@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 38;
+	objectVersion = 39;
 	objects = {
 		089C165CFE840E0CC02AAC07 = {
 			children = (
@@ -12,13 +12,16 @@
 			isa = PBXVariantGroup;
 			name = InfoPlist.strings;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		089C165DFE840E0CC02AAC07 = {
+			expectedFileType = text.plist.strings;
 			fileEncoding = 10;
 			isa = PBXFileReference;
 			name = English;
 			path = English.lproj/InfoPlist.strings;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		089C165EFE840E0CC02AAC07 = {
 			fileRef = 089C165CFE840E0CC02AAC07;
@@ -54,12 +57,16 @@
 			isa = PBXGroup;
 			name = "Linked Frameworks";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		1058C7A1FEA54F0111CA2CBB = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = Cocoa.framework;
 			path = /System/Library/Frameworks/Cocoa.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		1058C7A2FEA54F0111CA2CBB = {
 			children = (
@@ -69,6 +76,7 @@
 			isa = PBXGroup;
 			name = "Other Frameworks";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		1058C7A3FEA54F0111CA2CBB = {
 			fileRef = 1058C7A1FEA54F0111CA2CBB;
@@ -87,9 +95,12 @@
 //173
 //174
 		17587328FF379C6511CA2CBB = {
+			expectedFileType = wrapper.application;
+			fallbackIsa = PBXFileReference;
 			isa = PBXApplicationReference;
 			path = StepMania.app;
 			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 //170
 //171
@@ -112,6 +123,7 @@
 			isa = PBXGroup;
 			name = Products;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 //190
 //191
@@ -124,6 +136,8 @@
 //293
 //294
 		29B97313FDCFA39411CA2CEA = {
+			buildSettings = {
+			};
 			buildStyles = (
 				4A9504CCFFE6A4B311CA0CBA,
 				4A9504CDFFE6A4B311CA0CBA,
@@ -167,6 +181,7 @@
 			name = "SDL App";
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		29B97315FDCFA39411CA2CEA = {
 			children = (
@@ -180,18 +195,20 @@
 			name = "Other Source";
 			path = ../src;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		29B97317FDCFA39411CA2CEA = {
 			children = (
+				089C165CFE840E0CC02AAC07,
 				AA1C654F050D21AB0073A143,
 				AAB895E504A9057100D02EE9,
-				089C165CFE840E0CC02AAC07,
 				AA505F40050A87E400F96139,
 			);
 			isa = PBXGroup;
 			name = Resources;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		29B97323FDCFA39411CA2CEA = {
 			children = (
@@ -202,18 +219,25 @@
 			name = Frameworks;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		29B97324FDCFA39411CA2CEA = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = AppKit.framework;
 			path = /System/Library/Frameworks/AppKit.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		29B97325FDCFA39411CA2CEA = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = Foundation.framework;
 			path = /System/Library/Frameworks/Foundation.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		29B97326FDCFA39411CA2CEA = {
 			buildPhases = (
@@ -232,7 +256,7 @@
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-O2";
-				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof";
+				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti";
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
 				USE_GCC3_PFE_SUPPORT = NO;
@@ -873,7 +897,12 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				OPTIMIZATION_CFLAGS = "-O0";
+				ZERO_LINK = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -883,6 +912,8 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -904,10 +935,13 @@
 			};
 		};
 		AA0DF1B00503C262003DE00C = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = AudioUnit.framework;
 			path = /System/Library/Frameworks/AudioUnit.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AA0DF1B10503C262003DE00C = {
 			fileRef = AA0DF1B00503C262003DE00C;
@@ -916,18 +950,22 @@
 			};
 		};
 		AA0E393304DA8EE700D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ProTimingDisplay.cpp;
 			path = ../src/ProTimingDisplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA0E393404DA8EE700D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ProTimingDisplay.h;
 			path = ../src/ProTimingDisplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA0E393504DA8EE700D02EE9 = {
 			fileRef = AA0E393304DA8EE700D02EE9;
@@ -942,18 +980,22 @@
 			};
 		};
 		AA14ED0F0509F40000E3FAD7 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = MovieTexture_FFMpeg.cpp;
 			path = MovieTexture/MovieTexture_FFMpeg.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA14ED100509F40000E3FAD7 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = MovieTexture_FFMpeg.h;
 			path = MovieTexture/MovieTexture_FFMpeg.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA14ED110509F40000E3FAD7 = {
 			fileRef = AA14ED0F0509F40000E3FAD7;
@@ -983,18 +1025,23 @@
 			name = Libaries;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA14ED160509F98600E3FAD7 = {
+			expectedFileType = archive.ar;
 			isa = PBXFileReference;
 			name = libavcodec.a;
 			path = /usr/local/lib/libavcodec.a;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AA14ED170509F98600E3FAD7 = {
+			expectedFileType = archive.ar;
 			isa = PBXFileReference;
 			name = libavformat.a;
 			path = /usr/local/lib/libavformat.a;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AA14ED180509F98600E3FAD7 = {
 			fileRef = AA14ED160509F98600E3FAD7;
@@ -1009,10 +1056,12 @@
 			};
 		};
 		AA14ED1A0509FA1F00E3FAD7 = {
+			expectedFileType = archive.ar;
 			isa = PBXFileReference;
 			name = libz.a;
 			path = /usr/local/lib/libz.a;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AA14ED1B0509FA1F00E3FAD7 = {
 			fileRef = AA14ED1A0509FA1F00E3FAD7;
@@ -1021,18 +1070,22 @@
 			};
 		};
 		AA157B31051677F000D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = Util.h;
 			path = Installer/Util.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA157B32051677F000D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = Util.cpp;
 			path = Installer/Util.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA157B33051677F000D02EE9 = {
 			fileRef = AA157B31051677F000D02EE9;
@@ -1058,19 +1111,30 @@
 			settings = {
 			};
 		};
+		AA170C39055481660068A894 = {
+			containerPortal = 29B97313FDCFA39411CA2CEA;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = AAAE28D40522521300D02EE9;
+			remoteInfo = libresample.a;
+		};
 		AA1C653A050C00CF0073A143 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = Processor.h;
 			path = Installer/Processor.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C653B050C00CF0073A143 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = Processor.cpp;
 			path = Installer/Processor.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C653C050C00CF0073A143 = {
 			fileRef = AA1C653A050C00CF0073A143;
@@ -1201,9 +1265,12 @@
 ";
 		};
 		AA1C6544050D1FD00073A143 = {
+			expectedFileType = wrapper.application;
+			fallbackIsa = PBXFileReference;
 			isa = PBXApplicationReference;
 			path = Installer.app;
 			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		AA1C6546050D20A70073A143 = {
 			fileRef = 1058C7A1FEA54F0111CA2CBB;
@@ -1224,11 +1291,13 @@
 			};
 		};
 		AA1C654B050D212D0073A143 = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = main.c;
 			path = Installer/main.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C654C050D212D0073A143 = {
 			fileRef = AA1C654B050D212D0073A143;
@@ -1244,12 +1313,15 @@
 			name = MainMenu.nib;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C6550050D21AB0073A143 = {
+			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
 			name = English;
 			path = English.lproj/MainMenu.nib;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C6551050D21AB0073A143 = {
 			fileRef = AA1C654F050D21AB0073A143;
@@ -1258,18 +1330,22 @@
 			};
 		};
 		AA1C6552050D23200073A143 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenProfileOptions.cpp;
 			path = ../src/ScreenProfileOptions.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C6553050D23200073A143 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenProfileOptions.h;
 			path = ../src/ScreenProfileOptions.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C6554050D23200073A143 = {
 			fileRef = AA1C6552050D23200073A143;
@@ -1284,18 +1360,22 @@
 			};
 		};
 		AA1C6556050D234B0073A143 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ProfileManager.cpp;
 			path = ../src/ProfileManager.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C6557050D234B0073A143 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ProfileManager.h;
 			path = ../src/ProfileManager.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C6558050D234B0073A143 = {
 			fileRef = AA1C6556050D234B0073A143;
@@ -1316,18 +1396,22 @@
 			};
 		};
 		AA1C655F050D2ABC0073A143 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = InstallerWindowController.h;
 			path = Installer/InstallerWindowController.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C6560050D2ABC0073A143 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = InstallerWindowController.m;
 			path = Installer/InstallerWindowController.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C6561050D2ABC0073A143 = {
 			fileRef = AA1C655F050D2ABC0073A143;
@@ -1342,18 +1426,22 @@
 			};
 		};
 		AA1C6565050D2D0D0073A143 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = Helper.h;
 			path = Installer/Helper.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C6566050D2D0D0073A143 = {
+			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = Helper.mm;
 			path = Installer/Helper.mm;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C6567050D2D0D0073A143 = {
 			fileRef = AA1C6565050D2D0D0073A143;
@@ -1392,60 +1480,76 @@
 			};
 		};
 		AA1C659C050FD1E00073A143 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = NetGameState.h;
 			path = ../src/NetGameState.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C659D050FD1E00073A143 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = NetworkInput.h;
 			path = ../src/NetworkInput.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C659E050FD1E00073A143 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = NetworkManager.cpp;
 			path = ../src/NetworkManager.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C659F050FD1E00073A143 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = NetworkManager.h;
 			path = ../src/NetworkManager.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C65A4050FD21F0073A143 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_Vorbisfile.cpp;
 			path = ../src/RageSoundReader_Vorbisfile.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C65A5050FD21F0073A143 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_Vorbisfile.h;
 			path = ../src/RageSoundReader_Vorbisfile.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C65A6050FD21F0073A143 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_WAV.cpp;
 			path = ../src/RageSoundReader_WAV.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C65A7050FD21F0073A143 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_WAV.h;
 			path = ../src/RageSoundReader_WAV.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA1C65AB050FD21F0073A143 = {
 			fileRef = AA1C65A6050FD21F0073A143;
@@ -1460,12 +1564,14 @@
 			};
 		};
 		AA1DC47204A485E900D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ActorUtil.h;
 			path = ../src/ActorUtil.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -1476,22 +1582,26 @@
 			};
 		};
 		AA1DC47404A4861700D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectMaster.cpp;
 			path = ../src/ScreenSelectMaster.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA1DC47504A4861700D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectMaster.h;
 			path = ../src/ScreenSelectMaster.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -1508,12 +1618,14 @@
 			};
 		};
 		AA1DC47804A4866B00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ActorCollision.h;
 			path = ../src/ActorCollision.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -1524,40 +1636,48 @@
 			};
 		};
 		AA1DCB6004A4872700D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = Game.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA1DCB6104A4872700D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = glext.h;
 			path = ../src/glext.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA1DCB6304A4872700D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MenuInput.h;
 			path = ../src/MenuInput.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA1DCB6504A4872700D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = ModeChoice.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -1586,40 +1706,52 @@
 			};
 		};
 		AA25D882051B114700D02EE9 = {
+			expectedFileType = "compiled.mach-o.dylib";
 			isa = PBXFileReference;
 			name = libmad.dylib;
 			path = /usr/local/lib/libmad.dylib;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AA25D884051B11C700D02EE9 = {
+			expectedFileType = "compiled.mach-o.dylib";
 			isa = PBXFileReference;
 			name = libogg.dylib;
 			path = /usr/local/lib/libogg.dylib;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AA25D886051B121C00D02EE9 = {
+			expectedFileType = "compiled.mach-o.dylib";
 			isa = PBXFileReference;
 			name = libpng.3.1.2.5.dylib;
 			path = /usr/local/lib/libpng.3.1.2.5.dylib;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AA25D887051B121C00D02EE9 = {
+			expectedFileType = archive.ar;
 			isa = PBXFileReference;
 			name = libSDLmain.a;
 			path = /usr/local/lib/libSDLmain.a;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AA25D888051B121C00D02EE9 = {
+			expectedFileType = "compiled.mach-o.dylib";
 			isa = PBXFileReference;
 			name = libvorbis.dylib;
 			path = /usr/local/lib/libvorbis.dylib;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AA25D889051B121C00D02EE9 = {
+			expectedFileType = "compiled.mach-o.dylib";
 			isa = PBXFileReference;
 			name = libvorbisfile.dylib;
 			path = /usr/local/lib/libvorbisfile.dylib;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AA25D88B051B121C00D02EE9 = {
 			fileRef = AA25D887051B121C00D02EE9;
@@ -1628,34 +1760,44 @@
 			};
 		};
 		AA272BF704C7B37A00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = InputHandler_DirectInput.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA272BF804C7B37A00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = InputHandler_DirectInput.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA272BF904C7B37A00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = InputHandler_DirectInputHelper.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA272BFA04C7B37A00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = InputHandler_DirectInputHelper.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA272BFB04CB779F00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ModeChoice.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA272BFC04CB779F00D02EE9 = {
 			fileRef = AA272BFB04CB779F00D02EE9;
@@ -1664,18 +1806,22 @@
 			};
 		};
 		AA272C3004CD757100D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageFile.cpp;
 			path = ../src/RageFile.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA272C3104CD757100D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageFile.h;
 			path = ../src/RageFile.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA272C3204CD757100D02EE9 = {
 			fileRef = AA272C3004CD757100D02EE9;
@@ -1696,11 +1842,13 @@
 			};
 		};
 		AA3F283B04BE6DDC00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ArchHooks.cpp;
 			path = ArchHooks/ArchHooks.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA3F283C04BE6DDC00D02EE9 = {
 			fileRef = AA3F283B04BE6DDC00D02EE9;
@@ -1721,18 +1869,22 @@
 			};
 		};
 		AA4F38C004E2D0B700D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = NoteDataUtil.cpp;
 			path = ../src/NoteDataUtil.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA4F38C104E2D0B700D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = NoteDataUtil.h;
 			path = ../src/NoteDataUtil.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA4F38C204E2D0B700D02EE9 = {
 			fileRef = AA4F38C004E2D0B700D02EE9;
@@ -1747,10 +1899,12 @@
 			};
 		};
 		AA505F40050A87E400F96139 = {
+			expectedFileType = image.bmp;
 			isa = PBXFileReference;
 			name = splash.bmp;
 			path = ../Data/splash.bmp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA505F41050A87E400F96139 = {
 			fileRef = AA505F40050A87E400F96139;
@@ -1776,6 +1930,7 @@
 			isa = PBXGroup;
 			name = Installer;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA507E50050BA28F00F96139 = {
 			buildActionMask = 2147483647;
@@ -1840,9 +1995,12 @@
 			productReference = AA507E55050BA28F00F96139;
 		};
 		AA507E55050BA28F00F96139 = {
+			expectedFileType = "compiled.mach-o.executable";
+			fallbackIsa = PBXFileReference;
 			isa = PBXExecutableFileReference;
 			path = BuildInstaller;
 			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		AA507E63050BA42800F96139 = {
 			fileRef = AA6EFE6204770CF7005F316C;
@@ -1851,18 +2009,22 @@
 			};
 		};
 		AA507E64050BA55B00F96139 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = InstallerFile.h;
 			path = Installer/InstallerFile.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA507E65050BA55B00F96139 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = InstallerFile.cpp;
 			path = Installer/InstallerFile.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA507E66050BA55B00F96139 = {
 			fileRef = AA507E64050BA55B00F96139;
@@ -1877,11 +2039,13 @@
 			};
 		};
 		AA507E68050BC69000F96139 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = BuildInstaller.cpp;
 			path = Installer/BuildInstaller.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA507E69050BC69000F96139 = {
 			fileRef = AA507E68050BC69000F96139;
@@ -1890,10 +2054,12 @@
 			};
 		};
 		AA52E9BD04DBBCF400D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ver.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA52E9BE04DBBCF400D02EE9 = {
 			fileRef = AA52E9BD04DBBCF400D02EE9;
@@ -1905,56 +2071,64 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			generatedFileNames = (
-			);
 			isa = PBXShellScriptBuildPhase;
-			neededFileNames = (
-			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = scripts/increment_version.sh;
 		};
 		AA53D28405277DAF00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenOptionsMaster.cpp;
 			path = ../src/ScreenOptionsMaster.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA53D28505277DAF00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenOptionsMaster.h;
 			path = ../src/ScreenOptionsMaster.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA53D28605277DAF00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenOptionsMasterPrefs.cpp;
 			path = ../src/ScreenOptionsMasterPrefs.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA53D28705277DAF00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenOptionsMasterPrefs.h;
 			path = ../src/ScreenOptionsMasterPrefs.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA53D28805277DAF00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenReloadSongs.cpp;
 			path = ../src/ScreenReloadSongs.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA53D28905277DAF00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenReloadSongs.h;
 			path = ../src/ScreenReloadSongs.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA53D28A05277DAF00D02EE9 = {
 			fileRef = AA53D28405277DAF00D02EE9;
@@ -2094,9 +2268,12 @@
 			productReference = AA590A3D0541CD2A00D02EE9;
 		};
 		AA590A3D0541CD2A00D02EE9 = {
+			expectedFileType = "compiled.mach-o.executable";
+			fallbackIsa = PBXFileReference;
 			isa = PBXExecutableFileReference;
 			path = test;
 			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		AA590A3F0541CD3800D02EE9 = {
 			fileRef = AAC6230205389A3C00D02EE9;
@@ -2381,10 +2558,13 @@
 			};
 		};
 		AA5D1C9404FE259500BE5E4F = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = CoreAudio.framework;
 			path = /System/Library/Frameworks/CoreAudio.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AA5D1C9504FE259500BE5E4F = {
 			fileRef = AA5D1C9404FE259500BE5E4F;
@@ -2399,18 +2579,22 @@
 			};
 		};
 		AA6DAF0805300B3D00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScoreDisplayPercentage.cpp;
 			path = ../src/ScoreDisplayPercentage.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6DAF0905300B3D00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScoreDisplayPercentage.h;
 			path = ../src/ScoreDisplayPercentage.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6DAF0A05300B3D00D02EE9 = {
 			fileRef = AA6DAF0805300B3D00D02EE9;
@@ -2610,1024 +2794,1229 @@
 			name = Screens;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6E000A047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Screen.cpp;
 			path = ../src/Screen.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E000B047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Screen.h;
 			path = ../src/Screen.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E000C047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenAlbums.cpp;
 			path = ../src/ScreenAlbums.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E000D047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenAlbums.h;
 			path = ../src/ScreenAlbums.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0010047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenAttract.cpp;
 			path = ../src/ScreenAttract.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0011047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenAttract.h;
 			path = ../src/ScreenAttract.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0016047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenCaution.cpp;
 			path = ../src/ScreenCaution.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0017047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenCaution.h;
 			path = ../src/ScreenCaution.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0018047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenCompany.h;
 			path = ../src/ScreenCompany.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0019047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenCredits.cpp;
 			path = ../src/ScreenCredits.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E001A047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenCredits.h;
 			path = ../src/ScreenCredits.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E001B047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenDemonstration.cpp;
 			path = ../src/ScreenDemonstration.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E001C047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenDemonstration.h;
 			path = ../src/ScreenDemonstration.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E001D047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenEdit.cpp;
 			path = ../src/ScreenEdit.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E001E047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenEdit.h;
 			path = ../src/ScreenEdit.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E001F047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenEditMenu.cpp;
 			path = ../src/ScreenEditMenu.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0020047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenEditMenu.h;
 			path = ../src/ScreenEditMenu.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0021047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenEvaluation.cpp;
 			path = ../src/ScreenEvaluation.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0022047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenEvaluation.h;
 			path = ../src/ScreenEvaluation.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0023047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenEz2SelectMusic.cpp;
 			path = ../src/ScreenEz2SelectMusic.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0024047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenEz2SelectMusic.h;
 			path = ../src/ScreenEz2SelectMusic.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0025047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenEz2SelectPlayer.cpp;
 			path = ../src/ScreenEz2SelectPlayer.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0026047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenEz2SelectPlayer.h;
 			path = ../src/ScreenEz2SelectPlayer.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0027047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenGameOver.cpp;
 			path = ../src/ScreenGameOver.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0028047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenGameOver.h;
 			path = ../src/ScreenGameOver.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0029047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenGameplay.cpp;
 			path = ../src/ScreenGameplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E002A047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenGameplay.h;
 			path = ../src/ScreenGameplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E002D047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenGraphicOptions.cpp;
 			path = ../src/ScreenGraphicOptions.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E002E047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenGraphicOptions.h;
 			path = ../src/ScreenGraphicOptions.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E002F047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenHowToPlay.cpp;
 			path = ../src/ScreenHowToPlay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0030047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenHowToPlay.h;
 			path = ../src/ScreenHowToPlay.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0033047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenInstructions.cpp;
 			path = ../src/ScreenInstructions.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0034047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenInstructions.h;
 			path = ../src/ScreenInstructions.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0035047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenIntroMovie.cpp;
 			path = ../src/ScreenIntroMovie.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0036047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenIntroMovie.h;
 			path = ../src/ScreenIntroMovie.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0037047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenJukebox.cpp;
 			path = ../src/ScreenJukebox.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0038047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenJukebox.h;
 			path = ../src/ScreenJukebox.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0039047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenJukeboxMenu.cpp;
 			path = ../src/ScreenJukeboxMenu.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E003A047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenJukeboxMenu.h;
 			path = ../src/ScreenJukeboxMenu.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E003B047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenLogo.cpp;
 			path = ../src/ScreenLogo.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E003C047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenLogo.h;
 			path = ../src/ScreenLogo.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E003F047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenManager.cpp;
 			path = ../src/ScreenManager.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0040047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenManager.h;
 			path = ../src/ScreenManager.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0041047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenMapControllers.cpp;
 			path = ../src/ScreenMapControllers.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0042047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenMapControllers.h;
 			path = ../src/ScreenMapControllers.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0043047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenMemoryCard.h;
 			path = ../src/ScreenMemoryCard.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0044047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenMessage.h;
 			path = ../src/ScreenMessage.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0045047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenMiniMenu.cpp;
 			path = ../src/ScreenMiniMenu.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0046047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenMiniMenu.h;
 			path = ../src/ScreenMiniMenu.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0047047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenMusicScroll.cpp;
 			path = ../src/ScreenMusicScroll.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0048047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenMusicScroll.h;
 			path = ../src/ScreenMusicScroll.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0049047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenNameEntry.cpp;
 			path = ../src/ScreenNameEntry.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E004A047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenNameEntry.h;
 			path = ../src/ScreenNameEntry.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E004B047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenOptions.cpp;
 			path = ../src/ScreenOptions.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E004C047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenOptions.h;
 			path = ../src/ScreenOptions.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E004F047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenPlayerOptions.cpp;
 			path = ../src/ScreenPlayerOptions.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0050047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenPlayerOptions.h;
 			path = ../src/ScreenPlayerOptions.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0051047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenPrompt.cpp;
 			path = ../src/ScreenPrompt.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0052047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenPrompt.h;
 			path = ../src/ScreenPrompt.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0053047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenRanking.cpp;
 			path = ../src/ScreenRanking.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0054047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenRanking.h;
 			path = ../src/ScreenRanking.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0055047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenRaveOptions.cpp;
 			path = ../src/ScreenRaveOptions.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0056047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenRaveOptions.h;
 			path = ../src/ScreenRaveOptions.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0057047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSandbox.cpp;
 			path = ../src/ScreenSandbox.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0058047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSandbox.h;
 			path = ../src/ScreenSandbox.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0059047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelect.cpp;
 			path = ../src/ScreenSelect.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E005A047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelect.h;
 			path = ../src/ScreenSelect.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E005B047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectCharacter.cpp;
 			path = ../src/ScreenSelectCharacter.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E005C047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectCharacter.h;
 			path = ../src/ScreenSelectCharacter.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E005D047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectCourse.cpp;
 			path = ../src/ScreenSelectCourse.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E005E047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectCourse.h;
 			path = ../src/ScreenSelectCourse.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E005F047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectDifficulty.cpp;
 			path = ../src/ScreenSelectDifficulty.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0060047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectDifficulty.h;
 			path = ../src/ScreenSelectDifficulty.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0061047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectDifficultyEX.cpp;
 			path = ../src/ScreenSelectDifficultyEX.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0062047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectDifficultyEX.h;
 			path = ../src/ScreenSelectDifficultyEX.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0065047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectGroup.cpp;
 			path = ../src/ScreenSelectGroup.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0066047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectGroup.h;
 			path = ../src/ScreenSelectGroup.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0067047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectMode.cpp;
 			path = ../src/ScreenSelectMode.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0068047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectMode.h;
 			path = ../src/ScreenSelectMode.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0069047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectMusic.cpp;
 			path = ../src/ScreenSelectMusic.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E006A047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectMusic.h;
 			path = ../src/ScreenSelectMusic.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E006B047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectStyle.cpp;
 			path = ../src/ScreenSelectStyle.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E006C047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectStyle.h;
 			path = ../src/ScreenSelectStyle.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E006F047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSongOptions.cpp;
 			path = ../src/ScreenSongOptions.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0070047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSongOptions.h;
 			path = ../src/ScreenSongOptions.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0073047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenStage.cpp;
 			path = ../src/ScreenStage.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0074047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenStage.h;
 			path = ../src/ScreenStage.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0075047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenStyleSplash.cpp;
 			path = ../src/ScreenStyleSplash.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0076047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenStyleSplash.h;
 			path = ../src/ScreenStyleSplash.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0077047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenTest.cpp;
 			path = ../src/ScreenTest.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0078047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenTest.h;
 			path = ../src/ScreenTest.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0079047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenTestFonts.cpp;
 			path = ../src/ScreenTestFonts.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E007A047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenTestFonts.h;
 			path = ../src/ScreenTestFonts.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E007B047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenTestSound.cpp;
 			path = ../src/ScreenTestSound.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E007C047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenTestSound.h;
 			path = ../src/ScreenTestSound.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E007D047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenTextEntry.cpp;
 			path = ../src/ScreenTextEntry.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E007E047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenTextEntry.h;
 			path = ../src/ScreenTextEntry.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E007F047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenTitleMenu.cpp;
 			path = ../src/ScreenTitleMenu.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0080047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenTitleMenu.h;
 			path = ../src/ScreenTitleMenu.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0081047711F3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenUnlock.cpp;
 			path = ../src/ScreenUnlock.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0082047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenUnlock.h;
 			path = ../src/ScreenUnlock.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E0083047711F3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenWarning.h;
 			path = ../src/ScreenWarning.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4217,233 +4606,280 @@
 			name = GlobalSingletons;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6E00FF0477128A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = AnnouncerManager.cpp;
 			path = ../src/AnnouncerManager.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01000477128A005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = AnnouncerManager.h;
 			path = ../src/AnnouncerManager.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01010477128A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GameManager.cpp;
 			path = ../src/GameManager.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01020477128A005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GameManager.h;
 			path = ../src/GameManager.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01030477128A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GameState.cpp;
 			path = ../src/GameState.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01040477128A005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GameState.h;
 			path = ../src/GameState.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01050477128A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = InputFilter.cpp;
 			path = ../src/InputFilter.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01060477128A005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = InputFilter.h;
 			path = ../src/InputFilter.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01070477128A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = InputMapper.cpp;
 			path = ../src/InputMapper.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01080477128A005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = InputMapper.h;
 			path = ../src/InputMapper.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01090477128A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = InputQueue.cpp;
 			path = ../src/InputQueue.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E010A0477128A005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = InputQueue.h;
 			path = ../src/InputQueue.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E010B0477128A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NoteSkinManager.cpp;
 			path = ../src/NoteSkinManager.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E010C0477128A005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NoteSkinManager.h;
 			path = ../src/NoteSkinManager.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E010D0477128A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = PrefsManager.cpp;
 			path = ../src/PrefsManager.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E010E0477128A005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = PrefsManager.h;
 			path = ../src/PrefsManager.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E010F0477128A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = SongManager.cpp;
 			path = ../src/SongManager.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01100477128A005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = SongManager.h;
 			path = ../src/SongManager.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01110477128A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = StepmaniaTemplates.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01120477128A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ThemeManager.cpp;
 			path = ../src/ThemeManager.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01130477128A005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ThemeManager.h;
 			path = ../src/ThemeManager.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01140477128A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = UnlockSystem.cpp;
 			path = ../src/UnlockSystem.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01150477128A005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = UnlockSystem.h;
 			path = ../src/UnlockSystem.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4600,22 +5036,27 @@
 			isa = PBXGroup;
 			path = Sound;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6E012E047712BE005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = RageSoundDriver_Null.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E012F047712BE005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = RageSoundDriver_Null.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4648,13 +5089,16 @@
 			isa = PBXGroup;
 			path = arch;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6E01410477136A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = arch.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4674,22 +5118,27 @@
 			isa = PBXGroup;
 			path = InputHandler;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6E01560477136A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = InputHandler_SDL.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01570477136A005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = InputHandler_SDL.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4702,6 +5151,7 @@
 			isa = PBXGroup;
 			path = LoadingWindow;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6E01620477136A005F316C = {
 			children = (
@@ -4712,31 +5162,38 @@
 			isa = PBXGroup;
 			path = LowLevelWindow;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6E01630477136A005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = LowLevelWindow.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01640477136A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = LowLevelWindow_SDL.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01650477136A005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = LowLevelWindow_SDL.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4749,6 +5206,7 @@
 			isa = PBXGroup;
 			path = archutils;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6E01930477136A005F316C = {
 			fileRef = AA6E01410477136A005F316C;
@@ -4787,12 +5245,14 @@
 			};
 		};
 		AA6E01DB04771F11005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MovieTexture.cpp;
 			path = MovieTexture/MovieTexture.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4818,24 +5278,29 @@
 			isa = PBXGroup;
 			name = MovieTexture;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6E01DE04772005005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = SongCacheIndex.cpp;
 			path = ../src/SongCacheIndex.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01DF04772005005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = SongCacheIndex.h;
 			path = ../src/SongCacheIndex.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4852,22 +5317,26 @@
 			};
 		};
 		AA6E01E20477205A005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Song.cpp;
 			path = ../src/Song.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01E30477205A005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = song.h;
 			path = ../src/song.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4884,22 +5353,26 @@
 			};
 		};
 		AA6E01E6047720A3005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RandomSample.cpp;
 			path = ../src/RandomSample.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6E01E7047720A3005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RandomSample.h;
 			path = ../src/RandomSample.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4916,382 +5389,458 @@
 			};
 		};
 		AA6EFD6D04770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageBitmapTexture.cpp;
 			path = ../src/RageBitmapTexture.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD6E04770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageBitmapTexture.h;
 			path = ../src/RageBitmapTexture.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD6F04770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageDisplay.cpp;
 			path = ../src/RageDisplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD7004770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageDisplay.h;
 			path = ../src/RageDisplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD7204770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageException.cpp;
 			path = ../src/RageException.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD7304770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageException.h;
 			path = ../src/RageException.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD7404770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageInput.cpp;
 			path = ../src/RageInput.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD7504770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageInput.h;
 			path = ../src/RageInput.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD7604770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageInputDevice.cpp;
 			path = ../src/RageInputDevice.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD7704770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageInputDevice.h;
 			path = ../src/RageInputDevice.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD7804770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageLog.cpp;
 			path = ../src/RageLog.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD7904770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageLog.h;
 			path = ../src/RageLog.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD7A04770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageMath.cpp;
 			path = ../src/RageMath.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD7B04770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageMath.h;
 			path = ../src/RageMath.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD7C04770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSound.cpp;
 			path = ../src/RageSound.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD7D04770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSound.h;
 			path = ../src/RageSound.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD7E04770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSoundManager.cpp;
 			path = ../src/RageSoundManager.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD7F04770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSoundManager.h;
 			path = ../src/RageSoundManager.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8004770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSoundReader_Preload.cpp;
 			path = ../src/RageSoundReader_Preload.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8104770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSoundReader_Preload.h;
 			path = ../src/RageSoundReader_Preload.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8204770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSoundReader_Resample.cpp;
 			path = ../src/RageSoundReader_Resample.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8304770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSoundReader_Resample.h;
 			path = ../src/RageSoundReader_Resample.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8404770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSoundReader_SDL_Sound.cpp;
 			path = ../src/RageSoundReader_SDL_Sound.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8504770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSoundReader_SDL_Sound.h;
 			path = ../src/RageSoundReader_SDL_Sound.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8604770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSoundReader.h;
 			path = ../src/RageSoundReader.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8704770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSoundResampler.cpp;
 			path = ../src/RageSoundResampler.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8804770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSoundResampler.h;
 			path = ../src/RageSoundResampler.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8904770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageTexture.cpp;
 			path = ../src/RageTexture.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8A04770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageTexture.h;
 			path = ../src/RageTexture.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8B04770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageTextureManager.cpp;
 			path = ../src/RageTextureManager.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8C04770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageTextureManager.h;
 			path = ../src/RageTextureManager.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8D04770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageThreads.cpp;
 			path = ../src/RageThreads.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8E04770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageThreads.h;
 			path = ../src/RageThreads.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD8F04770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageTimer.cpp;
 			path = ../src/RageTimer.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD9004770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageTimer.h;
 			path = ../src/RageTimer.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD9104770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageTypes.h;
 			path = ../src/RageTypes.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD9204770A7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageUtil.cpp;
 			path = ../src/RageUtil.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFD9304770A7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageUtil.h;
 			path = ../src/RageUtil.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5579,64 +6128,77 @@
 			name = Rage;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6EFDBC04770AEA005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = SDL_dither.cpp;
 			path = ../src/SDL_dither.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDBD04770AEA005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = SDL_dither.h;
 			path = ../src/SDL_dither.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDBE04770AEA005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = SDL_rotozoom.cpp;
 			path = ../src/SDL_rotozoom.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDBF04770AEA005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = SDL_rotozoom.h;
 			path = ../src/SDL_rotozoom.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDC004770AEA005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = SDL_utils.cpp;
 			path = ../src/SDL_utils.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDC104770AEA005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = SDL_utils.h;
 			path = ../src/SDL_utils.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5758,674 +6320,809 @@
 			name = DataStructures;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6EFDC904770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ArrowBackdrop.cpp;
 			path = ../src/ArrowBackdrop.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDCA04770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ArrowBackdrop.h;
 			path = ../src/ArrowBackdrop.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDCB04770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Character.cpp;
 			path = ../src/Character.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDCC04770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Character.h;
 			path = ../src/Character.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDCD04770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = CodeDetector.cpp;
 			path = ../src/CodeDetector.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDCE04770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = CodeDetector.h;
 			path = ../src/CodeDetector.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDCF04770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Course.cpp;
 			path = ../src/Course.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDD004770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Course.h;
 			path = ../src/Course.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDD104770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Font.cpp;
 			path = ../src/Font.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDD204770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Font.h;
 			path = ../src/Font.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDD304770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = FontCharAliases.cpp;
 			path = ../src/FontCharAliases.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDD404770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = FontCharAliases.h;
 			path = ../src/FontCharAliases.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDD504770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = FontCharmaps.cpp;
 			path = ../src/FontCharmaps.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDD604770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = FontCharmaps.h;
 			path = ../src/FontCharmaps.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDD704770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = FontManager.cpp;
 			path = ../src/FontManager.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDD804770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = FontManager.h;
 			path = ../src/FontManager.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDD904770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GameConstantsAndTypes.cpp;
 			path = ../src/GameConstantsAndTypes.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDDA04770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GameConstantsAndTypes.h;
 			path = ../src/GameConstantsAndTypes.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDDB04770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GameDef.cpp;
 			path = ../src/GameDef.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDDC04770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GameDef.h;
 			path = ../src/GameDef.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDDD04770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GameInput.cpp;
 			path = ../src/GameInput.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDDE04770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GameInput.h;
 			path = ../src/GameInput.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDDF04770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Grade.cpp;
 			path = ../src/Grade.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDE004770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Grade.h;
 			path = ../src/Grade.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDE104770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Inventory.cpp;
 			path = ../src/Inventory.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDE204770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Inventory.h;
 			path = ../src/Inventory.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDE304770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = LyricsLoader.cpp;
 			path = ../src/LyricsLoader.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDE404770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = LyricsLoader.h;
 			path = ../src/LyricsLoader.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDE504770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NoteData.cpp;
 			path = ../src/NoteData.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDE604770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NoteData.h;
 			path = ../src/NoteData.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDE704770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NoteDataWithScoring.cpp;
 			path = ../src/NoteDataWithScoring.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDE804770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NoteDataWithScoring.h;
 			path = ../src/NoteDataWithScoring.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDE904770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NoteFieldPositioning.cpp;
 			path = ../src/NoteFieldPositioning.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDEA04770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NoteFieldPositioning.h;
 			path = ../src/NoteFieldPositioning.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDED04770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NotesLoader.cpp;
 			path = ../src/NotesLoader.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDEE04770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NotesLoader.h;
 			path = ../src/NotesLoader.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDEF04770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NotesLoaderBMS.cpp;
 			path = ../src/NotesLoaderBMS.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDF004770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NotesLoaderBMS.h;
 			path = ../src/NotesLoaderBMS.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDF104770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NotesLoaderDWI.cpp;
 			path = ../src/NotesLoaderDWI.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDF204770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NotesLoaderDWI.h;
 			path = ../src/NotesLoaderDWI.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDF304770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NotesLoaderKSF.cpp;
 			path = ../src/NotesLoaderKSF.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDF404770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NotesLoaderKSF.h;
 			path = ../src/NotesLoaderKSF.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDF504770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NotesLoaderSM.cpp;
 			path = ../src/NotesLoaderSM.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDF604770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NotesLoaderSM.h;
 			path = ../src/NotesLoaderSM.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDF704770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NotesWriterDWI.cpp;
 			path = ../src/NotesWriterDWI.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDF804770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NotesWriterDWI.h;
 			path = ../src/NotesWriterDWI.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDF904770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NotesWriterSM.cpp;
 			path = ../src/NotesWriterSM.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDFA04770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NotesWriterSM.h;
 			path = ../src/NotesWriterSM.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDFB04770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NoteTypes.cpp;
 			path = ../src/NoteTypes.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDFC04770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NoteTypes.h;
 			path = ../src/NoteTypes.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDFD04770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Player.cpp;
 			path = ../src/Player.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDFE04770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Player.h;
 			path = ../src/Player.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFDFF04770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = PlayerAI.cpp;
 			path = ../src/PlayerAI.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE0004770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = PlayerAI.h;
 			path = ../src/PlayerAI.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE0104770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = PlayerNumber.cpp;
 			path = ../src/PlayerNumber.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE0204770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = PlayerNumber.h;
 			path = ../src/PlayerNumber.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE0304770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = PlayerOptions.cpp;
 			path = ../src/PlayerOptions.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE0404770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = PlayerOptions.h;
 			path = ../src/PlayerOptions.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE0704770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = SongOptions.cpp;
 			path = ../src/SongOptions.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE0804770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = SongOptions.h;
 			path = ../src/SongOptions.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE0904770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = StageStats.cpp;
 			path = ../src/StageStats.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE0A04770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = StageStats.h;
 			path = ../src/StageStats.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE0B04770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = StyleDef.cpp;
 			path = ../src/StyleDef.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE0C04770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = StyleDef.h;
 			path = ../src/StyleDef.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE0D04770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = StyleInput.h;
 			path = ../src/StyleInput.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE0E04770C79005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = TitleSubstitution.cpp;
 			path = ../src/TitleSubstitution.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE0F04770C79005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = TitleSubstitution.h;
 			path = ../src/TitleSubstitution.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6842,44 +7539,53 @@
 			name = FileTypes;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6EFE5804770CAA005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = IniFile.cpp;
 			path = ../src/IniFile.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE5904770CAA005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = IniFile.h;
 			path = ../src/IniFile.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE5A04770CAA005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MsdFile.cpp;
 			path = ../src/MsdFile.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE5B04770CAA005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MsdFile.h;
 			path = ../src/MsdFile.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6908,48 +7614,58 @@
 			};
 		};
 		AA6EFE6004770CF7005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = global.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE6104770CF7005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenDimensions.h;
 			path = ../src/ScreenDimensions.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE6204770CF7005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = StdString.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE6304770CF7005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = StepMania.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE6404770CF7005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = StepMania.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6999,6 +7715,7 @@
 			name = StepMania;
 			path = ../src;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6EFE6D04770D3E005F316C = {
 			children = (
@@ -7077,24 +7794,29 @@
 			name = ActorsInMenus;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6EFE6E04770D61005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Banner.cpp;
 			path = ../src/Banner.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE6F04770D61005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Banner.h;
 			path = ../src/Banner.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7111,602 +7833,722 @@
 			};
 		};
 		AA6EFE7604770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = BPMDisplay.cpp;
 			path = ../src/BPMDisplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE7704770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = BPMDisplay.h;
 			path = ../src/BPMDisplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE7804770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = CourseContentsList.cpp;
 			path = ../src/CourseContentsList.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE7904770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = CourseContentsList.h;
 			path = ../src/CourseContentsList.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE7A04770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = CourseEntryDisplay.cpp;
 			path = ../src/CourseEntryDisplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE7B04770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = CourseEntryDisplay.h;
 			path = ../src/CourseEntryDisplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE7E04770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = DifficultyIcon.cpp;
 			path = ../src/DifficultyIcon.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE7F04770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = DifficultyIcon.h;
 			path = ../src/DifficultyIcon.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE8004770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = DifficultyMeter.cpp;
 			path = ../src/DifficultyMeter.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE8104770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = DifficultyMeter.h;
 			path = ../src/DifficultyMeter.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE8204770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = DifficultyRating.cpp;
 			path = ../src/DifficultyRating.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE8304770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = DifficultyRating.h;
 			path = ../src/DifficultyRating.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE8404770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = EditMenu.cpp;
 			path = ../src/EditMenu.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE8504770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = EditMenu.h;
 			path = ../src/EditMenu.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE8A04770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = FadingBanner.cpp;
 			path = ../src/FadingBanner.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE8B04770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = FadingBanner.h;
 			path = ../src/FadingBanner.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE8C04770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GradeDisplay.cpp;
 			path = ../src/GradeDisplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE8D04770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GradeDisplay.h;
 			path = ../src/GradeDisplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE8E04770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GrooveGraph.cpp;
 			path = ../src/GrooveGraph.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE8F04770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GrooveGraph.h;
 			path = ../src/GrooveGraph.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9004770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GrooveRadar.cpp;
 			path = ../src/GrooveRadar.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9104770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GrooveRadar.h;
 			path = ../src/GrooveRadar.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9204770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GroupList.cpp;
 			path = ../src/GroupList.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9304770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GroupList.h;
 			path = ../src/GroupList.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9404770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = HelpDisplay.cpp;
 			path = ../src/HelpDisplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9504770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = HelpDisplay.h;
 			path = ../src/HelpDisplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9604770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = JukeboxMenu.cpp;
 			path = ../src/JukeboxMenu.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9704770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = JukeboxMenu.h;
 			path = ../src/JukeboxMenu.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9804770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MenuElements.cpp;
 			path = ../src/MenuElements.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9904770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MenuElements.h;
 			path = ../src/MenuElements.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9A04770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MenuTimer.cpp;
 			path = ../src/MenuTimer.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9B04770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MenuTimer.h;
 			path = ../src/MenuTimer.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9C04770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MeterDisplay.cpp;
 			path = ../src/MeterDisplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9D04770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MeterDisplay.h;
 			path = ../src/MeterDisplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9E04770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MusicBannerWheel.cpp;
 			path = ../src/MusicBannerWheel.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFE9F04770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MusicBannerWheel.h;
 			path = ../src/MusicBannerWheel.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEA004770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MusicList.cpp;
 			path = ../src/MusicList.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEA104770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MusicList.h;
 			path = ../src/MusicList.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEA204770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MusicSortDisplay.cpp;
 			path = ../src/MusicSortDisplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEA304770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MusicSortDisplay.h;
 			path = ../src/MusicSortDisplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEA404770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MusicWheel.cpp;
 			path = ../src/MusicWheel.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEA504770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MusicWheel.h;
 			path = ../src/MusicWheel.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEA604770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MusicWheelItem.cpp;
 			path = ../src/MusicWheelItem.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEA704770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MusicWheelItem.h;
 			path = ../src/MusicWheelItem.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEA804770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = OptionIcon.cpp;
 			path = ../src/OptionIcon.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEA904770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = OptionIcon.h;
 			path = ../src/OptionIcon.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEAA04770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = OptionIconRow.cpp;
 			path = ../src/OptionIconRow.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEAB04770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = OptionIconRow.h;
 			path = ../src/OptionIconRow.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEAC04770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = OptionsCursor.cpp;
 			path = ../src/OptionsCursor.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEAD04770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = OptionsCursor.h;
 			path = ../src/OptionsCursor.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEAE04770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScrollBar.cpp;
 			path = ../src/ScrollBar.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEAF04770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScrollBar.h;
 			path = ../src/ScrollBar.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEB004770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScrollingList.cpp;
 			path = ../src/ScrollingList.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEB104770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScrollingList.h;
 			path = ../src/ScrollingList.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEB204770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = SnapDisplay.cpp;
 			path = ../src/SnapDisplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEB304770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = SnapDisplay.h;
 			path = ../src/SnapDisplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEB404770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = TextBanner.cpp;
 			path = ../src/TextBanner.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEB504770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = TextBanner.h;
 			path = ../src/TextBanner.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEB604770E7C005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = WheelNotifyIcon.cpp;
 			path = ../src/WheelNotifyIcon.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEB704770E7C005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = WheelNotifyIcon.h;
 			path = ../src/WheelNotifyIcon.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8145,524 +8987,629 @@
 			name = ActorsInGameplay;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6EFEFD04770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ArrowEffects.cpp;
 			path = ../src/ArrowEffects.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEFE04770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ArrowEffects.h;
 			path = ../src/ArrowEffects.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFEFF04770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Background.cpp;
 			path = ../src/Background.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF0004770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Background.h;
 			path = ../src/Background.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF0104770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = BGAnimation.cpp;
 			path = ../src/BGAnimation.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF0204770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = BGAnimation.h;
 			path = ../src/BGAnimation.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF0304770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = BGAnimationLayer.cpp;
 			path = ../src/BGAnimationLayer.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF0404770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = BGAnimationLayer.h;
 			path = ../src/BGAnimationLayer.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF0504770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Combo.cpp;
 			path = ../src/Combo.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF0604770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Combo.h;
 			path = ../src/Combo.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF0704770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = DancingCharacters.cpp;
 			path = ../src/DancingCharacters.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF0804770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = DancingCharacters.h;
 			path = ../src/DancingCharacters.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF0904770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GhostArrow.cpp;
 			path = ../src/GhostArrow.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF0A04770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GhostArrow.h;
 			path = ../src/GhostArrow.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF0D04770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GhostArrowRow.cpp;
 			path = ../src/GhostArrowRow.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF0E04770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GhostArrowRow.h;
 			path = ../src/GhostArrowRow.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF0F04770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GrayArrow.cpp;
 			path = ../src/GrayArrow.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF1004770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GrayArrow.h;
 			path = ../src/GrayArrow.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF1104770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GrayArrowRow.cpp;
 			path = ../src/GrayArrowRow.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF1204770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = GrayArrowRow.h;
 			path = ../src/GrayArrowRow.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF1304770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = HoldGhostArrow.cpp;
 			path = ../src/HoldGhostArrow.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF1404770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = HoldGhostArrow.h;
 			path = ../src/HoldGhostArrow.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF1504770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = HoldJudgment.cpp;
 			path = ../src/HoldJudgment.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF1604770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = HoldJudgment.h;
 			path = ../src/HoldJudgment.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF1704770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Judgment.cpp;
 			path = ../src/Judgment.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF1804770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Judgment.h;
 			path = ../src/Judgment.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF1A04770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = LifeMeter.h;
 			path = ../src/LifeMeter.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF1B04770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = LifeMeterBar.cpp;
 			path = ../src/LifeMeterBar.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF1C04770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = LifeMeterBar.h;
 			path = ../src/LifeMeterBar.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF1D04770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = LifeMeterBattery.cpp;
 			path = ../src/LifeMeterBattery.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF1E04770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = LifeMeterBattery.h;
 			path = ../src/LifeMeterBattery.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF1F04770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = LyricDisplay.cpp;
 			path = ../src/LyricDisplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF2004770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = LyricDisplay.h;
 			path = ../src/LyricDisplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF2104770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NoteDisplay.cpp;
 			path = ../src/NoteDisplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF2204770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NoteDisplay.h;
 			path = ../src/NoteDisplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF2304770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NoteField.cpp;
 			path = ../src/NoteField.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF2404770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = NoteField.h;
 			path = ../src/NoteField.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF2504770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScoreDisplay.cpp;
 			path = ../src/ScoreDisplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF2604770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScoreDisplay.h;
 			path = ../src/ScoreDisplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF2704770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScoreDisplayBattle.cpp;
 			path = ../src/ScoreDisplayBattle.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF2804770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScoreDisplayBattle.h;
 			path = ../src/ScoreDisplayBattle.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF2904770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScoreDisplayNormal.cpp;
 			path = ../src/ScoreDisplayNormal.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF2A04770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScoreDisplayNormal.h;
 			path = ../src/ScoreDisplayNormal.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF2B04770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScoreDisplayOni.cpp;
 			path = ../src/ScoreDisplayOni.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF2C04770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScoreDisplayOni.h;
 			path = ../src/ScoreDisplayOni.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF2D04770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScoreDisplayRave.cpp;
 			path = ../src/ScoreDisplayRave.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF2E04770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScoreDisplayRave.h;
 			path = ../src/ScoreDisplayRave.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF3004770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScoreKeeper.h;
 			path = ../src/ScoreKeeper.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF3104770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScoreKeeperMAX2.cpp;
 			path = ../src/ScoreKeeperMAX2.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF3204770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScoreKeeperMAX2.h;
 			path = ../src/ScoreKeeperMAX2.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF3304770F63005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = TimingAssist.cpp;
 			path = ../src/TimingAssist.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF3404770F63005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = TimingAssist.h;
 			path = ../src/TimingAssist.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8989,24 +9936,29 @@
 			name = Transitions;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6EFF7004770F86005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Transition.cpp;
 			path = ../src/Transition.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF7104770F86005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Transition.h;
 			path = ../src/Transition.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9050,172 +10002,207 @@
 			name = Actors;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA6EFF7504770FFD005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Actor.cpp;
 			path = ../src/Actor.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF7604770FFD005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Actor.h;
 			path = ../src/Actor.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF7704770FFD005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ActorFrame.cpp;
 			path = ../src/ActorFrame.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF7804770FFD005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ActorFrame.h;
 			path = ../src/ActorFrame.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF7904770FFD005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ActorScroller.cpp;
 			path = ../src/ActorScroller.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFF7A04770FFD005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ActorScroller.h;
 			path = ../src/ActorScroller.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFFB904770FFD005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = BitmapText.cpp;
 			path = ../src/BitmapText.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFFBA04770FFD005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = BitmapText.h;
 			path = ../src/BitmapText.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFFBB04770FFD005F316C = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = mathlib.c;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFFBC04770FFD005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = mathlib.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFFBD04770FFD005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Model.cpp;
 			path = ../src/Model.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFFBE04770FFD005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Model.h;
 			path = ../src/Model.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFFBF04770FFD005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ModelTypes.cpp;
 			path = ../src/ModelTypes.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFFC004770FFD005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ModelTypes.h;
 			path = ../src/ModelTypes.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFFC104770FFD005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Quad.h;
 			path = ../src/Quad.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFFC204770FFD005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Sprite.cpp;
 			path = ../src/Sprite.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA6EFFC304770FFD005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = Sprite.h;
 			path = ../src/Sprite.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9268,26 +10255,32 @@
 			};
 		};
 		AA76432A04DBC4BF00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = arch_setup.h;
 			path = Win32/arch_setup.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA76D15404D9D2D200D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = CrashHandler.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 		};
 		AA76D15504D9D2D200D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = CrashHandlerChild.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 		};
 		AA76D15604D9D2D200D02EE9 = {
@@ -9303,19 +10296,23 @@
 			};
 		};
 		AA7D404604FC3C270020E02B = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = RageSoundDriver_CA.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 		};
 		AA7D404704FC3C270020E02B = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = RageSoundDriver_CA.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 		};
 		AA7D404804FC3C270020E02B = {
@@ -9331,10 +10328,13 @@
 			};
 		};
 		AA7D404A04FC3E180020E02B = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = AudioToolbox.framework;
 			path = /System/Library/Frameworks/AudioToolbox.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AA8B6C7804AFD82B00D02EE9 = {
 			children = (
@@ -9349,75 +10349,93 @@
 			isa = PBXGroup;
 			path = pcre;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA8B6C7904AFD87300D02EE9 = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = chartables.c;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA8B6C7A04AFD87300D02EE9 = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = get.c;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA8B6C7B04AFD87300D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = internal.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA8B6C7C04AFD87300D02EE9 = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = maketables.c;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA8B6C7D04AFD87300D02EE9 = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = pcre.c;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA8B6C7E04AFD87300D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = pcre.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA8B6C7F04AFD87300D02EE9 = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = study.c;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA8DD84904A2E51400D02EE9 = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = OpenGL.framework;
 			path = /System/Library/Frameworks/OpenGL.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AA8DD84A04A2E51400D02EE9 = {
 			fileRef = AA8DD84904A2E51400D02EE9;
@@ -9426,22 +10444,26 @@
 			};
 		};
 		AA8F118204A04F9B00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = DifficultyDisplay.cpp;
 			path = ../src/DifficultyDisplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA8F118304A04F9B00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = DifficultyDisplay.h;
 			path = ../src/DifficultyDisplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9458,30 +10480,36 @@
 			};
 		};
 		AA8F275E04A1127900D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = RageSoundDriver_QT.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA8F275F04A1127900D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSoundDriver_QT.cpp;
 			path = ../src/arch/Sound/RageSoundDriver_QT.cpp;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 			tabWidth = 4;
 			usesTabs = 0;
 		};
 		AA98E298049ACE39005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = arch_darwin.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9492,10 +10520,13 @@
 			};
 		};
 		AAA0F7CE047AC7BF005F316C = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = Carbon.framework;
 			path = /System/Library/Frameworks/Carbon.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AAA0F7CF047AC7BF005F316C = {
 			fileRef = AAA0F7CE047AC7BF005F316C;
@@ -9504,10 +10535,13 @@
 			};
 		};
 		AAA0F7D0047AC7EA005F316C = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = IOKit.framework;
 			path = /System/Library/Frameworks/IOKit.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AAA0F7D1047AC7EA005F316C = {
 			fileRef = AAA0F7D0047AC7EA005F316C;
@@ -9516,10 +10550,13 @@
 			};
 		};
 		AAA0F7D2047ACBC9005F316C = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = QuickTime.framework;
 			path = /System/Library/Frameworks/QuickTime.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AAA0F7D3047ACBC9005F316C = {
 			fileRef = AAA0F7D2047ACBC9005F316C;
@@ -9528,11 +10565,13 @@
 			};
 		};
 		AAA983CA04B9060A00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ActorUtil.cpp;
 			path = ../src/ActorUtil.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAA983CB04B9060A00D02EE9 = {
 			fileRef = AAA983CA04B9060A00D02EE9;
@@ -9541,25 +10580,31 @@
 			};
 		};
 		AAABAD3604F0E12B00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ModelOrSprite.h;
 			path = ../src/ModelOrSprite.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAABAD3904F0E12B00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = NoteFieldPlus.cpp;
 			path = ../src/NoteFieldPlus.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAABAD3A04F0E12B00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = NoteFieldPlus.h;
 			path = ../src/NoteFieldPlus.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAABAD3C04F0E12B00D02EE9 = {
 			fileRef = AAABAD3604F0E12B00D02EE9;
@@ -9580,10 +10625,12 @@
 			};
 		};
 		AAADA4AE04E5F3DE00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ProductInfo.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAADA4AF04E5F3DE00D02EE9 = {
 			fileRef = AAADA4AE04E5F3DE00D02EE9;
@@ -9592,18 +10639,22 @@
 			};
 		};
 		AAADA51604E75DD300D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenEditCoursesMenu.cpp;
 			path = ../src/ScreenEditCoursesMenu.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAADA51704E75DD300D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenEditCoursesMenu.h;
 			path = ../src/ScreenEditCoursesMenu.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAADA51804E75DD300D02EE9 = {
 			fileRef = AAADA51604E75DD300D02EE9;
@@ -9618,18 +10669,22 @@
 			};
 		};
 		AAADA51A04E7609A00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = EditCoursesMenu.cpp;
 			path = ../src/EditCoursesMenu.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAADA51B04E7609A00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = EditCoursesMenu.h;
 			path = ../src/EditCoursesMenu.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAADA51C04E7609A00D02EE9 = {
 			fileRef = AAADA51A04E7609A00D02EE9;
@@ -9644,21 +10699,25 @@
 			};
 		};
 		AAADA51E04E77F4400D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSoundDriver_QT1.h;
 			path = ../src/arch/Sound/RageSoundDriver_QT1.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 			tabWidth = 4;
 		};
 		AAADA51F04E77F4400D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageSoundDriver_QT1.cpp;
 			path = ../src/arch/Sound/RageSoundDriver_QT1.cpp;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 			tabWidth = 4;
 		};
 		AAADA52004E77F4400D02EE9 = {
@@ -9740,9 +10799,12 @@
 			productReference = AAAE28D50522521300D02EE9;
 		};
 		AAAE28D50522521300D02EE9 = {
+			expectedFileType = archive.ar;
+			fallbackIsa = PBXFileReference;
 			isa = PBXLibraryReference;
 			path = libresample.a;
 			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		AAAE28D60522523F00D02EE9 = {
 			children = (
@@ -9753,13 +10815,16 @@
 			name = libresample;
 			path = ../src/libresample;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAAE28D70522527D00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = resample.h;
 			path = include/resample.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAAE28D80522527D00D02EE9 = {
 			fileRef = AAAE28D70522527D00D02EE9;
@@ -9776,46 +10841,58 @@
 			};
 		};
 		AAAE28DB052252A500D02EE9 = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = filterkit.c;
 			path = src/filterkit.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAAE28DC052252A500D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = filterkit.h;
 			path = src/filterkit.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAAE28DD052252A500D02EE9 = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = hackedresamplesubs.c;
 			path = src/hackedresamplesubs.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAAE28DE052252A500D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = resample_defs.h;
 			path = src/resample_defs.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAAE28DF052252A500D02EE9 = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = resample.c;
 			path = src/resample.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAAE28E0052252A500D02EE9 = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = resamplesubs.c;
 			path = src/resamplesubs.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAAE28E2052252A500D02EE9 = {
 			fileRef = AAAE28DB052252A500D02EE9;
@@ -9854,6 +10931,7 @@
 		AAAE28EA0522531E00D02EE9 = {
 			isa = PBXTargetDependency;
 			target = AAAE28D40522521300D02EE9;
+			targetProxy = AA170C39055481660068A894;
 		};
 		AAAE28EB0522532700D02EE9 = {
 			fileRef = AAAE28D50522521300D02EE9;
@@ -9874,32 +10952,40 @@
 			};
 		};
 		AAAE28F2052254A900D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_Resample_Fast.cpp;
 			path = ../src/RageSoundReader_Resample_Fast.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAAE28F3052254A900D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_Resample_Fast.h;
 			path = ../src/RageSoundReader_Resample_Fast.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAAE28F4052254A900D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_Resample_Good.cpp;
 			path = ../src/RageSoundReader_Resample_Good.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAAE28F5052254A900D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_Resample_Good.h;
 			path = ../src/RageSoundReader_Resample_Good.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAAE28F6052254A900D02EE9 = {
 			fileRef = AAAE28F2052254A900D02EE9;
@@ -9932,6 +11018,7 @@
 			isa = PBXGroup;
 			name = include;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAAE28FB0522551100D02EE9 = {
 			children = (
@@ -9945,6 +11032,7 @@
 			isa = PBXGroup;
 			name = src;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAAE28FC052255C200D02EE9 = {
 			fileRef = AAAE28D50522521300D02EE9;
@@ -9953,16 +11041,20 @@
 			};
 		};
 		AAB3B36B04C38B4600D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = InputHandler.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAB3B36C04C38B4600D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = InputHandler.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAB3B36D04C38B4600D02EE9 = {
 			fileRef = AAB3B36B04C38B4600D02EE9;
@@ -9977,11 +11069,13 @@
 			};
 		};
 		AAB3B37704C38BF600D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = MovieTexture.h;
 			path = MovieTexture/MovieTexture.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAB3B37804C38BF600D02EE9 = {
 			fileRef = AAB3B37704C38BF600D02EE9;
@@ -9990,21 +11084,25 @@
 			};
 		};
 		AAB3B37F04C3F48700D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ArchHooks_darwin.h;
 			path = ArchHooks/ArchHooks_darwin.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 		};
 		AAB3B38004C3F48700D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ArchHooks_darwin.cpp;
 			path = ArchHooks/ArchHooks_darwin.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 		};
 		AAB3B38104C3F48700D02EE9 = {
@@ -10020,56 +11118,68 @@
 			};
 		};
 		AAB3B38504C5701D00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MovieTexture_DShow.cpp;
 			path = MovieTexture/MovieTexture_DShow.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 		};
 		AAB3B38604C5701D00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MovieTexture_DShow.h;
 			path = MovieTexture/MovieTexture_DShow.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 		};
 		AAB3B38704C5701D00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MovieTexture_DShowHelper.cpp;
 			path = MovieTexture/MovieTexture_DShowHelper.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 		};
 		AAB3B38804C5701D00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MovieTexture_DShowHelper.h;
 			path = MovieTexture/MovieTexture_DShowHelper.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 		};
 		AAB3B39004C5921800D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MovieTexture_Null.cpp;
 			path = MovieTexture/MovieTexture_Null.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 		};
 		AAB3B39104C5921800D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = MovieTexture_Null.h;
 			path = MovieTexture/MovieTexture_Null.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAB3B39204C5921800D02EE9 = {
 			fileRef = AAB3B39004C5921800D02EE9;
@@ -10084,9 +11194,11 @@
 			};
 		};
 		AAB895E504A9057100D02EE9 = {
+			expectedFileType = image.icns;
 			isa = PBXFileReference;
 			path = smicon.icns;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAB895E604A9057100D02EE9 = {
 			fileRef = AAB895E504A9057100D02EE9;
@@ -10095,22 +11207,26 @@
 			};
 		};
 		AABE35EB04967E25005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = BannerCache.cpp;
 			path = ../src/BannerCache.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AABE35EC04967E26005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = BannerCache.h;
 			path = ../src/BannerCache.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10127,22 +11243,26 @@
 			};
 		};
 		AABE35EF04967E6F005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ModeSwitcher.cpp;
 			path = ../src/ModeSwitcher.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AABE35F004967E6F005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ModeSwitcher.h;
 			path = ../src/ModeSwitcher.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10159,29 +11279,35 @@
 			};
 		};
 		AABE36F60497CE16005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = arch_default.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AABE36F70497CE16005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = arch_internal.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AABE36F80497CE16005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = arch.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10204,12 +11330,14 @@
 			};
 		};
 		AABE36FC0497CE44005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ArchHooks.h;
 			path = ArchHooks/ArchHooks.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10235,14 +11363,17 @@
 			name = ArchHooks;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AABE36FF0497CE83005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ArchHooks_none.h;
 			path = ArchHooks/ArchHooks_none.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10253,11 +11384,13 @@
 			};
 		};
 		AABE37030497CF85005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = RageSoundDriver.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10268,66 +11401,82 @@
 			};
 		};
 		AABE7D3E051F07E900D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = Vsync.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AABE7D3F051F07E900D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = Vsync.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AABEB521051F163A00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = InputHandler_Carbon.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AABEB522051F163A00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = InputHandler_Carbon.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAC23F7C0485E68D005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageDisplay_OGL.cpp;
 			path = ../src/RageDisplay_OGL.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AAC23F7D0485E68D005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageDisplay_OGL.h;
 			path = ../src/RageDisplay_OGL.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AAC23F7E0485E68D005F316C = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageUtil_CharConversions.cpp;
 			path = ../src/RageUtil_CharConversions.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AAC23F7F0485E68D005F316C = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageUtil_CharConversions.h;
 			path = ../src/RageUtil_CharConversions.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10356,18 +11505,22 @@
 			};
 		};
 		AAC28BB904F758E500D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = BeginnerHelper.cpp;
 			path = ../src/BeginnerHelper.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAC28BBA04F758E500D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = BeginnerHelper.h;
 			path = ../src/BeginnerHelper.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAC28BBB04F758E500D02EE9 = {
 			fileRef = AAC28BB904F758E500D02EE9;
@@ -10382,32 +11535,40 @@
 			};
 		};
 		AAC622F805389A0500D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenCenterImage.cpp;
 			path = ../src/ScreenCenterImage.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAC622F905389A0500D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenCenterImage.h;
 			path = ../src/ScreenCenterImage.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAC622FA05389A0500D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenTestInput.cpp;
 			path = ../src/ScreenTestInput.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAC622FB05389A0500D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenTestInput.h;
 			path = ../src/ScreenTestInput.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAC622FC05389A0500D02EE9 = {
 			fileRef = AAC622F805389A0500D02EE9;
@@ -10442,18 +11603,23 @@
 			name = tests;
 			path = /Users/steve/stepmania/src/tests;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AAC6230105389A3C00D02EE9 = {
+			expectedFileType = text;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = "00 README";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAC6230205389A3C00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = test_audio_readers.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAC623130538A0B700D02EE9 = {
 			fileRef = AAE443F804B1032300D02EE9;
@@ -10522,18 +11688,22 @@
 			};
 		};
 		AAD620190528FA5E00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = CharacterHead.cpp;
 			path = ../src/CharacterHead.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAD6201A0528FA5E00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = CharacterHead.h;
 			path = ../src/CharacterHead.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAD6201B0528FA5E00D02EE9 = {
 			fileRef = AAD620190528FA5E00D02EE9;
@@ -10548,18 +11718,22 @@
 			};
 		};
 		AAD6201D0528FAAB00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenEndlessBreak.cpp;
 			path = ../src/ScreenEndlessBreak.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAD6201E0528FAAB00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenEndlessBreak.h;
 			path = ../src/ScreenEndlessBreak.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAD6203F0529A09F00D02EE9 = {
 			fileRef = AA6E0033047711F3005F316C;
@@ -10580,18 +11754,22 @@
 			};
 		};
 		AAD620A5052EC78B00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = PercentageDisplay.cpp;
 			path = ../src/PercentageDisplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAD620A6052EC78B00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = PercentageDisplay.h;
 			path = ../src/PercentageDisplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAD620A7052EC78B00D02EE9 = {
 			fileRef = AAD620A5052EC78B00D02EE9;
@@ -10606,25 +11784,31 @@
 			};
 		};
 		AADB4E7A04D4FE5D00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_FileReader.h;
 			path = ../src/RageSoundReader_FileReader.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADB4E7B04D4FE5D00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSounds.cpp;
 			path = ../src/RageSounds.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADB4E7C04D4FE5D00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSounds.h;
 			path = ../src/RageSounds.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADB4E7D04D4FE5D00D02EE9 = {
 			fileRef = AADB4E7A04D4FE5D00D02EE9;
@@ -10645,32 +11829,40 @@
 			};
 		};
 		AADB4E8004D4FEC400D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ArchHooks_Win32.cpp;
 			path = ArchHooks/ArchHooks_Win32.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADB4E8104D4FEC400D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ArchHooks_Win32.h;
 			path = ArchHooks/ArchHooks_Win32.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADB4E8204D4FF9B00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Crash.cpp;
 			path = Win32/Crash.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADB4E8304D4FF9B00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Crash.h;
 			path = Win32/Crash.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADB4E8604D50FB900D02EE9 = {
 			children = (
@@ -10684,34 +11876,43 @@
 			isa = PBXGroup;
 			path = Unix;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADB4E8804D50FB900D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = CrashHandler.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 		};
 		AADB4E8A04D50FB900D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = CrashHandlerInternal.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 		};
 		AADB4E8B04D50FB900D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SignalHandler.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADB4E8C04D50FB900D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SignalHandler.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADB4E8D04D5261C00D02EE9 = {
 			children = (
@@ -10722,6 +11923,7 @@
 			isa = PBXGroup;
 			name = Win32;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADB4E8E04D5263200D02EE9 = {
 			children = (
@@ -10734,12 +11936,15 @@
 			isa = PBXGroup;
 			path = Darwin;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADB4E8F04D5263200D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = arch_setup.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADB4E9004D5263200D02EE9 = {
 			fileRef = AADB4E8F04D5263200D02EE9;
@@ -10748,18 +11953,22 @@
 			};
 		};
 		AADB4E9104D5288400D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ArchHooks_Unix.cpp;
 			path = ArchHooks/ArchHooks_Unix.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADB4E9204D5288400D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ArchHooks_Unix.h;
 			path = ArchHooks/ArchHooks_Unix.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADB4F5504D8EB7500D02EE9 = {
 			fileRef = AADB4E8804D50FB900D02EE9;
@@ -10780,19 +11989,23 @@
 			};
 		};
 		AADB4F5904D9220700D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = Crash.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 		};
 		AADB4F5A04D9220700D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = Crash.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 		};
 		AADB4F5B04D9220700D02EE9 = {
@@ -10802,32 +12015,40 @@
 			};
 		};
 		AADBE360053D5F8A00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenBookkeeping.cpp;
 			path = ../src/ScreenBookkeeping.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADBE361053D5F8A00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenBookkeeping.h;
 			path = ../src/ScreenBookkeeping.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADBE362053D5F8A00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenNameEntryTraditional.cpp;
 			path = ../src/ScreenNameEntryTraditional.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADBE363053D5F8A00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenNameEntryTraditional.h;
 			path = ../src/ScreenNameEntryTraditional.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADBE364053D5F8A00D02EE9 = {
 			fileRef = AADBE360053D5F8A00D02EE9;
@@ -10854,18 +12075,22 @@
 			};
 		};
 		AADBE368053DA38C00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Bookkeeper.cpp;
 			path = ../src/Bookkeeper.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADBE369053DA38C00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Bookkeeper.h;
 			path = ../src/Bookkeeper.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AADBE36A053DA38C00D02EE9 = {
 			fileRef = AADBE368053DA38C00D02EE9;
@@ -10880,42 +12105,50 @@
 			};
 		};
 		AAE443E904B0F9F600D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = CombinedLifeMeterEnemy.cpp;
 			path = ../src/CombinedLifeMeterEnemy.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AAE443EA04B0F9F600D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = CombinedLifeMeterEnemy.h;
 			path = ../src/CombinedLifeMeterEnemy.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AAE443EB04B0F9F600D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = CombinedLifeMeterTug.cpp;
 			path = ../src/CombinedLifeMeterTug.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AAE443EC04B0F9F600D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = CombinedLifeMeterTug.h;
 			path = ../src/CombinedLifeMeterTug.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10944,22 +12177,26 @@
 			};
 		};
 		AAE443F304B0FEB700D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScoreKeeperRave.cpp;
 			path = ../src/ScoreKeeperRave.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AAE443F404B0FEB700D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScoreKeeperRave.h;
 			path = ../src/ScoreKeeperRave.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10976,16 +12213,22 @@
 			};
 		};
 		AAE443F704B1032300D02EE9 = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = SDL_image.framework;
 			path = /System/Library/Frameworks/SDL_image.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AAE443F804B1032300D02EE9 = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = SDL.framework;
 			path = /System/Library/Frameworks/SDL.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AAE4444704B1394500D02EE9 = {
 			buildActionMask = 2147483647;
@@ -11011,24 +12254,31 @@
 			};
 		};
 		AAECB3730512794D001B792B = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = Security.framework;
 			path = /System/Library/Frameworks/Security.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AAECF8BF05265DB600D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenExit.cpp;
 			path = ../src/ScreenExit.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAECF8C005265DB600D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenExit.h;
 			path = ../src/ScreenExit.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAECF8C105265DB600D02EE9 = {
 			fileRef = AAECF8BF05265DB600D02EE9;
@@ -11043,20 +12293,24 @@
 			};
 		};
 		AAEF3D0C04B533CC00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = LoadingWindow_Cocoa.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AAEF3D0D04B533CC00D02EE9 = {
+			expectedFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = LoadingWindow_Cocoa.mm;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -11073,10 +12327,12 @@
 			};
 		};
 		AAEF3D1004B53E2900D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = LoadingWindow.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAEF3D1104B53E2900D02EE9 = {
 			fileRef = AAEF3D1004B53E2900D02EE9;
@@ -11085,10 +12341,13 @@
 			};
 		};
 		AAF33F2A04FF213100F93C24 = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = CoreFoundation.framework;
 			path = /System/Library/Frameworks/CoreFoundation.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		AAF33F2B04FF213100F93C24 = {
 			fileRef = AAF33F2A04FF213100F93C24;
@@ -11103,18 +12362,22 @@
 			};
 		};
 		AAF430FD04DC98BC00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Steps.cpp;
 			path = ../src/Steps.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAF430FE04DC98BC00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Steps.h;
 			path = ../src/Steps.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAF430FF04DC98BC00D02EE9 = {
 			fileRef = AAF430FD04DC98BC00D02EE9;
@@ -11171,22 +12434,26 @@
 			};
 		};
 		AAF580A704B3E2DC00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageUtil_FileDB.cpp;
 			path = ../src/RageUtil_FileDB.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AAF580A804B3E2DC00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageUtil_FileDB.h;
 			path = ../src/RageUtil_FileDB.h;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -11203,25 +12470,31 @@
 			};
 		};
 		AAFC7FF00513A67700D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_FileReader.cpp;
 			path = ../src/RageSoundReader_FileReader.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFC7FF10513A67700D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_MP3.cpp;
 			path = ../src/RageSoundReader_MP3.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFC7FF20513A67700D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_MP3.h;
 			path = ../src/RageSoundReader_MP3.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFC7FF30513A67700D02EE9 = {
 			fileRef = AAFC7FF00513A67700D02EE9;
@@ -11262,6 +12535,7 @@
 			name = vorbis;
 			path = ../src/vorbis;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFC80400513A6EB00D02EE9 = {
 			children = (
@@ -11271,18 +12545,23 @@
 			isa = PBXGroup;
 			path = ogg;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFC80410513A6EB00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ogg.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFC80420513A6EB00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = os_types.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFC80430513A6EB00D02EE9 = {
 			children = (
@@ -11293,24 +12572,31 @@
 			isa = PBXGroup;
 			path = vorbis;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFC80440513A6EB00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = codec.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFC80450513A6EB00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = vorbisenc.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFC80460513A6EB00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = vorbisfile.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFC804F0513A6EB00D02EE9 = {
 			fileRef = AAFC80410513A6EB00D02EE9;
@@ -11343,18 +12629,22 @@
 			};
 		};
 		AAFF551D0549F39700D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = GraphDisplay.cpp;
 			path = ../src/GraphDisplay.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFF551E0549F39700D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = GraphDisplay.h;
 			path = ../src/GraphDisplay.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFF551F0549F39700D02EE9 = {
 			fileRef = AAFF551D0549F39700D02EE9;
@@ -11369,18 +12659,22 @@
 			};
 		};
 		AAFF55210549F43A00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ComboGraph.cpp;
 			path = ../src/ComboGraph.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFF55220549F43A00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ComboGraph.h;
 			path = ../src/ComboGraph.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFF55230549F43A00D02EE9 = {
 			fileRef = AAFF55210549F43A00D02EE9;
@@ -11395,18 +12689,22 @@
 			};
 		};
 		AAFF5541054E736D00D02EE9 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Attack.cpp;
 			path = ../src/Attack.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFF5542054E736D00D02EE9 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Attack.h;
 			path = ../src/Attack.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAFF5543054E736D00D02EE9 = {
 			fileRef = AAFF5541054E736D00D02EE9;
