@@ -291,7 +291,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 
 	// XML Node Tag Name Open
 	xml++;
-	char* pTagEnd = strpbrk( xml, " />" );
+	char* pTagEnd = strpbrk( xml, " \t\n/>" );
 	SetString( xml, pTagEnd, &m_sName );
 	xml = pTagEnd;
 	// Generate XML Attributte List
