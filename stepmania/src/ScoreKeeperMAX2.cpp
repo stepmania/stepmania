@@ -465,7 +465,7 @@ int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns )
 	case PLAY_MODE_ONI:
 		switch( hns )
 		{
-		case HNS_OK:	return +3;
+		case HNS_OK:	return PREFSMAN->m_bMarvelousTiming? +3:+2;
 		case HNS_NG:	return +0;
 		}
 		break;
