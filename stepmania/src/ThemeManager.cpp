@@ -168,9 +168,7 @@ CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
 
 CString ThemeManager::GetPathTo( CString sThemeName, ElementCategory category, CString sFileName ) 
 {
-#if defined(WIN32) // XXX arch?
 try_element_again:
-#endif
 	sFileName.MakeLower();
 
 	const CString sThemeDir = GetThemeDirFromName( sThemeName );
@@ -291,11 +289,9 @@ try_element_again:
 						"Verify that this redirect is correct.",
 						sPath.c_str(), sNewFileName.c_str());
 
-#if defined(WIN32)
 				if( DISPLAY->IsWindowed() )
 					if( ArchHooks::retry == HOOKS->MessageBoxAbortRetryIgnore(message) )
 						goto try_element_again;
-#endif
 
 				RageException::Throw( "%s", message.c_str() ); 
 			}
