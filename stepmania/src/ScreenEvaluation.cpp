@@ -80,7 +80,7 @@ const char* SCORE_STRING[NUM_SCORE_LINES] = { "Score", "Time" };
 
 const ScreenMessage SM_GoToSelectMusic		=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToSelectCourse		=	ScreenMessage(SM_User+3);
-const ScreenMessage SM_GoToFinalEvaluation	=	ScreenMessage(SM_User+4);
+const ScreenMessage SM_GoToEvaluationSummary	=	ScreenMessage(SM_User+4);
 const ScreenMessage SM_GoToGameFinished		=	ScreenMessage(SM_User+5);
 const ScreenMessage SM_PlayCheer			=	ScreenMessage(SM_User+6);
 
@@ -723,8 +723,8 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	//	SCREENMAN->SetNewScreen( "ScreenNameEntry" );
 		SCREENMAN->SetNewScreen( ENDGAME_SCREEN );
 		break;
-	case SM_GoToFinalEvaluation:
-		SCREENMAN->SetNewScreen( "ScreenFinalEvaluation" );
+	case SM_GoToEvaluationSummary:
+		SCREENMAN->SetNewScreen( "ScreenEvaluationSummary" );
 		break;
 	case SM_PlayCheer:
 		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation cheer") );
@@ -789,7 +789,7 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 					* Play the "swoosh" sound manually (would normally be played by the ME
 					* tween out). */
 				TweenOffScreen();
-				SCREENMAN->SendMessageToTopScreen( SM_GoToFinalEvaluation, MENU_ELEMENTS_TWEEN_TIME );
+				m_Menu.StartTransitioning( SM_GoToEvaluationSummary );
 			}
 			else
 			{
