@@ -439,6 +439,14 @@ SOURCE=.\NotesWriterDWI.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\NotesWriterSM.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\NotesWriterSM.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\NoteTypes.cpp
 # End Source File
 # Begin Source File

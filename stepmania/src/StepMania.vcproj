@@ -492,6 +492,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="NotesWriterDWI.h">
 			</File>
 			<File
+				RelativePath="NotesWriterSM.cpp">
+			</File>
+			<File
+				RelativePath="NotesWriterSM.h">
+			</File>
+			<File
 				RelativePath=".\Player.cpp">
 			</File>
 			<File
