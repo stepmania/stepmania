@@ -72,7 +72,7 @@ CString AnnouncerManager::GetPathTo( CString sFolderName )
 	CString sPathToFolderCurrent = GetAnnouncerDirFromName(m_sCurAnnouncerName) + sFolderName;
 	CString sPathToFolderEmpty = GetAnnouncerDirFromName(EMPTY_ANNOUNCER_NAME) + sFolderName;
 
-#ifdef _DEBUG
+#ifdef DEBUG
 	if( m_sCurAnnouncerName!=""  &&  !DoesFileExist(sPathToFolderCurrent) )
 	{
 		LOG->Trace( "The current announcer is missing the folder '%s'.", sFolderName.GetString() );

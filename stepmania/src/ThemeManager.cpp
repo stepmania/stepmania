@@ -147,7 +147,7 @@ try_element_again:
 						"Verify that this redirect is correct.",
 						asPossibleElementFilePaths[0].GetString(), sNewFilePath.GetString());
 
-#ifdef _DEBUG
+#ifdef DEBUG
 			if( MessageBox(NULL, message.GetString(), "ThemeManager", MB_RETRYCANCEL ) == IDRETRY)
 				goto try_element_again;
 #endif
@@ -216,7 +216,7 @@ CString ThemeManager::GetPathToOptional( CString sAssetCategory, CString sFileNa
 
 CString ThemeManager::GetPathTo( CString sAssetCategory, CString sFileName ) 
 {
-#ifdef _DEBUG
+#ifdef DEBUG
 try_element_again:
 #endif
 
@@ -224,7 +224,7 @@ try_element_again:
 	if( !ret.empty() )	// we found something
 		return ret;
 
-#ifdef _DEBUG
+#ifdef DEBUG
 	CString sMessage = ssprintf("The theme element %s/%s is missing.",sAssetCategory.GetString(),sFileName.GetString());
 	switch( MessageBox(NULL, sMessage, "ThemeManager", MB_RETRYCANCEL ) )
 	{
@@ -262,7 +262,7 @@ CString ThemeManager::GetMetricsPathFromName( CString sThemeName )
 
 CString ThemeManager::GetMetric( CString sClassName, CString sValueName )
 {
-#ifdef _DEBUG
+#ifdef DEBUG
 try_metric_again:
 #endif
 	CString sCurMetricPath = GetMetricsPathFromName(m_sCurThemeName);
@@ -292,7 +292,7 @@ try_metric_again:
 		return sValue;
 	}
 
-#ifdef _DEBUG
+#ifdef DEBUG
 	if( IDRETRY == MessageBox(NULL,ssprintf("The theme metric %s-%s is missing.  Correct this and click Retry, or Cancel to break.",sClassName.GetString(),sValueName.GetString()),"ThemeManager",MB_RETRYCANCEL ) )
 		goto try_metric_again;
 #endif

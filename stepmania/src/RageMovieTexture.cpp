@@ -15,7 +15,7 @@
 #pragma comment(lib, "winmm.lib") 
  
 // Link with the DirectShow base class libraries
-#if defined(DEBUG) | defined(_DEBUG)
+#if defined(DEBUG)
 	#pragma comment(lib, "baseclasses/debug/strmbasd.lib") 
 #else
 	#pragma comment(lib, "baseclasses/release/strmbase.lib") 

@@ -229,7 +229,7 @@ int main(int argc, char* argv[])
 	/* Set this up second.  Do this early, since it's needed for RageException::Throw. 
 	 * Do it after ChangeToDirOfExecutable, so the log ends up in the right place. */
 	LOG			= new RageLog();
-#ifdef _DEBUG
+#ifdef DEBUG
 	LOG->ShowConsole();
 #endif
 
@@ -249,7 +249,7 @@ int main(int argc, char* argv[])
 
 	CString  g_sErrorString = "";
 
-#ifndef _DEBUG
+#ifndef DEBUG
 	try{
 #endif
 
@@ -339,7 +339,7 @@ int main(int argc, char* argv[])
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	PREFSMAN->SaveGamePrefsToDisk();
 
-#ifndef _DEBUG
+#ifndef DEBUG
 	}
 	catch( RageException e )
 	{

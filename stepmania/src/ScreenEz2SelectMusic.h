@@ -77,7 +77,7 @@ protected:
 
 	int i_ErrorDetected;
 
-	#ifdef _DEBUG
+	#ifdef DEBUG
 		BitmapText	m_debugtext;
 	#endif
 

@@ -101,7 +101,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 		m_ChoiceListHighlight.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
 		this->AddChild( &m_ChoiceListHighlight );
 
-		#ifdef _DEBUG
+		#ifdef DEBUG
 		m_debugtext.LoadFromFont( THEME->GetPathTo("Fonts","small titles") );
 		m_debugtext.SetXY( CENTER_X, CENTER_Y );
 		this->AddChild(&m_debugtext);
@@ -224,7 +224,7 @@ void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn, int nosound)
 {
 	sOptions = GAMESTATE->m_PlayerOptions[pn].GetString();
 
-	#ifdef _DEBUG
+	#ifdef DEBUG
 		m_debugtext.SetText( "DEBUG: " + sOptions );
 	#endif
 

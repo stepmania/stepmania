@@ -16,7 +16,7 @@
 #if defined(WIN32)
 
 /* Pull in all of our SDL libraries here. */
-#ifdef _DEBUG
+#ifdef DEBUG
 #pragma comment(lib, "SDL-1.2.5/lib/SDLd.lib")
 #pragma comment(lib, "SDL_image-1.2/SDL_imaged.lib")
 #else

@@ -30,7 +30,7 @@ const float DEFAULT_SOUND_VOLUME = 0.50;
 
 PrefsManager::PrefsManager()
 {
-#ifdef _DEBUG
+#ifdef DEBUG
 	m_bWindowed = true;
 #else
 	m_bWindowed = false;
@@ -43,7 +43,7 @@ PrefsManager::PrefsManager()
 	m_iRefreshRate = REFRESH_DEFAULT;
 	m_bIgnoreJoyAxes = false;		// when did this get changed to ON by default?
 	m_bOnlyDedicatedMenuButtons = false;
-#ifdef _DEBUG
+#ifdef DEBUG
 	m_bShowStats = true;
 #else
 	m_bShowStats = false;

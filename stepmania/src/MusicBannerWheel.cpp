@@ -87,7 +87,7 @@ MusicBannerWheel::MusicBannerWheel()
 
 	LoadSongData();
 
-	#ifdef _DEBUG
+	#ifdef DEBUG
 	m_debugtext.LoadFromFont( THEME->GetPathTo("Fonts","small titles") );
 	m_debugtext.SetXY( 0, -120 );
 	this->AddChild(&m_debugtext);
@@ -312,7 +312,7 @@ void MusicBannerWheel::BannersLeft()
 	//	m_ScrollingList.Unload();
 	// LoadSongData();
 	InsertNewBanner(GOINGLEFT);
-	#ifdef _DEBUG
+	#ifdef DEBUG
 		m_debugtext.SetText(ssprintf("currentPos: %d scrlistPos: %d",currentPos,scrlistPos));
 	#endif
 	m_ScrollingList.Left();
@@ -336,7 +336,7 @@ void MusicBannerWheel::BannersRight()
 	//	m_ScrollingList.Unload();
 	//	LoadSongData();
 	InsertNewBanner(GOINGRIGHT);
-	#ifdef _DEBUG
+	#ifdef DEBUG
 		m_debugtext.SetText(ssprintf("currentPos: %d scrlistPos: %d",currentPos,scrlistPos));
 	#endif
 	m_ScrollingList.Right();

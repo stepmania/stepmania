@@ -40,7 +40,7 @@ private:
 	void ChangeNotes();
 	void InsertNewBanner(int direction);
 
-	#ifdef _DEBUG
+	#ifdef DEBUG
 		BitmapText	m_debugtext;
 	#endif
 
