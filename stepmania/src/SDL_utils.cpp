@@ -747,13 +747,17 @@ void mySDL_BlitTransform( const SDL_Surface *src, SDL_Surface *dst,
 			Uint8 out[4] = { 0,0,0,0 };
 			for(int i = 0; i < 4; ++i)
 			{
-				Uint32 sum = 0;
-				sum += Uint8(v[0][i] * (1-weight_x) * (1-weight_y));
-				sum += Uint8(v[1][i] * (1-weight_x) * (weight_y));
-				sum += Uint8(v[2][i] * (weight_x)   * (1-weight_y));
-				sum += Uint8(v[3][i] * (weight_x)   * (weight_y));
-				out[i] = (Uint8) clamp(sum, 0u, 255u);
+				float sum = 0;
+				sum += v[0][i] * (1-weight_x) * (1-weight_y);
+				sum += v[1][i] * (1-weight_x) * (weight_y);
+				sum += v[2][i] * (weight_x)   * (1-weight_y);
+				sum += v[3][i] * (weight_x)   * (weight_y);
+				out[i] = (Uint8) clamp( lrintf(sum), 0, 255 );
 			}
+
+			/* If the source has no alpha, set the destination to opaque. */
+			if( src->format->Amask == 0 )
+				out[3] = Uint8( dst->format->Amask >> dst->format->Ashift );
 
 			mySDL_SetRawRGBAV(dstpx, dst, out);
 
