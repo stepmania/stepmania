@@ -119,19 +119,17 @@ static bool ConvertRawTrackToTapNote( int iRawTrack, BmsTrack &bmsTrackOut, bool
 }
 
 // Find the largest common substring at the start of both strings.
-static CString FindLargestCommonSubstring( CString string1, CString string2 )
+static CString FindLargestInitialSubstring( CString string1, CString string2 )
 {
 	// First see if the whole first string matches an appropriately-sized
 	// substring of the second, then keep chopping off the last character of
 	// each until they match.
-	for( int i=string1.GetLength(); i > 0; i-- )
-	{
-		if( string1.substr(0,i) == string2.substr(0,i) )
-			return string1.substr(0,i);
-	}
+	int i;
+	for( i = 0; i < string1.size() && i < string2.size(); ++i )
+		if( string1[i] != string2[i] )
+			break;
 
-	// If all else fails, give them nothing.
-	return "";
+	return string1.substr(0,i);
 }
 
 static StepsType DetermineStepsType( int iPlayer, const NoteData &nd )
@@ -891,7 +889,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 			if( !GetTagFromMap( aBMSData[i], "#title", sTitle ) )
 				continue;
 
-			commonSubstring = FindLargestCommonSubstring( commonSubstring, sTitle );
+			commonSubstring = FindLargestInitialSubstring( commonSubstring, sTitle );
 			if( commonSubstring == "" )
 			{
 				// All bets are off; the titles don't match at all.
@@ -924,7 +922,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 			// XXX: We should do this with filenames too, I have plenty of examples.
 			//      however, filenames will be trickier, as stuffs at the beginning AND
-			//      end change per-file, so we'll need a fancier FindLargestCommonSubstring()
+			//      end change per-file, so we'll need a fancier FindLargestInitialSubstring()
 
 			// Any of [L7] [L14] (LIGHT7) (LIGHT14) (LIGHT) [L] <LIGHT7> <L7>... you get the idea.
 			// XXX: This matches (double), but I haven't seen it used. Again, MORE EXAMPLES NEEDED
