@@ -166,12 +166,15 @@ bool GameState::IsExtraStage2()
 
 CString GameState::GetStageText()
 {
-	if( m_bDemonstrationOrJukebox )		return "demo";
-	else if( PREFSMAN->m_bEventMode )	return "event";
-	else if( IsFinalStage() )			return "final";
-	else if( IsExtraStage() )			return "extra1";
-	else if( IsExtraStage2() )			return "extra2";
-	else								return ssprintf("%d",m_iCurrentStageIndex+1);
+	if( m_bDemonstrationOrJukebox )				return "demo";
+	else if( m_PlayMode == PLAY_MODE_ONI )		return "oni";
+	else if( m_PlayMode == PLAY_MODE_NONSTOP )	return "nonstop";
+	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return "endless";
+	else if( PREFSMAN->m_bEventMode )			return "event";
+	else if( IsFinalStage() )					return "final";
+	else if( IsExtraStage() )					return "extra1";
+	else if( IsExtraStage2() )					return "extra2";
+	else										return ssprintf("%d",m_iCurrentStageIndex+1);
 }
 
 int GameState::GetCourseSongIndex()
