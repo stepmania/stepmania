@@ -206,6 +206,9 @@ bool GameState::HasEarnedExtraStage()
 	if( PREFSMAN->m_bEventMode )
 		return false;
 
+	if( GAMESTATE->m_PlayMode != PLAY_MODE_ARCADE )
+		return false;
+
 	if( (GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage()) )
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
