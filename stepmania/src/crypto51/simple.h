@@ -58,6 +58,8 @@ template <class T>
 class Unflushable : public T
 {
 public:
+    using T::NULL_CHANNEL;
+
 	Unflushable() {}
 	Unflushable(BufferedTransformation *q) : T(q) {}
 	bool Flush(bool completeFlush, int propagation=-1, bool blocking=true)
@@ -70,7 +72,7 @@ public:
 			throw CannotFlush("Unflushable<T>: this object has buffered input that cannot be flushed");
 		else 
 		{
-			BufferedTransformation *attached = AttachedTransformation();
+			BufferedTransformation *attached = this->AttachedTransformation();
 			return attached && propagation ? attached->ChannelFlush(channel, hardFlush, propagation-1, blocking) : false;
 		}
 	}

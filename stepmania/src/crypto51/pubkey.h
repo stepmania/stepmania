@@ -37,6 +37,8 @@
 #include "argnames.h"
 #include <memory>
 
+#include "modarith.h"
+
 // VC60 workaround: this macro is defined in shlobj.h and conflicts with a template parameter used in this file
 #undef INTERFACE
 
@@ -140,12 +142,12 @@ template <class INTERFACE, class BASE>
 class TF_CryptoSystemBase : public INTERFACE, protected BASE
 {
 public:
-	unsigned int FixedMaxPlaintextLength() const {return GetMessageEncodingInterface().MaxUnpaddedLength(PaddedBlockBitLength());}
-	unsigned int FixedCiphertextLength() const {return GetTrapdoorFunctionBounds().MaxImage().ByteCount();}
+	unsigned int FixedMaxPlaintextLength() const {return this->GetMessageEncodingInterface().MaxUnpaddedLength(PaddedBlockBitLength());}
+	unsigned int FixedCiphertextLength() const {return this->GetTrapdoorFunctionBounds().MaxImage().ByteCount();}
 
 protected:
 	unsigned int PaddedBlockByteLength() const {return BitsToBytes(PaddedBlockBitLength());}
-	unsigned int PaddedBlockBitLength() const {return GetTrapdoorFunctionBounds().PreimageBound().BitCount()-1;}
+	unsigned int PaddedBlockBitLength() const {return this->GetTrapdoorFunctionBounds().PreimageBound().BitCount()-1;}
 };
 
 //! .
@@ -286,7 +288,7 @@ template <class HASH_ALGORITHM>
 class PK_MessageAccumulatorImpl : public PK_MessageAccumulatorBase, protected ObjectHolder<HASH_ALGORITHM>
 {
 public:
-	HashTransformation & AccessHash() {return m_object;}
+	HashTransformation & AccessHash() {return this->m_object;}
 };
 
 //! .
@@ -295,22 +297,22 @@ class TF_SignatureSchemeBase : public INTERFACE, protected BASE
 {
 public:
 	unsigned int SignatureLength() const 
-		{return GetTrapdoorFunctionBounds().MaxPreimage().ByteCount();}
+		{return this->GetTrapdoorFunctionBounds().MaxPreimage().ByteCount();}
 	unsigned int MaxRecoverableLength() const 
-		{return GetMessageEncodingInterface().MaxRecoverableLength(MessageRepresentativeBitLength(), GetHashIdentifier().second, GetDigestSize());}
+		{return this->GetMessageEncodingInterface().MaxRecoverableLength(MessageRepresentativeBitLength(), GetHashIdentifier().second, GetDigestSize());}
 	unsigned int MaxRecoverableLengthFromSignatureLength(unsigned int signatureLength) const
-		{return MaxRecoverableLength();}
+		{return this->MaxRecoverableLength();}
 
 	bool IsProbabilistic() const 
-		{return GetTrapdoorFunctionInterface().IsRandomized() || GetMessageEncodingInterface().IsProbabilistic();}
+		{return this->GetTrapdoorFunctionInterface().IsRandomized() || this->GetMessageEncodingInterface().IsProbabilistic();}
 	bool AllowNonrecoverablePart() const 
-		{return GetMessageEncodingInterface().AllowNonrecoverablePart();}
+		{return this->GetMessageEncodingInterface().AllowNonrecoverablePart();}
 	bool RecoverablePartFirst() const 
-		{return GetMessageEncodingInterface().RecoverablePartFirst();}
+		{return this->GetMessageEncodingInterface().RecoverablePartFirst();}
 
 protected:
 	unsigned int MessageRepresentativeLength() const {return BitsToBytes(MessageRepresentativeBitLength());}
-	unsigned int MessageRepresentativeBitLength() const {return GetTrapdoorFunctionBounds().ImageBound().BitCount()-1;}
+	unsigned int MessageRepresentativeBitLength() const {return this->GetTrapdoorFunctionBounds().ImageBound().BitCount()-1;}
 	virtual HashIdentifier GetHashIdentifier() const =0;
 	virtual unsigned int GetDigestSize() const =0;
 };
@@ -399,8 +401,12 @@ protected:
 	// for signature scheme
 	HashIdentifier GetHashIdentifier() const
 	{
-		typedef CPP_TYPENAME SchemeOptions::MessageEncodingMethod::HashIdentifierLookup::HashIdentifierLookup2<CPP_TYPENAME SchemeOptions::HashFunction> L;
-		return L::Lookup();
+        typedef CPP_TYPENAME SchemeOptions::MessageEncodingMethod::HashIdentifierLookup::template HashIdentifierLookup2<CPP_TYPENAME SchemeOptions::HashFunction> L;
+        return L::Lookup();
+/*        typedef typename SchemeOptions::MessageEncodingMethod MEnMeth;
+        typedef typename MEnMeth::HashIdentifierLookup HLookup;
+        typedef typename SchemeOptions::HashFunction HashF;
+        return HLookup::template HashIdentifierLookup2<HashF>::Lookup();		*/
 	}
 	unsigned int GetDigestSize() const
 	{
@@ -444,7 +450,7 @@ template <class BASE, class SCHEME_OPTIONS>
 class TF_PublicObjectImpl : public TF_ObjectImpl<BASE, SCHEME_OPTIONS, typename SCHEME_OPTIONS::PublicKey>, public PublicKeyCopier<SCHEME_OPTIONS>
 {
 public:
-	void CopyKeyInto(typename SCHEME_OPTIONS::PublicKey &key) const {key = GetKey();}
+	void CopyKeyInto(typename SCHEME_OPTIONS::PublicKey &key) const {key = this->GetKey();}
 };
 
 //! .
@@ -452,8 +458,8 @@ template <class BASE, class SCHEME_OPTIONS>
 class TF_PrivateObjectImpl : public TF_ObjectImpl<BASE, SCHEME_OPTIONS, typename SCHEME_OPTIONS::PrivateKey>, public PrivateKeyCopier<SCHEME_OPTIONS>
 {
 public:
-	void CopyKeyInto(typename SCHEME_OPTIONS::PrivateKey &key) const {key = GetKey();}
-	void CopyKeyInto(typename SCHEME_OPTIONS::PublicKey &key) const {key = GetKey();}
+	void CopyKeyInto(typename SCHEME_OPTIONS::PrivateKey &key) const {key = this->GetKey();}
+	void CopyKeyInto(typename SCHEME_OPTIONS::PublicKey &key) const {key = this->GetKey();}
 };
 
 //! .
@@ -542,107 +548,107 @@ public:
 	PK_FinalTemplate() {}
 
 	PK_FinalTemplate(const Integer &v1)
-		{AccessKey().Initialize(v1);}
+		{this->AccessKey().Initialize(v1);}
 
-	PK_FinalTemplate(const typename BASE::KeyClass &key)  {AccessKey().operator=(key);}
+	PK_FinalTemplate(const typename BASE::KeyClass &key)  {this->AccessKey().operator=(key);}
 
 	template <class T>
 	PK_FinalTemplate(const PublicKeyCopier<T> &key)
-		{key.CopyKeyInto(AccessKey());}
+		{key.CopyKeyInto(this->AccessKey());}
 
 	template <class T>
 	PK_FinalTemplate(const PrivateKeyCopier<T> &key)
-		{key.CopyKeyInto(AccessKey());}
+		{key.CopyKeyInto(this->AccessKey());}
 
-	PK_FinalTemplate(BufferedTransformation &bt) {AccessKey().BERDecode(bt);}
+	PK_FinalTemplate(BufferedTransformation &bt) {this->AccessKey().BERDecode(bt);}
 
 #if (defined(_MSC_VER) && _MSC_VER < 1300)
 
 	template <class T1, class T2>
 	PK_FinalTemplate(T1 &v1, T2 &v2)
-		{AccessKey().Initialize(v1, v2);}
+		{this->AccessKey().Initialize(v1, v2);}
 
 	template <class T1, class T2, class T3>
 	PK_FinalTemplate(T1 &v1, T2 &v2, T3 &v3)
-		{AccessKey().Initialize(v1, v2, v3);}
+		{this->AccessKey().Initialize(v1, v2, v3);}
 	
 	template <class T1, class T2, class T3, class T4>
 	PK_FinalTemplate(T1 &v1, T2 &v2, T3 &v3, T4 &v4)
-		{AccessKey().Initialize(v1, v2, v3, v4);}
+		{this->AccessKey().Initialize(v1, v2, v3, v4);}
 
 	template <class T1, class T2, class T3, class T4, class T5>
 	PK_FinalTemplate(T1 &v1, T2 &v2, T3 &v3, T4 &v4, T5 &v5)
-		{AccessKey().Initialize(v1, v2, v3, v4, v5);}
+		{this->AccessKey().Initialize(v1, v2, v3, v4, v5);}
 
 	template <class T1, class T2, class T3, class T4, class T5, class T6>
 	PK_FinalTemplate(T1 &v1, T2 &v2, T3 &v3, T4 &v4, T5 &v5, T6 &v6)
-		{AccessKey().Initialize(v1, v2, v3, v4, v5, v6);}
+		{this->AccessKey().Initialize(v1, v2, v3, v4, v5, v6);}
 
 	template <class T1, class T2, class T3, class T4, class T5, class T6, class T7>
 	PK_FinalTemplate(T1 &v1, T2 &v2, T3 &v3, T4 &v4, T5 &v5, T6 &v6, T7 &v7)
-		{AccessKey().Initialize(v1, v2, v3, v4, v5, v6, v7);}
+		{this->AccessKey().Initialize(v1, v2, v3, v4, v5, v6, v7);}
 
 	template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
 	PK_FinalTemplate(T1 &v1, T2 &v2, T3 &v3, T4 &v4, T5 &v5, T6 &v6, T7 &v7, T8 &v8)
-		{AccessKey().Initialize(v1, v2, v3, v4, v5, v6, v7, v8);}
+		{this->AccessKey().Initialize(v1, v2, v3, v4, v5, v6, v7, v8);}
 
 #else
 
 	template <class T1, class T2>
 	PK_FinalTemplate(const T1 &v1, const T2 &v2)
-		{AccessKey().Initialize(v1, v2);}
+		{this->AccessKey().Initialize(v1, v2);}
 
 	template <class T1, class T2, class T3>
 	PK_FinalTemplate(const T1 &v1, const T2 &v2, const T3 &v3)
-		{AccessKey().Initialize(v1, v2, v3);}
+		{this->AccessKey().Initialize(v1, v2, v3);}
 	
 	template <class T1, class T2, class T3, class T4>
 	PK_FinalTemplate(const T1 &v1, const T2 &v2, const T3 &v3, const T4 &v4)
-		{AccessKey().Initialize(v1, v2, v3, v4);}
+		{this->AccessKey().Initialize(v1, v2, v3, v4);}
 
 	template <class T1, class T2, class T3, class T4, class T5>
 	PK_FinalTemplate(const T1 &v1, const T2 &v2, const T3 &v3, const T4 &v4, const T5 &v5)
-		{AccessKey().Initialize(v1, v2, v3, v4, v5);}
+		{this->AccessKey().Initialize(v1, v2, v3, v4, v5);}
 
 	template <class T1, class T2, class T3, class T4, class T5, class T6>
 	PK_FinalTemplate(const T1 &v1, const T2 &v2, const T3 &v3, const T4 &v4, const T5 &v5, const T6 &v6)
-		{AccessKey().Initialize(v1, v2, v3, v4, v5, v6);}
+		{this->AccessKey().Initialize(v1, v2, v3, v4, v5, v6);}
 
 	template <class T1, class T2, class T3, class T4, class T5, class T6, class T7>
 	PK_FinalTemplate(const T1 &v1, const T2 &v2, const T3 &v3, const T4 &v4, const T5 &v5, const T6 &v6, const T7 &v7)
-		{AccessKey().Initialize(v1, v2, v3, v4, v5, v6, v7);}
+		{this->AccessKey().Initialize(v1, v2, v3, v4, v5, v6, v7);}
 
 	template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
 	PK_FinalTemplate(const T1 &v1, const T2 &v2, const T3 &v3, const T4 &v4, const T5 &v5, const T6 &v6, const T7 &v7, const T8 &v8)
-		{AccessKey().Initialize(v1, v2, v3, v4, v5, v6, v7, v8);}
+		{this->AccessKey().Initialize(v1, v2, v3, v4, v5, v6, v7, v8);}
 
 	template <class T1, class T2>
 	PK_FinalTemplate(T1 &v1, const T2 &v2)
-		{AccessKey().Initialize(v1, v2);}
+		{this->AccessKey().Initialize(v1, v2);}
 
 	template <class T1, class T2, class T3>
 	PK_FinalTemplate(T1 &v1, const T2 &v2, const T3 &v3)
-		{AccessKey().Initialize(v1, v2, v3);}
+		{this->AccessKey().Initialize(v1, v2, v3);}
 	
 	template <class T1, class T2, class T3, class T4>
 	PK_FinalTemplate(T1 &v1, const T2 &v2, const T3 &v3, const T4 &v4)
-		{AccessKey().Initialize(v1, v2, v3, v4);}
+		{this->AccessKey().Initialize(v1, v2, v3, v4);}
 
 	template <class T1, class T2, class T3, class T4, class T5>
 	PK_FinalTemplate(T1 &v1, const T2 &v2, const T3 &v3, const T4 &v4, const T5 &v5)
-		{AccessKey().Initialize(v1, v2, v3, v4, v5);}
+		{this->AccessKey().Initialize(v1, v2, v3, v4, v5);}
 
 	template <class T1, class T2, class T3, class T4, class T5, class T6>
 	PK_FinalTemplate(T1 &v1, const T2 &v2, const T3 &v3, const T4 &v4, const T5 &v5, const T6 &v6)
-		{AccessKey().Initialize(v1, v2, v3, v4, v5, v6);}
+		{this->AccessKey().Initialize(v1, v2, v3, v4, v5, v6);}
 
 	template <class T1, class T2, class T3, class T4, class T5, class T6, class T7>
 	PK_FinalTemplate(T1 &v1, const T2 &v2, const T3 &v3, const T4 &v4, const T5 &v5, const T6 &v6, const T7 &v7)
-		{AccessKey().Initialize(v1, v2, v3, v4, v5, v6, v7);}
+		{this->AccessKey().Initialize(v1, v2, v3, v4, v5, v6, v7);}
 
 	template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
 	PK_FinalTemplate(T1 &v1, const T2 &v2, const T3 &v3, const T4 &v4, const T5 &v5, const T6 &v6, const T7 &v7, const T8 &v8)
-		{AccessKey().Initialize(v1, v2, v3, v4, v5, v6, v7, v8);}
+		{this->AccessKey().Initialize(v1, v2, v3, v4, v5, v6, v7, v8);}
 
 #endif
 };

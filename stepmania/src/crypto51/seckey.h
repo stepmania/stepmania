@@ -156,7 +156,7 @@ template <class INFO, class INTERFACE = BlockCipher>
 class BlockCipherBaseTemplate : public AlgorithmImpl<SimpleKeyingInterfaceImpl<TwoBases<INFO, INTERFACE> > >
 {
 public:
-	unsigned int BlockSize() const {return BLOCKSIZE;}
+	unsigned int BlockSize() const {return this->BLOCKSIZE;}
 };
 
 //! .
@@ -166,11 +166,11 @@ class BlockCipherTemplate : public BASE
 public:
  	BlockCipherTemplate() {}
 	BlockCipherTemplate(const byte *key)
-		{SetKey(key, DEFAULT_KEYLENGTH);}
+		{SetKey(key, this->DEFAULT_KEYLENGTH);}
 	BlockCipherTemplate(const byte *key, unsigned int length)
 		{SetKey(key, length);}
 	BlockCipherTemplate(const byte *key, unsigned int length, unsigned int rounds)
-		{SetKeyWithRounds(key, length, rounds);}
+		{this->SetKeyWithRounds(key, length, rounds);}
 
 	bool IsForwardTransformation() const {return DIR == ENCRYPTION;}
 
@@ -194,11 +194,11 @@ class MessageAuthenticationCodeTemplate : public
 public:
  	MessageAuthenticationCodeTemplate() {}
 	MessageAuthenticationCodeTemplate(const byte *key)
-		{SetKey(key, DEFAULT_KEYLENGTH);}
+		{SetKey(key, this->DEFAULT_KEYLENGTH);}
 	MessageAuthenticationCodeTemplate(const byte *key, unsigned int length)
 		{SetKey(key, length);}
 
-	std::string AlgorithmName() const {return StaticAlgorithmName();}
+	std::string AlgorithmName() const {return this->StaticAlgorithmName();}
 
 	void SetKey(const byte *key, unsigned int length, const NameValuePairs &param = g_nullNameValuePairs)
 	{

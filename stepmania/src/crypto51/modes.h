@@ -188,18 +188,18 @@ class CipherModeFinalTemplate_CipherHolder : public ObjectHolder<CIPHER>, public
 public:
 	CipherModeFinalTemplate_CipherHolder()
 	{
-		m_cipher = &m_object;
-		ResizeBuffers();
+		this->m_cipher = &this->m_object;
+		this->ResizeBuffers();
 	}
 	CipherModeFinalTemplate_CipherHolder(const byte *key, unsigned int length)
 	{
-		m_cipher = &m_object;
-		SetKey(key, length);
+		this->m_cipher = &this->m_object;
+		this->SetKey(key, length);
 	}
 	CipherModeFinalTemplate_CipherHolder(const byte *key, unsigned int length, const byte *iv, int feedbackSize = 0)
 	{
-		m_cipher = &m_object;
-		SetKey(key, length, MakeParameters("IV", iv)("FeedbackSize", feedbackSize));
+		this->m_cipher = &this->m_object;
+		this->SetKey(key, length, MakeParameters("IV", iv)("FeedbackSize", feedbackSize));
 	}
 };
 

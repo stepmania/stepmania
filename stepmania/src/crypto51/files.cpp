@@ -106,7 +106,8 @@ unsigned int FileStore::CopyRangeTo2(BufferedTransformation &target, unsigned lo
 	streampos endPosition = m_stream->seekg(0, ios::end).tellg();
 	streampos newPosition = current + (streamoff)begin;
 
-	if (newPosition >= endPosition)
+//	if (newPosition >= endPosition)
+	if (std::streamoff(newPosition) >= std::streamoff(endPosition))
 	{
 		m_stream->seekg(current);
 		return 0;	// don't try to seek beyond the end of file
