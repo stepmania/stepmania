@@ -20,7 +20,6 @@
 #include "PrefsManager.h"
 #include "RageInput.h"
 #include "arch/arch.h"
-#include "regex.h"
 
 
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
