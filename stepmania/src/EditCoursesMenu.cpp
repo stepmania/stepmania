@@ -54,9 +54,9 @@ enum CourseEntryMenuRow
 
 static const MenuRow g_CourseOptionsMenuItems[] =
 {
-	{ "Repeat",		true, 0, { "NO","YES" } },
-	{ "Randomize",	true, 0, { "NO","YES" } },
-	{ "Lives",		true, 4, { "Use Bar Life","1","2","3","4","5","6","7","8","9","10" } }
+	{ "Repeat",		true, 0, { "NO","YES", NULL } },
+	{ "Randomize",	true, 0, { "NO","YES", NULL } },
+	{ "Lives",		true, 4, { "Use Bar Life","1","2","3","4","5","6","7","8","9","10", NULL } }
 };
 static Menu g_CourseOptionsMenu( "Course Options", g_CourseOptionsMenuItems );
 
@@ -73,12 +73,12 @@ enum CourseOptionsMenuRow
 
 static const MenuRow g_CourseEntryMenuItems[] =
 {
-	{ "Song",			true, 0, { } },
-	{ "Group",			true, 0, { } },
-	{ "Difficulty",		true, 0, { } },
-	{ "Low Meter",		true, 0, { } },
-	{ "High Meter",		true, 0, { } },
-	{ "Best/Worst value",true, 0, { } },
+	{ "Song",			true, 0, { NULL } },
+	{ "Group",			true, 0, { NULL } },
+	{ "Difficulty",		true, 0, { NULL } },
+	{ "Low Meter",		true, 0, { NULL } },
+	{ "High Meter",		true, 0, { NULL } },
+	{ "Best/Worst value",true, 0, { NULL } },
 };
 static Menu g_CourseEntryMenu( "Course Entry Options", g_CourseEntryMenuItems );
 
