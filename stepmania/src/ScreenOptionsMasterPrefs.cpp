@@ -51,3 +51,14 @@ const ConfOption *FindConfOption( CString name )
 	return NULL;
 }
 
+void ConfOption::MakeOptionsList( CStringArray &out ) const
+{
+	if( MakeOptionsListCB == NULL )
+	{
+		out = names;
+		return;
+	}
+
+	MakeOptionsListCB( out );
+}
+

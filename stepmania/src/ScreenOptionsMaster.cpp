@@ -152,8 +152,7 @@ void ScreenOptionsMaster::SetConf( OptionRow &row, OptionRowHandler &hand, CStri
 	if( hand.opt == NULL )
 		RageException::Throw( "Invalid Conf type \"%s\"", param.c_str() );
 
-	for( unsigned i = 0; i < hand.opt->names.size(); ++i )
-		row.choices.push_back( hand.opt->names[i] );
+	hand.opt->MakeOptionsList( row.choices );
 
 	TitleOut = hand.opt->name;
 }
