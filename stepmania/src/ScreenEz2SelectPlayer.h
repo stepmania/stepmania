@@ -31,20 +31,16 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	void MenuLeft( const PlayerNumber p );
-	void MenuRight( const PlayerNumber p );
+	void MenuDown( const PlayerNumber p );
 	void MenuStart( const PlayerNumber p );
 	void MenuBack( const PlayerNumber p );
 	void TweenOffScreen();
-//	void TweenOnScreen();
 
 private:
 	/* Private Function Prototypes */
-
-	//	void BeforeChange();
-	void AfterChange();
-	void SetFadedStyles();
 	void AnimateGraphics();
+
+	
 	/* Variable Declarations */
 
 	MenuElements m_Menu;

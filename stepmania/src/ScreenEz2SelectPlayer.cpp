@@ -27,12 +27,6 @@ Andrew Livy
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
-
-const CString N_PLAYERS[] = {
-	"one player",
-	"two players",
-};
-
 const float TWEEN_TIME		= 0.35f;
 const D3DXCOLOR OPT_NOT_SELECTED = D3DXCOLOR(0.3f,0.3f,0.3f,1);
 const D3DXCOLOR OPT_SELECTED = D3DXCOLOR(1.0f,1.0f,1.0f,1);
@@ -50,11 +44,9 @@ const float OPT_Y[NUM_EZ2_GRAPHICS] = {
 	CENTER_Y+115,
 }; // tells us the default Y position
 
-/* Variable Declaration */
-int bounce=0; // used for the bouncing of the '1p' and '2p' images
-int direct=0; // direction of the bouncing of the '1p' and '2p' images
-int wait=0; // how long we wait between updating the bounce.
-
+float ez2_lasttimercheck[2];
+int ez2_bounce=0; // used for the bouncing of the '1p' and '2p' images
+int ez2_direct=0; // direction of the bouncing of the '1p' and '2p' images
 
 /************************************
 ScreenEz2SelectPlayer (Constructor)
@@ -64,8 +56,11 @@ Desc: Sets up the screen display
 ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 {
 	LOG->WriteLine( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
-
-m_iSelectedStyle=0;
+	ez2_lasttimercheck[0] = TIMER->GetTimeSinceStart();
+	ez2_lasttimercheck[1] = 0.0f;
+	m_iSelectedStyle=0;
+	GAMEMAN->m_CurStyle = STYLE_NONE;
+	GAMEMAN->m_sMasterPlayerNumber = PLAYER_INVALID;
 
 // Load in the sprites we will be working with.
 	for( int i=0; i<NUM_EZ2_GRAPHICS; i++ )
@@ -96,7 +91,7 @@ m_iSelectedStyle=0;
 	m_Menu.Load( 	
 		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
 		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_TOP_EDGE),
-		ssprintf("Use %c %c to select, then press START", char(1), char(2) )
+		ssprintf("Use %c to select your pad", char(4) )
 		);
 	this->AddActor( &m_Menu );
 
@@ -135,58 +130,34 @@ Desc: Animates the 1p/2p selection
 ************************************/
 void ScreenEz2SelectPlayer::AnimateGraphics()
 {
-/********** THIS NEEDS IMPROVING WITH TIMER FUNCTIONS ***********/
 
-if (bounce < 10 && direct == 0 && wait == 2) // Bounce 1p/2p up
+//if (bounce < 10 && direct == 0 && wait == 2) // Bounce 1p/2p up
+if (TIMER->GetTimeSinceStart() > ez2_lasttimercheck[0] + 0.01f && ez2_direct == 0)
 	{
-		bounce++;
-		if (m_iSelectedStyle == 0)
+		ez2_lasttimercheck[0] = TIMER->GetTimeSinceStart();
+		ez2_bounce+=1;
+	
+		m_sprOpt[2].SetXY( OPT_X[2], OPT_Y[2] - ez2_bounce);
+		m_sprOpt[3].SetXY( OPT_X[3], OPT_Y[3] - ez2_bounce);
+
+
+		if (ez2_bounce == 10)
 		{
-			m_sprOpt[2].SetXY( OPT_X[2], OPT_Y[2] - bounce);
+			ez2_direct = 1;
 		}
-		else if (m_iSelectedStyle == 1)
-		{
-			m_sprOpt[3].SetXY( OPT_X[3], OPT_Y[3] - bounce);
-		}
-		else
-		{
-			m_sprOpt[2].SetXY( OPT_X[2], OPT_Y[2] - bounce);
-			m_sprOpt[3].SetXY( OPT_X[3], OPT_Y[3] - bounce);
-		}
-		
-		if (bounce == 10)
-		{
-			direct = 1;
-		}
-		wait = 0;
 	}
-	else if (bounce > 0 && direct == 1 && wait == 2) // bounce 1p/2p down
+	else if (TIMER->GetTimeSinceStart() > ez2_lasttimercheck[0] + 0.01f && ez2_direct == 1) // bounce 1p/2p down
 	{
-		bounce--;
-		if (m_iSelectedStyle == 0)
-		{
-			m_sprOpt[2].SetXY( OPT_X[2], OPT_Y[2] - bounce);
-		}
-		else if (m_iSelectedStyle == 1)
-		{
-			m_sprOpt[3].SetXY( OPT_X[3], OPT_Y[3] - bounce);
-		}
-		else
-		{
-			m_sprOpt[2].SetXY( OPT_X[2], OPT_Y[2] - bounce);
-			m_sprOpt[3].SetXY( OPT_X[3], OPT_Y[3] - bounce);
-		}
+		ez2_lasttimercheck[0] = TIMER->GetTimeSinceStart();
+		ez2_bounce-=1;
+	
+		m_sprOpt[2].SetXY( OPT_X[2], OPT_Y[2] - ez2_bounce);
+		m_sprOpt[3].SetXY( OPT_X[3], OPT_Y[3] - ez2_bounce);
 
-		if (bounce == 0)
+		if (ez2_bounce == 0)
 		{
-			direct = 0;
+			ez2_direct = 0;
 		}
-		wait = 0;
-	}
-
-	if (wait < 2) // don't make the 1p/2p bounce too quick.
-	{
-		wait++;
 	}
 }
 
@@ -201,6 +172,21 @@ void ScreenEz2SelectPlayer::DrawPrimitives()
 	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
+	
+	// wait for a bit incase another player wants to join before moving on.
+	if (ez2_lasttimercheck[1] != 0.0f && TIMER->GetTimeSinceStart() > ez2_lasttimercheck[1] + 1)
+	{
+		ez2_lasttimercheck[1] = 0.0f;
+
+		MUSIC->Stop();
+		
+		this->ClearMessageQueue();
+
+		m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
+
+		TweenOffScreen();	
+	}
+
 }
 
 /************************************
@@ -259,69 +245,15 @@ void ScreenEz2SelectPlayer::MenuBack( const PlayerNumber p )
 //	TweenOffScreen();
 }
 
-/************************************
-SetFadedStyles
-Desc: Fades out non-highlighted items
-depending on the users choice.
-************************************/
-void ScreenEz2SelectPlayer::SetFadedStyles()
-{
-	m_sprOpt[0].SetTweenDiffuseColor( OPT_NOT_SELECTED );
-	m_sprOpt[1].SetTweenDiffuseColor( OPT_NOT_SELECTED );
-	m_sprOpt[2].SetTweenDiffuseColor( OPT_NOT_SELECTED );
-	m_sprOpt[3].SetTweenDiffuseColor( OPT_NOT_SELECTED );
-	if (m_iSelectedStyle != 1)
-	{
-		m_sprOpt[2].SetTweenDiffuseColor( OPT_SELECTED );
-		m_sprOpt[3].SetTweenDiffuseColor( OPT_SELECTED );
-	}
-	else
-	{
-		m_sprOpt[0].SetTweenDiffuseColor( OPT_SELECTED );
-		m_sprOpt[1].SetTweenDiffuseColor( OPT_SELECTED );
-	}
-}
 
 /************************************
-MenuRight
+MenuDown
 Desc: Actions performed when a player 
-presses the button bound to right
+presses the button bound to down
 ************************************/
-void ScreenEz2SelectPlayer::MenuRight( PlayerNumber p )
+void ScreenEz2SelectPlayer::MenuDown( PlayerNumber p )
 {
-
-	m_soundChange.PlayRandom();
-
-	if (m_iSelectedStyle == 2)
-	{
-		m_iSelectedStyle = 0;
-	}
-	else
-	{
-		m_iSelectedStyle++;
-	}
-
-}
-
-/************************************
-MenuLeft
-Desc: Actions performed when a player 
-presses the button bound to left
-************************************/
-void ScreenEz2SelectPlayer::MenuLeft( PlayerNumber p )
-{
-
-	m_soundChange.PlayRandom();
-
-	if (m_iSelectedStyle == 0)
-	{
-		m_iSelectedStyle = 2;
-	}
-	else
-	{
-		m_iSelectedStyle--;
-	}
-
+	MenuStart( p );
 }
 
 /************************************
@@ -331,16 +263,27 @@ presses the button bound to start
 ************************************/
 void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 {
-//	GAME->m_sCurrentStyle = DANCE_STYLES[m_iSelectedStyle];
 
-	MUSIC->Stop();
-	
-	m_soundSelect.PlayRandom();
-	
-	this->ClearMessageQueue();
-
-	m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
-
+	// figure out whether we should add a player into the fray or not
+	if(	GAMEMAN->m_sMasterPlayerNumber != PLAYER_2 && GAMEMAN->m_sMasterPlayerNumber != PLAYER_1 )
+	{
+		GAMEMAN->m_sMasterPlayerNumber = p;
+		if (p == PLAYER_1)
+		{
+			m_iSelectedStyle = 0;
+		}
+		else
+		{
+			m_iSelectedStyle = 1;
+		}
+		m_soundSelect.PlayRandom();
+		ez2_lasttimercheck[1] = TIMER->GetTimeSinceStart(); // start the timer for going to next state
+	}
+	else
+	{
+		m_iSelectedStyle = 2;
+		m_soundSelect.PlayRandom();
+	}
 	TweenOffScreen();
 
 }
