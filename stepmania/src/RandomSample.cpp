@@ -26,8 +26,7 @@ RandomSample::RandomSample()
 
 RandomSample::~RandomSample()
 {
-	for( unsigned i=0; i<m_pSamples.size(); i++ )
-		delete m_pSamples[i];
+	UnloadAll();
 }
 
 bool RandomSample::Load( CString sFilePath, int iMaxToLoad )
@@ -41,6 +40,12 @@ bool RandomSample::Load( CString sFilePath, int iMaxToLoad )
 	else                            return LoadSound( sFilePath );
 }
 
+void RandomSample::UnloadAll()
+{
+	for( unsigned i=0; i<m_pSamples.size(); i++ )
+		delete m_pSamples[i];
+	m_pSamples.clear();
+}
 
 bool RandomSample::LoadSoundDir( CString sDir, int iMaxToLoad )
 {

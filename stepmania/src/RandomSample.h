@@ -20,6 +20,7 @@ public:
 	virtual ~RandomSample();
 
 	bool Load( CString sFilePath, int iMaxToLoad = 1000 /*load all*/ );
+	void UnloadAll();
 	void PlayRandom();
 	void Stop();
 

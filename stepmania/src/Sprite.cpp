@@ -301,6 +301,8 @@ void Sprite::DrawPrimitives()
 
 	switch( m_VertAlign )
 	{
+	// FIXME:  Top and bottom are flipped, but changing them now breaks a lot
+	// in our themes.  -Chris
 	case align_top:		quadVerticies.top = 0;				quadVerticies.bottom = m_size.y;	break;
 	case align_middle:	quadVerticies.top = -m_size.y/2;	quadVerticies.bottom = m_size.y/2;	break;
 	case align_bottom:	quadVerticies.top = -m_size.y;		quadVerticies.bottom = 0;			break;

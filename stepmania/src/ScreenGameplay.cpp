@@ -609,7 +609,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 		switch( GAMESTATE->m_PlayMode )
 		{
-		case PLAY_MODE_HUMAN_BATTLE:
 		case PLAY_MODE_CPU_BATTLE:
 			m_announcerBattleTrickLevel1.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level1") );
 			m_announcerBattleTrickLevel2.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level2") );
@@ -620,6 +619,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 			m_announcerBattleDamageLevel1.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level1") );
 			m_announcerBattleDamageLevel2.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level2") );
 			m_announcerBattleDamageLevel3.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level3") );
+			// HACK:  Load incorrect directory on purpose for now.
+			m_announcerBattleDie.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level3") );
 			break;
 		}
 	}
@@ -1064,6 +1065,34 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 			if( GAMESTATE->m_fOpponentHealthPercent == 0 )
 			{
+
+				// HACK:  Shut the announcer up
+				m_announcerReady.UnloadAll();
+				m_announcerHereWeGo.UnloadAll();
+				m_announcerDanger.UnloadAll();
+				m_announcerGood.UnloadAll();
+				m_announcerHot.UnloadAll();
+				m_announcerOni.UnloadAll();
+				m_announcer100Combo.UnloadAll();
+				m_announcer200Combo.UnloadAll();
+				m_announcer300Combo.UnloadAll();
+				m_announcer400Combo.UnloadAll();
+				m_announcer500Combo.UnloadAll();
+				m_announcer600Combo.UnloadAll();
+				m_announcer700Combo.UnloadAll();
+				m_announcer800Combo.UnloadAll();
+				m_announcer900Combo.UnloadAll();
+				m_announcer1000Combo.UnloadAll();
+				m_announcerComboStopped.UnloadAll();
+				m_announcerBattleTrickLevel1.UnloadAll();
+				m_announcerBattleTrickLevel2.UnloadAll();
+				m_announcerBattleTrickLevel3.UnloadAll();
+				m_announcerBattleDamageLevel1.UnloadAll();
+				m_announcerBattleDamageLevel2.UnloadAll();
+				m_announcerBattleDamageLevel3.UnloadAll();
+
+				m_announcerBattleDie.PlayRandom();
+
 				GAMESTATE->RemoveAllActiveAttacks();
 
 				for( int p=0; p<NUM_PLAYERS; p++ )
@@ -1695,7 +1724,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	
 	case SM_BattleTrickLevel1:
-		if( SECS_SINCE_LAST_COMMENT > 5 )
+		if( SECS_SINCE_LAST_COMMENT > 3 )
 		{
 			m_announcerBattleTrickLevel1.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
@@ -1703,7 +1732,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_soundBattleTrickLevel1.PlayRandom();
 		break;
 	case SM_BattleTrickLevel2:
-		if( SECS_SINCE_LAST_COMMENT > 5 )
+		if( SECS_SINCE_LAST_COMMENT > 3 )
 		{
 			m_announcerBattleTrickLevel2.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
@@ -1711,7 +1740,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_soundBattleTrickLevel2.PlayRandom();
 		break;
 	case SM_BattleTrickLevel3:
-		if( SECS_SINCE_LAST_COMMENT > 5 )
+		if( SECS_SINCE_LAST_COMMENT > 3 )
 		{
 			m_announcerBattleTrickLevel3.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
@@ -1720,21 +1749,21 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	
 	case SM_BattleDamageLevel1:
-		if( SECS_SINCE_LAST_COMMENT > 5 )
+		if( SECS_SINCE_LAST_COMMENT > 3 )
 		{
 			m_announcerBattleDamageLevel1.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_BattleDamageLevel2:
-		if( SECS_SINCE_LAST_COMMENT > 5 )
+		if( SECS_SINCE_LAST_COMMENT > 3 )
 		{
 			m_announcerBattleDamageLevel2.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_BattleDamageLevel3:
-		if( SECS_SINCE_LAST_COMMENT > 5 )
+		if( SECS_SINCE_LAST_COMMENT > 3 )
 		{
 			m_announcerBattleDamageLevel3.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;

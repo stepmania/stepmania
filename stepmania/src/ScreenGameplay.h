@@ -182,6 +182,7 @@ protected:
 	RandomSample	m_announcerBattleDamageLevel1;
 	RandomSample	m_announcerBattleDamageLevel2;
 	RandomSample	m_announcerBattleDamageLevel3;
+	RandomSample	m_announcerBattleDie;
 
 	bool			m_bZeroDeltaOnNextUpdate;
 	bool			m_bDemonstration;
