@@ -15,8 +15,8 @@
 class RageException : exception
 {
 public:
-	RageException( LPCTSTR fmt, ...);
-	RageException( HRESULT hr, LPCTSTR fmt, ...);
+	RageException( const char *fmt, ...);
+	RageException( HRESULT hr, const char *fmt, ...);
 
 	virtual const char *what() const;
 

@@ -17,7 +17,7 @@
 #pragma comment(lib, "DxErr8.lib")
 
 
-RageException::RageException( LPCTSTR fmt, ...)
+RageException::RageException( const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
@@ -28,7 +28,7 @@ RageException::RageException( LPCTSTR fmt, ...)
 #endif
 }
 
-RageException::RageException( HRESULT hr, LPCTSTR fmt, ...)
+RageException::RageException( HRESULT hr, const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);

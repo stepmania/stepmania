@@ -83,7 +83,7 @@ RageSound::~RageSound()
 
 void RageSound::PlayOnceStreamed( CString sPath )
 {
-	HSTREAM hStream = BASS_StreamCreateFile( FALSE, (void*)((LPCTSTR)sPath), 0, 0, BASS_STREAM_AUTOFREE );
+	HSTREAM hStream = BASS_StreamCreateFile( FALSE, const_cast<char*>((const char *)sPath), 0, 0, BASS_STREAM_AUTOFREE );
 	if( hStream == NULL )
 		throw RageException( "RageSound: Error creating stream." );
 
