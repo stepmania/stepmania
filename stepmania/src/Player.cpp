@@ -216,7 +216,7 @@ void PlayerMinus::Update( float fDeltaTime )
 		const StyleInput StyleI( m_PlayerNumber, bar );
 		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 		bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
-		if(bIsHoldingButton)
+		if(bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox)
 			m_pNoteField->UpdateBars(bar);
 	}
 

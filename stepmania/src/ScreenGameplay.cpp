@@ -423,7 +423,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	m_MaxCombo.LoadFromNumbers( THEME->GetPathToN("ScreenGameplay max combo") );
 	m_MaxCombo.SetName( "MaxCombo" );
 	SET_XY( m_MaxCombo );
-	m_MaxCombo.SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iCurCombo[GAMESTATE->m_MasterPlayerNumber]) ); // TODO: Make this work for both players
+	m_MaxCombo.SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iMaxCombo[GAMESTATE->m_MasterPlayerNumber]) ); // TODO: Make this work for both players
 	this->AddChild( &m_MaxCombo );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -1052,7 +1052,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		return;
 
 	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )
-		m_MaxCombo.SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iCurCombo[GAMESTATE->m_MasterPlayerNumber]) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
+		m_MaxCombo.SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iMaxCombo[GAMESTATE->m_MasterPlayerNumber]) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
 	
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
