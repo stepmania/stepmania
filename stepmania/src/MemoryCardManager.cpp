@@ -284,7 +284,8 @@ void MemoryCardManager::MountCard( PlayerNumber pn )
  * reading the profile.  Should never block; use FlushAndReset to block until writes complete. */
 void MemoryCardManager::UnmountCard( PlayerNumber pn )
 {
-	ASSERT( !m_Device[pn].IsBlank() );
+	if ( m_Device[pn].IsBlank() )
+		return;
 
 	if( !m_bMounted[pn] )
 		return;
