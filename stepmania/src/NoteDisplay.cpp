@@ -158,11 +158,9 @@ int NoteDisplay::GetFrameNo( float fNoteBeat, int iNumFrames, float fAnimationLe
 	float fPrecentIntoAnimation = fmodf(fSongBeat,fAnimationLengthInBeats) / fAnimationLengthInBeats;
 	float fNoteBeatFraction = fmodf( fNoteBeat, 1.0f );
 
-	int iFrameNo;
+	int iFrameNo = (int)(fPrecentIntoAnimation*iNumFrames);
 	if( bVivid )
-		iFrameNo = (int)(fPrecentIntoAnimation*iNumFrames + fNoteBeatFraction*iNumFrames);
-	else
-		iFrameNo = (int)(fPrecentIntoAnimation*iNumFrames);
+		iFrameNo += (int)( froundf(fNoteBeatFraction,1.f/fAnimationLengthInBeats)*iNumFrames );
 
 	iFrameNo += iNumFrames;
 	iFrameNo %= iNumFrames;
