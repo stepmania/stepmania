@@ -259,41 +259,26 @@
 #ifndef STDSTRING_H
 #define STDSTRING_H
 
-// In non-Visual C++ and/or non-Win32 builds, we can't use some cool stuff.
-#if !defined(_MSC_VER) || !defined(_WIN32) || defined(_XBOX)
-	#define SS_ANSI
-#endif
-
 // If they want us to use only standard C++ stuff (no Win32 stuff)
 
 typedef const char*		PCSTR;
 typedef char*			PSTR;
-typedef char			TCHAR;
 
 // Standard headers needed
 #include <string>			// basic_string
 #include <algorithm>		// for_each, etc.
 #include <functional>		// for StdStringLessNoCase, et al
 
-#ifndef SS_ANSI
+#if defined(WIN32)
 #include <malloc.h>			// _alloca
 #endif
 
-// First define the conversion helper functions.  We define these regardless of
-// any preprocessor macro settings since their names won't collide. 
-
 #include <cstdarg>
 
-#ifdef SS_ANSI // Are we doing things the standard, non-Win32 way?...
-	// Not sure if we need all these headers.   I believe ANSI says we do.
-
-	#include <cstdio>
-	#include <cctype>
-	#include <cstdlib>
-	#ifndef va_start
-		#include <varargs.h>
-	#endif
-#endif // #ifndef SS_ANSI
+#include <cstdio>
+#include <cctype>
+#include <cstdlib>
+#include <cstdarg>
 
 // a very shorthand way of applying the fix for KB problem Q172398
 // (basic_string assignment bug)
@@ -434,7 +419,6 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 // -----------------------------------------------------------------------------
 // ssicmp: comparison (case insensitive )
 // -----------------------------------------------------------------------------
-#ifdef SS_ANSI
 	template<typename CT>
 	inline int ssicmp(const CT* pA1, const CT* pA2)
 	{
@@ -449,21 +433,10 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 
 		return (int)(f - l);
 	}
-#else
-	inline long sscmp(PCSTR pA1, PCSTR pA2)
-	{
-		return strcmp(pA1, pA2);
-	}
-	inline long ssicmp(PCSTR pA1, PCSTR pA2)
-	{
-		return _stricmp(pA1, pA2);
-	}
-#endif
 
 // -----------------------------------------------------------------------------
 // ssupr/sslwr: Uppercase/Lowercase conversion functions
 // -----------------------------------------------------------------------------
-// #ifdef SS_ANSI
 	template<typename CT>
 	inline void sslwr(CT* pT, size_t nLen)
 	{
@@ -476,48 +449,18 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 		for ( CT* p = pT; static_cast<size_t>(p - pT) < nLen; ++p)
 			*p = (CT)sstoupper(*p);
 	}
-#if 0
-// #else  // #else we must be on Win32
-	#ifdef _MBCS
-		inline void	ssupr(PSTR pA, size_t /*nLen*/)
-		{
-			_mbsupr((unsigned char *)pA);
-		}
-		inline void	sslwr(PSTR pA, size_t /*nLen*/)
-		{
-			_mbslwr((unsigned char *)pA);
-		}
-	#else
-		inline void	ssupr(PSTR pA, size_t /*nLen*/)
-		{
-			_strupr(pA); 
-		}
-		inline void	sslwr(PSTR pA, size_t /*nLen*/)
-		{
-			_strlwr(pA);
-		}
-	#endif
-// #endif // #ifdef SS_ANSI
-#endif
 // -----------------------------------------------------------------------------
 //  vsprintf/vswprintf or _vsnprintf/_vsnwprintf equivalents.  In standard
 //  builds we can't use _vsnprintf/_vsnwsprintf because they're MS extensions.
 // -----------------------------------------------------------------------------
-#ifdef SS_ANSI
 	inline int ssvsprintf(PSTR pA, size_t nCount, PCSTR pFmtA, va_list vl)
 	{
-		#if defined(_XBOX)
-			return _vsnprintf(pA, nCount, pFmtA, vl);
-		#else
-			return vsnprintf(pA, nCount, pFmtA, vl);
-		#endif
-	}
-#else
-	inline int	ssnprintf(PSTR pA, size_t nCount, PCSTR pFmtA, va_list vl)
-	{ 
+#if defined(WIN32)
 		return _vsnprintf(pA, nCount, pFmtA, vl);
-	}
+#else
+		return vsnprintf(pA, nCount, pFmtA, vl);
 #endif
+	}
 
 
 //			Now we can define the template (finally!)
@@ -905,20 +848,6 @@ public:
 	#define BUFSIZE_2ND 512
 	#define STD_BUF_SIZE		1024
 
-	// an efficient way to add formatted characters to the string.  You may only
-	// add up to STD_BUF_SIZE characters at a time, though
-	void AppendFormatV(const CT* szFmt, va_list argList)
-	{
-		CT szBuf[STD_BUF_SIZE];
-	#ifdef SS_ANSI
-		int nLen = ssvsprintf(szBuf, STD_BUF_SIZE-1, szFmt, argList);
-	#else
-		int nLen = ssnprintf(szBuf, STD_BUF_SIZE-1, szFmt, argList);
-	#endif
-		if ( 0 < nLen )
-			this->append(szBuf, nLen);
-	}
-
 	// -------------------------------------------------------------------------
 	// FUNCTION:  FormatV
 	//		void FormatV(PCSTR szFormat, va_list, argList);
@@ -938,7 +867,31 @@ public:
 
 	void FormatV(const CT* szFormat, va_list argList)
 	{
-	#ifdef SS_ANSI
+	#if defined(WIN32)
+		CT* pBuf			= NULL;
+		int nChars			= 1;
+		int nUsed			= 0;
+		size_type nActual	= 0;
+		int nTry			= 0;
+
+		do	
+		{
+			// Grow more than linearly (e.g. 512, 1536, 3072, etc)
+
+			nChars			+= ((nTry+1) * FMT_BLOCK_SIZE);
+			pBuf			= reinterpret_cast<CT*>(_alloca(sizeof(CT)*nChars));
+			nUsed			= ssvsprintf(pBuf, nChars-1, szFormat, argList);
+
+			// Ensure proper NULL termination.
+
+			nActual			= nUsed == -1 ? nChars-1 : min(nUsed, nChars-1);
+			pBuf[nActual+1]= '\0';
+		} while ( nUsed < 0 && nTry++ < MAX_FMT_TRIES );
+
+		// assign whatever we managed to format
+
+		this->assign(pBuf, nActual);
+	#else
 		static bool bExactSizeSupported;
 		static bool bInitialized = false;
 		if( !bInitialized )
@@ -980,35 +933,6 @@ public:
 			ReleaseBuffer(nUsed);
 			break;
 		} while ( nTry++ < MAX_FMT_TRIES );
-
-	#else
-
-		CT* pBuf			= NULL;
-		int nChars			= 1;
-		int nUsed			= 0;
-		size_type nActual	= 0;
-		int nTry			= 0;
-
-		do	
-		{
-			// Grow more than linearly (e.g. 512, 1536, 3072, etc)
-
-			nChars			+= ((nTry+1) * FMT_BLOCK_SIZE);
-			pBuf			= reinterpret_cast<CT*>(_alloca(sizeof(CT)*nChars));
-			nUsed			= ssnprintf(pBuf, nChars-1, szFormat, argList);
-
-			// Ensure proper NULL termination.
-
-			nActual			= nUsed == -1 ? nChars-1 : min(nUsed, nChars-1);
-			pBuf[nActual+1]= '\0';
-
-
-		} while ( nUsed < 0 && nTry++ < MAX_FMT_TRIES );
-
-		// assign whatever we managed to format
-
-		this->assign(pBuf, nActual);
-
 	#endif
 	}
 	
@@ -1324,7 +1248,7 @@ typedef CStdStr<char>		CStdStringA;	// a better std::string
 	}
 #endif	// #ifdef _MFC_VER -- (i.e. is this MFC?)
 
-// Define TCHAR based friendly names for some of these functions
+// Define friendly names for some of these functions
 
 	#define CStdString				CStdStringA
 
