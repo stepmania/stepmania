@@ -78,18 +78,6 @@ InputHandler_DInput::InputHandler_DInput()
 	shutdown = false;
 	g_NumJoysticks = 0;
 
-	/* If we have any polled devices, we need to check it constantly.  In WinNT,
-	 * we have the scheduling resolution to do this.  In Win9x, we don't, so always
-	 * handle those devices uring Update(). */
-	{
-		OSVERSIONINFO ovi;
-		ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-		GetVersionEx(&ovi);
-		PolledDevicesInMainThread = (ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS);
-		if( PolledDevicesInMainThread )
-			LOG->Info( "Polled devices are not threaded");
-	}
-
 	AppInstance inst;	
 	HRESULT hr = DirectInputCreate(/* SDL_Instance */inst.Get(), DIRECTINPUT_VERSION, &dinput, NULL);
 	if ( hr != DI_OK )
@@ -433,23 +421,17 @@ void InputHandler_DInput::Update(float fDeltaTime)
 	RageTimer zero;
 	zero.SetZero();
 
-	if( InputThreadPtr == NULL )
+	/* Handle polled devices. */
+	PollAndAcquireDevices();
+	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
-		/* We don't have an input thread, so handle buffered devices. */
-		PollAndAcquireDevices();
-		for( unsigned i = 0; i < Devices.size(); ++i )
-			if( Devices[i].buffered )
-				UpdateBuffered( Devices[i], zero );
-	}
-
-	if( InputThreadPtr == NULL || PolledDevicesInMainThread )
-	{
-		/* We don't have an input thread, or polled devices are not being handled
-		 * in the thread, so handle polled devices. */
-		PollAndAcquireDevices();
-		for( unsigned i = 0; i < Devices.size(); ++i )
-			if( !Devices[i].buffered )
-				UpdatePolled( Devices[i], zero );
+		if( !Devices[i].buffered )
+			UpdatePolled( Devices[i], zero );
+		else if( InputThreadPtr == NULL )
+		{
+			/* If we have an input thread, it'll handle buffered devices. */
+			UpdateBuffered( Devices[i], zero );
+		}
 	}
 
 	InputHandler::UpdateTimer();
@@ -483,14 +465,6 @@ void InputHandler_DInput::InputThread()
 		IDirectInputDevice2_Acquire(Devices[i].Device);
 	}
 
-	/* If we have any polled devices, we need a fast loop. */
-	int Delay = (UnbufferedDevices.size() && !PolledDevicesInMainThread)? 2:50;
-	LOG->Info( "DirectInput thread is running at %ims", Delay );
-
-	RageTimer LoopPerformanceTimer;
-	int Counts[6];
-	memset(Counts, 0, sizeof(Counts));
-	RageTimer ThreadTimer;
 	while(!shutdown)
 	{
 		VDCHECKPOINT;
@@ -499,7 +473,7 @@ void InputHandler_DInput::InputThread()
 			/* Update buffered devices. */
 			PollAndAcquireDevices();
 
-			int ret = WaitForSingleObjectEx( Handle, Delay, true );
+			int ret = WaitForSingleObjectEx( Handle, 50, true );
 			if( ret == -1 )
 			{
 				LOG->Trace( werr_ssprintf(GetLastError(), "WaitForSingleObjectEx failed") );
@@ -515,28 +489,10 @@ void InputHandler_DInput::InputThread()
 		}
 		VDCHECKPOINT;
 
-		/* Check polled devices, unless we're not handling them in the thread. */
-		if( UnbufferedDevices.size() && !PolledDevicesInMainThread )
-		{
-			PollAndAcquireDevices();
-			for( i = 0; i < UnbufferedDevices.size(); ++i )
-				UpdatePolled( *UnbufferedDevices[i], ThreadTimer.Half() );
-		}
-
-		ThreadTimer.Touch();
-
 		/* If we have no buffered devices, we didn't delay at WaitForMultipleObjectsEx. */
 		if( BufferedDevices.size() == 0 )
-			SDL_Delay( Delay );
+			SDL_Delay( 50 );
 		VDCHECKPOINT;
-
-		float time = LoopPerformanceTimer.GetDeltaTime();
-		     if(time < 0.002f) ++Counts[0];
-		else if(time < 0.005f) ++Counts[1];
-		else if(time < 0.010f) ++Counts[2];
-		else if(time < 0.025f) ++Counts[3];
-		else if(time < 0.050f) ++Counts[4];
-		else                   ++Counts[5];
 	}
 	VDCHECKPOINT;
 
@@ -550,11 +506,6 @@ void InputHandler_DInput::InputThread()
 	}
 
 	CloseHandle(Handle);
-
-	/* If we're running in "slow loop" mode--that is, all devices are buffered--it's
-	 * normal for most loops to take 50ms. */
-	LOG->Info("DirectInput thread performance: %i %i %i %i %i %i",
-		Counts[0], Counts[1], Counts[2], Counts[3], Counts[4], Counts[5]);
 }
 
 void InputHandler_DInput::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
