@@ -110,6 +110,8 @@ public:
 	int GetLineHeightInSourcePixels( const wstring &szLine ) const;
 	int GetLineSpacingInSourcePixels( const wstring &szLine ) const;
 
+	bool FontCompleteForString( const wstring &str ) const;
+
 	/* Add a FontPage to this font. */
 	void AddPage(FontPage *fp);
 

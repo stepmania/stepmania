@@ -313,6 +313,22 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 	return *it->second;
 }
 
+bool Font::FontCompleteForString( const wstring &str ) const
+{
+	map<longchar,glyph*>::const_iterator def = m_iCharToGlyph.find(DEFAULT_GLYPH);
+	if(def == m_iCharToGlyph.end()) 
+		RageException::Throw( "The default glyph is missing from the font '%s'", path.GetString() );
+
+	for(unsigned i = 0; i < str.size(); ++i)
+	{
+		/* If the glyph for this character is the default glyph, we're incomplete. */
+		const glyph &g = GetGlyph(str[i]);
+		if(&g == def->second)
+			return false;
+	}
+	return true;
+}
+
 void Font::CapsOnly()
 {
 	/* For each uppercase character that we have a mapping for, add
