@@ -44,6 +44,7 @@
 #include "ProfileManager.h"
 #include "MemoryCardManager.h"
 #include "ScreenManager.h"
+#include "LuaHelpers.h"
 #include "GameManager.h"
 #include "FontManager.h"
 #include "InputFilter.h"
@@ -203,6 +204,7 @@ void ShutdownGame()
 	SAFE_DELETE( FONT );
 	SAFE_DELETE( TEXTUREMAN );
 	SAFE_DELETE( DISPLAY );
+	SAFE_DELETE( LUA );
 	Dialog::Shutdown();
 	SAFE_DELETE( LOG );
 	SAFE_DELETE( FILEMAN );
@@ -1082,6 +1084,7 @@ int main(int argc, char* argv[])
 
 	CheckSettings();
 
+	LUA			= new LuaManager;
 	GAMEMAN		= new GameManager;
 	THEME		= new ThemeManager;
 	ANNOUNCER	= new AnnouncerManager;

@@ -10,6 +10,14 @@ public:
 
 	void PrepareExpression( CString &sInOut );	// strip "//" comments and "+"
 
+	bool RunScriptFile( const CString &sFile );
+
+	/* Reset the environment, freeing any globals left over by previously executed scripts. */
+	void Init();
+
+	/* Run a complete script in the global environment, which returns no value. */
+	bool RunScript( const CString &sScript );
+
 	/* Run an expression in the global environment, returning the given type. */
 	bool RunExpressionB( const CString &str );
 	float RunExpressionF( const CString &str );

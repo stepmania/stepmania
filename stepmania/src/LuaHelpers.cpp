@@ -3,14 +3,14 @@
 #include "LuaFunctions.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageFile.h"
 #include "arch/Dialog/Dialog.h"
 
 #include <csetjmp>
 #include <cassert>
 
-static LuaManager LUAObj;
-LuaManager *LUA = &LUAObj;
-static LuaFunctionList *g_NewLuaFunctions = NULL;
+LuaManager *LUA = NULL;
+static LuaFunctionList *g_LuaFunctions = NULL;
 
 #if defined(_WINDOWS)
 	#pragma comment(lib, "lua-5.0/lib/LibLua.lib")
@@ -123,10 +123,23 @@ static int LuaPanic( lua_State *L )
 
 LuaManager::LuaManager()
 {
-	ASSERT( L == NULL );
-
 	if( setjmp(jbuf) )
 		RageException::Throw("%s", jbuf_error.c_str());
+	L = NULL;
+
+	Init();
+}
+
+LuaManager::~LuaManager()
+{
+	lua_close( L );
+}
+
+void LuaManager::Init()
+{
+	if( L != NULL )
+		lua_close( L );
+
 	L = lua_open();
 	ASSERT( L );
 
@@ -137,12 +150,8 @@ LuaManager::LuaManager()
 	luaopen_string( L );
 	lua_settop(L, 0); // luaopen_* pushes stuff onto the stack that we don't need
 
-	RegisterFunctions();
-}
-
-LuaManager::~LuaManager()
-{
-	lua_close( L );
+	for( const LuaFunctionList *p = g_LuaFunctions; p; p=p->next )
+		lua_register( L, p->name, p->func );
 }
 
 void LuaManager::PrepareExpression( CString &sInOut )
@@ -159,10 +168,63 @@ void LuaManager::PrepareExpression( CString &sInOut )
 		sInOut.erase( 0, 1 );
 }
 
+bool LuaManager::RunScriptFile( const CString &sFile )
+{
+	RageFile f;
+	if( !f.Open( sFile ) )
+	{
+		LOG->Warn( "Couldn't open Lua script \"%s\": %s", sFile.c_str(), f.GetError().c_str() );
+		return false;
+	}
+
+	CString sScript;
+	if( f.Read( sScript ) == -1 )
+	{
+		LOG->Warn( "Error reading Lua script \"%s\": %s", sFile.c_str(), f.GetError().c_str() );
+		return false;
+	}
+
+	return RunScript( sScript );
+}
+
+bool LuaManager::RunScript( const CString &sScript )
+{
+	// load string
+	{
+		ChunkReaderData data;
+		data.buf = &sScript;
+		int ret = lua_load( L, ChunkReaderString, &data, "in" );
+
+		if( ret )
+		{
+			CString err;
+			LuaManager::PopStack( err );
+			CString sError = ssprintf( "Lua runtime error parsing \"%s\": %s", sScript.c_str(), err.c_str() );
+			Dialog::OK( sError, "LUA_ERROR" );
+			return false;
+		}
+
+		ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
+	}
+
+	// evaluate
+	{
+		int ret = lua_pcall(L, 0, 0, 0);
+		if( ret )
+		{
+			CString err;
+			LuaManager::PopStack( err );
+			CString sError = ssprintf( "Lua runtime error evaluating \"%s\": %s", sScript.c_str(), err.c_str() );
+			Dialog::OK( sError, "LUA_ERROR" );
+			return false;
+		}
+	}
+
+	return true;
+}
+
 bool LuaManager::RunExpression( const CString &str )
 {
-	RegisterFunctions();
-
 	// load string
 	{
 		ChunkReaderData data;
@@ -246,22 +308,12 @@ void LuaManager::Fail( const CString &err )
 	lua_error( L );
 }
 
-/* Add any newly-added functions to the Lua state.  This should be called at
- * least once after global initialization, to handle global initialization
- * order. */
-void LuaManager::RegisterFunctions()
-{
-	for( const LuaFunctionList *p = g_NewLuaFunctions; p; p=p->next )
-		lua_register( L, p->name, p->func );
-	g_NewLuaFunctions = NULL;
-}
-
 LuaFunctionList::LuaFunctionList( CString name_, lua_CFunction func_ )
 {
 	name = name_;
 	func = func_;
-	next = g_NewLuaFunctions;
-	g_NewLuaFunctions = this;
+	next = g_LuaFunctions;
+	g_LuaFunctions = this;
 }
 
 
