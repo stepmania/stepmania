@@ -25,8 +25,8 @@ const int DS3DDX_COL_SPACING = 46;
 const int BM_COL_SPACING = 34;
 const int IIDX_COL_SPACING = 34;
 const int MANIAX_COL_SPACING = 36;
-const int TECHNO_COL_SPACING = 50;
-const int TECHNO_VERSUS_COL_SPACING = 35;
+const int TECHNO_COL_SPACING = 56;
+const int TECHNO_VERSUS_COL_SPACING = 33;
 const int PNM5_COL_SPACING = 32; 
 const int PNM9_COL_SPACING = 32; 
 
@@ -2183,7 +2183,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		"single8",								// m_szName
 		STEPS_TYPE_TECHNO_SINGLE8,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
-		{ 214, 426 },							// m_iCenterX
+		{ 224, 416 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
@@ -2218,7 +2218,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		"versus8",								// m_szName
 		STEPS_TYPE_TECHNO_SINGLE8,				// m_StepsType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
-		{ 150, 480 },							// m_iCenterX
+		{ 132, 508 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
