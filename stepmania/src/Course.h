@@ -133,11 +133,12 @@ public:
 	void RegenTrails();
 
 private:
-	void GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
-	void GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
+	bool GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
+	bool GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 
 	mutable Trail m_TrailCache[NUM_STEPS_TYPES][NUM_COURSE_DIFFICULTIES];
 	mutable bool m_TrailCacheValid[NUM_STEPS_TYPES][NUM_COURSE_DIFFICULTIES];
+	mutable bool m_TrailCacheNull[NUM_STEPS_TYPES][NUM_COURSE_DIFFICULTIES];
 };
 
 #endif

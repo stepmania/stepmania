@@ -483,22 +483,12 @@ void Course::AutogenOniFromArtist( CString sArtistName, CString sArtistNameTrans
  */
 bool Course::HasCourseDifficulty( StepsType st, CourseDifficulty cd ) const
 {
-	/* Check to see if any songs would change if difficult. */
-
-	/* COURSE_DIFFICULTY_REGULAR is always available (if IsPlayableIn == true). */
-	if( cd == COURSE_DIFFICULTY_REGULAR )
-		return true;
-
-	Trail *Regular = GetTrail( st, COURSE_DIFFICULTY_REGULAR ); 
-	Trail *Other = GetTrail( st, cd ); 
-
-	return Regular->m_vEntries != Other->m_vEntries;
+	return GetTrail( st, cd ) != NULL;
 }
 
 bool Course::IsPlayableIn( StepsType st ) const
 {
-	Trail* pTrail = GetTrail( st, COURSE_DIFFICULTY_REGULAR );
-	return !pTrail->m_vEntries.empty();
+	return HasCourseDifficulty( st, COURSE_DIFFICULTY_REGULAR );
 }
 
 static vector<Song*> GetFilteredBestSongs( StepsType st )
@@ -555,8 +545,8 @@ CString Course::GetDisplayName() const
 
 /* This is called by many simple functions, like Course::GetTotalSeconds, and may
  * be called on all songs to sort.  It can take time to execute, so we cache the
- * results.  Returned pointers remain valid for the lifetime of the Course. */
-/* XXX: if !HasCourseDifficulty(cd), return NULL instead of COURSE_DIFFICULTY_REGULAR */
+ * results.  Returned pointers remain valid for the lifetime of the Course.  If the
+ * course difficulty doesn't exist, NULL is returned. */
 Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 {
 	ASSERT( cd != COURSE_DIFFICULTY_INVALID );
@@ -565,22 +555,34 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 	// Look in the Trail cache
 	//
 	if( m_TrailCacheValid[st][cd] )
+	{
+		if( m_TrailCacheNull[st][cd] )
+			return NULL;
 		return &m_TrailCache[st][cd];
+	}
 
 	//
 	// Construct a new Trail, add it to the cache, then return it.
 	//
 	Trail &trail = m_TrailCache[st][cd];
 	trail = Trail();
-	GetTrailSorted( st, cd, trail );
+	if( !GetTrailSorted( st, cd, trail ) || trail.m_vEntries.empty() )
+	{
+		/* This course difficulty doesn't exist. */
+		m_TrailCacheNull[st][cd] = true;
+		m_TrailCacheValid[st][cd] = true;
+		return NULL;
+	}
 
 	m_TrailCacheValid[st][cd] = true;
+	m_TrailCacheNull[st][cd] = false;
 	return &m_TrailCache[st][cd];
 }
 
-void Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const
+bool Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const
 {
-	GetTrailUnsorted( st, cd, trail );
+	if( !GetTrailUnsorted( st, cd, trail ) )
+		return false;
 
 	if( this->m_bSortByMeter )
 	{
@@ -590,7 +592,12 @@ void Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) c
 		if( cd == COURSE_DIFFICULTY_REGULAR )
 			SortTrail = trail;
 		else
-			GetTrailUnsorted( st, COURSE_DIFFICULTY_REGULAR, SortTrail );
+		{
+			bool bOK = GetTrailUnsorted( st, COURSE_DIFFICULTY_REGULAR, SortTrail );
+
+			/* If we have any other difficulty, we must have COURSE_DIFFICULTY_REGULAR. */
+			ASSERT( bOK );
+		}
 		ASSERT_M( trail.m_vEntries.size() == SortTrail.m_vEntries.size(),
                   ssprintf("%i %i", int(trail.m_vEntries.size()), int(SortTrail.m_vEntries.size())) );
 
@@ -607,9 +614,11 @@ void Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) c
 		for( unsigned i = 0; i < trail.m_vEntries.size(); ++i )
 			trail.m_vEntries[i] = entries[i].entry;
 	}
+
+	return true;
 }
 
-void Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const
+bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const
 {
 	trail.Init();
 
@@ -643,6 +652,8 @@ void Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	trail.m_StepsType = st;
 	trail.m_CourseDifficulty = cd;
 
+	/* Set to true if CourseDifficulty is able to change something. */
+	bool bCourseDifficultyIsSignificant = (cd == COURSE_DIFFICULTY_REGULAR);
 	for( unsigned i=0; i<entries.size(); i++ )
 	{
 		const CourseEntry &e = entries[i];
@@ -765,6 +776,7 @@ void Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 					dc = new_dc;
 					pSteps = pNewSteps;
 					bChangedDifficulty = true;
+					bCourseDifficultyIsSignificant = true;
 				}
 			}
 
@@ -812,6 +824,10 @@ void Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	/* If we have a manually-entered meter for this difficulty, use it. */
 	if( m_iCustomMeter[cd] != -1 )
 		trail.m_iSpecifiedMeter = m_iCustomMeter[cd];
+
+	/* If the course difficulty never actually changed anything, then this difficulty
+	 * is equivalent to COURSE_DIFFICULTY_REGULAR; it doesn't exist. */
+	return bCourseDifficultyIsSignificant;
 }
 
 void Course::GetTrails( vector<Trail*> &AddTo, StepsType st ) const
