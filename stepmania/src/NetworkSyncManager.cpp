@@ -99,6 +99,7 @@ void NetworkSyncManager::CloseConnection()
 		return ;
 	m_ServerVersion = 0;
    	useSMserver = false;
+	isSMOnline = false;
 	FOREACH_PlayerNumber(pn)
 		isSMOLoggedIn[pn] = false;
 	m_startupStatus = 0;
