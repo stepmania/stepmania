@@ -77,13 +77,21 @@ ScreenManager::~ScreenManager()
 {
 	LOG->Trace( "ScreenManager::~ScreenManager()" );
 
+	EmptyDeleteQueue();
+
 	// delete current states
 	for( int i=0; i<m_ScreenStack.GetSize(); i++ )
 		SAFE_DELETE( m_ScreenStack[i] );
 }
 
+void ScreenManager::EmptyDeleteQueue()
+{
+	// delete all ScreensToDelete
+	for( int i=0; i<m_ScreensToDelete.GetSize(); i++ )
+		SAFE_DELETE( m_ScreensToDelete[i] );
 
-
+	m_ScreensToDelete.RemoveAll();
+}
 
 void ScreenManager::Update( float fDeltaTime )
 {
@@ -92,15 +100,10 @@ void ScreenManager::Update( float fDeltaTime )
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		m_textCreditInfo[p].Update( fDeltaTime );
 
-	// delete all ScreensToDelete
-	int i;
-	for( i=0; i<m_ScreensToDelete.GetSize(); i++ )
-		SAFE_DELETE( m_ScreensToDelete[i] );
-
-	m_ScreensToDelete.RemoveAll();
+	EmptyDeleteQueue();
 
 	// Update all windows in the stack
-	for( i=0; i<m_ScreenStack.GetSize(); i++ )
+	for( int i=0; i<m_ScreenStack.GetSize(); i++ )
 		m_ScreenStack[i]->Update( fDeltaTime );
 
 }

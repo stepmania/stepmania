@@ -50,6 +50,8 @@ private:
 	BitmapText m_textStats;
 	BitmapText m_textSystemMessage;
 	BitmapText m_textCreditInfo[NUM_PLAYERS];
+
+	void EmptyDeleteQueue();
 };
 
 
