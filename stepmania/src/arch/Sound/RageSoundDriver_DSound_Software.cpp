@@ -42,9 +42,6 @@ void RageSound_DSound_Software::MixerThread()
 			continue;
 		}
 
-		/* Silence the buffer. */
-		memset( locked_buf, 0, len );
-
 		this->Mix( (int16_t *) locked_buf, len/bytes_per_frame, play_pos, pcm->GetPosition() );
 
 		pcm->release_output_buf(locked_buf, len);
