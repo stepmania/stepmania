@@ -1509,6 +1509,8 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					feat.Type = RankingFeat::COURSE;
 					feat.pCourse = pCourse;
 					feat.Feat = ssprintf("MR #%d in %s", i+1, pCourse->m_sName.c_str() );
+					if( cd != COURSE_DIFFICULTY_REGULAR )
+						feat.Feat += " " + CourseDifficultyToThemedString(cd);
 					feat.pStringToFill = &hs.sName;
 					feat.grade = GRADE_NO_DATA;
 					feat.iScore = hs.iScore;
