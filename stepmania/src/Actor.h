@@ -225,7 +225,7 @@ public:
 		float fMinZoom = 0.5f,
 		float fMaxZoom = 1.f );
 	void SetEffectSpin( 
-		RageVector3 vect = RageVector3(0,0,1) );
+		RageVector3 vect = RageVector3(0,0,180) );
 	void SetEffectVibrate( 
 		RageVector3 vect = RageVector3(10,10,10) );
 
@@ -245,6 +245,7 @@ public:
 	// render states
 	//
 	virtual void SetBlendMode( BlendMode mode ) { m_BlendMode = mode; } 
+	virtual void SetBlendMode( CString );
 	virtual void SetTextureWrapping( bool b ) 	{ m_bTextureWrapping = b; } 
 	virtual void SetUseZBuffer( bool b ) 		{ m_bUseZBuffer = b; } 
 	virtual void SetUseBackfaceCull( bool b ) 	{ m_bUseBackfaceCull = b; } 

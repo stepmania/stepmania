@@ -65,7 +65,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 		IniFile ini(sPathToIni);
 		ini.ReadFile();
 
-		m_fLengthSeconds = -1;
+		m_fLengthSeconds = 10;
 		ini.GetValueF( "BGAnimation", "LengthSeconds", m_fLengthSeconds );
 		
 		unsigned i;

@@ -761,6 +761,8 @@ float Actor::Command( CString sCommandString )
 		else if( sName=="animate" )			EnableAnimation( bParam(1) );
 		else if( sName=="texturewrapping" )	SetTextureWrapping( bParam(1) );
 		else if( sName=="additiveblend" )	SetBlendMode( bParam(1) ? BLEND_ADD : BLEND_NORMAL );
+		else if( sName=="blend" )			SetBlendMode( sParam(1) );
+		else if( sName=="zbuffer" )			SetUseZBuffer( bParam(1) );
 		else
 		{
 			CString sError = ssprintf( "Unrecognized command name '%s' in command string '%s'.", sName.c_str(), sCommandString.c_str() );
@@ -867,3 +869,13 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 		average_out.diffuse[i]	= ts1.diffuse[i]+ (ts2.diffuse[i]	- ts1.diffuse[i])*fPercentBetween;
 	average_out.glow			= ts1.glow      + (ts2.glow			- ts1.glow		)*fPercentBetween;
 }
+
+void Actor::SetBlendMode( CString s )
+{
+	s.MakeLower();
+	if     (s=="normal")	SetBlendMode( BLEND_NORMAL );
+	else if(s=="add")		SetBlendMode( BLEND_ADD );
+	else if(s=="noeffect")	SetBlendMode( BLEND_NO_EFFECT );
+	else	ASSERT(0);
+}
+
