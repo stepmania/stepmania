@@ -149,7 +149,7 @@ void MenuElements::TweenOnScreenFromMenu( ScreenMessage smSendWhenDone, bool bLe
 	m_soundSwoosh.Play();
 }
 
-void MenuElements::TweenTopLayerOffScreen()
+void MenuElements::TweenTopLayerOffScreen(float tm)
 {
 /*
  This trick is neat, but there's a problem: fOriginalX may not be the settled
@@ -171,20 +171,23 @@ void MenuElements::TweenTopLayerOffScreen()
 	}
 	*/
 
+	if(tm == -1)
+		tm = MENU_ELEMENTS_TWEEN_TIME;
+
 	m_sprTopEdge.StopTweening();
-	m_sprTopEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
+	m_sprTopEdge.BeginTweening( tm, TWEEN_BOUNCE_BEGIN );
 	m_sprTopEdge.SetTweenX( TOP_EDGE_X+SCREEN_WIDTH );
 
 	m_sprStyleIcon.StopTweening();
-	m_sprStyleIcon.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
+	m_sprStyleIcon.BeginTweening( tm, TWEEN_BOUNCE_BEGIN );
 	m_sprStyleIcon.SetTweenX( STYLE_ICON_X+SCREEN_WIDTH );
 
 	m_MenuTimer.StopTweening();
-	m_MenuTimer.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
+	m_MenuTimer.BeginTweening( tm, TWEEN_BOUNCE_BEGIN );
 	m_MenuTimer.SetTweenX( TIMER_X+SCREEN_WIDTH );
 
 	m_textHelp.StopTweening();
-	m_textHelp.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
+	m_textHelp.BeginTweening( tm/2 );
 	m_textHelp.SetTweenZoomY( 0 );
 }
 
@@ -204,20 +207,13 @@ void MenuElements::ImmedOffScreenToMenu()
 	m_MenuTimer.StopTimer();
 	m_KeepAlive.SetClosed();
 
-	/* XXX: This is an ugly paste from TweenTopLayerOffScreen.
-	 * We need some way to use the same code for tweening and
-	 * immediates ... */
-	m_sprTopEdge.StopTweening();
-	m_sprTopEdge.SetX( TOP_EDGE_X+SCREEN_WIDTH );
+	/* Remove the top layer immediately. */
+	TweenTopLayerOffScreen(0);
 
-	m_sprStyleIcon.StopTweening();
-	m_sprStyleIcon.SetX( STYLE_ICON_X+SCREEN_WIDTH );
-
-	m_MenuTimer.StopTweening();
-	m_MenuTimer.SetX( TIMER_X+SCREEN_WIDTH );
-
-	m_textHelp.StopTweening();
-	m_textHelp.SetZoomY( 0 );
+	/* We need to do a null update after doing null tweens (tweens with zero time),
+	 * or they'll show up in their default positions for a frame (since screens
+	 * draw once before they're updated for the first time). */
+	Update(0);
 }
 
 void MenuElements::TweenBottomLayerOnScreen()

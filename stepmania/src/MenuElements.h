@@ -57,7 +57,7 @@ public:
 
 protected:
 	void TweenTopLayerOnScreen();
-	void TweenTopLayerOffScreen();
+	void TweenTopLayerOffScreen(float tm=-1);
 
 	void TweenBottomLayerOnScreen();
 	void TweenBottomLayerOffScreen();
