@@ -228,10 +228,12 @@ RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisp
 RageDisplay_Null.cpp RageDisplay_Null.h RageException.cpp RageException.h RageInput.cpp RageInput.h \
 RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMath.h \
 RageModelGeometry.cpp RageModelGeometry.h RageSound.cpp RageSound.h RageSoundManager.cpp RageSoundManager.h \
-RageSoundMixBuffer.cpp RageSoundMixBuffer.h RageSoundPosMap.cpp RageSoundPosMap.h RageSoundReader.h \
-RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h RageSoundReader_Preload.cpp RageSoundReader_Preload.h \
-RageSoundReader_Resample.cpp RageSoundReader_Resample.h RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h \
+RageSoundMixBuffer.cpp RageSoundMixBuffer.h \
+RageSoundPosMap.cpp RageSoundPosMap.h RageSoundReader.h RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
+RageSoundReader_Preload.cpp RageSoundReader_Preload.h RageSoundReader_Resample.cpp RageSoundReader_Resample.h \
+RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h \
 RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
+RageSoundReader_Chain.cpp RageSoundReader_Chain.h \
 RageSoundResampler.cpp RageSoundResampler.h \
 RageSurface.cpp RageSurface.h RageSurfaceUtils.cpp RageSurfaceUtils.h \
 RageSurfaceUtils_Palettize.cpp RageSurfaceUtils_Palettize.h \
@@ -338,11 +340,13 @@ test_audio_readers_SOURCES = \
 		$(RageSoundFileReaders) \
 		$(all_test_SOURCES) \
 		tests/test_audio_readers.cpp \
+		RageSoundMixBuffer.cpp RageSoundMixBuffer.h \
 		RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 		RageSoundReader_Preload.cpp RageSoundReader_Preload.h \
 		RageSoundReader_Resample.cpp  RageSoundReader_Resample.h \
 		RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h \
 		RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
+		RageSoundReader_Chain.cpp RageSoundReader_Chain.h \
 		RageSoundResampler.cpp RageSoundResampler.h
 
 test_audio_readers_LDADD = \
