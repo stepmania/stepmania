@@ -24,11 +24,9 @@ struct DateTime;
 class RageFile;
 
 struct XAttr;
-typedef XAttr* LPXAttr;
-typedef std::vector<LPXAttr> XAttrs;
+typedef std::vector<XAttr*> XAttrs;
 struct XNode;
-typedef XNode* LPXNode;
-typedef std::vector<LPXNode> XNodes, *LPXNodes;
+typedef std::vector<XNode*> XNodes;
 
 // Entity Encode/Decode Support
 struct XENTITY
@@ -37,12 +35,11 @@ struct XENTITY
 	TCHAR ref[10];					// entity reference ( &amp; &quot; etc )
 	int ref_len;					// entity reference length
 };
-typedef XENTITY* LPXENTITY;
 
 struct XENTITYS : public std::vector<XENTITY>
 {
-	LPXENTITY GetEntity( int entity );
-	LPXENTITY GetEntity( char* entity );	
+	XENTITY *GetEntity( int entity );
+	XENTITY *GetEntity( char* entity );	
 	int GetEntityCount( const char* str );
 	int Ref2Entity( const char* estr, char* str, int strlen );
 	int Entity2Ref( const char* str, char* estr, int estrlen );
@@ -50,9 +47,8 @@ struct XENTITYS : public std::vector<XENTITY>
 	CString Entity2Ref( const char* str );	
 
 	XENTITYS(){};
-	XENTITYS( LPXENTITY entities, int count );
+	XENTITYS( XENTITY *entities, int count );
 };
-typedef XENTITYS* LPXENTITYS;
 extern XENTITYS entityDefault;
 CString XRef2Entity( const char* estr );
 CString XEntity2Ref( const char* str );	
@@ -72,7 +68,7 @@ struct PARSEINFO
 {
 	bool		trim_value;			// [set] do trim when parse?
 	bool		entity_value;		// [set] do convert from reference to entity? ( &lt; -> < )
-	LPXENTITYS	entitys;			// [set] entity table for entity decode
+	XENTITYS	*entitys;			// [set] entity table for entity decode
 	TCHAR		escape_value;		// [set] escape value (default '\\')
 
 	char*		xml;				// [get] xml source
@@ -83,7 +79,6 @@ struct PARSEINFO
 
 	PARSEINFO() { trim_value = true; entity_value = true; entitys = &entityDefault; xml = NULL; erorr_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELFORMED; escape_value = 0; }
 };
-typedef PARSEINFO* LPPARSEINFO;
 extern PARSEINFO piDefault;
 
 // display optional environment
@@ -91,13 +86,12 @@ struct DISP_OPT
 {
 	bool newline;			// newline when new tag
 	bool reference_value;	// do convert from entity to reference ( < -> &lt; )
-	LPXENTITYS	entitys;	// entity table for entity encode
+	XENTITYS	*entitys;	// entity table for entity encode
 	CString stylesheet;		// empty string = none
 
 	int tab_base;			// internal usage
 	DISP_OPT() { newline = true; reference_value = true; entitys = &entityDefault; tab_base = 0; }
 };
-typedef DISP_OPT* LPDISP_OPT;
 extern DISP_OPT optDefault;
 
 // XAttr : Attribute Implementation
@@ -114,9 +108,8 @@ struct XAttr
 	
 	XNode*	parent;
 
-	bool GetXML( RageFile &f, LPDISP_OPT opt = &optDefault );
+	bool GetXML( RageFile &f, DISP_OPT *opt = &optDefault );
 };
-typedef XAttr* LPXAttr;
 
 // XMLNode structure
 struct XNode
@@ -137,21 +130,21 @@ struct XNode
 	void SetValue(const DateTime &v);
 
 	// internal variables
-	LPXNode	parent;		// parent node
+	XNode	*parent;		// parent node
 	XNodes	childs;		// child node
 	XAttrs	attrs;		// attributes
 
 	// Load/Save XML
-	char*	Load( const char* pszXml, LPPARSEINFO pi = &piDefault );
-	char*	LoadAttributes( const char* pszAttrs, LPPARSEINFO pi = &piDefault );
-	bool GetXML( RageFile &f, LPDISP_OPT opt = &optDefault );
+	char*	Load( const char* pszXml, PARSEINFO *pi = &piDefault );
+	char*	LoadAttributes( const char* pszAttrs, PARSEINFO *pi = &piDefault );
+	bool GetXML( RageFile &f, DISP_OPT *opt = &optDefault );
 
-	bool LoadFromFile( CString sFile, LPPARSEINFO pi = &piDefault );
-	bool SaveToFile( CString sFile, LPDISP_OPT opt = &optDefault );
+	bool LoadFromFile( CString sFile, PARSEINFO *pi = &piDefault );
+	bool SaveToFile( CString sFile, DISP_OPT *opt = &optDefault );
 
 	// in own attribute list
-	const LPXAttr	GetAttr( const char* attrname ) const; 
-	LPXAttr	GetAttr( const char* attrname ); 
+	const XAttr *GetAttr( const char* attrname ) const; 
+	XAttr *GetAttr( const char* attrname ); 
 	const char*	GetAttrValue( const char* attrname ); 
 	bool GetAttrValue(const char* name,CString &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	bool GetAttrValue(const char* name,int &out) const		{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
@@ -162,8 +155,8 @@ struct XNode
 	XAttrs	GetAttrs( const char* name ); 
 
 	// in one level child nodes
-	const LPXNode	GetChild( const char* name ) const; 
-	LPXNode	GetChild( const char* name ); 
+	const XNode *GetChild( const char* name ) const; 
+	XNode *GetChild( const char* name ); 
 	const char*	GetChildValue( const char* name ); 
 	bool GetChildValue(const char* name,CString &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	bool GetChildValue(const char* name,int &out) const		{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
@@ -174,38 +167,38 @@ struct XNode
 	XNodes	GetChilds( const char* name ); 
 	XNodes	GetChilds(); 
 
-	LPXAttr GetChildAttr( const char* name, const char* attrname );
+	XAttr *GetChildAttr( const char* name, const char* attrname );
 	const char* GetChildAttrValue( const char* name, const char* attrname );
 	
 	// modify DOM 
 	int		GetChildCount();
-	LPXNode GetChild( int i );
-	XNodes::iterator GetChildIterator( LPXNode node );
-	LPXNode CreateNode( const char* name = NULL, const char* value = NULL );
-	LPXNode	AppendChild( const char* name = NULL, const char* value = NULL );
-	LPXNode	AppendChild( const char* name, float value );
-	LPXNode	AppendChild( const char* name, int value );
-	LPXNode	AppendChild( const char* name, unsigned value );
-	LPXNode	AppendChild( const char* name, const DateTime &value );
-	LPXNode	AppendChild( LPXNode node );
-	bool	RemoveChild( LPXNode node );
-	LPXNode DetachChild( LPXNode node );
+	XNode *GetChild( int i );
+	XNodes::iterator GetChildIterator( XNode *node );
+	XNode *CreateNode( const char* name = NULL, const char* value = NULL );
+	XNode	*AppendChild( const char* name = NULL, const char* value = NULL );
+	XNode	*AppendChild( const char* name, float value );
+	XNode	*AppendChild( const char* name, int value );
+	XNode	*AppendChild( const char* name, unsigned value );
+	XNode	*AppendChild( const char* name, const DateTime &value );
+	XNode	*AppendChild( XNode *node );
+	bool	RemoveChild( XNode *node );
+	XNode *DetachChild( XNode *node );
 
 
-	LPXAttr GetAttr( int i );
-	XAttrs::iterator GetAttrIterator( LPXAttr node );
-	LPXAttr CreateAttr( const char* anem = NULL, const char* value = NULL );
-	LPXAttr AppendAttr( const char* name = NULL, const char* value = NULL );
-	LPXAttr AppendAttr( const char* name, float value );
-	LPXAttr AppendAttr( const char* name, int value );
-	LPXAttr AppendAttr( const char* name, unsigned value );
-	LPXAttr AppendAttr( const char* name, const DateTime &value );
-	LPXAttr	AppendAttr( LPXAttr attr );
-	bool	RemoveAttr( LPXAttr attr );
-	LPXAttr DetachAttr( LPXAttr attr );
+	XAttr *GetAttr( int i );
+	XAttrs::iterator GetAttrIterator( XAttr *node );
+	XAttr *CreateAttr( const char* anem = NULL, const char* value = NULL );
+	XAttr *AppendAttr( const char* name = NULL, const char* value = NULL );
+	XAttr *AppendAttr( const char* name, float value );
+	XAttr *AppendAttr( const char* name, int value );
+	XAttr *AppendAttr( const char* name, unsigned value );
+	XAttr *AppendAttr( const char* name, const DateTime &value );
+	XAttr	*AppendAttr( XAttr *attr );
+	bool	RemoveAttr( XAttr *attr );
+	XAttr *DetachAttr( XAttr *attr );
 
 	// operator overloads
-	LPXNode operator [] ( int i ) { return GetChild(i); }
+	XNode* operator [] ( int i ) { return GetChild(i); }
 
 	XNode() { parent = NULL; }
 	~XNode();
