@@ -166,9 +166,8 @@ bool DWILoader::LoadFromDWITokens(
 	else if( sDescription.CompareNoCase("maniac")==0 )	out.SetDifficulty( DIFFICULTY_HARD );
 	else if( sDescription.CompareNoCase("smaniac")==0 )	out.SetDifficulty( DIFFICULTY_CHALLENGE );
 
-	NoteData* pNoteData = new NoteData;
-	ASSERT( pNoteData );
-	pNoteData->SetNumTracks( g_mapDanceNoteToNoteDataColumn.size() );
+	NoteData newNoteData;
+	newNoteData.SetNumTracks( g_mapDanceNoteToNoteDataColumn.size() );
 
 	for( int pad=0; pad<2; pad++ )		// foreach pad
 	{
@@ -256,9 +255,9 @@ bool DWILoader::LoadFromDWITokens(
 					DWIcharToNoteCol( c, (GameController)pad, iCol1, iCol2 );
 
 					if( iCol1 != -1 )
-						pNoteData->SetTapNote(iCol1, iIndex, TAP_TAP);
+						newNoteData.SetTapNote(iCol1, iIndex, TAP_TAP);
 					if( iCol2 != -1 )
-						pNoteData->SetTapNote(iCol2, iIndex, TAP_TAP);
+						newNoteData.SetTapNote(iCol2, iIndex, TAP_TAP);
 
 					if( sStepData[i] == '!' )
 					{
@@ -268,9 +267,9 @@ bool DWILoader::LoadFromDWITokens(
 						DWIcharToNoteCol( holdChar, (GameController)pad, iCol1, iCol2 );
 
 						if( iCol1 != -1 )
-							pNoteData->SetTapNote(iCol1, iIndex, TAP_HOLD_HEAD);
+							newNoteData.SetTapNote(iCol1, iIndex, TAP_HOLD_HEAD);
 						if( iCol2 != -1 )
-							pNoteData->SetTapNote(iCol2, iIndex, TAP_HOLD_HEAD);
+							newNoteData.SetTapNote(iCol2, iIndex, TAP_HOLD_HEAD);
 
 					}
 				}
@@ -283,13 +282,12 @@ bool DWILoader::LoadFromDWITokens(
 	}
 
 	// this will expand the HoldNote begin markers we wrote into actual HoldNotes
-	pNoteData->Convert2sAnd3sToHoldNotes();
+	newNoteData.Convert2sAnd3sToHoldNotes();
 
-	ASSERT( pNoteData->GetNumTracks() > 0 );
+	ASSERT( newNoteData.GetNumTracks() > 0 );
 
-	out.SetNoteData(pNoteData);
+	out.SetNoteData(&newNoteData);
 
-	delete pNoteData;
 	out.TidyUpData();
 
 	return true;
