@@ -14,16 +14,6 @@ void NetworkSyncManager::ReportSongOver() { }
 void NetworkSyncManager::StartRequest() { }
 void NetworkSyncManager::DisplayStartupStatus() { }
 void NetworkSyncManager::Update( float fDeltaTime ) { }
-void NetworkSyncManager::WriteNT() { }
-void NetworkSyncManager::Write1() { }
-void NetworkSyncManager::Write2() { }
-void NetworkSyncManager::Write4() { }
-void NetworkSyncManager::ProcessInput() { }
-void NetworkSyncManager::Read1() { }
-void NetworkSyncManager::Read2() { }
-void NetworkSyncManager::Read4() { }
-void NetworkSyncManager::ReadNT() { }
-
 
 #else
 #include "ezsockets.h"
