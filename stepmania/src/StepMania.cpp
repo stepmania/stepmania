@@ -1033,8 +1033,8 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( FONT );
 	SAFE_DELETE( TEXTUREMAN );
 	SAFE_DELETE( DISPLAY );
-	SAFE_DELETE( FILEMAN );
 	SAFE_DELETE( LOG );
+	SAFE_DELETE( FILEMAN );
 
 #if !defined(DEBUG) && defined(_WINDOWS)
 	}
