@@ -49,6 +49,7 @@ MusicBannerWheel::MusicBannerWheel()
 	scrlistPos=0;
 	SongsExist=0;
 	SingleLoad=0;
+	bScanning = false;
 
 	if(DEFAULT_SCROLL_DIRECTION && GAMESTATE->m_pCurSong == NULL) /* check the song is null... incase they have just come back from a song and changed their PlayerOptions */
 	{
@@ -179,8 +180,15 @@ void MusicBannerWheel::InsertNewBanner(int direction)
 	{
 		ASSERT(0); // we should be going in some sort of direction.
 	}
-	if(PREVIEWMUSICMODE == 0 || PREVIEWMUSICMODE == 3)
+	if((PREVIEWMUSICMODE == 0 || PREVIEWMUSICMODE == 3) && !bScanning)
 		PlayMusicSample();
+}
+
+void MusicBannerWheel::SetScanMode(bool Scanmode)
+{
+	bScanning = Scanmode;
+	if((PREVIEWMUSICMODE == 0 || PREVIEWMUSICMODE == 3) && !Scanmode)
+		PlayMusicSample();	
 }
 
 /****************************
@@ -270,7 +278,7 @@ void MusicBannerWheel::LoadSongData()
 		m_ScrollingList.Load( asGraphicPaths );
 	if(SingleLoad == 2)
 		SingleLoad = 1;
-	if(PREVIEWMUSICMODE == 0 || PREVIEWMUSICMODE == 3)
+	if((PREVIEWMUSICMODE == 0 || PREVIEWMUSICMODE == 3) && !bScanning)
 		PlayMusicSample();
 }
 

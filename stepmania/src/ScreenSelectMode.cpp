@@ -65,12 +65,14 @@ ScreenSelectMode::ScreenSelectMode() : ScreenSelect( "ScreenSelectMode" )
 
 		arrayLocations.push_back( sElementPath );
 		
-		if(USE_MODE_SPECIFIC_BGS == 1)
+/*		if(USE_MODE_SPECIFIC_BGS == 1)
 		{	
 			BGAnimation templayer;
 			templayer.LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenSelectMode background %s", mc.name )) );
-			templayer.SetDiffuse(RageColor(0,0,0,0));
-		}
+		//	templayer.SetDiffuse(RageColor(0,0,0,0));
+			m_Backgrounds.push_back(&templayer);
+			this->AddChild( &m_Backgrounds[i] );
+		}*/
 	}
 	
 	// m_ScrollingList.UseSpriteType(BANNERTYPE);
@@ -119,7 +121,20 @@ void ScreenSelectMode::MenuLeft( PlayerNumber pn )
 
 void ScreenSelectMode::ChangeBGA()
 {
-
+/*	for(int i=0; i<m_Backgrounds.size(); i++)
+	{
+		BGAnimation* templayer;
+		templayer = m_Backgrounds[i];
+		if(i == m_ScrollingList.GetSelection() )
+		{
+			templayer->SetDiffuse( RageColor(0,0,0,0));
+		}
+		else
+		{
+			templayer->SetDiffuse( RageColor(1,1,1,1));
+		}
+		m_Backgrounds[i] = templayer;
+	}*/
 }
 
 void ScreenSelectMode::MenuRight( PlayerNumber pn )
@@ -153,12 +168,31 @@ void ScreenSelectMode::UpdateSelectableChoices()
 		// if its joint premium and inclusive of double consider double and versus as needing another coin
 		// if its joint premium and non-inclusive of double consider double as appearing only when one player is available.
 		// if its joint premium, everythings available for play
-		if( (PREFSMAN->m_bJointPremium && INCLUDE_DOUBLE_IN_JP == 1 && (GAMESTATE->GetNumSidesJoined() == mc.numSidesJoinedToPlay) ) ||
+/*		if( (PREFSMAN->m_bJointPremium && INCLUDE_DOUBLE_IN_JP == 1 && (GAMESTATE->GetNumSidesJoined() == mc.numSidesJoinedToPlay) ) ||
 			(PREFSMAN->m_bJointPremium && INCLUDE_DOUBLE_IN_JP == 0 && 
 			modename.substr(0, 6) == "DOUBLE" || modename.substr(0, 13) == "ARCADE-DOUBLE" ||
 			modename.substr(0, 10) == "HALFDOUBLE" || modename.substr(0, 17) == "ARCADE-HALFDOUBLE" ||
-			(GAMESTATE->GetNumSidesJoined() == mc.numSidesJoinedToPlay)) ||
+			(GAMESTATE->GetNumSidesJoined() != mc.numSidesJoinedToPlay)) ||
 			(!PREFSMAN->m_bJointPremium)
+		)*/
+
+		if( (!PREFSMAN->m_bJointPremium ) ||
+			(
+				PREFSMAN->m_bJointPremium && 
+				( 
+					(INCLUDE_DOUBLE_IN_JP == 1 && (GAMESTATE->GetNumSidesJoined() == mc.numSidesJoinedToPlay)) || 
+					(
+						INCLUDE_DOUBLE_IN_JP == 0 && 
+						(
+							GAMESTATE->GetNumSidesJoined() == mc.numSidesJoinedToPlay || 
+							(modename.substr(0, 6) == "DOUBLE" || modename.substr(0, 13) == "ARCADE-DOUBLE" ||
+							modename.substr(0, 10) == "HALFDOUBLE" || modename.substr(0, 17) == "ARCADE-HALFDOUBLE") &&
+							GAMESTATE->GetNumSidesJoined() != 2
+						)
+					)
+				) 
+			)			
+			
 		)
 		{
 			m_iNumChoices++;
@@ -221,5 +255,17 @@ int ScreenSelectMode::GetSelectionIndex( PlayerNumber pn )
 
 void ScreenSelectMode::Update( float fDelta )
 {
+/*	if(m_Backgrounds.empty() && USE_MODE_SPECIFIC_BGS == 1)
+	{
+		ASSERT(0);
+	}
+	else if(USE_MODE_SPECIFIC_BGS == 1)
+	{
+//		for(int i=0; i<m_Backgrounds.size(); i++)
+//		{
+//			m_Backgrounds[i]->Draw();
+//		}
+	}*/
+
 	ScreenSelect::Update( fDelta );
 }

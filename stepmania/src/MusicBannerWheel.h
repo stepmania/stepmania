@@ -34,11 +34,15 @@ public:
 	void PlayMusicSample();
 	void StartBouncing();
 	void StopBouncing();
+	void SetScanMode(bool Scanmode);
+
 private:
 	void SetNewPos(int NewPos);
 	void LoadSongData();
 	void ChangeNotes();
 	void InsertNewBanner(int direction);
+
+	bool bScanning;
 
 	#ifdef DEBUG
 		BitmapText	m_debugtext;

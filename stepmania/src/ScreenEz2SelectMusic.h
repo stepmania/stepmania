@@ -70,6 +70,8 @@ protected:
 	RageSound			m_soundOptionsChange;
 	RageSound			m_soundMusicChange;
 	RageSound			m_soundMusicCycle;
+	RageSound			m_soundBackMusic;
+	RageSound			m_soundButtonPress;
 
 	float m_fRemainingWaitTime;
 	MusicBannerWheel			m_MusicBannerWheel;
@@ -77,13 +79,16 @@ protected:
 	DifficultyRating	m_DifficultyRating;
 //	DifficultyMeter			m_DifficultyMeter[NUM_PLAYERS];
 	vector<Notes*>		m_arrayNotes[NUM_PLAYERS];
+
 	int					m_iSelection[NUM_PLAYERS];
 	bool m_bGoToOptions;
 	bool m_bMadeChoice;
 	bool m_bTransitioning;
+	bool m_bScanning;
 
 	int i_SkipAheadOffset;
 	float ScrollStartTime;
+	float LastInputTime;
 
 	int i_ErrorDetected;
 

@@ -70,11 +70,19 @@ const ScreenMessage SM_NoSongs	= ScreenMessage(SM_User+3);
 ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 {
 	i_SkipAheadOffset = 0;
+	LastInputTime = 0;
 	ScrollStartTime = 0;
 	m_bTransitioning = false;
+	m_bScanning = false;
 	m_fRemainingWaitTime = 0.0f;
 	i_ErrorDetected=0;
 	CodeDetector::RefreshCacheItems();
+
+	if(PREVIEWMUSICMODE == 4)
+	{
+		m_soundBackMusic.Load( THEME->GetPathToS("ScreenEz2SelectMusic music"));
+		m_soundBackMusic.Play();
+	}
 
 	if(PREVIEWMUSICMODE == 1 || PREVIEWMUSICMODE == 3)
 	{
@@ -87,6 +95,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 	m_Menu.Load("ScreenSelectMusic", true, false);
 	this->AddChild( &m_Menu );
 
+	m_soundButtonPress.Load( THEME->GetPathToS("ScreenEz2SelectMusic buttonpress"));
 	m_soundMusicChange.Load( THEME->GetPathToS("ScreenEz2SelectMusic change"));
 	m_soundMusicCycle.Load( THEME->GetPathToS("ScreenEz2SelectMusic cycle"));
 	m_soundSelect.Load( THEME->GetPathToS("Common start") );
@@ -244,6 +253,7 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	}
 	if( type != IET_FIRST_PRESS )
 	{
+		m_bScanning = true;
 		m_soundMusicCycle.Play();
 		i_SkipAheadOffset = 0;
 		if(ScrollStartTime == 0)
@@ -265,12 +275,13 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	}
 	else
 	{
+		m_bScanning = false;
 		i_SkipAheadOffset = 0;
 		ScrollStartTime = 0;
-		m_soundMusicChange.Play();
+	//	m_soundMusicChange.Play();
+		m_soundButtonPress.Play();
 	}
-
-
+	LastInputTime = RageTimer::GetTimeSinceStart();
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
@@ -444,6 +455,15 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 
 void ScreenEz2SelectMusic::Update( float fDeltaTime )
 {
+	if(i_SkipAheadOffset > 0 && RageTimer::GetTimeSinceStart() - LastInputTime < 0.5)
+	{
+		m_MusicBannerWheel.SetScanMode(true);
+	}
+	else
+	{
+		m_MusicBannerWheel.SetScanMode(false);
+	}
+	
 	if(m_MusicBannerWheel.CheckSongsExist() == 0 && ! i_ErrorDetected)
 	{
 		SCREENMAN->Prompt( SM_NoSongs, "ERROR:\n \nThere are no songs available for play!" );
@@ -575,6 +595,9 @@ void ScreenEz2SelectMusic::MusicChanged()
 		m_sprBalloon.StopTweening();
 		OFF_COMMAND( m_sprBalloon );
 	}
+	
+	if(	!m_bScanning )
+		m_soundMusicChange.Play();
 
 	if((PREVIEWMUSICMODE == 1 || PREVIEWMUSICMODE == 3) && iConfirmSelection == 1)
 	{
