@@ -1317,10 +1317,10 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	if( m_pPlayerStageStats )
 		m_pPlayerStageStats->iCurCombo;
 
-	if(m_pPrimaryScoreKeeper)
-		m_pPrimaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow );
-	if(m_pSecondaryScoreKeeper)
-		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow );
+	if( m_pPrimaryScoreKeeper != NULL )
+		m_pPrimaryScoreKeeper->HandleTapRowScore( scoreOfLastTap, iNumTapsInRow );
+	if( m_pSecondaryScoreKeeper != NULL )
+		m_pSecondaryScoreKeeper->HandleTapRowScore( scoreOfLastTap, iNumTapsInRow );
 
 	if( m_pPlayerStageStats )
 		m_Combo.SetCombo( m_pPlayerStageStats->iCurCombo, m_pPlayerStageStats->iCurMissCombo );
