@@ -202,13 +202,7 @@ public:
     RageMatrix( float v00, float v01, float v02, float v03,
                 float v10, float v11, float v12, float v13,
                 float v20, float v21, float v22, float v23,
-                float v30, float v31, float v32, float v33 )
-	{
-		m00=v00; m01=v01; m02=v02; m03=v03;
-		m10=v10; m11=v11; m12=v12; m13=v13;
-		m20=v20; m21=v21; m22=v22; m23=v23;
-		m30=v30; m31=v31; m32=v32; m33=v33;
-	}
+                float v30, float v31, float v32, float v33 );
 
     // access grants
 	float& operator () ( int iRow, int iCol )		{ return m[iCol][iRow]; }
@@ -218,7 +212,7 @@ public:
     operator float* ()								{ return m[0]; }
     operator const float* () const					{ return m[0]; }
 
-	RageMatrix GetTranspose() const { return RageMatrix(m00,m10,m20,m30,m01,m11,m21,m31,m02,m12,m22,m32,m03,m13,m23,m33); }
+    RageMatrix GetTranspose() const;
 
 //	---These are not used.  Maybe I'll implement them later...---
 //  // assignment operators
@@ -244,17 +238,7 @@ public:
 //  bool operator == ( const RageMatrix& ) const;
 //  bool operator != ( const RageMatrix& ) const;
 
-    union
-    {
-        float m[4][4];
-        struct
-        {
-            float m00, m01, m02, m03;
-            float m10, m11, m12, m13;
-            float m20, m21, m22, m23;
-            float m30, m31, m32, m33;
-        };
-    };
+	float m[4][4];
 };
 
 #if defined(_MSC_VER)
