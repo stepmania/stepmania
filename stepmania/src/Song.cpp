@@ -1236,8 +1236,11 @@ void Song::TidyUpData()
 void Song::GetNotesThatMatch( const StyleDef *s, int p, CArray<Notes*, Notes*>& arrayAddTo ) const
 {
 	for( int i=0; i<m_apNotes.GetSize(); i++ )	// for each of the Song's Notes
-		if( m_apNotes[i]->m_NotesType == s->m_NotesTypes[p] )
+	{
+		if( m_apNotes[i]->m_NotesType == s->m_NotesTypes[p] ||
+			m_apNotes[i]->m_NotesType == s->m_FallbackNotesType )
 			arrayAddTo.Add( m_apNotes[i] );
+	}
 }
 
 /* Return whether the song is playable in the given style. */
@@ -1483,7 +1486,7 @@ Grade Song::GetGradeForDifficultyClass( const StyleDef *st, int p, DifficultyCla
 
 	for( int i=0; i<aNotes.GetSize(); i++ )
 	{
-		Notes* pNotes = aNotes[i];
+		const Notes* pNotes = aNotes[i];
 		if( pNotes->m_DifficultyClass == dc )
 			return pNotes->m_TopGrade;
 	}
