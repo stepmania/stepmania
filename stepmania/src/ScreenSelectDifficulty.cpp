@@ -325,6 +325,14 @@ void ScreenSelectDifficulty::ChangeTo( PlayerNumber pn, int iSelectionWas, int i
 	bool bSelectedSomethingOnPage1 = iSelectionIs < 3;
 	bool bSelectedSomethingOnPage2 = iSelectionIs >= 3;
 
+	bool bSomeoneMadeAChoice = false;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( GAMESTATE->IsPlayerEnabled(p) && m_bChosen[p] )
+			bSomeoneMadeAChoice = true;
+
+	if( bSomeoneMadeAChoice && (bChangedPagesFrom1To2 || bChangedPagesFrom2To1) )
+		return;	// don't allow changing pages after one player has chosen
+
 	if( bSelectedSomethingOnPage2 )
 	{
 		// change both players
@@ -358,7 +366,7 @@ void ScreenSelectDifficulty::ChangeTo( PlayerNumber pn, int iSelectionWas, int i
 		m_framePages.SetTweenX( bSelectedSomethingOnPage1 ? 0.0f : -SCREEN_WIDTH );
 	}
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( bSelectedSomethingOnPage2 || bChangedPagesFrom2To1 || p==pn )
 		{
@@ -382,6 +390,10 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	if( m_bChosen[pn] == true )
 		return;
 	m_bChosen[pn] = true;
+
+	for( int page=0; page<NUM_PAGES; page++ )
+		m_sprMoreArrows[page].FadeOff( 0, "fade", 0.5f );
+
 
 	m_soundSelect.Play();
 	int iSelection = m_iSelection[pn];
