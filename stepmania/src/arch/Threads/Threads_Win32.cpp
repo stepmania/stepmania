@@ -5,7 +5,14 @@
 
 const int MAX_THREADS=128;
 
-static MutexImpl_Win32 g_ThreadIdMutex(NULL);
+static MutexImpl_Win32 *g_pThreadIdMutex = NULL;
+static void InitThreadIdMutex()
+{
+	if( g_pThreadIdMutex != NULL )
+		return;
+	g_pThreadIdMutex = new MutexImpl_Win32(NULL);
+}
+
 static int g_ThreadIds[MAX_THREADS];
 static HANDLE g_ThreadHandles[MAX_THREADS];
 
@@ -71,7 +78,9 @@ static DWORD WINAPI StartThread( LPVOID pData )
 
 static int GetOpenSlot( int iID )
 {
-	g_ThreadIdMutex.Lock();
+	InitThreadIdMutex();
+
+	g_pThreadIdMutex->Lock();
 
 	/* Find an open slot in g_ThreadIds. */
 	int slot = 0;
@@ -81,7 +90,7 @@ static int GetOpenSlot( int iID )
 
 	g_ThreadIds[slot] = iID;
 
-	g_ThreadIdMutex.Unlock();
+	g_pThreadIdMutex->Unlock();
 
 	return slot;
 }
@@ -143,6 +152,8 @@ MutexImpl_Win32::~MutexImpl_Win32()
 
 static bool SimpleWaitForSingleObject( HANDLE h, DWORD ms )
 {
+	ASSERT( h != NULL );
+
 	DWORD ret = WaitForSingleObject( h, ms );
 	switch( ret )
 	{
