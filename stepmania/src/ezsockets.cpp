@@ -214,7 +214,8 @@ void EzSockets::update()
 
 	//Check for reading
 	while (CanRead() && !IsError())
-		pUpdateRead();
+		if (pUpdateRead()<1)
+			break;
  
 	if (CanWrite() && (outBuffer.length()>0))
 		pUpdateWrite();
@@ -259,16 +260,15 @@ int EzSockets::PeekData(char *data, unsigned int bytes)
 		while ((inBuffer.length()<bytes) && !IsError())
 			pUpdateRead();
 	else
-	{
 		while (CanRead()&&!IsError())
-			pUpdateRead();
-	}
+			if (pUpdateRead()<1)
+				break;
 
 	int bytesRead = bytes;
 	if (inBuffer.length()<bytes)
 		bytesRead = inBuffer.length();
 
-	memcpy(data,(inBuffer.substr(0,bytesRead)).c_str(),bytesRead);
+	memcpy(data,inBuffer.c_str(),bytesRead);
 
 	return bytesRead;
 }
@@ -301,10 +301,14 @@ int EzSockets::PeekPack(char * data, unsigned int max)
 			pUpdateRead();
 		}
 
+		if (IsError())
+			return (-1);
+
+//		LOG->Info("TTY:%d",inBuffer.length()
 		unsigned int size=0;
 		PeekData((char*)&size,4);
 		size = ntohl(size);
-
+//		LOG->Info("TXA:%d",size);
 		while ((inBuffer.length()<(size+4)) && !IsError())
 		{
 			pUpdateRead();
@@ -325,7 +329,7 @@ int EzSockets::PeekPack(char * data, unsigned int max)
 			unsigned int size=0;
 			PeekData((char*)&size,4);
 			size = ntohl(size);
-			if (inBuffer.length()<(size+4))
+			if ((inBuffer.length()<(size+4)) || (inBuffer.length()<=4))
 				return (-1);
 
 			string tBuff(inBuffer.substr(4,size));
