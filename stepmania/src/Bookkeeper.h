@@ -13,7 +13,6 @@
 */
 
 #include "Style.h"
-#include "SDL_Types.h"
 
 const int DAYS_PER_YEAR = 365;
 const int HOURS_PER_DAY = 24;
