@@ -13,14 +13,11 @@
 
 #include "SDL_rotozoom.h"
 
-#include <stdlib.h>
 #include <math.h>
 
 struct tColorRGBA {
-    Uint8 r,g,b,a;
+    Uint8 c[4];
 };
-
-#define MAX(a,b)    (((a) > (b)) ? (a) : (b))
 
 /* 
  
@@ -29,133 +26,114 @@ struct tColorRGBA {
  Zoomes 32bit RGBA/ABGR 'src' surface to 'dst' surface.
  
 */
+/* Coordinate 0x0 represents the exact top-left corner of a bitmap.  .5x.5
+ * represents the center of the top-left pixel; 1x1 is the center of the top
+ * square of pixels.  
+ *
+ * (Look at a grid: map coordinates to the lines, not the squares between the
+ * lines.)
+ */
 
-int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int smooth)
+float frac(float x) { return x-int(x); }
+int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst)
 {
-    int x, y, sx, sy, *sax, *say;
+    /* Ratio from source to dest. */
+    float sx = float(src->w) / dst->w;
+    float sy = float(src->h) / dst->h;
 
-    /* Variable setup */
-    // if (smooth) {
-	/* For interpolation: assume source dimension is one pixel */
-	/* smaller to avoid overflow on right and bottom edge. */
-	/* XXX: no, this misaligns stuff; we need to clamp properly -glenn */
-	// sx = (int) (65536.0 * (float) (src->w - 1) / (float) dst->w);
-	// sy = (int) (65536.0 * (float) (src->h - 1) / (float) dst->h);
-    // } else {
-	sx = 65536 * src->w / dst->w;
-	sy = 65536 * src->h / dst->h;
-    //}
-
-    /* Allocate memory for row increments */
-    if ((sax = (int *) malloc((dst->w + 1) * sizeof(Uint32))) == NULL)
-	return (-1);
-
-    if ((say = (int *) malloc((dst->h + 1) * sizeof(Uint32))) == NULL) {
-	free(sax);
-	return (-1);
-    }
+    float *sax = new float[dst->w];
+    float *say = new float[dst->h];
 
     /* Precalculate row increments */
-    int csx = 0;
-    int *csax = sax;
-    for (x = 0; x <= dst->w; x++) {
-	*csax = csx;
-	csx &= 0xffff;
-	csax++;
-	csx += sx;
-    }
-    int csy = 0;
-    int *csay = say;
-    for (y = 0; y <= dst->h; y++) {
-	*csay = csy;
-	csy &= 0xffff;
-	csay++;
-	csy += sy;
-    }
+    int x, y;
+    /* sax[x] is the exact (floating-point) x coordinate in the source
+     * that the destination pixel at x should from.  For example, if we're
+     * going 512->256, then dst[0] should come from the pixels from 0..1 and
+     * 1..2, so sax[0] is 1. sx is the total number of pixels, so sx/2 is the
+     * distance from the start of the sample to its center. */
+    for (x = 0; x < dst->w; x++)
+	sax[x] = sx*x + sx/2;
 
-    /* Pointer setup */
-    tColorRGBA *sp, *csp;
-    sp = csp = (tColorRGBA *) src->pixels;
+    for (y = 0; y < dst->h; y++)
+	say[y] = sy*y + sy/2;
 
-    /* Switch between interpolating and non-interpolating code */
-    csay = say;
-    if (smooth) {
-	/* Interpolating Zoom */
+    tColorRGBA *sp = (tColorRGBA *) src->pixels;
 
-	/* Scan destination */
-	for (y = 0; y < dst->h; y++) {
-	    /* Set up color source pointers */
-	    tColorRGBA *c00 = csp;
-	    tColorRGBA *c01 = csp+1;
-	    tColorRGBA *c10 = (tColorRGBA *) ((Uint8 *) csp + src->pitch);
-	    tColorRGBA *c11 = c10+1;
-	    csax = sax;
-	    /* Set destination pointer. */
-	    tColorRGBA *dp = (tColorRGBA *) ((Uint8 *) dst->pixels + dst->pitch*y);
+    /* Scan destination */
+    for (y = 0; y < dst->h; y++) {
+	/* Set destination pointer. */
 
-	    for (x = 0; x < dst->w; x++) {
+	/* sx/2 is the distance from the start of the sample to the center;
+	 * sx/4 is the distance from the center of the sample to the center of
+	 * either pixel. */
+        float xstep = sx/4;
+        float ystep = sy/4;
 
-		/*
-		 * Interpolate colors 
-		 */
-		int ex = *csax & 0xffff;
-		int ey = *csay & 0xffff;
-		int t1, t2;
-		t1 = ((((c01->r - c00->r) * ex) >> 16) + c00->r) & 0xff;
-		t2 = ((((c11->r - c10->r) * ex) >> 16) + c10->r) & 0xff;
-		dp->r = (Uint8)((((t2 - t1) * ey) >> 16) + t1);
-		t1 = ((((c01->g - c00->g) * ex) >> 16) + c00->g) & 0xff;
-		t2 = ((((c11->g - c10->g) * ex) >> 16) + c10->g) & 0xff;
-		dp->g = (Uint8)((((t2 - t1) * ey) >> 16) + t1);
-		t1 = ((((c01->b - c00->b) * ex) >> 16) + c00->b) & 0xff;
-		t2 = ((((c11->b - c10->b) * ex) >> 16) + c10->b) & 0xff;
-		dp->b = (Uint8)((((t2 - t1) * ey) >> 16) + t1);
-		t1 = ((((c01->a - c00->a) * ex) >> 16) + c00->a) & 0xff;
-		t2 = ((((c11->a - c10->a) * ex) >> 16) + c10->a) & 0xff;
-		dp->a = (Uint8)((((t2 - t1) * ey) >> 16) + t1);
+	int ytop = int(say[y]-ystep);
+	int ybottom = int(say[y]+ystep);
 
-		/* Advance source pointers. */
-		csax++;
-		int sstep = (*csax >> 16);
-		c00 += sstep;
-		c01 += sstep;
-		c10 += sstep;
-		c11 += sstep;
-		/* Advance destination pointer. */
-		dp++;
+	tColorRGBA *dp = (tColorRGBA *) ((Uint8 *) dst->pixels + dst->pitch*y);
+	tColorRGBA *csp = (tColorRGBA *) ((Uint8 *) sp + ytop * src->pitch);
+	tColorRGBA *ncsp = (tColorRGBA *) ((Uint8 *) sp + ybottom * src->pitch);
+
+	for (x = 0; x < dst->w; x++) {
+	    /* x coordinates of left and right pixels to sample */
+	    int xleft = int(sax[x]-xstep);
+	    int xright = int(sax[x]+xstep);
+
+	    /* Grab pointers to the sampled pixels: */
+	    tColorRGBA *c00 = csp + xleft;
+	    tColorRGBA *c01 = csp + xright;
+	    tColorRGBA *c10 = ncsp + xleft;
+	    tColorRGBA *c11 = ncsp + xright;
+
+	    /* Distance between the pixels that were sampled: */
+	    int xdist = xright - xleft;
+	    int ydist = ybottom - ytop;
+
+	    float ex0, ex1, ey0, ey1;
+	    if(xdist == 0) {
+		/* If the sampled pixels happen to be the same, the distance
+		 * will be 0.  Avoid division by zero. */
+		ex0 = 1.f; ex1 = 0.f;
+	    } else {
+		/* fleft is the left pixel sampled; +.5 is the center: */
+    		float fleft = xleft + .5f;
+		/* sax[x] is somewhere between the centers of both sampled
+		 * pixels; find the percentage: */
+		float p = (sax[x] - fleft) / xdist;
+		ex0 = 1-p;
+		ex1 = 1-ex0;
 	    }
-	    /* Advance source pointer. */
-	    csay++;
-	    csp = (tColorRGBA *) ((Uint8 *) csp + (*csay >> 16) * src->pitch);
-	}
 
-    } else {
-	/* Non-Interpolating Zoom */
-	for (y = 0; y < dst->h; y++) {
-	    sp = csp;
-	    csax = sax;
-	    tColorRGBA *dp = (tColorRGBA *) ((Uint8 *) dst->pixels + dst->pitch*y);
-	    for (x = 0; x < dst->w; x++) {
-		/* Draw */
-		*dp = *sp;
-		/* Advance source pointers */
-		csax++;
-		sp += (*csax >> 16);
-		/* Advance destination pointer */
-		dp++;
+	    if(ydist == 0) {
+		ey0 = 1.f; ey1 = 0.f;
+	    } else {
+    		float ftop = ytop + .5f;
+		float p = (say[y] - ftop) / ydist;
+		ey0 = 1-p;
+		ey1 = 1-ey0;
 	    }
-	    /* Advance source pointer */
-	    csay++;
-	    csp = (tColorRGBA *) ((Uint8 *) csp + (*csay >> 16) * src->pitch);
-	}
 
+	    for(int c = 0; c < 4; ++c) {
+		float xxx0, xxx1;
+		xxx0 = c01->c[c] * ex1;
+		xxx0 += c00->c[c] * ex0;
+		xxx1 = c11->c[c] * ex1;
+		xxx1 += c10->c[c] * ex0;
+
+		float res = (xxx0 * ey0) + (xxx1 * ey1);
+		dp->c[c] = Uint8(res);
+	    }
+
+	    /* Advance destination pointer. */
+	    dp++;
+	}
     }
 
-    /*
-     * Remove temp arrays 
-     */
-    free(sax);
-    free(say);
+    /* Remove temp arrays */
+    delete [] sax;
+    delete [] say;
 
     return (0);
 }
@@ -193,7 +171,7 @@ void zoomSurfaceSize(int width, int height, double zoomx, double zoomy, int *dst
     if (*dstheight < 1) *dstheight = 1;
 }
 
-SDL_Surface *zoomSurface(SDL_Surface * src, double zoomx, double zoomy, int smooth)
+SDL_Surface *zoomSurface(SDL_Surface * src, double zoomx, double zoomy)
 {
     SDL_Surface *rz_dst;
     int dstwidth, dstheight;
@@ -220,7 +198,7 @@ SDL_Surface *zoomSurface(SDL_Surface * src, double zoomx, double zoomy, int smoo
     SDL_LockSurface(src);
 
     /* Call the 32bit transformation routine to do the zooming (using alpha) */
-    zoomSurfaceRGBA(src, rz_dst, smooth);
+    zoomSurfaceRGBA(src, rz_dst);
     /* Turn on source-alpha support */
     SDL_SetAlpha(rz_dst, SDL_SRCALPHA, 255);
     /* Unlock source surface */

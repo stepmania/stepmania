@@ -183,8 +183,8 @@ void RageBitmapTexture::Create(
 		/* Don't use more than we were hinted to. */
 		src_alpha_bits = min( iAlphaBits, src_alpha_bits );
 
-/* XXX Scan the image, and see if it actually uses its alpha channel/color key
- * (if any).  Reduce to 1 or 0 bits of alpha if possible. */
+		/* XXX Scan the image, and see if it actually uses its alpha channel/color key
+		* (if any).  Reduce to 1 or 0 bits of alpha if possible. */
 
 		switch( src_alpha_bits ) {
 		case 0:		fmtTexture = D3DFMT_R5G6B5;		break;
@@ -250,25 +250,36 @@ void RageBitmapTexture::Create(
 
 	if( bStretch ) {
 		/* zoomSurface takes a ratio.  I'm not sure if it's always exact; we don't
-			* want to accidentally create a 513x513 texture, for example (it won't just
-			* cause lines; it'll be copied to the texture completely wrong). */
+		 * want to accidentally create a 513x513 texture, for example (it won't just
+		 * cause lines; it'll be copied to the texture completely wrong). */
 		
 		/* resize currently only does RGBA8888 */
-		if(img->format->BitsPerPixel != 32 || img->format->colorkey) {
+		{
 			int mask = 0;
 			ConvertSDLSurface(img, img->w, img->h, PixFmtMasks[mask][4],
 				PixFmtMasks[mask][0], PixFmtMasks[mask][1], PixFmtMasks[mask][2], PixFmtMasks[mask][3]);
 		}
-		SDL_Surface *dst;
-		dst = zoomSurface(img, float(m_iTextureWidth)/m_iImageWidth,
-			float(m_iTextureHeight) / m_iImageHeight, SMOOTHING_ON);
 
-		SDL_FreeSurface(img);
-		img = dst;
+		while (m_iImageWidth != m_iTextureWidth || m_iImageHeight != m_iTextureHeight) {
+			SDL_Surface *dst;
 
-		/* The new image size is the full texture size. */
-		m_iImageWidth	= m_iTextureWidth;
-		m_iImageHeight	= m_iTextureHeight;
+			float xscale = float(m_iTextureWidth)/m_iImageWidth;
+			float yscale = float(m_iTextureHeight)/m_iImageHeight;
+			/* Our simple filter is a simple linear filter, so it can't
+			 * scale to less than .5 very well.  If we need to go lower
+			 * than .5, do it iteratively. */
+			xscale = max(xscale, .5f);
+			yscale = max(yscale, .5f);
+
+			dst = zoomSurface(img, xscale, yscale);
+
+			SDL_FreeSurface(img);
+			img = dst;
+
+			/* The new image size is the full texture size. */
+			m_iImageWidth	= int(m_iImageWidth * xscale + .0001);
+			m_iImageHeight	= int(m_iImageHeight * yscale + .0001);
+		}
 	}
 
 	if( bDither )

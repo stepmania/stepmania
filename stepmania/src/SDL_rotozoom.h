@@ -11,11 +11,6 @@
 
 #include "SDL.h"
 
-/* ---- Defines */
-
-#define SMOOTHING_OFF		0
-#define SMOOTHING_ON		1
-
 /* 
  
  zoomSurface()
@@ -27,7 +22,7 @@
 
 */
 
-SDL_Surface *zoomSurface(SDL_Surface * src, double zoomx, double zoomy, int smooth);
+SDL_Surface *zoomSurface(SDL_Surface * src, double zoomx, double zoomy);
 
 /* Returns the size of the target surface for a zoomSurface() call */
 void zoomSurfaceSize(int width, int height, double zoomx, double zoomy, int *dstwidth, int *dstheight);
