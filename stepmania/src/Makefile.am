@@ -67,7 +67,7 @@ ActorsInMenus = \
 Banner.cpp Banner.h BannerWithFrame.cpp BannerWithFrame.h BPMDisplay.cpp BPMDisplay.h CourseContentsList.cpp \
 CourseContentsList.h CourseEntryDisplay.cpp CourseEntryDisplay.h CroppedSprite.cpp CroppedSprite.h \
 DifficultyIcon.cpp DifficultyIcon.h DifficultyRating.cpp DifficultyRating.h EditMenu.cpp EditMenu.h \
-FadingBanner.cpp FadingBanner.h FootMeter.cpp FootMeter.h GradeDisplay.cpp GradeDisplay.h GrooveRadar.cpp \
+FadingBanner.cpp FadingBanner.h DifficultyMeter.cpp DifficultyMeter.h GradeDisplay.cpp GradeDisplay.h GrooveRadar.cpp \
 GrooveRadar.h GroupList.cpp GroupList.h JukeboxMenu.cpp JukeboxMenu.h MenuElements.cpp MenuElements.h \
 MenuTimer.cpp MenuTimer.h MusicBannerWheel.cpp MusicBannerWheel.h MusicList.cpp MusicList.h MusicSortDisplay.cpp \
 MusicSortDisplay.h MusicStatusDisplay.cpp MusicStatusDisplay.h MusicWheel.cpp MusicWheel.h MusicWheelItem.cpp \
