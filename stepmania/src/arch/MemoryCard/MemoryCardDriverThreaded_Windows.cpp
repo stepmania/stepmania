@@ -19,7 +19,7 @@ MemoryCardDriverThreaded_Windows::MemoryCardDriverThreaded_Windows()
 
 typedef const CString& CCStringRef;
 
-bool TestWrite( CCStringRef sDrive )
+static bool TestReady( CCStringRef sDrive )
 {
 	// TODO: Use RageFileDirect here to detect ready state?
 	TCHAR szVolumeNameBuffer[MAX_PATH];
@@ -27,7 +27,8 @@ bool TestWrite( CCStringRef sDrive )
 	DWORD dwMaximumComponentLength;
 	DWORD lpFileSystemFlags;
 	TCHAR szFileSystemNameBuffer[MAX_PATH];
-	BOOL bReady = GetVolumeInformation( 
+
+	return !!GetVolumeInformation( 
 		sDrive,
 		szVolumeNameBuffer,
 		sizeof(szVolumeNameBuffer),
@@ -36,9 +37,10 @@ bool TestWrite( CCStringRef sDrive )
 		&lpFileSystemFlags,
 		szFileSystemNameBuffer,
 		sizeof(szFileSystemNameBuffer) );
-	if( !bReady )
-		return false;
+}
 
+static bool TestWrite( CCStringRef sDrive )
+{
 	// Try to write a file.
 	// TODO: Can we use RageFile for this?
 	CString sFile = sDrive + "temp";
@@ -72,22 +74,25 @@ void MemoryCardDriverThreaded_Windows::MountThreadMain()
 
 					LOG->Trace( "Found drive %s", sDrive.c_str() );
 
-					if( GetDriveType(sDrive) == DRIVE_REMOVABLE )	// is a removable drive
-					{
-						UsbStorageDeviceEx usbd;
-						usbd.sOsMountDir = sDrive;
-						usbd.bWriteTestSucceeded = TestWrite( sDrive );
+					if( GetDriveType(sDrive) != DRIVE_REMOVABLE )	// is a removable drive
+						continue;
 
-						// read name
-						this->Mount( &usbd, TEMP_MOUNT_POINT );
-						FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
-						Profile profile;
-						CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
-						profile.LoadEditableDataFromDir( sProfileDir );
-						usbd.sName = profile.GetDisplayName();
+					if( !TestReady(sDrive) )
+						continue;
 
-						vNewStorageDevices.push_back( usbd );
-					}
+					UsbStorageDeviceEx usbd;
+					usbd.sOsMountDir = sDrive;
+					usbd.bWriteTestSucceeded = TestWrite( sDrive );
+
+					// read name
+					this->Mount( &usbd, TEMP_MOUNT_POINT );
+					FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
+					Profile profile;
+					CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
+					profile.LoadEditableDataFromDir( sProfileDir );
+					usbd.sName = profile.GetDisplayName();
+
+					vNewStorageDevices.push_back( usbd );
 				}
 			}
 
