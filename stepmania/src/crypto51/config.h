@@ -3,6 +3,14 @@
 
 // ***************** Important Settings ********************
 
+#include "global.h"
+#if defined(WIN32)
+#pragma warning (disable : 4244) // conversion ... possible loss of data
+#pragma warning (disable : 4516) // access-declarations are deprecated
+#pragma warning (disable : 4511) // copy constructor could not be generated
+#pragma warning (disable : 4189) // local variable is initialized but not referenced
+#endif
+
 // define this if running on a big-endian CPU
 #if !defined(IS_LITTLE_ENDIAN) && (defined(__BIG_ENDIAN__) || defined(__sparc) || defined(__sparc__) || defined(__hppa__) || defined(__mips__) || (defined(__MWERKS__) && !defined(__INTEL__)))
 #	define IS_BIG_ENDIAN
