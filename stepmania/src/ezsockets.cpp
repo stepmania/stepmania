@@ -8,10 +8,12 @@
    Windows-Based OSes.
 ********************************************/
 
-// We need the WinSock32 Library on Windows
+// StepMania only includes
 #include "global.h"
+
 #include "ezsockets.h"
 
+// We need the WinSock32 Library on Windows
 #if defined(_XBOX)
 #elif defined(_WINDOWS)
 #pragma comment(lib,"wsock32.lib")
@@ -274,7 +276,8 @@ int EzSockets::PeekData(char *data, unsigned int bytes)
 //Packet system (for structures and classes)
 void EzSockets::SendPack(char * data, unsigned int bytes)
 {
-	SendData ((char *)&bytes,sizeof(int));
+	unsigned int SendSize = htonl(bytes);
+	SendData ((char *)&SendSize,sizeof(int));
 	SendData (data,bytes);
 }
 
@@ -282,10 +285,7 @@ int EzSockets::ReadPack(char * data, unsigned int max)
 {
 	int size = PeekPack(data,max);
 	if (size!=-1)
-	{
-		int tSize = (int)((inBuffer.substr(0,4)).c_str());
-		inBuffer = inBuffer.substr(tSize+4);
-	}
+		inBuffer = inBuffer.substr(size+4);
 	return size;
 }
 
@@ -302,7 +302,8 @@ int EzSockets::PeekPack(char * data, unsigned int max)
 		}
 
 		unsigned int size=0;
-		PeekData((char*)size,4);
+		PeekData((char*)&size,4);
+		size = ntohl(size);
 
 		while ((inBuffer.length()<(size+4)) && !IsError())
 		{
@@ -323,6 +324,7 @@ int EzSockets::PeekPack(char * data, unsigned int max)
 		{
 			unsigned int size=0;
 			PeekData((char*)size,4);
+			size = ntohl(size);
 			if (inBuffer.length()<(size+4))
 				return (-1);
 
