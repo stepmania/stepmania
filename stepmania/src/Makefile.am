@@ -340,6 +340,8 @@ all_test_SOURCES = \
 		$(Dialog) \
 		tests/test_misc.cpp tests/test_misc.h \
 		IniFile.cpp IniFile.h \
+		XmlFile.cpp XmlFile.h \
+		DateTime.cpp DateTime.h \
 		PrefsManager.cpp PrefsManager.h \
 		Preference.cpp Preference.h \
 		RageException.cpp \
