@@ -55,6 +55,7 @@ LightsDriver_LinuxSerial::LightsDriver_LinuxSerial()
     
 	my_termios.c_iflag &= ~(IXON | IXOFF | IXANY); /* no flow control */
 	my_termios.c_oflag &= ~(IXON | IXOFF | IXANY); /* no flow control */
+	fcntl(fd, F_SETFL, 0);
 
     cfsetospeed(&my_termios, B2400);
     tcsetattr(fd, TCSANOW, &my_termios);
