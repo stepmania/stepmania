@@ -820,13 +820,12 @@ CString WcharToUTF8( wchar_t c )
 /* XXX autoconf this */
 int memicmp(const char *s1, const char *s2, size_t n)
 {
-	while(n)
+	for(size_t i = 0; i < n; ++i)
 	{
-		char c1 = tolower(*s1);
-		char c2 = tolower(*s2);
+		char c1 = tolower(s1[i]);
+		char c2 = tolower(s2[i]);
 		if(c1 < c2) return -1;
 		if(c1 > c2) return 1;
-		s1++; s2++;
 	}
 	return 0;
 }
