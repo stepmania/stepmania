@@ -151,6 +151,40 @@ void RageMatrixScaling( RageMatrix* pOut, float x, float y, float z )
 	pOut->m[2][2] = z;
 }
 
+/*
+ * Return:
+ *
+ * RageMatrix translate;
+ * RageMatrixTranslation( &translate, fTransX, fTransY, fTransZ );
+ * RageMatrix scale;
+ * RageMatrixScaling( &scale, fScaleX, float fScaleY, float fScaleZ );
+ * RageMatrixMultiply( pOut, &translate, &scale );
+ */
+void RageMatrixTranslateAndScale( RageMatrix* pOut,
+			float fTransX, float fTransY, float fTransZ,
+			float fScaleX, float fScaleY, float fScaleZ )
+{
+	pOut->m00 = fScaleX;
+	pOut->m01 = 0;
+	pOut->m02 = 0;
+	pOut->m03 = 0;
+
+	pOut->m10 = 0;
+	pOut->m11 = fScaleY;
+	pOut->m12 = 0;
+	pOut->m13 = 0;
+
+	pOut->m20 = 0;
+	pOut->m21 = 0;
+	pOut->m22 = fScaleZ;
+	pOut->m23 = 0;
+
+	pOut->m30 = fTransX;
+	pOut->m31 = fTransY;
+	pOut->m32 = fTransZ;
+	pOut->m33 = 1;
+}
+
 void RageMatrixRotationX( RageMatrix* pOut, float theta )
 {
 	theta *= PI/180;
@@ -185,6 +219,59 @@ void RageMatrixRotationZ( RageMatrix* pOut, float theta )
 
 	pOut->m[0][1] = sinf(theta);
 	pOut->m[1][0] = -pOut->m[0][1];
+}
+
+/* Return RageMatrixRotationX(rX) * RageMatrixRotationY(rY) * RageMatrixRotationZ(rZ)
+ * quickly (without actually doing two complete matrix multiplies), by removing the
+ * parts of the matrix multiplies that we know will be 0. */
+void RageMatrixRotationXYZ( RageMatrix* pOut, float rX, float rY, float rZ )
+{
+	rX *= PI/180;
+	rY *= PI/180;
+	rZ *= PI/180;
+
+	const float cX = cosf(rX);
+	const float sX = sinf(rX);
+	const float cY = cosf(rY);
+	const float sY = sinf(rY);
+	const float cZ = cosf(rZ);
+	const float sZ = sinf(rZ);
+
+	/*
+	 * X*Y:
+	 * RageMatrix(
+	 *	cY,  sY*sX, sY*cX, 0,
+	 *	0,   cX,    -sX,   0,
+	 *	-sY, cY*sX, cY*cX, 0,
+	 *	0, 0, 0, 1
+	 * );
+	 *
+	 * X*Y*Z:
+	 *
+	 * RageMatrix(
+	 *	cZ*cY, cZ*sY*sX+sZ*cX, cZ*sY*cX+sZ*(-sX), 0,
+	 *	(-sZ)*cY, (-sZ)*sY*sX+cZ*cX, (-sZ)*sY*cX+cZ*(-sX), 0,
+	 *	-sY, cY*sX, cY*cX, 0,
+	 *	0, 0, 0, 1
+	 * );
+	 */
+
+	pOut->m00 = cZ*cY;
+	pOut->m01 = cZ*sY*sX+sZ*cX;
+	pOut->m02 = cZ*sY*cX+sZ*(-sX);
+	pOut->m03 = 0;
+	pOut->m10 = (-sZ)*cY;
+	pOut->m11 = (-sZ)*sY*sX+cZ*cX;
+	pOut->m12 = (-sZ)*sY*cX+cZ*(-sX);
+	pOut->m13 = 0;
+	pOut->m20 = -sY;
+	pOut->m21 = cY*sX;
+	pOut->m22 = cY*cX;
+	pOut->m23 = 0;
+	pOut->m30 = 0;
+	pOut->m31 = 0;
+	pOut->m32 = 0;
+	pOut->m33 = 1;
 }
 
 /* This is similar in style to Actor::Command.  However, Actors don't store

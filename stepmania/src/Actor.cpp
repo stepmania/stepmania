@@ -246,23 +246,35 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		}
 	}
 
-	DISPLAY->Translate(
-		m_pTempState->pos.x,
-		m_pTempState->pos.y,
-		m_pTempState->pos.z );
-	DISPLAY->Scale( 
-		m_pTempState->scale.x * m_baseScale.x,
-		m_pTempState->scale.y * m_baseScale.y,
-		m_pTempState->scale.z * m_baseScale.z );
+	{
+		RageMatrix m;
+		RageMatrixTranslateAndScale( &m, 
+			m_pTempState->pos.x,
+			m_pTempState->pos.y,
+			m_pTempState->pos.z,
+			m_pTempState->scale.x * m_baseScale.x,
+			m_pTempState->scale.y * m_baseScale.y,
+			m_pTempState->scale.z * m_baseScale.z );
 
-	/* The only time rotation and quat should normally be used simultaneously
-	 * is for m_baseRotation. */
-	if( m_pTempState->rotation.x + m_baseRotation.x != 0 )	
-		DISPLAY->RotateX( m_pTempState->rotation.x + m_baseRotation.x );
-	if( m_pTempState->rotation.y + m_baseRotation.y != 0 )	
-		DISPLAY->RotateY( m_pTempState->rotation.y + m_baseRotation.y );
-	if( m_pTempState->rotation.z + m_baseRotation.z != 0 )	
-		DISPLAY->RotateZ( m_pTempState->rotation.z + m_baseRotation.z );
+		DISPLAY->PreMultMatrix( m );
+	}
+
+	{
+		/* The only time rotation and quat should normally be used simultaneously
+		 * is for m_baseRotation.  Most objects aren't rotated at all, so optimize
+		 * that case. */
+		const float fRotateX = m_pTempState->rotation.x + m_baseRotation.x;
+		const float fRotateY = m_pTempState->rotation.y + m_baseRotation.y;
+		const float fRotateZ = m_pTempState->rotation.z + m_baseRotation.z;
+
+		if( fRotateX != 0 || fRotateY != 0 || fRotateZ != 0 )	
+		{
+			RageMatrix m;
+			RageMatrixRotationXYZ( &m, fRotateX, fRotateY, fRotateZ );
+
+			DISPLAY->PreMultMatrix( m );
+		}
+	}
 
 	if( m_pTempState->quat.x != 0 ||  m_pTempState->quat.y != 0 ||  m_pTempState->quat.z != 0 || m_pTempState->quat.w != 1 )
 	{
