@@ -964,14 +964,10 @@ void Player::Step( int col, const RageTimer &tm )
 			if( m_pLifeMeter && m_pLifeMeter->GetLife() == 1.0f) // full life
 				m_iDCState = AS2D_FEVER; // super celebrate time :)
 		}
-		if( m_pNoteField )
-			m_pNoteField->Step( col, score );
 	}
-	else
-	{
-		if( m_pNoteField )
-			m_pNoteField->Step( col, TNS_NONE );
-	}
+
+	if( m_pNoteField )
+		m_pNoteField->Step( col, score );
 
 	/* Search for keyed sounds separately.  If we can't find a nearby note, search
 	 * backwards indefinitely, and ignore grading. */
