@@ -57,6 +57,7 @@ const int NUM_SCORE_DIGITS	=	9;
 #define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetric (m_sName,ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
 #define DO_ROULETTE_ON_MENU_TIMER			THEME->GetMetricB(m_sName,"DoRouletteOnMenuTimer")
 #define ALIGN_MUSIC_BEATS					THEME->GetMetricB(m_sName,"AlignMusicBeat")
+#define CODES								THEME->GetMetric (m_sName,"Codes")
 
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 CString g_sFallbackCDTitlePath;
@@ -448,7 +449,6 @@ void ScreenSelectMusic::TweenCoursePartsOnScreen( bool Initial )
 	m_CourseContentsFrame.SetZoomY( 1 );
 	if( Initial )
 	{
-		m_CourseContentsFrame.Command( "ZoomY,0;BounceEnd,0.3;Zoom,1" );
 		COMMAND( m_CourseContentsFrame, "On" );
 	}
 	else
@@ -456,15 +456,12 @@ void ScreenSelectMusic::TweenCoursePartsOnScreen( bool Initial )
 		m_CourseContentsFrame.SetFromCourse(NULL);
 		COMMAND( m_CourseContentsFrame, "Show" );
 	}
-	// XXX: if !Initial, m_CourseContentsFrame.Hide?
 }
 
 void ScreenSelectMusic::TweenCoursePartsOffScreen( bool Final )
 {
 	if( Final )
 	{
-		m_CourseContentsFrame.SetZoomY( 1 );
-		m_CourseContentsFrame.Command( "BounceBegin,0.3;ZoomY,0" );
 		OFF_COMMAND( m_CourseContentsFrame );
 	}
 	else
@@ -1043,6 +1040,12 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_SortOrderChanged: /* happens after the wheel is off and the new song is selected */
 		SortOrderChanged();
+		break;
+	case SM_GainFocus:
+		CodeDetector::RefreshCacheItems( CODES );
+		break;
+	case SM_LoseFocus:
+		CodeDetector::RefreshCacheItems(); /* reset for other screens */
 		break;
 	}
 
