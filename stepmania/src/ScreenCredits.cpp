@@ -64,6 +64,7 @@ const CreditLine CREDIT_LINES[] =
 	{0,"Lucas “v1ral” Tang"}, 
 	// "Who?" = "what is this person's real name", not "what did they do".
 	// Who knows? Some people might not want to reveal their real name. - Friez.
+	// FYI: Several people have requested that their real names not be shown. -Chris
 	{0,"SPiGuMuS"}, // who?
 	{0,"Visage"}, // who? makes para para theme graphics for me, wants to do BM and IIDX graphics too. - Friez
 	{0,"Ryan “DJ McFox” McKanna"},
@@ -124,6 +125,7 @@ const CreditLine CREDIT_LINES[] =
 	{0,"Thad “Coderjoe” Ward"},
 	{0,"Steve Checkoway"},
 	{0,"Sean Burke"},
+	{0,"XPort"},
 	{0,""},
 	{0,""},
 	{0,""},
