@@ -267,10 +267,9 @@ void Sprite::DrawPrimitives()
 	else
 		DISPLAY->SetBlendModeNormal();
 
-
-
-
-	if( m_temp.diffuse[0].a != 0 )
+	/* Draw if we're not fully transparent or the zbuffer is enabled (which ignores
+	 * alpha). */
+	if( m_temp.diffuse[0].a != 0 || DISPLAY->ZBufferEnabled())
 	{
 		//////////////////////
 		// render the shadow
