@@ -1,4 +1,8 @@
 ----------------------- Version 3.01 ---------------------------
+NEW FEATURE: .SM files can now contain UTF-8 text.
+NEW FEATURE: New alignment tags for bitmap fonts.
+NEW FEATURE: Bitmap fonts now support full Unicode mapping.
+CHANGE:  Internal precision increased; 32nd notes are no longer rounded.
 NEW FEATURE: Added "RANDOM" to music select.
 CHANGE:  Loading optimizations.
 NEW FEATURE: Caution and group select screens can now be disabled.
