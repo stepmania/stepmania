@@ -541,3 +541,4 @@ void RageMatrixTranspose( RageMatrix* pOut, const RageMatrix* pIn )
 		for( int j=0; j<4; j++)
 			pOut->m[j][i] = pIn->m[i][j];
 }
+
