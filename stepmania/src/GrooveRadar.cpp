@@ -187,8 +187,8 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			const float fX = cosf(fRotation) * fDistFromCenter;
 			const float fY = -sinf(fRotation) * fDistFromCenter;
 
-			v[i+0].p = RageVector3( fX, fY, 0 );
-			v[i+0].c = PlayerToColor( (PlayerNumber)p );
+			v[i].p = RageVector3( fX, fY, 0 );
+			v[i].c = PlayerToColor( (PlayerNumber)p );
 		}
 
 		DISPLAY->DrawLoop( v, NUM_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );
