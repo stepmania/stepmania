@@ -2230,9 +2230,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		}
 		
 		// Feels hackish. Feel free to make cleaner.
-                // MD 10/27/03 - I felt free. :-)  And now it's arcade-accurate as well.
-		if(GAMESTATE->IsCourseMode())
-                        if(GAMESTATE->GetCourseSongIndex() > (int(m_apSongsQueue.size() / 2) - 1 ))
+		if( GAMESTATE->IsCourseMode() )
+			if( GAMESTATE->GetCourseSongIndex() > (int(m_apSongsQueue.size() / 2) - 1 ) )
 				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo( "gameplay oni failed halfway" ) );
 			else
 				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo( "gameplay oni failed" ) );
@@ -2259,29 +2258,18 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			if( PREFSMAN->m_bEventMode )
 			{
 				if(EVAL_ON_FAIL) // go to the eval screen if we fail
-				{
 					SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
-				}
 				else // the theme says just fail and go back to the song select for event mode
-				{
 					SCREENMAN->SetNewScreen( PREV_SCREEN(GAMESTATE->m_PlayMode) );
-
-					/* Don't do this; it'll call SongFinished, etc. again. -glenn */
-//					HandleScreenMessage( SM_GoToScreenAfterBack );
-				}
 			}
 			else if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 				SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
 			else
 			{
 				if(EVAL_ON_FAIL) // go to the eval screen if we fail
-				{
 					SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
-				}
 				else // if not just game over now
-				{
 					SCREENMAN->SetNewScreen( "ScreenGameOver" );
-				}
 			}
 			break;
 		case PLAY_MODE_NONSTOP:
