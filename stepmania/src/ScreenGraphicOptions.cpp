@@ -78,8 +78,10 @@ void ScreenGraphicOptions::UpdateRefreshRates()
 {
 	CArray<int,int> hz;
 
+	/* XXX: We're hardcoded to 16bpp in StepMania.cpp; if we add a bpp option
+	 * this needs to be changed. */
 	DISPLAY->GetHzAtResolution(HorizRes[m_iSelectedOption[0][GO_DISPLAY_RESOLUTION]],
-		VertRes[m_iSelectedOption[0][GO_DISPLAY_RESOLUTION]], hz);
+		VertRes[m_iSelectedOption[0][GO_DISPLAY_RESOLUTION]], 16 /* XXX */, hz);
 
 	/* Disable all refresh rates (except DEFAULT/MAX). */
 	int i;
@@ -114,7 +116,7 @@ void ScreenGraphicOptions::UpdateRefreshRates()
 	int CurSel = m_iSelectedOption[0][GO_REFRESH_RATE];
 	if(m_OptionDim[GO_REFRESH_RATE][CurSel])
 		m_iSelectedOption[0][GO_REFRESH_RATE] = 
-		m_iSelectedOption[1][GO_REFRESH_RATE] = 0;
+		m_iSelectedOption[1][GO_REFRESH_RATE] = RageDisplay::REFRESH_MAX;
 //	PositionUnderlines();
 }
 
@@ -150,8 +152,8 @@ void ScreenGraphicOptions::ImportOptions()
 	
 	switch( PREFSMAN->m_iRefreshRate )
 	{
-	case 0:		m_iSelectedOption[0][GO_REFRESH_RATE] = 0;	break;
-	case 1:		m_iSelectedOption[0][GO_REFRESH_RATE] = 1;	break;
+	case RageDisplay::REFRESH_MAX:		m_iSelectedOption[0][GO_REFRESH_RATE] = 0;	break;
+	case RageDisplay::REFRESH_DEFAULT:	m_iSelectedOption[0][GO_REFRESH_RATE] = 1;	break;
 	case 60:	m_iSelectedOption[0][GO_REFRESH_RATE] = 2;	break;
 	case 70:	m_iSelectedOption[0][GO_REFRESH_RATE] = 3;	break;
 	case 72:	m_iSelectedOption[0][GO_REFRESH_RATE] = 4;	break;
@@ -192,8 +194,8 @@ void ScreenGraphicOptions::ExportOptions()
 		
 	switch( m_iSelectedOption[0][GO_REFRESH_RATE] )
 	{
-	case 0:	PREFSMAN->m_iRefreshRate = 0;	break;
-	case 1:	PREFSMAN->m_iRefreshRate = 1;	break;
+	case 0:	PREFSMAN->m_iRefreshRate = RageDisplay::REFRESH_MAX;	break;
+	case 1:	PREFSMAN->m_iRefreshRate = RageDisplay::REFRESH_DEFAULT;break;
 	case 2:	PREFSMAN->m_iRefreshRate = 60;	break;
 	case 3:	PREFSMAN->m_iRefreshRate = 70;	break;
 	case 4:	PREFSMAN->m_iRefreshRate = 72;	break;

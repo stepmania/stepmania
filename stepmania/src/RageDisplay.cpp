@@ -115,7 +115,9 @@ int RageDisplay::MaxRefresh(int iWidth, int iHeight, D3DFORMAT fmt) const
 	return mx;
 }
 
-void RageDisplay::GetHzAtResolution(int width, int height, CArray<int,int> &add) const
+/* Get the maximum refresh rate available in the given size, for any format
+ * that fits bpp. */
+void RageDisplay::GetHzAtResolution(int width, int height, int bpp, CArray<int,int> &add) const
 {
 	for( UINT u=0; u<m_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
 	{
@@ -125,7 +127,7 @@ void RageDisplay::GetHzAtResolution(int width, int height, CArray<int,int> &add)
 
 		if(mode.Width != width) continue;
 		if(mode.Height != height) continue;
-		/* also test mode.Format? */
+		if(GetBPP(mode.Format) != bpp) continue;
 
 		add.Add(mode.RefreshRate);
 	}
@@ -178,8 +180,8 @@ bool RageDisplay::SwitchDisplayMode(
 
 	// Test each back buffer format until we find something that works.
 	D3DFORMAT fmtBackBuffer;	// fill this in below...
-
-	for( int i=0; i < arrayBackBufferFormats.GetSize(); i++ )
+	int i;
+	for( i=0; i < arrayBackBufferFormats.GetSize(); i++ )
 	{
 		D3DFORMAT fmtDisplay;
 		if( bWindowed )
@@ -236,8 +238,8 @@ bool RageDisplay::SwitchDisplayMode(
     m_d3dpp.AutoDepthStencilFormat	=	D3DFMT_D16;
     m_d3dpp.Flags					=	0;
 	m_d3dpp.FullScreen_RefreshRateInHz = bWindowed? D3DPRESENT_RATE_DEFAULT :
-									iFullScreenHz == 0? MaxRefresh(iWidth, iHeight, fmtBackBuffer):
-									iFullScreenHz == 1? D3DPRESENT_RATE_DEFAULT:
+									iFullScreenHz == REFRESH_MAX? MaxRefresh(iWidth, iHeight, fmtBackBuffer):
+									iFullScreenHz == REFRESH_DEFAULT? D3DPRESENT_RATE_DEFAULT:
 										iFullScreenHz;
 	m_d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 
@@ -445,6 +447,23 @@ HRESULT RageDisplay::Restore()
 	return S_OK;
 }
 
+int RageDisplay::GetBPP(D3DFORMAT fmt) const
+{ 
+	switch( fmt )
+	{
+	case D3DFMT_R5G6B5:
+	case D3DFMT_X1R5G5B5:
+	case D3DFMT_A1R5G5B5:
+		return 16;
+	case D3DFMT_R8G8B8:
+	case D3DFMT_X8R8G8B8:
+	case D3DFMT_A8R8G8B8:
+		return 32;
+	default:
+		ASSERT( false );	// unexpected format
+		return 0;
+	}
+}
 
 
 void RageDisplay::CreateVertexBuffer()

@@ -49,6 +49,7 @@ class RageDisplay
 public:
 	RageDisplay( HWND hWnd );
 	~RageDisplay();
+	enum { REFRESH_MAX=0, REFRESH_DEFAULT=1 };
 	bool SwitchDisplayMode( 
 		const bool bWindowed, const int iWidth, const int iHeight, const int iBPP, const int iFullScreenHz );
 
@@ -65,27 +66,10 @@ public:
 	HRESULT Restore();
 
 
-	BOOL IsWindowed()	{ return m_d3dpp.Windowed; };
-	DWORD GetWidth()	{ return m_d3dpp.BackBufferWidth; };
-	DWORD GetHeight()	{ return m_d3dpp.BackBufferHeight; };
-	DWORD GetBPP()		
-	{ 
-		switch( m_d3dpp.BackBufferFormat )
-		{
-		case D3DFMT_R5G6B5:
-		case D3DFMT_X1R5G5B5:
-		case D3DFMT_A1R5G5B5:
-			return 16;
-		case D3DFMT_R8G8B8:
-		case D3DFMT_X8R8G8B8:
-		case D3DFMT_A8R8G8B8:
-			return 32;
-		default:
-			ASSERT( false );	// unexpected format
-			return 0;
-		}
-	}
-
+	bool IsWindowed() const	{ return !!m_d3dpp.Windowed; };
+	int GetWidth() const	{ return m_d3dpp.BackBufferWidth; };
+	int GetHeight() const	{ return m_d3dpp.BackBufferHeight; };
+	int GetBPP() const		{ return GetBPP( m_d3dpp.BackBufferFormat ); }
 	
 //	LPDIRECT3DVERTEXBUFFER8 GetVertexBuffer() { return m_pVB; };
 	void SetViewTransform( const D3DXMATRIX* pMatrix );
@@ -108,10 +92,11 @@ public:
 	int GetTPF() { return m_iTPF; };
 	int GetDPF() { return m_iDPF; };
 
-	void GetHzAtResolution(int width, int height, CArray<int,int> &add) const;
+	void GetHzAtResolution(int width, int height, int bpp, CArray<int,int> &add) const;
 
 private:
 	int MaxRefresh(int iWidth, int iHeight, D3DFORMAT fmt) const;
+	int GetBPP(D3DFORMAT fmt) const;
 	D3DXMATRIX& GetTopMatrix() { return m_MatrixStack.ElementAt( m_MatrixStack.GetSize()-1 ); };
 
 	HWND m_hWnd;
