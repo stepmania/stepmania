@@ -136,7 +136,7 @@ bool IsHexVal( const CString &s );
 float TimeToSeconds( const CString &sHMS );
 CString SecondsToTime( float fSecs );
 
-CString ssprintf( const char *fmt, ...);
+CString ssprintf( const char *fmt, ...) PRINTF(1,2);
 CString vssprintf( const char *fmt, va_list argList );
 
 #ifdef WIN32
