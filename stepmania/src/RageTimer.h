@@ -42,6 +42,9 @@ public:
 	/* deprecated: */
 	static float GetTimeSinceStart();	// seconds since the program was started
 
+	/* Get a timer representing half of the time ago as this one. */
+	RageTimer Half() const;
+
 	/* Add (or subtract) a duration from a timestamp.  The result is another timestamp. */
 	RageTimer operator+(float tm) const;
 
