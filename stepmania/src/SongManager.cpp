@@ -138,7 +138,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 		GetDirListing( ssprintf("%s\\%s\\*.*", sDir, sGroupDirName), arraySongDirs, true );
 		SortCStringArray( arraySongDirs );
 
-		for( int j=0; j< arraySongDirs.GetSize(); j++ )	// for each song dir
+		for( j=0; j< arraySongDirs.GetSize(); j++ )	// for each song dir
 		{
 			CString sSongDirName = arraySongDirs[j];
 
