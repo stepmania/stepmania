@@ -1,6 +1,7 @@
 #include "global.h"
 #include "RageLog.h"
 #include "StepMania.h"
+#include "RageFileManager.h"
 #include "LoadingWindow_Gtk.h"
 #include "LoadingWindow_GtkModule.h"
 
