@@ -22,10 +22,10 @@
 
 #include "arch/Threads/Threads.h"
 
-#if defined(CRASH_HANDLER)
+#if defined(CRASH_HANDLER) && !defined(DARWIN)
 #if defined(WIN32)
 #include "archutils/Win32/crash.h"
-#elif defined(UNIX)
+#elif defined(LINUX)
 #include "archutils/Unix/CrashHandler.h"
 #endif
 #endif
@@ -513,7 +513,7 @@ void RageMutex::Lock()
 			ThisSlot? ThisSlot->GetThreadName(): "(???" ")", // stupid trigraph warnings
 			OtherSlot? OtherSlot->GetThreadName(): "(???" ")" );
 
-#if defined(CRASH_HANDLER)
+#if defined(CRASH_HANDLER) && !defined(DARWIN)
 		/* Pass the crash handle of the other thread, so it can backtrace that thread. */
 		ForceCrashHandlerDeadlock( sReason, OtherSlot? OtherSlot->pImpl->GetCrashHandle():0 );
 #else
