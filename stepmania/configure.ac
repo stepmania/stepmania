@@ -204,6 +204,9 @@ case $host in
 		;;
 esac
 
+# If you're using autoconf, you're in "Unix", as far as we're concerned.
+AC_DEFINE(UNIX, 1, [Unix])
+
 AC_ARG_ENABLE(tests, AC_HELP_STRING([--enable-tests], [Build test programs]), enable_tests=$enableval, enable_tests=no)
 AM_CONDITIONAL(BUILD_TESTS, test "$enable_tests" = "yes" )
 
