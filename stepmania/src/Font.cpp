@@ -491,162 +491,162 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 
 	/* Iterate over all keys. */
 	const IniFile::key *k = ini.GetKey(PageName);
-	if(k == NULL)
-		return;
-
-	for(IniFile::key::const_iterator key = k->begin(); key != k->end(); ++key)
+	if( k )
 	{
-		CString val = key->first;
-		CString data = key->second;
-
-		val.MakeUpper();
-
-		/* If val is an integer, it's a width, eg. "10=27". */
-		if(IsAnInt(val))
+		for(IniFile::key::const_iterator key = k->begin(); key != k->end(); ++key)
 		{
-			cfg.GlyphWidths[atoi(val)] = atoi(data);
-			continue;
-		}
+			CString val = key->first;
+			CString data = key->second;
 
-		/* "map codepoint=frame" maps a char to a frame. */
-		if(val.substr(0, 4) == "MAP ")
-		{
-			/* map CODEPOINT=frame. CODEPOINT can be
-			 * 1. U+hexval
-			 * 2. an alias ("oq")
-			 * 3. a game type followed by a game alias, eg "pump menuleft"
-			 * 4. a character in quotes ("X")
-			 *
-			 * map 1=2 is the same as
-			 * range unicode #1-1=2
-			 */
-			CString codepoint = val.substr(4); /* "CODEPOINT" */
-		
-			Game game = GAME_INVALID;
+			val.MakeUpper();
 
-			if(codepoint.find_first_of(' ') != codepoint.npos)
+			/* If val is an integer, it's a width, eg. "10=27". */
+			if(IsAnInt(val))
 			{
-				/* There's a space; the first word should be a game type. Split it. */
-				unsigned pos = codepoint.find_first_of(' ');
-				CString gamename = codepoint.substr(0, pos);
-				codepoint = codepoint.substr(pos+1);
-
-				game = GameManager::StringToGameType(gamename);
-
-				if(game == GAME_INVALID)
-				{
-					LOG->Warn( "Font definition '%s' uses unknown game type '%s'",
-						ini.GetPath().c_str(), gamename.c_str() );
-					continue;
-				}
-			}
-
-			wchar_t c;
-			if(codepoint.substr(0, 2) == "U+" && IsHexVal(codepoint.substr(2)))
-				sscanf(codepoint.substr(2).c_str(), "%x", &c);
-			else if(codepoint.size() > 0 &&
-					utf8_get_char_len(codepoint[0]) == int(codepoint.size()))
-			{
-				c = utf8_get_char(codepoint.c_str());
-				if(c == wchar_t(-1))
-					LOG->Warn("Font definition '%s' has an invalid value '%s'.",
-						ini.GetPath().c_str(), val.c_str() );
-			}
-			else if(!FontCharAliases::GetChar(codepoint, c))
-			{
-				LOG->Warn("Font definition '%s' has an invalid value '%s'.",
-					ini.GetPath().c_str(), val.c_str() );
+				cfg.GlyphWidths[atoi(val)] = atoi(data);
 				continue;
 			}
 
-			if(game != GAME_INVALID)
+			/* "map codepoint=frame" maps a char to a frame. */
+			if(val.substr(0, 4) == "MAP ")
 			{
-				longchar lc = FontManager::MakeGameGlyph(c, game);
-				cfg.CharToGlyphNo[lc] = atoi(data);
-			} else {
-				cfg.CharToGlyphNo[c] = atoi(data);
+				/* map CODEPOINT=frame. CODEPOINT can be
+				 * 1. U+hexval
+				 * 2. an alias ("oq")
+				 * 3. a game type followed by a game alias, eg "pump menuleft"
+				 * 4. a character in quotes ("X")
+				 *
+				 * map 1=2 is the same as
+				 * range unicode #1-1=2
+				 */
+				CString codepoint = val.substr(4); /* "CODEPOINT" */
+			
+				Game game = GAME_INVALID;
+
+				if(codepoint.find_first_of(' ') != codepoint.npos)
+				{
+					/* There's a space; the first word should be a game type. Split it. */
+					unsigned pos = codepoint.find_first_of(' ');
+					CString gamename = codepoint.substr(0, pos);
+					codepoint = codepoint.substr(pos+1);
+
+					game = GameManager::StringToGameType(gamename);
+
+					if(game == GAME_INVALID)
+					{
+						LOG->Warn( "Font definition '%s' uses unknown game type '%s'",
+							ini.GetPath().c_str(), gamename.c_str() );
+						continue;
+					}
+				}
+
+				wchar_t c;
+				if(codepoint.substr(0, 2) == "U+" && IsHexVal(codepoint.substr(2)))
+					sscanf(codepoint.substr(2).c_str(), "%x", &c);
+				else if(codepoint.size() > 0 &&
+						utf8_get_char_len(codepoint[0]) == int(codepoint.size()))
+				{
+					c = utf8_get_char(codepoint.c_str());
+					if(c == wchar_t(-1))
+						LOG->Warn("Font definition '%s' has an invalid value '%s'.",
+							ini.GetPath().c_str(), val.c_str() );
+				}
+				else if(!FontCharAliases::GetChar(codepoint, c))
+				{
+					LOG->Warn("Font definition '%s' has an invalid value '%s'.",
+						ini.GetPath().c_str(), val.c_str() );
+					continue;
+				}
+
+				if(game != GAME_INVALID)
+				{
+					longchar lc = FontManager::MakeGameGlyph(c, game);
+					cfg.CharToGlyphNo[lc] = atoi(data);
+				} else {
+					cfg.CharToGlyphNo[c] = atoi(data);
+				}
+
+				continue;
 			}
 
-			continue;
-		}
-
-		if(val.substr(0, 6) == "RANGE ")
-		{
-			/* range CODESET=first_frame or
-			 * range CODESET #start-end=first_frame
-			 * eg
-			 * range CP1252=0       (default for 256-frame fonts)
-			 * range ASCII=0        (default for 128-frame fonts)
-			 *
-			 * (Start and end are in hex.)
-			 *
-			 * Map two high-bit portions of ISO-8859- to one font:
-			 * range ISO-8859-2 #80-FF=0
-			 * range ISO-8859-3 #80-FF=128
-			 *
-			 * Map hiragana to 0-84:
-			 * range Unicode #3041-3094=0
-			 */
-			vector<CString> matches;
-			static Regex parse("^RANGE ([A-Z\\-]+)( ?#([0-9A-F]+)-([0-9A-F]+))?$");
-			bool match = parse.Compare(val, matches);
-			
-			ASSERT(matches.size() == 4); /* 4 parens */
-
-			if(!match || matches[0].empty())
-				RageException::Throw("Font definition '%s' has an invalid range '%s': parse error",
-					ini.GetPath().c_str(), val.c_str() );
-			
-			/* We must have either 1 match (just the codeset) or 4 (the whole thing). */
-
-			int cnt = -1;
-			int first = 0;
-			if(!matches[2].empty())
+			if(val.substr(0, 6) == "RANGE ")
 			{
-				sscanf(matches[2].c_str(), "%x", &first);
-				int last;
-				sscanf(matches[3].c_str(), "%x", &last);
-				if(last < first)
-					RageException::Throw("Font definition '%s' has an invalid range '%s': %i < %i.",
-						ini.GetPath().c_str(), val.c_str(), last < first );
+				/* range CODESET=first_frame or
+				 * range CODESET #start-end=first_frame
+				 * eg
+				 * range CP1252=0       (default for 256-frame fonts)
+				 * range ASCII=0        (default for 128-frame fonts)
+				 *
+				 * (Start and end are in hex.)
+				 *
+				 * Map two high-bit portions of ISO-8859- to one font:
+				 * range ISO-8859-2 #80-FF=0
+				 * range ISO-8859-3 #80-FF=128
+				 *
+				 * Map hiragana to 0-84:
+				 * range Unicode #3041-3094=0
+				 */
+				vector<CString> matches;
+				static Regex parse("^RANGE ([A-Z\\-]+)( ?#([0-9A-F]+)-([0-9A-F]+))?$");
+				bool match = parse.Compare(val, matches);
+				
+				ASSERT(matches.size() == 4); /* 4 parens */
 
-				cnt = last-first+1;
+				if(!match || matches[0].empty())
+					RageException::Throw("Font definition '%s' has an invalid range '%s': parse error",
+						ini.GetPath().c_str(), val.c_str() );
+				
+				/* We must have either 1 match (just the codeset) or 4 (the whole thing). */
+
+				int cnt = -1;
+				int first = 0;
+				if(!matches[2].empty())
+				{
+					sscanf(matches[2].c_str(), "%x", &first);
+					int last;
+					sscanf(matches[3].c_str(), "%x", &last);
+					if(last < first)
+						RageException::Throw("Font definition '%s' has an invalid range '%s': %i < %i.",
+							ini.GetPath().c_str(), val.c_str(), last < first );
+
+					cnt = last-first+1;
+				}
+
+				CString ret = cfg.MapRange(matches[0], first, atoi(data), cnt);
+				if(!ret.empty())
+					RageException::Throw("Font definition '%s' has an invalid range '%s': %s.",
+						ini.GetPath().c_str(), val.c_str(), ret.c_str() );
+
+				continue;
 			}
 
-			CString ret = cfg.MapRange(matches[0], first, atoi(data), cnt);
-			if(!ret.empty())
-				RageException::Throw("Font definition '%s' has an invalid range '%s': %s.",
-					ini.GetPath().c_str(), val.c_str(), ret.c_str() );
+			if(val.substr(0, 5) == "LINE ")
+			{
+				/* line ROW=CHAR1CHAR2CHAR3CHAR4
+				 * eg.
+				 * line 0=ABCDEFGH
+				 *
+				 * This lets us assign characters very compactly and readably. */
 
-			continue;
-		}
+				CString row_str = val.substr(5);
+				ASSERT(IsAnInt(row_str));
+				const int row = atoi(row_str.c_str());
+				const int first_frame = row * NumFramesWide;
 
-		if(val.substr(0, 5) == "LINE ")
-		{
-			/* line ROW=CHAR1CHAR2CHAR3CHAR4
-			 * eg.
-			 * line 0=ABCDEFGH
-			 *
-			 * This lets us assign characters very compactly and readably. */
+				if(row > NumFramesHigh)
+					RageException::Throw("The font definition \"%s\" tries to assign line %i, but the font is only %i characters high",
+						ini.GetPath().c_str(), first_frame, NumFramesHigh);
 
-			CString row_str = val.substr(5);
-			ASSERT(IsAnInt(row_str));
-			const int row = atoi(row_str.c_str());
-			const int first_frame = row * NumFramesWide;
+				/* Decode the string. */
+				const wstring wdata(CStringToWstring(data));
 
-			if(row > NumFramesHigh)
-				RageException::Throw("The font definition \"%s\" tries to assign line %i, but the font is only %i characters high",
-					ini.GetPath().c_str(), first_frame, NumFramesHigh);
+				if(int(wdata.size()) > NumFramesWide)
+					RageException::Throw("The font definition \"%s\" assigns %i characters to row %i (\"%ls\"), but the font only has %i characters wide",
+						ini.GetPath().c_str(), wdata.size(), row, wdata.c_str(), NumFramesWide);
 
-			/* Decode the string. */
-			const wstring wdata(CStringToWstring(data));
-
-			if(int(wdata.size()) > NumFramesWide)
-				RageException::Throw("The font definition \"%s\" assigns %i characters to row %i (\"%ls\"), but the font only has %i characters wide",
-					ini.GetPath().c_str(), wdata.size(), row, wdata.c_str(), NumFramesWide);
-
-			for(unsigned i = 0; i < wdata.size(); ++i)
-				cfg.CharToGlyphNo[wdata[i]] = first_frame+i;
+				for(unsigned i = 0; i < wdata.size(); ++i)
+					cfg.CharToGlyphNo[wdata[i]] = first_frame+i;
+			}
 		}
 	}
 
@@ -658,6 +658,8 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 		cfg.MapRange("ascii", 0, 0, -1);
 	else if(cfg.CharToGlyphNo.empty() && NumFrames == 256)
 		cfg.MapRange("cp1252", 0, 0, -1);
+	else if(cfg.CharToGlyphNo.empty() && NumFrames == 15)
+		cfg.MapRange("numbers", 0, 0, -1);
 
 	/* If ' ' is set and nbsp is not, set nbsp. */
 	if( cfg.CharToGlyphNo.find(' ') != cfg.CharToGlyphNo.end() )
@@ -818,10 +820,12 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 	/* Load each font page. */
 	for(unsigned i = 0; i < TexturePaths.size(); ++i)
 	{
+		const CString sTexturePath = TexturePaths[i];
+
 		FontPage *fp = new FontPage;
 
 		/* Grab the page name, eg "foo" from "Normal [foo].png". */
-		CString pagename = GetPageNameFromFileName(TexturePaths[i]);
+		CString pagename = GetPageNameFromFileName(sTexturePath);
 
 		/* Load settings for this page from the INI. */
 		FontPageSettings cfg;

@@ -136,6 +136,15 @@ static const wchar_t map_korean_jamo[] =
 	0
 };
 
+/* Numbers. "0123456789%. :x" */
+static const wchar_t map_numbers[] = {
+	0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 
+	0x0035, 0x0036, 0x0037, 0x0038, 0x0039,
+	0x0025, 0x002E, 0x0020, 0x003A, 0x0078,
+	0
+};
+
+
 static void Init()
 {
 	if(!charmaps.empty())
@@ -147,6 +156,7 @@ static void Init()
 	charmaps["cp1252"] = map_cp1252;
 	charmaps["iso-8859-2"] = map_iso_8859_2;
 	charmaps["korean-jamo"] = map_korean_jamo;
+	charmaps["numbers"] = map_numbers;
 }
 
 const wchar_t *FontCharmaps::get_char_map(CString name)
