@@ -216,6 +216,10 @@ bool GameState::HasEarnedExtraStage()
 				GAMESTATE->m_pCurNotes[p]->GetDifficulty() != DIFFICULTY_CHALLENGE )
 				continue; /* not hard enough! */
 
+			/* XXX: if "choose EX" is enabled, then we should only grant EX2
+			 * if the chosen stage was the EX we would have chosen (the hardest
+			 * song or extra1.crs).  Also, that song should be highlighted in the
+			 * music wheel. */
 			if( m_CurStageStats.GetGrade((PlayerNumber)p) >= GRADE_AA )
 				return true;
 		}
