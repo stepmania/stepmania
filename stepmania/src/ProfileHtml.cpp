@@ -1227,11 +1227,9 @@ TITLE.c_str(), STYLE_CSS.c_str() ) );
 	f.PutLine( "</html>\n" );
 	f.Close();
 
-	//
-	// Sign Stats.html
-	//
-	if( PREFSMAN->m_bSignProfileData )
-		CryptManager::SignFileToFile(fn);
+	// don't sign Stats.html.  It's redundant and very slow.
+	//if( PREFSMAN->m_bSignProfileData )
+	//	CryptManager::SignFileToFile(fn);
 	
 	//
 	// Copy CSS file from theme.  If the copy fails, oh well...
