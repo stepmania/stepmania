@@ -816,6 +816,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	Screen::Update( fDeltaTime );
 
+	if( GAMESTATE->m_pCurSong == NULL )
+		return;
 
 	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )
 		m_MaxCombo.SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iCurCombo[GAMESTATE->m_MasterPlayerNumber]) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
