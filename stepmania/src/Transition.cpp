@@ -90,7 +90,14 @@ void Transition::DrawPrimitives()
 
 void Transition::StartTransitioning( ScreenMessage send_when_done )
 {
-	ASSERT( m_State == waiting );	// can't call this more than once
+	if( m_State != waiting )
+	{
+		// This assert will trigger in some cases if start is pressed
+		// right as a transition is ending.  We want to know about these
+		// problems in debug builds, but they're not fatal.
+		DEBUG_ASSERT( m_State == waiting );	// can't call this more than once
+		return;	// ignore
+	}
 	m_MessageToSendWhenDone = send_when_done;
 	m_State = transitioning;
 	m_fSecsIntoTransition = 0.0;

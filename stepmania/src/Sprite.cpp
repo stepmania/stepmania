@@ -329,7 +329,11 @@ void Sprite::DrawPrimitives()
 
 void Sprite::SetState( int iNewState )
 {
-	ASSERT( iNewState >= 0  &&  iNewState < m_iNumStates );
+	// This assert will likely trigger if the "missing" theme element graphic 
+	// is loaded in place of a multi-frame sprite.  We want to know about these
+	// problems in debug builds, but they're not fatal.
+	DEBUG_ASSERT( iNewState >= 0  &&  iNewState < m_iNumStates );
+
 	CLAMP(iNewState, 0, m_iNumStates-1);
 	m_iCurState = iNewState;
 	m_fSecsIntoState = 0.0; 

@@ -28,7 +28,7 @@ float		g_fExpandSeconds = 0;
 float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 {
 	float fYOffset;
-	if( !GAMESTATE->m_PlayerOptions->m_bTimeSpacing )
+	if( !GAMESTATE->m_PlayerOptions[pn].m_bTimeSpacing )
 	{
 		float fSongBeat = GAMESTATE->m_fSongBeat;
 		float fBeatsUntilStep = fNoteBeat - fSongBeat;
@@ -39,7 +39,7 @@ float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 		float fSongSeconds = GAMESTATE->m_fMusicSeconds;
 		float fNoteSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fNoteBeat);
 		float fSecondsUntilStep = fNoteSeconds - fSongSeconds;
-		float fBPM = GAMESTATE->m_pCurSong->GetDominantBPM();
+		float fBPM = GAMESTATE->m_PlayerOptions[pn].m_fScrollBPM;
 		float fBPS = fBPM/60.f;
 		fYOffset = fSecondsUntilStep * fBPS * ARROW_SPACING;
 	}

@@ -1345,29 +1345,3 @@ void Song::RemoveNotes( Notes* pNotes )
 
 	AddAutoGenNotes();
 }
-
-float Song::GetDominantBPM()
-{
-	// Get the average BPM.
-	// TODO:  Make this return the most-used BPM in the song.
-	// This is tricky though because many songs with BPM changes
-	// have tweaked BPMs (e.g. 160BPM at first, then 160.05BPM later).
-	float fSumBPM = 0;
-	float fSumWeights = 0;
-	for( unsigned i=0; i<m_BPMSegments.size(); i++ )
-	{
-		float fBPM = m_BPMSegments[i].m_fBPM;
-		bool bIsLast = i==m_BPMSegments.size()-1;
-		float fLength;
-		if( bIsLast )
-			fLength = m_fLastBeat - m_BPMSegments[i].m_fStartBeat;
-		else
-			fLength = m_BPMSegments[i+1].m_fStartBeat - m_BPMSegments[i].m_fStartBeat;
-		if(fLength > 0)
-		{
-			fSumBPM += fBPM * fLength;
-			fSumWeights += fLength;
-		}
-	}
-	return fSumBPM / fSumWeights;
-}

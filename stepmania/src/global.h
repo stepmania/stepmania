@@ -73,6 +73,13 @@ using namespace std;
 #define ASSERT assert
 #endif
 
+#ifdef DEBUG
+#define DEBUG_ASSERT	ASSERT
+#else
+#define DEBUG_ASSERT	(void*)(0)
+#endif
+
+
 /* Define a macro to tell the compiler that a function doesn't return.  This just
  * improves compiler warnings.  This should be placed near the beginning of the
  * function prototype (although it looks better near the end, VC only accepts it
