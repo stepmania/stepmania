@@ -265,7 +265,14 @@ ScreenNameEntry::ScreenNameEntry()
 
 
 
-	m_Timer.SetTimer(TIMER_SECONDS);
+	if( !PREFSMAN->m_bMenuTimer )
+	{
+		m_Timer.SetTimer( 99 );
+		m_Timer.Update( 0 );
+		m_Timer.StopTimer();
+	}
+	else
+		m_Timer.SetTimer(TIMER_SECONDS);
 	m_Timer.SetXY( TIMER_X, TIMER_Y );
 	this->AddChild( &m_Timer );
 
