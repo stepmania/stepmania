@@ -17,7 +17,7 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "RageException.h"
-#include "DXUtil.h"
+#include "RageTimer.h"
 
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
@@ -256,12 +256,14 @@ void ScreenManager::SetNewScreen( CString sClassName )
 	 * Perhaps we should only do this in debug? */
 	FlushDirCache();
 
-	float f = DXUtil_Timer(TIMER_GETAPPTIME);
+	RageTimer t;
+	
 	// It makes sense that ScreenManager should allocate memory for a new screen since it 
 	// deletes it later on.  This also convention will reduce includes because screens won't 
 	// have to include each other's headers of other screens.
 	Screen* pNewScreen = MakeNewScreen(sClassName);
-LOG->Trace( "Loaded %s in %f", sClassName, DXUtil_Timer(TIMER_GETAPPTIME)-f);
+	LOG->Trace( "Loaded %s in %f", sClassName, t.GetDeltaTime());
+
 	SetNewScreen( pNewScreen );
 }
 
