@@ -23,6 +23,9 @@ static const CString LayoutTypeNames[NUM_LAYOUT_TYPES] = {
 XToString( LayoutType );
 StringToX( LayoutType );
 
+#define FOREACH_OptionsPlayer( pn ) \
+	for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID && (!m_RowDef.bOneChoiceForAllPlayers || pn==0); pn=GetNextHumanPlayer(pn) )
+
 
 const CString NEXT_ROW_NAME = "NextRow";
 
@@ -455,18 +458,15 @@ void OptionRow::UpdateText()
 	switch( m_RowDef.layoutType )
 	{
 	case LAYOUT_SHOW_ONE_IN_ROW:
-		FOREACH_HumanPlayer( pn )
+		FOREACH_HumanPlayer( p )
 		{
+			unsigned pn = m_RowDef.bOneChoiceForAllPlayers ? 0 : p;
 			int iChoiceWithFocus = m_iChoiceInRowWithFocus[pn];
-			unsigned item_no = m_RowDef.bOneChoiceForAllPlayers ? 0 : pn;
-
-			/* If player_no is 2 and there is no player 1: */
-			item_no = min( item_no, m_textItems.size()-1 );
 
 			CString sText = m_RowDef.choices[iChoiceWithFocus];
 			if( CAPITALIZE_ALL_OPTION_NAMES )
 				sText.MakeUpper();
-			m_textItems[item_no]->SetText( sText );
+			m_textItems[pn]->SetText( sText );
 		}
 		break;
 	}
@@ -681,6 +681,23 @@ void OptionRow::Reload()
 
 			ImportOptions();
 
+			switch( m_RowDef.selectType )
+			{
+			case SELECT_ONE:
+				FOREACH_OptionsPlayer( p )
+					m_iChoiceInRowWithFocus[p] = GetOneSelection(p);
+				break;
+			case SELECT_MULTIPLE:
+				FOREACH_OptionsPlayer( p )
+					CLAMP( m_iChoiceInRowWithFocus[p], 0, m_RowDef.choices.size()-1 );
+				break;
+			default:
+				ASSERT(0);
+			}
+
+			if( m_RowDef.m_bExportOnChange )
+				ExportOptions();
+
 			UpdateEnabledDisabled();
 			UpdateText();
 			PositionUnderlines();
@@ -720,63 +737,53 @@ static void VerifySelected( SelectType st, const vector<bool> vbSelected )
 	}
 }
 
-void OptionRow::ImportOptions()
+void OptionRow::ImportOptions( PlayerNumber pn )
 {
 	if( m_pHand == NULL )
 		return;
 
-	// clear selections
-	FOREACH_PlayerNumber( p )
-		FOREACH( bool, m_vbSelected[p], b )
-			*b = false;
-
 	ASSERT( m_RowDef.choices.size() > 0 );
 
-	if( m_RowDef.bOneChoiceForAllPlayers )
-	{
-		ASSERT( m_vbSelected[0].size() == m_RowDef.choices.size() );
-		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[0] );
-		m_pHand->ImportOption( m_RowDef, PLAYER_1, m_vbSelected[0] );
-		INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[0] );
-		VerifySelected( m_RowDef.selectType, m_vbSelected[0] );
-	}
-	else
-	{
-		FOREACH_HumanPlayer( p )
-		{
-			ASSERT( m_vbSelected[p].size() == m_RowDef.choices.size() );
-			ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
-			m_pHand->ImportOption( m_RowDef, p, m_vbSelected[p] );
-			INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
-			VerifySelected( m_RowDef.selectType, m_vbSelected[p] );
-		}
-	}
+	FOREACH( bool, m_vbSelected[pn], b )
+		*b = false;
+
+	ASSERT( m_vbSelected[pn].size() == m_RowDef.choices.size() );
+	ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[pn] );
+	m_pHand->ImportOption( m_RowDef, pn, m_vbSelected[pn] );
+	INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[pn] );
+	VerifySelected( m_RowDef.selectType, m_vbSelected[pn] );
 }
 
-int OptionRow::ExportOptions()
+void OptionRow::ImportOptions()
+{
+	FOREACH_OptionsPlayer( p )
+		ImportOptions( p );
+}
+
+int OptionRow::ExportOptions( PlayerNumber pn )
 {
 	if( m_pHand == NULL )
 		return 0;
 
+	ASSERT( m_RowDef.choices.size() > 0 );
+
+	int iChangeMask = 0;
+	
+	ASSERT( m_vbSelected[pn].size() == m_RowDef.choices.size() );
+	ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[pn] );
+	iChangeMask |= m_pHand->ExportOption( m_RowDef, pn, m_vbSelected[pn] );
+	INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[pn] );
+	
+	return iChangeMask;
+}
+
+int OptionRow::ExportOptions()
+{
 	int iChangeMask = 0;
 
-	if( m_RowDef.bOneChoiceForAllPlayers )
-	{
-		ASSERT( m_vbSelected[0].size() == m_RowDef.choices.size() );
-		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[0] );
-		iChangeMask |= m_pHand->ExportOption( m_RowDef, PLAYER_1, m_vbSelected[0] );
-		INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[0] );
-	}
-	else
-	{
-		FOREACH_HumanPlayer( p )
-		{
-			ASSERT( m_vbSelected[p].size() == m_RowDef.choices.size() );
-			ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
-			iChangeMask |= m_pHand->ExportOption( m_RowDef, p, m_vbSelected[p] );
-			INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
-		}
-	}
+	FOREACH_OptionsPlayer( p )
+		iChangeMask |= ExportOptions( p );
+
 	return iChangeMask;
 }
 

@@ -191,13 +191,15 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		m_framePage.AddChild( &row );
 	}
 
-	// TRICKY:  Add one more item.  This will be "EXIT"
-	m_Rows.push_back( new OptionRow() );
-	OptionRow &row = *m_Rows.back();
-	row.LoadMetrics( OPTION_ROW_TYPE );
-	row.LoadExit();
-
-	m_framePage.AddChild( &row );
+	if( SEPARATE_EXIT_ROW )
+	{
+		// TRICKY:  Add one more item.  This will be "EXIT"
+		m_Rows.push_back( new OptionRow() );
+		OptionRow &row = *m_Rows.back();
+		row.LoadMetrics( OPTION_ROW_TYPE );
+		row.LoadExit();
+		m_framePage.AddChild( &row );
+	}
 
 	// add explanation here so it appears on top
 	FOREACH_PlayerNumber( p )
@@ -406,7 +408,7 @@ void ScreenOptions::PositionCursors()
 
 		OptionsCursor &highlight = m_Highlight[pn];
 
-		const int iChoiceWithFocus = OptionRow.m_iChoiceInRowWithFocus[pn];
+		const int iChoiceWithFocus = OptionRow.GetChoiceInRowWithFocus(pn);
 
 		int iWidth, iX, iY;
 		GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
@@ -422,7 +424,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
 
 	const OptionRow &row = *m_Rows[iRow];
-	const int iChoiceWithFocus = row.m_iChoiceInRowWithFocus[pn];
+	const int iChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
 
 	int iWidth, iX, iY;
 	GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
@@ -686,10 +688,11 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 	FOREACH_PlayerNumber( p )
 	{
 		if( GAMESTATE->IsHumanPlayer(p) )
-			TweenCursor(  p );
+			TweenCursor( p );
 
 		int iCurrentRow = m_iCurrentRow[pn];
-		const bool ExitSelected = m_Rows[iCurrentRow]->GetRowType() == OptionRow::ROW_EXIT;
+		OptionRow &row = *m_Rows[iCurrentRow];
+		const bool ExitSelected = row.GetRowType() == OptionRow::ROW_EXIT;
 		if( p == pn || GAMESTATE->GetNumHumanPlayers() == 1 )
 		{
 			if( m_bWasOnExit[p] != ExitSelected )
@@ -797,7 +800,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 
 	if( row.GetFirstItemGoesDown() )
 	{
-		int iChoiceInRow = row.m_iChoiceInRowWithFocus[pn];
+		int iChoiceInRow = row.GetChoiceInRowWithFocus(pn);
 		if( iChoiceInRow == 0 )
 		{
 			MenuDown( pn, selectType );
@@ -807,9 +810,10 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 	
 	if( row.GetRowDef().selectType == SELECT_MULTIPLE )
 	{
-		int iChoiceInRow = row.m_iChoiceInRowWithFocus[pn];
-		row.m_vbSelected[pn][iChoiceInRow] = !row.m_vbSelected[pn][iChoiceInRow];
-		if( row.m_vbSelected[pn][iChoiceInRow] )
+		int iChoiceInRow = row.GetChoiceInRowWithFocus(pn);
+		bool bSelected = !row.GetSelected( pn, iChoiceInRow );
+		row.SetSelected( pn, iChoiceInRow, bSelected );
+		if( bSelected )
 			m_SoundToggleOn.Play();
 		else
 			m_SoundToggleOff.Play();
@@ -819,7 +823,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 		if( row.GetFirstItemGoesDown() )
 		{
 			// move to the first choice in the row
-			ChangeValueInRow( pn, -row.m_iChoiceInRowWithFocus[pn], selectType != IET_FIRST_PRESS );
+			ChangeValueInRow( pn, -row.GetChoiceInRowWithFocus(pn), selectType != IET_FIRST_PRESS );
 		}
 	}
 	else	// data.selectType != SELECT_MULTIPLE
@@ -833,14 +837,14 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 		case NAV_TOGGLE_FIVE_KEY:
 			if( row.GetRowDef().selectType != SELECT_MULTIPLE )
 			{
-				int iChoiceInRow = row.m_iChoiceInRowWithFocus[pn];
+				int iChoiceInRow = row.GetChoiceInRowWithFocus(pn);
 				if( row.GetRowDef().bOneChoiceForAllPlayers )
 					row.SetOneSharedSelection( iChoiceInRow );
 				else
 					row.SetOneSelection( pn, iChoiceInRow );
 			}
 			if( row.GetFirstItemGoesDown() )
-				ChangeValueInRow( pn, -row.m_iChoiceInRowWithFocus[pn], selectType != IET_FIRST_PRESS );	// move to the first choice
+				ChangeValueInRow( pn, -row.GetChoiceInRowWithFocus(pn), selectType != IET_FIRST_PRESS );	// move to the first choice
 			else
 				ChangeValueInRow( pn, 0, selectType != IET_FIRST_PRESS );
 			break;
@@ -867,9 +871,9 @@ void ScreenOptions::StoreFocus( PlayerNumber pn )
 		return;
 
 	int iWidth, iY;
-	GetWidthXY( pn, m_iCurrentRow[pn], m_Rows[m_iCurrentRow[pn]]->m_iChoiceInRowWithFocus[pn], iWidth, m_iFocusX[pn], iY );
-	LOG->Trace("cur selection %ix%i @ %i", m_iCurrentRow[pn], m_Rows[m_iCurrentRow[pn]]->m_iChoiceInRowWithFocus[pn],
-		m_iFocusX[pn]);
+	GetWidthXY( pn, m_iCurrentRow[pn], row.GetChoiceInRowWithFocus(pn), iWidth, m_iFocusX[pn], iY );
+	LOG->Trace("cur selection %ix%i @ %i", 
+		m_iCurrentRow[pn], row.GetChoiceInRowWithFocus(pn), m_iFocusX[pn]);
 }
 
 /* Left/right */
@@ -899,14 +903,14 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	bool bOneChanged = false;
 
 
-	int iCurrentChoiceWithFocus = row.m_iChoiceInRowWithFocus[pn];
+	int iCurrentChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
 	int iNewChoiceWithFocus = iCurrentChoiceWithFocus + iDelta;
 	wrap( iNewChoiceWithFocus, iNumOptions );
 	
 	if( iCurrentChoiceWithFocus != iNewChoiceWithFocus )
 		bOneChanged = true;
 
-	row.m_iChoiceInRowWithFocus[pn] = iNewChoiceWithFocus;
+	row.SetChoiceInRowWithFocus( pn, iNewChoiceWithFocus );
 	StoreFocus( pn );
 
 	if( row.GetRowDef().bOneChoiceForAllPlayers )
@@ -931,7 +935,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 			// lock focus together
 			FOREACH_HumanPlayer( p )
 			{
-				row.m_iChoiceInRowWithFocus[p] = iNewChoiceWithFocus;
+				row.SetChoiceInRowWithFocus( p, iNewChoiceWithFocus );
 				StoreFocus( p );
 			}
 		}
@@ -988,7 +992,7 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 	{
 		// If moving from a bFirstChoiceGoesDown row, put focus back on 
 		// the first choice before moving.
-		row.m_iChoiceInRowWithFocus[pn] = 0;
+		row.SetChoiceInRowWithFocus( pn, 0 );
 	}
 
 	LOG->Trace("move pn %i, dir %i, rep %i", pn, dir, Repeat);
@@ -1004,8 +1008,7 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 
 		wrap( r, m_Rows.size() );
 
-		int iCurrentRow = m_iCurrentRow[p];
-		const unsigned iOldSelection = m_Rows[iCurrentRow]->m_iChoiceInRowWithFocus[p];
+		const unsigned iOldSelection = row.GetChoiceInRowWithFocus(p);
 
 		m_iCurrentRow[p] = r;
 
@@ -1026,10 +1029,10 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 					if( iSelectionDist == -1 || iDist < iSelectionDist )
 					{
 						iSelectionDist = iDist;
-						row.m_iChoiceInRowWithFocus[p] = i;
+						row.SetChoiceInRowWithFocus( p, i );
 					}
 				}
-				row.m_iChoiceInRowWithFocus[p] = min( iOldSelection, row.GetTextItemsSize()-1 );
+				row.SetChoiceInRowWithFocus( p, min( iOldSelection, row.GetTextItemsSize()-1 ) );
 			}
 		}
 

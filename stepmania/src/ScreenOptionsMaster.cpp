@@ -136,13 +136,8 @@ void ScreenOptionsMaster::ImportOptionsForPlayer( PlayerNumber pn )
 
 	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
 	{
-		const OptionRowHandler *pHand = OptionRowHandlers[i];
-		const OptionRowDefinition &def = m_OptionRowAlloc[i];
 		OptionRow &row = *m_Rows[i];
-
-		if( def.bOneChoiceForAllPlayers )
-			continue;
-		pHand->ImportOption( def, pn, row.m_vbSelected[pn] );
+		row.ImportOptions( pn );
 	}
 }
 
@@ -244,7 +239,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 
 				OptionRowHandler *pHand = OptionRowHandlers[r];
 
-				const int iChoice = row.m_iChoiceInRowWithFocus[GAMESTATE->m_MasterPlayerNumber];
+				const int iChoice = row.GetChoiceInRowWithFocus(GAMESTATE->m_MasterPlayerNumber);
 				CString sScreen = pHand->GetAndEraseScreen( iChoice );
 				if( !sScreen.empty() )
 					m_sNextScreen = sScreen;

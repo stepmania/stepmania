@@ -88,7 +88,9 @@ public:
 	void LoadExit();
 	void LoadOptionIcon( PlayerNumber pn, const CString &sText );
 
+	void ImportOptions( PlayerNumber pn );
 	void ImportOptions();
+	int ExportOptions( PlayerNumber pn );
 	int ExportOptions();
 
 	void AfterImportOptions( 
@@ -108,10 +110,33 @@ public:
 	void SetOneSelection( PlayerNumber pn, int iChoice );
 	void SetOneSharedSelection( int iChoice );
 
-	int m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
-
-	// Only one will true at a time if m_RowDef.bMultiSelect
-	vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size()
+	int GetChoiceInRowWithFocus( PlayerNumber pn ) const
+	{
+		if( m_RowDef.bOneChoiceForAllPlayers )
+			pn = PLAYER_1;
+		int iChoice = m_iChoiceInRowWithFocus[pn];
+		ASSERT(iChoice<(int)m_RowDef.choices.size());
+		return iChoice; 
+	}
+	void SetChoiceInRowWithFocus( PlayerNumber pn, int iChoice )
+	{
+		if( m_RowDef.bOneChoiceForAllPlayers )
+			pn = PLAYER_1;
+		ASSERT(iChoice<(int)m_RowDef.choices.size());
+		m_iChoiceInRowWithFocus[pn] = iChoice;
+	}
+	bool GetSelected( PlayerNumber pn, int iChoice ) const
+	{
+		if( m_RowDef.bOneChoiceForAllPlayers )
+			pn = PLAYER_1;
+		return m_vbSelected[pn][iChoice];
+	}
+	void SetSelected( PlayerNumber pn, int iChoice, bool b )
+	{
+		if( m_RowDef.bOneChoiceForAllPlayers )
+			pn = PLAYER_1;
+		m_vbSelected[pn][iChoice] = b;
+	}
 
 	enum RowType
 	{
@@ -154,6 +179,10 @@ protected:
 	OptionIcon				m_OptionIcons[NUM_PLAYERS];
 	bool					m_bFirstItemGoesDown;
 	bool					m_bRowHasFocus[NUM_PLAYERS];
+
+	int m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
+	// Only one will true at a time if m_RowDef.bMultiSelect
+	vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size()
 
 	float m_fY;
 	bool m_bHidden; // currently off screen
