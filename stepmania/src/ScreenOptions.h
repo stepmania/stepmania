@@ -84,6 +84,7 @@ protected:
 	BitmapText		m_textOptions[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];	// this array has to be big enough to hold all of the options
 	bool			m_OptionDim[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];
 	void DimOption(int line, int option, bool dim);
+	bool RowCompletelyDimmed(int line) const;
 
 	int m_iSelectedOption[NUM_PLAYERS][MAX_OPTION_LINES];
 	int m_iCurrentRow[NUM_PLAYERS];

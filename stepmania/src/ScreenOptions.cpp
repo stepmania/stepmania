@@ -204,6 +204,12 @@ void ScreenOptions::DimOption(int line, int option, bool dim)
 		m_textOptions[line][option].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
 }
 
+bool ScreenOptions::RowCompletelyDimmed(int line) const
+{
+	for(int i = 0; i < m_OptionLineData[line].iNumOptions; ++i)
+		if(!m_OptionDim[line][i]) return true;
+	return false;
+}
 
 void ScreenOptions::PositionUnderlines()
 {
@@ -383,16 +389,21 @@ void ScreenOptions::MenuUp( const PlayerNumber pn )
 		if( m_InputMode == INPUTMODE_PLAYERS  &&  p != pn )
 			continue;	// skip
 
-		if( m_iCurrentRow[p] == 0 )	
-			m_iCurrentRow[p] = m_iNumOptionLines-1; // wrap around
-		else
-			m_iCurrentRow[p]--;
-		
+		/* Find the prev row with any un-dimmed entries. */
+		int new_row = m_iCurrentRow[p];
+		do {
+			if(--new_row < 0)
+				new_row = m_iNumOptionLines-1; // wrap around
+			if(RowCompletelyDimmed(new_row)) break;
+		} while(new_row != m_iCurrentRow[p]);
+		m_iCurrentRow[p] = new_row;
+
 		TweenHighlight( (PlayerNumber)p );
 	}
 	m_SoundChangeRow.PlayRandom();
 	OnChange();
 }
+
 
 void ScreenOptions::MenuDown( const PlayerNumber pn ) 
 {
@@ -401,10 +412,14 @@ void ScreenOptions::MenuDown( const PlayerNumber pn )
 		if( m_InputMode == INPUTMODE_PLAYERS  &&  p != pn )
 			continue;	// skip
 
-		if( m_iCurrentRow[p] == m_iNumOptionLines-1 )	
-			m_iCurrentRow[p] = 0; // wrap around
-		else
-			m_iCurrentRow[p]++;
+		/* Find the next row with any un-dimmed entries. */
+		int new_row = m_iCurrentRow[p];
+		do {
+			if( ++new_row == m_iNumOptionLines-1 )
+				new_row = 0; // wrap around
+			if(RowCompletelyDimmed(new_row)) break;
+		} while(new_row != m_iCurrentRow[p]);
+		m_iCurrentRow[p] = new_row;
 
 		TweenHighlight( (PlayerNumber)p );
 	}
