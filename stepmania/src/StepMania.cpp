@@ -56,15 +56,15 @@
 
 #if defined(_XBOX)
 	#ifdef DEBUG
-	#pragma comment(lib, "SDL-1.2.5/lib/xboxSDLmaind.lib")
+	#pragma comment(lib, "SDL-1.2.6/lib/xboxSDLmaind.lib")
 	#else
-	#pragma comment(lib, "SDL-1.2.5/lib/xboxSDLmain.lib")
+	#pragma comment(lib, "SDL-1.2.6/lib/xboxSDLmain.lib")
 	#endif	
 #elif defined(_WINDOWS)
 	#ifdef DEBUG
-	#pragma comment(lib, "SDL-1.2.5/lib/SDLmaind.lib")
+	#pragma comment(lib, "SDL-1.2.6/lib/SDLmaind.lib")
 	#else
-	#pragma comment(lib, "SDL-1.2.5/lib/SDLmain.lib")
+	#pragma comment(lib, "SDL-1.2.6/lib/SDLmain.lib")
 	#endif	
 #endif
 
