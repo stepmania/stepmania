@@ -35,7 +35,7 @@ public:
 	Alsa9Buf( hw hardware, int channels );
 	~Alsa9Buf();
 
-	int GetNumFramesToFill( int writeahead );
+	int GetNumFramesToFill( snd_pcm_sframes_t writeahead, snd_pcm_sframes_t chunksize );
 	void Write( const Sint16 *buffer, int frames );
 	unsigned FindSampleRate( unsigned rate );
 	

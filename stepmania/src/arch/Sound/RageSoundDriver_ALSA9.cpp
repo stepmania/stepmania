@@ -56,10 +56,7 @@ RageSound_ALSA9::stream::~stream()
 /* Returns the number of frames processed */
 bool RageSound_ALSA9::stream::GetData(bool init)
 {
-	int frames_to_fill = pcm->GetNumFramesToFill( max_writeahead );
-	if( !init )
-		frames_to_fill = min( frames_to_fill, chunksize );
-				
+	int frames_to_fill = pcm->GetNumFramesToFill( max_writeahead, init? max_writeahead:chunksize );
 	if( frames_to_fill < chunksize )
 		return false;
 

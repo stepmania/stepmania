@@ -61,7 +61,7 @@ bool RageSound_ALSA9_Software::GetData()
 {
 	const int chunksize = max_writeahead / num_chunks;
 	
-	const int frames_to_fill = min( chunksize, pcm->GetNumFramesToFill( max_writeahead ) );
+	const int frames_to_fill = pcm->GetNumFramesToFill( max_writeahead, chunksize );
 	if( frames_to_fill <= 0 )
 		return false;
 
