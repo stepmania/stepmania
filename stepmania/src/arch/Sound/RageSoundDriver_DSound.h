@@ -39,10 +39,12 @@ private:
 
 		int64_t flush_pos; /* state == FLUSHING only */
 
+		bool bPaused;
+
 		RageTimer start_time;
 		bool GetData( bool init, bool &bEOF );
 
-	    stream() { pcm = NULL; snd = NULL; state=INACTIVE; }
+	    stream() { pcm = NULL; snd = NULL; state = INACTIVE; bPaused = false; }
 		~stream();
 	};
 
@@ -61,6 +63,7 @@ private:
 	/* virtuals: */
 	void StartMixing( RageSoundBase *snd );	/* used by RageSound */
 	void StopMixing( RageSoundBase *snd );		/* used by RageSound */
+	bool PauseMixing( RageSoundBase *snd, bool bStop );
 	int64_t GetPosition( const RageSoundBase *snd ) const;
 	void Update(float delta);
 

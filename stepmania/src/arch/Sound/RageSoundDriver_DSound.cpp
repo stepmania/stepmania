@@ -54,6 +54,10 @@ void RageSound_DSound::MixerThread()
 			while( stream_pool[i]->state == stream::PLAYING ||
 				   stream_pool[i]->state == stream::FLUSHING )
 			{
+				/* Don't mix paused sounds. */
+				if( stream_pool[i]->bPaused )
+					break;
+
 				bool bEOF;
 				if( !stream_pool[i]->GetData( false, bEOF ) )
 					break;
@@ -82,6 +86,7 @@ void RageSound_DSound::MixerThread()
 			if( ps < stream_pool[i]->flush_pos )
 				continue; /* still flushing */
 
+			stream_pool[i]->bPaused = false;
 			stream_pool[i]->pcm->Stop();
 
 			stream_pool[i]->state = stream::FINISHED;
@@ -339,6 +344,28 @@ void RageSound_DSound::StopMixing( RageSoundBase *snd )
 	 * don't need to guarantee this; this is just a peculiarity of DirectSound. */
 	stream_pool[i]->pcm->Stop();
 	stream_pool[i]->state = stream_pool[i]->INACTIVE;
+}
+
+bool RageSound_DSound::PauseMixing( RageSoundBase *snd, bool bStop )
+{
+	unsigned i;
+	for( i = 0; i < stream_pool.size(); ++i )
+		if( stream_pool[i]->snd == snd )
+			break;
+
+	/* A sound can be paused in PLAYING or FLUSHING.  (FLUSHING means the sound
+	 * has been decoded to the end, and we're waiting for that data to finish, so
+	 * externally it looks and acts like PLAYING.) */
+	if( i == stream_pool.size() ||
+		(stream_pool[i]->state != stream::PLAYING && stream_pool[i]->state != stream::FLUSHING) )
+	{
+		LOG->Trace( "not pausing a sound because it's not playing" );
+		return false;
+	}
+
+	stream_pool[i]->bPaused = bStop;
+
+	return true;
 }
 
 int64_t RageSound_DSound::GetPosition( const RageSoundBase *snd ) const
