@@ -109,9 +109,6 @@ void BacktraceNames::FromAddr( const void *p )
 }
 
 #elif defined(BACKTRACE_LOOKUP_METHOD_DARWIN_DYLD)
-#include <mach-o/dyld.h>
-#include <mach-o/nlist.h>
-
 /*
 Copyright (c) 2002 Jorge Acereda  <jacereda@users.sourceforge.net> &
                    Peter O'Gorman <ogorman@users.sourceforge.net>
