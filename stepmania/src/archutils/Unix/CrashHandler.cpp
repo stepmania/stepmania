@@ -273,7 +273,7 @@ static int find_address( void *p, const void **starts, const void **ends )
 	for( int i = 0; starts[i]; ++i )
 	{
 		/* Found it. */
-		if( starts[i] <= p && p <= ends[i] )
+		if( starts[i] <= p && p < ends[i] )
 			return i;
 	}
 
