@@ -1261,7 +1261,7 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		MenuStart( PLAYER_INVALID );
+		EndScreen();
 		break;
 	case SM_GoToNextScreen:
 		if(m_bFailed && !PREFSMAN->m_bEventMode && !(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2()) && GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE) // if failed and not in event mode go to gameover screen
@@ -1313,14 +1313,19 @@ void ScreenEvaluation::MenuBack( PlayerNumber pn )
 
 void ScreenEvaluation::MenuStart( PlayerNumber pn )
 {
+	m_soundStart.Play();
+
+	EndScreen();
+}
+
+void ScreenEvaluation::EndScreen()
+{
 	TweenOffScreen();
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		m_Grades[p].SettleImmediately();
 
 	GAMESTATE->m_iRoundSeed = rand();
-
-	m_soundStart.Play();
 
 	if( PREFSMAN->m_bEventMode )
 	{
