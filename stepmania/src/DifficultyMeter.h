@@ -12,7 +12,9 @@
 */
 
 #include "BitmapText.h"
+#include "PlayerNumber.h"
 class Notes;
+class Course;
 
 
 class DifficultyMeter : public BitmapText
@@ -20,10 +22,13 @@ class DifficultyMeter : public BitmapText
 public:
 	DifficultyMeter();
 
+	void SetFromGameState( PlayerNumber pn );
 	void SetFromNotes( Notes* pNotes );
-	void SetMeter( int iMeter );
+	void SetFromCourse( Course* pCourse );
+	void Unset();
 
 private:
+	void SetMeter( int iMeter );
 };
 
 #endif

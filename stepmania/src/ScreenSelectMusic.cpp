@@ -908,7 +908,7 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 		m_AutoGenIcon[pn].SetEffectNone();
 		m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,0) );
 	}
-	m_DifficultyMeter[pn].SetFromNotes( pNotes );
+	m_DifficultyMeter[pn].SetFromGameState( pn );
 	m_GrooveRadar.SetFromNotes( pn, pNotes );
 	m_MusicWheel.NotesChanged( pn );
 }

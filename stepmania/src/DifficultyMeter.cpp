@@ -13,9 +13,11 @@
 #include "DifficultyMeter.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
+#include "GameState.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "Notes.h"
+#include "Course.h"
 #include "SongManager.h"
 
 
@@ -28,28 +30,60 @@ DifficultyMeter::DifficultyMeter()
 {
 	BitmapText::LoadFromTextureAndChars( THEME->GetPathToG("DifficultyMeter bar 2x1"), "10" );
 
-	SetFromNotes( NULL );
+	Unset();
 }
 
 void DifficultyMeter::SetFromNotes( Notes* pNotes )
 {
-	if( pNotes != NULL )
+	if( pNotes == NULL )
 	{
-		SetDiffuse( RageColor(1,1,1,1) );
-		SetMeter( pNotes->GetMeter() );
-		if( pNotes->GetMeter() > GLOW_IF_METER_GREATER_THAN )
-			this->SetEffectGlowShift();
-		else
-			this->SetEffectNone();
+		Unset();
+		return;
+	}
 
-		SetDiffuse( SONGMAN->GetDifficultyColor(pNotes->GetDifficulty()) );
-	}
-	else
+	SetMeter( pNotes->GetMeter() );
+	SetDiffuse( SONGMAN->GetDifficultyColor(pNotes->GetDifficulty()) );
+}
+
+void DifficultyMeter::SetFromCourse( Course* pCourse )
+{
+	if( pCourse == NULL )
 	{
-		this->SetEffectNone();
-		SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
-		SetMeter( 0 );
+		Unset();
+		return;
 	}
+
+	int meter = pCourse->GetMeter();
+	SetMeter( meter );
+	
+	// XXX
+	if(meter <= 1 )
+		SetDiffuse( SONGMAN->GetDifficultyColor(DIFFICULTY_BEGINNER) );
+	else if(meter <= 2 )
+		SetDiffuse( SONGMAN->GetDifficultyColor(DIFFICULTY_EASY) );
+	else if(meter <= 5 )
+		SetDiffuse( SONGMAN->GetDifficultyColor(DIFFICULTY_MEDIUM) );
+	else if(meter <= 7 )
+		SetDiffuse( SONGMAN->GetDifficultyColor(DIFFICULTY_HARD) );
+	else
+		SetDiffuse( SONGMAN->GetDifficultyColor(DIFFICULTY_CHALLENGE) );
+}
+
+void DifficultyMeter::Unset()
+{
+	this->SetEffectNone();
+	SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
+	SetMeter( 0 );
+}
+
+void DifficultyMeter::SetFromGameState( PlayerNumber pn )
+{
+	if( GAMESTATE->m_pCurNotes[pn] )
+		SetFromNotes( GAMESTATE->m_pCurNotes[pn] );
+	else if( GAMESTATE->m_pCurCourse )
+		SetFromCourse( GAMESTATE->m_pCurCourse );
+	else
+		Unset();
 }
 
 void DifficultyMeter::SetMeter( int iMeter )
@@ -63,4 +97,9 @@ void DifficultyMeter::SetMeter( int iMeter )
 			sNewText += "1";
 
 	SetText( sNewText );
+
+	if( iMeter > GLOW_IF_METER_GREATER_THAN )
+		this->SetEffectGlowShift();
+	else
+		this->SetEffectNone();
 }
