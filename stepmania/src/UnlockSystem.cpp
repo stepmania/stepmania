@@ -50,7 +50,7 @@ void UnlockSystem::RouletteUnlock( const Song *song )
 	if (GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
 		return;
 
-	SongEntry *p = FindSong( song );
+	UnlockEntry *p = FindSong( song );
 	if (!p)
 		return;  // does not exist
 	if (p->m_iRouletteSeed == 0)
@@ -67,7 +67,7 @@ bool UnlockSystem::CourseIsLocked( const Course *course )
 
 	// I know, its not a song, but for purposes of title
 	// comparison, its the same thing.
-	SongEntry *p = FindCourse( course );
+	UnlockEntry *p = FindCourse( course );
 
 	if (p)
 		p->UpdateLocked();
@@ -80,7 +80,7 @@ bool UnlockSystem::SongIsLocked( const Song *song )
 	if( !PREFSMAN->m_bUseUnlockSystem )
 		return false;
 
-	SongEntry *p = FindSong( song );
+	UnlockEntry *p = FindSong( song );
 	if( p == NULL )
 		return false;
 
@@ -93,12 +93,12 @@ bool UnlockSystem::SongIsLocked( const Song *song )
 
 bool UnlockSystem::SongIsRoulette( const Song *song )
 {
-	SongEntry *p = FindSong( song );
+	UnlockEntry *p = FindSong( song );
 
 	return p && (p->m_iRouletteSeed != 0) ;
 }
 
-SongEntry *UnlockSystem::FindLockEntry( CString songname )
+UnlockEntry *UnlockSystem::FindLockEntry( CString songname )
 {
 	for(unsigned i = 0; i < m_SongEntries.size(); i++)
 		if (!songname.CompareNoCase(m_SongEntries[i].m_sSongName))
@@ -107,7 +107,7 @@ SongEntry *UnlockSystem::FindLockEntry( CString songname )
 	return NULL;
 }
 
-SongEntry *UnlockSystem::FindSong( const Song *pSong )
+UnlockEntry *UnlockSystem::FindSong( const Song *pSong )
 {
 	for(unsigned i = 0; i < m_SongEntries.size(); i++)
 		if (m_SongEntries[i].m_pSong == pSong )
@@ -116,7 +116,7 @@ SongEntry *UnlockSystem::FindSong( const Song *pSong )
 	return NULL;
 }
 
-SongEntry *UnlockSystem::FindCourse( const Course *pCourse )
+UnlockEntry *UnlockSystem::FindCourse( const Course *pCourse )
 {
 	for(unsigned i = 0; i < m_SongEntries.size(); i++)
 		if (m_SongEntries[i].m_pCourse== pCourse )
@@ -126,7 +126,7 @@ SongEntry *UnlockSystem::FindCourse( const Course *pCourse )
 }
 
 
-SongEntry::SongEntry()
+UnlockEntry::UnlockEntry()
 {
 	m_fDancePointsRequired = 0;
 	m_fArcadePointsRequired = 0;
@@ -144,7 +144,7 @@ SongEntry::SongEntry()
 }
 
 
-void SongEntry::UpdateLocked()
+void UnlockEntry::UpdateLocked()
 {
 	if (!isLocked)
 		return;
@@ -215,7 +215,7 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 			continue;
 		}
 
-		SongEntry current;
+		UnlockEntry current;
 		current.m_sSongName = sParams[1];
 		LOG->Trace("Song entry: %s", current.m_sSongName.c_str() );
 
@@ -288,12 +288,12 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 	return true;
 }
 
-bool SongEntry::SelectableWheel()
+bool UnlockEntry::SelectableWheel()
 {
 	return (!isLocked);  // cached
 }
 
-bool SongEntry::SelectableRoulette()
+bool UnlockEntry::SelectableRoulette()
 {
 	if (!isLocked) return true;
 

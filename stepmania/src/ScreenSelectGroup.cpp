@@ -71,7 +71,7 @@ ScreenSelectGroup::ScreenSelectGroup() : Screen("ScreenSelectGroup")
 		// check if song is locked
 		if (PREFSMAN->m_bUseUnlockSystem)
 		{
-			SongEntry* m_UnlockSong = GAMESTATE->m_pUnlockingSys->FindSong( aAllSongs[j] );
+			UnlockEntry* m_UnlockSong = GAMESTATE->m_pUnlockingSys->FindSong( aAllSongs[j] );
 
 			if (m_UnlockSong)
 				DisplaySong = (m_UnlockSong->SelectableWheel());

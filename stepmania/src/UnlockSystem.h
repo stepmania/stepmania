@@ -19,9 +19,9 @@ enum UnlockTypes { UNLOCK_AP, UNLOCK_DP, UNLOCK_SP,
 
 class Song;
 
-struct SongEntry
+struct UnlockEntry
 {
-	SongEntry();
+	UnlockEntry();
 
 	CString m_sSongName;
 	
@@ -70,7 +70,7 @@ public:
 	bool LoadFromDATFile( CString sPath );
 
 	// All locked songs are stored here
-	vector<SongEntry>	m_SongEntries;	
+	vector<UnlockEntry>	m_SongEntries;	
 
 	// Gets number of unlocks for title screen
 	int GetNumUnlocks() const;
@@ -105,13 +105,13 @@ public:
 
 	void UpdateSongs();
 
-	SongEntry *FindLockEntry( CString lockname );
+	UnlockEntry *FindLockEntry( CString lockname );
 
 	// so class can access FindSong
 	friend class ScreenSelectGroup;
 private:
-	SongEntry *FindSong( const Song *pSong );
-	SongEntry *FindCourse( const Course *pCourse );
+	UnlockEntry *FindSong( const Song *pSong );
+	UnlockEntry *FindCourse( const Course *pCourse );
 
 	void InitRouletteSeeds(int MaxRouletteSlot);  
 	// makes RouletteSeeds more efficient

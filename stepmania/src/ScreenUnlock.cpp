@@ -68,14 +68,14 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 		entry->SetName( ssprintf("Unlock%d",i) );
 		SET_XY( *entry );
 
-		// get pertaining songentry
+		// get pertaining UnlockEntry
 		CString SongTitle = DISPLAYED_SONG(i);
 		if (USE_UNLOCKS_DAT == 1)
 			if ((unsigned)i <= GAMESTATE->m_pUnlockingSys->m_SongEntries.size() )
 				SongTitle = GAMESTATE->m_pUnlockingSys->m_SongEntries[i-1].m_sSongName;
 		LOG->Trace("UnlockScreen: Searching for %s", SongTitle.c_str());
 		
-		SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindLockEntry( SongTitle );
+		UnlockEntry *pSong = GAMESTATE->m_pUnlockingSys->FindLockEntry( SongTitle );
 
 		if( pSong == NULL)
 		{
@@ -125,7 +125,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 					DisplayedSong = GAMESTATE->m_pUnlockingSys->m_SongEntries[i-1].m_sSongName;
 			
 			DisplayedSong.MakeUpper();
-			SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindLockEntry(DisplayedSong);
+			UnlockEntry *pSong = GAMESTATE->m_pUnlockingSys->FindLockEntry(DisplayedSong);
 			if ( pSong == NULL )  // no such song
 				continue;
 
@@ -254,7 +254,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			}
 
 			DisplayedSong.MakeUpper();
-			SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindLockEntry(DisplayedSong);
+			UnlockEntry *pSong = GAMESTATE->m_pUnlockingSys->FindLockEntry(DisplayedSong);
 
 			/* Reset zoom before using SetTextMaxWidth. */
 			NewText->SetZoom(UNLOCK_TEXT_SCROLL_ZOOM);
