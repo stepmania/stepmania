@@ -77,19 +77,24 @@ void SignalHandler::OnClose(handler h)
 		int version;
 		GetKernel( system, version );
 		void *p = NULL;
-		if( version > 0x020500 )
-			p = mmap( NULL, SIGSTKSZ, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
+		const int AltStackSize = 1024*64;
+		if( version > 20500 )
+			p = mmap( NULL, AltStackSize, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
 
 		if( p == (void *) -1 )
-			p = malloc( SIGSTKSZ );
+			p = malloc( AltStackSize );
 
 		if( p != NULL )
 		{
 			stack_t ss;
 			ss.ss_sp = p;
-			ss.ss_size = SIGSTKSZ;
+			ss.ss_size = AltStackSize;
 			ss.ss_flags = 0;
-			sigaltstack( &ss, NULL );
+			if( sigaltstack( &ss, NULL ) == -1 )
+			{
+				LOG->Info( "sigaltstack failed: %s", strerror(errno) );
+				p = NULL; /* no SA_ONSTACK */
+			}
 		}
 		
 		/* Set up our signal handlers. */
