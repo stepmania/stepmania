@@ -339,8 +339,9 @@ void Course::Save()
 			{
 				// strip off everything but the group name and song dir
 				CStringArray as;
+				ASSERT( entry.pSong != NULL );
 				split( entry.pSong->GetSongDir(), "/", as );
-				ASSERT( !as.empty() );
+				ASSERT( as.size() >= 2 );
 				CString sGroup = as[ as.size()-2 ];
 				CString sSong = as[ as.size()-1 ];
 				line += "#SONG:" + sGroup + '/' + sSong;
