@@ -33,7 +33,7 @@
 #include "NotesLoaderKSF.h"
 #include "NotesWriterDWI.h"
 
-const int FILE_CACHE_VERSION = 73;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 92;	// increment this when Song or Notes changes to invalidate cache
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
@@ -714,45 +714,50 @@ void Song::SaveToDWIFile()
 	wr.Write(sPath, *this);
 }
 
-struct AutoGenMapping
-{
-	NotesType ntMissing;
-	NotesType ntGenerateFrom;
-	int iOriginalTrackToTakeFrom[MAX_NOTE_TRACKS];
-};
-const AutoGenMapping AUTO_GEN_MAPPINGS[] = {
-	{ NOTES_TYPE_PUMP_SINGLE,	NOTES_TYPE_DANCE_SINGLE,	{ 0, 1, -1, 2, 3 }					},
-	{ NOTES_TYPE_DANCE_SINGLE,	NOTES_TYPE_PUMP_SINGLE,		{ 0, 1, 3, 4 }						},
-	{ NOTES_TYPE_PUMP_DOUBLE,	NOTES_TYPE_DANCE_DOUBLE,	{ 0, 1, -1, 2, 3, 4, 5, -1, 6, 7 }	},
-	{ NOTES_TYPE_DANCE_DOUBLE,	NOTES_TYPE_PUMP_DOUBLE,		{ 0, 1, 3, 4, 5, 6, 8, 9 }			},
-};
-const NUM_AUTOGEN_MAPPINGS = sizeof(AUTO_GEN_MAPPINGS) / sizeof(AutoGenMapping);
 
 void Song::AddAutoGenNotes()
 {
-	for( int i=0; i<NUM_AUTOGEN_MAPPINGS; i++ )
+	for( NotesType ntMissing=(NotesType)0; ntMissing<NUM_NOTES_TYPES; ntMissing=(NotesType)(ntMissing+1) )
 	{
-		const AutoGenMapping& mapping = AUTO_GEN_MAPPINGS[i];
-
-		if( !SongHasNotesType(mapping.ntMissing))
+		if( !SongHasNotesType(ntMissing) )	// missing Notes of this type
 		{
-			for( int i=0; i<m_apNotes.GetSize(); i++ )
+			int iNumTracksOfMissing = GAMEMAN->NotesTypeToNumTracks(ntMissing);
+
+			// look for closest match
+			NotesType	ntBestMatch = (NotesType)-1;
+			int			iBestTrackDifference = 10000;	// inf
+
+			for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
 			{
-				Notes* pOriginalNotes = m_apNotes[i];
-				if( pOriginalNotes->m_NotesType != mapping.ntGenerateFrom )
-					continue;
+				int iNumTracks = GAMEMAN->NotesTypeToNumTracks(nt);
+				int iTrackDifference = abs(iNumTracks-iNumTracksOfMissing);
+				if( SongHasNotesType(nt)  &&  iTrackDifference<iBestTrackDifference )
+				{
+					ntBestMatch = nt;
+					iBestTrackDifference = iTrackDifference;
+				}
+			}
 
-				Notes* pNewNotes = new Notes;
-				pNewNotes->m_Difficulty	= pOriginalNotes->m_Difficulty;
-				pNewNotes->m_iMeter				= pOriginalNotes->m_iMeter;
-				pNewNotes->m_sDescription		= pOriginalNotes->m_sDescription + " (autogen)";
-				pNewNotes->m_NotesType			= mapping.ntMissing;
+			if( ntBestMatch != -1 )
+			{
+				for( int j=0; j<m_apNotes.GetSize(); j++ )
+				{
+					Notes* pOriginalNotes = m_apNotes[j];
+					if( pOriginalNotes->m_NotesType != ntBestMatch )
+						continue;	// skip
 
-				NoteData originalNoteData, newNoteData;
-				pOriginalNotes->GetNoteData( &originalNoteData );
-				newNoteData.LoadTransformed( &originalNoteData, GAMEMAN->NotesTypeToNumTracks(mapping.ntMissing), mapping.iOriginalTrackToTakeFrom );
-				pNewNotes->SetNoteData( &newNoteData );
-				this->m_apNotes.Add( pNewNotes );
+					Notes* pNewNotes = new Notes;
+					pNewNotes->m_Difficulty		= pOriginalNotes->m_Difficulty;
+					pNewNotes->m_iMeter			= pOriginalNotes->m_iMeter;
+					pNewNotes->m_sDescription	= pOriginalNotes->m_sDescription + " (autogen)";
+					pNewNotes->m_NotesType		= ntMissing;
+
+					NoteData originalNoteData, newNoteData;
+					pOriginalNotes->GetNoteData( &originalNoteData );
+					newNoteData.LoadTransformedSlidingWindow( &originalNoteData, iNumTracksOfMissing );
+					pNewNotes->SetNoteData( &newNoteData );
+					this->m_apNotes.Add( pNewNotes );
+				}
 			}
 		}
 	}

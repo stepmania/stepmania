@@ -11,6 +11,8 @@
 */
 
 #include "MsdFile.h"
+#include "io.h"
+#include "fcntl.h"
 
 
 MsdFile::MsdFile()
@@ -25,19 +27,15 @@ MsdFile::~MsdFile()
 //returns true if successful, false otherwise
 bool MsdFile::ReadFile( CString sNewPath )
 {
-	// Get file size in bytes
-	HANDLE hFile = CreateFile(
-	  sNewPath,          // pointer to name of the file
-	  GENERIC_READ,       // access (read-write) mode
-	  FILE_SHARE_READ|FILE_SHARE_WRITE,	// share mode
-	  NULL,				   // pointer to security attributes
-	  OPEN_EXISTING,  // how to create
-	  FILE_ATTRIBUTE_NORMAL,  // file attributes
-	  NULL         // handle to file with attributes to 
-	);
+   int fh;
 
-	int iBufferSize = GetFileSize( hFile, NULL ) + 1000; // +1000 just in case
-	CloseHandle( hFile );
+   /* Open a file */
+   if( (fh = _open(sNewPath, _O_RDONLY, 0)) == -1 )
+	   return false;
+
+	int iBufferSize = _filelength( fh ) + 1000; // +1000 because sometimes the bytes read is > filelength.  Why?
+	_close( fh );
+
 
 	FILE* fp = fopen(sNewPath, "r");
 	if( fp == NULL )
@@ -45,13 +43,13 @@ bool MsdFile::ReadFile( CString sNewPath )
 
 	// allocate a string to hold the file
 	char* szFileString = new char[iBufferSize];
-	char* szParams[MAX_VALUES][MAX_PARAMS_PER_VALUE];
+	ASSERT( szFileString );
 
 	int iBytesRead = fread( szFileString, 1, iBufferSize, fp );
-
 	ASSERT( iBufferSize > iBytesRead );
-	/* why are we using Windows API calls for simple file access, anyway? XXX -glenn */
-	/* What is the C way to get the file size?  I don't see 'fstat' in C library... -Chris */
+	szFileString[iBytesRead] = '\0';
+	
+	char* szParams[MAX_VALUES][MAX_PARAMS_PER_VALUE];
 
 	m_iNumValues = 0;
 
@@ -90,6 +88,7 @@ bool MsdFile::ReadFile( CString sNewPath )
 
 				ReadingValue=true;
 				m_iNumValues++;
+				ASSERT( m_iNumValues < MAX_VALUES );
 				int iCurValueIndex = m_iNumValues-1;
 				m_iNumParams[iCurValueIndex] = 1;
 				szParams[iCurValueIndex][0] = &szFileString[i+1];
@@ -130,8 +129,6 @@ bool MsdFile::ReadFile( CString sNewPath )
 			;	// do nothing
 		}
 	}
-
-	szFileString[i] = '\0';
 
 	for( i=0; i<m_iNumValues; i++ )
 	{

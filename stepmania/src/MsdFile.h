@@ -11,7 +11,7 @@
 */
 
 
-const int MAX_VALUES = 50;
+const int MAX_VALUES = 200;
 const int MAX_PARAMS_PER_VALUE = 10;
 
 class MsdFile  

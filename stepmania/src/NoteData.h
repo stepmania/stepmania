@@ -23,7 +23,6 @@
 // ... for future expansion
 
 
-
 class NoteData
 {
 public:
@@ -58,6 +57,7 @@ public:
 
 	// statistics
 	bool IsThereANoteAtRow( int iRow );
+
 	float GetFirstBeat();	// return the beat number of the first note
 	int GetFirstRow();
 	float GetLastBeat();	// return the beat number of the last note
@@ -89,6 +89,9 @@ public:
 
 	// Transformations
 	void LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track
+	void LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTracks );	// useful for autogenerating DDR->Pump, Pump->DDR
+	void LoadTransformedMirrorOnCross( NoteData* pOriginal, int iNewNumTracks );	// useful for autogenerating double patterns
+
 
 	void CropToLeftSide();
 	void CropToRightSide();

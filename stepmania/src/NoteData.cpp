@@ -184,9 +184,15 @@ void NoteData::AddHoldNote( HoldNote add )
 	for( i=0; i<m_iNumHoldNotes; i++ )	// for each HoldNote
 	{
 		HoldNote &other = m_HoldNotes[i];
-		if( add.m_iTrack == other.m_iTrack  &&		// the notes correspond
-			other.m_fStartBeat <= add.m_fEndBeat  &&
-			other.m_fEndBeat >= add.m_fStartBeat )	// these HoldNotes overlap (this isn't entirely correct!)
+		if( add.m_iTrack == other.m_iTrack  &&		// the tracks correspond
+			// they overlap
+			(
+				( other.m_fStartBeat <= add.m_fStartBeat && other.m_fEndBeat >= add.m_fEndBeat ) ||		// other consumes add
+				( other.m_fStartBeat >= add.m_fStartBeat && other.m_fEndBeat <= add.m_fEndBeat ) ||		// other inside add
+				( add.m_fStartBeat <= other.m_fStartBeat && other.m_fStartBeat <= add.m_fEndBeat ) ||	// other overlaps add
+				( add.m_fStartBeat <= other.m_fEndBeat && other.m_fEndBeat <= add.m_fEndBeat )			// other overlaps add
+			)
+			)
 		{
 			add.m_fStartBeat = min(add.m_fStartBeat, other.m_fStartBeat);
 			add.m_fEndBeat   = max(add.m_fEndBeat, other.m_fEndBeat);
@@ -848,6 +854,63 @@ void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const in
 		if( iOriginalTrack == -1 )
 			continue;
 		memcpy( m_TapNotes[t], pOriginal->m_TapNotes[iOriginalTrack], MAX_TAP_NOTE_ROWS*sizeof(m_TapNotes[0][0]) );
+	}
+
+	pOriginal->Convert4sToHoldNotes();
+	Convert4sToHoldNotes();
+}
+
+void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTracks )
+{
+	pOriginal->ConvertHoldNotesTo4s();
+	m_iNumTracks = iNewNumTracks;
+
+	int iLastRow = pOriginal->GetLastRow();
+	for( int r=0; r<=iLastRow; r++ )
+	{
+		int iMeasure = (int)(NoteRowToBeat(r) / BEATS_PER_MEASURE);
+
+		for( int t=0; t<=pOriginal->m_iNumTracks; t++ )
+		{
+			int iOldTrack = t;
+			int iNewTrack = (iOldTrack + iMeasure/4) % iNewNumTracks;	// change sliding window every 4 measures
+
+			if( pOriginal->m_TapNotes[iOldTrack][r] != '0' )
+				this->m_TapNotes[iNewTrack][r] = pOriginal->m_TapNotes[iOldTrack][r];
+		}
+	}
+
+	pOriginal->Convert4sToHoldNotes();
+	Convert4sToHoldNotes();
+}
+
+void NoteData::LoadTransformedMirrorOnCross( NoteData* pOriginal, int iNewNumTracks )
+{
+	ASSERT( iNewNumTracks == pOriginal->m_iNumTracks*2 );
+
+	m_iNumTracks = iNewNumTracks;
+
+	pOriginal->ConvertHoldNotesTo4s();
+
+	bool bMirror = false;
+	int iMirrorTrack = pOriginal->m_iNumTracks/2-1;
+
+	int iLastRow = pOriginal->GetLastRow();
+	for( int r=0; r<=iLastRow; r++ )
+	{
+		for( int t=0; t<=pOriginal->m_iNumTracks; t++ )
+		{
+			int iOldTrack = t;
+			int iNewTrack = bMirror ? m_iNumTracks - iOldTrack : iOldTrack;
+
+			if( pOriginal->m_TapNotes[iOldTrack][r] != '0' )
+			{
+				this->m_TapNotes[iNewTrack][r] = pOriginal->m_TapNotes[iOldTrack][r];
+
+				if( iOldTrack == iMirrorTrack )
+					bMirror ^= true;
+			}
+		}
 	}
 
 	pOriginal->Convert4sToHoldNotes();

@@ -903,7 +903,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case DIK_P:
 		{
 			if( m_NoteFieldEdit.m_fBeginMarker == -1 )
-				m_NoteFieldEdit.m_fBeginMarker = m_pSong->m_fFirstBeat;
+				m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
 			if( m_NoteFieldEdit.m_fEndMarker == -1 )
 				m_NoteFieldEdit.m_fEndMarker = m_pSong->m_fLastBeat;
 
@@ -924,7 +924,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case DIK_R:
 		{
 			if( m_NoteFieldEdit.m_fBeginMarker == -1 )
-				m_NoteFieldEdit.m_fBeginMarker = m_pSong->m_fFirstBeat;
+				m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
 			if( m_NoteFieldEdit.m_fEndMarker == -1 )
 				m_NoteFieldEdit.m_fEndMarker = m_pSong->m_fLastBeat;
 
