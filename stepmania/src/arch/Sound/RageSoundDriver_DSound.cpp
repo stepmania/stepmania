@@ -38,14 +38,14 @@ void RageSound_DSound::MixerThread()
 {
 	InitThreadData("Mixer thread");
 	VDCHECKPOINT;
-	
+
+	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
+	 * assigns it; we might get here before that happens, though. */
+	while(!SOUNDMAN && !shutdown) Sleep(10);
+
 	while(!shutdown) {
 		VDCHECKPOINT;
 		Sleep(10);
-
-		/* SOUNDMAN will be set once RageSoundManager's ctor returns and
-		 * assigns it; we might get here before that happens, though. */
-		if(!SOUNDMAN) continue;
 
 		VDCHECKPOINT;
 		LockMutex L(SOUNDMAN->lock);
@@ -195,6 +195,20 @@ RageSound_DSound::RageSound_DSound()
 
 	/* Try to set primary mixing privileges */
 	hr = ds8->SetCooperativeLevel(GetDesktopWindow(), DSSCL_PRIORITY);
+	{
+		/* Don't bother wasting time trying to create buffers if we're
+		 * emulated.  This also gives us better diagnostic information. */
+		DSCAPS Caps;
+		Caps.dwSize = sizeof(Caps);
+		HRESULT hr;
+		if(FAILED(hr = ds8->GetCaps(&Caps)))
+			LOG->Warn(hr_ssprintf(hr, "ds8->GetCaps failed"));
+		else if(Caps.dwFlags & DSCAPS_EMULDRIVER)
+		{
+			ds8->Release();
+			throw "Driver unusable (emulated device)";
+		}
+	}
 
 	/* Create a bunch of streams and put them into the stream pool. */
 	for(int i = 0; i < 32; ++i) {
@@ -253,7 +267,8 @@ void RageSound_DSound::StartMixing(RageSound *snd)
 
 	if(i == stream_pool.size()) {
 		/* We don't have a free sound buffer. XXX fake it */
-		ASSERT(0);
+		SOUNDMAN->AddFakeSound(snd);
+		return;
 	}
 
 	/* Give the stream to the playing sound and remove it from the pool. */
