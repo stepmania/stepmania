@@ -83,14 +83,14 @@ private:
 
 	TransitionOniFade		m_OniFade;	// shows between songs in a course
 
-	Sprite					m_sprTopFrame;
+	Sprite					m_sprLifeFrame;
 	LifeMeter*				m_pLifeMeter[NUM_PLAYERS];
 	BitmapText				m_textStageNumber;
 	BitmapText				m_textCourseSongNumber[NUM_PLAYERS];
 
 	Sprite					m_sprMiddleFrame;
 
-	Sprite					m_sprBottomFrame;
+	Sprite					m_sprScoreFrame;
 	ScoreDisplay*			m_pScoreDisplay[NUM_PLAYERS];
 	BitmapText				m_textPlayerOptions[NUM_PLAYERS];
 	BitmapText				m_textSongOptions;

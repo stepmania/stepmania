@@ -32,10 +32,10 @@
 // Defines
 //
 
-#define TOP_FRAME_X						THEME->GetMetricF("ScreenGameplay","TopFrameX")
-#define TOP_FRAME_Y( e )				THEME->GetMetricF("ScreenGameplay",ssprintf("TopFrame%sY",e?"Extra":""))
-#define BOTTOM_FRAME_X					THEME->GetMetricF("ScreenGameplay","BottomFrameX")
-#define BOTTOM_FRAME_Y( e )				THEME->GetMetricF("ScreenGameplay",ssprintf("BottomFrame%sY",e?"Extra":""))
+#define LIFE_FRAME_X					THEME->GetMetricF("ScreenGameplay","LifeFrameX")
+#define LIFE_FRAME_Y( e )				THEME->GetMetricF("ScreenGameplay",ssprintf("LifeFrame%sY",e?"Extra":""))
+#define SCORE_FRAME_X					THEME->GetMetricF("ScreenGameplay","ScoreFrameX")
+#define SCORE_FRAME_Y( e )				THEME->GetMetricF("ScreenGameplay",ssprintf("ScoreFrame%sY",e?"Extra":""))
 #define MIDDLE_FRAME_X					THEME->GetMetricF("ScreenGameplay","MiddleFrameX")
 #define MIDDLE_FRAME_Y					THEME->GetMetricF("ScreenGameplay","MiddleFrameY")
 #define LIFE_X( p )						THEME->GetMetricF("ScreenGameplay",ssprintf("LifeP%dX",p+1))
@@ -201,17 +201,17 @@ ScreenGameplay::ScreenGameplay()
 		this->AddChild( m_pLifeMeter[p] );		
 	}
 
-	// TopFrame goes above LifeMeter
-	CString sTopFrameName;
+	// LifeFrame goes above LifeMeter
+	CString sLifeFrameName;
 	if( bExtra )
-		sTopFrameName = "gameplay extra top frame";
+		sLifeFrameName = "gameplay extra life frame";
 	else if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
-		sTopFrameName = "gameplay oni top frame";
+		sLifeFrameName = "gameplay oni life frame";
 	else 
-		sTopFrameName = "gameplay top frame";
-	m_sprTopFrame.Load( THEME->GetPathTo("Graphics",sTopFrameName) );
-	m_sprTopFrame.SetXY( TOP_FRAME_X, TOP_FRAME_Y(bExtra) );
-	this->AddChild( &m_sprTopFrame );
+		sLifeFrameName = "gameplay life frame";
+	m_sprLifeFrame.Load( THEME->GetPathTo("Graphics",sLifeFrameName) );
+	m_sprLifeFrame.SetXY( LIFE_FRAME_X, LIFE_FRAME_Y(bExtra) );
+	this->AddChild( &m_sprLifeFrame );
 
 
 	m_textStageNumber.LoadFromFont( THEME->GetPathTo("Fonts","gameplay stage") );
@@ -246,18 +246,18 @@ ScreenGameplay::ScreenGameplay()
 
 
 	//
-	// Add all Actors in bottom frame
+	// Add all Actors in score frame
 	//
-	CString sBottomFrameName;
+	CString sScoreFrameName;
 	if( bExtra )
-		sBottomFrameName = "gameplay extra bottom frame";
+		sScoreFrameName = "gameplay extra score frame";
 	else if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
-		sBottomFrameName = "gameplay oni bottom frame";
+		sScoreFrameName = "gameplay oni score frame";
 	else 
-		sBottomFrameName = "gameplay bottom frame";
-	m_sprBottomFrame.Load( THEME->GetPathTo("Graphics",sBottomFrameName) );
-	m_sprBottomFrame.SetXY( BOTTOM_FRAME_X, BOTTOM_FRAME_Y(bExtra) );
-	this->AddChild( &m_sprBottomFrame );
+		sScoreFrameName = "gameplay score frame";
+	m_sprScoreFrame.Load( THEME->GetPathTo("Graphics",sScoreFrameName) );
+	m_sprScoreFrame.SetXY( SCORE_FRAME_X, SCORE_FRAME_Y(bExtra) );
+	this->AddChild( &m_sprScoreFrame );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -1415,42 +1415,42 @@ void ScreenGameplay::TweenOnScreen()
 {
 	int i, p;
 
-	CArray<Actor*,Actor*> apActorsInTopFrame;
-	apActorsInTopFrame.Add(	&m_sprTopFrame );
+	CArray<Actor*,Actor*> apActorsInLifeFrame;
+	apActorsInLifeFrame.Add(	&m_sprLifeFrame );
 	for( p=0; p<NUM_PLAYERS; p++ )
-		apActorsInTopFrame.Add(	m_pLifeMeter[p] );
-	apActorsInTopFrame.Add(	&m_textStageNumber );
+		apActorsInLifeFrame.Add(	m_pLifeMeter[p] );
+	apActorsInLifeFrame.Add(	&m_textStageNumber );
 	for( p=0; p<NUM_PLAYERS; p++ )
-		apActorsInTopFrame.Add(	&m_textCourseSongNumber[p] );
-	for( i=0; i<apActorsInTopFrame.GetSize(); i++ )
+		apActorsInLifeFrame.Add(	&m_textCourseSongNumber[p] );
+	for( i=0; i<apActorsInLifeFrame.GetSize(); i++ )
 	{
-		float fOriginalY = apActorsInTopFrame[i]->GetY();
-		apActorsInTopFrame[i]->SetY( fOriginalY-100 );
+		float fOriginalY = apActorsInLifeFrame[i]->GetY();
+		apActorsInLifeFrame[i]->SetY( fOriginalY-100 );
 		if( !GAMESTATE->m_bDemonstration )
-			apActorsInTopFrame[i]->BeginTweening( 0.5f );	// sleep
-		apActorsInTopFrame[i]->BeginTweening( 1 );
-		apActorsInTopFrame[i]->SetTweenY( fOriginalY );
+			apActorsInLifeFrame[i]->BeginTweening( 0.5f );	// sleep
+		apActorsInLifeFrame[i]->BeginTweening( 1 );
+		apActorsInLifeFrame[i]->SetTweenY( fOriginalY );
 	}
 
 
-	CArray<Actor*,Actor*> apActorsInBottomFrame;
-	apActorsInBottomFrame.Add( &m_sprBottomFrame );
+	CArray<Actor*,Actor*> apActorsInScoreFrame;
+	apActorsInScoreFrame.Add( &m_sprScoreFrame );
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
-		apActorsInBottomFrame.Add( m_pScoreDisplay[p] );
-		apActorsInBottomFrame.Add( &m_textPlayerOptions[p] );
+		apActorsInScoreFrame.Add( m_pScoreDisplay[p] );
+		apActorsInScoreFrame.Add( &m_textPlayerOptions[p] );
 	}
-	apActorsInBottomFrame.Add( &m_textSongOptions );
-	for( i=0; i<apActorsInBottomFrame.GetSize(); i++ )
+	apActorsInScoreFrame.Add( &m_textSongOptions );
+	for( i=0; i<apActorsInScoreFrame.GetSize(); i++ )
 	{
-		float fOriginalY = apActorsInBottomFrame[i]->GetY();
-		apActorsInBottomFrame[i]->SetY( fOriginalY+100 );
+		float fOriginalY = apActorsInScoreFrame[i]->GetY();
+		apActorsInScoreFrame[i]->SetY( fOriginalY+100 );
 		if( !GAMESTATE->m_bDemonstration )
-			apActorsInBottomFrame[i]->BeginTweening( 0.5f );	// sleep
-		apActorsInBottomFrame[i]->BeginTweening( 1 );
-		apActorsInBottomFrame[i]->SetTweenY( fOriginalY );
+			apActorsInScoreFrame[i]->BeginTweening( 0.5f );	// sleep
+		apActorsInScoreFrame[i]->BeginTweening( 1 );
+		apActorsInScoreFrame[i]->SetTweenY( fOriginalY );
 	}
 
 	for( p=0; p<NUM_PLAYERS; p++ )

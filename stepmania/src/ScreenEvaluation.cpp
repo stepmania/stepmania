@@ -391,7 +391,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				fPercentDancePoints = max( fPercentDancePoints, 0 );
 				int iPercentDancePointsLarge = int(fPercentDancePoints*100);
 				int iPercentDancePointsSmall = int( (fPercentDancePoints*100 - int(fPercentDancePoints*100)) * 10 );
-				m_textOniPercentLarge[p].SetText( ssprintf("%02d%", iPercentDancePointsLarge) );
+				m_textOniPercentLarge[p].SetText( ssprintf("%02d", iPercentDancePointsLarge) );
 				m_textOniPercentSmall[p].SetText( ssprintf(".%01d%%", iPercentDancePointsSmall) );
 
 				// StageInfo stuff
