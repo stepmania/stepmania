@@ -36,14 +36,46 @@ void RageSound_ALSA9::MixerThread()
 		float sleep_secs = (float(chunksize_frames) / samplerate);
 		SDL_Delay( 20 ); // int(1000 * sleep_secs));
 
-		LockMutex L(SOUNDMAN->lock);
+		LockMut( m_Mutex );
+
 		for( unsigned i = 0; i < stream_pool.size(); ++i )
 		{
-			if( stream_pool[i]->state == stream_pool[i]->INACTIVE )
+			/* We're only interested in PLAYING and FLUSHING sounds. */
+			if( stream_pool[i]->state != stream::PLAYING &&
+				stream_pool[i]->state != stream::FLUSHING )
 				continue; /* inactive */
 
-			while( !shutdown && stream_pool[i]->GetData(false) )
+			bool bEOF = false;
+			while( !shutdown && stream_pool[i]->GetData(false, bEOF) && !bEOF )
 				;
+
+			if( bEOF )
+			{
+				/* FLUSHING tells the mixer thread to release the stream once str->flush_bufs
+				 * buffers have been flushed. */
+				stream_pool[i]->state = stream::FLUSHING;
+
+				/* Flush two buffers worth of data. */
+				stream_pool[i]->flush_pos = stream_pool[i]->pcm->GetPlayPos();
+				LOG->Trace("eof, fl to %i", (int)stream_pool[i]->flush_pos);
+			}
+
+		}
+
+		for(unsigned i = 0; i < stream_pool.size(); ++i)
+		{
+			if( stream_pool[i]->state != stream_pool[i]->FLUSHING )
+				continue;
+
+			int ps = stream_pool[i]->pcm->GetPosition();
+			LOG->Trace("fl #%i: pos %i to %i", 
+					i, ps, (int) stream_pool[i]->flush_pos);
+			if( ps < stream_pool[i]->flush_pos )
+				continue; /* stopping but still flushing */
+
+			/* The sound has stopped and flushed all of its buffers. */
+			stream_pool[i]->pcm->Stop();
+			stream_pool[i]->state = stream::FINISHED;
 		}
 	}
 }
@@ -54,13 +86,15 @@ RageSound_ALSA9::stream::~stream()
 }
 
 /* Returns the number of frames processed */
-bool RageSound_ALSA9::stream::GetData(bool init)
+bool RageSound_ALSA9::stream::GetData( bool init, bool &bEOF )
 {
+	bEOF = false;
+
 	int frames_to_fill = pcm->GetNumFramesToFill( max_writeahead, init? max_writeahead:chunksize );
 	if( frames_to_fill < chunksize )
 		return false;
 
-    static Sint16 *buf = NULL;
+	static Sint16 *buf = NULL;
 	if ( !buf )
 		buf = new Sint16[max_writeahead*samples_per_frame];
 	char *cbuf = (char*) buf;
@@ -70,8 +104,8 @@ bool RageSound_ALSA9::stream::GetData(bool init)
 
 	int len = frames_to_fill*bytes_per_frame;
 	/* It might be INACTIVE, when we're prebuffering. We just don't want to
-	 * fill anything in STOPPING; in that case, we just clear the audio buffer. */
-	if( state != STOPPING )
+	 * fill anything in FLUSHING; in that case, we just clear the audio buffer. */
+	if( state != FLUSHING )
 	{
 		int bytes_read = 0;
 		int bytes_left = len;
@@ -105,12 +139,8 @@ bool RageSound_ALSA9::stream::GetData(bool init)
 			/* Fill the remainder of the buffer with silence. */
 			memset( cbuf+bytes_read, 0, bytes_left );
 
-			/* STOPPING tells the mixer thread to release the stream once str->flush_bufs
-			 * buffers have been flushed. */
-			state = STOPPING;
-
-			/* Flush two buffers worth of data. */
-			flush_pos = pcm->GetPlayPos() + (bytes_read / bytes_per_frame);
+			LOG->Trace("eof");
+			bEOF = true;
 		}
 	} else {
 		/* Silence the buffer. */
@@ -125,7 +155,8 @@ bool RageSound_ALSA9::stream::GetData(bool init)
 
 void RageSound_ALSA9::StartMixing(RageSoundBase *snd)
 {
-	LockMutex L(SOUNDMAN->lock);
+	/* Lock INACTIVE sounds[], and reserve a slot. */
+	m_InactiveSoundMutex.Lock();
 
 	/* Find an unused buffer. */
 	unsigned i;
@@ -137,62 +168,62 @@ void RageSound_ALSA9::StartMixing(RageSoundBase *snd)
 
 	if( i == stream_pool.size() )
 	{
-		/* We don't have a free sound buffer. Fake it. */
-		/* XXX: too big of a hack for too rare of a case */
-		// SOUNDMAN->AddFakeSound(snd);
+		/* We don't have a free sound buffer. */
+		m_InactiveSoundMutex.Unlock();
 		return;
 	}
+
+	/* Place the sound in SETUP, where nobody else will touch it, until we put it
+	 * in FLUSHING or PLAYING below. */
+	stream_pool[i]->state = stream::SETUP;
+	m_InactiveSoundMutex.Unlock();
 
 	/* Give the stream to the playing sound and remove it from the pool. */
 	stream_pool[i]->snd = snd;
 	stream_pool[i]->pcm->SetSampleRate( snd->GetSampleRate() );
 	stream_pool[i]->start_time = snd->GetStartTime();
 
-	/* Pre-buffer the stream. */
-	stream_pool[i]->GetData(true);
+	/* Pre-buffer the stream, and start it immediately. */
+	bool bEOF;
+	stream_pool[i]->GetData( true, bEOF );
 	stream_pool[i]->pcm->Play();
 
-	/* Normally, at this point we should still be INACTIVE, in which case,
-	 * tell the mixer thread to start mixing this channel.  However, if it's
-	 * been changed to STOPPING, then we actually finished the whole file
-	 * in the prebuffering GetData calls above, so leave it alone and let it
-	 * finish on its own. */
-	if( stream_pool[i]->state == stream_pool[i]->INACTIVE )
+	/* If bEOF is true, we actually finished the whole file in the prebuffering
+	 * GetData call above, and the sound should go straight to FLUSHING.  Otherwise,
+	 * set PLAYING. */
+	if( bEOF )
+	{
+		stream_pool[i]->state = stream_pool[i]->FLUSHING;
+		stream_pool[i]->flush_pos = stream_pool[i]->pcm->GetPosition();
+	}
+	else
 		stream_pool[i]->state = stream_pool[i]->PLAYING;
 }
 
 void RageSound_ALSA9::Update(float delta)
 {
-	/* SoundStopped might erase sounds out from under us, so make a copy
-	 * of the sound list. */
-	vector<stream *> str = stream_pool;
-	ASSERT( SOUNDMAN );
-	LockMutex L( SOUNDMAN->lock );
-
-	for(unsigned i = 0; i < str.size(); ++i)
+	for(unsigned i = 0; i < stream_pool.size(); ++i)
 	{
-		if( str[i]->state != str[i]->STOPPING )
+		if( stream_pool[i]->state != stream_pool[i]->FINISHED )
 			continue;
 
-		int ps = str[i]->pcm->GetPosition();
-		if( ps < str[i]->flush_pos )
-			continue; /* stopping but still flushing */
-
 		/* The sound has stopped and flushed all of its buffers. */
-		if( str[i]->snd != NULL )
-			str[i]->snd->SoundIsFinishedPlaying();
-		str[i]->snd = NULL;
+		if( stream_pool[i]->snd )
+			stream_pool[i]->snd->SoundIsFinishedPlaying();
+		stream_pool[i]->snd = NULL;
 
-		str[i]->pcm->Stop();
-		str[i]->state = str[i]->INACTIVE;
+		/* Once we do this, the sound is once available for use; we must lock
+		 * m_InactiveSoundMutex to take it out of INACTIVE again. */
+		stream_pool[i]->state = stream_pool[i]->INACTIVE;
 	}
-
 }
 
 void RageSound_ALSA9::StopMixing(RageSoundBase *snd)
 {
+	/* Lock, to make sure the decoder thread isn't running on this sound while we do this. */
+	LockMut( m_Mutex );
+
 	ASSERT(snd != NULL);
-	LockMutex L(SOUNDMAN->lock);
 
 	unsigned i;
 	for( i = 0; i < stream_pool.size(); ++i )
@@ -205,9 +236,9 @@ void RageSound_ALSA9::StopMixing(RageSoundBase *snd)
 		return;
 	}
 
-	/* STOPPING tells the mixer thread to release the stream once str->flush_bufs
+	/* FLUSHING tells the mixer thread to release the stream once str->flush_bufs
 	 * buffers have been flushed. */
-	stream_pool[i]->state = stream_pool[i]->STOPPING;
+	stream_pool[i]->state = stream_pool[i]->FLUSHING;
 
 	/* Flush two buffers worth of data. */
 	stream_pool[i]->flush_pos = stream_pool[i]->pcm->GetPlayPos();
@@ -221,8 +252,6 @@ void RageSound_ALSA9::StopMixing(RageSoundBase *snd)
 
 int64_t RageSound_ALSA9::GetPosition(const RageSoundBase *snd) const
 {
-	LockMutex L(SOUNDMAN->lock);
-
 	unsigned i;
 	for( i = 0; i < stream_pool.size(); ++i )
 		if( stream_pool[i]->snd == snd )
@@ -231,13 +260,12 @@ int64_t RageSound_ALSA9::GetPosition(const RageSoundBase *snd) const
 	if( i == stream_pool.size() )
 		RageException::Throw("GetPosition: Sound %s is not being played", snd->GetLoadedFilePath().c_str());
 
+	/* XXX: This isn't quite threadsafe. */
 	return stream_pool[i]->pcm->GetPosition();
 }       
 
 int RageSound_ALSA9::GetSampleRate( int rate ) const
 {
-	LockMutex L(SOUNDMAN->lock);
-
 	stream *str = stream_pool[0];
 	return str->pcm->FindSampleRate( rate );
 }
@@ -255,7 +283,9 @@ static void CheckMixingBlacklist()
 		RageException::ThrowNonfatal( "ALSA driver \"%s\" not using hardware mixing", sID.c_str() );
 }
 
-RageSound_ALSA9::RageSound_ALSA9()
+RageSound_ALSA9::RageSound_ALSA9():
+	m_Mutex("ALSAMutex"),
+	m_InactiveSoundMutex("InactiveSoundMutex")
 {
 	CString err = LoadALSA();
 	if( err != "" )

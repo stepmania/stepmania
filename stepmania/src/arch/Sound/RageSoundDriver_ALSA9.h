@@ -10,6 +10,13 @@
 class RageSound_ALSA9: public RageSoundDriver
 {
 private:
+	/* This mutex serializes the decode thread and StopMixing. */
+	RageMutex m_Mutex;
+
+	/* The only place that takes sounds out of INACTIVE is StartMixing; this mutex
+	 * serializes inactive sounds. */
+	RageMutex m_InactiveSoundMutex;
+
 	struct stream
 	{
 		/* Actual audio stream: */
@@ -22,13 +29,15 @@ private:
 
 		enum {
 			INACTIVE,
+			SETUP,
 			PLAYING,
-			STOPPING
+			FLUSHING,
+			FINISHED
 		} state;
 
 		int64_t flush_pos; /* state == STOPPING only */
 
-		bool GetData( bool init );
+		bool GetData( bool init, bool &bEOF );
 
 		stream() { pcm = NULL; snd = NULL; state=INACTIVE; }
 		~stream();
