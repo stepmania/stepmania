@@ -73,7 +73,7 @@ void ActorScroller::DrawPrimitives()
 		int iFirstItemToDraw = (int)roundf( m_fCurrentItem - m_iNumItemsToDraw/2.f );
 		for( int i=iFirstItemToDraw; i<iFirstItemToDraw+m_iNumItemsToDraw; i++ )
 		{
-			if( i<0 || i>=m_SubActors.size() )
+			if( i < 0  ||  i >= (int)m_SubActors.size() )
 				continue;	// skip
 
 			float fItemOffset = i - m_fCurrentItem;
