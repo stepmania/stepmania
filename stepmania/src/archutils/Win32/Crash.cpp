@@ -31,7 +31,7 @@
 #include "CrashList.h"
 #include "ProductInfo.h"
 
-#include "RageLog.h" /* for RageLog::GetAdditionalLog only */
+#include "RageLog.h" /* for RageLog::GetAdditionalLog and Flush */
 #include "RageThreads.h" /* for GetCheckpointLogs */
 
 #include "GotoURL.h"
@@ -276,6 +276,9 @@ static void DoEraseEmergencyDump()
 extern HWND g_hWndMain;
 long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 {
+	/* Flush the log it isn't cut off at the end. */
+	LOG->Flush();
+
 	/* We aren't supposed to receive these exceptions.  For example, if you do
 	 * a floating point divide by zero, you should receive a result of #INF.  Only
 	 * if the floating point exception for _EM_ZERODIVIDE is unmasked does this
