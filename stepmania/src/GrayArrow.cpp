@@ -47,6 +47,7 @@ void GrayArrow::Update( float fDeltaTime )
 void GrayArrow::Step()
 {
 	SetZoom( g_fStepZoom );
+	StopTweening();
 	BeginTweening( g_fStepSeconds );
 	SetTweenZoom( 1 );
 }
