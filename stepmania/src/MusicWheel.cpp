@@ -405,7 +405,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			RageColor c = RageColor(1,1,0,1);
 			WheelItemData wid( TYPE_SORT, NULL, "", NULL, c, so );
 			wid.m_sLabel = Names[i];
-			wid.m_Action.FromString( Actions[i], true );
+			wid.m_Action.Load( i, Actions[i] );
 
 			switch( so )
 			{

@@ -21,18 +21,19 @@ struct ModeChoice		// used in SelectMode
 	ModeChoice() { Init(); }
 	void Init();
 
-	bool FromString( CString str, bool bIgnoreUnknown=false );
+	void Load( int iIndex, CString str );
 	void ApplyToAllPlayers();
 	void Apply( PlayerNumber pn );
 	bool DescribesCurrentMode() const;
 
-	Game		game;
-	Style		style;
-	PlayMode	pm;
-	Difficulty	dc;
-	CString		sAnnouncer;
-
-	char		name[64];
+	bool		m_bInvalid;
+	int			m_iIndex;
+	Game		m_game;
+	Style		m_style;
+	PlayMode	m_pm;
+	Difficulty	m_dc;
+	CString		m_sAnnouncer;
+	CString		m_sName;
 };
 
 #endif

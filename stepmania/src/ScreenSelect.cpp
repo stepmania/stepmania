@@ -49,10 +49,10 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 		CString sChoice = CHOICE(c);
 
 		ModeChoice mc;
-		if( mc.FromString(sChoice) )
-			m_aModeChoices.push_back( mc );
-		
-		CString sBGAnimationDir = THEME->GetPathTo(BGAnimations, ssprintf("%s %s",m_sName.c_str(),mc.name), true);	// true="optional"
+		mc.Load( c, sChoice );
+		m_aModeChoices.push_back( mc );
+	
+		CString sBGAnimationDir = THEME->GetPathTo(BGAnimations, ssprintf("%s %s",m_sName.c_str(),mc.m_sName.c_str()), true);	// true="optional"
 		if( sBGAnimationDir == "" )
 			sBGAnimationDir = THEME->GetPathToB(m_sName+" background");
 		m_BGAnimations[c].LoadFromAniDir( sBGAnimationDir );

@@ -411,7 +411,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 
 	if(GetCurrentPage() != PAGE_2 || !AnotherPlayerSelected)
 	{
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectMaster comment %s",mc.name)) );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectMaster comment %s",mc.m_sName.c_str())) );
 		m_soundSelect.Play();
 	}
 

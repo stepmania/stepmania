@@ -353,7 +353,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 
 	if(m_CurrentPage != PAGE_2 || !AnotherPlayerSelected)
 	{
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectDifficulty comment %s",mc.name)) );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectDifficulty comment %s",mc.m_sName.c_str())) );
 		m_soundSelect.Play();
 	}
 

@@ -75,7 +75,7 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 
 	for( unsigned k=0; k < m_NumModes || k <= 7 ; k++ )
 	{
-		CString MOO = m_aModeChoices[k].name;
+		CString MOO = m_aModeChoices[k].m_sName;
 		if( IsValidModeName(MOO) )
 		{
 			// We cannot show more than 8 icons at a time, BTW
@@ -115,8 +115,8 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 		float fCursorX = GetCursorX( (PlayerNumber)p );
 		float fCursorY = GetCursorY( (PlayerNumber)p );
 		
-		CString sInfoFile = ssprintf( "ScreenSelectDifficultyEX info %s", m_ModeChoices[0].name );
-		CString sPictureFile = ssprintf( "ScreenSelectDifficultyEX picture %s", m_ModeChoices[0].name );
+		CString sInfoFile = ssprintf( "ScreenSelectDifficultyEX info %s", m_ModeChoices[0].m_sName.c_str() );
+		CString sPictureFile = ssprintf( "ScreenSelectDifficultyEX picture %s", m_ModeChoices[0].m_sName.c_str() );
 		
 		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
 		m_sprPicture[p].SetXY( PICTURE_X(p), PICTURE_Y(p) );
@@ -229,7 +229,7 @@ void ScreenSelectDifficultyEX::MenuRight( PlayerNumber pn )
 
 bool ScreenSelectDifficultyEX::IsACourse( int mIndex )
 {
-	CString	MODECHOICENAME = m_ModeChoices[mIndex].name;
+	CString	MODECHOICENAME = m_ModeChoices[mIndex].m_sName;
 	if( MODECHOICENAME.Left(7) != "arcade-" ) { return true; }
 	else { return false; }
 }
@@ -257,8 +257,8 @@ void ScreenSelectDifficultyEX::SetAllPlayersSelection( int iChoice, bool bSwitch
 			m_sprInfo[p].Command( ANIMATE_MODE_SWITCH_INFO_ON_COMMAND );			
 		}
 		
-		CString sInfoFile = ssprintf( "ScreenSelectDifficultyEX info %s", m_ModeChoices[m_iChoice[p]].name );
-		CString sPictureFile = ssprintf( "ScreenSelectDifficultyEX picture %s", m_ModeChoices[m_iChoice[p]].name );
+		CString sInfoFile = ssprintf( "ScreenSelectDifficultyEX info %s", m_ModeChoices[m_iChoice[p]].m_sName.c_str() );
+		CString sPictureFile = ssprintf( "ScreenSelectDifficultyEX picture %s", m_ModeChoices[m_iChoice[p]].m_sName.c_str() );
 		m_sprInfo[p].Load( THEME->GetPathToG(sInfoFile) );
 		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
 		
@@ -299,8 +299,8 @@ void ScreenSelectDifficultyEX::Change( PlayerNumber pn, int iNewChoice )
 		}
 
 		m_iChoice[p] = iNewChoice;
-		CString sInfoFile = ssprintf( "ScreenSelectDifficultyEX info %s", m_ModeChoices[m_iChoice[p]].name );
-		CString sPictureFile = ssprintf( "ScreenSelectDifficultyEX picture %s", m_ModeChoices[m_iChoice[p]].name );
+		CString sInfoFile = ssprintf( "ScreenSelectDifficultyEX info %s", m_ModeChoices[m_iChoice[p]].m_sName.c_str() );
+		CString sPictureFile = ssprintf( "ScreenSelectDifficultyEX picture %s", m_ModeChoices[m_iChoice[p]].m_sName.c_str() );
 		m_sprInfo[p].Load( THEME->GetPathToG(sInfoFile) );
 		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
 		
@@ -338,7 +338,7 @@ void ScreenSelectDifficultyEX::SetDifficultyIconText( bool bDisplayCourseItems )
 {
 	for( unsigned k=0; k < m_aModeChoices.size(); k++ )
 	{
-		CString	MMNAME = m_ModeChoices[k].name;
+		CString	MMNAME = m_ModeChoices[k].m_sName;
 		MMNAME.Replace( "arcade-", "" );
 		m_sprDifficulty[k].SetState( GetIconIndex(MMNAME.c_str()) );
 		m_textDifficultyText[k].SetDiffuse( RageColor(1,1,1,1) );
@@ -384,7 +384,7 @@ void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
 				m_sprDifficulty[e].SetDiffuse( RageColor(.5,.5,.5,1) );
 			}
 		}
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectDifficulty comment %s",mc.name)) );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectDifficulty comment %s",mc.m_sName.c_str())) );
 		m_soundSelect.Play();
 	}
 

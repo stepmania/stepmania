@@ -58,7 +58,7 @@ ScreenSelectMode::ScreenSelectMode() : ScreenSelect( "ScreenSelectMode" )
 		//
 		// Load Sprite
 		//
-		CString sElementName = ssprintf("ScreenSelectMode %s", mc.name );
+		CString sElementName = ssprintf("ScreenSelectMode %s", mc.m_sName.c_str() );
 		CString sElementPath = THEME->GetPathToG(sElementName);
 
 		arrayLocations.push_back( sElementPath );
@@ -159,7 +159,7 @@ void ScreenSelectMode::UpdateSelectableChoices()
 	for( i=0; i<m_aModeChoices.size(); i++ )
 	{
 		const ModeChoice& mc = m_aModeChoices[i];
-		CString modename = mc.name;
+		CString modename = mc.m_sName;
 		modename.MakeUpper();
 
 
@@ -174,8 +174,10 @@ void ScreenSelectMode::UpdateSelectableChoices()
 			(!PREFSMAN->m_bJointPremium)
 		)*/
 
-		const int SidesJoinedToPlay = mc.style == STYLE_INVALID? 1:
-			GAMEMAN->GetStyleDefForStyle(mc.style)->NumSidesJoinedToPlay();
+		const int SidesJoinedToPlay = 
+			(mc.m_style == STYLE_INVALID) ?
+			1 :
+			GAMEMAN->GetStyleDefForStyle(mc.m_style)->NumSidesJoinedToPlay();
 		if( (!PREFSMAN->m_bJointPremium ) ||
 			(
 				PREFSMAN->m_bJointPremium && 

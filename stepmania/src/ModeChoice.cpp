@@ -11,43 +11,41 @@
 
 void ModeChoice::Init()
 {
-	game = GAME_INVALID;
-	style = STYLE_INVALID;
-	pm = PLAY_MODE_INVALID;
-	dc = DIFFICULTY_INVALID;
-	sAnnouncer = "";
-	strcpy( name, "" );
+	m_iIndex = -1;
+	m_game = GAME_INVALID;
+	m_style = STYLE_INVALID;
+	m_pm = PLAY_MODE_INVALID;
+	m_dc = DIFFICULTY_INVALID;
+	m_sAnnouncer = "";
+	m_sName = "";
 }
 
 bool ModeChoice::DescribesCurrentMode() const
 {
-	if( game != GAME_INVALID && game != GAMESTATE->m_CurGame )
+	if( m_game != GAME_INVALID && m_game != GAMESTATE->m_CurGame )
 		return false;
-	if( game != GAME_INVALID && GAMESTATE->m_CurGame != game )
+	if( m_pm != PLAY_MODE_INVALID && GAMESTATE->m_PlayMode != m_pm )
 		return false;
-	if( pm != PLAY_MODE_INVALID && GAMESTATE->m_PlayMode != pm )
+	if( m_style != STYLE_INVALID && GAMESTATE->m_CurStyle != m_style )
 		return false;
-	if( style != STYLE_INVALID && GAMESTATE->m_CurStyle != style )
-		return false;
-	if( dc != DIFFICULTY_INVALID )
+	if( m_dc != DIFFICULTY_INVALID )
 	{
 		for( int pn=0; pn<NUM_PLAYERS; pn++ )
-			if( GAMESTATE->IsHumanPlayer(pn) && GAMESTATE->m_PreferredDifficulty[pn] != dc )
+			if( GAMESTATE->IsHumanPlayer(pn) && GAMESTATE->m_PreferredDifficulty[pn] != m_dc )
 				return false;
 	}
 		
-	if( sAnnouncer != "" && sAnnouncer != ANNOUNCER->GetCurAnnouncerName() )
+	if( m_sAnnouncer != "" && m_sAnnouncer != ANNOUNCER->GetCurAnnouncerName() )
 		return false;
 	
 	return true;
 }
 
-bool ModeChoice::FromString( CString sChoice, bool bIgnoreUnknown )
+void ModeChoice::Load( int iIndex, CString sChoice )
 {
-	strncpy( this->name, sChoice, min(sChoice.size()+1, sizeof(this->name)) );
-	name[sizeof(this->name)-1] = 0;
+	m_iIndex = iIndex;
 
-	bool bChoiceIsInvalid = false;
+	m_sName = sChoice;
 
 	CStringArray asCommands;
 	split( sChoice, ";", asCommands );
@@ -68,9 +66,9 @@ bool ModeChoice::FromString( CString sChoice, bool bIgnoreUnknown )
 		{
 			Game game = GAMEMAN->StringToGameType( sValue );
 			if( game != GAME_INVALID )
-				this->game = game;
+				m_game = game;
 			else
-				bChoiceIsInvalid |= true;
+				m_bInvalid |= true;
 		}
 
 
@@ -79,40 +77,38 @@ bool ModeChoice::FromString( CString sChoice, bool bIgnoreUnknown )
 			Style style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_CurGame, sValue );
 			if( style != STYLE_INVALID )
 			{
-				this->style = style;
+				m_style = style;
 				// There is a choices that allows players to choose a style.  Allow joining.
 				GAMESTATE->m_bPlayersCanJoin = true;
 			}
 			else
-				bChoiceIsInvalid |= true;
+				m_bInvalid |= true;
 		}
 
 		if( sName == "playmode" )
 		{
 			PlayMode pm = StringToPlayMode( sValue );
 			if( pm != PLAY_MODE_INVALID )
-				this->pm = pm;
+				m_pm = pm;
 			else
-				bChoiceIsInvalid |= true;
+				m_bInvalid |= true;
 		}
 
 		if( sName == "difficulty" )
 		{
 			Difficulty dc = StringToDifficulty( sValue );
 			if( dc != DIFFICULTY_INVALID )
-				this->dc = dc;
+				m_dc = dc;
 			else
-				bChoiceIsInvalid |= true;
+				m_bInvalid |= true;
 		}
 
 		if( sName == "announcer" )
 		{
-			sAnnouncer = sValue;
+			m_sAnnouncer = sValue;
 		}
 
 	}
-
-	return !bChoiceIsInvalid;
 }
 
 void ModeChoice::ApplyToAllPlayers()
@@ -124,16 +120,16 @@ void ModeChoice::ApplyToAllPlayers()
 
 void ModeChoice::Apply( PlayerNumber pn )
 {
-	if( game != GAME_INVALID )
-		GAMESTATE->m_CurGame = game;
-	if( pm != PLAY_MODE_INVALID )
-		GAMESTATE->m_PlayMode = pm;
-	if( style != STYLE_INVALID )
-		GAMESTATE->m_CurStyle = style;
-	if( dc != DIFFICULTY_INVALID  &&  pn != PLAYER_INVALID )
-		GAMESTATE->m_PreferredDifficulty[pn] = dc;
-	if( sAnnouncer != "" )
-		ANNOUNCER->SwitchAnnouncer( sAnnouncer );
+	if( m_game != GAME_INVALID )
+		GAMESTATE->m_CurGame = m_game;
+	if( m_pm != PLAY_MODE_INVALID )
+		GAMESTATE->m_PlayMode = m_pm;
+	if( m_style != STYLE_INVALID )
+		GAMESTATE->m_CurStyle = m_style;
+	if( m_dc != DIFFICULTY_INVALID  &&  pn != PLAYER_INVALID )
+		GAMESTATE->m_PreferredDifficulty[pn] = m_dc;
+	if( m_sAnnouncer != "" )
+		ANNOUNCER->SwitchAnnouncer( m_sAnnouncer );
 
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.
@@ -144,7 +140,7 @@ void ModeChoice::Apply( PlayerNumber pn )
 	//
 	// We know what players are joined at the time we set the Style
 	//
-	if( style != STYLE_INVALID )
+	if( m_style != STYLE_INVALID )
 	{
 		PROFILEMAN->TryLoadProfile( pn );
 	}

@@ -47,7 +47,7 @@ ScreenSelectStyle::ScreenSelectStyle() : ScreenSelect( "ScreenSelectStyle" )
 		if( sIconPath.empty() )	// element doesn't exist
 		{
 			m_textIcon[i].LoadFromFont( THEME->GetPathToF("Common normal") );
-			m_textIcon[i].SetText( mc.name );
+			m_textIcon[i].SetText( mc.m_sName );
 			m_textIcon[i].SetZoom(0.5f);
 			this->AddChild( &m_textIcon[i] );
 		}
@@ -182,7 +182,7 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 	SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0 );
 
 	const ModeChoice& mc = m_aModeChoices[GetSelectionIndex(pn)];
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectStyle comment %s",mc.name)) );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectStyle comment %s",mc.m_sName.c_str())) );
 
 	//
 	// TweenOffScreen
