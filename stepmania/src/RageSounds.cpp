@@ -20,7 +20,7 @@ RageSounds *SOUND = NULL;
  * the same.
  *
  * If PlayMusic(length_sec) is set, peek at the beat, and extend the length so we'll be
- * on an integral beat 0 when we loop.  (XXX: should we increase fade_len, too?
+ * on the same fractional beat when we loop.  (XXX: should we increase fade_len, too?
  * That would cause the extra pad time to be silence.)
  */
 static RageSound *g_Music;
