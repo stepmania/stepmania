@@ -93,7 +93,11 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 {
 	//LOG->Trace( "ScreenDemonstration::Input()" );
 
-
+	// note: this code really is only needed because when one of these happens
+	// AttractInput calls SCREENMAN->SetNewScreen(), and we never get another chance
+	// to reset the volume in that case, and sounds then "vanish" everywhere.
+	// (should SetNewScreen() cause a SM_LoseFocus message to be sent to the top screen
+	//  before it gets deleted?)
 	if( MenuI.IsValid() && type == IET_FIRST_PRESS )
 	{
 		switch( MenuI.button )
