@@ -41,11 +41,12 @@ public:
 	int			m_iExtra;	// extra stage number...
 
 	Notes *GetNotesForStage( int iStage );
-	Song *GetSong( int iStage );
-	CString GetDescription( int iStage );
-	CString GetModifiers( int iStage );
+	Song *GetSong( int iStage ) const;
+	CString GetDescription( int iStage ) const;
+	CString GetModifiers( int iStage ) const;
 	void GetPlayerOptions( PlayerOptions* pPO_out );
 	void GetSongOptions( SongOptions* pSO_out);
+	int GetNumStages() const;
 
 	void LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs );
 	void CreateEndlessCourseFromGroupAndDifficulty( CString sGroupName, Difficulty dc, CArray<Song*,Song*> &apSongsInGroup );

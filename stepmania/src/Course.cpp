@@ -216,17 +216,17 @@ Notes* Course::GetNotesForStage( int iStage )
 	return NULL;
 }
 
-Song *Course::GetSong( int iStage )
+Song *Course::GetSong( int iStage ) const
 {
 	return m_apSongs[iStage];
 }
 
-CString Course::GetDescription( int iStage )
+CString Course::GetDescription( int iStage ) const
 {
 	return m_asDescriptions[iStage];
 }
 
-CString Course::GetModifiers( int iStage )
+CString Course::GetModifiers( int iStage ) const
 {
 	return m_asModifiers[iStage];
 }
@@ -290,6 +290,11 @@ void Course::GetSongOptions( SongOptions* pSO_out )
 	pSO_out->m_LifeType = (m_iLives==-1) ? SongOptions::LIFE_BAR : SongOptions::LIFE_BATTERY;
 	if( m_iLives != -1 )
 		pSO_out->m_iBatteryLives = m_iLives;
+}
+
+int Course::GetNumStages() const
+{
+	return m_iStages;
 }
 
 //
