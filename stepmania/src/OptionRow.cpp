@@ -603,7 +603,7 @@ void OptionRow::UpdateEnabledDisabled()
 				bt.SetY( m_fY );
 				FOREACH_HumanPlayer( p )
 				{
-					OptionsCursor &ul = *m_Underline[p][item_no];
+					OptionsCursor &ul = *m_Underline[item_no][0];
 					ul.StopTweening();
 					ul.BeginTweening( TWEEN_SECONDS );
 					ul.SetDiffuseAlpha( color.a );
