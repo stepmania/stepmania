@@ -49,10 +49,10 @@ ScreenTestSound::ScreenTestSound() : Screen("ScreenTestSound")
 	s[4].txt.SetXY(150, 400);
 
 	s[0].s.Load("Themes/default/Sounds/_common menu music.ogg");
-	s[1].s.Load("Themes/default/Sounds/ScreenTitleMenu change.mp3");
-	s[2].s.Load("Themes/default/Sounds/ScreenEvaluation try extra1.mp3");
-	s[3].s.Load("Themes/default/Sounds/ScreenGameplay oni die.mp3");
-	s[4].s.Load("Themes/default/Sounds/Common back.mp3");
+	s[1].s.Load("Themes/default/Sounds/ScreenTitleMenu change.ogg");
+	s[2].s.Load("Themes/default/Sounds/ScreenEvaluation try extra1.ogg");
+	s[3].s.Load("Themes/default/Sounds/ScreenGameplay oni die.ogg");
+	s[4].s.Load("Themes/default/Sounds/Common back.ogg");
 
 //s[0].s.SetStartSeconds(45);
 //s[0].s.SetPositionSeconds();
