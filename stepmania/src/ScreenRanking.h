@@ -36,8 +36,6 @@ public:
 	void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-	virtual bool AutoBeginFadingOut() const { return false; }
-
 	struct PageToShow
 	{
 		PageToShow()

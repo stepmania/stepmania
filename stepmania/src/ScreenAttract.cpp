@@ -103,7 +103,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 			SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );
 			break;
 		}
-	}
+	}	
 
 //	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
@@ -112,21 +112,6 @@ void ScreenAttract::Update( float fDelta )
 {
 	if( IsFirstUpdate() )
 	{
-		// The shared background isn't loaded until the screen is actually 
-		// showing.  The background is loaded by the time of the first update.
-		if( AutoBeginFadingOut() )
-		{
-			const Actor &background = *SCREENMAN->m_pSharedBGA;
-			float fTimeUntilBeginFadingOut = background.GetTweenTimeLeft() - m_Out.GetTweenTimeLeft();
-			if( fTimeUntilBeginFadingOut < 0 )
-			{
-				LOG->Warn( "Screen '%s' Out BGAnimation (%f seconds) is longer than Background BGAnimation (%f seconds); background BGA will be truncated",
-					m_sName.c_str(), m_Out.GetTweenTimeLeft(), background.GetTweenTimeLeft() );
-				fTimeUntilBeginFadingOut = 0;
-			}
-			this->PostScreenMessage( SM_BeginFadingOut, fTimeUntilBeginFadingOut );
-		}
-		
 		if( GAMESTATE->IsTimeToPlayAttractSounds() )
 			SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 		else
@@ -139,6 +124,7 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
+	case SM_MenuTimer:
 	case SM_BeginFadingOut:
 		if( !m_Out.IsTransitioning() )
 			m_Out.StartTransitioning( SM_GoToNextScreen );
