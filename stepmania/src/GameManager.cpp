@@ -34,7 +34,8 @@ struct {
 } const NotesTypes[NUM_NOTES_TYPES] = {
 	{ "dance-single", 4 },
 	{ "dance-double", 8 },
-	{ "dance-couple", 8 },
+	{ "dance-couple-1", 4 },
+	{ "dance-couple-2", 4 },
 	{ "dance-solo", 6 },
 	{ "pump-single", 5 },
 	{ "pump-double", 10 },
@@ -467,7 +468,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,								// m_bUsedForGameplay
 		false,								// m_bUsedForEdit
 		"DDR Couple",						// m_szName
-		{ NOTES_TYPE_DANCE_COUPLE, NOTES_TYPE_DANCE_COUPLE },	// m_NotesTypes
+		{ NOTES_TYPE_DANCE_COUPLE_1, NOTES_TYPE_DANCE_COUPLE_2 },	// m_NotesTypes
 		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
 		{ 160, 480 },						// m_iCenterX
@@ -480,10 +481,10 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 				{ TRACK_4,	GAME_CONTROLLER_1,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
 			},
 			{	// PLAYER_2
-				{ TRACK_5,	GAME_CONTROLLER_2,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_6,	GAME_CONTROLLER_2,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_7,	GAME_CONTROLLER_2,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_8,	GAME_CONTROLLER_2,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_1,	GAME_CONTROLLER_2,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_2,	GAME_CONTROLLER_2,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_3,	GAME_CONTROLLER_2,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
+				{ TRACK_4,	GAME_CONTROLLER_2,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
 			},
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
@@ -527,7 +528,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		"DDR Couple",							// m_szName
-		{ NOTES_TYPE_DANCE_COUPLE, NOTES_TYPE_DANCE_COUPLE }, // m_NotesTypes
+		{ NOTES_TYPE_DANCE_COUPLE_1, NOTES_TYPE_DANCE_COUPLE_2 }, // m_NotesTypes
 		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX

@@ -13,12 +13,9 @@ class DWILoader {
 	void DWIcharToNote( char c, GameController i, DanceNote &note1Out, DanceNote &note2Out );
 
 	bool LoadFromDWITokens( 
-	CString sMode, 
-	CString sDescription,
-	CString sNumFeet,
-	CString sStepData1, 
-	CString sStepData2,
-	Notes &out);
+		CString sMode, CString sDescription, CString sNumFeet, CString sStepData1, 
+		CString sStepData2,
+		Notes &out, Notes &out2);
 
 public:
 	bool LoadFromDWIFile( CString sPath, Song &out );

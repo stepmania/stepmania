@@ -36,7 +36,7 @@ public:
 	float			m_fRadarValues[NUM_RADAR_VALUES];	// between 0.0-1.2 starting from 12-o'clock rotating clockwise
 
 	CString			m_sSMNoteData;
-	void			GetNoteData( NoteData* pNoteDataOut );
+	void			GetNoteData( NoteData* pNoteDataOut ) const;
 	void			SetNoteData( NoteData* pNewNoteData );
 
 

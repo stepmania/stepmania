@@ -73,7 +73,7 @@ Font* FontManager::LoadFont( CString sFontOrTextureFilePath, CString sChars )
 	else	// the texture is not already loaded
 	{
 		CString sDrive, sDir, sFName, sExt;
-		splitpath( FALSE, sFontOrTextureFilePath, sDrive, sDir, sFName, sExt );
+		splitpath( false, sFontOrTextureFilePath, sDrive, sDir, sFName, sExt );
 
 		if( sChars == "" )
 			pFont = (Font*) new Font( sFontOrTextureFilePath );

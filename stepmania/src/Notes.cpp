@@ -136,7 +136,7 @@ void Notes::WriteDWINotesTag( FILE* fp )
 	switch( m_NotesType )
 	{
 	case NOTES_TYPE_DANCE_SINGLE:	fprintf( fp, "#SINGLE:" );	break;
-	case NOTES_TYPE_DANCE_COUPLE:	fprintf( fp, "#COUPLE:" );	break;
+	case NOTES_TYPE_DANCE_COUPLE_1:	fprintf( fp, "#COUPLE:" );	break;
 	case NOTES_TYPE_DANCE_DOUBLE:	fprintf( fp, "#DOUBLE:" );	break;
 	case NOTES_TYPE_DANCE_SOLO:		fprintf( fp, "#SOLO:" );	break;
 	default:	return;	// not a type supported by DWI
@@ -156,7 +156,7 @@ void Notes::WriteDWINotesTag( FILE* fp )
 	this->GetNoteData( &notedata );
 	notedata.ConvertHoldNotesTo2sAnd3s();
 
-	const int iNumPads = (m_NotesType==NOTES_TYPE_DANCE_COUPLE || m_NotesType==NOTES_TYPE_DANCE_DOUBLE) ? 2 : 1;
+	const int iNumPads = (m_NotesType==NOTES_TYPE_DANCE_COUPLE_1 || m_NotesType==NOTES_TYPE_DANCE_DOUBLE) ? 2 : 1;
 	const int iLastMeasure = int( notedata.GetLastBeat()/BEATS_PER_MEASURE );
 
 	for( int pad=0; pad<iNumPads; pad++ )
@@ -202,7 +202,7 @@ void Notes::WriteDWINotesTag( FILE* fp )
 				switch( m_NotesType )
 				{
 				case NOTES_TYPE_DANCE_SINGLE:
-				case NOTES_TYPE_DANCE_COUPLE:
+				case NOTES_TYPE_DANCE_COUPLE_1:
 				case NOTES_TYPE_DANCE_DOUBLE:
 					fprintf( fp, NotesToDWIString( notedata.m_TapNotes[pad*4+0][row], notedata.m_TapNotes[pad*4+1][row], notedata.m_TapNotes[pad*4+2][row], notedata.m_TapNotes[pad*4+3][row] ) );
 					break;
@@ -244,7 +244,7 @@ void Notes::SetNoteData( NoteData* pNewNoteData )
 	m_sSMNoteData = pNewNoteData->GetSMNoteDataString();
 }
 
-void Notes::GetNoteData( NoteData* pNoteDataOut )
+void Notes::GetNoteData( NoteData* pNoteDataOut ) const
 {
 	pNoteDataOut->m_iNumTracks = GameManager::NotesTypeToNumTracks( m_NotesType );
 	pNoteDataOut->LoadFromSMNoteDataString( m_sSMNoteData );

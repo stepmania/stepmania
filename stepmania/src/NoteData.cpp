@@ -481,7 +481,8 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 		{
 		case NOTES_TYPE_DANCE_SINGLE:
 		case NOTES_TYPE_DANCE_DOUBLE:
-		case NOTES_TYPE_DANCE_COUPLE:
+		case NOTES_TYPE_DANCE_COUPLE_1:
+		case NOTES_TYPE_DANCE_COUPLE_2:
 			iTakeFromTrack[0] = 2;
 			iTakeFromTrack[1] = 0;
 			iTakeFromTrack[2] = 3;
