@@ -660,6 +660,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="FontCharmaps.h">
 			</File>
 			<File
+				RelativePath="Foreach.h">
+			</File>
+			<File
 				RelativePath="Game.cpp">
 			</File>
 			<File
