@@ -267,6 +267,8 @@ int main(int argc, char* argv[])
 	// changed to use time.  GetTimeSinceStart is silly because it always return 0! -Chris
 	srand( time(NULL) );	// seed number generator	
 	
+	HOOKS->DumpDebugInfo();
+
 	//
 	// Create game objects
 	//
