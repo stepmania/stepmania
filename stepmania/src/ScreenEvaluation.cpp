@@ -1300,10 +1300,9 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 		{
-			/* XXX: If it's an extra stage, always increment by one.  This is because
-			 * in some unusual cases we can pick a long or marathon song as an extra
-			 * stage.  The most common cause of this is when an entire group of songs
-			 * is long/nonstop mixes.
+			/* If it's an extra stage, always increment by one.  This is because in some
+			 * unusual cases we can pick a long or marathon song as an extra stage.  The
+			 * most common cause of this is when an entire group of songs is long/nonstop mixes.
 			 * 
 			 * We can't simply not choose long songs as extra stages: if there are no
 			 * regular songs to choose, we'll end up with no song to use as an extra stage. */
