@@ -132,13 +132,13 @@ private:
 
 
 #define LUA_REGISTER_CLASS( T ) \
-	const char Luna<T>::s_className[] = #T; \
-	Luna<T>::RegTypeVector* Luna<T>::s_pvMethods = NULL; \
+	template<> const char Luna<T>::s_className[] = #T; \
+	template<> Luna<T>::RegTypeVector* Luna<T>::s_pvMethods = NULL; \
 	static Luna##T<T> registera; \
 void T::PushSelf( lua_State *L ) { Luna##T<T>::Push( L, this ); }
 
 #define ADD_METHOD( method_name ) \
-	{ CreateMethodsVector(); RegType<T> r = {#method_name,method_name}; s_pvMethods->push_back(r); }
+	{ Luna<T>::CreateMethodsVector(); RegType<T> r = {#method_name,method_name}; Luna<T>::s_pvMethods->push_back(r); }
 
 
 #endif
