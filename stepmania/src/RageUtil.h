@@ -244,7 +244,8 @@ struct char_traits_char_nocase: public char_traits<char>
     { return toupper(c1) <  toupper(c2); }
 
     static int compare( const char* s1, const char* s2, size_t n ) {
-		return memicmp( s1, s2, n );
+    //return memicmp( s1, s2, n );
+    return strncasecmp( s1, s2, n );
     }
 
 	static inline char fasttoupper(char a)
