@@ -249,6 +249,8 @@ void CSMPackageInstallDlg::OnOK()
 {
 	// TODO: Add extra validation here
 
+	int ProgressInit = 0;
+
 	m_comboDir.EnableWindow( FALSE );
 	m_buttonEdit.EnableWindow( FALSE );
 
@@ -285,8 +287,22 @@ void CSMPackageInstallDlg::OnOK()
 		pEdit2->SetWindowText( "" );
 		CEdit* pEdit3 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE3);
 		pEdit3->SetWindowText( "" );
-		SendMessage( WM_PAINT );
-		UpdateWindow();		// Force the silly thing to hadle WM_PAINT now!
+		CProgressCtrl* pProgress1 = (CProgressCtrl*)GetDlgItem(IDC_PROGRESS1);
+		//Show the hided progress bar
+	    if(!pProgress1->IsWindowVisible())
+        {
+          pProgress1->ShowWindow(SW_SHOWNORMAL);
+        }
+		//Initialize the progress bar and update the window 1 time (it's enough)
+        if(!ProgressInit)
+		{
+			pProgress1->SetRange( 0, m_zip.GetCount());
+            pProgress1->SetStep(1);
+			pProgress1->SetPos(0);
+			SendMessage( WM_PAINT );
+		    UpdateWindow();		// Force the silly thing to hadle WM_PAINT now!
+			ProgressInit = 1;
+		}
 
 retry_unzip:
 
@@ -304,6 +320,7 @@ retry_unzip:
 			}
 
 			m_zip.ExtractFile( (WORD)i, sInstallDir, true );	// extract file to current directory
+			pProgress1->StepIt(); //increase the progress bar of 1 step
 		}
 		catch (CException* e)
 		{
