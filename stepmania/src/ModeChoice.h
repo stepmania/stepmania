@@ -14,9 +14,17 @@
 #include "Game.h"
 #include "Style.h"
 #include "GameConstantsAndTypes.h"
+#include "PlayerNumber.h"
 
 struct ModeChoice		// used in SelectMode
 {
+	ModeChoice() { Init(); }
+	void Init();
+
+	bool FromString( CString str );
+	void ApplyToAllPlayers();
+	void Apply( PlayerNumber pn );
+
 	Game		game;
 	Style		style;
 	PlayMode	pm;
