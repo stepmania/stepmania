@@ -55,4 +55,3 @@ ArchHooks::MessageBoxResult ArchHooks_Win32::MessageBoxAbortRetryIgnore( CString
  *
  * Glenn Maynard
  */
-
