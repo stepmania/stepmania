@@ -560,7 +560,12 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 		 * source.)  If we don't know the length, don't fade. */
 		if( m_Param.m_FadeLength != 0 && (m_Param.m_LengthSeconds != -1 || m_Param.m_FadedOutAt != -1) )
 		{
-			const float fFinishFadingOutAt = m_Param.m_FadedOutAt != -1? m_Param.m_FadedOutAt:m_Param.m_LengthSeconds;
+			float fFinishFadingOutAt;
+			if( m_Param.m_FadedOutAt != -1 )
+				fFinishFadingOutAt = m_Param.m_FadedOutAt;
+			else
+				fFinishFadingOutAt = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
+
 			const float fStartFadingOutAt = fFinishFadingOutAt - m_Param.m_FadeLength;
 			const float fStartSecond = float(decode_position) / samplerate();
 			const float fEndSecond = float(decode_position+got_frames) / samplerate();
