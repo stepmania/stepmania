@@ -292,7 +292,9 @@ void Background::LoadFromSong( Song* pSong )
 			if( bLoadedAnyRandomBackgrounds )
 			{
 				CString sBGName = RANDOM_BACKGROUND[ rand()%MAX_RANDOM_BACKGROUNDS ];
-				m_aBGChanges.push_back( BackgroundChange(f,sBGName) );
+				bool bFade = PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_RANDOMMOVIES || 
+					PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_MOVIEVIS;
+				m_aBGChanges.push_back( BackgroundChange(f,sBGName,1.f,bFade) );
 			}
 		}
 

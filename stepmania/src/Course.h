@@ -22,13 +22,13 @@ class Notes;
 class Course
 {
 	struct Entry {
-		enum Type { fixed, random, random_within_group, players_best, players_worst } type;
+		enum Type { fixed, random, random_within_group, best, worst } type;
 		Song* pSong;			// used in type=fixed
 		CString group_name;		// used in type=random_within_group
 		Difficulty difficulty;	// = DIFFICULTY_INVALID if no difficulty specified
 		int low_meter;			// = -1 if no meter range specified
 		int high_meter;			// = -1 if no meter range specified
-		int players_index;		// ignored if type isn't a players_*
+		int players_index;		// ignored if type isn't 'best' or 'worst'
 		CString modifiers;		// set player and song options using these
 
 		Entry()

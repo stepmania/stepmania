@@ -150,16 +150,16 @@ void Course::LoadFromCRSFile( CString sPath )
 			Entry new_entry;
 
 			// infer entry::Type from the first param
-			if( sParams[1].Left(strlen("PlayersBest")) == "PlayersBest" )
+			if( sParams[1].Left(strlen("BEST")) == "BEST" )
 			{
-				new_entry.type = Entry::players_best;
-				new_entry.players_index = atoi( sParams[1].Right(sParams[1].size()-strlen("PlayersBest")) ) - 1;
+				new_entry.type = Entry::best;
+				new_entry.players_index = atoi( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
 				CLAMP( new_entry.players_index, 0, 500 );
 			}
-			else if( sParams[1].Left(strlen("PlayersWorst")) == "PlayersWorst" )
+			else if( sParams[1].Left(strlen("WORST")) == "WORST" )
 			{
-				new_entry.type = Entry::players_worst;
-				new_entry.players_index = atoi( sParams[1].Right(sParams[1].size()-strlen("PlayersWorst")) ) - 1;
+				new_entry.type = Entry::worst;
+				new_entry.players_index = atoi( sParams[1].Right(sParams[1].size()-strlen("WORST")) ) - 1;
 				CLAMP( new_entry.players_index, 0, 500 );
 			}
 			else if( sParams[1] == "*" )
@@ -273,11 +273,11 @@ void Course::Save()
 		case Entry::random_within_group:
 			fprintf( fp, "#SONG:%s/*", entry.group_name.GetString() );
 			break;
-		case Entry::players_best:
-			fprintf( fp, "#SONG:PlayersBest%d", entry.players_index+1 );
+		case Entry::best:
+			fprintf( fp, "#SONG:BEST%d", entry.players_index+1 );
 			break;
-		case Entry::players_worst:
-			fprintf( fp, "#SONG:PlayersWorst%d", entry.players_index+1 );
+		case Entry::worst:
+			fprintf( fp, "#SONG:WORST%d", entry.players_index+1 );
 			break;
 		default:
 			ASSERT(0);
@@ -433,8 +433,8 @@ void Course::GetStageInfo(
 				}
 			}
 			break;
-		case Entry::players_best:
-		case Entry::players_worst:
+		case Entry::best:
+		case Entry::worst:
 			{
 				if(vSongsByMostPlayed.size() == 0)
 				{
@@ -461,10 +461,10 @@ void Course::GetStageInfo(
 
 				switch( e.type )
 				{
-				case Entry::players_best:
+				case Entry::best:
 					pSong = vSongsByMostPlayed[e.players_index];
 					break;
-				case Entry::players_worst:
+				case Entry::worst:
 					pSong = vSongsByMostPlayed[vSongsByMostPlayed.size()-1-e.players_index];
 					break;
 				default:
@@ -552,8 +552,8 @@ bool Course::IsMysterySong( int stage ) const
 	case Entry::fixed:					return false;
 	case Entry::random:					return true;
 	case Entry::random_within_group:	return true;
-	case Entry::players_best:			return false;
-	case Entry::players_worst:			return false;
+	case Entry::best:			return false;
+	case Entry::worst:			return false;
 	default:		ASSERT(0);			return true;
 	}
 }
