@@ -71,5 +71,7 @@ enum { FOUR_BIT_PALETTE = 0x1 };
 
 SDL_Surface *mySDL_Palettize( SDL_Surface *src_surf, int GrayBits, int AlphaBits );
 
+SDL_Surface *SDL_LoadImage( const CString &sPath );
+
 #endif
 

@@ -12,6 +12,7 @@
 #include "SDL.h"
 #include "SDL_utils.h"
 #include "SDL_endian.h"
+#include "SDL_image.h"
 #include "RageFile.h"
 
 /* Pull in all of our SDL libraries here. */
@@ -494,7 +495,6 @@ Uint8 mySDL_EventState(Uint8 type, int state)
 	return ret;
 }
 
-#include "SDL_image.h"	// for setting icon
 #include "SDL_rotozoom.h"	// for setting icon
 
 #if defined(DARWIN) && DARWIN
@@ -511,7 +511,7 @@ void mySDL_WM_SetIcon( CString sIconFile )
 		return;
 	}
 
-	SDL_Surface *srf = IMG_Load(sIconFile);
+	SDL_Surface *srf = SDL_LoadImage(sIconFile);
 
 	// Why is this needed?  It's goofing up paletted images 
 	// that use a color key other than pink. -Chris
@@ -1106,3 +1106,7 @@ SDL_Surface *mySDL_Palettize( SDL_Surface *src_surf, int GrayBits, int AlphaBits
 	return dst_surf;
 }
 
+SDL_Surface *SDL_LoadImage( const CString &sPath )
+{
+	return IMG_Load( sPath );
+}
