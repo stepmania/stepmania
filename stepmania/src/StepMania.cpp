@@ -591,6 +591,6 @@ static void GameLoop()
 		if(g_bHasFocus)
 			SDL_Delay( 0 );	// give some time to other processes and threads
 		else
-			SDL_Delay( 2 );	// give more time to other processes and threads, but not so much that we skip sound
+			SDL_Delay( 5 );	// give some time to other processes and threads
 	}
 }
