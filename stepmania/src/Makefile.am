@@ -174,7 +174,7 @@ ScoreDisplayOni.cpp ScoreDisplayOni.h ScoreDisplayRave.cpp ScoreDisplayRave.h Ti
 PercentageDisplay.cpp PercentageDisplay.h ScoreDisplayPercentage.cpp ScoreDisplayPercentage.h \
 AttackDisplay.cpp AttackDisplay.h Foreground.cpp Foreground.h
 
-Helpers = SDL_dither.cpp SDL_dither.h SDL_rotozoom.cpp SDL_rotozoom.h SDL_utils.cpp SDL_utils.h
+Helpers = SDL_dither.cpp SDL_dither.h SDL_rotozoom.cpp SDL_rotozoom.h SDL_SaveJPEG.cpp SDL_SaveJPEG.h SDL_utils.cpp SDL_utils.h
 
 PCRE = pcre/chartables.c pcre/get.c pcre/internal.h pcre/maketables.c pcre/pcre.c pcre/pcre.h pcre/study.c
 
