@@ -114,7 +114,7 @@ void ScreenSystemLayer::ReloadCreditsText()
 
 CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 {
-	if( CREDITS_JOIN_ONLY && !GAMESTATE->PlayersCanJoin() )
+	if( (bool)CREDITS_JOIN_ONLY && !GAMESTATE->PlayersCanJoin() )
 		return "";
 
 	bool bShowCreditsMessage;
