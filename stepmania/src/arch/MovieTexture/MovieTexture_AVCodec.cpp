@@ -310,6 +310,9 @@ void MovieTexture_AVCodec::DecoderThread()
 	bool GetNextTimestamp = true;
 	float CurrentTimestamp = 0, LastGoodTimestamp = 0, Last_IP_Timestamp=0;
 
+	bool FrameSkipMode = false;
+	unsigned Frame = 0;
+	
 	CHECKPOINT;
 	while( m_State != DECODER_QUIT )
 	{
@@ -384,14 +387,12 @@ void MovieTexture_AVCodec::DecoderThread()
 			if (!got_frame)
 				continue;
 
+			++Frame;
+
 			/* We got a frame.  Convert it. */
 			avcodec::AVPicture pict;
 			pict.data[0] = (unsigned char *)m_img->pixels;
 			pict.linesize[0] = m_img->pitch;
-
-			img_convert(&pict, AVPixelFormats[m_AVTexfmt].pf,
-					(avcodec::AVPicture *) &frame, m_stream->codec.pix_fmt, 
-					m_stream->codec.width, m_stream->codec.height);
 
 			if ( m_stream->codec.has_b_frames &&
 				 frame.pict_type != FF_B_TYPE )
@@ -410,33 +411,78 @@ void MovieTexture_AVCodec::DecoderThread()
 				CurrentTimestamp += frame.repeat_pict * (frame_delay * 0.5);
 			}
 
-			{
-				const float Offset = CurrentTimestamp - m_Timer;
-			
-				/* If we're ahead, we're decoding too fast; delay. */
-				if( Offset > 0 )
-					SDL_Delay( int(1000*(CurrentTimestamp - m_Timer)) );
-
-				/* XXX: If we're behind, Offset will be negative and we
-				 * simply won't delay, so the video will play fast until
-				 * it catches up.  However, if we're too far behind, we
-				 * can take some steps to catch up.  1: We can stop updating
-				 * the texture; 2: we can play with hurry_up. */
-			}
-
 			m_Position = CurrentTimestamp;
 
-			/* Signal the main thread to update the image on the next Update. */
-			m_ImageWaiting=true;
+			const float Offset = CurrentTimestamp - m_Timer;
+			bool SkipThisTextureUpdate = false;
+		
+			/* If we're ahead, we're decoding too fast; delay. */
+			if( Offset > 0 )
+			{
+				SDL_Delay( int(1000*(CurrentTimestamp - m_Timer)) );
+				if( FrameSkipMode )
+				{
+					/* We're caught up; stop skipping frames. */
+					LOG->Trace( "stopped skipping frames" );
+					FrameSkipMode = false;
+				}
+			} else {
+				/* We're behind by -Offset seconds.  
+				 *
+				 * If we're just slightly behind, don't worry about it; we'll simply
+				 * not sleep, so we'll move as fast as we can to catch up.
+				 *
+				 * If we're far behind, we're short on CPU and we need to do something
+				 * about it.  We have at least two options:
+				 *
+				 * 1: We can skip texture updates.  This is a big bottleneck on many
+				 * systems.
+				 *
+				 * 2: If that's not enough, we can play with hurry_up.
+				 *
+				 * If we hit a threshold, start skipping frames via #1.  If we do that,
+				 * don't stop once we hit the threshold; keep doing it until we're fully
+				 * caught up.
+				 *
+				 * I'm not sure when we should do #2.  Also, we should try to notice if
+				 * we simply don't have enough CPU for the video; it's better to just
+				 * stay in frame skip mode than to enter and exit it constantly, but we
+				 * don't want to do that due to a single timing glitch.
+				 */
+				const float FrameSkipThreshold = 0.5f;
 
+				if( -Offset >= FrameSkipThreshold && !FrameSkipMode )
+				{
+					LOG->Trace( "Entering frame skip mode" );
+					FrameSkipMode = true;
+				}
+			}
+
+			if( FrameSkipMode )
+				if( Frame % 2 )
+					SkipThisTextureUpdate = true;
+			
 			if( m_State == PLAYING_ONE )
-				SDL_SemPost( m_OneFrameDecoded );
+				SkipThisTextureUpdate = false;
 
-			CHECKPOINT;
-			SDL_SemWait( m_BufferFinished );
-			CHECKPOINT;
-			/* If the frame wasn't used, then we must be shutting down. */
-			ASSERT( !m_ImageWaiting || m_State == DECODER_QUIT );
+			if( !SkipThisTextureUpdate )
+			{
+				img_convert(&pict, AVPixelFormats[m_AVTexfmt].pf,
+						(avcodec::AVPicture *) &frame, m_stream->codec.pix_fmt, 
+						m_stream->codec.width, m_stream->codec.height);
+
+				/* Signal the main thread to update the image on the next Update. */
+				m_ImageWaiting=true;
+
+				if( m_State == PLAYING_ONE )
+					SDL_SemPost( m_OneFrameDecoded );
+
+				CHECKPOINT;
+				SDL_SemWait( m_BufferFinished );
+				CHECKPOINT;
+				/* If the frame wasn't used, then we must be shutting down. */
+				ASSERT( !m_ImageWaiting || m_State == DECODER_QUIT );
+			}
 
 			GetNextTimestamp = true;
 		}
