@@ -1564,7 +1564,13 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 		float fBeat = pSong->GetBeatFromElapsedTime( sec );
 		int iBeat = (int)fBeat;
 		int iTrack = iBeat % nd.GetNumTracks();	// deterministically calculates track
-		nd.SetTapAttackNote( iTrack, BeatToNoteRow(fBeat), szAttacks[rand()%ARRAYSIZE(szAttacks)], 15 );
+		TapNote tn(
+			TapNote::attack, TapNote::original, 
+			szAttacks[rand()%ARRAYSIZE(szAttacks)],
+			15.0f, 
+			false,
+			0 );
+		nd.SetTapNote( iTrack, BeatToNoteRow(fBeat), tn );
 	}
 }
 

@@ -25,11 +25,6 @@ NoteData::~NoteData()
 {
 }
 
-int NoteData::GetNumTracks() const
-{
-	return m_TapNotes.size();
-}
-
 void NoteData::SetNumTracks( int iNewNumTracks )
 {
 	ASSERT( iNewNumTracks > 0 );
@@ -282,19 +277,6 @@ int NoteData::GetMatchingHoldNote( const HoldNote &hn ) const
 			return i;
 	}
 	FAIL_M( ssprintf("%i..%i, %i", hn.iStartRow, hn.iEndRow, hn.iTrack) );
-}
-
-
-void NoteData::SetTapAttackNote( int track, int row, CString sModifiers, float fDurationSeconds )
-{
-	TapNote tn(
-		TapNote::attack, 
-		TapNote::original, 
-		sModifiers,
-		fDurationSeconds, 
-		false,
-		0 );
-	SetTapNote( track, row, tn );
 }
 
 int NoteData::GetFirstRow() const

@@ -1564,7 +1564,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			CString sMods = poChosen.GetString();
 			const int row = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 			
-			m_NoteDataEdit.SetTapAttackNote( g_iLastInsertAttackTrack, row, sMods, g_fLastInsertAttackDurationSeconds );
+			TapNote tn(
+				TapNote::attack, TapNote::original, 
+				sMods,
+				g_fLastInsertAttackDurationSeconds, 
+				false,
+				0 );
+			m_NoteDataEdit.SetTapNote( g_iLastInsertAttackTrack, row, tn );
 			GAMESTATE->RestoreSelectedOptions();	// restore the edit and playback options
 		}
 		break;

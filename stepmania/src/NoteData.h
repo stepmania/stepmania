@@ -41,7 +41,7 @@ public:
 	~NoteData();
 	void Init();
 	
-	int GetNumTracks() const;
+	int GetNumTracks() const { return m_TapNotes.size(); }
 	void SetNumTracks( int iNewNumTracks );
 
 	/* Return the note at the given track and row.  Row may be out of
@@ -104,9 +104,6 @@ public:
 	HoldNote &GetHoldNote( int index ) { ASSERT( index < (int) m_HoldNotes.size() ); return m_HoldNotes[index]; }
 	const HoldNote &GetHoldNote( int index ) const { ASSERT( index < (int) m_HoldNotes.size() ); return m_HoldNotes[index]; }
 	int GetMatchingHoldNote( const HoldNote &hn ) const;
-
-	// remove me
-	void SetTapAttackNote( int track, int row, CString sModifiers, float fDurationSeconds );
 
 	//
 	// statistics
