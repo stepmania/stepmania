@@ -2074,6 +2074,14 @@ SOURCE=.\ScoreDisplayBattle.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScoreDisplayCalories.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayCalories.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScoreDisplayNormal.cpp
 # End Source File
 # Begin Source File
