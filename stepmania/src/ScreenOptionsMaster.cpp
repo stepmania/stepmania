@@ -105,6 +105,7 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 	if( GAMESTATE->m_bEditing )
 	{
 		row.choices.push_back( "" );
+		hand.ListEntries.push_back( ModeChoice() );
 	}
 	else if( GAMESTATE->m_pCurCourse )   // playing a course
 	{
@@ -518,6 +519,8 @@ void ScreenOptionsMaster::ExportOptions()
 	unsigned i;
 	for( i = 0; i < OptionRowHandlers.size(); ++i )
 	{
+		CHECKPOINT_M( ssprintf("%i/%i", i, OptionRowHandlers.size()) );
+		
 		const OptionRowHandler &hand = OptionRowHandlers[i];
 		const OptionRowData &data = m_OptionRowAlloc[i];
 		Row &row = *m_Rows[i];
