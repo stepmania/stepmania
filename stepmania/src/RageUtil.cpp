@@ -1054,9 +1054,11 @@ void CollapsePath( CString &sPath, bool bRemoveLeadingDot )
 			as.erase( as.begin()+i-1 );
 			i -= 2;
 		}
-		else if( as[i] == "" && i+1 < as.size() )
+		else if( as[i] == "" && i != 0 && i+1 < as.size() )
 		{
-			/* Remove empty parts that aren't at the end; "foo//bar/" -> "foo/bar/". */
+			/* Remove empty parts that aren't at the beginning or end;
+			 * "foo//bar/" -> "foo/bar/", but "/foo" -> "/foo" and "foo/"
+			 * to "foo/". */
 			as.erase( as.begin()+i );
 			i -= 1;
 		}
