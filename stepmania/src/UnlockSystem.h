@@ -75,6 +75,7 @@ private:
 	void SortSongEntriesArray();  // sorts unlocks
 	bool ParseRow(CString text, CString &type, float &qty, CString &songname);
 	SongEntry *FindSong( const Song *pSong );
+	void InitRouletteSeeds(int MaxRouletteSlot);
 };
 
 

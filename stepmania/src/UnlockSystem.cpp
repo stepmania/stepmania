@@ -241,6 +241,7 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 			continue;
 
 		SongEntry current;
+		int MaxRouletteSlot = 0;
 
 		song_title.MakeUpper();	//Avoid case-sensitive problems
 		current.m_sSongName = song_title;
@@ -283,14 +284,19 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 		if (unlock_type == "RO")
 		{
 			current.m_iRouletteSeed = (int)datavalue;
-			current.isLocked = ((PREFSMAN->m_RouletteSeeds)[(int)datavalue] != '1');
-		}
+			if (datavalue > MaxRouletteSlot)
+				MaxRouletteSlot = datavalue;
 
+			current.isLocked = true;
+			// will read on first update
+			// current.isLocked = ((PREFSMAN->m_RouletteSeeds)[(int)datavalue] != '1');
+		}
+		InitRouletteSeeds(MaxRouletteSlot);
 		m_SongEntries.push_back(current);
 	}
 	// sort list so we can make use of binary searching
 	sort( m_SongEntries.begin(), m_SongEntries.end(), CompareSongEntries );
-	
+
 	for(unsigned i=0; i < m_SongEntries.size(); i++)
 	{
 		CString tmp = "  ";
@@ -362,5 +368,31 @@ void UnlockSystem::DebugPrint()
 		LOG->Trace( "UnlockSystem entry %d: %s",i, m_SongEntries[i].m_sSongName.c_str() );
 		LOG->Trace( "Status:%slocked", tmp.c_str() );
 	}
+
+}
+
+// This is mainly to streamline the INI for unnecessary values.
+void UnlockSystem::InitRouletteSeeds(int MaxRouletteSlot)
+{
+	CString seeds = PREFSMAN->m_RouletteSeeds;
+	MaxRouletteSlot++; // we actually need one more
+
+	// have exactly the needed number of slots
+	if (seeds.GetLength() == MaxRouletteSlot) return;
+
+	if (seeds.GetLength() > MaxRouletteSlot)  // truncate value
+	{
+		seeds = seeds.Left(MaxRouletteSlot);
+		PREFSMAN->m_RouletteSeeds = seeds;
+		return;
+	}
+
+	// if we get here, the value isn't long enough
+	while (seeds.GetLength() != MaxRouletteSlot)
+		seeds += "0";
+
+	PREFSMAN->m_RouletteSeeds = seeds;
+
+
 
 }
