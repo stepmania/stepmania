@@ -50,9 +50,12 @@ const CString PUBLIC_KEY_FILE		= "public.key";
 const CString SCREENSHOTS_SUBDIR	= "Screenshots/";
 const CString EDITS_SUBDIR			= "Edits/";
 
-#define MAX_EDITABLE_INI_SIZE_BYTES		2*1024		// 2KB
-#define MAX_STATS_XML_SIZE_BYTES		2*1024*1024	// 2MB
-
+#define MAX_EDITABLE_INI_SIZE_BYTES			2*1024		// 2KB
+#define MAX_PLAYER_STATS_XML_SIZE_BYTES	\
+	100 /* Songs */						\
+	* 10 /* Steps per Song */			\
+	* 10 /* HighScores per Steps */		\
+	* 1024 /* size in bytes of a HighScores XNode */
 
 
 class Song;

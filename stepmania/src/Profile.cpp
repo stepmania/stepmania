@@ -604,8 +604,10 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 		//
 		// Don't unreasonably large stats.xml files.
 		//
+		const bool bThisIsMachineProfile = (this == PROFILEMAN->GetMachineProfile()); // XXX
+
 		int iBytes = FILEMAN->GetFileSizeInBytes( fn );
-		if( iBytes > MAX_STATS_XML_SIZE_BYTES )
+		if( !bThisIsMachineProfile && iBytes > MAX_PLAYER_STATS_XML_SIZE_BYTES )
 		{
 			LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
 			break;
