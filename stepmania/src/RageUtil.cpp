@@ -780,7 +780,7 @@ bool utf8_to_wchar_ec( const CString &s, unsigned &start, wchar_t &ch )
 
 	const int first_byte_mask[] = { -1, 0x7F, 0x1F, 0x0F, 0x07, 0x03, 0x01 };
 
-	ch = s[start] & first_byte_mask[len];
+	ch = wchar_t(s[start] & first_byte_mask[len]);
 
 	for( int i = 1; i < len; ++i )
 	{
@@ -792,7 +792,7 @@ bool utf8_to_wchar_ec( const CString &s, unsigned &start, wchar_t &ch )
 			return false;
 		}
 
-		int byte = s[start+i];
+		char byte = s[start+i];
 		if( !is_utf8_continuation_byte(byte) )
 		{
 			/* We expected a continuation byte, but didn't get one.  Return error, and point
@@ -930,10 +930,7 @@ void utf8_sanitize( CString &s )
 	{
 		wchar_t ch;
 		if( !utf8_to_wchar_ec( s, start, ch ) )
-		{
-			ret += INVALID_CHAR;
-			continue;
-		}
+			ch = INVALID_CHAR;
 
 		wchar_to_utf8( ch, ret );
 	}
