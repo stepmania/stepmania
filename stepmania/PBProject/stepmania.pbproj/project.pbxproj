@@ -166,6 +166,8 @@
 		};
 		29B97315FDCFA39411CA2CEA = {
 			children = (
+				AA8F136E0624BAB200C6A467,
+				AA8F136F0624BAB200C6A467,
 				AA996D9605E9ED34008CA159,
 				AA996D9705E9ED34008CA159,
 				AAEA090605E23DF900D38622,
@@ -185,10 +187,10 @@
 		};
 		29B97317FDCFA39411CA2CEA = {
 			children = (
+				AA817DF70622889500EA44DB,
 				089C165CFE840E0CC02AAC07,
 				AA1C654F050D21AB0073A143,
 				AAB895E504A9057100D02EE9,
-				AA505F40050A87E400F96139,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -742,13 +744,6 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
-		AA230E800604345B002672F3 = {
-			fileRef = AAD64AA10603FE7300EF8CDE;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-x c++-header";
-			};
-		};
 		AA230EAE06043704002672F3 = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
@@ -1027,6 +1022,7 @@
 		AA29CC270558741A00961A51 = {
 			buildActionMask = 2147483647;
 			files = (
+				AA817E070623237A00EA44DB,
 				AA29CC280558741A00961A51,
 				AA29CC290558741A00961A51,
 				AA29CC2A0558741A00961A51,
@@ -1178,7 +1174,6 @@
 				AA29CCC10558741A00961A51,
 				AA29CCC20558741A00961A51,
 				AA29CCC30558741A00961A51,
-				AA29CCC40558741A00961A51,
 				AA29CCC50558741A00961A51,
 				AA29CCC60558741A00961A51,
 				AA29CCC70558741A00961A51,
@@ -1365,6 +1360,8 @@
 				AA34ED290611FE33003E5955,
 				AA34ED2A0611FE33003E5955,
 				AADBA563062007BA005D4FC2,
+				AA8F13710624BAB200C6A467,
+				AAD36085062BB8AE00D0CED8,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2275,12 +2272,6 @@
 			settings = {
 			};
 		};
-		AA29CCC40558741A00961A51 = {
-			fileRef = AA6E0056047711F3005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA29CCC50558741A00961A51 = {
 			fileRef = AA6E0058047711F3005F316C;
 			isa = PBXBuildFile;
@@ -2970,8 +2961,7 @@
 			files = (
 				AA29CD3D0558741A00961A51,
 				AA29CD3E0558741A00961A51,
-				AA29CD3F0558741A00961A51,
-				AA230E800604345B002672F3,
+				AA817DF80622889500EA44DB,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2984,12 +2974,6 @@
 		};
 		AA29CD3E0558741A00961A51 = {
 			fileRef = AAB895E504A9057100D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CD3F0558741A00961A51 = {
-			fileRef = AA505F40050A87E400F96139;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -3137,7 +3121,6 @@
 				AA29CDCF0558741A00961A51,
 				AA29CDD00558741A00961A51,
 				AA29CDD10558741A00961A51,
-				AA29CDD20558741A00961A51,
 				AA29CDD30558741A00961A51,
 				AA29CDD40558741A00961A51,
 				AA29CDD50558741A00961A51,
@@ -3300,6 +3283,8 @@
 				AA34ECFA0611C9AA003E5955,
 				AA34ECFB0611C9AC003E5955,
 				AA34ECFE0611C9C6003E5955,
+				AA8F13700624BAB200C6A467,
+				AAD36084062BB8AE00D0CED8,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4141,12 +4126,6 @@
 		};
 		AA29CDD10558741A00961A51 = {
 			fileRef = AA6E0053047711F3005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CDD20558741A00961A51 = {
-			fileRef = AA6E0055047711F3005F316C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -5538,15 +5517,6 @@
 			settings = {
 			};
 		};
-		AA505F40050A87E400F96139 = {
-			isa = PBXFileReference;
-			lastKnownFileType = image.bmp;
-			name = splash.bmp;
-			path = ../Data/splash.bmp;
-			refType = 4;
-			sourceTree = "<group>";
-			usesTabs = 1;
-		};
 		AA507E4F050BA1A000F96139 = {
 			children = (
 				AA507E68050BC69000F96139,
@@ -6281,7 +6251,7 @@
 				HEADER_SEARCH_PATHS = "../src Installer";
 				INFOPLIST_FILE = "Info-Installer.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OTHER_CFLAGS = "-Wwrite-strings";
+				OTHER_CFLAGS = "-Wwrite-strings -fconstant-cfstrings";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = Installer;
@@ -6744,8 +6714,6 @@
 				AA6E0052047711F3005F316C,
 				AA6E0053047711F3005F316C,
 				AA6E0054047711F3005F316C,
-				AA6E0055047711F3005F316C,
-				AA6E0056047711F3005F316C,
 				AA53D28805277DAF00D02EE9,
 				AA53D28905277DAF00D02EE9,
 				AA6E0057047711F3005F316C,
@@ -7513,30 +7481,6 @@
 			lastKnownFileType = sourcecode.c.h;
 			name = ScreenRanking.h;
 			path = ../src/ScreenRanking.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 0;
-		};
-		AA6E0055047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = ScreenRaveOptions.cpp;
-			path = ../src/ScreenRaveOptions.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 0;
-		};
-		AA6E0056047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = ScreenRaveOptions.h;
-			path = ../src/ScreenRaveOptions.h;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
@@ -9052,6 +8996,8 @@
 		};
 		AA6EFDBB04770A83005F316C = {
 			children = (
+				AAD36082062BB8AE00D0CED8,
+				AAD36083062BB8AE00D0CED8,
 				AAF7458E061181F700B19AD1,
 				AAF7458F061181F700B19AD1,
 				AA96881E05DE34CD00478B95,
@@ -12181,6 +12127,26 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		AA817DF70622889500EA44DB = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.png;
+			name = splash.png;
+			path = /Users/steve/programming/stepmania/Data/splash.png;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AA817DF80622889500EA44DB = {
+			fileRef = AA817DF70622889500EA44DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA817E070623237A00EA44DB = {
+			fileRef = AAD64AA10603FE7300EF8CDE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AA8B6C7804AFD82B00D02EE9 = {
 			children = (
 				AA8B6C7904AFD87300D02EE9,
@@ -12305,6 +12271,34 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		AA8F136E0624BAB200C6A467 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = EnumHelper.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA8F136F0624BAB200C6A467 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = EnumHelper.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA8F13700624BAB200C6A467 = {
+			fileRef = AA8F136E0624BAB200C6A467;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA8F13710624BAB200C6A467 = {
+			fileRef = AA8F136F0624BAB200C6A467;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AA946AC005B27398000A1F2E = {
 			fileEncoding = 30;
@@ -13887,6 +13881,36 @@
 		};
 		AAC6DDE90569C80900B5D56F = {
 			fileRef = AAC6DDE70569C80900B5D56F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAD36082062BB8AE00D0CED8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = RageSoundPosMap.cpp;
+			path = ../src/RageSoundPosMap.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAD36083062BB8AE00D0CED8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = RageSoundPosMap.h;
+			path = ../src/RageSoundPosMap.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAD36084062BB8AE00D0CED8 = {
+			fileRef = AAD36082062BB8AE00D0CED8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAD36085062BB8AE00D0CED8 = {
+			fileRef = AAD36083062BB8AE00D0CED8;
 			isa = PBXBuildFile;
 			settings = {
 			};
