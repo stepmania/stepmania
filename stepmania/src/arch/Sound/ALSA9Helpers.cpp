@@ -307,8 +307,8 @@ int Alsa9Buf::GetPosition() const
 {
 	if( dsnd_pcm_state(pcm) == SND_PCM_STATE_PREPARED )
 	{
-		LOG->Trace("???");
-		return 0;
+		LOG->Trace("??? %i", last_cursor_pos);
+		return last_cursor_pos;
 	}
 
 	dsnd_pcm_hwsync( pcm );
