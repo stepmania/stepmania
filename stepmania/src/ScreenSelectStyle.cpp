@@ -2,6 +2,7 @@
 #include "ScreenSelectStyle.h"
 #include "GameManager.h"
 #include "GameSoundManager.h"
+#include "NetworkSyncManager.h"
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
@@ -181,6 +182,10 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 	 * we finished tweening in. */
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->StopTweening();
+
+	//Report All Stlye-dependant info
+	NSMAN->ReportStyle();
+
 
 	SCREENMAN->PlayStartSound();
 	SCREENMAN->SendMessageToTopScreen( SM_AllDoneChoosing );

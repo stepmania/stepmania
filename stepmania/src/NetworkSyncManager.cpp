@@ -12,6 +12,7 @@ bool NetworkSyncManager::Connect(const CString& addy, unsigned short port) { ret
 void NetworkSyncManager::ReportTiming(float offset, int PlayerNumber) { }
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo) { }
 void NetworkSyncManager::ReportSongOver() { }
+void NetworkSyncManager::ReportStyle() {}
 void NetworkSyncManager::StartRequest(short position) { }
 void NetworkSyncManager::DisplayStartupStatus() { }
 void NetworkSyncManager::Update( float fDeltaTime ) { }
@@ -28,6 +29,7 @@ bool NetworkSyncManager::ChangedScoreboard() {}
 #include "StageStats.h"
 #include "Steps.h"
 #include "PrefsManager.h"
+#include "ProductInfo.h"
 
 NetworkSyncManager::NetworkSyncManager()
 {
@@ -92,23 +94,8 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 	Write1(m_packet, 2);	//Hello Packet
 
 	Write1(m_packet, NETPROTOCOLVERSION);
-	int ctr = 2 * 16 + 0;
-	Write1(m_packet, (uint8_t) ctr);
 
-	vector<CString> profileNames;
-	profileNames.push_back("[No Prof]"); //Make a no profile option
-	PROFILEMAN->GetLocalProfileNames(profileNames);
-
-	FOREACH_PlayerNumber(pn)
-	{
-			int localID = atoi(PREFSMAN->m_sDefaultLocalProfileID[pn]);
-			/* If the length of the m_sDefaultLocalProfileID[pn] is greater than 0
-			there must be a profile there. */
-			if (PREFSMAN->m_sDefaultLocalProfileID[pn].length() > 0)
-				WriteNT(m_packet, profileNames[localID+1]);
-			else
-				WriteNT(m_packet, profileNames[localID]);
-	}
+	WriteNT(m_packet, CString(PRODUCT_NAME_VER)); 
 
 	NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
 
@@ -256,6 +243,22 @@ void NetworkSyncManager::ReportSongOver()
 	ClearPacket(m_packet);
 
 	Write1(m_packet,4);
+
+	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
+	return;
+}
+
+void NetworkSyncManager::ReportStyle() 
+{
+	ClearPacket(m_packet);
+	Write1(m_packet, 6);
+	Write1(m_packet, GAMESTATE->GetNumPlayersEnabled());
+
+	FOREACH_EnabledPlayer( pn ) 
+	{
+		Write1(m_packet,pn);
+		WriteNT(m_packet, GAMESTATE->GetPlayerDisplayName(pn));
+	}
 
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 	return;

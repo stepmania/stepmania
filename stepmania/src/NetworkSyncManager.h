@@ -29,6 +29,7 @@ public:
 	void ReportTiming(float offset, int PlayerNumber);
 	void ReportScore(int playerID, int step, int score, int combo);	
 	void ReportSongOver();	//Report to server that song is over
+	void ReportStyle();		//Report to server the style, players, and names
 	void StartRequest(short position);	//Request a start.  Block until granted.
 	bool Connect(const CString& addy, unsigned short port); // Connect to SM Server
 
