@@ -73,7 +73,7 @@ CString AnnouncerManager::GetAnnouncerDirFromName( CString sAnnouncerName )
 
 void AnnouncerManager::SwitchAnnouncer( CString sNewAnnouncerName )
 {
-	if( sNewAnnouncerName != "" )
+	if( sNewAnnouncerName == "" )
 		m_sCurAnnouncerName = "";
 	else if( !DoesAnnouncerExist(sNewAnnouncerName) )
 		m_sCurAnnouncerName = "";
