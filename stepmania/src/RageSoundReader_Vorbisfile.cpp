@@ -105,7 +105,7 @@ SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(CString file
 		delete f;
 		delete vf;
 		vf = NULL;
-		return OPEN_NO_MATCH;
+		return OPEN_FATAL_ERROR;
 	}
 
 	ov_callbacks callbacks;
@@ -124,9 +124,9 @@ SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(CString file
 		switch( ret )
 		{
 		case OV_ENOTVORBIS:
-			return OPEN_NO_MATCH;
+			return OPEN_UNKNOWN_FILE_FORMAT;
 		default:
-			return OPEN_MATCH_BUT_FAIL;
+			return OPEN_FATAL_ERROR;
 		}
 	}
 
