@@ -691,7 +691,8 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		/* メキシコ民謡 */
 		ttab.push_back(TitleTrans("", "", "^Spanish Folk Music$", "", "", "&kme;&kki;&ksi;&kko;&minyou1;&minyou2;") );
 
-		/* 青い振動 XXX verify this title */
+		/* 青い振動 */
+		ttab.push_back(TitleTrans("^Aoi Shoudou$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "") );
 		ttab.push_back(TitleTrans("^Blue Impulse$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "") );
 
 		/* XXX 大見解 verify this title (Night Line or Nightline or am I completely wrong?) */
@@ -703,6 +704,9 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		/* 三毛猫ロック */
 		ttab.push_back(TitleTrans("^Mikeneko Rock$", "", "", "&num-san;&hair;&neko;&kro;&kq;&kku;", "", "") );
 		
+		/* 桜 */
+		ttab.push_back(TitleTrans("^Sakura$", "", "", "&sakura;", "", "") );
+
 		/* XXX: "door of magic" (tobira no mahou) -> 魔法の扉 */
 		/* XXX スペース★マコのテーマ (space? special? * "mako"?'s team) (title or subtitle, not sure) */
 
