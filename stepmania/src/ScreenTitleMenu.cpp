@@ -232,7 +232,8 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			break;
 		/* break if the choice is invalid */
 		if( m_Choice == CHOICE_JUKEBOX  ||
-			m_Choice == CHOICE_EDIT )
+			m_Choice == CHOICE_EDIT ||
+			m_Choice == CHOICE_EDIT_COURSES )
 		{
 			if( SONGMAN->GetNumSongs() == 0 )
 			{
@@ -250,12 +251,6 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			{
 				m_soundInvalid.Play();
 				SCREENMAN->SystemMessage( "No courses are installed" );
-				return;
-			}
-			if( SONGMAN->GetNumSongs() == 0 )
-			{
-				m_soundInvalid.Play();
-				SCREENMAN->SystemMessage( "No songs are installed" );
 				return;
 			}
 		}
