@@ -308,6 +308,14 @@ void splitrelpath( const CString &Path, CString& Dir, CString& FName, CString& E
 	}
 }
 
+CString GetExtension( CString sPath )
+{
+	CString Dir, FName, Ext;
+	splitrelpath( sPath, Dir, FName, Ext );
+	Ext.MakeLower();
+	return Ext;
+}
+
 /* mkdir -p.  Doesn't fail if Path already exists and is a directory. */
 bool CreateDirectories( CString Path )
 {

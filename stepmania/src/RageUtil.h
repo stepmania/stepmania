@@ -174,13 +174,7 @@ void splitrelpath(
 	CString& Ext 
 );
 
-inline CString GetExtension( CString sPath )
-{
-	CString Dir, FName, Ext;
-	splitrelpath( sPath, Dir, FName, Ext );
-	Ext.MakeLower();
-	return Ext;
-};
+CString GetExtension( CString sPath );
 
 typedef int longchar;
 extern const wchar_t INVALID_CHAR;
