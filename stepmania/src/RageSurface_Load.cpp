@@ -54,7 +54,10 @@ static SDL_Surface *TryOpenFile( CString sPath, bool bHeaderOnly, CString &error
 	}
 
 	if( result == RageSurface::OPEN_OK )
+	{
+		ASSERT( ret );
 		return ret;
+	}
 
 	LOG->Trace( "Format %s failed: %s", format.c_str(), error.c_str() );
 
