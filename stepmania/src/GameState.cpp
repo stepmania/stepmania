@@ -1055,7 +1055,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 					feat.Feat = ssprintf("MR #%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
 					feat.pStringToFill = &vHighScores[j].sName;
 					feat.grade = GRADE_NO_DATA;
-					feat.iScore = (float) vHighScores[j].iScore;
+					feat.iScore = (int) vHighScores[j].iScore;
 					feat.fPercentDP = (float) vHighScores[j].fPercentDP;
 					asFeatsOut.push_back( feat );
 				}
@@ -1075,7 +1075,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 					feat.Feat = ssprintf("PR #%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
 					feat.pStringToFill = &vHighScores[j].sName;
 					feat.grade = GRADE_NO_DATA;
-					feat.iScore = (float) vHighScores[j].iScore;
+					feat.iScore = (int) vHighScores[j].iScore;
 					feat.fPercentDP = (float) vHighScores[j].fPercentDP;
 					asFeatsOut.push_back( feat );
 				}
