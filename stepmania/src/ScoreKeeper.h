@@ -19,11 +19,11 @@
 */
 
 #include "Actor.h"
-#include "NoteData.h"
+#include "GameConstantsAndTypes.h"
 
 class ScoreKeeper: public Actor {
 protected:
-	int m_PlayerNumber;
+	PlayerNumber m_PlayerNumber;
 
 	/* Common toggles that this class handles directly: */
 
@@ -32,7 +32,7 @@ protected:
 //	bool Stats_DoublesCount;
 
 public:
-	ScoreKeeper(int pn) { m_PlayerNumber=pn; }
+	ScoreKeeper(PlayerNumber pn) { m_PlayerNumber=pn; }
 	virtual void DrawPrimitives() { }
 
 	virtual void HandleNoteScore( TapNoteScore score, int iNumTapsInRow ) { }

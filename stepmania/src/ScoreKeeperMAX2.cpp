@@ -2,7 +2,7 @@
 #include "ScoreKeeperMAX2.h"
 #include "GameState.h"
 
-ScoreKeeperMAX2::ScoreKeeperMAX2(Notes *notes, NoteDataWithScoring &data, int pn_):
+ScoreKeeperMAX2::ScoreKeeperMAX2(Notes *notes, NoteDataWithScoring &data, PlayerNumber pn_):
 	ScoreKeeper(pn_)
 {
 //	Stats_DoublesCount = true;

@@ -25,7 +25,7 @@ class ScoreKeeperMAX2: public ScoreKeeper
 	void AddScore( TapNoteScore score );
 
 public:
-	ScoreKeeperMAX2(Notes *notes, NoteDataWithScoring &data, int pn);
+	ScoreKeeperMAX2(Notes *notes, NoteDataWithScoring &data, PlayerNumber pn);
 
 	void HandleNoteScore( TapNoteScore score, int iNumTapsInRow );
 	void HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore );
