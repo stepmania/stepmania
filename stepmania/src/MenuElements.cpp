@@ -58,6 +58,8 @@ MenuElements::MenuElements()
 	m_Wipe.SetZ( -2 );
 	m_Wipe.SetOpened();
 	this->AddActor( &m_Wipe );
+
+	this->AddActor( &m_Invisible );
 }
 
 void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText )
@@ -200,6 +202,7 @@ void MenuElements::TweenOffScreenToBlack( ScreenMessage smSendWhenDone, bool bPl
 	{
 		TweenTopLayerOffScreen();
 		TweenBottomLayerOffScreen();
+		m_Invisible.CloseWipingRight( smSendWhenDone );
 	}
 	else
 	{

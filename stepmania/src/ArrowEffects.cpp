@@ -77,7 +77,7 @@ float ArrowGetAlpha( const PlayerOptions& po, float fYPos )
 		fAlpha = (fYPos-100)/200;
 		break;
 	case PlayerOptions::APPEARANCE_SUDDEN:
-		fAlpha = ((SCREEN_HEIGHT-fYPos)-280)/200;
+		fAlpha = ((SCREEN_HEIGHT-fYPos)-260)/200;
 		break;
 	case PlayerOptions::APPEARANCE_STEALTH:
 		fAlpha = 0;

@@ -37,7 +37,7 @@ const float STAGE_NUMBER_LOCAL_Y = +20;
 const float SCORE_LOCAL_X[NUM_PLAYERS] = { -214, +214 };
 const float SCORE_LOCAL_Y[NUM_PLAYERS] = { -6, -6 };
 
-const float PLAYER_OPTIONS_LOCAL_X[NUM_PLAYERS]	= { -214, +214 };
+const float PLAYER_OPTIONS_LOCAL_X[NUM_PLAYERS]	= { -0, +0 };
 const float PLAYER_OPTIONS_LOCAL_Y[NUM_PLAYERS]	= { -10, +10 };
 
 const float DIFFICULTY_X[NUM_PLAYERS]	= { SCREEN_LEFT+60, SCREEN_RIGHT-60 };
@@ -324,7 +324,7 @@ void ScreenGameplay::LoadNextSong()
 			PREFSMAN->m_PlayerOptions[p],
 			&m_LifeMeter[p],
 			&m_ScoreDisplay[p],
-			pNotes[p]->GetNoteData()->GetNumTapNotes() + pNotes[p]->GetNoteData()->GetNumHoldNotes()
+			pNotes[p]->GetNoteData()->GetNumTapNotes()
 		);
 	}
 
@@ -504,6 +504,27 @@ void ScreenGameplay::Update( float fDeltaTime )
 		iRowLastCrossed = iRowNow;
 	}
 
+	//
+	if( m_bBothHaveFailed )
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
+				continue;
+			
+			float fOverrideAlpha = m_Player[p].GetOverrideAlpha();
+			if( fOverrideAlpha == -1 )
+			{
+				m_Player[p].SetOverrideAlpha( 0 );
+			}
+			else
+			{
+				float fNewAlpha = min( 1, fOverrideAlpha + fDeltaTime );
+                m_Player[p].SetOverrideAlpha( fNewAlpha );
+			}
+
+		}
+	}
 }
 
 
@@ -559,21 +580,10 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 
 	
-	if( MenuI.IsValid() )
+	if( MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_BACK  &&  type == IET_FAST_REPEAT &&  m_DancingState == STATE_DANCING  &&  !m_bBothHaveFailed )
 	{
-		switch( MenuI.button )
-		{
-		case MENU_BUTTON_BACK:
-			if( m_DancingState == STATE_DANCING 
-			&& !m_bBothHaveFailed )
-			{
-				m_bBothHaveFailed = true;
-				SCREENMAN->SendMessageToTopScreen( SM_BeginFailed, 0 );
-			}
-			else
-				; // do not let user go back!
-			break;
-		}
+		m_bBothHaveFailed = true;
+		SCREENMAN->SendMessageToTopScreen( SM_BeginFailed, 0 );
 	}
 
 	const float fMaxBeatDifference = fBPS * PREFSMAN->m_fJudgeWindow * PREFSMAN->m_SongOptions.m_fMusicRate;

@@ -24,5 +24,5 @@ public:
 	void SetFromNotes( Notes* pNotes );
 
 private:
-	void SetNumFeet( int iNumFeet, const CString &sDescription );
+	void SetNumFeet( int iNumFeet );
 };

@@ -85,7 +85,9 @@ GameplayStatistics SongManager::GetLatestGameplayStatistics( PlayerNumber p )
 void SongManager::InitSongArrayFromDisk()
 {
 	LoadStepManiaSongDir( "Songs" );
-	//LoadDWISongDir( "DWI Support" );
+
+	for( int i=0; i<PREFSMAN->m_asSongFolders.GetSize(); i++ )
+        LoadStepManiaSongDir( PREFSMAN->m_asSongFolders[i] );
 	
 	// compute group names
 	CArray<Song*, Song*> arraySongs;

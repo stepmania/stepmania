@@ -106,50 +106,70 @@ void Notes::ReadFromCacheFile( FILE* file, bool bLoadNoteData )
 	}
 }
 
+
+// BMS encoding:     tap-hold
+// 4&8panel:   Player1     Player2
+//    Left		11-51		21-61
+//    Down		13-53		23-63
+//    Up		15-55		25-65
+//    Right		16-56		26-66
+//	6panel:	   Player1
+//    Left		11-51
+//    Left+Up	12-52
+//    Down		13-53
+//    Up		14-54
+//    Up+Right	15-55
+//    Right		16-56
+//
+//	Notice that 15 and 25 have double meanings!  What were they thinking???
+//	While reading in, use the 6 panel mapping.  After reading in, detect if only 4 notes
+//	are used.  If so, shift the Up+Right column back to the Up column
+//
+void mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &cNoteCharOut )
+{
+	if( iBMSTrack > 40 )
+	{
+		cNoteCharOut = '2';
+		iBMSTrack -= 40;
+	}
+	else
+	{
+		cNoteCharOut = '1';
+	}
+
+	switch( iBMSTrack )
+	{
+	case 11:	iDanceColOut = DANCE_NOTE_PAD1_LEFT;	break;
+	case 12:	iDanceColOut = DANCE_NOTE_PAD1_UPLEFT;	break;
+	case 13:	iDanceColOut = DANCE_NOTE_PAD1_DOWN;	break;
+	case 14:	iDanceColOut = DANCE_NOTE_PAD1_UP;		break;
+	case 15:	iDanceColOut = DANCE_NOTE_PAD1_UPRIGHT;	break;
+	case 16:	iDanceColOut = DANCE_NOTE_PAD1_RIGHT;	break;
+	case 21:	iDanceColOut = DANCE_NOTE_PAD2_LEFT;	break;
+	case 22:	iDanceColOut = DANCE_NOTE_PAD2_UPLEFT;	break;
+	case 23:	iDanceColOut = DANCE_NOTE_PAD2_DOWN;	break;
+	case 24:	iDanceColOut = DANCE_NOTE_PAD2_UP;		break;
+	case 25:	iDanceColOut = DANCE_NOTE_PAD2_UPRIGHT;	break;
+	case 26:	iDanceColOut = DANCE_NOTE_PAD2_RIGHT;	break;
+	default:	iDanceColOut = -1;						break;
+	}
+}
+
+
 bool Notes::LoadFromBMSFile( const CString &sPath )
 {
 	LOG->WriteLine( "Notes::LoadFromBMSFile( '%s' )", sPath );
 
 	this->GetNoteData();	// make sure NoteData is loaded
 
-// BMS encoding:
-// 4&8panel: Player1  Player2
-//    Left		11		21
-//    Down		13		23
-//    Up		15		25
-//    Right		16		26
-//	6panel:	 Player1  Player2
-//    Left		11		21
-//    Left+Up	12		22
-//    Down		13		23
-//    Up		14		24
-//    Up+Right	15		25
-//    Right		16		26
-//
-//	Notice that 15 and 25 have double meanings!  What were they thinking???
-//	While reading in, use the 6 panel mapping.  After reading in, detect if only 4 notes
-//	are used.  If so, shift the Up+Right column back to the Up column
-//
-	CMap<int, int, int, int>  mapBMSTrackToDanceNote;
-	mapBMSTrackToDanceNote[11] = DANCE_NOTE_PAD1_LEFT;
-	mapBMSTrackToDanceNote[12] = DANCE_NOTE_PAD1_UPLEFT;
-	mapBMSTrackToDanceNote[13] = DANCE_NOTE_PAD1_DOWN;
-	mapBMSTrackToDanceNote[14] = DANCE_NOTE_PAD1_UP;
-	mapBMSTrackToDanceNote[15] = DANCE_NOTE_PAD1_UPRIGHT;
-	mapBMSTrackToDanceNote[16] = DANCE_NOTE_PAD1_RIGHT;
-	mapBMSTrackToDanceNote[21] = DANCE_NOTE_PAD2_LEFT;
-	mapBMSTrackToDanceNote[22] = DANCE_NOTE_PAD2_UPLEFT;
-	mapBMSTrackToDanceNote[23] = DANCE_NOTE_PAD2_DOWN;
-	mapBMSTrackToDanceNote[24] = DANCE_NOTE_PAD2_UP;
-	mapBMSTrackToDanceNote[25] = DANCE_NOTE_PAD2_UPRIGHT;
-	mapBMSTrackToDanceNote[26] = DANCE_NOTE_PAD2_RIGHT;
 
 
-	bool tempNotes[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];
+
+	int tempNotes[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];
 	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )
-			tempNotes[t][i] = false;
+			tempNotes[t][i] = '0';
 	}
 
 
@@ -157,7 +177,7 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 	CStdioFile file;	
 	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
 	{
-		throw RageException( ssprintf("Failed to open %s.", sPath) );
+		throw RageException( "Failed to open %s.", sPath );
 		return false;
 	}
 
@@ -232,8 +252,6 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 		if( -1 != value_name.Find("#playlevel") ) 
 		{
 			m_iMeter = atoi( value_data );
-
-			// Should we calculate m_DifficultyClass here?
 		}
 		else if( value_name.Left(1) == "#"  
 			 && IsAnInt( value_name.Mid(1,3) )
@@ -262,9 +280,12 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 
 					const int iNoteIndex = (int) ( (iMeasureNo + fPercentThroughMeasure)
 									 * BEATS_PER_MEASURE * ELEMENTS_PER_BEAT );
-					const int iColumnNumber = mapBMSTrackToDanceNote[iTrackNum];
+					int iColumnNumber;
+					char cNoteChar;
+					mapBMSTrackToDanceNote( iTrackNum, iColumnNumber, cNoteChar );
 
-					tempNotes[iColumnNumber][iNoteIndex] = true;
+					if( iColumnNumber != -1 )
+						tempNotes[iColumnNumber][iNoteIndex] = cNoteChar;
 				}
 			}
 		}
@@ -276,15 +297,15 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// for each TapNote
 		{
-			if( tempNotes[DANCE_NOTE_PAD1_UPRIGHT][i] )	// if up+right is a step
+			if( tempNotes[DANCE_NOTE_PAD1_UPRIGHT][i] != '0' )	// if up+right is a step
 			{
-				tempNotes[DANCE_NOTE_PAD1_UP][i] = true;			// add up
-				tempNotes[DANCE_NOTE_PAD1_UPRIGHT][i] = false;	// subtract up+right
+				tempNotes[DANCE_NOTE_PAD1_UP][i] = tempNotes[DANCE_NOTE_PAD1_UPRIGHT][i];			// add up
+				tempNotes[DANCE_NOTE_PAD1_UPRIGHT][i] = '0';	// subtract up+right
 			}
-			if( tempNotes[DANCE_NOTE_PAD2_UPRIGHT][i] )	// if up+right is a step
+			if( tempNotes[DANCE_NOTE_PAD2_UPRIGHT][i] != '0' )	// if up+right is a step
 			{
-				tempNotes[DANCE_NOTE_PAD2_UP][i] = true;			// add up
-				tempNotes[DANCE_NOTE_PAD2_UPRIGHT][i] = false;	// subtract up+right
+				tempNotes[DANCE_NOTE_PAD2_UP][i] = tempNotes[DANCE_NOTE_PAD2_UPRIGHT][i];			// add up
+				tempNotes[DANCE_NOTE_PAD2_UPRIGHT][i] = '0';	// subtract up+right
 			}
 		}
 	}
@@ -341,13 +362,14 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// foreach TapNote element
 		{
-			if( tempNotes[iTempCol][i] )
-				m_pNoteData->m_TapNotes[iNoteDataCol][i] = '1';
+			m_pNoteData->m_TapNotes[iNoteDataCol][i] = tempNotes[iTempCol][i];
 		}
 	}
 
 	m_pNoteData->m_iNumTracks = mapDanceNoteToNoteDataColumn.GetCount();
 	
+	m_pNoteData->Convert2sAnd3sToHoldNotes();
+
 
 	// search for runs of 32nd notes of all the same note type, and convert them to freezes
 	for( int iCol=0; iCol<mapDanceNoteToNoteDataColumn.GetCount(); iCol++ )
@@ -400,6 +422,20 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 		// done looking for runs
 
 
+	}
+
+
+	m_DifficultyClass = DifficultyClassFromDescriptionAndMeter( m_sDescription, m_iMeter );
+
+	if( m_iMeter == 0 )
+	{
+		switch( m_DifficultyClass )
+		{
+		case CLASS_EASY:	m_iMeter = 3;	break;
+		case CLASS_MEDIUM:	m_iMeter = 5;	break;
+		case CLASS_HARD:	m_iMeter = 8;	break;
+		default:	ASSERT(0);
+		}
 	}
 
 	return true;
@@ -503,17 +539,7 @@ bool Notes::LoadFromDWITokens(
 
 	m_iMeter = iNumFeet;
 
-	if( m_sDescription == "BASIC" )			m_DifficultyClass = CLASS_EASY;
-	else if( m_sDescription == "ANOTHER" )	m_DifficultyClass = CLASS_MEDIUM;
-	else if( m_sDescription == "MANIAC" )	m_DifficultyClass = CLASS_HARD;
-	else if( m_sDescription == "SMANIAC" )	m_DifficultyClass = CLASS_HARD;
-	else
-	{
-		// guess difficulty class from m_iMeter
-		if(		 m_iMeter <= 3 )	m_DifficultyClass = CLASS_EASY;
-		else if( m_iMeter <= 6 )	m_DifficultyClass = CLASS_MEDIUM;
-		else						m_DifficultyClass = CLASS_HARD;
-	}
+	m_DifficultyClass = DifficultyClassFromDescriptionAndMeter( m_sDescription, m_iMeter );
 
 	m_sCredit = "";
 
@@ -702,23 +728,8 @@ bool Notes::LoadFromNotesFile( const CString &sPath )
 		else
 			LOG->WriteLine( "Unexpected value named '%s'", sValueName );
 	}
-
 	
-	if     ( stricmp(m_sDescription, "BASIC") == 0 )	m_DifficultyClass = CLASS_EASY;
-	else if( stricmp(m_sDescription, "TRICK") == 0 )	m_DifficultyClass = CLASS_MEDIUM;
-	else if( stricmp(m_sDescription, "STANDARD") == 0 )	m_DifficultyClass = CLASS_MEDIUM;
-	else if( stricmp(m_sDescription, "ANOTHER") == 0 )	m_DifficultyClass = CLASS_MEDIUM;
-	else if( stricmp(m_sDescription, "SSR") == 0 )		m_DifficultyClass = CLASS_HARD;
-	else if( stricmp(m_sDescription, "MANIAC") == 0 )	m_DifficultyClass = CLASS_HARD;
-	else if( stricmp(m_sDescription, "HEAVY") == 0 )	m_DifficultyClass = CLASS_HARD;
-	else if( stricmp(m_sDescription, "SMANIAC") == 0 )	m_DifficultyClass = CLASS_HARD;
-	else
-	{
-		// guess difficulty class from m_iMeter
-		if(		 m_iMeter <= 3 )	m_DifficultyClass = CLASS_EASY;
-		else if( m_iMeter <= 6 )	m_DifficultyClass = CLASS_MEDIUM;
-		else						m_DifficultyClass = CLASS_HARD;
-	}
+	m_DifficultyClass = DifficultyClassFromDescriptionAndMeter( m_sDescription, m_iMeter );
 
 	return true;
 }
@@ -750,6 +761,40 @@ void Notes::SaveToSMDir( CString sSongDir )
 	
 	file.Close();
 }
+
+DifficultyClass Notes::DifficultyClassFromDescriptionAndMeter( CString sDifficulty, int iMeter )
+{
+	sDifficulty.MakeLower();
+
+	const CString sDescriptionParts[NUM_DIFFICULTY_CLASSES][3] = {
+		{
+			"basic",
+            "light",
+			"SDFKSJDKFJS",
+		},
+		{
+			"another",
+            "trick",
+            "standard",
+		},
+		{
+			"ssr",
+            "maniac",
+            "heavy",
+		},
+	};
+
+	for( int i=0; i<NUM_DIFFICULTY_CLASSES; i++ )
+		for( int j=0; j<3; j++ )
+			if( sDifficulty.Find(sDescriptionParts[i][j]) != -1 )
+				return DifficultyClass(i);
+	
+	// guess difficulty class from meter
+	if(		 iMeter <= 3 )	return CLASS_EASY;
+	else if( iMeter <= 6 )	return CLASS_MEDIUM;
+	else					return CLASS_HARD;
+}
+
 
 bool Notes::IsNoteDataLoaded()
 {

@@ -1,16 +1,14 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: MotionBlurSprite.h
+ Class: MotionBlurSprite
 
- Desc: A graphic that appears to blur and come into focus.
+ Desc: A sprite that leaves a ghost trail.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-#ifndef _MotionBlurSprite_H_
-#define _MotionBlurSprite_H_
-
 
 #include "Sprite.h"
 #include "ActorFrame.h"
@@ -116,6 +114,3 @@ protected:
 };
 
 
-
-
-#endif

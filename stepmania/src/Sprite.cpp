@@ -6,6 +6,7 @@
  Desc: A bitmap actor that animates and moves around.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -374,6 +375,12 @@ void Sprite::SetCustomTextureCoords( float fTexCoords[8] ) // order: bottom left
 	m_bUsingCustomTexCoords = true;
 	for( int i=0; i<8; i++ )
 		m_CustomTexCoords[i] = fTexCoords[i]; 
+}
+
+void Sprite::GetCustomTextureCoords( float fTexCoordsOut[8] ) // order: bottom left, top left, bottom right, top right
+{ 
+	for( int i=0; i<8; i++ )
+		fTexCoordsOut[i] = m_CustomTexCoords[i]; 
 }
 
 

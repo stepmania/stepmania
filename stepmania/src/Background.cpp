@@ -17,7 +17,8 @@
 #include "RageBitmapTexture.h"
 
 
-const CString VIS_DIR = "Visualizations\\";
+const CString MOVIE_VIS_DIR = "Visualizations\\";
+const CString BG_ANIMS_DIR = "BGAnimations\\";
 
 
 Background::Background()
@@ -34,16 +35,28 @@ Background::Background()
 	m_sprDangerBackground.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_DANGER_BACKGROUND) );
 	m_sprDangerBackground.StretchTo( CRect((int)SCREEN_LEFT, (int)SCREEN_TOP, (int)SCREEN_RIGHT, (int)SCREEN_BOTTOM) );
 
-	// Load background animations
-	m_BackgroundAnimations.Add( new BackgroundAnimation(NULL) );
-
 	m_pCurBackgroundAnimation = NULL;
 }
 
 bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 {
-	// load song background
+	//
+	// Load background animations
+	//
+	CStringArray asBGAnimNames;
+	GetDirListing( BG_ANIMS_DIR+"*.*", asBGAnimNames, true );
+	SortCStringArray( asBGAnimNames );
+	for( int i=0; i<asBGAnimNames.GetSize(); i++ )
+	{
+		if( stricmp(asBGAnimNames[i], "CVS") == 0 )	// if this directory is named CVS, skip it
+			continue;	// skip
+		m_BackgroundAnimations.Add( new BackgroundAnimation(BG_ANIMS_DIR+asBGAnimNames[i], pSong) );
+	}
 
+
+	//
+	// load song background
+	//
 	CString sBackgroundMoviePath;
 	if( pSong->HasBackgroundMovie() )
 	{
@@ -67,14 +80,14 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 	{
 		// load a random visualization
 		CStringArray sVisualizationNames;
-		GetDirListing( VIS_DIR + "*.avi", sVisualizationNames );
-		GetDirListing( VIS_DIR + "*.mpg", sVisualizationNames );
-		GetDirListing( VIS_DIR + "*.mpeg", sVisualizationNames );
+		GetDirListing( MOVIE_VIS_DIR + "*.avi", sVisualizationNames );
+		GetDirListing( MOVIE_VIS_DIR + "*.mpg", sVisualizationNames );
+		GetDirListing( MOVIE_VIS_DIR + "*.mpeg", sVisualizationNames );
 		if( sVisualizationNames.GetSize() > 0 )	// there is at least one visualization
 		{
 			int iIndexRandom = rand() % sVisualizationNames.GetSize();
 
-			m_sprVisualizationOverlay.Load( VIS_DIR + sVisualizationNames[iIndexRandom] );
+			m_sprVisualizationOverlay.Load( MOVIE_VIS_DIR + sVisualizationNames[iIndexRandom] );
 			m_sprVisualizationOverlay.StretchTo( CRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
 			m_sprVisualizationOverlay.SetZoomY( m_sprVisualizationOverlay.GetZoomY()*-1 );
 			m_sprVisualizationOverlay.SetBlendModeAdd();
@@ -94,8 +107,11 @@ void Background::Update( float fDeltaTime )
 		m_pCurBackgroundAnimation = NULL;
 	else
 	{
-		int iIndexToSwitchTo = int(m_fSongBeat/BEATS_PER_MEASURE/2) % m_BackgroundAnimations.GetSize();
-		m_pCurBackgroundAnimation = m_BackgroundAnimations[ iIndexToSwitchTo ];
+		if( m_BackgroundAnimations.GetSize() > 0 )
+		{
+			int iIndexToSwitchTo = int(m_fSongBeat/BEATS_PER_MEASURE/4) % m_BackgroundAnimations.GetSize();
+			m_pCurBackgroundAnimation = m_BackgroundAnimations[ iIndexToSwitchTo ];
+		}
 	}
 
 
@@ -145,21 +161,20 @@ void Background::DrawPrimitives()
 		{
 		case VIS_MODE_ANIMATION:
 			if( m_pCurBackgroundAnimation )
-				m_pCurBackgroundAnimation->DrawPrimitives();
+				m_pCurBackgroundAnimation->Draw();
 			else
 				m_sprSongBackground.Draw();
 			break;
 
 		case VIS_MODE_MOVIE:
+			m_sprSongBackground.Draw();
 			m_sprVisualizationOverlay.Draw();
-			// fall through and draw background
+			break;
 
 		case VIS_MODE_NONE:
 			m_sprSongBackground.Draw();
 			break;
 		}
-		m_sprSongBackground.Draw();
-		m_sprVisualizationOverlay.Draw();
 	}
 }
 

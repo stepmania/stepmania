@@ -35,6 +35,8 @@ NoteField::NoteField()
 	m_Mode = MODE_DANCING;
 
 	m_fBeginMarker = m_fEndMarker = -1;
+
+	m_fOverrideAlpha = -1;
 }
 
 
@@ -80,7 +82,9 @@ void NoteField::CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, c
 	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
 	const float fRotation	= ArrowGetRotation(	m_PlayerOptions, iCol, fYOffset );
 	const float fXPos		= ArrowGetXPos(		m_PlayerOptions, iCol, fYOffset, m_fSongBeat );
-	const float fAlpha		= ArrowGetAlpha(	m_PlayerOptions, fYPos );
+	float fAlpha			= ArrowGetAlpha(	m_PlayerOptions, fYPos );
+	if( m_fOverrideAlpha != -1 )
+		fAlpha = m_fOverrideAlpha;
 
 	D3DXCOLOR colorLeading, colorTrailing;	// of the color part.  Alpha here be overwritten with fAlpha!
 	if( color.a == -1 )	// indicated "NULL"
@@ -104,8 +108,9 @@ void NoteField::CreateHoldNoteInstance( ColorNoteInstance &cni, const bool bActi
 	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
 	const float fRotation	= ArrowGetRotation(	m_PlayerOptions, iCol, fYOffset );
 	const float fXPos		= ArrowGetXPos(		m_PlayerOptions, iCol, fYOffset, m_fSongBeat );
-	const float fAlpha		= ArrowGetAlpha(	m_PlayerOptions, fYPos );
-
+	float fAlpha			= ArrowGetAlpha(	m_PlayerOptions, fYPos );
+	if( m_fOverrideAlpha != -1 )
+		fAlpha = m_fOverrideAlpha;
 
 	int iGrayPartFrameNo;
 	if( bActive  &&  m_Mode == MODE_DANCING )

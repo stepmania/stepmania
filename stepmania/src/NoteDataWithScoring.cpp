@@ -135,7 +135,9 @@ float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds )
 float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds )
 {
 	// irregularity of steps
-	float fReturn = fabsf( GetActualStreamRadarValue(fSongSeconds) - GetActualVoltageRadarValue(fSongSeconds) ) * 2.5f;
+	float fReturn = GetChaosRadarValue(fSongSeconds) - 
+		(GetStreamRadarValue(fSongSeconds)-GetActualStreamRadarValue(fSongSeconds)) - 
+		(GetVoltageRadarValue(fSongSeconds)-GetActualVoltageRadarValue(fSongSeconds));
 	return min( fReturn, 1.2f );
 }
 

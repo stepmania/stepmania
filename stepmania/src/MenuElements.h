@@ -20,6 +20,7 @@
 #include "MenuTimer.h"
 #include "TransitionFadeWipe.h"
 #include "TransitionKeepAlive.h"
+#include "TransitionInvisible.h"
 
 
 const float MENU_ELEMENTS_TWEEN_TIME	=	0.30f;
@@ -70,6 +71,7 @@ protected:
 
 	TransitionFadeWipe	m_Wipe;
 	TransitionKeepAlive	m_KeepAlive;
+	TransitionInvisible	m_Invisible;
 
 	RageSoundSample m_soundSwoosh;
 	RageSoundSample m_soundBack;

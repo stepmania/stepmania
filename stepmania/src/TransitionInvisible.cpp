@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: TransitionInvisible.cpp
+ Class: TransitionInvisible
 
- Desc: Fades out or in.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -19,11 +20,6 @@
 
 TransitionInvisible::TransitionInvisible()
 {
-}
-
-TransitionInvisible::~TransitionInvisible()
-{
-
 }
 
 void TransitionInvisible::DrawPrimitives()

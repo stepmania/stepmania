@@ -131,7 +131,8 @@ enum DifficultyClass
 	CLASS_EASY,		// corresponds to Basic
 	CLASS_MEDIUM,	// corresponds to Trick, Another, Standard
 	CLASS_HARD,		// corresponds to Maniac, SSR, Heavy
-	NUM_DIFFICULTY_CLASSES
+	NUM_DIFFICULTY_CLASSES,
+	CLASS_INVALID
 };
 
 inline D3DXCOLOR DifficultyClassToColor( DifficultyClass dc )

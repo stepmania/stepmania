@@ -659,7 +659,7 @@ void MusicWheel::NotesChanged( PlayerNumber pn )	// update grade graphics and to
 	Notes* m_pNotes = SONGMAN->GetCurrentNotes( pn );
 	
 	if( m_pNotes )
-		m_HighScore[pn].SetScore( m_pNotes->m_iTopScore );
+		m_HighScore[pn].SetScore( (float)m_pNotes->m_iTopScore );
 
 	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
 	{

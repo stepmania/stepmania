@@ -76,6 +76,9 @@ CString vssprintf( LPCTSTR fmt, va_list argList)
 //-----------------------------------------------------------------------------
 CString join( const CString &Deliminator, const CStringArray& Source)
 {
+	if( Source.GetSize() == 0 )
+		return "";
+
 	CString csReturn;
 	CString csTmp;
 

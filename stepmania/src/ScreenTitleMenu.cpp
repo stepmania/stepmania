@@ -267,8 +267,9 @@ void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 		}
 		return;
 	case CHOICE_SELECT_GAME:
-		m_soundSelect.PlayRandom();
-		m_Fade.CloseWipingRight( SM_GoToSelectGame );
+		m_soundInvalid.PlayRandom();
+		//m_soundSelect.PlayRandom();
+		//m_Fade.CloseWipingRight( SM_GoToSelectGame );
 		return;
 	case CHOICE_MAP_INSTRUMENTS:
 		m_soundSelect.PlayRandom();

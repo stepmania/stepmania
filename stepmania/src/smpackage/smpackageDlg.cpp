@@ -161,32 +161,14 @@ void CSmpackageDlg::OnButtonExport()
 
 	// Create a new zip file on the desktop
 	CString sZipFileName = sSongName + ".smzip";
-	sZipFileName.Replace( " ", "_" );
-	sZipFileName.Replace( "!", "_" );
-	sZipFileName.Replace( "@", "_" );
-	sZipFileName.Replace( "#", "_" );
-	sZipFileName.Replace( "$", "_" );
-	sZipFileName.Replace( "%", "_" );
-	sZipFileName.Replace( "^", "_" );
-	sZipFileName.Replace( "&", "_" );
-	sZipFileName.Replace( "*", "_" );
-	sZipFileName.Replace( "(", "_" );
-	sZipFileName.Replace( ")", "_" );
-	sZipFileName.Replace( "+", "_" );
-	sZipFileName.Replace( "=", "_" );
-	sZipFileName.Replace( "[", "_" );
-	sZipFileName.Replace( "]", "_" );
-	sZipFileName.Replace( "{", "_" );
-	sZipFileName.Replace( "}", "_" );
-	sZipFileName.Replace( "|", "_" );
-	sZipFileName.Replace( ":", "_" );
-	sZipFileName.Replace( "\'","_" );
-	sZipFileName.Replace( "\"","_" );
-	sZipFileName.Replace( "<", "_" );
-	sZipFileName.Replace( ">", "_" );
-	sZipFileName.Replace( ",", "_" );
-	sZipFileName.Replace( "?", "_" );
-	sZipFileName.Replace( "/", "_" );
+	const char charsToReplace[] = { 
+		' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', 
+		'+', '=', '[', ']', '{', '}', '|', ':', '\"', '\\',
+		'<', '>', ',', '?', '/' 
+	};
+	for( int i=0; i<sizeof(charsToReplace[]); i++ )
+		sZipFileName.Replace( charsToReplace[i], '_' );
+
 	CString sZipFilePath = sDesktopPath + sZipFileName;
 	//MessageBox( ssprintf("sZipFilePath is '%s'", sZipFilePath), "", MB_OK );
 	try

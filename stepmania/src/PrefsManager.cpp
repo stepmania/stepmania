@@ -27,7 +27,7 @@ PrefsManager::PrefsManager()
 	m_bShowFPS = false;
 	m_visMode = VIS_MODE_ANIMATION;
 	m_bAnnouncer = true;
-	m_bEventMode = true;
+	m_bEventMode = false;
 	m_iNumArcadeStages = 3;
 	m_bAutoPlay = false;
 	m_fJudgeWindow = 0.10f;
@@ -64,6 +64,10 @@ void PrefsManager::ReadPrefsFromDisk()
 	ini.GetValueI( "Options", "NumArcadeStages",	m_iNumArcadeStages );
 	ini.GetValueB( "Options", "AutoPlay",			m_bAutoPlay );
 	ini.GetValueF( "Options", "JudgeWindow",		m_fJudgeWindow );
+	
+	CString sAdditionalSongFolders;
+	ini.GetValue( "Options", "SongFolders", sAdditionalSongFolders );
+	split( sAdditionalSongFolders, ",", m_asSongFolders, true );
 }
 
 
@@ -84,6 +88,8 @@ void PrefsManager::SavePrefsToDisk()
 	ini.SetValueB( "Options", "AutoPlay",			m_bAutoPlay );
 	ini.SetValueF( "Options", "JudgeWindow",		m_fJudgeWindow );
 
+	ini.SetValue( "Options", "SongFolders", join(",", m_asSongFolders) );
+
 	ini.WriteFile();
 }
 
@@ -94,16 +100,22 @@ int PrefsManager::GetStageIndex()
 
 bool PrefsManager::IsFinalStage()
 {
+	if( PREFSMAN->m_bEventMode )
+		return false;
 	return m_iCurrentStageIndex == m_iNumArcadeStages-1;
 }
 
 bool PrefsManager::IsExtraStage()
 {
+	if( PREFSMAN->m_bEventMode )
+		return false;
 	return m_iCurrentStageIndex == m_iNumArcadeStages;
 }
 
 bool PrefsManager::IsExtraStage2()
 {
+	if( PREFSMAN->m_bEventMode )
+		return false;
 	return m_iCurrentStageIndex == m_iNumArcadeStages+1;
 }
 

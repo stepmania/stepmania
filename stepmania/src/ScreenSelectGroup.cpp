@@ -205,6 +205,8 @@ void ScreenSelectGroup::AfterChange()
 	if( m_iSelection == 0 )		arraySongs.Copy( SONGMAN->m_pSongs );
 	else						SONGMAN->GetSongsInGroup( m_arrayGroupNames[m_iSelection], arraySongs );
 
+	SortSongPointerArrayByTitle( arraySongs );
+
 	for( int i=0; i<NUM_CONTENTS_COLUMNS; i++ )
 	{
 		CString sText;

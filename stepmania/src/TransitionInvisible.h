@@ -1,16 +1,14 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: TransitionInvisible.cpp
+ Class: TransitionInvisible
 
- Desc: Fades out or in.
+ Desc: Doesn't draw anything.  Only used for timing.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-
-#ifndef _TransitionInvisible_H_
-#define _TransitionInvisible_H_
 
 
 #include "Transition.h"
@@ -23,14 +21,8 @@ class TransitionInvisible : public Transition
 {
 public:
 	TransitionInvisible();
-	virtual ~TransitionInvisible();
 
 	virtual void DrawPrimitives();
 
 protected:
 };
-
-
-
-
-#endif

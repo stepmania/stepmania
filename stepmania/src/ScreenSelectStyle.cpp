@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: ScreenSelectStyle.cpp
+ Class: ScreenSelectStyle
 
  Desc: Testing the Screen class.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -81,6 +82,20 @@ ScreenSelectStyle::ScreenSelectStyle()
 	m_sprInfo.SetXY( INFO_X, INFO_Y );
 	this->AddActor( &m_sprInfo );
 	
+
+	// Load dummy Sprites
+	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )
+	{
+		ThemeElement te;
+
+		te = (ThemeElement)(GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_0+m_aPossibleStyles[i]);
+		m_sprDummyPreview[i].Load( THEME->GetPathTo(te) );
+
+		te = (ThemeElement)(GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_0+m_aPossibleStyles[i]);
+		m_sprDummyInfo[i].Load( THEME->GetPathTo(te) );
+	}
+
+
 	m_Menu.Load( 	
 		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
 		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_TOP_EDGE),

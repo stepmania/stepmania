@@ -49,7 +49,9 @@ const float TRY_EXTRA_STAGE_X			= CENTER_X;
 const float TRY_EXTRA_STAGE_Y			= SCREEN_BOTTOM - 60;
 
 
-const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User+1);
+const ScreenMessage SM_GoToSelectMusic		=	ScreenMessage(SM_User+2);
+const ScreenMessage SM_GoToFinalEvaluation	=	ScreenMessage(SM_User+3);
+const ScreenMessage SM_GoToMusicScroll		=	ScreenMessage(SM_User+4);
 
 
 ScreenEvaluation::ScreenEvaluation( bool bSummary )
@@ -331,8 +333,8 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		m_textJudgeNumbers[4][p].SetText( ssprintf("%4d", GS[p].miss) );
 		m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", GS[p].ok) );
 
-		m_ScoreDisplay[p].SetScore( GS[p].max_combo * 1000 );
-		m_ScoreDisplay[p].SetScore( GS[p].score );
+		m_ScoreDisplay[p].SetScore( (float)GS[p].max_combo * 1000 );
+		m_ScoreDisplay[p].SetScore( (float)GS[p].score );
 
 		switch( m_ResultMode )
 		{
@@ -393,6 +395,9 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_bTryExtraStage = true;
 		}
 	}
+	if( PREFSMAN->m_bEventMode )
+		m_bTryExtraStage = false;
+
 
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -636,23 +641,15 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		MenuStart( PLAYER_INVALID );
 		break;
-	case SM_GoToNextState:
-		switch( m_ResultMode )
-		{
-		case RM_ARCADE_SUMMARY:
-			SCREENMAN->SetNewScreen( new ScreenMusicScroll );
-			return;
-		case RM_ARCADE_STAGE:
-			if( m_bTryExtraStage )
-				SCREENMAN->SetNewScreen( new ScreenSelectMusic );
-			else
-				SCREENMAN->SetNewScreen( new ScreenEvaluation(true) );
-			return;
-		case RM_ONI:
-			SCREENMAN->SetNewScreen( new ScreenMusicScroll );
-			return;
+	case SM_GoToSelectMusic:
+		SCREENMAN->SetNewScreen( new ScreenSelectMusic );
 		break;
-		}
+	case SM_GoToMusicScroll:
+		SCREENMAN->SetNewScreen( new ScreenMusicScroll );
+		break;
+	case SM_GoToFinalEvaluation:
+		SCREENMAN->SetNewScreen( new ScreenEvaluation(true) );
+		break;
 	}
 }
 
@@ -665,8 +662,38 @@ void ScreenEvaluation::MenuStart( const PlayerNumber p )
 {
 	TweenOffScreen();
 
-	m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
 
-	PREFSMAN->m_iCurrentStageIndex++;	// increment the stage number before constructing the next screen
+	switch( m_ResultMode )
+	{
+	case RM_ARCADE_SUMMARY:
+		m_Menu.TweenOffScreenToBlack( SM_GoToMusicScroll, false );
+		return;
+	case RM_ARCADE_STAGE:
+		if( m_bTryExtraStage )
+		{
+			PREFSMAN->m_iCurrentStageIndex++;
+			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
+		}
+		else if( 
+			PREFSMAN->m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages-1 ||
+			PREFSMAN->IsExtraStage() || 
+			PREFSMAN->IsExtraStage2() )
+		{
+			m_Menu.TweenOffScreenToMenu( SM_GoToFinalEvaluation );
+		}
+		else
+		{
+			PREFSMAN->m_iCurrentStageIndex++;
+			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
+		}
+
+		return;
+	case RM_ONI:
+		m_Menu.TweenOffScreenToBlack( SM_GoToMusicScroll, false );
+		return;
+	default:
+		ASSERT(0);
+	}
+
 }
 

@@ -26,7 +26,7 @@ public:
 
 	void Init( PlayerNumber pn, PlayerOptions po, int iOriginalNumNotes, int iNotesMeter );
 
-	void SetScore( int iNewScore );
+	void SetScore( float fNewScore );
 	int GetScore();
 	void AddToScore( TapNoteScore score, int iCurCombo );
 
@@ -39,7 +39,7 @@ protected:
 	int m_iTotalNotes;
 	int m_iNotesMeter;
 
-	int m_iScore;
+	float m_fScore;
 
 	float m_fTrailingScore;
 	float m_fScoreVelocity;

@@ -6,6 +6,7 @@
  Desc: A bitmap Actor that animates and moves around.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -50,6 +51,7 @@ public:
 
 	void SetCustomTextureRect( FRECT new_texcoord_frect );
 	void SetCustomTextureCoords( float fTexCoords[8] );
+	void GetCustomTextureCoords( float fTexCoordsOut[8] );
 	void SetCustomSourceRect( FRECT rectSourceCoords );	// in source pixel space
 	void SetCustomImageRect( FRECT rectImageCoords );	// in image pixel space
 	void SetCustomImageCoords( float fImageCoords[8] );

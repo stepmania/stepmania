@@ -552,10 +552,9 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 		{
 			if( m_TapNotes[col][i] == '2' )	// this is a HoldNote begin marker
 			{
-				for( int j=i; j<MAX_TAP_NOTE_ROWS; j++ )	// search for end of HoldNote
+				for( int j=i+1; j<MAX_TAP_NOTE_ROWS; j++ )	// search for end of HoldNote
 				{
-					if( m_TapNotes[col][j] == '1'  ||
-						m_TapNotes[col][j] == '3' )	// found it!
+					if( m_TapNotes[col][j] != '0' )	// end on the next note we see
 					{
 						HoldNote hn = { col, i, j };
 						AddHoldNote( hn );

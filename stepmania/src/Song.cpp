@@ -308,7 +308,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 	GetDirListing( sDir + CString("*.bms"), arrayBMSFileNames );
 
 	if( arrayBMSFileNames.GetSize() == 0 )
-		throw RageException( ssprintf("Couldn't find any BMS files in '%s'", sDir) );
+		throw RageException( "Couldn't find any BMS files in '%s'", sDir );
 
 
 	// Load the Song info from the first BMS file.  Silly BMS duplicates the song info in every
@@ -328,7 +328,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 	CStdioFile file;	
 	if( !file.Open( m_sSongFilePath, CFile::modeRead|CFile::shareDenyNone ) )
 	{
-		throw RageException( ssprintf("Failed to open %s.", m_sSongFilePath) );
+		throw RageException( "Failed to open %s.", m_sSongFilePath );
 		return false;
 	}
 
@@ -365,38 +365,36 @@ bool Song::LoadFromBMSDir( CString sDir )
 
 
 		// handle the data
-		if( -1 != value_name.Find("#title") ) 
+		if( value_name == "#title" ) 
 		{
-			// strip Notes type out of description leaving only song title (looks like 'B4U <BASIC>')
-			value_data.Replace( "(ANOTHER)", "" );
-			value_data.Replace( "(BASIC)", "" );
-			value_data.Replace( "(MANIAC)", "" );
-			value_data.Replace( "<ANOTHER>", "" );
-			value_data.Replace( "<BASIC>", "" );
-			value_data.Replace( "<MANIAC>", "" );
-
-			GetMainAndSubTitlesFromFullTitle( value_data, m_sMainTitle, m_sSubTitle );
+			// strip Notes type out of description leaving only song title - looks like 'B4U <BASIC>'
+			int iIndex = value_data.ReverseFind('<');
+			if( iIndex == -1 )
+				iIndex = value_data.ReverseFind('(');
+			if( iIndex != -1 )
+			{
+				value_data.Delete( iIndex, 10000 );
+				GetMainAndSubTitlesFromFullTitle( value_data, m_sMainTitle, m_sSubTitle );
+			}
+			else
+				m_sMainTitle = value_data;
 		}
-		else if( -1 != value_name.Find("#artist") ) 
+		else if( value_name == "#artist" ) 
 		{
 			m_sArtist = value_data;
 		}
-		else if( -1 != value_name.Find("#bpm") ) 
+		else if( value_name == "#bpm" ) 
 		{
-			BPMSegment new_seg;
-			new_seg.m_fStartBeat = 0;
-			new_seg.m_fBPM = (float)atof( value_data );
-
-			// add, then sort
-			m_BPMSegments.Add( new_seg );
-			SortBPMSegmentsArray( m_BPMSegments );
-			LOG->WriteLine( "Inserting new BPM change at beat %f, BPM %f", new_seg.m_fStartBeat, new_seg.m_fBPM );
+			BPMSegment newSeg( 0, (float)atof(value_data) );
+			AddBPMSegment( newSeg );
+		
+			LOG->WriteLine( "Inserting new BPM change at beat %f, BPM %f", newSeg.m_fStartBeat, newSeg.m_fBPM );
 		}
-		else if( -1 != value_name.Find("#backbmp") ) 
+		else if( value_name == "#backbmp" ) 
 		{
 			m_sBackgroundPath = m_sSongDir + value_data;
 		}
-		else if( -1 != value_name.Find("#wav") ) 
+		else if( value_name == "#wav" ) 
 		{
 			m_sMusicPath = m_sSongDir + value_data;
 		}
@@ -405,7 +403,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 			 && IsAnInt( value_name.Mid(4,2) ) )	// this is step or offset data.  Looks like "#00705"
 		{
 			int iMeasureNo	= atoi( value_name.Mid(1,3) );
-			int iTrackNum	= atoi( value_name.Mid(4,2) );
+			int iBMSTrackNo	= atoi( value_name.Mid(4,2) );
 
 			CString sNoteData = value_data;
 			CArray<int, int> arrayNotes;
@@ -419,8 +417,8 @@ bool Song::LoadFromBMSDir( CString sDir )
 			}
 
 			const int iNumNotesInThisMeasure = arrayNotes.GetSize();
-			//LOG->WriteLine( "%s:%s: iMeasureNo = %d, iTrackNum = %d, iNumNotesInThisMeasure = %d", 
-			//	valuename, sNoteData, iMeasureNo, iTrackNum, iNumNotesInThisMeasure );
+			//LOG->WriteLine( "%s:%s: iMeasureNo = %d, iBMSTrackNo = %d, iNumNotesInThisMeasure = %d", 
+			//	valuename, sNoteData, iMeasureNo, iBMSTrackNo, iNumNotesInThisMeasure );
 			for( int j=0; j<iNumNotesInThisMeasure; j++ )
 			{
 				if( arrayNotes[j] != 0 )
@@ -431,9 +429,9 @@ bool Song::LoadFromBMSDir( CString sDir )
 					int iStepIndex = (int) ( (iMeasureNo + fPercentThroughMeasure)
 									 * BEATS_PER_MEASURE * ELEMENTS_PER_BEAT );
 
-					switch( iTrackNum )
+					switch( iBMSTrackNo )
 					{
-					case 01:	// background music track
+					case 1:	// background music track
 						float fBeatOffset;
 						fBeatOffset = NoteRowToBeat( (float)iStepIndex );
 						float fBPS;
@@ -441,13 +439,163 @@ bool Song::LoadFromBMSDir( CString sDir )
 						m_fOffsetInSeconds = fBeatOffset / fBPS;
 						//LOG->WriteLine( "Found offset to be index %d, beat %f", iStepIndex, NoteRowToBeat(iStepIndex) );
 						break;
-					case 03:	// bpm
-						BPMSegment new_seg;
-						new_seg.m_fStartBeat = NoteRowToBeat( (float)iStepIndex );
-						new_seg.m_fBPM = (float)arrayNotes[j];
+					case 3:	// bpm change
+						{
+							BPMSegment newSeg( NoteRowToBeat(iStepIndex), (float)arrayNotes[j] );
+							AddBPMSegment( newSeg );
+							LOG->WriteLine( "Inserting new BPM change at beat %f, BPM %f", newSeg.m_fStartBeat, newSeg.m_fBPM );
+						}
+						break;
 
-						m_BPMSegments.Add( new_seg );	// add to back for now (we'll sort later)
-						SortBPMSegmentsArray( m_BPMSegments );
+						// Let me just take a moment to express how frustrated I am with the new, 
+						// poorly-designed changes to the BMS format.
+						//
+						//
+						// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahhhhhhhhhhhhhhhhhhhhhhhh!!!!!!!!!!!!!!!
+						//
+						// Thank you.
+
+					case 8:	// indirect bpm
+						{
+							// This is a very inefficient way to parse, but it doesn't matter much
+							// because this is only parsed on the first run after the song is installed.
+							CString sTagToLookFor = ssprintf( "#BPM%02x", arrayNotes[j] );
+							float fBPM = -1;
+
+
+							// open the song file again and and look for this tag's value
+							CStdioFile file;	
+							if( !file.Open( m_sSongFilePath, CFile::modeRead|CFile::shareDenyNone ) )
+							{
+								throw RageException( "Failed to open %s.", m_sSongFilePath );
+								return false;
+							}
+
+							CString line;
+							while( file.ReadString(line) )	// foreach line
+							{
+								CString value_name;		// fill these in
+								CString value_data;	
+
+								// BMS value names can be separated by a space or a colon.
+								int iIndexOfFirstColon = line.Find( ":" );
+								int iIndexOfFirstSpace = line.Find( " " );
+
+								if( iIndexOfFirstColon == -1 )
+									iIndexOfFirstColon = 10000;
+								if( iIndexOfFirstSpace == -1 )
+									iIndexOfFirstSpace = 10000;
+								
+								int iIndexOfSeparator = min( iIndexOfFirstSpace, iIndexOfFirstColon );
+
+								if( iIndexOfSeparator != 10000 )
+								{
+									value_name = line.Mid( 0, iIndexOfSeparator );
+									value_data = line;	// the rest
+									value_data.Delete(0,iIndexOfSeparator+1);
+								}
+								else	// no separator
+								{
+									value_name = line;
+								}
+
+								if( stricmp(value_name, sTagToLookFor) == 0 )
+								{
+									fBPM = (float)atof( value_data );
+									break;
+								}
+							}
+
+							if( fBPM == -1 )	// we didn't find the line we were looking for
+							{
+								LOG->WriteLine( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor, m_sSongFilePath );
+							}
+							else
+							{
+								BPMSegment newSeg( NoteRowToBeat(iStepIndex), fBPM );
+								AddBPMSegment( newSeg );
+								LOG->WriteLine( "Inserting new BPM change at beat %f, BPM %f", newSeg.m_fStartBeat, newSeg.m_fBPM );
+							}
+						}
+						break;
+					case 9:	// freeze
+						{
+							// This is a very inefficient way to parse, but it doesn't 
+							// matter much because this is only parsed on the first run after the song is installed.
+							CString sTagToLookFor = ssprintf( "#STOP%02x", arrayNotes[j] );
+							float fFreezeStartBeat = NoteRowToBeat(iStepIndex);
+							float fFreezeSecs = -1;
+
+
+							// open the song file again and and look for this tag's value
+							CStdioFile file;	
+							if( !file.Open( m_sSongFilePath, CFile::modeRead|CFile::shareDenyNone ) )
+							{
+								throw RageException( "Failed to open %s.", m_sSongFilePath );
+								return false;
+							}
+
+							CString line;
+							while( file.ReadString(line) )	// foreach line
+							{
+								CString value_name;		// fill these in
+								CString value_data;	
+
+								// BMS value names can be separated by a space or a colon.
+								int iIndexOfFirstColon = line.Find( ":" );
+								int iIndexOfFirstSpace = line.Find( " " );
+
+								if( iIndexOfFirstColon == -1 )
+									iIndexOfFirstColon = 10000;
+								if( iIndexOfFirstSpace == -1 )
+									iIndexOfFirstSpace = 10000;
+								
+								int iIndexOfSeparator = min( iIndexOfFirstSpace, iIndexOfFirstColon );
+
+								if( iIndexOfSeparator != 10000 )
+								{
+									value_name = line.Mid( 0, iIndexOfSeparator );
+									value_data = line;	// the rest
+									value_data.Delete(0,iIndexOfSeparator+1);
+								}
+								else	// no separator
+								{
+									value_name = line;
+								}
+
+								if( stricmp(value_name, sTagToLookFor) == 0 )
+								{
+									// find the BPM at the time of this freeze
+									float fBPM = -1;
+									for( int i=0; i<m_BPMSegments.GetSize()-1; i++ )
+									{
+										if( m_BPMSegments[i].m_fStartBeat <= fFreezeStartBeat && 
+											m_BPMSegments[i+1].m_fStartBeat > fFreezeStartBeat )
+										{
+											fBPM = m_BPMSegments[i].m_fBPM;
+											break;
+										}
+									}
+									// the BPM segment of this beat is the last BPM segment
+									if( fBPM == -1 )
+										fBPM = m_BPMSegments[m_BPMSegments.GetSize()-1].m_fBPM;
+
+									fFreezeSecs = (float)atof(value_data)/(fBPM*0.81f);	// I have no idea what units these are in, so I experimented until finding this factor.
+									break;
+								}
+							}
+
+							if( fFreezeSecs == -1 )	// we didn't find the line we were looking for
+							{
+								LOG->WriteLine( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor, m_sSongFilePath );
+							}
+							else
+							{
+								FreezeSegment newSeg( fFreezeStartBeat, fFreezeSecs );
+								AddFreezeSegment( newSeg );
+								LOG->WriteLine( "Inserting new Freeze at beat %f, secs %f", newSeg.m_fStartBeat, newSeg.m_fFreezeSeconds );
+							}
+						}
 						break;
 					}
 				}

@@ -33,29 +33,21 @@ public:
 		if( pNotes != NULL )
 		{
 			SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-			SetFromDescription( pNotes->m_sDescription );
+			switch( pNotes->m_DifficultyClass )
+			{
+			case CLASS_EASY:	SetState( 0 );	break;
+			case CLASS_MEDIUM:	SetState( 1 );	break;
+			case CLASS_HARD:	SetState( 2 );	break;
+			}
 		}
 		else
 		{
 			SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-			SetFromDescription( "" );
+			SetState( 0 );
 		}
 	};
 
 private:
 
-	void SetFromDescription( const CString &sDescription )
-	{
-		CString sTemp = sDescription;
-		sTemp.MakeLower();
-		if(	sTemp.Find( "basic" ) != -1 )			SetState( 0 );
-		else if( sTemp.Find( "trick" ) != -1 )		SetState( 1 );
-		else if( sTemp.Find( "another" ) != -1  )	SetState( 1 );
-		else if( sTemp.Find( "maniac" ) != -1 )		SetState( 2 );
-		else if( sTemp.Find( "ssr" ) != -1 )		SetState( 2 );
-		else if( sTemp.Find( "battle" ) != -1 )		SetState( 0 );
-		else if( sTemp.Find( "couple" ) != -1 )		SetState( 0 );
-		else										SetState( 0 );
-	};
 };
 

@@ -1,10 +1,11 @@
 /*
 -----------------------------------------------------------------------------
- File: ScreenSelectStyle.h
+ Class: ScreenSelectStyle
 
  Desc: Select the game mode (single, versus, double).
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -45,6 +46,10 @@ private:
 	Sprite	m_sprExplanation;
 	Sprite	m_sprPreview;
 	Sprite	m_sprInfo;
+
+	// Sprites that are never drawn.  They exist to keep the style textures in memory
+	Sprite	m_sprDummyPreview[NUM_STYLES];
+	Sprite	m_sprDummyInfo[NUM_STYLES];
 
 	RandomSample m_soundChange;
 	RandomSample m_soundSelect;

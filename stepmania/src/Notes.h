@@ -72,6 +72,9 @@ public:
 	void		DeleteNoteData();
 
 protected:
+	static DifficultyClass DifficultyClassFromDescriptionAndMeter( CString sDifficulty, int iMeter );
+	
+	
 	NoteData*	m_pNoteData;
 };
 

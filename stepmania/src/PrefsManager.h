@@ -43,6 +43,7 @@ public:
 	int		m_iNumArcadeStages;
 	bool	m_bAutoPlay;
 	float	m_fJudgeWindow;
+	CStringArray m_asSongFolders;
 
 	void ReadPrefsFromDisk();
 	void SavePrefsToDisk();

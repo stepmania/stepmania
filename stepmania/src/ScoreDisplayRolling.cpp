@@ -40,13 +40,16 @@ void ScoreDisplayRolling::Init( PlayerNumber pn, PlayerOptions po, int iOriginal
 	m_PlayerOptions = po;
 	m_iTotalNotes = iOriginalNumNotes;
 	m_iNotesMeter = iNotesMeter;
+
+	//for( int i=0; i<iOriginalNumNotes; i++ )
+	//	AddToScore( TNS_GREAT, i );
 }
 
-void ScoreDisplayRolling::SetScore( int iNewScore ) 
+void ScoreDisplayRolling::SetScore( float fNewScore ) 
 { 
-	m_iScore = iNewScore;
+	m_fScore = fNewScore;
 
-	float fDelta = m_iScore - m_fTrailingScore;
+	float fDelta = (float)m_fScore - m_fTrailingScore;
 
 	m_fScoreVelocity = fDelta / SCORE_TWEEN_TIME;	// in score units per second
 }
@@ -54,7 +57,7 @@ void ScoreDisplayRolling::SetScore( int iNewScore )
 
 int ScoreDisplayRolling::GetScore() 
 { 
-	return m_iScore;
+	return (int)m_fScore;
 }
 
 
@@ -62,13 +65,13 @@ void ScoreDisplayRolling::Update( float fDeltaTime )
 {
 	BitmapText::Update( fDeltaTime );
 
-	float fDeltaBefore = m_iScore - m_fTrailingScore;
+	float fDeltaBefore = (float)m_fScore - m_fTrailingScore;
 	m_fTrailingScore += m_fScoreVelocity * fDeltaTime;
-	float fDeltaAfter = m_iScore - m_fTrailingScore;
+	float fDeltaAfter = (float)m_fScore - m_fTrailingScore;
 
 	if( fDeltaBefore * fDeltaAfter < 0 )	// the sign changed
 	{
-		m_fTrailingScore = (float)m_iScore;
+		m_fTrailingScore = (float)m_fScore;
 		m_fScoreVelocity = 0;
 	}
 
@@ -76,7 +79,7 @@ void ScoreDisplayRolling::Update( float fDeltaTime )
 
 void ScoreDisplayRolling::Draw()
 {
-	if( m_iScore == 0 )
+	if( m_fScore == 0 )
 	{
 		CString sFormat = ssprintf( "%%%d.0d", NUM_SCORE_DIGITS );
 		SetText( ssprintf(sFormat, 0) );
@@ -122,14 +125,14 @@ void ScoreDisplayRolling::AddToScore( TapNoteScore score, int iCurCombo )
 
 	static int iNumTimesCalled = 0;
 	iNumTimesCalled ++;
-	LOG->WriteLine("Called %d times.",iNumTimesCalled);
+	LOG->WriteLine("Called %d times - param %d.",iNumTimesCalled, iCurCombo);
 
 
 	int p;	// score multiplier 
 	switch( score )
 	{
-	case TNS_GREAT:		p = 10;		break;
-	case TNS_PERFECT:	p = 5;		break;
+	case TNS_PERFECT:	p = 10;		break;
+	case TNS_GREAT:		p = 5;		break;
 	default:			p = 0;		break;
 	}
 	
@@ -140,12 +143,12 @@ void ScoreDisplayRolling::AddToScore( TapNoteScore score, int iCurCombo )
 
 	int one_step_score = roundf( p * (B/S) * n );
 
-	// HACK:  The total score is off by a factor of 0.5.  For now, multiply by two...
-	one_step_score *= 2;
+	m_fScore += one_step_score;
+	ASSERT( m_fScore >= 0 );
 
+	// HACK:  The final total is slightly off because of rounding errors
+	if( fabsf(m_fScore-B*10) < 100.0f )
+		m_fScore = (float)B*10;
 
-	m_iScore += one_step_score;
-	ASSERT( m_iScore >= 0 );
-
-	this->SetScore( m_iScore );
+	this->SetScore( m_fScore );
 }
