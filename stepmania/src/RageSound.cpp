@@ -41,7 +41,14 @@
 
 #include "PrefsManager.h"
 
+#if defined(OGG_ONLY)
+#include "RageSoundReader_Vorbisfile.h"
+#define RageSoundReader_LowLevel RageSoundReader_Vorbisfile
+#else
 #include "RageSoundReader_SDL_Sound.h"
+#define RageSoundReader_LowLevel SoundReader_SDL_Sound
+#endif
+
 #include "RageSoundReader_Preload.h"
 #include "RageSoundReader_Resample.h"
 
@@ -171,7 +178,7 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	m_sFilePath = sSoundFilePath;
 	position = 0;
 
-    SoundReader_FileReader *NewSample = new SoundReader_SDL_Sound;
+    SoundReader_FileReader *NewSample = new RageSoundReader_LowLevel;
 	if(!NewSample->Open(sSoundFilePath.c_str()))
 		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound '%s': '%s'",
 			sSoundFilePath.c_str(), NewSample->GetError().c_str());
