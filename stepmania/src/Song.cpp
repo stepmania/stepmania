@@ -1028,14 +1028,11 @@ void Song::AddAutoGenNotes()
 
 		for( StepsType nt=(StepsType)0; nt<NUM_STEPS_TYPES; nt=(StepsType)(nt+1) )
 		{
-			vector<Steps*> apNotes;
-			this->GetSteps( apNotes, nt );
+			if( GetStepsByDifficulty( nt, DIFFICULTY_INVALID, false ) == NULL )
+				continue;
 
-			if(apNotes.empty() || apNotes[0]->IsAutogen())
-				continue; /* can't autogen from other autogen */
-
-			int iNumTracks = GAMEMAN->NotesTypeToNumTracks(nt);
-			int iTrackDifference = abs(iNumTracks-iNumTracksOfMissing);
+			const int iNumTracks = GAMEMAN->NotesTypeToNumTracks(nt);
+			const int iTrackDifference = abs(iNumTracks-iNumTracksOfMissing);
 			if( iTrackDifference < iBestTrackDifference )
 			{
 				ntBestMatch = nt;
@@ -1054,7 +1051,7 @@ void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 
 	for( unsigned int j=0; j<m_apNotes.size(); j++ )
 	{
-		Steps* pOriginalNotes = m_apNotes[j];
+		const Steps* pOriginalNotes = m_apNotes[j];
 		if( pOriginalNotes->m_StepsType == ntFrom )
 		{
 			Steps* pNewNotes = new Steps;
