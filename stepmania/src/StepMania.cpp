@@ -57,8 +57,6 @@ ArchHooks *HOOKS = NULL;
 #else
 #pragma comment(lib, "SDL-1.2.5/lib/SDLmain.lib")
 #endif
-#pragma comment(lib, "opengl32.lib")
-#pragma comment(lib, "glu32.Lib")
 
 #ifdef WIN32
 HWND g_hWndMain = NULL;
