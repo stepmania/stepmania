@@ -40,6 +40,7 @@ class DSoundBuf
 	int write_cursor, buffer_bytes_filled; /* bytes */
 	int64_t last_cursor_pos; /* frames */
 	mutable int64_t LastPosition;
+	bool playing;
 
 	bool buffer_locked;
 	char *locked_buf;

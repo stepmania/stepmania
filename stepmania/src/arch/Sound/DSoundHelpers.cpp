@@ -139,6 +139,7 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	buffer_locked = false;
 	last_cursor_pos = write_cursor = buffer_bytes_filled = 0;
 	LastPosition = 0;
+	playing = false;
 
 	/* The size of the actual DSound buffer.  This can be large; we generally
 	 * won't fill it completely. */
@@ -294,15 +295,23 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 	 * the two values returned by GetCurrentPosition, that we can't write to. */
 	result = buf->GetCurrentPosition(&cursorstart, &cursorend);
 #ifndef _XBOX
-	if ( result == DSERR_BUFFERLOST ) {
+	if ( result == DSERR_BUFFERLOST )
+	{
 		buf->Restore();
 		result = buf->GetCurrentPosition(&cursorstart, &cursorend);
 	}
-	if ( result != DS_OK ) {
+	if ( result != DS_OK )
+	{
 		LOG->Warn(hr_ssprintf(result, "DirectSound::GetCurrentPosition failed"));
 		return false;
 	}
 #endif
+
+	/* Some cards (Creative AudioPCI) have a no-write area even when not playing.  I'm not
+	 * sure what that means, but it breaks the assumption that we can fill the whole writeahead
+	 * when prebuffering. */
+	if( !playing )
+		cursorend = cursorstart;
 
 	/* Update buffer_bytes_filled. */
 	{
@@ -454,11 +463,17 @@ int64_t DSoundBuf::GetPosition() const
 
 void DSoundBuf::Play()
 {
+	if( playing )
+		return;
 	buf->Play(0, 0, DSBPLAY_LOOPING);
+	playing = true;
 }
 
 void DSoundBuf::Stop()
 {
+	if( !playing )
+		return;
+
 	buf->Stop();
 	buf->SetCurrentPosition(0);
 
@@ -469,6 +484,8 @@ void DSoundBuf::Stop()
 	DWORD play, write;
 	buf->GetCurrentPosition( &play, &write );
 	RAGE_ASSERT_M( play == 0 && write == 0, ssprintf("%i, %i", play, write) );
+
+	playing = false;
 }
 
 /*
