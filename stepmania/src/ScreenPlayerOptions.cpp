@@ -123,18 +123,6 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		this->PositionUnderlines();
 	}
 
-	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_SAVE_PLAYER_OPTIONS) )
-	{
-		if( PROFILEMAN->IsUsingProfile(pn) )
-		{
-			SOUND->PlayOnce( THEME->GetPathToS("ScreenPlayerOptions save") );
-			this->ExportOptions();
-			Profile* pProfile = PROFILEMAN->GetProfile(pn);
-			pProfile->m_bUsingProfileDefaultModifiers = true;
-			pProfile->m_sDefaultModifiers = GAMESTATE->m_PlayerOptions[pn].GetString();
-		}
-	}
-
 	ScreenOptionsMaster::Input( DeviceI, type, GameI, MenuI, StyleI );
 
 	// UGLY: Update m_Disqualified whenever Start is pressed
@@ -171,6 +159,22 @@ void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 	ScreenOptionsMaster::HandleScreenMessage( SM );
 }
 
+void ScreenPlayerOptions::ExportOptions()
+{
+	ScreenOptionsMaster::ExportOptions();
+
+	// automatically save all options to profile
+	FOREACH_HumanPlayer( pn )
+	{
+		if( PROFILEMAN->IsUsingProfile(pn) )
+		{
+			Profile* pProfile = PROFILEMAN->GetProfile(pn);
+			pProfile->m_bUsingProfileDefaultModifiers = true;
+			pProfile->m_sDefaultModifiers = GAMESTATE->m_PlayerOptions[pn].GetString();
+		}
+	}
+}
+
 void ScreenPlayerOptions::UpdateDisqualified()
 {
 	// save current player options 
@@ -183,7 +187,7 @@ void ScreenPlayerOptions::UpdateDisqualified()
 	}
 	
 	// export the currently selection options, which will fill GAMESTATE->m_PlayerOptions
-	this->ExportOptions();
+	ScreenOptionsMaster::ExportOptions();
 
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )

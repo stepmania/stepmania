@@ -25,6 +25,8 @@ private:
 	void GoToNextState();
 	void GoToPrevState();
 
+	virtual void ExportOptions();
+
 	void UpdateDisqualified();
 
 	bool            m_bAcceptedChoices;
