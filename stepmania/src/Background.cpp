@@ -91,6 +91,7 @@ void Background::Unload()
 	m_aBGChanges.clear();
 	m_pCurrentBGA = NULL;
 	m_pFadingBGA = NULL;
+	m_fSecsLeftInFade = 0;
 }
 
 void Background::LoadFromAniDir( CString sAniDir )
@@ -104,6 +105,7 @@ void Background::LoadFromAniDir( CString sAniDir )
 	pTempBGA = new BGAnimation;
 	pTempBGA->LoadFromAniDir( sAniDir );
 	m_BGAnimations[STATIC_BACKGROUND] = pTempBGA;
+	m_aBGChanges.push_back( BackgroundChange(-1000, STATIC_BACKGROUND) );
 }
 
 BGAnimation *Background::CreateSongBGA(const Song *pSong, CString sBGName) const
