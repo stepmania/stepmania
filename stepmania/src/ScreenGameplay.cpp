@@ -675,7 +675,15 @@ void ScreenGameplay::LoadNextSong()
 	m_textSongTitle.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
 
 	/* XXX: set it to the current BPM, not the range */
-	/* What does this comment mean?  -Chris */
+	/* What does this comment mean?  -Chris 
+	 *
+	 * We're in gameplay.  A BPM display should display the current BPM, updating
+	 * it as it changes, instead of the "BPM preview" of ScreenSelectMusic.  That'd
+	 * be used in IIDX, anyway.  (Havn't done this since I don't know what this is
+	 * currently actually used for and don't feel like investigating it until it's
+	 * needed.)
+	 * -glenn
+	 */
 	m_BPMDisplay.SetBPM( GAMESTATE->m_pCurSong );
 
 	const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
