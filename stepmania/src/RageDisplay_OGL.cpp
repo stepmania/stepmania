@@ -962,7 +962,7 @@ void RageDisplay_OGL::ClearZBuffer()
 
 void RageDisplay_OGL::SetTextureWrapping( bool b )
 {
-	GLenum mode = b ? GL_REPEAT : GL_CLAMP;
+	GLenum mode = b ? GL_REPEAT : GL_CLAMP_TO_EDGE;
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode );
 }
