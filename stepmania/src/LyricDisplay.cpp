@@ -97,11 +97,15 @@ void LyricDisplay::Update( float fDeltaTime )
 		m_textLyrics[i].SetZoomX(fZoom);
 
 		RageColor color = GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_Color;
+		
+		float WashOut = THEME->GetMetricF("LyricDisplay","WashOut");//DW
+		if (WashOut == 0) WashOut = 1;
+		
 		if( i==0 )
 		{
 			for( int c=0; c<4; c++ )
-				color[c] /= 2;
-			color.a = 0.5f;
+				color[c] /= WashOut;
+			color.a = THEME->GetMetricF("LyricDisplay","Alpha");//DW;
 		}
 		m_textLyrics[i].SetDiffuse(color);
 
