@@ -81,7 +81,7 @@ public:
 		switch( a )
 		{
 		case save:					return "Save Current Course";
-		case add_entry:				return "Add Entry";
+		case add_entry:				return "Duplicate Current Entry/Add Entry";
 		case delete_selected_entry:	return "Delete Selected Entry";
 		default:	ASSERT(0);		return "";
 		}

@@ -504,7 +504,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 
 	for( unsigned i=0; i<entries.size(); i++ )
 	{
-		const CourseEntry &e = entries[i];
+		CourseEntry &e = entries[i];
 
 		Song* pSong = NULL;	// fill this in
 		Steps* pNotes = NULL;	// fill this in
@@ -520,11 +520,14 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 			pSong = e.pSong;
 			if( pSong )
 			{
-				if( e.difficulty == DIFFICULTY_INVALID )
+				if( e.difficulty != DIFFICULTY_INVALID )
+					pNotes = pSong->GetStepsByDifficulty( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
+				else if( e.low_meter != -1  &&  e.high_meter != -1 )
 					pNotes = pSong->GetStepsByMeter( nt, low_meter, high_meter, PREFSMAN->m_bAutogenMissingTypes );
 				else
-					pNotes = pSong->GetStepsByDifficulty( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
+					pNotes = pSong->GetStepsByDifficulty( nt, DIFFICULTY_MEDIUM, PREFSMAN->m_bAutogenMissingTypes );
 			}
+			e.mystery = false;
 			break;
 		case COURSE_ENTRY_RANDOM:
 		case COURSE_ENTRY_RANDOM_WITHIN_GROUP:
@@ -554,6 +557,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 					pNotes = NULL;
 				}
 			}
+			e.mystery = true;
 			break;
 		case COURSE_ENTRY_BEST:
 		case COURSE_ENTRY_WORST:
@@ -587,6 +591,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 				if( pNotes == NULL )
 					pNotes = pSong->GetClosestNotes( nt, DIFFICULTY_MEDIUM );
 			}
+			e.mystery = false;
 			break;
 		default:
 			ASSERT(0);

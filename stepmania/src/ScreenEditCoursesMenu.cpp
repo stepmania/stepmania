@@ -84,10 +84,8 @@ void ScreenEditCoursesMenu::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-		break;
 	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( "ScreenEdit" );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	}
 }
@@ -110,16 +108,6 @@ void ScreenEditCoursesMenu::MenuLeft( PlayerNumber pn, const InputEventType type
 void ScreenEditCoursesMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 {
 	m_Selector.Right();
-}
-
-
-// helpers for MenuStart() below
-void DeleteCurNotes()
-{
-	Song* pSong = GAMESTATE->m_pCurSong;
-	Steps* pNotesToDelete = GAMESTATE->m_pCurNotes[PLAYER_1];
-	pSong->RemoveNotes( pNotesToDelete );
-	pSong->Save();
 }
 
 void ScreenEditCoursesMenu::MenuStart( PlayerNumber pn )

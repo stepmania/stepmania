@@ -58,11 +58,14 @@ public:
 	CourseEntry()
 	{
 		type = (CourseEntryType)0;
+		mystery = false;
+		pSong = NULL;
+		group_name = "";
 		difficulty = DIFFICULTY_INVALID;
 		low_meter = -1;
 		high_meter = -1;
-		players_index = -1;
-		mystery = false;
+		players_index = 0;
+		modifiers = "";
 	}
 };
 
