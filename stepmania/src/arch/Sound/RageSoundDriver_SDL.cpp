@@ -15,7 +15,7 @@
 #include "RageUtil.h"
 
 const unsigned channels = 2;
-const unsigned samplerate = 441000;
+const unsigned samplerate = 44100;
 const unsigned samplesize = channels*2;
 const unsigned buffersize_frames = 1024; /* in samples */
 const unsigned buffersize = buffersize_frames * samplesize;
