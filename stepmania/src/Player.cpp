@@ -126,8 +126,10 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	m_Combo.Init( pn );
 	m_Judgment.Reset();
 
-	if( m_pScore )
-		m_pScore->Init( pn );
+	/* Don't re-init this; that'll reload graphics.  Add a separate Reset() call
+	 * if some ScoreDisplays need it. */
+//	if( m_pScore )
+//		m_pScore->Init( pn );
 
 	/* Apply transforms. */
 	NoteDataUtil::TransformNoteData( *this, GAMESTATE->m_PlayerOptions[pn], GAMESTATE->GetCurrentStyleDef()->m_StepsType );
