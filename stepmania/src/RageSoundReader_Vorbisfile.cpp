@@ -5,9 +5,7 @@
 #include "RageUtil.h"
 #include "SDL_utils.h"
 #include "RageSoundReader_Vorbisfile.h"
-
-#if defined(INTEGER_OGG)
-#endif
+#include "RageLog.h"
 
 #if defined(_XBOX) || defined(_WINDOWS)
 #include "vorbis/vorbisfile.h"
@@ -24,12 +22,6 @@
 #endif
 
 #include <string.h>
-#include "RageFile.h"
-#include "RageLog.h"
-
-/* What is this file, and why is it needed?  Seems to compile on 
- * Win32 w/o it. -Chris */
-/* Standard header to get access to "errno", or we won't compile on modern compilers. */
 #include <errno.h>
 
 
