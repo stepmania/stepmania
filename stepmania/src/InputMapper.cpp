@@ -372,7 +372,7 @@ void InputMapper::ReadMappingsFromDisk()
 	IniFile ini;
 	ini.SetPath( KEYMAPS_PATH );
 	if( !ini.ReadFile() )
-		LOG->Warn( "could not input mapping file '%s'.", KEYMAPS_PATH );
+		LOG->Trace( "Couldn't open mapping file \"%s\": %s.", KEYMAPS_PATH, ini.error.c_str() );
 
 	const IniFile::key *Key = ini.GetKey( GAMESTATE->GetCurrentGameDef()->m_szName );
 
