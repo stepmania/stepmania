@@ -102,6 +102,8 @@ TitleSubst::TitleSubst()
 	AddTrans("^Freckles$", "", "", "&hso;&hba;&hka;&hsu;", "", "");
 	AddTrans("^Sobakasu$", "", "", "&hso;&hba;&hka;&hsu;", "", "");
 
+	AddTrans("^Hypnotic Crisis$", "", "", "HYPN&x00D8;OTIC CRISIS", "", "");
+
 	/* 夜空のムコウ */
 	AddTrans("^Yozora no Muko$", "", "", "&yozora1;&yozora2;&hno;&kmu;&kko;&ku;", "", "");
 
