@@ -946,8 +946,6 @@ int main(int argc, char* argv[])
 
 #endif
 
-	// Xbox : bug in the following
-	// Xbox : Detected with an endless loop placed to test if anything is reached.
 	/* Almost everything uses this to read and write files.  Load this early. */
 	FILEMAN = new RageFileManager( argv[0] );
 	FILEMAN->MountInitialFilesystems();
