@@ -422,6 +422,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenReloadSongs.h">
 			</File>
 			<File
+				RelativePath="ScreenSMOnlineLogin.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSMOnlineLogin.h">
+			</File>
+			<File
 				RelativePath="ScreenSandbox.cpp">
 			</File>
 			<File
@@ -480,12 +486,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenSetTime.h">
-			</File>
-			<File
-				RelativePath="ScreenSMOnlineLogin.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSMOnlineLogin.h">
 			</File>
 			<File
 				RelativePath="ScreenSongOptions.cpp">
@@ -2556,12 +2556,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				</File>
 				<File
 					RelativePath="crypto51\nbtheory.h">
-				</File>
-				<File
-					RelativePath="crypto51\oaep.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\oaep.h">
 				</File>
 				<File
 					RelativePath="crypto51\oids.h">
