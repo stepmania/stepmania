@@ -28,8 +28,8 @@
 #define CREDITS_JOIN_ONLY						THEME->GetMetricB("ScreenSystemLayer","CreditsJoinOnly")
 
 
-//REGISTER_SCREEN_CLASS( ScreenSystemLayer );
-ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
+REGISTER_SCREEN_CLASS( ScreenSystemLayer );
+ScreenSystemLayer::ScreenSystemLayer( const CString &sName ) : Screen(sName)
 {
 	MESSAGEMAN->Subscribe( this, "RefreshCreditText" );
 	MESSAGEMAN->Subscribe( this, "SystemMessage" );

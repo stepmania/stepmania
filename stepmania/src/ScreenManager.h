@@ -65,7 +65,7 @@ public:
 	void	PlaySharedBackgroundOffCommand();
 private:
 	vector<Screen*>		m_ScreenStack;	// bottommost to topmost
-	Screen				*m_SystemLayer;
+	vector<Screen*>		m_OverlayScreens;
 
 	CString				m_sLastLoadedBackgroundPath;
 	CString				m_sDelayedScreen;
@@ -79,6 +79,7 @@ private:
 	bool				m_bZeroNextUpdate;
 
 	Screen* MakeNewScreen( const CString &sName );
+	Screen* MakeNewScreenInternal( const CString &sName );
 	void SetFromNewScreen( Screen *pNewScreen, bool Stack );
 	void ClearScreenStack();
 	void EmptyDeleteQueue();

@@ -28,7 +28,7 @@
 #include "SongManager.h"
 #include "RageTextureManager.h"
 #include "ThemeManager.h"
-#include "ScreenSystemLayer.h"
+#include "Screen.h"
 #include "BGAnimation.h"
 #include "Foreach.h"
 #include "ActorUtil.h"
@@ -54,7 +54,6 @@ void ScreenManager::Register( const CString& sClassName, CreateScreenFn pfn )
 ScreenManager::ScreenManager()
 {
 	m_pSharedBGA = new Actor;
-	m_SystemLayer = NULL;
 
 	m_MessageSendOnPop = SM_None;
 
@@ -79,7 +78,8 @@ ScreenManager::~ScreenManager()
 	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
 		SAFE_DELETE( m_ScreenStack[i] );
 	DeletePreparedScreens();
-	SAFE_DELETE( m_SystemLayer );
+	for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
+		SAFE_DELETE( m_OverlayScreens[i] );
 }
 
 /* This is called when we start up, and when the theme changes or is reloaded. */
@@ -94,10 +94,20 @@ void ScreenManager::ThemeChanged()
 	m_soundScreenshot.Load( THEME->GetPathS("Common","screenshot") );
 	m_soundBack.Load( THEME->GetPathS("Common","back") );
 
-	// reload system layer
-	SAFE_DELETE( m_SystemLayer );
-	m_SystemLayer = new ScreenSystemLayer;
-	m_SystemLayer->Init();
+	// reload overlay screens
+	for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
+		SAFE_DELETE( m_OverlayScreens[i] );
+	m_OverlayScreens.clear();
+
+	CString sOverlays = THEME->GetMetric( "Common","OverlayScreens" );
+	vector<CString> asOverlays;
+	split( sOverlays, ",", asOverlays );
+	for( unsigned i=0; i<asOverlays.size(); i++ )
+	{
+		Screen *pScreen = MakeNewScreenInternal( asOverlays[i] );
+		m_OverlayScreens.push_back( pScreen );
+	}
+	
 	this->RefreshCreditsMessages();
 }
 
@@ -164,7 +174,8 @@ void ScreenManager::Update( float fDeltaTime )
 
 	m_pSharedBGA->Update( fDeltaTime );
 
-	m_SystemLayer->Update( fDeltaTime );	
+	for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
+		m_OverlayScreens[i]->Update( fDeltaTime );	
 	
 	/* The music may be started on the first update.  If we're reading from a CD,
 	 * it might not start immediately.  Make sure we start playing the sound before
@@ -214,7 +225,8 @@ void ScreenManager::Draw()
 			m_ScreenStack[i]->Draw();
 	}
 
-	m_SystemLayer->Draw();
+	for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
+		m_OverlayScreens[i]->Draw();
 
 
 	DISPLAY->EndFrame();
@@ -231,6 +243,24 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 		m_ScreenStack.back()->Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
+/* Just create a new screen; don't do any associated cleanup. */
+Screen* ScreenManager::MakeNewScreenInternal( const CString &sScreenName )
+{
+	RageTimer t;
+	LOG->Trace( "Loading screen name '%s'", sScreenName.c_str() );
+
+	CString sClassName = THEME->GetMetric(sScreenName,"Class");
+	
+	map<CString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
+	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Screen '%s' has an invalid class '%s'",sScreenName.c_str(),sClassName.c_str()) )
+
+	CreateScreenFn pfn = iter->second;
+	Screen* ret = pfn( sScreenName );
+
+	LOG->Trace( "Loaded '%s' ('%s') in %f", sScreenName.c_str(), sClassName.c_str(), t.GetDeltaTime());
+
+	return ret;
+}
 
 Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 {
@@ -245,18 +275,7 @@ Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 	 * creating the new screen, to lower peak memory usage slightly. */
 	SONGMAN->Cleanup();
 
-	RageTimer t;
-	LOG->Trace( "Loading screen name '%s'", sScreenName.c_str() );
-
-	CString sClassName = THEME->GetMetric(sScreenName,"Class");
-	
-	map<CString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
-	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Screen '%s' has an invalid class '%s'",sScreenName.c_str(),sClassName.c_str()) )
-
-	CreateScreenFn pfn = iter->second;
-	Screen* ret = pfn( sScreenName );
-
-	LOG->Trace( "Loaded '%s' ('%s') in %f", sScreenName.c_str(), sClassName.c_str(), t.GetDeltaTime());
+	Screen* ret = MakeNewScreenInternal( sScreenName );
 
 	/* Loading probably took a little while.  Let's reset stats.  This prevents us
 	 * from displaying an unnaturally low FPS value, and the next FPS value we

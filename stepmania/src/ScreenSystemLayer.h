@@ -12,7 +12,7 @@ const int NUM_SKIPS_TO_SHOW = 5;
 class ScreenSystemLayer : public Screen
 {
 public:
-	ScreenSystemLayer();
+	ScreenSystemLayer( const CString &sName );
 	virtual ~ScreenSystemLayer();
 	virtual void Init();
 	void HandleMessage( const CString &sCommandName );
