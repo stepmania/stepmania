@@ -73,7 +73,7 @@ void RageSound_SDL::GetData(void *userdata, Uint8 *stream, int len) {
 
   /* I don't like this but I can't think of another place to put it. */
   while (!SOUNDMAN)
-    sleep(10);
+    SDL_Delay(10);
   
   for (unsigned i = 0; i < P->sounds.size(); ++i) {
     if (P->sounds[i]->stopping)
@@ -87,6 +87,8 @@ void RageSound_SDL::GetData(void *userdata, Uint8 *stream, int len) {
       P->sounds[i]->flush_pos = P->last_cursor_pos + (got / samplesize);
     }
   }
+
+  mix.read(buf); 
 
   memcpy(stream, buf, len);
   P->last_cursor_pos += buffersize_frames;
