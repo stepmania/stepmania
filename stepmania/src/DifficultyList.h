@@ -31,6 +31,7 @@ private:
 	AutoActor		m_Cursors[NUM_PLAYERS];
 	ActorFrame		m_CursorFrames[NUM_PLAYERS];
 	BitmapText		*m_Descriptions;
+	BitmapText		*m_Number;
 	Song			*m_CurSong;
 	vector<Steps*>	m_CurSteps;
 };

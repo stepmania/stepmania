@@ -19,12 +19,14 @@ DifficultyList::DifficultyList()
 {
 	m_Meters = NULL; // defer alloc to Load
 	m_Descriptions = NULL;
+	m_Number = NULL;
 }
 
 DifficultyList::~DifficultyList()
 {
 	delete [] m_Meters;
 	delete [] m_Descriptions;
+	delete [] m_Number;
 }
 
 void DifficultyList::Load()
@@ -32,6 +34,7 @@ void DifficultyList::Load()
 	ASSERT( !m_Meters );
 	m_Meters = new DifficultyMeter[MAX_METERS];
 	m_Descriptions = new BitmapText[MAX_METERS];
+	m_Number = new BitmapText[MAX_METERS];
 	m_CurSong = NULL;
 
 	int pn, m;
@@ -64,6 +67,10 @@ void DifficultyList::Load()
 		m_Descriptions[m].SetName( "Description" );
 		m_Descriptions[m].LoadFromFont( THEME->GetPathToF(ssprintf("%s description",m_sName.c_str())) );
 		this->AddChild( &m_Descriptions[m] );
+
+		m_Number[m].SetName( "Number" );
+		m_Number[m].LoadFromFont( THEME->GetPathToF(ssprintf("%s number",m_sName.c_str())) );
+		this->AddChild( &m_Number[m] );
 	}
 
 	PositionItems();
@@ -76,6 +83,7 @@ void DifficultyList::Load()
 	{
 		ON_COMMAND( m_Meters[m] );
 		ON_COMMAND( m_Descriptions[m] );
+		ON_COMMAND( m_Number[m] );
 	}
 }
 
@@ -101,6 +109,7 @@ void DifficultyList::PositionItems()
 
 		m_Descriptions[m].SetY( fY );
 		met.SetY( fY );
+		m_Number[m].SetY( fY );
 	}
 
 	for( int pn = 0;pn < NUM_PLAYERS; ++pn )
@@ -146,17 +155,25 @@ void DifficultyList::SetFromGameState()
 			{
 				met.Unset();
 				m_Descriptions[m].SetText( "" );
+				m_Number[m].SetText( "" );
 				continue;
 			}
 
 			Steps* pSteps = m_CurSteps[m];
 
 			met.SetFromNotes( pSteps );
+
 			Difficulty dc = pSteps->GetDifficulty();
+			
 			m_Descriptions[m].SetZoomX(1);
-			m_Descriptions[m].SetTextMaxWidth( DESCRIPTION_MAX_WIDTH, SONGMAN->GetDifficultyThemeName(dc) );
+			CString s = SONGMAN->GetDifficultyThemeName(dc);
+			m_Descriptions[m].SetTextMaxWidth( DESCRIPTION_MAX_WIDTH, s );
 			/* Don't mess with alpha; it might be fading on. */
 			m_Descriptions[m].SetDiffuseColor( SONGMAN->GetDifficultyColor(dc) );
+			
+			m_Number[m].SetZoomX(1);
+			m_Number[m].SetDiffuseColor( SONGMAN->GetDifficultyColor(dc) );
+			m_Number[m].SetText( ssprintf("%d",pSteps->GetMeter()) );
 		}
 	}
 
@@ -168,8 +185,10 @@ void DifficultyList::TweenOnScreen()
 	for( int m = 0; m < MAX_METERS; ++m )
 	{
 		m_Descriptions[m].BeginTweening( m * TWEEN_ON_STAGGER_SECONDS );
+		m_Number[m].BeginTweening( m * TWEEN_ON_STAGGER_SECONDS );
 		COMMAND( m_Descriptions[m], "TweenOn" );
 		COMMAND( m_Meters[m], "TweenOn" );
+		COMMAND( m_Number[m], "TweenOn" );
 	}
 
 	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
@@ -192,6 +211,7 @@ void DifficultyList::Show()
 		// XXX: m_Meters[m].Show
 		COMMAND( m_Descriptions[m], "Show" );
 		COMMAND( m_Meters[m], "Show" );
+		COMMAND( m_Number[m], "Show" );
 	}
 
 	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
@@ -209,6 +229,7 @@ void DifficultyList::Hide()
 		// XXX: m_Meters[m].Hide
 		COMMAND( m_Descriptions[m], "Hide" );
 		COMMAND( m_Meters[m], "Hide" );
+		COMMAND( m_Number[m], "Hide" );
 	}
 
 	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
