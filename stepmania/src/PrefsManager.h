@@ -29,7 +29,7 @@ public:
 	int				m_iMaxTextureResolution;
 	int				m_iRefreshRate;
 	bool			m_bShowStats;
-	enum { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS, BGMODE_RANDOMMOVIES } m_BackgroundMode;
+	enum BackgroundModes { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS, BGMODE_RANDOMMOVIES } m_BackgroundMode;
 	int				m_iNumBackgrounds;
 	float			m_fBGBrightness;
 	int 			m_iMovieDecodeMS;
@@ -61,7 +61,7 @@ public:
 	bool			m_bInstructions, m_bShowDontDie, m_bShowSelectGroup;
 	bool			m_bShowNative;
 	bool			m_bArcadeOptionsNavigation;
-	enum			{ NEVER, ALWAYS, ABC_ONLY } m_MusicWheelUsesSections;
+	enum MusicWheelUsesSections { NEVER, ALWAYS, ABC_ONLY } m_MusicWheelUsesSections;
 	int				m_iMusicWheelSwitchSpeed;
 	bool			m_bEasterEggs;
 	int 			m_iMarvelousTiming;
@@ -102,11 +102,11 @@ public:
 	CString			m_sCustomSpeedMod;
 
 	// course ranking
-	enum { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK } m_iCourseSortOrder;
+	enum CourseSortOrders { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK } m_iCourseSortOrder;
 	bool			m_bMoveRandomToEnd;
 
 	// scoring type; SCORING_MAX2 should always be first
-	enum { SCORING_MAX2, SCORING_5TH } m_iScoringType;
+	enum ScoringTypes { SCORING_MAX2, SCORING_5TH } m_iScoringType;
 
 	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */
 	int				m_iBoostAppPriority;
