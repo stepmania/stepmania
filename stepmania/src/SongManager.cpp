@@ -150,8 +150,13 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 			if( callback )
 				callback();
 			Song* pNewSong = new Song;
-			pNewSong->LoadFromSongDir( ssprintf("%s\\%s\\%s", sDir, sGroupDirName, sSongDirName) );
-			m_pSongs.Add( pNewSong );
+			if( !pNewSong->LoadFromSongDir( ssprintf("%s\\%s\\%s", sDir, sGroupDirName, sSongDirName) ) ) {
+				/* The song failed to load. */
+				delete pNewSong;
+				continue;
+			}
+			
+            m_pSongs.Add( pNewSong );
 			loaded++;
 		}
 
