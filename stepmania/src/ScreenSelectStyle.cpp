@@ -259,13 +259,14 @@ void ScreenSelectStyle::MenuStart( const PlayerNumber p )
 	AnnouncerElement ae;
 	switch( GAMESTATE->m_CurStyle )
 	{
+		case STYLE_PUMP_SINGLE:	
 		case STYLE_DANCE_SINGLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_SINGLE;		break;
-		case STYLE_DANCE_VERSUS:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_VERSUS;		break;
+		case STYLE_PUMP_VERSUS:
+		case STYLE_DANCE_VERSUS:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_VERSUS;		break;		
+		case STYLE_PUMP_DOUBLE:
 		case STYLE_DANCE_DOUBLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_DOUBLE;		break;
 		case STYLE_DANCE_COUPLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_COUPLE;		break;
 		case STYLE_DANCE_SOLO:			ae = ANNOUNCER_SELECT_STYLE_COMMENT_SOLO;		break;
-		case STYLE_PUMP_SINGLE:			ae = ANNOUNCER_SELECT_STYLE_COMMENT_SINGLE;		break;
-		case STYLE_PUMP_VERSUS:			ae = ANNOUNCER_SELECT_STYLE_COMMENT_VERSUS;		break;
 		default:	ASSERT(0);	break;	// invalid Style
 	}
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ae) );
