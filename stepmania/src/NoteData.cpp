@@ -805,6 +805,9 @@ void NoteDataUtil::Turn( NoteData &in, TurnType tt )
 	case right:
 		// FIXME: TurnRight does the same thing as TurnLeft.
 		// Is there a way to do this withoutn handling each NotesType? -Chris
+		// Identity transform for ones not handled below.  What should we do here?
+		for( t = 0; t < MAX_NOTE_TRACKS; ++t )
+			iTakeFromTrack[t] = t;
 		switch( GAMESTATE->GetCurrentStyleDef()->m_NotesType )
 		{
 		case NOTES_TYPE_DANCE_SINGLE:
@@ -860,23 +863,7 @@ void NoteDataUtil::Turn( NoteData &in, TurnType tt )
 			iTakeFromTrack[8] = 0;
 			iTakeFromTrack[9] = 1;
 			break;
-		case NOTES_TYPE_EZ2_SINGLE:
-		case NOTES_TYPE_EZ2_DOUBLE:
-		case NOTES_TYPE_EZ2_REAL:
-			// identity transform.  What should we do here?
-			iTakeFromTrack[0] = 0;
-			iTakeFromTrack[1] = 1;
-			iTakeFromTrack[2] = 2;
-			iTakeFromTrack[3] = 3;
-			iTakeFromTrack[4] = 4;
-			iTakeFromTrack[5] = 5;
-			iTakeFromTrack[6] = 6;
-			iTakeFromTrack[7] = 7;
-			iTakeFromTrack[8] = 8;
-			iTakeFromTrack[9] = 9;
-			iTakeFromTrack[10]= 10;
-			iTakeFromTrack[11]= 11;
-			break;
+		default: break;
 		}
 		break;
 	case mirror:
