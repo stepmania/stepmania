@@ -126,6 +126,16 @@ void BitmapText::BuildChars()
 	if(m_pFont == NULL)
 		return;
 
+	/* calculate line lengths and widths */
+	m_iWidestLineWidth = 0;
+
+	for( unsigned l=0; l<m_szTextLines.size(); l++ )	// for each line
+	{
+		m_iLineWidths.push_back(m_pFont->GetLineWidthInSourcePixels( m_szTextLines[l] ));
+		m_iWidestLineWidth = max(m_iWidestLineWidth, m_iLineWidths.back());
+	}
+
+
 	verts.clear();
 	tex.clear();
 	
@@ -225,15 +235,6 @@ void BitmapText::SetText( CString sText )
 	lstring s; s+='\n';
 	split(CStringToLstring(sText), s, m_szTextLines, false);
 	
-	/* calculate line lengths and widths */
-	m_iWidestLineWidth = 0;
-
-	for( unsigned l=0; l<m_szTextLines.size(); l++ )	// for each line
-	{
-		m_iLineWidths.push_back(m_pFont->GetLineWidthInSourcePixels( m_szTextLines[l] ));
-		m_iWidestLineWidth = max(m_iWidestLineWidth, m_iLineWidths.back());
-	}
-
 	BuildChars();
 }
 
@@ -249,6 +250,8 @@ void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )
 			m_iLineWidths[l] = m_pFont->GetLineWidthInSourcePixels( m_szTextLines[l] );
 		}
 	}
+
+	BuildChars();
 }
 
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
