@@ -31,6 +31,7 @@ public:
 	void SettleImmediately();
 	void SettleQuickly();
 
+	Grade GetGrade () const {return m_Grade;}
 protected:
 	
 	int GetFrameNo( PlayerNumber pn, Grade g );
