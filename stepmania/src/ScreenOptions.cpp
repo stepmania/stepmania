@@ -52,6 +52,8 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 #define COLOR_NOT_SELECTED				THEME->GetMetricC("ScreenOptions","ColorNotSelected")
 #define NUM_SHOWN_ITEMS					THEME->GetMetricI("ScreenOptions","NumShownItems")
 #define SHOW_BPM_IN_SPEED_TITLE			THEME->GetMetricB("ScreenOptions","ShowBpmInSpeedTitle")
+#define FRAME_ON_COMMAND				THEME->GetMetric ("ScreenOptions","FrameOnCommand")
+#define FRAME_OFF_COMMAND				THEME->GetMetric ("ScreenOptions","FrameOffCommand")
 
 ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 {
@@ -76,9 +78,8 @@ ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 			m_iSelectedOption[p][l] = 0;
 	}
 
-	m_framePage.SetX( SCREEN_LEFT-SCREEN_WIDTH );
-	m_framePage.BeginTweening( 0.3f, Actor::TWEEN_DECELERATE );
-	m_framePage.SetX( 0 );
+	m_framePage.Command( FRAME_ON_COMMAND );
+
 	memset(&m_bRowIsLong, 0, sizeof(m_bRowIsLong));
 }
 
@@ -692,8 +693,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 
 		m_SoundStart.Play();
 
-		m_framePage.BeginTweening( 0.3f, Actor::TWEEN_ACCELERATE );
-		m_framePage.SetX( SCREEN_RIGHT );
+		m_framePage.Command( FRAME_OFF_COMMAND );
 		break;
 	case SM_GainFocus:
 		INPUTFILTER->SetRepeatRate( 0.25f, 12, 0.25f, 12 );
