@@ -530,6 +530,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	ON_COMMAND( m_MusicSortDisplay );
 	ON_COMMAND( m_MusicWheelUnder );
 	m_MusicWheel.TweenOnScreen();
+	ON_COMMAND( m_sprBalloon );
 	ON_COMMAND( m_MusicWheel );
 	ON_COMMAND( m_Artist );
 	ON_COMMAND( m_MachineRank );
@@ -1356,7 +1357,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			}
 
 			m_sprBalloon.StopTweening();
-			OFF_COMMAND( m_sprBalloon );
+			COMMAND( m_sprBalloon, "Hide" );
 			
 			m_sprCourseHasMods->StopTweening();
 			OFF_COMMAND( m_sprCourseHasMods );
@@ -1413,18 +1414,20 @@ void ScreenSelectMusic::AfterMusicChange()
 			{
 				m_sprBalloon.StopTweening();
 				m_sprBalloon.Load( THEME->GetPathG(m_sName,"balloon marathon") );
-				SET_XY_AND_ON_COMMAND( m_sprBalloon );
+				SET_XY( m_sprBalloon );
+				COMMAND( m_sprBalloon, "Show" );
 			}
 			else if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds )
 			{
 				m_sprBalloon.StopTweening();
 				m_sprBalloon.Load( THEME->GetPathG(m_sName,"balloon long") );
-				SET_XY_AND_ON_COMMAND( m_sprBalloon );
+				SET_XY( m_sprBalloon );
+				COMMAND( m_sprBalloon, "Show" );
 			}
 			else
 			{
 				m_sprBalloon.StopTweening();
-				OFF_COMMAND( m_sprBalloon );
+				COMMAND( m_sprBalloon, "Hide" );
 			}
 
 			m_sprCourseHasMods->StopTweening();
@@ -1472,7 +1475,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		}
 
 		m_sprBalloon.StopTweening();
-		OFF_COMMAND( m_sprBalloon );
+		COMMAND( m_sprBalloon, "Hide" );
 		
 		m_sprCourseHasMods->StopTweening();
 		OFF_COMMAND( m_sprCourseHasMods );
@@ -1522,7 +1525,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 
 		m_sprBalloon.StopTweening();
-		OFF_COMMAND( m_sprBalloon );
+		COMMAND( m_sprBalloon, "Hide" );
 
 		if( pCourse->HasMods() )
 		{
