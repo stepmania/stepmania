@@ -335,8 +335,7 @@ Client SMOnline packets:
 000:  Send Login Information
  Size:
     1		Encryption text
-		0: Plain Text
-		(More will be added)
+		0: MD5 hash
     NT		Username
     NT		Password
 
