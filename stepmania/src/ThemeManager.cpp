@@ -263,6 +263,13 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		GetDirListing( sCurrentThemeDir + sAssetPrefix + "*.jpg", asPossibleElementFilePaths, false, true );
 		GetDirListing( sCurrentThemeDir + sAssetPrefix + "*.bmp", asPossibleElementFilePaths, false, true );
 		GetDirListing( sCurrentThemeDir + sAssetPrefix + "*.gif", asPossibleElementFilePaths, false, true );
+
+		// WHY Get rid of this when it's used?
+		// Just commment out if you REALLY don't want it?
+		GetDirListing( sDefaultThemeDir + sAssetPrefix + "*.sprite", asPossibleElementFilePaths, false, true );
+		GetDirListing( sDefaultThemeDir + sAssetPrefix + "*.png", asPossibleElementFilePaths, false, true );
+		GetDirListing( sDefaultThemeDir + sAssetPrefix + "*.jpg", asPossibleElementFilePaths, false, true );
+		GetDirListing( sDefaultThemeDir + sAssetPrefix + "*.bmp", asPossibleElementFilePaths, false, true );
 	}
 	else if( -1 != sAssetPrefix.Find("Sounds\\") )
 	{
@@ -270,10 +277,17 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		GetDirListing( sCurrentThemeDir + sAssetPrefix + ".mp3", asPossibleElementFilePaths, false, true );
 		GetDirListing( sCurrentThemeDir + sAssetPrefix + ".ogg", asPossibleElementFilePaths, false, true );
 		GetDirListing( sCurrentThemeDir + sAssetPrefix + ".wav", asPossibleElementFilePaths, false, true );
+
+		GetDirListing( sDefaultThemeDir + sAssetPrefix + ".set", asPossibleElementFilePaths, false, true );
+		GetDirListing( sDefaultThemeDir + sAssetPrefix + ".mp3", asPossibleElementFilePaths, false, true );
+		GetDirListing( sDefaultThemeDir + sAssetPrefix + ".ogg", asPossibleElementFilePaths, false, true );
+		GetDirListing( sDefaultThemeDir + sAssetPrefix + ".wav", asPossibleElementFilePaths, false, true );
 	}
 	else if( -1 != sAssetPrefix.Find("Fonts\\") )
 	{
 		GetDirListing( sCurrentThemeDir + sAssetPrefix + ".font", asPossibleElementFilePaths, false, true );
+
+		GetDirListing( sDefaultThemeDir + sAssetPrefix + ".font", asPossibleElementFilePaths, false, true );
 	}
 	else
 	{

@@ -128,7 +128,21 @@ ScreenTitleMenu::ScreenTitleMenu()
 	
 	m_Fade.SetClosed();
 	m_Fade.OpenWipingRight( SM_DoneOpening );
+
 	this->AddActor( &m_Fade );
+
+
+	// LEAVE THIS HERE! ITS ESSENTIAL
+	// I know you're a fan of removing my code, but if this isn't here
+	// the Ez2dancer announcer will be the default (as it loads in alphabetical order, and ez2dancer
+	// is the last announcer (E follows D))
+	// so just leave it yeah?
+	// I don't wanna fix this a 3rd TIME!!
+	// - Andy.
+	if (GAMEMAN->m_CurGame != GAME_EZ2)
+	{
+		ANNOUNCER->SwitchAnnouncer( "default" );
+	}
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_GAME_NAME) );
 
@@ -142,8 +156,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	m_TitleMenuChoice = CHOICE_GAME_START;
 	GainFocus( m_TitleMenuChoice );
-
-
+	
 	MUSIC->Stop();
 
 	//this->SendScreenMessage( SM_TimeToFadeOut, 30.0 );
@@ -269,9 +282,9 @@ void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 		}
 		return;
 	case CHOICE_SELECT_GAME:
-		m_soundInvalid.PlayRandom();
-	//	m_soundSelect.PlayRandom();
-	//	m_Fade.CloseWipingRight( SM_GoToSelectGame );
+	//	m_soundInvalid.PlayRandom();
+		m_soundSelect.PlayRandom();
+		m_Fade.CloseWipingRight( SM_GoToSelectGame );
 		return;
 	case CHOICE_MAP_INSTRUMENTS:
 		m_soundSelect.PlayRandom();

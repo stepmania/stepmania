@@ -290,7 +290,7 @@ void ScreenGameplay::SaveSummary()
 		}
 
 		m_pCurSong = NULL;
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		for( p=0; p<NUM_PLAYERS; p++ )
 			m_pCurNotes[p] = NULL;
 	}
 }
