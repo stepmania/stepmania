@@ -337,23 +337,6 @@ retry:
 		pNewScreen = MakeNewScreen(sScreenName);
 
 
-	// Load shared BGAnimation
-	if( pNewScreen->UsesBackground() )
-	{
-		CString sNewBGA = THEME->GetPathToB(sScreenName+" background");
-		if( m_sLastLoadedBackground != sNewBGA )
-		{
-			// Create the new background before deleting the previous so that we keep
-			// any common textures loaded.
-			BGAnimation *pNewBGA = new BGAnimation;
-			pNewBGA->LoadFromAniDir( sNewBGA );
-			SAFE_DELETE( m_pSharedBGA );
-			m_pSharedBGA = pNewBGA;
-
-			m_sLastLoadedBackground = sNewBGA;
-		}
-	}	
-
 	if( pOldTopScreen!=NULL  &&  m_ScreenStack.back()!=pOldTopScreen )
 	{
 		// While constructing this Screen, it's constructor called
@@ -371,10 +354,29 @@ retry:
 		goto retry;
 	}
 	
+	// Load shared BGAnimation
+	if( m_ScreenStack.back()->UsesBackground() )
+	{
+		CString sNewBGA = THEME->GetPathToB(sScreenName+" background");
+		if( m_sLastLoadedBackground != sNewBGA )
+		{
+			// Create the new background before deleting the previous so that we keep
+			// any common textures loaded.
+			BGAnimation *pNewBGA = new BGAnimation;
+			pNewBGA->LoadFromAniDir( sNewBGA );
+			SAFE_DELETE( m_pSharedBGA );
+			m_pSharedBGA = pNewBGA;
+
+			m_sLastLoadedBackground = sNewBGA;
+		}
+	}	
+
 	bool bWasOnSystemMenu = GAMESTATE->m_bIsOnSystemMenu;
 
 	/* If this is a system menu, don't let the operator key touch it! 
 		However, if you add an options screen, please include it here -- Miryokuteki */
+	/* TODO: Don't have a hard-coded list of system menu names.  Make it a property
+	 * of the Screen. */
 	if(	sScreenName == "ScreenOptionsMenu" ||
 		sScreenName == "ScreenMachineOptions" || 
 		sScreenName == "ScreenInputOptions" || 
