@@ -102,6 +102,7 @@ void Actor::Update( const float &fDeltaTime )
 			m_fPercentBetweenColors += m_fDeltaPercentPerSecond * fDeltaTime;
 			if( m_fPercentBetweenColors > 1.0f ) {
 				m_fPercentBetweenColors = 1.0f;
+
 				m_bTweeningTowardEndColor = FALSE;
 			}
 		}
