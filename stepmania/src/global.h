@@ -123,6 +123,26 @@ inline const T& min(const T &a, const T &b, P Pr)
 #define strnicmp strncasecmp
 #endif
 
+/* Define a few functions if necessary */
+#ifndef powf
+#define powf (float)pow
+#endif
+
+#ifndef sqrtf
+#define sqrtf (float)sqrt
+#endif
+
+#ifndef sinf
+#define sinf (float)sin
+#endif
+
+#ifndef cosf
+#define cosf (float)cos
+#endif
+
+#ifndef acosf
+#define acosf (float)acos
+#endif
 
 /* Don't include our own headers here, since they tend to change
  * often. */
