@@ -448,10 +448,11 @@ int RageSound::GetData(char *buffer, int size)
  * Be careful; this is called in a separate thread. */
 int RageSound::GetPCM(char *buffer, int size, int sampleno)
 {
+	int NumRewindsThisCall = 0;
+
 	LockMut(SOUNDMAN->lock);
 
 	ASSERT(playing);
-
 	/* Erase old pos_map data. */
 	while(pos_map.size() > 1 && pos_map.back().sampleno - pos_map.front().sampleno > pos_map_backlog_samples)
 		pos_map.pop_front();
@@ -485,6 +486,20 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 			/* We're at the end of the data.  If we're looping, rewind and restart. */
 			if(StopMode == M_LOOP)
 			{
+				NumRewindsThisCall++;
+				if(NumRewindsThisCall > 3)
+				{
+					/* We're rewinding a bunch of times in one call.  This probably means
+					 * that the length is too short.  It might also mean that the start
+					 * position is very close to the end of the file, so we're looping
+					 * over the remainder.  If we keep doing this, we'll chew CPU rewinding,
+					 * so stop. */
+					LOG->Warn("Sound %s is busy looping.  Sound stopped (start = %i, length = %i)",
+						GetLoadedFilePath().GetString(), m_StartSample, m_LengthSamples);
+
+					return 0;
+				}
+
 				/* Rewind and start over. */
 				SetPositionSamples(m_StartSample);
 
@@ -562,21 +577,6 @@ void RageSound::StartPlaying()
 	LockMut(SOUNDMAN->lock);
 
 	ASSERT(!playing);
-
-	/* Sanity check:
-	 * It's extremely inefficient to loop very small lengths of data.  For example,
-	 * if m_LengthSamples is 1000, then we'll decode a full buffer (which may be
-	 * a second or more), queue up 1000 samples, then seek and redecode the whole
-	 * full buffer of data and start again.  This only happens due to bogus SAMPLELENGTH
-	 * values, so throw a warning and set a more reasonable value. 
-	 * XXX we'll do this if m_LengthSamples == -1 and the file is very small 
-	 */
-	if(StopMode == M_LOOP && m_LengthSamples != -1 && m_LengthSamples < samplerate*2)
-	{
-		LOG->Warn("Looping sound \"%s\" for too small a period (%f seconds)",
-			GetLoadedFilePath().GetString(), float(m_LengthSamples) / samplerate);
-		m_LengthSamples = samplerate * 10; /* 10 seconds */
-	}
 
 	/* Tell the sound manager to start mixing us. */
 	playing = true;
