@@ -1121,6 +1121,11 @@ creates your home directory and is required for things to start working.
 ************************************************************
 
 ------------------------CVS after 3.00 beta 6----------------
+BUG FIX:  When skipping the evaluation screen, stop spinning the grade
+	so it can be seen during fade out.
+NEW FEATURE:  Backspace and delete can be used (in addition to space) to
+	remove key mappings.
+NEW FEATURE:  The caution screen can be backed out of.
 CHANGE:  A game that doesn't have any note skins installed is now invisible on 
 	the Select Game screen.  This can be used to selectively disable a game.
 CHANGE:  Graphics and sounds now more compressed more for a smaller download.
