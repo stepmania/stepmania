@@ -274,7 +274,7 @@ public:
 	bool m_bAutoAdjustMeterDuringCorse;
 
 	// Lua
-	virtual void PushSelf( lua_State *L );
+	void PushSelf( lua_State *L );
 };
 
 
