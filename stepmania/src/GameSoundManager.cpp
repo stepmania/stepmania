@@ -112,6 +112,8 @@ CHECKPOINT;
 			ToPlay.HasTiming = true;
 	}
 CHECKPOINT;
+	if( ToPlay.HasTiming )
+		NewMusic->m_NewTiming = ToPlay.timing_data;
 
 	if( ToPlay.align_beat && ToPlay.HasTiming && ToPlay.force_loop && ToPlay.length_sec != -1 )
 	{
