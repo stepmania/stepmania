@@ -30,7 +30,7 @@ void GrayArrowRow::Load( PlayerNumber pn )
 	m_PlayerNumber = pn;
 
 	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
-	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
 	m_iNumCols = pStyleDef->m_iColsPerPlayer;
 
