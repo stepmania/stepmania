@@ -93,9 +93,9 @@ bool Alsa9Buf::SetHWParams()
 void Alsa9Buf::LogParams()
 {
 	if( preferred_writeahead != writeahead )
-		LOG->Info("ALSA: writeahead adjusted from %u to %u", preferred_writeahead, writeahead);
+		LOG->Info( "ALSA: writeahead adjusted from %u to %u", (unsigned) preferred_writeahead, (unsigned) writeahead );
 	if( preferred_chunksize != chunksize )
-		LOG->Info("ALSA: chunksize adjusted from %u to %u", preferred_chunksize, chunksize);
+		LOG->Info( "ALSA: chunksize adjusted from %u to %u", (unsigned) preferred_chunksize, (unsigned) chunksize );
 }
 
 bool Alsa9Buf::SetSWParams()
@@ -248,7 +248,6 @@ Alsa9Buf::Alsa9Buf( hw hardware, int channels_ )
 
 	/* Open the device. */
 	int err;
-//	err = dsnd_pcm_open( &pcm, "dmix", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
 	err = dsnd_pcm_open( &pcm, DeviceName(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
 	if (err < 0)
 		RageException::ThrowNonfatal("dsnd_pcm_open(%s): %s", DeviceName().c_str(), dsnd_strerror(err));
