@@ -29,6 +29,7 @@
 #include "UnlockSystem.h"
 #include "CatalogXml.h"
 #include "Foreach.h"
+#include "StageStats.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -675,6 +676,74 @@ void SongManager::Invalidate( Song *pStaleSong )
 		(*c)->Invalidate( pStaleSong );
 
 	StepsID::Invalidate( pStaleSong );
+}
+
+/* If bAllowNotesLoss is true, any global notes pointers which no longer exist
+ * (or exist but couldn't be matched) will be set to NULL.  This is used when
+ * reverting out of the editor.  If false, this is unexpected and will assert.
+ * This is used when reverting out of gameplay, in which case we may have StageStats,
+ * etc. which may cause hard-to-trace crashes down the line if we set them to NULL. */
+void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
+{
+	// Ugly:  When we re-load the song, the Steps* will change.
+	// Fix GAMESTATE->m_CurSteps, g_CurStageStats, g_vPlayedStageStats[] after reloading.
+	/* XXX: This is very brittle.  However, we must know about all globals uses of Steps*,
+	 * so we can check to make sure we didn't lose any steps which are referenced ... */
+	StepsID OldCurSteps[NUM_PLAYERS];
+	StepsID OldCurStageStats[NUM_PLAYERS];
+	vector<StepsID> OldPlayedStageStats[NUM_PLAYERS];
+	FOREACH_PlayerNumber( p )
+	{
+		Steps* pCurSteps = GAMESTATE->m_pCurSteps[p];
+		Steps* pCurStageStats = g_CurStageStats.pSteps[p];
+
+		OldCurSteps[p].FromSteps( pCurSteps );
+		OldCurStageStats[p].FromSteps( pCurStageStats );
+		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
+		{
+			const StageStats &ss = g_vPlayedStageStats[i];;
+			OldPlayedStageStats[p].push_back( StepsID() );
+			OldPlayedStageStats[p][i].FromSteps( ss.pSteps[p] );
+		}
+	}
+
+	const CString dir = pSong->GetSongDir();
+	FILEMAN->FlushDirCache( dir );
+
+	/* Erase existing data and reload. */
+	pSong->Reset();
+	const bool OldVal = PREFSMAN->m_bFastLoad;
+	PREFSMAN->m_bFastLoad = false;
+	pSong->LoadFromSongDir( dir );	
+	/* XXX: reload edits? */
+	PREFSMAN->m_bFastLoad = OldVal;
+
+
+	/* Courses cache Steps pointers.  On the off chance that this isn't the last
+	 * thing this screen does, clear that cache. */
+	/* TODO: Don't make Song depend on SongManager.  This is breaking 
+	 * encapsulation and placing confusing limitation on what can be done in 
+	 * SONGMAN->Invalidate(). -Chris */
+	this->Invalidate( pSong );
+	StepsID::Invalidate( pSong );
+
+
+	FOREACH_PlayerNumber( p )
+	{
+		CHECKPOINT;
+		if( GAMESTATE->m_pCurSong == pSong )
+			GAMESTATE->m_pCurSteps[p] = OldCurSteps[p].ToSteps( pSong, bAllowNotesLoss );
+		CHECKPOINT;
+		if( g_CurStageStats.pSong == pSong )
+			g_CurStageStats.pSteps[p] = OldCurStageStats[p].ToSteps( pSong, bAllowNotesLoss );
+		CHECKPOINT;
+		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
+		{
+			CHECKPOINT_M(ssprintf("%i", i));
+			if( g_vPlayedStageStats[i].pSong == pSong )
+				g_vPlayedStageStats[i].pSteps[p] = OldPlayedStageStats[p][i].ToSteps( pSong, bAllowNotesLoss );
+		}
+	}
 }
 
 void SongManager::RegenerateNonFixedCourses()

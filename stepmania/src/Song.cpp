@@ -24,8 +24,6 @@
 #include "RageSurface.h"
 #include "NoteDataUtil.h"
 #include "ProfileManager.h"
-#include "StageStats.h"
-#include "StepsUtil.h"
 #include "Foreach.h"
 
 #include "NotesLoaderSM.h"
@@ -103,13 +101,6 @@ void Song::Reset()
 
 	Song empty;
 	*this = empty;
-
-	/* Courses cache Steps pointers.  On the off chance that this isn't the last
-	 * thing this screen does, clear that cache. */
-	/* TODO: Don't make Song depend on SongManager.  This is breaking 
-	 * encapsulation and placing confusing limitation on what can be done in 
-	 * SONGMAN->Invalidate(). -Chris */
-	SONGMAN->Invalidate( this );
 }
 
 
@@ -291,72 +282,6 @@ bool Song::LoadFromSongDir( CString sDir )
 	else
 		return true;	// do load this song
 }
-
-
-/* If bAllowNotesLoss is true, any global notes pointers which no longer exist
- * (or exist but couldn't be matched) will be set to NULL.  This is used when
- * reverting out of the editor.  If false, this is unexpected and will assert.
- * This is used when reverting out of gameplay, in which case we may have StageStats,
- * etc. which may cause hard-to-trace crashes down the line if we set them to NULL. */
-void Song::RevertFromDisk( bool bAllowNotesLoss )
-{
-	// Ugly:  When we re-load the song, the Steps* will change.
-	// Fix GAMESTATE->m_CurSteps, g_CurStageStats, g_vPlayedStageStats[] after reloading.
-	/* XXX: This is very brittle.  However, we must know about all globals uses of Steps*,
-	 * so we can check to make sure we didn't lose any steps which are referenced ... */
-	StepsID OldCurSteps[NUM_PLAYERS];
-	StepsID OldCurStageStats[NUM_PLAYERS];
-	vector<StepsID> OldPlayedStageStats[NUM_PLAYERS];
-	FOREACH_PlayerNumber( p )
-	{
-		Steps* pCurSteps = GAMESTATE->m_pCurSteps[p];
-		Steps* pCurStageStats = g_CurStageStats.pSteps[p];
-
-		OldCurSteps[p].FromSteps( pCurSteps );
-		OldCurStageStats[p].FromSteps( pCurStageStats );
-		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
-		{
-			const StageStats &ss = g_vPlayedStageStats[i];;
-			OldPlayedStageStats[p].push_back( StepsID() );
-			OldPlayedStageStats[p][i].FromSteps( ss.pSteps[p] );
-		}
-	}
-
-	const CString dir = GetSongDir();
-
-	/* Erase all existing data. */
-	Reset();
-
-	FILEMAN->FlushDirCache( dir );
-
-	const bool OldVal = PREFSMAN->m_bFastLoad;
-	PREFSMAN->m_bFastLoad = false;
-
-	LoadFromSongDir( dir );	
-	/* XXX: reload edits? */
-
-	PREFSMAN->m_bFastLoad = OldVal;
-
-	FOREACH_PlayerNumber( p )
-	{
-		CHECKPOINT;
-		if( GAMESTATE->m_pCurSong == this )
-			GAMESTATE->m_pCurSteps[p] = OldCurSteps[p].ToSteps( this, bAllowNotesLoss );
-		CHECKPOINT;
-		if( g_CurStageStats.pSong == this )
-			g_CurStageStats.pSteps[p] = OldCurStageStats[p].ToSteps( this, bAllowNotesLoss );
-		CHECKPOINT;
-		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
-		{
-			CHECKPOINT_M(ssprintf("%i", i));
-			if( g_vPlayedStageStats[i].pSong == this )
-				g_vPlayedStageStats[i].pSteps[p] = OldPlayedStageStats[p][i].ToSteps( this, bAllowNotesLoss );
-		}
-	}
-
-	StepsID::Invalidate( this );
-}
-
 
 static void GetImageDirListing( CString sPath, CStringArray &AddTo, bool bReturnPathToo=false )
 {

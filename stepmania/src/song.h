@@ -61,7 +61,6 @@ public:
 	NotesLoader *MakeLoader( CString sDir ) const;
 
 	bool LoadFromSongDir( CString sDir );
-	void RevertFromDisk( bool bAllowNotesLoss=false );
 
 	void TidyUpData();	// call after loading to clean up invalid data
 	void ReCalculateRadarValuesAndLastBeat();	// called by TidyUpData, and after saving

@@ -1831,11 +1831,7 @@ void RevertChanges( void* papSongsQueue )
 	vector<Song*>& apSongsQueue = *(vector<Song*>*)papSongsQueue;
 	FOREACH( Song*, apSongsQueue, pSong )
 	{
-		(*pSong)->RevertFromDisk();
-
-		// We need to regen any Courses that have any of the songs we just reloaded.
-		// Regen all Courses for now.
-		SONGMAN->Invalidate( *pSong );
+		SONGMAN->RevertFromDisk( *pSong );
 	}
 }
 

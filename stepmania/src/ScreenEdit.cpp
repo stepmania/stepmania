@@ -1336,7 +1336,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_GoToNextScreen:
 		// Reload song from disk to discard changes.
-		GAMESTATE->m_pCurSong->RevertFromDisk( true );
+		SONGMAN->RevertFromDisk( GAMESTATE->m_pCurSong, true );
 		/* We might do something with m_pSteps (eg. UpdateTextInfo) before we end up
 		 * in ScreenEditMenu, and m_pSteps might be invalid due to RevertFromDisk. */
 		m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
@@ -1411,7 +1411,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		id.FromSteps( m_pSteps );
 
 		GAMESTATE->m_pCurSteps[PLAYER_1] = NULL; /* make RevertFromDisk not try to reset it */
-		GAMESTATE->m_pCurSong->RevertFromDisk();
+		SONGMAN->RevertFromDisk( GAMESTATE->m_pCurSong );
 
 		CString sMessage = "Reloaded from disk.";
 		Steps *pSteps = id.ToSteps( GAMESTATE->m_pCurSong, false );
