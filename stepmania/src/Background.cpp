@@ -301,18 +301,6 @@ void Background::LoadFromSong( const Song* pSong )
 	const float fXZoom = RECT_BACKGROUND.GetWidth() / (float)SCREEN_WIDTH;
 	const float fYZoom = RECT_BACKGROUND.GetHeight() / (float)SCREEN_HEIGHT;
 
-	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background");
-
-	// Load the static background that will show before notes start and after notes end
-	{
-		BGAnimation *pTempBGA = new BGAnimation;
-		pTempBGA->LoadFromStaticGraphic( sSongBGPath );
-		m_BGAnimations[STATIC_BACKGROUND] = pTempBGA;
-	}
-
-
-	// start off showing the static song background
-	m_aBGChanges.push_back( BackgroundChange(-10000,STATIC_BACKGROUND) );
 
 
 	if( pSong->HasBGChanges() )
@@ -352,6 +340,25 @@ void Background::LoadFromSong( const Song* pSong )
 		
 	// sort segments
 	SortBackgroundChangesArray( m_aBGChanges );
+
+	/* If the first BGAnimation isn't negative, add a lead-in image showing the song
+	 * background. */
+	if( m_aBGChanges.empty() || m_aBGChanges.front().m_fStartBeat >= 0 )
+		m_aBGChanges.insert( m_aBGChanges.begin(), BackgroundChange(-10000,STATIC_BACKGROUND) );
+
+	// If any BGChanges use the background image, load it.
+	bool bStaticBackgroundUsed = false;
+	for( unsigned i=0; i<m_aBGChanges.size(); i++ )
+		if( m_aBGChanges[i].m_sBGName == STATIC_BACKGROUND )
+			bStaticBackgroundUsed = true;
+	if( bStaticBackgroundUsed )
+	{
+		CString sSongBGPath = pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background");
+		BGAnimation *pTempBGA = new BGAnimation;
+		pTempBGA->LoadFromStaticGraphic( sSongBGPath );
+		m_BGAnimations[STATIC_BACKGROUND] = pTempBGA;
+	}
+
 
 	// Look for the filename "Random", and replace the segment with LoadFromRandom.
 	unsigned i = 0;
