@@ -782,16 +782,15 @@ int main(int argc, char* argv[])
 	PREFSMAN	= new PrefsManager;
 
 	LOG->ShowLogOutput( PREFSMAN->m_bShowLogOutput );
+	LOG->SetLogging( PREFSMAN->m_bLogging );
+	LOG->SetFlushing( PREFSMAN->m_bForceLogFlush );
+	LOG->SetTimestamping( PREFSMAN->m_bTimestamping );
 
 	CheckSDLVersion( 1,2,6 );
 	
 	/* This should be done after PREFSMAN is set up, so it can use HOOKS->MessageBoxOK,
 	 * but before we do more complex things that might crash. */
 	HOOKS->DumpDebugInfo();
-
-	LOG->SetLogging( PREFSMAN->m_bLogging );
-	LOG->SetFlushing( PREFSMAN->m_bForceLogFlush );
-	LOG->SetTimestamping( PREFSMAN->m_bTimestamping );
 
 	CheckSettings();
 
