@@ -724,11 +724,25 @@ void RageDisplay_OGL::SaveScreenshot( CString sPath )
 			(char *)temp->pixels + pitch * y,
 			(char *)image->pixels + pitch * (height-1-y),
 			3*width );
-
-	SDL_SaveBMP( temp, sPath );
-
 	SDL_FreeSurface( image );
+
+	CString buf;
+	buf.reserve( 1024*1024 );
+
+	SDL_RWops *rw = OpenRWops( buf );
+	SDL_SaveBMP_RW( temp, rw, false );
+	SDL_FreeRW( rw );
+
 	SDL_FreeSurface( temp );
+
+	RageFile out;
+	if( !out.Open( sPath, RageFile::WRITE ) )
+	{
+		LOG->Trace("Couldn't write %s: %s", sPath.c_str(), out.GetError().c_str() );
+		return;
+	}
+
+	out.Write( buf );
 }
 
 RageDisplay::VideoModeParams RageDisplay_OGL::GetVideoModeParams() const { return wind->GetVideoModeParams(); }
