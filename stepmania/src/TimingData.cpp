@@ -234,21 +234,21 @@ void TimingData::ShiftRows( float fStartBeat, float fBeatsToShift )
 
 	for( ix = 0; ix < m_BPMSegments.size(); ix++ )
 	{
-		const float fSegStart = m_BPMSegments[ix].m_fStartBeat;
+		float &fSegStart = m_BPMSegments[ix].m_fStartBeat;
 		if( fSegStart < fStartBeat )
 			continue;
 
-		m_BPMSegments[ix].m_fStartBeat += fBeatsToShift;
-		m_BPMSegments[ix].m_fStartBeat = max( m_BPMSegments[ix].m_fStartBeat, fStartBeat );
+		fSegStart += fBeatsToShift;
+		fSegStart = max( fSegStart, fStartBeat );
 	}
 
 	for( ix = 0; ix < m_StopSegments.size(); ix++ )
 	{
-		const float fSegStart = m_StopSegments[ix].m_fStartBeat;
+		float &fSegStart = m_StopSegments[ix].m_fStartBeat;
 		if( fSegStart < fStartBeat )
 			continue;
-		m_StopSegments[ix].m_fStartBeat += fBeatsToShift;
-		m_StopSegments[ix].m_fStartBeat = max( m_StopSegments[ix].m_fStartBeat, fStartBeat );
+		fSegStart += fBeatsToShift;
+		fSegStart = max( fSegStart, fStartBeat );
 	}
 }
 
