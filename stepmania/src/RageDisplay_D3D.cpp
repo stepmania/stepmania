@@ -1284,7 +1284,7 @@ void RageDisplay_D3D::UpdateTexture(
 	area.x = area.y = 0;
 	area.w = (uint16_t) width;
 	area.h = (uint16_t) height;
-	RageSurfaceUtils::Blit( img, Texture, width, height, false );
+	RageSurfaceUtils::Blit( img, Texture, width, height );
 
 	delete Texture;
 #endif

@@ -141,7 +141,7 @@ void RageSurfaceUtils::CopySurface( RageSurface *src, RageSurface *dest )
 		*dest->fmt.palette = *src->fmt.palette;
 	}
 
-	Blit( src, dest, -1, -1, false );
+	Blit( src, dest, -1, -1 );
 }
 
 bool RageSurfaceUtils::ConvertSurface( RageSurface *src, RageSurface *&dst,
@@ -582,7 +582,7 @@ static void blit_generic( RageSurface *src_surf, const RageSurface *dst_surf, in
 }
 
 /* Blit src onto dst. */
-void RageSurfaceUtils::Blit( RageSurface *src, RageSurface *dst, int width, int height, bool ckey )
+void RageSurfaceUtils::Blit( RageSurface *src, RageSurface *dst, int width, int height )
 {
 	if(width == -1)
 		width = src->w;

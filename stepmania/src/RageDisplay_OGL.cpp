@@ -1604,7 +1604,7 @@ RageDisplay::PixelFormat RageDisplay_OGL::GetImgPixelFormat( RageSurface* &img, 
 
 		RageSurface *imgconv = CreateSurface( width, height,
 			pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
-		RageSurfaceUtils::Blit( img, imgconv, width, height, false );
+		RageSurfaceUtils::Blit( img, imgconv, width, height );
 		img = imgconv;
 		FreeImg = true;
 	}
