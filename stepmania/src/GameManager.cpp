@@ -1144,8 +1144,8 @@ Style g_Styles[] =
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
-			{ 0, 3, 2, 1 },
-			{ 0, 3, 2, 1 }
+			{ 0, 3, 2, 1, Style::END_MAPPING },
+			{ 0, 3, 2, 1, Style::END_MAPPING }
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0, 1, 2, 3
@@ -1178,8 +1178,8 @@ Style g_Styles[] =
 			},
 		},
 		{
-			{ 0, 3, 2, 1 },
-			{ 0, 3, 2, 1 }
+			{ 0, 3, 2, 1, Style::END_MAPPING },
+			{ 0, 3, 2, 1, Style::END_MAPPING }
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0, 1, 2, 3
@@ -1254,8 +1254,8 @@ Style g_Styles[] =
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
-			{ 0, 3, 2, 1 },
-			{ 0, 3, 2, 1 }
+			{ 0, 3, 2, 1, Style::END_MAPPING },
+			{ 0, 3, 2, 1, Style::END_MAPPING }
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,1,2,3
@@ -1292,8 +1292,8 @@ Style g_Styles[] =
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
-			{ 0, 5, 3, 2, 1, 4 },
-			{ 0, 5, 3, 2, 1, 4 }
+			{ 0, 5, 3, 2, 1, 4, Style::END_MAPPING },
+			{ 0, 5, 3, 2, 1, 4, Style::END_MAPPING }
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,1,2,3,4,5
@@ -1367,8 +1367,8 @@ Style g_Styles[] =
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
-			{ 0, 5, 3, 2, 1, 4 },
-			{ 0, 5, 3, 2, 1, 4 }
+			{ 0, 5, 3, 2, 1, 4, Style::END_MAPPING },
+			{ 0, 5, 3, 2, 1, 4, Style::END_MAPPING }
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,5,1,4,2,3		// outside in
@@ -1478,7 +1478,7 @@ Style g_Styles[] =
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
 			{ Style::NO_MAPPING, 1, 0, Style::NO_MAPPING, 2, Style::END_MAPPING },
-			{ 3, Style::NO_MAPPING, 5, 4, Style::NO_MAPPING }
+			{ 3, Style::NO_MAPPING, 5, 4, Style::NO_MAPPING, Style::END_MAPPING }
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,5,2,4,3,1
@@ -1523,8 +1523,8 @@ Style g_Styles[] =
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
-			{ 1, 3, 2, 0, 4, 6, 8, 7, 5, 9, Style::END_MAPPING },
-			{ 1, 3, 2, 0, 4, 6, 8, 7, 5, 9, Style::END_MAPPING },
+			{ 1, 3, 2, 0, 4, Style::END_MAPPING },
+			{ 6, 8, 7, 5, 9, Style::END_MAPPING },
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,2,4,1,3,5,7,9,6,8
@@ -1798,8 +1798,8 @@ Style g_Styles[] =
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
-			{ 0, 4, 2, 1, 3, 5, 9, 7, 6, 8, Style::END_MAPPING },
-			{ 0, 4, 2, 1, 3, 5, 9, 7, 6, 8, Style::END_MAPPING },
+			{ 0, 4, 2, 1, 3, Style::END_MAPPING },
+			{ 5, 9, 7, 6, 8, Style::END_MAPPING },
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			2,0,4,1,3,7,5,9,6,8 // This should be from back to front: Down, UpLeft, UpRight, Upper Left Hand, Upper Right Hand 
@@ -2210,8 +2210,8 @@ Style g_Styles[] =
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
-			{ 1, 2, 0, 3, 5, 6, 4, 7, Style::END_MAPPING },
-			{ 1, 2, 0, 3, 5, 6, 4, 7, Style::END_MAPPING },
+			{ 1, 2, 0, 3, Style::END_MAPPING },
+			{ 5, 6, 4, 7, Style::END_MAPPING },
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,1,2,3,4,5,6,7
@@ -2672,7 +2672,7 @@ GameManager::~GameManager()
 {
 }
 
-void GameManager::GetStylesForGame( const Game *pGame, vector<const Style*>& aStylesAddTo, bool editor )
+void GameManager::GetStylesForGame( const Game *pGame, vector<const Style*>& aStylesAddTo, bool editor ) const
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
@@ -2688,7 +2688,7 @@ void GameManager::GetStylesForGame( const Game *pGame, vector<const Style*>& aSt
 	}
 }
 
-const Style* GameManager::GetEditorStyleForStepsType( StepsType st )
+const Style* GameManager::GetEditorStyleForStepsType( StepsType st ) const
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
@@ -2702,7 +2702,7 @@ const Style* GameManager::GetEditorStyleForStepsType( StepsType st )
 }
 
 
-void GameManager::GetStepsTypesForGame( const Game *pGame, vector<StepsType>& aStepsTypeAddTo )
+void GameManager::GetStepsTypesForGame( const Game *pGame, vector<StepsType>& aStepsTypeAddTo ) const
 {
 	FOREACH_StepsType( st )
 	{
@@ -2720,7 +2720,7 @@ void GameManager::GetStepsTypesForGame( const Game *pGame, vector<StepsType>& aS
 	}
 }
 
-const Style* GameManager::GetDemonstrationStyleForGame( const Game *pGame )
+const Style* GameManager::GetDemonstrationStyleForGame( const Game *pGame ) const
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
@@ -2733,7 +2733,7 @@ const Style* GameManager::GetDemonstrationStyleForGame( const Game *pGame )
 	return NULL;
 }
 
-const Style* GameManager::GetHowToPlayStyleForGame( const Game *pGame )
+const Style* GameManager::GetHowToPlayStyleForGame( const Game *pGame ) const
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
@@ -2746,7 +2746,7 @@ const Style* GameManager::GetHowToPlayStyleForGame( const Game *pGame )
 	return NULL;
 }
 
-void GameManager::GetEnabledGames( vector<const Game*>& aGamesOut )
+void GameManager::GetEnabledGames( vector<const Game*>& aGamesOut ) const
 {
 	for( int g=0; g<NUM_GAMES; g++ )
 	{
@@ -2756,12 +2756,12 @@ void GameManager::GetEnabledGames( vector<const Game*>& aGamesOut )
 	}
 }
 
-const Game* GameManager::GetDefaultGame()
+const Game* GameManager::GetDefaultGame() const
 {
 	return &g_Games[0];
 }
 
-int GameManager::GetIndexFromGame( const Game* pGame )
+int GameManager::GetIndexFromGame( const Game* pGame ) const
 {
 	for( int g=0; g<NUM_GAMES; g++ )
 	{
@@ -2772,14 +2772,14 @@ int GameManager::GetIndexFromGame( const Game* pGame )
 	return 0;
 }
 
-const Game* GameManager::GetGameFromIndex( int index )
+const Game* GameManager::GetGameFromIndex( int index ) const
 {
 	ASSERT( index >= 0 );
 	ASSERT( index < NUM_GAMES );
 	return &g_Games[index];
 }
 
-bool GameManager::IsGameEnabled( const Game *pGame )
+bool GameManager::IsGameEnabled( const Game *pGame ) const
 {
 	CStringArray asNoteSkins;
 	NOTESKIN->GetNoteSkinNames( pGame, asNoteSkins, false ); /* don't omit default */

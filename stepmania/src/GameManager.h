@@ -3,7 +3,6 @@
 #ifndef GAMEMANAGER_H
 #define GAMEMANAGER_H
 
-class IniFile;
 class Style;
 class Game;
 
@@ -15,18 +14,18 @@ public:
 	GameManager();
 	~GameManager();
 
-	void	GetStylesForGame( const Game* pGame, vector<const Style*>& aStylesAddTo, bool editor=false );
-	void	GetAllStyles( vector<const Style*>& aStylesAddTo, bool editor=false );
-	void	GetStepsTypesForGame( const Game* pGame, vector<StepsType>& aStepsTypeAddTo );
-	const Style*	GetEditorStyleForStepsType( StepsType st );
-	const Style*	GetDemonstrationStyleForGame( const Game* pGame );
-	const Style*	GetHowToPlayStyleForGame( const Game* pGame );
+	void	GetStylesForGame( const Game* pGame, vector<const Style*>& aStylesAddTo, bool editor=false ) const;
+	void	GetAllStyles( vector<const Style*>& aStylesAddTo, bool editor=false ) const;
+	void	GetStepsTypesForGame( const Game* pGame, vector<StepsType>& aStepsTypeAddTo ) const;
+	const Style*	GetEditorStyleForStepsType( StepsType st ) const;
+	const Style*	GetDemonstrationStyleForGame( const Game* pGame ) const;
+	const Style*	GetHowToPlayStyleForGame( const Game* pGame ) const;
 
-	void GetEnabledGames( vector<const Game*>& aGamesOut );
-	const Game* GetDefaultGame();
-	bool IsGameEnabled( const Game* pGame );
-	int GetIndexFromGame( const Game* pGame );
-	const Game* GetGameFromIndex( int index );
+	void GetEnabledGames( vector<const Game*>& aGamesOut ) const;
+	const Game* GetDefaultGame() const;
+	bool IsGameEnabled( const Game* pGame ) const;
+	int GetIndexFromGame( const Game* pGame ) const;
+	const Game* GetGameFromIndex( int index ) const;
 
 	static int StepsTypeToNumTracks( StepsType st );
 	static StepsType StringToStepsType( CString sStepsType );

@@ -58,7 +58,7 @@ StyleInput Style::GameInputToStyleInput( const GameInput &GameI ) const
 	if( m_iInputColumn[0][0] == NO_MAPPING )
 		return SI;	// Return invalid.
 
-	for( int i = 0; i < GameI.button; ++i )
+	for( int i = 0; i <= GameI.button; ++i )
 		if( m_iInputColumn[GameI.controller][i] == END_MAPPING )
 			return SI;	// Return invalid.
 
