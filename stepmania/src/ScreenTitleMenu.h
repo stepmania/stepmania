@@ -67,6 +67,7 @@ public:
 private:
 	void GainFocus( int iChoiceIndex );
 	void LoseFocus( int iChoiceIndex );
+	void MoveCursor( bool up );
 
 	Choice			m_Choice;
 

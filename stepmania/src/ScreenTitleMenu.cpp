@@ -177,6 +177,21 @@ ScreenTitleMenu::~ScreenTitleMenu()
 }
 
 
+void ScreenTitleMenu::MoveCursor( bool up )
+{
+	if( PREFSMAN->m_iCoinMode != COIN_HOME )
+		return;
+	if( m_BeginOut.IsTransitioning() )
+		return;
+	
+	TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
+	LoseFocus( m_Choice );
+	m_Choice = Choice( m_Choice + (up? -1:+1) );
+	wrap( (int&)m_Choice, (int)NUM_CHOICES );
+	m_soundChange.Play();
+	GainFocus( m_Choice );
+}
+
 void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	LOG->Trace( "ScreenTitleMenu::Input( %d-%d )", DeviceI.device, DeviceI.button );	// debugging gameport joystick problem
@@ -194,42 +209,23 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	if( !MenuI.IsValid() )
 		return;
 
+	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+		return;
+
 	switch( MenuI.button )
 	{
 	case MENU_BUTTON_UP:
-		if( PREFSMAN->m_iCoinMode != COIN_HOME )
-			break;
-		if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_BeginOut.IsTransitioning() )
-			break;
-		TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
-		LoseFocus( m_Choice );
-		if( m_Choice == 0 ) // wrap around
-			m_Choice = (Choice)((int)NUM_CHOICES); 
-		m_Choice = Choice( m_Choice-1 );
-		m_soundChange.Play();
-		GainFocus( m_Choice );
+		MoveCursor( true );
 		break;
 	case MENU_BUTTON_DOWN:
-		if( PREFSMAN->m_iCoinMode != COIN_HOME )
-			break;
-		if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_BeginOut.IsTransitioning() )
-			break;
-		TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
-		LoseFocus( m_Choice );
-		if( m_Choice == (int)ScreenTitleMenu::NUM_CHOICES-1 ) 
-			m_Choice = (Choice)-1; // wrap around
-		m_Choice = Choice( m_Choice+1 );
-		m_soundChange.Play();
-		GainFocus( m_Choice );
+		MoveCursor( false );
 		break;
 	case MENU_BUTTON_BACK:
-		if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_BeginOut.IsTransitioning() )
+		if( m_BeginOut.IsTransitioning() )
 			break;
 		m_Out.StartTransitioning( SM_GoToAttractLoop );
 		break;
 	case MENU_BUTTON_START:
-		if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
-			break;
 		/* break if the choice is invalid */
 		if( m_Choice == CHOICE_JUKEBOX  ||
 			m_Choice == CHOICE_EDIT ||
