@@ -309,6 +309,7 @@ public:
 		defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		defOut.m_bExportOnChange = true;
 		m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_CURRENT_SONG_CHANGED) );
+		m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_EDIT_STEPS_TYPE_CHANGED) );
 
 		if( GAMESTATE->m_pCurSong != NULL )
 		{
@@ -767,7 +768,7 @@ public:
 
 		defOut.name = opt->name;
 	}
-	virtual void ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
+	virtual void ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
 	{
 		int iSelection = opt->Get();
 		SelectExactlyOne( iSelection, vbSelectedOut );
@@ -853,7 +854,7 @@ public:
 		if( *m_pstToFill == STEPS_TYPE_INVALID )
 			m_pstToFill->Set( m_vStepsTypesToShow[0] );
 	}
-	virtual void ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
+	virtual void ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
 	{
 		if( GAMESTATE->m_pCurSteps[0] )
 		{
@@ -881,6 +882,7 @@ class OptionRowHandlerSteps : public OptionRowHandler
 {
 public:
 	BroadcastOnChangePtr<Steps> *m_ppStepsToFill;
+	const BroadcastOnChange<StepsType> *m_pst;
 	vector<Steps*> m_vSteps;
 
 	OptionRowHandlerSteps::OptionRowHandlerSteps() { Init(); }
@@ -898,21 +900,33 @@ public:
 		Init();
 		defOut.Init();
 
-		if( sParam == "EditSourceSteps" )
+		if( sParam == "EditSteps" )
+		{
+			m_ppStepsToFill = &GAMESTATE->m_pCurSteps[0];
+			m_pst = &GAMESTATE->m_stEdit;
+			m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_EDIT_STEPS_TYPE_CHANGED) );
+		}
+		else if( sParam == "EditSourceSteps" )
+		{
 			m_ppStepsToFill = &GAMESTATE->m_pEditSourceSteps;
+			m_pst = &GAMESTATE->m_stEditSource;
+			m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED) );
+		}
 		else
+		{
 			RageException::Throw( "invalid StepsType param \"%s\"", sParam.c_str() );
+		}
 		
 		m_sName = sParam;
 		defOut.name = sParam;
 		defOut.bOneChoiceForAllPlayers = true;
 		defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		defOut.m_bExportOnChange = true;
-		m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED) );
+		m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_CURRENT_SONG_CHANGED) );
 
 		if( GAMESTATE->m_pCurSong )
 		{
-			GAMESTATE->m_pCurSong->GetSteps( m_vSteps, GAMESTATE->m_stEditSource );
+			GAMESTATE->m_pCurSong->GetSteps( m_vSteps, *m_pst );
 			StepsUtil::SortNotesArrayByDifficulty( m_vSteps );
 			for( unsigned i=0; i<m_vSteps.size(); i++ )
 			{
@@ -929,8 +943,11 @@ public:
 			}
 		}
 	}
-	virtual void ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
+	virtual void ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
 	{
+		ASSERT( m_vSteps.size() == vbSelectedOut.size() );
+
+		// look for matching steps
 		vector<Steps*>::const_iterator iter = find( m_vSteps.begin(), m_vSteps.end(), m_ppStepsToFill->Get() );
 		if( iter != m_vSteps.end() )
 		{
@@ -938,6 +955,15 @@ public:
 			vbSelectedOut[i] = true;
 			return;
 		}
+		// look for matching difficulty
+		FOREACH_CONST( Steps*, m_vSteps, s )
+		{
+			unsigned i = s - m_vSteps.begin();
+			vbSelectedOut[i] = true;
+			ExportOption( def, pn, vbSelectedOut );	// current steps changed
+			return;
+		}
+		// default to 1st
 		vbSelectedOut[0] = true;
 	}
 	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const
@@ -999,7 +1025,7 @@ public:
 			defOut.choices.push_back( s );
 		}
 	}
-	virtual void ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
+	virtual void ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
 	{
 		vbSelectedOut[0] = true;
 	}
