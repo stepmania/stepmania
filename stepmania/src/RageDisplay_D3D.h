@@ -75,11 +75,14 @@ public:
 
 	void SetSphereEnironmentMapping( bool b );
 
+	RageModelVertexArray* CreateRageModelVertexArray();
+	void DeleteRageModelVertexArray( RageModelVertexArray* p );
+
 	void DrawQuads( const RageSpriteVertex v[], int iNumVerts );
 	void DrawFan( const RageSpriteVertex v[], int iNumVerts );
 	void DrawStrip( const RageSpriteVertex v[], int iNumVerts );
 	void DrawTriangles( const RageSpriteVertex v[], int iNumVerts );
-	void DrawIndexedTriangles( const RageModelVertex v[], int iNumVerts, const Uint16* pIndices, int iNumIndices );
+	void DrawIndexedTriangles( const RageModelVertexArray *p );
 //	void DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
 
 protected:

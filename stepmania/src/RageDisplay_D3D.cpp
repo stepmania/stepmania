@@ -734,6 +734,94 @@ RageDisplay::VideoModeParams RageDisplay_D3D::GetVideoModeParams() const { retur
 	g_pd3dDevice->SetTransform( D3DTS_WORLD, (D3DMATRIX*)&m );
 
 
+class RageModelVertexArraySW : public RageModelVertexArray
+{
+public:
+	RageModelVertexArraySW()
+	{
+		m_sizeVerts = 0;
+		m_sizeTriangles = 0;
+		m_pVertex = NULL;
+		m_pTriangles = NULL;
+	}
+
+	~RageModelVertexArraySW()
+	{
+		m_sizeVerts = 0;
+		m_sizeTriangles = 0;
+		SAFE_DELETE( m_pVertex );
+		SAFE_DELETE( m_pTriangles );
+	}
+	
+	size_t sizeVerts() const
+	{
+		return m_sizeVerts;
+	}
+	void resizeVerts( size_t size )
+	{
+		SAFE_DELETE( m_pVertex );
+
+		m_sizeVerts = size;
+		m_pVertex = new Vertex[size];
+	}
+
+	size_t sizeTriangles() const
+	{
+		return m_sizeTriangles;
+	}
+	void resizeTriangles( size_t size )
+	{
+		SAFE_DELETE( m_pTriangles );
+
+		m_sizeTriangles = size;
+		m_pTriangles = new msTriangle[size];
+	}
+
+	RageVector3&	Position	( int index ) { return m_pVertex[index].p; }
+	RageVector2&	TexCoord	( int index ) { return m_pVertex[index].t; }
+	RageVector3&	Normal		( int index ) { return m_pVertex[index].n; }
+	Sint8&			Bone		( int index ) { return m_pVertex[index].bone; }
+	msTriangle&		Triangle	( int index ) { return m_pTriangles[index]; }
+
+	void SendVertices() const
+	{
+		g_pd3dDevice->SetVertexShader( D3DFVF_RageModelVertex );
+		g_pd3dDevice->DrawIndexedPrimitiveUP(
+			D3DPT_TRIANGLELIST, // PrimitiveType
+			0,					// MinIndex
+			m_sizeVerts,		// NumVertices
+			m_sizeTriangles,	// PrimitiveCount,
+			m_pTriangles,		// pIndexData,
+			D3DFMT_INDEX16,		// IndexDataFormat,
+			m_pVertex,			// pVertexStreamZeroData,
+			sizeof(Vertex)		// VertexStreamZeroStride
+		);
+	}
+protected:
+	size_t		m_sizeVerts;
+	size_t		m_sizeTriangles;
+	
+	struct Vertex
+	{
+		RageVector3		p;	// position
+		RageVector3		n;	// normal
+		RageVector2		t;	// texture coordinates
+		Sint8			bone;
+	} *m_pVertex;
+	
+	msTriangle	*m_pTriangles;
+};
+
+RageModelVertexArray* RageDisplay_D3D::CreateRageModelVertexArray()
+{
+	return new RageModelVertexArraySW;
+}
+
+void RageDisplay_D3D::DeleteRageModelVertexArray( RageModelVertexArray* p )
+{
+	delete p;
+}
+
 void RageDisplay_D3D::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
 {
 	ASSERT( (iNumVerts%4) == 0 );
@@ -820,23 +908,13 @@ void RageDisplay_D3D::DrawTriangles( const RageSpriteVertex v[], int iNumVerts )
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_D3D::DrawIndexedTriangles( const RageModelVertex v[], int iNumVerts, const Uint16 pIndices[], int iNumIndices )
+void RageDisplay_D3D::DrawIndexedTriangles( const RageModelVertexArray *p )
 {
-	if( iNumIndices == 0 )
-		return;
-	g_pd3dDevice->SetVertexShader( D3DFVF_RageModelVertex );
 	SEND_CURRENT_MATRICES;
-	g_pd3dDevice->DrawIndexedPrimitiveUP(
-		D3DPT_TRIANGLELIST, // PrimitiveType
-		0, // MinIndex
-		iNumVerts, // NumVertices
-		iNumIndices/3, // PrimitiveCount,
-		pIndices, // pIndexData,
-		D3DFMT_INDEX16, // IndexDataFormat,
-		v, // pVertexStreamZeroData,
-		sizeof(RageModelVertex) // VertexStreamZeroStride
-	);
-	StatsAddVerts( iNumIndices );
+
+	p->SendVertices();
+		
+	StatsAddVerts( p->sizeTriangles()*3 );
 }
 
 /* Use the default poly-based implementation.  D3D lines apparently don't support

@@ -66,14 +66,20 @@ typedef struct
 //  byte        nSmoothingGroup;	// we don't care about this, so don't save it
 } msTriangle;
 
+
+class RageModelVertexArray;
+
 /* msMesh */
 typedef struct msMesh
 {
+	msMesh();
+	~msMesh();
+
 //  byte        nFlags;	// we don't care about saving this flag
     char        szName[MS_MAX_NAME];
     char        nMaterialIndex;
     
-    vector<RageModelVertex>   Vertices;
+    RageModelVertexArray* Vertices;
 //  vector<msVertex>   Vertices;
 
 //  vector<msVec3>     Normals;	// each vertex holds its own normal
@@ -83,7 +89,7 @@ typedef struct msMesh
 	// of transforming each vertex on the CPU;
 	char        nBoneIndex;	// -1 = no bone
 
-    vector<msTriangle> Triangles;
+//    vector<msTriangle> Triangles;
 } msMesh;
 
 /* msMaterial */

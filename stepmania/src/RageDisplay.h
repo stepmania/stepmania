@@ -13,6 +13,7 @@
 
 #include "SDL_types.h"
 #include "RageTypes.h"
+#include "ModelTypes.h"
 
 const int REFRESH_DEFAULT = 0;
 struct SDL_Surface;
@@ -20,23 +21,27 @@ const int MAX_TEXTURE_UNITS = 2;
 
 // VertexArray holds vertex data in a format that is most efficient for
 // the graphics API.
-/*struct VertexArray
+class RageModelVertexArray
 {
-	VertexArray();
-	~VertexArray();
-	unsigned size();
-	void resize( unsigned new_size );
-	RageVector2& TexCoord( int index );
-	RageColor& Color( int index );
-	RageVector3& Normal( int index );
-	RageVector3& Position( int index );
-	// convenience.  Remove this later!
-	void Set( int index, const RageSpriteVertex& v );
+public:
+	virtual ~RageModelVertexArray() { }
+	
+	virtual size_t sizeVerts() const = 0;
+	virtual void resizeVerts( size_t size ) = 0;
+	
+	virtual size_t sizeTriangles() const = 0;
+	virtual void resizeTriangles( size_t size ) = 0;
 
-	struct Impl;
-	Impl* pImpl;
+	virtual RageVector3&	Position( int index ) = 0;
+	virtual RageVector3&	Normal	( int index ) = 0;
+	virtual RageVector2&	TexCoord( int index ) = 0;
+	virtual Sint8&			Bone	( int index ) = 0;
+
+	virtual msTriangle&		Triangle( int index ) = 0;
+
+	virtual void SendVertices() const = 0;
 };
-*/
+
 
 class RageDisplay
 {
@@ -200,12 +205,15 @@ public:
 
 	virtual void SetSphereEnironmentMapping( bool b ) = 0;
 
+	virtual RageModelVertexArray* CreateRageModelVertexArray() = 0;
+	virtual void DeleteRageModelVertexArray( RageModelVertexArray* p ) = 0;
+
 	void DrawQuad( const RageSpriteVertex v[] ) { DrawQuads(v,4); } /* alias. upper-left, upper-right, lower-left, lower-right */
 	virtual void DrawQuads( const RageSpriteVertex v[], int iNumVerts ) = 0;
 	virtual void DrawFan( const RageSpriteVertex v[], int iNumVerts ) = 0;
 	virtual void DrawStrip( const RageSpriteVertex v[], int iNumVerts ) = 0;
 	virtual void DrawTriangles( const RageSpriteVertex v[], int iNumVerts ) = 0;
-	virtual void DrawIndexedTriangles( const RageModelVertex v[], int iNumVerts, const Uint16* pIndices, int iNumIndices ) = 0;
+	virtual void DrawIndexedTriangles( const RageModelVertexArray *p ) = 0;
 	virtual void DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
 
 	void DrawCircle( const RageSpriteVertex &v, float radius );

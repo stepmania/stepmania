@@ -55,6 +55,13 @@ void Model::Clear ()
 	m_Materials.clear();
 	m_mapNameToAnimation.clear();
 	m_pCurAnimation = NULL;
+
+	for (unsigned i = 0; i < m_vpTempVerticesByMesh.size(); i++)
+	{
+		RageModelVertexArray *&pTemp = m_vpTempVerticesByMesh[i];
+		DISPLAY->DeleteRageModelVertexArray( pTemp );
+	}
+	m_vpTempVerticesByMesh.clear();
 }
 
 void Model::Load( CString sFile )
@@ -115,10 +122,9 @@ void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBo
 	for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
 	{
 		msMesh& mesh = m_pGeometry->m_Meshes[i];
-		for (int j = 0; j < (int)mesh.Vertices.size(); j++)
+		for (int j = 0; j < (int)mesh.Vertices->sizeVerts(); j++)
 		{
-			RageModelVertex &vert = mesh.Vertices[j];
-			if( vert.boneIndex != -1 )
+			if( mesh.Vertices->Bone(j) != -1 )
 			{
 				bHasAnyPerVertexBones = true;
 				break;
@@ -129,11 +135,19 @@ void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBo
 	m_bUseTempVertices = bHasAnyPerVertexBones;
 	if( m_bUseTempVertices )
 	{
-		m_vTempVerticesByMesh.resize( m_pGeometry->m_Meshes.size() );
-		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
+		m_vpTempVerticesByMesh.resize( m_pGeometry->m_Meshes.size() );
+		for (unsigned i = 0; i < m_pGeometry->m_Meshes.size(); i++)
 		{
-			msMesh& Mesh = m_pGeometry->m_Meshes[i];
-			m_vTempVerticesByMesh[i].resize( Mesh.Vertices.size() );
+			msMesh &mesh = m_pGeometry->m_Meshes[i];
+			RageModelVertexArray *&pOrig = mesh.Vertices;
+			RageModelVertexArray *&pTemp = m_vpTempVerticesByMesh[i];
+			pTemp = DISPLAY->CreateRageModelVertexArray();
+			pTemp->resizeVerts( pOrig->sizeVerts() );
+			pTemp->resizeTriangles( pOrig->sizeTriangles() );
+
+			// copy triangles
+			for (unsigned j = 0; j < pOrig->sizeTriangles(); j++)
+				pTemp->Triangle(j) = pOrig->Triangle(j);
 		}
 	}
 }
@@ -455,7 +469,7 @@ void Model::DrawPrimitives()
 		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
 		{
 			msMesh *pMesh = &m_pGeometry->m_Meshes[i];
-			RageModelVertexVector& TempVertices = m_bUseTempVertices ? m_vTempVerticesByMesh[i] : pMesh->Vertices;
+			const RageModelVertexArray* TempVertices = m_bUseTempVertices ? m_vpTempVerticesByMesh[i] : pMesh->Vertices;
 
 			if( pMesh->nMaterialIndex != -1 )	// has a material
 			{
@@ -518,7 +532,7 @@ void Model::DrawPrimitives()
 				DISPLAY->PreMultMatrix( mat );
 			}
 
-			DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
+			DISPLAY->DrawIndexedTriangles( TempVertices );
 			DISPLAY->SetSphereEnironmentMapping( false );
 
 			if( pMesh->nBoneIndex != -1 )
@@ -538,7 +552,7 @@ void Model::DrawPrimitives()
 		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
 		{
 			msMesh *pMesh = &m_pGeometry->m_Meshes[i];
-			RageModelVertexVector& TempVertices = m_bUseTempVertices ? m_vTempVerticesByMesh[i] : pMesh->Vertices;
+			const RageModelVertexArray* pTempVertices = m_bUseTempVertices ? m_vpTempVerticesByMesh[i] : pMesh->Vertices;
 
 			// apply material
 			if( pMesh->nMaterialIndex != -1 )
@@ -578,9 +592,8 @@ void Model::DrawPrimitives()
 				DISPLAY->ClearAllTextures();
 			}
 
-			DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
+			DISPLAY->DrawIndexedTriangles( pTempVertices );
 		}
-
 	}
 }
 
@@ -610,7 +623,7 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 	int nBoneCount = (int)m_pCurAnimation->Bones.size();
 	m_vpBones.resize( nBoneCount );
 
-	int i, j;
+	int i;
 	for (i = 0; i < nBoneCount; i++)
 	{
 		msBone *pBone = &m_pCurAnimation->Bones[i];
@@ -643,22 +656,25 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 	for (i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
 	{
 		msMesh *pMesh = &m_pGeometry->m_Meshes[i];
-		for (j = 0; j < (int)pMesh->Vertices.size(); j++)
+		RageModelVertexArray* Vertices = pMesh->Vertices;
+		for (unsigned j = 0; j < Vertices->sizeVerts(); j++)
 		{
-			RageModelVertex *pVertex = &pMesh->Vertices[j];
-//			int nBoneIndex = (pMesh->nBoneIndex!=-1) ? pMesh->nBoneIndex : pVertex->boneIndex;
-			if (pVertex->boneIndex != -1)
+//			int nBoneIndex = (pMesh->nBoneIndex!=-1) ? pMesh->nBoneIndex : bone;
+			RageVector3 &pos = Vertices->Position(j);
+			Sint8 bone = Vertices->Bone(j);
+			if (bone != -1)
 			{
-				pVertex->p[0] -= m_vpBones[pVertex->boneIndex].mAbsolute.m[3][0];
-				pVertex->p[1] -= m_vpBones[pVertex->boneIndex].mAbsolute.m[3][1];
-				pVertex->p[2] -= m_vpBones[pVertex->boneIndex].mAbsolute.m[3][2];
+				pos[0] -= m_vpBones[bone].mAbsolute.m[3][0];
+				pos[1] -= m_vpBones[bone].mAbsolute.m[3][1];
+				pos[2] -= m_vpBones[bone].mAbsolute.m[3][2];
+
 				RageVector3 vTmp;
 
 				RageMatrix inverse;
-				RageMatrixTranspose( &inverse, &m_vpBones[pVertex->boneIndex].mAbsolute );	// transpose = inverse for rotation matrices
-				RageVec3TransformNormal( &vTmp, &pVertex->p, &inverse );
+				RageMatrixTranspose( &inverse, &m_vpBones[bone].mAbsolute );	// transpose = inverse for rotation matrices
+				RageVec3TransformNormal( &vTmp, &pos, &inverse );
 				
-				pVertex->p = vTmp;
+				pos = vTmp;
 			}
 		}
 	}
@@ -822,24 +838,30 @@ void Model::Update( float fDelta )
 		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
 		{
 			msMesh *pMesh = &m_pGeometry->m_Meshes[i];
-			RageModelVertexVector& TempVertices = m_vTempVerticesByMesh[i];
-			for (int j = 0; j < (int)pMesh->Vertices.size(); j++)
+			RageModelVertexArray* pOrigVertices = pMesh->Vertices;
+			RageModelVertexArray* pTempVertices = m_vpTempVerticesByMesh[i];
+			for (unsigned j = 0; j < pOrigVertices->sizeVerts(); j++)
 			{
-				RageModelVertex& tempVert = TempVertices[j];
-				RageModelVertex& originalVert = pMesh->Vertices[j];
 
-				tempVert.t = originalVert.t;
+				RageVector3& tempPos = pTempVertices->Position(j);
+				RageVector3& originalPos = pOrigVertices->Position(j);
+				RageVector3& tempNormal = pTempVertices->Normal(j);
+				RageVector3& originalNormal = pOrigVertices->Normal(j);
+				RageVector2& tempTex = pTempVertices->TexCoord(j);
+				RageVector2& originalTex = pOrigVertices->TexCoord(j);
+				Sint8 bone = pOrigVertices->Bone(j);
+
+				tempTex = originalTex;
 				
-				if( originalVert.boneIndex == -1 )
+				if( bone == -1 )
 				{
-					tempVert.n = originalVert.n;
-					tempVert.p = originalVert.p;
+					tempNormal = originalNormal;
+					tempPos = originalPos;
 				}
 				else
 				{
-					int bone = originalVert.boneIndex;
-					RageVec3TransformNormal( &tempVert.n, &originalVert.n, &m_vpBones[bone].mFinal );
-					RageVec3TransformCoord( &tempVert.p, &originalVert.p, &m_vpBones[bone].mFinal );
+					RageVec3TransformNormal( &tempNormal, &originalNormal, &m_vpBones[bone].mFinal );
+					RageVec3TransformCoord( &tempPos, &originalPos, &m_vpBones[bone].mFinal );
 				}
 			}
 		}

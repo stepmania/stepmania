@@ -16,6 +16,7 @@
 #include "RageTexture.h"
 #include "RageTextureManager.h"
 #include "RageLog.h"
+#include "RageDisplay.h"
 
 AnimatedTexture::AnimatedTexture()
 {
@@ -122,4 +123,17 @@ void AnimatedTexture::Unload()
 	iCurState = 0;
 	fSecsIntoFrame = 0;
 }
+
+
+msMesh::msMesh()
+{
+	ZERO( szName );
+	Vertices = NULL;
+}
+
+msMesh::~msMesh()
+{
+	Vertices = NULL;
+}
+
 

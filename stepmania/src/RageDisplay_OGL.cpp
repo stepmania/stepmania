@@ -883,51 +883,111 @@ static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 	glNormalPointer(GL_FLOAT, 0, Normal);
 }
 
-#define SEND_CURRENT_MATRICES \
-	glMatrixMode( GL_PROJECTION );	\
-	glLoadMatrixf( (const float*)GetProjectionTop() );	\
-	RageMatrix modelView;	\
-	RageMatrixMultiply( &modelView, GetCentering(), GetViewTop() );	\
-	RageMatrixMultiply( &modelView, &modelView, GetWorldTop() );	\
-	glMatrixMode( GL_MODELVIEW );	\
-	glLoadMatrixf( (const float*)&modelView );	\
-
-static void SetupVertices( const RageModelVertex v[], int iNumVerts )
+void RageDisplay_OGL::SendCurrentMatrices()
 {
-	static float *Vertex, *Texture, *Normal;	
-	static int Size = 0;
-	if(iNumVerts > Size)
+	glMatrixMode( GL_PROJECTION );
+	glLoadMatrixf( (const float*)GetProjectionTop() );
+	RageMatrix modelView;
+	RageMatrixMultiply( &modelView, GetCentering(), GetViewTop() );
+	RageMatrixMultiply( &modelView, &modelView, GetWorldTop() );
+	glMatrixMode( GL_MODELVIEW );
+	glLoadMatrixf( (const float*)&modelView );
+}
+
+class RageModelVertexArraySW : public RageModelVertexArray
+{
+public:
+	RageModelVertexArraySW()
 	{
-		Size = iNumVerts;
-		delete [] Vertex;
-		delete [] Texture;
-		delete [] Normal;
-		Vertex = new float[Size*3];
-		Texture = new float[Size*2];
-		Normal = new float[Size*3];
+		m_sizeVerts = 0;
+		m_sizeTriangles = 0;
+		m_pPosition = NULL;
+		m_pTexture = NULL;
+		m_pNormal = NULL;
+		m_pBone = NULL;
+		m_pTriangles = NULL;
 	}
 
-	for(unsigned i = 0; i < unsigned(iNumVerts); ++i)
+	~RageModelVertexArraySW()
 	{
-		Vertex[i*3+0]  = v[i].p[0];
-		Vertex[i*3+1]  = v[i].p[1];
-		Vertex[i*3+2]  = v[i].p[2];
-		Texture[i*2+0] = v[i].t[0];
-		Texture[i*2+1] = v[i].t[1];
-		Normal[i*3+0] = v[i].n[0];
-		Normal[i*3+1] = v[i].n[1];
-		Normal[i*3+2] = v[i].n[2];
+		m_sizeVerts = 0;
+		m_sizeTriangles = 0;
+		SAFE_DELETE( m_pPosition );
+		SAFE_DELETE( m_pTexture );
+		SAFE_DELETE( m_pNormal );
+		SAFE_DELETE( m_pBone );
+		SAFE_DELETE( m_pTriangles );
 	}
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, Vertex);
+	
+	size_t sizeVerts() const
+	{
+		return m_sizeVerts;
+	}
+	void resizeVerts( size_t size )
+	{
+		SAFE_DELETE( m_pPosition );
+		SAFE_DELETE( m_pTexture );
+		SAFE_DELETE( m_pNormal );
+		SAFE_DELETE( m_pBone );
 
-	glDisableClientState(GL_COLOR_ARRAY);
+		m_sizeVerts = size;
+		m_pPosition = new RageVector3[size];
+		m_pTexture = new RageVector2[size];
+		m_pNormal = new RageVector3[size];
+		m_pBone = new Sint8[size];
+	}
 
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glTexCoordPointer(2, GL_FLOAT, 0, Texture);
+	size_t sizeTriangles() const
+	{
+		return m_sizeTriangles;
+	}
+	void resizeTriangles( size_t size )
+	{
+		SAFE_DELETE( m_pTriangles );
 
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glNormalPointer(GL_FLOAT, 0, Normal);
+		m_sizeTriangles = size;
+		m_pTriangles = new msTriangle[size];
+	}
+
+	RageVector3&	Position	( int index ) { return m_pPosition[index]; }
+	RageVector2&	TexCoord	( int index ) { return m_pTexture[index]; }
+	RageVector3&	Normal		( int index ) { return m_pNormal[index]; }
+	Sint8&			Bone		( int index ) { return m_pBone[index]; }
+	msTriangle&		Triangle	( int index ) { return m_pTriangles[index]; }
+
+	void SendVertices() const
+	{
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, 0, m_pPosition);
+
+		glDisableClientState(GL_COLOR_ARRAY);
+
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glTexCoordPointer(2, GL_FLOAT, 0, m_pTexture);
+
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glNormalPointer(GL_FLOAT, 0, m_pNormal);
+
+		glDrawElements( GL_TRIANGLES, m_sizeTriangles*3, GL_UNSIGNED_SHORT, m_pTriangles );
+	}
+protected:
+	size_t		m_sizeVerts;
+	size_t		m_sizeTriangles;
+	RageVector3 *m_pPosition;
+	RageVector2 *m_pTexture;
+	RageVector3 *m_pNormal;
+	Sint8		*m_pBone;
+	msTriangle	*m_pTriangles;
+};
+
+RageModelVertexArray* RageDisplay_OGL::CreateRageModelVertexArray()
+{
+	return new RageModelVertexArraySW;
+}
+
+void RageDisplay_OGL::DeleteRageModelVertexArray( RageModelVertexArray* p )
+{
+	delete p;
 }
 
 void RageDisplay_OGL::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
@@ -937,7 +997,7 @@ void RageDisplay_OGL::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
 	if(iNumVerts == 0)
 		return;
 
-	SEND_CURRENT_MATRICES;
+	SendCurrentMatrices();
 
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_QUADS, 0, iNumVerts );
@@ -950,7 +1010,7 @@ void RageDisplay_OGL::DrawFan( const RageSpriteVertex v[], int iNumVerts )
 	ASSERT( iNumVerts >= 3 );
 	glMatrixMode( GL_PROJECTION );
 
-	SEND_CURRENT_MATRICES;
+	SendCurrentMatrices();
 
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_TRIANGLE_FAN, 0, iNumVerts );
@@ -961,7 +1021,7 @@ void RageDisplay_OGL::DrawStrip( const RageSpriteVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );
 
-	SEND_CURRENT_MATRICES;
+	SendCurrentMatrices();
 
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_TRIANGLE_STRIP, 0, iNumVerts );
@@ -974,25 +1034,20 @@ void RageDisplay_OGL::DrawTriangles( const RageSpriteVertex v[], int iNumVerts )
 		return;
 	ASSERT( (iNumVerts%3) == 0 );
 
-	SEND_CURRENT_MATRICES;
+	SendCurrentMatrices();
 
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_TRIANGLES, 0, iNumVerts );
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_OGL::DrawIndexedTriangles( const RageModelVertex v[], int iNumVerts, const Uint16 pIndices[], int iNumIndices )
+void RageDisplay_OGL::DrawIndexedTriangles( const RageModelVertexArray *p )
 {
-	if( iNumIndices == 0 )
-		return;
-	ASSERT( (iNumIndices%3) == 0 );
+	SendCurrentMatrices();
 
-	SEND_CURRENT_MATRICES;
+	p->SendVertices();
 
-	SetupVertices( v, iNumVerts );
-//	glInterleavedArrays( RageSpriteVertexFormat, sizeof(RageSpriteVertex), v );
-	glDrawElements( GL_TRIANGLES, iNumIndices, GL_UNSIGNED_SHORT, pIndices );
-	StatsAddVerts( iNumIndices );
+	StatsAddVerts( p->sizeTriangles()*3 );
 }
 
 void RageDisplay_OGL::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
@@ -1005,7 +1060,7 @@ void RageDisplay_OGL::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, 
 		return;
 	}
 
-	SEND_CURRENT_MATRICES;
+	SendCurrentMatrices();
 
 	/* Draw a nice AA'd line loop.  One problem with this is that point and line
 	 * sizes don't always precisely match, which doesn't look quite right.

@@ -218,19 +218,21 @@ struct RageSpriteVertex	// has color
 	RageVector2		t;	// texture coordinates
 };
 
-struct RageModelVertex	// doesn't have color.  Relies on material color
-{
-	/* Zero out by default. */
-	RageModelVertex():
-		p(0,0,0),
-		n(0,0,0),
-		t(0,0)
-		{ }
-    RageVector3		p;	// position
-    RageVector3		n;	// normal
-	RageVector2		t;	// texture coordinates
-	Sint8			boneIndex;
-};
+
+//struct RageModelVertex	// doesn't have color.  Relies on material color
+//{
+//	/* Zero out by default. */
+//	RageModelVertex():
+//		p(0,0,0),
+//		n(0,0,0),
+//		t(0,0)
+//		{ }
+//    RageVector3		p;	// position
+//    RageVector3		n;	// normal
+//	RageVector2		t;	// texture coordinates
+//	Sint8			bone;
+//};
+
 
 // RageMatrix elements are specified in row-major order.  This
 // means that the translate terms are located in the fourth row and the

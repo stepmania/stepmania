@@ -125,3 +125,13 @@ void RageDisplay_Null::EndFrame()
 	ProcessStatsOnFlip();
 }
 	
+
+RageModelVertexArray* RageDisplay_Null::CreateRageModelVertexArray()
+{
+	ASSERT( 0 );
+	return NULL;
+}
+
+void RageDisplay_Null::DeleteRageModelVertexArray( RageModelVertexArray* p )
+{
+}

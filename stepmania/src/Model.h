@@ -69,9 +69,8 @@ private:
 	// If true, then render from m_vTempVerticesByBone.  
 	// Otherwise, render directly from the mesh's vertices
 	bool m_bUseTempVertices;
-	
-	typedef vector<RageModelVertex>	RageModelVertexVector;
-	vector<RageModelVertexVector>	m_vTempVerticesByMesh;
+
+	vector<RageModelVertexArray*>	m_vpTempVerticesByMesh;
 	
 	float		m_fCurrFrame;
 	CString		m_sDefaultAnimation;
