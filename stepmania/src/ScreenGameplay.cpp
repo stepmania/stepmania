@@ -236,12 +236,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 		float fPlayerX = (float) GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p];
 
-		// If solo-single is enabled..
-		/* XXX: Maybe this should be enabled for all ONE_PLAYER_ONE_CREDIT modes.
-		 * I don't feel like testing that right now, though. */
 		if( PREFSMAN->m_bSoloSingle && 
-			GAMESTATE->m_CurStyle == STYLE_DANCE_SINGLE &&
-			GAMESTATE->GetNumSidesJoined() == 1 )
+			GAMESTATE->GetCurrentStyleDef()->m_StyleType == StyleDef::ONE_PLAYER_ONE_CREDIT )
 			fPlayerX = SCREEN_WIDTH/2;
 
 		m_Player[p].SetX( fPlayerX );
