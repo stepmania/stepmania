@@ -642,7 +642,7 @@ void ScreenEz2SelectMusic::AfterMusicChange()
 		break;
 	case TYPE_SONG:
 		{
-			pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, m_arrayNotes );
+			pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef(), PLAYER_1, m_arrayNotes );
 			SortNotesArrayByDifficulty( m_arrayNotes );
 
 			m_Banner.SetFromSong( pSong );
