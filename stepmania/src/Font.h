@@ -11,11 +11,13 @@
 -----------------------------------------------------------------------------
 */
 
-#include "RageTexture.h"
+#include "RageTextureID.h"
 #include "RageUtil.h"
 #include "IniFile.h"
+#include "RageTypes.h"
 
 class FontPage;
+class RageTexture;
 
 struct glyph {
 	FontPage *fp;
