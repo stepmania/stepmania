@@ -591,15 +591,32 @@ static bool ImageIsLoadable( const CString &sPath )
 	return true;
 }
 
+/* Fix up song paths.  If there's a leading "./", be sure to keep it: it's
+ * a signal that the path is from the root directory, not the song directory. */
+void FixupPath( CString &path )
+{
+	/* Replace backslashes with slashes in all paths. */	
+	FixSlashesInPlace( path );
+
+	bool StartsWithDot = false;
+	if( path.Left(2) == "./" )
+		StartsWithDot = true;
+
+	CollapsePath( path );
+
+	/* Many imported files contain erroneous whitespace before or after
+	 * filenames.  Paths usually don't actually start or end with spaces,
+	 * so let's just remove it. */
+	TrimLeft( path );
+	TrimRight( path );
+
+	if( StartsWithDot )
+		path = "./" + path;
+}
+
 /* Songs in BlacklistImages will never be autodetected as song images. */
 void Song::TidyUpData()
 {
-	m_sSongDir.Replace( '\\', '/' );
-	m_sBannerFile.Replace( '\\', '/' );
-	m_sLyricsFile.Replace( '\\', '/' );
-	m_sBackgroundFile.Replace( '\\', '/' );
-	m_sCDTitleFile.Replace( '\\', '/' );
-	
 	if( !HasMusic() )
 	{
 		CStringArray arrayPossibleMusic;
@@ -721,24 +738,12 @@ void Song::TidyUpData()
 
 	CHECKPOINT_M( "Looking for images..." );
 
-	/* Replace backslashes with slashes in all paths. */	
-	FixSlashesInPlace( m_sMusicFile );
-	FixSlashesInPlace( m_sBannerFile );
-	FixSlashesInPlace( m_sBackgroundFile );
-	FixSlashesInPlace( m_sCDTitleFile );
-	FixSlashesInPlace( m_sLyricsFile );
-
-	/* Many imported files contain erroneous whitespace before or after
-	 * filenames.  Paths usually don't actually start or end with spaces,
-	 * so let's just remove it. */
-	TrimLeft(m_sBannerFile);
-	TrimRight(m_sBannerFile);
-	TrimLeft(m_sBackgroundFile);
-	TrimRight(m_sBackgroundFile);
-	TrimLeft(m_sCDTitleFile);
-	TrimRight(m_sCDTitleFile);
-	TrimLeft(m_sLyricsFile);
-	TrimRight(m_sLyricsFile);
+	FixupPath( m_sSongDir  );
+	FixupPath( m_sMusicFile  );
+	FixupPath( m_sBannerFile );
+	FixupPath( m_sLyricsFile );
+	FixupPath( m_sBackgroundFile );
+	FixupPath( m_sCDTitleFile );
 
 	//
 	// First, check the file name for hints.
@@ -1675,7 +1680,7 @@ CString Song::GetLyricsPath() const
 
 CString Song::GetCDTitlePath() const
 {
-	if( m_sCDTitleFile.Find('/') != -1 )
+	if( m_sCDTitleFile.Find('/') == -1 )
 		return m_sSongDir+m_sCDTitleFile;
 	return m_sCDTitleFile;
 }
