@@ -330,6 +330,15 @@ static void AssertNoGLError()
 	}
 }
 
+static void TurnOffHardwareVBO()
+{
+	if( GLExt::glBindBufferARB )
+	{
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
+		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
+	}
+}
+
 
 #if defined(__unix__) && !defined(unix)
 #define unix
@@ -964,6 +973,8 @@ public:
 	}
 	void Draw( int iMeshIndex ) const
 	{
+		TurnOffHardwareVBO();
+
 		const MeshInfo& meshInfo = m_vMeshInfo[iMeshIndex];
 
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -1071,9 +1082,6 @@ public:
 			NULL, 
 			GL_STATIC_DRAW_ARB );
 		AssertNoGLError();
-
-		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
-		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
 	}
 
 	void Change( const vector<msMesh> &vMeshes )
@@ -1086,7 +1094,7 @@ public:
 			GetTotalVertices()*sizeof(RageVector3), 
 			&m_vPosition[0], 
 			GL_STATIC_DRAW_ARB );
-		AssertNoGLError();
+//		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
 		GLExt::glBufferDataARB( 
@@ -1094,7 +1102,7 @@ public:
 			GetTotalVertices()*sizeof(RageVector2), 
 			&m_vTexture[0], 
 			GL_STATIC_DRAW_ARB );
-		AssertNoGLError();
+//		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
 		GLExt::glBufferDataARB( 
@@ -1102,7 +1110,7 @@ public:
 			GetTotalVertices()*sizeof(RageVector3), 
 			&m_vNormal[0], 
 			GL_STATIC_DRAW_ARB );
-		AssertNoGLError();
+//		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
 		GLExt::glBufferDataARB( 
@@ -1110,10 +1118,7 @@ public:
 			GetTotalTriangles()*sizeof(msTriangle), 
 			&m_vTriangles[0], 
 			GL_STATIC_DRAW_ARB );
-		AssertNoGLError();
-
-		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
-		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
+//		AssertNoGLError();
 	}
 	
 	void Draw( int iMeshIndex ) const
@@ -1124,29 +1129,30 @@ public:
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
-		AssertNoGLError();
+//		AssertNoGLError();
 		glVertexPointer(3, GL_FLOAT, 0, NULL );
-		AssertNoGLError();
+//		AssertNoGLError();
 
 		glDisableClientState(GL_COLOR_ARRAY);
 
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
-		AssertNoGLError();
+//		AssertNoGLError();
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
-		AssertNoGLError();
+//		AssertNoGLError();
 
 		glEnableClientState(GL_NORMAL_ARRAY);
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
-		AssertNoGLError();
+//		AssertNoGLError();
 		glNormalPointer(GL_FLOAT, 0, NULL);
-		AssertNoGLError();
+//		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
-		AssertNoGLError();
+//		AssertNoGLError();
 
 #define BUFFER_OFFSET(o) ((char*)(o))
 
+		ASSERT( GLExt::glDrawRangeElements);
 		GLExt::glDrawRangeElements( 
 			GL_TRIANGLES, 
 			meshInfo.iVertexStart,	// minimum array index contained in indices
@@ -1155,10 +1161,7 @@ public:
 			meshInfo.iTriangleCount*3,	// number of elements to be rendered
 			GL_UNSIGNED_SHORT,
 			BUFFER_OFFSET(meshInfo.iTriangleStart*sizeof(msTriangle)) );
-		AssertNoGLError();
-
-		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
-		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
+//		AssertNoGLError();
 	}
 };
 
@@ -1177,6 +1180,7 @@ void RageDisplay_OGL::DeleteCompiledGeometry( RageCompiledGeometry* p )
 
 void RageDisplay_OGL::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts )
 {
+	TurnOffHardwareVBO();
 	SendCurrentMatrices();
 
 	SetupVertices( v, iNumVerts );
@@ -1185,6 +1189,7 @@ void RageDisplay_OGL::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVer
 
 void RageDisplay_OGL::DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
 {
+	TurnOffHardwareVBO();
 	SendCurrentMatrices();
 
 	SetupVertices( v, iNumVerts );
@@ -1193,6 +1198,8 @@ void RageDisplay_OGL::DrawQuadStripInternal( const RageSpriteVertex v[], int iNu
 
 void RageDisplay_OGL::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts )
 {
+	TurnOffHardwareVBO();
+
 	glMatrixMode( GL_PROJECTION );
 
 	SendCurrentMatrices();
@@ -1203,6 +1210,7 @@ void RageDisplay_OGL::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts
 
 void RageDisplay_OGL::DrawStripInternal( const RageSpriteVertex v[], int iNumVerts )
 {
+	TurnOffHardwareVBO();
 	SendCurrentMatrices();
 
 	SetupVertices( v, iNumVerts );
@@ -1211,6 +1219,7 @@ void RageDisplay_OGL::DrawStripInternal( const RageSpriteVertex v[], int iNumVer
 
 void RageDisplay_OGL::DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts )
 {
+	TurnOffHardwareVBO();
 	SendCurrentMatrices();
 
 	SetupVertices( v, iNumVerts );
@@ -1219,6 +1228,7 @@ void RageDisplay_OGL::DrawTrianglesInternal( const RageSpriteVertex v[], int iNu
 
 void RageDisplay_OGL::DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex )
 {
+	TurnOffHardwareVBO();
 	SendCurrentMatrices();
 
 	p->Draw( iMeshIndex );
@@ -1226,6 +1236,8 @@ void RageDisplay_OGL::DrawCompiledGeometryInternal( const RageCompiledGeometry *
 
 void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
 {
+	TurnOffHardwareVBO();
+
 	if( !GetVideoModeParams().bSmoothLines )
 	{
 		/* Fall back on the generic polygon-based line strip. */
