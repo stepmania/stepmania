@@ -1259,16 +1259,13 @@ static void HandleSDLEvents()
 				LOG->Trace("App %s focus (%i%i)", g_bHasFocus? "has":"doesn't have",
 					i&SDL_APPINPUTFOCUS, i&SDL_APPACTIVE);
 
+				/* If we lose focus, we may lose input events, especially key releases. */
+				INPUTFILTER->Reset();
+
 				if(g_bHasFocus)
 					BoostAppPri();
 				else
-				{
 					RestoreAppPri();
-
-					/* If we lose focus, we may lose input events, especially key
-					 * releases. */
-					INPUTFILTER->Reset();
-				}
 			}
 		}
 	}
