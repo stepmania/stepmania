@@ -41,7 +41,8 @@ RageTextureManager::~RageTextureManager()
 		i != m_mapPathToTexture.end(); ++i)
 	{
 		RageTexture* pTexture = i->second;
-		LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i->first, pTexture->m_iRefCount );
+		if( pTexture->m_iRefCount )
+			LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i->first, pTexture->m_iRefCount );
 		SAFE_DELETE( pTexture );
 	}
 }
