@@ -165,7 +165,7 @@ void MemoryCardManager::ReassignCards()
 	{
 		m_Device[p].MakeBlank();
 
-		int i;
+		unsigned i;
 
 		// search for card dir match
 		if( !PREFSMAN->m_sMemoryCardDir[p].empty() )
