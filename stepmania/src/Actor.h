@@ -330,6 +330,7 @@ public:
 	virtual void RunCommands2( const LuaReference& cmds, Actor *pParent );
 	void RunCommands( const apActorCommands& cmds ) { this->RunCommands( *cmds ); }	// convenience
 	void RunCommands2( const apActorCommands& cmds, Actor *pParent ) { this->RunCommands2( *cmds, pParent ); }	// convenience
+	void SubscribeToMessage( const CString &sMessageName ); // will automatically unsubscribe
 
 	static float GetCommandsLengthSeconds( const LuaReference& cmds );
 	static float GetCommandsLengthSeconds( const apActorCommands& cmds ) { return GetCommandsLengthSeconds( *cmds ); }	// convenience

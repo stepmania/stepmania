@@ -939,8 +939,7 @@ void Actor::AddCommand( const CString &sCmdName, apActorCommands apac )
 	CString sMessage;
 	if( GetMessageNameFromCommandName(sCmdName, sMessage) )
 	{
-		MESSAGEMAN->Subscribe( this, sMessage );
-		m_vsSubscribedTo.push_back( sMessage );
+		SubscribeToMessage( sMessage );
 		m_mapNameToCommands[sMessage] = apac;	// sCmdName w/o "Message" at the end
 	}
 	else
@@ -975,6 +974,11 @@ void Actor::HandleMessage( const CString& sMessage )
 	PlayCommand( sMessage );
 }
 
+void Actor::SubscribeToMessage( const CString &sMessageName )
+{
+	MESSAGEMAN->Subscribe( this, sMessageName );
+	m_vsSubscribedTo.push_back( sMessageName );
+}
 
 /*
  * (c) 2001-2004 Chris Danford
