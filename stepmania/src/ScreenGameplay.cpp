@@ -83,40 +83,49 @@ ScreenGameplay::ScreenGameplay()
 {
 	LOG->WriteLine( "ScreenGameplay::ScreenGameplay()" );
 
-	m_bAutoPlayerWasOn = PREFSMAN->m_bAutoPlay;
-	m_bChangedOffsetOrBPM = false;
 
-	switch( GAMESTATE->m_PlayMode )
+	GAMESTATE->ResetStageStatistics();	// clear values
+	// Update possible dance points
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-	case PLAY_MODE_ARCADE:
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;	// skip
+
+		NoteData notedata;
+		switch( GAMESTATE->m_PlayMode )
 		{
-			m_apSongQueue.Add( GAMESTATE->m_pCurSong );
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				m_apNotesQueue[p].Add( GAMESTATE->m_pCurNotes[p] );
-		}
-		break;
-	case PLAY_MODE_ONI:
-		{
-			Course* pCourse = GAMESTATE->m_pCurCourse;
-			ASSERT( pCourse != NULL );
-
-			m_apSongQueue.RemoveAll();
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				m_apNotesQueue[p].RemoveAll();
-
-			pCourse->GetSongAndNotesForCurrentStyle( m_apSongQueue, m_apNotesQueue );
-
-			// store possible dance points in GAMESTATE
-			GAMESTATE->m_iCoursePossibleDancePoints = 0;
-			for( int i=0; i<m_apNotesQueue[PLAYER_1].GetSize(); i++ )
+		case PLAY_MODE_ARCADE:
+			GAMESTATE->m_pCurNotes[p]->GetNoteData( &notedata );
+			GAMESTATE->m_iPossibleDancePoints[p] = notedata.GetPossibleDancePoints();
+			break;
+		case PLAY_MODE_ENDLESS:
+			GAMESTATE->m_iPossibleDancePoints[p] = -1;
+			break;
+		case PLAY_MODE_ONI:
 			{
-				NoteData nd;
-				m_apNotesQueue[PLAYER_1][i]->GetNoteData( &nd );
-				GAMESTATE->m_iCoursePossibleDancePoints += nd.GetPossibleDancePoints();
+				GAMESTATE->m_iPossibleDancePoints[p] = 0;
+
+				Course* pCourse = GAMESTATE->m_pCurCourse;
+				CArray<Song*,Song*> apSongs;
+				CArray<Notes*,Notes*> apNotes[NUM_PLAYERS];
+				pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes );
+
+				for( int i=0; i<apNotes[p].GetSize(); i++ )
+				{
+					apNotes[p][i]->GetNoteData( &notedata );
+					int iPossibleDancePoints = notedata.GetPossibleDancePoints();
+					GAMESTATE->m_iPossibleDancePoints[p] += iPossibleDancePoints;
+				}
 			}
+			break;
 		}
-		break;
+
 	}
+
+
+
+	GAMESTATE->m_bUsedAutoPlayer &= PREFSMAN->m_bAutoPlay;
+	m_bChangedOffsetOrBPM = false;
 
 
 	m_DancingState = STATE_INTRO;
@@ -128,7 +137,7 @@ ScreenGameplay::ScreenGameplay()
 
 
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
@@ -145,19 +154,19 @@ ScreenGameplay::ScreenGameplay()
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		switch( GAMESTATE->m_PlayMode )
+		switch( GAMESTATE->m_SongOptions.m_LifeType )
 		{
-		case PLAY_MODE_ARCADE:
+		case SongOptions::LIFE_BAR:
 			m_pLifeMeter[p] = new LifeMeterBar;
 			break;
-		case PLAY_MODE_ONI:
+		case SongOptions::LIFE_BATTERY:
 			m_pLifeMeter[p] = new LifeMeterBattery;
 			break;
 		default:
 			ASSERT(0);
 		}
 
-		m_pLifeMeter[p]->Load( (PlayerNumber)p, GAMESTATE->m_PlayerOptions[p] );
+		m_pLifeMeter[p]->Load( (PlayerNumber)p );
 		m_pLifeMeter[p]->SetXY( LIFE_LOCAL_X[p], LIFE_LOCAL_Y[p] );
 		m_frameTop.AddSubActor( m_pLifeMeter[p] );
 		
@@ -220,6 +229,7 @@ ScreenGameplay::ScreenGameplay()
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
+		case PLAY_MODE_ENDLESS:
 			m_pScoreDisplay[p] = new ScoreDisplayNormal;
 			break;
 		case PLAY_MODE_ONI:
@@ -229,7 +239,7 @@ ScreenGameplay::ScreenGameplay()
 			ASSERT(0);
 		}
 
-		m_pScoreDisplay[p]->Init( (PlayerNumber)p, GAMESTATE->m_PlayerOptions[p], 100, 7 );
+		m_pScoreDisplay[p]->Init( (PlayerNumber)p );
 		m_pScoreDisplay[p]->SetXY( SCORE_LOCAL_X[p], SCORE_LOCAL_Y[p] );
 		m_pScoreDisplay[p]->SetZoom( 0.8f );
 		m_pScoreDisplay[p]->SetDiffuseColor( PlayerToColor(p) );
@@ -350,7 +360,7 @@ ScreenGameplay::ScreenGameplay()
 	m_soundAssistTick.Load(		THEME->GetPathTo(SOUND_GAMEPLAY_ASSIST_TICK) );
 
 
-	LoadNextSong( false );
+	LoadNextSong( true );
 
 	// Send some messages every have second to we can get the introduction rolling
 	for( int i=0; i<30; i++ )
@@ -370,37 +380,62 @@ ScreenGameplay::~ScreenGameplay()
 	m_soundMusic.Stop();
 }
 
-
-void ScreenGameplay::LoadNextSong( bool bPlayMusic )
+bool ScreenGameplay::IsLastSong()
 {
-	if( m_apSongQueue.GetSize() == 0 )
+	switch( GAMESTATE->m_PlayMode )
 	{
-		this->SendScreenMessage( SM_LastNotesEnded, 0 );
-		return;
+	case PLAY_MODE_ARCADE:
+		return true;
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		{
+			Course* pCourse = GAMESTATE->m_pCurCourse;
+			CArray<Song*,Song*> apSongs;
+			CArray<Notes*,Notes*> apNotes[NUM_PLAYERS];
+			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes );
+
+			return GAMESTATE->m_iCurrentStageIndex >= apSongs.GetSize();	// there are no more songs left
+		}
+		break;
+	default:
+		ASSERT(0);
+		return true;
+	}
+}
+
+void ScreenGameplay::LoadNextSong( bool bFirstLoad )
+{
+	GAMESTATE->ResetMusicStatistics();
+
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_ARCADE:
+		break;
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		{
+			Course* pCourse = GAMESTATE->m_pCurCourse;
+			CArray<Song*,Song*> apSongs;
+			CArray<Notes*,Notes*> apNotes[NUM_PLAYERS];
+			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes );
+
+			GAMESTATE->m_pCurSong = apSongs[GAMESTATE->m_iCurrentStageIndex];
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				GAMESTATE->m_pCurNotes[p] = apNotes[p][GAMESTATE->m_iCurrentStageIndex];
+		}
+		break;
+	default:
+		ASSERT(0);
+		break;
 	}
 
+	m_textStageNumber.SetText( GAMESTATE->GetStageText() );
 
-	int p;
 
-	// add a new GameplayStatistic for this song
-	GAMESTATE->m_aGameplayStatistics.Add( GameplayStatistics() );
 
-	GAMESTATE->m_pCurSong = m_apSongQueue[0];
-	m_apSongQueue.RemoveAt(0);
-
-	for( p=0; p<NUM_PLAYERS; p++ )
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		GAMESTATE->m_pCurNotes[p] = m_apNotesQueue[p][0];
-		m_apNotesQueue[p].RemoveAt(0);
-	}
-
-
-	// Get the current StyleDef definition (used below)
-	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
+		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 
 		m_DifficultyBanner[p].SetFromNotes( PlayerNumber(p), GAMESTATE->m_pCurNotes[p] );
@@ -409,27 +444,11 @@ void ScreenGameplay::LoadNextSong( bool bPlayMusic )
 		NoteData originalNoteData;
 		GAMESTATE->m_pCurNotes[p]->GetNoteData( &originalNoteData );
 		
+		StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 		NoteData newNoteData;
 		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &originalNoteData, &newNoteData );
 
-
-		// Fill in info about these notes in the latest GameplayStatistics
-		GAMESTATE->GetLatestGameplayStatistics().dc[p] = GAMESTATE->m_pCurNotes[p]->m_DifficultyClass;
-		GAMESTATE->GetLatestGameplayStatistics().meter[p] = GAMESTATE->m_pCurNotes[p]->m_iMeter;
-		GAMESTATE->GetLatestGameplayStatistics().iPossibleDancePoints[p] = newNoteData.GetPossibleDancePoints();
-		for( int r=0; r<NUM_RADAR_VALUES; r++ )
-			GAMESTATE->GetLatestGameplayStatistics().fRadarPossible[p][r] = newNoteData.GetRadarValue( (RadarCategory)r, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
-
-		m_Player[p].Load( 
-			(PlayerNumber)p,
-			GAMESTATE->GetCurrentStyleDef(),
-			&newNoteData, 
-			GAMESTATE->m_PlayerOptions[p],
-			m_pLifeMeter[p],
-			m_pScoreDisplay[p],
-			originalNoteData.GetNumTapNotes(),
-			GAMESTATE->m_pCurNotes[p]->m_iMeter
-		);
+		m_Player[p].Load( (PlayerNumber)p, &newNoteData, m_pLifeMeter[p], m_pScoreDisplay[p] );
 	}
 
 	
@@ -442,13 +461,8 @@ void ScreenGameplay::LoadNextSong( bool bPlayMusic )
 	float fStartSeconds = min( 0, -4+GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(GAMESTATE->m_pCurSong->m_fFirstBeat) );
 	m_soundMusic.SetPositionSeconds( fStartSeconds );
 	m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
-	if( bPlayMusic )
+	if( !bFirstLoad )
 		m_soundMusic.Play();
-
-	if( bPlayMusic )
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
-				m_pLifeMeter[p]->NextSong( NULL );
 }
 
 bool ScreenGameplay::OneIsHot()
@@ -507,29 +521,14 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	// update the global music statistics for other classes to access
 	GAMESTATE->m_fMusicSeconds = fPositionSeconds;
-	GAMESTATE->m_fMusicBeat = fSongBeat;
+	GAMESTATE->m_fSongBeat = fSongBeat;
 	GAMESTATE->m_fCurBPS = fBPS;
 	GAMESTATE->m_bFreeze = bFreeze;
 	
 
 	m_Background.SetSongBeat( fSongBeat, bFreeze, fPositionSeconds );
 
-	
 	//LOG->WriteLine( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
-
-	const float fMaxBeatDifference = fBPS * PREFSMAN->m_fJudgeWindow * GAMESTATE->m_SongOptions.m_fMusicRate;
-
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
-			continue;
-		m_Player[p].Update( fDeltaTime, fSongBeat, fMaxBeatDifference );
-	}
-
-	// update seconds into play
-	for( p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled((PlayerNumber)p)  &&  !m_pLifeMeter[p]->FailedEarlier() )
-			GAMESTATE->GetLatestGameplayStatistics().fSecsIntoPlay[p] = max( GAMESTATE->GetLatestGameplayStatistics().fSecsIntoPlay[p], GAMESTATE->m_fMusicSeconds );
 
 
 	switch( m_DancingState )
@@ -586,16 +585,16 @@ void ScreenGameplay::Update( float fDeltaTime )
 	// Send crossed row messages to Player
 	//
 	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
+	CLAMP( iRowNow, 0, MAX_TAP_NOTE_ROWS-1 );
 	static int iRowLastCrossed = 0;
+	CLAMP( iRowLastCrossed, 0, MAX_TAP_NOTE_ROWS-1 );
 
 	for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-				continue;		// skip
-
-			m_Player[p].CrossedRow( r, fSongBeat, fMaxBeatDifference );
+			if( GAMESTATE->IsPlayerEnabled(p) )
+				m_Player[p].CrossedRow( r );
 		}
 	}
 
@@ -626,7 +625,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 				if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 					continue;		// skip
 
-				m_Player[p].CrossedRow( r, fSongBeat, fMaxBeatDifference );
+				m_Player[p].CrossedRow( r );
 				bAnyoneHasANote |= m_Player[p].IsThereANoteAtRow( r );
 				break;	// this will only play the tick for the first player that is joined
 			}
@@ -663,7 +662,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		{
 		case DIK_F8:
 			PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
-			m_bAutoPlayerWasOn &= PREFSMAN->m_bAutoPlay;
+			GAMESTATE->m_bUsedAutoPlayer &= PREFSMAN->m_bAutoPlay;
 			m_textDebug.SetText( ssprintf("Autoplayer %s.", (PREFSMAN->m_bAutoPlay ? "ON" : "OFF")) );
 			m_textDebug.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 			m_textDebug.StopTweening();
@@ -725,8 +724,13 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		}
 	}
 
-	if( MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_BACK  &&  type == IET_SLOW_REPEAT )
+	if( MenuI.IsValid()  &&  
+		MenuI.button == MENU_BUTTON_BACK  &&  
+		type == IET_SLOW_REPEAT  &&  
+		m_DancingState != STATE_OUTRO  &&
+		!m_Fade.IsClosing() )
 	{
+		SOUND->PlayOnceStreamed( THEME->GetPathTo(SOUND_MENU_BACK) );
 		m_soundMusic.Stop();
 		this->ClearMessageQueue();
 		m_Fade.CloseWipingLeft( SM_GoToScreenAfterBack );
@@ -744,7 +748,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			if( StyleI.IsValid() )
 			{
 				if( GAMESTATE->IsPlayerEnabled( StyleI.player ) )
-					m_Player[StyleI.player].HandlePlayerStep( fSongBeat, StyleI.col, fMaxBeatDifference ); 
+					m_Player[StyleI.player].Step( StyleI.col ); 
 			}
 		}
 	}
@@ -752,16 +756,75 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 void SaveChanges( void* pContext )
 {
-	GAMESTATE->m_pCurSong->SaveToSMFile();
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_ARCADE:
+		GAMESTATE->m_pCurSong->SaveToSMFile();
+		break;
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		{
+			for( int i=0; i<GAMESTATE->m_pCurCourse->m_iStages; i++ )
+			{
+				Song* pSong = GAMESTATE->m_pCurCourse->m_apSongs[i];
+				pSong->SaveToSMFile();
+			}
+		}
+		break;
+	default:
+		ASSERT(0);
+	}
 }
 
 void DontSaveChanges( void* pContext )
 {
-	GAMESTATE->m_pCurSong->LoadFromSMFile( GAMESTATE->m_pCurSong->GetCacheFilePath() );
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_ARCADE:
+		GAMESTATE->m_pCurSong->LoadFromSMFile( GAMESTATE->m_pCurSong->GetCacheFilePath() );
+		break;
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		{
+			for( int i=0; i<GAMESTATE->m_pCurCourse->m_iStages; i++ )
+			{
+				Song* pSong = GAMESTATE->m_pCurCourse->m_apSongs[i];
+				pSong->LoadFromSMFile( GAMESTATE->m_pCurSong->GetCacheFilePath() );
+			}
+		}
+		break;
+	default:
+		ASSERT(0);
+	}
 }
 
 void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 {
+	CString sMessage;
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_ARCADE:
+		sMessage = ssprintf( 
+			"You have changed the offset or BPM of\n"
+			"%s.\n"
+			"Would you like to save these changes back\n"
+			"to the song file?\n"
+			"Choosing NO will disgard your changes.",
+			GAMESTATE->m_pCurSong->GetFullTitle() );
+		break;
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		sMessage = ssprintf( 
+			"You have changed the offset or BPM of\n"
+			"one or more songs in this course.\n"
+			"Would you like to save these changes back\n"
+			"to the song file(s)?\n"
+			"Choosing NO will disgard your changes." );
+		break;
+	default:
+		ASSERT(0);
+	}
+
 	SCREENMAN->AddScreenToTop( new ScreenPrompt(
 		SM_SendWhenDone,
 		ssprintf( 
@@ -820,28 +883,48 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	// received while STATE_DANCING
 	case SM_NotesEnded:
 		{
+			// save any statistics
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-					m_Player[p].SaveGameplayStatistics();
-			GAMESTATE->GetLatestGameplayStatistics().bAutoPlayerWasOn = m_bAutoPlayerWasOn;
-			LoadNextSong( true );
-		}
-		break;
-	case SM_LastNotesEnded:
-		{
-			if( m_DancingState == STATE_OUTRO )	// gameplay already ended
-				return;		// ignore
-
-			m_DancingState = STATE_OUTRO;
-
-			if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG  &&  AllFailedEarlier() )
 			{
-				this->SendScreenMessage( SM_BeginFailed, 0 );
+				if( GAMESTATE->IsPlayerEnabled(p) )
+				{
+					m_pLifeMeter[p]->SongEnded();	// let the oni life meter give them back a life
+					
+					for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
+					{
+						RadarCategory rc = (RadarCategory)r;
+						GAMESTATE->m_fRadarPossible[p][r] = m_Player[p].GetRadarValue( rc, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
+						GAMESTATE->m_fRadarActual[p][r] = m_Player[p].GetActualRadarValue( rc, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
+					}
+				}
 			}
-			else
+
+			GAMESTATE->m_apSongsPlayed.Add( GAMESTATE->m_pCurSong );
+
+			GAMESTATE->m_iCurrentStageIndex++;
+
+			if( !IsLastSong() )
 			{
-				m_StarWipe.CloseWipingRight( SM_ShowCleared );
-				m_announcerCleared.PlayRandom();	// crowd cheer
+				LoadNextSong( false );
+			}
+			else	// IsLastSong
+			{
+				if( m_DancingState == STATE_OUTRO )	// gameplay already ended
+					return;		// ignore
+
+				m_DancingState = STATE_OUTRO;
+
+				GAMESTATE->AccumulateStageStatistics();	// accumulate values for final evaluation
+
+				if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG  &&  AllFailedEarlier() )
+				{
+					this->SendScreenMessage( SM_BeginFailed, 0 );
+				}
+				else
+				{
+					m_StarWipe.CloseWipingRight( SM_ShowCleared );
+					m_announcerCleared.PlayRandom();	// crowd cheer
+				}
 			}
 		}
 		break;

@@ -24,7 +24,7 @@
 #include "TipDisplay.h"
 
 
-const float MENU_ELEMENTS_TWEEN_TIME	=	0.30f;
+const float MENU_ELEMENTS_TWEEN_TIME	=	0.5f;
 
 
 class MenuElements : public ActorFrame

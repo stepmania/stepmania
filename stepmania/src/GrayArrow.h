@@ -23,7 +23,7 @@ class GrayArrow : public Sprite
 public:
 	GrayArrow();
 
-	virtual void  SetBeat( const float fSongBeat );
+	virtual void  Update( float fDeltaTime );
 	void Step();
 };
 

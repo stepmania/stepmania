@@ -56,7 +56,8 @@ private:
 	void TweenOnScreen();
 	void TweenOffScreen();
 
-	void LoadNextSong( bool bPlayMusic );
+	bool IsLastSong();
+	void LoadNextSong( bool bFirstLoad );
 
 	bool OneIsHot();
 	bool AllAreInDanger();
@@ -70,11 +71,7 @@ private:
 		NUM_DANCING_STATES
 	};
 	DancingState			m_DancingState;
-	bool					m_bAutoPlayerWasOn;
 	bool					m_bChangedOffsetOrBPM;
-
-	CArray<Song*,Song*>		m_apSongQueue;	// nearest songs are on back of queue
-	CArray<Notes*,Notes*>	m_apNotesQueue[NUM_PLAYERS];	// nearest notes are on back of queue
 
 	float					m_fTimeLeftBeforeDancingComment;	// this counter is only running while STATE_DANCING
 

@@ -34,6 +34,8 @@ const ScreenMessage SM_GoToNextState	=	ScreenMessage(SM_User + 3);
 
 ScreenStage::ScreenStage()
 {
+	MUSIC->Stop();
+
 	m_pNextScreen = NULL;
 
 	m_textStage.Load( THEME->GetPathTo(FONT_STAGE) );

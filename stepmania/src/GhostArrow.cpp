@@ -26,11 +26,6 @@ void GhostArrow::Update( float fDeltaTime )
 	Sprite::Update( fDeltaTime );
 }
 
-void GhostArrow::SetBeat( const float fSongBeat )
-{
-	//SetState( fmodf(fSongBeat,1)<0.25 ? 1 : 0 );
-}
-
 void GhostArrow::Step( TapNoteScore score )
 {
 	switch( score )
@@ -47,5 +42,4 @@ void GhostArrow::Step( TapNoteScore score )
 	D3DXCOLOR colorTween = GetDiffuseColor();
 	colorTween.a = 0;
 	SetTweenDiffuseColor( colorTween );
-
 }

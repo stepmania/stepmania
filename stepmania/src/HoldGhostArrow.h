@@ -1,23 +1,17 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: HoldGhostArrow.h
+ Class: HoldGhostArrow
 
- Desc: Class used to represent a color arrow on the screen.
+ Desc: The "electricity around the stationary arrow as it's pressing a HoldNote.
 
- Copyright (c) 2001 Ben Norstrom.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Ben Nordstrom
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-
-class HoldGhostArrow;
-
-#ifndef _HoldGhostArrow_H_
-#define _HoldGhostArrow_H_
-
-
 #include "Sprite.h"
-#include "Notes.h"
-
 
 class HoldGhostArrow : public Sprite
 {
@@ -25,12 +19,11 @@ public:
 	HoldGhostArrow();
 
 	virtual void Update( float fDeltaTime );
+	virtual void DrawPrimitives();
 
-	void  SetBeat( const float fSongBeat );
 	void  Step();
 
 	bool m_bWasSteppedOnLastFrame;
-	float m_fHeatLevel;	// effects brightness of electricity - between 0 and 1
+	float m_fHeatLevel;	// brightness - between 0 and 1
 };
 
-#endif 

@@ -338,6 +338,8 @@ void ScreenSelectMusic::MenuLeft( const PlayerNumber p, const InputEventType typ
 	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) ) )
 		return;		// ignore
 	
+	MUSIC->Stop();
+
 	m_MusicWheel.PrevMusic();
 }
 
@@ -346,6 +348,8 @@ void ScreenSelectMusic::MenuRight( const PlayerNumber p, const InputEventType ty
 {
 	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) ) )
 		return;		// ignore
+
+	MUSIC->Stop();
 
 	m_MusicWheel.NextMusic();
 }

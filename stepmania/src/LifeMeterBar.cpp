@@ -57,11 +57,11 @@ LifeMeterBar::LifeMeterBar()
 	ResetBarVelocity();
 }
 
-void LifeMeterBar::Load( PlayerNumber p, const PlayerOptions &po )
+void LifeMeterBar::Load( PlayerNumber pn )
 {
-	LifeMeter::Load( p, po );
+	LifeMeter::Load( pn );
 
-	if( p == PLAYER_2 )
+	if( pn == PLAYER_2 )
 		m_frame.SetZoomX( -1 );
 }
 
@@ -139,7 +139,7 @@ bool LifeMeterBar::FailedEarlier()
 
 void LifeMeterBar::Update( float fDeltaTime )
 {
-	ActorFrame::Update( fDeltaTime );
+	LifeMeter::Update( fDeltaTime );
 
 	float fDelta = m_fLifePercentage - m_fTrailingLifePercentage;
 	m_fLifeVelocity += fDelta * fDeltaTime;		// accelerate

@@ -26,11 +26,12 @@ GrayArrowRow::GrayArrowRow()
 	m_iNumCols = 0;
 }
 
-void GrayArrowRow::Load( PlayerNumber pn, StyleDef* pStyleDef, PlayerOptions po )
+void GrayArrowRow::Load( PlayerNumber pn )
 {
-	m_PlayerOptions = po;
+	m_PlayerNumber = pn;
 
 	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
 	m_iNumCols = pStyleDef->m_iColsPerPlayer;
 
@@ -42,26 +43,23 @@ void GrayArrowRow::Load( PlayerNumber pn, StyleDef* pStyleDef, PlayerOptions po 
 	
 }
 
-void GrayArrowRow::Update( float fDeltaTime, float fSongBeat )
+void GrayArrowRow::Update( float fDeltaTime )
 {
-	m_fSongBeat = fSongBeat;
-
 	for( int c=0; c<m_iNumCols; c++ )
 	{
 		m_GrayArrow[c].Update( fDeltaTime );
-		m_GrayArrow[c].SetBeat( fSongBeat );
 	}
 }
 
 void GrayArrowRow::DrawPrimitives()
 {
-	if( m_PlayerOptions.m_bDark )
+	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bDark )
 		return;
 
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
 		// set arrow X
-		float fX = ArrowGetXPos( m_PlayerOptions, c, 0, m_fSongBeat );
+		float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
 		m_GrayArrow[c].SetX( fX );
 
 

@@ -413,14 +413,6 @@ inline NotesType StyleToNotesType ( Style s )
 
 */
 
-///////////////////////////
-// Options stuff
-///////////////////////////
-
-
-
-
-
 
 ///////////////////////////
 // Scoring stuff
@@ -432,7 +424,8 @@ enum TapNoteScore {
 	TNS_BOO,
 	TNS_GOOD,
 	TNS_GREAT,
-	TNS_PERFECT, 
+	TNS_PERFECT,
+	NUM_TAP_NOTE_SCORES
 };
 
 inline int TapNoteScoreToDancePoints( TapNoteScore tns )
@@ -460,7 +453,8 @@ enum HoldNoteScore
 { 
 	HNS_NONE,	// this HoldNote has not been scored yet
 	HNS_OK,		// the HoldNote has passed and was successfully held all the way through
-	HNS_NG		// the HoldNote has passed and they missed it
+	HNS_NG,		// the HoldNote has passed and they missed it
+	NUM_HOLD_NOTE_SCORES
 };
 
 

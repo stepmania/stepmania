@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
  Class: ScoreDisplayNormal
 
- Desc: A graphic displayed in the ScoreDisplayNormal during Dancing.
+ Desc: Shows point score during gameplay and used in some menus.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -21,23 +21,15 @@ class ScoreDisplayNormal : public ScoreDisplay
 public:
 	ScoreDisplayNormal();
 
-	virtual void Init( PlayerNumber pn, PlayerOptions po, int iOriginalNumNotes, int iNotesMeter );
-
-	virtual void SetScore( float fNewScore );
-	virtual int GetScore();
-	virtual void AddToScore( TapNoteScore score, int iCurCombo );
+	virtual void Init( PlayerNumber pn );
 
 	virtual void Update( float fDeltaTime );
 	virtual void Draw();
 
+	virtual void SetScore( float fNewScore );
+
 protected:
-	PlayerNumber m_PlayerNumber;
-	PlayerOptions m_PlayerOptions;
-	int m_iTotalNotes;
-	int m_iNotesMeter;
-
-	float m_fScore;
-
-	float m_fTrailingScore;
-	float m_fScoreVelocity;
+	float m_fScore;			// the actual score
+	float m_fTrailingScore;	// what is displayed temporarily
+	float m_fScoreVelocity;	// how fast trailing approaches real score
 };

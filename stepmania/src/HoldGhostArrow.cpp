@@ -1,8 +1,15 @@
 #include "stdafx.h"
-//
-// HoldGhostArrow.cpp: implementation of the GhostArrow class.
-//
-//////////////////////////////////////////////////////////////////////
+/*
+-----------------------------------------------------------------------------
+ Class: HoldGhostArrow
+
+ Desc: A graphic displayed in the HoldJudgement during Dancing.
+
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Ben Nordstrom
+	Chris Danford
+-----------------------------------------------------------------------------
+*/
 
 #include "HoldGhostArrow.h"
 #include "PrefsManager.h"
@@ -12,11 +19,6 @@
 
 const float  HOLD_GHOST_ARROW_TWEEN_TIME = 0.5f;
 
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
 HoldGhostArrow::HoldGhostArrow()
 {
 	m_bWasSteppedOnLastFrame = false;
@@ -24,7 +26,7 @@ HoldGhostArrow::HoldGhostArrow()
 
 //	LoadFromSpriteFile( THEME->GetPathTo(GRAPHIC_HOLD_GHOST_ARROW) );
 	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-	SetZoom( 1.1f );
+//	SetZoom( 1.1f );
 }
 
 void HoldGhostArrow::Update( float fDeltaTime )
@@ -32,17 +34,13 @@ void HoldGhostArrow::Update( float fDeltaTime )
 	Sprite::Update( fDeltaTime );
 
 	if( m_bWasSteppedOnLastFrame )
-	{
 		m_fHeatLevel += fDeltaTime * 4;
-		if( m_fHeatLevel >= 1 )
-			m_fHeatLevel = 1;
-	}
 	else
-	{
 		m_fHeatLevel -= fDeltaTime * 4;
-		if( m_fHeatLevel < 0 )
-			m_fHeatLevel = 0;
-	}
+
+	CLAMP( m_fHeatLevel, 0, 1 );
+//	if( m_fHeatLevel > 0 )
+//		printf( "m_fHeatLevel = %f\n", m_fHeatLevel );
 
 	int iStateNum = (int)min( m_fHeatLevel * GetNumStates(), GetNumStates()-1 );
 	SetState( iStateNum );
@@ -60,9 +58,9 @@ void HoldGhostArrow::Update( float fDeltaTime )
 	m_bWasSteppedOnLastFrame = false;	// reset for next frame
 }
 
-void HoldGhostArrow::SetBeat( const float fSongBeat )
+void HoldGhostArrow::DrawPrimitives()
 {
-	//SetState( fmod(fSongBeat,1)<0.25 ? 1 : 0 );
+	Sprite::DrawPrimitives();
 }
 
 void HoldGhostArrow::Step()

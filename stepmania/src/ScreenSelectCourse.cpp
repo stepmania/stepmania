@@ -151,6 +151,9 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, const InputEventType
 		return;
 	}
 
+	if( m_bMadeChoice )
+		return;
+
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
 }
 
@@ -235,7 +238,11 @@ void ScreenSelectCourse::MenuStart( const PlayerNumber p )
 
 		m_Menu.TweenOffScreenToBlack( SM_None, false );
 
-		GAMESTATE->m_pCurCourse = m_MusicWheel.GetSelectedCourse();
+		Course* pCourse = m_MusicWheel.GetSelectedCourse();
+		GAMESTATE->m_pCurCourse = pCourse;
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			pCourse->GetPlayerOptions( &GAMESTATE->m_PlayerOptions[p] );
+		pCourse->GetSongOptions( &GAMESTATE->m_SongOptions );
 
 		this->SendScreenMessage( SM_GoToNextState, 2.5f );
 		

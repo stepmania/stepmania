@@ -25,11 +25,12 @@ GhostArrowRow::GhostArrowRow()
 	m_iNumCols = 0;
 }
 
-void GhostArrowRow::Load( PlayerNumber pn, StyleDef* pStyleDef, PlayerOptions po )
+void GhostArrowRow::Load( PlayerNumber pn )
 {
-	m_PlayerOptions = po;
+	m_PlayerNumber = pn;
 
 	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
 	m_iNumCols = pStyleDef->m_iColsPerPlayer;
 
@@ -47,19 +48,13 @@ void GhostArrowRow::Load( PlayerNumber pn, StyleDef* pStyleDef, PlayerOptions po
 }
 
 
-void GhostArrowRow::Update( float fDeltaTime, float fSongBeat )
+void GhostArrowRow::Update( float fDeltaTime )
 {
-	m_fSongBeat = fSongBeat;
-
 	for( int c=0; c<m_iNumCols; c++ )
 	{
 		m_GhostArrowRow[c].Update( fDeltaTime );
 		m_GhostArrowRowBright[c].Update( fDeltaTime );
 		m_HoldGhostArrowRow[c].Update( fDeltaTime );
-
-		m_GhostArrowRow[c].SetBeat( fSongBeat );
-		m_GhostArrowRowBright[c].SetBeat( fSongBeat );
-		m_HoldGhostArrowRow[c].SetBeat( fSongBeat );
 	}
 }
 
@@ -67,7 +62,7 @@ void GhostArrowRow::DrawPrimitives()
 {
 	for( int c=0; c<m_iNumCols; c++ )
 	{
-		float fX = ArrowGetXPos( m_PlayerOptions, c, 0, m_fSongBeat );
+		float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
 		m_GhostArrowRow[c].SetX( fX );
 		m_GhostArrowRowBright[c].SetX( fX );
 		m_HoldGhostArrowRow[c].SetX( fX );

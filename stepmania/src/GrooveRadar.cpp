@@ -20,7 +20,7 @@
 
 float RADAR_VALUE_ROTATION( int iValueIndex ) {	return D3DX_PI/2 + D3DX_PI*2 / 5.0f * iValueIndex; }
 
-const float RADAR_EDGE_WIDTH	= 2;
+const float RADAR_EDGE_WIDTH	= 3;
 
 GrooveRadar::GrooveRadar()
 {
@@ -81,6 +81,7 @@ void GrooveRadar::TweenOffScreen()
 {
 	for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
 	{
+		m_sprRadarLabels[c].StopTweening();
 		m_sprRadarLabels[c].BeginTweening( 0.2f );
 		m_sprRadarLabels[c].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	}

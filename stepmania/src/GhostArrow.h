@@ -22,9 +22,6 @@ public:
 
 	virtual void Update( float fDeltaTime );
 
-	void  SetBeat( const float fSongBeat );
 	void  Step( TapNoteScore score );
-
-	float m_fVisibilityCountdown;
 };
 

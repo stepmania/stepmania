@@ -21,14 +21,13 @@
 class ScoreDisplay : public BitmapText
 {
 public:
-	virtual void Init( PlayerNumber pn, PlayerOptions po, int iOriginalNumNotes, int iNotesMeter ) = 0;
-
-	virtual void SetScore( float fNewScore ) = 0;
-	virtual int GetScore() = 0;
-	virtual void AddToScore( TapNoteScore score, int iCurCombo ) = 0;
+	virtual void Init( PlayerNumber pn ) { m_PlayerNumber = pn; };
 
 	virtual void Update( float fDeltaTime ) = 0;
 	virtual void Draw() = 0;
 
+	virtual void SetScore( float fNewScore ) = 0;
+
 protected:
+	PlayerNumber m_PlayerNumber;	// needed to look up statistics in GAMESTATE
 };

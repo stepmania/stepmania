@@ -20,12 +20,13 @@ class LifeMeterBar : public LifeMeter
 public:
 	LifeMeterBar();
 	
-	virtual void Load( PlayerNumber p, const PlayerOptions &po );
+	virtual void Load( PlayerNumber pn );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
 	virtual void ChangeLife( TapNoteScore score );
+	virtual void OnDancePointsChange() {};	// this life meter doesn't care
 	virtual bool IsInDanger();
 	virtual bool IsHot();
 	virtual bool IsFailing();
@@ -40,8 +41,6 @@ private:
 	Sprite		m_sprStreamNormal;
 	Sprite		m_sprStreamHot;
 	Sprite		m_sprFrame;
-
-	PlayerOptions m_PlayerOptions;
 
 	float		m_fLifePercentage;
 	float		m_fTrailingLifePercentage;	// this approaches m_fLifePercentage

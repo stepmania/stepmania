@@ -29,15 +29,10 @@ class NoteField : public NoteData, public ActorFrame
 {
 public:
 	NoteField();
-	virtual void Update( float fDeltaTime, float fSongBeat );
+	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
-
-	enum NoteFieldMode {
-		MODE_DANCING,
-		MODE_EDITING,
-	};
 	
-	void Load( NoteData* pNoteData, PlayerNumber p, StyleDef* pStyleDef, PlayerOptions po, int iPixelsToDrawBehind, int iPixelsToDrawAhead, NoteFieldMode mode );
+	void Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBehind, int iPixelsToDrawAhead );
 	void RemoveTapNoteRow( int iIndex );
 	void SetHoldNoteLife( int iIndex, float fLife );
 
@@ -55,15 +50,9 @@ protected:
 	inline void DrawBPMText( const int iIndex, const float fBPM );
 	inline void DrawFreezeText( const int iIndex, const float fBPM );
 
-	PlayerOptions	m_PlayerOptions;
-
+	PlayerNumber	m_PlayerNumber;
 	int				m_iPixelsToDrawBehind;
 	int				m_iPixelsToDrawAhead;
-
-	float			m_fSongBeat;
-
-
-	NoteFieldMode m_Mode;
 
 	// color arrows
 	ColorNote		m_ColorNote[MAX_NOTE_TRACKS];

@@ -19,6 +19,7 @@
 #include "Banner.h"
 #include "ScoreDisplayNormal.h"
 #include "BonusInfoFrame.h"
+#include "StageBox.h"
 #include "BannerWithFrame.h"
 
 
@@ -51,7 +52,8 @@ protected:
 	GradeDisplay		m_Grades[NUM_PLAYERS];
 	BitmapText			m_textOniPercent[NUM_PLAYERS];
 
-	BonusInfoFrame		m_BonusInfoFrame[NUM_PLAYERS];
+	BonusInfoFrame		m_BonusInfoFrame[NUM_PLAYERS];	// used in arcade
+	StageBox			m_StageBox[NUM_PLAYERS];	// used in Oni
 
 	Sprite				m_sprJudgeLabels[NUM_JUDGE_LINES];
 	BitmapText			m_textJudgeNumbers[NUM_JUDGE_LINES][NUM_PLAYERS];

@@ -23,18 +23,17 @@ class GhostArrowRow : public ActorFrame
 {
 public:
 	GhostArrowRow();
-	void Update( float fDeltaTime, float fSongBeat );
+	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	void Load( PlayerNumber pn, StyleDef* pStyleDef, PlayerOptions po );
+	void Load( PlayerNumber pn );
 	
 	void TapNote( int iCol, TapNoteScore score, bool bBright );
 	void HoldNote( int iCol );
 	
 protected:
 	int m_iNumCols;
-	float m_fSongBeat;
-	PlayerOptions m_PlayerOptions;
+	PlayerNumber m_PlayerNumber;
 
 	GhostArrow			m_GhostArrowRow[MAX_NOTE_TRACKS];
 	GhostArrowBright	m_GhostArrowRowBright[MAX_NOTE_TRACKS];

@@ -20,17 +20,17 @@ class GrayArrowRow : public ActorFrame
 {
 public:
 	GrayArrowRow();
-	virtual void Update( float fDeltaTime, float fSongBeat );
-	virtual void DrawPrimitives();
 
-	void Load( PlayerNumber pn, StyleDef* pStyleDef, PlayerOptions po );
+	void Load( PlayerNumber pn );
+
+	virtual void Update( float fDeltaTime );
+	virtual void DrawPrimitives();
 
 	void Step( int iCol );
 	
 protected:
 	int m_iNumCols;
-	float m_fSongBeat;
-	PlayerOptions m_PlayerOptions;
+	PlayerNumber m_PlayerNumber;
 
 	GrayArrow	m_GrayArrow[MAX_NOTE_TRACKS];
 };

@@ -1,8 +1,15 @@
 #include "stdafx.h"
-//
-// GhostArrowBright.cpp: implementation of the GhostArrowBright class.
-//
-//////////////////////////////////////////////////////////////////////
+/*
+-----------------------------------------------------------------------------
+ Class: GhostArrowBright
+
+ Desc: See header.
+
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Ben Nordstrom
+	Chris Danford
+-----------------------------------------------------------------------------
+*/
 
 #include "GhostArrowBright.h"
 #include "PrefsManager.h"
@@ -11,10 +18,6 @@
 const float  GRAY_ARROW_TWEEN_TIME = 0.5f;
 
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
 GhostArrowBright::GhostArrowBright()
 {
 //	Load( THEME->GetPathTo(GRAPHIC_BRIGHT_GHOST_ARROW) );
@@ -22,9 +25,9 @@ GhostArrowBright::GhostArrowBright()
 	TurnShadowOff();
 }
 
-void GhostArrowBright::SetBeat( const float fSongBeat )
+void GhostArrowBright::Update( float fDeltaTime )
 {
-	//SetState( fmodf(fSongBeat,1)<0.25 ? 1 : 0 );
+	Sprite::Update( fDeltaTime );
 }
 
 void GhostArrowBright::Step( TapNoteScore score )
@@ -44,5 +47,4 @@ void GhostArrowBright::Step( TapNoteScore score )
 	D3DXCOLOR colorTween = GetDiffuseColor();
 	colorTween.a = 0;
 	SetTweenDiffuseColor( colorTween );
-
 }

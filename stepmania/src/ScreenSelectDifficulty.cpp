@@ -63,8 +63,9 @@ const float DIFFICULTY_ARROW_X[NUM_DIFFICULTY_ITEMS][NUM_PLAYERS] = {
 };
 
 
-
 const float ARROW_SHADOW_OFFSET = 10;
+
+const float LOCK_INPUT_TIME = 0.75f;	// lock input while waiting for tweening to complete
 
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
@@ -176,6 +177,8 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 
 	m_Menu.TweenOnScreenFromMenu( SM_None );
 	TweenOnScreen();
+
+	m_fLockInputTime = LOCK_INPUT_TIME;
 }
 
 
@@ -193,7 +196,16 @@ void ScreenSelectDifficulty::Input( const DeviceInput& DeviceI, const InputEvent
 	if( m_Menu.IsClosing() )
 		return;
 
+	if( m_fLockInputTime > 0 )
+		return;
+
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
+}
+
+void ScreenSelectDifficulty::Update( float fDeltaTime )
+{
+	Screen::Update( fDeltaTime );
+	m_fLockInputTime = max( m_fLockInputTime-fDeltaTime, 0 );
 }
 
 void ScreenSelectDifficulty::DrawPrimitives()

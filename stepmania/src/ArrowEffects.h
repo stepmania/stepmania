@@ -20,30 +20,30 @@
 //	fYOffset is a vertical position in pixels relative to the center.
 //	(positive if has not yet been stepped on, negative if has already passed).
 //	The ArrowEffect is applied in this stage.
-float ArrowGetYOffset( const PlayerOptions& po, float fStepIndex, float fSongBeat );
+float ArrowGetYOffset( const PlayerNumber pn, float fStepIndex );
 
 
 //	fXPos is a horizontal position in pixels relative to the center of the field.
 //	This depends on the column of the arrow and possibly the Arrow effect and
 //	fYOffset (in the case of EFFECT_DRUNK).
-float ArrowGetXPos(	const PlayerOptions& po, int iCol, float fYOffset, float fSongBeat );
+float ArrowGetXPos(	const PlayerNumber pn, int iCol, float fYOffset );
 
 
 //	fRotation is Z rotation of an arrow.  This will depend on the column of 
 //	the arrow and possibly the Arrow effect and the fYOffset (in the case of 
 //	EFFECT_DIZZY).
-float ArrowGetRotation(	const PlayerOptions& po, int iCol, float fYOffset );
+float ArrowGetRotation(	const PlayerNumber pn, int iCol, float fYOffset );
 
 
 //	fYPos is the position of the note in pixels relative to the center.
 //	(positive if has not yet been stepped on, negative if has already passed).
 //	This value is fYOffset with bReverseScroll and fScrollSpeed factored in.
-float ArrowGetYPos(	const PlayerOptions& po, float fYOffset );
+float ArrowGetYPos(	const PlayerNumber pn, float fYOffset );
 
 
 //	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 //	ArrowAppearance.
-float ArrowGetAlpha( const PlayerOptions& po, float fYPos );
+float ArrowGetAlpha( const PlayerNumber pn, float fYPos );
 
 
 #endif 

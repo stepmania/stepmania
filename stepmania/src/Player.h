@@ -34,32 +34,31 @@
 #include "NoteDataWithScoring.h"
 
 
-struct GameplayStatistics;
-
 class Player : public NoteDataWithScoring, public ActorFrame
 {
 public:
 	Player();
 
-	void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
-	void DrawPrimitives();
+	virtual void Update( float fDeltaTime );
+	virtual void DrawPrimitives();
 
-	void Load( PlayerNumber player_no, StyleDef *pStyleDef, NoteData* pNoteData, const PlayerOptions& po, LifeMeter* pLM, ScoreDisplay* pScore, int iOriginalNumNotes, int iNotesMeter );
-	void CrossedRow( int iNoteRow, float fSongBeat, float fMaxBeatDiff );
-	void HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff );
-	int UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
+	void Load( PlayerNumber player_no, NoteData* pNoteData, LifeMeter* pLM, ScoreDisplay* pScore );
+	void CrossedRow( int iNoteRow );
+	void Step( int col );
 
-	void SaveGameplayStatistics();
 
 	void	SetOverrideAdd( float fAdd )	{ m_NoteField.m_fOverrideAdd = fAdd; };
 	float	GetOverrideAdd()				{ return m_NoteField.m_fOverrideAdd; };
 
 protected:
-	void OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int iStepIndex );
+	int UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
+	void OnRowDestroyed( int col, int iStepIndex );
+	void HandleNoteScore( TapNoteScore score );
+	void HandleNoteScore( HoldNoteScore score );
 
-	float			m_fSongBeat;
+	static float GetMaxBeatDifference();
+
 	PlayerNumber	m_PlayerNumber;
-	PlayerOptions	m_PlayerOptions;
 
 	float			m_fHoldNoteLife[MAX_TAP_NOTE_ROWS];	// 1.0 means this HoldNote has full life.
 														// 0.0 means this HoldNote is dead
@@ -67,7 +66,9 @@ protected:
 														// m_HoldScore becomes HSS_NG.
 														// If the life is > 0.0 when the HoldNote ends, then
 														// m_HoldScore becomes HSS_OK.
-
+	int				m_iNumTapNotes;	// num of TapNotes for the current notes needed by scoring
+	int				m_iTapNotesHit;	// number of notes judged so far, needed by scoring
+	int				m_iMeter;		// meter of current steps, needed by scoring
 
 	GrayArrowRow		m_GrayArrowRow;
 	NoteField			m_NoteField;

@@ -14,7 +14,6 @@
 
 #include "Song.h"
 #include "Course.h"
-#include "GameplayStatistics.h"
 //#include <d3dxmath.h>	// for D3DXCOLOR
 
 const int MAX_SONG_QUEUE_SIZE = 400;	// this has to be gigantic to fit an "endless" number of songs

@@ -248,14 +248,6 @@ SOURCE=.\GameInput.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\GameplayStatistics.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GameplayStatistics.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\GameTypes.h
 # End Source File
 # Begin Source File
@@ -685,6 +677,14 @@ SOURCE=.\SongInfoFrame.cpp
 # Begin Source File
 
 SOURCE=.\SongInfoFrame.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\StageBox.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\StageBox.h
 # End Source File
 # Begin Source File
 

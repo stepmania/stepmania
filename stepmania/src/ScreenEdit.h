@@ -41,13 +41,11 @@ protected:
 	void OnSnapModeChange();
 
 
-	enum EditMode { MODE_EDIT, MODE_RECORD, MODE_PLAY };
-	EditMode m_Mode;
+	enum EditMode { MODE_EDITING, MODE_RECORDING, MODE_PLAYING };
+	EditMode m_EditMode;
 
 	Song*			m_pSong;
 	Notes*			m_pNotes;
-
-	PlayerOptions	m_PlayerOptions;
 
 	Sprite			m_sprBackground;
 
@@ -59,8 +57,7 @@ protected:
 	BitmapText				m_textHelp;
 
 	// keep track of where we are and what we're doing
-	float				m_fTrailingBeat;	// this approaches m_fBeat
-	float				m_fBeat;
+	float				m_fBeat;	// make GAMESTATE->m_fSongBeat approach this
 
 	NoteData			m_Clipboard;
 

@@ -26,6 +26,7 @@ public:
 	ScreenSelectDifficulty();
 	virtual ~ScreenSelectDifficulty();
 
+	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
@@ -64,6 +65,8 @@ private:
 
 	int m_iSelection[NUM_PLAYERS];
 	bool m_bChosen[NUM_PLAYERS];
+
+	float m_fLockInputTime;
 };
 
 

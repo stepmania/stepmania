@@ -142,12 +142,12 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 void MenuElements::TweenTopLayerOnScreen()
 {
 	m_frameTopBar.SetXY( CENTER_X+SCREEN_WIDTH, m_sprTopEdge.GetZoomedHeight()/2 );
-	m_frameTopBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME*2, TWEEN_SPRING );
+	m_frameTopBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, TWEEN_SPRING );
 	m_frameTopBar.SetTweenX( CENTER_X );
 
 	float fOriginalZoom = m_textHelp.GetZoomY();
 	m_textHelp.SetZoomY( 0 );
-	m_textHelp.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+	m_textHelp.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
 	m_textHelp.SetTweenZoomY( fOriginalZoom );
 }
 
@@ -160,10 +160,10 @@ void MenuElements::TweenOnScreenFromMenu( ScreenMessage smSendWhenDone )
 
 void MenuElements::TweenTopLayerOffScreen()
 {
-	m_frameTopBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME*2, TWEEN_BIAS_END );
+	m_frameTopBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, TWEEN_BIAS_END );
 	m_frameTopBar.SetTweenX( SCREEN_WIDTH*1.5f );
 
-	m_textHelp.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+	m_textHelp.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
 	m_textHelp.SetTweenZoomY( 0 );
 }
 
@@ -178,22 +178,24 @@ void MenuElements::TweenOffScreenToMenu( ScreenMessage smSendWhenDone )
 void MenuElements::TweenBottomLayerOnScreen()
 {
 	m_frameBottomBar.SetXY( CENTER_X, SCREEN_HEIGHT + m_sprBottomEdge.GetZoomedHeight()/2 );
-	m_frameBottomBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+	m_frameBottomBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
 	m_frameBottomBar.SetTweenY( SCREEN_HEIGHT - m_sprBottomEdge.GetZoomedHeight()/2 );
 
 	m_sprBG.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
-	m_sprBG.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+	m_sprBG.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
 	m_sprBG.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
 
 }
 
 void MenuElements::TweenBottomLayerOffScreen()
 {
-	m_frameBottomBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+	m_frameBottomBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
 	m_frameBottomBar.SetTweenY( SCREEN_HEIGHT + m_sprTopEdge.GetZoomedHeight() );
 
 	m_sprBG.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-	m_sprBG.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+	m_sprBG.StopTweening();
+	m_sprBG.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME*3/2.0f );	// sleep
+	m_sprBG.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME/2 );	// fade
 	m_sprBG.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,1) );
 }
 
@@ -211,6 +213,7 @@ void MenuElements::TweenOffScreenToBlack( ScreenMessage smSendWhenDone, bool bPl
 	{
 		TweenTopLayerOffScreen();
 		TweenBottomLayerOffScreen();
+		m_Invisible.SetTransitionTime( MENU_ELEMENTS_TWEEN_TIME*2 );
 		m_Invisible.CloseWipingRight( smSendWhenDone );
 	}
 	else

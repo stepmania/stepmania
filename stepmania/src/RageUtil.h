@@ -19,6 +19,7 @@
 #define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
 
 #define ZERO(x)					memset(&x, 0, sizeof(x))
+#define COPY(a,b)				{ ASSERT(sizeof(a)==sizeof(b)); memcpy(&a, &b, sizeof(a)); }
 
 #define RECTWIDTH(rect)   ((rect).right  - (rect).left)
 #define RECTHEIGHT(rect)  ((rect).bottom - (rect).top)
@@ -31,6 +32,14 @@ inline int RECTCENTERY(RECT rect) { return rect.top + (rect.bottom-rect.top)/2; 
 
 #ifndef min
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
+
+#ifndef MAX
+#define MAX(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef MIN
+#define MIN(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 
 #define clamp(val,low,high)		( max( (low), min((val),(high)) ) )

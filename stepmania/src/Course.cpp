@@ -19,6 +19,8 @@
 #include "RageException.h"
 #include "RageLog.h"
 #include "MsdFile.h"
+#include "PlayerOptions.h"
+#include "SongOptions.h"
 
 
 void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
@@ -159,6 +161,19 @@ D3DXCOLOR Course::GetColor()
 		return D3DXCOLOR(1,0.5f,0,1);	// orange
 	else
 		return D3DXCOLOR(0,1,0,1);	// green
+}
+
+void Course::GetPlayerOptions( PlayerOptions* pPO_out )
+{
+	*pPO_out = PlayerOptions();
+}
+
+void Course::GetSongOptions( SongOptions* pSO_out )
+{
+	*pSO_out = SongOptions();
+	pSO_out->m_LifeType = (m_iLives==-1) ? SongOptions::LIFE_BAR : SongOptions::LIFE_BATTERY;
+	if( m_iLives != -1 )
+		pSO_out->m_iBatteryLives = m_iLives;
 }
 
 //

@@ -144,6 +144,8 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 		case GRAPHIC_EVALUATION_BANNER_FRAME:			sAssetPrefix = "Graphics\\evaluation banner frame";			break;
 		case GRAPHIC_EVALUATION_BONUS_FRAME_P1:			sAssetPrefix = "Graphics\\evaluation bonus frame p1";		break;
 		case GRAPHIC_EVALUATION_BONUS_FRAME_P2:			sAssetPrefix = "Graphics\\evaluation bonus frame p2";		break;
+		case GRAPHIC_EVALUATION_STAGE_FRAME_P1:			sAssetPrefix = "Graphics\\evaluation stage frame p1";		break;
+		case GRAPHIC_EVALUATION_STAGE_FRAME_P2:			sAssetPrefix = "Graphics\\evaluation stage frame p2";		break;
 		case GRAPHIC_EVALUATION_GRADE_FRAME:			sAssetPrefix = "Graphics\\evaluation grade frame 1x2";		break;
 		case GRAPHIC_EVALUATION_GRADES:					sAssetPrefix = "Graphics\\evaluation grades 1x7";			break;
 		case GRAPHIC_EVALUATION_JUDGE_LABELS:			sAssetPrefix = "Graphics\\evaluation judge labels 1x6";		break;

@@ -36,20 +36,19 @@ NoteField::NoteField()
 	m_rectMarkerBar.TurnShadowOff();
 	m_rectMarkerBar.SetEffectGlowing();
 
-	m_Mode = MODE_DANCING;
-
 	m_fBeginMarker = m_fEndMarker = -1;
 
 	m_fOverrideAdd = -1;
 }
 
 
-void NoteField::Load( NoteData* pNoteData, PlayerNumber p, StyleDef* pStyleDef, PlayerOptions po, int iPixelsToDrawBehind, int iPixelsToDrawAhead, NoteFieldMode mode )
+void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBehind, int iPixelsToDrawAhead )
 {
-	m_PlayerOptions = po;
+	m_PlayerNumber = pn;
 	m_iPixelsToDrawBehind = iPixelsToDrawBehind;
 	m_iPixelsToDrawAhead = iPixelsToDrawAhead;
-	m_Mode = mode;
+
+	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
 	this->CopyAll( pNoteData );
 
@@ -59,7 +58,7 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber p, StyleDef* pStyleDef, 
 		CArray<D3DXCOLOR,D3DXCOLOR>	arrayTweenColors;
 		GAMEMAN->GetTweenColors( c, arrayTweenColors );
 
-		m_ColorNote[c].Load( c, p );
+		m_ColorNote[c].Load( c, pn );
 	}
 
 
@@ -70,9 +69,8 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber p, StyleDef* pStyleDef, 
 	ASSERT( m_iNumTracks == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
 }
 
-void NoteField::Update( float fDeltaTime, float fSongBeat )
+void NoteField::Update( float fDeltaTime )
 {
-	m_fSongBeat = fSongBeat;
 	m_rectMarkerBar.Update( fDeltaTime );
 }
 
@@ -81,22 +79,22 @@ void NoteField::Update( float fDeltaTime, float fSongBeat )
 
 void NoteField::CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, const float fIndex, const D3DXCOLOR color )
 {
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerOptions, fIndex, m_fSongBeat );
-	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
-	const float fRotation	= ArrowGetRotation(	m_PlayerOptions, iCol, fYOffset );
-	const float fXPos		= ArrowGetXPos(		m_PlayerOptions, iCol, fYOffset, m_fSongBeat );
-	const float fAlpha		= ArrowGetAlpha(	m_PlayerOptions, fYPos );
+	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, fIndex );
+	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
+	const float fRotation	= ArrowGetRotation(	m_PlayerNumber, iCol, fYOffset );
+	const float fXPos		= ArrowGetXPos(		m_PlayerNumber, iCol, fYOffset );
+	const float fAlpha		= ArrowGetAlpha(	m_PlayerNumber, fYPos );
 
 	D3DXCOLOR colorLeading, colorTrailing;	// of the color part.  Alpha here be overwritten with fAlpha!
 	if( color.a == -1 )	// indicated "NULL"
-		m_ColorNote[iCol].GetEdgeColorsFromIndexAndBeat( roundf(fIndex), m_fSongBeat, m_PlayerOptions.m_ColorType, colorLeading, colorTrailing );
+		m_ColorNote[iCol].GetEdgeColorsFromIndexAndBeat( roundf(fIndex), colorLeading, colorTrailing );
 	else
 		colorLeading = colorTrailing = color;
 
 	float fAddAlpha = m_ColorNote[iCol].GetAddAlphaFromDiffuseAlpha( fAlpha );
 	if( m_fOverrideAdd != -1 )
 		fAddAlpha = m_fOverrideAdd;
-	int iGrayPartFrameNo = m_ColorNote[iCol].GetGrayPartFrameNoFromIndexAndBeat( roundf(fIndex), m_fSongBeat );
+	int iGrayPartFrameNo = m_ColorNote[iCol].GetGrayPartFrameNoFromIndexAndBeat( roundf(fIndex), GAMESTATE->m_fSongBeat );
 
 
 	ColorNoteInstance instance = { fXPos, fYPos, fRotation, fAlpha, colorLeading, colorTrailing, fAddAlpha, iGrayPartFrameNo };
@@ -107,14 +105,14 @@ void NoteField::CreateHoldNoteInstance( ColorNoteInstance &cni, const bool bActi
 {
 	const int iCol = hn.m_iTrack;
 
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerOptions, fIndex, m_fSongBeat );
-	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
-	const float fRotation	= ArrowGetRotation(	m_PlayerOptions, iCol, fYOffset );
-	const float fXPos		= ArrowGetXPos(		m_PlayerOptions, iCol, fYOffset, m_fSongBeat );
-	const float fAlpha			= ArrowGetAlpha(	m_PlayerOptions, fYPos );
+	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, fIndex );
+	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
+	const float fRotation	= ArrowGetRotation(	m_PlayerNumber, iCol, fYOffset );
+	const float fXPos		= ArrowGetXPos(		m_PlayerNumber, iCol, fYOffset );
+	const float fAlpha		= ArrowGetAlpha(	m_PlayerNumber, fYPos );
 
 	int iGrayPartFrameNo;
-	if( bActive  &&  m_Mode == MODE_DANCING )
+	if( bActive )
 		iGrayPartFrameNo = m_ColorNote[iCol].GetGrayPartFrameNoFull();
 	else
 		iGrayPartFrameNo = m_ColorNote[iCol].GetGrayPartFrameNoClear();
@@ -135,8 +133,8 @@ void NoteField::CreateHoldNoteInstance( ColorNoteInstance &cni, const bool bActi
 
 void NoteField::DrawMeasureBar( const int iIndex, const int iMeasureNo )
 {
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerOptions, (float)iIndex, m_fSongBeat );
-	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
+	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, (float)iIndex );
+	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
 	m_rectMeasureBar.SetXY( 0, fYPos );
 	m_rectMeasureBar.SetWidth( (float)(m_iNumTracks+1) * ARROW_SIZE );
@@ -153,8 +151,8 @@ void NoteField::DrawMeasureBar( const int iIndex, const int iMeasureNo )
 
 void NoteField::DrawMarkerBar( const int iIndex )
 {
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerOptions, (float)iIndex, m_fSongBeat );
-	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
+	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, (float)iIndex );
+	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
 	m_rectMarkerBar.SetXY( 0, fYPos );
 	m_rectMarkerBar.SetWidth( (float)(m_iNumTracks+1) * ARROW_SIZE );
@@ -165,8 +163,8 @@ void NoteField::DrawMarkerBar( const int iIndex )
 
 void NoteField::DrawBPMText( const int iIndex, const float fBPM )
 {
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerOptions, (float)iIndex, m_fSongBeat );
-	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
+	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, (float)iIndex );
+	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
 	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(1,0,0,1) );
 	m_textMeasureNumber.SetAddColor( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
@@ -177,8 +175,8 @@ void NoteField::DrawBPMText( const int iIndex, const float fBPM )
 
 void NoteField::DrawFreezeText( const int iIndex, const float fSecs )
 {
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerOptions, (float)iIndex, m_fSongBeat );
-	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
+	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, (float)iIndex );
+	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
 	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,0,1) );
 	m_textMeasureNumber.SetAddColor( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
@@ -191,19 +189,18 @@ void NoteField::DrawPrimitives()
 {
 	//LOG->WriteLine( "NoteField::DrawPrimitives()" );
 
-	if( m_fSongBeat < 0 )
-		m_fSongBeat = 0;
+	float fSongBeat = max( 0, GAMESTATE->m_fSongBeat );
 
-	int iBaseFrameNo = (int)(m_fSongBeat*2.5) % NUM_FRAMES_IN_COLOR_ARROW_SPRITE;	// 2.5 is a "fudge number" :-)  This should be based on BPM
+	int iBaseFrameNo = (int)(fSongBeat*2.5) % NUM_FRAMES_IN_COLOR_ARROW_SPRITE;	// 2.5 is a "fudge number" :-)  This should be based on BPM
 	
-	const float fBeatsToDrawBehind = m_iPixelsToDrawBehind * (1/(float)ARROW_SIZE) * (1/m_PlayerOptions.m_fArrowScrollSpeed);
-	const float fBeatsToDrawAhead  = m_iPixelsToDrawAhead  * (1/(float)ARROW_SIZE) * (1/m_PlayerOptions.m_fArrowScrollSpeed);
-	const int iIndexFirstArrowToDraw = max( 0, BeatToNoteRow( m_fSongBeat - fBeatsToDrawBehind ) );
-	const int iIndexLastArrowToDraw  = BeatToNoteRow( m_fSongBeat + fBeatsToDrawAhead );
+	const float fBeatsToDrawBehind = m_iPixelsToDrawBehind * (1/(float)ARROW_SIZE) * (1/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed);
+	const float fBeatsToDrawAhead  = m_iPixelsToDrawAhead  * (1/(float)ARROW_SIZE) * (1/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed);
+	const int iIndexFirstArrowToDraw = max( 0, BeatToNoteRow( fSongBeat - fBeatsToDrawBehind ) );
+	const int iIndexLastArrowToDraw  = BeatToNoteRow( fSongBeat + fBeatsToDrawAhead );
 
 	//LOG->WriteLine( "Drawing elements %d through %d", iIndexFirstArrowToDraw, iIndexLastArrowToDraw );
 
-	if( m_Mode == MODE_EDITING )
+	if( GAMESTATE->m_bEditing )
 	{
 		//
 		// Draw measure bars
@@ -284,25 +281,25 @@ void NoteField::DrawPrimitives()
 
 
 			// If this note was in the past and has life > 0, then it was completed and don't draw it!
-			if( hn.m_iEndIndex < BeatToNoteRow(m_fSongBeat)  &&  fLife > 0 )
+			if( hn.m_iEndIndex < BeatToNoteRow(fSongBeat)  &&  fLife > 0 )
 				continue;	// skip
 
 
 			const int iCol = hn.m_iTrack;
 			const float fHoldNoteLife = m_HoldNoteLife[i];
-			const bool bActive = NoteRowToBeat(hn.m_iStartIndex-1) <= m_fSongBeat  &&  m_fSongBeat <= NoteRowToBeat(hn.m_iEndIndex);	// hack: added -1 because hn.m_iStartIndex changes as note is held
+			const bool bActive = NoteRowToBeat(hn.m_iStartIndex-1) <= fSongBeat  &&  fSongBeat <= NoteRowToBeat(hn.m_iEndIndex);	// hack: added -1 because hn.m_iStartIndex changes as note is held
 
 			// parts of the hold
-			const float fStartDrawingAtBeat = froundf( (float)hn.m_iStartIndex, ROWS_BETWEEN_HOLD_BITS/m_PlayerOptions.m_fArrowScrollSpeed );
+			const float fStartDrawingAtBeat = froundf( (float)hn.m_iStartIndex, ROWS_BETWEEN_HOLD_BITS/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed );
 			for( float j=fStartDrawingAtBeat; 
 				 j<=hn.m_iEndIndex; 
-				 j+=ROWS_BETWEEN_HOLD_BITS/m_PlayerOptions.m_fArrowScrollSpeed )	// for each bit of the hold
+				 j+=ROWS_BETWEEN_HOLD_BITS/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed )	// for each bit of the hold
 			{
  				// check if this arrow is off the the screen
 				if( j < iIndexFirstArrowToDraw || iIndexLastArrowToDraw < j)
 					continue;	// skip this arrow
 
-				if( fLife > 0  &&  NoteRowToBeat(j) < m_fSongBeat )
+				if( fLife > 0  &&  NoteRowToBeat(j) < fSongBeat )
 					continue;
 
 				CreateHoldNoteInstance( instances[iCount++], bActive, (float)j, hn, fHoldNoteLife );
@@ -310,7 +307,7 @@ void NoteField::DrawPrimitives()
 
 		}
 		
-		const bool bDrawAddPass = m_PlayerOptions.m_AppearanceType != PlayerOptions::APPEARANCE_VISIBLE;
+		const bool bDrawAddPass = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_AppearanceType != PlayerOptions::APPEARANCE_VISIBLE;
 		if( iCount > 0 )
 			m_ColorNote[c].DrawList( iCount, instances, bDrawAddPass );
 

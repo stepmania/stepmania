@@ -20,7 +20,7 @@ const float	BATTERY_X[NUM_PLAYERS]	=	{ -92, +92 };
 const float NUM_X[NUM_PLAYERS]		=	{ BATTERY_X[0], BATTERY_X[1] };
 const float NUM_Y					=	+2;
 
-const float PERCENT_X[NUM_PLAYERS]	=	{ +28, -28 };
+const float PERCENT_X[NUM_PLAYERS]	=	{ +20, -20 };
 const float PERCENT_Y				=	0;
 
 const float BATTERY_BLINK_TIME		= 1.2f;
@@ -28,8 +28,8 @@ const float BATTERY_BLINK_TIME		= 1.2f;
 
 LifeMeterBattery::LifeMeterBattery()
 {
-	m_iMaxLives = 3;
-	m_iLivesLeft = m_iMaxLives;
+	m_iLivesLeft = GAMESTATE->m_SongOptions.m_iBatteryLives;
+	m_iTrailingLivesLeft = m_iLivesLeft;
 	m_bFailedEarlier = false;
 
 	m_fBatteryBlinkTime = 0;
@@ -59,51 +59,40 @@ LifeMeterBattery::LifeMeterBattery()
 	Refresh();
 }
 
-void LifeMeterBattery::Load( PlayerNumber p, const PlayerOptions &po )
+void LifeMeterBattery::Load( PlayerNumber pn )
 {
-	LifeMeter::Load( p, po );
+	LifeMeter::Load( pn );
 
-	m_sprFrame.SetZoomX( p==PLAYER_1 ? 1.0f : -1.0f );
-	m_sprBattery.SetZoomX( p==PLAYER_1 ? 1.0f : -1.0f );
-	m_sprBattery.SetX( BATTERY_X[p] );
-	m_textNumLives.SetX( NUM_X[p] );
+	m_sprFrame.SetZoomX( pn==PLAYER_1 ? 1.0f : -1.0f );
+	m_sprBattery.SetZoomX( pn==PLAYER_1 ? 1.0f : -1.0f );
+	m_sprBattery.SetX( BATTERY_X[pn] );
+	m_textNumLives.SetX( NUM_X[pn] );
 	m_textNumLives.SetY( NUM_Y );
-	m_textPercent.SetX( PERCENT_X[p] );
+	m_textPercent.SetX( PERCENT_X[pn] );
 	m_textPercent.SetY( PERCENT_Y );
 
-	m_textPercent.SetDiffuseColor( PlayerToColor(p) );	// light blue
+	m_textPercent.SetDiffuseColor( PlayerToColor(pn) );	// light blue
 
 }
 
-void LifeMeterBattery::NextSong( Song* pSong )
+void LifeMeterBattery::SongEnded()
 {
 	if( m_bFailedEarlier )
 		return;
 
-	m_iLivesLeft++;
+	m_iTrailingLivesLeft = m_iLivesLeft;
+	m_iLivesLeft += ( GAMESTATE->m_pCurNotes[m_PlayerNumber]->m_iMeter>=8 ? 2 : 1 );
+	m_iLivesLeft = min( m_iLivesLeft, GAMESTATE->m_SongOptions.m_iBatteryLives );
 	m_soundGainLife.Play();
 
 	Refresh();
 }
 
+
 void LifeMeterBattery::ChangeLife( TapNoteScore score )
 {
 	if( m_bFailedEarlier )
 		return;
-
-	if( GAMESTATE->m_aGameplayStatistics.GetSize() > 0 )
-	{
-		int iActualDancePoints = 0;
-		for( int i=0; i<GAMESTATE->m_aGameplayStatistics.GetSize(); i++ )
-			iActualDancePoints += GAMESTATE->m_aGameplayStatistics[i].iActualDancePoints[m_PlayerNumber];
-		int iPossibleDancePoints = GAMESTATE->m_iCoursePossibleDancePoints;
-		float fPercentDancePoints =  iActualDancePoints / (float)iPossibleDancePoints + 0.001f;	// correct for rounding errors
-		float fNumToDisplay = fPercentDancePoints*100;
-		CString sNumToDisplay = ssprintf("%03.1f", fNumToDisplay);
-		if( sNumToDisplay.GetLength() == 3 )
-			sNumToDisplay = "0" + sNumToDisplay;
-		m_textPercent.SetText( sNumToDisplay );
-	}
 
 	switch( score )
 	{
@@ -113,15 +102,34 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 	case TNS_GOOD:
 	case TNS_BOO:
 	case TNS_MISS:
+		m_iTrailingLivesLeft = m_iLivesLeft;
 		m_iLivesLeft--;
 		m_soundLoseLife.Play();
 		Refresh();
 		m_fBatteryBlinkTime = BATTERY_BLINK_TIME;
 		break;
 	}
-	if( m_iLivesLeft == -1 )
+	if( m_iLivesLeft == 0 )
 		m_bFailedEarlier = true;
 }
+
+void LifeMeterBattery::OnDancePointsChange()
+{
+	int iActualDancePoints = GAMESTATE->m_iActualDancePoints[m_PlayerNumber];
+	int iPossibleDancePoints = GAMESTATE->m_iPossibleDancePoints[m_PlayerNumber];
+	float fPercentDancePoints =  iActualDancePoints / (float)iPossibleDancePoints + 0.00001f;	// correct for rounding errors
+
+	printf( "Actual %d, Possible %d, Percent %f\n", iActualDancePoints, iPossibleDancePoints, fPercentDancePoints );
+
+	float fNumToDisplay = MAX( 0, fPercentDancePoints*100 );
+	CString sNumToDisplay = ssprintf("%03.1f", fNumToDisplay);
+	if( sNumToDisplay.GetLength() == 3 )
+		sNumToDisplay = "0" + sNumToDisplay;
+	if( iPossibleDancePoints == -1 )
+		sNumToDisplay = "??.?";
+	m_textPercent.SetText( sNumToDisplay );
+}
+
 
 bool LifeMeterBattery::IsInDanger()
 {
@@ -145,36 +153,41 @@ bool LifeMeterBattery::FailedEarlier()
 
 void LifeMeterBattery::Refresh()
 {
-	if( m_iLivesLeft <= 3 )
+	if( m_iLivesLeft <= 4 )
 	{
 		m_textNumLives.SetText( "" );
-		m_sprBattery.SetState( max(m_iLivesLeft,0) );
+		m_sprBattery.SetState( max(m_iLivesLeft-1,0) );
 	}
 	else
 	{
 		m_textNumLives.SetText( ssprintf("x%d", m_iLivesLeft) );
+		m_textNumLives.SetZoom( 1.5f );
+		m_textNumLives.BeginTweening( 0.15f );
+		m_textNumLives.SetTweenZoom( 1.1f );
 		m_sprBattery.SetState( 3 );
 	}
 }
 
 void LifeMeterBattery::Update( float fDeltaTime )
 {
-	if( m_iLivesLeft == -1 )
-	{
-		m_sprBattery.SetState( 0 );
-	}
-	else if( m_fBatteryBlinkTime > 0 )
+	LifeMeter::Update( fDeltaTime );
+
+	if( m_fBatteryBlinkTime > 0 )
 	{
 		m_fBatteryBlinkTime -= fDeltaTime;
-		int iFrameNo = m_iLivesLeft + int(m_fBatteryBlinkTime*15)%2;
+		int iFrame1 = m_iLivesLeft-1;
+		int iFrame2 = m_iTrailingLivesLeft-1;
+		
+		int iFrameNo = (int(m_fBatteryBlinkTime*15)%2) ? iFrame1 : iFrame2;
 		CLAMP( iFrameNo, 0, 3 );
 		m_sprBattery.SetState( iFrameNo );
 
-
-		if( m_fBatteryBlinkTime < 0 )
-		{
-			m_fBatteryBlinkTime = 0;
-			m_sprBattery.SetState( max(m_iLivesLeft,0) );
-		}
+	}
+	else
+	{
+		m_fBatteryBlinkTime = 0;
+		int iFrameNo = m_iLivesLeft-1;
+		CLAMP( iFrameNo, 0, 3 );
+		m_sprBattery.SetState( iFrameNo );
 	}
 }

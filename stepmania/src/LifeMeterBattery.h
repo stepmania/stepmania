@@ -22,12 +22,13 @@ class LifeMeterBattery : public LifeMeter
 public:
 	LifeMeterBattery();
 
-	virtual void Load( PlayerNumber p, const PlayerOptions &po );
+	virtual void Load( PlayerNumber pn );
 
 	virtual void Update( float fDeltaTime );
 
-	virtual void NextSong( Song* pSong );
+	virtual void SongEnded();
 	virtual void ChangeLife( TapNoteScore score );
+	virtual void OnDancePointsChange();	// look in GAMESTATE and update the display
 	virtual bool IsInDanger();
 	virtual bool IsHot();
 	virtual bool IsFailing();
@@ -36,8 +37,8 @@ public:
 	void Refresh();
 
 private:
-	int			m_iLivesLeft;
-	int			m_iMaxLives;
+	int			m_iLivesLeft;			// dead when 0
+	int			m_iTrailingLivesLeft;	// lags m_iLivesLeft
 	bool		m_bFailedEarlier;
 
 	float		m_fBatteryBlinkTime;	// if > 0 battery is blinking

@@ -40,6 +40,10 @@ NoteData::~NoteData()
 
 void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
 {
+	int iNumTracks = m_iNumTracks;
+	NoteData::Init();
+	m_iNumTracks = iNumTracks;
+
 	// strip comments out of sSMNoteData
 	while( sSMNoteData.Find("//") != -1 )
 	{
@@ -780,7 +784,7 @@ float NoteData::GetAirRadarValue( float fSongSeconds )
 
 float NoteData::GetChaosRadarValue( float fSongSeconds )
 {
-	// count number of triplets
+	// count number of triplets or 16ths
 	int iNumChaosNotes = 0;
 	for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ )
 	{

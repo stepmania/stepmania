@@ -114,8 +114,7 @@ const CString CREDIT_LINES[] =
 	"",
 	"",
 	"",
-	"Please, join the StepMania team and help us out!"
-	"                                -Chris"
+	"Please, join the StepMania team and help us out!",
 };
 const int NUM_CREDIT_LINES = sizeof(CREDIT_LINES) / sizeof(CString);
 

@@ -13,8 +13,10 @@
 
 #include "GrayArrow.h"
 #include "PrefsManager.h"
+#include "GameState.h"
 
-const float GRAY_ARROW_POP_UP_TIME			= 0.15f;
+
+const float GRAY_ARROW_POP_UP_TIME	= 0.15f;
 
 
 GrayArrow::GrayArrow()
@@ -22,9 +24,11 @@ GrayArrow::GrayArrow()
 	StopAnimating();
 }
 
-void GrayArrow::SetBeat( const float fSongBeat )
+void GrayArrow::Update( float fDeltaTime )
 {
-	int iNewState = (int)( fmod(fSongBeat,1) * Sprite::GetNumStates() );
+	Sprite::Update( fDeltaTime );
+
+	int iNewState = (int)( fmod(GAMESTATE->m_fSongBeat,1) * Sprite::GetNumStates() );
 	if( iNewState < 0 )
 		iNewState += Sprite::GetNumStates();
 	SetState( iNewState );

@@ -358,12 +358,6 @@
 				RelativePath=".\GameTypes.h">
 			</File>
 			<File
-				RelativePath="GameplayStatistics.cpp">
-			</File>
-			<File
-				RelativePath="GameplayStatistics.h">
-			</File>
-			<File
 				RelativePath=".\Grade.cpp">
 			</File>
 			<File
@@ -657,6 +651,12 @@
 			</File>
 			<File
 				RelativePath="SongInfoFrame.h">
+			</File>
+			<File
+				RelativePath="StageBox.cpp">
+			</File>
+			<File
+				RelativePath="StageBox.h">
 			</File>
 			<File
 				RelativePath=".\TextBanner.cpp">

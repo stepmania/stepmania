@@ -49,11 +49,6 @@ public:
 	void SaveGlobalPrefsToDisk();
 
 
-	// AppearanceOptions (ARE saved between sessions, and saved per game)
-//	CString m_sAnnouncer;	// need to make sure to call ANNOUNCER->SwitchAnnouncer() when this changes
-//	CString m_sTheme;		// need to make sure to call THEME->SwitchTheme() when this changes
-//	CString m_sNoteSkin;	
-
 	void ReadGamePrefsFromDisk();
 	void SaveGamePrefsToDisk();
 };

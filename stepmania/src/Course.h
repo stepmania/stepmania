@@ -11,7 +11,8 @@
 */
 
 #include "GameConstantsAndTypes.h"
-#include "PlayerOptions.h"
+struct PlayerOptions;
+struct SongOptions;
 class Song;
 struct Notes;
 
@@ -40,8 +41,9 @@ public:
 	bool		m_bRepeat;	// repeat after last song?
 	int			m_iLives;	// -1 means use bar life meter
 	CString		m_sModifiers;	// contains player options and song options
-//	PlayerOptions	m_PlayerOptions;
 
+	void GetPlayerOptions( PlayerOptions* pPO_out );
+	void GetSongOptions( SongOptions* pSO_out);
 
 	void LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs );
 	void CreateFromGroupAndDifficultyClass( CString sGroupName, DifficultyClass dc, CArray<Song*,Song*> &apSongsInGroup );
