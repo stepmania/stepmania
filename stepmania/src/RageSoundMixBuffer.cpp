@@ -20,14 +20,16 @@ void RageSoundMixBuffer::SetVolume( float f )
 	m_iVolumeFactor = int(256*f);
 }
 
+/* write() will start mixing iOffset samples into the buffer.  Be careful; this is
+ * measured in samples, not frames, so if the data is stereo, multiply by two. */
 void RageSoundMixBuffer::SetWriteOffset( int iOffset )
 {
 	m_iOffset = iOffset;
 }
 
-void RageSoundMixBuffer::write( const int16_t *buf, unsigned size )
+void RageSoundMixBuffer::Extend( unsigned iSamples )
 {
-	const unsigned realsize = size+m_iOffset;
+	const unsigned realsize = iSamples+m_iOffset;
 	if( m_iBufSize < realsize )
 	{
 		m_pMixbuf = (int32_t *) realloc( m_pMixbuf, sizeof(int32_t) * realsize );
@@ -39,10 +41,18 @@ void RageSoundMixBuffer::write( const int16_t *buf, unsigned size )
 		memset( m_pMixbuf + m_iBufUsed, 0, (realsize - m_iBufUsed) * sizeof(int32_t) );
 		m_iBufUsed = realsize;
 	}
+}
+
+void RageSoundMixBuffer::write( const int16_t *buf, unsigned size )
+{
+	Extend( size );
 
 	/* Scale volume and add. */
+	int32_t *pBuf = m_pMixbuf+m_iOffset;
 	for( unsigned pos = 0; pos < size; ++pos )
-		m_pMixbuf[pos+m_iOffset] += buf[pos] * m_iVolumeFactor;
+	{
+		*pBuf += buf[pos] * m_iVolumeFactor; ++pBuf;
+	}
 }
 
 void RageSoundMixBuffer::read( int16_t *buf )

@@ -6,7 +6,12 @@
 class RageSoundMixBuffer
 {
 public:
+	/* Mix the given buffer of samples. */
 	void write( const int16_t *buf, unsigned size );
+
+	/* Extend the buffer as if write() was called with a buffer of silence. */
+	void Extend( unsigned iSamples );
+
 	void read( int16_t *pBuf );
 	void read( float *pBuf );
 	unsigned size() const { return m_iBufUsed; }
