@@ -21,9 +21,10 @@
 struct File {
 	istring name;
 	bool dir;
-	
-	File() { dir=false; }
-	File(istring fn, bool dir_=false): name(fn), dir(dir) { }
+	int size;
+
+	File() { dir=false; size=-1; }
+	File( istring fn ): name(fn) { dir=false; size=-1; }
 	
 	bool operator== (const File &rhs) const { return name==rhs.name; }
 	bool operator< (const File &rhs) const { return name<rhs.name; }
@@ -47,6 +48,7 @@ struct FileSet
 	bool DoesFileExist(const CString &path) const;
 	bool IsADirectory(const CString &path) const;
 	bool IsAFile(const CString &path) const;
+	int GetFileSize(const CString &path) const;
 };
 
 void FileSet::LoadFromDir(const CString &dir)
@@ -68,6 +70,7 @@ void FileSet::LoadFromDir(const CString &dir)
 		File f;
 		f.name=fd.cFileName;
 		f.dir = !!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
+		f.size = fd.nFileSizeLow;
 
 		files.insert(f);
 	} while( FindNextFile( hFind, &fd ) );
@@ -95,21 +98,18 @@ void FileSet::LoadFromDir(const CString &dir)
 		File f;
 		f.name=ent->d_name;
 		
-		if( ent->d_type == DT_UNKNOWN )
+		struct stat st;
+		if( stat(ent->d_name, &st) == -1 )
 		{
-			/* d_type isn't implemented; we need to stat. */
-			struct stat st;
-			if( stat(ent->d_name, &st) == -1 )
-			{
-				/* Huh? */
-				if(LOG)
-					LOG->Warn("Got file '%s' in '%s' from list, but can't stat? (%s)",
-						ent->d_name, dir.c_str(), strerror(errno));
-				f.dir = false;
-			} else 
-				f.dir = (st.st_mode & S_IFDIR);
-		} else
-			f.dir = ent->d_type == DT_DIR;
+			/* Huh? */
+			if(LOG)
+				LOG->Warn("Got file '%s' in '%s' from list, but can't stat? (%s)",
+					ent->d_name, dir.c_str(), strerror(errno));
+			f.dir = false;
+		} else {
+			f.dir = (st.st_mode & S_IFDIR);
+			f.size = st.st_size;
+		}
 
 		files.insert(f);
 	}
@@ -186,6 +186,14 @@ bool FileSet::IsAFile(const CString &path) const
 	return !i->dir;
 }
 
+int FileSet::GetFileSize(const CString &path) const
+{
+	set<File>::const_iterator i = files.find(File(path.c_str()));
+	if(i == files.end())
+		return -1;
+	return i->size;
+}
+
 /* Given "foo/bar/baz/" or "foo/bar/baz", return "foo/bar/" and "baz". */
 static void SplitPath( CString Path, CString &Dir, CString &Name )
 {
@@ -232,6 +240,7 @@ public:
 	bool DoesFileExist(const CString &path);
 	bool IsAFile(const CString &path);
 	bool IsADirectory(const CString &path);
+	int GetFileSize(const CString &path);
 
 	void FlushDirCache();
 };
@@ -258,6 +267,14 @@ bool FilenameDB::IsADirectory( const CString &sPath )
 	SplitPath(sPath, Dir, Name);
 	FileSet &fs = GetFileSet(Dir.c_str());
 	return fs.IsADirectory(Name);
+}
+
+int FilenameDB::GetFileSize( const CString &sPath )
+{
+	CString Dir, Name;
+	SplitPath(sPath, Dir, Name);
+	FileSet &fs = GetFileSet(Dir.c_str());
+	return fs.GetFileSize(Name);
 }
 
 
@@ -435,11 +452,24 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 
 bool ResolvePath(CString &path) { return FDB.ResolvePath(path); }
 
+void FlushDirCache()
+{
+	FDB.FlushDirCache();
+}
+
 
 #if 1
 bool DoesFileExist( const CString &sPath ) { return FDB.DoesFileExist(sPath); }
 bool IsAFile( const CString &sPath ) { return FDB.IsAFile(sPath); }
 bool IsADirectory( const CString &sPath ) { return FDB.IsADirectory(sPath); }
+unsigned GetFileSizeInBytes( const CString &sPath )
+{
+	int ret = FDB.GetFileSize(sPath);
+	LOG->Trace("file '%s' size %i", sPath.c_str(), ret);
+	if( ret == -1 )
+		return 0;
+	return ret;
+}
 #else
 bool DoesFileExist( const CString &sPath )
 {
@@ -462,14 +492,6 @@ bool IsADirectory( const CString &sPath )
 
 	return !!(st.st_mode & S_IFDIR);
 }
-#endif
-
-/* XXX */
-bool DoStat(CString sPath, struct stat *st)
-{
-	TrimRight(sPath, "/\\");
-    return stat(sPath.c_str(), st) != -1;
-}
 
 unsigned GetFileSizeInBytes( const CString &sFilePath )
 {
@@ -479,8 +501,11 @@ unsigned GetFileSizeInBytes( const CString &sFilePath )
 	
 	return st.st_size;
 }
+#endif
 
-void FlushDirCache()
+/* XXX */
+bool DoStat(CString sPath, struct stat *st)
 {
-	FDB.FlushDirCache();
+	TrimRight(sPath, "/\\");
+    return stat(sPath.c_str(), st) != -1;
 }
