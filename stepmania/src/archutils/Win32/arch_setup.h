@@ -71,8 +71,12 @@ inline int lrintf( float f )
 	return retval;
 }
 
-/* For RageLog */
+/* For RageLog. */
 #define HAVE_VERSION_INFO
+
+/* We implement the crash handler interface (though that interface isn't completely
+ * uniform across platforms yet). */
+#define CRASH_HANDLER
 
 #ifdef _XBOX
 #include <xtl.h>
