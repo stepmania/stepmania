@@ -15,6 +15,7 @@ AM_CXXFLAGS += -finline-limit=300
 
 AM_CXXFLAGS += $(XCFLAGS)
 
+LIBS += $(LUA_LIBS)
 LIBS += -lpthread
 
 $(srcdir)/libresample/libresample.a:
@@ -315,7 +316,6 @@ main_SOURCES = $(Screens) \
 
 main_LDADD = \
 		  $(AUDIO_LIBS) \
-		  $(LUA_LIBS) \
 		  $(SDL_LIBS) \
 		  $(XLIBS) \
 		  $(srcdir)/libresample/libresample.a
@@ -344,6 +344,7 @@ all_test_SOURCES = \
 		DateTime.cpp DateTime.h \
 		PrefsManager.cpp PrefsManager.h \
 		Preference.cpp Preference.h \
+		LuaFunctions.h LuaHelpers.cpp LuaHelpers.h \
 		RageException.cpp \
 		RageLog.cpp \
 		RageThreads.cpp \
