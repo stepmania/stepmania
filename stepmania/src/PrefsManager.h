@@ -116,6 +116,7 @@ public:
 	CString			m_sVideoRenderers;
 	bool			m_bAntiAliasing;
 	CString			m_sSoundDrivers;
+	CString			m_sMovieDrivers;
 	float			m_fSoundVolume;
 	bool			m_bSoundPreloadAll;
 	bool			m_bAllowUnacceleratedRenderer;

@@ -142,6 +142,7 @@ PrefsManager::PrefsManager()
 	m_bInterlaced = false;
 #endif
 	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
+	m_sMovieDrivers = DEFAULT_MOVIE_DRIVER_LIST;
 
 	// StepMania.cpp sets these on first run:
 	m_sVideoRenderers = "";
@@ -219,6 +220,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueI( "Options", "MusicWheelUsesSections",		(int&)m_MusicWheelUsesSections );
 	ini.GetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
 	ini.GetValue ( "Options", "SoundDrivers",			m_sSoundDrivers );
+	ini.GetValue ( "Options", "MovieDrivers",			m_sMovieDrivers );
 	ini.GetValueB( "Options", "EasterEggs",				m_bEasterEggs );
 	ini.GetValueI( "Options", "MarvelousTiming",			(int&)m_iMarvelousTiming );
 	ini.GetValueF( "Options", "SoundVolume",			m_fSoundVolume );
@@ -391,6 +393,9 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 		ini.SetValue ( "Options", "SoundDrivers",		m_sSoundDrivers );
 	if(m_fSoundVolume != DEFAULT_SOUND_VOLUME)
 		ini.SetValueF( "Options", "SoundVolume",		m_fSoundVolume );
+	if(m_sMovieDrivers != DEFAULT_MOVIE_DRIVER_LIST)
+		ini.SetValue ( "Options", "MovieDrivers",		m_sMovieDrivers );
+	
 
 
 	ini.SetValue ( "Options", "AdditionalSongFolders", 		join(",", m_asAdditionalSongFolders) );
