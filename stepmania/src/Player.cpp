@@ -41,6 +41,7 @@
 CachedThemeMetricI					BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
 #define START_DRAWING_AT_PIXELS		THEME->GetMetricI("Player","StartDrawingAtPixels")
 #define STOP_DRAWING_AT_PIXELS		THEME->GetMetricI("Player","StopDrawingAtPixels")
+#define MAX_PRO_TIMING_ERROR		THEME->GetMetricI("Player","MaxProTimingError")
 
 /* Distance to search for a note in Step(). */
 /* Units? */
@@ -429,8 +430,6 @@ void Player::Step( int col, RageTimer tm )
 
 		const float fSecondsFromPerfect = fabsf( fNoteOffset );
 
-		GAMESTATE->m_CurStageStats.iTotalError[m_PlayerNumber] += (int) roundf( fSecondsFromPerfect * 1000 );
-
 		// calculate TapNoteScore
 		TapNoteScore score;
 
@@ -464,6 +463,14 @@ void Player::Step( int col, RageTimer tm )
 			ASSERT(0);
 			score = TNS_NONE;
 			break;
+		}
+
+		if( score != TNS_NONE )
+		{
+			int ms_error = (int) roundf( fSecondsFromPerfect * 1000 );
+			ms_error = min( ms_error, MAX_PRO_TIMING_ERROR );
+
+			GAMESTATE->m_CurStageStats.iTotalError[m_PlayerNumber] += ms_error;
 		}
 
 		if( score==TNS_MARVELOUS  &&  !GAMESTATE->ShowMarvelous())
@@ -594,6 +601,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 			MissedNoteOnThisRow = true;
 			SetTapNoteScore(t, r, TNS_MISS);
+			GAMESTATE->m_CurStageStats.iTotalError[m_PlayerNumber] += MAX_PRO_TIMING_ERROR;
 		}
 
 		if(!MissedNoteOnThisRow) continue;
