@@ -42,9 +42,10 @@ Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 {
 	Actor* pActor = NULL;	// fill this in before we return
 
+	// Element name is the type in XML.
+	// Type= is the name in INI.
 	CString sType = layer.m_sName;
-	if( sType.empty() )
-		layer.GetAttrValue( "Type", sType );
+	layer.GetAttrValue( "Type", sType );
 
 	CString sFile;
 	layer.GetAttrValue( "File", sFile );
