@@ -76,7 +76,7 @@ float GetClosestCharYOffset( float fFakeBeat )
 	float f = fmodf(fFakeBeat, 1.0f);
 	if( f > 0.5f )
 		f -= 1;
-	ASSERT( f>=-0.5f && f<=0.5f );
+	ASSERT( f>-0.5f && f<=0.5f );
 	return -f;	
 }
 
