@@ -20,6 +20,7 @@
 #include "song.h"
 #include "ThemeManager.h"
 
+const int MAX_LAYERS = 100;
 
 BGAnimation::BGAnimation()
 {
@@ -68,12 +69,12 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 		ini.GetValueF( "BGAnimation", "LengthSeconds", m_fLengthSeconds );
 		
 		unsigned i;
-		for( i=0; true; i++ )
+		for( i=0; MAX_LAYERS; i++ )
 		{
 			CString sLayer = ssprintf("Layer%d",i+1);
 			const IniFile::key* pKey = ini.GetKey( sLayer );
 			if( pKey == NULL )
-				break;
+				continue;	// skip
 			BGAnimationLayer* pLayer = new BGAnimationLayer;
 			pLayer->LoadFromIni( sAniDir, sLayer );
 			m_Layers.push_back( pLayer );
