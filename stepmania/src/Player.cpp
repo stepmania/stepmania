@@ -371,7 +371,7 @@ void Player::Update( float fDeltaTime )
 		const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
 
 		// if they got a bad score or haven't stepped on the corresponding tap yet
-		const TapNoteScore tns = m_NoteData.GetTapNoteScore( hn.iTrack, hn.iStartRow );
+		const TapNoteScore tns = m_NoteData.GetTapNote( hn.iTrack, hn.iStartRow ).result.tns;
 		const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this hold?
 
 		float fLife = hn.result.fLife;
@@ -641,9 +641,10 @@ int Player::GetClosestNoteDirectional( int col, int iStartRow, int iMaxRowsAhead
 		/* Is iRow the row we want? */
 		do
 		{
-			if( m_NoteData.GetTapNote(col, iRow).type == TapNote::empty )
+			TapNote tn = m_NoteData.GetTapNote(col, iRow);
+			if( tn.type == TapNote::empty )
 				break;
-			if( !bAllowGraded && m_NoteData.GetTapNoteScore(col, iRow) != TNS_NONE )
+			if( !bAllowGraded && tn.result.tns != TNS_NONE )
 				break;
 			return iRow;
 		} while(0);
@@ -947,10 +948,12 @@ void Player::Step( int col, RageTimer tm )
 			score, col, fStepSeconds, fCurrentMusicSeconds, fMusicSeconds, fNoteOffset );
 //		LOG->Trace("Note offset: %f (fSecondsFromPerfect = %f), Score: %i", fNoteOffset, fSecondsFromPerfect, score);
 		
-		m_NoteData.SetTapNoteScore(col, iIndexOverlappingNote, score);
+		tn.result.tns = score;
 
 		if( score != TNS_NONE )
-			m_NoteData.SetTapNoteOffset(col, iIndexOverlappingNote, -fNoteOffset);
+			tn.result.fTapNoteOffset = -fNoteOffset;
+
+		m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
 
 		if( m_pPlayerState->m_PlayerController == PC_HUMAN  && 
 			score >= TNS_GREAT ) 
@@ -1129,19 +1132,23 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		{
 			/* XXX: cleaner to pick the things we do want to apply misses to, instead of
 			 * the things we don't? */
-			switch( m_NoteData.GetTapNote(t, r).type )
+			TapNote tn = m_NoteData.GetTapNote(t, r);
+			switch( tn.type )
 			{
 			case TapNote::empty:
 			case TapNote::attack:
 			case TapNote::mine:
 				continue; /* no note here */
 			}
-			if( m_NoteData.GetTapNoteScore(t, r) != TNS_NONE ) /* note here is already hit */
+			if( tn.result.tns != TNS_NONE ) /* note here is already hit */
 				continue; 
-			
+
+			tn.result.tns =	TNS_MISS;
+
 			// A normal note.  Penalize for not stepping on it.
 			MissedNoteOnThisRow = true;
-			m_NoteData.SetTapNoteScore( t, r, TNS_MISS );
+
+			m_NoteData.SetTapNote( t, r, tn );
 
 			if( m_pPlayerStageStats )
 			{
@@ -1174,9 +1181,9 @@ void Player::CrossedRow( int iNoteRow )
 	{
 		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 		{
-			if( m_NoteData.GetTapNote(t, iNoteRow).type != TapNote::empty )
-				if( m_NoteData.GetTapNoteScore(t, iNoteRow) == TNS_NONE )
-					Step( t, now );
+			TapNote tn = m_NoteData.GetTapNote(t, iNoteRow);
+			if( tn.type != TapNote::empty && tn.result.tns == TNS_NONE )
+				Step( t, now );
 		}
 	}
 }

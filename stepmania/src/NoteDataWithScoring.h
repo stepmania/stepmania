@@ -17,9 +17,6 @@ struct RowTrack: public pair<int,int>
 
 class NoteDataWithScoring : public NoteData
 {
-	// maintain this extra data in addition to the NoteData
-	vector<TapNoteResult> m_TapNoteScores[MAX_NOTE_TRACKS];
-
 public:
 	NoteDataWithScoring();
 	void Init();
@@ -30,19 +27,16 @@ public:
 	int GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	int GetSuccessfulMines( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	int GetSuccessfulHands( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
-	TapNoteScore GetTapNoteScore(unsigned track, unsigned row) const;
-	void SetTapNoteScore(unsigned track, unsigned row, TapNoteScore tns);
-	float GetTapNoteOffset(unsigned track, unsigned row) const;
-	void SetTapNoteOffset(unsigned track, unsigned row, float offset);
 
 	bool IsRowCompletelyJudged(unsigned row) const;
 	TapNoteScore MinTapNoteScore(unsigned row) const;
-	int LastTapNoteScoreTrack(unsigned row) const;
 	TapNoteScore LastTapNoteScore(unsigned row) const;
 
 	void GetActualRadarValues( PlayerNumber pn, float fSongSeconds, RadarValues& out ) const;
 
 private:
+	int LastTapNoteScoreTrack(unsigned row) const;
+
 	float GetActualStreamRadarValue( float fSongSeconds, PlayerNumber pn ) const;
 	float GetActualVoltageRadarValue( float fSongSeconds, PlayerNumber pn ) const;
 	float GetActualAirRadarValue( float fSongSeconds, PlayerNumber pn ) const;

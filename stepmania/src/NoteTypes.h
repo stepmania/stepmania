@@ -111,7 +111,7 @@ struct TapNote
 
 	/* This data is only used and manipulated by NoteDataWithScoring.  It's only in
 	 * here for the sake of efficiency. */
-
+	TapNoteResult result;
 };
 
 const unsigned MAX_NUM_ATTACKS = 2*2*2;	// 3 bits to hold the attack index currently
