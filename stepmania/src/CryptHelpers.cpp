@@ -122,15 +122,11 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 void RageFileSink::IsolatedInitialize(const NameValuePairs &parameters)
 {
 	const char *fileName;
-	if (parameters.GetValue("OutputFileName", fileName))
-	{
-		if( !m_file.Open( fileName, RageFile::WRITE ) )	// trucates existing data
-			throw OpenErr(fileName);
-	}
-	else
-	{
+	if( !parameters.GetValue("OutputFileName", fileName) )
 		ASSERT(0);
-	}
+
+	if( !m_file.Open( fileName, RageFile::WRITE ) )	// trucates existing data
+		throw OpenErr(fileName);
 }
 
 bool RageFileSink::IsolatedFlush(bool hardFlush, bool blocking)
