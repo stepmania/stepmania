@@ -70,7 +70,7 @@ public:
 };
 
 
-struct RageVector4
+struct ALIGN(16) RageVector4
 {
 public:
     RageVector4() {}
@@ -98,7 +98,7 @@ public:
 	float x, y, z, w;
 };
 
-struct RageColor
+struct ALIGN(16) RageColor
 {
 public:
     RageColor() {}
@@ -253,7 +253,7 @@ struct RageModelVertex	// doesn't have color.  Relies on material color
 // MAX, Direct3D, and OpenGL all handle matrices.  Even though the OpenGL
 // documentation is in column-major form, the OpenGL code is designed to
 // handle matrix operations in row-major form.
-struct RageMatrix
+struct ALIGN(16) RageMatrix
 {
 public:
     RageMatrix() {};
