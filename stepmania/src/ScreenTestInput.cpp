@@ -59,7 +59,7 @@ void ScreenTestInput::Update( float fDeltaTime )
 				if( INPUTMAPPER->DeviceToGame(di,gi) )
 				{
 					CString sName = GAMESTATE->GetCurrentGame()->m_szButtonNames[gi.button];
-					CString sSecondary = GAMEMAN->GetSecondaryMenuButtonName( GAMESTATE->GetCurrentGame(), gi.button );
+					CString sSecondary = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), gi.button );
 					
 					sTemp += ssprintf("  (Controller %d %s)  %s", gi.controller+1, sName.c_str(), sSecondary.c_str() );
 				}

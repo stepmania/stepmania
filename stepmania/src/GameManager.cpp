@@ -2694,7 +2694,7 @@ const Style* GameManager::GameAndStringToStyle( const Game *game, CString sStyle
 }
 
 
-CString GameManager::GetSecondaryMenuButtonName( const Game *pGame, GameButton gb ) const
+CString GameManager::GetMenuButtonSecondaryFunction( const Game *pGame, GameButton gb ) const
 {
 	/*
 	 * Each GameButton can be used in gameplay (if any gameplay style maps to
