@@ -1188,6 +1188,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 						RelativePath="arch\InputHandler\InputHandler.h">
 					</File>
 					<File
+						RelativePath=".\arch\InputHandler\InputHandler_MonkeyKeyboard.cpp">
+					</File>
+					<File
+						RelativePath=".\arch\InputHandler\InputHandler_MonkeyKeyboard.h">
+					</File>
+					<File
 						RelativePath="arch\InputHandler\InputHandler_Xbox.cpp">
 					</File>
 					<File
