@@ -130,12 +130,65 @@ static void GetSoundDriverDebugInfo()
 	}
 }
 
+#include <vfw.h>
+#pragma comment(lib, "vfw32.lib")
+
+static CString FourCCToString(int fcc)
+{
+	CString s;
+
+	s += char((fcc >> 0) & 0xFF);
+	s += char((fcc >> 8) & 0xFF);
+	s += char((fcc >> 16) & 0xFF);
+	s += char((fcc >> 24) & 0xFF);
+
+	return s;
+}
+
+static void GetVideoCodecDebugInfo()
+{
+	ICINFO info = { sizeof(ICINFO) };
+	int i;
+	LOG->Info("Video codecs:");
+	for(i=0; ICInfo(ICTYPE_VIDEO, i, &info); ++i)
+	{
+		if( FourCCToString(info.fccHandler) == "ASV1" )
+		{
+			/* Broken. */
+			LOG->Info("%i: %s: skipped", i, FourCCToString(info.fccHandler).c_str());
+			continue;
+		}
+
+		HIC hic;
+		hic = ICOpen(info.fccType, info.fccHandler, ICMODE_QUERY);
+		if(!hic)
+		{
+			LOG->Info("Couldn't open video codec %s",
+				FourCCToString(info.fccHandler).c_str());
+			continue;
+		}
+
+		if (ICGetInfo(hic, &info, sizeof(ICINFO)))
+			LOG->Info("    %s: %ls (%ls)",
+				FourCCToString(info.fccHandler).c_str(), info.szName, info.szDescription);
+		else
+			LOG->Info("ICGetInfo(%s) failed",
+				FourCCToString(info.fccHandler).c_str());
+
+		ICClose(hic);
+	}
+
+	if(!i)
+		LOG->Info("    None found");
+}
+
 void SearchForDebugInfo()
 {
 	GetWindowsVersionDebugInfo();
 	GetMemoryDebugInfo();
 	GetDisplayDriverDebugInfo();
 	GetSoundDriverDebugInfo();
+	GetVideoCodecDebugInfo();
 }
 
 /*
