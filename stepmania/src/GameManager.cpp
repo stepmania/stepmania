@@ -894,7 +894,7 @@ void GameManager::GetGameplayStylesForGame( Game game, CArray<Style,Style>& aSty
 	for( int s=0; s<NUM_STYLES; s++ ) {
 		if( g_StyleDefs[s].m_Game != game)
 			continue;
-		if( !editor && g_StyleDefs[s].m_bUsedForGameplay )	
+		if( !editor && !g_StyleDefs[s].m_bUsedForGameplay )	
 			continue;
 		if( editor && !g_StyleDefs[s].m_bUsedForEdit )	
 			continue;
