@@ -67,6 +67,7 @@ static RageKeySym SDLSymToKeySym( SDLKey key )
 	case SDLK_KP_MULTIPLY:	return KEY_KP_ASTERISK;
 	case SDLK_KP_MINUS:		return KEY_KP_HYPHEN;
 	case SDLK_KP_PLUS:		return KEY_KP_PLUS;
+	case SDLK_KP_EQUALS:	return KEY_KP_EQUAL;
 	case SDLK_KP_ENTER:		return KEY_KP_ENTER;
 	case SDLK_UP:			return KEY_UP;
 	case SDLK_DOWN:			return KEY_DOWN;

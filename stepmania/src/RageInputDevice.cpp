@@ -218,6 +218,7 @@ CString DeviceInput::GetDescription()
 		case KEY_KP_HYPHEN:		sReturn += "KP -"; break;
 		case KEY_KP_PLUS:		sReturn += "KP +"; break;
 		case KEY_KP_PERIOD:		sReturn += "KP ."; break;
+		case KEY_KP_EQUAL:		sReturn += "KP ="; break;
 		case KEY_KP_ENTER:		sReturn += "KP enter"; break;
 		default:				sReturn += "unknown"; break;
 		}
