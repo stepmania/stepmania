@@ -42,7 +42,7 @@ ScreenSelectGame::ScreenSelectGame() :
 	LOG->Trace( "ScreenSelectGame::ScreenSelectGame()" );
 
 	/* populate g_SelectGameLines */
-	CArray<Game,Game> aGames;
+	vector<Game> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
 	unsigned i;
 	for( i=0; i<aGames.size(); i++ )
@@ -70,7 +70,7 @@ void ScreenSelectGame::ImportOptions()
 	/* Search the list of games for the currently active game.  If it's
 	 * not there, we might have set a game and then the user removed its
 	 * note skins; reset it to the first available. */
-	CArray<Game,Game> aGames;
+	vector<Game> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
 	ASSERT(!aGames.empty());
 
@@ -89,7 +89,7 @@ void ScreenSelectGame::ExportOptions()
 	// Switch the current style to the frist style of the selected game
 	int iSelection = m_iSelectedOption[0][SG_GAME];
 
-	CArray<Game,Game> aGames;
+	vector<Game> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
 	Game game = aGames[iSelection];
 

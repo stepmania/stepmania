@@ -341,7 +341,7 @@ public:
 	struct CacheEntry {
 		CStringArray files;
 		CStringArray exts;
-		CArray<int,int> Attributes;
+		vector<int> Attributes;
 
 		CString dir;
 	};
@@ -354,7 +354,7 @@ private:
 	CacheEntry *LoadDirCache( const CString &sPath );
 
 	/* We don't have too many directories ... XXX - glenn */
-	CArray<CacheEntry *,CacheEntry *> directory_cache;
+	vector<CacheEntry *> directory_cache;
 } static DirectoryCache;
 
 void DirCache::FlushCache()

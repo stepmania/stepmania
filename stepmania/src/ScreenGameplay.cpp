@@ -142,8 +142,8 @@ ScreenGameplay::ScreenGameplay()
 				GAMESTATE->m_iPossibleDancePoints[p] = 0;
 
 				Course* pCourse = GAMESTATE->m_pCurCourse;
-				CArray<Song*,Song*> apSongs;
-				CArray<Notes*,Notes*> apNotes;
+				vector<Song*> apSongs;
+				vector<Notes*> apNotes;
 				CStringArray asModifiers;
 				pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, true );
 
@@ -502,8 +502,8 @@ bool ScreenGameplay::IsLastSong()
 			if( pCourse->m_bRepeat )
 				return false;
 
-			CArray<Song*,Song*> apSongs;
-			CArray<Notes*,Notes*> apNotes;
+			vector<Song*> apSongs;
+			vector<Notes*> apNotes;
 			CStringArray asModifiers;
 			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, true );
 
@@ -536,8 +536,8 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 					GAMESTATE->m_SelectedOptions[p] = GAMESTATE->m_PlayerOptions[p];
 			}
 			Course* pCourse = GAMESTATE->m_pCurCourse;
-			CArray<Song*,Song*> apSongs;
-			CArray<Notes*,Notes*> apNotes;
+			vector<Song*> apSongs;
+			vector<Notes*> apNotes;
 			CStringArray asModifiers;
 
 			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, true );
@@ -1501,7 +1501,7 @@ void ScreenGameplay::TweenOnScreen()
 {
 	unsigned i, p;
 
-	CArray<Actor*,Actor*> apActorsInLifeFrame;
+	vector<Actor*> apActorsInLifeFrame;
 	apActorsInLifeFrame.push_back(	&m_sprLifeFrame );
 	for( p=0; p<NUM_PLAYERS; p++ )
 		apActorsInLifeFrame.push_back(	m_pLifeMeter[p] );
@@ -1519,7 +1519,7 @@ void ScreenGameplay::TweenOnScreen()
 	}
 
 
-	CArray<Actor*,Actor*> apActorsInScoreFrame;
+	vector<Actor*> apActorsInScoreFrame;
 	apActorsInScoreFrame.push_back( &m_sprScoreFrame );
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{

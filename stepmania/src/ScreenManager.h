@@ -46,8 +46,8 @@ public:
 	void RefreshCreditsMessages();
 
 private:
-	CArray<Screen*, Screen*> m_ScreenStack;
-	CArray<Screen*, Screen*> m_ScreensToDelete;
+	vector<Screen*> m_ScreenStack;
+	vector<Screen*> m_ScreensToDelete;
 	Screen *m_ScreenBuffered;
 
 	BitmapText m_textStats;

@@ -28,9 +28,9 @@ public:
 	GameDef*	GetGameDefForGame( Game g );
 	const StyleDef*	GetStyleDefForStyle( Style s );
 
-	void		GetGameplayStylesForGame( Game game, CArray<Style,Style>& aStylesAddTo, bool editor=false );
-	void		GetModesChoicesForGame( Game game, CArray<ModeChoice*,ModeChoice*>& apChoicesAddTo );
-	void		GetNotesTypesForGame( Game game, CArray<NotesType,NotesType>& aNotesTypeAddTo );	// only look at edit-specific styles
+	void		GetGameplayStylesForGame( Game game, vector<Style>& aStylesAddTo, bool editor=false );
+	void		GetModesChoicesForGame( Game game, vector<ModeChoice*>& apChoicesAddTo );
+	void		GetNotesTypesForGame( Game game, vector<NotesType>& aNotesTypeAddTo );	// only look at edit-specific styles
 
 //	void GetGameNames( CStringArray &AddTo );
 //	bool DoesGameExist( CString sGameName );
@@ -52,7 +52,7 @@ public:
 	RageColor	GetMetricC( CString sClassName, CString sValueName );
 
 
-	void GetEnabledGames( CArray<Game,Game>& aGamesOut );
+	void GetEnabledGames( vector<Game>& aGamesOut );
 
 	static int NotesTypeToNumTracks( NotesType nt );
 	static NotesType StringToNotesType( CString sNotesType );

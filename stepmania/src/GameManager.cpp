@@ -1476,7 +1476,7 @@ const StyleDef* GameManager::GetStyleDefForStyle( Style s )
 	return &g_StyleDefs[ s ];
 }
 
-void GameManager::GetGameplayStylesForGame( Game game, CArray<Style,Style>& aStylesAddTo, bool editor )
+void GameManager::GetGameplayStylesForGame( Game game, vector<Style>& aStylesAddTo, bool editor )
 {
 	for( int s=0; s<NUM_STYLES; s++ ) {
 		if( g_StyleDefs[s].m_Game != game)
@@ -1490,14 +1490,14 @@ void GameManager::GetGameplayStylesForGame( Game game, CArray<Style,Style>& aSty
 	}
 }
 
-void GameManager::GetModesChoicesForGame( Game game, CArray<ModeChoice*,ModeChoice*>& apChoicesAddTo )
+void GameManager::GetModesChoicesForGame( Game game, vector<ModeChoice*>& apChoicesAddTo )
 {
 	for( int s=0; s<NUM_MODE_CHOICES; s++ )
 		if( g_ModeChoices[s].game == game)
 			apChoicesAddTo.push_back( &g_ModeChoices[s] );
 }
 
-void GameManager::GetNotesTypesForGame( Game game, CArray<NotesType,NotesType>& aNotesTypeAddTo )
+void GameManager::GetNotesTypesForGame( Game game, vector<NotesType>& aNotesTypeAddTo )
 {
 	for( int nt=0; nt<NUM_NOTES_TYPES; nt++ )
 	{
@@ -1621,7 +1621,7 @@ CString GameManager::GetPathTo( const int col, CString sElementName )	// looks i
 	return DerefRedir(arrayPossibleFileNames[0]);
 }
 
-void GameManager::GetEnabledGames( CArray<Game,Game>& aGamesOut )
+void GameManager::GetEnabledGames( vector<Game>& aGamesOut )
 {
 	for( int g=0; g<NUM_GAMES; g++ )
 	{

@@ -417,7 +417,7 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 }
 
 
-void SongManager::GetSongsInGroup( const CString sGroupName, CArray<Song*, Song*> &AddTo )
+void SongManager::GetSongsInGroup( const CString sGroupName, vector<Song*> &AddTo )
 {
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
 	{
@@ -472,7 +472,7 @@ void SongManager::InitCoursesFromDisk()
 	for( g=0; g<saGroupNames.size(); g++ )	// foreach Group
 	{
 		CString sGroupName = saGroupNames[g];
-		CArray<Song*, Song*> apGroupSongs;
+		vector<Song*> apGroupSongs;
 		GetSongsInGroup( sGroupName, apGroupSongs );
 
 		for( Difficulty dc=DIFFICULTY_EASY; dc<=DIFFICULTY_HARD; dc=Difficulty(dc+1) )	// foreach Difficulty
@@ -559,13 +559,13 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, cons
 	Song*	pExtra2Song = NULL;		// a medium-hard Song and Notes.  Use this for extra stage 2.
 	Notes*	pExtra2Notes = NULL;
 	
-	CArray<Song*,Song*> apSongs;
+	vector<Song*> apSongs;
 	SONGMAN->GetSongsInGroup( GAMESTATE->m_sPreferredGroup, apSongs );
 	for( unsigned s=0; s<apSongs.size(); s++ )	// foreach song
 	{
 		Song* pSong = apSongs[s];
 
-		CArray<Notes*,Notes*> apNotes;
+		vector<Notes*> apNotes;
 		pSong->GetNotesThatMatch( sd->m_NotesType, apNotes );
 		for( unsigned n=0; n<apNotes.size(); n++ )	// foreach Notes
 		{

@@ -34,7 +34,7 @@ public:
 	InputEventType type;
 };
 
-typedef CArray<InputEvent, InputEvent> InputEventArray;
+typedef vector<InputEvent> InputEventArray;
 
 class InputFilter
 {

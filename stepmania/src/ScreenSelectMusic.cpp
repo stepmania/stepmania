@@ -334,7 +334,7 @@ void ScreenSelectMusic::TweenOffScreen()
 
 	m_MusicSortDisplay.FadeOff( 0, "fade", TWEEN_TIME );
 
-	CArray<Actor*,Actor*> apActorsInScore;
+	vector<Actor*> apActorsInScore;
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		apActorsInScore.push_back( &m_sprHighScoreFrame[p] );
@@ -354,7 +354,7 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 	if( !SCORE_CONNECTED_TO_MUSIC_WHEEL )
 		return;	// do nothing
 
-	CArray<Actor*,Actor*> apActorsInScore;
+	vector<Actor*> apActorsInScore;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		apActorsInScore.push_back( &m_sprHighScoreFrame[p] );

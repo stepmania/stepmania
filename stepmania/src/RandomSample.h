@@ -39,7 +39,7 @@ private:
 	bool LoadSound( CString sSoundFilePath );
 
 
-	CArray<RageSound*, RageSound*> m_pSamples;
+	vector<RageSound*> m_pSamples;
 	int m_iIndexLastPlayed;
 };
 

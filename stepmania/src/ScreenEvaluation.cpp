@@ -692,7 +692,7 @@ void ScreenEvaluation::TweenOnScreen()
 	{
 		unsigned i;
 
-		CArray<Actor*,Actor*> apActorsInBonusOrStageInfo;
+		vector<Actor*> apActorsInBonusOrStageInfo;
 		apActorsInBonusOrStageInfo.push_back( &m_sprBonusFrame[p] );
 		for( i=0; i<NUM_RADAR_VALUES; i++ )
 		{
@@ -711,7 +711,7 @@ void ScreenEvaluation::TweenOnScreen()
 			apActorsInBonusOrStageInfo[i]->SetTweenX( fOriginalX );
 		}
 
-		CArray<Actor*,Actor*> apActorsInGradeOrPercentFrame;
+		vector<Actor*> apActorsInGradeOrPercentFrame;
 		apActorsInGradeOrPercentFrame.push_back( &m_sprBonusFrame[p] );
 		apActorsInGradeOrPercentFrame.push_back( &m_sprGradeFrame[p] );
 		apActorsInGradeOrPercentFrame.push_back( &m_Grades[p] );

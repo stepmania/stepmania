@@ -42,7 +42,7 @@ public:
 	void LosingFocus();
 
 protected:
-	CArray<BGAnimationLayer*,BGAnimationLayer*> m_Layers;
+	vector<BGAnimationLayer*> m_Layers;
 	float	m_fFadeSeconds;
 };
 

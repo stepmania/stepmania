@@ -51,7 +51,7 @@ protected:
 	MusicBannerWheel			m_MusicBannerWheel;
 	MenuElements		m_Menu;
 	FootMeter			m_FootMeter[NUM_PLAYERS];
-	CArray<Notes*, Notes*> m_arrayNotes[NUM_PLAYERS];
+	vector<Notes*>		m_arrayNotes[NUM_PLAYERS];
 	int					m_iSelection[NUM_PLAYERS];
 	bool m_bGoToOptions;
 	bool m_bMadeChoice;

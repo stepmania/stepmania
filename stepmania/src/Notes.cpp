@@ -227,7 +227,7 @@ bool CompareNotesPointersByDifficulty(const Notes *pNotes1, const Notes *pNotes2
 	return CompareNotesPointersByMeter( pNotes1, pNotes2 );
 }
 
-void SortNotesArrayByDifficulty( CArray<Notes*,Notes*> &arraySteps )
+void SortNotesArrayByDifficulty( vector<Notes*> &arraySteps )
 {
 	sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByDifficulty );
 }

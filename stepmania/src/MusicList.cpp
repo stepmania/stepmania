@@ -34,7 +34,7 @@ void MusicList::AddGroup()
 	m_ContentsText.push_back(group());
 }
 
-void MusicList::AddSongsToGroup(const CArray<Song*,Song*> &Songs)
+void MusicList::AddSongsToGroup(const vector<Song*> &Songs)
 {
 	// Generate what text will show in the contents for each group
 	unsigned group = m_ContentsText.size()-1;

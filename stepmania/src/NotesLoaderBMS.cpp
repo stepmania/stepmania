@@ -153,7 +153,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 			int iTrackNum	= atoi( value_name.substr(4,2).c_str() );
 
 			CString &sNoteData = value_data;
-			CArray<bool, bool&> arrayNotes;
+			vector<bool> arrayNotes;
 
 			for( int i=0; i+1<sNoteData.GetLength(); i+=2 )
 			{
@@ -352,7 +352,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 			int iBMSTrackNo	= atoi( value_name.substr(4,2).c_str() );
 
 			CString sNoteData = value_data;
-			CArray<int, int> arrayNotes;
+			vector<int> arrayNotes;
 
 			for( int i=0; i+1<sNoteData.GetLength(); i+=2 )
 			{

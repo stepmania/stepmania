@@ -59,8 +59,8 @@ protected:
 	BGAnimation		m_BGADanger;
 
 	// used in all BackgroundModes except OFF
-	CArray<BGAnimation*,BGAnimation*> m_BGAnimations;
-	CArray<BGSegment,BGSegment&> m_aBGSegments;
+	vector<BGAnimation*> m_BGAnimations;
+	vector<BGSegment> m_aBGSegments;
 	int m_iCurBGSegment;	// this increases as we move into new segments
 	BGAnimation* GetCurBGA() { int index = m_aBGSegments[m_iCurBGSegment].m_iBGIndex; return m_BGAnimations[index]; };
 	BGAnimation* m_pCurrentBGA;

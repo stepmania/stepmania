@@ -103,9 +103,6 @@ inline const T& min(const T &a, const T &b, P Pr)
 
 #endif
 
-template <class Type, class IGNOREME>
-class StdCArray: public std::vector<Type> {};
-#define CArray StdCArray
 #define CStringArray vector<CString>
 
 /* Include this here to make sure our assertion handler is always

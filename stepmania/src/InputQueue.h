@@ -34,7 +34,7 @@ protected:
 		GameButton	button;
 		float		fTime;
 	};
-	CArray<GameButtonAndTime,GameButtonAndTime> m_aQueue[MAX_GAME_CONTROLLERS];
+	vector<GameButtonAndTime> m_aQueue[MAX_GAME_CONTROLLERS];
 };
 
 

@@ -26,7 +26,7 @@ public:
 	SongManager( LoadingWindow *ld );
 	~SongManager();
 
-	CArray<Song*, Song*>	m_pSongs;	// all songs that can be played
+	vector<Song*>	m_pSongs;	// all songs that can be played
 
 	void InitSongArrayFromDisk( LoadingWindow *ld );
 	void FreeSongArray();
@@ -43,17 +43,17 @@ public:
 
 	static CString ShortenGroupName( const CString &sOrigGroupName );
 
-	void GetSongsInGroup( const CString sGroupName, CArray<Song*,Song*> &AddTo );
+	void GetSongsInGroup( const CString sGroupName, vector<Song*> &AddTo );
 
 
 	// for Oni
-	CArray<Course, Course> m_aOniCourses;
+	vector<Course> m_aOniCourses;
 
 	// for Extra Stages
-	CArray<Course, Course> m_aExtraCourses;
+	vector<Course> m_aExtraCourses;
 	
 	// for Endless
-	CArray<Course, Course> m_aEndlessCourses;
+	vector<Course> m_aEndlessCourses;
 
 	void InitCoursesFromDisk();
 	void ReloadCourses();

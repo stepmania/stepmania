@@ -59,7 +59,7 @@ private:
 	RandomSample m_soundSelect;
 
 	int					m_iSelection;
-	CArray<Style,Style>	m_aPossibleStyles;
+	vector<Style>	m_aPossibleStyles;
 
 	Style	GetSelectedStyle() { return m_aPossibleStyles[m_iSelection]; };
 };

@@ -15,7 +15,7 @@ class MusicList : public ActorFrame {
 		int m_iNumSongsInGroup;
 	};
 
-	CArray<group,group> m_ContentsText;
+	vector<group> m_ContentsText;
 
 	int NumGroups, CurGroup;
 	
@@ -26,7 +26,7 @@ public:
 	void AddGroup();
 
 	/* Add songs to the group that was just added. */
-	void AddSongsToGroup(const CArray<Song*,Song*> &songs);
+	void AddSongsToGroup(const vector<Song*> &songs);
 
 	/* Set the displayed group number. */
 	void SetGroupNo(int group);

@@ -44,8 +44,8 @@ protected:
 	float					m_fSelectionLag;
 	int						m_iSpacing;
 	int						m_iNumVisible;
-	CArray<Sprite*,Sprite*>	m_apSprites;	// stores the list of elements (left to right)
-	CArray<CroppedSprite*,CroppedSprite*>	m_apCSprites;	// stores the list of elements (left to right)
+	vector<Sprite*>	m_apSprites;	// stores the list of elements (left to right)
+	vector<CroppedSprite*>	m_apCSprites;	// stores the list of elements (left to right)
 };
 
 #endif

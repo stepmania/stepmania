@@ -143,9 +143,9 @@ public:
 	bool HasMovieBackground() const;
 	bool HasBGChanges() const;
 
-	CArray<BPMSegment, BPMSegment&> m_BPMSegments;	// this must be sorted before gameplay
-	CArray<StopSegment, StopSegment&> m_StopSegments;	// this must be sorted before gameplay
-	CArray<BackgroundChange, BackgroundChange&> m_BackgroundChanges;	// this must be sorted before gameplay
+	vector<BPMSegment> m_BPMSegments;	// this must be sorted before gameplay
+	vector<StopSegment> m_StopSegments;	// this must be sorted before gameplay
+	vector<BackgroundChange> m_BackgroundChanges;	// this must be sorted before gameplay
 
 	void AddBPMSegment( BPMSegment seg );
 	void AddStopSegment( StopSegment seg );
@@ -198,12 +198,12 @@ public:
 	
 	
 	
-	CArray<Notes*, Notes*> m_apNotes;
+	vector<Notes*> m_apNotes;
 
 	bool SongCompleteForStyle( const StyleDef *st ) const;
 	bool SongHasNotesType( NotesType nt ) const;
 	bool SongHasNotesTypeAndDifficulty( NotesType nt, Difficulty dc ) const;
-	void GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo ) const;
+	void GetNotesThatMatch( NotesType nt, vector<Notes*>& arrayAddTo ) const;
 	int GetNumTimesPlayed() const;
 	bool IsNew() const;
 	bool IsEasy( NotesType nt ) const;
@@ -213,12 +213,12 @@ public:
 };
 
 
-void SortSongPointerArrayByDifficulty( CArray<Song*, Song*> &arraySongPointers );
-void SortSongPointerArrayByTitle( CArray<Song*, Song*> &arraySongPointers );
-void SortSongPointerArrayByBPM( CArray<Song*, Song*> &arraySongPointers );
-void SortSongPointerArrayByArtist( CArray<Song*, Song*> &arraySongPointers );
-void SortSongPointerArrayByGroup( CArray<Song*, Song*> &arraySongPointers );
-void SortSongPointerArrayByMostPlayed( CArray<Song*, Song*> &arraySongPointers );
+void SortSongPointerArrayByDifficulty( vector<Song*> &arraySongPointers );
+void SortSongPointerArrayByTitle( vector<Song*> &arraySongPointers );
+void SortSongPointerArrayByBPM( vector<Song*> &arraySongPointers );
+void SortSongPointerArrayByArtist( vector<Song*> &arraySongPointers );
+void SortSongPointerArrayByGroup( vector<Song*> &arraySongPointers );
+void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers );
 
 
 

@@ -28,7 +28,7 @@ public:
 	virtual float TweenTime() const;
 
 protected:
-	CArray<Actor*,Actor*>	m_SubActors;
+	vector<Actor*>	m_SubActors;
 };
 
 #endif

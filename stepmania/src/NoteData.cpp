@@ -853,7 +853,7 @@ void NoteDataUtil::Turn( NoteData &in, PlayerOptions::TurnType tt )
 	case PlayerOptions::TURN_SHUFFLE:
 	case PlayerOptions::TURN_SUPER_SHUFFLE:		// use this code to shuffle the HoldNotes
 		{
-			CArray<int,int> aiTracksLeftToMap;
+			vector<int> aiTracksLeftToMap;
 			for( t=0; t<in.m_iNumTracks; t++ )
 				aiTracksLeftToMap.push_back( t );
 			
@@ -913,7 +913,7 @@ void NoteDataUtil::Turn( NoteData &in, PlayerOptions::TurnType tt )
 				continue;	// no need to super shuffle this row
 
 			// shuffle this row
-			CArray<int,int> aiTracksThatCouldHaveTapNotes;
+			vector<int> aiTracksThatCouldHaveTapNotes;
 			for( t=0; t<in.m_iNumTracks; t++ )
 				if( in.GetTapNote(t, r) != TAP_HOLD )	// any point that isn't part of a hold
 					aiTracksThatCouldHaveTapNotes.push_back( t );

@@ -83,7 +83,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	// This will simply the code a bit, and fix a weird case that 
 	// causes a crash when there are duplicate song names.
 	
-	CArray<Song*, Song*> aAllSongs = SONGMAN->m_pSongs;
+	vector<Song*> aAllSongs = SONGMAN->m_pSongs;
 
 	// Filter out Songs that can't be played by the current Style
 	for( j=aAllSongs.size()-1; j>=0; j-- )		// foreach Song, back to front
@@ -112,7 +112,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	// Add songs to the MusicList.
 	for( unsigned g=0; g < asGroupNames.size(); g++ ) /* for each group */
 	{
-		CArray<Song*,Song*> aSongsInGroup;
+		vector<Song*> aSongsInGroup;
 		/* find all songs */
 		for( i=0; i<aAllSongs.size(); i++ )		// foreach Song
 		{

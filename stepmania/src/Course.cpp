@@ -31,7 +31,7 @@ Course::Course()
 	m_iExtra = 0;
 }
 
-void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
+void Course::LoadFromCRSFile( CString sPath, vector<Song*> &apSongs )
 {
 	MsdFile msd;
 	if( !msd.ReadFile(sPath) )
@@ -144,7 +144,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 }
 
 
-void Course::CreateEndlessCourseFromGroupAndDifficulty( CString sGroupName, Difficulty dc, CArray<Song*,Song*> &apSongsInGroup )
+void Course::CreateEndlessCourseFromGroupAndDifficulty( CString sGroupName, Difficulty dc, vector<Song*> &apSongsInGroup )
 {
 	m_bRepeat = true;
 	m_bRandomize = true;
@@ -241,8 +241,8 @@ void Course::AddStage( Song* pSong, CString sDescription, CString sModifiers )
 
 /* When bShuffled is true, returns courses in the song ordering list. */
 void Course::GetSongAndNotesForCurrentStyle( 
-	CArray<Song*,Song*>& apSongsOut,
-	CArray<Notes*,Notes*>& apNotesOut, 
+	vector<Song*>& apSongsOut,
+	vector<Notes*>& apNotesOut, 
 	CStringArray& asModifiersOut,
 	bool bShuffled )
 {
@@ -303,7 +303,7 @@ static int CompareCoursePointersByDifficulty(const Course* pCourse1, const Cours
 	return pCourse1->GetNumStages() < pCourse2->GetNumStages();
 }
 
-void SortCoursePointerArrayByDifficulty( CArray<Course*,Course*> &apCourses )
+void SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses )
 {
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByDifficulty );
 }

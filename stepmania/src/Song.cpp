@@ -46,7 +46,7 @@ static int CompareBPMSegments(const BPMSegment &seg1, const BPMSegment &seg2)
 	return seg1.m_fStartBeat < seg2.m_fStartBeat;
 }
 
-void SortBPMSegmentsArray( CArray<BPMSegment,BPMSegment&> &arrayBPMSegments )
+void SortBPMSegmentsArray( vector<BPMSegment> &arrayBPMSegments )
 {
 	sort( arrayBPMSegments.begin(), arrayBPMSegments.end(), CompareBPMSegments );
 }
@@ -56,7 +56,7 @@ static int CompareStopSegments(const StopSegment &seg1, const StopSegment &seg2)
 	return seg1.m_fStartBeat < seg2.m_fStartBeat;
 }
 
-void SortStopSegmentsArray( CArray<StopSegment,StopSegment&> &arrayStopSegments )
+void SortStopSegmentsArray( vector<StopSegment> &arrayStopSegments )
 {
 	sort( arrayStopSegments.begin(), arrayStopSegments.end(), CompareStopSegments );
 }
@@ -66,7 +66,7 @@ int CompareBackgroundChanges(const BackgroundChange &seg1, const BackgroundChang
 	return seg1.m_fStartBeat < seg2.m_fStartBeat;
 }
 
-void SortBackgroundChangesArray( CArray<BackgroundChange,BackgroundChange&> &arrayBackgroundChanges )
+void SortBackgroundChangesArray( vector<BackgroundChange> &arrayBackgroundChanges )
 {
 	sort( arrayBackgroundChanges.begin(), arrayBackgroundChanges.end(), CompareBackgroundChanges );
 }
@@ -551,7 +551,7 @@ void Song::TidyUpData()
 	// a NotesType and it's "smaniac", then convert it to "Challenge"
 	for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
 	{
-		CArray<Notes*,Notes*> apNotes;
+		vector<Notes*> apNotes;
 		GetNotesThatMatch( nt, apNotes );
 		if( apNotes.size() == 1 )
 		{
@@ -601,7 +601,7 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 
 }
 
-void Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo ) const
+void Song::GetNotesThatMatch( NotesType nt, vector<Notes*>& arrayAddTo ) const
 {
 	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Notes
 	{
@@ -712,7 +712,7 @@ void Song::AddAutoGenNotes()
 
 		for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
 		{
-			CArray<Notes*,Notes*> apNotes;
+			vector<Notes*> apNotes;
 			this->GetNotesThatMatch( nt, apNotes );
 
 			if(apNotes.empty() || apNotes[0]->IsAutogen())
@@ -751,7 +751,7 @@ void Song::AutoGen( NotesType ntTo, NotesType ntFrom )
 Grade Song::GetGradeForDifficulty( const StyleDef *st, int p, Difficulty dc ) const
 {
 	// return max grade of notes in difficulty class
-	CArray<Notes*, Notes*> aNotes;
+	vector<Notes*> aNotes;
 	this->GetNotesThatMatch( st->m_NotesType, aNotes );
 	SortNotesArrayByDifficulty( aNotes );
 
@@ -804,15 +804,15 @@ int CompareSongPointersByTitle(const Song *pSong1, const Song *pSong2)
 	return pSong1->GetSongFilePath().CompareNoCase(pSong2->GetSongFilePath()) < 0;
 }
 
-void SortSongPointerArrayByTitle( CArray<Song*, Song*> &arraySongPointers )
+void SortSongPointerArrayByTitle( vector<Song*> &arraySongPointers )
 {
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByTitle );
 }
 
 int CompareSongPointersByDifficulty(const Song *pSong1, const Song *pSong2)
 {
-	CArray<Notes*,Notes*> aNotes1;
-	CArray<Notes*,Notes*> aNotes2;
+	vector<Notes*> aNotes1;
+	vector<Notes*> aNotes2;
 
 	pSong1->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, aNotes1 );
 	pSong2->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, aNotes2 );
@@ -833,7 +833,7 @@ int CompareSongPointersByDifficulty(const Song *pSong1, const Song *pSong2)
 	return CompareSongPointersByTitle( pSong1, pSong2 );
 }
 
-void SortSongPointerArrayByDifficulty( CArray<Song*, Song*> &arraySongPointers )
+void SortSongPointerArrayByDifficulty( vector<Song*> &arraySongPointers )
 {
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByDifficulty );
 }
@@ -852,7 +852,7 @@ bool CompareSongPointersByBPM(const Song *pSong1, const Song *pSong2)
 	return CompareCStringsAsc( pSong1->GetSongFilePath(), pSong2->GetSongFilePath() );
 }
 
-void SortSongPointerArrayByBPM( CArray<Song*, Song*> &arraySongPointers )
+void SortSongPointerArrayByBPM( vector<Song*> &arraySongPointers )
 {
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByBPM );
 }
@@ -870,7 +870,7 @@ int CompareSongPointersByArtist(const Song *pSong1, const Song *pSong2)
 	return CompareSongPointersByTitle( pSong1, pSong2 );
 }
 
-void SortSongPointerArrayByArtist( CArray<Song*, Song*> &arraySongPointers )
+void SortSongPointerArrayByArtist( vector<Song*> &arraySongPointers )
 {
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByArtist );
 }
@@ -889,7 +889,7 @@ int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
 	return CompareSongPointersByDifficulty( pSong1, pSong2 );
 }
 
-void SortSongPointerArrayByGroup( CArray<Song*, Song*> &arraySongPointers )
+void SortSongPointerArrayByGroup( vector<Song*> &arraySongPointers )
 {
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGroup );
 }
@@ -906,7 +906,7 @@ int CompareSongPointersByMostPlayed(const Song *pSong1, const Song *pSong2)
 	return CompareSongPointersByTitle( pSong1, pSong2 );
 }
 
-void SortSongPointerArrayByMostPlayed( CArray<Song*, Song*> &arraySongPointers )
+void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers )
 {
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByMostPlayed );
 }

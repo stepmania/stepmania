@@ -39,7 +39,7 @@ int CompareBGSegments(const BGSegment &seg1, const BGSegment &seg2)
 	return seg1.m_fStartBeat < seg2.m_fStartBeat;
 }
 
-void SortBGSegmentArray( CArray<BGSegment,BGSegment&> &arrayBGSegments )
+void SortBGSegmentArray( vector<BGSegment> &arrayBGSegments )
 {
 	sort( arrayBGSegments.begin(), arrayBGSegments.end(), CompareBGSegments );
 }

@@ -37,7 +37,7 @@ protected:
 	Sprite		m_sprTapParts;		// for now, must be an even number of frames
 	Sprite		m_sprHoldParts;		// for now, must be 8 frames
 
-	CArray<RageColor,RageColor> m_colorTapTweens;
+	vector<RageColor> m_colorTapTweens;
 };
 
 #endif

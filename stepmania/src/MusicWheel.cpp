@@ -334,7 +334,7 @@ MusicWheel::MusicWheel()
 
 	// init m_mapGroupNameToBannerColor
 
-	CArray<Song*, Song*> arraySongs = SONGMAN->m_pSongs;
+	vector<Song*> arraySongs = SONGMAN->m_pSongs;
 	SortSongPointerArrayByGroup( arraySongs );
 	
 	m_iSelection = 0;
@@ -392,7 +392,7 @@ MusicWheel::MusicWheel()
 			 * This will select songs we can't use; we want the first song
 			 * that's actually visible.  Should we select out of wheel data? 
 			 * -glenn */
-			CArray<Song*, Song*> arraySongs;
+			vector<Song*> arraySongs;
 			SONGMAN->GetSongsInGroup( asGroupNames[0], arraySongs );
 			if( !arraySongs.empty() ) // still nothing selected
 				GAMESTATE->m_pCurSong = arraySongs[0];	// select the first song
@@ -471,7 +471,7 @@ bool MusicWheel::SelectCourse( const Course *p )
 	return true;
 }
 
-void MusicWheel::GetSongList(CArray<Song*, Song*> &arraySongs, bool bRoulette )
+void MusicWheel::GetSongList(vector<Song*> &arraySongs, bool bRoulette )
 {
 	// copy only songs that have at least one Notes for the current GameMode
 	for( unsigned i=0; i<SONGMAN->m_pSongs.size(); i++ )
@@ -489,7 +489,7 @@ void MusicWheel::GetSongList(CArray<Song*, Song*> &arraySongs, bool bRoulette )
 				continue;
 		}
 
-		CArray<Notes*, Notes*> arraySteps;
+		vector<Notes*> arraySteps;
 		pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, arraySteps );
 
 		if( !arraySteps.empty() )
@@ -511,7 +511,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			///////////////////////////////////
 			// Make an array of Song*, then sort them
 			///////////////////////////////////
-			CArray<Song*, Song*> arraySongs;
+			vector<Song*> arraySongs;
 			
 			GetSongList(arraySongs, so == SORT_ROULETTE);
 
@@ -634,7 +634,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		{
 			unsigned i;
 
-			CArray<Course*,Course*> apCourses;
+			vector<Course*> apCourses;
 			switch( GAMESTATE->m_PlayMode )
 			{
 			case PLAY_MODE_ONI:
@@ -653,8 +653,8 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				Course* pCourse = apCourses[c];
 
 				// check that this course has at least one song playable in the current style
-				CArray<Song*,Song*> apSongs;
-				CArray<Notes*,Notes*> apNotes;
+				vector<Song*> apSongs;
+				vector<Notes*> apNotes;
 				CStringArray asModifiers;
 				pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, false );
 

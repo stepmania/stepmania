@@ -58,7 +58,7 @@ protected:
 
 	Sprite m_Infotext[MAX_MODE_CHOICES];
 
-	CArray<ModeChoice*,ModeChoice*> m_apPossibleModeChoices;
+	vector<ModeChoice*> m_apPossibleModeChoices;
 
 	ScrollingList m_ScrollingList;
 	void RefreshModeChoices();

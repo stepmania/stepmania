@@ -46,7 +46,7 @@ private:
 	int SongsExist;
 	int SingleLoad;
 
-	CArray<Song*, Song*> arraySongs;
+	vector<Song*> arraySongs;
 };
 
 #endif

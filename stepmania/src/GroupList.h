@@ -10,7 +10,7 @@ const unsigned MAX_GROUPS_ONSCREEN = 8;
 class GroupList: public ActorFrame {
 	Sprite			m_sprButton[MAX_GROUPS_ONSCREEN];
 	BitmapText		m_screenLabels[MAX_GROUPS_ONSCREEN];
-	CArray<CString,CString> m_textLabels;
+	vector<CString> m_textLabels;
 
 	/* Currently selected label. */
 	unsigned m_iSelection;

@@ -41,7 +41,7 @@ enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_RANDOM, TYPE_C
 struct WheelItemData
 {
 public:
-	WheelItemData() {};	// this is needed to use a CArray of these
+	WheelItemData() {}
 	WheelItemData( WheelItemType wit, Song* pSong, const CString &sSectionName, Course* pCourse, const RageColor color );
 
 	WheelItemType	m_WheelItemType;
@@ -123,7 +123,7 @@ public:
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
 
 protected:
-	void GetSongList(CArray<Song*, Song*> &arraySongs, bool bRoulette );
+	void GetSongList(vector<Song*> &arraySongs, bool bRoulette );
 	void BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItems, SongSortOrder so );
 	void RebuildWheelItemDisplays();
 	void SetOpenGroup(CString group, SongSortOrder so = NUM_SORT_ORDERS);

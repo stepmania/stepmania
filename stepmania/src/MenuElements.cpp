@@ -124,7 +124,7 @@ void MenuElements::TweenTopLayerOnScreen(float tm)
 	if(tm == -1)
 		tm = MENU_ELEMENTS_TWEEN_TIME;
 
-	CArray<Actor*,Actor*> apActorsInTopFrame;
+	vector<Actor*> apActorsInTopFrame;
 	apActorsInTopFrame.push_back( &m_sprTopEdge );
 	apActorsInTopFrame.push_back( &m_sprStyleIcon );
 	apActorsInTopFrame.push_back( &m_MenuTimer );
@@ -162,7 +162,7 @@ void MenuElements::TweenTopLayerOffScreen(float tm)
  bounce faster.  SCREEN_WIDTH+SCREEN_WIDTH/2 would, but ignoring fOriginalX
  will make each component tween off at a different rate ...
  -glenn
-	CArray<Actor*,Actor*> apActorsInTopFrame;
+	vector<Actor*> apActorsInTopFrame;
 	apActorsInTopFrame.push_back( &m_sprTopEdge );
 	apActorsInTopFrame.push_back( &m_sprStyleIcon );
 	apActorsInTopFrame.push_back( &m_MenuTimer );

@@ -126,7 +126,7 @@ public:
 	//
 	// Session Statistics: Arcade: 3 songs.  Oni/Endless: one course.
 	//
-	CArray<Song*,Song*>	m_apSongsPlayed;	// an array of completed songs.  
+	vector<Song*>	m_apSongsPlayed;	// an array of completed songs.  
 											// This is useful for the final evaluation screen,
 											// and used to calculate the time into a course
 

@@ -94,6 +94,6 @@ protected:
 };
 
 bool CompareNotesPointersByDifficulty(const Notes *pNotes1, const Notes *pNotes2);
-void SortNotesArrayByDifficulty( CArray<Notes*,Notes*> &arrayNotess );
+void SortNotesArrayByDifficulty( vector<Notes*> &arrayNotess );
 
 #endif

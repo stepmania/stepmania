@@ -50,11 +50,11 @@ public:
 	void GetSongOptions( SongOptions* pSO_out);
 	int GetNumStages() const;
 
-	void LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs );
-	void CreateEndlessCourseFromGroupAndDifficulty( CString sGroupName, Difficulty dc, CArray<Song*,Song*> &apSongsInGroup );
+	void LoadFromCRSFile( CString sPath, vector<Song*> &apSongs );
+	void CreateEndlessCourseFromGroupAndDifficulty( CString sGroupName, Difficulty dc, vector<Song*> &apSongsInGroup );
 	void AddStage( Song* pSong, CString sDescription, CString sModifiers );
 
-	void GetSongAndNotesForCurrentStyle( CArray<Song*,Song*>& apSongsOut, CArray<Notes*,Notes*>& apNotesOut, CStringArray& asModifiersOut, bool bShuffled );
+	void GetSongAndNotesForCurrentStyle( vector<Song*>& apSongsOut, vector<Notes*>& apNotesOut, CStringArray& asModifiersOut, bool bShuffled );
 	RageColor	GetColor();
 
 private:
@@ -62,7 +62,7 @@ private:
 };
 
 
-void SortCoursePointerArrayByDifficulty( CArray<Course*,Course*> &apCourses );
+void SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses );
 
 
 #endif

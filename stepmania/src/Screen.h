@@ -49,7 +49,7 @@ protected:
 		ScreenMessage SM;  
 		float fDelayRemaining;
 	};
-	CArray<QueuedScreenMessage, QueuedScreenMessage&>	m_QueuedMessages;
+	vector<QueuedScreenMessage>	m_QueuedMessages;
 
 public:
 
