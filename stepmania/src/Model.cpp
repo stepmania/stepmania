@@ -654,9 +654,9 @@ void Model::DrawPrimitives()
 				RageColor Ambient = mat.Ambient;
 				RageColor Diffuse = mat.Diffuse;
 				
-				Emissive.a = m_pTempState->diffuse[0].a;
-				Ambient.a = m_pTempState->diffuse[0].a;
-				Diffuse.a = m_pTempState->diffuse[0].a;
+				Emissive *= m_pTempState->diffuse[0];
+				Ambient *= m_pTempState->diffuse[0];
+				Diffuse *= m_pTempState->diffuse[0];
 
 				DISPLAY->SetMaterial( 
 					Emissive,
