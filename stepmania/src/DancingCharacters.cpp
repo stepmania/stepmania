@@ -9,7 +9,6 @@
 #include "Character.h"
 #include "StageStats.h"
 #include "PrefsManager.h"
-#include "SDL_opengl.h"
 
 #define DC_X( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterXP%d",choice+1))
 #define DC_Y( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterYP%d",choice+1))
