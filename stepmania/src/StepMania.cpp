@@ -139,6 +139,8 @@ void ResetGame()
 	PREFSMAN->ReadGamePrefsFromDisk();
 	INPUTMAPPER->ReadMappingsFromDisk();
 
+	NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_CurGame );
+
 	/*
 	GameState::Reset() will switch the NoteSkin
 	for( int p=0; p<NUM_PLAYERS; p++ )
