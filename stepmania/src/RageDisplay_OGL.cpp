@@ -1012,7 +1012,6 @@ void RageDisplay_OGL::UpdateTexture(
 	
 	if( pixfmt == NUM_PIX_FORMATS )
 	{
-		LOG->Trace("guh");
 		/* The source isn't in a supported, known pixel format.  We need to convert
 		 * it ourself.  Just convert it to RGBA8, and let OpenGL convert it back
 		 * down to whatever the actual pixel format is.  This is a very slow code
