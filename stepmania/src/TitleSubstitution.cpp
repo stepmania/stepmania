@@ -114,7 +114,7 @@ void TitleSubst::Load(const CString &filename, const CString &section)
 		CString line = f.GetLine();
 		if (f.GetError() != 0)
 		{
-			clearerr(f.GetFilePointer());
+			f.ClearError();
 			continue;
 		}
 		if(line.size() > 0 && utf8_get_char(line.c_str()) == 0xFEFF)

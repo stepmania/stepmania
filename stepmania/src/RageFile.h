@@ -1,5 +1,5 @@
-#ifndef RageFile_H
-#define RageFile_H
+#ifndef RAGE_FILE_H
+#define RAGE_FILE_H
 
 /*
 -----------------------------------------------------------------------------
@@ -9,7 +9,7 @@
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
-        Steve Checkoway
+	Steve Checkoway
 -----------------------------------------------------------------------------
 */
 
@@ -39,7 +39,7 @@ public:
     bool IsOpen() { return (mFP != NULL); }
     bool AtEOF() { return (feof(mFP) != 0); }
     int GetError() { return ferror(mFP); }
-    FILE *GetFilePointer() { return mFP; }
+	void ClearError() { clearerr(mFP); }
     
     long Tell() { return ftell(mFP); }
     bool Seek(long offset, int origin = SEEK_CUR) { return !fseek(mFP, offset, origin); }
