@@ -59,12 +59,10 @@ StyleInput Style::GameInputToStyleInput( const GameInput &GameI ) const
 		return SI;	// Return invalid.
 
 	for( int i = 0; i < GameI.button; ++i )
-	{
 		if( m_iInputColumn[GameI.controller][i] == END_MAPPING )
 			return SI;	// Return invalid.
-	}
 
-	SI = StyleInput( (PlayerNumber) GameI.controller, m_iInputColumn[GameI.controller][i] );
+	SI = StyleInput( (PlayerNumber) GameI.controller, m_iInputColumn[GameI.controller][GameI.button] );
 
 	// HACK:  Looking up the player number using m_ColumnInfo 
 	// returns the wrong answer for ONE_PLAYER_TWO_SIDES styles
