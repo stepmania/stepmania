@@ -40,14 +40,14 @@ Steps::Steps()
 	m_Difficulty = DIFFICULTY_INVALID;
 	m_iMeter = 0;
 
-	notes = NULL;
-	notes_comp = "";
+	m_NoteData.Init();
+	m_bNoteDataIsFilled = false;
+	m_sNoteDataCompressed = "";
 	parent = NULL;
 }
 
 Steps::~Steps()
 {
-	SAFE_DELETE( notes );
 }
 
 void Steps::SetNoteData( const NoteData& noteDataNew )
@@ -56,11 +56,11 @@ void Steps::SetNoteData( const NoteData& noteDataNew )
 
 	DeAutogen();
 
-	SAFE_DELETE( notes );
-	notes = new NoteData( noteDataNew );
+	m_NoteData = noteDataNew;
+	m_bNoteDataIsFilled = true;
 	
-	NoteDataUtil::GetSMNoteDataString( *notes, notes_comp );
-	m_uHash = GetHashForString( notes_comp );
+	NoteDataUtil::GetSMNoteDataString( m_NoteData, m_sNoteDataCompressed );
+	m_uHash = GetHashForString( m_sNoteDataCompressed );
 }
 
 void Steps::GetNoteData( NoteData& noteDataOut ) const
@@ -69,8 +69,10 @@ void Steps::GetNoteData( NoteData& noteDataOut ) const
 
 	Decompress();
 
-	if( notes != NULL )
-		noteDataOut = *notes;
+	if( m_bNoteDataIsFilled )
+	{
+		noteDataOut = m_NoteData;
+	}
 	else
 	{
 		noteDataOut.ClearAll();
@@ -80,28 +82,29 @@ void Steps::GetNoteData( NoteData& noteDataOut ) const
 
 void Steps::SetSMNoteData( const CString &notes_comp_ )
 {
-	SAFE_DELETE( notes );
+	m_NoteData.Init();
+	m_bNoteDataIsFilled = false;
 
-	notes_comp = notes_comp_;
-	m_uHash = GetHashForString( notes_comp );
+	m_sNoteDataCompressed = notes_comp_;
+	m_uHash = GetHashForString( m_sNoteDataCompressed );
 }
 
 /* XXX: this function should pull data from cache, like Decompress() */
 void Steps::GetSMNoteData( CString &notes_comp_out ) const
 {
-	if( notes_comp.empty() )
+	if( m_sNoteDataCompressed.empty() )
 	{
-		if( !notes ) 
+		if( !m_bNoteDataIsFilled ) 
 		{
 			/* no data is no data */
 			notes_comp_out = "";
 			return;
 		}
 
-		NoteDataUtil::GetSMNoteDataString( *notes, notes_comp );
+		NoteDataUtil::GetSMNoteDataString( m_NoteData, m_sNoteDataCompressed );
 	}
 
-	notes_comp_out = notes_comp;
+	notes_comp_out = m_sNoteDataCompressed;
 }
 
 float Steps::PredictMeter() const
@@ -150,31 +153,33 @@ void Steps::TidyUpData()
 
 void Steps::Decompress() const
 {
-	if(notes)
+	if( m_bNoteDataIsFilled )
 		return;	// already decompressed
 
 	if(parent)
 	{
-		// get autogen notes
+		// get autogen m_NoteData
 		NoteData notedata;
 		parent->GetNoteData( notedata );
 
-		notes = new NoteData;
+		m_bNoteDataIsFilled = true;
 
 		int iNewTracks = GameManager::StepsTypeToNumTracks(m_StepsType);
 
 		if( this->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
 		{
-			NoteDataUtil::LoadTransformedLights( notedata, *notes, iNewTracks );
-		} else {
-			NoteDataUtil::LoadTransformedSlidingWindow( notedata, *notes, iNewTracks );
+			NoteDataUtil::LoadTransformedLights( notedata, m_NoteData, iNewTracks );
+		}
+		else
+		{
+			NoteDataUtil::LoadTransformedSlidingWindow( notedata, m_NoteData, iNewTracks );
 
-			NoteDataUtil::FixImpossibleRows( *notes, m_StepsType );
+			NoteDataUtil::FixImpossibleRows( m_NoteData, m_StepsType );
 		}
 		return;
 	}
 
-	if( !m_sFilename.empty() && notes_comp.empty() )
+	if( !m_sFilename.empty() && m_sNoteDataCompressed.empty() )
 	{
 		/* We have data on disk and not in memory.  Load it. */
 		Song s;
@@ -196,20 +201,20 @@ void Steps::Decompress() const
 			return;
 		}
 
-		pSteps->GetSMNoteData( notes_comp );
+		pSteps->GetSMNoteData( m_sNoteDataCompressed );
 	}
 
-	if( notes_comp.empty() )
+	if( m_sNoteDataCompressed.empty() )
 	{
 		/* there is no data, do nothing */
 	}
 	else
 	{
 		// load from compressed
-		notes = new NoteData;
-		notes->SetNumTracks( GameManager::StepsTypeToNumTracks(m_StepsType) );
+		m_bNoteDataIsFilled = true;
+		m_NoteData.SetNumTracks( GameManager::StepsTypeToNumTracks(m_StepsType) );
 
-		NoteDataUtil::LoadFromSMNoteDataString( *notes, notes_comp );
+		NoteDataUtil::LoadFromSMNoteDataString( m_NoteData, m_sNoteDataCompressed );
 	}
 }
 
@@ -218,20 +223,22 @@ void Steps::Compress() const
 	if( !m_sFilename.empty() )
 	{
 		/* We have a file on disk; clear all data in memory. */
-		SAFE_DELETE( notes );
+		m_NoteData.Init();
+		m_bNoteDataIsFilled = false;
 
-		/* Be careful; 'x = ""', notes_comp.clear() and notes_comp.reserve(0)
+		/* Be careful; 'x = ""', m_sNoteDataCompressed.clear() and m_sNoteDataCompressed.reserve(0)
 		 * don't always free the alocated memory. */
-		notes_comp = CString("");
+		m_sNoteDataCompressed = CString("");
 	}
 
-	if( notes_comp.empty() )
+	if( m_sNoteDataCompressed.empty() )
 	{
-		if(!notes) return; /* no data is no data */
-		NoteDataUtil::GetSMNoteDataString( *notes, notes_comp );
+		if(!m_bNoteDataIsFilled) return; /* no data is no data */
+		NoteDataUtil::GetSMNoteDataString( m_NoteData, m_sNoteDataCompressed );
 	}
 
-	SAFE_DELETE( notes );
+	m_NoteData.Init();
+	m_bNoteDataIsFilled = false;
 }
 
 /* Copy our parent's data.  This is done when we're being changed from autogen
@@ -241,7 +248,7 @@ void Steps::DeAutogen()
 	if(!parent)
 		return; /* OK */
 
-	Decompress();	// fills in notes with sliding window transform
+	Decompress();	// fills in m_NoteData with sliding window transform
 
 	m_sDescription	= Real()->m_sDescription;
 	m_Difficulty	= Real()->m_Difficulty;
