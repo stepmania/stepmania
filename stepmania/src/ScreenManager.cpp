@@ -198,7 +198,12 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 		{
 			Profile* pProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
 			if( pProfile )
-				sPlayerInfo = pProfile->m_sName;
+			{
+				if( !pProfile->m_sLastUsedHighScoreName.empty() )
+					sPlayerInfo = pProfile->m_sLastUsedHighScoreName;
+				else
+					sPlayerInfo = pProfile->m_sName;
+			}
 			else if( GAMESTATE->m_bIsOnSystemMenu ) // no mem card
 				sPlayerInfo = "";
 			else if( PREFSMAN->m_sMemoryCardDir[p]!="" )

@@ -29,6 +29,7 @@
 #include "AnnouncerManager.h"
 #include "song.h"
 #include <math.h>
+#include "ProfileManager.h"
 
 
 //
@@ -418,6 +419,11 @@ void ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 		selection = DEFAULT_RANKING_NAME;
 
 	GAMESTATE->StoreRankingName( pn, selection );
+
+	// save last used ranking name
+	Profile* pProfile = PROFILEMAN->GetProfile(pn);
+	if( pProfile )
+		pProfile->m_sLastUsedHighScoreName = selection;
 
 	OFF_COMMAND( m_Keyboard[pn] );
 	for( int i = 0; i < (int)m_textAlphabet[pn].size(); ++i )

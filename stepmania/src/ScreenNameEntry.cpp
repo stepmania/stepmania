@@ -25,6 +25,7 @@
 #include "Course.h"
 #include "AnnouncerManager.h"
 #include <math.h>
+#include "ProfileManager.h"
 
 
 //
@@ -168,9 +169,16 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		for( int i=0; i<MAX_RANKING_NAME_LENGTH; i++ )
-			m_sSelectedName[p] += ' ';
+		// load last used ranking name if any
+		Profile* pProfile = PROFILEMAN->GetProfile((PlayerNumber)p);
+		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
+			 m_sSelectedName[p] = pProfile->m_sLastUsedHighScoreName;
 
+		// resize string to MAX_RANKING_NAME_LENGTH
+		m_sSelectedName[p] = ssprintf( "%*.*s", MAX_RANKING_NAME_LENGTH, MAX_RANKING_NAME_LENGTH, m_sSelectedName[p].c_str() );
+		ASSERT( m_sSelectedName[p].length() == MAX_RANKING_NAME_LENGTH );
+
+		// don't load player if they aren't going to enter their name
 		if( !m_bStillEnteringName[p] )
 			continue;	// skip
 
@@ -210,6 +218,8 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 			m_textSelectedChars[p][t].SetY( GRAY_ARROWS_Y );
 			m_textSelectedChars[p][t].SetDiffuse( g_SelectedCharsColor );
 			m_textSelectedChars[p][t].SetZoom( CHARS_ZOOM_LARGE );
+			if( t<m_sSelectedName[p].length() )
+				m_textSelectedChars[p][t].SetText( m_sSelectedName[p].substr(t,1) );
 			this->AddChild( &m_textSelectedChars[p][t] );		// draw these manually
 			
 			m_textScrollingChars[p][t].LoadFromFont( THEME->GetPathToF("ScreenNameEntry letters") );
@@ -420,6 +430,11 @@ void ScreenNameEntry::MenuStart( PlayerNumber pn )
 		m_sSelectedName[pn] = DEFAULT_RANKING_NAME;
 
 	GAMESTATE->StoreRankingName( pn, m_sSelectedName[pn] );
+
+	// save last used ranking name
+	Profile* pProfile = PROFILEMAN->GetProfile(pn);
+	if( pProfile )
+		pProfile->m_sLastUsedHighScoreName = m_sSelectedName[pn];
 
 	if( !AnyStillEntering() && !m_Out.IsTransitioning() )
 		m_Out.StartTransitioning( SM_GoToNextScreen );

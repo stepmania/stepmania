@@ -81,6 +81,10 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 
 	CodeDetector::RefreshCacheItems();
 
+	m_sprLogo.Load( THEME->GetPathToG(ssprintf("ScreenLogo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
+	m_sprLogo.Command( PREFSMAN->m_iCoinMode==COIN_HOME ? LOGO_HOME_ON_COMMAND : LOGO_ON_COMMAND );
+	this->AddChild( &m_sprLogo );
+
 	if( PREFSMAN->m_iCoinMode != COIN_HOME )
 	{
 		switch( PREFSMAN->m_Premium )
@@ -95,10 +99,6 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 			break;
 		}
 	}
-
-	m_sprLogo.Load( THEME->GetPathToG(ssprintf("ScreenLogo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
-	m_sprLogo.Command( PREFSMAN->m_iCoinMode==COIN_HOME ? LOGO_HOME_ON_COMMAND : LOGO_ON_COMMAND );
-	this->AddChild( &m_sprLogo );
 
 	m_textVersion.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textVersion.Command( VERSION_ON_COMMAND );
