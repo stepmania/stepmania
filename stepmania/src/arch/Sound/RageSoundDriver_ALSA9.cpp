@@ -98,6 +98,8 @@ bool RageSound_ALSA9::stream::GetData(bool init)
 		bytes_read += got;
 		bytes_left -= got;
 
+		RageSoundManager::AttenuateBuf( buf, got, snd->GetVolume() );
+
 		if( bytes_left > 0 )
 		{
 			/* Fill the remainder of the buffer with silence. */
@@ -114,8 +116,6 @@ bool RageSound_ALSA9::stream::GetData(bool init)
 		/* Silence the buffer. */
 		memset( buf, 0, len );
 	}
-
-	RageSoundManager::AttenuateBuf( buf, max_writeahead*samples_per_frame, snd->GetVolume() );
 
 	pcm->Write( buf, frames_to_fill );
 
