@@ -1128,6 +1128,7 @@ void SongManager::UpdateBest()
 			/* Remove it. */
 			swap( Best[j], Best.back() );
 			Best.erase( Best.end()-1 );
+			--j;
 		}
 
 		SongUtil::SortSongPointerArrayByNumPlays( m_pBestSongs[i], (ProfileSlot) i, true );
