@@ -1,4 +1,8 @@
-ï»¿------------------------CVS after 3.00 beta 6----------------
+ï"¿------------------------CVS after 3.00 beta 6----------------
+NEW FEATURE: Ez2SelectStyle ScrollingList Contents now Metric Configurable.
+NEW FEATURE: PPP and PUMP use Ez2SelectStyle Menus to become more arcade-accurate.
+NEW FEATURE: Ez2SelectStyle Menu Background Animations Metric Configurable
+NEW FEATURE: ParaParaParadise Support
 NEW FEATURE:  #TRANSLITERATION tag-- this is used in sorting
 	so songs like sana & matsuri can go in the proper alphabetic group,
 	but still be displayed in their proper language (once we support that)
@@ -504,7 +508,7 @@ Bug fix: Little now works correctly.  It is accessible from the PlayerOptions me
 Optimization: Lower priority for movie decoding, which is a major speed boost on 
      slower computers.
 Change: Freeze arrow scoring now matches DDR MAX.  The start of a freeze arrow is judged 
-     as other steps are (perfect, great, good, etc). Â Missing the start of a freeze will 
+     as other steps are (perfect, great, good, etc). Â Missing the start of a freeze will 
      should break your combo, but NG'ing the freeze arrow will not. 
 New feature: Basic song statistics tracking.  Times played, top score, top combo, and 
      top grade are shown on SelectSong screen.
