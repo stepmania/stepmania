@@ -1900,6 +1900,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageSurface_Load_GIF.h">
 			</File>
 			<File
+				RelativePath="RageSurface_Load_JPEG.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_JPEG.h">
+			</File>
+			<File
 				RelativePath="RageSurface_Load_PNG.cpp">
 			</File>
 			<File
