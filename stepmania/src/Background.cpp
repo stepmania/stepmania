@@ -272,7 +272,7 @@ void Background::LoadFromSong( Song* pSong )
 				for( int i=arrayPossibleMovies.GetSize()-1; i>=0; i-- )
 					if( -1!=arrayPossibleMovies[i].Find("anger") )
 						arrayPossibleMovies.RemoveAt(i);
-				for( int i=0; i<4 && arrayPossibleMovies.GetSize()>0; i++ )
+				for( i=0; i<4 && arrayPossibleMovies.GetSize()>0; i++ )
 				{
 					int index = rand() % arrayPossibleMovies.GetSize();
 					pTempBGA = new BackgroundAnimation;

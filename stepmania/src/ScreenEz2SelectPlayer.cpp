@@ -210,8 +210,8 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 	m_sprControllers[pn].SetTweenZoomY( 0 );
 
 	bool bBothSidesJoined = true;
-	for( int pn=0; pn<NUM_PLAYERS; pn++ )
-		if( !GAMESTATE->m_bSideIsJoined[pn] )
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( !GAMESTATE->m_bSideIsJoined[p] )
 			bBothSidesJoined = false;
 
 	if( bBothSidesJoined )

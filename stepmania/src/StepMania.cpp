@@ -221,7 +221,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR CmdLine, int nCmdShow 
 		//
 		CStringArray asPackagePaths;
 		GetDirListing( "AutoInstall\\*.smzip", asPackagePaths, false, true );
-		for( int i=0; i<asPackagePaths.GetSize(); i++ )
+		for( i=0; i<asPackagePaths.GetSize(); i++ )
 		{
 			CString sCommandLine = ssprintf( "smpackage.exe %s", asPackagePaths[i] );
 

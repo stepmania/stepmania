@@ -194,14 +194,14 @@ void ScreenEz2SelectStyle::RefreshStylesAndList()
 
 		switch( GAMEMAN->GetStyleDefForStyle(style)->m_StyleType )
 		{
-		case StyleDef::ONE_PLAYER_ONE_CREDIT:	
-			if( iNumSidesJoined!=1 )
-				m_aPossibleStyles.RemoveAt( i );
+		case StyleDef::ONE_PLAYER_ONE_CREDIT: // if the current style is for 1player	
+			if( iNumSidesJoined!=1 ) // and we have two (or more) players
+				m_aPossibleStyles.RemoveAt( i ); // remove the element
 			break;
-		case StyleDef::ONE_PLAYER_TWO_CREDITS:
-		case StyleDef::TWO_PLAYERS_TWO_CREDITS:
-			if( iNumSidesJoined!=2 )
-				m_aPossibleStyles.RemoveAt( i );
+		case StyleDef::ONE_PLAYER_TWO_CREDITS: // if the current style is for 1player on both sides
+		case StyleDef::TWO_PLAYERS_TWO_CREDITS: // if the current style for 2players
+			if( iNumSidesJoined!=2 ) // and we don't have two players
+				m_aPossibleStyles.RemoveAt( i ); // remove the element
 			break;
 		default:	ASSERT(0);
 		}

@@ -1,0 +1,23 @@
+* denotes task to do.
+X denotes task complete or no longer required to do.
+- denotes task to do, but also being worked upon by other dev.
+H denotes task on hold.
+
+TODO As of: 01:29:AM 04/09/02
+
+X Fix Ez2dancer SelectPlayer Theme Metrics
+- Try to fix ez2dancer select style.
+* Create Ez2dancer style Gameover by making some Gameover Metrics.
+* Create Ez2dancer style End Scroll, possibly new class, possibly just metric changes.
+* Create Ez2dancer style song select.
+* Add Scoreboard System (longterm project)
+* Create some kind of metrics so that Ez2dancer may have extra stage the way it should
+* Fix Ez2dancer type stage screens
+- Create Ez2dancer type "extra stage" stage screen.
+* Modify Gameplay Screen Metrics so that Ez2dancer style screen is more arcade-accurate
+* Modify DEMO Play Screen so that Ez2dancer shows each style (double, real, e.t.c.) in the way it should.
+* Create Ez2dancer HowToPlay screens.
+* Modify Pump Style Select So it is more arcade accurate.
+* Update the rather tacky graphics.
+
+* Keep my sanity.
