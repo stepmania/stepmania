@@ -33,8 +33,7 @@ static void GetDisplayDriverDebugInfo()
 		LOG->Info( "Primary display driver could not be determined." );
 
 	bool LoggedSomething = false;
-	int i;
-	for( i=0; true; i++ )
+	for( int i=0; true; i++ )
 	{
 		VideoDriverInfo info;
 		if( !GetVideoDriverInfo(i, info) )
@@ -57,7 +56,7 @@ static void GetDisplayDriverDebugInfo()
 		LOG->Info( "Primary display driver: %s", sPrimaryDeviceName.c_str() );
 		LOG->Warn("Couldn't find primary display driver; logging all drivers");
 
-		for( i=0; true; i++ )
+		for( int i=0; true; i++ )
 		{
 			VideoDriverInfo info;
 			if( !GetVideoDriverInfo(i, info) )

@@ -94,8 +94,7 @@ void InputHandler_Win32_Pump::InputThreadMain()
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
 
 	vector<WindowsFileIO *> sources;
-	int i;
-	for(i = 0; i < NUM_PUMPS; ++i)
+	for( int i = 0; i < NUM_PUMPS; ++i )
 	{
 		if( dev[i].io.IsOpen() )
 			sources.push_back( &dev[i].io );

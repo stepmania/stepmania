@@ -89,8 +89,7 @@ InputHandler_DInput::InputHandler_DInput()
 	if ( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
-	unsigned i;
-	for( i = 0; i < Devices.size(); ++i )
+	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
 		if( Devices[i].Open() )
 			continue;
@@ -101,7 +100,7 @@ InputHandler_DInput::InputHandler_DInput()
 	}
 
 	LOG->Info( "Found %u DirectInput devices:", Devices.size() );
-	for( i = 0; i < Devices.size(); ++i )
+	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
 		LOG->Info( "   %d: '%s' axes: %d, hats: %d, buttons: %d (%s)",
 			i,
@@ -460,10 +459,9 @@ void InputHandler_DInput::InputThreadMain()
 	/* Enable priority boosting. */
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
 
-	unsigned i;
 	vector<DIDevice*> BufferedDevices, UnbufferedDevices;
 	HANDLE Handle = CreateEvent(NULL, FALSE, FALSE, NULL);
-	for( i = 0; i < Devices.size(); ++i )
+	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
 		if( !Devices[i].buffered )
 		{
@@ -498,7 +496,7 @@ void InputHandler_DInput::InputThreadMain()
 			if( ret == WAIT_OBJECT_0 )
 			{
 				RageTimer now;
-				for( i = 0; i < BufferedDevices.size(); ++i )
+				for( unsigned i = 0; i < BufferedDevices.size(); ++i )
 					UpdateBuffered( *BufferedDevices[i], now );
 			}
 		}
@@ -511,7 +509,7 @@ void InputHandler_DInput::InputThreadMain()
 	}
 	CHECKPOINT;
 
-	for( i = 0; i < Devices.size(); ++i )
+	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
 		if( !Devices[i].buffered )
 			continue;

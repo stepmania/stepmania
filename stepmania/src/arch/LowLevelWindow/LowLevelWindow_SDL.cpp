@@ -66,8 +66,7 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 		}
 	}
 
-	int i;
-	for( i = 0; i < SDL_NUMEVENTS; ++i)
+	for( int i = 0; i < SDL_NUMEVENTS; ++i )
 		EventEnabled[i] = mySDL_EventState( (Uint8) i, SDL_QUERY );
 
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
@@ -83,7 +82,7 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 	}
 	
 	/* Put them back. */
-	for( i = 0; i < SDL_NUMEVENTS; ++i)
+	for( int i = 0; i < SDL_NUMEVENTS; ++i)
 		mySDL_EventState((Uint8) i, EventEnabled[i]);
 	mySDL_PushEvents(events);
 

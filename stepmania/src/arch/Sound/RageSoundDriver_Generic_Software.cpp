@@ -256,8 +256,7 @@ void RageSound_Generic_Software::Update(float delta)
 	/* We must not lock here, since the decoder thread might hold the lock for a
 	 * while at a time.  This is threadsafe, because once a sound is in STOPPING,
 	 * this is the only place it'll be changed (to STOPPED). */
-	unsigned i;
-	for( i = 0; i < ARRAYSIZE(sounds); ++i )
+	for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
 	{
 		if( sounds[i].state != sound::STOPPING )
 			continue;

@@ -72,10 +72,10 @@ static void CheckCodecVersion( CString codec, CString desc )
 static void GetVideoCodecDebugInfo()
 {
 	ICINFO info = { sizeof(ICINFO) };
-	int i;
 	LOG->Info("Video codecs:");
 	CHECKPOINT;
-	for(i=0; ICInfo(ICTYPE_VIDEO, i, &info); ++i)
+	int i;
+	for( i=0; ICInfo(ICTYPE_VIDEO, i, &info); ++i )
 	{
 		CHECKPOINT;
 		if( FourCCToString(info.fccHandler) == "ASV1" )
