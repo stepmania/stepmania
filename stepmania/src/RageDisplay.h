@@ -275,8 +275,8 @@ public:
 	int GetFPS() const;
 	int GetVPF() const;
 	int GetCumFPS() const; /* average FPS since last reset */
-	void ResetStats();
-	void ProcessStatsOnFlip();
+	virtual void ResetStats();
+	virtual void ProcessStatsOnFlip();
 	virtual CString GetStats() const;
 	void StatsAddVerts( int iNumVertsRendered );
 
