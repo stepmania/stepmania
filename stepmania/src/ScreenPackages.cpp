@@ -602,14 +602,14 @@ void ScreenPackages::HTTPUpdate()
 		{
 			int i = m_sBUFFER.find(" ");
 			int j = m_sBUFFER.find(" ",i+1);
-			int k = m_sBUFFER.Find("\n",j+1);
-			if ( i < 0 || j < 0 || k < 0 )
+			int k = m_sBUFFER.find("\n",j+1);
+			if ( i == string::npos || j == string::npos || k == string::npos )
 			{
 				m_iResponseCode = -100;
-				m_iResponceName = "Malformed response.";
+				m_sResponseName = "Malformed response.";
 			}
 			m_iResponseCode = atoi(m_sBUFFER.substr(i+1,j-i).c_str());
-			m_iResponceName = m_sBUFFER.substr( j+1, k-j).c_str();
+			m_sResponseName = m_sBUFFER.substr( j+1, k-j).c_str();
 
 			i = m_sBUFFER.find("Content-Length:");
 			j = m_sBUFFER.find("\n", i+1 );
@@ -651,7 +651,7 @@ void ScreenPackages::HTTPUpdate()
 
 			if( m_iResponseCode < 200 || m_iResponseCode >= 400 )
 			{
-				m_sStatus = ssprintf( "%d", m_iResponseCode ) + m_iResponceName;
+				m_sStatus = ssprintf( "%d", m_iResponseCode ) + m_sResponseName;
 			}
 			else
 			{

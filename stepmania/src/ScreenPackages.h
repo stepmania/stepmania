@@ -89,7 +89,7 @@ private:
 	long	m_iDownloaded;
 
 	long	m_iResponseCode;
-	CString	m_iResponceName;
+	CString	m_sResponseName;
 
 	//Raw HTTP Buffer
 	CString m_sBUFFER;
