@@ -13,11 +13,7 @@ test -z "$srcdir" && srcdir=.
 
 PKG_NAME="stepmania"
 
-# Actually, there's a chance we'll work with later versions, too, but it's
-# not worth bending over backward to try to detect it right now.
-ACLOCAL=aclocal-1.7
 AUTOHEADER=autoheader
-AUTOMAKE=automake-1.7
 ACLOCAL_OPTIONS="-I autoconf/m4/"
 AUTOMAKE_OPTIONS=-a
 
@@ -33,7 +29,7 @@ AUTOCONF=autoconf
 
 DIE=0
 
-($AUTOCONF --version) < /dev/null > /dev/null 2>&1 || {
+($AUTOCONF --version) > /dev/null 2>&1 || {
   echo
   echo "**Error**: You must have \`autoconf' installed to compile $PKG_NAME."
   echo "Download the appropriate package for your distribution,"
@@ -41,14 +37,46 @@ DIE=0
   DIE=1
 }
 
-($AUTOMAKE --version) < /dev/null > /dev/null 2>&1 || {
+# Try automake-1.9, 1.8, and 1.7.
+if automake-1.9 --version > /dev/null 2>&1; then
+	ACLOCAL=aclocal-1.9
+	AUTOMAKE=automake-1.9
+	echo 1.9
+elif automake-1.8 --version > /dev/null 2>&1; then
+	ACLOCAL=aclocal-1.8
+	AUTOMAKE=automake-1.8
+	echo 1.8
+elif automake-1.7 --version > /dev/null 2>&1; then
+	ACLOCAL=aclocal-1.7
+	AUTOMAKE=automake-1.7
+	echo 1.7
+fi
+
+# If none of those were found, check if "automake" exists, and check the version.
+if test -z "$AUTOMAKE" && automake --version > /dev/null 2>&1; then
+	version=`automake --version 2>/dev/null|head -1|sed -e 's/.* \([0-9]\+\.[0-9]\+\).*$/\1/'`
+	
+	IFS=.
+	set $version
+	if test -z "$version"; then
+		echo "\`automake' appears to be installed, but the version string could not"
+		echo "be parsed.  Proceeding anyway ..."
+	elif test $1 -lt 1 -o $2 -lt 7; then
+		echo "\`automake' appears to be installed, but is not recent enough.  Automake"
+		echo "1.7 or newer is required."
+		exit 1
+	fi
+	IFS=
+	ACLOCAL=aclocal
+	AUTOMAKE=automake
+fi
+
+if test -z "$AUTOMAKE"; then
   echo
   echo "**Error**: You must have \`automake' installed to compile $PKG_NAME."
-  echo "Get ftp://ftp.gnu.org/pub/gnu/automake/automake-1.7.2.tar.gz"
-  echo "(or a newer version if it is available)"
   DIE=1
   NO_AUTOMAKE=yes
-}
+fi
 
 
 # if no automake, don't bother testing for aclocal
@@ -56,8 +84,6 @@ test -n "$NO_AUTOMAKE" || ($ACLOCAL --version) < /dev/null > /dev/null 2>&1 || {
   echo
   echo "**Error**: Missing \`aclocal'.  The version of \`automake'"
   echo "installed doesn't appear recent enough."
-  echo "Get ftp://ftp.gnu.org/pub/gnu/automake/automake-1.7.2.tar.gz"
-  echo "(or a newer version if it is available)"
   DIE=1
 }
 
