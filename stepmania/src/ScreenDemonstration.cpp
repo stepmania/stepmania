@@ -47,6 +47,12 @@ bool PrepareForDemonstration()		// always return true.
 
 	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 
+	/* If needed, turn sound off.  We need to do this before the ScreenGameplay ctor,
+	 * since changes to sound volume aren't guaranteed to take effect if done *after*
+	 * the sound starts playing. */
+	if( !GAMESTATE->IsTimeToPlayAttractSounds() )
+		SOUNDMAN->SetPrefs( 0 );	// silent
+
 	return true;
 }
 
@@ -73,9 +79,6 @@ ScreenDemonstration::ScreenDemonstration( CString sName ) : ScreenJukebox( sName
 
 	m_DancingState = STATE_DANCING;
 	this->PostScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );	
-
-	if( !GAMESTATE->IsTimeToPlayAttractSounds() )
-		SOUNDMAN->SetPrefs( 0 );	// silent
 }
 
 ScreenDemonstration::~ScreenDemonstration()
