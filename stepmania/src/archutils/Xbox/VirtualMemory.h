@@ -59,7 +59,7 @@ void vfree(void *ptr);
 
 extern VirtualMemoryManager vmem_Manager;
 
-int CheckPageFault(LPEXCEPTION_POINTERS e);
+LONG _stdcall CheckPageFault(LPEXCEPTION_POINTERS e);
 int NoMemory(size_t size);
 
 #endif

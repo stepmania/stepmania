@@ -297,7 +297,11 @@ bool VirtualMemoryManager::DecommitLRU()
 			// decommit this page
 			// write to the page file
 			if(SetFilePointer(vmemFile, addr - baseAddress, 0, FILE_BEGIN) == INVALID_SET_FILE_POINTER)
+			{
+				if(LOG)
+					LOG->Trace("Vmem error: could not write to page file");
 				return false;
+			}
 
 			DWORD written;
 			
@@ -511,7 +515,7 @@ void vfree(void *ptr)
 	HeapFree(GetProcessHeap(), 0, ptr);
 }
 
-int CheckPageFault(LPEXCEPTION_POINTERS e)
+LONG _stdcall CheckPageFault(LPEXCEPTION_POINTERS e)
 {
 	if(LOG && e->ExceptionRecord->ExceptionCode != EXCEPTION_ACCESS_VIOLATION)
 		LOG->Trace("Exception: %u", e->ExceptionRecord->ExceptionCode);
