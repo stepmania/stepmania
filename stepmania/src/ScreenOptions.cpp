@@ -391,7 +391,9 @@ void ScreenOptions::DrawPrimitives()
 
 void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( m_Wipe.IsClosing() )
+	/* Allow input when transitioning in (m_In.IsTransitioning()), but ignore it
+	 * when we're transitioning out. */
+	if( m_Menu.m_Back.IsTransitioning() || m_Menu.m_Out.IsTransitioning() )
 		return;
 
 	// default input handler
@@ -417,7 +419,6 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		m_Menu.StartTransitioning( SM_GoToNextScreen );
 
 		m_SoundStart.Play();
-		m_Wipe.CloseWipingRight(  );
 
 		m_framePage.BeginTweening( 0.3f, Actor::TWEEN_ACCELERATE );
 		m_framePage.SetTweenX( SCREEN_RIGHT );
@@ -563,16 +564,6 @@ void ScreenOptions::MenuDown( PlayerNumber pn )
 			return;	// can't go down any more
 
 		m_iCurrentRow[p]++;
-
-// Chris:  Commented this out, but will add back in later.
-//		/* Find the next row with any un-dimmed entries. */
-//		int new_row = m_iCurrentRow[p];
-//		do {
-//			if( ++new_row == m_iNumOptionRows )
-//				new_row = 0; // wrap around
-//			if(!RowCompletelyDimmed(new_row)) break;
-//		} while(new_row != m_iCurrentRow[p]);
-//		m_iCurrentRow[p] = new_row;
 
 		TweenCursor( (PlayerNumber)p );
 	}

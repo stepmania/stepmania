@@ -57,7 +57,6 @@ StepMania = global.h ScreenDimensions.h StdString.h StepMania.cpp StepMania.h
 
 Transitions = \
 Transition.cpp Transition.h TransitionFade.cpp TransitionFade.h TransitionFadeWipe.cpp TransitionFadeWipe.h \
-TransitionInvisible.cpp TransitionInvisible.h \
 TransitionOniFade.cpp TransitionOniFade.h TransitionRectWipe.cpp TransitionRectWipe.h \
 TransitionStarWipe.cpp TransitionStarWipe.h TransitionBGAnimation.cpp TransitionBGAnimation.h
 

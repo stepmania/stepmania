@@ -16,7 +16,6 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "RandomSample.h"
-#include "TransitionInvisible.h"
 #include "Quad.h"
 #include "MenuElements.h"
 #include "OptionsCursor.h"
@@ -119,8 +118,6 @@ protected:
 	RageSound		m_SoundNextRow;
 	RageSound		m_SoundPrevRow;
 	RageSound		m_SoundStart;
-
-	TransitionInvisible		m_Wipe;
 };
 
 

@@ -912,14 +912,6 @@ SOURCE=.\TransitionFadeWipe.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\TransitionInvisible.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\TransitionInvisible.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\TransitionOniFade.cpp
 # End Source File
 # Begin Source File
