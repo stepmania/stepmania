@@ -2544,7 +2544,10 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 		if( iNumNotesThisMeasure > MAX_NOTES_PER_MEASURE )
 		{
 			Undo();
-			SCREENMAN->Prompt( SM_None, "This change creates more than 50 notes in a measure.  The change has been reverted." );
+			CString sError = ssprintf(
+				"This change creates more than %d notes in a measure.\n\nMore than %d notes per measure is not allowed.  This change has been reverted.", 
+				MAX_NOTES_PER_MEASURE, MAX_NOTES_PER_MEASURE );
+			SCREENMAN->Prompt( SM_None, sError );
 			return;
 		}
 	}
