@@ -308,15 +308,8 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongs
 	m_bRandomize = true;
 	m_iLives = -1;
 
-	CStringArray asPossibleBannerPaths;
-	GetDirListing( "Songs/" + sGroupName + "/banner.png", asPossibleBannerPaths, false, true );
-	GetDirListing( "Songs/" + sGroupName + "/banner.jpg", asPossibleBannerPaths, false, true );
-	GetDirListing( "Songs/" + sGroupName + "/banner.gif", asPossibleBannerPaths, false, true );
-	GetDirListing( "Songs/" + sGroupName + "/banner.bmp", asPossibleBannerPaths, false, true );
-	if( !asPossibleBannerPaths.empty() )
-		m_sBannerPath = asPossibleBannerPaths[0];
-
 	m_sName = SONGMAN->ShortenGroupName( sGroupName );	
+	m_sBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
 
 	// We want multiple songs, so we can try to prevent repeats during
 	// gameplay. (We might still get a repeat at the repeat boundary,
