@@ -13,7 +13,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="./../../itg/itg/Program"
+			OutputDirectory="./../Program"
 			IntermediateDirectory="./../Debug"
 			ConfigurationType="1"
 			UseOfMFC="0"
