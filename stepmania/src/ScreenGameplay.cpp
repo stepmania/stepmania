@@ -681,15 +681,6 @@ void ScreenGameplay::Init()
 		}
 	}
 
-
-	/* LoadNextSong first, since that positions some elements which need to be
-	 * positioned before we TweenOnScreen. */
-	LoadNextSong();
-
-	TweenOnScreen();
-
-	this->SortByDrawOrder();
-
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're going to use it
 	{
 		m_soundAssistTick.Load(	THEME->GetPathS(m_sName,"assist tick"), true );
@@ -703,6 +694,15 @@ void ScreenGameplay::Init()
 			break;
 		}
 	}
+
+
+	/* LoadNextSong first, since that positions some elements which need to be
+	 * positioned before we TweenOnScreen. */
+	LoadNextSong();
+
+	TweenOnScreen();
+
+	this->SortByDrawOrder();
 
 	m_GiveUpTimer.SetZero();
 
