@@ -29,7 +29,7 @@ enum {
 	GO_DISPLAY_RESOLUTION,
 	GO_DISPLAY_COLOR_DEPTH,
 	GO_TEXTURE_COLOR_DEPTH,
-	GO_REFRESH_RATE_MODE,
+	GO_REFRESH_RATE,
 	GO_BGMODE,
 	GO_BGBRIGHTNESS,
 	GO_MOVIEDECODEMS,
@@ -42,7 +42,7 @@ OptionRowData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
 	{ "Display\nResolution",	7,  {"320","400","512","640","800","1024","1280"} },
 	{ "Display\nColor",			2,  {"16BIT","32BIT"} },
 	{ "Texture\nColor",			2,  {"16BIT","32BIT"} },
-	{ "Refresh\nRate",			3,  {"DEFAULT","MAX","MIN"} },
+	{ "Refresh\nRate",			11, {"DEFAULT","60","70","72","75","80","85","90","100","120","150"} },
 	{ "Background\nMode",		4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
 	{ "Background\nBrightness",	11, {"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"} },
 	{ "Movie\nDecode",			4,  {"1ms","2ms","3ms","4ms"} },
@@ -89,48 +89,12 @@ ScreenGraphicOptions::ScreenGraphicOptions() :
 
 void ScreenGraphicOptions::UpdateRefreshRates()
 {
-#if 0
-	CArray<int,int> hz;
-
-	int OldSetting = CurrentRefresh();
-
-	/* XXX: We're hardcoded to 16bpp in StepMania.cpp; if we add a bpp option
-	 * this needs to be changed. */
-	DISPLAY->GetHzAtResolution(HorizRes[m_iSelectedOption[0][GO_DISPLAY_RESOLUTION]],
-		VertRes[m_iSelectedOption[0][GO_DISPLAY_RESOLUTION]], 16 /* XXX */, hz);
-
-	/* Set the refresh to default.  If we can find the old selection in the
-	 * new data, we'll set it to that later. */
-
-	OptionRowData &opt = g_GraphicOptionsLines[GO_REFRESH_RATE_MODE];
-	opt.iNumOptions = 2;
-	int OldSettingNo = RageDisplay::REFRESH_DEFAULT;
-
-	unsigned i;
-	for(i = 2; i < MAX_OPTIONS_PER_LINE; ++i)
-		opt.szOptionsText[i][0] = 0;
-
-	for(i = 0; i < hz.size(); ++i)
-	{
-		if(hz[i] < 60) continue;
-		sprintf(opt.szOptionsText[opt.iNumOptions], "%i", hz[i]);
-		opt.iNumOptions++;
-		if( hz[i] == OldSetting )
-			OldSettingNo = i;
-	}
-
-	m_iSelectedOption[0][GO_REFRESH_RATE_MODE] = 
-	m_iSelectedOption[1][GO_REFRESH_RATE_MODE] = OldSettingNo;
-
-	InitOptionsText();
-#endif
-
 	/* If we're windowed, leave all refresh rates dimmed, but don't
 	 * change the actual selection. */
 	if(m_iSelectedOption[0][GO_WINDOWED])
 		return;
 
-	PositionUnderlines();
+//	PositionUnderlines();
 }
 
 void ScreenGraphicOptions::OnChange()
@@ -167,7 +131,16 @@ void ScreenGraphicOptions::ImportOptions()
 	case 32:	m_iSelectedOption[0][GO_TEXTURE_COLOR_DEPTH] = 1;	break;
 	}
 
-	m_iSelectedOption[0][GO_REFRESH_RATE_MODE]		= PREFSMAN->m_iRefreshRateMode;
+	switch(PREFSMAN->m_iRefreshRate)
+	{
+	case REFRESH_DEFAULT:	m_iSelectedOption[0][GO_REFRESH_RATE]		= 0; break;
+	default:
+		for(unsigned i = 2; i < g_GraphicOptionsLines[GO_REFRESH_RATE].iNumOptions; ++i) {
+			if(atoi(g_GraphicOptionsLines[GO_REFRESH_RATE].szOptionsText[i]) <= PREFSMAN->m_iRefreshRate) 
+				m_iSelectedOption[0][GO_REFRESH_RATE] = i;
+		}
+	}
+
 	m_iSelectedOption[0][GO_BGMODE]					= PREFSMAN->m_BackgroundMode;
 	m_iSelectedOption[0][GO_BGBRIGHTNESS]			= (int)( PREFSMAN->m_fBGBrightness*10+0.5f ); 
 	m_iSelectedOption[0][GO_MOVIEDECODEMS]			= PREFSMAN->m_iMovieDecodeMS-1;
@@ -201,7 +174,13 @@ void ScreenGraphicOptions::ExportOptions()
 	default:	ASSERT(0);	PREFSMAN->m_iTextureColorDepth = 16;	break;
 	}
 	
-	PREFSMAN->m_iRefreshRateMode		= m_iSelectedOption[0][GO_REFRESH_RATE_MODE];
+	if(m_iSelectedOption[0][GO_REFRESH_RATE] == 0)
+		PREFSMAN->m_iRefreshRate = REFRESH_DEFAULT;
+	else {
+		int n = m_iSelectedOption[0][GO_REFRESH_RATE];
+		PREFSMAN->m_iRefreshRate = atoi(g_GraphicOptionsLines[GO_REFRESH_RATE].szOptionsText[n]);
+	}
+
 	PREFSMAN->m_BackgroundMode			= PrefsManager::BackgroundMode( m_iSelectedOption[0][GO_BGMODE] );
 	PREFSMAN->m_fBGBrightness			= m_iSelectedOption[0][GO_BGBRIGHTNESS] / 10.0f;
 	PREFSMAN->m_iMovieDecodeMS			= m_iSelectedOption[0][GO_MOVIEDECODEMS]+1;
