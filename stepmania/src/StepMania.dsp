@@ -784,6 +784,14 @@ SOURCE=.\GhostArrows.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\GranularityIndicator.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GranularityIndicator.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\GrayArrow.cpp
 # End Source File
 # Begin Source File
