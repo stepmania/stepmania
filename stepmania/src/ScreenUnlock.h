@@ -19,6 +19,7 @@ class ScreenUnlock : public ScreenAttract
 {
 public:
 	ScreenUnlock();
+	~ScreenUnlock();
 
 protected:
 	BitmapText PointsUntilNextUnlock;

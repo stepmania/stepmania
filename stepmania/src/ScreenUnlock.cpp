@@ -333,3 +333,25 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 	this->PostScreenMessage( SM_BeginFadingOut, TIME_TO_DISPLAY );
 }
+
+ScreenUnlock::~ScreenUnlock()
+{
+	while (Unlocks.size() > 0)
+	{
+		Sprite* entry = Unlocks[Unlocks.size()-1];
+		SAFE_DELETE(entry);
+		Unlocks.pop_back();
+	}
+	while (item.size() > 0)
+	{
+		BitmapText* entry = item[item.size()-1];
+		SAFE_DELETE(entry);
+		item.pop_back();
+	}
+	while (ItemIcons.size() > 0)
+	{
+		Sprite* entry = ItemIcons[ItemIcons.size()-1];
+		SAFE_DELETE(entry);
+		ItemIcons.pop_back();
+	}
+}
