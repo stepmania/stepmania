@@ -52,15 +52,18 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 
 
 	// Display character
-	int iRnd;
-	iRnd = rand() % (GAMESTATE->m_pCharacters.size()-1);
-	if( iRnd != 0 )
+	if( GAMESTATE->m_pCharacters.size() )
 	{
-		m_mCharacter.LoadMilkshapeAscii( GAMESTATE->m_pCharacters[iRnd]->GetModelPath() );
-		m_mCharacter.LoadMilkshapeAsciiBones("howtoplay", GAMESTATE->m_pCharacters[iRnd]->GetHowToPlayAnimationPath() );
-		m_mCharacter.SetZoom(20);
-		m_mCharacter.Command("X,150;Y,300;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,100;Y,425");
-		this->AddChild(&m_mCharacter);
+		int iRnd;
+		iRnd = rand() % ( GAMESTATE->m_pCharacters.size() );
+		if( iRnd != 0 )
+		{
+			m_mCharacter.LoadMilkshapeAscii( GAMESTATE->m_pCharacters[iRnd]->GetModelPath() );
+			m_mCharacter.LoadMilkshapeAsciiBones("howtoplay", GAMESTATE->m_pCharacters[iRnd]->GetHowToPlayAnimationPath() );
+			m_mCharacter.SetZoom(20);
+			m_mCharacter.Command("X,150;Y,300;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,100;Y,425");
+			this->AddChild(&m_mCharacter);
+		}
 	}
 	//
 
@@ -201,7 +204,7 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_BeginFadingOut:
 		/* We can't do this in ScreenHowToPlay::~ScreenHowToPlay, since that happens
-		 * after the actor of the next screen; we don't want to mess with its state. */
+		 * after the ctor of the next screen; we don't want to mess with its state. */
 		GAMESTATE->m_pCurSong = NULL;
 		break;
 	}
