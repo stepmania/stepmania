@@ -352,7 +352,7 @@ void MovieTexture_AVCodec::DecoderThread()
 
 		/* Decode the packet. */
 		int current_packet_offset = 0;
-		while( current_packet_offset < pkt.size )
+		while( m_State != DECODER_QUIT && current_packet_offset < pkt.size )
 		{
 			if ( GetNextTimestamp )
 			{
@@ -432,7 +432,9 @@ void MovieTexture_AVCodec::DecoderThread()
 			if( m_State == PLAYING_ONE )
 				SDL_SemPost( m_OneFrameDecoded );
 
+			CHECKPOINT;
 			SDL_SemWait( m_BufferFinished );
+			CHECKPOINT;
 			/* If the frame wasn't used, then we must be shutting down. */
 			ASSERT( !m_ImageWaiting || m_State == DECODER_QUIT );
 
@@ -503,7 +505,9 @@ void MovieTexture_AVCodec::StopThread()
 	/* Make sure we don't deadlock waiting for m_BufferFinished. */
 	SDL_SemPost(m_BufferFinished);
 
+	CHECKPOINT;
 	m_DecoderThread.Wait();
+	CHECKPOINT;
 	
 	/* Clear the above post, if the thread didn't. */
 	SDL_SemTryWait(m_BufferFinished);
