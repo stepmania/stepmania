@@ -6,7 +6,6 @@
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
 #include "SDL_utils.h"
-#include "SDL_image.h"
 #include "RageFile.h"
 #include "SDL_SaveJPEG.h"
 
