@@ -3,11 +3,14 @@
 
 #include "RageFile.h"
 
+extern CString InitialWorkingDirectory;
+extern CString DirOfExecutable;
+
 class RageFileObj;
 class RageFileManager
 {
 public:
-	RageFileManager();
+	RageFileManager( CString argv0 );
 	~RageFileManager();
 
 	void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );

@@ -89,57 +89,6 @@ char **g_argv = NULL;
 static bool g_bHasFocus = true;
 static bool g_bQuitting = false;
 
-CString InitialWorkingDirectory;
-CString DirOfExecutable;
-
-static void ChangeToDirOfExecutable(const char *argv0)
-{
-#ifdef _XBOX
-	DirOfExecutable = "D:\\";
-	InitialWorkingDirectory = "D:\\";
-	return;
-#else
-
-	char tmp[1024];
-	getcwd( tmp, 1024 );
-	tmp[1023] = 0;
-	InitialWorkingDirectory = tmp;
-
-	DirOfExecutable = argv0;
-	DirOfExecutable.Replace( "\\", "/" );
-
-	bool IsAbsolutePath = false;
-	if( DirOfExecutable.size() == 0 || DirOfExecutable[0] == '/' )
-		IsAbsolutePath = true;
-#if defined(_WIN32)
-	if( DirOfExecutable.size() > 2 && DirOfExecutable[1] == ':' && DirOfExecutable[2] == '/' )
-		IsAbsolutePath = true;
-#endif
-
-	// strip off executable name
-	unsigned n = DirOfExecutable.find_last_of("/");
-	if( n != DirOfExecutable.npos )
-		DirOfExecutable.erase(n);
-	else
-		DirOfExecutable.erase();
-
-	if( !IsAbsolutePath )
-	{
-		DirOfExecutable = GetCwd() + "/" + DirOfExecutable;
-		DirOfExecutable.Replace( "\\", "/" );
-	}
-
-	/* Set the CWD.  Any effects of this is platform-specific; most files are read and
-	 * written through RageFile.  See also RageFileManager::RageFileManager. */
-#if defined(_WIN32)
-	chdir( DirOfExecutable + "/.." );
-#elif defined(DARWIN)
-	chdir(DirOfExecutable + "/../../..");
-#endif
-	
-#endif
-}
-
 void UpdateHWnd()
 {
 #ifdef _WINDOWS
@@ -888,13 +837,10 @@ int main(int argc, char* argv[])
 
 #endif
 
-	ChangeToDirOfExecutable(argv[0]);
-
 	/* Almost everything uses this to read and write files.  Load this early. */
-	FILEMAN = new RageFileManager;
+	FILEMAN = new RageFileManager( argv[0] );
 
-	/* Set this up next.  Do this early, since it's needed for RageException::Throw. 
-	 * Do it after ChangeToDirOfExecutable, so the log ends up in the right place. */
+	/* Set this up next.  Do this early, since it's needed for RageException::Throw. */
 	LOG			= new RageLog();
 
 	/* Whew--we should be able to crash safely now! */

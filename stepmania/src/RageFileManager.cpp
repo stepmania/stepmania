@@ -17,6 +17,9 @@ RageFileManager *FILEMAN = NULL;
 /* Lock this before touching any of these globals (except FILEMAN itself). */
 static RageMutex *g_Mutex;
 
+CString InitialWorkingDirectory;
+CString DirOfExecutable;
+
 // Mountpoints as directories cause a problem.  If "Themes/default" is a mountpoint, and
 // doesn't exist anywhere else, then GetDirListing("Themes/*") must return "default".  The
 // driver containing "Themes/default" won't do this; its world view begins at "BGAnimations"
@@ -58,8 +61,57 @@ struct LoadedDriver
 static vector<LoadedDriver> g_Drivers;
 
 
-RageFileManager::RageFileManager()
+static void ChangeToDirOfExecutable( CString argv0 )
 {
+#ifdef _XBOX
+	DirOfExecutable = "D:\\";
+	InitialWorkingDirectory = "D:\\";
+#else
+
+	char tmp[1024];
+	getcwd( tmp, 1024 );
+	tmp[1023] = 0;
+	InitialWorkingDirectory = tmp;
+
+	DirOfExecutable = argv0;
+	DirOfExecutable.Replace( "\\", "/" );
+
+	bool IsAbsolutePath = false;
+	if( DirOfExecutable.size() == 0 || DirOfExecutable[0] == '/' )
+		IsAbsolutePath = true;
+#if defined(_WIN32)
+	if( DirOfExecutable.size() > 2 && DirOfExecutable[1] == ':' && DirOfExecutable[2] == '/' )
+		IsAbsolutePath = true;
+#endif
+
+	// strip off executable name
+	unsigned n = DirOfExecutable.find_last_of("/");
+	if( n != DirOfExecutable.npos )
+		DirOfExecutable.erase(n);
+	else
+		DirOfExecutable.erase();
+
+	if( !IsAbsolutePath )
+	{
+		DirOfExecutable = GetCwd() + "/" + DirOfExecutable;
+		DirOfExecutable.Replace( "\\", "/" );
+	}
+
+	/* Set the CWD.  Any effects of this is platform-specific; most files are read and
+	 * written through RageFile.  See also RageFileManager::RageFileManager. */
+#if defined(_WIN32)
+	chdir( DirOfExecutable + "/.." );
+#elif defined(DARWIN)
+	chdir(DirOfExecutable + "/../../..");
+#endif
+	
+#endif
+}
+
+RageFileManager::RageFileManager( CString argv0 )
+{
+	ChangeToDirOfExecutable( argv0 );
+	
 	g_Mutex = new RageMutex;
 
 	g_Mountpoints = new RageFileDriverMountpoints;
