@@ -189,20 +189,40 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd )
 	}
 }
 
-float BMSLoader::GetBeatsPerMeasure( int iMeasure ) const
+float BMSLoader::GetBeatsPerMeasure( const MeasureToTimeSig_t &sigs, int iMeasure )
 {
-	map<int, float>::const_iterator time_sig = m_MeasureToTimeSig.find( iMeasure );
-	if( time_sig != m_MeasureToTimeSig.end() )
+	map<int, float>::const_iterator time_sig = sigs.find( iMeasure );
+	if( time_sig != sigs.end() )
 		return 4.0f * time_sig->second;
 	return 4.0f;
 }
 
-int BMSLoader::GetMeasureStartRow( int iMeasureNo ) const
+int BMSLoader::GetMeasureStartRow( const MeasureToTimeSig_t &sigs, int iMeasureNo )
 {
 	int iRowNo = 0;
 	for( int i = 0; i < iMeasureNo; ++i )
-		iRowNo += BeatToNoteRow( GetBeatsPerMeasure(i) );
+		iRowNo += BeatToNoteRow( GetBeatsPerMeasure(sigs, i) );
 	return iRowNo;
+}
+
+
+void BMSLoader::SearchForDifficulty( CString sTag, Steps *pOut )
+{
+	sTag.ToLower();
+
+	/* Only match "Light" in parentheses. */
+	if( sTag.find( "(light" ) != sTag.npos )
+		pOut->SetDifficulty( DIFFICULTY_EASY );
+	else if( sTag.find( "another" ) != sTag.npos )
+		pOut->SetDifficulty( DIFFICULTY_HARD );
+
+	if( sTag.find( "(solo)" ) != sTag.npos )
+	{
+		pOut->SetDescription( "Edit" );
+		pOut->SetDifficulty( DIFFICULTY_EDIT );
+	}
+
+	LOG->Trace( "Tag \"%s\" is %s", sTag.c_str(), DifficultyToString(pOut->GetDifficulty()).c_str() );
 }
 
 bool BMSLoader::LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNameToData, Steps &out )
@@ -245,6 +265,11 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNa
 	NoteData ndNotes;
 	ndNotes.SetNumTracks( NUM_BMS_TRACKS );
 
+	/* Read time signatures.  Note that these can differ across files in the same
+	 * song. */
+	MeasureToTimeSig_t mapMeasureToTimeSig;
+	ReadTimeSigs( mapNameToData, mapMeasureToTimeSig );
+
 	NameToData_t::const_iterator it;
 	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
 	{
@@ -255,9 +280,8 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNa
 		// this is step or offset data.  Looks like "#00705"
 		int iMeasureNo = atoi( sName.substr(1,3).c_str() );
 		int iRawTrackNum = atoi( sName.substr(4,2).c_str() );
-		int iRowNo = GetMeasureStartRow( iMeasureNo );
-		float fBeatsPerMeasure = GetBeatsPerMeasure( iMeasureNo );
-
+		int iRowNo = GetMeasureStartRow( mapMeasureToTimeSig, iMeasureNo );
+		float fBeatsPerMeasure = GetBeatsPerMeasure( mapMeasureToTimeSig, iMeasureNo );
 		const CString &sNoteData = it->second;
 
 		vector<TapNote> vTapNotes;
@@ -519,6 +543,14 @@ bool BMSLoader::GetTagFromMap( const NameToData_t &mapNameToData, const CString 
 	return true;
 }
 
+enum
+{
+	BMS_TRACK_TIME_SIG = 2,
+	BMS_TRACK_BPM = 3,
+	BMS_TRACK_BPM_REF = 8,
+	BMS_TRACK_STOP = 9
+};
+
 void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 {
 	CString sData;
@@ -588,28 +620,9 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 		LOG->Trace( "Inserting keysound index %lu '%s'", out.m_vsKeysoundFile.size()-1, sWavID.c_str() );
 	}
 
-	enum
-	{
-		BMS_TRACK_TIME_SIG = 2,
-		BMS_TRACK_BPM = 3,
-		BMS_TRACK_BPM_REF = 8,
-		BMS_TRACK_STOP = 9
-	};
-
 	/* Time signature tags affect all other global timing tags, so read them first. */
-	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
-	{
-		const CString &sName = it->first;
-		if( sName.size() != 6 || sName[0] != '#' || !IsAnInt( sName.substr(1,5) ) )
-			 continue;
-
-		// this is step or offset data.  Looks like "#00705"
-		const CString &sData = it->second;
-		int iMeasureNo	= atoi( sName.substr(1,3).c_str() );
-		int iBMSTrackNo	= atoi( sName.substr(4,2).c_str() );
-		if( iBMSTrackNo == BMS_TRACK_TIME_SIG )
-			m_MeasureToTimeSig[iMeasureNo] = (float) atof(sData);
-	}
+	MeasureToTimeSig_t mapMeasureToTimeSig;
+	ReadTimeSigs( mapNameToData, mapMeasureToTimeSig );
 
 	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
 	{
@@ -619,8 +632,8 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 		// this is step or offset data.  Looks like "#00705"
 		int iMeasureNo	= atoi( sName.substr(1,3).c_str() );
 		int iBMSTrackNo	= atoi( sName.substr(4,2).c_str() );
-		int iStepIndex = GetMeasureStartRow( iMeasureNo );
-		float fBeatsPerMeasure = GetBeatsPerMeasure( iMeasureNo );
+		int iStepIndex = GetMeasureStartRow( mapMeasureToTimeSig, iMeasureNo );
+		float fBeatsPerMeasure = GetBeatsPerMeasure( mapMeasureToTimeSig, iMeasureNo );
 		int iRowsPerMeasure = BeatToNoteRow( fBeatsPerMeasure );
 
 		CString sData = it->second;
@@ -708,6 +721,24 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 	}
 }
 
+void BMSLoader::ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t &out )
+{
+	NameToData_t::const_iterator it;
+	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
+	{
+		const CString &sName = it->first;
+		if( sName.size() != 6 || sName[0] != '#' || !IsAnInt( sName.substr(1,5) ) )
+			 continue;
+
+		// this is step or offset data.  Looks like "#00705"
+		const CString &sData = it->second;
+		int iMeasureNo	= atoi( sName.substr(1,3).c_str() );
+		int iBMSTrackNo	= atoi( sName.substr(4,2).c_str() );
+		if( iBMSTrackNo == BMS_TRACK_TIME_SIG )
+			out[iMeasureNo] = (float) atof(sData);
+	}
+}
+
 bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 {
 	LOG->Trace( "Song::LoadFromBMSDir(%s)", sDir.c_str() );
@@ -722,8 +753,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	 * called to begin with. */
 	ASSERT( arrayBMSFileNames.size() );
 
-	CString sPath = out.GetSongDir() + arrayBMSFileNames[0];
-
+	/* Read all BMS files. */
 	vector<NameToData_t> aBMSData;
 	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
 	{
@@ -731,14 +761,39 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		ReadBMSFile( out.GetSongDir() + arrayBMSFileNames[i], aBMSData.back() );
 	}
 
-	ReadGlobalTags( aBMSData[0], out );
+	/* Create a Steps for each. */
+	vector<Steps*> apSteps;
+	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
+		apSteps.push_back( new Steps );
+
+	/* Try to figure out the difficulty of each file. */
+	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
+	{
+		Steps *pSteps = apSteps[i];
+		pSteps->SetDifficulty( DIFFICULTY_MEDIUM );
+		CString sTag;
+		if( GetTagFromMap( aBMSData[i], "#title", sTag ) )
+			SearchForDifficulty( sTag, pSteps );
+		if( GetTagFromMap( aBMSData[i], "#genre", sTag ) )
+			SearchForDifficulty( sTag, pSteps );
+	}
+
+	/* Prefer to read global tags from a DIFFICULTY_MEDIUM file.  These tend to
+	 * have the least cruft in the #TITLE tag, so it's more likely to get a clean
+	 * title. */
+	int iMainDataIndex = 0;
+	for( unsigned i=1; i<apSteps.size(); i++ )
+		if( apSteps[i]->GetDifficulty() == DIFFICULTY_MEDIUM )
+			iMainDataIndex = i;
+
+	ReadGlobalTags( aBMSData[iMainDataIndex], out );
 
 
 	// Now that we've parsed the keysound data, load the Steps from the rest 
 	// of the .bms files.
 	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
 	{
-		Steps* pNewNotes = new Steps;
+		Steps* pNewNotes = apSteps[i];
 		const bool ok = LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i], aBMSData[i], *pNewNotes );
 		if( ok )
 			out.AddSteps( pNewNotes );

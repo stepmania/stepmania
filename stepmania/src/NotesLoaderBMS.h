@@ -11,15 +11,17 @@ class BMSLoader: public NotesLoader
 {
 	void SlideDuplicateDifficulties( Song &p );
 
-	map<int, float> m_MeasureToTimeSig;
-	float GetBeatsPerMeasure( int iMeasure ) const;
-	int GetMeasureStartRow( int iMeasureNo ) const;
-
 	typedef multimap<CString, CString> NameToData_t;
 	bool ReadBMSFile( const CString &sPath, BMSLoader::NameToData_t &mapNameToData );
 	bool LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNameToData, Steps &out1 );
 	void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out );
 	bool GetTagFromMap( const BMSLoader::NameToData_t &mapNameToData, const CString &sName, CString &sOut );
+	void SearchForDifficulty( CString sTag, Steps *pOut );
+
+	typedef map<int, float> MeasureToTimeSig_t;
+	void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t &out );
+	static float GetBeatsPerMeasure( const MeasureToTimeSig_t &sigs, int iMeasure );
+	static int GetMeasureStartRow( const MeasureToTimeSig_t &sigs, int iMeasureNo );
 
 	CString m_sDir;
 	map<CString,int> m_mapWavIdToKeysoundIndex;
