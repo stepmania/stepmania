@@ -157,7 +157,10 @@ void PaneDisplay::SetContent( PaneContents c )
 	if( (g_Contents[c].req&NEED_COURSE) && !pTrail )
 		goto done;
 	if( (g_Contents[c].req&NEED_PROFILE) && !pProfile )
+	{
+		str = "N/A";
 		goto done;
+	}
 
 	{
 		RadarValues rv;
