@@ -477,9 +477,9 @@ void RageMutexImpl::Lock()
 	}
 
 	/* XXX: We want a stack trace of *all* threads if this happened, so we can
-	 * tell who we're deadlocked with.  Crash in a thread, so we can see the
-	 * function on the stack (so we know we didn't crash somewhere else above. 
-	 * (We can't use CHECKPOINT, since that uses locks.) */
+	 * tell who we're deadlocked with.  We can't use CHECKPOINT, since that uses
+	 * locks.  Crash in a function, so we can see it on the stack (so we know
+	 * we didn't crash somewhere else above.)   */
 	CrashDeadlocked();
 }
 
