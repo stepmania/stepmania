@@ -132,11 +132,7 @@ CString AnnouncerManager::GetPathTo( CString sAnnouncerName, CString sFolderName
 
 CString AnnouncerManager::GetPathTo( CString sFolderName )
 {
-	CString sPath = GetPathTo(m_sCurAnnouncerName, sFolderName);
-	if(sPath != "")
-		return sPath;
-
-	return GetPathTo(EMPTY_ANNOUNCER_NAME, sFolderName);
+	return GetPathTo(m_sCurAnnouncerName, sFolderName);
 }
 
 bool AnnouncerManager::HasSoundsFor( CString sFolderName )
