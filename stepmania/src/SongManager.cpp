@@ -37,7 +37,7 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 #define COURSES_DIR				"Courses/"
 
 #define MAX_EDITS_PER_PROFILE	200
-#define MAX_EDIT_SIZE_BYTES		8*1024		// 8KB
+#define MAX_EDIT_SIZE_BYTES		30*1024		// 30KB
 
 #define NUM_GROUP_COLORS	THEME->GetMetricI("SongManager","NumGroupColors")
 #define GROUP_COLOR( i )	THEME->GetMetricC("SongManager",ssprintf("GroupColor%d",i+1))
