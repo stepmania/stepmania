@@ -1108,8 +1108,12 @@ void ScreenGameplay::Update( float fDeltaTime )
 	 * us not to update the time here.  (In that case, we've already created
 	 * a new ScreenJukebox and reset music statistics, and if we do this then
 	 * we'll un-reset them.) */
-	if(m_soundMusic.IsPlaying())
-		GAMESTATE->UpdateSongPosition( m_soundMusic.GetPositionSeconds(), GAMESTATE->m_pCurSong->m_Timing );
+	if( m_soundMusic.IsPlaying() )
+	{
+		RageTimer tm;
+		const float fSeconds = m_soundMusic.GetPositionSeconds( NULL, &tm );
+		GAMESTATE->UpdateSongPosition( fSeconds, GAMESTATE->m_pCurSong->m_Timing, tm );
+	}
 
 	if( m_bZeroDeltaOnNextUpdate )
 	{
