@@ -117,8 +117,11 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_CANCEL_ALL_PLAYER_OPTIONS) )
 	{
 		SOUND->PlayOnce( THEME->GetPathToS("ScreenPlayerOptions cancel all") );
+		
+		// apply the game default mods, but not the Profile saved mods
 		GAMESTATE->m_PlayerOptions[pn].Init();
 		GAMESTATE->m_PlayerOptions[pn].FromString( PREFSMAN->m_sDefaultModifiers );
+		
 		this->ImportOptions();
 		this->PositionUnderlines();
 	}
