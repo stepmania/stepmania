@@ -97,12 +97,6 @@ const CString HELP_TEXT =
 	"F1:\n     Show\n     keyboard\n     shortcuts\n";
 
 
-
-#define E	"                                "	// CHAR[32]
-#define OPTION_NAME_SIZE  sizeof(E)
-#define THIRTY_ES	E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E		// MAX_OPTIONS_PER_LINE == 30
-
-
 Menu g_KeyboardShortcuts
 (
 	"Keyboard Shortcuts",
@@ -143,7 +137,7 @@ Menu g_MainMenu
 	MenuRow( "Add/Edit Stop",				true ),
 	MenuRow( "Add/Edit BG Change",			true ),
 	MenuRow( "Play preview music",			true ),
-	MenuRow( "Exit",						true )
+	MenuRow( "Exit (discards changes since last save)",true )
 );
 
 Menu g_AreaMenu
@@ -1113,10 +1107,9 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
-		break;
 	case SM_GoToNextScreen:
+		// Reload song from disk to discard changes.
+		GAMESTATE->m_pCurSong->LoadFromSongDir( GAMESTATE->m_pCurSong->GetSongDir() );
 		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
 		break;
 	case SM_BackFromMainMenu:
