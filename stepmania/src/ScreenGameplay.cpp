@@ -393,45 +393,6 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 
 
 
-	//
-	// Add stage / SongNumber
-	//
-	m_sprStage.SetName( ssprintf("Stage%s",bExtra?"Extra":"") );
-	SET_XY( m_sprStage );
-
-	
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		m_textCourseSongNumber[p].LoadFromNumbers( THEME->GetPathToN("ScreenGameplay song num") );
-		m_textCourseSongNumber[p].EnableShadow( false );
-		m_textCourseSongNumber[p].SetName( ssprintf("SongNumberP%d%s",p+1,bExtra?"Extra":"") );
-		SET_XY( m_textCourseSongNumber[p] );
-		m_textCourseSongNumber[p].SetText( "" );
-		m_textCourseSongNumber[p].SetDiffuse( RageColor(0,0.5f,1,1) );	// light blue
-	}
-
-	switch( GAMESTATE->m_PlayMode )
-	{
-	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
-		m_sprStage.Load( THEME->GetPathToG("ScreenGameplay stage "+GAMESTATE->GetStageText()) );
-		this->AddChild( &m_sprStage );
-		break;
-	case PLAY_MODE_NONSTOP:
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_ENDLESS:
-		for( p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsPlayerEnabled(p) )
-			{
-				this->AddChild( &m_textCourseSongNumber[p] );
-			}
-		break;
-	default:
-		ASSERT(0);	// invalid GameMode
-	}
-
-
 
 	m_textSongTitle.LoadFromFont( THEME->GetPathToF("ScreenGameplay song title") );
 	m_textSongTitle.EnableShadow( false );
@@ -497,6 +458,49 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		}
 	}
 	
+	//
+	// Add stage / SongNumber
+	//
+	m_sprStage.SetName( ssprintf("Stage%s",bExtra?"Extra":"") );
+	SET_XY( m_sprStage );
+
+	
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_textCourseSongNumber[p].LoadFromNumbers( THEME->GetPathToN("ScreenGameplay song num") );
+		m_textCourseSongNumber[p].EnableShadow( false );
+		m_textCourseSongNumber[p].SetName( ssprintf("SongNumberP%d%s",p+1,bExtra?"Extra":"") );
+		SET_XY( m_textCourseSongNumber[p] );
+		m_textCourseSongNumber[p].SetText( "" );
+		m_textCourseSongNumber[p].SetDiffuse( RageColor(0,0.5f,1,1) );	// light blue
+	}
+
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_RAVE:
+		m_sprStage.Load( THEME->GetPathToG("ScreenGameplay stage "+GAMESTATE->GetStageText()) );
+		this->AddChild( &m_sprStage );
+		break;
+	case PLAY_MODE_NONSTOP:
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		for( p=0; p<NUM_PLAYERS; p++ )
+			if( GAMESTATE->IsPlayerEnabled(p) )
+			{
+				this->AddChild( &m_textCourseSongNumber[p] );
+			}
+		break;
+	default:
+		ASSERT(0);	// invalid GameMode
+	}
+
+
+
+	//
+	// Player/Song options
+	//
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
@@ -515,6 +519,9 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	SET_XY( m_textSongOptions );
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
 	this->AddChild( &m_textSongOptions );
+
+
+
 
 
 	for( p=0; p<NUM_PLAYERS; p++ )
