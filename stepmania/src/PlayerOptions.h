@@ -16,7 +16,7 @@ struct PlayerOptions
 	PlayerOptions() { Init(); };
 	void Init();
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );
-	CString GetString();
+	CString GetString() const;
 	void FromString( CString sOptions );
 	void ChooseRandomMofifiers();
 

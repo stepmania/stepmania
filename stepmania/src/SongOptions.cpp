@@ -25,7 +25,7 @@ void SongOptions::Init()
 	m_bSaveScore = true;
 }
 
-CString SongOptions::GetString()
+CString SongOptions::GetString() const
 {
 	CString sReturn;
 

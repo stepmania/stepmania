@@ -27,7 +27,7 @@ struct SongOptions
 
 	SongOptions() { Init(); };
 	void Init();
-	CString GetString();
+	CString GetString() const;
 	void FromString( CString sOptions );
 };
 

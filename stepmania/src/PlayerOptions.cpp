@@ -70,7 +70,7 @@ static CString AddPart( float level, CString name )
 	return LevelStr + name + ", ";
 }
 
-CString PlayerOptions::GetString()
+CString PlayerOptions::GetString() const
 {
 	CString sReturn;
 
