@@ -180,6 +180,7 @@ public:
 	Steps* GetStepsByDescription( StepsType st, CString sDescription ) const;
 	Steps* GetClosestNotes( StepsType st, Difficulty dc ) const;
 	bool IsEasy( StepsType st ) const;
+	bool IsTutorial() const;
 	bool HasEdits( StepsType st ) const;
 	SelectionDisplay GetDisplayed() const;
 	bool NormallyDisplayed() const { return GetDisplayed() == SHOW_ALWAYS; }

@@ -1309,15 +1309,21 @@ void MusicWheel::SetOpenGroup(CString group, SortOrder so)
 
 	m_CurWheelItemData.clear();
 	vector<WheelItemData> &from = m_WheelItemDatas[so];
-	unsigned i;
-	for(i = 0; i < from.size(); ++i)
+	for( unsigned i = 0; i < from.size(); ++i )
 	{
-		if((from[i].m_Type == TYPE_SONG ||
-			from[i].m_Type == TYPE_COURSE) &&
-		     !from[i].m_sSectionName.empty() &&
-			 from[i].m_sSectionName != group)
+		WheelItemData &d = from[i];
+		if( (d.m_Type == TYPE_SONG || d.m_Type == TYPE_COURSE) &&
+		     !d.m_sSectionName.empty() &&
+			 d.m_sSectionName != group )
 			 continue;
-		m_CurWheelItemData.push_back(&from[i]);
+
+		/* Only show tutorial songs in arcade */
+		if( GAMESTATE->m_PlayMode!=PLAY_MODE_ARCADE && 
+			d.m_pSong &&
+			d.m_pSong->IsTutorial() )
+			continue;
+
+		m_CurWheelItemData.push_back(&d);
 	}
 
 
@@ -1326,7 +1332,7 @@ void MusicWheel::SetOpenGroup(CString group, SortOrder so)
 	//
 	m_iSelection = 0;
 
-	for( i=0; i<m_CurWheelItemData.size(); i++ )
+	for( unsigned i=0; i<m_CurWheelItemData.size(); i++ )
 	{
 		if( m_CurWheelItemData[i] == old )
 		{

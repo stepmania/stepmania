@@ -26,6 +26,7 @@
 #include "ProfileManager.h"
 #include "StageStats.h"
 #include "StepsUtil.h"
+#include "Foreach.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -1182,6 +1183,19 @@ bool Song::IsEasy( StepsType st ) const
 		return true;
 
 	return false;
+}
+
+bool Song::IsTutorial() const
+{
+	FOREACH_CONST( Steps*, m_vpSteps, s )
+	{
+		if( (*s)->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
+			continue;	// ignore
+		if( (*s)->GetDifficulty() != DIFFICULTY_BEGINNER )
+			return false;
+	}
+
+	return true;
 }
 
 bool Song::HasEdits( StepsType st ) const
