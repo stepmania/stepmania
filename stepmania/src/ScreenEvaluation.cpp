@@ -369,14 +369,16 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) || GAMEMAN->m_CurGame == GAME_EZ2 )
+		if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
 			continue;	// skip
-
-		m_sprGradeFrame[p].Load( THEME->GetPathTo(GRAPHIC_EVALUATION_GRADE_FRAME) );
-		m_sprGradeFrame[p].StopAnimating();
-		m_sprGradeFrame[p].SetState( p );
-		m_sprGradeFrame[p].SetXY( GRADE_X[p], GRADE_Y );
-		this->AddActor( &m_sprGradeFrame[p] );
+		if ( GAMEMAN->m_CurGame != GAME_EZ2)
+		{
+			m_sprGradeFrame[p].Load( THEME->GetPathTo(GRAPHIC_EVALUATION_GRADE_FRAME) );
+			m_sprGradeFrame[p].StopAnimating();
+			m_sprGradeFrame[p].SetState( p );
+			m_sprGradeFrame[p].SetXY( GRADE_X[p], GRADE_Y );
+			this->AddActor( &m_sprGradeFrame[p] );
+		}
 
 		switch( m_ResultMode )
 		{
@@ -392,14 +394,37 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			break;
 		case RM_ARCADE_STAGE:
 		case RM_ARCADE_SUMMARY:
-			m_Grades[p].SetXY( GRADE_X[p], GRADE_Y );
-			m_Grades[p].SetZ( -2 );
-			m_Grades[p].SetZoom( 1.0f );
-			m_Grades[p].SetEffectGlowing( 1.0f );
-			m_Grades[p].SpinAndSettleOn( grade[p] );
+			if (GAMEMAN->m_CurGame != GAME_EZ2 )
+			{
+				m_Grades[p].SetXY( GRADE_X[p], GRADE_Y );
+				m_Grades[p].SetZ( -2 );
+				m_Grades[p].SetZoom( 1.0f );
+				m_Grades[p].SetEffectGlowing( 1.0f );
+				m_Grades[p].SpinAndSettleOn( grade[p] );
+			}
+			else // Ez2dancer Style Grade Display.
+			{
+				m_Grades[p].SetXY( GRADE_X[p], GRADE_Y + 150);
+				m_Grades[p].SetZ( -2 );
+				if (p == PLAYER_1 )
+				{
+					m_Grades[p].SetXY( GRADE_X[p]-10, GRADE_Y + 150);	
+				}
+				m_Grades[p].SetGrade( grade[p] );
+				m_Grades[p].SetRotation( D3DX_PI );
+				m_Grades[p].SetZoom( 8 );
+				m_Grades[p].BeginTweening( 0.6f );
+
+				m_Grades[p].SetTweenRotationZ( 0 );
+				m_Grades[p].SetTweenZoom( 2 );
+
+			}
 			this->AddActor( &m_Grades[p] );
 			break;
 		}
+
+		if ( GAMEMAN->m_CurGame == GAME_EZ2)
+			continue;
 
 		m_BonusInfoFrame[p].SetXY( BONUS_FRAME_X[p], BONUS_FRAME_Y );
 		this->AddActor( &m_BonusInfoFrame[p] );
