@@ -347,7 +347,7 @@ void NetworkSyncManager::ProcessInput()
 
 
 
-unsigned char NetworkSyncManager::Read1(NetPacket &Packet)
+uint8_t NetworkSyncManager::Read1(NetPacket &Packet)
 {
 	if (Packet.Position>=NETMAXBUFFERSIZE)
 		return 0;
@@ -355,7 +355,7 @@ unsigned char NetworkSyncManager::Read1(NetPacket &Packet)
 	return Packet.Data[Packet.Position++];
 }
 
-unsigned short int NetworkSyncManager::Read2(NetPacket &Packet)
+uint16_t NetworkSyncManager::Read2(NetPacket &Packet)
 {
 	if (Packet.Position>=NETMAXBUFFERSIZE-1)
 		return 0;
@@ -366,7 +366,7 @@ unsigned short int NetworkSyncManager::Read2(NetPacket &Packet)
 	return ntohs(Temp);
 }
 
-unsigned int NetworkSyncManager::Read4(NetPacket &Packet)
+uint32_t NetworkSyncManager::Read4(NetPacket &Packet)
 {
 	if (Packet.Position>=NETMAXBUFFERSIZE-3)
 		return 0;
@@ -389,7 +389,7 @@ CString NetworkSyncManager::ReadNT(NetPacket &Packet)
 }
 
 
-void NetworkSyncManager::Write1(NetPacket &Packet, unsigned char Data)
+void NetworkSyncManager::Write1(NetPacket &Packet, uint8_t Data)
 {
 	if (Packet.Position>=NETMAXBUFFERSIZE)
 		return;
@@ -397,7 +397,7 @@ void NetworkSyncManager::Write1(NetPacket &Packet, unsigned char Data)
 	Packet.Position++;
 }
 
-void NetworkSyncManager::Write2(NetPacket &Packet, unsigned short int Data)
+void NetworkSyncManager::Write2(NetPacket &Packet, uint16_t Data)
 {
 	if (Packet.Position>=NETMAXBUFFERSIZE-1)
 		return;
@@ -406,7 +406,7 @@ void NetworkSyncManager::Write2(NetPacket &Packet, unsigned short int Data)
 	Packet.Position+=2;
 }
 
-void NetworkSyncManager::Write4(NetPacket &Packet, unsigned long Data)
+void NetworkSyncManager::Write4(NetPacket &Packet, uint32_t Data)
 {
 	if (Packet.Position>=NETMAXBUFFERSIZE-3)
 		return ;

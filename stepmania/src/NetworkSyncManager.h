@@ -71,14 +71,14 @@ private:
 	NetPacket m_packet;
 
 	//Commands used to operate on NetPackets
-	unsigned char Read1(NetPacket &Packet);
-	unsigned short int Read2(NetPacket &Packet);
-	unsigned int Read4(NetPacket &Packet);
+	uint8_t Read1(NetPacket &Packet);
+	uint16_t Read2(NetPacket &Packet);
+	uint32_t Read4(NetPacket &Packet);
 	CString ReadNT(NetPacket &Packet);
 
-	void Write1(NetPacket &Packet, unsigned char Data);
-	void Write2(NetPacket &Packet, unsigned short int Data);
-	void Write4(NetPacket &Packet, unsigned long Data);
+	void Write1(NetPacket &Packet, uint8_t Data);
+	void Write2(NetPacket &Packet, uint16_t Data);
+	void Write4(NetPacket &Packet, uint32_t Data);
 	void WriteNT(NetPacket &Packet, CString Data);
 
 	inline void ClearPacket(NetPacket &Packet)	{ memset((void*)(&Packet),0, sizeof(NetPacket)); }
