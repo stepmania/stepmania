@@ -552,9 +552,8 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 
 	/* XXX: Do we actually have to send real note data here, and to m_NoteFieldRecord? 
 	 * (We load again on play/record.) */
-	m_Player.Load( 
+	m_Player.Init( 
 		GAMESTATE->m_pPlayerState[PLAYER_1], 
-		noteData, 
 		NULL,
 		NULL, 
 		NULL, 
@@ -563,6 +562,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 		NULL, 
 		NULL, 
 		NULL );
+	m_Player.Load( noteData );
 	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
 
@@ -2177,9 +2177,11 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( m_NoteFieldEdit.m_fBeginMarker - 4 );
 				GAMESTATE->UpdateSongPosition( fSeconds, m_pSong->m_Timing );
 
+				/* If we're in course display mode, set that up. */
 				SetupCourseAttacks();
 
-				m_Player.Load( GAMESTATE->m_pPlayerState[PLAYER_1], m_NoteFieldEdit, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+				m_Player.Init( GAMESTATE->m_pPlayerState[PLAYER_1], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+				m_Player.Load( m_NoteFieldEdit );
 				GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
 
 				m_rectRecordBack.StopTweening();

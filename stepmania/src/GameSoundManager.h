@@ -3,8 +3,11 @@
 #ifndef RAGE_SOUNDS_H
 #define RAGE_SOUNDS_H
 
+#include "PlayerNumber.h"
+
 class TimingData;
 class RageSound;
+struct RageSoundParams;
 class GameSoundManager
 {
 public:
@@ -26,6 +29,8 @@ public:
 	float GetPlayLatency() const;
 	void HandleSongTimer( bool on=true );
 	float GetFrameTimingAdjustment( float fDeltaTime );
+
+	static void SetPlayerBalance( PlayerNumber pn, RageSoundParams &params );
 };
 
 extern GameSoundManager *SOUND;

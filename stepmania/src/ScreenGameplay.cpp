@@ -831,9 +831,8 @@ void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 	{
 		NoteData nd = ndTransformed;
 		NoteDataUtil::RemoveAllTapsOfType( nd, TapNote::autoKeysound );
-		m_Player[p].Load( 
+		m_Player[p].Init( 
 			GAMESTATE->m_pPlayerState[p], 
-			nd, 
 			&g_CurStageStats.m_player[p],
 			m_pLifeMeter[p], 
 			m_pCombinedLifeMeter, 
@@ -842,6 +841,7 @@ void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 			m_pInventory[p], 
 			m_pPrimaryScoreKeeper[p], 
 			m_pSecondaryScoreKeeper[p] );
+		m_Player[p].Load( nd );
 	}
 
 	// load auto keysounds

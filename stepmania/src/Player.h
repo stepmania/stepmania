@@ -33,9 +33,8 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	void Load( 
+	void Init( 
 		PlayerState* pPlayerState, 
-		const NoteData& noteData, 
 		PlayerStageStats* pPlayerStageStats,
 		LifeMeter* pLM, 
 		CombinedLifeMeter* pCombinedLM, 
@@ -44,6 +43,7 @@ public:
 		Inventory* pInventory, 
 		ScoreKeeper* pPrimaryScoreKeeper, 
 		ScoreKeeper* pSecondaryScoreKeeper );
+	void Load( const NoteData& noteData );
 	void CrossedRow( int iNoteRow );
 	void CrossedMineRow( int iNoteRow );
 	void Step( int col, RageTimer tm );

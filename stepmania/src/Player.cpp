@@ -32,6 +32,7 @@
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 #include "GameplayMessages.h"
+#include "GameSoundManager.h"
 
 ThemeMetric<float> GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
 ThemeMetric<float> GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
@@ -94,9 +95,9 @@ Player::~Player()
 	delete m_pNoteField;
 }
 
-void Player::Load( 
+/* Init() does the expensive stuff: load sounds and note skins.  Load() just loads a NoteData. */
+void Player::Init(
 	PlayerState* pPlayerState, 
-	const NoteData& noteData, 
 	PlayerStageStats* pPlayerStageStats,
 	LifeMeter* pLM, 
 	CombinedLifeMeter* pCombinedLM, 
@@ -106,8 +107,6 @@ void Player::Load(
 	ScoreKeeper* pPrimaryScoreKeeper, 
 	ScoreKeeper* pSecondaryScoreKeeper )
 {
-	m_iDCState = AS2D_IDLE;
-
 	m_pPlayerState = pPlayerState;
 	m_pPlayerStageStats = pPlayerStageStats;
 	m_pLifeMeter = pLM;
@@ -117,11 +116,44 @@ void Player::Load(
 	m_pInventory = pInventory;
 	m_pPrimaryScoreKeeper = pPrimaryScoreKeeper;
 	m_pSecondaryScoreKeeper = pSecondaryScoreKeeper;
+
+	m_soundMine.Load( THEME->GetPathToS("Player mine"), true );
+
+	/* Attacks can be launched in course modes and in battle modes.  They both come
+	 * here to play, but allow loading a different sound for different modes. */
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_RAVE:
+	case PLAY_MODE_BATTLE:
+		m_soundAttackLaunch.Load( THEME->GetPathToS("Player battle attack launch"), true );
+		m_soundAttackEnding.Load( THEME->GetPathToS("Player battle attack ending"), true );
+		break;
+	default:
+		m_soundAttackLaunch.Load( THEME->GetPathToS("Player course attack launch"), true );
+		m_soundAttackEnding.Load( THEME->GetPathToS("Player course attack ending"), true );
+		break;
+	}
+
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+	RageSoundParams p;
+	GameSoundManager::SetPlayerBalance( pn, p );
+
+	m_soundMine.SetParams( p );
+	m_soundAttackLaunch.SetParams( p );
+	m_soundAttackEnding.SetParams( p );
+}
+
+void Player::Load( const NoteData& noteData )
+{
+	m_iDCState = AS2D_IDLE;
+
 	m_iRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
 	m_iMineRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
 
 	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = pPlayerState->m_PlayerNumber;
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 	GAMESTATE->ResetNoteSkinsForPlayer( pn );
 
@@ -228,40 +260,16 @@ void Player::Load(
 	// Need to set Y positions of all these elements in Update since
 	// they change depending on PlayerOptions.
 
-	RageSoundParams p;
-	m_soundMine.Load( THEME->GetPathToS("Player mine"), true );
-
-	/* Attacks can be launched in course modes and in battle modes.  They both come
-	 * here to play, but allow loading a different sound for different modes. */
-	switch( GAMESTATE->m_PlayMode )
-	{
-	case PLAY_MODE_RAVE:
-	case PLAY_MODE_BATTLE:
-		m_soundAttackLaunch.Load( THEME->GetPathToS("Player battle attack launch"), true );
-		m_soundAttackEnding.Load( THEME->GetPathToS("Player battle attack ending"), true );
-		break;
-	default:
-		m_soundAttackLaunch.Load( THEME->GetPathToS("Player course attack launch"), true );
-		m_soundAttackEnding.Load( THEME->GetPathToS("Player course attack ending"), true );
-		break;
-	}
-
-	if( GAMESTATE->GetNumPlayersEnabled() == 2 )
-	{
-		/* Two players are active.  Play sounds on this player's side. */
-		p.m_Balance = (pn == PLAYER_1)? -1.0f:1.0f;
-	}
-	m_soundMine.SetParams( p );
-	m_soundAttackLaunch.SetParams( p );
-	m_soundAttackEnding.SetParams( p );
-
 	//
 	// Load keysounds
 	//
-	Song* pSong = GAMESTATE->m_pCurSong;
+	const Song* pSong = GAMESTATE->m_pCurSong;
 	CString sSongDir = pSong->GetSongDir();
 	m_vKeysounds.clear();
 	m_vKeysounds.resize( pSong->m_vsKeysoundFile.size() );
+
+	RageSoundParams p;
+	GameSoundManager::SetPlayerBalance( pn, p );
 	for( unsigned i=0; i<m_vKeysounds.size(); i++ )
 	{
 		 CString sKeysoundFilePath = sSongDir + pSong->m_vsKeysoundFile[i];
