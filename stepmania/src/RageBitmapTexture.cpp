@@ -24,7 +24,10 @@
 #include "SDL_rotozoom.h"
 #include "SDL_utils.h"
 #include "SDL_dither.h"
+#define NO_SDL_GLEXT
+#define __glext_h_ /* try harder to stop glext.h from being forced on us by someone else */
 #include "SDL_opengl.h"
+#include "glext.h"
 
 #include "RageTimer.h"
 
@@ -199,7 +202,7 @@ void RageBitmapTexture::Create()
 	int target = PixFmtMaskNo(fmtTexture);
 
 	/* Dither only when the target is 16bpp, not when it's 32bpp. */
-	if( PixFmtMasks[target][4] /* XXX magic 4 */ == 4)
+	if( PixFmtMasks[target][4] /* XXX magic 4 */ == 32)
 		m_prefs.bDither = false;
 
 	if( m_prefs.bStretch ) 
