@@ -46,28 +46,5 @@ bool SDL_GetEvent(SDL_Event &event, int mask);
 #define TRAIT_WHITE_ONLY		0x0004 /* 8alphaonly */
 int FindSurfaceTraits(const SDL_Surface *img);
 
-struct char_traits_Sint32: public char_traits<Sint32>
-{
-	static Sint32 *copy(Sint32 *s, const Sint32 *p, size_t n)
-	{
-		memcpy(s, p, n * sizeof(Sint32));
-		return s;
-	}
-	static Sint32 *move(Sint32 *s, const Sint32 *p, size_t n)
-	{
-		memmove(s, p, n * sizeof(Sint32));
-		return s;
-	}
-	static Sint32 *assign(Sint32 *s, unsigned cnt, int n)
-	{
-		while(cnt--) *(s++) = n;
-		return s;
-	}
-	static void assign(Sint32 &c1, Sint32 c2)
-	{
-		c1 = c2;
-	}
-};
-
 #endif
 

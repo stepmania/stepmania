@@ -299,15 +299,27 @@ void RageSoundManager::SetPrefs(float MixVol)
 SoundMixBuffer::SoundMixBuffer()
 {
 	vol = SOUNDMAN->GetMixVolume();
+	bufsize = used = 0;
+	mixbuf = NULL;
+}
+
+SoundMixBuffer::~SoundMixBuffer()
+{
+	free(mixbuf);
 }
 
 void SoundMixBuffer::write(const Sint16 *buf, unsigned size)
 {
-	if(mixbuf.size() < size)
+	if(bufsize < size)
 	{
-		basic_string<Sint32, char_traits_Sint32> empty(size-mixbuf.size(), 0);
+		mixbuf = (Sint32 *) realloc(mixbuf, sizeof(Sint32) * size);
+		bufsize = size;
+	}
 
-		mixbuf.insert(mixbuf.end(), empty.begin(), empty.end());
+	if(used < size)
+	{
+		memset(mixbuf + used, 0, (size - used) * sizeof(Sint32));
+		used = size;
 	}
 
 	for(unsigned pos = 0; pos < size; ++pos)
@@ -330,7 +342,7 @@ void SoundMixBuffer::write(const Sint16 *buf, unsigned size)
 
 void SoundMixBuffer::read(Sint16 *buf)
 {
-	for(unsigned pos = 0; pos < mixbuf.size(); ++pos)
+	for(unsigned pos = 0; pos < used; ++pos)
 	{
 		/* XXX: dither */
 		Sint32 out = (mixbuf[pos]) / 32768;
@@ -338,5 +350,5 @@ void SoundMixBuffer::read(Sint16 *buf)
 		buf[pos] = Sint16(out);
 	}
 
-	mixbuf.erase();
+	used = 0;
 }

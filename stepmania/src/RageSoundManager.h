@@ -68,16 +68,19 @@ public:
 /* This inputs and outputs 16-bit 44khz stereo input. */
 class SoundMixBuffer
 {
-	basic_string<Sint32, char_traits_Sint32> mixbuf;
+	Sint32 *mixbuf;
+	unsigned bufsize; /* actual allocated samples */
+	unsigned used; /* used samples */
 	float vol;
 
 public:
 	void write(const Sint16 *buf, unsigned size);
 	void read(Sint16 *buf);
-	unsigned size() const { return mixbuf.size(); }
+	unsigned size() const { return used; }
 	void SetVolume(float f);
 
 	SoundMixBuffer();
+	~SoundMixBuffer();
 };
 
 extern RageSoundManager *SOUNDMAN;
