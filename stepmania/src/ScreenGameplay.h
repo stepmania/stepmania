@@ -44,6 +44,7 @@ const ScreenMessage	SM_900Combo					= ScreenMessage(SM_User+208);
 const ScreenMessage	SM_1000Combo				= ScreenMessage(SM_User+209);
 const ScreenMessage	SM_ComboStopped				= ScreenMessage(SM_User+210);
 const ScreenMessage SM_ComboContinuing			= ScreenMessage(SM_User+211);
+const ScreenMessage	SM_MissComboAborted			= ScreenMessage(SM_User+212);
 
 const ScreenMessage SM_BattleTrickLevel1		= ScreenMessage(SM_User+301);
 const ScreenMessage SM_BattleTrickLevel2		= ScreenMessage(SM_User+302);
@@ -119,6 +120,9 @@ protected:
 	BitmapText			m_textSongOptions;
 
 	BitmapText			m_textDebug;
+
+	RageTimer			m_GiveUpTimer;
+	void AbortGiveUp();
 
 	BitmapText			m_textAutoPlay;	// for AutoPlay, AutoAdjust
 	void	UpdateAutoPlayText();

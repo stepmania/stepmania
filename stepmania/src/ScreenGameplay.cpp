@@ -614,6 +614,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		}
 	}
 
+	m_GiveUpTimer.SetZero();
+
 	// Get the transitions rolling on the first update.
 	// We can't do this in the constructor because ScreenGameplay is constructed 
 	// in the middle of ScreenStage.
@@ -1035,6 +1037,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		float fSecondsToStop = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat ) + 1;
 		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop  &&  !m_NextSongOut.IsTransitioning() )
 		{
+			/* XXX: Why is this here?  I think this is causing slight graphics glitches as the beat shifts. */
 			GAMESTATE->m_fSongBeat = 0;
 			this->PostScreenMessage( SM_NotesEnded, 0 );
 		}
@@ -1192,10 +1195,37 @@ void ScreenGameplay::Update( float fDeltaTime )
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;	// reset for the next comment
 		}
 	}
+
+	if( !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 4.0f )
+	{
+		m_GiveUpTimer.SetZero();
+		/* Unless we're in FailOff, giving up means failing the song. */
+		switch( GAMESTATE->m_SongOptions.m_FailType )
+		{
+		case SongOptions::FAIL_ARCADE:
+		case SongOptions::FAIL_END_OF_SONG:
+			for ( pn=0; pn<NUM_PLAYERS; pn++ )
+				GAMESTATE->m_CurStageStats.bFailed[pn] = true;	// fail
+		}
+
+		this->PostScreenMessage( SM_NotesEnded, 0 );
+	}
+
 	if( GAMESTATE->m_SongOptions.m_bAssistTick && IsTimeToPlayTicks())
 		m_soundAssistTick.Play();
 }
 
+void ScreenGameplay::AbortGiveUp()
+{
+	if( m_GiveUpTimer.IsZero() )
+		return;
+
+	m_textDebug.StopTweening();
+	m_textDebug.SetText("Don't give up!");
+	m_textDebug.BeginTweening( 1/2.f );
+	m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
+	m_GiveUpTimer.SetZero();
+}
 
 void ScreenGameplay::DrawPrimitives()
 {
@@ -1209,11 +1239,42 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	//LOG->Trace( "ScreenGameplay::Input()" );
 
 	if( MenuI.IsValid()  &&  
-		MenuI.button == MENU_BUTTON_BACK  &&  
 		m_DancingState != STATE_OUTRO  &&
 		!m_Back.IsTransitioning() )
 	{
-		if( PREFSMAN->m_bDelayedEscape && type==IET_FIRST_PRESS)
+		/* If we have a large miss combo on both players, allow bailing out by holding
+		 * the START button of all active players.  This gives a way to "give up" when
+		 * a back button isn't available that won't be accidentally (or maliciously)
+		 * triggered.  Doing this is treated as failing the song, unlike BACK, since
+		 * it's always available. */
+
+		if(	MenuI.button == MENU_BUTTON_START )
+		{
+			/* No PREFSMAN->m_bDelayedEscape; always delayed. */
+			if( type==IET_RELEASE )
+				AbortGiveUp();
+			else if( m_GiveUpTimer.IsZero() )
+			{
+				for ( int pn=0; pn<NUM_PLAYERS; pn++ )
+				{
+					if( !GAMESTATE->IsHumanPlayer(pn) )
+						continue;
+					if( GAMESTATE->m_CurStageStats.iCurMissCombo[pn] < 30 )
+						return;
+				}
+
+				m_textDebug.SetText( "Continue holding START to give up" );
+				m_textDebug.StopTweening();
+				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
+				m_textDebug.BeginTweening( 1/8.f );
+				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
+				m_GiveUpTimer.Touch(); /* start the timer */
+			}
+
+			return;
+		}
+
+		if( MenuI.button == MENU_BUTTON_BACK && PREFSMAN->m_bDelayedEscape && type==IET_FIRST_PRESS)
 		{
 			m_textDebug.SetText( "Continue holding BACK to quit" );
 			m_textDebug.StopTweening();
@@ -1223,7 +1284,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			return;
 		}
 		
-		if( PREFSMAN->m_bDelayedEscape && type==IET_RELEASE )
+		if( MenuI.button == MENU_BUTTON_BACK && PREFSMAN->m_bDelayedEscape && type==IET_RELEASE )
 		{
 			m_textDebug.StopTweening();
 			m_textDebug.BeginTweening( 1/8.f );
@@ -1231,7 +1292,8 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			return;
 		}
 		
-		if( (!PREFSMAN->m_bDelayedEscape && type==IET_FIRST_PRESS) ||
+		if( MenuI.button == MENU_BUTTON_BACK && 
+			(!PREFSMAN->m_bDelayedEscape && type==IET_FIRST_PRESS) ||
 			(DeviceI.device==DEVICE_KEYBOARD && type==IET_SLOW_REPEAT)  ||
 			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT) )
 		{
@@ -1848,6 +1910,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		default:
 			ASSERT(0);
 		}
+	case SM_MissComboAborted:
+		AbortGiveUp();
+		break;
 	}
 }
 

@@ -835,7 +835,9 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	case TNS_PERFECT:
 	case TNS_GREAT:
 		GAMESTATE->m_CurStageStats.iCurMissCombo[m_PlayerNumber] = 0;
+		SCREENMAN->PostMessageToTopScreen( SM_MissComboAborted, 0 );
 		break;
+
 	case TNS_MISS:
 		++GAMESTATE->m_CurStageStats.iCurMissCombo[m_PlayerNumber];
 
