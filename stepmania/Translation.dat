@@ -147,11 +147,11 @@ SubtitleTo: スペース☆マコのテーマ
 * 
 # No need to write transliterations for these.
 TitleFrom: Senorita
-TitleTo: Señorita
+TitleTo: SEÑORITA
 DontTransliterate
 * 
 TitleFrom: Senorita\(Speedy Mix\)
-TitleTo: Señorita
+TitleTo: SEÑORITA
 SubtitleTo: Speedy Mix
 DontTransliterate
 *
@@ -201,43 +201,6 @@ ArtistTo: くにたけみゆき
 *
 ArtistFrom: Kunitake Miyuki
 ArtistTo: くにたけみゆき
-*
-# Courses:
-TitleFrom: Kidou
-TitleTo: 鬼道
-*
-TitleFrom: Demon Road
-TitleTo: 鬼道
-*
-TitleFrom: Kidou 2
-TitleTo: 鬼道弐
-*
-TitleFrom: Demon Road 2
-TitleTo: 鬼道弐
-*
-TitleFrom: Love
-TitleTo: Love ♡
-*
-TitleFrom: Love Love
-TitleTo: Love ♡
-*
-TitleFrom: 2 ?MB
-TitleTo: 2MB鬼
-*
-TitleFrom: Dancemania( Oni)?
-TitleTo: Dancemania 鬼
-*
-TitleFrom: TaQ( Oni)?
-TitleTo: TaQ 鬼
-*
-TitleFrom: Legend Road
-TitleTo: 伝説道
-*
-TitleFrom: Slow Demon Road
-TitleTo: 鬼の遅道
-*
-TitleFrom: True Demon Road
-TitleTo: 真鬼道
 *
 # DREAMS COME TRUE:
 TitleFrom: Asa ga Mata Kuru
@@ -343,3 +306,42 @@ ArtistTo: 堀江由衣
 *
 ArtistFrom: (Nobuo Uematsu)|(Uematsu Nobuo)
 ArtistTo: 植松伸夫
+
+# Courses:
+TitleFrom: Kidou
+TitleTo: 鬼道
+*
+TitleFrom: Demon Road
+TitleTo: 鬼道
+*
+TitleFrom: Kidou 2
+TitleTo: 鬼道 弐
+*
+TitleFrom: Demon Road 2
+TitleTo: 鬼道 弐
+*
+TitleFrom: Love
+TitleTo: Love ♡
+*
+TitleFrom: Love Love
+TitleTo: Love ♡
+*
+TitleFrom: 2 ?MB
+TitleTo: 2MB鬼
+*
+TitleFrom: Dancemania( Oni)?
+TitleTo: Dancemania 鬼
+*
+TitleFrom: (TaQ( Oni)?)|(Road of TaQ)
+TitleTo: TaQ 鬼
+*
+TitleFrom: Legend Road
+TitleTo: 伝説道
+*
+TitleFrom: Slow Demon Road
+TitleTo: 鬼の遅道
+*
+TitleFrom: True Demon Road
+TitleTo: 真鬼道
+*
+
