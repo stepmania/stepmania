@@ -110,6 +110,7 @@ protected:
 
 	Transition	m_NextSongIn;	// shows between songs in a course
 	Transition	m_NextSongOut;	// shows between songs in a course
+	Transition	m_SongFinished;	// shows after each song, course or not
 
 	Sprite				m_sprStaticBackground;
 	Sprite				m_sprLifeFrame;

@@ -342,7 +342,8 @@ void ScreenGameplay::Init()
 	m_NextSongOut.SetZ( -2 ); // on top of everything else
 	this->AddChild( &m_NextSongOut );
 
-
+	m_SongFinished.SetZ( -2 ); // on top of everything else
+	this->AddChild( &m_SongFinished );
 
 	//
 	// Add LifeFrame
@@ -953,6 +954,8 @@ void ScreenGameplay::LoadNextSong()
 	// Instead, load this right before it's used
 //	m_NextSongOut.Load( THEME->GetPathToB("ScreenGameplay next song out") );
 
+	m_SongFinished.Load( THEME->GetPathToB("ScreenGameplay song finished") );
+
 	// Load lyrics
 	// XXX: don't load this here
 	LyricsLoader LL;
@@ -1219,8 +1222,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 		// Check for end of song
 		//
 		float fSecondsToStop = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat );
-		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop  &&  !m_NextSongOut.IsTransitioning() )
-			this->PostScreenMessage( SM_NotesEnded, 0 );
+		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop && !m_SongFinished.IsTransitioning() && !m_NextSongOut.IsTransitioning() )
+			m_SongFinished.StartTransitioning( SM_NotesEnded );
 
 		//
 		// check for fail
