@@ -3,7 +3,7 @@
 
 #include "GameState.h"
 #include "GameManager.h"
-#include "Song.h"
+#include "song.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "BGAnimation.h"
@@ -86,7 +86,7 @@ void ConditionalBGA::Load(CString szScreenName)
 				CStringArray asSplitLine;
 				split(currentline,"[",asSplitLine);
 				split(asSplitLine[0],"]",asSplitLine);
-				if(!asSplitLine.empty() && asSplitLine.size() - 1 >= 0)
+				if(!asSplitLine.empty() && asSplitLine.size() >= 1)
 					m_bgainfo[bgano].bganame = asSplitLine[asSplitLine.size() - 1];
 			}
 			else
@@ -399,7 +399,8 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 		{	
 			if(GAMESTATE->IsPlayerEnabled(pn))
 			{
-				for(unsigned md=0;md<PlayerOptions::NUM_ACCELS;md++)
+				unsigned md;
+				for(md=0;md<PlayerOptions::NUM_ACCELS;md++)
 				{
 					if(po.m_fAccels[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_fAccels[md] != 0.0f)
 					{
