@@ -262,6 +262,7 @@ public:
 	//
 	// other properties
 	//
+	bool GetHidden()			{ return m_bHidden; }
 	void SetHidden( bool b )	{ m_bHidden = b; }
 	void SetShadowLength( float fLength );
 	void EnableShadow( bool b )	{ m_bShadow = b; }

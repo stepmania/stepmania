@@ -247,9 +247,8 @@ public:
 	};
 
 	void GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsOut );
-
-	/* Called by name entry screens: */
-	void StoreRankingName( PlayerNumber pn, CString name );
+	void StoreRankingName( PlayerNumber pn, CString name );	// Called by name entry screens
+	vector<CString*> m_vpsNamesThatWereFilled;	// filled on StoreRankingName, 
 
 	//
 	// Arrow positioning

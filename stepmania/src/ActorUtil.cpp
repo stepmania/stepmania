@@ -149,6 +149,10 @@ void UtilSetXY( Actor& actor, CString sClassName )
 
 float UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
 {
+	// If Actor is hidden, it won't get updated or drawn, so don't bother tweening.
+	if( actor.GetHidden() )
+		return 0;
+
 	float ret = actor.Command( "playcommand," + sCommandName );
 
 	// HACK:  It's very often that we command things to TweenOffScreen 

@@ -159,6 +159,8 @@ void GameState::Reset()
 void GameState::BeginGame()
 {
 	m_timeGameStarted = time(NULL);
+
+	m_vpsNamesThatWereFilled.clear();
 }
 
 void GameState::EndGame()
@@ -1176,6 +1178,9 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 	for( unsigned i=0; i<aFeats.size(); i++ )
 	{
 		*aFeats[i].pStringToFill = name;
+
+		// save name pointers as we fill them
+		m_vpsNamesThatWereFilled.push_back( aFeats[i].pStringToFill );
 	}
 }
 
