@@ -107,11 +107,10 @@ MusicWheel::MusicWheel()
 	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
 		GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
 
+	m_sprSelectionOverlay.SetName( "Highlight" );
 	m_sprSelectionOverlay.Load( THEME->GetPathToG("MusicWheel highlight") );
-	m_sprSelectionOverlay.SetXY( 0, 0 );
-	m_sprSelectionOverlay.SetDiffuse( RageColor(1,1,1,1) );
-	m_sprSelectionOverlay.SetEffectGlowShift( 1.0f, RageColor(1,1,1,0.4f), RageColor(1,1,1,1) );
-	AddChild( &m_sprSelectionOverlay );
+	this->AddChild( &m_sprSelectionOverlay );
+	UtilOnCommand( &m_sprSelectionOverlay, "MusicWheel" );
 
 	m_ScrollBar.SetX( SCROLL_BAR_X ); 
 	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT ); 
@@ -1327,15 +1326,15 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 
 	SetItemPosition( m_sprSelectionOverlay, 0 );
 
-	m_sprSelectionOverlay.Command( "addx,320" );
-	if(changing_sort) {
-		m_sprSelectionOverlay.BeginTweening( 0.04f * NUM_WHEEL_ITEMS/2 );	// sleep
-		m_sprSelectionOverlay.BeginTweening( 0.2f, Actor::TWEEN_ACCELERATE );
+	COMMAND( m_sprSelectionOverlay, "StartOn");
+	if( changing_sort )
+	{
+		const float delay = fabsf(NUM_WHEEL_ITEMS/2-WHEEL_ITEM_ON_DELAY_CENTER) * WHEEL_ITEM_ON_DELAY_OFFSET;
+		m_sprSelectionOverlay.BeginTweening( delay ); // sleep
+		COMMAND( m_sprSelectionOverlay, "FinishOnSort");
 	} else {
-		m_sprSelectionOverlay.BeginTweening( 0.05f );	// sleep
-		m_sprSelectionOverlay.BeginTweening( 0.4f, Actor::TWEEN_ACCELERATE );
+		COMMAND( m_sprSelectionOverlay, "FinishOn");
 	}
-	m_sprSelectionOverlay.Command( "addx,-320" );
 
 	m_ScrollBar.SetX( SCROLL_BAR_X );
 	m_ScrollBar.Command( "addx,+30" );
@@ -1354,8 +1353,8 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 
 		COMMAND( display, "StartOn");
 		const float delay = fabsf(i-WHEEL_ITEM_ON_DELAY_CENTER) * WHEEL_ITEM_ON_DELAY_OFFSET;
-		display.BeginTweening( delay ); //0.04f*i /*atof(delays[i])*/ );	// sleep
-		COMMAND( display, "FinishOn"); // accelerate,0.2
+		display.BeginTweening( delay ); // sleep
+		COMMAND( display, "FinishOn");
 		if( changing_sort )
 			display.HurryTweening( 0.25f );
 	}
@@ -1372,16 +1371,18 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 
 	SetItemPosition( m_sprSelectionOverlay, 0 );
 
-	if(changing_sort) {
+	COMMAND( m_sprSelectionOverlay, "StartOff");
+	if(changing_sort)
+	{
 		/* When changing sort, tween the overlay with the item in the center;
 		 * having it separate looks messy when we're moving fast. */
-		m_sprSelectionOverlay.BeginTweening( 0.04f * NUM_WHEEL_ITEMS/2 );	// sleep
-		m_sprSelectionOverlay.BeginTweening( 0.2f, Actor::TWEEN_DECELERATE );
+		const float delay = fabsf(NUM_WHEEL_ITEMS/2-WHEEL_ITEM_ON_DELAY_CENTER) * WHEEL_ITEM_ON_DELAY_OFFSET;
+		m_sprSelectionOverlay.BeginTweening( delay ); // sleep
+		COMMAND( m_sprSelectionOverlay, "FinishOffSort");
 	} else {
-		m_sprSelectionOverlay.BeginTweening( 0 );	// sleep
-		m_sprSelectionOverlay.BeginTweening( 0.2f, Actor::TWEEN_DECELERATE );
+		COMMAND( m_sprSelectionOverlay, "FinishOff");
 	}
-	m_sprSelectionOverlay.Command( "addx,320" );
+	COMMAND( m_sprSelectionOverlay, "FinishOff");
 
 	m_ScrollBar.BeginTweening( 0 );
 	m_ScrollBar.BeginTweening( 0.2f, Actor::TWEEN_ACCELERATE );
