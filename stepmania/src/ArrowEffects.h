@@ -22,8 +22,12 @@
 //	The ArrowEffect and ScrollSpeed is applied in this stage.
 float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat );
 
-//	Actual display position, with reverse factored in.
-float ArrowGetYPos(	PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels );
+/* Actual display position, with reverse and post-reverse-effects factored in
+ * (fYOffset -> YPos). */
+float ArrowGetYPos(	PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse = true );
+
+// Inverse of ArrowGetYPos (YPos -> fYOffset).
+float ArrowGetYOffsetFromYPos( PlayerNumber pn, int iCol, float YPos, float fYReverseOffsetPixels );
 
 
 //	fRotation is Z rotation of an arrow.  This will depend on the column of 
@@ -35,7 +39,7 @@ float ArrowGetRotation(	PlayerNumber pn, float fNoteBeat );
 //	fXPos is a horizontal position in pixels relative to the center of the field.
 //	This depends on the column of the arrow and possibly the Arrow effect and
 //	fYPos (in the case of EFFECT_DRUNK).
-float ArrowGetXPos( PlayerNumber pn, int iCol, float fYPos );
+float ArrowGetXPos( PlayerNumber pn, int iCol, float fYOffset );
 
 //  Z position; normally 0.  Only visible in perspective modes.
 float ArrowGetZPos( PlayerNumber pn, int iCol, float fYPos );

@@ -87,16 +87,29 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 	return fYOffset;
 }
 
-float ArrowGetYPos( PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels )
-{
-	float f = fYOffset;
-	f *= SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 1.f, -1.f );
 
+static void ArrowGetReverseShiftAndScale( PlayerNumber pn, int iCol, float fYReverseOffsetPixels, float &fShift, float &fScale )
+{
 	/* XXX: Hack: we need to scale the reverse shift by the zoom. */
 	float fMiniPercent = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI];
 	float fZoom = 1 - fMiniPercent*0.5f;
 
-	f += SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
+	fShift = SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
+	fScale = SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 1.f, -1.f);
+}
+
+float ArrowGetYPos( PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse )
+{
+	float f = fYOffset;
+
+	if( WithReverse )
+	{
+		float fShift, fScale;
+		ArrowGetReverseShiftAndScale( pn, iCol, fYReverseOffsetPixels, fShift, fScale );
+
+		f *= fScale;
+		f += fShift;
+	}
 
 	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
 
@@ -105,8 +118,25 @@ float ArrowGetYPos( PlayerNumber pn, int iCol, float fYOffset, float fYReverseOf
 	return f;
 }
 
+float ArrowGetYOffsetFromYPos( PlayerNumber pn, int iCol, float YPos, float fYReverseOffsetPixels )
+{
+	float f = YPos;
 
-float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos ) 
+	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
+	if( fEffects[PlayerOptions::EFFECT_TIPSY] > 0 )
+		f -= fEffects[PlayerOptions::EFFECT_TIPSY] * ( cosf( RageTimer::GetTimeSinceStart()*1.2f + iCol*2.f) * ARROW_SIZE*0.4f );
+
+	float fShift, fScale;
+	ArrowGetReverseShiftAndScale( pn, iCol, fYReverseOffsetPixels, fShift, fScale );
+
+	f -= fShift;
+	if( fScale )
+		f /= fScale;
+
+	return f;
+}
+
+float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYOffset ) 
 {
 	float fPixelOffsetFromCenter = 0;
 	
@@ -120,7 +150,7 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos )
 		const float fRealPixelOffset = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[pn][iColNum].fXOffset;
 		const float fPositionBetween = SCALE( fRealPixelOffset, fMinX, fMaxX, -1, 1 );
 		float fRads = acosf( fPositionBetween );
-		fRads += fYPos * 6 / SCREEN_HEIGHT;
+		fRads += fYOffset * 6 / SCREEN_HEIGHT;
 		
 		const float fAdjustedPixelOffset = SCALE( cosf(fRads), -1, 1, fMinX, fMaxX );
 
@@ -128,7 +158,7 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos )
 	}
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] > 0 )
-		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * ( cosf( RageTimer::GetTimeSinceStart() + iColNum*0.2f + fYPos*10/SCREEN_HEIGHT) * ARROW_SIZE*0.5f );
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * ( cosf( RageTimer::GetTimeSinceStart() + iColNum*0.2f + fYOffset*10/SCREEN_HEIGHT) * ARROW_SIZE*0.5f );
 	if( fEffects[PlayerOptions::EFFECT_FLIP] > 0 )
 	{
 //		fPixelOffsetFromCenter *= SCALE(fEffects[PlayerOptions::EFFECT_FLIP], 0.f, 1.f, 1.f, -1.f);
@@ -177,7 +207,7 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos )
 		if( bEvenBeat )
 			fAmount *= -1;
 
-		const float fShift = 20.0f*fAmount*sinf( fYPos / 15.0f + PI/2.0f );
+		const float fShift = 20.0f*fAmount*sinf( fYOffset / 15.0f + PI/2.0f );
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
 	} while(0);
 
@@ -199,34 +229,29 @@ float ArrowGetRotation( PlayerNumber pn, float fNoteBeat )
 }
 
 
-const float fCenterLine = 160;	// from fYPos == 0
+const float fCenterLine = 160;	// from fYOffset == 0
 const float fFadeDist = 100;
 
-// used by ArrowGetAlpha and ArrowGetGlow below
-static float ArrowGetPercentVisible( PlayerNumber pn, int iCol, float fYPos, float fYReverseOffsetPixels )
+static float GetCenterLine( PlayerNumber pn )
 {
-	/* Ack.  What we're really doing here is unapplying reverse--what we really want is the Y position
-	 * *with* EFFECT_TIPSY, but without reverse; this is tricky since EFFECT_TIPSY is applied after
-	 * reverse.  This would be more straightforward if we were passed fYPosWORev; we could just apply
-	 * EFFECT_TIPSY.  That would make the interface more complicated, however. */
 	const float fMiniPercent = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI];
 	const float fZoom = 1 - fMiniPercent*0.5f;
-	if( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol) > 0.5f )
-	{
-		fYPos -= SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 0.f, fYReverseOffsetPixels/fZoom );
-		fYPos /= SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 1.f, -1.f );
 
-	}
+	/* Another mini hack: if EFFECT_MINI is on, then our center line is at eg. 320, 
+	 * not 160. */
+	return fCenterLine / fZoom;
+}
 
-	/* Another mini hack: if EFFECT_MINI is on, then our fYPos range is eg. 0..640, when we really
-	 * want 0..320: */
-	fYPos *= fZoom;
+// used by ArrowGetAlpha and ArrowGetGlow below
+static float ArrowGetPercentVisible( PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels )
+{
+	/* Get the YPos without reverse (that is, factor in EFFECT_TIPSY). */
+	float fYPos = ArrowGetYPos( pn, iCol, fYOffset, fYReverseOffsetPixels, false );
 
-	const float fDistFromCenterLine = fYPos - fCenterLine;
+	const float fDistFromCenterLine = fYPos - GetCenterLine( pn );
 
 	if( fYPos < 0 )	// past Gray Arrows
 		return 1;	// totally visible
-
 
 	const float* fAppearances = GAMESTATE->m_CurrentPlayerOptions[pn].m_fAppearances;
 
@@ -246,36 +271,26 @@ static float ArrowGetPercentVisible( PlayerNumber pn, int iCol, float fYPos, flo
 	}
 	if( fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] > 0)
 	{
+		float fRealCenterLine = GetCenterLine( pn );
+		float fRealFadeDist = fFadeDist - 20;
 		
-		float adjustment = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
-		if(adjustment == 0)
-			adjustment = 1;
-
-		float fRealCenterLine = fCenterLine / adjustment;
-		const float fDistFromRealCenterLine = fYPos - fRealCenterLine;
-		float fRealFadeDist = (fFadeDist - 20) / adjustment;
-		
-		if(fYPos >= fRealCenterLine + (fRealFadeDist))
-		{
-			fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] * (SCALE( fDistFromRealCenterLine-fRealFadeDist, 0, (fRealFadeDist), -1, 0 )); // go hidden
-		}
-		else if(fYPos <= fRealCenterLine - (fRealFadeDist))
-		{
-			fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] * (SCALE( fDistFromRealCenterLine+fRealFadeDist, 0, -((fRealFadeDist)), -1, 0 )); // suddenly appear
-		}
+		float fAdj;
+		if( fYPos >= fRealCenterLine + fRealFadeDist )
+			fAdj = SCALE( fDistFromCenterLine-fRealFadeDist, 0, fRealFadeDist, -1, 0 ); // go hidden
+		else if( fYPos <= fRealCenterLine - fRealFadeDist )
+			fAdj = SCALE( fDistFromCenterLine+fRealFadeDist, 0, -fRealFadeDist, -1, 0 ); // suddenly appear
 		else
-		{
-			fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] * -1; // be invisible
-		}
+			fAdj = -1; // be invisible
+
+		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] * fAdj;
 	}
 
 	return clamp( 1+fVisibleAdjust, 0, 1 );
 }
 
-float ArrowGetAlpha( PlayerNumber pn, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels )
+float ArrowGetAlpha( PlayerNumber pn, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels )
 {
-//	fYPos /= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
-	float fPercentVisible = ArrowGetPercentVisible(pn,iCol,fYPos,fYReverseOffsetPixels);
+	float fPercentVisible = ArrowGetPercentVisible(pn,iCol,fYOffset,fYReverseOffsetPixels);
 
 	if( fPercentFadeToFail != -1 )
 		fPercentVisible = 1 - fPercentFadeToFail;
@@ -283,10 +298,9 @@ float ArrowGetAlpha( PlayerNumber pn, int iCol, float fYPos, float fPercentFadeT
 	return (fPercentVisible>0.5f) ? 1.0f : 0.0f;
 }
 
-float ArrowGetGlow( PlayerNumber pn, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels )
+float ArrowGetGlow( PlayerNumber pn, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels )
 {
-//	fYPos /= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
-	float fPercentVisible = ArrowGetPercentVisible(pn,iCol,fYPos,fYReverseOffsetPixels);
+	float fPercentVisible = ArrowGetPercentVisible(pn,iCol,fYOffset,fYReverseOffsetPixels);
 
 	if( fPercentFadeToFail != -1 )
 		fPercentVisible = 1 - fPercentFadeToFail;
@@ -309,13 +323,13 @@ float ArrowGetBrightness( PlayerNumber pn, float fNoteBeat )
 }
 
 
-float ArrowGetZPos( PlayerNumber pn, int iCol, float fYPos )
+float ArrowGetZPos( PlayerNumber pn, int iCol, float fYOffset )
 {
 	float fZPos=0;
 	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] > 0 )
-		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*sinf( fYPos/16.0f );
+		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*sinf( fYOffset/16.0f );
 
 	return fZPos;
 }
