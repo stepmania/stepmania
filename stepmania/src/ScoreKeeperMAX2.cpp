@@ -19,6 +19,7 @@
 #include "GameState.h"
 #include "Course.h"
 #include "UnlockSystem.h"
+#include "SDL_utils.h"
 
 
 ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Notes*>& apNotes_, PlayerNumber pn_ ):

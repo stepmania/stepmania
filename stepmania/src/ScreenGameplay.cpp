@@ -38,6 +38,7 @@
 #include "ActorUtil.h"
 #include "NoteSkinManager.h"
 #include "RageTextureManager.h"
+#include "RageSoundManager.h"
 #include "CombinedLifeMeterEnemy.h"
 #include "CombinedLifeMeterTug.h"
 #include "Inventory.h"
