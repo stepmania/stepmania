@@ -110,8 +110,10 @@ void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
 //			if( m_iNumTracks != sMeasureLine.GetLength() )
 //				throw RageException( "Actual number of note columns (%d) is different from the NotesType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
 
+			/* XXXXX: don't do this, translate explicitly, so the TAP_* constants
+			 * can be changed */
 			for( int c=0; c<min(sMeasureLine.GetLength(),m_iNumTracks); c++ )
-				m_TapNotes[c][iIndex] = sMeasureLine[c];
+				SetTapNote(c, iIndex, sMeasureLine[c]);
 		}
 	}
 	this->Convert2sAnd3sToHoldNotes();
@@ -144,8 +146,10 @@ CString NoteData::GetSMNoteDataString()
 		for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
 		{
 			char szLineString[MAX_NOTE_TRACKS];
+			/* XXXXX: don't do this, translate explicitly, so the TAP_* constants
+			 * can be changed */
 			for( int t=0; t<m_iNumTracks; t++ )
-				szLineString[t] = m_TapNotes[t][r];
+				szLineString[t] = GetTapNote(t, r);
 			szLineString[t] = '\0';
 			asMeasureLines.Add( szLineString );
 		}
@@ -167,7 +171,7 @@ void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 	for( int c=0; c<m_iNumTracks; c++ )
 	{
 		for( int i=iNoteIndexBegin; i <= iNoteIndexEnd && i < MAX_TAP_NOTE_ROWS; i++ )
-			m_TapNotes[c][i] = TAP_EMPTY;
+			SetTapNote(c, i, TAP_EMPTY);
 	}
 	this->Convert4sToHoldNotes();
 }
@@ -237,10 +241,10 @@ void NoteData::AddHoldNote( HoldNote add )
 
 	// delete TapNotes under this HoldNote
 	for( i=iAddStartIndex+1; i<=iAddEndIndex; i++ )
-		m_TapNotes[add.m_iTrack][i] = TAP_EMPTY;
+		SetTapNote(add.m_iTrack, i, TAP_EMPTY);
 
 	// add a tap note at the start of this hold
-	m_TapNotes[add.m_iTrack][iAddStartIndex] = TAP_HOLD_HEAD;		// Hold begin marker.  Don't draw this, but do grade it.
+	SetTapNote(add.m_iTrack, iAddStartIndex, TAP_HOLD_HEAD);		// Hold begin marker.  Don't draw this, but do grade it.
 
 	ASSERT( m_iNumHoldNotes < MAX_HOLD_NOTES );
 	m_HoldNotes[m_iNumHoldNotes++] = add;
@@ -255,7 +259,7 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 	int iHoldStartIndex = BeatToNoteRow(hn.m_fStartBeat);
 
 	// delete a tap note at the start of this hold
-	m_TapNotes[hn.m_iTrack][iHoldStartIndex] = TAP_EMPTY;
+	SetTapNote(hn.m_iTrack, iHoldStartIndex, TAP_EMPTY);
 
 	// remove from list
 	for( int j=iHoldIndex; j<m_iNumHoldNotes-1; j++ )
@@ -267,7 +271,7 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 bool NoteData::IsThereANoteAtRow( int iRow ) const
 {
 	for( int t=0; t<m_iNumTracks; t++ )
-		if( m_TapNotes[t][iRow] != TAP_EMPTY )
+		if( GetTapNote(t, iRow) != TAP_EMPTY )
 			return true;
 
 // There is a tap note at the beginning of every HoldNote start
@@ -350,7 +354,7 @@ int NoteData::GetNumTapNotes( const float fStartBeat, const float fEndBeat )
 	for( int i=iStartIndex; i<min(iEndIndex, MAX_TAP_NOTE_ROWS); i++ )
 	{
 		for( int t=0; t<m_iNumTracks; t++ )
-			if( m_TapNotes[t][i] != TAP_EMPTY )
+			if( GetTapNote(t, i) != TAP_EMPTY )
 				iNumNotes++;
 	}
 	
@@ -369,7 +373,7 @@ int NoteData::GetNumDoubles( const float fStartBeat, const float fEndBeat )
 		int iNumNotesThisIndex = 0;
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
-			if( m_TapNotes[t][i] != TAP_EMPTY )
+			if( GetTapNote(t, i) != TAP_EMPTY )
 				iNumNotesThisIndex++;
 		}
 		if( iNumNotesThisIndex >= 2 )
@@ -419,7 +423,7 @@ void NoteData::CropToLeftSide()
 	for( int c=iFirstRightSideColumn; c<=iLastRightSideColumn; c++ )
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) // foreach TapNote
-			m_TapNotes[c][i] = TAP_EMPTY;
+			SetTapNote(c, i, TAP_EMPTY);
 	}
 
 	for( int i=m_iNumHoldNotes-1; i>=0; i-- ) // foreach HoldNote
@@ -446,7 +450,7 @@ void NoteData::CropToRightSide()
 	for( c=0; c<iFirstRightSideColumn; c++ )
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) // foreach TapNote
-			m_TapNotes[c][i] = TAP_EMPTY;
+			SetTapNote(c, i, TAP_EMPTY);
 	}
 
 	// copy the right side into the left
@@ -454,8 +458,8 @@ void NoteData::CropToRightSide()
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) // foreach TapNote
 		{
-			m_TapNotes[c-4][i] = m_TapNotes[c][i];
-			m_TapNotes[c][i] = TAP_EMPTY;
+			SetTapNote(c-4, i, GetTapNote(c, i));
+			SetTapNote(c, i, TAP_EMPTY);
 		}
 	}
 
@@ -485,7 +489,7 @@ void NoteData::RemoveHoldNotes()
 		int iIndex = BeatToNoteRow(hn.m_fStartBeat);
 		int iCol = hn.m_iTrack;
 
-		m_TapNotes[iCol][iIndex] = '1';
+		SetTapNote(iCol, iIndex, TAP_TAP);
 	}
 
 	// Remove all HoldNotes
@@ -595,7 +599,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 	// transform notes
 	for( t=0; t<m_iNumTracks; t++ )
 		for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ ) 			
-			tempNoteData.m_TapNotes[t][r] = m_TapNotes[iTakeFromTrack[t]][r];
+			tempNoteData.SetTapNote(t, r, GetTapNote(iTakeFromTrack[t], r));
 
 	this->CopyAll( &tempNoteData );		// copy note data from newData back into this
 	this->Convert2sAnd3sToHoldNotes();
@@ -628,18 +632,18 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 			// shuffle this row
 			CArray<int,int> aiTracksThatCouldHaveTapNotes;
 			for( t=0; t<m_iNumTracks; t++ )
-				if( m_TapNotes[t][r] != TAP_HOLD )	// any point that isn't part of a hold
+				if( GetTapNote(t, r) != TAP_HOLD )	// any point that isn't part of a hold
 					aiTracksThatCouldHaveTapNotes.Add( t );
 
 			for( t=0; t<m_iNumTracks; t++ )
 			{
-				if( m_TapNotes[t][r] != TAP_HOLD  &&  m_TapNotes[t][r] != TAP_EMPTY )	// there is a tap note here (and not a HoldNote)
+				if( GetTapNote(t, r) != TAP_HOLD  &&  GetTapNote(t, r) != TAP_EMPTY )	// there is a tap note here (and not a HoldNote)
 				{
 					int iRandIndex = rand() % aiTracksThatCouldHaveTapNotes.GetSize();
 					int iTo = aiTracksThatCouldHaveTapNotes[ iRandIndex ];
 					aiTracksThatCouldHaveTapNotes.RemoveAt( iRandIndex );
 	
-					tempNoteData.m_TapNotes[iTo][r] = m_TapNotes[t][r];
+					tempNoteData.SetTapNote(iTo, r, GetTapNote(t, r));
 				}
 			}
 		}
@@ -658,7 +662,7 @@ void NoteData::MakeLittle()
 			// filter out all non-quarter notes
 			for( int c=0; c<m_iNumTracks; c++ ) 
 			{
-				m_TapNotes[c][i] = TAP_EMPTY;
+				SetTapNote(c, i, TAP_EMPTY);
 			}
 		}
 	}
@@ -687,17 +691,17 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// foreach TapNote element
 		{
-			if( m_TapNotes[col][i] != TAP_HOLD_HEAD )	// this is a HoldNote begin marker
+			if( GetTapNote(col, i) != TAP_HOLD_HEAD )	// this is a HoldNote begin marker
 				continue;
-			m_TapNotes[col][i] = TAP_EMPTY;
+			SetTapNote(col, i, TAP_EMPTY);
 
 			for( int j=i+1; j<MAX_TAP_NOTE_ROWS; j++ )	// search for end of HoldNote
 			{
 				// end hold on the next note we see
-				if( m_TapNotes[col][j] == TAP_EMPTY )
+				if( GetTapNote(col, j) == TAP_EMPTY )
 					continue;
 
-				m_TapNotes[col][j] = TAP_EMPTY;
+				SetTapNote(col, j, TAP_EMPTY);
 
 				HoldNote hn = { col, NoteRowToBeat(i), NoteRowToBeat(j) };
 				AddHoldNote( hn );
@@ -720,8 +724,8 @@ void NoteData::ConvertHoldNotesTo2sAnd3s()
 		
 		/* If they're the same, then they got clamped together, so just ignore it. */
 		if(iHoldStartIndex != iHoldEndIndex) {
-			m_TapNotes[hn.m_iTrack][iHoldStartIndex] = TAP_HOLD_HEAD;
-			m_TapNotes[hn.m_iTrack][iHoldEndIndex]   = TAP_HOLD_TAIL;
+			SetTapNote(hn.m_iTrack, iHoldStartIndex, TAP_HOLD_HEAD);
+			SetTapNote(hn.m_iTrack, iHoldEndIndex, TAP_HOLD_TAIL);
 		}
 	}
 	m_iNumHoldNotes = 0;
@@ -739,7 +743,7 @@ void NoteData::Convert4sToHoldNotes()
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// foreach TapNote element
 		{
-			if( m_TapNotes[col][i] != TAP_HOLD )	// this is a HoldNote body
+			if( GetTapNote(col, i) != TAP_HOLD )	// this is a HoldNote body
 				continue;
 
 			HoldNote hn = { col, NoteRowToBeat(i), 0 };
@@ -766,7 +770,7 @@ void NoteData::ConvertHoldNotesTo4s()
 		int iHoldEndIndex   = clamp(BeatToNoteRow(hn.m_fEndBeat), 0, MAX_TAP_NOTE_ROWS);
 
 		for( int j = iHoldStartIndex; j < iHoldEndIndex; ++j)
-			m_TapNotes[hn.m_iTrack][j] = TAP_HOLD;
+			SetTapNote(hn.m_iTrack, j, TAP_HOLD);
 	}
 	m_iNumHoldNotes = 0;
 }
@@ -814,9 +818,12 @@ void NoteData::SnapToNearestNoteType( NoteType nt1, NoteType nt2, float fBeginBe
 
 		for( int c=0; c<m_iNumTracks; c++ )
 		{
-			TapNote note = m_TapNotes[c][iOldIndex];
-			m_TapNotes[c][iOldIndex] = TAP_EMPTY;
-			m_TapNotes[c][iNewIndex] = max( m_TapNotes[c][iNewIndex], note );	// this causes HoldNotes to override TapNotes
+			TapNote note = GetTapNote(c, iOldIndex);
+			SetTapNote(c, iOldIndex, TAP_EMPTY);
+			// HoldNotes override TapNotes
+			if(GetTapNote(c, iNewIndex) == TAP_TAP)
+				note = TAP_HOLD_HEAD;
+			SetTapNote(c, iNewIndex, note );
 		}
 	}
 
@@ -928,8 +935,8 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 		{
 			int iOldTrack = t;
 			int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
-			if( pOriginal->m_TapNotes[iOldTrack][r] != TAP_EMPTY )
-				this->m_TapNotes[iNewTrack][r] = pOriginal->m_TapNotes[iOldTrack][r];
+			if( pOriginal->GetTapNote(iOldTrack, r) != TAP_EMPTY )
+				this->SetTapNote(iNewTrack, r, pOriginal->GetTapNote(iOldTrack, r));
 		}
 
 		if( r % (ROWS_PER_MEASURE*4) == 0 )	// adjust sliding window every 4 measures
@@ -956,8 +963,8 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 			if( r )
 			for( int t=0; t<=pOriginal->m_iNumTracks; t++ )
 			{
-				if( pOriginal->m_TapNotes[t][r] == TAP_HOLD &&
-					pOriginal->m_TapNotes[t][r-1] == TAP_HOLD)
+				if( pOriginal->GetTapNote(t, r) == TAP_HOLD &&
+					pOriginal->GetTapNote(t, r-1) == TAP_HOLD)
 				{
 					bHoldCrossesThisMeasure = true;
 					break;
