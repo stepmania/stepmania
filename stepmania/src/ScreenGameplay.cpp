@@ -98,8 +98,6 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen(sN
 
 void ScreenGameplay::Init()
 {
-	int p;
-
 	if( m_bDemonstration )
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_DEMONSTRATION );
 	else
@@ -233,7 +231,6 @@ void ScreenGameplay::Init()
 	g_CurStageStats.playMode = GAMESTATE->m_PlayMode;
 	g_CurStageStats.style = GAMESTATE->m_CurStyle;
 
-	for( p=0; p<NUM_PLAYERS; p++ )
     FOREACH_EnabledPlayer(p)
 	{
 		ASSERT( !m_apNotesQueue[p].empty() );
