@@ -25,17 +25,11 @@
 //
 // Important!!!!  Do not use these macros during gameplay.  They return very slowly.  Cache them in a member.
 //
-#define METER_WIDTH			THEME->GetMetricI("LifeMeterBar","MeterWidth")
-#define METER_HEIGHT		THEME->GetMetricI("LifeMeterBar","MeterHeight")
-#define DANGER_THRESHOLD	THEME->GetMetricF("LifeMeterBar","DangerThreshold")
-#define NUM_CHAMBERS		THEME->GetMetricI("LifeMeterBar","NumChambers")
-#define NUM_STRIPS			THEME->GetMetricI("LifeMeterBar","NumStrips")
-
-int		g_iMeterWidth;
-int		g_iMeterHeight;
-float	g_fDangerThreshold;
-int		g_iNumChambers;
-int		g_iNumStrips;
+static CachedThemeMetricI METER_WIDTH		("LifeMeterBar","MeterWidth");
+static CachedThemeMetricI METER_HEIGHT		("LifeMeterBar","MeterHeight");
+static CachedThemeMetricF DANGER_THRESHOLD	("LifeMeterBar","DangerThreshold");
+static CachedThemeMetricI NUM_CHAMBERS		("LifeMeterBar","NumChambers");
+static CachedThemeMetricI NUM_STRIPS		("LifeMeterBar","NumStrips");
 
 
 const float FAIL_THRESHOLD = 0;
@@ -46,11 +40,11 @@ class LifeMeterStream : public Actor
 public:
 	LifeMeterStream()
 	{
-		g_iMeterWidth = METER_WIDTH;
-		g_iMeterHeight = METER_HEIGHT;
-		g_fDangerThreshold = DANGER_THRESHOLD;
-		g_iNumChambers = NUM_CHAMBERS;
-		g_iNumStrips = NUM_STRIPS;
+		METER_WIDTH.Refresh();
+		METER_HEIGHT.Refresh();
+		DANGER_THRESHOLD.Refresh();
+		NUM_CHAMBERS.Refresh();
+		NUM_STRIPS.Refresh();
 
 
 		bool bExtra = GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2();
@@ -90,26 +84,26 @@ public:
 
 	void GetChamberIndexAndOverslow( float fPercent, int& iChamberOut, float& fChamberOverflowPercentOut )
 	{
-		iChamberOut = (int)(fPercent*g_iNumChambers);
-		fChamberOverflowPercentOut = fPercent*g_iNumChambers - iChamberOut;
+		iChamberOut = (int)(fPercent*NUM_CHAMBERS);
+		fChamberOverflowPercentOut = fPercent*NUM_CHAMBERS - iChamberOut;
 	}
 
 	float GetChamberLeftPercent( int iChamber )
 	{
-		return (iChamber+0) / (float)g_iNumChambers;
+		return (iChamber+0) / (float)NUM_CHAMBERS;
 	}
 
 	float GetChamberRightPercent( int iChamber )
 	{
-		return (iChamber+1) / (float)g_iNumChambers;
+		return (iChamber+1) / (float)NUM_CHAMBERS;
 	}
 
 	float GetRightEdgePercent( int iChamber, float fChamberOverflowPercent )
 	{
 		if( (iChamber%2) == 0 )
-			return (iChamber+fChamberOverflowPercent) / (float)g_iNumChambers;
+			return (iChamber+fChamberOverflowPercent) / (float)NUM_CHAMBERS;
 		else
-			return (iChamber+1) / (float)g_iNumChambers;
+			return (iChamber+1) / (float)NUM_CHAMBERS;
 	}
 
 	float GetHeightPercent( int iChamber, float fChamberOverflowPercent )
@@ -126,10 +120,10 @@ public:
 		{
 			DrawMask( m_fPercent );		// this is the "right endcap" to the life
 			
-			const float fChamberWidthInPercent = 1.0f/g_iNumChambers;
-			float fPercentBetweenStrips = 1.0f/g_iNumStrips;
+			const float fChamberWidthInPercent = 1.0f/NUM_CHAMBERS;
+			float fPercentBetweenStrips = 1.0f/NUM_STRIPS;
 			// round this so that the chamber overflows align
-			if( g_iNumChambers > 10 )
+			if( NUM_CHAMBERS > 10 )
 				fPercentBetweenStrips = froundf( fPercentBetweenStrips, fChamberWidthInPercent );
 
 			float fPercentOffset = fmodf( GAMESTATE->m_fSongBeat/4+1000, fPercentBetweenStrips );
@@ -151,8 +145,8 @@ public:
 	{
 		RectI rect;
 
-		const float fChamberWidthInPercent = 1.0f/g_iNumChambers;
-		const float fStripWidthInPercent = 1.0f/g_iNumStrips;
+		const float fChamberWidthInPercent = 1.0f/NUM_CHAMBERS;
+		const float fStripWidthInPercent = 1.0f/NUM_STRIPS;
 		
 		const float fCorrectedRightEdgePercent = fRightEdgePercent + fChamberWidthInPercent;
 		const float fCorrectedStripWidthInPercent = fStripWidthInPercent + 2*fChamberWidthInPercent;
@@ -160,12 +154,12 @@ public:
 
 
 		// set size of streams
-		rect.left	= int(-g_iMeterWidth/2 + g_iMeterWidth*max(0,fCorrectedLeftEdgePercent));
-		rect.top	= int(-g_iMeterHeight/2);
-		rect.right	= int(-g_iMeterWidth/2 + g_iMeterWidth*min(1,fCorrectedRightEdgePercent));
-		rect.bottom	= int(+g_iMeterHeight/2);
+		rect.left	= int(-METER_WIDTH/2 + METER_WIDTH*max(0,fCorrectedLeftEdgePercent));
+		rect.top	= int(-METER_HEIGHT/2);
+		rect.right	= int(-METER_WIDTH/2 + METER_WIDTH*min(1,fCorrectedRightEdgePercent));
+		rect.bottom	= int(+METER_HEIGHT/2);
 
-		ASSERT( rect.left <= g_iMeterWidth/2  &&  rect.right <= g_iMeterWidth/2 );  
+		ASSERT( rect.left <= METER_WIDTH/2  &&  rect.right <= METER_WIDTH/2 );  
 
 		float fPercentCroppedFromLeft = max( 0, -fCorrectedLeftEdgePercent );
 		float fPercentCroppedFromRight = max( 0, fCorrectedRightEdgePercent-1 );
@@ -206,25 +200,25 @@ public:
 		float fChamberRightPercent = GetChamberRightPercent( iChamber );
 
 		// draw mask for vertical chambers
-		rect.left	= int(-g_iMeterWidth/2 + fChamberLeftPercent*g_iMeterWidth-1);
-		rect.top	= int(-g_iMeterHeight/2);
-		rect.right	= int(-g_iMeterWidth/2 + fChamberRightPercent*g_iMeterWidth+1);
-		rect.bottom	= int(-g_iMeterHeight/2 + fHeightPercent*g_iMeterHeight);
+		rect.left	= int(-METER_WIDTH/2 + fChamberLeftPercent*METER_WIDTH-1);
+		rect.top	= int(-METER_HEIGHT/2);
+		rect.right	= int(-METER_WIDTH/2 + fChamberRightPercent*METER_WIDTH+1);
+		rect.bottom	= int(-METER_HEIGHT/2 + fHeightPercent*METER_HEIGHT);
 
-		rect.left  = MIN( rect.left,  + g_iMeterWidth/2 );
-		rect.right = MIN( rect.right, + g_iMeterWidth/2 );
+		rect.left  = MIN( rect.left,  + METER_WIDTH/2 );
+		rect.right = MIN( rect.right, + METER_WIDTH/2 );
 
 		m_quadMask.StretchTo( rect );
 		m_quadMask.Draw();
 
 		// draw mask for horizontal chambers
-		rect.left	= (int)(-g_iMeterWidth/2 + fRightPercent*g_iMeterWidth); 
-		rect.top	= -g_iMeterHeight/2;
-		rect.right	= +g_iMeterWidth/2;
-		rect.bottom	= +g_iMeterHeight/2;
+		rect.left	= (int)(-METER_WIDTH/2 + fRightPercent*METER_WIDTH); 
+		rect.top	= -METER_HEIGHT/2;
+		rect.right	= +METER_WIDTH/2;
+		rect.bottom	= +METER_HEIGHT/2;
 
-		rect.left  = MIN( rect.left,  + g_iMeterWidth/2 );
-		rect.right = MIN( rect.right, + g_iMeterWidth/2 );
+		rect.left  = MIN( rect.left,  + METER_WIDTH/2 );
+		rect.right = MIN( rect.right, + METER_WIDTH/2 );
 
 		m_quadMask.StretchTo( rect );
 		m_quadMask.Draw();
@@ -254,8 +248,8 @@ LifeMeterBar::LifeMeterBar()
 	m_fLifeDifficulty = m_fBaseLifeDifficulty;
 
 	m_quadBlackBackground.SetDiffuse( RageColor(0,0,0,1) );
-	m_quadBlackBackground.SetZoomX( (float)g_iMeterWidth );
-	m_quadBlackBackground.SetZoomY( (float)g_iMeterHeight );
+	m_quadBlackBackground.SetZoomX( (float)METER_WIDTH );
+	m_quadBlackBackground.SetZoomY( (float)METER_HEIGHT );
 
 	this->AddChild( &m_quadBlackBackground );
 	this->AddChild( m_pStream );
@@ -477,7 +471,7 @@ bool LifeMeterBar::IsHot() const
 
 bool LifeMeterBar::IsInDanger() const
 { 
-	return m_fLifePercentage < g_fDangerThreshold; 
+	return m_fLifePercentage < DANGER_THRESHOLD; 
 }
 
 bool LifeMeterBar::IsFailing() const
@@ -549,7 +543,7 @@ void LifeMeterBar::DrawPrimitives()
 	m_pStream->m_fPercent = m_fTrailingLifePercentage;
 	m_pStream->m_fHotAlpha = m_fHotAlpha;
 
-	float fPercentRed = (m_fTrailingLifePercentage<g_fDangerThreshold) ? sinf( RageTimer::GetTimeSinceStart()*PI*4 )/2+0.5f : 0;
+	float fPercentRed = (m_fTrailingLifePercentage<DANGER_THRESHOLD) ? sinf( RageTimer::GetTimeSinceStart()*PI*4 )/2+0.5f : 0;
 	m_quadBlackBackground.SetDiffuse( RageColor(fPercentRed*0.8f,0,0,1) );
 
 	ActorFrame::DrawPrimitives();
