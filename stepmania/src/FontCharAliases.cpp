@@ -11,6 +11,9 @@ typedef map<CString, longchar, StdStringLessNoCase> aliasmap;
 static aliasmap CharAliases;
 static map<CString,CString> CharAliasRepl;
 
+/* Editing this file in VC6 will be rather ugly, since it contains a lot of UTF-8.
+ * Just don't change anything you can't read. :) */
+
 /* If we move this to an INI, group these, so we can display them in a help
  * page off of the TextEntry screen reasonably.  Allow putting the actual
  * character on the same line (as below).  Perhaps warn if they don't match.
@@ -25,6 +28,36 @@ static map<CString,CString> CharAliasRepl;
  * This will need some mechanism for assigning internal numbers.
  */
 
+/* Here's a copy-and-paste for a basic Japanese font page:
+
+　、。〃〄々〆〇〈〉《》「」『』
+【】〒〓〔〕〖〗〘〙〚〛〜〝〞〟
+〠
+〰〱〲〳〴〵〶〷
+　ぁあぃいぅうぇえぉおかがきぎく
+ぐけげこごさざしじすずせぜそぞた
+だちぢっつづてでとどなにぬねのは
+ばぱひびぴふぶぷへべぺほぼぽまみ
+むめもゃやゅゆょよらりるれろゎわ
+ゐゑをんゔ　　　　　　゛゜ゝゞ　
+　ァアィイゥウェエォオカガキギク
+グケゲコゴサザシジスズセゼソゾタ
+ダチヂッツヅテデトドナニヌネノハ
+バパヒビピフブプヘベペホボポマミ
+ムメモャヤュユョヨラリルレロヮワ
+ヰヱヲンヴヵヶヷヸヹヺ・ーヽヾ　
+
+And here's one for a kanji page:
+
+ 一ニ三四五六七八
+九十
+革命祭桜小坂鬼道
+弐神様民謡明日青
+衝動猫毛亜熱帯爆
+弾谷新大見解魔法
+扉夜空才
+
+ */
 
 static void InitCharAliases()
 {
