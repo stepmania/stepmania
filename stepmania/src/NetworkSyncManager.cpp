@@ -60,6 +60,8 @@ void NetworkSyncManager::StartUp()
 		}
 
 	}
+    else
+        return;
 
 	useSMserver = true;
 
