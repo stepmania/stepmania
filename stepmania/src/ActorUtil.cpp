@@ -133,8 +133,7 @@ void IncorrectActorParametersWarning( const CStringArray &asTokens, int iMaxInde
 	const CString sError = ssprintf( "Actor::HandleCommand: Wrong number of parameters in command '%s'.  Expected %d but there are %d.",
 		join(",",asTokens).c_str(), iMaxIndexAccessed+1, size );
 	LOG->Warn( sError );
-	if( DISPLAY->IsWindowed() )
-		HOOKS->MessageBoxOK( sError );
+	HOOKS->MessageBoxOK( sError );
 }
 
 void UtilSetXY( Actor& actor, CString sClassName )

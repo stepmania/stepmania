@@ -472,9 +472,8 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	}
 	else if( sFile == "" )
 	{
-		if( DISPLAY->IsWindowed() )
-			HOOKS->MessageBoxOK( ssprintf( 
-				"In the ini file for BGAnimation '%s', '%s' is missing a the line 'File='.", sAniDir.c_str(), sLayer.c_str() ) );
+		HOOKS->MessageBoxOK( ssprintf( 
+			"In the ini file for BGAnimation '%s', '%s' is missing a the line 'File='.", sAniDir.c_str(), sLayer.c_str() ) );
 	}
 
 
@@ -486,8 +485,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		if(asElementPaths.size() == 0)
 		{
 			CString sError = ssprintf("In the ini file for BGAnimation '%s', the specified File '%s' does not exist.", sAniDir.c_str(), sFile.c_str());
-			if( DISPLAY->IsWindowed() )
-				HOOKS->MessageBoxOK( sError );
+			HOOKS->MessageBoxOK( sError );
 			LOG->Warn( sError );
 			return;
 		}
@@ -497,8 +495,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 					"There is more than one file that matches "
 					"'%s/%s'.  Please remove all but one of these matches.",
 					sAniDir.c_str(), sFile.c_str() );
-			if( DISPLAY->IsWindowed() )
-				HOOKS->MessageBoxOK( sError );
+			HOOKS->MessageBoxOK( sError );
 			LOG->Warn( sError );
 		}
 		sPath = asElementPaths[0];

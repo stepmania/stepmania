@@ -802,16 +802,14 @@ void Actor::HandleCommand( const CStringArray &asTokens )
 	{
 		CString sError = ssprintf( "Actor::HandleCommand: Unrecognized command name '%s'.", sName.c_str() );
 		LOG->Warn( sError );
-		if( DISPLAY->IsWindowed() )
-			HOOKS->MessageBoxOK( sError );
+		HOOKS->MessageBoxOK( sError );
 	}
 
 	if( iMaxIndexAccessed != (int)asTokens.size()-1 )
 	{
 		CString sError = ssprintf( "Actor::HandleCommand: Wrong number of parameters in command '%s'.  Expected %d but there are %d.", join(",",asTokens).c_str(), iMaxIndexAccessed+1, (int)asTokens.size() );
 		LOG->Warn( sError );
-		if( DISPLAY->IsWindowed() )
-			HOOKS->MessageBoxOK( sError );
+		HOOKS->MessageBoxOK( sError );
 	}
 }
 

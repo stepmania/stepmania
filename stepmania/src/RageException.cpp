@@ -13,6 +13,11 @@
 #include "RageException.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageLog.h"
+
+#if defined(WIN32) && defined(DEBUG)
+#include "windows.h"
+#endif
 
 RageException::RageException( const char *fmt, ...)
 {

@@ -346,8 +346,7 @@ apply_color_key:
 				fBetterSourceWidth, fBetterSourceHeight,
 				fBetterFrameWidth, fBetterFrameHeight );
 			LOG->Warn( sWarning );
-			if( DISPLAY->IsWindowed() )
-				HOOKS->MessageBoxOK( sWarning, "FRAME_DIMENSIONS_WARNING" );
+			HOOKS->MessageBoxOK( sWarning, "FRAME_DIMENSIONS_WARNING" );
 		}
 	}
 

@@ -280,8 +280,7 @@ CString NoteSkinManager::GetPathTo( CString sDir, CString sFileName )
 	if( matches.size() > 1 )
 	{
 		CString sError = "Multiple files match '"+sDir+sFileName+"'.  Please remove all but one of these files.";
-		if( DISPLAY->IsWindowed() )
-			HOOKS->MessageBoxOK( sError );
+		HOOKS->MessageBoxOK( sError );
 	}
 	
 	CString sPath = matches[0];

@@ -248,8 +248,7 @@ void RageMatrixCommand( CString sCommandString, RageMatrix &mat )
 		{
 			CString sError = ssprintf( "MatrixCommand:  Unrecognized matrix command name '%s' in command string '%s'.", sName.c_str(), sCommandString.c_str() );
 			LOG->Warn( sError );
-			if( DISPLAY->IsWindowed() )
-				HOOKS->MessageBoxOK( sError );
+			HOOKS->MessageBoxOK( sError );
 			continue;
 		}
 
@@ -258,8 +257,7 @@ void RageMatrixCommand( CString sCommandString, RageMatrix &mat )
 		{
 			CString sError = ssprintf( "MatrixCommand:  Wrong number of parameters in command '%s'.  Expected %d but there are %d.", join(",",asTokens).c_str(), iMaxIndexAccessed+1, (int)asTokens.size() );
 			LOG->Warn( sError );
-			if( DISPLAY->IsWindowed() )
-				HOOKS->MessageBoxOK( sError );
+			HOOKS->MessageBoxOK( sError );
 			continue;
 		}
 

@@ -244,9 +244,8 @@ try_element_again:
 			"'%s/%s/%s'.  Please remove all but one of these matches.",
 			sThemeName.c_str(), sCategory.c_str(), sFileName.c_str() );
 
-		if( DISPLAY->IsWindowed() )
-			if( ArchHooks::retry == HOOKS->MessageBoxRetryCancel(message) )
-				goto try_element_again;
+		if( ArchHooks::retry == HOOKS->MessageBoxRetryCancel(message) )
+			goto try_element_again;
 
 		RageException::Throw( message ); 
 	}
@@ -292,9 +291,8 @@ try_element_again:
 						"Verify that this redirect is correct.",
 						sPath.c_str(), sNewFileName.c_str());
 
-				if( DISPLAY->IsWindowed() )
-					if( ArchHooks::retry == HOOKS->MessageBoxAbortRetryIgnore(message) )
-						goto try_element_again;
+				if( ArchHooks::retry == HOOKS->MessageBoxAbortRetryIgnore(message) )
+					goto try_element_again;
 
 				RageException::Throw( "%s", message.c_str() ); 
 			}
@@ -339,24 +337,23 @@ try_element_again:
 
 	CString sCategory = ELEMENT_CATEGORY_STRING[category];
 
-#if defined(DEBUG) && defined(WIN32)
 	CString sMessage = "The theme element '" + sCategory + SLASH + sFileName +"' is missing.";
-	switch( MessageBox(NULL, sMessage, "ThemeManager", MB_RETRYCANCEL ) )
+	switch( HOOKS->MessageBoxRetryCancel(sMessage) )
 	{
-	case IDRETRY:
+	case ArchHooks::retry:
 		FlushDirCache();
 		g_ThemePathCache[category].clear();
-
 		goto try_element_again;
-	case IDCANCEL:
+	case ArchHooks::cancel:
 		RageException::Throw( "Theme element '%s" SLASH "%s' could not be found in '%s' or '%s'.", 
 			sCategory.c_str(),
 			sFileName.c_str(), 
 			GetThemeDirFromName(m_sCurThemeName).c_str(), 
 			GetThemeDirFromName(BASE_THEME_NAME).c_str() );
 		break;
+	default:
+		ASSERT(0);
 	}
-#endif
 
 	LOG->Warn( 
 		"Theme element '%s" SLASH "%s' could not be found in '%s' or '%s'.", 
@@ -424,22 +421,19 @@ try_metric_again:
 	if( m_pIniMetrics->GetValue(sClassName,sValueName,sValue) )
 		return sValue;
 
-	if( DISPLAY->IsWindowed() )
+	CString sMessage = ssprintf( "The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
+	switch( HOOKS->MessageBoxAbortRetryIgnore(sMessage) )
 	{
-		CString sMessage = ssprintf( "The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
-		switch( HOOKS->MessageBoxAbortRetryIgnore(sMessage) )
-		{
-		case ArchHooks::abort:
-			break;	// fall through
-		case ArchHooks::retry:
-			FlushDirCache();
-			ReloadMetrics();
-			goto try_metric_again;
-		case ArchHooks::ignore:
-			return "";
-		default:
-			ASSERT(0);
-		}
+	case ArchHooks::abort:
+		break;	// fall through
+	case ArchHooks::retry:
+		FlushDirCache();
+		ReloadMetrics();
+		goto try_metric_again;
+	case ArchHooks::ignore:
+		return "";
+	default:
+		ASSERT(0);
 	}
 
 	RageException::Throw( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 

@@ -26,8 +26,7 @@ bool DifficultyIcon::Load( CString sPath )
 	Sprite::Load( sPath );
 	int iStates = GetNumStates();
 	if( iStates != 5  &&  iStates != 10 )
-		if( DISPLAY->IsWindowed() )
-			HOOKS->MessageBoxOK( ssprintf("The difficulty icon graphic '%s' must have 5 or 10 frames.  It has %d states.", sPath.c_str(), iStates) );
+		HOOKS->MessageBoxOK( ssprintf("The difficulty icon graphic '%s' must have 5 or 10 frames.  It has %d states.", sPath.c_str(), iStates) );
 	StopAnimating();
 	return true;
 }
