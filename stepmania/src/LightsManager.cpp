@@ -139,6 +139,16 @@ void LightsManager::Update( float fDeltaTime )
 				m_LightsState.m_bCabinetLights[cl] = true;
 		}
 		break;
+	case LIGHTSMODE_TEST:
+		{
+			int iSec = (int)RageTimer::GetTimeSinceStart();
+			FOREACH_CabinetLight( cl )
+			{
+				bool bOn = (iSec%NUM_CABINET_LIGHTS) == cl;
+				m_LightsState.m_bCabinetLights[cl] = bOn;
+			}
+		}
+		break;
 	default:
 		ASSERT(0);
 	}
@@ -178,6 +188,20 @@ void LightsManager::Update( float fDeltaTime )
 				FOREACH_GameButton( gb )
 				{
 					bool bOn = INPUTMAPPER->IsButtonDown( GameInput(gc,gb) );
+					m_LightsState.m_bGameButtonLights[gc][gb] = bOn;
+				}
+			}
+		}
+		break;
+	case LIGHTSMODE_TEST:
+		{
+			int iSec = (int)RageTimer::GetTimeSinceStart();
+
+			FOREACH_GameController( gc )
+			{
+				FOREACH_GameButton( gb )
+				{
+					bool bOn = (iSec%MAX_GAME_BUTTONS)==gb;
 					m_LightsState.m_bGameButtonLights[gc][gb] = bOn;
 				}
 			}

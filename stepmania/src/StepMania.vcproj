@@ -13,7 +13,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="./../Program"
+			OutputDirectory="./../../itg/itg/Program"
 			IntermediateDirectory="./../Debug"
 			ConfigurationType="1"
 			UseOfMFC="0"
@@ -513,6 +513,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenTestInput.h">
+			</File>
+			<File
+				RelativePath="ScreenTestLights.cpp">
+			</File>
+			<File
+				RelativePath="ScreenTestLights.h">
 			</File>
 			<File
 				RelativePath="ScreenTestSound.cpp">

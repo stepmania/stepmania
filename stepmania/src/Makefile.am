@@ -61,7 +61,8 @@ ScreenSelectMode.cpp ScreenSelectMode.h ScreenSelectMusic.cpp ScreenSelectMusic.
 ScreenSetTime.cpp ScreenSetTime.h \
 ScreenSongOptions.cpp ScreenSongOptions.h ScreenStage.cpp ScreenStage.h \
 ScreenStyleSplash.cpp ScreenStyleSplash.h ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h \
-ScreenTestInput.h ScreenTestInput.cpp ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h \
+ScreenTestInput.h ScreenTestInput.cpp ScreenTestLights.h ScreenTestLights.cpp \
+ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h \
 ScreenUnlock.cpp ScreenUnlock.h
 
 
