@@ -51,7 +51,8 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 	Clear ();
 
 	m_pModel = new msModel;
-	memset (m_pModel, 0, sizeof (msModel));
+// Never zero out a non-POD data type.
+//	memset (m_pModel, 0, sizeof (msModel));
 
     bool bError = false;
     char szLine[256];
@@ -217,7 +218,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 
                     word nIndices[3];
                     word nNormalIndices[3];
-                    if (sscanf (szLine, "%d %d %d %d %d %d %d %d",
+                    if (sscanf (szLine, "%d %hd %hd %hd %hd %hd %hd %d",
                         &nFlags,
                         &nIndices[0], &nIndices[1], &nIndices[2],
                         &nNormalIndices[0], &nNormalIndices[1], &nNormalIndices[2],
