@@ -34,9 +34,19 @@ bool RandomSample::LoadSoundDir( CString sDir )
 	if( sDir == "" )
 		return true;
 
+#if 0
+	/* (don't want to do this just yet) */
+	/* If this is actually a directory, add a backslash to the filename,
+	 * so we'll look for eg. themes\Default\sounds\sDir\*.mp3.  Otherwise,
+	 * don't, so we'll look for all of the files starting with sDir,
+	 * eg. themes\Default\sounds\sDir*.mp3. */
+	if(IsADirectory(sDir) && sDir[sDir.GetLength()-1] != '\\' )
+		sDir += "\\";
+#else
 	// make sure there's a backslash at the end of this path
 	if( sDir[sDir.GetLength()-1] != '\\' )
 		sDir += "\\";
+#endif
 
 	CStringArray arraySoundFiles;
 	GetDirListing( sDir + "*.mp3", arraySoundFiles );
