@@ -105,6 +105,10 @@ FileType FilenameDB::GetFileType( const CString &sPath )
 {
 	CString Dir, Name;
 	SplitPath( sPath, Dir, Name );
+
+	if( Name == "." )
+		return TTYPE_DIR;
+
 	FileSet &fs = GetFileSet( Dir );
 	return fs.GetFileType( Name );
 }
@@ -126,7 +130,6 @@ int FilenameDB::GetFileHash( const CString &sPath )
 	return fs.GetFileHash(Name);
 }
 
-/* XXX: this won't work right for URIs, eg \\foo\bar */
 bool FilenameDB::ResolvePath(CString &path)
 {
 	if(path == ".") return true;
@@ -140,12 +143,12 @@ bool FilenameDB::ResolvePath(CString &path)
 	if( path.Left(1) == "/" )
 		p.insert( p.begin(), "" );
 
-	/* Resolve each component.  Assume the first component is correct. XXX
-	 * don't do that! "Songs/" vs "songs/" */
-	CString ret = p[0];
-	for(unsigned i = 1; i < p.size(); ++i)
+	/* Resolve each component. */
+	CString ret = "";
+	for(unsigned i = 0; i < p.size(); ++i)
 	{
-		ret += "/";
+		if( i != 0 )
+			ret += "/";
 
 		vector<CString> lst;
 		FileSet &fs = GetFileSet( ret );
