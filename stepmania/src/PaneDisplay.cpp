@@ -44,11 +44,12 @@ static const Content_t g_Contents[NUM_PANE_CONTENTS] =
 	{ "ProfileNumPlays",		PANE_SONG_PROFILE_SCORES,	NEED_NOTES|NEED_PROFILE },
 	{ "ProfileRank",			PANE_SONG_PROFILE_SCORES,	NEED_NOTES|NEED_PROFILE },
 	{ "CourseMachineHighScore",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseMachineNumPlays",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseMachineRank",		PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseProfileHighScore",	PANE_COURSE_PROFILE_SCORES,	NEED_COURSE|NEED_PROFILE },
-	{ "CourseProfileNumPlays",	PANE_COURSE_PROFILE_SCORES,	NEED_COURSE|NEED_PROFILE },
-	{ "CourseProfileRank",		PANE_COURSE_PROFILE_SCORES,	NEED_COURSE|NEED_PROFILE }
+	{ "CourseMachineNumPlays",	NUM_PANES,					NEED_COURSE },
+	{ "CourseMachineRank",		NUM_PANES,					NEED_COURSE },
+	{ "CourseMachineHighName",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
+	{ "CourseProfileHighScore",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE|NEED_PROFILE },
+	{ "CourseProfileNumPlays",	NUM_PANES,					NEED_COURSE|NEED_PROFILE },
+	{ "CourseProfileRank",		NUM_PANES,					NEED_COURSE|NEED_PROFILE }
 };
 
 static const PaneModes PaneMode[NUM_PANES] =
@@ -84,7 +85,7 @@ void PaneDisplay::Load( PlayerNumber pn )
 	m_PlayerNumber = pn;
 	m_PreferredPaneForMode[PANEMODE_SONG] = PANE_SONG_DIFFICULTY;
 	m_PreferredPaneForMode[PANEMODE_BATTLE] = PANE_BATTLE_DIFFICULTY;
-	m_PreferredPaneForMode[PANEMODE_COURSE] = PANE_COURSE_PROFILE_SCORES;
+	m_PreferredPaneForMode[PANEMODE_COURSE] = PANE_COURSE_MACHINE_SCORES;
 
 	m_sprPaneUnder.Load( THEME->GetPathToG( ssprintf("PaneDisplay under p%i", pn+1)) );
 	m_sprPaneUnder->SetName( "Under" );
@@ -94,6 +95,9 @@ void PaneDisplay::Load( PlayerNumber pn )
 	int p;
 	for( p = 0; p < NUM_PANE_CONTENTS; ++p )
 	{
+		if( g_Contents[p].type == NUM_PANES )
+			continue; /* skip, disabled */
+
 		m_textContents[p].LoadFromFont( THEME->GetPathToF( "PaneDisplay text" ) );
 		m_textContents[p].SetName( ssprintf("%sText", g_Contents[p].name) );
 		SET_XY_AND_ON_COMMAND( m_textContents[p] );
@@ -115,6 +119,8 @@ void PaneDisplay::Load( PlayerNumber pn )
 
 	for( unsigned i = 0; i < NUM_PANE_CONTENTS; ++i )
 	{
+		if( g_Contents[i].type == NUM_PANES )
+			continue; /* skip, disabled */
 		COMMAND( m_textContents[i], "LoseFocus"  );
 		COMMAND( m_Labels[i], "LoseFocus"  );
 		m_textContents[i].FinishTweening();
@@ -188,9 +194,9 @@ void PaneDisplay::SetContent( PaneContents c )
 		break;
 		}
 
+	case COURSE_MACHINE_HIGH_NAME: /* set val for color */
 	case COURSE_MACHINE_HIGH_SCORE:
-		// XXX add percentdp
-		val = 100.0f; // * GAMESTATE->m_pCurCourse->GetTopScore( GAMESTATE->GetCurrentStyleDef()->m_StepsType, MEMORY_CARD_MACHINE ).HighScore;
+		val = 100.0f * GAMESTATE->m_pCurCourse->GetTopScore( GAMESTATE->GetCurrentStyleDef()->m_StepsType, MEMORY_CARD_MACHINE ).fPercentDP;
 		break;
 
 	case COURSE_MACHINE_NUM_PLAYS:
@@ -206,8 +212,7 @@ void PaneDisplay::SetContent( PaneContents c )
 		break;
 
 	case COURSE_PROFILE_HIGH_SCORE:
-		// XXX add percentdp
-		val = 100.0f; // * GAMESTATE->m_pCurCourse->GetTopScore( GAMESTATE->GetCurrentStyleDef()->m_StepsType, PlayerMemCard(m_PlayerNumber) ).HighScore;
+		val = 100.0f * GAMESTATE->m_pCurCourse->GetTopScore( GAMESTATE->GetCurrentStyleDef()->m_StepsType, PlayerMemCard(m_PlayerNumber) ).fPercentDP;
 		break;
 	case COURSE_PROFILE_NUM_PLAYS:
 		val = (float) GAMESTATE->m_pCurCourse->GetNumTimesPlayed( PlayerMemCard(m_PlayerNumber) );
@@ -239,6 +244,10 @@ void PaneDisplay::SetContent( PaneContents c )
 	case SONG_MACHINE_HIGH_NAME:
 		str = GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetTopScore( MEMORY_CARD_MACHINE ).sName;
 		break;
+	case COURSE_MACHINE_HIGH_NAME:
+		str = GAMESTATE->m_pCurCourse->GetTopScore( GAMESTATE->GetCurrentStyleDef()->m_StepsType, MEMORY_CARD_MACHINE ).sName;
+		break;
+
 	case SONG_MACHINE_HIGH_SCORE:
 	case COURSE_MACHINE_HIGH_SCORE:
 	case SONG_PROFILE_HIGH_SCORE:
@@ -269,9 +278,9 @@ void PaneDisplay::SetContent( PaneContents c )
 		const CString metric = ITEM_COLOR(g_Contents[c].name, p);
 		CStringArray spec;
 		split( metric, ";", spec );
-	LOG->Trace("%i/%i, '%s', %zu, max '%s'", p, num, metric.c_str(), spec.size(), spec[0].c_str() );
 		if( spec.size() < 2 )
 			RageException::Throw( "Metric '%s' malformed", metric.c_str() );
+
 		const float n = (float) atof( spec[0] );
 		if( val >= n )
 			continue;
@@ -321,6 +330,9 @@ void PaneDisplay::SetFocus( PaneTypes NewPane )
 
 	for( unsigned i = 0; i < NUM_PANE_CONTENTS; ++i )
 	{
+		if( g_Contents[i].type == NUM_PANES )
+			continue; /* skip, disabled */
+
 		if( g_Contents[i].type == m_CurPane )
 		{
 			COMMAND( m_textContents[i], "LoseFocus"  );
