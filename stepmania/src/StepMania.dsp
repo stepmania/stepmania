@@ -2579,6 +2579,14 @@ SOURCE=.\ScreenNameEntryTraditional.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenNetSelectMusic.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenNetSelectMusic.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenNetworkOptions.cpp
 # End Source File
 # Begin Source File

@@ -266,6 +266,7 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenTestFonts.h"
 #include "ScreenTestSound.h"
 #include "ScreenTitleMenu.h"
+#include "ScreenNetSelectMusic.h"
 #include "ScreenEz2SelectMusic.h"
 #include "ScreenRanking.h"
 #include "ScreenLogo.h"
@@ -336,6 +337,7 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenTestSound );
 	IF_RETURN( ScreenTitleMenu );
 	IF_RETURN( ScreenEz2SelectMusic );
+	IF_RETURN( ScreenNetSelectMusic );
 	IF_RETURN( ScreenRanking );
 	IF_RETURN( ScreenLogo );
 	IF_RETURN( ScreenUnlock );
