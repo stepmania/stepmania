@@ -251,7 +251,6 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenGameplay.h"
 #include "ScreenGraphicOptions.h"
 #include "ScreenHowToPlay.h"
-#include "ScreenInputOptions.h"
 #include "ScreenMachineOptions.h"
 #include "ScreenMapControllers.h"
 #include "ScreenMusicScroll.h"
@@ -280,7 +279,6 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenNameEntry.h"
 #include "ScreenJukebox.h"
 #include "ScreenJukeboxMenu.h"
-#include "ScreenGameplayOptions.h"
 #include "ScreenStyleSplash.h"
 #include "ScreenCredits.h"
 #include "ScreenSelectCharacter.h"
@@ -354,10 +352,8 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenGameplay );
 	IF_RETURN( ScreenGraphicOptions );
 	IF_RETURN( ScreenHowToPlay );
-	IF_RETURN( ScreenInputOptions );
 	IF_RETURN( ScreenMachineOptions );
 	IF_RETURN( ScreenMapControllers );
-	IF_RETURN( ScreenInputOptions );
 	IF_RETURN( ScreenMusicScroll );
 	IF_RETURN( ScreenPlayerOptions );
 	IF_RETURN( ScreenSandbox );
@@ -385,7 +381,6 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenNameEntry );
 	IF_RETURN( ScreenJukebox );
 	IF_RETURN( ScreenJukeboxMenu );
-	IF_RETURN( ScreenGameplayOptions );
 	IF_RETURN( ScreenStyleSplash );
 	IF_RETURN( ScreenCredits );
 	IF_RETURN( ScreenSelectCharacter );
