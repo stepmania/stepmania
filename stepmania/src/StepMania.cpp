@@ -830,6 +830,8 @@ int main(int argc, char* argv[])
 	ReadGamePrefsFromDisk();
 
 	NOTESKIN	= new NoteSkinManager;
+	if( PREFSMAN->m_iSoundWriteAhead )
+		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead );
 	SOUNDMAN	= new RageSoundManager(PREFSMAN->m_sSoundDrivers);
 	SOUNDMAN->SetPrefs(PREFSMAN->m_fSoundVolume);
 	SOUND		= new RageSounds;
