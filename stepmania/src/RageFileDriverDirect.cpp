@@ -80,7 +80,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 	if( chdir(root+sPath) == -1 )
 	{
 		/* Only log once per dir. */
-		if( LOG )
+		if( LOG && errno != ENOENT )
 			LOG->MapLog("chdir " + sPath, "Couldn't chdir(%s): %s", sPath.c_str(), strerror(errno) );
 		close( OldDir );
 		return;
