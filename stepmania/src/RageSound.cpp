@@ -66,13 +66,11 @@ RageSound::RageSound():
 {
 	ASSERT(SOUNDMAN);
 
-	original = this;
 	Sample = NULL;
 	decode_position = 0;
 	stopped_position = 0;
 	max_driver_frame = 0;
 	playing = false;
-	playing_thread = 0;
 	databuf.reserve(internal_buffer_size);
 
 	ID = SOUNDMAN->GetUniqueID();
@@ -110,13 +108,11 @@ RageSound &RageSound::operator=( const RageSound &cpy )
 {
 	LockMut(cpy.m_Mutex);
 
-	original = cpy.original;
 	m_Param = cpy.m_Param;
 	decode_position = cpy.decode_position;
 	stopped_position = cpy.stopped_position;
 	max_driver_frame = 0;
 	playing = false;
-	playing_thread = 0;
 
 	databuf.reserve(internal_buffer_size);
 	delete Sample;
@@ -198,9 +194,6 @@ bool RageSound::Load( CString sSoundFilePath, int precache )
 
 void RageSound::LoadSoundReader( SoundReader *pSound )
 {
-	/* Don't load over copies. */
-	ASSERT( original == this || m_sFilePath == "" );
-
 	Unload();
 
 	decode_position = stopped_position = 0;
@@ -585,7 +578,6 @@ void RageSound::StartPlaying()
 //	LOG->Trace("set playing true for %p (StartPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
 
 	playing = true;
-	playing_thread = RageThread::GetCurrentThreadID();
 
 	SOUNDMAN->StartMixing(this);
 
@@ -609,7 +601,6 @@ void RageSound::StopPlaying()
 
 //	LOG->Trace("set playing false for %p (StopPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
 	playing = false;
-	playing_thread = 0;
 	
 	max_driver_frame = 0;
 	pos_map.Clear();
@@ -640,7 +631,6 @@ void RageSound::SoundIsFinishedPlaying()
 
 //	LOG->Trace("set playing false for %p (SoundIsFinishedPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
 	playing = false;
-	playing_thread = 0;
 
 	pos_map.Clear();
 //	LOG->Trace("SoundIsFinishedPlaying %p finished (%s)", this, this->GetLoadedFilePath().c_str());

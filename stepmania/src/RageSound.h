@@ -114,7 +114,6 @@ public:
 	bool SetPositionSeconds( float fSeconds );
 	CString GetLoadedFilePath() const { return m_sFilePath; }
 	bool IsPlaying() const { return playing; }
-	uint64_t GetPlayingThread() const { return playing_thread; }
 
 	/* Lock and unlock this sound. */
 	void LockSound();
@@ -128,10 +127,6 @@ public:
 	const RageSoundParams &GetParams() const { return m_Param; }
 
 private:
-	/* If we were copied from another RageSound, this will point to it; otherwise
-	 * this is ourself. */
-	RageSound *original;
-
 	mutable RageMutex m_Mutex;
 
 	SoundReader *Sample;
@@ -161,9 +156,6 @@ private:
 	/* Keep track of the max SOUNDMAN->GetPosition result (see GetPositionSecondsInternal). */
 	mutable int64_t max_driver_frame;
 
-	/* If playing, record the thread that called Play(). */
-	uint64_t playing_thread;
-
 	/* Unique ID number for this instance of RageSound. */
 	int ID;
 
@@ -181,9 +173,6 @@ private:
 	static void RateChange(char *buf, int &cnt, int speed_input_samples, int speed_output_samples, int channels);
 
 public:
-	/* Used by RageSoundManager: */
-	RageSound *GetOriginal() { return original; }
-
 	/* Called only by the sound drivers: */
 	/* This function should return the number of bytes actually put into buffer.
 	 * If less than size is returned, it signals the stream to stop; once it's
