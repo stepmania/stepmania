@@ -72,6 +72,7 @@ const CreditLine CREDIT_LINES[] =
 	{0,"Griever (Julian)"},
 	{0,"Miguel Moore"},
 	{0,"Dj 'AeON ExOdus' Washington"},
+	{0,"SPDS (James Sanders)"},
 	{0,""},
 	{0,""},
 	{0,""},
