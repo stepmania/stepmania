@@ -41,7 +41,7 @@ RageSoundManager::~RageSoundManager()
 {
 	lock.Lock();
 	/* Clear any sounds that we own and havn't freed yet. */
-	set<RageSoundBase *>::iterator j = owned_sounds.begin();
+	set<RageSound *>::iterator j = owned_sounds.begin();
 	while(j != owned_sounds.end())
 		delete *(j++);
 	lock.Unlock();
@@ -58,16 +58,6 @@ void RageSoundManager::StartMixing( RageSoundBase *snd )
 void RageSoundManager::StopMixing( RageSoundBase *snd )
 {
 	driver->StopMixing(snd);
-
-	/* The sound is finished, and should be deleted if it's in owned_sounds.
-	 * However, this call might be *from* the sound itself, and it'd be
-	 * a mess to delete it while it's on the call stack.  Instead, put it
-	 * in a queue to delete, and delete it on the next update. */
-	LockMut(lock);
-	if(owned_sounds.find(snd) != owned_sounds.end()) {
-		sounds_to_delete.insert(snd);
-		owned_sounds.erase(snd);
-	}
 }
 
 int64_t RageSoundManager::GetPosition( const RageSoundBase *snd ) const
@@ -81,10 +71,18 @@ void RageSoundManager::Update(float delta)
 
 	FlushPosMapQueue();
 
-	while(!sounds_to_delete.empty())
+	/* Scan the owned_sounds list for sounds that are no longer playing, and delete them. */
+	set<RageSound *>::iterator it = owned_sounds.begin(), next = it;
+	++next;
+	while( it != owned_sounds.end() )
 	{
-		delete *sounds_to_delete.begin();
-		sounds_to_delete.erase(sounds_to_delete.begin());
+		if( !(*it)->IsPlaying() )
+		{
+			delete *it;
+			owned_sounds.erase( it );
+		}
+		it = next;
+		++next;
 	}
 
 	for(set<RageSound *>::iterator i = all_sounds.begin();

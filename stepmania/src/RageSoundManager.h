@@ -16,10 +16,7 @@ class RageSoundManager
 {
 	/* Set of sounds that we've taken over (and are responsible for deleting
 	 * when they're finished playing): */
-	set<RageSoundBase *> owned_sounds;
-
-	/* Set of sounds that are finished and should be deleted. */
-	set<RageSoundBase *> sounds_to_delete;
+	set<RageSound *> owned_sounds;
 
 	RageSoundDriver *driver;
 
