@@ -42,6 +42,7 @@
 
 #include "global.h"
 #include "RageFileDriverTimeout.h"
+#include "RageUtil.h"
 #include "RageUtil_FileDB.h"
 #include "RageLog.h"
 
@@ -121,7 +122,7 @@ private:
 	/* REQ_OPEN: */
 	int m_iRequestMode; /* in */
 
-	/* REQ_GET_FILE_SIZE, REQ_COPY: */
+	/* REQ_CLOSE, REQ_GET_FILE_SIZE, REQ_COPY: */
 	RageFileBasic *m_pRequestFile; /* in */
 
 	/* REQ_OPEN, REQ_GET_FILE_SIZE, REQ_READ */
@@ -152,13 +153,14 @@ void RageFileDriverTimeout::SetTimeout( float fSeconds )
 
 
 ThreadedFileWorker::ThreadedFileWorker( CString sPath ):
-	m_WorkerEvent( sPath + "worker event" )
+	m_WorkerEvent( "\"" + sPath + "\" worker event" )
 {
 	/* Grab a reference to the child driver.  We'll operate on it directly. */
 	m_pChildDriver = FILEMAN->GetFileDriver( sPath );
 	if( m_pChildDriver == NULL )
 		LOG->Warn( "ThreadedFileWorker: Mountpoint \"%s\" not found", sPath.c_str() );
 
+	m_Timeout.SetZero();
 	m_Request = REQ_INVALID;
 	m_bTimedOut = false;
 	m_pResultFile = NULL;
@@ -233,9 +235,12 @@ bool ThreadedFileWorker::DoRequest( ThreadRequest r )
 	m_WorkerEvent.Broadcast();
 
 	/* Wait for it to complete or time out. */
-	bool bTimedOut = false;
-	while( !m_bRequestFinished && !m_bTimedOut )
-		bTimedOut = !m_WorkerEvent.Wait( &m_Timeout );
+	while( !m_bRequestFinished )
+	{
+		bool bTimedOut = !m_WorkerEvent.Wait( &m_Timeout );
+		if( bTimedOut )
+			break;
+	}
 
 	/* Don't depend on bTimedOut to tell if we timed out; only look at m_bRequestFinished,
 	 * to avoid a race condition where the event times out and the operation completes
@@ -251,6 +256,7 @@ bool ThreadedFileWorker::DoRequest( ThreadRequest r )
 	{
 		/* The operation completed; make sure that the worker thread doesn't erase the file. */
 		m_pRequestFile = NULL;
+		m_bRequestFinished = false;
 	}
 	m_WorkerEvent.Unlock();
 
@@ -262,14 +268,13 @@ void ThreadedFileWorker::WorkerMain()
 	while(1)
 	{
 		m_WorkerEvent.Lock();
-		while( m_Request == REQ_INVALID )
+		while( m_Request == REQ_INVALID && m_apDeletedFiles.empty() )
 			m_WorkerEvent.Wait();
 		const ThreadRequest r = m_Request;
 		m_Request = REQ_INVALID;
 
 		/* We're going to clean up any deleted files.  Make a copy of the list; don't
 		 * hold the lock while we delete. */
-
 		vector<RageFileBasic *> apDeletedFiles = m_apDeletedFiles;
 		m_apDeletedFiles.clear();
 
@@ -278,6 +283,9 @@ void ThreadedFileWorker::WorkerMain()
 		for( unsigned i = 0; i < apDeletedFiles.size(); ++i )
 			delete apDeletedFiles[i];
 		apDeletedFiles.clear();
+
+		if( r == REQ_INVALID )
+			continue;
 		
 		/* We have a request. */
 		switch( r )
@@ -285,12 +293,13 @@ void ThreadedFileWorker::WorkerMain()
 		case REQ_OPEN:
 			ASSERT( m_pResultFile == NULL );
 			ASSERT( !m_sRequestPath.empty() );
+			m_iResultRequest = 0;
 			m_pResultFile = m_pChildDriver->Open( m_sRequestPath, m_iRequestMode, m_iResultRequest );
 			break;
 
 		case REQ_CLOSE:
 			ASSERT( m_pRequestFile != NULL );
-			delete m_pRequestFile;
+			m_apDeletedFiles.push_back( m_pRequestFile );
 			break;
 
 		case REQ_GET_FILE_SIZE:
@@ -337,6 +346,9 @@ void ThreadedFileWorker::WorkerMain()
 
 		case REQ_SHUTDOWN:
 			break;
+
+		default:
+			FAIL_M( ssprintf("%i", r) );
 		}
 
 		m_WorkerEvent.Lock();
@@ -369,7 +381,7 @@ void ThreadedFileWorker::WorkerMain()
 		else
 			m_bRequestFinished = true;
 
-		/* We're finished.  Wake up the requester. */
+		/* We're finished.  Wake up the requester (if he's still around). */
 		m_WorkerEvent.Broadcast();
 		m_WorkerEvent.Unlock();
 
@@ -413,11 +425,21 @@ void ThreadedFileWorker::Close( RageFileBasic *pFile )
 {
 	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
 
-	/* We need to delete files passed to us by Close, even if we're in a timed-out state. */
-	m_WorkerEvent.Lock();
-	m_apDeletedFiles.push_back( pFile );
-	m_WorkerEvent.Broadcast();
-	m_WorkerEvent.Unlock();
+	if( !m_bTimedOut )
+	{
+		/* If we're not in a timed-out state, try to wait for the deletion to complete
+		 * before continuing. */
+		m_pRequestFile = pFile;
+		DoRequest( REQ_CLOSE );
+	}
+	else
+	{
+		/* Delete the file when the timeout completes. */
+		m_WorkerEvent.Lock();
+		m_apDeletedFiles.push_back( pFile );
+		m_WorkerEvent.Broadcast();
+		m_WorkerEvent.Unlock();
+	}
 }
 
 int ThreadedFileWorker::GetFileSize( RageFileBasic *&pFile )
