@@ -24,13 +24,13 @@ enum {
 };
 
 OptionRowDefinition g_ProfileOptionsLines[NUM_PROFILE_OPTIONS_LINES] = {
-	OptionRowDefinition( "Player1\nProfile",	true ),
-	OptionRowDefinition( "Player2\nProfile",	true ),
-	OptionRowDefinition( "Create\nNew",		true, "PRESS START" ),
+	OptionRowDefinition( "Player1Profile",	true ),
+	OptionRowDefinition( "Player2Profile",	true ),
+	OptionRowDefinition( "CreateNew",		true, "PRESS START" ),
 	OptionRowDefinition( "Delete",			true ),
 	OptionRowDefinition( "Rename",			true ),
-	OptionRowDefinition( "OS Mount\nPlayer1",	true, "" ),
-	OptionRowDefinition( "OS Mount\nPlayer2",	true, "" ),
+	OptionRowDefinition( "OsMountPlayer1",	true, "" ),
+	OptionRowDefinition( "OsMountPlayer2",	true, "" ),
 };
 
 const ScreenMessage	SM_DoneCreating		= ScreenMessage(SM_User+1);

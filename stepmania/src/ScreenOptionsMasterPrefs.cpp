@@ -417,7 +417,7 @@ static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption
 	}
 }
 
-MOVE( ProgressiveLifebar,	PREFSMAN->m_iProgressiveLifebar );
+MOVE( ProgressiveLifebar,			PREFSMAN->m_iProgressiveLifebar );
 MOVE( ProgressiveStageLifebar,		PREFSMAN->m_iProgressiveStageLifebar );
 MOVE( ProgressiveNonstopLifebar,	PREFSMAN->m_iProgressiveNonstopLifebar );
 
@@ -519,110 +519,110 @@ static void InitializeConfOptions()
 
 #define ADD(x) g_ConfOptions.push_back( x )
 	/* Select game */
-	ADD( ConfOption( "Game",					GameSel, GameChoices ) );
+	ADD( ConfOption( "Game",						GameSel, GameChoices ) );
 	g_ConfOptions.back().m_iEffects = OPT_RESET_GAME;
 
 	/* Appearance options */
-	ADD( ConfOption( "Language",				Language, LanguageChoices ) );
+	ADD( ConfOption( "Language",					Language, LanguageChoices ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_THEME;
 
-	ADD( ConfOption( "Theme",					Theme, ThemeChoices ) );
+	ADD( ConfOption( "Theme",						Theme, ThemeChoices ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_THEME;
 
-	ADD( ConfOption( "Announcer",				Announcer, AnnouncerChoices ) );
-	ADD( ConfOption( "Default\nNoteSkin",		DefaultNoteSkin, DefaultNoteSkinChoices ) );
-	ADD( ConfOption( "Instructions",			Instructions,		"SKIP","SHOW") );
-	ADD( ConfOption( "ShowCaution",				MovePref,			"SKIP","SHOW") );
-	ADD( ConfOption( "Oni Score\nDisplay",		OniScoreDisplay,	"PERCENT","DANCE POINTS") );
-	ADD( ConfOption( "Song\nGroup",				SongGroup,			"ALL MUSIC","CHOOSE") );
-	ADD( ConfOption( "Wheel\nSections",			WheelSections,		"NEVER","ALWAYS", "ABC ONLY") );
-	ADD( ConfOption( "Course\nSort",			CourseSort,			"# SONGS","AVG FEET","TOTAL FEET","RANKING") );
-	ADD( ConfOption( "Random\nAt End",			RandomAtEnd,		"NO","YES") );
-	ADD( ConfOption( "Translations",			Translations,		"ROMANIZATION","NATIVE LANGUAGE") );
-	ADD( ConfOption( "Lyrics",					Lyrics,				"HIDE","SHOW") );
+	ADD( ConfOption( "Announcer",					Announcer, AnnouncerChoices ) );
+	ADD( ConfOption( "DefaultNoteSkin",				DefaultNoteSkin, DefaultNoteSkinChoices ) );
+	ADD( ConfOption( "Instructions",				Instructions,		"SKIP","SHOW") );
+	ADD( ConfOption( "ShowCaution",					MovePref,			"SKIP","SHOW") );
+	ADD( ConfOption( "OniScoreDisplay",				OniScoreDisplay,	"PERCENT","DANCE POINTS") );
+	ADD( ConfOption( "SongGroup",					SongGroup,			"ALL MUSIC","CHOOSE") );
+	ADD( ConfOption( "WheelSections",				WheelSections,		"NEVER","ALWAYS", "ABC ONLY") );
+	ADD( ConfOption( "CourseSort",					CourseSort,			"# SONGS","AVG FEET","TOTAL FEET","RANKING") );
+	ADD( ConfOption( "RandomAtEnd",					RandomAtEnd,		"NO","YES") );
+	ADD( ConfOption( "Translations",				Translations,		"ROMANIZATION","NATIVE LANGUAGE") );
+	ADD( ConfOption( "Lyrics",						Lyrics,				"HIDE","SHOW") );
 
 	/* Misc options */
-	ADD( ConfOption( "Autogen\nSteps",			AutogenSteps, "OFF","ON" ) );
+	ADD( ConfOption( "AutogenSteps",				AutogenSteps, "OFF","ON" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_SONG;
 
-	ADD( ConfOption( "Autogen\nGroup Courses",	AutogenGroupCourses, "OFF","ON" ) );
-	ADD( ConfOption( "FastLoad",				MovePref,			"OFF","ON" ) );
+	ADD( ConfOption( "AutogenGroupCourses",			AutogenGroupCourses, "OFF","ON" ) );
+	ADD( ConfOption( "FastLoad",					MovePref,			"OFF","ON" ) );
 
 	/* Background options */
-	ADD( ConfOption( "BackgroundMode",			MovePref,			"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ) );
-	ADD( ConfOption( "Brightness",				BGBrightness,		"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ) );
-	ADD( ConfOption( "ShowDanger",				MovePref,			"HIDE","SHOW" ) );
-	ADD( ConfOption( "Dancing\nCharacters",		DancingCharacters,	"DEFAULT TO OFF","DEFAULT TO RANDOM","SELECT" ) );
-	ADD( ConfOption( "Beginner\nHelper",		BeginnerHelper,		"OFF","ON" ) );
-	ADD( ConfOption( "Random\nBackgrounds",		NumBackgrounds,		"5","10","15","20" ) );
+	ADD( ConfOption( "BackgroundMode",				MovePref,			"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ) );
+	ADD( ConfOption( "Brightness",					BGBrightness,		"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ) );
+	ADD( ConfOption( "ShowDanger",					MovePref,			"HIDE","SHOW" ) );
+	ADD( ConfOption( "DancingCharacters",			DancingCharacters,	"DEFAULT TO OFF","DEFAULT TO RANDOM","SELECT" ) );
+	ADD( ConfOption( "BeginnerHelper",				BeginnerHelper,		"OFF","ON" ) );
+	ADD( ConfOption( "RandomBackgrounds",			NumBackgrounds,		"5","10","15","20" ) );
 
 	/* Input options */
-	ADD( ConfOption( "Auto Map\nOn Joy Change",	AutoMapOnJoyChange,	"OFF","ON (recommended)" ) );
-	ADD( ConfOption( "OnlyDedicatedMenuButtons",MovePref,			"USE GAMEPLAY BUTTONS","ONLY DEDICATED BUTTONS" ) );
-	ADD( ConfOption( "AutoPlay",				AutoPlay,			"OFF","ON" ) );
-	ADD( ConfOption( "Back\nDelayed",			BackDelayed,		"INSTANT","HOLD" ) );
-	ADD( ConfOption( "Options\nNavigation",		OptionsNavigation,	"SM STYLE","ARCADE STYLE" ) );
-	ADD( ConfOption( "Wheel\nSpeed",			WheelSpeed,			"SLOW","NORMAL","FAST","REALLY FAST" ) );
+	ADD( ConfOption( "AutoMapOnJoyChange",			AutoMapOnJoyChange,	"OFF","ON (recommended)" ) );
+	ADD( ConfOption( "OnlyDedicatedMenuButtons",	MovePref,			"USE GAMEPLAY BUTTONS","ONLY DEDICATED BUTTONS" ) );
+	ADD( ConfOption( "AutoPlay",					AutoPlay,			"OFF","ON" ) );
+	ADD( ConfOption( "BackDelayed",					BackDelayed,		"INSTANT","HOLD" ) );
+	ADD( ConfOption( "OptionsNavigation",			OptionsNavigation,	"SM STYLE","ARCADE STYLE" ) );
+	ADD( ConfOption( "WheelSpeed",					WheelSpeed,			"SLOW","NORMAL","FAST","REALLY FAST" ) );
 
 	/* Gameplay options */
-	ADD( ConfOption( "Solo\nSingles",			SoloSingles,		"OFF","ON" ) );
-	ADD( ConfOption( "HiddenSongs",				MovePref,			"OFF","ON" ) );
-	ADD( ConfOption( "Easter\nEggs",			EasterEggs,			"OFF","ON" ) );
-	ADD( ConfOption( "Marvelous\nTiming",		MarvelousTiming,	"NEVER","COURSES ONLY","ALWAYS" ) );
-	ADD( ConfOption( "Allow Extra\nStage",		AllowExtraStage,	"OFF","ON" ) );
-	ADD( ConfOption( "Pick Extra\nStage",		PickExtraStage,		"OFF","ON" ) );
-	ADD( ConfOption( "Unlock\nSystem",			UnlockSystem,		"OFF","ON" ) );
+	ADD( ConfOption( "SoloSingles",					SoloSingles,		"OFF","ON" ) );
+	ADD( ConfOption( "HiddenSongs",					MovePref,			"OFF","ON" ) );
+	ADD( ConfOption( "EasterEggs",					EasterEggs,			"OFF","ON" ) );
+	ADD( ConfOption( "MarvelousTiming",				MarvelousTiming,	"NEVER","COURSES ONLY","ALWAYS" ) );
+	ADD( ConfOption( "AllowExtraStage",				AllowExtraStage,	"OFF","ON" ) );
+	ADD( ConfOption( "PickExtraStage",				PickExtraStage,		"OFF","ON" ) );
+	ADD( ConfOption( "UnlockSystem",				UnlockSystem,		"OFF","ON" ) );
 
 	/* Machine options */
-	ADD( ConfOption( "MenuTimer",				MovePref,			"OFF","ON" ) );
-	ADD( ConfOption( "CoinMode",				CoinModeM,			"HOME","PAY","FREE PLAY" ) );
-	ADD( ConfOption( "CoinModeNoHome",			CoinModeNoHome,		"PAY","FREE PLAY" ) );
-	ADD( ConfOption( "SongsPerPlay",			SongsPerPlay,		"1","2","3","4","5","6","7" ) );
+	ADD( ConfOption( "MenuTimer",					MovePref,			"OFF","ON" ) );
+	ADD( ConfOption( "CoinMode",					CoinModeM,			"HOME","PAY","FREE PLAY" ) );
+	ADD( ConfOption( "CoinModeNoHome",				CoinModeNoHome,		"PAY","FREE PLAY" ) );
+	ADD( ConfOption( "SongsPerPlay",				SongsPerPlay,		"1","2","3","4","5","6","7" ) );
 	ADD( ConfOption( "SongsPerPlayOrEvent",			SongsPerPlayOrEventMode, "1","2","3","4","5","6","7","EVENT" ) );
-	ADD( ConfOption( "EventMode",				MovePref,			"OFF","ON" ) );
-	ADD( ConfOption( "Scoring\nType",			ScoringType,		"MAX2","5TH" ) );
-	ADD( ConfOption( "Judge\nDifficulty",		JudgeDifficulty,	"1","2","3","4","5","6","7","8","JUSTICE" ) );
-	ADD( ConfOption( "Life\nDifficulty",		LifeDifficulty,		"1","2","3","4","5","6","7" ) );
-	ADD( ConfOption( "Progressive\nLifebar",	ProgressiveLifebar,	"OFF","1","2","3","4","5","6","7","8") );
-	ADD( ConfOption( "Progressive\nStage Lifebar",ProgressiveStageLifebar,	"OFF","1","2","3","4","5","6","7","8","INSANITY") );
-	ADD( ConfOption( "Progressive\nNonstop Lifebar",ProgressiveNonstopLifebar,"OFF","1","2","3","4","5","6","7","8","INSANITY") );
-	ADD( ConfOption( "Default\nFail Type",		DefaultFailType,	"IMMEDIATE","COMBO OF 30 MISSES","END OF SONG","OFF" ) );	
-	ADD( ConfOption( "DefaultFailTypeNoOff",	DefaultFailType,	"IMMEDIATE","COMBO OF 30 MISSES","END OF SONG" ) );	
-	ADD( ConfOption( "Coins Per\nCredit",		CoinsPerCredit,		"1","2","3","4","5","6","7","8" ) );
-	ADD( ConfOption( "Premium",					PremiumM,			"OFF","DOUBLE FOR 1 CREDIT","JOINT PREMIUM" ) );
-	ADD( ConfOption( "Show Song\nOptions",		ShowSongOptions,	"HIDE","SHOW","ASK" ) );
-	ADD( ConfOption( "Show Name\nEntry",		ShowNameEntry,		"OFF", "ON", "RANKING SONGS" ) );
+	ADD( ConfOption( "EventMode",					MovePref,			"OFF","ON" ) );
+	ADD( ConfOption( "ScoringType",					ScoringType,		"MAX2","5TH" ) );
+	ADD( ConfOption( "JudgeDifficulty",				JudgeDifficulty,	"1","2","3","4","5","6","7","8","JUSTICE" ) );
+	ADD( ConfOption( "LifeDifficulty",				LifeDifficulty,		"1","2","3","4","5","6","7" ) );
+	ADD( ConfOption( "ProgressiveLifebar",			ProgressiveLifebar,	"OFF","1","2","3","4","5","6","7","8") );
+	ADD( ConfOption( "ProgressiveStageLifebar",		ProgressiveStageLifebar,	"OFF","1","2","3","4","5","6","7","8","INSANITY") );
+	ADD( ConfOption( "ProgressiveNonstopLifebar",	ProgressiveNonstopLifebar,"OFF","1","2","3","4","5","6","7","8","INSANITY") );
+	ADD( ConfOption( "DefaultFailType",				DefaultFailType,	"IMMEDIATE","COMBO OF 30 MISSES","END OF SONG","OFF" ) );	
+	ADD( ConfOption( "DefaultFailTypeNoOff",		DefaultFailType,	"IMMEDIATE","COMBO OF 30 MISSES","END OF SONG" ) );	
+	ADD( ConfOption( "CoinsPerCredit",				CoinsPerCredit,		"1","2","3","4","5","6","7","8" ) );
+	ADD( ConfOption( "Premium",						PremiumM,			"OFF","DOUBLE FOR 1 CREDIT","JOINT PREMIUM" ) );
+	ADD( ConfOption( "ShowSongOptions",				ShowSongOptions,	"HIDE","SHOW","ASK" ) );
+	ADD( ConfOption( "ShowNameEntry",				ShowNameEntry,		"OFF", "ON", "RANKING SONGS" ) );
 
 	/* Graphic options */
-	ADD( ConfOption( "Windowed",				MovePref,			"FULLSCREEN", "WINDOWED" ) );
+	ADD( ConfOption( "Windowed",					MovePref,			"FULLSCREEN", "WINDOWED" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "DisplayResolution",		DisplayResolution,	"320","400","512","640","800","1024","1280x960","1280x1024" ) );
+	ADD( ConfOption( "DisplayResolution",			DisplayResolution,	"320","400","512","640","800","1024","1280x960","1280x1024" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "DisplayColor",			DisplayColor,		"16BIT","32BIT" ) );
+	ADD( ConfOption( "DisplayColor",				DisplayColor,		"16BIT","32BIT" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "Texture\nResolution",		TextureResolution,	"256","512","1024","2048" ) );
+	ADD( ConfOption( "TextureResolution",			TextureResolution,	"256","512","1024","2048" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "Texture\nColor",			TextureColor,		"16BIT","32BIT" ) );
+	ADD( ConfOption( "TextureColor",				TextureColor,		"16BIT","32BIT" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "Movie\nColor",			MovieColor,			"16BIT","32BIT" ) );
-	ADD( ConfOption( "DelayedTextureDelete",	MovePref,			"OFF","ON" ) );
+	ADD( ConfOption( "MovieColor",					MovieColor,			"16BIT","32BIT" ) );
+	ADD( ConfOption( "DelayedTextureDelete",		MovePref,			"OFF","ON" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "CelShade\nModels",		CelShadeModels,		"OFF","ON" ) );
-	ADD( ConfOption( "Smooth\nLines",			SmoothLines,		"OFF","ON" ) );
+	ADD( ConfOption( "CelShadeModels",				CelShadeModels,		"OFF","ON" ) );
+	ADD( ConfOption( "SmoothLines",					SmoothLines,		"OFF","ON" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "Refresh\nRate",			RefreshRate,		"DEFAULT","60","70","72","75","80","85","90","100","120","150" ) );
+	ADD( ConfOption( "RefreshRate",					RefreshRate,		"DEFAULT","60","70","72","75","80","85","90","100","120","150" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "Aspect\nRatio",			AspectRatio,		"3:4","1:1","4:3","16:10","16:9","8:3" ) );
+	ADD( ConfOption( "AspectRatio",					AspectRatio,		"3:4","1:1","4:3","16:10","16:9","8:3" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_ASPECT_RATIO;
-	ADD( ConfOption( "Vsync",					MovePref,			"NO", "YES" ) );
+	ADD( ConfOption( "Vsync",						MovePref,			"NO", "YES" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "ShowStats",				MovePref,			"OFF","ON" ) );
-	ADD( ConfOption( "ShowBanners",				MovePref,			"OFF","ON" ) );
+	ADD( ConfOption( "ShowStats",					MovePref,			"OFF","ON" ) );
+	ADD( ConfOption( "ShowBanners",					MovePref,			"OFF","ON" ) );
 
 	/* Sound options */
-	ADD( ConfOption( "Resampling\nQuality",		ResamplingQuality,	"FAST","NORMAL","HIGH QUALITY" ) );
-	ADD( ConfOption( "Attract\nSound Frequency",AttractSoundFrequency,	"NEVER","ALWAYS","2 TIMES","3 TIMES","4 TIMES","5 TIMES" ) );
-	ADD( ConfOption( "Sound\nVolume",			SoundVolume,		"SILENT","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ) );
+	ADD( ConfOption( "ResamplingQuality",			ResamplingQuality,	"FAST","NORMAL","HIGH QUALITY" ) );
+	ADD( ConfOption( "AttractSoundFrequency",		AttractSoundFrequency,	"NEVER","ALWAYS","2 TIMES","3 TIMES","4 TIMES","5 TIMES" ) );
+	ADD( ConfOption( "SoundVolume",					SoundVolume,		"SILENT","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_SOUND;
 }
 
@@ -638,15 +638,9 @@ ConfOption *ConfOption::Find( CString name )
 	for( unsigned i = 0; i < g_ConfOptions.size(); ++i )
 	{
 		ConfOption *opt = &g_ConfOptions[i];
-
 		CString match(opt->name);
-		match.Replace("\n", "");
-		match.Replace("-", "");
-		match.Replace(" ", "");
-
 		if( match.CompareNoCase(name) )
 			continue;
-
 		return opt;
 	}
 
