@@ -34,11 +34,13 @@ HelpDisplay::HelpDisplay()
 }
 
 
-void HelpDisplay::SetTips( CStringArray &arrayTips )
+void HelpDisplay::SetTips( const CStringArray &arrayTips )
 { 
 	m_arrayTips = arrayTips;
 	if( !m_arrayTips.empty() )
 		m_textTip.SetText( m_arrayTips[0] );
+	else
+		m_textTip.SetText( "" );
 }
 
 

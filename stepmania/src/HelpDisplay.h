@@ -11,8 +11,6 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Sprite.h"
-#include "song.h"
 #include "ActorFrame.h"
 #include "BitmapText.h"
 
@@ -21,7 +19,7 @@ class HelpDisplay : public ActorFrame
 {
 public:
 	HelpDisplay();
-	void SetTips( CStringArray &arrayTips );
+	void SetTips( const CStringArray &arrayTips );
 
 	virtual void Update( float fDeltaTime );
 

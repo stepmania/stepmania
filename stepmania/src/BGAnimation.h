@@ -39,7 +39,7 @@ public:
 	void GainingFocus( float fRate, bool bRewindMovie, bool bLoop );
 	void LosingFocus();
 
-	float GetLengthSeconds() { return m_fLengthSeconds; }
+	float GetLengthSeconds() const { return m_fLengthSeconds; }
 
 	virtual void HandleCommand( const CStringArray &asTokens );
 	void PlayOffCommand() { PlayCommand("Off"); }
