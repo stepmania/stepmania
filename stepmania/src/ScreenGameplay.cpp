@@ -2071,9 +2071,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		{
 			m_bChangedOffsetOrBPM = false;
 			ShowSavePrompt( SM_GoToScreenAfterBack );
+			break;
 		}
-		else
-			HandleScreenMessage( SM_GoToScreenAfterBack );
+
+		HandleScreenMessage( SM_GoToScreenAfterBack );
 		break;
 
 	case SM_GoToScreenAfterBack:
@@ -2086,9 +2087,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 
 	case SM_GoToStateAfterCleared:
-		SongFinished();
-		StageFinished();
-
 		if( m_bChangedOffsetOrBPM )
 		{
 			m_bChangedOffsetOrBPM = false;
@@ -2096,6 +2094,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			break;
 		}
 		
+		SongFinished();
+		StageFinished();
+
 		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 		break;
 
@@ -2143,9 +2144,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 
 	case SM_GoToScreenAfterFail:
-		SongFinished();
-		StageFinished();
-		
 		if( m_bChangedOffsetOrBPM )
 		{
 			m_bChangedOffsetOrBPM = false;
@@ -2153,6 +2151,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			break;
 		}
 
+		SongFinished();
+		StageFinished();
+		
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
