@@ -648,13 +648,20 @@ void Song::Save()
 {
 	LOG->Trace( "Song::SaveToSongFile()" );
 
-	//
-	// rename all old files to avoid confusion
-	//
+	/* rename all old files to avoid confusion.
+	 *
+	 * This also serves as a backup, so rename .sm's, too.  If we crash when
+	 * saving the .sm, we don't want to lose what we had.  But, what we really
+	 * should be doing is saving to another file (eg. foo.sm.new), then once we 
+	 * know we havn't crashed, move the old .sm to .sm.old and the new one to
+	 * the real filename.  That way, if we crash, we don't leave the song in an
+	 * unplayable state where the user has to manually un-rename stuff.  XXX -glenn 
+	 */
 	CStringArray arrayOldFileNames;
 	GetDirListing( m_sSongDir + "*.bms", arrayOldFileNames );
 	GetDirListing( m_sSongDir + "*.dwi", arrayOldFileNames );
 	GetDirListing( m_sSongDir + "*.ksf", arrayOldFileNames );
+	GetDirListing( m_sSongDir + "*.sm", arrayOldFileNames );
 	
 	for( int i=0; i<arrayOldFileNames.GetSize(); i++ )
 	{
