@@ -190,7 +190,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
 		this->AddChild( &m_BannerWithFrame[0] );
 
-		m_textStage.LoadFromFont( THEME->GetPathTo("Fonts","evalstage") );
+		m_textStage.LoadFromFont( THEME->GetPathTo("Fonts","evaluation stage") );
 		m_textStage.TurnShadowOff();
 		m_textStage.SetXY( STAGE_X, STAGE_Y );
 		m_textStage.SetZoom( 0.5f );
@@ -375,7 +375,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 		for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 		{
-			m_textJudgeNumbers[l][p].LoadFromFont( THEME->GetPathTo("Fonts","score numbers") );
+			m_textJudgeNumbers[l][p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation score numbers 7x2"), "01234 :56789%." );
 			m_textJudgeNumbers[l][p].TurnShadowOff();
 			m_textJudgeNumbers[l][p].SetXY( JUDGE_X(p,l), JUDGE_Y(l) );
 			m_textJudgeNumbers[l][p].SetZoom( 0.7f );

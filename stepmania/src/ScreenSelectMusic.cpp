@@ -211,7 +211,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	this->AddChild( &m_MusicSortDisplay );
 
 
-	m_textHoldForOptions.LoadFromFont( THEME->GetPathTo("Fonts","select music stage") );
+	m_textHoldForOptions.LoadFromFont( THEME->GetPathTo("Fonts","select music hold") );
 	m_textHoldForOptions.SetXY( CENTER_X, CENTER_Y );
 	m_textHoldForOptions.SetText( "press START again for options" );
 	m_textHoldForOptions.SetZoom( 1 );
