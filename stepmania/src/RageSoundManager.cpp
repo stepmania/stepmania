@@ -9,7 +9,6 @@
 #include "RageSound.h"
 #include "RageLog.h"
 #include "RageTimer.h"
-#include "PrefsManager.h"
 
 #include "arch/arch.h"
 #include "arch/Sound/RageSoundDriver.h"
@@ -17,12 +16,13 @@
 
 RageSoundManager::RageSoundManager(CString drivers)
 {
+	/* needs to be done first */
+	SOUNDMAN = this;
+	MixVolume = 1.0f;
+
 	driver = MakeRageSoundDriver(drivers);
 	if(!driver)
 		RageException::Throw("Couldn't find a sound driver that works");
-
-	/* needs to be done before RageSound::RageSound */
-	SOUNDMAN = this;
 
 	music = new RageSound;
 }
@@ -271,9 +271,15 @@ void RageSoundManager::PlayMusic(CString file, bool loop, float start_sec, float
 	music->StartPlaying();
 }
 
+void RageSoundManager::SetPrefs(float MixVol)
+{
+	MixVolume = MixVol;
+	driver->VolumeChanged();
+}
+
 SoundMixBuffer::SoundMixBuffer()
 {
-	vol = PREFSMAN->m_fSoundVolume;
+	vol = SOUNDMAN->GetMixVolume();
 }
 
 void SoundMixBuffer::write(const Sint16 *buf, unsigned size)

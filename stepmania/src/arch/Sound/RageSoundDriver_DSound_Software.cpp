@@ -43,7 +43,6 @@ void RageSound_DSound_Software::MixerThread()
 
 	while(!shutdown) {
 		Sleep(10);
-
 		while(GetData())
 			;
 	}
@@ -179,9 +178,11 @@ RageSound_DSound_Software::~RageSound_DSound_Software()
 {
 	/* Signal the mixing thread to quit. */
 	shutdown = true;
-	LOG->Trace("Shutting down mixer thread ...");
+	LOG->Trace("Shutting down mixer thread %p ...", MixerThreadPtr);
+	LOG->Flush();
 	SDL_WaitThread(MixerThreadPtr, NULL);
 	LOG->Trace("Mixer thread shut down.");
+	LOG->Flush();
 
 	delete str_ds;
 }

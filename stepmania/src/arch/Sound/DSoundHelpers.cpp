@@ -46,12 +46,8 @@ bool DSound::IsEmulated() const
 }
 
 DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
-			int channels_, int samplerate_, int samplebits_, int writeahead_,
-			float vol)
+			int channels_, int samplerate_, int samplebits_, int writeahead_)
 {
-	ASSERT(vol >= 0);
-	ASSERT(vol <= 1);
-
 	channels = channels_;
 	samplerate = samplerate_;
 	samplebits = samplebits_;
@@ -79,15 +75,14 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	DSBUFFERDESC format;
 	memset(&format, 0, sizeof(format));
 	format.dwSize = sizeof(format);
-	format.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS;
+	format.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME;
 	/* Don't use DSBCAPS_STATIC.  It's meant for static buffers, and we
 	 * only use streaming buffers. */
 	if(hardware == HW_HARDWARE)
 		format.dwFlags |= DSBCAPS_LOCHARDWARE;
 	else
 		format.dwFlags |= DSBCAPS_LOCSOFTWARE;
-	if(vol != 1)
-		format.dwFlags |= DSBCAPS_CTRLVOLUME;
+
 	format.dwBufferBytes = buffersize;
 	format.dwReserved = 0;
 	format.lpwfxFormat = &waveformat;
@@ -113,6 +108,12 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 		buffersize = bcaps.dwBufferBytes;
 		writeahead = min(writeahead, buffersize);
 	}
+}
+
+void DSoundBuf::SetVolume(float vol)
+{
+	ASSERT(vol >= 0);
+	ASSERT(vol <= 1);
 
 	float vl2 = log10f(vol) / log10f(2); /* vol log 2 */
 
@@ -121,7 +122,6 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	if(vol != 1)
 		buf->SetVolume(max(int(1000 * vl2), DSBVOLUME_MIN));
 }
-
 
 DSoundBuf::~DSoundBuf()
 {

@@ -48,6 +48,7 @@ class RageSound_DSound: public RageSoundDriver
 	void StopMixing(RageSound *snd);		/* used by RageSound */
 	int GetPosition(const RageSound *snd) const;
 	void Update(float delta);
+	void VolumeChanged();
 
 public:
 	RageSound_DSound();

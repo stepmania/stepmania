@@ -12,7 +12,6 @@
 #include "../../RageUtil.h"
 #include "../../RageSound.h"
 #include "../../RageLog.h"
-#include "../../PrefsManager.h"
 #include "../../tls.h"
 #include "SDL.h"
 
@@ -165,8 +164,7 @@ RageSound_DSound::RageSound_DSound()
 		try {
 			newbuf = new DSoundBuf(ds, 
 				DSoundBuf::HW_HARDWARE,
-				channels, samplerate, 16, buffersize,
-				PREFSMAN->m_fSoundVolume);
+				channels, samplerate, 16, buffersize);
 		} catch(const RageException &e) {
 			/* If we didn't get at least 8, fail. */
 			if(i >= 8) break; /* OK */
@@ -188,7 +186,11 @@ RageSound_DSound::RageSound_DSound()
 		s->str_ds = newbuf;
 		stream_pool.push_back(s);
 	}
+
 	LOG->Trace("Got %i hardware buffers", stream_pool.size());
+
+	/* Set channel volumes. */
+	VolumeChanged();
 
 	MixerThreadPtr = SDL_CreateThread(MixerThread_start, this);
 }
@@ -197,10 +199,22 @@ RageSound_DSound::~RageSound_DSound()
 {
 	/* Signal the mixing thread to quit. */
 	shutdown = true;
+	LOG->Trace("Shutting down mixer thread ...");
+	LOG->Flush();
 	SDL_WaitThread(MixerThreadPtr, NULL);
+	LOG->Trace("Mixer thread shut down.");
+	LOG->Flush();
 
 	for(unsigned i = 0; i < stream_pool.size(); ++i)
 		delete stream_pool[i];
+}
+
+void RageSound_DSound::VolumeChanged()
+{
+	for(unsigned i = 0; i < stream_pool.size(); ++i)
+	{
+		stream_pool[i]->str_ds->SetVolume(SOUNDMAN->GetMixVolume());
+	}
 }
 
 void RageSound_DSound::StartMixing(RageSound *snd)

@@ -268,6 +268,7 @@ int main(int argc, char* argv[])
 	GAMEMAN		= new GameManager;
 	THEME		= new ThemeManager;
 	SOUNDMAN	= new RageSoundManager(PREFSMAN->m_bSoundDrivers);
+	SOUNDMAN->SetPrefs(PREFSMAN->m_fSoundVolume);
 	ANNOUNCER	= new AnnouncerManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;

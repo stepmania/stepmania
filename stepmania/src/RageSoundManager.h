@@ -28,11 +28,17 @@ class RageSoundManager
 
 	RageSoundDriver *driver;
 
+	/* Prefs: */
+	float MixVolume;
+
 public:
 	RageMutex lock;
 
 	RageSoundManager(CString drivers);
 	~RageSoundManager();
+
+	float GetMixVolume() const { return MixVolume; }
+	void SetPrefs(float MixVol);
 
 	void Update(float delta);
 	void StartMixing(RageSound *snd);	/* used by RageSound */
