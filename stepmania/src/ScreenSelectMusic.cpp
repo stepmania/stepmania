@@ -638,7 +638,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 {
 //	LOG->Trace( "ScreenSelectMusic::Input()" );
 
-	
+	// debugging?
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F9 )
 	{
 		if( type != IET_FIRST_PRESS ) return;
@@ -650,10 +650,30 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		return;
 	}
 
+	if( !GameI.IsValid() )		return;		// don't care
+
+	if( m_bMadeChoice  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START  &&  !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
+	{
+		if(m_bGoToOptions) return; /* got it already */
+		if(!m_bAllowOptionsMenu) return; /* not allowed */
+
+		if( !m_bAllowOptionsMenuRepeat &&
+			(type == IET_SLOW_REPEAT || type == IET_FAST_REPEAT ))
+			return; /* not allowed yet */
+		
+		m_bGoToOptions = true;
+		m_sprOptionsMessage.SetState( 1 );
+		SOUND->PlayOnce( THEME->GetPathToS("Common start") );
+		return;
+	}
+
+	if( m_Menu.IsTransitioning() )
+		return;		// ignore
+
+	if( m_bMadeChoice )		return;		// ignore
 
 	if( MenuI.button == MENU_BUTTON_RIGHT || MenuI.button == MENU_BUTTON_LEFT )
 	{
-		if( !GAMESTATE->IsHumanPlayer(MenuI.player) ) return;
 
 		/* If we're rouletting, hands off. */
 		if(m_MusicWheel.IsRouletting())
@@ -712,29 +732,6 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		}
 	}
 
-	if( type == IET_RELEASE )	return;		// don't care
-
-	if( !GameI.IsValid() )		return;		// don't care
-
-	if( m_bMadeChoice  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START  &&  !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
-	{
-		if(m_bGoToOptions) return; /* got it already */
-		if(!m_bAllowOptionsMenu) return; /* not allowed */
-
-		if( !m_bAllowOptionsMenuRepeat &&
-			(type == IET_SLOW_REPEAT || type == IET_FAST_REPEAT ))
-			return; /* not allowed yet */
-		
-		m_bGoToOptions = true;
-		m_sprOptionsMessage.SetState( 1 );
-		SOUND->PlayOnce( THEME->GetPathToS("Common start") );
-		return;
-	}
-	
-	if( m_Menu.IsTransitioning() )	return;		// ignore
-
-	if( m_bMadeChoice )
-		return;
 
 	PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
 
