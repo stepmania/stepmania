@@ -93,7 +93,7 @@ void CourseContentsFrame::SetFromCourse( Course* pCourse )
 {
 	ASSERT( pCourse != NULL );
 
-	m_fTimeUntilScroll = 3;
+	m_fTimeUntilScroll = 0;
 	m_fItemAtTopOfList = 0;
 
 	m_iNumContents = 0; 
@@ -124,10 +124,10 @@ void CourseContentsFrame::Update( float fDeltaTime )
 
 	if( m_fTimeUntilScroll > 0  &&  m_iNumContents > MAX_VISIBLE_CONTENTS)
 		m_fTimeUntilScroll -= fDeltaTime;
-	if( m_fTimeUntilScroll <= 0 )
+	if( m_fTimeUntilScroll <= 0 ) {
 		m_fItemAtTopOfList += fDeltaTime;
-	if( m_fItemAtTopOfList > m_iNumContents )
-		m_fItemAtTopOfList -= m_iNumContents;
+		m_fItemAtTopOfList = fmodf(m_fItemAtTopOfList, float(m_iNumContents));
+	}
 
 	for( int i=0; i<m_iNumContents; i++ )
 		m_CourseContentDisplays[i].Update( fDeltaTime );
@@ -157,15 +157,14 @@ void CourseContentsFrame::DrawPrimitives()
 	float fRemainder = m_fItemAtTopOfList - (int)m_fItemAtTopOfList;
 	fRemainder = min( fRemainder*1.5f, 1 );
 
-	float fY = (-fRemainder-(MAX_VISIBLE_CONTENTS-1)/2) * CONTENTS_BAR_HEIGHT;
+	const float fY = (-fRemainder-(MAX_VISIBLE_CONTENTS-1)/2) * CONTENTS_BAR_HEIGHT;
 
 	for( int i=0; i<min(MAX_VISIBLE_CONTENTS+1, m_iNumContents); i++ )
 	{
 		if( m_fTimeUntilScroll <= 0 )
-			m_CourseContentDisplays[iItemToDraw].SetY( fY );
+			m_CourseContentDisplays[iItemToDraw].SetY( fY + i*CONTENTS_BAR_HEIGHT);
 		m_CourseContentDisplays[iItemToDraw].Draw();
 		iItemToDraw = (iItemToDraw+1) % m_iNumContents;
-		fY += CONTENTS_BAR_HEIGHT;
 	}
 
 	// turn off Z buffer
