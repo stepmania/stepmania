@@ -153,8 +153,7 @@ const char *SignalCodeName( int signo, int code )
 	}
 
 	static char buf[128];
-	strcpy( buf, "Unknown code " );
-	strcat( buf, itoa(code) );
+	sprintf( buf, "Unknown code %i", code );
 	return buf;
 }
 #endif
