@@ -35,6 +35,16 @@ int resample_process(void   *handle,
                      float  *outBuffer,
                      int     outBufferLen);
 
+int resample_process_stride(void   *handle,
+                     double  factor,
+                     float  *inBuffer,
+                     int     inBufferLen,
+                     int     lastFlag,
+                     int    *inBufferUsed,
+                     float  *outBuffer,
+                     int     outBufferLen,
+		     int     BufferStride);
+
 void resample_close(void *handle);
 
 #ifdef __cplusplus

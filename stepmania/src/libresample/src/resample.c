@@ -176,24 +176,40 @@ int resample_process(void   *handle,
                      float  *outBuffer,
                      int     outBufferLen)
 {
+    return resample_process_stride( handle,
+                     factor,inBuffer, inBufferLen,
+                     lastFlag, inBufferUsed, outBuffer, outBufferLen, 1);
+}
+
+int resample_process_stride(void   *handle,
+                     double  factor,
+                     float  *inBuffer,
+                     int     inBufferLen,
+                     int     lastFlag,
+                     int    *inBufferUsed, /* output param */
+                     float  *outBuffer,
+                     int     outBufferLen,
+		     int     BufferStride)
+{
    rsdata *hp = (rsdata *)handle;
    float  *Imp = hp->Imp;
    float  *ImpD = hp->ImpD;
    float  LpScl = hp->LpScl;
    UWORD  Nwing = hp->Nwing;
    BOOL interpFilt = FALSE; /* TRUE means interpolate filter coeffs */
-   int outSampleCount;
+   int inSampleCount, outSampleCount;
    UWORD Nout, Ncreep, Nreuse;
    int Nx;
    int i, len;
 
    #if DEBUG
-   fprintf(stderr, "resample_process: in=%d, out=%d lastFlag=%d\n",
-           inBufferLen, outBufferLen, lastFlag);
+   fprintf(stderr, "resample_process: in=%d, out=%d stride=%d lastFlag=%d\n",
+           inBufferLen, outBufferLen, lastFlag, 1);
    #endif
 
    /* Initialize inBufferUsed and outSampleCount to 0 */
    *inBufferUsed = 0;
+   inSampleCount = 0;
    outSampleCount = 0;
 
    if (factor < hp->minFactor || factor > hp->maxFactor) {
@@ -208,11 +224,16 @@ int resample_process(void   *handle,
 
    /* Start by copying any samples still in the Y buffer to the output
       buffer */
-   if (hp->Yp && (outBufferLen-outSampleCount)>0) {
-      len = MIN(outBufferLen-outSampleCount, hp->Yp);
+   if (hp->Yp && outBufferLen>0) {
+      len = MIN(outBufferLen/BufferStride, hp->Yp);  // in samples
       for(i=0; i<len; i++)
-         outBuffer[outSampleCount+i] = hp->Y[i];
-      outSampleCount += len;
+      {
+         *outBuffer = hp->Y[i];
+	 outBuffer += BufferStride;
+      }
+
+      outSampleCount += len*BufferStride;
+      outBufferLen -= len*BufferStride;
       for(i=0; i<hp->Yp-len; i++)
          hp->Y[i] = hp->Y[i+len];
       hp->Yp -= len;
@@ -240,16 +261,20 @@ int resample_process(void   *handle,
       /* Copy as many samples as we can from the input buffer into X */
       len = hp->XSize - hp->Xread;
 
-      if (len >= (inBufferLen - (*inBufferUsed)))
-         len = (inBufferLen - (*inBufferUsed));
+      if (len >= inBufferLen/BufferStride)
+         len = inBufferLen/BufferStride;
 
       for(i=0; i<len; i++)
-         hp->X[hp->Xread + i] = inBuffer[(*inBufferUsed) + i];
+      {
+         hp->X[hp->Xread + i] = *inBuffer;
+	 inBuffer += BufferStride;
+      }
 
-      *inBufferUsed += len;
+      inSampleCount += len*BufferStride;
+      inBufferLen -= len*BufferStride;
       hp->Xread += len;
 
-      if (lastFlag && (*inBufferUsed == inBufferLen)) {
+      if (lastFlag && (inSampleCount == inBufferLen)) {
          /* If these are the last samples, zero-pad the
             end of the input buffer and make sure we process
             all the way to the end */
@@ -316,11 +341,16 @@ int resample_process(void   *handle,
       hp->Yp = Nout;
 
       /* Copy as many samples as possible to the output buffer */
-      if (hp->Yp && (outBufferLen-outSampleCount)>0) {
-         len = MIN(outBufferLen-outSampleCount, hp->Yp);
+      if (hp->Yp && outBufferLen>0) {
+         len = MIN(outBufferLen/BufferStride, hp->Yp);
          for(i=0; i<len; i++)
-            outBuffer[outSampleCount+i] = hp->Y[i];
-         outSampleCount += len;
+	 {
+            *outBuffer = hp->Y[i];
+	    outBuffer += BufferStride;
+	 }
+         outSampleCount += len*BufferStride;
+         outBufferLen -= len*BufferStride;
+
          for(i=0; i<hp->Yp-len; i++)
             hp->Y[i] = hp->Y[i+len];
          hp->Yp -= len;
@@ -332,6 +362,7 @@ int resample_process(void   *handle,
          break;
    }
 
+   *inBufferUsed = inSampleCount;
    return outSampleCount;
 }
 

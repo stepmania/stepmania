@@ -3,4 +3,5 @@ EXPORTS
     resample_dup
     resample_get_filter_width
     resample_process
+    resample_process_stride
     resample_close
