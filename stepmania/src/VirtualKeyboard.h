@@ -1,4 +1,4 @@
-/* Allows a user to input profile names or IP addresses without using a keyboard. */
+/* VirtualKeyboard - Allows a user to enter text without a keyboard. */
 
 #ifndef VIRTUAL_KEYBOARD_H
 #define VIRTUAL_KEYBOARD_H

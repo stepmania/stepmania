@@ -1,4 +1,4 @@
-/* Class: ReceptorArrow - A gray arrow that "receives" the note arrows. */
+/* ReceptorArrow - A gray arrow that "receives" the note arrows. */
 
 #ifndef RECEPTOR_ARROW_H
 #define RECEPTOR_ARROW_H
