@@ -208,6 +208,14 @@ int RageSound_ALSA9::GetPosition(const RageSound *snd) const
 	return stream_pool[i]->pcm->GetPosition();
 }       
 
+int RageSound_ALSA9::GetSampleRate( int rate ) const
+{
+	LockMutex L(SOUNDMAN->lock);
+
+	stream *str = stream_pool[0];
+	return str->pcm->FindSampleRate( rate );
+}
+	
 
 RageSound_ALSA9::RageSound_ALSA9()
 {
@@ -222,7 +230,7 @@ try {
 	{
 		Alsa9Buf *newbuf;
 		try {
-			newbuf = new Alsa9Buf( Alsa9Buf::HW_HARDWARE, channels, Alsa9Buf::DYNAMIC_SAMPLERATE );
+			newbuf = new Alsa9Buf( Alsa9Buf::HW_HARDWARE, channels );
 		} catch(const RageException &e) {
 			/* If we didn't get at least 8, fail. */
 			if(i >= 8) break; /* OK */

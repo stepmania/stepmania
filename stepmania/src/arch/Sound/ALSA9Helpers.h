@@ -28,15 +28,14 @@ public:
 		
 	enum hw { HW_HARDWARE, HW_SOFTWARE, HW_DONT_CARE };
 
-	/* If samplerate is DYNAMIC_SAMPLERATE, then call SetSampleRate before
-	 * you use the sample. */
-	enum { DYNAMIC_SAMPLERATE = -1 };
-	Alsa9Buf( hw hardware, int channels, int samplerate );
+	/* Call SetSampleRate before you use the sample. */
+	Alsa9Buf( hw hardware, int channels );
 	~Alsa9Buf();
 
 	int GetNumFramesToFill( int writeahead );
 	void Write( const Sint16 *buffer, int frames );
-
+	unsigned FindSampleRate( unsigned rate );
+	
 	void Reset();
 	void Play();
 	void Stop();

@@ -15,7 +15,7 @@
 #include <sys/resource.h>
 
 const int channels = 2;
-const int samplerate = 44100;
+int samplerate = 44100;
 
 const int samples_per_frame = channels;
 const int bytes_per_frame = sizeof(Sint16) * samples_per_frame;
@@ -176,7 +176,10 @@ try {
 	if( PREFSMAN->m_iSoundWriteAhead )
 		max_writeahead = PREFSMAN->m_iSoundWriteAhead;
 
-	pcm = new Alsa9Buf( Alsa9Buf::HW_DONT_CARE, channels, samplerate );
+	pcm = new Alsa9Buf( Alsa9Buf::HW_DONT_CARE, channels );
+
+	samplerate = pcm->FindSampleRate( samplerate );
+	pcm->SetSampleRate( samplerate );
 	
 	MixingThread.SetName( "RageSound_ALSA9_Software" );
 	MixingThread.Create( MixerThread_start, this );
@@ -205,6 +208,11 @@ float RageSound_ALSA9_Software::GetPlayLatency() const
 	return float(max_writeahead)/samplerate;
 }
 
+int RageSound_ALSA9_Software::GetSampleRate( int rate ) const
+{
+	return samplerate;
+}
+		
 /*
  * Copyright (c) 2002 by the person(s) listed below.  All rights reserved.
  *

@@ -32,7 +32,7 @@ class RageSound_OSS: public RageSoundDriver
 public:
 	bool GetData();
 	void Update(float delta);
-	int GetSampleRate() const { return samplerate; }
+	int GetSampleRate( int rate ) const { return samplerate; }
 
 	/* virtuals: */
 	void StartMixing(RageSound *snd);	/* used by RageSound */

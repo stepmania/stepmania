@@ -37,7 +37,8 @@ public:
 	void StopMixing(RageSound *snd);
 	int GetPosition(const RageSound *snd) const;
 	float GetPlayLatency() const;
-
+        int GetSampleRate( int rate ) const;
+	
 	void Update(float delta);
 
 	RageSound_ALSA9_Software();

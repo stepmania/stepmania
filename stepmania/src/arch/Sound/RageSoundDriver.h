@@ -37,7 +37,7 @@ protected:
 	 * get it. */
 	virtual void VolumeChanged() { }
 
-	virtual int GetSampleRate() const { return 44100; }
+	virtual int GetSampleRate( int rate ) const { return 44100; }
 
 public:
 	virtual ~RageSoundDriver() { }

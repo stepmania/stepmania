@@ -11,6 +11,21 @@
 #define ALSA_ASSERT(x) \
         if (err < 0) { LOG->Warn("ALSA9: %s: %s", x, dsnd_strerror(err)); }
 
+/* If the given sample rate can be used, return it.  Otherwise, return the
+ * samplerate to use instead. */
+unsigned Alsa9Buf::FindSampleRate( unsigned rate )
+{
+	snd_pcm_hw_params_t *testhw;
+	dsnd_pcm_hw_params_alloca( &testhw );
+	dsnd_pcm_hw_params_any( pcm, testhw );
+
+	int err = dsnd_pcm_hw_params_set_rate_near(pcm, testhw, &rate, 0);
+	if( err >= 0 )
+		return rate;
+
+	return 0;
+}
+
 bool Alsa9Buf::SetHWParams()
 {
 	int err;
@@ -45,11 +60,7 @@ bool Alsa9Buf::SetHWParams()
 	err = dsnd_pcm_hw_params_set_channels(pcm, hwparams, 2);
 	ALSA_CHECK("dsnd_pcm_hw_params_set_channels");
 
-	/* Set the sample rate.  We shouldn't need to set it if rate is DYNAMIC_SAMPLERATE,
-	 * but I've had alsalib crashes if I don't. */
-	if( samplerate == Alsa9Buf::DYNAMIC_SAMPLERATE )
-		samplerate = 44100;
-	
+	/* Set the sample rate. */
 	unsigned int rate = samplerate;
 	err = dsnd_pcm_hw_params_set_rate_near(pcm, hwparams, &rate, 0);
 	ALSA_CHECK("dsnd_pcm_hw_params_set_rate_near");
@@ -139,21 +150,21 @@ void Alsa9Buf::ErrorHandler(const char *file, int line, const char *function, in
 /* NOP */
 }
 
-Alsa9Buf::Alsa9Buf( hw hardware, int channels_, int samplerate_ )
+Alsa9Buf::Alsa9Buf( hw hardware, int channels_ )
 {
 	GetSoundCardDebugInfo();
 		
 	dsnd_lib_error_set_handler( ErrorHandler );
 	
 	channels = channels_;
-	samplerate = samplerate_;
+	samplerate = 44100;
 	samplebits = 16;
 	last_cursor_pos = 0;
 	
 	/* Open the device. */
 	int err;
 //	err = dsnd_pcm_open( &pcm, "dmix", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
-	err = dsnd_pcm_open( &pcm, "default", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
+	err = dsnd_pcm_open( &pcm, "hw:0", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
 	if (err < 0)
 		RageException::ThrowNonfatal("dsnd_pcm_open: %s", dsnd_strerror(err));
 
@@ -251,7 +262,7 @@ void Alsa9Buf::Write( const Sint16 *buffer, int frames )
 
 	last_cursor_pos += wrote;
 	if( wrote < frames )
-		LOG->Trace("Couldn't write whole buffer? (%i < %i)\n", wrote, frames );
+		LOG->Trace("Couldn't write whole buffer? (%i < %i)", wrote, frames );
 }
 
 

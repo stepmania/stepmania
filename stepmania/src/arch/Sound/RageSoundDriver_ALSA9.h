@@ -51,7 +51,7 @@ public:
 	void StartMixing(RageSound *snd);
 	void StopMixing(RageSound *snd);
 	int GetPosition(const RageSound *snd) const;
-	int GetSampleRate() const { return -1; }
+	int GetSampleRate( int rate ) const;
 
 	void Update(float delta);
 
