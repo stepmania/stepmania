@@ -602,10 +602,10 @@ void ScreenPackages::HTTPUpdate()
 			int k = m_sBUFFER.Find("\n",j+1);
 			if ( i < 0 || j < 0 || k < 0 )
 			{
-				m_iResponceCode = -100;
+				m_iResponseCode = -100;
 				m_iResponceName = "Malformed responce.";
 			}
-			m_iResponceCode = atoi(m_sBUFFER.substr(i+1,j-i).c_str());
+			m_iResponseCode = atoi(m_sBUFFER.substr(i+1,j-i).c_str());
 			m_iResponceName = m_sBUFFER.substr( j+1, k-j).c_str();
 
 			i = m_sBUFFER.find("Content-Length:");
@@ -646,13 +646,13 @@ void ScreenPackages::HTTPUpdate()
 			m_bGotHeader=false;
 			m_sStatus = ssprintf( "Done;%dB", int(m_iDownloaded) );
 
-			if( m_iResponceCode < 200 || m_iResponceCode >= 400 )
+			if( m_iResponseCode < 200 || m_iResponseCode >= 400 )
 			{
-				m_sStatus = ssprintf( "%d", m_iResponceCode ) + m_iResponceName;
+				m_sStatus = ssprintf( "%d", m_iResponseCode ) + m_iResponceName;
 			}
 			else
 			{
-				if( m_bIsPackage && m_iResponceCode < 300 )
+				if( m_bIsPackage && m_iResponseCode < 300 )
 				{
 					m_fOutputFile.Flush();
 					m_fOutputFile.Close();
