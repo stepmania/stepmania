@@ -56,28 +56,30 @@ void CroppedSprite::CropToSize( float fWidth, float fHeight )
 	float fOriginalX = GetX();
 	float fOriginalY = GetY();
 
-	if( IsDiagonalBanner(iSourceWidth, iSourceHeight) )		// this is a SSR/DWI CroppedSprite
-	{
-		float fCustomImageCoords[8] = {
-			0.02f,	0.78f,	// top left
-			0.22f,	0.98f,	// bottom left
-			0.98f,	0.22f,	// bottom right
-			0.78f,	0.02f,	// top right
-		};
-		Sprite::SetCustomImageCoords( fCustomImageCoords );
-
-		if( m_fCropWidth != -1 && m_fCropHeight != -1)
-			m_size = RageVector2( m_fCropWidth, m_fCropHeight );
-		else
-		{
-			/* If no crop size is set, then we're only being used to crop diagonal
-			 * banners so they look like regular ones. We don't actually care about
-			 * the size of the image, only that it has an aspect ratio of 4:1.  */
-			m_size = RageVector2(256, 64);
-		}
-		SetZoom( 1 );
-	}
-	else if( m_pTexture->GetID().filename.find( "(was rotated)" ) != m_pTexture->GetID().filename.npos && 
+	// TODO: Add this back in
+//	if( IsDiagonalBanner(iSourceWidth, iSourceHeight) )		// this is a SSR/DWI CroppedSprite
+//	{
+//		float fCustomImageCoords[8] = {
+//			0.02f,	0.78f,	// top left
+//			0.22f,	0.98f,	// bottom left
+//			0.98f,	0.22f,	// bottom right
+//			0.78f,	0.02f,	// top right
+//		};
+//		Sprite::SetCustomImageCoords( fCustomImageCoords );
+//
+//		if( m_fCropWidth != -1 && m_fCropHeight != -1)
+//			m_size = RageVector2( m_fCropWidth, m_fCropHeight );
+//		else
+//		{
+//			/* If no crop size is set, then we're only being used to crop diagonal
+//			 * banners so they look like regular ones. We don't actually care about
+//			 * the size of the image, only that it has an aspect ratio of 4:1.  */
+//			m_size = RageVector2(256, 64);
+//		}
+//		SetZoom( 1 );
+//	}
+//	else 
+	if( m_pTexture->GetID().filename.find( "(was rotated)" ) != m_pTexture->GetID().filename.npos && 
 			 m_fCropWidth != -1 && m_fCropHeight != -1 )
 	{
 		/* Dumb hack.  Normally, we crop all sprites except for diagonal banners,
@@ -115,7 +117,7 @@ void CroppedSprite::CropToSize( float fWidth, float fHeight )
 				0, 
 				1 - fPercentageToCutOffEachSide, 
 				1 );
-			SetCustomImageRect( fCustomImageCoords );
+			SetCustomImageCoords( fCustomImageCoords );
 		}
 		else		// crop Y
 		{
@@ -128,7 +130,7 @@ void CroppedSprite::CropToSize( float fWidth, float fHeight )
 				fPercentageToCutOffEachSide,
 				1, 
 				1 - fPercentageToCutOffEachSide );
-			SetCustomImageRect( fCustomImageCoords );
+			SetCustomImageCoords( fCustomImageCoords );
 		}
 		m_size = RageVector2( m_fCropWidth, m_fCropHeight );
 		SetZoom( 1 );

@@ -19,7 +19,7 @@
 // Derived classes must send this when done
 const ScreenMessage SM_AllDoneChoosing = (ScreenMessage)(SM_User+123);	// unique
 
-#define MAX_CHOICES 30
+#define MAX_CHOICES 10
 
 class ScreenSelect : public Screen
 {

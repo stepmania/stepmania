@@ -40,17 +40,12 @@ public:
 	virtual int GetNumStates()		{ return m_States.size(); };
 	CString	GetTexturePath()	{ return m_pTexture==NULL ? "" : m_pTexture->GetID().filename; };
 
-	void SetCustomTextureRect( const RectF &new_texcoord_frect );
-	void SetCustomTextureCoords( float fTexCoords[8] );
-	void GetCustomTextureCoords( float fTexCoordsOut[8] ) const;
-	void SetCustomSourceRect( const RectF &rectSourceCoords );	// in source pixel space
-	void SetCustomImageRect( RectF rectImageCoords );	// in image pixel space
-	void SetCustomImageCoords( float fImageCoords[8] );
-	const RectF *GetCurrentTextureCoordRect() const;
+	void SetCustomTextureCoords( const RectF &newTexCoords );
+	const RectF* GetCustomTextureCoords() const;
+	void SetCustomImageCoords( const RectF &newImageCoords );	// in image space (not texture space)
 	void StopUsingCustomCoords();
-
-	void GetActiveTexCoords(float fImageCoords[8]) const;
-	void GetCurrentTextureCoords(float fImageCoords[8]) const;
+	const RectF* GetActiveTextureCoords() const;	// depends on m_bUsingCustomTexCoords
+	const RectF* GetCurrentTextureCoords() const;
 
 protected:
 	virtual bool LoadFromTexture( RageTextureID ID );
@@ -71,8 +66,7 @@ protected:
 	float	m_fSecsIntoState;	// number of seconds that have elapsed since we switched to this frame
 
 	bool m_bUsingCustomTexCoords;
-	//FRECT m_CustomTexCoordRect;
-	float m_CustomTexCoords[8];	// (x,y) * 4
+	RectF m_CustomTexCoords;
 };
 
 #endif

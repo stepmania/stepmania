@@ -219,6 +219,9 @@ void Sprite::Update( float fDeltaTime )
 	}
 }
 
+/*
+	No longer needed.  -Chris
+
 static void TexCoordsFromArray(RageVertex *v, const float *f)
 {
 	v[0].t = RageVector2( f[0], f[1] );	// top left
@@ -234,10 +237,16 @@ void TexCoordArrayFromRect(float fImageCoords[8], const RectF &rect)
 	fImageCoords[4] = rect.right;	fImageCoords[5] = rect.bottom;	// bottom right
 	fImageCoords[6] = rect.right;	fImageCoords[7] = rect.top;		// top right
 }
+*/
 
 void Sprite::DrawPrimitives()
 {
 	if( m_pTexture == NULL  &&  !m_bDrawIfTextureNull )
+		return;
+
+	// bail if cropped all the way
+	if( m_temp.crop.left + m_temp.crop.right > 1  || 
+		m_temp.crop.top + m_temp.crop.bottom > 1 ) 
 		return;
 
 	if( m_pTexture  &&  m_pTexture->IsAMovie()  &&  m_pTexture->IsPlaying() )
@@ -263,11 +272,19 @@ void Sprite::DrawPrimitives()
 	}
 
 
+	RectF croppedQuadVerticies = quadVerticies;
+#define IF_CROP_POS(side,opp_side) if(m_temp.crop.side>0) croppedQuadVerticies.side = SCALE( m_temp.crop.side, 0.f, 1.f, quadVerticies.side, quadVerticies.opp_side ); 
+	IF_CROP_POS( left, right );
+	IF_CROP_POS( top, bottom );
+	IF_CROP_POS( right, left );
+	IF_CROP_POS( bottom, top );
+
+
 	static RageVertex v[4];
-	v[0].p = RageVector3( quadVerticies.left,	quadVerticies.top,		0 );	// top left
-	v[1].p = RageVector3( quadVerticies.left,	quadVerticies.bottom,	0 );	// bottom left
-	v[2].p = RageVector3( quadVerticies.right,	quadVerticies.bottom,	0 );	// bottom right
-	v[3].p = RageVector3( quadVerticies.right,	quadVerticies.top,		0 );	// top right
+	v[0].p = RageVector3( croppedQuadVerticies.left,	croppedQuadVerticies.top,		0 );	// top left
+	v[1].p = RageVector3( croppedQuadVerticies.left,	croppedQuadVerticies.bottom,	0 );	// bottom left
+	v[2].p = RageVector3( croppedQuadVerticies.right,	croppedQuadVerticies.bottom,	0 );	// bottom right
+	v[3].p = RageVector3( croppedQuadVerticies.right,	croppedQuadVerticies.top,		0 );	// top right
 
 	DISPLAY->SetTexture( m_pTexture );
 
@@ -277,9 +294,21 @@ void Sprite::DrawPrimitives()
 
 	if( m_pTexture )
 	{
-		float TexCoords[8];
-		GetActiveTexCoords(TexCoords);
-		TexCoordsFromArray(v, TexCoords);
+		const RectF texCoords = *(m_bUsingCustomTexCoords ? 
+			GetCustomTextureCoords() : 
+			GetCurrentTextureCoords());
+
+		RectF croppedTexCoords = texCoords;
+#define IF_CROP_TEX(side,opp_side) if(m_temp.crop.side>0) croppedTexCoords.side = SCALE( m_temp.crop.side, 0.f, 1.f, texCoords.side, texCoords.opp_side ); 
+		IF_CROP_TEX( left, right );
+		IF_CROP_TEX( top, bottom );
+		IF_CROP_TEX( right, left );
+		IF_CROP_TEX( bottom, top );
+
+		v[0].t = RageVector2( croppedTexCoords.left,  croppedTexCoords.top );		// top left
+		v[1].t = RageVector2( croppedTexCoords.left,  croppedTexCoords.bottom );	// bottom left
+		v[2].t = RageVector2( croppedTexCoords.right, croppedTexCoords.bottom );	// bottom right
+		v[3].t = RageVector2( croppedTexCoords.right, croppedTexCoords.top );		// top right
 	}
 
 	DISPLAY->SetTextureModeModulate();
@@ -337,70 +366,44 @@ void Sprite::SetState( int iNewState )
 	m_fSecsIntoState = 0.0; 
 }
 
-void Sprite::SetCustomTextureRect( const RectF &new_texcoord_frect ) 
+void Sprite::SetCustomTextureCoords( const RectF &new_texcoord_frect ) 
 { 
 	m_bUsingCustomTexCoords = true;
 	m_bTextureWrapping = true;
-	TexCoordArrayFromRect(m_CustomTexCoords, new_texcoord_frect);
+	m_CustomTexCoords = new_texcoord_frect;
 }
 
-void Sprite::SetCustomTextureCoords( float fTexCoords[8] ) // order: top left, bottom left, bottom right, top right
+const RectF* Sprite::GetCustomTextureCoords() const
 { 
-	m_bUsingCustomTexCoords = true;
-	m_bTextureWrapping = true;
-	for( int i=0; i<8; i++ )
-		m_CustomTexCoords[i] = fTexCoords[i]; 
+	return &m_CustomTexCoords; 
 }
 
-void Sprite::GetCustomTextureCoords( float fTexCoordsOut[8] ) const // order: top left, bottom left, bottom right, top right
-{ 
-	for( int i=0; i<8; i++ )
-		fTexCoordsOut[i] = m_CustomTexCoords[i]; 
-}
-
-
-void Sprite::SetCustomImageRect( RectF rectImageCoords )
+void Sprite::SetCustomImageCoords( const RectF &newImageCoords )
 {
 	// Convert to a rectangle in texture coordinate space.
-	rectImageCoords.left	*= m_pTexture->GetImageWidth()	/ (float)m_pTexture->GetTextureWidth();
-	rectImageCoords.right	*= m_pTexture->GetImageWidth()	/ (float)m_pTexture->GetTextureWidth();
-	rectImageCoords.top		*= m_pTexture->GetImageHeight()	/ (float)m_pTexture->GetTextureHeight(); 
-	rectImageCoords.bottom	*= m_pTexture->GetImageHeight()	/ (float)m_pTexture->GetTextureHeight(); 
+	RectF texCoords;
+	texCoords.left   = newImageCoords.left   * m_pTexture->GetImageWidth() / (float)m_pTexture->GetTextureWidth();
+	texCoords.right  = newImageCoords.right  * m_pTexture->GetImageWidth() / (float)m_pTexture->GetTextureWidth();
+	texCoords.top    = newImageCoords.top	 * m_pTexture->GetImageHeight()/ (float)m_pTexture->GetTextureHeight(); 
+	texCoords.bottom = newImageCoords.bottom * m_pTexture->GetImageHeight()/ (float)m_pTexture->GetTextureHeight(); 
 
-	SetCustomTextureRect( rectImageCoords );
+	SetCustomTextureCoords( texCoords );
 }
 
-void Sprite::SetCustomImageCoords( float fImageCoords[8] )	// order: top left, bottom left, bottom right, top right
-{
-	// convert image coords to texture coords in place
-	for( int i=0; i<8; i+=2 )
-	{
-		fImageCoords[i+0] *= m_pTexture->GetImageWidth()	/ (float)m_pTexture->GetTextureWidth(); 
-		fImageCoords[i+1] *= m_pTexture->GetImageHeight()	/ (float)m_pTexture->GetTextureHeight(); 
-	}
-
-	SetCustomTextureCoords( fImageCoords );
-}
-
-const RectF *Sprite::GetCurrentTextureCoordRect() const
+const RectF *Sprite::GetCurrentTextureCoords() const
 {
 	unsigned int uFrameNo = m_States[m_iCurState].iFrameIndex;
 	return m_pTexture->GetTextureCoordRect( uFrameNo );
 }
 
-void Sprite::GetCurrentTextureCoords(float fImageCoords[8]) const
-{
-	const RectF *pTexCoordRect = GetCurrentTextureCoordRect();
-	TexCoordArrayFromRect(fImageCoords, *pTexCoordRect);
-}
-
-
 /* If we're using custom coordinates, return them; otherwise return the coordinates
  * for the current state. */
-void Sprite::GetActiveTexCoords(float fImageCoords[8]) const
+const RectF* Sprite::GetActiveTextureCoords() const
 {
-	if(m_bUsingCustomTexCoords) GetCustomTextureCoords(fImageCoords);
-	else GetCurrentTextureCoords(fImageCoords);
+	if(m_bUsingCustomTexCoords) 
+		return GetCustomTextureCoords();
+	else 
+		return GetCurrentTextureCoords();
 }
 
 

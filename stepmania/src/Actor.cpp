@@ -661,9 +661,11 @@ void Actor::AddRotationR( float rot )
 	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromR(rot) );
 }
 
-void Actor::Command( CString sCommandString )
+float Actor::Command( CString sCommandString )
 {
 	// OPTIMIZATION OPPORTUNITY:  sCommandString could be parsed more efficiently.
+
+	sCommandString.MakeLower();
 
 	CStringArray asCommands;
 	split( sCommandString, ";", asCommands, true );
@@ -685,13 +687,12 @@ void Actor::Command( CString sCommandString )
 #define bParam(i) (iParam(i)!=0)
 
 		CString& sName = asTokens[0];
-		sName.MakeLower();
 
 		if( sName.size() == 0 )
 			continue;
 	
 		// Commands that go in the tweening queue:
-		if     ( sName=="sleep" )			BeginTweening( fParam(1), TWEEN_LINEAR );
+		if     ( sName=="sleep" )			{ BeginTweening( fParam(1), TWEEN_LINEAR ); BeginTweening( 0, TWEEN_LINEAR ); }
 		else if( sName=="linear" )			BeginTweening( fParam(1), TWEEN_LINEAR );
 		else if( sName=="accelerate" )		BeginTweening( fParam(1), TWEEN_ACCELERATE );
 		else if( sName=="decelerate" )		BeginTweening( fParam(1), TWEEN_DECELERATE );
@@ -711,6 +712,10 @@ void Actor::Command( CString sCommandString )
 //		else if( sName=="zoomz" )			SetZoomZ( fParam(1) );
 		else if( sName=="zoomtowidth" )		ZoomToWidth( fParam(1) );
 		else if( sName=="zoomtoheight" )	ZoomToHeight( fParam(1) );
+		else if( sName=="cropleft" )		SetCropLeft( fParam(1) );
+		else if( sName=="croptop" )			SetCropTop( fParam(1) );
+		else if( sName=="cropright" )		SetCropRight( fParam(1) );
+		else if( sName=="cropbottom" )		SetCropBottom( fParam(1) );
 		else if( sName=="diffuse" )			SetDiffuse( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 		else if( sName=="diffuseleftedge" )		SetDiffuseLeftEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 		else if( sName=="diffuserightedge" )	SetDiffuseRightEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
@@ -777,6 +782,8 @@ void Actor::Command( CString sCommandString )
 #endif
 		}
 	}
+
+	return GetTweenTimeLeft();
 }
 
 float Actor::GetCommandLength( CString command )
@@ -837,6 +844,7 @@ void Actor::TweenState::Init()
 	rotation = RageVector3( 0, 0, 0 );
 	quat = RageVector4( 0, 0, 0, 1 );
 	scale = RageVector3( 1, 1, 1 );
+	crop = RectF( 0,0,0,0 );
 	for(int i=0; i<4; i++) 
 		diffuse[i] = RageColor( 1, 1, 1, 1 );
 	glow = RageColor( 1, 1, 1, 0 );
@@ -845,10 +853,15 @@ void Actor::TweenState::Init()
 
 void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween )
 {
-	average_out.pos			= ts1.pos	  + (ts2.pos		- ts1.pos	  )*fPercentBetween;
-	average_out.scale		= ts1.scale	  + (ts2.scale		- ts1.scale   )*fPercentBetween;
-	average_out.rotation	= ts1.rotation+ (ts2.rotation	- ts1.rotation)*fPercentBetween;
+	average_out.pos			= ts1.pos	   + (ts2.pos		- ts1.pos	  )*fPercentBetween;
+	average_out.scale		= ts1.scale	   + (ts2.scale		- ts1.scale   )*fPercentBetween;
+	average_out.rotation	= ts1.rotation + (ts2.rotation	- ts1.rotation)*fPercentBetween;
 	RageQuatSlerp(&average_out.quat, ts1.quat, ts2.quat, fPercentBetween);
+	
+	average_out.crop.left	= ts1.crop.left  + (ts2.crop.left	- ts1.crop.left  )*fPercentBetween;
+	average_out.crop.top	= ts1.crop.top   + (ts2.crop.top	- ts1.crop.top   )*fPercentBetween;
+	average_out.crop.right	= ts1.crop.right + (ts2.crop.right	- ts1.crop.right )*fPercentBetween;
+	average_out.crop.bottom	= ts1.crop.bottom+ (ts2.crop.bottom	- ts1.crop.bottom)*fPercentBetween;
 
 	for(int i=0; i<4; i++) 
 		average_out.diffuse[i]	= ts1.diffuse[i]+ (ts2.diffuse[i]	- ts1.diffuse[i])*fPercentBetween;

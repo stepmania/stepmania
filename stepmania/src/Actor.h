@@ -43,6 +43,7 @@ public:
 		RageVector3 rotation;
 		RageVector4 quat;
 		RageVector3 scale;
+		RectF		crop;	// 0 = no cropping, 1 = fully cropped
 		RageColor   diffuse[4];
 		RageColor   glow;
 		GlowMode	glowmode;
@@ -118,6 +119,16 @@ public:
 	virtual void  AddRotationH( float rot );
 	virtual void  AddRotationP( float rot );
 	virtual void  AddRotationR( float rot );
+
+	virtual float GetCropLeft()					{ return DestTweenState().crop.left; }
+	virtual float GetCropTop()					{ return DestTweenState().crop.top;	}
+	virtual float GetCropRight()				{ return DestTweenState().crop.right;}
+	virtual float GetCropBottom()				{ return DestTweenState().crop.bottom;}
+	virtual void  SetCropLeft( float percent )	{ DestTweenState().crop.left = percent; }
+	virtual void  SetCropTop( float percent )	{ DestTweenState().crop.top = percent;	}
+	virtual void  SetCropRight( float percent )	{ DestTweenState().crop.right = percent;}
+	virtual void  SetCropBottom( float percent ){ DestTweenState().crop.bottom = percent;}
+
 
 	virtual void SetGlobalDiffuseColor( RageColor c );
 	virtual void SetGlobalX( float x );
@@ -245,7 +256,7 @@ public:
 	void FadeOn( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,false); };
 	void FadeOff( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,true); };
 
-	void Command( CString sCommandString );
+	float Command( CString sCommandString );	// return length in seconds to execute command
 	static float GetCommandLength( CString command );
 
 	virtual void SetState( int iNewState ) {};

@@ -71,7 +71,7 @@ void GradeDisplay::Update( float fDeltaTime )
 		m_frectCurTexCoords.right  = m_frectStartTexCoords.right*(1-fPercentIntoScrolling)  + m_frectDestTexCoords.right*fPercentIntoScrolling;
 		m_frectCurTexCoords.bottom = m_frectStartTexCoords.bottom*(1-fPercentIntoScrolling) + m_frectDestTexCoords.bottom*fPercentIntoScrolling;
 
-		this->SetCustomTextureRect( m_frectCurTexCoords );
+		this->SetCustomTextureCoords( m_frectCurTexCoords );
 	}
 }
 

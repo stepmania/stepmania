@@ -182,8 +182,8 @@ public:
 			1-fPercentCroppedFromRight,
 			1);
 
-		m_sprStreamNormal.SetCustomTextureRect( frectCustomTexCoords );
-		m_sprStreamHot.SetCustomTextureRect( frectCustomTexCoords );
+		m_sprStreamNormal.SetCustomTextureCoords( frectCustomTexCoords );
+		m_sprStreamHot.SetCustomTextureCoords( frectCustomTexCoords );
 
 		m_sprStreamHot.SetDiffuse( RageColor(1,1,1,m_fHotAlpha) );
 
