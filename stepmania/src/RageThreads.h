@@ -51,7 +51,7 @@ class RageMutex
 	friend struct RageMutexImpl;
 
 	RageMutexImpl *mut;
-	const CString m_sName;
+	CString m_sName;
 
 	int m_UniqueID;
 	
@@ -59,6 +59,7 @@ class RageMutex
 
 public:
 	CString GetName() const { return m_sName; }
+	void SetName( const CString &s ) { m_sName = s; }
 	void Lock();
 	void Unlock();
 	bool IsLockedByThisThread() const;

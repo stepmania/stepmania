@@ -190,6 +190,8 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 		}
 	}
 
+	m_Mutex.SetName( ssprintf("RageSound (%s)", Basename(sSoundFilePath).c_str() ) );
+
 	return true;
 }
 
