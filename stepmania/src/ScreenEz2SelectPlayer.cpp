@@ -53,8 +53,8 @@ const float OPT_Y[NUM_EZ2_GRAPHICS] = {
 
 
 
-float ez2_lasttimercheck[2];
-int ez2_bounce=0; // used for the bouncing of the '1p' and '2p' images
+float ez2_lasttimercheck;
+float ez2_bounce=0.f; // used for the bouncing of the '1p' and '2p' images
 
 /************************************
 ScreenEz2SelectPlayer (Constructor)
@@ -64,8 +64,7 @@ Desc: Sets up the screen display
 ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 {
 	LOG->Trace( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
-	ez2_lasttimercheck[0] = TIMER->GetTimeSinceStart();
-	ez2_lasttimercheck[1] = 0.0f;
+	ez2_lasttimercheck = 0.0f;
 	m_iSelectedStyle=3; // by bbf: frieza, was this supposed to be 3 ?
 	GAMESTATE->m_CurStyle = STYLE_NONE;
 //	GAMESTATE->m_MasterPlayerNumber = PLAYER_INVALID;
@@ -128,24 +127,22 @@ ScreenEz2SelectPlayer::~ScreenEz2SelectPlayer()
 	LOG->Trace( "ScreenEz2SelectPlayer::~ScreenEz2SelectPlayer()" );
 }
 
-
 /************************************
-AnimateGraphics
+Update
 Desc: Animates the 1p/2p selection
 ************************************/
-void ScreenEz2SelectPlayer::AnimateGraphics()
+void ScreenEz2SelectPlayer::Update( float fDeltaTime )
 {
-	if (TIMER->GetTimeSinceStart() > ez2_lasttimercheck[0] + 0.01f)
-	{
-		ez2_lasttimercheck[0] = TIMER->GetTimeSinceStart();
+	Screen::Update( fDeltaTime );
 
-		ez2_bounce = (ez2_bounce+1) % 20;
-		
-		/* 0..10..19 -> 10..0..9 */
-		int offset = abs(10-ez2_bounce);
-		m_sprOpt[2].SetXY( OPT_X[2], OPT_Y[2] - offset);
-		m_sprOpt[3].SetXY( OPT_X[3], OPT_Y[3] - offset);
-	}
+	fDeltaTime /= .01f;
+
+	ez2_bounce = fmod((ez2_bounce+fDeltaTime), 20);
+
+	/* 0..10..19 -> 10..0..9 */
+	int offset = abs(10-ez2_bounce);
+	m_sprOpt[2].SetXY( OPT_X[2], OPT_Y[2] - offset);
+	m_sprOpt[3].SetXY( OPT_X[3], OPT_Y[3] - offset);
 }
 
 /************************************
@@ -155,15 +152,14 @@ Desc: Draws the screen =P
 
 void ScreenEz2SelectPlayer::DrawPrimitives()
 {
-	AnimateGraphics();
 	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
 	
 	// wait for a bit incase another player wants to join before moving on.
-	if (ez2_lasttimercheck[1] != 0.0f && TIMER->GetTimeSinceStart() > ez2_lasttimercheck[1] + 1)
+	if (ez2_lasttimercheck != 0.0f && TIMER->GetTimeSinceStart() > ez2_lasttimercheck + 1)
 	{
-		ez2_lasttimercheck[1] = 0.0f;
+		ez2_lasttimercheck = 0.0f;
 		
 		if (m_iSelectedStyle == 0) // only the left pad was selected
 		{
@@ -292,7 +288,7 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 //			GAMESTATE->m_bIsJoined[PLAYER_2] = true;
 		}
 		m_soundSelect.PlayRandom();
-		ez2_lasttimercheck[1] = TIMER->GetTimeSinceStart(); // start the timer for going to next state
+		ez2_lasttimercheck = TIMER->GetTimeSinceStart(); // start the timer for going to next state
 	}
 	else
 	{

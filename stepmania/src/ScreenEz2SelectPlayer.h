@@ -38,8 +38,7 @@ public:
 
 private:
 	/* Private Function Prototypes */
-	void AnimateGraphics();
-
+	void Update( float fDeltaTime );
 	
 	/* Variable Declarations */
 
