@@ -1,13 +1,15 @@
 #include "global.h"
 #include "MemoryCardDriver_Linux.h"
-
-#include <fstream>
 #include "RageLog.h"
 #include "RageUtil.h"
+
 #include <stdio.h>
+#include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <linux/types.h>
+
+#include <fstream>
 
 static const char *USB_DEVICE_LIST_FILE = "/proc/bus/usb/devices";
 
