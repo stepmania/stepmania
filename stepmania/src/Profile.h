@@ -67,6 +67,8 @@ public:
 	// smart accessors
 	//
 	CString GetDisplayName() const;
+	CString GetDisplayGuid() const;
+	CString GetDisplayLastPlayedMachineGuid() const;
 	CString GetDisplayTotalCaloriesBurned() const;
 	int GetTotalNumSongsPlayed() const;
 	int GetTotalNumSongsPassed() const;
@@ -86,6 +88,7 @@ public:
 	//
 	// General data
 	//
+	Sint32	m_iGuid;
 	bool m_bUsingProfileDefaultModifiers;
 	CString m_sDefaultModifiers;
 	SortOrder m_SortOrder;
@@ -106,7 +109,7 @@ public:
 	int m_iTotalMines;
 	int m_iTotalHands;
 	set<int> m_UnlockedSongs;
-	mutable CString m_sLastPlayedMachineName;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
+	mutable Sint32 m_iLastPlayedMachineGuid;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
 	int m_iNumSongsPlayedByPlayMode[NUM_PLAY_MODES];
 	int m_iNumSongsPlayedByStyle[NUM_STYLES];
 	int m_iNumSongsPlayedByDifficulty[NUM_DIFFICULTIES];
@@ -165,10 +168,10 @@ public:
 	//
 	struct Screenshot
 	{
-		CString sFileName;		// no directory part - just the file name
-		CString sMD5;			// MD5 hash of the screenshot file
-		time_t time;			// return value of time() when screenshot was taken
-		CString sMachineName;	// where this screenshot was taken
+		CString sFileName;	// no directory part - just the file name
+		CString sMD5;		// MD5 hash of the screenshot file
+		time_t time;		// return value of time() when screenshot was taken
+		Sint32 iMachineGuid;	// where this screenshot was taken
 	};
 	vector<Screenshot> m_vScreenshots;
 	void AddScreenshot( Screenshot screenshot );

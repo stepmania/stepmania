@@ -25,11 +25,11 @@
 #include <time.h>
 #include "ThemeManager.h"
 #include "CryptManager.h"
-#include "PrefsManager.h"
 #include "ProfileHtml.h"
 #include "ProfileManager.h"
 #include "RageFileManager.h"
 #include "ScoreKeeperMAX2.h"
+#include "crypto/CryptRand.h"
 
 //
 // Old file versions for backward compatibility
@@ -66,6 +66,17 @@ void Profile::InitEditableData()
 
 void Profile::InitGeneralData()
 {
+	// Init m_iGuid.
+	// Does the RNG need to be inited and seeded every time?
+	random_init();
+	random_add_noise( "ai8049ujr3odusj" );
+	
+	{
+		for( int i=0; i<sizeof(m_iGuid); i++ )
+			((Uint8*)&m_iGuid)[i] = random_byte();
+	}
+
+
 	m_bUsingProfileDefaultModifiers = false;
 	m_sDefaultModifiers = "";
 	m_SortOrder = SORT_INVALID;
@@ -81,7 +92,7 @@ void Profile::InitGeneralData()
 	m_iNumExtraStagesFailed = 0;
 	m_iNumToasties = 0;
 	m_UnlockedSongs.clear();
-	m_sLastPlayedMachineName = "";
+	m_iLastPlayedMachineGuid = 0;
 	m_iTotalTapsAndHolds = 0;
 	m_iTotalJumps = 0;
 	m_iTotalHolds = 0;
@@ -150,6 +161,16 @@ CString Profile::GetDisplayName() const
 		return m_sLastUsedHighScoreName;
 	else
 		return "NoName";
+}
+
+CString Profile::GetDisplayGuid() const
+{
+	return ssprintf("%x",m_iGuid);
+}
+
+CString Profile::GetDisplayLastPlayedMachineGuid() const
+{
+	return ssprintf("%x",m_iLastPlayedMachineGuid);
 }
 
 CString Profile::GetDisplayTotalCaloriesBurned() const
@@ -466,7 +487,7 @@ bool Profile::LoadAllFromDir( CString sDir )
 
 bool Profile::SaveAllToDir( CString sDir ) const
 {
-	m_sLastPlayedMachineName = PREFSMAN->m_sMachineName;
+	m_iLastPlayedMachineGuid = PROFILEMAN->GetMachineProfile()->m_iGuid;
 
 	// Save editable.xml
 	SaveEditableDataToDir( sDir );
@@ -536,7 +557,7 @@ void Profile::LoadProfileDataFromDirSM390a12( CString sDir )
 	ini.GetValue( "Profile", "CurrentCombo",					m_iCurrentCombo );
 	ini.GetValue( "Profile", "WeightPounds",					m_iWeightPounds );
 	ini.GetValue( "Profile", "CaloriesBurned",					m_fTotalCaloriesBurned );
-	ini.GetValue( "Profile", "LastPlayedMachineName",			m_sLastPlayedMachineName );
+	ini.GetValue( "Profile", "LastPlayedMachineGuid",			m_iLastPlayedMachineGuid );
 
 	unsigned i;
 	for( i=0; i<NUM_PLAY_MODES; i++ )
@@ -567,6 +588,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	XNode* pGeneralDataNode = new XNode;
 	pGeneralDataNode->name = "GeneralData";
 	
+	pGeneralDataNode->AppendChild( "Guid",							m_iGuid );
 	pGeneralDataNode->AppendChild( "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
 	pGeneralDataNode->AppendChild( "DefaultModifiers",				m_sDefaultModifiers );
 	pGeneralDataNode->AppendChild( "SortOrder",						SortOrderToString(m_SortOrder) );
@@ -577,7 +599,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
 	pGeneralDataNode->AppendChild( "CurrentCombo",					m_iCurrentCombo );
 	pGeneralDataNode->AppendChild( "TotalCaloriesBurned",			m_fTotalCaloriesBurned );
-	pGeneralDataNode->AppendChild( "LastPlayedMachineName",			m_sLastPlayedMachineName );
+	pGeneralDataNode->AppendChild( "LastPlayedMachineGuid",			m_iLastPlayedMachineGuid );
 	pGeneralDataNode->AppendChild( "TotalDancePoints",				m_iTotalDancePoints );
 	pGeneralDataNode->AppendChild( "NumExtraStagesPassed",			m_iNumExtraStagesPassed );
 	pGeneralDataNode->AppendChild( "NumExtraStagesFailed",			m_iNumExtraStagesFailed );
@@ -706,6 +728,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 
 	CString s;
 
+	pNode->GetChildValue( "Guid",							m_iGuid );
 	pNode->GetChildValue( "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
 	pNode->GetChildValue( "DefaultModifiers",				m_sDefaultModifiers );
 	pNode->GetChildValue( "SortOrder",						s );	m_SortOrder = StringToSortOrder( s );
@@ -716,7 +739,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
 	pNode->GetChildValue( "CurrentCombo",					m_iCurrentCombo );
 	pNode->GetChildValue( "TotalCaloriesBurned",			m_fTotalCaloriesBurned );
-	pNode->GetChildValue( "LastPlayedMachineName",			m_sLastPlayedMachineName );
+	pNode->GetChildValue( "LastPlayedMachineGuid",			m_iLastPlayedMachineGuid );
 	pNode->GetChildValue( "TotalDancePoints",				m_iTotalDancePoints );
 	pNode->GetChildValue( "NumExtraStagesPassed",			m_iNumExtraStagesPassed );
 	pNode->GetChildValue( "NumExtraStagesFailed",			m_iNumExtraStagesFailed );
@@ -1529,7 +1552,7 @@ void Profile::LoadScreenshotDataFromNode( const XNode* pNode )
 		if( !(*screenshot)->GetChildValue("Time",(int&)ss.time) )	// time_t is a signed long on Win32.  Is this ok on other platforms?
 			WARN;
 
-		if( !(*screenshot)->GetChildValue("MachineName",ss.sMachineName) )
+		if( !(*screenshot)->GetChildValue("MachineGuid",ss.iMachineGuid) )
 			WARN;
 
 		m_vScreenshots.push_back( ss );
@@ -1555,7 +1578,7 @@ XNode* Profile::SaveScreenshotDataCreateNode() const
 		pScreenshotNode->AppendChild( "FileName", ss.sFileName );
 		pScreenshotNode->AppendChild( "MD5", ss.sMD5 );
 		pScreenshotNode->AppendChild( "Time", (int) ss.time );
-		pScreenshotNode->AppendChild( "MachineName", ss.sMachineName );
+		pScreenshotNode->AppendChild( "MachineGuid", ss.iMachineGuid );
 	}
 
 	return pNode;

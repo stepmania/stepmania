@@ -1357,7 +1357,7 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 					screenshot.sFileName = sFileName;
 					screenshot.sMD5 = CRYPTMAN->GetMD5( sPath );
 					screenshot.time = time(NULL);
-					screenshot.sMachineName = PREFSMAN->m_sMachineName;
+					screenshot.iMachineGuid = PROFILEMAN->GetMachineProfile()->m_iGuid;
 					pProfile->AddScreenshot( screenshot );
 				}
 

@@ -40,6 +40,7 @@ void CryptManager::GenerateRSAKey( unsigned int keyLength, CString privFilename,
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
+	// Does the RNG need to be inited and seeded every time?
 	random_init();
 	random_add_noise( seed );
 
