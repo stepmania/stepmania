@@ -20,6 +20,8 @@
 #include "ProfileManager.h"
 #include "Foreach.h"
 
+#include <limits.h>
+
 /* Amount to increase meter ranges to make them difficult: */
 const int COURSE_DIFFICULTY_CLASS_CHANGE[NUM_DIFFICULTIES] = { -1, -1, 0, 1, 1 };
 
@@ -1191,7 +1193,7 @@ void Course::UpdateCourseStats( StepsType st )
 
 		if ( m_SortOrder_Ranking == 2 )
 			m_SortOrder_Ranking = 3;
-		m_SortOrder_TotalDifficulty = 999999;     // large number
+		m_SortOrder_TotalDifficulty = INT_MAX;
 		return;
 	}
 

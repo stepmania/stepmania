@@ -9,6 +9,8 @@
 #include "ActorUtil.h"
 #include "CommonMetrics.h"
 
+#include <limits.h>
+
 BPMDisplay::BPMDisplay()
 {
 	m_fBPMFrom = m_fBPMTo = 0;
@@ -101,8 +103,8 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 
 	if( !(bool)CYCLE )
 	{
-		int MinBPM=99999999;
-		int MaxBPM=-99999999;
+		int MinBPM = INT_MAX;
+		int MaxBPM = INT_MIN;
 		for( unsigned i = 0; i < BPMS.size(); ++i )
 		{
 			MinBPM = min( MinBPM, (int) roundf(BPMS[i]) );
