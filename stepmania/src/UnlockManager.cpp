@@ -4,7 +4,7 @@
 #include "song.h"
 #include "Course.h"
 #include "RageUtil.h"
-#include "UnlockSystem.h"
+#include "UnlockManager.h"
 #include "SongManager.h"
 #include "GameState.h"
 #include "MsdFile.h"

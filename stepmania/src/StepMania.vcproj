@@ -2527,10 +2527,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\ThemeManager.h">
 			</File>
 			<File
-				RelativePath="UnlockSystem.cpp">
+				RelativePath="UnlockManager.cpp">
 			</File>
 			<File
-				RelativePath="UnlockSystem.h">
+				RelativePath="UnlockManager.h">
 			</File>
 			<File
 				RelativePath=".\VirtualKeyboard.cpp">
