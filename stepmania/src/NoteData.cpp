@@ -327,7 +327,7 @@ int NoteData::GetPossibleDancePoints()
 //An "OK" (Successful Freeze step) will add 6 points
 //A "NG" (Unsuccessful Freeze step) is worth 0 points
 
-	if(PREFSMAN->m_bMarvelousTiming && GAMESTATE->m_PlayMode == PLAY_MODE_ONI) // score out of marvelous for oni mode only
+	if(PREFSMAN->m_bMarvelousTiming && ( GAMESTATE->m_PlayMode == PLAY_MODE_ONI || GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP || GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS ) ) // score out of marvelous for course modes, unless marvelous timing is off
 	{
 		return GetNumTapNotes()*TapNoteScoreToDancePoints(TNS_MARVELOUS) +	// Marvelous for oni
 		   GetNumHoldNotes()*HoldNoteScoreToDancePoints(HNS_OK);

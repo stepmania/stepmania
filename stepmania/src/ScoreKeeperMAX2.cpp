@@ -51,7 +51,7 @@ void ScoreKeeperMAX2::HandleTapScore( TapNoteScore score, int iNumTapsInRow )
 	ASSERT( iNumTapsInRow >= 1 );
 
 	// update dance points for Oni lifemeter
-	GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber] += iNumTapsInRow * TapNoteScoreToDancePoints( score, GAMESTATE->m_PlayMode == PLAY_MODE_ONI );
+	GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber] += iNumTapsInRow * TapNoteScoreToDancePoints( score, GAMESTATE->m_PlayMode == PLAY_MODE_ONI || GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP || GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS );
 	GAMESTATE->m_CurStageStats.iTapNoteScores[m_PlayerNumber][score] += iNumTapsInRow;
 
 /*
