@@ -89,7 +89,7 @@ Song::Song()
 
 Song::~Song()
 {
-	for( int i=0; i<m_apNotes.GetSize(); i++ )
+	for( unsigned i=0; i<m_apNotes.size(); i++ )
 		SAFE_DELETE( m_apNotes[i] );
 
 	m_apNotes.clear();
@@ -130,10 +130,10 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 	fElapsedTime += m_fBeat0OffsetInSeconds;
 
 
-	for( int i=0; i<m_BPMSegments.GetSize(); i++ ) // foreach BPMSegment
+	for( unsigned i=0; i<m_BPMSegments.size(); i++ ) // foreach BPMSegment
 	{
 		float fStartBeatThisSegment = m_BPMSegments[i].m_fStartBeat;
-		bool bIsLastBPMSegment = i==m_BPMSegments.GetSize()-1;
+		bool bIsLastBPMSegment = i==m_BPMSegments.size()-1;
 		float fStartBeatNextSegment = bIsLastBPMSegment ? 40000/*inf*/ : m_BPMSegments[i+1].m_fStartBeat; 
 		float fBeatsInThisSegment = fStartBeatNextSegment - fStartBeatThisSegment;
 		float fBPM = m_BPMSegments[i].m_fBPM;
@@ -141,8 +141,8 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 
 		// calculate the number of seconds in this segment
 		float fSecondsInThisSegment =  fBeatsInThisSegment / fBPS;
-		int j;
-		for( j=0; j<m_StopSegments.GetSize(); j++ )	// foreach freeze
+		unsigned j;
+		for( j=0; j<m_StopSegments.size(); j++ )	// foreach freeze
 		{
 			if( fStartBeatThisSegment <= m_StopSegments[j].m_fStartBeat  &&  m_StopSegments[j].m_fStartBeat < fStartBeatNextSegment )	
 			{
@@ -163,7 +163,7 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 
 		float fBeatEstimate = fStartBeatThisSegment + fElapsedTime*fBPS;
 
-		for( j=0; j<m_StopSegments.GetSize(); j++ )	// foreach freeze
+		for( j=0; j<m_StopSegments.size(); j++ )	// foreach freeze
 		{
 			if( fStartBeatThisSegment > m_StopSegments[j].m_fStartBeat  ||
 				m_StopSegments[j].m_fStartBeat > fStartBeatNextSegment )	
@@ -300,7 +300,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	// save group name
 	CStringArray sDirectoryParts;
 	split( m_sSongDir, "\\", sDirectoryParts, false );
-	m_sGroupName = sDirectoryParts[sDirectoryParts.GetSize()-3];	// second from last item
+	m_sGroupName = sDirectoryParts[sDirectoryParts.size()-3];	// second from last item
 
 	//
 	// First look in the cache for this song (without loading NoteData)
@@ -345,16 +345,16 @@ bool Song::LoadFromSongDir( CString sDir )
 		m_sSongFileName = m_sSongDir;
 		CStringArray asFileNames;
 		GetDirListing( m_sSongDir+"*.sm", asFileNames );
-		if( asFileNames.GetSize() > 0 )
+		if( !asFileNames.empty() )
 			m_sSongFileName += asFileNames[0];
 		else {
 			GetDirListing( m_sSongDir+"*.dwi", asFileNames );
-			if( asFileNames.GetSize() > 0 ) {
+			if( !asFileNames.empty() ) {
 				m_sSongFileName += asFileNames[0];
 				/* XXX: This would mess up "vote.for.dwight.d.eisenhower.dwi". */
 				m_sSongFileName.Replace( ".dwi", ".sm" );
 			} else {
-				m_sSongFileName += sDirectoryParts[sDirectoryParts.GetSize()-2];	// last item
+				m_sSongFileName += sDirectoryParts[sDirectoryParts.size()-2];	// last item
 				m_sSongFileName += ".sm";
 			}
 		}
@@ -370,7 +370,7 @@ void Song::TidyUpData()
 	if( m_sMainTitle == "" )	m_sMainTitle = "Untitled song";
 	m_sSubTitle.TrimRight();
 	if( m_sArtist == "" )		m_sArtist = "Unknown artist";
-	if( m_BPMSegments.GetSize() == 0 )
+	if( m_BPMSegments.empty() )
 		throw RageException( "No #BPM specified in '%s%s.'", m_sSongDir.GetString(), m_sSongFileName.GetString() );
 
 	if( !HasMusic() )
@@ -380,7 +380,7 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*.ogg"), arrayPossibleMusic );
 		GetDirListing( m_sSongDir + CString("*.wav"), arrayPossibleMusic );
 
-		if( arrayPossibleMusic.GetSize() > 0 )		// we found a match
+		if( !arrayPossibleMusic.empty() )		// we found a match
 			m_sMusicFile = arrayPossibleMusic[0];
 //		Don't throw on missing music.  -Chris
 //		else
@@ -423,7 +423,7 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*banner*.jpg"), arrayPossibleBanners );
 		GetDirListing( m_sSongDir + CString("*banner*.bmp"), arrayPossibleBanners );
 		GetDirListing( m_sSongDir + CString("*banner*.gif"), arrayPossibleBanners );
-		if( arrayPossibleBanners.GetSize() > 0 )
+		if( !arrayPossibleBanners.empty() )
 			m_sBannerFile = arrayPossibleBanners[0];
 	}
 
@@ -441,7 +441,7 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*background*.jpg"), arrayPossibleBGs );
 		GetDirListing( m_sSongDir + CString("*background*.bmp"), arrayPossibleBGs );
 		GetDirListing( m_sSongDir + CString("*background*.gif"), arrayPossibleBGs );
-		if( arrayPossibleBGs.GetSize() > 0 )
+		if( !arrayPossibleBGs.empty() )
 			m_sBackgroundFile = arrayPossibleBGs[0];
 	}
 
@@ -455,7 +455,7 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*cdtitle*.jpg"), arrayPossibleCDTitles );
 		GetDirListing( m_sSongDir + CString("*cdtitle*.bmp"), arrayPossibleCDTitles );
 		GetDirListing( m_sSongDir + CString("*cdtitle*.gif"), arrayPossibleCDTitles );
-		if( arrayPossibleCDTitles.GetSize() > 0 )
+		if( !arrayPossibleCDTitles.empty() )
 			m_sCDTitleFile = arrayPossibleCDTitles[0];
 	}
 
@@ -468,8 +468,8 @@ void Song::TidyUpData()
 	GetDirListing( m_sSongDir + CString("*.jpg"), arrayImages );
 	GetDirListing( m_sSongDir + CString("*.bmp"), arrayImages );
 	GetDirListing( m_sSongDir + CString("*.gif"), arrayImages );
-
-	for( int i=0; i<arrayImages.GetSize(); i++ )	// foreach image
+	unsigned i;
+	for( i=0; i<arrayImages.size(); i++ )	// foreach image
 	{
 		// Skip any image that we've already classified
 
@@ -515,7 +515,7 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*.avi"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + CString("*.mpg"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + CString("*.mpeg"), arrayPossibleMovies );
-		if( arrayPossibleMovies.GetSize() == 1 )
+		if( arrayPossibleMovies.size() == 1 )
 		{
 			CString sBGMovieFile = arrayPossibleMovies[0];
 			
@@ -531,7 +531,7 @@ void Song::TidyUpData()
 	//
 	// calculate radar values and first/last beat
 	//
-	for( i=0; i<m_apNotes.GetSize(); i++ )
+	for( i=0; i<m_apNotes.size(); i++ )
 	{
 		Notes* pNotes = m_apNotes[i];
 		NoteData tempNoteData;
@@ -558,7 +558,7 @@ void Song::TidyUpData()
 	{
 		CArray<Notes*,Notes*> apNotes;
 		GetNotesThatMatch( nt, apNotes );
-		if( apNotes.GetSize() == 1 )
+		if( apNotes.size() == 1 )
 			if( 0 == apNotes[0]->m_sDescription.CompareNoCase("smaniac") )
 			{
 				apNotes[0]->m_sDescription = "Challenge";
@@ -569,7 +569,7 @@ void Song::TidyUpData()
 
 void Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo ) const
 {
-	for( int i=0; i<m_apNotes.GetSize(); i++ )	// for each of the Song's Notes
+	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Notes
 	{
 		if( m_apNotes[i]->m_NotesType == nt )
 			arrayAddTo.Add( m_apNotes[i] );
@@ -586,7 +586,7 @@ bool Song::SongCompleteForStyle( const StyleDef *st ) const
 
 bool Song::SongHasNotesType( NotesType nt ) const
 {
-	for( int i=0; i < m_apNotes.GetSize(); i++ ) // foreach Notes
+	for( unsigned i=0; i < m_apNotes.size(); i++ ) // foreach Notes
 		if( m_apNotes[i]->m_NotesType == nt )
 			return true;
 	return false;
@@ -594,7 +594,7 @@ bool Song::SongHasNotesType( NotesType nt ) const
 
 bool Song::SongHasNotesTypeAndDifficulty( NotesType nt, Difficulty dc ) const
 {
-	for( int i=0; i < m_apNotes.GetSize(); i++ ) // foreach Notes
+	for( unsigned i=0; i < m_apNotes.size(); i++ ) // foreach Notes
 		if( m_apNotes[i]->m_NotesType == nt  &&  m_apNotes[i]->m_Difficulty == dc )
 			return true;
 	return false;
@@ -627,7 +627,7 @@ void Song::Save()
 	GetDirListing( m_sSongDir + "*.ksf", arrayOldFileNames );
 	GetDirListing( m_sSongDir + "*.sm", arrayOldFileNames );
 	
-	for( int i=0; i<arrayOldFileNames.GetSize(); i++ )
+	for( unsigned i=0; i<arrayOldFileNames.size(); i++ )
 	{
 		CString sOldPath = m_sSongDir + arrayOldFileNames[i];
 		CString sNewPath = sOldPath + ".old";
@@ -643,7 +643,7 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 {
 	LOG->Trace( "Song::SaveToSMDir('%s')", sPath.GetString() );
 
-	int i;
+	unsigned i;
 
 	FILE* fp = fopen( sPath, "w" );	
 	if( fp == NULL )
@@ -682,34 +682,34 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 	fprintf( fp, ";\n" );
 
 	fprintf( fp, "#BPMS:" );
-	for( i=0; i<m_BPMSegments.GetSize(); i++ )
+	for( i=0; i<m_BPMSegments.size(); i++ )
 	{
 		BPMSegment &bs = m_BPMSegments[i];
 
 		fprintf( fp, "%.3f=%.3f", bs.m_fStartBeat, bs.m_fBPM );
-		if( i != m_BPMSegments.GetSize()-1 )
+		if( i != m_BPMSegments.size()-1 )
 			fprintf( fp, "," );
 	}
 	fprintf( fp, ";\n" );
 
 	fprintf( fp, "#STOPS:" );
-	for( i=0; i<m_StopSegments.GetSize(); i++ )
+	for( i=0; i<m_StopSegments.size(); i++ )
 	{
 		StopSegment &fs = m_StopSegments[i];
 
 		fprintf( fp, "%.3f=%.3f", fs.m_fStartBeat, fs.m_fStopSeconds );
-		if( i != m_StopSegments.GetSize()-1 )
+		if( i != m_StopSegments.size()-1 )
 			fprintf( fp, "," );
 	}
 	fprintf( fp, ";\n" );
 	
 	fprintf( fp, "#BGCHANGES:" );
-	for( i=0; i<m_BackgroundChanges.GetSize(); i++ )
+	for( i=0; i<m_BackgroundChanges.size(); i++ )
 	{
 		BackgroundChange &seg = m_BackgroundChanges[i];
 
 		fprintf( fp, "%.3f=%s", seg.m_fStartBeat, seg.m_sBGName.GetString() );
-		if( i != m_BackgroundChanges.GetSize()-1 )
+		if( i != m_BackgroundChanges.size()-1 )
 			fprintf( fp, "," );
 	}
 	fprintf( fp, ";\n" );
@@ -717,7 +717,7 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 	//
 	// Save all Notes for this file
 	//
-	for( i=0; i<m_apNotes.GetSize(); i++ ) 
+	for( i=0; i<m_apNotes.size(); i++ ) 
 	{
 		Notes* pNotes = m_apNotes[i];
 		if( bSavingCache  ||  pNotes->m_sDescription.Find("(autogen)") == -1 )	// If notes aren't autogen
@@ -752,7 +752,7 @@ void Song::AddAutoGenNotes()
 //	if( !SongHasNotesType(NOTES_TYPE_PUMP_SINGLE) )		aMissingNotesTypes.Add( NOTES_TYPE_PUMP_SINGLE );
 //	if( !SongHasNotesType(NOTES_TYPE_PUMP_DOUBLE) )		aMissingNotesTypes.Add( NOTES_TYPE_PUMP_DOUBLE );
 //
-//	for( int i=0; i<aMissingNotesTypes.GetSize(); i++ )
+//	for( unsigned i=0; i<aMissingNotesTypes.size(); i++ )
 //	{
 //		NotesType ntMissing = aMissingNotesTypes[i];
 
@@ -767,10 +767,10 @@ next_notes_type:
 		// missing Notes of this type
 		int iNumTracksOfMissing = GAMEMAN->NotesTypeToNumTracks(ntMissing);
 
-		int j;
+		unsigned j;
 
 		// look for an exact match that was created by autogen
-		for( j=0; j<m_apNotes.GetSize(); j++ )
+		for( j=0; j<m_apNotes.size(); j++ )
 		{
 			Notes* pOriginalNotes = m_apNotes[j];
 			if( iNumTracksOfMissing != GAMEMAN->NotesTypeToNumTracks(pOriginalNotes->m_NotesType) )
@@ -797,7 +797,7 @@ next_notes_type:
 			int iTrackDifference = abs(iNumTracks-iNumTracksOfMissing);
 			CArray<Notes*,Notes*> apNotes;
 			this->GetNotesThatMatch( nt, apNotes );
-			if( iTrackDifference<iBestTrackDifference  &&  apNotes.GetSize() > 0  &&  apNotes[0]->m_sDescription.Find("autogen")==-1 )
+			if( iTrackDifference < iBestTrackDifference && !apNotes.empty() && apNotes[0]->m_sDescription.Find("autogen")==-1 )
 			{
 				ntBestMatch = nt;
 				iBestTrackDifference = iTrackDifference;
@@ -807,7 +807,7 @@ next_notes_type:
 		if( ntBestMatch == -1 )
 			continue;
 
-		for( j=0; j<m_apNotes.GetSize(); j++ )
+		for( j=0; j<m_apNotes.size(); j++ )
 		{
 			Notes* pOriginalNotes = m_apNotes[j];
 			if( pOriginalNotes->m_NotesType != ntBestMatch )
@@ -839,7 +839,7 @@ Grade Song::GetGradeForDifficulty( const StyleDef *st, int p, Difficulty dc ) co
 
 	Grade grade = GRADE_NO_DATA;
 
-	for( int i=0; i<aNotes.GetSize(); i++ )
+	for( unsigned i=0; i<aNotes.size(); i++ )
 	{
 		const Notes* pNotes = aNotes[i];
 		if( pNotes->m_Difficulty == dc )
@@ -856,7 +856,7 @@ bool Song::IsNew() const
 
 bool Song::IsEasy( NotesType nt ) const
 {
-	for( int i=0; i<m_apNotes.GetSize(); i++ )
+	for( unsigned i=0; i<m_apNotes.size(); i++ )
 	{
 		Notes* pNotes = m_apNotes[i];
 		if( pNotes->m_NotesType != nt )
@@ -902,10 +902,10 @@ int CompareSongPointersByDifficulty(const Song *pSong1, const Song *pSong2)
 	int iEasiestMeter1 = 1000;	// infinity
 	int iEasiestMeter2 = 1000;	// infinity
 
-	int i;
-	for( i=0; i<aNotes1.GetSize(); i++ )
+	unsigned i;
+	for( i=0; i<aNotes1.size(); i++ )
 		iEasiestMeter1 = min( iEasiestMeter1, aNotes1[i]->m_iMeter );
-	for( i=0; i<aNotes2.GetSize(); i++ )
+	for( i=0; i<aNotes2.size(); i++ )
 		iEasiestMeter2 = min( iEasiestMeter2, aNotes2[i]->m_iMeter );
 
 	if( iEasiestMeter1 < iEasiestMeter2 )
@@ -1005,16 +1005,16 @@ bool Song::RouletteDisplayed() const
 	return m_SelectionDisplay != SHOW_NEVER;
 }
 
-bool Song::HasMusic() const 		{return m_sMusicFile != ""			&&	IsAFile(GetMusicPath()); };
-bool Song::HasBanner() const 		{return m_sBannerFile != ""			&&  IsAFile(GetBannerPath()); };
-bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(GetBackgroundPath()); };
-bool Song::HasCDTitle() const 		{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); };
-bool Song::HasBGChanges() const 	{return m_BackgroundChanges.GetSize() > 0; };
+bool Song::HasMusic() const 		{return m_sMusicFile != ""			&&	IsAFile(GetMusicPath()); }
+bool Song::HasBanner() const 		{return m_sBannerFile != ""			&&  IsAFile(GetBannerPath()); }
+bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(GetBackgroundPath()); }
+bool Song::HasCDTitle() const 		{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); }
+bool Song::HasBGChanges() const 	{return !m_BackgroundChanges.empty(); }
 
 int Song::GetNumTimesPlayed() const
 {
 	int iTotalNumTimesPlayed = 0;
-	for( int i=0; i<m_apNotes.GetSize(); i++ )
+	for( unsigned i=0; i<m_apNotes.size(); i++ )
 	{
 		iTotalNumTimesPlayed += m_apNotes[i]->m_iNumTimesPlayed;
 	}

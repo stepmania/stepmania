@@ -5,7 +5,7 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 
-const int MAX_GROUPS_ONSCREEN = 8;
+const unsigned MAX_GROUPS_ONSCREEN = 8;
 
 class GroupList: public ActorFrame {
 	Sprite			m_sprButton[MAX_GROUPS_ONSCREEN];
@@ -13,9 +13,9 @@ class GroupList: public ActorFrame {
 	CArray<CString,CString> m_textLabels;
 
 	/* Currently selected label. */
-	int m_iSelection;
+	unsigned m_iSelection;
 	/* Label that's currently at the top of the screen. */
-	int m_iTop;
+	unsigned m_iTop;
 
 	void BeforeChange();
 	void AfterChange();
@@ -24,7 +24,7 @@ class GroupList: public ActorFrame {
 public:
 	GroupList();
 
-	void SetSelection(int sel);
+	void SetSelection(unsigned sel);
 	int GetSelection() const { return m_iSelection; }
 	CString GetSelectionName() const { return m_textLabels[m_iSelection]; }
 	void Up();

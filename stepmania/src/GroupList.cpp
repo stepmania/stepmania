@@ -18,9 +18,9 @@ GroupList::GroupList()
 
 void GroupList::DoneAddingGroups()
 {
-	int i;
+	unsigned i;
 
-	for( i=0; i<min(m_textLabels.GetSize(), MAX_GROUPS_ONSCREEN); i++ )
+	for( i=0; i<min(m_textLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
 	{
 		m_sprButton[i].Load( THEME->GetPathTo("Graphics","select group button") );
 		m_sprButton[i].SetXY( BUTTON_X, BUTTON_START_Y + i*BUTTON_SPACING_Y );
@@ -28,7 +28,7 @@ void GroupList::DoneAddingGroups()
 		this->AddChild( &m_screenLabels[i] );
 	}
 
-	for( i=0; i<min(m_textLabels.GetSize(), MAX_GROUPS_ONSCREEN); i++ )
+	for( i=0; i<min(m_textLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
 	{
 		m_screenLabels[i].LoadFromFont( THEME->GetPathTo("Fonts","select group button label") );
 		m_screenLabels[i].SetXY( BUTTON_X, BUTTON_START_Y + i*BUTTON_SPACING_Y );
@@ -44,7 +44,7 @@ void GroupList::DoneAddingGroups()
 
 void GroupList::SetLabels()
 {
-	for( int i=0; i<min(m_textLabels.GetSize(), MAX_GROUPS_ONSCREEN); i++ )
+	for( unsigned i=0; i<min(m_textLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
 	{
 		CString &label = m_textLabels[m_iTop+i];
 		m_screenLabels[i].SetText( SONGMAN->ShortenGroupName( label ) );
@@ -91,7 +91,7 @@ void GroupList::Up()
 	BeforeChange();
 
 	if( m_iSelection == 0 )
-		SetSelection(m_textLabels.GetSize()-1);
+		SetSelection(m_textLabels.size()-1);
 	else
 		SetSelection(m_iSelection-1);
 
@@ -102,7 +102,7 @@ void GroupList::Down()
 {
 	BeforeChange();
 
-	SetSelection((m_iSelection+1) % m_textLabels.GetSize());
+	SetSelection((m_iSelection+1) % m_textLabels.size());
 	
 	AfterChange();
 }
@@ -112,7 +112,7 @@ void GroupList::AddGroup(CString name)
 	m_textLabels.Add(name);
 }
 
-void GroupList::SetSelection( int sel )
+void GroupList::SetSelection( unsigned sel )
 {
 	BeforeChange();
 
@@ -121,7 +121,7 @@ void GroupList::SetSelection( int sel )
 		if( m_iSelection >= MAX_GROUPS_ONSCREEN/2 ) 
 			m_iTop++;
 	} else if( sel == m_iSelection-1 ) {
-		if(m_iSelection < m_textLabels.GetSize() - MAX_GROUPS_ONSCREEN/2)
+		if(m_iSelection < m_textLabels.size() - MAX_GROUPS_ONSCREEN/2)
 			m_iTop--;
 	} else {
 		/* We're jumping somewhere else; just put the top somewhere
@@ -130,7 +130,7 @@ void GroupList::SetSelection( int sel )
 	}
 
 	m_iSelection=sel;
-	m_iTop = clamp( m_iTop, 0, m_textLabels.GetSize()-MAX_GROUPS_ONSCREEN );
+	m_iTop = clamp( m_iTop, 0u, m_textLabels.size()-MAX_GROUPS_ONSCREEN );
 
 	/* The current selection must always be visible. */
 	ASSERT( m_iTop <= m_iSelection );
@@ -143,7 +143,7 @@ void GroupList::SetSelection( int sel )
 
 void GroupList::TweenOnScreen()
 {
-	for( int i=0; i<min(m_textLabels.GetSize(), MAX_GROUPS_ONSCREEN); i++ )
+	for( unsigned i=0; i<min(m_textLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
 	{
 		m_sprButton[i].SetX( BUTTON_X+400 );
 		m_sprButton[i].BeginTweening( 0.1f*i, TWEEN_BOUNCE_END );
@@ -159,7 +159,7 @@ void GroupList::TweenOnScreen()
 
 void GroupList::TweenOffScreen()
 {
-	for( int i=0; i<min(m_textLabels.GetSize(), MAX_GROUPS_ONSCREEN); i++ )
+	for( unsigned i=0; i<min(m_textLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
 	{
 		if( i == m_iSelection )
 			m_sprButton[i].BeginTweening( 1.0f, TWEEN_BOUNCE_BEGIN );
