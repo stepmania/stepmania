@@ -179,7 +179,12 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 {
 	LOG->Trace("ScreenOptionsMaster::ScreenOptionsMaster(%s)", m_sName.c_str() );
 
-	SOUND->PlayMusic( THEME->GetPathToS( ssprintf("%s music", m_sName.c_str()) ) );
+	/* If this file doesn't exist, leave the music alone (eg. ScreenPlayerOptions music sample
+	 * left over from ScreenSelectMusic).  If you really want to play no music, add a redir
+	 * to _silent. */
+	CString MusicPath = THEME->GetPathToS( ssprintf("%s music", m_sName.c_str()), true );
+	if( MusicPath != "" )
+		SOUND->PlayMusic( MusicPath );
 
 	m_ForceSMOptionsNavigation = false;
 
