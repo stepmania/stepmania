@@ -11,10 +11,6 @@ float g_TweenInTime, g_TweenOutTime;
 
 LyricDisplay::LyricDisplay()
 {
-	// We need to use the Color Tag that's in m_pCurSong->m_LyricSegments[?].m_sColor
-	// But since the value there is in Hex, need to convert to RageColor I guess.
-	// Until that gets done, this will default to white (&HFFFFFF)
-
 	m_textLyrics.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textLyrics.SetDiffuse( RageColor(1,1,1,1) );
 	this->AddChild(&m_textLyrics);
@@ -69,8 +65,13 @@ void LyricDisplay::Update( float fDeltaTime )
 	 * 
 	 * "Diffuse=1,1,1,0;linear,.2;Diffuse=1,1,1,1;linear,.2;LyricDiffuse"
 	 */
-	
+
+	float fZoom = 1.0f;
+	fZoom = min(fZoom, float(SCREEN_WIDTH)/(m_textLyrics.GetWidestLineWidthInSourcePixels()+1) );
+
 	m_textLyrics.StopTweening();
+	m_textLyrics.SetZoomX(fZoom);
+
 	m_textLyrics.SetDiffuse(GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_Color);
 	m_textLyrics.Command(IN_COMMAND);
 	m_textLyrics.BeginTweening( fShowLength ); /* sleep */
