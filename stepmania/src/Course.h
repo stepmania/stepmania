@@ -116,6 +116,6 @@ private:
 
 
 void SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses );
-
+void SortCoursePointerArrayByType( vector<Course*> &apCourses );
 
 #endif

@@ -809,6 +809,17 @@ void SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses )
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByDifficulty );
 }
 
+static bool CompareCoursePointersByType(const Course* pCourse1, const Course* pCourse2)
+{
+	return pCourse1->GetPlayMode() < pCourse2->GetPlayMode();
+}
+
+
+void SortCoursePointerArrayByType( vector<Course*> &apCourses )
+{
+	stable_sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByType );
+}
+
 bool Course::HasBanner() const
 {
 	return m_sBannerPath != ""  &&  IsAFile(m_sBannerPath);
