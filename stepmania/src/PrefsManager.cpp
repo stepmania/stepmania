@@ -46,6 +46,7 @@ PrefsManager::PrefsManager()
 	m_iMaxTextureResolution = 2048;
 	m_iRefreshRate = REFRESH_DEFAULT;
 	m_bOnlyDedicatedMenuButtons = false;
+	m_bCelShadeDancers = false;		// Work-In-Progress.. disable by default.
 #ifdef DEBUG
 	m_bShowStats = true;
 #else
@@ -312,6 +313,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "ScreenWidth",						m_fScreenWidth );
 	ini.GetValue( "Options", "ScreenHeight",					m_fScreenHeight );
 #endif
+	ini.GetValue( "Options", "CelShadeDancers",					m_bCelShadeDancers );
 	ini.GetValue( "Options", "DisplayWidth",					m_iDisplayWidth );
 	ini.GetValue( "Options", "DisplayHeight",					m_iDisplayHeight );
 	ini.GetValue( "Options", "DisplayColorDepth",				m_iDisplayColorDepth );
@@ -531,6 +533,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetPath( STEPMANIA_INI_PATH );
 
 	ini.SetValue( "Options", "Windowed",						m_bWindowed );
+	ini.SetValue( "Options", "CelShadeDancers",					m_bCelShadeDancers );
 	ini.SetValue( "Options", "DisplayWidth",					m_iDisplayWidth );
 	ini.SetValue( "Options", "DisplayHeight",					m_iDisplayHeight );
 	ini.SetValue( "Options", "DisplayColorDepth",				m_iDisplayColorDepth );

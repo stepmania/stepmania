@@ -192,6 +192,7 @@ public:
 	bool			m_bAllowExtraStage;
 	bool			m_bHideDefaultNoteSkin;
 	int				m_iMaxHighScoresPerList;
+	bool			m_bCelShadeDancers;
 
 	// Number of seconds it takes for a button on the controller to release
 	// after pressed.
