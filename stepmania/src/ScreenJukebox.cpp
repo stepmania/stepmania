@@ -31,16 +31,13 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 	//Check to see if there is a theme-course
 	//I.E. If there is a course called exactly the theme name, 
 	//then we pick a song from this course.
-	Course * tCourse = SONGMAN->GetCourseFromName( THEME->GetCurThemeName() );
-	if( tCourse != NULL )
-		for ( unsigned i = 0; i < tCourse->m_entries.size(); i++ )
-			vSongs.push_back( tCourse->m_entries[i].pSong );
+	Course *pCourse = SONGMAN->GetCourseFromName( THEME->GetCurThemeName() );
+	if( pCourse != NULL )
+		for ( unsigned i = 0; i < pCourse->m_entries.size(); i++ )
+			vSongs.push_back( pCourse->m_entries[i].pSong );
 
 	if ( vSongs.size() == 0 )
-		if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL_MUSIC )
-			SONGMAN->GetSongs( vSongs );
-		else
-			SONGMAN->GetSongs( vSongs, GAMESTATE->m_sPreferredSongGroup );
+		SONGMAN->GetSongs( vSongs, GAMESTATE->m_sPreferredSongGroup );
 
 	//
 	// Calculate what difficulties to show
