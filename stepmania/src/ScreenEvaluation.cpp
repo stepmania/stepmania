@@ -398,8 +398,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	{
 		for( p=0; p<NUM_PLAYERS; p++ ) 
 		{
-			m_sprPercentFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation percent frame p%d",p+1)) );
 			m_sprPercentFrame[p].SetName( ssprintf("PercentFrameP%d",p+1) );
+			m_sprPercentFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation percent frame p%d",p+1)) );
 			UtilSetXYAndOnCommand( m_sprPercentFrame[p], "ScreenEvaluation" );
 			this->AddChild( &m_sprPercentFrame[p] );
 
