@@ -277,8 +277,8 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 			TABLE_LINE2( "TotalPlay",						SecondsToHHMMSS(pProfile->m_iTotalPlaySeconds) );
 			TABLE_LINE2( "TotalGameplay",					SecondsToHHMMSS(pProfile->m_iTotalGameplaySeconds) );
 			TABLE_LINE2( "CurrentCombo",					pProfile->m_iCurrentCombo );
-			TABLE_LINE2( "CaloriesBurned",					pProfile->GetDisplayCaloriesBurned() );
-			TABLE_LINE2( "LastMachinePlayed",				pProfile->m_sLastMachinePlayed );
+			TABLE_LINE2( "TotalCaloriesBurned",				pProfile->GetDisplayTotalCaloriesBurned() );
+			TABLE_LINE2( "LastPlayedMachineName",			pProfile->m_sLastPlayedMachineName );
 			TABLE_LINE2( "TotalTapsAndHolds",				pProfile->m_iTotalTapsAndHolds );
 			TABLE_LINE2( "TotalJumps",						pProfile->m_iTotalJumps );
 			TABLE_LINE2( "TotalHolds",						pProfile->m_iTotalHolds );
@@ -916,7 +916,7 @@ void PrintScreenshot( RageFile &f, const Profile::Screenshot &ss )
 	TABLE_LINE2( "File", ss.sFileName );
 	TABLE_LINE2( "MD5", ss.sMD5 );
 	TABLE_LINE2( "Time", (CString)ctime(&ss.time) );
-	TABLE_LINE2( "Location", ss.sLocation );
+	TABLE_LINE2( "MachineName", ss.sMachineName );
 
 	END_TABLE;
 

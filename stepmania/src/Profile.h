@@ -67,7 +67,7 @@ public:
 	// smart accessors
 	//
 	CString GetDisplayName() const;
-	CString GetDisplayCaloriesBurned() const;
+	CString GetDisplayTotalCaloriesBurned() const;
 	int GetTotalNumSongsPlayed() const;
 	int GetTotalNumSongsPassed() const;
 	static CString GetProfileDisplayNameFromDir( CString sDir );
@@ -89,7 +89,7 @@ public:
 	int m_iTotalPlaySeconds;
 	int m_iTotalGameplaySeconds;
 	int m_iCurrentCombo;
-	int m_fCaloriesBurned;
+	int m_fTotalCaloriesBurned;
 	int m_iTotalDancePoints;
 	int m_iNumExtraStagesPassed;
 	int m_iNumExtraStagesFailed;
@@ -100,7 +100,7 @@ public:
 	int m_iTotalMines;
 	int m_iTotalHands;
 	set<int> m_UnlockedSongs;
-	mutable CString m_sLastMachinePlayed;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
+	mutable CString m_sLastPlayedMachineName;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
 	int m_iNumSongsPlayedByPlayMode[NUM_PLAY_MODES];
 	int m_iNumSongsPlayedByStyle[NUM_STYLES];
 	int m_iNumSongsPlayedByDifficulty[NUM_DIFFICULTIES];
@@ -162,10 +162,10 @@ public:
 	//
 	struct Screenshot
 	{
-		CString sFileName;	// no directory part - just the file name
-		CString sMD5;		// MD5 hash of the screenshot file
-		time_t time;		// return value of time() when screenshot was taken
-		CString sLocation;	// location name where this screenshot was taken
+		CString sFileName;		// no directory part - just the file name
+		CString sMD5;			// MD5 hash of the screenshot file
+		time_t time;			// return value of time() when screenshot was taken
+		CString sMachineName;	// where this screenshot was taken
 	};
 	vector<Screenshot> m_vScreenshots;
 	void AddScreenshot( Screenshot screenshot );

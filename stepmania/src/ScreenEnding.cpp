@@ -44,7 +44,7 @@ CString GetStatsLineValue( PlayerNumber pn, int iLine )
 	switch( iLine )
 	{
 	case 0:
-		return pProfile->GetDisplayCaloriesBurned();
+		return pProfile->GetDisplayTotalCaloriesBurned();
 	case 1:
 		return ssprintf( "%d", pProfile->GetTotalNumSongsPlayed() );	// fixme
 	case 2:
