@@ -58,7 +58,6 @@ bool SnapDisplay::PrevSnapMode()
 bool SnapDisplay::NextSnapMode()
 {
 	if( m_NoteType == NOTE_TYPE_64TH )	// this is the smallest snap we should allow
-		// MD 11/02/03 - changed to 64ths because support for 48ths and 64ths comes in today.
 		return false;
 	m_NoteType = NoteType(m_NoteType+1);
 
