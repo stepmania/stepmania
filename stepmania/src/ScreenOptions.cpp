@@ -1008,21 +1008,20 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 		m_ScrollBar.SetPercentage( pn, fPercent );
 	}
 
+
+	/* If the last row is EXIT, and is hidden, then show MORE. */
+	const bool ShowMore = m_Rows.back()->Type == Row::ROW_EXIT && m_Rows.back()->m_bHidden;
+	if( m_bMoreShown != ShowMore )
+	{
+		m_bMoreShown = ShowMore;
+		UtilCommand( m_sprMore, "ScreenOptions", m_bMoreShown? "ShowMore":"HideMore" );
+	}
+
 	/* Update all players, since changing one player can move both cursors. */
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
-
-		TweenCursor( (PlayerNumber) p );
-
-		/* If the last row is EXIT, and is hidden, then show MORE. */
-		const bool ShowMore = m_Rows.back()->Type == Row::ROW_EXIT && m_Rows.back()->m_bHidden;
-		if( m_bMoreShown != ShowMore )
-		{
-			m_bMoreShown = ShowMore;
-			UtilCommand( m_sprMore, "ScreenOptions", m_bMoreShown? "ShowMore":"HideMore" );
-		}
+		if( GAMESTATE->IsHumanPlayer(p) )
+			TweenCursor( (PlayerNumber) p );
 
 		const bool ExitSelected = m_Rows[m_iCurrentRow[pn]]->Type == Row::ROW_EXIT;
 		if( p == pn || GAMESTATE->GetNumSidesJoined() == 1 )
