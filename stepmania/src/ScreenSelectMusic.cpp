@@ -810,6 +810,8 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	m_Banner.SetMovingFast( !!m_MusicWheel.IsMoving() );
 
+	CString SampleMusicToPlay; 
+
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_SECTION:
@@ -825,13 +827,14 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_sprCDTitleBack.UnloadTexture();
 			m_DifficultyDisplay.UnsetDifficulties();
 
+			m_fSampleStartSeconds = m_fSampleLengthSeconds = -1;
 			switch( m_MusicWheel.GetSelectedType() )
 			{
 			case TYPE_SECTION:
-				m_sSampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic section music");
+				SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic section music");
 				break;
 			case TYPE_SORT:
-				m_sSampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic sort music");
+				SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic sort music");
 				break;
 			default:
 				ASSERT(0);
@@ -843,16 +846,9 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	case TYPE_SONG:
 		{
-			// Don't stop music if it's already playing the right file.
-			if( SOUNDMAN->GetMusicPath() != pSong->GetMusicPath() )
-			{
-				SOUNDMAN->StopMusic();
-
-				m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
-				m_sSampleMusicToPlay = pSong->GetMusicPath();
-				m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
-				m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
-			}
+			SampleMusicToPlay = pSong->GetMusicPath();
+			m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
+			m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 
 			for( int pn = 0; pn < NUM_PLAYERS; ++pn) 
 			{
@@ -919,22 +915,18 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_sprCDTitleBack.UnloadTexture();
 		m_DifficultyDisplay.UnsetDifficulties();
 
-		SOUNDMAN->StopMusic();
-		m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
+		m_fSampleStartSeconds = m_fSampleLengthSeconds = -1;
 		switch( m_MusicWheel.GetSelectedType() )
 		{
 		case TYPE_ROULETTE:
-			m_sSampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic roulette music");
+			SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic roulette music");
 			break;
 		case TYPE_RANDOM:
-			m_sSampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic random music");
+			SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic random music");
 			break;
 		default:
 			ASSERT(0);
 		}
-
-		m_fSampleStartSeconds = -1;
-		m_fSampleLengthSeconds = -1;
 
 		m_sprBalloon.StopTweening();
 		OFF_COMMAND( m_sprBalloon );
@@ -942,6 +934,17 @@ void ScreenSelectMusic::AfterMusicChange()
 	default:
 		ASSERT(0);
 	}
+
+	// Don't stop music if it's already playing the right file.
+	if( SampleMusicToPlay == "" )
+		SOUNDMAN->StopMusic();
+	else if( SOUNDMAN->GetMusicPath() != SampleMusicToPlay )
+	{
+		SOUNDMAN->StopMusic();
+		m_sSampleMusicToPlay = SampleMusicToPlay;
+		m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
+	}
+
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
