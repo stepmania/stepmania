@@ -13,7 +13,6 @@
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 
-
 #define COLOR_P1		THEME->GetMetricC("Common","ColorP1")
 #define COLOR_P2		THEME->GetMetricC("Common","ColorP2")
 #define COLOR_EASY		THEME->GetMetricC("Common","ColorEasy")
@@ -68,36 +67,3 @@ D3DXCOLOR PlayerToColor( int p )
 { 
 	return PlayerToColor( (PlayerNumber)p ); 
 }
-
-
-
-/*  This was a dumb idea.  I'm change Style so that it knows what game it belongs to.
-
-Game StyleToGame( Style s )
-{
-	switch( s )
-	{
-	case STYLE_DANCE_SINGLE:
-	case STYLE_DANCE_VERSUS:
-	case STYLE_DANCE_DOUBLE:
-	case STYLE_DANCE_COUPLE:
-	case STYLE_DANCE_SOLO:
-		return GAME_DANCE;
-	case STYLE_PUMP_SINGLE:
-	case STYLE_PUMP_VERSUS:
-	case STYLE_PUMP_DOUBLE:
-		return GAME_PUMP;
-	case STYLE_EZ2_SINGLE:
-	case STYLE_EZ2_SINGLE_HARD:
-	case STYLE_EZ2_DOUBLE:
-	case STYLE_EZ2_REAL:
-	case STYLE_EZ2_SINGLE_VERSUS:
-	case STYLE_EZ2_SINGLE_HARD_VERSUS:
-	case STYLE_EZ2_REAL_VERSUS:
-		return GAME_EZ2;
-	default:
-		ASSERT(0);	// invalid Style
-		return GAME_DANCE;
-	}
-}
-*/

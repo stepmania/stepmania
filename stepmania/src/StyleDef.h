@@ -30,8 +30,6 @@
 const int MAX_COLS_PER_PLAYER = MAX_NOTE_TRACKS;
 
 
-class GameDef;
-
 class StyleDef
 {
 public:
