@@ -10,6 +10,67 @@ class RageSoundBase;
 class RageSoundDriver;
 struct RageSoundParams;
 
+/* This is a temporary hack, to try to track down an obscure crash. */
+#if defined(WIN32)
+#include <windows.h>
+
+extern set<void *> g_ProtectedPages;
+template<typename T>
+class ProtAllocator
+{
+public:
+    typedef T value_type;
+    typedef value_type* pointer;
+    typedef const value_type* const_pointer;
+    typedef value_type& reference;
+    typedef const value_type& const_reference;
+    typedef std::size_t size_type;
+    typedef std::ptrdiff_t difference_type;
+
+    template<typename U> struct rebind
+	{
+        typedef ProtAllocator<U> other;
+    };
+
+	explicit ProtAllocator() {}
+	~ProtAllocator() {}
+	ProtAllocator( ProtAllocator const & ) {}
+	template<typename U> ProtAllocator( ProtAllocator<U> const& ) {}
+
+	pointer address( reference r ) { return &r; }
+	const_pointer address( const_reference r ) { return &r; }
+
+	pointer allocate( size_type cnt, typename std::allocator<void>::const_pointer = 0 )
+	{ 
+		cnt *= sizeof (T);
+		void *p = VirtualAlloc( NULL, cnt, MEM_COMMIT, PAGE_READWRITE );
+		g_ProtectedPages.insert( p );
+
+		return reinterpret_cast<pointer>( p );
+	}
+	void deallocate( pointer p, size_type s )
+	{
+		VirtualFree( p, 0, MEM_RELEASE );
+		g_ProtectedPages.erase( p );
+	}
+
+	size_type max_size() const
+	{
+		return 2147483648 / sizeof(T);
+	}
+
+	void construct( pointer p, const T& t ) { new(p) T(t); }
+	void destroy( pointer p ) { p->~T(); }
+
+	bool operator==( ProtAllocator const& ) { return true; }
+	bool operator!=( ProtAllocator const& a ) { return !operator==(a); }
+};
+
+#else
+#define ProtAllocator allocator
+#endif
+
+
 class RageSoundManager
 {
 	/* Set of sounds that we've taken over (and are responsible for deleting
@@ -18,7 +79,8 @@ class RageSoundManager
 	set<RageSound *> playing_sounds;
 
 	/* A list of all sounds that currently exist. */
-	set<RageSound *> all_sounds;
+	typedef set<RageSound *, less<RageSound*>, ProtAllocator<RageSound*> > all_sounds_type;
+	all_sounds_type all_sounds;
 	
 	RageSoundDriver *driver;
 

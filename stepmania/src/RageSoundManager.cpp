@@ -13,6 +13,26 @@
 #include "arch/Sound/RageSoundDriver.h"
 #include "SDL_audio.h"
 
+#if defined(WIN32)
+set<void *> g_ProtectedPages;
+void EnableWrites()
+{
+	DWORD ignore;
+	for( set<void *>::iterator it = g_ProtectedPages.begin(); it != g_ProtectedPages.end(); ++it )
+		VirtualProtect( *it, 4096, PAGE_READWRITE, &ignore );
+}
+
+void DisableWrites()
+{
+	DWORD ignore;
+	for( set<void *>::iterator it = g_ProtectedPages.begin(); it != g_ProtectedPages.end(); ++it )
+		VirtualProtect( *it, 4096, PAGE_READONLY, &ignore );
+}
+#else
+void EnableWrites() { }
+void DisableWrites() { }
+#endif
+
 /*
  * This mutex is locked before Update() deletes old sounds from owned_sounds.  Lock
  * this mutex if you want to ensure that sounds remain valid.  (Other threads may
@@ -37,6 +57,7 @@ RageSoundManager::RageSoundManager()
 {
 	pos_map_queue.reserve( 1024 );
 	MixVolume = 1.0f;
+	DisableWrites();
 }
 
 void RageSoundManager::Init( CString drivers )
@@ -59,6 +80,8 @@ RageSoundManager::~RageSoundManager()
 
 	/* Don't lock while deleting the driver (the decoder thread might deadlock). */
 	delete driver;
+	
+	EnableWrites(); /* for dtor */
 }
 
 void RageSoundManager::StartMixing( RageSoundBase *snd )
@@ -97,10 +120,10 @@ void RageSoundManager::Update(float delta)
 	 * child sounds first.  Otherwise, another sound might be allocated that has the
 	 * same pointer as an old, deleted parent, and since we use the pointer to the
 	 * parent to determine which sounds share the same parent, it'll confuse GetCopies(). */
-	for( it = all_sounds.begin(); it != all_sounds.end(); ++it )
-		if( (*it)->GetOriginal() != (*it) ) // child
+	for( all_sounds_type::iterator iter = all_sounds.begin(); iter != all_sounds.end(); ++iter )
+		if( (*iter)->GetOriginal() != (*iter) ) // child
 		{
-			set<RageSound *>::iterator parent = ToDelete.find( (*it)->GetOriginal() );
+			set<RageSound *>::iterator parent = ToDelete.find( (*iter)->GetOriginal() );
 			if( parent != ToDelete.end() )
 				ToDelete.erase( parent );
 		}
@@ -122,14 +145,18 @@ void RageSoundManager::Update(float delta)
 void RageSoundManager::RegisterSound( RageSound *p )
 {
 	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
+	EnableWrites();
 	all_sounds.insert( p );
+	DisableWrites();
 	g_SoundManMutex.Unlock(); /* finished with all_sounds */
 }
 
 void RageSoundManager::UnregisterSound( RageSound *p )
 {
 	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
+	EnableWrites();
 	all_sounds.erase( p );
+	DisableWrites();
 	g_SoundManMutex.Unlock(); /* finished with all_sounds */
 }
 
@@ -172,7 +199,7 @@ RageSound *RageSoundManager::GetSoundByID( int ID )
 	LockMut( g_SoundManMutex );
 
 	/* Find the sound with p.ID. */
-	set<RageSound *>::iterator it;
+	all_sounds_type::iterator it;
 	for( it = all_sounds.begin(); it != all_sounds.end(); ++it )
 		if( (*it)->GetID() == ID )
 			return *it;
@@ -308,12 +335,12 @@ void RageSoundManager::GetCopies( RageSound &snd, vector<RageSound *> &snds, boo
 	g_DeletionMutex.Lock();
 
 	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
-	const set<RageSound *> sounds = all_sounds;
+	const all_sounds_type sounds = all_sounds;
 	g_SoundManMutex.Unlock(); /* finished with all_sounds */
 	
 	RageSound *parent = snd.GetOriginal();
 
-	set<RageSound *>::const_iterator it;
+	all_sounds_type::const_iterator it;
 	for( it = sounds.begin(); it != sounds.end(); ++it )
 	{
 		CHECKPOINT_M( ssprintf("%p %p", *it, parent) );
