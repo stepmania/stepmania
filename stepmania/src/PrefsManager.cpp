@@ -74,47 +74,47 @@ PrefsManager::PrefsManager() :
 	),
 	m_bShowBanners			( Options, "ShowBanners",			true ),
 
-	m_iBackgroundMode		( Options, "m_iBackgroundMode",			BGMODE_ANIMATIONS ),
-	m_iNumBackgrounds		( Options, "m_iNumBackgrounds",			8 ),
-	m_fBGBrightness			( Options, "m_fBGBrightness",			0.8f ),
-	m_bHiddenSongs			( Options, "m_bHiddenSongs",			false ),	/* I'd rather get occasional people asking for support for this even though it's already here than lots of people asking why songs aren't being displayed. */
-	m_bVsync				( Options, "m_bVsync",					true ),
-	m_bInterlaced			( Options, "m_bInterlaced",				false ),
+	m_iBackgroundMode		( Options, "BackgroundMode",			BGMODE_ANIMATIONS ),
+	m_iNumBackgrounds		( Options, "NumBackgrounds",			8 ),
+	m_fBGBrightness			( Options, "BGBrightness",			0.8f ),
+	m_bHiddenSongs			( Options, "HiddenSongs",			false ),	/* I'd rather get occasional people asking for support for this even though it's already here than lots of people asking why songs aren't being displayed. */
+	m_bVsync				( Options, "Vsync",					true ),
+	m_bInterlaced			( Options, "Interlaced",				false ),
 	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
-	m_bPAL					( Options, "m_bPAL",					false ),
-	m_bDelayedTextureDelete	( Options, "m_bDelayedTextureDelete",	true ),
-	m_bTexturePreload		( Options, "m_bTexturePreload",			false ),
-	m_bDelayedScreenLoad	( Options, "m_bDelayedScreenLoad",		false ),
-	m_bDelayedModelDelete	( Options, "m_bDelayedModelDelete",		false ),
-	m_iBannerCache			( Options, "m_iBannerCache",			BNCACHE_LOW_RES ),
-	m_bPalettedBannerCache	( Options, "m_bPalettedBannerCache",	false ),
-	m_bFastLoad				( Options, "m_bFastLoad",				true ),
+	m_bPAL					( Options, "PAL",					false ),
+	m_bDelayedTextureDelete	( Options, "DelayedTextureDelete",	true ),
+	m_bTexturePreload		( Options, "TexturePreload",			false ),
+	m_bDelayedScreenLoad	( Options, "DelayedScreenLoad",		false ),
+	m_bDelayedModelDelete	( Options, "DelayedModelDelete",		false ),
+	m_iBannerCache			( Options, "BannerCache",			BNCACHE_LOW_RES ),
+	m_bPalettedBannerCache	( Options, "PalettedBannerCache",	false ),
+	m_bFastLoad				( Options, "FastLoad",				true ),
 
-	m_bOnlyDedicatedMenuButtons	( Options, "m_bOnlyDedicatedMenuButtons",	false ),
-	m_bMenuTimer				( Options, "m_bMenuTimer",					true ),
-	m_bShowDanger				( Options, "m_bShowDanger",					true ),
+	m_bOnlyDedicatedMenuButtons	( Options, "OnlyDedicatedMenuButtons",	false ),
+	m_bMenuTimer				( Options, "MenuTimer",					true ),
+	m_bShowDanger				( Options, "ShowDanger",					true ),
 
-	m_fJudgeWindowScale				( Options, "m_fJudgeWindowScale",				1.0f ),
-	m_fJudgeWindowAdd				( Options, "m_fJudgeWindowAdd",					0 ),
-	m_fJudgeWindowSecondsMarvelous	( Options, "m_fJudgeWindowSecondsMarvelous",	0.0225f ),
-	m_fJudgeWindowSecondsPerfect	( Options, "m_fJudgeWindowSecondsPerfect",		0.045f ),
-	m_fJudgeWindowSecondsGreat		( Options, "m_fJudgeWindowSecondsGreat",		0.090f ),
-	m_fJudgeWindowSecondsGood		( Options, "m_fJudgeWindowSecondsGood",			0.135f ),
-	m_fJudgeWindowSecondsBoo		( Options, "m_fJudgeWindowSecondsBoo",			0.180f ),
-	m_fJudgeWindowSecondsOK			( Options, "m_fJudgeWindowSecondsOK",			0.250f ),	// allow enough time to take foot off and put back on
-	m_fJudgeWindowSecondsMine		( Options, "m_fJudgeWindowSecondsMine",			0.090f ),	// same as great
-	m_fJudgeWindowSecondsAttack		( Options, "m_fJudgeWindowSecondsAttack",		0.135f ),
+	m_fJudgeWindowScale				( Options, "JudgeWindowScale",				1.0f ),
+	m_fJudgeWindowAdd				( Options, "JudgeWindowAdd",					0 ),
+	m_fJudgeWindowSecondsMarvelous	( Options, "JudgeWindowSecondsMarvelous",	0.0225f ),
+	m_fJudgeWindowSecondsPerfect	( Options, "JudgeWindowSecondsPerfect",		0.045f ),
+	m_fJudgeWindowSecondsGreat		( Options, "JudgeWindowSecondsGreat",		0.090f ),
+	m_fJudgeWindowSecondsGood		( Options, "JudgeWindowSecondsGood",			0.135f ),
+	m_fJudgeWindowSecondsBoo		( Options, "JudgeWindowSecondsBoo",			0.180f ),
+	m_fJudgeWindowSecondsOK			( Options, "JudgeWindowSecondsOK",			0.250f ),	// allow enough time to take foot off and put back on
+	m_fJudgeWindowSecondsMine		( Options, "JudgeWindowSecondsMine",			0.090f ),	// same as great
+	m_fJudgeWindowSecondsAttack		( Options, "JudgeWindowSecondsAttack",		0.135f ),
 
-	m_fLifeDifficultyScale				( Options, "m_fLifeDifficultyScale",				1.0f ),
-	m_fLifeDeltaPercentChangeMarvelous	( Options, "m_fLifeDeltaPercentChangeMarvelous",	+0.008f ),
-	m_fLifeDeltaPercentChangePerfect	( Options, "m_fLifeDeltaPercentChangePerfect",		+0.008f ),
-	m_fLifeDeltaPercentChangeGreat		( Options, "m_fLifeDeltaPercentChangeGreat",		+0.004f ),
-	m_fLifeDeltaPercentChangeGood		( Options, "m_fLifeDeltaPercentChangeGood",			+0.000f ),
-	m_fLifeDeltaPercentChangeBoo		( Options, "m_fLifeDeltaPercentChangeBoo",			-0.040f ),
-	m_fLifeDeltaPercentChangeMiss		( Options, "m_fLifeDeltaPercentChangeMiss",			-0.080f ),
-	m_fLifeDeltaPercentChangeHitMine	( Options, "m_fLifeDeltaPercentChangeHitMine",		-0.160f ),
-	m_fLifeDeltaPercentChangeOK			( Options, "m_fLifeDeltaPercentChangeOK",			+0.008f ),
-	m_fLifeDeltaPercentChangeNG			( Options, "m_fLifeDeltaPercentChangeNG",			-0.080f )
+	m_fLifeDifficultyScale				( Options, "LifeDifficultyScale",				1.0f ),
+	m_fLifeDeltaPercentChangeMarvelous	( Options, "LifeDeltaPercentChangeMarvelous",	+0.008f ),
+	m_fLifeDeltaPercentChangePerfect	( Options, "LifeDeltaPercentChangePerfect",		+0.008f ),
+	m_fLifeDeltaPercentChangeGreat		( Options, "LifeDeltaPercentChangeGreat",		+0.004f ),
+	m_fLifeDeltaPercentChangeGood		( Options, "LifeDeltaPercentChangeGood",			+0.000f ),
+	m_fLifeDeltaPercentChangeBoo		( Options, "LifeDeltaPercentChangeBoo",			-0.040f ),
+	m_fLifeDeltaPercentChangeMiss		( Options, "LifeDeltaPercentChangeMiss",			-0.080f ),
+	m_fLifeDeltaPercentChangeHitMine	( Options, "LifeDeltaPercentChangeHitMine",		-0.160f ),
+	m_fLifeDeltaPercentChangeOK			( Options, "LifeDeltaPercentChangeOK",			+0.008f ),
+	m_fLifeDeltaPercentChangeNG			( Options, "LifeDeltaPercentChangeNG",			-0.080f )
 {
 	Init();
 	ReadGlobalPrefsFromDisk();
