@@ -47,10 +47,13 @@ public:
 	virtual void Unmount( UsbStorageDevice* pDevice, CString sMountPoint ) = 0;
 	virtual void Flush( UsbStorageDevice* pDevice ) = 0;
 	virtual void ResetUsbStorage() = 0;
-	virtual void PauseMountingThread() = 0;
-	virtual void UnPauseMountingThread() = 0;
-	virtual void DoOsMount() = 0;
-	virtual void DontDoOsMount() = 0;
+	enum MountThreadState 
+	{
+		detect_and_mount,
+		detect_and_dont_mount,
+		paused
+	};
+	virtual void SetMountThreadState( MountThreadState mts ) = 0;
 };
 
 MemoryCardDriver *MakeMemoryCardDriver();

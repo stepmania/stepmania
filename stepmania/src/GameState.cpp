@@ -95,6 +95,7 @@ void GameState::Reset()
 {
 	EndGame();
 	
+	MEMCARDMAN->LockCards( true );
 	
 	ASSERT( THEME );
 
@@ -191,7 +192,6 @@ void GameState::Reset()
 		m_iCpuSkill[p] = 5;
 	}
 
-	MEMCARDMAN->LockCards( false );
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_ATTRACT );
 
@@ -218,6 +218,8 @@ void GameState::BeginGame()
 	// play attract on the ending screen, then in one more whole attract 
 	// sequence after the game is over (even if attract sounds are set to off)
 	m_iNumTimesThroughAttract = -2;
+
+	MEMCARDMAN->LockCards( false );
 }
 
 void CheckStageStats( const StageStats &ss, int p )
@@ -247,7 +249,7 @@ void GameState::PlayersFinalized()
 	// apply saved default modifiers if any
 	FOREACH_HumanPlayer( pn )
 	{
-		PROFILEMAN->LoadFirstAvailableProfile( pn, false );	// load full profile
+		PROFILEMAN->LoadFirstAvailableProfile( pn );	// load full profile
 
 		if( !PROFILEMAN->IsUsingProfile(pn) )
 			continue;	// skip

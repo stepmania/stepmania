@@ -131,8 +131,6 @@ MemoryCardDriverThreaded_Linux::MemoryCardDriverThreaded_Linux()
 	if( m_fd == -1 )
 		LOG->Warn( "Failed to open \"%s\": %s", USB_DEVICE_LIST_FILE, strerror(errno) );
 
-	m_bForceRedetect = false;
-
 	this->StartThread();
 }
 
@@ -164,8 +162,7 @@ void MemoryCardDriverThreaded_Linux::ResetUsbStorage()
 	ExecuteCommand( "rmmod usb-storage" );
 	ExecuteCommand( "modprobe usb-storage" );
 	
-	m_vDevicesLastSeen.clear();
-	m_bForceRedetect = true;
+	m_bForceRedetectNextUpdate = true;
 
 	MountThreadDoOneUpdate();
 }
@@ -178,9 +175,10 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 		return;
 	}
 	
-	if( m_bForceRedetect )
+	if( m_bForceRedetectNextUpdate )
 	{
-		m_bForceRedetect = false;
+		m_vDevicesLastSeen.clear();
+		m_bForceRedetectNextUpdate = false;
 		// fall through
 	}
 	else

@@ -25,8 +25,9 @@ MemoryCardDriverThreaded::MemoryCardDriverThreaded() :
 	m_mutexStorageDevices("StorageDevices")
 {
 	m_bShutdownNextUpdate = false;
+	m_bForceRedetectNextUpdate = true;
 	m_bStorageDevicesChanged = false;
-	m_bDoOsMount = true;
+	m_MountThreadState = detect_and_mount;
 }
 
 void MemoryCardDriverThreaded::StartThread()
@@ -52,24 +53,26 @@ MemoryCardDriverThreaded::~MemoryCardDriverThreaded()
 	ASSERT( !m_threadMemoryCardMount.IsCreated() );
 }
 
-void MemoryCardDriverThreaded::PauseMountingThread()
+void MemoryCardDriverThreaded::SetMountThreadState( MountThreadState mts )
 {
-	m_mutexPause.Lock();
-}
+	CHECKPOINT;
 
-void MemoryCardDriverThreaded::UnPauseMountingThread()
-{
-	m_mutexPause.Unlock();
-}
+	MountThreadState old = m_MountThreadState;
 
-void MemoryCardDriverThreaded::DoOsMount()
-{
-  m_bDoOsMount = true;
-}
+	if( old != paused && mts == paused )
+		m_mutexPause.Lock();
 
-void MemoryCardDriverThreaded::DontDoOsMount()
-{
-  m_bDoOsMount = false;
+	if( old == paused && mts != paused )
+		m_mutexPause.Unlock();
+
+	if( old == detect_and_dont_mount && mts == detect_and_mount )
+	{
+		m_bForceRedetectNextUpdate = true;
+		LockMut( m_mutexStorageDevices );
+		m_vStorageDevices.clear();
+	}
+
+	m_MountThreadState = mts;
 }
 
 int MemoryCardDriverThreaded::MountThread_Start( void *p )
@@ -80,6 +83,8 @@ int MemoryCardDriverThreaded::MountThread_Start( void *p )
 
 void MemoryCardDriverThreaded::MountThreadMain()
 {
+	CHECKPOINT;
+
 	while( !m_bShutdownNextUpdate )
 	{      
 		LockMut( m_mutexPause );	// wait until we're unpaused
@@ -89,6 +94,8 @@ void MemoryCardDriverThreaded::MountThreadMain()
 
 bool MemoryCardDriverThreaded::StorageDevicesChanged()
 {
+	CHECKPOINT;
+
 	LockMut( m_mutexStorageDevices );
 	if( m_bStorageDevicesChanged )
     {
@@ -103,6 +110,8 @@ bool MemoryCardDriverThreaded::StorageDevicesChanged()
 
 void MemoryCardDriverThreaded::GetStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
+	CHECKPOINT;
+
 	LockMut( m_mutexStorageDevices );
 	vDevicesOut.clear();
 	for( unsigned i=0; i<m_vStorageDevices.size(); i++ )

@@ -204,7 +204,8 @@ bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, c
 		SCREENMAN->PlayStartSound();
 		GAMESTATE->JoinPlayer( MenuI.player );
 
-		PROFILEMAN->LoadFirstAvailableProfile( MenuI.player, true );	// fast load
+		// don't load memory card profiles here.  It's slow and can cause a big skip.
+		PROFILEMAN->LoadLocalProfileFromMachine( MenuI.player );
 		SCREENMAN->RefreshCreditsMessages();
 
 		return true;

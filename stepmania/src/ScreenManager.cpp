@@ -48,6 +48,7 @@ ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our p
 #define CREDITS_INSERT_CARD		THEME->GetMetric ("ScreenSystemLayer","CreditsInsertCard")
 #define CREDITS_CARD_ERROR		THEME->GetMetric ("ScreenSystemLayer","CreditsCardError")
 #define CREDITS_CARD_TOO_LATE	THEME->GetMetric ("ScreenSystemLayer","CreditsCardTooLate")
+#define CREDITS_CARD_NO_NAME	THEME->GetMetric ("ScreenSystemLayer","CreditsCardNoName")
 #define CREDITS_FREE_PLAY		THEME->GetMetric ("ScreenSystemLayer","CreditsFreePlay")
 #define CREDITS_CREDITS			THEME->GetMetric ("ScreenSystemLayer","CreditsCredits")
 #define CREDITS_NOT_PRESENT		THEME->GetMetric ("ScreenSystemLayer","CreditsNotPresent")
@@ -184,32 +185,30 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 		{
 			MemoryCardState mcs = MEMCARDMAN->GetCardState( p );
 			Profile* pProfile = PROFILEMAN->GetProfile( p );
-			if( pProfile )
+			switch( mcs )
 			{
-				sCredits = pProfile->GetDisplayName();
-			}
-			else 
-			{
-				switch( mcs )
-				{
-				case MEMORY_CARD_STATE_NO_CARD:
-					if( GAMESTATE->PlayersCanJoin() )
-						sCredits = CREDITS_INSERT_CARD;
-					else
-						sCredits = "";
-					break;
-				case MEMORY_CARD_STATE_WRITE_ERROR:
-					sCredits = CREDITS_CARD_ERROR;
-					break;
-				case MEMORY_CARD_STATE_TOO_LATE:
-					sCredits = CREDITS_CARD_TOO_LATE;
-					break;
-				case MEMORY_CARD_STATE_READY:
+			case MEMORY_CARD_STATE_NO_CARD:
+				if( pProfile )	// this is a local machine profile
+					sCredits = pProfile->GetDisplayName();
+				else if( GAMESTATE->PlayersCanJoin() )
+					sCredits = CREDITS_INSERT_CARD;
+				else
 					sCredits = "";
-					break;
-				default:
-					ASSERT(0);
-				}
+				break;
+			case MEMORY_CARD_STATE_WRITE_ERROR:
+				sCredits = CREDITS_CARD_ERROR;
+				break;
+			case MEMORY_CARD_STATE_TOO_LATE:
+				sCredits = CREDITS_CARD_TOO_LATE;
+				break;
+			case MEMORY_CARD_STATE_READY:
+				if( !MEMCARDMAN->GetName(p).empty() )
+					sCredits = MEMCARDMAN->GetName(p);
+				else	
+					sCredits = CREDITS_CARD_NO_NAME;
+				break;
+			default:
+				ASSERT(0);
 			}
 		}
 		else // bShowCreditsMessage

@@ -38,7 +38,7 @@ public:
 	CString GetName( PlayerNumber pn ) const;
 
 protected:
-	void AssignUnassignedCards();	// do our best to assign a Device to each player
+	void UpdateUnassignedCards();	// do our best to assign a Device to each player
 
 	MemoryCardDriver *m_pDriver;
 

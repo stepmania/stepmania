@@ -29,7 +29,7 @@ MemoryCardManager::MemoryCardManager()
 	m_soundTooLate.Load( THEME->GetPathToS("MemoryCardManager too late") );
 	m_soundDisconnect.Load( THEME->GetPathToS("MemoryCardManager disconnect") );
 
-	AssignUnassignedCards();
+	UpdateUnassignedCards();
 }
 
 MemoryCardManager::~MemoryCardManager()
@@ -94,18 +94,8 @@ void MemoryCardManager::Update( float fDelta )
 			}
 		}
 
-		AssignUnassignedCards();
+		UpdateUnassignedCards();
 
-		// Load profiles from cards that were just connected.
-		if( !m_bCardsLocked )
-		{
-			FOREACH_PlayerNumber( pn )
-			{
-				bool bPlayersCardWasJustConnected = find(vConnects.begin(),vConnects.end(),m_Device[pn]) != vConnects.end();
-				if( bPlayersCardWasJustConnected )
-					PROFILEMAN->LoadFirstAvailableProfile( pn, true );	// fast load
-			}
-		}
 		SCREENMAN->RefreshCreditsMessages();
 	}
 }
@@ -150,14 +140,14 @@ void MemoryCardManager::LockCards( bool bLock )
 	}
 
 	if( m_bCardsLocked )
-	  m_pDriver->DontDoOsMount();
+		m_pDriver->SetMountThreadState( MemoryCardDriver::detect_and_dont_mount );
 	else
-	  m_pDriver->DoOsMount();
+		m_pDriver->SetMountThreadState( MemoryCardDriver::detect_and_mount );
 }
 
-void MemoryCardManager::AssignUnassignedCards()
+void MemoryCardManager::UpdateUnassignedCards()
 {
-	LOG->Trace( "AssignUnassignedCards" );
+	LOG->Trace( "UpdateUnassignedCards" );
 
 	// make a list of unassigned
 	vector<UsbStorageDevice> vUnassignedDevices = m_vStorageDevices;	// copy
@@ -171,7 +161,12 @@ void MemoryCardManager::AssignUnassignedCards()
 
 			vector<UsbStorageDevice>::iterator it = find(vUnassignedDevices.begin(),vUnassignedDevices.end(),m_Device[p]);
 			if( it != vUnassignedDevices.end() )
+			{
+				// TRICKY: 
+				m_Device[p] = *it;
+
 				vUnassignedDevices.erase( it );
+			}
 		}
 	}
 
@@ -289,12 +284,15 @@ CString MemoryCardManager::GetName( PlayerNumber pn ) const
 
 void MemoryCardManager::PauseMountingThread()
 {
-	m_pDriver->PauseMountingThread();
+	m_pDriver->SetMountThreadState( MemoryCardDriver::paused );
 }
 
 void MemoryCardManager::UnPauseMountingThread()
 {
-	m_pDriver->UnPauseMountingThread();
+	m_pDriver->SetMountThreadState( 
+		m_bCardsLocked ? 
+		MemoryCardDriver::detect_and_dont_mount : 
+		MemoryCardDriver::detect_and_mount );
 }
 
 bool IsAnyPlayerUsingMemoryCard()

@@ -97,8 +97,8 @@ void ScreenEvaluation::Init()
 	
 	if( PREFSMAN->m_bScreenTestMode )
 	{
-		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_1, false);
-		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2, false);
+		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_1);
+		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2);
 
 		GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 		GAMESTATE->m_pCurStyle = GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(), "versus" );

@@ -10,6 +10,7 @@ struct UsbStorageDeviceEx : public UsbStorageDevice
 
 	void MakeBlank()
 	{
+		UsbStorageDevice::MakeBlank();
 		bWriteTestSucceeded = false;
 	}
 	
@@ -25,10 +26,7 @@ public:
 	virtual bool StorageDevicesChanged();
 	virtual void GetStorageDevices( vector<UsbStorageDevice>& vStorageDevicesOut );
 	virtual bool MountAndTestWrite( UsbStorageDevice* pDevice, CString sMountPoint );
-	virtual void PauseMountingThread();
-	virtual void UnPauseMountingThread();
-	virtual void DoOsMount();
-	virtual void DontDoOsMount();
+	virtual void SetMountThreadState( MountThreadState mts );
 
 private:
 	static int MountThread_Start( void *p );
@@ -42,20 +40,19 @@ private:
 	// will temporarily halt.
 	RageMutex m_mutexPause;
 
-	// If true, detect and report changes in connected devices, but don't don't
-	// do the OS mount or unmount.
-	bool m_bDoOsMount;
+	MountThreadState m_MountThreadState;
 
 protected:
 	void StartThread();	// call this in the derived constructor to start the mounting thread
 	void StopThread(); // call this in the derived desstructor to stop the mounting thread
 	virtual void MountThreadDoOneUpdate() = 0;	// this will get called as fast as possible
 	virtual void Mount( UsbStorageDevice* pDevice, CString sMountPoint ) = 0;
-	bool ShouldDoOsMount() { return m_bDoOsMount; }
+	bool ShouldDoOsMount() { return m_MountThreadState==detect_and_mount; }
 
 	vector<UsbStorageDeviceEx> m_vStorageDevices;
 	bool m_bStorageDevicesChanged;
 	RageMutex m_mutexStorageDevices;	// protects the above two
+	bool m_bForceRedetectNextUpdate;	// on the next update, redetect from scratch report new devices found
 };
 
 #endif

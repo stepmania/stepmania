@@ -67,7 +67,17 @@ void MemoryCardDriverThreaded_Windows::ResetUsbStorage()
 void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
 {
 	DWORD dwNewLogicalDrives = ::GetLogicalDrives();
-	if( dwNewLogicalDrives != m_dwLastLogicalDrives )
+
+	if( m_bForceRedetectNextUpdate )
+	{
+		m_bForceRedetectNextUpdate = false;
+	}
+	else if( dwNewLogicalDrives == m_dwLastLogicalDrives )
+	{
+		// no change from last update
+		return;
+	}
+
 	{
 		vector<UsbStorageDeviceEx> vNewStorageDevices;
 
@@ -89,29 +99,36 @@ void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
 
 				UsbStorageDeviceEx usbd;
 				usbd.sOsMountDir = sDrive;
-				usbd.bWriteTestSucceeded = TestWrite( sDrive );
 
-				// read name
-				this->Mount( &usbd, TEMP_MOUNT_POINT );
-				FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
-				Profile profile;
-				CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
-				profile.LoadEditableDataFromDir( sProfileDir );
-				usbd.sName = profile.GetDisplayName();
+				if( ShouldDoOsMount() )
+				{
+					usbd.bWriteTestSucceeded = TestWrite( sDrive );
+
+					// read name
+					this->Mount( &usbd, TEMP_MOUNT_POINT );
+					FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
+					Profile profile;
+					CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
+					profile.LoadEditableDataFromDir( sProfileDir );
+					usbd.sName = profile.GetDisplayName();
+				}
 
 				vNewStorageDevices.push_back( usbd );
 			}
 		}
+
+		CHECKPOINT;
 
 		{
 			LockMut( m_mutexStorageDevices );
 			m_bStorageDevicesChanged = true;
 			m_vStorageDevices = vNewStorageDevices;
 		}
-	}
-	m_dwLastLogicalDrives = dwNewLogicalDrives;
 
-	usleep( 100000 );
+		CHECKPOINT;
+
+		m_dwLastLogicalDrives = dwNewLogicalDrives;
+	}
 }
 
 void MemoryCardDriverThreaded_Windows::Mount( UsbStorageDevice* pDevice, CString sMountPoint )

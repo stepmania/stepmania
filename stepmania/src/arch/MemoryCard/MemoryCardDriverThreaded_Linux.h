@@ -18,7 +18,6 @@ protected:
 
 	int m_fd;
 	vector<UsbStorageDeviceEx> m_vDevicesLastSeen;
-	bool m_bForceRedetect;
 };
 
 #endif

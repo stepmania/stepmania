@@ -17,6 +17,7 @@ public:
 	virtual void UnPauseMountingThread() {}
 	virtual void DoOsMount() {}
 	virtual void DontDoOsMount() {}
+	virtual void SetMountThreadState( MountThreadState mts ) {}
 };
 
 #endif
