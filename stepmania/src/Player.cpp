@@ -315,7 +315,8 @@ void PlayerMinus::Update( float fDeltaTime )
 			if( bSteppedOnTapNote )		// this note is not judged and we stepped on its head
 			{
 				// Move the start of this Hold
-				m_pNoteField->GetHoldNote(i).iStartRow = min( iSongRow, m_pNoteField->GetHoldNote(i).iEndRow );
+				HoldNote &fhn = m_pNoteField->GetHoldNote(i);
+				fhn.iStartRow = min( iSongRow, fhn.iEndRow );
 			}
 
 			if( bSteppedOnTapNote && bIsHoldingButton )
