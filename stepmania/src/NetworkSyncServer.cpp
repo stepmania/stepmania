@@ -210,12 +210,15 @@ void StepManiaLanServer::CheckReady() {
 			
 
 	// If All clients were ready, send the start command
-	if (Start == true)
+	if (Start == true) {
 		for (x = 0; x < NUMBERCLIENTS; x++)
 			if (Client[x].Used == true) {
 				SendValue(131, x);
 				Client[x].Ready = false;
 			}
+		//After we start the clients, clear each client's hasSong.
+		ClearHasSong();
+	}
 }
 
 
@@ -450,8 +453,6 @@ void StepManiaLanServer::SelectSong(PacketFunctions &Packet, int clientNum) {
 			Reply.WriteNT(CurrentSongInfo.title);
 			Reply.WriteNT(CurrentSongInfo.artist);
 			Reply.WriteNT(CurrentSongInfo.subtitle);		
-
-			ClearHasSong();
 
 			SendToAllClients(Reply);
 
