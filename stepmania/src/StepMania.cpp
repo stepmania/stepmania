@@ -710,13 +710,22 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ASSERT( THEME );
 	ASSERT( GAMESTATE );
 
-	if( GAMESTATE->m_pCurGame == NULL )
-		GAMESTATE->m_pCurGame = GAMEMAN->GetDefaultGame();
-	CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
-
 	IniFile ini;
 	ini.ReadFile( GAMEPREFS_INI_PATH );	// it's OK if this fails
 	ini.ReadFile( STATIC_INI_PATH );	// it's OK if this fails, too
+
+	if( bSwitchToLastPlayedGame )
+	{
+		ASSERT( GAMEMAN != NULL );
+		CString sGame;
+		GAMESTATE->m_pCurGame = NULL;
+		if( ini.GetValue("Options", "Game", sGame) )
+			GAMESTATE->m_pCurGame = GAMEMAN->StringToGameType( sGame );
+	}
+
+	if( GAMESTATE->m_pCurGame == NULL )
+		GAMESTATE->m_pCurGame = GAMEMAN->GetDefaultGame();
+	CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
 
 	CString sAnnouncer = sGameName, sTheme = sGameName, sNoteSkin = sGameName;
 
@@ -730,17 +739,6 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 	THEME->SwitchThemeAndLanguage( sTheme, PREFSMAN->m_sLanguage );
 
 //	NOTESKIN->SwitchNoteSkin( sNoteSkin );
-
-	if( bSwitchToLastPlayedGame )
-	{
-		CString sGame;
-		if( ini.GetValue("Options", "Game", sGame) )
-		{
-			GAMESTATE->m_pCurGame = GAMEMAN->StringToGameType( sGame );
-			if( GAMESTATE->m_pCurGame == NULL )
-				GAMESTATE->m_pCurGame = GAMEMAN->GetDefaultGame();
-		}
-	}
 }
 
 
@@ -1018,11 +1016,11 @@ int main(int argc, char* argv[])
 	GAMEMAN		= new GameManager;
 	THEME		= new ThemeManager;
 	ANNOUNCER	= new AnnouncerManager;
+	NOTESKIN	= new NoteSkinManager;
 
 	/* Set up the theme and announcer. */
 	ReadGamePrefsFromDisk();
 
-	NOTESKIN	= new NoteSkinManager;
 	if( PREFSMAN->m_iSoundWriteAhead )
 		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead );
 	SOUNDMAN	= new RageSoundManager;
