@@ -14,7 +14,6 @@
 #include "RageMath.h"
 #include "RageDisplay.h"
 #include "ThemeManager.h"
-#include "Combo.h"
 #include "ScoreDisplay.h"
 #include "LifeMeter.h"
 #include "CombinedLifeMeter.h"
