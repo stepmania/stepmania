@@ -196,6 +196,7 @@ public:
 	// sorting values
 	int		SortOrder_TotalDifficulty;
 	int		SortOrder_Ranking;
+	bool	IsRanking() const;
 
 	void UpdateCourseStats();
 

@@ -992,3 +992,16 @@ void Course::Info::GetAttackArray( AttackArray &out ) const
 
 	out.insert( out.end(), Attacks.begin(), Attacks.end() );
 }
+
+bool Course::IsRanking() const
+{
+	CStringArray rankingsongs;
+	
+	split(THEME->GetMetric("ScreenRanking", "CoursesToShow"), ",", rankingsongs);
+
+	for(unsigned i=0; i < rankingsongs.size(); i++)
+		if (rankingsongs[i].CompareNoCase(m_sPath))
+			return true;
+
+	return false;
+}

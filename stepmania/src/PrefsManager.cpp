@@ -133,6 +133,8 @@ PrefsManager::PrefsManager()
 	m_bMoveRandomToEnd = false;
 	m_iScoringType = SCORING_MAX2;
 
+	m_iGetRankingName = RANKING_ON;
+
 	m_fLongVerSongSeconds = 60*2.5f;	// Dynamite Rave is 2:55
 	m_fMarathonVerSongSeconds = 60*5.f;
 
@@ -298,6 +300,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "LastSeenMemory",					m_iLastSeenMemory );
 #endif
 	ini.GetValue( "Options", "CoursesToShowRanking",			m_sCoursesToShowRanking );
+	ini.GetValue( "Options", "GetRankingName",					(int&)m_iGetRankingName);
 	ini.GetValue( "Options", "AntiAliasing",					m_bAntiAliasing );
 	ini.GetValue( "Options", "GlobalOffsetSeconds",				m_fGlobalOffsetSeconds );
 	ini.GetValue( "Options", "ForceLogFlush",					m_bForceLogFlush );
@@ -424,6 +427,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "LastSeenMemory",					m_iLastSeenMemory );
 #endif
 	ini.SetValue( "Options", "CoursesToShowRanking",			m_sCoursesToShowRanking );
+	ini.SetValue( "Options", "GetRankingName",					m_iGetRankingName);
 	ini.SetValue( "Options", "AntiAliasing",					m_bAntiAliasing );
 	ini.SetValue( "Options", "GlobalOffsetSeconds",				m_fGlobalOffsetSeconds );
 	ini.SetValue( "Options", "ForceLogFlush",					m_bForceLogFlush );

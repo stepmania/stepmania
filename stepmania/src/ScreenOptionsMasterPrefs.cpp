@@ -298,6 +298,12 @@ static void ShowSongOptions( int &sel, bool ToSel, const CStringArray &choices )
 	MoveMap( sel, PREFSMAN->m_ShowSongOptions, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
+static void ShowNameEntry( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const PrefsManager::GetRankingName mapping[] = { PrefsManager::RANKING_OFF, PrefsManager::RANKING_ON, PrefsManager::RANKING_LIST };
+	MoveMap( sel, PREFSMAN->m_iGetRankingName, ToSel, mapping, ARRAYSIZE(mapping) );
+}
+
 static void DefaultFailType( int &sel, bool ToSel, const CStringArray &choices )
 {
 	if( ToSel )
@@ -449,6 +455,7 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Coins Per\nCredit",	CoinsPerCredit,		"1","2","3","4","5","6","7","8" ),
 	ConfOption( "Joint\nPremium",		JointPremium,		"OFF","ON" ),
 	ConfOption( "Show Song\nOptions",	ShowSongOptions,	"HIDE","SHOW","ASK" ),
+	ConfOption( "Show Name\nEntry",     ShowNameEntry,		"OFF", "ON", "RANKING SONGS" ),
 
 	/* Graphic options */
 	ConfOption( "Display\nMode",		DisplayMode,		"FULLSCREEN", "WINDOWED" ),
