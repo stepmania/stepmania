@@ -646,7 +646,7 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 		{
 //			int nBoneIndex = (pMesh->nBoneIndex!=-1) ? pMesh->nBoneIndex : bone;
 			RageVector3 &pos = Vertices[j].p;
-			Sint8 bone = Vertices[j].bone;
+			int8_t bone = Vertices[j].bone;
 			if (bone != -1)
 			{
 				pos[0] -= m_vpBones[bone].mAbsolute.m[3][0];
@@ -834,7 +834,7 @@ void Model::Update( float fDelta )
 				RageVector3& originalNormal =	origVertices[j].n;
 				RageVector2& tempTex =			tempVertices[j].t;
 				RageVector2& originalTex =		origVertices[j].t;
-				Sint8 bone =					origVertices[j].bone;
+				int8_t bone =					origVertices[j].bone;
 
 				tempTex = originalTex;
 				

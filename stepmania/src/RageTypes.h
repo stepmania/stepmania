@@ -5,8 +5,6 @@
 #ifndef RAGETYPES_H
 #define RAGETYPES_H
 
-#include "SDL_types.h"	// for Sint8
-
 enum GlowMode { GLOW_BRIGHTEN, GLOW_WHITEN };
 enum BlendMode { BLEND_NORMAL, BLEND_ADD, BLEND_NO_EFFECT, BLEND_INVALID };
 enum CullMode { CULL_BACK, CULL_FRONT, CULL_NONE };
@@ -248,7 +246,7 @@ struct RageModelVertex	// doesn't have color.  Relies on material color
     RageVector3		p;	// position
     RageVector3		n;	// normal
 	RageVector2		t;	// texture coordinates
-	Sint8			bone;
+	int8_t			bone;
 };
 
 
