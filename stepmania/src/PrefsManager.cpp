@@ -13,11 +13,12 @@
 
 #include "PrefsManager.h"
 #include "IniFile.h"
-#include "GameManager.h"
+#include "NoteSkinManager.h"
 #include "GameState.h"
 #include "RageException.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
+#include "GameDef.h"
 #include "AnnouncerManager.h"
 #include "ThemeManager.h"
 #include "arch/arch.h" /* for default driver specs */
@@ -260,7 +261,7 @@ void PrefsManager::ReadGamePrefsFromDisk()
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
 	THEME->SwitchTheme( sTheme );
-	GAMEMAN->SwitchNoteSkin( sNoteSkin );
+	NOTESKIN->SwitchNoteSkin( sNoteSkin );
 }
 
 void PrefsManager::SaveGamePrefsToDisk()
@@ -275,7 +276,7 @@ void PrefsManager::SaveGamePrefsToDisk()
 
 	ini.SetValue( sGameName, "Announcer",		ANNOUNCER->GetCurAnnouncerName() );
 	ini.SetValue( sGameName, "Theme",			THEME->GetCurThemeName() );
-	ini.SetValue( sGameName, "NoteSkin",		GAMEMAN->GetCurNoteSkin() );
+	ini.SetValue( sGameName, "NoteSkin",		NOTESKIN->GetCurNoteSkinName() );
 
 	ini.WriteFile();
 }

@@ -55,7 +55,7 @@ void ThemeManager::GetAllThemeNames( CStringArray& AddTo )
 	// strip out the folder called "CVS"
 	for( CStringArray::iterator i=AddTo.begin(); i != AddTo.end(); ++i )
 	{
-		if( !i->CompareNoCase("cvs") ) {
+		if( *i == "CVS" ) {
 			AddTo.erase(i, i+1);
 			break;
 		}

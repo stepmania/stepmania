@@ -18,6 +18,7 @@
 #include "IniFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "NoteSkinManager.h"
 #include "SDL_keysym.h"		// for SDLKeys
 
 
@@ -1492,12 +1493,10 @@ const int NUM_MODE_CHOICES = sizeof(g_ModeChoices) / sizeof(g_ModeChoices[0]);
 
 GameManager::GameManager()
 {
-	m_pIniFile = new IniFile;
 }
 
 GameManager::~GameManager()
 {
-	delete m_pIniFile;
 }
 
 GameDef* GameManager::GetGameDefForGame( Game g )
@@ -1565,136 +1564,16 @@ void GameManager::GetNotesTypesForGame( Game game, vector<NotesType>& aNotesType
 	}
 }
 
-bool GameManager::DoesNoteSkinExist( CString sSkinName ) const
-{
-	CStringArray asSkinNames;	
-	GetNoteSkinNames( asSkinNames );
-	for( unsigned i=0; i<asSkinNames.size(); i++ )
-		if( 0==stricmp(sSkinName, asSkinNames[i]) )
-			return true;
-	return false;
-}
-
-void GameManager::SwitchNoteSkin( CString sNewNoteSkin )
-{
-	if( sNewNoteSkin == ""  ||  !DoesNoteSkinExist(sNewNoteSkin) )
-	{
-		CStringArray as;
-		GetNoteSkinNames( as );
-		ASSERT( !as.empty() );
-		SwitchNoteSkin( as[0] );
-	}
-	else
-	{
-		m_sCurNoteSkin = sNewNoteSkin;
-		m_pIniFile->Reset();
-		CString sPath = GetCurNoteSkinDir() + "metrics.ini";
-		m_pIniFile->SetPath(sPath);
-		if( !m_pIniFile->ReadFile() )
-			RageException::Throw( "Could not read NoteSkin metrics file '%s'", sPath.GetString() );
-	}
-}
-
-CString GameManager::GetCurNoteSkinDir()
-{
-	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
-
-	return NOTESKIN_DIR + ssprintf("%s\\%s\\", pGameDef->m_szName, m_sCurNoteSkin.GetString());
-}
-
-CString GameManager::GetMetric( CString sClassName, CString sValue )	// looks in GAMESTATE for the current Style
-{
-	CString sReturn;
-	if( !m_pIniFile->GetValue( sClassName, sValue, sReturn ) )
-		RageException::Throw( "Could not read metric '%s - %s' from '%smetrics.ini'", sClassName.GetString(), sValue.GetString(), GetCurNoteSkinDir().GetString() );
-	return sReturn;
-}
-
-int GameManager::GetMetricI( CString sClassName, CString sValueName )
-{
-	return atoi( GetMetric(sClassName,sValueName) );
-}
-
-float GameManager::GetMetricF( CString sClassName, CString sValueName )
-{
-	return (float)atof( GetMetric(sClassName,sValueName) );
-}
-
-bool GameManager::GetMetricB( CString sClassName, CString sValueName )
-{
-	return atoi( GetMetric(sClassName,sValueName) ) != 0;
-}
-
-RageColor GameManager::GetMetricC( CString sClassName, CString sValueName )
-{
-	float r=1,b=1,g=1,a=1;	// initialize in case sscanf fails
-	CString sValue = GetMetric(sClassName,sValueName);
-	char szValue[40];
-	strncpy( szValue, sValue, 39 );
-	int result = sscanf( szValue, "%f,%f,%f,%f", &r, &g, &b, &a );
-	if( result != 4 )
-	{
-		LOG->Warn( "The color value '%s' for theme metric '%s : %s' is invalid.", szValue, sClassName.GetString(), sValueName.GetString() );
-		ASSERT(0);
-	}
-
-	return RageColor(r,g,b,a);
-}
-
-CString GameManager::GetPathTo( const int col, CString sElementName )	// looks in GAMESTATE for the current Style
-{
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
-
-	StyleInput SI( PLAYER_1, col );
-	GameInput GI = pStyleDef->StyleInputToGameInput( SI );
-	CString sButtonName = pGameDef->m_szButtonNames[GI.button];
-
-	const CString sDir = GetCurNoteSkinDir();
-
-	CStringArray arrayPossibleFileNames;		// fill this with the possible files
-
-	GetDirListing( ssprintf("%s%s %s*.sprite", sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.png",    sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.jpg",    sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.bmp",    sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.gif",    sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*",        sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
-
-	if( arrayPossibleFileNames.empty() )
-		RageException::Throw( "The NoteSkin element '%s %s' is missing from '%s'.", sButtonName.GetString(), sElementName.GetString(), sDir.GetString() );
-
-	return DerefRedir(arrayPossibleFileNames[0]);
-}
-
 void GameManager::GetEnabledGames( vector<Game>& aGamesOut )
 {
 	for( int g=0; g<NUM_GAMES; g++ )
 	{
 		Game game = (Game)g;
 		CStringArray asNoteSkins;
-		GetNoteSkinNames( game, asNoteSkins );
+		NOTESKIN->GetNoteSkinNames( game, asNoteSkins );
 		if( !asNoteSkins.empty() )
 			aGamesOut.push_back( game );
 	}
-}
-
-void GameManager::GetNoteSkinNames( Game game, CStringArray &AddTo ) const
-{
-	GameDef* pGameDef = GAMEMAN->GetGameDefForGame( game );
-
-	CString sBaseSkinFolder = NOTESKIN_DIR + pGameDef->m_szName + "\\";
-	GetDirListing( sBaseSkinFolder + "*", AddTo, true );
-
-	// strip out "CVS"
-	for( int i=AddTo.size()-1; i>=0; i-- )
-		if( 0 == stricmp("cvs", AddTo[i]) )
-			AddTo.erase( AddTo.begin()+i, AddTo.begin()+i+1 );
-}
-
-void GameManager::GetNoteSkinNames( CStringArray &AddTo ) const
-{
-	GetNoteSkinNames( GAMESTATE->m_CurGame, AddTo );
 }
 
 int GameManager::NotesTypeToNumTracks( NotesType nt )

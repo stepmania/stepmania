@@ -17,6 +17,7 @@
 #include "RageLog.h"
 #include "GameDef.h"
 #include "StyleDef.h"
+#include "RageUtil.h"
 
 enum Code {
 	CODE_EASIER1,

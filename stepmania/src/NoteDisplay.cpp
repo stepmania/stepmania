@@ -17,7 +17,7 @@
 #include "Notes.h"
 #include "PrefsManager.h"
 #include "GameState.h"
-#include "GameManager.h"
+#include "NoteSkinManager.h"
 #include "RageException.h"
 #include "ArrowEffects.h"
 #include "RageLog.h"
@@ -26,24 +26,24 @@
 #include "NoteTypes.h"
 
 
-#define DRAW_HOLD_HEAD_FOR_TAPS_ON_SAME_ROW			GAMEMAN->GetMetricB("NoteDisplay","DrawHoldHeadForTapsOnSameRow")
-#define TAP_NOTE_ANIMATION_LENGTH_IN_BEATS			GAMEMAN->GetMetricF("NoteDisplay","TapNoteAnimationLengthInBeats")
-#define HOLD_HEAD_ANIMATION_LENGTH_IN_BEATS			GAMEMAN->GetMetricF("NoteDisplay","HoldHeadAnimationLengthInBeats")
-#define HOLD_BODY_ANIMATION_LENGTH_IN_BEATS			GAMEMAN->GetMetricF("NoteDisplay","HoldBodyAnimationLengthInBeats")
-#define HOLD_TAIL_ANIMATION_LENGTH_IN_BEATS			GAMEMAN->GetMetricF("NoteDisplay","HoldTailAnimationLengthInBeats")
-#define TAP_NOTE_ANIMATION_IS_VIVID					GAMEMAN->GetMetricB("NoteDisplay","TapNoteAnimationIsVivid")
-#define HOLD_HEAD_ANIMATION_IS_VIVID				GAMEMAN->GetMetricB("NoteDisplay","HoldHeadAnimationIsVivid")
-#define HOLD_BODY_ANIMATION_IS_VIVID				GAMEMAN->GetMetricB("NoteDisplay","HoldBodyAnimationIsVivid")
-#define HOLD_TAIL_ANIMATION_IS_VIVID				GAMEMAN->GetMetricB("NoteDisplay","HoldTailAnimationIsVivid")
-#define TAP_NOTE_ANIMATION_IS_NOTE_COLOR			GAMEMAN->GetMetricB("NoteDisplay","TapNoteAnimationIsNoteColor")
-#define HOLD_HEAD_ANIMATION_IS_NOTE_COLOR			GAMEMAN->GetMetricB("NoteDisplay","HoldHeadAnimationIsNoteColor")
-#define HOLD_BODY_ANIMATION_IS_NOTE_COLOR			GAMEMAN->GetMetricB("NoteDisplay","HoldBodyAnimationIsNoteColor")
-#define HOLD_TAIL_ANIMATION_IS_NOTE_COLOR			GAMEMAN->GetMetricB("NoteDisplay","HoldTailAnimationIsNoteColor")
-#define START_DRAWING_HOLD_BODY_OFFSET_FROM_HEAD	GAMEMAN->GetMetricI("NoteDisplay","StartDrawingHoldBodyOffsetFromHead")
-#define STOP_DRAWING_HOLD_BODY_OFFSET_FROM_TAIL		GAMEMAN->GetMetricI("NoteDisplay","StopDrawingHoldBodyOffsetFromTail")
-#define HOLD_HEAD_IS_WAVY							GAMEMAN->GetMetricB("NoteDisplay","HoldHeadIsWavy")
-#define HOLD_TAIL_IS_WAVY							GAMEMAN->GetMetricB("NoteDisplay","HoldTailIsWavy")
-#define HOLD_NG_GRAY_PERCENT						GAMEMAN->GetMetricF("NoteDisplay","HoldNGGrayPercent")
+#define DRAW_HOLD_HEAD_FOR_TAPS_ON_SAME_ROW			NOTESKIN->GetMetricB("NoteDisplay","DrawHoldHeadForTapsOnSameRow")
+#define TAP_NOTE_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF("NoteDisplay","TapNoteAnimationLengthInBeats")
+#define HOLD_HEAD_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF("NoteDisplay","HoldHeadAnimationLengthInBeats")
+#define HOLD_BODY_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF("NoteDisplay","HoldBodyAnimationLengthInBeats")
+#define HOLD_TAIL_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF("NoteDisplay","HoldTailAnimationLengthInBeats")
+#define TAP_NOTE_ANIMATION_IS_VIVID					NOTESKIN->GetMetricB("NoteDisplay","TapNoteAnimationIsVivid")
+#define HOLD_HEAD_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB("NoteDisplay","HoldHeadAnimationIsVivid")
+#define HOLD_BODY_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB("NoteDisplay","HoldBodyAnimationIsVivid")
+#define HOLD_TAIL_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB("NoteDisplay","HoldTailAnimationIsVivid")
+#define TAP_NOTE_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB("NoteDisplay","TapNoteAnimationIsNoteColor")
+#define HOLD_HEAD_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB("NoteDisplay","HoldHeadAnimationIsNoteColor")
+#define HOLD_BODY_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB("NoteDisplay","HoldBodyAnimationIsNoteColor")
+#define HOLD_TAIL_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB("NoteDisplay","HoldTailAnimationIsNoteColor")
+#define START_DRAWING_HOLD_BODY_OFFSET_FROM_HEAD	NOTESKIN->GetMetricI("NoteDisplay","StartDrawingHoldBodyOffsetFromHead")
+#define STOP_DRAWING_HOLD_BODY_OFFSET_FROM_TAIL		NOTESKIN->GetMetricI("NoteDisplay","StopDrawingHoldBodyOffsetFromTail")
+#define HOLD_HEAD_IS_WAVY							NOTESKIN->GetMetricB("NoteDisplay","HoldHeadIsWavy")
+#define HOLD_TAIL_IS_WAVY							NOTESKIN->GetMetricB("NoteDisplay","HoldTailIsWavy")
+#define HOLD_NG_GRAY_PERCENT						NOTESKIN->GetMetricF("NoteDisplay","HoldNGGrayPercent")
 
 // cache
 bool g_bDrawHoldHeadForTapsOnSameRow;
@@ -92,93 +92,161 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
-	m_sprTapNote.Load(			GAMEMAN->GetPathTo(iColNum, "tap note") );
-	m_sprHoldHeadActive.Load(	GAMEMAN->GetPathTo(iColNum, "hold head active") );
-	m_sprHoldHeadInactive.Load( GAMEMAN->GetPathTo(iColNum, "hold head inactive") );
-	m_sprHoldBodyActive.Load(	GAMEMAN->GetPathTo(iColNum, "hold body active") );
-	m_sprHoldBodyInactive.Load( GAMEMAN->GetPathTo(iColNum, "hold body inactive") );
-	m_sprHoldTailActive.Load(	GAMEMAN->GetPathTo(iColNum, "hold tail active") );
-	m_sprHoldTailInactive.Load( GAMEMAN->GetPathTo(iColNum, "hold tail inactive") );
+	// Look up note names once and store them here.
+	CString sNoteType[ NOTE_COLOR_IMAGES ];
+	for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
+		sNoteType[i] = NoteTypeToString( (NoteType)i );
+
+
+	if( g_bTapNoteAnimationIsNoteColor )
+	{
+		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
+			m_sprTapNote[i].Load( NOTESKIN->GetPathTo(iColNum, "tap note "+sNoteType[i]) );
+	}
+	else
+	{
+		m_sprTapNote[0].Load( NOTESKIN->GetPathTo(iColNum, "tap note") );
+	}
+
+	if( g_bHoldHeadAnimationIsNoteColor )
+	{
+		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
+		{
+			m_sprHoldHeadActive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold head active "+sNoteType[i]) );
+			m_sprHoldHeadInactive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold head inactive "+sNoteType[i]) );
+		}
+	}
+	else
+	{
+		m_sprHoldHeadActive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold head active") );
+		m_sprHoldHeadInactive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold head inactive") );
+	}
+
+	if( g_bHoldBodyAnimationIsNoteColor )
+	{
+		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
+		{
+			m_sprHoldBodyActive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold body active "+sNoteType[i]) );
+			m_sprHoldBodyInactive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold body inactive "+sNoteType[i]) );
+		}
+	}
+	else
+	{
+		m_sprHoldBodyActive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold body active") );
+		m_sprHoldBodyInactive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold body inactive") );
+	}
+
+	if( g_bHoldTailAnimationIsNoteColor )
+	{
+		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
+		{
+			m_sprHoldTailActive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold tail active "+sNoteType[i]) );
+			m_sprHoldTailInactive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold tail inactive "+sNoteType[i]) );
+		}
+	}
+	else
+	{
+		m_sprHoldTailActive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold tail active") );
+		m_sprHoldTailInactive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold tail inactive") );
+	}
 }
 
 
 int NoteDisplay::GetFrameNo( float fNoteBeat, int iNumFrames, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor )
 {
 	float fSongBeat = GAMESTATE->m_fSongBeat;
-	float fPercentIntoMeasure = fmodfp( fSongBeat, fAnimationLengthInBeats ) / fAnimationLengthInBeats;
-
-	float fBeatFraction = fmodf( fNoteBeat, 1.0f );
-	fBeatFraction = froundf( fBeatFraction, 0.25f );	// round to nearest 1/4th
-
-	int iBeatFractionContrib = (int)roundf( fBeatFraction * iNumFrames );
-	int iSongBeatFrameContrib = (int)roundf( fPercentIntoMeasure * iNumFrames );
+	float fPrecentIntoAnimation = fmodf(fSongBeat,fAnimationLengthInBeats) / fAnimationLengthInBeats;
+	float fNoteBeatFraction = fmodf( fNoteBeat, 1.0f );
 
 	int iFrameNo;
 	if( bVivid )
-	{
-		iFrameNo = (iSongBeatFrameContrib + iBeatFractionContrib) % iNumFrames;
-	}
-	else if( bNoteColor )
-	{
-		NoteType type = BeatToNoteType( fNoteBeat );
-		int iBaseFrameNo;
-		switch( type )
-		{
-		case NOTE_TYPE_4TH:		iBaseFrameNo = iNumFrames*0/6;	break;
-		case NOTE_TYPE_8TH:		iBaseFrameNo = iNumFrames*1/6;	break;
-		case NOTE_TYPE_12TH:	iBaseFrameNo = iNumFrames*2/6;	break;
-		case NOTE_TYPE_16TH:	iBaseFrameNo = iNumFrames*3/6;	break;
-		case NOTE_TYPE_24TH:	iBaseFrameNo = iNumFrames*4/6;	break;
-		case NOTE_TYPE_32ND:	iBaseFrameNo = iNumFrames*5/6;	break;
-		default:	ASSERT(0);	iBaseFrameNo=0;	// get rid of warning
-		}
+		iFrameNo = (int)(fPrecentIntoAnimation*iNumFrames + fNoteBeatFraction*iNumFrames);
+	else
+		iFrameNo = (int)(fPrecentIntoAnimation*iNumFrames);
 
-		iFrameNo = iBaseFrameNo + iBeatFractionContrib;
-	}
-	else	// flat
-	{
-		iFrameNo = (iSongBeatFrameContrib) % iNumFrames;
-	}
+	iFrameNo += iNumFrames;
+	iFrameNo %= iNumFrames;
 
 	ASSERT( iFrameNo>=0 && iFrameNo<iNumFrames );
 	return iFrameNo;
 }
 
-int NoteDisplay::GetTapNoteFrameNo( float fNoteBeat )
+void NoteDisplay::GetTapNoteSpriteAndFrameNo( float fNoteBeat, Sprite*& pSpriteOut, int& iFrameNoOut )
 {
-	return GetFrameNo( 
+	if( g_bTapNoteAnimationIsNoteColor )
+	{
+		NoteType nt = BeatToNoteType( fNoteBeat );
+		if( nt == NOTE_TYPE_INVALID )
+			nt = NOTE_TYPE_32ND;
+		pSpriteOut = &m_sprTapNote[nt];
+	}
+	else
+		pSpriteOut = &m_sprTapNote[0];
+
+	iFrameNoOut = GetFrameNo( 
 		fNoteBeat, 
-		m_sprTapNote.GetNumStates(), 
+		pSpriteOut->GetNumStates(), 
 		g_fTapNoteAnimationLengthInBeats, 
 		g_bTapNoteAnimationIsVivid, 
 		g_bTapNoteAnimationIsNoteColor );
 }
 
-int	NoteDisplay::GetHoldHeadFrameNo( float fNoteBeat, bool bActive )
+void NoteDisplay::GetHoldHeadSpriteAndFrameNo( float fNoteBeat, bool bActive, Sprite*& pSpriteOut, int& iFrameNoOut )
 {
-	return GetFrameNo( 
+	if( g_bHoldHeadAnimationIsNoteColor )
+	{
+		NoteType nt = BeatToNoteType( fNoteBeat );
+		if( nt == NOTE_TYPE_INVALID )
+			nt = NOTE_TYPE_32ND;
+		pSpriteOut = bActive ? &m_sprHoldHeadActive[nt] : &m_sprHoldHeadInactive[nt];
+	}
+	else
+		pSpriteOut = bActive ? &m_sprHoldHeadActive[0] : &m_sprHoldHeadInactive[0];
+
+	iFrameNoOut = GetFrameNo( 
 		fNoteBeat, 
-		(bActive?m_sprHoldHeadActive:m_sprHoldHeadInactive).GetNumStates(), 
+		pSpriteOut->GetNumStates(), 
 		g_fHoldHeadAnimationLengthInBeats, 
 		g_bHoldHeadAnimationIsVivid, 
 		g_bHoldHeadAnimationIsNoteColor );
 }
 
-int	NoteDisplay::GetHoldBodyFrameNo( float fNoteBeat, bool bActive )
+void NoteDisplay::GetHoldBodySpriteAndFrameNo( float fNoteBeat, bool bActive, Sprite*& pSpriteOut, int& iFrameNoOut )
 {
-	return GetFrameNo( 
+	if( g_bHoldBodyAnimationIsNoteColor )
+	{
+		NoteType nt = BeatToNoteType( fNoteBeat );
+		if( nt == NOTE_TYPE_INVALID )
+			nt = NOTE_TYPE_32ND;
+		pSpriteOut = bActive ? &m_sprHoldBodyActive[nt] : &m_sprHoldBodyInactive[nt];
+	}
+	else
+		pSpriteOut = bActive ? &m_sprHoldBodyActive[0] : &m_sprHoldBodyInactive[0];
+
+	iFrameNoOut = GetFrameNo( 
 		fNoteBeat, 
-		(bActive?m_sprHoldBodyActive:m_sprHoldBodyInactive).GetNumStates(), 
+		pSpriteOut->GetNumStates(), 
 		g_fHoldBodyAnimationLengthInBeats, 
 		g_bHoldBodyAnimationIsVivid, 
 		g_bHoldBodyAnimationIsNoteColor );
 }
 
-int	NoteDisplay::GetHoldTailFrameNo( float fNoteBeat, bool bActive )
+void NoteDisplay::GetHoldTailSpriteAndFrameNo( float fNoteBeat, bool bActive, Sprite*& pSpriteOut, int& iFrameNoOut )
 {
-	return GetFrameNo( 
+
+	if( g_bHoldTailAnimationIsNoteColor )
+	{
+		NoteType nt = BeatToNoteType( fNoteBeat );
+		if( nt == NOTE_TYPE_INVALID )
+			nt = NOTE_TYPE_32ND;
+		pSpriteOut = bActive ? &m_sprHoldTailActive[nt] : &m_sprHoldTailInactive[nt];
+	}
+	else
+		pSpriteOut = bActive ? &m_sprHoldTailActive[0] : &m_sprHoldTailInactive[0];
+
+	iFrameNoOut = GetFrameNo( 
 		fNoteBeat, 
-		(bActive?m_sprHoldTailActive:m_sprHoldTailInactive).GetNumStates(), 
+		pSpriteOut->GetNumStates(), 
 		g_fHoldTailAnimationLengthInBeats, 
 		g_bHoldTailAnimationIsVivid, 
 		g_bHoldTailAnimationIsNoteColor );
@@ -215,8 +283,9 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	// Draw the tail
 	//
 	{
-		Sprite* pSprTail = bActive ? &m_sprHoldTailActive : &m_sprHoldTailInactive;
-		int iFrameNo = GetHoldTailFrameNo( hn.m_fStartBeat, bActive );
+		Sprite* pSprTail;
+		int iFrameNo;
+		GetHoldTailSpriteAndFrameNo( hn.m_fStartBeat, bActive, pSprTail, iFrameNo );
 
 		if( g_bHoldTailIsWavy )
 		{
@@ -307,9 +376,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	// Draw the body (always wavy)
 	//
 	{
-		Sprite* pSprBody = bActive ? &m_sprHoldBodyActive : &m_sprHoldBodyInactive;
-		int iFrameNo = GetHoldBodyFrameNo( hn.m_fStartBeat, bActive );
-		
+		Sprite* pSprBody;
+		int iFrameNo;
+		GetHoldBodySpriteAndFrameNo( hn.m_fStartBeat, bActive, pSprBody, iFrameNo );
+
 		// draw manually in small segments
 		RageVertex *v = &queue[0];
 		RageTexture* pTexture = pSprBody->GetTexture();
@@ -387,8 +457,9 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	// Draw the head
 	//
 	{
-		Sprite* pSprHead = bActive ? &m_sprHoldHeadActive : &m_sprHoldHeadInactive;
-		int iFrameNo = GetHoldHeadFrameNo( hn.m_fStartBeat, bActive );
+		Sprite* pSprHead;
+		int iFrameNo;
+		GetHoldHeadSpriteAndFrameNo( hn.m_fStartBeat, bActive, pSprHead, iFrameNo );
 
 		if( g_bHoldHeadIsWavy )
 		{
@@ -492,6 +563,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	RageColor diffuse = RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	RageColor glow = RageColor(1,1,1,fGlow);
 
+	/*
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_ColorType == PlayerOptions::COLOR_NOTE )
 	{
 		RageColor noteColor = GetNoteColorFromBeat(fBeat);
@@ -501,27 +573,35 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 
 		glow = RageColor(1,1,1,1)*fGlow + noteColor*(1-fGlow)*0.7f*fAlpha;
 	}
+	*/
 
 	if( bOnSameRowAsHoldStart  &&  g_bDrawHoldHeadForTapsOnSameRow )
 	{
 		// draw hold head
-		const int iHoldHeadFrameNo		= GetHoldHeadFrameNo( fBeat, false );
-		m_sprHoldHeadInactive.SetXY( fXPos, fYPos );
-		m_sprHoldHeadInactive.SetDiffuse( diffuse );
-		m_sprHoldHeadInactive.SetGlow( glow );
-		m_sprHoldHeadInactive.StopUsingCustomCoords();
-		m_sprHoldHeadInactive.SetState( iHoldHeadFrameNo );
-		m_sprHoldHeadInactive.Draw();
+		Sprite* pSprHead;
+		int iFrameNo;
+		GetHoldHeadSpriteAndFrameNo( fBeat, false, pSprHead, iFrameNo );
+
+		pSprHead->SetXY( fXPos, fYPos );
+		pSprHead->SetDiffuse( diffuse );
+		pSprHead->SetGlow( glow );
+		pSprHead->StopUsingCustomCoords();
+		pSprHead->SetState( iFrameNo );
+		pSprHead->Draw();
 	}
 	else	
 	{
-		const int iTapFrameNo		= GetTapNoteFrameNo( fBeat );
-		m_sprTapNote.SetXY( fXPos, fYPos );
-		m_sprTapNote.SetRotation( fRotation );
-		m_sprTapNote.SetGlow( glow );
-		m_sprTapNote.SetDiffuse( diffuse );
-		m_sprTapNote.SetState( iTapFrameNo );
-		m_sprTapNote.Draw();
+		// draw tap
+		Sprite* pSprTap;
+		int iFrameNo;
+		GetTapNoteSpriteAndFrameNo( fBeat, pSprTap, iFrameNo );
+		
+		pSprTap->SetXY( fXPos, fYPos );
+		pSprTap->SetRotation( fRotation );
+		pSprTap->SetGlow( glow );
+		pSprTap->SetDiffuse( diffuse );
+		pSprTap->SetState( iFrameNo );
+		pSprTap->Draw();
 	}
 }
 

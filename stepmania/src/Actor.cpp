@@ -24,6 +24,8 @@ Actor::Actor()
 
 	m_iNumTweenStates = 0;
 
+	m_baseRotation = RageVector3( 0, 0, 0 );
+	m_baseScale = RageVector3( 1, 1, 1 );
 	m_size = RageVector2( 1, 1 );
 
 	m_start.Init();
@@ -124,16 +126,17 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	}
 
 
-
+	m_temp.scale.x *= m_baseScale.x;
+	m_temp.scale.y *= m_baseScale.y;
+	m_temp.scale.z *= m_baseScale.z;
+	m_temp.rotation.x += m_baseRotation.x;
+	m_temp.rotation.y += m_baseRotation.y;
+	m_temp.rotation.z += m_baseRotation.z;
 	
+
 	DISPLAY->Translate( m_temp.pos.x, m_temp.pos.y, m_temp.pos.z );
-	DISPLAY->Scale( m_temp.scale.x, m_temp.scale.y, 1 );
+	DISPLAY->Scale( m_temp.scale.x, m_temp.scale.y, m_temp.scale.z );
 
-	// super slow, and most Actors don't have any rotation	
-	//	RageMatrixRotationYawPitchRoll( &matTemp, rotation.y, rotation.x, rotation.z );	// add in the rotation
-	//	matNewWorld = matTemp * matNewWorld;
-
-	// replace with...
 	if( m_temp.rotation.x != 0 )	DISPLAY->RotateX( m_temp.rotation.x );
 	if( m_temp.rotation.y != 0 )	DISPLAY->RotateY( m_temp.rotation.y );
 	if( m_temp.rotation.z != 0 )	DISPLAY->RotateZ( m_temp.rotation.z );

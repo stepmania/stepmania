@@ -77,6 +77,7 @@ NoteType BeatToNoteType( float fBeat );
 bool IsNoteOfType( int iNoteIndex, NoteType t );
 RageColor GetNoteColorFromIndex( int iNoteIndex );
 RageColor GetNoteColorFromBeat( float fBeat );
+CString NoteTypeToString( NoteType nt );
 
 
 

@@ -33,26 +33,6 @@ public:
 	void	GetNotesTypesForGame( Game game, vector<NotesType>& aNotesTypeAddTo );
 	Style	GetEditorStyleForNotesType( NotesType nt );
 
-//	void GetGameNames( CStringArray &AddTo );
-//	bool DoesGameExist( CString sGameName );
-
-	CString GetCurNoteSkinDir();
-
-	void GetNoteSkinNames( Game game, CStringArray &AddTo ) const;
-	void GetNoteSkinNames( CStringArray &AddTo ) const;	// looks up current Game in GAMESTATE
-	bool DoesNoteSkinExist( CString sSkinName ) const;	// looks up current Game in GAMESTATE
-	void SwitchNoteSkin( CString sNewNoteSkin );	// looks up current Game in GAMESTATE
-	CString GetCurNoteSkin() const { return m_sCurNoteSkin; };
-
-	CString GetPathTo( const int col, CString sElementName );
-
-	CString		GetMetric( CString sClassName, CString sValueName );
-	int			GetMetricI( CString sClassName, CString sValueName );
-	float		GetMetricF( CString sClassName, CString sValueName );
-	bool		GetMetricB( CString sClassName, CString sValueName );
-	RageColor	GetMetricC( CString sClassName, CString sValueName );
-
-
 	void GetEnabledGames( vector<Game>& aGamesOut );
 
 	static int NotesTypeToNumTracks( NotesType nt );
@@ -61,9 +41,6 @@ public:
 	static Game StringToGameType( CString sGameType );
 
 protected:
-
-	CString m_sCurNoteSkin;	
-	IniFile* m_pIniFile;
 };
 
 extern GameManager*	GAMEMAN;	// global and accessable from anywhere in our program

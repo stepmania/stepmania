@@ -19,7 +19,7 @@
 !define PRODUCT_NAME_VER "${PRODUCT_NAME} ${VERSION}"
 
 Name "${PRODUCT_NAME}"
-OutFile "stepmania-CVS-20030202.exe"
+OutFile "stepmania-CVS-20030205.exe"
 ;OutFile "stepmania301.exe"
 
 ; Some default compiler settings (uncomment and change at will):
@@ -130,12 +130,16 @@ SetOutPath "$INSTDIR\Music"
 File "Music\instructions.txt"
 
 RMDir /r "$INSTDIR\NoteSkins\dance\MAX"
-CreateDirectory "$INSTDIR\NoteSkins\dance\MAX"
+RMDir /r "$INSTDIR\NoteSkins\dance\default"
+RMDir /r "$INSTDIR\NoteSkins\dance\flat"
+RMDir /r "$INSTDIR\NoteSkins\dance\note"
 SetOutPath "$INSTDIR\NoteSkins"
 File "NoteSkins\instructions.txt"
-
+CreateDirectory "$INSTDIR\NoteSkins\dance\default"
+CreateDirectory "$INSTDIR\NoteSkins\dance\note"
 SetOutPath "$INSTDIR\NoteSkins\dance"
-File /r "NoteSkins\dance\MAX"
+File /r "NoteSkins\dance\default"
+File /r "NoteSkins\dance\note"
 
 SetOutPath "$INSTDIR\NoteSkins\pump"
 File /r "NoteSkins\pump\classic" ; what the heck, they're tiny
@@ -254,7 +258,9 @@ Delete "$INSTDIR\Music\instructions.txt"
 RMDir "$INSTDIR\Music"
 
 Delete "$INSTDIR\NoteSkins\instructions.txt"
-RMDir /r "$INSTDIR\NoteSkins\dance\MAX"
+RMDir /r "$INSTDIR\NoteSkins\dance\default"
+RMDir /r "$INSTDIR\NoteSkins\dance\flat"
+RMDir /r "$INSTDIR\NoteSkins\dance\note"
 RMDir "$INSTDIR\NoteSkins\dance"
 RMDir /r "$INSTDIR\NoteSkins\pump\classic"
 RMDir /r "$INSTDIR\NoteSkins\pump\shiny"

@@ -855,6 +855,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		OnSnapModeChange();
 		break;
 	case SDLK_RETURN:
+	case SDLK_KP_ENTER:
 		if( m_NoteFieldEdit.m_fEndMarker != -1  &&  GAMESTATE->m_fSongBeat > m_NoteFieldEdit.m_fEndMarker )
 		{
 			// invalid!  The begin maker must be placed before the end marker

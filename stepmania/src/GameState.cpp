@@ -19,6 +19,7 @@
 #include "Song.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
+#include "RageUtil.h"
 
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program

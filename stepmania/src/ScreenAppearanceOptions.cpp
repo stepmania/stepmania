@@ -21,7 +21,7 @@
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
-#include "GameManager.h"
+#include "NoteSkinManager.h"
 #include "GameState.h"
 #include "ThemeManager.h"
 
@@ -134,7 +134,7 @@ void ScreenAppearanceOptions::ImportOptions()
 	// fill in skin names
 	//
 	CStringArray arraySkinNames;
-	GAMEMAN->GetNoteSkinNames( arraySkinNames );
+	NOTESKIN->GetNoteSkinNames( arraySkinNames );
 
 	m_OptionRowData[AO_SKIN].iNumOptions	=	arraySkinNames.size(); 
 	
@@ -145,7 +145,7 @@ void ScreenAppearanceOptions::ImportOptions()
 	m_iSelectedOption[0][AO_SKIN] = -1;
 	for( i=0; i<m_OptionRowData[AO_SKIN].iNumOptions; i++ )
 	{
-		if( 0==stricmp(m_OptionRowData[AO_SKIN].szOptionsText[i], GAMEMAN->GetCurNoteSkin()) )
+		if( 0==stricmp(m_OptionRowData[AO_SKIN].szOptionsText[i], NOTESKIN->GetCurNoteSkinName()) )
 		{
 			m_iSelectedOption[0][AO_SKIN] = i;
 			break;
@@ -177,7 +177,7 @@ void ScreenAppearanceOptions::ExportOptions()
 
 	int iSelectedSkin = m_iSelectedOption[0][AO_SKIN];
 	CString sNewSkin = m_OptionRowData[AO_SKIN].szOptionsText[iSelectedSkin];
-	GAMEMAN->SwitchNoteSkin( sNewSkin );
+	NOTESKIN->SwitchNoteSkin( sNewSkin );
 
 	PREFSMAN->m_bInstructions			= !!m_iSelectedOption[0][AO_INSTRUCTIONS];
 	PREFSMAN->m_bShowDontDie			= !!m_iSelectedOption[0][AO_CAUTION];

@@ -53,10 +53,24 @@ NoteType GetNoteType( int iNoteIndex )
 	else												return NOTE_TYPE_INVALID;
 };
 
+CString NoteTypeToString( NoteType nt )
+{
+	switch( nt )
+	{
+	case NOTE_TYPE_4TH:		return "4th";
+	case NOTE_TYPE_8TH:		return "8th";
+	case NOTE_TYPE_12TH:	return "12th";
+	case NOTE_TYPE_16TH:	return "16th";
+	case NOTE_TYPE_24TH:	return "24th";
+	case NOTE_TYPE_32ND:	return "32nd";
+	default:	ASSERT(0);	return "";
+	}
+}
+
 NoteType BeatToNoteType( float fBeat )
 { 
 	return GetNoteType( BeatToNoteRow(fBeat) );
-};
+}
 
 bool IsNoteOfType( int iNoteIndex, NoteType t )
 { 

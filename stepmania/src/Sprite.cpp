@@ -51,6 +51,12 @@ Sprite::~Sprite()
 // Delay0000=1.0
 // Frame0001=3
 // Delay0000=2.0
+// BaseRotationXDegrees=0
+// BaseRotationYDegrees=0
+// BaseRotationZDegrees=0
+// BaseZoomX=1
+// BaseZoomY=1
+// BaseZoomZ=1
 bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 {
 	LOG->Trace( ssprintf("Sprite::LoadFromSpriteFile(%s)", ID.filename.GetString()) );
@@ -63,9 +69,6 @@ bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 	// Split for the directory.  We'll need it below
 	CString sFontDir, sFontFileName, sFontExtension;
 	splitrelpath( m_sSpritePath, sFontDir, sFontFileName, sFontExtension );
-
-
-
 
 
 	// read sprite file
@@ -116,6 +119,14 @@ bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 		m_iStateToFrame[0] = 0;
 		m_fDelay[0] = 10;
 	}
+
+	float f;
+	if( ini.GetValueF( "Sprite", "BaseRotationXDegrees", f ) )	Actor::SetBaseRotationX( f*PI/180.f );
+	if( ini.GetValueF( "Sprite", "BaseRotationYDegrees", f ) )	Actor::SetBaseRotationY( f*PI/180.f );
+	if( ini.GetValueF( "Sprite", "BaseRotationZDegrees", f ) )	Actor::SetBaseRotationZ( f*PI/180.f );
+	if( ini.GetValueF( "Sprite", "BaseZoomX", f ) )				Actor::SetBaseZoomX( f );
+	if( ini.GetValueF( "Sprite", "BaseZoomY", f ) )				Actor::SetBaseZoomY( f );
+	if( ini.GetValueF( "Sprite", "BaseZoomZ", f ) )				Actor::SetBaseZoomZ( f );
 
 
 	return true;

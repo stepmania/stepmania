@@ -198,7 +198,7 @@ public:
 		// start and end position for tweening
 		RageVector3 pos;
 		RageVector3 rotation;
-		RageVector2 scale;
+		RageVector3 scale;
 		RageColor   diffuse[4];
 		RageColor   glow;
 
@@ -206,7 +206,7 @@ public:
 		{
 			pos	= RageVector3( 0, 0, 0 );
 			rotation = RageVector3( 0, 0, 0 );
-			scale = RageVector2( 1, 1 );
+			scale = RageVector3( 1, 1, 1 );
 			for(int i=0; i<4; i++) 
 				diffuse[i] = RageColor( 1, 1, 1, 1 );
 			glow = RageColor( 1, 1, 1, 0 );
@@ -230,6 +230,19 @@ protected:
 		float		m_fTweenTime;		// seconds between Start and End positions/zooms
 	};
 
+
+	// only called by Sprite
+	void  SetBaseZoomX( float zoom )	{ m_baseScale.x = zoom;	}
+	void  SetBaseZoomY( float zoom )	{ m_baseScale.y = zoom; }
+	void  SetBaseZoomZ( float zoom )	{ m_baseScale.z = zoom; }
+	virtual void  SetBaseRotationX( float rot )	{ m_baseRotation.x = rot; }
+	virtual void  SetBaseRotationY( float rot )	{ m_baseRotation.y = rot; }
+	virtual void  SetBaseRotationZ( float rot )	{ m_baseRotation.z = rot; }
+
+	RageVector3	m_baseRotation;
+	RageVector3	m_baseScale;
+
+
 	RageVector2	m_size;
 	TweenState	m_current;
 	TweenState	m_start;
@@ -242,13 +255,8 @@ protected:
 	// Temporary variables that are filled just before drawing
 	//
 	TweenState m_temp;
-/*	RageVector2 m_temp_size;
-	RageVector3 m_temp_pos;
-	RageVector3 m_temp_rotation;
-	RageVector2 m_temp_scale;
-	RageColor   m_temp_colorDiffuse[4];
-	RageColor   m_temp_colorGlow;
-*/
+
+
 
 	bool	m_bFirstUpdate;
 

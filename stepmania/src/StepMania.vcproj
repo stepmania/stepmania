@@ -1452,6 +1452,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="InputQueue.h">
 			</File>
 			<File
+				RelativePath="NoteSkinManager.cpp">
+			</File>
+			<File
+				RelativePath="NoteSkinManager.h">
+			</File>
+			<File
 				RelativePath=".\PrefsManager.cpp">
 			</File>
 			<File

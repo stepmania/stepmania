@@ -145,6 +145,9 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	if( !MenuI.IsValid() )
 		return;
 
+	if( PREFSMAN->m_CoinMode==PrefsManager::COIN_HOME && m_Fade.IsClosing() )
+		return;
+
 	switch( MenuI.button )
 	{
 	case MENU_BUTTON_UP:
@@ -162,6 +165,8 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		case PrefsManager::COIN_PAY:
 		case PrefsManager::COIN_FREE:
 			return;	// ignore
+		default:
+			ASSERT(0);
 		}
 		break;
 	case MENU_BUTTON_DOWN:
@@ -199,9 +204,6 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			// fall through
 		case PrefsManager::COIN_HOME:
 		case PrefsManager::COIN_FREE:
-			if( m_Fade.IsClosing() )
-				break;
-
 			GAMESTATE->m_bSideIsJoined[MenuI.player] = true;
 			GAMESTATE->m_MasterPlayerNumber = MenuI.player;
 			GAMESTATE->m_bPlayersCanJoin = false;

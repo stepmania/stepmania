@@ -15,7 +15,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "ArrowEffects.h"
-#include "GameManager.h"
+#include "NoteSkinManager.h"
 #include "GameState.h"
 #include "PrefsManager.h"
 
@@ -35,7 +35,7 @@ void GrayArrowRow::Load( PlayerNumber pn )
 
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		CString sPath = GAMEMAN->GetPathTo(c, "receptor");
+		CString sPath = NOTESKIN->GetPathTo(c, "receptor");
 		m_GrayArrow[c].Load( sPath );
 		// XXX
 		if( m_GrayArrow[c].GetNumStates() != 2 &&

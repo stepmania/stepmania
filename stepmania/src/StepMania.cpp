@@ -36,6 +36,7 @@
 // StepMania global classes
 //
 #include "ThemeManager.h"
+#include "NoteSkinManager.h"
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "PrefsManager.h"
@@ -121,11 +122,11 @@ void ResetGame()
 	INPUTMAPPER->ReadMappingsFromDisk();
 	GAMESTATE->m_bPlayersCanJoin = true;
 
-	if( !GAMEMAN->DoesNoteSkinExist( GAMEMAN->GetCurNoteSkin() ) )
+	if( !NOTESKIN->DoesNoteSkinExist( NOTESKIN->GetCurNoteSkinName() ) )
 	{
 		CStringArray asNoteSkinNames;
-		GAMEMAN->GetNoteSkinNames( asNoteSkinNames );
-		GAMEMAN->SwitchNoteSkin( asNoteSkinNames[0] );
+		NOTESKIN->GetNoteSkinNames( asNoteSkinNames );
+		NOTESKIN->SwitchNoteSkin( asNoteSkinNames[0] );
 	}
 	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
 	{
@@ -272,6 +273,7 @@ int main(int argc, char* argv[])
 	PREFSMAN	= new PrefsManager;
 	GAMEMAN		= new GameManager;
 	THEME		= new ThemeManager;
+	NOTESKIN	= new NoteSkinManager;
 	SOUNDMAN	= new RageSoundManager(PREFSMAN->m_sSoundDrivers);
 	SOUNDMAN->SetPrefs(PREFSMAN->m_fSoundVolume);
 	ANNOUNCER	= new AnnouncerManager;
@@ -364,6 +366,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( PREFSMAN );
 	SAFE_DELETE( GAMESTATE );
 	SAFE_DELETE( GAMEMAN );
+	SAFE_DELETE( NOTESKIN );
 	SAFE_DELETE( THEME );
 	SAFE_DELETE( ANNOUNCER );
 	SAFE_DELETE( INPUTMAN );
@@ -422,29 +425,7 @@ static void HandleInputEvents(float fDeltaTime)
 				continue;
 			}
 		}
-		/* Hitting F5, then waiting 5 seconds while my monitor is black
-		 * is really making me angry.  
-		 * Do any users even know about this hotkey or think it's useful?
-		 * Probably not...   -Chris
-/*		else if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))
-		{
-			if(type != IET_FIRST_PRESS) continue;
-
-			// pressed F5.  Toggle detail.
-			if(PREFSMAN->m_iDisplayWidth != 640)
-			{
-				PREFSMAN->m_iDisplayWidth = 640;
-				PREFSMAN->m_iDisplayHeight = 480;
-			}			
-			else
-			{
-				PREFSMAN->m_iDisplayWidth = 320;
-				PREFSMAN->m_iDisplayHeight = 240;
-			}			
-			ApplyGraphicOptions();
-		}
-		*/
-		else if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))	// F6 conflicts with editor and AutoSync
+		else if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))	// F5 conflicts with editor and AutoSync
 		{
 			if(type != IET_FIRST_PRESS) continue;
 

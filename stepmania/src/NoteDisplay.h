@@ -29,20 +29,22 @@ public:
 
 protected:
 	int GetFrameNo( float fNoteBeat, int iNumFrames, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor  );
-	int	GetTapNoteFrameNo( float fNoteBeat );
-	int	GetHoldHeadFrameNo( float fNoteBeat, bool bActive );
-	int	GetHoldBodyFrameNo( float fNoteBeat, bool bActive );
-	int	GetHoldTailFrameNo( float fNoteBeat, bool bActive );
+	void	GetTapNoteSpriteAndFrameNo( float fNoteBeat, Sprite*& pSpriteOut, int& iFrameNoOut );
+	void	GetHoldHeadSpriteAndFrameNo( float fNoteBeat, bool bActive, Sprite*& pSpriteOut, int& iFrameNoOut );
+	void	GetHoldBodySpriteAndFrameNo( float fNoteBeat, bool bActive, Sprite*& pSpriteOut, int& iFrameNoOut );
+	void	GetHoldTailSpriteAndFrameNo( float fNoteBeat, bool bActive, Sprite*& pSpriteOut, int& iFrameNoOut );
 
 	PlayerNumber m_PlayerNumber;	// to look up PlayerOptions
 
-	Sprite		m_sprTapNote;
-	Sprite		m_sprHoldHeadActive;
-	Sprite		m_sprHoldHeadInactive;
-	Sprite		m_sprHoldBodyActive;
-	Sprite		m_sprHoldBodyInactive;
-	Sprite		m_sprHoldTailActive;
-	Sprite		m_sprHoldTailInactive;
+#define NOTE_COLOR_IMAGES 6
+
+	Sprite		m_sprTapNote[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldHeadActive[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldHeadInactive[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldBodyActive[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldBodyInactive[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldTailActive[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldTailInactive[NOTE_COLOR_IMAGES];
 };
 
 #endif

@@ -12,7 +12,6 @@
 -----------------------------------------------------------------------------
 */
 
-#include "RageUtil.h"
 #include "RageTypes.h"
 
 class IniFile;
