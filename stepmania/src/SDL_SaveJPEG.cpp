@@ -1,6 +1,7 @@
 #include "global.h"
 #include "SDL.h"
 #include "SDL_utils.h"
+#include "RageUtil.h"
 
 #undef FAR /* fix for VC */
 namespace jpeg
@@ -98,7 +99,7 @@ void IMG_SaveJPG_RW( SDL_Surface *surface, SDL_RWops *dest, bool bHighQual )
 {
 	SDL_Surface *dst_surface;
 	if( ConvertSDLSurface( surface, dst_surface,
-		surface->w, surface->h, 24, mySDL_SwapBE24(0xFF0000), mySDL_SwapBE24(0x00FF00), mySDL_SwapBE24(0x0000FF), 0 ) )
+		surface->w, surface->h, 24, Swap24BE(0xFF0000), Swap24BE(0x00FF00), Swap24BE(0x0000FF), 0 ) )
 		surface = dst_surface;
 
 	struct jpeg::jpeg_compress_struct cinfo;

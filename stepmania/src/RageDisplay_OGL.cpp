@@ -274,8 +274,8 @@ static void FixLilEndian()
 			int m = pf.masks[mask];
 			switch( pf.bpp )
 			{
-			case 24: m = mySDL_Swap24(m); break;
-			case 32: m = SDL_Swap32(m); break;
+			case 24: m = Swap24(m); break;
+			case 32: m = Swap32(m); break;
 			default: ASSERT(0);
 			}
 			pf.masks[mask] = m;
