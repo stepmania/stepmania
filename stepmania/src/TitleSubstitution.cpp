@@ -129,7 +129,7 @@ void TitleSubst::Load(const CString &filename, const CString &section)
 		}
 
 		/* Add the translation if this is a terminator (*) or section
-		 * marker ([xxx]). */
+		 * marker ([foo]). */
 		if(line[0] == '*' || line[0] == '[')
 		{
 			/* Surround each regex with ^(...)$, to force all comparisons to default
