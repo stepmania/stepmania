@@ -26,7 +26,7 @@ OSStatus HandleException(ExceptionInformation *theException)
 
 void *GetCrashedFramePtr()
 {
-    return crashedFramePtr;
+    return (crashedFramePtr ? crashedFramePtr : __builtin_return_address(2));
 }
 
 void InformUserOfCrash()
