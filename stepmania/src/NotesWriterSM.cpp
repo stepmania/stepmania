@@ -83,7 +83,7 @@ void NotesWriterSM::WriteSMNotesTag( const Notes &in, FILE* fp )
 	fprintf( fp, "     %d:\n", in.GetMeter() );
 	
 	CStringArray asRadarValues;
-	for( int r=0; r < NUM_RADAR_VALUES; r++ )
+	for( int r=0; r < NUM_RADAR_CATEGORIES; r++ )
 		asRadarValues.push_back( ssprintf("%.3f", in.GetRadarValues()[r]) );
 	fprintf( fp, "     %s:\n", join(",",asRadarValues).GetString() );
 

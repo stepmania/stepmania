@@ -87,7 +87,7 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_sprStyleIcon.Load( THEME->GetPathTo("Graphics",ssprintf("menu style icons %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
 	m_sprStyleIcon.StopAnimating();
 	m_sprStyleIcon.SetXY( STYLE_ICON_X, STYLE_ICON_Y );
-	if( GAMESTATE->m_CurStyle == STYLE_NONE  ||  !bShowStyleIcon )
+	if( GAMESTATE->m_CurStyle == STYLE_INVALID  ||  !bShowStyleIcon )
 		m_sprStyleIcon.SetDiffuse( RageColor(1,1,1,0) );
 	else
 	{

@@ -45,7 +45,7 @@ enum RadarCategory	// starting from 12-o'clock rotating clockwise
 	RADAR_AIR,
 	RADAR_FREEZE,
 	RADAR_CHAOS,
-	NUM_RADAR_VALUES	// leave this at the end
+	NUM_RADAR_CATEGORIES	// leave this at the end
 };
 
 enum Difficulty 

@@ -306,7 +306,7 @@ MusicWheel::MusicWheel()
 	g_fItemCurveX = ITEM_CURVE_X;
 
 	// for debugging
-	if( GAMESTATE->m_CurStyle == STYLE_NONE )
+	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
 		GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
 
 	m_sprSelectionOverlay.Load( THEME->GetPathTo("Graphics","select music song highlight") );

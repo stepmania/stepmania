@@ -7,6 +7,8 @@ NEW FEATURE:  New modifier: Acceleration-Boomerang
 CHANGE:  Tweaked Acceleration-Wave for more of a challenge
 CHANGE:  Changed format  NoteSkin tap graphic format.  Existing NoteSkins will 
 	need to update the tap graphic.
+NEW FEATURE:  New Edit menus with ability to delete Notes patterns and new 
+	options	for importing existing patterns into a new Notes pattern.
 
 ----------------------- Version 3.01 ---------------------------
 CHANGE:  Simplified NoteSkin tap graphic format.  Old NoteSkins will need to 

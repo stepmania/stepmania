@@ -16,8 +16,6 @@
 #include "Song.h"
 
 
-const int NUM_RADAR_CATEGORIES	=	5;
-
 class GrooveRadar : public ActorFrame
 {
 public:

@@ -28,9 +28,10 @@ public:
 	GameDef*	GetGameDefForGame( Game g );
 	const StyleDef*	GetStyleDefForStyle( Style s );
 
-	void		GetGameplayStylesForGame( Game game, vector<Style>& aStylesAddTo, bool editor=false );
-	void		GetModesChoicesForGame( Game game, vector<ModeChoice*>& apChoicesAddTo );
-	void		GetNotesTypesForGame( Game game, vector<NotesType>& aNotesTypeAddTo );	// only look at edit-specific styles
+	void	GetStylesForGame( Game game, vector<Style>& aStylesAddTo, bool editor=false );
+	void	GetModesChoicesForGame( Game game, vector<ModeChoice*>& apChoicesAddTo );
+	void	GetNotesTypesForGame( Game game, vector<NotesType>& aNotesTypeAddTo );
+	Style	GetEditorStyleForNotesType( NotesType nt );
 
 //	void GetGameNames( CStringArray &AddTo );
 //	bool DoesGameExist( CString sGameName );

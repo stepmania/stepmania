@@ -242,13 +242,17 @@ ScreenNameEntry::ScreenNameEntry()
 	}
 
 
+
 	bool bAnyStillEntering = false;
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		bAnyStillEntering |= m_bStillEnteringName[p];
-	if( !bAnyStillEntering )
+	
 	{
-		this->SendScreenMessage( SM_GoToNextScreen, 0 );
-		return;
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			bAnyStillEntering |= m_bStillEnteringName[p];
+		if( !bAnyStillEntering )
+		{
+			this->SendScreenMessage( SM_GoToNextScreen, 0 );
+			return;
+		}
 	}
 
 

@@ -43,8 +43,8 @@ void SMLoader::LoadFromSMTokens(
 	out.SetMeter(atoi(sMeter));
 	CStringArray saValues;
 	split( sRadarValues, ",", saValues, true );
-	if( saValues.size() == NUM_RADAR_VALUES )
-		for( int r=0; r<NUM_RADAR_VALUES; r++ )
+	if( saValues.size() == NUM_RADAR_CATEGORIES )
+		for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
 			out.SetRadarValue(r, (float)atof(saValues[r]));
     
 	out.SetSMNoteData(sNoteData);

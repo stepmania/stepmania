@@ -38,7 +38,7 @@ void TransitionFade::DrawPrimitives()
 	CLAMP( fPercentageOpaque, 0, 1 );
 
 	RageColor colorTemp = GetDiffuse();
-	colorTemp.a = fPercentageOpaque;
+	colorTemp.a *= fPercentageOpaque;
 	m_rect.SetDiffuse( colorTemp );
 	m_rect.Draw();
 }

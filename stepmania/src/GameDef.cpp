@@ -34,7 +34,7 @@ MenuInput GameDef::GameInputToMenuInput( GameInput GameI ) const
 	PlayerNumber pn;
 
 	StyleDef::StyleType type = StyleDef::TWO_PLAYERS_TWO_CREDITS;
-	if( GAMESTATE->m_CurStyle != STYLE_NONE )
+	if( GAMESTATE->m_CurStyle != STYLE_INVALID )
 		type = GAMESTATE->GetCurrentStyleDef()->m_StyleType;
 	switch( type )
 	{

@@ -133,113 +133,6 @@ CString DeviceInput::GetDescription()
 
 	case DEVICE_KEYBOARD:		// keyboard
 		sReturn = ssprintf("Key %s", SDL_GetKeyName((SDLKey)button) );
-/*
-		switch( button )
-		{
-		case SDLK_ESCAPE:	sReturn += "Escape";	break;
-		case SDLK_1:			sReturn += "1";			break;
-		case SDLK_2:			sReturn += "2";			break;
-		case SDLK_3:			sReturn += "3";			break;
-		case SDLK_4:			sReturn += "4";			break;
-		case SDLK_5:			sReturn += "5";			break;
-		case SDLK_6:			sReturn += "6";			break;
-		case SDLK_7:			sReturn += "7";			break;
-		case SDLK_8:			sReturn += "8";			break;
-		case SDLK_9:			sReturn += "9";			break;
-		case SDLK_0:			sReturn += "0";			break;
-		case SDLK_MINUS:		sReturn += "Minus";		break;
-		case SDLK_EQUALS:	sReturn += "Equals";	break;
-		case SDLK_BACKSPACE:		sReturn += "Backsp";	break;
-		case SDLK_TAB:		sReturn += "Tab";		break;
-		case SDLK_Q:			sReturn += "Q";			break;
-		case SDLK_W:			sReturn += "W";			break;
-		case SDLK_E:			sReturn += "E";			break;
-		case SDLK_R:			sReturn += "R";			break;
-		case SDLK_T:			sReturn += "T";			break;
-		case SDLK_Y:			sReturn += "Y";			break;
-		case SDLK_U:			sReturn += "U";			break;
-		case SDLK_I:			sReturn += "I";			break;
-		case SDLK_O:			sReturn += "O";			break;
-		case SDLK_P:			sReturn += "P";			break;
-		case SDLK_LBRACKET:	sReturn += "LBracket";	break;
-		case SDLK_RBRACKET:	sReturn += "RBracket";	break;
-		case SDLK_RETURN:	sReturn += "Return";	break;
-		case SDLK_LCONTROL:	sReturn += "LControl";	break;
-		case SDLK_A:			sReturn += "A";			break;
-		case SDLK_S:			sReturn += "S";			break;
-		case SDLK_D:			sReturn += "D";			break;
-		case SDLK_F:			sReturn += "F";			break;
-		case SDLK_G:			sReturn += "G";			break;
-		case SDLK_H:			sReturn += "H";			break;
-		case SDLK_J:			sReturn += "J";			break;
-		case SDLK_K:			sReturn += "K";			break;
-		case SDLK_L:			sReturn += "L";			break;
-		case SDLK_SEMICOLON:	sReturn += "Semicln";	break;
-		case SDLK_APOSTROPHE:sReturn += "Apostro";	break;
-		case SDLK_GRAVE:		sReturn += "Grave";		break;
-		case SDLK_LSHIFT:	sReturn += "LShift";	break;
-		case SDLK_BACKSLASH:	sReturn += "Backslsh";	break;
-		case SDLK_Z:			sReturn += "Z";			break;
-		case SDLK_X:			sReturn += "X";			break;
-		case SDLK_C:			sReturn += "C";			break;
-		case SDLK_V:			sReturn += "V";			break;
-		case SDLK_B:			sReturn += "B";			break;
-		case SDLK_N:			sReturn += "N";			break;
-		case SDLK_M:			sReturn += "M";			break;
-		case SDLK_COMMA:		sReturn += "Comma";		break;
-		case SDLK_PERIOD:	sReturn += "Period";	break;
-		case SDLK_SLASH:		sReturn += "Slash";		break;
-		case SDLK_RSHIFT:	sReturn += "RShift";	break;
-		case SDLK_MULTIPLY:	sReturn += "Mult";		break;
-		case SDLK_LMENU:		sReturn += "LMenu";		break;
-		case SDLK_SPACE:		sReturn += "Space";		break;
-		case SDLK_CAPITAL:	sReturn += "CapsLk";	break;
-		case SDLK_F1:		sReturn += "F1";		break;
-		case SDLK_F2:		sReturn += "F2";		break;
-		case SDLK_F3:		sReturn += "F3";		break;
-		case SDLK_F4:		sReturn += "F4";		break;
-		case SDLK_F5:		sReturn += "F5";		break;
-		case SDLK_F6:		sReturn += "F6";		break;
-		case SDLK_F7:		sReturn += "F7";		break;
-		case SDLK_F8:		sReturn += "F8";		break;
-		case SDLK_F9:		sReturn += "F9";		break;
-		case SDLK_F10:		sReturn += "F10";		break;
-		case SDLK_NUMLOCK:	sReturn += "Numlock";	break;
-		case SDLK_SCROLL:	sReturn += "Scroll";	break;
-		case SDLK_NUMPAD7:	sReturn += "NumPad7";	break;
-		case SDLK_NUMPAD8:	sReturn += "NumPad8";	break;
-		case SDLK_NUMPAD9:	sReturn += "NumPad9";	break;
-		case SDLK_SUBTRACT:	sReturn += "Subtract";	break;
-		case SDLK_NUMPAD4:	sReturn += "NumPad4";	break;
-		case SDLK_NUMPAD5:	sReturn += "NumPad5";	break;
-		case SDLK_NUMPAD6:	sReturn += "NumPad6";	break;
-		case SDLK_ADD:		sReturn += "Add";		break;
-		case SDLK_NUMPAD1:	sReturn += "NumPad1";	break;
-		case SDLK_NUMPAD2:	sReturn += "NumPad2";	break;
-		case SDLK_NUMPAD3:	sReturn += "NumPad3";	break;
-		case SDLK_NUMPAD0:	sReturn += "NumPad0";	break;
-		case SDLK_DECIMAL:	sReturn += "Decimal";	break;
-		case SDLK_RMENU:		sReturn += "RightAlt";	break;
-		case SDLK_PAUSE:		sReturn += "Pause";		break;
-		case SDLK_HOME:		sReturn += "Home";		break;
-		case SDLK_UP:		sReturn += "Up";		break;
-		case SDLK_PRIOR:		sReturn += "PageUp";	break;
-		case SDLK_LEFT:		sReturn += "Left";		break;
-		case SDLK_RIGHT:		sReturn += "Right";		break;
-		case SDLK_END:		sReturn += "End";		break;
-		case SDLK_DOWN:		sReturn += "Down";		break;
-		case SDLK_NEXT:		sReturn += "PageDn";	break;
-		case SDLK_INSERT:	sReturn += "Insert";	break;
-		case SDLK_DELETE:	sReturn += "Delete";	break;
-		case SDLK_LWIN:		sReturn += "LeftWin";	break;
-		case SDLK_RWIN:		sReturn += "RightWin";	break;
-		case SDLK_APPS:		sReturn += "AppMenu";	break;
-		case SDLK_NUMPADENTER:	sReturn += "PadEnter";	break;
-		case SDLK_DIVIDE:	sReturn += "PadSlash";	break;
-
-		default:			sReturn += "Unknown Key"; break;
-		}
-*/
 		break;
 	default:
 		ASSERT(0);	// what device is this?
@@ -338,10 +231,16 @@ RageInput::RageInput()
 	//
 	memset( m_pJoystick, 0, sizeof(m_pJoystick) );
 	int iNumJoySticks = min( SDL_NumJoysticks(), NUM_JOYSTICKS );
+	LOG->Info( "Found %d joysticks", iNumJoySticks );
 	for( int i=0; i<iNumJoySticks; i++ )
 	{
 		m_pJoystick[i] = SDL_JoystickOpen( i );
-		LOG->Info( "Found joystick %d: %s", i, SDL_JoystickName(i) );
+		LOG->Info( "   %d: '%s' axes: %d, hats: %d, buttons: %d",
+			i,
+			SDL_JoystickName(i),
+			SDL_JoystickNumAxes(m_pJoystick[i]),
+			SDL_JoystickNumHats(m_pJoystick[i]),
+			SDL_JoystickNumButtons(m_pJoystick[i]) );
 	}
 	SDL_JoystickEventState( SDL_IGNORE );
 

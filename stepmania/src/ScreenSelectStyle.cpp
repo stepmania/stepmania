@@ -46,10 +46,10 @@ ScreenSelectStyle::ScreenSelectStyle()
 	LOG->Trace( "ScreenSelectStyle::ScreenSelectStyle()" );
 
 	// Reset the current style and game
-	GAMESTATE->m_CurStyle = STYLE_NONE;
+	GAMESTATE->m_CurStyle = STYLE_INVALID;
 	GAMESTATE->m_bPlayersCanJoin = true;
 
-	GAMEMAN->GetGameplayStylesForGame( GAMESTATE->m_CurGame, m_aPossibleStyles );
+	GAMEMAN->GetStylesForGame( GAMESTATE->m_CurGame, m_aPossibleStyles );
 	ASSERT( !m_aPossibleStyles.empty() );	// every game should have at least one Style, or else why have the Game? :-)
 	m_iSelection = 0;
 

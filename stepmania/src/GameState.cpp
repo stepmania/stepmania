@@ -52,7 +52,7 @@ void GameState::Reset()
 {
 	int p;
 
-	m_CurStyle = STYLE_NONE;
+	m_CurStyle = STYLE_INVALID;
 	m_bPlayersCanJoin = false;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_bSideIsJoined[p] = false;
@@ -172,13 +172,13 @@ GameDef* GameState::GetCurrentGameDef()
 
 const StyleDef* GameState::GetCurrentStyleDef()
 {
-	ASSERT( m_CurStyle != STYLE_NONE );	// the style must be set before calling this
+	ASSERT( m_CurStyle != STYLE_INVALID );	// the style must be set before calling this
 	return GAMEMAN->GetStyleDefForStyle( m_CurStyle );
 }
 
 bool GameState::IsPlayerEnabled( PlayerNumber pn )
 {
-	if( m_CurStyle == STYLE_NONE )	// if no style set (we're in TitleMenu, ConfigInstruments or something)
+	if( m_CurStyle == STYLE_INVALID )	// if no style set (we're in TitleMenu, ConfigInstruments or something)
 		return true;				// allow input from both sides
 
 	switch( GetCurrentStyleDef()->m_StyleType )

@@ -369,7 +369,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_sprBonusFrame[p].SetXY( BONUS_X(p), BONUS_Y );
 				this->AddChild( &m_sprBonusFrame[p] );
 	
-				for( int r=0; r<NUM_RADAR_VALUES; r++ )	// foreach line
+				for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )	// foreach line
 				{
 					m_sprPossibleBar[p][r].Load( THEME->GetPathTo("Graphics","evaluation bars possible 1x2") );
 					m_sprPossibleBar[p][r].SetState( p );
@@ -614,7 +614,7 @@ void ScreenEvaluation::TweenOnScreen()
 
 		vector<Actor*> apActorsInBonusOrStageInfo;
 		apActorsInBonusOrStageInfo.push_back( &m_sprBonusFrame[p] );
-		for( i=0; i<NUM_RADAR_VALUES; i++ )
+		for( i=0; i<NUM_RADAR_CATEGORIES; i++ )
 		{
 			apActorsInBonusOrStageInfo.push_back( &m_sprPossibleBar[p][i] );
 			apActorsInBonusOrStageInfo.push_back( &m_sprActualBar[p][i] );
@@ -686,7 +686,7 @@ void ScreenEvaluation::TweenOffScreen()
 
 		m_Grades[p].SettleImmediately();
 
-		for( i=0; i<NUM_RADAR_VALUES; i++ )
+		for( i=0; i<NUM_RADAR_CATEGORIES; i++ )
 		{
 			m_sprPossibleBar[p][i].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
 			m_sprActualBar[p][i].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );

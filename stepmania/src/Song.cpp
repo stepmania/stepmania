@@ -727,7 +727,7 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		NoteData tempNoteData;
 		pNotes->GetNoteData( &tempNoteData );
 
-		for( int r=0; r<NUM_RADAR_VALUES; r++ )
+		for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
 		{
 			/* If it's autogen, radar vals come from the parent. */
 			if(pNotes->IsAutogen())
@@ -749,13 +749,21 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 	}
 }
 
-void Song::GetNotesThatMatch( NotesType nt, vector<Notes*>& arrayAddTo ) const
+void Song::GetNotesThatMatch( NotesType nt, vector<Notes*>& arrayAddTo, bool bIncludeAutoGen ) const
 {
 	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Notes
-	{
 		if( m_apNotes[i]->m_NotesType == nt )
-			arrayAddTo.push_back( m_apNotes[i] );
-	}
+			if( bIncludeAutoGen || !m_apNotes[i]->IsAutogen() )
+				arrayAddTo.push_back( m_apNotes[i] );
+}
+
+Notes* Song::GetNotesThatMatch( NotesType nt, Difficulty dc, bool bIncludeAutoGen ) const
+{
+	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Notes
+		if( m_apNotes[i]->m_NotesType==nt &&  m_apNotes[i]->GetDifficulty()==dc )
+			if( bIncludeAutoGen || !m_apNotes[i]->IsAutogen() )
+				return m_apNotes[i];
+	return NULL;
 }
 
 /* Return whether the song is playable in the given style. */
@@ -896,6 +904,19 @@ void Song::AutoGen( NotesType ntTo, NotesType ntFrom )
 		}
 	}
 }
+
+void Song::RemoveAutoGenNotes()
+{
+	for( int j=m_apNotes.size()-1; j>=0; j-- )
+	{
+		if( m_apNotes[j]->IsAutogen() )
+		{
+			delete m_apNotes[j];
+			m_apNotes.erase( m_apNotes.begin()+j );
+		}
+	}
+}
+
 
 Grade Song::GetGradeForDifficulty( const StyleDef *st, PlayerNumber pn, Difficulty dc ) const
 {
@@ -1204,3 +1225,28 @@ float Song::GetLastBeat() const
 	return last;
 }
 #endif
+
+void Song::AddNotes( Notes* pNotes )
+{
+	m_apNotes.push_back( pNotes );
+}
+
+void Song::RemoveNotes( Notes* pNotes )
+{
+	// Avoid any stale Note::parent pointers by removing all AutoGen'd Notes,
+	// then adding them again.
+
+	RemoveAutoGenNotes();
+
+	for( unsigned j=m_apNotes.size()-1; j>=0; j-- )
+	{
+		if( m_apNotes[j] == pNotes )
+		{
+			delete m_apNotes[j];
+			m_apNotes.erase( m_apNotes.begin()+j );
+			break;
+		}
+	}
+
+	AddAutoGenNotes();
+}

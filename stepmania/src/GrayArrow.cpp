@@ -44,7 +44,7 @@ void GrayArrow::Update( float fDeltaTime )
 	int OnState = (GetNumStates() == 3)? 1: 0;
 	int OffState = (GetNumStates() == 3)? 2: 1;
 	
-	if( !GAMESTATE->m_fSongBeat > 0 )
+	if( GAMESTATE->m_fSongBeat<0 )
 	{
 		SetState( IdleState );
 		return;

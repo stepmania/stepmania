@@ -41,7 +41,7 @@ Notes::Notes()
 	m_NotesType = NOTES_TYPE_DANCE_SINGLE;
 	m_Difficulty = DIFFICULTY_INVALID;
 	m_iMeter = 0;
-	for(int i = 0; i < NUM_RADAR_VALUES; ++i)
+	for(int i = 0; i < NUM_RADAR_CATEGORIES; ++i)
 		m_fRadarValues[i] = -1; /* unknown */
 
 	m_iNumTimesPlayed = 0;
@@ -176,7 +176,7 @@ bool CompareNotesPointersByRadarValues(const Notes* pNotes1, const Notes* pNotes
 	float fScore1 = 0;
 	float fScore2 = 0;
 	
-	for( int r=0; r<NUM_RADAR_VALUES; r++ )
+	for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
 	{
 		fScore1 += pNotes1->GetRadarValues()[r];
 		fScore2 += pNotes2->GetRadarValues()[r];
@@ -257,7 +257,7 @@ void Notes::DeAutogen()
 	m_iMeter		= Real()->m_iMeter;
 	m_sDescription	= Real()->m_sDescription;
 	m_Difficulty	= Real()->m_Difficulty;
-	for(int i = 0; i < NUM_RADAR_VALUES; ++i)
+	for(int i = 0; i < NUM_RADAR_CATEGORIES; ++i)
 		m_fRadarValues[i] = Real()->m_fRadarValues[i];
 	
 	delete notes;
@@ -276,6 +276,47 @@ void Notes::AutogenFrom( Notes *parent_, NotesType ntTo )
 	parent = parent_;
 	m_NotesType = ntTo;
 }
+
+void Notes::BakeAutoGen()
+{
+	NoteData noteData;
+	parent->GetNoteData( &noteData );
+	this->SetNoteData( &noteData );
+	this->SetDescription( "AutoGen'd from "+parent->GetDescription() );
+	this->SetDifficulty( parent->GetDifficulty() );
+	this->SetMeter( parent->GetMeter() );
+
+	const float* radarValues = parent->GetRadarValues();
+	for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
+		this->SetRadarValue( (RadarCategory)r, radarValues[r] );
+
+	parent = NULL;
+}
+
+void Notes::CopyFrom( Notes* pSource, NotesType ntTo )	// pSource does not have to be of the same NotesType!
+{
+	m_NotesType = ntTo;
+	NoteData noteData;
+	pSource->GetNoteData( &noteData );
+	noteData.m_iNumTracks = GameManager::NotesTypeToNumTracks(ntTo);
+	this->SetNoteData( &noteData );
+	this->SetDescription( "Copied from "+pSource->GetDescription() );
+	this->SetDifficulty( pSource->GetDifficulty() );
+	this->SetMeter( pSource->GetMeter() );
+
+	const float* radarValues = pSource->GetRadarValues();
+	for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
+		this->SetRadarValue( (RadarCategory)r, radarValues[r] );
+}
+
+void Notes::CreateBlank( NotesType ntTo )
+{
+	m_NotesType = ntTo;
+	NoteData noteData;
+	noteData.m_iNumTracks = GameManager::NotesTypeToNumTracks(ntTo);
+	this->SetNoteData( &noteData );
+}
+
 
 const Notes *Notes::Real() const
 {
@@ -309,7 +350,7 @@ void Notes::SetMeter(int meter)
 void Notes::SetRadarValue(int r, float val)
 {
 	DeAutogen();
-	ASSERT(r < NUM_RADAR_VALUES);
+	ASSERT(r < NUM_RADAR_CATEGORIES);
 	m_fRadarValues[r] = val;
 }
 

@@ -51,7 +51,7 @@ ScreenManager::ScreenManager()
 	m_textSystemMessage.SetHorizAlign( Actor::align_left );
 	m_textSystemMessage.SetVertAlign( Actor::align_top );
 	m_textSystemMessage.SetXY( 4.0f, 4.0f );
-	m_textSystemMessage.SetZoom( 1.0f );
+	m_textSystemMessage.SetZoom( 0.7f );
 //	m_textSystemMessage.SetShadowLength( 2 );
 	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,0) );
 }

@@ -34,7 +34,7 @@ private:
 	void MenuBack( PlayerNumber pn );
 	void MenuStart( PlayerNumber pn );
 
-	SongSelector Selector;
+	SongSelector m_Selector;
 
 	BitmapText		m_textExplanation;
 
@@ -43,6 +43,7 @@ private:
 	TransitionFade	m_Fade;
 
 	RandomSample	m_soundSelect;
+	RandomSample	m_soundCreate;
 };
 
 

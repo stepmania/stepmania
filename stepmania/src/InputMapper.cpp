@@ -232,7 +232,7 @@ bool InputMapper::GameToDevice( GameInput GameI, int iSoltNum, DeviceInput& Devi
 
 void InputMapper::GameToStyle( GameInput GameI, StyleInput &StyleI )
 {
-	if( GAMESTATE->m_CurStyle == STYLE_NONE )
+	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
 	{
 		StyleI.MakeInvalid();
 		return;

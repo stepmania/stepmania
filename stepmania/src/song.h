@@ -78,6 +78,7 @@ public:
 
 	void AddAutoGenNotes();
 	void AutoGen( NotesType ntTo, NotesType ntFrom );	// create Notes of type ntTo from Notes of type ntFrom
+	void RemoveAutoGenNotes();
 
 	/* Directory this song data came from: */
 	const CString &GetSongDir() const { return m_sSongDir; }
@@ -194,13 +195,17 @@ public:
 	bool SongCompleteForStyle( const StyleDef *st ) const;
 	bool SongHasNotesType( NotesType nt ) const;
 	bool SongHasNotesTypeAndDifficulty( NotesType nt, Difficulty dc ) const;
-	void GetNotesThatMatch( NotesType nt, vector<Notes*>& arrayAddTo ) const;
+	void GetNotesThatMatch( NotesType nt, vector<Notes*>& arrayAddTo, bool bIncludeAutoGen = true ) const;
+	Notes* GetNotesThatMatch( NotesType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
 	int GetNumTimesPlayed() const;
 	bool IsNew() const;
 	bool IsEasy( NotesType nt ) const;
 	Grade GetGradeForDifficulty( const StyleDef *s, PlayerNumber pn, Difficulty dc ) const;
 	bool NormallyDisplayed() const;
 	bool RouletteDisplayed() const;
+
+	void AddNotes( Notes* pNotes );		// we are responsible for deleting the memory pointed to by pNotes!
+	void RemoveNotes( Notes* pNotes );
 };
 
 

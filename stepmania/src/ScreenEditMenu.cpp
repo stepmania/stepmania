@@ -31,17 +31,17 @@
 #define EXPLANATION_TEXT			THEME->GetMetric("ScreenEditMenu","ExplanationText")
 #define HELP_TEXT					THEME->GetMetric("ScreenEditMenu","HelpText")
 
-
+const ScreenMessage SM_RefreshSelector	=	(ScreenMessage)(SM_User+1);
 
 ScreenEditMenu::ScreenEditMenu()
 {
 	LOG->Trace( "ScreenEditMenu::ScreenEditMenu()" );
 
-	GAMESTATE->m_CurStyle = STYLE_NONE;
+	GAMESTATE->m_CurStyle = STYLE_INVALID;
 
-	Selector.SetXY( 0, 0 );
-//	Selector.AllowNewNotes();
-	this->AddChild( &Selector );
+	m_Selector.SetXY( 0, 0 );
+//	m_Selector.AllowNewNotes();
+	this->AddChild( &m_Selector );
 
 	m_Menu.Load( 
 		THEME->GetPathTo("BGAnimations","edit menu"), 
@@ -63,6 +63,7 @@ ScreenEditMenu::ScreenEditMenu()
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","edit menu music") );
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
+	m_soundCreate.Load( THEME->GetPathTo("Sounds","edit menu create") );
 
 	m_Menu.TweenOnScreenFromBlack( SM_None );
 }
@@ -91,24 +92,13 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
+	case SM_RefreshSelector:
+		m_Selector.Refresh();
+		break;
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextScreen:
-		// set the current style based on the notes type
-
-		// Dro Kulix:
-		// A centralized solution for this switching mess...
-		// (See GameConstantsAndTypes.h)
-		//
-		// Chris:
-		//	Find the first Style that will play the selected notes type.
-		//  Set the current Style, then let ScreenEdit infer the desired
-		//  NotesType from that Style.
-		Style style = Selector.GetSelectedStyle();
-		GAMESTATE->m_CurStyle = style;
-		GAMESTATE->m_CurGame = GAMEMAN->GetStyleDefForStyle(style)->m_Game;
-
 		SCREENMAN->SetNewScreen( "ScreenEdit" );
 		break;
 	}
@@ -116,22 +106,32 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	
 void ScreenEditMenu::MenuUp( PlayerNumber pn )
 {
-	Selector.Up();
+	m_Selector.Up();
 }
 
 void ScreenEditMenu::MenuDown( PlayerNumber pn )
 {
-	Selector.Down();
+	m_Selector.Down();
 }
 
 void ScreenEditMenu::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
-	Selector.Left();
+	m_Selector.Left();
 }
 
 void ScreenEditMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 {
-	Selector.Right();
+	m_Selector.Right();
+}
+
+
+// helpers for MenuStart() below
+void DeleteCurNotes()
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	Notes* pNotesToDelete = GAMESTATE->m_pCurNotes[PLAYER_1];
+	pSong->RemoveNotes( pNotesToDelete );
+	pSong->Save();
 }
 
 void ScreenEditMenu::MenuStart( PlayerNumber pn )
@@ -139,27 +139,98 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	if( m_Fade.IsClosing() || m_Fade.IsClosed() )
 		return;
 
-	GAMESTATE->m_pCurSong = Selector.GetSelectedSong();
+	Song* pSong					= m_Selector.GetSelectedSong();
+	NotesType nt				= m_Selector.GetSelectedNotesType();
+	Difficulty dc				= m_Selector.GetSelectedDifficulty();
+	Notes* pNotes				= m_Selector.GetSelectedNotes();
+//	NotesType soureNT			= m_Selector.GetSelectedSourceNotesType();
+//	Difficulty sourceDiff		= m_Selector.GetSelectedSourceDifficulty();
+	Notes* pSourceNotes			= m_Selector.GetSelectedSourceNotes();
+	SongSelector::Action action	= m_Selector.GetSelectedAction();
 
-	if( !GAMESTATE->m_pCurSong->HasMusic() )
+	GAMESTATE->m_pCurSong = pSong;
+	GAMESTATE->m_CurStyle = GAMEMAN->GetEditorStyleForNotesType( nt );
+	GAMESTATE->m_pCurNotes[PLAYER_1] = pNotes;
+
+	//
+	// handle error cases
+	//
+
+	if( !pSong->HasMusic() )
 	{
-		SCREENMAN->SystemMessage( "This song is missing a music file and cannot be edited" );
-		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu invalid") );
+		SCREENMAN->Prompt( SM_None, "This song is missing a music file and cannot be edited" );
 		return;
 	}
 
-	SOUNDMAN->StopMusic();
-
-
-	// get the style
-	GAMESTATE->m_CurStyle = Selector.GetSelectedStyle();
-	GAMESTATE->m_pCurNotes[PLAYER_1] = Selector.GetSelectedNotes();
-
-	m_soundSelect.PlayRandom();
-
-	m_Menu.TweenOffScreenToBlack( SM_GoToNextScreen, false  );
-
-	m_Fade.CloseWipingRight( SM_None );
+	switch( action )
+	{
+	case SongSelector::ACTION_EDIT:
+		// Prepare prepare for ScreenEdit
+		ASSERT( pNotes );
+		SOUNDMAN->StopMusic();
+		m_soundSelect.PlayRandom();
+		m_Menu.TweenOffScreenToBlack( SM_GoToNextScreen, false  );
+		m_Fade.CloseWipingRight( SM_None );
+		break;
+	case SongSelector::ACTION_DELETE:
+		ASSERT( pNotes );
+		SCREENMAN->Prompt( SM_RefreshSelector, "These notes will be lost permanently.\nContinue with delete?", true, false, DeleteCurNotes );
+		m_Selector.Refresh();
+		return;
+	case SongSelector::ACTION_COPY:
+		ASSERT( !pNotes );
+		ASSERT( pSourceNotes );
+		{
+			// Yuck.  Doing the memory allocation doesn't seem right since
+			// Song allocates all of the other Notes.
+			Notes* pNewNotes = new Notes;
+			pNewNotes->CopyFrom( pSourceNotes, nt );
+			pNewNotes->SetDifficulty( dc );
+			pSong->AddNotes( pNewNotes );
+		
+			SCREENMAN->SystemMessage( "Notes created from copy." );
+			m_soundCreate.PlayRandom();
+			m_Selector.Refresh();
+			pSong->Save();
+		}
+		return;
+	case SongSelector::ACTION_AUTOGEN:
+		ASSERT( !pNotes );
+		ASSERT( pSourceNotes );
+		{
+			// Yuck.  Doing the memory allocation doesn't seem right since
+			// Song allocates all of the other Notes.
+			Notes* pNewNotes = new Notes;
+			pNewNotes->CopyFrom( pSourceNotes, nt );
+			pNewNotes->SetDifficulty( dc );
+			pSong->AddNotes( pNewNotes );
+		
+			SCREENMAN->SystemMessage( "AutoGen Notes created." );
+			m_soundCreate.PlayRandom();
+			m_Selector.Refresh();
+			pSong->Save();
+		}
+		return;
+	case SongSelector::ACTION_BLANK:
+		ASSERT( !pNotes );
+		{
+			// Yuck.  Doing the memory allocation doesn't seem right since
+			// Song allocates all of the other Notes.
+			Notes* pNewNotes = new Notes;
+			pNewNotes->CreateBlank( nt );
+			pNewNotes->SetDifficulty( dc );
+			pNewNotes->SetMeter( 1 );
+			pSong->AddNotes( pNewNotes );
+		
+			SCREENMAN->SystemMessage( "Blank Notes created." );
+			m_soundCreate.PlayRandom();
+			m_Selector.Refresh();
+			pSong->Save();
+		}
+		return;
+	default:
+		ASSERT(0);
+	}
 }
 
 void ScreenEditMenu::MenuBack( PlayerNumber pn )

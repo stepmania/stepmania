@@ -20,106 +20,105 @@
 //
 // Defines specific to SongSelector
 //
-const float GROUP_X				=	CENTER_X;
-const float GROUP_Y				=	CENTER_Y - 160;
+#define ARROWS_X( i )			THEME->GetMetricF("SongSelector",ssprintf("Arrows%dX",i+1))
+#define SONG_BANNER_X			THEME->GetMetricF("SongSelector","SongBannerX")
+#define SONG_BANNER_Y			THEME->GetMetricF("SongSelector","SongBannerY")
+#define SONG_BANNER_WIDTH		THEME->GetMetricF("SongSelector","SongBannerWidth")
+#define SONG_BANNER_HEIGHT		THEME->GetMetricF("SongSelector","SongBannerHeight")
+#define SONG_TEXT_BANNER_X		THEME->GetMetricF("SongSelector","SongTextBannerX")
+#define SONG_TEXT_BANNER_Y		THEME->GetMetricF("SongSelector","SongTextBannerY")
+#define GROUP_BANNER_X			THEME->GetMetricF("SongSelector","GroupBannerX")
+#define GROUP_BANNER_Y			THEME->GetMetricF("SongSelector","GroupBannerY")
+#define GROUP_BANNER_WIDTH		THEME->GetMetricF("SongSelector","GroupBannerWidth")
+#define GROUP_BANNER_HEIGHT		THEME->GetMetricF("SongSelector","GroupBannerHeight")
+#define METER_X					THEME->GetMetricF("SongSelector","MeterX")
+#define METER_Y					THEME->GetMetricF("SongSelector","MeterY")
+#define SOURCE_METER_X			THEME->GetMetricF("SongSelector","SourceMeterX")
+#define SOURCE_METER_Y			THEME->GetMetricF("SongSelector","SourceMeterY")
+#define ROW_LABELS_X			THEME->GetMetricF("SongSelector","RowLabelsX")
+#define ROW_VALUE_X( i )		THEME->GetMetricF("SongSelector",ssprintf("RowValue%dX",i+1))
+#define ROW_Y( i )				THEME->GetMetricF("SongSelector",ssprintf("Row%dY",i+1))
 
-const float SONG_BANNER_X		=	CENTER_X;
-const float SONG_BANNER_Y		=	CENTER_Y - 80;
-
-const float SONG_BANNER_WIDTH	=	286;
-const float SONG_BANNER_HEIGHT	=	92;
-
-const float ARROWS_X[2]			=	{ SONG_BANNER_X - 200, SONG_BANNER_X + 200 };
-const float ARROWS_Y[2]			=	{ SONG_BANNER_Y,       SONG_BANNER_Y };
-
-const float SONG_TEXT_BANNER_X	=	CENTER_X;
-const float SONG_TEXT_BANNER_Y	=	CENTER_Y - 10;
-
-const float GAME_STYLE_X		=	CENTER_X;
-const float GAME_STYLE_Y		=	CENTER_Y + 40;
-
-const float STEPS_X				=	CENTER_X;
-const float STEPS_Y				=	CENTER_Y + 90;
 
 SongSelector::SongSelector()
 {
 	LOG->Trace( "ScreenEditMenu::ScreenEditMenu()" );
 
-	NewNotes = false;
+	m_bAllowNewNotes = true;
 
-	m_textGroup.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-	m_textGroup.SetXY( GROUP_X, GROUP_Y );
-	m_textGroup.SetDiffuse( RageColor(0.7f,0.7f,0.7f,1) );
-	m_textGroup.SetText( "blah" );
-	this->AddChild( &m_textGroup );
+	int i;
 
-	m_Banner.SetXY( SONG_BANNER_X, SONG_BANNER_Y );
-	m_Banner.SetCroppedSize( SONG_BANNER_WIDTH, SONG_BANNER_HEIGHT );
-	this->AddChild( &m_Banner );
+	for( i=0; i<2; i++ )
+	{
+		m_sprArrows[i].Load( THEME->GetPathTo("Graphics",ssprintf("edit menu %s",(i==0?"left":"right"))) );
+		m_sprArrows[i].SetX( ARROWS_X(i) );
+		this->AddChild( &m_sprArrows[i] );
+	}
 
-	m_TextBanner.SetXY( SONG_TEXT_BANNER_X, SONG_TEXT_BANNER_Y );
-	this->AddChild( &m_TextBanner );
+	m_SelectedRow = (Row)0;
+
+	ZERO( m_iSelection );
+
+	for( i=0; i<NUM_ROWS; i++ )
+	{
+		m_textLabel[i].LoadFromFont( THEME->GetPathTo("Fonts","header2") );
+		m_textLabel[i].SetXY( ROW_LABELS_X, ROW_Y(i) );
+		m_textLabel[i].SetText( RowToString((Row)i) );
+		m_textLabel[i].SetZoom( 0.8f );
+		m_textLabel[i].SetHorizAlign( Actor::align_left );
+		this->AddChild( &m_textLabel[i] );
+
+		m_textValue[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textValue[i].SetXY( ROW_VALUE_X(i), ROW_Y(i) );
+		m_textValue[i].SetText( "blah" );
+		m_textValue[i].SetZoom( 0.8f );
+		this->AddChild( &m_textValue[i] );
+	}
+
+	m_GroupBanner.SetXY( GROUP_BANNER_X, GROUP_BANNER_Y );
+	m_GroupBanner.SetCroppedSize( GROUP_BANNER_WIDTH, GROUP_BANNER_HEIGHT );
+	this->AddChild( &m_GroupBanner );
+
+	m_SongBanner.SetXY( SONG_BANNER_X, SONG_BANNER_Y );
+	m_SongBanner.SetCroppedSize( SONG_BANNER_WIDTH, SONG_BANNER_HEIGHT );
+	this->AddChild( &m_SongBanner );
+
+	m_SongTextBanner.SetXY( SONG_TEXT_BANNER_X, SONG_TEXT_BANNER_Y );
+	this->AddChild( &m_SongTextBanner );
 	
-	m_sprArrowLeft.Load( THEME->GetPathTo("Graphics","edit menu left") );
-	m_sprArrowLeft.SetXY( ARROWS_X[0], ARROWS_Y[0] );
-	m_sprArrowLeft.SetDiffuse( RageColor(1,1,1,0) );
-	this->AddChild( &m_sprArrowLeft );
+	m_Meter.SetXY( METER_X, METER_Y );
+	this->AddChild( &m_Meter );
+	
+	m_SourceMeter.SetXY( SOURCE_METER_X, SOURCE_METER_Y );
+	this->AddChild( &m_SourceMeter );
+	
 
-	m_sprArrowRight.Load( THEME->GetPathTo("Graphics","edit menu right") );
-	m_sprArrowRight.SetXY( ARROWS_X[1], ARROWS_Y[1] );
-	m_sprArrowRight.SetDiffuse( RageColor(1,1,1,0) );
-	this->AddChild( &m_sprArrowRight );
+	m_soundChangeRow.Load( THEME->GetPathTo("sounds","edit menu row") );
+	m_soundChangeValue.Load( THEME->GetPathTo("sounds","edit menu value") );
 
-	m_textStyle.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-	m_textStyle.SetXY( GAME_STYLE_X, GAME_STYLE_Y );
-	m_textStyle.SetDiffuse( RageColor(0.7f,0.7f,0.7f,1) );
-	m_textStyle.SetText( "blah" );
-	this->AddChild( &m_textStyle );
 
-	m_textNotes.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-	m_textNotes.SetXY( STEPS_X, STEPS_Y );
-	m_textNotes.SetDiffuse( RageColor(0.7f,0.7f,0.7f,1) );
-	m_textNotes.SetText( "blah" );
-	this->AddChild( &m_textNotes );
-
-	// data structures
-	ChangeSelectedRow(ROW_GROUP);
-
+	// fill in data structures
 	SONGMAN->GetGroupNames( m_sGroups );
-	GAMEMAN->GetGameplayStylesForGame( GAMESTATE->m_CurGame, m_Styles, true );
-	m_iSelectedGroup = m_iSelectedSong = m_iSelectedStyle = m_iSelectedNotes = 0;
-
+	GAMEMAN->GetNotesTypesForGame( GAMESTATE->m_CurGame, m_NotesTypes );
+	
+	// Select the current song if any
 	if( GAMESTATE->m_pCurSong )
 	{
 		unsigned i;
 
 		for( i=0; i<m_sGroups.size(); i++ )
 			if( GAMESTATE->m_pCurSong->m_sGroupName == m_sGroups[i] )
-				m_iSelectedGroup = i;
-		OnGroupChange();
+				m_iSelection[ROW_GROUP] = i;
+		OnRowValueChanged( ROW_GROUP );
 
 		for( i=0; i<m_pSongs.size(); i++ )
 			if( GAMESTATE->m_pCurSong == m_pSongs[i] )
-				m_iSelectedSong = i;
-		OnSongChange();
-
-		for( i=0; i<m_Styles.size(); i++ )
-		{
-			if( GAMESTATE->GetCurrentStyleDef() == GAMEMAN->GetStyleDefForStyle(m_Styles[i]) )
-				m_iSelectedStyle = i;
-		}
-		OnNotesTypeChange();
-
-		for( i=0; i<m_pNotess.size(); i++ )
-			if( GAMESTATE->m_pCurNotes[PLAYER_1] == m_pNotess[i] )
-				m_iSelectedNotes = i;
-		OnNotesChange();
+				m_iSelection[ROW_SONG] = i;
+		OnRowValueChanged( ROW_SONG );
 	}
-	else
-		OnGroupChange();
 
-
-	m_soundChangeMusic.Load( THEME->GetPathTo("Sounds","select music change") );
+	ChangeToRow( (Row)0 );
+	OnRowValueChanged( (Row)0 );
 }
 
 SongSelector::~SongSelector()
@@ -127,168 +126,173 @@ SongSelector::~SongSelector()
 
 }
 
+void SongSelector::Refresh()
+{
+	ChangeToRow( (Row)0 );
+	OnRowValueChanged( (Row)0 );
+}
+
 void SongSelector::DrawPrimitives()
 {
 	ActorFrame::DrawPrimitives();
 }
 
+bool SongSelector::CanGoUp()
+{
+	return m_SelectedRow != 0;
+}
+
+bool SongSelector::CanGoDown()
+{
+	return m_SelectedRow != NUM_ROWS-1;
+}
+
+bool SongSelector::CanGoLeft()
+{
+	return m_iSelection[m_SelectedRow] != 0;
+}
+
+bool SongSelector::CanGoRight()
+{
+	int num_values[NUM_ROWS] = 
+	{
+		m_sGroups.size(),
+		m_pSongs.size(),
+		m_NotesTypes.size(),
+		NUM_DIFFICULTIES,
+		m_NotesTypes.size(),
+		NUM_DIFFICULTIES,
+		m_Actions.size()
+	};
+
+	return m_iSelection[m_SelectedRow] != (num_values[m_SelectedRow]-1);
+}
+
 void SongSelector::Up()
 {
-	if( m_SelectedRow == 0 )	// can't go up any further
-		return;	
-
-	ChangeSelectedRow(SelectedRow(m_SelectedRow-1));
+	if( CanGoUp() )
+	{
+		if( GetSelectedNotes() && m_SelectedRow==ROW_ACTION )
+			ChangeToRow( ROW_DIFFICULTY );
+		else
+			ChangeToRow( Row(m_SelectedRow-1) );
+		m_soundChangeRow.PlayRandom();
+	}
 }
 
 void SongSelector::Down()
 {
-	if( m_SelectedRow == NUM_ROWS-1 )	// can't go down any further
-		return;	
-
-	ChangeSelectedRow(SelectedRow(m_SelectedRow+1));
+	if( CanGoDown() )
+	{
+		if( GetSelectedNotes() && m_SelectedRow==ROW_DIFFICULTY )
+			ChangeToRow( ROW_ACTION );
+		else
+			ChangeToRow( Row(m_SelectedRow+1) );
+		m_soundChangeRow.PlayRandom();
+	}
 }
 
 void SongSelector::Left()
 {
-	switch( m_SelectedRow )
+	if( CanGoLeft() )
 	{
-	case ROW_GROUP:
-		if( m_iSelectedGroup == 0 )	// can't go left any further
-			return;
-		m_iSelectedGroup--;
-		OnGroupChange();
-		break;
-	case ROW_SONG:
-		if( m_iSelectedSong == 0 )	// can't go left any further
-			return;
-		m_iSelectedSong--;
-		OnSongChange();
-		break;
-	case ROW_STYLE:
-		if( m_iSelectedStyle == 0 )	// can't go left any further
-			return;
-		m_iSelectedStyle--;
-		OnNotesTypeChange();
-		break;
-	case ROW_STEPS:
-		if( m_iSelectedNotes == 0 )	// can't go left any further
-			return;
-		m_iSelectedNotes--;
-		OnNotesChange();
-		break;
-	default:
-		ASSERT(false);
+		m_iSelection[m_SelectedRow]--;
+		OnRowValueChanged( m_SelectedRow );
+		m_soundChangeValue.PlayRandom();
 	}
 }
 
 void SongSelector::Right()
 {
-	switch( m_SelectedRow )
+	if( CanGoRight() )
+	{
+		m_iSelection[m_SelectedRow]++;
+		OnRowValueChanged( m_SelectedRow );
+		m_soundChangeValue.PlayRandom();
+	}
+}
+
+
+void SongSelector::ChangeToRow( Row newRow )
+{
+	m_SelectedRow = newRow;
+
+	for( int i=0; i<2; i++ )
+		m_sprArrows[i].SetY( ROW_Y(newRow) );
+	m_sprArrows[0].SetDiffuse( CanGoLeft()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
+	m_sprArrows[1].SetDiffuse( CanGoRight()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
+}
+
+void SongSelector::OnRowValueChanged( Row row )
+{
+	m_sprArrows[0].SetDiffuse( CanGoLeft()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
+	m_sprArrows[1].SetDiffuse( CanGoRight()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
+
+	switch( row )
 	{
 	case ROW_GROUP:
-		if( m_iSelectedGroup == m_sGroups.size()-1 )	// can't go right any further
-			return;
-		m_iSelectedGroup++;
-		OnGroupChange();
-		break;
+		m_textValue[ROW_GROUP].SetText( SONGMAN->ShortenGroupName(GetSelectedGroup()) );
+		m_GroupBanner.LoadFromGroup( GetSelectedGroup() );
+		m_pSongs.clear();
+		SONGMAN->GetSongsInGroup( GetSelectedGroup(), m_pSongs );
+		m_iSelection[ROW_SONG] = 0;
+		// fall through
 	case ROW_SONG:
-		if( m_iSelectedSong == m_pSongs.size()-1 )	// can't go right any further
-			return;
-		m_iSelectedSong++;
-		OnSongChange();
-		break;
-	case ROW_STYLE:
-		if( m_iSelectedStyle == m_Styles.size()-1 )	// can't go right any further
-			return;
-		m_iSelectedStyle++;
-		OnNotesTypeChange();
-		break;
-	case ROW_STEPS:
-		if( m_iSelectedNotes == m_pNotess.size()-1 )	// can't go right any further
-			return;
-		m_iSelectedNotes++;
-		OnNotesChange();
+		m_textValue[ROW_SONG].SetText( "" );
+		m_SongBanner.LoadFromSong( GetSelectedSong() );
+		m_SongTextBanner.LoadFromSong( GetSelectedSong() );
+		// fall through
+	case ROW_NOTES_TYPE:
+		m_textValue[ROW_NOTES_TYPE].SetText( GAMEMAN->NotesTypeToString(GetSelectedNotesType()) );
+		// fall through
+	case ROW_DIFFICULTY:
+		m_textValue[ROW_DIFFICULTY].SetText( DifficultyToString(GetSelectedDifficulty()) );
+		m_Meter.SetFromNotes( GetSelectedNotes() );
+		// fall through
+	case ROW_SOURCE_NOTES_TYPE:
+		m_textLabel[ROW_SOURCE_NOTES_TYPE].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
+		m_textValue[ROW_SOURCE_NOTES_TYPE].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
+		m_textValue[ROW_SOURCE_NOTES_TYPE].SetText( GAMEMAN->NotesTypeToString(GetSelectedSourceNotesType()) );
+		// fall through
+	case ROW_SOURCE_DIFFICULTY:
+		m_textLabel[ROW_SOURCE_DIFFICULTY].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
+		m_textValue[ROW_SOURCE_DIFFICULTY].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
+		m_textValue[ROW_SOURCE_DIFFICULTY].SetText( DifficultyToString(GetSelectedSourceDifficulty()) );
+		m_SourceMeter.SetFromNotes( GetSelectedSourceNotes() );
+		m_SourceMeter.SetZoomY( GetSelectedNotes()?0.f:1.f );
+
+		m_Actions.clear();
+		if( GetSelectedNotes() )
+		{
+			m_Actions.push_back( ACTION_EDIT );
+			m_Actions.push_back( ACTION_DELETE );
+		}
+		else if( GetSelectedSourceNotes() )
+		{
+			m_Actions.push_back( ACTION_COPY );
+			m_Actions.push_back( ACTION_AUTOGEN );
+			m_Actions.push_back( ACTION_BLANK );
+		}
+		else
+		{
+			m_Actions.push_back( ACTION_BLANK );
+		}
+		m_iSelection[ROW_ACTION] = 0;
+		// fall through
+	case ROW_ACTION:
+		m_textValue[ROW_ACTION].SetText( ActionToString(GetSelectedAction()) );
 		break;
 	default:
-		ASSERT(false);
+		ASSERT(0);	// invalid row
 	}
 }
 
-
-void SongSelector::ChangeSelectedRow( SelectedRow row )
+Notes* SongSelector::GetSelectedNotes()
 {
-	m_textGroup.SetEffectNone();
-	m_sprArrowLeft.SetDiffuse( RageColor(1,1,1,0) );
-	m_sprArrowRight.SetDiffuse( RageColor(1,1,1,0) );
-	m_textStyle.SetEffectNone();
-	m_textNotes.SetEffectNone();
-	m_SelectedRow = row;
-	
-	switch( m_SelectedRow )
-	{
-	case ROW_GROUP:			m_textGroup.SetEffectGlowing();			break;
-	case ROW_SONG:
-		m_sprArrowLeft.SetDiffuse( RageColor(1,1,1,1) );
-		m_sprArrowRight.SetDiffuse( RageColor(1,1,1,1) );
-		break;
-	case ROW_STYLE:	m_textStyle.SetEffectGlowing(); 		break;
-	case ROW_STEPS:			m_textNotes.SetEffectGlowing();			break;
-	default:		ASSERT(false);
-	}
+	return GetSelectedSong()->GetNotesThatMatch(GetSelectedNotesType(),GetSelectedDifficulty(), false);
 }
 
-void SongSelector::OnGroupChange()
+Notes* SongSelector::GetSelectedSourceNotes()
 {
-	m_iSelectedGroup = clamp( m_iSelectedGroup, 0u, m_sGroups.size()-1 );
-
-	m_textGroup.SetText( SONGMAN->ShortenGroupName(GetSelectedGroup()) );
-
-	// reload songs
-	m_pSongs.clear();
-	SONGMAN->GetSongsInGroup( GetSelectedGroup(), m_pSongs );
-
-	OnSongChange();
+	return GetSelectedSong()->GetNotesThatMatch(GetSelectedSourceNotesType(),GetSelectedSourceDifficulty(), false);
 }
-
-void SongSelector::OnSongChange()
-{
-	m_iSelectedSong = clamp( m_iSelectedSong, 0u, m_pSongs.size()-1 );
-
-	m_Banner.LoadFromSong( GetSelectedSong() );
-	m_TextBanner.LoadFromSong( GetSelectedSong() );
-
-	OnNotesTypeChange();
-}
-
-void SongSelector::OnNotesTypeChange()
-{
-	m_iSelectedStyle = clamp( m_iSelectedStyle, 0u, m_Styles.size()-1 );
-
-	m_textStyle.SetText( GAMEMAN->GetStyleDefForStyle(GetSelectedStyle())->m_szName );
-
-	m_pNotess.clear();
-	GetSelectedSong()->GetNotesThatMatch( GAMEMAN->GetStyleDefForStyle(GetSelectedStyle())->m_NotesType, m_pNotess );
-	SortNotesArrayByDifficulty( m_pNotess );
-	m_pNotess.push_back( NULL );		// marker for "(NEW)"
-	m_iSelectedNotes = 0;
-
-	OnNotesChange();
-}
-
-void SongSelector::OnNotesChange()
-{
-	m_iSelectedNotes = clamp( m_iSelectedNotes, 0u, m_pNotess.size()-1 );
-
-	if( GetSelectedNotes() == NULL )
-		m_textNotes.SetText( "(NEW)" );
-	else
-	{
-		CString sDescription = GetSelectedNotes()->GetDescription();
-		if( sDescription == "" )
-			sDescription = "[no name]";
-		if( GetSelectedNotes()->IsAutogen() )
-			sDescription += " (autogen)";
-		m_textNotes.SetText( sDescription );
-	}
-}
-

@@ -62,8 +62,8 @@ protected:
 
 	// used in arcade
 	Sprite				m_sprBonusFrame[NUM_PLAYERS];
-	Sprite				m_sprPossibleBar[NUM_PLAYERS][NUM_RADAR_VALUES];
-	Sprite				m_sprActualBar[NUM_PLAYERS][NUM_RADAR_VALUES];
+	Sprite				m_sprPossibleBar[NUM_PLAYERS][NUM_RADAR_CATEGORIES];
+	Sprite				m_sprActualBar[NUM_PLAYERS][NUM_RADAR_CATEGORIES];
 
 	// used in Oni/Endless
 	Sprite				m_sprCourseFrame[NUM_PLAYERS];

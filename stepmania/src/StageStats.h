@@ -30,8 +30,8 @@ struct StageStats
 	int		iHoldNoteScores[NUM_PLAYERS][NUM_HOLD_NOTE_SCORES];
 	int		iMaxCombo[NUM_PLAYERS];
 	float	fScore[NUM_PLAYERS];
-	float	fRadarPossible[NUM_PLAYERS][NUM_RADAR_VALUES];	// filled in by ScreenGameplay on start of notes
-	float	fRadarActual[NUM_PLAYERS][NUM_RADAR_VALUES];	// filled in by ScreenGameplay on start of notes
+	float	fRadarPossible[NUM_PLAYERS][NUM_RADAR_CATEGORIES];	// filled in by ScreenGameplay on start of notes
+	float	fRadarActual[NUM_PLAYERS][NUM_RADAR_CATEGORIES];	// filled in by ScreenGameplay on start of notes
 	float	fSecondsBeforeFail[NUM_PLAYERS];				// -1 means didn't/hasn't failed
 	int		iSongsPassed[NUM_PLAYERS];						// For course, this is the number of songs that the player has passed
 };

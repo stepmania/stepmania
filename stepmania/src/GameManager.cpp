@@ -1508,11 +1508,11 @@ GameDef* GameManager::GetGameDefForGame( Game g )
 
 const StyleDef* GameManager::GetStyleDefForStyle( Style s )
 {
-	ASSERT( s != STYLE_NONE );	// the style must be set before calling this
+	ASSERT( s != STYLE_INVALID );	// the style must be set before calling this
 	return &g_StyleDefs[ s ];
 }
 
-void GameManager::GetGameplayStylesForGame( Game game, vector<Style>& aStylesAddTo, bool editor )
+void GameManager::GetStylesForGame( Game game, vector<Style>& aStylesAddTo, bool editor )
 {
 	for( int s=0; s<NUM_STYLES; s++ ) {
 		if( g_StyleDefs[s].m_Game != game)
@@ -1524,6 +1524,16 @@ void GameManager::GetGameplayStylesForGame( Game game, vector<Style>& aStylesAdd
 
 		aStylesAddTo.push_back( (Style)s );
 	}
+}
+
+Style GameManager::GetEditorStyleForNotesType( NotesType nt )
+{
+	for( int s=0; s<NUM_STYLES; s++ )
+		if( g_StyleDefs[s].m_NotesType == nt && g_StyleDefs[s].m_bUsedForEdit )
+			return (Style)s;
+
+	ASSERT(0);	// this style doesn't have a StyleDef that can be used with the editor!
+	return STYLE_INVALID;
 }
 
 void GameManager::GetModesChoicesForGame( Game game, vector<ModeChoice*>& apChoicesAddTo )

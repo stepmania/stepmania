@@ -19,7 +19,7 @@
 !define PRODUCT_NAME_VER "${PRODUCT_NAME} ${VERSION}"
 
 Name "${PRODUCT_NAME}"
-OutFile "stepmania-CVS-20030119.exe"
+OutFile "stepmania-CVS-20030128.exe"
 ;OutFile "stepmania301.exe"
 
 ; Some default compiler settings (uncomment and change at will):

@@ -33,7 +33,7 @@ enum Style
 	STYLE_DS3DDX_SINGLE,
 	STYLE_BM_SINGLE,
 	NUM_STYLES,	// leave this at the end
-	STYLE_NONE,
+	STYLE_INVALID,
 };
 
 const int NUM_DANCE_STYLES = 6;
