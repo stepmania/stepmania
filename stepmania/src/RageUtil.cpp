@@ -317,10 +317,15 @@ CString SetExtension( const CString &path, const CString &ext )
 
 CString GetExtension( CString sPath )
 {
-	CString Dir, FName, Ext;
-	splitrelpath( sPath, Dir, FName, Ext );
-	Ext.MakeLower();
-	return Ext;
+	unsigned pos = sPath.rfind( '.' );
+	if( pos == sPath.npos )
+		return "";
+
+	unsigned slash = sPath.find( '/', slash );
+	if( slash != sPath.npos )
+		return ""; /* rare: path/dir.ext/fn */
+
+	return sPath.substr( pos+1, sPath.size()-pos+1 );
 }
 
 CString GetCwd()
