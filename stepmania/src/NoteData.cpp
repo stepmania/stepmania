@@ -382,7 +382,7 @@ int NoteData::GetNumHands( float fStartBeat, float fEndBeat ) const
 	/* We want to count both three taps at the same time, a tap while two
 	 * hold notes are being held, etc. */
 	NoteData temp;
-	temp.To4s( temp );
+	temp.To4s( *this );
 
 	if( fEndBeat == -1 )
 		fEndBeat = temp.GetMaxBeat();
