@@ -220,7 +220,8 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		);
 	this->AddChild( &m_Menu );
 
-	for( int p=0; p<NUM_PLAYERS; p++ ) 
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ ) 
 	{
 		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )	// If EZ2 wants to hide this graphic, place it somewhere off screen using theme metrics
 			continue;	// skip
@@ -256,7 +257,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	bool bNewRecord[NUM_PLAYERS];
 	memset( bNewRecord, 0, sizeof(bNewRecord) );
 	m_bGoToNameEntry = false;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) || grade[p] == GRADE_E )
 			continue;	// can't be a new record
@@ -773,6 +774,9 @@ void ScreenEvaluation::MenuLeft( PlayerNumber pn )
 {
 	// What is the purpose of this?  I keep my feet on the pads and 
 	// was wondering why the grades weren't spinning. -Chris
+	// To be able to see the grade without having to wait for it to
+	// stop spinning.  (I was hitting left repeatedly and wondering
+	// why it kept spinning ...)
 	//m_Grades[pn].SettleQuickly();
 }
 
