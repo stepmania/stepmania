@@ -203,6 +203,25 @@ CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
 	return THEMES_DIR + sThemeName + "/";
 }
 
+CString ThemeManager::GetPathToAndFallback( CString sThemeName, ElementCategory category, CString sClassName, CString sElement ) 
+{
+	// search with requested name
+	CString sRet = GetPathToRaw( sThemeName, category, sClassName, sElement );
+	if( !sRet.empty() )
+		return sRet;
+
+	// search fallback name (if any)
+	CString sFallback;
+	if( m_pIniMetrics->GetValue(sClassName,"Fallback",sFallback) )
+	{
+		sRet = GetPathToAndFallback( m_sCurThemeName, category, sFallback, sElement );
+		if( !sRet.empty() )
+			return sRet;
+	}
+
+	return "";
+}
+
 CString ThemeManager::GetPathToRaw( CString sThemeName, ElementCategory category, CString sClassName, CString sElement ) 
 {
 try_element_again:
@@ -361,48 +380,23 @@ CString ThemeManager::GetPathTo( ElementCategory category, CString sClassName, C
 	
 try_element_again:
 
-	CString sFallback;
-	sFallback = "";
-	m_pIniMetrics->GetValue(sClassName,"Fallback",sFallback);
 
-	// search the requested current theme and requested class
-	CString ret = GetPathToRaw( m_sCurThemeName, category, sClassName, sElement);
+	// search the current theme
+	CString ret = GetPathToAndFallback( m_sCurThemeName, category, sClassName, sElement);
 	if( !ret.empty() )	// we found something
 	{
 		Cache[sFileName] = ret;
 		return ret;
 	}
 
-	// search the requested current theme and fallback class
-	if( !sFallback.empty() )
-	{
-		CString ret = GetPathToRaw( m_sCurThemeName, category, sFallback, sElement);
-		if( !ret.empty() )	// we found something
-		{
-			Cache[sFileName] = ret;
-			return ret;
-		}
-	}
-
-	// search the base theme and requested class
-	ret = GetPathToRaw( BASE_THEME_NAME, category, sClassName, sElement);
+	// search the base theme
+	ret = GetPathToAndFallback( BASE_THEME_NAME, category, sClassName, sElement);
 	if( !ret.empty() )	// we found something
 	{
 		Cache[sFileName] = ret;
 		return ret;
 	}
 	
-	// search the base theme and fallback class
-	if( !sFallback.empty() )
-	{
-		ret = GetPathToRaw( BASE_THEME_NAME, category, sFallback, sElement);
-		if( !ret.empty() )	// we found something
-		{
-			Cache[sFileName] = ret;
-			return ret;
-		}
-	}
-
 	if( bOptional )
 	{
 		Cache[sFileName] = "";
@@ -412,11 +406,7 @@ try_element_again:
 	CString sCategory = ELEMENT_CATEGORY_STRING[category];
 
 	/* We can't fall back on _missing in Other: the file types are unknown. */
-	CString sMessage = "The theme element \"" + sCategory + "/" + sFileName +"\"";
-	if( !sFallback.empty() )
-		sMessage += " and its fallback \"" + sCategory + "/" + ClassAndElementToFileName(sFallback,sElement) + "\" are missing.";
-	else
-		sMessage += " is missing.";
+	CString sMessage = "The theme element \"" + sCategory + "/" + sFileName +"\" is missing.";
 	ArchHooks::MessageBoxResult res;
 	if( category != Other )
 		res = HOOKS->MessageBoxAbortRetryIgnore(sMessage, "MissingThemeElement");
