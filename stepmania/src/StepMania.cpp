@@ -656,7 +656,7 @@ RageDisplay *CreateDisplay()
 #endif
 		}
 		else if( sRenderer.CompareNoCase("null")==0 )
-			return new RageDisplay_Null();
+			return new RageDisplay_Null( params );
 		else
 			RageException::Throw("Unknown video renderer value: %s", sRenderer.c_str() );
 	}

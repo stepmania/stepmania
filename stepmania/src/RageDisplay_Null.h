@@ -4,7 +4,7 @@
 class RageDisplay_Null: public RageDisplay
 {
 public:
-	RageDisplay_Null();
+	RageDisplay_Null( VideoModeParams p );
 	void Update( float fDeltaTime ) { }
 
 	bool IsSoftwareRenderer() { return false; }
