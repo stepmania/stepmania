@@ -557,7 +557,7 @@ public:
 				const char *pValue = lua_tostring( LUA->L, -1 );
 				if( pValue == NULL )
 					RageException::Throw( "\"%s\" Column entry is not a string", sLuaFunction.c_str() );
-				LOG->Trace( "'%s'", pValue);
+//				LOG->Trace( "'%s'", pValue);
 
 				defOut.choices.push_back( pValue );
 
