@@ -17,7 +17,6 @@
 #include "Style.h"
 #include "ActorUtil.h"
 
-static const ThemeMetric<float>			SECONDS_TO_SHOW		("ScreenHowToPlay","SecondsToShow");
 static const ThemeMetric<CString>		STEPFILE			("ScreenHowToPlay","Stepfile");
 static const ThemeMetric<int>			NUM_PERFECTS		("ScreenHowToPlay","NumPerfects");
 static const ThemeMetric<int>			NUM_MISSES			("ScreenHowToPlay","NumMisses");
@@ -79,15 +78,6 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 void ScreenHowToPlay::Init()
 {
 	ScreenAttract::Init();
-
-	m_In.Load( THEME->GetPathB("ScreenHowToPlay","in") );
-	m_In.StartTransitioning();
-
-	m_Out.Load( THEME->GetPathB("ScreenHowToPlay","out") );
-
-	m_Overlay.LoadFromAniDir( THEME->GetPathB("ScreenHowToPlay","overlay") );
-	m_Overlay.PlayCommand("On");
-	this->AddChild( &m_Overlay );
 
 	if( (bool)USEPAD && DoesFileExist( GetAnimPath(ANIM_DANCE_PAD) ) )
 	{
@@ -186,10 +176,7 @@ void ScreenHowToPlay::Init()
 		this->AddChild( m_pLifeMeterBar );
 
 	m_fFakeSecondsIntoSong = 0;
-	this->ClearMessageQueue();
-	this->PostScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );
 
-	this->MoveToTail( &m_Overlay );
 	this->MoveToTail( &m_In );
 	this->MoveToTail( &m_Out );
 }
@@ -332,7 +319,6 @@ void ScreenHowToPlay::DrawPrimitives()
 			DISPLAY->SetLighting( false );
 		}
 		
-		m_Overlay.DrawPrimitives();
 		m_In.DrawPrimitives();
 		m_Out.DrawPrimitives();
 	}
