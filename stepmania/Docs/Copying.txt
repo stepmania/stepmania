@@ -27,7 +27,7 @@ PERFORMANCE OF THIS SOFTWARE.
 
 ******************************************************************************
 
-Code in src/crypto/ is under the following permissive license:
+Code in RageFileDriverZip.cpp is under the following permissive license:
 
 Copyright (c) 1990-2002 Info-ZIP.  All rights reserved.
 
