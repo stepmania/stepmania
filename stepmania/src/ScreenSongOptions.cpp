@@ -101,7 +101,12 @@ void ScreenSongOptions::ExportOptions()
 	so.m_LifeType = (SongOptions::LifeType)m_iSelectedOption[0][SO_LIFE];
 	so.m_DrainType = (SongOptions::DrainType)m_iSelectedOption[0][SO_DRAIN];
 	so.m_iBatteryLives = m_iSelectedOption[0][SO_BAT_LIVES]+1;
-	so.m_FailType =	(SongOptions::FailType)m_iSelectedOption[0][SO_FAIL];
+	if( so.m_FailType !=	(SongOptions::FailType)m_iSelectedOption[0][SO_FAIL] )
+	{
+		/* The user is changing the fail mode explicitly; stop messing with it. */
+		GAMESTATE->m_bChangedFailMode = true;
+		so.m_FailType =	(SongOptions::FailType)m_iSelectedOption[0][SO_FAIL];
+	}
 	so.m_bAssistTick = !!m_iSelectedOption[0][SO_ASSIST];
 	so.m_bAutoSync = !!m_iSelectedOption[0][SO_AUTOSYNC];
 

@@ -521,36 +521,25 @@ void ScreenSelectMusic::AdjustOptions()
 		dc = min(dc, GAMESTATE->m_pCurNotes[p]->GetDifficulty());
 	}
 
-	/* This can still interfere a bit with the song options menu; eg. if a
-	 * player changes to a mode easier than the preference setting, we might
-	 * reset it to the preference later. XXX */
+	LOG->Trace( "AdjustOptions: difficulty %i", dc );
+	if( !GAMESTATE->m_bChangedFailMode )
+	{
+		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_ARCADE;
 
-	/* Never set the FailType harder than the preference. */
-	SongOptions::FailType ft = SongOptions::FAIL_ARCADE;
+        /* Easy and beginner are never harder than FAIL_END_OF_SONG. */
+		if(dc <= DIFFICULTY_EASY)
+		{
+			LOG->Trace( "AdjustOptions: EOS" );
+			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_END_OF_SONG;
+		}
 
-	/* Easy and beginner are never harder than FAIL_END_OF_SONG. */
-	if(dc <= DIFFICULTY_EASY)
-		ft = SongOptions::FAIL_END_OF_SONG;
-	/* If beginner's steps were chosen, and this is the first stage,
-	 * turn off failure completely--always give a second try. */
-	if(dc == DIFFICULTY_BEGINNER &&
-		PREFSMAN->m_bEventMode && /* stage index is meaningless in event mode */
-		GAMESTATE->m_iCurrentStageIndex == 0)
-		ft = SongOptions::FAIL_OFF;
-//  Redundant.   -Chris
-//	else if(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
-//	{
-//		/* Extra stage.  We need to make sure we undo any changes above from
-//		 * previous rounds; eg. where one player is on beginner and the other
-//		 * is on hard, we've changed the fail mode in previous rounds and we
-//		 * want to reset it for the extra stage.
-//		 *
-//		 * Besides, extra stage should probably always be FAIL_ARCADE anyway,
-//		 * unless the extra stage course says otherwise. */
-//		ft = SongOptions::FAIL_ARCADE;
-//	}
-
-	GAMESTATE->m_SongOptions.m_FailType = max( ft, GAMESTATE->m_SongOptions.m_FailType );
+		/* If beginner's steps were chosen, and this is the first stage,
+		 * turn off failure completely--always give a second try. */
+		if(dc == DIFFICULTY_BEGINNER &&
+			!PREFSMAN->m_bEventMode && /* stage index is meaningless in event mode */
+			GAMESTATE->m_iCurrentStageIndex == 0)
+			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
+	}
 }
 
 void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )

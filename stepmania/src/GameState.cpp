@@ -59,6 +59,7 @@ void GameState::Reset()
 //	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_sPreferredGroup	= GROUP_ALL_MUSIC;
+	m_bChangedFailMode = false;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
 	m_SongSortOrder = SORT_PREFERRED;
