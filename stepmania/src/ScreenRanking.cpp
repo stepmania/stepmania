@@ -230,7 +230,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 
 		vector<Course*> courses;
 		SONGMAN->GetAllCourses( courses, false );
-		LOG->Trace("rankings: adding %i courses", courses.size());
+		LOG->Trace("rankings: adding %u courses", unsigned(courses.size()));
 		for( unsigned s=0; s<courses.size(); s++ )
 		{
 			if( UNLOCKSYS->CourseIsLocked(courses[s]) )
