@@ -651,7 +651,7 @@ Model::AdvanceFrame (float dt)
 		return;	// bail early
 	}
 
-	LOG->Trace( "m_fCurrFrame = %f", m_fCurrFrame );
+//	LOG->Trace( "m_fCurrFrame = %f", m_fCurrFrame );
 
 	m_fCurrFrame += FRAMES_PER_SECOND * dt * m_fCurAnimationRate;
 	if (m_fCurrFrame >= m_pCurAnimation->nTotalFrames)
