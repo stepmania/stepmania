@@ -94,10 +94,12 @@ void ApplyGraphicOptions()
 		PREFSMAN->m_iRefreshRate,
 		PREFSMAN->m_bVsync );
 
-	if(TEXTUREMAN->SetPrefs( PREFSMAN->m_iTextureColorDepth, PREFSMAN->m_iUnloadTextureDelaySeconds, PREFSMAN->m_iMaxTextureResolution ))
-		ReloadTextures = true;
+	bool bTexturesInvalidated = TEXTUREMAN->SetPrefs( 
+		PREFSMAN->m_iTextureColorDepth, 
+		PREFSMAN->m_iUnloadTextureDelaySeconds, 
+		PREFSMAN->m_iMaxTextureResolution );
 
-	if(ReloadTextures)
+	if( bTexturesInvalidated )
 		TEXTUREMAN->ReloadAll(); 
 }
 

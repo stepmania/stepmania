@@ -453,7 +453,7 @@ void RageDisplay::SaveScreenshot( CString sPath )
 	for( int y=0; y<g_CurrentHeight; y++ )
 		memcpy( 
 			(char *)temp->pixels + 3 * g_CurrentWidth * y,
-			(char *)image->pixels + 3 * g_CurrentWidth * (g_CurrentHeight-y),
+			(char *)image->pixels + 3 * g_CurrentWidth * (g_CurrentHeight-1-y),
 			3*g_CurrentWidth );
 
 	SDL_SaveBMP( temp, sPath );
