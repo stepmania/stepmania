@@ -186,7 +186,7 @@ ScreenNameEntry::ScreenNameEntry()
 	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","name entry") );
 	this->AddChild( &m_Background );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		bool bNewHighScore = GAMESTATE->m_iLastRankingIndex[p] != -1;
 		m_bStillEnteringName[p] = bNewHighScore;	// false if they made a new high score

@@ -27,6 +27,7 @@
 
 
 #define SONGSEL_SCREEN			THEME->GetMetric("ScreenEvaluation","SongSelectScreen")
+#define ENDGAME_SCREEN			THEME->GetMetric("ScreenEvaluation","EndGameScreen")
 #define BANNER_X				THEME->GetMetricF("ScreenEvaluation","BannerX")
 #define BANNER_Y				THEME->GetMetricF("ScreenEvaluation","BannerY")
 #define STAGE_X					THEME->GetMetricF("ScreenEvaluation","StageX")
@@ -747,7 +748,8 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
 		break;
 	case SM_GoToGameFinished:
-		SCREENMAN->SetNewScreen( "ScreenNameEntry" );
+	//	SCREENMAN->SetNewScreen( "ScreenNameEntry" );
+		SCREENMAN->SetNewScreen( ENDGAME_SCREEN );
 		break;
 	case SM_GoToFinalEvaluation:
 		SCREENMAN->SetNewScreen( "ScreenFinalEvaluation" );
