@@ -1,15 +1,4 @@
 #include "global.h"
-/*
------------------------------------------------------------------------------
- File: RageTimer.cpp
-
- Desc: See header.
-
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
-	Chris Danford
------------------------------------------------------------------------------
-*/
-
 
 #include "RageTimer.h"
 #include "RageLog.h"
@@ -17,49 +6,56 @@
 #include "SDL-1.2.5/include/SDL.h"
 #include "SDL-1.2.5/include/SDL_timer.h"
  
-const float SECS_IN_DAY	=	60*60*24;
+/* We only actually get 1000 using SDL. */
+#define TIMESTAMP_RESOLUTION 1000000
 
-/* XXX: SDL_GetTicks() wraps every month or so.  Handle it. */
-RageTimer::RageTimer()
+static RageTimer g_Start;
+
+float RageTimer::GetTimeSinceStart()
 {
-	Init();
-	GetDeltaTime(); /* so the next call to GetDeltaTime is from the construction of this object */
+	return g_Start.Ago();
 }
 
-void RageTimer::Init()
+void RageTimer::Touch()
 {
-/*
- This is needed for the "timer" system, not the "ticks" system; it often starts
- a thread, so let's not do it--we don't need it.
-	static bool SDL_Initialized = false;
-	if(!SDL_Initialized) {
-		SDL_InitSubSystem(SDL_INIT_TIMER);
-		SDL_Initialized = true;
-	}
-*/
+	unsigned ms = SDL_GetTicks();
+	this->m_secs = ms / 1000;
+	ms %= 1000;
+
+	unsigned mult = TIMESTAMP_RESOLUTION / 1000;
+	this->m_us = ms*mult;
+}
+
+float RageTimer::Ago() const
+{
+	const RageTimer Now;
+	return Difference(*this, Now);
 }
 
 float RageTimer::GetDeltaTime()
 {
-	/* Store the LDT in integral milliseconds, to avoid rounding error. */
-	int now = SDL_GetTicks();
-	int ret = now - m_iLastDeltaTime;
-	m_iLastDeltaTime = now;
-	return ret / 1000.f;
+	const RageTimer Now;
+	const float diff = Difference( Now, *this );
+	*this = Now;
+	return diff;
 }
 
-float RageTimer::PeekDeltaTime() const
+float RageTimer::Difference(const RageTimer &lhs, const RageTimer &rhs)
 {
-	return (SDL_GetTicks() - m_iLastDeltaTime) / 1000.f;
+	int secs = lhs.m_secs - rhs.m_secs;
+	int us = lhs.m_us - rhs.m_us;
+
+	if( us < 0 )
+	{
+		us += TIMESTAMP_RESOLUTION;
+		--secs;
+	}
+
+	return float(secs) + float(us) / TIMESTAMP_RESOLUTION;
 }
 
-float RageTimer::GetTimeSinceStart()
-{
-	return SDL_GetTicks() / 1000.f;
-}
-
-/* XXX: SDL_GetTicks() wraps every month or so.  Handle it. */
-unsigned int GetTicks()
-{
-	return SDL_GetTicks();
-}
+/*
+ * Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
+ *	Chris Danford
+ *	Glenn Maynard
+ */
