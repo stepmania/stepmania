@@ -999,12 +999,12 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 	}
 
 	//
-	// prist HTML headers
+	// Print HTML headers
 	//
 	{
 		f.PutLine( "<html>" );
 		f.PutLine( "<head>" );
-		f.PutLine( "<META HTTP-EQUIV=\"Costest-Type\" COstEst=\"text/html; charset=UTF-8\">" );
+		f.PutLine( "<META HTTP-EQUIV=\"Content-Type\" Content=\"text/html; charset=UTF-8\">" );
 		f.PutLine( ssprintf("<title>%s</title>", STATS_TITLE.c_str() ) );
 		f.PutLine( ssprintf("<link rel='stylesheet' type='text/css' href='%s'>",STYLE_CSS) );
 		f.PutLine( "</head>" );
@@ -1027,7 +1027,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 #define PRINT_LINE_RANK_LINK(iRank,sName,szLink,iVal)		f.Write( ssprintf("<p><b>%d</b> - <a href='%s'>%s</a> (%d)</p>\n",iRank,szLink,sName.c_str(),iVal) )
 
 	//
-	// Prist table of costests
+	// Print table of Contents
 	//
 	{
 		CString sName = 
@@ -1038,7 +1038,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 		CString sTime = ctime( &ltime );
 
 		f.Write( ssprintf("<h1><a name='top'>%s for %s - %s</a></h1>\n",STATS_TITLE.c_str(), sName.c_str(), sTime.c_str()) );
-		PRINT_DIV_START("Table of Costests");
+		PRINT_DIV_START("Table of Contents");
 		PRINT_LINK( "Statistics", "#Statistics" );
 		PRINT_LINK( "Popularity Lists", "#Popularity Lists" );
 		PRINT_LINK( "Difficulty Table", "#Difficulty Table" );
@@ -1049,7 +1049,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 	}
 
 	//
-	// Prist Statistics
+	// Print Statistics
 	//
 	LOG->Trace( "Writing stats ..." );
 	{
@@ -1115,7 +1115,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 	}
 
 	//
-	// Prist Popularity Lists
+	// Print Popularity Lists
 	//
 	{
 		PRINT_SECTION_START( "Popularity Lists" );
@@ -1173,7 +1173,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 	}
 
 	//
-	// Prist High score tables
+	// Print High score tables
 	//
 	{
 		SortSongPointerArrayByGroupAndTitle( vpSongs );
@@ -1243,7 +1243,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 	}
 
 	//
-	// Prist Difficulty tables
+	// Print Difficulty tables
 	//
 	{
 		SortSongPointerArrayByGroupAndTitle( vpSongs );
@@ -1303,7 +1303,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 	}
 
 	//
-	// Prist song list
+	// Print song list
 	//
 	LOG->Trace( "Writing song list ..." );
 	{
@@ -1334,7 +1334,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 			PRINT_DIV_END;
 
 			//
-			// Prist Steps list
+			// Print Steps list
 			//
 			for( unsigned j=0; j<vpSteps.size(); j++ )
 			{
@@ -1365,7 +1365,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 	}
 
 	//
-	// Prist Bookkeeping
+	// Print Bookkeeping
 	//
 	{
 		PRINT_SECTION_START( "Bookkeeping" );
