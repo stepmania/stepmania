@@ -1,6 +1,7 @@
 #include "global.h"
 #include "NetworkSyncManager.h"
 #include "NetworkSyncServer.h"
+#include "LuaFunctions.h"
 
 NetworkSyncManager *NSMAN;
 
@@ -579,7 +580,7 @@ void NetworkSyncManager::SelectUserSong()
 {
 	m_packet.ClearPacket();
 	m_packet.Write1( 8 );
-	m_packet.Write1( m_iSelectMode );
+	m_packet.Write1( (uint8_t) m_iSelectMode );
 	m_packet.WriteNT( m_sMainTitle );
 	m_packet.WriteNT( m_sArtist );
 	m_packet.WriteNT( m_sSubTitle );
@@ -673,6 +674,7 @@ void PacketFunctions::ClearPacket()
 }
 #endif
 
+LuaFunction_NoArgs( IsNetConnected,			NSMAN->useSMserver )
 
 /*
  * (c) 2003-2004 Charles Lohr, Joshua Allen
