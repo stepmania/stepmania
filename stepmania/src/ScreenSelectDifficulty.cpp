@@ -52,7 +52,8 @@
 ScreenSelectDifficulty::ScreenSelectDifficulty() : ScreenSelect( "ScreenSelectDifficulty" )
 {
 	m_CurrentPage = PAGE_1;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_iChoiceOnPage[p] = 0;
 		m_bChosen[p] = false;
