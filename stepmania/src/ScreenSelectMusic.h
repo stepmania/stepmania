@@ -73,7 +73,7 @@ protected:
 
 	Sprite				m_sprBannerMask;
 	FadingBanner		m_Banner;
-	Sprite				m_sprBannerFrame;
+	AutoActor			m_sprBannerFrame;
 	BPMDisplay			m_BPMDisplay;
 	Sprite				m_sprStage;
 	Sprite				m_sprCDTitleFront, m_sprCDTitleBack;

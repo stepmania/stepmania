@@ -115,10 +115,10 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	SET_XY( m_Banner );
 	this->AddChild( &m_Banner );
 
-	m_sprBannerFrame.SetName( "BannerFrame" );
 	m_sprBannerFrame.Load( THEME->GetPathToG("ScreenSelectMusic banner frame") );
+	m_sprBannerFrame->SetName( "BannerFrame" );
 	SET_XY( m_sprBannerFrame );
-	this->AddChild( &m_sprBannerFrame );
+	this->AddChild( m_sprBannerFrame );
 
 	m_BPMDisplay.SetName( "BPM" );
 	SET_XY( m_BPMDisplay );
