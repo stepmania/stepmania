@@ -42,7 +42,9 @@
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
 
 #define CHARACTERS_DIR "Characters/"
-#define NAMES_BLACKLIST_FILE "Data/NamesBlacklist.dat"
+#define NAME_BLACKLIST_FILE "Data/NamesBlacklist.dat"
+
+ThemeMetric<bool> USE_NAME_BLACKLIST("GameState","UseNameBlacklist");
 
 GameState::GameState() :
     m_PreferredCourseDifficulty( MESSAGE_EDIT_PREFERRED_COURSE_DIFFICULTY_P1_CHANGED ),
@@ -1604,29 +1606,30 @@ bool GameState::AnyPlayerHasRankingFeats() const
 
 void GameState::StoreRankingName( PlayerNumber pn, CString name )
 {
-	//
-	// Filter swear words from name
-	//
 	name.MakeUpper();
-	RageFile file;
-	if( file.Open(NAMES_BLACKLIST_FILE) )
-	{
-		CString line;
-		
-		while (!file.AtEOF())
-		{
-			if( file.GetLine( line ) == -1 )
-			{
-				LOG->Warn( "Error reading \"%s\": %s", NAMES_BLACKLIST_FILE, file.GetError().c_str() );
-				break;
-			}
 
-			line.MakeUpper();
-			if( !line.empty() && name.Find(line) != -1 )	// name contains a bad word
+	if( USE_NAME_BLACKLIST )
+	{
+		RageFile file;
+		if( file.Open(NAME_BLACKLIST_FILE) )
+		{
+			CString line;
+			
+			while (!file.AtEOF())
 			{
-				LOG->Trace( "entered '%s' matches blacklisted item '%s'", name.c_str(), line.c_str() );
-				name = "";
-				break;
+				if( file.GetLine( line ) == -1 )
+				{
+					LOG->Warn( "Error reading \"%s\": %s", NAME_BLACKLIST_FILE, file.GetError().c_str() );
+					break;
+				}
+
+				line.MakeUpper();
+				if( !line.empty() && name.Find(line) != -1 )	// name contains a bad word
+				{
+					LOG->Trace( "entered '%s' matches blacklisted item '%s'", name.c_str(), line.c_str() );
+					name = "";
+					break;
+				}
 			}
 		}
 	}
