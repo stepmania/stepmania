@@ -34,6 +34,7 @@
 #define NOMINMAX /* make sure Windows doesn't try to define this */
 
 #include <afxwin.h>         // MFC core and standard components
+
 /* Make sure everyone has min and max: */
 #include <algorithm>
 
@@ -55,10 +56,11 @@ using namespace std;
 #include <dinput.h>
 
 #if 0
-#include "StdString.h"
 
 /* Use CStdString: */
+#include "StdString.h"
 #define CString CStdString
+
 #else
 
 /* Wrapper to use getline() on MFC strings. */
@@ -87,6 +89,12 @@ public:
 };
 #define CString CStringTemp
 
+#endif
+
+#endif
+
+#if _MSC_VER < 1300 /* VC6, not VC7 */
+
 /* VC6's <algorithm> is doesn't actually define min and max. */
 template<class T>
 inline const T& max(const T &a, const T &b)
@@ -100,8 +108,6 @@ inline const T& min(const T &a, const T &b)
 template<class T, class P>
 inline const T& min(const T &a, const T &b, P Pr)
 { return Pr(b, a)? b:a; }
-
-#endif
 
 #endif
 
