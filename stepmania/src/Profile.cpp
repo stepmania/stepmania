@@ -703,28 +703,38 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 	return bSaved;
 }
 
+XNode *Profile::SaveStatsXmlCreateNode() const
+{
+	XNode *xml = new XNode;
+
+	xml->name = "Stats";
+	xml->AppendChild( SaveGeneralDataCreateNode() );
+	xml->AppendChild( SaveSongScoresCreateNode() );
+	xml->AppendChild( SaveCourseScoresCreateNode() );
+	xml->AppendChild( SaveCategoryScoresCreateNode() );
+	xml->AppendChild( SaveScreenshotDataCreateNode() );
+	xml->AppendChild( SaveCalorieDataCreateNode() );
+	xml->AppendChild( SaveRecentSongScoresCreateNode() );
+	xml->AppendChild( SaveRecentCourseScoresCreateNode() );
+	if( IsMachine() )
+		xml->AppendChild( SaveCoinDataCreateNode() );
+
+	return xml;
+}
+
 bool Profile::SaveStatsXmlToDir( CString sDir, bool bSignData ) const
 {
+	XNode *xml = SaveStatsXmlCreateNode();
+
 	// Save stats.xml
 	CString fn = sDir + STATS_XML;
-
-	XNode xml;
-	xml.name = "Stats";
-	xml.AppendChild( SaveGeneralDataCreateNode() );
-	xml.AppendChild( SaveSongScoresCreateNode() );
-	xml.AppendChild( SaveCourseScoresCreateNode() );
-	xml.AppendChild( SaveCategoryScoresCreateNode() );
-	xml.AppendChild( SaveScreenshotDataCreateNode() );
-	xml.AppendChild( SaveCalorieDataCreateNode() );
-	xml.AppendChild( SaveRecentSongScoresCreateNode() );
-	xml.AppendChild( SaveRecentCourseScoresCreateNode() );
-	if( IsMachine() )
-		xml.AppendChild( SaveCoinDataCreateNode() );
 
 	DISP_OPT opts = optDefault;
 	opts.stylesheet = STATS_XSL;
 	opts.write_tabs = false;
-	bool bSaved = xml.SaveToFile(fn, &opts);
+	bool bSaved = xml->SaveToFile(fn, &opts);
+
+	SAFE_DELETE( xml );
 	
 	// Update file cache, or else IsAFile in CryptManager won't see this new file.
 	FILEMAN->FlushDirCache( sDir );
