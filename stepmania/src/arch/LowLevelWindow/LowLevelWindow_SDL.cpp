@@ -65,7 +65,7 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 	if( SDL_InitSubSystem(SDL_INIT_VIDEO) == -1 )
-		RageException::Throw( "SDL_INIT_VIDEO failed: %s", SDL_GetError() );
+		RageException::Throw( "SDL_INIT_VIDEO failed: %s", mySDL_GetError().c_str() );
 
 	/* Put them back. */
 	for( i = 0; i < SDL_NUMEVENTS; ++i)
@@ -121,8 +121,8 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 	SDL_Surface *screen = SDL_SetVideoMode(p.width, p.height, p.bpp, flags);
 	if(!screen)
 	{
-		LOG->Trace("SDL_SetVideoMode failed: %s", SDL_GetError());
-		return SDL_GetError();	// failed to set mode
+		LOG->Trace( "SDL_SetVideoMode failed: %s", mySDL_GetError().c_str() );
+		return mySDL_GetError();	// failed to set mode
 	}
 
 	bNewDeviceOut = true;	// always a new context because we're resetting SDL_Video
