@@ -30,7 +30,16 @@ OptionRow::OptionRow()
 
 OptionRow::~OptionRow()
 {
+	Clear();
+}
+
+void OptionRow::Clear()
+{
 	ActorFrame::RemoveAllChildren();
+
+	FOREACH_PlayerNumber( p )
+		m_vbSelected[p].clear();
+
 	for( unsigned i = 0; i < m_textItems.size(); ++i )
 		SAFE_DELETE( m_textItems[i] );
 	m_textItems.clear();
@@ -41,7 +50,6 @@ OptionRow::~OptionRow()
 		m_Underline[p].clear();
 	}
 }
-
 
 void OptionRow::LoadNormal( const OptionRowDefinition &def )
 {

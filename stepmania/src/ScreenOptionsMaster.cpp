@@ -723,25 +723,20 @@ void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const Op
 	}
 }
 
-void ScreenOptionsMaster::ImportOptions()
+void ScreenOptionsMaster::ImportOptions( int r )
 {
-	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
-	{
-		const OptionRowHandler &hand = OptionRowHandlers[i];
-		const OptionRowDefinition &def = m_OptionRowAlloc[i];
-		OptionRow &row = *m_Rows[i];
+	const OptionRowHandler &hand = OptionRowHandlers[r];
+	const OptionRowDefinition &def = m_OptionRowAlloc[r];
+	OptionRow &row = *m_Rows[r];
 
-		if( def.bOneChoiceForAllPlayers )
-		{
-			ImportOption(def, hand, PLAYER_1, i, row.m_vbSelected[0] );
-		}
-		else
-		{
-			FOREACH_HumanPlayer( p )
-			{
-				ImportOption( def, hand, p, i, row.m_vbSelected[p] );
-			}
-		}
+	if( def.bOneChoiceForAllPlayers )
+	{
+		ImportOption(def, hand, PLAYER_1, r, row.m_vbSelected[0] );
+	}
+	else
+	{
+		FOREACH_HumanPlayer( p )
+			ImportOption( def, hand, p, r, row.m_vbSelected[p] );
 	}
 }
 
@@ -862,9 +857,8 @@ int ScreenOptionsMaster::ExportOption( const OptionRowDefinition &row, const Opt
 	return 0;
 }
 
-int ScreenOptionsMaster::ExportOptionForAllPlayers( int iRow )
+void ScreenOptionsMaster::ExportOptions( int iRow )
 {
-	int iChangeMask = 0;
 	const OptionRowHandler &hand = OptionRowHandlers[iRow];
 	const OptionRowDefinition &def = m_OptionRowAlloc[iRow];
 	OptionRow &row = *m_Rows[iRow];
@@ -872,93 +866,8 @@ int ScreenOptionsMaster::ExportOptionForAllPlayers( int iRow )
 	{
 		vector<bool> &vbSelected = row.m_vbSelected[pn];
 
-		iChangeMask |= ExportOption( def, hand, pn, vbSelected );
+		m_iChangeMask |= ExportOption( def, hand, pn, vbSelected );
 	}
-	return iChangeMask;
-}
-
-void ScreenOptionsMaster::ExportOptions()
-{
-	int ChangeMask = 0;
-
-	CHECKPOINT;
-	const unsigned row = this->GetCurrentRow();
-	/* If the selection is on a LIST, and the selected LIST option sets the screen,
-	 * honor it. */
-	m_sNextScreen = "";
-
-	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
-	{
-		CHECKPOINT_M( ssprintf("%i/%i", i, int(OptionRowHandlers.size())) );
-		
-		/* If SELECT_NONE, only apply it if it's the selected option. */
-		const OptionRowDefinition &def = m_OptionRowAlloc[i];
-		if( def.selectType == SELECT_NONE && i != row )
-			continue;
-
-		OptionRowHandler &hand = OptionRowHandlers[i];
-
-		if( hand.type == ROW_LIST )
-		{
-			const int choice = m_Rows[i]->m_iChoiceInRowWithFocus[GAMESTATE->m_MasterPlayerNumber];
-			GameCommand &mc = hand.ListEntries[choice];
-			if( mc.m_sScreen != "" )
-			{
-				/* Hack: instead of applying screen commands here, store them in
-				 * m_sNextScreen and apply them after we tween out.  If we don't set
-				 * m_sScreen to "", we'll load it twice (once for each player) and
-				 * then again for m_sNextScreen. */
-				m_sNextScreen = mc.m_sScreen;
-				mc.m_sScreen = "";
-			}
-		}
-
-		ExportOptionForAllPlayers( i );
-	}
-	CHECKPOINT;
-
-	// NEXT_SCREEN;
-	if( m_sNextScreen == "" )
-		m_sNextScreen = NEXT_SCREEN;
-
-	if( ChangeMask & OPT_APPLY_ASPECT_RATIO )
-	{
-		THEME->UpdateLuaGlobals();	// This needs to be done before resetting the projection matrix below
-		SCREENMAN->ThemeChanged();	// recreate ScreenSystemLayer and SharedBGA
-	}
-
-	/* If the theme changes, we need to reset RageDisplay to apply new theme 
-	 * window title and icon. */
-	/* If the aspect ratio changes, we need to reset RageDisplay so that the 
-	 * projection matrix is re-created using the new screen dimensions. */
-	if( (ChangeMask & OPT_APPLY_THEME) || 
-		(ChangeMask & OPT_APPLY_GRAPHICS) ||
-		(ChangeMask & OPT_APPLY_ASPECT_RATIO) )
-		ApplyGraphicOptions();
-
-	if( ChangeMask & OPT_SAVE_PREFERENCES )
-	{
-		/* Save preferences. */
-		LOG->Trace("ROW_CONFIG used; saving ...");
-		PREFSMAN->SaveGlobalPrefsToDisk();
-		SaveGamePrefsToDisk();
-	}
-
-	if( ChangeMask & OPT_RESET_GAME )
-	{
-		ResetGame();
-		m_sNextScreen = "";
-	}
-
-	if( ChangeMask & OPT_APPLY_SOUND )
-	{
-		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );
-	}
-	
-	if( ChangeMask & OPT_APPLY_SONG )
-		SONGMAN->SetPreferences();
-
-	CHECKPOINT;
 }
 
 void ScreenOptionsMaster::GoToNextScreen()
@@ -1040,7 +949,7 @@ void ScreenOptionsMaster::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Re
 	const OptionRowHandler &hand = OptionRowHandlers[iRow];
 
 	if( hand.m_bExportOnChange || !hand.m_vsRefreshRowNames.empty() )
-		ExportOptionForAllPlayers( iRow );
+		ExportOptions( iRow );
 
 	FOREACH_CONST( CString, hand.m_vsRefreshRowNames, sRowToRefreshName )
 	{
@@ -1071,6 +980,104 @@ void ScreenOptionsMaster::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Re
 	}
 }
 
+void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
+{
+	switch( SM )
+	{
+	case SM_GoToNextScreen:
+		{
+			//
+			// Override ScreenOptions's calling of ExportOptions
+			//
+			m_iChangeMask = 0;
+		
+			CHECKPOINT;
+
+			const unsigned uFocusRow = this->GetCurrentRow();
+			/* If the selection is on a LIST, and the selected LIST option sets the screen,
+			* honor it. */
+			m_sNextScreen = "";
+
+			for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
+			{
+				CHECKPOINT_M( ssprintf("%i/%i", i, int(OptionRowHandlers.size())) );
+				
+				/* If SELECT_NONE, only apply it if it's the selected option. */
+				const OptionRowDefinition &def = m_OptionRowAlloc[i];
+				if( def.selectType == SELECT_NONE && i != uFocusRow )
+					continue;
+
+				OptionRowHandler &hand = OptionRowHandlers[i];
+
+				if( hand.type == ROW_LIST )
+				{
+					const int choice = m_Rows[i]->m_iChoiceInRowWithFocus[GAMESTATE->m_MasterPlayerNumber];
+					GameCommand &mc = hand.ListEntries[choice];
+					if( mc.m_sScreen != "" )
+					{
+						/* Hack: instead of applying screen commands here, store them in
+						* m_sNextScreen and apply them after we tween out.  If we don't set
+						* m_sScreen to "", we'll load it twice (once for each player) and
+						* then again for m_sNextScreen. */
+						m_sNextScreen = mc.m_sScreen;
+						mc.m_sScreen = "";
+					}
+				}
+
+				ExportOptions( i );
+			}
+			CHECKPOINT;
+
+			// NEXT_SCREEN;
+			if( m_sNextScreen == "" )
+				m_sNextScreen = NEXT_SCREEN;
+
+			if( m_iChangeMask & OPT_APPLY_ASPECT_RATIO )
+			{
+				THEME->UpdateLuaGlobals();	// This needs to be done before resetting the projection matrix below
+				SCREENMAN->ThemeChanged();	// recreate ScreenSystemLayer and SharedBGA
+			}
+
+			/* If the theme changes, we need to reset RageDisplay to apply new theme 
+			* window title and icon. */
+			/* If the aspect ratio changes, we need to reset RageDisplay so that the 
+			* projection matrix is re-created using the new screen dimensions. */
+			if( (m_iChangeMask & OPT_APPLY_THEME) || 
+				(m_iChangeMask & OPT_APPLY_GRAPHICS) ||
+				(m_iChangeMask & OPT_APPLY_ASPECT_RATIO) )
+				ApplyGraphicOptions();
+
+			if( m_iChangeMask & OPT_SAVE_PREFERENCES )
+			{
+				/* Save preferences. */
+				LOG->Trace("ROW_CONFIG used; saving ...");
+				PREFSMAN->SaveGlobalPrefsToDisk();
+				SaveGamePrefsToDisk();
+			}
+
+			if( m_iChangeMask & OPT_RESET_GAME )
+			{
+				ResetGame();
+				m_sNextScreen = "";
+			}
+
+			if( m_iChangeMask & OPT_APPLY_SOUND )
+			{
+				SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );
+			}
+			
+			if( m_iChangeMask & OPT_APPLY_SONG )
+				SONGMAN->SetPreferences();
+
+			CHECKPOINT;
+			this->GoToNextScreen();
+		}
+		break;
+	default:
+		ScreenOptions::HandleScreenMessage( SM );
+		break;
+	}
+}
 
 /*
  * (c) 2003-2004 Glenn Maynard

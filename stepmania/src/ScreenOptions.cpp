@@ -158,21 +158,17 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 
 	m_bShowUnderlines = bShowUnderlines;
 
-	for( int r=0; r<iNumOptionLines; r++ )		// foreach row
-	{
-		m_Rows.push_back( new OptionRow() );
-		OptionRow &row = *m_Rows.back();
-		row.LoadNormal( defs[r] );
-	}
-	
-	this->ImportOptions();
-	
 	Font* pFont = FONT->LoadFont( THEME->GetPathF(m_sName,"item") );
 
 	for( int r=0; r<iNumOptionLines; r++ )		// foreach row
 	{
-		OptionRow &row = *m_Rows[r];
+		m_Rows.push_back( new OptionRow() );
+		OptionRow &row = *m_Rows.back();
+		
+		row.LoadNormal( defs[r] );
 
+		this->ImportOptions( r );
+	
 		CHECKPOINT_M( ssprintf("row %i: %s", r, row.GetRowDef().name.c_str()) );
 
 		unsigned pos = r;
@@ -574,7 +570,8 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		this->GoToPrevScreen();
 		break;
 	case SM_GoToNextScreen:
-		this->ExportOptions();
+		for( unsigned r=0; r<m_Rows.size(); r++ )		// foreach row
+			this->ExportOptions(r);
 		this->GoToNextScreen();
 		break;
 	case SM_BeginFadingOut:
@@ -1144,41 +1141,35 @@ void ScreenOptions::RefreshRowChoices( int r, const OptionRowDefinition &newdef 
 {
 	OptionRow &row = *m_Rows[r];
 
-	// For now, update only m_vEnabledForPlayers
-	row.GetRowDef().m_vEnabledForPlayers = newdef.m_vEnabledForPlayers;
-	
-	UpdateEnabledDisabled( r );
-
-
-	/*
-	Font* pFont = FONT->LoadFont( THEME->GetPathF(m_sName,"item") );
-
-	OptionRow &row = *m_Rows[r];
-	OptionRow::RowType rt = row.GetRowType();
-	row.Clear();
-	switch( rt )
+	switch( row.GetRowType() )
 	{
 	case OptionRow::ROW_NORMAL:
-		row.LoadNormal( def );
-		row.AfterImportOptions( 
-			pFont, 
-			ITEMS_START_X, 
-			ITEMS_GAP_X, 
-			ITEMS_END_X, 
-			ITEMS_LONG_ROW_SHARED_X,
-			ITEMS_LONG_ROW_X,
-			ITEMS_ZOOM, 
-			CAPITALIZE_ALL_OPTION_NAMES,
-			THEME->GetPathF(m_sName,"item"),
-			THEME->GetPathF(m_sName,"title"),
-			GetExplanationTitle( r ),
-			THEME->GetPathG(m_sName,"bullet"),
-			LABELS_X,
-			ARROWS_X,
-			row.GetRowY(),
-			LABELS_ON_COMMAND
-			);
-
+		{
+			Font* pFont = FONT->LoadFont( THEME->GetPathF(m_sName,"item") );
+			row.Clear();
+			row.LoadNormal( newdef );
+			row.AfterImportOptions( 
+				pFont, 
+				ITEMS_START_X, 
+				ITEMS_GAP_X, 
+				ITEMS_END_X, 
+				ITEMS_LONG_ROW_SHARED_X,
+				ITEMS_LONG_ROW_X,
+				ITEMS_ZOOM, 
+				CAPITALIZE_ALL_OPTION_NAMES,
+				THEME->GetPathF(m_sName,"item"),
+				THEME->GetPathF(m_sName,"title"),
+				GetExplanationTitle( r ),
+				THEME->GetPathG(m_sName,"bullet"),
+				LABELS_X,
+				ARROWS_X,
+				row.GetRowY(),
+				LABELS_ON_COMMAND
+				);
+			FONT->UnloadFont( pFont );
+			pFont = NULL;
+			UpdateEnabledDisabled( r );
+		}
 		break;
 	case OptionRow::ROW_EXIT:
 		// nothing to do
@@ -1186,10 +1177,6 @@ void ScreenOptions::RefreshRowChoices( int r, const OptionRowDefinition &newdef 
 	default:
 		ASSERT(0);
 	}
-
-	FONT->UnloadFont( pFont );
-	pFont = NULL;
-	*/
 }
 
 /*

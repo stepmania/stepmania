@@ -51,29 +51,43 @@ void ScreenSMOnlineLogin::Init()
 	}
 }
 
-void ScreenSMOnlineLogin::ImportOptions()
+void ScreenSMOnlineLogin::ImportOptions( int row )
 {
-	vector<CString> vsProfiles;
-	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
-
-	CStringArray::iterator iter;
-
-	FOREACH_PlayerNumber( pn )
+	switch( row )
 	{
-		iter = find(vsProfiles.begin(), vsProfiles.end(), PREFSMAN->m_sDefaultLocalProfileID[pn] );
-		if( iter != vsProfiles.end() )
-			m_Rows[0]->SetOneSelection((PlayerNumber) pn, iter - vsProfiles.begin());
+	case 0:
+		{
+			vector<CString> vsProfiles;
+			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
+
+			CStringArray::iterator iter;
+
+			FOREACH_PlayerNumber( pn )
+			{
+				iter = find(vsProfiles.begin(), vsProfiles.end(), PREFSMAN->m_sDefaultLocalProfileID[pn] );
+				if( iter != vsProfiles.end() )
+					m_Rows[0]->SetOneSelection((PlayerNumber) pn, iter - vsProfiles.begin());
+			}
+		}
+		break;
 	}
 }
 
-void ScreenSMOnlineLogin::ExportOptions()
+void ScreenSMOnlineLogin::ExportOptions( int row )
 {
-	vector<CString> vsProfiles;
-	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
-
-	FOREACH_EnabledPlayer( pn )
+	switch( row )
 	{
-		PREFSMAN->m_sDefaultLocalProfileID[pn] = vsProfiles[m_Rows[0]->GetOneSelection((PlayerNumber) pn)];
+	case 0:
+		{
+			vector<CString> vsProfiles;
+			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
+
+			FOREACH_EnabledPlayer( pn )
+			{
+				PREFSMAN->m_sDefaultLocalProfileID[pn] = vsProfiles[m_Rows[0]->GetOneSelection((PlayerNumber) pn)];
+			}
+		}
+		break;
 	}
 }
 
@@ -84,7 +98,8 @@ void ScreenSMOnlineLogin::GoToPrevScreen()
 
 void ScreenSMOnlineLogin::GoToNextScreen()
 {
-	ExportOptions();
+	for( unsigned r=0; r<m_Rows.size(); r++ )
+		ExportOptions( r );
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	FOREACH_EnabledPlayer(pn)
 	{

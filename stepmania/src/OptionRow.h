@@ -80,6 +80,7 @@ public:
 	OptionRow();
 	~OptionRow();
 
+	void Clear();
 	void LoadNormal( const OptionRowDefinition &def );
 	void LoadExit(
 		const CString &sFontPath,

@@ -14,8 +14,8 @@ public:
 	virtual void MenuStart( PlayerNumber pn, const InputEventType type );
 
 private:
-	void ImportOptions();
-	void ExportOptions();
+	void ImportOptions( int row );
+	void ExportOptions( int row );
 
 	void GoToNextScreen();
 	void GoToPrevScreen();

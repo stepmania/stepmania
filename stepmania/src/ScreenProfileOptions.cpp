@@ -80,42 +80,46 @@ void ScreenProfileOptions::Init()
 	SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions","music") );
 }
 
-void ScreenProfileOptions::ImportOptions()
+void ScreenProfileOptions::ImportOptions( int row )
 {
-	vector<CString> vsProfiles;
-	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
+	switch( row )
+	{
+	case PO_PLAYER1:
+	case PO_PLAYER2:
+		{
+			PlayerNumber pn = (PlayerNumber)(row - PO_PLAYER1);
+			vector<CString> vsProfiles;
+			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-	CStringArray::iterator iter;
-
-	iter = find( 
-		vsProfiles.begin(),
-		vsProfiles.end(),
-		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_1] );
-	if( iter != vsProfiles.end() )
-		m_Rows[PO_PLAYER1]->SetOneSharedSelection( iter - vsProfiles.begin() + 1 );
-
-	iter = find( 
-		vsProfiles.begin(),
-		vsProfiles.end(),
-		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_2] );
-	if( iter != vsProfiles.end() )
-		m_Rows[PO_PLAYER2]->SetOneSharedSelection( iter - vsProfiles.begin() + 1 );
+			CStringArray::iterator iter = find( 
+				vsProfiles.begin(),
+				vsProfiles.end(),
+				PREFSMAN->m_sDefaultLocalProfileID[pn] );
+			if( iter != vsProfiles.end() )
+				m_Rows[row]->SetOneSharedSelection( iter - vsProfiles.begin() + 1 );
+		}
+		break;
+	}
 }
 
-void ScreenProfileOptions::ExportOptions()
+void ScreenProfileOptions::ExportOptions( int row )
 {
-	vector<CString> vsProfiles;
-	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
+	switch( row )
+	{
+	case PO_PLAYER1:
+	case PO_PLAYER2:
+		{
+			PlayerNumber pn = (PlayerNumber)(row - PO_PLAYER1);
+			vector<CString> vsProfiles;
+			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-	if( m_Rows[PO_PLAYER1]->GetOneSharedSelection() > 0 )
-		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_1] = vsProfiles[m_Rows[PO_PLAYER1]->GetOneSharedSelection()-1];
-	else
-		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_1] = "";
-
-	if( m_Rows[PO_PLAYER2]->GetOneSharedSelection() > 0 )
-		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_2] = vsProfiles[m_Rows[PO_PLAYER2]->GetOneSharedSelection()-1];
-	else
-		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_2] = "";
+			if( m_Rows[row]->GetOneSharedSelection() > 0 )
+				PREFSMAN->m_sDefaultLocalProfileID[pn] = vsProfiles[m_Rows[row]->GetOneSharedSelection()-1];
+			else
+				PREFSMAN->m_sDefaultLocalProfileID[pn] = "";
+		}
+		break;
+	}
 }
 
 void ScreenProfileOptions::GoToPrevScreen()

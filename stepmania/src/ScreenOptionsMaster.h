@@ -23,7 +23,7 @@ public:
 	virtual ~ScreenOptionsMaster();
 	void Update( float fDelta );
 
-private:
+protected:
 
 	struct OptionRowHandler
 	{
@@ -58,6 +58,7 @@ private:
 		const ConfOption *opt;
 	};
 
+	int m_iChangeMask;
 	CString m_sNextScreen;
 
 	vector<OptionRowHandler> OptionRowHandlers;
@@ -65,7 +66,6 @@ private:
 
 	int ExportOption( const OptionRowDefinition &def, const OptionRowHandler &hand, PlayerNumber pn, const vector<bool> &vbSelected );
 	void ImportOption( const OptionRowDefinition &def, const OptionRowHandler &hand, PlayerNumber pn, int rowno, vector<bool> &vbSelectedOut );
-	int ExportOptionForAllPlayers( int iRow );
 	
 	static void SetList( OptionRowDefinition &def, OptionRowHandler &hand, CString param );
 	static void SetLua( OptionRowDefinition &def, OptionRowHandler &hand, const CString &sLuaFunction );
@@ -77,10 +77,12 @@ private:
 	static void SetDifficulties( OptionRowDefinition &def, OptionRowHandler &hand );
 
 protected:
+	void HandleScreenMessage( const ScreenMessage SM );
+
 	virtual void ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat );
 
-	virtual void ImportOptions();
-	virtual void ExportOptions();
+	virtual void ImportOptions( int row );
+	virtual void ExportOptions( int row );
 	virtual void ImportOptionsForPlayer( PlayerNumber pn ); // used by ScreenPlayerOptions
 
 	virtual void GoToNextScreen();

@@ -31,8 +31,8 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-	virtual void ImportOptions() = 0;
-	virtual void ExportOptions() = 0;
+	virtual void ImportOptions( int row ) = 0;
+	virtual void ExportOptions( int row ) = 0;
 	void InitOptionsText();
 	void GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut );
 	CString GetExplanationText( int row ) const;

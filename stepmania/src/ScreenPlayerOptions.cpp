@@ -185,15 +185,14 @@ void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 void ScreenPlayerOptions::UpdateDisqualified()
 {
 	// save current player options 
-	PlayerOptions po[2];
+	PlayerOptions po[NUM_PLAYERS];
 
 	FOREACH_PlayerNumber( p )
-	{
 		po[p] = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions;
-	}
 	
 	// export the currently selection options, which will fill GAMESTATE->m_PlayerOptions
-	ScreenOptionsMaster::ExportOptions();
+	for( unsigned r=0; r<OptionRowHandlers.size(); r++ )
+		ScreenOptionsMaster::ExportOptions( r );
 
 	FOREACH_HumanPlayer( p )
 	{
