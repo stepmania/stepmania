@@ -415,9 +415,16 @@ void RageDisplay::LoadIdentity()
 	g_ModelViewStack.LoadIdentity();
 }
 
+float g_fLastMenuPerspectiveFOV = -1;
+float RageDisplay::GetMenuPerspectiveFOV()
+{
+	return g_fLastMenuPerspectiveFOV;
+}
 
 void RageDisplay::LoadMenuPerspective(float fovDegrees)
 {
+	g_fLastMenuPerspectiveFOV = fovDegrees;
+
 	/* fovDegrees == 0 looks the same as an ortho projection.  However,
 	 * we don't want to mess with the ModelView stack because 
 	 * EnterPerspectiveMode's preserve location feature expectes there 

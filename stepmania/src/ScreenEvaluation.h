@@ -133,10 +133,16 @@ public:
 	ScreenEvaluationEndless() : ScreenEvaluation("ScreenEvaluationEndless",ScreenEvaluation::course) {};
 };
 
-class ScreenEvaluationBattle : public ScreenEvaluation
+class ScreenEvaluationCpubattle : public ScreenEvaluation
 {
 public:
-	ScreenEvaluationBattle() : ScreenEvaluation("ScreenEvaluationBattle",ScreenEvaluation::stage) {};
+	ScreenEvaluationCpubattle() : ScreenEvaluation("ScreenEvaluationCpubattle",ScreenEvaluation::stage) {};
+};
+
+class ScreenEvaluationHumanbattle : public ScreenEvaluation
+{
+public:
+	ScreenEvaluationHumanbattle() : ScreenEvaluation("ScreenEvaluationHumanbattle",ScreenEvaluation::stage) {};
 };
 
 class ScreenEvaluationRave : public ScreenEvaluation

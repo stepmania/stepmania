@@ -193,7 +193,8 @@ ScreenNameEntry::ScreenNameEntry() : Screen("ScreenNameEntry")
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
-		case PLAY_MODE_BATTLE:
+		case PLAY_MODE_HUMAN_BATTLE:
+		case PLAY_MODE_CPU_BATTLE:
 		case PLAY_MODE_RAVE:
 			{
 				StageStats SS;
@@ -404,7 +405,8 @@ void ScreenNameEntry::MenuStart( PlayerNumber pn )
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_CPU_BATTLE:
 	case PLAY_MODE_RAVE:
 		SONGMAN->m_MachineScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_RankingCategory[pn]][GAMESTATE->m_iRankingIndex[pn]].sName = m_sSelectedName[pn];
 		break;

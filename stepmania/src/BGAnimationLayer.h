@@ -97,7 +97,7 @@ protected:
 	// common stuff
 	CString m_sCommand;
 	float m_fUpdateRate;	// get by GainingFocus
-	float m_fFOV;
+	float m_fFOV;	// -1 = no change
 	bool m_bLighting;
 
 	// stretch stuff

@@ -218,6 +218,7 @@ public:
 	void PostMultMatrix( const RageMatrix &f );
 	void PreMultMatrix( const RageMatrix &f );
 	void LoadIdentity();
+	float GetMenuPerspectiveFOV();
 	void LoadMenuPerspective(float fovDegrees);
 	void EnterPerspective(float fov, bool preserve_loc = true, float znear = 1, float zfar = 1000);
 	void ExitPerspective();

@@ -67,13 +67,14 @@ CString PlayModeToString( PlayMode pm )
 {
 	switch( pm )
 	{
-	case PLAY_MODE_ARCADE:		return "arcade";
-	case PLAY_MODE_ONI:			return "oni";
-	case PLAY_MODE_NONSTOP:		return "nonstop";
-	case PLAY_MODE_ENDLESS:		return "endless";
-	case PLAY_MODE_BATTLE:		return "battle";
-	case PLAY_MODE_RAVE:		return "rave";
-	default:	ASSERT(0);		return "";
+	case PLAY_MODE_ARCADE:			return "arcade";
+	case PLAY_MODE_ONI:				return "oni";
+	case PLAY_MODE_NONSTOP:			return "nonstop";
+	case PLAY_MODE_ENDLESS:			return "endless";
+	case PLAY_MODE_HUMAN_BATTLE:	return "humanbattle";
+	case PLAY_MODE_CPU_BATTLE:		return "cpubattle";
+	case PLAY_MODE_RAVE:			return "rave";
+	default:	ASSERT(0);			return "";
 	}
 }
 

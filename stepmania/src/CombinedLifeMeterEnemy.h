@@ -35,7 +35,8 @@ public:
 	virtual bool FailedEarlier( PlayerNumber pn ) { return false; };
 
 protected:
-	MeterDisplay m_meterHealth;
+	Sprite m_sprHealthStream;
+	Sprite	m_sprHealthBackground;
 	float m_fLastSeenHealthPercent;
 
 	Sprite m_sprFace;

@@ -365,7 +365,8 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_CPU_BATTLE:
 	case PLAY_MODE_RAVE:
 		{
 			if( so == SORT_SORT )

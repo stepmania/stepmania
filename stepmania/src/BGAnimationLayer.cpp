@@ -26,6 +26,7 @@
 #include "Sprite.h"
 #include "RageDisplay.h"
 #include "ActorUtil.h"
+#include "StepMania.h"	// for HOOKS
 
 
 const float PARTICLE_SPEED = 300;
@@ -57,8 +58,8 @@ void BGAnimationLayer::Init()
 	Unload();
 
 	m_fUpdateRate = 1;
-	m_fFOV = 0;		// ortho
-	m_bLighting = 0;		// ortho
+	m_fFOV = -1;	// no change
+	m_bLighting = false;
 
 //	m_bCycleColor = false;
 //	m_bCycleAlpha = false;
@@ -491,7 +492,9 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	}
 	else if( sFile == "" )
 	{
-		RageException::Throw( "In the ini file for BGAnimation '%s', '%s' is missing a the line 'File='.", sAniDir.c_str(), sLayer.c_str() );
+		if( DISPLAY->IsWindowed() )
+			HOOKS->MessageBoxOK( ssprintf( 
+				"In the ini file for BGAnimation '%s', '%s' is missing a the line 'File='.", sAniDir.c_str(), sLayer.c_str() ) );
 	}
 
 
@@ -501,15 +504,18 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		vector<CString> asElementPaths;
 		GetDirListing( sPath + "*", asElementPaths, false, true );
 		if(asElementPaths.size() == 0)
-			RageException::Throw( "In the ini file for BGAnimation '%s', the specified File '%s' does not exist.", sAniDir.c_str(), sFile.c_str() );
+		{
+			if( DISPLAY->IsWindowed() )
+				HOOKS->MessageBoxOK( ssprintf("In the ini file for BGAnimation '%s', the specified File '%s' does not exist.", sAniDir.c_str(), sFile.c_str()) );
+			return;
+		}
 		if(asElementPaths.size() > 1)
 		{
-			CString message = ssprintf( 
-				"There is more than one file that matches "
-				"'%s/%s'.  Please remove all but one of these matches.",
-				sAniDir.c_str(), sFile.c_str() );
-
-			RageException::Throw( message ); 
+			if( DISPLAY->IsWindowed() )
+				HOOKS->MessageBoxOK( ssprintf( 
+					"There is more than one file that matches "
+					"'%s/%s'.  Please remove all but one of these matches.",
+					sAniDir.c_str(), sFile.c_str() ) );
 		}
 		sPath = asElementPaths[0];
 	}
@@ -903,14 +909,16 @@ void BGAnimationLayer::Update( float fDeltaTime )
 
 void BGAnimationLayer::Draw()
 {
-	DISPLAY->LoadMenuPerspective( m_fFOV );
+	float fLastFOV = DISPLAY->GetMenuPerspectiveFOV();
+	if( m_fFOV != -1 )
+		DISPLAY->LoadMenuPerspective( m_fFOV );
 	if( m_bLighting )
 	{
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
 			0, 
-			RageColor(0.6,0.6,0.6,1), 
-			RageColor(0.9,0.9,0.9,1),
+			RageColor(0.6f,0.6f,0.6f,1), 
+			RageColor(0.9f,0.9f,0.9f,1),
 			RageColor(0,0,0,1),
 			RageVector3(0, 0, 1) );
 	}
@@ -918,7 +926,8 @@ void BGAnimationLayer::Draw()
 	for( unsigned i=0; i<m_pActors.size(); i++ )
 		m_pActors[i]->Draw();
 	
-	DISPLAY->LoadMenuPerspective( 0 );
+	if( m_fFOV != -1 )
+		DISPLAY->LoadMenuPerspective( fLastFOV );
 	if( m_bLighting )
 	{
 		DISPLAY->SetLightOff( 0 );

@@ -155,7 +155,6 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 		m_sprDifficultyFrame[p].SetName( ssprintf("DifficultyFrameP%d",p+1) );
 		m_sprDifficultyFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic difficulty frame p%d",p+1)) );
 		m_sprDifficultyFrame[p].StopAnimating();
-		m_sprDifficultyFrame[p].SetState( p );
 		this->AddChild( &m_sprDifficultyFrame[p] );
 
 		m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );

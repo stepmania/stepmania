@@ -56,6 +56,14 @@ void ReloadItems()
 
 Inventory::Inventory()
 {
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_CPU_BATTLE:
+	case PLAY_MODE_HUMAN_BATTLE:
+		break;
+	default:
+		ASSERT(0);
+	}
 }
 
 Inventory::~Inventory()
@@ -75,8 +83,10 @@ void Inventory::Load( PlayerNumber pn )
 	m_iLastSeenCombo = 0;
 
 	// don't load battle sounds if they're not going to be used
-	if( GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE )
+	switch( GAMESTATE->m_PlayMode )
 	{
+	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_CPU_BATTLE:
 		m_soundAcquireItem.Load( THEME->GetPathToS("Inventory aquire item") );
 		for( unsigned i=0; i<g_Items.size(); i++ )
 		{
@@ -86,14 +96,12 @@ void Inventory::Load( PlayerNumber pn )
 			m_vpSoundUseItem.push_back( pSound );
 		}
 		m_soundItemEnding.Load( THEME->GetPathToS("Inventory item ending") );
+		break;
 	}
 }
 
 void Inventory::Update( float fDelta )
 {
-	if( GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE )
-		return;
-
 	if( GAMESTATE->m_bActiveAttackEndedThisUpdate[m_PlayerNumber] )
 		m_soundItemEnding.Play();
 
@@ -145,6 +153,12 @@ void Inventory::Update( float fDelta )
 
 void Inventory::AwardItem( int iItemIndex )
 {
+	// CPU player is vanity only.  It should have no effect on gameplay
+	// and should not aquire/launch attacks.
+	if( GAMESTATE->IsCpuPlayer(m_PlayerNumber) )
+		return;
+
+
 	// search for the first open slot
 	int iOpenSlot = -1;
 
@@ -181,20 +195,26 @@ void Inventory::UseItem( int iSlot )
 	if( asInventory[iSlot].IsBlank() )
 		return;
 
-//    PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
+    PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
 	GameState::Attack a = asInventory[iSlot];
 
-//	GAMESTATE->LaunchAttack( pnToAttack, a );
-//	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( pnToAttack );
+	// remove the item
+	asInventory[iSlot].MakeBlank();
+	m_vpSoundUseItem[a.level]->Play();
+
+
+	// Item has no effect if CPU is already dead
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_CPU_BATTLE && GAMESTATE->m_fOpponentHealthPercent==0 )
+		return;
+
+
+	GAMESTATE->LaunchAttack( pnToAttack, a );
 
 	float fPercentHealthToDrain = (a.level+1) / 10.f;
 	ASSERT( fPercentHealthToDrain > 0 );
 	GAMESTATE->m_fOpponentHealthPercent -= fPercentHealthToDrain;
 	CLAMP( GAMESTATE->m_fOpponentHealthPercent, 0.f, 1.f );
 
-	// remove the item
-	asInventory[iSlot].MakeBlank();
-	m_vpSoundUseItem[a.level]->Play();
-
+	// play announcer sound
 	SCREENMAN->SendMessageToTopScreen( (ScreenMessage)(SM_BattleDamageLevel1+a.level) );
 }

@@ -24,6 +24,8 @@
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "ModeChoice.h"
+#include "RageDisplay.h"
+#include "StepMania.h"
 
 
 #define CHOICES					THEME->GetMetric (m_sName,"Choices")
@@ -97,7 +99,10 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 				continue;
 			}
 
-			LOG->Warn( "The choice token '%s' is not recognized as a Game, Style, PlayMode, or Difficulty.  The choice containing this token will be ignored.", sBit.c_str() );
+			CString sError = ssprintf( "The choice token '%s' is not recognized as a Game, Style, PlayMode, or Difficulty.  The choice containing this token will be ignored.", sBit.c_str() );
+			LOG->Warn( sError );
+			if( DISPLAY->IsWindowed() )
+				HOOKS->MessageBoxOK( sError );
 			bChoiceIsInvalid |= true;
 		}
 

@@ -86,7 +86,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty() : ScreenSelect( "ScreenSelectDi
 		CLAMP( m_iChoiceOnPage[p], 0, (int)m_ModeChoices[0].size()-1 );
 		m_bChosen[p] = false;
 
-		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
+		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
 
 		m_sprShadow[p].SetName( "Shadow" );
@@ -203,8 +203,11 @@ void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 //		return;
 	if( m_bChosen[pn] )
 		return;
-	if( m_iChoiceOnPage[pn] == (int)m_ModeChoices[m_CurrentPage].size()-1 )	// can't go left any more
+	if( m_iChoiceOnPage[pn] == (int)m_ModeChoices[m_CurrentPage].size()-1 )	// can't go right any more
 	{
+		if( m_ModeChoices[m_CurrentPage+1].size()==0 )	// there is no page 2
+			return;
+
 		if( m_CurrentPage < NUM_PAGES-1 )
 			ChangePage( (Page)(m_CurrentPage+1) );
 	}

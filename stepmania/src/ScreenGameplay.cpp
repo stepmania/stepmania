@@ -40,12 +40,14 @@
 #include "RageTextureManager.h"
 #include "CombinedLifeMeterEnemy.h"
 #include "CombinedLifeMeterTug.h"
+#include "Inventory.h"
 
 //
 // Defines
 //
-#define PREV_SCREEN( play_mode )		THEME->GetMetric ("ScreenGameplay","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
-#define NEXT_SCREEN( play_mode )		THEME->GetMetric ("ScreenGameplay","NextScreen"+Capitalize(PlayModeToString(play_mode)))
+#define PREV_SCREEN( play_mode )				THEME->GetMetric ("ScreenGameplay","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
+#define NEXT_SCREEN( play_mode )				THEME->GetMetric ("ScreenGameplay","NextScreen"+Capitalize(PlayModeToString(play_mode)))
+#define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB("ScreenGameplay","ShowLifeMeterForDisabledPlayers")
 
 CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 CachedThemeMetricF G_TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
@@ -113,7 +115,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_CPU_BATTLE:
 	case PLAY_MODE_RAVE:
 		{
 			// cache NoteSkin graphics
@@ -239,11 +242,14 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	
 		m_TimingAssist.Load((PlayerNumber)p, &m_Player[p]);
 
-		if( GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE )
+		switch( GAMESTATE->m_PlayMode )
 		{
+		case PLAY_MODE_HUMAN_BATTLE:
+		case PLAY_MODE_CPU_BATTLE:
 			m_ActiveItemList[p].Init( (PlayerNumber)p );
 			/* Position it in LoadNextSong. */
 			this->AddChild( &m_ActiveItemList[p] );
+			break;
 		}
 
 		m_sprOniGameOver[p].Load( THEME->GetPathToG("ScreenGameplay oni gameover") );
@@ -274,14 +280,51 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	SET_XY( m_sprLifeFrame );
 	this->AddChild( &m_sprLifeFrame );
 
+	//
+	// combined life meter
+	//
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_CPU_BATTLE:
+	case PLAY_MODE_RAVE:
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_CPU_BATTLE:
+			m_pCombinedLifeMeter = new CombinedLifeMeterEnemy;
+			break;
+		case PLAY_MODE_RAVE:
+			m_pCombinedLifeMeter = new CombinedLifeMeterTug;
+			break;
+		default:
+			ASSERT(0);
+		}
+		m_pCombinedLifeMeter->SetName( ssprintf("CombinedLife%s",bExtra?"Extra":"") );
+		SET_XY( *m_pCombinedLifeMeter );
+		this->AddChild( m_pCombinedLifeMeter );		
+		break;
+	}
+
+	//
+	// individual life meter
+	//
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ENDLESS:
+	case PLAY_MODE_CPU_BATTLE:
+	case PLAY_MODE_HUMAN_BATTLE:
 		for( p=0; p<NUM_PLAYERS; p++ )
 		{
+			// CPU players don't have an individual life meter in CPU battle
+			if( GAMESTATE->m_PlayMode == PLAY_MODE_CPU_BATTLE &&
+				GAMESTATE->IsCpuPlayer(p) )
+				continue;	// skip
+
+			if( !GAMESTATE->IsPlayerEnabled(p) && !SHOW_LIFE_METER_FOR_DISABLED_PLAYERS )
+				continue;	// skip
+
 			switch( GAMESTATE->m_SongOptions.m_LifeType )
 			{
 			case SongOptions::LIFE_BAR:
@@ -299,23 +342,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 			SET_XY( *m_pLifeMeter[p] );
 			this->AddChild( m_pLifeMeter[p] );		
 		}
-		break;
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_BATTLE:
-			m_pCombinedLifeMeter = new CombinedLifeMeterEnemy;
-			break;
-		case PLAY_MODE_RAVE:
-			m_pCombinedLifeMeter = new CombinedLifeMeterTug;
-			break;
-		default:
-			ASSERT(0);
-		}
-		m_pCombinedLifeMeter->SetName( ssprintf("CombinedLife%s",bExtra?"Extra":"") );
-		SET_XY( *m_pCombinedLifeMeter );
-		this->AddChild( m_pCombinedLifeMeter );		
 		break;
 	}
 
@@ -338,7 +364,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_CPU_BATTLE:
 	case PLAY_MODE_RAVE:
 		m_sprStage.Load( THEME->GetPathToG("ScreenGameplay stage "+GAMESTATE->GetStageText()) );
 		this->AddChild( &m_sprStage );
@@ -386,7 +413,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
+		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 
 		switch( GAMESTATE->m_PlayMode )
@@ -399,7 +426,14 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		case PLAY_MODE_ENDLESS:
 			m_pScoreDisplay[p] = new ScoreDisplayOni;
 			break;
-		case PLAY_MODE_BATTLE:
+		case PLAY_MODE_CPU_BATTLE:
+			// CPU controlled player is vanity only.  It has no
+			// effect on gameplay, and thus no score.
+			if( GAMESTATE->IsCpuPlayer(p) )
+				continue;	// skip
+			m_pScoreDisplay[p] = new ScoreDisplayBattle;
+			break;
+		case PLAY_MODE_HUMAN_BATTLE:
 			m_pScoreDisplay[p] = new ScoreDisplayBattle;
 			break;
 		case PLAY_MODE_RAVE:
@@ -413,7 +447,13 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		m_pScoreDisplay[p]->SetName( ssprintf("ScoreP%d%s",p+1,bExtra?"Extra":"") );
 		SET_XY( *m_pScoreDisplay[p] );
 		this->AddChild( m_pScoreDisplay[p] );
-		
+	}
+	
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;
+
 		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathToF("Common normal") );
 		m_textPlayerOptions[p].EnableShadow( false );
 		m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d%s",p+1,bExtra?"Extra":"") );
@@ -458,10 +498,14 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( GAMESTATE->m_PlayMode==PLAY_MODE_BATTLE )
+		switch( GAMESTATE->m_PlayMode )
 		{
-			m_Inventory[p].Load( (PlayerNumber)p );
-			this->AddChild( &m_Inventory[p] );
+		case PLAY_MODE_HUMAN_BATTLE:
+		case PLAY_MODE_CPU_BATTLE:
+			m_pInventory[p] = new Inventory;
+			m_pInventory[p]->Load( (PlayerNumber)p );
+			this->AddChild( m_pInventory[p] );
+			break;
 		}
 	}
 
@@ -489,7 +533,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		// only load if we're going to use it
 		switch( GAMESTATE->m_PlayMode )
 		{
-		case PLAY_MODE_BATTLE:
+		case PLAY_MODE_HUMAN_BATTLE:
+		case PLAY_MODE_CPU_BATTLE:
 		case PLAY_MODE_RAVE:
 			for( p=0; p<NUM_PLAYERS; p++ )
 			{
@@ -562,8 +607,10 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("gameplay combo stopped") );
 		m_soundAssistTick.Load(			THEME->GetPathToS("ScreenGameplay assist tick") );
 
-		if( GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE )
+		switch( GAMESTATE->m_PlayMode )
 		{
+		case PLAY_MODE_HUMAN_BATTLE:
+		case PLAY_MODE_CPU_BATTLE:
 			m_announcerBattleTrickLevel1.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level1") );
 			m_announcerBattleTrickLevel2.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level2") );
 			m_announcerBattleTrickLevel3.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level3") );
@@ -573,6 +620,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 			m_announcerBattleDamageLevel1.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level1") );
 			m_announcerBattleDamageLevel2.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level2") );
 			m_announcerBattleDamageLevel3.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level3") );
+			break;
 		}
 	}
 
@@ -591,6 +639,7 @@ ScreenGameplay::~ScreenGameplay()
 		SAFE_DELETE( m_pScoreDisplay[p] );
 		SAFE_DELETE( m_pPrimaryScoreKeeper[p] );
 		SAFE_DELETE( m_pSecondaryScoreKeeper[p] );
+		SAFE_DELETE( m_pInventory[p] );
 	}
 	SAFE_DELETE( m_pCombinedLifeMeter );
 
@@ -658,7 +707,7 @@ void ScreenGameplay::LoadNextSong()
 		NoteData pNewNoteData;
 		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &pOriginalNoteData, &pNewNoteData );
 
-		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pScoreDisplay[p], &m_Inventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
+		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pScoreDisplay[p], m_pInventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
 		if( m_bDemonstration )
 		{
 			GAMESTATE->m_PlayerController[p] = PC_CPU;
@@ -1004,6 +1053,34 @@ void ScreenGameplay::Update( float fDeltaTime )
 			ASSERT(0);
 		}
 
+
+		//
+		// Check for enemy death in enemy battle
+		//
+		static float fLastSeenEnemyHealth = 1;
+		if( fLastSeenEnemyHealth != GAMESTATE->m_fOpponentHealthPercent )
+		{
+			fLastSeenEnemyHealth = GAMESTATE->m_fOpponentHealthPercent;
+
+			if( GAMESTATE->m_fOpponentHealthPercent == 0 )
+			{
+				GAMESTATE->RemoveAllActiveAttacks();
+
+				for( int p=0; p<NUM_PLAYERS; p++ )
+				{
+					if( GAMESTATE->IsCpuPlayer(p) )
+					{
+						m_soundOniDie.PlayRandom();
+						ShowOniGameOver((PlayerNumber)p);
+						m_Player[p].Init();		// remove all notes and scoring
+						m_Player[p].FadeToFail();	// tell the NoteField to fade to white
+					}
+				}
+			}
+		}
+		GAMESTATE->m_CurStageStats.bFailed[pn] = true;
+
+
 		//
 		// Check to see if it's time to play a ScreenGameplay comment
 		//
@@ -1013,7 +1090,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 			switch( GAMESTATE->m_PlayMode )
 			{
 			case PLAY_MODE_ARCADE:
-			case PLAY_MODE_BATTLE:
+			case PLAY_MODE_HUMAN_BATTLE:
+			case PLAY_MODE_CPU_BATTLE:
 			case PLAY_MODE_RAVE:
 				if( OneIsHot() )			m_announcerHot.PlayRandom();
 				else if( AllAreInDanger() )	m_announcerDanger.PlayRandom();
@@ -1036,11 +1114,16 @@ void ScreenGameplay::Update( float fDeltaTime )
 		m_soundAssistTick.Play();
 
 
-	// launch battle attacks
-
-	if( GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE )
+	//
+	// launch enemy attacks to human players
+	//
+	switch( GAMESTATE->m_PlayMode )
 	{
-#define CROSSED_SONG_SECONDS( s ) ((GAMESTATE->m_fMusicSeconds-fDeltaTime) < s  &&  (GAMESTATE->m_fMusicSeconds) >= s )
+	case PLAY_MODE_CPU_BATTLE:
+
+		// Don't apply any attacks if the enemy is already defeated
+		if( GAMESTATE->m_fOpponentHealthPercent==0 )
+			break;
 
 		static const CString sPossibleModifiers[NUM_ATTACK_LEVELS][3] = 
 		{
@@ -1061,6 +1144,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 			}
 		};
 
+#define CROSSED_SONG_SECONDS( s ) ((GAMESTATE->m_fMusicSeconds-fDeltaTime) < s  &&  (GAMESTATE->m_fMusicSeconds) >= s )
+
 		if( CROSSED_SONG_SECONDS(20) || CROSSED_SONG_SECONDS(40) )
 		{
 			GameState::Attack a;
@@ -1068,7 +1153,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			a.level = ATTACK_LEVEL_1;
 			a.sModifier = sPossibleModifiers[a.level][rand()%3];
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsPlayerEnabled(p) )
+				if( GAMESTATE->IsHumanPlayer(p) )
 					GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
 			this->HandleScreenMessage( SM_BattleTrickLevel1 );
 		}
@@ -1079,7 +1164,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			a.level = ATTACK_LEVEL_2;
 			a.sModifier = sPossibleModifiers[a.level][rand()%3];
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsPlayerEnabled(p) )
+				if( GAMESTATE->IsHumanPlayer(p) )
 					GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
 			this->HandleScreenMessage( SM_BattleTrickLevel2 );
 		}
@@ -1090,10 +1175,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 			a.level = ATTACK_LEVEL_3;
 			a.sModifier = sPossibleModifiers[a.level][rand()%3];
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsPlayerEnabled(p) )
+				if( GAMESTATE->IsHumanPlayer(p) )
 					GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
 			this->HandleScreenMessage( SM_BattleTrickLevel3 );
 		}
+		break;
 	}
 }
 
@@ -1279,7 +1365,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		}
 		
 		if( iItemSlot != -1 )
-			m_Inventory[MenuI.player].UseItem( iItemSlot );
+			m_pInventory[MenuI.player]->UseItem( iItemSlot );
 	}
 }
 
@@ -1308,7 +1394,8 @@ void SaveChanges()
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_CPU_BATTLE:
 	case PLAY_MODE_RAVE:
 		GAMESTATE->m_pCurSong->Save();
 		break;
@@ -1331,7 +1418,8 @@ void DontSaveChanges()
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_CPU_BATTLE:
 	case PLAY_MODE_RAVE:
 		GAMESTATE->m_pCurSong->RevertFromDisk();
 		break;
@@ -1358,7 +1446,8 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_CPU_BATTLE:
 	case PLAY_MODE_RAVE:
 		sMessage = ssprintf( 
 			"You have changed the offset or BPM of\n"
@@ -1483,7 +1572,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 						
 						switch( GAMESTATE->m_PlayMode )
 						{
-						case PLAY_MODE_BATTLE:
+						case PLAY_MODE_HUMAN_BATTLE:
+						case PLAY_MODE_CPU_BATTLE:
 						case PLAY_MODE_RAVE:
 							{
 								PlayerNumber winner = GAMESTATE->GetWinner();
@@ -1719,7 +1809,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
-		case PLAY_MODE_BATTLE:
+		case PLAY_MODE_HUMAN_BATTLE:
+		case PLAY_MODE_CPU_BATTLE:
 		case PLAY_MODE_RAVE:
 			if( PREFSMAN->m_bEventMode )
 				HandleScreenMessage( SM_GoToScreenAfterBack );
@@ -1759,7 +1850,8 @@ void ScreenGameplay::TweenOnScreen()
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 		ON_COMMAND( m_textCourseSongNumber[p] );
-		ON_COMMAND( *m_pScoreDisplay[p] );
+		if( m_pScoreDisplay[p] )
+			ON_COMMAND( *m_pScoreDisplay[p] );
 		ON_COMMAND( m_textPlayerOptions[p] );
 		ON_COMMAND( m_DifficultyIcon[p] );
 	}
@@ -1780,7 +1872,8 @@ void ScreenGameplay::TweenOffScreen()
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 		OFF_COMMAND( m_textCourseSongNumber[p] );
-		OFF_COMMAND( *m_pScoreDisplay[p] );
+		if( m_pScoreDisplay[p] )
+			OFF_COMMAND( *m_pScoreDisplay[p] );
 		OFF_COMMAND( m_textPlayerOptions[p] );
 		OFF_COMMAND( m_DifficultyIcon[p] );
 	}

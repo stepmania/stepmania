@@ -309,7 +309,8 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenEvaluationNonstop );
 	IF_RETURN( ScreenEvaluationOni );
 	IF_RETURN( ScreenEvaluationEndless );
-	IF_RETURN( ScreenEvaluationBattle );
+	IF_RETURN( ScreenEvaluationCpubattle );
+	IF_RETURN( ScreenEvaluationHumanbattle );
 	IF_RETURN( ScreenEvaluationRave );
 	IF_RETURN( ScreenEz2SelectPlayer );
 	IF_RETURN( ScreenGameOver );

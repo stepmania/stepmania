@@ -301,6 +301,11 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn )
 	if( m_PlayMode == PLAY_MODE_RAVE )
 		return true;
 	
+	// In cpu battle, show cpu player only if there's room on the screen.
+	if( m_PlayMode == PLAY_MODE_CPU_BATTLE )
+		if( GetCurrentStyleDef()->m_StyleType == StyleDef::ONE_PLAYER_ONE_CREDIT )
+			return true;
+	
 	return IsHumanPlayer( pn );
 }
 
@@ -401,7 +406,8 @@ StageResult GameState::GetStageResult( PlayerNumber pn )
 {
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_CPU_BATTLE:
 		return (m_fOpponentHealthPercent==0)?RESULT_WIN:RESULT_LOSE;
 	case PLAY_MODE_RAVE:
 		switch( pn )
@@ -489,11 +495,14 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 void GameState::RemoveAllActiveAttacks()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
 		for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
 		{
 			m_ActiveAttacks[p][s].fSecsRemaining = 0;
 			m_ActiveAttacks[p][s].sModifier = "";
 		}
+		RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
+	}
 }
 
 void GameState::RemoveAllInventory()

@@ -90,7 +90,8 @@ enum PlayMode
 	PLAY_MODE_NONSTOP,	// DDR EX Nonstop
 	PLAY_MODE_ONI,		// DDR EX Challenge
 	PLAY_MODE_ENDLESS,	// DDR PlayStation Endless
-	PLAY_MODE_BATTLE,	// inventory battle
+	PLAY_MODE_CPU_BATTLE,	// inventory battle vs non-player CPU
+	PLAY_MODE_HUMAN_BATTLE,	// inventory battle vs human player or CPU-controlled player
 	PLAY_MODE_RAVE,		// DDR Disney Rave "Dance Magic"
 	NUM_PLAY_MODES,
 	PLAY_MODE_INVALID

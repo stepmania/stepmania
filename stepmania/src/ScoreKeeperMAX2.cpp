@@ -30,7 +30,8 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Notes*>& apNotes_, PlayerNumber p
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_CPU_BATTLE:
 	case PLAY_MODE_RAVE:
 		{
 			ASSERT( !apNotes.empty() );
@@ -324,7 +325,8 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_CPU_BATTLE:
 	case PLAY_MODE_RAVE:
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ENDLESS:
@@ -455,7 +457,8 @@ int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_CPU_BATTLE:
 	case PLAY_MODE_RAVE:
 	case PLAY_MODE_ENDLESS:
 	case PLAY_MODE_NONSTOP:
@@ -491,7 +494,8 @@ int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns )
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_CPU_BATTLE:
 	case PLAY_MODE_RAVE:
 	case PLAY_MODE_ENDLESS:
 	case PLAY_MODE_NONSTOP:
