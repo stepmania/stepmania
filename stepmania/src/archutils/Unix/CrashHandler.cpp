@@ -118,14 +118,14 @@ static int retried_write( int fd, const void *buf, size_t count )
 
 static bool parent_write(int to_child, const void *p, size_t size)
 {
-	size_t ret = retried_write(to_child, p, size);
+	int ret = retried_write(to_child, p, size);
 	if( ret == -1 )
 	{
 		safe_print(fileno(stderr), "Unexpected write() result (", strerror(errno), ")\n", NULL);
 		return false;
 	}
 
-	if(ret != size)
+	if(size_t(ret) != size)
 	{
 		safe_print(fileno(stderr), "Unexpected write() result (", itoa(ret), ")\n", NULL);
 		return false;
