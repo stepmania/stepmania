@@ -430,6 +430,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 			delete pNewNotes;
 	}
 
+	SlideDuplicateDifficulties( out );
+
 	CString sPath = out.GetSongDir() + arrayBMSFileNames[0];
 
 	RageFile file(sPath);
@@ -703,3 +705,33 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 }
 
 
+void BMSLoader::SlideDuplicateDifficulties( Song &p )
+{
+	/* BMS files have to guess the Difficulty from the meter; this is inaccurate,
+	 * and often leads to duplicates.  Slide duplicate difficulties upwards.  We
+	 * only do this with BMS files, since a very common bug was having *all*
+	 * difficulties slid upwards due to (for example) having two beginner steps.
+	 * We do a second pass in Song::TidyUpData to eliminate any remaining duplicates
+	 * after this. */
+	for( int i=0; i<NUM_STEPS_TYPES; i++ )
+	{
+		StepsType st = (StepsType)i;
+
+		for( unsigned j=0; j<=DIFFICULTY_CHALLENGE; j++ ) // not DIFFICULTY_EDIT
+		{
+			Difficulty dc = (Difficulty)j;
+
+			vector<Steps*> vSteps;
+			p.GetSteps( vSteps, st, dc );
+
+			SortNotesArrayByDifficulty( vSteps );
+			for( unsigned k=1; k<vSteps.size(); k++ )
+			{
+				Steps* pSteps = vSteps[k];
+			
+				Difficulty dc2 = min( (Difficulty)(dc+1), DIFFICULTY_CHALLENGE );
+				pSteps->SetDifficulty( dc2 );
+			}
+		}
+	}
+}

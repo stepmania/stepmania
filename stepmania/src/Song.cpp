@@ -348,6 +348,7 @@ void Song::RevertFromDisk( bool bAllowNotesLoss )
 	PREFSMAN->m_bFastLoad = false;
 
 	LoadFromSongDir( dir );	
+	/* XXX: reload edits? */
 
 	PREFSMAN->m_bFastLoad = OldVal;
 
@@ -434,6 +435,45 @@ static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 			vSteps.erase(vSteps.begin()+j);
 			--j;
 		}
+	}
+}
+
+/* Make any duplicate difficulties edits.  (Note that BMS files do a first pass
+ * on this; see BMSLoader::SlideDuplicateDifficulties.) */
+void Song::AdjustDuplicateSteps()
+{
+	for( int i=0; i<NUM_STEPS_TYPES; i++ )
+	{
+		StepsType st = (StepsType)i;
+
+		for( unsigned j=0; j<=DIFFICULTY_CHALLENGE; j++ ) // not DIFFICULTY_EDIT
+		{
+			Difficulty dc = (Difficulty)j;
+
+			vector<Steps*> vSteps;
+			this->GetSteps( vSteps, st, dc );
+
+			/* Delete steps that are completely identical.  This happened due to a
+			 * bug in an earlier version. */
+			DeleteDuplicateSteps( this, vSteps );
+
+			CHECKPOINT;
+			SortNotesArrayByDifficulty( vSteps );
+			CHECKPOINT;
+			for( unsigned k=1; k<vSteps.size(); k++ )
+			{
+				vSteps[k]->SetDifficulty( DIFFICULTY_EDIT );
+				if( vSteps[k]->GetDescription() == "" )
+				{
+					/* "Hard Edit" */
+					CString EditName = Capitalize( DifficultyToString(dc) ) + " Edit";
+					vSteps[k]->SetDescription( EditName );
+				}
+			}
+		}
+
+		/* XXX: Don't allow edits to have descriptions that look like regular difficulties.
+		 * These are confusing, and they're ambiguous when passed to GetStepsByID. */
 	}
 }
 
@@ -747,35 +787,8 @@ void Song::TidyUpData()
 
 
 	/* Don't allow multiple Steps of the same StepsType and Difficulty (except for edits).
-	 * This happens a lot reading BMS files because they we have to guess
-	 * the Difficulty from the meter. */
-	for( i=0; i<NUM_STEPS_TYPES; i++ )
-	{
-		StepsType st = (StepsType)i;
-
-		for( unsigned j=0; j<=DIFFICULTY_CHALLENGE; j++ ) // not DIFFICULTY_EDIT
-		{
-			Difficulty dc = (Difficulty)j;
-
-			vector<Steps*> vSteps;
-			this->GetSteps( vSteps, st, dc );
-
-			/* Delete steps that are completely identical.  This happened due to a
-			 * bug in an earlier version. */
-			DeleteDuplicateSteps( this, vSteps );
-
-			CHECKPOINT;
-			SortNotesArrayByDifficulty( vSteps );
-			CHECKPOINT;
-			for( unsigned k=1; k<vSteps.size(); k++ )
-			{
-				Steps* pSteps = vSteps[k];
-			
-				Difficulty dc2 = min( (Difficulty)(dc+1), DIFFICULTY_CHALLENGE );
-				pSteps->SetDifficulty( dc2 );
-			}
-		}
-	}
+	 * We should be able to use difficulty names as unique identifiers for steps. */
+	AdjustDuplicateSteps();
 
 	{
 		/* Generated filename; this doesn't always point to a loadable file,

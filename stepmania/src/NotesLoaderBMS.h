@@ -5,12 +5,15 @@
 #include "Steps.h"
 #include "NotesLoader.h"
 
-class BMSLoader: public NotesLoader {
+class BMSLoader: public NotesLoader
+{
 	bool LoadFromBMSFile( const CString &sPath, Steps &out1 );
 	void mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &cNoteCharOut );
 	void PushTrackNumForMagic( int iTrackNum );
 	StepsType CheckTracksMagic( void );
 	void ResetTracksMagic( void );
+
+	void SlideDuplicateDifficulties( Song &p );
 
 public:
 	void GetApplicableFiles( CString sPath, CStringArray &out );

@@ -203,6 +203,10 @@ public:
 
 	void FreeAllLoadedFromProfiles();
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }
+
+private:
+	void AdjustDuplicateSteps(); // part of TidyUpData
+	CString GetUniqueSongDescription( StepsType st );
 };
 
 CString MakeSortString( CString s );
