@@ -206,12 +206,8 @@ try_element_again:
 
 	return asPossibleElementFilePaths[0];
 }
-
-CString ThemeManager::GetPathTo( CString sAssetCategory, CString sFileName ) 
+CString ThemeManager::GetPathToOptional( CString sAssetCategory, CString sFileName ) 
 {
-	if(sAssetCategory == "Fonts")
-		return GetPathToFont(sAssetCategory, sFileName);
-
 try_element_again:
 	sAssetCategory.MakeLower();
 	sFileName.MakeLower();
@@ -265,36 +261,8 @@ try_element_again:
 						asPossibleElementFilePaths, false, true );
 	}
 
-	/* If it's empty, we found nothing. */
-	if( asPossibleElementFilePaths.empty() )
-	{
-#ifdef _DEBUG
-		CString sMessage = ssprintf("The theme element %s/%s is missing.",sAssetCategory.GetString(),sFileName.GetString());
-		switch( MessageBox(NULL, sMessage, "ThemeManager", MB_ABORTRETRYIGNORE ) )
-		{
-		case IDRETRY:
-			goto try_element_again;
-			break;
-		case IDABORT:
-#endif
-			RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
-				sAssetCategory.GetString(),
-				sFileName.GetString(), 
-				GetThemeDirFromName(m_sCurThemeName).GetString(), 
-				GetThemeDirFromName(BASE_THEME_NAME).GetString() );
-#ifdef _DEBUG
-		case IDIGNORE:
-			LOG->Warn( 
-				"Theme element '%s/%s' could not be found in '%s' or '%s'.", 
-				sAssetCategory.GetString(),
-				sFileName.GetString(), 
-				GetThemeDirFromName(m_sCurThemeName).GetString(), 
-				GetThemeDirFromName(BASE_THEME_NAME).GetString() );
-			return GetPathTo( sAssetCategory, "_missing" );
-			break;
-		}
-#endif
-	}
+	if(asPossibleElementFilePaths.empty())
+		return "";
 
 	if( asPossibleElementFilePaths[0].GetLength() > 5  &&  asPossibleElementFilePaths[0].Right(5) == "redir" )	// this is a redirect file
 	{
@@ -332,12 +300,49 @@ try_element_again:
 		goto try_element_again;
 	}
 
-	/* If we're searching for a font, the return value should be the file
-	 * prefix we searched for; don't resolve it to the complete filename. */
-	if( sAssetCategory == "fonts" )
-		return path + sAssetCategory+"\\"+sFileName;
-
 	return asPossibleElementFilePaths[0];
+}
+
+CString ThemeManager::GetPathTo( CString sAssetCategory, CString sFileName ) 
+{
+	if(sAssetCategory == "Fonts")
+		return GetPathToFont(sAssetCategory, sFileName);
+
+#ifdef _DEBUG
+try_element_again:
+#endif
+
+	CString ret = GetPathToOptional(sAssetCategory, sFileName);
+
+	/* If it's empty, we found nothing. */
+	if( !ret.empty() )
+		return ret;
+
+#ifdef _DEBUG
+	CString sMessage = ssprintf("The theme element %s/%s is missing.",sAssetCategory.GetString(),sFileName.GetString());
+	switch( MessageBox(NULL, sMessage, "ThemeManager", MB_ABORTRETRYIGNORE ) )
+	{
+	case IDRETRY:
+		goto try_element_again;
+		break;
+	case IDABORT:
+#endif
+		RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
+			sAssetCategory.GetString(),
+			sFileName.GetString(), 
+			GetThemeDirFromName(m_sCurThemeName).GetString(), 
+			GetThemeDirFromName(BASE_THEME_NAME).GetString() );
+#ifdef _DEBUG
+	case IDIGNORE:
+		LOG->Warn( 
+			"Theme element '%s/%s' could not be found in '%s' or '%s'.", 
+			sAssetCategory.GetString(),
+			sFileName.GetString(), 
+			GetThemeDirFromName(m_sCurThemeName).GetString(), 
+			GetThemeDirFromName(BASE_THEME_NAME).GetString() );
+		return GetPathTo( sAssetCategory, "_missing" );
+	}
+#endif
 }
 
 

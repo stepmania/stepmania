@@ -29,6 +29,7 @@ public:
 	CString GetCurThemeName() { return m_sCurThemeName; };
 
 	CString GetPathTo( CString sAssetCategory, CString sFileName );	// looks up the current theme in PREFSMAN
+	CString GetPathToOptional( CString sAssetCategory, CString sFileName );	// looks up the current theme in PREFSMAN
 
 	CString		GetMetric( CString sClassName, CString sValueName );
 	int			GetMetricI( CString sClassName, CString sValueName );
