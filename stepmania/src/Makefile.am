@@ -230,16 +230,19 @@ crypto/CryptBn.cpp crypto/CryptMD5.cpp crypto/CryptNoise.cpp crypto/CryptPrime.c
 crypto/CryptRSA.cpp crypto/CryptSH512.cpp crypto/CryptSHA.cpp crypto/CryptBn.h crypto/CryptMD5.h crypto/CryptPrime.h \
 crypto/CryptRand.h crypto/CryptRSA.h crypto/CryptSH512.h crypto/CryptSHA.h
 
-stepmania_SOURCES = $(Screens) $(DataStructures) $(FileTypes) $(StepMania) $(Arch) \
+main_SOURCES = $(Screens) $(DataStructures) $(FileTypes) $(StepMania) $(Arch) \
 					$(ActorsInGameplayAndMenus) $(ActorsInMenus) $(ActorsInGameplay) \
 					$(Rage) $(Actors) $(GlobalSingletons) $(crypto)
 
-stepmania_LDADD = \
+main_LDADD = \
 		  $(XLIBS) \
 		  $(USE_SDL_LIBS) -lSDL_image \
 		  $(LUA_LIBS) \
 		  $(AUDIO_LIBS) \
 		  $(srcdir)/libresample/libresample.a
+
+stepmania_SOURCES = $(main_SOURCES)
+stepmania_LDADD = $(main_LDADD)
 
 # XXX: Make ArchHooks not depend on Display
 # Display depends on SaveJPEG  and SDL_utils, SDL_utils depends on SDL_rotozoom.
