@@ -271,10 +271,19 @@ void NoteField::DrawBGChangeText( const float fBeat, const CString sNewBGName )
 	m_textMeasureNumber.Draw();
 }
 
-/* cur is an iterator within m_NoteDisplays.  next is ++cur.  Advance cur to point to the
- * block that contains beat. */
+/* cur is an iterator within m_NoteDisplays.  next is ++cur.  Advance or rewind cur to
+ * point to the block that contains beat.  We maintain next as an optimization, as this
+ * is called for every tap. */
 void NoteField::SearchForBeat( NDMap::iterator &cur, NDMap::iterator &next, float Beat )
 {
+	/* cur is too far ahead: */
+	while( cur != m_BeatToNoteDisplays.begin() && cur->first > Beat )
+	{
+		next = cur;
+		--cur;
+	}
+
+	/* cur is too far behind: */
 	while( next != m_BeatToNoteDisplays.end() && next->first < Beat )
 	{
 		cur = next;
@@ -507,22 +516,11 @@ void NoteField::DrawPrimitives()
 		///////////////////////////////////
 		// Draw all TapNotes in this column
 		///////////////////////////////////
-		int first = iFirstIndexToDraw;
-		int last = iLastIndexToDraw;
-		int increment = 1;	// What is the reason for this?  We always want to draw all rows, right?  -Chris
-
-/*		if (ColDisplay[c] == '1')
-		{
-			first = iLastIndexToDraw;
-			last = iFirstIndexToDraw;
-			increment = -1;
-		}
-*/		
 		CurDisplay = m_BeatToNoteDisplays.begin();
 		NextDisplay = CurDisplay; ++NextDisplay;
 
 		// draw notes from furthest to closest
-		for( i=last; i>=first; i-=increment )	//	 for each row
+		for( i=iLastIndexToDraw; i>=iFirstIndexToDraw; --i )	//	 for each row
 		{	
 			TapNote tn = GetTapNote(c, i);
 			if( tn == TAP_EMPTY )	// no note here
