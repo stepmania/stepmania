@@ -8,6 +8,7 @@ const int NUM_KEYBOARD_BUTTONS = SDLK_LAST;
 const int NUM_JOYSTICKS = 6;
 const int NUM_JOYSTICK_HATS = 1;
 const int NUM_PUMPS = 2;
+const int NUM_PARAS = 2;
 
 enum InputDevice {
 	DEVICE_KEYBOARD = 0,
@@ -19,6 +20,7 @@ enum InputDevice {
 	DEVICE_JOY6,
 	DEVICE_PUMP1,
 	DEVICE_PUMP2,
+	DEVICE_PARA,
 	NUM_INPUT_DEVICES,	// leave this at the end
 	DEVICE_NONE			// means this is NULL
 };
@@ -56,6 +58,19 @@ enum PumpButton {
 	NUM_PUMP_PAD_BUTTONS	// leave this at the end
 };
 
+enum ParaButton {
+	PARA_L,
+	PARA_UL,
+	PARA_U,
+	PARA_UR,
+	PARA_R,
+	PARA_SELECT,
+	PARA_START,
+	PARA_MENU_LEFT,
+	PARA_MENU_RIGHT,
+	NUM_PARA_PAD_BUTTONS	// leave this at the end
+};
+
 
 const int NUM_DEVICE_BUTTONS[NUM_INPUT_DEVICES] =
 {
@@ -68,6 +83,7 @@ const int NUM_DEVICE_BUTTONS[NUM_INPUT_DEVICES] =
 	NUM_JOYSTICK_BUTTONS, // DEVICE_JOY6
 	NUM_PUMP_PAD_BUTTONS, // DEVICE_PUMP1
 	NUM_PUMP_PAD_BUTTONS, // DEVICE_PUMP2
+	NUM_PARA_PAD_BUTTONS, // DEVICE_PARA
 };
 
 const int MAX_DEVICE_BUTTONS = NUM_KEYBOARD_BUTTONS;

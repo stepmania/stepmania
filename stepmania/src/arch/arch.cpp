@@ -77,7 +77,7 @@ void MakeInputHandlers(vector<InputHandler *> &Add)
 #if defined(_WINDOWS)
 	Add.push_back(new InputHandler_DInput);
 	Add.push_back(new InputHandler_Win32_Pump);
-//	Add.push_back(new InputHandler_Win32_Para);
+	Add.push_back(new InputHandler_Win32_Para);
 #elif defined(_XBOX)
 	// Add.push_back(new InputHandler_DInput);
 #endif
@@ -156,8 +156,7 @@ LightsDriver *MakeLightsDriver(CString driver)
 	if(!driver.CompareNoCase("Serial")) ret = new LightsDriver_LinuxSerial;
 #endif
 	if(!driver.CompareNoCase("SystemMessage")) ret = new LightsDriver_SystemMessage;
-	if(!driver.CompareNoCase("Null")) ret = new LightsDriver_Null;
-	if( !ret )
+	if(!driver.CompareNoCase("Null") || !ret )
 	{
 		LOG->Warn("Unknown lights driver name: %s", driver.c_str());
 		ret = new LightsDriver_Null;
