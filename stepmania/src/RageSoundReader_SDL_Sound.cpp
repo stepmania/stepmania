@@ -87,6 +87,8 @@ int SoundReader_SDL_Sound::GetLength_Fast() const
 
 int SoundReader_SDL_Sound::SetPosition(int ms, bool accurate)
 {
+	avail = 0;
+
 	if(ms == 0)
 	{
 		Sound_Rewind(Sample);

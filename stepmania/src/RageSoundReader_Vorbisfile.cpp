@@ -78,6 +78,8 @@ int RageSoundReader_Vorbisfile::GetLength_Fast() const
 
 int RageSoundReader_Vorbisfile::SetPosition(int ms, bool accurate)
 {
+	avail = 0;
+
 	int ret = ov_time_seek(vf, ms);
 	if(ret < 0)
 	{
