@@ -61,6 +61,7 @@ public:
 	CString GetPathG( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(ELEMENT_CATEGORY_GRAPHICS,sClassName,sElement,bOptional); };
 	CString GetPathS( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(ELEMENT_CATEGORY_SOUNDS,sClassName,sElement,bOptional); };
 	CString GetPathO( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(ELEMENT_CATEGORY_OTHER,sClassName,sElement,bOptional); };
+	void ClearThemePathCache();
 
 	// TODO: remove these and update the places that use them
 	CString GetPathToB( const CString &sFileName, bool bOptional=false );

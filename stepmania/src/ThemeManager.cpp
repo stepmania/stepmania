@@ -90,6 +90,11 @@ void ThemeManager::Unsubscribe( IThemeMetric *p )
 
 /* We spend a lot of time doing redundant theme path lookups.  Cache results. */
 static map<CString, CString> g_ThemePathCache[NUM_ELEMENT_CATEGORIES];
+void ThemeManager::ClearThemePathCache()
+{
+	for( int i = 0; i < NUM_ELEMENT_CATEGORIES; ++i )
+		g_ThemePathCache[i].clear();
+}
 
 void FileNameToClassAndElement( const CString &sFileName, CString &sClassNameOut, CString &sElementOut )
 {
