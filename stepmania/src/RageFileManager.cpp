@@ -244,10 +244,8 @@ void RageFileManager::MountInitialFilesystems()
 #if defined(XBOX)
 	RageFileManager::Mount( "dir", "D:\\", "" );
 #elif defined(LINUX)
-	/* Absolute paths.  This is rarely used, eg. by Alsa9Buf::GetSoundCardDebugInfo(). 
-	 * All paths that start with a slash (eg. "/proc") should use this, so put it
-	 * first. */
-	RageFileManager::Mount( "dir", "/", "/" );
+	/* Mount /proc, so Alsa9Buf::GetSoundCardDebugInfo() and others can access it. */
+	RageFileManager::Mount( "dir", "/proc", "/proc" );
 	
 	/* We can almost do this, to have machine profiles be system-global to eg. share
 	 * scores.  It would need to handle permissions properly. */
