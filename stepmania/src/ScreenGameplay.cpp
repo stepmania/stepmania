@@ -207,6 +207,8 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		}
 	}
 
+	/* Called once per stage (single song or single course). */
+	GAMESTATE->BeginStage();
 
 	g_CurStageStats.pSong = NULL; // set in LoadNextSong
 	g_CurStageStats.playMode = GAMESTATE->m_PlayMode;
