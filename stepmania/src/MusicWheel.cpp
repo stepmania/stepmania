@@ -366,7 +366,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 			continue;
 
 		vector<Steps*> arraySteps;
-		pSong->GetSteps( arraySteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType, DIFFICULTY_INVALID, -1, -1, "", PREFSMAN->m_bAutogenMissingTypes );
+		pSong->GetSteps( arraySteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType, DIFFICULTY_INVALID, -1, -1, "" );
 
 		if( !arraySteps.empty() )
 			arraySongs.push_back( pSong );

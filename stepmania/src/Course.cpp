@@ -517,7 +517,7 @@ static vector<Song*> GetFilteredBestSongs( StepsType nt )
 		{
 			if( pSong->m_apNotes[j]->m_StepsType != nt )
 				continue;
-			if( !PREFSMAN->m_bAutogenMissingTypes && pSong->m_apNotes[j]->IsAutogen() )
+			if( !PREFSMAN->m_bAutogenSteps && pSong->m_apNotes[j]->IsAutogen() )
 				continue;
 
 			if( pSong->m_apNotes[j]->GetDifficulty() == DIFFICULTY_MEDIUM )
@@ -594,11 +594,11 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 			if( pSong )
 			{
 				if( e.difficulty != DIFFICULTY_INVALID )
-					pNotes = pSong->GetStepsByDifficulty( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
+					pNotes = pSong->GetStepsByDifficulty( nt, e.difficulty );
 				else if( e.low_meter != -1  &&  e.high_meter != -1 )
-					pNotes = pSong->GetStepsByMeter( nt, low_meter, high_meter, PREFSMAN->m_bAutogenMissingTypes );
+					pNotes = pSong->GetStepsByMeter( nt, low_meter, high_meter );
 				else
-					pNotes = pSong->GetStepsByDifficulty( nt, DIFFICULTY_MEDIUM, PREFSMAN->m_bAutogenMissingTypes );
+					pNotes = pSong->GetStepsByDifficulty( nt, DIFFICULTY_MEDIUM );
 			}
 			break;
 		case COURSE_ENTRY_RANDOM:
@@ -625,9 +625,9 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 					   continue; /* wrong group */
 
 					if( e.difficulty == DIFFICULTY_INVALID )
-						pNotes = pSong->GetStepsByMeter( nt, low_meter, high_meter, PREFSMAN->m_bAutogenMissingTypes );
+						pNotes = pSong->GetStepsByMeter( nt, low_meter, high_meter );
 					else
-						pNotes = pSong->GetStepsByDifficulty( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
+						pNotes = pSong->GetStepsByDifficulty( nt, e.difficulty );
 
 					if( pNotes )	// found a match
 						break;		// stop searching
@@ -662,9 +662,9 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 				}
 
 				if( e.difficulty == DIFFICULTY_INVALID )
-					pNotes = pSong->GetStepsByMeter( nt, low_meter, high_meter, PREFSMAN->m_bAutogenMissingTypes );
+					pNotes = pSong->GetStepsByMeter( nt, low_meter, high_meter );
 				else
-					pNotes = pSong->GetStepsByDifficulty( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
+					pNotes = pSong->GetStepsByDifficulty( nt, e.difficulty );
 
 				if( pNotes == NULL )
 					pNotes = pSong->GetClosestNotes( nt, DIFFICULTY_MEDIUM );
@@ -687,7 +687,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 			Difficulty new_dc = Difficulty( dc + cd );
 			if( new_dc < NUM_DIFFICULTIES )
 			{
-				Steps* pNewNotes = pSong->GetStepsByDifficulty( nt, new_dc, PREFSMAN->m_bAutogenMissingTypes );
+				Steps* pNewNotes = pSong->GetStepsByDifficulty( nt, new_dc );
 				if( pNewNotes )
 					pNotes = pNewNotes;
 			}

@@ -162,7 +162,7 @@ PrefsManager::PrefsManager()
 	m_bPercentageScoring = false;
 	m_fMinPercentageForHighScore = 0.5f;
 	m_bShowLyrics = true;
-	m_bAutogenMissingTypes = true;
+	m_bAutogenSteps = true;
 	m_bAutogenGroupCourses = true;
 	m_bBreakComboToGetItem = false;
 	m_bLockCourseDifficulties = true;
@@ -434,7 +434,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "PercentageScoring",				m_bPercentageScoring );
 	ini.GetValue( "Options", "MinPercentageForHighScore",		m_fMinPercentageForHighScore );
 	ini.GetValue( "Options", "ShowLyrics",						m_bShowLyrics );
-	ini.GetValue( "Options", "AutogenMissingTypes",				m_bAutogenMissingTypes );
+	ini.GetValue( "Options", "AutogenSteps",					m_bAutogenSteps );
 	ini.GetValue( "Options", "AutogenGroupCourses",				m_bAutogenGroupCourses );
 	ini.GetValue( "Options", "BreakComboToGetItem",				m_bBreakComboToGetItem );
 	ini.GetValue( "Options", "LockCourseDifficulties",			m_bLockCourseDifficulties );
@@ -648,7 +648,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "PercentageScoring",				m_bPercentageScoring );
 	ini.SetValue( "Options", "MinPercentageForHighScore",		m_fMinPercentageForHighScore );
 	ini.SetValue( "Options", "ShowLyrics",						m_bShowLyrics );
-	ini.SetValue( "Options", "AutogenMissingTypes",				m_bAutogenMissingTypes );
+	ini.SetValue( "Options", "AutogenSteps",					m_bAutogenSteps );
 	ini.SetValue( "Options", "AutogenGroupCourses",				m_bAutogenGroupCourses );
 	ini.SetValue( "Options", "BreakComboToGetItem",				m_bBreakComboToGetItem );
 	ini.SetValue( "Options", "LockCourseDifficulties",			m_bLockCourseDifficulties );

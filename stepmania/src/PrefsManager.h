@@ -157,7 +157,7 @@ public:
 	bool			m_bPercentageScoring;
 	float			m_fMinPercentageForHighScore;
 	bool			m_bShowLyrics;
-	bool			m_bAutogenMissingTypes;
+	bool			m_bAutogenSteps;
 	bool			m_bAutogenGroupCourses;
 	bool			m_bBreakComboToGetItem;
 	bool			m_bLockCourseDifficulties;

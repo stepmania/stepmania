@@ -61,7 +61,7 @@ bool ScreenJukebox::SetSong()
 		if( pNotes == NULL )
 			continue;	// skip
 
-		if( !PREFSMAN->m_bAutogenMissingTypes && pNotes->IsAutogen())
+		if( !PREFSMAN->m_bAutogenSteps && pNotes->IsAutogen())
 			continue;	// skip
 
 		// Found something we can use!

@@ -856,6 +856,9 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 
 void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType nt, Difficulty dc, int iMeterLow, int iMeterHigh, const CString &sDescription, bool bIncludeAutoGen, int Max ) const
 {
+	if( !PREFSMAN->m_bAutogenSteps )
+		bIncludeAutoGen = false;
+
 	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Steps
 	{
 		if( !Max )
@@ -891,10 +894,10 @@ Steps* Song::GetStepsByDifficulty( StepsType nt, Difficulty dc, bool bIncludeAut
 		return vNotes[0];
 }
 
-Steps* Song::GetStepsByMeter( StepsType nt, int iMeterLow, int iMeterHigh, bool bIncludeAutoGen ) const
+Steps* Song::GetStepsByMeter( StepsType nt, int iMeterLow, int iMeterHigh ) const
 {
 	vector<Steps*> vNotes;
-	GetSteps( vNotes, nt, DIFFICULTY_INVALID, iMeterLow, iMeterHigh, "", bIncludeAutoGen, 1 );
+	GetSteps( vNotes, nt, DIFFICULTY_INVALID, iMeterLow, iMeterHigh, "", true, 1 );
 	if( vNotes.size() == 0 )
 		return NULL;
 	else 

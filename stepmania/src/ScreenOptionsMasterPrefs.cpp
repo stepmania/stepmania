@@ -210,7 +210,7 @@ MOVE( Translations,			PREFSMAN->m_bShowNative );
 MOVE( Lyrics,				PREFSMAN->m_bShowLyrics );
 
 /* Misc. options */
-MOVE( AutogenMissingTypes,	PREFSMAN->m_bAutogenMissingTypes );
+MOVE( AutogenSteps,			PREFSMAN->m_bAutogenSteps );
 MOVE( AutogenGroupCourses,	PREFSMAN->m_bAutogenGroupCourses );
 MOVE( FastLoad,				PREFSMAN->m_bFastLoad );
 
@@ -422,7 +422,7 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Lyrics",				Lyrics,				"HIDE","SHOW"),
 
 	/* Misc options */
-	ConfOption( "Autogen\nMissing Types", AutogenMissingTypes, "OFF","ON" ),
+	ConfOption( "Autogen\nSteps",		AutogenSteps, "OFF","ON" ),
 	ConfOption( "Autogen\nGroup Courses", AutogenGroupCourses, "OFF","ON" ),
 	ConfOption( "Fast\nLoad",			  FastLoad,			   "OFF","ON" ),
 
