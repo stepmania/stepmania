@@ -124,8 +124,6 @@ void RageFileSink::IsolatedInitialize(const NameValuePairs &parameters)
 	const char *fileName;
 	if (parameters.GetValue("OutputFileName", fileName))
 	{
-        // does this do anything other than cause g++ to emit a warning?
-		ios::openmode binary = parameters.GetValueWithDefault("OutputBinaryMode", true) ? ios::binary : ios::openmode(0);
 		if( !m_file.Open( fileName, RageFile::WRITE ) )	// trucates existing data
 			throw OpenErr(fileName);
 	}
