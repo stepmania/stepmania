@@ -1036,8 +1036,8 @@ int main(int argc, char* argv[])
 	}
 #endif
 
-    SAFE_DELETE( NSMAN );
 	SAFE_DELETE( SCREENMAN );
+    SAFE_DELETE( NSMAN );
 	/* Delete INPUTMAN before the other INPUTFILTER handlers, or an input
 	 * driver may try to send a message to INPUTFILTER after we delete it. */
 	SAFE_DELETE( INPUTMAN );
