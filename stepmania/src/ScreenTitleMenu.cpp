@@ -303,7 +303,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 
 void ScreenTitleMenu::Update( float fDelta )
 {
-	if(TimeToDemonstration.PeekDeltaTime() >= SECONDS_BEFORE_ATTRACT)
+	if( !m_Menu.IsTransitioning() && TimeToDemonstration.PeekDeltaTime() >= SECONDS_BEFORE_ATTRACT)
 	{
 		this->PostScreenMessage( SM_GoToAttractLoop, 0 );
 		TimeToDemonstration.GetDeltaTime();
