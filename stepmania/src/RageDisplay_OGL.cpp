@@ -1085,6 +1085,8 @@ unsigned RageDisplay_OGL::CreateTexture(
 	PixelFormat pixfmt,
 	SDL_Surface* img )
 {
+	ASSERT( pixfmt < NUM_PIX_FORMATS );
+
 	unsigned int uTexHandle;
 	glGenTextures(1, reinterpret_cast<GLuint*>(&uTexHandle));
 	ASSERT(uTexHandle);
