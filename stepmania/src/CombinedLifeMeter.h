@@ -1,15 +1,5 @@
 #ifndef COMBINEDLIFEMETER_H
 #define COMBINEDLIFEMETER_H
-/*
------------------------------------------------------------------------------
- Class: LifeMeter
-
- Desc: A graphic displayed in the LifeMeterBar during Dancing.
-
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
-	Chris Danford
------------------------------------------------------------------------------
-*/
 
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"

@@ -1,16 +1,5 @@
 #ifndef ScreenSelectDifficultyEX_H
 #define ScreenSelectDifficultyEX_H
-/*
------------------------------------------------------------------------------
- Class: ScreenSelectDifficultyEX
-
- Desc: DDR Extreme Difficulty Select
-
- Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
-	Kevin Slaughter
------------------------------------------------------------------------------
-*/
-
 
 #include "BitmapText.h"
 #include "RageSound.h"
