@@ -191,17 +191,6 @@ void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
 void BitmapText::DrawPrimitives()
 {
-	// Offset so that pixels are aligned to texels
-	// Offset by -0.5, -0.5 if 640x480
-	// Offset by -1.0, -1.0 if 320x240
-	// 11/12/2002:  Why in the world is this not needed with the OpenGL renderer?
-	// We're using the exact same orthographic projection transform.  Anyway, things
-	// are perfectly aligned without this TranslateLocal
-//	DISPLAY->TranslateLocal( 
-//		-0.5f*SCREEN_WIDTH/(float)PREFSMAN->m_iDisplayWidth, 
-//		-0.5f*SCREEN_HEIGHT/(float)PREFSMAN->m_iDisplayHeight, 
-//		0 );
-
 	if( m_iNumLines == 0 )
 		return;
 
