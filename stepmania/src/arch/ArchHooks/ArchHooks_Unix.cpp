@@ -5,6 +5,7 @@
 #include "StepMania.h"
 #include "archutils/Unix/SignalHandler.h"
 #include "archutils/Unix/GetSysInfo.h"
+#include "archutils/Unix/LinuxThreadHelpers.h"
 
 #if defined(CRASH_HANDLER)
 #include "archutils/Unix/CrashHandler.h"
@@ -73,6 +74,20 @@ ArchHooks_Unix::ArchHooks_Unix()
 	SignalHandler::OnClose( EmergencyShutdown );
 }
 
+#ifndef _CS_GNU_LIBC_VERSION
+#define _CS_GNU_LIBC_VERSION 2
+#endif
+
+static CString LibcVersion()
+{	
+	char buf[1024];
+	int ret = confstr( _CS_GNU_LIBC_VERSION, buf, sizeof(buf) );
+	if( ret == -1 )
+		return "(unknown)";
+
+	return buf;
+}
+
 void ArchHooks_Unix::DumpDebugInfo()
 {
 	CString sys;
@@ -87,6 +102,9 @@ void ArchHooks_Unix::DumpDebugInfo()
 	LOG->Info( "Crash demangle component: %s", BACKTRACE_DEMANGLE_METHOD_TEXT );
 #endif
 #endif
+
+	LOG->Info( "Runtime library: %s", LibcVersion().c_str() );
+	LOG->Info( "Threads library: %s", ThreadsVersion().c_str() );
 }
 
 /*
