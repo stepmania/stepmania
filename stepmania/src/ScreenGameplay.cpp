@@ -769,7 +769,7 @@ bool ScreenGameplay::IsLastSong()
 {
 	if( GAMESTATE->m_pCurCourse  &&  GAMESTATE->m_pCurCourse->m_bRepeat )
 		return false;
-	return GAMESTATE->GetCourseSongIndex()+1 == (int)m_apSongsQueue.size(); // GetCourseSongIndex() is 0-based but size() is not
+	return GAMESTATE->GetCourseSongIndex() >= (int)m_apSongsQueue.size()-1; // GetCourseSongIndex() is 0-based
 }
 
 void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
@@ -2090,10 +2090,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_NotesEnded )	// received while STATE_DANCING
 	{
 		/* Do this in LoadNextSong, so we don't tween off old attacks until
-			* m_NextSong finishes. */
+		 * m_NextSong finishes. */
 		// GAMESTATE->RemoveAllActiveAttacks();
 
-	        FOREACH_EnabledPlayer(p)
+		FOREACH_EnabledPlayer(p)
 		{
 			/* If either player's passmark is enabled, check it. */
 			if( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fPassmark > 0 &&
@@ -2116,7 +2116,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		}
 
 		/* If all players have *really* failed (bFailed, not the life meter or
-			* bFailedEarlier): */
+		 * bFailedEarlier): */
 		const bool bAllReallyFailed = STATSMAN->m_CurStageStats.AllFailed();
 
 
@@ -2135,15 +2135,17 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		// update dancing characters for win / lose
 		DancingCharacters *Dancers = m_SongBackground.GetDancingCharacters();
 		if( Dancers )
-                FOREACH_EnabledPlayer(p)
 		{
-			/* XXX: In battle modes, switch( GAMESTATE->GetStageResult(p) ). */
-			if( STATSMAN->m_CurStageStats.m_player[p].bFailed )
-				Dancers->Change2DAnimState( p, AS2D_FAIL ); // fail anim
-			else if( m_pLifeMeter[p] && m_pLifeMeter[p]->GetLife() == 1.0f ) // full life
-				Dancers->Change2DAnimState( p, AS2D_WINFEVER ); // full life pass anim
-			else
-				Dancers->Change2DAnimState( p, AS2D_WIN ); // pass anim
+			FOREACH_EnabledPlayer(p)
+			{
+				/* XXX: In battle modes, switch( GAMESTATE->GetStageResult(p) ). */
+				if( STATSMAN->m_CurStageStats.m_player[p].bFailed )
+					Dancers->Change2DAnimState( p, AS2D_FAIL ); // fail anim
+				else if( m_pLifeMeter[p] && m_pLifeMeter[p]->GetLife() == 1.0f ) // full life
+					Dancers->Change2DAnimState( p, AS2D_WINFEVER ); // full life pass anim
+				else
+					Dancers->Change2DAnimState( p, AS2D_WIN ); // pass anim
+			}
 		}
 
 		/* End round. */

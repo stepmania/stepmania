@@ -874,15 +874,13 @@ void ScreenEvaluation::CommitScores(
 	PerDifficultyAward pdaToShowOut[NUM_PLAYERS],
 	PeakComboAward pcaToShowOut[NUM_PLAYERS] )
 {
+	FOREACH_PlayerNumber( pn )
 	{
-		FOREACH_PlayerNumber( pn )
-		{
-			iPersonalHighScoreIndexOut[pn] = -1;
-			iMachineHighScoreIndexOut[pn] = -1;
-			rcOut[pn] = RANKING_INVALID;
-			pdaToShowOut[pn] = PER_DIFFICULTY_AWARD_INVALID;
-			pcaToShowOut[pn] = PEAK_COMBO_AWARD_INVALID;
-		}
+		iPersonalHighScoreIndexOut[pn] = -1;
+		iMachineHighScoreIndexOut[pn] = -1;
+		rcOut[pn] = RANKING_INVALID;
+		pdaToShowOut[pn] = PER_DIFFICULTY_AWARD_INVALID;
+		pcaToShowOut[pn] = PEAK_COMBO_AWARD_INVALID;
 	}
 
 	switch( GAMESTATE->m_PlayMode )
@@ -907,79 +905,77 @@ void ScreenEvaluation::CommitScores(
 
 	LOG->Trace( "saving stats and high scores" );
 
+	FOREACH_HumanPlayer( p )
 	{
-		FOREACH_HumanPlayer( p )
+		// don't save scores if the player is disqualified
+		if( GAMESTATE->IsDisqualified(p) )
+			continue;
+
+		Song* pSong = GAMESTATE->m_pCurSong;
+		Steps* pSteps = GAMESTATE->m_pCurSteps[p];
+
+		// whether or not to save scores when the stage was failed
+		// depends on if this is a course or not ... it's handled
+		// below in the switch
+
+		HighScore &hs = m_HighScore[p];
+		hs.sName = RANKING_TO_FILL_IN_MARKER[p];
+		hs.grade = stageStats.m_player[p].GetGrade();
+		hs.iScore = stageStats.m_player[p].iScore;
+		hs.fPercentDP = stageStats.m_player[p].GetPercentDancePoints();
+		hs.fSurviveSeconds = stageStats.m_player[p].fAliveSeconds;
+		hs.sModifiers = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString();
+		hs.dateTime = DateTime::GetNowDateTime();
+		hs.sPlayerGuid = PROFILEMAN->IsUsingProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : CString("");
+		hs.sMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
+		hs.iProductID = PREFSMAN->m_iProductID;
+		memcpy( hs.iTapNoteScores, stageStats.m_player[p].iTapNoteScores, sizeof(hs.iTapNoteScores) );
+		memcpy( hs.iHoldNoteScores, stageStats.m_player[p].iHoldNoteScores, sizeof(hs.iHoldNoteScores) );
+		hs.radarValues = stageStats.m_player[p].radarActual;
+
+		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+
+		switch( m_Type )
 		{
-			// don't save scores if the player is disqualified
-			if( GAMESTATE->IsDisqualified(p) )
-				continue;
-
-			Song* pSong = GAMESTATE->m_pCurSong;
-			Steps* pSteps = GAMESTATE->m_pCurSteps[p];
-
-			// whether or not to save scores when the stage was failed
-			// depends on if this is a course or not ... it's handled
-			// below in the switch
-
-			HighScore &hs = m_HighScore[p];
-			hs.sName = RANKING_TO_FILL_IN_MARKER[p];
-			hs.grade = stageStats.m_player[p].GetGrade();
-			hs.iScore = stageStats.m_player[p].iScore;
-			hs.fPercentDP = stageStats.m_player[p].GetPercentDancePoints();
-			hs.fSurviveSeconds = stageStats.m_player[p].fAliveSeconds;
-			hs.sModifiers = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString();
-			hs.dateTime = DateTime::GetNowDateTime();
-			hs.sPlayerGuid = PROFILEMAN->IsUsingProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : CString("");
-			hs.sMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
-			hs.iProductID = PREFSMAN->m_iProductID;
-			memcpy( hs.iTapNoteScores, stageStats.m_player[p].iTapNoteScores, sizeof(hs.iTapNoteScores) );
-			memcpy( hs.iHoldNoteScores, stageStats.m_player[p].iHoldNoteScores, sizeof(hs.iHoldNoteScores) );
-			hs.radarValues = stageStats.m_player[p].radarActual;
-
-			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-
-			switch( m_Type )
+		case stage:
 			{
-			case stage:
-				{
-					// don't save scores for a failed song
-					if( stageStats.m_player[p].bFailed )
-						continue;
+				// don't save scores for a failed song
+				if( stageStats.m_player[p].bFailed )
+					continue;
 
-					ASSERT( pSteps );
+				ASSERT( pSteps );
 
-					PROFILEMAN->AddStepsScore( pSong, pSteps, p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
-				}
-				break;
-
-			case summary:
-				{
-					// don't save scores if any stage was failed
-					if( stageStats.m_player[p].bFailed ) 
-						continue;
-
-					int iAverageMeter = stageStats.GetAverageMeter(p);
-					rcOut[p] = AverageMeterToRankingCategory( iAverageMeter );
-
-					PROFILEMAN->AddCategoryScore( st, rcOut[p], p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
-					
-					// TRICKY:  Increment play count here, and not on ScreenGameplay like the others.
-					PROFILEMAN->IncrementCategoryPlayCount( st, rcOut[p], p );
-				}
-				break;
-
-			case course:
-				{
-					Course* pCourse = GAMESTATE->m_pCurCourse;
-					ASSERT( pCourse );
-					Trail* pTrail = GAMESTATE->m_pCurTrail[p];
-
-					PROFILEMAN->AddCourseScore( pCourse, pTrail, p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
-				}
-				break;
-			default:
-				ASSERT(0);
+				PROFILEMAN->AddStepsScore( pSong, pSteps, p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
 			}
+			break;
+
+		case summary:
+			{
+				// don't save scores if any stage was failed
+				if( stageStats.m_player[p].bFailed ) 
+					continue;
+
+				int iAverageMeter = stageStats.GetAverageMeter(p);
+				rcOut[p] = AverageMeterToRankingCategory( iAverageMeter );
+
+				PROFILEMAN->AddCategoryScore( st, rcOut[p], p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
+				
+				// TRICKY:  Increment play count here, and not on ScreenGameplay like the others.
+				PROFILEMAN->IncrementCategoryPlayCount( st, rcOut[p], p );
+			}
+			break;
+
+		case course:
+			{
+				Course* pCourse = GAMESTATE->m_pCurCourse;
+				ASSERT( pCourse );
+				Trail* pTrail = GAMESTATE->m_pCurTrail[p];
+
+				PROFILEMAN->AddCourseScore( pCourse, pTrail, p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
+			}
+			break;
+		default:
+			ASSERT(0);
 		}
 	}
 
@@ -988,124 +984,121 @@ void ScreenEvaluation::CommitScores(
 	// If both players get a machine high score in the same HighScoreList,
 	// then one player's score may have bumped the other player.  Look in 
 	// the HighScoreList and re-get the high score index.
+	FOREACH_HumanPlayer( p )
 	{
-		FOREACH_HumanPlayer( p )
+		if( iMachineHighScoreIndexOut[p] == -1 )	// no record
+			continue;	// skip
+
+		HighScore &hs = m_HighScore[p];
+		Profile* pProfile = PROFILEMAN->GetMachineProfile();
+		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+
+		const HighScoreList *pHSL = NULL;
+		switch( m_Type )
 		{
-			if( iMachineHighScoreIndexOut[p] == -1 )	// no record
-				continue;	// skip
-
-			HighScore &hs = m_HighScore[p];
-			Profile* pProfile = PROFILEMAN->GetMachineProfile();
-			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-
-			const HighScoreList *pHSL = NULL;
-			switch( m_Type )
+		case stage:
 			{
-			case stage:
-				{
-					Song* pSong = GAMESTATE->m_pCurSong;
-					Steps* pSteps = GAMESTATE->m_pCurSteps[p];
-					pHSL = &pProfile->GetStepsHighScoreList( pSong, pSteps );
-				}
-				break;
-			case summary:
-				{
-					pHSL = &pProfile->GetCategoryHighScoreList( st, rcOut[p] );
-				}
-				break;
-			case course:
-				{
-					Course* pCourse = GAMESTATE->m_pCurCourse;
-					ASSERT( pCourse );
-					Trail *pTrail = GAMESTATE->m_pCurTrail[p];
-					ASSERT( pTrail );
-					pHSL = &pProfile->GetCourseHighScoreList( pCourse, pTrail );
-				}
-				break;
-			default:
-				ASSERT(0);
+				Song* pSong = GAMESTATE->m_pCurSong;
+				Steps* pSteps = GAMESTATE->m_pCurSteps[p];
+				pHSL = &pProfile->GetStepsHighScoreList( pSong, pSteps );
 			}
-			
-			vector<HighScore>::const_iterator iter = find( pHSL->vHighScores.begin(), pHSL->vHighScores.end(), hs );
-			if( iter == pHSL->vHighScores.end() )
-				iMachineHighScoreIndexOut[p] = -1;
-			else
-				iMachineHighScoreIndexOut[p] = iter - pHSL->vHighScores.begin();
+			break;
+		case summary:
+			{
+				pHSL = &pProfile->GetCategoryHighScoreList( st, rcOut[p] );
+			}
+			break;
+		case course:
+			{
+				Course* pCourse = GAMESTATE->m_pCurCourse;
+				ASSERT( pCourse );
+				Trail *pTrail = GAMESTATE->m_pCurTrail[p];
+				ASSERT( pTrail );
+				pHSL = &pProfile->GetCourseHighScoreList( pCourse, pTrail );
+			}
+			break;
+		default:
+			ASSERT(0);
 		}
+		
+		vector<HighScore>::const_iterator iter = find( pHSL->vHighScores.begin(), pHSL->vHighScores.end(), hs );
+		if( iter == pHSL->vHighScores.end() )
+			iMachineHighScoreIndexOut[p] = -1;
+		else
+			iMachineHighScoreIndexOut[p] = iter - pHSL->vHighScores.begin();
 	}
 
 	
 	LOG->Trace( "hand out awards" );
 	
+	FOREACH_HumanPlayer( p )
 	{
-		FOREACH_HumanPlayer( p )
+		deque<PerDifficultyAward> &vPdas = GAMESTATE->m_vLastPerDifficultyAwards[p];
+
+		LOG->Trace( "per difficulty awards" );
+
+		// per-difficulty awards
+		switch( m_Type )
 		{
-			deque<PerDifficultyAward> &vPdas = GAMESTATE->m_vLastPerDifficultyAwards[p];
-
-			LOG->Trace( "per difficulty awards" );
-
-			// per-difficulty awards
-			switch( m_Type )
+		case stage:
+		case course:
+			// don't give per-difficutly awards if using easy mods
+			if( !GAMESTATE->IsDisqualified(p) )
 			{
-			case stage:
-				// don't give per-difficutly awards if using easy mods
-				if( !GAMESTATE->IsDisqualified(p) )
-				{
-					if( stageStats.m_player[p].FullComboOfScore( TNS_GREAT ) )
-						vPdas.push_back( AWARD_FULL_COMBO_GREATS );
-					if( stageStats.m_player[p].SingleDigitsOfScore( TNS_GREAT ) )
-						vPdas.push_back( AWARD_SINGLE_DIGIT_GREATS );
-					if( stageStats.m_player[p].FullComboOfScore( TNS_PERFECT ) )
-						vPdas.push_back( AWARD_FULL_COMBO_PERFECTS );
-					if( stageStats.m_player[p].SingleDigitsOfScore( TNS_PERFECT ) )
-						vPdas.push_back( AWARD_SINGLE_DIGIT_PERFECTS );
-					if( stageStats.m_player[p].FullComboOfScore( TNS_MARVELOUS ) )
-						vPdas.push_back( AWARD_FULL_COMBO_MARVELOUSES );
-					
-					if( stageStats.m_player[p].OneOfScore( TNS_GREAT ) )
-						vPdas.push_back( AWARD_ONE_GREAT );
-					if( stageStats.m_player[p].OneOfScore( TNS_PERFECT ) )
-						vPdas.push_back( AWARD_ONE_PERFECT );
+				if( stageStats.m_player[p].FullComboOfScore( TNS_GREAT ) )
+					vPdas.push_back( AWARD_FULL_COMBO_GREATS );
+				if( stageStats.m_player[p].SingleDigitsOfScore( TNS_GREAT ) )
+					vPdas.push_back( AWARD_SINGLE_DIGIT_GREATS );
+				if( stageStats.m_player[p].FullComboOfScore( TNS_PERFECT ) )
+					vPdas.push_back( AWARD_FULL_COMBO_PERFECTS );
+				if( stageStats.m_player[p].SingleDigitsOfScore( TNS_PERFECT ) )
+					vPdas.push_back( AWARD_SINGLE_DIGIT_PERFECTS );
+				if( stageStats.m_player[p].FullComboOfScore( TNS_MARVELOUS ) )
+					vPdas.push_back( AWARD_FULL_COMBO_MARVELOUSES );
+				
+				if( stageStats.m_player[p].OneOfScore( TNS_GREAT ) )
+					vPdas.push_back( AWARD_ONE_GREAT );
+				if( stageStats.m_player[p].OneOfScore( TNS_PERFECT ) )
+					vPdas.push_back( AWARD_ONE_PERFECT );
 
-					float fPercentGreats = stageStats.m_player[p].GetPercentageOfTaps( TNS_GREAT );
-					if( fPercentGreats >= 0.8f )
-						vPdas.push_back( AWARD_GREATS_80_PERCENT );
-					if( fPercentGreats >= 0.9f )
-						vPdas.push_back( AWARD_GREATS_90_PERCENT );
-					if( fPercentGreats >= 1.f )
-						vPdas.push_back( AWARD_GREATS_100_PERCENT );
-				}
+				float fPercentGreats = stageStats.m_player[p].GetPercentageOfTaps( TNS_GREAT );
+				if( fPercentGreats >= 0.8f )
+					vPdas.push_back( AWARD_GREATS_80_PERCENT );
+				if( fPercentGreats >= 0.9f )
+					vPdas.push_back( AWARD_GREATS_90_PERCENT );
+				if( fPercentGreats >= 1.f )
+					vPdas.push_back( AWARD_GREATS_100_PERCENT );
 			}
-
-			// Max one PDA per stage
-			if( !vPdas.empty() )
-				vPdas.erase( vPdas.begin(), vPdas.end()-1 );
-			
-			if( !vPdas.empty() )
-				pdaToShowOut[p] = vPdas.back();
-
-			LOG->Trace( "done with per difficulty awards" );
-
-			// DO give peak combo awards if using easy mods
-			int iComboAtStartOfStage = stageStats.m_player[p].GetComboAtStartOfStage();
-			int iPeakCombo = stageStats.m_player[p].GetMaxCombo().cnt;
-
-			FOREACH_PeakComboAward( pca )
-			{
-			      int iLevel = 1000 * (pca+1);
-				bool bCrossedLevel = iComboAtStartOfStage < iLevel && iPeakCombo >= iLevel;
-				LOG->Trace( "pca = %d, iLevel = %d, bCrossedLevel = %d", pca, iLevel, bCrossedLevel );
-				if( bCrossedLevel )
-				{
-					GAMESTATE->m_vLastPeakComboAwards[p].push_back( pca );
-				}
-			}
-
-			if( !GAMESTATE->m_vLastPeakComboAwards[p].empty() )
-				pcaToShowOut[p] = GAMESTATE->m_vLastPeakComboAwards[p].back();
-
-			LOG->Trace( "done with per combo awards" );
 		}
+
+		// Max one PDA per stage
+		if( !vPdas.empty() )
+			vPdas.erase( vPdas.begin(), vPdas.end()-1 );
+		
+		if( !vPdas.empty() )
+			pdaToShowOut[p] = vPdas.back();
+
+		LOG->Trace( "done with per difficulty awards" );
+
+		// DO give peak combo awards if using easy mods
+		int iComboAtStartOfStage = stageStats.m_player[p].GetComboAtStartOfStage();
+		int iPeakCombo = stageStats.m_player[p].GetMaxCombo().cnt;
+
+		FOREACH_PeakComboAward( pca )
+		{
+			  int iLevel = 1000 * (pca+1);
+			bool bCrossedLevel = iComboAtStartOfStage < iLevel && iPeakCombo >= iLevel;
+			LOG->Trace( "pca = %d, iLevel = %d, bCrossedLevel = %d", pca, iLevel, bCrossedLevel );
+			if( bCrossedLevel )
+			{
+				GAMESTATE->m_vLastPeakComboAwards[p].push_back( pca );
+			}
+		}
+
+		if( !GAMESTATE->m_vLastPeakComboAwards[p].empty() )
+			pcaToShowOut[p] = GAMESTATE->m_vLastPeakComboAwards[p].back();
+
+		LOG->Trace( "done with per combo awards" );
 	}
 
 	LOG->Trace( "done handing out awards." );
