@@ -135,6 +135,10 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 	else
 		m_sCurLanguage = sLanguage;
 
+	// clear theme path cache
+	for( int i = 0; i < NUM_ELEMENT_CATEGORIES; ++i )
+		g_ThemePathCache[i].clear();
+
 	// update hashes for metrics files
 	m_uHashForCurThemeMetrics = GetHashForFile( GetMetricsIniPath(m_sCurThemeName) );
 	m_uHashForBaseThemeMetrics = GetHashForFile( GetMetricsIniPath(BASE_THEME_NAME) );
