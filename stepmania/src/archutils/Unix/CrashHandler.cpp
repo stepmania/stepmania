@@ -79,7 +79,7 @@ static void parent_write(int to_child, const void *p, size_t size)
 	}
 }
 
-static void parent_process( int to_child, void **BacktracePointers, int SignalReceived )
+static void parent_process( int to_child, const void **BacktracePointers, int SignalReceived )
 {
 	/* 1. Write the backtrace pointers. */
 	parent_write(to_child, BacktracePointers, sizeof(void *)*BACKTRACE_MAX_SIZE);
@@ -291,7 +291,7 @@ static void initialize_do_backtrace()
 }
 
 /* backtrace() for x86 Linux, tested with kernel 2.4.18, glibc 2.3.1. */
-static void do_backtrace( void **buf, size_t size, bool ignore_before_sig = true )
+static void do_backtrace( const void **buf, size_t size, bool ignore_before_sig = true )
 {
 	/* Read /proc/pid/maps to find the address range of the stack. */
 	const void *readable_begin[1024], *readable_end[1024];
@@ -391,7 +391,7 @@ static void do_backtrace( void **buf, size_t size, bool ignore_before_sig = true
 
 static void initialize_do_backtrace() { }
 
-static void do_backtrace(void **buf, size_t size)
+static void do_backtrace( const void **buf, size_t size )
 {
 	int retsize = backtrace( buf, size-1 );
 
@@ -416,7 +416,7 @@ typedef struct Frame {
 
 static void initialize_do_backtrace() { }
 
-static void do_backtrace(void **buf, size_t size)
+static void do_backtrace( const void **buf, size_t size )
 {
     FramePtr frame = FramePtr(GetCrashedFramePtr());
     unsigned i;
@@ -429,7 +429,7 @@ static void do_backtrace(void **buf, size_t size)
 #warning Undefined BACKTRACE_METHOD_*
 static void initialize_do_backtrace() { }
 
-static void do_backtrace(void **buf, size_t size)
+static void do_backtrace( const void **buf, size_t size )
 {
     buf[0] = BACKTRACE_METHOD_NOT_AVAILABLE;
     buf[1] = NULL;
@@ -470,7 +470,7 @@ void CrashSignalHandler( int signal )
 	// RageThread::HaltAllThreads();
 	
 	/* Do this early, so functions called below don't end up on the backtrace. */
-	void *BacktracePointers[BACKTRACE_MAX_SIZE];
+	const void *BacktracePointers[BACKTRACE_MAX_SIZE];
 	do_backtrace(BacktracePointers, BACKTRACE_MAX_SIZE);
 	
 	/* We need to be very careful, since we're under crash conditions.  Let's fork
