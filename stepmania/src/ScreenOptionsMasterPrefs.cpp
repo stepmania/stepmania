@@ -13,6 +13,23 @@
 #include "GameState.h"
 #include "InputMapper.h"
 
+static void GetDefaultModifiers( PlayerOptions &po, SongOptions &so )
+{
+	po.FromString( PREFSMAN->m_sDefaultModifiers );
+	so.FromString( PREFSMAN->m_sDefaultModifiers );
+}
+
+static void SetDefaultModifiers( const PlayerOptions &po, const SongOptions &so )
+{
+	CStringArray as;
+	if( po.GetString() != "" )
+		as.push_back( po.GetString() );
+	if( so.GetString() != "" )
+		as.push_back( so.GetString() );
+
+	PREFSMAN->m_sDefaultModifiers = join(", ",as);
+}
+
 /* "sel" is the selection in the menu. */
 template<class T>
 static void MoveData( int &sel, T &opt, bool ToSel )
@@ -150,21 +167,11 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const CStringArray &choices )
 			if( !stricmp(choices[i], po.m_sNoteSkin) )
 				sel = i;
 	} else {
-		CString sModifiers = PREFSMAN->m_sDefaultModifiers;
 		PlayerOptions po;
-		po.FromString( sModifiers );
 		SongOptions so;
-		so.FromString( sModifiers );
-
+		GetDefaultModifiers( po, so );
 		po.m_sNoteSkin = choices[sel];
-
-		CStringArray as;
-		if( po.GetString() != "" )
-			as.push_back( po.GetString() );
-		if( so.GetString() != "" )
-			as.push_back( so.GetString() );
-
-		PREFSMAN->m_sDefaultModifiers = join(", ",as);
+		SetDefaultModifiers( po, so );
 	}
 }
 
@@ -302,24 +309,20 @@ static void DefaultFailType( int &sel, bool ToSel, const CStringArray &choices )
 		so.FromString( PREFSMAN->m_sDefaultModifiers );
 		sel = so.m_FailType;
 	} else {
-		CString sModifiers = PREFSMAN->m_sDefaultModifiers;
 		PlayerOptions po;
-		po.FromString( sModifiers );
 		SongOptions so;
-		so.FromString( sModifiers );
+		GetDefaultModifiers( po, so );
+
 		switch( sel )
 		{
 		case 0:	so.m_FailType = SongOptions::FAIL_ARCADE;		break;
-		case 1:	so.m_FailType = SongOptions::FAIL_END_OF_SONG;		break;
+		case 1:	so.m_FailType = SongOptions::FAIL_END_OF_SONG;	break;
 		case 2:	so.m_FailType = SongOptions::FAIL_OFF;			break;
 		default:
 			ASSERT(0);
 		}
-		CStringArray as;
-		if( po.GetString() != "" )
-			as.push_back( po.GetString() );
-		if( so.GetString() != "" )
-			as.push_back( so.GetString() );
+
+		SetDefaultModifiers( po, so );
 	}
 }
 
