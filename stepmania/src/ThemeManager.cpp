@@ -211,10 +211,11 @@ CString ThemeManager::GetPathToAndFallback( CString sThemeName, ElementCategory 
 		return sRet;
 
 	// search fallback name (if any)
+	// XXX: should this check fallbacks recursively?
 	CString sFallback;
 	if( m_pIniMetrics->GetValue(sClassName,"Fallback",sFallback) )
 	{
-		sRet = GetPathToAndFallback( m_sCurThemeName, category, sFallback, sElement );
+		sRet = GetPathToAndFallback( sThemeName, category, sFallback, sElement );
 		if( !sRet.empty() )
 			return sRet;
 	}
