@@ -25,8 +25,8 @@ Now Installer.app is ready to be distributed.
 
 NOTE
 I added the symlink:
-ln -s /System/Library/Frameworks/OpenGL/Versions/A/Libraries/ \
-/Developer/SDKs/MacOSX10.2.7.sdk/System/Library/Frameworks/OpenGL/Versions/A/
+ln -s /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries \
+/Developer/SDKs/MacOSX10.2.7.sdk/System/Library/Frameworks/OpenGL.framework/Versions/A
 because Apple was stupid and screwed up that framework in all of the SDKs.
 
 Steve Checkoway
