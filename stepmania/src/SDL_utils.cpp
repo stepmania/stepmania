@@ -821,6 +821,8 @@ static void blit_generic( SDL_Surface *src_surf, const SDL_Surface *dst_surf, in
 		while( x++ < width )
 		{
 			unsigned int pixel = decodepixel((Uint8 *) src, src_surf->format->BytesPerPixel);
+			ASSERT_M( (int) pixel < src_surf->format->palette->ncolors, ssprintf("%i %i",
+				pixel, src_surf->format->palette->ncolors) );
 
 			Uint8 colors[4];
 				/* Convert pixel to the destination RGBA. */
