@@ -623,6 +623,7 @@ void GameState::FinishStage()
 
 	// Increment the stage counter.
 	ASSERT( m_iNumStagesOfThisSong >= 1 && m_iNumStagesOfThisSong <= 3 );
+	const int iOldStageIndex = m_iCurrentStageIndex;
 	m_iCurrentStageIndex += m_iNumStagesOfThisSong;
 
 	m_iNumStagesOfThisSong = 0;
@@ -643,6 +644,16 @@ void GameState::FinishStage()
 		int iNumMines			= (int) g_CurStageStats.radarActual[pn][RADAR_NUM_MINES];
 		int iNumHands			= (int) g_CurStageStats.radarActual[pn][RADAR_NUM_HANDS];
 		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands );
+	}
+
+	if( PREFSMAN->m_bEventMode )
+	{
+		const int iSaveProfileEvery = 3;
+		if( iOldStageIndex/iSaveProfileEvery < m_iCurrentStageIndex/iSaveProfileEvery )
+		{
+			LOG->Trace( "Played %i stages; saving profiles ...", iSaveProfileEvery );
+			PROFILEMAN->SaveAllProfiles();
+		}
 	}
 }
 
