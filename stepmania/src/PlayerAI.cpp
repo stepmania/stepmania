@@ -29,7 +29,7 @@ struct TapScoreDistribution
 		for( int i=0; i<=TNS_MARVELOUS; i++ )
 		{
 			fCumulativePercent += fPercent[i];
-			if( fRand <= fCumulativePercent )
+			if( fRand <= fCumulativePercent+1e-4 ) /* rounding error */
 				return (TapNoteScore)i;
 		}
 		ASSERT(0);	// the fCumulativePercents must sum to 1.0, so we should never get here!
