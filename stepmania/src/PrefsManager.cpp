@@ -255,6 +255,7 @@ PrefsManager::PrefsManager()
 	m_bShowLogOutput = false;
 #endif
 	m_bTimestamping = false;
+	m_bLogSkips = false;
 	m_bLogCheckpoints = false;
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -487,6 +488,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Debug", "ForceLogFlush",						m_bForceLogFlush );
 	ini.GetValue( "Debug", "ShowLogOutput",						m_bShowLogOutput );
 	ini.GetValue( "Debug", "Timestamping",						m_bTimestamping );
+	ini.GetValue( "Debug", "LogSkips",							m_bLogSkips );
 	ini.GetValue( "Debug", "LogCheckpoints",					m_bLogCheckpoints );
 }
 
@@ -698,6 +700,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Debug", "ForceLogFlush",						m_bForceLogFlush );
 	ini.SetValue( "Debug", "ShowLogOutput",						m_bShowLogOutput );
 	ini.SetValue( "Debug", "Timestamping",						m_bTimestamping );
+	ini.SetValue( "Debug", "LogSkips",							m_bLogSkips );
 	ini.SetValue( "Debug", "LogCheckpoints",					m_bLogCheckpoints );
 
 	ini.WriteFile();

@@ -222,6 +222,7 @@ public:
 	bool			m_bForceLogFlush;
 	bool			m_bShowLogOutput;
 	bool			m_bTimestamping;
+	bool			m_bLogSkips;
 	bool			m_bLogCheckpoints;
 
 	/* Game-specific prefs: */
