@@ -175,6 +175,7 @@ void GameState::ReloadCharacters()
 
 	CStringArray as;
 	GetDirListing( CHARACTERS_DIR "*", as, true, true );
+	bool FoundDefault = false;
 	for( i=0; i<as.size(); i++ )
 	{
 		CString sCharName, sDummy;
@@ -184,6 +185,9 @@ void GameState::ReloadCharacters()
 		if( sCharName == "cvs" )	// the directory called "CVS"
 			continue;		// ignore it
 
+		if( sCharName.CompareNoCase("default")!=0 )
+			FoundDefault = true;
+
 		Character* pChar = new Character;
 		if( pChar->Load( as[i] ) )
 			m_pCharacters.push_back( pChar );
@@ -191,6 +195,8 @@ void GameState::ReloadCharacters()
 			delete pChar;
 	}
 	
+	if( !FoundDefault )
+		RageException::Throw( "Couldn't find \"Characters" SLASH "default\"" );
 	if( !m_pCharacters.size() )
 		RageException::Throw( "Couldn't find any character definitions" );
 }
@@ -729,5 +735,7 @@ Character* GameState::GetDefaultCharacter()
 			return m_pCharacters[i];
 	}
 
+	/* We always have the default character. */
+	ASSERT(0);
 	return NULL;
 }
