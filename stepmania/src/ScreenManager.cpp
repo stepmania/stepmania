@@ -521,14 +521,21 @@ void ScreenManager::SendMessageToTopScreen( ScreenMessage SM )
 
 void ScreenManager::SystemMessage( const CString &sMessage )
 {
+	m_sSystemMessage = sMessage;
 	LOG->Trace( "%s", sMessage.c_str() );
-	m_SystemLayer->SystemMessage( sMessage );
+	MESSAGEMAN->Broadcast( "SystemMessage" );
 }
 
 void ScreenManager::SystemMessageNoAnimate( const CString &sMessage )
 {
 //	LOG->Trace( "%s", sMessage.c_str() );	// don't log because the caller is likely calling us every frame
-	m_SystemLayer->SystemMessageNoAnimate( sMessage );
+	m_sSystemMessage = sMessage;
+	MESSAGEMAN->Broadcast( "SystemMessageNoAnimate" );
+}
+
+CString ScreenManager::GetCurrentSystemMessage() const
+{
+	return m_sSystemMessage;
 }
 
 void ScreenManager::RefreshCreditsMessages()

@@ -32,11 +32,15 @@
 ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 {
 	MESSAGEMAN->Subscribe( this, "RefreshCreditText" );
+	MESSAGEMAN->Subscribe( this, "SystemMessage" );
+	MESSAGEMAN->Subscribe( this, "SystemMessageNoAnimate" );
 }
 
 ScreenSystemLayer::~ScreenSystemLayer()
 {
 	MESSAGEMAN->Unsubscribe( this, "RefreshCreditText" );
+	MESSAGEMAN->Unsubscribe( this, "SystemMessage" );
+	MESSAGEMAN->Unsubscribe( this, "SystemMessageNoAnimate" );
 }
 
 void ScreenSystemLayer::Init()
@@ -107,24 +111,6 @@ void ScreenSystemLayer::ReloadCreditsText()
 		m_textCredits[p].SetName( ssprintf("CreditsP%d",p+1) );
 		SET_XY_AND_ON_COMMAND( &m_textCredits[p] );
 	}
-}
-
-void ScreenSystemLayer::SystemMessage( const CString &sMessage )
-{
-	m_textMessage.SetText( sMessage );
-	ActorCommands c = ActorCommands( "finishtweening;diffusealpha,1;addx,-640;linear,0.5;addx,+640;sleep,5;linear,0.5;diffusealpha,0" );
-	m_textMessage.RunCommands( c );
-}
-
-void ScreenSystemLayer::SystemMessageNoAnimate( const CString &sMessage )
-{
-	m_textMessage.FinishTweening();
-	m_textMessage.SetText( sMessage );
-	m_textMessage.SetX( 4 );
-	m_textMessage.SetDiffuseAlpha( 1 );
-	m_textMessage.BeginTweening( 5 );
-	m_textMessage.BeginTweening( 0.5f );
-	m_textMessage.SetDiffuse( RageColor(1,1,1,0) );
 }
 
 CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
@@ -224,7 +210,22 @@ void ScreenSystemLayer::HandleMessage( const CString &sMessage )
 		FOREACH_PlayerNumber( pn )
 			m_textCredits[pn].SetText( GetCreditsMessage(pn) );
 	}
-	
+	else if( sMessage == "SystemMessage" )
+	{
+		m_textMessage.SetText( SCREENMAN->GetCurrentSystemMessage() );
+		ActorCommands c = ActorCommands( "finishtweening;diffusealpha,1;addx,-640;linear,0.5;addx,+640;sleep,5;linear,0.5;diffusealpha,0" );
+		m_textMessage.RunCommands( c );
+	}
+	else if( sMessage == "SystemMessageNoAnimate" )
+	{
+		m_textMessage.FinishTweening();
+		m_textMessage.SetText( SCREENMAN->GetCurrentSystemMessage() );
+		m_textMessage.SetX( 4 );
+		m_textMessage.SetDiffuseAlpha( 1 );
+		m_textMessage.BeginTweening( 5 );
+		m_textMessage.BeginTweening( 0.5f );
+		m_textMessage.SetDiffuse( RageColor(1,1,1,0) );
+	}
 	Screen::HandleMessage( sMessage );
 }
 

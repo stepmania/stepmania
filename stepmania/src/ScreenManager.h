@@ -54,6 +54,8 @@ public:
 	void RefreshCreditsMessages();
 	void ThemeChanged();
 
+	CString GetCurrentSystemMessage() const;
+
 	Screen *GetTopScreen();
 
 public:
@@ -68,6 +70,7 @@ private:
 
 	CString				m_sLastLoadedBackgroundPath;
 	CString				m_sDelayedScreen;
+	CString				m_sSystemMessage;
 	ScreenMessage		m_MessageSendOnPop;
 	vector<Screen*>		m_vPreparedScreens;
 	vector<Screen*>		m_vScreensToDelete;

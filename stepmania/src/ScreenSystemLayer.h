@@ -17,8 +17,6 @@ public:
 	virtual void Init();
 	void HandleMessage( const CString &sCommandName );
 
-	void SystemMessage( const CString &sMessage );
-	void SystemMessageNoAnimate( const CString &sMessage );
 	void ReloadCreditsText();
 	void Update( float fDeltaTime );
 
