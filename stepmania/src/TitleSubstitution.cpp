@@ -72,7 +72,7 @@ void TitleSubst::Subst(CString &title, CString &subtitle, CString &artist,
 
 TitleSubst::TitleSubst(const CString &section)
 {
-	Load("Translation.dat", section);
+	Load("data/Translation.dat", section);
 }
 
 void TitleSubst::Load(const CString &filename, const CString &section)
