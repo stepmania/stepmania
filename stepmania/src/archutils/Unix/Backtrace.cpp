@@ -281,8 +281,6 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	buf[retsize] = NULL;
 }
 #elif defined(BACKTRACE_METHOD_POWERPC_DARWIN)
-
-#include "archutils/Darwin/Crash.h"
 typedef struct Frame
 {
     Frame *stackPointer;
