@@ -29,7 +29,7 @@
 #include "GameManager.h"
 #include "RageFile.h"
 #include "RageTextureManager.h"
-#include "Banner.h"
+#include "Sprite.h"
 #include "ProfileManager.h"
 #include "MemoryCardManager.h"
 #include "NotesLoaderSM.h"
@@ -298,7 +298,7 @@ void SongManager::PreloadSongImages()
 		if( !songs[i]->HasBanner() )
 			continue;
 
-		const RageTextureID ID = Banner::BannerTex( songs[i]->GetBannerPath() );
+		const RageTextureID ID = Sprite::SongBannerTexture( songs[i]->GetBannerPath() );
 		TEXTUREMAN->CacheTexture( ID );
 	}
 
@@ -309,7 +309,7 @@ void SongManager::PreloadSongImages()
 		if( !courses[i]->HasBanner() )
 			continue;
 
-		const RageTextureID ID = Banner::BannerTex( courses[i]->m_sBannerPath );
+		const RageTextureID ID = Sprite::SongBannerTexture( courses[i]->m_sBannerPath );
 		TEXTUREMAN->CacheTexture( ID );
 	}
 }

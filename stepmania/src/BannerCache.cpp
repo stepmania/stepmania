@@ -219,7 +219,7 @@ RageTextureID BannerCache::LoadCachedBanner( CString BannerPath )
 
 	/* Hack: make sure Banner::Load doesn't change our return value and end up
 	 * reloading. */
-	ID = Banner::BannerTex(ID);
+	ID = Sprite::SongBannerTexture(ID);
 
 	/* It's not in a texture.  Do we have it loaded? */
 	if( m_BannerPathToImage.find(BannerPath) == m_BannerPathToImage.end() )

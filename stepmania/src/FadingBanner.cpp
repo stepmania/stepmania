@@ -114,7 +114,7 @@ void FadingBanner::LoadFromCachedBanner( const CString &path )
 
 	RageTextureID ID;
 	if( PREFSMAN->m_BannerCache == PrefsManager::BNCACHE_FULL )
-		ID = Banner::BannerTex( path );
+		ID = Sprite::SongBannerTexture( path );
 	else
 		/* Try to load the low quality version. */
 		ID = BANNERCACHE->LoadCachedBanner( path );
