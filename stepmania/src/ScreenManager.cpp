@@ -208,6 +208,11 @@ void ScreenManager::LoadPreppedScreen()
 	m_ScreenBuffered = NULL;
 }
 
+void ScreenManager::DeletePreppedScreen()
+{
+	SAFE_DELETE( m_ScreenBuffered );
+}
+
 void ScreenManager::SetNewScreen( Screen *pNewScreen )
 {
 	RefreshCreditsMessages();

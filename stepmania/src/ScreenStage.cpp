@@ -71,6 +71,9 @@ ScreenStage::ScreenStage()
 	m_In.StartTransitioning( SM_LoadPrepedScreen );
 	float fStartFadingOutSeconds = m_Background.GetLengthSeconds() - m_Out.GetLengthSeconds();
 	this->SendScreenMessage( SM_BeginFadingOut, fStartFadingOutSeconds );
+
+	m_Back.Load( THEME->GetPathTo("BGAnimations","Common back") );
+	this->AddChild( &m_Back );
 	
 	//g_StageType = (StageType)STAGE_TYPE; 
 
@@ -583,5 +586,18 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToNextScreen:
 		SCREENMAN->LoadPreppedScreen(); /* use prepped */
 		break;
+	case SM_GoToPrevScreen:
+		SCREENMAN->DeletePreppedScreen();
+		SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
+		break;
 	}
+}
+
+void ScreenStage::MenuBack( PlayerNumber pn )
+{
+	if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Back.IsTransitioning() )
+		return;
+
+	this->ClearMessageQueue();
+	m_Back.StartTransitioning( SM_GoToPrevScreen );
 }

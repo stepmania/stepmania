@@ -219,7 +219,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
 	m_sprOptionsMessage.SetZoom( 1 );
 	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
-	this->AddChild( &m_sprOptionsMessage );
+	//this->AddChild( &m_sprOptionsMessage );	// we have to draw this manually over the top of transitions
 
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
@@ -252,6 +252,7 @@ void ScreenSelectMusic::DrawPrimitives()
 	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
+	m_sprOptionsMessage.Draw();
 }
 
 void ScreenSelectMusic::TweenOnScreen()
@@ -391,6 +392,8 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 void ScreenSelectMusic::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
+	m_sprOptionsMessage.Update( fDeltaTime );
+
 
 	if( m_fPlaySampleCountdown > 0 )
 	{
@@ -715,13 +718,15 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 
 		if( !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
 		{
+			float fShowSeconds = m_Menu.m_Out.GetLengthSeconds();
+
 			// show "hold START for options"
 			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
-			m_sprOptionsMessage.BeginTweening( 0.25f );	// fade in
+			m_sprOptionsMessage.BeginTweening( 0.15f );	// fade in
 			m_sprOptionsMessage.SetTweenZoomY( 1 );
 			m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,1) );
-			m_sprOptionsMessage.BeginTweening( 2.0f );	// sleep
-			m_sprOptionsMessage.BeginTweening( 0.25f );	// fade out
+			m_sprOptionsMessage.BeginTweening( fShowSeconds-0.3f );	// sleep
+			m_sprOptionsMessage.BeginTweening( 0.15f );	// fade out
 			m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
 			m_sprOptionsMessage.SetTweenZoomY( 0 );
 
@@ -730,7 +735,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			 * hit accidentally.  Accept an initial START right away, though,
 			 * so we don't ignore deliberate fast presses (which would be
 			 * annoying). */
-			this->SendScreenMessage( SM_AllowOptionsMenuRepeat, 0.75f );
+			this->SendScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
 		}
 
 		m_Menu.StartTransitioning( SM_GoToNextScreen );

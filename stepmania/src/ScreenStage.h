@@ -20,6 +20,8 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	
+	virtual void MenuBack( PlayerNumber pn );
 
 private:
 
@@ -49,7 +51,7 @@ private:
 
 	Quad			m_quadMask;		// write this into ZBuffer as a mask
 */
-	TransitionBGAnimation	m_In, m_Out;
+	TransitionBGAnimation	m_In, m_Out, m_Back;
 	BGAnimation				m_Background;
 
 protected:

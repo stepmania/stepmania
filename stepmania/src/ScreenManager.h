@@ -39,6 +39,7 @@ public:
 
 	void PrepNewScreen( CString sClassName );
 	void LoadPreppedScreen();
+	void DeletePreppedScreen();
 	void SetNewScreen( CString sClassName );
 	void AddNewScreenToTop( CString sClassName );
 	void Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo = false, bool bDefaultAnswer = false, void(*OnYes)() = NULL, void(*OnNo)() = NULL );
