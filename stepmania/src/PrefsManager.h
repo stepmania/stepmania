@@ -111,7 +111,6 @@ public:
 	bool			m_bFirstRun;
 	bool			m_bAutoMapOnJoyChange;
 	float			m_fGlobalOffsetSeconds;
-	bool			m_bTenFooterInRed;
 	int				m_iProgressiveLifebar;
 	int				m_iProgressiveStageLifebar;
 	int				m_iProgressiveNonstopLifebar;

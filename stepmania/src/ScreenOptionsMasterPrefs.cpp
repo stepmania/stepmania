@@ -204,7 +204,6 @@ MOVE( Caution,				PREFSMAN->m_bShowDontDie );
 MOVE( OniScoreDisplay,		PREFSMAN->m_bDancePointsForOni );
 MOVE( SongGroup,			PREFSMAN->m_bShowSelectGroup );
 MOVE( WheelSections,		PREFSMAN->m_MusicWheelUsesSections );
-MOVE( TenFootInRed,			PREFSMAN->m_bTenFooterInRed );
 MOVE( CourseSort,			PREFSMAN->m_iCourseSortOrder );
 MOVE( RandomAtEnd,			PREFSMAN->m_bMoveRandomToEnd );
 MOVE( Translations,			PREFSMAN->m_bShowNative );
@@ -417,7 +416,6 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Oni Score\nDisplay",	OniScoreDisplay,	"PERCENT","DANCE POINTS"),
 	ConfOption( "Song\nGroup",			SongGroup,			"ALL MUSIC","CHOOSE"),
 	ConfOption( "Wheel\nSections",		WheelSections,		"NEVER","ALWAYS", "ABC ONLY"),
-	ConfOption( "10+ foot\nIn Red",		TenFootInRed,		"NO", "YES"),
 	ConfOption( "Course\nSort",			CourseSort,			"# SONGS","AVG FEET","TOTAL FEET","RANKING"),
 	ConfOption( "Random\nAt End",		RandomAtEnd,		"NO","YES"),
 	ConfOption( "Translations",			Translations,		"ROMANIZATION","NATIVE LANGUAGE"),

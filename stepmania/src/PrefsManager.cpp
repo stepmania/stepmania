@@ -121,7 +121,6 @@ PrefsManager::PrefsManager()
 	m_bEndlessBreakEnabled = true;
 	m_iEndlessNumStagesUntilBreak = 5;
 	m_iEndlessBreakLength = 5;
-	m_bTenFooterInRed = true;
 
 	// set to 0 so people aren't shocked at first
 	m_iProgressiveLifebar = 0;
@@ -333,7 +332,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "AutogenGroupCourses",				m_bAutogenGroupCourses );
 	ini.GetValue( "Options", "BreakComboToGetItem",				m_bBreakComboToGetItem );
 	ini.GetValue( "Options", "ShowDancingCharacters",			(int&)m_ShowDancingCharacters );
-	ini.GetValue( "Options", "TenFooterInRed",					m_bTenFooterInRed );
 
 	ini.GetValue( "Options", "CourseSortOrder",					(int&)m_iCourseSortOrder );
 	ini.GetValue( "Options", "MoveRandomToEnd",					m_bMoveRandomToEnd );
@@ -509,7 +507,6 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "SmoothLines",					m_bSmoothLines );
 	ini.SetValue( "Options", "GlobalOffsetSeconds",				m_fGlobalOffsetSeconds );
 
-	ini.SetValue( "Options", "TenFooterInRed",					m_bTenFooterInRed );
 	ini.SetValue( "Options", "CourseSortOrder",					m_iCourseSortOrder );
 	ini.SetValue( "Options", "MoveRandomToEnd",					m_bMoveRandomToEnd );
 
