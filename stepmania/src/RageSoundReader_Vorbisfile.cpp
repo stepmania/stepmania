@@ -125,7 +125,6 @@ SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(CString file
 		}
 	}
 
-	avail = 0;
 	eof = false;
 	read_offset = (int) ov_pcm_tell(vf);
 
@@ -156,7 +155,6 @@ int RageSoundReader_Vorbisfile::GetLength_Fast() const
 
 int RageSoundReader_Vorbisfile::SetPosition(int ms, bool accurate)
 {
-	avail = 0;
 	eof = false;
 
 	const ogg_int64_t sample = ogg_int64_t(ms) * GetSampleRate() / 1000;
@@ -178,99 +176,79 @@ int RageSoundReader_Vorbisfile::SetPosition(int ms, bool accurate)
 	return ms;
 }
 
-bool RageSoundReader_Vorbisfile::FillBuf()
+int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
 {
-	if( avail )
-		return true;
+	int bytes_read = 0;
 
-	vorbis_info *vi = ov_info( vf, -1 );
-	ASSERT( vi != NULL );
-
-	if( (unsigned) vi->channels != channels )
-		RageException::Throw( "File \"%s\" changes channel count from %i to %i; not supported", channels, vi->channels );
-
-	const int bytes_per_frame = sizeof(int16_t)*vi->channels;
-
-	int ret = 0;
-
+	while( len && !eof )
 	{
-		int curofs = (int) ov_pcm_tell(vf);
-		if( curofs < read_offset )
+		const int bytes_per_frame = sizeof(int16_t)*channels;
+
+		int ret = 0;
+
 		{
-			/* The timestamps moved backwards.  Ignore it.  This file probably
-			 * won't sync correctly. */
-			LOG->Trace( "p ahead %p %i < %i, we're ahead by %i", 
-				this, curofs, read_offset, read_offset-curofs );
-			read_offset = curofs;
-		}
-		else if( curofs > read_offset )
-		{
-			/* Our offset doesn't match.  We have a hole in the data, or corruption.
-			 * If we're reading with accurate syncing, insert silence to line it up.
-			 * That way, corruptions in the file won't casue desyncs. */
+			int curofs = (int) ov_pcm_tell(vf);
+			if( curofs < read_offset )
+			{
+				/* The timestamps moved backwards.  Ignore it.  This file probably
+				 * won't sync correctly. */
+				LOG->Trace( "p ahead %p %i < %i, we're ahead by %i", 
+					this, curofs, read_offset, read_offset-curofs );
+				read_offset = curofs;
+			}
+			else if( curofs > read_offset )
+			{
+				/* Our offset doesn't match.  We have a hole in the data, or corruption.
+				 * If we're reading with accurate syncing, insert silence to line it up.
+				 * That way, corruptions in the file won't casue desyncs. */
 
-			/* In bytes: */
-			int silence = (curofs - read_offset) * bytes_per_frame;
-			CHECKPOINT_M( ssprintf("p %i,%i: %i frames of silence needed", curofs, read_offset, silence) );
-			silence = min( silence, (int) sizeof(buffer) );
+				/* In bytes: */
+				int silence = (curofs - read_offset) * bytes_per_frame;
+				CHECKPOINT_M( ssprintf("p %i,%i: %i frames of silence needed", curofs, read_offset, silence) );
+				silence = min( silence, (int) len );
 
-			memset( buffer, 0, silence );
-			ret = silence;
-		}
-	}
-
-	if( ret == 0 )
-	{
-		int bstream;
-#if defined(INTEGER_VORBIS)
-		ret = ov_read( vf, buffer, sizeof(buffer), &bstream );
-#else // float vorbis decoder
-		ret = ov_read( vf, buffer, sizeof(buffer), (BYTE_ORDER == BIG_ENDIAN)?1:0, 2, 1, &bstream );
-#endif
-
-		if( ret == OV_HOLE )
-			return true;
-		if( ret == OV_EBADLINK )
-		{
-			SetError( ssprintf("Read: OV_EBADLINK") );
-			return false;
+				memset( buf, 0, silence );
+				ret = silence;
+			}
 		}
 
 		if( ret == 0 )
 		{
-			eof = true;
-			return true;
+			int bstream;
+#if defined(INTEGER_VORBIS)
+			ret = ov_read( vf, buf, len, &bstream );
+#else // float vorbis decoder
+			ret = ov_read( vf, buf, len, (BYTE_ORDER == BIG_ENDIAN)?1:0, 2, 1, &bstream );
+#endif
+			{
+				vorbis_info *vi = ov_info( vf, -1 );
+				ASSERT( vi != NULL );
+
+				if( (unsigned) vi->channels != channels )
+					RageException::Throw( "File \"%s\" changes channel count from %i to %i; not supported", channels, vi->channels );
+			}
+
+
+			if( ret == OV_HOLE )
+				continue;
+			if( ret == OV_EBADLINK )
+			{
+				SetError( ssprintf("Read: OV_EBADLINK") );
+				return -1;
+			}
+
+			if( ret == 0 )
+			{
+				eof = true;
+				continue;
+			}
 		}
-	}
 
-	read_offset += ret / bytes_per_frame;
-	avail = ret;
-	return true;
-}
+		read_offset += ret / bytes_per_frame;
 
-int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
-{
-	if( eof )
-		return 0;
-
-	int bytes_read = 0;
-	while(len)
-	{
-		if( !FillBuf() )
-			return -1;
-
-		if( eof && !avail )
-			break;
-
-		unsigned size = min(avail, len);
-		memcpy(buf, buffer, size);
-
-		buf += size;
-		len -= size;
-
-		memmove(buffer, buffer+size, avail-size);
-		avail -= size;
-		bytes_read += size;
+		buf += ret;
+		bytes_read += ret;
+		len -= ret;
 	}
 
 	return bytes_read;

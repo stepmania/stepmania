@@ -11,8 +11,6 @@ typedef struct OggVorbis_File OggVorbis_File;
 
 class RageSoundReader_Vorbisfile: public SoundReader_FileReader {
 	OggVorbis_File *vf;
-	char buffer[4096*4];
-	unsigned avail;
 	bool eof;
 	int SetPosition(int ms, bool accurate);
 	bool FillBuf();
