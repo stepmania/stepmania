@@ -399,15 +399,14 @@ RageFileObj *RageFileDriverZip::Open( const CString &path, int mode, RageFile &p
 		return NULL;
 	}
 
-	const File *f = FDB->GetFile( path );
-	if( f == NULL )
+	FileInfo *info = (FileInfo *) FDB->GetFilePriv( path );
+	if( info == NULL )
 	{
 		err = ENOENT;
 		return NULL;
 	}
 
 	/* If we havn't figured out the offset to the real data yet, do so now. */
-	FileInfo *info = (FileInfo *) f->priv;
 	if( info->data_offset == -1 )
 	{
 		zip.Seek( info->offset );
