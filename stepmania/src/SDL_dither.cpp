@@ -6,17 +6,20 @@
 
 #define DitherMatDim 4
 
-/* Scale these to [0..1): */
-static const float DitherMatCalc[DitherMatDim][DitherMatDim] =
+/* Fractions, 0/16 to 15/16:  */
+static const int DitherMat[DitherMatDim][DitherMatDim] =
 {
-     0/16.,  8/16.,  2/16., 10/16.,
-    12/16.,  4/16., 14/16.,  6/16.,
-     3/16., 11/16.,  1/16.,  9/16.,
-    15/16.,  7/16., 13/16.,  5/16.
+     0,  8,  2, 10,
+    12,  4, 14,  6,
+     3, 11,  1,  9,
+    15,  7, 13,  5
 };
 
+static int DitherMatCalc[DitherMatDim][DitherMatDim];
+static bool DitherMatCalc_initted = false;
+
 /* conv is the ratio from the input to the output. */
-static Uint8 DitherPixel(int x, int y, int intensity,  float conv)
+static Uint8 DitherPixel(int x, int y, int intensity,  int conv)
 {
 	/* The intensity matrix wraps.  This assumes the matrix dims are a power of 2. */
 	x &= DitherMatDim-1;
@@ -33,17 +36,31 @@ static Uint8 DitherPixel(int x, int y, int intensity,  float conv)
 	 * the number is to the next value. */
 
 	/* Convert the number to the destination range. */
-	float out_intensity = intensity * conv;
+	int out_intensity = intensity * conv;
 	
 	/* Add bias. */
 	out_intensity += DitherMatCalc[y][x];
 
 	/* Truncate, and add e to make sure a value of 14.999998 -> 15. */
-	return Uint8(out_intensity + 0.00001f);
+	return Uint8((out_intensity + 1) >> 16);
 }
 
 void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 {
+	if(!DitherMatCalc_initted) {
+		for(int i = 0; i < DitherMatDim; ++i) {
+			for(int j = 0; j < DitherMatDim; ++j) {
+				/* Each value is 0..15.  They represent 0/16 through 15/16.
+				 * Set DitherMatCalc to that value * 65536, so we can do it
+				 * with integer calcs. */
+				DitherMatCalc[i][j] = DitherMat[i][j] * 65536 / 16;
+			}
+		}
+			
+		DitherMatCalc_initted = true;
+	}
+
+
 	/* We can't dither to paletted surfaces. */
 	ASSERT(dst->format->BytesPerPixel > 1);
 
@@ -52,12 +69,12 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 	mySDL_GetBitsPerChannel(dst->format, dst_cbits);
 
 	/* Calculate the ratio from the old bit depth to the new for each color channel. */
-	float conv[4];
+	int conv[4];
 	for(int i = 0; i < 4; ++i)
 	{
 		int MaxInputIntensity = (1 << src_cbits[i])-1;
 		int MaxOutputIntensity = (1 << dst_cbits[i])-1;
-		conv[i] = MaxOutputIntensity / float(MaxInputIntensity);
+		conv[i] = MaxOutputIntensity * 65536 / MaxInputIntensity;
 	}
 
 	/* For each row: */
