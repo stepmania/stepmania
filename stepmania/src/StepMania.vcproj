@@ -99,7 +99,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				FavorSizeOrSpeed="2"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis,libjpeg"
+				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis,libjpeg,crypto51"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,RELEASE"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
@@ -553,6 +553,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="Course.h">
+			</File>
+			<File
+				RelativePath="CryptHelpers.cpp">
+			</File>
+			<File
+				RelativePath="CryptHelpers.h">
 			</File>
 			<File
 				RelativePath=".\Font.cpp">
