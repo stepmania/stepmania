@@ -17,7 +17,7 @@
 #include <sys/stat.h>
 #include <linux/unistd.h>
 #define _LINUX_PTRACE_H // hack to prevent broken linux/ptrace.h from conflicting with sys/ptrace.h
-#include <linux/user.h>
+#include <sys/user.h>
 
 /* In Linux, we might be using PID-based or TID-based threads.  With PID-based
  * threads, getpid() returns a unique value for each thread; each thread is a
