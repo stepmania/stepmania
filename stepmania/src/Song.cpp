@@ -310,10 +310,30 @@ bool Song::LoadWithoutCache( CString sDir )
 	delete ld;
 
 	LOG->Trace("\n\n\n SONG NAME:: %s", this->GetDisplayMainTitle().GetBuffer() );
+	/*
 	if( this->GetDisplayMainTitle().GetBuffer() == "Future Girls" )
+	 * This is incorrect; it's comparing two string pointers, which doesn't
+	 * work like you expect.  Drop the "GetBuffer".
+     *
+	 * I don't believe we should be loading lyrics into Song directly, as part of
+	 * the data.  Instead, I'd treat it as a separate resource (like images
+	 * and movies) and load it on demand; eg. into a LyricsDisplay actor.  The
+	 * primary reason is that it's more modular: the Song class is already too
+	 * monolithic.  (Note that lyrics can get substantially more detailed; for
+	 * example, we might want to add SSA support.)
+	 *
+	 * I'm still undecided, personally, as to whether we should ultimately
+	 * store lyrics inside the SM or in a separate file, but since we'll want
+	 * to support LRC anyway (which is what you're doing) and we don't need to
+	 * actually write it to disk at this point, we don't have to decide on this yet.
+	 * (I'm leaning to changing my opinion to leaving it in a separate file, but
+	 * I need to think on it some more.)
+	 *
+	 * -glenn */
+/*	if( this->GetDisplayMainTitle() == "Future Girls" ) <- this is what you wanted
 	{
 		LOG->Trace("AAA");
-	}
+	} */
 	if( HasLyrics() )
 	{
 		LOG->Trace("\n\n\n LOAD LYRICS HERE!! \n\n\n");	
@@ -1156,6 +1176,7 @@ void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers )
 	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
 		song_sort_val[arraySongPointers[i]] = arraySongPointers[i]->GetNumTimesPlayed();
 	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortVal );
+	reverse( arraySongPointers.begin(), arraySongPointers.end() );
 	song_sort_val.clear();
 }
 
