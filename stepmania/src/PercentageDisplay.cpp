@@ -50,7 +50,7 @@ void PercentageDisplay::Load( PlayerNumber pn, StageStats* pSource, bool bAutoRe
 void PercentageDisplay::TweenOffScreen()
 {
 	OFF_COMMAND( m_textPercent );
-	if( PREFSMAN->m_bDancePointsForOni && PERCENT_USE_REMAINDER )
+	if( !PREFSMAN->m_bDancePointsForOni && PERCENT_USE_REMAINDER )
 		OFF_COMMAND( m_textPercentRemainder );
 }
 
