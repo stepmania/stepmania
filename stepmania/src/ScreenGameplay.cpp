@@ -1603,7 +1603,17 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					GAMESTATE->m_CurStageStats.iSongsPassed[p]++;
 			}
 
-			if( !IsLastSong() )
+			if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG  &&  AllAreFailing() )
+			{
+				if( m_DancingState == STATE_OUTRO )	// ScreenGameplay already ended
+					return;		// ignore
+				m_DancingState = STATE_OUTRO;
+
+				GAMESTATE->RemoveAllActiveAttacks();
+
+				this->PostScreenMessage( SM_BeginFailed, 0 );
+			}
+			else if( !IsLastSong() )
 			{
 				for( p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsPlayerEnabled(p) && !GAMESTATE->m_CurStageStats.bFailed[p] )
@@ -1636,47 +1646,40 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 				GAMESTATE->RemoveAllActiveAttacks();
 
-				if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG  &&  AllAreFailing() )
+				// do they deserve an extra stage?
+				if( GAMESTATE->HasEarnedExtraStage() )
 				{
-					this->PostScreenMessage( SM_BeginFailed, 0 );
+					TweenOffScreen();
+					m_Extra.StartTransitioning( SM_GoToStateAfterCleared );
+					SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay extra") );
 				}
-				else	// ! failed
+				else
 				{
-					// do they deserve an extra stage?
-					if( GAMESTATE->HasEarnedExtraStage() )
+					TweenOffScreen();
+					
+					switch( GAMESTATE->m_PlayMode )
 					{
-						TweenOffScreen();
-						m_Extra.StartTransitioning( SM_GoToStateAfterCleared );
-						SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay extra") );
-					}
-					else
-					{
-						TweenOffScreen();
-						
-						switch( GAMESTATE->m_PlayMode )
+					case PLAY_MODE_BATTLE:
+					case PLAY_MODE_RAVE:
 						{
-						case PLAY_MODE_BATTLE:
-						case PLAY_MODE_RAVE:
+							PlayerNumber winner = GAMESTATE->GetBestPlayer();
+							switch( winner )
 							{
-								PlayerNumber winner = GAMESTATE->GetBestPlayer();
-								switch( winner )
-								{
-								case PLAYER_INVALID:
-									m_Draw.StartTransitioning( SM_GoToStateAfterCleared );
-									break;
-								default:
-									m_Win[winner].StartTransitioning( SM_GoToStateAfterCleared );
-									break;
-								}
+							case PLAYER_INVALID:
+								m_Draw.StartTransitioning( SM_GoToStateAfterCleared );
+								break;
+							default:
+								m_Win[winner].StartTransitioning( SM_GoToStateAfterCleared );
+								break;
 							}
-							break;
-						default:
-							m_Cleared.StartTransitioning( SM_GoToStateAfterCleared );
-							break;
 						}
-						
-						SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
+						break;
+					default:
+						m_Cleared.StartTransitioning( SM_GoToStateAfterCleared );
+						break;
 					}
+					
+					SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
 				}
 			}
 		}
