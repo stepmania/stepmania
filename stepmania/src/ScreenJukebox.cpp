@@ -65,6 +65,9 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 		}
 	}
 
+	if( vDifficultiesToShow.empty() )
+		vDifficultiesToShow.push_back( DIFFICULTY_EASY );
+
 	//
 	// Search for a Song and Steps to play during the demo
 	//
