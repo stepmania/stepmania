@@ -122,6 +122,10 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		g_CurStageStats.UpdateComboList( PLAYER_1, 25, false );
 		g_CurStageStats.iCurCombo[PLAYER_1] = 250;
 		g_CurStageStats.UpdateComboList( PLAYER_1, 100, false );
+
+		g_CurStageStats.iTapNoteScores[PLAYER_1][TNS_MARVELOUS] = 1;
+		g_CurStageStats.iTapNoteScores[PLAYER_2][TNS_PERFECT] = 1;
+
 		g_vPlayedStageStats.clear();
 	}
 

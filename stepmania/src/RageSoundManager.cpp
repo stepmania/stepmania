@@ -76,6 +76,14 @@ void RageSoundManager::Update(float delta)
 		sounds_to_delete.erase(sounds_to_delete.begin());
 	}
 
+	// Race condition here?  I crashed with the following stack:
+	// std::_Tree<RageSound *,RageSound *,std::set<RageSound *,std::less<RageSound *>,std::allocator<RageSound *> >::_Kfn,std::less<RageSound *>,std::allocator<RageSound *> >::_Min(std::_Tree<RageSound *,RageSound *,std::set<RageSound *,std::less<RageSound *>,std::allocator<RageSound *> >::_Kfn,std::less<RageSound *>,std::allocator<RageSound *> >::_Node * 0xfeeefeee) line 542 + 21 bytes
+	// std::_Tree<RageSound *,RageSound *,std::set<RageSound *,std::less<RageSound *>,std::allocator<RageSound *> >::_Kfn,std::less<RageSound *>,std::allocator<RageSound *> >::const_iterator::_Inc() line 104 + 22 bytes
+	// std::_Tree<RageSound *,RageSound *,std::set<RageSound *,std::less<RageSound *>,std::allocator<RageSound *> >::_Kfn,std::less<RageSound *>,std::allocator<RageSound *> >::iterator::operator++() line 130
+	// RageSoundManager::Update(float 0.0360000) line 80 + 10 bytes
+	// GameLoop() line 1315
+	// SDL_main(int 1, char * * 0x0012fed0) line 999
+	//  -Chris
 	for(set<RageSound *>::iterator i = all_sounds.begin();
 		i != all_sounds.end(); ++i)
 		(*i)->Update(delta);
