@@ -19,8 +19,6 @@
 #include "RageSoundReader_SDL_Sound.h"
 
 const int channels = 2;
-const int samplesize = 2 * channels; /* 16-bit */
-const int samplerate = 44100;
 
 /* The amount of data to read from SDL_sound at once. */
 const int read_block_size = 1024;
@@ -42,16 +40,10 @@ bool SoundReader_SDL_Sound::Open(CString filename_)
 	Sound_AudioInfo sound_desired;
 	sound_desired.channels = channels;
 	sound_desired.format = AUDIO_S16SYS;
-	sound_desired.rate = 0; // samplerate;
+	sound_desired.rate = 0;
 
     Sample = Sound_NewSampleFromFile(filename.GetString(),
                     &sound_desired, read_block_size);
-
-	resamp.reset();
-	resamp.SetInputChannels(2);
-	resamp.SetOutputChannels(2);
-	resamp.SetInputSampleRate(Sample->actual.rate);
-	resamp.SetOutputSampleRate(samplerate);
 	if(Sample)
 		return true;
 	
@@ -87,7 +79,6 @@ int SoundReader_SDL_Sound::GetLength_Fast() const
 
 int SoundReader_SDL_Sound::SetPosition(int ms, bool accurate)
 {
-	resamp.reset();
 	if(ms == 0)
 	{
 		Sound_Rewind(Sample);
@@ -124,16 +115,7 @@ int SoundReader_SDL_Sound::Read(char *buf, unsigned len)
 	int bytes_read = 0;
 	while(len)
 	{
-		int size = resamp.read(buf, len);
-
-		if(size == -1)
-			break;
-
-		buf += size;
-		len -= size;
-		bytes_read += size;
-
-		if(size == 0)
+		if(!avail)
 		{
 			/* Don't read at all if we've already hit EOF (it'll whine). */
 			if(Sample->flags & SOUND_SAMPLEFLAG_EOF)
@@ -142,10 +124,7 @@ int SoundReader_SDL_Sound::Read(char *buf, unsigned len)
 			int cnt = Sound_Decode(Sample);
 
 			if(Sample->flags & SOUND_SAMPLEFLAG_EOF)
-			{
-				resamp.eof();
-				continue;
-			}
+				return bytes_read; /* EOF */
 
 			if(Sample->flags & SOUND_SAMPLEFLAG_ERROR)
 			{
@@ -153,11 +132,26 @@ int SoundReader_SDL_Sound::Read(char *buf, unsigned len)
 				return -1;
 			}
 
-			resamp.write(Sample->buffer, cnt);
+			avail = cnt;
+			inbuf = (const char *) Sample->buffer;
 		}
+
+		unsigned size = min(avail, len);
+		memcpy(buf, inbuf, size);
+		buf += size;
+		len -= size;
+		inbuf += size;
+		avail -= size;
+		bytes_read += size;
 	}
 
 	return bytes_read;
+}
+
+int SoundReader_SDL_Sound::GetSampleRate() const
+{
+	ASSERT(Sample);
+	return Sample->actual.rate;
 }
 
 SoundReader_SDL_Sound::~SoundReader_SDL_Sound()

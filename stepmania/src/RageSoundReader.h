@@ -17,6 +17,7 @@ public:
 	virtual int Read(char *buf, unsigned len) = 0;
 	virtual ~SoundReader() { }
 	virtual SoundReader *Copy() const = 0;
+	virtual int GetSampleRate() const = 0;
 
 	bool Error() const { return !error.empty(); }
 	string GetError() const { return error; }

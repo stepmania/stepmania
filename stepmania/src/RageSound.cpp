@@ -43,6 +43,7 @@
 
 #include "RageSoundReader_SDL_Sound.h"
 #include "RageSoundReader_Preload.h"
+#include "RageSoundReader_Resample.h"
 
 const int channels = 2;
 const int samplesize = 2 * channels; /* 16-bit */
@@ -175,6 +176,14 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound %s: %s",
 			sSoundFilePath.GetString(), NewSample->GetError().c_str());
 	Sample = NewSample;
+
+	if(Sample->GetSampleRate() != samplerate)
+	{
+		RageSoundReader_Resample *Resample = new RageSoundReader_Resample;
+		Resample->Open(Sample);
+		Resample->SetSampleRate(44100);
+		Sample = Resample;
+	}
 
 	/* Try to precache. */
 	if(precache)
