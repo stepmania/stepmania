@@ -73,8 +73,6 @@ BitmapText::BitmapText()
 
 	m_pFont = NULL;
 
-	m_iWidestLineWidth = 0;
-	
 	m_bShadow = true;
 
 	m_bRainbow = false;
@@ -130,16 +128,14 @@ void BitmapText::BuildChars()
 		return;
 
 	/* calculate line lengths and widths */
-	m_iWidestLineWidth = 0;
+	m_size.x = 0;
 
 	m_iLineWidths.clear();
 	for( unsigned l=0; l<m_wTextLines.size(); l++ )	// for each line
 	{
 		m_iLineWidths.push_back(m_pFont->GetLineWidthInSourcePixels( m_wTextLines[l] ));
-		m_iWidestLineWidth = max(m_iWidestLineWidth, m_iLineWidths.back());
+		m_size.x = max( m_size.x, m_iLineWidths.back() );
 	}
-	m_size.x = (float) m_iWidestLineWidth;
-
 
 	verts.clear();
 	tex.clear();
@@ -313,8 +309,11 @@ void BitmapText::SetTextMaxWidth( float MaxWidth, const CString &text, const CSt
 {
 	this->SetText(text, alttext);
 
+	const float Width = GetUnzoomedWidth();
+
 	/* Avoid division by zero. */
-	const int Width = GetWidestLineWidthInSourcePixels()+1;
+	if( !Width )
+		return;
 
 	/* Never decrease the zoom.  Important: make sure you reset zoom before
 	 * changing text with this function. */

@@ -30,7 +30,6 @@ public:
 	void SetTextMaxWidth( float MaxWidth, const CString &text, const CString &alttext = "" );
 	void SetWrapWidthPixels( int iWrapWidthPixels );
 
-	int GetWidestLineWidthInSourcePixels() { return m_iWidestLineWidth; };
 	void CropToWidth( int iWidthInSourcePixels );
 
 	virtual void DrawPrimitives();
@@ -56,7 +55,6 @@ protected:
 	CString			m_sText;
 	vector<wstring>	m_wTextLines;
 	vector<int>		m_iLineWidths;			// in source pixels
-	int				m_iWidestLineWidth;		// in source pixels
 	int				m_iWrapWidthPixels;	// -1 = no wrap
 
 	bool m_bRainbow;
