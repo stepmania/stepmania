@@ -214,6 +214,3 @@ stepmania_LDADD = \
 
 INCLUDES = $(SDL_CFLAGS)
 # -O0 -g
-
-smpixmapdir = $(datadir)/pixmaps/stepmania
-smpixmap_DATA = arch/LoadingWindow/loading.xpm
