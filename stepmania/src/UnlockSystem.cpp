@@ -273,6 +273,11 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 		LOG->Trace( "                CS %f", m_SongEntries[i].m_fStagesCleared );
 		LOG->Trace( "                RO %i", m_SongEntries[i].m_iRouletteSeed );
 		LOG->Trace( "            Status %slocked", tmp.c_str() );
+		if (m_SongEntries[i].m_pSong)
+			LOG->Trace( "                   Found matching song entry" );
+		if (m_SongEntries[i].m_pCourse)
+			LOG->Trace( "                   Found matching course entry" );
+
 		
 	}
 	

@@ -139,7 +139,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 				}
 			}
 
-			if (pSong != NULL)
+			if (pSong != NULL && pSong->m_pSong != NULL)
 			{
 				if( pSong->isLocked)
 				{
