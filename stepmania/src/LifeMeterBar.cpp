@@ -549,7 +549,7 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 	// about 20% of your lifebar); at 0.2 it would be 40%, which
 	// is too harsh at one difficulty level higher.  Override.
 
-	int m_iLifeDifficulty = ((1.8 - m_fLifeDifficulty)/0.2);
+	int m_iLifeDifficulty = int((1.8f - m_fLifeDifficulty)/0.2f);
 	
 	// first eight values don't matter
 	float DifficultyValues[16] = {0,0,0,0,0,0,0,0, 
