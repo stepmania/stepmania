@@ -259,7 +259,7 @@ void MemoryCardManager::MountCard( PlayerNumber pn )
 		return;
 	}
 
-	m_bMounted[p] = true;
+	m_bMounted[pn] = true;
 
 	/* If this is the first time we're mounting the device, mount the VFS drivers.
 	 * Simply mounting our VFS on a directory doesn't actually touch the directory,
