@@ -9,6 +9,7 @@
 
 extern CString InitialWorkingDirectory;
 extern CString DirOfExecutable;
+class RageFileDriver;
 
 class RageFileManager
 {
@@ -47,6 +48,10 @@ public:
 	RageFileBasic *Open( CString sPath, int mode, int &err );
 	void Close( RageFileBasic *obj );
 	RageFileBasic *CopyFileObj( const RageFileBasic *cpy );
+
+	/* Retrieve or release a reference to the low-level driver for a mountpoint. */
+	RageFileDriver *GetFileDriver( CString sMountpoint );
+	void ReleaseFileDriver( RageFileDriver *pDriver );
 
 private:
 	RageFileBasic *OpenForWriting( CString sPath, int mode, int &err );

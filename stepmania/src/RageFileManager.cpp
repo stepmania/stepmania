@@ -62,6 +62,47 @@ void UnreferenceAllDrivers( vector<LoadedDriver> &aDriverList )
 	aDriverList.clear();
 }
 
+RageFileDriver *RageFileManager::GetFileDriver( CString sMountpoint )
+{
+	FixSlashesInPlace( sMountpoint );
+	if( sMountpoint.size() && sMountpoint.Right(1) != "/" )
+		sMountpoint += '/';
+
+	g_Mutex->Lock();
+	RageFileDriver *pRet = NULL;
+	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+	{
+		if( g_Drivers[i].MountPoint.CompareNoCase( sMountpoint ) )
+			continue;
+
+		pRet = g_Drivers[i].driver;
+		++g_Drivers[i].m_iRefs;
+		break;
+	}
+	g_Mutex->Unlock();
+
+	return pRet;
+}
+
+void RageFileManager::ReleaseFileDriver( RageFileDriver *pDriver )
+{
+	ASSERT( pDriver != NULL );
+
+	g_Mutex->Lock();
+	unsigned i;
+	for( i = 0; i < g_Drivers.size(); ++i )
+	{
+		if( g_Drivers[i].driver == pDriver )
+			break;
+	}
+	ASSERT( i != g_Drivers.size() );
+
+	--g_Drivers[i].m_iRefs;
+
+	g_Mutex->Broadcast();
+	g_Mutex->Unlock();
+}
+
 /* Wait for the given driver to become unreferenced, and remove it from the list
  * to get exclusive access to it.  Returns false if the driver is no longer available
  * (somebody else got it first). */
