@@ -13,20 +13,14 @@
 
 #include "PrefsManager.h"
 #include "IniFile.h"
-#include "NoteSkinManager.h"
 #include "GameState.h"
 #include "RageException.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
-#include "GameDef.h"
-#include "AnnouncerManager.h"
-#include "ThemeManager.h"
-#include "GameConstantsAndTypes.h"
 #include "arch/arch.h" /* for default driver specs */
 #include "RageSoundReader_Resample.h" /* for ResampleQuality */
 
 #define STEPMANIA_INI_PATH BASE_PATH "Data" SLASH "StepMania.ini"
-#define GAMEPREFS_INI_PATH BASE_PATH "Data" SLASH "GamePrefs.ini"
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -432,47 +426,6 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValue ( "Options", "AdditionalSongFolders", 		join(",", m_asAdditionalSongFolders) );
 
 	ini.SetValueI( "Options", "Game",				GAMESTATE->m_CurGame );
-
-	ini.WriteFile();
-}
-
-void PrefsManager::ReadGamePrefsFromDisk()
-{
-	if( !GAMESTATE )
-		return;
-
-	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
-	IniFile ini;
-	ini.SetPath( GAMEPREFS_INI_PATH );
-	ini.ReadFile();	// it's OK if this fails
-
-	CString sAnnouncer = sGameName, sTheme = sGameName, sNoteSkin = sGameName;
-
-	// if these calls fail, the three strings will keep the initial values set above.
-	ini.GetValue( sGameName, "Announcer",		sAnnouncer );
-	ini.GetValue( sGameName, "Theme",		sTheme );
-	ini.GetValue( sGameName, "DefaultModifiers",	m_sDefaultModifiers );
-
-	// it's OK to call these functions with names that don't exist.
-	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
-	THEME->SwitchThemeAndLanguage( sTheme, m_sLanguage );
-
-//	NOTESKIN->SwitchNoteSkin( sNoteSkin );
-}
-
-void PrefsManager::SaveGamePrefsToDisk()
-{
-	if( !GAMESTATE )
-		return;
-
-	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
-	IniFile ini;
-	ini.SetPath( GAMEPREFS_INI_PATH );
-	ini.ReadFile();	// it's OK if this fails
-
-	ini.SetValue( sGameName, "Announcer",		ANNOUNCER->GetCurAnnouncerName() );
-	ini.SetValue( sGameName, "Theme",		THEME->GetCurThemeName() );
-	ini.SetValue( sGameName, "DefaultModifiers",	m_sDefaultModifiers );
 
 	ini.WriteFile();
 }

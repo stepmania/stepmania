@@ -12,6 +12,7 @@
 #include "GameManager.h"
 #include "GameState.h"
 #include "InputMapper.h"
+#include "StepMania.h"
 
 static void GetDefaultModifiers( PlayerOptions &po, SongOptions &so )
 {
@@ -104,14 +105,14 @@ static void GameSel( int &sel, bool ToSel, const CStringArray &choices )
 			if( !stricmp(choices[i], sCurGameName) )
 				sel = i;
 	} else {
-		PREFSMAN->SaveGamePrefsToDisk();
+		SaveGamePrefsToDisk();
 		INPUTMAPPER->SaveMappingsToDisk();	// save mappings before switching the game
 
 		vector<Game> aGames;
 		GAMEMAN->GetEnabledGames( aGames );
 		GAMESTATE->m_CurGame = aGames[sel];
 
-		PREFSMAN->ReadGamePrefsFromDisk();
+		ReadGamePrefsFromDisk();
 		INPUTMAPPER->ReadMappingsFromDisk();
 	}
 }

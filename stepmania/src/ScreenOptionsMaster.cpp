@@ -518,7 +518,7 @@ void ScreenOptionsMaster::ExportOptions()
 		/* Save preferences. */
 		LOG->Trace("ROW_CONFIG used; saving ...");
 		PREFSMAN->SaveGlobalPrefsToDisk();
-		PREFSMAN->SaveGamePrefsToDisk();
+		SaveGamePrefsToDisk();
 	}
 
 	if( ChangeMask & OPT_RESET_GAME )
