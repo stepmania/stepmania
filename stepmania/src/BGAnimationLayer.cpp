@@ -144,10 +144,8 @@ void BGAnimationLayer::Init()
 void BGAnimationLayer::LoadFromStaticGraphic( CString sPath )
 {
 	Init();
-	RageTextureID ID(sPath);
-	ID.iAlphaBits = 0;
 	Sprite* pSprite = new Sprite;
-	pSprite->LoadBG( ID );
+	pSprite->LoadBG( sPath );
 	pSprite->StretchTo( FullScreenRectI );
 	m_SubActors.push_back( pSprite );
 }
