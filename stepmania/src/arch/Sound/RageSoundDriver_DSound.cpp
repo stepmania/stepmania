@@ -150,7 +150,7 @@ RageSound_DSound::RageSound_DSound()
 	/* Don't bother wasting time trying to create buffers if we're
 	 * emulated.  This also gives us better diagnostic information. */
 	if(ds.IsEmulated())
-		throw "Driver unusable (emulated device)";
+		RageException::ThrowNonfatal("Driver unusable (emulated device)");
 
 	/* Create a bunch of streams and put them into the stream pool. */
 	for(int i = 0; i < 32; ++i) {
@@ -159,7 +159,7 @@ RageSound_DSound::RageSound_DSound()
 			newbuf = new DSoundBuf(ds, 
 				DSoundBuf::HW_HARDWARE,
 				channels, samplerate, 16, buffersize);
-		} catch(const char *e) {
+		} catch(const RageException &e) {
 			/* If we didn't get at least 8, fail. */
 			if(i >= 8) break; /* OK */
 
@@ -171,9 +171,9 @@ RageSound_DSound::RageSound_DSound()
 			{
 				/* We created at least one hardware buffer. */
 				LOG->Trace("Could only create %i buffers; need at least 8 (failed with %s).  DirectSound driver can't be used.", i, e);
-				throw "Driver unusable (not enough hardware buffers)";
+				RageException::ThrowNonfatal("Driver unusable (not enough hardware buffers)");
 			}
-			throw "Driver unusable (no hardware buffers)";
+			RageException::ThrowNonfatal("Driver unusable (no hardware buffers)");
 		}
 
 		stream *s = new stream;
@@ -207,7 +207,7 @@ void RageSound_DSound::StartMixing(RageSound *snd)
 	}
 
 	if(i == stream_pool.size()) {
-		/* We don't have a free sound buffer. XXX fake it */
+		/* We don't have a free sound buffer. Fake it. */
 		SOUNDMAN->AddFakeSound(snd);
 		return;
 	}

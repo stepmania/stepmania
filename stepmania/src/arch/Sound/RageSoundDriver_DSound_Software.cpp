@@ -163,13 +163,10 @@ RageSound_DSound_Software::RageSound_DSound_Software()
 {
 	shutdown = false;
 
-	/* XXX make another exception type that doesn't trigger debug stuff
-	 * and use that */
-
 	/* If we're emulated, we're better off with the WaveOut driver; DS
 	 * emulation tends to be desynced. */
 	if(ds.IsEmulated())
-		throw "Driver unusable (emulated device)";
+		RageException::ThrowNonfatal("Driver unusable (emulated device)");
 
 	/* Create a DirectSound stream, but don't force it into hardware. */
 	str_ds = new DSoundBuf(ds, 

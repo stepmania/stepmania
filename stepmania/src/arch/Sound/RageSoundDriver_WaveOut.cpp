@@ -91,7 +91,7 @@ bool RageSound_WaveOut::GetPCM()
 
 	MMRESULT ret = waveOutWrite(wo, &buffers[b], sizeof(buffers[b]));
   	if(ret != MMSYSERR_NOERROR)
-		throw "blah";
+		RageException::ThrowNonfatal("blah"); // XXX
 
 	/* Increment last_cursor_pos to point at where the data we're about to
 	 * ask for will actually be played. */
@@ -177,7 +177,7 @@ RageSound_WaveOut::RageSound_WaveOut()
 		(DWORD_PTR) sound_event, NULL, CALLBACK_EVENT);
 
 	if(ret != MMSYSERR_NOERROR)
-		throw "blah";
+		RageException::ThrowNonfatal("blah"); // XXX
 
 	for(int b = 0; b < num_chunks; ++b)
 	{
@@ -186,7 +186,7 @@ RageSound_WaveOut::RageSound_WaveOut()
 		buffers[b].lpData = new char[chunksize];
 		ret = waveOutPrepareHeader(wo, &buffers[b], sizeof(buffers[b]));
 		if(ret != MMSYSERR_NOERROR)
-			throw "blah";
+			RageException::ThrowNonfatal("blah"); // XXX
 		buffers[b].dwFlags |= WHDR_DONE;
 	}
 	

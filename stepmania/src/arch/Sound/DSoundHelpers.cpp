@@ -15,7 +15,7 @@ DSound::DSound()
 	HRESULT hr;
 
 	if(FAILED(hr=DirectSoundCreate8(NULL, &ds8, NULL)))
-		throw RageException(hr_ssprintf(hr, "DirectSoundCreate8"));
+		RageException::ThrowNonfatal(hr_ssprintf(hr, "DirectSoundCreate8"));
 
 	/* Try to set primary mixing privileges */
 	hr = ds8->SetCooperativeLevel(GetDesktopWindow(), DSSCL_PRIORITY);
@@ -84,12 +84,12 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	IDirectSoundBuffer *sndbuf_buf;
 	HRESULT hr = ds.GetDS8()->CreateSoundBuffer(&format, &sndbuf_buf, NULL);
 	if (FAILED(hr))
-		throw "CreateSoundBuffer failed";
+		RageException::ThrowNonfatal(hr_ssprintf(hr, "CreateSoundBuffer failed"));
 
 	sndbuf_buf->QueryInterface(IID_IDirectSoundBuffer8, (LPVOID*) &buf);
 
 	if(buf == NULL)
-		throw "foo"; // XXX
+		RageException::ThrowNonfatal("foo"); // XXX
 
 }
 
