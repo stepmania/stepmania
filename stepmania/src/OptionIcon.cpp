@@ -40,16 +40,12 @@ OptionIcon::OptionIcon()
 
 void OptionIcon::Load( PlayerNumber pn, CString sText, bool bHeader )
 {
-	static CString sStopWords[] = 
+	static const CString sStopWords[] = 
 	{
-		"OFF",
-		"VISIBLE",
-		"VIVID",
-		"STANDARD",
 		"1X",
-		"HOLDS",
 		"DEFAULT",
-		"OVERHEAD"
+		"OVERHEAD",
+		"OFF",
 	};
 	
 	for( unsigned i=0; i<ARRAYSIZE(sStopWords); i++ )
