@@ -572,6 +572,9 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 #endif
 	}
 
+	/* Recreating the window changes the hwnd. */
+	SDL_UpdateHWnd();
+
 	ResolutionChanged();
 
 	this->SetDefaultRenderStates();

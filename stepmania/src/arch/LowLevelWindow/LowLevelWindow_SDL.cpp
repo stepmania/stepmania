@@ -169,6 +169,9 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 //	mySDL_EventState(SDL_OPENGLRESET, SDL_IGNORE);
 #endif
 
+	/* Recreating the window changes the hwnd. */
+	SDL_UpdateHWnd();
+
 	{
 		/* Find out what we really got. */
 		int r,g,b,a, colorbits, depth, stencil;
