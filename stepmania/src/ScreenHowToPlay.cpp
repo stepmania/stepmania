@@ -134,7 +134,8 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	m_Player.Load( PLAYER_1, pND, &m_LifeMeterBar, NULL, NULL, NULL, NULL, NULL );
 	
 	m_Player.SetX( 480 );
-	m_Player.DontShowJudgement();
+	// Don't show judgement
+	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fBlind = 1;
 	this->AddChild( &m_Player );
 	delete pND;
 

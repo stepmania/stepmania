@@ -84,6 +84,7 @@ struct PlayerOptions
 	float		m_fAppearances[NUM_APPEARANCES];
 	float		m_fScrolls[NUM_SCROLLS];
 	float		m_fDark;
+	float		m_fBlind;
 	Turn		m_Turn;
 	Transform	m_Transform;
 	bool		m_bHoldNotes;

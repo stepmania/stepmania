@@ -29,6 +29,7 @@ void PlayerOptions::Init()
 	ZERO( m_fAppearances );
 	ZERO( m_fScrolls );
 	m_fDark = 0;
+	m_fBlind = 0;
 	m_Turn = TURN_NONE;
 	m_Transform = TRANSFORM_NONE;
 	m_bHoldNotes = true;
@@ -53,6 +54,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	for( i=0; i<NUM_SCROLLS; i++ )
 		fapproach( m_fScrolls[i], other.m_fScrolls[i], fDeltaSeconds );
 	fapproach( m_fDark, other.m_fDark, fDeltaSeconds );
+	fapproach( m_fBlind, other.m_fBlind, fDeltaSeconds );
 	fapproach( m_fPerspectiveTilt, other.m_fPerspectiveTilt, fDeltaSeconds );
 }
 
@@ -109,6 +111,8 @@ CString PlayerOptions::GetString()
 	if( m_fScrolls[SCROLL_ALTERNATE]==1 )	sReturn += "Alternate, ";
 
 	if( m_fDark == 1)				sReturn += "Dark, ";
+
+	if( m_fBlind == 1)				sReturn += "Blind, ";
 
 	switch( m_Turn )
 	{
@@ -221,6 +225,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "noholds" )	m_bHoldNotes = false;
 		else if( sBit == "nofreeze" )	m_bHoldNotes = false;
 		else if( sBit == "dark" )		m_fDark = 1;
+		else if( sBit == "blind" )		m_fBlind = 1;
 		else if( sBit == "timingassist")m_bTimingAssist = true;
 		else if( sBit == "protiming")	m_bProTiming = true;
 		else if( sBit == "incoming" )	m_fPerspectiveTilt = -1;
