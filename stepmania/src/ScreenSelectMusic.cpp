@@ -653,11 +653,8 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 			if( !m_sSampleMusicToPlay.empty() )
 			{
 				SOUND->PlayMusic(
-					m_sSampleMusicToPlay, 
-					m_sSampleMusicTimingData,
-					true,
-					m_fSampleStartSeconds,
-					m_fSampleLengthSeconds,
+					m_sSampleMusicToPlay, m_pSampleMusicTimingData,
+					true, m_fSampleStartSeconds, m_fSampleLengthSeconds,
 					1.5f, /* fade out for 1.5 seconds */
 					ALIGN_MUSIC_BEATS );
 			}
@@ -1353,6 +1350,9 @@ void ScreenSelectMusic::AfterMusicChange()
 	vector<CString> m_Artists, m_AltArtists;
 
 	m_MachineRank.SetText( "" );
+
+	m_sSampleMusicToPlay = "";
+	m_pSampleMusicTimingData = NULL;
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_SECTION:
@@ -1377,7 +1377,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			{
 			case TYPE_SECTION:
 				m_Banner.LoadFromGroup( sGroup );	// if this isn't a group, it'll default to the fallback banner
-				SampleMusicToPlay = THEME->GetPathS(m_sName,"section music");
+				m_sSampleMusicToPlay = THEME->GetPathS(m_sName,"section music");
 				break;
 			case TYPE_SORT:
 				switch( GAMESTATE->m_SortOrder )
@@ -1389,7 +1389,7 @@ void ScreenSelectMusic::AfterMusicChange()
 					m_Banner.LoadMode();
 					break;
 				}
-				SampleMusicToPlay = THEME->GetPathS(m_sName,"sort music");
+				m_sSampleMusicToPlay = THEME->GetPathS(m_sName,"sort music");
 				break;
 			default:
 				ASSERT(0);
@@ -1405,8 +1405,8 @@ void ScreenSelectMusic::AfterMusicChange()
 	case TYPE_SONG:
 	case TYPE_PORTAL:
 		{
-			SampleMusicToPlay = pSong->GetMusicPath();
-			SampleMusicTimingData = pSong->GetCacheFilePath();
+			m_sSampleMusicToPlay = pSong->GetMusicPath();
+			m_pSampleMusicTimingData = &pSong->m_Timing;
 			m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 			m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 
@@ -1499,10 +1499,10 @@ void ScreenSelectMusic::AfterMusicChange()
 		switch( m_MusicWheel.GetSelectedType() )
 		{
 		case TYPE_ROULETTE:
-			SampleMusicToPlay = THEME->GetPathS(m_sName,"roulette music");
+			m_sSampleMusicToPlay = THEME->GetPathS(m_sName,"roulette music");
 			break;
 		case TYPE_RANDOM:
-			SampleMusicToPlay = THEME->GetPathS(m_sName,"random music");
+			m_sSampleMusicToPlay = THEME->GetPathS(m_sName,"random music");
 			break;
 		default:
 			ASSERT(0);
@@ -1524,7 +1524,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		pCourse->GetTrails( m_vpTrails, GAMESTATE->GetCurrentStyle()->m_StepsType );
 
-		SampleMusicToPlay = THEME->GetPathS(m_sName,"course music");
+		m_sSampleMusicToPlay = THEME->GetPathS(m_sName,"course music");
 		m_fSampleStartSeconds = 0;
 		m_fSampleLengthSeconds = -1;
 
@@ -1585,13 +1585,9 @@ void ScreenSelectMusic::AfterMusicChange()
 	m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+GAMESTATE->GetStageText()) );
 
 	// Don't stop music if it's already playing the right file.
-	if( SampleMusicToPlay == "" )
-		SOUND->StopMusic();
-	else if( SOUND->GetMusicPath() != SampleMusicToPlay )
+	if( SOUND->GetMusicPath() != m_sSampleMusicToPlay )
 	{
 		SOUND->StopMusic();
-		m_sSampleMusicToPlay = SampleMusicToPlay;
-		m_sSampleMusicTimingData = SampleMusicTimingData;
 		m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
 	}
 

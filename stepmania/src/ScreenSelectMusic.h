@@ -104,7 +104,8 @@ protected:
 	bool				m_bGoToOptions;
 	Sprite				m_sprOptionsMessage;
 	float				m_fPlaySampleCountdown;
-	CString				m_sSampleMusicToPlay, m_sSampleMusicTimingData;
+	CString				m_sSampleMusicToPlay;
+	TimingData			*m_pSampleMusicTimingData;
 	float				m_fSampleStartSeconds, m_fSampleLengthSeconds;
 	bool				m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;
 
