@@ -511,7 +511,7 @@ void Sprite::DrawTexture( const TweenState *state )
 	//////////////////////
 	if( state->glow.a > 0.0001f )
 	{
-		DISPLAY->SetTextureModeGlow(state->glowmode);
+		DISPLAY->SetTextureModeGlow();
 		v[0].c = v[1].c = v[2].c = v[3].c = state->glow;
 		DISPLAY->DrawQuad( v );
 	}

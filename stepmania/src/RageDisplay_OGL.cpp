@@ -1344,31 +1344,27 @@ void RageDisplay_OGL::SetTextureModeModulate()
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 }
 
-void RageDisplay_OGL::SetTextureModeGlow(GlowMode m)
+void RageDisplay_OGL::SetTextureModeGlow()
 {
-	if(m == GLOW_WHITEN && !g_bEXT_texture_env_combine)
-		m = GLOW_BRIGHTEN; /* we can't do GLOW_WHITEN */
-
-	switch(m)
+	if( !g_bEXT_texture_env_combine )
 	{
-	case GLOW_BRIGHTEN:
+		/* This is changing blend state, instead of texture state, which isn't
+		 * great, but it's better than doing nothing. */
 		glBlendFunc( GL_SRC_ALPHA, GL_ONE );
 		return;
-
-	case GLOW_WHITEN:
-		/* Source color is the diffuse color only: */
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_COMBINE_RGB_EXT), GL_REPLACE);
-		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE0_RGB_EXT), GL_PRIMARY_COLOR_EXT);
-
-		/* Source alpha is texture alpha * diffuse alpha: */
-		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_COMBINE_ALPHA_EXT), GL_MODULATE);
-		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_OPERAND0_ALPHA_EXT), GL_SRC_ALPHA);
-		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE0_ALPHA_EXT), GL_PRIMARY_COLOR_EXT);
-		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_OPERAND1_ALPHA_EXT), GL_SRC_ALPHA);
-		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE1_ALPHA_EXT), GL_TEXTURE);
-		return;
 	}
+
+	/* Source color is the diffuse color only: */
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+	glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_COMBINE_RGB_EXT), GL_REPLACE);
+	glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE0_RGB_EXT), GL_PRIMARY_COLOR_EXT);
+
+	/* Source alpha is texture alpha * diffuse alpha: */
+	glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_COMBINE_ALPHA_EXT), GL_MODULATE);
+	glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_OPERAND0_ALPHA_EXT), GL_SRC_ALPHA);
+	glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE0_ALPHA_EXT), GL_PRIMARY_COLOR_EXT);
+	glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_OPERAND1_ALPHA_EXT), GL_SRC_ALPHA);
+	glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE1_ALPHA_EXT), GL_TEXTURE);
 }
 
 void RageDisplay_OGL::SetTextureModeAdd()

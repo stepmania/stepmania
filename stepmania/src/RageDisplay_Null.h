@@ -31,7 +31,7 @@ public:
 	int GetNumTextureUnits() { return 1; }
 	void SetTexture( int iTextureUnitIndex, RageTexture* pTexture ) { }
 	void SetTextureModeModulate() { }
-	void SetTextureModeGlow( GlowMode m=GLOW_WHITEN ) { }
+	void SetTextureModeGlow() { }
 	void SetTextureModeAdd() { }
 	void SetTextureWrapping( bool b ) { }
 	int GetMaxTextureSize() const { return 2048; }

@@ -999,7 +999,7 @@ void RageDisplay_D3D::SetTextureModeModulate()
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 }
 
-void RageDisplay_D3D::SetTextureModeGlow(GlowMode m)
+void RageDisplay_D3D::SetTextureModeGlow()
 {
 	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;

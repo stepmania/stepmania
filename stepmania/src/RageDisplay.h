@@ -184,7 +184,7 @@ public:
 	virtual int GetNumTextureUnits() = 0;
 	virtual void SetTexture( int iTextureUnitIndex, RageTexture* pTexture ) = 0;
 	virtual void SetTextureModeModulate() = 0;
-	virtual void SetTextureModeGlow( GlowMode m=GLOW_WHITEN ) = 0;
+	virtual void SetTextureModeGlow() = 0;
 	virtual void SetTextureModeAdd() = 0;
 	virtual void SetTextureWrapping( bool b ) = 0;
 	virtual int GetMaxTextureSize() const = 0;
