@@ -34,7 +34,9 @@ Steps::Steps()
 	 * I have a feeling that it's the right thing to do but that
 	 * it'd trip obscure asserts all over the place, so I'll wait
 	 * until after b6 to do this. -glenn */
-	m_StepsType = STEPS_TYPE_DANCE_SINGLE;
+	/* Yep, it should be STEPS_TYPE_INVALID. -Chris */
+	m_StepsType = STEPS_TYPE_INVALID;
+	m_bIsAnEdit = false;
 	m_Difficulty = DIFFICULTY_INVALID;
 	m_iMeter = 0;
 	for(int i = 0; i < NUM_RADAR_CATEGORIES; ++i)
@@ -170,8 +172,9 @@ void Steps::TidyUpData()
 		}*/
 	}
 
-	if( m_sDescription.empty() )
-		m_sDescription = Capitalize( DifficultyToString(m_Difficulty) );
+	// Don't put garbage in the desciption.
+//	if( m_sDescription.empty() )
+//		m_sDescription = Capitalize( DifficultyToString(m_Difficulty) );
 }
 
 void Steps::Decompress() const
@@ -230,9 +233,10 @@ void Steps::DeAutogen()
 
 	Decompress();	// fills in notes with sliding window transform
 
-	m_iMeter		= Real()->m_iMeter;
+	m_bIsAnEdit		= Real()->m_bIsAnEdit;
 	m_sDescription	= Real()->m_sDescription;
 	m_Difficulty	= Real()->m_Difficulty;
+	m_iMeter		= Real()->m_iMeter;
 	for(int i = 0; i < NUM_RADAR_CATEGORIES; ++i)
 		m_fRadarValues[i] = Real()->m_fRadarValues[i];
 
@@ -281,6 +285,12 @@ const Steps *Steps::Real() const
 bool Steps::IsAutogen() const
 {
 	return parent != NULL;
+}
+
+void Steps::SetIsAnEdit(bool b)
+{
+	DeAutogen();
+	m_bIsAnEdit = b;
 }
 
 void Steps::SetDescription(CString desc)

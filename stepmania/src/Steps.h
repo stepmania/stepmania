@@ -38,6 +38,7 @@ public:
 	int GetMeter() const { return Real()->m_iMeter; }
 	const float *GetRadarValues() const { return Real()->m_fRadarValues; }
 
+	void SetIsAnEdit(bool b);
 	void SetDescription(CString desc);
 	void SetDifficulty(Difficulty d);
 	void SetMeter(int meter);
@@ -124,9 +125,10 @@ protected:
 	const Steps *Real() const;
 
 	/* These values are pulled from the autogen source first, if there is one. */
-	CString			m_sDescription;		// This text is displayed next to the number of feet when a song is selected
+	bool			m_bIsAnEdit;		// true if this was loaded from a memory card
+	CString			m_sDescription;		// Step author, edit name, or something meaningful
 	Difficulty		m_Difficulty;		// difficulty classification
-	int				m_iMeter;			// difficulty rating from 1-10
+	int				m_iMeter;			// difficulty rating from MIN_METER to MAX_METER
 	float			m_fRadarValues[NUM_RADAR_CATEGORIES];	// between 0.0-1.2 starting from 12-o'clock rotating clockwise
 
 };
