@@ -27,7 +27,6 @@
 class Inventory;
 #include "BeginnerHelper.h"
 #include "LyricDisplay.h"
-#include "TimingAssist.h"
 #include "Character.h"
 #include "Attack.h"
 #include "MeterDisplay.h"
@@ -103,8 +102,6 @@ protected:
 	float				m_fTimeSinceLastDancingComment;	// this counter is only running while STATE_DANCING
 
 	LyricDisplay		m_LyricDisplay;
-
-	TimingAssist		m_TimingAssist;
 
 	Background			m_Background;
 	Foreground			m_Foreground;

@@ -326,16 +326,12 @@ void ScreenGameplay::Init()
 		m_Player[p].SetX( fPlayerX );
 		this->AddChild( &m_Player[p] );
 	
-		m_TimingAssist.Load((PlayerNumber)p, &m_Player[p]);
-
 		m_sprOniGameOver[p].Load( THEME->GetPathToG("ScreenGameplay oni gameover") );
 		m_sprOniGameOver[p].SetX( fPlayerX );
 		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
 		m_sprOniGameOver[p].SetDiffuse( RageColor(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
 		this->AddChild( &m_sprOniGameOver[p] );
 	}
-
-	this->AddChild(&m_TimingAssist);
 
 	m_NextSongIn.SetZ( -2 ); // on top of everything else
 	this->AddChild( &m_NextSongIn );
@@ -921,8 +917,6 @@ void ScreenGameplay::LoadNextSong()
 			GAMESTATE->m_PlayerController[p] = PC_AUTOPLAY;
 		else
 			GAMESTATE->m_PlayerController[p] = PC_HUMAN;
-
-		m_TimingAssist.Reset();
 	}
 
 	m_textSongTitle.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );

@@ -1649,12 +1649,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath="ScoreDisplayRave.h">
 			</File>
-			<File
-				RelativePath="TimingAssist.cpp">
-			</File>
-			<File
-				RelativePath="TimingAssist.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Rage"

@@ -73,8 +73,6 @@ const OptionColumnEntry g_OptionColumnEntries[] =
 	{"Space",		6},
 	{"Hallway",		6},
 	{"Distant",		6},
-
-	{"TimingAssist",-1},
 };
 
 int OptionToPreferredColumn( CString sOptionText )

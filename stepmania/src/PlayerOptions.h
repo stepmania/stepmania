@@ -117,7 +117,6 @@ struct PlayerOptions
 
 	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];
-	bool		m_bTimingAssist;
 	bool		m_bProTiming;
 	CString		m_sPositioning;	/* The current positioning mode, or empty to use the normal positions. */
 	CString		m_sNoteSkin;
