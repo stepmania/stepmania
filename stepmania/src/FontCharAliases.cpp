@@ -308,3 +308,9 @@ longchar FontCharAliases::GetChar( CString &codepoint )
 	
 	return i->second;
 }
+
+/*
+ * Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
+ *
+ * Glenn Maynard
+ */
