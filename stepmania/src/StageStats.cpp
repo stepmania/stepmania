@@ -15,6 +15,7 @@
 #include "GameState.h"
 #include "RageLog.h"
 #include "SongManager.h"
+#include "RageUtil.h"
 
 StageStats::StageStats()
 {
@@ -133,3 +134,14 @@ bool StageStats::OnePassed() const
 	return false;
 }
 
+float StageStats::GetPercentDancePoints( PlayerNumber pn ) const
+{
+	if( iPossibleDancePoints[pn] == 0 )
+		return 0; // div/0
+
+	if( iActualDancePoints[pn] == iPossibleDancePoints[pn] )
+		return 1;	// correct for rounding error
+
+	float fPercentDancePoints =  iActualDancePoints[pn] / (float)iPossibleDancePoints[pn];
+	return clamp( fPercentDancePoints, 0, 1 );
+}

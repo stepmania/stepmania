@@ -24,6 +24,7 @@ struct StageStats
 	void AddStats( const StageStats& other );		// accumulate
 	Grade GetGrade( PlayerNumber pn );
 	bool OnePassed() const;
+	float GetPercentDancePoints( PlayerNumber pn ) const;
 
 	Song*	pSong;
 	enum { STAGE_INVALID, STAGE_NORMAL, STAGE_EXTRA, STAGE_EXTRA2 } StageType;
