@@ -24,25 +24,48 @@ static vector<LoadedDriver> g_Drivers;
 
 RageFileManager::RageFileManager()
 {
+	/* Add file search paths, higher priority first. */
 #if defined(XBOX)
 	RageFileManager::Mount( "dir", ".", "" );
 	/* XXX: drop BASE_PATH and do this instead */
 //	RageFileManager::Mount( "dir", "D:\\", "" );
-#else
+#elif defined(UNIX)
+	/* We can almost do this, to have machine profiles be system-global to eg. share
+	 * scores.  It would need to handle permissions properly. */
+/*	RageFileManager::Mount( "dir", "/var/lib/games/stepmania", "Data/Profiles" ); */
+	
+	CString Home = getenv( "HOME" ) + "/" + PRODUCT_NAME;
+
+	/*
+	 * Next: path to write general mutable user data.  If the above path fails (eg.
+	 * wrong permissions, doesn't exist), machine memcard data will also go in here. 
+	 * XXX: It seems silly to have two ~ directories.  If we're going to create a
+	 * directory on our own, it seems like it should be a dot directory, but it
+	 * seems wrong to put lots of data (eg. music) in one.  Hmm. 
+	 */
+	/* XXX: create */
+/*	RageFileManager::Mount( "dir", Home + "." PRODUCT_NAME, "Data" ); */
+
+	/* Next, search ~/StepMania.  This is where users can put music, themes, etc. */
+	/* RageFileManager::Mount( "dir", Home + PRODUCT_NAME, "" ); */
+
 	/* Paths relative to the CWD: */
 	RageFileManager::Mount( "dir", ".", "" );
 
 	/* Absolute paths.  This is rarely used, eg. by Alsa9Buf::GetSoundCardDebugInfo(). */
 	RageFileManager::Mount( "dir", "/", "/" );
-#endif
+#elif defined(WINDOWS)
+	/* All Windows data goes in the directory with the executable. */
+	/* XXX: Test to see if we can write to the program directory tree.  If we can't,
+	 * add a search path under "Documents and Settings" for writing scores, etc. Otherwise,
+	 * don't.  We don't want to write to D&S if we don't have to (it'll confuse people). */
+/*	RageFileManager::Mount( "dir", "******", "" ); */
 
-#if defined(WIN32)
-	/* Temporary hack for accessing files by drive letter. */
-	for( char c = 'A'; c <= 'Z'; ++c )
-	{
-		const CString path = ssprintf( "%c:/", c );
-		RageFileManager::Mount( "dir", path, path );
-	}
+	/* Paths relative to the CWD: */
+	RageFileManager::Mount( "dir", ".", "" );
+#else
+	/* Paths relative to the CWD: */
+	RageFileManager::Mount( "dir", ".", "" );
 #endif
 }
 
