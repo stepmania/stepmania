@@ -1,7 +1,7 @@
 #ifndef RAGE_SOUND_WAVEOUT
 #define RAGE_SOUND_WAVEOUT
 
-#include "RageSoundDriver_Generic_test.h"
+#include "RageSoundDriver_Generic_Software.h"
 #include "RageSoundDriver.h"
 #include "RageThreads.h"
 #include "windows.h"
