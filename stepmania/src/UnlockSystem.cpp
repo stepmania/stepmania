@@ -17,6 +17,7 @@
 #include "RageException.h"
 #include "RageUtil.h"
 #include "UnlockSystem.h"
+#include "SongManager.h"
 
 #include <fstream>
 using namespace std;
@@ -30,36 +31,25 @@ UnlockSystem::UnlockSystem()
 
 bool UnlockSystem::SongIsLocked( const Song *song )
 {
-	return SongIsLocked( song->GetFullTranslitTitle() );
+	SongEntry *p = FindSong( song );
+	return p && p->isLocked;
 }
 
 bool UnlockSystem::SongIsRoulette( const Song *song )
 {
-	return SongIsRoulette( song->GetFullTranslitTitle() );
+	SongEntry *p = FindSong( song );
+	return p && p->m_iRouletteSeed != 0;
 }
 
-bool UnlockSystem::SongIsLocked( CString sSongName )
+SongEntry *UnlockSystem::FindSong( const Song *pSong )
 {
-	sSongName.MakeUpper();	//Avoid case-sensitive problems
-	
-	// searches for song in unlock list
 	for(unsigned i = 0; i < m_SongEntries.size(); i++)
-		if (m_SongEntries[i].m_sSongName == sSongName)
-			return m_SongEntries[i].isLocked;
-	
-	return false;
+		if (m_SongEntries[i].GetSong() == pSong )
+			return &m_SongEntries[i];
+		
+	return NULL;
 }
 
-bool UnlockSystem::SongIsRoulette( CString sSongName )
-{
-	sSongName.MakeUpper();	//Avoid case-sensitive problems
-	
-	for(unsigned i = 0; i < m_SongEntries.size(); i++)
-		if (m_SongEntries[i].m_sSongName == sSongName)
-			return (m_SongEntries[i].m_iRouletteSeed != 0);
-	
-	return false;
-}
 
 SongEntry::SongEntry()
 {
@@ -269,4 +259,9 @@ float UnlockSystem::NumPointsUntilNextUnlock()
 	
 	if (fSmallestPoints == 400000000) return 0;  // no match found
 	return fSmallestPoints - PREFSMAN->m_fDancePointsAccumulated;
+}
+
+Song *SongEntry::GetSong() const
+{
+	return SONGMAN->FindSong( "", m_sSongName );
 }

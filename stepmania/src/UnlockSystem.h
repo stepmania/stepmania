@@ -44,7 +44,7 @@ struct SongEntry
 	bool	SelectableRoulette();
 
 	bool	updateLocked();  //updates isLocked flag
-
+	Song	*GetSong() const;
 };
 
 class UnlockSystem
@@ -70,8 +70,7 @@ public:
 private:
 	void SortSongEntriesArray();  // sorts unlocks
 	bool ParseRow(CString text, CString &type, float &qty, CString &songname);
-	bool SongIsLocked( CString sSongName );
-	bool SongIsRoulette( CString sSongName );
+	SongEntry *FindSong( const Song *pSong );
 };
 
 
