@@ -68,7 +68,7 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 struct AutoJoyMapping
 {
 	Game game;
-	char sDeviceDescription[64];
+	const char *sDeviceDescription;
 	bool bIgnoreAxes;
 	int numMappings;
 	struct {
@@ -160,7 +160,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 				if( gc == GAME_CONTROLLER_INVALID )
 					continue;
 
-				for( unsigned k=0; k<mapping.numMappings; k++ )
+				for( int k=0; k<mapping.numMappings; k++ )
 				{
 					DeviceInput di( device, mapping.mapping[k].deviceButton );
 					GameInput gi( gc, mapping.mapping[k].gb );
