@@ -273,9 +273,9 @@ void ScreenHowToPlay::DrawPrimitives()
 
 		DISPLAY->SetLightOff( 0 );
 		DISPLAY->SetLighting( false );
-	}
 
-	m_Overlay.DrawPrimitives();
-	m_In.DrawPrimitives();
-	m_Out.DrawPrimitives();
+		m_Overlay.DrawPrimitives();
+		m_In.DrawPrimitives();
+		m_Out.DrawPrimitives();
+	}
 }
