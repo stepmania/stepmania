@@ -317,6 +317,9 @@ void ScreenOptions::RefreshIcons()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
 	{
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;
+
 		for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
 		{
 			OptionIcon &icon = m_OptionIcons[p][i];

@@ -21,9 +21,9 @@ public:
 	DifficultyMeter();
 
 	void SetFromNotes( Notes* pNotes );
+	void SetMeter( int iMeter );
 
 private:
-	void SetMeter( int iMeter );
 };
 
 #endif

@@ -240,10 +240,8 @@ void ScreenPlayerOptions::GoToNextState()
 {
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen();
-	else if( PREFSMAN->m_bShowSongOptions )
-		SCREENMAN->SetNewScreen( "ScreenSongOptions" );
 	else
-		SCREENMAN->SetNewScreen( "ScreenStage" );
+		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 }
 
 

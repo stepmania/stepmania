@@ -127,6 +127,7 @@ protected:
 	Transition	m_Extra;
 	Transition	m_Toasty;	// easter egg
 	Transition	m_Win[NUM_PLAYERS];
+	Transition	m_Draw;
 	Transition	m_In;
 	Transition	m_Back;
 

@@ -492,10 +492,10 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			UtilSetXYAndOnCommand( m_sprWinFrame[p], "ScreenEvaluation" );
 			this->AddChild( &m_sprWinFrame[p] );
 
-			m_sprWin[p].Load( THEME->GetPathToG("ScreenEvaluation win 2x2") );
+			m_sprWin[p].Load( THEME->GetPathToG("ScreenEvaluation win 2x3") );
 			m_sprWin[p].StopAnimating();
-			bool bIsWinner = GAMESTATE->GetWinner() == p;
-			m_sprWin[p].SetState( (bIsWinner?0:2) + p );
+			int iFrame = GAMESTATE->GetBattleResult( (PlayerNumber)p )*2 + p;
+			m_sprWin[p].SetState( iFrame );
 			m_sprWin[p].SetName( ssprintf("WinP%d",p+1) );
 			UtilSetXYAndOnCommand( m_sprWin[p], "ScreenEvaluation" );
 			this->AddChild( &m_sprWin[p] );

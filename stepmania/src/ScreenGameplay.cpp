@@ -432,11 +432,14 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_BATTLE:
+		case PLAY_MODE_RAVE:
 			for( p=0; p<NUM_PLAYERS; p++ )
 			{
 				m_Win[p].Load( THEME->GetPathToB(ssprintf("ScreenGameplay win p%d",p+1)) );
 				this->AddChild( &m_Win[p] );
 			}
+			m_Draw.Load( THEME->GetPathToB("ScreenGameplay draw") );
+			this->AddChild( &m_Draw );
 			break;
 		}
 
@@ -585,28 +588,30 @@ void ScreenGameplay::LoadNextSong()
 
 		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pScoreDisplay[p], &m_Inventory[p], m_pScoreKeeper[p] );
 		if( m_bDemonstration )
-			GAMESTATE->m_PlayerController[p] = CPU_MEDIUM;
+		{
+			GAMESTATE->m_PlayerController[p] = PC_CPU;
+			GAMESTATE->m_iCpuSkill[p] = 5;
+		}
 		else if( GAMESTATE->IsCpuPlayer(p) )
 		{
-			switch( GAMESTATE->m_pCurNotes[p]->GetDifficulty() )
+			GAMESTATE->m_PlayerController[p] = PC_CPU;
+			if( GAMESTATE->m_iCpuSkill[p] == -1 )
 			{
-			case DIFFICULTY_BEGINNER:
-			case DIFFICULTY_EASY:
-				GAMESTATE->m_PlayerController[p] = CPU_EASY;
-				break;
-			case DIFFICULTY_MEDIUM:
-				GAMESTATE->m_PlayerController[p] = CPU_MEDIUM;
-				break;
-			case DIFFICULTY_HARD:
-			case DIFFICULTY_CHALLENGE:
-				GAMESTATE->m_PlayerController[p] = CPU_HARD;
-				break;
+				switch( GAMESTATE->m_pCurNotes[p]->GetDifficulty() )
+				{
+				case DIFFICULTY_BEGINNER:	GAMESTATE->m_iCpuSkill[p] = 1;	break;
+				case DIFFICULTY_EASY:		GAMESTATE->m_iCpuSkill[p] = 3;	break;
+				case DIFFICULTY_MEDIUM:		GAMESTATE->m_iCpuSkill[p] = 5;	break;
+				case DIFFICULTY_HARD:		GAMESTATE->m_iCpuSkill[p] = 7;	break;
+				case DIFFICULTY_CHALLENGE:	GAMESTATE->m_iCpuSkill[p] = 9;	break;
+				default:	ASSERT(0);
+				}
 			}
 		}
 		else if( PREFSMAN->m_bAutoPlay )
-			GAMESTATE->m_PlayerController[p] = CPU_AUTOPLAY;
+			GAMESTATE->m_PlayerController[p] = PC_AUTOPLAY;
 		else
-			GAMESTATE->m_PlayerController[p] = HUMAN;
+			GAMESTATE->m_PlayerController[p] = PC_HUMAN;
 
 		m_TimingAssist.Reset();
 	}
@@ -1047,7 +1052,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				UpdateAutoPlayText();
 				for( int p=0; p<NUM_PLAYERS; p++ )
 					if( GAMESTATE->IsHumanPlayer(p) )
-						GAMESTATE->m_PlayerController[p] = PREFSMAN->m_bAutoPlay?CPU_AUTOPLAY:HUMAN;
+						GAMESTATE->m_PlayerController[p] = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
 			}
 			break;
 		case SDLK_F9:
@@ -1330,9 +1335,18 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 						switch( GAMESTATE->m_PlayMode )
 						{
 						case PLAY_MODE_BATTLE:
+						case PLAY_MODE_RAVE:
 							{
 								PlayerNumber winner = GAMESTATE->GetWinner();
-								m_Win[winner].StartTransitioning( SM_GoToStateAfterCleared );
+								switch( winner )
+								{
+								case PLAYER_INVALID:
+									m_Draw.StartTransitioning( SM_GoToStateAfterCleared );
+									break;
+								default:
+									m_Win[winner].StartTransitioning( SM_GoToStateAfterCleared );
+									break;
+								}
 							}
 							break;
 						default:

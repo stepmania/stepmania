@@ -298,73 +298,71 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenAutogenOptions.h"
 #include "ScreenCredits.h"
 #include "ScreenSelectCharacter.h"
+#include "ScreenRaveOptions.h"
 
 Screen* Screen::Create( CString sClassName )
 {
-	Screen *ret = NULL;
+#define IF_RETURN(X)	if(sClassName.CompareNoCase(#X)==0)	return new X;
 
-#define IS( name )	(sClassName.CompareNoCase(name)==0)
+	IF_RETURN( ScreenAppearanceOptions );
+	IF_RETURN( ScreenCaution );
+	IF_RETURN( ScreenEdit );
+	IF_RETURN( ScreenEditMenu );
+	IF_RETURN( ScreenEvaluationStage );
+	IF_RETURN( ScreenEvaluationSummary );
+	IF_RETURN( ScreenEvaluationNonstop );
+	IF_RETURN( ScreenEvaluationOni );
+	IF_RETURN( ScreenEvaluationEndless );
+	IF_RETURN( ScreenEvaluationBattle );
+	IF_RETURN( ScreenEvaluationRave );
+	IF_RETURN( ScreenEz2SelectPlayer );
+	IF_RETURN( ScreenSelectMode );
+	IF_RETURN( ScreenGameOver );
+	IF_RETURN( ScreenGameplay );
+	IF_RETURN( ScreenGraphicOptions );
+	IF_RETURN( ScreenHowToPlay );
+	IF_RETURN( ScreenInputOptions );
+	IF_RETURN( ScreenMachineOptions );
+	IF_RETURN( ScreenMapControllers );
+	IF_RETURN( ScreenInputOptions );
+	IF_RETURN( ScreenMusicScroll );
+	IF_RETURN( ScreenPlayerOptions );
+	IF_RETURN( ScreenSandbox );
+	IF_RETURN( ScreenSelectCourse );
+	IF_RETURN( ScreenSelectDifficulty );
+	IF_RETURN( ScreenSelectDifficultyEX );
+	IF_RETURN( ScreenSelectGame );
+	IF_RETURN( ScreenSelectGroup );
+	IF_RETURN( ScreenSelectMusic );
+	IF_RETURN( ScreenSelectStyle5th );
+	IF_RETURN( ScreenSelectStyle );
+	IF_RETURN( ScreenSongOptions );
+	IF_RETURN( ScreenStage );
+	IF_RETURN( ScreenTest );
+	IF_RETURN( ScreenTestFonts );
+	IF_RETURN( ScreenTestSound );
+	IF_RETURN( ScreenTitleMenu );
+	IF_RETURN( ScreenEz2SelectMusic );
+	IF_RETURN( ScreenWarning );
+	IF_RETURN( ScreenRanking );
+	IF_RETURN( ScreenCompany );
+	IF_RETURN( ScreenIntroMovie );
+	IF_RETURN( ScreenAlbums );
+	IF_RETURN( ScreenLogo );
+	IF_RETURN( ScreenUnlock );
+	IF_RETURN( ScreenDemonstration );
+	IF_RETURN( ScreenInstructions );
+	IF_RETURN( ScreenNameEntry );
+	IF_RETURN( ScreenJukebox );
+	IF_RETURN( ScreenJukeboxMenu );
+	IF_RETURN( ScreenOptionsMenu );
+	IF_RETURN( ScreenSoundOptions );
+	IF_RETURN( ScreenGameplayOptions );
+	IF_RETURN( ScreenStyleSplash );
+	IF_RETURN( ScreenAutogenOptions );
+	IF_RETURN( ScreenCredits );
+	IF_RETURN( ScreenSelectCharacter );
+	IF_RETURN( ScreenRaveOptions );
 
-	if(		 IS("ScreenAppearanceOptions") )	ret = new ScreenAppearanceOptions;
-	else if( IS("ScreenCaution") )				ret = new ScreenCaution;
-	else if( IS("ScreenEdit") )					ret = new ScreenEdit;
-	else if( IS("ScreenEditMenu") )				ret = new ScreenEditMenu;
-	else if( IS("ScreenEvaluationStage") )		ret = new ScreenEvaluationStage;
-	else if( IS("ScreenEvaluationSummary") )	ret = new ScreenEvaluationSummary;
-	else if( IS("ScreenEvaluationNonstop") )	ret = new ScreenEvaluationNonstop;
-	else if( IS("ScreenEvaluationOni") )		ret = new ScreenEvaluationOni;
-	else if( IS("ScreenEvaluationEndless") )	ret = new ScreenEvaluationEndless;
-	else if( IS("ScreenEvaluationBattle") )		ret = new ScreenEvaluationBattle;
-	else if( IS("ScreenEvaluationRave") )		ret = new ScreenEvaluationRave;
-	else if( IS("ScreenEz2SelectPlayer") )		ret = new ScreenEz2SelectPlayer;
-	else if( IS("ScreenSelectMode") )			ret = new ScreenSelectMode;
-	else if( IS("ScreenGameOver") )				ret = new ScreenGameOver;
-	else if( IS("ScreenGameplay") )				ret = new ScreenGameplay;
-	else if( IS("ScreenGraphicOptions") )		ret = new ScreenGraphicOptions;
-	else if( IS("ScreenHowToPlay") )			ret = new ScreenHowToPlay;
-	else if( IS("ScreenInputOptions") )			ret = new ScreenInputOptions;
-	else if( IS("ScreenMachineOptions") )		ret = new ScreenMachineOptions;
-	else if( IS("ScreenMapControllers") )		ret = new ScreenMapControllers;
-	else if( IS("ScreenInputOptions") )			ret = new ScreenInputOptions;
-	else if( IS("ScreenMusicScroll") )			ret = new ScreenMusicScroll;
-	else if( IS("ScreenPlayerOptions") )		ret = new ScreenPlayerOptions;
-	else if( IS("ScreenSandbox") )				ret = new ScreenSandbox;
-	else if( IS("ScreenSelectCourse") )			ret = new ScreenSelectCourse;
-	else if( IS("ScreenSelectDifficulty") )		ret = new ScreenSelectDifficulty;
-	else if( IS("ScreenSelectDifficultyEX") )	ret = new ScreenSelectDifficultyEX;
-	else if( IS("ScreenSelectGame") )			ret = new ScreenSelectGame;
-	else if( IS("ScreenSelectGroup") )			ret = new ScreenSelectGroup;
-	else if( IS("ScreenSelectMusic") )			ret = new ScreenSelectMusic;
-	else if( IS("ScreenSelectStyle5th") )		ret = new ScreenSelectStyle5th;
-	else if( IS("ScreenSelectStyle") )			ret = new ScreenSelectStyle;
-	else if( IS("ScreenSongOptions") )			ret = new ScreenSongOptions;
-	else if( IS("ScreenStage") )				ret = new ScreenStage;
-	else if( IS("ScreenTest") )					ret = new ScreenTest;
-	else if( IS("ScreenTestFonts") )			ret = new ScreenTestFonts;
-	else if( IS("ScreenTestSound") )			ret = new ScreenTestSound;
-	else if( IS("ScreenTitleMenu") )			ret = new ScreenTitleMenu;
-	else if( IS("ScreenEz2SelectMusic") )		ret = new ScreenEz2SelectMusic;
-	else if( IS("ScreenWarning") )				ret = new ScreenWarning;
-	else if( IS("ScreenRanking") )				ret = new ScreenRanking;
-	else if( IS("ScreenMemoryCard") )			ret = new ScreenMemoryCard;
-	else if( IS("ScreenCompany") )				ret = new ScreenCompany;
-	else if( IS("ScreenIntroMovie") )			ret = new ScreenIntroMovie;
-	else if( IS("ScreenAlbums") )				ret = new ScreenAlbums;
-	else if( IS("ScreenLogo") )					ret = new ScreenLogo;
-	else if( IS("ScreenUnlock") )				ret = new ScreenUnlock;
-	else if( IS("ScreenDemonstration") )		ret = (ScreenGameplay*)new ScreenDemonstration;
-	else if( IS("ScreenInstructions") )			ret = new ScreenInstructions;
-	else if( IS("ScreenNameEntry") )			ret = new ScreenNameEntry;
-	else if( IS("ScreenJukebox") )				ret = new ScreenJukebox;
-	else if( IS("ScreenJukeboxMenu") )			ret = new ScreenJukeboxMenu;
-	else if( IS("ScreenOptionsMenu") )			ret = new ScreenOptionsMenu;
-	else if( IS("ScreenSoundOptions") )			ret = new ScreenSoundOptions;
-	else if( IS("ScreenGameplayOptions") )		ret = new ScreenGameplayOptions;
-	else if( IS("ScreenStyleSplash") )			ret = new ScreenStyleSplash;
-	else if( IS("ScreenAutogenOptions") )		ret = new ScreenAutogenOptions;
-	else if( IS("ScreenCredits") )				ret = new ScreenCredits;
-	else if( IS("ScreenSelectCharacter") )		ret = new ScreenSelectCharacter;
-	else
-		RageException::Throw( "Invalid Screen class name '%s'", sClassName.GetString() );
-	return ret;
+	RageException::Throw( "Invalid Screen class name '%s'", sClassName.GetString() );
 }

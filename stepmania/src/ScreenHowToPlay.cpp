@@ -57,7 +57,7 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	GAMESTATE->m_bPastHereWeGo = true;
 
 	m_Player.Load( PLAYER_1, pND, NULL, NULL, NULL, NULL );
-	GAMESTATE->m_PlayerController[PLAYER_1] = CPU_AUTOPLAY;
+	GAMESTATE->m_PlayerController[PLAYER_1] = PC_AUTOPLAY;
 	m_Player.SetX( 480 );
 	this->AddChild( &m_Player );
 

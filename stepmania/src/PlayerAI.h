@@ -13,12 +13,14 @@
 
 #include "GameConstantsAndTypes.h"
 
+const int NUM_SKILL_LEVELS = 11;	// 0-10
 
 class PlayerAI
 {
 public:
 
-	static TapNoteScore PlayerAI::GetTapNoteScore( PlayerController pc, int iSumOfAttackLevels );
+	static void InitFromDisk();
+	static TapNoteScore PlayerAI::GetTapNoteScore( int iCpuSkill, int iSumOfAttackLevels );
 
 };
 

@@ -82,7 +82,8 @@ public:
 	}
 
 	PlayerController	m_PlayerController[NUM_PLAYERS];
-
+	int					m_iCpuSkill[NUM_PLAYERS];	// only used when m_PlayerController is PC_CPU
+	float				m_fSuperMeterGrowth[NUM_PLAYERS];	// between 0.0 and 1.0
 
 	bool IsCourseMode() const;
 
@@ -155,7 +156,6 @@ public:
 
 	// used in PLAY_MODE_RAVE
 	CString m_sCharacterName[NUM_PLAYERS];
-	AttackLevel	m_MaxAttackLevel[NUM_PLAYERS];
 	CString	m_sAttacks[NUM_PLAYERS][NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
 
 	
@@ -183,6 +183,7 @@ public:
 
 	bool HasEarnedExtraStage();
 	PlayerNumber GetWinner();
+	BattleResult GetBattleResult( PlayerNumber pn );
 	bool m_bAllow2ndExtraStage; //only used when "Allow Selection of Extra Stage is on"
 
 

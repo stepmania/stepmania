@@ -70,6 +70,8 @@ Player::Player()
 	this->AddChild( &m_Combo );
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
 		this->AddChild( &m_HoldJudgment[c] );
+
+	PlayerAI::InitFromDisk();
 }
 
 Player::~Player()
@@ -221,7 +223,7 @@ void Player::Update( float fDeltaTime )
 			bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
 			
 			// TODO: Make the CPU miss sometimes.
-			if( GAMESTATE->m_PlayerController[m_PlayerNumber] != HUMAN )
+			if( GAMESTATE->m_PlayerController[m_PlayerNumber] != PC_HUMAN )
 				bIsHoldingButton = true;
 
 			m_NoteField.m_bIsHoldingHoldNote[i] = bIsHoldingButton && bSteppedOnTapNote;	// set host flag so NoteField can do intelligent drawing
@@ -386,25 +388,31 @@ void Player::Step( int col )
 		// calculate TapNoteScore
 		TapNoteScore score;
 
-		if( GAMESTATE->m_PlayerController[m_PlayerNumber] == HUMAN )
+		switch( GAMESTATE->m_PlayerController[m_PlayerNumber] )
 		{
+		case PC_HUMAN:
 			if(		 fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_MARVELOUS;
 			else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
 			else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
 			else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
 			else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
 			else	score = TNS_NONE;
-		}
-		else
-		{
-			score = PlayerAI::GetTapNoteScore( GAMESTATE->m_PlayerController[m_PlayerNumber], GAMESTATE->GetSumOfActiveAttackLevels(m_PlayerNumber) );
-			
+			break;
+		case PC_CPU:
+			score = PlayerAI::GetTapNoteScore( GAMESTATE->m_iCpuSkill[m_PlayerNumber], GAMESTATE->GetSumOfActiveAttackLevels(m_PlayerNumber) );			
+
 			/* AI will generate misses here.  Don't handle a miss like a regular note because
 			 * we want the judgment animation to appear delayed.  Instead, return early if
 			 * AI generated a miss, and let UpdateMissedTapNotesOlderThan() detect and handle the 
 			 * misses. */
 			if( score == TNS_MISS )
 				return;
+			break;
+		case PC_AUTOPLAY:
+			score = TNS_MARVELOUS;
+			break;
+		default:
+			ASSERT(0);
 		}
 
 		if( score==TNS_MARVELOUS  &&  !PREFSMAN->m_bMarvelousTiming )
@@ -419,7 +427,7 @@ void Player::Step( int col )
 		if( score != TNS_NONE )
 			SetTapNoteOffset(col, iIndexOverlappingNote, -fNoteOffset);
 
-		if( GAMESTATE->m_PlayerController[m_PlayerNumber] == HUMAN  && 
+		if( GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_HUMAN  && 
 			score >= TNS_GREAT ) 
 			HandleAutosync(fNoteOffset);
 
@@ -549,7 +557,7 @@ void Player::CrossedRow( int iNoteRow )
 	// check to see if there's at the crossed row
 	for( int t=0; t<GetNumTracks(); t++ )
 		if( GetTapNote(t, iNoteRow) != TAP_EMPTY )
-			if( GAMESTATE->m_PlayerController[m_PlayerNumber] != HUMAN )
+			if( GAMESTATE->m_PlayerController[m_PlayerNumber] != PC_HUMAN )
 				 Step( t );
 }
 

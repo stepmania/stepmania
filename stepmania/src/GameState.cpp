@@ -88,6 +88,12 @@ void GameState::Reset()
 		NOTESKIN->SwitchNoteSkin( PlayerNumber(p), PREFSMAN->m_sDefaultNoteSkin );
 
 	m_Position = new NoteFieldPositioning("Positioning.ini");
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_fSuperMeterGrowth[p] = 1;
+		m_iCpuSkill[p] = 5;
+	}
 }
 
 void GameState::Update( float fDelta )
@@ -358,10 +364,22 @@ bool GameState::HasEarnedExtraStage()
 PlayerNumber GameState::GetWinner()
 {
 	PlayerNumber winner = PLAYER_1;
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->m_CurStageStats.iActualDancePoints[p] > GAMESTATE->m_CurStageStats.iActualDancePoints[winner] )
+	for( int p=PLAYER_1+1; p<NUM_PLAYERS; p++ )
+	{
+		if( GAMESTATE->m_CurStageStats.iActualDancePoints[p] == GAMESTATE->m_CurStageStats.iActualDancePoints[winner] )
+			return PLAYER_INVALID;	// draw
+		else if( GAMESTATE->m_CurStageStats.iActualDancePoints[p] > GAMESTATE->m_CurStageStats.iActualDancePoints[winner] )
 			winner = (PlayerNumber)p;
+	}
 	return winner;
+}
+
+BattleResult GameState::GetBattleResult( PlayerNumber pn )
+{
+	PlayerNumber winner = GetWinner();
+	if( winner == PLAYER_INVALID )
+		return RESULT_DRAW;
+	return (winner==pn) ? RESULT_WIN : RESULT_LOSE;
 }
 
 void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut )

@@ -111,7 +111,7 @@ void Inventory::Update( float fDelta )
 
 
 	// use items if this player is CPU-controlled
-	if( GAMESTATE->m_PlayerController[m_PlayerNumber] != HUMAN &&
+	if( GAMESTATE->m_PlayerController[m_PlayerNumber] != PC_HUMAN &&
 		GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
 	{
 		// every one second, consider using an item

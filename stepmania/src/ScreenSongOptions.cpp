@@ -18,7 +18,10 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "ThemeManager.h"
+#include "PrefsManager.h"
 
+#define PREV_SCREEN( play_mode )		THEME->GetMetric ("ScreenSongOptions","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
+#define NEXT_SCREEN( play_mode )		THEME->GetMetric ("ScreenSongOptions","NextScreen"+Capitalize(PlayModeToString(play_mode)))
 
 enum {
 	SO_LIFE = 0,
@@ -46,6 +49,9 @@ ScreenSongOptions::ScreenSongOptions() :
 	ScreenOptions("ScreenSongOptions",true)
 {
 	LOG->Trace( "ScreenSongOptions::ScreenSongOptions()" );
+
+	if( !PREFSMAN->m_bShowSongOptions )
+		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 
 	Init( INPUTMODE_BOTH, 
 		g_SongOptionsLines, 
@@ -106,7 +112,7 @@ void ScreenSongOptions::GoToPrevState()
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen( SM_None );
 	else
-		SCREENMAN->SetNewScreen( "ScreenPlayerOptions" );
+		SCREENMAN->SetNewScreen( PREV_SCREEN(GAMESTATE->m_PlayMode) );
 }
 
 void ScreenSongOptions::GoToNextState()
@@ -114,7 +120,7 @@ void ScreenSongOptions::GoToNextState()
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen();
 	else
-		SCREENMAN->SetNewScreen( "ScreenStage" );
+		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 }
 
 

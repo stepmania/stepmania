@@ -186,13 +186,14 @@ const CString GROUP_ALL_MUSIC = "";
 //
 enum PlayerController
 {
-	HUMAN,
-	CPU_EASY,
-	CPU_MEDIUM,
-	CPU_HARD,
-	CPU_AUTOPLAY,
+	PC_HUMAN,
+	PC_CPU,
+	PC_AUTOPLAY,
 	NUM_PLAYER_CONTROLLERS
 };
+
+const int MIN_SKILL = 0;
+const int MAX_SKILL = 10;
 
 
 //
@@ -208,6 +209,15 @@ enum AttackLevel
 };
 const int NUM_ATTACKS_PER_LEVEL	= 3;
 const int ITEM_NONE = -1;
+
+enum BattleResult
+{
+	RESULT_WIN,
+	RESULT_LOSE,
+	RESULT_DRAW
+};
+
+
 
 
 const CString BG_ANIMS_DIR = "BGAnimations/";

@@ -58,7 +58,6 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_iSelectedCharacter[p] = 0;
-		m_iSelectedLevelIndex[p] = 0;
 		if( GAMESTATE->IsHumanPlayer(p) )
 			m_SelectionRow[p] = CHOOSING_HUMAN_CHARACTER;
 	}
@@ -103,12 +102,6 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 				m_AttackIcons[p][i][j].SetXY( fX, fY );
 				this->AddChild( &m_AttackIcons[p][i][j] );
 			}
-
-		m_sprLevelCursor[p].Load( THEME->GetPathToG("ScreenSelectCharacter level cursor") );
-		int iLevelIndex = m_iSelectedLevelIndex[p];
-		m_sprLevelCursor[p].SetXY( LEVEL_CURSOR_X(p,iLevelIndex), LEVEL_CURSOR_Y(p,iLevelIndex) );
-		m_sprLevelCursor[p].Load( THEME->GetPathToG("ScreenSelectCharacter level cursor") );
-		this->AddChild( &m_sprLevelCursor[p] );
 	}
 
 	m_sprExplanation.Load( THEME->GetPathToG("ScreenSelectCharacter explanation") );
@@ -183,11 +176,9 @@ PlayerNumber ScreenSelectCharacter::GetAffectedPlayerNumber( PlayerNumber pn )
 	switch( m_SelectionRow[pn] )
 	{
 	case CHOOSING_HUMAN_CHARACTER:
-	case CHOOSING_HUMAN_LEVEL:
 		return pn;
 		break;
 	case CHOOSING_CPU_CHARACTER:
-	case CHOOSING_CPU_LEVEL:
 		return CPU_PLAYER[pn];
 		break;
 	default:
@@ -206,10 +197,6 @@ void ScreenSelectCharacter::BeforeRowChange( PlayerNumber pn )
 	case CHOOSING_HUMAN_CHARACTER:
 		m_sprCharacterArrows[pnAffected].SetEffectNone();
 		break;
-	case CHOOSING_CPU_LEVEL:
-	case CHOOSING_HUMAN_LEVEL:
-		m_sprLevelCursor[pnAffected].SetEffectNone();
-		break;
 	}
 }
 
@@ -221,10 +208,6 @@ void ScreenSelectCharacter::AfterRowChange( PlayerNumber pn )
 	case CHOOSING_CPU_CHARACTER:
 	case CHOOSING_HUMAN_CHARACTER:
 		m_sprCharacterArrows[pnAffected].SetEffectGlowShift();
-		break;
-	case CHOOSING_CPU_LEVEL:
-	case CHOOSING_HUMAN_LEVEL:
-		m_sprLevelCursor[pnAffected].SetEffectGlowShift();
 		break;
 	}
 }
@@ -252,13 +235,6 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 			for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
 				for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
 					m_AttackIcons[pnAffected][i][j].Load( pnAffected, character.m_sAttacks[i][j] );
-		}
-		break;
-	case CHOOSING_CPU_LEVEL:
-	case CHOOSING_HUMAN_LEVEL:
-		{
-			int iLevelIndex = m_iSelectedLevelIndex[pnAffected];
-			m_sprLevelCursor[pnAffected].SetXY( LEVEL_CURSOR_X(pnAffected,iLevelIndex), LEVEL_CURSOR_Y(pnAffected,iLevelIndex) );
 		}
 		break;
 	case FINISHED_CHOOSING:
@@ -303,13 +279,6 @@ void ScreenSelectCharacter::Move( PlayerNumber pn, int deltaValue )
 		AfterValueChange(pn);
 		m_soundChange.PlayRandom();
 		break;
-	case CHOOSING_CPU_LEVEL:
-	case CHOOSING_HUMAN_LEVEL:
-		m_iSelectedLevelIndex[pnAffected] += deltaValue;
-		CLAMP( m_iSelectedLevelIndex[pnAffected], 0, NUM_ATTACK_LEVELS-1 );
-		AfterValueChange(pn);
-		m_soundChange.PlayRandom();
-		break;
 	}
 }
 
@@ -324,15 +293,9 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 	switch( m_SelectionRow[pn] )
 	{
 	case CHOOSING_HUMAN_CHARACTER:
-		m_SelectionRow[pn] = CHOOSING_HUMAN_LEVEL;
-		break;
-	case CHOOSING_HUMAN_LEVEL:
 		m_SelectionRow[pn] = GAMESTATE->AnyPlayersAreCpu() ? CHOOSING_CPU_CHARACTER : FINISHED_CHOOSING;
 		break;
 	case CHOOSING_CPU_CHARACTER:
-		m_SelectionRow[pn] = CHOOSING_CPU_LEVEL;
-		break;
-	case CHOOSING_CPU_LEVEL:
 		m_SelectionRow[pn] = FINISHED_CHOOSING;
 		break;
 	}
@@ -354,7 +317,6 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 			for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
 				for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
 					GAMESTATE->m_sAttacks[p][i][j] = character.m_sAttacks[i][j];
-			GAMESTATE->m_MaxAttackLevel[p] = (AttackLevel)m_iSelectedLevelIndex[p];
 		}
 
 		m_Menu.m_MenuTimer.Stop();
@@ -371,7 +333,9 @@ void ScreenSelectCharacter::MenuBack( PlayerNumber pn )
 void ScreenSelectCharacter::TweenOffScreen()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
 		m_sprCharacter[p].Command( CHARACTER_OFF_COMMAND(p) );
+	}
 	m_sprExplanation.Command( EXPLANATION_OFF_COMMAND );
 }
 

@@ -49,12 +49,9 @@ private:
 
 	vector<Character>	m_vCharacters;
 	int				m_iSelectedCharacter[NUM_PLAYERS];
-	int				m_iSelectedLevelIndex[NUM_PLAYERS];
 	enum { 
 		CHOOSING_HUMAN_CHARACTER, 
-		CHOOSING_HUMAN_LEVEL, 
 		CHOOSING_CPU_CHARACTER, 
-		CHOOSING_CPU_LEVEL,
 		FINISHED_CHOOSING
 	} m_SelectionRow[NUM_PLAYERS];
 	PlayerNumber GetAffectedPlayerNumber( PlayerNumber pn );	// returns the number of the player that pn is selecting for
@@ -68,7 +65,6 @@ private:
 	
 	Sprite			m_sprAttackFrame[NUM_PLAYERS];
 	OptionIcon		m_AttackIcons[NUM_PLAYERS][NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
-	Sprite			m_sprLevelCursor[NUM_PLAYERS];
 
 	Sprite			m_sprExplanation;
 
