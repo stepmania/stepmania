@@ -23,7 +23,7 @@ SDL_Surface *RageSurface::LoadFile( const CString &sPath )
 		RageFile f;
 		if( !f.Open(sPath) )
 		{
-			SDL_SetError( "%s", f.GetError() );
+			SDL_SetError( "%s", f.GetError().c_str() );
 			return NULL;
 		}
 
