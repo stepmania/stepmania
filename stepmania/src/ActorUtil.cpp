@@ -155,7 +155,7 @@ float UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
 		if( actor.GetID().empty() )
 			return ret;
 	} else {
-		ASSERT( !actor.GetID().empty() );
+		RAGE_ASSERT_M( !actor.GetID().empty(), ssprintf("!actor.GetID().empty() ('%s', '%s')", sClassName.c_str(), sCommandName.c_str()) );
 	}
 
 	return max( ret, actor.Command( THEME->GetMetric(sClassName,actor.GetID()+sCommandName+"Command") ) );
