@@ -12,7 +12,6 @@ struct XNode;
 namespace SongUtil
 {
 	CString MakeSortString( CString s );
-	void SortSongPointerArrayByDifficulty( vector<Song*> &arraySongPointers );
 	void SortSongPointerArrayByTitle( vector<Song*> &arraySongPointers );
 	void SortSongPointerArrayByBPM( vector<Song*> &arraySongPointers );
 	void SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers );

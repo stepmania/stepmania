@@ -97,14 +97,6 @@ static int GetSongSortDifficulty(const Song *pSong)
 	return 1;
 }
 
-void SongUtil::SortSongPointerArrayByDifficulty( vector<Song*> &arraySongPointers )
-{
-	for( unsigned i = 0; i < arraySongPointers.size(); ++i )
-		song_sort_val[arraySongPointers[i]] =
-			ssprintf("%9i", GetSongSortDifficulty(arraySongPointers[i]));
-	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueAscending );
-}
-
 bool CompareSongPointersByBPM(const Song *pSong1, const Song *pSong2)
 {
 	DisplayBpms bpms1, bpms2;
@@ -189,7 +181,7 @@ static int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
 
 void SongUtil::SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &arraySongPointers )
 {
-	SortSongPointerArrayByDifficulty( arraySongPointers );
+	SortSongPointerArrayByMeter( arraySongPointers, DIFFICULTY_EASY );
 	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGroup );
 }
 
