@@ -194,10 +194,6 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
 
 	if( HintString.Find("4alphaonly") != -1 )		m_ActualID.iTransparencyOnly = 4;
 	else if( HintString.Find("8alphaonly") != -1 )	m_ActualID.iTransparencyOnly = 8;
-//	else if( HintString.Find("no alpha") != -1 )	m_ActualID.iAlphaBits = 0;
-//	else if( HintString.Find("0alpha") != -1 )		m_ActualID.iAlphaBits = 0;
-//	else if( HintString.Find("1 alpha") != -1 )		m_ActualID.iAlphaBits = 1;
-//	else if( HintString.Find("1alpha") != -1 )		m_ActualID.iAlphaBits = 1;
 	if( HintString.Find("dither") != -1 )			m_ActualID.bDither = true;
 
 	if( m_ActualID.iTransparencyOnly )
