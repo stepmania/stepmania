@@ -41,7 +41,14 @@ Actor* MakeActor( CString sPath )
 		CString sFileName;
 		ini.GetValue( "Actor", "File", sFileName );
 		
-		Actor* pActor = MakeActor( sDir+sFileName );
+		CString sNewPath = sDir+sFileName;
+
+		if( !DoesFileExist(sNewPath) )
+			RageException::Throw( "The actor file '%s' references a file '%s' which doesn't exist.", sPath.c_str(), sNewPath.c_str() );
+
+		sNewPath = DerefRedir( sNewPath );
+
+		Actor* pActor = MakeActor( sNewPath );
 
 		float f;
 		if( ini.GetValueF( "Actor", "BaseRotationXDegrees", f ) )	pActor->SetBaseRotationX( f );
