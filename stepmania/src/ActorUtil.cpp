@@ -15,6 +15,7 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "Model.h"
+#include "BGAnimation.h"
 #include "IniFile.h"
 #include "ThemeManager.h"
 #include "RageUtil_FileDB.h"
@@ -90,7 +91,6 @@ Actor* MakeActor( RageTextureID ID )
 	CString sExt = GetExtension( ID.filename );
 	sExt.MakeLower();
 	
-
 	if( sExt=="actor" )
 	{
 		return LoadActor( ID.filename );
@@ -114,7 +114,14 @@ Actor* MakeActor( RageTextureID ID )
 		pModel->LoadMilkshapeAscii( ID.filename );
 		return pModel;
 	}
-
+	/* Do this last, to avoid the IsADirectory in most cases. */
+	else if( IsADirectory(ID.filename)  )
+	{
+		BGAnimation *pBGA = new BGAnimation;
+		pBGA->LoadFromAniDir( ID.filename );
+		return pBGA;
+	}
+	else 
 	RageException::Throw("File \"%s\" has unknown type, \"%s\"",
 		ID.filename.c_str(), sExt.c_str() );
 }
@@ -126,4 +133,32 @@ void IncorrectActorParametersWarning( const CStringArray &asTokens, int iMaxInde
 	LOG->Warn( sError );
 	if( DISPLAY->IsWindowed() )
 		HOOKS->MessageBoxOK( sError );
+}
+
+void UtilSetXY( Actor& actor, CString sClassName )
+{
+	ASSERT( !actor.GetName().empty() );
+	actor.SetXY( THEME->GetMetricF(sClassName,actor.GetName()+"X"), THEME->GetMetricF(sClassName,actor.GetName()+"Y") );
+}
+
+float UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
+{
+	ASSERT( !actor.GetName().empty() );
+	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+sCommandName+"Command") );
+}
+
+float UtilOnCommand( Actor& actor, CString sClassName )
+{
+	ASSERT( !actor.GetName().empty() );
+	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+"OnCommand") );
+}
+
+float UtilOffCommand( Actor& actor, CString sClassName )
+{
+	// HACK:  It's very often that we command things to TweenOffScreen 
+	// that we aren't drawing.  We know that an Actor is not being
+	// used if it's name is blank.  So, do nothing on Actors with a blank name.
+	if( actor.GetName().empty() )
+		return 0;
+	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+"OffCommand") );
 }

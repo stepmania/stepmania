@@ -12,7 +12,6 @@
 */
 
 #include "Actor.h"
-#include "ThemeManager.h"
 #include "RageTexture.h"
 
 
@@ -23,41 +22,18 @@
 #define COMMAND( actor, command_name )		UtilCommand( actor, m_sName, command_name )
 
 
-inline void UtilSetXY( Actor& actor, CString sClassName )
-{
-	ASSERT( !actor.GetName().empty() );
-	actor.SetXY( THEME->GetMetricF(sClassName,actor.GetName()+"X"), THEME->GetMetricF(sClassName,actor.GetName()+"Y") );
-}
+void UtilSetXY( Actor& actor, CString sClassName );
 inline void UtilSetXY( Actor* pActor, CString sClassName ) { UtilSetXY( *pActor, sClassName ); }
 
 
-inline float UtilOnCommand( Actor& actor, CString sClassName )
-{
-	ASSERT( !actor.GetName().empty() );
-	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+"OnCommand") );
-}
+float UtilOnCommand( Actor& actor, CString sClassName );
 inline float UtilOnCommand( Actor* pActor, CString sClassName ) { return UtilOnCommand( *pActor, sClassName ); }
 
-
-inline float UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
-{
-	ASSERT( !actor.GetName().empty() );
-	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+sCommandName+"Command") );
-}
+float UtilCommand( Actor& actor, CString sClassName, CString sCommandName );
 inline float UtilCommand( Actor* pActor, CString sClassName, CString sCommandName ) { return UtilCommand( *pActor, sClassName, sCommandName ); }
 
-
-inline float UtilOffCommand( Actor& actor, CString sClassName )
-{
-	// HACK:  It's very often that we command things to TweenOffScreen 
-	// that we aren't drawing.  We know that an Actor is not being
-	// used if it's name is blank.  So, do nothing on Actors with a blank name.
-	if( actor.GetName().empty() )
-		return 0;
-	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+"OffCommand") );
-}
+float UtilOffCommand( Actor& actor, CString sClassName );
 inline float UtilOffCommand( Actor* pActor, CString sClassName ) { return UtilOffCommand( *pActor, sClassName ); }
-
 
 inline float UtilSetXYAndOnCommand( Actor& actor, CString sClassName )
 {
