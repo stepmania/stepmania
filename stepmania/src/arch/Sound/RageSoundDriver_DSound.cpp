@@ -171,7 +171,7 @@ RageSound_DSound::RageSound_DSound()
 			if(i)
 			{
 				/* We created at least one hardware buffer. */
-				LOG->Trace("Could only create %i buffers; need at least 8 (failed with %s).  DirectSound driver can't be used.", i, e.c_str());
+				LOG->Trace("Could only create %i buffers; need at least 8 (failed with %s).  DirectSound driver can't be used.", i, e.what());
 				RageException::ThrowNonfatal("Driver unusable (not enough hardware buffers)");
 			}
 			RageException::ThrowNonfatal("Driver unusable (no hardware buffers)");
