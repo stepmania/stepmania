@@ -6,6 +6,8 @@
 #include "RageThreads.h"
 #include "RageSoundManager.h"
 
+#include <deque>
+
 class CircBuf
 {
 	string buf;
@@ -52,7 +54,7 @@ class RageSound
 
 		pos_map_t(int samp, int pos, int cnt) { sampleno=samp, position=pos; samples=cnt; }
 	};
-	vector<pos_map_t> pos_map[4];
+	deque<pos_map_t> pos_map;
 
 	CString m_sFilePath;
 //	float m_Rate;

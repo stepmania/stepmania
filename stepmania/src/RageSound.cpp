@@ -57,6 +57,11 @@ const int internal_buffer_size = 1024*16;
 /* The amount of data to read from SDL_sound at once. */
 const int read_block_size = 1024;
 
+/* The number of samples we should keep pos_map data for.  This being too high
+ * is mostly harmless (the data is small).  Let's keep a second; no sane audio
+ * driver will have that much latency. */
+const int pos_map_backlog_samples = samplerate;
+
 RageSound::RageSound()
 {
 	ASSERT(SOUNDMAN);
@@ -300,10 +305,9 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 
 	int bytes_stored = 0;
 
-	pos_map[0] = pos_map[1];
-	pos_map[1] = pos_map[2];
-	pos_map[2] = pos_map[3];
-	pos_map[3].clear();
+	/* Erase old pos_map data. */
+	while(pos_map.size() > 1 && pos_map.back().sampleno - pos_map.front().sampleno > pos_map_backlog_samples)
+		pos_map.pop_front();
 
 	/* "sampleno" is the audio driver's conception of time.  "position"
 	 * is ours. Keep track of sampleno->position mappings for two GetPCM calls.
@@ -398,7 +402,7 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 		}
 
 		/* Save this sampleno/position map. */
-		pos_map[3].push_back(pos_map_t(sampleno, position, got/samplesize));
+		pos_map.push_back(pos_map_t(sampleno, position, got/samplesize));
 
 		int got_samples = got / samplesize;  /* bytes -> samples */
 
@@ -467,8 +471,7 @@ void RageSound::Stop()
 	SetPositionSeconds(float(m_StartSample)/samplerate);
 
 	playing = false;
-	for(int i = 0; i < 4; ++i)
-		pos_map[i].clear();
+	pos_map.clear();
 }
 
 float RageSound::GetLengthSeconds()
@@ -504,11 +507,7 @@ float RageSound::GetPositionSeconds() const
 	/* If we don't yet have any position data, GetPCM hasn't yet been called at all,
 	 * so report the static position. */
 	{
-		bool HasData = false;
-		for(int i = 0; i < 4; ++i) {
-			if(!pos_map[i].empty()) HasData = true;
-		}
-		if(!HasData) {
+		if(pos_map.empty()) {
 			LOG->Trace("no data yet; %i", position);
 			return position / float(samplerate);
 		}
@@ -517,40 +516,34 @@ float RageSound::GetPositionSeconds() const
 	/* Get our current hardware position. */
 	int cur_sample = SOUNDMAN->GetPosition(this);
 
-	/* Concatenate the pos_maps.  (Just a cheat to simplify this a little; this
-	 * is small, so this isn't very expensive.) */
-	vector<pos_map_t> posmaps;
-	for(int n = 0; n < 4; ++n)
-		posmaps.insert(posmaps.end(), pos_map[n].begin(), pos_map[n].end());
-
-	/* sampleno is probably in one of the pos_maps.  Search through them
-	 * to figure out what position this sampleno maps to. */
+	/* sampleno is probably in pos_maps.  Search to figure out what position
+	 * this sampleno maps to. */
 
 	int closest_position = 0, closest_position_dist = INT_MAX;
-	for(unsigned i = 0; i < posmaps.size(); ++i) {
-		if(cur_sample >= posmaps[i].sampleno &&
-		   cur_sample < posmaps[i].sampleno+posmaps[i].samples)
+	for(unsigned i = 0; i < pos_map.size(); ++i) {
+		if(cur_sample >= pos_map[i].sampleno &&
+		   cur_sample < pos_map[i].sampleno+pos_map[i].samples)
 		{
 			/* cur_sample lies in this block; it's an exact match.  Figure
 			 * out the exact position. */
-			int diff = posmaps[i].position - posmaps[i].sampleno;
+			int diff = pos_map[i].position - pos_map[i].sampleno;
 			return float(cur_sample + diff) / samplerate;
 		}
 
 		/* See if the current position is close to the beginning of this block. */
-		int dist = abs(posmaps[i].sampleno - cur_sample);
+		int dist = abs(pos_map[i].sampleno - cur_sample);
 		if(dist < closest_position_dist)
 		{
 			closest_position_dist = dist;
-			closest_position = posmaps[i].position;
+			closest_position = pos_map[i].position;
 		}
 
 		/* See if the current position is close to the end of this block. */
-		dist = abs(posmaps[i].sampleno + posmaps[i].samples - cur_sample);
+		dist = abs(pos_map[i].sampleno + pos_map[i].samples - cur_sample);
 		if(dist < closest_position_dist)
 		{
-			closest_position_dist = dist + posmaps[i].samples;
-			closest_position = posmaps[i].position + posmaps[i].samples;
+			closest_position_dist = dist + pos_map[i].samples;
+			closest_position = pos_map[i].position + pos_map[i].samples;
 		}
 	}
 
