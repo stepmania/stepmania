@@ -348,8 +348,8 @@ void Actor::StretchTo( LPRECT pRect )
 	int rect_height = RECTHEIGHT(*pRect);
 
 	// center of the rectangle
-	int rect_cx = pRect->left + rect_width/2;
-	int rect_cy = pRect->top  + rect_height/2;
+	float rect_cx = pRect->left + rect_width/2.0f;
+	float rect_cy = pRect->top  + rect_height/2.0f;
 
 	// zoom fActor needed to scale the Actor to fill the rectangle
 	float fNewZoomX = rect_width  / m_size.x;
