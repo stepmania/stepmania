@@ -10,18 +10,24 @@ else
 AM_CXXFLAGS += -DLINUX -DDATADIR=\"$(datadir)\"
 endif
 
-AM_CXXFLAGS += -O2 
+AM_CXXFLAGS += -O2
+
+if NHAVE_SDL
 AM_CXXFLAGS += -ISDL-1.2.5/include
+endif
+
 AM_CFLAGS   += -O2
 
 # This is a little hacky; we use our own version of SDL, and I don't
 # want to have to integrate the entire build system.
 
+if NHAVE_SDL
 SDL-1.2.5/src/.libs/libSDL.a:
 	cd SDL-1.2.5 && ./configure \
 		--disable-nasm --disable-arts --disable-esd --enable-static --disable-shared \
 		--disable-debug --disable-alsa --disable-oss --disable-video-directfb
 	make -C SDL-1.2.5
+endif
 
 Screens = \
 Screen.cpp Screen.h ScreenAlbums.cpp ScreenAlbums.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
@@ -193,9 +199,15 @@ stepmania_SOURCES = $(Screens) $(DataStructures) $(FileTypes) $(StepMania) $(Arc
 # "fix" would be to statically link SDL_image, but that would mean
 # dealing with its build and libjpeg, png, etc--not worth it.
 
+libSDL = 
+
+if NHAVE_SDL
+libSDL += $(srcdir)/SDL-1.2.5/src/.libs/libSDL.a
+endif
+
 stepmania_LDADD = \
 		  $(GL_LIBS) \
-		  $(srcdir)/SDL-1.2.5/src/.libs/libSDL.a \
+		  $(libSDL) \
 		  $(SDL_LIBS) -lSDL_image
 
 INCLUDES = $(SDL_CFLAGS)

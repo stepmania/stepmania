@@ -21,11 +21,13 @@ test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 
 MDL_HAVE_OPENGL
 
-AM_PATH_SDL
+AM_PATH_SDL(1.2.6,enable_sdl=yes,enable_sdl=no)
+AM_CONDITIONAL(NHAVE_SDL, test x$enable_sdl = xno )
+
 # sdl-config puts -L/usr/lib in the library search path, which reorders things
 # in a way that breaks some configurations.
+# Does this still need to be in?
 SDL_LIBS="`echo $SDL_LIBS | sed 's_-L/usr/lib/\?[[ $]]__'`"
-
 
 # These tests break my custom build environment.  I'll put them back in later.
 #AC_SEARCH_LIBS(IMG_Load, [SDL_image], have_SDL_image=yes,  have_SDL_image=no)
