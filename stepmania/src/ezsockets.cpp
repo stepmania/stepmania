@@ -78,11 +78,11 @@ bool EzSockets::bind(unsigned short port) {
   addr.sin_addr.s_addr = htonl(INADDR_ANY);
   addr.sin_port        = htons(port);
   
-  return(::bind(sock,(struct sockaddr*)&addr, sizeof(addr))>0);
+  return(::bind(sock,(struct sockaddr*)&addr, sizeof(addr))==0);
 }
 
 bool EzSockets::listen() {
-  if(::listen(sock,MAXCON)<=0)
+  if(::listen(sock,MAXCON)!=0)
 	return false;
 
   state = skLISTENING;
@@ -138,14 +138,12 @@ bool EzSockets::connect(const std::string& host,unsigned short port) {
   #elif defined(_WINDOWS)
 	struct hostent* phe;
 	phe = gethostbyname(host.c_str());
-    addr.sin_family      = AF_INET;
-	addr.sin_addr        = *((LPIN_ADDR)* phe->h_addr_list); 
-    addr.sin_port        = htons(port);
+    addr.sin_addr = *((LPIN_ADDR)* phe->h_addr_list);
   #else
-    addr.sin_family = AF_INET;
-    addr.sin_port   = htons(port);
 	inet_pton(AF_INET,host.c_str(),&addr.sin_addr);
-  #endif
+  #endif 
+  addr.sin_family = AF_INET;
+  addr.sin_port   = htons(port);
 
   if(::connect(sock,(struct sockaddr*)&addr,sizeof(addr))!=0)
     return false;
@@ -162,13 +160,17 @@ bool EzSockets::CanRead() {
 }
 
 bool EzSockets::IsError() {
-  if(state == skERROR)
+  if(state==skERROR)
 	return true;
 
   FD_ZERO(scks);
   FD_SET((unsigned)sock,scks);
 
-  return(select(sock+1,NULL,NULL,scks,times)<=0);
+  if(select(sock+1, NULL, NULL, scks, times)>=0)
+	return false;
+
+  state=skERROR;
+  return true;
 }
 
 bool EzSockets::CanWrite() {
@@ -179,20 +181,15 @@ bool EzSockets::CanWrite() {
 }
 
 void EzSockets::update() {
-  if(state == skERROR) //If socket is in error, don't bother.
+  if(IsError()) //If socket is in error, don't bother.
 	return;
-	
-  if(IsError()) {
-	state=skERROR;
-	return;
-  }
 
   while(CanRead() && !IsError()) //Check for Reading
 	if(pUpdateRead()<1)
 	  break;
 
-  if (CanWrite() && (outBuffer.length()>0))
-	pUpdateWrite();
+  if(CanWrite() && (outBuffer.length()>0))
+    pUpdateWrite();
 }
 
 
@@ -263,28 +260,33 @@ int EzSockets::PeekPack(char* data,unsigned int max) {
 	pUpdateRead();
 
   if(blocking) {
-	while((inBuffer.length()<4)&& !IsError())
+	while((inBuffer.length()<4) && !IsError()) {
 	  pUpdateRead();
-
+	}
+  
 	if(IsError())
 	  return -1;
   }
-	
+
+  if(inBuffer.length()<4)
+	return -1;
+
   unsigned int size=0;
   PeekData((char*)&size,4);
   size=ntohl(size);
 
   if(blocking)
-	while ((inBuffer.length()<(size+4)) && !IsError())
-	  pUpdateRead();
-  else if(inBuffer.length()>3)
-	if((inBuffer.length()<(size+4)) || (inBuffer.length()<=4))
-	  return -1;
+    while ((inBuffer.length()<(size+4)) && !IsError())
+  	  pUpdateRead();
+  else
+    if((inBuffer.length()<(size+4)) || (inBuffer.length()<=4))
+      return -1;
 
   string tBuff(inBuffer.substr(4,size));
   if(tBuff.length()>max)
     tBuff.substr(0,max);
   memcpy (data,tBuff.c_str(),tBuff.length());
+
   return size;
 }
 
@@ -349,7 +351,7 @@ int EzSockets::pUpdateRead() {
 
   if(bytes>0)
 	inBuffer.append(tempData,bytes);
-  else
+  else if(bytes<0)
 	state = skERROR;
   return bytes;
 }
@@ -359,7 +361,7 @@ int EzSockets::pUpdateWrite() {
 
   if (bytes>0)
 	outBuffer = outBuffer.substr(bytes);
-  else
+  else if(bytes<0)
 	state = skERROR;
   return bytes;
 }
