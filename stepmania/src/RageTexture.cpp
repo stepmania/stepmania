@@ -155,8 +155,7 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWi
 
 	sPath.MakeLower();
 
-	CString sDir, sFName, sExt;
-	splitrelpath( sPath, sDir, sFName, sExt);
+	const CString sFName = SetExtension( sPath, "" );
 
 	CStringArray arrayBits;
 	split( sFName, " ", arrayBits, false );
