@@ -192,7 +192,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 					score = float(stageStats.iScore[p] + stageStats.iBonus[p]);
 				Steps::MemCardData::HighScore hs;
 				hs.grade = grade[p];
-				hs.fScore = score;
+				hs.iScore = score;
+				hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
 				GAMESTATE->m_pCurNotes[p]->AddHighScore( (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
 					
 				// update unlock data if unlocks are on

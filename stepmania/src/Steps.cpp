@@ -325,7 +325,7 @@ void SortNotesArrayByDifficulty( vector<Steps*> &arraySteps )
 
 bool Steps::MemCardData::HighScore::operator>=( const Steps::MemCardData::HighScore& other ) const
 {
-	return fScore >= other.fScore;
+	return iScore >= other.iScore;
 	/* Make sure we treat AAAA as higher than AAA, even though the score
 		* is the same. 
 		*

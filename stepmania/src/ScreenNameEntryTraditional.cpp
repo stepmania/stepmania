@@ -79,7 +79,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 		Steps::MemCardData::HighScore hs;
 		hs.grade = GRADE_A;
-		hs.fScore = 42;
+		hs.iScore = 42;
 		int a, b;
 		GAMESTATE->m_pCurNotes[i]->AddHighScore( (PlayerNumber)i, hs, a,b );
 

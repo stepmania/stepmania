@@ -66,12 +66,14 @@ public:
 		{
 			CString sName;
 			Grade grade;
-			float fScore;
+			int iScore;
+			float fPercentDP;
 
 			HighScore()
 			{
 				grade = GRADE_NO_DATA;
-				fScore = 0;
+				iScore = 0;
+				fPercentDP = 0;
 			}
 
 			bool operator>=( const HighScore& other ) const;

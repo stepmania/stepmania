@@ -152,9 +152,9 @@ public:
 				fSurviveTime = 0;
 			}
 
-			bool operator>( const HighScore& other ) const
+			bool operator>=( const HighScore& other ) const
 			{
-				return iScore > other.iScore;
+				return iScore >= other.iScore;
 			}
 		};
 		vector<HighScore> vHighScores;

@@ -40,7 +40,7 @@ const CString CATEGORY_RANKING_FILE =			BASE_PATH "Data" SLASH "CategoryRanking.
 const CString MACHINE_STEPS_MEM_CARD_DATA =		BASE_PATH "Data" SLASH "MachineStepsMemCardData.dat";
 const CString MACHINE_COURSE_MEM_CARD_DATA =	BASE_PATH "Data" SLASH "MachineCourseMemCardData.dat";
 const int CATEGORY_RANKING_VERSION = 2;
-const int STEPS_MEM_CARD_DATA_VERSION = 4;
+const int STEPS_MEM_CARD_DATA_VERSION = 5;
 const int COURSE_MEM_CARD_DATA_VERSION = 3;
 
 
@@ -102,7 +102,7 @@ void SongManager::CategoryData::AddHighScore( HighScore hs, int &iIndexOut )
 	int i;
 	for( i=0; i<(int)vHighScores.size(); i++ )
 	{
-		if( hs > vHighScores[i] )
+		if( hs >= vHighScores[i] )
 			break;
 	}
 	if( i < NUM_RANKING_LINES )
@@ -435,19 +435,24 @@ void SongManager::ReadStepsMemCardDataFromFile( CString fn, int mc )
 					WARN_AND_RETURN;
 				CLAMP( grade, (Grade)0, (Grade)(NUM_GRADES-1) );
 
-				float fScore;
-				if( !FileRead(f, fScore) )
+				float iScore;
+				if( !FileRead(f, iScore) )
 					WARN_AND_RETURN;
 
 				CString sName;
 				if( !FileRead(f, sName) )
 					WARN_AND_RETURN;
 
+				float fPercentDP;
+				if( !FileRead(f, fPercentDP) )
+					WARN_AND_RETURN;
+
 				if( pNotes )
 				{
-					pNotes->m_MemCardDatas[mc].vHighScores[l].grade = grade;
-					pNotes->m_MemCardDatas[mc].vHighScores[l].fScore = fScore;
 					pNotes->m_MemCardDatas[mc].vHighScores[l].sName = sName;
+					pNotes->m_MemCardDatas[mc].vHighScores[l].grade = grade;
+					pNotes->m_MemCardDatas[mc].vHighScores[l].iScore = iScore;
+					pNotes->m_MemCardDatas[mc].vHighScores[l].fPercentDP = fPercentDP;
 				}
 			}
 		}
@@ -617,10 +622,10 @@ void SongManager::ReadSM300NoteScores()
 
 			iRetVal = sscanf( 
 				value, 
-				"%d::%[^:]::%f::%d", 
+				"%d::%[^:]::%d::%d", 
 				&pNotes->m_MemCardDatas[MEMORY_CARD_MACHINE].iNumTimesPlayed,
 				szGradeLetters,
-				&pNotes->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[0].fScore,
+				&pNotes->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[0].iScore,
 				&iMaxCombo
 			);
 			if( iRetVal != 4 )
@@ -729,9 +734,10 @@ void SongManager::SaveStepsMemCardDataToFile( CString fn, int mc )
 			pNotes->m_MemCardDatas[mc].vHighScores.resize(NUM_RANKING_LINES);
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
-				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].grade );
-				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].fScore );
 				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].sName );
+				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].grade );
+				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].iScore );
+				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].fPercentDP );
 			}
 		}
 	}

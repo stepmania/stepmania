@@ -18,10 +18,16 @@
 #include "Course.h"
 #include "song.h"
 #include "PrefsManager.h"
+#include "NoteData.h"
+#include "NoteDataUtil.h"
+#include "ScoreKeeperMAX2.h"
+#include "ScoreKeeper5th.h"
 
 #define CATEGORY_X				THEME->GetMetricF("ScreenRanking","CategoryX")
 #define CATEGORY_Y				THEME->GetMetricF("ScreenRanking","CategoryY")
 #define CATEGORY_WIDTH			THEME->GetMetricF("ScreenRanking","CategoryWidth")
+#define BANNER_X				THEME->GetMetricF("ScreenRanking","BannerX")
+#define BANNER_Y				THEME->GetMetricF("ScreenRanking","BannerY")
 #define TYPE_X					THEME->GetMetricF("ScreenRanking","TypeX")
 #define TYPE_Y					THEME->GetMetricF("ScreenRanking","TypeY")
 #define LINE_SPACING_X			THEME->GetMetricF("ScreenRanking","LineSpacingX")
@@ -48,11 +54,7 @@
 #define SHOW_ALL_SONGS			THEME->GetMetricB("ScreenRanking","ShowAllSongs")
 #define NOTES_TYPES_TO_HIDE		THEME->GetMetric ("ScreenRanking","NotesTypesToHide")
 #define EMPTY_SCORE_NAME		THEME->GetMetric ("ScreenRanking","EmptyScoreName")
-#define EMPTY_CATEGORY_SCORE	THEME->GetMetricI("ScreenRanking","EmptyCategoryScore")
-#define EMPTY_COURSE_SCORE		THEME->GetMetricI("ScreenRanking","EmptyCourseScore")
-#define EMPTY_COURSE_TIME		THEME->GetMetricF("ScreenRanking","EmptyCourseTime")
-#define EMPTY_SONG_PERCENT		THEME->GetMetricF("ScreenRanking","EmptySongPercent")
-#define SHOW_DIFF_COLS			THEME->GetMetric ("ScreenRanking","ShowDiffCol")
+#define SHOW_SONG_DIFFICULTIES	THEME->GetMetric ("ScreenRanking","ShowSongDifficulties")
 
 #define COURSES_TO_SHOW			PREFSMAN->m_sCoursesToShowRanking
 
@@ -65,6 +67,9 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 	m_sprCategory.SetXY( CATEGORY_X, CATEGORY_Y );
 	this->AddChild( &m_sprCategory );
 
+	m_banner.SetXY( BANNER_X, BANNER_Y );
+	this->AddChild( &m_banner );
+
 	m_textCategory.LoadFromFont( THEME->GetPathToF("ScreenRanking title") );
 	m_textCategory.EnableShadow( false );
 	m_textCategory.SetXY( CATEGORY_X, CATEGORY_Y );
@@ -76,7 +81,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 
 	// make the list of difficulties to show
 	vector<CString> sShowDiffs;
-	split( SHOW_DIFF_COLS, ",", sShowDiffs, true );
+	split( SHOW_SONG_DIFFICULTIES, ",", sShowDiffs, true );
 
 	for( vector<CString>::const_iterator iter = sShowDiffs.begin(); iter != sShowDiffs.end(); iter++ )
 	{
@@ -135,14 +140,12 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		m_sprDiffHeaders[d].SetDiffuse( RageColor(1,1,1,0) );
 		m_sprDiffHeaders[d].StopAnimating();
 		m_sprDiffHeaders[d].SetState(d);
-		m_sprDiffHeaders[d].SetHorizAlign( Actor::align_right );
 
 		for( int i=0; i<NUM_RANKING_LINES; i++ )
 		{
 			m_textPercent[i][d].LoadFromFont( THEME->GetPathToF("ScreenRanking letters") );
 			m_textPercent[i][d].EnableShadow( false );
 			m_textPercent[i][d].SetZoom( TEXT_SONGZOOM );
-			m_textPercent[i][d].SetHorizAlign( Actor::align_right );
 		}
 	}
 
@@ -287,6 +290,7 @@ void ScreenRanking::SetPage( PageToShow pts )
 		m_textTime[l].SetText( "" );
 		for( DiffVectorCIter j=m_vDiffsToShow.begin(); j<m_vDiffsToShow.end(); j++ )
 			m_textPercent[l][*j].SetText( "" );
+		m_banner.UnloadTexture();
 	}
 	for( int d=0; d<NUM_DIFFICULTIES; d++ )
 	{
@@ -306,14 +310,9 @@ void ScreenRanking::SetPage( PageToShow pts )
 			{
 				SongManager::CategoryData::HighScore hs;
 				if( l < (int)SONGMAN->m_CategoryDatas[pts.nt][pts.category].vHighScores.size() )
-				{
 					hs = SONGMAN->m_CategoryDatas[pts.nt][pts.category].vHighScores[l];
-				}
-				else
-				{
+				if( hs.sName.empty() )
 					hs.sName = EMPTY_SCORE_NAME;
-					hs.iScore = EMPTY_CATEGORY_SCORE;
-				}
 
 				m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
 				m_textNames[l].SetText( hs.sName );
@@ -365,16 +364,10 @@ void ScreenRanking::SetPage( PageToShow pts )
 			{
 				Course::MemCardData::HighScore hs;
 				if( l < (int)pts.pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores.size() )
-				{
 					hs = pts.pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores[l];
-				}
-				else
-				{
+				if( hs.sName.empty() )
 					hs.sName = EMPTY_SCORE_NAME;
-					hs.iScore = EMPTY_COURSE_SCORE;
-					hs.fSurviveTime = EMPTY_COURSE_TIME;
-				}
-
+				
 				m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
 				m_textNames[l].SetText( hs.sName );
 				if( pts.pCourse->IsOni() )
@@ -417,8 +410,9 @@ void ScreenRanking::SetPage( PageToShow pts )
 			m_textCategory.SetDiffuseAlpha(0);
 			m_sprCategory.SetDiffuseAlpha(0);
 
-			m_sprCategory.Load( pts.pSong->GetBannerPath() );
-			m_sprCategory.SetDiffuseAlpha(1);
+			m_banner.LoadFromSong( pts.pSong );
+			m_banner.SetDiffuseAlpha(1);
+
 			m_textCategory.SetZoom(1);
 			m_textCategory.SetTextMaxWidth( CATEGORY_WIDTH, pts.pSong->GetFullTranslitTitle() );
 			m_textCategory.SetDiffuseAlpha(1);
@@ -449,18 +443,13 @@ void ScreenRanking::SetPage( PageToShow pts )
 					m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
 
 					Steps::MemCardData::HighScore hs;
-
 					if( l < (int)pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores.size() )
-					{
 						hs = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[l];
+					if( hs.sName.empty() )
+						hs.sName = EMPTY_SCORE_NAME;
 
-						m_textPercent[l][d].SetText( ssprintf("%s %f%", hs.sName.c_str(), hs.fScore) );
-					}
-					else
-					{
-						m_textPercent[l][d].SetText( ssprintf("%s", EMPTY_SCORE_NAME.c_str()) );
-					}
-
+					m_textPercent[l][d].SetText( ssprintf("%s\n%0.3f%%", hs.sName.c_str(), hs.fPercentDP*100) );
+					m_textPercent[l][d].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
 				}
 			}
 		}
@@ -483,9 +472,11 @@ void ScreenRanking::TweenPageOnScreen()
 		m_textScores[l].FadeOn(0.2f+l*0.1f,"bounce right far",1.f);
 		m_textPoints[l].FadeOn(0.2f+l*0.1f,"bounce right far",1.f);
 		m_textTime[l].FadeOn(0.2f+l*0.1f,"bounce right far",1.f);
+		for( int d=0; d<NUM_DIFFICULTIES; d++ )
+			m_textPercent[l][d].FadeOn(0.2f+l*0.1f,"bounce right far",1.f);
 	}
 	for( int d=0; d<NUM_DIFFICULTIES; d++ )
-		m_sprDiffHeaders[d].FadeOn(0.2f,"bounce right far",1.f);
+		m_sprDiffHeaders[d].FadeOn(0,"bounce right far",1.f);
 
 }
 
@@ -502,8 +493,9 @@ void ScreenRanking::TweenPageOffScreen()
 		m_textScores[l].FadeOff(0.2f+l*0.1f,"fade",0.25f);
 		m_textPoints[l].FadeOff(0.2f+l*0.1f,"fade",0.25f);
 		m_textTime[l].FadeOff(0.2f+l*0.1f,"fade",0.25f);
+		for( int d=0; d<NUM_DIFFICULTIES; d++ )
+			m_textPercent[l][d].FadeOff(0.2f+l*0.1f,"fade",0.25f);
 	}
 	for( int d=0; d<NUM_DIFFICULTIES; d++ )
-		m_sprDiffHeaders[d].FadeOff(0.2f+d*0.1f,"fade",0.25f);
-
+		m_sprDiffHeaders[d].FadeOff(0,"fade",0.25f);
 }

@@ -820,7 +820,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 					feat.Feat = ssprintf("MR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
 					feat.pStringToFill = &vMachineHighScores[j].sName;
 					feat.g = vMachineHighScores[j].grade;
-					feat.Score = vMachineHighScores[j].fScore;
+					feat.Score = vMachineHighScores[j].iScore;
 
 					// XXX: temporary hack
 					if( pSong->HasBackground() )
@@ -843,7 +843,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 					feat.Feat = ssprintf("PR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
 					feat.pStringToFill = &vPersonalHighScores[j].sName;
 					feat.g = vPersonalHighScores[j].grade;
-					feat.Score = vPersonalHighScores[j].fScore;
+					feat.Score = vPersonalHighScores[j].iScore;
 
 					// XXX: temporary hack
 					if( pSong->HasBackground() )

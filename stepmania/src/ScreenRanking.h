@@ -14,6 +14,7 @@
 #include "Style.h"
 #include "Sprite.h"
 #include "BitmapText.h"
+#include "Banner.h"
 
 class Course;
 class Song;
@@ -42,6 +43,7 @@ protected:
 
 
 	Sprite m_sprCategory;
+	Banner m_banner;
 	BitmapText m_textCategory;
 	Sprite m_sprType;
 	Sprite m_sprBullets[NUM_RANKING_LINES];
