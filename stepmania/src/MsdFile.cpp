@@ -133,18 +133,18 @@ bool MsdFile::ReadFile( CString sNewPath )
 		return false;
 	}
 
-	const int iBufferSize = f.GetFileSize();
-
 	// allocate a string to hold the file
-	char* szFileString = new char[iBufferSize];
+	CString FileString;
+	FileString.reserve( f.GetFileSize() );
 
-	int iBytesRead = f.Read( szFileString, iBufferSize );
+	int iBytesRead = f.Read( FileString );
+	if( iBytesRead == -1 )
+	{
+		error = f.GetError();
+		return false;
+	}
 
-	ASSERT( iBufferSize >= iBytesRead );
-
-	ReadBuf(szFileString, iBytesRead);
-
-	delete [] szFileString;
+	ReadBuf( (char*) FileString.c_str(), iBytesRead );
 
 	return true;
 }
