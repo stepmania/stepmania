@@ -47,6 +47,7 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	afx_msg void OnSelchangeListSongs();
 	afx_msg void OnButtonExport();
+	afx_msg void OnButtonPlay();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

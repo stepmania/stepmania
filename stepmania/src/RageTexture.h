@@ -51,13 +51,19 @@ public:
 	UINT GetSourceHeight()	{return m_uSourceHeight;};
 	UINT GetTextureWidth()	{return m_uTextureWidth;};
 	UINT GetTextureHeight()	{return m_uTextureHeight;};
-	UINT GetTextureFrameWidth()	{return GetTextureWidth()/GetFramesWide();};
-	UINT GetTextureFrameHeight(){return GetTextureHeight()/GetFramesHigh();};
+	UINT GetImageWidth()	{return m_uImageWidth;};
+	UINT GetImageHeight()	{return m_uImageHeight;};
 
 	UINT GetFramesWide()  {return m_uFramesWide;};
 	UINT GetFramesHigh()  {return m_uFramesHigh;};
-	UINT GetSourceFrameWidth()	{return GetSourceWidth()/GetFramesWide();};
-	UINT GetSourceFrameHeight()	{return GetSourceHeight()/GetFramesHigh();};
+
+	UINT GetSourceFrameWidth()	{return GetSourceWidth()	/	GetFramesWide();};
+	UINT GetSourceFrameHeight()	{return GetSourceHeight()	/	GetFramesHigh();};
+	UINT GetTextureFrameWidth()	{return GetTextureWidth()	/	GetFramesWide();};
+	UINT GetTextureFrameHeight(){return GetTextureHeight()	/	GetFramesHigh();};
+	UINT GetImageFrameWidth()	{return GetImageWidth()		/	GetFramesWide();};
+	UINT GetImageFrameHeight()	{return GetImageHeight()	/	GetFramesHigh();};
+	
 	FRECT* GetTextureCoordRect( UINT uFrameNo ) {return &m_TextureCoordRects[uFrameNo];};
 	UINT   GetNumFrames()	{return m_TextureCoordRects.GetSize();};
 	CString GetFilePath()	{return m_sFilePath;};
@@ -72,13 +78,13 @@ protected:
 	LPDIRECT3DDEVICE8   m_pd3dDevice;
 //	LPDIRECT3DTEXTURE8  m_pd3dTexture;
 
-	UINT				m_uSourceWidth,		m_uSourceHeight;	// dimensions of the original image
-	UINT				m_uTextureWidth,	m_uTextureHeight;	// dimensions of the texture holding the image
+	UINT				m_uSourceWidth,		m_uSourceHeight;	// dimensions of the original image loaded from disk
+	UINT				m_uTextureWidth,	m_uTextureHeight;	// dimensions of the texture in memory
+	UINT				m_uImageWidth,		m_uImageHeight;		// dimensions of the image in the texture
 	D3DFORMAT			m_TextureFormat; 
 
 	// The number of frames of animation in each row and column of this texture.
 	UINT				m_uFramesWide, m_uFramesHigh;
-	UINT				m_uSourceFrameWidth, m_uSourceFrameHeight;
 	
 
 	// RECTs that hold the bounds of each frame in the bitmap.

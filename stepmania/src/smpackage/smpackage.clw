@@ -2,7 +2,7 @@
 
 [General Info]
 Version=1
-LastClass=CSMPackageInstallDlg
+LastClass=CSmpackageDlg
 LastTemplate=CDialog
 NewFileInclude1=#include "stdafx.h"
 NewFileInclude2=#include "smpackage.h"

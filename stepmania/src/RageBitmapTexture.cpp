@@ -91,9 +91,25 @@ void RageBitmapTexture::Create()
 	}
 
 
-	
-	// load texture and get image info
+	/////////////////////
+	// Figure out whether the texture can fit into texture memory unscaled
+	/////////////////////
+	bool bScaleImageToTextureSize;
+
 	D3DXIMAGE_INFO ddii;
+	if( FAILED( hr = D3DXGetImageInfoFromFile( 
+		m_sFilePath,
+		&ddii ) ) )
+	{
+        RageErrorHr( ssprintf("D3DXGetImageInfoFromFile() failed for file '%s'.", m_sFilePath), hr );
+	}
+
+	D3DCAPS8 caps;
+	m_pd3dDevice->GetDeviceCaps( &caps );
+
+	bScaleImageToTextureSize = ddii.Width > caps.MaxTextureWidth 
+						    || ddii.Height > caps.MaxTextureHeight;
+	
 
 	if( FAILED( hr = D3DXCreateTextureFromFileEx( 
 		m_pd3dDevice,				// device
@@ -103,8 +119,8 @@ void RageBitmapTexture::Create()
 		0,							// usage (is a render target?)
 		fmtTexture,					// our preferred texture format
 		D3DPOOL_MANAGED,			// which memory pool
-		D3DX_FILTER_BOX,			// filter
-		D3DX_FILTER_BOX,			// mip filter
+		bScaleImageToTextureSize ? D3DX_FILTER_BOX : D3DX_FILTER_NONE,		// filter
+		D3DX_DEFAULT,				// mip filter
 		0,							// no color key
 		&ddii,						// struct to fill with source image info
 		NULL,						// no palette
@@ -113,14 +129,12 @@ void RageBitmapTexture::Create()
         RageErrorHr( ssprintf("D3DXCreateTextureFromFileEx() failed for file '%s'.", m_sFilePath), hr );
 	}
 
-	// save the source image's width and height
+
+	/////////////////////
+	// Save information about the texture
+	/////////////////////
 	m_uSourceWidth = ddii.Width;
 	m_uSourceHeight= ddii.Height;
-
-	
-	//RageLog( "info.Width = %d, info.Height = %d, devCaps.MaxTextureWidth = %d, devCaps.MaxTextureHeight = %d",
-	//	info.Width, info.Height, devCaps.MaxTextureWidth, devCaps.MaxTextureHeight );
-
 
     D3DSURFACE_DESC ddsd;
     if ( FAILED( hr = m_pd3dTexture->GetLevelDesc( 0, &ddsd ) ) ) 
@@ -130,5 +144,16 @@ void RageBitmapTexture::Create()
 	m_uTextureWidth		= ddsd.Width;
 	m_uTextureHeight	= ddsd.Height;
     m_TextureFormat		= ddsd.Format;	
+
+	if( bScaleImageToTextureSize )
+	{
+		m_uImageWidth	= m_uTextureWidth;
+		m_uImageHeight	= m_uTextureHeight;
+	}
+	else
+	{
+		m_uImageWidth	= m_uSourceWidth;
+		m_uImageHeight	= m_uSourceHeight;
+	}
 }
 

@@ -20,15 +20,7 @@
 //-----------------------------------------------------------------------------
 // RageTexture constructor
 //-----------------------------------------------------------------------------
-RageTexture::RageTexture( LPRageScreen pScreen, CString sFilePath ) :
-  m_uSourceWidth( 0 ),
-  m_uSourceHeight( 0 ),
-  m_uTextureWidth( 0 ),
-  m_uTextureHeight( 0 ),
-  m_uFramesWide( 1 ),
-  m_uFramesHigh( 1 ),
-  m_uSourceFrameWidth( 0 ),
-  m_uSourceFrameHeight( 0 )
+RageTexture::RageTexture( LPRageScreen pScreen, CString sFilePath )
 {
 //	RageLog( "RageTexture::RageTexture()" );
 
@@ -41,7 +33,10 @@ RageTexture::RageTexture( LPRageScreen pScreen, CString sFilePath ) :
 //	m_pd3dTexture = NULL;
 	m_iRefCount = 1;
 
-
+	m_uSourceWidth = m_uSourceHeight = 0;
+	m_uTextureWidth = m_uTextureHeight = 0;
+	m_uImageWidth = m_uImageHeight = 0;
+	m_uFramesWide = m_uFramesHigh = 1;
 }
 
 RageTexture::~RageTexture()
@@ -61,10 +56,10 @@ void RageTexture::CreateFrameRects()
 	{
 		for( UINT i=0; i<m_uFramesWide; i++ )	// traverse along X (important that this is the inner loop)
 		{
-			FRECT frect( (i+0)/(float)m_uFramesWide,	// these will all be between 0.0 and 1.0
-						 (j+0)/(float)m_uFramesHigh, 
-						 (i+1)/(float)m_uFramesWide, 
-						 (j+1)/(float)m_uFramesHigh );
+			FRECT frect( (i+0)/(float)m_uFramesWide*m_uImageWidth /m_uTextureWidth,	// these will all be between 0.0 and 1.0
+						 (j+0)/(float)m_uFramesHigh*m_uImageHeight/m_uTextureHeight, 
+						 (i+1)/(float)m_uFramesWide*m_uImageWidth /m_uTextureWidth, 
+						 (j+1)/(float)m_uFramesHigh*m_uImageHeight/m_uTextureHeight );
 			m_TextureCoordRects.Add( frect );	// the index of this array element will be (i + j*m_uFramesWide)
 			
 			//RageLog( "Adding frect%d %f %f %f %f", (i + j*m_uFramesWide), frect.left, frect.top, frect.right, frect.bottom );

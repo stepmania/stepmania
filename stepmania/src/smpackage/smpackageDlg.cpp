@@ -40,6 +40,7 @@ BEGIN_MESSAGE_MAP(CSmpackageDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	ON_LBN_SELCHANGE(IDC_LIST_SONGS, OnSelchangeListSongs)
 	ON_BN_CLICKED(IDC_BUTTON_EXPORT, OnButtonExport)
+	ON_BN_CLICKED(IDC_BUTTON_PLAY, OnButtonPlay)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -229,6 +230,31 @@ void CSmpackageDlg::OnButtonExport()
 
 
 	m_zip.Close();
+
+}
+
+
+
+void CSmpackageDlg::OnButtonPlay() 
+{
+	// TODO: Add your control notification handler code here
+
+	PROCESS_INFORMATION pi;
+	STARTUPINFO	si;
+	ZeroMemory( &si, sizeof(si) );
+
+	CreateProcess(
+		NULL,		// pointer to name of executable module
+		"stepmania.exe",		// pointer to command line string
+		NULL,  // process security attributes
+		NULL,   // thread security attributes
+		false,  // handle inheritance flag
+		0, // creation flags
+		NULL,  // pointer to new environment block
+		NULL,   // pointer to current directory name
+		&si,  // pointer to STARTUPINFO
+		&pi  // pointer to PROCESS_INFORMATION
+	);
 
 }
 
