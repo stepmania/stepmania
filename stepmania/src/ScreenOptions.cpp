@@ -23,6 +23,7 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 #define LABELS_H_ALIGN					THEME->GetMetricI("ScreenOptions","LabelsHAlign")
 #define ITEMS_ZOOM						THEME->GetMetricF("ScreenOptions","ItemsZoom")
 #define ITEMS_START_X					THEME->GetMetricF("ScreenOptions","ItemsStartX")
+#define ITEMS_END_X						THEME->GetMetricF("ScreenOptions","ItemsEndX")
 #define ITEMS_GAP_X						THEME->GetMetricF("ScreenOptions","ItemsGapX")
 #define ITEMS_START_Y					THEME->GetMetricF("ScreenOptions","ItemsStartY")
 #define ITEMS_SPACING_Y					THEME->GetMetricF("ScreenOptions","ItemsSpacingY")
@@ -287,7 +288,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 			fX += fItemWidth/2 + ITEMS_GAP_X;
 
 			// It goes off the edge of the screen.  Re-init with the "long row" style.
-			if( fX > SCREEN_RIGHT-40 ) 
+			if( fX > ITEMS_END_X ) 
 			{
 				row.m_bRowIsLong = true;
 				for( unsigned j=0; j<textItems.size(); j++ )	// for each option on this row
