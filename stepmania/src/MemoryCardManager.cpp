@@ -176,7 +176,7 @@ void MemoryCardManager::AssignUnassignedCards()
 
 			if( !m_Device[p].IsBlank() )	// they already have an assigned card
 			{
-				LOG->Trace( "Already has a card", p+1 );
+				LOG->Trace( "Already has a card" );
 				continue;	// skip
 			}
 
