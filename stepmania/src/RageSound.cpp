@@ -392,21 +392,21 @@ int RageSound::GetData( char *buffer, int frames )
 	return got;
 }
 
-/* Adjust the balance of buffer; fBalance is -1...+1. */
-void AdjustBalance( int16_t *buffer, int frames, float fBalance )
+/* Pan buffer left or right; fPos is -1...+1. */
+void PanSound( int16_t *buffer, int frames, float fPos )
 {
-	if( fBalance == 0 )
+	if( fPos == 0 )
 		return; /* no change */
 
-	bool bSwap = fBalance < 0;
+	bool bSwap = fPos < 0;
 	if( bSwap )
-		fBalance = -fBalance;
+		fPos = -fPos;
 
-	float fLeftFactors[2] ={ 1-fBalance, 0 };
+	float fLeftFactors[2] ={ 1-fPos, 0 };
 	float fRightFactors[2] =
 	{
-		SCALE( fBalance, 0, 1, 0.5f, 0 ),
-		SCALE( fBalance, 0, 1, 0.5f, 1 )
+		SCALE( fPos, 0, 1, 0.5f, 0 ),
+		SCALE( fPos, 0, 1, 0.5f, 1 )
 	};
 
 	if( bSwap )
@@ -545,7 +545,7 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 			FadeSound( buffer, got_frames, fStartVolume, fEndVolume );
 		}
 
-		AdjustBalance( buffer, got_frames, m_Param.m_Balance );
+		PanSound( buffer, got_frames, m_Param.m_Balance );
 
 		sound_frame = decode_position;
 
