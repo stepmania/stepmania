@@ -1,11 +1,10 @@
 /* RageUtil - Miscellaneous helper macros and functions.  */
 
-#ifndef RAGEUTIL_H
-#define RAGEUTIL_H
+#ifndef RAGE_UTIL_H
+#define RAGE_UTIL_H
 
-#define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
-#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
-#define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
+#define SAFE_DELETE(p)       { delete (p);     (p)=NULL; }
+#define SAFE_DELETE_ARRAY(p) { delete[] (p);   (p)=NULL; }
 
 #define ZERO(x)	memset(&x, 0, sizeof(x))
 #define COPY(a,b) { ASSERT(sizeof(a)==sizeof(b)); memcpy(&(a), &(b), sizeof(a)); }
