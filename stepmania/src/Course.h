@@ -149,6 +149,8 @@ public:
 	/* Call when a Song or its Steps are deleted/changed. */
 	void Invalidate( Song *pStaleSong );
 
+	void GetAllCachedTrails( vector<Trail *> &out );
+
 private:
 	bool GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 	bool GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;

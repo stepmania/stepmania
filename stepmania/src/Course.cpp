@@ -1111,6 +1111,14 @@ bool Course::IsRanking() const
 	return false;
 }
 
+void Course::GetAllCachedTrails( vector<Trail *> &out )
+{
+	FOREACH_StepsType( st )
+		FOREACH_ShownCourseDifficulty( cd )
+			if( m_TrailCacheValid[st][cd] && !m_TrailCacheNull[st][cd] )
+				out.push_back( &m_TrailCache[st][cd] );
+}
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
