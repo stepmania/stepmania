@@ -52,6 +52,9 @@ void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
 		if( combo.GetStageCnt() < MinComboSizeToShow )
 			continue; /* too small */
 	
+		if( !MaxComboSize )
+			continue;
+
 		const bool IsMax = (combo.GetStageCnt() == MaxComboSize);
 		if( !IsMax )
 			continue;

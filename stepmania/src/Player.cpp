@@ -1151,7 +1151,7 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	/* Use the real current beat, not the beat we've been passed.  That's because we
 	 * want to record the current life/combo to the current time; eg. if it's a MISS,
 	 * the beat we're registering is in the past, but the life is changing now. */
-	g_CurStageStats.UpdateComboList( m_PlayerNumber, GAMESTATE->m_fSongBeat );
+	g_CurStageStats.UpdateComboList( m_PlayerNumber, GAMESTATE->m_fSongBeat, false );
 
 	float life = -1;
 	if( m_pLifeMeter )

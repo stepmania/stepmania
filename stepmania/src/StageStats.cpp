@@ -296,7 +296,9 @@ void StageStats::GetLifeRecord( PlayerNumber pn, float *life, int nout ) const
 	}
 }
 
-void StageStats::UpdateComboList( PlayerNumber pn, float pos )
+/* If "rollover" is true, we're being called before gameplay begins, so we can record
+ * the amount of the first combo that comes from the previous song. */
+void StageStats::UpdateComboList( PlayerNumber pn, float pos, bool rollover )
 {
 	if( pos < 0 )
 		return;
@@ -314,17 +316,14 @@ void StageStats::UpdateComboList( PlayerNumber pn, float pos )
 		Combo_t NewCombo;
 		NewCombo.start = pos;
 		ComboList[pn].push_back( NewCombo );
-
-		/* If this is the first combo, and the current combo is greater than 1,
-		 * then that extra part of the combo must have come from a previous song.
-		 * Remember it separately. */
-		if( ComboList[pn].size() == 1 )
-			ComboList[pn][0].rollover = cnt-1;
 	}
 
 	Combo_t &combo = ComboList[pn].back();
 	combo.size = pos - combo.start;
 	combo.cnt = cnt;
+
+	if( rollover )
+		combo.rollover = cnt;
 }
 
 /* This returns the largest combo contained within the song, as if

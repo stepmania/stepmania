@@ -94,7 +94,7 @@ struct StageStats
 	float fFirstPos[NUM_PLAYERS], fLastPos[NUM_PLAYERS];
 
 	bool	FullCombo( PlayerNumber pn ) const;
-	void	UpdateComboList( PlayerNumber pn, float pos );
+	void	UpdateComboList( PlayerNumber pn, float pos, bool rollover );
 	Combo_t GetMaxCombo( PlayerNumber pn ) const;
 };
 

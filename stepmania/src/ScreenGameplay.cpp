@@ -214,6 +214,9 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		ASSERT( !m_apNotesQueue[p].empty() );
 		g_CurStageStats.pSteps[p] = m_apNotesQueue[p][0];
 		g_CurStageStats.iMeter[p] = m_apNotesQueue[p][0]->GetMeter();
+
+		/* Record combo rollover. */
+		g_CurStageStats.UpdateComboList( (PlayerNumber)p, 0, true );
 	}
 
 	if( GAMESTATE->IsExtraStage() )

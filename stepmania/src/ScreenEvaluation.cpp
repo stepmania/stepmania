@@ -115,13 +115,13 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		}
 	
 		g_CurStageStats.iCurCombo[PLAYER_1] = 0;
-		g_CurStageStats.UpdateComboList( PLAYER_1, 0 );
+		g_CurStageStats.UpdateComboList( PLAYER_1, 0, false );
 		g_CurStageStats.iCurCombo[PLAYER_1] = 1;
-		g_CurStageStats.UpdateComboList( PLAYER_1, 1 );
+		g_CurStageStats.UpdateComboList( PLAYER_1, 1, false );
 		g_CurStageStats.iCurCombo[PLAYER_1] = 50;
-		g_CurStageStats.UpdateComboList( PLAYER_1, 25 );
+		g_CurStageStats.UpdateComboList( PLAYER_1, 25, false );
 		g_CurStageStats.iCurCombo[PLAYER_1] = 250;
-		g_CurStageStats.UpdateComboList( PLAYER_1, 100 );
+		g_CurStageStats.UpdateComboList( PLAYER_1, 100, false );
 	}
 
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
