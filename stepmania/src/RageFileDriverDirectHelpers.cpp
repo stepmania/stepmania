@@ -245,6 +245,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 		sPath.erase( sPath.size() - 1 );
 
 	HANDLE hFind = DoFindFirstFile( root+sPath+"/*", &fd );
+	CHECKPOINT_M( root+sPath+"/*" );
 
 	if( hFind == INVALID_HANDLE_VALUE )
 		return;
