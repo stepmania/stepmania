@@ -83,32 +83,34 @@ void FadingBanner::BeforeChange()
 	m_sPendingBanner = "";
 }
 
+/* If this returns false, the banner couldn't be loaded. */
+bool FadingBanner::LoadFromCachedBanner( const CString &path )
+{
+	if( TEXTUREMAN->IsTextureRegistered( Banner::BannerTex( path ) ) )
+	{
+		/* The actual file is already cached.  Use it. */
+		m_Banner[GetBackIndex()].Load( Banner::BannerTex(path) );
+		return true;
+	}
+
+	/* It's not loaded.  Try to load the low quality version. */
+	RageTextureID ID = BANNERCACHE->LoadCachedSongBanner( path );
+	if( !TEXTUREMAN->IsTextureRegistered(ID) )
+		return false;
+
+	m_Banner[GetBackIndex()].Load( ID );
+	m_sPendingBanner = path;
+	m_PendingTimer.GetDeltaTime(); /* reset */
+
+	return true;
+}
+
 void FadingBanner::LoadFromSong( Song* pSong )
 {
 	BeforeChange();
 
-	if( !pSong->HasBanner() || 
-		TEXTUREMAN->IsTextureRegistered( Banner::BannerTex( pSong->GetBannerPath() ) ) )
-	{
-		/* We either don't have a regular banner at all, or we have a banner and
-		 * it's cached; just use Banner's logic. */
+	if( !LoadFromCachedBanner(pSong->GetBannerPath()) )
 		m_Banner[GetBackIndex()].LoadFromSong( pSong );
-		return;
-	}
-
-	/* We have a banner, but it's not loaded.  Try to load the low quality version. */
-	RageTextureID ID = BANNERCACHE->LoadCachedSongBanner( pSong->GetBannerPath() );
-	
-	if( !TEXTUREMAN->IsTextureRegistered(ID) )
-	{
-		LOG->Warn("Load of reduced banner for '%s' failed", pSong->GetSongDir().c_str() );
-		m_Banner[GetBackIndex()].LoadFromSong( pSong );
-		return;
-	}
-
-	m_Banner[GetBackIndex()].Load( ID );
-	m_sPendingBanner = pSong->GetBannerPath();
-	m_PendingTimer.GetDeltaTime(); /* reset */
 }
 
 void FadingBanner::LoadAllMusic()

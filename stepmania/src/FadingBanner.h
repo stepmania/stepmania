@@ -41,6 +41,8 @@ protected:
 	int			m_iIndexFront;
 	int			GetBackIndex() { return m_iIndexFront==0 ? 1 : 0; }
 
+	bool LoadFromCachedBanner( const CString &path );
+
 	CString		m_sPendingBanner;
 	RageTimer	m_PendingTimer;
 };
