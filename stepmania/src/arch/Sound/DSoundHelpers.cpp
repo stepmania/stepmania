@@ -143,7 +143,7 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	/* The size of the actual DSound buffer.  This can be large; we generally
 	 * won't fill it completely. */
 	buffersize = 1024*64;
-	buffersize = min( buffersize, writeahead );
+	buffersize = max( buffersize, writeahead );
 
 	WAVEFORMATEX waveformat;
 	memset(&waveformat, 0, sizeof(waveformat));
@@ -302,6 +302,20 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 	}
 #endif
 
+	/* Update buffer_bytes_filled. */
+	{
+		int first_byte_filled = write_cursor-buffer_bytes_filled;
+		if( first_byte_filled < 0 )
+			first_byte_filled += buffersize; /* unwrap */
+
+		int current_cursor = cursorstart;
+		if( current_cursor < first_byte_filled )
+			current_cursor += buffersize;
+
+		/* The number of bytes that have been played since the last time we got here: */
+		int bytes_played = current_cursor - first_byte_filled;
+		buffer_bytes_filled -= bytes_played;
+	}
 
 	/* XXX We can figure out if we've underrun, and increase the write-ahead
 	 * when it happens.  Two problems:
@@ -320,25 +334,22 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 
 	{
 		int first_byte_filled = write_cursor-buffer_bytes_filled;
-		if(first_byte_filled < 0) first_byte_filled += buffersize; /* unwrap */
-
-		int current_cursor = cursorstart;
-		if(current_cursor < first_byte_filled) current_cursor += buffersize;
-
-		/* The number of bytes that have been played since the last time we got here: */
-		int bytes_played = current_cursor - first_byte_filled;
-		buffer_bytes_filled -= bytes_played;
+		if( first_byte_filled < 0 )
+			first_byte_filled += buffersize; /* unwrap */
 
 		/* Data between the play cursor and the write cursor is committed to be
-		 * played.  If we don't actually have data there, we've underrun. */
-		if(!contained(first_byte_filled, write_cursor, cursorstart) ||
-		   !contained(first_byte_filled, write_cursor, cursorend))
+		 * played.  If we don't actually have data there, we've underrun. 
+		 * (If buffer_bytes_filled == buffersize, then it's full, and can't be
+		 * an underrun.) */
+		if( buffer_bytes_filled < writeahead &&
+		   (!contained(first_byte_filled, write_cursor, cursorstart) ||
+		    !contained(first_byte_filled, write_cursor, cursorend)) )
 		{
 			int missed_by = cursorend - write_cursor;
 			wrap( missed_by, buffersize );
-			LOG->Trace("underrun: %i..%i filled but cursor at %i..%i (missed it by %i)",
-				first_byte_filled, write_cursor, cursorstart, cursorend,
-				missed_by);
+			LOG->Trace("underrun %p: %i..%i filled but cursor at %i..%i (missed it by %i) %i/%i",
+				this, first_byte_filled, write_cursor, cursorstart, cursorend,
+				missed_by, buffer_bytes_filled, buffersize);
 //				(cursorend - first_byte_filled + buffersize) % buffersize);
 
 			/* Pretend the space between the play and write cursor is filled
@@ -359,7 +370,7 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 	if(buffer_bytes_filled > writeahead)
 		return false;
 
-	int num_bytes_empty = buffersize-buffer_bytes_filled;
+	int num_bytes_empty = writeahead-buffer_bytes_filled;
 
 	/* num_bytes_empty is the amount of free buffer space.  If it's
 	 * too small, come back later. */
