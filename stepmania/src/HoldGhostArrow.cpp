@@ -12,11 +12,7 @@
 */
 
 #include "HoldGhostArrow.h"
-#include "PrefsManager.h"
-#include "RageException.h"
-#include "RageTimer.h"
 #include "NoteSkinManager.h"
-#include "GameState.h"
 
 HoldGhostArrow::HoldGhostArrow()
 {
@@ -26,8 +22,7 @@ HoldGhostArrow::HoldGhostArrow()
 void HoldGhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
 {
 	Sprite::Load( NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sElement) );	// not optional
-	m_sOnCommand = NOTESKIN->GetMetric(sNoteSkin,"HoldGhostArrow","OnCommand");
-	this->Command( m_sOnCommand );
+	this->Command( NOTESKIN->GetMetric(sNoteSkin,"HoldGhostArrow","OnCommand") );
 }
 
 void HoldGhostArrow::Update( float fDeltaTime )
@@ -35,12 +30,4 @@ void HoldGhostArrow::Update( float fDeltaTime )
 	Sprite::Update( fDeltaTime );
 	
 	m_bHoldIsActive = false;
-}
-
-void HoldGhostArrow::DrawPrimitives()
-{
-	if( !m_bHoldIsActive )
-		return;
-
-	Sprite::DrawPrimitives();
 }

@@ -13,7 +13,6 @@
 */
 
 #include "Sprite.h"
-#include "PlayerNumber.h"
 
 class HoldGhostArrow : public Sprite
 {
@@ -23,12 +22,12 @@ public:
 	virtual void Load( CString sNoteSkin, CString sButton, CString sElement );
 
 	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
+	virtual bool EarlyAbortDraw() { return !m_bHoldIsActive; }
 
 	void  SetHoldIsActive( bool bHoldIsActive ) { m_bHoldIsActive = bHoldIsActive; }
 
+private:
 	bool m_bHoldIsActive;
-	CString m_sOnCommand;
 };
 
 
