@@ -12,6 +12,7 @@ class Alsa9Buf
 private:
 	int channels, samplerate, samplebits;
 	int buffersize, last_cursor_pos;
+	bool samplerate_set_explicitly;
 
 	snd_pcm_sframes_t total_frames;
 	snd_pcm_uframes_t xfer_align;

@@ -65,7 +65,7 @@ bool Alsa9Buf::SetHWParams()
 	err = dsnd_pcm_hw_params_set_rate_near(pcm, hwparams, &rate, 0);
 	ALSA_CHECK("dsnd_pcm_hw_params_set_rate_near");
 
-	if( (int) rate != samplerate )
+	if( samplerate_set_explicitly && (int) rate != samplerate )
 		LOG->Warn("Alsa9Buf::SetHWParams: Couldn't get %ihz (got %ihz instead)", samplerate, rate);
 
 	snd_pcm_uframes_t buffersize = 1024*8;
@@ -160,7 +160,8 @@ Alsa9Buf::Alsa9Buf( hw hardware, int channels_ )
 	samplerate = 44100;
 	samplebits = 16;
 	last_cursor_pos = 0;
-	
+	samplerate_set_explicitly = false;
+
 	/* Open the device. */
 	int err;
 //	err = dsnd_pcm_open( &pcm, "dmix", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
@@ -333,6 +334,7 @@ void Alsa9Buf::Stop()
 void Alsa9Buf::SetSampleRate(int hz)
 {
 	samplerate = hz;
+	samplerate_set_explicitly = true;
 
 	SetHWParams();
 	
