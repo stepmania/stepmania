@@ -88,11 +88,8 @@ private:
 	 * this is ourself. */
 	RageSound *original;
 
-	/* These are only used when big == true: */
-	struct stream_t {
-		SoundReader *Sample;
-		CircBuf buf;
-	} stream;
+	SoundReader *Sample;
+	CircBuf databuf;
 	int FillBuf(int bytes);
 
 	/* Sound blocks we've sent out recently through GetPCM.  We keep track

@@ -66,13 +66,13 @@ RageSound::RageSound()
 	LockMut(SOUNDMAN->lock);
 
 	original = this;
-	stream.Sample = NULL;
+	Sample = NULL;
 	position = 0;
 	stopped_position = -1;
 	playing = false;
 	StopMode = M_STOP;
 	speed_input_samples = speed_output_samples = 1;
-	stream.buf.reserve(internal_buffer_size);
+	databuf.reserve(internal_buffer_size);
 	m_StartSample = 0;
 	m_LengthSamples = -1;
 	AccurateSync = false;
@@ -99,7 +99,7 @@ RageSound::RageSound(const RageSound &cpy)
 	ASSERT(SOUNDMAN);
 	LockMut(SOUNDMAN->lock);
 
-	stream.Sample = NULL;
+	Sample = NULL;
 
 	original = cpy.original;
 	m_StartSample = cpy.m_StartSample;
@@ -112,8 +112,8 @@ RageSound::RageSound(const RageSound &cpy)
 	speed_input_samples = cpy.speed_input_samples;
 	speed_output_samples = cpy.speed_output_samples;
 
-	stream.buf.reserve(internal_buffer_size);
-	stream.Sample = cpy.stream.Sample->Copy();
+	databuf.reserve(internal_buffer_size);
+	Sample = cpy.Sample->Copy();
 
 	/* Load() won't work on a copy if m_sFilePath is already set, so
 	 * copy this down here. */
@@ -128,18 +128,18 @@ void RageSound::Unload()
 	if(IsPlaying())
 		StopPlaying();
 
-	delete stream.Sample;
-	stream.Sample = NULL;
+	delete Sample;
+	Sample = NULL;
 	
 	m_sFilePath = "";
-	stream.buf.clear();
+	databuf.clear();
 }
 
 /* This is called upon fatal failure.  Replace the sound with silence. */
 void RageSound::Fail(CString reason)
 {
-	delete stream.Sample;
-	stream.Sample = NULL;
+	delete Sample;
+	Sample = NULL;
 
 	LOG->Warn("sound error %s", reason.c_str());
 	/* XXX: we can't do this anymore, and it was a hack anyway */
@@ -175,16 +175,13 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound %s: %s",
 			sSoundFilePath.GetString(), NewSample->GetError().c_str());
 
-	if(PREFSMAN->m_bSoundPreloadAll)
-		precache = true;
-
 	/* Try to precache. */
 	if(precache)
 	{
 		SoundReader_Preload *Preload = new SoundReader_Preload;
 		if(Preload->Open(NewSample))
 		{
-			stream.Sample = Preload;
+			Sample = Preload;
 			delete NewSample;
 			return true;
 		}
@@ -194,7 +191,8 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 		NewSample->SetPosition_Fast(0);
 		delete Preload;
 	}
-	stream.Sample = NewSample;
+
+	Sample = NewSample;
 
 	return true;
 }
@@ -225,7 +223,7 @@ void RageSound::Update(float delta)
 /* Return the number of bytes available in the input buffer. */
 int RageSound::Bytes_Available() const
 {
-	return stream.buf.size();
+	return databuf.size();
 }
 
 #include <math.h>
@@ -294,13 +292,13 @@ int RageSound::FillBuf(int bytes)
 {
 	LockMut(SOUNDMAN->lock);
 
-	ASSERT(stream.Sample);
+	ASSERT(Sample);
 
 	bool got_something = false;
 
 	while(bytes > 0)
 	{
-		if(read_block_size > stream.buf.capacity() - stream.buf.size())
+		if(read_block_size > databuf.capacity() - databuf.size())
 			break; /* full */
 
 		char inbuf[10240];
@@ -321,7 +319,7 @@ int RageSound::FillBuf(int bytes)
 
 		ASSERT(read_size < sizeof(inbuf));
 
-		cnt = stream.Sample->Read(inbuf, read_size);
+		cnt = Sample->Read(inbuf, read_size);
 		if(cnt == 0)
 			return got_something; /* EOF */
 
@@ -330,7 +328,7 @@ int RageSound::FillBuf(int bytes)
 		if(cnt == -1)
 		{
 			/* XXX untested */
-			Fail(stream.Sample->GetError());
+			Fail(Sample->GetError());
 
 			/* Pretend we got data; we actually just switched to a non-streaming
 			 * buffer. */
@@ -338,7 +336,7 @@ int RageSound::FillBuf(int bytes)
 		}
 
 		/* Add the data to the buffer. */
-		stream.buf.write((const char *) inbuf, cnt);
+		databuf.write((const char *) inbuf, cnt);
 		bytes -= cnt;
 		got_something = true;
 	}
@@ -371,10 +369,10 @@ int RageSound::GetData(char *buffer, int size)
 			memset(buffer, 0, got);
 	} else {
 		/* Feed data out of our streaming buffer. */
-		ASSERT(stream.Sample);
-		got = min(int(stream.buf.size()), size);
+		ASSERT(Sample);
+		got = min(int(databuf.size()), size);
 		if(buffer)
-			stream.buf.read(buffer, got);
+			databuf.read(buffer, got);
 	}
 
 	return got;
@@ -543,13 +541,13 @@ void RageSound::Stop()
 
 float RageSound::GetLengthSeconds()
 {
-	ASSERT(stream.Sample);
-	int len = stream.Sample->GetLength();
+	ASSERT(Sample);
+	int len = Sample->GetLength();
 
 	if(len < 0)
 	{
 		LOG->Warn("GetLengthSeconds failed on %s: %s",
-			GetLoadedFilePath().GetString(), stream.Sample->GetError().c_str() );
+			GetLoadedFilePath().GetString(), Sample->GetError().c_str() );
 		return -1;
 	}
 
@@ -661,20 +659,20 @@ bool RageSound::SetPositionSamples( int samples )
 	int ms = int(float(samples) * 1000.f / samplerate);
 	ms = max(ms, 0);
 
-	stream.buf.clear();
+	databuf.clear();
 
-	ASSERT(stream.Sample);
+	ASSERT(Sample);
 
 	int ret;
 	if(AccurateSync)
-		ret = stream.Sample->SetPosition_Accurate(ms);
+		ret = Sample->SetPosition_Accurate(ms);
 	else
-		ret = stream.Sample->SetPosition_Fast(ms);
+		ret = Sample->SetPosition_Fast(ms);
 
 	if(ret == -1)
 	{
 		/* XXX untested */
-		Fail(stream.Sample->GetError());
+		Fail(Sample->GetError());
 		return false; /* failed */
 	}
 
