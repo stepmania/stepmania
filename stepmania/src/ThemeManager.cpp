@@ -414,19 +414,19 @@ CString ThemeManager::GetPathTo( CString sAssetCategory, CString sFileName )
 	///////////////////////////////////////
 	if( sAssetCategory == "graphics" )
 	{
-		GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + "*.sprite", asPossibleElementFilePaths, false, true );
-		GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + "*.png", asPossibleElementFilePaths, false, true );
-		GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + "*.jpg", asPossibleElementFilePaths, false, true );
-		GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + "*.bmp", asPossibleElementFilePaths, false, true );
-		GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + "*.gif", asPossibleElementFilePaths, false, true );
-		GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + "*.redir", asPossibleElementFilePaths, false, true );
+		const char *masks[] = {
+			"*.sprite", "*.png", "*.jpg", "*.bmp", "*.gif", "*.redir",
+			"*.avi", "*.mpg", "*.mpeg", NULL
+		};
 
-		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + "*.sprite", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + "*.png", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + "*.jpg", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + "*.bmp", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + "*.gif", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + "*.redir", asPossibleElementFilePaths, false, true );
+		int i;
+		for(i = 0; masks[i]; ++i)
+			GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + masks[i],
+				asPossibleElementFilePaths, false, true );
+
+		for(i = 0; masks[i]; ++i)
+			GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + masks[i],
+				asPossibleElementFilePaths, false, true );
 	}
 	else if( sAssetCategory == "sounds" )
 	{
