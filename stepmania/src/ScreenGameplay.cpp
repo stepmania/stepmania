@@ -260,7 +260,7 @@ void ScreenGameplay::Init()
 	m_Background.SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );
 	this->AddChild( &m_Background );
 
-	m_Foreground.SetDrawOrder( DRAW_ORDER_AFTER_EVERYTHING );	// on top of everything else, including transitions
+	m_Foreground.SetDrawOrder( DRAW_ORDER_OVERLAY+1 );	// on top of the overlay, but under transitions
 	this->AddChild( &m_Foreground );
 
 	
