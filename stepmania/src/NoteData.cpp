@@ -160,12 +160,13 @@ CString NoteData::GetSMNoteDataString()
 	return join( "\n,", asMeasureStrings );
 }
 
+/* Clear [iNoteIndexBegin,iNoteIndexEnd]; that is, including iNoteIndexEnd. */
 void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 {
 	this->ConvertHoldNotesTo4s();
 	for( int c=0; c<m_iNumTracks; c++ )
 	{
-		for( int i=iNoteIndexBegin; i<=iNoteIndexEnd; i++ )
+		for( int i=iNoteIndexBegin; i <= iNoteIndexEnd && i < MAX_TAP_NOTE_ROWS; i++ )
 			m_TapNotes[c][i] = '0';
 	}
 	this->Convert4sToHoldNotes();
