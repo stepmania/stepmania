@@ -37,6 +37,7 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 #define COURSES_DIR				"Courses/"
 
 #define MAX_EDITS_PER_PROFILE	200
+#define MAX_EDIT_SIZE_BYTES		8*1024		// 8KB
 
 #define NUM_GROUP_COLORS	THEME->GetMetricI("SongManager","NumGroupColors")
 #define GROUP_COLOR( i )	THEME->GetMetricC("SongManager",ssprintf("GroupColor%d",i+1))
@@ -1128,9 +1129,16 @@ void SongManager::LoadAllFromProfiles()
 
 			for( unsigned i=0; i<size; i++ )
 			{
-				CString sEditFileWithPath = asEditsFilesWithPath[i];
+				CString fn = asEditsFilesWithPath[i];
 
-				SMLoader::LoadEdit( sEditFileWithPath, (ProfileSlot) s );
+				int iBytes = FILEMAN->GetFileSizeInBytes( fn );
+				if( iBytes > MAX_EDIT_SIZE_BYTES )
+				{
+					LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
+					continue;
+				}
+
+				SMLoader::LoadEdit( fn, (ProfileSlot) s );
 			}
 		}
 
