@@ -11,12 +11,19 @@ endif
 if NHAVE_SDL
 # This is a little hacky; we statically link SDL if it isn't present on the system already, and I don't
 # want to have to integrate the entire build system.
+
+# XXX Both of these should really be linked dynamically.
+# XXX honor vpath
 SDL-1.2.6/src/.libs/libSDL.a:
 	cd SDL-1.2.6 && ./configure \
 		--disable-nasm --disable-arts --disable-esd --enable-static --disable-shared \
 		--disable-debug --disable-alsa --disable-oss --disable-video-directfb
 	make -C SDL-1.2.6
 endif
+
+$(srcdir)/libresample/libresample.a:
+	cd $(srcdir)/libresample && autoconf && ./configure && make
+
 
 Screens = \
 Screen.cpp Screen.h ScreenAlbums.cpp ScreenAlbums.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
@@ -191,7 +198,8 @@ stepmania_LDADD = \
 		  $(GL_LIBS) \
 		  $(libSDL) \
 		  $(SDL_LIBS) -lSDL_image \
-		  $(AUDIO_LIBS)
+		  $(AUDIO_LIBS) \
+		  $(srcdir)/libresample/libresample.a
 
 INCLUDES = $(SDL_CFLAGS)
 # -O0 -g
