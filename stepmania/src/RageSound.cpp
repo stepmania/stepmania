@@ -687,7 +687,7 @@ float RageSound::GetPositionSeconds() const
 	 *    SoundStopped has been called.
 	 * 3. Underflow; we'll be given a larger sample number than we know about.
 	 */
-	LOG->Trace("Approximate sound time: sample %i, closest %i", cur_sample, closest_position);
+	LOG->Trace("Approximate sound time: sample %i, dist %i, closest %i", cur_sample, closest_position_dist, closest_position);
 
 	return GetPlaybackRate() * closest_position / float(samplerate);
 }
