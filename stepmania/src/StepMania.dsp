@@ -543,7 +543,7 @@ SOURCE=.\RageMath.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\RageMusic.cpp
+SOURCE=.\RageSounds.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Debug"
 
@@ -558,7 +558,7 @@ SOURCE=.\RageMusic.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\RageMusic.h
+SOURCE=.\RageSounds.h
 # End Source File
 # Begin Source File
 

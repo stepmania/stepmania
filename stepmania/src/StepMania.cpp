@@ -18,7 +18,7 @@
 #include "RageLog.h"
 #include "RageTextureManager.h"
 #include "RageSoundManager.h"
-#include "RageMusic.h"
+#include "RageSounds.h"
 #include "RageInput.h"
 #include "RageTimer.h"
 #include "RageException.h"
@@ -486,7 +486,7 @@ int main(int argc, char* argv[])
 	NOTESKIN	= new NoteSkinManager;
 	SOUNDMAN	= new RageSoundManager(PREFSMAN->m_sSoundDrivers);
 	SOUNDMAN->SetPrefs(PREFSMAN->m_fSoundVolume);
-	MUSIC		= new RageMusic;
+	SOUND		= new RageSounds;
 	ANNOUNCER	= new AnnouncerManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
@@ -572,7 +572,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( NOTESKIN );
 	SAFE_DELETE( THEME );
 	SAFE_DELETE( ANNOUNCER );
-	SAFE_DELETE( MUSIC );
+	SAFE_DELETE( SOUND );
 	SAFE_DELETE( SOUNDMAN );
 	SAFE_DELETE( FONT );
 	SAFE_DELETE( TEXTUREMAN );

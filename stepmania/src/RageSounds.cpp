@@ -1,27 +1,29 @@
-/* This is just a simple wrapper to handle a single music track conveniently. */
 #include "global.h"
-#include "RageMusic.h"
+#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "RageSound.h"
 
-RageMusic *MUSIC = NULL;
+RageSounds *SOUND = NULL;
 
-RageMusic::RageMusic()
+RageSounds::RageSounds()
 {
+	/* Init RageSoundMan first: */
+	ASSERT( SOUNDMAN );
 	music = new RageSound;
 }
 
-RageMusic::~RageMusic()
+RageSounds::~RageSounds()
 {
 	delete music;
 }
 
 
-CString RageMusic::GetPath() const
+CString RageSounds::GetMusicPath() const
 {
 	return music->GetLoadedFilePath();
 }
 
-void RageMusic::Play(CString file, bool force_loop, float start_sec, float length_sec, float fade_len)
+void RageSounds::PlayMusic(CString file, bool force_loop, float start_sec, float length_sec, float fade_len)
 {
 //	LOG->Trace("play '%s' (current '%s')", file.c_str(), music->GetLoadedFilePath().c_str());
 	if(music->IsPlaying())
@@ -56,6 +58,16 @@ void RageMusic::Play(CString file, bool force_loop, float start_sec, float lengt
 	music->SetFadeLength(fade_len);
 	music->SetPositionSeconds();
 	music->StartPlaying();
+}
+
+void RageSounds::PlayOnce( CString sPath )
+{
+	SOUNDMAN->PlayOnce( sPath );
+}
+
+void RageSounds::PlayOnceFromDir( CString PlayOnceFromDir )
+{
+	SOUNDMAN->PlayOnceFromDir( PlayOnceFromDir );
 }
 
 /*

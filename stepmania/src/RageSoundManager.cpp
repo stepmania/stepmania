@@ -10,7 +10,7 @@
 #include "RageLog.h"
 #include "RageTimer.h"
 
-#include "RageMusic.h"
+#include "RageSounds.h"
 
 #include "arch/arch.h"
 #include "arch/Sound/RageSoundDriver.h"
@@ -260,16 +260,16 @@ void RageSoundManager::MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, floa
 
 void RageSoundManager::PlayMusic(CString file, bool force_loop, float start_sec, float length_sec, float fade_len)
 {
-	MUSIC->Play(file, force_loop, start_sec, length_sec, fade_len);
+	SOUND->PlayMusic(file, force_loop, start_sec, length_sec, fade_len);
 }
 void RageSoundManager::StopMusic()
 {
-	MUSIC->Stop();
+	SOUND->StopMusic();
 }
 
 CString RageSoundManager::GetMusicPath() const
 {
-	return MUSIC->GetPath();
+	return SOUND->GetMusicPath();
 }
 
 void RageSoundManager::SetPrefs(float MixVol)

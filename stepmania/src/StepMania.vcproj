@@ -1528,12 +1528,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageMath.h">
 			</File>
 			<File
-				RelativePath="RageMusic.cpp">
-			</File>
-			<File
-				RelativePath="RageMusic.h">
-			</File>
-			<File
 				RelativePath="RageSound.cpp">
 			</File>
 			<File
@@ -1574,6 +1568,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="RageSoundResampler.h">
+			</File>
+			<File
+				RelativePath="RageSounds.cpp">
+			</File>
+			<File
+				RelativePath="RageSounds.h">
 			</File>
 			<File
 				RelativePath=".\RageTexture.cpp">

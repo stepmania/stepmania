@@ -55,7 +55,7 @@ RageTexture.cpp RageTexture.h RageTextureManager.cpp RageTextureManager.h RageTh
 RageTimer.cpp RageTimer.h RageTypes.h RageUtil_FileDB.cpp RageUtil_FileDB.h RageUtil.cpp RageUtil.h \
 RageUtil_CharConversions.cpp RageUtil_CharConversions.h RageSoundReader_Preload.cpp RageSoundReader_Preload.h \
 RageSoundResampler.cpp RageSoundResampler.h RageSoundReader_Resample.cpp RageSoundReader_Resample.h RageSoundReader_FileReader.h \
-RageMusic.cpp RageMusic.h
+RageSounds.cpp RageSounds.h
 
 DataStructures = \
 CodeDetector.cpp CodeDetector.h Course.cpp Course.h Font.cpp Font.h FontCharAliases.cpp FontCharAliases.h \
