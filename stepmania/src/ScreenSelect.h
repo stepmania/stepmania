@@ -4,7 +4,6 @@
 #define SCREEN_SELECT_H
 
 #include "ScreenWithMenuElements.h"
-#include "BGAnimation.h"
 #include "GameCommand.h"
 #include "CodeDetector.h"
 #include "ThemeMetric.h"
@@ -29,7 +28,6 @@ protected:
 	virtual int GetSelectionIndex( PlayerNumber pn ) = 0;
 	virtual void UpdateSelectableChoices() = 0;		// derived screens must handle this
 	
-	vector<BGAnimation*> m_vpBGAnimations;
 	vector<GameCommand>	m_aGameCommands;		// derived classes should look here for what choices are available
 
 	vector<CodeItem>	m_aCodes;

@@ -53,12 +53,6 @@ ScreenSelect::ScreenSelect( CString sClassName ) :
 			mc.m_sName = sChoiceName;
 			mc.Load( c, CHOICE(sChoiceName) );
 			m_aGameCommands.push_back( mc );
-		
-			CString sBGAnimationDir = THEME->GetPath(BGAnimations, m_sName, mc.m_sName, true);	// true="optional"
-			if( sBGAnimationDir == "" )
-				sBGAnimationDir = THEME->GetPathToB(m_sName+" background");
-			BGAnimation *pBGA = new BGAnimation;
-			m_vpBGAnimations.push_back( pBGA );
 		}
 	}
 
@@ -95,9 +89,6 @@ ScreenSelect::ScreenSelect( CString sClassName ) :
 ScreenSelect::~ScreenSelect()
 {
 	LOG->Trace( "ScreenSelect::~ScreenSelect()" );
-	for( unsigned i=0; i<m_vpBGAnimations.size(); i++ )
-		SAFE_DELETE( m_vpBGAnimations[i] );
-	m_vpBGAnimations.clear();
 }
 
 void ScreenSelect::Update( float fDelta )
@@ -130,25 +121,10 @@ void ScreenSelect::Update( float fDelta )
 	}
 
 	Screen::Update( fDelta );
-	
-	// GAMESTATE->m_MasterPlayerNumber is set to PLAYER_INVALID when going Back to 
-	// the title screen and this screen is updated after.  TODO: find out why
-	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )	
-	{
-		int iSelection = this->GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
-		m_vpBGAnimations[iSelection]->Update( fDelta );
-	}
 }
 
 void ScreenSelect::DrawPrimitives()
 {
-	// GAMESTATE->m_MasterPlayerNumber is set to PLAYER_INVALID when going Back to 
-	// the title screen and this screen is updated after.  TODO: find out why
-	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )	
-	{
-		int iSelection = this->GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
-		m_vpBGAnimations[iSelection]->Draw();
-	}
 	Screen::DrawPrimitives();
 }
 
