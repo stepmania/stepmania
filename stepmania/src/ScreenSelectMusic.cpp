@@ -42,6 +42,8 @@
 const int NUM_SCORE_DIGITS	=	9;
 
 #define FOV									THEME->GetMetricF("ScreenSelectMusic","FOV")
+#define FOV_CENTER_X						THEME->GetMetricF("ScreenSelectMusic","FOVCenterX")
+#define FOV_CENTER_Y						THEME->GetMetricF("ScreenSelectMusic","FOVCenterY")
 #define BANNER_WIDTH						THEME->GetMetricF("ScreenSelectMusic","BannerWidth")
 #define BANNER_HEIGHT						THEME->GetMetricF("ScreenSelectMusic","BannerHeight")
 #define SONG_OPTIONS_EXTRA_COMMAND			THEME->GetMetric ("ScreenSelectMusic","SongOptionsExtraCommand")
@@ -278,7 +280,7 @@ ScreenSelectMusic::~ScreenSelectMusic()
 void ScreenSelectMusic::DrawPrimitives()
 {
 	DISPLAY->CameraPushMatrix();
-	DISPLAY->LoadMenuPerspective(FOV, CENTER_X, CENTER_Y);
+	DISPLAY->LoadMenuPerspective( FOV, FOV_CENTER_X, FOV_CENTER_Y );
 
 	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
