@@ -164,6 +164,8 @@
 		};
 		29B97315FDCFA39411CA2CEA = {
 			children = (
+				AA75DA1E06E0A1B500EF13B5,
+				AA75DA1F06E0A1B500EF13B5,
 				AA3A705E06AA144C006F755E,
 				AA70E3640663112800DAE1FD,
 				AA70E3650663112800DAE1FD,
@@ -2371,6 +2373,8 @@
 				AA3A706306AA1645006F755E,
 				AA9A78AC06B5C72200B03E97,
 				AA22CBA606DE909C0083BA97,
+				AA75DA1806E0944700EF13B5,
+				AA75DA2106E0A1B500EF13B5,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4275,6 +4279,7 @@
 				AA3A706206AA1645006F755E,
 				AA9A78AB06B5C72200B03E97,
 				AA22CBA506DE909C0083BA97,
+				AA75DA2006E0A1B500EF13B5,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6245,10 +6250,9 @@
 			explicitFileType = sourcecode.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = SDLMain.m;
-			path = "SDL-1.2.6/src/main/macosx/SDLMain.m";
-			refType = 4;
-			sourceTree = "<group>";
+			path = SDLMain.m;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -11017,6 +11021,7 @@
 				AA272BFB04CB779F00D02EE9,
 				AA1DCB6504A4872700D02EE9,
 				AAADA4AE04E5F3DE00D02EE9,
+				AA75DA1706E0944700EF13B5,
 				AA4B59EE0573AA5B005FB5DB,
 				AA6EFE6204770CF7005F316C,
 				AA6EFE6304770CF7005F316C,
@@ -12950,6 +12955,48 @@
 		};
 		AA729C67059A2F2400779F33 = {
 			fileRef = AA729C65059A2F2400779F33;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA75DA1706E0944700EF13B5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = SDLMain.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		AA75DA1806E0944700EF13B5 = {
+			fileRef = AA75DA1706E0944700EF13B5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA75DA1E06E0A1B500EF13B5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = NetworkSyncServer.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA75DA1F06E0A1B500EF13B5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = NetworkSyncServer.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA75DA2006E0A1B500EF13B5 = {
+			fileRef = AA75DA1E06E0A1B500EF13B5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA75DA2106E0A1B500EF13B5 = {
+			fileRef = AA75DA1F06E0A1B500EF13B5;
 			isa = PBXBuildFile;
 			settings = {
 			};
