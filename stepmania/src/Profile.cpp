@@ -993,7 +993,8 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 		if( pProfile->GetCourseNumTimesPlayed(pCourse) == 0 )
 			continue;
 
-		XNode* pCourseNode = pNode->AppendChild( "Course", pCourse->m_bIsAutogen ? pCourse->m_sName : pCourse->m_sPath );
+		XNode* pCourseNode = pNode->AppendChild( "Course" );
+		pCourseNode->AppendAttr( "Name", pCourse->m_bIsAutogen ? pCourse->m_sName : pCourse->m_sPath );
 
 		for( StepsType st=(StepsType)0; st<NUM_STEPS_TYPES; ((int&)st)++ )
 		{
@@ -1001,7 +1002,8 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 			if( pProfile->GetCourseHighScoreList(pCourse, st).iNumTimesPlayed == 0 )
 				continue;
 
-			LPXNode pStepsTypeNode = pCourseNode->AppendChild( "StepsType", st );
+			LPXNode pStepsTypeNode = pCourseNode->AppendChild( "StepsType" );
+			pStepsTypeNode->AppendAttr( "Type", GameManager::NotesTypeToString(st) );
 
 			const HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, st );
 			
@@ -1024,12 +1026,17 @@ void Profile::LoadCourseScoresFromNode( const XNode* pNode )
 	{
 		if( (*course)->name != "Course" )
 			continue;
-		
-		CString sCourse;
-		(*course)->GetValue(sCourse);
+
+		const LPXAttr TypeAttr = (*course)->GetAttr( "Name" );
+		if( TypeAttr == NULL )
+			WARN_AND_CONTINUE;
+		CString sCourse = TypeAttr->value;
+
 		Course* pCourse = SONGMAN->GetCourseFromPath( sCourse );
 		if( pCourse == NULL )
 			pCourse = SONGMAN->GetCourseFromName( sCourse );
+		if( pCourse == NULL )
+			WARN_AND_CONTINUE;
 		
 		for( XNodes::iterator stepsType = (*course)->childs.begin(); 
 			stepsType != (*course)->childs.end(); 
@@ -1038,8 +1045,12 @@ void Profile::LoadCourseScoresFromNode( const XNode* pNode )
 			if( (*stepsType)->name != "StepsType" )
 				continue;
 			
-			StepsType st;
-			(*stepsType)->GetValue((int&)st);
+			const LPXAttr TypeAttr = (*stepsType)->GetAttr( "Type" );
+			if( TypeAttr == NULL )
+				WARN_AND_CONTINUE;
+			StepsType st = GameManager::StringToNotesType( TypeAttr->value );
+			if( st == STEPS_TYPE_INVALID )
+				WARN_AND_CONTINUE;
 
 			XNode *pHighScoreListNode = (*stepsType)->GetChild("HighScoreList");
 			if( pHighScoreListNode == NULL )
