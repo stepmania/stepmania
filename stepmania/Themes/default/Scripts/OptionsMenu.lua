@@ -35,3 +35,28 @@ function OptionsRowTest()
 	}
 end
 
+-- This option row loads and saves the results to a table.  For example, if you
+-- have options "fast" and "slow", and the name of the option is "run", then the
+-- table will be set to table["run"] = "fast" (or "slow"), and loaded appropriately.
+-- (This could handle SelectMultiple, by saving the result to a table, eg.
+-- table["run"]["fast"] = true.)
+
+local OptionRowTable =
+{
+	SaveTo = nil, -- set this
+
+	LoadSelections = function(self, list, pn)
+		local Sort = PROFILEMAN:GetMachineProfile():GetSaved()[self.Name]
+		-- Find the index of the current sort.
+		local Index = FindValue(self.RawChoices, Sort) or 1
+		list[Index] = true
+	end,
+
+	SaveSelections = function(self, list, pn)
+		local Env = PROFILEMAN:GetMachineProfile():GetSaved()
+		local Selection = FindSelection( list )
+		Env[self.Name] = self.RawChoices[Selection]
+	end
+}
+
+
