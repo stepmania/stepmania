@@ -44,10 +44,6 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 
 	m_LifeMeterBar.Load( PLAYER_1 );
 	m_LifeMeterBar.SetXY( 480, 40 );
-	// we need to be a little lower than half if we want to hit
-	// zero with the actual miss steps. cheat.
-//	m_LifeMeterBar.ChangeLife(TNS_MISS);
-	// nicer fix :P  it depends on difficulty
 	m_LifeMeterBar.FillForHowToPlay(4, 6);
 
 	// Display random character+pad
@@ -154,6 +150,7 @@ void ScreenHowToPlay::Update( float fDelta )
 			case 20: m_mCharacter.SetFrame(150); break;
 			case 22: m_mCharacter.SetFrame(270); break;
 			};
+			m_mCharacter.Update(fDelta);
 		}
 		else
 		{
@@ -192,15 +189,16 @@ void ScreenHowToPlay::Update( float fDelta )
 				if( (m_mCharacter.GetCurFrame() >=243) || (m_mCharacter.GetCurFrame() <=184) )
 					m_mCharacter.SetFrame(184);
 				//Loop for HowToPlay static movement is 184~243
-			};
-
-			m_mCharacter.Update( (0+(fDelta*1.08f)) );
+				m_mCharacter.Update(fDelta);
+			} else
+				// if we update at normal speed during a step animation, it is too slow and
+				// doesn't finish in time.
+				m_mCharacter.Update( fDelta*1.8f );
 		};	
 
 	}
 
 	m_mDancePad.Update(fDelta);
-	m_mCharacter.Update(fDelta);
 	ScreenAttract::Update( fDelta );
 }
 
