@@ -93,7 +93,7 @@ void CourseContentsFrame::SetFromCourse( Course* pCourse )
 {
 	ASSERT( pCourse != NULL );
 
-	m_fTimeUntilScroll = 0;
+	m_fTimeUntilScroll = 3;
 	m_fItemAtTopOfList = 0;
 
 	m_iNumContents = 0; 
