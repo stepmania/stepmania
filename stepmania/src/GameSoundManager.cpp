@@ -314,6 +314,7 @@ static void StartQueuedSounds()
 
 void GameSoundManager::Flush()
 {
+	/* XXX: This is ugly; it'll wait a while, even if there's nothing to flush. */
 	g_Mutex->Lock();
 	g_bFlushing = true;
 	while( g_bFlushing )
