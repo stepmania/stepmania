@@ -822,7 +822,6 @@ extern const char *version_time;
 
 static void WriteLogHeader()
 {
-
 	LOG->Info( PRODUCT_NAME_VER );
 
 #if defined(HAVE_VERSION_INFO)
@@ -837,7 +836,6 @@ static void WriteLogHeader()
 	LOG->Info( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
 		1900+now.tm_year, now.tm_mon+1, now.tm_mday, now.tm_hour+1, now.tm_min, now.tm_sec );
 	LOG->Trace( " " );
-
 }
 
 int main(int argc, char* argv[])
