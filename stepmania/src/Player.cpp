@@ -339,27 +339,18 @@ void Player::DrawPrimitives()
 		m_HoldJudgement[c].Draw();
 }
 
-void Player::Step( int col )
+int Player::GetClosestBeat( int col, float fSeconds, float fMaxSecondsAhead, float fMaxSecondsBehind, bool IgnoreScored )
 {
-	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  GAMESTATE->m_CurStageStats.bFailed[m_PlayerNumber] )	// Oni dead
-		return;	// do nothing
-
-	//LOG->Trace( "Player::HandlePlayerStep()" );
-
-	ASSERT( col >= 0  &&  col <= GetNumTracks() );
-
-	const float fSongBeat = GAMESTATE->m_fSongBeat;
+	fMaxSecondsBehind; /* not yet implemented */
+	IgnoreScored; /* not yet implemented */
 
 	// look for the closest matching step
-	int iIndexStartLookingAt = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+	int iIndexStartLookingAt = BeatToNoteRow( fSeconds );
+
 	// number of elements to examine on either end of iIndexStartLookingAt
-	// 3dfsux: I expanded this window so that beat correction will look
-	int iNumElementsToExamine = BeatToNoteRow( GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate );
-	
-	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
+	int iNumElementsToExamine = BeatToNoteRow( fMaxSecondsAhead );
 
-	int iIndexOverlappingNote = -1;		// leave as -1 if we don't find any
-
+	int iIndexOverlappingNote = -1;
 	// Start at iIndexStartLookingAt and search outward.  The first one note 
 	// overlaps the player's hit (this is the closest match).
 	for( int delta=0; delta <= iNumElementsToExamine; delta++ )
@@ -392,6 +383,28 @@ void Player::Step( int col )
 			break;
 		}
 	}
+
+	return iIndexOverlappingNote;
+}
+
+void Player::Step( int col )
+{
+	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  GAMESTATE->m_CurStageStats.bFailed[m_PlayerNumber] )	// Oni dead
+		return;	// do nothing
+
+	//LOG->Trace( "Player::HandlePlayerStep()" );
+
+	ASSERT( col >= 0  &&  col <= GetNumTracks() );
+
+	const float fSongBeat = GAMESTATE->m_fSongBeat;
+
+	int iIndexOverlappingNote;
+	iIndexOverlappingNote = GetClosestBeat( col, GAMESTATE->m_fSongBeat, 
+						   GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
+						   GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
+						   true );
+	
+	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
 	bool bDestroyedNote = false;
 

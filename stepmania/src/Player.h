@@ -58,6 +58,8 @@ protected:
 	void HandleNoteScore( TapNoteScore score, int iNumTapsInRow );
 	void HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore );
 
+	int GetClosestBeat( int col, float fSeconds, float fMaxSecondsAhead, float fMaxSecondsBehind, bool IgnoreScored );
+
 	static float GetMaxBeatDifference();
 
 	PlayerNumber	m_PlayerNumber;
