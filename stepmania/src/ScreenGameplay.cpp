@@ -678,11 +678,11 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 
 
 		m_Back.Load( THEME->GetPathToB("Common back") );
-		m_Back.SetZ( -2 ); // on top of everything else
+		m_Back.SetZ( -4 ); // on top of everything else
 		this->AddChild( &m_Back );
 
 		m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenGameplay Overlay") );
-		m_Overlay.SetZ( -4 ); // on top of everything else
+		m_Overlay.SetZ( -3 ); // on top of everything else
 		this->AddChild( &m_Overlay );
 
 
