@@ -29,6 +29,8 @@ Model::Model ()
 	m_bUseZBuffer = true;
 	m_pCurAnimation = NULL;
 	m_bRevertToDefaultAnimation = false;
+	m_fDefaultAnimationRate = 1;
+	m_fCurAnimationRate = 1;
 }
 
 Model::~Model ()
@@ -683,15 +685,16 @@ void Model::DrawPrimitives()
 
 }
 
-void Model::SetDefaultAnimation( CString sAnimation )
+void Model::SetDefaultAnimation( CString sAnimation, float fPlayRate )
 {
 	m_sDefaultAnimation = sAnimation;
+	m_fDefaultAnimationRate = fPlayRate;
 	m_sMostRecentAnimation = "";	// Clear this out so if we set a different default
 									// while the current default is playing, it will
 									// change to the new one when the current ends.
 }
 
-void Model::PlayAnimation( CString sAniName )
+void Model::PlayAnimation( CString sAniName, float fPlayRate )
 {
 	msAnimation *pNewAnimation = NULL;
 	if( m_mapNameToAnimation.find(sAniName) == m_mapNameToAnimation.end() )
@@ -700,6 +703,7 @@ void Model::PlayAnimation( CString sAniName )
 		pNewAnimation = &m_mapNameToAnimation[sAniName];
 
 	m_fCurrFrame = 0;
+	m_fCurAnimationRate = fPlayRate;
 	m_sMostRecentAnimation = sAniName;
 
 	if ( m_pCurAnimation == pNewAnimation )
@@ -772,12 +776,12 @@ Model::AdvanceFrame (float dt)
 	if( m_Meshes.empty() || !m_pCurAnimation )
 		return;	// bail early
 
-	m_fCurrFrame += FRAMES_PER_SECOND * dt;
+	m_fCurrFrame += FRAMES_PER_SECOND * dt * m_fCurAnimationRate;
 	if (m_fCurrFrame >= (float)m_pCurAnimation->nTotalFrames)
 	{
 		if( (m_bRevertToDefaultAnimation) && (m_sDefaultAnimation != "") && (m_sDefaultAnimation != m_sMostRecentAnimation) )
 		{
-			this->PlayAnimation( m_sDefaultAnimation );
+			this->PlayAnimation( m_sDefaultAnimation, m_fDefaultAnimationRate );
 			m_fCurrFrame = 0.0f;
 			return;
 		}

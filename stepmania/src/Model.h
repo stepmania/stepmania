@@ -49,7 +49,7 @@ public:
 	bool	LoadFromModelFile( CString sFile );
 	bool	LoadMilkshapeAscii( CString sFile );
 	bool	LoadMilkshapeAsciiBones( CString sAniName, CString sFile );
-	void	PlayAnimation( CString sAniName );
+	void	PlayAnimation( CString sAniName, float fPlayRate = 1 );
 
 	virtual void	Update( float fDelta );
 	virtual void	DrawPrimitives();
@@ -61,7 +61,7 @@ public:
 	void SetFrame( float fNewFrame );
 	virtual int GetNumStates();
 	CString		GetDefaultAnimation() { return m_sDefaultAnimation; };
-	void		SetDefaultAnimation( CString sAnimation );
+	void		SetDefaultAnimation( CString sAnimation, float fPlayRate = 1 );
 	bool		m_bRevertToDefaultAnimation;
 
 
@@ -77,6 +77,8 @@ private:
 	vector<RageModelVertexVector>	m_vTempVerticesByBone;
 	float		m_fCurrFrame;
 	CString		m_sDefaultAnimation;
+	float		m_fDefaultAnimationRate;
+	float		m_fCurAnimationRate;
 	CString		m_sMostRecentAnimation;
 };
 
