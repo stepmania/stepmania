@@ -1928,6 +1928,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageSoundManager.h">
 			</File>
 			<File
+				RelativePath=".\RageSoundMixBuffer.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundMixBuffer.h">
+			</File>
+			<File
 				RelativePath="RageSoundPosMap.cpp">
 			</File>
 			<File
