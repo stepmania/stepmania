@@ -188,19 +188,38 @@ try_element_again:
 		GetDirListing( sThemeDir + sCategory + SLASH + sFileName + ".redir",
 						asElementPaths, false, true );
 
-		static const char *masks[NUM_ELEMENT_CATEGORIES][12] = {
-			{ "", NULL },
-			{ "*.ini", NULL },
-			{ "*.actor", "*.sprite", "*.png", "*.jpg", "*.bmp", "*.gif","*.avi", "*.mpg", "*.mpeg", "*.txt", NULL},
-			{ "*.png", NULL },
-			{ "*.mp3", "*.ogg", "*.wav", NULL },
-			{ "*.sm", NULL },
-		};		
-		const char **asset_masks = masks[category];
+		const CString wildcard = (category == BGAnimations? "":"*");
+		CStringArray asPaths;
+		GetDirListing( sThemeDir + sCategory + SLASH + sFileName + wildcard,
+						asPaths, bDirsOnly, true );
 
-		for( int i = 0; asset_masks[i]; ++i )
-			GetDirListing( sThemeDir + sCategory + SLASH + sFileName + asset_masks[i],
-							asElementPaths, bDirsOnly, true );
+		for( unsigned p = 0; p < asPaths.size(); ++p )
+		{
+			static const char *masks[NUM_ELEMENT_CATEGORIES][12] = {
+				{ "", NULL },
+				{ "ini", NULL },
+				{ "actor", "sprite", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", NULL},
+				{ "png", NULL },
+				{ "mp3", "ogg", "wav", NULL },
+				{ "sm", NULL },
+			};		
+			const char **asset_masks = masks[category];
+
+			const CString ext = GetExtension( asPaths[p] );
+
+			if( ext == "redir" )
+				continue; // got it already
+
+			for( int i = 0; asset_masks[i]; ++i )
+			{
+				if( ext == asset_masks[i] )
+				{
+					asElementPaths.push_back( asPaths[p] );
+					break;
+				}
+			}
+		}
+		
 		if( category == Fonts )
 			Font::WeedFontNames(asElementPaths, sFileName);
 	}
