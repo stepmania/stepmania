@@ -16,6 +16,8 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "ScreenManager.h"
+# include <stdio.h>
+# include <sys/stat.h>
 
 MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -242,23 +244,21 @@ bool UsbChanged()
 	// disconnected.  Use this as a trivial check.
 	static const CString VAR_LOG_MESSAGES = "/var/log/messages";
 	static bool bFirstTime = false;
-	static _stat old_stat;
+	static stat old_stat;
 	if( bFirstTime )
 	{
-		_fstat(VAR_LOG_MESSAGES, &old_stat);
+		fstat(VAR_LOG_MESSAGES, &old_stat);
 		bFirstTime = false;
 		return true;
 	}
 	else
 	{
-		_stat new_stat;
-		_fstat(VAR_LOG_MESSAGES, &new_stat);
+		stat new_stat;
+		fstat(VAR_LOG_MESSAGES, &new_stat);
 		bool bChanged = old_stat != new_stat;
 		old_stat = new_stat;
 		return bChanged;
 	}
-#elif defined(_WINDOWS)
-	return false;
 #else
 	return false;
 #endif
