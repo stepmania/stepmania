@@ -45,7 +45,7 @@ CFG=StepMania - Win32 Release
 # PROP Target_Dir ""
 CPP=cl.exe
 # ADD BASE CPP /nologo /MD /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /Fr /YX"global.h" /FD /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /Zi /Od /I "." /I "SDL-1.2.6\include" /I "SDL_image-1.2" /I "SDL_net-1.2.5\include" /I "vorbis" /I "ddk" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /FR /YX"global.h" /FD /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.6\include" /I "SDL_image-1.2" /I "SDL_net-1.2.5\include" /I "vorbis" /I "ddk" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /FR /YX"global.h" /FD /c
 MTL=midl.exe
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
@@ -65,7 +65,7 @@ IntDir=.\../Debug6
 TargetDir=\stepmania\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                        	cl                                                        /Zl                                                        /nologo                                                        /c                                                        verstub.cpp                                                        /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                         	cl                                                         /Zl                                                         /nologo                                                         /c                                                         verstub.cpp                                                         /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -142,7 +142,7 @@ IntDir=.\../Release6
 TargetDir=\stepmania\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                         	cl                  /Zl                  /nologo                  /c                  verstub.cpp                  /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                          	cl                   /Zl                   /nologo                   /c                   verstub.cpp                   /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
