@@ -23,48 +23,48 @@ static const CString PageTypeNames[NUM_PAGE_TYPES] = {
 XToString( PageType );
 
 
-#define STEPS_TYPES_TO_HIDE			THEME->GetMetric ("ScreenRanking","StepsTypesToHide")
-#define SHOW_CATEGORIES				THEME->GetMetricB("ScreenRanking","ShowCategories")
-#define SHOW_ALL_STEPS_SCORES		THEME->GetMetricB("ScreenRanking","ShowAllStepsScores")
-#define SHOW_ALL_COURSE_SCORES		THEME->GetMetricB("ScreenRanking","ShowAllCourseScores")
-#define DIFFICULTIES_TO_SHOW		THEME->GetMetric ("ScreenRanking","DifficultiesToShow")
+#define STEPS_TYPES_TO_HIDE			THEME->GetMetric (m_sName,"StepsTypesToHide")
+#define SHOW_CATEGORIES				THEME->GetMetricB(m_sName,"ShowCategories")
+#define SHOW_ALL_STEPS_SCORES		THEME->GetMetricB(m_sName,"ShowAllStepsScores")
+#define SHOW_ALL_COURSE_SCORES		THEME->GetMetricB(m_sName,"ShowAllCourseScores")
+#define DIFFICULTIES_TO_SHOW		THEME->GetMetric (m_sName,"DifficultiesToShow")
 #define COURSES_TO_SHOW				PREFSMAN->m_sCoursesToShowRanking
-#define SECONDS_PER_PAGE			THEME->GetMetricF("ScreenRanking","SecondsPerPage")
-#define PAGE_FADE_SECONDS			THEME->GetMetricF("ScreenRanking","PageFadeSeconds")
-#define PERCENT_DECIMAL_PLACES		THEME->GetMetricI("ScreenRanking","PercentDecimalPlaces")
-#define PERCENT_TOTAL_SIZE			THEME->GetMetricI("ScreenRanking","PercentTotalSize")
-#define NO_SCORE_NAME				THEME->GetMetric ("ScreenRanking","NoScoreName")
+#define SECONDS_PER_PAGE			THEME->GetMetricF(m_sName,"SecondsPerPage")
+#define PAGE_FADE_SECONDS			THEME->GetMetricF(m_sName,"PageFadeSeconds")
+#define PERCENT_DECIMAL_PLACES		THEME->GetMetricI(m_sName,"PercentDecimalPlaces")
+#define PERCENT_TOTAL_SIZE			THEME->GetMetricI(m_sName,"PercentTotalSize")
+#define NO_SCORE_NAME				THEME->GetMetric (m_sName,"NoScoreName")
 
-#define ROW_SPACING_X				THEME->GetMetricF("ScreenRanking","RowSpacingX")
-#define ROW_SPACING_Y				THEME->GetMetricF("ScreenRanking","RowSpacingY")
-#define COL_SPACING_X				THEME->GetMetricF("ScreenRanking","ColSpacingX")
-#define COL_SPACING_Y				THEME->GetMetricF("ScreenRanking","ColSpacingY")
-#define STEPS_TYPE_COLOR( i )		THEME->GetMetricC("ScreenRanking",ssprintf("StepsTypeColor%d",i+1))
-#define SONG_SCORE_ROWS_TO_SHOW		THEME->GetMetricI("ScreenRanking","SongScoreRowsToShow")
-#define SONG_SCORE_SECONDS_PER_ROW	THEME->GetMetricF("ScreenRanking","SongScoreSecondsPerRow")
+#define ROW_SPACING_X				THEME->GetMetricF(m_sName,"RowSpacingX")
+#define ROW_SPACING_Y				THEME->GetMetricF(m_sName,"RowSpacingY")
+#define COL_SPACING_X				THEME->GetMetricF(m_sName,"ColSpacingX")
+#define COL_SPACING_Y				THEME->GetMetricF(m_sName,"ColSpacingY")
+#define STEPS_TYPE_COLOR( i )		THEME->GetMetricC(m_sName,ssprintf("StepsTypeColor%d",i+1))
+#define SONG_SCORE_ROWS_TO_SHOW		THEME->GetMetricI(m_sName,"SongScoreRowsToShow")
+#define SONG_SCORE_SECONDS_PER_ROW	THEME->GetMetricF(m_sName,"SongScoreSecondsPerRow")
 
-#define BULLET_START_X				THEME->GetMetricF("ScreenRanking","BulletStartX")
-#define BULLET_START_Y				THEME->GetMetricF("ScreenRanking","BulletStartY")
-#define NAME_START_X				THEME->GetMetricF("ScreenRanking","NameStartX")
-#define NAME_START_Y				THEME->GetMetricF("ScreenRanking","NameStartY")
-#define SCORE_START_X				THEME->GetMetricF("ScreenRanking","ScoreStartX")
-#define SCORE_START_Y				THEME->GetMetricF("ScreenRanking","ScoreStartY")
-#define POINTS_START_X				THEME->GetMetricF("ScreenRanking","PointsStartX")
-#define POINTS_START_Y				THEME->GetMetricF("ScreenRanking","PointsStartY")
-#define TIME_START_X				THEME->GetMetricF("ScreenRanking","TimeStartX")
-#define TIME_START_Y				THEME->GetMetricF("ScreenRanking","TimeStartY")
-#define DIFFICULTY_START_X			THEME->GetMetricF("ScreenRanking","DifficultyStartX")
-#define DIFFICULTY_Y				THEME->GetMetricF("ScreenRanking","DifficultyY")
-#define COURSE_DIFFICULTY_START_X	THEME->GetMetricF("ScreenRanking","CourseDifficultyStartX")
-#define COURSE_DIFFICULTY_Y			THEME->GetMetricF("ScreenRanking","CourseDifficultyY")
-#define SONG_TITLE_OFFSET_X			THEME->GetMetricF("ScreenRanking","SongTitleOffsetX")
-#define SONG_TITLE_OFFSET_Y			THEME->GetMetricF("ScreenRanking","SongTitleOffsetY")
-#define SONG_FRAME_OFFSET_X			THEME->GetMetricF("ScreenRanking","SongFrameOffsetX")
-#define SONG_FRAME_OFFSET_Y			THEME->GetMetricF("ScreenRanking","SongFrameOffsetY")
-#define STEPS_SCORE_OFFSET_START_X	THEME->GetMetricF("ScreenRanking","StepsScoreOffsetStartX")
-#define STEPS_SCORE_OFFSET_Y		THEME->GetMetricF("ScreenRanking","StepsScoreOffsetY")
-#define COURSE_SCORE_OFFSET_START_X	THEME->GetMetricF("ScreenRanking","CourseListScoreOffsetStartX")
-#define COURSE_SCORE_OFFSET_Y		THEME->GetMetricF("ScreenRanking","CourseListScoreOffsetY")
+#define BULLET_START_X				THEME->GetMetricF(m_sName,"BulletStartX")
+#define BULLET_START_Y				THEME->GetMetricF(m_sName,"BulletStartY")
+#define NAME_START_X				THEME->GetMetricF(m_sName,"NameStartX")
+#define NAME_START_Y				THEME->GetMetricF(m_sName,"NameStartY")
+#define SCORE_START_X				THEME->GetMetricF(m_sName,"ScoreStartX")
+#define SCORE_START_Y				THEME->GetMetricF(m_sName,"ScoreStartY")
+#define POINTS_START_X				THEME->GetMetricF(m_sName,"PointsStartX")
+#define POINTS_START_Y				THEME->GetMetricF(m_sName,"PointsStartY")
+#define TIME_START_X				THEME->GetMetricF(m_sName,"TimeStartX")
+#define TIME_START_Y				THEME->GetMetricF(m_sName,"TimeStartY")
+#define DIFFICULTY_START_X			THEME->GetMetricF(m_sName,"DifficultyStartX")
+#define DIFFICULTY_Y				THEME->GetMetricF(m_sName,"DifficultyY")
+#define COURSE_DIFFICULTY_START_X	THEME->GetMetricF(m_sName,"CourseDifficultyStartX")
+#define COURSE_DIFFICULTY_Y			THEME->GetMetricF(m_sName,"CourseDifficultyY")
+#define SONG_TITLE_OFFSET_X			THEME->GetMetricF(m_sName,"SongTitleOffsetX")
+#define SONG_TITLE_OFFSET_Y			THEME->GetMetricF(m_sName,"SongTitleOffsetY")
+#define SONG_FRAME_OFFSET_X			THEME->GetMetricF(m_sName,"SongFrameOffsetX")
+#define SONG_FRAME_OFFSET_Y			THEME->GetMetricF(m_sName,"SongFrameOffsetY")
+#define STEPS_SCORE_OFFSET_START_X	THEME->GetMetricF(m_sName,"StepsScoreOffsetStartX")
+#define STEPS_SCORE_OFFSET_Y		THEME->GetMetricF(m_sName,"StepsScoreOffsetY")
+#define COURSE_SCORE_OFFSET_START_X	THEME->GetMetricF(m_sName,"CourseListScoreOffsetStartX")
+#define COURSE_SCORE_OFFSET_Y		THEME->GetMetricF(m_sName,"CourseListScoreOffsetY")
 
 
 #define BULLET_X(row)				(BULLET_START_X+ROW_SPACING_X*row)
@@ -107,19 +107,19 @@ void ScreenRanking::Init()
 		this->AddChild( &m_sprBannerFrame );
 
 		m_textCategory.SetName( "Category" );
-		m_textCategory.LoadFromFont( THEME->GetPathF("ScreenRanking","category") );
+		m_textCategory.LoadFromFont( THEME->GetPathF(m_sName,"category") );
 		m_textCategory.SetShadowLength( 0 );
 		m_textCategory.SetHidden( true );
 		this->AddChild( &m_textCategory );
 
 		m_textCourseTitle.SetName( "CourseTitle" );
-		m_textCourseTitle.LoadFromFont( THEME->GetPathF("ScreenRanking","course title") );
+		m_textCourseTitle.LoadFromFont( THEME->GetPathF(m_sName,"course title") );
 		m_textCourseTitle.SetShadowLength( 0 );
 		m_textCourseTitle.SetHidden( true );
 		this->AddChild( &m_textCourseTitle );
 
 		m_textStepsType.SetName( "StepsType" );
-		m_textStepsType.LoadFromFont( THEME->GetPathF("ScreenRanking","steps type") );
+		m_textStepsType.LoadFromFont( THEME->GetPathF(m_sName,"steps type") );
 		m_textStepsType.SetShadowLength( 0 );
 		m_textStepsType.SetHidden( true );
 		this->AddChild( &m_textStepsType );
@@ -128,35 +128,35 @@ void ScreenRanking::Init()
 		for( int l=0; l<NUM_RANKING_LINES; l++ )
 		{
 			m_sprBullets[l].SetName( ssprintf("Bullet%d",l+1) );
-			m_sprBullets[l].Load( THEME->GetPathG( "ScreenRanking", ssprintf("bullets 1x%d",NUM_RANKING_LINES) ) );
+			m_sprBullets[l].Load( THEME->GetPathG( m_sName, ssprintf("bullets 1x%d",NUM_RANKING_LINES) ) );
 			m_sprBullets[l].SetState( l );
 			m_sprBullets[l].StopAnimating();
 			m_sprBullets[l].SetHidden( true );
 			this->AddChild( &m_sprBullets[l] );
 
 			m_textNames[l].SetName( ssprintf("Name%d",l+1) );
-			m_textNames[l].LoadFromFont( THEME->GetPathF("ScreenRanking","name") );
+			m_textNames[l].LoadFromFont( THEME->GetPathF(m_sName,"name") );
 			m_textNames[l].SetHidden( true );
 			this->AddChild( &m_textNames[l] );
 
 			m_textScores[l].SetName( ssprintf("Score%d",l+1) );
-			m_textScores[l].LoadFromFont( THEME->GetPathF("ScreenRanking","score") );
+			m_textScores[l].LoadFromFont( THEME->GetPathF(m_sName,"score") );
 			m_textScores[l].SetHidden( true );
 			this->AddChild( &m_textScores[l] );
 
 			m_textPoints[l].SetName( ssprintf("Points%d",l+1) );
-			m_textPoints[l].LoadFromFont( THEME->GetPathF("ScreenRanking","points") );
+			m_textPoints[l].LoadFromFont( THEME->GetPathF(m_sName,"points") );
 			m_textPoints[l].SetHidden( true );
 			this->AddChild( &m_textPoints[l] );
 			
 			m_textTime[l].SetName( ssprintf("Time%d",l+1) );
-			m_textTime[l].LoadFromFont( THEME->GetPathF("ScreenRanking","time") );
+			m_textTime[l].LoadFromFont( THEME->GetPathF(m_sName,"time") );
 			m_textTime[l].SetHidden( true );
 			this->AddChild( &m_textTime[l] );
 
 			// TODO: Think of a better way to handle this
 			if( PREFSMAN->m_sCoursesToShowRanking == "" )
-				PREFSMAN->m_sCoursesToShowRanking = THEME->GetMetric("ScreenRanking","CoursesToShow");
+				PREFSMAN->m_sCoursesToShowRanking = THEME->GetMetric(m_sName,"CoursesToShow");
 		}
 	}
 
@@ -198,18 +198,18 @@ void ScreenRanking::Init()
 
 			pStepsScoreRowItem->m_sprSongFrame.SetName( "SongFrame" );
 			pStepsScoreRowItem->m_sprSongFrame.SetHidden( true );
-			pStepsScoreRowItem->m_sprSongFrame.Load( THEME->GetPathG("ScreenRanking","song frame") );
+			pStepsScoreRowItem->m_sprSongFrame.Load( THEME->GetPathG(m_sName,"song frame") );
 			pStepsScoreRowItem->AddChild( &pStepsScoreRowItem->m_sprSongFrame );
 
 			pStepsScoreRowItem->m_textSongTitle.SetName( "SongTitle" );
 			pStepsScoreRowItem->m_textSongTitle.SetHidden( true );
-			pStepsScoreRowItem->m_textSongTitle.LoadFromFont( THEME->GetPathF("ScreenRanking","song title") );
+			pStepsScoreRowItem->m_textSongTitle.LoadFromFont( THEME->GetPathF(m_sName,"song title") );
 			pStepsScoreRowItem->AddChild( &pStepsScoreRowItem->m_textSongTitle );
 
 			for( int d=0; d<NUM_DIFFICULTIES; d++ )
 			{
 				pStepsScoreRowItem->m_textStepsScore[d].SetName( "StepsScore" );
-				pStepsScoreRowItem->m_textStepsScore[d].LoadFromFont( THEME->GetPathF("ScreenRanking","steps score") );
+				pStepsScoreRowItem->m_textStepsScore[d].LoadFromFont( THEME->GetPathF(m_sName,"steps score") );
 				pStepsScoreRowItem->m_textStepsScore[d].SetHidden( true );
 				pStepsScoreRowItem->AddChild( &pStepsScoreRowItem->m_textStepsScore[d] );
 			}
@@ -246,18 +246,18 @@ void ScreenRanking::Init()
 
 			pCourseScoreRowItem->m_sprSongFrame.SetName( "CourseListFrame" );
 			pCourseScoreRowItem->m_sprSongFrame.SetHidden( true );
-			pCourseScoreRowItem->m_sprSongFrame.Load( THEME->GetPathG("ScreenRanking","course frame") );
+			pCourseScoreRowItem->m_sprSongFrame.Load( THEME->GetPathG(m_sName,"course frame") );
 			pCourseScoreRowItem->AddChild( &pCourseScoreRowItem->m_sprSongFrame );
 
 			pCourseScoreRowItem->m_textSongTitle.SetName( "CourseListTitle" );
 			pCourseScoreRowItem->m_textSongTitle.SetHidden( true );
-			pCourseScoreRowItem->m_textSongTitle.LoadFromFont( THEME->GetPathF("ScreenRanking","course list title") );
+			pCourseScoreRowItem->m_textSongTitle.LoadFromFont( THEME->GetPathF(m_sName,"course list title") );
 			pCourseScoreRowItem->AddChild( &pCourseScoreRowItem->m_textSongTitle );
 
 			FOREACH_ShownCourseDifficulty(d)
 			{
 				pCourseScoreRowItem->m_textStepsScore[d].SetName( "CourseListScore" );
-				pCourseScoreRowItem->m_textStepsScore[d].LoadFromFont( THEME->GetPathF("ScreenRanking","course list score") );
+				pCourseScoreRowItem->m_textStepsScore[d].LoadFromFont( THEME->GetPathF(m_sName,"course list score") );
 				pCourseScoreRowItem->m_textStepsScore[d].SetHidden( true );
 				pCourseScoreRowItem->AddChild( &pCourseScoreRowItem->m_textStepsScore[d] );
 			}
