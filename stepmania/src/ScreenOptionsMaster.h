@@ -42,7 +42,7 @@ private:
 	OptionRow *m_OptionRowAlloc;
 
 	CString ConvertParamToThemeDifficulty( const CString &in ) const;
-	void ExportOption( const OptionRow &row, const OptionRowHandler &hand, int pn, int sel );
+	int ExportOption( const OptionRow &row, const OptionRowHandler &hand, int pn, int sel );
 	int ImportOption( const OptionRow &row, const OptionRowHandler &hand, int pn );
 	void SetList( OptionRow &row, OptionRowHandler &hand, CString param, CString &TitleOut );
 	void SetStep( OptionRow &row, OptionRowHandler &hand );

@@ -150,7 +150,7 @@ void ScreenOptionsMaster::SetConf( OptionRow &row, OptionRowHandler &hand, CStri
 	row.bOneChoiceForAllPlayers = true;
 	hand.type = ROW_CONFIG;
 
-	hand.opt = FindConfOption( param );
+	hand.opt = ConfOption::Find( param );
 	if( hand.opt == NULL )
 		RageException::Throw( "Invalid Conf type \"%s\"", param.c_str() );
 
@@ -366,7 +366,9 @@ void ScreenOptionsMaster::ImportOptions()
 	}
 }
 
-void ScreenOptionsMaster::ExportOption( const OptionRow &row, const OptionRowHandler &hand, int pn, int sel )
+
+/* Returns an OPT mask. */
+int ScreenOptionsMaster::ExportOption( const OptionRow &row, const OptionRowHandler &hand, int pn, int sel )
 {
 	/* Figure out which selection is the default. */
 	switch( hand.type )
@@ -377,8 +379,24 @@ void ScreenOptionsMaster::ExportOption( const OptionRow &row, const OptionRowHan
 		break;
 
 	case ROW_CONFIG:
+	{
+		/* Get the original choice. */
+		int Original = hand.opt->Get( row.choices );
+
+		/* Apply. */
 		hand.opt->Put( sel, row.choices );
-		break;
+
+		/* Get the new choice. */
+		int New = hand.opt->Get( row.choices );
+
+		/* If it didn't change, don't return any side-effects. */
+		LOG->Trace("origin %i, %i  %s", Original, New, hand.opt->name.c_str());
+		if( Original == New )
+			return 0;
+		LOG->Trace("foo %i", hand.opt->GetEffects());
+
+		return hand.opt->GetEffects();
+	}
 
 	case ROW_CHARACTER:
 		if( sel == 0 )
@@ -422,11 +440,12 @@ void ScreenOptionsMaster::ExportOption( const OptionRow &row, const OptionRowHan
 		ASSERT(0);
 		break;
 	}
+	return 0;
 }
 
 void ScreenOptionsMaster::ExportOptions()
 {
-	const CString OldTheme = THEME->GetCurThemeName();
+	int ChangeMask = 0;
 
 	unsigned i;
 	for( i = 0; i < OptionRowHandlers.size(); ++i )
@@ -436,7 +455,7 @@ void ScreenOptionsMaster::ExportOptions()
 
 		if( row.bOneChoiceForAllPlayers )
 		{
-			ExportOption( row, hand, 0, m_iSelectedOption[0][i] );
+			ChangeMask |= ExportOption( row, hand, 0, m_iSelectedOption[0][i] );
 		}
 		else
 			for( int pn=0; pn<NUM_PLAYERS; pn++ )
@@ -444,7 +463,7 @@ void ScreenOptionsMaster::ExportOptions()
 				if( !GAMESTATE->IsHumanPlayer(pn) )
 					continue;
 
-				ExportOption( row, hand, pn, m_iSelectedOption[pn][i] );
+				ChangeMask |= ExportOption( row, hand, pn, m_iSelectedOption[pn][i] );
 			}
 	}
 
@@ -467,24 +486,14 @@ void ScreenOptionsMaster::ExportOptions()
 	if( m_NextScreen == "" )
 		m_NextScreen = NEXT_SCREEN;
 
-	/* If any ROW_CONFIG options were used, save preferences. */
-	bool ConfChanged = false;
-	for( i = 0; i < OptionRowHandlers.size(); ++i )
-		if( OptionRowHandlers[i].type == ROW_CONFIG )
-			ConfChanged = true;
-
 	/* Did the theme change? */
-	if( OldTheme != THEME->GetCurThemeName() )
-	{
-		// THEME->SwitchThemeAndLanguage( sNewTheme, THEME->GetCurLanguage() );
-		ApplyGraphicOptions();	// reset graphics to apply new window title and icon
+	if( (ChangeMask & OPT_APPLY_THEME) || 
+		(ChangeMask & OPT_APPLY_GRAPHICS) ) 	// reset graphics to apply new window title and icon
+		ApplyGraphicOptions();
 
-		SONGMAN->UpdateRankingCourses(); // update ranking courses
-		ConfChanged = true; // save it
-	}
-
-	if( ConfChanged )
+	if( ChangeMask & OPT_SAVE_PREFERENCES )
 	{
+		/* Save preferences. */
 		LOG->Trace("ROW_CONFIG used; saving ...");
 		PREFSMAN->SaveGlobalPrefsToDisk();
 		PREFSMAN->SaveGamePrefsToDisk();

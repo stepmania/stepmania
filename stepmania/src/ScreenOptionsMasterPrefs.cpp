@@ -7,6 +7,8 @@
 #include "NoteSkinManager.h"
 #include "PlayerOptions.h"
 #include "SongOptions.h"
+#include "RageDisplay.h"
+#include "RageUtil.h"
 
 /* "sel" is the selection in the menu. */
 template<class T>
@@ -197,6 +199,77 @@ MOVE( MarvelousTiming,		PREFSMAN->m_iMarvelousTiming );
 MOVE( PickExtraStage,		PREFSMAN->m_bPickExtraStage );
 MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
 
+/* Graphic options */
+MOVE( DisplayMode,			PREFSMAN->m_bWindowed );
+MOVE( WaitForVsync,			PREFSMAN->m_bVsync );
+MOVE( ShowStats,			PREFSMAN->m_bShowStats );
+MOVE( KeepTexturesInMemory,	PREFSMAN->m_bDelayedTextureDelete );
+
+template<class T>
+static void MoveMap( int &sel, T &opt, bool ToSel, const T *map, unsigned cnt )
+{
+	if( ToSel )
+	{
+		/* opt -> sel.  Find the closest entry in map. */
+		T best_dist = -1;
+		
+		for( unsigned i = 0; i < cnt; ++i )
+		{
+			const T val = map[i];
+			T dist = opt-val;
+			if( dist < 0 )
+				dist = -dist;
+			if( best_dist != -1 && dist > best_dist )
+				continue;
+			
+			best_dist = dist;
+
+			sel = i;
+		}
+	} else {
+		/* sel -> opt */
+		opt = map[sel];
+	}
+}
+
+static void DisplayResolution( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const int map[] = { 320,400,512,640,800,1024,1280 };
+	MoveMap( sel, PREFSMAN->m_iDisplayWidth, ToSel, map, ARRAYSIZE(map) );
+	if( !ToSel )
+		PREFSMAN->m_iDisplayHeight = PREFSMAN->m_iDisplayWidth * 3 / 4;
+}
+
+static void DisplayColor( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const int map[] = { 16,32 };
+	MoveMap( sel, PREFSMAN->m_iDisplayColorDepth, ToSel, map, ARRAYSIZE(map) );
+}
+
+static void TextureResolution( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const int map[] = { 256,512,1024,2048 };
+	MoveMap( sel, PREFSMAN->m_iMaxTextureResolution, ToSel, map, ARRAYSIZE(map) );
+}
+
+static void TextureColor( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const int map[] = { 16,32 };
+	MoveMap( sel, PREFSMAN->m_iTextureColorDepth, ToSel, map, ARRAYSIZE(map) );
+}
+
+static void RefreshRate( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const int map[] = { (int) REFRESH_DEFAULT,60,70,72,75,80,85,90,100,120,150 };
+	MoveMap( sel, PREFSMAN->m_iRefreshRate, ToSel, map, ARRAYSIZE(map) );
+}
+
+static void MovieDecode( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const int map[] = { 1,2,3,4 };
+	MoveMap( sel, PREFSMAN->m_iMovieDecodeMS, ToSel, map, ARRAYSIZE(map) );
+}
+
 /* Sound options */
 MOVE( PreloadSounds,		PREFSMAN->m_bSoundPreloadAll );
 MOVE( ResamplingQuality,	PREFSMAN->m_iSoundResampleQuality );
@@ -248,13 +321,51 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Pick Extra\nStage",	PickExtraStage,		"OFF","ON" ),
 	ConfOption( "Unlock\nSystem",		UnlockSystem,		"OFF","ON" ),
 
+	/* Graphic options */
+	ConfOption( "Display\nMode",		DisplayMode,		"FULLSCREEN", "WINDOWED" ),
+	ConfOption( "Display\nResolution",	DisplayResolution,	"320","400","512","640","800","1024","1280" ),
+	ConfOption( "Display\nColor",		DisplayColor,		"16BIT","32BIT" ),
+	ConfOption( "Texture\nResolution",	TextureResolution,	"256","512","1024","2048" ),
+	ConfOption( "Texture\nColor",		TextureColor,		"16BIT","32BIT" ),
+	ConfOption( "Keep Textures\nIn Memory", KeepTexturesInMemory,	"NO","YES" ),
+	ConfOption( "Refresh\nRate",		RefreshRate,		"DEFAULT","60","70","72","75","80","85","90","100","120","150" ),
+	ConfOption( "Movie\nDecode",		MovieDecode,		"1ms","2ms","3ms","4ms" ),
+	ConfOption( "Wait For\nVsync",		WaitForVsync,		"NO", "YES" ),
+	ConfOption( "Show\nStats",			ShowStats,			"OFF","ON" ),
+
 	/* Sound options */
-	ConfOption( "Preload\nSounds",		PreloadSounds, "NO","YES" ),
-	ConfOption( "Resampling\nQuality",	ResamplingQuality, "FAST","NORMAL","HIGH QUALITY" ),
+	ConfOption( "Preload\nSounds",		PreloadSounds,		"NO","YES" ),
+	ConfOption( "Resampling\nQuality",	ResamplingQuality,	"FAST","NORMAL","HIGH QUALITY" ),
 	ConfOption( "", NULL )
 };
 
-const ConfOption *FindConfOption( CString name )
+/* Get a mask of effects to apply if the given option changes. */
+int ConfOption::GetEffects() const
+{
+	struct opts {
+		ConfOption::MoveData_t ptr;
+		int effects;
+	} opts[] = {
+		{ Language,				OPT_APPLY_THEME },
+		{ Theme,				OPT_APPLY_THEME },
+		{ DisplayMode,			OPT_APPLY_GRAPHICS },
+		{ DisplayResolution,	OPT_APPLY_GRAPHICS },
+		{ DisplayColor,			OPT_APPLY_GRAPHICS },
+		{ TextureResolution,	OPT_APPLY_GRAPHICS },
+		{ KeepTexturesInMemory,	OPT_APPLY_GRAPHICS },
+		{ RefreshRate,			OPT_APPLY_GRAPHICS },
+		{ WaitForVsync,			OPT_APPLY_GRAPHICS }
+	};
+
+	int ret = OPT_SAVE_PREFERENCES;
+	for( unsigned i = 0; i < ARRAYSIZE(opts); ++i )
+		if( opts[i].ptr == MoveData )
+			return ret |= opts[i].effects;
+
+	return ret;
+}
+
+const ConfOption *ConfOption::Find( CString name )
 {
 	for( unsigned i = 0; g_ConfOptions[i].name != ""; ++i )
 	{
