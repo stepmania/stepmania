@@ -12,23 +12,21 @@
 -----------------------------------------------------------------------------
 */
 
-#include <stdio.h>
-
 class RageLog
 {
 public:
 	RageLog();
 	~RageLog();
 
-	void Trace( const char *fmt, ...);
-	void Warn( const char *fmt, ...);
-	void Info( const char *fmt, ...);
+	void Trace( const char *fmt, ...) PRINTF(2,3);
+	void Warn( const char *fmt, ...) PRINTF(2,3);
+	void Info( const char *fmt, ...) PRINTF(2,3);
 	void Flush();
 
 	void ShowConsole();
 	void HideConsole();
 
-	void MapLog(const CString &key, const char *fmt, ...);
+	void MapLog(const CString &key, const char *fmt, ...) PRINTF(3,4);
 	void UnmapLog(const CString &key);
 
 	static const char *GetAdditionalLog();
