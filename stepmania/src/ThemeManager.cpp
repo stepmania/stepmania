@@ -299,7 +299,7 @@ void ThemeManager::UpdateLuaGlobals()
 	{
 		const CString &sThemeDir = GetThemeDirFromName( iter->sThemeName );
 		CStringArray asElementPaths;
-		GetDirListing( sThemeDir + "Lua/*.lua", asElementPaths, false, true );
+		GetDirListing( sThemeDir + "Scripts/*.lua", asElementPaths, false, true );
 		for( unsigned i = 0; i < asElementPaths.size(); ++i )
 		{
 			const CString &sPath = asElementPaths[i];
