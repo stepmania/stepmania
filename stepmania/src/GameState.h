@@ -152,6 +152,7 @@ public:
 	map<float,CString> m_BeatToNoteSkin[NUM_PLAYERS];
 	int			m_BeatToNoteSkinRev; /* hack: incremented whenever m_BeatToNoteSkin changes */
 	void ResetNoteSkins();
+	void GetAllUsedNoteSkins( vector<CString> &out ) const;
 
 	static const float MUSIC_SECONDS_INVALID;
 
@@ -170,14 +171,18 @@ public:
 	struct Attack
 	{
 		AttackLevel	level;
+		float fStartSecond; // -1 = now
 		float fSecsRemaining;
 		CString sModifier;
 		bool IsBlank() { return sModifier.empty(); }
 		void MakeBlank() { sModifier=""; }
+		Attack() { fStartSecond = -1; }
 	};
 	enum { MAX_SIMULTANEOUS_ATTACKS=16 };
 	Attack	m_ActiveAttacks[NUM_PLAYERS][MAX_SIMULTANEOUS_ATTACKS];
 	vector<PlayerOptions::Transform>	m_TransformsToApply[NUM_PLAYERS];
+	void ActivateAttack( PlayerNumber target, int slot, bool ActivingDelayedAttack );
+	void SetNoteSkinForBeatRange( PlayerNumber pn, CString sNoteSkin, float StartBeat, float EndBeat );
 
 	// used in PLAY_MODE_BATTLE
 	Attack	m_Inventory[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
@@ -196,7 +201,7 @@ public:
 		for( int p=0; p<NUM_PLAYERS; p++ )
 			RemoveActiveAttacksForPlayer( (PlayerNumber)p );
 	}
-	void RemoveActiveAttacksForPlayer( PlayerNumber pn );
+	void RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al=NUM_ATTACK_LEVELS /*all*/ );
 	void RemoveAllInventory();
 	int GetSumOfActiveAttackLevels( PlayerNumber pn );
 	PlayerNumber GetBestPlayer();

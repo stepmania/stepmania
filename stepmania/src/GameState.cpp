@@ -145,23 +145,46 @@ void GameState::Update( float fDelta )
 	{
 		m_CurrentPlayerOptions[p].Approach( m_PlayerOptions[p], fDelta );
 
+		bool RebuildPlayerOptions = false;
+
+		/* See if any delayed attacks are starting. */
+		for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
+		{
+			if( m_ActiveAttacks[p][s].fStartSecond < 0 )
+				continue; /* already started */
+			if( m_ActiveAttacks[p][s].fStartSecond > this->m_fMusicSeconds )
+				continue; /* not yet */
+
+			m_ActiveAttacks[p][s].fStartSecond = -1;
+
+			ActivateAttack( (PlayerNumber)p, s, true );
+			RebuildPlayerOptions = true;
+		}
+
+		/* See if any attacks are ending. */
 		m_bActiveAttackEndedThisUpdate[p] = false;
 
 		for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
 		{
+			if( m_ActiveAttacks[p][s].fStartSecond >= 0 )
+				continue; /* hasn't started yet */
+
+			if( m_ActiveAttacks[p][s].fSecsRemaining <= 0 )
+				continue; /* ended already */
+
+			m_ActiveAttacks[p][s].fSecsRemaining -= fDelta;
+
 			if( m_ActiveAttacks[p][s].fSecsRemaining > 0 )
-			{
-				m_ActiveAttacks[p][s].fSecsRemaining -= fDelta;
-				if( m_ActiveAttacks[p][s].fSecsRemaining <= 0 )
-				{
-					m_ActiveAttacks[p][s].fSecsRemaining = 0;
-					m_ActiveAttacks[p][s].sModifier = "";
-					m_bActiveAttackEndedThisUpdate[p] = true;
-				}
-			}
+				continue; /* continuing */
+
+			/* ending */
+			m_ActiveAttacks[p][s].fSecsRemaining = 0;
+			m_ActiveAttacks[p][s].sModifier = "";
+			m_bActiveAttackEndedThisUpdate[p] = true;
+			RebuildPlayerOptions = true;
 		}
 
-		if( m_bActiveAttackEndedThisUpdate[p] )
+		if( RebuildPlayerOptions )
 			RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
 	}
 }
@@ -560,6 +583,37 @@ void GameState::ResetNoteSkins()
 	m_BeatToNoteSkinRev = 0;
 }
 
+void GameState::GetAllUsedNoteSkins( vector<CString> &out ) const
+{
+	for( int pn=0; pn<NUM_PLAYERS; ++pn )
+	{
+		out.push_back( GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin );
+
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_BATTLE:
+		case PLAY_MODE_RAVE:
+			for( int al=0; al<NUM_ATTACK_LEVELS; al++ )
+			{
+				const Character *ch = GAMESTATE->m_pCurCharacters[pn];
+				ASSERT( ch );
+				const CString* asAttacks = ch->m_sAttacks[al];
+				for( int att = 0; att < NUM_ATTACKS_PER_LEVEL; ++att )
+				{
+					PlayerOptions po;
+					po.FromString( asAttacks[att] );
+					if( po.m_sNoteSkin != "" )
+						out.push_back( po.m_sNoteSkin );
+				}
+			}
+		}
+
+		for( map<float,CString>::const_iterator it = m_BeatToNoteSkin[pn].begin(); 
+			it != m_BeatToNoteSkin[pn].end(); ++it )
+			out.push_back( it->second );
+	}
+}
+
 /* From NoteField: */
 
 void GameState::GetUndisplayedBeats( PlayerNumber pn, float TotalSeconds, float &StartBeat, float &EndBeat )
@@ -574,9 +628,20 @@ void GameState::GetUndisplayedBeats( PlayerNumber pn, float TotalSeconds, float 
 	EndBeat = truncf(EndBeat)+1;
 }
 
-void GameState::LaunchAttack( PlayerNumber target, Attack a )
+void GameState::ActivateAttack( PlayerNumber target, int slot, bool ActivingDelayedAttack )
 {
-	LOG->Trace( "Launch attack '%s' against P%d", a.sModifier.c_str(), target+1 );
+	const Attack &a = m_ActiveAttacks[target][slot];
+
+	enum { QUEUE_FOR_LATER, ACTIVATE_QUEUED_ATTACK, START_IMMEDIATELY } type;
+	if( ActivingDelayedAttack )
+	{
+		ASSERT( a.fStartSecond < 0 );
+		type = ACTIVATE_QUEUED_ATTACK;
+	}
+	else if( a.fStartSecond >= 0 )
+		type = QUEUE_FOR_LATER;
+	else
+		type = START_IMMEDIATELY;
 
 	//
 	// Peek at the effect being applied.  If it's a transform, add it to 
@@ -585,61 +650,87 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 	//
 	PlayerOptions po;
 	po.FromString( a.sModifier );
-	if( po.m_Transform != PlayerOptions::TRANSFORM_NONE )
+	if( type != QUEUE_FOR_LATER && po.m_Transform != PlayerOptions::TRANSFORM_NONE )
 	{
 		m_TransformsToApply[target].push_back( po.m_Transform );
 	}
 
 	if( po.m_sNoteSkin != "" )
 	{
-		map<float,CString> &BeatToNoteSkin = m_BeatToNoteSkin[target];
-		/* Add it in the future, past what's currently on screen, so new arrows will scroll
-		 * on screen with this skin. */
-		float StartBeat, EndBeat;
-		GetUndisplayedBeats( target, a.fSecsRemaining, StartBeat, EndBeat );
-
-		/* If there are any note skins after the point we're adding, remove them.  We probably
-		 * have overlapping note skin attacks. */
-		map<float,CString>::iterator it = BeatToNoteSkin.begin();
-		while( it != BeatToNoteSkin.end() )
+		if( type == QUEUE_FOR_LATER )
 		{
-			map<float,CString>::iterator next = it;
-			++next;
-			if( it->first >= StartBeat )
-			{
-				LOG->Trace( "erase old %f", it->first );
-				BeatToNoteSkin.erase( it );
-			}
-			it = next;
+			float StartBeat = this->m_pCurSong->GetBeatFromElapsedTime( a.fStartSecond );
+			float EndBeat = this->m_pCurSong->GetBeatFromElapsedTime( a.fStartSecond+a.fSecsRemaining );
+			LOG->Trace("... x queue at %f..%f", StartBeat, EndBeat );
+			SetNoteSkinForBeatRange( target, po.m_sNoteSkin, StartBeat, EndBeat );
 		}
-
-		/* Add the skin to m_BeatToNoteSkin.  */
-		BeatToNoteSkin[StartBeat] = po.m_sNoteSkin;
-
-		/* Return to the default note skin after the duration. */
-		BeatToNoteSkin[EndBeat] = GAMESTATE->m_PlayerOptions[target].m_sNoteSkin;
-
-		++m_BeatToNoteSkinRev;
-		po.m_sNoteSkin = "";
+		else if( type == START_IMMEDIATELY )
+		{
+			/* We're changing note skins on the fly.  Add it in the future, past what's
+			 * currently on screen, so new arrows will scroll on screen with this skin. */
+			float StartBeat, EndBeat;
+			GetUndisplayedBeats( target, a.fSecsRemaining, StartBeat, EndBeat );
+			SetNoteSkinForBeatRange( target, po.m_sNoteSkin, StartBeat, EndBeat );
+		}
 	}
+}
+
+void GameState::SetNoteSkinForBeatRange( PlayerNumber pn, CString sNoteSkin, float StartBeat, float EndBeat )
+{
+			LOG->Trace("... queue at %f..%f", StartBeat, EndBeat );
+
+	map<float,CString> &BeatToNoteSkin = m_BeatToNoteSkin[pn];
+
+	/* Erase any other note skin settings in this range. */
+	map<float,CString>::iterator it = BeatToNoteSkin.lower_bound( StartBeat );
+	map<float,CString>::iterator end = BeatToNoteSkin.upper_bound( EndBeat );
+	while( it != end )
+	{
+		map<float,CString>::iterator next = it;
+		++next;
+
+		BeatToNoteSkin.erase( it );
+
+		it = next;
+	}
+
+	/* Add the skin to m_BeatToNoteSkin.  */
+	BeatToNoteSkin[StartBeat] = sNoteSkin;
+
+	/* Return to the default note skin after the duration. */
+	BeatToNoteSkin[EndBeat] = m_StoredPlayerOptions[pn].m_sNoteSkin;
+
+	++m_BeatToNoteSkinRev;
+}
+
+/* This is called to launch an attack, or to queue an attack if a.fStartSecond
+ * is set.  This is also called by GameState::Update when activating a queued attack. */
+void GameState::LaunchAttack( PlayerNumber target, Attack a )
+{
+	LOG->Trace( "Launch attack '%s' against P%d at %f", a.sModifier.c_str(), target+1, a.fStartSecond );
 
 	// search for an open slot
 	for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
+	{
 		if( m_ActiveAttacks[target][s].fSecsRemaining <= 0 )
 		{
 			m_ActiveAttacks[target][s] = a;
+			ActivateAttack( target, s, false );
 			GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( target );
 			return;
 		}
+	}
 
 	LOG->Warn("Couldn't launch attack '%s' against p%i: no empty attack slots",
 		a.sModifier.c_str(), target );
 }
 
-void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn )
+void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al )
 {
 	for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
 	{
+		if( al != NUM_ATTACK_LEVELS && al != m_ActiveAttacks[pn][s].level )
+			continue;
 		m_ActiveAttacks[pn][s].fSecsRemaining = 0;
 		m_ActiveAttacks[pn][s].sModifier = "";
 	}
@@ -661,7 +752,11 @@ void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
 	// rebuild player options
 	PlayerOptions po = m_StoredPlayerOptions[pn];
 	for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
+	{
+		if( m_ActiveAttacks[pn][s].fStartSecond >= 0 )
+			continue; /* hasn't started yet */
 		po.FromString( m_ActiveAttacks[pn][s].sModifier );
+	}
 	m_PlayerOptions[pn] = po;
 }
 
@@ -670,7 +765,7 @@ int GameState::GetSumOfActiveAttackLevels( PlayerNumber pn )
 	int iSum = 0;
 
 	for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
-		if( m_ActiveAttacks[pn][s].fSecsRemaining > 0 )
+		if( m_ActiveAttacks[pn][s].fSecsRemaining > 0 && m_ActiveAttacks[pn][s].level != NUM_ATTACK_LEVELS )
 			iSum += m_ActiveAttacks[pn][s].level;
 
 	return iSum;
