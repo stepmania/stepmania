@@ -18,7 +18,7 @@ public:
 private:
 	CString m_name;
 	CString m_description;
-	uint8_t m_state;
+	unsigned int m_state;
 };
 
 class ScreenNetRoom : public ScreenNetSelectBase
