@@ -239,8 +239,9 @@ void PlayerOptions::FromString( CString sOptions )
 			m_sPositioning = sBit;
 		else if( NOTESKIN->DoesNoteSkinExist(sBit) )
 			m_sNoteSkin = sBit;
-		else
-			LOG->Warn( "Modifier '%s' not recognized.", sBit.c_str() );
+		// XXX: this warns about song options
+		//else
+		//	LOG->Warn( "Modifier '%s' not recognized.", sBit.c_str() );
 	}
 }
 
