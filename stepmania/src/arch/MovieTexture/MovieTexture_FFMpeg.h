@@ -35,6 +35,8 @@ public:
 	void SetLooping(bool looping=true) { m_bLoop = looping; }
 	unsigned GetTexHandle() const { return m_uTexHandle; }
 
+	static void RegisterProtocols();
+
 private:
 	FFMpeg_Helper *decoder;
 

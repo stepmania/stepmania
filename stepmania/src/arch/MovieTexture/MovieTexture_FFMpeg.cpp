@@ -560,7 +560,7 @@ static avcodec::URLProtocol RageProtocol =
 	NULL
 };
 
-static void RegisterProtocols()
+void MovieTexture_FFMpeg::RegisterProtocols()
 {
 	static bool Done = false;
 	if( Done )
