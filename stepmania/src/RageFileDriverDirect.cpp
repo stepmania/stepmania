@@ -21,6 +21,43 @@
 #define O_BINARY 0
 #endif
 
+/* Wrappers for low-level file functions, to work around Xbox issues: */
+static int DoMkdir( const CString &sPath, int perm )
+{
+#if defined(XBOX)
+	CString TempPath = sPath;
+	TempPath.Replace( "/", "\\" ); /* just for mkdir */
+	return mkdir( TempPath, perm );
+#else
+	return mkdir( sPath, perm );
+#endif
+}
+
+static int DoOpen( const CString &sPath, int flags, int perm )
+{
+#if defined(XBOX)
+	CString TempPath = sPath;
+	TempPath.Replace( "/", "\\" ); /* just for mkdir */
+	return open( TempPath, flags, perm );
+#else
+	return open( sPath, flags, perm );
+#endif
+}
+
+#if defined(WIN32)
+static HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd )
+{
+#if defined(XBOX)
+	CString TempPath = sPath;
+	TempPath.Replace( "/", "\\" ); /* just for mkdir */
+	return FindFirstFile( TempPath, fd );
+#else
+	return FindFirstFile( sPath, fd );
+#endif
+}
+#endif
+
+
 /* This driver handles direct file access. */
 class DirectFilenameDB: public FilenameDB
 {
@@ -40,6 +77,7 @@ public:
 	}
 };
 
+
 void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 {
 	CString sPath = path;
@@ -53,10 +91,10 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 #if defined(WIN32)
 	WIN32_FIND_DATA fd;
 
-	if ( sPath.size() > 0  && sPath.Right(1) == SLASH )
+	if ( sPath.size() > 0  && sPath.Right(1) == "/" )
 		sPath.erase( sPath.size() - 1 );
 
-	HANDLE hFind = FindFirstFile( root+sPath+SLASH "*", &fd );
+	HANDLE hFind = DoFindFirstFile( root+sPath+"/*", &fd );
 
 	if( hFind == INVALID_HANDLE_VALUE )
 		return;
@@ -156,12 +194,12 @@ static bool CreateDirectories( CString Path )
 {
 	CStringArray parts;
 	CString curpath;
-	split(Path, SLASH, parts);
+	split(Path, "/", parts);
 
 	for(unsigned i = 0; i < parts.size(); ++i)
 	{
-		curpath += parts[i] + SLASH;
-		if( mkdir(curpath, 0755) == 0 )
+		curpath += parts[i] + "/";
+		if( DoMkdir(curpath, 0755) == 0 )
 			continue;
 
 		if(errno == EEXIST)
@@ -193,7 +231,9 @@ static bool CreateDirectories( CString Path )
 	return true;
 }
 
-RageFileObj *MakeFileObjDirect( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err )
+
+
+RageFileObj *MakeFileObjDirect( CString sPath, RageFile::OpenMode mode, RageFile &p, int &err )
 {
 	int flags = O_BINARY;
 	if( mode == RageFile::READ )
@@ -203,11 +243,7 @@ RageFileObj *MakeFileObjDirect( const CString &sPath, RageFile::OpenMode mode, R
 		flags |= O_WRONLY|O_CREAT|O_TRUNC;
 	}
 
-#if defined(XBOX)
-	sPath.Replace( "/", "\\" );
-#endif
-
-	int fd = open( sPath, flags, 0644 );
+	int fd = DoOpen( sPath, flags, 0644 );
 	if( fd == -1 )
 	{
 		err = errno;
@@ -230,9 +266,7 @@ RageFileObj *RageFileDriverDirect::Open( const CString &path, RageFile::OpenMode
 	{
 		const CString dir = Dirname(sPath);
 		if( this->GetFileType(dir) != RageFileManager::TYPE_DIR )
-		{
 			CreateDirectories( dir );
-		}
 	}
 
 	return MakeFileObjDirect( sPath, mode, p, err );
