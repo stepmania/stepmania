@@ -826,8 +826,9 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 			it != fp->m_iCharToGlyphNo.end(); ++it)
 		{
 			if(it->second < fp->m_pTexture->GetNumFrames()) continue; /* OK */
-			RageException::Throw( "The font '%s' maps %s to frame %i, but the font only has %i frames.",
+			CString sError = ssprintf( "The font '%s' maps %s to frame %i, but the font only has %i frames.",
 				TexturePaths[i].c_str(), WcharDisplayText(wchar_t(it->first)).c_str(), it->second, fp->m_pTexture->GetNumFrames() );
+			RageException::Throw( sError );
 		}
 
 //		LOG->Trace("Adding page %s (%s) to %s; %i glyphs",

@@ -19,7 +19,10 @@ bool DifficultyIcon::Load( CString sPath )
 {
 	Sprite::Load( sPath );
 	int iStates = GetNumStates();
-	if( iStates != NUM_DIFFICULTIES  &&  iStates != NUM_DIFFICULTIES*2 )
+	bool bWarn = iStates != NUM_DIFFICULTIES  &&  iStates != NUM_DIFFICULTIES*2;
+	if( sPath.Find("_blank") != -1 )
+		bWarn = false;
+	if( bWarn )
 	{
 		CString sError = ssprintf(
 			"The difficulty icon graphic '%s' must have %d or %d frames.  It has %d states.", 

@@ -26,7 +26,7 @@ public:
 	Grade GetGrade () const {return m_Grade;}
 protected:
 	
-	int GetFrameNo( PlayerNumber pn, Grade g );
+	int GetFrameIndex( PlayerNumber pn, Grade g );
 
 	PlayerNumber m_PlayerNumber;
 	Grade m_Grade;

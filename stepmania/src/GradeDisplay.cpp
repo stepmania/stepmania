@@ -5,6 +5,8 @@
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "RageTexture.h"
+#include "arch/Dialog/Dialog.h"
+#include "RageLog.h"
 
 
 const float SCROLL_TIME = 5.0f;
@@ -28,8 +30,15 @@ bool GradeDisplay::Load( RageTextureID ID )
 	Sprite::Load( ID );
 	Sprite::StopAnimating();
 
-	if( Sprite::GetNumStates() != 8 && Sprite::GetNumStates() != 16 )
-		RageException::Throw( "The grade graphic '%s' must have either 8 or 16 frames.", ID.filename.c_str() );
+	bool bWarn = Sprite::GetNumStates() != 8 && Sprite::GetNumStates() != 16;
+	if( ID.filename.Find("_blank") != -1 )
+		bWarn = false;
+	if( bWarn )
+	{
+		CString sError = ssprintf( "The grade graphic '%s' must have either 8 or 16 frames.", ID.filename.c_str() );
+		LOG->Warn( sError );
+		Dialog::OK( sError );
+	}
 	return true;
 }
 
@@ -70,16 +79,19 @@ void GradeDisplay::DrawPrimitives()
 	Sprite::DrawPrimitives();
 }
 
-int GradeDisplay::GetFrameNo( PlayerNumber pn, Grade g )
+int GradeDisplay::GetFrameIndex( PlayerNumber pn, Grade g )
 {
+	if( this->m_pTexture->GetID().filename.Find("_blank") != -1 )
+		return 0;
+
 	// either 8, or 16 states
 	int iNumCols;
 	switch( Sprite::GetNumStates() )
 	{
-	default:
-		ASSERT(0);
 	case 8:		iNumCols=1;	break;
 	case 16:	iNumCols=2;	break;
+	default:
+		ASSERT(0);
 	}
 
 	int iFrame;
@@ -111,17 +123,20 @@ void GradeDisplay::SetGrade( PlayerNumber pn, Grade g )
 
 	if(g != GRADE_NO_DATA)
 	{
-		SetState( GetFrameNo(pn,g) );
-		SetDiffuse( RageColor(1,1,1,1.0f) );
-	} else
-		SetDiffuse( RageColor(1,1,1,0) );
+		SetState( GetFrameIndex(pn,g) );
+		SetDiffuseAlpha( 1 );
+	}
+	else
+	{
+		SetDiffuseAlpha( 0 );
+	}
 }
 
 void GradeDisplay::Spin()
 {
 	m_bDoScrolling = true;
 
-	int iFrameNo = GetFrameNo( m_PlayerNumber, m_Grade );
+	int iFrameNo = GetFrameIndex( m_PlayerNumber, m_Grade );
 
 	m_frectDestTexCoords = *m_pTexture->GetTextureCoordRect( iFrameNo );
 	m_frectStartTexCoords = m_frectDestTexCoords;
