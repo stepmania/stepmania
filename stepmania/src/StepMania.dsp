@@ -100,6 +100,10 @@ CPP=cl.exe
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_XBOX" /D "_DEBUG" /Fr /YX"global.h" /FD /c
 # ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_XBOX" /D "_DEBUG" /Fr /YX"global.h" /FD /c
 # Begin Special Build Tool
+IntDir=.\StepMania___Xbox_Debug___VC6
+TargetDir=.\StepMania___Xbox_Debug___VC6
+TargetName=StepMania
+SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                                                                                                	cl                                                                                                                                                 /Zl                                                                                                                                                 /nologo                                                                                                                                                 /c                                                                                                                                                 verstub.cpp                                                                                                                                                 /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
@@ -2150,23 +2154,6 @@ SOURCE=.\BGAnimationLayer.cpp
 # Begin Source File
 
 SOURCE=.\BGAnimationLayer.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\CroppedSprite.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\CroppedSprite.h
 # End Source File
 # Begin Source File
 

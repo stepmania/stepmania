@@ -27,28 +27,28 @@
 #define NEXT_SCREEN( play_mode )		THEME->GetMetric ("ScreenRaveOptions","NextScreen"+Capitalize(PlayModeToString(play_mode)))
 
 enum {
-	RO_HUMAN_SUPER,
+	RO_P1_SUPER_GROWTH,
+	RO_P2_SUPER_GROWTH,
 	RO_CPU_SKILL,
-	RO_CPU_SUPER,
 	NUM_RAVE_OPTIONS_LINES
 };
 
 OptionRow g_RaveOptionsLines[NUM_RAVE_OPTIONS_LINES] = {
-	OptionRow( "Human Super\nGrowth",	"25%","50%","75%","100%","125%","150%","175%","200%" ),
-	OptionRow( "CPU\nSkill",			"-5","-4","-3","-2","-1","DEFAULT","+1","+2","+3","+4","+5" ),
-	OptionRow( "CPU Super\nGrowth",		"25%","50%","75%","100%","125%","150%","175%","200%" )
+	OptionRow( "P1 Super\nGrowth",	"25%","50%","75%","100%","125%","150%","175%","200%" ),
+	OptionRow( "P2 Super\nGrowth",	"25%","50%","75%","100%","125%","150%","175%","200%" ),
+	OptionRow( "CPU\nSkill",		"-5","-4","-3","-2","-1","DEFAULT","+1","+2","+3","+4","+5" )
 };
 
 PlayerNumber OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
 
 ScreenRaveOptions::ScreenRaveOptions() :
-	ScreenOptions("ScreenRaveOptions",false)
+	ScreenOptions("ScreenRaveOptions",true)
 {
 	LOG->Trace( "ScreenRaveOptions::ScreenRaveOptions()" );
 
 	bool bComputerPlayersPresent = GAMESTATE->GetNumSidesJoined()==1;
 	Init( 
-		INPUTMODE_PLAYERS, 
+		INPUTMODE_BOTH, 
 		g_RaveOptionsLines, 
 		bComputerPlayersPresent ? 3 : 1,
 		false, false );
@@ -58,41 +58,22 @@ void ScreenRaveOptions::ImportOptions()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( GAMESTATE->IsHumanPlayer(p) )
-		{
-			int iHumanSuperIndex = (int)SCALE( GAMESTATE->m_fSuperMeterGrowthScale[p], 0.25f, 2.f, 0.f, 7.f );
-			CLAMP( iHumanSuperIndex, 0, 9 );
-			m_iSelectedOption[p][RO_HUMAN_SUPER]	= iHumanSuperIndex;
-		}
-		else if( GAMESTATE->IsCpuPlayer(p) )
-		{
-			PlayerNumber pnHuman = OPPOSITE_PLAYER[p];
-
-			m_iSelectedOption[pnHuman][RO_CPU_SKILL]		= GAMESTATE->m_iCpuSkill[p];
-			CLAMP( m_iSelectedOption[pnHuman][RO_CPU_SKILL], 0, 10 );
-			
-			int iHumanSuperIndex = (int)SCALE( GAMESTATE->m_fSuperMeterGrowthScale[pnHuman], 0.25f, 2.f, 0.f, 7.f );
-			CLAMP( iHumanSuperIndex, 0, 9 );
-			m_iSelectedOption[pnHuman][RO_CPU_SUPER]	= iHumanSuperIndex;
-		}
-		else
-			ASSERT(0);
+		int iSuperGrowthIndex = (int)SCALE( GAMESTATE->m_fSuperMeterGrowthScale[p], 0.25f, 2.f, 0.f, 7.f );
+		CLAMP( iSuperGrowthIndex, 0, 9 );
+		m_iSelectedOption[0][RO_P1_SUPER_GROWTH+p] = iSuperGrowthIndex;
 	}
+
+	m_iSelectedOption[0][RO_CPU_SKILL] = GAMESTATE->m_iCpuSkill[0];
+	CLAMP( m_iSelectedOption[0][RO_CPU_SKILL], 0, 10 );
 }
 
 void ScreenRaveOptions::ExportOptions()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( GAMESTATE->IsHumanPlayer(p) )
-		{
-			GAMESTATE->m_fSuperMeterGrowthScale[p]	= SCALE( m_iSelectedOption[p][RO_HUMAN_SUPER], 0.f, 7.f, 0.25f, 2.f );
-
-			PlayerNumber pnCPU = OPPOSITE_PLAYER[p];
-			GAMESTATE->m_iCpuSkill[pnCPU]			= m_iSelectedOption[p][RO_CPU_SKILL];
-			GAMESTATE->m_fSuperMeterGrowthScale[pnCPU]	= SCALE( m_iSelectedOption[p][RO_CPU_SUPER], 0, 7, 0.25f, 2.f );
-		}
-	}
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
+		GAMESTATE->m_fSuperMeterGrowthScale[p]	= SCALE( m_iSelectedOption[0][RO_P1_SUPER_GROWTH+p], 0.f, 7.f, 0.25f, 2.f );
+	for( p=0; p<NUM_PLAYERS; p++ )
+		GAMESTATE->m_iCpuSkill[p]	= m_iSelectedOption[0][RO_CPU_SKILL];
 }
 
 void ScreenRaveOptions::GoToPrevState()

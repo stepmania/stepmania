@@ -44,8 +44,10 @@ const int NUM_SCORE_DIGITS	=	9;
 #define SAMPLE_MUSIC_DELAY					THEME->GetMetricF("ScreenSelectMusic","SampleMusicDelay")
 #define SHOW_RADAR							THEME->GetMetricB("ScreenSelectMusic","ShowRadar")
 #define SHOW_GRAPH							THEME->GetMetricB("ScreenSelectMusic","ShowGraph")
-
 #define CDTITLE_SPIN_SECONDS				THEME->GetMetricF("ScreenSelectMusic","CDTitleSpinSeconds")
+#define PREV_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectMusic","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
+#define NEXT_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectMusic","NextScreen"+Capitalize(PlayModeToString(play_mode)))
+#define NEXT_OPTIONS_SCREEN( play_mode )	THEME->GetMetric ("ScreenSelectMusic","NextOptionsScreen"+Capitalize(PlayModeToString(play_mode)))
 
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 CString g_sFallbackCDTitlePath;
@@ -55,7 +57,7 @@ CString g_sFallbackCDTitlePath;
 static void FlipSpriteHorizontally(Sprite &s)
 {
 	float Coords[8];
-	s.GetCurrentTextureCoords(Coords);
+	s.GetActiveTextureCoords(Coords);
 	swap(Coords[0], Coords[6]); /* top left X <-> top right X */
 	swap(Coords[1], Coords[7]); /* top left Y <-> top right Y */
 	swap(Coords[2], Coords[4]); /* bottom left X <-> bottom left X */
@@ -98,8 +100,8 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 
 	// this is loaded SetSong and TweenToSong
 	m_Banner.SetName( "Banner" );
-	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
 	m_Banner.SetUseZBuffer( true );	// do have to pass the z test
+	m_Banner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 	this->AddChild( &m_Banner );
 
 	m_sprBannerFrame.SetName( "BannerFrame" );
@@ -584,7 +586,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		break;
 	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+		SCREENMAN->SetNewScreen( PREV_SCREEN(GAMESTATE->m_PlayMode) );
 		/* We may have stray SM_SongChanged messages from the music wheel.  We can't
 		 * handle them anymore, since the title menu (and attract screens) reset
 		 * the game state, so just discard them. */
@@ -593,12 +595,12 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToNextScreen:
 		if( m_bGoToOptions )
 		{
-			SCREENMAN->SetNewScreen( "ScreenPlayerOptions" );
+			SCREENMAN->SetNewScreen( NEXT_OPTIONS_SCREEN(GAMESTATE->m_PlayMode) );
 		}
 		else
 		{
 			SOUNDMAN->StopMusic();
-			SCREENMAN->SetNewScreen( "ScreenStage" );
+			SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 		}
 		break;
 	case SM_SongChanged:
@@ -912,8 +914,8 @@ void ScreenSelectMusic::AfterMusicChange()
 	case TYPE_RANDOM:
 		switch(m_MusicWheel.GetSelectedType())
 		{
-		case TYPE_ROULETTE: m_Banner.LoadRoulette(); break;
-		case TYPE_RANDOM: m_Banner.LoadRandom(); break;
+		case TYPE_ROULETTE:	m_Banner.LoadRoulette();	break;
+		case TYPE_RANDOM: 	m_Banner.LoadRandom();		break;
 		default: ASSERT(0);
 		}
 

@@ -21,7 +21,7 @@
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
 #include <math.h>
-#include "CroppedSprite.h"
+#include "Sprite.h"
 #include "song.h"
 #include "BitmapText.h"
 
@@ -190,9 +190,9 @@ ScreenCredits::ScreenCredits() : Screen("ScreenCredits")
 				break;
 		}
 
-		CroppedSprite* pBackground = new CroppedSprite;
-		pBackground->SetCroppedSize( BACKGROUNDS_WIDTH, BACKGROUNDS_HEIGHT );
+		Sprite* pBackground = new Sprite;
 		pBackground->LoadBG( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background") );
+		pBackground->ScaleToClipped( BACKGROUNDS_WIDTH, BACKGROUNDS_HEIGHT );
 		m_vBackgrounds.push_back( pBackground );
 
 		Sprite* pFrame = new Sprite;

@@ -11,13 +11,13 @@
 -----------------------------------------------------------------------------
 */
 
-#include "CroppedSprite.h"
+#include "Sprite.h"
 #include "RageTexture.h"
 class Song;
 class Course;
 
 
-class Banner : public CroppedSprite
+class Banner : public Sprite
 {
 public:
 	Banner();
@@ -26,6 +26,8 @@ public:
 	virtual bool Load( RageTextureID ID );
 
 	virtual void Update( float fDeltaTime );
+
+	virtual void ScaleToClipped( float fWidth, float fHeight );
 
 	void LoadFromSong( Song* pSong );		// NULL means no song
 	void LoadAllMusic();
@@ -42,6 +44,7 @@ public:
 	static RageTextureID BannerTex( RageTextureID ID );
 
 protected:
+
 	bool m_bScrolling;
 	float m_fPercentScrolling;
 };

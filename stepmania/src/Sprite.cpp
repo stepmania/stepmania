@@ -30,6 +30,12 @@ Sprite::Sprite()
 	m_iCurState = 0;
 	m_fSecsIntoState = 0.0;
 	m_bUsingCustomTexCoords = false;
+	
+	m_fRememberedClipWidth = -1;
+	m_fRememberedClipHeight = -1;
+
+	m_fTexCoordVelocityX = 0;
+	m_fTexCoordVelocityY = 0;
 }
 
 
@@ -193,14 +199,18 @@ bool Sprite::LoadFromTexture( RageTextureID ID )
 		m_States.push_back( newState );
 	}
 
+	// apply clipping (if any)
+	if( m_fRememberedClipWidth != -1 && m_fRememberedClipHeight != -1 )
+		ScaleToClipped( m_fRememberedClipWidth, m_fRememberedClipHeight );
+
 	return true;
 }
 
 
 
-void Sprite::Update( float fDeltaTime )
+void Sprite::Update( float fDelta )
 {
-	Actor::Update( fDeltaTime );	// do tweening
+	Actor::Update( fDelta );	// do tweening
 
 	if( !m_bIsAnimating )
 	    return;
@@ -208,14 +218,37 @@ void Sprite::Update( float fDeltaTime )
 	if( !m_pTexture )	// no texture, nothing to animate
 	    return;
 
-	// update animation
-	m_fSecsIntoState += fDeltaTime;
+	//
+	// update animation frame
+	//
+	m_fSecsIntoState += fDelta;
 
 	while( m_fSecsIntoState > m_States[m_iCurState].fDelay )	// it's time to switch frames
 	{
 		// increment frame and reset the counter
 		m_fSecsIntoState -= m_States[m_iCurState].fDelay;		// leave the left over time for the next frame
 		m_iCurState = (m_iCurState+1) % m_States.size();
+	}
+
+	//
+	// update scrolling
+	//
+	if( m_fTexCoordVelocityX != 0 || m_fTexCoordVelocityY != 0 )
+	{
+		float fTexCoords[8];
+		Sprite::GetActiveTextureCoords( fTexCoords );
+ 
+		// top left, bottom left, bottom right, top right
+		fTexCoords[0] += fDelta*m_fTexCoordVelocityX;
+		fTexCoords[1] += fDelta*m_fTexCoordVelocityY; 
+		fTexCoords[2] += fDelta*m_fTexCoordVelocityX;
+		fTexCoords[3] += fDelta*m_fTexCoordVelocityY;
+		fTexCoords[4] += fDelta*m_fTexCoordVelocityX;
+		fTexCoords[5] += fDelta*m_fTexCoordVelocityY;
+		fTexCoords[6] += fDelta*m_fTexCoordVelocityX;
+		fTexCoords[7] += fDelta*m_fTexCoordVelocityY;
+
+		Sprite::SetCustomTextureCoords( fTexCoords );
 	}
 }
 
@@ -298,7 +331,7 @@ void Sprite::DrawPrimitives()
 	if( m_pTexture )
 	{
 		float f[8];
-		GetActiveTexCoords(f);
+		GetActiveTextureCoords(f);
 		TexCoordsFromArray(v, f);
 
 
@@ -402,13 +435,6 @@ void Sprite::SetCustomTextureCoords( float fTexCoords[8] ) // order: top left, b
 		m_CustomTexCoords[i] = fTexCoords[i]; 
 }
 
-void Sprite::GetCustomTextureCoords( float fTexCoordsOut[8] ) const // order: top left, bottom left, bottom right, top right
-{ 
-	for( int i=0; i<8; i++ )
-		fTexCoordsOut[i] = m_CustomTexCoords[i]; 
-}
-
-
 void Sprite::SetCustomImageRect( RectF rectImageCoords )
 {
 	// Convert to a rectangle in texture coordinate space.
@@ -438,24 +464,132 @@ const RectF *Sprite::GetCurrentTextureCoordRect() const
 	return m_pTexture->GetTextureCoordRect( uFrameNo );
 }
 
-void Sprite::GetCurrentTextureCoords(float fImageCoords[8]) const
-{
-	const RectF *pTexCoordRect = GetCurrentTextureCoordRect();
-	TexCoordArrayFromRect(fImageCoords, *pTexCoordRect);
-}
-
 
 /* If we're using custom coordinates, return them; otherwise return the coordinates
  * for the current state. */
-void Sprite::GetActiveTexCoords(float fImageCoords[8]) const
+void Sprite::GetActiveTextureCoords(float fTexCoordsOut[8]) const
 {
-	if(m_bUsingCustomTexCoords) GetCustomTextureCoords(fImageCoords);
-	else GetCurrentTextureCoords(fImageCoords);
+	if(m_bUsingCustomTexCoords) 
+	{
+		// GetCustomTextureCoords
+		for( int i=0; i<8; i++ )
+			fTexCoordsOut[i] = m_CustomTexCoords[i]; 
+	}
+	else
+	{
+		// GetCurrentTextureCoords
+		const RectF *pTexCoordRect = GetCurrentTextureCoordRect();
+		TexCoordArrayFromRect(fTexCoordsOut, *pTexCoordRect);
+	}
 }
 
 
 void Sprite::StopUsingCustomCoords()
 {
 	m_bUsingCustomTexCoords = false;
+}
+
+
+void Sprite::ScaleToClipped( float fWidth, float fHeight )
+{
+	m_fRememberedClipWidth = fWidth;
+	m_fRememberedClipHeight = fHeight;
+
+	if( !m_pTexture )
+		return;
+
+	int iSourceWidth	= m_pTexture->GetSourceWidth();
+	int iSourceHeight	= m_pTexture->GetSourceHeight();
+
+	// save the original X&Y.  We're going to resore them later.
+	float fOriginalX = GetX();
+	float fOriginalY = GetY();
+
+	if( IsDiagonalBanner(iSourceWidth, iSourceHeight) )		// this is a SSR/DWI CroppedSprite
+	{
+		float fCustomImageCoords[8] = {
+			0.02f,	0.78f,	// top left
+			0.22f,	0.98f,	// bottom left
+			0.98f,	0.22f,	// bottom right
+			0.78f,	0.02f,	// top right
+		};
+		Sprite::SetCustomImageCoords( fCustomImageCoords );
+
+		if( fWidth != -1 && fHeight != -1)
+			m_size = RageVector2( fWidth, fHeight );
+		else
+		{
+			/* If no crop size is set, then we're only being used to crop diagonal
+			 * banners so they look like regular ones. We don't actually care about
+			 * the size of the image, only that it has an aspect ratio of 4:1.  */
+			m_size = RageVector2(256, 64);
+		}
+		SetZoom( 1 );
+	}
+	else if( m_pTexture->GetID().filename.find( "(was rotated)" ) != m_pTexture->GetID().filename.npos && 
+			 fWidth != -1 && fHeight != -1 )
+	{
+		/* Dumb hack.  Normally, we crop all sprites except for diagonal banners,
+		 * which are stretched.  Low-res versions of banners need to do the same
+		 * thing as their full resolution counterpart, so the crossfade looks right.
+		 * However, low-res diagonal banners are un-rotated, to save space.  BannerCache
+		 * drops the above text into the "filename" (which is otherwise unused for
+		 * these banners) to tell us this.
+		 */
+		Sprite::StopUsingCustomCoords();
+		m_size = RageVector2( fWidth, fHeight );
+		SetZoom( 1 );
+	}
+	else if( fWidth != -1 && fHeight != -1 )
+	{
+		// this is probably a background graphic or something not intended to be a CroppedSprite
+		Sprite::StopUsingCustomCoords();
+
+		// first find the correct zoom
+		Sprite::ScaleToCover( RectI(0, 0,
+									(int)fWidth,
+									(int)fHeight )
+							 );
+		// find which dimension is larger
+		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
+		
+		if( bXDimNeedsToBeCropped )	// crop X
+		{
+			float fPercentageToCutOff = (this->GetZoomedWidth() - fWidth) / this->GetZoomedWidth();
+			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
+			
+			// generate a rectangle with new texture coordinates
+			RectF fCustomImageRect( 
+				fPercentageToCutOffEachSide, 
+				0, 
+				1 - fPercentageToCutOffEachSide, 
+				1 );
+			SetCustomImageRect( fCustomImageRect );
+		}
+		else		// crop Y
+		{
+			float fPercentageToCutOff = (this->GetZoomedHeight() - fHeight) / this->GetZoomedHeight();
+			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
+			
+			// generate a rectangle with new texture coordinates
+			RectF fCustomImageRect( 
+				0, 
+				fPercentageToCutOffEachSide,
+				1, 
+				1 - fPercentageToCutOffEachSide );
+			SetCustomImageRect( fCustomImageRect );
+		}
+		m_size = RageVector2( fWidth, fHeight );
+		SetZoom( 1 );
+	}
+
+	// restore original XY
+	SetXY( fOriginalX, fOriginalY );
+}
+
+bool Sprite::IsDiagonalBanner( int iWidth, int iHeight )
+{
+	/* A diagonal banner is a square.  Give a couple pixels of leeway. */
+	return iWidth >= 100 && abs(iWidth - iHeight) < 2;
 }
 

@@ -21,7 +21,7 @@ public:
 	FadingBanner();
 
 	virtual bool Load( RageTextureID ID );
-	void SetCroppedSize( float fWidth, float fHeight );
+	void ScaleToClipped( float fWidth, float fHeight );
 
 	void LoadFromSong( Song* pSong );		// NULL means no song
 	void LoadAllMusic();
@@ -37,6 +37,7 @@ public:
 
 protected:
 	void BeforeChange();
+
 
 	Banner		m_Banner[2];
 	int			m_iIndexFront;

@@ -10,7 +10,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "BannerCache.h"
-#include "CroppedSprite.h"
+#include "Sprite.h"
 #include "PrefsManager.h"
 #include "SDL_utils.h"
 #include "SDL_dither.h"
@@ -243,7 +243,7 @@ RageTextureID BannerCache::LoadCachedBanner( CString BannerPath )
 
 	if( WasRotatedBanner )
 	{
-		/* We need to tell CroppedSprite that this was originally a rotated
+		/* We need to tell Sprite that this was originally a rotated
 		 * sprite. */
 		ID.filename += "(was rotated)";
 	}
@@ -300,7 +300,7 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 
 	bool WasRotatedBanner = false;
 
-	if( CroppedSprite::IsDiagonalBanner(img->w , img->h) )
+	if( Sprite::IsDiagonalBanner(img->w , img->h) )
 	{
 		/* Ack.  It's a diagonal banner.  Problem: if we resize a diagonal banner, we
 		 * get ugly checker patterns.  We need to un-rotate it.
@@ -403,7 +403,7 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 	BannerData.SetValueI( BannerPath, "Width", src_width );
 	BannerData.SetValueI( BannerPath, "Height", src_height );
 	BannerData.SetValueU( BannerPath, "FullHash", GetHashForFile( BannerPath ) );
-	/* Remember this, so we can hint CroppedSprite. */
+	/* Remember this, so we can hint Sprite. */
 	BannerData.SetValueB( BannerPath, "Rotated", WasRotatedBanner );
 	BannerData.WriteFile();
 }

@@ -13,7 +13,6 @@
 
 #include "ActorFrame.h"
 #include "Sprite.h"
-#include "CroppedSprite.h"
 
 
 class ScrollingList : public ActorFrame
@@ -42,25 +41,25 @@ public:
 
 protected:
 	
-	int						m_iBouncingState;
-	int						m_iBounceDir;
-	int						m_iBounceWait;
-	float					m_iBounceSize;
+	int		m_iBouncingState;
+	int		m_iBounceDir;
+	int		m_iBounceWait;
+	float	m_iBounceSize;
 	
 
-	int						m_iBannerPrefs;
-	int						m_iSpriteType;
-	int						m_iSelection;
-	float					m_fSelectionLag;
-	int						m_iSpacing;
-	int						m_iNumVisible;
-	float					m_fNextTween;
-	Sprite				m_sprBannerMask;
-	CroppedSprite	m_RippleCSprite;
-	Sprite m_RippleSprite;
+	int		m_iBannerPrefs;
+	int		m_iSpriteType;
+	int		m_iSelection;
+	float	m_fSelectionLag;
+	int		m_iSpacing;
+	int		m_iNumVisible;
+	float	m_fNextTween;
+	Sprite	m_sprBannerMask;
+	Sprite	m_RippleCSprite;
+	Sprite	m_RippleSprite;
 
 	vector<Sprite*>	m_apSprites;	// stores the list of elements (left to right)
-	vector<CroppedSprite*>	m_apCSprites;	// stores the list of elements (left to right)
+	vector<Sprite*>	m_apCSprites;	// stores the list of elements (left to right)
 };
 
 #endif

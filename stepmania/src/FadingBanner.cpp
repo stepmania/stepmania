@@ -32,10 +32,10 @@ FadingBanner::FadingBanner()
 		this->AddChild( &m_Banner[i] );
 }
 
-void FadingBanner::SetCroppedSize( float fWidth, float fHeight )
+void FadingBanner::ScaleToClipped( float fWidth, float fHeight )
 {
 	for( int i=0; i<2; i++ )
-		m_Banner[i].SetCroppedSize( fWidth, fHeight );
+		m_Banner[i].ScaleToClipped( fWidth, fHeight );
 }
 
 void FadingBanner::Update( float fDeltaTime )
@@ -69,7 +69,8 @@ void FadingBanner::DrawPrimitives()
 bool FadingBanner::Load( RageTextureID ID )
 {
 	BeforeChange();
-	return m_Banner[m_iIndexFront].Load(ID);
+	bool bRet = m_Banner[m_iIndexFront].Load(ID);
+	return bRet;
 }
 
 void FadingBanner::BeforeChange()

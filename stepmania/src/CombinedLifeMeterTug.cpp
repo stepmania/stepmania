@@ -18,7 +18,7 @@ CombinedLifeMeterTug::CombinedLifeMeterTug()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_Stream[p].Load( THEME->GetPathToG(ssprintf("CombinedLifeMeterTug stream p%d",p+1)), 600 );
+		m_Stream[p].Load( THEME->GetPathToG(ssprintf("CombinedLifeMeterTug stream p%d",p+1)), 550 );
 		this->AddChild( &m_Stream[p] );
 	}
 	m_Stream[PLAYER_2].SetZoomX( -1 );
@@ -40,13 +40,13 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 	float fPercentToMove;
 	switch( score )
 	{
-	case TNS_MARVELOUS:		fPercentToMove = +0.02f;	break;
-	case TNS_PERFECT:		fPercentToMove = +0.02f;	break;
-	case TNS_GREAT:			fPercentToMove = +0.01f;	break;
-	case TNS_GOOD:			fPercentToMove = +0.00f;	break;
-	case TNS_BOO:			fPercentToMove = -0.02f;	break;
-	case TNS_MISS:			fPercentToMove = -0.04f;	break;
-	default:	ASSERT(0);	fPercentToMove = +0.00f;	break;
+	case TNS_MARVELOUS:		fPercentToMove = +0.010f;	break;
+	case TNS_PERFECT:		fPercentToMove = +0.010f;	break;
+	case TNS_GREAT:			fPercentToMove = +0.005f;	break;
+	case TNS_GOOD:			fPercentToMove = +0.000f;	break;
+	case TNS_BOO:			fPercentToMove = -0.010f;	break;
+	case TNS_MISS:			fPercentToMove = -0.020f;	break;
+	default:	ASSERT(0);	fPercentToMove = +0.000f;	break;
 	}
 
 	switch( pn )

@@ -76,7 +76,6 @@ ScreenSelectCourse::ScreenSelectCourse() : Screen("ScreenSelectCourse")
 	this->AddChild( &m_sprExplanation );
 
 	m_Banner.SetXY( BANNER_X, BANNER_Y );
-	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
 	this->AddChild( &m_Banner );
 
 	m_sprBannerFrame.Load( THEME->GetPathToG("ScreenSelectCourse banner frame") );
@@ -415,6 +414,7 @@ void ScreenSelectCourse::AfterCourseChange()
 				m_textTime.SetText( "xx:xx:xx" );	// The numbers format doesn't have a '?'.  Is there a better solution?
 
 			m_Banner.LoadFromCourse( pCourse );
+			m_Banner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 
 			m_CourseContentsFrame.SetFromCourse( pCourse );
 			m_CourseContentsFrame.TweenInAfterChangedCourse();

@@ -90,7 +90,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	/* Save selected options before we change them. */
 	GAMESTATE->StoreSelectedOptions();
 
-	GAMESTATE->RemoveAllInventory();
+	GAMESTATE->ResetStageStatistics();
 
 
 	for( p=0; p<NUM_PLAYERS; p++ )

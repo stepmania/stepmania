@@ -45,12 +45,12 @@ bool Banner::Load( RageTextureID ID )
 	m_bScrolling = false;
 
 	TEXTUREMAN->VolatileTexture( ID );
-	return CroppedSprite::Load( ID );
+	return Sprite::Load( ID );
 };
 
 void Banner::Update( float fDeltaTime )
 {
-	CroppedSprite::Update( fDeltaTime );
+	Sprite::Update( fDeltaTime );
 
 	if( m_bScrolling )
 	{
@@ -128,4 +128,10 @@ void Banner::LoadRandom()
 {
 	Load( THEME->GetPathToG("Banner random") );
 	m_bScrolling = true;
+}
+
+void Banner::ScaleToClipped( float fWidth, float fHeight )
+{
+	m_fRememberedClipWidth = fWidth;
+	m_fRememberedClipHeight = fHeight;
 }

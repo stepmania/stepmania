@@ -42,15 +42,20 @@ public:
 
 	void SetCustomTextureRect( const RectF &new_texcoord_frect );
 	void SetCustomTextureCoords( float fTexCoords[8] );
-	void GetCustomTextureCoords( float fTexCoordsOut[8] ) const;
 	void SetCustomSourceRect( const RectF &rectSourceCoords );	// in source pixel space
 	void SetCustomImageRect( RectF rectImageCoords );	// in image pixel space
 	void SetCustomImageCoords( float fImageCoords[8] );
 	const RectF *GetCurrentTextureCoordRect() const;
 	void StopUsingCustomCoords();
+	void GetActiveTextureCoords(float fTexCoordsOut[8]) const;
 
-	void GetActiveTexCoords(float fImageCoords[8]) const;
-	void GetCurrentTextureCoords(float fImageCoords[8]) const;
+
+	void SetTexCoordVelocity(float fVelX, float fVelY) { m_fTexCoordVelocityX = fVelX; m_fTexCoordVelocityY = fVelY; }	
+	// Scale the Sprite maintaining the aspect ratio so that it fits 
+	// within (fWidth,fHeight) and is clipped to (fWidth,fHeight).
+	void ScaleToClipped( float fWidth, float fHeight );
+	static bool IsDiagonalBanner( int iWidth, int iHeight );
+
 
 protected:
 	virtual bool LoadFromTexture( RageTextureID ID );
@@ -71,7 +76,14 @@ protected:
 	float	m_fSecsIntoState;	// number of seconds that have elapsed since we switched to this frame
 
 	bool m_bUsingCustomTexCoords;
-	float m_CustomTexCoords[8];     // (x,y) * 4
+	float m_CustomTexCoords[8];     // (x,y) * 4: top left, bottom left, bottom right, top right
+
+	// Remembered clipped dimensions are applied on Load().
+	// -1 means no remembered dimensions;
+	float	m_fRememberedClipWidth, m_fRememberedClipHeight;
+
+	float m_fTexCoordVelocityX;
+	float m_fTexCoordVelocityY;
 };
 
 #endif

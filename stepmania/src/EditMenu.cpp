@@ -83,11 +83,9 @@ EditMenu::EditMenu()
 	}
 
 	m_GroupBanner.SetXY( GROUP_BANNER_X, GROUP_BANNER_Y );
-	m_GroupBanner.SetCroppedSize( GROUP_BANNER_WIDTH, GROUP_BANNER_HEIGHT );
 	this->AddChild( &m_GroupBanner );
 
 	m_SongBanner.SetXY( SONG_BANNER_X, SONG_BANNER_Y );
-	m_SongBanner.SetCroppedSize( SONG_BANNER_WIDTH, SONG_BANNER_HEIGHT );
 	this->AddChild( &m_SongBanner );
 
 	m_SongTextBanner.SetXY( SONG_TEXT_BANNER_X, SONG_TEXT_BANNER_Y );
@@ -258,6 +256,7 @@ void EditMenu::OnRowValueChanged( Row row )
 	case ROW_GROUP:
 		m_textValue[ROW_GROUP].SetText( SONGMAN->ShortenGroupName(GetSelectedGroup()) );
 		m_GroupBanner.LoadFromGroup( GetSelectedGroup() );
+		m_GroupBanner.ScaleToClipped( GROUP_BANNER_WIDTH, GROUP_BANNER_HEIGHT );
 		m_pSongs.clear();
 		SONGMAN->GetSongs( m_pSongs, GetSelectedGroup() );
 		m_iSelection[ROW_SONG] = 0;
@@ -265,6 +264,7 @@ void EditMenu::OnRowValueChanged( Row row )
 	case ROW_SONG:
 		m_textValue[ROW_SONG].SetText( "" );
 		m_SongBanner.LoadFromSong( GetSelectedSong() );
+		m_SongBanner.ScaleToClipped( SONG_BANNER_WIDTH, SONG_BANNER_HEIGHT );
 		m_SongTextBanner.LoadFromSong( GetSelectedSong() );
 		// fall through
 	case ROW_NOTES_TYPE:

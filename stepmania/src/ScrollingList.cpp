@@ -120,15 +120,20 @@ void ScrollingList::StartBouncing()
 		m_RippleCSprite.UnloadTexture();
 		m_RippleCSprite.Load( m_apCSprites[m_iSelection]->GetTexturePath() );
 
-		if(m_RippleCSprite.GetUnzoomedWidth() == m_RippleCSprite.GetUnzoomedHeight()) // rotated graphics need cropping
-		{
-			m_RippleCSprite.SetCroppedSize( 100, 100 );
-		}
-		else // flat, unrotated graphics need widths changing
-		{
-			m_RippleCSprite.SetCroppedSize( -1, -1 ); // default image size.
-			m_RippleCSprite.SetWH(EZ2_BANNER_WIDTH+10, EZ2_BANNER_HEIGHT+10);
-		}
+
+		// ScaleToClipped should detect rotated banner files and correct
+		// accordingly.  If there's a case I didn't think about, feel free
+		// to change it back.  -Chris
+//		if(m_RippleCSprite.GetUnzoomedWidth() == m_RippleCSprite.GetUnzoomedHeight()) // rotated graphics need cropping
+//		{
+//			m_RippleCSprite.ScaleToClipped( 100, 100 );
+//		}
+//		else // flat, unrotated graphics need widths changing
+//		{
+//			m_RippleCSprite.ScaleToClipped( -1, -1 ); // default image size.
+//			m_RippleCSprite.SetWH(EZ2_BANNER_WIDTH+10, EZ2_BANNER_HEIGHT+10);
+//		}
+		m_RippleCSprite.ScaleToClipped( EZ2_BANNER_WIDTH+10, EZ2_BANNER_HEIGHT+10 );
 
 		m_RippleCSprite.SetXY( m_apCSprites[m_iSelection]->GetX(), m_apCSprites[m_iSelection]->GetY() );
 		m_RippleCSprite.SetZoom( 2.0f );
@@ -165,7 +170,7 @@ void ScrollingList::Load( const CStringArray& asGraphicPaths )
 	{
 		for( unsigned i=0; i<asGraphicPaths.size(); i++ )
 		{
-			CroppedSprite* pNewCSprite = new CroppedSprite;
+			Sprite* pNewCSprite = new Sprite;
 			pNewCSprite->Load( asGraphicPaths[i] );
 
 			m_apCSprites.push_back( pNewCSprite );
@@ -400,34 +405,43 @@ void ScrollingList::Replace(CString sGraphicPath, int ElementNumber)
 	}
 	else
 	{
-		CroppedSprite* pNewCSprite = new CroppedSprite;
+		Sprite* pNewCSprite = new Sprite;
 		pNewCSprite->Load( sGraphicPath );
 		if(m_iBannerPrefs == BANNERPREFS_DDRFLAT)
 		{
-			if(pNewCSprite->GetUnzoomedWidth() == pNewCSprite->GetUnzoomedHeight()) // rotated graphics need cropping
-			{
-				pNewCSprite->SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
-			}
-			else // flat, unrotated graphics need widths changing
-			{
-				pNewCSprite->SetWH(BANNER_WIDTH, BANNER_HEIGHT );
-			}
+			// ScaleToClipped should detect rotated banner files and correct
+			// accordingly.  If there's a case I didn't think about, feel free
+			// to change it back.  -Chris
+//			if(pNewCSprite->GetUnzoomedWidth() == pNewCSprite->GetUnzoomedHeight()) // rotated graphics need cropping
+//			{
+//				pNewCSprite->SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
+//			}
+//			else // flat, unrotated graphics need widths changing
+//			{
+//				pNewCSprite->SetWH(BANNER_WIDTH, BANNER_HEIGHT );
+//			}
+		
+			pNewCSprite->ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 		}
 		else if(m_iBannerPrefs == BANNERPREFS_DDRROT)
 		{
-			pNewCSprite->SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
+			pNewCSprite->ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 			pNewCSprite->SetRotationZ( DDRROT_ROTATION );
 		}
 		else if(m_iBannerPrefs == BANNERPREFS_EZ2)
 		{
-			if(pNewCSprite->GetUnzoomedWidth() == pNewCSprite->GetUnzoomedHeight()) // rotated graphics need cropping
-			{
-				pNewCSprite->SetCroppedSize( EZ2_BANNER_WIDTH, EZ2_BANNER_HEIGHT );
-			}
-			else // flat, unrotated graphics need widths changing
-			{
-				pNewCSprite->SetWH(EZ2_BANNER_WIDTH, EZ2_BANNER_HEIGHT);
-			}
+			// ScaleToClipped should detect rotated banner files and correct
+			// accordingly.  If there's a case I didn't think about, feel free
+			// to change it back.  -Chris
+//			if(pNewCSprite->GetUnzoomedWidth() == pNewCSprite->GetUnzoomedHeight()) // rotated graphics need cropping
+//			{
+//				pNewCSprite->ScaleToClipped( EZ2_BANNER_WIDTH, EZ2_BANNER_HEIGHT );
+//			}
+//			else // flat, unrotated graphics need widths changing
+//			{
+//				pNewCSprite->SetWH(EZ2_BANNER_WIDTH, EZ2_BANNER_HEIGHT);
+//			}
+			pNewCSprite->ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 		}
 			
 		m_apCSprites[ElementNumber] = pNewCSprite;

@@ -23,7 +23,7 @@
 #include "song.h"
 #include "ThemeManager.h"
 #include "ActorCollision.h"
-#include "CroppedSprite.h"
+#include "Sprite.h"
 
 
 
@@ -438,12 +438,6 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 	*/
 }
 
-static Sprite *NewSprite(bool banner)
-{
-	if(banner) return new CroppedSprite;
-	return new Sprite;
-}
-
 
 void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 {
@@ -535,13 +529,13 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	switch( m_Type )
 	{
 	case TYPE_SPRITE:
-		m_Sprites.push_back(NewSprite(IsBanner));
+		m_Sprites.push_back( new Sprite );
 		m_Sprites.back()->Load( sPath );
 		m_Sprites.back()->SetXY( CENTER_X, CENTER_Y );
 		break;
 	case TYPE_STRETCH:
 		{
-			m_Sprites.push_back(NewSprite(IsBanner));
+			m_Sprites.push_back( new Sprite );
 			RageTextureID ID(sPath);
 			ID.bStretch = true;
 			m_Sprites.back()->LoadBG( ID );
@@ -553,7 +547,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		{
 			for( int i=0; i<m_iNumParticles; i++ )
 			{
-				m_Sprites.push_back(NewSprite(IsBanner));
+				m_Sprites.push_back( new Sprite );
 				m_Sprites.back()->Load( sPath );
 				m_Sprites.back()->SetXY( randomf(SCREEN_LEFT,SCREEN_RIGHT), randomf(SCREEN_TOP,SCREEN_BOTTOM) );
 				m_Sprites.back()->SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
@@ -584,7 +578,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 			unsigned NumSprites = m_iNumTilesWide * m_iNumTilesHigh;
 			for( unsigned i=0; i<NumSprites; i++ )
 			{
-				m_Sprites.push_back(NewSprite(IsBanner));
+				m_Sprites.push_back( new Sprite );
 				m_Sprites.back()->Load( ID );
 				m_Sprites.back()->SetTextureWrapping( true );		// gets rid of some "cracks"
 				m_Sprites.back()->SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
@@ -639,7 +633,7 @@ void BGAnimationLayer::Update( float fDeltaTime )
 		for( i=0; i<m_Sprites.size(); i++ )
 		{
 			float fTexCoords[8];
-			m_Sprites[i]->GetActiveTexCoords( fTexCoords );
+			m_Sprites[i]->GetActiveTextureCoords( fTexCoords );
 
 			for( int j=0; j<8; j+=2 )
 			{

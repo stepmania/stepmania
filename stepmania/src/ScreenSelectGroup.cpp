@@ -113,7 +113,7 @@ ScreenSelectGroup::ScreenSelectGroup() : Screen("ScreenSelectGroup")
 
 	// these guys get loaded SetSong and TweenToSong
 	m_Banner.SetName( "Banner" );
-	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
+	m_Banner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 	this->AddChild( &m_Banner );
 
 	m_sprFrame.SetName( "Frame" );

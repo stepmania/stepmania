@@ -256,7 +256,7 @@ public:
 	void FadeOn( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,false); };
 	void FadeOff( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,true); };
 
-	float Command( CString sCommandString );	// return length in seconds to execute command
+	virtual float Command( CString sCommandString );	// return length in seconds to execute command
 	static float GetCommandLength( CString command );
 
 	virtual void SetState( int iNewState ) {};

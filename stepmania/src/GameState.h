@@ -39,8 +39,9 @@ public:
 
 	void Update( float fDelta );
 
+
 	//
-	// Main State Info
+	// Main state info
 	//
 	UnlockSystem	UnlockingSys;
 	Game			m_CurGame;
@@ -95,10 +96,7 @@ public:
 	
 	// Used in Battle and Rave
 	int					m_iCpuSkill[NUM_PLAYERS];	// only used when m_PlayerController is PC_CPU
-
 	// Used in Rave
-	float				m_fTugLifePercentP1;
-	float				m_fSuperMeter[NUM_PLAYERS];	// between 0 and NUM_ATTACK_LEVELS
 	float				m_fSuperMeterGrowthScale[NUM_PLAYERS];
 
 
@@ -143,7 +141,7 @@ public:
 	bool		m_bPastHereWeGo;
 	static const float MUSIC_SECONDS_INVALID;
 
-	void ResetMusicStatistics();		// Call this when it's time to play a new song.  Clears the values above.
+	void ResetMusicStatistics();	// Call this when it's time to play a new song.  Clears the values above.
 	void UpdateSongPosition(float fPositionSeconds);
 
 	//
@@ -152,9 +150,42 @@ public:
 	// Nonstop/Oni/Endless:	 for current course (which usually contains multiple songs)
 	//
 	StageStats	m_CurStageStats;				// current stage (not necessarily passed if Extra Stage)
+
+	// used in PLAY_MODE_BATTLE and PLAY_MODE_RAVE
+	struct Attack
+	{
+		AttackLevel	level;
+		float fSecsRemaining;
+		CString sModifier;
+		bool IsBlank() { return sModifier.empty(); }
+		void MakeBlank() { sModifier=""; }
+	};
+	Attack	m_ActiveAttacks[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
+
+	// used in PLAY_MODE_BATTLE
+	Attack	m_Inventory[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
+	float	m_fOpponentHealthPercent;
+
+	// used in PLAY_MODE_RAVE
+	float	m_fTugLifePercentP1;
+	float	m_fSuperMeter[NUM_PLAYERS];	// between 0 and NUM_ATTACK_LEVELS
+	
+	bool	m_bActiveAttackEndedThisUpdate[NUM_PLAYERS];	// flag for other objects to watch (play sounds)
+	void LaunchAttack( PlayerNumber target, Attack aa );
+	void RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn );
+	void RemoveAllActiveAttacks();	// called on end of song
+	void RemoveAllInventory();
+	int GetSumOfActiveAttackLevels( PlayerNumber pn );
+	PlayerNumber GetWinner();
+	StageResult GetStageResult( PlayerNumber pn );
+
+	void ResetStageStatistics();	// Call this when it's time to play a new stage.
+	
+
 	vector<StageStats>	m_vPassedStageStats;	// Only useful in Arcade for final evaluation
 												// A song is only inserted here if at least one player passed.
 												// StageStats are added by the Evaluation screen
+
 	void	GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut );	// shown on arcade final evaluation
 
 
@@ -173,39 +204,16 @@ public:
 	void RestoreSelectedOptions();
 
 
-	// used in PLAY_MODE_RAVE
+	// character stuff
 	vector<Character*> m_pCharacters;
 	Character* m_pCurCharacters[NUM_PLAYERS];
 
 	void ReloadCharacters();
 
 	
-	// used in PLAY_MODE_RAVE and PLAY_MODE_BATTLE
-	struct Attack
-	{
-		AttackLevel	level;
-		float fSecsRemaining;
-		CString sModifier;
-		bool IsBlank() { return sModifier.empty(); }
-		void MakeBlank() { sModifier=""; }
-	};
-	Attack	m_ActiveAttacks[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
-
-	// used in PLAY_MODE_BATTLE
-	Attack	m_Inventory[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
-	float	m_fOpponentHealthPercent;
-	
-	bool	m_bActiveAttackEndedThisUpdate[NUM_PLAYERS];	// flag for other objects to watch (play sounds)
-	void LaunchAttack( PlayerNumber target, Attack aa );
-	void RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn );
-	void RemoveAllActiveAttacks();	// called on end of song
-	void RemoveAllInventory();
-	int GetSumOfActiveAttackLevels( PlayerNumber pn );
 
 
 	bool HasEarnedExtraStage();
-	PlayerNumber GetWinner();
-	StageResult GetStageResult( PlayerNumber pn );
 	bool m_bAllow2ndExtraStage; //only used when "Allow Selection of Extra Stage is on"
 
 

@@ -43,12 +43,12 @@ void ScoreKeeperRave::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	float fPercentToMove;
 	switch( scoreOfLastTap )
 	{
-	case TNS_MARVELOUS:		fPercentToMove = +0.02f;	break;
-	case TNS_PERFECT:		fPercentToMove = +0.02f;	break;
-	case TNS_GREAT:			fPercentToMove = +0.01f;	break;
+	case TNS_MARVELOUS:		fPercentToMove = +0.04f;	break;
+	case TNS_PERFECT:		fPercentToMove = +0.04f;	break;
+	case TNS_GREAT:			fPercentToMove = +0.02f;	break;
 	case TNS_GOOD:			fPercentToMove = +0.00f;	break;
-	case TNS_BOO:			fPercentToMove = -0.02f;	break;
-	case TNS_MISS:			fPercentToMove = -0.04f;	break;
+	case TNS_BOO:			fPercentToMove = -0.08f;	break;
+	case TNS_MISS:			fPercentToMove = -0.16f;	break;
 	default:	ASSERT(0);	fPercentToMove = +0.00f;	break;
 	}
 
@@ -60,11 +60,8 @@ void ScoreKeeperRave::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	if( newAL > oldAL )
 	{
 		if( newAL == NUM_ATTACK_LEVELS )	// hit upper bounds of meter
-		{
 			GAMESTATE->m_fSuperMeter[m_PlayerNumber] -= 1.f;
-			newAL = (AttackLevel)(NUM_ATTACK_LEVELS-1);
-		}
-		LaunchAttack( newAL );
+		LaunchAttack( oldAL );
 	}
 }
 

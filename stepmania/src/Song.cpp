@@ -27,7 +27,7 @@
 #include "FontCharAliases.h"
 #include "TitleSubstitution.h"
 #include "BannerCache.h"
-#include "CroppedSprite.h"
+#include "Sprite.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -705,7 +705,7 @@ void Song::TidyUpData()
 			continue;
 		}
 
-		if( !HasBanner() && CroppedSprite::IsDiagonalBanner(width, height) )
+		if( !HasBanner() && Sprite::IsDiagonalBanner(width, height) )
 		{
 			m_sBannerFile = arrayImages[i];
 			continue;

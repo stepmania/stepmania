@@ -80,8 +80,8 @@ void GameState::Reset()
 	m_pPosition = new NoteFieldPositioning("Positioning.ini");
 
 	ResetMusicStatistics();
+	ResetStageStatistics();
 
-	m_CurStageStats = StageStats();
 	m_vPassedStageStats.clear();
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -107,13 +107,6 @@ void GameState::Reset()
 	{
 		m_fSuperMeterGrowthScale[p] = 1;
 		m_iCpuSkill[p] = 5;
-	}
-
-	m_fTugLifePercentP1 = 0.5f;
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		m_fSuperMeter[p] = 0;
-		m_fSuperMeterGrowthScale[p] = 1;
 	}
 }
 
@@ -185,8 +178,17 @@ void GameState::ResetMusicStatistics()
 	m_fCurBPS = 10;
 	m_bFreeze = false;
 	m_bPastHereWeGo = false;
+}
 
+void GameState::ResetStageStatistics()
+{
+	m_CurStageStats = StageStats();
+	RemoveAllActiveAttacks();
+	RemoveAllInventory();
 	m_fOpponentHealthPercent = 1;
+	m_fTugLifePercentP1 = 0.5f;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		m_fSuperMeter[p] = 0;
 }
 
 void GameState::UpdateSongPosition(float fPositionSeconds)
@@ -398,6 +400,13 @@ StageResult GameState::GetStageResult( PlayerNumber pn )
 	{
 	case PLAY_MODE_BATTLE:
 		return (m_fOpponentHealthPercent==0)?RESULT_WIN:RESULT_LOSE;
+	case PLAY_MODE_RAVE:
+		switch( pn )
+		{
+		case PLAYER_1:	return (m_fTugLifePercentP1>=0.5f)?RESULT_WIN:RESULT_LOSE;
+		case PLAYER_2:	return (m_fTugLifePercentP1<0.5f)?RESULT_WIN:RESULT_LOSE;
+		default:	ASSERT(0); return RESULT_LOSE;
+		}
 	default:
 		return (GetWinner()==pn)?RESULT_WIN:RESULT_LOSE;
 	}
@@ -462,6 +471,8 @@ void GameState::RestoreSelectedOptions()
 
 void GameState::LaunchAttack( PlayerNumber target, Attack a )
 {
+	LOG->Trace( "Launch attack '%s' against P%d", a.sModifier.c_str(), target+1 );
+
 	// search for an open slot
 	for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
 		if( m_ActiveAttacks[target][s].fSecsRemaining <= 0 )

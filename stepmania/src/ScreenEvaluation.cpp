@@ -282,8 +282,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 		{
 		case stage:
 			{
-				m_LargeBanner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
 				m_LargeBanner.LoadFromSong( GAMESTATE->m_pCurSong );
+				m_LargeBanner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 				m_LargeBanner.SetName( "LargeBanner" );
 				UtilSetXYAndOnCommand( m_LargeBanner, "ScreenEvaluation" );
 				this->AddChild( &m_LargeBanner );
@@ -323,8 +323,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			{
 				for( unsigned i=0; i<vSongsToShow.size(); i++ )
 				{
-					m_SmallBanner[i].SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
 					m_SmallBanner[i].LoadFromSong( vSongsToShow[i] );
+					m_SmallBanner[i].ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 					m_SmallBanner[i].SetName( ssprintf("SmallBanner%d",i+1) );
 					UtilSetXYAndOnCommand( m_SmallBanner[i], "ScreenEvaluation" );
 					this->AddChild( &m_SmallBanner[i] );
@@ -338,8 +338,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			break;
 		case course:
 			{
-				m_LargeBanner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
 				m_LargeBanner.LoadFromCourse( GAMESTATE->m_pCurCourse );
+				m_LargeBanner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 				m_LargeBanner.SetName( "LargeBanner" );
 				UtilSetXYAndOnCommand( m_LargeBanner, "ScreenEvaluation" );
 				this->AddChild( &m_LargeBanner );

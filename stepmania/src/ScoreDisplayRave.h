@@ -15,6 +15,7 @@
 #include "GameConstantsAndTypes.h"
 #include "OptionIcon.h"
 #include "MeterDisplay.h"
+#include "Sprite.h"
 
 
 class ScoreDisplayRave : public ScoreDisplay
@@ -26,9 +27,11 @@ public:
 	virtual void Update( float fDelta );
 
 protected:
-	MeterDisplay m_LevelStream[NUM_ATTACK_LEVELS];
+	Sprite m_sprMeter[NUM_ATTACK_LEVELS];
 	Sprite m_sprFrame;
-	BitmapText	m_LevelNumber;
+	BitmapText	m_textLevel;
+
+	AttackLevel	m_lastLevelSeen;
 };
 
 #endif
