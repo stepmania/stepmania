@@ -76,7 +76,7 @@ RageLog::RageLog()
 RageLog::~RageLog()
 {
 	Flush();
-	FreeConsole();
+	HideConsole();
 	if(m_fileLog) fclose( m_fileLog );
 	if(m_fileInfo) fclose( m_fileInfo );
 }
