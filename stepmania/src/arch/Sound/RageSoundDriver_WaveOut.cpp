@@ -11,12 +11,11 @@
 
 #include "SDL.h"
 
-/* samples */
 const int channels = 2;
-const int samplesize = channels*2;		/* 16-bit */
+const int bytes_per_frame = channels*2;		/* 16-bit */
 const int samplerate = 44100;
 const int buffersize_frames = 1024*8;	/* in frames */
-const int buffersize = buffersize_frames * samplesize; /* in bytes */
+const int buffersize = buffersize_frames * bytes_per_frame; /* in bytes */
 
 const int num_chunks = 8;
 const int chunksize_frames = buffersize_frames / num_chunks;
@@ -95,7 +94,7 @@ bool RageSound_WaveOut::GetData()
 		{
 			/* This sound is finishing. */
 			sounds[i]->stopping = true;
-			sounds[i]->flush_pos = last_cursor_pos + (got / samplesize);
+			sounds[i]->flush_pos = last_cursor_pos + (got / bytes_per_frame);
 		}
 	}
 
@@ -228,7 +227,9 @@ RageSound_WaveOut::~RageSound_WaveOut()
 
 float RageSound_WaveOut::GetPlayLatency() const
 {
-	return (1.0f / samplerate) * (buffersize_frames - chunksize_frames);
+	/* If we have a 1000-byte buffer, and we fill 100 bytes at a time, we
+	 * almost always have between 900 and 1000 bytes filled; on average, 950. */
+	return (buffersize_frames - chunksize_frames/2) * (1.0f / samplerate);
 }
 
 /*
