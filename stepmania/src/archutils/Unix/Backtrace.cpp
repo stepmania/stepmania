@@ -386,7 +386,8 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
 	InitializeBacktrace();
 
-	int retsize = backtrace( buf, size-1 );
+	void **cbuf = const_cast<void **> (buf);
+	int retsize = backtrace( cbuf, size-1 );
 
 	/* Remove any NULL entries.  We want to null-terminate the list, and null entries are useless. */
 	for( int i = retsize-1; i >= 0; --i )
