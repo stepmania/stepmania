@@ -154,15 +154,8 @@ void ScreenSystemLayer::ReloadCreditsText()
 
 void ScreenSystemLayer::SystemMessage( CString sMessage )
 {
-	m_textMessage.FinishTweening();
 	m_textMessage.SetText( sMessage );
-	m_textMessage.SetDiffuseAlpha( 1 );
-	m_textMessage.SetX( -640 );
-	m_textMessage.BeginTweening( 0.5f );
-	m_textMessage.SetX( 4 );
-	m_textMessage.BeginTweening( 5 );
-	m_textMessage.BeginTweening( 0.5f );
-	m_textMessage.SetDiffuse( RageColor(1,1,1,0) );
+	m_textMessage.Command( "finishtweening;diffusealpha,1;addx,-640;linear,0.5;addx,+640;sleep,5;linear,0.5;diffusealpha,0" );
 }
 
 void ScreenSystemLayer::SystemMessageNoAnimate( CString sMessage )
