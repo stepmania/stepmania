@@ -408,14 +408,16 @@ void OptionRow::UpdateEnabledDisabled(
 	case LAYOUT_SHOW_ONE_IN_ROW:
 		FOREACH_HumanPlayer( pn )
 		{
-			bool bEnabled = m_RowDef.m_vEnabledForPlayers.find(pn) != m_RowDef.m_vEnabledForPlayers.end();
+			bool bRowEnabled = m_RowDef.m_vEnabledForPlayers.find(pn) != m_RowDef.m_vEnabledForPlayers.end();
 			
 			if( bThisRowHasFocus[pn] )
 				color = colorFocus;
-			else if( bEnabled )
+			else if( bRowEnabled )
 				color = colorNoFocus;
 			else
 				color = colorDisabled;
+
+			float fEnabledDisabledAlpha = bRowEnabled ? 1:0;
 
 			unsigned item_no = m_RowDef.bOneChoiceForAllPlayers ? 0 : pn;
 
@@ -435,7 +437,7 @@ void OptionRow::UpdateEnabledDisabled(
 					OptionsCursor &ul = *m_Underline[p][item_no];
 					ul.StopTweening();
 					ul.BeginTweening( fTweenSeconds );
-					ul.SetDiffuseAlpha( fDiffuseAlpha );
+					ul.SetDiffuseAlpha( fEnabledDisabledAlpha );
 					ul.SetY( m_fY );
 				}
 			}
