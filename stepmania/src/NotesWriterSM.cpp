@@ -205,9 +205,10 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 	//
 	// Save all Steps for this file
 	//
-	for( i=0; i<out.m_vpSteps.size(); i++ ) 
+	const vector<Steps*>& vpSteps = out.GetAllSteps();
+	for( i=0; i<vpSteps.size(); i++ ) 
 	{
-		Steps* pSteps = out.m_vpSteps[i];
+		const Steps* pSteps = vpSteps[i];
 		if( pSteps->IsAutogen() )
 			continue; /* don't write autogen notes */
 
@@ -215,7 +216,7 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 		if( pSteps->WasLoadedFromProfile() )
 			continue;
 
-		WriteSMNotesTag( *out.m_vpSteps[i], f, bSavingCache );
+		WriteSMNotesTag( *pSteps, f, bSavingCache );
 	}
 
 	return true;

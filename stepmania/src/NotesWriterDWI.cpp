@@ -399,20 +399,22 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 		f.PutLine( ";" );
 	}
 
-	for( unsigned i=0; i<out.m_vpSteps.size(); i++ ) 
+	const vector<Steps*>& vpSteps = out.GetAllSteps();
+	for( unsigned i=0; i<vpSteps.size(); i++ ) 
 	{
-		if( out.m_vpSteps[i]->IsAutogen() )
+		const Steps* pSteps = vpSteps[i];
+		if( pSteps->IsAutogen() )
 			continue;	// don't save autogen notes
 
-		if(!WriteDWINotesTag( f, *out.m_vpSteps[i] ))
+		if( !WriteDWINotesTag( f, *pSteps ))
 			continue;
 
-		WriteDWINotesField( f, *out.m_vpSteps[i], 0 );
-		if(out.m_vpSteps[i]->m_StepsType==STEPS_TYPE_DANCE_DOUBLE ||
-		   out.m_vpSteps[i]->m_StepsType==STEPS_TYPE_DANCE_COUPLE)
+		WriteDWINotesField( f, *pSteps, 0 );
+		if( pSteps->m_StepsType==STEPS_TYPE_DANCE_DOUBLE ||
+		    pSteps->m_StepsType==STEPS_TYPE_DANCE_COUPLE )
 		{
 			f.PutLine( ":" );
-			WriteDWINotesField( f, *out.m_vpSteps[i], 4 );
+			WriteDWINotesField( f, *pSteps, 4 );
 		}
 
 		f.PutLine( ";" );
