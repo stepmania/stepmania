@@ -1,5 +1,5 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
+// Microsoft Developer Studio generated include file.
 // Used by StepMania.RC
 //
 #define IDC_CRASH_SAVE                  16
@@ -27,6 +27,7 @@
 #define IDC_BUTTON_CLOSE                1011
 #define IDC_VIEW_LOG                    1012
 #define IDC_STATIC_MESSAGE3             1013
+#define IDC_PROGRESS1                   1014
 #define IDC_ASMBOX                      1133
 #define IDC_REGDUMP                     1283
 #define IDC_STATIC_BOMBREASON           1284
@@ -39,7 +40,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        124
 #define _APS_NEXT_COMMAND_VALUE         40009
-#define _APS_NEXT_CONTROL_VALUE         1013
+#define _APS_NEXT_CONTROL_VALUE         1015
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

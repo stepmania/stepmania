@@ -32,7 +32,8 @@ public:
 	{
 		CHOICE_GAME_START = 0,
 		CHOICE_SELECT_GAME,
-		CHOICE_MAP_KEY_JOY,
+		/* At request, moved this into the options/operator menu -- Miryokuteki */
+		//CHOICE_MAP_KEY_JOY,
 		CHOICE_OPTIONS,
 		CHOICE_EDIT,
 		CHOICE_JUKEBOX,
@@ -48,7 +49,8 @@ public:
 		const CString s[NUM_CHOICES] = {
 			"GAME START",
 			"SWITCH GAME",
-			"CONFIG KEY/JOY",
+			/* At request, moved this into the options/operator menu -- Miryokuteki */
+			//"CONFIG KEY/JOY",
 			"OPTIONS",
 			"EDIT/SYNC SONGS",
 			"JUKEBOX",

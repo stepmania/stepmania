@@ -115,10 +115,10 @@ ScreenMiniMenu::ScreenMiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendO
 		fAnswerX += fIncreaseBy/2;
 	}
 
-	for( i=0; i<m_Def.iNumLines; i++ )
+	for( int k=0; k<m_Def.iNumLines; k++ )
 	{
-		m_textLabel[i].SetX( fLabelX );
-		m_textAnswer[i].SetX( fAnswerX );
+		m_textLabel[k].SetX( fLabelX );
+		m_textAnswer[k].SetX( fAnswerX );
 	}
 
 	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu prompt") );

@@ -308,7 +308,7 @@ static void InitCharAliases()
 
 	CharAliases["kdot"]	= 0x30FB; /* ・ */
 	CharAliases["kdash"]= 0x30FC; /* ー */
-	
+
 	/* Symbols: */
 	CharAliases["omega"]		= 0x03a9; /* Ω */
 	CharAliases["whiteheart"]	= 0x2661; /* ♡ */

@@ -135,7 +135,6 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 
 	if( type != IET_FIRST_PRESS )
 		return;
-
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
 	{
 		/* Coin mode changed.. since this effects how this screen appears, JUST the 
@@ -225,7 +224,8 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			{
 			case CHOICE_GAME_START:
 			case CHOICE_SELECT_GAME:
-			case CHOICE_MAP_KEY_JOY:
+			/* At request, moved this into the options/operator menu -- Miryokuteki */
+			//case CHOICE_MAP_KEY_JOY:
 			case CHOICE_OPTIONS:
 			#ifdef DEBUG
 			case CHOICE_SANDBOX:
@@ -310,9 +310,10 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		case CHOICE_SELECT_GAME:
 			SCREENMAN->SetNewScreen( "ScreenSelectGame" );
 			break;
-		case CHOICE_MAP_KEY_JOY:
+		/* At request, moved this into the options/operator menu -- Miryokuteki */
+		/*case CHOICE_MAP_KEY_JOY:
 			SCREENMAN->SetNewScreen( "ScreenMapControllers" );
-			break;
+			break;*/
 		case CHOICE_OPTIONS:
 			SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 			break;

@@ -1777,6 +1777,14 @@ SOURCE=.\ScreenSongOptions.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenSoundOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSoundOptions.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenStage.cpp
 # End Source File
 # Begin Source File

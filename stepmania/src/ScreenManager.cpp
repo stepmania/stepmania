@@ -185,6 +185,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenSelectStyle5th.h"
 #include "ScreenSelectStyle.h"
 #include "ScreenSongOptions.h"
+#include "ScreenSoundOptions.h"
 #include "ScreenStage.h"
 #include "ScreenTest.h"
 #include "ScreenTestFonts.h"
@@ -263,6 +264,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenJukebox") )			ret = new ScreenJukebox;
 	else if( 0==stricmp(sClassName, "ScreenJukeboxMenu") )		ret = new ScreenJukeboxMenu;
 	else if( 0==stricmp(sClassName, "ScreenOptionsMenu") )		ret = new ScreenOptionsMenu;
+	else if( 0==stricmp(sClassName, "ScreenSoundOptions") )		ret = new ScreenSoundOptions;
 	else if( 0==stricmp(sClassName, "ScreenGameplayOptions") )	ret = new ScreenGameplayOptions;
 	else if( 0==stricmp(sClassName, "ScreenStyleSplash") )	ret = new ScreenStyleSplash;
 	else
