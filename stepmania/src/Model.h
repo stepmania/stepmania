@@ -60,9 +60,16 @@ private:
 	msAnimation*				m_pCurAnimation;
 
 	RageVector3			m_vMins, m_vMaxs;
-	myBone_t			*m_pBones;
+	vector<myBone_t>	m_vpBones;
+
+	// true if any vertex has a bone weight.
+	// If true, then render from m_vTempVerticesByBone.  
+	// Otherwise, render directly from the mesh's vertices
+	bool bUseTempVertices;
+	
 	typedef vector<RageModelVertex>	RageModelVertexVector;
-	vector<RageModelVertexVector>	m_vTempVerticesByBone;
+	vector<RageModelVertexVector>	m_vTempVerticesByMesh;
+	
 	float		m_fCurrFrame;
 	CString		m_sDefaultAnimation;
 	float		m_fDefaultAnimationRate;

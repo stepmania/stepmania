@@ -26,7 +26,6 @@ const CString DEFAULT_ANIMATION_NAME = "default";
 
 Model::Model ()
 {
-	m_pBones = NULL;
 	m_bTextureWrapping = true;
 	SetUseZBuffer( true );
 	m_pCurAnimation = NULL;
@@ -42,9 +41,7 @@ Model::~Model ()
 
 void Model::Clear ()
 {
-	delete[] m_pBones;
-	m_pBones = NULL;
-
+	m_vpBones.clear();
 	m_Meshes.clear();
 	m_Materials.clear();
 	m_mapNameToAnimation.clear();
@@ -139,11 +136,11 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 						THROW
                     }
 
-					msVertex& vertex = mesh.Vertices[j];
+					RageModelVertex& vertex = mesh.Vertices[j];
 //                  vertex.nFlags = nFlags;
-                    memcpy( vertex.Vertex, Vertex, sizeof(vertex.Vertex) );
-                    memcpy( vertex.uv, uv, sizeof(vertex.uv) );
-                    vertex.nBoneIndex = (byte)nIndex;
+                    memcpy( vertex.p, Vertex, sizeof(vertex.p) );
+                    memcpy( vertex.t, uv, sizeof(vertex.t) );
+                    vertex.boneIndex = (byte)nIndex;
 					RageVec3AddToBounds( RageVector3(Vertex), m_vMins, m_vMaxs );
                 }
 
@@ -208,10 +205,9 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 					// deflate the normals into vertices
 					for( int k=0; k<3; k++ )
 					{
-
-						msVertex& Vertex = mesh.Vertices[ nIndices[k] ];
-						RageVector3& Normal = Normals[ nNormalIndices[k] ];
-						Vertex.Normal = Normal;
+						RageModelVertex& vertex = mesh.Vertices[ nIndices[k] ];
+						RageVector3& normal = Normals[ nNormalIndices[k] ];
+						vertex.n = normal;
 					}
 
 					msTriangle& Triangle = mesh.Triangles[j];
@@ -341,13 +337,19 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 
 	LoadMilkshapeAsciiBones( DEFAULT_ANIMATION_NAME, sPath );
 
-    // Setup temp vertices
-	m_vTempVerticesByBone.resize( m_Meshes.size() );
-	for (i = 0; i < (int)m_Meshes.size(); i++)
-    {
-		msMesh& Mesh = m_Meshes[i];
-		m_vTempVerticesByBone[i].resize( Mesh.Vertices.size() );
-	}	
+	//
+    // Setup temp vertices (if necessary)
+	//
+	bUseTempVertices = m_mapNameToAnimation[DEFAULT_ANIMATION_NAME].Bones.size() > 0;	// if there are no bones, then there's no reason to use temp vertices
+	if( bUseTempVertices )
+	{
+		m_vTempVerticesByMesh.resize( m_Meshes.size() );
+		for (i = 0; i < (int)m_Meshes.size(); i++)
+		{
+			msMesh& Mesh = m_Meshes[i];
+			m_vTempVerticesByMesh[i].resize( Mesh.Vertices.size() );
+		}
+	}
 
 	return true;
 }
@@ -508,30 +510,30 @@ void Model::DrawPrimitives()
 	//
 	// process vertices
 	//
-	for (int i = 0; i < (int)m_Meshes.size(); i++)
+	if( bUseTempVertices )
 	{
-		msMesh *pMesh = &m_Meshes[i];
-		RageModelVertexVector& TempVertices = m_vTempVerticesByBone[i];
-		for (int j = 0; j < (int)pMesh->Vertices.size(); j++)
+		for (int i = 0; i < (int)m_Meshes.size(); i++)
 		{
-			RageModelVertex& tempVert = TempVertices[j];
-			msVertex& originalVert = pMesh->Vertices[j];
-
-			memcpy( &tempVert.t, originalVert.uv, sizeof(originalVert.uv) );
-			
-			if( originalVert.nBoneIndex == -1 )
+			msMesh *pMesh = &m_Meshes[i];
+			RageModelVertexVector& TempVertices = m_vTempVerticesByMesh[i];
+			for (int j = 0; j < (int)pMesh->Vertices.size(); j++)
 			{
-				memcpy( &tempVert.n, originalVert.Normal, sizeof(originalVert.Normal) );
-			
-				memcpy( &tempVert.p, originalVert.Vertex, sizeof(originalVert.Vertex) );
-			}
-			else
-			{
-				int bone = originalVert.nBoneIndex;
+				RageModelVertex& tempVert = TempVertices[j];
+				RageModelVertex& originalVert = pMesh->Vertices[j];
 
-				RageVec3TransformNormal( &tempVert.n, &originalVert.Normal, &m_pBones[bone].mFinal );
-
-				RageVec3TransformCoord( &tempVert.p, &originalVert.Vertex, &m_pBones[bone].mFinal );
+				tempVert.t = originalVert.t;
+				
+				if( originalVert.boneIndex == -1 )
+				{
+					tempVert.n = originalVert.n;
+					tempVert.p = originalVert.p;
+				}
+				else
+				{
+					int bone = originalVert.boneIndex;
+					RageVec3TransformNormal( &tempVert.n, &originalVert.n, &m_vpBones[bone].mFinal );
+					RageVec3TransformCoord( &tempVert.p, &originalVert.p, &m_vpBones[bone].mFinal );
+				}
 			}
 		}
 	}
@@ -546,7 +548,7 @@ void Model::DrawPrimitives()
 		for (int i = 0; i < (int)m_Meshes.size(); i++)
 		{
 			msMesh *pMesh = &m_Meshes[i];
-			RageModelVertexVector& TempVertices = m_vTempVerticesByBone[i];
+			RageModelVertexVector& TempVertices = bUseTempVertices ? m_vTempVerticesByMesh[i] : pMesh->Vertices;
 
 			if( pMesh->nMaterialIndex != -1 )	// has a material
 			{
@@ -616,7 +618,7 @@ void Model::DrawPrimitives()
 		for (int i = 0; i < (int)m_Meshes.size(); i++)
 		{
 			msMesh *pMesh = &m_Meshes[i];
-			RageModelVertexVector& TempVertices = m_vTempVerticesByBone[i];
+			RageModelVertexVector& TempVertices = m_vTempVerticesByMesh[i];
 
 			// apply material
 			if( pMesh->nMaterialIndex != -1 )
@@ -686,10 +688,7 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 
 	// setup bones
 	int nBoneCount = (int)m_pCurAnimation->Bones.size();
-	if (!m_pBones)
-	{
-		m_pBones = new myBone_t[nBoneCount];
-	}
+	m_vpBones.resize( nBoneCount );
 
 	int i, j;
 	for (i = 0; i < nBoneCount; i++)
@@ -700,23 +699,23 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 		vRot[1] = pBone->Rotation[1] * 180 / (float) PI;
 		vRot[2] = pBone->Rotation[2] * 180 / (float) PI;
 
-		RageMatrixAngles( &m_pBones[i].mRelative, vRot );
+		RageMatrixAngles( &m_vpBones[i].mRelative, vRot );
 		
-		m_pBones[i].mRelative.m[3][0] = pBone->Position[0];
-		m_pBones[i].mRelative.m[3][1] = pBone->Position[1];
-		m_pBones[i].mRelative.m[3][2] = pBone->Position[2];
+		m_vpBones[i].mRelative.m[3][0] = pBone->Position[0];
+		m_vpBones[i].mRelative.m[3][1] = pBone->Position[1];
+		m_vpBones[i].mRelative.m[3][2] = pBone->Position[2];
 		
 		int nParentBone = m_pCurAnimation->FindBoneByName( pBone->szParentName );
 		if (nParentBone != -1)
 		{
-			RageMatrixMultiply( &m_pBones[i].mAbsolute, &m_pBones[nParentBone].mAbsolute, &m_pBones[i].mRelative );
+			RageMatrixMultiply( &m_vpBones[i].mAbsolute, &m_vpBones[nParentBone].mAbsolute, &m_vpBones[i].mRelative );
 
-			m_pBones[i].mFinal = m_pBones[i].mAbsolute;
+			m_vpBones[i].mFinal = m_vpBones[i].mAbsolute;
 		}
 		else
 		{
-			m_pBones[i].mAbsolute = m_pBones[i].mRelative;
-			m_pBones[i].mFinal = m_pBones[i].mRelative;
+			m_vpBones[i].mAbsolute = m_vpBones[i].mRelative;
+			m_vpBones[i].mFinal = m_vpBones[i].mRelative;
 		}
 	}
 
@@ -725,19 +724,19 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 		msMesh *pMesh = &m_Meshes[i];
 		for (j = 0; j < (int)pMesh->Vertices.size(); j++)
 		{
-			msVertex *pVertex = &pMesh->Vertices[j];
-			if (pVertex->nBoneIndex != -1)
+			RageModelVertex *pVertex = &pMesh->Vertices[j];
+			if (pVertex->boneIndex != -1)
 			{
-				pVertex->Vertex[0] -= m_pBones[pVertex->nBoneIndex].mAbsolute.m[3][0];
-				pVertex->Vertex[1] -= m_pBones[pVertex->nBoneIndex].mAbsolute.m[3][1];
-				pVertex->Vertex[2] -= m_pBones[pVertex->nBoneIndex].mAbsolute.m[3][2];
+				pVertex->p[0] -= m_vpBones[pVertex->boneIndex].mAbsolute.m[3][0];
+				pVertex->p[1] -= m_vpBones[pVertex->boneIndex].mAbsolute.m[3][1];
+				pVertex->p[2] -= m_vpBones[pVertex->boneIndex].mAbsolute.m[3][2];
 				RageVector3 vTmp;
 
 				RageMatrix inverse;
-				RageMatrixTranspose( &inverse, &m_pBones[pVertex->nBoneIndex].mAbsolute );	// transpose = inverse for rotation matrices
-				RageVec3TransformNormal( &vTmp, &pVertex->Vertex, &inverse );
+				RageMatrixTranspose( &inverse, &m_vpBones[pVertex->boneIndex].mAbsolute );	// transpose = inverse for rotation matrices
+				RageVec3TransformNormal( &vTmp, &pVertex->p, &inverse );
 				
-				pVertex->Vertex = vTmp;
+				pVertex->p = vTmp;
 			}
 		}
 	}
@@ -779,7 +778,7 @@ Model::AdvanceFrame (float dt)
 		int nRotationKeyCount = pBone->RotationKeys.size();
 		if (nPositionKeyCount == 0 && nRotationKeyCount == 0)
 		{
-			m_pBones[i].mFinal = m_pBones[i].mAbsolute;
+			m_vpBones[i].mFinal = m_vpBones[i].mAbsolute;
 		}
 		else
 		{
@@ -860,16 +859,16 @@ Model::AdvanceFrame (float dt)
 			m.m[3][1] = vPos[1];
 			m.m[3][2] = vPos[2];
 
-			RageMatrixMultiply( &m_pBones[i].mRelativeFinal, &m_pBones[i].mRelative, &m );
+			RageMatrixMultiply( &m_vpBones[i].mRelativeFinal, &m_vpBones[i].mRelative, &m );
 
 			int nParentBone = m_pCurAnimation->FindBoneByName( pBone->szParentName );
 			if (nParentBone == -1)
 			{
-				m_pBones[i].mFinal = m_pBones[i].mRelativeFinal;
+				m_vpBones[i].mFinal = m_vpBones[i].mRelativeFinal;
 			}
 			else
 			{
-				RageMatrixMultiply( &m_pBones[i].mFinal, &m_pBones[nParentBone].mFinal, &m_pBones[i].mRelativeFinal );
+				RageMatrixMultiply( &m_vpBones[i].mFinal, &m_vpBones[nParentBone].mFinal, &m_vpBones[i].mRelativeFinal );
 			}
 		}
 	}

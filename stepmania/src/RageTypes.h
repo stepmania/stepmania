@@ -11,6 +11,8 @@
 -----------------------------------------------------------------------------
 */
 
+#include "SDL_types.h"	// for Sint8
+
 /* These are shared between Actor and RageDisplay.  I don't want to put this in
  * Actor (because Rage shouldn't touch Actor) and I don't want to have Actor.h
  * depend on RageDisplay (since that'd boost RDisplay.h a lot), so let's just
@@ -227,6 +229,7 @@ struct RageModelVertex	// doesn't have color.  Relies on material color
     RageVector3		p;	// position
     RageVector3		n;	// normal
 	RageVector2		t;	// texture coordinates
+	Sint8			boneIndex;
 };
 
 // RageMatrix elements are specified in row-major order.  This

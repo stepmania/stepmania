@@ -45,14 +45,16 @@ typedef enum {
 } msFlag;
 
 /* msVertex */
+/*
 typedef struct msVertex
 {
 //  byte        nFlags;	// we don't care about saving this flag
     RageVector3 Vertex;
-    RageVector2 uv;
     RageVector3 Normal;
+    RageVector2 uv;
     char        nBoneIndex;
 } msVertex;
+*/
 
 /* msTriangle */
 typedef struct
@@ -71,7 +73,8 @@ typedef struct msMesh
     char        szName[MS_MAX_NAME];
     char        nMaterialIndex;
     
-    vector<msVertex>   Vertices;
+    vector<RageModelVertex>   Vertices;
+//  vector<msVertex>   Vertices;
 
 //  vector<msVec3>     Normals;	// each vertex holds its own normal
 
