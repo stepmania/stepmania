@@ -459,7 +459,7 @@ void SongManager::InitCoursesFromDisk()
 	{
 		Course course;
 		course.LoadFromCRSFile( "Courses\\" + saCourseFiles[i], m_pSongs );
-		if( course.m_iStages > 0 )
+		if( course.GetNumStages() > 0 )
 			m_aOniCourses.push_back( course );
 	}
 	
@@ -480,7 +480,7 @@ void SongManager::InitCoursesFromDisk()
 			Course course;
 			course.CreateEndlessCourseFromGroupAndDifficulty( sGroupName, dc, apGroupSongs );
 
-			if( course.m_iStages > 0 )
+			if( course.GetNumStages() > 0 )
 				m_aEndlessCourses.push_back( course );
 		}
 	}
@@ -498,7 +498,7 @@ void SongManager::InitCoursesFromDisk()
 		{
 			Course course;
 			course.LoadFromCRSFile( saCoursePaths[i], m_pSongs );
-			if( course.m_iStages > 0 )
+			if( course.GetNumStages() > 0 )
 				m_aExtraCourses.push_back( course );
 		}
 	}
@@ -520,7 +520,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 
 	Course course;
 	course.LoadFromCRSFile( sCoursePath, m_pSongs );
-	if( course.m_iStages <= 0 ) return false;
+	if( course.GetNumStages() <= 0 ) return false;
 
 	pSongOut = course.GetSong(0);
 	pNotesOut = course.GetNotesForStage( 0 );

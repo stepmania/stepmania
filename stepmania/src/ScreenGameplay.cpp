@@ -1029,7 +1029,7 @@ void SaveChanges()
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
-			for( int i=0; i<GAMESTATE->m_pCurCourse->m_iStages; i++ )
+			for( int i=0; i<GAMESTATE->m_pCurCourse->GetNumStages(); i++ )
 			{
 				Song* pSong = GAMESTATE->m_pCurCourse->GetSong(i);
 				pSong->Save();
@@ -1053,7 +1053,7 @@ void DontSaveChanges()
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
-			for( int i=0; i<GAMESTATE->m_pCurCourse->m_iStages; i++ )
+			for( int i=0; i<GAMESTATE->m_pCurCourse->GetNumStages(); i++ )
 			{
 				Song* pSong = GAMESTATE->m_pCurCourse->GetSong(i);
 				ld.LoadFromSMFile( GAMESTATE->m_pCurSong->GetCacheFilePath(), *pSong );

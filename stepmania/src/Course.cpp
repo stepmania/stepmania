@@ -182,8 +182,8 @@ void Course::CreateEndlessCourseFromGroupAndDifficulty( CString sGroupName, Diff
 void Course::Shuffle()
 {
 	/* Shuffle the list. */
-	for( int i = 0; i < m_iStages; ++i)
-		swap(SongOrdering[i], SongOrdering[rand() % m_iStages]);
+	for( int i = 0; i < GetNumStages(); ++i)
+		swap(SongOrdering[i], SongOrdering[rand() % GetNumStages()]);
 }
 
 Notes* Course::GetNotesForStage( int iStage )
@@ -249,7 +249,7 @@ void Course::GetSongAndNotesForCurrentStyle(
 	CStringArray& asModifiersOut,
 	bool bShuffled )
 {
-	for( int i=0; i<m_iStages; i++ )
+	for( int i=0; i<GetNumStages(); i++ )
 	{
 		int num = bShuffled? SongOrdering[i]:i;
 
@@ -271,9 +271,9 @@ void Course::GetSongAndNotesForCurrentStyle(
 RageColor Course::GetColor()
 {
 	// This could be made smarter
-	if( m_iStages >= 7 )
+	if( GetNumStages() >= 7 )
 		return RageColor(1,0,0,1);	// red
-	else if( m_iStages >= 4 )
+	else if( GetNumStages() >= 4 )
 		return RageColor(1,0.5f,0,1);	// orange
 	else
 		return RageColor(0,1,0,1);	// green
@@ -303,7 +303,7 @@ int Course::GetNumStages() const
 
 static int CompareCoursePointersByDifficulty(const Course* pCourse1, const Course* pCourse2)
 {
-	return pCourse1->m_iStages < pCourse2->m_iStages;
+	return pCourse1->GetNumStages() < pCourse2->GetNumStages();
 }
 
 void SortCoursePointerArrayByDifficulty( CArray<Course*,Course*> &apCourses )

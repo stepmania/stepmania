@@ -102,7 +102,7 @@ void CourseContentsFrame::SetFromCourse( Course* pCourse )
 
 	m_iNumContents = 0; 
 
-	for( int i=0; i<min(pCourse->m_iStages, MAX_TOTAL_CONTENTS); i++ )
+	for( int i=0; i<min(pCourse->GetNumStages(), MAX_TOTAL_CONTENTS); i++ )
 	{
 		Song* pSong = pCourse->GetSong(i);
 		Notes* pNotes = pCourse->GetNotesForStage(i);

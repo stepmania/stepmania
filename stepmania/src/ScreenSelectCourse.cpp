@@ -329,9 +329,9 @@ void ScreenSelectCourse::AfterCourseChange()
 		{
 			Course* pCourse = m_MusicWheel.GetSelectedCourse();
 
-			m_textNumSongs.SetText( ssprintf("%d", pCourse->m_iStages) );
+			m_textNumSongs.SetText( ssprintf("%d", pCourse->GetNumStages()) );
 			float fTotalSeconds = 0;
-			for( int i=0; i<pCourse->m_iStages; i++ )
+			for( int i=0; i<pCourse->GetNumStages(); i++ )
 				fTotalSeconds += pCourse->GetSong(i)->m_fMusicLengthSeconds;
 			m_textTime.SetText( SecondsToTime(fTotalSeconds) );
 
