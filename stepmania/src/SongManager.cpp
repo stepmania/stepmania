@@ -354,7 +354,7 @@ void FileWrite( ofstream& f, int iWrite )
 {
 	f << iWrite << endl;
 }
-void FileWrite( ofstream& f, unsigned uWrite )
+void FileWrite( ofstream& f, size_t uWrite )
 {
 	f << uWrite << endl;
 }
