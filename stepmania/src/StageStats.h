@@ -73,13 +73,17 @@ struct StageStats
 		/* Combo size, in steps. */
 		int cnt;
 
-		Combo_t(): start(-1), size(-1), cnt(-1) { }
+		/* Combo rollover from the last song (see UpdateComboList for details). */
+		int rollover;
+
+		Combo_t(): start(0), size(0), cnt(0), rollover(0) { }
 		bool IsZero() const { return start < 0; }
 	};
 	float fFirstPos[NUM_PLAYERS], fLastPos[NUM_PLAYERS];
 
 	bool	FullCombo( PlayerNumber pn ) const;
 	void	UpdateComboList( PlayerNumber pn, float pos );
+	Combo_t GetMaxCombo( PlayerNumber pn ) const;
 
 	void	Finish();
 	vector<Combo_t> ComboList[NUM_PLAYERS];

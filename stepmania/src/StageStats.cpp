@@ -183,7 +183,7 @@ void StageStats::UpdateComboList( PlayerNumber pn, float pos )
 	fFirstPos[pn] = min( pos, fFirstPos[pn] );
 	fLastPos[pn] = max( pos, fLastPos[pn] );
 	
-	const int cnt = iCurCombo[pn];
+	int cnt = iCurCombo[pn];
 	if( !cnt )
 		return; /* no combo */
 
@@ -193,11 +193,37 @@ void StageStats::UpdateComboList( PlayerNumber pn, float pos )
 		Combo_t NewCombo;
 		NewCombo.start = pos;
 		ComboList[pn].push_back( NewCombo );
+
+		/* If this is the first combo, and the current combo is greater than 1,
+		 * then that extra part of the combo must have come from a previous song.
+		 * Remember it separately. */
+		if( ComboList[pn].size() == 1 )
+		{
+			ComboList[pn][0].rollover = cnt-1;
+			cnt = 1;
+		}
 	}
 
 	Combo_t &combo = ComboList[pn].back();
 	combo.size = pos - combo.start;
 	combo.cnt = cnt;
+}
+
+/* This returns the largest combo contained within the song, as if
+ * m_bComboContinuesBetweenSongs is turned off. */
+StageStats::Combo_t StageStats::GetMaxCombo( PlayerNumber pn ) const
+{
+	if( ComboList[pn].size() == 0 )
+		return Combo_t();
+
+	int m = 0;
+	for( unsigned i = 1; i < ComboList[pn].size(); ++i )
+	{
+		if( ComboList[pn][i].cnt > ComboList[pn][m].cnt )
+			m = i;
+	}
+
+	return ComboList[pn][m];
 }
 
 /* SetLifeRecord and UpdateComboList take a percentage (0..1) in pos, but the values
