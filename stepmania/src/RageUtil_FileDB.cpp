@@ -323,8 +323,11 @@ void FilenameDB::DelFile( const CString &sPath )
 		{
 			FileSet *Clean = it->second;
 			for( set<File>::iterator f = Clean->files.begin(); f != Clean->files.end(); ++f )
-				if( f->dirp == fs )
-					f->dirp = NULL;
+			{
+				File &ff = (File &) *f;
+				if( ff.dirp == fs )
+					ff.dirp = NULL;
+			}
 		}
 
 		delete fs;
