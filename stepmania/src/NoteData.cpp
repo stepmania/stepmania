@@ -176,7 +176,7 @@ void NoteData::CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEn
 
 void NoteData::AddHoldNote( HoldNote add )
 {
-	ASSERT( add.m_fStartBeat>0 && add.m_fEndBeat>0 );
+	ASSERT( add.m_fStartBeat>=0 && add.m_fEndBeat>=0 );
 
 	int i;
 
