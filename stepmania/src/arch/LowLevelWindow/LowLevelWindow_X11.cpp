@@ -129,6 +129,8 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 		otherEvs.pop();
 	}
 
+	CurrentParams = p;
+
 	X11Helper::CloseMask(StructureNotifyMask);
 
 	return ""; // Success
