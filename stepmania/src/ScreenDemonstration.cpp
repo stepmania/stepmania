@@ -5,7 +5,6 @@
 #include "GameState.h"
 #include "SongManager.h"
 #include "StepMania.h"
-#include "ScreenAttract.h"	// for AttractInput()
 #include "ScreenManager.h"
 #include "RageSoundManager.h"
 #include "GameSoundManager.h"
