@@ -17,8 +17,13 @@ bool GetVideoDriverInfo9x( int iIndex, VideoDriverInfo& infoOut )
 {
 	HKEY    hkey;
 	CString sKey = ssprintf("SYSTEM\\CurrentControlSet\\Services\\Class\\Display\\%04d",iIndex);
-	if (RegOpenKey(HKEY_LOCAL_MACHINE, sKey, &hkey) !=  ERROR_SUCCESS)
+	if (RegOpenKey(HKEY_LOCAL_MACHINE, sKey, &hkey) != ERROR_SUCCESS)
+	{
+		/* The first card should always exist. */
+		if( iIndex == 0 )
+			LOG->Warn("GetVideoDriverInfo9x error: index 0 doesn't exist!");
 		return false;
+	}
 
 	infoOut.sDate =			GetRegValue( hkey, "DriverDate");
 	infoOut.sDescription =	GetRegValue( hkey, "DriverDesc");
@@ -36,7 +41,11 @@ bool GetVideoDriverInfo2k( int iIndex, VideoDriverInfo& infoOut )
 	HKEY    hkey;
 	CString sKey = ssprintf("SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E968-E325-11CE-BFC1-08002BE10318}\\%04d",iIndex);
 	if (RegOpenKey(HKEY_LOCAL_MACHINE, sKey, &hkey) !=  ERROR_SUCCESS)
+	{
+		if( iIndex == 0 )
+			LOG->Warn("GetVideoDriverInfo2k error: index 0 doesn't exist!");
 		return false;
+	}
 
 	infoOut.sDate =			GetRegValue( hkey, "DriverDate");
 	infoOut.sDescription =	GetRegValue( hkey, "DriverDesc");
@@ -98,7 +107,7 @@ CString GetPrimaryVideoDriverName()
 
 	VideoDriverInfo info;
 	if( !GetVideoDriverInfo(0, info) )
-		RageException::Throw( "GetVideoDriverInfo(0) failed");
+		return "(ERROR DETECTING VIDEO DRIVER)";
 
 	return info.sDescription;
 }
