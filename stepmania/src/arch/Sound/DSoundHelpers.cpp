@@ -495,8 +495,9 @@ void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend, int chunksize )
 	writeahead = (writeahead / bytes_per_frame()) * bytes_per_frame();
 	writeahead = min( writeahead, buffersize );
 
-	LOG->Trace("insufficient writeahead: wants %i, but we'll only fill to %i; writeahead adjusted from %i to %i",
-		prefetch/bytes_per_frame(), fake_buffer_bytes_filled/bytes_per_frame(), old_writeahead/bytes_per_frame(), writeahead/bytes_per_frame() );
+	LOG->Trace("insufficient writeahead: wants %i (cursor at %i..%i), but we'll only fill to %i; writeahead adjusted from %i to %i",
+		prefetch/bytes_per_frame(), cursorstart, cursorend,
+		fake_buffer_bytes_filled/bytes_per_frame(), old_writeahead/bytes_per_frame(), writeahead/bytes_per_frame() );
 }
 
 bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
