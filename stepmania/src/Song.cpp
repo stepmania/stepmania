@@ -1187,6 +1187,21 @@ bool Song::HasEdits( StepsType nt ) const
 // Sorting
 /////////////////////////////////////
 
+/* Just calculating GetNumTimesPlayed within the sort is pretty slow, so let's precompute
+ * it.  (This could be generalized with a template.) */
+map<const Song*, CString> song_sort_val;
+
+bool CompareSongPointersBySortValueAscending(const Song *pSong1, const Song *pSong2)
+{
+	return song_sort_val[pSong1] < song_sort_val[pSong2];
+}
+
+bool CompareSongPointersBySortValueDescending(const Song *pSong1, const Song *pSong2)
+{
+	return song_sort_val[pSong1] > song_sort_val[pSong2];
+}
+
+
 CString MakeSortString( CString s )
 {
 	s.MakeUpper();
@@ -1254,21 +1269,12 @@ static int GetSongSortDifficulty(const Song *pSong)
 	return 1;
 }
 
-int CompareSongPointersByDifficulty(const Song *pSong1, const Song *pSong2)
-{
-	int iEasiestMeter1 = GetSongSortDifficulty(pSong1);
-	int iEasiestMeter2 = GetSongSortDifficulty(pSong2);
-
-	if( iEasiestMeter1 < iEasiestMeter2 )
-		return true;
-	if( iEasiestMeter1 > iEasiestMeter2 )
-		return false;
-	return CompareSongPointersByTitle( pSong1, pSong2 );
-}
-
 void SortSongPointerArrayByDifficulty( vector<Song*> &arraySongPointers )
 {
-	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByDifficulty );
+	for( unsigned i = 0; i < arraySongPointers.size(); ++i )
+		song_sort_val[arraySongPointers[i]] =
+			ssprintf("%9i", GetSongSortDifficulty(arraySongPointers[i]));
+	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueAscending );
 }
 
 bool CompareSongPointersByBPM(const Song *pSong1, const Song *pSong2)
@@ -1333,43 +1339,22 @@ void SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers )
 }
 
 
-int CompareSongPointersByArtist(const Song *pSong1, const Song *pSong2)
-{
-	CString s1 = pSong1->GetTranslitArtist();
-	CString s2 = pSong2->GetTranslitArtist();
-
-	s1 = MakeSortString(s1);
-	s2 = MakeSortString(s2);
-
-	if( s1 < s2 )
-		return true;
-	if( s1 > s2 )
-		return false;
-	return CompareSongPointersByTitle( pSong1, pSong2 );
-}
-
 void SortSongPointerArrayByArtist( vector<Song*> &arraySongPointers )
 {
-	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByArtist );
+	for( unsigned i = 0; i < arraySongPointers.size(); ++i )
+		song_sort_val[arraySongPointers[i]] = MakeSortString( arraySongPointers[i]->GetTranslitArtist() );
+	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueAscending );
 }
 
-int CompareSongPointersByGroupAndDifficulty(const Song *pSong1, const Song *pSong2)
+static int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
 {
-	const CString &sGroup1 = pSong1->m_sGroupName;
-	const CString &sGroup2 = pSong2->m_sGroupName;
-
-	if( sGroup1 < sGroup2 )
-		return true;
-	if( sGroup1 > sGroup2 )
-		return false;
-
-	/* Same group; compare by difficulty. */
-	return CompareSongPointersByDifficulty( pSong1, pSong2 );
+	return pSong1->m_sGroupName < pSong2->m_sGroupName;
 }
 
 void SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &arraySongPointers )
 {
-	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGroupAndDifficulty );
+	SortSongPointerArrayByDifficulty( arraySongPointers );
+	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGroup );
 }
 
 int CompareSongPointersByGroupAndTitle(const Song *pSong1, const Song *pSong2)
@@ -1389,20 +1374,6 @@ int CompareSongPointersByGroupAndTitle(const Song *pSong1, const Song *pSong2)
 void SortSongPointerArrayByGroupAndTitle( vector<Song*> &arraySongPointers )
 {
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGroupAndTitle );
-}
-
-/* Just calculating GetNumTimesPlayed within the sort is pretty slow, so let's precompute
- * it.  (This could be generalized with a template.) */
-map<const Song*, CString> song_sort_val;
-
-bool CompareSongPointersBySortValueAscending(const Song *pSong1, const Song *pSong2)
-{
-	return song_sort_val[pSong1] < song_sort_val[pSong2];
-}
-
-bool CompareSongPointersBySortValueDescending(const Song *pSong1, const Song *pSong2)
-{
-	return song_sort_val[pSong1] > song_sort_val[pSong2];
 }
 
 void SortSongPointerArrayByNumPlays( vector<Song*> &arraySongPointers, ProfileSlot slot, bool bDescending )
@@ -1535,30 +1506,15 @@ void SortSongPointerArrayBySectionName( vector<Song*> &arraySongPointers, SongSo
 	song_sort_val.clear();
 }
 
-struct CompareSongByMeter
-{
-	Difficulty dc;
-
-	CompareSongByMeter(Difficulty d): dc(d) { }
-	bool operator() (const Song* pSong1, const Song* pSong2)
-	{
-		Steps* pNotes1 = pSong1->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, dc );
-		Steps* pNotes2 = pSong2->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, dc );
-
-		const int iMeter1 = pNotes1 ? pNotes1->GetMeter() : 0;
-		const int iMeter2 = pNotes2 ? pNotes2->GetMeter() : 0;
-
-		if( iMeter1 < iMeter2 )
-			return true;
-		if( iMeter1 > iMeter2 )
-			return false;
-		return CompareSongPointersByTitle( pSong1, pSong2 );
-	}
-};
-
 void SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Difficulty dc )
 {
-	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongByMeter(dc) );
+	song_sort_val.clear();
+	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
+	{
+		Steps* pNotes = arraySongPointers[i]->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, dc );
+		song_sort_val[arraySongPointers[i]] = ssprintf("%i", pNotes ? pNotes->GetMeter() : 0);
+	}
+	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueAscending );
 }
 
 Song::SelectionDisplay Song::GetDisplayed() const
