@@ -129,7 +129,7 @@ public:
 	CString GetName() const { return m_sName; }
 	int GetValue() const;
 	void Post();
-	void Wait();
+	void Wait( bool bFailOnTimeout=true );
 	bool TryWait();
 
 private:

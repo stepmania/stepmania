@@ -661,13 +661,13 @@ void RageSemaphore::Post()
 	m_pSema->Post();
 }
 
-void RageSemaphore::Wait()
+void RageSemaphore::Wait( bool bFailOnTimeout )
 {
 retry:
 	if( m_pSema->Wait() )
 		return;
 
-	if( Dialog::IsShowingDialog() )
+	if( !bFailOnTimeout || Dialog::IsShowingDialog() )
 		goto retry;
 
 	/* We waited too long.  We're probably deadlocked, though unlike mutexes, we can't
