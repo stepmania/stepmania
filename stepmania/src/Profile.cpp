@@ -211,9 +211,9 @@ int Profile::GetTotalNumSongsPassed() const
 	return iTotal;
 }
 
-int Profile::GetPossibleSongDancePoints( StepsType st, Difficulty dc ) const
+float Profile::GetSongsPercentComplete( StepsType st, Difficulty dc ) const
 {
-	int iTotal = 0;
+	int iTotalSteps = 0;
 
 	// add steps high scores
 	const vector<Song*> vSongs = SONGMAN->GetAllSongs();
@@ -235,17 +235,12 @@ int Profile::GetPossibleSongDancePoints( StepsType st, Difficulty dc ) const
 			if( pSteps->GetDifficulty() != dc )
 				continue;	// skip
 
-			const RadarValues& fRadars = pSteps->GetRadarValues();
-			iTotal += ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
+			iTotalSteps++;
 		}
 	}
 
-	return iTotal;
-}
 
-int Profile::GetActualSongDancePoints( StepsType st, Difficulty dc ) const
-{
-	int iTotal = 0;
+	float fTotalPercents = 0;
 	
 	// add steps high scores
 	for( std::map<SongID,HighScoresForASong>::const_iterator i = m_SongHighScores.begin();
@@ -286,18 +281,16 @@ int Profile::GetActualSongDancePoints( StepsType st, Difficulty dc ) const
 			const HighScoresForASteps& h = j->second;
 			const HighScoreList& hs = h.hs;
 
-			const RadarValues& fRadars = pSteps->GetRadarValues();
-			int iPossibleDP = ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
-			iTotal += (int)truncf( hs.GetTopScore().fPercentDP * iPossibleDP );
+			fTotalPercents += hs.GetTopScore().fPercentDP;
 		}
 	}
 
-	return iTotal;
+	return fTotalPercents / iTotalSteps;
 }
 
-int Profile::GetPossibleCourseDancePoints( StepsType st, CourseDifficulty cd ) const
+float Profile::GetCoursesPercentComplete( StepsType st, CourseDifficulty cd ) const
 {
-	int iTotal = 0;
+	int iTotalTrails = 0;
 
 	// add course high scores
 	vector<Course*> vCourses;
@@ -314,16 +307,11 @@ int Profile::GetPossibleCourseDancePoints( StepsType st, CourseDifficulty cd ) c
 		if( pTrail == NULL )
 			continue;
 
-		const RadarValues& fRadars = pTrail->GetRadarValues();
-		iTotal += ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
+		iTotalTrails++;
 	}
 
-	return iTotal;
-}
-
-int Profile::GetActualCourseDancePoints( StepsType st, CourseDifficulty cd ) const
-{
-	int iTotal = 0;
+	
+	float fTotalPercents = 0;
 	
 	// add course high scores
 	for( std::map<CourseID,HighScoresForACourse>::const_iterator i = m_CourseHighScores.begin();
@@ -365,13 +353,11 @@ int Profile::GetActualCourseDancePoints( StepsType st, CourseDifficulty cd ) con
 			const HighScoresForATrail& h = j->second;
 			const HighScoreList& hs = h.hs;
 
-			const RadarValues& fRadars = pTrail->GetRadarValues();
-			int iPossibleDP = ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
-			iTotal += (int)truncf( hs.GetTopScore().fPercentDP * iPossibleDP );
+			fTotalPercents += hs.GetTopScore().fPercentDP;
 		}
 	}
 
-	return iTotal;
+	return fTotalPercents / iTotalTrails;
 }
 
 CString Profile::GetProfileDisplayNameFromDir( CString sDir )
