@@ -11,7 +11,7 @@
 
 #ifdef HAVE_GTK
 #include "LoadingWindow/LoadingWindow_Gtk.h"
-#elif
+#else
 #include "LoadingWindow/LoadingWindow_SDL.h"
 #endif
 
