@@ -141,7 +141,7 @@ MiniMenuDefinition g_AreaMenu =
 		{ "Paste",				true, 1, 0, {""} },
 		{ "Clear",				true, 1, 0, {""} },
 		{ "Quantize",			true, NUM_NOTE_TYPES, 0, {"4TH","8TH","12TH","16TH","24TH","32ND"} },
-		{ "Transform",			true, ScreenEdit::NUM_TRANSFORM_TYPES, 0, {"Little","Wide","Big","Left","Right","Mirror","Shuffle","Super Shuffle","Backwards","Swap Sides"} },
+		{ "Transform",			true, ScreenEdit::NUM_TRANSFORM_TYPES, 0, {"Little","Wide","Big","Quick","Left","Right","Mirror","Shuffle","Super Shuffle","Backwards","Swap Sides"} },
 		{ "Play selection",		true, 1, 0, {""} },
 		{ "Record in selection",true, 1, 0, {""} },
 		{ "Insert blank beat and shift down", true, 1, 0, {""} },
@@ -1290,7 +1290,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				{
 				case little:		NoteDataUtil::Little( m_Clipboard );							break;
 				case wide:			NoteDataUtil::Wide( m_Clipboard );								break;
-				case tall:			NoteDataUtil::Tall( m_Clipboard );								break;
+				case big:			NoteDataUtil::Big( m_Clipboard );								break;
+				case quick:			NoteDataUtil::Quick( m_Clipboard );								break;
 				case left:			NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::left );			break;
 				case right:			NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::right );			break;
 				case shuffle:		NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::shuffle );		break;

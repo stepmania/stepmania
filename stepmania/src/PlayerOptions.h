@@ -58,7 +58,8 @@ struct PlayerOptions
 		TRANSFORM_NONE=0,
 		TRANSFORM_LITTLE,
 		TRANSFORM_WIDE,
-		TRANSFORM_TALL,
+		TRANSFORM_BIG,
+		TRANSFORM_QUICK,
 		NUM_TRANSFORMS
 	} m_Transform;
 	void NextTransform();

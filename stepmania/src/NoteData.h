@@ -140,7 +140,9 @@ namespace NoteDataUtil
 	void Turn( NoteData &in, TurnType tt );
 	void Little( NoteData &in );
 	void Wide( NoteData &in );
-	void Tall( NoteData &in );
+	void Big( NoteData &in );
+	void Quick( NoteData &in );
+	void InsertIntelligentTaps( NoteData &in, float fBeatInterval );
 	void SuperShuffleTaps( NoteData &in );
 	void Backwards( NoteData &in );
 	void SwapSides( NoteData &in );

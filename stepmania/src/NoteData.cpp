@@ -1043,25 +1043,43 @@ void NoteDataUtil::Wide( NoteData &in )
 	in.Convert4sToHoldNotes();
 }
 
-void NoteDataUtil::Tall( NoteData &in )
+void NoteDataUtil::Big( NoteData &in )
+{
+	InsertIntelligentTaps(in,1.0f);	// add 8ths
+}
+
+void NoteDataUtil::Quick( NoteData &in )
+{
+	InsertIntelligentTaps(in,0.5f);	// add 16ths
+}
+
+void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval )
 {
 	in.ConvertHoldNotesTo4s();
 
 	// insert 16th between all 4th-8ths
 	int max_row = in.GetLastRow();
-	int rows_per_eighth = ROWS_PER_BEAT/2;
-	for( int i=0; i<=max_row; i+=rows_per_eighth ) 
+	int rows_per_interval = BeatToNoteRow( fBeatInterval );
+	for( int i=0; i<=max_row; i+=rows_per_interval ) 
 	{
 		int iRowEarlier = i;
-		int iRowLater = i + rows_per_eighth;
-		int iRowMiddle = i + rows_per_eighth/2;
+		int iRowLater = i + rows_per_interval;
+		int iRowMiddle = i + rows_per_interval/2;
 		if( in.GetNumTapNonEmptyTracks(iRowEarlier) != 1 )
 			continue;
 		if( in.GetNumTapNonEmptyTracks(iRowLater) != 1 )
 			continue;
 		// there is a 4th and 8th note surrounding iRowBetween
 		
-		if( !in.IsRowEmpty(iRowMiddle) )	// there's already a 16th here
+		// don't insert a new note if there's already one within this interval
+		bool bNoteInMiddle = false;
+		for( int j=iRowEarlier+1; j<=iRowLater-1; j++ )
+			if( !in.IsRowEmpty(iRowMiddle) )
+			{
+				bNoteInMiddle = true;
+				break;
+			}
+		if( bNoteInMiddle )
 			continue;
 
 		// add a note determinitsitcally somewhere on a track different from the two surrounding notes

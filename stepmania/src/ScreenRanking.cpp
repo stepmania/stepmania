@@ -218,8 +218,8 @@ void ScreenRanking::SetPage( PageToShow pts )
 
 				if( bRecentHighScore )
 				{
-					m_textNames[l].SetEffectDiffuseBlinking( 0.1f, TEXT_COLOR, RageColor(1,1,1,1) );
-					m_textScores[l].SetEffectDiffuseBlinking( 0.1f, TEXT_COLOR, RageColor(1,1,1,1) );
+					m_textNames[l].SetEffectGlowBlinking(0.1f);
+					m_textScores[l].SetEffectGlowBlinking(0.1f);
 				}
 				else
 				{
@@ -252,8 +252,8 @@ void ScreenRanking::SetPage( PageToShow pts )
 						pts.nt == GAMESTATE->m_RankingNotesType  &&
 						GAMESTATE->m_iRankingIndex[p] == l )
 					{
-						m_textNames[l].SetEffectDiffuseBlinking();
-						m_textScores[l].SetEffectDiffuseBlinking();
+						m_textNames[l].SetEffectGlowBlinking(0.1f);
+						m_textScores[l].SetEffectGlowBlinking(0.1f);
 					}
 					else
 					{

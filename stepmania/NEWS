@@ -11,15 +11,16 @@ NEW FEATURE:  New Edit menus with ability to delete Notes patterns and new
 	options	for importing existing patterns into a new Notes pattern.
 NEW FEATURE:  Jukebox mode.  Like demonstration, but plays entire songs 
 	and loops.
-NEW FEATURE:  F6 to save screenshot.  Saved in StepMania program directory
+NEW FEATURE:  F5 to save screenshot.  Saved in StepMania program directory
 	as "screenshotXXXX.bmp".
 CHANGE:  Reorganization of options screens.
 NEW FEATURE: Option for user-selectable extra stage 1
 CHANGE:  Documentation now in HTML format.
-CHANGE:  Overhauled NoteSkin format.  See README-FIRST.htm for details.
+CHANGE:  Overhauled NoteSkin format.  See README-FIRST.html for details.
 BUG FIX:  Super-shuffle fixed (now doesn't add extra notes)
 NEW FEATURE: Added WIDE transform (changes notes on beats to jumps)
-NEW FEATURE: Added TALL transform (adds 16th notes between 8ths)
+NEW FEATURE: Added BIG transform (strategically inserts 8ths)
+NEW FEATURE: Added QUICK transform (strategically inserts 16ths)
 
 ----------------------- Version 3.01 ---------------------------
 CHANGE:  Simplified NoteSkin tap graphic format.  Old NoteSkins will need to 
