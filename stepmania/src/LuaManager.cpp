@@ -147,7 +147,7 @@ LuaManager::LuaManager()
 		RageException::Throw("%s", jbuf_error.c_str());
 	L = NULL;
 
-	Init();
+	ResetState();
 }
 
 LuaManager::~LuaManager()
@@ -155,7 +155,7 @@ LuaManager::~LuaManager()
 	lua_close( L );
 }
 
-void LuaManager::Init()
+void LuaManager::ResetState()
 {
 	if( L != NULL )
 		lua_close( L );

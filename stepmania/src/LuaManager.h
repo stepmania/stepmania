@@ -19,7 +19,7 @@ public:
 	bool RunScriptFile( const CString &sFile );
 
 	/* Reset the environment, freeing any globals left over by previously executed scripts. */
-	void Init();
+	void ResetState();
 
 	/* Run a complete script in the global environment, which returns no value. */
 	bool RunScript( const CString &sScript );
