@@ -150,18 +150,12 @@ TitleTo: ロマンスの神様
 TitleFrom: (Dancing Pompokolin)|(Odoru Pompokolin)
 TitleTo: おどるポンポコリン
 *
-TitleFrom: Aoi Shoudou
+# Handle a typo:
+TitleFrom: (Aoi Shoudou)|(Blue Impulse)|(Aio Shoudou)
 TitleTo: 蒼い衝動
 *
 TitleFrom: Aoi Shoudou\(for EXTREME\)
 TitleTo: 蒼い衝動(for EXTREME)
-*
-TitleFrom: Blue Impulse
-TitleTo: 蒼い衝動
-*
-# Handle a typo:
-TitleFrom: Aio Shoudou
-TitleTo: 蒼い衝動
 *
 TitleFrom: Daikenkai
 TitleTo: 大見解
