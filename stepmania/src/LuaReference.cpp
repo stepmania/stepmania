@@ -128,15 +128,16 @@ void LuaExpression::Register()
 void LuaData::BeforeReset()
 {
 	/* Call Serialize(t), where t is our referenced object. */
-	this->PushSelf( LUA->L );
-
 	lua_pushstring( LUA->L, "Serialize" );
 	lua_gettable( LUA->L, LUA_GLOBALSINDEX );
 
 	if( lua_isnil(LUA->L, -1) )
 		FAIL_M( "Serialize() missing" );
 
-	lua_call( LUA->L, 0, 1 );
+	/* Arg 1 (t): */
+	this->PushSelf( LUA->L );
+
+	lua_call( LUA->L, 1, 1 );
 
 	/* The return value is a string, which we store in m_sSerializedData. */
 	const char *pString = lua_tostring( LUA->L, -1 );
