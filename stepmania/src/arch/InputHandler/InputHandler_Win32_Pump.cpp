@@ -42,8 +42,10 @@ void InputHandler_Win32_Pump::Update(float fDeltaTime)
 		InputDevice id = InputDevice(DEVICE_PUMP1 + i);
 	
 		for (int butno = 0 ; butno < NUM_PUMP_PAD_BUTTONS ; butno++)
-			INPUTFILTER->ButtonPressed(DeviceInput(id, butno), !(ret & bits[butno]));
+			ButtonPressed(DeviceInput(id, butno), !(ret & bits[butno]));
 	}
+
+	InputHandler::Update( fDeltaTime );
 }
 
 void InputHandler_Win32_Pump::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)

@@ -103,6 +103,8 @@ void InputHandler_Linux_Joystick::Update(float fDeltaTime)
 		}
 
 	}
+
+	InputHandler::Update( fDeltaTime );
 }
 
 void InputHandler_Linux_Joystick::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)

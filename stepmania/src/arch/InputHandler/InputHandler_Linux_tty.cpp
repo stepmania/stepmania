@@ -186,6 +186,8 @@ void InputHandler_Linux_tty::Update(float fDeltaTime)
 			INPUTFILTER->ButtonPressed(DeviceInput(DEVICE_KEYBOARD, butno), pressed);
 		}
 	}
+
+	InputHandler::Update( fDeltaTime );
 }
 
 void InputHandler_Linux_tty::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
