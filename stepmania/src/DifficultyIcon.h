@@ -12,9 +12,8 @@
 
 
 #include "Sprite.h"
-#include "Song.h"
-#include "BitmapText.h"
-#include "PrefsManager.h"
+#include "Notes.h"
+#include "ThemeManager.h"
 
 
 class DifficultyIcon : public Sprite
@@ -28,7 +27,7 @@ public:
 		SetFromNotes( NULL );
 	};
 
-	void SetFromNotes( Notes* pNotes )
+	void SetFromNotes( const Notes* pNotes )
 	{
 		if( pNotes != NULL )
 		{
