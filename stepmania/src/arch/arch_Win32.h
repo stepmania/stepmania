@@ -15,7 +15,7 @@
 
 #include "Lights/LightsDriver_Win32Parallel.h"
 
-#include "MemoryCard/MemoryCardDriver_Windows.h"
+#include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
 
 #define HAVE_FFMPEG
 #undef SUPPORT_SDL_INPUT

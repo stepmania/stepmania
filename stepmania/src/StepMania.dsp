@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="StepMania" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 6.00
+# Microsoft Developer Studio Generated Build File, Format Version 60000
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
@@ -62,10 +62,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\temp\stepmania\Program
+TargetDir=\stepmania\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                  	cl                                                                                  /Zl                                                                                  /nologo                                                                                  /c                                                                                  verstub.cpp                                                                                  /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                    	cl                                                                                    /Zl                                                                                    /nologo                                                                                    /c                                                                                    verstub.cpp                                                                                    /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -135,10 +135,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none /debug
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\temp\stepmania\Program
+TargetDir=\stepmania\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                   	cl                                            /Zl                                            /nologo                                            /c                                            verstub.cpp                                            /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                     	cl                                              /Zl                                              /nologo                                              /c                                              verstub.cpp                                              /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -2657,26 +2657,41 @@ SOURCE=.\arch\MemoryCard\MemoryCardDriver_Null.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\arch\MemoryCard\MemoryCardDriver_Windows.cpp
+SOURCE=.\arch\MemoryCard\MemoryCardDriverThreaded.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-# PROP Exclude_From_Build 1
-
 !ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
-
-# PROP Exclude_From_Build 1
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=.\arch\MemoryCard\MemoryCardDriver_Windows.h
+SOURCE=.\arch\MemoryCard\MemoryCardDriverThreaded.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\MemoryCard\MemoryCardDriverThreaded_Windows.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\MemoryCard\MemoryCardDriverThreaded_Windows.h
 # End Source File
 # End Group
 # Begin Source File

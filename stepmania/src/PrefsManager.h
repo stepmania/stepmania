@@ -178,7 +178,7 @@ public:
 	int				m_iEndlessBreakLength;
 	bool			m_bDisableScreenSaver;
 	CString			m_sLanguage;
-	CString			m_sMemoryCardProfileSubdir;	// if set, always use the device that mounts to this point
+	CString			m_sMemoryCardProfileSubdir;	// the directory on a memory card to look in for a profile
 	CString			m_sDefaultLocalProfileID[NUM_PLAYERS];
 	CString			m_sMemoryCardOsMountPoint[NUM_PLAYERS];	// if set, always use the device that mounts to this point
 	int				m_iMemoryCardUsbBus[NUM_PLAYERS];	// take the first storage device on this usb bus
