@@ -42,6 +42,9 @@ public:
 	virtual bool UsesBackground() const { return false; }
 
 protected:
+	ThemeMetric<CString> PLAYER_TYPE;
+	ThemeMetric<CString> GIVE_UP_TEXT;
+	ThemeMetric<CString> GIVE_UP_ABORTED_TEXT;
 	ThemeMetric<bool> START_GIVES_UP;
 	ThemeMetric<bool> BACK_GIVES_UP;
 	ThemeMetric<bool> GIVING_UP_FAILS;
@@ -165,8 +168,6 @@ protected:
 	BeginnerHelper	m_BeginnerHelper;
 
 	NoteData		m_CabinetLightsNoteData;
-
-	ThemeMetric<CString> PLAYER_TYPE;
 };
 
 

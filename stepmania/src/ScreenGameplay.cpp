@@ -90,6 +90,8 @@ REGISTER_SCREEN_CLASS( ScreenGameplay );
 ScreenGameplay::ScreenGameplay( CString sName ) : Screen(sName)
 {
 	PLAYER_TYPE.Load( sName, "PlayerType" );
+	GIVE_UP_TEXT.Load( sName, "GiveUpText" );
+	GIVE_UP_ABORTED_TEXT.Load( sName, "GiveUpAbortedText" );
 	START_GIVES_UP.Load( sName, "StartGivesUp" );
 	BACK_GIVES_UP.Load( sName, "BackGivesUp" );
 	GIVING_UP_FAILS.Load( sName, "GivingUpFails" );
@@ -1731,7 +1733,7 @@ void ScreenGameplay::AbortGiveUp()
 		return;
 
 	m_textDebug.StopTweening();
-	m_textDebug.SetText("Don't give up!");
+	m_textDebug.SetText( GIVE_UP_ABORTED_TEXT );
 	m_textDebug.BeginTweening( 1/2.f );
 	m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 	m_GiveUpTimer.SetZero();
@@ -1773,7 +1775,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				AbortGiveUp();
 			else if( type==IET_FIRST_PRESS && m_GiveUpTimer.IsZero() )
 			{
-				m_textDebug.SetText( "Continue holding START to give up" );
+				m_textDebug.SetText( GIVE_UP_TEXT );
 				m_textDebug.StopTweening();
 				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 				m_textDebug.BeginTweening( 1/8.f );
