@@ -57,9 +57,11 @@ CString SongOptions::GetString()
 	return sReturn;
 }
 
+/* Options are added to the current settings; call Init() beforehand if
+ * you don't want this. */
 void SongOptions::FromString( CString sOptions )
 {
-	Init();
+//	Init();
 	sOptions.MakeLower();
 	CStringArray asBits;
 	split( sOptions, ",", asBits, true );
