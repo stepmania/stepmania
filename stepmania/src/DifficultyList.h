@@ -4,10 +4,11 @@
 #include "ActorFrame.h"
 #include "ActorUtil.h"
 #include "PlayerNumber.h"
+#include "BitmapText.h"
+
 class DifficultyMeter;
 class Song;
 class Steps;
-class BitmapText;
 
 #define MAX_METERS 16
 
@@ -25,15 +26,32 @@ public:
 	void Show();
 
 private:
-	void PositionItems();
+	void UpdatePositions();
+	void PositionItems( bool TweenOn );
+	void GetCurrentRows( int iCurrentRow[NUM_PLAYERS] );
 
 	DifficultyMeter *m_Meters;
 	AutoActor		m_Cursors[NUM_PLAYERS];
 	ActorFrame		m_CursorFrames[NUM_PLAYERS];
-	BitmapText		*m_Descriptions;
-	BitmapText		*m_Number;
+	BitmapText		m_Descriptions[MAX_METERS];
+	BitmapText		m_Number[MAX_METERS];
 	Song			*m_CurSong;
-	vector<Steps*>	m_CurSteps;
+	bool			m_bShown;
+
+	struct Row
+	{
+		Row();
+		
+		Steps *m_Steps;
+		float m_fY;
+		bool m_bHidden; // currently off screen
+	};
+	
+	vector<Row*>		m_Rows;
 };
 
 #endif
+/*
+ * Copyright (c) 2003-2004 by the person(s) listed below.  All rights reserved.
+ *	Glenn Maynard
+ */

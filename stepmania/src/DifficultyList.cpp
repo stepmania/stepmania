@@ -12,30 +12,25 @@
 
 #define ITEMS_SPACING_Y							THEME->GetMetricF(m_sName,"ItemsSpacingY")
 #define DESCRIPTION_MAX_WIDTH					THEME->GetMetricF(m_sName,"DescriptionMaxWidth")
-#define TWEEN_ON_STAGGER_SECONDS				THEME->GetMetricF(m_sName,"TweenOnStaggerSeconds")
-
-const int RowsOnScreen=6;
+#define NUM_SHOWN_ITEMS							THEME->GetMetricI(m_sName,"NumShownItems")
+#define TWEEN_ON_COMMAND						THEME->GetMetric (m_sName,"TweenOnCommand")
+#define MOVE_COMMAND							THEME->GetMetric (m_sName,"MoveCommand")
 
 DifficultyList::DifficultyList()
 {
+	m_bShown = true;
 	m_Meters = NULL; // defer alloc to Load
-	m_Descriptions = NULL;
-	m_Number = NULL;
 }
 
 DifficultyList::~DifficultyList()
 {
 	delete [] m_Meters;
-	delete [] m_Descriptions;
-	delete [] m_Number;
 }
 
 void DifficultyList::Load()
 {
 	ASSERT( !m_Meters );
 	m_Meters = new DifficultyMeter[MAX_METERS];
-	m_Descriptions = new BitmapText[MAX_METERS];
-	m_Number = new BitmapText[MAX_METERS];
 	m_CurSong = NULL;
 
 	int pn, m;
@@ -46,7 +41,6 @@ void DifficultyList::Load()
 
 		m_Cursors[pn].Load( THEME->GetPathToG(ssprintf("%s cursor p%i",m_sName.c_str(), pn+1)) );
 		m_Cursors[pn]->SetName( ssprintf("CursorP%i",pn+1) );
-		ON_COMMAND( m_Cursors[pn] );
 
 		/* Hack: we need to tween cursors both up to down (cursor motion) and visible to
 		 * invisible (fading).  Cursor motion needs to stoptweening, so multiple motions
@@ -74,123 +68,272 @@ void DifficultyList::Load()
 		this->AddChild( &m_Number[m] );
 	}
 
-	PositionItems();
-
 	for( pn = 0; pn < NUM_PLAYERS; ++pn )
 		if( GAMESTATE->IsHumanPlayer(pn) )
 			ON_COMMAND( m_Cursors[pn] );
 
-	for( m = 0; m < MAX_METERS; ++m )
+	for( int m = 0; m < MAX_METERS; ++m )
 	{
 		ON_COMMAND( m_Meters[m] );
 		ON_COMMAND( m_Descriptions[m] );
 		ON_COMMAND( m_Number[m] );
 	}
+
+	UpdatePositions();
+	PositionItems( false );
 }
 
-void DifficultyList::PositionItems()
+void DifficultyList::GetCurrentRows( int iCurrentRow[NUM_PLAYERS] )
 {
-	int pos = 0;
-	for( int m = 0; m < MAX_METERS; ++m )
+	for( int pn = 0;pn < NUM_PLAYERS; ++pn )
 	{
-		DifficultyMeter &met = m_Meters[m];
+		if( !GAMESTATE->IsHumanPlayer(pn) )
+			continue;
 
+		for( iCurrentRow[pn] = 0; iCurrentRow[pn] < (int) m_Rows.size(); ++iCurrentRow[pn] )
+			if( GAMESTATE->m_pCurNotes[pn] == m_Rows[iCurrentRow[pn]]->m_Steps )
+				break;
+	}
+}
+
+/* Update m_fY and m_bHidden[]. */
+void DifficultyList::UpdatePositions()
+{
+	int iCurrentRow[NUM_PLAYERS];
+	GetCurrentRows( iCurrentRow );
+
+	const int total = NUM_SHOWN_ITEMS;
+	const int halfsize = total / 2;
+
+	int first_start, first_end, second_start, second_end;
+
+	/* Choices for each player.  If only one player is active, it's the same for both. */
+	int P1Choice = GAMESTATE->IsHumanPlayer(PLAYER_1)? iCurrentRow[PLAYER_1]: iCurrentRow[PLAYER_2];
+	int P2Choice = GAMESTATE->IsHumanPlayer(PLAYER_2)? iCurrentRow[PLAYER_2]: iCurrentRow[PLAYER_1];
+
+	vector<Row*> Rows( m_Rows );
+
+	const bool BothPlayersActivated = GAMESTATE->IsHumanPlayer(PLAYER_1) && GAMESTATE->IsHumanPlayer(PLAYER_2);
+	if( !BothPlayersActivated )
+	{
+		/* Simply center the cursor. */
+		first_start = max( P1Choice - halfsize, 0 );
+		first_end = first_start + total;
+		second_start = second_end = first_end;
+	} else {
+		/* First half: */
+		const int earliest = min( P1Choice, P2Choice );
+		first_start = max( earliest - halfsize/2, 0 );
+		first_end = first_start + halfsize;
+
+		/* Second half: */
+		const int latest = max( P1Choice, P2Choice );
+
+		second_start = max( latest - halfsize/2, 0 );
+
+		/* Don't overlap. */
+		second_start = max( second_start, first_end );
+
+		second_end = second_start + halfsize;
+	}
+
+	first_end = min( first_end, (int) Rows.size() );
+	second_end = min( second_end, (int) Rows.size() );
+
+	/* If less than total (and Rows.size()) are displayed, fill in the empty
+	 * space intelligently. */
+	while(1)
+	{
+		const int sum = (first_end - first_start) + (second_end - second_start);
+		if( sum >= (int) Rows.size() || sum >= total)
+			break; /* nothing more to display, or no room */
+
+		/* First priority: expand the top of the second half until it meets
+		 * the first half. */
+		if( second_start > first_end )
+			second_start--;
+		/* Otherwise, expand either end. */
+		else if( first_start > 0 )
+			first_start--;
+		else if( second_end < (int) Rows.size() )
+			second_end++;
+		else
+			ASSERT(0); /* do we have room to grow or don't we? */
+	}
+
+	int pos = 0;
+	for( int i=0; i<(int) Rows.size(); i++ )		// foreach row
+	{
 		float ItemPosition;
-		if( m < RowsOnScreen )
+		if( i < first_start )
+			ItemPosition = -0.5f;
+		else if( i < first_end )
+			ItemPosition = (float) pos++;
+		else if( i < second_start )
+			ItemPosition = halfsize - 0.5f;
+		else if( i < second_end )
 			ItemPosition = (float) pos++;
 		else
+			ItemPosition = (float) total - 0.5f;
+			
+		Row &row = *Rows[i];
+
+		float fY = ITEMS_SPACING_Y*ItemPosition;
+		row.m_fY = fY;
+		row.m_bHidden = i < first_start ||
+							(i >= first_end && i < second_start) ||
+							i >= second_end;
+	}
+}
+
+
+void DifficultyList::PositionItems( bool TweenOn )
+{
+	for( int i = 0; i < MAX_METERS; ++i )
+	{
+		bool bUnused = ( i >= (int)m_Rows.size() );
+		m_Descriptions[i].SetHidden( bUnused );
+		m_Meters[i].SetHidden( bUnused );
+		m_Number[i].SetHidden( bUnused );
+	}
+
+	for( int m = 0; m < (int)m_Rows.size(); ++m )
+	{
+		const bool bHidden = m_Rows[m]->m_bHidden;
+		const float fY = m_Rows[m]->m_fY;
+
+		Row &row = *m_Rows[m];
+
+		const float DiffuseAlpha = row.m_bHidden? 0.0f:1.0f;
+		if( m_Number[m].GetDestY() != row.m_fY ||
+			m_Number[m].DestTweenState().diffuse[0][3] != DiffuseAlpha )
 		{
-			met.SetHidden( true );
-//			ItemPosition = ItemPosition = (float) pos++;
-			continue;
+			const CString cmd = TweenOn? TWEEN_ON_COMMAND:MOVE_COMMAND;
+			m_Descriptions[m].Command( cmd );
+			m_Meters[m].Command( cmd );
+			m_Meters[m].RunCommandOnChildren( cmd );
+			m_Number[m].Command( cmd );
 		}
-		const float fY = ITEMS_SPACING_Y*ItemPosition;
-		LOG->Trace("row %i, pos %f, fY %f",
-			m, ItemPosition, fY);
 
 		m_Descriptions[m].SetY( fY );
-		met.SetY( fY );
+		m_Meters[m].SetY( fY );
 		m_Number[m].SetY( fY );
+
+		const CString cmd = ssprintf( "diffusealpha,%f", bHidden? 0.0f:1.0f );
+		m_Descriptions[m].Command( cmd );
+		m_Meters[m].RunCommandOnChildren( cmd );
+		m_Number[m].Command( cmd );
 	}
+
+	int iCurrentRow[NUM_PLAYERS];
+	GetCurrentRows( iCurrentRow );
 
 	for( int pn = 0;pn < NUM_PLAYERS; ++pn )
 	{
 		if( !GAMESTATE->IsHumanPlayer(pn) )
 			continue;
 
-		unsigned ItemPosition;
-		for( ItemPosition = 0; ItemPosition  < m_CurSteps.size(); ++ItemPosition  )
-			if( GAMESTATE->m_pCurNotes[pn] == m_CurSteps[ItemPosition] )
-				break;
-
-		if( ItemPosition == m_CurSteps.size() )
-			continue;
-
-		const float fY = ITEMS_SPACING_Y*ItemPosition;
+		float fY = 0;
+		if( iCurrentRow[pn] < (int) m_Rows.size() )
+			fY = m_Rows[iCurrentRow[pn]]->m_fY;
 
 		COMMAND( m_CursorFrames[pn], "Change" );
 		m_CursorFrames[pn].SetY( fY );
 	}
 }
 
+DifficultyList::Row::Row()
+{
+	m_Steps = NULL;
+}
+
 void DifficultyList::SetFromGameState()
 {
-	Song *song = GAMESTATE->m_pCurSong;
-	if( !song )
+	/* If Hide() was called, doing this would un-hide. */
+	if( !m_bShown )
 		return;
 
+	Song *song = GAMESTATE->m_pCurSong;
+
+	const bool bSongChanged = (song != m_CurSong);
+
 	/* If the song has changed, update displays: */
-	if( song != m_CurSong )
+	if( bSongChanged )
 	{
 		m_CurSong = song;
-		m_CurSteps.clear();
-		song->GetSteps( m_CurSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
-
-		/* Should match the sort in ScreenSelectMusic::AfterMusicChange. */
-		SortNotesArrayByDifficulty( m_CurSteps );
+		if( !song )
+			return;
 
 		for( int m = 0; m < MAX_METERS; ++m )
 		{
-			DifficultyMeter &met = m_Meters[m];
-			if( m >= (int) m_CurSteps.size() )
-			{
-				met.Unset();
-				m_Descriptions[m].SetText( "" );
-				m_Number[m].SetText( "" );
-				continue;
-			}
+			m_Meters[m].Unset();
+			m_Descriptions[m].SetText( "" );
+			m_Number[m].SetText( "" );
+		}
 
-			Steps* pSteps = m_CurSteps[m];
+		vector<Steps*>	CurSteps;
+		song->GetSteps( CurSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 
-			met.SetFromNotes( pSteps );
+		/* Should match the sort in ScreenSelectMusic::AfterMusicChange. */
+		SortNotesArrayByDifficulty( CurSteps );
 
-			Difficulty dc = pSteps->GetDifficulty();
+		unsigned i;
+		for( i = 0; i < m_Rows.size(); ++i )
+			delete m_Rows[i];
+		m_Rows.clear();
+
+		for( i = 0; i < CurSteps.size(); ++i )
+		{
+			m_Rows.push_back( new Row() );
+			Row &row = *m_Rows[i];
+
+			row.m_Steps = CurSteps[i];
+
+			m_Meters[i].SetFromNotes( m_Rows[i]->m_Steps );
+
+			Difficulty dc = row.m_Steps->GetDifficulty();
 			
 			CString s = SONGMAN->GetDifficultyThemeName(dc);
-			m_Descriptions[m].SetMaxWidth( DESCRIPTION_MAX_WIDTH );
-			m_Descriptions[m].SetText( s );
+			m_Descriptions[i].SetMaxWidth( DESCRIPTION_MAX_WIDTH );
+			m_Descriptions[i].SetText( s );
 			/* Don't mess with alpha; it might be fading on. */
-			m_Descriptions[m].SetDiffuseColor( SONGMAN->GetDifficultyColor(dc) );
+			m_Descriptions[i].SetDiffuseColor( SONGMAN->GetDifficultyColor(dc) );
 			
-			m_Number[m].SetZoomX(1);
-			m_Number[m].SetDiffuseColor( SONGMAN->GetDifficultyColor(dc) );
-			m_Number[m].SetText( ssprintf("%d",pSteps->GetMeter()) );
+			m_Number[i].SetZoomX(1);
+			m_Number[i].SetDiffuseColor( SONGMAN->GetDifficultyColor(dc) );
+			m_Number[i].SetText( ssprintf("%d",row.m_Steps->GetMeter()) );
 		}
 	}
 
-	PositionItems();
+	UpdatePositions();
+	PositionItems( false );
+
+	if( bSongChanged )
+	{
+		for( int m = 0; m < MAX_METERS; ++m )
+		{
+			m_Meters[m].FinishTweening();
+			m_Descriptions[m].FinishTweening();
+			m_Number[m].FinishTweening();
+		}
+	}
 }
 
 void DifficultyList::TweenOnScreen()
 {
-	for( int m = 0; m < MAX_METERS; ++m )
+	m_bShown = true;
+	for( unsigned m = 0; m < m_Rows.size(); ++m )
 	{
-		m_Descriptions[m].BeginTweening( m * TWEEN_ON_STAGGER_SECONDS );
-		m_Number[m].BeginTweening( m * TWEEN_ON_STAGGER_SECONDS );
-		COMMAND( m_Descriptions[m], "TweenOn" );
-		COMMAND( m_Meters[m], "TweenOn" );
-		COMMAND( m_Number[m], "TweenOn" );
+		m_Descriptions[m].Command( "finishtweening;y,0" );
+		m_Meters[m].Command( "finishtweening;y,0" );
+		m_Number[m].Command( "finishtweening;y,0" );
+
+		m_Descriptions[m].Command( "diffusealpha,0" );
+		m_Meters[m].RunCommandOnChildren( "diffusealpha,0" );
+		m_Number[m].Command( "diffusealpha,0" );
 	}
+
+	PositionItems( true );
 
 	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
 	{
@@ -207,9 +350,10 @@ void DifficultyList::TweenOffScreen()
 
 void DifficultyList::Show()
 {
+	m_bShown = true;
+
 	for( int m = 0; m < MAX_METERS; ++m )
 	{
-		// XXX: m_Meters[m].Show
 		COMMAND( m_Descriptions[m], "Show" );
 		COMMAND( m_Meters[m], "Show" );
 		COMMAND( m_Number[m], "Show" );
@@ -225,9 +369,10 @@ void DifficultyList::Show()
 
 void DifficultyList::Hide()
 {
+	m_bShown = false;
+
 	for( int m = 0; m < MAX_METERS; ++m )
 	{
-		// XXX: m_Meters[m].Hide
 		COMMAND( m_Descriptions[m], "Hide" );
 		COMMAND( m_Meters[m], "Hide" );
 		COMMAND( m_Number[m], "Hide" );
@@ -240,3 +385,8 @@ void DifficultyList::Hide()
 		COMMAND( m_Cursors[pn], "Hide" );
 	}
 }
+
+/*
+ * Copyright (c) 2003-2004 by the person(s) listed below.  All rights reserved.
+ *	Glenn Maynard
+ */
