@@ -110,7 +110,7 @@ void Steps::GetSMNoteData( CString &notes_comp_out, CString &attacks_comp_out ) 
 	attacks_comp_out = notes_comp->attacks;
 }
 
-float Steps::PredictMeter()
+float Steps::PredictMeter() const
 {
 	/* Tip: try this, instead:
 	const float RadarFactors[NUM_RADAR_CATEGORIES] =

@@ -43,7 +43,7 @@ public:
 	void SetMeter(int meter);
 	void SetRadarValue(int r, float val);
 	bool IsAutogen() const;	// Was created by autogen?
-	float PredictMeter();
+	float PredictMeter() const;
 	
 	StepsType	m_StepsType;
 
