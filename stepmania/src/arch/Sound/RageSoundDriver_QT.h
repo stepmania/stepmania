@@ -25,26 +25,17 @@ namespace QT {
 
 class RageSound_QT: public RageSoundDriver {
 private:
-	struct sound {
-		RageSound *snd;
-		bool stopping;
-		int flush_pos;
-		sound() { snd=NULL; stopping=false; flush_pos=0; }
-	};
-
-	vector<sound *> sounds;
-    QT::ComponentInstance clock;
     QT::ComponentInstance soundOutput;
-    QT::SndChannelPtr channel;
-	int last_pos;
 	float latency;
+
+	bool CanPlayMultiChannels();
 
 protected:
 	virtual void StartMixing(RageSound *snd);
 	virtual void StopMixing(RageSound *snd);
 	virtual int GetPosition(const RageSound *snd) const;
 	virtual void Update (float delta);
-	virtual float GetPlayLatency() const;
+	virtual float GetPlayLatency() const { return latency; }
 
 public:
 	RageSound_QT();
