@@ -36,6 +36,7 @@ const CString LANGUAGES_SUBDIR = "Languages" SLASH;
 const CString BASE_LANGUAGE = "english";
 const CString THEMES_DIR  = BASE_PATH "Themes" SLASH;
 const CString METRICS_FILE = "metrics.ini";
+const CString FALLBACK_METRICS_FILE = "fallback.ini";
 const CString ELEMENT_CATEGORY_STRING[NUM_ELEMENT_CATEGORIES] =
 {
 	"BGAnimations",
@@ -144,6 +145,8 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 
 	// read new metrics.  First read base metrics, then read cur theme's metrics, overriding base theme
 	m_pIniMetrics->Reset();
+	m_pIniMetrics->SetPath( GetThemeDirFromName(BASE_THEME_NAME) + FALLBACK_METRICS_FILE );
+	m_pIniMetrics->ReadFile();
 	m_pIniMetrics->SetPath( GetMetricsIniPath(BASE_THEME_NAME) );
 	m_pIniMetrics->ReadFile();
 	m_pIniMetrics->SetPath( GetMetricsIniPath(m_sCurThemeName) );
