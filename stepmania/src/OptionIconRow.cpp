@@ -66,6 +66,8 @@ const OptionColumnEntry g_OptionColumnEntries[] =
 	{"Note",	6},
 	{"Flat",	6},
 	{"Plain",	6},
+
+	{"TimingAssist",	-1},
 };
 const int NUM_OPTION_COL_ENTRIES = sizeof(g_OptionColumnEntries)/sizeof(OptionColumnEntry);
 
