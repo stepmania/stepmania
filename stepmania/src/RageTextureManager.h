@@ -32,6 +32,7 @@ public:
 	int GetTextureColorDepth() { return m_iTextureColorDepth; };
 
 protected:
+	void GCTextures();
 	RageDisplay* m_pScreen;
 
 	int m_iMaxTextureSize;

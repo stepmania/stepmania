@@ -105,6 +105,39 @@ bool RageTextureManager::IsTextureLoaded( CString sTexturePath )
 	return m_mapPathToTexture.find(sTexturePath) != m_mapPathToTexture.end();
 }	
 
+void RageTextureManager::GCTextures()
+{
+	/* If m_iSecondsBeforeUnload is 0, then we'll unload textures immediately when
+	 * they're no longer needed, to use as little extra memory as possible, so don't
+	 * bother checking for expired textures here. */
+	if(!m_iSecondsBeforeUnload) return;
+
+	static int timeLastGarbageCollect = time(NULL);
+	if( timeLastGarbageCollect+m_iSecondsBeforeUnload/2 > time(NULL) )
+		return;
+
+	// Search for old textures with refcount==0 to unload
+	LOG->Trace("Performing texture garbage collection");
+	timeLastGarbageCollect = time(NULL);
+
+	for( std::map<CString, RageTexture*>::iterator i = m_mapPathToTexture.begin();
+		i != m_mapPathToTexture.end(); )
+	{
+		std::map<CString, RageTexture*>::iterator j = i;
+		i++;
+
+		CString sPath = j->first;
+		RageTexture* pTexture = j->second;
+		if( pTexture->m_iRefCount==0  &&
+			pTexture->m_iTimeOfLastUnload+m_iSecondsBeforeUnload < time(NULL) )
+		{
+			SAFE_DELETE( pTexture );		// free the texture
+			m_mapPathToTexture.erase(j);	// and remove the key in the map
+		}
+	}
+}
+
+
 void RageTextureManager::UnloadTexture( CString sTexturePath )
 {
 	sTexturePath.MakeLower();
@@ -117,47 +150,32 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 		return;
 	}
 	
-	RageTexture* pTexture;
-
 	std::map<CString, RageTexture*>::iterator p = m_mapPathToTexture.find(sTexturePath);
 	if(p == m_mapPathToTexture.end())
 		throw RageException( "Tried to Unload texture '%s' that wasn't loaded.", sTexturePath );
 	
-	pTexture = p->second;
+	RageTexture* pTexture = p->second;
 	pTexture->m_iRefCount--;
 	pTexture->m_iTimeOfLastUnload = time(NULL);
 	ASSERT( pTexture->m_iRefCount >= 0 );
-	if( pTexture->m_iRefCount == 0  &&  pTexture->IsAMovie() )	// always unload if a movie so we don't waste time decoding
+
+	/* Always unload movies, so we don't waste time decoding.
+	 *
+	 * Actually, multiple refs to a movie won't work; they should play independently,
+	 * but they'll actually share settings.  Not worth fixing, since we don't currently
+	 * using movies for anything except BGAs (though we could).
+	 * 
+	 * Also, if texture caching is off, just remove it now instead of doing
+	 * garbage collection. */
+	if( pTexture->m_iRefCount == 0  && 
+		(pTexture->IsAMovie() || !m_iSecondsBeforeUnload ))
 	{
 		//	LOG->Trace( "RageTextureManager: '%s' will be deleted.  It has %d references.", sTexturePath, pTexture->m_iRefCount );
 		SAFE_DELETE( pTexture );		// free the texture
 		m_mapPathToTexture.erase(p);	// and remove the key in the map
 	}
 
-	// Search for old textures with refcount==0 to unload
-	static int timeLastGarbageCollect = time(NULL);
-	if( timeLastGarbageCollect+m_iSecondsBeforeUnload/2 < time(NULL) )
-	{
-		LOG->Trace("Performing texture garbage collection");
-		timeLastGarbageCollect = time(NULL);
-
-		for( std::map<CString, RageTexture*>::iterator i = m_mapPathToTexture.begin();
-			i != m_mapPathToTexture.end(); )
-		{
-			std::map<CString, RageTexture*>::iterator j = i;
-			i++;
-
-			CString sPath = j->first;
-			RageTexture* pTexture = j->second;
-			if( pTexture->m_iRefCount==0  &&
-				pTexture->m_iTimeOfLastUnload+m_iSecondsBeforeUnload <= time(NULL) )
-			{
-				SAFE_DELETE( pTexture );		// free the texture
-				m_mapPathToTexture.erase(j);	// and remove the key in the map
-			}
-		}
-	}
-
+	GCTextures();
 
 	//LOG->Trace( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath, pTexture->m_iRefCount );
 }
@@ -169,15 +187,14 @@ void RageTextureManager::ReloadAll()
 	{
 		RageTexture* pTexture = i->second;
 
-		// this is not entirely correct.  Hints are lost!
+		// this is not entirely correct.  Hints are lost! XXX
 		pTexture->Reload( m_iMaxTextureSize, m_iTextureColorDepth, 0 );
 	}
 }
 
 void RageTextureManager::SetPrefs( int iMaxSize, int iTextureColorDepth, int iSecondsBeforeUnload )
 {
-	m_iSecondsBeforeUnload = max( iSecondsBeforeUnload, 1 );
-	ASSERT( m_iSecondsBeforeUnload > 0 );
+	m_iSecondsBeforeUnload = iSecondsBeforeUnload;
 	if( iMaxSize == m_iMaxTextureSize  &&  iTextureColorDepth == m_iTextureColorDepth )
 		return;
 	m_iMaxTextureSize = iMaxSize; 
