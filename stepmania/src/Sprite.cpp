@@ -211,6 +211,13 @@ void Sprite::Update( float fDeltaTime )
 	}
 }
 
+static void TexCoordsFromRect(RageVertex *v, const RectF &rect)
+{
+	v[0].t = RageVector2( rect.left,	rect.top );		// top left
+	v[1].t = RageVector2( rect.left,	rect.bottom );	// bottom left
+	v[2].t = RageVector2( rect.right,	rect.bottom );	// bottom right
+	v[3].t = RageVector2( rect.right,	rect.top );		// top right
+}
 
 void Sprite::DrawPrimitives()
 {
@@ -263,12 +270,7 @@ void Sprite::DrawPrimitives()
 		else 
 		{
 			const RectF *pTexCoordRect = GetCurrentTextureCoordRect();
-
-			v[0].t = RageVector2( pTexCoordRect->left,	pTexCoordRect->top );		// top left
-			v[1].t = RageVector2( pTexCoordRect->left,	pTexCoordRect->bottom );	// bottom left
-			v[2].t = RageVector2( pTexCoordRect->right,	pTexCoordRect->bottom );	// bottom right
-			v[3].t = RageVector2( pTexCoordRect->right,	pTexCoordRect->top );		// top right
-
+			TexCoordsFromRect(v, *pTexCoordRect);
 			DISPLAY->EnableTextureWrapping(m_bTextureWrapping);
 		}
 	}
@@ -353,6 +355,8 @@ void Sprite::SetCustomTextureCoords( float fTexCoords[8] ) // order: bottom left
 		m_CustomTexCoords[i] = fTexCoords[i]; 
 }
 
+/* Get the current custom texture coordinates.  Note that these are independent
+ * */
 void Sprite::GetCustomTextureCoords( float fTexCoordsOut[8] ) // order: bottom left, top left, bottom right, top right
 { 
 	for( int i=0; i<8; i++ )
