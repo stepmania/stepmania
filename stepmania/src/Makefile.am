@@ -201,7 +201,7 @@ ArrowBackdrop.cpp ArrowBackdrop.h ArrowEffects.cpp ArrowEffects.h AttackDisplay.
 Background.cpp Background.h BeginnerHelper.cpp BeginnerHelper.h CombinedLifeMeterTug.cpp CombinedLifeMeterTug.h \
 Combo.cpp Combo.h DancingCharacters.cpp DancingCharacters.h Foreground.cpp Foreground.h GhostArrow.cpp GhostArrow.h \
 GhostArrowRow.cpp GhostArrowRow.h HoldGhostArrow.cpp HoldGhostArrow.h HoldJudgment.cpp HoldJudgment.h \
-Judgment.cpp Judgment.h LifeMeter.cpp LifeMeterBar.cpp LifeMeterBar.h LifeMeterBattery.cpp LifeMeterBattery.h \
+Judgment.cpp Judgment.h LifeMeter.h LifeMeterBar.cpp LifeMeterBar.h LifeMeterBattery.cpp LifeMeterBattery.h \
 LyricDisplay.cpp LyricDisplay.h NoteDisplay.cpp NoteDisplay.h NoteField.cpp NoteField.h \
 NoteFieldPlus.cpp NoteFieldPlus.h PercentageDisplay.cpp PercentageDisplay.h Player.cpp Player.h \
 ProTimingDisplay.cpp ProTimingDisplay.h ReceptorArrow.cpp ReceptorArrow.h ReceptorArrowRow.cpp ReceptorArrowRow.h \
