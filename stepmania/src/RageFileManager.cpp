@@ -465,11 +465,11 @@ void RageFileManager::Unmount( CString Type, CString Root, CString MountPoint )
 	g_Mutex->Lock();
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
-		if( g_Drivers[i].Type.CompareNoCase( Type ) )
+		if( Type != "" && g_Drivers[i].Type.CompareNoCase( Type ) )
 			continue;
-		if( g_Drivers[i].Root.CompareNoCase( Root ) )
+		if( Root != "" && g_Drivers[i].Root.CompareNoCase( Root ) )
 			continue;
-		if( g_Drivers[i].MountPoint.CompareNoCase( MountPoint ) )
+		if( MountPoint != "" && g_Drivers[i].MountPoint.CompareNoCase( MountPoint ) )
 			continue;
 
 		++g_Drivers[i].m_iRefs;
