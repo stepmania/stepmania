@@ -23,19 +23,11 @@ struct NoteFieldMode
 	/* Unique ID from the INI. */
 	CString m_Id;
 
-	CString GrayButtonNames[MAX_NOTE_TRACKS];
-	CString NoteButtonNames[MAX_NOTE_TRACKS];
-	CString GhostButtonNames[MAX_NOTE_TRACKS];
-
-	/* 0 = no perspective */
-	float m_fFov, m_fNear, m_fFar;
 	float m_fPositionTrackX[MAX_NOTE_TRACKS];
 	
 	float m_fFirstPixelToDrawScale, m_fLastPixelToDrawScale;
-	CString m_Backdrop;
 
 	Commands m_JudgmentCmd, m_ComboCmd, m_AttackDisplayCmd;
-	Commands m_HoldJudgmentCmd[MAX_NOTE_TRACKS];
 };
 
 class NoteFieldPositioning

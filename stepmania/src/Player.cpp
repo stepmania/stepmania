@@ -76,7 +76,6 @@ Player::Player()
 	
 	m_iOffsetSample = 0;
 
-	this->AddChild( &m_ArrowBackdrop );
 	this->AddChild( &m_Judgment );
 	this->AddChild( &m_ProTimingDisplay );
 	this->AddChild( &m_Combo );
@@ -160,8 +159,6 @@ void Player::Load( const NoteData& noteData )
 	/* Ensure that this is up-to-date. */
 	GAMESTATE->m_pPosition->Load(pn);
 	
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
-
 	// init steps
 	m_NoteData.Init();
 	bool bOniDead = GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  
@@ -220,11 +217,6 @@ void Player::Load( const NoteData& noteData )
 	int iStartDrawingAtPixels = GAMESTATE->m_bEditing ? -100 : START_DRAWING_AT_PIXELS;
 	int iStopDrawingAtPixels = GAMESTATE->m_bEditing ? 400 : STOP_DRAWING_AT_PIXELS;
 
-	m_ArrowBackdrop.Unload();
-	CString BackdropName = g_NoteFieldMode[pn].m_Backdrop;
-	if( !BackdropName.empty() )
-		m_ArrowBackdrop.LoadFromAniDir( THEME->GetPathToB( BackdropName ) );
-
 	float fNoteFieldMiddle = (GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
 	
 	if( m_pNoteField )
@@ -232,7 +224,6 @@ void Player::Load( const NoteData& noteData )
 	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
 	if( m_pNoteField )
 		m_pNoteField->Load( &m_NoteData, m_pPlayerState, iStartDrawingAtPixels, iStopDrawingAtPixels, m_fNoteFieldHeight );
-	m_ArrowBackdrop.SetPlayer( pn );
 
 	const bool bReverse = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetReversePercentForColumn(0) == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==ONE_PLAYER_TWO_SIDES;
@@ -250,12 +241,6 @@ void Player::Load( const NoteData& noteData )
 	m_ProTimingDisplay.RunCommands( g_NoteFieldMode[pn].m_JudgmentCmd );
 	m_Combo.RunCommands( g_NoteFieldMode[pn].m_ComboCmd );
 	m_AttackDisplay.RunCommands( g_NoteFieldMode[pn].m_AttackDisplayCmd );
-
-	for( int c=0; c<pStyle->m_iColsPerPlayer; c++ )
-	{
-		NoteFieldMode &mode = g_NoteFieldMode[pn];
-		m_HoldJudgment[c].RunCommands( mode.m_HoldJudgmentCmd[c] );
-	}
 
 	// Need to set Y positions of all these elements in Update since
 	// they change depending on PlayerOptions.
@@ -316,10 +301,6 @@ void Player::Update( float fDeltaTime )
 			m_HoldJudgment[c].SetZ( fZ );
 		}
 	}
-
-	float fPercentReverse = m_pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(0);
-	float fGrayYPos = SCALE( fPercentReverse, 0.f, 1.f, GRAY_ARROWS_Y_STANDARD, GRAY_ARROWS_Y_REVERSE );
-	m_ArrowBackdrop.SetY( fGrayYPos );
 
 	// NoteField accounts for reverse on its own now.
 	//if( m_pNoteField )
@@ -563,7 +544,6 @@ void Player::DrawPrimitives()
 
 
 	// Draw these below everything else.
-	m_ArrowBackdrop.Draw();
 	if( m_pPlayerState->m_PlayerOptions.m_fBlind == 0 )
 		m_Combo.Draw();
 

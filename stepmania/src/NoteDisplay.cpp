@@ -230,13 +230,7 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, CString No
 	m_pPlayerState = pPlayerState;
 	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 
-	/* Normally, this is empty and we use the style table entry via ColToButtonName. */
-	// TODO: Remove indexing with PlayerNumber.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	NoteFieldMode &mode = g_NoteFieldMode[pn];
-	CString Button = mode.NoteButtonNames[iColNum];
-	if( Button == "" )
-		Button = GAMESTATE->GetCurrentGame()->ColToButtonName( iColNum );
+	CString Button = GAMESTATE->GetCurrentGame()->ColToButtonName( iColNum );
 
 	cache->Load( NoteSkin, Button );
 

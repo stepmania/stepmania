@@ -33,10 +33,7 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, CString NoteSkin, flo
 	{
 		// TODO: Remove indexing by PlayerNumber;
 		PlayerNumber pn = pPlayerState->m_PlayerNumber;
-		NoteFieldMode &mode = g_NoteFieldMode[pn];
-		CString Button = mode.GhostButtonNames[c];
-		if( Button == "" )
-			Button = GAMESTATE->GetCurrentGame()->ColToButtonName( c );
+		CString Button = GAMESTATE->GetCurrentGame()->ColToButtonName( c );
 
 		m_GhostDim.push_back( new GhostArrow );
 		m_GhostBright.push_back( new GhostArrow );

@@ -19,9 +19,6 @@ NoteFieldMode g_NoteFieldMode[NUM_PLAYERS];
 
 NoteFieldMode::NoteFieldMode()
 {
-	m_fFov = 0;
-	m_fNear = 5;
-	m_fFar = 1000;
 	m_fFirstPixelToDrawScale = m_fLastPixelToDrawScale = 1.0f;
 }
 
@@ -29,12 +26,6 @@ void NoteFieldMode::BeginDrawTrack(int tn)
 {
 	DISPLAY->CameraPushMatrix();
 
-	/* It's useful to be able to use Actors like this, functioning only
-	 * for a transformation.  However, this is a big waste of matrix
-	 * stack space, as each of these will push.  Profile this. XXX */
-	if(m_fFov) 
-		DISPLAY->LoadMenuPerspective(m_fFov, SCREEN_CENTER_X, SCREEN_CENTER_Y);
-	
 	if(tn != -1)
 	{
 		DISPLAY->PushMatrix();
@@ -69,32 +60,12 @@ void NoteFieldMode::Load(const XNode *pNode, int pn)
 	if(pn == -1)
 		return;
 
-	GetValue( pNode, pn, "Backdrop",				m_Backdrop );
-	GetValue( pNode, pn, "FOV",					m_fFov );
-	GetValue( pNode, pn, "NearClipDistance",		m_fNear );
-	GetValue( pNode, pn, "FarClipDistance",		m_fFar );
 	GetValue( pNode, pn, "PixelsDrawAheadScale",	m_fFirstPixelToDrawScale );
 	GetValue( pNode, pn, "PixelsDrawBehindScale",	m_fLastPixelToDrawScale );
 
 	CString s;
 	if( GetValue( pNode, pn, "Judgment",			s ) )	m_JudgmentCmd = ParseCommands(s);
 	if( GetValue( pNode, pn, "Combo",				s ) )	m_ComboCmd = ParseCommands(s);
-
-	/* Load per-track data: */
-	for( int t = 0; t < MAX_NOTE_TRACKS; ++t )
-	{
-		GetValue( pNode, pn, ssprintf("GrayButton"), GrayButtonNames[t] );
-		GetValue( pNode, pn, ssprintf("GrayButton%i", t+1), GrayButtonNames[t] );
-
-		GetValue( pNode, pn, ssprintf("NoteButton"), NoteButtonNames[t] );
-		GetValue( pNode, pn, ssprintf("NoteButton%i", t+1), NoteButtonNames[t] );
-
-		GetValue( pNode, pn, ssprintf("GhostButton"), GhostButtonNames[t] );
-		GetValue( pNode, pn, ssprintf("GhostButton%i", t+1), GhostButtonNames[t] );
-
-		if( GetValue( pNode, pn, ssprintf("HoldJudgment"),       s ) )	m_HoldJudgmentCmd[t] = ParseCommands(s);
-		if( GetValue( pNode, pn, ssprintf("HoldJudgment%i",t+1), s ) )	m_HoldJudgmentCmd[t] = ParseCommands(s);
-	}
 }
 
 NoteFieldPositioning::NoteFieldPositioning(CString fn)
