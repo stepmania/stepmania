@@ -26,13 +26,13 @@ GhostArrow::GhostArrow()
 	}
 }
 
-void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement, bool bLoadJustOne )
+void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
 {
 	for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
 	{
 		CString sJudge = TapNoteScoreToString( (TapNoteScore)i );
 		
-		CString sFullElement = bLoadJustOne ? sElement : sElement  + " " + sJudge;
+		CString sFullElement = sElement  + " " + sJudge;
 
 		// HACK: for backward noteskin compatibility
 		CString sPath = NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sFullElement, true);	// optional

@@ -22,7 +22,7 @@ class GhostArrow : public ActorFrame
 public:
 	GhostArrow();
 
-	void Load( CString sNoteSkin, CString sButton, CString sFile, bool bLoadJustOne );
+	void Load( CString sNoteSkin, CString sButton, CString sFile );
 	virtual void Init( PlayerNumber pn );
 
 	virtual void Update( float fDeltaTime );

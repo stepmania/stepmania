@@ -50,8 +50,8 @@ void GhostArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffs
 		m_GhostBright[c].Init( pn );
 		//m_HoldGhost[c].Init( pn );
 
-		m_GhostDim[c].Load( NoteSkin, Button, "tap explosion dim", false);
-		m_GhostBright[c].Load( NoteSkin, Button, "tap explosion bright", false );
+		m_GhostDim[c].Load( NoteSkin, Button, "tap explosion dim" );
+		m_GhostBright[c].Load( NoteSkin, Button, "tap explosion bright" );
 		m_HoldGhost[c].Load( NoteSkin, Button, "hold explosion" );
 	}
 }
