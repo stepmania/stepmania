@@ -103,6 +103,7 @@ protected:
 	void DimOption(int line, int option, bool dim);
 	bool RowCompletelyDimmed(int line) const;
 
+	bool m_bRowIsLong[MAX_OPTION_LINES];	// goes off edge of screen
 	int m_iSelectedOption[NUM_PLAYERS][MAX_OPTION_LINES];
 	int m_iCurrentRow[NUM_PLAYERS];
 

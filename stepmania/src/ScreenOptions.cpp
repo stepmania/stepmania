@@ -21,7 +21,6 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 
-const int MAX_ITEMS_PER_ROW = 8;
 const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 
 #define ICONS_X( p )		THEME->GetMetricF("ScreenOptions",ssprintf("IconsP%dX",p+1))
@@ -76,6 +75,7 @@ ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer )
 	m_framePage.BeginTweening( 0.3f, Actor::TWEEN_DECELERATE );
 	m_framePage.SetTweenX( 0 );
 	memset(&m_OptionDim, 0, sizeof(m_OptionDim));
+	memset(&m_bRowIsLong, 0, sizeof(m_bRowIsLong));
 }
 
 void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLines, bool bUseIcons, bool bLoadExplanations )
@@ -126,7 +126,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 		m_framePage.AddChild( &m_textTitles[i] );		
 
 		for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
-			m_framePage.AddChild( &m_textItems[i][j] );	// this array has to be big enough to hold all of the options
+			m_framePage.AddChild( &m_textItems[i][j] );
 	}
 
 	// TRICKY:  Add one more item.  This will be "EXIT"
@@ -158,7 +158,7 @@ ScreenOptions::~ScreenOptions()
 void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &iXOut, int &iYOut )
 {
 	bool bExitRow = iRow == m_iNumOptionRows;
-	bool bLotsOfOptions = m_OptionRow[iRow].choices.size()>=MAX_ITEMS_PER_ROW;
+	bool bLotsOfOptions = m_bRowIsLong[iRow];
 	int iOptionInRow = bExitRow ? 0 : bLotsOfOptions ? pn : m_iSelectedOption[pn][iRow];
 
 	BitmapText &text = m_textItems[iRow][iOptionInRow];
@@ -199,8 +199,31 @@ void ScreenOptions::InitOptionsText()
 
 
 		// init all text in this line and count the width of the line
-		if( optline.choices.size() >= MAX_ITEMS_PER_ROW )
+		float fX = ITEMS_START_X;	// indent 70 pixels
+		for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this line
 		{
+			BitmapText &option = m_textItems[i][j];
+
+			option.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions item") );
+			option.SetText( optline.choices[j] );
+			option.SetZoom( ITEMS_ZOOM );
+			option.EnableShadow( false );
+
+			// set the XY position of each item in the line
+			float fItemWidth = option.GetWidestLineWidthInSourcePixels() * option.GetZoomX();
+			fX += fItemWidth/2;
+			option.SetXY( fX, fY );
+			fX += fItemWidth/2 + ITEMS_GAP_X;
+		}
+
+		m_bRowIsLong[i] = fX > SCREEN_RIGHT-40;	// goes off edge of screen
+
+		if( m_bRowIsLong[i] )
+		{
+			// re-init with "long row" style
+			for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this line
+				m_textItems[i][j].SetText( "" );
+
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
 				if( GAMESTATE->IsPlayerEnabled(p) )
@@ -218,25 +241,6 @@ void ScreenOptions::InitOptionsText()
 
 					UpdateText( (PlayerNumber)p );
 				}
-			}
-		}
-		else
-		{
-			float fX = ITEMS_START_X;	// indent 70 pixels
-			for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this line
-			{
-				BitmapText &option = m_textItems[i][j];
-
-				option.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions item") );
-				option.SetText( optline.choices[j] );
-				option.SetZoom( ITEMS_ZOOM );
-				option.EnableShadow( false );
-
-				// set the XY position of each item in the line
-				float fItemWidth = option.GetWidestLineWidthInSourcePixels() * option.GetZoomX();
-				fX += fItemWidth/2;
-				option.SetXY( fX, fY );
-				fX += fItemWidth/2 + ITEMS_GAP_X;
 			}
 		}
 	}
@@ -365,7 +369,7 @@ void ScreenOptions::UpdateText( PlayerNumber player_no )
 	int iCurRow = m_iCurrentRow[player_no];
 	int iChoiceInRow = m_iSelectedOption[player_no][iCurRow];
 
-	bool bLotsOfOptions = m_OptionRow[iCurRow].choices.size()>=MAX_ITEMS_PER_ROW;
+	bool bLotsOfOptions = m_bRowIsLong[iCurRow];
 
 	if( bLotsOfOptions )
 		m_textItems[iCurRow][player_no].SetText( m_OptionRow[iCurRow].choices[iChoiceInRow] );
@@ -389,7 +393,7 @@ void ScreenOptions::UpdateEnabledDisabled()
 
 		m_textTitles[i].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
 
-		if( m_OptionRow[i].choices.size() >= MAX_ITEMS_PER_ROW )
+		if( m_bRowIsLong[i] )
 			for( unsigned j=0; j<NUM_PLAYERS; j++ )
 				m_textItems[i][j].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
 		else
