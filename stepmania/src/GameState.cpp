@@ -359,10 +359,12 @@ void GameState::EndGame()
 		if( !PROFILEMAN->IsUsingProfile(pn) )
 			continue;
 
-		if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn) )
+		bool bWasMemoryCard = PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn);
+		if( bWasMemoryCard )
 			MEMCARDMAN->MountCard( pn );
 		PROFILEMAN->SaveProfile( pn );
-		MEMCARDMAN->UnmountCard( pn );
+		if( bWasMemoryCard )
+			MEMCARDMAN->UnmountCard( pn );
 
 		PROFILEMAN->UnloadProfile( pn );
 	}
@@ -371,7 +373,7 @@ void GameState::EndGame()
 
 	// Reset the USB storage device numbers -after- saving
 	CHECKPOINT;
-	MEMCARDMAN->FlushAndReset();
+//	MEMCARDMAN->FlushAndReset();
 	CHECKPOINT;
 
 	SONGMAN->FreeAllLoadedFromProfiles();
