@@ -12,7 +12,40 @@
 // lua start
 LUA_REGISTER_CLASS( ActorFrame )
 // lua end
-REGISTER_ACTOR_CLASS( ActorFrame )
+
+/* Tricky: We need ActorFrames created in XML to auto delete their children.
+ * We don't want classes that derive from ActorFrame to auto delete their 
+ * children.  The name "ActorFrame" is widely used in XML, so we'll have
+ * that string instead create an ActorFrameAutoDeleteChildren object.
+ */
+//REGISTER_ACTOR_CLASS( ActorFrame )
+class ActorFrameAutoDeleteChildren : public ActorFrame
+{
+public:
+	ActorFrameAutoDeleteChildren() { DeleteChildrenWhenDone(true); }
+	void LoadFromNode( const CString& sDir, const XNode* pNode )
+	{
+		ActorFrame::LoadFromNode( sDir, pNode );
+
+		//
+		// Load children
+		//
+		const XNode* pChildren = pNode->GetChild("children");
+		if( pChildren )
+		{
+			FOREACH_CONST_Child( pChildren, pChild )
+			{
+				Actor* pChildActor = ActorUtil::LoadFromActorFile( sDir, pChild );
+				if( pChildActor )
+					AddChild( pChildActor );
+			}
+			SortByDrawOrder();
+		}
+	}
+
+};
+REGISTER_ACTOR_CLASS_WITH_NAME( ActorFrameAutoDeleteChildren, ActorFrame )
+
 
 ActorFrame::ActorFrame()
 {
@@ -37,21 +70,6 @@ void ActorFrame::LoadFromNode( const CString& sDir, const XNode* pNode )
 	pNode->GetAttrValue( "UpdateRate", m_fUpdateRate );
 	pNode->GetAttrValue( "FOV", m_fFOV );
 	m_bOverrideLighting = pNode->GetAttrValue( "Lighting", m_bLighting );
-
-	//
-	// Load children
-	//
-	const XNode* pChildren = pNode->GetChild("children");
-	if( pChildren )
-	{
-		FOREACH_CONST_Child( pChildren, pChild )
-		{
-			Actor* pChildActor = ActorUtil::LoadFromActorFile( sDir, pChild );
-			if( pChildActor )
-				AddChild( pChildActor );
-		}
-		SortByDrawOrder();
-	}
 }
 
 void ActorFrame::AddChild( Actor* pActor )
