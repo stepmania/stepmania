@@ -701,6 +701,8 @@ void ScreenGameplay::LoadNextSong()
 			a.sModifier=m_asModifiersQueue[p][iPlaySongIndex];
 			GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
 		}
+		GAMESTATE->m_SongOptions.FromString( m_asModifiersQueue[p][iPlaySongIndex] );
+
 
 		/* Queue course attacks. */
 
