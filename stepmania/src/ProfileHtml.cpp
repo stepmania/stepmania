@@ -672,7 +672,7 @@ void PrintScreenshots( RageFile &f, const Profile *pProfile, CString sTitle, CSt
 	{
 		PRINT_OPEN(f, "Less Than 1 Month Old" );
 		{
-			for( int i=0; i<pProfile->m_vScreenshots.size(); i++ )
+			for( unsigned i=0; i<pProfile->m_vScreenshots.size(); i++ )
 			{
 				const Profile::Screenshot &ss = pProfile->m_vScreenshots[i];
 				PrintScreenshot( f, ss );
