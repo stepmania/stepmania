@@ -25,7 +25,7 @@ void ScreenTestFonts::HandleScreenMessage( const ScreenMessage SM )
 		SetText(CustomText);
 }
 
-ScreenTestFonts::ScreenTestFonts()
+ScreenTestFonts::ScreenTestFonts() : Screen("ScreenTestFonts")
 {
 	Hline.SetXY(CENTER_X, CENTER_Y);
 	Hline.SetZoomX(LineWidth);

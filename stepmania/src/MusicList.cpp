@@ -94,7 +94,7 @@ void MusicList::TweenOnScreen()
 		m_textTitles[i].SetDiffuse( RageColor(1,1,1,0) );
 		m_textTitles[i].BeginTweening( 0.5f );
 		m_textTitles[i].BeginTweening( 0.5f );
-		m_textTitles[i].SetTweenDiffuse( RageColor(1,1,1,1) );
+		m_textTitles[i].SetDiffuse( RageColor(1,1,1,1) );
 	}
 }
 
@@ -105,6 +105,6 @@ void MusicList::TweenOffScreen()
 		m_textTitles[i].StopTweening();
 		m_textTitles[i].BeginTweening( 0.7f );
 		m_textTitles[i].BeginTweening( 0.5f );
-		m_textTitles[i].SetTweenDiffuse( RageColor(1,1,1,0) );
+		m_textTitles[i].SetDiffuse( RageColor(1,1,1,0) );
 	}
 }

@@ -105,7 +105,7 @@ const ScreenMessage	SM_StartHereWeGo		= ScreenMessage(SM_User+40);
 const ScreenMessage	SM_StopHereWeGo			= ScreenMessage(SM_User+41);
 
 
-ScreenGameplay::ScreenGameplay( bool bDemonstration )
+ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 {
 	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
 
@@ -626,7 +626,7 @@ void ScreenGameplay::LoadNextSong()
 	m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
 	m_Background.SetDiffuse( RageColor(0.5f,0.5f,0.5f,1) );
 	m_Background.BeginTweening( 2 );
-	m_Background.SetTweenDiffuse( RageColor(1,1,1,1) );
+	m_Background.SetDiffuse( RageColor(1,1,1,1) );
 
 	m_textSongTitle.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
 
@@ -970,7 +970,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			m_textDebug.StopTweening();
 			m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 			m_textDebug.BeginTweening( 1/8.f );
-			m_textDebug.SetTweenDiffuse( RageColor(1,1,1,1) );
+			m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 			return;
 		}
 		
@@ -978,7 +978,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		{
 			m_textDebug.StopTweening();
 			m_textDebug.BeginTweening( 1/8.f );
-			m_textDebug.SetTweenDiffuse( RageColor(1,1,1,0) );
+			m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 			return;
 		}
 		
@@ -1028,7 +1028,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			m_textDebug.StopTweening();
 			m_textDebug.BeginTweening( 3 );		// sleep
 			m_textDebug.BeginTweening( 0.5f );	// fade out
-			m_textDebug.SetTweenDiffuse( RageColor(1,1,1,0) );
+			m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 			break;
 		case SDLK_F8:
 			{
@@ -1062,7 +1062,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				m_textDebug.StopTweening();
 				m_textDebug.BeginTweening( 3 );		// sleep
 				m_textDebug.BeginTweening( 0.5f );	// fade out
-				m_textDebug.SetTweenDiffuse( RageColor(1,1,1,0) );
+				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 			}
 			break;
 		case SDLK_F11:
@@ -1087,7 +1087,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				m_textDebug.StopTweening();
 				m_textDebug.BeginTweening( 3 );		// sleep
 				m_textDebug.BeginTweening( 0.5f );	// fade out
-				m_textDebug.SetTweenDiffuse( RageColor(1,1,1,0) );
+				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 			}
 			break;
 		}
@@ -1406,10 +1406,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 /*	// received while STATE_OUTRO
 	case SM_ShowCleared:
 		m_sprCleared.BeginTweening(1.0f);
-		m_sprCleared.SetTweenDiffuse( RageColor(1,1,1,1) );
+		m_sprCleared.SetDiffuse( RageColor(1,1,1,1) );
 		m_sprCleared.BeginTweening(1.5f); // sleep
 		m_sprCleared.BeginTweening(0.7f);
-		m_sprCleared.SetTweenDiffuse( RageColor(1,1,1,0) );
+		m_sprCleared.SetDiffuse( RageColor(1,1,1,0) );
 		SCREENMAN->PostMessageToTopScreen( SM_GoToStateAfterCleared, 4 );
 		break;
 */
@@ -1419,27 +1419,27 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 			// make the background invisible so we don't waste mem bandwidth drawing it
 			m_Background.BeginTweening( 1 );
-			m_Background.SetTweenDiffuse( RageColor(1,1,1,0) );
+			m_Background.SetDiffuse( RageColor(1,1,1,0) );
 
 			RageColor colorStage = GAMESTATE->GetStageColor();
 			colorStage.a *= 0.7f;
 
 			m_sprTryExtraStage.SetZoom( 4 );
 			m_sprTryExtraStage.BeginBlurredTweening( 0.8f, TWEEN_DECELERATE );
-			m_sprTryExtraStage.SetTweenZoom( 0.4f );			// zoom out
-			m_sprTryExtraStage.SetTweenDiffuse( colorStage );	// and fade in
+			m_sprTryExtraStage.SetZoom( 0.4f );			// zoom out
+			m_sprTryExtraStage.SetDiffuse( colorStage );	// and fade in
 			m_sprTryExtraStage.BeginTweening( 0.2f );
-			m_sprTryExtraStage.SetTweenZoom( 0.8f );			// bounce
-			m_sprTryExtraStage.SetTweenDiffuse( colorStage );	// and fade in
+			m_sprTryExtraStage.SetZoom( 0.8f );			// bounce
+			m_sprTryExtraStage.SetDiffuse( colorStage );	// and fade in
 			m_sprTryExtraStage.BeginTweening( 0.2f );
-			m_sprTryExtraStage.SetTweenZoom( 1.0f );			// come to rest
-			m_sprTryExtraStage.SetTweenDiffuse( colorStage );	// and fade in
+			m_sprTryExtraStage.SetZoom( 1.0f );			// come to rest
+			m_sprTryExtraStage.SetDiffuse( colorStage );	// and fade in
 
 			colorStage.a = 0;
 
 			m_sprTryExtraStage.BeginTweening( 2 );	// sleep
 			m_sprTryExtraStage.BeginTweening( 1 );	// fade out
-			m_sprTryExtraStage.SetTweenDiffuse( colorStage );
+			m_sprTryExtraStage.SetDiffuse( colorStage );
 			SCREENMAN->PostMessageToTopScreen( SM_GoToStateAfterCleared, 5 );
 		}
 		break;
@@ -1514,7 +1514,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		// make the background invisible so we don't waste power drawing it
 		m_Background.BeginTweening( 1 );
-		m_Background.SetTweenDiffuse( RageColor(1,1,1,0) );
+		m_Background.SetDiffuse( RageColor(1,1,1,0) );
 
 		// show the survive time if extra stage
 		// TODO:  Move this animation to a metric?
@@ -1528,10 +1528,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_textSurviveTime.SetText( "TIME: " + SecondsToTime(fMaxSurviveSeconds) );
 			m_textSurviveTime.BeginTweening( 0.3f );	// sleep
 			m_textSurviveTime.BeginTweening( 0.3f );	// fade in
-			m_textSurviveTime.SetTweenDiffuse( RageColor(1,1,1,1) );
+			m_textSurviveTime.SetDiffuse( RageColor(1,1,1,1) );
 			m_textSurviveTime.BeginTweening( 3.5f );	// sleep
 			m_textSurviveTime.BeginTweening( 0.5f );	// fade out
-			m_textSurviveTime.SetTweenDiffuse( RageColor(1,1,1,0) );
+			m_textSurviveTime.SetDiffuse( RageColor(1,1,1,0) );
 		}
 
 		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
@@ -1594,7 +1594,7 @@ void ScreenGameplay::TweenOnScreen()
 		apActorsInLifeFrame[i]->SetY( fOriginalY-100 );
 		apActorsInLifeFrame[i]->BeginTweening( 0.5f );	// sleep
 		apActorsInLifeFrame[i]->BeginTweening( 1 );
-		apActorsInLifeFrame[i]->SetTweenY( fOriginalY );
+		apActorsInLifeFrame[i]->SetY( fOriginalY );
 	}
 
 
@@ -1614,7 +1614,7 @@ void ScreenGameplay::TweenOnScreen()
 		apActorsInScoreFrame[i]->SetY( fOriginalY+100 );
 		apActorsInScoreFrame[i]->BeginTweening( 0.5f );	// sleep
 		apActorsInScoreFrame[i]->BeginTweening( 1 );
-		apActorsInScoreFrame[i]->SetTweenY( fOriginalY );
+		apActorsInScoreFrame[i]->SetY( fOriginalY );
 	}
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -1623,7 +1623,7 @@ void ScreenGameplay::TweenOnScreen()
 		m_DifficultyIcon[p].SetX( (p==PLAYER_1) ? fOriginalX-200 : fOriginalX+200 );
 		m_DifficultyIcon[p].BeginTweening( 0.5f );	// sleep
 		m_DifficultyIcon[p].BeginTweening( 1 );
-		m_DifficultyIcon[p].SetTweenX( fOriginalX );
+		m_DifficultyIcon[p].SetX( fOriginalX );
 	}
 }
 
@@ -1636,6 +1636,6 @@ void ScreenGameplay::ShowOniGameOver( PlayerNumber pn )
 {
 	m_sprOniGameOver[pn].SetDiffuse( RageColor(1,1,1,1) );
 	m_sprOniGameOver[pn].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
-	m_sprOniGameOver[pn].SetTweenY( CENTER_Y );
+	m_sprOniGameOver[pn].SetY( CENTER_Y );
 	m_sprOniGameOver[pn].SetEffectBob( 4, RageVector3(0,6,0) );
 }

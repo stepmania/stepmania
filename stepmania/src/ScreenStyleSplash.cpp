@@ -26,7 +26,7 @@ const ScreenMessage SM_DoneOpening		= ScreenMessage(SM_User-7);
 const ScreenMessage SM_StartClosing		= ScreenMessage(SM_User-8);
 
 
-ScreenStyleSplash::ScreenStyleSplash()
+ScreenStyleSplash::ScreenStyleSplash() : Screen("ScreenStyleSplash")
 {
 	SOUNDMAN->StopMusic();
 

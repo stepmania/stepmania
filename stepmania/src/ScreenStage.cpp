@@ -53,7 +53,7 @@ enum StageMode
 };
 */
 
-ScreenStage::ScreenStage()
+ScreenStage::ScreenStage() : Screen("ScreenStage")
 {
 	SOUNDMAN->StopMusic();
 
@@ -249,7 +249,7 @@ ScreenStage::ScreenStage()
 //
 //		m_frameStage.SetXY( CENTER_X, fStageOffScreenY );
 //		m_frameStage.BeginTweening(0.8f, Actor::TWEEN_DECELERATE );
-//		m_frameStage.SetTweenY( CENTER_Y );
+//		m_frameStage.SetY( CENTER_Y );
 //
 //		this->AddChild( &m_quadMask );	// add quad mask before stage so that it will block out the stage sprites
 //		this->AddChild( &m_frameStage ); 
@@ -297,8 +297,8 @@ ScreenStage::ScreenStage()
 //			m_sprNumbers[i].SetRotationZ( 10 ); // make this thing rotated
 //
 //			m_sprNumbers[i].BeginTweening(0.8f, Actor::TWEEN_ACCELERATE );
-//			m_sprNumbers[i].SetTweenZoom( 3.0f ); // shrink it down to it's proper size
-//			m_sprNumbers[i].SetTweenRotationZ( 0 ); // make it rotate into place
+//			m_sprNumbers[i].SetZoom( 3.0f ); // shrink it down to it's proper size
+//			m_sprNumbers[i].SetRotationZ( 0 ); // make it rotate into place
 //		}
 //	
 //	//	m_frameStage.SetXY( CENTER_X, CENTER_Y );
@@ -340,7 +340,7 @@ ScreenStage::ScreenStage()
 //			m_sprbgxtra.ZoomToWidth( SCREEN_WIDTH + 50 ); // stretching shouldn't be a concern.
 //			m_sprbgxtra.SetRotationZ( -20 ); // rotate this graphic
 //			m_sprbgxtra.BeginTweening(0.3f); // start tweening
-//			m_sprbgxtra.SetTweenRotationZ( 0 ); // set the rotation we want it to finally appear as
+//			m_sprbgxtra.SetRotationZ( 0 ); // set the rotation we want it to finally appear as
 //		}
 //
 //
@@ -357,22 +357,22 @@ ScreenStage::ScreenStage()
 //		m_sprbg[0].ZoomToWidth( SCREEN_WIDTH + 50 ); // no matter what... it's this wide
 //		m_sprbg[0].SetRotationZ( -20 ); // and is initially this rotation
 //		m_sprbg[0].BeginTweening(0.3f); // start tweening
-//		m_sprbg[0].SetTweenRotationZ( 0 ); // and set the rotation to where we want it to end up
+//		m_sprbg[0].SetRotationZ( 0 ); // and set the rotation to where we want it to end up
 //		
 //		m_sprbg[1].SetXY( CENTER_X-(SCREEN_WIDTH/2)-20, CENTER_Y+element_y_offsets);
 //		m_sprbg[1].ZoomToHeight( SCREEN_HEIGHT - 140 );
 //		m_sprbg[1].ZoomToWidth( 130 );
 //		m_sprbg[1].SetRotationZ( -20 );
 //		m_sprbg[1].BeginTweening(0.3f);
-//		m_sprbg[1].SetTweenRotationZ( 0 );
+//		m_sprbg[1].SetRotationZ( 0 );
 //
 //		m_sprbg[2].SetXY( CENTER_X+430, CENTER_Y+element_y_offsets);
 //		m_sprbg[2].ZoomToHeight( SCREEN_HEIGHT - 140 );
 //		m_sprbg[2].ZoomToWidth( SCREEN_WIDTH + 50 );
 //		m_sprbg[2].SetRotationZ( -20 );
 //		m_sprbg[2].BeginTweening(0.3f);
-//		m_sprbg[2].SetTweenX( CENTER_X );
-//		m_sprbg[2].SetTweenRotationZ( 0 );
+//		m_sprbg[2].SetX( CENTER_X );
+//		m_sprbg[2].SetRotationZ( 0 );
 //
 //		for (i = 3; i >= 0; i--) // add them backwards
 //			AddChild( &m_sprbg[i] ); 
@@ -432,10 +432,10 @@ ScreenStage::ScreenStage()
 //
 //		}
 //		
-//		m_ez2ukm[0].SetTweenX(CENTER_X+90); // set their new locations
-//		m_ez2ukm[1].SetTweenX(CENTER_X-160);
-//		m_stagedesc[0].SetTweenX(CENTER_X+10); // set their new locations
-//		m_stagedesc[1].SetTweenX(CENTER_X-100);
+//		m_ez2ukm[0].SetX(CENTER_X+90); // set their new locations
+//		m_ez2ukm[1].SetX(CENTER_X-160);
+//		m_stagedesc[0].SetX(CENTER_X+10); // set their new locations
+//		m_stagedesc[1].SetX(CENTER_X-100);
 //
 //		for (i=0; i<2; i++) // add the actors
 //		{
@@ -487,9 +487,9 @@ ScreenStage::ScreenStage()
 //
 //				m_sprScrollingBlobs[j][i].BeginTweening(0.2f * i / 7); // start them tweening, different delay for each blob
 //				if (j == 0) // set 1
-//					m_sprScrollingBlobs[j][i].SetTweenX(CENTER_X-(SCREEN_WIDTH/2)+30+(i*30.0f)); // keep them at equal distance when they arrive
+//					m_sprScrollingBlobs[j][i].SetX(CENTER_X-(SCREEN_WIDTH/2)+30+(i*30.0f)); // keep them at equal distance when they arrive
 //				else // set 2
-//					m_sprScrollingBlobs[j][i].SetTweenX(CENTER_X+(SCREEN_WIDTH/2)+30-70-(i*30.0f)); 
+//					m_sprScrollingBlobs[j][i].SetX(CENTER_X+(SCREEN_WIDTH/2)+30-70-(i*30.0f)); 
 //	
 //				AddChild( &m_sprScrollingBlobs[j][i] );
 //			}
@@ -541,7 +541,7 @@ ScreenStage::ScreenStage()
 //
 //		m_stagename.BeginTweening(0.5f); // start tweening them to their new home
 //		
-//		m_stagename.SetTweenX(CENTER_X+70); // set their new locations
+//		m_stagename.SetX(CENTER_X+70); // set their new locations
 //		AddChild( &m_stagename ); //add the actor
 //	
 //		this->AddChild( &m_frameStage ); 

@@ -73,8 +73,8 @@ void OptionsCursor::TweenBarWidth( int iNewWidth, float fTweenTime )
 	m_sprMiddle.BeginTweening( fTweenTime );
 	m_sprRight.BeginTweening( fTweenTime );
 
-	m_sprMiddle.SetTweenZoomX( iNewWidth/(float)fFrameWidth );
+	m_sprMiddle.SetZoomX( iNewWidth/(float)fFrameWidth );
 
-	m_sprLeft.SetTweenX( -iNewWidth/2 - fFrameWidth/2 );
-	m_sprRight.SetTweenX( +iNewWidth/2 + fFrameWidth/2 );
+	m_sprLeft.SetX( -iNewWidth/2 - fFrameWidth/2 );
+	m_sprRight.SetX( +iNewWidth/2 + fFrameWidth/2 );
 }

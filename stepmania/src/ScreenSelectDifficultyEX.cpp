@@ -347,7 +347,7 @@ void ScreenSelectDifficultyEX::TweenOnScreen()
 
 void ScreenSelectDifficultyEX::TweenOffScreen()
 {	
-	const int page = m_CurrentPage;
+//	const int page = m_CurrentPage;
 
 	//m_sprExplanation.Command( "linear,0.5;bounceend,0.5" );
 	//m_sprMore.Command( "linear,0.5;bounceend,0.5" );

@@ -26,17 +26,17 @@
 #include "ModeChoice.h"
 
 
-#define CHOICES					THEME->GetMetric (m_sClassName,"Choices")
-#define HELP_TEXT				THEME->GetMetric (m_sClassName,"HelpText")
-#define TIMER_SECONDS			THEME->GetMetricI(m_sClassName,"TimerSeconds")
-#define NEXT_SCREEN( choice )	THEME->GetMetric (m_sClassName,ssprintf("NextScreen%d",choice+1))
+#define CHOICES					THEME->GetMetric (m_sName,"Choices")
+#define HELP_TEXT				THEME->GetMetric (m_sName,"HelpText")
+#define TIMER_SECONDS			THEME->GetMetricI(m_sName,"TimerSeconds")
+#define NEXT_SCREEN( choice )	THEME->GetMetric (m_sName,ssprintf("NextScreen%d",choice+1))
 
 
-ScreenSelect::ScreenSelect( CString sClassName )
+ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 {
 	LOG->Trace( "ScreenSelect::ScreenSelect()" );
 
-	m_sClassName = sClassName;
+	m_sName = sClassName;
 
 	GAMESTATE->m_bPlayersCanJoin = false;	
 	// Set this true later if we discover a choice that chooses the Style
@@ -122,18 +122,18 @@ ScreenSelect::ScreenSelect( CString sClassName )
 			m_aModeChoices.push_back( mc );
 		
 		
-		CString sBGAnimationDir = THEME->GetPathToOptional("BGAnimations",ssprintf("%s %s",m_sClassName.GetString(),mc.name));
+		CString sBGAnimationDir = THEME->GetPathToOptional("BGAnimations",ssprintf("%s %s",m_sName.GetString(),mc.name));
 		if( sBGAnimationDir == "" )
-			sBGAnimationDir = THEME->GetPathTo("BGAnimations",m_sClassName+" background");
+			sBGAnimationDir = THEME->GetPathTo("BGAnimations",m_sName+" background");
 		m_BGAnimations[c].LoadFromAniDir( sBGAnimationDir );
 	}
 
 	m_Menu.Load( sClassName );
 	this->AddChild( &m_Menu );
 
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sClassName+" intro") );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName+" intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds",m_sClassName+" music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds",m_sName+" music") );
 }
 
 

@@ -73,8 +73,8 @@ void GhostArrowBright::Step( TapNoteScore score )
 	SetZoom( GAB_ZOOM_START );
 	
 	BeginTweening( (float)GAB_SHOW_SECONDS/2 );
-	SetTweenZoom( ((float)GAB_ZOOM_START+(float)GAB_ZOOM_END)/2 );
+	SetZoom( ((float)GAB_ZOOM_START+(float)GAB_ZOOM_END)/2 );
 	BeginTweening( (float)GAB_SHOW_SECONDS/2 );
-	SetTweenZoom( GAB_ZOOM_END );
-	SetTweenDiffuse( colorEnd );
+	SetZoom( GAB_ZOOM_END );
+	SetDiffuse( colorEnd );
 }

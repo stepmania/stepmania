@@ -83,16 +83,16 @@ const char* JUDGE_STRING[NUM_JUDGE_LINES] = { "Marvelous", "Perfect", "Great", "
 #define SPIN_GRADES							THEME->GetMetricB("ScreenEvaluation","SpinGrades")
 
 // metrics that are specific to classes derived from ScreenEvaluation
-#define NEXT_SCREEN							THEME->GetMetric (m_sClassName,"NextScreen")
-#define END_SCREEN							THEME->GetMetric (m_sClassName,"EndScreen")
-#define SHOW_BANNER_AREA					THEME->GetMetricB(m_sClassName,"ShowBannerArea")
-#define SHOW_GRADE_AREA						THEME->GetMetricB(m_sClassName,"ShowGradeArea")
-#define SHOW_POINTS_AREA					THEME->GetMetricB(m_sClassName,"ShowPointsArea")
-#define SHOW_BONUS_AREA						THEME->GetMetricB(m_sClassName,"ShowBonusArea")
-#define SHOW_SURVIVED_AREA					THEME->GetMetricB(m_sClassName,"ShowSurvivedArea")
-#define SHOW_JUDGMENT( l )					THEME->GetMetricB(m_sClassName,ssprintf("Show%s",JUDGE_STRING[l]))
-#define SHOW_SCORE_AREA						THEME->GetMetricB(m_sClassName,"ShowScoreArea")
-#define SHOW_TIME_AREA						THEME->GetMetricB(m_sClassName,"ShowTimeArea")
+#define NEXT_SCREEN							THEME->GetMetric (m_sName,"NextScreen")
+#define END_SCREEN							THEME->GetMetric (m_sName,"EndScreen")
+#define SHOW_BANNER_AREA					THEME->GetMetricB(m_sName,"ShowBannerArea")
+#define SHOW_GRADE_AREA						THEME->GetMetricB(m_sName,"ShowGradeArea")
+#define SHOW_POINTS_AREA					THEME->GetMetricB(m_sName,"ShowPointsArea")
+#define SHOW_BONUS_AREA						THEME->GetMetricB(m_sName,"ShowBonusArea")
+#define SHOW_SURVIVED_AREA					THEME->GetMetricB(m_sName,"ShowSurvivedArea")
+#define SHOW_JUDGMENT( l )					THEME->GetMetricB(m_sName,ssprintf("Show%s",JUDGE_STRING[l]))
+#define SHOW_SCORE_AREA						THEME->GetMetricB(m_sName,"ShowScoreArea")
+#define SHOW_TIME_AREA						THEME->GetMetricB(m_sName,"ShowTimeArea")
 
 
 const ScreenMessage SM_GoToSelectCourse			=	ScreenMessage(SM_User+3);
@@ -101,7 +101,7 @@ const ScreenMessage SM_GoToEndScreen			=	ScreenMessage(SM_User+5);
 const ScreenMessage SM_PlayCheer				=	ScreenMessage(SM_User+6);
 
 
-ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
+ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sClassName)
 {
 	//
 	// debugging
@@ -122,7 +122,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
 
-	m_sClassName = sClassName;
+	m_sName = sClassName;
 	m_Type = type;
 	
 
@@ -241,7 +241,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
  
 
 
-	m_Menu.Load( m_sClassName );
+	m_Menu.Load( m_sName );
 	this->AddChild( &m_Menu );
 
 

@@ -204,7 +204,7 @@ Menu g_BGChange
 );
 
 
-ScreenEdit::ScreenEdit()
+ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 {
 	LOG->Trace( "ScreenEdit::ScreenEdit()" );
 
@@ -1036,7 +1036,7 @@ void ScreenEdit::TransitionToEdit()
 	m_soundMusic.StopPlaying();
 	m_rectRecordBack.StopTweening();
 	m_rectRecordBack.BeginTweening( 0.5f );
-	m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0) );
+	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );
 
 	/* Make sure we're snapped. */
 	GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
@@ -1409,7 +1409,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				m_rectRecordBack.StopTweening();
 				m_rectRecordBack.BeginTweening( 0.5f );
-				m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0.8f) );
+				m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0.8f) );
 
 				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
 				float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
@@ -1433,7 +1433,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				m_rectRecordBack.StopTweening();
 				m_rectRecordBack.BeginTweening( 0.5f );
-				m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0.8f) );
+				m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0.8f) );
 
 				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
 				float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat);

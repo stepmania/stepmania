@@ -63,7 +63,7 @@ public:
 	void Update( float fDeltaTime );
 };
 
-ScreenSystemLayer::ScreenSystemLayer()
+ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 {
 	m_textSystemMessage.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	m_textSystemMessage.SetHorizAlign( Actor::align_left );

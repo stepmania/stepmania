@@ -17,7 +17,6 @@
 #include "RandomSample.h"
 #include "RageSoundManager.h"
 #include "RageSound.h"
-#include "MotionBlurSprite.h"
 #include "BGAnimation.h"
 #include "SnapDisplay.h"
 

@@ -132,12 +132,12 @@ void GroupList::TweenOnScreen()
 		m_sprButton[i].SetX( 400 );
 		m_sprButton[i].BeginTweening( 0.1f*i, TWEEN_BOUNCE_END );
 		m_sprButton[i].BeginTweening( 0.2f, TWEEN_BOUNCE_END );
-		m_sprButton[i].SetTweenX( 0 );
+		m_sprButton[i].SetX( 0 );
 
 		m_screenLabels[i].SetX( 400 );
 		m_screenLabels[i].BeginTweening( 0.1f*i, TWEEN_BOUNCE_END );
 		m_screenLabels[i].BeginTweening( 0.2f, TWEEN_BOUNCE_END );
-		m_screenLabels[i].SetTweenX( 0 );
+		m_screenLabels[i].SetX( 0 );
 	}
 }
 
@@ -150,14 +150,14 @@ void GroupList::TweenOffScreen()
 		else
 			m_sprButton[i].BeginTweening( 0.1f*i, TWEEN_BOUNCE_BEGIN );
 		m_sprButton[i].BeginTweening( 0.2f, TWEEN_BOUNCE_BEGIN );
-		m_sprButton[i].SetTweenX( 400 );
+		m_sprButton[i].SetX( 400 );
 
 		if( i == m_iSelection )
 			m_screenLabels[i].BeginTweening( 1.0f, TWEEN_BOUNCE_BEGIN );
 		else
 			m_screenLabels[i].BeginTweening( 0.1f*i, TWEEN_BOUNCE_BEGIN );
 		m_screenLabels[i].BeginTweening( 0.2f, TWEEN_BOUNCE_BEGIN );
-		m_screenLabels[i].SetTweenX( 400 );
+		m_screenLabels[i].SetX( 400 );
 	}
 
 }

@@ -38,7 +38,8 @@ int	ScreenMiniMenu::s_iLastLine;
 int	ScreenMiniMenu::s_iLastAnswers[MAX_MENU_ROWS];
 
 
-ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
+ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel ) :
+  Screen("ScreenMiniMenu")
 {
 	m_bIsTransparent = true;	// draw screens below us
 

@@ -22,7 +22,7 @@
 class Screen : public ActorFrame
 {
 public:
-	Screen();
+	Screen( CString sName );	// enforce that all screens have m_sName filled in
 	virtual ~Screen();
 
 	virtual void AddChild( Actor* pActor );

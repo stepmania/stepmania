@@ -20,7 +20,6 @@
 #include "RandomSample.h"
 #include "RageSoundManager.h"
 #include "RageSound.h"
-#include "MotionBlurSprite.h"
 #include "Background.h"
 #include "LifeMeter.h"
 #include "ScoreDisplay.h"

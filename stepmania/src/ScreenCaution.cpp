@@ -27,7 +27,7 @@ const ScreenMessage SM_DoneOpening		= ScreenMessage(SM_User-7);
 const ScreenMessage SM_StartClosing		= ScreenMessage(SM_User-8);
 
 
-ScreenCaution::ScreenCaution()
+ScreenCaution::ScreenCaution() : Screen( "ScreenCaution" )
 {
 	GAMESTATE->m_bPlayersCanJoin = true;
 

@@ -79,7 +79,7 @@ const int NUM_SCORE_DIGITS	=	9;
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 
 
-ScreenSelectMusic::ScreenSelectMusic()
+ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
 
@@ -286,7 +286,7 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 
 		float fOriginalX = apActorsInScore[i]->GetX();
 		apActorsInScore[i]->BeginTweening( factor*0.5f, TWEEN_DECELERATE );		// tween off screen
-		apActorsInScore[i]->SetTweenX( fOriginalX+400 );
+		apActorsInScore[i]->SetX( fOriginalX+400 );
 		
 		apActorsInScore[i]->BeginTweening( factor*0.5f );		// sleep
 
@@ -642,12 +642,12 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );	// visible
 			m_sprOptionsMessage.Command( OPTIONS_MESSAGE_SHOW_COMMAND );
 /*			m_sprOptionsMessage.BeginTweening( 0.15f );	// fade in
-			m_sprOptionsMessage.SetTweenZoomY( 1 );
-			m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,1) );
+			m_sprOptionsMessage.SetZoomY( 1 );
+			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );
 			m_sprOptionsMessage.BeginTweening( fShowSeconds-0.35f );	// sleep
 			m_sprOptionsMessage.BeginTweening( 0.15f );	// fade out
-			m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
-			m_sprOptionsMessage.SetTweenZoomY( 0 );
+			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
+			m_sprOptionsMessage.SetZoomY( 0 );
 */
 			m_bAllowOptionsMenu = true;
 			/* Don't accept a held START for a little while, so it's not
@@ -706,7 +706,7 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 
 //	m_BPMDisplay.SetZoomY( 0 );
 //	m_BPMDisplay.BeginTweening( 0.2f );
-//	m_BPMDisplay.SetTweenZoomY( 1.2f );
+//	m_BPMDisplay.SetZoomY( 1.2f );
 
 	Notes* m_pNotes = GAMESTATE->m_pCurNotes[pn];
 	

@@ -43,7 +43,7 @@ public:
 
 public:	// let owner tinker with these objects
 
-	CString				m_sClassName;
+	CString				m_sName;
 
 	BGAnimation			m_Background;
 

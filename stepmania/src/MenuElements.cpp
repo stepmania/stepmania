@@ -46,12 +46,12 @@ void MenuElements::Load( CString sClassName, bool bEnableTimer, bool bLoadStyleI
 
 	ASSERT( this->m_SubActors.empty() );	// don't call Load twice!
 
-	m_sClassName = sClassName;
+	m_sName = sClassName;
 
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",m_sClassName+" background") );
+	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",m_sName+" background") );
 	this->AddChild( &m_Background );
 
-	m_sprHeader.Load( THEME->GetPathTo("Graphics",m_sClassName+" header") );
+	m_sprHeader.Load( THEME->GetPathTo("Graphics",m_sName+" header") );
 	m_sprHeader.Command( HEADER_ON_COMMAND );
 	this->AddChild( &m_sprHeader );
 
@@ -66,26 +66,26 @@ void MenuElements::Load( CString sClassName, bool bEnableTimer, bool bLoadStyleI
 	
 	m_MenuTimer.Command( TIMER_ON_COMMAND );
 	if( bEnableTimer  &&  PREFSMAN->m_bMenuTimer  &&  !GAMESTATE->m_bEditing )
-		m_MenuTimer.SetSeconds( THEME->GetMetricI(m_sClassName,"TimerSeconds") );
+		m_MenuTimer.SetSeconds( THEME->GetMetricI(m_sName,"TimerSeconds") );
 	else
 		m_MenuTimer.Disable();
 	this->AddChild( &m_MenuTimer );
 
-	m_sprFooter.Load( THEME->GetPathTo("Graphics",m_sClassName+" footer") );
+	m_sprFooter.Load( THEME->GetPathTo("Graphics",m_sName+" footer") );
 	m_sprFooter.Command( FOOTER_ON_COMMAND );
 	this->AddChild( &m_sprFooter );
 
 	m_textHelp.Command( HELP_ON_COMMAND );
 	CStringArray asHelpTips;
-	split( THEME->GetMetric(m_sClassName,"HelpText"), "\n", asHelpTips );
+	split( THEME->GetMetric(m_sName,"HelpText"), "\n", asHelpTips );
 	m_textHelp.SetTips( asHelpTips );
 	this->AddChild( &m_textHelp );
 
 
-	m_In.Load( THEME->GetPathTo("BGAnimations",m_sClassName+" in") );
+	m_In.Load( THEME->GetPathTo("BGAnimations",m_sName+" in") );
 	this->AddChild( &m_In );
 
-	m_Out.Load( THEME->GetPathTo("BGAnimations",m_sClassName+" out") );
+	m_Out.Load( THEME->GetPathTo("BGAnimations",m_sName+" out") );
 	this->AddChild( &m_Out );
 
 	m_Back.Load( THEME->GetPathTo("BGAnimations","Common back") );

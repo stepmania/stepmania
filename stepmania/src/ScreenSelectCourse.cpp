@@ -56,7 +56,7 @@ static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 
 
 
-ScreenSelectCourse::ScreenSelectCourse()
+ScreenSelectCourse::ScreenSelectCourse() : Screen("ScreenSelectCourse")
 {
 	LOG->Trace( "ScreenSelectCourse::ScreenSelectCourse()" );
 
@@ -346,12 +346,12 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 		// show "hold START for options"
 		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
 		m_sprOptionsMessage.BeginTweening( 0.15f );	// fade in
-		m_sprOptionsMessage.SetTweenZoomY( 1 );
-		m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,1) );
+		m_sprOptionsMessage.SetZoomY( 1 );
+		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );
 		m_sprOptionsMessage.BeginTweening( fShowSeconds-0.35f );	// sleep
 		m_sprOptionsMessage.BeginTweening( 0.15f );	// fade out
-		m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
-		m_sprOptionsMessage.SetTweenZoomY( 0 );
+		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
+		m_sprOptionsMessage.SetZoomY( 0 );
 
 		/* Don't accept a held START for a little while, so it's not
 		 * hit accidentally.  Accept an initial START right away, though,

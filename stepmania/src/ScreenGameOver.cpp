@@ -25,7 +25,7 @@ const ScreenMessage SM_PlayAnnouncer	=	ScreenMessage(SM_User + 3);
 #define NEXT_SCREEN		THEME->GetMetric("ScreenGameOver","NextScreen")
 
 
-ScreenGameOver::ScreenGameOver()
+ScreenGameOver::ScreenGameOver() : Screen("ScreenGameOver")
 {
 	GAMESTATE->Reset();
 

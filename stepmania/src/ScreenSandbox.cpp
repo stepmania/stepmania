@@ -19,7 +19,7 @@
 #include "GameConstantsAndTypes.h"
 
 
-ScreenSandbox::ScreenSandbox()
+ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
 {
 	m_quad.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_quad.SetDiffuse( RageColor(1,1,1,1) );

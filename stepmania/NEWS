@@ -37,6 +37,11 @@ NEW FEATURE:  Convert a theme from the 3.0 naming convention to the 4.0
 	naming convention using "Analyze Theme" in smpackage.exe.
 NEW FEATURE:  Check for redundant and possibly mis-named theme elements using
 	"Analyze Theme" in smpackage.exe.
+NEW FEATURE:  PlayerOption:  Perspective - Incoming
+NEW FEATURE:  Set default player and song options in stepmania.ini using 
+	DefaultModifiers.
+NEW FEATURE:  Courses can be organized into group folders.  See 
+	README-FIRST.html for details.
 
 ----------------------- Version 3.01 ---------------------------
 CHANGE:  Simplified NoteSkin tap graphic format.  Old NoteSkins will need to 

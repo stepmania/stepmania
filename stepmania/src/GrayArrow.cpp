@@ -73,5 +73,5 @@ void GrayArrow::Step()
 	SetZoom( GR_STEP_ZOOM );
 	StopTweening();
 	BeginTweening( GR_STEP_SECONDS );
-	SetTweenZoom( 1 );
+	SetZoom( 1 );
 }

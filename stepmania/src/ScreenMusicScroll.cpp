@@ -36,7 +36,7 @@ const CString CREDIT_LINES[] =
 const unsigned NUM_CREDIT_LINES = sizeof(CREDIT_LINES) / sizeof(CString);
 
 
-ScreenMusicScroll::ScreenMusicScroll()
+ScreenMusicScroll::ScreenMusicScroll() : Screen("ScreenMusicScroll")
 {
 	LOG->Trace( "ScreenMusicScroll::ScreenMusicScroll()" );
 
@@ -79,7 +79,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 		m_textLines[i].SetXY( CENTER_X, SCREEN_BOTTOM + 40 );
 		m_textLines[i].BeginTweening( SCROLL_DELAY * i );
 		m_textLines[i].BeginTweening( 2.0f*SCROLL_SPEED );
-		m_textLines[i].SetTweenXY( CENTER_X, SCREEN_TOP - 40 );	
+		m_textLines[i].SetXY( CENTER_X, SCREEN_TOP - 40 );	
 	}
 	
 	this->PostScreenMessage( SM_BeginFadingOut, 0.2f * i + 3.0f );

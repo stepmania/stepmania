@@ -56,13 +56,13 @@ void GrooveRadar::TweenOnScreen()
 		m_sprRadarLabels[c].BeginTweening( 0.6f+0.2f*c );	// sleep
 
 		m_sprRadarLabels[c].BeginTweening( 0.1f );	// begin fading on screen
-		m_sprRadarLabels[c].SetTweenGlow( RageColor(1,1,1,1) );
+		m_sprRadarLabels[c].SetGlow( RageColor(1,1,1,1) );
 		
 		m_sprRadarLabels[c].BeginTweening( 0.3f, Actor::TWEEN_ACCELERATE );	// fly to the right
-		m_sprRadarLabels[c].SetTweenX( fOriginalX );
-		m_sprRadarLabels[c].SetTweenZoom( 1 );
-		m_sprRadarLabels[c].SetTweenGlow( RageColor(1,1,1,0) );
-		m_sprRadarLabels[c].SetTweenDiffuse( RageColor(1,1,1,1) );
+		m_sprRadarLabels[c].SetX( fOriginalX );
+		m_sprRadarLabels[c].SetZoom( 1 );
+		m_sprRadarLabels[c].SetGlow( RageColor(1,1,1,0) );
+		m_sprRadarLabels[c].SetDiffuse( RageColor(1,1,1,1) );
 	}
 	m_GrooveRadarValueMap.TweenOnScreen();
 }
@@ -76,8 +76,8 @@ void GrooveRadar::TweenOffScreen()
 		/* Make sure we undo glow.  We do this at the end of TweenIn,
 		 * but we might tween off before we complete tweening in, and
 		 * the glow can remain. */
-		m_sprRadarLabels[c].SetTweenGlow( RageColor(1,1,1,0) );
-		m_sprRadarLabels[c].SetTweenDiffuse( RageColor(1,1,1,0) );
+		m_sprRadarLabels[c].SetGlow( RageColor(1,1,1,0) );
+		m_sprRadarLabels[c].SetDiffuse( RageColor(1,1,1,0) );
 	}
 	m_GrooveRadarValueMap.TweenOffScreen();
 }
@@ -206,13 +206,13 @@ void GrooveRadar::GrooveRadarValueMap::TweenOnScreen()
 	SetZoom( 0.5f );
 	SetRotationZ( 720 );
 	BeginTweening( 0.6f );
-	SetTweenZoom( 1 );
-	SetTweenRotationZ( 0 );
+	SetZoom( 1 );
+	SetRotationZ( 0 );
 }
 
 void GrooveRadar::GrooveRadarValueMap::TweenOffScreen()
 {
 	BeginTweening( 0.6f );
-	SetTweenRotationZ( 180*4 );
-	SetTweenZoom( 0 );
+	SetRotationZ( 180*4 );
+	SetZoom( 0 );
 }

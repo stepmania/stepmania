@@ -290,14 +290,14 @@ void ScreenTitleMenu::LoseFocus( int iChoiceIndex )
 	m_textChoice[iChoiceIndex].SetEffectNone();
 	m_textChoice[iChoiceIndex].StopTweening();
 	m_textChoice[iChoiceIndex].BeginTweening( 0.3f );
-	m_textChoice[iChoiceIndex].SetTweenZoom( ZOOM_NOT_SELECTED );
+	m_textChoice[iChoiceIndex].SetZoom( ZOOM_NOT_SELECTED );
 }
 
 void ScreenTitleMenu::GainFocus( int iChoiceIndex )
 {
 	m_textChoice[iChoiceIndex].StopTweening();
 	m_textChoice[iChoiceIndex].BeginTweening( 0.3f );
-	m_textChoice[iChoiceIndex].SetTweenZoom( ZOOM_SELECTED );
+	m_textChoice[iChoiceIndex].SetZoom( ZOOM_SELECTED );
 	RageColor color1, color2;
 	color1 = COLOR_SELECTED;
 	color2 = color1 * 0.5f;

@@ -418,13 +418,13 @@ bool Background::IsDangerVisible()
 void Background::FadeIn()
 {
 	m_quadBGBrightness.BeginTweening( 0.5f );
-	m_quadBGBrightness.SetTweenDiffuse( RageColor(0,0,0,1-PREFSMAN->m_fBGBrightness) );
+	m_quadBGBrightness.SetDiffuse( RageColor(0,0,0,1-PREFSMAN->m_fBGBrightness) );
 }
 
 void Background::FadeOut()
 {
 	m_quadBGBrightness.BeginTweening( 0.5f );
-	m_quadBGBrightness.SetTweenDiffuse( RageColor(0,0,0,1-0.5f) );
+	m_quadBGBrightness.SetDiffuse( RageColor(0,0,0,1-0.5f) );
 
 }
 

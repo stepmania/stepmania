@@ -19,34 +19,23 @@
 #include "AnnouncerManager.h"
 #include "ModeChoice.h"
 
+#define SET_XY( actor )			actor.SetXY( THEME->GetMetricF(m_sName,actor.GetName()+"X"), THEME->GetMetricF(m_sName,actor.GetName()+"Y") )
+#define ON_COMMAND( actor )		actor.Command( THEME->GetMetric(m_sName,actor.GetName()+"OnCommand") )
+#define OFF_COMMAND( actor )	actor.Command( THEME->GetMetric(m_sName,actor.GetName()+"OffCommand") )
+#define SET_XY_AND_ON_COMMAND( actor )		SET_XY(actor);	ON_COMMAND(actor)
 
 #define NUM_CHOICES_ON_PAGE_1				THEME->GetMetricI("ScreenSelectDifficulty","NumChoicesOnPage1")
 #define LOCK_INPUT_SECONDS					THEME->GetMetricF("ScreenSelectDifficulty","LockInputSeconds")
 #define SLEEP_AFTER_CHOICE_SECONDS			THEME->GetMetricF("ScreenSelectDifficulty","SleepAfterChoiceSeconds")
 #define SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF("ScreenSelectDifficulty","SleepAfterTweenOffSeconds")
-#define MORE_ON_COMMAND( page )				THEME->GetMetric ("ScreenSelectDifficulty",ssprintf("MorePage%dOnCommand",page+1))
-#define MORE_OFF_COMMAND( page )			THEME->GetMetric ("ScreenSelectDifficulty",ssprintf("MorePage%dOffCommand",page+1))
-#define EXPLANATION_ON_COMMAND( page )		THEME->GetMetric ("ScreenSelectDifficulty",ssprintf("ExplanationPage%dOnCommand",page+1))
-#define EXPLANATION_OFF_COMMAND( page )		THEME->GetMetric ("ScreenSelectDifficulty",ssprintf("ExplanationPage%dOffCommand",page+1))
-#define INFO_ON_COMMAND( page, choice )		THEME->GetMetric ("ScreenSelectDifficulty",ssprintf("InfoPage%dChoice%dOnCommand",page+1,choice+1))
-#define INFO_OFF_COMMAND( page, choice )	THEME->GetMetric ("ScreenSelectDifficulty",ssprintf("InfoPage%dChoice%dOffCommand",page+1,choice+1))
-#define PICTURE_ON_COMMAND( page, choice )	THEME->GetMetric ("ScreenSelectDifficulty",ssprintf("PicturePage%dChoice%dOnCommand",page+1,choice+1))
-#define PICTURE_OFF_COMMAND( page, choice )	THEME->GetMetric ("ScreenSelectDifficulty",ssprintf("PicturePage%dChoice%dOffCommand",page+1,choice+1))
-#define CURSOR_ON_COMMAND					THEME->GetMetric ("ScreenSelectDifficulty","CursorOnCommand")
 #define CURSOR_CHOOSE_COMMAND				THEME->GetMetric ("ScreenSelectDifficulty","CursorChooseCommand")
-#define CURSOR_OFF_COMMAND					THEME->GetMetric ("ScreenSelectDifficulty","CursorOffCommand")
 #define CURSOR_OFFSET_X_FROM_PICTURE( p )	THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("CursorP%dOffsetXFromPicture",p+1))
 #define CURSOR_OFFSET_Y_FROM_PICTURE( p )	THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("CursorP%dOffsetYFromPicture",p+1))
-#define SHADOW_ON_COMMAND					THEME->GetMetric ("ScreenSelectDifficulty","ShadowOnCommand")
 #define SHADOW_CHOOSE_COMMAND				THEME->GetMetric ("ScreenSelectDifficulty","ShadowChooseCommand")
-#define SHADOW_OFF_COMMAND					THEME->GetMetric ("ScreenSelectDifficulty","ShadowOffCommand")
 #define SHADOW_LENGTH_X						THEME->GetMetricF("ScreenSelectDifficulty","ShadowLengthX")
 #define SHADOW_LENGTH_Y						THEME->GetMetricF("ScreenSelectDifficulty","ShadowLengthY")
-#define OK_ON_COMMAND						THEME->GetMetric ("ScreenSelectDifficulty","OKOnCommand")
 #define OK_CHOOSE_COMMAND					THEME->GetMetric ("ScreenSelectDifficulty","OKChooseCommand")
-#define OK_OFF_COMMAND						THEME->GetMetric ("ScreenSelectDifficulty","OKOffCommand")
 #define DISABLED_COLOR						THEME->GetMetricC("ScreenSelectDifficulty","DisabledColor")
-
 
 
 ScreenSelectDifficulty::ScreenSelectDifficulty() : ScreenSelect( "ScreenSelectDifficulty" )
@@ -75,17 +64,20 @@ ScreenSelectDifficulty::ScreenSelectDifficulty() : ScreenSelect( "ScreenSelectDi
 			CString sInfoFile = ssprintf( "ScreenSelectDifficulty info %s", m_ModeChoices[page][choice].name );
 			CString sPictureFile = ssprintf( "ScreenSelectDifficulty picture %s", m_ModeChoices[page][choice].name );
 
+			m_sprPicture[page][choice].SetName( ssprintf("PicturePage%dChoice%d",page+1,choice+1) );
 			m_sprPicture[page][choice].Load( THEME->GetPathTo("Graphics",sPictureFile) );
 			m_framePages.AddChild( &m_sprPicture[page][choice] );
 
+			m_sprInfo[page][choice].SetName( ssprintf("InfoPage%dChoice%d",page+1,choice+1) );
 			m_sprInfo[page][choice].Load( THEME->GetPathTo("Graphics",sInfoFile) );
 			m_framePages.AddChild( &m_sprInfo[page][choice] );
 		}
 
-		
+		m_sprMore[page].SetName( ssprintf("MorePage%d",page+1) );
 		m_sprMore[page].Load( THEME->GetPathTo("Graphics", ssprintf("ScreenSelectDifficulty more page%d",page+1) ) );
 		m_framePages.AddChild( &m_sprMore[page] );
 
+		m_sprExplanation[page].SetName( ssprintf("ExplanationPage%d",page+1) );
 		m_sprExplanation[page].Load( THEME->GetPathTo("Graphics", "ScreenSelectDifficulty explanation") );
 		m_sprExplanation[page].StopAnimating();
 		m_sprExplanation[page].SetState( page );
@@ -101,17 +93,20 @@ ScreenSelectDifficulty::ScreenSelectDifficulty() : ScreenSelect( "ScreenSelectDi
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
+		m_sprShadow[p].SetName( "Shadow" );
 		m_sprShadow[p].Load( THEME->GetPathTo("Graphics", "ScreenSelectDifficulty shadow 2x1") );
 		m_sprShadow[p].StopAnimating();
 		m_sprShadow[p].SetState( p );
 		m_sprShadow[p].SetDiffuse( RageColor(0,0,0,0.6f) );
 		m_framePages.AddChild( &m_sprShadow[p] );
 
+		m_sprCursor[p].SetName( "Cursor" );
 		m_sprCursor[p].Load( THEME->GetPathTo("Graphics", "ScreenSelectDifficulty cursor 2x1") );
 		m_sprCursor[p].StopAnimating();
 		m_sprCursor[p].SetState( p );
 		m_framePages.AddChild( &m_sprCursor[p] );
 
+		m_sprOK[p].SetName( "OK" );
 		m_sprOK[p].Load( THEME->GetPathTo("Graphics", "ScreenSelectDifficulty ok 2x1") );
 		m_sprOK[p].SetState( p );
 		m_sprOK[p].StopAnimating();
@@ -250,7 +245,7 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 	// move frame with choices
 	m_framePages.StopTweening();
 	m_framePages.BeginTweening( 0.2f );
-	m_framePages.SetTweenX( (float)newPage*-SCREEN_WIDTH );
+	m_framePages.SetX( (float)newPage*-SCREEN_WIDTH );
 }
 
 void ScreenSelectDifficulty::ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages )
@@ -270,13 +265,13 @@ void ScreenSelectDifficulty::ChangeWithinPage( PlayerNumber pn, int iNewChoice, 
 
 		m_sprCursor[p].StopTweening();
 		m_sprCursor[p].BeginTweening( 0.2f, bChangingPages ? TWEEN_LINEAR : TWEEN_DECELERATE );
-		m_sprCursor[p].SetTweenX( fCursorX );
-		m_sprCursor[p].SetTweenY( fCursorY );
+		m_sprCursor[p].SetX( fCursorX );
+		m_sprCursor[p].SetY( fCursorY );
 
 		m_sprShadow[p].StopTweening();
 		m_sprShadow[p].BeginTweening( 0.2f, bChangingPages ? TWEEN_LINEAR : TWEEN_DECELERATE );
-		m_sprShadow[p].SetTweenX( fCursorX + SHADOW_LENGTH_X );
-		m_sprShadow[p].SetTweenY( fCursorY + SHADOW_LENGTH_Y );
+		m_sprShadow[p].SetX( fCursorX + SHADOW_LENGTH_X );
+		m_sprShadow[p].SetY( fCursorY + SHADOW_LENGTH_Y );
 	}
 
 	/* If we're changing pages, it's ChangePage's responsibility to play this
@@ -294,7 +289,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	m_bChosen[pn] = true;
 
 	for( int page=0; page<NUM_PAGES; page++ )
-		m_sprMore[page].Command( MORE_OFF_COMMAND(page) );
+		OFF_COMMAND( m_sprMore[page] );
 
 	const ModeChoice& mc = m_ModeChoices[m_CurrentPage][m_iChoiceOnPage[pn]];
 	/* Don't play sound if we're on the second page and another player
@@ -345,13 +340,13 @@ void ScreenSelectDifficulty::TweenOnScreen()
 
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
-		m_sprExplanation[page].Command( EXPLANATION_ON_COMMAND(page) );
-		m_sprMore[page].Command( MORE_ON_COMMAND(page) );
+		SET_XY_AND_ON_COMMAND( m_sprExplanation[page] );
+		SET_XY_AND_ON_COMMAND( m_sprMore[page] );
 
 		for( unsigned c=0; c<m_ModeChoices[page].size(); c++ )
-		{
-			m_sprInfo[page][c].Command( INFO_ON_COMMAND(page,c) );
-			m_sprPicture[page][c].Command( PICTURE_ON_COMMAND(page,c) );
+		{			
+			SET_XY_AND_ON_COMMAND( m_sprInfo[page][c] );
+			SET_XY_AND_ON_COMMAND( m_sprPicture[page][c] );
 		}
 	}
 
@@ -364,10 +359,10 @@ void ScreenSelectDifficulty::TweenOnScreen()
 		float fCursorY = GetCursorY( (PlayerNumber)p );
 
 		m_sprCursor[p].SetXY( fCursorX, fCursorY );
-		m_sprCursor[p].Command( CURSOR_ON_COMMAND );
+		ON_COMMAND( m_sprCursor[p] );
 
 		m_sprShadow[p].SetXY( fCursorX + SHADOW_LENGTH_X, fCursorY + SHADOW_LENGTH_Y );
-		m_sprShadow[p].Command( SHADOW_ON_COMMAND );
+		ON_COMMAND( m_sprShadow[p] );
 	}
 }
 
@@ -375,23 +370,23 @@ void ScreenSelectDifficulty::TweenOffScreen()
 {	
 	const int page = m_CurrentPage;
 
-	m_sprExplanation[page].Command( EXPLANATION_OFF_COMMAND(page) );
-	m_sprMore[page].Command( MORE_OFF_COMMAND(page) );
+	OFF_COMMAND( m_sprExplanation[page] );
+	OFF_COMMAND( m_sprMore[page] );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsHumanPlayer((PlayerNumber)p) )
+		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
 
-		m_sprCursor[p].Command( CURSOR_OFF_COMMAND );
-		m_sprOK[p].Command( OK_OFF_COMMAND );
-		m_sprShadow[p].Command( SHADOW_OFF_COMMAND );
+		OFF_COMMAND( m_sprCursor[p] );
+		OFF_COMMAND( m_sprOK[p] );
+		OFF_COMMAND( m_sprShadow[p] );
 	}
 
 	for( unsigned c=0; c<m_ModeChoices[page].size(); c++ )
 	{
-		m_sprPicture[page][c].Command( PICTURE_OFF_COMMAND(page,c) );
-		m_sprInfo[page][c].Command( INFO_OFF_COMMAND(page,c) );
+		OFF_COMMAND( m_sprInfo[page][c] );
+		OFF_COMMAND( m_sprPicture[page][c] );
 	}
 }
 

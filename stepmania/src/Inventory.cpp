@@ -113,7 +113,7 @@ void Inventory::Update( float fDelta )
 	if( GAMESTATE->m_PlayerController[m_PlayerNumber] != HUMAN )
 	{
 		// every one second, consider using an item
-		int iLastSecond = (int)RageTimer::GetTimeSinceStart() - fDelta;
+		int iLastSecond = (int)(RageTimer::GetTimeSinceStart() - fDelta);
 		int iThisSecond = (int)RageTimer::GetTimeSinceStart();
 		if( iLastSecond != iThisSecond )
 		{

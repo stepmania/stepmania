@@ -97,11 +97,11 @@ void MenuTimer::Update( float fDeltaTime )
 			m_textDigit1.StopTweening(); 
 			m_textDigit1.BeginTweening( 0.8f );	// sleep
 			m_textDigit1.BeginTweening( 0.2f );
-			m_textDigit1.SetTweenZoomX( 0 );
+			m_textDigit1.SetZoomX( 0 );
 			m_textDigit2.StopTweening(); 
 			m_textDigit2.BeginTweening( 0.8f );	// sleep
 			m_textDigit2.BeginTweening( 0.2f );
-			m_textDigit2.SetTweenZoomX( 0 );
+			m_textDigit2.SetZoomX( 0 );
 			break;
 		case 5:		// transition to below 5
 			m_textDigit1.SetEffectGlowShift( 0.15f, RageColor(1,0,0,0), RageColor(1,0,0,1) );
@@ -113,16 +113,16 @@ void MenuTimer::Update( float fDeltaTime )
 		case 1:
 			m_textDigit1.StopTweening(); 
 			m_textDigit1.BeginTweening( 0.2f );
-			m_textDigit1.SetTweenZoomX( 1 );
+			m_textDigit1.SetZoomX( 1 );
 			m_textDigit1.BeginTweening( 0.6f );	// sleep
 			m_textDigit1.BeginTweening( 0.2f );
-			m_textDigit1.SetTweenZoomX( 0 );
+			m_textDigit1.SetZoomX( 0 );
 			m_textDigit2.StopTweening(); 
 			m_textDigit2.BeginTweening( 0.2f );
-			m_textDigit2.SetTweenZoomX( 1 );
+			m_textDigit2.SetZoomX( 1 );
 			m_textDigit2.BeginTweening( 0.6f );	// sleep
 			m_textDigit2.BeginTweening( 0.2f );
-			m_textDigit2.SetTweenZoomX( 0 );
+			m_textDigit2.SetZoomX( 0 );
 
 			m_soundBeep.Play();
 			break;

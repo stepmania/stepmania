@@ -19,7 +19,7 @@
 !define PRODUCT_NAME_VER "${PRODUCT_NAME} ${VERSION}"
 
 Name "${PRODUCT_NAME}"
-OutFile "StepMania-CVS-20030324.exe"
+OutFile "StepMania-CVS-20030410.exe"
 ;OutFile "StepMania301.exe"
 
 ; Some default compiler settings (uncomment and change at will):
@@ -121,9 +121,16 @@ CreateDirectory "$INSTDIR\CDTitles"
 SetOutPath "$INSTDIR\CDTitles"
 File "CDTitles\instructions.txt"
 
+CreateDirectory "$INSTDIR\Characters"
+SetOutPath "$INSTDIR\Characters"
+File "Characters\instructions.txt"
+
 CreateDirectory "$INSTDIR\Courses"
 SetOutPath "$INSTDIR\Courses"
 File "Courses\instructions.txt"
+CreateDirectory "$INSTDIR\Courses\Samples"
+SetOutPath "$INSTDIR\Courses\Samples"
+File /r "Courses\Samples"
 
 RMDir /r "$INSTDIR\NoteSkins\dance\MAX"
 RMDir /r "$INSTDIR\NoteSkins\dance\default"
@@ -133,6 +140,7 @@ RMDir /r "$INSTDIR\NoteSkins\dance\solo"
 SetOutPath "$INSTDIR\NoteSkins"
 File "NoteSkins\instructions.txt"
 ; why do this? -glenn
+; instructions.txt can be deleted.  -Chris
 CreateDirectory "$INSTDIR\NoteSkins\dance\default"
 CreateDirectory "$INSTDIR\NoteSkins\dance\flat"
 CreateDirectory "$INSTDIR\NoteSkins\dance\note"
@@ -215,7 +223,7 @@ CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
 CreateShortCut "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\stepmania.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\stepmania.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open Songs Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\Songs\"
-CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\SMZIP Package Exporter.lnk" "$INSTDIR\smpackage.exe"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\StepMania Tools and Package Exporter.lnk" "$INSTDIR\smpackage.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\README-FIRST.lnk" "$INSTDIR\README-FIRST.html"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninst.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go To StepMania web site.lnk" "http://www.stepmania.com"
@@ -252,6 +260,9 @@ RMDir "$INSTDIR\Cache"
 
 Delete "$INSTDIR\CDTitles\instructions.txt"
 RMDir "$INSTDIR\CDTitles"
+
+Delete "$INSTDIR\Characters\instructions.txt"
+RMDir "$INSTDIR\Characters"
 
 RMDir /r "$INSTDIR\Cache"
 

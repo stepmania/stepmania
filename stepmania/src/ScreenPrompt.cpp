@@ -26,7 +26,8 @@ const float PROMPT_X	=	CENTER_X;
 const float PROMPT_Y	=	CENTER_Y + 120;
 
 
-ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNoPrompt, bool bDefaultAnswer, void(*OnYes)(), void(*OnNo)() )
+ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNoPrompt, bool bDefaultAnswer, void(*OnYes)(), void(*OnNo)() ) :
+  Screen("ScreenPrompt")
 {
 	m_bIsTransparent = true;	// draw screens below us
 
@@ -148,8 +149,8 @@ void ScreenPrompt::MenuRight( PlayerNumber pn )
 
 	m_rectAnswerBox.StopTweening();
 	m_rectAnswerBox.BeginTweening( 0.2f );
-	m_rectAnswerBox.SetTweenXY( m_textAnswer[m_bAnswer].GetX(), m_textAnswer[m_bAnswer].GetY() );
-	m_rectAnswerBox.SetTweenZoomX( m_textAnswer[m_bAnswer].GetWidestLineWidthInSourcePixels()+10.0f );
+	m_rectAnswerBox.SetXY( m_textAnswer[m_bAnswer].GetX(), m_textAnswer[m_bAnswer].GetY() );
+	m_rectAnswerBox.SetZoomX( m_textAnswer[m_bAnswer].GetWidestLineWidthInSourcePixels()+10.0f );
 
 	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenPrompt change") );
 }
@@ -159,17 +160,17 @@ void ScreenPrompt::MenuStart( PlayerNumber pn )
 	m_Fade.OpenWipingRight( SM_DoneOpeningWipingRight );
 
 	m_textQuestion.BeginTweening( 0.2f );
-	m_textQuestion.SetTweenDiffuse( RageColor(1,1,1,0) );
+	m_textQuestion.SetDiffuse( RageColor(1,1,1,0) );
 
 	m_rectAnswerBox.BeginTweening( 0.2f );
-	m_rectAnswerBox.SetTweenDiffuse( RageColor(1,1,1,0) );
+	m_rectAnswerBox.SetDiffuse( RageColor(1,1,1,0) );
 
 	m_textAnswer[m_bAnswer].SetEffectNone();
 
 	m_textAnswer[0].BeginTweening( 0.2f );
-	m_textAnswer[0].SetTweenDiffuse( RageColor(1,1,1,0) );
+	m_textAnswer[0].SetDiffuse( RageColor(1,1,1,0) );
 	m_textAnswer[1].BeginTweening( 0.2f );
-	m_textAnswer[1].SetTweenDiffuse( RageColor(1,1,1,0) );
+	m_textAnswer[1].SetDiffuse( RageColor(1,1,1,0) );
 
 	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
 

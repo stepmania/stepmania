@@ -38,7 +38,7 @@ void ScreenTest::SetScreen(int num)
 		current=new ScreenTestFonts;
 }
 
-ScreenTest::ScreenTest()
+ScreenTest::ScreenTest() : Screen("ScreenTest")
 {
 	current = NULL;
 	cur_screen = -1;

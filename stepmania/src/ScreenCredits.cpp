@@ -159,7 +159,7 @@ const CreditLine CREDIT_LINES[] =
 const unsigned NUM_CREDIT_LINES = sizeof(CREDIT_LINES) / sizeof(CreditLine);
 
 
-ScreenCredits::ScreenCredits()
+ScreenCredits::ScreenCredits() : Screen("ScreenCredits")
 {
 	LOG->Trace( "ScreenCredits::ScreenCredits()" );
 

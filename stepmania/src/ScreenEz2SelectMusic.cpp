@@ -55,7 +55,7 @@ const float TWEEN_TIME		= 0.5f;
 
 const ScreenMessage SM_NoSongs	= ScreenMessage(SM_User+3);
 
-ScreenEz2SelectMusic::ScreenEz2SelectMusic()
+ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 {
 	i_ErrorDetected=0;
 	CodeDetector::RefreshCacheItems();
@@ -347,12 +347,12 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 	// show "hold START for options"
 	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
 	m_sprOptionsMessage.BeginTweening( 0.25f );	// fade in
-	m_sprOptionsMessage.SetTweenZoomY( 1 );
-	m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,1) );
+	m_sprOptionsMessage.SetZoomY( 1 );
+	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );
 	m_sprOptionsMessage.BeginTweening( 2.0f );	// sleep
 	m_sprOptionsMessage.BeginTweening( 0.25f );	// fade out
-	m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
-	m_sprOptionsMessage.SetTweenZoomY( 0 );
+	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
+	m_sprOptionsMessage.SetZoomY( 0 );
 
 	m_Menu.StartTransitioning( SM_GoToNextScreen );
 }

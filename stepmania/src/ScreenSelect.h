@@ -39,7 +39,7 @@ protected:
 	virtual int GetSelectionIndex( PlayerNumber pn ) = 0;
 	virtual void UpdateSelectableChoices() = 0;		// derived screens must handle this
 	
-	CString m_sClassName;
+	CString m_sName;
 
 	MenuElements m_Menu;
 	BGAnimation m_BGAnimations[MAX_CHOICES];

@@ -384,7 +384,7 @@ void Player::Step( int col )
 		if( score==TNS_MARVELOUS  &&  !PREFSMAN->m_bMarvelousTiming )
 			score = TNS_PERFECT;
 
-		if( score >= TNS_GOOD )
+		if( score < TNS_GOOD )
 			m_GrayArrowRow.Step( col );
 
 		LOG->Trace("Note offset: %f (fSecondsFromPerfect = %f), Score: %i", fNoteOffset, fSecondsFromPerfect, score);

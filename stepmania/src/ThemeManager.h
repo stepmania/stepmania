@@ -58,7 +58,7 @@ extern ThemeManager*	THEME;	// global and accessable from anywhere in our progra
 class CachedThemeMetric
 {
 protected:
-	CString m_sClassName;
+	CString m_sName;
 	CString m_sValueName;
 	bool	m_bInited;
 
@@ -71,14 +71,14 @@ protected:
 public:
 	CachedThemeMetric( CString sClassName, CString sValueName )
 	{
-		m_sClassName = sClassName;
+		m_sName = sClassName;
 		m_sValueName = sValueName;
 		m_bInited = false;
 	}
 
 	void Refresh()
 	{
-		m_sValue = THEME->GetMetric(m_sClassName,m_sValueName);
+		m_sValue = THEME->GetMetric(m_sName,m_sValueName);
 		m_iValue = atoi( m_sValue );
 		m_fValue = (float)atof( m_sValue );
 		m_bValue = atoi( m_sValue ) != 0;

@@ -18,8 +18,9 @@
 #include "ThemeManager.h"
 #include "ScreenManager.h"
 
-Screen::Screen()
+Screen::Screen( CString sName )
 {
+	SetName( sName );
 	m_bIsTransparent = false;
 }
 
@@ -279,63 +280,63 @@ Screen* Screen::Create( CString sClassName )
 {
 	Screen *ret = NULL;
 
-	if(		 0==stricmp(sClassName, "ScreenAppearanceOptions") )	ret = new ScreenAppearanceOptions;
-	else if( 0==stricmp(sClassName, "ScreenCaution") )				ret = new ScreenCaution;
-	else if( 0==stricmp(sClassName, "ScreenEdit") )					ret = new ScreenEdit;
-	else if( 0==stricmp(sClassName, "ScreenEditMenu") )				ret = new ScreenEditMenu;
-	else if( 0==stricmp(sClassName, "ScreenEvaluationStage") )		ret = new ScreenEvaluationStage;
-	else if( 0==stricmp(sClassName, "ScreenEvaluationSummary") )	ret = new ScreenEvaluationSummary;
-	else if( 0==stricmp(sClassName, "ScreenEvaluationNonstop") )	ret = new ScreenEvaluationNonstop;
-	else if( 0==stricmp(sClassName, "ScreenEvaluationOni") )		ret = new ScreenEvaluationOni;
-	else if( 0==stricmp(sClassName, "ScreenEvaluationEndless") )	ret = new ScreenEvaluationEndless;
-	else if( 0==stricmp(sClassName, "ScreenEz2SelectPlayer") )		ret = new ScreenEz2SelectPlayer;
-	else if( 0==stricmp(sClassName, "ScreenSelectMode") )			ret = new ScreenSelectMode;
-	else if( 0==stricmp(sClassName, "ScreenGameOver") )				ret = new ScreenGameOver;
-	else if( 0==stricmp(sClassName, "ScreenGameplay") )				ret = new ScreenGameplay;
-	else if( 0==stricmp(sClassName, "ScreenGraphicOptions") )		ret = new ScreenGraphicOptions;
-	else if( 0==stricmp(sClassName, "ScreenHowToPlay") )			ret = new ScreenHowToPlay;
-	else if( 0==stricmp(sClassName, "ScreenInputOptions") )			ret = new ScreenInputOptions;
-	else if( 0==stricmp(sClassName, "ScreenMachineOptions") )		ret = new ScreenMachineOptions;
-	else if( 0==stricmp(sClassName, "ScreenMapControllers") )		ret = new ScreenMapControllers;
-	else if( 0==stricmp(sClassName, "ScreenInputOptions") )			ret = new ScreenInputOptions;
-	else if( 0==stricmp(sClassName, "ScreenMusicScroll") )			ret = new ScreenMusicScroll;
-	else if( 0==stricmp(sClassName, "ScreenPlayerOptions") )		ret = new ScreenPlayerOptions;
-	else if( 0==stricmp(sClassName, "ScreenSandbox") )				ret = new ScreenSandbox;
-	else if( 0==stricmp(sClassName, "ScreenSelectCourse") )			ret = new ScreenSelectCourse;
-	else if( 0==stricmp(sClassName, "ScreenSelectDifficulty") )		ret = new ScreenSelectDifficulty;
-	else if( 0==stricmp(sClassName, "ScreenSelectDifficultyEX") )	ret = new ScreenSelectDifficultyEX;
-	else if( 0==stricmp(sClassName, "ScreenSelectGame") )			ret = new ScreenSelectGame;
-	else if( 0==stricmp(sClassName, "ScreenSelectGroup") )			ret = new ScreenSelectGroup;
-	else if( 0==stricmp(sClassName, "ScreenSelectMusic") )			ret = new ScreenSelectMusic;
-	else if( 0==stricmp(sClassName, "ScreenSelectStyle5th") )		ret = new ScreenSelectStyle5th;
-	else if( 0==stricmp(sClassName, "ScreenSelectStyle") )			ret = new ScreenSelectStyle;
-	else if( 0==stricmp(sClassName, "ScreenSongOptions") )			ret = new ScreenSongOptions;
-	else if( 0==stricmp(sClassName, "ScreenStage") )				ret = new ScreenStage;
-	else if( 0==stricmp(sClassName, "ScreenTest") )					ret = new ScreenTest;
-	else if( 0==stricmp(sClassName, "ScreenTestFonts") )			ret = new ScreenTestFonts;
-	else if( 0==stricmp(sClassName, "ScreenTestSound") )			ret = new ScreenTestSound;
-	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )			ret = new ScreenTitleMenu;
-	else if( 0==stricmp(sClassName, "ScreenEz2SelectMusic") )		ret = new ScreenEz2SelectMusic;
-	else if( 0==stricmp(sClassName, "ScreenWarning") )				ret = new ScreenWarning;
-	else if( 0==stricmp(sClassName, "ScreenRanking") )				ret = new ScreenRanking;
-	else if( 0==stricmp(sClassName, "ScreenMemoryCard") )			ret = new ScreenMemoryCard;
-	else if( 0==stricmp(sClassName, "ScreenCompany") )				ret = new ScreenCompany;
-	else if( 0==stricmp(sClassName, "ScreenIntroMovie") )			ret = new ScreenIntroMovie;
-	else if( 0==stricmp(sClassName, "ScreenAlbums") )				ret = new ScreenAlbums;
-	else if( 0==stricmp(sClassName, "ScreenLogo") )					ret = new ScreenLogo;
-	else if( 0==stricmp(sClassName, "ScreenUnlock") )				ret = new ScreenUnlock;
-	else if( 0==stricmp(sClassName, "ScreenDemonstration") )		ret = (ScreenGameplay*)new ScreenDemonstration;
-	else if( 0==stricmp(sClassName, "ScreenInstructions") )			ret = new ScreenInstructions;
-	else if( 0==stricmp(sClassName, "ScreenNameEntry") )			ret = new ScreenNameEntry;
-	else if( 0==stricmp(sClassName, "ScreenJukebox") )				ret = new ScreenJukebox;
-	else if( 0==stricmp(sClassName, "ScreenJukeboxMenu") )			ret = new ScreenJukeboxMenu;
-	else if( 0==stricmp(sClassName, "ScreenOptionsMenu") )			ret = new ScreenOptionsMenu;
-	else if( 0==stricmp(sClassName, "ScreenSoundOptions") )			ret = new ScreenSoundOptions;
-	else if( 0==stricmp(sClassName, "ScreenGameplayOptions") )		ret = new ScreenGameplayOptions;
-	else if( 0==stricmp(sClassName, "ScreenStyleSplash") )			ret = new ScreenStyleSplash;
-	else if( 0==stricmp(sClassName, "ScreenAutogenOptions") )		ret = new ScreenAutogenOptions;
-	else if( 0==stricmp(sClassName, "ScreenCredits") )				ret = new ScreenCredits;
-	else if( 0==stricmp(sClassName, "ScreenSelectCharacter") )		ret = new ScreenSelectCharacter;
+	if(		 sClassName=="ScreenAppearanceOptions" )	ret = new ScreenAppearanceOptions;
+	else if( sClassName=="ScreenCaution" )				ret = new ScreenCaution;
+	else if( sClassName=="ScreenEdit" )					ret = new ScreenEdit;
+	else if( sClassName=="ScreenEditMenu" )				ret = new ScreenEditMenu;
+	else if( sClassName=="ScreenEvaluationStage" )		ret = new ScreenEvaluationStage;
+	else if( sClassName=="ScreenEvaluationSummary" )	ret = new ScreenEvaluationSummary;
+	else if( sClassName=="ScreenEvaluationNonstop" )	ret = new ScreenEvaluationNonstop;
+	else if( sClassName=="ScreenEvaluationOni" )		ret = new ScreenEvaluationOni;
+	else if( sClassName=="ScreenEvaluationEndless" )	ret = new ScreenEvaluationEndless;
+	else if( sClassName=="ScreenEz2SelectPlayer" )		ret = new ScreenEz2SelectPlayer;
+	else if( sClassName=="ScreenSelectMode" )			ret = new ScreenSelectMode;
+	else if( sClassName=="ScreenGameOver" )				ret = new ScreenGameOver;
+	else if( sClassName=="ScreenGameplay" )				ret = new ScreenGameplay;
+	else if( sClassName=="ScreenGraphicOptions" )		ret = new ScreenGraphicOptions;
+	else if( sClassName=="ScreenHowToPlay" )			ret = new ScreenHowToPlay;
+	else if( sClassName=="ScreenInputOptions" )			ret = new ScreenInputOptions;
+	else if( sClassName=="ScreenMachineOptions" )		ret = new ScreenMachineOptions;
+	else if( sClassName=="ScreenMapControllers" )		ret = new ScreenMapControllers;
+	else if( sClassName=="ScreenInputOptions" )			ret = new ScreenInputOptions;
+	else if( sClassName=="ScreenMusicScroll" )			ret = new ScreenMusicScroll;
+	else if( sClassName=="ScreenPlayerOptions" )		ret = new ScreenPlayerOptions;
+	else if( sClassName=="ScreenSandbox" )				ret = new ScreenSandbox;
+	else if( sClassName=="ScreenSelectCourse" )			ret = new ScreenSelectCourse;
+	else if( sClassName=="ScreenSelectDifficulty" )		ret = new ScreenSelectDifficulty;
+	else if( sClassName=="ScreenSelectDifficultyEX" )	ret = new ScreenSelectDifficultyEX;
+	else if( sClassName=="ScreenSelectGame" )			ret = new ScreenSelectGame;
+	else if( sClassName=="ScreenSelectGroup" )			ret = new ScreenSelectGroup;
+	else if( sClassName=="ScreenSelectMusic" )			ret = new ScreenSelectMusic;
+	else if( sClassName=="ScreenSelectStyle5th" )		ret = new ScreenSelectStyle5th;
+	else if( sClassName=="ScreenSelectStyle" )			ret = new ScreenSelectStyle;
+	else if( sClassName=="ScreenSongOptions" )			ret = new ScreenSongOptions;
+	else if( sClassName=="ScreenStage" )				ret = new ScreenStage;
+	else if( sClassName=="ScreenTest" )					ret = new ScreenTest;
+	else if( sClassName=="ScreenTestFonts" )			ret = new ScreenTestFonts;
+	else if( sClassName=="ScreenTestSound" )			ret = new ScreenTestSound;
+	else if( sClassName=="ScreenTitleMenu" )			ret = new ScreenTitleMenu;
+	else if( sClassName=="ScreenEz2SelectMusic" )		ret = new ScreenEz2SelectMusic;
+	else if( sClassName=="ScreenWarning" )				ret = new ScreenWarning;
+	else if( sClassName=="ScreenRanking" )				ret = new ScreenRanking;
+	else if( sClassName=="ScreenMemoryCard" )			ret = new ScreenMemoryCard;
+	else if( sClassName=="ScreenCompany" )				ret = new ScreenCompany;
+	else if( sClassName=="ScreenIntroMovie" )			ret = new ScreenIntroMovie;
+	else if( sClassName=="ScreenAlbums" )				ret = new ScreenAlbums;
+	else if( sClassName=="ScreenLogo" )					ret = new ScreenLogo;
+	else if( sClassName=="ScreenUnlock" )				ret = new ScreenUnlock;
+	else if( sClassName=="ScreenDemonstration" )		ret = (ScreenGameplay*)new ScreenDemonstration;
+	else if( sClassName=="ScreenInstructions" )			ret = new ScreenInstructions;
+	else if( sClassName=="ScreenNameEntry" )			ret = new ScreenNameEntry;
+	else if( sClassName=="ScreenJukebox" )				ret = new ScreenJukebox;
+	else if( sClassName=="ScreenJukeboxMenu" )			ret = new ScreenJukeboxMenu;
+	else if( sClassName=="ScreenOptionsMenu" )			ret = new ScreenOptionsMenu;
+	else if( sClassName=="ScreenSoundOptions" )			ret = new ScreenSoundOptions;
+	else if( sClassName=="ScreenGameplayOptions" )		ret = new ScreenGameplayOptions;
+	else if( sClassName=="ScreenStyleSplash" )			ret = new ScreenStyleSplash;
+	else if( sClassName=="ScreenAutogenOptions" )		ret = new ScreenAutogenOptions;
+	else if( sClassName=="ScreenCredits" )				ret = new ScreenCredits;
+	else if( sClassName=="ScreenSelectCharacter" )		ret = new ScreenSelectCharacter;
 	else
 		RageException::Throw( "Invalid Screen class name '%s'", sClassName.GetString() );
 	return ret;

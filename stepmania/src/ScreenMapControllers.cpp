@@ -41,8 +41,7 @@ const float BUTTON_COLUMN_X[NUM_GAME_TO_DEVICE_SLOTS*MAX_GAME_CONTROLLERS] =
 };
 
 
-
-ScreenMapControllers::ScreenMapControllers()
+ScreenMapControllers::ScreenMapControllers() : Screen("ScreenMapControllers")
 {
 	LOG->Trace( "ScreenMapControllers::ScreenMapControllers()" );
 	
@@ -149,7 +148,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			m_textError.SetDiffuse( RageColor(0,1,0,1) );
 			m_textError.BeginTweening( 3 );
 			m_textError.BeginTweening( 1 );
-			m_textError.SetTweenDiffuse( RageColor(0,1,0,0) );
+			m_textError.SetDiffuse( RageColor(0,1,0,0) );
 			return;
 		}
 
@@ -171,7 +170,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			m_textError.SetDiffuse( RageColor(0,1,0,1) );
 			m_textError.BeginTweening( 3 );
 			m_textError.BeginTweening( 1 );
-			m_textError.SetTweenDiffuse( RageColor(0,1,0,0) );
+			m_textError.SetDiffuse( RageColor(0,1,0,0) );
 
 			return;	// ignore this press
 		}

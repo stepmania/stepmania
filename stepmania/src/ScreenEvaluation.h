@@ -44,7 +44,7 @@ public:
 	virtual void MenuStart( PlayerNumber pn );
 
 protected:
-	CString				m_sClassName;
+	CString				m_sName;
 	Type				m_Type;
 
 	MenuElements		m_Menu;

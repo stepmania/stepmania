@@ -84,7 +84,7 @@ protected:
 	void MenuUp( PlayerNumber pn );
 	void MenuDown( PlayerNumber pn );
 
-	CString			m_sClassName;
+	CString			m_sName;
 	InputMode		m_InputMode;
 	bool			m_bUseIcons;
 	bool			m_bLoadExplanations;

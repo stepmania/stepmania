@@ -1350,12 +1350,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="LyricDisplay.h">
 			</File>
 			<File
-				RelativePath=".\MotionBlurSprite.cpp">
-			</File>
-			<File
-				RelativePath=".\MotionBlurSprite.h">
-			</File>
-			<File
 				RelativePath="NoteDisplay.cpp">
 			</File>
 			<File

@@ -1095,7 +1095,7 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 		m_sprSelectionOverlay.BeginTweening( 0.05f * factor );	// sleep
 		m_sprSelectionOverlay.BeginTweening( 0.4f * factor, Actor::TWEEN_ACCELERATE );
 	}
-	m_sprSelectionOverlay.SetTweenX( fX );
+	m_sprSelectionOverlay.SetX( fX );
 
 	m_ScrollBar.SetX( SCROLL_BAR_X+30 );
 	if(changing_sort)
@@ -1103,7 +1103,7 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 	else
 		m_ScrollBar.BeginTweening( 0.7f * factor );	// sleep
 	m_ScrollBar.BeginTweening( 0.2f * factor , Actor::TWEEN_ACCELERATE );
-	m_ScrollBar.SetTweenX( SCROLL_BAR_X );	
+	m_ScrollBar.SetX( SCROLL_BAR_X );	
 
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
@@ -1117,7 +1117,7 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 		display.SetRotationX( fRotationX );
 		display.BeginTweening( 0.04f*i * factor );	// sleep
 		display.BeginTweening( 0.2f * factor, Actor::TWEEN_ACCELERATE );
-		display.SetTweenX( fX );
+		display.SetX( fX );
 	}
 
 	m_fTimeLeftInState = GetTweenTimeLeft() + 0.100f;
@@ -1145,11 +1145,11 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 		m_sprSelectionOverlay.BeginTweening( 0 );	// sleep
 		m_sprSelectionOverlay.BeginTweening( 0.2f * factor, Actor::TWEEN_DECELERATE );
 	}
-	m_sprSelectionOverlay.SetTweenX( fX+320 );
+	m_sprSelectionOverlay.SetX( fX+320 );
 
 	m_ScrollBar.BeginTweening( 0 );
 	m_ScrollBar.BeginTweening( 0.2f * factor, Actor::TWEEN_ACCELERATE );
-	m_ScrollBar.SetTweenX( SCROLL_BAR_X+30 );	
+	m_ScrollBar.SetX( SCROLL_BAR_X+30 );	
 
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
@@ -1163,7 +1163,7 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 		display.SetRotationX( fRotationX );
 		display.BeginTweening( 0.04f*i * factor );	// sleep
 		display.BeginTweening( 0.2f * factor, Actor::TWEEN_DECELERATE );
-		display.SetTweenX( fX+320 );
+		display.SetX( fX+320 );
 	}
 
 	m_fTimeLeftInState = GetTweenTimeLeft() + 0.100f;

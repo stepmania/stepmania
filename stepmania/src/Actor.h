@@ -59,16 +59,32 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void UpdateTweening( float fDeltaTime );
 
+
+
+	CString m_sName;
+
+	CString GetName()			{ return m_sName; };
+	void SetName( CString n )	{ m_sName = n; };
+
+
+
 	/* Do subclasses really need to override tweening?  Tween data should
 	 * probably be private ... - glenn */
+	/* Things like a "FocusingSprite" might, but probably not.  -Chris */
+
 	/* Return the current coordinates, not the destination coordinates;
 	 * that's what the old behavior was, at least, and it's what ScreenMusicScroll
 	 * expects.  I could see uses for knowing the destination coords, though,
 	 * especially now that setting parameters when tweening and when not tweening
 	 * is somewhat abstracted.  Hmmm. -glenn */
+	/* Things like the cursor on ScreenSelectDifficutly need to know the dest coordinates.
+	 * -Chris */
 	virtual float GetX() const				{ return m_current.pos.x; };
 	virtual float GetY() const				{ return m_current.pos.y; };
 	virtual float GetZ() const				{ return m_current.pos.z; };
+	virtual float GetDestX()				{ return DestTweenState().pos.x; };
+	virtual float GetDestY()				{ return DestTweenState().pos.y; };
+	virtual float GetDestZ()				{ return DestTweenState().pos.z; };
 	virtual void  SetX( float x )			{ DestTweenState().pos.x = x; };
 	virtual void  SetY( float y )			{ DestTweenState().pos.y = y; };
 	virtual void  SetZ( float z )			{ DestTweenState().pos.z = z; };
@@ -112,31 +128,6 @@ public:
 	virtual RageColor GetDiffuses( int i )				{ return DestTweenState().diffuse[i]; };
 	virtual void SetGlow( RageColor c )					{ DestTweenState().glow = c; };
 	virtual RageColor GetGlow()							{ return DestTweenState().glow; };
-
-
-	// TODO: Get rid of these once we're sure everything is working
-	virtual void SetTweenX( float x )		{ SetX(x); }
-	virtual void SetTweenY( float y )		{ SetY(y); }
-	virtual void SetTweenZ( float z )		{ SetZ(z); }
-	virtual void SetTweenXY( float x, float y )	{ SetXY(x,y); }
-	virtual void SetTweenZoom( float zoom )		{ SetZoom(zoom); }
-	virtual void SetTweenZoomX( float zoom )	{ SetZoomX(zoom); }
-	virtual void SetTweenZoomY( float zoom )	{ SetZoomY(zoom); }
-	virtual void SetTweenZoomToWidth( float zoom )	{ ZoomToWidth(zoom); }
-	virtual void SetTweenZoomToHeight( float zoom )	{ ZoomToHeight(zoom); }
-	virtual void SetTweenRotationX( float r )	{ SetRotationX(r); }
-	virtual void SetTweenRotationY( float r )	{ SetRotationY(r); }
-	virtual void SetTweenRotationZ( float r )	{ SetRotationZ(r); }
-	virtual void SetTweenDiffuse( RageColor c )				{ SetDiffuse(c); }
-	virtual void SetTweenDiffuseUpperLeft( RageColor c )	{ SetDiffuseUpperLeft(c); }
-	virtual void SetTweenDiffuseUpperRight( RageColor c )	{ SetDiffuseUpperRight(c); }
-	virtual void SetTweenDiffuseLowerLeft( RageColor c )	{ SetDiffuseLowerLeft(c); }
-	virtual void SetTweenDiffuseLowerRight( RageColor c )	{ SetDiffuseLowerRight(c); }
-	virtual void SetTweenDiffuseTopEdge( RageColor c )		{ SetDiffuseTopEdge(c); }
-	virtual void SetTweenDiffuseRightEdge( RageColor c )	{ SetDiffuseRightEdge(c); }
-	virtual void SetTweenDiffuseBottomEdge( RageColor c )	{ SetDiffuseBottomEdge(c); }
-	virtual void SetTweenDiffuseLeftEdge( RageColor c )		{ SetDiffuseLeftEdge(c); }
-	virtual void SetTweenGlow( RageColor c )				{ SetGlow(c); }
 
 
 	virtual void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );

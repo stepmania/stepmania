@@ -6,7 +6,6 @@
  Desc: Area for testing.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
-	Chris Danford
 	Glenn Maynard (OpenGL Code)
 	Lance Gilbert (OpenGL/Usability Modifications)
 -----------------------------------------------------------------------------
@@ -21,7 +20,7 @@
 #include "RageSoundManager.h"
 #include "ThemeManager.h"
 
-ScreenTestSound::ScreenTestSound()
+ScreenTestSound::ScreenTestSound() : Screen("ScreenTestSound")
 {	
 	int i;
 	this->AddChild(&HEEEEEEEEELP);

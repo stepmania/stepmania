@@ -756,7 +756,7 @@ void BGAnimationLayer::Update( float fDeltaTime )
 		m_TweenStartTime -= fDeltaTime;
 		if(m_TweenStartTime <= 0) // if we've gone past the magic point... show the beast....
 		{
-		//	m_Sprites[0].SetTweenXY( m_TweenX, m_TweenY);
+		//	m_Sprites[0].SetXY( m_TweenX, m_TweenY);
 			
 			// WHAT WOULD BE NICE HERE:
 			// Set the Sprite Tweening To m_TweenX and m_TweenY

@@ -128,18 +128,18 @@ void BPMDisplay::SetBPMRange( float fLowBPM, float fHighBPM )
 
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 	{
-		m_textBPM.SetTweenDiffuse( EXTRA_COLOR );
-		m_sprLabel.SetTweenDiffuse( EXTRA_COLOR );		
+		m_textBPM.SetDiffuse( EXTRA_COLOR );
+		m_sprLabel.SetDiffuse( EXTRA_COLOR );		
 	}
 	else if( m_fLowBPM != m_fHighBPM )
 	{
-		m_textBPM.SetTweenDiffuse( CHANGE_COLOR );
-		m_sprLabel.SetTweenDiffuse( CHANGE_COLOR );
+		m_textBPM.SetDiffuse( CHANGE_COLOR );
+		m_sprLabel.SetDiffuse( CHANGE_COLOR );
 	}
 	else
 	{
-		m_textBPM.SetTweenDiffuse( NORMAL_COLOR );
-		m_sprLabel.SetTweenDiffuse( NORMAL_COLOR );
+		m_textBPM.SetDiffuse( NORMAL_COLOR );
+		m_sprLabel.SetDiffuse( NORMAL_COLOR );
 	}
 
 }
@@ -149,8 +149,8 @@ void BPMDisplay::CycleRandomly()
 	m_CountingState = cycle_randomly;
 	m_fTimeLeftInState = 0;
 
-	m_textBPM.SetTweenDiffuse( NORMAL_COLOR );
-	m_sprLabel.SetTweenDiffuse( NORMAL_COLOR );
+	m_textBPM.SetDiffuse( NORMAL_COLOR );
+	m_sprLabel.SetDiffuse( NORMAL_COLOR );
 }
 
 void BPMDisplay::NoBPM()
@@ -158,6 +158,6 @@ void BPMDisplay::NoBPM()
 	m_CountingState = no_bpm;
 	m_textBPM.SetText( "..." ); 
 
-	m_textBPM.SetTweenDiffuse( NORMAL_COLOR );
-	m_sprLabel.SetTweenDiffuse( NORMAL_COLOR );
+	m_textBPM.SetDiffuse( NORMAL_COLOR );
+	m_sprLabel.SetDiffuse( NORMAL_COLOR );
 }

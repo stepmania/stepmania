@@ -143,6 +143,6 @@ void CourseContentsList::TweenInAfterChangedCourse()
 		display.StopTweening();
 		display.SetXY( 0, -((MAX_VISIBLE_CONTENTS-1)/2) * float(ContentsBarHeight) );
 		display.BeginTweening( i*0.1f );
-		display.SetTweenY( (-(MAX_VISIBLE_CONTENTS-1)/2 + i) * float(ContentsBarHeight) );
+		display.SetY( (-(MAX_VISIBLE_CONTENTS-1)/2 + i) * float(ContentsBarHeight) );
 	}
 }

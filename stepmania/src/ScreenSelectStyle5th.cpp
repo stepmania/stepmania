@@ -114,7 +114,7 @@ const ScreenMessage SM_UpdateAnimations		=	ScreenMessage(SM_User + 3);
 const ScreenMessage SM_TweenExplanation2	=	ScreenMessage(SM_User + 4);
 
 
-ScreenSelectStyle5th::ScreenSelectStyle5th()
+ScreenSelectStyle5th::ScreenSelectStyle5th() : Screen("ScreenSelectStyle5th")
 {
 	LOG->Trace( "ScreenSelectStyle5th::ScreenSelectStyle5th()" );
 
@@ -222,7 +222,7 @@ void ScreenSelectStyle5th::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_TweenExplanation2:
 		m_textExplanation2.BeginTweening( 0.7f );
-		m_textExplanation2.SetTweenZoomX( EXPLANATION2_ZOOM_X );
+		m_textExplanation2.SetZoomX( EXPLANATION2_ZOOM_X );
 		break;
 	case SM_UpdateAnimations:
 		for( int i=0; i<NUM_STYLE_DANCERS; i++ )
@@ -297,27 +297,27 @@ void ScreenSelectStyle5th::BeforeChange()
 	{
 	case 0:
 		m_sprDancer[0].BeginTweening( TWEEN_TIME );
-		m_sprDancer[0].SetTweenDiffuse( COLOR_P1_NOT_SELECTED );
+		m_sprDancer[0].SetDiffuse( COLOR_P1_NOT_SELECTED );
 		break;
 	case 1:
 		m_sprDancer[1].BeginTweening( TWEEN_TIME );
-		m_sprDancer[1].SetTweenDiffuse( COLOR_P1_NOT_SELECTED );
+		m_sprDancer[1].SetDiffuse( COLOR_P1_NOT_SELECTED );
 		m_sprDancer[2].BeginTweening( TWEEN_TIME );
-		m_sprDancer[2].SetTweenDiffuse( COLOR_P2_NOT_SELECTED );
+		m_sprDancer[2].SetDiffuse( COLOR_P2_NOT_SELECTED );
 		break;
 	case 2:
 		m_sprDancer[3].BeginTweening( TWEEN_TIME );
-		m_sprDancer[3].SetTweenDiffuse( COLOR_P1_NOT_SELECTED );
+		m_sprDancer[3].SetDiffuse( COLOR_P1_NOT_SELECTED );
 		break;
 	case 3:
 		m_sprDancer[4].BeginTweening( TWEEN_TIME );
-		m_sprDancer[4].SetTweenDiffuse( COLOR_P1_NOT_SELECTED );
+		m_sprDancer[4].SetDiffuse( COLOR_P1_NOT_SELECTED );
 		m_sprDancer[5].BeginTweening( TWEEN_TIME );
-		m_sprDancer[5].SetTweenDiffuse( COLOR_P2_NOT_SELECTED );
+		m_sprDancer[5].SetDiffuse( COLOR_P2_NOT_SELECTED );
 		break;
 	case 4:
 		m_sprDancer[6].BeginTweening( TWEEN_TIME );
-		m_sprDancer[6].SetTweenDiffuse( COLOR_P1_NOT_SELECTED );
+		m_sprDancer[6].SetDiffuse( COLOR_P1_NOT_SELECTED );
 		break;
 	}
 
@@ -331,7 +331,7 @@ void ScreenSelectStyle5th::AfterChange()
 	m_textExplanation1.SetText( TEXT_EXPLANATION1[m_iSelection] );
 	m_textExplanation1.SetZoomX( 0 );
 	m_textExplanation1.BeginTweening( 0.6f );
-	m_textExplanation1.SetTweenZoomX( EXPLANATION1_ZOOM_X );
+	m_textExplanation1.SetZoomX( EXPLANATION1_ZOOM_X );
 
 	m_textExplanation2.SetText( TEXT_EXPLANATION2[m_iSelection] );
 	m_textExplanation2.StopTweening();
@@ -341,47 +341,47 @@ void ScreenSelectStyle5th::AfterChange()
 	{
 	case 0:
 		m_sprPad[0].BeginTweening( TWEEN_TIME );
-		m_sprPad[0].SetTweenDiffuse( RageColor(1,1,1,1) );
+		m_sprPad[0].SetDiffuse( RageColor(1,1,1,1) );
 		m_sprDancer[0].BeginTweening( TWEEN_TIME );
-		m_sprDancer[0].SetTweenDiffuse( COLOR_P1_SELECTED );
+		m_sprDancer[0].SetDiffuse( COLOR_P1_SELECTED );
 		m_sprDancer[0].StartAnimating();
 		m_sprStyleIcon.SetState( 0 );
 		break;
 	case 1:
 		m_sprPad[1].BeginTweening( TWEEN_TIME );
-		m_sprPad[1].SetTweenDiffuse( RageColor(1,1,1,1) );
+		m_sprPad[1].SetDiffuse( RageColor(1,1,1,1) );
 		m_sprDancer[1].BeginTweening( TWEEN_TIME );
-		m_sprDancer[1].SetTweenDiffuse( COLOR_P1_SELECTED );
+		m_sprDancer[1].SetDiffuse( COLOR_P1_SELECTED );
 		m_sprDancer[1].StartAnimating();
 		m_sprDancer[2].BeginTweening( TWEEN_TIME );
-		m_sprDancer[2].SetTweenDiffuse( COLOR_P2_SELECTED );
+		m_sprDancer[2].SetDiffuse( COLOR_P2_SELECTED );
 		m_sprDancer[2].StartAnimating();
 		m_sprStyleIcon.SetState( 1 );
 		break;
 	case 2:
 		m_sprPad[2].BeginTweening( TWEEN_TIME );
-		m_sprPad[2].SetTweenDiffuse( RageColor(1,1,1,1) );
+		m_sprPad[2].SetDiffuse( RageColor(1,1,1,1) );
 		m_sprDancer[3].BeginTweening( TWEEN_TIME );
-		m_sprDancer[3].SetTweenDiffuse( COLOR_P1_SELECTED );
+		m_sprDancer[3].SetDiffuse( COLOR_P1_SELECTED );
 		m_sprDancer[3].StartAnimating();
 		m_sprStyleIcon.SetState( 2 );
 		break;
 	case 3:
 		m_sprPad[3].BeginTweening( TWEEN_TIME );
-		m_sprPad[3].SetTweenDiffuse( RageColor(1,1,1,1) );
+		m_sprPad[3].SetDiffuse( RageColor(1,1,1,1) );
 		m_sprDancer[4].BeginTweening( TWEEN_TIME );
-		m_sprDancer[4].SetTweenDiffuse( COLOR_P1_SELECTED );
+		m_sprDancer[4].SetDiffuse( COLOR_P1_SELECTED );
 		m_sprDancer[4].StartAnimating();
 		m_sprDancer[5].BeginTweening( TWEEN_TIME );
-		m_sprDancer[5].SetTweenDiffuse( COLOR_P2_SELECTED );
+		m_sprDancer[5].SetDiffuse( COLOR_P2_SELECTED );
 		m_sprDancer[5].StartAnimating();
 		m_sprStyleIcon.SetState( 3 );
 		break;
 	case 4:
 		m_sprPad[4].BeginTweening( TWEEN_TIME );
-		m_sprPad[4].SetTweenDiffuse( RageColor(1,1,1,1) );
+		m_sprPad[4].SetDiffuse( RageColor(1,1,1,1) );
 		m_sprDancer[6].BeginTweening( TWEEN_TIME );
-		m_sprDancer[6].SetTweenDiffuse( COLOR_P1_SELECTED );
+		m_sprDancer[6].SetDiffuse( COLOR_P1_SELECTED );
 		m_sprDancer[6].StartAnimating();
 		m_sprStyleIcon.SetState( 4 );
 		break;
@@ -397,23 +397,23 @@ void ScreenSelectStyle5th::TweenOffScreen()
 	for( i=0; i<NUM_STYLE_DANCERS; i++ )
 	{
 		m_sprDancer[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_sprDancer[i].SetTweenZoomY( 0 );
+		m_sprDancer[i].SetZoomY( 0 );
 	}
 
 	for( i=0; i<NUM_STYLE_PADS; i++ )
 	{
 		m_sprPad[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_sprPad[i].SetTweenZoomY( 0 );
+		m_sprPad[i].SetZoomY( 0 );
 	}
 
 	m_sprStyleIcon.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_sprStyleIcon.SetTweenZoomY( 0 );
+	m_sprStyleIcon.SetZoomY( 0 );
 
 	m_textExplanation1.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_textExplanation1.SetTweenZoomX( 0 );
+	m_textExplanation1.SetZoomX( 0 );
 
 	m_textExplanation2.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_textExplanation2.SetTweenZoomX( 0 );
+	m_textExplanation2.SetZoomX( 0 );
 }
   
 
@@ -425,7 +425,7 @@ void ScreenSelectStyle5th::TweenOnScreen()
 		float fOrigDancerZoomY = m_sprDancer[i].GetZoomY();
 		m_sprDancer[i].SetZoomY( 0 );
 		m_sprDancer[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_sprDancer[i].SetTweenZoomY( fOrigDancerZoomY );
+		m_sprDancer[i].SetZoomY( fOrigDancerZoomY );
 	}
 
 	for( i=0; i<NUM_STYLE_PADS; i++ )
@@ -433,16 +433,16 @@ void ScreenSelectStyle5th::TweenOnScreen()
 		float fOrigPadZoomY = m_sprPad[i].GetZoomY();
 		m_sprPad[i].SetZoomY( 0 );
 		m_sprPad[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_sprPad[i].SetTweenZoomY( fOrigPadZoomY );
+		m_sprPad[i].SetZoomY( fOrigPadZoomY );
 	}
 
 	m_sprStyleIcon.SetZoomY( 0 );
 	m_sprStyleIcon.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_sprStyleIcon.SetTweenZoomY( 1 );
+	m_sprStyleIcon.SetZoomY( 1 );
 
 	m_textExplanation1.SetZoomX( 0 );
 	m_textExplanation1.BeginTweening( 0.6f );
-	m_textExplanation1.SetTweenZoomX( EXPLANATION1_ZOOM_X );
+	m_textExplanation1.SetZoomX( EXPLANATION1_ZOOM_X );
 
 	m_textExplanation2.SetZoomX( 0 );
 	m_textExplanation2.SetZoomX( 0 );

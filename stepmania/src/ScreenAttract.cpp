@@ -26,20 +26,18 @@
 #include "SDL_utils.h"
 #include "RageSoundManager.h"
 
-#define NEXT_SCREEN						THEME->GetMetric(m_sClassName,"NextScreen")
+#define NEXT_SCREEN						THEME->GetMetric(m_sName,"NextScreen")
 
 
-ScreenAttract::ScreenAttract( CString sClassName )
+ScreenAttract::ScreenAttract( CString sClassName ) : Screen( sClassName )
 {
 	LOG->Trace( "ScreenAttract::ScreenAttract(%s)", sClassName.c_str() );
 
 	GAMESTATE->Reset();
 
-	m_sClassName = sClassName;
-
 	// We have to do initialization in the first update because this->GetElementName() won't
 	// work until the object has been fully constructed.
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",m_sClassName+" background") );
+	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",m_sName+" background") );
 	this->AddChild( &m_Background );
 
 	m_In.Load( THEME->GetPathTo("BGAnimations","ScreenAttract in") );
@@ -49,11 +47,11 @@ ScreenAttract::ScreenAttract( CString sClassName )
 	m_Out.Load( THEME->GetPathTo("BGAnimations","ScreenAttract out") );
 	this->AddChild( &m_Out );
 
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sClassName) );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName) );
 
 	m_soundStart.Load( THEME->GetPathTo("Sounds","Common start") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds",m_sClassName + " music") );	// DO loop.  -Chris
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds",m_sName + " music") );	// DO loop.  -Chris
 
 	GAMESTATE->m_bPlayersCanJoin = true;
 

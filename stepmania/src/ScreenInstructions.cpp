@@ -30,7 +30,7 @@
 #define NEXT_SCREEN_RAVE		THEME->GetMetric("ScreenInstructions","NextScreenRave")
 
 
-ScreenInstructions::ScreenInstructions()
+ScreenInstructions::ScreenInstructions() : Screen("ScreenInstructions")
 {
 	LOG->Trace( "ScreenInstructions::ScreenInstructions()" );
 
@@ -74,7 +74,7 @@ ScreenInstructions::ScreenInstructions()
 	m_sprHowToPlay.SetX( SCREEN_LEFT-SCREEN_WIDTH );
 	m_sprHowToPlay.BeginTweening( 0.4f );		// sleep
 	m_sprHowToPlay.BeginTweening( 0.6f, Actor::TWEEN_DECELERATE );
-	m_sprHowToPlay.SetTweenX( CENTER_X );
+	m_sprHowToPlay.SetX( CENTER_X );
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenInstructions music") );
 }
@@ -152,5 +152,5 @@ void ScreenInstructions::MenuStart( PlayerNumber pn )
 
 	m_sprHowToPlay.StopTweening();
 	m_sprHowToPlay.BeginTweening( 0.3f, Actor::TWEEN_ACCELERATE );
-	m_sprHowToPlay.SetTweenX( SCREEN_RIGHT+m_sprHowToPlay.GetUnzoomedWidth()/2 );
+	m_sprHowToPlay.SetX( SCREEN_RIGHT+m_sprHowToPlay.GetUnzoomedWidth()/2 );
 }

@@ -1,0 +1,10 @@
+#COURSE:End of the Road;
+#LIVES:4;
+#SONG:*:7..7:1.5x,reverse;
+#SONG:*:7..7:expand;
+#SONG:*:8..8:0.25x;
+#SONG:*:8..8:hidden,boost;
+#SONG:*:9..9:3.0x,dark,reverse;
+#SONG:*:9..9:land,big,supershuffle;
+#SONG:*:10..10:1.2xmusic,dizzy,drunk;
+#SONG:*:10..10:tornado,shuffle,dark;

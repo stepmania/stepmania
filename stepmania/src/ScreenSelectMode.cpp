@@ -52,7 +52,7 @@ ScreenSelectMode (Constructor)
 Desc: Sets up the screen display
 ************************************/
 
-ScreenSelectMode::ScreenSelectMode()
+ScreenSelectMode::ScreenSelectMode() : Screen("ScreenSelectMode")
 {
 	LOG->Trace( "ScreenSelectMode::ScreenSelectMode()" );
 	GAMESTATE->m_bPlayersCanJoin = true;
@@ -356,9 +356,9 @@ void ScreenSelectMode::MenuStart( PlayerNumber pn )
 		if( FOLD_ON_JOIN )
 		{
 			m_sprJoinMessage[pn].BeginTweening( 0.25f );
-			m_sprJoinMessage[pn].SetTweenZoomY( 0 );
+			m_sprJoinMessage[pn].SetZoomY( 0 );
 			m_sprJoinFrame[pn].BeginTweening( 0.25f );
-			m_sprJoinFrame[pn].SetTweenZoomY( 0 );
+			m_sprJoinFrame[pn].SetZoomY( 0 );
 		}
 
 		RefreshModeChoices();
@@ -381,7 +381,7 @@ void ScreenSelectMode::TweenOnScreen()
 {
 	float fOriginalZoomY = m_ScrollingList.GetZoomY();
 	m_ScrollingList.BeginTweening( 0.5f );
-	m_ScrollingList.SetTweenZoomY( fOriginalZoomY );
+	m_ScrollingList.SetZoomY( fOriginalZoomY );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -392,27 +392,27 @@ void ScreenSelectMode::TweenOnScreen()
 		fOriginalX = m_sprJoinMessage[p].GetX();
 		m_sprJoinMessage[p].SetX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
 		m_sprJoinMessage[p].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
-		m_sprJoinMessage[p].SetTweenX( fOriginalX );
+		m_sprJoinMessage[p].SetX( fOriginalX );
 
 		fOriginalX = m_sprJoinFrame[p].GetX();
 		m_sprJoinFrame[p].SetX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
 		m_sprJoinFrame[p].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
-		m_sprJoinFrame[p].SetTweenX( fOriginalX );
+		m_sprJoinFrame[p].SetX( fOriginalX );
 	}
 }
 
 void ScreenSelectMode::TweenOffScreen()
 {
 	m_ScrollingList.BeginTweening( 0.5f );
-	m_ScrollingList.SetTweenZoomY( 0 );
+	m_ScrollingList.SetZoomY( 0 );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		float fOffScreenOffset = float( (p==PLAYER_1) ? -SCREEN_WIDTH : +SCREEN_WIDTH );
 
 		m_sprJoinMessage[p].BeginTweening( 0.5f, Actor::TWEEN_DECELERATE );
-		m_sprJoinMessage[p].SetTweenX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
+		m_sprJoinMessage[p].SetX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
 		m_sprJoinFrame[p].BeginTweening( 0.5f, Actor::TWEEN_DECELERATE );
-		m_sprJoinFrame[p].SetTweenX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
+		m_sprJoinFrame[p].SetX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
 	}
 }

@@ -35,7 +35,8 @@ const float ANSWER_HEIGHT	=	30;
  * Handle UTF-8.  Right now, we need to at least be able to backspace
  * a whole UTF-8 character.  Better would be to operate in longchars.
  */
-ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCancel)() )
+ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCancel)() ) :
+  Screen("ScreenTextEntry")
 {
 	m_bIsTransparent = true;	// draw screens below us
 
@@ -190,15 +191,15 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 	m_Fade.OpenWipingRight( SM_DoneOpeningWipingRight );
 
 	m_textQuestion.BeginTweening( 0.2f );
-	m_textQuestion.SetTweenDiffuse( RageColor(1,1,1,0) );
+	m_textQuestion.SetDiffuse( RageColor(1,1,1,0) );
 
 	m_rectAnswerBox.BeginTweening( 0.2f );
-	m_rectAnswerBox.SetTweenDiffuse( RageColor(1,1,1,0) );
+	m_rectAnswerBox.SetDiffuse( RageColor(1,1,1,0) );
 
 	m_textAnswer.SetEffectNone();
 
 	m_textAnswer.BeginTweening( 0.2f );
-	m_textAnswer.SetTweenDiffuse( RageColor(1,1,1,0) );
+	m_textAnswer.SetDiffuse( RageColor(1,1,1,0) );
 
 	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
 

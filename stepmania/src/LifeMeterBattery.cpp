@@ -125,7 +125,7 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 
 		m_textNumLives.SetZoom( 1.5f );
 		m_textNumLives.BeginTweening( 0.15f );
-		m_textNumLives.SetTweenZoom( 1.0f );
+		m_textNumLives.SetZoom( 1.0f );
 
 		Refresh();
 		m_fBatteryBlinkTime = BATTERY_BLINK_TIME;

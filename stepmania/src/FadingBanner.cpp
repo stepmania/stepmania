@@ -54,6 +54,6 @@ void FadingBanner::BeforeChange()
 	m_FrontBanner.SetDiffuse( RageColor(1,1,1,1) );
 	m_FrontBanner.StopTweening();
 	m_FrontBanner.BeginTweening( 0.25f );		// fade out
-	m_FrontBanner.SetTweenDiffuse( RageColor(1,1,1,0) );
+	m_FrontBanner.SetDiffuse( RageColor(1,1,1,0) );
 }
 

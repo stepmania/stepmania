@@ -42,11 +42,11 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 #define COLOR_NOT_SELECTED	THEME->GetMetricC("ScreenOptions","ColorNotSelected")
 
 
-ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer )
+ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer ) : Screen("ScreenOptions")
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
 
-	m_sClassName = sClassName;
+	m_sName = sClassName;
 
 	m_SoundChangeCol.Load( THEME->GetPathTo("Sounds","ScreenOptions change") );
 	m_SoundNextRow.Load( THEME->GetPathTo("Sounds","ScreenOptions next") );
@@ -73,7 +73,7 @@ ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer )
 
 	m_framePage.SetX( SCREEN_LEFT-SCREEN_WIDTH );
 	m_framePage.BeginTweening( 0.3f, Actor::TWEEN_DECELERATE );
-	m_framePage.SetTweenX( 0 );
+	m_framePage.SetX( 0 );
 	memset(&m_OptionDim, 0, sizeof(m_OptionDim));
 	memset(&m_bRowIsLong, 0, sizeof(m_bRowIsLong));
 }
@@ -263,9 +263,9 @@ void ScreenOptions::DimOption(int line, int option, bool dim)
 	m_textItems[line][option].StopTweening();
 	m_textItems[line][option].BeginTweening(.250);
 	if(m_OptionDim[line][option])
-		m_textItems[line][option].SetTweenDiffuse( RageColor(.5,.5,.5,1) );
+		m_textItems[line][option].SetDiffuse( RageColor(.5,.5,.5,1) );
 	else
-		m_textItems[line][option].SetTweenDiffuse( RageColor(1,1,1,1) );
+		m_textItems[line][option].SetDiffuse( RageColor(1,1,1,1) );
 }
 
 bool ScreenOptions::RowCompletelyDimmed(int line) const
@@ -361,7 +361,7 @@ void ScreenOptions::TweenCursor( PlayerNumber player_no )
 	highlight.StopTweening();
 	highlight.BeginTweening( 0.2f );
 	highlight.TweenBarWidth( iWidth );
-	highlight.SetTweenXY( (float)iX, (float)iY );
+	highlight.SetXY( (float)iX, (float)iY );
 }
 
 void ScreenOptions::UpdateText( PlayerNumber player_no )
@@ -460,7 +460,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		m_SoundStart.Play();
 
 		m_framePage.BeginTweening( 0.3f, Actor::TWEEN_ACCELERATE );
-		m_framePage.SetTweenX( SCREEN_RIGHT );
+		m_framePage.SetX( SCREEN_RIGHT );
 		break;
 	}
 }
@@ -483,7 +483,7 @@ void ScreenOptions::OnChange()
 			sLineName = m_OptionRow[iCurRow].choices[0];
 		sLineName.Replace("\n","");
 		sLineName.Replace(" ","");
-		m_textExplanation.SetText( THEME->GetMetric(m_sClassName,sLineName) );	
+		m_textExplanation.SetText( THEME->GetMetric(m_sName,sLineName) );	
 	}
 	else
 		m_textExplanation.SetText( "" );

@@ -35,8 +35,6 @@ public:
 
 protected:
 
-	CString		m_sClassName;	// used to loop up theme metrics
-
 	BGAnimation				m_Background;
 	TransitionBGAnimation	m_In;
 	TransitionBGAnimation	m_Out;
