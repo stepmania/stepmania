@@ -396,8 +396,10 @@ int FindSurfaceTraits(const SDL_Surface *img)
 {
 //	bool HaveAlphaValue = false; /* whether ar, ag, ab is valid */
 //	bool HaveConsistentAlphaValue = true;
-	bool HaveTransparency = false;
-	bool HaveTranslucensy = false;
+	const int NEEDS_NO_ALPHA=0, NEEDS_BOOL_ALPHA=1, NEEDS_FULL_ALPHA=2;
+	int alpha_type = NEEDS_NO_ALPHA;
+//	bool HaveTransparency = false;
+//	bool HaveTranslucensy = false;
 //	bool WhiteOnly = true;
 
 	for(int y = 0; y < img->h; ++y)
@@ -409,19 +411,16 @@ int FindSurfaceTraits(const SDL_Surface *img)
 		{
 			Uint32 val = decodepixel(row, img->format->BytesPerPixel);
 
-			bool Transparent = false;
-			bool Translucent = false;
 			if( img->format->BitsPerPixel == 8 ) {
 				if(img->flags & SDL_SRCCOLORKEY && val == img->format->colorkey )
-					Transparent = true;
+					alpha_type = max( alpha_type, NEEDS_BOOL_ALPHA );
 			} else if(img->format->Amask) {
 				Uint32 masked_alpha = val & img->format->Amask;
-				if(masked_alpha == 0) Transparent = true;
-				else if(masked_alpha != img->format->Amask) Translucent = true;
+				if(masked_alpha == 0) 
+					alpha_type = max( alpha_type, NEEDS_BOOL_ALPHA );
+				else if(masked_alpha != img->format->Amask)
+					alpha_type = max( alpha_type, NEEDS_FULL_ALPHA );
 			}
-
-			if(Transparent) HaveTransparency = true;
-			if(Translucent) HaveTranslucensy = true;
 
 #if 0
 			/* Hmm.  This doesn't quite work.  For example, the ScreenCompany
@@ -479,8 +478,13 @@ int FindSurfaceTraits(const SDL_Surface *img)
 
 	int ret = 0;
 //	if(HaveConsistentAlphaValue) ret |= TRAIT_CONSISTENT_TRANSPARENT_COLOR;
-	if(!HaveTransparency) ret |= TRAIT_NO_TRANSPARENCY;
-	if(!HaveTranslucensy) ret |= TRAIT_BOOL_TRANSPARENCY;
+	switch( alpha_type ) 
+	{
+	case NEEDS_NO_ALPHA:	ret |= TRAIT_NO_TRANSPARENCY;	break;
+	case NEEDS_BOOL_ALPHA:	ret |= TRAIT_BOOL_TRANSPARENCY;	break;
+	case NEEDS_FULL_ALPHA:									break;
+	default:	ASSERT(0);
+	}
 //	if(WhiteOnly) ret |= TRAIT_WHITE_ONLY;
 	return ret;
 }
