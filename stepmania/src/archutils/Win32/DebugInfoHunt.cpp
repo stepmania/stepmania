@@ -9,12 +9,11 @@
 
 void LogVideoDriverInfo( VideoDriverInfo info )
 {
-	LOG->Info("Video Driver Information:");
-	LOG->Info("%-15s:\t%s", "Provider", info.sProvider.c_str());
-	LOG->Info("%-15s:\t%s", "Description", info.sDescription.c_str());
-	LOG->Info("%-15s:\t%s", "Version", info.sVersion.c_str());
-	LOG->Info("%-15s:\t%s", "Date", info.sDate.c_str());
-	LOG->Info("%-15s:\t%s", "DeviceID", info.sDeviceID.c_str());
+	LOG->Info( "Video Driver Information:" );
+	LOG->Info( "Provider:    %s", info.sProvider.c_str() );
+	LOG->Info( "Description: %s", info.sDescription.c_str() );
+	LOG->Info( "Driver:      %s, %s", info.sVersion.c_str(), info.sDate.c_str() );
+	LOG->Info( "DeviceID:    %s", info.sDeviceID.c_str() );
 }
 
 static void GetMemoryDebugInfo()
@@ -34,8 +33,6 @@ static void GetDisplayDriverDebugInfo()
 	
 	if( sPrimaryDeviceName == "" )
 		LOG->Info( "Primary display driver could not be determined." );
-	else
-		LOG->Info( "Primary display driver: %s", sPrimaryDeviceName.c_str() );
 
 	bool LoggedSomething = false;
 	int i;
@@ -59,6 +56,7 @@ static void GetDisplayDriverDebugInfo()
 	}
 	if( !LoggedSomething )
 	{
+		LOG->Info( "Primary display driver: %s", sPrimaryDeviceName.c_str() );
 		LOG->Warn("Couldn't find primary display driver; logging all drivers");
 
 		for( i=0; true; i++ )
