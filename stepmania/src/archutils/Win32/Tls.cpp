@@ -17,8 +17,7 @@
 
 #include "global.h"
 #include "tls.h"
-// XXX
-#include "archutils/win32/crash.h"
+#include "crash.h"
 
 __declspec(thread) VirtualDubTLSData g_tlsdata;
 
