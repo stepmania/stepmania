@@ -43,6 +43,7 @@ public:
 	void Stop();
 	void SetVolume(float vol);
 	void SetSampleRate(int hz);
+	int GetSampleRate() const { return samplerate; }
 
 	int GetPosition() const;
 	int GetPlayPos() const { return last_cursor_pos; }

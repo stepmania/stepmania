@@ -337,6 +337,7 @@ void Alsa9Buf::Stop()
 {
 	dsnd_pcm_drop( pcm );
 	dsnd_pcm_prepare( pcm );
+	last_cursor_pos = 0;
 }
 
 void Alsa9Buf::SetSampleRate(int hz)
