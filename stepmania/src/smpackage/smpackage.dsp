@@ -88,6 +88,10 @@ LINK32=link.exe
 # Name "smpackage - Win32 Debug"
 # Begin Source File
 
+SOURCE=.\converttheme.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\EditInsallations.cpp
 # End Source File
 # Begin Source File
@@ -108,7 +112,27 @@ SOURCE=.\install.bmp
 # End Source File
 # Begin Source File
 
+SOURCE=.\MainMenuDlg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MainMenuDlg.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\manage.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\menu.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\onvertThemeDlg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\onvertThemeDlg.h
 # End Source File
 # Begin Source File
 

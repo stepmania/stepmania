@@ -7,6 +7,7 @@
 #include "smpackageInstallDlg.h"
 #include "RageUtil.h"
 #include "smpackageUtil.h"
+#include "MainMenuDlg.h"
 
 
 #ifdef _DEBUG
@@ -101,11 +102,15 @@ BOOL CSmpackageApp::InitInstance()
 			int nResponse = dlg.DoModal();
 			if( nResponse == IDOK )
 			{
-				;	// do nothing and fall through to below
+				CSmpackageExportDlg dlg;
+				int nResponse = dlg.DoModal();
+				// Since the dialog has been closed, return FALSE so that we exit the
+				//  application, rather than start the application's message pump.
+				return FALSE;
 			}
 			else if (nResponse == IDCANCEL)
 			{
-				// the user cancelled.  Don't fall through and display the Manager.
+				// the user cancelled.  Don't fall through to the Manager.
 				exit(0);
 			}
 		}
@@ -113,7 +118,7 @@ BOOL CSmpackageApp::InitInstance()
 
 
 	// Show the Manager Dialog
-	CSmpackageExportDlg dlg;
+	MainMenuDlg dlg;
 	int nResponse = dlg.DoModal();
 //	if (nResponse == IDOK)
 
