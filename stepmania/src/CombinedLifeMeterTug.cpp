@@ -28,7 +28,9 @@ CombinedLifeMeterTug::CombinedLifeMeterTug()
 	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_Stream[p].Load( THEME->GetPathToG(ssprintf("CombinedLifeMeterTug stream p%d",p+1)), METER_WIDTH );
+		CString sStreamPath = THEME->GetPathToG(ssprintf("CombinedLifeMeterTug stream p%d",p+1));
+		CString sTipPath = THEME->GetPathToG(ssprintf("CombinedLifeMeterTug tip p%d",p+1));
+		m_Stream[p].Load( sStreamPath, METER_WIDTH, sTipPath );
 		this->AddChild( &m_Stream[p] );
 	}
 	m_Stream[PLAYER_2].SetZoomX( -1 );

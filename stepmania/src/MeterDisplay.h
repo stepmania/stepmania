@@ -20,7 +20,7 @@ class MeterDisplay : public ActorFrame
 {
 public:
 	MeterDisplay();
-	void Load( CString sStreamPath, float fStreamWidth, CString sTipPath = "" );
+	void Load( CString sStreamPath, float fStreamWidth, CString sTipPath );
 
 	void SetPercent( float fPercent );
 
