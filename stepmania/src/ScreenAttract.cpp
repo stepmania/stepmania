@@ -125,7 +125,7 @@ void ScreenAttract::Update( float fDelta )
 		// showing.  The background is loaded by the time of the first update.
 		if( AutoBeginFadingOut() )
 		{
-			BGAnimation &background = *SCREENMAN->m_pSharedBGA;
+			const Actor &background = *SCREENMAN->m_pSharedBGA;
 			float fTimeUntilBeginFadingOut = background.GetTweenTimeLeft() - m_Out.GetTweenTimeLeft();
 			if( fTimeUntilBeginFadingOut < 0 )
 			{
