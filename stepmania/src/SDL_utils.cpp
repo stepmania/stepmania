@@ -508,6 +508,26 @@ bool SDL_GetEvent(SDL_Event &event, int mask)
 	default: RageException::Throw("SDL_PeepEvents returned unexpected error: %s", SDL_GetError());
 	}
 }
+#include "RageLog.h"
+/* Reads all currently queued SDL events, clearing them from the queue. */
+void mySDL_GetAllEvents(vector<SDL_Event> &events)
+{
+	while(1)
+	{
+		SDL_Event ev;
+		if(SDL_PollEvent(&ev) <= 0)
+			break;
+
+		events.push_back(ev);
+	}
+}
+
+/* Pushes the given events onto the SDL event queue. */
+void mySDL_PushEvents(vector<SDL_Event> &events)
+{
+	for(unsigned i = 0; i < events.size(); ++i)
+		LOG->Trace("push ev %i: %i", events[i].type, SDL_PushEvent(&events[i]));
+}
 
 /* For some bizarre reason, SDL_EventState flushes all events.  This is a pain, so
  * avoid it. */
@@ -517,24 +537,23 @@ Uint8 mySDL_EventState(Uint8 type, int state)
 		return SDL_EventState(type, state);
 
 	vector<SDL_Event> events;
-	while(1)
-	{
-		SDL_Event ev;
-		if(SDL_PollEvent(&ev) <= 0)
-			break;
+	mySDL_GetAllEvents(events);
 
-		/* Don't bother readding it if we're turning this event type off. */
-		if(state == SDL_IGNORE && ev.type == type)
-			continue;
-
-		events.push_back(ev);
-	}
-
+	/* Set the event mask. */
 	Uint8 ret = SDL_EventState(type, state);
 
+	/* Don't readding events that we just turned off; they'll just sit around
+	 * in the buffer. */
+	for(unsigned i = 0; i < events.size(); )
+	{
+		if(state == SDL_IGNORE && events[i].type == type)
+			events.erase(events.begin()+i);
+		else
+			i++;
+	}
+
 	/* Put them back. */
-	for(unsigned i = 0; i < events.size(); ++i)
-		SDL_PushEvent(&events[i]);
+	mySDL_PushEvents(events);
 
 	return ret;
 }

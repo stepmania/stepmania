@@ -38,6 +38,9 @@ bool SDL_GetEvent(SDL_Event &event, int mask);
 /* Change the event state without dropping extra events. */
 Uint8 mySDL_EventState(Uint8 type, int state);
 
+void mySDL_GetAllEvents(vector<SDL_Event> &events);
+void mySDL_PushEvents(vector<SDL_Event> &events);
+
 /* The surface contains no transparent pixels and/or never uses its color
  * key, so it doesn't need any alpha bits at all. */
 #define TRAIT_NO_TRANSPARENCY   0x0001 /* 0alpha */
