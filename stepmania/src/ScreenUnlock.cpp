@@ -36,6 +36,7 @@
 #define ICON_COMMAND				THEME->GetMetric ("ScreenUnlock", "UnlockIconCommand")
 #define TIME_TO_DISPLAY		THEME->GetMetricF("ScreenUnlock", "TimeToDisplay")
 #define POINTS_ZOOM			THEME->GetMetricF("ScreenUnlock","PointsZoom")
+#define USE_UNLOCKS_DAT		THEME->GetMetricI("ScreenUnlock","UseUnlocksDat")
 
 ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 {
@@ -64,7 +65,14 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 		// get pertaining songentry
 		LOG->Trace("UnlockScreen: Searching for %s", DISPLAYED_SONG(i).c_str());
-		SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindLockEntry( DISPLAYED_SONG(i) );
+		CString SongTitle = DISPLAYED_SONG(i);
+		if (USE_UNLOCKS_DAT == 1)
+		{
+			if (i <= GAMESTATE->m_pUnlockingSys->m_SongEntries.size() )
+				SongTitle = GAMESTATE->m_pUnlockingSys->m_SongEntries[i-1].m_sSongName;
+		}
+		
+		SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindLockEntry( SongTitle );
 
 		if( pSong == NULL)
 		{
@@ -110,6 +118,13 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			text->SetHorizAlign( Actor::align_left );
 
 			CString DisplayedSong = DISPLAYED_SONG(i);
+			if (USE_UNLOCKS_DAT == 1)
+			{
+				if (i <= GAMESTATE->m_pUnlockingSys->m_SongEntries.size() )
+					DisplayedSong = GAMESTATE->m_pUnlockingSys->m_SongEntries[i-1].m_sSongName;
+			}
+
+			
 			DisplayedSong.MakeUpper();
 			SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindLockEntry(DisplayedSong);
 
@@ -233,6 +248,12 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			NewText->SetHorizAlign( Actor::align_left );
 
 			CString DisplayedSong = DISPLAYED_SONG(NextIcon);
+			if (USE_UNLOCKS_DAT == 1)
+			{
+				if (NextIcon <= GAMESTATE->m_pUnlockingSys->m_SongEntries.size() )
+					DisplayedSong = GAMESTATE->m_pUnlockingSys->m_SongEntries[NextIcon-1].m_sSongName;
+			}
+
 			DisplayedSong.MakeUpper();
 			SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindLockEntry(DisplayedSong);
 
