@@ -46,12 +46,21 @@ namespace Checkpoints
 struct RageMutexImpl;
 class RageMutex
 {
+	friend struct RageMutexImpl;
+
 	RageMutexImpl *mut;
 	const CString m_sName;
 
+	int m_UniqueID;
+	
+	void MarkLockedMutex();
+
 public:
+	CString GetName() const { return m_sName; }
 	void Lock();
 	void Unlock();
+	bool IsLockedByThisThread() const;
+
 	RageMutex( CString name );
 	~RageMutex();
 };
