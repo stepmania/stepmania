@@ -101,7 +101,6 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 			const int courseMult = (numSongsInCourse * (numSongsInCourse + 1)) / 2;
 			ASSERT(courseMult >= 0);
 
-			/* This will overflow at about 200 songs. XXX */
 			m_iMaxPossiblePoints = (100000000 * (iSongInCourseIndex+1)) / courseMult;
 		}
 		else
