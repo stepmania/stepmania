@@ -197,7 +197,6 @@ public:
 	bool NormallyDisplayed() const { return GetDisplayed() == SHOW_ALWAYS; }
 	bool NeverDisplayed() const { return GetDisplayed() == SHOW_NEVER; }
 	bool RouletteDisplayed() const { return GetDisplayed() != SHOW_NEVER; }
-	int	GetNumNotesWithGrade( Grade g ) const;
 
 	void AddNotes( Steps* pNotes );		// we are responsible for deleting the memory pointed to by pNotes!
 	void RemoveNotes( const Steps* pNotes );

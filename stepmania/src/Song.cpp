@@ -1281,21 +1281,6 @@ void Song::RemoveNotes( const Steps* pNotes )
 	AddAutoGenNotes();
 }
 
-int	Song::GetNumNotesWithGrade( Grade g ) const
-{
-	int iCount = 0;
-	vector<Steps*> vNotes;
-	this->GetSteps( vNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
-	for( unsigned j=0; j<vNotes.size(); j++ )
-	{
-		Steps* pSteps = vNotes[j];
-		
-		if( PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(this,pSteps).GetTopScore().grade == g )
-			iCount++;
-	}
-	return iCount;
-}
-
 bool Song::Matches(CString sGroup, CString sSong) const
 {
 	if( sGroup.size() && sGroup.CompareNoCase(this->m_sGroupName) != 0)
