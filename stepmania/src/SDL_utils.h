@@ -20,7 +20,7 @@ SDL_Surface *SDL_CreateRGBSurfaceSane
 			(Uint32 flags, int width, int height, int depth, 
 			Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask);
 
-void SetAlphaRGB(SDL_Surface *img, Uint8 r, Uint8 g, Uint8 b);
+void FixHiddenAlpha(SDL_Surface *img);
 
 #endif
 

@@ -287,9 +287,7 @@ void RageBitmapTexture::Create()
 
 	int pixfmt = desired_rgba_pixfmt;
 
-	/* XXX this needs to be a hint */
-	Uint8 AlphaR=0, AlphaG=0, AlphaB=0;
-	SetAlphaRGB(img, AlphaR, AlphaG, AlphaB);
+	FixHiddenAlpha(img);
 
 	if(img->format->BitsPerPixel == 8 && DISPLAY->GetSpecs().EXT_paletted_texture)
 	{

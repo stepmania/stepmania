@@ -233,9 +233,56 @@ SDL_Surface *SDL_CreateRGBSurfaceSane
 		Rmask, Gmask, Bmask, Amask);
 }
 
+static void FindAlphaRGB(SDL_Surface *img, Uint8 &r, Uint8 &g, Uint8 &b, bool reverse)
+{
+	/* If we have no alpha or no color key, there's no alpha color. */
+	if(img->format->BitsPerPixel == 8 && !(img->flags & SDL_SRCCOLORKEY))
+		return;
+	if(img->format->BitsPerPixel > 8 && !img->format->Amask)
+		return;
+
+	/* Eww.  Sorry.  Iterate front-to-back or in reverse. */
+	for(int y = reverse? img->h-1:0;
+		reverse? (y >=0):(y < img->h); reverse? (--y):(++y))
+	{
+		Uint8 *row = (Uint8 *)img->pixels + img->pitch*y;
+		if(reverse)
+			row += img->format->BytesPerPixel * img->w;
+
+		for(int x = 0; x < img->w; ++x)
+		{
+			if(img->format->BitsPerPixel == 8 && img->format->colorkey != *row)
+			{
+				/* This color isn't the color key, so grab it. */
+				r = img->format->palette->colors[*row].r;
+				g = img->format->palette->colors[*row].g;
+				b = img->format->palette->colors[*row].b;
+				return;
+			} else {
+				Uint32 val = decodepixel(row, img->format->BytesPerPixel);
+				if(val & img->format->Amask)
+				{
+					/* This color isn't fully transparent, so grab it. */
+					SDL_GetRGB(val, img->format, &r, &g, &b);
+					return;
+				}
+			}
+
+			if(reverse)
+				row -= img->format->BytesPerPixel;
+			else
+				row += img->format->BytesPerPixel;
+		}
+	}
+
+	/* XXX The image has alpha set, but never uses it.  We should drop the alpha
+	 * channel. */
+	r = g = b = 0;
+}
+
 /* Set the underlying RGB values of all pixels in 'img' that are
  * completely transparent. */
-void SetAlphaRGB(SDL_Surface *img, Uint8 r, Uint8 g, Uint8 b)
+static void SetAlphaRGB(SDL_Surface *img, Uint8 r, Uint8 g, Uint8 b)
 {
 	/* If it's a paletted surface, all we have to do is change the
 	 * colorkey, if any. */
@@ -271,4 +318,34 @@ void SetAlphaRGB(SDL_Surface *img, Uint8 r, Uint8 g, Uint8 b)
 			row += img->format->BytesPerPixel;
 		}
 	}
+}
+
+/* When we scale up images (which we always do in high res), pixels
+ * that are completely transparent can be blended with opaque pixels,
+ * causing their RGB elements to show.  This is visible in many textures
+ * as a pixel-wide border in the wrong color.  This is tricky to fix.
+ * We need to set the RGB components of completely transparent pixels
+ * to a reasonable color.
+ *
+ * Most images have a single border color.  For these, the transparent
+ * color is easy: search through the image top-bottom-left-right,
+ * find the first non-transparent pixel, and pull out its RGB.
+ *
+ * A few images don't.  We can only make a guess here.  What we'll do
+ * is, after the above search, do the same in reverse (bottom-top-right-
+ * left).  If the color we find is different, we'll just set the border
+ * color to black.  
+ */
+void FixHiddenAlpha(SDL_Surface *img)
+{
+	Uint8 r, g, b;
+	FindAlphaRGB(img, r, g, b, false);
+
+	Uint8 cr, cg, cb; /* compare */
+	FindAlphaRGB(img, cr, cg, cb, true);
+
+	if(cr != r || cg != g || cb != b)
+		r = g = b = 0;
+
+	SetAlphaRGB(img, r, g, b);
 }
