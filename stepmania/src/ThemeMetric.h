@@ -79,6 +79,62 @@ public:
 	}
 };
 
+typedef CString (*MetricName1D)(size_t N);
+
+template <class T, size_t N>
+class ThemeMetric1D : public IThemeMetric
+{
+	ThemeMetric<T> m_metric[N];
+
+public:
+	ThemeMetric1D( const CString& sGroup, MetricName1D pfn, size_t nToInit )
+	{
+		ASSERT( nToInit <= N );
+		for( unsigned i=0; i<nToInit; i++ )
+			m_metric[i].Load( sGroup, pfn(i) );
+
+	}
+	void Read()
+	{
+		for( unsigned i=0; i<N; i++ )
+			m_metric[i].Read();
+	}
+	const T& GetValue( size_t i ) const
+	{
+		return m_metric[i].GetValue();
+	}
+};
+
+typedef CString (*MetricName2D)(size_t N, size_t M);
+
+template <class T, size_t N, size_t M>
+class ThemeMetric2D : public IThemeMetric
+{
+	ThemeMetric<T> m_metric[N][M];
+
+public:
+	ThemeMetric2D( const CString& sGroup, MetricName2D pfn, size_t nToInit, size_t mToInit )
+	{
+		ASSERT( nToInit <= N );
+		ASSERT( mToInit <= M );
+		for( unsigned i=0; i<nToInit; i++ )
+			for( unsigned j=0; j<mToInit; j++ )
+				m_metric[i][j].Load( sGroup, pfn(i,j) );
+
+	}
+	void Read()
+	{
+		for( unsigned i=0; i<N; i++ )
+			for( unsigned j=0; j<M; j++ )
+				m_metric[i][j].Read();
+	}
+	const T& GetValue( size_t i, size_t j ) const
+	{
+		return m_metric[i][j].GetValue();
+	}
+};
+
+
 #endif
 
 /*

@@ -10,6 +10,9 @@
 #include "ActorScroller.h"
 
 #define MAX_CHOICES 30
+#define MAX_ICON_PARTS 3
+#define MAX_PREVIEW_PARTS 3
+#define MAX_CURSOR_PARTS 3
 
 class ScreenSelectMaster : public ScreenSelect
 {
@@ -38,8 +41,8 @@ protected:
 	ThemeMetric<int> NUM_CURSOR_PARTS;
 	ThemeMetric<bool> SHARED_PREVIEW_AND_CURSOR;
 	ThemeMetric<int> NUM_CHOICES_ON_PAGE_1;
-	//ThemeMetric<float> CURSOR_OFFSET_X_FROM_ICON( p, part )    THEME->GetMetricF(m_sName,ssprintf("CursorPart%dP%dOffsetXFromIcon",part+1,p+1))
-	//ThemeMetric<float> CURSOR_OFFSET_Y_FROM_ICON( p, part )    THEME->GetMetricF(m_sName,ssprintf("CursorPart%dP%dOffsetYFromIcon",part+1,p+1))
+	ThemeMetric2D<float,NUM_PLAYERS,MAX_CURSOR_PARTS> CURSOR_OFFSET_X_FROM_ICON;
+	ThemeMetric2D<float,NUM_PLAYERS,MAX_CURSOR_PARTS> CURSOR_OFFSET_Y_FROM_ICON;
 	ThemeMetric<float> PRE_SWITCH_PAGE_SECONDS;
 	ThemeMetric<float> POST_SWITCH_PAGE_SECONDS;
 	ThemeMetric<float> EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS;
@@ -77,13 +80,10 @@ protected:
 
 	AutoActor	m_sprExplanation[NUM_PAGES];
 	AutoActor	m_sprMore[NUM_PAGES];
-#define MAX_ICON_PARTS 3
 	// icon is the piece shared, per-choice piece
 	AutoActor m_sprIcon[MAX_ICON_PARTS][MAX_CHOICES];
-#define MAX_PREVIEW_PARTS 3
 	// preview is per-choice, per-player piece
 	AutoActor m_sprPreview[MAX_PREVIEW_PARTS][MAX_CHOICES][NUM_PLAYERS];
-#define MAX_CURSOR_PARTS 3
 	// cursor is the per-player that's shared by all choices
 	AutoActor	m_sprCursor[MAX_CURSOR_PARTS][NUM_PLAYERS];
 	// scroll is the per-player, per-choice piece that's scrolled

@@ -14,8 +14,6 @@
 #include "Foreach.h"
 #include "RageSoundManager.h"
 
-#define CURSOR_OFFSET_X_FROM_ICON( p, part )	THEME->GetMetricF(m_sName,ssprintf("CursorPart%dP%dOffsetXFromIcon",part+1,p+1))
-#define CURSOR_OFFSET_Y_FROM_ICON( p, part )	THEME->GetMetricF(m_sName,ssprintf("CursorPart%dP%dOffsetYFromIcon",part+1,p+1))
 #define OPTION_ORDER( dir )						THEME->GetMetric (m_sName,"OptionOrder"+CString(dir))
 
 /* OptionOrderLeft=0:1,1:2,2:3,3:4 */
@@ -26,6 +24,9 @@ const char *ScreenSelectMaster::dirs[NUM_DIRS] =
 
 const ScreenMessage SM_PlayPostSwitchPage = (ScreenMessage)(SM_User+1);
 
+CString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p, size_t part ) { return ssprintf("CursorPart%dP%dOffsetXFromIcon",part+1,p+1); }
+CString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p, size_t part ) { return ssprintf("CursorPart%dP%dOffsetYFromIcon",part+1,p+1); }
+
 REGISTER_SCREEN_CLASS( ScreenSelectMaster );
 ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sClassName ),
 	NUM_ICON_PARTS(m_sName,"NumIconParts"),
@@ -33,6 +34,8 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	NUM_CURSOR_PARTS(m_sName,"NumCursorParts"),
 	SHARED_PREVIEW_AND_CURSOR(m_sName,"SharedPreviewAndCursor"),
 	NUM_CHOICES_ON_PAGE_1(m_sName,"NumChoicesOnPage1"),
+	CURSOR_OFFSET_X_FROM_ICON(m_sName,CURSOR_OFFSET_X_FROM_ICON_NAME,NUM_PLAYERS,NUM_CURSOR_PARTS),
+	CURSOR_OFFSET_Y_FROM_ICON(m_sName,CURSOR_OFFSET_Y_FROM_ICON_NAME,NUM_PLAYERS,NUM_CURSOR_PARTS),
 	PRE_SWITCH_PAGE_SECONDS(m_sName,"PreSwitchPageSeconds"),
 	POST_SWITCH_PAGE_SECONDS(m_sName,"PostSwitchPageSeconds"),
 	EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS(m_sName,"ExtraSleepAfterTweenOffSeconds"),
@@ -106,7 +109,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			{
 				const GameCommand& mc = m_aGameCommands[c];
 
-				m_sprScroll[c][0].Load( THEME->GetPathG(m_sName,ssprintf("%s Scroll Choice%s",mc.m_sName.c_str())) );
+				m_sprScroll[c][0].Load( THEME->GetPathG(m_sName,ssprintf("Scroll Choice%s",mc.m_sName.c_str())) );
 				m_sprScroll[c][0]->SetName( ssprintf("Scroll") );
 				m_sprScroll[c][0]->PlayCommand( "Init" );
 				m_Scroller[0].AddChild( m_sprScroll[c][0] );
@@ -812,12 +815,12 @@ void ScreenSelectMaster::TweenOffScreen()
 
 float ScreenSelectMaster::GetCursorX( PlayerNumber pn, int iPartIndex )
 {
-	return m_sprIcon[0][m_iChoice[pn]]->GetX() + CURSOR_OFFSET_X_FROM_ICON(pn, iPartIndex);
+	return m_sprIcon[0][m_iChoice[pn]]->GetX() + CURSOR_OFFSET_X_FROM_ICON.GetValue(pn, iPartIndex);
 }
 
 float ScreenSelectMaster::GetCursorY( PlayerNumber pn, int iPartIndex )
 {
-	return m_sprIcon[0][m_iChoice[pn]]->GetY() + CURSOR_OFFSET_Y_FROM_ICON(pn, iPartIndex);
+	return m_sprIcon[0][m_iChoice[pn]]->GetY() + CURSOR_OFFSET_Y_FROM_ICON.GetValue(pn, iPartIndex);
 }
 
 /*
