@@ -3,12 +3,12 @@
 #include "SDL_utils.h"
 #include "RageSurface_Load_XPM.h"
 #include "SDL_video.h"
-#include "SDL_rotozoom.h"
 #include "LoadingWindow_SDL.h"
 #include "loading.xpm"
 #include "StepMania.xpm" /* icon */
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
+#include "RageSurfaceUtils_Zoom.h"
 
 /* XXX: What is all this Xbox junk doing in LoadingWindow_SDL? */
 

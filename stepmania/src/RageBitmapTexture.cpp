@@ -9,10 +9,10 @@
 #include "arch/Dialog/Dialog.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
-
-#include "SDL_rotozoom.h"
-#include "SDL_dither.h"
+#include "RageSurfaceUtils_Zoom.h"
 #include "RageSurface_Load.h"
+
+#include "SDL_dither.h"
 
 static void GetResolutionFromFileName( CString sPath, int &Width, int &Height )
 {

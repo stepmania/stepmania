@@ -2,13 +2,13 @@
 
 #include "SDL.h"
 #include "SDL_utils.h"
-#include "SDL_rotozoom.h"	// for setting icon
 #include "RageSurface_Load.h"
 #include "RageFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
+#include "RageSurfaceUtils_Zoom.h"
 #include "RageThreads.h"
 #include "StepMania.h"
 

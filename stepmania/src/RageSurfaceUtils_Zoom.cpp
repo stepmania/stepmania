@@ -1,5 +1,5 @@
 #include "global.h"
-#include "SDL_rotozoom.h"
+#include "RageSurfaceUtils_Zoom.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "RageUtil.h"

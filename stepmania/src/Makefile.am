@@ -224,8 +224,7 @@ ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp ScoreDisplayOni.
 ScoreDisplayPercentage.cpp ScoreDisplayPercentage.h ScoreDisplayRave.cpp ScoreDisplayRave.h
 
 Helpers = SDL_SaveJPEG.cpp SDL_SaveJPEG.h \
-	  SDL_dither.cpp SDL_dither.h \
-	  SDL_rotozoom.cpp SDL_rotozoom.h
+	  SDL_dither.cpp SDL_dither.h
 
 PCRE = pcre/chartables.c pcre/get.c pcre/internal.h pcre/maketables.c pcre/pcre.c pcre/pcre.h pcre/study.c
 
@@ -251,6 +250,7 @@ RageSoundReader_Chain.cpp RageSoundReader_Chain.h \
 RageSoundResampler.cpp RageSoundResampler.h \
 RageSurface.cpp RageSurface.h RageSurfaceUtils.cpp RageSurfaceUtils.h \
 RageSurfaceUtils_Palettize.cpp RageSurfaceUtils_Palettize.h \
+RageSurfaceUtils_Zoom.cpp RageSurfaceUtils_Zoom.h \
 RageSurface_Load.cpp RageSurface_Load.h RageSurface_Load_PNG.cpp RageSurface_Load_PNG.h \
 RageSurface_Load_JPEG.cpp RageSurface_Load_JPEG.h RageSurface_Load_GIF.cpp RageSurface_Load_GIF.h \
 RageSurface_Load_BMP.cpp RageSurface_Load_BMP.h \

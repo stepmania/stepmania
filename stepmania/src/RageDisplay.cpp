@@ -8,7 +8,7 @@
 #include "RageFile.h"
 #include "SDL_SaveJPEG.h"
 #include "RageSurface_Save_BMP.h"
-#include "SDL_rotozoom.h"
+#include "RageSurfaceUtils_Zoom.h"
 #include "RageSurface.h"
 #include "Preference.h"
 #include "ScreenDimensions.h"

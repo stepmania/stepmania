@@ -9,7 +9,7 @@
 #include "Sprite.h"
 #include "PrefsManager.h"
 #include "SDL_dither.h"
-#include "SDL_rotozoom.h"
+#include "RageSurfaceUtils_Zoom.h"
 #include "RageDisplay.h"
 #include "RageTexture.h"
 #include "RageTextureManager.h"
