@@ -53,7 +53,7 @@ static const int HorizRes[] = {
 	320, 400, 512, 640, 800, 1024, 1280
 };
 static const int VertRes[] = {
-	240, 300, 384, 480, 600, 768, 1024
+	240, 300, 384, 480, 600, 768, 960
 };
 static const int TextureRes[] = {
 	256, 512, 1024, 2048

@@ -413,7 +413,7 @@ bool RageDisplay_D3D::SetVideoMode( bool windowed, int width, int height, int bp
 		case 640:	height = 480;	break;
 		case 800:	height = 600;	break;
 		case 1024:	height = 768;	break;
-		case 1280:	height = 1024;	break;
+		case 1280:	height = 960;	break;
 		default:	ASSERT(0);
 		}
 	}
