@@ -72,8 +72,10 @@ public:
 	void FlushQueue();
 
 	int GetMaxTextureSize() const;
-
-	void SetViewport(int shift_left, int shift_down);
+	
+	void EnterPerspective(float fov, bool preserve_loc = true);
+	void ExitPerspective();
+	void LookAt(const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up);
 
 	/* Statistics */
 	int GetFPS() const;
@@ -85,6 +87,7 @@ protected:
 	void SetBlendMode(int src, int dst);
 	void SetupOpenGL();
 	void SetupExtensions();
+	void SetViewport(int shift_left, int shift_down);
 };
 
 

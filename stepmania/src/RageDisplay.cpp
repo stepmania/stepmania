@@ -49,6 +49,9 @@ RageTimer			g_LastCheckTimer;
 int					g_iNumVerts;
 int					g_iFPS, g_iVPF, g_iDPF;
 
+int					g_PerspectiveMode = 0;
+RageMatrix			matOldProj;
+
 struct oglspecs_t {
     /* OpenGL system information that generally doesn't change at runtime. */
     
@@ -455,6 +458,113 @@ void RageDisplay::PopMatrix()
 { 
 	g_matModelStack.erase( g_matModelStack.end()-1, g_matModelStack.end() ); 
 	ASSERT(g_matModelStack.size()>=1);	// popped a matrix we didn't push
+}
+
+/* Switch from orthogonal to perspective view.
+ *
+ * Tricky: we want to maintain all of the zooms, rotations and translations
+ * that have been applied already.  They're in our internal screen space (that
+ * is, 640x480 ortho).  We can't simply leave them where they are, since they'll
+ * be applied before the perspective transform, which means they'll be in the
+ * wrong coordinate space.
+ *
+ * Handle translations (the right column of the transform matrix) to the viewport.
+ * Move rotations and scaling (0,0 through 1,1) to after the perspective transform.
+ * Actually, those might be able to stay where they are, I'm not sure; it's translations
+ * that are annoying.  So, XXX: see if rots and scales can be left on the modelview
+ * matrix instead of messing with the projection matrix.
+ *
+ * When finished, the current position will be the "viewpoint" (at 0,0).  negative
+ * Z goes into the screen, positive X and Y is right and down.
+ */
+void RageDisplay::EnterPerspective(float fov, bool preserve_loc)
+{
+	g_PerspectiveMode++;
+	if(g_PerspectiveMode > 1) {
+		/* havn't yet worked out the details of this */
+		LOG->Trace("EnterPerspective called when already in perspective mode");
+		g_PerspectiveMode++;
+		return;
+	}
+
+	DISPLAY->FlushQueue();
+
+	/* Save the old matrices. */
+	DISPLAY->PushMatrix();
+	DISPLAY->GetProjectionTransform( &matOldProj );
+	glMatrixMode( GL_PROJECTION );
+	glLoadIdentity();
+	float aspect = SCREEN_WIDTH/(float)SCREEN_HEIGHT;
+	gluPerspective(fov, aspect, 1.000f, 1000.0f);
+
+	/* Flip the Y coordinate, so positive numbers go down. */
+	glScalef(1, -1, 1);
+
+	if(preserve_loc) {
+		RageMatrix &matTop = GetTopModelMatrix();
+		{
+			/* Pull out the 2d translation. */
+			float x = matTop.m[3][0], y = matTop.m[3][1];
+
+			/* These values are where the viewpoint should be.  By default, it's in the
+			* center of the screen, and these values are from the top-left, so subtract
+			* the difference. */
+			x -= SCREEN_WIDTH/2;
+			y -= SCREEN_HEIGHT/2;
+			DISPLAY->SetViewport(int(x), int(y));
+		}
+
+		/* Pull out the 2d rotations and scales. */
+		{
+			sgMat4 mat;
+			sgMakeIdentMat4(mat);
+			mat[0][0] = matTop.m[0][0];
+			mat[0][1] = matTop.m[0][1];
+			mat[1][0] = matTop.m[1][0];
+			mat[1][1] = matTop.m[1][1];
+			glMultMatrixf((float *) mat);
+		}
+
+		/* We can't cope with perspective matrices or things that touch Z.  (We shouldn't
+		* have touched those while in 2d, anyway.) */
+		ASSERT(matTop.m[0][2] == 0.f &&	matTop.m[0][3] == 0.f && matTop.m[1][2] == 0.f &&
+			matTop.m[1][3] == 0.f && matTop.m[2][0] == 0.f && matTop.m[2][1] == 0.f &&
+			matTop.m[2][2] == 1.f && matTop.m[3][2] == 0.f && matTop.m[3][3] == 1.f);
+
+		/* Reset the matrix back to identity. */
+		RageMatrixIdentity( &matTop );
+	}
+
+	glMatrixMode( GL_MODELVIEW );
+}
+
+void RageDisplay::ExitPerspective()
+{
+	g_PerspectiveMode--;
+	if(g_PerspectiveMode) return;
+
+	/* Restore the old matrices. */
+	DISPLAY->SetProjectionTransform( &matOldProj );
+	DISPLAY->PopMatrix();
+
+	/* Restore the viewport. */
+	DISPLAY->SetViewport(0, 0);
+}
+
+/* gluLookAt.  The result is post-multiplied to the matrix (M = L * M) instead of
+ * pre-multiplied. */
+void RageDisplay::LookAt(const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up)
+{
+	glMatrixMode(GL_MODELVIEW);
+
+	glPushMatrix();
+	glLoadIdentity();
+	gluLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z);
+	RageMatrix view;
+	glGetFloatv( GL_MODELVIEW_MATRIX, (float*)view ); /* cheesy :) */
+	glPopMatrix();
+
+	sgPostMultMat4( GetTopModelMatrix().m, view.m );
 }
 
 void RageDisplay::Translate( float x, float y, float z )
