@@ -163,9 +163,8 @@ void SaveCatalogXml()
 					continue;
 				StyleID sID;
 				sID.FromStyle( (*pStyle) );
-				const Style *pStyle = sID.ToStyle();
 				XNode* pNode2 = pNode->AppendChild( sID.CreateNode() );
-				pNode2->AppendAttr( "DisplayAs", GAMEMAN->StyleToThemedString(pStyle) );
+				pNode2->AppendAttr( "DisplayAs", GAMEMAN->StyleToThemedString(*pStyle) );
 			}
 		}
 
