@@ -31,7 +31,7 @@ bool FunctionAssignIntToInteger(const std::type_info &valueType, void *pInteger,
 }
 
 #ifdef SSE2_INTRINSICS_AVAILABLE
-template <typename T>
+template <class T>
 CPP_TYPENAME AllocatorBase<T>::pointer AlignedAllocator<T>::allocate(size_type n, const void *)
 {
 	if (n < 4)
