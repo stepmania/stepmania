@@ -865,50 +865,46 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 	pOriginal->ConvertHoldNotesTo4s();
 	m_iNumTracks = iNewNumTracks;
 
+	int iCurTrackOffset = 0;
+	int iTrackOffsetMin = 0;
+	int iTrackOffsetMax = abs( iNewNumTracks - pOriginal->m_iNumTracks );
+	int bOffsetIncreasing = true;
+
 	int iLastRow = pOriginal->GetLastRow();
 	for( int r=0; r<=iLastRow; r++ )
 	{
-		int iMeasure = (int)(NoteRowToBeat(r) / BEATS_PER_MEASURE);
-
+		// copy notes in this measure
 		for( int t=0; t<=pOriginal->m_iNumTracks; t++ )
 		{
 			int iOldTrack = t;
-			int iNewTrack = (iOldTrack + iMeasure/4) % iNewNumTracks;	// change sliding window every 4 measures
-
+			int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
 			if( pOriginal->m_TapNotes[iOldTrack][r] != '0' )
 				this->m_TapNotes[iNewTrack][r] = pOriginal->m_TapNotes[iOldTrack][r];
 		}
-	}
 
-	pOriginal->Convert4sToHoldNotes();
-	Convert4sToHoldNotes();
-}
-
-void NoteData::LoadTransformedMirrorOnCross( NoteData* pOriginal, int iNewNumTracks )
-{
-	ASSERT( iNewNumTracks == pOriginal->m_iNumTracks*2 );
-
-	m_iNumTracks = iNewNumTracks;
-
-	pOriginal->ConvertHoldNotesTo4s();
-
-	bool bMirror = false;
-	int iMirrorTrack = pOriginal->m_iNumTracks/2-1;
-
-	int iLastRow = pOriginal->GetLastRow();
-	for( int r=0; r<=iLastRow; r++ )
-	{
-		for( int t=0; t<=pOriginal->m_iNumTracks; t++ )
+		if( r % (ROWS_PER_MEASURE*2) == 0 )	// adjust sliding window every two measures
 		{
-			int iOldTrack = t;
-			int iNewTrack = bMirror ? m_iNumTracks - iOldTrack : iOldTrack;
-
-			if( pOriginal->m_TapNotes[iOldTrack][r] != '0' )
+			// See if there is a hold crossing the beginning of this measure
+			pOriginal->Convert4sToHoldNotes();
+			bool bHoldCrossesThisMeasure = false;
+			for( int i=0; i<pOriginal->m_iNumHoldNotes; i++ )
 			{
-				this->m_TapNotes[iNewTrack][r] = pOriginal->m_TapNotes[iOldTrack][r];
-
-				if( iOldTrack == iMirrorTrack )
-					bMirror ^= true;
+				const HoldNote& hn = pOriginal->m_HoldNotes[i];
+				if( hn.m_fStartBeat < NoteRowToBeat(r)  &&  hn.m_fEndBeat > NoteRowToBeat(r) )
+				{
+					bHoldCrossesThisMeasure = true;
+					break;
+				}
+			}
+			pOriginal->ConvertHoldNotesTo4s();
+			
+			// adjust offset
+			if( !bHoldCrossesThisMeasure )
+			{
+				iCurTrackOffset += bOffsetIncreasing ? 1 : -1;
+				if( iCurTrackOffset == iTrackOffsetMin  ||  iCurTrackOffset == iTrackOffsetMax )
+					bOffsetIncreasing ^= true;
+				CLAMP( iCurTrackOffset, iTrackOffsetMin, iTrackOffsetMax );
 			}
 		}
 	}
@@ -916,6 +912,7 @@ void NoteData::LoadTransformedMirrorOnCross( NoteData* pOriginal, int iNewNumTra
 	pOriginal->Convert4sToHoldNotes();
 	Convert4sToHoldNotes();
 }
+
 
 NoteType NoteData::GetSmallestNoteTypeForMeasure( int iMeasureIndex )
 {

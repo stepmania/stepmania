@@ -189,6 +189,7 @@ public:
 	bool SongHasNotesType( NotesType nt ) const;
 	bool SongHasNotesTypeAndDifficulty( NotesType nt, Difficulty dc ) const;
 	void GetNotesThatMatch( const StyleDef *s, int p, CArray<Notes*, Notes*>& arrayAddTo ) const;
+	void GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo ) const;
 	int GetNumTimesPlayed() const;
 	bool IsNew() const;
 	bool IsEasy( NotesType nt ) const;

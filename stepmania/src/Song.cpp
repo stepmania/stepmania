@@ -33,7 +33,7 @@
 #include "NotesLoaderKSF.h"
 #include "NotesWriterDWI.h"
 
-const int FILE_CACHE_VERSION = 92;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 97;	// increment this when Song or Notes changes to invalidate cache
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
@@ -549,9 +549,14 @@ void Song::TidyUpData()
 /* Get Notes that match a given style and player. */
 void Song::GetNotesThatMatch( const StyleDef *s, int p, CArray<Notes*, Notes*>& arrayAddTo ) const
 {
+	GetNotesThatMatch( s->m_NotesTypes[p], arrayAddTo );
+}
+
+void Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo ) const
+{
 	for( int i=0; i<m_apNotes.GetSize(); i++ )	// for each of the Song's Notes
 	{
-		if( m_apNotes[i]->m_NotesType == s->m_NotesTypes[p] )
+		if( m_apNotes[i]->m_NotesType == nt )
 			arrayAddTo.Add( m_apNotes[i] );
 	}
 }
@@ -731,7 +736,9 @@ void Song::AddAutoGenNotes()
 			{
 				int iNumTracks = GAMEMAN->NotesTypeToNumTracks(nt);
 				int iTrackDifference = abs(iNumTracks-iNumTracksOfMissing);
-				if( SongHasNotesType(nt)  &&  iTrackDifference<iBestTrackDifference )
+				CArray<Notes*,Notes*> apNotes;
+				this->GetNotesThatMatch( nt, apNotes );
+				if( iTrackDifference<iBestTrackDifference  &&  apNotes.GetSize() > 0  &&  apNotes[0]->m_sDescription.Find("autogen")==-1 )
 				{
 					ntBestMatch = nt;
 					iBestTrackDifference = iTrackDifference;

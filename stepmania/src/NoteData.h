@@ -89,8 +89,7 @@ public:
 
 	// Transformations
 	void LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track
-	void LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTracks );	// useful for autogenerating DDR->Pump, Pump->DDR
-	void LoadTransformedMirrorOnCross( NoteData* pOriginal, int iNewNumTracks );	// useful for autogenerating double patterns
+	void LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTracks );	// used by autogen
 
 
 	void CropToLeftSide();
