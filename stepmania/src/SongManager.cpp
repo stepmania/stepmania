@@ -345,18 +345,15 @@ void SongManager::InitMachineScoresFromDisk()
 							else
 								pNotes = pSong->GetNotes( nt, dc );
 						}
-						int iNumTimesPlayed;
-						Grade grade;
-						float fScore;
 						
 						getline(f, line);
-						sscanf(line.GetString(), "%d %d %f\n", &iNumTimesPlayed, &grade, &fScore );
 						
 						if( pNotes )
 						{
-							pNotes->m_MemCardScores[c].iNumTimesPlayed = iNumTimesPlayed;
-							pNotes->m_MemCardScores[c].grade = grade;
-							pNotes->m_MemCardScores[c].fScore = fScore;
+							sscanf(line.GetString(), "%d %d %f\n",
+								&pNotes->m_MemCardScores[c].iNumTimesPlayed,
+								&pNotes->m_MemCardScores[c].grade,
+								&pNotes->m_MemCardScores[c].fScore);
 						}
 					}
 				}
