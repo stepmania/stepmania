@@ -109,35 +109,23 @@ static RageKeySym XSymToKeySym( int key )
 	return KEY_INVALID;
 }
 
-InputHandler_Xlib::InputHandler_Xlib()
+InputHandler_X11::InputHandler_Xlib()
 {
 	X11Helper::Go();
 	X11Helper::OpenMask(KeyPressMask); X11Helper::OpenMask(KeyReleaseMask);
 }
 
-InputHandler_Xlib::~InputHandler_Xlib()
+InputHandler_X11::~InputHandler_Xlib()
 {
 	X11Helper::CloseMask(KeyPressMask); X11Helper::CloseMask(KeyReleaseMask);
 	X11Helper::Stop();
 }
 
-static bool IsKeyEvent(Display *display,XEvent *event,XPointer arg)
-{
-	switch (event->type)
-	{
-	case KeyPress:
-	case KeyRelease:
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-void InputHandler_Xlib::Update(float fDeltaTime)
+void InputHandler_X11::Update(float fDeltaTime)
 {
 	XEvent event;
-	while(XCheckIfEvent(display,&event,IsKeyEvent,NULL))
+	while(XCheckTypedEvent(X11Helper::Dpy(), KeyPress, &event)
+		|| XCheckTypedEvent(X11Helper::Dpy(), KeyRelease, &event) )
 	{
 		LOG->Trace("key: sym %i, key %i, state %i",
 			event.xkey.keycode, XSymToKeySym(event.key.keycode),
@@ -150,7 +138,7 @@ event.key.state );
 }
 
 
-void InputHandler_Xlib::GetDevicesAndDescriptions(vector<InputDevice>&
+void InputHandler_X11::GetDevicesAndDescriptions(vector<InputDevice>&
 vDevicesOut, vector<CString>& vDescriptionsOut)
 {
 	vDevicesOut.push_back( DEVICE_KEYBOARD );
