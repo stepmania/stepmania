@@ -167,7 +167,6 @@ void Course::LoadFromCRSFile( CString sPath )
 				split( sParams[j], "=", sBits, false );
 				if( sBits.size() == 0 )
 					continue;
-				LOG->Trace("b '%s'", sBits[0].c_str());
 
 				TrimLeft( sBits[0] );
 				TrimRight( sBits[0] );
