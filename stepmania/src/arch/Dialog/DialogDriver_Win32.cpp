@@ -3,6 +3,8 @@
 #include "RageUtil.h"
 #include "ProductInfo.h"
 #include "DialogDriver.h"
+#include "CommonMetrics.h"	// for WINDOW_TITLE
+#include "ThemeManager.h"
 
 #include "archutils/win32/AppInstance.h"
 #include "archutils/win32/GotoURL.h"
@@ -155,7 +157,7 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString I
 	SDL_PumpEvents();
 #endif
 
-	switch( MessageBox(g_hWndMain, sMessage, PRODUCT_NAME, MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 ) )
+	switch( MessageBox(g_hWndMain, sMessage, WINDOW_TITLE, MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 ) )
 	{
 	case IDABORT:	return Dialog::abort;
 	case IDRETRY:	return Dialog::retry;
@@ -170,7 +172,7 @@ Dialog::Result DialogDriver_Win32::RetryCancel( CString sMessage, CString ID )
 	SDL_PumpEvents();
 #endif
 
-	switch( MessageBox(g_hWndMain, sMessage, PRODUCT_NAME, MB_RETRYCANCEL ) )
+	switch( MessageBox(g_hWndMain, sMessage, WINDOW_TITLE, MB_RETRYCANCEL ) )
 	{
 	case IDRETRY:	return Dialog::retry;
 	default:	ASSERT(0);
