@@ -90,26 +90,16 @@ void RageSoundManager::Update(float delta)
 	g_DeletionMutex.Lock();
 
 	/* Scan the owned_sounds list for sounds that are no longer playing, and delete them. */
-	g_SoundManMutex.Lock(); /* lock for access to owned_sounds and all_sounds */
+	g_SoundManMutex.Lock(); /* lock for access to owned_sounds */
 	set<RageSound *>::iterator it;
 	set<RageSound *> ToDelete;
 	for( it = owned_sounds.begin(); it != owned_sounds.end(); ++it )
 		if( !(*it)->IsPlaying() )
 			ToDelete.insert( *it );
 
-	/* Don't delete any sounds that are the parent of another sound.  Always delete
-	 * child sounds first. */
-	for( it = all_sounds.begin(); it != all_sounds.end(); ++it )
-		if( (*it)->GetOriginal() != (*it) ) // child
-		{
-			set<RageSound *>::iterator parent = ToDelete.find( (*it)->GetOriginal() );
-			if( parent != ToDelete.end() )
-				ToDelete.erase( parent );
-		}
-
 	for( it = ToDelete.begin(); it != ToDelete.end(); ++it )
 		owned_sounds.erase( *it );
-	g_SoundManMutex.Unlock(); /* finished with owned_sounds and all_sounds */
+	g_SoundManMutex.Unlock(); /* finished with owned_sounds */
 
 	/* We can safely delete sounds while holding g_DeletionMutex, but not while
 	 * holding g_SoundManMutex (see the mutex ordering at the top of the file). */
