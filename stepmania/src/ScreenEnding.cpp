@@ -57,7 +57,7 @@ CString GetStatsLineValue( PlayerNumber pn, int iLine )
 	case PERCENT_COMPLETE:
 		{
 			double fPercent = 100.0 * pProfile->GetTotalHighScoreDancePointsForStepsType(st) / (double)pProfile->GetTotalPossibleDancePointsForStepsType(st);
-			return ssprintf( "%02.4f%%", fPercent );	
+			return ssprintf( "%02.3f%%", fPercent );	
 		}
 	case TOTAL_CALORIES:		return pProfile->GetDisplayTotalCaloriesBurned();
 	case TOTAL_SONGS_PLAYED:	return Commify( pProfile->GetTotalNumSongsPlayed() );

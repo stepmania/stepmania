@@ -1320,7 +1320,14 @@ void MusicWheel::StartLeap()
 		SetOpenGroup("", SortOrder(m_LastSortOrder));
 	}
 
-	m_iSelection = rand() % m_CurWheelItemData.size();
+	// probe to find a song
+	for( int i=0; i<20; i++ )
+	{
+		m_iSelection = rand() % m_CurWheelItemData.size();
+		if( m_CurWheelItemData[m_iSelection]->m_Type == TYPE_SONG )
+			break;	// done searching
+	}
+
 	m_fPositionOffsetFromSelection = 0;
 	m_WheelState = STATE_SELECTING_MUSIC;
 	SCREENMAN->PlayStartSound();
