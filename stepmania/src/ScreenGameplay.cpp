@@ -674,8 +674,11 @@ void ScreenGameplay::LoadNextSong()
 	GAMESTATE->m_pCurSong = m_apSongsQueue[iPlaySongIndex];
 
 	// Restore the player's originally selected options.
+	GAMESTATE->RemoveAllActiveAttacks();
 	GAMESTATE->RestoreSelectedOptions();
 
+	GAMESTATE->ResetNoteSkins();
+	
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -683,10 +686,23 @@ void ScreenGameplay::LoadNextSong()
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 
+		/* This is the first beat that can be changed without it being visible.  Until
+		 * we draw for the first time, any beat can be changed. */
+		GAMESTATE->m_fLastDrawnBeat[p] = -100;
+
 		GAMESTATE->m_pCurNotes[p] = m_apNotesQueue[p][iPlaySongIndex];
 
 		// Put courses options into effect.
-		GAMESTATE->ApplyModifiers( (PlayerNumber)p, m_asModifiersQueue[p][iPlaySongIndex] );
+		{
+			GameState::Attack a;
+			a.fSecsRemaining = 10000; /* whole song */
+			a.level = ATTACK_LEVEL_1;
+
+			a.sModifier=m_asModifiersQueue[p][iPlaySongIndex];
+			GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
+		}
+
+		/* Queue course attacks. */
 
 		m_textPlayerOptions[p].SetText( GAMESTATE->m_PlayerOptions[p].GetString() );
 
@@ -1565,7 +1581,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				}
 			}
 
-			GAMESTATE->RemoveAllActiveAttacks();
+			/* Do this in LoadNextSong, so we don't tween off old attacks until
+			 * m_NextSongOut finishes. */
+			// GAMESTATE->RemoveAllActiveAttacks();
 
 			for( p=0; p<NUM_PLAYERS; p++ )
 			{
