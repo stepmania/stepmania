@@ -32,7 +32,6 @@
 #define COLOR_CHALLENGE	THEME->GetMetricC("Notes","ColorChallenge")
 #define COLOR_BATTLE	THEME->GetMetricC("Notes","ColorBattle")
 
-
 Notes::Notes()
 {
 	/* FIXME: should we init this to NOTES_TYPE_INVALID? 
@@ -50,32 +49,54 @@ Notes::Notes()
 	m_iMaxCombo = 0;
 	m_iTopScore = 0;
 	m_TopGrade = GRADE_NO_DATA;
+	notes = NULL;
+	notes_comp = NULL;
 }
 
 Notes::~Notes()
 {
+	delete notes;
+	delete notes_comp;
 }
 
 void Notes::SetNoteData( NoteData* pNewNoteData )
 {
 	ASSERT( pNewNoteData->m_iNumTracks == GameManager::NotesTypeToNumTracks(m_NotesType) );
-	m_sSMNoteData = NoteDataUtil::GetSMNoteDataString(*pNewNoteData);
+
+	delete notes_comp;
+	notes_comp = NULL;
+
+	delete notes;
+	notes = new NoteData(*pNewNoteData);
 }
 
 void Notes::GetNoteData( NoteData* pNoteDataOut ) const
 {
-	pNoteDataOut->m_iNumTracks = GameManager::NotesTypeToNumTracks( m_NotesType );
-	NoteDataUtil::LoadFromSMNoteDataString( *pNoteDataOut, m_sSMNoteData );
+	Decompress();
+	pNoteDataOut->m_iNumTracks = notes->m_iNumTracks;
+	*pNoteDataOut = *notes;
 }
 
 void Notes::SetSMNoteData( const CString &out )
 {
-	m_sSMNoteData = out;
+	delete notes;
+	notes = NULL;
+
+	if(!notes_comp)
+		notes_comp = new CString;
+
+	*notes_comp = out;
 }
 
 CString Notes::GetSMNoteData() const
 {
-	return m_sSMNoteData;
+	if(!notes_comp)
+	{
+		if(!notes) return ""; /* no data is no data */
+		notes_comp = new CString(NoteDataUtil::GetSMNoteDataString(*notes));
+	}
+
+	return *notes_comp;
 }
 
 // Color is a function of Difficulty and Intended Style
@@ -206,5 +227,28 @@ bool CompareNotesPointersByDifficulty(const Notes *pNotes1, const Notes *pNotes2
 void SortNotesArrayByDifficulty( CArray<Notes*,Notes*> &arraySteps )
 {
 	sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByDifficulty );
+}
+
+void Notes::Decompress() const
+{
+	if(!notes_comp) return; /* no data is no data */
+	if(notes) return;
+
+	notes = new NoteData;
+	notes->m_iNumTracks = GameManager::NotesTypeToNumTracks(m_NotesType);
+
+	NoteDataUtil::LoadFromSMNoteDataString(*notes, *notes_comp);
+}
+
+void Notes::Compress() const
+{
+	if(!notes_comp)
+	{
+		if(!notes) return; /* no data is no data */
+		notes_comp = new CString(NoteDataUtil::GetSMNoteDataString(*notes));
+	}
+
+	delete notes;
+	notes = NULL;
 }
 
