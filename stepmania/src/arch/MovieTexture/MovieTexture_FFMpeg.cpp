@@ -843,11 +843,6 @@ void MovieTexture_FFMpeg::DiscardFrame()
 void MovieTexture_FFMpeg::DecoderThread()
 {
 #if defined(_WINDOWS)
-	/* Movie decoding is bursty.  We burst decode a frame, then we sleep, then we burst
-	 * to YUV->RGB convert, then we wait for the frame to move, and we repeat.  */
-//	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL))
-//		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set sound thread priority"));
-
 	/* Windows likes to boost priority when processes come out of a wait state.  We don't
 	 * want that, since it'll result in us having a small priority boost after each movie
 	 * frame, resulting in skips in the gameplay thread. */
