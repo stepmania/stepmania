@@ -28,7 +28,7 @@
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,DEBUG"
 				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\../Debug/StepMania.pch"
 				AssemblerListingLocation=".\../Debug/"
@@ -42,7 +42,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386 $(intdir)\verstub.obj"
+				AdditionalOptions="/MACHINE:I386 $(intdir)\verstub.obj
+"
 				OutputFile="../StepMania-debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
@@ -88,7 +89,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
 			CharacterSet="2"
-			WholeProgramOptimization="TRUE">
+			WholeProgramOptimization="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
@@ -104,7 +105,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
 				ExceptionHandling="FALSE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="FALSE"
 				UsePrecompiledHeader="0"
@@ -269,6 +270,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenMusicScroll.h">
+			</File>
+			<File
+				RelativePath="ScreenNetworkWaiting.cpp">
+			</File>
+			<File
+				RelativePath="ScreenNetworkWaiting.h">
 			</File>
 			<File
 				RelativePath="ScreenOptions.cpp">
@@ -1042,6 +1049,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageMath.h">
 			</File>
 			<File
+				RelativePath="RageMovieTexture.cpp">
+			</File>
+			<File
 				RelativePath=".\RageMovieTexture.h">
 			</File>
 			<File
@@ -1051,10 +1061,19 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\RageMusic.h">
 			</File>
 			<File
-				RelativePath="RageNetwork.cpp">
+				RelativePath="RageNetworkClient.cpp">
 			</File>
 			<File
-				RelativePath="RageNetwork.h">
+				RelativePath="RageNetworkClient.h">
+			</File>
+			<File
+				RelativePath="RageNetworkPacket.h">
+			</File>
+			<File
+				RelativePath="RageNetworkServer.cpp">
+			</File>
+			<File
+				RelativePath="RageNetworkServer.h">
 			</File>
 			<File
 				RelativePath=".\RageSound.cpp">
