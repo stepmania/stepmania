@@ -834,15 +834,6 @@ const Game* GameState::GetCurrentGame()
 
 const Style* GameState::GetCurrentStyle() const
 {
-	/*
-	// HACK: if we're in TM doing PLAY_MODE_BATTLE or PLAY_MODE_RAVE,
-	// pretend that we're doing STYLE_TECHNO_VERSUS8 instead.
-	// What is the problem that this is fixing? -Chris
-	if( m_CurGame == GAME_TECHNO &&
-		( m_PlayMode == PLAY_MODE_BATTLE || m_PlayMode == PLAY_MODE_RAVE ) )
-		return GAMEMAN->GetStyleForStyle( STYLE_TECHNO_VERSUS8 );
-	*/
-
 	return m_pCurStyle;
 }
 
@@ -870,6 +861,7 @@ int	GameState::GetNumPlayersEnabled() const
 
 bool GameState::PlayerUsingBothSides() const
 {
+	ASSERT( this->GetCurrentStyle() != NULL );
 	return this->GetCurrentStyle()->m_StyleType == ONE_PLAYER_TWO_SIDES;
 }
 
