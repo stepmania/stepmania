@@ -9,13 +9,13 @@
 -----------------------------------------------------------------------------
 */
 
-#include "RageUtil.h"
-
 #include "Banner.h"
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "RageBitmapTexture.h"
 #include "ThemeManager.h"
+#include "RageUtil.h"
+
 
 Banner::Banner()
 {

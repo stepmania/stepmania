@@ -136,6 +136,7 @@ void MenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 
 void MenuElements::Back( ScreenMessage smSendWhenDone )
 {
+	m_MenuTimer.StopTimer();
 	m_Back.StartTransitioning( smSendWhenDone );
 	m_soundBack.Play();
 }

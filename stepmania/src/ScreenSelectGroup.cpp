@@ -25,25 +25,26 @@
 #include <map>
 
 
-#define FRAME_ON_COMMAND			THEME->GetMetric ("ScreenSelectGroup","FrameOnCommand")
-#define FRAME_OFF_COMMAND			THEME->GetMetric ("ScreenSelectGroup","FrameOffCommand")
-#define BANNER_ON_COMMAND			THEME->GetMetric ("ScreenSelectGroup","BannerOnCommand")
-#define BANNER_OFF_COMMAND			THEME->GetMetric ("ScreenSelectGroup","BannerOffCommand")
-#define BANNER_WIDTH				THEME->GetMetricF("ScreenSelectGroup","BannerWidth")
-#define BANNER_HEIGHT				THEME->GetMetricF("ScreenSelectGroup","BannerHeight")
-#define NUMBER_ON_COMMAND			THEME->GetMetric ("ScreenSelectGroup","NumberOnCommand")
-#define NUMBER_OFF_COMMAND			THEME->GetMetric ("ScreenSelectGroup","NumberOffCommand")
-#define EXPLANATION_ON_COMMAND		THEME->GetMetric ("ScreenSelectGroup","ExplanationOnCommand")
-#define EXPLANATION_OFF_COMMAND		THEME->GetMetric ("ScreenSelectGroup","ExplanationOffCommand")
-#define CONTENTS_ON_COMMAND			THEME->GetMetric ("ScreenSelectGroup","ContentsOnCommand")
-#define CONTENTS_OFF_COMMAND		THEME->GetMetric ("ScreenSelectGroup","ContentsOffCommand")
-#define MUSIC_LIST_ON_COMMAND		THEME->GetMetric ("ScreenSelectGroup","MusicListOnCommand")
-#define MUSIC_LIST_OFF_COMMAND		THEME->GetMetric ("ScreenSelectGroup","MusicListOffCommand")
-#define GROUP_LIST_ON_COMMAND		THEME->GetMetric ("ScreenSelectGroup","GroupListOnCommand")
-#define GROUP_LIST_OFF_COMMAND		THEME->GetMetric ("ScreenSelectGroup","GroupListOnCommand")
-#define HELP_TEXT					THEME->GetMetric ("ScreenSelectGroup","HelpText")
-#define TIMER_SECONDS				THEME->GetMetricI("ScreenSelectGroup","TimerSeconds")
-#define NEXT_SCREEN					THEME->GetMetric ("ScreenSelectGroup","NextScreen")
+#define FRAME_ON_COMMAND				THEME->GetMetric ("ScreenSelectGroup","FrameOnCommand")
+#define FRAME_OFF_COMMAND				THEME->GetMetric ("ScreenSelectGroup","FrameOffCommand")
+#define BANNER_ON_COMMAND				THEME->GetMetric ("ScreenSelectGroup","BannerOnCommand")
+#define BANNER_OFF_COMMAND				THEME->GetMetric ("ScreenSelectGroup","BannerOffCommand")
+#define BANNER_WIDTH					THEME->GetMetricF("ScreenSelectGroup","BannerWidth")
+#define BANNER_HEIGHT					THEME->GetMetricF("ScreenSelectGroup","BannerHeight")
+#define NUMBER_ON_COMMAND				THEME->GetMetric ("ScreenSelectGroup","NumberOnCommand")
+#define NUMBER_OFF_COMMAND				THEME->GetMetric ("ScreenSelectGroup","NumberOffCommand")
+#define EXPLANATION_ON_COMMAND			THEME->GetMetric ("ScreenSelectGroup","ExplanationOnCommand")
+#define EXPLANATION_OFF_COMMAND			THEME->GetMetric ("ScreenSelectGroup","ExplanationOffCommand")
+#define CONTENTS_ON_COMMAND				THEME->GetMetric ("ScreenSelectGroup","ContentsOnCommand")
+#define CONTENTS_OFF_COMMAND			THEME->GetMetric ("ScreenSelectGroup","ContentsOffCommand")
+#define MUSIC_LIST_ON_COMMAND			THEME->GetMetric ("ScreenSelectGroup","MusicListOnCommand")
+#define MUSIC_LIST_OFF_COMMAND			THEME->GetMetric ("ScreenSelectGroup","MusicListOffCommand")
+#define GROUP_LIST_ON_COMMAND			THEME->GetMetric ("ScreenSelectGroup","GroupListOnCommand")
+#define GROUP_LIST_OFF_COMMAND			THEME->GetMetric ("ScreenSelectGroup","GroupListOnCommand")
+#define SLEEP_AFTER_TWEEN_OFF_SECONDS	THEME->GetMetricF("ScreenSelectGroup","SleepAfterTweenOffSeconds")
+#define HELP_TEXT						THEME->GetMetric ("ScreenSelectGroup","HelpText")
+#define TIMER_SECONDS					THEME->GetMetricI("ScreenSelectGroup","TimerSeconds")
+#define NEXT_SCREEN						THEME->GetMetric ("ScreenSelectGroup","NextScreen")
 
 
 ScreenSelectGroup::ScreenSelectGroup()
@@ -123,31 +124,24 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_bChosen = false;
 
 	m_sprExplanation.Load( THEME->GetPathTo("Graphics","ScreenSelectGroup explanation") );
-	m_sprExplanation.Command( EXPLANATION_ON_COMMAND );
 	this->AddChild( &m_sprExplanation );
 
 	// these guys get loaded SetSong and TweenToSong
-	m_Banner.SetXY( 640, 240 );
 	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
 	this->AddChild( &m_Banner );
 
 	m_sprFrame.Load( THEME->GetPathTo("Graphics","ScreenSelectGroup frame") );
-	m_sprFrame.Command( FRAME_ON_COMMAND );
 	this->AddChild( &m_sprFrame );
 
 	m_textNumber.LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenSelectGroup numbers") );
-	m_textNumber.Command( NUMBER_ON_COMMAND );
 	this->AddChild( &m_textNumber );
 	
 	m_sprContents.Load( THEME->GetPathTo("Graphics","ScreenSelectGroup contents") );
-	m_sprContents.Command( CONTENTS_ON_COMMAND );
 	this->AddChild( &m_sprContents );
 
-	m_MusicList.Command( MUSIC_LIST_ON_COMMAND );
 	this->AddChild( &m_MusicList );
 	
 	m_GroupList.Load( asGroupNames );
-	m_GroupList.Command( GROUP_LIST_ON_COMMAND );
 	this->AddChild( &m_GroupList );
 
 
@@ -158,8 +152,8 @@ ScreenSelectGroup::ScreenSelectGroup()
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectGroup music") );
 
-	TweenOnScreen();
 	AfterChange();
+	TweenOnScreen();
 	m_GroupList.SetSelection(0);
 }
 
@@ -192,6 +186,9 @@ void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
+	case SM_BeginFadingOut:
+		m_Menu.StartTransitioning( SM_GoToNextScreen );
+		break;
 	case SM_MenuTimer:
 		MenuStart(PLAYER_1);
 		break;
@@ -210,9 +207,7 @@ void ScreenSelectGroup::AfterChange()
 	m_MusicList.SetGroupNo(sel);
 
 	CString sSelectedGroupName = m_GroupList.GetSelectionName();
-
-	CString sGroupBannerPath;
-	if( sSelectedGroupName == GROUP_ALL_MUSIC )
+	if( sSelectedGroupName == "ALL MUSIC" )
 		m_Banner.LoadAllMusic();
 	else 
 		m_Banner.LoadFromGroup( sSelectedGroupName );
@@ -272,7 +267,7 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 
 
 	TweenOffScreen();
-	m_Menu.StartTransitioning( SM_GoToNextScreen );
+	this->SendScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_TWEEN_OFF_SECONDS );
 }
 
 void ScreenSelectGroup::MenuBack( PlayerNumber pn )

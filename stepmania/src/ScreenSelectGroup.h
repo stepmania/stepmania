@@ -46,7 +46,7 @@ private:
 
 	Sprite			m_sprExplanation;
 	Sprite			m_sprFrame;
-	FadingBanner	m_Banner;
+	Banner			m_Banner;
 	BitmapText		m_textNumber;
 	Sprite			m_sprContents;
 	
