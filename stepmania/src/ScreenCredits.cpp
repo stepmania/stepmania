@@ -107,6 +107,8 @@ static const CreditLine CREDIT_LINES[] =
 	{0,"Steve Checkoway"},
 	{0,"Sean Burke"},
 	{0,"XPort"},
+	{0,"Charles Lohr"},
+	{0,"Josh “Axlecrusher” Allen"},
 	{0,""},
 	{0,""},
 	{0,""},
