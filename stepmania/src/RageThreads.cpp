@@ -475,19 +475,21 @@ struct RageMutexImpl
 	HANDLE mutex;
 	DWORD LockedBy;
 	volatile int LockCnt;
+	RageMutex *m_Parent;
 
-	RageMutexImpl();
+	RageMutexImpl( RageMutex *parent );
 	~RageMutexImpl();
 
 	void Lock();
 	void Unlock();
 };
 
-RageMutexImpl::RageMutexImpl()
+RageMutexImpl::RageMutexImpl( RageMutex *parent )
 {
 	mutex = CreateMutex( NULL, false, NULL );
 	LockedBy = NULL;
 	LockCnt = 0;
+	m_Parent = parent;
 }
 
 RageMutexImpl::~RageMutexImpl()
@@ -569,19 +571,21 @@ struct RageMutexImpl
 	volatile int LockCnt;
 
 	pthread_mutex_t mutex;
+	RageMutex *m_Parent;
 
-	RageMutexImpl();
+	RageMutexImpl( RageMutex *parent );
 	~RageMutexImpl();
 
 	void Lock();
 	void Unlock();
 };
 
-RageMutexImpl::RageMutexImpl()
+RageMutexImpl::RageMutexImpl( RageMutex *parent )
 {
 	pthread_mutex_init( &mutex, NULL );
 	LockedBy = 0;
 	LockCnt = 0;
+	m_Parent = parent;
 }
 
 RageMutexImpl::~RageMutexImpl()
@@ -639,17 +643,19 @@ void RageMutexImpl::Lock()
 		}
 	}
 
-	ThreadSlot *slot = FindThread( LockedBy );
+	const ThreadSlot *slot = FindThread( LockedBy );
+
+	CString ThisThread = RageThread::GetCurThreadName();
+	CString OtherThread = slot? slot->GetThreadName():"(unknown)";
+
+	CString reason = ssprintf( "Thread deadlock between \"%s\" and \"%s\" while locking \"%s\"",
+		RageThread::GetCurThreadName(), slot->GetThreadName(), m_Parent->m_sName.c_str() );
+
 	if( slot == NULL )
 	{
-		CString reason = ssprintf( "Thread deadlock between \"%s\" and an unknown thread",
-			RageThread::GetCurThreadName() );
 		ForceCrashHandler( reason );
 		_exit(1);
 	}
-
-	CString reason = ssprintf( "Thread deadlock between \"%s\" and \"%s\"",
-		RageThread::GetCurThreadName(), slot->GetThreadName() );
 
 	BacktraceContext ctx;
 	if( !GetThreadBacktraceContext( slot->pid, &ctx ) )
@@ -689,19 +695,21 @@ struct RageMutexImpl
 	volatile int LockCnt;
 
 	SDL_mutex *mutex;
+	RageMutex *m_Parent;
 
-	RageMutexImpl();
+	RageMutexImpl( RageMutex *parent );
 	~RageMutexImpl();
 
 	void Lock();
 	void Unlock();
 };
 
-RageMutexImpl::RageMutexImpl()
+RageMutexImpl::RageMutexImpl( RageMutex *parent )
 {
 	mutex = SDL_CreateMutex();
 	LockedBy = 0;
 	LockCnt = 0;
+	m_Parent = parent;
 }
 
 RageMutexImpl::~RageMutexImpl()
@@ -740,7 +748,7 @@ void RageMutexImpl::Unlock()
 RageMutex::RageMutex( const CString name ):
 	m_sName( name )
 {
-	mut = new RageMutexImpl;
+	mut = new RageMutexImpl(this);
 }
 
 RageMutex::~RageMutex()
