@@ -20,9 +20,8 @@ static float GetNoteFieldHeight( PlayerNumber pn )
 	return SCREEN_HEIGHT + fabsf(GAMESTATE->m_CurrentPlayerOptions[pn].m_fPerspectiveTilt)*200;
 }
 
-/* For visibility testing: if iAbsolute is -1, then all random modifiers must return
- * the minimal possible offset; if +1, they must return the maximum possible offset.
- * When actually rendering, iAbsolute is 0. */
+/* For visibility testing: if bAbsolute is false, random modifiers must return the
+ * minimum possible scroll speed. */
 float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat, bool bAbsolute )
 {
 	float fYOffset = 0;
