@@ -140,7 +140,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRowData[], int iNumO
 	m_framePage.AddChild( &m_textOptions[i][0] );
 
 	// add explanation here so it appears on top
-	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","options explanation") );
+	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","option explanation") );
 	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	m_textExplanation.SetZoom( EXPLANATION_ZOOM );
 	m_textExplanation.SetShadowLength( 2 );
@@ -167,9 +167,9 @@ void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &
 	int iOptionInRow = m_iSelectedOption[pn][iRow];
 	BitmapText &option = m_textOptions[iRow][iOptionInRow];
 
-	iWidthOut = roundf( option.GetWidestLineWidthInSourcePixels() * option.GetZoomX() );
-	iXOut = roundf( option.GetX() );
-	iYOut = roundf( option.GetY() );
+	iWidthOut = int(roundf( option.GetWidestLineWidthInSourcePixels() * option.GetZoomX() ));
+	iXOut = int(roundf( option.GetX() ));
+	iYOut = int(roundf( option.GetY() ));
 }
 
 void ScreenOptions::InitOptionsText()
