@@ -51,6 +51,11 @@ void NoteData::SetNumTracks( int iNewNumTracks )
 		else
 			m_TapNotes[t].clear();
 	}
+
+	/* Remove all hold notes that are out of bounds. */
+	for( int h = m_HoldNotes.size()-1; h >= 0; --h )
+		if( m_HoldNotes[h].iTrack >= iNewNumTracks )
+			m_HoldNotes.erase( m_HoldNotes.begin()+h );
 }
 
 
