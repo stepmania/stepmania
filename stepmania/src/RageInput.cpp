@@ -328,7 +328,10 @@ RageInput::RageInput()
 	// Init keyboard
 	//
 	SDL_EnableKeyRepeat( 0, 0 );
-
+	/* If we use key events, we can do this to get Unicode values
+	 * in the key struct, which (with a little more work) will make
+	 * us work on international keyboards: */
+	// SDL_EnableUNICODE( 1 );
 
 	//
 	// Init joysticks
