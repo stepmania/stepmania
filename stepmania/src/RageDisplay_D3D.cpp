@@ -44,7 +44,9 @@ RageDisplay*		DISPLAY	= NULL;
 //
 // Globals
 //
+#if !defined(_XBOX)
 HMODULE					g_D3D8_Module = NULL;
+#endif
 LPDIRECT3D8				g_pd3d = NULL;
 LPDIRECT3DDEVICE8		g_pd3dDevice = NULL;
 D3DCAPS8				g_DeviceCaps;
@@ -147,13 +149,17 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 	g_Windowed = false;
 
 
+	typedef IDirect3D8 * (WINAPI * Direct3DCreate8_t) (UINT SDKVersion);
+	Direct3DCreate8_t pDirect3DCreate8;
+#if defined(_XBOX)
+	pDirect3DCreate8 = Direct3DCreate8;
+#else
 	g_D3D8_Module = LoadLibrary("D3D8.dll");
 	if(!g_D3D8_Module)
 		RageException::Throw("Couldn't load D3D8.");
 
-	typedef IDirect3D8 * (WINAPI * Direct3DCreate8_t) (UINT SDKVersion);
-	Direct3DCreate8_t pDirect3DCreate8;
 	pDirect3DCreate8 = (Direct3DCreate8_t) GetProcAddress(g_D3D8_Module, "Direct3DCreate8");
+#endif
 
 	g_pd3d = pDirect3DCreate8( D3D_SDK_VERSION );
 
