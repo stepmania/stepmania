@@ -21,12 +21,6 @@
 #include "PrefsManager.h"
 
 
-#define HELP_TEXT		THEME->GetMetric (m_sName,"HelpText")
-#define TIMER_SECONDS	THEME->GetMetricI(m_sName,"TimerSeconds")
-#define NEXT_SCREEN		THEME->GetMetric (m_sName,"NextScreen")
-#define PREV_SCREEN		THEME->GetMetric (m_sName,"PrevScreen")
-
-
 ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements( sName )
 {
 	LOG->Trace( "ScreenInstructions::ScreenInstructions()" );
