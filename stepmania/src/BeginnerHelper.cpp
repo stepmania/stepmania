@@ -91,15 +91,14 @@ bool BeginnerHelper::CanUse()
 		return false;
 	if( GAMESTATE->m_CurGame != GAME_DANCE )
 		return false;
-	if( GAMESTATE->m_CurStyle == STYLE_DANCE_SOLO )
-		return false;
-	// not sure how this could happen, since double steps should be
-	// basic/light or higher, but lets check for it anyway.
-	if( GAMESTATE->m_CurStyle == STYLE_DANCE_DOUBLE )
-		return false;
 	if( GAMESTATE->m_pCharacters.size() == 0 )
 		return false;
 
+	switch (GAMESTATE->m_CurStyle)
+	{
+		case STYLE_DANCE_SOLO:
+		case STYLE_DANCE_DOUBLE: return false; break;
+	}
 	return true;
 }
 
@@ -111,8 +110,11 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 		return false;
 
 	// Load the StepCircle, Background, and flash animation
-	m_sBackground.Load( THEME->GetPathToG("BeginnerHelper background") );
-	m_sBackground.SetXY( CENTER_X, CENTER_Y);
+	if( m_bShowBackground )
+	{
+		m_sBackground.Load( THEME->GetPathToG("BeginnerHelper background") );
+		m_sBackground.SetXY( CENTER_X, CENTER_Y);
+	}
 	
 	m_sFlash.Load( THEME->GetPathToG("BeginnerHelper flash") );
 	m_sFlash.SetXY( CENTER_X, CENTER_Y );
@@ -129,16 +131,8 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 	switch(iDancePadType)
 	{
 		case 0: break; // No pad
-		case 1:
-			if (!DoesFileExist("Characters" SLASH "DancePad-DDR.txt") )
-				return false;		// can't initialize without the required pad model. bail
-			m_mDancePad.LoadMilkshapeAscii( "Characters" SLASH "DancePad-DDR.txt" );
-			break;
-		case 2:
-			if (!DoesFileExist("Characters" SLASH "DancePads-DDR.txt") )
-				return false;		// can't initialize without the required pad model. bail
-			m_mDancePad.LoadMilkshapeAscii( "Characters" SLASH "DancePads-DDR.txt" );
-			break;
+		case 1: m_mDancePad.LoadMilkshapeAscii( "Characters" SLASH "DancePad-DDR.txt" ); break;
+		case 2: m_mDancePad.LoadMilkshapeAscii( "Characters" SLASH "DancePads-DDR.txt" ); break;
 	}
 	m_mDancePad.SetHorizAlign( align_left );
 	m_mDancePad.SetRotationX( DANCEPAD_ANGLE );

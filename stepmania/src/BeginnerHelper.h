@@ -14,8 +14,6 @@ public:
 	BeginnerHelper();
 	~BeginnerHelper();
 	
-	ActorFrame	m_afDancerSuite;	// So we can easily rotate or whatever without disturbing the Background.
-
 	void FlashOnce();
 	bool Initialize( int iDancePadType );
 	bool IsInitialized() { return m_bInitialized; }
@@ -25,6 +23,8 @@ public:
 	void ShowStepCircle( int pn, int CSTEP );
 	void TurnFlashOff();
 	void TurnFlashOn();
+
+	bool	m_bShowBackground;
 
 	void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
