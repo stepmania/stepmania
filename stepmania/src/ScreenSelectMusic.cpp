@@ -738,10 +738,24 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 
 	PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
 
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
 
-	// TRICKY: Process codes after handing MenuLeft, MenuRight, MenuStart.
-	// This 
+	// TRICKY:  Do default processing of MenuLeft and MenuRight before detecting 
+	// codes.  Do default processing of Start AFTER detecting codes.  This gives us a 
+	// change to return if Start is part of a code because we don't want to process 
+	// Start as "move to the next screen" if it was just part of a code.
+	switch( MenuI.button )
+	{
+	case MENU_BUTTON_UP:	this->MenuUp( MenuI.player, type );		break;
+	case MENU_BUTTON_DOWN:	this->MenuDown( MenuI.player, type );	break;
+	case MENU_BUTTON_LEFT:	this->MenuLeft( MenuI.player, type );	break;
+	case MENU_BUTTON_RIGHT:	this->MenuRight( MenuI.player, type );	break;
+	case MENU_BUTTON_BACK:	Screen::MenuBack( MenuI.player, type );	break;
+	// Do the default handler for Start after detecting codes.
+//	case MENU_BUTTON_START:	this->MenuStart( MenuI.player, type );	break;
+	case MENU_BUTTON_COIN:	this->MenuCoin( MenuI.player, type );	break;
+	}
+
+
 	if( type == IET_FIRST_PRESS )
 	{
 		if( CodeDetector::EnteredEasierDifficulty(GameI.controller) )
@@ -790,6 +804,11 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 			UpdateOptionsDisplays();
 			return;
 		}
+	}
+
+	switch( MenuI.button )
+	{
+	case MENU_BUTTON_START:	Screen::MenuStart( MenuI.player, type );	break;
 	}
 }
 
@@ -927,20 +946,6 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 {
-//	if( pn != PLAYER_INVALID  &&
-//		INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) )  &&
-//		INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_RIGHT) ) )
-//	{
-//		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-//			m_soundLocked.Play();
-//		else
-//		{
-//			m_MusicWheel.NextSort();
-//		}
-//		return;
-//	}
-
-
 	// this needs to check whether valid Steps are selected!
 	bool bResult = m_MusicWheel.Select();
 
