@@ -276,6 +276,8 @@ void ScrollingList::Replace(CString sGraphicPath, int ElementNumber)
 		}
 
 			pNewCSprite->Load( sGraphicPath );
+
+			
 			m_apCSprites[ElementNumber] = pNewCSprite;
 	}
 }

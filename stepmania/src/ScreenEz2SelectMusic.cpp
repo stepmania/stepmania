@@ -40,6 +40,8 @@
 #define METER_Y( p )			THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("MeterP%dY",p+1))
 #define GUIDE_X					THEME->GetMetricF("ScreenSelectMode","GuideX")
 #define GUIDE_Y					THEME->GetMetricF("ScreenSelectMode","GuideY")
+#define SPEEDICON_X( p )			THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("SpeedIconP%dX",p+1))
+#define SPEEDICON_Y( p )			THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("SpeedIconP%dY",p+1))
 
 const float TWEEN_TIME		= 0.5f;
 
@@ -85,6 +87,11 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 			m_FootMeter[p].SetXY( METER_X(p), METER_Y(p) );
 			m_FootMeter[p].SetShadowLength( 2 );
 			this->AddChild( &m_FootMeter[p] );
+
+			m_SpeedIcon[p].Load( THEME->GetPathTo("Graphics","select music speedicon"));
+			m_SpeedIcon[p].SetXY( SPEEDICON_X(p), SPEEDICON_Y(p) );
+			m_SpeedIcon[p].SetDiffuse( RageColor(0,0,0,0) );
+			this->AddChild(&m_SpeedIcon[p] );
 
 			m_iSelection[p] = 0;
 		}
@@ -149,8 +156,28 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 		HarderDifficulty( pn );
 		return;
 	}
+	if( CodeDetector::DetectAndAdjustOptions(GameI.controller) )
+	{
+		UpdateOptions( pn );
+	}
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+}
+
+void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn)
+{
+	CString sOptions = GAMESTATE->m_PlayerOptions[pn].GetString();
+	CStringArray asOptions;
+	split( sOptions, ", ", asOptions, true );
+
+	if(asOptions[0] != "1.0X")
+	{
+		m_SpeedIcon[pn].SetDiffuse( RageColor(1,1,1,1) );	
+	}
+	else
+	{
+		m_SpeedIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
+	}
 }
 
 void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )

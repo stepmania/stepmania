@@ -42,6 +42,8 @@ protected:
 	void EasierDifficulty( PlayerNumber pn );
 	void HarderDifficulty( PlayerNumber pn );
 
+	void UpdateOptions( PlayerNumber pn );
+
 	void TweenOffScreen();
 
 	Sprite  m_ChoiceListFrame;
@@ -49,6 +51,7 @@ protected:
 	Sprite  m_Guide;
 	Sprite				m_sprOptionsMessage;
 	Sprite  m_PumpDifficultyCircle;
+	Sprite	m_SpeedIcon[NUM_PLAYERS];
 	BitmapText	m_PumpDifficultyRating;
 	MusicBannerWheel			m_MusicBannerWheel;
 	MenuElements		m_Menu;

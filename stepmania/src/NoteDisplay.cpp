@@ -44,7 +44,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
-	CString sTapPath = GAMEMAN->GetPathTo(iColNum, "tap");
+	CString sTapPath = GAMEMAN->GetPathTo(iColNum, "tap parts");
 	m_sprTap.Load( sTapPath );
 	m_sprTap.StopAnimating();
 	m_sprTap.TurnShadowOff();
