@@ -108,10 +108,10 @@ public:
 	int GetTPF() { return m_iTPF; };
 	int GetDPF() { return m_iDPF; };
 
-	int MaxRefresh(int iWidth, int iHeight) const;
 	void GetHzAtResolution(int width, int height, CArray<int,int> &add) const;
 
 private:
+	int MaxRefresh(int iWidth, int iHeight, D3DFORMAT fmt) const;
 	D3DXMATRIX& GetTopMatrix() { return m_MatrixStack.ElementAt( m_MatrixStack.GetSize()-1 ); };
 
 	HWND m_hWnd;

@@ -96,7 +96,7 @@ RageDisplay::RageDisplay( HWND hWnd )
 	m_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &m_DesktopMode );
 }
 
-int RageDisplay::MaxRefresh(int iWidth, int iHeight) const
+int RageDisplay::MaxRefresh(int iWidth, int iHeight, D3DFORMAT fmt) const
 {
 	UINT mx = D3DPRESENT_RATE_DEFAULT;
 	for( UINT u=0; u<m_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
@@ -107,7 +107,7 @@ int RageDisplay::MaxRefresh(int iWidth, int iHeight) const
 
 		if(mode.Width != iWidth) continue;
 		if(mode.Height != iHeight) continue;
-		/* also test mode.Format? */
+		if(mode.Format != fmt) continue;
 
 		if(mx == D3DPRESENT_RATE_DEFAULT || mode.RefreshRate > mx)
 			mx = mode.RefreshRate;
@@ -160,43 +160,28 @@ bool RageDisplay::SwitchDisplayMode(
 	// If windowed, then dwBPP is ignored.  Use whatever works.
     CArray<D3DFORMAT,D3DFORMAT> arrayBackBufferFormats;		// throw all possibilities in here
 	
-	if( bWindowed )
+	/* When windowed, add all formats; otherwise add only formats that match dwBPP. */
+	if( iBPP == 16 || bWindowed )
 	{
 		arrayBackBufferFormats.Add( D3DFMT_R5G6B5 );
 		arrayBackBufferFormats.Add( D3DFMT_X1R5G5B5 );
 		arrayBackBufferFormats.Add( D3DFMT_A1R5G5B5 );
+	}
+	if( iBPP == 32 || bWindowed )
+	{
 		arrayBackBufferFormats.Add( D3DFMT_R8G8B8 );
 		arrayBackBufferFormats.Add( D3DFMT_X8R8G8B8 );
 		arrayBackBufferFormats.Add( D3DFMT_A8R8G8B8 );
 	}
-	else		// full screen
-	{
-		// add only the formats that match dwBPP
-		switch( iBPP )
-		{
-		case 16:
-			arrayBackBufferFormats.Add( D3DFMT_R5G6B5 );
-			arrayBackBufferFormats.Add( D3DFMT_X1R5G5B5 );
-			arrayBackBufferFormats.Add( D3DFMT_A1R5G5B5 );
-			break;
-		case 32:
-			arrayBackBufferFormats.Add( D3DFMT_R8G8B8 );
-			arrayBackBufferFormats.Add( D3DFMT_X8R8G8B8 );
-			arrayBackBufferFormats.Add( D3DFMT_A8R8G8B8 );
-			break;
-		default:
-			throw RageException( ssprintf("Invalid BPP '%u' specified", iBPP) );
-			return false;
-		}
-	}
-
+	if( !bWindowed && iBPP != 16 && iBPP != 32 )
+		throw RageException( ssprintf("Invalid BPP '%u' specified", iBPP) );
 
 	// Test each back buffer format until we find something that works.
-	D3DFORMAT fmtDisplay;	// fill these in below...
-	D3DFORMAT fmtBackBuffer;
+	D3DFORMAT fmtBackBuffer;	// fill this in below...
 
 	for( int i=0; i < arrayBackBufferFormats.GetSize(); i++ )
 	{
+		D3DFORMAT fmtDisplay;
 		if( bWindowed )
 		{
 			fmtDisplay = m_DesktopMode.Format;
@@ -251,7 +236,7 @@ bool RageDisplay::SwitchDisplayMode(
     m_d3dpp.AutoDepthStencilFormat	=	D3DFMT_D16;
     m_d3dpp.Flags					=	0;
 	m_d3dpp.FullScreen_RefreshRateInHz = bWindowed? D3DPRESENT_RATE_DEFAULT :
-									iFullScreenHz == 0? MaxRefresh(iWidth, iHeight):
+									iFullScreenHz == 0? MaxRefresh(iWidth, iHeight, fmtBackBuffer):
 									iFullScreenHz == 1? D3DPRESENT_RATE_DEFAULT:
 										iFullScreenHz;
 	m_d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
