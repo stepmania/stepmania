@@ -94,8 +94,20 @@ void MenuElements::Load( CString sClassName, bool bEnableTimer, bool bLoadStyleI
 
 	m_soundBack.Load( THEME->GetPathTo("Sounds","Common back") );
 
+	m_bStartedTransitionIn = false;
+}
 
-	m_In.StartTransitioning( SM_None );
+void MenuElements::Update( float fDeltaTime )
+{
+	if(!m_bStartedTransitionIn)
+	{
+		/* Start the transition on the first update, not in the ctor, so
+		 * we don't play a sound while our parent is still loading. */
+		m_bStartedTransitionIn = true;
+		m_In.StartTransitioning( SM_None );
+	}
+
+	ActorFrame::Update(fDeltaTime);
 }
 
 void MenuElements::StartTransitioning( ScreenMessage smSendWhenDone )

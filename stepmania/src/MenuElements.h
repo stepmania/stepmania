@@ -38,6 +38,7 @@ public:
 
 	void StartTransitioning( ScreenMessage smSendWhenDone );
 	void Back( ScreenMessage smSendWhenDone );
+	void Update( float fDeltaTime );
 	bool IsTransitioning();
 
 public:	// let owner tinker with these objects
@@ -57,6 +58,8 @@ public:	// let owner tinker with these objects
 	TransitionBGAnimation	m_Back;
 
 	RageSound m_soundBack;
+
+	bool m_bStartedTransitionIn;
 };
 
 #endif
