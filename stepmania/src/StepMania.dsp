@@ -232,6 +232,14 @@ SOURCE=.\WindowEditMenu.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\WindowEditOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowEditOptions.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\WindowGameOptions.cpp
 # End Source File
 # Begin Source File
