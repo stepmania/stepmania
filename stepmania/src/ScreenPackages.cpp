@@ -598,30 +598,31 @@ void ScreenPackages::HTTPUpdate()
 		int HeaderEnd = m_sBUFFER.find("\n\n");
 		if( HeaderEnd == m_sBUFFER.npos )
 			HeaderEnd = m_sBUFFER.find("\r\n\r\n");
-		if( HeaderEnd != m_sBUFFER.npos )
+		if( HeaderEnd == m_sBUFFER.npos )
+			return;
+
+		size_t i = m_sBUFFER.find(" ");
+		size_t j = m_sBUFFER.find(" ",i+1);
+		size_t k = m_sBUFFER.find("\n",j+1);
+		if ( i == string::npos || j == string::npos || k == string::npos )
 		{
-			int i = m_sBUFFER.find(" ");
-			int j = m_sBUFFER.find(" ",i+1);
-			int k = m_sBUFFER.find("\n",j+1);
-			if ( i == string::npos || j == string::npos || k == string::npos )
-			{
-				m_iResponseCode = -100;
-				m_sResponseName = "Malformed response.";
-			}
-			m_iResponseCode = atoi(m_sBUFFER.substr(i+1,j-i).c_str());
-			m_sResponseName = m_sBUFFER.substr( j+1, k-j).c_str();
-
-			i = m_sBUFFER.find("Content-Length:");
-			j = m_sBUFFER.find("\n", i+1 );
-
-			if( i > 0 )
-				m_iTotalBytes = atoi(m_sBUFFER.substr(i+16,j-i).c_str());
-			else
-				m_iTotalBytes = -1;	//We don't know, so go until disconnect
-
-			m_bGotHeader = true;
-			m_sBUFFER = m_sBUFFER.substr( HeaderEnd + 4 );
+			m_iResponseCode = -100;
+			m_sResponseName = "Malformed response.";
+			return;
 		}
+		m_iResponseCode = atoi(m_sBUFFER.substr(i+1,j-i).c_str());
+		m_sResponseName = m_sBUFFER.substr( j+1, k-j).c_str();
+
+		i = m_sBUFFER.find("Content-Length:");
+		j = m_sBUFFER.find("\n", i+1 );
+
+		if( i > 0 )
+			m_iTotalBytes = atoi(m_sBUFFER.substr(i+16,j-i).c_str());
+		else
+			m_iTotalBytes = -1;	//We don't know, so go until disconnect
+
+		m_bGotHeader = true;
+		m_sBUFFER = m_sBUFFER.substr( HeaderEnd + 4 );
 	}
 	else
 	{
