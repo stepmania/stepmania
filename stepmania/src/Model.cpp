@@ -106,6 +106,16 @@ void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBo
 	ASSERT( m_pGeometry == NULL );
 	m_pGeometry = MODELMAN->LoadMilkshapeAscii( sMeshesPath, this->MaterialsNeedNormals() );
 
+	/* Validate material indices. */
+	for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
+	{
+		const msMesh *pMesh = &m_pGeometry->m_Meshes[i];
+		
+		if( pMesh->nMaterialIndex >= (int) m_Materials.size() )
+			RageException::Throw( "Model \"%s\" mesh \"%s\" references material index %i, but there are only %i materials",
+				sMeshesPath.c_str(), pMesh->szName, pMesh->nMaterialIndex, m_Materials.size() );
+	}
+
 	if( LoadMilkshapeAsciiBones( DEFAULT_ANIMATION_NAME, sBonesPath ) )
 		PlayAnimation( DEFAULT_ANIMATION_NAME );
 
