@@ -61,6 +61,9 @@ static int			g_iFramesRenderedSinceLastCheck,
 set<string> g_glExts;
 static bool g_GL_EXT_texture_env_combine;
 
+typedef BOOL (APIENTRY * PWSWAPINTERVALEXTPROC) (int interval);
+PWSWAPINTERVALEXTPROC wglSwapIntervalEXT;
+
 void GetGLExtensions(set<string> &ext)
 {
     const char *buf = (const char *)glGetString(GL_EXTENSIONS);
@@ -89,6 +92,10 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 		g_GL_EXT_texture_env_combine = true;
 
 	glBlendFuncSeparate = (PFNGLBLENDFUNCSEPARATEPROC) SDL_GL_GetProcAddress ("glBlendFuncSeparate");
+
+	/* Windows vsync: */
+	if(g_glExts.find("WGL_EXT_swap_control") != g_glExts.end())
+	    wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) SDL_GL_GetProcAddress("wglSwapIntervalEXT");
 
 	SetupOpenGL();
 }
@@ -171,6 +178,11 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 		TEXTUREMAN->InvalidateTextures();
 	}
 #endif
+
+	/* Set vsync the Windows way, if we can.  (What other extensions are there
+	 * to do this, for other archs?) */
+	if(wglSwapIntervalEXT)
+	    wglSwapIntervalEXT(vsync);
 
 	if(!g_screen) {
 		g_screen = SDL_SetVideoMode(width, height, bpp, g_flags);
