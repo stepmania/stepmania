@@ -62,7 +62,7 @@ void ListDisplay::Load(
 	m_fSecondsPerItem = fSecondsPerItem; 
 	m_fSecondsPauseBetweenItems = fSecondsPauseBetweenItems;
 	m_bSlide = bSlide;
-	m_fItemAtTopOfList = m_bLoop ? 0 : -m_iNumItemsToShow;
+	m_fItemAtTopOfList = m_bLoop ? 0 : (float)-m_iNumItemsToShow;
 	m_fSecondsPauseCountdown = 0;
 
 	RectF rectBarSize(-m_fItemWidth/2, -m_fItemHeight/2,
@@ -73,7 +73,7 @@ void ListDisplay::Load(
 
 float ListDisplay::GetSecondsForCompleteScrollThrough()
 {
-	float fTotalItems = m_iNumItemsToShow + m_SubActors.size();
+	int fTotalItems = m_iNumItemsToShow + m_SubActors.size();
 	return fTotalItems * (m_fSecondsPerItem + m_fSecondsPauseBetweenItems );
 }
 
@@ -113,7 +113,7 @@ void ListDisplay::Update( float fDeltaTime )
 		}
 
 		if( m_bLoop )
-			wrap( m_fItemAtTopOfList, m_SubActors.size() );
+			m_fItemAtTopOfList = fmodf( m_fItemAtTopOfList, (float) m_SubActors.size() );
 	}
 }
 
@@ -140,7 +140,7 @@ void ListDisplay::DrawPrimitives()
 
 	for( int i=0; i<m_iNumItemsToShow+1; i++ )
 	{
-		if( iItemToDraw >= 0 && iItemToDraw < m_SubActors.size() )
+		if( iItemToDraw >= 0 && iItemToDraw < (int) m_SubActors.size() )
 		{			
 			float fX = 0;
 			if( m_bSlide && fIndex>fIndexFullyOnScreenBottom-1 )
