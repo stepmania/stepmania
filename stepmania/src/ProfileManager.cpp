@@ -106,6 +106,9 @@ void ProfileManager::UnloadProfile( PlayerNumber pn )
 	//
 	SONGMAN->SaveNoteScoresToFile( m_sProfileDir[pn]+NOTES_SCORES_FILE, (MemoryCard)pn );
 	SONGMAN->SaveCourseScoresToFile( m_sProfileDir[pn]+COURSE_SCORES_FILE, (MemoryCard)pn );
+
+	// clear out the displayname and highscore name when we unload the profile.
+	m_Profile[pn].Init();
 }
 
 CString ProfileManager::GetDisplayName( PlayerNumber pn )
