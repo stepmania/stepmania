@@ -186,7 +186,7 @@ bool RageSound_Generic_Software::GetDataForSound( sound &s )
 	RAGE_ASSERT_M( psize[0] > 0, ssprintf("%i", (int)s.frames_buffered()) );
 
 	sound_block *b = p[0];
-	bool eof = !s.snd->GetDataToPlay( b->buf, ARRAYSIZE(b->buf), b->position, b->frames_in_buffer );
+	bool eof = !s.snd->GetDataToPlay( b->buf, ARRAYSIZE(b->buf)/channels, b->position, b->frames_in_buffer );
 	b->p = b->buf;
 
 	s.buffer.advance_write_pointer( 1 );
