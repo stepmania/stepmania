@@ -1,4 +1,4 @@
-/* ThemeManager - Manages which graphics and sounds are loaded.  Every time a sound or graphic is loaded, it gets the path from the ThemeManager. */
+/* ThemeManager - Manages theme paths and metrics. */
 
 #ifndef THEMEMANAGER_H
 #define THEMEMANAGER_H
