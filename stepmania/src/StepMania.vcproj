@@ -2525,9 +2525,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					RelativePath="crypto51\iterhash.h">
 				</File>
 				<File
-					RelativePath="crypto51\mdc.h">
-				</File>
-				<File
 					RelativePath="crypto51\misc.cpp">
 				</File>
 				<File
@@ -2535,12 +2532,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				</File>
 				<File
 					RelativePath="crypto51\modarith.h">
-				</File>
-				<File
-					RelativePath="crypto51\modes.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\modes.h">
 				</File>
 				<File
 					RelativePath="crypto51\mqueue.cpp">
@@ -2585,12 +2576,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					RelativePath="crypto51\queue.h">
 				</File>
 				<File
-					RelativePath="crypto51\randpool.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\randpool.h">
-				</File>
-				<File
 					RelativePath="crypto51\rng.h">
 				</File>
 				<File
@@ -2616,12 +2601,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				</File>
 				<File
 					RelativePath="crypto51\smartptr.h">
-				</File>
-				<File
-					RelativePath="crypto51\strciphr.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\strciphr.h">
 				</File>
 				<File
 					RelativePath="crypto51\words.h">

@@ -210,7 +210,7 @@ ScrollingList.cpp ScrollingList.h SongCreditDisplay.cpp SongCreditDisplay.h Snap
 TextBanner.cpp TextBanner.h WheelNotifyIcon.cpp WheelNotifyIcon.h
 
 ActorsInGameplay = \
-ArrowBackdrop.cpp ArrowBackdrop.h ArrowEffects.cpp ArrowEffects.h AttackDisplay.cpp AttackDisplay.h \
+ArrowEffects.cpp ArrowEffects.h AttackDisplay.cpp AttackDisplay.h \
 Background.cpp Background.h BeginnerHelper.cpp BeginnerHelper.h CombinedLifeMeterTug.cpp CombinedLifeMeterTug.h \
 Combo.cpp Combo.h DancingCharacters.cpp DancingCharacters.h Foreground.cpp Foreground.h GhostArrow.cpp GhostArrow.h \
 GhostArrowRow.cpp GhostArrowRow.h HoldGhostArrow.cpp HoldGhostArrow.h HoldJudgment.cpp HoldJudgment.h \
@@ -290,12 +290,12 @@ cryptopp = \
 crypto51/algebra.cpp crypto51/algebra.h crypto51/algparam.cpp crypto51/algparam.h crypto51/argnames.h \
 crypto51/asn.cpp crypto51/asn.h crypto51/config.h crypto51/cryptlib.cpp crypto51/cryptlib.h crypto51/files.cpp \
 crypto51/files.h crypto51/filters.cpp crypto51/filters.h crypto51/fltrimpl.h crypto51/integer.cpp crypto51/integer.h \
-crypto51/iterhash.cpp crypto51/iterhash.h crypto51/mdc.h crypto51/misc.cpp crypto51/misc.h crypto51/modarith.h \
-crypto51/modes.cpp crypto51/modes.h crypto51/mqueue.cpp crypto51/mqueue.h crypto51/nbtheory.cpp crypto51/nbtheory.h \
+crypto51/iterhash.cpp crypto51/iterhash.h crypto51/misc.cpp crypto51/misc.h crypto51/modarith.h \
+crypto51/mqueue.cpp crypto51/mqueue.h crypto51/nbtheory.cpp crypto51/nbtheory.h \
 crypto51/oids.h crypto51/osrng.cpp crypto51/osrng.h crypto51/pch.h crypto51/pkcspad.cpp \
-crypto51/pkcspad.h crypto51/pubkey.cpp crypto51/pubkey.h crypto51/queue.cpp crypto51/queue.h crypto51/randpool.cpp \
-crypto51/randpool.h crypto51/rsa.cpp crypto51/rsa.h crypto51/secblock.h crypto51/seckey.h crypto51/sha.cpp \
-crypto51/sha.h crypto51/simple.h crypto51/smartptr.h crypto51/strciphr.cpp crypto51/strciphr.h crypto51/words.h \
+crypto51/pkcspad.h crypto51/pubkey.cpp crypto51/pubkey.h crypto51/queue.cpp crypto51/queue.h \
+crypto51/rsa.cpp crypto51/rsa.h crypto51/secblock.h crypto51/seckey.h crypto51/sha.cpp \
+crypto51/sha.h crypto51/simple.h crypto51/smartptr.h crypto51/words.h \
 CryptHelpers.cpp CryptHelpers.h
 
 main_SOURCES = $(Screens) \
