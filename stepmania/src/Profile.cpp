@@ -246,13 +246,13 @@ int Profile::GetActualSongDancePointsForStepsType( StepsType st ) const
 			SongID id = i->first;
 			Song* pSong = id.ToSong();
 			
-			if( pSong->m_SelectionDisplay == Song::SHOW_NEVER )
-				continue;	// skip
-
 			// If the Song isn't loaded on the current machine, then we can't 
 			// get radar values to compute dance points.
 			if( pSong == NULL )
 				continue;
+
+			if( pSong->m_SelectionDisplay == Song::SHOW_NEVER )
+				continue;	// skip
 
 			const HighScoresForASong &hsfas = i->second;
 
