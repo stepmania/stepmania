@@ -907,14 +907,12 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 		else
 			m_soundDifficultyHarder.Play();
 
+		FOREACH_HumanPlayer( p )
 		{
-			FOREACH_HumanPlayer( p )
+			if( pn == p || GAMESTATE->DifficultiesLocked() )
 			{
-				if( pn == p || GAMESTATE->DifficultiesLocked() )
-				{
-					m_iSelection[p] = m_iSelection[pn];
-					AfterNotesChange( p );
-				}
+				m_iSelection[p] = m_iSelection[pn];
+				AfterNotesChange( p );
 			}
 		}
 		break;
@@ -940,6 +938,15 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 			else
 				m_soundDifficultyHarder.Play();
 			AfterMusicChange();
+
+			FOREACH_HumanPlayer( p )
+			{
+				if( pn == p || GAMESTATE->DifficultiesLocked() )
+				{
+					m_iSelection[p] = m_iSelection[pn];
+					AfterNotesChange( p );
+				}
+			}
 		}
 		break;
 	}

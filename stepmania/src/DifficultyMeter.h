@@ -28,6 +28,8 @@ public:
 
 	void Load();
 	void SetFromGameState( PlayerNumber pn );
+	void SetFromDifficulty( Difficulty dc );
+	void SetFromCourseDifficulty( CourseDifficulty cd );
 	void SetFromNotes( const Steps* pNotes );
 	void SetFromCourse( const Course* pCourse, PlayerNumber pn );
 	void Unset();

@@ -145,14 +145,42 @@ void DifficultyMeter::Unset()
 	SetDifficulty( "None" );
 }
 
+void DifficultyMeter::SetFromDifficulty( Difficulty dc )
+{
+	m_textFeet.SetEffectNone();
+	if( FEET_IS_DIFFICULTY_COLOR )
+		m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
+	SetMeter( 0, DIFFICULTY_BEGINNER );
+	SetDifficulty( DifficultyToString( dc ) );
+}
+
+void DifficultyMeter::SetFromCourseDifficulty( CourseDifficulty cd )
+{
+	m_textFeet.SetEffectNone();
+	if( FEET_IS_DIFFICULTY_COLOR )
+		m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
+	SetMeter( 0, DIFFICULTY_BEGINNER );
+	SetDifficulty( CourseDifficultyToString( cd ) );
+}
+
 void DifficultyMeter::SetFromGameState( PlayerNumber pn )
 {
-	if( GAMESTATE->m_pCurNotes[pn] )
-		SetFromNotes( GAMESTATE->m_pCurNotes[pn] );
-	else if( GAMESTATE->m_pCurCourse )
-		SetFromCourse( GAMESTATE->m_pCurCourse, pn );
+	if( GAMESTATE->IsCourseMode() )
+	{
+		Course* pCourse = GAMESTATE->m_pCurCourse;
+		if( pCourse )
+			SetFromCourse( pCourse, pn );
+		else
+			SetFromCourseDifficulty( GAMESTATE->m_PreferredCourseDifficulty[pn] );
+	}
 	else
-		Unset();
+	{
+		Steps* pSteps = GAMESTATE->m_pCurNotes[pn];
+		if( pSteps )
+			SetFromNotes( pSteps );
+		else
+			SetFromDifficulty( GAMESTATE->m_PreferredDifficulty[pn] );
+	}
 }
 
 void DifficultyMeter::SetMeter( int iMeter, Difficulty dc )
