@@ -125,14 +125,12 @@ RageLog::RageLog()
 
 	time_t cur_time;
 	time(&cur_time);
-	const struct tm *now = localtime(&cur_time);
+	struct tm now;
+	localtime_r( &cur_time, &now );
 
-	if ( now )
-	{
-		this->Info( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
-			1900+now->tm_year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec );
-		this->Trace( " " );
-	}
+	this->Info( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
+		1900+now.tm_year, now.tm_mon+1, now.tm_mday, now.tm_hour+1, now.tm_min, now.tm_sec );
+	this->Trace( " " );
 }
 
 RageLog::~RageLog()
