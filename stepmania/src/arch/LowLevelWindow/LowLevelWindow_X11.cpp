@@ -17,9 +17,11 @@ extern Display *g_X11Display;
 LowLevelWindow_X11::LowLevelWindow_X11()
 {
 	g_X11Display = NULL;
-	if(!X11Helper::Go() ) { RageException::Throw("Failed to establish a connection with the X server."); }
+	if(!X11Helper::Go() )
+	{
+		RageException::Throw("Failed to establish a connection with the X server.");
+	}
 	g_X11Display = X11Helper::Dpy();
-	LOG->Trace("LowLevelWindow_X11 init");
 }
 
 LowLevelWindow_X11::~LowLevelWindow_X11()
@@ -51,6 +53,8 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 	hints.min_width = hints.max_width = hints.base_width = p.width;
 	hints.min_height = hints.max_height = hints.base_height = p.height;
 
+	X11Helper::OpenMask(StructureNotifyMask);
+
 	if(!windowIsOpen || p.bpp != CurrentParams.bpp)
 	{
 		// Different depth, or we didn't make a window before. New context.
@@ -71,44 +75,60 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 		xvi = glXChooseVisual(X11Helper::Dpy(),
 				DefaultScreen(X11Helper::Dpy() ), visAttribs);
 
-		if(!xvi) { return "No visual available for that depth."; }
-
-		X11Helper::OpenMask(StructureNotifyMask);
+		if(!xvi)
+		{
+			return "No visual available for that depth.";
+		}
 
 		if(!X11Helper::MakeWindow(xvi->screen, xvi->depth, xvi->visual,
 							p.width, p.height) )
-			{ return "Failed to create the window."; }
+		{
+			return "Failed to create the window.";
+		}
+		windowIsOpen = true;
 
 		ctxt = glXCreateContext(X11Helper::Dpy(), xvi, NULL, True);
 
 		glXMakeCurrent(X11Helper::Dpy(), X11Helper::Win(), ctxt);
 
-		XMapWindow(X11Helper::Dpy(), X11Helper::Win() );
-
-		// HACK: Wait for the MapNotify event, without spinning and
-		// eating CPU unnecessarily, and without smothering other
-		// events. Do this by grabbing all events, remembering
-		// uninteresting events, and putting them back on the queue
-		// after MapNotify arrives.
-		while(true)
-		{
-			XNextEvent(X11Helper::Dpy(), &ev);
-			if(ev.type == MapNotify) { break; }
-			else
-			{ otherEvs.push(ev); }
-		}
-		while(!otherEvs.empty() )
-		{
-			XPutBackEvent(X11Helper::Dpy(), &otherEvs.top() );
-			otherEvs.pop();
-		}
-
-		X11Helper::CloseMask(StructureNotifyMask);
-
-		windowIsOpen = true;
-	} else { bNewDeviceOut = false; }
+	}
+	else
+	{
+		// We're remodeling the existing window, and not touching the
+		// context.
+		bNewDeviceOut = false;
+		// Remap the window to work around possible buggy WMs and/or X servers
+		XUnmapWindow(X11Helper::Dpy(), X11Helper::Win() );
+	}
 
 	XSetWMNormalHints(X11Helper::Dpy(), X11Helper::Win(), &hints);
+
+	XMapWindow(X11Helper::Dpy(), X11Helper::Win() );
+
+	// HACK: Wait for the MapNotify event, without spinning and
+	// eating CPU unnecessarily, and without smothering other
+	// events. Do this by grabbing all events, remembering
+	// uninteresting events, and putting them back on the queue
+	// after MapNotify arrives.
+	while(true)
+	{
+		XNextEvent(X11Helper::Dpy(), &ev);
+		if(ev.type == MapNotify)
+		{
+			break;
+		}
+		else
+		{
+			otherEvs.push(ev);
+		}
+	}
+	while(!otherEvs.empty() )
+	{
+		XPutBackEvent(X11Helper::Dpy(), &otherEvs.top() );
+		otherEvs.pop();
+	}
+
+	X11Helper::CloseMask(StructureNotifyMask);
 
 	return ""; // Success
 }
@@ -116,12 +136,6 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 void LowLevelWindow_X11::SwapBuffers()
 {
 	glXSwapBuffers(X11Helper::Dpy(), X11Helper::Win() );
-}
-
-void LowLevelWindow_X11::Update(float fDeltaTime)
-{
-	// XXX: Handle close events, connection lost events, etc.
-	return;
 }
 
 /*
