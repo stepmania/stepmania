@@ -111,3 +111,11 @@ void Banner::LoadRoulette()
 	Load( ID );
 	m_bScrolling = true;
 }
+
+void Banner::LoadRandom()
+{
+	RageTextureID ID(THEME->GetPathTo("Graphics","Banner random"));
+	ID.iMipMaps = 0;
+	Load( ID );
+	m_bScrolling = true;
+}

@@ -31,6 +31,7 @@ public:
 	void LoadFromGroup( CString sGroupName );
 	void LoadFromCourse( Course* pCourse );
 	void LoadRoulette();
+	void LoadRandom();
 	void LoadFallback();
 
 	void SetScrolling( bool bScroll, float Percent = 0);

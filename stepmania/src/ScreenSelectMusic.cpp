@@ -926,6 +926,14 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_BPMDisplay.SetBPMRange( 0, 0 );
 		m_sprCDTitle.UnloadTexture();
 		break;
+	case TYPE_RANDOM:
+		if(!no_banner_change)
+			m_Banner.LoadRandom();
+		m_BPMDisplay.SetBPMRange( 0, 0 );
+		m_sprCDTitle.UnloadTexture();
+		break;
+	default:
+		ASSERT(0);
 	}
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
