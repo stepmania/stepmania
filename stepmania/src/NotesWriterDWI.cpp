@@ -345,7 +345,7 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 {
 	RageFile f;
 	if( !f.Open( sPath, RageFile::WRITE ) )
-		RageException::Throw( "Error opening song file '%s' for writing.", f.GetError().c_str() );
+		RageException::Throw( "Error opening song file \"%s\" for writing: \"%s\"", sPath.c_str(), f.GetError().c_str() );
 
 	/* Write transliterations, if we have them, since DWI doesn't support UTF-8. */
 	f.PutLine( ssprintf("#TITLE:%s;", out.GetFullTranslitTitle().c_str()) );
