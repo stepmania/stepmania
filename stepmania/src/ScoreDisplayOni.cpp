@@ -45,7 +45,8 @@ void ScoreDisplayOni::Update( float fDelta )
 
 	float fSecsIntoPlay;
 	if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
-		fSecsIntoPlay = GAMESTATE->m_CurStageStats.fAliveSeconds[m_PlayerNumber];
+		// cure: multiplied by music rate to adjust timer
+		fSecsIntoPlay = GAMESTATE->m_CurStageStats.fAliveSeconds[m_PlayerNumber] * GAMESTATE->m_SongOptions.m_fMusicRate;
 	else
 		fSecsIntoPlay = 0;
 
