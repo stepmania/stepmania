@@ -56,7 +56,7 @@ public:
 	void RemoveHoldNote( int index );
 
 	// statistics
-	bool IsThereANoteAtRow( int iRow );
+	bool IsThereANoteAtRow( int iRow ) const;
 
 	float GetFirstBeat();	// return the beat number of the first note
 	int GetFirstRow();

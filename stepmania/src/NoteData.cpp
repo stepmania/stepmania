@@ -237,7 +237,7 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 	m_iNumHoldNotes--;
 }
 
-bool NoteData::IsThereANoteAtRow( int iRow )
+bool NoteData::IsThereANoteAtRow( int iRow ) const
 {
 	for( int t=0; t<m_iNumTracks; t++ )
 		if( m_TapNotes[t][iRow] != '0' )
@@ -885,11 +885,15 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 		if( r % (ROWS_PER_MEASURE*4) == 0 )	// adjust sliding window every 4 measures
 		{
 			// See if there is a hold crossing the beginning of this measure
-			pOriginal->Convert4sToHoldNotes();
 			bool bHoldCrossesThisMeasure = false;
+#if 0
+			pOriginal->Convert4sToHoldNotes();
 			for( int i=0; i<pOriginal->m_iNumHoldNotes; i++ )
 			{
 				const HoldNote& hn = pOriginal->m_HoldNotes[i];
+				/* Bug here: NoteRowToBeat() may have floating point error,
+				 * so we need to do an epsilon here.  But we can do this in
+				 * 4s easier anyway ... */
 				if( hn.m_fStartBeat < NoteRowToBeat(r)  &&  hn.m_fEndBeat > NoteRowToBeat(r) )
 				{
 					bHoldCrossesThisMeasure = true;
@@ -897,7 +901,19 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 				}
 			}
 			pOriginal->ConvertHoldNotesTo4s();
-			
+#endif
+
+			if( r )
+			for( int t=0; t<=pOriginal->m_iNumTracks; t++ )
+			{
+				if( pOriginal->m_TapNotes[t][r] == '4' &&
+					pOriginal->m_TapNotes[t][r-1] == '4')
+				{
+					bHoldCrossesThisMeasure = true;
+					break;
+				}
+			}
+
 			// adjust offset
 			if( !bHoldCrossesThisMeasure )
 			{
