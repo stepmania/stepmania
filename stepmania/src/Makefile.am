@@ -164,10 +164,6 @@ Sound_Null = \
 	arch/Sound/RageSoundDriver_Null.cpp \
 	arch/Sound/RageSoundDriver_Null.h
 
-Sound_SDL = \
-    arch/Sound/RageSoundDriver_SDL.cpp \
-    arch/Sound/RageSoundDriver_SDL.h
-
 Sound = $(Sound_Null)
 if ALSA
 Sound += $(Sound_ALSA9)
@@ -175,7 +171,6 @@ endif
 if HAVE_OSS
 Sound += $(Sound_OSS)
 endif
-Sound += $(Sound_SDL)
 
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
 		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \
