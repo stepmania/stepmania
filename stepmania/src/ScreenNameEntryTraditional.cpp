@@ -195,11 +195,25 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		m_textSelection[p].LoadFromFont( THEME->GetPathToF("ScreenNameEntryTraditional entry") );
 		SET_XY_AND_ON_COMMAND( m_textSelection[p] );
 		this->AddChild( &m_textSelection[p] );
-		UpdateSelectionText( p );
 
 		m_SelectedChar[p] = 0;
-
 		PositionCharsAndCursor( p );
+
+		// load last used ranking name if any
+		const Profile* pProfile = PROFILEMAN->GetProfile((PlayerNumber)p);
+		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
+		{
+			m_sSelection[p] = CStringToWstring( pProfile->m_sLastUsedHighScoreName );
+			if( (int) m_sSelection[p].size() > MAX_RANKING_NAME_LENGTH )
+				m_sSelection[p].erase( MAX_RANKING_NAME_LENGTH );
+			ASSERT( (int) m_sSelection[p].size() <= MAX_RANKING_NAME_LENGTH );
+			if( m_sSelection[p].size() )
+				SelectChar( (PlayerNumber) p, CHAR_OK );
+		}
+
+		UpdateSelectionText( p );
+
+		/* Don't tween to the initial position. */
 		unsigned i;
 		for( i = 0; i < m_textAlphabet[p].size(); ++i )
 			m_textAlphabet[p][i]->FinishTweening();
@@ -482,14 +496,17 @@ void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventTyp
 
 		/* If that filled the string, set the cursor on OK. */
 		if( (int) m_sSelection[pn].size() == MAX_RANKING_NAME_LENGTH )
-		{
-			m_SelectedChar[pn] = 0;
-			while( m_AlphabetLetter[pn][m_SelectedChar[pn]] != CHAR_OK )
-				++m_SelectedChar[pn];
-			ASSERT( m_AlphabetLetter[pn][m_SelectedChar[pn]] == CHAR_OK );
-			PositionCharsAndCursor( pn );
-		}
+			SelectChar( pn, CHAR_OK );
 	}
+}
+
+void ScreenNameEntryTraditional::SelectChar( PlayerNumber pn, int c )
+{
+	m_SelectedChar[pn] = 0;
+	while( m_AlphabetLetter[pn][m_SelectedChar[pn]] != CHAR_OK )
+		++m_SelectedChar[pn];
+	ASSERT( m_AlphabetLetter[pn][m_SelectedChar[pn]] == CHAR_OK );
+	PositionCharsAndCursor( pn );
 }
 
 void ScreenNameEntryTraditional::MenuLeft( PlayerNumber pn, const InputEventType type )

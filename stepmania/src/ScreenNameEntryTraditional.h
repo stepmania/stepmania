@@ -38,6 +38,7 @@ private:
 	void Finish( PlayerNumber pn );
 	void UpdateSelectionText( int pn );
 	void ChangeDisplayedFeat();
+	void SelectChar( PlayerNumber pn, int c );
 
 	int				m_NumFeats[NUM_PLAYERS], m_CurFeat[NUM_PLAYERS];
 
