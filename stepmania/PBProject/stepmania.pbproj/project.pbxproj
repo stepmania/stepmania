@@ -547,6 +547,8 @@
 				AA53D28F05277DAF00D02EE9,
 				AAD6201C0528FA5E00D02EE9,
 				AAD620410529EF6100D02EE9,
+				AAD620A8052EC78B00D02EE9,
+				AA6DAF0B05300B3D00D02EE9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -807,6 +809,8 @@
 				AAD6201B0528FA5E00D02EE9,
 				AAD6203F0529A09F00D02EE9,
 				AAD620400529EF6100D02EE9,
+				AAD620A7052EC78B00D02EE9,
+				AA6DAF0A05300B3D00D02EE9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2013,6 +2017,32 @@
 			settings = {
 			};
 		};
+		AA6DAF0805300B3D00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = ScoreDisplayPercentage.cpp;
+			path = ../src/ScoreDisplayPercentage.cpp;
+			refType = 4;
+		};
+		AA6DAF0905300B3D00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = ScoreDisplayPercentage.h;
+			path = ../src/ScoreDisplayPercentage.h;
+			refType = 4;
+		};
+		AA6DAF0A05300B3D00D02EE9 = {
+			fileRef = AA6DAF0805300B3D00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA6DAF0B05300B3D00D02EE9 = {
+			fileRef = AA6DAF0905300B3D00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AA6E000004770FFD005F316C = {
 			fileRef = AA6EFFBB04770FFD005F316C;
 			isa = PBXBuildFile;
@@ -2073,14 +2103,8 @@
 				AA6E000B047711F3005F316C,
 				AA6E000C047711F3005F316C,
 				AA6E000D047711F3005F316C,
-				AA6E000E047711F3005F316C,
-				AA6E000F047711F3005F316C,
 				AA6E0010047711F3005F316C,
 				AA6E0011047711F3005F316C,
-				AA6E0012047711F3005F316C,
-				AA6E0013047711F3005F316C,
-				AA6E0014047711F3005F316C,
-				AA6E0015047711F3005F316C,
 				AA6E0016047711F3005F316C,
 				AA6E0017047711F3005F316C,
 				AA6E0018047711F3005F316C,
@@ -2109,14 +2133,10 @@
 				AA6E0028047711F3005F316C,
 				AA6E0029047711F3005F316C,
 				AA6E002A047711F3005F316C,
-				AA6E002B047711F3005F316C,
-				AA6E002C047711F3005F316C,
 				AA6E002D047711F3005F316C,
 				AA6E002E047711F3005F316C,
 				AA6E002F047711F3005F316C,
 				AA6E0030047711F3005F316C,
-				AA6E0031047711F3005F316C,
-				AA6E0032047711F3005F316C,
 				AA6E0033047711F3005F316C,
 				AA6E0034047711F3005F316C,
 				AA6E0035047711F3005F316C,
@@ -2127,8 +2147,6 @@
 				AA6E003A047711F3005F316C,
 				AA6E003B047711F3005F316C,
 				AA6E003C047711F3005F316C,
-				AA6E003D047711F3005F316C,
-				AA6E003E047711F3005F316C,
 				AA6E0041047711F3005F316C,
 				AA6E0042047711F3005F316C,
 				AA6E0043047711F3005F316C,
@@ -2145,8 +2163,6 @@
 				AA53D28505277DAF00D02EE9,
 				AA53D28605277DAF00D02EE9,
 				AA53D28705277DAF00D02EE9,
-				AA6E004D047711F3005F316C,
-				AA6E004E047711F3005F316C,
 				AA6E004F047711F3005F316C,
 				AA6E0050047711F3005F316C,
 				AA1C6552050D23200073A143,
@@ -2171,8 +2187,6 @@
 				AA6E0060047711F3005F316C,
 				AA6E0061047711F3005F316C,
 				AA6E0062047711F3005F316C,
-				AA6E0063047711F3005F316C,
-				AA6E0064047711F3005F316C,
 				AA6E0065047711F3005F316C,
 				AA6E0066047711F3005F316C,
 				AA1DC47404A4861700D02EE9,
@@ -2185,8 +2199,6 @@
 				AA6E006C047711F3005F316C,
 				AA6E006F047711F3005F316C,
 				AA6E0070047711F3005F316C,
-				AA6E0071047711F3005F316C,
-				AA6E0072047711F3005F316C,
 				AA6E0073047711F3005F316C,
 				AA6E0074047711F3005F316C,
 				AA6E0075047711F3005F316C,
@@ -2250,26 +2262,6 @@
 			tabWidth = 4;
 			usesTabs = 1;
 		};
-		AA6E000E047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenAppearanceOptions.cpp;
-			path = ../src/ScreenAppearanceOptions.cpp;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E000F047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenAppearanceOptions.h;
-			path = ../src/ScreenAppearanceOptions.h;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
 		AA6E0010047711F3005F316C = {
 			fileEncoding = 30;
 			indentWidth = 4;
@@ -2286,46 +2278,6 @@
 			isa = PBXFileReference;
 			name = ScreenAttract.h;
 			path = ../src/ScreenAttract.h;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E0012047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenAutogenOptions.cpp;
-			path = ../src/ScreenAutogenOptions.cpp;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E0013047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenAutogenOptions.h;
-			path = ../src/ScreenAutogenOptions.h;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E0014047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenBackgroundOptions.cpp;
-			path = ../src/ScreenBackgroundOptions.cpp;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E0015047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenBackgroundOptions.h;
-			path = ../src/ScreenBackgroundOptions.h;
 			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
@@ -2540,26 +2492,6 @@
 			tabWidth = 4;
 			usesTabs = 1;
 		};
-		AA6E002B047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenGameplayOptions.cpp;
-			path = ../src/ScreenGameplayOptions.cpp;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E002C047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenGameplayOptions.h;
-			path = ../src/ScreenGameplayOptions.h;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
 		AA6E002D047711F3005F316C = {
 			fileEncoding = 30;
 			indentWidth = 4;
@@ -2596,26 +2528,6 @@
 			isa = PBXFileReference;
 			name = ScreenHowToPlay.h;
 			path = ../src/ScreenHowToPlay.h;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E0031047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenInputOptions.cpp;
-			path = ../src/ScreenInputOptions.cpp;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E0032047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenInputOptions.h;
-			path = ../src/ScreenInputOptions.h;
 			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
@@ -2716,26 +2628,6 @@
 			isa = PBXFileReference;
 			name = ScreenLogo.h;
 			path = ../src/ScreenLogo.h;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E003D047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenMachineOptions.cpp;
-			path = ../src/ScreenMachineOptions.cpp;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E003E047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenMachineOptions.h;
-			path = ../src/ScreenMachineOptions.h;
 			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
@@ -2876,26 +2768,6 @@
 			isa = PBXFileReference;
 			name = ScreenOptions.h;
 			path = ../src/ScreenOptions.h;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E004D047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenOptionsMenu.cpp;
-			path = ../src/ScreenOptionsMenu.cpp;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E004E047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenOptionsMenu.h;
-			path = ../src/ScreenOptionsMenu.h;
 			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
@@ -3100,26 +2972,6 @@
 			tabWidth = 4;
 			usesTabs = 1;
 		};
-		AA6E0063047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenSelectGame.cpp;
-			path = ../src/ScreenSelectGame.cpp;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E0064047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenSelectGame.h;
-			path = ../src/ScreenSelectGame.h;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
 		AA6E0065047711F3005F316C = {
 			fileEncoding = 30;
 			indentWidth = 4;
@@ -3216,26 +3068,6 @@
 			isa = PBXFileReference;
 			name = ScreenSongOptions.h;
 			path = ../src/ScreenSongOptions.h;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E0071047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenSoundOptions.cpp;
-			path = ../src/ScreenSoundOptions.cpp;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E0072047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenSoundOptions.h;
-			path = ../src/ScreenSoundOptions.h;
 			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
@@ -6708,8 +6540,8 @@
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenDimensions.h;
-			path = /Users/steve/stepmania/src/ScreenDimensions.h;
-			refType = 0;
+			path = ../src/ScreenDimensions.h;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7900,6 +7732,8 @@
 				AA6EFF2404770F63005F316C,
 				AAABAD3904F0E12B00D02EE9,
 				AAABAD3A04F0E12B00D02EE9,
+				AAD620A5052EC78B00D02EE9,
+				AAD620A6052EC78B00D02EE9,
 				AA0E393304DA8EE700D02EE9,
 				AA0E393404DA8EE700D02EE9,
 				AA6EFF2504770F63005F316C,
@@ -7910,6 +7744,8 @@
 				AA6EFF2A04770F63005F316C,
 				AA6EFF2B04770F63005F316C,
 				AA6EFF2C04770F63005F316C,
+				AA6DAF0805300B3D00D02EE9,
+				AA6DAF0905300B3D00D02EE9,
 				AA6EFF2D04770F63005F316C,
 				AA6EFF2E04770F63005F316C,
 				AA6EFF3004770F63005F316C,
@@ -10230,15 +10066,15 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenEndlessBreak.cpp;
-			path = /Users/steve/stepmania/src/ScreenEndlessBreak.cpp;
-			refType = 0;
+			path = ../src/ScreenEndlessBreak.cpp;
+			refType = 4;
 		};
 		AAD6201E0528FAAB00D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenEndlessBreak.h;
-			path = /Users/steve/stepmania/src/ScreenEndlessBreak.h;
-			refType = 0;
+			path = ../src/ScreenEndlessBreak.h;
+			refType = 4;
 		};
 		AAD6203F0529A09F00D02EE9 = {
 			fileRef = AA6E0033047711F3005F316C;
@@ -10254,6 +10090,32 @@
 		};
 		AAD620410529EF6100D02EE9 = {
 			fileRef = AA6E0030047711F3005F316C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAD620A5052EC78B00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = PercentageDisplay.cpp;
+			path = ../src/PercentageDisplay.cpp;
+			refType = 4;
+		};
+		AAD620A6052EC78B00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = PercentageDisplay.h;
+			path = ../src/PercentageDisplay.h;
+			refType = 4;
+		};
+		AAD620A7052EC78B00D02EE9 = {
+			fileRef = AAD620A5052EC78B00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAD620A8052EC78B00D02EE9 = {
+			fileRef = AAD620A6052EC78B00D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
