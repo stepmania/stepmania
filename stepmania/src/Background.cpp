@@ -213,8 +213,11 @@ Actor *Background::CreateSongBGA( CString sBGName ) const
 	return NULL;
 }
 
-CString Background::CreateRandomBGA()
+CString Background::CreateRandomBGA( CString sPreferredSubDir )
 {
+	if( sPreferredSubDir.Right(1) != "/" )
+		sPreferredSubDir += '/';
+
 	if( PREFSMAN->m_iBackgroundMode == PrefsManager::BGMODE_OFF )
 		return "";
 
@@ -230,33 +233,42 @@ CString Background::CreateRandomBGA()
 	}
 
 	CStringArray arrayPaths;
-	switch( PREFSMAN->m_iBackgroundMode )
+	for( int i=0; i<2; i++ )
 	{
-	default:
-		FAIL_M( ssprintf("Invalid BackgroundMode: %i", (int)PREFSMAN->m_iBackgroundMode) );
-		break;
+		switch( PREFSMAN->m_iBackgroundMode )
+		{
+		default:
+			FAIL_M( ssprintf("Invalid BackgroundMode: %i", (int)PREFSMAN->m_iBackgroundMode) );
+			break;
 
-	case PrefsManager::BGMODE_ANIMATIONS:
-		GetDirListing( BG_ANIMS_DIR+"*", arrayPaths, true, true );
-		break;
+		case PrefsManager::BGMODE_ANIMATIONS:
+			GetDirListing( BG_ANIMS_DIR + sPreferredSubDir + "*", arrayPaths, true, true );
+			break;
 
-	case PrefsManager::BGMODE_MOVIEVIS:
-		GetDirListing( VISUALIZATIONS_DIR + "*.avi", arrayPaths, false, true );
-		GetDirListing( VISUALIZATIONS_DIR + "*.mpg", arrayPaths, false, true );
-		GetDirListing( VISUALIZATIONS_DIR + "*.mpeg", arrayPaths, false, true );
-		break;
+		case PrefsManager::BGMODE_MOVIEVIS:
+			GetDirListing( VISUALIZATIONS_DIR + sPreferredSubDir + "*.avi", arrayPaths, false, true );
+			GetDirListing( VISUALIZATIONS_DIR + sPreferredSubDir + "*.mpg", arrayPaths, false, true );
+			GetDirListing( VISUALIZATIONS_DIR + sPreferredSubDir + "*.mpeg", arrayPaths, false, true );
+			break;
 
-	case PrefsManager::BGMODE_RANDOMMOVIES:
-		GetDirListing( RANDOMMOVIES_DIR + "*.avi", arrayPaths, false, true );
-		GetDirListing( RANDOMMOVIES_DIR + "*.mpg", arrayPaths, false, true );
-		GetDirListing( RANDOMMOVIES_DIR + "*.mpeg", arrayPaths, false, true );
-		break;
+		case PrefsManager::BGMODE_RANDOMMOVIES:
+			GetDirListing( RANDOMMOVIES_DIR + sPreferredSubDir + "*.avi", arrayPaths, false, true );
+			GetDirListing( RANDOMMOVIES_DIR + sPreferredSubDir + "*.mpg", arrayPaths, false, true );
+			GetDirListing( RANDOMMOVIES_DIR + sPreferredSubDir + "*.mpeg", arrayPaths, false, true );
+			break;
+		}
+
+		// strip out "cvs"
+		for( int j=arrayPaths.size()-1; j>=0; j-- )
+			if( Basename(arrayPaths[j]).CompareNoCase("cvs")==0 )
+				arrayPaths.erase( arrayPaths.begin()+j, arrayPaths.begin()+j+1 );
+
+		if( !arrayPaths.empty() )	// found one
+			break;
+
+		// now search without a subdir
+		sPreferredSubDir = "";
 	}
-
-	// strip out "cvs"
-	for( int j=arrayPaths.size()-1; j>=0; j-- )
-		if( !Basename(arrayPaths[j]).CompareNoCase("cvs") )
-			arrayPaths.erase( arrayPaths.begin()+j, arrayPaths.begin()+j+1 );
 
 	if( arrayPaths.empty() )
 		return "";
@@ -300,7 +312,7 @@ CString Background::CreateRandomBGA()
 	return file;
 }
 
-void Background::LoadFromRandom( float fFirstBeat, float fLastBeat, const TimingData &timing )
+void Background::LoadFromRandom( float fFirstBeat, float fLastBeat, const TimingData &timing, CString sPreferredSubDir )
 {
 	// change BG every 4 bars
 	for( float f=fFirstBeat; f<fLastBeat; f+=BEATS_PER_MEASURE*4 )
@@ -311,7 +323,7 @@ void Background::LoadFromRandom( float fFirstBeat, float fLastBeat, const Timing
 		//bool bFade = PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_RANDOMMOVIES || 
 		//	PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_MOVIEVIS;
 		
-		CString sBGName = CreateRandomBGA();
+		CString sBGName = CreateRandomBGA( sPreferredSubDir );
 		if( sBGName != "" )
 			m_aBGChanges.push_back( BackgroundChange(f,sBGName,1.f,bFade) );
 	}
@@ -329,7 +341,7 @@ void Background::LoadFromRandom( float fFirstBeat, float fLastBeat, const Timing
 		if( bpmseg.m_iStartIndex < iStartIndex  || bpmseg.m_iStartIndex > iEndIndex )
 			continue;	// skip
 
-		CString sBGName = CreateRandomBGA();
+		CString sBGName = CreateRandomBGA( sPreferredSubDir );
 		if( sBGName != "" )
 			m_aBGChanges.push_back( BackgroundChange(NoteRowToBeat(bpmseg.m_iStartIndex),sBGName) );
 	}
@@ -368,7 +380,7 @@ void Background::LoadFromSong( const Song* pSong )
 			
 			bool bIsAlreadyLoaded = m_BGAnimations.find(sBGName) != m_BGAnimations.end();
 
-			if( sBGName.CompareNoCase("-random-") && !bIsAlreadyLoaded )
+			if( sBGName.CompareNoCase("-random-")!=0 && !bIsAlreadyLoaded )
 			{
 				Actor *pTempBGA = CreateSongBGA( sBGName );
 				if( pTempBGA )
@@ -377,7 +389,7 @@ void Background::LoadFromSong( const Song* pSong )
 				}
 				else // the background was not found.  Use a random one instead
 				{
-					sBGName = CreateRandomBGA();
+					sBGName = CreateRandomBGA( pSong->m_sGroupName );
 					if( sBGName == "" )
 						sBGName = STATIC_BACKGROUND;
 				}
@@ -388,7 +400,7 @@ void Background::LoadFromSong( const Song* pSong )
 	}
 	else	// pSong doesn't have an animation plan
 	{
-		LoadFromRandom( pSong->m_fFirstBeat, pSong->m_fLastBeat, pSong->m_Timing );
+		LoadFromRandom( pSong->m_fFirstBeat, pSong->m_fLastBeat, pSong->m_Timing, pSong->m_sGroupName );
 
 		// end showing the static song background
 		m_aBGChanges.push_back( BackgroundChange(pSong->m_fLastBeat,STATIC_BACKGROUND) );
@@ -432,7 +444,7 @@ void Background::LoadFromSong( const Song* pSong )
 		m_aBGChanges.erase( m_aBGChanges.begin()+i );
 		--i;
 
-		LoadFromRandom( fStartBeat, fLastBeat, pSong->m_Timing );
+		LoadFromRandom( fStartBeat, fLastBeat, pSong->m_Timing, pSong->m_sGroupName );
 	}
 
 	// At this point, we shouldn't have any BGChanges to "".  "" is an invalid name.

@@ -48,7 +48,7 @@ public:
 
 protected:
 	const Song *m_pSong;
-	void LoadFromRandom( float fFirstBeat, float fLastBeat, const TimingData &timing );
+	void LoadFromRandom( float fFirstBeat, float fLastBeat, const TimingData &timing, CString sPreferredSubDir );
 	int FindBGSegmentForBeat( float fBeat ) const;
 
 	bool IsDangerPlayerVisible( PlayerNumber pn );
@@ -65,7 +65,7 @@ protected:
 	BGAnimation		m_DeadPlayer[NUM_PLAYERS];
 
 	Actor *CreateSongBGA( CString sBGName ) const;
-	CString CreateRandomBGA();
+	CString CreateRandomBGA( CString sPreferredSubDir );
 
 	map<CString,Actor*> m_BGAnimations;
 	deque<CString> m_RandomBGAnimations;
