@@ -793,7 +793,13 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	case MENU_BUTTON_DOWN:	this->MenuDown( MenuI.player, type );	break;
 	case MENU_BUTTON_LEFT:	this->MenuLeft( MenuI.player, type );	break;
 	case MENU_BUTTON_RIGHT:	this->MenuRight( MenuI.player, type );	break;
-	case MENU_BUTTON_BACK:	Screen::MenuBack( MenuI.player, type );	break;
+	case MENU_BUTTON_BACK:
+		/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
+		if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == SDLK_ESCAPE )
+			this->MenuBack( MenuI.player );
+		else
+			Screen::MenuBack( MenuI.player, type );
+		break;
 	// Do the default handler for Start after detecting codes.
 //	case MENU_BUTTON_START:	this->MenuStart( MenuI.player, type );	break;
 	case MENU_BUTTON_COIN:	this->MenuCoin( MenuI.player, type );	break;
