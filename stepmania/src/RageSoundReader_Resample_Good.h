@@ -13,12 +13,11 @@ class RageSoundReader_Resample_Good: public RageSoundReader_Resample
 	bool HighQuality;
 	int samplerate;
 
-	/* Mutable hell, since GetLength pretends to be const but isn't yet. */
-	mutable	void *resamp[2];
-	mutable	void *empty_resamp[2];
+	void *resamp[2];
+	void *empty_resamp[2];
 	float inbuf[2][BUFSIZE];
-	mutable	int BufSamples;
-	mutable	bool eof;
+	int BufSamples;
+	bool eof;
 
 	void Reset();
 	void ReopenResampler();
