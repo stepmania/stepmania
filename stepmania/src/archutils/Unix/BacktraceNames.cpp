@@ -239,8 +239,6 @@ void BacktraceNames::FromAddr( const void *p )
 				continue; /* Undefined */
 			if( symtable[j].n_type >= N_PEXT )
 				continue; /* Debug symbol */
-			if( !(symtable[j].n_type & N_EXT) )
-				continue; /* Local Symbol */
 
 			if( addr >= symtable[j].n_value && diff >= (addr - symtable[j].n_value) )
 			{
