@@ -1947,7 +1947,7 @@ LuaFunction_NoArgs( CurStyleName,			CString( GAMESTATE->m_pCurStyle == NULL ? "n
 LuaFunction_NoArgs( GetNumPlayersEnabled,	GAMESTATE->GetNumPlayersEnabled() )
 LuaFunction_NoArgs( PlayerUsingBothSides,	GAMESTATE->PlayerUsingBothSides() )
 LuaFunction_NoArgs( GetEasiestNotesDifficulty, GAMESTATE->GetEasiestNotesDifficulty() )
-LuaFunction_Str(	GetEnv,					GAMESTATE->m_mapEnv[str] )
+LuaFunction_Str(	GetEnv,					( GAMESTATE->m_mapEnv.find(str) != GAMESTATE->m_mapEnv.end() ) ? GAMESTATE->m_mapEnv[str] : "" )
 LuaFunction_StrStr(	SetEnv,					GAMESTATE->m_mapEnv[str1] = str2 )
 
 /* Return an integer into SONGMAN->m_pSongs.  This lets us do input checking, which we
