@@ -639,6 +639,9 @@ on the Select Music screen.  This is specified as a floating point value.  e.g.
 #SAMPLELENGTH:...;   - The time in seconds let the sample music play after 
 starting.  This is specified as a floating point value.  e.g. "32.34".  Note 
 that in the last 1 second of playing the music will fade out.
+#SELECTABLE:...;   - If "NO", the song can not be selected manually and can
+only be played as part of a course.  If "ROULETTE", the song can can also be
+selected via roulette.  The default value is "YES".
 #BPMS:...; - A value of the format "beat=bpm".  Indicates that at 'beat', the 
 speed of the arrows will change to "bpm".  Both of these values are specified 
 as floating point values.  You must specifiy a BPM value for beat 0.  Multiple 
