@@ -393,7 +393,9 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	case TNS_PERFECT:
 		m_iCurToastyCombo += iNumTapsInRow;
 
-		if( m_iCurToastyCombo==250 && !GAMESTATE->m_bDemonstrationOrJukebox )
+		if( m_iCurToastyCombo >= 250 &&
+			m_iCurToastyCombo - iNumTapsInRow < 250 &&
+			!GAMESTATE->m_bDemonstrationOrJukebox )
 		{
 			SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
 			PROFILEMAN->IncrementToastiesCount( m_PlayerNumber );
