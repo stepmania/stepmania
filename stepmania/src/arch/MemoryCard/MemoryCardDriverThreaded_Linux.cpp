@@ -3,6 +3,8 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageFileManager.h"
+#include "Profile.h"
+#include "PrefsManager.h"
 
 #include <cstdio>
 #include <cstring>
@@ -12,6 +14,8 @@
 #include <linux/types.h>
 
 #include <fstream>
+
+const CString TEMP_MOUNT_POINT = "@mctemp/";
 
 static const char *USB_DEVICE_LIST_FILE = "/proc/bus/usb/devices";
 static const char *ETC_MTAB = "/etc/mtab";
@@ -144,6 +148,15 @@ void MemoryCardDriverThreaded_Linux::MountThreadMain()
 	      bool bMountedSuccessfully = ExecuteCommand( sCommand );
 
 	      d.bWriteTestSucceeded = bMountedSuccessfully && TestWrite( d.sOsMountDir );
+
+			// read name
+			this->Mount( &usbd, TEMP_MOUNT_POINT );
+			FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
+			Profile profile;
+			CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
+			profile.LoadEditableDataFromDir( sProfileDir );
+			usbd.sName = profile.GetDisplayName();
+
 	      LOG->Trace( "write test %s", d.bWriteTestSucceeded ? "succeeded" : "failed" );
 	    }
 
@@ -376,8 +389,8 @@ void MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice, CString s
     {
       if( Mounts[i].Type.CompareNoCase( "dir" ) )
 	continue; // wrong type
-      if( Mounts[i].Root.CompareNoCase( pDevice->sOsMountDir ) )
-	continue; // wrong root
+		if( Mounts[i].MountPoint.CompareNoCase( sMountPoint ) )
+				continue; // wrong mount point
       FILEMAN->Unmount( Mounts[i].Type, Mounts[i].Root, Mounts[i].MountPoint );
     }
 

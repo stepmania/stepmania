@@ -21,6 +21,8 @@ struct UsbStorageDevice
 	CString sSerial;
 	int iUsbStorageIndex;
 	CString	sOsMountDir;	// WITHOUT trailing slash
+	CString	sName;	// Name in the profile on the memory card.  
+					// This is passed here because it's read in the mounting thread.
 
 	bool IsBlank() { return sOsMountDir.empty(); }
 

@@ -40,6 +40,8 @@ public:
 	void FlushAllDisks();	// force all files to be written to mounted memory cards
 
 	bool PathIsMemCard( CString sDir ) const;
+	
+	CString GetName( PlayerNumber pn ) const { return m_Device[pn].sName; }
 
 protected:
 	void AssignUnassignedCards();	// do our best to assign a Device to each player

@@ -5,7 +5,12 @@
 #include <fcntl.h>
 #include "RageFileManager.h"
 #include "RageLog.h"
+#include "Profile.h"
+#include "PrefsManager.h"
 #include <windows.h>
+
+const CString TEMP_MOUNT_POINT = "@mctemp/";
+
 
 MemoryCardDriverThreaded_Windows::MemoryCardDriverThreaded_Windows()
 {
@@ -72,6 +77,15 @@ void MemoryCardDriverThreaded_Windows::MountThreadMain()
 						UsbStorageDeviceEx usbd;
 						usbd.sOsMountDir = sDrive;
 						usbd.bWriteTestSucceeded = TestWrite( sDrive );
+
+						// read name
+						this->Mount( &usbd, TEMP_MOUNT_POINT );
+						FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
+						Profile profile;
+						CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
+						profile.LoadEditableDataFromDir( sProfileDir );
+						usbd.sName = profile.GetDisplayName();
+
 						vNewStorageDevices.push_back( usbd );
 					}
 				}
@@ -100,8 +114,8 @@ void MemoryCardDriverThreaded_Windows::Mount( UsbStorageDevice* pDevice, CString
 	{
 		if( Mounts[i].Type.CompareNoCase( "dir" ) )
 				continue; // wrong type
-		if( Mounts[i].Root.CompareNoCase( pDevice->sOsMountDir ) )
-				continue; // wrong root
+		if( Mounts[i].MountPoint.CompareNoCase( sMountPoint ) )
+				continue; // wrong mount point
 		FILEMAN->Unmount( Mounts[i].Type, Mounts[i].Root, Mounts[i].MountPoint );
 	}
 
