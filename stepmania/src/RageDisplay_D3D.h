@@ -30,6 +30,7 @@ public:
 		);
 	void DeleteTexture( unsigned uTexHandle );
 	void ClearAllTextures();
+	int GetNumTextureUnits();
 	void SetTexture( int iTextureUnitIndex, RageTexture* pTexture );
 	void SetTextureModeModulate();
 	void SetTextureModeGlow( GlowMode m=GLOW_WHITEN );

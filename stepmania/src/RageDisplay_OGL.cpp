@@ -106,6 +106,8 @@ int g_glVersion;
 /* GLU version * 10: */
 int g_gluVersion;
 
+static int g_iMaxTextureUnits = 0;
+
 /* Available extensions: */
 set<string> g_glExts;
 
@@ -379,12 +381,13 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 		return sError;
 
 	// Log driver details
-	LOG->Info("OGL Vendor: %s", glGetString(GL_VENDOR));
-	LOG->Info("OGL Renderer: %s", glGetString(GL_RENDERER));
-	LOG->Info("OGL Version: %s", glGetString(GL_VERSION));
-	LOG->Info("OGL Extensions: %s", glGetString(GL_EXTENSIONS));
-	LOG->Info("OGL Max texture size: %i", GetMaxTextureSize() );
-	LOG->Info("GLU Version: %s", gluGetString(GLU_VERSION));
+	LOG->Info( "OGL Vendor: %s", glGetString(GL_VENDOR) );
+	LOG->Info( "OGL Renderer: %s", glGetString(GL_RENDERER) );
+	LOG->Info( "OGL Version: %s", glGetString(GL_VERSION) );
+	LOG->Info( "OGL Max texture size: %i", GetMaxTextureSize() );
+	LOG->Info( "OGL Texture units: %i", g_iMaxTextureUnits );
+	LOG->Info( "OGL Extensions: %s", glGetString(GL_EXTENSIONS) );
+	LOG->Info( "GLU Version: %s", gluGetString(GLU_VERSION) );
 
 	LogGLXDebugInformation();
 
@@ -649,7 +652,11 @@ void SetupExtensions()
 	}
 
 	if( HasExtension("GL_ARB_multitexture") )
+	{
 		GLExt.glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC) wind->GetProcAddress("glActiveTextureARB");
+		g_iMaxTextureUnits = 1;
+		glGetIntegerv( GL_MAX_TEXTURE_UNITS_ARB, &g_iMaxTextureUnits );
+	}
 
 	if( HasExtension("GL_ARB_vertex_buffer_object") )
 	{
@@ -1289,6 +1296,14 @@ void RageDisplay_OGL::ClearAllTextures()
 	// TODO:  Change all texture functions to take a stage number.
 	if( GLExt.glActiveTextureARB )
 		GLExt.glActiveTextureARB(GL_TEXTURE0_ARB);
+}
+
+int RageDisplay_OGL::GetNumTextureUnits()
+{
+	if( GLExt.glActiveTextureARB == NULL )
+		return 1;
+	else
+		return g_iMaxTextureUnits;
 }
 
 void RageDisplay_OGL::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )

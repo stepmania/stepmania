@@ -956,6 +956,11 @@ void RageDisplay_D3D::ClearAllTextures()
 	g_iCurrentTextureIndex = 0;
 }
 
+int RageDisplay_D3D::GetNumTextureUnits()
+{
+	return g_DeviceCaps.MaxSimultaneousTextures;
+}
+
 void RageDisplay_D3D::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )
 {
 	g_iCurrentTextureIndex = iTextureUnitIndex;

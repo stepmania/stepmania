@@ -28,6 +28,7 @@ public:
 		) { }
 	void DeleteTexture( unsigned uTexHandle ) { }
 	void ClearAllTextures() { }
+	int GetNumTextureUnits() { return 1; }
 	void SetTexture( int iTextureUnitIndex, RageTexture* pTexture ) { }
 	void SetTextureModeModulate() { }
 	void SetTextureModeGlow( GlowMode m=GLOW_WHITEN ) { }
