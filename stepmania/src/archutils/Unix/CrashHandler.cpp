@@ -334,9 +334,8 @@ static void RunCrashHandler( const CrashData *crash )
 	}
 	received = getpid();
 
-	/* We want to stop other threads when crashing.  However, sending SIGSTOPs is messy and
-	 * tends to do more harm than good.  Let's just try to get the crashdump written quickly. */
-	// RageThread::HaltAllThreads();
+	/* Stop other threads. */
+	RageThread::HaltAllThreads();
 	
 	/* We need to be very careful, since we're under crash conditions.  Let's fork
 	 * a process and exec ourself to get a clean environment to work in. */
