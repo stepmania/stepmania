@@ -88,12 +88,15 @@ class ThemeMetric1D : public IThemeMetric
 	vector<ThemeMetricT> m_metric;
 
 public:
-	ThemeMetric1D( const CString& sGroup, MetricName1D pfn, size_t N )
+	ThemeMetric1D( const CString& sGroup = "", MetricName1D pfn = NULL, size_t N = 0 )
+	{
+		Load( sGroup, pfn, N );
+	}
+	void Load( const CString& sGroup, MetricName1D pfn, size_t N )
 	{
 		m_metric.resize( N );
 		for( unsigned i=0; i<N; i++ )
 			m_metric[i].Load( sGroup, pfn(i) );
-
 	}
 	void Read()
 	{
@@ -116,7 +119,11 @@ class ThemeMetric2D : public IThemeMetric
 	vector<ThemeMetricTVector> m_metric;
 
 public:
-	ThemeMetric2D( const CString& sGroup, MetricName2D pfn, size_t N, size_t M )
+	ThemeMetric2D( const CString& sGroup = "", MetricName2D pfn = NULL, size_t N = 0, size_t M = 0 )
+	{
+		Load( sGroup, pfn, N, M );
+	}
+	void Load( const CString& sGroup, MetricName2D pfn, size_t N, size_t M )
 	{
 		m_metric.resize( N );
 		for( unsigned i=0; i<N; i++ )
@@ -125,7 +132,6 @@ public:
 			for( unsigned j=0; j<M; j++ )
 				m_metric[i][j].Load( sGroup, pfn(i,j) );
 		}
-
 	}
 	void Read()
 	{
