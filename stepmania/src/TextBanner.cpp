@@ -19,66 +19,62 @@
 #include "RageTextureManager.h"
 
 
-#define WIDTH						THEME->GetMetricF("TextBanner","Width")
-#define HEIGHT						THEME->GetMetricF("TextBanner","Height")
-#define HORIZ_ALIGN					THEME->GetMetricI("TextBanner","HorizAlign")
-#define ARTIST_PREPEND_STRING		THEME->GetMetric( "TextBanner","ArtistPrependString")
-#define TWO_LINES_TITLE_ZOOM		THEME->GetMetricF("TextBanner","TwoLinesTitleZoom")
-#define TWO_LINES_ARTIST_ZOOM		THEME->GetMetricF("TextBanner","TwoLinesArtistZoom")
-#define THREE_LINES_TITLE_ZOOM		THEME->GetMetricF("TextBanner","ThreeLinesTitleZoom")
-#define THREE_LINES_SUB_TITLE_ZOOM	THEME->GetMetricF("TextBanner","ThreeLinesSubTitleZoom")
-#define THREE_LINES_ARTIST_ZOOM		THEME->GetMetricF("TextBanner","ThreeLinesArtistZoom")
-#define TWO_LINES_TITLE_Y			THEME->GetMetricF("TextBanner","TwoLinesTitleY")
-#define TWO_LINES_ARTIST_Y			THEME->GetMetricF("TextBanner","TwoLinesArtistY")
-#define THREE_LINES_TITLE_Y			THEME->GetMetricF("TextBanner","ThreeLinesTitleY")
-#define THREE_LINES_SUB_TITLE_Y		THEME->GetMetricF("TextBanner","ThreeLinesSubTitleY")
-#define THREE_LINES_ARTIST_Y		THEME->GetMetricF("TextBanner","ThreeLinesArtistY")
-
-// metrics cache
-float g_fWidth;
-float g_fHeight;
-int g_iHorizAlign;
-CString g_sArtistPrependString;
-float g_fTwoLinesTitleZoom;
-float g_fTwoLinesArtistZoom;
-float g_fThreeLinesTitleZoom;
-float g_fThreeLinesSubTitleZoom;
-float g_fThreeLinesArtistZoom;
-float g_fTwoLinesTitleY;
-float g_fTwoLinesArtistY;
-float g_fThreeLinesTitleY;
-float g_fThreeLinesSubTitleY;
-float g_fThreeLinesArtistY;
+CachedThemeMetricI TITLE_X						("TextBanner","TitleHorizX");
+CachedThemeMetricI SUB_TITLE_X					("TextBanner","SubTitleHorizX");
+CachedThemeMetricI ARTIST_X						("TextBanner","ArtistHorizX");
+CachedThemeMetricF MAX_TITLE_WIDTH				("TextBanner","MaxTitleWidth");
+CachedThemeMetricF MAX_SUB_TITLE_WIDTH			("TextBanner","MaxSubTitleWidth");
+CachedThemeMetricF MAX_ARTIST_WIDTH				("TextBanner","MaxArtistWidth");
+CachedThemeMetricI TITLE_HORIZ_ALIGN			("TextBanner","TitleHorizAlign");
+CachedThemeMetricI SUB_TITLE_HORIZ_ALIGN		("TextBanner","SubTitleHorizAlign");
+CachedThemeMetricI ARTIST_HORIZ_ALIGN			("TextBanner","ArtistHorizAlign");
+CachedThemeMetric  ARTIST_PREPEND_STRING		("TextBanner","ArtistPrependString");
+CachedThemeMetricF TWO_LINES_TITLE_ZOOM			("TextBanner","TwoLinesTitleZoom");
+CachedThemeMetricF TWO_LINES_ARTIST_ZOOM		("TextBanner","TwoLinesArtistZoom");
+CachedThemeMetricF THREE_LINES_TITLE_ZOOM		("TextBanner","ThreeLinesTitleZoom");
+CachedThemeMetricF THREE_LINES_SUB_TITLE_ZOOM	("TextBanner","ThreeLinesSubTitleZoom");
+CachedThemeMetricF THREE_LINES_ARTIST_ZOOM		("TextBanner","ThreeLinesArtistZoom");
+CachedThemeMetricF TWO_LINES_TITLE_Y			("TextBanner","TwoLinesTitleY");
+CachedThemeMetricF TWO_LINES_ARTIST_Y			("TextBanner","TwoLinesArtistY");
+CachedThemeMetricF THREE_LINES_TITLE_Y			("TextBanner","ThreeLinesTitleY");
+CachedThemeMetricF THREE_LINES_SUB_TITLE_Y		("TextBanner","ThreeLinesSubTitleY");
+CachedThemeMetricF THREE_LINES_ARTIST_Y			("TextBanner","ThreeLinesArtistY");
 
 
 TextBanner::TextBanner()
 {
-	g_fWidth = WIDTH;
-	g_fHeight = HEIGHT;
-	g_iHorizAlign = HORIZ_ALIGN;
-	g_sArtistPrependString = ARTIST_PREPEND_STRING;
-	g_fTwoLinesTitleZoom = TWO_LINES_TITLE_ZOOM;
-	g_fTwoLinesArtistZoom = TWO_LINES_ARTIST_ZOOM;
-	g_fThreeLinesTitleZoom = THREE_LINES_TITLE_ZOOM;
-	g_fThreeLinesSubTitleZoom = THREE_LINES_SUB_TITLE_ZOOM;
-	g_fThreeLinesArtistZoom = THREE_LINES_ARTIST_ZOOM;
-	g_fTwoLinesTitleY = TWO_LINES_TITLE_Y;
-	g_fTwoLinesArtistY = TWO_LINES_ARTIST_Y;
-	g_fThreeLinesTitleY = THREE_LINES_TITLE_Y;
-	g_fThreeLinesSubTitleY = THREE_LINES_SUB_TITLE_Y;
-	g_fThreeLinesArtistY = THREE_LINES_ARTIST_Y;
+	TITLE_X.Refresh();
+	SUB_TITLE_X.Refresh();
+	ARTIST_X.Refresh();
+	MAX_TITLE_WIDTH.Refresh();
+	MAX_SUB_TITLE_WIDTH.Refresh();
+	MAX_ARTIST_WIDTH.Refresh();
+	TITLE_HORIZ_ALIGN.Refresh();
+	SUB_TITLE_HORIZ_ALIGN.Refresh();
+	ARTIST_HORIZ_ALIGN.Refresh();
+	ARTIST_PREPEND_STRING.Refresh();
+	TWO_LINES_TITLE_ZOOM.Refresh();
+	TWO_LINES_ARTIST_ZOOM.Refresh();
+	THREE_LINES_TITLE_ZOOM.Refresh();
+	THREE_LINES_SUB_TITLE_ZOOM.Refresh();
+	THREE_LINES_ARTIST_ZOOM.Refresh();
+	TWO_LINES_TITLE_Y.Refresh();
+	TWO_LINES_ARTIST_Y.Refresh();
+	THREE_LINES_TITLE_Y.Refresh();
+	THREE_LINES_SUB_TITLE_Y.Refresh();
+	THREE_LINES_ARTIST_Y.Refresh();
 	
 	m_textTitle.LoadFromFont( THEME->GetPathToF("TextBanner") );
 	m_textSubTitle.LoadFromFont( THEME->GetPathToF("TextBanner") );
 	m_textArtist.LoadFromFont( THEME->GetPathToF("TextBanner") );
 
-	m_textTitle.SetX( -g_fWidth/2 );
-	m_textSubTitle.SetX( -g_fWidth/2 );
-	m_textArtist.SetX( -g_fWidth/2 );
+	m_textTitle.SetX( TITLE_X );
+	m_textSubTitle.SetX( SUB_TITLE_X );
+	m_textArtist.SetX( ARTIST_X );
 
-	m_textTitle.SetHorizAlign( (Actor::HorizAlign)g_iHorizAlign );
-	m_textSubTitle.SetHorizAlign( (Actor::HorizAlign)g_iHorizAlign );
-	m_textArtist.SetHorizAlign( (Actor::HorizAlign)g_iHorizAlign );
+	m_textTitle.SetHorizAlign( (Actor::HorizAlign)(int)TITLE_HORIZ_ALIGN );
+	m_textSubTitle.SetHorizAlign( (Actor::HorizAlign)(int)SUB_TITLE_HORIZ_ALIGN );
+	m_textArtist.SetHorizAlign( (Actor::HorizAlign)(int)ARTIST_HORIZ_ALIGN );
 
 	m_textTitle.EnableShadow( false );
 	m_textSubTitle.EnableShadow( false );
@@ -97,21 +93,21 @@ void TextBanner::LoadFromString(
 {
 	bool bTwoLines = sDisplaySubTitle.size() == 0;
 
-	const float fTitleZoom	= bTwoLines ? g_fTwoLinesTitleZoom	: g_fThreeLinesTitleZoom;
-	const float fSubTitleZoom = bTwoLines ? 0						: g_fThreeLinesSubTitleZoom;
-	const float fArtistZoom	= bTwoLines ? g_fTwoLinesArtistZoom : g_fThreeLinesArtistZoom;
+	const float fTitleZoom		= bTwoLines ? TWO_LINES_TITLE_ZOOM	: THREE_LINES_TITLE_ZOOM;
+	const float fSubTitleZoom	= bTwoLines ? 0						: THREE_LINES_SUB_TITLE_ZOOM;
+	const float fArtistZoom		= bTwoLines ? TWO_LINES_ARTIST_ZOOM : THREE_LINES_ARTIST_ZOOM;
 	
 	m_textTitle.SetZoom( fTitleZoom );
 	m_textSubTitle.SetZoom( fSubTitleZoom );
 	m_textArtist.SetZoom( fArtistZoom );
 
-	m_textTitle.SetTextMaxWidth( g_fWidth, sDisplayTitle, sTranslitTitle );
-	m_textSubTitle.SetTextMaxWidth( g_fWidth, sDisplaySubTitle, sTranslitSubTitle );
-	m_textArtist.SetTextMaxWidth( g_fWidth, sDisplayArtist, sTranslitArtist );
+	m_textTitle.SetTextMaxWidth( MAX_TITLE_WIDTH, sDisplayTitle, sTranslitTitle );
+	m_textSubTitle.SetTextMaxWidth( MAX_SUB_TITLE_WIDTH, sDisplaySubTitle, sTranslitSubTitle );
+	m_textArtist.SetTextMaxWidth( MAX_ARTIST_WIDTH, sDisplayArtist, sTranslitArtist );
 
-	const float fTitleY		= bTwoLines ? g_fTwoLinesTitleY		: g_fThreeLinesTitleY;
-	const float fSubTitleY	= bTwoLines ? 0						: g_fThreeLinesSubTitleY;
-	const float fArtistY		= bTwoLines ? g_fTwoLinesArtistY	: g_fThreeLinesArtistY;
+	const float fTitleY		= bTwoLines ? TWO_LINES_TITLE_Y		: THREE_LINES_TITLE_Y;
+	const float fSubTitleY	= bTwoLines ? 0						: THREE_LINES_SUB_TITLE_Y;
+	const float fArtistY	= bTwoLines ? TWO_LINES_ARTIST_Y	: THREE_LINES_ARTIST_Y;
 
 	m_textTitle.SetY( fTitleY );
 	m_textSubTitle.SetY( fSubTitleY );
@@ -124,8 +120,8 @@ void TextBanner::LoadFromSong( const Song* pSong )
 	CString sTranslitTitle = pSong ? pSong->GetTranslitMainTitle() : "";
 	CString sDisplaySubTitle = pSong ? pSong->GetDisplaySubTitle() : "";
 	CString sTranslitSubTitle = pSong ? pSong->GetTranslitSubTitle() : "";
-	CString sDisplayArtist = pSong ? g_sArtistPrependString + pSong->GetDisplayArtist() : "";
-	CString sTranslitArtist = pSong ? g_sArtistPrependString + pSong->GetTranslitArtist() : "";
+	CString sDisplayArtist = pSong ? (CString)ARTIST_PREPEND_STRING + pSong->GetDisplayArtist() : "";
+	CString sTranslitArtist = pSong ? (CString)ARTIST_PREPEND_STRING + pSong->GetTranslitArtist() : "";
 
 	LoadFromString( 
 		sDisplayTitle, sTranslitTitle, 
