@@ -229,6 +229,7 @@ test_audio_readers_SOURCES = tests/test_audio_readers.cpp \
 		$(RageFile) \
 		RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 		PrefsManager.cpp PrefsManager.h \
+		Grade.cpp Grade.h \
 		arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
 		IniFile.cpp IniFile.h \
 		$(RageSoundFileReaders) \
@@ -246,6 +247,7 @@ test_file_readers_SOURCES = tests/test_file_readers.cpp \
 		RageTimer.cpp RageTimer.h \
 		$(RageFile) \
 		PrefsManager.cpp PrefsManager.h \
+		Grade.cpp Grade.h \
 		arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
 		IniFile.cpp IniFile.h \
 		$(PCRE)
