@@ -49,10 +49,10 @@ namespace RageSurfaceUtils
 
 	void Blit( const RageSurface *src, RageSurface *dst, int width, int height );
 
-	bool SaveSurface( RageSurface *img, CString file );
+	bool SaveSurface( const RageSurface *img, CString file );
 	RageSurface *LoadSurface( CString file );
 
-	RageSurface *Palettize( RageSurface *src_surf, int GrayBits, int AlphaBits );
+	RageSurface *Palettize( const RageSurface *src_surf, int GrayBits, int AlphaBits );
 
 	RageSurface *MakeDummySurface( int height, int width );
 

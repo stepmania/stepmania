@@ -659,7 +659,7 @@ void RageSurfaceUtils::Blit( const RageSurface *src, RageSurface *dst, int width
 	if( height < dst->h )
 	{
 		/* Duplicate the last row. */
-		char *srcp = (char *) dst->pixels;
+		uint8_t *srcp = dst->pixels;
 		srcp += dst->pitch * (height-1);
 		memcpy( srcp + dst->pitch, srcp, dst->pitch );
 	}
@@ -673,7 +673,7 @@ struct SurfaceHeader
 };
 
 /* Save and load RageSurfaces to disk, in a very fast, nonportable way. */
-bool RageSurfaceUtils::SaveSurface( RageSurface *img, CString file )
+bool RageSurfaceUtils::SaveSurface( const RageSurface *img, CString file )
 {
 	RageFile f;
 	if( !f.Open( file, RageFile::WRITE ) )
@@ -753,7 +753,7 @@ RageSurface *RageSurfaceUtils::LoadSurface( CString file )
  *
  * This gives us a generic way to handle arbitrary 8-bit texture formats.
  */
-RageSurface *RageSurfaceUtils::Palettize( RageSurface *src_surf, int GrayBits, int AlphaBits )
+RageSurface *RageSurfaceUtils::Palettize( const RageSurface *src_surf, int GrayBits, int AlphaBits )
 {
 	AlphaBits = min( AlphaBits, 8-src_surf->format->Aloss );
 	
@@ -801,8 +801,8 @@ RageSurface *RageSurfaceUtils::Palettize( RageSurface *src_surf, int GrayBits, i
 		dst_surf->fmt.palette->colors[index] = c;
 	}
 
-	const char *src = (const char *) src_surf->pixels;
-	const char *dst = (const char *) dst_surf->pixels;
+	const uint8_t *src = src_surf->pixels;
+	uint8_t *dst = dst_surf->pixels;
 
 	int height = src_surf->h;
 	int width = src_surf->w;
@@ -816,7 +816,7 @@ RageSurface *RageSurfaceUtils::Palettize( RageSurface *src_surf, int GrayBits, i
 		int x = 0;
 		while( x++ < width )
 		{
-			unsigned int pixel = decodepixel((uint8_t *) src, src_surf->format->BytesPerPixel);
+			unsigned int pixel = decodepixel( src, src_surf->format->BytesPerPixel );
 
 			uint8_t colors[4];
 			GetRGBAV(pixel, src_surf, colors);
@@ -831,7 +831,7 @@ RageSurface *RageSurfaceUtils::Palettize( RageSurface *src_surf, int GrayBits, i
 					(colors[3] >> Aloss) << Ashift;
 
 			/* Store it. */
-			*((uint8_t *) dst) = uint8_t(pixel);
+			*dst = uint8_t(pixel);
 
 			src += src_surf->format->BytesPerPixel;
 			dst += dst_surf->format->BytesPerPixel;
