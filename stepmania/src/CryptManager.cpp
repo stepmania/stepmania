@@ -28,12 +28,14 @@ CryptManager::CryptManager()
 	//
 	// generate keys if none are available
 	//
-	if( !DoesFileExist(PRIVATE_KEY_PATH) || !DoesFileExist(PUBLIC_KEY_PATH) )
+	/* This is crashing in crypto51/integer.cpp CryptoPP::RecursiveInverseModPower2
+	 * in Linux. -glenn */
+/*	if( !DoesFileExist(PRIVATE_KEY_PATH) || !DoesFileExist(PUBLIC_KEY_PATH) )
 	{
 		LOG->Warn( "Keys missing.  Generating new keys" );
 		GenerateRSAKey( KEY_LENGTH, PRIVATE_KEY_PATH, PUBLIC_KEY_PATH, "aoksdjaksd" );
 		FlushDirCache();
-	}
+	} */
 }
 
 CryptManager::~CryptManager()
