@@ -33,10 +33,6 @@ class NoteData
 	/* Pad m_TapNotes so it includes the row "rows". */
 	void PadTapNotes(int rows);
 
-
-private:
-
-
 public:
 	/* Set up to hold the data in From; same number of tracks, same
 	 * divisor.  Doesn't allocate or copy anything. */
