@@ -2,14 +2,11 @@
 #define ERROR_DIALOG_WIN32_H
 
 #include "ErrorDialog.h"
-#include "../../archutils/Win32/AppInstance.h"
 
 class ErrorDialog_Win32: public ErrorDialog
 {
-	AppInstance handle;
-
 public:
-	void ShowError();
+	void ShowError( const CString &error );
 };
 
 #undef ARCH_ERROR_DIALOG

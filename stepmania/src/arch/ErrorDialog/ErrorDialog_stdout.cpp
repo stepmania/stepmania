@@ -1,10 +1,10 @@
 #include "../../global.h"
 #include "ErrorDialog_stdout.h"
 
-void ErrorDialog_stdout::ShowError()
+void ErrorDialog_stdout::ShowError( const CString &error )
 {
 	/* Simplest "dialog" ever. */
-	printf("Error: %s\n", GetErrorText().c_str());
+	printf("Error: %s\n", error.c_str());
 }
 
 /*

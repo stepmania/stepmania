@@ -3,6 +3,7 @@
 #include "../../resource.h"
 
 #include "../../archutils/Win32/GotoURL.h"
+#include "../../archutils/Win32/AppInstance.h"
 
 #include "ErrorDialog_Win32.h"
 
@@ -90,10 +91,11 @@ BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 }
 
 
-void ErrorDialog_Win32::ShowError()
+void ErrorDialog_Win32::ShowError( const CString &error )
 {
-	g_sErrorString = GetErrorText();
+	g_sErrorString = error;
  	// throw up a pretty error dialog
+	AppInstance handle;
 	DialogBox(handle.Get(), MAKEINTRESOURCE(IDD_ERROR_DIALOG),
 		NULL, ErrorWndProc);
 }

@@ -688,8 +688,7 @@ int main(int argc, char* argv[])
 	{
 		// throw up a pretty error dialog
 		ErrorDialog *d = MakeErrorDialog();
-		d->SetErrorText(g_sErrorString);
-		d->ShowError();
+		d->ShowError( g_sErrorString );
 		delete d;
 	}
 

@@ -6,7 +6,7 @@
 class ErrorDialog_stdout: public ErrorDialog
 {
 public:
-	void ShowError();
+	void ShowError( const CString &error );
 };
 
 #undef ARCH_ERROR_DIALOG
