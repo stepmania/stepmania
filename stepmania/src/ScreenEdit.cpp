@@ -765,6 +765,9 @@ void ScreenEdit::Update( float fDeltaTime )
 
 void ScreenEdit::UpdateTextInfo()
 {
+	if( m_pSteps == NULL )
+		return;
+
 	int iNumTapNotes = m_NoteDataEdit.GetNumTapNotes();
 	int iNumHoldNotes = m_NoteDataEdit.GetNumHoldNotes();
 
@@ -1502,12 +1505,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_GoToNextScreen:
-		CopyFromLastSave();
-
 		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
-
 		GAMESTATE->m_bEditing = false;
-
 		break;
 	case SM_BackFromMainMenu:
 		HandleMainMenuChoice( (MainMenuChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_iLastAnswers );
@@ -1591,7 +1590,6 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
 		{
 			CopyFromLastSave();
-
 			m_pSteps->GetNoteData( m_NoteDataEdit );
 		}
 		break;
@@ -1603,6 +1601,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	case SM_DoExit:
 		if( ScreenPrompt::s_LastAnswer != ANSWER_CANCEL )
 		{
+			// IMPORTANT: CopyFromLastSave before deleteing the Steps below
 			CopyFromLastSave();
 			
 			// If these steps have never been saved, then we should delete them.
@@ -1613,6 +1612,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			{
 				Song* pSong = GAMESTATE->m_pCurSong;
 				pSong->RemoveSteps( pSteps );
+				m_pSteps = NULL;
+				GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
 			}
 
 			m_Out.StartTransitioning( SM_GoToNextScreen );
@@ -2421,13 +2422,16 @@ void ScreenEdit::SetupCourseAttacks()
 void ScreenEdit::CopyToLastSave()
 {
 	m_songLastSave = *GAMESTATE->m_pCurSong;
-	m_stepsLastSave = *GAMESTATE->m_pCurSteps[PLAYER_1];
+	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
+		m_stepsLastSave = *GAMESTATE->m_pCurSteps[PLAYER_1];
 }
 
 void ScreenEdit::CopyFromLastSave()
 {
+
 	*GAMESTATE->m_pCurSong = m_songLastSave;
-	*GAMESTATE->m_pCurSteps[PLAYER_1] = m_stepsLastSave;
+	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
+		*GAMESTATE->m_pCurSteps[PLAYER_1] = m_stepsLastSave;
 }
 
 /*
