@@ -186,8 +186,7 @@ int RageSoundReader_WAV::seek_sample_fmt_normal( Uint32 ms )
     const int pos = (int) (this->fmt.data_starting_offset + offset);
 
 	int rc = fseek( this->rw, pos, SEEK_SET );
-    if( rc != pos )
-		return -1;
+	BAIL_IF_MACRO(rc == -1, strerror(errno), -1);
 
     return ms;
 }
@@ -374,8 +373,7 @@ int RageSoundReader_WAV::seek_sample_fmt_adpcm( Uint32 ms )
 
 	const int pos = skipsize + this->fmt.data_starting_offset;
 	int rc = fseek(this->rw, pos, SEEK_SET);
-	BAIL_IF_MACRO(rc == -1, strerror(errno), 0);
-	BAIL_IF_MACRO(rc != pos, "end of file", 0);
+	BAIL_IF_MACRO(rc == -1, strerror(errno), -1);
 
 	/* The offset we need is in this block, so we need to decode to there. */
 	skipsize += (offset % bpb);
