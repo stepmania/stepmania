@@ -182,14 +182,11 @@ void RageBitmapTexture::Create(
 	if( m_sFilePath.Find("dither") != -1 )			bDither = true; 
 
 	/* Load the image into an SDL surface. */
-RageTimer q; static float xxx = 0;
 	SDL_Surface *img = IMG_Load(m_sFilePath);
-	xxx += q.GetDeltaTime();
-LOG->Trace("load %f", xxx);
 
 	/* Figure out which texture format to use. */
 	D3DFORMAT fmtTexture;
-// dwTextureColorDepth = 32;
+
 	if( dwTextureColorDepth == 16 )	{
 		/* 8-bit indexed color (BPP == 1) never needs more than 1 bit of alpha.
 		 *
@@ -222,7 +219,6 @@ LOG->Trace("load %f", xxx);
 			ASSERT(0);	// invalid iAlphaBits value
 			fmtTexture = D3DFMT_A1R5G5B5;	break;
 		}
-//  fmtTexture = D3DFMT_A4R4G4B4;
 	} else if( dwTextureColorDepth == 32 )
 		fmtTexture = D3DFMT_A8R8G8B8;
 	else
