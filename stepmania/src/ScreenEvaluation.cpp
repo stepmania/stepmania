@@ -1322,7 +1322,7 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 				/* StyleI won't be valid if it's a menu button that's pressed.  
 				 * There's got to be a better way of doing this.  -Chris */
 				CString sDir = PROFILEMAN->GetProfileDir((ProfileSlot)pn);
-				SaveScreenshot( sDir );
+				SaveScreenshot( sDir, true, true );
 				m_bSavedScreenshot[pn] = true;
 				return;	// handled
 			}

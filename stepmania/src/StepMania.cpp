@@ -32,6 +32,7 @@
 #include "SDL_utils.h"
 
 #include "CodeDetector.h"
+#include "CryptHelpers.h"
 
 //
 // StepMania global classes
@@ -791,6 +792,11 @@ void SaveGamePrefsToDisk()
 	ini.WriteFile();
 }
 
+static void OnFirstRun()
+{
+	// TODO: generate a machine keypair here
+}
+
 static void MountTreeOfZips( const CString &dir )
 {
 	vector<CString> dirs;
@@ -916,6 +922,9 @@ int main(int argc, char* argv[])
 
 	CheckSDLVersion( 1,2,6 );
 	
+	if( PREFSMAN->m_bFirstRun )
+		OnFirstRun();
+
 	/* This should be done after PREFSMAN is set up, so it can use HOOKS->MessageBoxOK,
 	 * but before we do more complex things that might crash. */
 	HOOKS->DumpDebugInfo();
@@ -1083,25 +1092,43 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-bool SaveScreenshot( CString sDir, bool bSaveUncompressed )
+bool SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature )
 {
-	// Save Screenshot.
-	CString sPath;
-	
+	//
+	// Find a file name for the screenshot
+	//
 	FlushDirCache();
 
+	CString sScreenshotPath;
 	/* XXX slow? */
 	for( int i=0; i<10000; i++ )
 	{
-		sPath = ssprintf( sDir+"screen%04d.%s",i,bSaveUncompressed ? "bmp" : "jpg" );
-		if( !DoesFileExist(sPath) )
+		sScreenshotPath = ssprintf( sDir+"screen%04d.%s", i, bSaveCompressed ? "jpg" : "bmp" );
+		if( !DoesFileExist(sScreenshotPath) )
 			break;
 	}
-	bool bResult = DISPLAY->SaveScreenshot( sPath, bSaveUncompressed ? RageDisplay::bmp : RageDisplay::jpg );
+
+	//
+	// Save the screenshot
+	//
+	bool bResult = DISPLAY->SaveScreenshot( sScreenshotPath, bSaveCompressed ? RageDisplay::jpg : RageDisplay::bmp );
 	if( bResult )
 		SOUND->PlayOnce( THEME->GetPathToS("Common screenshot") );
 	else
+	{
 		SOUND->PlayOnce( THEME->GetPathToS("Common invalid") );
+		return false;
+	}
+
+	//
+	// Write a signature
+	//
+	if( bMakeSignature )
+	{
+		CString sSignaturePath = sScreenshotPath + ".sig.rsa";
+		RSASignFile( "private.rsa", sScreenshotPath, sSignaturePath);
+	}
+
 	return bResult;
 }
 
@@ -1203,9 +1230,9 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		 (INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RMETA)) ||
 	      INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LMETA)))))
 	{
-		// If holding LShift save a BMP, else save a JPG
-		bool bSaveUncompressed = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT) );
-		SaveScreenshot( "Screenshots/", bSaveUncompressed );
+		// If holding LShift save uncompressed, else save compressed
+		bool bSaveCompressed = !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT) );
+		SaveScreenshot( "Screenshots/", bSaveCompressed, false );
 		return true;	// handled
 	}
 
