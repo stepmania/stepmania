@@ -444,7 +444,7 @@ int ScoreKeeper5th::GetPossibleDancePoints( const NoteData &preNoteData, const N
 
 int ScoreKeeper5th::TapNoteScoreToDancePoints( TapNoteScore tns )
 {
-	if(!GAMESTATE->ShowMarvelous() && tns == TNS_MARVELOUS)
+	if( !GAMESTATE->ShowMarvelous() && tns == TNS_MARVELOUS )
 		tns = TNS_PERFECT;
 
 /*
