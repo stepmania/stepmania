@@ -1,5 +1,5 @@
-#ifndef RAGEMovieTexture_FFMPEG_H
-#define RAGEMovieTexture_FFMPEG_H
+#ifndef RAGEMOVIETEXTURE_FFMPEG_H
+#define RAGEMOVIETEXTURE_FFMPEG_H
 
 #include "MovieTexture.h"
 
@@ -9,6 +9,8 @@
 #include "RageTimer.h"
 
 #include "SDL_mutex.h"
+
+#define SUPPORT_MOVIETEXTURE_FFMPEG
 
 namespace avcodec
 {
