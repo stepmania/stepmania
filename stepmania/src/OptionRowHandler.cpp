@@ -941,33 +941,19 @@ public:
 
 		if( GAMESTATE->m_pCurSong )
 		{
-			if( sParam == "EditSteps" )
+			FOREACH_Difficulty( dc )
 			{
-				FOREACH_Difficulty( dc )
-				{
-					if( dc == DIFFICULTY_EDIT )
-						continue;
-					m_vDifficulties.push_back( dc );
-					Steps* pSteps = GAMESTATE->m_pCurSong->GetStepsByDifficulty( *m_pst, dc );
-					m_vSteps.push_back( pSteps );
-				}
-				GAMESTATE->m_pCurSong->GetSteps( m_vSteps, *m_pst, DIFFICULTY_EDIT );
-				m_vDifficulties.resize( m_vSteps.size(), DIFFICULTY_EDIT );
+				if( dc == DIFFICULTY_EDIT )
+					continue;
+				m_vDifficulties.push_back( dc );
+				Steps* pSteps = GAMESTATE->m_pCurSong->GetStepsByDifficulty( *m_pst, dc );
+				m_vSteps.push_back( pSteps );
+			}
+			GAMESTATE->m_pCurSong->GetSteps( m_vSteps, *m_pst, DIFFICULTY_EDIT );
+			m_vDifficulties.resize( m_vSteps.size(), DIFFICULTY_EDIT );
 
-				m_vSteps.push_back( NULL );
-				m_vDifficulties.push_back( DIFFICULTY_EDIT );
-			}
-			else if( sParam == "EditSourceSteps" )
-			{
-				GAMESTATE->m_pCurSong->GetSteps( m_vSteps, *m_pst );
-				FOREACH( Steps*, m_vSteps, p )
-					m_vDifficulties.push_back( (*p)->GetDifficulty() );
-				StepsUtil::SortNotesArrayByDifficulty( m_vSteps );
-			}
-			else
-			{
-				ASSERT(0);
-			}
+			m_vSteps.push_back( NULL );
+			m_vDifficulties.push_back( DIFFICULTY_EDIT );
 
 			for( unsigned i=0; i<m_vSteps.size(); i++ )
 			{
@@ -1084,6 +1070,7 @@ public:
 		m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_EDIT_SOURCE_STEPS_CHANGED) );
 
 		bool bHasSteps = GAMESTATE->m_pCurSteps[0] != NULL;
+		bool bHasSourceSteps = GAMESTATE->m_pEditSourceSteps != NULL;
 		FOREACH_EditMenuAction( ema )
 		{
 			switch( ema )
@@ -1095,6 +1082,9 @@ public:
 				break;
 			case EDIT_MENU_ACTION_COPY:
 			case EDIT_MENU_ACTION_AUTOGEN:
+				if( bHasSteps || !bHasSourceSteps )
+					continue;	// skip
+				break;
 			case EDIT_MENU_ACTION_BLANK:
 				if( bHasSteps )
 					continue;	// skip
