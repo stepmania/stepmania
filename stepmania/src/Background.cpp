@@ -116,7 +116,7 @@ void Background::Unload()
 	m_pFadingBGA = NULL;
 	m_pSong = NULL;
 	m_fSecsLeftInFade = 0;
-	m_iCurBGChangeIndex = 0;
+	m_iCurBGChangeIndex = -1;
 	m_fLastMusicSeconds	= -9999;
 }
 
@@ -393,13 +393,13 @@ void Background::LoadFromSong( const Song* pSong )
 		LoadFromRandom( fStartBeat, fLastBeat, pSong->m_Timing );
 	}
 
+	// At this point, we shouldn't have any BGChanges to "".  "" is an invalid name.
+	for( i=0; i<m_aBGChanges.size(); i++ )
+		ASSERT( !m_aBGChanges[i].m_sBGName.empty() );
+
+
 	// Re-sort.
 	SortBackgroundChangesArray( m_aBGChanges );
-
-	// scale all rates by the current music rate
-	for( i=0; i<m_aBGChanges.size(); i++ )
-		m_aBGChanges[i].m_fRate *= GAMESTATE->m_SongOptions.m_fMusicRate;
-
 
     for( map<CString,BGAnimation*>::iterator iter = m_BGAnimations.begin();
 		 iter != m_BGAnimations.end();
@@ -431,7 +431,7 @@ void Background::LoadFromSong( const Song* pSong )
 		m_pDancingCharacters->LoadNextSong();
 }
 
-int Background::FindBPMSegmentForBeat( float fBeat ) const
+int Background::FindBGSegmentForBeat( float fBeat ) const
 {
 	int i;
 	for( i=0; i<(int)(m_aBGChanges.size()) - 1; i++ )
@@ -454,13 +454,13 @@ void Background::UpdateCurBGChange( float fCurrentTime )
 	bool bFreeze;
 	m_pSong->m_Timing.GetBeatAndBPSFromElapsedTime( fCurrentTime, fBeat, fBPS, bFreeze );
 
-	// Find the BGSegment we're in
-	const int i = FindBPMSegmentForBeat( fBeat );
-
 	/* Calls to Update() should *not* be scaled by music rate; fCurrentTime is. Undo it. */
 	const float fRate = GAMESTATE->m_SongOptions.m_fMusicRate;
 
-	if( i != m_iCurBGChangeIndex )
+	// Find the BGSegment we're in
+	const int i = FindBGSegmentForBeat( fBeat );
+
+	if( i != -1  &&  i != m_iCurBGChangeIndex )	// we're changing backgrounds
 	{
 		LOG->Trace( "old bga %d -> new bga %d, %f, %f", i, m_iCurBGChangeIndex, m_aBGChanges[i].m_fStartBeat, fBeat );
 
@@ -493,7 +493,7 @@ void Background::UpdateCurBGChange( float fCurrentTime )
 		if( m_pCurrentBGA )
 			m_pCurrentBGA->Update( fDeltaTime );
 	}
-	else
+	else	// we're not changing backgrounds
 	{
 		/* This is affected by the music rate. */
 		float fDeltaTime = fCurrentTime - m_fLastMusicSeconds;

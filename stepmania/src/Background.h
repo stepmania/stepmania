@@ -42,7 +42,7 @@ protected:
 	const Song *m_pSong;
 	void LoadFromAniDir( CString sAniDir );
 	void LoadFromRandom( float fFirstBeat, float fLastBeat, const TimingData &timing );
-	int FindBPMSegmentForBeat( float fBeat ) const;
+	int FindBGSegmentForBeat( float fBeat ) const;
 
 	bool IsDangerPlayerVisible( PlayerNumber pn );
 	bool IsDangerAllVisible();
