@@ -19,9 +19,9 @@ static bool IsFatalSignal( int signal )
 	case SIGINT:
 	case SIGTERM:
 	case SIGHUP:
-		return true;
-	default:
 		return false;
+	default:
+		return true;
 	}
 }
 
@@ -53,12 +53,6 @@ static void EmergencyShutdown( int signal )
 	 * another thread causes crashes (eg. GL may be using TLS). */
 	if( !strcmp(RageThread::GetCurThreadName(), "Main thread") && SDL_WasInit(SDL_INIT_VIDEO) )
 		SDL_QuitSubSystem(SDL_INIT_VIDEO);
-}
-
-static void KillSelf( int signal )
-{
-	if( !IsFatalSignal(signal) )
-		return;
 
 	kill( 0, SIGKILL );
 }
@@ -71,15 +65,12 @@ ArchHooks_Unix::ArchHooks_Unix()
 #if defined(CRASH_HANDLER)
 	CrashHandlerHandleArgs( g_argc, g_argv );
 	InitializeCrashHandler();
-	SignalHandler::OnClose( CrashSignalHandler );
+	SignalHandler::OnClose( DoCrashSignalHandler );
 #endif
 
 	/* Set up EmergencyShutdown, to try to shut down the window if we crash.
 	 * This might blow up, so be sure to do it after the crash handler. */
 	SignalHandler::OnClose( EmergencyShutdown );
-
-	/* On fatal crashes, after the above, kill ourself so we don't return. */
-	SignalHandler::OnClose( KillSelf );
 }
 
 void ArchHooks_Unix::DumpDebugInfo()
