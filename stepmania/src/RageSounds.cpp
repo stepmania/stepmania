@@ -38,13 +38,20 @@ struct MusicPlaying
 	/* If m_TimingDelayed is true, this will be the timing data for the song that's starting.
 	 * We'll copy it to m_Timing once sound is heard. */
 	TimingData m_NewTiming;
-	RageSound m_Music;
-	MusicPlaying()
+	RageSound *m_Music;
+	MusicPlaying( RageSound *Music )
 	{
 		m_Timing.AddBPMSegment( BPMSegment(0,120) );
 		m_NewTiming.AddBPMSegment( BPMSegment(0,120) );
 		m_HasTiming = false;
 		m_TimingDelayed = false;
+		m_Music = Music;
+	}
+
+	~MusicPlaying()
+	{
+		if( m_Music )
+			delete m_Music;
 	}
 };
 
@@ -124,22 +131,22 @@ void StartPlayingMusic( const RageTimer &when, const MusicToPlay &ToPlay, MusicP
 	Playing.m_HasTiming = ToPlay.HasTiming;
 	Playing.m_TimingDelayed = true;
 
-	Playing.m_Music.Load( ToPlay.file, false );
+	Playing.m_Music->Load( ToPlay.file, false );
 
 	if( ToPlay.force_loop )
-		Playing.m_Music.SetStopMode( RageSound::M_LOOP );
+		Playing.m_Music->SetStopMode( RageSound::M_LOOP );
 
-	Playing.m_Music.SetStartSeconds( ToPlay.start_sec );
+	Playing.m_Music->SetStartSeconds( ToPlay.start_sec );
 
 	if( ToPlay.length_sec == -1 )
-		Playing.m_Music.SetLengthSeconds();
+		Playing.m_Music->SetLengthSeconds();
 	else
-		Playing.m_Music.SetLengthSeconds( ToPlay.length_sec );
+		Playing.m_Music->SetLengthSeconds( ToPlay.length_sec );
 
-	Playing.m_Music.SetFadeLength( ToPlay.fade_len );
-	Playing.m_Music.SetPositionSeconds();
-	Playing.m_Music.SetStartTime( when );
-	Playing.m_Music.StartPlaying();
+	Playing.m_Music->SetFadeLength( ToPlay.fade_len );
+	Playing.m_Music->SetPositionSeconds();
+	Playing.m_Music->SetStartTime( when );
+	Playing.m_Music->StartPlaying();
 }
 
 void StartMusic( MusicToPlay &ToPlay )
@@ -148,13 +155,13 @@ void StartMusic( MusicToPlay &ToPlay )
 
 	if( ToPlay.file.empty() )
 	{
-		if( g_Playing->m_Music.IsPlaying() )
-			g_Playing->m_Music.StopPlaying();
-		g_Playing->m_Music.Unload();
+		if( g_Playing->m_Music->IsPlaying() )
+			g_Playing->m_Music->StopPlaying();
+		g_Playing->m_Music->Unload();
 		return;
 	}
 
-	MusicPlaying *NewMusic = new MusicPlaying;
+	MusicPlaying *NewMusic = new MusicPlaying( new RageSound );
 	NewMusic->m_Timing = g_Playing->m_Timing;
 
 	/* See if we can find timing data. */
@@ -269,7 +276,7 @@ RageSounds::RageSounds()
 	ASSERT( SOUNDMAN );
 
 	g_Mutex = new RageMutex;
-	g_Playing = new MusicPlaying;
+	g_Playing = new MusicPlaying( new RageSound );
 
 	g_UpdatingTimer = false;
 
@@ -304,7 +311,7 @@ void RageSounds::Update( float fDeltaTime )
 	if( !g_UpdatingTimer )
 		return;
 
-	if( !g_Playing->m_Music.IsPlaying() )
+	if( !g_Playing->m_Music->IsPlaying() )
 	{
 		/* There's no song playing.  Fake it. */
 		GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Playing->m_Timing );
@@ -317,22 +324,24 @@ void RageSounds::Update( float fDeltaTime )
 	 * started playing. */
 	bool approximate;
 	RageTimer tm;
-	const float fSeconds = g_Playing->m_Music.GetPositionSeconds( &approximate, &tm );
+	const float fSeconds = g_Playing->m_Music->GetPositionSeconds( &approximate, &tm );
 
-	if( g_Playing->m_TimingDelayed && !approximate )
+	if( g_Playing->m_TimingDelayed )
 	{
-		/* We've passed the start position of the new sound, so we should be OK.
-		 * Load up the new timing data. */
-		g_Playing->m_Timing = g_Playing->m_NewTiming;
-		g_Playing->m_TimingDelayed = false;
-	}
-
-	if( approximate )
-	{
-		/* We're still waiting for the new sound to start playing, so keep using the
-		 * old timing data and fake the time. */
-		GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Playing->m_Timing );
-		return;
+		if( approximate )
+		{
+			/* We're still waiting for the new sound to start playing, so keep using the
+			 * old timing data and fake the time. */
+			GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Playing->m_Timing );
+			return;
+		}
+		else
+		{
+			/* We've passed the start position of the new sound, so we should be OK.
+			 * Load up the new timing data. */
+			g_Playing->m_Timing = g_Playing->m_NewTiming;
+			g_Playing->m_TimingDelayed = false;
+		}
 	}
 
 	GAMESTATE->UpdateSongPosition( fSeconds, g_Playing->m_Timing, tm );
@@ -342,15 +351,15 @@ void RageSounds::Update( float fDeltaTime )
 CString RageSounds::GetMusicPath() const
 {
 	LockMut( *g_Mutex );
-	return g_Playing->m_Music.GetLoadedFilePath();
+	return g_Playing->m_Music->GetLoadedFilePath();
 }
 
 /* This function should not touch the disk at all. */
 void RageSounds::PlayMusic( const CString &file, const CString &timing_file, bool force_loop, float start_sec, float length_sec, float fade_len )
 {
 	LockMut( *g_Mutex );
-//	LOG->Trace("play '%s' (current '%s')", file.c_str(), g_Playing->m_Music.GetLoadedFilePath().c_str());
-	if( g_Playing->m_Music.IsPlaying() && !g_Playing->m_Music.GetLoadedFilePath().CompareNoCase(file) )
+//	LOG->Trace("play '%s' (current '%s')", file.c_str(), g_Playing->m_Music->GetLoadedFilePath().c_str());
+	if( g_Playing->m_Music->IsPlaying() && !g_Playing->m_Music->GetLoadedFilePath().CompareNoCase(file) )
 		return;		// do nothing
 
 	MusicToPlay ToPlay;
@@ -404,6 +413,28 @@ void RageSounds::PlayOnceFromDir( CString PlayOnceFromDir )
 float RageSounds::GetPlayLatency() const
 {
 	return SOUNDMAN->GetPlayLatency();
+}
+
+void RageSounds::TakeOverSound( RageSound *snd, const TimingData *Timing )
+{
+	MusicPlaying *NewMusic = new MusicPlaying( snd );
+
+	NewMusic->m_TimingDelayed = false;
+	NewMusic->m_HasTiming = false;
+	if( Timing )
+	{
+		NewMusic->m_HasTiming = true;
+		NewMusic->m_Timing = *Timing;
+	}
+
+	LockMut( *g_Mutex );
+	delete g_Playing;
+	g_Playing = NewMusic;
+
+	Update( 0 );
+
+	const float fSeconds = g_Playing->m_Music->GetPositionSeconds();
+	LOG->Trace("Updated: %f sec, %f beat", fSeconds, GAMESTATE->m_fSongBeat );
 }
 
 /*
