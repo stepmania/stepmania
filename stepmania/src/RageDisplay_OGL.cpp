@@ -348,8 +348,7 @@ static void LogGLXDebugInformation()
 
 	const int scr = DefaultScreen( g_X11Display );
 
-	LOG->Info( "Display: %s", DisplayString(g_X11Display) );
-	LOG->Info( "Screen: %i", scr );
+	LOG->Info( "Display: %s (screen %i)", DisplayString(g_X11Display), scr );
 	LOG->Info( "Direct rendering: %s", glXIsDirect( g_X11Display, glXGetCurrentContext() )? "yes":"no" );
 
 	int XServerVersion = XVendorRelease( g_X11Display ); /* eg. 40201001 */
@@ -357,12 +356,10 @@ static void LogGLXDebugInformation()
 	int minor = XServerVersion / 100000;   XServerVersion %= 100000;
 	int revision = XServerVersion / 1000;  XServerVersion %= 1000;
 	int patch = XServerVersion;
-	LOG->Info( "X server vendor: %s, %i.%i.%i.%i", XServerVendor( g_X11Display ), major, minor, revision, patch );
 
-	LOG->Info( "Server GLX vendor: %s", glXQueryServerString( g_X11Display, scr, GLX_VENDOR ) );
-	LOG->Info( "Server GLX version: %s", glXQueryServerString( g_X11Display, scr, GLX_VERSION ) );
-	LOG->Info( "Client GLX vendor: %s", glXGetClientString( g_X11Display, GLX_VENDOR ) );
-	LOG->Info( "Client GLX version: %s", glXGetClientString( g_X11Display, GLX_VERSION ) );
+	LOG->Info( "X server vendor: %s [%i.%i.%i.%i]", XServerVendor( g_X11Display ), major, minor, revision, patch );
+	LOG->Info( "Server GLX vendor: %s [%s]", glXQueryServerString( g_X11Display, scr, GLX_VENDOR ), glXQueryServerString( g_X11Display, scr, GLX_VERSION ) );
+	LOG->Info( "Client GLX vendor: %s [%s]", glXGetClientString( g_X11Display, GLX_VENDOR ), glXGetClientString( g_X11Display, GLX_VERSION ) );
 #endif
 }
 
@@ -436,11 +433,11 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 	 * system we can compare them: */
 	glGetFloatv(GL_LINE_WIDTH_RANGE, g_line_range);
 	glGetFloatv(GL_LINE_WIDTH_GRANULARITY, &g_line_granularity);
-	LOG->Info("Line width range: %.3f-%.3f +%.3f", g_line_range[0], g_line_range[1], g_line_granularity);
-
 	glGetFloatv(GL_POINT_SIZE_RANGE, g_point_range);
 	glGetFloatv(GL_POINT_SIZE_GRANULARITY, &g_point_granularity);
-	LOG->Info("Point size range: %.3f-%.3f +%.3f", g_point_range[0], g_point_range[1], g_point_granularity);
+	LOG->Info("Line width range: %.3f-%.3f +%.3f  Point size range: %.3f-%.3f +%.3f",
+		g_line_range[0], g_line_range[1], g_line_granularity,
+		g_point_range[0], g_point_range[1], g_point_granularity );
 }
 
 #if defined(unix) && defined(HAVE_LIBXTST)
