@@ -100,6 +100,9 @@ bool EzSockets::listen() {
 #endif
 
 bool EzSockets::accept(EzSockets &socket) {
+  if (!blocking && !CanRead())
+    return false;
+
   int length = sizeof(socket);
 
   socket.sock = ::accept(sock,(struct sockaddr*) &socket.addr,(socklen_t*) &length);
