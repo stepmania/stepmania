@@ -60,6 +60,9 @@ void SongManager::InitSongArrayFromDisk( void(*callback)() )
 	for( int i=0; i<PREFSMAN->m_asAdditionalSongFolders.GetSize(); i++ )
         LoadStepManiaSongDir( PREFSMAN->m_asAdditionalSongFolders[i], callback );
 
+	if( PREFSMAN->m_DWIPath != "" )
+		LoadStepManiaSongDir( PREFSMAN->m_DWIPath + "\\Songs", callback );
+
 	LOG->Trace( "Found %d Songs.", m_pSongs.GetSize() );
 }
 
