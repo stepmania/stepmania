@@ -467,15 +467,17 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			{
 			arraySongs.clear();
 
-			vector<Song*> arrayAllSongs = SONGMAN->GetBestSongs();
+			const vector<Song*> arrayAllSongs = SONGMAN->GetBestSongs();
 
-			// weed out songs that require more songs than are available
-			for (i=0; i<arrayAllSongs.size(); i++)
-				if ( SONGMAN->GetNumStagesForSong(arrayAllSongs[i]) <= GAMESTATE->GetNumStagesLeft() )
-					arraySongs.push_back(arrayAllSongs[i]);
+			for ( i=0; arraySongs.size() < 30 && i < arrayAllSongs.size(); i++ )
+			{
+				// weed out songs that require more songs than are available
+				if ( SONGMAN->GetNumStagesForSong(arrayAllSongs[i]) > GAMESTATE->GetNumStagesLeft() )
+					continue;
 
-			if( arraySongs.size() > 30 )
-				arraySongs.erase(arraySongs.begin()+30, arraySongs.end());
+				arraySongs.push_back(arrayAllSongs[i]);
+			}
+
 			bUseSections = false;
 			break;
 			}
@@ -1232,7 +1234,8 @@ void MusicWheel::StartRoulette()
 void MusicWheel::StartRandom()
 {
 	/* Shuffle the roulette wheel. */
-	random_shuffle( m_WheelItemDatas[SORT_ROULETTE].begin(), m_WheelItemDatas[SORT_ROULETTE].end() );
+	RandomGen rnd;
+	random_shuffle( m_WheelItemDatas[SORT_ROULETTE].begin(), m_WheelItemDatas[SORT_ROULETTE].end(), rnd );
 
 	SetOpenGroup("", SongSortOrder(SORT_ROULETTE));
 
