@@ -77,6 +77,9 @@ void GameState::Reset()
 	m_bAllow2ndExtraStage = true;
 	m_bDifficultCourses = false;
 
+	m_iGameSeed = rand();
+	m_iRoundSeed = rand();
+
 	m_pCurSong = NULL;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_pCurNotes[p] = NULL;

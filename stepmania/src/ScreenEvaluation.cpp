@@ -949,6 +949,7 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		m_Grades[p].SettleImmediately();
 
+	GAMESTATE->m_iRoundSeed = rand();
 
 	if( PREFSMAN->m_bEventMode )
 	{
