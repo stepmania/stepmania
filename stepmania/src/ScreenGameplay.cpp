@@ -1626,7 +1626,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			LOG->Trace("Player %i went back", MenuI.player+1);
 
 			m_DancingState = STATE_OUTRO;
-			SOUND->PlayOnce( THEME->GetPathToS("Common back") );
+			SCREENMAN->PlayBackSound();
 			/* Hmm.  There are a bunch of subtly different ways we can
 			 * tween out: 
 			 *   1. Keep rendering the song, and keep it moving.  This might

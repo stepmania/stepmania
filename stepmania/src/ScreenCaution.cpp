@@ -99,6 +99,6 @@ void ScreenCaution::MenuBack( PlayerNumber pn )
 		return;
 	this->ClearMessageQueue();
 	m_Back.StartTransitioning( SM_GoToPrevScreen );
-	SOUND->PlayOnce( THEME->GetPathToS("Common back") );
+	SCREENMAN->PlayBackSound();
 }
 

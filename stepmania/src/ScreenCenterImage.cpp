@@ -126,7 +126,7 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 	case SDLK_ESCAPE:
 		if(!IsTransitioning())
 		{
-			SOUND->PlayOnce( THEME->GetPathToS("Common back") );
+			SCREENMAN->PlayBackSound();
 			StartTransitioning( SM_GoToPrevScreen );		
 		}
 	case SDLK_RETURN:
