@@ -180,6 +180,10 @@ void ScreenEvaluation::Init()
 {
 	LOG->Trace( "ScreenEvaluation::Init()" );
 
+	/* Commit stats to the profile, so any profile stats displayed on this screen
+	 * include the last game. */
+	GAMESTATE->CommitStageStats();
+
 	Screen::Init();
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );

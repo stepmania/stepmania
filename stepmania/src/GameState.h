@@ -110,6 +110,7 @@ public:
 	int				GetStageIndex() const;
 	void			BeginStage();
 	void			CancelStage();
+	void			CommitStageStats();
 	void			FinishStage();
 	int				GetNumStagesLeft() const;
 	bool			IsFinalStage() const;
@@ -186,6 +187,9 @@ public:
 	StageResult GetStageResult( PlayerNumber pn ) const;
 
 	void ResetStageStatistics();	// Call this when it's time to play a new stage.
+
+	// True if CommitStageStats() has been called and FinishStage() hasn't.
+	bool			m_bStatsCommitted;
 
 
 	//

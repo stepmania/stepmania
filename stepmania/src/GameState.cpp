@@ -204,6 +204,7 @@ void GameState::Reset()
 	}
 
 	m_bTemporaryEventMode = false;
+	m_bStatsCommitted = false;
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_ATTRACT );
 
@@ -232,7 +233,12 @@ void GameState::JoinPlayer( PlayerNumber pn )
  *
  * optional: CancelStage() - gameplay aborted (Back pressed), undo BeginStage and back up
  *
+ * CommitStageStats() - gameplay is finished
+ *   Saves STATSMAN->m_CurStageStats to the profiles, so profile information
+ *   is up-to-date for Evaluation.
+ *
  * FinishStage() - gameplay and evaluation is finished
+ *   Clears data which was stored by CommitStageStats.
  *
  * EndGame() - the game is finished
  * 
@@ -416,6 +422,16 @@ void GameState::CancelStage()
 	m_iNumStagesOfThisSong = 0;
 }
 
+void GameState::CommitStageStats()
+{
+	/* Don't commit stats twice. */
+	if( m_bStatsCommitted || m_bDemonstrationOrJukebox )
+		return;
+	m_bStatsCommitted = true;
+
+	STATSMAN->CommitStatsToProfiles();
+}
+
 /* Called by ScreenSelectMusic (etc).  Increment the stage counter if we just played a
  * song.  Might be called more than once. */
 void GameState::FinishStage()
@@ -424,6 +440,11 @@ void GameState::FinishStage()
 	 * BeginStage.  This can happen when backing out of the player options screen. */
 	if( m_iNumStagesOfThisSong == 0 )
 		return;
+
+	/* If we havn't committed stats yet, do so. */
+	CommitStageStats();
+
+	m_bStatsCommitted = false;
 
 	// Increment the stage counter.
 	ASSERT( m_iNumStagesOfThisSong >= 1 && m_iNumStagesOfThisSong <= 3 );
@@ -437,8 +458,6 @@ void GameState::FinishStage()
 
 	if( m_bDemonstrationOrJukebox )
 		return;
-
-	STATSMAN->CommitStatsToProfiles();
 
 	if( GAMESTATE->GetEventMode() )
 	{
