@@ -9,9 +9,16 @@
 #define GLX_GLXEXT_PROTOTYPES
 #include <GL/glx.h>	// All sorts of stuff...
 
+// XXX HACK: RageDisplay_OGL is expecting us to set this for it so it can do
+// GLX-specific queries and whatnot. It's one ugly hackish mess, but hey,
+// LLW_SDL is in on it, and I'm feeling lazy.
+extern Display *g_X11Display;
+
 LowLevelWindow_X11::LowLevelWindow_X11()
 {
+	g_X11Display = NULL;
 	if(!X11Helper::Go() ) { RageException::Throw("Failed to establish a connection with the X server."); }
+	g_X11Display = X11Helper::Dpy();
 	LOG->Trace("LowLevelWindow_X11 init");
 }
 
