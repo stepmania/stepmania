@@ -174,20 +174,20 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 	{
 		// map the xbox controller buttons to the keyboard equivalents
 		if(DeviceI.button == JOY_HAT_LEFT)
-			button = SDLK_LEFT;
+			button = KEY_LEFT;
 		else if(DeviceI.button == JOY_HAT_RIGHT)
-			button = SDLK_RIGHT;
+			button = KEY_RIGHT;
 		else if(DeviceI.button == JOY_HAT_UP)
-			button = SDLK_UP;
+			button = KEY_UP;
 		else if(DeviceI.button == JOY_HAT_DOWN)
-			button = SDLK_DOWN;
+			button = KEY_DOWN;
 		else if(DeviceI.button == JOY_9)
-			button = SDLK_RETURN;
+			button = KEY_RETURN;
 		else if(DeviceI.button == JOY_10)
-			button = SDLK_ESCAPE;
+			button = KEY_ESCAPE;
 		else if(DeviceI.button == JOY_1 || DeviceI.button == JOY_2 ||
 				DeviceI.button == JOY_3 || DeviceI.button == JOY_4)
-			button = SDLK_DELETE;
+			button = KEY_DEL;
 	}
 #endif
 
@@ -211,7 +211,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 	if( m_iWaitingForPress )
 	{
 		/* Don't allow function keys to be mapped. */
-		if ( DeviceI.device == DEVICE_KEYBOARD && (DeviceI.button >= SDLK_F1 && DeviceI.button <= SDLK_F12) )
+		if ( DeviceI.device == DEVICE_KEYBOARD && (DeviceI.button >= KEY_F1 && DeviceI.button <= KEY_F12) )
 		{
 			m_textError.SetText( "That key can not be mapped." );
 			SCREENMAN->PlayInvalidSound();
@@ -247,14 +247,14 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 		 * intuitive, so allow them, too. -gm */
 
 		/* XXX: For some reason that eludes me, this function gets sent an
-		 * SDLK_SPACE button press every time the JOY_HAT_UP button is pressed.
+		 * KEY_SPACE button press every time the JOY_HAT_UP button is pressed.
 		 * Had to put this in to prevent mappings being erased everytime the user
 		 * pressed up on the joypad. */
 
-		case SDLK_DELETE:
+		case KEY_DEL:
 #ifndef _XBOX
-		case SDLK_SPACE:
-		case SDLK_BACKSPACE: /* Clear the selected input mapping. */
+		case KEY_SPACE:
+		case KEY_BACK: /* Clear the selected input mapping. */
 #endif
 			{
 				GameInput curGameI( (GameController)m_iCurController, (GameButton)m_iCurButton );
@@ -264,7 +264,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 				INPUTMAPPER->SaveMappingsToDisk();
 			}
 			break;
-		case SDLK_LEFT: /* Move the selection left, wrapping up. */
+		case KEY_LEFT: /* Move the selection left, wrapping up. */
 			if( m_iCurSlot == 0 && m_iCurController == 0 )
 				break;	// can't go left any more
 			m_iCurSlot--;
@@ -275,7 +275,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			}
 
 			break;
-		case SDLK_RIGHT:	/* Move the selection right, wrapping down. */
+		case KEY_RIGHT:	/* Move the selection right, wrapping down. */
 			if( m_iCurSlot == NUM_CHANGABLE_SLOTS-1 && m_iCurController == MAX_GAME_CONTROLLERS-1 )
 				break;	// can't go right any more
 			m_iCurSlot++;
@@ -285,17 +285,17 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 				m_iCurController++;
 			}
 			break;
-		case SDLK_UP: /* Move the selection up. */
+		case KEY_UP: /* Move the selection up. */
 			if( m_iCurButton == 0 )
 				break;	// can't go up any more
 			m_iCurButton--;
 			break;
-		case SDLK_DOWN: /* Move the selection down. */
+		case KEY_DOWN: /* Move the selection down. */
 			if( m_iCurButton == GAMESTATE->GetCurrentGame()->m_iButtonsPerController-1 )
 				break;	// can't go down any more
 			m_iCurButton++;
 			break;
-		case SDLK_ESCAPE: /* Quit the screen. */
+		case KEY_ESC: /* Quit the screen. */
 			if(!IsTransitioning())
 			{
 				SCREENMAN->PlayStartSound();
@@ -304,8 +304,8 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 					m_Line[b].Command( (b%2)? ODD_LINE_OUT:EVEN_LINE_OUT );
 			}
 			break;
-		case SDLK_RETURN: /* Change the selection. */
-		case SDLK_KP_ENTER:
+		case KEY_ENTER: /* Change the selection. */
+		case KEY_KP_ENTER:
 			m_iWaitingForPress = FramesToWaitForInput;
 			m_DeviceIToMap.MakeInvalid();
 			break;
