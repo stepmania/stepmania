@@ -48,6 +48,7 @@ public:
 	void SetGlobal( const CString &sName, bool val ) { PushStack(val); SetGlobal( sName ); }
 	void UnsetGlobal( const CString &sName ) { PushStackNil(); SetGlobal( sName ); }
 
+	// XXX: yuck
 	void PushStackNil();
 	void PushNopFunction();
 	static void PushStack( bool val, lua_State *L = NULL );
@@ -55,7 +56,11 @@ public:
 	static void PushStack( int val, lua_State *L = NULL );
 	static void PushStack( void *val, lua_State *L = NULL );
 	static void PushStack( const CString &val, lua_State *L = NULL );
-	void PopStack( CString &out );
+	static bool PopStack( bool &val, lua_State *L = NULL );
+	static bool PopStack( float &val, lua_State *L = NULL );
+	static bool PopStack( int &val, lua_State *L = NULL );
+	static bool PopStack( void *&val, lua_State *L = NULL );
+	static bool PopStack( CString &val, lua_State *L = NULL );
 	bool GetStack( int pos, int &out );
 	void SetGlobal( const CString &sName );
 

@@ -104,6 +104,59 @@ void LuaManager::PushStack( const CString &out, lua_State *L )
 	lua_pushstring( L, out );
 }
 
+bool LuaManager::PopStack( int &out, lua_State *L )
+{
+	if( L == NULL )
+		L = LUA->L;
+
+	out = (int) lua_tonumber( L, -1 );
+	lua_pop( L, 1 );
+	return true;
+}
+
+bool LuaManager::PopStack( bool &out, lua_State *L )
+{
+	if( L == NULL )
+		L = LUA->L;
+
+	out = lua_toboolean( L, -1 );
+	lua_pop( L, 1 );
+	return true;
+}
+
+bool LuaManager::PopStack( float &val, lua_State *L )
+{
+	if( L == NULL )
+		L = LUA->L;
+
+	val = lua_tonumber( L, -1 );
+	lua_pop( L, 1 );
+	return true;
+}
+
+bool LuaManager::PopStack( void *&out, lua_State *L )
+{
+	if( L == NULL )
+		L = LUA->L;
+
+	out = lua_touserdata( L, -1 );
+	lua_pop( L, 1 );
+	return true;
+}
+
+bool LuaManager::PopStack( CString &out, lua_State *L )
+{
+	if( L == NULL )
+		L = LUA->L;
+
+	const char *pStr = lua_tostring( L, -1 );
+	if( pStr != NULL )
+		out = pStr;
+
+	lua_pop( L, 1 );
+	return pStr != NULL;
+}
+
 void LuaManager::CreateTableFromArrayB( const vector<bool> &aIn, lua_State *L )
 {
 	if( L == NULL )
@@ -131,16 +184,6 @@ void LuaManager::ReadArrayFromTableB( vector<bool> &aOut, lua_State *L )
 		aOut[i] = bOn;
 		lua_pop( L, 1 );
 	}
-}
-
-void LuaManager::PopStack( CString &out )
-{
-	/* There must be at least one entry on the stack. */
-	ASSERT( lua_gettop(L) > 0 );
-	ASSERT( lua_isstring(L, -1) );
-
-	out = lua_tostring( L, -1 );
-	lua_pop( L, -1 );
 }
 
 bool LuaManager::GetStack( int pos, int &out )
