@@ -67,9 +67,6 @@ bool InputQueue::MatchesPattern( const GameController c, const MenuButton* butto
 
 bool InputQueue::MatchesPattern( const GameController c, const GameButton* button_sequence, const int iNumButtons, float fMaxSecondsBack )
 {
-	if( fMaxSecondsBack == -1 )
-		fMaxSecondsBack = 0.4f + iNumButtons*0.15f;
-
 	float fOldestTimeAllowed = RageTimer::GetTimeSinceStart() - fMaxSecondsBack;
 
 	int sequence_index = iNumButtons-1;	// count down

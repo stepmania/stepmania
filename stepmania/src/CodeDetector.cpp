@@ -51,17 +51,18 @@ const int MAX_CODE_LENGTH = 10;
 struct CodeCacheItem {
 	int iNumButtons;
 	GameButton buttons[MAX_CODE_LENGTH];
+	float fMaxSecondsBack;
 };	
 CodeCacheItem g_CodeCacheItems[CodeDetector::NUM_CODES];
 
 
 bool CodeDetector::EnteredCode( GameController controller, Code code )
 {
-	if( g_CodeCacheItems[code].iNumButtons > 0 )
-		if( INPUTQUEUE->MatchesPattern(controller, g_CodeCacheItems[code].buttons, g_CodeCacheItems[code].iNumButtons) )
-			return true;
+	if( g_CodeCacheItems[code].iNumButtons == 0 )
+		return false;
 
-	return false;
+	const CodeCacheItem& item = g_CodeCacheItems[code];
+	return INPUTQUEUE->MatchesPattern(controller, item.buttons, item.iNumButtons, item.fMaxSecondsBack);
 }
 
 void RefreshCacheItem( int iIndex )
@@ -103,6 +104,8 @@ void RefreshCacheItem( int iIndex )
 			return;
 		}
 	}
+
+	item.fMaxSecondsBack = item.iNumButtons*0.4f;
 
 	// if we make it here, we found all the buttons in the code
 }

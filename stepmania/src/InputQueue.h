@@ -23,8 +23,8 @@ public:
 	InputQueue();
 
 	void RememberInput( GameInput );
-	bool MatchesPattern( const GameController c, const GameButton* button_sequence, const int iNumButtons, float fMaxSecondsBack = -1 );
-	bool MatchesPattern( const GameController c, const MenuButton* button_sequence, const int iNumButtons, float fMaxSecondsBack = -1 );
+	bool MatchesPattern( const GameController c, const GameButton* button_sequence, const int iNumButtons, float fMaxSecondsBack );
+	bool MatchesPattern( const GameController c, const MenuButton* button_sequence, const int iNumButtons, float fMaxSecondsBack );
 
 protected:
 	struct GameButtonAndTime
