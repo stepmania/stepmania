@@ -153,6 +153,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 		{
 			//m_textError.SetText( "Game option is set to ignore the Joystick D-Pad." );
 			//m_fErrorDisplayCountdown = 5;	// show the error message
+			m_textError.StopTweening();
 			m_textError.SetDiffuse( RageColor(0,1,0,1) );
 			m_textError.BeginTweening( 3 );
 			m_textError.BeginTweening( 1 );
