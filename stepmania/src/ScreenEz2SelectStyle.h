@@ -56,6 +56,6 @@ private:
 	int m_iSelectedPlayer;
 	RandomSample m_soundChange;
 	RandomSample m_soundSelect;	
-
+	RandomSample m_soundInvalid;
 protected:
 };

@@ -128,10 +128,10 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"UpLeft",
 			"UpLeftHand",
 			"LrLeftHand",
-			"UpRight",
-			"UpRightHand",
-			"LrRightHand",
 			"Down",
+			"LrRightHand",
+			"UpRightHand",
+			"UpRight",
 			"Back"
 		},
 		{	// m_iMenuButtons[NUM_MENU_BUTTONS];	// map from MenuButton to m_szButtonNames
@@ -145,8 +145,6 @@ GameDef g_GameDefs[NUM_GAMES] =
 	},
 
 };
-
-
 
 StyleDef g_StyleDefs[NUM_STYLES] = 
 {
@@ -408,11 +406,11 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFT,		-EZ2_COL_SPACING*1.5f },   // CHANGE THESE WHEN WE CAN SEE THE
+				{ TRACK_1,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFT,		-EZ2_COL_SPACING*1.0f },   // CHANGE THESE WHEN WE CAN SEE THE
 				{ TRACK_2,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFTHAND,	-EZ2_COL_SPACING*0.5f },  // NOTES IN-GAME !!!!!!!!!!
 				{ TRACK_3,	INSTRUMENT_1,	EZ2_BUTTON_DOWN,		+EZ2_COL_SPACING*0 },
 				{ TRACK_4,	INSTRUMENT_1,	EZ2_BUTTON_UPRIGHTHAND,	+EZ2_COL_SPACING*0.5f },
-				{ TRACK_5,	INSTRUMENT_1,	EZ2_BUTTON_UPRIGHT,		+EZ2_COL_SPACING*1.5f },
+				{ TRACK_5,	INSTRUMENT_1,	EZ2_BUTTON_UPRIGHT,		+EZ2_COL_SPACING*1.0f },
 			},
 			{	// PLAYER_2
 				{ TRACK_1,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFT,		-EZ2_COL_SPACING*2 },   // CHANGE THESE WHEN WE CAN SEE THE

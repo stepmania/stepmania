@@ -179,7 +179,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 
 	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_STYLE_CHANGE) );
 	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
-
+	m_soundInvalid.Load( THEME->GetPathTo(SOUND_MENU_INVALID) );
 
 //	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_INTRO) );
 
@@ -312,11 +312,18 @@ void ScreenEz2SelectStyle::MenuBack( const PlayerNumber p )
 	MUSIC->Stop();
 
 	m_Menu.TweenOffScreenToBlack( SM_GoToPrevState, true );
+	GAMEMAN->m_CurStyle = STYLE_NONE; // Make sure that both players can scroll around title menu...
 
 //	m_Fade.CloseWipingLeft( SM_GoToPrevState );
 
 //	TweenOffScreen();
 }
+
+/************************************
+MenuDown
+Desc: Actions performed when a player 
+presses the button bound to down
+************************************/
 
 void ScreenEz2SelectStyle::MenuDown( const PlayerNumber p )
 {
@@ -623,11 +630,38 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 	}
 	else
 	{
+		if (m_iSelectedPlayer == 2) // both players
+		{
+			m_soundInvalid.PlayRandom();
+			return;
+		}
+		else
+		{
+			if (m_iSelectedStyle == 0) // easy
+			{
+				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
+			}
+			else if (m_iSelectedStyle == 1) // hard
+			{
+				m_soundInvalid.PlayRandom();
+				return;
+			}
+			else if (m_iSelectedStyle == 2) // real
+			{
+				// GAMEMAN->m_CurStyle = STYLE_EZ2_REAL;	
+				m_soundInvalid.PlayRandom();
+				return;
+			}
+			else // club
+			{
+				m_soundInvalid.PlayRandom();
+				return;
+			}
+		}
 		m_soundSelect.PlayRandom();
 	
 		this->ClearMessageQueue();
-
-		GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;		
+	
 		PREFSMAN->m_PlayMode = PLAY_MODE_ARCADE;
 
 		m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
