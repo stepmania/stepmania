@@ -554,20 +554,25 @@ TitleFrom: Sigma
 ArtistFrom: (Shiina Ringo|椎名林檎)
 TitleTo: Σ 
 *
+# Gimmick for this artist only:
+TitleFrom: Motto
+ArtistFrom: (Ishisaka Kumiko)|(Kumiko Ishisaka)|(石坂久美子)
+TitleTo: Mottö
+*
 # http://www.hotei.com/
-ArtistFrom: Hotei Tomoyasu 
+ArtistFrom: (Hotei Tomoyasu)|(Tomoyasu Hotei)
 ArtistTo: 布袋寅泰
 *
 # http://www.uyax.com/whats/index.html
-ArtistFrom: Yuuya Asaoka
+ArtistFrom: (Yuuya Asaoka)|(Yuuya Asaoka)
 ArtistTo: 浅岡雄也
 *
 # http://www5a.biglobe.ne.jp/~iwadare/main_fl_j.html
-ArtistFrom: Noriyuki Iwadare
+ArtistFrom: (Noriyuki Iwadare)|(Iwadare Noriyuki)
 ArtistTo: 岩垂徳行
 *
 # http://www.avexnet.or.jp/shimatani/
-ArtistFrom: Hitomi Shimatani
+ArtistFrom: (Hitomi Shimatani)|(Shimatani Hitomi)
 ArtistTo: 島谷ひとみ
 *
 # http://www.pokemon.co.jp/videodvdcd/others/01.html
@@ -578,11 +583,11 @@ TitleTo: ポケモン言えるかneo？
 ArtistTo: イマクニ？
 *
 # http://www.toshiba-emi.co.jp/domestic/artists/ringo/
-ArtistFrom: Shiina Ringo
+ArtistFrom: (Shiina Ringo|(Shiina Ringo)
 ArtistTo: 椎名林檎
 *
 # http://sdb.noppo.com/kumiko_w.htm
-ArtistFrom: KLONOA\(kumiko watanabe\)
+ArtistFrom: KLONOA *\(kumiko watanabe\)
 ArtistTo: KLONOA （渡辺久美子）
 *
 SubtitleFrom: -HOSHI NO UMI KAZE NO YUME-
@@ -592,16 +597,16 @@ ArtistTo: RainbowColors☆ feat. DR
 *
 # http://www.geneon-ent.co.jp/rondorobe/music/parapara/meca-max.html
 # http://system.emedia.co.jp/details/NMC-1070912-9976204.html
-ArtistFrom: Shinichi Ish?ihara
+ArtistFrom: (Shinichi Ish?ihara)|(Ish?ihara Shinichi)
 ArtistTo: 石原慎一
 *
 # http://www.geneon-ent.co.jp/rondorobe/music/parapara/meca-max.html
 # http://system.emedia.co.jp/details/NMC-1070912-9976204.html
-ArtistFrom: Norifumi Ono 
+ArtistFrom: (Norifumi Ono)|(Ono Norifumi)
 ArtistTo: 小野訓史
 *
 # http://www.konamistyle.com/product/product_detail.aspx?pfid=KOLA-51
-ArtistFrom: Kumiko Ishisaka
+ArtistFrom: (Kumiko Ishisaka)|(Ishisaka Kumiko)
 ArtistTo: 石坂久美子
 *
 # http://www.smtown.com/smtown/shin/
