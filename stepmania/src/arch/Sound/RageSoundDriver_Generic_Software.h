@@ -33,7 +33,7 @@ class RageSound_Generic_Software: public RageSoundDriver
 	 * happen on the next iteration.
 	 * 
 	 * The only state change made by the decoding thread is on EOF: the state is changed
-	 * from PLAYING to STOPPING.  This is done while SOUNDMAN->lock is held, to prevent
+	 * from PLAYING to STOPPING.  This is done while m_Mutex is held, to prevent
 	 * races with other threads.
 	 *
 	 * The only state change made by the mixing thread is from HALTING to STOPPED.
@@ -58,6 +58,9 @@ class RageSound_Generic_Software: public RageSoundDriver
 		int64_t frames_read, frames_written;
 
 		int64_t frames_buffered() const { return frames_written - frames_read; }
+		/* If true, this sound is in STOPPED and available for use. */
+		bool available;
+
 		enum
 		{
 			STOPPED,	/* idle */
@@ -115,6 +118,14 @@ protected:
 	 * is safe to call from a realtime thread.
 	 */
 	void Mix( int16_t *frames, int nframes, int64_t frameno, int64_t current_frameno );
+
+	/* This mutex is used for serializing with the decoder thread.  Locking this mutex
+	 * can take a while. */
+	RageMutex m_Mutex;
+
+	/* This mutex locks all sounds[] which are "available".  (Other sound may safely
+	 * be accessed, and sounds may be set to available, without locking this.) */
+	RageMutex m_SoundListMutex;
 
 public:
 	virtual void Update(float delta);

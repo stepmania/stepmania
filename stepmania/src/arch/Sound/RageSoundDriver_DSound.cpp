@@ -42,7 +42,8 @@ void RageSound_DSound::MixerThread()
 	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL))
 		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set sound thread priority"));
 
-	while(!shutdown) {
+	while( !shutdown )
+	{
 		CHECKPOINT;
 
 		/* Sleep for the size of one chunk. */
@@ -51,7 +52,7 @@ void RageSound_DSound::MixerThread()
 		Sleep(int(1000 * sleep_secs));
 
 		CHECKPOINT;
-		LockMutex L(SOUNDMAN->lock);
+		LockMut( m_Mutex );
 
 		/* GetData() will return false if the buffer is sufficiently full.  Interleave
 		 * reads: call GetData for each file before calling it on the same file twice.
@@ -65,18 +66,48 @@ void RageSound_DSound::MixerThread()
 			bool bMoreData = false;
  			for(unsigned i = 0; i < stream_pool.size(); ++i)
 			{
-				if(stream_pool[i]->state == stream_pool[i]->INACTIVE)
+				/* We're only interested in PLAYING and FLUSHING sounds. */
+				if( stream_pool[i]->state != stream::PLAYING &&
+					stream_pool[i]->state != stream::FLUSHING )
 					continue; /* inactive */
 
-				if( stream_pool[i]->GetData(false) )
+				bool bEOF;
+				if( stream_pool[i]->GetData( false, bEOF ) )
 					bMoreData = true;
+
+				if( bEOF )
+				{
+					/* FLUSHING tells the mixer thread to release the stream once str->flush_bufs
+					 * buffers have been flushed. */
+					stream_pool[i]->state = stream_pool[i]->FLUSHING;
+
+					/* Keep playing until the data we currently have locked has played. */
+					stream_pool[i]->flush_pos = stream_pool[i]->pcm->GetOutputPosition();
+				}
 			}
 			if( !bMoreData )
 				break;
 		}
+
+		/* When sounds are in FLUSHING, and we've finished flushing, stop the sound
+		 * and move the sound to FINISHED.  Once we do this, it's owned by the main
+		 * thread and we can't touch it anymore. */
+		for( unsigned i = 0; i < stream_pool.size(); ++i )
+		{
+			if( stream_pool[i]->state != stream_pool[i]->FLUSHING )
+				continue;
+
+			const int64_t ps = stream_pool[i]->pcm->GetPosition();
+			if( ps < stream_pool[i]->flush_pos )
+				continue; /* still flushing */
+
+			stream_pool[i]->pcm->Stop();
+
+			stream_pool[i]->state = stream::FINISHED;
+		}
 	}
 
-	/* I'm not sure why, but if we don't stop the stream now, then the thread will take
+	/* I'm not sure why, but if we don't stop streams now, then the thread will take
 	 * 90ms (our buffer size) longer to close. */
 	for(unsigned i = 0; i < stream_pool.size(); ++i)
 		if(stream_pool[i]->state != stream_pool[i]->INACTIVE)
@@ -88,33 +119,29 @@ void RageSound_DSound::Update(float delta)
 	/* SoundStopped might erase sounds out from under us, so make a copy
 	 * of the sound list. */
 	vector<stream *> str = stream_pool;
-	ASSERT(SOUNDMAN);
-	LockMutex L(SOUNDMAN->lock);
 
 	for(unsigned i = 0; i < str.size(); ++i)
 	{
-		if(str[i]->state != str[i]->STOPPING) continue;
-
-		const int64_t ps = str[i]->pcm->GetPosition();
-		if(ps < str[i]->flush_pos)
-			continue; /* stopping but still flushing */
+		if( str[i]->state != stream::FINISHED )
+			continue;
 
 		/* The sound has stopped and flushed all of its buffers. */
-		if(str[i]->snd != NULL)
-			str[i]->snd->SoundIsFinishedPlaying();
+		str[i]->snd->SoundIsFinishedPlaying();
 		str[i]->snd = NULL;
 
-		str[i]->pcm->Stop();
+		/* Once we do this, the sound is once available for use; we must lock
+		 * m_InactiveSoundMutex to take it out of INACTIVE again. */
 		str[i]->state = str[i]->INACTIVE;
 	}
 }
 
-/* If init is true, we're filling the buffer while it's stopped, so put
- * data in the current buffer (where the play cursor is); otherwise put
- * it in the opposite buffer. */
-bool RageSound_DSound::stream::GetData(bool init)
+/* If init is true, we're filling the buffer while it's stopped, so fill the
+ * entire buffer.  If false, fill only one chunk.  If EOF is reached, set bEOF. */
+bool RageSound_DSound::stream::GetData( bool init, bool &bEOF )
 {
 	CHECKPOINT;
+
+	bEOF = false;
 
 	char *locked_buf;
 	unsigned len;
@@ -133,8 +160,8 @@ bool RageSound_DSound::stream::GetData(bool init)
 	}
 
 	/* It might be INACTIVE, when we're prebuffering. We just don't want to
-	 * fill anything in STOPPING; in that case, we just clear the audio buffer. */
-	if(state != STOPPING)
+	 * fill anything in FLUSHING; in that case, we just clear the audio buffer. */
+	if(state != FLUSHING)
 	{
 		pcm->SetVolume( snd->GetVolume() );
 
@@ -168,12 +195,7 @@ bool RageSound_DSound::stream::GetData(bool init)
 			/* Fill the remainder of the buffer with silence. */
 			memset( locked_buf+got, 0, len-bytes_read );
 
-			/* STOPPING tells the mixer thread to release the stream once str->flush_bufs
-			 * buffers have been flushed. */
-			state = STOPPING;
-
-			/* Keep playing until the data we currently have locked has played. */
-			flush_pos = pcm->GetOutputPosition();
+			bEOF = true;
 		}
 	} else {
 		/* Silence the buffer. */
@@ -190,7 +212,9 @@ RageSound_DSound::stream::~stream()
 	delete pcm;
 }
 
-RageSound_DSound::RageSound_DSound()
+RageSound_DSound::RageSound_DSound():
+	m_Mutex("DSoundMutex"),
+	m_InactiveSoundMutex("InactiveSoundMutex")
 {
 	shutdown = false;
 
@@ -253,39 +277,46 @@ RageSound_DSound::~RageSound_DSound()
 
 void RageSound_DSound::StartMixing( RageSoundBase *snd )
 {
-	LockMutex L(SOUNDMAN->lock);
+	/* Lock INACTIVE sounds[], and reserve a slot. */
+	m_InactiveSoundMutex.Lock();
 
 	/* Find an unused buffer. */
 	unsigned i;
-	for(i = 0; i < stream_pool.size(); ++i) {
-		if(stream_pool[i]->state == stream_pool[i]->INACTIVE)
+	for( i = 0; i < stream_pool.size(); ++i )
+		if( stream_pool[i]->state == stream::INACTIVE )
 			break;
-	}
 
-	if(i == stream_pool.size()) {
-		/* We don't have a free sound buffer. Fake it. */
-		/* XXX: too big of a hack for too rare of a case */
-		// SOUNDMAN->AddFakeSound(snd);
+	if( i == stream_pool.size() )
+	{
+		/* We don't have a free sound buffer. */
+		m_InactiveSoundMutex.Unlock();
 		return;
 	}
+
+	/* Place the sound in SETUP, where nobody else will touch it, until we put it
+	 * in FLUSHING or PLAYING below. */
+	stream_pool[i]->state = stream::SETUP;
+	m_InactiveSoundMutex.Unlock();
 
 	/* Give the stream to the playing sound and remove it from the pool. */
 	stream_pool[i]->snd = snd;
 	stream_pool[i]->pcm->SetSampleRate(snd->GetSampleRate());
 	stream_pool[i]->start_time = snd->GetStartTime();
 
-	/* Pre-buffer the stream. */
-	/* There are two buffers of data; fill them both ahead of time so the
-	 * sound can start almost immediately. */
-	stream_pool[i]->GetData(true);
+	/* Pre-buffer the stream, and start it immediately. */
+	bool bEOF;
+	stream_pool[i]->GetData( true, bEOF );
 	stream_pool[i]->pcm->Play();
 
-	/* Normally, at this point we should still be INACTIVE, in which case,
-	 * tell the mixer thread to start mixing this channel.  However, if it's
-	 * been changed to STOPPING, then we actually finished the whole file
-	 * in the prebuffering GetData calls above, so leave it alone and let it
-	 * finish on its own. */
-	if(stream_pool[i]->state == stream_pool[i]->INACTIVE)
+	/* If bEOF is true, we actually finished the whole file in the prebuffering
+	 * GetData call above, and the sound should go straight to FLUSHING.  Otherwise,
+	 * set PLAYING. */
+	if( bEOF )
+	{
+		stream_pool[i]->state = stream_pool[i]->FLUSHING;
+		stream_pool[i]->flush_pos = stream_pool[i]->pcm->GetOutputPosition();
+	}
+	else
 		stream_pool[i]->state = stream_pool[i]->PLAYING;
 
 //	LOG->Trace("new sound assigned to channel %i", i);
@@ -297,8 +328,10 @@ void RageSound_DSound::StartMixing( RageSoundBase *snd )
  * again. */
 void RageSound_DSound::StopMixing( RageSoundBase *snd )
 {
+	/* Lock, to make sure the decoder thread isn't running on this sound while we do this. */
+	LockMut( m_Mutex );
+
 	ASSERT(snd != NULL);
-	LockMutex L(SOUNDMAN->lock);
 
 	unsigned i;
 	for(i = 0; i < stream_pool.size(); ++i)
@@ -319,8 +352,6 @@ void RageSound_DSound::StopMixing( RageSoundBase *snd )
 
 int64_t RageSound_DSound::GetPosition( const RageSoundBase *snd ) const
 {
-	LockMutex L(SOUNDMAN->lock);
-
 	unsigned i;
 	for(i = 0; i < stream_pool.size(); ++i)
 		if(stream_pool[i]->snd == snd) break;
@@ -330,6 +361,8 @@ int64_t RageSound_DSound::GetPosition( const RageSoundBase *snd ) const
 
 	ASSERT(i != stream_pool.size());
 
+	/* XXX: This isn't quite threadsafe: GetPosition uses two variables, and we might
+	 * be caught in the middle.  We don't want to lock, though ... */
 	return stream_pool[i]->pcm->GetPosition();
 }
 

@@ -17,6 +17,7 @@ RageSound_Generic_Software::sound::sound()
 {
 	snd = NULL;
 	state = STOPPED;
+	available = true;
 }
 
 void RageSound_Generic_Software::sound::Init()
@@ -40,6 +41,7 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 	RAGE_ASSERT_M( m_DecodeThread.IsCreated(), "RageSound_Generic_Software::StartDecodeThread() was never called" );
 
 	static SoundMixBuffer mix;
+//m_Mutex.Lock(); //XXX
 
 	CHECKPOINT;
 	for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
@@ -48,9 +50,11 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 		sound &s = sounds[i];
 		if( s.state == sound::HALTING )
 		{
-			/* The main thread is waiting for us. */
-			s.buffer.clear();
+			/* This indicates that this stream can be reused. */
 			s.state = sound::STOPPED;
+			s.available = true;
+
+//			LOG->Trace("set %p from HALTING to STOPPED", sounds[i].snd);
 			continue;
 		}
 
@@ -111,7 +115,14 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 			p[0]->p += frames_to_read*channels;
 			p[0]->frames_in_buffer -= frames_to_read;
 			p[0]->position += frames_to_read;
+			CString foo = ssprintf("incr fr rd %i += %i",
+				(int) s.frames_read, (int) frames_to_read );
 			s.frames_read += frames_to_read;
+
+//			LOG->Trace( "%s = %i (%i left) (state %i) (%p)",
+//				foo.c_str(), (int) s.frames_read, (int) s.frames_buffered(), s.state, s.snd );
+			ASSERT( s.frames_read <= s.frames_written );
+
 			got_frames += frames_to_read;
 			frames_left -= frames_to_read;
 		}
@@ -123,6 +134,7 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 
 	memset( buf, 0, frames*bytes_per_frame );
 	mix.read( (Sint16*)buf );
+//m_Mutex.Unlock(); //XXX
 }
 
 
@@ -140,12 +152,16 @@ void RageSound_Generic_Software::DecodeThread()
 		/* Fill each playing sound, round-robin. */
 		SDL_Delay( 1000*chunksize() / GetSampleRate(0) );
 
-		LockMut(SOUNDMAN->lock);
+		LockMut( m_Mutex );
+//		LOG->Trace("begin mix");
+
 		unsigned i;
-		/* The volume can change while the sound is playing; update it. */
 		for( i = 0; i < ARRAYSIZE(sounds); ++i )
+		{
+			/* The volume can change while the sound is playing; update it. */
 			if( sounds[i].state == sound::PLAYING || sounds[i].state == sound::STOPPING )
 				sounds[i].volume = sounds[i].snd->GetVolume();
+		}
 
 		/* Fill PLAYING sounds, prioritizing sounds that have less sound buffered. */
 		while( 1 )
@@ -174,8 +190,10 @@ void RageSound_Generic_Software::DecodeThread()
 			{
 				/* This sound is finishing. */
 				pSound->state = sound::STOPPING;
+//				LOG->Trace("mixer: (#%i) eof (%i buffered) (%p)", i, (int) pSound->frames_buffered(), pSound->snd );
 			}
 		}
+//		LOG->Trace("end mix");
 	}
 }
 
@@ -183,6 +201,7 @@ void RageSound_Generic_Software::DecodeThread()
  * return false. */
 bool RageSound_Generic_Software::GetDataForSound( sound &s )
 {
+//m_Mutex.Lock(); //XXX
 	sound_block *p[2];
 	unsigned psize[2];
 	s.buffer.get_write_pointers( p, psize );
@@ -196,7 +215,14 @@ bool RageSound_Generic_Software::GetDataForSound( sound &s )
 
 	s.buffer.advance_write_pointer( 1 );
 
+	CString foo = ssprintf("incr fr wr %i += %i",
+		(int) s.frames_written, (int) b->frames_in_buffer );
+
 	s.frames_written += b->frames_in_buffer;
+
+//	LOG->Trace( "%s = %i (%i left) (state %i) (%p)",
+//		foo.c_str(), (int) s.frames_written, (int) s.frames_buffered(), s.state, s.snd );
+//m_Mutex.Unlock(); //XXX
 
 	return !eof;
 }
@@ -204,10 +230,11 @@ bool RageSound_Generic_Software::GetDataForSound( sound &s )
 
 void RageSound_Generic_Software::Update(float delta)
 {
-	ASSERT(SOUNDMAN);
-	LockMut(SOUNDMAN->lock);
-
-	for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
+	/* We must not lock here, since the decoder thread might hold the lock for a
+	 * while at a time.  This is threadsafe, because once a sound is in STOPPING,
+	 * this is the only place it'll be changed (to STOPPED). */
+	unsigned i;
+	for( i = 0; i < ARRAYSIZE(sounds); ++i )
 	{
 		if( sounds[i].state != sound::STOPPING )
 			continue;
@@ -215,54 +242,76 @@ void RageSound_Generic_Software::Update(float delta)
 		if( sounds[i].buffer.num_readable() != 0 )
 			continue;
 
-		LOG->Trace("finishing sound %i", i);
+//		LOG->Trace("finishing sound %i", i);
 
-		/* This sound is done. */
-		sounds[i].state = sound::STOPPED;
 		sounds[i].snd->SoundIsFinishedPlaying();
+
+		/* This sound is done.  Set it to HALTING, since the mixer thread might
+		 * be accessing it; it'll change it back to STOPPED once it's ready to
+		 * be used again. */
+		sounds[i].state = sound::HALTING;
+//		LOG->Trace("set (#%i) %p from STOPPING to HALTING", i, sounds[i].snd);
 	}
 }
 
 void RageSound_Generic_Software::StartMixing( RageSoundBase *snd )
 {
+	/* Lock available sounds[], and reserve a slot. */
+	m_SoundListMutex.Lock();
+
 	unsigned i;
 	for( i = 0; i < ARRAYSIZE(sounds); ++i )
-		if( sounds[i].state == sound::STOPPED )
+		if( sounds[i].available )
 			break;
 	if( i == ARRAYSIZE(sounds) )
+	{
+		m_SoundListMutex.Unlock();
 		return;
+	}
 
 	sound &s = sounds[i];
+	s.available = false;
+
+	/* We've reserved our slot; we can safely unlock now.  Don't hold onto it longer
+	 * than needed, since prebuffering might take some time. */
+	m_SoundListMutex.Unlock();
 
 	s.snd = snd;
 	s.start_time = snd->GetStartTime();
 	s.frames_read = s.frames_written = 0;
 	s.sound_id = snd->GetID();
 	s.volume = snd->GetVolume();
+	s.buffer.clear();
+
+//	LOG->Trace("StartMixing(%s) (%p)", s.snd->GetLoadedFilePath().c_str(), s.snd );
 
 	/* Prebuffer some frames before changing the sound to PLAYING. */
 	bool ReachedEOF = false;
 	while( !ReachedEOF && s.frames_buffered() < frames_to_buffer )
 	{
+//		LOG->Trace("StartMixing: (#%i) buffered %i of %i (%i writable) (%p)", i, (int) s.frames_buffered(), (int) frames_to_buffer, s.buffer.num_writable(), s.snd );
 		if( !GetDataForSound( s ) )
+		{
+//		LOG->Trace("StartMixing: XXX hit EOF (%p)", s.snd );
 			ReachedEOF = true;
+		}
 	}
 
 	/* If we hit EOF already, while prebuffering, then go right to STOPPING. */
 	s.state = ReachedEOF? sound::STOPPING: sound::PLAYING;
 
-	LOG->Trace("finished prebuffering");
+//	LOG->Trace("StartMixing: (#%i) finished prebuffering(%s) (%p)", i, s.snd->GetLoadedFilePath().c_str(), s.snd );
 }
 
 void RageSound_Generic_Software::StopMixing( RageSoundBase *snd )
 {
 	/* Lock, to make sure the decoder thread isn't running on this sound while we do this. */
-	LockMut(SOUNDMAN->lock);
+	LockMut( m_Mutex );
 
 	/* Find the sound. */
 	unsigned i;
 	for( i = 0; i < ARRAYSIZE(sounds); ++i )
-		if( sounds[i].snd == snd )
+		if( !sounds[i].available && sounds[i].snd == snd )
 			break;
 	if( i == ARRAYSIZE(sounds) )
 	{
@@ -277,12 +326,16 @@ void RageSound_Generic_Software::StopMixing( RageSoundBase *snd )
 		return;
 	}
 
-	/* Tell the mixing thread to flush the buffer. */
+//	LOG->Trace("StopMixing: set %p (%s) to HALTING", sounds[i].snd, sounds[i].snd->GetLoadedFilePath().c_str());
+
+	/* Tell the mixing thread to flush the buffer.  We don't have to worry about
+	 * the decoding thread, since we've locked m_Mutex. */
 	sounds[i].state = sound::HALTING;
 
 	/* Invalidate the snd pointer to guarantee we don't make any further references to
 	 * it.  Once this call returns, the sound may no longer exist. */
 	sounds[i].snd = NULL;
+//	LOG->Trace("end StopMixing");
 }
 
 
@@ -304,7 +357,9 @@ void RageSound_Generic_Software::SetDecodeBufferSize( int frames )
 	frames_to_buffer = frames;
 }
 
-RageSound_Generic_Software::RageSound_Generic_Software()
+RageSound_Generic_Software::RageSound_Generic_Software():
+	m_Mutex("RageSound_Generic_Software"),
+	m_SoundListMutex("SoundListMutex")
 {
 	shutdown_decode_thread = false;
 	SetDecodeBufferSize( 4096 );

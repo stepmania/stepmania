@@ -57,7 +57,6 @@ void RageSound_DSound_Software::MixerThread()
 
 int64_t RageSound_DSound_Software::GetPosition( const RageSoundBase *snd ) const
 {
-	LockMut(SOUNDMAN->lock);
 	return pcm->GetPosition();
 }
 

@@ -11,6 +11,10 @@ struct IDirectSoundBuffer;
 
 class RageSound_DSound: public RageSoundDriver
 {
+	/* The only place that takes sounds out of INACTIVE is StartMixing; this mutex
+	 * serializes inactive sounds. */
+	RageMutex m_InactiveSoundMutex;
+
 	struct stream {
 	    /* Actual audio stream: */
 		DSoundBuf *pcm;
@@ -21,14 +25,16 @@ class RageSound_DSound: public RageSoundDriver
 
 		enum {
 			INACTIVE,
+			SETUP,
 			PLAYING,
-			STOPPING
+			FLUSHING,
+			FINISHED
 		} state;
 
-		int64_t flush_pos; /* state == STOPPING only */
+		int64_t flush_pos; /* state == FLUSHING only */
 
 		RageTimer start_time;
-		bool GetData(bool init);
+		bool GetData( bool init, bool &bEOF );
 
 	    stream() { pcm = NULL; snd = NULL; state=INACTIVE; }
 		~stream();
@@ -38,6 +44,8 @@ class RageSound_DSound: public RageSoundDriver
 	vector<stream *> stream_pool;
 
 	DSound ds;
+
+	RageMutex m_Mutex;
 
 	bool shutdown; /* tells the MixerThread to shut down */
 	static int MixerThread_start(void *p);
