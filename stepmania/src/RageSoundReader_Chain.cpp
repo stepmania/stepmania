@@ -77,6 +77,9 @@ bool RageSoundReader_Chain::AddSound( CString sPath, float fOffsetSecs, float fP
 /* If every sound has the same sample rate, return it.  Otherwise, return -1. */
 int RageSoundReader_Chain::GetSampleRateInternal() const
 {
+	if( m_apLoadedSounds.empty() )
+		return m_iPreferredSampleRate;
+
 	map<CString, SoundReader *>::const_iterator it;
 	int iRate = -1;
 	for( it = m_apLoadedSounds.begin(); it != m_apLoadedSounds.end(); ++it )
