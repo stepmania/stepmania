@@ -39,11 +39,12 @@ RageTextureManager::~RageTextureManager()
 {
 	// delete all textures
 	POSITION pos = m_mapPathToTexture.GetStartPosition();
-	CString sPath;
-	RageTexture* pTexture;
 
 	while( pos != NULL )  // iterate over all k/v pairs in map
 	{
+		RageTexture* pTexture;
+		CString sPath;
+
 		m_mapPathToTexture.GetNextAssoc( pos, sPath, pTexture );
 		LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", sPath, pTexture->m_iRefCount );
 		SAFE_DELETE( pTexture );
