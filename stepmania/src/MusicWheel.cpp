@@ -398,6 +398,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sP
 
 	/* Hack: Add extra stage item if it was eliminated for any reason (eg. it's a long
 	 * song). */
+	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 	{
 		Song* pSong;
 		Steps* pSteps;
