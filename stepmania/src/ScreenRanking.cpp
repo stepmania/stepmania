@@ -23,6 +23,8 @@
 #include "ScoreKeeperMAX2.h"
 #include "ScoreKeeper5th.h"
 
+int g_iLastSongShown = 0;
+
 
 #define CATEGORY_X					THEME->GetMetricF("ScreenRanking","CategoryX")
 #define CATEGORY_Y					THEME->GetMetricF("ScreenRanking","CategoryY")
@@ -77,7 +79,8 @@
 #define SECONDS_PER_PAGE			THEME->GetMetricF("ScreenRanking","SecondsPerPage")
 #define PAGE_FADE_SECONDS			THEME->GetMetricF("ScreenRanking","PageFadeSeconds")
 #define SHOW_CATEGORIES				THEME->GetMetricB("ScreenRanking","ShowCategories")
-#define SHOW_ALL_SONGS				THEME->GetMetricB("ScreenRanking","ShowAllSongs")
+#define SHOW_SONG_SCORES			THEME->GetMetricB("ScreenRanking","ShowSongScores")
+#define NUM_SONGS_TO_SHOW			THEME->GetMetricI("ScreenRanking","NumSongsToShow")
 #define NOTES_TYPES_TO_HIDE			THEME->GetMetric ("ScreenRanking","NotesTypesToHide")
 #define EMPTY_SCORE_NAME			THEME->GetMetric ("ScreenRanking","EmptyScoreName")
 #define DIFFICULTIES_TO_SHOW		THEME->GetMetric ("ScreenRanking","DifficultiesToShow")
@@ -90,6 +93,8 @@ const ScreenMessage SM_HidePage			=	(ScreenMessage)(SM_User+68);
 
 ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 {
+	g_iLastSongShown++;
+
 	this->AddChild( &m_sprCategory );
 
 	this->AddChild( &m_banner );
@@ -214,19 +219,25 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		}
 	}
 
-	if( SHOW_ALL_SONGS )
+	if( SHOW_SONG_SCORES )
 	{
 		vector<Song*> vpSongs = SONGMAN->GetAllSongs();
-		for( unsigned i=0; i<aNotesTypesToShow.size(); i++ )
+		if( !vpSongs.empty() )
 		{
-			for( unsigned j=0; j<vpSongs.size(); j++ )
+			for( unsigned i=0; i<aNotesTypesToShow.size(); i++ )
 			{
-				PageToShow pts;
-				pts.type = PageToShow::TYPE_SONG;
-				pts.colorIndex = i;
-				pts.pSong = vpSongs[j];
-				pts.nt = aNotesTypesToShow[i];
-				m_vPagesToShow.push_back( pts );
+				for( unsigned j=0; j<NUM_SONGS_TO_SHOW; j++ )
+				{
+					PageToShow pts;
+					pts.type = PageToShow::TYPE_SONG;
+					pts.colorIndex = i;
+					pts.pSong = vpSongs[g_iLastSongShown];
+					pts.nt = aNotesTypesToShow[i];
+					m_vPagesToShow.push_back( pts );
+					
+					g_iLastSongShown++;
+					wrap( g_iLastSongShown,vpSongs.size() ); 
+				}
 			}
 		}
 	}
