@@ -131,21 +131,41 @@ bool ProfileManager::IsMemoryCardInserted( PlayerNumber pn )
 	if( sDir.empty() )
 		return false;
 
-	//
-	// Test whether a memory card is available by trying to write a file.
-	//
-	CString sFile = sDir + "temp";
-	FILE* fp = fopen( sFile, "w" );
-	if( fp )
-	{
-		fclose( fp );
-		remove( sFile );
-		return true;
-	}
-	else
+#ifdef _WINDOWS
+	// Windows will throw up a message box if we try to write to a
+	// removable drive with no disk inserted.  Find out whether there's a 
+	// disk in the drive w/o writing a file.
+
+	// find drive letter
+	vector<CString> matches;
+	static Regex parse("^([A-Za-z]+):");
+	parse.Compare(sDir, matches);
+	if( matches.size() != 1 )
 	{
 		return false;
 	}
+	else
+	{
+		CString sDrive = matches[0];
+		TCHAR szVolumeNameBuffer[MAX_PATH];
+		DWORD dwVolumeSerialNumber;
+		DWORD dwMaximumComponentLength;
+		DWORD lpFileSystemFlags;
+		TCHAR szFileSystemNameBuffer[MAX_PATH];
+		BOOL bResult = GetVolumeInformation( 
+			sDrive + ":",
+			szVolumeNameBuffer,
+			sizeof(szVolumeNameBuffer),
+			&dwVolumeSerialNumber,
+			&dwMaximumComponentLength,
+			&lpFileSystemFlags,
+			szFileSystemNameBuffer,
+			sizeof(szFileSystemNameBuffer) );
+		return !!bResult;
+	}
+#endif
+
+	return true;
 }
 
 bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
@@ -162,12 +182,12 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 
 bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
 {
-	if( LoadProfileFromMemoryCard(pn) )
-		return true;
-	
-	CString sDir = GetMemCardDir( pn );
-	if( !sDir.empty() )
+	if( IsMemoryCardInserted(pn) )
 	{
+		if( LoadProfileFromMemoryCard(pn) )
+			return true;
+	
+		CString sDir = GetMemCardDir( pn );
 		CreateProfile( sDir, NEW_MEM_CARD_NAME );
 		if( LoadProfileFromMemoryCard(pn) )
 			return true;
