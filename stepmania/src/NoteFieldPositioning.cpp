@@ -86,6 +86,31 @@ void NoteFieldMode::Load(IniFile &ini, CString id, int pn)
 	/* Required: */
 	ASSERT( ini.GetValue ( id, "Name",			m_Name ) );
 
+	/* Grab this directly; don't try to set game specs per-player. */
+	CString sGames;
+	if(ini.GetValue( id, "Games", sGames ))
+	{
+		vector<CString> games;
+		split(sGames, ",", games);
+		for(unsigned n = 0; n < games.size(); ++n)
+		{
+			vector<CString> bits;
+			split(games[n], "-", bits);
+			ASSERT(bits.size() == 2);
+
+			const Game game = GAMEMAN->StringToGameType( bits[0] );
+			ASSERT(game != GAME_INVALID);
+
+			const Style style = GAMEMAN->GameAndStringToStyle( game, bits[1] );
+			ASSERT(style != STYLE_INVALID);
+			Styles.insert(style);
+		}
+	}
+
+	// if we aren't loading a player, we can bail here.
+	if(pn == -1)
+		return;
+
 	GetValue( ini, pn, id, "Backdrop",				m_Backdrop );
 	GetValue( ini, pn, id, "FOV",					m_fFov );
 	GetValue( ini, pn, id, "NearClipDistance",		m_fNear );
@@ -116,27 +141,6 @@ void NoteFieldMode::Load(IniFile &ini, CString id, int pn)
 
 		GetValue( ini, pn, id, ssprintf("HoldJudgment", t+1),	m_HoldJudgmentCmd[t] );
 		GetValue( ini, pn, id, ssprintf("HoldJudgment%i", t+1), m_HoldJudgmentCmd[t] );
-	}
-
-	/* Grab this directly; don't try to set game specs per-player. */
-	CString sGames;
-	if(ini.GetValue( id, "Games", sGames ))
-	{
-		vector<CString> games;
-		split(sGames, ",", games);
-		for(unsigned n = 0; n < games.size(); ++n)
-		{
-			vector<CString> bits;
-			split(games[n], "-", bits);
-			ASSERT(bits.size() == 2);
-
-			const Game game = GAMEMAN->StringToGameType( bits[0] );
-			ASSERT(game != GAME_INVALID);
-
-			const Style style = GAMEMAN->GameAndStringToStyle( game, bits[1] );
-			ASSERT(style != STYLE_INVALID);
-			Styles.insert(style);
-		}
 	}
 }
 
