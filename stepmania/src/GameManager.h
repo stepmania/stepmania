@@ -57,6 +57,7 @@ public:
 	static int NotesTypeToNumTracks( NotesType nt );
 	static NotesType StringToNotesType( CString sNotesType );
 	static CString NotesTypeToString( NotesType nt );
+	static Game StringToGameType( CString sGameType );
 
 protected:
 

@@ -1684,6 +1684,15 @@ NotesType GameManager::StringToNotesType( CString sNotesType )
 	return NOTES_TYPE_DANCE_SINGLE;
 }
 
+Game GameManager::StringToGameType( CString sGameType )
+{
+	for( int i=0; i<NUM_GAMES; i++ )
+		if( !sGameType.CompareNoCase(g_GameDefs[i].m_szName) )
+			return Game(i);
+
+	return GAME_INVALID;
+}
+
 CString GameManager::NotesTypeToString( NotesType nt )
 {
 	if(nt >= NUM_NOTES_TYPES)
