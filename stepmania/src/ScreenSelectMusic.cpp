@@ -21,7 +21,6 @@
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "InputMapper.h"
-#include "InputQueue.h"
 #include "AnnouncerManager.h"
 #include "InputMapper.h"
 #include "GameState.h"
@@ -616,6 +615,7 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 			{
 				SOUND->PlayMusic(
 					m_sSampleMusicToPlay, 
+					m_sSampleMusicTimingData,
 					true,
 					m_fSampleStartSeconds,
 					m_fSampleLengthSeconds,
@@ -1096,7 +1096,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	m_Banner.SetMovingFast( !!m_MusicWheel.IsMoving() );
 
-	CString SampleMusicToPlay; 
+	CString SampleMusicToPlay, SampleMusicTimingData;
 	vector<CString> m_Artists, m_AltArtists;
 
 	m_MachineRank.SetText( "" );
@@ -1135,6 +1135,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	case TYPE_SONG:
 		{
 			SampleMusicToPlay = pSong->GetMusicPath();
+			SampleMusicTimingData = pSong->GetCacheFilePath();
 			m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 			m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 
@@ -1282,6 +1283,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	{
 		SOUND->StopMusic();
 		m_sSampleMusicToPlay = SampleMusicToPlay;
+		m_sSampleMusicTimingData = SampleMusicTimingData;
 		m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
 	}
 

@@ -1262,6 +1262,7 @@ static void GameLoop()
 		}
 
 		DISPLAY->Update( fDeltaTime );
+		SOUND->Update( fDeltaTime );
 		TEXTUREMAN->Update( fDeltaTime );
 		GAMESTATE->Update( fDeltaTime );
 		SCREENMAN->Update( fDeltaTime );

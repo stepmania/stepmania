@@ -7,7 +7,6 @@
 TimingData::TimingData()
 {
 	m_fBeat0OffsetInSeconds = 0;
-
 }
 
 static int CompareBPMSegments(const BPMSegment &seg1, const BPMSegment &seg2)

@@ -21,6 +21,7 @@
 #include "GameState.h"
 #include "RageException.h"
 #include "RageTimer.h"
+#include "RageSounds.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
 #include "Screen.h"
@@ -472,6 +473,10 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 
 Screen* ScreenManager::MakeNewScreen( CString sClassName )
 {
+	/* By default, RageSounds handles the song timer.  When we change screens, reset this;
+	 * screens turn this off in their ctor if they handle timers themselves (gameplay, edit). */
+	SOUND->HandleSongTimer( true );
+
 	Screen *ret = Screen::Create( sClassName );
 
 	/* Loading probably took a little while.  Let's reset stats.  This prevents us

@@ -239,6 +239,9 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 {
 	LOG->Trace( "ScreenEdit::ScreenEdit()" );
 
+	/* We do this ourself. */
+	SOUND->HandleSongTimer( false );
+
 	TICK_EARLY_SECONDS.Refresh();
 
 	// set both players to joined so the credit message doesn't show

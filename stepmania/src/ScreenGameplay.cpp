@@ -97,6 +97,9 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	else
 		LIGHTSMAN->SetLightMode( LIGHTMODE_GAMEPLAY );
 
+	/* We do this ourself. */
+	SOUND->HandleSongTimer( false );
+
 	SECONDS_BETWEEN_COMMENTS.Refresh();
 	G_TICK_EARLY_SECONDS.Refresh();
 

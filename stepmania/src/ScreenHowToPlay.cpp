@@ -21,6 +21,7 @@
 #include "NoteFieldPositioning.h"
 #include "GameManager.h"
 #include "NotesLoaderSM.h"
+#include "RageSounds.h"
 
 #define SECONDS_TO_SHOW						THEME->GetMetricF("ScreenHowToPlay","SecondsToShow")
 #define STEPFILE							THEME->GetMetric ("ScreenHowToPlay","Stepfile")
@@ -78,6 +79,9 @@ static bool HaveAllCharAnimations()
 
 ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 {
+	/* We do this ourself. */
+	SOUND->HandleSongTimer( false );
+
 	m_iPerfects = 0;
 	m_iNumPerfects = NUM_PERFECTS;
 
