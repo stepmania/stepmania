@@ -366,10 +366,16 @@ void NoteData::ConvertHoldNotesTo2sAnd3s()
 }
 
 
-void NoteData::Get2sAnd3s( NoteData &out ) const
+void NoteData::To2sAnd3s( const NoteData &out )
 {
-	out.CopyAll( this );
-	out.ConvertHoldNotesTo2sAnd3s();
+	CopyAll( &out );
+	ConvertHoldNotesTo2sAnd3s();
+}
+
+void NoteData::From2sAnd3s( const NoteData &out )
+{
+	CopyAll( &out );
+	Convert2sAnd3sToHoldNotes();
 }
 
 /* "104444001" ==

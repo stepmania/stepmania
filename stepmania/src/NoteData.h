@@ -130,7 +130,8 @@ public:
 	// Convert between HoldNote representation and '2' and '3' markers in TapNotes
 	void Convert2sAnd3sToHoldNotes();
 	void ConvertHoldNotesTo2sAnd3s();
-	void Get2sAnd3s( NoteData &out ) const;
+	void To2sAnd3s( const NoteData &out );
+	void From2sAnd3s( const NoteData &out );
 
 	void Convert4sToHoldNotes();
 	void ConvertHoldNotesTo4s();

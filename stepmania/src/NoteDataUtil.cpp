@@ -130,7 +130,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &out )
 {
 	NoteData in;
-	in_.Get2sAnd3s( in );
+	in.To2sAnd3s( in_ );
 
 	float fLastBeat = in.GetLastBeat();
 	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
