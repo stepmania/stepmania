@@ -55,6 +55,7 @@ public:
 	bool			m_bDelayedEscape;
 	bool			m_bHowToPlay;
 	bool			m_bArcadeOptionsNavigation;
+	bool			m_bCoinOpMode;
 	
 	CStringArray m_asAdditionalSongFolders;
 	CString m_DWIPath;

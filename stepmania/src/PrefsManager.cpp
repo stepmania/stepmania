@@ -56,6 +56,7 @@ PrefsManager::PrefsManager()
 	m_bHowToPlay = true;
 	m_bArcadeOptionsNavigation = false;
 	m_iUnloadTextureDelaySeconds = 60*30;	// 30 mins
+	m_bCoinOpMode = true;
 
 	/* I'd rather get occasional people asking for support for this even though it's
 	 * already here than lots of people asking why songs aren't being displayed. */
@@ -71,7 +72,7 @@ PrefsManager::~PrefsManager()
 	SaveGamePrefsToDisk();
 }
 
-void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
+ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 {
 	IniFile ini;
 	ini.SetPath( "StepMania.ini" );
@@ -106,6 +107,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "ArcadeOptionsNavigation",	m_bArcadeOptionsNavigation );
 	ini.GetValue ( "Options", "DWIPath",					m_DWIPath );
 	ini.GetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
+	ini.GetValueB( "Options", "CoinOpMode",					m_bCoinOpMode );
 
 	m_asAdditionalSongFolders.RemoveAll();
 	CString sAdditionalSongFolders;
@@ -154,6 +156,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "ArcadeOptionsNavigation",	m_bArcadeOptionsNavigation );
 	ini.SetValue ( "Options", "DWIPath",					m_DWIPath );
 	ini.SetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
+	ini.SetValueB( "Options", "CoinOpMode",					m_bCoinOpMode );
 
 	ini.SetValue( "Options", "AdditionalSongFolders", join(",", m_asAdditionalSongFolders) );
 
