@@ -227,26 +227,23 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				this->AddChild( &m_sprBanner[p][i] );
 			}
 
-			if( feat.g != GRADE_NO_DATA )
+			if( feat.grade != GRADE_NO_DATA )
 			{
 				m_Grade[p][i].SetName( ssprintf("GradeP%i",p+1) );
 				m_Grade[p][i].Load( THEME->GetPathToG("ScreenNameEntryTraditional grades") );
-				m_Grade[p][i].SetGrade( (PlayerNumber)p, feat.g );
+				m_Grade[p][i].SetGrade( (PlayerNumber)p, feat.grade );
 				SET_ON( m_Grade[p][i] );
 				this->AddChild( &m_Grade[p][i] );
 			}
 
-			if( feat.Score != 0 )
-			{
-				m_textScore[p][i].SetName( ssprintf("ScoreP%i",p+1) );
-				m_textScore[p][i].LoadFromFont( THEME->GetPathToF("ScreenNameEntryTraditional score") );
-				if( PREFSMAN->m_bPercentageScoring )
-					m_textScore[p][i].SetText( ssprintf("%.2f%%", feat.Score*100) );
-				else
-					m_textScore[p][i].SetText( ssprintf("%.0f", feat.Score) );
-				SET_ON( m_textScore[p][i] );
-				this->AddChild( &m_textScore[p][i] );
-			}
+			m_textScore[p][i].SetName( ssprintf("ScoreP%i",p+1) );
+			m_textScore[p][i].LoadFromFont( THEME->GetPathToF("ScreenNameEntryTraditional score") );
+			if( PREFSMAN->m_bPercentageScoring )
+				m_textScore[p][i].SetText( ssprintf("%.2f%%", feat.fPercentDP*100) );
+			else
+				m_textScore[p][i].SetText( ssprintf("%.0f", feat.iScore) );
+			SET_ON( m_textScore[p][i] );
+			this->AddChild( &m_textScore[p][i] );
 
 			if( feat.Feat != "" )
 			{

@@ -147,20 +147,19 @@ public:
 
 		struct HighScore
 		{
-			int iScore;
-			float fSurviveTime;
 			CString	sName;
+			int iScore;
+			float fPercentDP;
+			float fSurviveTime;
 
 			HighScore()
 			{
 				iScore = 0;
+				fPercentDP = 0;
 				fSurviveTime = 0;
 			}
 
-			bool operator>=( const HighScore& other ) const
-			{
-				return iScore >= other.iScore;
-			}
+			bool operator>=( const HighScore& other ) const;
 		};
 		vector<HighScore> vHighScores;
 

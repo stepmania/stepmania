@@ -49,11 +49,11 @@ ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our
 #define USER_PROFILES_DIR		"Data/LocalProfiles/"
 #define MACHINE_PROFILE_DIR		"Data/MachineProfile/"
 
-const int CATEGORY_RANKING_VERSION = 5;
+const int CATEGORY_RANKING_VERSION = 6;
 const int SONG_SCORES_VERSION = 9;
-const int COURSE_SCORES_VERSION = 7;
+const int COURSE_SCORES_VERSION = 8;
 
-#define STATS_TITLE				THEME->GetMetric("ProfileManager","StatsTitle")
+#define STATS_TITLE									THEME->GetMetric("ProfileManager","StatsTitle")
 
 static const char *MemCardDirs[NUM_PLAYERS] =
 {
@@ -547,11 +547,18 @@ void ProfileManager::ReadCategoryScoresFromDir( CString sDir, MemoryCard mc )
 				CString sName;
 				if( !FileRead(f, sName) )
 					WARN_AND_RETURN;
+			
 				int iScore;
 				if( !FileRead(f, iScore) )
 					WARN_AND_RETURN;
+				
+				float fPercentDP;
+				if( !FileRead(f, fPercentDP) )
+					WARN_AND_RETURN;
+				
 				m_CategoryDatas[mc][st][rc].vHighScores[l].sName = sName;
 				m_CategoryDatas[mc][st][rc].vHighScores[l].iScore = iScore;
+				m_CategoryDatas[mc][st][rc].vHighScores[l].fPercentDP = fPercentDP;
 			}
 		}
 	}
@@ -624,6 +631,10 @@ void ProfileManager::ReadCourseScoresFromDir( CString sDir, MemoryCard mc )
 				if( !FileRead(f, iScore) )
 					WARN_AND_RETURN;
 
+				float fPercentDP;
+				if( !FileRead(f, fPercentDP) )
+					WARN_AND_RETURN;
+
 				float fSurviveTime;
 				if( !FileRead(f, fSurviveTime) )
 					WARN_AND_RETURN;
@@ -632,6 +643,7 @@ void ProfileManager::ReadCourseScoresFromDir( CString sDir, MemoryCard mc )
 				{
 					pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName = sName;
 					pCourse->m_MemCardDatas[st][mc].vHighScores[l].iScore = iScore;
+					pCourse->m_MemCardDatas[st][mc].vHighScores[l].fPercentDP = fPercentDP;
 					pCourse->m_MemCardDatas[st][mc].vHighScores[l].fSurviveTime = fSurviveTime;
 				}
 			}
@@ -754,6 +766,7 @@ void ProfileManager::SaveCategoryScoresToDir( CString sDir, MemoryCard mc )
 
 				FileWrite( f, m_CategoryDatas[mc][st][rc].vHighScores[l].sName );
 				FileWrite( f, m_CategoryDatas[mc][st][rc].vHighScores[l].iScore );
+				FileWrite( f, m_CategoryDatas[mc][st][rc].vHighScores[l].fPercentDP );
 			}
 		}
 	}
@@ -813,6 +826,7 @@ void ProfileManager::SaveCourseScoresToDir( CString sDir, MemoryCard mc )
 
 				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName );
 				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].iScore );
+				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].fPercentDP );
 				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].fSurviveTime );
 			}
 		}
@@ -1332,4 +1346,12 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 	CString sStyleFile = THEME->GetPathToO("ProfileManager style.css");
 	CopyFile2( sStyleFile, sDir+STYLE_CSS_FILE );
 		
+}
+
+bool ProfileManager::CategoryData::HighScore::operator>=( const HighScore& other ) const
+{
+	if( PREFSMAN->m_bPercentageScoring )
+		return fPercentDP >= other.fPercentDP;
+	else
+		return iScore >= other.iScore;
 }

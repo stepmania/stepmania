@@ -247,10 +247,11 @@ public:
 	//
 	struct RankingFeats 
 	{
-		enum { SONG, COURSE, RANKING } Type;
+		enum { SONG, COURSE, CATEGORY } Type;
 
-		float Score;
-		Grade g;
+		Grade grade;
+		int iScore;
+		float fPercentDP;
 		CString Banner;
 		CString Feat;
 		CString *pStringToFill;

@@ -98,18 +98,17 @@ public:
 	{
 		struct HighScore
 		{
-			int iScore;
 			CString	sName;
+			int iScore;
+			float fPercentDP;
 
 			HighScore()
 			{
 				iScore = 0;
+				fPercentDP = 0;
 			}
 
-			bool operator>=( const HighScore& other ) const
-			{
-				return iScore >= other.iScore;
-			}
+			bool operator>=( const HighScore& other ) const;
 		};
 		vector<HighScore> vHighScores;
 

@@ -36,6 +36,7 @@ const int DIFFICULT_METER_CHANGE = 2;
 /* Maximum lower value of ranges when difficult: */
 const int MAX_BOTTOM_RANGE = 10;
 
+
 /* -1 is the default parameter of a few Course calls; leaving it out indicates
  * to use GAMESTATE->m_bDifficultCourses. */
 static bool IsDifficult( int Difficult )
@@ -1034,4 +1035,12 @@ void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, M
 		course_sort_val[arrayCoursePointers[i]] = arrayCoursePointers[i]->GetNumTimesPlayed( card );
 	stable_sort( arrayCoursePointers.begin(), arrayCoursePointers.end(), CompareCoursePointersBySortValueDescending );
 	course_sort_val.clear();
+}
+
+bool Course::MemCardData::HighScore::operator>=( const HighScore& other ) const
+{
+	if( PREFSMAN->m_bPercentageScoring )
+		return fPercentDP >= other.fPercentDP;
+	else
+		return iScore >= other.iScore;
 }

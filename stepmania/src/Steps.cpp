@@ -25,7 +25,7 @@
 #include "GameManager.h"
 #include "NoteDataUtil.h"
 #include "ProfileManager.h"
-
+#include "PrefsManager.h"
 
 Steps::Steps()
 {
@@ -349,7 +349,10 @@ void SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers )
 
 bool Steps::MemCardData::HighScore::operator>=( const Steps::MemCardData::HighScore& other ) const
 {
-	return iScore >= other.iScore;
+	if( PREFSMAN->m_bPercentageScoring )
+		return fPercentDP >= other.fPercentDP;
+	else
+		return iScore >= other.iScore;
 	/* Make sure we treat AAAA as higher than AAA, even though the score
 		* is the same. 
 		*
@@ -391,3 +394,4 @@ void Steps::AddHighScore( PlayerNumber pn, MemCardData::HighScore hs, int &iPers
 		iPersonalIndexOut = -1;
 	m_MemCardDatas[MEMORY_CARD_MACHINE].AddHighScore( hs, iMachineIndexOut );
 }
+
