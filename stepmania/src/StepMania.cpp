@@ -384,7 +384,7 @@ static void CheckVideoDefaultSettings()
 	if( PREFSMAN->m_sVideoRenderers == "" )
 	{
 		SetDefaultVideoParams=true;
-		LOG->Trace( "Applying defaults for %s.", PREFSMAN->m_sLastSeenVideoDriver.c_str() );
+		LOG->Trace( "Applying defaults for %s.", sVideoDriver.c_str() );
 	} else if( PREFSMAN->m_sLastSeenVideoDriver != sVideoDriver ) {
 		SetDefaultVideoParams=true;
 		LOG->Trace( "Video card has changed from %s to %s.  Applying new defaults.", PREFSMAN->m_sLastSeenVideoDriver.c_str(), sVideoDriver.c_str() );
