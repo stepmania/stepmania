@@ -45,10 +45,12 @@ ScreenSelectMode::ScreenSelectMode() : ScreenSelect( "ScreenSelectMode" )
 	m_bSelected = false;
 	m_ChoiceListFrame.Load( THEME->GetPathToG("ScreenSelectMode list frame"));
 	m_ChoiceListFrame.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
+	m_ChoiceListFrame.SetName("ChoiceListFrame");
 	this->AddChild( &m_ChoiceListFrame );
 
 	m_soundModeChange.Load( THEME->GetPathToS("ScreenSelectMode modechange"));
 	m_soundConfirm.Load( THEME->GetPathToS("ScreenSelectMode modeconfirm"));
+	m_soundStart.Load( THEME->GetPathToS("ScreenSelectMode menustart"));
 		unsigned i;
 	for( i=0; i<m_aModeChoices.size(); i++ )
 	{
@@ -66,14 +68,17 @@ ScreenSelectMode::ScreenSelectMode() : ScreenSelect( "ScreenSelectMode" )
 	// m_ScrollingList.UseSpriteType(BANNERTYPE);
 	m_ScrollingList.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y );
 	m_ScrollingList.SetSpacing( ELEM_SPACING );
+	m_ScrollingList.SetName("ScrollingList");
 	this->AddChild( &m_ScrollingList );
 
 	m_ChoiceListHighlight.Load( THEME->GetPathToG("ScreenSelectMode list highlight"));
 	m_ChoiceListHighlight.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y );
+	m_ChoiceListHighlight.SetName("ChoiceListHighlight");
 	this->AddChild(&m_ChoiceListHighlight);
 
 	m_Guide.Load( THEME->GetPathToG("select mode guide"));
 	m_Guide.SetXY( GUIDE_X, GUIDE_Y );
+	m_Guide.SetName("Guide");
 	this->AddChild( &m_Guide );
 
 	UpdateSelectableChoices();
@@ -175,16 +180,12 @@ void ScreenSelectMode::MenuStart( PlayerNumber pn )
 		m_bSelected = true;
 		return;
 	}
+	m_soundStart.Play();
+	OFF_COMMAND( m_ScrollingList );
+	OFF_COMMAND( m_Guide );
+	OFF_COMMAND( m_ChoiceListHighlight );
+	OFF_COMMAND( m_ChoiceListFrame );
 
-	m_ScrollingList.BeginTweening(0.1f);
-	m_ScrollingList.SetZoomY(0.0f);
-	m_Guide.BeginTweening(0.1f);
-	m_Guide.SetY(550.0f); // off the bottom of the screen
-	m_ChoiceListFrame.BeginTweening(0.1f);
-	m_ChoiceListFrame.SetDiffuse(RageColor(0,0,0,0));
-	m_ChoiceListHighlight.BeginTweening(0.1f);
-	m_ChoiceListHighlight.SetDiffuse(RageColor(0,0,0,0));
-	
 	SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0.5f );
 }
 

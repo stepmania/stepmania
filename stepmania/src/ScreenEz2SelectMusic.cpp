@@ -39,6 +39,8 @@
 #define METER_Y( p )			THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("MeterP%dY",p+1))
 #define GUIDE_X					THEME->GetMetricF("ScreenSelectMode","GuideX")
 #define GUIDE_Y					THEME->GetMetricF("ScreenSelectMode","GuideY")
+#define GROUPNAME_X				THEME->GetMetricF("ScreenEz2SelectMusic","GroupNameX")
+#define GROUPNAME_Y				THEME->GetMetricF("ScreenEz2SelectMusic","GroupNameY")
 #define SPEEDICON_X( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("SpeedIconP%dX",p+1))
 #define SPEEDICON_Y( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("SpeedIconP%dY",p+1))
 #define MIRRORICON_X( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("MirrorIconP%dX",p+1))
@@ -157,6 +159,10 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 		m_PumpDifficultyRating.LoadFromFont( THEME->GetPathToF("ScreenEz2SelectMusic difficulty") );
 		m_PumpDifficultyRating.SetXY( PUMP_DIFF_X, PUMP_DIFF_Y );
 		this->AddChild(&m_PumpDifficultyRating);
+
+		m_CurrentGroup.LoadFromFont( THEME->GetPathToF("ScreenEz2SelectMusic GroupName") );
+		m_CurrentGroup.SetXY( GROUPNAME_X, GROUPNAME_Y );
+		this->AddChild(&m_CurrentGroup );
 
 		m_DifficultyRating.SetOrientation(DIFFICULTYRATING_ORIENTATION);
 		m_DifficultyRating.SetX(DIFFICULTYRATING_X);
@@ -507,6 +513,9 @@ void ScreenEz2SelectMusic::MusicChanged()
 	Song* pSong = m_MusicBannerWheel.GetSelectedSong();
 	GAMESTATE->m_pCurSong = pSong;
 
+	m_CurrentGroup.SetText( SONGMAN->ShortenGroupName( pSong->m_sGroupName ) , "");
+	m_CurrentGroup.SetDiffuse( SONGMAN->GetGroupColor(pSong->m_sGroupName) );
+
 	if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
 	{
 		m_sprBalloon.StopTweening();
@@ -577,6 +586,7 @@ void ScreenEz2SelectMusic::AfterNotesChange( PlayerNumber pn )
 	if( pNotes != NULL && pn == GAMESTATE->m_MasterPlayerNumber )
 	{
 		m_PumpDifficultyRating.SetText(ssprintf("Lv.%d",pNotes->GetMeter()));
+		m_PumpDifficultyRating.SetDiffuse(  SONGMAN->GetDifficultyColor(pNotes->GetDifficulty()) );
 		m_DifficultyRating.SetDifficulty(pNotes->GetMeter());
 	}
 

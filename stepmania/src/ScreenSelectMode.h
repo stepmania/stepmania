@@ -39,6 +39,7 @@ protected:
 	int m_iSelectableChoices[MAX_ELEMS];
 	RageSound			m_soundModeChange;
 	RageSound			m_soundConfirm;
+	RageSound			m_soundStart;
 	CStringArray arrayLocations;
 	ScrollingList m_ScrollingList;
 	Sprite m_ChoiceListFrame;

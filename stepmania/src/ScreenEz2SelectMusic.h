@@ -64,6 +64,7 @@ protected:
 	Sprite	m_VanishIcon[NUM_PLAYERS];
 	Sprite				m_sprBalloon;
 	BitmapText	m_PumpDifficultyRating;
+	BitmapText  m_CurrentGroup;
 
 	RageSound			m_soundOptionsChange;
 	RageSound			m_soundMusicChange;

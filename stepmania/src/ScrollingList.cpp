@@ -115,9 +115,7 @@ void ScrollingList::StartBouncing()
 		else // flat, unrotated graphics need widths changing
 		{
 			m_RippleCSprite.SetCroppedSize( -1, -1 ); // default image size.
-			m_RippleCSprite.SetWidth(EZ2_BANNER_WIDTH);
-			m_RippleCSprite.SetHeight(EZ2_BANNER_HEIGHT);
-		//	m_RippleCSprite.SetWH(EZ2_BANNER_WIDTH+10, EZ2_BANNER_HEIGHT+10);
+			m_RippleCSprite.SetWH(EZ2_BANNER_WIDTH+10, EZ2_BANNER_HEIGHT+10);
 		}
 
 		m_RippleCSprite.SetXY( m_apCSprites[m_iSelection]->GetX(), m_apCSprites[m_iSelection]->GetY() );
