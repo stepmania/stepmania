@@ -148,14 +148,13 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 	};
 
 	float Possible = 0, Actual = 0;
-	int i;
-	for( i = 0; i < NUM_TAP_NOTE_SCORES; ++i )
+	FOREACH_TapNoteScore( i )
 	{
 		Actual += iTapNoteScores[pn][i] * TapScoreValues[i];
 		Possible += iTapNoteScores[pn][i] * TapScoreValues[TNS_MARVELOUS];
 	}
 
-	for( i = HNS_OK; i < NUM_HOLD_NOTE_SCORES; ++i )
+	FOREACH_HoldNoteScore( i )
 	{
 		Actual += iHoldNoteScores[pn][i] * HoldScoreValues[i];
 		Possible += iHoldNoteScores[pn][i] * HoldScoreValues[HNS_OK];

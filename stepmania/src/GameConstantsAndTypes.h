@@ -171,8 +171,8 @@ TapNoteScore StringToTapNoteScore( const CString& str );
 enum HoldNoteScore 
 { 
 	HNS_NONE,	// this HoldNote has not been scored yet
-	HNS_OK,		// the HoldNote has passed and was successfully held all the way through
 	HNS_NG,		// the HoldNote has passed and they missed it
+	HNS_OK,		// the HoldNote has passed and was successfully held all the way through
 	NUM_HOLD_NOTE_SCORES
 };
 #define FOREACH_HoldNoteScore( hns ) FOREACH_ENUM( HoldNoteScore, NUM_HOLD_NOTE_SCORES, hns )
