@@ -65,8 +65,8 @@ LoadingWindow_SDL::LoadingWindow_SDL()
         RageException::Throw( "Couldn't initialize loading window: %s", SDL_GetError() );
 
 #ifdef _XBOX
-		SDL_XBOX_SetScreenPosition( 70, 48 ) ;
-		SDL_XBOX_SetScreenStretch( -150, -300 ) ;
+		//SDL_XBOX_SetScreenPosition( 70, 48 ) ; figure out another way to do this
+		//SDL_XBOX_SetScreenStretch( -150, -300 ) ;
 
 
     if( FAILED ( XFONT_OpenDefaultFont( &m_pConsoleTTF ) ) ) 
