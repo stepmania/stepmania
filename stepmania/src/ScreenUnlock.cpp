@@ -155,10 +155,10 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			}
 
 			text->SetXY(ScrollingTextX, ScrollingTextStartY);
-			text->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;linear,0.5;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
+			text->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
+//			text->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;linear,0.5;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
 
 			item.push_back(text);
-			this->AddChild(item[i-1]);
 
 			if (UNLOCK_TEXT_SCROLL >= 2)
 			{
@@ -173,11 +173,11 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 				IconCount->SetHeight(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 				IconCount->SetWidth(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 
-				IconCount->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;linear,0.5;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
+				IconCount->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
+//				IconCount->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;linear,0.5;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
 
 				ItemIcons.push_back(IconCount);
 
-				this->AddChild(ItemIcons[i-1]);
 				LOG->Trace("Added unlock text %d", i);
 					
 				if (UNLOCK_TEXT_SCROLL == 3)
@@ -232,7 +232,8 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			NewText->SetGlobalDiffuseColor(color);
 
 			NewText->SetXY(ScrollingTextX, ScrollingTextStartY);
-			NewText->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumberUnlocks + 2 * i - 2), SECS_PER_CYCLE * 2 * (ScrollingTextRows + 1 - i), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
+			NewText->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumberUnlocks + 2 * i - 2), SECS_PER_CYCLE * 2 * (ScrollingTextRows + 1 - i), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
+//			NewText->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumberUnlocks + 2 * i - 2), SECS_PER_CYCLE * 2 * (ScrollingTextRows + 1 - i), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
 
 			// new unlock graphic
 			NewIcon->Load( THEME->GetPathToG(ssprintf("ScreenUnlock %d icon", NextIcon)) );
@@ -243,16 +244,19 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			NewIcon->SetHeight(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 			NewIcon->SetWidth(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 
-			NewIcon->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumberUnlocks + 2 * i - 2), SECS_PER_CYCLE * 2 * (ScrollingTextRows + 1 - i), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
+			NewIcon->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumberUnlocks + 2 * i - 2), SECS_PER_CYCLE * 2 * (ScrollingTextRows + 1 - i), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
+//			NewIcon->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumberUnlocks + 2 * i - 2), SECS_PER_CYCLE * 2 * (ScrollingTextRows + 1 - i), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
 
 			ItemIcons.push_back(NewIcon);
 			item.push_back(NewText);
-
-			this->AddChild(ItemIcons[ItemIcons.size() - 1]);
-			this->AddChild(item[item.size() - 1]);
-
 		}
 	}
+
+	for(i=(item.size() - 1); (int)i>=0; i--)
+		this->AddChild(item[i]);
+
+	for(i=(ItemIcons.size() - 1); (int)i>=0; i--)
+		this->AddChild(ItemIcons[i]);
 
 	PointsUntilNextUnlock.SetName( "PointsDisplay" );
 	
