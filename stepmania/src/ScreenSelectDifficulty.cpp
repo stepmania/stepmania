@@ -104,7 +104,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSel
 
 	this->AddChild( &m_framePages );
 	
-	m_soundChange.Load( THEME->GetPathToS( m_sName + " change") );
+	m_soundChange.Load( THEME->GetPathToS( m_sName + " change"), true );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
 	m_fLockInputTime = LOCK_INPUT_SECONDS;

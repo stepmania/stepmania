@@ -115,7 +115,7 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 	}
 
 
-	m_soundChange.Load( THEME->GetPathToS(m_sName + " change") );
+	m_soundChange.Load( THEME->GetPathToS(m_sName + " change"), true );
 
 
 	//
