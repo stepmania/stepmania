@@ -28,7 +28,7 @@
 
 float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
 
-const float RADAR_EDGE_WIDTH	= 3;
+const float RADAR_EDGE_WIDTH	= 2;
 
 GrooveRadar::GrooveRadar()
 {
