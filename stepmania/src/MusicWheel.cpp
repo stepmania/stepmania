@@ -35,7 +35,7 @@
 
 
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
-#define SWITCH_SECONDS				THEME->GetMetricF("MusicWheel","SwitchSeconds")
+CachedThemeMetricF SWITCH_SECONDS	("MusicWheel","SwitchSeconds");
 #define ROULETTE_SWITCH_SECONDS		THEME->GetMetricF("MusicWheel","RouletteSwitchSeconds")
 #define ROULETTE_SLOW_DOWN_SWITCHES	THEME->GetMetricI("MusicWheel","RouletteSlowDownSwitches")
 #define LOCKED_INITIAL_VELOCITY		THEME->GetMetricF("MusicWheel","LockedInitialVelocity")
@@ -85,6 +85,7 @@ MusicWheel::MusicWheel()
 	SONGMAN->UpdateRankingCourses();
 
 	// update theme metric cache
+	SWITCH_SECONDS.Refresh();
 	ITEM_CURVE_X.Refresh();
 	ITEM_SPACING_Y.Refresh();
 	USE_3D.Refresh();

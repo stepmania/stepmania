@@ -22,10 +22,15 @@
 #include "SongManager.h"
 
 /* XXX: metric */
-static const float FadeTime = 0.25;
+CachedThemeMetricF FADE_SECONDS			("FadingBanner","FadeSeconds");
+CachedThemeMetricF MW_SWITCH_SECONDS	("MusicWheel","SwitchSeconds");
+
 
 FadingBanner::FadingBanner()
 {
+	FADE_SECONDS.Refresh();
+	MW_SWITCH_SECONDS.Refresh();
+
 	m_bMovingFast = false;
 	m_iIndexFront = 0;
 	for( int i=0; i<2; i++ )
@@ -43,11 +48,11 @@ void FadingBanner::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 
 	/* Don't fade to the full banner until we finish fading. */
-	float HighQualTime = FadeTime;
+	float HighQualTime = FADE_SECONDS;
 
 	/* Hacky: also don't fade until the music wheel has a chance to settle down. */
 	HighQualTime = max( HighQualTime, 1.0f / PREFSMAN->m_iMusicWheelSwitchSpeed );
-	HighQualTime = max( HighQualTime, THEME->GetMetricF("MusicWheel","SwitchSeconds") );
+	HighQualTime = max( HighQualTime, (float)MW_SWITCH_SECONDS );
 	
 	if( m_sPendingBanner == "" || m_PendingTimer.PeekDeltaTime() < HighQualTime )
 		return;
@@ -81,7 +86,7 @@ void FadingBanner::BeforeChange()
 
 	m_Banner[m_iIndexFront].SetDiffuse( RageColor(1,1,1,1) );
 	m_Banner[m_iIndexFront].StopTweening();
-	m_Banner[m_iIndexFront].BeginTweening( FadeTime );		// fade out
+	m_Banner[m_iIndexFront].BeginTweening( FADE_SECONDS );		// fade out
 	m_Banner[m_iIndexFront].SetDiffuse( RageColor(1,1,1,0) );
 
 	m_sPendingBanner = "";
