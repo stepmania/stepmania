@@ -73,12 +73,13 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
 {
     CStringArray parts;
 
-    split(line, ":", parts);    
+    split(line, ":", parts);
+    nextLine++;
 
 #pragma mark LABEL
     if (parts[0] == "LABEL")
     {
-        printf("%u: %s\n", nextLine, line.c_str());
+        printf("%u: %s\n", nextLine - 1, line.c_str());
         if (parts.size() != 2)
             goto error;
         if (mDoGoto && parts[1] == mLabel)
@@ -86,17 +87,14 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
             mDoGoto = false;
             mLabel = "";
         }
-        mLabels[parts[1]] = ++nextLine; // set mLabel to be the next line
+        mLabels[parts[1]] = nextLine;
         return;
     }
     
     if (mDoGoto)
-    {
-        ++nextLine;
         return;
-    }
 
-    printf("%u: %s\n", nextLine, line.c_str());
+    printf("%u: %s\n", nextLine - 1, line.c_str());
 
 #pragma mark FILE
     if (parts[0] == "FILE")
@@ -137,7 +135,6 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
                 (*mHandleFile)(file, dir, mPath, true);
         }
 
-        ++nextLine;
         return;
     }
 
@@ -147,7 +144,6 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         if (parts.size() != 3)
             goto error;
         mVars[parts[2]] = (*mGetPath)(parts[1]);
-        ++nextLine;
         return;
     }
 
@@ -156,7 +152,6 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
     {
         if (parts.size() != 3)
             goto error;
-        ++nextLine;
         if (!ResolveConditional(parts[2]))
             return;
         CString path = ResolveVar(parts[1]);
@@ -175,13 +170,11 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         if (parts.size() != 2)
             goto error;
         mIgnore.insert(ResolveVar(parts[1]));
+        return;
     }    
     
     if (!mInstalling)
-    {
-        ++nextLine;
         return;
-    }
 
 #pragma mark GOTO
     if (parts[0] == "GOTO")
@@ -199,7 +192,7 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
             return;
         }
         mDoGoto = true;
-        mReturnStack.push(++nextLine);
+        mReturnStack.push(nextLine);
         return;
     }    
 
@@ -214,7 +207,6 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
             mLabel = parts[3];
         if (mLabel == "")
         {
-            ++nextLine;
             return;
         }
         mReturnStack.push(nextLine + 1);
@@ -225,7 +217,6 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
             return;
         }
         mDoGoto = true;
-        ++nextLine;
         return;
     }
 
@@ -251,7 +242,6 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         for (unsigned i=2; i<parts.size(); ++i)
             temp += ResolveVar(parts[i]);
         mVars[parts[1]] = temp;
-        ++nextLine;
         return;
     }
 
@@ -265,7 +255,6 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
             path =  mCWD + "/" + path;
         if (mkdir_p(path))
             (*mError)(strerror(errno));
-        ++nextLine;
         return;
     }
 
@@ -302,7 +291,6 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
                 (*mError)("%s", strerror(errno));
         }
         
-        ++nextLine;
         return;
     }
 
@@ -312,7 +300,6 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         if (parts.size() != 3)
             goto error;
         mConditionals[parts[1]] = (*mAsk)(parts[2]);
-        ++nextLine;
         return;
     }
 
@@ -322,7 +309,6 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         if (parts.size() != 2)
             goto error;
         mConditionals[parts[1]] = (*mAuth)();
-        ++nextLine;
         return;
     }
 
@@ -332,7 +318,6 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         if (parts.size() != 3)
             goto error;
         (mEcho)(parts[1], ResolveConditional(parts[2]));
-        ++nextLine;
         return;
     }
 
@@ -342,13 +327,11 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         if (parts.size() != 2)
             goto error;
         (mPriv)(ResolveConditional(parts[1]));
-        ++nextLine;
         return;
     }
 
 error:
     (*mError)("%s is an invalid command", line.c_str());
-    ++nextLine;
 }
 
 const CString& Processor::ResolveVar(const CString& var)
