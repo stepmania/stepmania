@@ -76,7 +76,7 @@ public:
 	RageFileObjTest( const CString &path, RageFile &p );
 	int Read(void *buffer, size_t bytes);
 	int Write(const void *buffer, size_t bytes);
-	int Flush() { return 0; }
+	int Flush();
 	void Rewind() { pos = 0; }
 	int Seek( int offset )
 	{
@@ -166,6 +166,26 @@ int RageFileObjTest::Write( const void *buf, size_t bytes )
 	}
 
 	return bytes;
+}
+
+/*
+ * Testing Flush() is important.  Writing may buffer.  That buffer will be
+ * flushed, at the latest, when the file is closed in the RageFile dtor.  However,
+ * if you wait until then, there's no way to check for an error; the file is
+ * going away.  The primary purpose of Flush() is to give the user a chance to
+ * check for these errors.  (Flush() is only intended to flush our buffers;
+ * it is *not* intended to sync data to disk.)
+ */
+int RageFileObjTest::Flush()
+{
+	if( g_BytesUntilError != -1 )
+	{
+		SetError( "Fake error" );
+		g_BytesUntilError = -1;
+		return -1;
+	}
+
+	return 0;
 }
 
 #define Fail(s...) \
