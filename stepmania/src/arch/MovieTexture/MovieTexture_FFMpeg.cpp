@@ -845,7 +845,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 	/* Windows likes to boost priority when processes come out of a wait state.  We don't
 	 * want that, since it'll result in us having a small priority boost after each movie
 	 * frame, resulting in skips in the gameplay thread. */
-	if( !SetThreadPriorityBoost(GetCurrentThread(), TRUE) && GetLastError() != ERROR_NOT_SUPPORTED )
+	if( !SetThreadPriorityBoost(GetCurrentThread(), TRUE) && GetLastError() != ERROR_CALL_NOT_IMPLEMENTED )
 		LOG->Warn( werr_ssprintf(GetLastError(), "SetThreadPriorityBoost failed") );
 #endif
 
