@@ -154,6 +154,9 @@ protected:
 
 	CString GetSectionNameFromSongAndSort( Song* pSong, SongSortOrder so )
 	{
+		if( pSong == NULL )
+			return "";
+
 		CString sTemp;
 
 		switch( so )

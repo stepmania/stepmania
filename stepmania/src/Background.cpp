@@ -66,8 +66,10 @@ bool Background::LoadFromSong( Song &song )
 				int iIndexRandom = rand() % sVisualizationPaths.GetSize();
 
 				m_sprVisualizationOverlay.Load( VIS_DIR + sVisualizationPaths[iIndexRandom] );
+
+				
 				m_sprVisualizationOverlay.StretchTo( CRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
-				m_sprVisualizationOverlay.SetZoomY( -1 );
+				m_sprVisualizationOverlay.SetZoomY( m_sprVisualizationOverlay.GetZoomY()*-1 );
 				m_sprVisualizationOverlay.SetBlendModeAdd();
 				m_sprVisualizationOverlay.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
 				this->AddActor( &m_sprVisualizationOverlay );

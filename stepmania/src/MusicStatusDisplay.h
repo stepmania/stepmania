@@ -70,6 +70,10 @@ public:
 	{
 		Sprite::Update( fDeltaTime );
 
+	};
+
+	virtual void RenderPrimitives()
+	{
 		switch( m_MusicStatusDisplayType )
 		{
 		case TYPE_CROWN1:
@@ -77,16 +81,12 @@ public:
 		case TYPE_CROWN3:
 			// blink
 			if( (GetTickCount() % 1000) > 500 )		// show the new icon
-				SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-			else
-					SetDiffuseColor( D3DXCOLOR(0,0,0,0) );		// invisible
-		}
-	};
-
-	virtual void RenderPrimitives()
-	{
-		if( m_MusicStatusDisplayType == TYPE_NONE )
+				return;
+			break;
+		case TYPE_NONE:
 			return;
+			break;
+		}
 
 		Sprite::RenderPrimitives();
 	}

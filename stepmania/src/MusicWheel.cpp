@@ -119,7 +119,7 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 	case TYPE_MUSIC:
 		m_Banner.LoadFromSong( m_pSong );
 		m_Banner.SetDiffuseColor( m_colorTint );
-		m_MusicStatusDisplay.SetType( (m_pSong->GetNumTimesPlayed()==0) ? TYPE_NEW : TYPE_NONE );
+		m_MusicStatusDisplay.SetType( m_MusicStatusDisplayType );
 		break;
 	default:
 		ASSERT( true );	// invalid type
@@ -382,13 +382,24 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 		ASSERT( true );	// unhandled SORT_ORDER
 	}
 
+	// init crowns
+	for( i=0; i<arrayWheelItemDatas.GetSize(); i++ )
+	{
+		Song* pSong = arrayWheelItemDatas[i].m_pSong;
+		if( pSong != NULL )
+		{
+			MusicStatusDisplayType crown = (pSong->GetNumTimesPlayed()==0) ? TYPE_NEW : TYPE_NONE;
+			arrayWheelItemDatas[i].m_MusicStatusDisplayType = crown;
+		}		
+	}
 
 	if( so == SORT_MOST_PLAYED )
 	{
 		// init crown icons 
-		for( int i=0; i<arrayWheelItemDatas.GetSize(); i++ )
+		for( int i=0; i<arrayWheelItemDatas.GetSize() && i<3; i++ )
 		{
-			arrayWheelItemDatas[i].m_MusicStatusDisplayType = MusicStatusDisplayType(TYPE_CROWN1 + i);
+			MusicStatusDisplayType crown = MusicStatusDisplayType(TYPE_CROWN1 + i);
+			arrayWheelItemDatas[i].m_MusicStatusDisplayType = crown;
 		}
 	}
 
@@ -472,6 +483,9 @@ void MusicWheel::RebuildWheelItemDisplays()
 {
 	// rewind to first index that will be displayed;
 	int iIndex = m_iSelection;
+	if( m_iSelection > GetCurWheelItemDatas().GetSize()-1 )
+		m_iSelection = 0;
+
 	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW/2; i++ )
 	{
 		do

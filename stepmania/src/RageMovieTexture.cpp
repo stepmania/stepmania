@@ -419,6 +419,8 @@ HRESULT RageMovieTexture::InitDShowTextureRenderer()
 	// The source and image width will always be the same since we can't scale the video
 	m_uSourceWidth  = m_pCTR->GetVidWidth();
 	m_uSourceHeight = m_pCTR->GetVidHeight();
+	m_uImageWidth   = m_uSourceWidth;
+	m_uImageHeight  = m_uSourceHeight;
 
 	
     return S_OK;
