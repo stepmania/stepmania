@@ -1714,7 +1714,8 @@ unsigned RageDisplay_OGL::CreateTexture(
 				", format " << GLToString(glImageFormat) <<
 				", type " << GLToString(glImageType) <<
 				", pixfmt " << pixfmt <<
-				", imgpixfmt " << imgpixfmt;
+				", imgpixfmt " << imgpixfmt <<
+				")";
 		LOG->Trace( "%s", s.str().c_str() );
 	}
 
