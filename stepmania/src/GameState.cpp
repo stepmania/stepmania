@@ -310,14 +310,13 @@ bool GameState::IsPlayable( const ModeChoice& mc )
 bool GameState::IsPlayerEnabled( PlayerNumber pn )
 {
 	// In rave, all players are present.  Non-human players are CPU controlled.
-	if( m_PlayMode == PLAY_MODE_RAVE )
+	switch( m_PlayMode )
+	{
+	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_RAVE:
 		return true;
-	
-	// In cpu battle, show cpu player only if there's room on the screen.
-	if( m_PlayMode == PLAY_MODE_CPU_BATTLE )
-		if( GetCurrentStyleDef()->m_StyleType == StyleDef::ONE_PLAYER_ONE_CREDIT )
-			return true;
-	
+	}
+
 	return IsHumanPlayer( pn );
 }
 
@@ -374,8 +373,7 @@ bool GameState::IsBattleMode() const
 {
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_HUMAN_BATTLE:
-	case PLAY_MODE_CPU_BATTLE:
+	case PLAY_MODE_BATTLE:
 		return true;
 	default:
 		return false;
@@ -430,11 +428,7 @@ StageResult GameState::GetStageResult( PlayerNumber pn )
 {
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_CPU_BATTLE:
-		if( IsHumanPlayer(pn) )
-			return (m_fOpponentHealthPercent==0)?RESULT_WIN:RESULT_LOSE;
-		else
-			return (m_fOpponentHealthPercent==0)?RESULT_LOSE:RESULT_WIN;
+	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		switch( pn )
 		{
@@ -442,7 +436,6 @@ StageResult GameState::GetStageResult( PlayerNumber pn )
 		case PLAYER_2:	return (m_fTugLifePercentP1<0.5f)?RESULT_WIN:RESULT_LOSE;
 		default:	ASSERT(0); return RESULT_LOSE;
 		}
-	case PLAY_MODE_HUMAN_BATTLE:
 	default:
 		return (GetBestPlayer()==pn)?RESULT_WIN:RESULT_LOSE;
 	}

@@ -198,8 +198,7 @@ ScreenNameEntry::ScreenNameEntry() : Screen("ScreenNameEntry")
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
-		case PLAY_MODE_HUMAN_BATTLE:
-		case PLAY_MODE_CPU_BATTLE:
+		case PLAY_MODE_BATTLE:
 		case PLAY_MODE_RAVE:
 			{
 				StageStats SS;
@@ -409,21 +408,13 @@ void ScreenNameEntry::MenuStart( PlayerNumber pn )
 	if( m_sSelectedName[pn] == "" )
 		m_sSelectedName[pn] = DEFAULT_RANKING_NAME;
 	
-	switch( GAMESTATE->m_PlayMode )
+	if( GAMESTATE->IsCourseMode() )
 	{
-	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_HUMAN_BATTLE:
-	case PLAY_MODE_CPU_BATTLE:
-	case PLAY_MODE_RAVE:
-		SONGMAN->m_MachineScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_RankingCategory[pn]][GAMESTATE->m_iRankingIndex[pn]].sName = m_sSelectedName[pn];
-		break;
-	case PLAY_MODE_NONSTOP:
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_ENDLESS:
 		GAMESTATE->m_pRankingCourse->m_RankingScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_iRankingIndex[pn]].sName = m_sSelectedName[pn];
-		break;
-	default:
-		ASSERT(0);
+	}
+	else
+	{
+		SONGMAN->m_MachineScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_RankingCategory[pn]][GAMESTATE->m_iRankingIndex[pn]].sName = m_sSelectedName[pn];
 	}
 
 	bool bAnyStillEntering = false;

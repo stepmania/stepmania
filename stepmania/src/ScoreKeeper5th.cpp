@@ -370,8 +370,7 @@ void ScoreKeeper5th::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTap
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_HUMAN_BATTLE:
-	case PLAY_MODE_CPU_BATTLE:
+	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ENDLESS:
@@ -507,8 +506,7 @@ int ScoreKeeper5th::TapNoteScoreToDancePoints( TapNoteScore tns )
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_HUMAN_BATTLE:
-	case PLAY_MODE_CPU_BATTLE:
+	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 	case PLAY_MODE_ENDLESS:
 	case PLAY_MODE_NONSTOP:
@@ -544,8 +542,7 @@ int ScoreKeeper5th::HoldNoteScoreToDancePoints( HoldNoteScore hns )
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_HUMAN_BATTLE:
-	case PLAY_MODE_CPU_BATTLE:
+	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 	case PLAY_MODE_ENDLESS:
 	case PLAY_MODE_NONSTOP:

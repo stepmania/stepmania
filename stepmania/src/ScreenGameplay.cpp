@@ -40,7 +40,6 @@
 #include "NoteSkinManager.h"
 #include "RageTextureManager.h"
 #include "RageSounds.h"
-#include "CombinedLifeMeterEnemy.h"
 #include "CombinedLifeMeterTug.h"
 #include "Inventory.h"
 #include "Course.h"
@@ -121,8 +120,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_HUMAN_BATTLE:
-	case PLAY_MODE_CPU_BATTLE:
+	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		{
 			// cache NoteSkin graphics
@@ -298,19 +296,9 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	//
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_CPU_BATTLE:
+	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_CPU_BATTLE:
-			m_pCombinedLifeMeter = new CombinedLifeMeterEnemy;
-			break;
-		case PLAY_MODE_RAVE:
-			m_pCombinedLifeMeter = new CombinedLifeMeterTug;
-			break;
-		default:
-			ASSERT(0);
-		}
+		m_pCombinedLifeMeter = new CombinedLifeMeterTug;
 		m_pCombinedLifeMeter->SetName( ssprintf("CombinedLife%s",bExtra?"Extra":"") );
 		SET_XY( *m_pCombinedLifeMeter );
 		this->AddChild( m_pCombinedLifeMeter );		
@@ -326,15 +314,9 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ENDLESS:
-	case PLAY_MODE_CPU_BATTLE:
-	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_BATTLE:
 		for( p=0; p<NUM_PLAYERS; p++ )
 		{
-			// CPU players don't have an individual life meter in CPU battle
-			if( GAMESTATE->m_PlayMode == PLAY_MODE_CPU_BATTLE &&
-				GAMESTATE->IsCpuPlayer(p) )
-				continue;	// skip
-
 			if( !GAMESTATE->IsPlayerEnabled(p) && !SHOW_LIFE_METER_FOR_DISABLED_PLAYERS )
 				continue;	// skip
 
@@ -377,8 +359,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_HUMAN_BATTLE:
-	case PLAY_MODE_CPU_BATTLE:
+	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		m_sprStage.Load( THEME->GetPathToG("ScreenGameplay stage "+GAMESTATE->GetStageText()) );
 		this->AddChild( &m_sprStage );
@@ -439,16 +420,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		case PLAY_MODE_ENDLESS:
 			m_pScoreDisplay[p] = new ScoreDisplayOni;
 			break;
-		case PLAY_MODE_CPU_BATTLE:
-			// CPU controlled player is vanity only.  It has no
-			// effect on gameplay, and thus no score.
-			if( GAMESTATE->IsCpuPlayer(p) )
-				continue;	// skip
-			m_pScoreDisplay[p] = new ScoreDisplayBattle;
-			break;
-		case PLAY_MODE_HUMAN_BATTLE:
-			m_pScoreDisplay[p] = new ScoreDisplayBattle;
-			break;
+		case PLAY_MODE_BATTLE:
 		case PLAY_MODE_RAVE:
 			m_pScoreDisplay[p] = new ScoreDisplayRave;
 			break;
@@ -489,10 +461,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 		m_DifficultyIcon[p].Load( THEME->GetPathToG("ScreenGameplay difficulty icons 2x5") );
 		
-		// UGLY HACK:  Don't show difficulty icon for CPU.
-		if( GAMESTATE->m_PlayMode == PLAY_MODE_CPU_BATTLE && GAMESTATE->IsCpuPlayer(p) )
-			m_DifficultyIcon[p].SetZoom( 0 );
-
 		/* Position it in LoadNextSong. */
 		this->AddChild( &m_DifficultyIcon[p] );
 	}
@@ -519,8 +487,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	{
 		switch( GAMESTATE->m_PlayMode )
 		{
-		case PLAY_MODE_HUMAN_BATTLE:
-		case PLAY_MODE_CPU_BATTLE:
+		case PLAY_MODE_BATTLE:
 			m_pInventory[p] = new Inventory;
 			m_pInventory[p]->Load( (PlayerNumber)p );
 			this->AddChild( m_pInventory[p] );
@@ -552,8 +519,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		// only load if we're going to use it
 		switch( GAMESTATE->m_PlayMode )
 		{
-		case PLAY_MODE_HUMAN_BATTLE:
-		case PLAY_MODE_CPU_BATTLE:
+		case PLAY_MODE_BATTLE:
 		case PLAY_MODE_RAVE:
 			for( p=0; p<NUM_PLAYERS; p++ )
 			{
@@ -628,7 +594,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 		switch( GAMESTATE->m_PlayMode )
 		{
-		case PLAY_MODE_CPU_BATTLE:
+		case PLAY_MODE_BATTLE:
 			m_announcerBattleTrickLevel1.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level1") );
 			m_announcerBattleTrickLevel2.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level2") );
 			m_announcerBattleTrickLevel3.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level3") );
@@ -1167,8 +1133,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			switch( GAMESTATE->m_PlayMode )
 			{
 			case PLAY_MODE_ARCADE:
-			case PLAY_MODE_HUMAN_BATTLE:
-			case PLAY_MODE_CPU_BATTLE:
+			case PLAY_MODE_BATTLE:
 			case PLAY_MODE_RAVE:
 				if( OneIsHot() )			m_announcerHot.PlayRandom();
 				else if( AllAreInDanger() )	m_announcerDanger.PlayRandom();
@@ -1415,52 +1380,32 @@ void SaveChanges()
 	 * special case play modes.  Need to make sure m_pCurCourse gets erased
 	 * correctly, though. -glenn */
 	/* That's a very clever idea!   I should look into this.  -Chris */
-	switch( GAMESTATE->m_PlayMode )
+	if( GAMESTATE->IsCourseMode() )
 	{
-	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_HUMAN_BATTLE:
-	case PLAY_MODE_CPU_BATTLE:
-	case PLAY_MODE_RAVE:
+		// FIXME!!!
+		//for( int i=0; i<m_apSongsQueue.size(); i++ )
+		//	m_apSongsQueue[i]->Save();
+	}
+	else
+	{
 		GAMESTATE->m_pCurSong->Save();
-		break;
-	case PLAY_MODE_NONSTOP:
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_ENDLESS:
-		{
-			// FIXME!!!
-			//for( int i=0; i<m_apSongsQueue.size(); i++ )
-			//	m_apSongsQueue[i]->Save();
-		}
-		break;
-	default:
-		ASSERT(0);
 	}
 }
 
 void DontSaveChanges()
 {
-	switch( GAMESTATE->m_PlayMode )
+	if( GAMESTATE->IsCourseMode() )
 	{
-	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_HUMAN_BATTLE:
-	case PLAY_MODE_CPU_BATTLE:
-	case PLAY_MODE_RAVE:
-		GAMESTATE->m_pCurSong->RevertFromDisk();
-		break;
-	case PLAY_MODE_NONSTOP:
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_ENDLESS:
-		{
-			// FIXME
+		// FIXME
 //			for( unsigned i=0; i<m_apSongsQueue.size(); i++ )
 //			{
 //				Song* pSong = m_apSongsQueue[i];
 //				ld.LoadFromSMFile( pSong->GetCacheFilePath(), *pSong );
 //			}
-		}
-		break;
-	default:
-		ASSERT(0);
+	}
+	else
+	{
+		GAMESTATE->m_pCurSong->RevertFromDisk();
 	}
 }
 
@@ -1470,8 +1415,7 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_HUMAN_BATTLE:
-	case PLAY_MODE_CPU_BATTLE:
+	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		sMessage = ssprintf( 
 			"You have changed the offset or BPM of\n"
@@ -1610,7 +1554,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 						
 						switch( GAMESTATE->m_PlayMode )
 						{
-						case PLAY_MODE_HUMAN_BATTLE:
+						case PLAY_MODE_BATTLE:
 						case PLAY_MODE_RAVE:
 							{
 								PlayerNumber winner = GAMESTATE->GetBestPlayer();
@@ -1851,8 +1795,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
-		case PLAY_MODE_HUMAN_BATTLE:
-		case PLAY_MODE_CPU_BATTLE:
+		case PLAY_MODE_BATTLE:
 		case PLAY_MODE_RAVE:
 			if( PREFSMAN->m_bEventMode )
 				HandleScreenMessage( SM_GoToScreenAfterBack );

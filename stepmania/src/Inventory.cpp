@@ -58,8 +58,7 @@ Inventory::Inventory()
 {
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_CPU_BATTLE:
-	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_BATTLE:
 		break;
 	default:
 		ASSERT(0);
@@ -85,8 +84,7 @@ void Inventory::Load( PlayerNumber pn )
 	// don't load battle sounds if they're not going to be used
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_HUMAN_BATTLE:
-	case PLAY_MODE_CPU_BATTLE:
+	case PLAY_MODE_BATTLE:
 		m_soundAcquireItem.Load( THEME->GetPathToS("Inventory aquire item") );
 		for( unsigned i=0; i<g_Items.size(); i++ )
 		{
@@ -201,12 +199,6 @@ void Inventory::UseItem( int iSlot )
 	// remove the item
 	asInventory[iSlot].MakeBlank();
 	m_vpSoundUseItem[a.level]->Play();
-
-
-	// Item has no effect if CPU is already dead
-	if( GAMESTATE->m_PlayMode == PLAY_MODE_CPU_BATTLE && GAMESTATE->m_fOpponentHealthPercent==0 )
-		return;
-
 
 	GAMESTATE->LaunchAttack( pnToAttack, a );
 

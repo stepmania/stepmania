@@ -663,8 +663,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 		case stage:
 			switch( GAMESTATE->m_PlayMode )
 			{
-			case PLAY_MODE_HUMAN_BATTLE:
-			case PLAY_MODE_CPU_BATTLE:
+			case PLAY_MODE_BATTLE:
 				{
 					bool bWon = GAMESTATE->GetStageResult(GAMESTATE->m_MasterPlayerNumber) == RESULT_WIN;
 					if( bWon )
