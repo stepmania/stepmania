@@ -64,6 +64,12 @@ bool StepManiaLanServer::ServerStart()
 
 void StepManiaLanServer::ServerStop()
 {
+	for (unsigned int x = 0; x < Client.size(); ++x)
+	{
+		delete Client[x];
+		Client[x] = NULL;
+	}
+
 	Client.clear();
 	server.close();
 	stop = true;
@@ -88,9 +94,8 @@ void StepManiaLanServer::UpdateClients()
 	//Go through all the clients and check to see if it is being used.
 	//If so then try to get a backet and parse the data.
 	for (unsigned int x = 0; x < Client.size(); ++x)
-			if (CheckConnection(x))
-				if (Client[x]->GetData(Packet) >= 0)
-					ParseData(Packet, x);
+		if (CheckConnection(x) && (Client[x]->GetData(Packet) >= 0))
+			ParseData(Packet, x);
 }
 
 GameClient::GameClient()
@@ -110,17 +115,28 @@ GameClient::GameClient()
 
 void StepManiaLanServer::Disconnect(const unsigned int clientNum)
 {
-	vector<GameClient*>::iterator Iterator;
-	Iterator = Client.begin();
 	if (clientNum == (Client.size()-1))
+	{
+		delete Client[Client.size()-1];
+		Client[Client.size()-1] = NULL;
 		Client.pop_back();
+	}
 	else
+	{
+		vector<GameClient*>::iterator Iterator;
+		Iterator = Client.begin();
 		for (unsigned int x = 0; x < Client.size(); ++x)
 		{
 			if (x == clientNum)
+			{
+				delete Client[x];
+				Client[x] = NULL;
 				Client.erase(Iterator);
-			Iterator++;
+			}
+			++Iterator;
 		}
+	}
+	SendUserList();
 }
 
 int GameClient::GetData(PacketFunctions& Packet)
@@ -150,7 +166,7 @@ void StepManiaLanServer::ParseData(PacketFunctions& Packet, const unsigned int c
 	case NSCGSR:
 		// Start Request
 		Client[clientNum]->StartRequest(Packet);
-		CheckReady();
+		CheckReady();  //This is what ACTUALLY starts the games
 		break;
 	case NSCGON:
 		// GameOver 
@@ -262,10 +278,15 @@ void StepManiaLanServer::CheckReady()
 	unsigned int x;
 
 	//Only check clients that are starting (after ScreenNetMusicSelect before InGame).
-	for (x = 0; (x < Client.size())&& canStart; ++x)
-			if (Client[x]->isStarting)
-				if (!Client[x]->GotStartRequest)
-					canStart = false;
+	for (x = 0; (x < Client.size()) && canStart; ++x)
+	{
+			if (Client[x]->isStarting && !Client[x]->GotStartRequest)
+				canStart = false;
+
+			//Start for courses
+			if (!Client[x]->inNetMusicSelect && !Client[x]->hasSong && Client[x]->GotStartRequest)
+				canStart = true;
+	}
 			
 	if (canStart)
 	{
@@ -280,18 +301,34 @@ void StepManiaLanServer::CheckReady()
 		//during the actual loop that starts the clients. This is in an atempt
 		//to start all the clients as close together as possible.
 		for (x = 0; x < Client.size(); ++x)
+		{
 			if (Client[x]->isStarting)
 			{
 				Client[x]->clientSocket.blocking = true;
 				Client[x]->GotStartRequest = false;
 			}
+
+			//For Start for courses
+			if (!Client[x]->inNetMusicSelect && !Client[x]->hasSong && Client[x]->GotStartRequest)
+			{
+				Client[x]->clientSocket.blocking = true;
+				Client[x]->GotStartRequest = false;
+			}
+		}
 		
 		//Start clients waiting for a start between ScreenNetMusicSelect and the game.
 		for (x = 0; x < Client.size(); ++x)
+		{
 			if (Client[x]->isStarting)
 				SendValue(NSCGSR + NSServerOffset, x);
 
+			//For Start for courses
+			if (!Client[x]->inNetMusicSelect && !Client[x]->hasSong)
+				SendValue(NSCGSR + NSServerOffset, x);	
+		}
+
 		for (x = 0; x < Client.size(); ++x)
+		{
 			if (Client[x]->isStarting)
 			{
 				if (Client[x]->startPosition == 1)
@@ -304,9 +341,21 @@ void StepManiaLanServer::CheckReady()
 				}
 				Client[x]->clientSocket.blocking = false;
 			}
+
+			//For Start for courses
+			if (!Client[x]->inNetMusicSelect && !Client[x]->hasSong)
+				if (Client[x]->startPosition == 1)
+				{
+					Client[x]->isStarting = false;
+					Client[x]->InGame = true;
+					Client[x]->lowerJudge = false;
+					//After we start the clients, clear each client's hasSong.
+					Client[x]->hasSong = false;
+				}
+				Client[x]->clientSocket.blocking = false;
+		}
 	}
 }
-
 
 void StepManiaLanServer::GameOver(PacketFunctions& Packet, const unsigned int clientNum)
 {
@@ -328,10 +377,9 @@ void StepManiaLanServer::GameOver(PacketFunctions& Packet, const unsigned int cl
 	if (allOver)
 	{
 		for (x = 0; x < Client.size(); ++x)
-			if (Client[x]->wasIngame)
-				if (Client[x]->lowerJudge)
-					for (int y = 0; y < 2; ++y)
-						Client[x]->Player[y].options = "TIMING " + playersPtr[x]->options;
+			if (Client[x]->wasIngame && Client[x]->lowerJudge)
+				for (int y = 0; y < 2; ++y)
+					Client[x]->Player[y].options = "TIMING " + playersPtr[x]->options;
 
 		SortStats(playersPtr);
 		Reply.ClearPacket();
@@ -374,17 +422,18 @@ void StepManiaLanServer::AssignPlayerIDs()
 }
 
 void StepManiaLanServer::PopulatePlayersPtr(vector<LanPlayer*> &playersPtr) {
-	playersPtr.resize(0);
+
+	for (unsigned int x = 0; x < playersPtr.size(); ++x)
+		playersPtr[x] = NULL;
+
+	playersPtr.clear();
 
 	//Populate with in game players only
 	for (unsigned int x = 0; x < Client.size(); ++x)
 		if (Client[x]->InGame||Client[x]->wasIngame)
 			for (int y = 0; y < 2; ++y)
 				if (Client[x]->IsPlaying(y))
-				{
-					playersPtr.push_back(new LanPlayer);
-					playersPtr[playersPtr.size()-1] = &Client[x]->Player[y];
-				}
+					playersPtr.push_back(&Client[x]->Player[y]);
 }
 
 int StepManiaLanServer::SortStats(vector<LanPlayer*> &playersPtr)
@@ -393,7 +442,6 @@ int StepManiaLanServer::SortStats(vector<LanPlayer*> &playersPtr)
 	bool isChanged;
 
 	PopulatePlayersPtr(playersPtr);
-
 
 	do
 	{
@@ -468,7 +516,6 @@ void StepManiaLanServer::SendNetPacket(const unsigned int client, PacketFunction
 
 void StepManiaLanServer::StatsNameColumn(PacketFunctions &data, vector<LanPlayer*> &playresPtr)
 {
-	CString numname;
 	for (unsigned int x = 0; x < playersPtr.size(); ++x)
 		data.Write1( (uint8_t) playersPtr[x]->PlayerID );
 }
@@ -517,22 +564,25 @@ void GameClient::UpdateStats(PacketFunctions& Packet)
 void StepManiaLanServer::NewClientCheck()
 {
 	//Make a new client and accept a connection to it.
-	// no connection is accepted, delete the client.
+	//If no connection is accepted, delete the client.
 
-	Client.push_back(new GameClient);
+	GameClient *tmp = new GameClient;
 
-	if (server.accept(Client[Client.size()-1]->clientSocket) == 1)
-	{
-		AssignPlayerIDs();
-
-		if (IsBanned(Client[Client.size()-1]->clientSocket.address))
+	if (server.accept(tmp->clientSocket) == 1)
+		if (!IsBanned(tmp->clientSocket.address))
 		{
-			Disconnect(Client.size()-1);
+			Client.push_back(tmp);
+			AssignPlayerIDs();
 		}
-	}
+		else
+		{
+			delete tmp;
+			tmp = NULL;
+		}
 	else
 	{
-		Client.pop_back();
+		delete tmp;
+		tmp = NULL;
 	}
 }
 
@@ -548,7 +598,6 @@ void StepManiaLanServer::AnalizeChat(PacketFunctions &Packet, const unsigned int
 	{
 		CString command = message.substr(1, message.find(" ")-1);
 		if ((command.compare("list") == 0)||(command.compare("have") == 0))
-		{
 			if (command.compare("list") == 0)
 			{
 				Reply.ClearPacket();
@@ -567,9 +616,7 @@ void StepManiaLanServer::AnalizeChat(PacketFunctions &Packet, const unsigned int
 				Client[clientNum]->forceHas = true;
 				ServerChat(message);
 			}
-		}
 		else
-		{
 			if (clientNum == 0)
 			{
 				if (command.compare("force_start") == 0)
@@ -592,12 +639,9 @@ void StepManiaLanServer::AnalizeChat(PacketFunctions &Packet, const unsigned int
 				Reply.WriteNT("You do not have permission to use server commands.");
 				SendNetPacket(clientNum, Reply);
 			}
-		}
 	}
 	else
-	{
 		RelayChat(message, clientNum);
-	}
 }
 
 void StepManiaLanServer::RelayChat(CString &passedmessage, const unsigned int clientNum)
@@ -648,10 +692,10 @@ void StepManiaLanServer::SelectSong(PacketFunctions& Packet, unsigned int client
 					SendNetPacket(x, Reply);
 
 			//The following code forces the host to select the same song twice in order to play it.
-			if (strcmp(CurrentSongInfo.title, LastSongInfo.title) == 0)
-				if (strcmp(CurrentSongInfo.artist, LastSongInfo.artist) == 0)
-					if (strcmp(CurrentSongInfo.artist, LastSongInfo.artist) == 0)
-						SecondSameSelect = true;
+			if ((strcmp(CurrentSongInfo.title, LastSongInfo.title) == 0) &&
+				(strcmp(CurrentSongInfo.artist, LastSongInfo.artist) == 0) &&
+				(strcmp(CurrentSongInfo.artist, LastSongInfo.artist) == 0))
+					SecondSameSelect = true;
 
 			if (!SecondSameSelect)
 			{
@@ -719,22 +763,20 @@ void StepManiaLanServer::ClientsSongSelectStart()
 
 	//Only send data to clients currently in ScreenNetMusicSelect that use hasSong
 	for (unsigned int x = 0; x < Client.size(); ++x)
-		if (Client[x]->inNetMusicSelect)
-			if (Client[x]->hasSong)
-			{
-				SendNetPacket(x, Reply);
-				//Designate the client is starting,
-				//after ScreenNetMusicSelect but before game play (InGame).
-				Client[x]->isStarting = true;
-			}
+		if (Client[x]->inNetMusicSelect && Client[x]->hasSong)
+		{
+			SendNetPacket(x, Reply);
+			//Designate the client is starting,
+			//after ScreenNetMusicSelect but before game play (InGame).
+			Client[x]->isStarting = true;
+		}
 }
 
 bool StepManiaLanServer::CheckHasSongState()
 {
 	for (unsigned int x = 0; x < Client.size(); ++x)
-		if (Client[x]->inNetMusicSelect)
-			if (!Client[x]->hasSong)
-				return false;
+		if (Client[x]->inNetMusicSelect && !Client[x]->hasSong)
+			return false;
 
 	return true;
 }
@@ -838,24 +880,28 @@ CString StepManiaLanServer::ListPlayers()
 
 void StepManiaLanServer::Kick(CString &name)
 {
+	bool kicked = false;
 	for (unsigned int x = 0; x < Client.size(); ++x)
-		for (int y = 0; y < 2; ++y)
+		for (int y = 0; (y < 2)&&(kicked == false); ++y)
 			if (name == Client[x]->Player[y].name)
 			{
 				ServerChat("Kicked " + name + ".");
 				Disconnect(x);
+				kicked = true;
 			}
 }
 
 void StepManiaLanServer::Ban(CString &name)
 {
+	bool kicked = false;
 	for (unsigned int x = 0; x < Client.size(); ++x)
-		for (int y = 0; y < 2; ++y)
+		for (int y = 0; (y < 2)&&(kicked == false); ++y)
 			if (name == Client[x]->Player[y].name)
 			{
 				ServerChat("Banned " + name + ".");
 				bannedIPs.push_back(Client[x]->clientSocket.address);
 				Disconnect(x);
+				kicked = true;
 			}
 }
 
@@ -882,14 +928,13 @@ void StepManiaLanServer::ForceStart()
 
 	//Only send force_start data to clients currently in ScreenNetMusicSelect using forceHas
 	for (unsigned int x = 0; x < Client.size(); ++x)
-		if (Client[x]->inNetMusicSelect)
-			if(Client[x]->forceHas)
-			{
-				SendNetPacket(x, Reply);
-				//Designate the client is starting,
-				//after ScreenNetMusicSelect but before game play (InGame).
-				Client[x]->isStarting = true;
-			}
+		if (Client[x]->inNetMusicSelect && Client[x]->forceHas)
+		{
+			SendNetPacket(x, Reply);
+			//Designate the client is starting,
+			//after ScreenNetMusicSelect but before game play (InGame).
+			Client[x]->isStarting = true;
+		}
 }
 
 void StepManiaLanServer::ResetLastSongInfo()
