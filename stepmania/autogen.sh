@@ -1,5 +1,4 @@
 #!/bin/sh
-# $Id$
 # Run this to generate configure, the initial makefiles, etc.
 #
 # Source (non-CVS) distributions should come with a "configure" script
