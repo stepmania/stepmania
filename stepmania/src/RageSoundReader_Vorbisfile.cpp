@@ -306,12 +306,9 @@ RageSoundReader_Vorbisfile::RageSoundReader_Vorbisfile()
 
 RageSoundReader_Vorbisfile::~RageSoundReader_Vorbisfile()
 {
-	CHECKPOINT_M( ssprintf("%p", vf) );
 	if(vf)
 		ov_clear(vf);
-	CHECKPOINT;
 	delete vf;
-	CHECKPOINT;
 }
 
 SoundReader *RageSoundReader_Vorbisfile::Copy() const
