@@ -17,6 +17,10 @@
 #include <vector>
 #include <AudioToolbox/AudioToolbox.h>
 #include <CoreAudio/CoreAudio.h>
+#if CURRENT_DRIVER == BROKEN_DRIVER_2
+#include <AudioUnit/AudioUnit.h>
+#endif
+
 
 const Float64	kSampleRate = 44100.000;
 const UInt32	kChannelsPerFrame = 2;
@@ -24,8 +28,6 @@ const UInt32	kBitsPerChannel = 16;
 const UInt32	kSampleSize = kChannelsPerFrame * kBitsPerChannel / 8;
 const UInt32	kPacketSize = kSampleSize;
 
-
-static AudioDeviceID outputDevice;
 
 #if defined(DEBUG)
 static char *__errorMessage;
@@ -44,6 +46,10 @@ free(__errorMessage)
 
 RageSound_CA::RageSound_CA()
 {
+#if CURRENT_DRIVER != BROKEN_DRIVER_1 && CURRENT_DRIVER != BROKEN_DRIVER_2
+    RageException::ThrowNonfatal("Class not finished");
+#endif
+#if CURRENT_DRIVER == BROKEN_DRIVER_1
     UInt32 thePropertySize = sizeof(AudioDeviceID);
     OSStatus err;
     
@@ -76,6 +82,12 @@ RageSound_CA::RageSound_CA()
     /* Create the converter to convert from the ideal to the actual format */
     err = AudioConverterNew(&idealFormat, &streamFormat, &converter);
     TEST_ERR(err);
+
+    /*thePropertySize = sizeof(UInt32);
+    UInt32 frames = 1024;
+    err = AudioStreamSetProperty(outputDevice, NULL, kAudioPropertyWildcardChannel,
+                                 kAudioDevicePropertyBufferFrameSize, thePropertySize, &frames);
+    TEST_ERR(err);*/
 
     /* Calculate the input buffersize */
     thePropertySize = sizeof(UInt32);
@@ -116,10 +128,85 @@ RageSound_CA::RageSound_CA()
     TEST_ERR(err);
 
     latency = 0; //for now
+#elif CURRENT_DRIVER == BROKEN_DRIVER_2
+    /* Open the default output unit */
+    OSStatus err;
+    ComponentDescription desc;
+    
+    desc.componentType = kAudioUnitType_Output;
+    desc.componentSubType = kAudioUnitSubType_DefaultOutput;
+    desc.componentManufacturer = kAudioUnitManufacturer_Apple;
+    desc.componentFlags = 0;
+    desc.componentFlagsMask = 0;
+
+    Component comp = FindNextComponent(NULL, &desc);
+    RAGE_ASSERT_M(comp != NULL, "Couldn't find the component");
+
+    err = OpenAComponent(comp, &outputUnit);
+    TEST_ERR(err);
+
+    /* Set the callback */
+    AURenderCallbackStruct callback;
+    callback.inputProc = GetData;
+    callback.inputProcRefCon = this;
+
+    err = AudioUnitSetProperty(outputUnit,
+                               kAudioUnitProperty_SetRenderCallback,
+                               kAudioUnitScope_Input,
+                               0,
+                               &callback,
+                               sizeof(callback));
+    TEST_ERR(err);
+
+    /* Set the input format */
+    AudioStreamBasicDescription idealFormat;
+
+    idealFormat.mSampleRate = kSampleRate;
+    idealFormat.mFormatID = kAudioFormatLinearPCM;
+    idealFormat.mFormatFlags =  kLinearPCMFormatFlagIsBigEndian | kLinearPCMFormatFlagIsPacked
+        | kLinearPCMFormatFlagIsSignedInteger;
+    idealFormat.mBytesPerPacket = kPacketSize;
+    idealFormat.mFramesPerPacket = 1;
+    idealFormat.mBytesPerFrame = kPacketSize;
+    idealFormat.mChannelsPerFrame = kChannelsPerFrame;
+    idealFormat.mBitsPerChannel = kBitsPerChannel;
+    idealFormat.mReserved = 0;
+
+    err = AudioUnitSetProperty(outputUnit,
+                               kAudioUnitProperty_StreamFormat,
+                               kAudioUnitScope_Input,
+                               0,
+                               &idealFormat,
+                               sizeof(idealFormat));
+    TEST_ERR(err);    
+
+    /* Calculate the latency */
+    latency = 0;
+
+    /* Initialize the unit */
+    err = AudioUnitInitialize(outputUnit);
+    TEST_ERR(err);
+
+    /* Get the underlying device */
+    UInt32 propertySize = sizeof(outputDevice);
+    err = AudioUnitGetProperty(outputUnit,
+                               kAudioOutputUnitProperty_CurrentDevice,
+                               kAudioUnitScope_Global,
+                               0,
+                               &outputDevice,
+                               &propertySize);
+    TEST_ERR(err);
+    RAGE_ASSERT(outputDevice);
+
+    /* Start the outputUnit */
+    AudioOutputUnitStart(outputUnit);
+    
+#endif
 }
 
 RageSound_CA::~RageSound_CA()
 {
+#if CURRENT_DRIVER == BROKEN_DRIVER_1
     OSStatus err;
 
     err = AudioDeviceStop(outputDevice, GetData);
@@ -130,6 +217,10 @@ RageSound_CA::~RageSound_CA()
 
     err = AudioConverterDispose(converter);
     TEST_ERR(err);
+#elif CURRENT_DRIVER == BROKEN_DRIVER_2
+    AudioOutputUnitStop(outputUnit);
+    CloseComponent(outputUnit);
+#endif
 }
 
 void RageSound_CA::StartMixing(RageSound *snd)
@@ -182,6 +273,7 @@ void RageSound_CA::Update(float delta)
     }
 }
 
+#if CURRENT_DRIVER == BROKEN_DRIVER_1
 OSStatus RageSound_CA::GetData(AudioDeviceID			inDevice,
                  const AudioTimeStamp*	inNow,
                  const AudioBufferList*	inInputData,
@@ -226,13 +318,61 @@ OSStatus RageSound_CA::GetData(AudioDeviceID			inDevice,
     
     UInt32 size;
 
-    OSStatus err = AudioConverterConvertBuffer(THIS->converter, THIS->buffersize, buffer, &size,
-                                               outOutputData->mBuffers[0].mData);
-    
-    return err;
+    return AudioConverterConvertBuffer(THIS->converter, THIS->buffersize, buffer, &size,
+                                       outOutputData->mBuffers[0].mData);
 }
+
+#elif CURRENT_DRIVER == BROKEN_DRIVER_2
+
+OSStatus RageSound_CA::GetData(void							*inRefCon,
+                               AudioUnitRenderActionFlags	*inActionFlags,
+                               const AudioTimeStamp			*inTimeStamp,
+                               UInt32						inBusNumber,
+                               UInt32						inNumFrames,
+                               AudioBufferList				*ioData)
+{
+    unsigned outputSize = ioData->mBuffers[0].mDataByteSize;
+    if (!SOUNDMAN)
+    {
+        bzero(ioData->mBuffers[0].mData, outputSize);
+        *inActionFlags = kAudioUnitRenderAction_OutputIsSilence;
+        return noErr;
+    }
+    RageSound_CA *THIS = (RageSound_CA *)inRefCon;
+    char *buffer = (char *)ioData->mBuffers[0].mData;
+
+    bzero(buffer, THIS->buffersize);
+    LockMutex L(SOUNDMAN->lock);
+    static SoundMixBuffer mix;
+    int position = int(inTimeStamp->mSampleTime); //This should be in frames
+    bool moreThanOneSound = THIS->sounds.size() > 1;
+    
+    for (unsigned i=0; i<THIS->sounds.size(); ++i)
+    {
+        if (THIS->sounds[i]->stopping)
+            continue;
+
+        unsigned got = THIS->sounds[i]->snd->GetPCM(buffer, outputSize, position);
+        if (moreThanOneSound)
+            mix.write((SInt16 *)buffer, got / 2);
+        if (got < outputSize)
+        {
+            THIS->sounds[i]->stopping = true;
+            THIS->sounds[i]->flush_pos = position + got / kSampleSize;
+        }
+    }
+
+    if (moreThanOneSound)
+        mix.read((SInt16 *)buffer);
+    *inActionFlags = kAudioUnitRenderAction_PostRender;
+
+    return noErr;
+}
+
+#endif
 
 inline int RageSound_CA::ConvertAudioTimeStampToPosition(const AudioTimeStamp *time)
 {
     return (int)(time->mSampleTime / time->mRateScalar);
+    //return int(time->mSampleTime);
 }    
