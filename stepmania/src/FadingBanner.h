@@ -12,28 +12,21 @@
 */
 
 #include "Banner.h"
-#include "ActorFrame.h"
-class Song;
-class Course;
 
-class FadingBanner : public ActorFrame
+class FadingBanner : public Banner
 {
 public:
-	FadingBanner();
-
+	virtual ~FadingBanner() { }
+	virtual bool Load( RageTextureID ID );
 	void SetCroppedSize( float fWidth, float fHeight );
 
-	void Update( float fDeltaTime );
-
-	void SetFromSong( Song* pSong );
-	void SetFromGroup( const CString &sGroupName );
-	void SetRoulette();
-	void SetFromCourse( Course* pCourse );
+	virtual void Update( float fDeltaTime );
+	virtual void DrawPrimitives();
 
 protected:
 	void BeforeChange();
 
-	Banner		m_Banner[2];	// front and back
+	Banner		m_BackBanner;
 };
 
 #endif

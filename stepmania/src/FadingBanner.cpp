@@ -7,73 +7,48 @@
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Glenn Maynard
 -----------------------------------------------------------------------------
 */
 
 #include "FadingBanner.h"
-#include "RageUtil.h"
-#include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
-#include "RageLog.h"
-#include "PrefsManager.h"
-#include "GameState.h"
-
-
-FadingBanner::FadingBanner()
-{
-	// these guys get loaded on the Set* methods
-	this->AddChild( &m_Banner[0] );
-	this->AddChild( &m_Banner[1] );
-}
 
 void FadingBanner::SetCroppedSize( float fWidth, float fHeight )
 {
-	m_Banner[0].SetCroppedSize( fWidth, fHeight );
-	m_Banner[1].SetCroppedSize( fWidth, fHeight );
+	m_BackBanner.SetCroppedSize( fWidth, fHeight );
+	Banner::SetCroppedSize( fWidth, fHeight );
 }
 
 void FadingBanner::Update( float fDeltaTime )
 {
-	ActorFrame::Update( fDeltaTime );
+	m_BackBanner.Update(fDeltaTime);
+	Banner::Update( fDeltaTime );
+}
 
+void FadingBanner::DrawPrimitives()
+{
+	Banner::DrawPrimitives();
+	m_BackBanner.Draw();
+}
+
+bool FadingBanner::Load( RageTextureID ID )
+{
+	BeforeChange();
+	return Banner::Load(ID);
 }
 
 void FadingBanner::BeforeChange()
 {
 	// move the back banner to the front in preparation for a cross fade
-	if( m_Banner[0].GetTexturePath() != "" )
+	if( this->GetTexturePath() != "" )
 	{
-		m_Banner[1].Load( m_Banner[0].GetTexturePath() );
-		m_Banner[1].SetScrolling( m_Banner[0].IsScrolling(), m_Banner[0].ScrollingPercent() );
+		m_BackBanner.Load( this->GetTexturePath() );
+		m_BackBanner.SetScrolling( this->IsScrolling(), this->ScrollingPercent() );
 	}
 
-	m_Banner[1].SetDiffuse( RageColor(1,1,1,1) );
-	m_Banner[1].StopTweening();
-	m_Banner[1].BeginTweening( 0.25f );		// fade out
-	m_Banner[1].SetTweenDiffuse( RageColor(1,1,1,0) );
+	m_BackBanner.SetDiffuse( RageColor(1,1,1,1) );
+	m_BackBanner.StopTweening();
+	m_BackBanner.BeginTweening( 0.25f );		// fade out
+	m_BackBanner.SetTweenDiffuse( RageColor(1,1,1,0) );
 }
 
-void FadingBanner::SetFromSong( Song* pSong )
-{
-	ASSERT( pSong != NULL );
-	BeforeChange();
-	m_Banner[0].LoadFromSong( pSong );
-}
-
-void FadingBanner::SetFromGroup( const CString &sGroupName )
-{
-	BeforeChange();
-	m_Banner[0].LoadFromGroup( sGroupName );
-}
-
-void FadingBanner::SetRoulette()
-{
-	BeforeChange();
-	m_Banner[0].LoadRoulette();
-}
-
-void FadingBanner::SetFromCourse( Course* pCourse )
-{
-	BeforeChange();
-	m_Banner[0].LoadFromCourse( pCourse );
-}
