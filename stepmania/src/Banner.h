@@ -32,6 +32,8 @@ public:
 	void LoadRandom();
 	void LoadFallback();
 
+	static void CacheGlobalBanners();
+
 	void SetScrolling( bool bScroll, float Percent = 0);
 	bool IsScrolling() const { return m_bScrolling; }
 	float ScrollingPercent() const { return m_fPercentScrolling; }

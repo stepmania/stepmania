@@ -27,6 +27,8 @@ FadingBanner::FadingBanner()
 	m_iIndexLatest = 0;
 	for( int i=0; i<3; i++ )
 		this->AddChild( &m_Banner[i] );
+
+	Banner::CacheGlobalBanners();
 }
 
 void FadingBanner::ScaleToClipped( float fWidth, float fHeight )

@@ -16,16 +16,20 @@ Banner::Banner()
 {
 	m_bScrolling = false;
 	m_fPercentScrolling = 0;
+}
 
-	if( PREFSMAN->m_iBannerCache != PrefsManager::BNCACHE_OFF )
-	{
-		TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","all music")) );
-		TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Common","fallback banner")) );
-		TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","roulette")) );
-		TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","random")) );
-		TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","Sort")) );
-		TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","Mode")) );
-	}
+void Banner::CacheGlobalBanners()
+{
+	if( PREFSMAN->m_iBannerCache == PrefsManager::BNCACHE_OFF )
+		return;
+
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","all music")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Common","fallback banner")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","roulette")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","random")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","leap")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","Sort")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","Mode")) );
 }
 
 bool Banner::Load( RageTextureID ID )
