@@ -749,6 +749,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 						RelativePath="arch\ErrorDialog\ErrorDialog_Win32.h">
 					</File>
 					<File
+						RelativePath="arch\ErrorDialog\ErrorDialog_null.h">
+					</File>
+					<File
 						RelativePath="arch\ErrorDialog\ErrorDialog_stdout.cpp">
 					</File>
 					<File
