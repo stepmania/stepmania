@@ -79,6 +79,7 @@ public:
 	/* Statistics */
 	int GetFPS() const;
 	int GetVPF() const;
+	int GetCumFPS() const; /* average FPS since last reset */
 	void ResetStats();
 
 	const oglspecs_t &GetSpecs() const { return *m_oglspecs; }

@@ -33,7 +33,7 @@ int					g_flags = 0;		/* SDL video flags */
 GLenum				g_vertMode = GL_TRIANGLES;
 RageTimer			g_LastCheckTimer;
 int					g_iNumVerts;
-int					g_iFPS, g_iVPF;
+int					g_iFPS, g_iVPF, g_iCFPS;
 
 int					g_PerspectiveMode = 0;
 
@@ -41,13 +41,18 @@ int					g_CurrentHeight, g_CurrentWidth, g_CurrentBPP;
 int					g_ModelMatrixCnt=0;
 int RageDisplay::GetFPS() const { return g_iFPS; }
 int RageDisplay::GetVPF() const { return g_iVPF; }
+int RageDisplay::GetCumFPS() const { return g_iCFPS; }
 
 static int			g_iFramesRenderedSinceLastCheck,
-					g_iVertsRenderedSinceLastCheck;
+					g_iFramesRenderedSinceLastReset,
+					g_iVertsRenderedSinceLastCheck,
+					g_iNumChecksSinceLastReset;
 
 PWSWAPINTERVALEXTPROC GLExt::wglSwapIntervalEXT;
 
-const GLenum RageVertexFormat = GL_T2F_C4UB_V3F;
+/* We don't actually use normals (we don't tunr on lighting), there's just
+ * no GL_T2F_C4F_V3F. */
+const GLenum RageVertexFormat = GL_T2F_C4F_N3F_V3F;
 
 void GetGLExtensions(set<string> &ext)
 {
@@ -288,22 +293,26 @@ void RageDisplay::Flip()
 {
 	SDL_GL_SwapBuffers();
 	g_iFramesRenderedSinceLastCheck++;
+	g_iFramesRenderedSinceLastReset++;
 
 	if( g_LastCheckTimer.PeekDeltaTime() >= 1.0f )	// update stats every 1 sec.
 	{
 		g_LastCheckTimer.GetDeltaTime();
+		g_iNumChecksSinceLastReset++;
 		g_iFPS = g_iFramesRenderedSinceLastCheck;
+		g_iCFPS = g_iFramesRenderedSinceLastReset / g_iNumChecksSinceLastReset;
 		g_iVPF = g_iVertsRenderedSinceLastCheck / g_iFPS;
 		g_iFramesRenderedSinceLastCheck = g_iVertsRenderedSinceLastCheck = 0;
-		LOG->Trace( "FPS: %d, VPF: %d", g_iFPS, g_iVPF );
+		LOG->Trace( "FPS: %d, CFPS %d, VPF: %d", g_iFPS, g_iCFPS, g_iVPF );
 	}
-
 }
 
 void RageDisplay::ResetStats()
 {
 	g_iFPS = g_iVPF = 0;
-	g_iFramesRenderedSinceLastCheck = g_iVertsRenderedSinceLastCheck = 0;
+	g_iFramesRenderedSinceLastCheck = g_iFramesRenderedSinceLastReset = 0;
+	g_iNumChecksSinceLastReset = 0;
+	g_iVertsRenderedSinceLastCheck = 0;
 	g_LastCheckTimer.GetDeltaTime();
 }
 

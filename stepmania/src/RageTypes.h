@@ -180,14 +180,11 @@ typedef Rect<float> RectF;
 // A structure for our custom vertex type.  Note that these data structes have the same layout that D3D expects.
 struct RageVertex
 {
-	// This is the format expected by OpenGL.  D3D expects the reverse!
 	RageVector2		t;	// texture coordinates
-    RageVColor		c;	// diffuse color
+    RageColor		c;	// diffuse color
+    RageVector3		n;	// normal
     RageVector3		p;	// position
 };
-
-#define D3DFVF_RAGEVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1)	// D3D FVF flags which describe our vertex structure
-
 
 /* nonstandard extension used : nameless struct/union
  * It is, in fact, nonstandard.  G++ 3.x can handle it. 2.95.x can not. XXX */
