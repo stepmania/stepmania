@@ -83,10 +83,16 @@ char **g_argv = NULL;
 static bool g_bHasFocus = true;
 static bool g_bQuitting = false;
 
+CString InitialWorkingDirectory;
 CString DirOfExecutable;
 
 static void ChangeToDirOfExecutable(const char *argv0)
 {
+	char tmp[1024];
+	getcwd( tmp, 1024 );
+	tmp[1023] = 0;
+	InitialWorkingDirectory = tmp;
+
 #ifdef _XBOX
 	DirOfExecutable = "D:\\" ;
 	return ;
@@ -112,9 +118,15 @@ static void ChangeToDirOfExecutable(const char *argv0)
 	if( !IsAbsolutePath )
 		DirOfExecutable = GetCwd() + "/" + DirOfExecutable;
 
-	/* Make sure the current directory is the root program directory. */
+	/* Change to the directory that crash dumps should be logged to. */
+#if defined(_WIN32)
 	chdir( DirOfExecutable );
-	FlushDirCache();
+#elif defined(LINUX)
+	const char *home = getenv("HOME");
+	if( home )
+		chdir( home );
+#endif
+	
 #endif
 }
 

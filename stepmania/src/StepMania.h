@@ -27,6 +27,7 @@ extern HWND g_hWndMain;
 #endif
 
 extern CString DirOfExecutable;
+extern CString InitialWorkingDirectory;
 
 extern int g_argc;
 extern char **g_argv;
