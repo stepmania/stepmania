@@ -77,6 +77,7 @@ PrefsManager::PrefsManager()
 	m_bArcadeOptionsNavigation = false;
 	m_bSoloSingle = false;
 	m_bDelayedTextureDelete = true;
+	m_bTexturePreload = false;
 	m_bDelayedScreenLoad = false;
 	m_bBannerCache = true;
 	m_MusicWheelUsesSections = ALWAYS;
@@ -108,9 +109,9 @@ PrefsManager::PrefsManager()
 	m_iEndlessNumStagesUntilBreak = 5;
 	m_iEndlessBreakLength = 5;
 #ifdef DEBUG
-	m_bShowLogWindow = true;
+	m_bShowLogOutput = true;
 #else
-	m_bShowLogWindow = false;
+	m_bShowLogOutput = false;
 #endif
 	m_bTenFooterInRed = true;
 
@@ -240,6 +241,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "ArcadeOptionsNavigation",			m_bArcadeOptionsNavigation );
 	ini.GetValue( "Options", "DWIPath",							m_DWIPath );
 	ini.GetValue( "Options", "DelayedTextureDelete",			m_bDelayedTextureDelete );
+	ini.GetValue( "Options", "TexturePreload",					m_bTexturePreload );
 	ini.GetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
 	ini.GetValue( "Options", "BannerCache",						m_bBannerCache );
 	ini.GetValue( "Options", "MusicWheelUsesSections",			(int&)m_MusicWheelUsesSections );
@@ -298,7 +300,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "GlobalOffsetSeconds",				m_fGlobalOffsetSeconds );
 	ini.GetValue( "Options", "ForceLogFlush",					m_bForceLogFlush );
 	ini.GetValue( "Options", "Logging",							m_bLogging );
-	ini.GetValue( "Options", "ShowLogWindow",					m_bShowLogWindow );
+	ini.GetValue( "Options", "ShowLogOutput",					m_bShowLogOutput );
 	ini.GetValue( "Options", "ShowBeginnerHelper",				m_bShowBeginnerHelper );
 	ini.GetValue( "Options", "Language",						m_sLanguage );
 	ini.GetValue( "Options", "EndlessBreakEnabled",				m_bEndlessBreakEnabled );
@@ -374,6 +376,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "ArcadeOptionsNavigation",			m_bArcadeOptionsNavigation );
 	ini.SetValue( "Options", "DWIPath",							m_DWIPath );
 	ini.SetValue( "Options", "DelayedTextureDelete",			m_bDelayedTextureDelete );
+	ini.SetValue( "Options", "TexturePreload",					m_bTexturePreload );
 	ini.SetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
 	ini.SetValue( "Options", "BannerCache",						m_bBannerCache );
 	ini.SetValue( "Options", "MusicWheelUsesSections",			m_MusicWheelUsesSections );
@@ -417,7 +420,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "GlobalOffsetSeconds",				m_fGlobalOffsetSeconds );
 	ini.SetValue( "Options", "ForceLogFlush",					m_bForceLogFlush );
 	ini.SetValue( "Options", "Logging",							m_bLogging );
-	ini.SetValue( "Options", "ShowLogWindow",					m_bShowLogWindow );
+	ini.SetValue( "Options", "ShowLogOutput",					m_bShowLogOutput );
 
 	ini.SetValue( "Options", "TenFooterInRed",					m_bTenFooterInRed );
 	ini.SetValue( "Options", "CourseSortOrder",					m_iCourseSortOrder );

@@ -781,8 +781,7 @@ int main(int argc, char* argv[])
 	GAMESTATE	= new GameState;
 	PREFSMAN	= new PrefsManager;
 
-	if( PREFSMAN->m_bShowLogWindow )
-		LOG->ShowConsole();
+	LOG->ShowLogOutput( PREFSMAN->m_bShowLogOutput );
 
 	CheckSDLVersion( 1,2,6 );
 	

@@ -23,8 +23,7 @@ public:
 	void Info( const char *fmt, ...) PRINTF(2,3);
 	void Flush();
 
-	void ShowConsole();
-	void HideConsole();
+	void ShowLogOutput( bool show );
 
 	void MapLog(const CString &key, const char *fmt, ...) PRINTF(3,4);
 	void UnmapLog(const CString &key);
@@ -42,6 +41,7 @@ private:
 	bool m_bEnabled;
 	bool m_bFlush;
 	bool m_bTimestamping;
+	bool m_bShowLogOutput;
 	FILE *m_fileLog, *m_fileInfo;
 	void Write( int, CString );
 	void UpdateMappedLog();

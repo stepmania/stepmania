@@ -131,7 +131,7 @@ RageLog::~RageLog()
 	this->Info( "%s", GetAdditionalLog() );
 
 	Flush();
-	HideConsole();
+	ShowLogOutput( false );
 	if(m_fileLog) fclose( m_fileLog );
 	if(m_fileInfo) fclose( m_fileInfo );
 }
@@ -151,20 +151,23 @@ void RageLog::SetTimestamping( bool b )
 	m_bTimestamping = b;
 }
 
-void RageLog::ShowConsole()
+/* Enable or disable display of output to stdout, or a console window in Windows. */
+void RageLog::ShowLogOutput( bool show )
 {
-#if defined(WIN32) && !defined(_XBOX)
-	// create a new console window and attach standard handles
-	AllocConsole();
-	freopen("CONOUT$","wb",stdout);
-	freopen("CONOUT$","wb",stderr);
-#endif
-}
+	m_bShowLogOutput = show;
 
-void RageLog::HideConsole()
-{
 #if defined(WIN32) && !defined(_XBOX)
-	FreeConsole();
+	if( m_bShowLogOutput )
+	{
+		// create a new console window and attach standard handles
+		AllocConsole();
+		freopen("CONOUT$","wb",stdout);
+		freopen("CONOUT$","wb",stderr);
+	}
+	else
+	{
+		FreeConsole();
+	}
 #endif
 }
 
@@ -239,7 +242,8 @@ void RageLog::Write( int where, CString str)
 	if( m_fileLog )
 		fprintf(m_fileLog, "%s\n", str.c_str() );
 
-	printf("%s\n", str.c_str() );
+	if( m_bShowLogOutput || where != 0 )
+		printf("%s\n", str.c_str() );
 
 	if( m_bFlush || (where & WRITE_TO_INFO) )
 		Flush();

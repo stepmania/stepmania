@@ -39,6 +39,7 @@ public:
 	bool			m_bPAL;
 #endif
 	bool			m_bDelayedTextureDelete;
+	bool			m_bTexturePreload;
 	bool			m_bDelayedScreenLoad;
 	bool			m_bBannerCache;
 
@@ -94,7 +95,7 @@ public:
 	float			m_fGlobalOffsetSeconds;
 	bool			m_bForceLogFlush;
 	bool			m_bLogging;
-	bool			m_bShowLogWindow;
+	bool			m_bShowLogOutput;
 	bool			m_bTenFooterInRed;
 	int				m_iProgressiveLifebar;
 	int				m_iProgressiveStageLifebar;
