@@ -510,13 +510,13 @@ struct VideoCardDefaults
 	{
 		/* Unconfirmed texture problems on this; let's try D3D, since it's a VIA/S3
 		 * chipset. */
-		"VIA/S3G KM400/KN400"
+		"VIA/S3G KM400/KN400",
 		"d3d,opengl",
 		640,480,
 		16,16,16,
 		2048,
 		false
-	}
+	},
 	{
 		"OpenGL",	// This matches all drivers in Mac and Linux. -Chris
 		"opengl",
