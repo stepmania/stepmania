@@ -143,10 +143,7 @@ static const CreditLine CREDIT_LINES[] =
 	{0,"Gotetsu"},
 	{0,"Mark “Foobly” Verrey"},
 	{0,"Mandarin Blue"},
-	{0,"Anne Kiel"},
-	{0,"BeMaNiFiNiNaTiC (Jeremy Hine)"},
-	{0,"Garett Sakamoto"},
-	{0,"SailorBob"}, // isnt this the same as warrior bob?
+//	{0,"SailorBob"}, // isnt this the same as warrior bob?  // I think so.  -Chris
 	{0,"Kenny “AngelTK” Lai"},
 	{0,"curewater"},
 	{0,"Bill “DMAshura” Shillito"},
