@@ -934,3 +934,14 @@ void Course::UpdateCourseStats()
 		this->m_sName.c_str(),
 		SortOrder_TotalDifficulty );
 }
+
+void Course::Info::GetAttackArray( AttackArray &out ) const
+{
+	Attack a;
+	a.fStartSecond = -1;
+	a.fSecsRemaining = 10000; /* whole song */
+	a.level = ATTACK_LEVEL_1;
+	a.sModifier = Modifiers;
+
+	out.push_back( a );
+}

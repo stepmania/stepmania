@@ -13,6 +13,7 @@
 
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
+#include "Attack.h"
 
 struct PlayerOptions;
 struct SongOptions;
@@ -95,6 +96,8 @@ public:
 	struct Info
 	{
 		Info(): pSong(NULL), pNotes(NULL), Random(false), Difficult(false) { }
+		void GetAttackArray( AttackArray &out ) const;
+
 		Song*	pSong;
 		Steps*	pNotes;
 		CString	Modifiers;
