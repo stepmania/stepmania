@@ -144,11 +144,6 @@ void ScreenHowToPlay::Update( float fDelta )
 		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong );
 		m_fFakeSecondsIntoSong += fDelta;
 		
-		// XXX: really, the prefs manager would take care of
-		// showing the console at the beginning of the program.
-		// (namely DebugMode in stepmania.ini)
-		//	LOG->ShowConsole();
-
 		if( GAMESTATE->m_bFreeze )
 		{
 			switch(int(GAMESTATE->m_fSongBeat))
@@ -166,19 +161,19 @@ void ScreenHowToPlay::Update( float fDelta )
 			if( (GAMESTATE->m_fSongBeat >= 15.0f && GAMESTATE->m_fSongBeat <= 15.2f) )
 			{
 				m_mCharacter.SetFrame(1);
-			};
+			}
 			if( (GAMESTATE->m_fSongBeat >= 17.0f && GAMESTATE->m_fSongBeat <= 17.2f) )
 			{ 
 				m_mCharacter.SetFrame(55);
-			};
+			}
 			if( (GAMESTATE->m_fSongBeat >= 19.0f && GAMESTATE->m_fSongBeat <= 19.2f) )
 			{ 
 				m_mCharacter.SetFrame(120);
-			};
+			}
 			if( (GAMESTATE->m_fSongBeat >= 21.0f && GAMESTATE->m_fSongBeat <= 21.2f) )
 			{ 
 				m_mCharacter.SetFrame(240);
-			};
+			}
 			// ----------------------------------------------------------------------- */
 
 
