@@ -68,17 +68,61 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 
 		else if( 0 == stricmp(sValueName, "SONG") )
 		{
-			CString sSongDir = "Songs\\" + sParams[1] + "\\";
+			CString sSongDir = sParams[1];
 			CString sNotesDescription = sParams[2];
 			CString sModifiers = sParams[3];
 
-			int i;
+			if(!sSongDir.GetLength()) {
+			    /* Err. */
+			    LOG->Trace( "Course file \"%s\" has an empty #SONG.  Ignored.",
+				            sPath.GetString(), sSongDir.GetString());
+			    continue;
+			}
 
-			Song* pSong = NULL;
-			for( i=0; i<apSongs.GetSize(); i++ )	// foreach song
+			/* m_sSongDir contains a path to the song, possibly a full path, eg:
+			 * Songs\Group\SongName                   or 
+			 * My Other Song Folder\Group\SongName    or
+			 * c:\Corny J-pop\Group\SongName
+			 *
+			 * Most course group names are "Group\SongName", so we want to
+			 * match against the last two elements. Let's also support
+			 * "SongName" alone, since the group is only important when it's
+			 * potentially ambiguous.
+			 *
+			 * Let's *not* support "Songs\Group\SongName" in course files.
+			 * That's probably a common error, but that would result in
+			 * course files floating around that only work for people who put
+			 * songs in "Songs"; we don't want that.
+			 */
+
+			CStringArray split_SongDir;
+			split( sSongDir, "\\", split_SongDir, true );
+
+			if( split_SongDir.GetSize() > 2 )
 			{
-				CString sThisSongDir = apSongs[i]->m_sSongDir;
-				if( 0 == stricmp(sThisSongDir, sSongDir) )
+			    LOG->Warn( "Course file \"%s\" path \"%s\" should contain "
+						   "at most one backslash; ignored.",
+				           sPath.GetString(), sSongDir.GetString());
+			    continue;
+			}
+
+			Song *pSong = NULL;
+			// foreach song
+			for( int i = 0; pSong == NULL && i < apSongs.GetSize(); i++ )
+			{
+				CStringArray splitted;
+				split( apSongs[i]->m_sSongDir, "\\", splitted, true );
+				bool matches = true;
+				
+				int split_no = splitted.GetSize()-1;
+				int SongDir_no = split_SongDir.GetSize()-1;
+
+				while( split_no >= 0 && SongDir_no >= 0 ) {
+				    if( stricmp(splitted[split_no--].GetString(), split_SongDir[SongDir_no--].GetString() ) )
+						matches=false;
+				}
+
+				if(matches)
 					pSong = apSongs[i];
 			}
 			if( pSong == NULL )	// we didn't find the Song
