@@ -1587,6 +1587,7 @@ void ScreenGameplay::ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 {
+	CHECKPOINT_M( ssprintf("HandleScreenMessage(%i)", SM) );
 	switch( SM )
 	{
 	case SM_PlayReady:
@@ -1685,19 +1686,21 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			}
 			
 			// update dancing characters for win / lose
-			for(p=0; p<NUM_PLAYERS;p++)
-			{
-				if( GAMESTATE->IsPlayerEnabled(p) && GAMESTATE->m_CurStageStats.bFailed[p] )
-					m_Background.GetDancingCharacters()->Change2DAnimState(p,AS2D_FAIL); // fail anim
-				else
+			DancingCharacters *Dancers = m_Background.GetDancingCharacters();
+			if( Dancers )
+				for( p=0; p<NUM_PLAYERS; p++ )
 				{
-					if(m_pLifeMeter[p]->GetLife() == 1.0f) // full life
-						m_Background.GetDancingCharacters()->Change2DAnimState(p,AS2D_WINFEVER); // full life pass anim
-					else
-						m_Background.GetDancingCharacters()->Change2DAnimState(p,AS2D_WIN); // pass anim
-				}
+					if( !GAMESTATE->IsPlayerEnabled(p) )
+						continue;
 
-			}
+					/* XXX: In battle modes, switch( GAMESTATE->GetStageResult(p) ). */
+					if( GAMESTATE->m_CurStageStats.bFailed[p] )
+						Dancers->Change2DAnimState( p, AS2D_FAIL ); // fail anim
+					else if( m_pLifeMeter[p] && m_pLifeMeter[p]->GetLife() == 1.0f ) // full life
+						Dancers->Change2DAnimState( p, AS2D_WINFEVER ); // full life pass anim
+					else
+						Dancers->Change2DAnimState( p, AS2D_WIN ); // pass anim
+				}
 
 			/* End round. */
 			if( m_DancingState == STATE_OUTRO )	// ScreenGameplay already ended
