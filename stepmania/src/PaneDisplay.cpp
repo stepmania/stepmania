@@ -122,15 +122,6 @@ void PaneDisplay::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 }
 
-template<class T>
-int FindIndex( const T &array, const Song *s )
-{
-	T::const_iterator it = find( array.begin(), array.end(), s );
-	if( it == array.end() )
-		return -1;
-	return it - array.begin();
-}
-
 void PaneDisplay::SetContent( PaneContents c )
 {
 	m_textContents[c].SetText( "" );
@@ -164,10 +155,21 @@ void PaneDisplay::SetContent( PaneContents c )
 		break;
 
 
-	case SONG_PROFILE_RANK:
-		val = (float) FindIndex( SONGMAN->GetBestSongs( PlayerMemCard(m_PlayerNumber) ), GAMESTATE->m_pCurSong );
+	case SONG_MACHINE_RANK:
+		{
+		const vector<Song*> best = SONGMAN->GetBestSongs( MEMORY_CARD_MACHINE );
+		val = (float) FindIndex( best.begin(), best.end(), GAMESTATE->m_pCurSong );
 		val += 1;
 		break;
+		}
+
+	case SONG_PROFILE_RANK:
+		{
+		const vector<Song*> best = SONGMAN->GetBestSongs( PlayerMemCard(m_PlayerNumber) );
+		val = (float) FindIndex( best.begin(), best.end(), GAMESTATE->m_pCurSong );
+		val += 1;
+		break;
+		}
 
 	case COURSE_MACHINE_HIGH_SCORE:
 		// XXX add percentdp
