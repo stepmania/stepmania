@@ -70,7 +70,7 @@ fi
 # SDL_LIBS="`echo $SDL_LIBS | sed 's_-L/usr/lib/\?[[ $]]__'`"
 
 have_libpng=yes
-AC_SEARCH_LIBS(png_create_read_struct, [png], ,  have_libpng=no)
+AC_CHECK_LIB(png, png_create_read_struct, , have_libpng=no, [-lz -lm])
 AC_CHECK_HEADER(png.h, , have_libpng=no)
 if test "$have_libpng" = "no"; then
   echo
