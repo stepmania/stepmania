@@ -1947,12 +1947,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageSoundResampler.h">
 			</File>
 			<File
-				RelativePath="RageSounds.cpp">
-			</File>
-			<File
-				RelativePath="RageSounds.h">
-			</File>
-			<File
 				RelativePath="RageSurface.cpp">
 			</File>
 			<File
@@ -2222,6 +2216,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath=".\GameManager.h">
+			</File>
+			<File
+				RelativePath="GameSoundManager.cpp">
+			</File>
+			<File
+				RelativePath="GameSoundManager.h">
 			</File>
 			<File
 				RelativePath="GameState.cpp">
