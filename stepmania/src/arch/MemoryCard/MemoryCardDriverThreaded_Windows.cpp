@@ -95,7 +95,7 @@ void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
 					continue;
 
 				UsbStorageDevice usbd;
-				usbd.sOsMountDir = sDrive;
+				usbd.SetOsMountDir( sDrive );
 				usbd.bWriteTestSucceeded = TestWrite( sDrive );
 				// read name
 				this->Mount( &usbd, TEMP_MOUNT_POINT );

@@ -18,6 +18,12 @@ bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
 #undef COMPARE
 }
 
+void UsbStorageDevice::SetOsMountDir( const CString &s )
+{
+	sOsMountDir = s;
+	FixSlashesInPlace( sOsMountDir );
+}
+
 
 MemoryCardDriver *MakeMemoryCardDriver()
 {

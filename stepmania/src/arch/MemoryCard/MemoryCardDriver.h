@@ -30,7 +30,8 @@ struct UsbStorageDevice
   bool bWriteTestSucceeded;  // only valid if bNeedsWriteTest == false
   CString sName;  // Name in the profile on the memory card.
 
-	bool IsBlank() { return sOsMountDir.empty(); }
+	bool IsBlank() const { return sOsMountDir.empty(); }
+	void SetOsMountDir( const CString &s );
 
   bool operator==(const UsbStorageDevice& other) const;
 };
