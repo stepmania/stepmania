@@ -114,7 +114,6 @@ CString SecondsToHHMMSS( float fSecs )
 {
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
-	const float fLeftoverDisplay = (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100;
 	CString sReturn = ssprintf( "%02d:%02d:%02d", iMinsDisplay/60, iMinsDisplay%60, iSecsDisplay );
 	return sReturn;
 }
@@ -137,7 +136,7 @@ CString Commify( int iNum )
 {
 	CString sNum = ssprintf("%d",iNum);
 	CString sReturn;
-	for( int i=0; i<sNum.length(); i++ )
+	for( unsigned i=0; i<sNum.length(); i++ )
 	{
 		char cDigit = sNum[sNum.length()-1-i];
 		if( i!=0 && i%3 == 0 )
