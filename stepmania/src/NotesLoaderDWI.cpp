@@ -42,7 +42,7 @@ void DWILoader::DWIcharToNote( char c, GameController i, DanceNote &note1Out, Da
 		case 'L':	note1Out = DANCE_NOTE_PAD1_UPRIGHT;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
 		case 'M':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
 		default:	
-			LOG->Warn( "Encountered invalid DWI note character '%c'", c );
+			LOG->Warn( "Encountered invalid DWI note character '%c' in '%s'", c, m_sLoadingFile.c_str() );
 			note1Out = DANCE_NOTE_NONE;			note2Out = DANCE_NOTE_NONE;			break;
 	}
 
@@ -225,7 +225,7 @@ bool DWILoader::LoadFromDWITokens(
 			{
 				if( c == '!' )
 				{
-					LOG->Warn("Unexpected character in DWI: '!'");
+					LOG->Warn( "Unexpected character in '%s': '!'", m_sLoadingFile.c_str() );
 					continue;
 				}
 
@@ -325,7 +325,7 @@ float DWILoader::ParseBrokenDWITimestamp(const CString &arg1, const CString &arg
 bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 {
 	LOG->Trace( "Song::LoadFromDWIFile(%s)", sPath.c_str() );
-	
+	m_sLoadingFile = sPath;
 
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
@@ -340,7 +340,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 
 		if(iNumParams < 1)
 		{
-			LOG->Warn("Got \"%s\" tag with no parameters", sValueName.c_str());
+			LOG->Warn("Got \"%s\" tag with no parameters in '%s'", sValueName.c_str(), m_sLoadingFile.c_str() );
 			continue;
 		}
 
@@ -432,7 +432,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 				CStringArray arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
 				if(arrayBPMChangeValues.size() != 2) {
-					LOG->Warn( "Invalid CHANGEBPM: '%s'", arrayBPMChangeExpressions[b].c_str());
+					LOG->Warn( "Invalid CHANGEBPM in '%s': '%s'", m_sLoadingFile.c_str(), arrayBPMChangeExpressions[b].c_str() );
 					continue;
 				}
 				float fIndex = (float)atof( arrayBPMChangeValues[0] ) * ROWS_PER_BEAT / 4.0f;
