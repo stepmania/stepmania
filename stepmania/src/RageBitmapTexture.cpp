@@ -155,6 +155,10 @@ apply_color_key:
 	 * grayscale; if it only has boolean transparency, you get a 7-bit grayscale. */
 	if( HintString.Find("grayscale") != -1 )		actualID.iGrayscaleBits = 8-actualID.iAlphaBits;
 
+	/* This indicates that the only component in the texture is alpha; assume all
+	 * color is white. */
+	if( HintString.Find("alphamap") != -1 )			actualID.iGrayscaleBits = 0;
+
 	/* No iGrayscaleBits for images that are already paletted.  We don't support
 	 * that; and that hint is intended for use on images that are already grayscale,
 	 * it's not intended to change a color image into a grayscale image. */
