@@ -468,11 +468,13 @@ void Player::OnRowDestroyed( int col, int iIndexThatWasSteppedOn )
 	case TNS_GOOD:		fStartZoomX = g_fJudgeGoodZoomX;	fStartZoomY = g_fJudgeGoodZoomY;	break;
 	case TNS_BOO:		fStartZoomX = g_fJudgeBooZoomX;		fStartZoomY = g_fJudgeBooZoomY;		break;
 	}
+	m_frameJudgement.StopTweening();
 	m_frameJudgement.SetZoomX( fStartZoomX );
 	m_frameJudgement.SetZoomY( fStartZoomY );
 	m_frameJudgement.BeginTweening( g_fComboJudgeTweenSeconds );
 	m_frameJudgement.SetTweenZoom( 1 );
 
+	m_frameCombo.StopTweening();
 	m_frameCombo.SetZoomX( fStartZoomX );
 	m_frameCombo.SetZoomY( fStartZoomY );
 	m_frameCombo.BeginTweening( g_fComboJudgeTweenSeconds );

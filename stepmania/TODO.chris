@@ -2,9 +2,19 @@
 Fix
 /////////////////////////
 
+> We also throw when we get a difficulty we don't know about.
+
+> LifeMeterBattery::Refresh wants "x", but the font being used..
+
+Like when playing MAX300, how the judgement "pulsing" goofs up?
+
+freezes are locked until NG
+
 the CDTitles DWI style arent being read anymore.
 
 faster IniFile (with std::map?)
+
+flag for use hold head
 
 fix movie texture crash
 
@@ -40,8 +50,6 @@ slower eval bar tween
 
 add turns to editor
 
-sample pop
-
 fix screwed up scroll bar
 
 send disc to Penny Arcade
@@ -53,8 +61,6 @@ warning screen
 lyrics
 
 team seattle link
-
-flag for use hold head
 
 //////////////////////
 Animachanic suggestions:
