@@ -98,7 +98,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 
 	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_STYLE_CHANGE) );
 	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
-
+	m_soundInvalid.Load( THEME->GetPathTo(SOUND_MENU_INVALID) );
 
 //	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_INTRO) );
 
@@ -289,7 +289,6 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 	// figure out whether we should add a player into the fray or not
 	if(	GAMEMAN->m_sMasterPlayerNumber != PLAYER_2 && GAMEMAN->m_sMasterPlayerNumber != PLAYER_1 )
 	{
-		GAMEMAN->m_sMasterPlayerNumber = p;
 		if (p == PLAYER_1)
 		{
 			m_iSelectedStyle = 0;
@@ -297,7 +296,10 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 		else
 		{
 			m_iSelectedStyle = 1;
+			//m_soundInvalid.PlayRandom();
+			//return;
 		}
+		// GAMEMAN->m_sMasterPlayerNumber = p;
 		m_soundSelect.PlayRandom();
 		ez2_lasttimercheck[1] = TIMER->GetTimeSinceStart(); // start the timer for going to next state
 	}
@@ -305,6 +307,8 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 	{
 		m_iSelectedStyle = 2;
 		m_soundSelect.PlayRandom();
+		//m_soundInvalid.PlayRandom();
+		//return;
 	}
 
 	TweenOffScreen();

@@ -37,6 +37,26 @@ float ArrowGetXPos( const PlayerOptions& po, int iColNum, float fYOffset, float 
 	float fColOffsetFromCenter = iColNum - (GAMEMAN->GetCurrentStyleDef()->m_iColsPerPlayer-1)/2.0f;
 	float fPixelOffsetFromCenter = fColOffsetFromCenter * ARROW_SIZE;
 	
+	// BUG OR FEATURE??? THIS IS WHERE THE REAL COLUMN PLACEMENT HAPPENS!!!
+	// GAMEMANAGER SITS AROUND ON ITS ASS DOING NOTHING
+	// 
+	// As I know very little about this system, and as this is the only place I can think of that I
+	// can possibly change my arrow placements, Ez2dancer column setups will be here until
+	// somebody makes some other system. In the meantime, if it works, i'm using it.
+
+	if ( GAMEMAN->m_CurGame == GAME_EZ2 )
+	{
+		fPixelOffsetFromCenter = fColOffsetFromCenter * ARROW_SIZE / 1.3f;
+		if ( GAMEMAN->m_CurStyle == STYLE_EZ2_REAL ) // real gets MEGA squashed
+		{
+			fPixelOffsetFromCenter = fColOffsetFromCenter * ARROW_SIZE / 1.5f;
+		}
+		else if ( GAMEMAN->m_CurStyle == STYLE_EZ2_DOUBLE )
+		{
+			fPixelOffsetFromCenter = (fColOffsetFromCenter + 2.9f) * ARROW_SIZE / 1.3f;
+		}
+	}
+	
 	switch( po.m_EffectType )
 	{
 	case PlayerOptions::EFFECT_DRUNK:

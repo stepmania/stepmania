@@ -619,6 +619,11 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 	
 	if ((m_iSelectedPlayer == 0 && p == PLAYER_2) || (m_iSelectedPlayer == 1 && p == PLAYER_1))
 	{
+		if (p == PLAYER_2) // CURRENTLY PLAYER 2 IS BROKEN
+		{
+			m_soundInvalid.PlayRandom();
+			return;
+		}
 		m_soundSelect.PlayRandom();
 		TweenPlyOffScreen();
 		m_iSelectedPlayer = 2; // set to BOTH players now.
