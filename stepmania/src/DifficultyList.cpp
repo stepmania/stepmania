@@ -29,7 +29,7 @@ void DifficultyList::SetName( const CString &sName, const CString &sID )
 {
 	ActorFrame::SetName( sName, sID );
 
-        ITEMS_SPACING_Y.Load( m_sName, "ItemsSpacingY" );
+	ITEMS_SPACING_Y.Load( m_sName, "ItemsSpacingY" );
 	DESCRIPTION_MAX_WIDTH.Load( m_sName, "DescriptionMaxWidth" );
 	NUM_SHOWN_ITEMS.Load( m_sName, "NumShownItems" );
 	CAPITALIZE_DIFFICULTY_NAMES.Load( m_sName, "CapitalizeDifficultyNames" );
@@ -47,11 +47,11 @@ void DifficultyList::Load()
 		m_Cursors[pn]->SetName( ssprintf("CursorP%i",pn+1) );
 
 		/* Hack: we need to tween cursors both up to down (cursor motion) and visible to
-			* invisible (fading).  Cursor motion needs to stoptweening, so multiple motions
-			* don't queue and look unresponsive.  However, that stpotweening interrupts fading,
-			* resulting in the cursor remaining invisible or partially invisible.  So, do them
-			* in separate tweening stacks.  This means the Cursor command can't change diffuse
-			* colors; I think we do need a diffuse color stack ... */
+		 * invisible (fading).  Cursor motion needs to stoptweening, so multiple motions
+		 * don't queue and look unresponsive.  However, that stpotweening interrupts fading,
+		 * resulting in the cursor remaining invisible or partially invisible.  So, do them
+		 * in separate tweening stacks.  This means the Cursor command can't change diffuse
+		 * colors; I think we do need a diffuse color stack ... */
 		m_CursorFrames[pn].SetName( ssprintf("CursorP%i",pn+1) );
 		ActorUtil::LoadCommand( m_CursorFrames[pn], m_sName,  "Change" );
 		m_CursorFrames[pn].AddChild( m_Cursors[pn] );
@@ -295,7 +295,7 @@ void DifficultyList::SetFromGameState()
 
 				row.m_dc = *d;
 
-				m_Lines[i].m_Meter.SetFromMeterAndDifficulty( 3*(*d), *d );
+				m_Lines[i].m_Meter.SetFromMeterAndDifficulty( 0, *d );
 
 				m_Lines[i].m_Description.SetText( GetDifficultyString(*d) );
 				m_Lines[i].m_Description.SetDiffuseColor( SONGMAN->GetDifficultyColor(*d) );
