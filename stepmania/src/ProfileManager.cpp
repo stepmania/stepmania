@@ -92,7 +92,7 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 	if( bSuccess )
 	{
 		CString sBackupDir = m_sProfileDir[pn] + "LastGood/";
-		m_Profile[pn].SaveStatsXmlToDir( sBackupDir, PREFSMAN->m_bSignProfileData );
+		Profile::BackupToDir( m_sProfileDir[pn], sBackupDir );
 	}
 
 	if( bIsMemCard )

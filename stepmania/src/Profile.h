@@ -289,6 +289,8 @@ public:
 	void SaveStatsWebPageToDir( CString sDir ) const;
 	void SaveMachinePublicKeyToDir( CString sDir ) const;
 
+	static void BackupToDir( CString sFromDir, CString sToDir );
+
 private:
 	const HighScoresForASong *GetHighScoresForASong( const SongID& songID ) const;
 	const HighScoresForACourse *GetHighScoresForACourse( const CourseID& courseID ) const;

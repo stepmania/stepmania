@@ -1576,6 +1576,12 @@ XNode* Profile::SaveCoinDataCreateNode() const
 	return pNode;
 }
 
+void Profile::BackupToDir( CString sFromDir, CString sToDir )
+{
+	FileCopy( sFromDir+STATS_XML,					sToDir+STATS_XML );
+	FileCopy( sFromDir+STATS_XML+SIGNATURE_APPEND,	sToDir+STATS_XML+SIGNATURE_APPEND );
+	FileCopy( sFromDir+DONT_SHARE_SIG,				sToDir+DONT_SHARE_SIG );
+}
 
 /*
  * (c) 2001-2004 Chris Danford
