@@ -1160,7 +1160,7 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType n
 	int iNoteIndexBegin = BeatToNoteRow( fBeginBeat );
 	int iNoteIndexEnd = BeatToNoteRow( fEndBeat );
 
-	//ConvertHoldNotesTo2sAnd3s();
+	in.ConvertHoldNotesTo2sAnd3s();
 
 	// iterate over all TapNotes in the interval and snap them
 	for( int i=iNoteIndexBegin; i<=iNoteIndexEnd; i++ )
@@ -1180,19 +1180,31 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType n
 
 		for( int c=0; c<in.GetNumTracks(); c++ )
 		{
+			if( iOldIndex == iNewIndex )
+				continue;
+
 			TapNote note = in.GetTapNote(c, iOldIndex);
 			if( note == TAP_EMPTY )
 				continue;
 
 			in.SetTapNote(c, iOldIndex, TAP_EMPTY);
-			// HoldNotes override TapNotes
-			if(in.GetTapNote(c, iNewIndex) == TAP_TAP)
-				note = TAP_HOLD_HEAD;
+
+			const TapNote oldnote = in.GetTapNote(c, iNewIndex);
+			if( note == TAP_TAP &&
+				(oldnote == TAP_HOLD_HEAD || oldnote == TAP_HOLD_TAIL) )
+				continue; // HoldNotes override TapNotes
+
+			/* If two hold note boundaries are getting snapped together,
+			 * merge them. */
+			if( (note == TAP_HOLD_HEAD && oldnote == TAP_HOLD_TAIL) ||
+				(note == TAP_HOLD_TAIL && oldnote == TAP_HOLD_HEAD))
+				note = TAP_EMPTY;
+			
 			in.SetTapNote(c, iNewIndex, note );
 		}
 	}
 
-	//Convert2sAnd3sToHoldNotes();
+	in.Convert2sAnd3sToHoldNotes();
 }
 
 
