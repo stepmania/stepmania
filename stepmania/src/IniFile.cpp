@@ -86,15 +86,17 @@ bool IniFile::ReadFile()
 void IniFile::WriteFile()
 {
 	FILE* fp = fopen( path, "w" );
-	for (unsigned keynum = 0; keynum < names.size(); keynum++)
+	for (keymap::const_iterator k = keys.begin(); k != keys.end(); ++k)
 	{
-		if (keys[keynum].names.GetSize() != 0)
-		{
-			fprintf( fp, "[%s]\n", names[keynum] );
-			for (unsigned valuenum = 0; valuenum < keys[keynum].names.size(); valuenum++)
-				fprintf( fp, "%s=%s\n", keys[keynum].names[valuenum], keys[keynum].values[valuenum] );
-			fprintf( fp, "\n" );
-		}
+		if (k->second.empty())
+			continue;
+
+		fprintf( fp, "[%s]\n", k->first.GetString() );
+
+		for (key::const_iterator i = k->second.begin(); i != k->second.end(); ++i)
+			fprintf( fp, "%s=%s\n", i->first.GetString(), i->second.GetString() );
+
+		fprintf( fp, "\n" );
 	}
 	fclose( fp );
 }
@@ -103,44 +105,44 @@ void IniFile::WriteFile()
 void IniFile::Reset()
 {
 	keys.clear();
-	names.clear();
 }
 
 //returns number of keys currently in the ini
-int IniFile::GetNumKeys()
+int IniFile::GetNumKeys() const
 {
-	return keys.GetSize();
+	return keys.size();
 }
 
-//returns number of values stored for specified key, or -1 if key found
-int IniFile::GetNumValues(const CString &keyname)
+//returns number of values stored for specified key, or -1 if key not found
+int IniFile::GetNumValues(const CString &keyname) const
 {
-	int keynum = FindKey(keyname);
-	if (keynum == -1)
+	keymap::const_iterator k = keys.find(keyname);
+	if (k == keys.end())
 		return -1;
-	else
-		return keys[keynum].names.GetSize();
+
+	return k->second.size();
 }
 
 //gets value of [keyname] valuename = 
 //overloaded to return CString, int, and double
 bool IniFile::GetValue(const CString &keyname, const CString &valuename, CString& value)
 {
-	int keynum = FindKey(keyname), valuenum = FindValue(keynum,valuename);
-
-	if (keynum == -1)
+	keymap::const_iterator k = keys.find(keyname);
+	if (k == keys.end())
 	{
 		error = "Unable to locate specified key.";
 		return false;
 	}
 
-	if (valuenum == -1)
+	key::const_iterator i = k->second.find(valuename);
+
+	if (i == k->second.end())
 	{
 		error = "Unable to locate specified value.";
 		return false;
 	}
 
-	value = keys[keynum].values[valuenum];
+	value = i->second;
 	return true;
 }
 
@@ -186,31 +188,15 @@ bool IniFile::GetValueB(const CString &keyname, const CString &valuename, bool& 
 //overloaded to accept CString, int, and double
 bool IniFile::SetValue(const CString &keyname, const CString &valuename, const CString &value, bool create)
 {
-	int keynum = FindKey(keyname), valuenum = 0;
-	//find key
-	if (keynum == -1) //if key doesn't exist
-	{
-		if (!create) //and user does not want to create it,
-			return 0; //stop entering this key
-		names.SetSize(names.GetSize()+1);
-		keys.SetSize(keys.GetSize()+1);
-		keynum = names.GetSize()-1;
-		names[keynum] = keyname;
-	}
+	if (!create && keys.find(keyname) == keys.end()) //if key doesn't exist
+		return false; // stop entering this key
 
-	//find value
-	valuenum = FindValue(keynum,valuename);
-	if (valuenum == -1)
-	{
-		if (!create)
-			return 0;
-		keys[keynum].names.SetSize(keys[keynum].names.GetSize()+1);
-		keys[keynum].values.SetSize(keys[keynum].names.GetSize()+1);
-		valuenum = keys[keynum].names.GetSize()-1;
-		keys[keynum].names[valuenum] = valuename;
-	}
-	keys[keynum].values[valuenum] = value;
-	return 1;
+	// find value
+	if (!create && keys[keyname].find(valuename) == keys[keyname].end())
+		return false;
+
+	keys[keyname][valuename] = value;
+	return true;
 }
 
 //sets value of [keyname] valuename =.
@@ -250,61 +236,31 @@ bool IniFile::SetValueB(const CString &keyname, const CString &valuename, bool v
 //returns true if value existed and deleted, false otherwise
 bool IniFile::DeleteValue(const CString &keyname, const CString &valuename)
 {
-	int keynum = FindKey(keyname), valuenum = FindValue(keynum,valuename);
-	if (keynum == -1 || valuenum == -1)
-		return 0;
+	keymap::iterator k = keys.find(keyname);
+	if (k == keys.end())
+		return false;
 
-	keys[keynum].names.RemoveAt(valuenum);
-	keys[keynum].values.RemoveAt(valuenum);
-	return 1;
+	key::iterator i = k->second.find(valuename);
+	if(i == k->second.end())
+		return false;
+
+	k->second.erase(i);
+	return true;
 }
 
 //deletes specified key and all values contained within
 //returns true if key existed and deleted, false otherwise
 bool IniFile::DeleteKey(const CString &keyname)
 {
-	int keynum = FindKey(keyname);
-	if (keynum == -1)
-		return 0;
-	keys.RemoveAt(keynum);
-	names.RemoveAt(keynum);
-	return 1;
+	keymap::iterator k = keys.find(keyname);
+	if (k == keys.end())
+		return false;
+
+	keys.erase(k);
+	return true;
 }
 
-//deletes specified key and all values contained within
-//returns true if key existed and deleted, false otherwise
-IniFile::key* IniFile::GetKey(const CString &keyname)
+IniFile::const_iterator IniFile::GetKey(const CString &keyname) const
 {
-	int keynum = FindKey(keyname);
-	if (keynum == -1)
-		return NULL;
-	return &keys[keynum];
-}
-
-/////////////////////////////////////////////////////////////////////
-// Private Functions
-/////////////////////////////////////////////////////////////////////
-
-//returns index of specified key, or -1 if not found
-int IniFile::FindKey(const CString &keyname)
-{
-	int keynum = 0;
-	while ( keynum < keys.GetSize() && names[keynum] != keyname)
-		keynum++;
-	if (keynum == keys.GetSize())
-		return -1;
-	return keynum;
-}
-
-//returns index of specified value, in the specified key, or -1 if not found
-int IniFile::FindValue(int keynum, const CString &valuename)
-{
-	if (keynum == -1)
-		return -1;
-	int valuenum = 0;
-	while (valuenum < keys[keynum].names.GetSize() && keys[keynum].names[valuenum] != valuename)
-		valuenum++;
-	if (valuenum == keys[keynum].names.GetSize())
-		return -1;
-	return valuenum;
+	return keys.find(keyname);
 }

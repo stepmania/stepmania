@@ -74,14 +74,15 @@ void InputMapper::ReadMappingsFromDisk()
 	if( !ini.ReadFile() )
 		LOG->Warn( "could not input mapping file '%s'.", sPath );
 
-	IniFile::key* pKey = ini.GetKey( "Input" );
+	IniFile::const_iterator Key = ini.GetKey( "Input" );
 
-	if( pKey != NULL )
+	if( Key != ini.end() )
 	{
-		for( int i=0; i<pKey->names.GetSize(); i++ )
+		for( IniFile::key::const_iterator i = Key->second.begin(); 
+			i != Key->second.end(); ++i )
 		{
-			CString name = pKey->names[i];
-			CString value = pKey->values[i];
+			CString name = i->first;
+			CString value = i->second;
 
 			GameInput GameI;
 			GameI.fromString( name );

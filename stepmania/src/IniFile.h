@@ -11,36 +11,26 @@
 -----------------------------------------------------------------------------
 */
 
+#include <map>
+
 class IniFile  
 {
 public:
 	// all keys are of this type
-	struct key
-	{
-		//list of values in key
-		CArray<CString, CString> values; 
 
-		//corresponding list of value names
-		CArray<CString, CString> names;
-	};
+	typedef map<CString, CString> key;
+	typedef map<CString, key> keymap;
+
+	typedef keymap::const_iterator const_iterator;
+	const_iterator begin() const { return keys.begin(); }
+	const_iterator end() const { return keys.end(); }
 
 private:
 	//stores pathname of ini file to read/write
 	CString path;
 
-	//list of keys in ini
-	CArray<key, key> keys; 
-
-	//corresponding list of keynames
-	CArray<CString, CString> names; 
-	
-	
-private:
-	//returns index of specified value, in the specified key, or -1 if not found
-	int FindValue(int keynum, const CString &valuename);
-
-	//returns index of specified key, or -1 if not found
-	int FindKey(const CString &keyname);
+	// keys in ini
+	keymap keys;
 
 
 public:
@@ -48,7 +38,6 @@ public:
 	//will contain error info if one occurs
 	//ended up not using much, just in ReadFile and GetValue
 	CString error;
-
 
 	//constructor, can specify pathname here instead of using SetPath later
 	IniFile(CString inipath = "");
@@ -70,10 +59,10 @@ public:
 	void Reset();
 
 	//returns number of keys currently in the ini
-	int GetNumKeys();
+	int GetNumKeys() const;
 
 	//returns number of values stored for specified key
-	int GetNumValues(const CString &keyname);
+	int GetNumValues(const CString &keyname) const;
 
 	//gets value of [keyname] valuename = 
 	//overloaded to return CString, int, and double,
@@ -100,5 +89,5 @@ public:
 	//returns true if key existed and deleted, false otherwise
 	bool DeleteKey(const CString &keyname);
 
-	key* GetKey(const CString &keyname);
+	const_iterator GetKey(const CString &keyname) const;
 };

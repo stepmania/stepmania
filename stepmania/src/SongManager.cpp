@@ -259,13 +259,14 @@ void SongManager::ReadStatisticsFromDisk()
 
 
 	// load song statistics
-	IniFile::key* pKey = ini.GetKey( "Statistics" );
-	if( pKey )
+	IniFile::const_iterator Key = ini.GetKey( "Statistics" );
+	if( Key != ini.end() )
 	{
-		for( int i=0; i<pKey->names.GetSize(); i++ )
+		for( IniFile::key::const_iterator i = Key->second.begin(); 
+			i != Key->second.end(); ++i )
 		{
-			CString name = pKey->names[i];
-			CString value = pKey->values[i];
+			CString name = i->first;
+			CString value = i->second;
 
 			// Each value has the format "SongName::StepsName=TimesPlayed::TopGrade::TopScore::MaxCombo".
 			char szSongDir[256];
