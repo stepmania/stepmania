@@ -42,6 +42,10 @@ public:
 
 	void GetEnabledGames( CArray<Game,Game>& aGamesOut );
 
+	static int NotesTypeToNumTracks( NotesType nt );
+	static NotesType StringToNotesType( CString sNotesType );
+	static CString NotesTypeToString( NotesType nt );
+
 protected:
 	void GetNoteSkinNames( Game game, CStringArray &AddTo );
 

@@ -923,8 +923,8 @@ void GameManager::SwitchNoteSkin( CString sNewNoteSkin )
 
 CString GameManager::GetPathTo( const int col, const SkinElement gbg )	// looks in GAMESTATE for the current Style
 {
-	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 
 	StyleInput SI( PLAYER_1, col );
 	GameInput GI = pStyleDef->StyleInputToGameInput( SI );
@@ -936,8 +936,8 @@ void GameManager::GetTapTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> 
 {
 	ASSERT( m_sCurNoteSkin != "" );	// if this == NULL, SwitchGame() was never called
 
-	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 
 	StyleInput SI( PLAYER_1, col );
 	GameInput GI = pStyleDef->StyleInputToGameInput( SI );
@@ -949,8 +949,8 @@ void GameManager::GetHoldTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR>
 {
 	ASSERT( m_sCurNoteSkin != "" );	// if this == NULL, SwitchGame() was never called
 
-	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 
 	StyleInput SI( PLAYER_1, col );
 	GameInput GI = pStyleDef->StyleInputToGameInput( SI );
@@ -969,3 +969,103 @@ void GameManager::GetEnabledGames( CArray<Game,Game>& aGamesOut )
 			aGamesOut.Add( game );
 	}
 }
+
+int GameManager::NotesTypeToNumTracks( NotesType nt )
+{
+	for( int i=0; i<NUM_STYLES; i++ )
+		if( g_StyleDefs[i].m_NotesType == nt  )
+			return g_StyleDefs[i].m_iColsPerPlayer;
+	
+	// invalid NotesType
+	ASSERT(0);
+	return -1;
+}
+
+NotesType GameManager::StringToNotesType( CString sNotesType )
+{
+	sNotesType.MakeLower();
+	for( int i=0; i<NUM_STYLES; i++ )
+		if( g_StyleDefs[i].m_szName == sNotesType )
+			return g_StyleDefs[i].m_NotesType;
+	
+	// invalid NotesType
+	ASSERT(0);
+	return NOTES_TYPE_DANCE_SINGLE;
+}
+
+CString GameManager::NotesTypeToString( NotesType nt )
+{
+	for( int i=0; i<NUM_STYLES; i++ )
+		if( g_StyleDefs[i].m_NotesType == nt  )
+			return g_StyleDefs[i].m_szName ;
+
+	// invalid NotesType
+	ASSERT(0);
+	return "";
+}
+
+/* once we're sure the above lookups works, nuke this */
+/*
+int NotesTypeToNumTracks( NotesType nt )
+{
+	switch( nt )
+	{
+	case NOTES_TYPE_DANCE_SINGLE:		return 4;
+	case NOTES_TYPE_DANCE_DOUBLE:		return 8;
+	case NOTES_TYPE_DANCE_COUPLE:		return 8;
+	case NOTES_TYPE_DANCE_SOLO:			return 6;
+	case NOTES_TYPE_PUMP_SINGLE:		return 5;
+	case NOTES_TYPE_PUMP_DOUBLE:		return 10;
+	case NOTES_TYPE_PUMP_COUPLE:		return 10;
+	case NOTES_TYPE_EZ2_SINGLE:			return 5; // Single: TL,LHH,D,RHH,TR
+	case NOTES_TYPE_EZ2_SINGLE_HARD:	return 5; // Single: TL,LHH,D,RHH,TR
+	case NOTES_TYPE_EZ2_DOUBLE:			return 10; // Double: Single x2
+	case NOTES_TYPE_EZ2_REAL:			return 7; // Real: TL,LHH,LHL,D,RHL,RHH,TR
+//	case NOTES_TYPE_EZ2_SINGLE_VERSUS:	return 10;	
+//	case NOTES_TYPE_EZ2_SINGLE_HARD_VERSUS:		return 10; 
+//	case NOTES_TYPE_EZ2_REAL_VERSUS:	return 10;
+	default:	ASSERT(0);		return -1;	// invalid NotesType
+	}
+}
+
+NotesType StringToNotesType( CString sNotesType )
+{
+	sNotesType.MakeLower();
+	if     ( sNotesType == "dance-single" )	return NOTES_TYPE_DANCE_SINGLE;
+	else if( sNotesType == "dance-double" )	return NOTES_TYPE_DANCE_DOUBLE;
+	else if( sNotesType == "dance-couple" )	return NOTES_TYPE_DANCE_COUPLE;
+	else if( sNotesType == "dance-solo" )	return NOTES_TYPE_DANCE_SOLO;
+	else if( sNotesType == "pump-single" )	return NOTES_TYPE_PUMP_SINGLE;
+	else if( sNotesType == "pump-double" )	return NOTES_TYPE_PUMP_DOUBLE;
+	else if( sNotesType == "pump-couple" )	return NOTES_TYPE_PUMP_COUPLE;
+	else if( sNotesType == "ez2-single" )	return NOTES_TYPE_EZ2_SINGLE;
+	else if( sNotesType == "ez2-single-hard" )	return NOTES_TYPE_EZ2_SINGLE_HARD;
+	else if( sNotesType == "ez2-double" )	return NOTES_TYPE_EZ2_DOUBLE;
+	else if( sNotesType == "ez2-real" )		return NOTES_TYPE_EZ2_REAL;
+// 	else if( sNotesType == "ez2-real-versus" )		return NOTES_TYPE_EZ2_REAL_VERSUS;
+//	else if( sNotesType == "ez2-single-versus" )		return NOTES_TYPE_EZ2_SINGLE_VERSUS;
+	else	ASSERT(0);	return NOTES_TYPE_DANCE_SINGLE;	// invalid NotesType
+}
+
+CString NotesTypeToString( NotesType nt )
+{
+	switch( nt )
+	{
+	case NOTES_TYPE_DANCE_SINGLE:	return "dance-single";
+	case NOTES_TYPE_DANCE_DOUBLE:	return "dance-double";
+	case NOTES_TYPE_DANCE_COUPLE:	return "dance-couple";
+	case NOTES_TYPE_DANCE_SOLO:		return "dance-solo";
+	case NOTES_TYPE_PUMP_SINGLE:	return "pump-single";
+	case NOTES_TYPE_PUMP_DOUBLE:	return "pump-double";
+	case NOTES_TYPE_PUMP_COUPLE:	return "pump-couple";
+	case NOTES_TYPE_EZ2_SINGLE:		return "ez2-single";
+	case NOTES_TYPE_EZ2_SINGLE_HARD:		return "ez2-single-hard";
+	case NOTES_TYPE_EZ2_DOUBLE:		return "ez2-double";
+	case NOTES_TYPE_EZ2_REAL:		return "ez2-real";
+//	case NOTES_TYPE_EZ2_REAL_VERSUS:		return "ez2-real-versus";
+//	case NOTES_TYPE_EZ2_SINGLE_VERSUS:		return "ez2-single-versus";
+//	case NOTES_TYPE_EZ2_SINGLE_HARD_VERSUS:		return "ez2-single-hard-versus";
+	default:	ASSERT(0);		return "";	// invalid NotesType
+	}
+}
+*/
