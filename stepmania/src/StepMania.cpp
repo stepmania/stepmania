@@ -357,8 +357,8 @@ static const CString D3DURL = "http://search.microsoft.com/gomsuri.asp?n=1&c=rp_
 
 struct VideoCardDefaults
 {
-	char szDriverRegex[200];
-	char szVideoRenderers[200];
+	char *szDriverRegex;
+	char *szVideoRenderers;
 	int iWidth;
 	int iHeight;
 	int iDisplayColor;

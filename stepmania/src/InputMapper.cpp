@@ -20,6 +20,7 @@
 #include "PrefsManager.h"
 #include "RageInput.h"
 #include "arch/arch.h"
+#include "regex.h"
 
 
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
@@ -71,7 +72,7 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 struct AutoJoyMapping
 {
 	Game game;
-	const char *szDeviceDescription;	// reported by InputHandler
+	const char *szDriverRegex;	// reported by InputHandler
 	const char *szControllerName;	// the product name of the controller
 	struct {
 		int iSlotIndex;	// -1 == end marker
@@ -200,6 +201,28 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 	},
 	{
 		GAME_DANCE,
+		"NTPAD",
+		"NTPAD",
+		{
+			{ 0, JOY_13,	DANCE_BUTTON_LEFT,		false },
+			{ 0, JOY_15,	DANCE_BUTTON_RIGHT,		false },
+			{ 0, JOY_16,	DANCE_BUTTON_UP,		false },
+			{ 0, JOY_14,	DANCE_BUTTON_DOWN,		false },
+			{ 1, JOY_1,		DANCE_BUTTON_LEFT,		false },
+			{ 1, JOY_3,		DANCE_BUTTON_RIGHT,		false },
+			{ 1, JOY_4,		DANCE_BUTTON_UP,		false },
+			{ 1, JOY_2,		DANCE_BUTTON_DOWN,		false },
+			{ 0, JOY_5,		DANCE_BUTTON_UPLEFT,	false },
+			{ 0, JOY_6,		DANCE_BUTTON_UPRIGHT,	false },
+			{ 1, JOY_7,		DANCE_BUTTON_UPLEFT,	false },
+			{ 1, JOY_8,		DANCE_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_9,		DANCE_BUTTON_BACK,		false },
+			{ 0, JOY_10,	DANCE_BUTTON_START,		false },
+			{-1, -1, -1, false },	// end marker
+		}
+	},
+	{
+		GAME_DANCE,
 		"XBOX Gamepad Plugin V0.01",
 		"X-Box gamepad",
 		{
@@ -280,7 +303,9 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 		{
 			const AutoJoyMapping& mapping = g_AutoJoyMappings[j];
 
-			if( sDescription == mapping.szDeviceDescription )
+			CString sDriverRegex = mapping.szDriverRegex;
+			Regex regex( sDriverRegex );
+			if( regex.Compare(sDescription) )
 			{
 				//
 				// We have a mapping for this joystick
@@ -290,7 +315,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 					break;	// stop mapping.  We already mapped one device for each game controller.
 
 				LOG->Info( "Applying default joystick mapping #%d for device '%s' (%s)",
-					iNumJoysticksMapped+1, mapping.szDeviceDescription, mapping.szControllerName );
+					iNumJoysticksMapped+1, mapping.szDriverRegex, mapping.szControllerName );
 
 				for( int k=0; mapping.maps[k].iSlotIndex != -1; k++ )
 				{
