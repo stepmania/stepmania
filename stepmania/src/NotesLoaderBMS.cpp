@@ -644,7 +644,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 		sWavID.MakeUpper();		// HACK: undo the MakeLower()
 		out.m_vsKeysoundFile.push_back( sData );
 		m_mapWavIdToKeysoundIndex[ sWavID ] = out.m_vsKeysoundFile.size()-1;
-		LOG->Trace( "Inserting keysound index %lu '%s'", out.m_vsKeysoundFile.size()-1, sWavID.c_str() );
+		LOG->Trace( "Inserting keysound index %u '%s'", out.m_vsKeysoundFile.size()-1, sWavID.c_str() );
 	}
 
 	/* Time signature tags affect all other global timing tags, so read them first. */
