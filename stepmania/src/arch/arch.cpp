@@ -48,6 +48,8 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 	CStringArray DriversToTry;
 	split(drivers, ",", DriversToTry, true);
 
+	ASSERT( DriversToTry.size() != 0 );
+
 	CString Driver;
 	RageSoundDriver *ret = NULL;
 
