@@ -17,11 +17,17 @@
 #include "GameState.h"
 
 
+void Combo::Reset()
+{
+	m_iCurCombo = m_iMaxCombo = m_iCurComboOfPerfects = 0; 
+
+	m_textComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
+	m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
+}
+
 Combo::Combo()
 {
-	m_iCurCombo = 0;
-	m_iMaxCombo = 0;
-	m_iCurComboOfPerfects = 0;
+	Reset();
 
 	m_sprCombo.Load( THEME->GetPathTo("Graphics", "gameplay combo") );
 	m_sprCombo.TurnShadowOn();
@@ -33,10 +39,6 @@ Combo::Combo()
 	m_textComboNumber.TurnShadowOn();
 	m_textComboNumber.SetHorizAlign( Actor::align_right );
 	m_textComboNumber.SetX( 0 );
-
-	m_textComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
-	m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
-
 
 	this->AddSubActor( &m_textComboNumber );
 	this->AddSubActor( &m_sprCombo );
@@ -123,14 +125,4 @@ void Combo::UpdateScore( TapNoteScore score )
 	default:
 		ASSERT(0);
 	}
-}
-
-int Combo::GetCurrentCombo()
-{
-	return m_iCurCombo;
-}
-
-int Combo::GetMaxCombo()
-{
-	return m_iMaxCombo;
 }

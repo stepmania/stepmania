@@ -24,8 +24,9 @@ public:
 
 	void UpdateScore( TapNoteScore score );
 
-	int GetCurrentCombo();
-	int GetMaxCombo();
+	int GetCurrentCombo() const { return m_iCurCombo; }
+	int GetMaxCombo() const { return m_iMaxCombo; }
+	void Reset();
 
 protected:
 	int			m_iCurCombo;

@@ -9,8 +9,8 @@
 */
 
 
-#ifndef _Judgement_H_
-#define _Judgement_H_
+#ifndef JUDGEMENT_H
+#define JUDGEMENT_H
 
 
 #include "Sprite.h"
@@ -24,9 +24,11 @@ class Judgement : public ActorFrame
 {
 public:
 	Judgement();
+	virtual ~Judgement() { }
 	void SetJudgement( TapNoteScore score );
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+	virtual void Reset() { m_fDisplayCountdown = .0f; }
 
 protected:
 	Sprite		m_sprJudgement;

@@ -77,6 +77,12 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  GAMESTATE->m_fSecondsBeforeFail[m_PlayerNumber] != -1 )	// Oni dead
 		this->ClearAll();
 
+	/* The editor reuses Players ... so we really need to make sure everything
+	 * is reset and not tweening.  Perhaps ActorFrame should recurse to subactors;
+	 * then we could just this->StopTweening()? -glenn */
+	m_frameJudgement.StopTweening();
+	m_Combo.Reset();
+	m_Judgement.Reset();
 
 	m_iNumTapNotes = pNoteData->GetNumTapNotes();
 	m_iTapNotesHit = 0;
