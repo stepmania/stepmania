@@ -1,6 +1,7 @@
 #include "global.h"
 #include "RageSoundDriver_CA.h"
 #include "CAHelpers.h"
+#include "RageLog.h"
 
 #include "CAAudioHardwareSystem.h"
 #include "CAAudioHardwareDevice.h"
@@ -26,7 +27,7 @@ static Desc FindClosestFormat(const vector<Desc>& formats)
 			continue;
 
 		if (format.SampleWordSize() == 2 &&
-				(format.mFormatFlags & kAudioFormatFlagIsSignedInteger) ==
+            (format.mFormatFlags & kAudioFormatFlagIsSignedInteger) ==
 				kAudioFormatFlagIsSignedInteger)
 		{ // exact match
 			return format;
@@ -88,6 +89,8 @@ RageSound_CA::RageSound_CA()
     {
         UInt32 frames = mOutputDevice->GetLatency(kAudioDeviceSectionOutput);
         mLatency = frames / 44100.0;
+        LOG->Info("Frames of latency:  %lu\n"
+                  "Seconds of latency: %f", frames, mLatency);
     }
     catch (const CAException& e)
     {
@@ -100,11 +103,48 @@ RageSound_CA::RageSound_CA()
 
     vector<Desc> physicalFormats;
     GetPhysicalFormats( sID, physicalFormats );
+    unsigned i;
+    LOG->Info("Available physical formats:");
+    for (i = 0; i < physicalFormats.size(); ++i)
+    {
+        const Desc& f = physicalFormats[i];
+        
+        LOG->Info("Format %u:\n"
+                  "Sample rate:        %f\n"
+                  "Format ID:          %lu\n"
+                  "Format flags:       0x%lx\n"
+                  "Bytes per packet:   %lu\n"
+                  "Frames per packet:  %lu\n"
+                  "Bytes per frame:    %lu\n"
+                  "Channels per frame: %lu\n"
+                  "Bits per channel:   %lu",
+                  i, f.mSampleRate, f.mFormatID, f.mFormatFlags,
+                  f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
+                  f.mChannelsPerFrame, f.mBitsPerChannel);
+    }
     const Desc& physicalFormat = FindClosestFormat( physicalFormats );
     stream.SetCurrentPhysicalFormat( physicalFormat );
 
     vector<Desc> procFormats;
     GetIOProcFormats( sID, procFormats );
+    LOG->Info("---------------------------\nAvailable I/O procedure formats:");
+    for (i = 0; i < procFormats.size(); ++i)
+    {
+        const Desc& f = procFormats[i];
+        
+        LOG->Info("Format %u:\n"
+                  "Sample rate:        %f\n"
+                  "Format ID:          %lu\n"
+                  "Format flags:       0x%lx\n"
+                  "Bytes per packet:   %lu\n"
+                  "Frames per packet:  %lu\n"
+                  "Bytes per frame:    %lu\n"
+                  "Channels per frame: %lu\n"
+                  "Bits per channel:   %lu",
+                  i, f.mSampleRate, f.mFormatID, f.mFormatFlags,
+                  f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
+                  f.mChannelsPerFrame, f.mBitsPerChannel);
+    }
     const Desc& procFormat = FindClosestFormat( procFormats );
     stream.SetCurrentIOProcFormat( procFormat );
 
