@@ -70,7 +70,7 @@ void MemoryCardDriverThreaded_Windows::MountThreadMain()
 				{
 					CString sDrive = ssprintf( "%c:\\", 'a'+i%26 );
 
-					LOG->Warn( "Found drive %s", sDrive.c_str() );
+					LOG->Trace( "Found drive %s", sDrive.c_str() );
 
 					if( GetDriveType(sDrive) == DRIVE_REMOVABLE )	// is a removable drive
 					{
