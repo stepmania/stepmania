@@ -25,6 +25,7 @@ Difficulty StringToDifficulty( const CString& sDC );
 
 enum CourseDifficulty 
 {
+	COURSE_DIFFICULTY_EASY,
 	COURSE_DIFFICULTY_REGULAR,
 	COURSE_DIFFICULTY_DIFFICULT,
 	NUM_COURSE_DIFFICULTIES,

@@ -31,7 +31,8 @@
 #include "ProfileManager.h"
 
 /* Amount to increase meter ranges to make them difficult: */
-const int COURSE_DIFFICULTY_METER_CHANGE[NUM_COURSE_DIFFICULTIES] = { 0, 2 };
+const int COURSE_DIFFICULTY_METER_CHANGE[NUM_COURSE_DIFFICULTIES] = { -2, 0, 2 };
+const int COURSE_DIFFICULTY_CLASS_CHANGE[NUM_COURSE_DIFFICULTIES] = { -1, 0, 1 };
 
 /* Maximum lower value of ranges when difficult: */
 const int MAX_BOTTOM_RANGE = 10;
@@ -83,6 +84,7 @@ float Course::GetMeter( CourseDifficulty cd ) const
 				fTotalMeter += (iMeterLow + iMeterHigh) / 2.0f;
 				break;
 			}
+			/* XXX? */
 			case DIFFICULTY_BEGINNER:	fTotalMeter += 1; break;
 			case DIFFICULTY_EASY:		fTotalMeter += 2; break;
 			case DIFFICULTY_MEDIUM:		fTotalMeter += 5; break;
@@ -541,15 +543,24 @@ bool Course::HasCourseDifficulty( StepsType nt, CourseDifficulty cd ) const
 		{
 			const CourseEntry &e = m_entries[ Normal[i].CourseIndex ];
 			
-			/* Difficulties under CHALLENGE change by getting harder. */
-			if( e.difficulty < DIFFICULTY_CHALLENGE )
-				return true;
+			if( e.difficulty != DIFFICULTY_INVALID )
+			{
+				/* Check if the song's difficulty class will actually change. */
+				Difficulty dc = (Difficulty) (e.difficulty + COURSE_DIFFICULTY_CLASS_CHANGE[cd]);
+				dc = clamp( dc, DIFFICULTY_BEGINNER, DIFFICULTY_CHALLENGE );
+				if( dc != e.difficulty )
+					return true;
+			}
 
 			/* Meters under MAX_BOTTOM_RANGE..MAX_BOTTOM_RANGE change by getting harder. */
-			if( e.difficulty != DIFFICULTY_INVALID &&
-				e.low_meter < MAX_BOTTOM_RANGE &&
-				e.high_meter < MAX_BOTTOM_RANGE )
-				return true;
+			if( e.difficulty == DIFFICULTY_INVALID )
+			{
+				/* Check if the meter will actually change. */
+				int iNewLowMeter = clamp( 1, e.low_meter + COURSE_DIFFICULTY_METER_CHANGE[cd], MAX_BOTTOM_RANGE );
+				int iNewHighMeter = clamp( 1, e.high_meter + COURSE_DIFFICULTY_METER_CHANGE[cd], MAX_BOTTOM_RANGE );
+				if( iNewLowMeter != e.low_meter || iNewHighMeter != e.high_meter )
+					return true;
+			}
 			continue;
 		}
 		
@@ -747,17 +758,18 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 		if( !pSong || !pNotes )
 			continue;	// this song entry isn't playable.  Skip.
 
-		/* If e.difficulty == DIFFICULTY_INVALID, then we already increased difficulty
+		/* If e.difficulty == DIFFICULTY_INVALID, then we already adjusted difficulty
 		 * based on meter. */
-		if( entry_difficulty > COURSE_DIFFICULTY_REGULAR  &&  e.difficulty != DIFFICULTY_INVALID )
+		if( entry_difficulty != COURSE_DIFFICULTY_REGULAR  &&  e.difficulty != DIFFICULTY_INVALID )
 		{
-			/* See if we can find a NoteData that's one notch more difficult than
-			 * the one we found above. */
-			Difficulty dc = pNotes->GetDifficulty();
-			Difficulty new_dc = Difficulty( dc + entry_difficulty );
-			if( new_dc <= DIFFICULTY_CHALLENGE )
+			/* See if we can find a NoteData after adjusting the difficulty by COURSE_DIFFICULTY_CLASS_CHANGE.
+			 * If we can't, just use the one we already have. */
+			Difficulty original_dc = pNotes->GetDifficulty();
+			Difficulty dc = Difficulty( original_dc + COURSE_DIFFICULTY_CLASS_CHANGE[entry_difficulty] );
+			dc = clamp( dc, DIFFICULTY_BEGINNER, DIFFICULTY_CHALLENGE );
+			if( dc != original_dc )
 			{
-				Steps* pNewNotes = pSong->GetStepsByDifficulty( nt, new_dc );
+				Steps* pNewNotes = pSong->GetStepsByDifficulty( nt, dc );
 				if( pNewNotes )
 					pNotes = pNewNotes;
 			}
@@ -871,8 +883,9 @@ bool Course::IsFixed() const
 Difficulty Course::GetDifficulty( const Info &stage ) const
 {
 	Difficulty dc = m_entries[stage.CourseIndex].difficulty;
-	Difficulty new_dc = Difficulty( dc + stage.Difficulty );
-	return (new_dc <= DIFFICULTY_CHALLENGE) ? new_dc : dc;
+	Difficulty new_dc = Difficulty( dc + COURSE_DIFFICULTY_CLASS_CHANGE[stage.Difficulty] );
+	new_dc = clamp( new_dc, DIFFICULTY_BEGINNER, DIFFICULTY_CHALLENGE );
+	return new_dc;
 }
 
 void Course::GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, CourseDifficulty cd ) const

@@ -45,6 +45,7 @@ Difficulty StringToDifficulty( const CString& sDC )
 
 static const CString CourseDifficultyNames[NUM_COURSE_DIFFICULTIES] =
 {
+	"Easy",
 	"Regular",
 	"Difficult",
 };
