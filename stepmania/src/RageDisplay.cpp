@@ -96,6 +96,41 @@ RageDisplay::RageDisplay( HWND hWnd )
 	m_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &m_DesktopMode );
 }
 
+int RageDisplay::MaxRefresh(int iWidth, int iHeight) const
+{
+	int mx = D3DPRESENT_RATE_DEFAULT;
+	for( UINT u=0; u<m_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
+	{
+		D3DDISPLAYMODE mode;
+		if( !SUCCEEDED( m_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, u, &mode ) ) )
+			continue;
+
+		if(mode.Width != iWidth) continue;
+		if(mode.Height != iHeight) continue;
+		/* also test mode.Format? */
+
+		if(mx == D3DPRESENT_RATE_DEFAULT || mode.RefreshRate > mx)
+			mx = mode.RefreshRate;
+	}
+	return mx;
+}
+
+void RageDisplay::GetHzAtResolution(int width, int height, CArray<int,int> &add) const
+{
+	for( UINT u=0; u<m_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
+	{
+		D3DDISPLAYMODE mode;
+		if( !SUCCEEDED( m_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, u, &mode ) ) )
+			continue;
+
+		if(mode.Width != width) continue;
+		if(mode.Height != height) continue;
+		/* also test mode.Format? */
+
+		add.Add(mode.RefreshRate);
+	}
+}
+
 RageDisplay::~RageDisplay()
 {
 	ReleaseVertexBuffer();
@@ -215,7 +250,10 @@ bool RageDisplay::SwitchDisplayMode(
     m_d3dpp.EnableAutoDepthStencil	=	TRUE;
     m_d3dpp.AutoDepthStencilFormat	=	D3DFMT_D16;
     m_d3dpp.Flags					=	0;
-	m_d3dpp.FullScreen_RefreshRateInHz = bWindowed ? D3DPRESENT_RATE_DEFAULT : iFullScreenHz;
+	m_d3dpp.FullScreen_RefreshRateInHz = bWindowed? D3DPRESENT_RATE_DEFAULT :
+									iFullScreenHz == 0? MaxRefresh(iWidth, iHeight):
+									iFullScreenHz == 1? D3DPRESENT_RATE_DEFAULT:
+										iFullScreenHz;
 	m_d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 
 	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 

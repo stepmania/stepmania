@@ -42,12 +42,19 @@ OptionLineData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
 	{ "Display",		2,  {"FULLSCREEN", "WINDOWED"} },
 	{ "Display Res",	7,  {"320","400","512","640","800","1024","1280"} },
 	{ "Texture Res",	3,  {"256","512","1024"} },
-	{ "Refresh Rate",	10, {"DEFAULT","60","70","72","75","80","85","90","100","120"} },
+	{ "Refresh Rate",	11, {"MAX","DEFAULT","60","70","72","75","80","85","90","100","120"} },
 	{ "Show Stats",		2,  {"OFF","ON"} },
-	{ "BG Mode",		4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
+	{ "BG Mode",		6,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES","fsdflksjfdlksjdflksfdj","fsdflksjfdlksjdflksfdj"} },
 	{ "BG Brightness",	5,  {"20%","40%","60%","80%","100%"} },
 	{ "Movie Decode",	4,  {"1ms","2ms","3ms","4ms"} },
 	{ "BG For Banner",	2,  {"NO", "YES (slow)"} },
+};
+
+static const int HorizRes[] = {
+	320, 400, 512, 640, 800, 1024, 1280
+};
+static const int VertRes[] = {
+	240, 300, 384, 480, 600, 768, 1024
 };
 
 ScreenGraphicOptions::ScreenGraphicOptions() :
@@ -64,7 +71,58 @@ ScreenGraphicOptions::ScreenGraphicOptions() :
 		g_GraphicOptionsLines, 
 		NUM_GRAPHIC_OPTIONS_LINES
 		);
+	UpdateRefreshRates();
 	m_Menu.StopTimer();
+}
+
+void ScreenGraphicOptions::UpdateRefreshRates()
+{
+	CArray<int,int> hz;
+
+	DISPLAY->GetHzAtResolution(HorizRes[m_iSelectedOption[0][GO_DISPLAY_RESOLUTION]],
+		VertRes[m_iSelectedOption[0][GO_DISPLAY_RESOLUTION]], hz);
+
+	/* Disable all refresh rates (except DEFAULT/MAX). */
+	int i;
+	for(i = 0; i < g_GraphicOptionsLines[GO_REFRESH_RATE].iNumOptions; ++i)
+		DimOption(GO_REFRESH_RATE, i, true);
+
+	/* If we're windowed, leave all refresh rates dimmed, but don't
+	 * change the actual selection. */
+	if(m_iSelectedOption[0][GO_WINDOWED])
+		return;
+
+	/* Enable MAX and DEFAULT. */
+	DimOption(GO_REFRESH_RATE, 0, false);
+	DimOption(GO_REFRESH_RATE, 1, false);
+
+	/* Enable refresh rates.  As we go, remember the highest
+	 * refresh found. */
+	for(i = 0; i < hz.GetSize(); ++i)
+	{
+		for(int j = 1; j < g_GraphicOptionsLines[GO_REFRESH_RATE].iNumOptions; ++j)
+		{
+			if(atoi(g_GraphicOptionsLines[GO_REFRESH_RATE].szOptionsText[j]) != hz[i])
+				continue;
+
+			/* This refresh is available. */
+			DimOption(GO_REFRESH_RATE, j, false);
+
+			break;
+		}
+	}
+	/* If current refresh is no longer valid, set it to max. */
+	int CurSel = m_iSelectedOption[0][GO_REFRESH_RATE];
+	if(m_OptionDim[GO_REFRESH_RATE][CurSel])
+		m_iSelectedOption[0][GO_REFRESH_RATE] = 
+		m_iSelectedOption[1][GO_REFRESH_RATE] = 0;
+//	PositionUnderlines();
+}
+
+void ScreenGraphicOptions::OnChange()
+{
+	ScreenOptions::OnChange();
+	UpdateRefreshRates();
 }
 
 void ScreenGraphicOptions::ImportOptions()
@@ -94,16 +152,17 @@ void ScreenGraphicOptions::ImportOptions()
 	switch( PREFSMAN->m_iRefreshRate )
 	{
 	case 0:		m_iSelectedOption[0][GO_REFRESH_RATE] = 0;	break;
-	case 60:	m_iSelectedOption[0][GO_REFRESH_RATE] = 1;	break;
-	case 70:	m_iSelectedOption[0][GO_REFRESH_RATE] = 2;	break;
-	case 72:	m_iSelectedOption[0][GO_REFRESH_RATE] = 3;	break;
-	case 75:	m_iSelectedOption[0][GO_REFRESH_RATE] = 4;	break;
-	case 80:	m_iSelectedOption[0][GO_REFRESH_RATE] = 5;	break;
-	case 85:	m_iSelectedOption[0][GO_REFRESH_RATE] = 6;	break;
-	case 90:	m_iSelectedOption[0][GO_REFRESH_RATE] = 7;	break;
-	case 100:	m_iSelectedOption[0][GO_REFRESH_RATE] = 8;	break;
-	case 120:	m_iSelectedOption[0][GO_REFRESH_RATE] = 9;	break;
-	default:	m_iSelectedOption[0][GO_REFRESH_RATE] = 0;	break;
+	case 1:		m_iSelectedOption[0][GO_REFRESH_RATE] = 1;	break;
+	case 60:	m_iSelectedOption[0][GO_REFRESH_RATE] = 2;	break;
+	case 70:	m_iSelectedOption[0][GO_REFRESH_RATE] = 3;	break;
+	case 72:	m_iSelectedOption[0][GO_REFRESH_RATE] = 4;	break;
+	case 75:	m_iSelectedOption[0][GO_REFRESH_RATE] = 5;	break;
+	case 80:	m_iSelectedOption[0][GO_REFRESH_RATE] = 6;	break;
+	case 85:	m_iSelectedOption[0][GO_REFRESH_RATE] = 7;	break;
+	case 90:	m_iSelectedOption[0][GO_REFRESH_RATE] = 8;	break;
+	case 100:	m_iSelectedOption[0][GO_REFRESH_RATE] = 9;	break;
+	case 120:	m_iSelectedOption[0][GO_REFRESH_RATE] = 10;	break;
+	default:	m_iSelectedOption[0][GO_REFRESH_RATE] = 1;	break;
 	}
 
 	m_iSelectedOption[0][GO_SHOWSTATS]				= PREFSMAN->m_bShowStats ? 1:0;
@@ -119,22 +178,17 @@ void ScreenGraphicOptions::ImportOptions()
 	m_iSelectedOption[0][GO_MOVIEDECODEMS]			= PREFSMAN->m_iMovieDecodeMS-1;
 	m_iSelectedOption[0][GO_BGIFNOBANNER]			= PREFSMAN->m_bUseBGIfNoBanner ? 1:0;
 }
-
 void ScreenGraphicOptions::ExportOptions()
 {
 	PREFSMAN->m_bWindowed				= m_iSelectedOption[0][GO_WINDOWED] == 1;
 
-	switch( m_iSelectedOption[0][GO_DISPLAY_RESOLUTION] )
+	if(m_iSelectedOption[0][GO_DISPLAY_RESOLUTION] > 6)
 	{
-	case 0:	PREFSMAN->m_iDisplayResolution = 320;	break;
-	case 1:	PREFSMAN->m_iDisplayResolution = 400;	break;
-	case 2:	PREFSMAN->m_iDisplayResolution = 512;	break;
-	case 3:	PREFSMAN->m_iDisplayResolution = 640;	break;
-	case 4:	PREFSMAN->m_iDisplayResolution = 800;	break;
-	case 5:	PREFSMAN->m_iDisplayResolution = 1024;	break;
-	case 6:	PREFSMAN->m_iDisplayResolution = 1280;	break;
-	default:	ASSERT(0);	PREFSMAN->m_iDisplayResolution = 640;	break;
+		ASSERT(0);
+		m_iSelectedOption[0][GO_DISPLAY_RESOLUTION] = 3;
 	}
+	PREFSMAN->m_iDisplayResolution = 
+		HorizRes[m_iSelectedOption[0][GO_DISPLAY_RESOLUTION]];
 	
 	switch( m_iSelectedOption[0][GO_TEXTURE_RESOLUTION] )
 	{
@@ -147,15 +201,16 @@ void ScreenGraphicOptions::ExportOptions()
 	switch( m_iSelectedOption[0][GO_REFRESH_RATE] )
 	{
 	case 0:	PREFSMAN->m_iRefreshRate = 0;	break;
-	case 1:	PREFSMAN->m_iRefreshRate = 60;	break;
-	case 2:	PREFSMAN->m_iRefreshRate = 70;	break;
-	case 3:	PREFSMAN->m_iRefreshRate = 72;	break;
-	case 4:	PREFSMAN->m_iRefreshRate = 75;	break;
-	case 5:	PREFSMAN->m_iRefreshRate = 80;	break;
-	case 6:	PREFSMAN->m_iRefreshRate = 85;	break;
-	case 7:	PREFSMAN->m_iRefreshRate = 90;	break;
-	case 8:	PREFSMAN->m_iRefreshRate = 100;	break;
-	case 9:	PREFSMAN->m_iRefreshRate = 120;	break;
+	case 1:	PREFSMAN->m_iRefreshRate = 1;	break;
+	case 2:	PREFSMAN->m_iRefreshRate = 60;	break;
+	case 3:	PREFSMAN->m_iRefreshRate = 70;	break;
+	case 4:	PREFSMAN->m_iRefreshRate = 72;	break;
+	case 5:	PREFSMAN->m_iRefreshRate = 75;	break;
+	case 6:	PREFSMAN->m_iRefreshRate = 80;	break;
+	case 7:	PREFSMAN->m_iRefreshRate = 85;	break;
+	case 8:	PREFSMAN->m_iRefreshRate = 90;	break;
+	case 9:	PREFSMAN->m_iRefreshRate = 100;	break;
+	case 10:PREFSMAN->m_iRefreshRate = 120;	break;
 	default:	ASSERT(0);	PREFSMAN->m_iRefreshRate = 0;	break;
 	}
 

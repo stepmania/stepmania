@@ -24,6 +24,9 @@ public:
 	ScreenGraphicOptions();
 
 private:
+	void UpdateRefreshRates();
+
+	void OnChange();
 	void ImportOptions();
 	void ExportOptions();
 
