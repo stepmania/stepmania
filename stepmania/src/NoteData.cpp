@@ -1028,6 +1028,13 @@ void NoteData::PadTapNotes(int rows)
 		m_TapNotes[track].insert(m_TapNotes[track].end(), pad.begin(), pad.end());
 }
 
+void NoteData::MoveTapNoteTrack(int dest, int src)
+{
+	if(dest == src) return;
+	m_TapNotes[dest] = m_TapNotes[src];
+	m_TapNotes[src].clear();
+}
+
 void NoteData::SetTapNote(int track, int row, TapNote t)
 {
 	if(row < 0) return;

@@ -45,7 +45,7 @@ public:
 		if(row < 0 || row >= m_TapNotes[track].size()) return TapNote(TAP_EMPTY);
 		return m_TapNotes[track][row];
 	}
-
+	void MoveTapNoteTrack(int dest, int src);
 	/* Pad m_TapNotes so it includes the row "rows". */
 	void PadTapNotes(int rows);
 	void SetTapNote(int track, int row, TapNote t);
