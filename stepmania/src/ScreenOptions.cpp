@@ -766,7 +766,9 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 	PositionIcons();
 	UpdateEnabledDisabled();
 
-	TweenCursor( pn );
+	/* Update all players, since changing one player can move both cursors. */
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		TweenCursor( (PlayerNumber) p );
 
 	int iCurRow = m_iCurrentRow[pn];
 
@@ -781,7 +783,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 		pText->Command( EXPLANATION_ON_COMMAND(pn) );
 		break;
 	case INPUTMODE_TOGETHER:
-		pText = &m_textExplanation[pn];
+		pText = &m_textExplanation[0];
 		pText->FinishTweening();
 		pText->Command( EXPLANATION_TOGETHER_ON_COMMAND );
 		break;
