@@ -3,6 +3,7 @@
 
 #include "SDL.h"
 #include "windows.h"
+#include "wtypes.h"
 
 struct IDirectSound;
 struct IDirectSoundBuffer;
