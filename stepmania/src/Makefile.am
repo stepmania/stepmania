@@ -141,6 +141,9 @@ ThemeManager.cpp ThemeManager.h UnlockSystem.cpp UnlockSystem.h StepmaniaTemplat
 
 PCRE = pcre/chartables.c pcre/get.c pcre/internal.h pcre/maketables.c pcre/pcre.c pcre/pcre.h pcre/study.c
 
+Hooks = arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
+	arch/ArchHooks/ArchHooks_Unix.cpp arch/ArchHooks/ArchHooks_Unix.h
+
 Sound = arch/Sound/RageSoundDriver_Null.cpp \
 	arch/Sound/RageSoundDriver_Null.h
 
@@ -178,17 +181,23 @@ Window = arch/LowLevelWindow/LowLevelWindow.h
 Window += arch/LowLevelWindow/LowLevelWindow_SDL.cpp \
 	  arch/LowLevelWindow/LowLevelWindow_SDL.h
 
+ArchUtils = archutils/Unix/SignalHandler.cpp archutils/Unix/SignalHandler.h
+if USE_CRASH_HANDLER
+ArchUtils += archutils/Unix/CrashHandler.cc archutils/Unix/CrashHandlerChild.cc \
+	     archutils/Unix/CrashHandler.h archutils/Unix/CrashHandlerInternal.h
+endif
+
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
-		    arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
 		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \
 		    $(PCRE) \
+		    $(Hooks) \
 		    $(Loading) \
 		    $(Input) \
 		    $(Movie) \
 		    $(Sound) \
 		    $(Window) \
-	            arch/arch.cpp arch/arch.h \
-		    archutils/Unix/SignalHandler.cpp archutils/Unix/SignalHandler.h
+		    arch/arch.cpp arch/arch.h \
+		    $(ArchUtils)
 
 # Note that we still end up linking dynamically to the shared system library
 # for SDL_image.  This is annoying, but it's not a major problem.  The
