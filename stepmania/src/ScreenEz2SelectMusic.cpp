@@ -12,7 +12,6 @@
 */
 
 #include "ScreenEz2SelectMusic.h"
-#include "RageDisplay.h"
 #include <math.h>
 #include "SDL.h"
 #include "SDL_opengl.h"

@@ -23,7 +23,6 @@
 #include "RageLog.h"
 #include <math.h>
 #include "ThemeManager.h"
-#include "RageDisplay.h"
 #include "NoteFieldPositioning.h"
 
 

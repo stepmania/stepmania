@@ -22,7 +22,6 @@
 #include "GameState.h"
 #include "RageSoundManager.h"
 #include "ThemeManager.h"
-#include "RageDisplay.h"
 
 
 #define NEXT_SCREEN				THEME->GetMetric ("ScreenStage","NextScreen")
@@ -568,14 +567,7 @@ void ScreenStage::Update( float fDeltaTime )
 
 void ScreenStage::DrawPrimitives()
 {
-	//// Enable Zbuffering for the mask in the dance mode
-	//if( g_StageType == STAGE_TYPE_MAX )
-	//	DISPLAY->EnableZBuffer();
-
 	Screen::DrawPrimitives();
-
-	//if( g_StageType == STAGE_TYPE_MAX )
-	//	DISPLAY->DisableZBuffer();
 }
 
 void ScreenStage::HandleScreenMessage( const ScreenMessage SM )

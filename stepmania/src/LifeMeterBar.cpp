@@ -15,7 +15,6 @@
 #include "RageException.h"
 #include "RageTimer.h"
 #include "GameState.h"
-#include "RageDisplay.h"
 #include <math.h>
 #include "ThemeManager.h"
 
