@@ -263,16 +263,13 @@ void Sprite::DrawPrimitives()
 			v[1].t = RageVector2( m_CustomTexCoords[0], m_CustomTexCoords[1] );	// bottom left
 			v[2].t = RageVector2( m_CustomTexCoords[4],	m_CustomTexCoords[5] );	// bottom right
 			v[3].t = RageVector2( m_CustomTexCoords[6],	m_CustomTexCoords[7] );	// top right
-
-			/* XXX: Why don't we honor m_bTextureWrapping when using custom coords? */
-			DISPLAY->EnableTextureWrapping();
 		} 
 		else 
 		{
 			const RectF *pTexCoordRect = GetCurrentTextureCoordRect();
 			TexCoordsFromRect(v, *pTexCoordRect);
-			DISPLAY->EnableTextureWrapping(m_bTextureWrapping);
 		}
+		DISPLAY->EnableTextureWrapping(m_bTextureWrapping);
 	}
 
 	DISPLAY->SetTextureModeModulate();
