@@ -4,12 +4,12 @@ Desc: The "Style Select Screen" for Ez2dancer
 Copyright (c):
 Frieza
 *********************************/
-#ifndef __SCREEN_SELECT_MODE_H
-#define __SCREEN_SELECT_MODE_H
+#ifndef SCREEN_SELECT_MODE_H
+#define SCREEN_SELECT_MODE_H
 /* Includes */
 
 #include "ScreenSelect.h"
-#include "Background.h"
+#include "BGAnimation.h"
 #include "Screen.h"
 #include "Sprite.h"
 #include "Quad.h"
@@ -19,7 +19,6 @@ Frieza
 #include "ModeChoice.h"
 #include "BitmapText.h"
 #include "RandomSample.h"
-#include "BGAnimationLayer.h"
 #include "Character.h"
 
 /* Class Definition */
