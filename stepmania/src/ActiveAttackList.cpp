@@ -49,27 +49,40 @@ void ActiveAttackList::Update( float fDelta )
 			if( !attack.bOn )
 				continue; /* hasn't started yet */
 
-			CString sDisplayText = attack.sModifier;
-			
-			// Strip out the approach speed token
-			if( !sDisplayText.empty() && sDisplayText[0]=='*' )
+			CString sMods = attack.sModifier;
+			CStringArray asMods;
+			split( sMods, ", ", asMods );
+			for( int j=0; j<asMods.size(); j++ )
 			{
-				int iPos = sDisplayText.Find(' ');
-				if( iPos != -1 )
-					sDisplayText.erase( sDisplayText.begin(), sDisplayText.begin()+iPos+1 );
-			}
+				CString& sMod = asMods[j];
 
-			// Capitalize all tokens
-			CStringArray asTokens;
-			split( sDisplayText, " ", asTokens );
-			sDisplayText.erase( sDisplayText.begin(), sDisplayText.end() );
-			for( int i=0; i<asTokens.size(); i++ )
-				sDisplayText += Capitalize( asTokens[i] );
-			
-			if( s.empty() )
-				s = sDisplayText;
-			else
-				s = sDisplayText + "\n" + s;
+				// Strip out the approach speed token
+				if( !sMod.empty() && sMod[0]=='*' )
+				{
+					int iPos = sMod.Find(' ');
+					if( iPos != -1 )
+						sMod.erase( sMod.begin(), sMod.begin()+iPos+1 );
+				}
+
+				// Strip out "100% "
+#define PERCENT_100 "100% "
+				if( !strncmp( sMod, PERCENT_100, sizeof(PERCENT_100)) )
+				{
+					sMod.erase( sMod.begin(), sMod.begin()+sizeof(PERCENT_100) );
+				}
+
+				// Capitalize all tokens
+				CStringArray asTokens;
+				split( sMod, " ", asTokens );
+				sMod.erase( sMod.begin(), sMod.end() );
+				for( int i=0; i<asTokens.size(); i++ )
+					sMod += Capitalize( asTokens[i] ) + " ";
+				
+				if( s.empty() )
+					s = sMod;
+				else
+					s = sMod + "\n" + s;
+			}
 		}
 
 		this->SetText( s );	// BitmapText will not rebuild vertices if these strings are the same.
