@@ -32,9 +32,12 @@ struct RageSurfaceFormat
 
 	int32_t BytesPerPixel;
 	int32_t BitsPerPixel;
-	uint32_t Rmask, Gmask, Bmask, Amask;
-	uint32_t Rshift, Gshift, Bshift, Ashift;
-	uint8_t Rloss, Gloss, Bloss, Aloss;
+	uint32_t Mask[4];
+	uint32_t Shift[4];
+	uint8_t Loss[4];
+	uint32_t &Rmask, &Gmask, &Bmask, &Amask; /* deprecated */
+	uint32_t &Rshift, &Gshift, &Bshift, &Ashift; /* deprecated */
+	uint8_t &Rloss, &Gloss, &Bloss, &Aloss; /* deprecated */
 	RageSurfacePalette *palette;
 
 	void GetRGB( uint32_t val, uint8_t *r, uint8_t *g, uint8_t *b ) const;

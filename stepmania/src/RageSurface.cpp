@@ -38,12 +38,18 @@ int32_t RageSurfacePalette::FindClosestColor( const RageSurfaceColor &color ) co
 	return iBest;
 }
 
-RageSurfaceFormat::RageSurfaceFormat()
+RageSurfaceFormat::RageSurfaceFormat():
+	Rmask(Mask[0]), Gmask(Mask[1]), Bmask(Mask[2]), Amask(Mask[3]),
+	Rshift(Shift[0]), Gshift(Shift[1]), Bshift(Shift[2]), Ashift(Shift[3]),
+	Rloss(Loss[0]), Gloss(Loss[1]), Bloss(Loss[2]), Aloss(Loss[3])
 {
 	palette = NULL;	
 }
 
-RageSurfaceFormat::RageSurfaceFormat( const RageSurfaceFormat &cpy )
+RageSurfaceFormat::RageSurfaceFormat( const RageSurfaceFormat &cpy ):
+	Rmask(Mask[0]), Gmask(Mask[1]), Bmask(Mask[2]), Amask(Mask[3]),
+	Rshift(Shift[0]), Gshift(Shift[1]), Bshift(Shift[2]), Ashift(Shift[3]),
+	Rloss(Loss[0]), Gloss(Loss[1]), Bloss(Loss[2]), Aloss(Loss[3])
 {
 	memcpy( this, &cpy, sizeof(RageSurfaceFormat) );
 	if( palette )
