@@ -62,6 +62,8 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 	useSMserver = false;
 	m_startupStatus = 0;	//By default, connection not tried.
 
+	m_ActivePlayers = 0;
+
 	StartUp();
 }
 
@@ -500,7 +502,7 @@ void NetworkSyncManager::ProcessInput()
 				case 0:
 					ColumnData = "Names\n";
 					for (i=0;i<NumberPlayers;i++)
-						ColumnData += m_packet.ReadNT() + "\n";
+						ColumnData += m_PlayerNames[m_packet.Read1()] + "\n";
 					break;
 				case 1:
 					ColumnData = "Combo\n";
@@ -553,6 +555,23 @@ void NetworkSyncManager::ProcessInput()
 				m_sArtist = m_packet.ReadNT();
 				m_sSubTitle = m_packet.ReadNT();
 				SCREENMAN->SendMessageToTopScreen( SM_ChangeSong );
+			}
+			break;
+		case 9:
+			{
+				int ServerMaxPlayers=m_packet.Read1();
+				int PlayersInThisPacket=m_packet.Read1();
+				m_PlayerStatus.clear();
+				m_PlayerNames.clear();
+				m_ActivePlayers = 0;
+				for (int i=0; i<PlayersInThisPacket; i++)
+				{
+					int PStatus = m_packet.Read1();
+					if ( PStatus > 0 )
+						m_ActivePlayers++;
+					m_PlayerStatus.push_back( PStatus );
+					m_PlayerNames.push_back( m_packet.ReadNT() );
+				}
 			}
 			break;
 		}

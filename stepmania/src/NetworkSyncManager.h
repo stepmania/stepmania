@@ -5,8 +5,10 @@
 
 #include "PlayerNumber.h"
 
+
 class LoadingWindow;
 
+#define NETMAXPLAYERS 32
 const int NETPROTOCOLVERSION=1;
 const int NETMAXBUFFERSIZE=1020; //1024 - 4 bytes for EzSockets
 
@@ -62,12 +64,15 @@ public:
 
 	void DisplayStartupStatus();	//Used to note user if connect attempt was sucessful or not.
 
-	int m_playerLife[NUM_PLAYERS];	//Life
+	int m_playerLife[NUM_PLAYERS];	//Life (used for sending to server)
 
 	void Update(float fDeltaTime);
 
 	bool useSMserver;
 
+	int m_ActivePlayers;
+	vector <int> m_PlayerStatus;
+	vector <CString> m_PlayerNames;
 
 	//Used togeather for 
 	bool ChangedScoreboard(int Column);	//If scoreboard changed since this function last called, then true.
