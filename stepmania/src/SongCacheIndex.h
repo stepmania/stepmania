@@ -5,6 +5,8 @@
 
 class SongCacheIndex {
 	IniFile CacheIndex;
+	static CString MangleName( const CString &Name );
+
 public:
 	SongCacheIndex();
 	~SongCacheIndex();

@@ -55,13 +55,21 @@ void SongCacheIndex::ReadCacheIndex()
 void SongCacheIndex::AddCacheIndex(const CString &path, unsigned hash)
 {
 	CacheIndex.SetValueI( "Cache", "CacheVersion", FILE_CACHE_VERSION );
-	CacheIndex.SetValueU( "Cache", path, hash );
+	CacheIndex.SetValueU( "Cache", MangleName(path), hash );
 	CacheIndex.WriteFile();
 }
 
 unsigned SongCacheIndex::GetCacheHash( const CString &path ) const
 {
 	unsigned iDirHash;
-	CacheIndex.GetValueU( "Cache", path, iDirHash );
+	CacheIndex.GetValueU( "Cache", MangleName(path), iDirHash );
 	return iDirHash;
+}
+
+CString SongCacheIndex::MangleName( const CString &Name )
+{
+	/* We store paths in an INI.  We can't store '='. */
+	CString ret = Name;
+	ret.Replace( "=", "");
+	return ret;
 }
