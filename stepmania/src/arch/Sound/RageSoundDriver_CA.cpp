@@ -99,7 +99,7 @@ namespace
 #define INTERNAL_DEBUG		0
 #if (INTERNAL_DEBUG)
 #define LOG_MARKER			"### "
-#define DEBUG_LOG			LOG->Info
+#define DEBUG_LOG			LOG->Trace
 #else
 #define LOG_MARKER			""
 #define DEBUG_LOG
@@ -382,7 +382,7 @@ void RageSound_CA::StartMixing(RageSoundBase *snd)
 	stream_pool[i]->clear();
 	stream_pool[i]->snd = snd;
 	streamsInUse++;
-	LOG->Info(LOG_MARKER "RageSound_CA::StartMixing -- [%ld] %s", i, (const char *) snd->GetLoadedFilePath());
+	LOG->Trace(LOG_MARKER "RageSound_CA::StartMixing -- [%ld] %s", i, (const char *) snd->GetLoadedFilePath());
 
 	/* Pre-buffer the stream. */
 	//stream_pool[i]->GetData(true);
@@ -454,7 +454,7 @@ void RageSound_CA::StopMixing(RageSoundBase *snd)
 		return;
 	}
 
-	LOG->Info(LOG_MARKER "RageSound_CA::StopMixing -- [%ld] %s", i, (const char *) snd->GetLoadedFilePath());
+	LOG->Trace(LOG_MARKER "RageSound_CA::StopMixing -- [%ld] %s", i, (const char *) snd->GetLoadedFilePath());
 	
 	/* STOPPING tells the mixer thread to release the stream once str->flush_bufs buffers have been flushed. */
 	stream_pool[i]->state = stream_pool[i]->STOPPING;
@@ -564,7 +564,7 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice, const AudioTimeStamp* inN
     size_t outputSize = outOutputData->mBuffers[0].mDataByteSize;
     if (!SOUNDMAN)
     {
-		LOG->Info(LOG_MARKER "RageSound_CA::GetData() -- SOUNDMAN doesnt yet exist!");
+		LOG->Warn(LOG_MARKER "RageSound_CA::GetData() -- SOUNDMAN doesnt yet exist!");
         bzero(outOutputData->mBuffers[0].mData, outputSize);
         return noErr;
     }
@@ -576,8 +576,8 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice, const AudioTimeStamp* inN
 	if (THIS->startSampleTime == 0)
 	{
 		THIS->startSampleTime = inOutputTime->mSampleTime;
-		LOG->Info(LOG_MARKER "RageSound_CA::GetData -- startSampleTime set to %f", THIS->startSampleTime);
-		LOG->Info(LOG_MARKER "RageSound_CA::GetData -- outputSize:%ld, output-samples:%d", outputSize, THIS->caBytesToSamples(outputSize));
+		LOG->Trace(LOG_MARKER "RageSound_CA::GetData -- startSampleTime set to %f", THIS->startSampleTime);
+		LOG->Trace(LOG_MARKER "RageSound_CA::GetData -- outputSize:%ld, output-samples:%d", outputSize, THIS->caBytesToSamples(outputSize));
 	}
 	
 	// Where are we now (well, actually a little into the future)
@@ -620,7 +620,7 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice, const AudioTimeStamp* inN
 	}
 	else
 	{
-		LOG->Info(LOG_MARKER "RageSound_CA::GetData -- %s (expected:%d, is:%d, dist:%d, packets-off:%d, samples:%d)", ((THIS->packetsOff<0)?"skipping ahead":"skipping back"), posExpected, posPlaying, posExpected-posPlaying, THIS->packetsOff, THIS->packetsOffSamples);
+		LOG->Trace(LOG_MARKER "RageSound_CA::GetData -- %s (expected:%d, is:%d, dist:%d, packets-off:%d, samples:%d)", ((THIS->packetsOff<0)?"skipping ahead":"skipping back"), posExpected, posPlaying, posExpected-posPlaying, THIS->packetsOff, THIS->packetsOffSamples);
 		THIS->packetsOff = 0;				// Reset number of packets off since we're resetting
 		THIS->packetsOffSamples = 0;
 	}
@@ -790,7 +790,7 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice, const AudioTimeStamp* inN
 
 OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput, AudioDevicePropertyID inPropertyID, void* inClientData)
 {
-	LOG->Info(LOG_MARKER "RageSound_CA::OverloadListener() -- hardware overloaded (channel=%lu)", inChannel);
+	LOG->Trace(LOG_MARKER "RageSound_CA::OverloadListener() -- hardware overloaded (channel=%lu)", inChannel);
 	return 0;
 }
 
