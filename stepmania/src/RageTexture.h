@@ -91,6 +91,7 @@ public:
 	const RageTextureID &GetActualID() const { return m_ActualID; }
 
 	static void GetFrameDimensionsFromFileName( CString sPath, int* puFramesWide, int* puFramesHigh );
+	static int GetFrameCountFromFileName( CString sPath );
 
 private:
 	/* The file we were asked to load.  (This is never changed.) */
