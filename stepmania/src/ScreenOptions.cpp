@@ -737,7 +737,9 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta )
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( m_InputMode == INPUTMODE_INDIVIDUAL  &&  p != pn )
+//		if( m_InputMode == INPUTMODE_INDIVIDUAL  &&  p != pn )
+		if( p != pn )  // don't check for INPUTMODE_INDIVIDUAL because on regular
+			           // options it moves everything by 2
 			continue;	// skip
 
 		int iCurRow = m_iCurrentRow[p];
