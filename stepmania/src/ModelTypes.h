@@ -71,8 +71,9 @@ typedef struct msMesh
 class RageTexture;
 
 // merge this into Sprite?
-struct AnimatedTexture
+class AnimatedTexture
 {
+public:
 	AnimatedTexture();
 	~AnimatedTexture();
 	
@@ -82,11 +83,21 @@ struct AnimatedTexture
 	
 	RageTexture* GetCurrentTexture();
 	
-	void SetState( int iState );
-	int GetNumStates();
+	int GetNumStates() const;
+	void SetState( int iNewState );
+	float GetAnimationLengthSeconds() const;
+	void SetSecondsIntoAnimation( float fSeconds );
+	float GetSecondsIntoAnimation() const;
 
-	int iCurState;
-	float fSecsIntoFrame;
+	bool		m_bSphereMapped;
+	float		m_fTexVelocityX;
+	float		m_fTexVelocityY;
+	BlendMode	m_BlendMode;
+
+private:
+
+	int m_iCurState;
+	float m_fSecsIntoFrame;
 	struct AnimatedTextureState
 	{
 		RageTexture* pTexture;
@@ -109,27 +120,8 @@ typedef struct msMaterial
     char        szAlphaTexture[MS_MAX_PATH];	// not used in SM.  Use alpha in diffuse texture instead
     int         nName;	// not used in SM.  What is this for anyway?
 
-	struct Texture
-	{
-		Texture()
-		{
-			bSphereMapped = false;
-			blendMode = BLEND_NORMAL;
-		}
-
-		void Load( CString sFile )
-		{
-			ani.Load( sFile );
-			bSphereMapped = sFile.Find("sphere") != -1;
-			if( sFile.Find("add") != -1 )
-				blendMode = BLEND_ADD;
-			else
-				blendMode = BLEND_NORMAL;
-		};
-		AnimatedTexture ani;
-		bool		bSphereMapped;	// true of "sphere" appears in the material name
-		BlendMode	blendMode;
-	} diffuse, alpha;
+	AnimatedTexture diffuse;
+	AnimatedTexture alpha;
 } msMaterial;
 
 /* msPositionKey */

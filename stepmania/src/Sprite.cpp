@@ -11,6 +11,7 @@
 #include "RageTexture.h"
 #include "ActorUtil.h"
 #include "arch/Dialog/Dialog.h"
+#include "Foreach.h"
 
 Sprite::Sprite()
 {
@@ -588,6 +589,11 @@ void Sprite::DrawPrimitives()
 }
 
 
+int Sprite::GetNumStates() const
+{
+	return m_States.size(); 
+}
+
 void Sprite::SetState( int iNewState )
 {
 	// This assert will likely trigger if the "missing" theme element graphic 
@@ -608,6 +614,14 @@ void Sprite::SetState( int iNewState )
 	CLAMP(iNewState, 0, (int)m_States.size()-1);
 	m_iCurState = iNewState;
 	m_fSecsIntoState = 0.0; 
+}
+
+float Sprite::GetAnimationLengthSeconds() const
+{
+	float fTotal = 0;
+	FOREACH_CONST( State, m_States, s )
+		fTotal += s->fDelay;
+	return fTotal;
 }
 
 void Sprite::SetSecondsIntoAnimation( float fSeconds )

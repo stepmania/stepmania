@@ -737,15 +737,17 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 
 RageDisplay::VideoModeParams RageDisplay_D3D::GetVideoModeParams() const { return g_CurrentParams; }
 
-#define SEND_CURRENT_MATRICES \
-	g_pd3dDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)GetProjectionTop() ); \
-	g_pd3dDevice->SetTransform( D3DTS_VIEW, (D3DMATRIX*)GetViewTop() ); \
-	RageMatrix m; \
-	/* Convert to OpenGL-style "pixel-centered" coords */ \
-	RageMatrixTranslation( &m, -0.5f, -0.5f, 0 ); \
-	RageMatrixMultiply( &m, &m, GetWorldTop() ); \
+void RageDisplay_D3D::SendCurrentMatrices()
+{
+	g_pd3dDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)GetProjectionTop() );
+	g_pd3dDevice->SetTransform( D3DTS_VIEW, (D3DMATRIX*)GetViewTop() );
+	RageMatrix m;
+	/* Convert to OpenGL-style "pixel-centered" coords */
+	RageMatrixTranslation( &m, -0.5f, -0.5f, 0 );
+	RageMatrixMultiply( &m, &m, GetWorldTop() );
 	g_pd3dDevice->SetTransform( D3DTS_WORLD, (D3DMATRIX*)&m );
-
+	g_pd3dDevice->SetTransform( D3DTS_TEXTURE0, (D3DMATRIX*)GetTextureTop() );
+}
 
 class RageCompiledGeometrySWD3D : public RageCompiledGeometry
 {
@@ -831,7 +833,7 @@ void RageDisplay_D3D::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVer
 	}
 
 	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
-	SEND_CURRENT_MATRICES;
+	SendCurrentMatrices();
 	g_pd3dDevice->DrawIndexedPrimitiveUP(
 		D3DPT_TRIANGLELIST, // PrimitiveType
 		0, // MinIndex
@@ -867,7 +869,7 @@ void RageDisplay_D3D::DrawQuadStripInternal( const RageSpriteVertex v[], int iNu
 	}
 
 	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
-	SEND_CURRENT_MATRICES;
+	SendCurrentMatrices();
 	g_pd3dDevice->DrawIndexedPrimitiveUP(
 		D3DPT_TRIANGLELIST, // PrimitiveType
 		0, // MinIndex
@@ -883,7 +885,7 @@ void RageDisplay_D3D::DrawQuadStripInternal( const RageSpriteVertex v[], int iNu
 void RageDisplay_D3D::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
-	SEND_CURRENT_MATRICES;
+	SendCurrentMatrices();
 	g_pd3dDevice->DrawPrimitiveUP(
 		D3DPT_TRIANGLEFAN, // PrimitiveType
 		iNumVerts-2, // PrimitiveCount,
@@ -895,7 +897,7 @@ void RageDisplay_D3D::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts
 void RageDisplay_D3D::DrawStripInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
-	SEND_CURRENT_MATRICES;
+	SendCurrentMatrices();
 	g_pd3dDevice->DrawPrimitiveUP(
 		D3DPT_TRIANGLESTRIP, // PrimitiveType
 		iNumVerts-2, // PrimitiveCount,
@@ -907,7 +909,7 @@ void RageDisplay_D3D::DrawStripInternal( const RageSpriteVertex v[], int iNumVer
 void RageDisplay_D3D::DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
-	SEND_CURRENT_MATRICES;
+	SendCurrentMatrices();
 	g_pd3dDevice->DrawPrimitiveUP(
 		D3DPT_TRIANGLELIST, // PrimitiveType
 		iNumVerts/3, // PrimitiveCount,
@@ -918,7 +920,7 @@ void RageDisplay_D3D::DrawTrianglesInternal( const RageSpriteVertex v[], int iNu
 
 void RageDisplay_D3D::DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex )
 {
-	SEND_CURRENT_MATRICES;
+	SendCurrentMatrices();
 
 	p->Draw( iMeshIndex );
 }
@@ -931,7 +933,7 @@ void RageDisplay_D3D::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, 
 	ASSERT( iNumVerts >= 2 );
 	g_pd3dDevice->SetRenderState( D3DRS_POINTSIZE, *((DWORD*)&LineWidth) );	// funky cast.  See D3DRENDERSTATETYPE doc
 	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
-	SEND_CURRENT_MATRICES;
+	SendCurrentMatrices();
 	g_pd3dDevice->DrawPrimitiveUP(
 		D3DPT_LINESTRIP, // PrimitiveType
 		iNumVerts-1, // PrimitiveCount,

@@ -34,10 +34,12 @@ public:
 	RageTexture* GetTexture() { return m_pTexture; };
 
 	virtual void EnableAnimation( bool bEnable );
+	
+	virtual int GetNumStates() const;
 	virtual void SetState( int iNewState );
+	virtual float GetAnimationLengthSeconds() const;
 	virtual void SetSecondsIntoAnimation( float fSeconds );
 	
-	virtual int GetNumStates()		{ return m_States.size(); };
 	CString	GetTexturePath() const;
 
 	void SetCustomTextureRect( const RectF &new_texcoord_frect );

@@ -6,11 +6,16 @@
 #include "RageTextureManager.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
+#include "Foreach.h"
 
 AnimatedTexture::AnimatedTexture()
 {
-	iCurState = 0;
-	fSecsIntoFrame = 0;
+	m_iCurState = 0;
+	m_fSecsIntoFrame = 0;
+	m_bSphereMapped = false;
+	m_fTexVelocityX = 0;
+	m_fTexVelocityY = 0;
+	m_BlendMode = BLEND_NORMAL;
 }
 
 AnimatedTexture::~AnimatedTexture()
@@ -22,6 +27,12 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 {
 	ASSERT( vFrames.empty() );	// don't load more than once
 
+	m_bSphereMapped = sTexOrIniPath.Find("sphere") != -1;
+	if( sTexOrIniPath.Find("add") != -1 )
+		m_BlendMode = BLEND_ADD;
+	else
+		m_BlendMode = BLEND_NORMAL;
+
 	if( GetExtension(sTexOrIniPath).CompareNoCase("ini")==0 )
 	{
 		IniFile ini;
@@ -30,6 +41,10 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 
 		if( !ini.GetKey("AnimatedTexture") )
 			RageException::Throw( "The animated texture file '%s' doesn't contain a section called 'AnimatedTexture'.", sTexOrIniPath.c_str() );
+		
+		ini.GetValue( "AnimatedTexture", "TexVelocityX", m_fTexVelocityX );
+		ini.GetValue( "AnimatedTexture", "TexVelocityY", m_fTexVelocityY );
+		
 		for( int i=0; i<1000; i++ )
 		{
 			CString sFileKey = ssprintf( "Frame%04d", i );
@@ -64,7 +79,7 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 		ID.bMipMaps = true;	// use mipmaps in Models
 		AnimatedTextureState state = { 
 			TEXTUREMAN->LoadTexture( ID ),
-			10
+			1
 		};
 		vFrames.push_back( state );
 	}
@@ -75,12 +90,12 @@ void AnimatedTexture::Update( float fDelta )
 {
 	if( vFrames.empty() )
 		return;
-	ASSERT( iCurState < (int)vFrames.size() );
-	fSecsIntoFrame += fDelta;
-	if( fSecsIntoFrame > vFrames[iCurState].fDelaySecs )
+	ASSERT( m_iCurState < (int)vFrames.size() );
+	m_fSecsIntoFrame += fDelta;
+	if( m_fSecsIntoFrame > vFrames[m_iCurState].fDelaySecs )
 	{
-		fSecsIntoFrame -= vFrames[iCurState].fDelaySecs;
-		iCurState = (iCurState+1) % vFrames.size();
+		m_fSecsIntoFrame -= vFrames[m_iCurState].fDelaySecs;
+		m_iCurState = (m_iCurState+1) % vFrames.size();
 	}
 }
 
@@ -88,19 +103,60 @@ RageTexture* AnimatedTexture::GetCurrentTexture()
 {
 	if( vFrames.empty() )
 		return NULL;
-	ASSERT( iCurState < (int)vFrames.size() );
-	return vFrames[iCurState].pTexture;
+	ASSERT( m_iCurState < (int)vFrames.size() );
+	return vFrames[m_iCurState].pTexture;
+}
+
+int AnimatedTexture::GetNumStates() const
+{
+	return vFrames.size();
 }
 
 void AnimatedTexture::SetState( int iState )
 {
 	CLAMP( iState, 0, GetNumStates()-1 );
-	iCurState = iState;
+	m_iCurState = iState;
 }
 
-int AnimatedTexture::GetNumStates()
+float AnimatedTexture::GetAnimationLengthSeconds() const
 {
-	return vFrames.size();
+	float fTotalSeconds = 0;
+	FOREACH_CONST( AnimatedTextureState, vFrames, ats )
+		fTotalSeconds += ats->fDelaySecs;
+	return fTotalSeconds;
+}
+
+void AnimatedTexture::SetSecondsIntoAnimation( float fSeconds )
+{
+	fSeconds = fmodf( fSeconds, GetAnimationLengthSeconds() );
+
+	m_iCurState = 0;
+	for( unsigned i=0; i<vFrames.size(); i++ )
+	{
+		AnimatedTextureState& ats = vFrames[i];
+		if( fSeconds > ats.fDelaySecs )
+		{
+			fSeconds -= ats.fDelaySecs;
+			m_iCurState = i+1;
+		}
+	}
+	m_fSecsIntoFrame = fSeconds;	// remainder
+}
+
+float AnimatedTexture::GetSecondsIntoAnimation() const
+{
+	float fSeconds = 0;
+
+	for( unsigned i=0; i<vFrames.size(); i++ )
+	{
+		const AnimatedTextureState& ats = vFrames[i];
+		if( i >= m_iCurState )
+			break;
+
+		fSeconds += ats.fDelaySecs;
+	}
+	fSeconds += m_fSecsIntoFrame;
+	return fSeconds;
 }
 
 void AnimatedTexture::Unload()
@@ -108,10 +164,9 @@ void AnimatedTexture::Unload()
 	for(unsigned i = 0; i < vFrames.size(); ++i)
 		TEXTUREMAN->UnloadTexture(vFrames[i].pTexture);
 	vFrames.clear();
-	iCurState = 0;
-	fSecsIntoFrame = 0;
+	m_iCurState = 0;
+	m_fSecsIntoFrame = 0;
 }
-
 
 msMesh::msMesh()
 {

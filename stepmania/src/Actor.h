@@ -305,9 +305,13 @@ public:
 	virtual void HandleCommand( const ParsedCommand &command );	// derivable
 	static float GetCommandLength( CString command );
 
-	virtual void SetState( int iNewState ) {};
-	virtual void SetSecondsIntoAnimation( float fSeconds ) {};
-	virtual int GetNumStates() { return 1; };
+	//
+	// Animation
+	//
+	virtual int GetNumStates() const { return 1; }
+	virtual void SetState( int iNewState ) {}
+	virtual float GetAnimationLengthSeconds() const { return 0; }
+	virtual void SetSecondsIntoAnimation( float fSeconds ) {}
 
 	//
 	// BGAnimation stuff

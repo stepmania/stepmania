@@ -251,31 +251,25 @@ void NoteDisplay::Update( float fDeltaTime )
 
 void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor )
 {
-	const int iNumFrames = actorToSet.GetNumStates();
-	if( iNumFrames == 0 )	// Model with no textures
-		return;
 
 	float fSongBeat = GAMESTATE->m_fSongBeat;
-	float fPrecentIntoAnimation = fmodf(fSongBeat,fAnimationLengthInBeats) / fAnimationLengthInBeats;
+	float fPercentIntoAnimation = fmodf(fSongBeat,fAnimationLengthInBeats) / fAnimationLengthInBeats;
 	float fNoteBeatFraction = fmodf( fNoteBeat, 1.0f );
 
-	int iFrameNo = (int)(fPrecentIntoAnimation*iNumFrames);
 	if( bVivid )
 	{
 		// changed to deal with the minor complaint that the color cycling is
 		// one tick off in general
 		const float fFraction = fNoteBeatFraction - 0.25f/fAnimationLengthInBeats;
 		const float fInterval = 1.f / fAnimationLengthInBeats;
-		iFrameNo += int( froundf(fFraction,fInterval)*iNumFrames );
+		fPercentIntoAnimation += froundf(fFraction,fInterval);
 	}
 
 	// just in case somehow we're majorly negative with the subtraction
-	iFrameNo += (iNumFrames * 2);
-	iFrameNo %= iNumFrames;
+	wrap( fPercentIntoAnimation, 1.f );
 
-	ASSERT( iFrameNo>=0 && iFrameNo<iNumFrames );
-
-	actorToSet.SetState( iFrameNo );
+	float fLengthSeconds = actorToSet.GetAnimationLengthSeconds();
+	actorToSet.SetSecondsIntoAnimation( fPercentIntoAnimation*fLengthSeconds );
 }
 
 Actor * NoteDisplay::GetTapNoteActor( float fNoteBeat )

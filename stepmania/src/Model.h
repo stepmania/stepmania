@@ -37,10 +37,11 @@ public:
 	void	AdvanceFrame (float dt);
 	void	DrawCelShaded();
 
+	virtual int GetNumStates() const;
 	virtual void SetState( int iNewState );
-	float GetCurFrame();
-	void SetFrame( float fNewFrame );
-	virtual int GetNumStates();
+	virtual float GetAnimationLengthSeconds() const;
+	virtual void SetSecondsIntoAnimation( float fSeconds );
+
 	CString		GetDefaultAnimation() { return m_sDefaultAnimation; };
 	void		SetDefaultAnimation( CString sAnimation, float fPlayRate = 1 );
 	bool		m_bRevertToDefaultAnimation;

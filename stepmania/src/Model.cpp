@@ -11,6 +11,7 @@
 #include "ActorUtil.h"
 #include <cerrno>
 #include "ModelManager.h"
+#include "Foreach.h"
 
 const float FRAMES_PER_SECOND = 30;
 const CString DEFAULT_ANIMATION_NAME = "default";
@@ -466,6 +467,8 @@ void Model::DrawPrimitives()
 				RageMatrix &mat = m_vpBones[pMesh->nBoneIndex].mFinal;
 				DISPLAY->PreMultMatrix( mat );
 			}
+		
+			DISPLAY->TexturePushMatrix();
 
 			if( pMesh->nMaterialIndex != -1 )	// has a material
 			{
@@ -482,15 +485,25 @@ void Model::DrawPrimitives()
 
 				DISPLAY->SetMaterial( Emissive, Ambient, Diffuse, mat.Specular, mat.fShininess );
 
-				// render the first pass with texture 1
-				DISPLAY->SetTexture( 0, mat.diffuse.ani.GetCurrentTexture() );
-				DISPLAY->SetSphereEnironmentMapping( mat.diffuse.bSphereMapped );
-
-				// render the second pass with texture 2
-				if( mat.alpha.ani.GetCurrentTexture() )
+				float fScrollX = 0;
+				float fScrollY = 0;
+				if( mat.diffuse.m_fTexVelocityX != 0  ||  mat.diffuse.m_fTexVelocityY != 0 )
 				{
-					DISPLAY->SetTexture( 1, mat.alpha.ani.GetCurrentTexture() );
-					DISPLAY->SetSphereEnironmentMapping( mat.alpha.bSphereMapped );
+					fScrollX = mat.diffuse.m_fTexVelocityX * mat.diffuse.GetSecondsIntoAnimation() / mat.diffuse.GetAnimationLengthSeconds();
+					fScrollY = mat.diffuse.m_fTexVelocityY * mat.diffuse.GetSecondsIntoAnimation() / mat.diffuse.GetAnimationLengthSeconds();
+					DISPLAY->SetTextureWrapping( true );
+				}
+				DISPLAY->TextureTranslate( fScrollX, fScrollY, 0 );
+
+				// render the first pass with texture 1
+				DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
+				DISPLAY->SetSphereEnironmentMapping( mat.diffuse.m_bSphereMapped );
+				
+				// render the second pass with texture 2
+				if( mat.alpha.GetCurrentTexture() )
+				{
+					DISPLAY->SetTexture( 1, mat.alpha.GetCurrentTexture() );
+					DISPLAY->SetSphereEnironmentMapping( mat.alpha.m_bSphereMapped );
 					// UGLY:  This overrides the Actor's BlendMode
 					DISPLAY->SetTextureModeAdd();
 					DISPLAY->SetTextureFiltering( true );
@@ -511,6 +524,8 @@ void Model::DrawPrimitives()
 			// Draw it
 			DISPLAY->DrawCompiledGeometry( TempGeometry, i, m_pGeometry->m_Meshes );
 			DISPLAY->SetSphereEnironmentMapping( false );
+
+			DISPLAY->TexturePopMatrix();
 
 			if( pMesh->nBoneIndex != -1 )
 			{
@@ -549,7 +564,7 @@ void Model::DrawPrimitives()
 			if( pMesh->nMaterialIndex != -1 )
 			{
 				msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
-				DISPLAY->SetTexture( 0, mat.diffuse.ani.GetCurrentTexture() );
+				DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
 			}
 			else
 			{
@@ -659,13 +674,6 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 	/* Run AdvanceFrame once, to set up m_vpBones, just in case we're drawn without
 	 * being Update(). */
 	AdvanceFrame( 0.0f );
-}
-
-float Model::GetCurFrame() { return m_fCurrFrame; };
-
-void Model::SetFrame( float fNewFrame )
-{
-	m_fCurrFrame = fNewFrame;
 }
 
 void Model::AdvanceFrame (float dt)
@@ -807,8 +815,8 @@ void Model::Update( float fDelta )
 
 	for( int i=0; i<(int)m_Materials.size(); i++ )
 	{
-		m_Materials[i].diffuse.ani.Update( fDelta );
-		m_Materials[i].alpha.ani.Update( fDelta );
+		m_Materials[i].diffuse.Update( fDelta );
+		m_Materials[i].alpha.Update( fDelta );
 	}
 
 	//
@@ -853,21 +861,38 @@ void Model::Update( float fDelta )
 	}
 }
 
+int Model::GetNumStates() const
+{
+	int iMaxStates = 0;
+	FOREACH_CONST( msMaterial, m_Materials, m )
+		iMaxStates = max( iMaxStates, m->diffuse.GetNumStates() );
+	return iMaxStates;
+}
+
 void Model::SetState( int iNewState )
 {
-	for( int i=0; i<(int)m_Materials.size(); i++ )
+	FOREACH( msMaterial, m_Materials, m )
 	{
-		m_Materials[i].diffuse.ani.SetState( iNewState );
-		m_Materials[i].alpha.ani.SetState( iNewState );
+		m->diffuse.SetState( iNewState );
+		m->alpha.SetState( iNewState );
 	}
 }
 
-int Model::GetNumStates()
+float Model::GetAnimationLengthSeconds() const
 {
-	int iMaxStates = 0;
-	for( int i=0; i<(int)m_Materials.size(); i++ )
-		iMaxStates = max( iMaxStates, m_Materials[i].diffuse.ani.GetNumStates() );
-	return iMaxStates;
+	float fSeconds = 0;
+	FOREACH_CONST( msMaterial, m_Materials, m )
+		fSeconds = max( fSeconds, m->diffuse.GetAnimationLengthSeconds() );
+	return fSeconds;
+}
+
+void Model::SetSecondsIntoAnimation( float fSeconds )
+{
+	FOREACH( msMaterial, m_Materials, m )
+	{
+		m->diffuse.SetSecondsIntoAnimation( fSeconds );
+		m->alpha.SetSecondsIntoAnimation( fSeconds );
+	}
 }
 
 void Model::HandleCommand( const ParsedCommand &command )

@@ -293,6 +293,11 @@ public:
 	void PreMultMatrix( const RageMatrix &f );
 	void LoadIdentity();
 
+	/* Texture matrix functions */
+	void TexturePushMatrix();
+	void TexturePopMatrix();
+	void TextureTranslate( float x, float y, float z );
+
 	/* Projection and View matrix stack functions. */
 	void CameraPushMatrix();
 	void CameraPopMatrix();
@@ -322,6 +327,7 @@ protected:
 	const RageMatrix* GetProjectionTop();
 	const RageMatrix* GetViewTop();
 	const RageMatrix* GetWorldTop();
+	const RageMatrix* GetTextureTop();
 };
 
 

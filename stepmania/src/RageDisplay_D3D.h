@@ -89,6 +89,8 @@ protected:
 	RageSurface* CreateScreenshot();
 	void SetViewport(int shift_left, int shift_down);
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
+
+	void SendCurrentMatrices();
 };
 
 #endif

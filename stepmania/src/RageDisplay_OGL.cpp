@@ -899,6 +899,8 @@ void RageDisplay_OGL::SendCurrentMatrices()
 	RageMatrixMultiply( &modelView, &modelView, GetWorldTop() );
 	glMatrixMode( GL_MODELVIEW );
 	glLoadMatrixf( (const float*)&modelView );
+	glMatrixMode( GL_TEXTURE  );
+	glLoadMatrixf( (const float*)GetTextureTop() );
 }
 
 class RageCompiledGeometrySWOGL : public RageCompiledGeometry

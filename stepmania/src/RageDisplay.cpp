@@ -350,6 +350,7 @@ public:
 MatrixStack	g_ProjectionStack;
 MatrixStack	g_ViewStack;
 MatrixStack	g_WorldStack;
+MatrixStack	g_TextureStack;
 
 const RageMatrix* RageDisplay::GetProjectionTop()
 {
@@ -364,6 +365,11 @@ const RageMatrix* RageDisplay::GetViewTop()
 const RageMatrix* RageDisplay::GetWorldTop()
 {
 	return g_WorldStack.GetTop();
+}
+
+const RageMatrix* RageDisplay::GetTextureTop()
+{
+	return g_TextureStack.GetTop();
 }
 
 void RageDisplay::PushMatrix() 
@@ -420,6 +426,23 @@ void RageDisplay::LoadIdentity()
 {
 	g_WorldStack.LoadIdentity();
 }
+
+
+void RageDisplay::TexturePushMatrix() 
+{ 
+	g_TextureStack.Push();
+}
+
+void RageDisplay::TexturePopMatrix() 
+{ 
+	g_TextureStack.Pop();
+}
+
+void RageDisplay::TextureTranslate( float x, float y, float z )
+{
+	g_TextureStack.TranslateLocal(x, y, z);
+}
+
 
 void RageDisplay::LoadMenuPerspective( float fovDegrees, float fVanishPointX, float fVanishPointY )
 {
