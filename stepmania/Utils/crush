@@ -1,0 +1,5 @@
+#!/bin/sh
+pngcrush "$1" "$1.new"
+rm "$1"
+mv "$1.new" "$1"
+
