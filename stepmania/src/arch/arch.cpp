@@ -125,9 +125,6 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 #ifdef RAGE_SOUND_CA
 			if(!DriversToTry[i].CompareNoCase("CoreAudio")) ret = new RageSound_CA;
 #endif
-#ifdef RAGE_SOUND_QT
-			if(!DriversToTry[i].CompareNoCase("QT")) ret = new RageSound_QT;
-#endif
 #ifdef RAGE_SOUND_QT1
 			if(!DriversToTry[i].CompareNoCase("QT1")) ret = new RageSound_QT1;
 #endif
