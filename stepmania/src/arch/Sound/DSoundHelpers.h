@@ -26,31 +26,13 @@ public:
 
 class DSoundBuf
 {
-	IDirectSoundBuffer *buf;
-
-	int channels, samplerate, samplebits, writeahead;
-	int volume;
-
-	int buffersize;
-	
-	int buffersize_frames() const { return buffersize / bytes_per_frame(); }
-	int bytes_per_frame() const { return channels*samplebits/8; }
-
-	int write_cursor, buffer_bytes_filled; /* bytes */
-	int64_t last_cursor_pos; /* frames */
-	mutable int64_t LastPosition;
-	bool playing;
-
-	bool buffer_locked;
-	char *locked_buf;
-	int locked_len;
-
 public:
 	enum hw { HW_HARDWARE, HW_SOFTWARE, HW_DONT_CARE };
 
 	/* If samplerate is DYNAMIC_SAMPLERATE, then call SetSampleRate before
 	 * you use the sample. */
 	enum { DYNAMIC_SAMPLERATE = -1 };
+
 	DSoundBuf(DSound &ds, hw hardware, 
 		int channels, int samplerate, int samplebits, int writeahead);
 
@@ -66,6 +48,26 @@ public:
 	~DSoundBuf();
 	int64_t GetPosition() const;
 	int64_t GetOutputPosition() const { return last_cursor_pos; }
+
+private:
+	int buffersize_frames() const { return buffersize / bytes_per_frame(); }
+	int bytes_per_frame() const { return channels*samplebits/8; }
+
+	IDirectSoundBuffer *buf;
+
+	int channels, samplerate, samplebits, writeahead;
+	int volume;
+
+	int buffersize;
+	
+	int write_cursor, buffer_bytes_filled; /* bytes */
+	int64_t last_cursor_pos; /* frames */
+	mutable int64_t LastPosition;
+	bool playing;
+
+	bool buffer_locked;
+	char *locked_buf;
+	int locked_len;
 };
 
 #endif
