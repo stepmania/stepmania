@@ -1,18 +1,9 @@
+/*
+ * RageFile: high-level file abstraction
+ */
+
 #ifndef RAGE_FILE_H
 #define RAGE_FILE_H
-
-/*
------------------------------------------------------------------------------
- Class: RageFile
-
- Desc: Encapsulates C and C++ file classes to deal with arch-specific oddities.
-
- Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
-	Chris Danford
-	Steve Checkoway
-	Glenn Maynard
------------------------------------------------------------------------------
-*/
 
 class RageFileObj;
 
