@@ -234,9 +234,7 @@ void PrefsManager::Init()
 
 	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
 	m_bPAL = false;
-#ifdef _XBOX
-	resizing = false;
-#else
+#ifndef _XBOX
 	m_bInterlaced = false;
 #endif
 
