@@ -16,7 +16,62 @@
 #include "BitmapText.h"
 #include "Model.h"
 #include "IniFile.h"
+#include "ThemeManager.h"
+#include "RageUtil_FileDB.h"
 
+
+static Actor* LoadActor( CString sPath )
+{
+	// TODO: Check for recursive loading
+	IniFile ini;
+	ini.SetPath( sPath );
+	ini.ReadFile();
+	
+	if( !ini.GetKey("Actor") )
+		RageException::Throw( "The actor file '%s' is invalid.", sPath.c_str() );
+
+	CString sFileName;
+	ini.GetValue( "Actor", "File", sFileName );
+	
+	CString sNewPath = Dirname( sPath ) + sFileName;
+
+	sNewPath = DerefRedir( sNewPath );
+
+	Actor* pActor = NULL;
+	CString text;
+	if( ini.GetValue ( "Actor", "Text", text ) )
+	{
+		/* It's a BitmapText. Note that we could do the actual text setting with metrics,
+		 * by adding "text" and "alttext" commands, but right now metrics can't contain
+		 * commas or semicolons.  It's useful to be able to refer to fonts in the real
+		 * theme font dirs, too. */
+		CString alttext;
+		ini.GetValue ( "Actor", "AltText", alttext );
+
+		BitmapText* pBitmapText = new BitmapText;
+		pActor = pBitmapText;
+
+		pBitmapText->LoadFromFont( THEME->GetPathToF( sFileName ) );
+		pBitmapText->SetText( text, alttext );
+	}
+	else
+	{
+		if( !DoesFileExist(sNewPath) )
+			RageException::Throw( "The actor file '%s' references a file '%s' which doesn't exist.", sPath.c_str(), sNewPath.c_str() );
+
+		pActor = MakeActor( sNewPath );
+	}
+
+	float f;
+	if( ini.GetValue ( "Actor", "BaseRotationXDegrees", f ) )	pActor->SetBaseRotationX( f );
+	if( ini.GetValue ( "Actor", "BaseRotationYDegrees", f ) )	pActor->SetBaseRotationY( f );
+	if( ini.GetValue ( "Actor", "BaseRotationZDegrees", f ) )	pActor->SetBaseRotationZ( f );
+	if( ini.GetValue ( "Actor", "BaseZoomX", f ) )				pActor->SetBaseZoomX( f );
+	if( ini.GetValue ( "Actor", "BaseZoomY", f ) )				pActor->SetBaseZoomY( f );
+	if( ini.GetValue ( "Actor", "BaseZoomZ", f ) )				pActor->SetBaseZoomZ( f );
+
+	return pActor;
+}
 
 Actor* MakeActor( CString sPath )
 {
@@ -26,35 +81,7 @@ Actor* MakeActor( CString sPath )
 
 	if( sExt=="actor" )
 	{
-		// TODO: Check for recursive loading
-		IniFile ini;
-		ini.SetPath( sPath );
-		ini.ReadFile();
-		
-		if( !ini.GetKey("Actor") )
-			RageException::Throw( "The actor file '%s' is invalid.", sPath.c_str() );
-
-		CString sFileName;
-		ini.GetValue( "Actor", "File", sFileName );
-		
-		CString sNewPath = Dirname( sPath ) + sFileName;
-
-		if( !DoesFileExist(sNewPath) )
-			RageException::Throw( "The actor file '%s' references a file '%s' which doesn't exist.", sPath.c_str(), sNewPath.c_str() );
-
-		sNewPath = DerefRedir( sNewPath );
-
-		Actor* pActor = MakeActor( sNewPath );
-
-		float f;
-		if( ini.GetValue ( "Actor", "BaseRotationXDegrees", f ) )	pActor->SetBaseRotationX( f );
-		if( ini.GetValue ( "Actor", "BaseRotationYDegrees", f ) )	pActor->SetBaseRotationY( f );
-		if( ini.GetValue ( "Actor", "BaseRotationZDegrees", f ) )	pActor->SetBaseRotationZ( f );
-		if( ini.GetValue ( "Actor", "BaseZoomX", f ) )				pActor->SetBaseZoomX( f );
-		if( ini.GetValue ( "Actor", "BaseZoomY", f ) )				pActor->SetBaseZoomY( f );
-		if( ini.GetValue ( "Actor", "BaseZoomZ", f ) )				pActor->SetBaseZoomZ( f );
-			
-		return pActor;
+		return LoadActor( sPath );
 	}
 	else if( sExt=="png" ||
 		sExt=="jpg" || 
@@ -68,12 +95,6 @@ Actor* MakeActor( CString sPath )
 		Sprite* pSprite = new Sprite;
 		pSprite->Load( sPath );
 		return pSprite;
-	}
-	else if( sExt=="ini" )
-	{
-		BitmapText* pBitmapText = new BitmapText;
-		pBitmapText->LoadFromFont( sPath );
-		return pBitmapText;
 	}
 	else if( sExt=="txt" )
 	{
