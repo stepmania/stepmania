@@ -11,7 +11,6 @@
 -----------------------------------------------------------------------------
 */
 
-#include "DifficultyMeter.h"
 #include "BitmapText.h"
 #include "ActorFrame.h"
 #include "Sprite.h"

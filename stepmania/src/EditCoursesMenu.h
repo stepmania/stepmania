@@ -16,7 +16,6 @@
 #include "Banner.h"
 #include "TextBanner.h"
 #include "GameConstantsAndTypes.h"
-#include "DifficultyMeter.h"
 #include "RageSound.h"
 #include "Course.h"
 #include "ScreenMessage.h"
