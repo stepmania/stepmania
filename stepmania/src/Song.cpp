@@ -951,25 +951,21 @@ void Song::GetEdits( vector<Steps*>& arrayAddTo, StepsType nt ) const
 /* Return whether the song is playable in the given style. */
 bool Song::SongCompleteForStyle( const StyleDef *st ) const
 {
-	if(!SongHasNotesType(st->m_StepsType))
-		return false;
-	return true;
+	return SongHasNotesType( st->m_StepsType );
 }
 
 bool Song::SongHasNotesType( StepsType nt ) const
 {
-	for( unsigned i=0; i < m_apNotes.size(); i++ ) // foreach Steps
-		if( m_apNotes[i]->m_StepsType == nt )
-			return true;
-	return false;
+	vector<Steps*> add;
+	GetSteps( add, nt, DIFFICULTY_INVALID, -1, -1, "", true, 1 );
+	return !add.empty();
 }
 
 bool Song::SongHasNotesTypeAndDifficulty( StepsType nt, Difficulty dc ) const
 {
-	for( unsigned i=0; i < m_apNotes.size(); i++ ) // foreach Steps
-		if( m_apNotes[i]->m_StepsType == nt  &&  m_apNotes[i]->GetDifficulty() == dc )
-			return true;
-	return false;
+	vector<Steps*> add;
+	GetSteps( add, nt, dc, -1, -1, "", true, 1 );
+	return !add.empty();
 }
 
 void Song::Save()
