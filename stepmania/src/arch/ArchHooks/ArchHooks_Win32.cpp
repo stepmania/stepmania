@@ -185,7 +185,7 @@ void ArchHooks_Win32::SetTime( tm newtime )
 	SetLocalTime( &st ); 
 }
 
-int64_t ArchHooks_Win32::GetMicrosecondsSinceStart()
+int64_t ArchHooks_Win32::GetMicrosecondsSinceStart( bool bAccurate )
 {
 	static bool bInitialized;
 	static DWORD iStartTime;

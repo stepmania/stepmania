@@ -23,8 +23,23 @@ public:
 
 	virtual void SetTime( tm newtime ) { }
 
-	/* */
-	virtual int64_t GetMicrosecondsSinceStart() = 0;
+	/*
+	 * Return the amount of time since the program started.  (This may actually be
+	 * since the initialization of HOOKS.
+	 *
+	 * Full microsecond accuracy may not be available.
+	 *
+	 * bAccurate is a hint: it specifies whether to prefer short-term precision
+	 * or long-term accuracy.  If false, the implementation may give higher resolution
+	 * results, but not be as stable over long periods (eg. may drift depending on
+	 * clock speed shifts on laptops).  If true, lower precision results (usually with
+	 * no less than a 1ms granularity) are returned, but the results should be stable
+	 * over long periods of time.
+	 *
+	 * Note that bAccurate may change the result significantly; it may use a different
+	 * timer, and may have a different concept of when the program "started".
+	 */
+	virtual int64_t GetMicrosecondsSinceStart( bool bAccurate ) = 0;
 };
 
 ArchHooks *MakeArchHooks();
