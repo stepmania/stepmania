@@ -173,32 +173,14 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 */
 	int p = 0;	// score multiplier 
-	switch( GAMESTATE->m_PlayMode )
+	const bool MarvelousEnabled = GAMESTATE->IsCourseMode() && PREFSMAN->m_bMarvelousTiming;
+
+	switch( score )
 	{
-	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
-		switch( score )
-		{
-		case TNS_MARVELOUS:	p = 10;		break;
-		case TNS_PERFECT:	p = 10;		break;
-		case TNS_GREAT:		p = 5;		break;
-		default:			p = 0;		break;
-		}
-		break;
-	case PLAY_MODE_NONSTOP:
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_ENDLESS:
-		switch( score )
-		{
-		case TNS_MARVELOUS:	p = 10;		break;
-		case TNS_PERFECT:	p = 9;		break;
-		case TNS_GREAT:		p = 5;		break;
-		default:			p = 0;		break;
-		}
-		break;
-	default:
-		ASSERT(0);
+	case TNS_MARVELOUS:	p = 10;		break;
+	case TNS_PERFECT:	p = MarvelousEnabled? 9:10; break;
+	case TNS_GREAT:		p = 5;		break;
+	default:			p = 0;		break;
 	}
 
 	m_iTapNotesHit++;
