@@ -19,7 +19,7 @@
 #include "RageException.h"
 #include "RageTimer.h"
 
-static map <CString, int, StdStringLessNoCase> CharAliases;
+static map <CString, wchar_t, StdStringLessNoCase> CharAliases;
 
 FontManager*	FONT	= NULL;
 
@@ -53,7 +53,7 @@ void FontManager::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, cons
 		else if(NumFrames == 256)
 			cfg.MapRange("ISO-8859-1", 0, 255, 0);
 		*/
-		for( int i=0; i<NumFrames; i++ )
+		for( wchar_t i=0; i<NumFrames; i++ )
 			cfg.CharToGlyphNo[i] = i;
 	}
 	ini.RenameKey("Char Widths", "main");
@@ -93,14 +93,13 @@ void FontManager::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, cons
 			 */
 			CString codepoint = val.substr(4); /* "XXXX" */
 		
-			int c = -1;
+			wchar_t c;
 
 			if(codepoint.substr(0, 2) == "U+" && IsHexVal(codepoint.substr(2)))
 				sscanf(codepoint.substr(2).c_str(), "%x", &c);
 			else if(CharAliases.find(codepoint) != CharAliases.end())
 				c = CharAliases[codepoint];
-
-			if(c == -1)
+			else
 				RageException::Throw( "Font definition '%s' has an invalid value '%s'.",
 					ini.GetPath().GetString(), val.GetString() );
 

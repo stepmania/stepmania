@@ -37,7 +37,7 @@ struct FontPageSettings {
 		LineSpacing;
 	float ScaleAllWidthsBy;
 	
-	map<int,int> CharToGlyphNo;
+	map<wchar_t,int> CharToGlyphNo;
 	/* If a value is missing, the width of the texture frame is used. */
 	map<int,int> GlyphWidths;
 
@@ -49,6 +49,7 @@ struct FontPageSettings {
 	{ }
 };
 
+// typedef basic_string<wchar_t> wstring;
 
 class FontPage
 {
@@ -60,13 +61,10 @@ public:
 	/* All glyphs in this list will point to m_pTexture. */
 	vector<glyph> glyphs;
 
-	map<int,int> m_iCharToGlyphNo;
+	map<wchar_t,int> m_iCharToGlyphNo;
 
 	FontPage();
 	~FontPage();
-
-	int GetLineWidthInSourcePixels( const CString &szLine );
-	int GetLineHeightInSourcePixels( const CString &szLine );
 
 	void Load( const CString &sASCIITexturePath, const FontPageSettings &cfg );
 
@@ -80,16 +78,16 @@ class Font
 public:
 	int m_iRefCount;
 	CString path;
-	map<int,glyph*> m_iCharToGlyph;
+	map<wchar_t,glyph*> m_iCharToGlyph;
 
 	Font();
 	~Font();
 
-	RageTexture *GetGlyphTexture( int c );
-	const glyph &GetGlyph( int c ) const;
+	RageTexture *GetGlyphTexture( wchar_t c );
+	const glyph &GetGlyph( wchar_t c ) const;
 
-	int GetLineWidthInSourcePixels( const CString &szLine ) const;
-	int GetLineHeightInSourcePixels( const CString &szLine ) const;
+	int GetLineWidthInSourcePixels( const wstring &szLine ) const;
+	int GetLineHeightInSourcePixels( const wstring &szLine ) const;
 
 	/* Add a FontPage to this font. */
 	void AddPage(FontPage *fp);

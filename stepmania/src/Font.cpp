@@ -34,7 +34,7 @@ void FontPage::Load( const CString &TexturePath, const FontPageSettings &cfg )
 	ASSERT( m_pTexture != NULL );
 
 	// load character widths
-	vector<int> FrameWidths; // = cfg.GlyphWidths;
+	vector<int> FrameWidths;
 	int i;
 	// Assume each character is the width of the frame by default.
 	for( i=0; i<m_pTexture->GetNumFrames(); i++ )
@@ -155,7 +155,7 @@ FontPage::~FontPage()
 }
 
 
-int Font::GetLineWidthInSourcePixels( const CString &szLine ) const
+int Font::GetLineWidthInSourcePixels( const wstring &szLine ) const
 {
 	int LineWidth = 0;
 	
@@ -165,7 +165,7 @@ int Font::GetLineWidthInSourcePixels( const CString &szLine ) const
 	return LineWidth;
 }
 
-int Font::GetLineHeightInSourcePixels( const CString &szLine ) const
+int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
 {
 	int iLineSpacing = 0;
 
@@ -194,16 +194,16 @@ void Font::AddPage(FontPage *fp)
 {
 	pages.push_back(fp);
 
-	for(map<int,int>::const_iterator it = fp->m_iCharToGlyphNo.begin();
+	for(map<wchar_t,int>::const_iterator it = fp->m_iCharToGlyphNo.begin();
 		it != fp->m_iCharToGlyphNo.end(); ++it)
 	{
 		m_iCharToGlyph[it->first] = &fp->glyphs[it->second];
 	}
 }
 
-const glyph &Font::GetGlyph( int c ) const
+const glyph &Font::GetGlyph( wchar_t c ) const
 {
-	map<int,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
+	map<wchar_t,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
 
 	if(it == m_iCharToGlyph.end())
 		RageException::Throw( "The font '%s' does not implement the character '%c'", path.GetString(), c );
@@ -211,9 +211,9 @@ const glyph &Font::GetGlyph( int c ) const
 	return *it->second;
 }
 
-RageTexture *Font::GetGlyphTexture( int c )
+RageTexture *Font::GetGlyphTexture( wchar_t c )
 {
-	map<int,glyph*>::iterator it = m_iCharToGlyph.find(c);
+	map<wchar_t,glyph*>::iterator it = m_iCharToGlyph.find(c);
 
 	if(it == m_iCharToGlyph.end())
 		RageException::Throw( "The font '%s' does not implement the character '%c'", path.GetString(), c );
@@ -227,11 +227,11 @@ void Font::CapsOnly()
      * a lowercase one. */
 	for(char c = 'A'; c <= 'Z'; ++c)
 	{
-		map<int,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
+		map<wchar_t,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
 
 		if(it == m_iCharToGlyph.end())
 			continue;
 
-		m_iCharToGlyph[tolower(c)] = it->second;
+		m_iCharToGlyph[(char) tolower(c)] = it->second;
 	}
 }

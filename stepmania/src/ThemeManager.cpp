@@ -116,10 +116,7 @@ CString ThemeManager::GetThemeDirFromName( CString sThemeName )
 
 CString ThemeManager::GetPathTo( CString sAssetCategory, CString sFileName ) 
 {
-#ifdef _DEBUG
 try_element_again:
-#endif
-
 	sAssetCategory.MakeLower();
 	sFileName.MakeLower();
 
@@ -139,6 +136,7 @@ try_element_again:
 	static const char *font_masks[] = { " 16x16.png", ".redir", NULL };
 	static const char *numbers_masks[] = { " 5x3.png", ".redir", NULL };
 	static const char *bganimations_masks[] = { ".", ".redir", NULL };
+	static const char *blank_mask[] = { "", NULL };
 	const char **asset_masks = NULL;
 	if( sAssetCategory == "graphics" ) asset_masks = graphic_masks;
 	else if( sAssetCategory == "sounds" ) asset_masks = sound_masks;
@@ -146,8 +144,15 @@ try_element_again:
 	else if( sAssetCategory == "numbers" ) asset_masks = numbers_masks;
 	else if( sAssetCategory == "bganimations" ) asset_masks = bganimations_masks;
 	else ASSERT(0); // Unknown theme asset category
+
+	/* If the theme asset name has an extension, don't add
+	 * a mask.  This should only happen with redirs. */
+	if(sFileName.find_last_of('.') != sFileName.npos)
+		asset_masks = blank_mask;
+
 	int i;
 	CString path;
+
 	for(i = 0; asset_masks[i]; ++i)
 	{
 		path = sCurrentThemeDir;
@@ -204,11 +209,8 @@ try_element_again:
 			/* backwards-compatibility hack */
 			if( sAssetCategory == "fonts" )
 				sNewFilePath.Replace(" 16x16.png", "");
-
-			return sNewFilePath;
 		}
-
-		if( !DoesFileExist(sNewFilePath) )
+		else if( !DoesFileExist(sNewFilePath) ) 
 		{
 			CString message = ssprintf(
 						"The redirect '%s' points to the file '%s', which does not exist."
@@ -222,8 +224,16 @@ try_element_again:
 			RageException::Throw( "%s", message.GetString() ); 
 		}
 
+		/* Search again.  For example, themes/default/Fonts/foo might redir
+		 * to "Hello"; but "Hello" might be overridden in themes/hot pink/Fonts/Hello. */
 
-		return sNewFilePath;
+		/* Strip off the path. */
+		unsigned pos = sNewFilePath.find_last_of("/\\");
+		if(pos != sNewFilePath.npos) sNewFilePath = sNewFilePath.substr(pos+1);
+		sFileName = sNewFilePath;
+
+		/* XXX check for loops */
+		goto try_element_again;
 	}
 
 	/* If we're searching for a font, the return value should be the file
