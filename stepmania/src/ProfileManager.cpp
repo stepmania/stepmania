@@ -18,6 +18,7 @@
 #include "IniFile.h"
 #include "GameConstantsAndTypes.h"
 #include "SongManager.h"
+#include "GameState.h"
 
 ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -76,11 +77,16 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 		return false;
 	}
 
-	//
 	// Load scores into SONGMAN
-	//
 	SONGMAN->ReadStepsMemCardDataFromFile( m_sProfileDir[pn]+STEPS_MEM_CARD_DATA_FILE, (MemoryCard)pn );
 	SONGMAN->ReadCourseMemCardDataFromFile( m_sProfileDir[pn]+COURSE_MEM_CARD_DATA_FILE, (MemoryCard)pn );
+
+	// apply saved default modifiers if any
+	if( m_Profile[pn].m_bUsingProfileDefaultModifiers )
+	{
+		GAMESTATE->m_PlayerOptions[pn].Init();
+		GAMESTATE->ApplyModifiers( pn, m_Profile[pn].m_sDefaultModifiers );
+	}
 
 	return true;
 }
@@ -272,6 +278,8 @@ bool Profile::LoadFromIni( CString sIniPath )
 
 	ini.GetValue( "Profile", "DisplayName", m_sName );
 	ini.GetValue( "Profile", "LastUsedHighScoreName", m_sLastUsedHighScoreName );
+	ini.GetValue( "Profile", "UsingProfileDefaultModifiers", m_bUsingProfileDefaultModifiers );
+	ini.GetValue( "Profile", "DefaultModifiers", m_sDefaultModifiers );
 	return true;
 }
 
@@ -280,6 +288,8 @@ bool Profile::SaveToIni( CString sIniPath )
 	IniFile ini( sIniPath );
 	ini.SetValue( "Profile", "DisplayName", m_sName );
 	ini.SetValue( "Profile", "LastUsedHighScoreName", m_sLastUsedHighScoreName );
+	ini.SetValue( "Profile", "UsingProfileDefaultModifiers", m_bUsingProfileDefaultModifiers );
+	ini.SetValue( "Profile", "DefaultModifiers", m_sDefaultModifiers );
 	ini.WriteFile();
 	return true;
 }

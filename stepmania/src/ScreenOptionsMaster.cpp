@@ -19,6 +19,7 @@
 #include "RageSounds.h"
 #include "StepMania.h"
 #include "RageSoundManager.h"
+#include "ProfileManager.h"
 
 #define OPTION_MENU_FLAGS		THEME->GetMetric (m_sName,"OptionMenuFlags")
 #define ROW_LINE(i)				THEME->GetMetric (m_sName,ssprintf("Line%i",(i+1)))
@@ -38,6 +39,7 @@
 #define MEDIUM_DESCRIPTION		THEME->GetMetric ("ScreenOptionsMaster","Medium")
 #define HARD_DESCRIPTION		THEME->GetMetric ("ScreenOptionsMaster","Hard")
 #define CHALLENGE_DESCRIPTION	THEME->GetMetric ("ScreenOptionsMaster","Challenge")
+
 
 CString ScreenOptionsMaster::ConvertParamToThemeDifficulty( const CString &in ) const
 {
@@ -176,6 +178,15 @@ void ScreenOptionsMaster::SetCharacter( OptionRow &row, OptionRowHandler &hand )
 	}
 }
 
+/* Add a list of available characters to the given row/handler. */
+void ScreenOptionsMaster::SetSaveToProfile( OptionRow &row, OptionRowHandler &hand )
+{
+	hand.type = ROW_SAVE_TO_PROFILE;
+	row.bOneChoiceForAllPlayers = false;
+	row.choices.push_back( "DON'T SAVE" );
+	row.choices.push_back( "SAVE TO PROFILE" );
+}
+
 ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	ScreenOptions( sClassName )
 {
@@ -256,6 +267,11 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			{
 				SetCharacter( row, hand );
 				row.name = "Characters";
+			}
+			else if( !name.CompareNoCase("SaveToProfile") )
+			{
+				SetSaveToProfile( row, hand );
+				row.name = "Save To\nProfile";
 			}
 			else
 				RageException::Throw( "Unexpected type '%s' in %s::Line%i", name.c_str(), m_sName.c_str(), i );
@@ -349,6 +365,9 @@ int ScreenOptionsMaster::ImportOption( const OptionRow &row, const OptionRowHand
 
 	case ROW_CONFIG:
 		return hand.opt->Get( row.choices );
+
+	case ROW_SAVE_TO_PROFILE:
+		return 0;
 
 	default:
 		ASSERT(0);
@@ -451,6 +470,19 @@ int ScreenOptionsMaster::ExportOption( const OptionRow &row, const OptionRowHand
 		}
 
 		break;
+
+	case ROW_SAVE_TO_PROFILE:
+		if( sel == 1 )
+		{
+			if( PROFILEMAN->IsUsingProfile((PlayerNumber)pn) )
+			{
+				Profile* pProfile = PROFILEMAN->GetProfile((PlayerNumber)pn);
+				pProfile->m_bUsingProfileDefaultModifiers = true;
+				pProfile->m_sDefaultModifiers = GAMESTATE->m_PlayerOptions[pn].GetString();
+			}
+		}
+		break;
+
 	default:
 		ASSERT(0);
 		break;
@@ -524,6 +556,11 @@ void ScreenOptionsMaster::ExportOptions()
 	}
 
 	if( ChangeMask & OPT_APPLY_SOUND )
+	{
+		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );
+	}
+	
+	if( ChangeMask & OPT_SAVE_MODIFIERS_TO_PROFILE )
 	{
 		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );
 	}

@@ -22,12 +22,16 @@ struct Profile
 	{
 		m_sName = "";
 		m_sLastUsedHighScoreName = "";
+		m_bUsingProfileDefaultModifiers = false;
+		m_sDefaultModifiers = "";
 	}
 
 	bool LoadFromIni( CString sIniPath );
 	bool SaveToIni( CString sIniPath );
 	CString m_sName;
 	CString m_sLastUsedHighScoreName;
+	bool m_bUsingProfileDefaultModifiers;
+	CString m_sDefaultModifiers;
 };
 
 class ProfileManager

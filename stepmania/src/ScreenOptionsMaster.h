@@ -19,7 +19,8 @@ private:
 		ROW_LIST, /* list of custom settings */
 		ROW_STEP, /* list of steps for the current song or course */
 		ROW_CHARACTER, /* list of characters */
-		ROW_CONFIG,
+		ROW_CONFIG,	/* global pref */
+		ROW_SAVE_TO_PROFILE, /* save new options to profile? */
 		NUM_OPTION_ROW_TYPES
 	};
 
@@ -48,6 +49,7 @@ private:
 	void SetStep( OptionRow &row, OptionRowHandler &hand );
 	void SetConf( OptionRow &row, OptionRowHandler &hand, CString param, CString &TitleOut );
 	void SetCharacter( OptionRow &row, OptionRowHandler &hand );
+	void SetSaveToProfile( OptionRow &row, OptionRowHandler &hand );
 
 protected:
 	virtual void MenuStart( PlayerNumber pn );
