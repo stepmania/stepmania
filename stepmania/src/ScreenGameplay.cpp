@@ -132,6 +132,16 @@ void ScreenGameplay::Init()
 	/* Save selected options before we change them. */
 	GAMESTATE->StoreSelectedOptions();
 
+	/* Save settings to the profile now.  Don't do this on extra stages, since the
+	 * user doesn't have full control; saving would force profiles to DIFFICULTY_HARD
+	 * and save over their default modifiers every time someone got an extra stage.
+	 * Do this before course modifiers are set up. */
+	if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
+	{
+		FOREACH_HumanPlayer( pn )
+			GAMESTATE->SaveCurrentSettingsToProfile(pn);
+	}
+
 	GAMESTATE->ResetStageStatistics();
 
 

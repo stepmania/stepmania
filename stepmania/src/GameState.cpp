@@ -310,14 +310,6 @@ void GameState::EndGame()
 		Profile* pProfile = PROFILEMAN->GetProfile(pn);
 
 		// persist settings
-		pProfile->m_bUsingProfileDefaultModifiers = true;
-		pProfile->m_sDefaultModifiers = m_PlayerOptions[pn].GetString();
-		if( IsSongSort(m_SortOrder) )
-			pProfile->m_SortOrder = m_SortOrder;
-		if( m_PreferredDifficulty[pn] != DIFFICULTY_INVALID )
-			pProfile->m_LastDifficulty = m_PreferredDifficulty[pn];
-		if( m_PreferredCourseDifficulty[pn] != COURSE_DIFFICULTY_INVALID )
-			pProfile->m_LastCourseDifficulty = m_PreferredCourseDifficulty[pn];
 		if( !g_vPlayedStageStats.empty() )
 			pProfile->m_pLastSong = g_vPlayedStageStats.back().pSong;
 
@@ -331,6 +323,23 @@ void GameState::EndGame()
 	CHECKPOINT;
 
 	SONGMAN->FreeAllLoadedFromProfiles();
+}
+
+void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
+{
+	if( !PROFILEMAN->IsUsingProfile(pn) )
+		return;
+
+	Profile* pProfile = PROFILEMAN->GetProfile(pn);
+
+	pProfile->m_bUsingProfileDefaultModifiers = true;
+	pProfile->m_sDefaultModifiers = m_PlayerOptions[pn].GetString();
+	if( IsSongSort(m_SortOrder) )
+		pProfile->m_SortOrder = m_SortOrder;
+	if( m_PreferredDifficulty[pn] != DIFFICULTY_INVALID )
+		pProfile->m_LastDifficulty = m_PreferredDifficulty[pn];
+	if( m_PreferredCourseDifficulty[pn] != COURSE_DIFFICULTY_INVALID )
+		pProfile->m_LastCourseDifficulty = m_PreferredCourseDifficulty[pn];
 }
 
 void GameState::Update( float fDelta )
