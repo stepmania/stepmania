@@ -33,6 +33,7 @@ void PlayerOptions::Init()
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bProTiming = false;
+	m_fScoreDisplay = SCORING_ADD;
 	m_sPositioning = "";	// "null"
 	m_sNoteSkin = "default";
 }
@@ -313,7 +314,14 @@ void PlayerOptions::FromString( CString sOptions )
 			m_sNoteSkin = sBit;
 		else if( sBit == "noteskin" && !on ) /* "no noteskin" */
 			m_sNoteSkin = "default";
-		else if ( sBit == "randomspeed" ) SET_FLOAT( fRandomSpeed )
+		else if ( sBit == "randomspeed" ) 
+			SET_FLOAT( fRandomSpeed )
+		else if ( sBit == "addscore" )
+			m_fScoreDisplay = SCORING_ADD;
+		else if ( sBit == "subtractscore" )
+			m_fScoreDisplay = SCORING_SUBTRACT;
+		else if ( sBit == "averagescore" )
+			m_fScoreDisplay = SCORING_AVERAGE;
 
 	}
 }
@@ -516,6 +524,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fScrollSpeed);
 	COMPARE(m_fScrollBPM);
 	COMPARE(m_fRandomSpeed);
+	COMPARE(m_fScoreDisplay);
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
 	COMPARE(m_fCover);

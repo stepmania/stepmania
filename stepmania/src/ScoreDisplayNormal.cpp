@@ -6,6 +6,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "PlayerState.h"
+#include "StageStats.h"
 
 
 const float SCORE_TWEEN_TIME = 0.2f;
@@ -24,6 +25,7 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 	m_text.SetShadowLength( 0 );
 
 	m_iScore = 0;
+
 	m_iTrailingScore = 0;
 	m_iScoreVelocity = 0;
 
@@ -48,6 +50,35 @@ void ScoreDisplayNormal::SetScore( int iNewScore )
 {
 	m_iScore = iNewScore;
 
+	// play some games to display the correct score -- the actual internal score does not change at all
+	// but the displayed one can (ie: displayed score for subtracrive is MaxScore - score)
+
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+
+	if ( m_pPlayerState->m_CurrentPlayerOptions.m_fScoreDisplay == PlayerOptions::SCORING_SUBTRACT )
+	{
+		if ( iNewScore == 0 && g_CurStageStats.m_player[pn].iMaxScoreToNow == 0 )
+		{
+			m_iScore = g_CurStageStats.m_player[pn].iMaxScore;
+		}
+		else 
+		{
+			m_iScore = g_CurStageStats.m_player[pn].iMaxScore - ( g_CurStageStats.m_player[pn].iMaxScoreToNow - iNewScore );
+		}
+	}
+	else if ( m_pPlayerState->m_CurrentPlayerOptions.m_fScoreDisplay == PlayerOptions::SCORING_AVERAGE )
+	{
+		if ( g_CurStageStats.m_player[pn].iMaxScoreToNow == 0 ) // don't divide by zero fats
+			m_iScore = 0;
+		else
+		{
+			float scoreRatio = ( (float) iNewScore / (float) g_CurStageStats.m_player[pn].iMaxScoreToNow );
+			m_iScore = (int) ( scoreRatio * g_CurStageStats.m_player[pn].iMaxScore );
+		}
+	}
+	
 	int iDelta = m_iScore - m_iTrailingScore;
 
 	m_iScoreVelocity = int(float(iDelta) / SCORE_TWEEN_TIME);	// in score units per second

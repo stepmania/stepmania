@@ -40,6 +40,8 @@ struct PlayerStageStats
 	int		iMaxCombo;
 	int		iCurMissCombo;
 	int		iScore;
+	int		iMaxScoreToNow;
+	int		iMaxScore;
 	int		iBonus;  // bonus to be added on screeneval
 	RadarValues	radarPossible;	// filled in by ScreenGameplay on start of notes
 	RadarValues radarActual;

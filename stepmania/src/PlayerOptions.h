@@ -92,6 +92,13 @@ struct PlayerOptions
 		SCROLL_CENTERED,
 		NUM_SCROLLS
 	};
+	enum ScoreDisplay {
+		SCORING_ADD=0,
+		SCORING_SUBTRACT,
+		SCORING_AVERAGE,
+		NUM_SCOREDISPLAYS
+	};
+
 	float GetReversePercentForColumn( int iCol ) const; // accounts for all Directions
 
 	/* All floats have a corresponding speed setting, which determines how fast
@@ -114,10 +121,12 @@ struct PlayerOptions
 	/* If this is > 0, then the player must have life above this value at the end of
 	 * the song to pass.  This is independent of SongOptions::m_FailType. */
 	float		m_fPassmark,			m_SpeedfPassmark;
-
+	
 	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];
 	bool		m_bProTiming;
+	float		m_fScoreDisplay;
+
 	CString		m_sPositioning;	/* The current positioning mode, or empty to use the normal positions. */
 	CString		m_sNoteSkin;
 
