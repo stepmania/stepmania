@@ -290,7 +290,7 @@ MusicWheel::MusicWheel()
 { 
 	LOG->Trace( "MusicWheel::MusicWheel()" );
 	if (GAMESTATE->m_pCurSong != NULL)
-		LOG->Trace( "Current Song: %s", GAMESTATE->m_pCurSong->GetSongDir() );
+		LOG->Trace( "Current Song: %s", GAMESTATE->m_pCurSong->GetSongDir().GetString() );
 	else
 		LOG->Trace( "Current Song: NULL" );
 
