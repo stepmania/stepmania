@@ -866,11 +866,11 @@ void RageDisplay_OGL::SetLightDirectional(
 	glLoadIdentity();
 
 	glEnable( GL_LIGHT0+index );
-	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+	glLightfv(GL_LIGHT0+index, GL_AMBIENT, ambient);
+	glLightfv(GL_LIGHT0+index, GL_DIFFUSE, diffuse);
+	glLightfv(GL_LIGHT0+index, GL_SPECULAR, specular);
 	float position[4] = {dir.x, dir.y, dir.z, 0};
-	glLightfv(GL_LIGHT0, GL_POSITION, position);
+	glLightfv(GL_LIGHT0+index, GL_POSITION, position);
 
 	glPopMatrix();
 }
