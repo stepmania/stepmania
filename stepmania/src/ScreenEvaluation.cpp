@@ -307,8 +307,6 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		GAMESTATE->HasEarnedExtraStage()  && 
 		m_ResultMode==RM_ARCADE_STAGE;
  
-	float fDancePointWidth = DANCE_POINT_WIDTH;
-
 	//
 	// Init ResultMode-specific displays
 	//
@@ -352,8 +350,11 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				if(PREFSMAN->m_bDancePointsForOni)
 				{
 					m_textOniPercentLarge[p].SetText( ssprintf("%d", stageStats.iActualDancePoints[p]) );
-					if(m_textOniPercentLarge[p].GetWidestLineWidthInSourcePixels() > fDancePointWidth)
-						m_textOniPercentLarge[p].SetZoomX( fDancePointWidth / (float)m_textOniPercentLarge[p].GetWidestLineWidthInSourcePixels() );
+
+					const float fDancePointWidth = DANCE_POINT_WIDTH;
+					const float WidestLineWidth = (float) m_textOniPercentLarge[p].GetWidestLineWidthInSourcePixels();
+					if(WidestLineWidth > fDancePointWidth)
+						m_textOniPercentLarge[p].SetZoomX( fDancePointWidth / WidestLineWidth );
 				}
 				else
 				{
