@@ -137,11 +137,18 @@ bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, c
 			return false;
 
 		/* subtract coins */
+		int iCoinsToCharge = 0;
 		if( PREFSMAN->m_CoinMode == PrefsManager::COIN_PAY )
-			if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
-				return false;	// not enough coins
-			else
-				GAMESTATE->m_iCoins -= PREFSMAN->m_iCoinsPerCredit;
+			iCoinsToCharge = PREFSMAN->m_iCoinsPerCredit;
+		
+		if( PREFSMAN->m_bJointPremium )
+			if( GAMESTATE->m_MasterPlayerNumber!=PLAYER_INVALID )	// one side already joined
+				iCoinsToCharge = 0;
+
+		if( GAMESTATE->m_iCoins < iCoinsToCharge )
+			return false;	// not enough coins
+		else
+			GAMESTATE->m_iCoins -= iCoinsToCharge;
 
 		GAMESTATE->m_bSideIsJoined[MenuI.player] = true;
 		if( GAMESTATE->m_MasterPlayerNumber == PLAYER_INVALID )
