@@ -123,7 +123,7 @@ ScreenMiniMenu::ScreenMiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendO
 		m_textAnswer[k].SetX( fAnswerX );
 	}
 
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu prompt") );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenMiniMenu music") );
 }
 
 void ScreenMiniMenu::Update( float fDeltaTime )
@@ -229,7 +229,7 @@ void ScreenMiniMenu::BeforeLineChanged()
 	m_textAnswer[m_iCurLine].SetEffectNone();
 	m_textLabel[m_iCurLine].SetZoom( ZOOM_NOT_SELECTED );
 	m_textAnswer[m_iCurLine].SetZoom( ZOOM_NOT_SELECTED );
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","mini menu row") );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenMiniMenu row") );
 }
 
 void ScreenMiniMenu::AfterLineChanged()
@@ -242,7 +242,7 @@ void ScreenMiniMenu::AfterLineChanged()
 
 void ScreenMiniMenu::AfterAnswerChanged()
 {
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","mini menu row") );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenMiniMenu row") );
 	int iAnswerInRow = m_iCurAnswers[m_iCurLine];
 	CString sAnswerText = m_Def.lines[m_iCurLine].szOptionsText[iAnswerInRow];
 	m_textAnswer[m_iCurLine].SetText( sAnswerText );

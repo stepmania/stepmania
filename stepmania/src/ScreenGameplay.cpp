@@ -435,11 +435,11 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		m_Toasty.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay toasty") );
 		this->AddChild( &m_Toasty );
 
-		m_Back.Load( THEME->GetPathTo("BGAnimations","Common back") );
-		this->AddChild( &m_Back );
-
 		m_In.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay in") );
 		this->AddChild( &m_In );
+
+		m_Back.Load( THEME->GetPathTo("BGAnimations","Common back") );
+		this->AddChild( &m_Back );
 
 
 		if( GAMESTATE->IsExtraStage() )	// only load if we're going to use it

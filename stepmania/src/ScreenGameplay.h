@@ -123,8 +123,8 @@ protected:
 	TransitionBGAnimation	m_Failed;
 	TransitionBGAnimation	m_Extra;
 	TransitionBGAnimation	m_Toasty;	// easter egg
-	TransitionBGAnimation	m_Back;
 	TransitionBGAnimation	m_In;
+	TransitionBGAnimation	m_Back;
 
 	BitmapText			m_textSurviveTime;	// only shown in extra stage
 	BitmapText			m_StageName;

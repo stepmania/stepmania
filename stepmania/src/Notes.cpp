@@ -142,10 +142,13 @@ void Notes::TidyUpData()
 
 void Notes::Decompress() const
 {
-	if(notes) return;
-
-	if(parent)
+	if(notes)
 	{
+		return;	// already decompressed
+	}
+	else if(parent)
+	{
+		// get autogen notes
 		NoteData pdata;
 		parent->GetNoteData(&pdata);
 
@@ -158,13 +161,18 @@ void Notes::Decompress() const
 
 		return;
 	}
+	else if(!notes_comp)
+	{
+		return; /* there is no data */
+	}
+	else
+	{
+		// load from compressed
+		notes = new NoteData;
+		notes->SetNumTracks( GameManager::NotesTypeToNumTracks(m_NotesType) );
 
-	if(!notes_comp) return; /* no data is no data */
-
-	notes = new NoteData;
-	notes->SetNumTracks( GameManager::NotesTypeToNumTracks(m_NotesType) );
-
-	NoteDataUtil::LoadFromSMNoteDataString(*notes, *notes_comp);
+		NoteDataUtil::LoadFromSMNoteDataString(*notes, *notes_comp);
+	}
 }
 
 void Notes::Compress() const
@@ -186,21 +194,17 @@ void Notes::DeAutogen()
 	if(!parent)
 		return; /* OK */
 
+	Decompress();	// fills in notes with sliding window transform
+
 	m_iMeter		= Real()->m_iMeter;
 	m_sDescription	= Real()->m_sDescription;
 	m_Difficulty	= Real()->m_Difficulty;
 	for(int i = 0; i < NUM_RADAR_CATEGORIES; ++i)
 		m_fRadarValues[i] = Real()->m_fRadarValues[i];
-	
-	delete notes;
-	notes = NULL;
-
-	if(!notes_comp)
-		notes_comp = new CString;
-
-	*notes_comp = parent->GetSMNoteData();
 
 	parent = NULL;
+
+	Compress();
 }
 
 void Notes::AutogenFrom( Notes *parent_, NotesType ntTo )
