@@ -58,8 +58,8 @@ public:
 	ScreenMiniMenu( CString sScreenClass );
 	void Init( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel );
 protected:
-	virtual void ImportOptions( int row, PlayerNumber pn );
-	virtual void ExportOptions( int row, PlayerNumber pn );
+	virtual void ImportOptions( int row, const vector<PlayerNumber> &vpns );
+	virtual void ExportOptions( int row, const vector<PlayerNumber> &vpns );
 	
 	virtual void GoToNextScreen();
 	virtual void GoToPrevScreen();

@@ -151,75 +151,87 @@ public:
 			defOut.choices.push_back( sChoice );
 		}
 	}
-	void ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
+	void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		int FallbackOption = -1;
 		bool UseFallbackOption = true;
 
-		for( unsigned e = 0; e < ListEntries.size(); ++e )
+		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
-			const GameCommand &mc = ListEntries[e];
+			PlayerNumber p = *pn;
+			vector<bool> &vbSelOut = vbSelectedOut[p];
 
-			vbSelectedOut[e] = false;
-
-			if( mc.IsZero() )
+			for( unsigned e = 0; e < ListEntries.size(); ++e )
 			{
-				/* The entry has no effect.  This is usually a default "none of the
-					* above" entry.  It will always return true for DescribesCurrentMode().
-					* It's only the selected choice if nothing else matches. */
-				if( def.selectType != SELECT_MULTIPLE )
-					FallbackOption = e;
-				continue;
-			}
+				const GameCommand &mc = ListEntries[e];
 
-			if( def.bOneChoiceForAllPlayers )
-			{
-				if( mc.DescribesCurrentModeForAllPlayers() )
+				vbSelOut[e] = false;
+
+				if( mc.IsZero() )
 				{
-					UseFallbackOption = false;
+					/* The entry has no effect.  This is usually a default "none of the
+						* above" entry.  It will always return true for DescribesCurrentMode().
+						* It's only the selected choice if nothing else matches. */
 					if( def.selectType != SELECT_MULTIPLE )
-						SelectExactlyOne( e, vbSelectedOut );
-					else
-						vbSelectedOut[e] = true;
+						FallbackOption = e;
+					continue;
+				}
+
+				if( def.bOneChoiceForAllPlayers )
+				{
+					if( mc.DescribesCurrentModeForAllPlayers() )
+					{
+						UseFallbackOption = false;
+						if( def.selectType != SELECT_MULTIPLE )
+							SelectExactlyOne( e, vbSelOut );
+						else
+							vbSelOut[e] = true;
+					}
+				}
+				else
+				{
+					if( mc.DescribesCurrentMode( p) )
+					{
+						UseFallbackOption = false;
+						if( def.selectType != SELECT_MULTIPLE )
+							SelectExactlyOne( e, vbSelOut );
+						else
+							vbSelOut[e] = true;
+					}
 				}
 			}
-			else
+
+			if( UseFallbackOption && FallbackOption == -1 )
 			{
-				if( mc.DescribesCurrentMode(  pn) )
-				{
-					UseFallbackOption = false;
-					if( def.selectType != SELECT_MULTIPLE )
-						SelectExactlyOne( e, vbSelectedOut );
-					else
-						vbSelectedOut[e] = true;
-				}
+				LOG->Warn( "No options in row \"%s\" were selected, and no fallback row found; selected entry 0", m_sName.c_str() );
+				FallbackOption = 0;
 			}
-		}
 
-		if( UseFallbackOption && FallbackOption == -1 )
-		{
-			LOG->Warn( "No options in row \"%s\" were selected, and no fallback row found; selected entry 0", m_sName.c_str() );
-			FallbackOption = 0;
-		}
-
-		if( def.selectType == SELECT_ONE && 
-			UseFallbackOption && 
-			FallbackOption != -1 )
-		{
-			SelectExactlyOne( FallbackOption, vbSelectedOut );
+			if( def.selectType == SELECT_ONE && 
+				UseFallbackOption && 
+				FallbackOption != -1 )
+			{
+				SelectExactlyOne( FallbackOption, vbSelOut );
+			}
 		}
 	}
 
-	int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const
+	int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
-		Default.Apply( pn );
-		for( unsigned i=0; i<vbSelected.size(); i++ )
+		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
-			if( vbSelected[i] )
-				ListEntries[i].Apply( pn );
+			PlayerNumber p = *pn;
+			const vector<bool> &vbSel = vbSelected[p];
+		
+			Default.Apply( p );
+			for( unsigned i=0; i<vbSel.size(); i++ )
+			{
+				if( vbSel[i] )
+					ListEntries[i].Apply( p );
+			}
+			FOREACH_CONST( CString, m_vsBroadcastOnExport, s )
+				MESSAGEMAN->Broadcast( *s );
 		}
-		FOREACH_CONST( CString, m_vsBroadcastOnExport, s )
-			MESSAGEMAN->Broadcast( *s );
 		return 0;
 	}
 
@@ -500,55 +512,103 @@ public:
 		if( m_pLuaTable->GetLuaType() != LUA_TTABLE )
 			RageException::Throw( "Result of \"%s\" is not a table", sLuaFunction.c_str() );
 
+		m_pLuaTable->PushSelf( LUA->L );
+
+		lua_pushstring( LUA->L, "Name" );
+		lua_gettable( LUA->L, -2 );
+		const char *pStr = lua_tostring( LUA->L, -1 );
+		if( pStr == NULL )
+			RageException::Throw( "\"%s\" \"Name\" entry is not a string", sLuaFunction.c_str() );
+		defOut.name = pStr;
+		lua_pop( LUA->L, 1 );
+
+
+		lua_pushstring( LUA->L, "OneChoiceForAllPlayers" );
+		lua_gettable( LUA->L, -2 );
+		defOut.bOneChoiceForAllPlayers = !!lua_toboolean( LUA->L, -1 );
+		lua_pop( LUA->L, 1 );
+
+
+		lua_pushstring( LUA->L, "ExportOnChange" );
+		lua_gettable( LUA->L, -2 );
+		defOut.m_bExportOnChange = !!lua_toboolean( LUA->L, -1 );
+		lua_pop( LUA->L, 1 );
+
+
+		lua_pushstring( LUA->L, "LayoutType" );
+		lua_gettable( LUA->L, -2 );
+		pStr = lua_tostring( LUA->L, -1 );
+		if( pStr == NULL )
+			RageException::Throw( "\"%s\" \"LayoutType\" entry is not a string", sLuaFunction.c_str() );
+		defOut.layoutType = StringToLayoutType( pStr );
+		ASSERT( defOut.layoutType != LAYOUT_INVALID );
+		lua_pop( LUA->L, 1 );
+
+
+		lua_pushstring( LUA->L, "SelectType" );
+		lua_gettable( LUA->L, -2 );
+		pStr = lua_tostring( LUA->L, -1 );
+		if( pStr == NULL )
+			RageException::Throw( "\"%s\" \"SelectType\" entry is not a string", sLuaFunction.c_str() );
+		defOut.selectType = StringToSelectType( pStr );
+		ASSERT( defOut.selectType != SELECT_INVALID );
+		lua_pop( LUA->L, 1 );
+
+
+		/* Iterate over the "Choices" table. */
+		lua_pushstring( LUA->L, "Choices" );
+		lua_gettable( LUA->L, -2 );
+		if( !lua_istable( LUA->L, -1 ) )
+			RageException::Throw( "\"%s\" \"Choices\" is not a table", sLuaFunction.c_str() );
+
+		lua_pushnil( LUA->L );
+		while( lua_next(LUA->L, -2) != 0 )
 		{
-			m_pLuaTable->PushSelf( LUA->L );
+			/* `key' is at index -2 and `value' at index -1 */
+			const char *pValue = lua_tostring( LUA->L, -1 );
+			if( pValue == NULL )
+				RageException::Throw( "\"%s\" Column entry is not a string", sLuaFunction.c_str() );
+//				LOG->Trace( "'%s'", pValue);
 
-			lua_pushstring( LUA->L, "Name" );
-			lua_gettable( LUA->L, -2 );
-			const char *pStr = lua_tostring( LUA->L, -1 );
-			if( pStr == NULL )
-				RageException::Throw( "\"%s\" \"Name\" entry is not a string", sLuaFunction.c_str() );
-			defOut.name = pStr;
-			lua_pop( LUA->L, 1 );
+			defOut.choices.push_back( pValue );
 
+			lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
+		}
 
-			lua_pushstring( LUA->L, "OneChoiceForAllPlayers" );
-			lua_gettable( LUA->L, -2 );
-			defOut.bOneChoiceForAllPlayers = !!lua_toboolean( LUA->L, -1 );
-			lua_pop( LUA->L, 1 );
+		lua_pop( LUA->L, 1 ); /* pop choices table */
 
 
-			lua_pushstring( LUA->L, "ExportOnChange" );
-			lua_gettable( LUA->L, -2 );
-			defOut.m_bExportOnChange = !!lua_toboolean( LUA->L, -1 );
-			lua_pop( LUA->L, 1 );
-
-
-			lua_pushstring( LUA->L, "LayoutType" );
-			lua_gettable( LUA->L, -2 );
-			pStr = lua_tostring( LUA->L, -1 );
-			if( pStr == NULL )
-				RageException::Throw( "\"%s\" \"LayoutType\" entry is not a string", sLuaFunction.c_str() );
-			defOut.layoutType = StringToLayoutType( pStr );
-			ASSERT( defOut.layoutType != LAYOUT_INVALID );
-			lua_pop( LUA->L, 1 );
-
-
-			lua_pushstring( LUA->L, "SelectType" );
-			lua_gettable( LUA->L, -2 );
-			pStr = lua_tostring( LUA->L, -1 );
-			if( pStr == NULL )
-				RageException::Throw( "\"%s\" \"SelectType\" entry is not a string", sLuaFunction.c_str() );
-			defOut.selectType = StringToSelectType( pStr );
-			ASSERT( defOut.selectType != SELECT_INVALID );
-			lua_pop( LUA->L, 1 );
-
-
-			/* Iterate over the "Choices" table. */
-			lua_pushstring( LUA->L, "Choices" );
-			lua_gettable( LUA->L, -2 );
+		/* Iterate over the "EnabledForPlayers" table. */
+		lua_pushstring( LUA->L, "EnabledForPlayers" );
+		lua_gettable( LUA->L, -2 );
+		if( !lua_isnil( LUA->L, -1 ) )
+		{
 			if( !lua_istable( LUA->L, -1 ) )
-				RageException::Throw( "\"%s\" \"Choices\" is not a table", sLuaFunction.c_str() );
+				RageException::Throw( "\"%s\" \"EnabledForPlayers\" is not a table", sLuaFunction.c_str() );
+
+			defOut.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
+
+			lua_pushnil( LUA->L );
+			while( lua_next(LUA->L, -2) != 0 )
+			{
+				/* `key' is at index -2 and `value' at index -1 */
+				PlayerNumber pn = (PlayerNumber)luaL_checkint( LUA->L, -1 );
+
+				defOut.m_vEnabledForPlayers.insert( pn );
+
+				lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
+			}
+		}
+		lua_pop( LUA->L, 1 ); /* pop EnabledForPlayers table */
+
+		
+		/* Iterate over the "ReloadRowMessages" table. */
+		lua_pushstring( LUA->L, "ReloadRowMessages" );
+		lua_gettable( LUA->L, -2 );
+		if( !lua_isnil( LUA->L, -1 ) )
+		{
+			if( !lua_istable( LUA->L, -1 ) )
+				RageException::Throw( "\"%s\" \"ReloadRowMessages\" is not a table", sLuaFunction.c_str() );
 
 			lua_pushnil( LUA->L );
 			while( lua_next(LUA->L, -2) != 0 )
@@ -557,192 +617,165 @@ public:
 				const char *pValue = lua_tostring( LUA->L, -1 );
 				if( pValue == NULL )
 					RageException::Throw( "\"%s\" Column entry is not a string", sLuaFunction.c_str() );
-//				LOG->Trace( "'%s'", pValue);
+				LOG->Trace( "Found ReloadRowMessage '%s'", pValue);
 
-				defOut.choices.push_back( pValue );
+				m_vsReloadRowMessages.push_back( pValue );
 
 				lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
 			}
+		}
+		lua_pop( LUA->L, 1 ); /* pop ReloadRowMessages table */
 
-			lua_pop( LUA->L, 1 ); /* pop choices table */
+		
+		/* Look for "ExportOnChange" value. */
+		lua_pushstring( LUA->L, "ExportOnChange" );
+		lua_gettable( LUA->L, -2 );
+		if( !lua_isnil( LUA->L, -1 ) )
+		{
+			defOut.m_bExportOnChange = !!MyLua_checkboolean( LUA->L, -1 );
+		}
+		lua_pop( LUA->L, 1 ); /* pop ExportOnChange value */
 
 
-			/* Iterate over the "EnabledForPlayers" table. */
-			lua_pushstring( LUA->L, "EnabledForPlayers" );
-			lua_gettable( LUA->L, -2 );
-			if( !lua_isnil( LUA->L, -1 ) )
+		lua_pop( LUA->L, 1 ); /* pop main table */
+		ASSERT( lua_gettop(LUA->L) == 0 );
+	}
+	virtual void Reload( OptionRowDefinition &defOut )
+	{
+		/* Run the Lua expression.  It should return a table. */
+		m_pLuaTable->SetFromExpression( m_sName );
+
+		if( m_pLuaTable->GetLuaType() != LUA_TTABLE )
+			RageException::Throw( "Result of \"%s\" is not a table", m_sName.c_str() );
+
+		m_pLuaTable->PushSelf( LUA->L );
+
+
+		/* Iterate over the "EnabledForPlayers" table. */
+		lua_pushstring( LUA->L, "EnabledForPlayers" );
+		lua_gettable( LUA->L, -2 );
+		if( !lua_isnil( LUA->L, -1 ) )
+		{
+			if( !lua_istable( LUA->L, -1 ) )
+				RageException::Throw( "\"%s\" \"EnabledForPlayers\" is not a table", m_sName.c_str() );
+
+			defOut.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
+
+			lua_pushnil( LUA->L );
+			while( lua_next(LUA->L, -2) != 0 )
 			{
-				if( !lua_istable( LUA->L, -1 ) )
-					RageException::Throw( "\"%s\" \"EnabledForPlayers\" is not a table", sLuaFunction.c_str() );
+				/* `key' is at index -2 and `value' at index -1 */
+				PlayerNumber pn = (PlayerNumber)luaL_checkint( LUA->L, -1 );
 
-				defOut.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
+				defOut.m_vEnabledForPlayers.insert( pn );
 
-				lua_pushnil( LUA->L );
-				while( lua_next(LUA->L, -2) != 0 )
-				{
-					/* `key' is at index -2 and `value' at index -1 */
-					PlayerNumber pn = (PlayerNumber)luaL_checkint( LUA->L, -1 );
-
-					defOut.m_vEnabledForPlayers.insert( pn );
-
-					lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
-				}
+				lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
 			}
-			lua_pop( LUA->L, 1 ); /* pop EnabledForPlayers table */
+		}
+		lua_pop( LUA->L, 1 ); /* pop EnabledForPlayers table */
 
+
+		lua_pop( LUA->L, 1 ); /* pop main table */
+		ASSERT( lua_gettop(LUA->L) == 0 );
+	}
+	virtual void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	{
+		ASSERT( lua_gettop(LUA->L) == 0 );
+
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+		{
+			PlayerNumber p = *pn;
+			vector<bool> &vbSelOut = vbSelectedOut[p];
+
+			/* Evaluate the LoadSelections(self,array,pn) function, where array is a table
+			* representing vbSelectedOut. */
+
+			/* All selections default to false. */
+			for( unsigned i = 0; i < vbSelOut.size(); ++i )
+				vbSelOut[i] = false;
+
+			/* Create the vbSelectedOut table. */
+			LUA->CreateTableFromArrayB( vbSelOut );
+			ASSERT( lua_gettop(LUA->L) == 1 ); /* vbSelectedOut table */
+
+			/* Get the function to call from m_LuaTable. */
+			m_pLuaTable->PushSelf( LUA->L );
+			ASSERT( lua_istable( LUA->L, -1 ) );
+
+			lua_pushstring( LUA->L, "LoadSelections" );
+			lua_gettable( LUA->L, -2 );
+			if( !lua_isfunction( LUA->L, -1 ) )
+				RageException::Throw( "\"%s\" \"LoadSelections\" entry is not a function", def.name.c_str() );
+
+			/* Argument 1 (self): */
+			m_pLuaTable->PushSelf( LUA->L );
+
+			/* Argument 2 (vbSelectedOut): */
+			lua_pushvalue( LUA->L, 1 );
+
+			/* Argument 3 (pn): */
+			LuaHelpers::PushStack( (int) p );
+
+			ASSERT( lua_gettop(LUA->L) == 6 ); /* vbSelectedOut, m_iLuaTable, function, self, arg, arg */
+
+			lua_call( LUA->L, 3, 0 ); // call function with 3 arguments and 0 results
+			ASSERT( lua_gettop(LUA->L) == 2 );
+
+			lua_pop( LUA->L, 1 ); /* pop option table */
+
+			LUA->ReadArrayFromTableB( vbSelOut );
 			
-			/* Iterate over the "ReloadRowMessages" table. */
-			lua_pushstring( LUA->L, "ReloadRowMessages" );
-			lua_gettable( LUA->L, -2 );
-			if( !lua_isnil( LUA->L, -1 ) )
-			{
-				if( !lua_istable( LUA->L, -1 ) )
-					RageException::Throw( "\"%s\" \"ReloadRowMessages\" is not a table", sLuaFunction.c_str() );
+			lua_pop( LUA->L, 1 ); /* pop vbSelectedOut table */
 
-				lua_pushnil( LUA->L );
-				while( lua_next(LUA->L, -2) != 0 )
-				{
-					/* `key' is at index -2 and `value' at index -1 */
-					const char *pValue = lua_tostring( LUA->L, -1 );
-					if( pValue == NULL )
-						RageException::Throw( "\"%s\" Column entry is not a string", sLuaFunction.c_str() );
-					LOG->Trace( "'%s'", pValue);
-
-					m_vsReloadRowMessages.push_back( pValue );
-
-					lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
-				}
-			}
-			lua_pop( LUA->L, 1 ); /* pop ReloadRowMessages table */
-
-			
-			/* Look for "ExportOnChange" value. */
-			lua_pushstring( LUA->L, "ExportOnChange" );
-			lua_gettable( LUA->L, -2 );
-			if( !lua_isnil( LUA->L, -1 ) )
-			{
-				defOut.m_bExportOnChange = !!MyLua_checkboolean( LUA->L, -1 );
-			}
-			lua_pop( LUA->L, 1 ); /* pop ExportOnChange value */
-
-			
-			/* Iterate over the "ReloadRowMessages" table. */
-			lua_pushstring( LUA->L, "ReloadRowMessages" );
-			lua_gettable( LUA->L, -2 );
-			if( !lua_isnil( LUA->L, -1 ) )
-			{
-				if( !lua_istable( LUA->L, -1 ) )
-					RageException::Throw( "\"%s\" \"ReloadRowMessages\" is not a table", sLuaFunction.c_str() );
-
-				m_vsReloadRowMessages.clear();	// and fill in with supplied PlayerNumbers below
-
-				lua_pushnil( LUA->L );
-				while( lua_next(LUA->L, -2) != 0 )
-				{
-					/* `key' is at index -2 and `value' at index -1 */
-					const char *pValue = lua_tostring( LUA->L, -1 );
-					if( pValue == NULL )
-						RageException::Throw( "\"%s\" Column entry is not a string", sLuaFunction.c_str() );
-					LOG->Trace( "'%s'", pValue);
-
-					m_vsReloadRowMessages.push_back( pValue );
-
-					lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
-				}
-			}
-			lua_pop( LUA->L, 1 ); /* pop ReloadRowMessages table */
-
-
-			lua_pop( LUA->L, 1 ); /* pop main table */
 			ASSERT( lua_gettop(LUA->L) == 0 );
 		}
 	}
-	virtual void ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
+    virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		ASSERT( lua_gettop(LUA->L) == 0 );
 
-		/* Evaluate the LoadSelections(self,array,pn) function, where array is a table
-		 * representing vbSelectedOut. */
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+		{
+			PlayerNumber p = *pn;
+			const vector<bool> &vbSel = vbSelected[p];
 
-		/* All selections default to false. */
-		for( unsigned i = 0; i < vbSelectedOut.size(); ++i )
-			vbSelectedOut[i] = false;
+			/* Evaluate SaveSelections(self,array,pn) function, where array is a table
+			 * representing vbSelectedOut. */
 
-		/* Create the vbSelectedOut table. */
-		LUA->CreateTableFromArrayB( vbSelectedOut );
-		ASSERT( lua_gettop(LUA->L) == 1 ); /* vbSelectedOut table */
+			vector<bool> vbSelectedCopy = vbSel;
 
-		/* Get the function to call from m_LuaTable. */
-		m_pLuaTable->PushSelf( LUA->L );
-		ASSERT( lua_istable( LUA->L, -1 ) );
+			/* Create the vbSelectedOut table. */
+			LUA->CreateTableFromArrayB( vbSelectedCopy );
+			ASSERT( lua_gettop(LUA->L) == 1 ); /* vbSelectedOut table */
 
-		lua_pushstring( LUA->L, "LoadSelections" );
-		lua_gettable( LUA->L, -2 );
-		if( !lua_isfunction( LUA->L, -1 ) )
-			RageException::Throw( "\"%s\" \"LoadSelections\" entry is not a function", def.name.c_str() );
+			/* Get the function to call. */
+			m_pLuaTable->PushSelf( LUA->L );
+			ASSERT( lua_istable( LUA->L, -1 ) );
 
-		/* Argument 1 (self): */
-		m_pLuaTable->PushSelf( LUA->L );
+			lua_pushstring( LUA->L, "SaveSelections" );
+			lua_gettable( LUA->L, -2 );
+			if( !lua_isfunction( LUA->L, -1 ) )
+				RageException::Throw( "\"%s\" \"SaveSelections\" entry is not a function", def.name.c_str() );
 
-		/* Argument 2 (vbSelectedOut): */
-		lua_pushvalue( LUA->L, 1 );
+			/* Argument 1 (self): */
+			m_pLuaTable->PushSelf( LUA->L );
 
-		/* Argument 3 (pn): */
-		LuaHelpers::PushStack( (int) pn );
+			/* Argument 2 (vbSelectedOut): */
+			lua_pushvalue( LUA->L, 1 );
 
-		ASSERT( lua_gettop(LUA->L) == 6 ); /* vbSelectedOut, m_iLuaTable, function, self, arg, arg */
+			/* Argument 3 (pn): */
+			LuaHelpers::PushStack( (int) p );
 
-		lua_call( LUA->L, 3, 0 ); // call function with 3 arguments and 0 results
-		ASSERT( lua_gettop(LUA->L) == 2 );
+			ASSERT( lua_gettop(LUA->L) == 6 ); /* vbSelectedOut, m_iLuaTable, function, self, arg, arg */
 
-		lua_pop( LUA->L, 1 ); /* pop option table */
+			lua_call( LUA->L, 3, 0 ); // call function with 3 arguments and 0 results
+			ASSERT( lua_gettop(LUA->L) == 2 );
 
-		LUA->ReadArrayFromTableB( vbSelectedOut );
-		
-		lua_pop( LUA->L, 1 ); /* pop vbSelectedOut table */
+			lua_pop( LUA->L, 1 ); /* pop option table */
+			lua_pop( LUA->L, 1 ); /* pop vbSelected table */
 
-		ASSERT( lua_gettop(LUA->L) == 0 );
-	}
-    virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const
-	{
-		ASSERT( lua_gettop(LUA->L) == 0 );
-
-		/* Evaluate SaveSelections(self,array,pn) function, where array is a table
-			* representing vbSelectedOut. */
-
-		vector<bool> vbSelectedCopy = vbSelected;
-
-		/* Create the vbSelectedOut table. */
-		LUA->CreateTableFromArrayB( vbSelectedCopy );
-		ASSERT( lua_gettop(LUA->L) == 1 ); /* vbSelectedOut table */
-
-		/* Get the function to call. */
-		m_pLuaTable->PushSelf( LUA->L );
-		ASSERT( lua_istable( LUA->L, -1 ) );
-
-		lua_pushstring( LUA->L, "SaveSelections" );
-		lua_gettable( LUA->L, -2 );
-		if( !lua_isfunction( LUA->L, -1 ) )
-			RageException::Throw( "\"%s\" \"SaveSelections\" entry is not a function", def.name.c_str() );
-
-		/* Argument 1 (self): */
-		m_pLuaTable->PushSelf( LUA->L );
-
-		/* Argument 2 (vbSelectedOut): */
-		lua_pushvalue( LUA->L, 1 );
-
-		/* Argument 3 (pn): */
-		LuaHelpers::PushStack( (int) pn );
-
-		ASSERT( lua_gettop(LUA->L) == 6 ); /* vbSelectedOut, m_iLuaTable, function, self, arg, arg */
-
-		lua_call( LUA->L, 3, 0 ); // call function with 3 arguments and 0 results
-		ASSERT( lua_gettop(LUA->L) == 2 );
-
-		lua_pop( LUA->L, 1 ); /* pop option table */
-		lua_pop( LUA->L, 1 ); /* pop vbSelected table */
-
-		ASSERT( lua_gettop(LUA->L) == 0 );
+			ASSERT( lua_gettop(LUA->L) == 0 );
+		}
 
 		// XXX: allow specifying the mask
 		return 0;
@@ -781,29 +814,43 @@ public:
 
 		defOut.name = opt->name;
 	}
-	virtual void ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
+	virtual void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
-		int iSelection = opt->Get();
-		SelectExactlyOne( iSelection, vbSelectedOut );
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+		{
+			PlayerNumber p = *pn;
+			vector<bool> &vbSelOut = vbSelectedOut[p];
+
+			int iSelection = opt->Get();
+			SelectExactlyOne( iSelection, vbSelOut );
+		}
 	}
-	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const
+	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
-		int sel = GetOneSelection(vbSelected);
+		bool bChanged = false;
 
-		/* Get the original choice. */
-		int Original = opt->Get();
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+		{
+			PlayerNumber p = *pn;
+			const vector<bool> &vbSel = vbSelected[p];
 
-		/* Apply. */
-		opt->Put( sel );
+			int sel = GetOneSelection(vbSel);
 
-		/* Get the new choice. */
-		int New = opt->Get();
+			/* Get the original choice. */
+			int Original = opt->Get();
 
-		/* If it didn't change, don't return any side-effects. */
-		if( Original == New )
-			return 0;
+			/* Apply. */
+			opt->Put( sel );
 
-		return opt->GetEffects();
+			/* Get the new choice. */
+			int New = opt->Get();
+
+			/* If it didn't change, don't return any side-effects. */
+			if( Original != New )
+				bChanged = true;
+		}
+
+		return bChanged ? opt->GetEffects() : 0;
 	}
 };
 
@@ -864,25 +911,38 @@ public:
 		if( *m_pstToFill == STEPS_TYPE_INVALID )
 			m_pstToFill->Set( m_vStepsTypesToShow[0] );
 	}
-	virtual void ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
+	virtual void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
-		if( GAMESTATE->m_pCurSteps[0] )
+		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
-			StepsType st = GAMESTATE->m_pCurSteps[0]->m_StepsType;
-			vector<StepsType>::const_iterator iter = find( m_vStepsTypesToShow.begin(), m_vStepsTypesToShow.end(), st );
-			if( iter != m_vStepsTypesToShow.end() )
+			PlayerNumber p = *pn;
+			vector<bool> &vbSelOut = vbSelectedOut[p];
+
+			if( GAMESTATE->m_pCurSteps[0] )
 			{
-				unsigned i = iter - m_vStepsTypesToShow.begin();
-				vbSelectedOut[i] = true;
-				return;
+				StepsType st = GAMESTATE->m_pCurSteps[0]->m_StepsType;
+				vector<StepsType>::const_iterator iter = find( m_vStepsTypesToShow.begin(), m_vStepsTypesToShow.end(), st );
+				if( iter != m_vStepsTypesToShow.end() )
+				{
+					unsigned i = iter - m_vStepsTypesToShow.begin();
+					vbSelOut[i] = true;
+					continue;	// done with this player
+				}
 			}
+			vbSelOut[0] = true;
 		}
-		vbSelectedOut[0] = true;
 	}
-	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const
+	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
-		int index = GetOneSelection( vbSelected );
-		m_pstToFill->Set( m_vStepsTypesToShow[index] );
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+		{
+			PlayerNumber p = *pn;
+			const vector<bool> &vbSel = vbSelected[p];
+
+			int index = GetOneSelection( vbSel );
+			m_pstToFill->Set( m_vStepsTypesToShow[index] );
+		}
+
 		return 0;
 	}
 };
@@ -992,43 +1052,58 @@ public:
 			m_pDifficultyToFill->Set( m_vDifficulties[0] );
 		m_ppStepsToFill->Set( m_vSteps[0] );
 	}
-	virtual void ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
+	virtual void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
-		ASSERT( m_vSteps.size() == vbSelectedOut.size() );
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+		{
+			PlayerNumber p = *pn;
+			vector<bool> &vbSelOut = vbSelectedOut[p];
 
-		// look for matching steps
-		vector<Steps*>::const_iterator iter = find( m_vSteps.begin(), m_vSteps.end(), m_ppStepsToFill->Get() );
-		if( iter != m_vSteps.end() )
-		{
-			unsigned i = iter - m_vSteps.begin();
-			vbSelectedOut[i] = true;
-			return;
-		}
-		// look for matching difficulty
-		if( m_pDifficultyToFill )
-		{
-			FOREACH_CONST( Difficulty, m_vDifficulties, d )
+			ASSERT( m_vSteps.size() == vbSelOut.size() );
+
+			// look for matching steps
+			vector<Steps*>::const_iterator iter = find( m_vSteps.begin(), m_vSteps.end(), m_ppStepsToFill->Get() );
+			if( iter != m_vSteps.end() )
 			{
-				unsigned i = d - m_vDifficulties.begin();
-				if( *d == GAMESTATE->m_PreferredDifficulty[0] )
+				unsigned i = iter - m_vSteps.begin();
+				vbSelOut[i] = true;
+				return;
+			}
+			// look for matching difficulty
+			if( m_pDifficultyToFill )
+			{
+				FOREACH_CONST( Difficulty, m_vDifficulties, d )
 				{
-					vbSelectedOut[i] = true;
-					ExportOption( def, pn, vbSelectedOut );	// current steps changed
-					return;
+					unsigned i = d - m_vDifficulties.begin();
+					if( *d == GAMESTATE->m_PreferredDifficulty[0] )
+					{
+						vbSelOut[i] = true;
+						vector<PlayerNumber> v;
+						v.push_back( p );
+						ExportOption( def, v, vbSelectedOut );	// current steps changed
+						continue;
+					}
 				}
 			}
+			// default to 1st
+			vbSelOut[0] = true;
 		}
-		// default to 1st
-		vbSelectedOut[0] = true;
 	}
-	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const
+	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
-		int index = GetOneSelection( vbSelected );
-		Difficulty dc = m_vDifficulties[index];
-		Steps *pSteps = m_vSteps[index];
-		if( m_pDifficultyToFill )
-			m_pDifficultyToFill->Set( dc );
-		m_ppStepsToFill->Set( pSteps );
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+		{
+			PlayerNumber p = *pn;
+			const vector<bool> &vbSel = vbSelected[p];
+
+			int index = GetOneSelection( vbSel );
+			Difficulty dc = m_vDifficulties[index];
+			Steps *pSteps = m_vSteps[index];
+			if( m_pDifficultyToFill )
+				m_pDifficultyToFill->Set( dc );
+			m_ppStepsToFill->Set( pSteps );
+		}
+
 		return 0;
 	}
 };

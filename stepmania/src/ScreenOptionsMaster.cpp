@@ -105,18 +105,22 @@ ScreenOptionsMaster::~ScreenOptionsMaster()
 	OptionRowHandlers.clear();
 }
 
-void ScreenOptionsMaster::ImportOptions( int r, PlayerNumber pn )
+void ScreenOptionsMaster::ImportOptions( int r, const vector<PlayerNumber> &vpns )
 {
-	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
+	FOREACH_CONST( PlayerNumber, vpns, pn )
+		ASSERT( GAMESTATE->IsHumanPlayer(*pn) );
 	OptionRow &row = *m_Rows[r];
-	row.ImportOptions( pn );
+	row.ImportOptions( vpns );
 }
 
-void ScreenOptionsMaster::ExportOptions( int r, PlayerNumber pn )
+void ScreenOptionsMaster::ExportOptions( int r, const vector<PlayerNumber> &vpns )
 {
 	OptionRow &row = *m_Rows[r];
-	bool bRowHasFocus = m_iCurrentRow[pn] == r;
-	m_iChangeMask |= row.ExportOptions( pn, bRowHasFocus );
+	bool bRowHasFocus[NUM_PLAYERS];
+	ZERO( bRowHasFocus );
+	FOREACH_CONST( PlayerNumber, vpns, pn )
+		bRowHasFocus[*pn] = m_iCurrentRow[*pn] == r;
+	m_iChangeMask |= row.ExportOptions( vpns, bRowHasFocus );
 }
 
 void ScreenOptionsMaster::BeginFadingOut()
@@ -216,8 +220,10 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 			{
 				CHECKPOINT_M( ssprintf("%i/%i", r, int(OptionRowHandlers.size())) );
 
+				vector<PlayerNumber> vpns;
 				FOREACH_OptionsPlayer( p )
-					ExportOptions( r, p );
+					vpns.push_back( p );
+				ExportOptions( r, vpns );
 			}
 
 			if( m_iChangeMask & OPT_APPLY_ASPECT_RATIO )

@@ -34,8 +34,8 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-	virtual void ImportOptions( int row, PlayerNumber pn ) = 0;
-	virtual void ExportOptions( int row, PlayerNumber pn ) = 0;
+	virtual void ImportOptions( int row, const vector<PlayerNumber> &vpns ) = 0;
+	virtual void ExportOptions( int row, const vector<PlayerNumber> &vpns ) = 0;
 
 	void InitOptionsText();
 	void GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut );

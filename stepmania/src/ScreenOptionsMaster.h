@@ -21,8 +21,8 @@ protected:
 protected:
 	void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void ImportOptions( int row, PlayerNumber pn );
-	virtual void ExportOptions( int row, PlayerNumber pn );
+	virtual void ImportOptions( int row, const vector<PlayerNumber> &vpns );
+	virtual void ExportOptions( int row, const vector<PlayerNumber> &vpns );
 
 	virtual void BeginFadingOut();
 	virtual void GoToNextScreen();

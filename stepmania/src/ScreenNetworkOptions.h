@@ -14,8 +14,8 @@ public:
 	virtual void MenuStart( PlayerNumber pn, const InputEventType type );
 
 private:
-	void ImportOptions( int row, PlayerNumber pn );
-	void ExportOptions( int row, PlayerNumber pn );
+	void ImportOptions( int row, const vector<PlayerNumber> &vpns );
+	void ExportOptions( int row, const vector<PlayerNumber> &vpns );
 
 	void GoToNextScreen();
 	void GoToPrevScreen();

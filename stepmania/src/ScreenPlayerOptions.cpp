@@ -150,7 +150,9 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 
 		for( unsigned r=0; r<m_Rows.size(); r++ )
 		{
-			this->ImportOptions( r, pn );
+			vector<PlayerNumber> v;
+			v.push_back( pn );
+			this->ImportOptions( r, v );
 			this->PositionUnderlines( r, pn );
 			this->UpdateDisqualified( r, pn );
 		}
@@ -205,7 +207,9 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 	// Find out if the current row when exprorted causes disqualification.
 	// Exporting the row will fill GAMESTATE->m_PlayerOptions.
 	GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions = PlayerOptions();
-	ExportOptions( row, pn );
+	vector<PlayerNumber> v;
+	v.push_back( pn );
+	ExportOptions( row, v );
 	bool bRowCausesDisqualified = GAMESTATE->IsDisqualified( pn );
 	m_bRowCausesDisqualified[pn][row] = bRowCausesDisqualified;
 

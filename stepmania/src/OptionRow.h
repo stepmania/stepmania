@@ -90,8 +90,8 @@ public:
 
 	CString GetRowTitle() const;
 
-	void ImportOptions( PlayerNumber pn );
-	int ExportOptions( PlayerNumber pn, bool bRowHasFocus );
+	void ImportOptions( const vector<PlayerNumber> &vpns );
+	int ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocus[NUM_PLAYERS] );
 
 	void AfterImportOptions( float fY );
 	void DetachHandler();

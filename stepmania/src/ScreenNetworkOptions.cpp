@@ -154,8 +154,8 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 #endif
 }
 
-void ScreenNetworkOptions::ImportOptions( int row, PlayerNumber pn ) { }
-void ScreenNetworkOptions::ExportOptions( int row, PlayerNumber pn ) { }
+void ScreenNetworkOptions::ImportOptions( int row, const vector<PlayerNumber> &vpns ) { }
+void ScreenNetworkOptions::ExportOptions( int row, const vector<PlayerNumber> &vpns ) { }
 
 void ScreenNetworkOptions::UpdateConnectStatus( )
 {

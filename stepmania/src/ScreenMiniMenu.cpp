@@ -86,7 +86,7 @@ void ScreenMiniMenu::Init( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMe
 	ScreenOptions::InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
 }
 
-void ScreenMiniMenu::ImportOptions( int r, PlayerNumber pn )
+void ScreenMiniMenu::ImportOptions( int r, const vector<PlayerNumber> &vpns )
 {
 	OptionRow &optrow = *m_Rows[r];
 	MenuRow &mr = m_vMenuRows[r];
@@ -94,7 +94,7 @@ void ScreenMiniMenu::ImportOptions( int r, PlayerNumber pn )
 		optrow.SetOneSharedSelection( mr.iDefaultChoice );
 }
 
-void ScreenMiniMenu::ExportOptions( int r, PlayerNumber pn )
+void ScreenMiniMenu::ExportOptions( int r, const vector<PlayerNumber> &vpns )
 {
 	if( r == GetCurrentRow() )
 		s_iLastRowCode = m_vMenuRows[r].iRowCode;

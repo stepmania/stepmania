@@ -23,10 +23,10 @@ public:
 		m_vsReloadRowMessages.clear();
 	}
 	virtual void Load( OptionRowDefinition &defOut, CString sParam ) = 0;
-	void Reload( OptionRowDefinition &defOut ) { this->Load(defOut,m_sName); }
-	virtual void ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const = 0;
+	virtual void Reload( OptionRowDefinition &defOut ) { this->Load(defOut,m_sName); }
+	virtual void ImportOption( const OptionRowDefinition &row, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const = 0;
 	/* Returns an OPT mask. */
-	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const = 0;
+	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const = 0;
 	virtual CString GetIconText( const OptionRowDefinition &def, int iFirstSelection ) const { return ""; }
 	virtual bool HasScreen( int iChoice ) const { return false; }
 };

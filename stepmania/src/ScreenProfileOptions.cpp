@@ -84,12 +84,8 @@ void ScreenProfileOptions::Init()
 	SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions","music") );
 }
 
-void ScreenProfileOptions::ImportOptions( int row, PlayerNumber pn )
+void ScreenProfileOptions::ImportOptions( int row, const vector<PlayerNumber> &vpns )
 {
-	// Only take action for the master player
-	if( pn != GAMESTATE->m_MasterPlayerNumber )
-		return;
-
 	switch( row )
 	{
 	case PO_PLAYER1:
@@ -110,12 +106,8 @@ void ScreenProfileOptions::ImportOptions( int row, PlayerNumber pn )
 	}
 }
 
-void ScreenProfileOptions::ExportOptions( int row, PlayerNumber pn )
+void ScreenProfileOptions::ExportOptions( int row, const vector<PlayerNumber> &vpns )
 {
-	// Only take action for the master player
-	if( pn != GAMESTATE->m_MasterPlayerNumber )
-		return;
-
 	switch( row )
 	{
 	case PO_PLAYER1:

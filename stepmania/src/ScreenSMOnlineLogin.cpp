@@ -58,12 +58,8 @@ void ScreenSMOnlineLogin::Init()
 	}
 }
 
-void ScreenSMOnlineLogin::ImportOptions( int row, PlayerNumber pn )
+void ScreenSMOnlineLogin::ImportOptions( int row, const vector<PlayerNumber> &vpns )
 {
-	// Only take action for the master player
-	if( pn != GAMESTATE->m_MasterPlayerNumber )
-		return;
-
 	switch( row )
 	{
 	case 0:
@@ -84,12 +80,8 @@ void ScreenSMOnlineLogin::ImportOptions( int row, PlayerNumber pn )
 	}
 }
 
-void ScreenSMOnlineLogin::ExportOptions( int row, PlayerNumber pn )
+void ScreenSMOnlineLogin::ExportOptions( int row, const vector<PlayerNumber> &vpns )
 {
-	// Only take action for the master player
-	if( pn != GAMESTATE->m_MasterPlayerNumber )
-		return;
-
 	switch( row )
 	{
 	case 0:
@@ -113,8 +105,11 @@ void ScreenSMOnlineLogin::GoToPrevScreen()
 
 void ScreenSMOnlineLogin::GoToNextScreen()
 {
+	vector<PlayerNumber> v;
+	v.push_back( GAMESTATE->m_MasterPlayerNumber );
 	for( unsigned r=0; r<m_Rows.size(); r++ )
-		ExportOptions( r, GAMESTATE->m_MasterPlayerNumber );
+		ExportOptions( r, v );
+
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	FOREACH_EnabledPlayer(pn)
 	{
