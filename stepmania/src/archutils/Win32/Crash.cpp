@@ -458,7 +458,7 @@ typedef BOOL (__stdcall *PGETMODULEINFORMATION)(HANDLE, HMODULE, Win32ModuleInfo
 typedef HANDLE (__stdcall *PCREATETOOLHELP32SNAPSHOT)(DWORD, DWORD);
 typedef BOOL (WINAPI *PMODULE32FIRST)(HANDLE, LPMODULEENTRY32);
 typedef BOOL (WINAPI *PMODULE32NEXT)(HANDLE, LPMODULEENTRY32);
-
+/*
 static ModuleInfo *CrashGetModules(void *&ptr) {
 	void *pMem = VirtualAlloc(NULL, 65536, MEM_COMMIT, PAGE_READWRITE);
 
@@ -596,7 +596,7 @@ static ModuleInfo *CrashGetModules(void *&ptr) {
 	ptr = NULL;
 	return NULL;
 }
-
+*/
 ///////////////////////////////////////////////////////////////////////////
 //
 //	info from Portable Executable/Common Object File Format (PE/COFF) spec
@@ -717,6 +717,7 @@ struct PE32PlusOptionalHeader {
 	ulong		export_size;			// 116
 };
 
+/*
 static const char *CrashLookupExport(HMODULE hmod, unsigned long addr, unsigned long &fnbase) {
 	char *pBase = (char *)hmod;
 
@@ -826,6 +827,7 @@ static const char *CrashLookupExport(HMODULE hmod, unsigned long addr, unsigned 
 
 	return pszName;
 }
+*/
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -1055,7 +1057,7 @@ long VDDebugInfoLookupRVA(VDDebugInfoContext *pctx, unsigned rva, char *buf, int
 #include "dbghelp.h"
 #pragma comment(lib, "dbghelp.lib")
 
-static const char *Demangle( const char *buf )
+static bool InitDbghelp()
 {
 	static bool initted = false;
 	if( !initted )
@@ -1063,13 +1065,36 @@ static const char *Demangle( const char *buf )
 		SymSetOptions( SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS );
 
 		if (!SymInitialize(GetCurrentProcess(), NULL, TRUE))
-			return buf;
+			return false;
 
 		initted = true;
 	}
 
-	static char obuf[1024];
+	return true;
+}
 
+static SYMBOL_INFO *GetSym( unsigned long ptr, DWORD64 &disp )
+{
+	InitDbghelp();
+
+	static BYTE buffer[1024];
+	SYMBOL_INFO *pSymbol = (PSYMBOL_INFO)buffer;
+
+	pSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+	pSymbol->MaxNameLen = sizeof(buffer) - sizeof(SYMBOL_INFO) + 1;
+
+	if (!SymFromAddr(GetCurrentProcess(), ptr, &disp, pSymbol))
+		return NULL;
+
+	return pSymbol;
+}
+
+static const char *Demangle( const char *buf )
+{
+	if( !InitDbghelp() )
+		return buf;
+
+	static char obuf[1024];
 	if( !UnDecorateSymbolName(buf, obuf, sizeof(obuf),
 		UNDNAME_COMPLETE
 		| UNDNAME_NO_CV_THISTYPE
@@ -1080,6 +1105,13 @@ static const char *Demangle( const char *buf )
 	{
 		return buf;
 	}
+
+	if( obuf[0] == '_' )
+	{
+		strcat( obuf, "()" ); /* _main -> _main() */
+		return obuf+1; /* _main -> main */
+	}
+
 	return obuf;
 }
 
@@ -1105,7 +1137,7 @@ static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTE
 	// Get some module names.
 
 	void *pModuleMem;
-	ModuleInfo *pModules = CrashGetModules(pModuleMem);
+//	ModuleInfo *pModules = CrashGetModules(pModuleMem);
 
 	// Retrieve stack pointers.
 	// Not sure if NtCurrentTeb() is available on Win95....
@@ -1150,6 +1182,26 @@ static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTE
 				Report(hwnd, hFile, "%08lx: %s", data, Demangle(buf));
 				--limit;
 			} else {
+				char szName[MAX_PATH];
+				if( !CrashGetModuleBaseName((HMODULE)meminfo.AllocationBase, szName) )
+					strcpy( szName, "???" );
+
+				DWORD64 disp;
+				SYMBOL_INFO *pSymbol = GetSym( data, disp );
+
+				if( pSymbol )
+				{
+					Report(hwnd, hFile, "%08lx: %s!%s [%08lx+%lx+%lx]",
+						(unsigned long) data, szName, pSymbol->Name,
+						(unsigned long) meminfo.AllocationBase,
+						(unsigned long) (pSymbol->Address) - (unsigned long) (meminfo.AllocationBase),
+						(unsigned long) disp);
+				} else {
+					Report(hwnd, hFile, "%08lx: %s!%08lx",
+						(unsigned long) data, szName, 
+						(unsigned long) meminfo.AllocationBase );
+				}
+/*
 				ModuleInfo *pMods = pModules;
 				ModuleInfo mi;
 				char szName[MAX_PATH];
@@ -1184,7 +1236,7 @@ static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTE
 						Report(hwnd, hFile, "%08lx: %s!%08lx", data, mi.name, data - mi.base);
 				} else
 					Report(hwnd, hFile, "%08lx: %08lx", data, data);
-
+*/
 				--limit;
 			}
 		}
