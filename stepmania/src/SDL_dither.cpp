@@ -23,7 +23,6 @@ static const int DitherMat[DitherMatDim][DitherMatDim] =
 };
 
 static int DitherMatCalc[DitherMatDim][DitherMatDim];
-static bool DitherMatCalc_initted = false;
 
 /* conv is the ratio from the input to the output. */
 static Uint8 DitherPixel(int x, int y, int intensity,  int conv)
@@ -54,9 +53,13 @@ static Uint8 DitherPixel(int x, int y, int intensity,  int conv)
 
 void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 {
-	if(!DitherMatCalc_initted) {
-		for(int i = 0; i < DitherMatDim; ++i) {
-			for(int j = 0; j < DitherMatDim; ++j) {
+	static bool DitherMatCalc_initted = false;
+	if( !DitherMatCalc_initted )
+	{
+		for( int i = 0; i < DitherMatDim; ++i )
+		{
+			for( int j = 0; j < DitherMatDim; ++j )
+			{
 				/* Each value is 0..15.  They represent 0/16 through 15/16.
 				 * Set DitherMatCalc to that value * 65536, so we can do it
 				 * with integer calcs. */
@@ -67,22 +70,21 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 		DitherMatCalc_initted = true;
 	}
 
-
 	/* We can't dither to paletted surfaces. */
-	ASSERT(dst->format->BytesPerPixel > 1);
+	ASSERT( dst->format->BytesPerPixel > 1 );
 
 	Uint32 src_cbits[4], dst_cbits[4];
-	mySDL_GetBitsPerChannel(src->format, src_cbits);
-	mySDL_GetBitsPerChannel(dst->format, dst_cbits);
+	mySDL_GetBitsPerChannel( src->format, src_cbits );
+	mySDL_GetBitsPerChannel( dst->format, dst_cbits );
 
 	/* Calculate the ratio from the old bit depth to the new for each color channel. */
 	int conv[4];
-	for(int i = 0; i < 4; ++i)
+	for( int i = 0; i < 4; ++i )
 	{
 		int MaxInputIntensity = (1 << src_cbits[i])-1;
 		int MaxOutputIntensity = (1 << dst_cbits[i])-1;
 		/* If the source is missing the channel, avoid div/0. */
-		if(MaxInputIntensity == 0)
+		if( MaxInputIntensity == 0 )
 			conv[i] = 0;
 		else
 			conv[i] = MaxOutputIntensity * 65536 / MaxInputIntensity;
@@ -92,25 +94,29 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 	const Uint8 alpha_max = Uint8((1 << dst_cbits[3]) - 1);
 
 	/* For each row: */
-	for(int row = 0; row < src->h; ++row) {
-		const Uint8 *srcp = (const Uint8 *)src->pixels + row * src->pitch;
-		Uint8 *dstp = (Uint8 *)dst->pixels + row * dst->pitch;
+	for( int row = 0; row < src->h; ++row )
+	{
+		const Uint8 *srcp = (const Uint8 *) src->pixels + row * src->pitch;
+		Uint8 *dstp = (Uint8 *) dst->pixels + row * dst->pitch;
 
 		/* For each pixel: */
-		for(int col = 0; col < src->w; ++col) {
+		for( int col = 0; col < src->w; ++col )
+		{
 			Uint8 colors[4];
-			mySDL_GetRawRGBAV(srcp, src, colors);
+			mySDL_GetRawRGBAV( srcp, src, colors );
 
 			/* Note that we don't dither the alpha channel. */
-			for(int c = 0; c < 3; ++c) {
+			for( int c = 0; c < 3; ++c )
+			{
 				/* If the destination has less bits, dither: */
-				colors[c] = DitherPixel(col, row, colors[c], conv[c]);
+				colors[c] = DitherPixel( col, row, colors[c], conv[c] );
 			}
 
 			/* If the source has no alpha, the conversion formula will end up
 			 * with 0; that's fine for color channels, but for alpha we need to
 			 * be opaque. */
-			if(src_cbits[3] == 0) {
+			if( src_cbits[3] == 0 )
+			{
 				colors[3] = alpha_max;
 			} else {
 				/* Same as DitherPixel, except it doesn't actually dither; dithering
@@ -136,7 +142,7 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 {
 	/* We can't dither to paletted surfaces. */
-	ASSERT(dst->format->BytesPerPixel > 1);
+	ASSERT( dst->format->BytesPerPixel > 1 );
 
 	/* For each row: */
 	for(int row = 0; row < src->h; ++row) 
@@ -147,14 +153,14 @@ void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 		Uint8 *dstp = (Uint8 *)dst->pixels + row * dst->pitch;
 
 		/* For each pixel in row: */
-		for(int col = 0; col < src->w; ++col)
+		for( int col = 0; col < src->w; ++col )
 		{
 			Uint8 originalColors[4];
-			mySDL_GetRGBAV(srcp, src, originalColors);
+			mySDL_GetRGBAV( srcp, src, originalColors );
 
 			Uint8 colorsPlusError[4];
 			int c;
-			for(c = 0; c < 4; ++c) 
+			for( c = 0; c < 4; ++c )
 			{
 				// move some error to the new pixel (without overflowing)
 				Sint32 errorToAdd;
@@ -163,18 +169,17 @@ void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 				else
 					errorToAdd = max( accumError[c], (Sint32)-originalColors[c] );
 
-				colorsPlusError[c] = (Uint8)(originalColors[c] + errorToAdd);
+				colorsPlusError[c] = (Uint8)( originalColors[c] + errorToAdd );
 				accumError[c] -= errorToAdd;
 				
 				// make sure we didn't overflow
 				ASSERT( (Uint8)(originalColors[c] + errorToAdd) == (Sint32)(originalColors[c] + errorToAdd) );
-				
 			}
-			mySDL_SetRGBAV(dstp, dst, colorsPlusError);
 
+			mySDL_SetRGBAV( dstp, dst, colorsPlusError );
 
 			Uint8 ditheredColors[4];
-			mySDL_GetRGBAV(dstp, dst, ditheredColors);
+			mySDL_GetRGBAV( dstp, dst, ditheredColors );
 
 			for(c = 0; c < 4; ++c) 
 				accumError[c] += originalColors[c] - ditheredColors[c];
@@ -183,7 +188,7 @@ void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 			 * This has the effect of not dithering the alpha channel. */
 			accumError[3] = 0;
 
-			for(c = 0; c < 4; ++c)
+			for( c = 0; c < 4; ++c )
 			{
 				// Reduce funky streaks in low-bit channels by clamping error.
 				CLAMP( accumError[c], -128, +128 );
