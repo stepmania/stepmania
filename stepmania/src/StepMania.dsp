@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="StepMania" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 60000
+# Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\stepmania\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                                                                                                                              	cl      /Zl      /nologo      /c      verstub.cpp      /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                                                                                                                               	cl       /Zl       /nologo       /c       verstub.cpp       /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\stepmania\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                                                                                                                               	cl                                                                                                        /Zl                                                                                                        /nologo                                                                                                        /c                                                                                                        verstub.cpp                                                                                                        /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                	cl                                                                                                         /Zl                                                                                                         /nologo                                                                                                         /c                                                                                                         verstub.cpp                                                                                                         /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -340,6 +340,14 @@ SOURCE=.\RageSoundManager.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RageSoundMixBuffer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSoundMixBuffer.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RageSoundPosMap.cpp
 # End Source File
 # Begin Source File
@@ -349,6 +357,14 @@ SOURCE=.\RageSoundPosMap.h
 # Begin Source File
 
 SOURCE=.\RageSoundReader.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSoundReader_Chain.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSoundReader_Chain.h
 # End Source File
 # Begin Source File
 
@@ -421,6 +437,14 @@ SOURCE=.\RageSoundResampler.cpp
 # Begin Source File
 
 SOURCE=.\RageSoundResampler.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSoundUtil.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSoundUtil.h
 # End Source File
 # Begin Source File
 
