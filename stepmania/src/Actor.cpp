@@ -820,6 +820,10 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	else if( sName=="clearzbuffer" )	SetClearZBuffer( bParam(1) );
 	else if( sName=="hidden" )			SetHidden( bParam(1) );
 	else if( sName=="playcommand" )		sParam(1); /* nop: only BGAnimation handles this but everyone receives it */
+	else if( sName=="customtexturerect" || sName=="texcoordvelocity" || sName=="scaletoclipped" ||
+			 sName=="stretchtexcoords" || sName=="position" || sName=="loop" || sName=="play" ||
+			 sName=="pause" || sName=="rate" )
+			 ; /* sprite commands */
 	else
 	{
 		CString sError = ssprintf( "Actor::HandleCommand: Unrecognized command name '%s'.", sName.c_str() );
