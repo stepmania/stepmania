@@ -255,25 +255,27 @@ CString Capitalize( CString s );
 /* ASCII-only case insensitivity. */
 struct char_traits_char_nocase: public char_traits<char>
 {
-    static bool eq( char c1, char c2 )
-    { return toupper(c1) == toupper(c2); }
+    static char uptab[256];
 
-    static bool ne( char c1, char c2 )
-    { return toupper(c1) != toupper(c2); }
+	static inline bool eq( char c1, char c2 )
+	{ return uptab[c1] == uptab[c2]; }
 
-    static bool lt( char c1, char c2 )
-    { return toupper(c1) <  toupper(c2); }
+	static inline bool ne( char c1, char c2 )
+	{ return uptab[c1] != uptab[c2]; }
+
+	static inline bool lt( char c1, char c2 )
+	{ return uptab[c1] < uptab[c2]; }
 
     static int compare( const char* s1, const char* s2, size_t n )
 	{
-		for(size_t i = 0; i < n; ++i)
+		int ret = 0;
+		while( n-- )
 		{
-			const char c1 = (char) tolower(s1[i]);
-			const char c2 = (char) tolower(s2[i]);
-			if(c1 < c2) return -1;
-			if(c1 > c2) return 1;
+			ret = fasttoupper(*s1++) - fasttoupper(*s2++);
+			if( ret != 0 )
+				break;
 		}
-		return 0;
+		return ret;
     }
 
 	static inline char fasttoupper(char a)
