@@ -1029,6 +1029,7 @@ void ScreenGameplay::LoadNextSong()
 	m_MarqueeLightsNoteData.Init();
 	m_BassLightsNoteData.Init();
 	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+	ASSERT( GAMESTATE->m_pCurSong );
 	Steps* pStepsEasy = GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, DIFFICULTY_EASY, false );
 	Steps* pStepsMedium = GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, DIFFICULTY_MEDIUM, false );
 	if( pStepsEasy )	pStepsEasy->GetNoteData( &m_BassLightsNoteData );
@@ -1416,9 +1417,13 @@ void ScreenGameplay::Update( float fDeltaTime )
 	m_meterSongPosition.SetPercent( fPercentPositionSong );
 
 	//NSMAN Update Life in NSMAN.
-	for (int i=0;i<NUM_PLAYERS;i++)
-		NSMAN->m_playerLife[i] = int(m_pLifeMeter[i]->GetLife()*10000);
-	
+	{
+		FOREACH_EnabledPlayer( pn )
+		{
+			ASSERT( m_pLifeMeter[pn] );
+			NSMAN->m_playerLife[pn] = int(m_pLifeMeter[pn]->GetLife()*10000);
+		}
+	}
 }
 
 /* Set g_CurStageStats.bFailed for failed players.  In, FAIL_ARCADE, send
