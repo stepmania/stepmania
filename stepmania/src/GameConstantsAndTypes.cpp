@@ -38,9 +38,9 @@ StringToX( PlayMode );
 
 RankingCategory AverageMeterToRankingCategory( int iAverageMeter )
 {
-	if(      fAverageMeter <= 3 )	return RANKING_A;
-	else if( fAverageMeter <= 6 )	return RANKING_B;
-	else if( fAverageMeter <= 9 )	return RANKING_C;
+	if(      iAverageMeter <= 3 )	return RANKING_A;
+	else if( iAverageMeter <= 6 )	return RANKING_B;
+	else if( iAverageMeter <= 9 )	return RANKING_C;
 	else							return RANKING_D;
 }
 
