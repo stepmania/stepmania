@@ -968,9 +968,6 @@ void ScreenGameplay::LoadNextSong()
 		}
 	}
 
-	m_AutoKeysounds.FinishLoading();
-	m_pSoundMusic = m_AutoKeysounds.GetSound();
-
 	const bool bReverse[NUM_PLAYERS] = 
 	{
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1,
@@ -1079,6 +1076,11 @@ void ScreenGameplay::LoadNextSong()
 			}
 		}
 	}
+
+	/* Load the music last, since it may start streaming and we don't want the music
+	 * to compete with other loading. */
+	m_AutoKeysounds.FinishLoading();
+	m_pSoundMusic = m_AutoKeysounds.GetSound();
 }
 
 float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic)
