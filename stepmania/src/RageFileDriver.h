@@ -12,6 +12,7 @@ public:
 	virtual RageFileManager::FileType GetFileType( CString sPath ) = 0;
 	virtual int GetFileSizeInBytes( CString sFilePath ) = 0;
 	virtual int GetFileModTime( CString sPath ) = 0;
+	virtual bool Ready() { return true; } /* see RageFileManager::MountpointIsReady */
 };
 
 class RageFileObj

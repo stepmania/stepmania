@@ -99,6 +99,56 @@ int RageFileDriverDirect::GetFileModTime( CString sPath )
 	return st.st_mtime;
 }
 
+#ifdef _WINDOWS
+#include "windows.h"
+#endif
+bool RageFileDriverDirect::Ready()
+{
+#ifdef _WINDOWS
+	// Windows will throw up a message box if we try to write to a
+	// removable drive with no disk inserted.  Find out whether there's a 
+	// disk in the drive w/o writing a file.
+
+	// find drive letter
+	vector<CString> matches;
+	static Regex parse("^([A-Za-z]+):");
+	parse.Compare( root, matches );
+	if( matches.size() != 1 )
+		return false;
+
+	CString sDrive = matches[0];
+	TCHAR szVolumeNameBuffer[MAX_PATH];
+	DWORD dwVolumeSerialNumber;
+	DWORD dwMaximumComponentLength;
+	DWORD lpFileSystemFlags;
+	TCHAR szFileSystemNameBuffer[MAX_PATH];
+	BOOL bResult = GetVolumeInformation( 
+		sDrive + ":\\",
+		szVolumeNameBuffer,
+		sizeof(szVolumeNameBuffer),
+		&dwVolumeSerialNumber,
+		&dwMaximumComponentLength,
+		&lpFileSystemFlags,
+		szFileSystemNameBuffer,
+		sizeof(szFileSystemNameBuffer) );
+	return !!bResult;
+#else
+
+	// Try to create directory before writing a temp file.
+	CreateDirectories( sDir ); // XXX
+	
+	// Try to write a file.
+	CString sFile = sDir + "temp";
+	RageFile f;
+	if( !f.Open( sFile, RageFile::WRITE ) )
+		return false;
+
+	f.Close();
+	remove( sFile );
+	return true;
+#endif
+}
+
 RageFileObjDirect::RageFileObjDirect( int fd_, RageFile &p ):
 	RageFileObj( p )
 {
@@ -162,5 +212,6 @@ int RageFileObjDirect::GetFileSize()
 /*
  * Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
  *   Glenn Maynard
+ *   Chris Danford
  */
 

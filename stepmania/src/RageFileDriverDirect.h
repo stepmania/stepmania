@@ -13,6 +13,7 @@ public:
 	RageFileManager::FileType GetFileType( CString sPath );
 	int GetFileSizeInBytes( CString sFilePath );
 	int GetFileModTime( CString sPath );
+	bool Ready();
 
 private:
 	CString root;

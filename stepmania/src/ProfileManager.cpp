@@ -15,6 +15,8 @@
 #include "arch/arch.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
+#include "RageFile.h"
+#include "RageFileManager.h"
 #include "IniFile.h"
 #include "GameConstantsAndTypes.h"
 #include "SongManager.h"
@@ -34,10 +36,22 @@ ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our
 #define NEW_MEM_CARD_NAME			"NewCard"
 #define NEW_PROFILE_NAME			"NewProfile"
 
+static const char *MemCardDirs[NUM_PLAYERS] =
+{
+	/* @ is important; see RageFileManager LoadedDriver::GetPath */
+	"@mc1" SLASH,
+	"@mc2" SLASH,
+};
+
 ProfileManager::ProfileManager()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
 		m_bUsingMemoryCard[p] = false;
+
+		if( PREFSMAN->m_sMemoryCardDir[p] != "" )
+			FILEMAN->Mount( "dir", PREFSMAN->m_sMemoryCardDir[p], MemCardDirs[p] );
+	}
 }
 
 ProfileManager::~ProfileManager()
@@ -125,79 +139,15 @@ bool ProfileManager::LoadDefaultProfileFromMachine( PlayerNumber pn )
 	return LoadProfile( pn, sDir, false );
 }
 
-CString GetMemCardDir( PlayerNumber pn )
-{
-	CString sDir = PREFSMAN->m_sMemoryCardDir[pn];
-	if( sDir.empty() )
-		return sDir;
-	if( sDir.Right(1) != SLASH )
-		sDir += SLASH;
-	return sDir;
-}
-
 bool ProfileManager::IsMemoryCardInserted( PlayerNumber pn )
 {
-	CString sDir = GetMemCardDir( pn );
-	if( sDir.empty() )
-		return false;
-
-#ifdef _WINDOWS
-	// Windows will throw up a message box if we try to write to a
-	// removable drive with no disk inserted.  Find out whether there's a 
-	// disk in the drive w/o writing a file.
-
-	// find drive letter
-	vector<CString> matches;
-	static Regex parse("^([A-Za-z]+):");
-	parse.Compare(sDir, matches);
-	if( matches.size() != 1 )
-	{
-		return false;
-	}
-	else
-	{
-		CString sDrive = matches[0];
-		TCHAR szVolumeNameBuffer[MAX_PATH];
-		DWORD dwVolumeSerialNumber;
-		DWORD dwMaximumComponentLength;
-		DWORD lpFileSystemFlags;
-		TCHAR szFileSystemNameBuffer[MAX_PATH];
-		BOOL bResult = GetVolumeInformation( 
-			sDrive + ":",
-			szVolumeNameBuffer,
-			sizeof(szVolumeNameBuffer),
-			&dwVolumeSerialNumber,
-			&dwMaximumComponentLength,
-			&lpFileSystemFlags,
-			szFileSystemNameBuffer,
-			sizeof(szFileSystemNameBuffer) );
-		return !!bResult;
-	}
-#else
-
-	// Try to create directory before writing a temp file.
-	CreateDirectories( sDir );
-	
-	// Test whether a memory card is usable by trying to write a file.
-	CString sFile = sDir + "temp";
-	FILE* fp = fopen( sFile, "w" );
-	if( fp )
-	{
-		fclose( fp );
-		remove( sFile );
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-#endif
+	return FILEMAN->MountpointIsReady( MemCardDirs[pn] );
 }
 
 bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 {
-	CString sDir = GetMemCardDir( pn );
-	if( sDir.empty() )
+	CString sDir = MemCardDirs[pn];
+	if( !FILEMAN->IsMounted(sDir) )
 		return false;
 	
 	m_bUsingMemoryCard[pn] = true;
@@ -218,7 +168,7 @@ bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
 		if( LoadProfileFromMemoryCard(pn) )
 			return true;
 	
-		CString sDir = GetMemCardDir( pn );
+		CString sDir = MemCardDirs[pn];
 		CreateProfile( sDir, NEW_MEM_CARD_NAME );
 		if( LoadProfileFromMemoryCard(pn) )
 			return true;

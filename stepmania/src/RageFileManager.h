@@ -20,7 +20,9 @@ public:
 	int GetFileSizeInBytes( const CString &sPath );
 	int GetFileModTime( const CString &sPath );
 
-	void AddFS( CString Type, CString RealPath, CString Root );
+	void Mount( CString Type, CString RealPath, CString MountPoint );
+	bool IsMounted( CString MountPoint );
+	bool MountpointIsReady( CString MountPoint );
 
 	/* Used only by RageFile: */
 	RageFileObj *Open( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err );

@@ -14,7 +14,7 @@ struct LoadedDriver
 	 * only send "Foo/Bar".  The path "Themes/Foo" is out of the scope
 	 * of the driver, and GetPath returns false. */
 	RageFileDriver *driver;
-	CString base;
+	CString MountPoint;
 
 	CString GetPath( CString path );
 };
@@ -25,15 +25,15 @@ static vector<LoadedDriver> g_Drivers;
 RageFileManager::RageFileManager()
 {
 #if defined(XBOX)
-	RageFileManager::AddFS( "dir", ".", "" );
+	RageFileManager::Mount( "dir", ".", "" );
 	/* XXX: drop BASE_PATH and do this instead */
-//	RageFileManager::AddFS( "dir", "D:\\", "" );
+//	RageFileManager::Mount( "dir", "D:\\", "" );
 #else
 	/* Paths relative to the CWD: */
-	RageFileManager::AddFS( "dir", ".", "" );
+	RageFileManager::Mount( "dir", ".", "" );
 
 	/* Absolute paths.  This is rarely used, eg. by Alsa9Buf::GetSoundCardDebugInfo(). */
-	RageFileManager::AddFS( "dir", "/", "/" );
+	RageFileManager::Mount( "dir", "/", "/" );
 #endif
 
 #if defined(WIN32)
@@ -41,7 +41,7 @@ RageFileManager::RageFileManager()
 	for( char c = 'A'; c <= 'Z'; ++c )
 	{
 		const CString path = ssprintf( "%c:/", c );
-		RageFileManager::AddFS( "dir", path, path );
+		RageFileManager::Mount( "dir", path, path );
 	}
 #endif
 }
@@ -56,24 +56,26 @@ RageFileManager::~RageFileManager()
 
 CString LoadedDriver::GetPath( CString path )
 {
-	if( base.size() == 0 )
-		return path;
+	/* If the path begins with @, default mount points don't count. */
+	const bool Dedicated = ( path.size() && path[0] == '@' );
+	if( MountPoint.size() == 0 )
+		return Dedicated? "":path;
 	
 	/* Map all slashes to forward slash. */
 	path.Replace( "\\", "/" );
 
-	if( path.Left( base.size() ).CompareNoCase( base ) )
+	if( path.Left( MountPoint.size() ).CompareNoCase( MountPoint ) )
 		return ""; /* no match */
 
-	return path.Right( path.size() - base.size() );
+	return path.Right( path.size() - MountPoint.size() );
 }
 
 
 #include "RageFileDriverDirect.h"
-void RageFileManager::AddFS( CString Type, CString Root, CString Base )
+void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 {
-	if( Base.size() && Base.Right(1) != "/" )
-		Base += '/';
+	if( MountPoint.size() && MountPoint.Right(1) != "/" )
+		MountPoint += '/';
 	ASSERT( Root != "" );
 	if( Root.Right(1) != "/" )
 		Root += '/';
@@ -88,10 +90,34 @@ void RageFileManager::AddFS( CString Type, CString Root, CString Base )
 		return;
 	LoadedDriver ld;
 	ld.driver = driver;
-	ld.base = Base;
+	ld.MountPoint = MountPoint;
 	g_Drivers.push_back( ld );
 }
-	
+
+bool RageFileManager::IsMounted( CString MountPoint )
+{
+	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+		if( !g_Drivers[i].MountPoint.CompareNoCase( MountPoint ) )
+			return true;
+
+	return false;
+}
+
+/* Return true if the driver with the given root path is ready (eg. CD or memory card
+ * inserted). */
+bool RageFileManager::MountpointIsReady( CString MountPoint )
+{
+	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+	{
+		if( g_Drivers[i].MountPoint.CompareNoCase( MountPoint ) )
+			continue;
+
+		return g_Drivers[i].driver->Ready();
+	}
+
+	return false;
+}
+
 RageFileManager::FileType RageFileManager::GetFileType( const CString &sPath )
 {
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
