@@ -609,11 +609,11 @@ void Song::TidyUpData()
 	LOG->Trace("Looking for images...");
 
 	/* Replace backslashes with slashes in all paths. */	
-	FixSlashes( m_sMusicFile );
-	FixSlashes( m_sBannerFile );
-	FixSlashes( m_sBackgroundFile );
-	FixSlashes( m_sCDTitleFile );
-	FixSlashes( m_sLyricsFile );
+	FixSlashesInPlace( m_sMusicFile );
+	FixSlashesInPlace( m_sBannerFile );
+	FixSlashesInPlace( m_sBackgroundFile );
+	FixSlashesInPlace( m_sCDTitleFile );
+	FixSlashesInPlace( m_sLyricsFile );
 
 	/* Many imported files contain erroneous whitespace before or after
 	 * filenames.  Paths usually don't actually start or end with spaces,
