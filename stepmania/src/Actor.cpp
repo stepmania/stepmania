@@ -386,6 +386,10 @@ void Actor::UpdateTweening( float fDeltaTime )
 		if( TI.m_fTimeLeftInTween == 0 )	// Current tween is over.  Stop.
 		{
 			m_current = TS;
+
+			// don't inherit the queued state's command.  We keep having to do this.
+			// Does sCommandName belong in TweenInfo, instead of TweenState?
+			m_current.sCommandName = "";
 			
 			// delete the head tween
 			m_Tweens.pop_front();
