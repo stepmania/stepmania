@@ -99,8 +99,9 @@ public:
 	void GetFilesSimpleMatch(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs);
 
 	/* Search for "path" case-insensitively and replace it with the correct
-	 * case.  If "path" doesn't exist at all, return false and don't change it. */
-	bool ResolvePath(CString &path);
+	 * case.  If only a portion of the path exists, resolve as much as possible.
+	 * Return true if the entire path was matched. */
+	bool ResolvePath( CString &path );
 
 	RageFileManager::FileType GetFileType( const CString &path );
 	int GetFileSize(const CString &path);
