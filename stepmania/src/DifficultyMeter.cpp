@@ -31,6 +31,7 @@
 /* 3, 9 */
 #define SHOW_METER								THEME->GetMetricB(m_sName,"ShowMeter")
 #define FEET_IS_DIFFICULTY_COLOR				THEME->GetMetricB(m_sName,"FeetIsDifficultyColor")
+#define FEET_PER_DIFFICULTY						THEME->GetMetricB(m_sName,"FeetPerDifficulty")
 
 DifficultyMeter::DifficultyMeter()
 {
@@ -63,7 +64,16 @@ void DifficultyMeter::Load()
 	if( SHOW_FEET )
 	{
 		m_textFeet.SetName( "Feet" );
-		m_textFeet.LoadFromTextureAndChars( THEME->GetPathToG( ssprintf("%s bar 2x1", m_sName.c_str())), "10" );
+		CString Feet;
+		if( FEET_PER_DIFFICULTY )
+		{
+			for( unsigned i = 0; i < NUM_DIFFICULTIES; ++i )
+				Feet += char(i + '0'); // 01234
+			Feet += 'X'; // Off
+		}
+		else
+			Feet = "0X";
+		m_textFeet.LoadFromTextureAndChars( THEME->GetPathToG( ssprintf("%s bar", m_sName.c_str())), Feet );
 		SET_XY_AND_ON_COMMAND( &m_textFeet );
 		this->AddChild( &m_textFeet );
 	}
@@ -129,7 +139,8 @@ void DifficultyMeter::SetFromCourse( const Course* pCourse )
 void DifficultyMeter::Unset()
 {
 	m_textFeet.SetEffectNone();
-	m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
+	if( FEET_IS_DIFFICULTY_COLOR )
+		m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
 	SetMeter( 0, DIFFICULTY_BEGINNER );
 	SetDifficulty( "None" );
 }
@@ -148,13 +159,17 @@ void DifficultyMeter::SetMeter( int iMeter, Difficulty dc )
 {
 	if( SHOW_FEET )
 	{
+		CString on = "0";
+		CString off = "X";
+		if( FEET_PER_DIFFICULTY )
+			on = char(dc + '0');
+
 		CString sNewText;
 		int f;
 		for( f=0; f<NUM_FEET_IN_METER; f++ )
-			sNewText += (f<iMeter) ? "1" : "0";
-		for( f=NUM_FEET_IN_METER; f<MAX_FEET_IN_METER; f++ )
-			if( f<iMeter )
-				sNewText += "1";
+			sNewText += (f<iMeter) ? on : off;
+		for( f=NUM_FEET_IN_METER; f<MAX_FEET_IN_METER && f<iMeter; f++ )
+			sNewText += on;
 
 		m_textFeet.SetText( sNewText );
 
