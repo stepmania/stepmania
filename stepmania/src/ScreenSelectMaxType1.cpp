@@ -205,8 +205,11 @@ int ScreenSelectMaxType1::GetSelectionIndex( PlayerNumber pn )
 void ScreenSelectMaxType1::UpdateSelectableChoices()
 {
 	unsigned i;
-	/* XXX: If a player joins during the tween-in, this diffuse change
-	 * will be undone by the tween.  Hmm. */
+	/* If a player joins during the tween-in, this diffuse change
+	 * will be undone by the tween.  Hmm. 
+	 *
+	 * This is fixed now, since SetDiffuse() will affect the latest
+	 * tween, if we're currently tweening. */
 	for( i=0; i<m_aModeChoices.size(); i++ )
 	{
 		/* If the icon is text, use a dimmer diffuse, or we won't be
