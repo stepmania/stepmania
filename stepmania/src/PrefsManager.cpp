@@ -88,6 +88,7 @@ PrefsManager::PrefsManager()
 	m_DefaultFailType = SongOptions::FAIL_ARCADE;
 	m_bDancePointsForOni = false; //DDR-Extreme style dance points instead of max2 percent
 	m_bTimestamping = false;
+	m_bShowLyrics = true;
 
 	/* DDR Extreme-style extra stage support.
 	 * Default off so people used to the current behavior (or those with extra
@@ -181,6 +182,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "AllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
 	ini.GetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.GetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
+	ini.GetValueB( "Options", "ShowLyrics",					m_bShowLyrics );
 	ini.GetValueB( "Options", "Timestamping",			m_bTimestamping );
 
 
@@ -258,6 +260,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "AllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
 	ini.SetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.SetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
+	ini.SetValueB( "Options", "ShowLyrics",					m_bShowLyrics );
 	ini.SetValueB( "Options", "Timestamping",				m_bTimestamping );
 
 

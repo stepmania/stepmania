@@ -658,10 +658,13 @@ void ScreenGameplay::LoadNextSong()
 
 	// Load lyrics
 	// XXX: don't load this here
-	LyricsLoader	LL;
-	if( GAMESTATE->m_pCurSong->HasLyrics()  )
+	if( PREFSMAN->m_bShowLyrics == true )
 	{
-		LL.LoadFromLRCFile(GAMESTATE->m_pCurSong->GetLyricsPath(), *GAMESTATE->m_pCurSong);
+		LyricsLoader	LL;
+		if( GAMESTATE->m_pCurSong->HasLyrics()  )
+		{
+			LL.LoadFromLRCFile(GAMESTATE->m_pCurSong->GetLyricsPath(), *GAMESTATE->m_pCurSong);
+		}
 	}
 }
 
