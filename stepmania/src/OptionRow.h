@@ -192,13 +192,14 @@ protected:
 	ThemeMetric<float>				ARROWS_X;
 	ThemeMetric<float>				LABELS_X;
 	ThemeMetric<apActorCommands>	LABELS_ON_COMMAND;
-	ThemeMetric<float>				ITEMS_ZOOM;
 	ThemeMetric<float>				ITEMS_START_X;
 	ThemeMetric<float>				ITEMS_END_X;
 	ThemeMetric<float>				ITEMS_GAP_X;
 	ThemeMetric1D<float>			ITEMS_LONG_ROW_X;
 	ThemeMetric<float>				ITEMS_LONG_ROW_SHARED_X;
+	ThemeMetric<apActorCommands>	ITEMS_ON_COMMAND;
 	ThemeMetric1D<float>			ICONS_X;
+	ThemeMetric<apActorCommands>	ICONS_ON_COMMAND;
 	ThemeMetric<RageColor>			COLOR_SELECTED;
 	ThemeMetric<RageColor>			COLOR_NOT_SELECTED;
 	ThemeMetric<RageColor>			COLOR_DISABLED;

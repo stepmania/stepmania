@@ -115,13 +115,14 @@ void OptionRow::LoadMetrics( const CString &sType )
 	ARROWS_X   						.Load(m_sType,"ArrowsX");
 	LABELS_X						.Load(m_sType,"LabelsX");
 	LABELS_ON_COMMAND				.Load(m_sType,"LabelsOnCommand");
-	ITEMS_ZOOM						.Load(m_sType,"ItemsZoom");
 	ITEMS_START_X					.Load(m_sType,"ItemsStartX");
 	ITEMS_END_X						.Load(m_sType,"ItemsEndX");
 	ITEMS_GAP_X						.Load(m_sType,"ItemsGapX");
 	ITEMS_LONG_ROW_X				.Load(m_sType,ITEMS_LONG_ROW_X_NAME,NUM_PLAYERS);
 	ITEMS_LONG_ROW_SHARED_X			.Load(m_sType,"ItemsLongRowSharedX");
+	ITEMS_ON_COMMAND				.Load(m_sType,"ItemsOnCommand");
 	ICONS_X							.Load(m_sType,ICONS_X_NAME,NUM_PLAYERS);
+	ICONS_ON_COMMAND				.Load(m_sType,"IconsOnCommand");
 	COLOR_SELECTED					.Load(m_sType,"ColorSelected");
 	COLOR_NOT_SELECTED				.Load(m_sType,"ColorNotSelected");
 	COLOR_DISABLED					.Load(m_sType,"ColorDisabled");
@@ -133,7 +134,10 @@ void OptionRow::LoadMetrics( const CString &sType )
 	SHOW_BPM_IN_SPEED_TITLE			.Load(m_sType,"ShowBpmInSpeedTitle");
 
 	FOREACH_PlayerNumber( p )
+	{
 		m_OptionIcons[p].Load( m_sType );
+		m_OptionIcons[p].RunCommands( ICONS_ON_COMMAND );
+	}
 }
 
 void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown )
@@ -263,7 +267,9 @@ void OptionRow::AfterImportOptions( float fY )
 
 	// If the items will go off the edge of the screen, then re-init with the "long row" style.
 	{
-		Font* pFont = FONT->LoadFont( THEME->GetPathF(m_sType,"item") );
+		BitmapText bt;
+		bt.LoadFromFont( THEME->GetPathF(m_sType,"item") );
+		bt.RunCommands( ITEMS_ON_COMMAND );
 
 		float fX = ITEMS_START_X;
 		
@@ -271,7 +277,9 @@ void OptionRow::AfterImportOptions( float fY )
 		{
 			CString sText = m_RowDef.choices[c];
 			PrepareItemText( sText );
-			fX += ITEMS_ZOOM * pFont->GetLineWidthInSourcePixels( CStringToWstring(sText) );
+			bt.SetText( sText );
+			
+			fX += bt.GetZoomedWidth();
 			
 			if( c != m_RowDef.choices.size()-1 )
 				fX += ITEMS_GAP_X;
@@ -282,9 +290,6 @@ void OptionRow::AfterImportOptions( float fY )
 				break;
 			}
 		}
-
-		FONT->UnloadFont( pFont );
-		pFont = NULL;
 	}
 
 	//
@@ -305,7 +310,7 @@ void OptionRow::AfterImportOptions( float fY )
 			CString sText = (iChoiceInRowWithFocus==-1) ? "" : m_RowDef.choices[iChoiceInRowWithFocus];
 			PrepareItemText( sText );
 			bt->SetText( sText );
-			bt->SetZoom( ITEMS_ZOOM );
+			bt->RunCommands( ITEMS_ON_COMMAND );
 			bt->SetShadowLength( 0 );
 
 			if( m_RowDef.bOneChoiceForAllPlayers )
@@ -345,7 +350,7 @@ void OptionRow::AfterImportOptions( float fY )
 				CString sText = m_RowDef.choices[c];
 				PrepareItemText( sText );
 				bt->SetText( sText );
-				bt->SetZoom( ITEMS_ZOOM );
+				bt->RunCommands( ITEMS_ON_COMMAND );
 				bt->SetShadowLength( 0 );
 
 				// set the X position of each item in the line
@@ -414,7 +419,7 @@ void OptionRow::LoadExit()
 	CString sText = "Exit";
 	PrepareItemText( sText );
 	bt->SetText( sText );
-	bt->SetZoom( ITEMS_ZOOM );
+	bt->RunCommands( ITEMS_ON_COMMAND );
 	bt->SetShadowLength( 0 );
 	bt->SetX( ITEMS_LONG_ROW_SHARED_X );
 	this->AddChild( bt );
@@ -469,10 +474,6 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 
 void OptionRow::PositionIcons()
 {
-	/*
-	ICONS_X
-	TWEEN_SECONDS
-	*/
 	if( m_RowType == OptionRow::ROW_EXIT )
 		return;
 
