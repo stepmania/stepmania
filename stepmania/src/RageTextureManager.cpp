@@ -16,7 +16,7 @@
 //-----------------------------------------------------------------------------
 #include "RageTextureManager.h"
 #include "RageBitmapTexture.h"
-//#include "RageMovieTexture.h"
+#include "RageMovieTexture.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
@@ -74,9 +74,9 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, RageTextureP
 		CString sDrive, sDir, sFName, sExt;
 		splitpath( false, sTexturePath, sDrive, sDir, sFName, sExt );
 
-//		if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
-//			pTexture = new RageMovieTexture( sTexturePath );
-//		else
+		if( sExt == "avi" )
+			pTexture = new RageMovieTexture( sTexturePath, prefs );
+		else
 			pTexture = new RageBitmapTexture( sTexturePath, prefs );
 
 		LOG->Trace( "RageTextureManager: Finished loading '%s'.", sTexturePath.GetString() );

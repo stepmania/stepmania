@@ -51,3 +51,8 @@ float RageTimer::GetTimeSinceStart() const
 	return SDL_GetTicks() / 1000.f;
 }
 
+/* XXX: SDL_GetTicks() wraps every month or so.  Handle it. */
+unsigned int GetTicks()
+{
+	return SDL_GetTicks();
+}

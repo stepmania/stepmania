@@ -7,567 +7,343 @@
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Adapted from Nehe tutorial 35
 -----------------------------------------------------------------------------
 */
 
-
-//-----------------------------------------------------------------------------
-// In-line Links
-//-----------------------------------------------------------------------------
-#pragma comment(lib, "winmm.lib") 
-#pragma comment(lib, "dxerr8.lib")
- 
-// Link with the DirectShow base class libraries
-#if defined(DEBUG) | defined(_DEBUG)
-	#pragma comment(lib, "baseclasses/debug/strmbasd.lib") 
-#else
-	#pragma comment(lib, "baseclasses/release/strmbase.lib") 
-#endif
-
-//-----------------------------------------------------------------------------
-// Define GUID for Texture Renderer
-// {71771540-2017-11cf-AE26-0020AFD79767}
-//-----------------------------------------------------------------------------
-struct __declspec(uuid("{71771540-2017-11cf-ae26-0020afd79767}")) CLSID_TextureRenderer;
-
- 
-//-----------------------------------------------------------------------------
-// Includes
-//-----------------------------------------------------------------------------
 #include "RageMovieTexture.h"
-#include "dxerr8.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
+#include "RageDisplay.h"
+#include "RageTimer.h"
+#include "sdl_opengl.h"
+#include <vfw.h>
 
-#include <stdio.h>
+#pragma comment( lib, "vfw32.lib" )
 
-//-----------------------------------------------------------------------------
-// CTextureRenderer Class Declarations
-//
-//	Usage: 1) CheckMediaType is called by the graph
-//         2) SetMediaType is called by the graph
-//         3) call GetVidWidth and GetVidHeight to get texture information
-//         4) call SetRenderTarget
-//         5) Do RenderSample is called by the graph
-//-----------------------------------------------------------------------------
-class CTextureRenderer : public CBaseVideoRenderer
+
+static int power_of_two(int input)
 {
+    int value = 1;
+
+	while ( value < input ) value <<= 1;
+
+	return value;
+}
+
+
+struct AviRenderer
+{
+private:
+	AVISTREAMINFO		psi;		// Pointer To A Structure Containing Stream Info
+	PAVISTREAM			pavi;		// Handle To An Open Stream
+	PGETFRAME			pgf;		// Pointer To A GetFrame Object
+	BITMAPINFOHEADER	bmih;		// Header Information For DrawDibDraw Decoding
+	int					videoWidth;
+	int					videoHeight;
+	int					frameWidth;
+	int					frameHeight;
+	char				*pdata;		// Pointer To Texture Data
+	int					numFrames;	
+	float				secsIntoPlay;	// Will Hold seconds since beginning of this loop
+	float				streamSecs;	// Will Hold seconds since beginning of this loop
+	HDRAWDIB			hdd;		// Handle For Our Dib
+	HBITMAP				hBitmap;	// Handle To A Device Dependant Bitmap
+	HDC					hdc;		// Creates A Compatible Device Context
+	unsigned char*		data;		// Pointer To Our Resized Image
+	int					last_frame;	// true if frame hasn't let been requested
+	bool				frame_is_new;	// true if frame hasn't let been requested
+
 public:
-    CTextureRenderer();
-    ~CTextureRenderer();
+	void Update( float fDeltaTime ) 
+	{
+		secsIntoPlay += fDeltaTime;
+		while( secsIntoPlay > streamSecs )
+		{
+			secsIntoPlay -= streamSecs;
+		}
+		
+		int this_frame = secsIntoPlay/streamSecs*numFrames;
 
-	// overridden methods
-    HRESULT CheckMediaType(const CMediaType *pmt );     // Format acceptable?
-    HRESULT SetMediaType(const CMediaType *pmt );       // Video format notification
-    HRESULT DoRenderSample(IMediaSample *pMediaSample); // New video sample
+		if( last_frame != this_frame )
+		{
+			frame_is_new = true;
+			GetFrame( this_frame );
+			last_frame = this_frame;
+		}
+	}
+	int GetVideoWidth() { return videoWidth; }
+	int GetVideoHeight() { return videoHeight; }
+	int GetFrameWidth() { return frameWidth; }
+	int GetFrameHeight() { return frameHeight; }
+	void Play() {}
+	void Pause() {}
+	void Stop() {}
+	void SetPosition( float fSeconds ) {}
+	bool IsPlaying() { return true; }
 
-	// new methods
-	long GetVidWidth() const { return m_lVidWidth; }
-	long GetVidHeight() const { return m_lVidHeight; }
-	HRESULT SetRenderTarget( RageMovieTexture* pTexture );
+	AviRenderer( CString sFile )
+	{
+		hdc = CreateCompatibleDC(0);								// Creates A Compatible Device Context
+		hdd = DrawDibOpen();										// Grab A Device Context For Our Dib
+	
+		AVIFileInit();												// Opens The AVIFile Library
 
-protected:
-	// Video width, height, and pitch.
-	long m_lVidWidth, m_lVidHeight, m_lVidPitch;
+		// Opens The AVI Stream
+		if (AVIStreamOpenFromFile(&pavi, sFile, streamtypeVIDEO, 0, OF_READ, NULL) !=0)
+		{
+			// An Error Occurred Opening The Stream
+			MessageBox (HWND_DESKTOP, "Failed To Open The AVI Stream", "Error", MB_OK | MB_ICONEXCLAMATION);
+		}
 
-	RageMovieTexture*	m_pTexture;	// the video surface we will copy new frames to
-	D3DFORMAT			m_TextureFormat; // Texture format
+		AVIStreamInfo(pavi, &psi, sizeof(psi));						// Reads Information About The Stream Into psi
+		videoWidth=psi.rcFrame.right-psi.rcFrame.left;					// Width Is Right Side Of Frame Minus Left
+		videoHeight=psi.rcFrame.bottom-psi.rcFrame.top;					// Height Is Bottom Of Frame Minus Top
+		frameWidth = power_of_two( videoWidth );
+		frameHeight = power_of_two( videoHeight );
+
+		last_frame = -1;
+
+		numFrames = AVIStreamLength(pavi);							// The Last Frame Of The Stream
+		streamSecs = AVIStreamSampleToTime(pavi,numFrames)/1000.f;		// Calculate stream length
+		secsIntoPlay = 0;
+
+		bmih.biSize = sizeof (BITMAPINFOHEADER);					// Size Of The BitmapInfoHeader
+		bmih.biPlanes = 1;											// Bitplanes	
+		bmih.biBitCount = 24;										// Bits Format We Want (24 Bit, 3 Bytes)
+		bmih.biWidth = frameWidth;											// Width We Want (256 Pixels)
+		bmih.biHeight = frameHeight;										// Height We Want (256 Pixels)
+		bmih.biCompression = BI_RGB;								// Requested Mode = RGB
+
+		hBitmap = CreateDIBSection (hdc, (BITMAPINFO*)(&bmih), DIB_RGB_COLORS, (void**)(&data), NULL, NULL);
+		SelectObject (hdc, hBitmap);								// Select hBitmap Into Our Device Context (hdc)
+
+		pgf=AVIStreamGetFrameOpen(pavi, NULL);						// Create The PGETFRAME	Using Our Request Mode
+		if (pgf==NULL)
+		{
+			// An Error Occurred Opening The Frame
+			MessageBox (HWND_DESKTOP, "Failed To Open The AVI Frame", "Error", MB_OK | MB_ICONEXCLAMATION);
+		}
+	}
+
+	~AviRenderer(void)							// Properly Closes The Avi File
+	{
+		DeleteObject(hBitmap);					// Delete The Device Dependant Bitmap Object
+		DrawDibClose(hdd);						// Closes The DrawDib Device Context
+		AVIStreamGetFrameClose(pgf);			// Deallocates The GetFrame Resources
+		AVIStreamRelease(pavi);					// Release The Stream
+		AVIFileExit();							// Release The File
+	}
+
+	void flipIt(void* buffer)						// Flips The Red And Blue Bytes (256x256)
+	{
+		void* b = buffer;						// Pointer To The Buffer
+		unsigned int numFips = frameWidth*frameHeight;
+		__asm								// Assembler Code To Follow
+		{
+			mov ecx, numFips					// Set Up A Counter (Dimensions Of Memory Block)
+			mov ebx, b						// Points ebx To Our Data (b)
+			label:							// Label Used For Looping
+				mov al,[ebx+0]					// Loads Value At ebx Into al
+				mov ah,[ebx+2]					// Loads Value At ebx+2 Into ah
+				mov [ebx+2],al					// Stores Value In al At ebx+2
+				mov [ebx+0],ah					// Stores Value In ah At ebx
+				
+				add ebx,3					// Moves Through The Data By 3 Bytes
+				dec ecx						// Decreases Our Loop Counter
+				jnz label					// If Not Zero Jump Back To Label
+		}
+	}
+
+	bool IsNewFrameReady()	// returns true only once when a new frame has been taken from the stream
+	{
+		bool bNew = frame_is_new;
+		frame_is_new = false;
+		return bNew;
+	}
+
+	unsigned char* GetData()			// Grabs current frame from the stream
+	{
+		Update( 1/60.f );
+		return data;
+	}
+	
+	void GetFrame(int frame)		// Grabs A Frame From The Stream
+	{
+		LPBITMAPINFOHEADER lpbi;					// Holds The Bitmap Header Information
+		lpbi = (LPBITMAPINFOHEADER)AVIStreamGetFrame(pgf, frame);	// Grab Data From The AVI Stream
+		pdata=(char *)lpbi+lpbi->biSize+lpbi->biClrUsed * sizeof(RGBQUAD);	// Pointer To Data Returned By AVIStreamGetFrame
+
+		SelectObject (hdc, hBitmap);								// Select hBitmap Into Our Device Context (hdc)
+
+		// (Skip The Header Info To Get To The Data)
+		// 1:1 copy into the new surface
+		DrawDibDraw (hdd, hdc, 0, 0, videoWidth, videoHeight, lpbi, pdata, 0, 0, videoWidth, videoHeight, 0);
+
+//		flipIt(data);							// Swap The Red And Blue Bytes (GL Compatability)
+	}
 };
 
 
 
 
-//-----------------------------------------------------------------------------
-// CTextureRenderer constructor
-//-----------------------------------------------------------------------------
-static HRESULT CBV_ret;
-CTextureRenderer::CTextureRenderer()
-                                   : CBaseVideoRenderer(__uuidof(CLSID_TextureRenderer), 
-                                   NAME("Texture Renderer"), NULL, &CBV_ret)
-{
-    if( FAILED(CBV_ret) )
-        throw RageException( CBV_ret, "Could not create texture renderer object!" );
-
-    // Store and ARageef the texture for our use.
-	m_pTexture = NULL;
-}
-
-
-//-----------------------------------------------------------------------------
-// CTextureRenderer destructor
-//-----------------------------------------------------------------------------
-CTextureRenderer::~CTextureRenderer()
-{
-    // Do nothing
-}
-
-
-//-----------------------------------------------------------------------------
-// CheckMediaType: This method forces the graph to give us an R8G8B8 video
-// type, making our copy to texture memory trivial.
-//-----------------------------------------------------------------------------
-HRESULT CTextureRenderer::CheckMediaType(const CMediaType *pmt)
-{
-    HRESULT   hr = E_FAIL;
-    VIDEOINFO *pvi;
-    
-    // Reject the connection if this is not a video type
-    if( *pmt->FormatType() != FORMAT_VideoInfo ) {
-        return E_INVALIDARG;
-    }
-    
-    // Only accept RGB24
-    pvi = (VIDEOINFO *)pmt->Format();
-    if(IsEqualGUID( *pmt->Type(),    MEDIATYPE_Video)  &&
-       IsEqualGUID( *pmt->Subtype(), MEDIASUBTYPE_RGB24))
-//       IsEqualGUID( *pmt->Subtype(), MEDIASUBTYPE_RGB565))
-    {
-        hr = S_OK;
-    }
-    
-    return hr;
-}
-
-
-//-----------------------------------------------------------------------------
-// SetMediaType: Graph connection has been made. 
-//-----------------------------------------------------------------------------
-HRESULT CTextureRenderer::SetMediaType(const CMediaType *pmt)
-{
-    // Retrive the size of this media type
-    VIDEOINFO *pviBmp;                      // Bitmap info header
-    pviBmp = (VIDEOINFO *)pmt->Format();
-    m_lVidWidth  = pviBmp->bmiHeader.biWidth;
-    m_lVidHeight = abs(pviBmp->bmiHeader.biHeight);
-    m_lVidPitch = (m_lVidWidth * 3 + 3) & ~(3); // We are forcing RGB24
-
-    return S_OK;
-}
-
-
-//-----------------------------------------------------------------------------
-// SetRenderTarget: Save all the information we'll need to render to a D3D texture.
-//-----------------------------------------------------------------------------
-HRESULT CTextureRenderer::SetRenderTarget( RageMovieTexture* pTexture )
-{
-	HRESULT hr;
-
-	m_pTexture = pTexture;
-
-	if( m_pTexture == NULL )
-		return S_OK;
-	
-	LPDIRECT3DTEXTURE8 pD3DTexture = pTexture->GetD3DTexture();
-
-	// get the format of the texture
-    D3DSURFACE_DESC ddsd;
-    if ( FAILED( hr = pD3DTexture->GetLevelDesc( 0, &ddsd ) ) ) {
-        DXTRACE_ERR(TEXT("Could not get level Description of D3DX texture! hr = 0x%x"), hr);
-        return hr;
-    }
-
-    m_TextureFormat = ddsd.Format;
-    if (m_TextureFormat != D3DFMT_A8R8G8B8 &&
-        m_TextureFormat != D3DFMT_A1R5G5B5) {
-        DXTRACE_ERR(TEXT("Texture is format we can't handle! Format = 0x%x"), m_TextureFormat);
-        return E_FAIL;
-    }
-
-	return S_OK;
-}
-
-
-//-----------------------------------------------------------------------------
-// DoRenderSample: A sample has been delivered. Copy it to the texture.
-//-----------------------------------------------------------------------------
-HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
-{
-	if( m_pTexture == NULL )
-	{
-		LOG->Warn( "DoRenderSample called while m_pTexture was NULL!" );
-		return S_OK;
-	}
-
-    BYTE  *pBmpBuffer;		// Bitmap buffer
-
-    // Get the video bitmap buffer
-    pSample->GetPointer( &pBmpBuffer );
-	 
-	// Find which texture we should render to.  We want to copy to the "back buffer"
-	LPDIRECT3DTEXTURE8 pD3DTextureCopyTo = m_pTexture->GetBackBuffer();
-
-    // Lock the Texture
-    D3DLOCKED_RECT d3dlr;
-    while( FAILED( pD3DTextureCopyTo->LockRect(0, &d3dlr, 0, 0) ) )
-	{
-        LOG->Warn( "Failed to lock the texture for rendering movie!" );
-		// keep trying until we get the lock
-	}
-    
-    // Get the texture buffer & pitch
-	byte  *pTxtBuffer = static_cast<byte *>(d3dlr.pBits);
-    long  lTxtPitch = d3dlr.Pitch;
-   
-	ASSERT( pTxtBuffer != NULL );
-
     // Copy the bits    
     // OPTIMIZATION OPPORTUNITY: Use a video and texture
     // format that allows a simpler copy than this one.
-    switch( m_TextureFormat )
-	{
-	case D3DFMT_A8R8G8B8:
-		{
-			for(int y = 0; y < m_pTexture->GetImageHeight(); y++ ) {
-				BYTE *pBmpBufferOld = pBmpBuffer;
-				BYTE *pTxtBufferOld = pTxtBuffer;   
-				for (int x = 0; x < m_pTexture->GetImageWidth(); x++) {
-					pTxtBuffer[0] = pBmpBuffer[0];
-					pTxtBuffer[1] = pBmpBuffer[1];
-					pTxtBuffer[2] = pBmpBuffer[2];
-					pTxtBuffer[3] = 0xff;
-					pTxtBuffer += 4;
-					pBmpBuffer += 3;
-				}
-				pBmpBuffer = pBmpBufferOld + m_lVidPitch;
-				pTxtBuffer = pTxtBufferOld + lTxtPitch;
-			}
-		}
-		break;
-	case D3DFMT_A1R5G5B5:
-		{
-			for(int y = 0; y < m_pTexture->GetImageHeight(); y++ ) {
-				BYTE *pBmpBufferOld = pBmpBuffer;
-				BYTE *pTxtBufferOld = pTxtBuffer;   
-				for (int x = 0; x < m_pTexture->GetImageWidth(); x++) {
-					*(WORD *)pTxtBuffer =
-						0x8000 +
-						((pBmpBuffer[2] & 0xF8) << 7) +
-						((pBmpBuffer[1] & 0xF8) << 2) +
-						(pBmpBuffer[0] >> 3);
-					pTxtBuffer += 2;
-					pBmpBuffer += 3;
-				}
-				pBmpBuffer = pBmpBufferOld + m_lVidPitch;
-				pTxtBuffer = pTxtBufferOld + lTxtPitch;
-			}
-		}
-		break;
-	default:
-		ASSERT(0);
-	}
+//    switch( m_TextureFormat )
+//	{
+//	case D3DFMT_A8R8G8B8:
+//		{
+//			for(int y = 0; y < m_pTexture->GetImageHeight(); y++ ) {
+//				BYTE *pBmpBufferOld = pBmpBuffer;
+//				BYTE *pTxtBufferOld = pTxtBuffer;   
+//				for (int x = 0; x < m_pTexture->GetImageWidth(); x++) {
+//					pTxtBuffer[0] = pBmpBuffer[0];
+//					pTxtBuffer[1] = pBmpBuffer[1];
+//					pTxtBuffer[2] = pBmpBuffer[2];
+//					pTxtBuffer[3] = 0xff;
+//					pTxtBuffer += 4;
+//					pBmpBuffer += 3;
+//				}
+//				pBmpBuffer = pBmpBufferOld + m_lVidPitch;
+//				pTxtBuffer = pTxtBufferOld + lTxtPitch;
+//			}
+//		}
+//		break;
+//	case D3DFMT_A1R5G5B5:
+//		{
+//			for(int y = 0; y < m_pTexture->GetImageHeight(); y++ ) {
+//				BYTE *pBmpBufferOld = pBmpBuffer;
+//				BYTE *pTxtBufferOld = pTxtBuffer;   
+//				for (int x = 0; x < m_pTexture->GetImageWidth(); x++) {
+//					*(WORD *)pTxtBuffer =
+//						0x8000 +
+//						((pBmpBuffer[2] & 0xF8) << 7) +
+//						((pBmpBuffer[1] & 0xF8) << 2) +
+//						(pBmpBuffer[0] >> 3);
+//					pTxtBuffer += 2;
+//					pBmpBuffer += 3;
+//				}
+//				pBmpBuffer = pBmpBufferOld + m_lVidPitch;
+//				pTxtBuffer = pTxtBufferOld + lTxtPitch;
+//			}
+//		}
+//		break;
 
-	ASSERT( m_pTexture != NULL );
-        
-    // Unlock the Texture
-    if( FAILED( pD3DTextureCopyTo->UnlockRect(0) ) ) 
-	{
-        LOG->Warn( "Failed to unlock the texture!" );
-        return E_FAIL;
-	}
 
-	ASSERT( m_pTexture != NULL );
-
-	// flip active texture
-	/* Hmm.  GetD3DTexture says "Return the front buffer because it's guaranteed
-	 * that CTextureRenderer doesn't have it locked."  But what happens if we somehow
-	 * get two movie frames while whoever called GetD3DTexture is still working with
-	 * it?  Maybe we should triple buffer, just to be sure. */
-	m_pTexture->Flip();
-
-    return S_OK;
-}
 
 
 //-----------------------------------------------------------------------------
 // RageMovieTexture constructor
 //-----------------------------------------------------------------------------
-RageMovieTexture::RageMovieTexture( const CString &sFilePath ) : RageTexture( sFilePath )
+RageMovieTexture::RageMovieTexture( CString sFilePath, RageTexturePrefs prefs ) : 
+	RageTexture( sFilePath, prefs )
 {
 	LOG->Trace( "RageBitmapTexture::RageBitmapTexture()" );
 
-	m_pd3dTexture[0] = m_pd3dTexture[1] = NULL;
-	m_iIndexFrontBuffer = 0;
+	m_uGLTextureID = 0;
+	pAviRenderer = new AviRenderer( m_sFilePath );
+    pAviRenderer->Play();
 
 	Create();
-
-	CreateFrameRects();
-	// flip all frame rects because movies are upside down
-	for( unsigned i=0; i<m_TextureCoordRects.size(); i++ )
-	{
-		float fTemp = m_TextureCoordRects[i].top;
-		m_TextureCoordRects[i].top = m_TextureCoordRects[i].bottom;
-		m_TextureCoordRects[i].bottom = fTemp;
-	}
-
-	m_bLoop = true;
-	m_bPlaying = false;
 }
 
 RageMovieTexture::~RageMovieTexture()
 {
 	LOG->Trace("RageMovieTexture::~RageMovieTexture");
 
-	// Shut down the graph
-    if (m_pGB) {
-		Stop();
-		m_pGB.Release ();
+	delete pAviRenderer;
+}
+
+void RageMovieTexture::Reload( RageTexturePrefs prefs )
+{
+	DISPLAY->SetTexture(0);
+
+	if(m_uGLTextureID) 
+	{
+		glDeleteTextures(1, &m_uGLTextureID);
+		m_uGLTextureID = 0;
 	}
 
-	SAFE_RELEASE(m_pd3dTexture[0]);
-	SAFE_RELEASE(m_pd3dTexture[1]);
+	Create();
 }
 
-void RageMovieTexture::Reload( 
-	int dwMaxSize, 
-	int dwTextureColorDepth,
-	int iMipMaps,
-	int iAlphaBits,
-	bool bDither,
-	bool bStretch )
-{
-	// do nothing
-}
-
-
-//-----------------------------------------------------------------------------
-// GetTexture
-//-----------------------------------------------------------------------------
-LPDIRECT3DTEXTURE8 RageMovieTexture::GetD3DTexture()
-{
-	CheckMovieStatus();		// restart the movie if we reach the end
-
-	// Return the front buffer because it's guaranteed that CTextureRenderer
-	// doesn't have it locked.	
-	return m_pd3dTexture[m_iIndexFrontBuffer]; 
-}
-
-
-//-----------------------------------------------------------------------------
-// RageMovieTexture::Create()
-//-----------------------------------------------------------------------------
 void RageMovieTexture::Create()
 {
-	HRESULT hr;
+	if(!m_uGLTextureID)
+		glGenTextures(1, &m_uGLTextureID);
 
-	// Initialize the filter graph find and get information about the
-	// video (dimensions, color depth, etc.)
-	if( FAILED( hr = InitDShowTextureRenderer() ) )
-        throw RageException( hr, "Could not initialize the DirectShow Texture Renderer!" );
+	/* Cap the max texture size to the hardware max. */
+	m_prefs.iMaxSize = min( m_prefs.iMaxSize, DISPLAY->GetMaxTextureSize() );
 
-	// Start the graph running
-    if( FAILED( hr = PlayMovie() ) )
-        throw RageException( hr, "Could not run the DirectShow graph." );
+	/* Save information about the source. */
+	m_iSourceWidth = pAviRenderer->GetVideoWidth();
+	m_iSourceHeight = pAviRenderer->GetVideoHeight();
+
+	/* image size cannot exceed max size */
+	m_iImageWidth = min( m_iSourceWidth, m_prefs.iMaxSize );
+	m_iImageHeight = min( m_iSourceHeight, m_prefs.iMaxSize );
+
+	/* Texture dimensions need to be a power of two; jump to the next. */
+	m_iTextureWidth = power_of_two( m_iSourceWidth );
+	m_iTextureHeight = power_of_two( m_iSourceHeight );
+
+
+	glBindTexture( GL_TEXTURE_2D, m_uGLTextureID );
+
+	// Create The Texture
+	unsigned char* data = pAviRenderer->GetData();
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, m_iTextureWidth);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, m_iTextureWidth, m_iTextureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+
+	CreateFrameRects();
+
+	// invert text coor rect
+	m_TextureCoordRects[0].top = 1 - m_TextureCoordRects[0].top;
+	m_TextureCoordRects[0].bottom = 1 - m_TextureCoordRects[0].bottom;
+
 }
 
-
-void HandleDivXError()
+unsigned int RageMovieTexture::GetGLTextureID()
 {
-	/* Actually, we might need XviD; we might want to look
-	 * at the file and try to figure out if it's something
-	 * common: DIV3, DIV4, DIV5, XVID, or maybe even MPEG2. */
-	throw RageException( 
-		"Could not locate the DivX video codec.\n"
-		"DivX is required to movie textures and must\n"
-		"be installed before running the application.\n\n"
-		"Please visit http://www.divx.com to download the latest version."
-		);
+	unsigned char* data = pAviRenderer->GetData();
+
+	// Update The Texture
+	glBindTexture( GL_TEXTURE_2D, m_uGLTextureID );
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, m_iTextureWidth);
+	glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, m_iTextureWidth, m_iTextureHeight, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+	return m_uGLTextureID; 
 }
 
-//-----------------------------------------------------------------------------
-// InitDShowTextureRenderer : Create DirectShow filter graph and run the graph
-//-----------------------------------------------------------------------------
-HRESULT RageMovieTexture::InitDShowTextureRenderer()
-{
-    HRESULT hr = S_OK;
-    
-    // Create the filter graph
-    if( FAILED( m_pGB.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC) ) )
-        throw RageException( hr, "Could not create CLSID_FilterGraph!" );
-    
-    // Create the Texture Renderer object
-    CTextureRenderer *pCTR = new CTextureRenderer;
-    
-    /* Get a pointer to the IBaseFilter on the TextureRenderer, and add it to the
-	 * graph.  When m_pGB is released, it will free pFTR. */
-    CComPtr<IBaseFilter> pFTR = pCTR;
-    if( FAILED( hr = m_pGB->AddFilter(pFTR, L"TEXTURERENDERER" ) ) )
-        throw RageException( hr, "Could not add renderer filter to graph!" );
-    
-    // convert movie file path to wide char string
-	WCHAR wFileName[MAX_PATH];
-
-    #ifndef UNICODE
-        MultiByteToWideChar(CP_ACP, 0, m_sFilePath, -1, wFileName, MAX_PATH);
-    #else
-        lstrcpy(wFileName, m_szFilePath);
-    #endif
-
-
-    // Add the source filter
-    CComPtr<IBaseFilter>    pFSrc;          // Source Filter
-    if( FAILED( hr = m_pGB->AddSourceFilter( wFileName, L"SOURCE", &pFSrc ) ) )		// if this fails, it's probably because the user doesn't have DivX installed
-	{
-		HandleDivXError();
-        throw RageException( hr, "Could not create source filter to graph!" );
-	}
-    
-    // Find the source's output and the renderer's input
-    CComPtr<IPin>           pFTRPinIn;      // Texture Renderer Input Pin
-    if( FAILED( hr = pFTR->FindPin( L"In", &pFTRPinIn ) ) )
-        throw RageException( hr, "Could not find input pin!" );
-
-    CComPtr<IPin>           pFSrcPinOut;    // Source Filter Output Pin   
-    if( FAILED( hr = pFSrc->FindPin( L"Output", &pFSrcPinOut ) ) )
-        throw RageException( hr, "Could not find output pin!" );
-    
-    // Connect these two filters
-    if( FAILED( hr = m_pGB->Connect( pFSrcPinOut, pFTRPinIn ) ) )
-	{
- 		HandleDivXError();
-		throw RageException( hr, "Could not connect pins!" );
-	}
-    
-    // The graph is built, now get the set the output video width and height.
-	// The source and image width will always be the same since we can't scale the video
-	m_iSourceWidth  = pCTR->GetVidWidth();
-	m_iSourceHeight = pCTR->GetVidHeight();
-	m_iImageWidth   = m_iSourceWidth;
-	m_iImageHeight  = m_iSourceHeight;
-
-	/* We've set up the movie, so we know the dimensions we need.  Set
-	 * up the texture. */
-	if( FAILED( hr = CreateD3DTexture() ) )
-        throw RageException( hr, "Could not create the D3D Texture!" );
-
-	// Pass the D3D texture to our TextureRenderer so it knows 
-	// where to render new movie frames to.
-	if( FAILED( hr = pCTR->SetRenderTarget( this ) ) )
-        throw RageException( hr, "RageMovieTexture: SetRenderTarget failed." );
-
-    return S_OK;
-}
-
-HRESULT RageMovieTexture::CreateD3DTexture()
-{
-	HRESULT hr;
-
-	//////////////////////////////////////////////////
-    // Create the texture that maps to this media type
-	//////////////////////////////////////////////////
-    if( FAILED( hr = D3DXCreateTexture(m_pd3dDevice,
-                    m_iSourceWidth, m_iSourceHeight,
-                    1, 0, 
-                    D3DFMT_A1R5G5B5, D3DPOOL_MANAGED, &m_pd3dTexture[0] ) ) )
-        throw RageException( hr, "Could not create the D3DX texture!" );
-
-    if( FAILED( hr = D3DXCreateTexture(m_pd3dDevice,
-                    m_iSourceWidth, m_iSourceHeight,
-                    1, 0, 
-                    D3DFMT_A1R5G5B5, D3DPOOL_MANAGED, &m_pd3dTexture[1] ) ) )
-        throw RageException( hr, "Could not create the D3DX texture!" );
-
-    // D3DXCreateTexture can silently change the parameters on us
-    D3DSURFACE_DESC ddsd;
-    if ( FAILED( hr = m_pd3dTexture[0]->GetLevelDesc( 0, &ddsd ) ) )
-        throw RageException( hr, "Could not get level Description of D3DX texture!" );
-
-	m_iTextureWidth = ddsd.Width;
-	m_iTextureHeight = ddsd.Height;
-
-	if( m_iTextureWidth < m_iImageWidth || m_iTextureHeight < m_iImageHeight )
-	{
-		/* Gack.  We got less than we asked for; probably on a Voodoo.
-		 * We really need to scale the image down; hopefully DShow has some
-		 * way to do that efficiently.  For now, we'll just have to
-		 * chop it off. */
-		m_iImageWidth = min(m_iImageWidth, m_iTextureWidth);
-		m_iImageHeight = min(m_iImageHeight, m_iTextureHeight);
-	}
-
-    if( ddsd.Format != D3DFMT_A8R8G8B8 &&
-		ddsd.Format != D3DFMT_A1R5G5B5 )
-        throw RageException( "Texture is format we can't handle! Format = 0x%x!", ddsd.Format );
-
-
-	return S_OK;
-}
-
-HRESULT RageMovieTexture::PlayMovie()
-{
-	LOG->Trace("RageMovieTexture::PlayMovie()");
-	CComPtr<IMediaControl> pMC;
-    m_pGB.QueryInterface(&pMC);
-
-    // Start the graph running;
-	HRESULT hr;
-    if( FAILED( hr = pMC->Run() ) )
-        throw RageException( hr, "Could not run the DirectShow graph." );
-
-	m_bPlaying = true;
-
-    return S_OK;
-}
-
-
-//-----------------------------------------------------------------------------
-// CheckMovieStatus: If the movie has ended, rewind to beginning
-//-----------------------------------------------------------------------------
-void RageMovieTexture::CheckMovieStatus()
-{
-    long lEventCode;
-    long lParam1;
-    long lParam2;
-
-    // Check for completion events
-	CComPtr<IMediaEvent>    pME;
-    m_pGB.QueryInterface(&pME);
-    pME->GetEvent( &lEventCode, &lParam1, &lParam2, 0 );
-    if( EC_COMPLETE == lEventCode  && m_bLoop )
-		SetPosition(0);
-}
 
 void RageMovieTexture::Play()
 {
-	PlayMovie();
+	pAviRenderer->Play();
 }
 
 void RageMovieTexture::Pause()
 {
-	LOG->Trace("RageMovieTexture::Pause()");
-	CComPtr<IMediaControl> pMC;
-    m_pGB.QueryInterface(&pMC);
-
-	HRESULT hr;
-	if( FAILED( hr = pMC->Pause() ) )
-        throw RageException( hr, "Could not pause the DirectShow graph." );
-
+	pAviRenderer->Pause();
 }
 
 void RageMovieTexture::Stop()
 {
-	LOG->Trace("RageMovieTexture::Stop()");
-	CComPtr<IMediaControl> pMC;
-    m_pGB.QueryInterface(&pMC);
-
-	HRESULT hr;
-	if( FAILED( hr = pMC->Stop() ) )
-        throw RageException( hr, "Could not stop the DirectShow graph." );
-
-	m_bPlaying = false;
+	pAviRenderer->Stop();
 }
 
 void RageMovieTexture::SetPosition( float fSeconds )
 {
-	LOG->Trace("RageMovieTexture::Stop()");
-	CComPtr<IMediaPosition> pMP;
-    m_pGB.QueryInterface(&pMP);
-    pMP->put_CurrentPosition(0);
+	pAviRenderer->SetPosition( fSeconds );
 }
 
 bool RageMovieTexture::IsPlaying() const
 {
-	return m_bPlaying;
+	return pAviRenderer->IsPlaying();
 }
 
 

@@ -16,6 +16,7 @@ class RageTimer
 {
 public:
 	RageTimer();
+	unsigned int GetTicks();
 	float GetDeltaTime();	// time between last call to GetDeltaTime()
 	float PeekDeltaTime() const;
 	float GetTimeSinceStart() const;	// seconds since the program was started

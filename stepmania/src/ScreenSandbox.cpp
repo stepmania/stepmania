@@ -33,6 +33,14 @@
 
 ScreenSandbox::ScreenSandbox()
 {	
+	m_quad.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
+	m_quad.SetDiffuse( RageColor(1,1,1,1) );
+	this->AddChild( &m_quad );
+
+	m_sprite.Load( "C:\\stepmania\\stepmania\\RandomMovies\\face2.avi" );
+	m_sprite.SetXY( CENTER_X, CENTER_Y );
+	this->AddChild( &m_sprite );
+
 	obj.SetXY(CENTER_X, CENTER_Y);
 	this->AddChild(&obj);
 }
