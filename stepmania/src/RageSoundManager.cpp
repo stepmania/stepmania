@@ -113,7 +113,7 @@ void RageSoundManager::Update(float delta)
 	g_SoundManMutex.Unlock(); /* finished with owned_sounds and all_sounds */
 
 	/* Be sure to release g_SoundManMutex before deleting sounds. */
-	for( it = ToDelete.begin(); it != ToDelete.end(); ++it )
+	for( set<RageSound *>::iterator it = ToDelete.begin(); it != ToDelete.end(); ++it )
 		delete *it;
 
 	if( driver != NULL )
