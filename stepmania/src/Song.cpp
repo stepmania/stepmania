@@ -551,16 +551,11 @@ void Song::TidyUpData()
 	ReCalculateRadarValuesAndLastBeat();
 
 	TrimRight(m_sMainTitle);
-	if( m_sMainTitle == "" )
-	{
-		/* Use the song directory name. */
-		CString SongDir = this->GetSongDir();
-		vector<CString> parts;
-		split(SongDir, "/", parts);
-		ASSERT(parts.size() > 0);
 
-		NotesLoader::GetMainAndSubTitlesFromFullTitle( parts[parts.size()-1], m_sMainTitle, m_sSubTitle );
-	}
+	/* Fall back on the song directory name. */
+	if( m_sMainTitle == "" )
+		NotesLoader::GetMainAndSubTitlesFromFullTitle( Basename(this->GetSongDir()), m_sMainTitle, m_sSubTitle );
+
 	TrimRight(m_sSubTitle);
 	if( m_sArtist == "" )		m_sArtist = "Unknown artist";
 	TranslateTitles();
