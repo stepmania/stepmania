@@ -9,8 +9,8 @@
 
 class RoomData {
 public:
-	void SetName(CString& name) { m_name = name; }
-	void SetDescription(CString& desc) { m_description = desc; }
+	void SetName( const CString& name ) { m_name = name; }
+	void SetDescription( const CString& desc ) { m_description = desc; }
 	void SetState(unsigned int state) { m_state = state; }
 	inline CString Name() { return m_name; }
 	inline CString Description() { return m_description; }

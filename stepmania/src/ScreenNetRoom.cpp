@@ -212,9 +212,11 @@ void ScreenNetRoom::MenuUp( PlayerNumber pn, const InputEventType type )
 
 void ScreenNetRoom::MenuDown( PlayerNumber pn, const InputEventType type )
 {
-	switch (m_SelectMode) {
+	switch( m_SelectMode )
+	{
 	case SelectRooms:
-		if (m_iRoomPlace+1 < m_RoomList.size()) {
+		if( m_iRoomPlace+1 < (int) m_RoomList.size() )
+		{
 			ShiftRoomsUp();
 			m_iRoomPlace++;
 		}
@@ -301,8 +303,10 @@ void ScreenNetRoom::ShiftRoomsUp() {
 	}
 }
 
-void ScreenNetRoom::ShiftRoomsDown() {
-	for ( int x = 0; x < m_RoomList.size(); ++x) {
+void ScreenNetRoom::ShiftRoomsDown()
+{
+	for( unsigned x = 0; x < m_RoomList.size(); ++x )
+	{
 		if ((m_RoomList[x].GetY()+ROOMSPACEY >= ROOMUPPERBOUND)&&(m_RoomList[x].GetY()+ROOMSPACEY < ROOMLOWERBOUND)) {
 			COMMAND(m_RoomList[x], "ShiftDown");
 			COMMAND(m_RoomList[x], "RoomsOn");
