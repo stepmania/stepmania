@@ -274,7 +274,7 @@ void UnlockManager::Load()
 				current.m_Type = UnlockEntry::TYPE_COURSE;
 				current.m_sName = (CString) cmd.GetArg(1);
 			}
-			if( sName == "modifier" )
+			if( sName == "mod" )
 			{
 				current.m_Type = UnlockEntry::TYPE_MODIFIER;
 				current.m_sName = (CString) cmd.GetArg(1);
