@@ -1,3 +1,5 @@
+/* RageDisplay_OGL_Extensions - OpenGL extension helpers. */
+
 #ifndef RAGE_DISPLAY_OGL_EXTENSIONS_H
 #define RAGE_DISPLAY_OGL_EXTENSIONS_H
 

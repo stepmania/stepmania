@@ -1,6 +1,4 @@
-/*
- * RageDisplay: Methods common to all RageDisplays
- */
+/* RageDisplay - Renderer base class. */
 
 #ifndef RAGEDISPLAY_H
 #define RAGEDISPLAY_H

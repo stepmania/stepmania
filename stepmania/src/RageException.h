@@ -1,9 +1,7 @@
-/*
- * RageException: Class for thowing fatal error exceptions
- */
+/* RageException - Class for thowing fatal errors. */
 
-#ifndef RAGEEXCEPTION_H
-#define RAGEEXCEPTION_H
+#ifndef RAGE_EXCEPTION_H
+#define RAGE_EXCEPTION_H
 
 namespace RageException
 {

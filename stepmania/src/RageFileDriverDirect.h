@@ -1,3 +1,5 @@
+/* RageFileDriverDirect - File driver for accessing a regular filesystem. */
+
 #ifndef RAGE_FILE_DRIVER_DIRECT_H
 #define RAGE_FILE_DRIVER_DIRECT_H
 

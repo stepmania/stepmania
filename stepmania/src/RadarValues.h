@@ -1,5 +1,4 @@
-/* This is just cached song data.  Not all of it may actually be displayed
- * in the radar. */
+/* RadarValues - Cached song statistics. */
 
 #ifndef RARAR_VALUES_H
 #define RARAR_VALUES_H

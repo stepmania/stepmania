@@ -1,4 +1,4 @@
-/* RageDisplay_OGL: OpenGL display implementation */
+/* RageDisplay_OGL: OpenGL renderer. */
 
 #ifndef RAGEDISPLAY_OGL_H
 #define RAGEDISPLAY_OGL_H

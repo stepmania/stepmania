@@ -1,4 +1,4 @@
-/* RageBitmapTexture: Holder for a static texture with metadata. */
+/* RageBitmapTexture - Loads a static texture. */
 
 #ifndef RAGEBITMAPTEXTURE_H
 #define RAGEBITMAPTEXTURE_H

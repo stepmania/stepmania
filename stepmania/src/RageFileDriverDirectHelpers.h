@@ -1,4 +1,4 @@
-/* Internal helper functions for RageFileDriverDirect. */
+/* RageFileDriverDirectHelpers - Internal helpers for RageFileDriverDirect. */
 
 #ifndef RAGE_FILE_DRIVER_DIRECT_HELPERS_H
 #define RAGE_FILE_DRIVER_DIRECT_HELPERS_H
