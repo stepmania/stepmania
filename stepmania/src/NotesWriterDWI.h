@@ -9,8 +9,8 @@ class NotesWriterDWI {
 	char NotesToDWIChar( bool bCol1, bool bCol2, bool bCol3, bool bCol4 );
 	CString NotesToDWIString( char cNoteCol1, char cNoteCol2, char cNoteCol3, char cNoteCol4, char cNoteCol5, char cNoteCol6 );
 	CString NotesToDWIString( char cNoteCol1, char cNoteCol2, char cNoteCol3, char cNoteCol4 );
-
-	void WriteDWINotesTag( FILE* fp, const Notes &out );
+	void WriteDWINotesField( FILE* fp, const Notes &out, int start );
+	bool WriteDWINotesTag( FILE* fp, const Notes &out );
 
 public:
 	bool Write( CString sPath, const Song &out );

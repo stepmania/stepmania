@@ -67,7 +67,89 @@ CString NotesWriterDWI::NotesToDWIString( char cNoteCol1, char cNoteCol2, char c
 	return NotesToDWIString( '0', cNoteCol1, cNoteCol2, cNoteCol3, cNoteCol4, '0' );
 }
 
-void NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Notes &out )
+void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
+{
+	NoteData notedata;
+	out.GetNoteData( &notedata );
+	notedata.ConvertHoldNotesTo2sAnd3s();
+
+	const int iLastMeasure = int( notedata.GetLastBeat()/BEATS_PER_MEASURE );
+	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
+	{
+		NoteType nt = notedata.GetSmallestNoteTypeForMeasure( m );
+
+		double fCurrentIncrementer;
+		switch( nt )
+		{
+		case NOTE_TYPE_4TH:
+		case NOTE_TYPE_8TH:	
+			fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
+			break;
+		case NOTE_TYPE_12TH:
+			fprintf( fp, "[" );
+			fCurrentIncrementer = 1.0/24 * BEATS_PER_MEASURE;
+			break;
+		case NOTE_TYPE_16TH:
+			fprintf( fp, "(" );
+			fCurrentIncrementer = 1.0/16 * BEATS_PER_MEASURE;
+			break;
+		default:
+			ASSERT(0);
+			// fall though
+		case NOTE_TYPE_INVALID:
+			fprintf( fp, "<" );
+			fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
+			break;
+		}
+
+		double fFirstBeatInMeasure = m * BEATS_PER_MEASURE;
+		double fLastBeatInMeasure = (m+1) * BEATS_PER_MEASURE;
+
+		for( double b=fFirstBeatInMeasure; b<fLastBeatInMeasure; b+=fCurrentIncrementer )
+		{
+			int row = BeatToNoteRow( (float)b );
+
+			switch( out.m_NotesType )
+			{
+			case NOTES_TYPE_DANCE_SINGLE:
+			case NOTES_TYPE_DANCE_COUPLE_1:
+			case NOTES_TYPE_DANCE_COUPLE_2:
+			case NOTES_TYPE_DANCE_DOUBLE:
+				fprintf( fp, NotesToDWIString( notedata.m_TapNotes[start+0][row], 
+												notedata.m_TapNotes[start+1][row],
+												notedata.m_TapNotes[start+2][row],
+												notedata.m_TapNotes[start+3][row] ) );
+				break;
+			case NOTES_TYPE_DANCE_SOLO:
+				fprintf( fp, NotesToDWIString( notedata.m_TapNotes[0][row], notedata.m_TapNotes[1][row], notedata.m_TapNotes[2][row], notedata.m_TapNotes[3][row], notedata.m_TapNotes[4][row], notedata.m_TapNotes[5][row] ) );
+				break;
+			default:	return;	// not a type supported by DWI
+			}
+		}
+
+		switch( nt )
+		{
+		case NOTE_TYPE_4TH:
+		case NOTE_TYPE_8TH:	
+			break;
+		case NOTE_TYPE_12TH:
+			fprintf( fp, "]" );
+			break;
+		case NOTE_TYPE_16TH:
+			fprintf( fp, ")" );
+			break;
+		default:
+			ASSERT(0);
+			// fall though
+		case NOTE_TYPE_INVALID:
+			fprintf( fp, ">" );
+			break;
+		}
+		fprintf( fp, "\n" );
+	}
+}
+
+bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Notes &out )
 {
 	LOG->Trace( "Notes::WriteDWINotesTag" );
 
@@ -77,7 +159,7 @@ void NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Notes &out )
 	case NOTES_TYPE_DANCE_COUPLE_1:	fprintf( fp, "#COUPLE:" );	break;
 	case NOTES_TYPE_DANCE_DOUBLE:	fprintf( fp, "#DOUBLE:" );	break;
 	case NOTES_TYPE_DANCE_SOLO:		fprintf( fp, "#SOLO:" );	break;
-	default:	return;	// not a type supported by DWI
+	default:	return false;	// not a type supported by DWI
 	}
 
 	switch( out.m_DifficultyClass )
@@ -85,97 +167,12 @@ void NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Notes &out )
 	case CLASS_EASY:	fprintf( fp, "BASIC:" );	break;
 	case CLASS_MEDIUM:	fprintf( fp, "ANOTHER:" );	break;
 	case CLASS_HARD:	fprintf( fp, "MANIAC:" );	break;
-	default:	ASSERT(0);	return;
+	default:	ASSERT(0);	return false;
 	}
 
 	fprintf( fp, "%d:\n", out.m_iMeter );
-
-	NoteData notedata;
-	out.GetNoteData( &notedata );
-	notedata.ConvertHoldNotesTo2sAnd3s();
-
-	const int iNumPads = (out.m_NotesType==NOTES_TYPE_DANCE_COUPLE_1 || out.m_NotesType==NOTES_TYPE_DANCE_DOUBLE) ? 2 : 1;
-	const int iLastMeasure = int( notedata.GetLastBeat()/BEATS_PER_MEASURE );
-
-	for( int pad=0; pad<iNumPads; pad++ )
-	{
-		if( pad == 1 )	// 2nd pad
-			fprintf( fp, ":\n" );
-
-		for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
-		{
-			NoteType nt = notedata.GetSmallestNoteTypeForMeasure( m );
-
-			double fCurrentIncrementer;
-			switch( nt )
-			{
-			case NOTE_TYPE_4TH:
-			case NOTE_TYPE_8TH:	
-				fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
-				break;
-			case NOTE_TYPE_12TH:
-				fprintf( fp, "[" );
-				fCurrentIncrementer = 1.0/24 * BEATS_PER_MEASURE;
-				break;
-			case NOTE_TYPE_16TH:
-				fprintf( fp, "(" );
-				fCurrentIncrementer = 1.0/16 * BEATS_PER_MEASURE;
-				break;
-			default:
-				ASSERT(0);
-				// fall though
-			case NOTE_TYPE_INVALID:
-				fprintf( fp, "<" );
-				fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
-				break;
-			}
-
-			double fFirstBeatInMeasure = m * BEATS_PER_MEASURE;
-			double fLastBeatInMeasure = (m+1) * BEATS_PER_MEASURE;
-
-			for( double b=fFirstBeatInMeasure; b<fLastBeatInMeasure; b+=fCurrentIncrementer )
-			{
-				int row = BeatToNoteRow( (float)b );
-
-				switch( out.m_NotesType )
-				{
-				case NOTES_TYPE_DANCE_SINGLE:
-				case NOTES_TYPE_DANCE_COUPLE_1:
-				case NOTES_TYPE_DANCE_DOUBLE:
-					fprintf( fp, NotesToDWIString( notedata.m_TapNotes[pad*4+0][row], notedata.m_TapNotes[pad*4+1][row], notedata.m_TapNotes[pad*4+2][row], notedata.m_TapNotes[pad*4+3][row] ) );
-					break;
-				case NOTES_TYPE_DANCE_SOLO:
-					fprintf( fp, NotesToDWIString( notedata.m_TapNotes[0][row], notedata.m_TapNotes[1][row], notedata.m_TapNotes[2][row], notedata.m_TapNotes[3][row], notedata.m_TapNotes[4][row], notedata.m_TapNotes[5][row] ) );
-					break;
-				default:	return;	// not a type supported by DWI
-				}
-			}
-
-			switch( nt )
-			{
-			case NOTE_TYPE_4TH:
-			case NOTE_TYPE_8TH:	
-				break;
-			case NOTE_TYPE_12TH:
-				fprintf( fp, "]" );
-				break;
-			case NOTE_TYPE_16TH:
-				fprintf( fp, ")" );
-				break;
-			default:
-				ASSERT(0);
-				// fall though
-			case NOTE_TYPE_INVALID:
-				fprintf( fp, ">" );
-				break;
-			}
-			fprintf( fp, "\n" );
-		}
-	}
-
-	fprintf( fp, ";\n" );
+	return true;
 }
-
 
 bool NotesWriterDWI::Write( CString sPath, const Song &out )
 {
@@ -209,12 +206,61 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 	}
 	fprintf( fp, ";\n" );
 	
-	//
-	// Save all Notes for this file
-	//
-	for( i=0; i<out.m_apNotes.GetSize(); i++ ) 
-		WriteDWINotesTag( fp, *out.m_apNotes[i] );
+	/* Save all Notes for this file.
+	 *
+	 * Hmm.  We can have any number of notes for any tag; this means we can
+	 * have any number of COUPLE_1 and COUPLE_2.  We don't force them to be
+	 * a pair; one player can play couples on normal and the other can play
+	 * on hard.
+	 *
+	 * .DWIs pair up couples; we only write couples where we have a pairing
+	 * (eg. we have both COUPLE_1 and COUPLE_2 for the same difficulty.)
+	 * If we don't have both, write neither, since "COUPLE" in DWI without
+	 * a second side is meaningless.  (I think.)
+	 *
+	 * We can have any number of pairings; only write one pair for each
+	 * difficulty.
+	 */
 
+	Notes *c[NUM_DIFFICULTY_CLASSES][2];
+	memset(c, 0, sizeof(c));
+
+	for( i=0; i<out.m_apNotes.GetSize(); i++ ) 
+	{
+		if(out.m_apNotes[i]->m_NotesType == NOTES_TYPE_DANCE_COUPLE_1) {
+			c[out.m_apNotes[i]->m_DifficultyClass][0] = out.m_apNotes[i];
+			continue;
+		}
+		if(out.m_apNotes[i]->m_NotesType == NOTES_TYPE_DANCE_COUPLE_2) {
+			c[out.m_apNotes[i]->m_DifficultyClass][1] = out.m_apNotes[i];
+			continue;
+		}
+
+		if(!WriteDWINotesTag( fp, *out.m_apNotes[i] ))
+			continue;
+
+		WriteDWINotesField( fp, *out.m_apNotes[i], 0 );
+		if(out.m_apNotes[i]->m_NotesType==NOTES_TYPE_DANCE_DOUBLE)
+		{
+			fprintf( fp, ":\n" );
+			WriteDWINotesField( fp, *out.m_apNotes[i], 4 );
+		}
+
+		fprintf( fp, ";\n" );
+	}
+
+	for( i=0; i < NUM_DIFFICULTY_CLASSES; ++i )
+	{
+		/* Skip if we don't have both sides for this couples. */
+		if( !c[i][0] || !c[i][1] ) continue;
+
+		WriteDWINotesTag( fp, *c[i][0] );
+		WriteDWINotesField( fp, *c[i][0], 0 );
+		fprintf( fp, ":\n" );
+		WriteDWINotesField( fp, *c[i][1], 0 );
+		fprintf( fp, ";\n" );
+	}
+	
 	fclose( fp );
 
 	return true;
