@@ -120,7 +120,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386 $(intdir)\verstub.obj 
+				AdditionalOptions="/MACHINE:I386 $(intdir)\verstub.obj
 "
 				OutputFile=".\../StepMania.exe"
 				LinkIncremental="1"
@@ -561,12 +561,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="Inventory.h">
 			</File>
 			<File
-				RelativePath="LRCFile.cpp">
-			</File>
-			<File
-				RelativePath="LRCFile.h">
-			</File>
-			<File
 				RelativePath="LyricsLoader.cpp">
 			</File>
 			<File
@@ -713,6 +707,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\IniFile.h">
+			</File>
+			<File
+				RelativePath="LRCFile.cpp">
+			</File>
+			<File
+				RelativePath="LRCFile.h">
 			</File>
 			<File
 				RelativePath="MsdFile.cpp">
