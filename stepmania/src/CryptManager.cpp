@@ -58,12 +58,12 @@ void CryptManager::GenerateRSAKey( unsigned int keyLength, CString privFilename,
 	{
 		AutoSeededRandomPool rng;
 
-		RSAES_OAEP_SHA_Decryptor priv(rng, keyLength);
+		RSASSA_PKCS1v15_SHA_Signer priv(rng, keyLength);
 		RageFileSink privFile(privFilename);
 		priv.DEREncode(privFile);
 		privFile.MessageEnd();
 
-		RSAES_OAEP_SHA_Encryptor pub(priv);
+		RSASSA_PKCS1v15_SHA_Verifier pub(priv);
 		RageFileSink pubFile(pubFilename);
 		pub.DEREncode(pubFile);
 		pubFile.MessageEnd();
