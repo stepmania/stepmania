@@ -70,6 +70,9 @@ $AUTOCONF
 $AUTOHEADER
 $AUTOMAKE $AUTOMAKE_OPTIONS
 
+#the other configure files from cvs are not executable. Make them executable.
+chmod a+x $srcdir/src/SDL-1.2.5/configure $srcdir/src/SDL_sound-1.0.0/configure 2>/dev/null
+
 #make -f Makefile.am srcdir=. acinclude.m4
 
 #if test -z "$*"; then
