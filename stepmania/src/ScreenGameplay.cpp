@@ -541,14 +541,14 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 
-		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathToF("Common normal") );
+		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathToF("ScreenGameplay player options") );
 		m_textPlayerOptions[p].EnableShadow( false );
 		m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d%s",p+1,bExtra?"Extra":"") );
 		SET_XY( m_textPlayerOptions[p] );
 		this->AddChild( &m_textPlayerOptions[p] );
 	}
 
-	m_textSongOptions.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textSongOptions.LoadFromFont( THEME->GetPathToF("ScreenGameplay song options") );
 	m_textSongOptions.EnableShadow( false );
 	m_textSongOptions.SetName( ssprintf("SongOptions%s",bExtra?"Extra":"") );
 	SET_XY( m_textSongOptions );
