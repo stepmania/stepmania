@@ -163,7 +163,7 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 		Profile* pProfile = PROFILEMAN->GetProfile( p );
 
 		m_textPlayerName[p].LoadFromFont( THEME->GetPathToF("ScreenEnding player name") );
-		m_textPlayerName[p].SetText( pProfile ? pProfile->GetDisplayName() : "NO CARD" );
+		m_textPlayerName[p].SetText( pProfile ? pProfile->GetDisplayName() : CString("NO CARD") );
 		m_textPlayerName[p].SetName( ssprintf("PlayerNameP%d",p+1) );
 		SET_XY_AND_ON_COMMAND( m_textPlayerName[p] );
 		this->AddChild( &m_textPlayerName[p] );

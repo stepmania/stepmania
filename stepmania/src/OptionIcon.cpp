@@ -51,7 +51,7 @@ void OptionIcon::Load( PlayerNumber pn, CString sText, bool bHeader )
 	int iState = pn*3 + (bHeader?0:(bVacant?1:2));
 	m_spr.SetState( iState );
 
-	m_text.SetText( bHeader ? "" : sText );
+	m_text.SetText( bHeader ? CString("") : sText );
 	m_text.SetZoom( TEXT_ZOOM );
 	m_text.CropToWidth( TEXT_WIDTH );
 }

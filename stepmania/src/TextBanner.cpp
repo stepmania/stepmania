@@ -85,12 +85,12 @@ void TextBanner::LoadFromSong( const Song* pSong )
 {
 	Init();
 
-	CString sDisplayTitle = pSong ? pSong->GetDisplayMainTitle() : "";
-	CString sTranslitTitle = pSong ? pSong->GetTranslitMainTitle() : "";
-	CString sDisplaySubTitle = pSong ? pSong->GetDisplaySubTitle() : "";
-	CString sTranslitSubTitle = pSong ? pSong->GetTranslitSubTitle() : "";
-	CString sDisplayArtist = pSong ? (CString)ARTIST_PREPEND_STRING + pSong->GetDisplayArtist() : "";
-	CString sTranslitArtist = pSong ? (CString)ARTIST_PREPEND_STRING + pSong->GetTranslitArtist() : "";
+	CString sDisplayTitle = pSong ? pSong->GetDisplayMainTitle() : CString("");
+	CString sTranslitTitle = pSong ? pSong->GetTranslitMainTitle() : CString("");
+	CString sDisplaySubTitle = pSong ? pSong->GetDisplaySubTitle() : CString("");
+	CString sTranslitSubTitle = pSong ? pSong->GetTranslitSubTitle() : CString("");
+	CString sDisplayArtist = pSong ? (CString)ARTIST_PREPEND_STRING + pSong->GetDisplayArtist() : CString("");
+	CString sTranslitArtist = pSong ? (CString)ARTIST_PREPEND_STRING + pSong->GetTranslitArtist() : CString("");
 
 	LoadFromString( 
 		sDisplayTitle, sTranslitTitle, 

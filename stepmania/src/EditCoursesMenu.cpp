@@ -434,7 +434,7 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 		// fall through
 	case ROW_ENTRY_TYPE:
 		CHECKPOINT;
-		m_textValue[ROW_ENTRY_TYPE].SetText( pEntry ? CourseEntryTypeToString(pEntry->type) : "(none)" );
+		m_textValue[ROW_ENTRY_TYPE].SetText( pEntry ? CourseEntryTypeToString(pEntry->type) : CString("(none)") );
 		// fall through
 	case ROW_ENTRY_OPTIONS:
 		CHECKPOINT;
@@ -443,9 +443,9 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 			const bool *bShow = g_bRowEnabledForType[GetSelectedEntry()->type];
 
 			if( bShow[song] )
-				as.push_back( pEntry->pSong ? pEntry->pSong->GetFullTranslitTitle() : "(missing song)" );
+				as.push_back( pEntry->pSong ? pEntry->pSong->GetFullTranslitTitle() : CString("(missing song)") );
 			if( bShow[group] )
-				as.push_back( pEntry->group_name.empty() ? "(no group)" : pEntry->group_name );
+				as.push_back( pEntry->group_name.empty() ? CString("(no group)") : pEntry->group_name );
 			if( bShow[difficulty] )
 				if( pEntry->difficulty != DIFFICULTY_INVALID )
 					as.push_back( DifficultyToString(pEntry->difficulty) );

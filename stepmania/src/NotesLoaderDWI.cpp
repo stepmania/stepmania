@@ -468,7 +468,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 				sParams[1], 
 				sParams[2], 
 				sParams[3], 
-				(iNumParams==5) ? sParams[4] : "",
+				(iNumParams==5) ? sParams[4] : CString(""),
 				*pNewNotes
 				);
 			if(pNewNotes->m_StepsType != STEPS_TYPE_INVALID)

@@ -605,8 +605,8 @@ void SongManager::InitAutogenCourses()
 		vector<Song *> aSongs;
 		unsigned i = 0;
 		do {
-			CString sArtist = i >= apSongs.size()? "": apSongs[i]->GetDisplayArtist();
-			CString sTranslitArtist = i >= apSongs.size()? "": apSongs[i]->GetTranslitArtist();
+			CString sArtist = i >= apSongs.size()? CString(""): apSongs[i]->GetDisplayArtist();
+			CString sTranslitArtist = i >= apSongs.size()? CString(""): apSongs[i]->GetTranslitArtist();
 			if( i < apSongs.size() && !sCurArtist.CompareNoCase(sArtist) )
 			{
 				aSongs.push_back( apSongs[i] );

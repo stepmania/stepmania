@@ -347,7 +347,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			}
 
 			LoadFromSMTokens( 
-				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:"",
+				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:CString(""),
 				*pNewNotes);
 
 			out.AddSteps( pNewNotes );
@@ -445,7 +445,7 @@ bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 			}
 
 			LoadFromSMTokens( 
-				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:"",
+				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:CString(""),
 				*pNewNotes);
 
 			pNewNotes->SetLoadedFromProfile( slot );

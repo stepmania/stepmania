@@ -65,7 +65,7 @@ static CString AddPart( float level, CString name )
 	if( level == 0 )
 		return "";
 
-	const CString LevelStr = (level == 1)? "": ssprintf( "%i%% ", (int) roundf(level*100) );
+	const CString LevelStr = (level == 1)? CString(""): ssprintf( "%i%% ", (int) roundf(level*100) );
 
 	return LevelStr + name + ", ";
 }

@@ -214,7 +214,7 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 	}
 
 	s_bCancelledLast = m_bCancelled;
-	s_sLastAnswer = m_bCancelled ? "" : WStringToCString(m_sAnswer);
+	s_sLastAnswer = m_bCancelled ? CString("") : WStringToCString(m_sAnswer);
 }
 
 void ScreenTextEntry::MenuBack( PlayerNumber pn )

@@ -167,7 +167,7 @@ static void Announcer( int &sel, bool ToSel, const CStringArray &choices )
 			if( !stricmp(choices[i], ANNOUNCER->GetCurAnnouncerName()) )
 				sel = i;
 	} else {
-		const CString sNewAnnouncer = sel? choices[sel]:"";
+		const CString sNewAnnouncer = sel? choices[sel]:CString("");
 		ANNOUNCER->SwitchAnnouncer( sNewAnnouncer );
 	}
 }

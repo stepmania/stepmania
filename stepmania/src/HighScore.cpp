@@ -38,7 +38,7 @@ XNode* HighScore::CreateNode() const
 	pNode->name = "HighScore";
 
 	// TRICKY:  Don't write "name to fill in" markers.
-	pNode->AppendChild( "Name", IsRankingToFillIn(sName) ? "" : sName );
+	pNode->AppendChild( "Name", IsRankingToFillIn(sName) ? CString("") : sName );
 	pNode->AppendChild( "Grade",			GradeToString(grade) );
 	pNode->AppendChild( "Score",			iScore );
 	pNode->AppendChild( "PercentDP",		fPercentDP );

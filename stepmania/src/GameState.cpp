@@ -49,6 +49,7 @@ GameState::GameState()
 	ReloadCharacters();
 
 	m_iNumTimesThroughAttract = -1;	// initial screen will bump this up to 0
+	m_iRoundSeed = m_iGameSeed = 0;
 
 	/* Don't reset yet; let the first screen do it, so we can
 	 * use PREFSMAN and THEME. */

@@ -277,7 +277,7 @@ void EditCoursesSongMenu::OnRowValueChanged( Row row )
 		// fall through
 	case ROW_SONG:
 		CHECKPOINT;
-		m_textValue[ROW_SONG].SetText( pSong? pSong->GetTranslitMainTitle():"" );
+		m_textValue[ROW_SONG].SetText( pSong? pSong->GetTranslitMainTitle():CString("") );
 		// fall through
 
 	case ROW_TYPE:

@@ -930,7 +930,7 @@ void ScreenEvaluation::CommitScores(
 			hs.fSurviveSeconds = stageStats.fAliveSeconds[p];
 			hs.sModifiers = GAMESTATE->m_PlayerOptions[p].GetString();
 			hs.dateTime = DateTime::GetNowDateTime();
-			hs.sPlayerGuid = PROFILEMAN->IsUsingProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : "";
+			hs.sPlayerGuid = PROFILEMAN->IsUsingProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : CString("");
 			hs.sMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
 			hs.iProductID = PREFSMAN->m_iProductID;
 			memcpy( hs.iTapNoteScores, stageStats.iTapNoteScores[p], sizeof(hs.iTapNoteScores) );

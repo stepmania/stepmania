@@ -239,7 +239,7 @@ const Profile* ProfileManager::GetProfile( PlayerNumber pn ) const
 CString ProfileManager::GetPlayerName( PlayerNumber pn ) const
 {
 	const Profile *prof = GetProfile( pn );
-	return prof ? prof->GetDisplayName() : "";
+	return prof ? prof->GetDisplayName() : CString("");
 }
 
 

@@ -67,7 +67,7 @@ void BPMDisplay::Update( float fDeltaTime )
 		if(m_fBPMTo == -1)
 		{
 			m_fBPMFrom = -1;
-			m_textBPM.SetText( (RandomFloat(0,1)>0.90) ? "xxx" : ssprintf("%03.0f",RandomFloat(0,600)) ); 
+			m_textBPM.SetText( (RandomFloat(0,1)>0.90) ? CString("xxx") : ssprintf("%03.0f",RandomFloat(0,600)) ); 
 		} else if(m_fBPMFrom == -1)
 			m_fBPMFrom = m_fBPMTo;
 	}

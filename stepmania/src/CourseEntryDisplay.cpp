@@ -42,12 +42,12 @@ void CourseEntryDisplay::Load()
 		if( !SEPARATE_COURSE_METERS && pn != GAMESTATE->m_MasterPlayerNumber )
 			continue;	// skip
 
-		m_textFoot[pn].SetName( SEPARATE_COURSE_METERS? ssprintf("FootP%i", pn+1):"Foot" );
+		m_textFoot[pn].SetName( SEPARATE_COURSE_METERS? ssprintf("FootP%i", pn+1):CString("Foot") );
 		m_textFoot[pn].LoadFromTextureAndChars( THEME->GetPathToG("CourseEntryDisplay difficulty 2x1"),"10" );
 		SET_XY_AND_ON_COMMAND( &m_textFoot[pn] );
 		this->AddChild( &m_textFoot[pn] );
 
-		m_textDifficultyNumber[pn].SetName( SEPARATE_COURSE_METERS? ssprintf("DifficultyP%i", pn+1):"Difficulty" );
+		m_textDifficultyNumber[pn].SetName( SEPARATE_COURSE_METERS? ssprintf("DifficultyP%i", pn+1):CString("Difficulty") );
 		m_textDifficultyNumber[pn].LoadFromFont( THEME->GetPathToF("Common normal") );
 		SET_XY_AND_ON_COMMAND( &m_textDifficultyNumber[pn] );
 		this->AddChild( &m_textDifficultyNumber[pn] );
