@@ -66,7 +66,24 @@ public:
 	bool ZBufferEnabled() const;
 	void EnableZBuffer();
 	void DisableZBuffer();
-	void EnableTextureWrapping(bool yes=true);
+	void EnableTextureWrapping(bool b=true);
+
+	void SetMaterial( 
+		float emissive[4],
+		float ambient[4],
+		float diffuse[4],
+		float specular[4],
+		float shininess
+		);
+
+	void EnableLighting(bool b=true);
+	void SetLightOff( int index );
+	void SetLightDirectional( 
+		int index, 
+		RageColor ambient, 
+		RageColor diffuse, 
+		RageColor specular, 
+		RageVector3 dir );
 
 	void DrawQuad( const RageVertex v[4] );	// upper-left, upper-right, lower-left, lower-right
 	void DrawQuads( const RageVertex v[], int iNumVerts );

@@ -31,9 +31,11 @@ ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
 //	this->AddChild( &m_sprite );
 
 	m_model.SetXY(CENTER_X, CENTER_Y);
-	m_model.SetZoom(10);
+	m_model.SetZoomX(5);
+	m_model.SetZoomY(5);
 	m_model.Load( "bend.txt" );
 	this->AddChild(&m_model);
+	m_model.SetEffectSpin( RageVector3(0,90,0) );
 
 	this->AddChild( &m_In );
 

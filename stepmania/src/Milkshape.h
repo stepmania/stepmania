@@ -93,6 +93,8 @@ typedef struct msMesh
 } msMesh;
 
 /* msMaterial */
+class RageTexture;
+
 typedef struct msMaterial
 {
     int         nFlags;
@@ -104,8 +106,9 @@ typedef struct msMaterial
     float       fShininess;
     float       fTransparency;
     char        szDiffuseTexture[MS_MAX_PATH];
-    char        szAlphaTexture[MS_MAX_PATH];
-    int         nName;
+    char        szAlphaTexture[MS_MAX_PATH];	// not used in SM.  Use alpha in diffuse texture instead
+    int         nName;	// not used in SM.  What is this for?
+	RageTexture* pTexture;
 } msMaterial;
 
 /* msPositionKey */

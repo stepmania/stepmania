@@ -34,7 +34,7 @@ public:
 
 public:
 	void	Clear ();
-	bool	Load(const char *szFilename);
+	bool	Load( CString sPath );
 
 	virtual void	Update( float fDelta );
 	virtual void	DrawPrimitives();

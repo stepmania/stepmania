@@ -943,9 +943,56 @@ void RageDisplay::DisableZBuffer()
 {
 	glDisable( GL_DEPTH_TEST );
 }
-void RageDisplay::EnableTextureWrapping(bool yes)
+void RageDisplay::EnableTextureWrapping(bool b)
 {
-	GLenum mode = yes? GL_REPEAT:GL_CLAMP;
+	GLenum mode = b? GL_REPEAT:GL_CLAMP;
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode );
+}
+
+void RageDisplay::SetMaterial( 
+	float emissive[4],
+	float ambient[4],
+	float diffuse[4],
+	float specular[4],
+	float shininess
+	)
+{
+	glMaterialfv( GL_FRONT, GL_EMISSION, emissive );
+	glMaterialfv( GL_FRONT, GL_AMBIENT, ambient );
+	glMaterialfv( GL_FRONT, GL_DIFFUSE, diffuse );
+	glMaterialfv( GL_FRONT, GL_SPECULAR, specular );
+	glMaterialf( GL_FRONT, GL_SHININESS, shininess );
+}
+
+void RageDisplay::EnableLighting(bool b)
+{
+	if( b )	glEnable( GL_LIGHTING );
+	else	glDisable( GL_LIGHTING );
+}
+
+void RageDisplay::SetLightOff( int index )
+{
+	glDisable( GL_LIGHT0+index );
+}
+void RageDisplay::SetLightDirectional( 
+	int index, 
+	RageColor ambient, 
+	RageColor diffuse, 
+	RageColor specular, 
+	RageVector3 dir )
+{
+	// Light coordinates are transformed by the modelview matrix, but
+	// we are being passed in world-space coords.
+	glPushMatrix();
+	glLoadIdentity();
+
+	glEnable( GL_LIGHT0+index );
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+	float position[4] = {dir.x, dir.y, dir.z, 0};
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+	glPopMatrix();
 }

@@ -13,6 +13,8 @@
 #include "Milkshape.h"
 #include "mathlib.h"
 #include "RageDisplay.h"
+#include "RageUtil.h"
+#include "RageTextureManager.h"
 
 
 Model::Model ()
@@ -42,9 +44,12 @@ void Model::Clear ()
 	}
 }
 
-bool Model::Load (const char *szFilename)
+bool Model::Load( CString sPath )
 {
-	FILE *file = fopen (szFilename, "rt");
+	CString sDir, sThrowAway;
+	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
+
+	FILE *file = fopen (sPath, "rt");
 	if (!file)
 		return false;
 
@@ -252,7 +257,7 @@ bool Model::Load (const char *szFilename)
 
             for (i = 0; i < nNumMaterials && !bError; i++)
             {
-                m_pModel->Materials.resize( m_pModel->Materials.size() );
+                m_pModel->Materials.resize( m_pModel->Materials.size()+1 );
 				msMaterial& Material = m_pModel->Materials.back();
 
                 // name
@@ -358,11 +363,8 @@ bool Model::Load (const char *szFilename)
                     bError = true;
                     break;
                 }
-                if (sscanf (szLine, "\"%[^\"]\"", szName) != 1)
-                {
-                    bError = true;
-                    break;
-                }
+                strcpy (szName, "");
+                sscanf (szLine, "\"%[^\"]\"", szName);
                 strcpy( Material.szDiffuseTexture, szName );
 
                 // alpha texture
@@ -373,8 +375,17 @@ bool Model::Load (const char *szFilename)
                 }
                 strcpy (szName, "");
                 sscanf (szLine, "\"%[^\"]\"", szName);
-
                 strcpy( Material.szAlphaTexture, szName );
+
+				Material.pTexture = NULL;
+				if( strcmp(Material.szDiffuseTexture, "")!=0 )
+				{
+					RageTextureID ID;
+					ID.filename = sDir+Material.szDiffuseTexture;
+					ID.bStretch = true;
+					if( DoesFileExist(ID.filename) )
+						Material.pTexture = TEXTUREMAN->LoadTexture( ID );
+				}
             }
         }
 
@@ -507,17 +518,59 @@ bool Model::Load (const char *szFilename)
 	return true;
 }
 
+#include "SDL_opengl.h"
+#include "RageTimer.h"
+
 void Model::DrawPrimitives()
 {
 	if (!m_pModel)
 		return;
 
-	DISPLAY->SetTexture( NULL );
 	DISPLAY->SetBlendModeNormal();
+	DISPLAY->EnableLighting( true );
+	DISPLAY->EnableZBuffer();
+	DISPLAY->SetLightDirectional( 
+		0, 
+		RageColor(0.2f,0.2f,0.2f,1), 
+		RageColor(1,1,1,1),
+		RageColor(1,1,1,1),
+		RageVector3(0, 0, +1) );
+
 
 	for (int i = 0; i < (int)m_pModel->Meshes.size(); i++)
 	{
 		msMesh *pMesh = &m_pModel->Meshes[i];
+
+		// apply material
+		if( pMesh->nMaterialIndex != -1 )
+		{
+			msMaterial& mat = m_pModel->Materials[ pMesh->nMaterialIndex ];
+			DISPLAY->SetMaterial( 
+				mat.Emissive,
+				mat.Ambient,
+				mat.Diffuse,
+				mat.Specular,
+				mat.fShininess );
+			DISPLAY->SetTexture( mat.pTexture );
+		}
+		else
+		{
+			float emissive[4] = {0,0,0,0};
+			float ambient[4] = {0.2f,0.2f,0.2f,1};
+			float diffuse[4] = {0.7f,0.7f,0.7f,1};
+			float specular[4] = {0.2f,0.2f,0.2f,1};
+			float shininess = 1;
+			DISPLAY->SetMaterial(
+				emissive,
+				ambient,
+				diffuse,
+				specular,
+				shininess );
+			DISPLAY->SetTexture( NULL );
+		}
+
+		glBegin( GL_TRIANGLES );
+
 		for (int j = 0; j < (int)pMesh->Triangles.size(); j++)
 		{
 			RageVertex verts[3];
@@ -528,14 +581,31 @@ void Model::DrawPrimitives()
 			memcpy( nNormalIndices, pTriangle->nNormalIndices, sizeof(nNormalIndices) );
 			for (int k = 0; k < 3; k++)
 			{
-				msVertex *pVertex = &pMesh->Vertices[ nIndices[k] ];
 				RageVertex& v = verts[k];
+
+				msVec3 *normal = &pMesh->Normals[ nNormalIndices[k] ];
+				v.n.x = normal->v[0];
+				v.n.y = normal->v[1];
+				v.n.z = normal->v[2];
+
+				glNormal3fv( normal->v );
+
+				msVertex *pVertex = &pMesh->Vertices[ nIndices[k] ];
 				v.c = RageColor(1,1,1,1);
+				v.t.x = pVertex->uv[0];
+				v.t.y = pVertex->uv[1];
+
+				glTexCoord2f( pVertex->uv[0], pVertex->uv[1] );
+
+				float white[4] = {1,1,0,1};
+				glColor4fv( white );
+
 				if (pVertex->nBoneIndex == -1)
 				{
 					v.p.x = pVertex->Vertex[0];
 					v.p.y = pVertex->Vertex[1];
 					v.p.z = pVertex->Vertex[2];
+					glVertex3fv( pVertex->Vertex );
 				}
 				else
 				{
@@ -547,11 +617,18 @@ void Model::DrawPrimitives()
 					v.p.x = Vertex[0];
 					v.p.y = Vertex[1];
 					v.p.z = Vertex[2];
+					glVertex3fv( Vertex );
 				}
+
 			}
-			DISPLAY->DrawTriangles( verts, 3 );
+//			DISPLAY->DrawTriangles( verts, 3 );
 		}
+		glEnd();
 	}
+
+	DISPLAY->SetLightOff( 0 );
+	DISPLAY->EnableLighting( false );
+
 }
 
 float
@@ -748,5 +825,6 @@ Model::AdvanceFrame (float dt)
 
 void Model::Update( float fDelta )
 {
+	Actor::Update( fDelta );
 	AdvanceFrame( fDelta );
 }
