@@ -26,13 +26,14 @@ void Transition::Load( CString sBGAniDir )
 	m_State = waiting;
 
 	// load sound from file specified by ini, or use the first sound in the directory
+	
 	if( IsADirectory(sBGAniDir) )
 	{
 		IniFile ini;
 		ini.ReadFile( sBGAniDir+"/BGAnimation.ini" );
 
 		CString sSoundFileName;
-		if( ini.GetValue("BGAnimation","Sound",sSoundFileName) )
+		if( ini.GetValue("BGAnimation","Sound", sSoundFileName) )
 		{
 			FixSlashesInPlace( sSoundFileName );
 			CString sPath = sBGAniDir+sSoundFileName;
@@ -42,6 +43,17 @@ void Transition::Load( CString sBGAniDir )
 		else
 		{
 			m_sound.Load( sBGAniDir );
+		}
+	}
+	else if( GetExtension(sBGAniDir).CompareNoCase("xml") == 0 )
+	{
+		CString sSoundFile;
+		XNode xml;
+		PARSEINFO pi;
+		xml.LoadFromFile( sBGAniDir, &pi );
+		if( xml.GetAttrValue( "Sound", sSoundFile ) )
+		{
+			m_sound.Load( Dirname(sBGAniDir) + sSoundFile );
 		}
 	}
 }
