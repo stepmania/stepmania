@@ -3,7 +3,7 @@
 #include "RageFile.h"
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
-#include "RageFileManager.h"
+#include "test_misc.h"
 
 #include <unistd.h>
 
@@ -185,7 +185,13 @@ void TestText()
 void TestSeek( bool relative )
 {
 	const CString TestLine = "Hello World\n";
-	const CString junk = "XXXXXXXX";
+	/* Print a couple kb of text.  Make sure this is big enough that the binary
+	 * test data after it won't start in the buffer; if that happens, the seek
+	 * will be optimized out. */
+	CString junk;
+	for( int lines = 0; lines < 128; ++lines )
+		junk += "XXXXXXXXX\n";
+
 	if( CreateTestFiles )
 	{
 		/* Output a line of text, followed by some junk, followed by binary
@@ -244,16 +250,33 @@ void TestSeek( bool relative )
 		LOG->Warn( "AtEOF returned true, expected false");
 		return;
 	}
+
+	/* Make sure a read after seeking far past EOF returns 0. */
+	test.Seek( 9999999 );
+	ret = test.Read( &c, 1 );
+	if( ret != 0 )
+	{
+		LOG->Warn( "Read(1) failed: got %i, expected 0", ret );
+		return;
+	}
+	if( !test.AtEOF() )
+	{
+		LOG->Warn( "AtEOF returned false, expected true");
+		return;
+	}
 }
 
 
 
 int main( int argc, char *argv[] )
 {
-	CString Driver = "dir", Root = ".";
+	test_handle_args( argc, argv );
+
+	optind = 0; // force getopt to reset
 	while( 1 )
 	{
-		int opt = getopt( argc, argv, "cd:r:h" );
+		opterr = 0;
+		int opt = getopt( argc, argv, "c" );
 		if( opt == -1 )
 			break;
 		switch( opt )
@@ -261,30 +284,11 @@ int main( int argc, char *argv[] )
 		case 'c':
 			CreateTestFiles = true;
 			break;
-		case 'd':
-			Driver = optarg;
-			break;
-		case 'r':
-			Root = optarg;
-			break;
-
-		case 'h':
-			printf( "options:\n" );
-			printf( " -c: create test files\n" );
-			printf( " -d driver: choose file driver to test (default \"Dir\")\n" );
-			printf( " -r root: set file driver root (default \".\")\n" );
-			exit(1);
 		}
 
 	}
 
-	FILEMAN = new RageFileManager( argv[0] );
-	FILEMAN->Mount( Driver, Root, "" );
-
-	LOG			= new RageLog();
-	LOG->SetLogToDisk( false );
-	LOG->SetShowLogOutput( true );
-	LOG->SetFlushing( true );
+	test_init();
 
 	if( CreateTestFiles )
 		CreateBinaryTestFile( "test.binary", 4096 );
@@ -325,6 +329,8 @@ int main( int argc, char *argv[] )
 	/* Test seeking. */
 	TestSeek( true );
 	TestSeek( false );
+
+	test_deinit();
 
 	exit(0);
 }
