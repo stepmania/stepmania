@@ -35,6 +35,7 @@ BeginnerHelper::BeginnerHelper()
 {
 	LOG->Trace("BeginnerHelper::BeginnerHelper()");
 	m_bFlashEnabled = false;
+	m_bShowBackground = true;
 	m_bInitialized = false;
 	m_iLastRowChecked = 0;
 	this->AddChild(&m_sBackground);
