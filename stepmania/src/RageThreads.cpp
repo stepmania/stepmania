@@ -108,6 +108,12 @@ const char *ThreadSlot::GetFormattedCheckpoint( int lineno )
 
 static ThreadSlot g_ThreadSlots[MAX_THREADS];
 struct ThreadSlot *g_pUnknownThreadSlot = NULL;
+
+/* This locks all unused thread slots; once a slot is marked "used", this is no longer
+ * relevant.  A thread must be fully set up before being marked used.  This is intended
+ * to allow access to g_ThreadSlots without locking, since GetThreadSlotFromID is called
+ * on every CHECKPOINT.  (XXX: there are race conditions on Wait(); I wish TLS was
+ * more standard ...) */
 static RageMutex g_ThreadSlotsLock("ThreadSlots");
 
 static int FindEmptyThreadSlot()
@@ -118,7 +124,6 @@ static int FindEmptyThreadSlot()
 		if( g_ThreadSlots[entry].used )
 			continue;
 
-		g_ThreadSlots[entry].used = true;
 		return entry;
 	}
 			
@@ -173,6 +178,9 @@ void RageThread::Create( int (*fn)(void *), void *data )
 	/* Don't create a thread that's already running: */
 	ASSERT( m_pSlot == NULL );
 
+	/* Lock unused slots, so nothing else uses our slot before we mark it used. */
+	LockMut(g_ThreadSlotsLock);
+
 	int slotno = FindEmptyThreadSlot();
 	m_pSlot = &g_ThreadSlots[slotno];
 	
@@ -190,6 +198,9 @@ void RageThread::Create( int (*fn)(void *), void *data )
 	m_pSlot->pImpl = MakeThread( fn, data );
 	sprintf( m_pSlot->ThreadFormattedOutput, "Thread: %s", name.c_str() );
 
+	/* Only after everything in the slot is valid, mark the slot used, so all
+	 * "used" slots have a valid pImpl. */
+	g_ThreadSlots[slotno].used = true;
 }
 
 /* On startup, register the main thread's slot. */
@@ -197,10 +208,12 @@ static struct SetupMainThread
 {
 	SetupMainThread()
 	{
+		LockMut(g_ThreadSlotsLock);
 		int slot = FindEmptyThreadSlot();
 		strcpy( g_ThreadSlots[slot].name, "Main thread" );
 		sprintf( g_ThreadSlots[slot].ThreadFormattedOutput, "Thread: %s", g_ThreadSlots[slot].name );
 		g_ThreadSlots[slot].pImpl = MakeThisThread();
+		g_ThreadSlots[slot].used = true;
 	}
 } SetupMainThreadObj;
 
@@ -209,10 +222,12 @@ static struct SetupUnknownThread
 {
 	SetupUnknownThread()
 	{
+		LockMut(g_ThreadSlotsLock);
 		int slot = FindEmptyThreadSlot();
 		strcpy( g_ThreadSlots[slot].name, "Unknown thread" );
 		g_pUnknownThreadSlot = &g_ThreadSlots[slot];
 		sprintf( g_ThreadSlots[slot].ThreadFormattedOutput, "Unknown thread" );
+		g_ThreadSlots[slot].used = true;
 	}
 } SetupUnknownThreadObj;
 
