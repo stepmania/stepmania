@@ -705,6 +705,15 @@ void ScreenSelectMaster::TweenOnScreen()
 			}
 	}
 
+	//We have to move page two's explanation and more off the screen
+	//so it doesn't just sit there on page one.  (Thanks Zhek)
+	
+	for (int page=0;page<NUM_PAGES;page++)
+	{
+		m_sprMore[page].SetXY(999,999);
+		m_sprExplanation[page]->SetXY(999,999);
+	}
+
 	SET_XY_AND_ON_COMMAND( m_sprExplanation[GetCurrentPage()] );
 	SET_XY_AND_ON_COMMAND( m_sprMore[GetCurrentPage()] );
 
