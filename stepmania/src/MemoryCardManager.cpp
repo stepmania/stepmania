@@ -296,6 +296,11 @@ bool MemoryCardManager::PathIsMemCard( CString sDir ) const
 		return false;
 }
 
+bool MemoryCardManager::IsNameAvailable( PlayerNumber pn ) const
+{
+	return m_Device[pn].bIsNameAvailable;
+}
+
 CString MemoryCardManager::GetName( PlayerNumber pn ) const
 {
 	return m_Device[pn].sName;

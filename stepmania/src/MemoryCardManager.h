@@ -39,7 +39,8 @@ public:
 	void FlushAndReset();	// force all files to be flushed to mounted memory cards
 
 	bool PathIsMemCard( CString sDir ) const;
-	
+
+	bool IsNameAvailable( PlayerNumber pn ) const;
 	CString GetName( PlayerNumber pn ) const;
 
 protected:

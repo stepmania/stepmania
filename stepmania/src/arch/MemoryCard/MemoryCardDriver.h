@@ -17,6 +17,7 @@ struct UsbStorageDevice
 		sOsMountDir = "";
 		bNeedsWriteTest = true;
 		bWriteTestSucceeded = false;
+		bIsNameAvailable = false;
 		sName = "";
 		idVendor = 0;
 		idProduct = 0;
@@ -32,6 +33,7 @@ struct UsbStorageDevice
 	CString	sOsMountDir;	// WITHOUT trailing slash
   bool bNeedsWriteTest;
   bool bWriteTestSucceeded;  // only valid if bNeedsWriteTest == false
+  bool bIsNameAvailable;  // Name in the profile on the memory card.
   CString sName;  // Name in the profile on the memory card.
   int idVendor;
   int idProduct;

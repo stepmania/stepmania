@@ -103,6 +103,7 @@ void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
 				Profile profile;
 				CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
 				profile.LoadEditableDataFromDir( sProfileDir );
+				usbd.bIsNameAvailable = true;
 				usbd.sName = profile.GetDisplayName();
 				UnmountMountPoint( TEMP_MOUNT_POINT );
 

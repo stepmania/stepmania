@@ -49,6 +49,7 @@ ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our p
 #define CREDITS_CARD_ERROR		THEME->GetMetric ("ScreenSystemLayer","CreditsCardError")
 #define CREDITS_CARD_TOO_LATE	THEME->GetMetric ("ScreenSystemLayer","CreditsCardTooLate")
 #define CREDITS_CARD_NO_NAME	THEME->GetMetric ("ScreenSystemLayer","CreditsCardNoName")
+#define CREDITS_CARD_READY		THEME->GetMetric ("ScreenSystemLayer","CreditsCardReady")
 #define CREDITS_FREE_PLAY		THEME->GetMetric ("ScreenSystemLayer","CreditsFreePlay")
 #define CREDITS_CREDITS			THEME->GetMetric ("ScreenSystemLayer","CreditsCredits")
 #define CREDITS_NOT_PRESENT		THEME->GetMetric ("ScreenSystemLayer","CreditsNotPresent")
@@ -224,9 +225,11 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 				// Prefer the name of the profile over the name of the card.
 				else if( pProfile )
 					sCredits = pProfile->GetDisplayName();
+				else if( !MEMCARDMAN->IsNameAvailable(p) )
+					sCredits = CREDITS_CARD_READY;
 				else if( !MEMCARDMAN->GetName(p).empty() )
 					sCredits = MEMCARDMAN->GetName(p);
-				else	
+				else
 					sCredits = CREDITS_CARD_NO_NAME;
 				break;
 			default:
