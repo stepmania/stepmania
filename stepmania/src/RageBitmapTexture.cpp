@@ -158,7 +158,7 @@ void RageBitmapTexture::Create(
 			iMipMaps,					// mip map levels
 			0,							// usage (is a render target?)
 			fmtTexture,					// our preferred texture format
-			D3DPOOL_DEFAULT,			// which memory pool
+			D3DPOOL_MANAGED,			// which memory pool
 			(bStretch ? D3DX_FILTER_LINEAR : D3DX_FILTER_NONE) | (bDither ? D3DX_FILTER_DITHER : 0),		// filter
 			D3DX_FILTER_BOX | (bDither ? D3DX_FILTER_DITHER : 0),				// mip filter
 			D3DCOLOR_ARGB(255,255,0,255), // pink color key

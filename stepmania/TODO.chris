@@ -2,19 +2,28 @@
 Fix
 /////////////////////////
 
-fix weird colors in recording
 
-weird dik_p
+There's a major Oni course bug (at least in Pump mode):
+
+If you set a certain song to have modifiers, those modifiers will carry over to the next songs unless you change them. I don't think this was the original intention of how each #SONG line is supposed to work? Every time you finish a song, aren't the modifiers supposed to be reset for the next line unless that line sets it's own modifiers. This is a problem because, at least from what the README indicates, there's no normal setting for each modifier type (for e.g, no 1.0x to return to normal speed).
+
+I'll abbreviate a course file I did:
+
+#SONG:Pump\Artist1 - SongTitle1:EASY:0.5x,dizzy;
+#SONG:Pump\Artist2 - SongTitle2:MEDIUM;
+
+The problem is on song 2, it still gets the 0.5x and dizzy modifiers. Shouldn't they be reset for the 2nd song? 
 
 
+performane issues
 
-I noticed 2 things with Challenge Mode, one new to this release candidate, and one that I've noticed since I've started using SM in Beta 5.
+ready, here we go closer to start (dive into the night)
 
-1) The timer at the end of the song jumps about 1:30 for a brief period of time. Perhaps it's adding the length of the next song. Once the next song starts however, it goes back the 1:30 or so back to what it was supposed to be. This is a new bug as far as I know.
-
-2) On Kidou II, the final song, Kakumei is on Reverse/Dark and stuff, but the green heavy logo doesn't move to the top of the screen like all the other reverse songs do. And especially when it's on dark, the bottom of the screen is partially blocked by this Heavy logo. I know if I pick Reverse in any other mode, the Heavy logo will move up below the health meter, but it doesn't for Challenge Mode, or at least this course anyway. This bug has been present since Beta 5.
+long ver balloon
 
 crowd cheer on AA or greater
+
+notefield length on play record and in gameplay
 
 - ez2dancer missing graphic
 

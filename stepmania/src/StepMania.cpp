@@ -617,7 +617,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 					if( PREFSMAN->m_iDisplayResolution != 640 )
 						PREFSMAN->m_iDisplayResolution = 640;
 					else
-						PREFSMAN->m_iDisplayResolution = 400;
+						PREFSMAN->m_iDisplayResolution = 320;
 
 					ApplyGraphicOptions();
 					return 0;
