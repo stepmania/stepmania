@@ -1267,7 +1267,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BackFromInsertAttack:
 		{
 			int iDurationChoice = ScreenMiniMenu::s_iLastAnswers[0];
-			g_fLastInsertAttackDurationSeconds = atof( g_InsertAttackItems[0].choices[iDurationChoice] );
+			g_fLastInsertAttackDurationSeconds = (float) atof( g_InsertAttackItems[0].choices[iDurationChoice] );
 			GAMESTATE->StoreSelectedOptions();	// save so that we don't lose the options chosen for edit and playback
 			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertAttackModifiers );
 		}

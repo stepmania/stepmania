@@ -635,7 +635,6 @@ void NoteData::EliminateAllButOneTap(int row)
 
 void NoteData::GetTracksHeldAtRow( int row, vector<int>& viTracksOut )
 {
-	int iNumTracksHeld = 0;
 	float fBeat = NoteRowToBeat(row);
 	for( unsigned i=0; i<m_HoldNotes.size(); i++ )
 	{
