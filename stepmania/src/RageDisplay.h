@@ -79,7 +79,6 @@ public:
 
 	
 	LPDIRECT3DVERTEXBUFFER8 GetVertexBuffer() { return m_pVB; };
-	LPDIRECT3DINDEXBUFFER8	GetIndexBuffer()  { return m_pIB; };
 
 	inline void ResetMatrixStack() 
 	{ 
@@ -177,15 +176,11 @@ private:
 	void CreateVertexBuffer();
 	void ReleaseVertexBuffer();
 
-	LPDIRECT3DINDEXBUFFER8	m_pIB;
-	void CreateIndexBuffer();
-	void ReleaseIndexBuffer();
-
 	// OpenGL-like matrix stack
 	CArray<D3DXMATRIX, D3DXMATRIX&>	m_MatrixStack;
 
 	// for performance stats
-	DWORD m_dwLastUpdateTicks;
+	float m_fLastUpdateTime;
 	int m_iFramesRenderedSinceLastCheck;
 	float m_fFPS;
 };

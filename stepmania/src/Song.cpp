@@ -15,7 +15,7 @@
 #include "Song.h"
 #include <math.h>	// for fmod
 #include "RageLog.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 
 
 
@@ -74,6 +74,14 @@ Song::Song()
 	m_fMusicSampleStartSeconds = m_fMusicSampleLengthSeconds = -1;
 	m_iMusicBytes = 0;
 	m_fMusicLength = 0;
+}
+
+Song::~Song()
+{
+	for( int i=0; i<m_arrayNotes.GetSize(); i++ )
+		SAFE_DELETE( m_arrayNotes[i] );
+
+	m_arrayNotes.RemoveAll();
 }
 
 
@@ -237,9 +245,9 @@ bool Song::LoadFromSongDir( CString sDir )
 
 
 	if( iNumSongFiles > 1 )
-		FatalError( "There is more than one .song file in '%s'.  There should be only one!", sDir );
+		throw RageException( "There is more than one .song file in '%s'.  There should be only one!", sDir );
 	else if( iNumDWIFiles > 1 )
-		FatalError( "There is more than one DWI file in '%s'.  There should be only one!", sDir );
+		throw RageException( "There is more than one DWI file in '%s'.  There should be only one!", sDir );
 	else if( iNumSongFiles == 1 )
 		LoadFromSMDir( sDir );
 	else if( iNumDWIFiles == 1 )
@@ -247,7 +255,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	else if( iNumBMSFiles > 0 )
 		LoadFromBMSDir( sDir );
 	else 
-		FatalError( "Couldn't find any .song, BMS, or DWI files in '%s'.  This is not a valid song directory.", sDir );
+		throw RageException( "Couldn't find any .song, BMS, or DWI files in '%s'.  This is not a valid song directory.", sDir );
 
 	TidyUpData();
 
@@ -284,7 +292,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 	GetDirListing( sDir + CString("*.bms"), arrayBMSFileNames );
 
 	if( arrayBMSFileNames.GetSize() == 0 )
-		FatalError( ssprintf("Couldn't find any BMS files in '%s'", sDir) );
+		throw RageException( ssprintf("Couldn't find any BMS files in '%s'", sDir) );
 
 
 	// Load the Song info from the first BMS file.  Silly BMS duplicates the song info in every
@@ -295,16 +303,16 @@ bool Song::LoadFromBMSDir( CString sDir )
 	// load the Notes from the rest of the BMS files
 	for( int i=0; i<arrayBMSFileNames.GetSize(); i++ ) 
 	{
-		m_arrayNotes.SetSize( m_arrayNotes.GetSize()+1 );
-		Notes &new_steps = m_arrayNotes[ m_arrayNotes.GetSize()-1 ];
-		new_steps.LoadFromBMSFile( m_sSongDir + arrayBMSFileNames[i] );
+		Notes* pNewNotes = new Notes;
+		pNewNotes->LoadFromBMSFile( m_sSongDir + arrayBMSFileNames[i] );
+		m_arrayNotes.Add( pNewNotes );
 	}
 
 
 	CStdioFile file;	
 	if( !file.Open( m_sSongFilePath, CFile::modeRead|CFile::shareDenyNone ) )
 	{
-		FatalError( ssprintf("Failed to open %s.", m_sSongFilePath) );
+		throw RageException( ssprintf("Failed to open %s.", m_sSongFilePath) );
 		return false;
 	}
 
@@ -461,7 +469,7 @@ bool Song::LoadFromDWIFile( CString sPath )
 
 	CStdioFile file;	
 	if( !file.Open( GetSongFilePath(), CFile::modeRead|CFile::shareDenyNone ) )
-		FatalError( ssprintf("Error opening DWI file '%s'.", GetSongFilePath()) );
+		throw RageException( ssprintf("Error opening DWI file '%s'.", GetSongFilePath()) );
 
 
 	// read the whole file into a sFileText
@@ -570,15 +578,15 @@ bool Song::LoadFromDWIFile( CString sPath )
 
 		else if( sValueName == "#SINGLE" || sValueName == "#DOUBLE" || sValueName == "#COUPLE" )
 		{
-			m_arrayNotes.SetSize( m_arrayNotes.GetSize()+1, 1 );
-			Notes &new_Notes = m_arrayNotes[ m_arrayNotes.GetSize()-1 ];
-			new_Notes.LoadFromDWITokens( 
+			Notes* pNewNotes = new Notes;
+			pNewNotes->LoadFromDWITokens( 
 				arrayValueTokens[0], 
 				arrayValueTokens[1], 
 				arrayValueTokens[2], 
 				arrayValueTokens[3], 
 				arrayValueTokens.GetSize() == 5 ? arrayValueTokens[4] : "" 
 				);
+			m_arrayNotes.Add( pNewNotes );
 		}
 		else
 			// do nothing.  We don't care about this value name
@@ -611,7 +619,7 @@ bool Song::LoadFromSMDir( CString sDir )
 	CStringArray arraySongFileNames;
 	GetDirListing( sDir + "*.song", arraySongFileNames );
 	if( arraySongFileNames.GetSize() == 0 )
-		FatalError( "Couldn't find any SM Song files in '%s'", sDir );
+		throw RageException( "Couldn't find any SM Song files in '%s'", sDir );
 
 
 	// Load the Song info from the first BMS file.  Silly BMS duplicates the song info in every
@@ -626,15 +634,15 @@ bool Song::LoadFromSMDir( CString sDir )
 	// load the Notes from the rest of the BMS files
 	for( i=0; i<arrayNotesFileNames.GetSize(); i++ ) 
 	{
-		m_arrayNotes.SetSize( m_arrayNotes.GetSize()+1 );
-		Notes &new_steps = m_arrayNotes[ m_arrayNotes.GetSize()-1 ];
-		new_steps.LoadFromNotesFile( m_sSongDir + arrayNotesFileNames[i] );
+		Notes* pNewNotes = new Notes;
+		pNewNotes->LoadFromNotesFile( m_sSongDir + arrayNotesFileNames[i] );
+		m_arrayNotes.Add( pNewNotes );
 	}
 
 
 	CStdioFile file;	
 	if( !file.Open( GetSongFilePath(), CFile::modeRead|CFile::shareDenyNone ) )
-		FatalError( "Error opening DWI file '%s'.", GetSongFilePath() );
+		throw RageException( "Error opening DWI file '%s'.", GetSongFilePath() );
 
 
 	// read the whole file into a sFileText
@@ -771,7 +779,7 @@ void Song::TidyUpData()
 	m_sSubTitle.TrimRight();
 	if( m_sArtist == "" )		m_sArtist = "Unknown artist";
 	if( m_BPMSegments.GetSize() == 0 )
-		FatalError( "No #BPM specified in '%s.'", GetSongFilePath() );
+		throw RageException( "No #BPM specified in '%s.'", GetSongFilePath() );
 
 	if( m_sMusicPath == "" || !DoesFileExist(GetMusicPath()) )
 	{
@@ -784,7 +792,7 @@ void Song::TidyUpData()
 			m_sMusicPath = m_sSongDir + arrayPossibleMusic[0];
 		else
 			m_sMusicPath = "";
-		//	FatalError( ssprintf("Music could not be found.  Please check the Song file '%s' and verify the specified #MUSIC exists.", GetSongFilePath()) );
+		//	throw RageException( ssprintf("Music could not be found.  Please check the Song file '%s' and verify the specified #MUSIC exists.", GetSongFilePath()) );
 	}
 
 	// Save length of music
@@ -823,7 +831,7 @@ void Song::TidyUpData()
 		else
 			m_sBannerPath = "";
 
-		//FatalError( ssprintf("Banner could not be found.  Please check the Song file '%s' and verify the specified #BANNER exists.", GetSongFilePath()) );
+		//throw RageException( ssprintf("Banner could not be found.  Please check the Song file '%s' and verify the specified #BANNER exists.", GetSongFilePath()) );
 	}
 
 	if( !DoesFileExist(GetBackgroundPath()) )
@@ -873,7 +881,7 @@ void Song::TidyUpData()
 
 	for( int i=0; i<m_arrayNotes.GetSize(); i++ )
 	{
-		Notes* pNM = &m_arrayNotes[i];
+		Notes* pNM = m_arrayNotes[i];
 
 		float fMusicLength = m_fMusicLength;
 		if( fMusicLength == 0 )
@@ -891,8 +899,8 @@ void Song::TidyUpData()
 void Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo )
 {
 	for( int i=0; i<m_arrayNotes.GetSize(); i++ )	// for each of the Song's Notes
-		if( m_arrayNotes[i].m_NotesType == nt )
-			arrayAddTo.Add( &m_arrayNotes[i] );
+		if( m_arrayNotes[i]->m_NotesType == nt )
+			arrayAddTo.Add( m_arrayNotes[i] );
 }
 
 
@@ -942,7 +950,7 @@ void Song::SaveToCacheFile()
 
 	fprintf( file, "%d\n", m_arrayNotes.GetSize() );
 	for( i=0; i<m_arrayNotes.GetSize(); i++ )
-		m_arrayNotes[i].WriteToCacheFile( file );
+		m_arrayNotes[i]->WriteToCacheFile( file );
 
 	fclose( file );
 }
@@ -1015,7 +1023,7 @@ bool Song::LoadFromCacheFile( bool bLoadNoteData )
 	fscanf( file, "%d\n", &iNumNotes );
 	m_arrayNotes.SetSize( iNumNotes );
 	for( i=0; i<iNumNotes; i++ )
-		m_arrayNotes[i].ReadFromCacheFile( file, bLoadNoteData );
+		m_arrayNotes[i]->ReadFromCacheFile( file, bLoadNoteData );
 
 	fclose( file );
 	return true;
@@ -1052,7 +1060,7 @@ void Song::SaveToSMDir()
 
 	CStdioFile file;	
 	if( !file.Open( m_sSongFilePath, CFile::modeWrite | CFile::modeCreate ) )
-		FatalError( "Error opening song file '%s' for writing.", m_sSongFilePath );
+		throw RageException( "Error opening song file '%s' for writing.", m_sSongFilePath );
 
 	file.WriteString( ssprintf("#MAINTITLE:%s;\n", m_sMainTitle) );
 	file.WriteString( ssprintf("#SUBTITLE:%s;\n", m_sSubTitle) );
@@ -1134,20 +1142,20 @@ void Song::SaveToSMDir()
 	//
 	for( i=0; i<m_arrayNotes.GetSize(); i++ ) 
 	{
-		m_arrayNotes[i].SaveToSMDir( m_sSongDir );
+		m_arrayNotes[i]->SaveToSMDir( m_sSongDir );
 	}
 
 }
 
 Grade Song::GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc )
 {
-	CArray<Notes*, Notes*> arrayNotess;
-	this->GetNotesThatMatch( nt, arrayNotess );
-	SortNotesArrayByDifficultyClass( arrayNotess );
+	CArray<Notes*, Notes*> aNotes;
+	this->GetNotesThatMatch( nt, aNotes );
+	SortNotesArrayByDifficultyClass( aNotes );
 
-	for( int i=0; i<arrayNotess.GetSize(); i++ )
+	for( int i=0; i<aNotes.GetSize(); i++ )
 	{
-		Notes* pNotes = arrayNotess[i];
+		Notes* pNotes = aNotes[i];
 		if( pNotes->m_DifficultyClass == dc )
 			return pNotes->m_TopGrade;
 	}

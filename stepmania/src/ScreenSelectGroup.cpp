@@ -60,7 +60,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_Menu.Load(
 		THEME->GetPathTo(GRAPHIC_SELECT_GROUP_BACKGROUND) , 
 		THEME->GetPathTo(GRAPHIC_SELECT_GROUP_TOP_EDGE),
-		ssprintf("Use %c %c to select, then press NEXT", char(1), char(2))
+		ssprintf("Use %c %c to select, then press START", char(1), char(2))
 		);
 	this->AddActor( &m_Menu );
 

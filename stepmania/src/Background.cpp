@@ -95,7 +95,7 @@ void Background::DrawPrimitives()
 {
 	ActorFrame::DrawPrimitives();
 
-	if( m_bShowDanger  &&  (GetTickCount() % 1000) > 500 )
+	if( m_bShowDanger  &&  (TIMER->GetTimeSinceStart() - (int)TIMER->GetTimeSinceStart()) > 0.5f )
 	{
 		m_sprDangerBackground.Draw();
 		m_sprDanger.Draw();

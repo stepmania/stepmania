@@ -12,7 +12,7 @@
 #include "StyleDef.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 #include "GameDef.h"
 #include "IniFile.h"
 

@@ -29,6 +29,9 @@ const float HEADER_Y	=		50;
 const float HELP_X		=		CENTER_X;
 const float HELP_Y		=		SCREEN_HEIGHT-35;
 const float ITEM_GAP_X	=		12;
+const float LABELS_X	=		80;
+const float LINE_START_Y=		80;
+const float LINE_GAP_Y	=		36;
 
 
 const ScreenMessage SM_PlaySample			= ScreenMessage(SM_User-4);
@@ -48,7 +51,7 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sTopEdgePath )
 	m_Menu.Load(
 		sBackgroundPath, 
 		sTopEdgePath, 
-		ssprintf("%s %s to change line   %s %s to select between options      then press NEXT", CString(char(3)), CString(char(4)), CString(char(1)), CString(char(2)) )
+		ssprintf("%s %s to change line   %s %s to select between options      then press START", CString(char(3)), CString(char(4)), CString(char(1)), CString(char(2)) )
 		);
 	this->AddActor( &m_Menu );
 	m_Menu.TweenOnScreenFromBlack( SM_None );
@@ -135,13 +138,13 @@ void ScreenOptions::InitOptionsText()
 	{
 		OptionLineData &optline = m_OptionLineData[i];
 
-		float fY = 60.0f + 40*i;
+		float fY = LINE_START_Y + LINE_GAP_Y*i;
 
 		BitmapText &title = m_textOptionLineTitles[i];
 
 		title.Load( THEME->GetPathTo(FONT_HEADER2) );
 		title.SetText( optline.szTitle );
-		title.SetXY( 80, fY );
+		title.SetXY( LABELS_X, fY );
 		title.SetZoom( 0.7f );
 		title.SetVertAlign( Actor::align_middle );		
 		this->AddActor( &title );
@@ -173,12 +176,10 @@ void ScreenOptions::InitOptionsText()
 			continue;	// skip
 
 		Quad &highlight = m_SelectionHighlight[p];
-		this->AddActor( &highlight );
 
 		for( int i=0; i<m_iNumOptionLines; i++ )	// foreach options line
 		{
 			Quad &underline = m_OptionUnderline[p][i];
-			this->AddActor( &underline );
 		}
 	}
 }

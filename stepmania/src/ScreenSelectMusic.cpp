@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: ScreenSelectMusic.cpp
+ Class: ScreenSelectMusic
 
- Desc: Testing the Screen class.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -110,7 +111,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 
 	m_textHoldForOptions.Load( THEME->GetPathTo(FONT_STAGE) );
 	m_textHoldForOptions.SetXY( CENTER_X, CENTER_Y );
-	m_textHoldForOptions.SetText( "hold NEXT for options" );
+	m_textHoldForOptions.SetText( "press START again for options" );
 	m_textHoldForOptions.SetZoom( 1 );
 	m_textHoldForOptions.SetZoomY( 0 );
 	m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
@@ -123,6 +124,8 @@ ScreenSelectMusic::ScreenSelectMusic()
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_INTRO) );
 
+	m_bMadeChoice = false;
+	m_bGoToOptions = false;
 
 	AfterMusicChange();
 	TweenOnScreen();
@@ -214,10 +217,21 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType 
 {
 	LOG->WriteLine( "ScreenSelectMusic::Input()" );
 
+	if( MenuI.player == PLAYER_NONE )
+		return;
+
 	if( m_Menu.IsClosing() )
 		return;		// ignore
 
-	if( MenuI.player == PLAYER_NONE )
+	if( m_bMadeChoice && !m_bGoToOptions && MenuI.button == MENU_BUTTON_START )
+	{
+		m_bGoToOptions = true;
+		m_textHoldForOptions.SetText( "Entering Options..." );
+		SOUND->PlayOnceStreamed( THEME->GetPathTo(SOUND_MENU_START) );
+		return;
+	}
+	
+	if( m_bMadeChoice )
 		return;
 
 	if( INPUTQUEUE->MatchesPattern(MenuI.player, EASIER_DIFFICULTY_PATTERN, EASIER_DIFFICULTY_PATTERN_SIZE) )
@@ -301,7 +315,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 				bIsHoldingNext = true;
 		}
 
-		if( bIsHoldingNext )
+		if( bIsHoldingNext || m_bGoToOptions )
 		{
 			SCREENMAN->SetNewScreen( new ScreenPlayerOptions );
 		}
@@ -368,9 +382,11 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 
 			TweenOffScreen();
 
+			m_bMadeChoice = true;
+
 			m_soundSelect.PlayRandom();
 
-			// show "hold NEXT for options"
+			// show "hold START for options"
 			m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 			m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade in
 			m_textHoldForOptions.SetTweenZoomY( 1 );
@@ -410,6 +426,9 @@ void ScreenSelectMusic::AfterNotesChange( const PlayerNumber p )
 	m_iSelection[p] = clamp( m_iSelection[p], 0, m_arrayNotes.GetSize()-1 );	// bounds clamping
 
 	Notes* pNotes = m_arrayNotes.GetSize()>0 ? m_arrayNotes[m_iSelection[p]] : NULL;
+
+	if( pNotes )
+		PREFSMAN->m_PreferredDifficultyClass[p] = pNotes->m_DifficultyClass;
 
 	SONGMAN->SetCurrentNotes( p, pNotes );
 

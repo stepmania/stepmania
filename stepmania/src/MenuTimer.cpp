@@ -16,7 +16,7 @@
 #include "ThemeManager.h"
 #include "ScreenManager.h"
 
-const float TIMER_SECONDS = 40;
+const float TIMER_SECONDS = 99;
 
 MenuTimer::MenuTimer()
 {

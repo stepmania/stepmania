@@ -14,7 +14,7 @@
 #include "IniFile.h"
 #include "FontManager.h"
 #include "RageLog.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 
 
 D3DXCOLOR RAINBOW_COLORS[] = { 
@@ -176,7 +176,7 @@ void BitmapText::DrawPrimitives()
 			const char c = szLine[j];
 			const int iFrameNo = m_pFont->m_iCharToFrameNo[c];
 			if( iFrameNo == -1 )	// this font doesn't impelemnt this character
-				FatalError( "The font '%s' does not implement the character '%c'", m_sFontFilePath, c );
+				throw RageException( "The font '%s' does not implement the character '%c'", m_sFontFilePath, c );
 			const int iCharWidth = m_pFont->m_iFrameNoToWidth[iFrameNo];
 
 			// HACK:
@@ -298,7 +298,7 @@ void BitmapText::DrawPrimitives()
 
 	if( m_bRainbow )
 	{
-		int color_index = (GetTickCount() / 200) % NUM_RAINBOW_COLORS;
+		int color_index = int(TIMER->GetTimeSinceStart() / 0.200) % NUM_RAINBOW_COLORS;
 		for( int i=0; i<iNumV; i+=6 )
 		{
 			const D3DXCOLOR color = RAINBOW_COLORS[color_index];

@@ -1,10 +1,11 @@
 /*
 -----------------------------------------------------------------------------
- File: ScreenSelectMusic.h
+ Class: ScreenSelectMusic
 
- Desc: Select the game mode (single, versus, double).
+ Desc: The screen in PLAY_MODE_ARCADE where you choose a Song and Notes.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -62,6 +63,8 @@ protected:
 	FootMeter		m_FootMeter[NUM_PLAYERS];
 	MusicWheel		m_MusicWheel;
 
+	bool			m_bMadeChoice;
+	bool			m_bGoToOptions;
 	BitmapText		m_textHoldForOptions;
 
 	RandomSample m_soundSelect;

@@ -65,7 +65,7 @@ protected:
 	ColorNote		m_ColorNote[MAX_NOTE_TRACKS];
 	
 	// used in MODE_EDIT
-	Quad	m_rectMeasureBar;
+	Quad			m_rectMeasureBar;
 	BitmapText		m_textMeasureNumber;
-	Quad	m_rectMarkerBar;
+	Quad			m_rectMarkerBar;
 };

@@ -17,7 +17,7 @@
 #include "ArrowEffects.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 
 
 NoteData::NoteData()
@@ -149,10 +149,13 @@ void NoteData::AddHoldNote( HoldNote add )
 	}
 
 	// delete TapNotes under this HoldNote
-	for( i=add.m_iStartIndex; i<=add.m_iEndIndex; i++ )
+	for( i=add.m_iStartIndex+1; i<=add.m_iEndIndex; i++ )
 	{
 		m_TapNotes[add.m_iTrack][i] = '0';
 	};
+
+	// add a tap note at the start of this hold
+	m_TapNotes[add.m_iTrack][add.m_iStartIndex] = '1';
 
 	m_HoldNotes[m_iNumHoldNotes++] = add;
 }
@@ -161,6 +164,11 @@ void NoteData::RemoveHoldNote( int index )
 {
 	ASSERT( index > 0  &&  index < m_iNumHoldNotes );
 
+	// delete a tap note at the start of this hold
+	HoldNote &hn = m_HoldNotes[index];
+	m_TapNotes[hn.m_iTrack][hn.m_iStartIndex] = '0';
+
+	// remove from list
 	for( int j=index; j<m_iNumHoldNotes-1; j++ )
 	{
 		m_HoldNotes[j] = m_HoldNotes[j+1];
@@ -260,6 +268,23 @@ int NoteData::GetNumHoldNotes( const float fStartBeat, const float fEndBeat )
 	return iNumSteps;
 }
 
+int NoteData::GetPossibleDancePoints()
+{
+//Each song has a certain number of "Dance Points" assigned to it. For regular arrows, this is 2 per arrow. For freeze arrows, it is 6 per arrow. When you add this all up, you get the maximum number of possible "Dance Points". 
+//
+//Your "Dance Points" are calculated as follows: 
+//
+//A "Perfect" is worth 2 points
+//A "Great" is worth 1 points
+//A "Good" is worth 0 points
+//A "Boo" will subtract 4 points
+//A "Miss" will subtract 8 points
+//An "OK" (Successful Freeze step) will add 6 points
+//A "NG" (Unsuccessful Freeze step) is worth 0 points
+
+	return GetNumTapNotes()*TapNoteScoreToDancePoints(TNS_PERFECT) +
+		   GetNumHoldNotes()*HoldNoteScoreToDancePoints(HNS_OK);
+}
 
 void NoteData::CropToLeftSide()
 {
@@ -666,7 +691,7 @@ void NoteData::SetFromMeasureStrings( CStringArray &arrayMeasureStrings )
 			if( m_iNumTracks == 0 )
 				m_iNumTracks = sNoteLine.GetLength();
 			if( m_iNumTracks != sNoteLine.GetLength() )
-				FatalError( "Line doesn't have right number of notes." );
+				throw RageException( "Line doesn't have right number of notes." );
 
 			for( int c=0; c<sNoteLine.GetLength(); c++ )
 			{

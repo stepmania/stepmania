@@ -12,7 +12,7 @@
 
 #include "ThemeManager.h"
 #include "RageLog.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
@@ -48,7 +48,7 @@ void ThemeManager::SwitchTheme( CString sThemeName )
 	m_sCurThemeName = sThemeName;
 	CString sThemeDir = GetThemeDirFromName(m_sCurThemeName);
 	if( !DoesFileExist( sThemeDir ) )
-		FatalError( "Error loading the theme in diretory '%s'.", sThemeDir );
+		throw RageException( "Error loading the theme in diretory '%s'.", sThemeDir );
 }
 
 
@@ -88,7 +88,6 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		case GRAPHIC_CAUTION:							sAssetPrefix = "Graphics\\Caution";							break;
 		case GRAPHIC_DANCER_P1:							sAssetPrefix = "Graphics\\dancer p1";						break;
 		case GRAPHIC_DANCER_P2:							sAssetPrefix = "Graphics\\dancer p2";						break;
-		case GRAPHIC_DIFFICULTY_ICONS:					sAssetPrefix = "Graphics\\select music difficulty icons";	break;
 		case GRAPHIC_EDIT_BACKGROUND:					sAssetPrefix = "Graphics\\edit background";					break;
 		case GRAPHIC_EDIT_TOP_EDGE:						sAssetPrefix = "Graphics\\edit top edge";					break;
 		case GRAPHIC_EDIT_SNAP_INDICATOR:				sAssetPrefix = "Graphics\\edit snap indicator";				break;
@@ -104,16 +103,17 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		case GRAPHIC_GAMEPLAY_COMBO:					sAssetPrefix = "Graphics\\gameplay combo";					break;
 		case GRAPHIC_GAMEPLAY_DANGER_BACKGROUND:		sAssetPrefix = "Graphics\\gameplay danger background";		break;
 		case GRAPHIC_GAMEPLAY_DANGER_TEXT:				sAssetPrefix = "Graphics\\gameplay danger text";			break;
-		case GRAPHIC_GAMEPLAY_DIFFICULTY_FRAME:			sAssetPrefix = "Graphics\\gameplay difficulty frame";		break;
+		case GRAPHIC_GAMEPLAY_DIFFICULTY_BANNER_ICONS:	sAssetPrefix = "Graphics\\gameplay difficulty banner icons";break;
+		case GRAPHIC_GAMEPLAY_DIFFICULTY_BANNER_FRAME:	sAssetPrefix = "Graphics\\gameplay difficulty banner frame";break;
 		case GRAPHIC_GAMEPLAY_FAILED:					sAssetPrefix = "Graphics\\gameplay failed";					break;
 		case GRAPHIC_GAMEPLAY_HERE_WE_GO:				sAssetPrefix = "Graphics\\gameplay here we go";				break;
 		case GRAPHIC_GAMEPLAY_JUDGEMENT:				sAssetPrefix = "Graphics\\gameplay judgement 1x9";			break;
 		case GRAPHIC_GAMEPLAY_OPENING_STAR:				sAssetPrefix = "Graphics\\gameplay opening star";			break;
 		case GRAPHIC_GAMEPLAY_READY:					sAssetPrefix = "Graphics\\gameplay Ready";					break;
-		case GRAPHIC_GAMEPLAY_TOP_FRAME:				sAssetPrefix = "Graphics\\gameplay top frame";				break;
+		case GRAPHIC_GAMEPLAY_TOP_FRAME_ARCADE:			sAssetPrefix = "Graphics\\gameplay top frame arcade";		break;
+		case GRAPHIC_GAMEPLAY_TOP_FRAME_ONI:			sAssetPrefix = "Graphics\\gameplay top frame oni";			break;
+		case GRAPHIC_GAMEPLAY_ONI_BATTERY:				sAssetPrefix = "Graphics\\gameplay oni battery";			break;
 		case GRAPHIC_KEEP_ALIVE:						sAssetPrefix = "Graphics\\keep alive";						break;
-		case GRAPHIC_LIFEMETER_FRAME:					sAssetPrefix = "Graphics\\Life Meter Frame";				break;
-		case GRAPHIC_LIFEMETER_PILLS:					sAssetPrefix = "Graphics\\life meter pills 17x1";			break;
 		case GRAPHIC_MENU_BOTTOM_EDGE:					sAssetPrefix = "Graphics\\menu bottom edge";				break;
 		case GRAPHIC_MENU_STYLE_ICONS:					sAssetPrefix = "Graphics\\menu style icons";				break;
 		case GRAPHIC_MUSIC_SCROLL_BACKGROUND:			sAssetPrefix = "Graphics\\music scroll background";			break;
@@ -132,10 +132,12 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		case GRAPHIC_RESULTS_GRADES:					sAssetPrefix = "Graphics\\results grades 1x7";				break;
 		case GRAPHIC_RESULTS_JUDGE_LABELS:				sAssetPrefix = "Graphics\\results judge labels 1x6";		break;
 		case GRAPHIC_RESULTS_SCORE_LABELS:				sAssetPrefix = "Graphics\\results score labels 1x2";		break;
-		case GRAPHIC_RESULTS_SUMMARY_TOP_EDGE:			sAssetPrefix = "Graphics\\results summary top edge";			break;
+		case GRAPHIC_RESULTS_SUMMARY_TOP_EDGE:			sAssetPrefix = "Graphics\\results summary top edge";		break;
 		case GRAPHIC_RESULTS_TOP_EDGE:					sAssetPrefix = "Graphics\\results top edge";				break;
-		case GRAPHIC_SELECT_DIFFICULTY_ARROW_P1:		sAssetPrefix = "Graphics\\select difficulty arrow p1";		break;
-		case GRAPHIC_SELECT_DIFFICULTY_ARROW_P2:		sAssetPrefix = "Graphics\\select difficulty arrow p2";		break;
+		case GRAPHIC_SELECT_COURSE_INFO_FRAME:			sAssetPrefix = "Graphics\\select course info frame";		break;
+		case GRAPHIC_SELECT_COURSE_TOP_EDGE:			sAssetPrefix = "Graphics\\select course top edge";			break;
+		case GRAPHIC_SELECT_COURSE_BACKGROUND:			sAssetPrefix = "Graphics\\select course background";		break;
+		case GRAPHIC_SELECT_DIFFICULTY_ARROWS:			sAssetPrefix = "Graphics\\select difficulty arrows 1x2";	break;
 		case GRAPHIC_SELECT_DIFFICULTY_BACKGROUND:		sAssetPrefix = "Graphics\\select difficulty background";	break;
 		case GRAPHIC_SELECT_DIFFICULTY_EASY_HEADER:		sAssetPrefix = "Graphics\\select difficulty easy header";	break;
 		case GRAPHIC_SELECT_DIFFICULTY_EASY_PICTURE:	sAssetPrefix = "Graphics\\select difficulty easy picture";	break;
@@ -144,6 +146,10 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		case GRAPHIC_SELECT_DIFFICULTY_HARD_PICTURE:	sAssetPrefix = "Graphics\\select difficulty hard picture";	break;
 		case GRAPHIC_SELECT_DIFFICULTY_MEDIUM_HEADER:	sAssetPrefix = "Graphics\\select difficulty medium header";	break;
 		case GRAPHIC_SELECT_DIFFICULTY_MEDIUM_PICTURE:	sAssetPrefix = "Graphics\\select difficulty medium picture";break;
+		case GRAPHIC_SELECT_DIFFICULTY_ONI_HEADER:		sAssetPrefix = "Graphics\\select difficulty oni header";	break;
+		case GRAPHIC_SELECT_DIFFICULTY_ONI_PICTURE:		sAssetPrefix = "Graphics\\select difficulty oni picture";	break;
+		case GRAPHIC_SELECT_DIFFICULTY_ENDLESS_HEADER:	sAssetPrefix = "Graphics\\select difficulty endless header";	break;
+		case GRAPHIC_SELECT_DIFFICULTY_ENDLESS_PICTURE:	sAssetPrefix = "Graphics\\select difficulty endless picture";	break;
 		case GRAPHIC_SELECT_DIFFICULTY_OK:				sAssetPrefix = "Graphics\\select difficulty ok";			break;
 		case GRAPHIC_SELECT_DIFFICULTY_TOP_EDGE:		sAssetPrefix = "Graphics\\select difficulty top edge";		break;
 		case GRAPHIC_SELECT_GAME_BACKGROUND:			sAssetPrefix = "Graphics\\select game background";			break;
@@ -155,6 +161,7 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		case GRAPHIC_SELECT_GROUP_INFO_FRAME:			sAssetPrefix = "Graphics\\select group info frame";			break;
 		case GRAPHIC_SELECT_GROUP_TOP_EDGE:				sAssetPrefix = "Graphics\\select group top edge";			break;
 		case GRAPHIC_SELECT_MUSIC_BACKGROUND:			sAssetPrefix = "Graphics\\select music background";			break;
+		case GRAPHIC_SELECT_MUSIC_DIFFICULTY_ICONS:		sAssetPrefix = "Graphics\\select music difficulty icons";	break;
 		case GRAPHIC_SELECT_MUSIC_DIFFICULTY_FRAME:		sAssetPrefix = "Graphics\\select music difficulty frame";	break;
 		case GRAPHIC_SELECT_MUSIC_INFO_FRAME:			sAssetPrefix = "Graphics\\select music info frame";			break;
 		case GRAPHIC_SELECT_MUSIC_METER_FRAME:			sAssetPrefix = "Graphics\\select music meter frame";		break;
@@ -174,22 +181,22 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		case GRAPHIC_SELECT_STYLE_EXPLANATION:			sAssetPrefix = "Graphics\\select Style explanation";		break;
 		case GRAPHIC_SELECT_STYLE_TOP_EDGE:				sAssetPrefix = "Graphics\\select Style top edge";			break;
 		case GRAPHIC_SELECT_STYLE_ICONS:				sAssetPrefix = "Graphics\\select Style icons";				break;
-		case GRAPHIC_SELECT_STYLE_INFO_0:				sAssetPrefix = "Graphics\\select style info 0";				break;
-		case GRAPHIC_SELECT_STYLE_INFO_1:				sAssetPrefix = "Graphics\\select style info 1";				break;
-		case GRAPHIC_SELECT_STYLE_INFO_2:				sAssetPrefix = "Graphics\\select style info 2";				break;
-		case GRAPHIC_SELECT_STYLE_INFO_3:				sAssetPrefix = "Graphics\\select style info 3";				break;
-		case GRAPHIC_SELECT_STYLE_INFO_4:				sAssetPrefix = "Graphics\\select style info 4";				break;
-		case GRAPHIC_SELECT_STYLE_INFO_5:				sAssetPrefix = "Graphics\\select style info 5";				break;
-		case GRAPHIC_SELECT_STYLE_INFO_6:				sAssetPrefix = "Graphics\\select style info 6";				break;
-		case GRAPHIC_SELECT_STYLE_INFO_7:				sAssetPrefix = "Graphics\\select style info 7";				break;
-		case GRAPHIC_SELECT_STYLE_PREVIEW_0:			sAssetPrefix = "Graphics\\select style preview 0";			break;
-		case GRAPHIC_SELECT_STYLE_PREVIEW_1:			sAssetPrefix = "Graphics\\select style preview 1";			break;
-		case GRAPHIC_SELECT_STYLE_PREVIEW_2:			sAssetPrefix = "Graphics\\select style preview 2";			break;
-		case GRAPHIC_SELECT_STYLE_PREVIEW_3:			sAssetPrefix = "Graphics\\select style preview 3";			break;
-		case GRAPHIC_SELECT_STYLE_PREVIEW_4:			sAssetPrefix = "Graphics\\select style preview 4";			break;
-		case GRAPHIC_SELECT_STYLE_PREVIEW_5:			sAssetPrefix = "Graphics\\select style preview 5";			break;
-		case GRAPHIC_SELECT_STYLE_PREVIEW_6:			sAssetPrefix = "Graphics\\select style preview 6";			break;
-		case GRAPHIC_SELECT_STYLE_PREVIEW_7:			sAssetPrefix = "Graphics\\select style preview 7";			break;
+		case GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_0:		sAssetPrefix = "Graphics\\select style info game 0 style 0";	break;
+		case GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_1:		sAssetPrefix = "Graphics\\select style info game 0 style 1";	break;
+		case GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_2:		sAssetPrefix = "Graphics\\select style info game 0 style 2";	break;
+		case GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_3:		sAssetPrefix = "Graphics\\select style info game 0 style 3";	break;
+		case GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_4:		sAssetPrefix = "Graphics\\select style info game 0 style 4";	break;
+		case GRAPHIC_SELECT_STYLE_INFO_GAME_1_STYLE_0:		sAssetPrefix = "Graphics\\select style info game 1 style 0";	break;
+		case GRAPHIC_SELECT_STYLE_INFO_GAME_1_STYLE_1:		sAssetPrefix = "Graphics\\select style info game 1 style 1";	break;
+		case GRAPHIC_SELECT_STYLE_INFO_GAME_1_STYLE_2:		sAssetPrefix = "Graphics\\select style info game 1 style 2";	break;
+		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_0:	sAssetPrefix = "Graphics\\select style preview game 0 style 0";	break;
+		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_1:	sAssetPrefix = "Graphics\\select style preview game 0 style 1";	break;
+		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_2:	sAssetPrefix = "Graphics\\select style preview game 0 style 2";	break;
+		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_3:	sAssetPrefix = "Graphics\\select style preview game 0 style 3";	break;
+		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_4:	sAssetPrefix = "Graphics\\select style preview game 0 style 4";	break;
+		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_1_STYLE_0:	sAssetPrefix = "Graphics\\select style preview game 1 style 0";	break;
+		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_1_STYLE_1:	sAssetPrefix = "Graphics\\select style preview game 1 style 1";	break;
+		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_1_STYLE_2:	sAssetPrefix = "Graphics\\select style preview game 1 style 2";	break;
 		case GRAPHIC_SONG_OPTIONS_BACKGROUND:			sAssetPrefix = "Graphics\\song options background";			break;	
 		case GRAPHIC_SONG_OPTIONS_TOP_EDGE:				sAssetPrefix = "Graphics\\song options top edge";			break;
 		case GRAPHIC_STAGE_UNDERSCORE:					sAssetPrefix = "Graphics\\stage underscore";				break;
@@ -216,18 +223,21 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		case SOUND_OPTION_CHANGE_ROW:			sAssetPrefix = "Sounds\\option change row";				break;
 		case SOUND_RESULTS_FLY_OFF:				sAssetPrefix = "Sounds\\results fly off";				break;
 		case SOUND_RESULTS_SCORE_TICK:			sAssetPrefix = "Sounds\\results score tick";			break;
+		case SOUND_RESULTS_EXTRA_STAGE:			sAssetPrefix = "Sounds\\results extra stage";			break;
 		case SOUND_SELECT_DIFFICULTY_CHANGE:	sAssetPrefix = "Sounds\\select difficulty change";		break;
 		case SOUND_SELECT_GROUP_CHANGE:			sAssetPrefix = "Sounds\\select group change";			break;
 		case SOUND_SELECT_MUSIC_SECTION_EXPAND:	sAssetPrefix = "Sounds\\select music section expand";	break;
 		case SOUND_SELECT_MUSIC_CHANGE_MUSIC:	sAssetPrefix = "Sounds\\select music change music";		break;
 		case SOUND_SELECT_MUSIC_CHANGE_SORT:	sAssetPrefix = "Sounds\\select music change sort";		break;
 		case SOUND_SELECT_MUSIC_CHANGE_NOTES:	sAssetPrefix = "Sounds\\select music change notes";		break;
+		case SOUND_SELECT_MUSIC_WHEEL_LOCKED:	sAssetPrefix = "Sounds\\select music wheel locked";		break;
 		case SOUND_SELECT_STYLE_CHANGE:			sAssetPrefix = "Sounds\\select style change";			break;
 		case SOUND_TITLE_MENU_CHANGE:			sAssetPrefix = "Sounds\\title menu change";				break;
 
 		case FONT_HEADER1:						sAssetPrefix = "Fonts\\Header1";						break;
 		case FONT_HEADER2:						sAssetPrefix = "Fonts\\Header2";						break;
 		case FONT_NORMAL:						sAssetPrefix = "Fonts\\Normal";							break;
+		case FONT_ITALIC:						sAssetPrefix = "Fonts\\Italic";							break;
 		case FONT_COMBO_NUMBERS:				sAssetPrefix = "Fonts\\Combo Numbers";					break;
 		case FONT_METER:						sAssetPrefix = "Fonts\\Meter";							break;
 		case FONT_SCORE_NUMBERS:				sAssetPrefix = "Fonts\\Score Numbers";					break;
@@ -284,7 +294,7 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 	if( asPossibleElementFilePaths.GetSize() > 0 )
 		return asPossibleElementFilePaths[0];
 	else
-		FatalError( "Theme element '%s' could not be found in '%s' or '%s'.", 
+		throw RageException( "Theme element '%s' could not be found in '%s' or '%s'.", 
 			sDefaultThemeDir + sAssetPrefix, 
 			GetThemeDirFromName(m_sCurThemeName), 
 			GetThemeDirFromName(DEFAULT_THEME_NAME) );

@@ -27,7 +27,7 @@
 #include "RageLog.h"
 #include "SongManager.h"
 #include "AnnouncerManager.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 #include "GameManager.h"
 
 
@@ -85,7 +85,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	this->AddActor( &m_sprLogo );
 
 	m_textHelp.Load( THEME->GetPathTo(FONT_NORMAL) );
-	m_textHelp.SetText( ssprintf("Use %c %c to select, then press NEXT", char(3), char(4)) );
+	m_textHelp.SetText( ssprintf("Use %c %c to select, then press START", char(3), char(4)) );
 	m_textHelp.SetXY( CENTER_X, SCREEN_BOTTOM - 30 );
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetEffectBlinking();

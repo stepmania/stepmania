@@ -89,14 +89,14 @@ ScreenEditMenu::ScreenEditMenu()
 
 	m_textExplanation.Load( THEME->GetPathTo(FONT_NORMAL) );
 	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
-	m_textExplanation.SetText( ssprintf("This mode will allow you to\nedit an existing or\n create a new Notes Notes.") );
+	m_textExplanation.SetText( ssprintf("This mode will allow you to\nedit existing notes patterns,\n or create new ones from scratch.") );
 	m_textExplanation.SetZoom( 0.7f );
 	this->AddActor( &m_textExplanation );
 
 	m_Menu.Load( 
 		THEME->GetPathTo(GRAPHIC_EDIT_BACKGROUND), 
 		THEME->GetPathTo(GRAPHIC_EDIT_TOP_EDGE),
-		ssprintf("%s %s change music    NEXT to continue", CString(char(1)), CString(char(2)) )
+		ssprintf("%s %s change music    START to continue", CString(char(1)), CString(char(2)) )
 		);
 	this->AddActor( &m_Menu );
 
@@ -144,6 +144,17 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
 	case SM_GoToNextState:
+		// set the current style based on the notes type
+		switch( GetSelectedNotesType() )
+		{
+		case NOTES_TYPE_DANCE_SINGLE:	GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;	break;
+		case NOTES_TYPE_DANCE_DOUBLE:	GAMEMAN->m_CurStyle = STYLE_DANCE_DOUBLE;	break;
+		case NOTES_TYPE_DANCE_COUPLE:	GAMEMAN->m_CurStyle = STYLE_DANCE_COUPLE;	break;
+		case NOTES_TYPE_DANCE_SOLO:		GAMEMAN->m_CurStyle = STYLE_DANCE_SOLO;		break;
+		case NOTES_TYPE_PUMP_SINGLE:	GAMEMAN->m_CurStyle = STYLE_PUMP_SINGLE;	break;
+		case NOTES_TYPE_PUMP_DOUBLE:	GAMEMAN->m_CurStyle = STYLE_PUMP_DOUBLE;	break;
+		}
+
 		SCREENMAN->SetNewScreen( new ScreenEdit );
 		break;
 	}

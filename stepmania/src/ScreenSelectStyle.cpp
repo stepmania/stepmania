@@ -79,7 +79,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 	m_Menu.Load( 	
 		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
 		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_TOP_EDGE),
-		ssprintf("Use %c %c to select, then press NEXT", char(1), char(2) )
+		ssprintf("Use %c %c to select, then press START", char(1), char(2) )
 		);
 	this->AddActor( &m_Menu );
 
@@ -155,7 +155,7 @@ void ScreenSelectStyle::AfterChange()
 	ThemeElement te;
 
 	// Tween Preview
-	te = (ThemeElement)(GRAPHIC_SELECT_STYLE_PREVIEW_0+GetSelectedStyle());
+	te = (ThemeElement)(GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_0+GetSelectedStyle());
 	m_sprPreview.Load( THEME->GetPathTo(te) );
 
 	m_sprPreview.StopTweening();
@@ -177,7 +177,7 @@ void ScreenSelectStyle::AfterChange()
 
 
 	// Tween Info
-	te = (ThemeElement)(GRAPHIC_SELECT_STYLE_INFO_0+GetSelectedStyle());
+	te = (ThemeElement)(GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_0+GetSelectedStyle());
 	m_sprInfo.Load( THEME->GetPathTo(te) );
 	m_sprInfo.StopTweening();
 	m_sprInfo.SetZoomY( 0 );
@@ -222,7 +222,6 @@ void ScreenSelectStyle::MenuStart( const PlayerNumber p )
 		case STYLE_DANCE_DOUBLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_DOUBLE;		break;
 		case STYLE_DANCE_COUPLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_COUPLE;		break;
 		case STYLE_DANCE_SOLO:			ae = ANNOUNCER_SELECT_STYLE_COMMENT_SOLO;		break;
-		case STYLE_DANCE_SOLO_VERSUS:	ae = ANNOUNCER_SELECT_STYLE_COMMENT_VERSUS;		break;
 		case STYLE_PUMP_SINGLE:			ae = ANNOUNCER_SELECT_STYLE_COMMENT_SINGLE;		break;
 		case STYLE_PUMP_VERSUS:			ae = ANNOUNCER_SELECT_STYLE_COMMENT_VERSUS;		break;
 		default:	ASSERT(0);	break;	// invalid Style

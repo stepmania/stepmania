@@ -31,3 +31,8 @@ void BannerWithFrame::LoadFromSong( Song* pSong )
 {
 	m_Banner.LoadFromSong( pSong );
 }
+
+void BannerWithFrame::LoadFromGroup( CString sGroupName )
+{
+	m_Banner.LoadFromGroup( sGroupName );
+}

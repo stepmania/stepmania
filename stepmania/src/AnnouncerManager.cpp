@@ -12,7 +12,7 @@
 
 #include "AnnouncerManager.h"
 #include "RageLog.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 
 AnnouncerManager*	ANNOUNCER = NULL;	// global object accessable from anywhere in the program
 
@@ -49,7 +49,7 @@ void AnnouncerManager::SwitchAnnouncer( CString sAnnouncerName )
 	m_sCurAnnouncerName = sAnnouncerName;
 	CString sAnnouncerDir = GetAnnouncerDirFromName( m_sCurAnnouncerName );
 	if( !DoesFileExist( sAnnouncerDir ) )
-		FatalError( "Error loading the announcer in diretory '%s'.", m_sCurAnnouncerName );
+		throw RageException( "Error loading the announcer in diretory '%s'.", m_sCurAnnouncerName );
 }
 
 void AnnouncerManager::AssertAnnouncerIsComplete( CString sAnnouncerName )
@@ -58,7 +58,7 @@ void AnnouncerManager::AssertAnnouncerIsComplete( CString sAnnouncerName )
 	{
 		CString sPath = GetPathTo( (AnnouncerElement)i, sAnnouncerName );
 		if( !DoesFileExist(sPath) )
-			FatalError( "The Announcer element '%s' is missing.", sPath );
+			throw RageException( "The Announcer element '%s' is missing.", sPath );
 	}
 }
 
@@ -119,9 +119,12 @@ CString AnnouncerManager::GetPathTo( AnnouncerElement ae, CString sAnnouncerName
 		case ANNOUNCER_RESULT_C:						sAssetDir = "result c";					break;
 		case ANNOUNCER_RESULT_D:						sAssetDir = "result d";					break;
 		case ANNOUNCER_RESULT_E:						sAssetDir = "result e";					break;
+		case ANNOUNCER_SELECT_COURSE_INTRO:				sAssetDir = "select course intro";				break;
 		case ANNOUNCER_SELECT_DIFFICULTY_COMMENT_EASY:	sAssetDir = "select difficulty comment easy";	break;
 		case ANNOUNCER_SELECT_DIFFICULTY_COMMENT_HARD:	sAssetDir = "select difficulty comment hard";	break;
 		case ANNOUNCER_SELECT_DIFFICULTY_COMMENT_MEDIUM:sAssetDir = "select difficulty comment medium";	break;
+		case ANNOUNCER_SELECT_DIFFICULTY_COMMENT_ONI:	sAssetDir = "select difficulty comment oni";	break;
+		case ANNOUNCER_SELECT_DIFFICULTY_CHALLENGE:		sAssetDir = "select difficulty challenge";		break;
 		case ANNOUNCER_SELECT_DIFFICULTY_INTRO:			sAssetDir = "select difficulty intro";			break;
 		case ANNOUNCER_SELECT_GROUP_COMMENT_ALL_MUSIC:	sAssetDir = "select group comment all music";	break;
 		case ANNOUNCER_SELECT_GROUP_COMMENT_GENERAL:	sAssetDir = "select group comment general";		break;

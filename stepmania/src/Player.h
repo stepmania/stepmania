@@ -11,7 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "PrefsManager.h"	// for ScoreSummary
+#include "PrefsManager.h"	// for GameplayStatistics
 #include "Notes.h"
 #include "Sprite.h"
 #include "BitmapText.h"
@@ -33,7 +33,7 @@
 #include "GhostArrowRow.h"
 
 
-
+struct GameplayStatistics;
 
 class Player : public NoteData, public ActorFrame
 {
@@ -48,7 +48,7 @@ public:
 	void HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff );
 	int UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 
-	ScoreSummary GetScoreSummary();
+	void GetGameplayStatistics( GameplayStatistics& GSout );
 
 	bool IsThereANoteAtIndex( int iIndex );
 
@@ -63,6 +63,12 @@ protected:
 	// maintain this extra data in addition to the NoteData
 	TapNote			m_TapNotesOriginal[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];	// the original Notes that were loaded into player
 	TapNoteScore	m_TapNoteScores[MAX_TAP_NOTE_ROWS];
+	float			m_fHoldNoteLife[MAX_TAP_NOTE_ROWS];	// 1.0 means this HoldNote has full life.
+														// 0.0 means this HoldNote is dead
+														// When this value hits 0.0 for the first time, 
+														// m_HoldScore becomes HSS_NG.
+														// If the life is > 0.0 when the HoldNote ends, then
+														// m_HoldScore becomes HSS_OK.
 	HoldNoteScore	m_HoldNoteScores[MAX_HOLD_NOTE_ELEMENTS];
 
 

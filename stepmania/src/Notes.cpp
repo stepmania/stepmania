@@ -17,7 +17,7 @@
 #include "math.h"	// for fabs()
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 #include "GameInput.h"
 
 
@@ -54,6 +54,7 @@ Notes::Notes()
 
 Notes::~Notes()
 {
+	DeleteNoteData();
 }
 
 void Notes::WriteToCacheFile( FILE* file )
@@ -156,7 +157,7 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 	CStdioFile file;	
 	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
 	{
-		FatalError( ssprintf("Failed to open %s.", sPath) );
+		throw RageException( ssprintf("Failed to open %s.", sPath) );
 		return false;
 	}
 
@@ -434,7 +435,7 @@ void DWIcharToNote( char c, InstrumentNumber i, DanceNote &note1Out, DanceNote &
 		case 'K':	note1Out = DANCE_NOTE_PAD1_UP;		note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
 		case 'L':	note1Out = DANCE_NOTE_PAD1_UPRIGHT;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
 		case 'M':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
-		default:	FatalError( "Encountered invalid DWI note characer '%c'", c );			break;
+		default:	throw RageException( "Encountered invalid DWI note characer '%c'", c );			break;
 	}
 
 	switch( i )
@@ -634,7 +635,7 @@ bool Notes::LoadFromNotesFile( const CString &sPath )
 
 	CStdioFile file;	
 	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
-		FatalError( "Error opening DWI file '%s'.", sPath );
+		throw RageException( "Error opening DWI file '%s'.", sPath );
 
 	// read the whole file into a sFileText
 	CString sFileText;
@@ -709,7 +710,7 @@ void Notes::SaveToSMDir( CString sSongDir )
 
 	CStdioFile file;	
 	if( !file.Open( sNewNotesFilePath, CFile::modeWrite | CFile::modeCreate ) )
-		FatalError( "Error opening Notes file '%s' for writing.", sNewNotesFilePath );
+		throw RageException( "Error opening Notes file '%s' for writing.", sNewNotesFilePath );
 
 	file.WriteString( ssprintf("#TYPE:%s;\n", NotesTypeToString(m_NotesType)) );
 	file.WriteString( ssprintf("#DESCRIPTION:%s;\n", m_sDescription) );

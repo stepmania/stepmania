@@ -21,35 +21,34 @@ public:
 	InputQueue()
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
-			m_aMenuButtonQueue[p].SetSize( MAX_INPUT_QUEUE_LENGTH );
+			m_aQueue[p].SetSize( MAX_INPUT_QUEUE_LENGTH );
 	}
 
 	void HandleInput( const PlayerNumber p, const MenuButton b )
 	{
-		if( m_aMenuButtonQueue[p].GetSize() >= MAX_INPUT_QUEUE_LENGTH )	// full
-			m_aMenuButtonQueue[p].RemoveAt( 0, m_aMenuButtonQueue[p].GetSize()-MAX_INPUT_QUEUE_LENGTH+1 );
-		m_aMenuButtonQueue[p].Add( MenuButtonAndTickCount(b,GetTickCount()) );
+		if( m_aQueue[p].GetSize() >= MAX_INPUT_QUEUE_LENGTH )	// full
+			m_aQueue[p].RemoveAt( 0, m_aQueue[p].GetSize()-MAX_INPUT_QUEUE_LENGTH+1 );
+		m_aQueue[p].Add( MenuButtonAndTime(b,TIMER->GetTimeSinceStart()) );
 	};
 	bool MatchesPattern( const PlayerNumber p, const MenuButton* button_sequence, const int iNumButtons, float fMaxSecondsBack = -1 )
 	{
 		if( fMaxSecondsBack == -1 )
 			fMaxSecondsBack = 0.4f + iNumButtons*0.15f;
 
-		DWORD dwMaxTicksBack = roundf(fMaxSecondsBack*1000);
-		DWORD dwOldestTickAllowed = GetTickCount() - dwMaxTicksBack;
+		float fOldestTimeAllowed = TIMER->GetTimeSinceStart() - fMaxSecondsBack;
 
 		int sequence_index = iNumButtons-1;	// count down
-		for( int queue_index=m_aMenuButtonQueue[p].GetSize()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
+		for( int queue_index=m_aQueue[p].GetSize()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
 		{
-			MenuButtonAndTickCount BandT = m_aMenuButtonQueue[p][queue_index];
+			MenuButtonAndTime BandT = m_aQueue[p][queue_index];
 			if( BandT.button != button_sequence[sequence_index]  ||
-				BandT.dwTickCount < dwOldestTickAllowed )
+				BandT.fTime < fOldestTimeAllowed )
 			{
 				return false;
 			}
 			if( sequence_index == 0 )		// we matched the whole pattern
 			{
-				m_aMenuButtonQueue[p].RemoveAll();	// empty the queue so we don't match on it again
+				m_aQueue[p].RemoveAll();	// empty the queue so we don't match on it again
 				return true;
 			}
 			sequence_index--;
@@ -58,14 +57,14 @@ public:
 	}
 
 protected:
-	struct MenuButtonAndTickCount
+	struct MenuButtonAndTime
 	{
-		MenuButtonAndTickCount() {}
-		MenuButtonAndTickCount( MenuButton b, DWORD t ) { button = b; dwTickCount = t; };
-		MenuButton button;
-		DWORD	dwTickCount;
+		MenuButtonAndTime() {}
+		MenuButtonAndTime( MenuButton b, float t ) { button = b; fTime = t; };
+		MenuButton	button;
+		float		fTime;
 	};
-	CArray<MenuButtonAndTickCount,MenuButtonAndTickCount> m_aMenuButtonQueue[NUM_PLAYERS];
+	CArray<MenuButtonAndTime,MenuButtonAndTime> m_aQueue[NUM_PLAYERS];
 };
 
 

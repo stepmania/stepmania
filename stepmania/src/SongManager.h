@@ -13,9 +13,13 @@
 
 
 #include "Song.h"
+#include "Course.h"
+#include "GamePlayStatistics.h"
 //#include <d3dxmath.h>	// for D3DXCOLOR
 
-const int MAX_SONG_QUEUE_SIZE = 30;
+const int MAX_SONG_QUEUE_SIZE = 400;	// this has to be gigantic to fit an "endless" number of songs
+const int MAX_NUM_STAGES = 10;			// the max number of stages that can be played in arcade mode
+
 
 class SongManager
 {
@@ -23,23 +27,26 @@ public:
 	SongManager();
 	~SongManager();
 
-	Song*		m_pCurSong[MAX_SONG_QUEUE_SIZE];
-	Notes*		m_pCurNotes[MAX_SONG_QUEUE_SIZE][NUM_PLAYERS];
+	Song*		m_pCurSong;
+	Notes*		m_pCurNotes[NUM_PLAYERS];
+	Course*		m_pCurCourse;
 	CString		m_sPreferredGroup;
+
+	GameplayStatistics	m_GameplayStatistics[MAX_NUM_STAGES][NUM_PLAYERS];	// for passing from Dancing to Results
+
 
 	CArray<Song*, Song*>	m_pSongs;	// all songs that can be played
 
 	void InitSongArrayFromDisk();
+	void FreeSongArray();
+	void ReloadSongArray();
 
 
 	Song* GetCurrentSong();
 	Notes* GetCurrentNotes( PlayerNumber p );
 	void SetCurrentSong( Song* pSong );
 	void SetCurrentNotes( PlayerNumber p, Notes* pNotes );
-
-
-	void CleanUpSongArray();
-	void ReloadSongArray();
+	GameplayStatistics	GetLatestGameplayStatistics( PlayerNumber p );
 
 
 	void ReadStatisticsFromDisk();
@@ -53,6 +60,13 @@ public:
 	CString ShortenGroupName( const CString &sOrigGroupName );
 
 	void GetSongsInGroup( const CString sGroupName, CArray<Song*,Song*> &AddTo );
+
+
+	// for Courses
+	CArray<Course, Course>	m_aCourses;
+
+	void InitCoursesFromDisk();
+	void ReloadCourses();
 
 
 protected:

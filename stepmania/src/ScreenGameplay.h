@@ -45,27 +45,36 @@ public:
 
 
 private:
+	void TweenOnScreen();
+	void TweenOffScreen();
+	void LoadNextSong();
 
-	DancingState	m_DancingState;
 
-	float			m_fTimeLeftBeforeDancingComment;	// this counter is only running while STATE_DANCING
+	DancingState			m_DancingState;
 
-	Song*			m_pSong;
-	bool			m_bHasFailed;
+	Song*					m_pCurSong;	// nearest songs are on back of queue
+	CArray<Song*,Song*>		m_apSongQueue;	// nearest songs are on back of queue
+	CArray<Notes*,Notes*>	m_apNotesQueue[NUM_PLAYERS];	// nearest notes are on back of queue
+	bool					m_bBothHaveFailed;
 
-	Background		m_Background;
+	float					m_fTimeLeftBeforeDancingComment;	// this counter is only running while STATE_DANCING
 
-	Quad			m_quadLifeMeterBG[NUM_PLAYERS];
-	LifeMeterBar	m_LifeMeter[NUM_PLAYERS];
 
-	Sprite			m_sprTopFrame;
-	Sprite			m_sprBottomFrame;
-	BitmapText		m_textPlayerOptions[NUM_PLAYERS];
+	Background				m_Background;
 
+
+	ActorFrame				m_frameTop;
+	Sprite					m_sprTopFrame;
+	Quad					m_quadLifeMeterBG[NUM_PLAYERS];	// just a black quad to fill in hole for the life meter
+	LifeMeterBar			m_LifeMeter[NUM_PLAYERS];
+	BitmapText				m_textStageNumber;
+
+
+	ActorFrame				m_frameBottom;
+	Sprite					m_sprBottomFrame;
 	ScoreDisplayRolling		m_ScoreDisplay[NUM_PLAYERS];
+	BitmapText				m_textPlayerOptions[NUM_PLAYERS];
 
-
-	BitmapText			m_textStageNumber;
 
 	TransitionStarWipe	m_StarWipe;
 
@@ -74,7 +83,7 @@ private:
 	FocusingSprite		m_sprCleared;
 	MotionBlurSprite	m_sprFailed;
 
-	Player		m_Player[NUM_PLAYERS];
+	Player				m_Player[NUM_PLAYERS];
 
 	DifficultyBanner	m_DifficultyBanner[NUM_PLAYERS];
 

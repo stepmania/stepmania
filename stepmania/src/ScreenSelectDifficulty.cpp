@@ -20,33 +20,44 @@
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"
 #include "AnnouncerManager.h"
+#include "ScreenSelectCourse.h"
 
 
-const float EXPLANATION_X	=	CENTER_X - 150;
-const float EXPLANATION_Y	=	CENTER_Y - 170;
+const float MORE_ARROWS_X[NUM_PAGES]	=	{ SCREEN_RIGHT-60, SCREEN_WIDTH + SCREEN_LEFT+60};
+const float MORE_ARROWS_Y[NUM_PAGES]	=	{ CENTER_Y-150, CENTER_Y-150 };
+const float EXPLANATION_X[NUM_PAGES]	=	{ CENTER_X - 150, SCREEN_WIDTH + CENTER_X + 150 };
+const float EXPLANATION_Y[NUM_PAGES]	=	{ CENTER_Y - 170, CENTER_Y - 170 };
+const float EXPLANATION_OFF_SCREEN_X[NUM_PAGES]	=	{ EXPLANATION_X[0]-400, EXPLANATION_X[1]+400 };
+const float EXPLANATION_OFF_SCREEN_Y[NUM_PAGES]	=	{ EXPLANATION_Y[0], EXPLANATION_Y[1] };
 
-const float DIFFICULTY_CLASS_X[NUM_DIFFICULTY_CLASSES] = {
-	CENTER_X-200,
-	CENTER_X,
-	CENTER_X+200
+const float DIFFICULTY_ITEM_X[NUM_DIFFICULTY_ITEMS] = {
+	CENTER_X-200,			// easy
+	CENTER_X,				// medium
+	CENTER_X+200,			// hard
+	SCREEN_WIDTH+CENTER_X,	// Oni, page 2
 };
 // these sprites are bottom aligned!
-const float DIFFICULTY_CLASS_Y[NUM_DIFFICULTY_CLASSES] = {
+const float DIFFICULTY_ITEM_Y[NUM_DIFFICULTY_ITEMS] = {
 	CENTER_Y-40,
 	CENTER_Y-60,
-	CENTER_Y-40
+	CENTER_Y-40,
+	CENTER_Y-60,
 };
 
-const float DIFFICULTY_ARROW_Y[NUM_DIFFICULTY_CLASSES] = {
-	DIFFICULTY_CLASS_Y[0]+205,
-	DIFFICULTY_CLASS_Y[1]+205,
-	DIFFICULTY_CLASS_Y[2]+205
+const float DIFFICULTY_ARROW_Y[NUM_DIFFICULTY_ITEMS] = {
+	DIFFICULTY_ITEM_Y[0]+205,
+	DIFFICULTY_ITEM_Y[1]+205,
+	DIFFICULTY_ITEM_Y[2]+205,
+	DIFFICULTY_ITEM_Y[3]+205,
 };
-const float DIFFICULTY_ARROW_X[NUM_DIFFICULTY_CLASSES][NUM_PLAYERS] = {
-	{ DIFFICULTY_CLASS_X[0]-40, DIFFICULTY_CLASS_X[0]+40 },
-	{ DIFFICULTY_CLASS_X[1]-40, DIFFICULTY_CLASS_X[1]+40 },
-	{ DIFFICULTY_CLASS_X[2]-40, DIFFICULTY_CLASS_X[2]+40 },
+const float DIFFICULTY_ARROW_X[NUM_DIFFICULTY_ITEMS][NUM_PLAYERS] = {
+	{ DIFFICULTY_ITEM_X[0]-40, DIFFICULTY_ITEM_X[0]+40 },
+	{ DIFFICULTY_ITEM_X[1]-40, DIFFICULTY_ITEM_X[1]+40 },
+	{ DIFFICULTY_ITEM_X[2]-40, DIFFICULTY_ITEM_X[2]+40 },
+	{ DIFFICULTY_ITEM_X[3]-40, DIFFICULTY_ITEM_X[3]+40 },
 };
+
+
 
 const float ARROW_SHADOW_OFFSET = 10;
 
@@ -61,20 +72,17 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 {
 	LOG->WriteLine( "ScreenSelectDifficulty::ScreenSelectDifficulty()" );
 
+	int p;
 	
 	m_Menu.Load(
 		THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_BACKGROUND) , 
 		THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_TOP_EDGE),
-		ssprintf("Use %c %c to select, then press NEXT", char(1), char(2))
+		ssprintf("Use %c %c to select, then press START", char(1), char(2))
 		);
 	this->AddActor( &m_Menu );
 
 
-	m_sprExplanation.Load( THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_EXPLANATION) );
-	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
-	this->AddActor( &m_sprExplanation );
-
-	for( int d=0; d<NUM_DIFFICULTY_CLASSES; d++ )
+	for( int d=0; d<NUM_DIFFICULTY_ITEMS; d++ )
 	{
 		ThemeElement te_header;
 		ThemeElement te_picture;
@@ -83,22 +91,37 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 		case 0:	te_header = GRAPHIC_SELECT_DIFFICULTY_EASY_HEADER;		te_picture = GRAPHIC_SELECT_DIFFICULTY_EASY_PICTURE;	break;
 		case 1: te_header = GRAPHIC_SELECT_DIFFICULTY_MEDIUM_HEADER;	te_picture = GRAPHIC_SELECT_DIFFICULTY_MEDIUM_PICTURE;	break;
 		case 2: te_header = GRAPHIC_SELECT_DIFFICULTY_HARD_HEADER;		te_picture = GRAPHIC_SELECT_DIFFICULTY_HARD_PICTURE;	break;
+		case 3: te_header = GRAPHIC_SELECT_DIFFICULTY_ONI_HEADER;		te_picture = GRAPHIC_SELECT_DIFFICULTY_ONI_PICTURE;		break;
+		case 4: te_header = GRAPHIC_SELECT_DIFFICULTY_ENDLESS_HEADER;	te_picture = GRAPHIC_SELECT_DIFFICULTY_ENDLESS_PICTURE;	break;
 		}
-		m_sprDifficultyPicture[d].Load( THEME->GetPathTo(te_picture) );
-		m_sprDifficultyPicture[d].SetXY( DIFFICULTY_CLASS_X[d], DIFFICULTY_CLASS_Y[d] );
-		m_sprDifficultyPicture[d].SetVertAlign( align_bottom );
-		m_sprDifficultyPicture[d].TurnShadowOff();
-		this->AddActor( &m_sprDifficultyPicture[d] );
+		m_sprPicture[d].Load( THEME->GetPathTo(te_picture) );
+		m_sprPicture[d].SetXY( DIFFICULTY_ITEM_X[d], DIFFICULTY_ITEM_Y[d] );
+		m_sprPicture[d].SetVertAlign( align_bottom );
+		m_sprPicture[d].TurnShadowOff();
+		m_framePages.AddActor( &m_sprPicture[d] );
 
-		m_sprDifficultyHeader[d].Load( THEME->GetPathTo(te_header) );
-		m_sprDifficultyHeader[d].SetXY( DIFFICULTY_CLASS_X[d], DIFFICULTY_CLASS_Y[d] );
-		m_sprDifficultyHeader[d].SetVertAlign( align_top );
-		m_sprDifficultyHeader[d].TurnShadowOff();
-		this->AddActor( &m_sprDifficultyHeader[d] );
-
+		m_sprHeader[d].Load( THEME->GetPathTo(te_header) );
+		m_sprHeader[d].SetXY( DIFFICULTY_ITEM_X[d], DIFFICULTY_ITEM_Y[d] );
+		m_sprHeader[d].SetVertAlign( align_top );
+		m_sprHeader[d].TurnShadowOff();
+		m_framePages.AddActor( &m_sprHeader[d] );
 	}
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PAGES; p++ )
+	{
+		m_sprMoreArrows[p].Load( THEME->GetPathTo( p==0 ? GRAPHIC_ARROWS_RIGHT : GRAPHIC_ARROWS_LEFT ) );
+		m_sprMoreArrows[p].SetXY( MORE_ARROWS_X[p], MORE_ARROWS_Y[p] );
+		m_framePages.AddActor( &m_sprMoreArrows[p] );
+
+		m_sprExplanation[p].Load( THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_EXPLANATION) );
+		m_sprExplanation[p].SetXY( EXPLANATION_X[p], EXPLANATION_Y[p] );
+		m_sprExplanation[p].StopAnimating();
+		m_sprExplanation[p].SetState( p );
+		m_framePages.AddActor( &m_sprExplanation[p] );
+	}
+
+
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_iSelection[p] = 0;
 		m_bChosen[p] = false;
@@ -106,32 +129,31 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 		if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
-		ThemeElement te;
-		switch( p )
-		{
-		case PLAYER_1:	te = GRAPHIC_SELECT_DIFFICULTY_ARROW_P1;	break;
-		case PLAYER_2:	te = GRAPHIC_SELECT_DIFFICULTY_ARROW_P2;	break;
-		default:	ASSERT( false );
-		}
-		m_sprArrowShadow[p].Load( THEME->GetPathTo(te) );
+		m_sprArrowShadow[p].Load( THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_ARROWS) );
+		m_sprArrowShadow[p].StopAnimating();
+		m_sprArrowShadow[p].SetState( p );
 		m_sprArrowShadow[p].TurnShadowOff();
 		m_sprArrowShadow[p].SetDiffuseColor( D3DXCOLOR(0,0,0,0.6f) );
-		this->AddActor( &m_sprArrowShadow[p] );
+		m_framePages.AddActor( &m_sprArrowShadow[p] );
 
-		m_sprArrow[p].Load( THEME->GetPathTo(te) );
+		m_sprArrow[p].Load( THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_ARROWS) );
+		m_sprArrow[p].StopAnimating();
+		m_sprArrow[p].SetState( p );
 		m_sprArrow[p].TurnShadowOff();
 		m_sprArrow[p].SetDiffuseColor( PlayerToColor((PlayerNumber)p) );
 		m_sprArrow[p].SetEffectGlowing();
-		this->AddActor( &m_sprArrow[p] );
+		m_framePages.AddActor( &m_sprArrow[p] );
 
 		m_sprOK[p].Load( THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_OK) );
-		this->AddActor( &m_sprOK[p] );
+		m_framePages.AddActor( &m_sprOK[p] );
 	}
-	
 
+	this->AddActor( &m_framePages );
+	
 	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_DIFFICULTY_CHANGE) );
 	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
-	
+
+	m_bPlayedChallengeSound = false;
 	
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_INTRO) );
 
@@ -185,7 +207,21 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
 	case SM_GoToNextState:
-		SCREENMAN->SetNewScreen( new ScreenSelectGroup );
+		switch( m_iSelection[PLAYER_1] )
+		{
+		case 0:
+		case 1:
+		case 2:	// something on page 1 was chosen
+			SCREENMAN->SetNewScreen( new ScreenSelectGroup );
+			break;
+		case 3:
+		case 4:
+			PREFSMAN->m_PlayMode = PLAY_MODE_ONI;
+			SCREENMAN->SetNewScreen( new ScreenSelectCourse );
+			break;
+		default:
+			ASSERT(0);	// bad selection
+		}
 		break;
 	case SM_StartTweeningOffScreen:
 		TweenOffScreen();
@@ -204,36 +240,73 @@ void ScreenSelectDifficulty::MenuLeft( const PlayerNumber p )
 	if( m_bChosen[p] )
 		return;
 
-	m_iSelection[p]--;
-
-	m_sprArrow[p].BeginTweening( 0.2f, TWEEN_BIAS_BEGIN );
-	m_sprArrow[p].SetTweenX( DIFFICULTY_ARROW_X[m_iSelection[p]][p] - ARROW_SHADOW_OFFSET );
-	m_sprArrow[p].SetTweenY( DIFFICULTY_ARROW_Y[m_iSelection[p]] - ARROW_SHADOW_OFFSET );
-
-	m_sprArrowShadow[p].BeginTweening( 0.2f, TWEEN_BIAS_BEGIN );
-	m_sprArrowShadow[p].SetTweenX( DIFFICULTY_ARROW_X[m_iSelection[p]][p] );
-	m_sprArrowShadow[p].SetTweenY( DIFFICULTY_ARROW_Y[m_iSelection[p]] );
-
-	m_soundChange.PlayRandom();
+	ChangeTo( p, m_iSelection[p], m_iSelection[p]-1 );
 }
 
 
 void ScreenSelectDifficulty::MenuRight( const PlayerNumber p )
 {
-	if( m_iSelection[p] == 2 )	// can't go right any more
+	if( m_iSelection[p] == NUM_DIFFICULTY_ITEMS-1 )	// can't go right any more
 		return;
 	if( m_bChosen[p] )
 		return;
 
-	m_iSelection[p]++;
-	
-	m_sprArrow[p].BeginTweening( 0.2f, TWEEN_BIAS_BEGIN );
-	m_sprArrow[p].SetTweenX( DIFFICULTY_ARROW_X[m_iSelection[p]][p] - ARROW_SHADOW_OFFSET );
-	m_sprArrow[p].SetTweenY( DIFFICULTY_ARROW_Y[m_iSelection[p]] - ARROW_SHADOW_OFFSET );
+	ChangeTo( p, m_iSelection[p], m_iSelection[p]+1 );
+}
 
-	m_sprArrowShadow[p].BeginTweening( 0.2f, TWEEN_BIAS_BEGIN );
-	m_sprArrowShadow[p].SetTweenX( DIFFICULTY_ARROW_X[m_iSelection[p]][p] );
-	m_sprArrowShadow[p].SetTweenY( DIFFICULTY_ARROW_Y[m_iSelection[p]] );
+void ScreenSelectDifficulty::ChangeTo( const PlayerNumber pn, int iSelectionWas, int iSelectionIs )
+{
+	bool bChangedPagesFrom1To2 = iSelectionWas < 3  &&  iSelectionIs >= 3;
+	bool bChangedPagesFrom2To1 = iSelectionWas >= 3  &&  iSelectionIs < 3;
+	bool bChangedPages = bChangedPagesFrom1To2 || bChangedPagesFrom2To1;
+	bool bSelectedSomethingOnPage1 = iSelectionIs < 3;
+	bool bSelectedSomethingOnPage2 = iSelectionIs >= 3;
+
+	if( bSelectedSomethingOnPage2 )
+	{
+		// change both players
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			m_iSelection[p] = iSelectionIs;
+	}
+	else if( bChangedPagesFrom2To1 )
+	{
+		// change only the player who pressed the button
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			m_iSelection[p] = 2;
+	}
+	else	// moving around in page 1
+	{
+		// change only the player who pressed the button
+		m_iSelection[pn] = iSelectionIs;
+
+	}
+
+
+	if( !m_bPlayedChallengeSound  &&  bChangedPagesFrom1To2 )
+	{
+		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_CHALLENGE) );
+		m_bPlayedChallengeSound = true;
+	}
+
+	if( bChangedPagesFrom1To2 || bChangedPagesFrom2To1 )
+	{
+		m_framePages.BeginTweening( 0.2f );
+		m_framePages.SetTweenX( bSelectedSomethingOnPage1 ? 0.0f : -SCREEN_WIDTH );
+	}
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( bSelectedSomethingOnPage2 || bChangedPagesFrom2To1 || p==pn )
+		{
+			m_sprArrow[p].BeginTweening( 0.2f, bChangedPages ? TWEEN_LINEAR : TWEEN_BIAS_BEGIN );
+			m_sprArrow[p].SetTweenX( DIFFICULTY_ARROW_X[m_iSelection[p]][p] - ARROW_SHADOW_OFFSET );
+			m_sprArrow[p].SetTweenY( DIFFICULTY_ARROW_Y[m_iSelection[p]] - ARROW_SHADOW_OFFSET );
+
+			m_sprArrowShadow[p].BeginTweening( 0.2f, bChangedPages ? TWEEN_LINEAR : TWEEN_BIAS_BEGIN );
+			m_sprArrowShadow[p].SetTweenX( DIFFICULTY_ARROW_X[m_iSelection[p]][p] );
+			m_sprArrowShadow[p].SetTweenY( DIFFICULTY_ARROW_Y[m_iSelection[p]] );
+		}
+	}
 
 	m_soundChange.PlayRandom();
 }
@@ -252,6 +325,19 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	case 0:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_COMMENT_EASY) );	break;
 	case 1:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_COMMENT_MEDIUM) );	break;
 	case 2:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_COMMENT_HARD) );	break;
+	case 3:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_COMMENT_ONI) );	break;
+	}
+
+	if( iSelection >= 3 )	// chose something on page 2
+	{
+		// choose this for all the other players too
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( m_bChosen[p] )
+				continue;
+		
+			MenuStart( (PlayerNumber)p );
+		}
 	}
 
 	m_sprArrow[pn].BeginTweeningQueued( 0.2f );
@@ -289,11 +375,19 @@ void ScreenSelectDifficulty::MenuBack( const PlayerNumber p )
 
 void ScreenSelectDifficulty::TweenOffScreen()
 {
-	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
-	m_sprExplanation.BeginTweening( 0.5, Actor::TWEEN_BOUNCE_BEGIN );
-	m_sprExplanation.SetTweenXY( EXPLANATION_X-400, EXPLANATION_Y );
+	int p;
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PAGES; p++ )
+	{
+		m_sprExplanation[p].SetXY( EXPLANATION_X[p], EXPLANATION_Y[p] );
+		m_sprExplanation[p].BeginTweening( 0.5, Actor::TWEEN_BOUNCE_BEGIN );
+		m_sprExplanation[p].SetTweenXY( EXPLANATION_OFF_SCREEN_X[p], EXPLANATION_OFF_SCREEN_Y[p] );
+
+		m_sprMoreArrows[p].BeginTweening( 0.5 );
+		m_sprMoreArrows[p].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	}
+
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
@@ -308,39 +402,51 @@ void ScreenSelectDifficulty::TweenOffScreen()
 		m_sprArrowShadow[p].SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0) );
 	}
 
-	for( int d=0; d<NUM_DIFFICULTY_CLASSES; d++ )
+	for( int d=0; d<NUM_DIFFICULTY_ITEMS; d++ )
 	{
+		if( d >= 3 )	// this item is on page 2
+			continue;	// don't tween
+
 		const float fPauseTime = d*0.2f;
 
 		// pause
-		m_sprDifficultyHeader[d].BeginTweeningQueued( fPauseTime );
+		m_sprHeader[d].BeginTweeningQueued( fPauseTime );
 
-		m_sprDifficultyPicture[d].BeginTweeningQueued( fPauseTime );
+		m_sprPicture[d].BeginTweeningQueued( fPauseTime );
 
 		// roll up
-		m_sprDifficultyHeader[d].BeginTweeningQueued( 0.3f, TWEEN_BOUNCE_BEGIN );
+		m_sprHeader[d].BeginTweeningQueued( 0.3f, TWEEN_BOUNCE_BEGIN );
 
-		m_sprDifficultyPicture[d].BeginTweeningQueued( 0.3f, TWEEN_BOUNCE_BEGIN );
-		m_sprDifficultyPicture[d].SetTweenZoomY( 0 );
+		m_sprPicture[d].BeginTweeningQueued( 0.3f, TWEEN_BOUNCE_BEGIN );
+		m_sprPicture[d].SetTweenZoomY( 0 );
 
 		// fly off
-		m_sprDifficultyHeader[d].BeginTweeningQueued( 0.4f, TWEEN_BIAS_END );
-		m_sprDifficultyHeader[d].SetTweenXY( DIFFICULTY_CLASS_X[d]-700, DIFFICULTY_CLASS_Y[d] );
+		m_sprHeader[d].BeginTweeningQueued( 0.4f, TWEEN_BIAS_END );
+		m_sprHeader[d].SetTweenXY( DIFFICULTY_ITEM_X[d]-700, DIFFICULTY_ITEM_Y[d] );
 
-		m_sprDifficultyPicture[d].BeginTweeningQueued( 0.4f, TWEEN_BIAS_END );
-		m_sprDifficultyPicture[d].SetTweenXY( DIFFICULTY_CLASS_X[d]-700, DIFFICULTY_CLASS_Y[d] );
+		m_sprPicture[d].BeginTweeningQueued( 0.4f, TWEEN_BIAS_END );
+		m_sprPicture[d].SetTweenXY( DIFFICULTY_ITEM_X[d]-700, DIFFICULTY_ITEM_Y[d] );
 	}
 }
 
 void ScreenSelectDifficulty::TweenOnScreen() 
 {
+	int p;
+
 	m_Menu.TweenOnScreenFromMenu( SM_None );
 
-	m_sprExplanation.SetXY( EXPLANATION_X-400, EXPLANATION_Y );
-	m_sprExplanation.BeginTweening( 0.3f, Actor::TWEEN_BOUNCE_END );
-	m_sprExplanation.SetTweenXY( EXPLANATION_X, EXPLANATION_Y );
+	for( p=0; p<NUM_PAGES; p++ )
+	{
+		m_sprExplanation[p].SetXY( EXPLANATION_OFF_SCREEN_X[p], EXPLANATION_OFF_SCREEN_Y[p] );
+		m_sprExplanation[p].BeginTweening( 0.3f, Actor::TWEEN_BOUNCE_END );
+		m_sprExplanation[p].SetTweenXY( EXPLANATION_X[p], EXPLANATION_Y[p] );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+		m_sprMoreArrows[p].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+		m_sprMoreArrows[p].BeginTweening( 0.5 );
+		m_sprMoreArrows[p].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	}
+
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
@@ -365,33 +471,38 @@ void ScreenSelectDifficulty::TweenOnScreen()
 		m_sprArrowShadow[p].SetTweenDiffuseColor( colorOriginal );
 	}
 
-	for( int d=0; d<NUM_DIFFICULTY_CLASSES; d++ )
+	for( int d=0; d<NUM_DIFFICULTY_ITEMS; d++ )
 	{
 		const float fPauseTime = d*0.2f;
 
+		bool bIsOnPage1 = m_iSelection[PLAYER_1] >= 3;
+
+		if( bIsOnPage1  &&  d >= 3 )	// they are on page 1, but this item is on page 2
+			continue;	// don't tween
+
 		// set off screen
-		m_sprDifficultyHeader[d].SetXY( DIFFICULTY_CLASS_X[d]-700, DIFFICULTY_CLASS_Y[d] );
+		m_sprHeader[d].SetXY( DIFFICULTY_ITEM_X[d]-700, DIFFICULTY_ITEM_Y[d] );
 	
-		m_sprDifficultyPicture[d].SetXY( DIFFICULTY_CLASS_X[d]-700, DIFFICULTY_CLASS_Y[d] );
-		m_sprDifficultyPicture[d].SetZoomY( 0 );
+		m_sprPicture[d].SetXY( DIFFICULTY_ITEM_X[d]-700, DIFFICULTY_ITEM_Y[d] );
+		m_sprPicture[d].SetZoomY( 0 );
 
 		// pause
-		m_sprDifficultyHeader[d].BeginTweeningQueued( fPauseTime );
+		m_sprHeader[d].BeginTweeningQueued( fPauseTime );
 
-		m_sprDifficultyPicture[d].BeginTweeningQueued( fPauseTime );
+		m_sprPicture[d].BeginTweeningQueued( fPauseTime );
 
 		// fly on
-		m_sprDifficultyHeader[d].BeginTweeningQueued( 0.5f, TWEEN_BIAS_BEGIN );
-		m_sprDifficultyHeader[d].SetTweenXY( DIFFICULTY_CLASS_X[d], DIFFICULTY_CLASS_Y[d] );
+		m_sprHeader[d].BeginTweeningQueued( 0.5f, TWEEN_BIAS_BEGIN );
+		m_sprHeader[d].SetTweenXY( DIFFICULTY_ITEM_X[d], DIFFICULTY_ITEM_Y[d] );
 
-		m_sprDifficultyPicture[d].BeginTweeningQueued( 0.5f, TWEEN_BIAS_BEGIN );
-		m_sprDifficultyPicture[d].SetTweenXY( DIFFICULTY_CLASS_X[d], DIFFICULTY_CLASS_Y[d] );
+		m_sprPicture[d].BeginTweeningQueued( 0.5f, TWEEN_BIAS_BEGIN );
+		m_sprPicture[d].SetTweenXY( DIFFICULTY_ITEM_X[d], DIFFICULTY_ITEM_Y[d] );
 
 		// roll down
-		m_sprDifficultyHeader[d].BeginTweeningQueued( 0.3f, TWEEN_BOUNCE_END );
+		m_sprHeader[d].BeginTweeningQueued( 0.3f, TWEEN_BOUNCE_END );
 
-		m_sprDifficultyPicture[d].BeginTweeningQueued( 0.3f, TWEEN_BOUNCE_END );
-		m_sprDifficultyPicture[d].SetTweenZoomY( 1 );
+		m_sprPicture[d].BeginTweeningQueued( 0.3f, TWEEN_BOUNCE_END );
+		m_sprPicture[d].SetTweenZoomY( 1 );
 
 	}
 }

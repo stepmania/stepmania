@@ -21,6 +21,7 @@ public:
 	BannerWithFrame();
 
 	void LoadFromSong( Song* pSong );
+	void LoadFromGroup( CString sGroupName );
 
 protected:
 

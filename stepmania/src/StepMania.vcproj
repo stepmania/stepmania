@@ -21,7 +21,6 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/EHa"
 				Optimization="0"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,DEBUG"
 				BasicRuntimeChecks="3"
@@ -237,6 +236,12 @@
 				RelativePath="ScreenSandbox.h">
 			</File>
 			<File
+				RelativePath="ScreenSelectCourse.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSelectCourse.h">
+			</File>
+			<File
 				RelativePath="ScreenSelectDifficulty.cpp">
 			</File>
 			<File
@@ -307,6 +312,12 @@
 			Name="Data Structures"
 			Filter="">
 			<File
+				RelativePath="Course.cpp">
+			</File>
+			<File
+				RelativePath="Course.h">
+			</File>
+			<File
 				RelativePath=".\Font.cpp">
 			</File>
 			<File
@@ -326,6 +337,12 @@
 			</File>
 			<File
 				RelativePath=".\GameTypes.h">
+			</File>
+			<File
+				RelativePath="GameplayStatistics.cpp">
+			</File>
+			<File
+				RelativePath="GameplayStatistics.h">
 			</File>
 			<File
 				RelativePath=".\Grade.cpp">
@@ -498,6 +515,18 @@
 			</File>
 			<File
 				RelativePath="BonusInfoFrame.h">
+			</File>
+			<File
+				RelativePath="CourseContentsFrame.cpp">
+			</File>
+			<File
+				RelativePath="CourseContentsFrame.h">
+			</File>
+			<File
+				RelativePath="CourseInfoFrame.cpp">
+			</File>
+			<File
+				RelativePath="CourseInfoFrame.h">
 			</File>
 			<File
 				RelativePath="CroppedSprite.cpp">
@@ -736,6 +765,12 @@
 				RelativePath="RageDisplay.h">
 			</File>
 			<File
+				RelativePath="RageException.cpp">
+			</File>
+			<File
+				RelativePath="RageException.h">
+			</File>
+			<File
 				RelativePath=".\RageInput.cpp">
 			</File>
 			<File
@@ -788,6 +823,12 @@
 			</File>
 			<File
 				RelativePath=".\RageTextureManager.h">
+			</File>
+			<File
+				RelativePath="RageTimer.cpp">
+			</File>
+			<File
+				RelativePath="RageTimer.h">
 			</File>
 			<File
 				RelativePath=".\RageUtil.cpp">

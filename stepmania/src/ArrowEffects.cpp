@@ -40,7 +40,7 @@ float ArrowGetXPos( const PlayerOptions& po, int iColNum, float fYOffset, float 
 	switch( po.m_EffectType )
 	{
 	case PlayerOptions::EFFECT_DRUNK:
-		fPixelOffsetFromCenter += cosf( (GetTickCount()%1000000)/250.0f + iColNum*0.4f + fYOffset/SCREEN_HEIGHT*4) * ARROW_SIZE/3; 
+		fPixelOffsetFromCenter += cosf( TIMER->GetTimeSinceStart()/4 + iColNum*0.4f + fYOffset/SCREEN_HEIGHT*4) * ARROW_SIZE/3; 
 		break;
 	}
 	return fPixelOffsetFromCenter;

@@ -18,8 +18,9 @@
 #include "PrefsManager.h"
 #include "GameManager.h"
 
-const float BEATS_BETWEEN_HOLD_BITS	=	0.2f;
-const float INDICIES_BETWEEN_HOLD_BITS	= BEATS_BETWEEN_HOLD_BITS * ELEMENTS_PER_BEAT;	
+const float HOLD_NOTE_BITS_PER_BEAT	= 6;
+const float HOLD_NOTE_BITS_PER_ROW	= HOLD_NOTE_BITS_PER_BEAT / ELEMENTS_PER_BEAT;
+const float ROWS_BETWEEN_HOLD_BITS	= 1 / HOLD_NOTE_BITS_PER_ROW;	
 
 NoteField::NoteField()
 {
@@ -205,18 +206,72 @@ void NoteField::DrawPrimitives()
 	{
 		const int MAX_COLOR_NOTE_INSTANCES = 300;
 		ColorNoteInstance instances[MAX_COLOR_NOTE_INSTANCES];
-		int iCount = 0;		// number of valid elements in instances
+		int iCount = 0;		// number of valid elements in the instances array
 
 
-		//
+
+
+		/////////////////////////////////
+		// Draw all HoldNotes in this column (so that they appear under the tap notes)
+		/////////////////////////////////
+		for( int i=0; i<m_iNumHoldNotes; i++ )
+		{
+			HoldNote &hn = m_HoldNotes[i];
+
+			if( hn.m_iTrack != c )	// this HoldNote doesn't belong to this column
+				continue;
+
+			// If no part of this HoldNote is on the screen, skip it
+			if( !( iIndexFirstArrowToDraw <= hn.m_iEndIndex && hn.m_iEndIndex <= iIndexLastArrowToDraw  ||
+				iIndexFirstArrowToDraw <= hn.m_iStartIndex  && hn.m_iStartIndex <= iIndexLastArrowToDraw  ||
+				hn.m_iStartIndex < iIndexFirstArrowToDraw && hn.m_iEndIndex > iIndexLastArrowToDraw ) )
+			{
+				continue;	// skip
+			}
+
+
+			// If this note was in the past and has life > 0, then it was completed and don't draw it!
+			if( hn.m_iEndIndex < BeatToNoteRow(m_fSongBeat)  &&  m_HoldNoteLife[i] > 0 )
+				continue;	// skip
+
+
+			const int iCol = hn.m_iTrack;
+			const float fHoldNoteLife = m_HoldNoteLife[i];
+			const bool bActive = NoteRowToBeat(hn.m_iStartIndex) > m_fSongBeat  &&  m_fSongBeat < NoteRowToBeat(hn.m_iEndIndex);
+
+
+			// parts of the hold
+			const float fStartDrawingAtBeat = froundf( (float)hn.m_iStartIndex, ROWS_BETWEEN_HOLD_BITS );
+			for( float j=fStartDrawingAtBeat; 
+				 j<=hn.m_iEndIndex; 
+				 j+=ROWS_BETWEEN_HOLD_BITS/m_PlayerOptions.m_fArrowScrollSpeed )	// for each bit of the hold
+			{
+ 				// check if this arrow is off the the screen
+				if( j < iIndexFirstArrowToDraw || iIndexLastArrowToDraw < j)
+					continue;	// skip this arrow
+
+				CreateHoldNoteInstance( instances[iCount++], bActive, (float)j, hn, fHoldNoteLife );
+			}
+
+		}
+		
+		const bool bDrawAddPass = m_PlayerOptions.m_AppearanceType != PlayerOptions::APPEARANCE_VISIBLE;
+		if( iCount > 0 )
+			m_ColorNote[c].DrawList( iCount, instances, bDrawAddPass );
+
+
+
+		iCount = 0;		// reset count
+
+		///////////////////////////////////
 		// Draw all TapNotes in this column
-		//
-		for( int i=iIndexFirstArrowToDraw; i<=iIndexLastArrowToDraw; i++ )	//	 for each row
+		///////////////////////////////////
+		for( i=iIndexFirstArrowToDraw; i<=iIndexLastArrowToDraw; i++ )	//	 for each row
 		{	
 			if( m_TapNotes[c][i] == '0' )
 				continue;	// no note here
 			
-			// See if there is a hold step that begins on this beat.  Not pretty...
+			// See if there is a hold step that begins on this beat.
 			bool bHoldNoteOnThisBeat = false;
 			for( int j=0; j<m_iNumHoldNotes; j++ )
 			{
@@ -233,56 +288,6 @@ void NoteField::DrawPrimitives()
 				CreateTapNoteInstance( instances[iCount++], c, (float)i );
 		}
 
-
-		//
-		// Draw all HoldNotes in this column
-		//
-		for( i=0; i<m_iNumHoldNotes; i++ )
-		{
-			HoldNote &hn = m_HoldNotes[i];
-
-			if( hn.m_iTrack != c )	// this HoldNote doesn't belong to this column
-				continue;
-
-			// If no part of this HoldNote is on the screen, skip it
-			if( !( iIndexFirstArrowToDraw <= hn.m_iEndIndex && hn.m_iEndIndex <= iIndexLastArrowToDraw  ||
-				iIndexFirstArrowToDraw <= hn.m_iStartIndex  && hn.m_iStartIndex <= iIndexLastArrowToDraw  ||
-				hn.m_iStartIndex < iIndexFirstArrowToDraw && hn.m_iEndIndex > iIndexLastArrowToDraw ) )
-			{
-				continue;
-			}
-
-
-			const int iCol = hn.m_iTrack;
-			const float fHoldNoteLife = m_HoldNoteLife[i];
-			const bool bActive = NoteRowToBeat(hn.m_iStartIndex) > m_fSongBeat  &&  m_fSongBeat < NoteRowToBeat(hn.m_iEndIndex);
-
-
-			// draw the gray parts
-			for( float j=(float)hn.m_iStartIndex;
-				j<=hn.m_iEndIndex; 
-				j+=INDICIES_BETWEEN_HOLD_BITS/m_PlayerOptions.m_fArrowScrollSpeed )	// for each arrow in the run
-			{
- 				// check if this arrow is off the the screen
-				if( j < iIndexFirstArrowToDraw || iIndexLastArrowToDraw < j)
-					continue;	// skip this arrow
-
-				if( fHoldNoteLife > 0  &&  m_Mode == MODE_DANCING  &&  NoteRowToBeat(j) < m_fSongBeat )
-					continue;		// don't draw
-
-				CreateHoldNoteInstance( instances[iCount++], bActive, j, hn, fHoldNoteLife );
-			}
-
-			// draw the first arrow on top of the others
-			j = (float)hn.m_iStartIndex;
-
-			if( fHoldNoteLife > 0  &&  m_Mode == MODE_DANCING  &&  NoteRowToBeat(j) < m_fSongBeat )
-				;		// don't draw
-			else
-				CreateHoldNoteInstance( instances[iCount++], bActive, j, hn, fHoldNoteLife );
-		}
-		
-		const bool bDrawAddPass = m_PlayerOptions.m_AppearanceType != PlayerOptions::APPEARANCE_VISIBLE;
 		if( iCount > 0 )
 			m_ColorNote[c].DrawList( iCount, instances, bDrawAddPass );
 	}

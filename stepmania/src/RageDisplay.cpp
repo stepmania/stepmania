@@ -14,7 +14,7 @@
 
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 
 RageDisplay*		DISPLAY	= NULL;
 
@@ -28,9 +28,8 @@ RageDisplay::RageDisplay( HWND hWnd )
 	m_pd3d = NULL;
 	m_pd3dDevice = NULL;
 	m_pVB = NULL;
-	m_pIB = NULL;
 
-	m_dwLastUpdateTicks = GetTickCount();
+	m_fLastUpdateTime = TIMER->GetTimeSinceStart();
 	m_iFramesRenderedSinceLastCheck = 0;
 	m_fFPS = 0;
 
@@ -43,16 +42,16 @@ RageDisplay::RageDisplay( HWND hWnd )
 	catch (...) 
 	{
 		// Edwin Evans: Catch any exception. It won't be caught by main exception handler.
-		FatalError( "Unknown exception in Direct3DCreate8." );
+		throw RageException( "Unknown exception in Direct3DCreate8." );
 	}
 
     if( NULL == m_pd3d )
-		FatalError( "Direct3DCreate8 failed." );
+		throw RageException( "Direct3DCreate8 failed." );
 
 	HRESULT  hr;
 	if( FAILED( hr = m_pd3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &m_DeviceCaps) ) )
 	{
-		FatalError( 
+		throw RageException( 
 			"There was an error while initializing your video card.\n\n"
 			"Your system is reporting that Direct3D8 hardware acceleration\n"
 			"is not available.  In most cases, you can download an updated\n"
@@ -92,7 +91,6 @@ RageDisplay::RageDisplay( HWND hWnd )
 RageDisplay::~RageDisplay()
 {
 	ReleaseVertexBuffer();
-	ReleaseIndexBuffer();
 	// Release our D3D Device
 	SAFE_RELEASE( m_pd3dDevice );
     m_pd3d->Release();
@@ -141,7 +139,7 @@ bool RageDisplay::SwitchDisplayMode(
 			arrayBackBufferFormats.Add( D3DFMT_A8R8G8B8 );
 			break;
 		default:
-			FatalError( ssprintf("Invalid BPP '%u' specified", dwBPP) );
+			throw RageException( ssprintf("Invalid BPP '%u' specified", dwBPP) );
 			return false;
 		}
 	}
@@ -238,11 +236,13 @@ bool RageDisplay::SwitchDisplayMode(
 			LOG->WriteLineHr( hr, "failed to create device: %d, %u, %u, %u.", bWindowed, dwWidth, dwHeight, dwBPP );
 			return false;
 		}
+		LOG->WriteLine( 
+			"Video card info:\n"
+			" - available texture mem is %u\n",
+			m_pd3dDevice->GetAvailableTextureMem()
+		);
 		if( m_pVB == NULL )
 			CreateVertexBuffer();
-
-		if( m_pIB == NULL )
-			CreateIndexBuffer();
 	}
 	else
 	{
@@ -336,9 +336,9 @@ HRESULT RageDisplay::BeginFrame()
     m_pd3dDevice->SetTextureStageState( 0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR );
 
 
-	// tile, don't crop texture coords
-  //  m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSU, D3DTADDRESS_BORDER );
-  //  m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, D3DTADDRESS_BORDER );
+	// Don't tile texture coords.  This creates ugly wrapping artifacts on textures that have to be rescaled.
+    //m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSU, D3DTADDRESS_BORDER );
+    //m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, D3DTADDRESS_BORDER );
 
 
 
@@ -354,12 +354,12 @@ HRESULT RageDisplay::EndFrame()
 	// update stats
 	m_iFramesRenderedSinceLastCheck++;
 
-	DWORD dwThisTicks = GetTickCount();
-	if( dwThisTicks - m_dwLastUpdateTicks > 1000 )	// update stats every 1 sec.
+	float fTimeNow = TIMER->GetTimeSinceStart();
+	if( fTimeNow - m_fLastUpdateTime > 1.0f )	// update stats every 1 sec.
 	{
 		m_fFPS = (float)m_iFramesRenderedSinceLastCheck;
 		m_iFramesRenderedSinceLastCheck = 0;
-		m_dwLastUpdateTicks = dwThisTicks;
+		m_fLastUpdateTime = fTimeNow;
 
 		LOG->WriteLine( "FPS: %.0f", m_fFPS );
 	}
@@ -401,30 +401,12 @@ void RageDisplay::CreateVertexBuffer()
 									MAX_NUM_VERTICIES * sizeof(RAGEVERTEX),
 									D3DUSAGE_WRITEONLY, D3DFVF_RAGEVERTEX,
 									D3DPOOL_MANAGED, &m_pVB ) ) )
-		FatalErrorHr( hr, "Vertex Buffer Could Not Be Created" );
+		throw RageException( hr, "Vertex Buffer Could Not Be Created" );
 }
 
 
 void RageDisplay::ReleaseVertexBuffer()
 {
 	SAFE_RELEASE( m_pVB );
-}
-
-void RageDisplay::CreateIndexBuffer()
-{
-	HRESULT hr;
-	if( FAILED( hr = GetDevice()->CreateIndexBuffer( 
-									MAX_NUM_INDICIES, 
-									D3DUSAGE_WRITEONLY, 
-									D3DFMT_INDEX16, 
-									D3DPOOL_MANAGED, 
-									&m_pIB ) ) )
-		FatalErrorHr( hr, "Index Buffer Could Not Be Created" );
-}
-
-
-void RageDisplay::ReleaseIndexBuffer()
-{
-	SAFE_RELEASE( m_pIB );
 }
 

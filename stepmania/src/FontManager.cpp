@@ -17,7 +17,7 @@
 #include "Font.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 
 FontManager*	FONT	= NULL;
 
@@ -127,7 +127,7 @@ void FontManager::UnloadFont( CString sFontFilePath )
 	}
 	else	// lookup failed
 	{
-		FatalError( ssprintf("Tried to Unload a font that wasn't loaded. '%s'", sFontFilePath) );
+		throw RageException( ssprintf("Tried to Unload a font that wasn't loaded. '%s'", sFontFilePath) );
 	}
 	
 }

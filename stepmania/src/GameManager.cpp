@@ -11,7 +11,7 @@
 */
 
 #include "GameManager.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 
 
 GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
@@ -226,7 +226,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			0,1,2,3,4,5
 		},
 	},
-	{	// STYLE_DANCE_SOLO_VERSUS 
+/*	{	// STYLE_DANCE_SOLO_VERSUS 
 		"dance-solo-versus",				// m_szName
 		NOTES_TYPE_DANCE_SOLO,				// m_NotesType
 		StyleDef::ONE_PLAYER_USES_ONE_SIDE,	// m_StyleType
@@ -254,8 +254,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			0,5,1,4,2,3		// outside in
 		},
 	},
-	{	// PUMP_STYLE_SINGLE
-		"single",								// m_szName
+*/	{	// PUMP_STYLE_SINGLE
+		"pump-single",							// m_szName
 		NOTES_TYPE_PUMP_SINGLE,					// m_NotesType
 		StyleDef::ONE_PLAYER_USES_ONE_SIDE,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
@@ -383,6 +383,9 @@ void GameManager::GetSkinNames( CStringArray &AddTo )
 
 bool GameManager::IsPlayerEnabled( PlayerNumber pn )
 {
+	if( m_CurStyle == STYLE_NONE )	// if no style set (we're in TitleMenu, ConfigInstruments or something)
+		return true;				// allow input from both sides
+
 	return ( pn == m_sMasterPlayerNumber ) ||  
 		( GetCurrentStyleDef()->m_StyleType == StyleDef::TWO_PLAYERS_USE_TWO_SIDES );
 };

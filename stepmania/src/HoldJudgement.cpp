@@ -44,21 +44,21 @@ void HoldJudgement::DrawPrimitives()
 	}
 }
 
-void HoldJudgement::SetHoldJudgement( HoldNoteResult result )
+void HoldJudgement::SetHoldJudgement( HoldNoteScore hns )
 {
 	//LOG->WriteLine( "Judgement::SetJudgement()" );
 
-	switch( result )
+	switch( hns )
 	{
-	case HNR_NONE:	m_sprJudgement.SetState( 0 );	break;
-	case HNR_OK:	m_sprJudgement.SetState( 7 );	break;
-	case HNR_NG:	m_sprJudgement.SetState( 8 );	break;
+	case HNS_NONE:	m_sprJudgement.SetState( 0 );	break;
+	case HNS_OK:	m_sprJudgement.SetState( 7 );	break;
+	case HNS_NG:	m_sprJudgement.SetState( 8 );	break;
 	default:	ASSERT( false );
 	}
 
 	m_fDisplayCountdown = JUDGEMENT_DISPLAY_TIME;
 
-	if( result == HNR_NG ) 
+	if( hns == HNS_NG ) 
 	{
 		// falling down
 		m_sprJudgement.SetY( -10 );
@@ -66,7 +66,7 @@ void HoldJudgement::SetHoldJudgement( HoldNoteResult result )
 		m_sprJudgement.BeginTweening( JUDGEMENT_DISPLAY_TIME );
 		m_sprJudgement.SetTweenY( 10 );
 	} 
-	else if( result == HNR_OK ) 
+	else // hns == HNS_OK
 	{		
 		// zooming out
 		m_sprJudgement.SetZoom( 1.5f );

@@ -39,7 +39,7 @@ RSC=rc.exe
 # PROP Use_MFC 1
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "../"
-# PROP Intermediate_Dir "../Release-VC6"
+# PROP Intermediate_Dir "../Release"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo /o"../StepMania-StackTrace.bsc"
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 /nologo /subsystem:windows /debug /machine:I386 /out:"../StepMania-VC6.exe"
+# ADD LINK32 /nologo /subsystem:windows /debug /machine:I386
 
 !ELSEIF  "$(CFG)" == "StepMania - Win32 Debug"
 
@@ -65,7 +65,7 @@ LINK32=link.exe
 # PROP Use_MFC 1
 # PROP Use_Debug_Libraries 1
 # PROP Output_Dir "../"
-# PROP Intermediate_Dir "../Debug-VC6"
+# PROP Intermediate_Dir "../Debug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
@@ -79,7 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 /nologo /subsystem:windows /debug /machine:I386 /out:"../StepMania-debug-VC6.exe" /pdbtype:sept
+# ADD LINK32 /nologo /subsystem:windows /debug /machine:I386 /out:"../StepMania-debug.exe" /pdbtype:sept
 
 !ENDIF 
 
@@ -105,6 +105,14 @@ SOURCE=.\RageDisplay.cpp
 # Begin Source File
 
 SOURCE=.\RageDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageException.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageException.h
 # End Source File
 # Begin Source File
 
@@ -180,6 +188,14 @@ SOURCE=.\RageTextureManager.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RageTimer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageTimer.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RageUtil.cpp
 # End Source File
 # Begin Source File
@@ -213,6 +229,14 @@ SOURCE=.\GameDef.h
 # Begin Source File
 
 SOURCE=.\GameInput.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameplayStatistics.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameplayStatistics.h
 # End Source File
 # Begin Source File
 
@@ -488,19 +512,27 @@ SOURCE=.\BPMDisplay.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CourseContentsFrame.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CourseContentsFrame.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CourseInfoFrame.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CourseInfoFrame.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\CroppedSprite.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\CroppedSprite.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\DifficultyBanner.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\DifficultyBanner.h
 # End Source File
 # Begin Source File
 
@@ -623,7 +655,7 @@ SOURCE=.\TipDisplay.cpp
 SOURCE=.\TipDisplay.h
 # End Source File
 # End Group
-# Begin Group "Actors used in Dancing"
+# Begin Group "Actors used in Gameplay"
 
 # PROP Default_Filter ""
 # Begin Source File
@@ -657,6 +689,14 @@ SOURCE=.\Combo.cpp
 # Begin Source File
 
 SOURCE=.\Combo.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DifficultyBanner.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\DifficultyBanner.h
 # End Source File
 # Begin Source File
 
@@ -769,14 +809,6 @@ SOURCE=.\ScoreDisplayRolling.cpp
 # Begin Source File
 
 SOURCE=.\ScoreDisplayRolling.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplayRollingWithFrame.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplayRollingWithFrame.h
 # End Source File
 # End Group
 # Begin Group "Screens"
@@ -905,6 +937,14 @@ SOURCE=.\ScreenSandbox.cpp
 # Begin Source File
 
 SOURCE=.\ScreenSandbox.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectCourse.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectCourse.h
 # End Source File
 # Begin Source File
 

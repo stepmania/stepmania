@@ -370,7 +370,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 				// allocate a new Notes
 				SONGMAN->GetCurrentSong()->m_arrayNotes.SetSize( SONGMAN->GetCurrentSong()->m_arrayNotes.GetSize() + 1 );
-				pNotes = &SONGMAN->GetCurrentSong()->m_arrayNotes[ SONGMAN->GetCurrentSong()->m_arrayNotes.GetSize()-1 ];
+				pNotes = SONGMAN->GetCurrentSong()->m_arrayNotes[ SONGMAN->GetCurrentSong()->m_arrayNotes.GetSize()-1 ];
 				pNotes->m_NotesType = GAMEMAN->m_CurNotesType;
 				pNotes->m_sDescription = "Untitled";
 				pNotes->m_iMeter = 1;

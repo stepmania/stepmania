@@ -17,6 +17,8 @@
 const float BANNER_WIDTH	= 286;
 const float BANNER_HEIGHT	= 92;
 
+class Course;
+
 
 class Banner : public CroppedSprite
 {
@@ -36,6 +38,7 @@ public:
 
 	bool LoadFromSong( Song* pSong );		// NULL means no song
 	bool LoadFromGroup( CString sGroupName );
+	bool LoadFromCourse( Course* pCourse );
 	bool LoadRoulette();
 
 	inline void SetScrolling( bool bScroll ) { m_bScrolling = bScroll; };

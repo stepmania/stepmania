@@ -11,6 +11,7 @@
 */
 
 #include "Screen.h"
+#include "GameManager.h"
 
 Screen::Screen()
 {
@@ -48,6 +49,9 @@ void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const
 {
 	// default input handler used by most menus
 	if( !MenuI.IsValid() )
+		return;
+
+	if( !GAMEMAN->IsPlayerEnabled(MenuI.player) )
 		return;
 
 	switch( MenuI.button )

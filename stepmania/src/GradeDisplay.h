@@ -32,6 +32,7 @@ protected:
 	Grade m_Grade;
 
 	// for scrolling
+	bool  m_bDoScrolling;
 	FRECT m_frectStartTexCoords;
 	FRECT m_frectDestTexCoords;
 	float m_fTimeLeftInScroll;

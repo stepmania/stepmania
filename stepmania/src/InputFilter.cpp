@@ -14,7 +14,7 @@
 #include "InputFilter.h"
 #include "RageLog.h"
 #include "RageInput.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 
 InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our program
 

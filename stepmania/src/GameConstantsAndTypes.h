@@ -153,7 +153,8 @@ enum NotesType
 	NOTES_TYPE_DANCE_SOLO,
 	NOTES_TYPE_PUMP_SINGLE,
 	NOTES_TYPE_PUMP_DOUBLE,
-	NUM_NOTES_TYPES		// leave this at the end
+	NUM_NOTES_TYPES,		// leave this at the end
+	NOTES_TYPE_INVALID,
 };
 
 inline int NotesTypeToNumColumns( NotesType nt )
@@ -202,8 +203,7 @@ inline CString NotesTypeToString( NotesType nt )
 enum PlayMode
 {
 	PLAY_MODE_ARCADE,
-	PLAY_MODE_NONSTOP,
-	PLAY_MODE_ENDLESS,
+	PLAY_MODE_ONI,
 	NUM_PLAY_MODES
 };
 
@@ -253,7 +253,6 @@ enum Style
 	STYLE_DANCE_DOUBLE,
 	STYLE_DANCE_COUPLE,
 	STYLE_DANCE_SOLO,
-	STYLE_DANCE_SOLO_VERSUS,
 	STYLE_PUMP_SINGLE,
 	STYLE_PUMP_VERSUS,
 	STYLE_PUMP_DOUBLE,
@@ -270,7 +269,6 @@ inline Game StyleToGame( Style s )
 	case STYLE_DANCE_DOUBLE:
 	case STYLE_DANCE_COUPLE:
 	case STYLE_DANCE_SOLO:
-	case STYLE_DANCE_SOLO_VERSUS:
 		return GAME_DANCE;
 	case STYLE_PUMP_SINGLE:
 	case STYLE_PUMP_VERSUS:
@@ -374,19 +372,3 @@ struct SongOptions
 };
 
 
-struct ScoreSummary 
-{
-	int perfect, great, good, boo, miss, ok, ng, max_combo;
-	float score;
-
-	float fRadarActual[NUM_RADAR_VALUES];
-	float fRadarPossible[NUM_RADAR_VALUES];
-
-	ScoreSummary() 
-	{ 
-		perfect=great=good=boo=miss=ok=ng=max_combo=0; 
-		score=0;
-		for( int r=0; r<NUM_RADAR_VALUES; r++ )
-			fRadarActual[r] = fRadarPossible[r] = 0;
-	}
-};

@@ -19,7 +19,7 @@
 #include "RageMovieTexture.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 
 RageTextureManager*		TEXTUREMAN		= NULL;
 
@@ -140,7 +140,7 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 	}
 	else // texture not found
 	{
-		FatalError( "Tried to Unload texture '%s' that wasn't loaded.", sTexturePath );
+		throw RageException( "Tried to Unload texture '%s' that wasn't loaded.", sTexturePath );
 	}
 	
 }

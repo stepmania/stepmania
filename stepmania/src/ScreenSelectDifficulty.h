@@ -5,6 +5,7 @@
  Desc: Select the game mode (single, versus, double).
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -16,6 +17,8 @@
 #include "MenuElements.h"
 
 
+const int NUM_DIFFICULTY_ITEMS = NUM_DIFFICULTY_CLASSES + 1;	// easy, medium, hard, Oni
+const int NUM_PAGES = 2;	// easy-medium-hard, Oni
 
 class ScreenSelectDifficulty : public Screen
 {
@@ -36,18 +39,25 @@ public:
 	void TweenOnScreen();
 
 private:
+	void ChangeTo( const PlayerNumber pn, int iSelectionWas, int iSelectionIs );
 
 	MenuElements m_Menu;
 
-	Sprite	m_sprDifficultyHeader[NUM_DIFFICULTY_CLASSES];
-	Sprite	m_sprDifficultyPicture[NUM_DIFFICULTY_CLASSES];
+	ActorFrame	m_framePages;	// 2 pages
+
+	Sprite	m_sprHeader[NUM_DIFFICULTY_ITEMS];
+	Sprite	m_sprPicture[NUM_DIFFICULTY_ITEMS];
+	Sprite	m_sprExplanation[NUM_PAGES];
+	Sprite	m_sprMoreArrows[NUM_PAGES];
+
 	Sprite	m_sprArrow[NUM_PLAYERS];
 	Sprite	m_sprArrowShadow[NUM_PLAYERS];
 	Sprite	m_sprOK[NUM_PLAYERS];
-	Sprite	m_sprExplanation;
 
 	RandomSample m_soundChange;
 	RandomSample m_soundSelect;
+
+	bool m_bPlayedChallengeSound;
 
 	int m_iSelection[NUM_PLAYERS];
 	bool m_bChosen[NUM_PLAYERS];

@@ -13,7 +13,7 @@
 #include "GameDef.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 #include "IniFile.h"
 #include "StyleDef.h"
 
@@ -32,7 +32,7 @@ CString GameDef::ElementToGraphicSuffix( const GameButtonGraphic gbg )
 		case GRAPHIC_TAP_EXPLOSION_DIM:		sAssetPath = "tap explosion dim";		break;
 
 		default:
-			FatalError( ssprintf("Unhandled StyleElement %d", gbg) );
+			throw RageException( ssprintf("Unhandled StyleElement %d", gbg) );
 	}
 	
 	return sAssetPath;
@@ -54,7 +54,7 @@ CString GameDef::GetPathToGraphic( const CString sSkinName, const int iInstrumen
 	if( arrayPossibleFileNames.GetSize() > 0 )
 		return sSkinDir + arrayPossibleFileNames[0];
 
-	FatalError( "The game button graphic '%s%s %s' is missing.", sSkinDir, sButtonName, sGraphicSuffix );
+	throw RageException( "The game button graphic '%s%s %s' is missing.", sSkinDir, sButtonName, sGraphicSuffix );
 	return "";
 }
 
@@ -94,7 +94,7 @@ void GameDef::GetSkinNames( CStringArray &AddTo )
 			AddTo.RemoveAt( i );
 
 	if( AddTo.GetSize() == 0 )
-		FatalError( "The folder '%s' must contain at least one skin.", sBaseSkinFolder );
+		throw RageException( "The folder '%s' must contain at least one skin.", sBaseSkinFolder );
 }
 
 bool GameDef::HasASkinNamed( CString sSkin )
@@ -124,7 +124,7 @@ void GameDef::AssertSkinsAreComplete()
 			GameButtonGraphic gbg = (GameButtonGraphic)i;
 			CString sPathToGraphic = GetPathToGraphic( sSkin, INSTRUMENT_1, gbg );
 			if( !DoesFileExist(sPathToGraphic) )
-				FatalError( "Game button graphic at %s is missing.", sPathToGraphic );
+				throw RageException( "Game button graphic at %s is missing.", sPathToGraphic );
 		}		
 	}
 }

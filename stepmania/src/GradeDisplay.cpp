@@ -29,6 +29,7 @@ GradeDisplay::GradeDisplay()
 	StopAnimating();
 
 	m_fTimeLeftInScroll = 0;
+	m_bDoScrolling = false;
 
 	SetGrade( GRADE_NO_DATA );
 }
@@ -37,31 +38,34 @@ void GradeDisplay::Update( float fDeltaTime )
 {
 	Sprite::Update( fDeltaTime );
 
-	m_fTimeLeftInScroll -= fDeltaTime;
-	m_fTimeLeftInScroll = max( 0, m_fTimeLeftInScroll );
+	if( m_bDoScrolling )
+	{
+		m_fTimeLeftInScroll -= fDeltaTime;
+		m_fTimeLeftInScroll = max( 0, m_fTimeLeftInScroll );
 
-	float fPercentIntoScrolling = 1 - (m_fTimeLeftInScroll/SCROLL_TIME);
-	if( fPercentIntoScrolling < 0.75 )
-		fPercentIntoScrolling = (fPercentIntoScrolling/0.75f) * (1 + 1.0f/NUM_GRADE_FRAMES);
-	else if( fPercentIntoScrolling < 0.9 )
-		fPercentIntoScrolling = 1 + 1.0f/NUM_GRADE_FRAMES;
-	else
-		fPercentIntoScrolling = (1 + 1.0f/NUM_GRADE_FRAMES) - ((fPercentIntoScrolling-0.9f)/0.1f) * 1.0f/NUM_GRADE_FRAMES;
+		float fPercentIntoScrolling = 1 - (m_fTimeLeftInScroll/SCROLL_TIME);
+		if( fPercentIntoScrolling < 0.75 )
+			fPercentIntoScrolling = (fPercentIntoScrolling/0.75f) * (1 + 1.0f/NUM_GRADE_FRAMES);
+		else if( fPercentIntoScrolling < 0.9 )
+			fPercentIntoScrolling = 1 + 1.0f/NUM_GRADE_FRAMES;
+		else
+			fPercentIntoScrolling = (1 + 1.0f/NUM_GRADE_FRAMES) - ((fPercentIntoScrolling-0.9f)/0.1f) * 1.0f/NUM_GRADE_FRAMES;
 
-	FRECT frectCurrentTextureCoords;
-	frectCurrentTextureCoords.left   = m_frectStartTexCoords.left*(1-fPercentIntoScrolling)   + m_frectDestTexCoords.left*fPercentIntoScrolling;
-	frectCurrentTextureCoords.top    = m_frectStartTexCoords.top*(1-fPercentIntoScrolling)    + m_frectDestTexCoords.top*fPercentIntoScrolling;
-	frectCurrentTextureCoords.right  = m_frectStartTexCoords.right*(1-fPercentIntoScrolling)  + m_frectDestTexCoords.right*fPercentIntoScrolling;
-	frectCurrentTextureCoords.bottom = m_frectStartTexCoords.bottom*(1-fPercentIntoScrolling) + m_frectDestTexCoords.bottom*fPercentIntoScrolling;
+		FRECT frectCurrentTextureCoords;
+		frectCurrentTextureCoords.left   = m_frectStartTexCoords.left*(1-fPercentIntoScrolling)   + m_frectDestTexCoords.left*fPercentIntoScrolling;
+		frectCurrentTextureCoords.top    = m_frectStartTexCoords.top*(1-fPercentIntoScrolling)    + m_frectDestTexCoords.top*fPercentIntoScrolling;
+		frectCurrentTextureCoords.right  = m_frectStartTexCoords.right*(1-fPercentIntoScrolling)  + m_frectDestTexCoords.right*fPercentIntoScrolling;
+		frectCurrentTextureCoords.bottom = m_frectStartTexCoords.bottom*(1-fPercentIntoScrolling) + m_frectDestTexCoords.bottom*fPercentIntoScrolling;
 
-	this->SetCustomTextureRect( frectCurrentTextureCoords );
+		this->SetCustomTextureRect( frectCurrentTextureCoords );
+	}
 }
 
 void GradeDisplay::DrawPrimitives()
 {
 	if( m_Grade == GRADE_NO_DATA )
 		return;
-
+	
 	Sprite::DrawPrimitives();
 }
 
@@ -69,6 +73,7 @@ void GradeDisplay::SetGrade( Grade g )
 {
 	m_Grade = g;
 
+	m_bDoScrolling = false;
 	StopUsingCustomCoords();
 
 	switch( g )
@@ -89,6 +94,9 @@ void GradeDisplay::SpinAndSettleOn( Grade g )
 {
 	ASSERT( g != GRADE_NO_DATA );
 	m_Grade = g;
+
+	m_bDoScrolling = true;
+
 
 	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 

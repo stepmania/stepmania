@@ -80,7 +80,7 @@ public:
 		case TYPE_CROWN2:
 		case TYPE_CROWN3:
 			// blink
-			if( (GetTickCount() % 1000) > 500 )		// show the new icon
+			if( (TIMER->GetTimeSinceStart() - (int)TIMER->GetTimeSinceStart()) > 0.5f )		// show the new icon
 				return;
 			break;
 		case TYPE_NONE:

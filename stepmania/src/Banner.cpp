@@ -72,6 +72,19 @@ bool Banner::LoadFromGroup( CString sGroupName )
 	return true;
 }
 
+bool Banner::LoadFromCourse( Course* pCourse )		// NULL means no course
+{
+	m_bScrolling = false;
+
+	Sprite::TurnShadowOff();
+
+	if( pCourse == NULL )						Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
+	else if( pCourse->m_sBannerPath != "" )		Banner::Load( pCourse->m_sBannerPath );
+	else										Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
+
+	return true;
+}
+
 bool Banner::LoadRoulette()
 {
 	Banner::Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_ROULETTE_BANNER), false, 0, 0, false, false );

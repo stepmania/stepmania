@@ -14,7 +14,7 @@
 #include "SongManager.h"
 #include "IniFile.h"
 #include "RageLog.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 #include "PrefsManager.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
@@ -36,44 +36,48 @@ const int NUM_GROUP_COLORS = sizeof(GROUP_COLORS) / sizeof(D3DXCOLOR);
 
 SongManager::SongManager()
 {
-	for( int i=0; i<MAX_SONG_QUEUE_SIZE; i++ )
-	{
-		m_pCurSong[i] = NULL;
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			m_pCurNotes[i][p] = NULL;
-	}
+	m_pCurSong = NULL;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		m_pCurNotes[p] = NULL;
+	m_pCurCourse = NULL;
 
 	InitSongArrayFromDisk();
 	ReadStatisticsFromDisk();
+
+	InitCoursesFromDisk();
 }
 
 
 SongManager::~SongManager()
 {
 	SaveStatisticsToDisk();
-	CleanUpSongArray();
-	m_arrayGroupNames.RemoveAll();
+	FreeSongArray();
 }
 
 
 Song* SongManager::GetCurrentSong()
 {
-	return m_pCurSong[ PREFSMAN->GetStageIndex() ];
+	return m_pCurSong;
 }
 
 Notes* SongManager::GetCurrentNotes( PlayerNumber p )
 {
-	return m_pCurNotes[ PREFSMAN->GetStageIndex() ][p];
+	return m_pCurNotes[p];
 }
 
 void SongManager::SetCurrentSong( Song* pSong )
 {
-	m_pCurSong[ PREFSMAN->GetStageIndex() ] = pSong;
+	m_pCurSong = pSong;
 }
 
 void SongManager::SetCurrentNotes( PlayerNumber p, Notes* pNotes )
 {
-	m_pCurNotes[ PREFSMAN->GetStageIndex() ][p] = pNotes;
+	m_pCurNotes[p] = pNotes;
+}
+
+GameplayStatistics SongManager::GetLatestGameplayStatistics( PlayerNumber p )
+{
+	return m_GameplayStatistics[ PREFSMAN->GetStageIndex() ][p];
 }
 
 
@@ -82,7 +86,7 @@ void SongManager::InitSongArrayFromDisk()
 	LoadStepManiaSongDir( "Songs" );
 	//LoadDWISongDir( "DWI Support" );
 	
-	// computer group names
+	// compute group names
 	CArray<Song*, Song*> arraySongs;
 	arraySongs.Copy( m_pSongs );
 	SortSongPointerArrayByGroup( arraySongs );
@@ -122,7 +126,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir )
 		GetDirListing( ssprintf("%s\\%s\\*.ogg", sDir, sGroupDirName), arrayFiles );
 		GetDirListing( ssprintf("%s\\%s\\*.wav", sDir, sGroupDirName), arrayFiles );
 		if( arrayFiles.GetSize() > 0 )
-			FatalError( 
+			throw RageException( 
 				ssprintf( "The song folder '%s' must be placed inside of a group folder.\n\n"
 					"All song folders must be placed below a group folder.  For example, 'Songs\\DDR 4th Mix\\B4U'.  See the StepMania readme for more info.",
 					ssprintf("%s\\%s", sDir, sGroupDirName ) )
@@ -215,14 +219,12 @@ void SongManager::LoadDWISongDir( CString DWIHome )
 */
 
 
-void SongManager::CleanUpSongArray()
+void SongManager::FreeSongArray()
 {
 	for( int i=0; i<m_pSongs.GetSize(); i++ )
-	{
 		SAFE_DELETE( m_pSongs[i] );
-	}
-
 	m_pSongs.RemoveAll();
+
 	m_mapGroupToBannerPath.RemoveAll();
 }
 
@@ -230,7 +232,7 @@ void SongManager::CleanUpSongArray()
 void SongManager::ReloadSongArray()
 {
 	InitSongArrayFromDisk();
-	CleanUpSongArray();
+	FreeSongArray();
 }
 
 
@@ -286,9 +288,9 @@ void SongManager::ReadStatisticsFromDisk()
 			Notes* pNotes = NULL;
 			for( i=0; i<pSong->m_arrayNotes.GetSize(); i++ )
 			{
-				if( pSong->m_arrayNotes[i].m_sDescription == szStepsName )	// match!
+				if( pSong->m_arrayNotes[i]->m_sDescription == szStepsName )	// match!
 				{
-					pNotes = &pSong->m_arrayNotes[i];
+					pNotes = pSong->m_arrayNotes[i];
 					break;
 				}
 			}
@@ -327,7 +329,7 @@ void SongManager::SaveStatisticsToDisk()
 
 		for( int j=0; j<pSong->m_arrayNotes.GetSize(); j++ )		// for each Notes
 		{
-			Notes* pNotes = &pSong->m_arrayNotes[j];
+			Notes* pNotes = pSong->m_arrayNotes[j];
 
 			if( pNotes->m_TopGrade == GRADE_NO_DATA )
 				continue;		// skip
@@ -397,4 +399,64 @@ CString SongManager::ShortenGroupName( const CString &sOrigGroupName )
 	sShortName.Replace( "dance dance revolution", "DDR" );
 	sShortName.Replace( "DANCE DANCE REVOLUTION", "DDR" );
 	return sShortName;
+}
+
+void SongManager::InitCoursesFromDisk()
+{
+	CStringArray saGroupNames;
+	this->GetGroupNames( saGroupNames );
+	for( int g=0; g<saGroupNames.GetSize(); g++ )	// foreach Group
+	{
+		CString sGroupName = saGroupNames[g];
+		CString sShortGroupName = this->ShortenGroupName( sGroupName );
+
+		CArray<Song*, Song*> apSongs;
+		this->GetSongsInGroup( sGroupName, apSongs );
+		
+		for( NotesType nt=NotesType(0); nt<NUM_NOTES_TYPES; nt=NotesType(nt+1) )	// foreach NotesType
+		{
+
+			for( DifficultyClass dc=CLASS_MEDIUM; dc<=CLASS_HARD; dc=DifficultyClass(dc+1) )	// foreach DifficultyClass
+			{
+				Course course;
+				course.m_sName = sShortGroupName + " ";
+				switch( dc )
+				{
+				case CLASS_EASY:	course.m_sName += "Easy";	break;
+				case CLASS_MEDIUM:	course.m_sName += "Medium";	break;
+				case CLASS_HARD:	course.m_sName += "Hard";	break;
+				}
+				course.m_NotesType = nt;
+
+
+				for( int s=0; s<apSongs.GetSize(); s++ )
+				{
+					Song* pSong = apSongs[s];
+
+					CArray<Notes*, Notes*> apNotes;
+					pSong->GetNotesThatMatch( course.m_NotesType, apNotes );
+
+					// search for first Notes matching this DifficultyClass
+					for( int n=0; n<apNotes.GetSize(); n++ )
+					{
+						Notes* pNotes = apNotes[n];
+
+						if( pNotes->m_DifficultyClass == dc )
+						{
+							course.AddStage( pSong, pNotes );
+							break;
+						}
+					}
+				}
+
+				if( course.m_iStages > 0 )
+					m_aCourses.Add( course );
+			}
+		}
+	}
+}
+
+void SongManager::ReloadCourses()
+{
+
 }

@@ -14,7 +14,7 @@
 #include "RandomSample.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 
 
 RandomSample::RandomSample()

@@ -16,7 +16,7 @@
 #include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 
 
 Font::Font( const CString &sFontFilePath )
@@ -49,7 +49,7 @@ Font::Font( const CString &sFontFilePath )
 	IniFile ini;
 	ini.SetPath( m_sFontFilePath );
 	if( !ini.ReadFile() )
-		FatalError( "Error opening Font file '%s'.", m_sFontFilePath );
+		throw RageException( "Error opening Font file '%s'.", m_sFontFilePath );
 
 
 	//
@@ -58,7 +58,7 @@ Font::Font( const CString &sFontFilePath )
 	CString sTextureFile;
 	ini.GetValue( "Font", "Texture", sTextureFile );
 	if( sTextureFile == "" )
-		FatalError( "Error reading value 'Texture' from %s.", m_sFontFilePath );
+		throw RageException( "Error reading value 'Texture' from %s.", m_sFontFilePath );
 
 	m_sTexturePath = sFontDir + sTextureFile;	// save the path of the new texture
 	m_sTexturePath.MakeLower();
@@ -76,7 +76,7 @@ Font::Font( const CString &sFontFilePath )
 	{
 		// sanity check
 		if( sCharacters.GetLength() != m_pTexture->GetNumFrames() )
-			FatalError( "The characters in '%s' does not match the number of frames in the texture."
+			throw RageException( "The characters in '%s' does not match the number of frames in the texture."
 						"The font has %d frames, and the texture has %d frames.",
 						m_sFontFilePath, sCharacters.GetLength(), m_pTexture->GetNumFrames() );
 
@@ -106,7 +106,7 @@ Font::Font( const CString &sFontFilePath )
 			}
 			break;
 		default:
-			FatalError( "No characters were specified in '%s' and the font is not a standard ASCII set.", m_sFontFilePath );
+			throw RageException( "No characters were specified in '%s' and the font is not a standard ASCII set.", m_sFontFilePath );
 		}
 
 	}
@@ -126,7 +126,7 @@ Font::Font( const CString &sFontFilePath )
 		split( sWidthsValue, ",", asCharWidths );
 
 		if( asCharWidths.GetSize() != m_pTexture->GetNumFrames() )
-			FatalError( "The number of widths specified in '%s' (%d) do not match the number of frames in the texture (%d).", 
+			throw RageException( "The number of widths specified in '%s' (%d) do not match the number of frames in the texture (%d).", 
 				m_sFontFilePath, asCharWidths.GetSize(), m_pTexture->GetNumFrames() );
 
 		for( int i=0; i<asCharWidths.GetSize(); i++ )
@@ -158,7 +158,7 @@ int Font::GetLineWidthInSourcePixels( LPCTSTR szLine, int iLength )
 		const char c = szLine[i];
 		const int iFrameNo = m_iCharToFrameNo[c];
 		if( iFrameNo == -1 )	// this font doesn't impelemnt this character
-			FatalError( "The font '%s' does not implement the character '%c'", m_sFontFilePath, c );
+			throw RageException( "The font '%s' does not implement the character '%c'", m_sFontFilePath, c );
 
 		iLineWidth += m_iFrameNoToWidth[iFrameNo];
 	}

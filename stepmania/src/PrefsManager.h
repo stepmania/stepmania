@@ -5,7 +5,7 @@
 
  Desc: Holds user-chosen preferences and saves it between sessions.  This class 
     also has temporary holders for information that passed between windows - e.g.
-	ScoreSummary.
+	GameplayStatistics.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -16,7 +16,6 @@
 
 
 const int NUM_PAD_TO_DEVICE_SLOTS	= 3;	// three device inputs may map to one pad input
-const int MAX_NUM_STAGES = 10;
 
 class PrefsManager
 {
@@ -54,8 +53,6 @@ public:
 
 	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];
 	SongOptions		m_SongOptions;
-
-	ScoreSummary	m_ScoreSummary[NUM_PLAYERS][MAX_NUM_STAGES];	// for passing from Dancing to Results
 };
 
 

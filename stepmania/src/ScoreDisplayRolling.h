@@ -24,16 +24,22 @@ class ScoreDisplayRolling : public BitmapText
 public:
 	ScoreDisplayRolling();
 
-	void SetScore( float fNewScore );
+	void Init( PlayerNumber pn, PlayerOptions po, int iTotalTapNotes, int iNotesMeter );
+
 	void SetScore( int iNewScore );
-	float GetScore();
+	int GetScore();
 	void AddToScore( TapNoteScore score, int iCurCombo );
 
 	virtual void Update( float fDeltaTime );
 	virtual void Draw();
 
 protected:
-	float m_fScore;
+	PlayerNumber m_PlayerNumber;
+	PlayerOptions m_PlayerOptions;
+	int m_iTotalTapNotes;
+	int m_iNotesMeter;
+
+	int m_iScore;
 
 	float m_fTrailingScore;
 	float m_fScoreVelocity;

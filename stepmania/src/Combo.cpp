@@ -27,7 +27,7 @@ Combo::Combo()
 	m_textComboNumber.Load( THEME->GetPathTo(FONT_COMBO_NUMBERS) );
 	m_textComboNumber.TurnShadowOn();
 	m_textComboNumber.SetHorizAlign( Actor::align_right );
-	m_textComboNumber.SetX( -10 );
+	m_textComboNumber.SetX( -0 );
 
 	m_textComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
 	m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
@@ -38,9 +38,9 @@ Combo::Combo()
 }
 
 
-void Combo::ContinueCombo()
+void Combo::ContinueCombo( const int iNumNotesHit )
 {
-	m_iCurCombo++;
+	m_iCurCombo += iNumNotesHit;
 
 	// new max combo
 	if( m_iCurCombo > m_iMaxCombo )
@@ -59,7 +59,6 @@ void Combo::ContinueCombo()
 		m_textComboNumber.SetText( ssprintf("%d", m_iCurCombo) );
 		float fNewZoom = 0.5f + m_iCurCombo/800.0f;
 		m_textComboNumber.SetZoom( fNewZoom ); 
-		m_textComboNumber.SetX( -40 - (fNewZoom-1)*30 ); 
 		
 		//this->SetZoom( 1.2f );
 		//this->BeginTweening( 0.3f );

@@ -116,7 +116,7 @@ void LifeMeterBar::DrawPrimitives()
 
 	int iNumV = 0;
 
-	float fPercentIntoSection = (GetTickCount()/300.0f)*SECTION_WIDTH;
+	float fPercentIntoSection = (TIMER->GetTimeSinceStart()/0.3f)*SECTION_WIDTH;
 	fPercentIntoSection -= (int)fPercentIntoSection;
 	fPercentIntoSection = 1-fPercentIntoSection;
 	fPercentIntoSection -= (int)fPercentIntoSection;

@@ -25,7 +25,7 @@
 #include <dinput.h>
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 
 
 RageInput*		INPUTMAN	= NULL;		// globally accessable input device
@@ -245,7 +245,7 @@ BOOL CALLBACK	EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
 									&pInput->m_pJoystick[i++], 
 									NULL );
 	if( FAILED( hr ) )
-		FatalErrorHr( hr, "Error in CreateDevice() for joystick %d.", i );
+		throw RageException( hr, "Error in CreateDevice() for joystick %d.", i );
 
 	return DIENUM_CONTINUE;
 }
@@ -322,7 +322,7 @@ HRESULT RageInput::Initialize()
 	////////////////////////////////
     if( FAILED(hr = DirectInput8Create( GetModuleHandle(NULL), DIRECTINPUT_VERSION, 
                                          IID_IDirectInput8, (VOID**)&m_pDI, NULL ) ) )
-		FatalErrorHr( hr, "DirectInput8Create failed." );
+		throw RageException( hr, "DirectInput8Create failed." );
 	
 	/////////////////////////////
 	// Create the keyboard device
@@ -330,21 +330,21 @@ HRESULT RageInput::Initialize()
 
 	// Create our DirectInput Object for the Keyboard
     if( FAILED( hr = m_pDI->CreateDevice( GUID_SysKeyboard, &m_pKeyboard, NULL ) ) )
-		FatalErrorHr( hr, "CreateDevice keyboard failed." );
+		throw RageException( hr, "CreateDevice keyboard failed." );
 
 	// Set our Cooperation Level with each Device
 	if( FAILED( hr = m_pKeyboard->SetCooperativeLevel(m_hWnd, DISCL_FOREGROUND | 
 															  DISCL_NOWINKEY |
 															  DISCL_NONEXCLUSIVE) ) )
-		FatalErrorHr( hr, "m_pKeyboard->SetCooperativeLevel failed." );
+		throw RageException( hr, "m_pKeyboard->SetCooperativeLevel failed." );
 
 	// Set the Data Format of each device
 	if( FAILED( hr = m_pKeyboard->SetDataFormat(&c_dfDIKeyboard) ) )
-		FatalErrorHr( hr, "m_pKeyboard->SetDataFormat failed." );
+		throw RageException( hr, "m_pKeyboard->SetDataFormat failed." );
 
 	// Acquire the Keyboard Device
 	//if( FAILED( hr = m_pKeyboard->Acquire() ) )
-	//	FatalErrorHr( "m_pKeyboard->Acquire failed.", hr );
+	//	throw RageException( "m_pKeyboard->Acquire failed.", hr );
 
 
 
@@ -354,13 +354,13 @@ HRESULT RageInput::Initialize()
 	
 	// Obtain an interface to the system mouse device.
 	if( FAILED( hr = m_pDI->CreateDevice( GUID_SysMouse, &m_pMouse, NULL ) ) )
-		FatalErrorHr( hr, "CreateDevice mouse failed." );
+		throw RageException( hr, "CreateDevice mouse failed." );
 
     if( FAILED( hr = m_pMouse->SetCooperativeLevel( m_hWnd, DISCL_NONEXCLUSIVE|DISCL_FOREGROUND ) ) )
-		FatalErrorHr( hr, "m_pMouse->SetCooperativeLevel failed." );
+		throw RageException( hr, "m_pMouse->SetCooperativeLevel failed." );
     
 	if( FAILED( hr = m_pMouse->SetDataFormat( &c_dfDIMouse2 ) ) )
-		FatalErrorHr( hr, "m_pMouse->SetDataFormat failed." );
+		throw RageException( hr, "m_pMouse->SetDataFormat failed." );
 
 /*
     DIPROPDWORD dipdw;
@@ -373,7 +373,7 @@ HRESULT RageInput::Initialize()
     if( FAILED( m_pMouse->SetProperty( DIPROP_AXISMODE, &dipdw.diph ) ) )
         return E_FAIL;*/
 	//if( FAILED( hr = m_pMouse->Acquire()))
-	//	FatalErrorHr( "m_pMouse->Acquire failed.", hr );
+	//	throw RageException( "m_pMouse->Acquire failed.", hr );
 
 	m_RelPosition_x = 0;
 	m_RelPosition_y = 0;
@@ -390,7 +390,7 @@ HRESULT RageInput::Initialize()
                                          EnumJoysticksCallback,
                                          (VOID*)this, 
 										 DIEDFL_ATTACHEDONLY ) ) )
-		FatalErrorHr( hr, "m_pDI->EnumDevices failed." );
+		throw RageException( hr, "m_pDI->EnumDevices failed." );
 
 	for( int i=0; i<NUM_JOYSTICKS; i++ )
 	{
@@ -401,14 +401,14 @@ HRESULT RageInput::Initialize()
 		// passing a DIJOYSTATE2 structure to IDirectInputDevice::GetDeviceState().
 		if( m_pJoystick[i] )
 			if( FAILED( hr = m_pJoystick[i]->SetDataFormat( &c_dfDIJoystick2 ) ) )
-				FatalErrorHr( hr, "m_pJoystick[i]->SetDataFormat failed." );
+				throw RageException( hr, "m_pJoystick[i]->SetDataFormat failed." );
 
 
 		// Set the cooperative level to let DInput know how this device should
 		// interact with the system and with other DInput applications.
 		if( m_pJoystick[i] )
 			if( FAILED( hr = m_pJoystick[i]->SetCooperativeLevel( m_hWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND ) ) )
-				FatalErrorHr( hr, "m_pJoystick[i]->SetCooperativeLevel failed." );
+				throw RageException( hr, "m_pJoystick[i]->SetCooperativeLevel failed." );
 
 
 		/*
@@ -426,12 +426,12 @@ HRESULT RageInput::Initialize()
 		// of enumerating device objects (axes, buttons, etc.).
 		if( m_pJoystick[i] )
 			if ( FAILED( hr = m_pJoystick[i]->EnumObjects( EnumAxesCallback, (VOID*)m_pJoystick[i], DIDFT_AXIS ) ) )
-				FatalErrorHr( hr, "m_pJoystick[i]->EnumObjects failed." );
+				throw RageException( hr, "m_pJoystick[i]->EnumObjects failed." );
 
 		// Acquire the newly created devices
 		if( m_pJoystick[i] )
 			if( FAILED( hr = m_pJoystick[i]->Acquire() ) )
-				FatalErrorHr( hr, "m_pJoystick[i]->Acquire failed." );
+				throw RageException( hr, "m_pJoystick[i]->Acquire failed." );
 	}
 
 	return S_OK;

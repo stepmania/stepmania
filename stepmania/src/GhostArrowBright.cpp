@@ -38,9 +38,9 @@ void GhostArrowBright::Step( TapNoteScore score )
 	case TNS_MISS:		ASSERT( false );									break;
 	}
 	SetState( 0 );
-	SetZoom( 1.3f );
-	BeginTweening( 0.35f );
-	SetTweenZoom( 2.5f );
+	SetZoom( 1.0f );
+	BeginTweening( 0.25f );
+	SetTweenZoom( 1.5f );
 	D3DXCOLOR colorTween = GetDiffuseColor();
 	colorTween.a = 0;
 	SetTweenDiffuseColor( colorTween );

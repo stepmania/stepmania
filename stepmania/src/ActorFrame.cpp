@@ -11,6 +11,10 @@
 
 #include "ActorFrame.h"
 
+void ActorFrame::AddActor( Actor* pActor)
+{
+	m_SubActors.Add( pActor );
+}
 
 void ActorFrame::DrawPrimitives()
 {

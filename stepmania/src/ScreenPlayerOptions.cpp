@@ -105,7 +105,7 @@ void ScreenPlayerOptions::ImportOptions()
 		for( int s=0; i<m_OptionLineData[PO_SKIN].iNumOptions; s++ )	// foreach skin
 			if( m_OptionLineData[PO_SKIN].szOptionsText[s] == GAMEMAN->m_sCurrentSkin[p] )
 			{
-				m_iSelectedOption[p][PO_DRAIN] = s;
+				m_iSelectedOption[p][PO_SKIN] = s;
 				break;
 			}
 	}
@@ -137,12 +137,8 @@ void ScreenPlayerOptions::ExportOptions()
 		po.m_bHoldNotes		= (m_iSelectedOption[p][PO_HOLD_NOTES] == 1);
 		po.m_DrainType		= (PlayerOptions::DrainType)m_iSelectedOption[p][PO_DRAIN];
 		
-		for( int s=0; s<m_OptionLineData[PO_SKIN].iNumOptions; s++ )	// foreach skin
-		if( m_OptionLineData[PO_SKIN].szOptionsText[s] == GAMEMAN->m_sCurrentSkin[p] )
-		{
-			m_iSelectedOption[p][PO_DRAIN] = s;
-			break;
-		}
+		int iSelectedSkin = m_iSelectedOption[p][PO_SKIN];
+		GAMEMAN->m_sCurrentSkin[p] = m_OptionLineData[PO_SKIN].szOptionsText[iSelectedSkin];
 	}
 }
 

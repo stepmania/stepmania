@@ -6,6 +6,7 @@
  Desc: A graphic displayed in the ScoreDisplayRolling during Dancing.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -32,24 +33,27 @@ ScoreDisplayRolling::ScoreDisplayRolling()
 }
 
 
-void ScoreDisplayRolling::SetScore( int iNewScore ) 
-{ 
-	SetScore( (float)iNewScore );
+void ScoreDisplayRolling::Init( PlayerNumber pn, PlayerOptions po, int iTotalTapNotes, int iNotesMeter )
+{
+	m_PlayerNumber = pn;
+	m_PlayerOptions = po;
+	m_iTotalTapNotes = iTotalTapNotes;
+	m_iNotesMeter = iNotesMeter;
 }
 
-void ScoreDisplayRolling::SetScore( float fNewScore ) 
+void ScoreDisplayRolling::SetScore( int iNewScore ) 
 { 
-	m_fScore = fNewScore;
+	m_iScore = iNewScore;
 
-	float fDelta = m_fScore - m_fTrailingScore;
+	float fDelta = m_iScore - m_fTrailingScore;
 
 	m_fScoreVelocity = fDelta / SCORE_TWEEN_TIME;	// in score units per second
 }
 
 
-float ScoreDisplayRolling::GetScore() 
+int ScoreDisplayRolling::GetScore() 
 { 
-	return m_fScore;
+	return m_iScore;
 }
 
 
@@ -57,13 +61,13 @@ void ScoreDisplayRolling::Update( float fDeltaTime )
 {
 	BitmapText::Update( fDeltaTime );
 
-	float fDeltaBefore = m_fScore - m_fTrailingScore;
+	float fDeltaBefore = m_iScore - m_fTrailingScore;
 	m_fTrailingScore += m_fScoreVelocity * fDeltaTime;
-	float fDeltaAfter = m_fScore - m_fTrailingScore;
+	float fDeltaAfter = m_iScore - m_fTrailingScore;
 
 	if( fDeltaBefore * fDeltaAfter < 0 )	// the sign changed
 	{
-		m_fTrailingScore = m_fScore;
+		m_fTrailingScore = (float)m_iScore;
 		m_fScoreVelocity = 0;
 	}
 
@@ -71,7 +75,7 @@ void ScoreDisplayRolling::Update( float fDeltaTime )
 
 void ScoreDisplayRolling::Draw()
 {
-	if( m_fScore == 0 )
+	if( m_iScore == 0 )
 	{
 		CString sFormat = ssprintf( "%%%d.0d", NUM_SCORE_DIGITS );
 		SetText( ssprintf(sFormat, 0) );
@@ -89,81 +93,50 @@ void ScoreDisplayRolling::Draw()
 
 void ScoreDisplayRolling::AddToScore( TapNoteScore score, int iCurCombo )
 {
-	// The scoring system for DDR versions 1 and 2 (including the Plus remixes) is as follows: 
-	// For every step: 
-	//
-	// Multiplier (M) = (# of Notes in your current combo / 4) rounded down 
-	// "Good" step = M * 100 (and this ends your combo)
-	// "Great" step = M * M * 100 
-	// "Perfect" step = M * M * 300 
-	// 
-	// e.g. When you get a 259 combo, the 260th step will earn you:
-	// 
-	// M = (260 / 4) rounded down 
-	// = 65 
-	//  step = M x M X 100 
-	// = 65 x 65 x 100 
-	// = 422,500 
-	// Perfect step = Great step score x 3 
-	// = 422,500 x 3 
-	// = 1,267,500
+//A single step's points are calculated as follows: 
+//
+//Let p = score multiplier (Perfect = 10, Great = 5, other = 0)
+//N = total number of steps and freeze steps
+//n = number of the current step or freeze step (varies from 1 to N)
+//B = Base value of the song (1,000,000 X the number of feet difficulty) - All edit data is rated as 5 feet
+//So, the score for one step is: 
+//one_step_score = p * (B/S) * n 
+//Where S = The sum of all integers from 1 to N (the total number of steps/freeze steps) 
+//
+//*IMPORTANT* : Double steps (U+L, D+R, etc.) count as two steps instead of one, so if you get a double L+R on the 112th step of a song, you score is calculated with a Perfect/Great/whatever for both the 112th and 113th steps. Got it? Now, through simple algebraic manipulation 
+//S = 1+...+N = (1+N)*N/2 (1 through N added together) 
+//Okay, time for an example: 
+//
+//So, for example, suppose we wanted to calculate the step score of a "Great" on the 57th step of a 441 step, 8-foot difficulty song (I'm just making this one up): 
+//
+//S = (1 + 441)*441 / 2
+//= 194,222 / 2
+//= 97,461
+//StepScore = p * (B/S) * n
+//= 5 * (8,000,000 / 97,461) * 57
+//= 5 * (82) * 57 (The 82 is rounded down from 82.08411...)
+//= 23,370
+//Remember this is just the score for the step, not the cumulative score up to the 57th step. Also, please note that I am currently checking into rounding errors with the system and if there are any, how they are resolved in the system. 
+//
+//Note: if you got all Perfect on this song, you would get (p=10)*B, which is 80,000,000. In fact, the maximum possible score for any song is the number of feet difficulty X 10,000,000. 
 
-	float M = iCurCombo/4.0f;
-
-	float fScoreToAdd = 0;
+	int p;	// score multiplier 
 	switch( score )
 	{
-	case TNS_MISS:											break;
-	case TNS_BOO:											break;
-	case TNS_GOOD:		fScoreToAdd =     M * 100 + 100;	break;
-	case TNS_GREAT:		fScoreToAdd = M * M * 100 + 300;	break;
-	case TNS_PERFECT:	fScoreToAdd = M * M * 300 + 500;	break;
+	case TNS_GREAT:		p = 10;		break;
+	case TNS_PERFECT:	p = 5;		break;
+	default:			p = 0;		break;
 	}
-	m_fScore += fScoreToAdd;
-	ASSERT( m_fScore >= 0 );
-
 	
- /* Score implementation by Chris Gomez, February 6th, 2002  The 
- scoring system for 5th mix is much more complicated than the original 
- scoring system.  We don't have bonuses yet, so they're not included in 
- this code.  Max score is (feet + 1) * 5,000,000.  Scores are clamped 
- to integers; this is fixed on the last step (if it's perfect)
+	int N = m_iTotalTapNotes;
+	int n = iCurCombo;
+	int B = m_iNotesMeter * 1000000;
+	int S = (1+N)*N/2;
 
-  The base step value is the max score divided by 10, divided by 
- one-half of the max combo  squared plus the max combo. This value is 
- multiplied by 10 for a perfect or 5 for a great,  and further 
- multiplied by the number of Notes currently in the combo. */ 
-/*
-	int iScoreToAdd = 0; int iBonus = 0;
+	int one_step_score = p * (B/S) * n;
 
- Notes *pSteps = GAMEINFO->m_pStepsPlayer[m_PlayerNumber];
- int iNumFeet = pSteps->m_iNumFeet;
- int iMaxCombo = pSteps->GetNumSteps();
+	m_iScore += one_step_score;
+	ASSERT( m_iScore >= 0 );
 
- int iScoreMax = (iNumFeet + 1) * 5000000; //magic numbers. int 
- iBaseScore = (iScoreMax / 10) / ((iMaxCombo * (iMaxCombo + 1)) / 2);
-
- iCurCombo++; // looks like the current combo counter starts at 0 when 
- iCurCombo++it should start at 1
-     // this was messing with the scoring, so it had to be fixed.
-
- switch (score)
- {
- case miss:
- case boo:
- case good:
-  break;
- case great:
-  iScoreToAdd = 5 * iBaseScore * iCurCombo;
-  break;
- case perfect:
-  iScoreToAdd = 10 * iBaseScore * iCurCombo;
-  if(BeatToStepIndex(pSteps->GetLastBeat()) == iMaxCombo)
-   for(int i = 1; i <= iMaxCombo; i++)
-    iBonus += 10 * iBaseScore * i;
-  iScoreToAdd += iBonus;
-  break;
- }
-*/
-	this->SetScore( m_fScore );
+	this->SetScore( m_iScore );
 }

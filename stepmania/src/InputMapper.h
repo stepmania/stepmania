@@ -5,7 +5,7 @@
 
  Desc: Holds user-chosen preferences and saves it between sessions.  This class 
     also has temporary holders for information that passed between windows - e.g.
-	ScoreSummary.
+	GameplayStatistics.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford

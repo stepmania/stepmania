@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
  File: ActorFrame.h
@@ -7,10 +8,6 @@
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
-
-
-#ifndef _ActorFrame_H_
-#define _ActorFrame_H_
 
 #include "RageUtil.h"
 
@@ -26,7 +23,7 @@ protected:
 
 
 public:
-	void AddActor( Actor* pActor) { m_SubActors.Add(pActor); };
+	void AddActor( Actor* pActor);
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -34,7 +31,3 @@ public:
 	virtual void SetDiffuseColor( D3DXCOLOR c );
 
 };
-
-
-
-#endif

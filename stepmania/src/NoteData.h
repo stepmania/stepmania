@@ -17,18 +17,31 @@
 
 // '1' = tap note
 // '2' = hold note begin
-// '3' = hold note end  ('1' can also end a HoldNote)
+// '3' = hold note end  ('1' can also end a HoldNote) ('3' without a matching '2' is ignored
 // ... for future expansion
 
 
 enum TapNoteScore { 
 	TNS_NONE, 
-	TNS_PERFECT, 
-	TNS_GREAT,
-	TNS_GOOD,
+	TNS_MISS,
 	TNS_BOO,
-	TNS_MISS
+	TNS_GOOD,
+	TNS_GREAT,
+	TNS_PERFECT, 
 };
+
+inline int TapNoteScoreToDancePoints( TapNoteScore tns )
+{
+	switch( tns )
+	{
+	case TNS_PERFECT:	return +2;
+	case TNS_GREAT:		return +1;
+	case TNS_GOOD:		return +0;
+	case TNS_BOO:		return -4;
+	case TNS_MISS:		return +8;
+	default:			return 0;
+	}
+}
 
 //enum TapNoteTiming { 
 //	TNT_NONE, 
@@ -44,32 +57,23 @@ struct HoldNote
 	int m_iEndIndex;
 };
 
-enum HoldNoteResult 
+enum HoldNoteScore 
 { 
-	HNR_NONE,	// this HoldNote has not been scored yet
-	HNR_OK,		// the HoldNote has passed and was successfully held all the way through
-	HNR_NG		// the HoldNote has passed and they missed it
+	HNS_NONE,	// this HoldNote has not been scored yet
+	HNS_OK,		// the HoldNote has passed and was successfully held all the way through
+	HNS_NG		// the HoldNote has passed and they missed it
 };
 
-struct HoldNoteScore
+
+inline int HoldNoteScoreToDancePoints( HoldNoteScore hns )
 {
-	TapNoteScore	m_TapNoteScore;		// The scoring of the tap Note that begins the hold.  
-										// This is judeged separately from the actual hold.
-	HoldNoteResult	m_Result;
-	float			m_fLife;	// 1.0 means this HoldNote has full life.
-								// 0.0 means this HoldNote is dead
-								// When this value hits 0.0 for the first time, 
-								// m_HoldScore becomes HSS_NG.
-								// If the life is > 0.0 when the HoldNote ends, then
-								// m_HoldScore becomes HSS_OK.
-	HoldNoteScore() 
-	{ 
-		m_TapNoteScore = TNS_NONE; 
-		m_Result = HNR_NONE; 
-		m_fLife = 1.0f; 
-	};
-};
-
+	switch( hns )
+	{
+	case HNS_OK:	return +6;
+	case HNS_NG:	return +0;
+	default:	ASSERT(0);	return 0;
+	}
+}
 
 
 inline int   BeatToNoteRow( float fBeatNum )			{ return int( fBeatNum * ELEMENTS_PER_BEAT + 0.5f); };	// round
@@ -126,7 +130,21 @@ public:
 	int GetNumDoubles( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
 	int GetNumHoldNotes( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
 	
+	int GetPossibleDancePoints();
+
 	// radar values - return between 0.0 and 1.2
+	float GetRadarValue( RadarCatrgory rv, float fSongSeconds )
+	{
+		switch( rv )
+		{
+		case RADAR_STREAM:	return GetStreamRadarValue( fSongSeconds );		break;
+		case RADAR_VOLTAGE:	return GetVoltageRadarValue( fSongSeconds );	break;
+		case RADAR_AIR:		return GetAirRadarValue( fSongSeconds );		break;
+		case RADAR_CHAOS:	return GetChaosRadarValue( fSongSeconds );		break;
+		case RADAR_FREEZE:	return GetFreezeRadarValue( fSongSeconds );		break;
+		default:	ASSERT(0);  return 0;
+		}
+	};
 	float GetStreamRadarValue( float fSongSeconds );
 	float GetVoltageRadarValue( float fSongSeconds );
 	float GetAirRadarValue( float fSongSeconds );

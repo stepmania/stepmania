@@ -28,19 +28,22 @@
 // Defines specific to GameScreenTitleMenu
 //
 
-const float LIFE_X[NUM_PLAYERS] = { CENTER_X-180, CENTER_X+180 };
-const float LIFE_Y				= SCREEN_TOP+28;
+const float LIFE_LOCAL_X[NUM_PLAYERS] = { -180, +180 };
+const float LIFE_LOCAL_Y[NUM_PLAYERS] = { -10, -10 };
 
-const float SCORE_X[NUM_PLAYERS] = { CENTER_X-214, CENTER_X+214 };
-const float SCORE_Y				 = SCREEN_BOTTOM-38;
+const float STAGE_NUMBER_LOCAL_X = 0;
+const float STAGE_NUMBER_LOCAL_Y = +20;
 
-const float PLAYER_OPTIONS_X[NUM_PLAYERS]	= { CENTER_X-214, CENTER_X+214 };
-const float PLAYER_OPTIONS_Y[NUM_PLAYERS]	= { SCREEN_BOTTOM-60, SCREEN_BOTTOM-40 };
+const float SCORE_LOCAL_X[NUM_PLAYERS] = { -214, +214 };
+const float SCORE_LOCAL_Y[NUM_PLAYERS] = { -6, -6 };
 
-const float DIFFICULTY_X[NUM_PLAYERS]	= { SCREEN_LEFT+70, SCREEN_RIGHT-70 };
-const float DIFFICULTY_Y				= SCREEN_BOTTOM-80;
+const float PLAYER_OPTIONS_LOCAL_X[NUM_PLAYERS]	= { -214, +214 };
+const float PLAYER_OPTIONS_LOCAL_Y[NUM_PLAYERS]	= { -10, +10 };
 
-const float MAX_SECONDS_CAN_BE_OFF_BY	=	0.20f;
+const float DIFFICULTY_X[NUM_PLAYERS]	= { SCREEN_LEFT+60, SCREEN_RIGHT-60 };
+const float DIFFICULTY_Y[NUM_PLAYERS]	= { SCREEN_BOTTOM-70, SCREEN_BOTTOM-70 };
+
+const float MAX_SECONDS_CAN_BE_OFF_BY	=	0.25f;
 
 const float TIME_BETWEEN_DANCING_COMMENTS	=	15;
 
@@ -67,86 +70,105 @@ ScreenGameplay::ScreenGameplay()
 {
 	LOG->WriteLine( "ScreenGameplay::ScreenGameplay()" );
 
+	m_pCurSong = NULL;
+
+	switch( PREFSMAN->m_PlayMode )
+	{
+	case PLAY_MODE_ARCADE:
+		{
+			m_apSongQueue.Add( SONGMAN->GetCurrentSong() );
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				m_apNotesQueue[p].Add( SONGMAN->GetCurrentNotes(PlayerNumber(p)) );
+		}
+		break;
+	case PLAY_MODE_ONI:
+		{
+			Course* pCourse = SONGMAN->m_pCurCourse;
+			ASSERT( pCourse != NULL );
+			for( int i=0; i<pCourse->m_iStages; i++ )
+			{
+				m_apSongQueue.Add( pCourse->m_apSongs[i] );
+				for( int p=0; p<NUM_PLAYERS; p++ )
+					m_apNotesQueue[p].Add( pCourse->m_apNotes[i] );
+			}
+		}
+		break;
+	}
+
+
 	m_DancingState = STATE_INTRO;
 	m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
-
-	m_bHasFailed = false;
-	m_pSong = SONGMAN->GetCurrentSong();
+	m_bBothHaveFailed = false;
 
 
-	m_Background.LoadFromSong( m_pSong );
 	m_Background.SetDiffuseColor( D3DXCOLOR(0.4f,0.4f,0.4f,1) );
 	this->AddActor( &m_Background );
 
 
-	// Get the current StyleDef definition (used below)
-	StyleDef* pStyleDef = GAMEMAN->GetCurrentStyleDef();
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMEMAN->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
-		float fDifficultyY = DIFFICULTY_Y;
-		if( PREFSMAN->m_PlayerOptions[p].m_bReverseScroll )
-			fDifficultyY = SCREEN_HEIGHT - DIFFICULTY_Y;
-		m_DifficultyBanner[p].SetXY( DIFFICULTY_X[p], fDifficultyY );
-		m_DifficultyBanner[p].SetFromNotes( SONGMAN->GetCurrentNotes((PlayerNumber)p) );
-		this->AddActor( &m_DifficultyBanner[p] );
-
-
-		NoteData* pOriginalNoteData = SONGMAN->GetCurrentNotes((PlayerNumber)p)->GetNoteData();
-		
-		NoteData newNoteData;
-		GAMEMAN->GetCurrentStyleDef()->GetTransformedNoteDataForStyle( (PlayerNumber)p, pOriginalNoteData, newNoteData );
-
 		m_Player[p].SetX( (float) GAMEMAN->GetCurrentStyleDef()->m_iCenterX[p] );
-		m_Player[p].Load( 
-			(PlayerNumber)p,
-			GAMEMAN->GetCurrentStyleDef(),
-			&newNoteData, 
-			PREFSMAN->m_PlayerOptions[p],
-			&m_LifeMeter[p],
-			&m_ScoreDisplay[p]
-		);
-		
-
 		this->AddActor( &m_Player[p] );
 	}
 
 
+
+	//////////////////////////////////
+	// Add all Actors to m_frameTop
+	//////////////////////////////////
+	this->AddActor( &m_frameTop );
+
+	// LifeMeter goes underneath top frame
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_quadLifeMeterBG[p].SetXY( LIFE_X[p], LIFE_Y );
+		m_quadLifeMeterBG[p].SetXY( LIFE_LOCAL_X[p], LIFE_LOCAL_Y[p] );
 		m_quadLifeMeterBG[p].SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
 		m_quadLifeMeterBG[p].SetZoomX( 256 );
 		m_quadLifeMeterBG[p].SetZoomY( (p==PLAYER_1) ? 20.0f : -20.0f );
-		this->AddActor( &m_quadLifeMeterBG[p] );
+		m_frameTop.AddActor( &m_quadLifeMeterBG[p] );
 
 		if( !GAMEMAN->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
 		m_LifeMeter[p].SetPlayerOptions( PREFSMAN->m_PlayerOptions[p] );
-		m_LifeMeter[p].SetXY( LIFE_X[p], LIFE_Y );
+		m_LifeMeter[p].SetXY( LIFE_LOCAL_X[p], LIFE_LOCAL_Y[p] );
 		m_LifeMeter[p].SetZoomX( 256 );
 		m_LifeMeter[p].SetZoomY( (p==PLAYER_1) ? 20.0f : -20.0f );
-		this->AddActor( &m_LifeMeter[p] );
+		m_frameTop.AddActor( &m_LifeMeter[p] );
 	}
 
-	m_sprTopFrame.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_TOP_FRAME) );
-	m_sprTopFrame.SetXY( CENTER_X, SCREEN_TOP + m_sprTopFrame.GetZoomedHeight()/2 );
-	this->AddActor( &m_sprTopFrame );
+	// TopFrame goes above LifeMeter
+	m_sprTopFrame.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_TOP_FRAME_ARCADE) );
+	m_frameTop.AddActor( &m_sprTopFrame );
+
+	m_frameTop.SetXY( CENTER_X, SCREEN_TOP + m_sprTopFrame.GetZoomedHeight()/2 );
+
+	m_textStageNumber.Load( THEME->GetPathTo(FONT_HEADER2) );
+	m_textStageNumber.TurnShadowOff();
+	m_textStageNumber.SetXY( STAGE_NUMBER_LOCAL_X, STAGE_NUMBER_LOCAL_Y );
+	CString sStageText = PREFSMAN->GetStageText();
+	m_textStageNumber.SetText( sStageText );
+	if( stricmp(sStageText, "Final") == 0 )
+		m_textStageNumber.SetDiffuseColor( D3DXCOLOR(1,0.1f,0.1f,1) );	// red
+	else
+		m_textStageNumber.SetDiffuseColor( D3DXCOLOR(0.3f,1,0.3f,1) );	// green
+	m_frameTop.AddActor( &m_textStageNumber );
+
+
+
+	//////////////////////////////////
+	// Add all Actors to m_frameBottom
+	//////////////////////////////////
+	this->AddActor( &m_frameBottom );
 
 	m_sprBottomFrame.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_BOTTOM_FRAME) );
-	m_sprBottomFrame.SetXY( CENTER_X, SCREEN_BOTTOM - m_sprBottomFrame.GetZoomedHeight()/2 );
-	this->AddActor( &m_sprBottomFrame );
+	m_frameBottom.AddActor( &m_sprBottomFrame );
 
-	m_textStageNumber.Load( THEME->GetPathTo(FONT_HEADER1) );
-	m_textStageNumber.TurnShadowOff();
-	m_textStageNumber.SetXY( CENTER_X, 60 );
-	m_textStageNumber.SetDiffuseColor( D3DXCOLOR(0.3f,1,1,1) );
-	m_textStageNumber.SetText( PREFSMAN->GetStageText() );
-	this->AddActor( &m_textStageNumber );
+	m_frameBottom.SetXY( CENTER_X, SCREEN_BOTTOM - m_sprBottomFrame.GetZoomedHeight()/2 );
 
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -154,18 +176,37 @@ ScreenGameplay::ScreenGameplay()
 		if( !GAMEMAN->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
-		m_ScoreDisplay[p].SetXY( SCORE_X[p], SCORE_Y );
+		m_ScoreDisplay[p].SetXY( SCORE_LOCAL_X[p], SCORE_LOCAL_Y[p] );
 		m_ScoreDisplay[p].SetZoom( 0.8f );
-		this->AddActor( &m_ScoreDisplay[p] );
+		m_frameBottom.AddActor( &m_ScoreDisplay[p] );
 
 		m_textPlayerOptions[p].Load( THEME->GetPathTo(FONT_NORMAL) );
 		m_textPlayerOptions[p].TurnShadowOff();
-		m_textPlayerOptions[p].SetXY( PLAYER_OPTIONS_X[p], PLAYER_OPTIONS_Y[p] );
+		m_textPlayerOptions[p].SetXY( PLAYER_OPTIONS_LOCAL_X[p], PLAYER_OPTIONS_LOCAL_Y[p] );
 		m_textPlayerOptions[p].SetZoom( 0.5f );
 		m_textPlayerOptions[p].SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 		m_textPlayerOptions[p].SetText( PREFSMAN->m_PlayerOptions[p].GetString() );
-		this->AddActor( &m_textPlayerOptions[p] );
+		m_frameBottom.AddActor( &m_textPlayerOptions[p] );
 	}
+
+
+
+	// Get the current StyleDef definition (used below)
+	StyleDef* pStyleDef = GAMEMAN->GetCurrentStyleDef();
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMEMAN->IsPlayerEnabled(PlayerNumber(p)) )
+			continue;
+
+		float fDifficultyY = DIFFICULTY_Y[p];
+		if( PREFSMAN->m_PlayerOptions[p].m_bReverseScroll )
+			fDifficultyY = SCREEN_HEIGHT - DIFFICULTY_Y[p];
+		m_DifficultyBanner[p].SetXY( DIFFICULTY_X[p], fDifficultyY );
+		this->AddActor( &m_DifficultyBanner[p] );
+	}
+
+
 
 	
 
@@ -195,7 +236,6 @@ ScreenGameplay::ScreenGameplay()
 	this->AddActor( &m_sprFailed );
 
 
-	m_soundMusic.Load( m_pSong->GetMusicPath() );
 
 	m_soundFail.Load(			THEME->GetPathTo(SOUND_GAMEPLAY_FAILED) );
 	m_announcerReady.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_READY) );
@@ -208,18 +248,67 @@ ScreenGameplay::ScreenGameplay()
 	m_soundAssistTick.Load(		THEME->GetPathTo(SOUND_GAMEPLAY_ASSIST_TICK) );
 
 
+	LoadNextSong();
+
 	// Send some messages every have second to we can get the introduction rolling
 	for( int i=0; i<30; i++ )
 		this->SendScreenMessage( ScreenMessage(SM_User+i), i/2.0f );
-
-
-	m_StarWipe.SetClosed();
 }
 
 ScreenGameplay::~ScreenGameplay()
 {
 	LOG->WriteLine( "ScreenGameplay::~ScreenGameplay()" );
 	m_soundMusic.Stop();
+}
+
+
+void ScreenGameplay::LoadNextSong()
+{
+	int p;
+
+	m_pCurSong = m_apSongQueue[m_apSongQueue.GetSize()-1];
+	m_apSongQueue.RemoveAt(m_apSongQueue.GetSize()-1);
+
+	Notes* pNotes[NUM_PLAYERS];
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		pNotes[p] = m_apNotesQueue[p][m_apNotesQueue[p].GetSize()-1];
+		m_apNotesQueue[p].RemoveAt(m_apNotesQueue[p].GetSize()-1);
+	}
+
+
+	// Get the current StyleDef definition (used below)
+	StyleDef* pStyleDef = GAMEMAN->GetCurrentStyleDef();
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMEMAN->IsPlayerEnabled(PlayerNumber(p)) )
+			continue;
+
+		m_DifficultyBanner[p].SetFromNotes( PlayerNumber(p), pNotes[p] );
+
+
+		NoteData* pOriginalNoteData = pNotes[p]->GetNoteData();
+		
+		NoteData newNoteData;
+		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, pOriginalNoteData, newNoteData );
+
+		m_Player[p].Load( 
+			(PlayerNumber)p,
+			GAMEMAN->GetCurrentStyleDef(),
+			&newNoteData, 
+			PREFSMAN->m_PlayerOptions[p],
+			&m_LifeMeter[p],
+			&m_ScoreDisplay[p]
+		);
+	}
+
+	m_soundMusic.Load( m_pCurSong->GetMusicPath() );
+	
+	m_Background.LoadFromSong( m_pCurSong );
+	m_Background.SetDiffuseColor( D3DXCOLOR(0.5f,0.5f,0.5f,1) );
+	m_Background.BeginTweeningQueued( 2 );
+	m_Background.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
 }
 
 
@@ -232,7 +321,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	float fSongBeat, fBPS;
 	float fPositionSeconds = m_soundMusic.GetPositionSeconds();
 	
-	m_pSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS );
+	m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS );
 
 	
 
@@ -254,7 +343,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	case SongOptions::FAIL_ARCADE:
 	case SongOptions::FAIL_END_OF_SONG:
 
-		if( m_bHasFailed )
+		if( m_bBothHaveFailed )
 			break;		// if they have already failed, don't bother checking again
 
 		{
@@ -282,7 +371,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		if( bAllFailed )
 		{
-			m_bHasFailed = true;
+			m_bBothHaveFailed = true;
 			SCREENMAN->SendMessageToTopScreen( SM_LifeIs0, 0 );
 		}
 		}
@@ -329,7 +418,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		// will start coming out the speaker.  Compensate for this by boosting
 		// fPositionSeconds ahead
 		fPositionSeconds += (SOUND->GetPlayLatency()+0.06f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.06 seconds to make them play a tiny bit earlier
-		m_pSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS );
+		m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS );
 
 		int iIndexNow = BeatToNoteIndexNotRounded( fSongBeat );
 		static int iIndexLastCrossed = 0;
@@ -369,7 +458,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	//LOG->WriteLine( "ScreenGameplay::Input()" );
 
 	float fSongBeat, fBPS;
-	m_pSong->GetBeatAndBPSFromElapsedTime( m_soundMusic.GetPositionSeconds(), fSongBeat, fBPS );
+	m_pCurSong->GetBeatAndBPSFromElapsedTime( m_soundMusic.GetPositionSeconds(), fSongBeat, fBPS );
 
 	
 	if( MenuI.IsValid() )
@@ -378,9 +467,9 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		{
 		case MENU_BUTTON_BACK:
 			if( m_DancingState == STATE_DANCING 
-			&& !m_bHasFailed )
+			&& !m_bBothHaveFailed )
 			{
-				m_bHasFailed = true;
+				m_bBothHaveFailed = true;
 				SCREENMAN->SendMessageToTopScreen( SM_BeginFailed, 0 );
 			}
 			else
@@ -450,7 +539,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		if( m_DancingState == STATE_OUTRO )	// gameplay already ended
 			return;		// ignore
 
-		if( m_bHasFailed )	// fail them
+		if( m_bBothHaveFailed )	// fail them
 		{
 			this->SendScreenMessage( SM_BeginFailed, 0 );
 		}
@@ -473,10 +562,16 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SendMessageToTopScreen( SM_GoToResults, 1 );
 		break;
 	case SM_GoToResults:
-		// send score summaries to the PREFSMAN object so ScreenResults can grab it.
-		PREFSMAN->m_ScoreSummary[PLAYER_1][PREFSMAN->m_iNumArcadeStages-1] = m_Player[PLAYER_1].GetScoreSummary();
-		PREFSMAN->m_ScoreSummary[PLAYER_2][PREFSMAN->m_iNumArcadeStages-1] = m_Player[PLAYER_2].GetScoreSummary();
-		SCREENMAN->SetNewScreen( new ScreenResults(false) );
+		{
+			// send score summaries to the PREFSMAN object so ScreenResults can grab it.
+			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
+				if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
+					continue;		// skip
+				m_Player[p].GetGameplayStatistics( SONGMAN->m_GameplayStatistics[PREFSMAN->m_iNumArcadeStages-1][p] );
+			}
+			SCREENMAN->SetNewScreen( new ScreenResults(false) );
+		}
 		break;
 
 
@@ -526,6 +621,16 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SetNewScreen( new ScreenGameOver );
 		break;
 	}
+}
 
+
+void ScreenGameplay::TweenOnScreen()
+{
 
 }
+
+void ScreenGameplay::TweenOffScreen()
+{
+
+}
+

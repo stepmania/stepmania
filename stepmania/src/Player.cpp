@@ -18,6 +18,7 @@
 #include "ArrowEffects.h"
 #include "GameManager.h"
 #include "InputMapper.h"
+#include "SongManager.h"
 
 
 // these two items are in the
@@ -47,7 +48,13 @@ Player::Player()
 		}
 		m_TapNoteScores[i] = TNS_NONE;
 	}
+
 	m_iNumHoldNotes = 0;
+	for( i=0; i<MAX_HOLD_NOTE_ELEMENTS; i++ )
+	{
+		m_HoldNoteScores[i] = HNS_NONE;
+		m_fHoldNoteLife[i] = 1.0f;
+	}
 
 	m_pLifeMeter = NULL;
 	m_pScore = NULL;
@@ -75,6 +82,8 @@ void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteD
 
 	m_pLifeMeter = pLM;
 	m_pScore = pScore;
+	if( m_pScore )
+		m_pScore->Init( player_no, m_PlayerOptions, pNoteData->GetNumTapNotes(), SONGMAN->GetCurrentNotes(player_no)->m_iMeter );
 
 	if( !po.m_bHoldNotes )
 		this->RemoveHoldNotes();
@@ -125,8 +134,9 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 	{
 		HoldNote &hn = m_HoldNotes[i];
 		HoldNoteScore &hns = m_HoldNoteScores[i];
+		float &fLife = m_fHoldNoteLife[i];
 
-		if( hns.m_Result != HNR_NONE )	// if this HoldNote already has a result
+		if( hns != HNS_NONE )	// if this HoldNote already has a result
 			continue;	// we don't need to update the logic for this one
 
 		float fStartBeat = NoteRowToBeat( (float)hn.m_iStartIndex );
@@ -136,40 +146,52 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		const StyleInput StyleI( m_PlayerNumber, hn.m_iTrack );
 		const GameInput GameI = GAMEMAN->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 
+
 		// update the life
 		if( fStartBeat < m_fSongBeat && m_fSongBeat < fEndBeat )	// if the song beat is in the range of this hold
 		{
 			const bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
+			// if they got a bad score or haven't stepped on the corresponding tap yet
+			const bool bSteppedOnTapNote = m_TapNoteScores[hn.m_iStartIndex] >= TNS_GREAT;
 
-			if( bIsHoldingButton )
+
+			if( bIsHoldingButton && bSteppedOnTapNote )
 			{
-				hns.m_fLife += fDeltaTime/HOLD_ARROW_NG_TIME;
-				hns.m_fLife = min( hns.m_fLife, 1 );	// clamp
+				// Increase life
+				fLife += fDeltaTime/HOLD_ARROW_NG_TIME;
+				fLife = min( fLife, 1 );	// clamp
+
+				m_NoteField.m_HoldNotes[i].m_iStartIndex = BeatToNoteRow( m_fSongBeat );	// move the start of this Hold
+
 				m_GhostArrowRow.HoldNote( iCol );		// update the "electric ghost" effect
 			}
 			else	// !bIsHoldingButton
 			{
-				hns.m_fLife -= fDeltaTime/HOLD_ARROW_NG_TIME;
-				hns.m_fLife = max( hns.m_fLife, 0 );	// clamp
+				if( m_fSongBeat-fStartBeat > fMaxBeatDifference )
+				{
+					// Decrease life
+					fLife -= fDeltaTime/HOLD_ARROW_NG_TIME;
+					fLife = max( fLife, 0 );	// clamp
+				}
 			}
-			m_NoteField.SetHoldNoteLife( i, hns.m_fLife );	// update the NoteField display
+			m_NoteField.SetHoldNoteLife( i, fLife );	// update the NoteField display
 		}
 
 		// check for NG
-		if( hns.m_fLife == 0 )	// the player has not pressed the button for a long time!
+		if( fLife == 0 )	// the player has not pressed the button for a long time!
 		{
-			hns.m_Result = HNR_NG;
-			m_HoldJudgement[iCol].SetHoldJudgement( HNR_NG );
+			hns = HNS_NG;
+			m_HoldJudgement[iCol].SetHoldJudgement( HNS_NG );
 		}
 
 		// check for OK
 		if( m_fSongBeat > fEndBeat )	// if this HoldNote is in the past
 		{
-			// this implies that hns.m_fLife > 0, or else we would have marked it NG above
-			hns.m_fLife = 1;
-			hns.m_Result = HNR_OK;
-			m_HoldJudgement[iCol].SetHoldJudgement( HNR_OK );
-			m_NoteField.SetHoldNoteLife( i, hns.m_fLife );	// update the NoteField display
+			// At this point fLife > 0, or else we would have marked it NG above
+			fLife = 1;
+			hns = HNS_OK;
+			m_HoldJudgement[iCol].SetHoldJudgement( HNS_OK );
+			m_NoteField.SetHoldNoteLife( i, fLife );	// update the NoteField display
 		}
 	}
 
@@ -267,77 +289,6 @@ void Player::HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff )
 	m_GrayArrowRow.Step( col );
 
 	CheckForCompleteRow( fSongBeat, col, fMaxBeatDiff );
-
-	//
-	// check if we stepped on the TapNote part of a HoldNote
-	//
-	for( int i=0; i<m_iNumHoldNotes; i++ )	// for each HoldNote
-	{
-		HoldNote& hn		= m_HoldNotes[i];
-		HoldNoteScore& hns	= m_HoldNoteScores[i];
-
-		if( hns.m_Result != HNR_NONE )	// if this note already has a score
-			continue;	// we don't need to update its logic
-
-		if( hns.m_TapNoteScore != TNS_NONE )	// the TapNote already has a score
-			continue;	// no need to continue;
-			
-		if( col == m_HoldNotes[i].m_iTrack ) // the player's step is the same as this HoldNote
-		{
-			float fBeatDifference = fabsf( NoteRowToBeat(hn.m_iStartIndex) - fSongBeat );
-			
-			if( fBeatDifference <= fMaxBeatDiff )
-			{
-				float fBeatsUntilStep = NoteRowToBeat( (float)hn.m_iStartIndex ) - fSongBeat;
-				float fPercentFromPerfect = fabsf( fBeatsUntilStep / fMaxBeatDiff );
-
-				//LOG->WriteLine( "fBeatsUntilStep: %f, fPercentFromPerfect: %f", 
-				//		 fBeatsUntilStep, fPercentFromPerfect );
-
-				// compute what the score should be for the note we stepped on
-				TapNoteScore &score = hns.m_TapNoteScore;
-				if(		 fPercentFromPerfect < 0.25f )	score = TNS_PERFECT;
-				else if( fPercentFromPerfect < 0.50f )	score = TNS_GREAT;
-				else if( fPercentFromPerfect < 0.75f )	score = TNS_GOOD;
-				else									score = TNS_BOO;
-
-				// update the judgement, score, and life
-				m_Judgement.SetJudgement( score );
-				m_pScore->AddToScore( score, m_Combo.GetCurrentCombo() );
-				m_pLifeMeter->ChangeLife( score );
-
-				// show the gray arrow ghost
-				m_GhostArrowRow.TapNote( col, score, m_Combo.GetCurrentCombo() > 100 );
-
-				// update the combo display
-				switch( score )
-				{
-				case TNS_PERFECT:
-				case TNS_GREAT:
-					m_Combo.ContinueCombo();
-					break;
-				case TNS_GOOD:
-				case TNS_BOO:
-					m_Combo.EndCombo();
-					break;
-				}
-
-				// zoom the judgement and combo like a heart beat
-				float fStartZoom;
-				switch( score )
-				{
-				case TNS_PERFECT:	fStartZoom = 1.5f;	break;
-				case TNS_GREAT:		fStartZoom = 1.3f;	break;
-				case TNS_GOOD:		fStartZoom = 1.2f;	break;
-				case TNS_BOO:		fStartZoom = 1.0f;	break;
-				}
-				m_frameJudgeAndCombo.SetZoom( fStartZoom );
-				m_frameJudgeAndCombo.BeginTweening( 0.2f );
-				m_frameJudgeAndCombo.SetTweenZoom( 1 );
-			}
-		}
-	}
-
 }
 
 
@@ -436,12 +387,19 @@ void Player::OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int i
 			m_GhostArrowRow.TapNote( c, score, m_Combo.GetCurrentCombo()>100 );	// show the ghost arrow for this column
 	}
 
+	int iNumNotesDestroyed = 0;
+	for( c=0; c<m_iNumTracks; c++ )	// for each column
+	{
+		if( m_TapNotesOriginal[c][iIndexThatWasSteppedOn] != '0' )	// if there is an original note note in this column
+			iNumNotesDestroyed++;
+	}
+
 	// update the combo display
 	switch( score )
 	{
 	case TNS_PERFECT:
 	case TNS_GREAT:
-		m_Combo.ContinueCombo();
+		m_Combo.ContinueCombo( iNumNotesDestroyed );
 		break;
 	case TNS_GOOD:
 	case TNS_BOO:
@@ -464,47 +422,51 @@ void Player::OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int i
 }
 
 
-ScoreSummary Player::GetScoreSummary()
+void Player::GetGameplayStatistics( GameplayStatistics& GSout )
 {
-	ScoreSummary scoreSummary;
+	GSout.pSong = SONGMAN->GetCurrentSong();
+	Notes* pNotes = SONGMAN->GetCurrentNotes(m_PlayerNumber);
+	GSout.dc = pNotes->m_DifficultyClass;
+	GSout.meter = pNotes->m_iMeter;
+	GSout.iPossibleDancePoints = ((NoteData*)this)->GetPossibleDancePoints();
+	GSout.iActualDancePoints = 0;
 
 	for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) 
 	{
 		switch( m_TapNoteScores[i] )
 		{
-		case TNS_PERFECT:	scoreSummary.perfect++;		break;
-		case TNS_GREAT:		scoreSummary.great++;		break;
-		case TNS_GOOD:		scoreSummary.good++;		break;
-		case TNS_BOO:		scoreSummary.boo++;			break;
-		case TNS_MISS:		scoreSummary.miss++;		break;
-		case TNS_NONE:									break;
+		case TNS_PERFECT:	GSout.perfect++;	break;
+		case TNS_GREAT:		GSout.great++;		break;
+		case TNS_GOOD:		GSout.good++;		break;
+		case TNS_BOO:		GSout.boo++;		break;
+		case TNS_MISS:		GSout.miss++;		break;
+		case TNS_NONE:							break;
 		default:		ASSERT( false );
 		}
+		GSout.iActualDancePoints += TapNoteScoreToDancePoints( m_TapNoteScores[i] );
 	}
 	for( i=0; i<m_iNumHoldNotes; i++ ) 
 	{
-		switch( m_HoldNoteScores[i].m_TapNoteScore )
+		switch( m_HoldNoteScores[i] )
 		{
-		case TNS_PERFECT:	scoreSummary.perfect++;		break;
-		case TNS_GREAT:		scoreSummary.great++;		break;
-		case TNS_GOOD:		scoreSummary.good++;		break;
-		case TNS_BOO:		scoreSummary.boo++;			break;
-		case TNS_MISS:		scoreSummary.miss++;		break;
-		case TNS_NONE:									break;
+		case HNS_NG:		GSout.ng++;		break;
+		case HNS_OK:		GSout.ok++;		break;
+		case HNS_NONE:						break;
 		default:		ASSERT( false );
 		}
-		switch( m_HoldNoteScores[i].m_Result )
-		{
-		case HNR_NG:		scoreSummary.ng++;		break;
-		case HNR_OK:		scoreSummary.ok++;		break;
-		case HNR_NONE:								break;
-		default:		ASSERT( false );
-		}
+		GSout.iActualDancePoints += HoldNoteScoreToDancePoints( m_HoldNoteScores[i] );
 	}
-	scoreSummary.max_combo = m_Combo.GetMaxCombo();
-	scoreSummary.score = m_pScore ? m_pScore->GetScore() : 0;
-	
-	return scoreSummary;
+	GSout.max_combo = m_Combo.GetMaxCombo();
+	GSout.score = m_pScore ? m_pScore->GetScore() : 0;
+
+	GSout.failed = this->m_pLifeMeter->HasFailed();
+
+
+	for( int r=0; r<NUM_RADAR_VALUES; r++ )
+	{
+		GSout.fRadarPossible[r] = this->GetRadarValue( (RadarCatrgory)r, SONGMAN->GetCurrentSong()->GetMusicLengthSeconds() );
+		GSout.fRadarActual[r] = randomf(0, GSout.fRadarPossible[r]);
+	}
 }
 
 

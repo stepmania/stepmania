@@ -47,7 +47,7 @@ void HoldGhostArrow::Update( float fDeltaTime )
 
 	if( m_fHeatLevel == 1 )
 	{
-		bool bZooomALittle = (GetTickCount() % 50) > 25;
+		bool bZooomALittle = fmodf( TIMER->GetTimeSinceStart(), 1/20.0f ) > 1/40.0f;
 		SetZoom( bZooomALittle ? 1.04f : 1.0f );
 	}
 	else

@@ -22,9 +22,10 @@
 #include "GameConstantsAndTypes.h"
 #include "MusicSortDisplay.h"
 #include "MusicStatusDisplay.h"
-#include "Screen.h"	// for ScreenMessage
+#include "Screen.h"		// for ScreenMessage
 #include "ScoreDisplayRolling.h"
 #include "ScrollBar.h"
+#include "Course.h"
 
 
 const int NUM_WHEEL_ITEMS_TO_DRAW	=	13;
@@ -34,7 +35,7 @@ const ScreenMessage	SM_SongChanged		=	ScreenMessage(SM_User+47);	// this should 
 const ScreenMessage SM_PlaySongSample	=	ScreenMessage(SM_User+48);	
 
 
-enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE };
+enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_COURSE };
 
 
 struct WheelItemData
@@ -42,18 +43,19 @@ struct WheelItemData
 public:
 	WheelItemData();
 
-	void Load( WheelItemType wit, Song* pSong, const CString &sSectionName, const D3DXCOLOR color );
+	void Load( WheelItemType wit, Song* pSong, const CString &sSectionName, Course* pCourse, const D3DXCOLOR color );
 
 	WheelItemType	m_WheelItemType;
 	CString			m_sSectionName;
+	Course*			m_pCourse;
 	Song*			m_pSong;
 	D3DXCOLOR		m_color;	// either text color or section background color
 	MusicStatusDisplayType m_MusicStatusDisplayType;
 };
 
 
-class WheelItemDisplay : public Actor,
-						 public WheelItemData
+class WheelItemDisplay : public WheelItemData,
+						 public Actor
 {
 public:
 	WheelItemDisplay();
@@ -78,6 +80,9 @@ public:
 	MusicStatusDisplay	m_MusicStatusDisplay;
 	TextBanner			m_TextBanner;
 	GradeDisplay		m_GradeDisplay[NUM_PLAYERS];
+
+	// for TYPE_COURSE
+	BitmapText			m_textCourse;
 };
 
 
@@ -109,6 +114,7 @@ public:
 	bool Select();	// return true if the selected item is a music, otherwise false
 	WheelItemType	GetSelectedType()	{ return GetCurWheelItemDatas()[m_iSelection].m_WheelItemType; };
 	Song*			GetSelectedSong()	{ return GetCurWheelItemDatas()[m_iSelection].m_pSong; };
+	Course*			GetSelectedCourse()	{ return GetCurWheelItemDatas()[m_iSelection].m_pCourse; };
 	CString			GetSelectedSection(){ return GetCurWheelItemDatas()[m_iSelection].m_sSectionName; };
 
 
@@ -147,7 +153,10 @@ protected:
 		STATE_FLYING_ON_AFTER_NEXT_SORT, 
 		STATE_TWEENING_ON_SCREEN, 
 		STATE_TWEENING_OFF_SCREEN, 
-		STATE_WAITING_OFF_SCREEN
+		STATE_WAITING_OFF_SCREEN,
+		STATE_ROULETTE_SPINNING,
+		STATE_ROULETTE_SLOWING_DOWN,
+		STATE_LOCKED,
 	};
 	WheelState			m_WheelState;
 	float				m_fTimeLeftInState;
@@ -158,6 +167,7 @@ protected:
 	RageSoundSample m_soundChangeMusic;
 	RageSoundSample m_soundChangeSort;
 	RageSoundSample m_soundExpand;
+	RageSoundSample m_soundStart;
 
 
 

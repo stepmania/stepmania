@@ -34,6 +34,8 @@
 #include "RageSound.h"
 #include "RageMusic.h"
 #include "RageInput.h"
+#include "RageTimer.h"
+#include "RageException.h"
 
 
 

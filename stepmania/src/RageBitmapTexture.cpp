@@ -24,7 +24,7 @@
 #include "DXUtil.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 
 
 //-----------------------------------------------------------------------------
@@ -122,7 +122,7 @@ void RageBitmapTexture::Create(
 		fmtTexture = D3DFMT_A8R8G8B8;
 		break;
 	default:
-		FatalError( "Invalid color depth: %d bits", dwTextureColorDepth );
+		throw RageException( "Invalid color depth: %d bits", dwTextureColorDepth );
 	}
 
 	
@@ -134,7 +134,7 @@ void RageBitmapTexture::Create(
 		m_sFilePath,
 		&ddii ) ) )
 	{
-        FatalErrorHr( hr, "D3DXGetImageInfoFromFile() failed for file '%s'.", m_sFilePath );
+        throw RageException( hr, "D3DXGetImageInfoFromFile() failed for file '%s'.", m_sFilePath );
 	}
 
 	// find out what the min texture size is
@@ -166,7 +166,7 @@ void RageBitmapTexture::Create(
 		NULL,						// no palette
 		&m_pd3dTexture ) ) )
 	{
-		FatalErrorHr( hr, "D3DXCreateTextureFromFileEx() failed for file '%s'.", m_sFilePath );
+		throw RageException( hr, "D3DXCreateTextureFromFileEx() failed for file '%s'.", m_sFilePath );
 	}
 
 	/////////////////////
@@ -177,7 +177,7 @@ void RageBitmapTexture::Create(
 
 	D3DSURFACE_DESC ddsd;
 	if ( FAILED( hr = m_pd3dTexture->GetLevelDesc( 0, &ddsd ) ) ) 
-		FatalErrorHr( hr, "Could not get level Description of D3DX texture!" );
+		throw RageException( hr, "Could not get level Description of D3DX texture!" );
 
 	// save information about the texture
 	m_iTextureWidth		= ddsd.Width;

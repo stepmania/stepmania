@@ -41,7 +41,7 @@ void InputMapper::ReadMappingsFromDisk()
 	ini.SetPath( m_sCurrentGame + ".ini" );
 	if( !ini.ReadFile() ) {
 		return;		// load nothing
-		//FatalError( "could not read config file" );
+		//throw RageException( "could not read config file" );
 	}
 
 	CMapStringToString* pKey = ini.GetKeyPointer("Input");
@@ -235,6 +235,12 @@ DeviceInput InputMapper::MenuToDevice( MenuInput MenuI )
 
 void InputMapper::GameToStyle( GameInput GameI, StyleInput &StyleI )
 {
+	if( GAMEMAN->m_CurStyle == STYLE_NONE )
+	{
+		StyleI.MakeBlank();
+		return;
+	}
+
 	StyleDef* pStyleDef = GAMEMAN->GetCurrentStyleDef();
 	StyleI = pStyleDef->GameInputToStyleInput( GameI );
 }

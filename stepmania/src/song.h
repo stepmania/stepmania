@@ -39,6 +39,7 @@ class Song
 {
 public:
 	Song();
+	~Song();
 
 	bool LoadFromSongDir( CString sDir );	// calls one of the loads below
 	void Save()			{ SaveToSMDir(); SaveToCacheFile(); }; 
@@ -62,6 +63,7 @@ public:
 	CString GetSongFileDir()		{return m_sSongDir; };
 	CString GetGroupName()			{return m_sGroupName; };
 	CString GetMusicPath()			{return m_sMusicPath; };
+	float GetMusicLengthSeconds()	{return m_fMusicLength; };
 	void GetMusicSampleRange( float &fStartSec, float &fEndSec ) { fStartSec = m_fMusicSampleStartSeconds; fEndSec = m_fMusicSampleStartSeconds + m_fMusicSampleLengthSeconds; };
 	CString GetBannerPath()			{return m_sBannerPath; };
 	CString GetBackgroundPath()		{return m_sBackgroundPath; };
@@ -105,7 +107,7 @@ public:
 		int iTotalNumTimesPlayed = 0;
 		for( int i=0; i<m_arrayNotes.GetSize(); i++ )
 		{
-			iTotalNumTimesPlayed += m_arrayNotes[i].m_iNumTimesPlayed;
+			iTotalNumTimesPlayed += m_arrayNotes[i]->m_iNumTimesPlayed;
 		}
 		return iTotalNumTimesPlayed;
 	}
@@ -142,7 +144,7 @@ private:
 	CArray<FreezeSegment, FreezeSegment&> m_FreezeSegments;	// this must be sorted before gameplay
 
 public:
-	CArray<Notes, Notes&> m_arrayNotes;
+	CArray<Notes*, Notes*> m_arrayNotes;
 };
 
 

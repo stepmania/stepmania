@@ -13,7 +13,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include <fstream>
-#include "ErrorCatcher/ErrorCatcher.h"
+
 
 #include "dxerr8.h"
 #pragma comment(lib, "DxErr8.lib")

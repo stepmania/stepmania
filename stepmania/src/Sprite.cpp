@@ -15,7 +15,7 @@
 #include "IniFile.h"
 #include <math.h>
 #include "RageLog.h"
-#include "ErrorCatcher/ErrorCatcher.h"
+
 #include "PrefsManager.h"
 
 
@@ -75,12 +75,12 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, bool bForceReload, int iMi
 	IniFile ini;
 	ini.SetPath( m_sSpritePath );
 	if( !ini.ReadFile() )
-		FatalError( ssprintf("Error opening Sprite file '%s'.", m_sSpritePath) );
+		throw RageException( ssprintf("Error opening Sprite file '%s'.", m_sSpritePath) );
 
 	CString sTextureFile;
 	ini.GetValue( "Sprite", "Texture", sTextureFile );
 	if( sTextureFile == "" )
-		FatalError( ssprintf("Error reading  value 'Texture' from %s.", m_sSpritePath) );
+		throw RageException( ssprintf("Error reading  value 'Texture' from %s.", m_sSpritePath) );
 
 	CString sTexturePath = sFontDir + sTextureFile;	// save the path of the new texture
 
@@ -103,7 +103,7 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, bool bForceReload, int iMi
 		if( !ini.GetValueI( "Sprite", sFrameKey, m_iStateToFrame[i] ) )
 			break;
 		if( m_iStateToFrame[i] >= m_pTexture->GetNumFrames() )
-			FatalError( "In '%s', %s is %d, but the texture %s only has %d frames.",
+			throw RageException( "In '%s', %s is %d, but the texture %s only has %d frames.",
 				m_sSpritePath, sFrameKey, m_iStateToFrame[i], sTexturePath, m_pTexture->GetNumFrames() );
 		m_fDelay[i] = 0.2f;
 		if( !ini.GetValueF( "Sprite", sDelayKey, m_fDelay[i] ) )
@@ -260,8 +260,6 @@ void Sprite::DrawPrimitives()
 	pVB->Unlock();
 
 
-
-
 	// Set the stage...
 	LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
 	pd3dDevice->SetTexture( 0, m_pTexture->GetD3DTexture() );
@@ -349,7 +347,6 @@ void Sprite::DrawPrimitives()
 		
 		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
 	}
-	
 }
 
 

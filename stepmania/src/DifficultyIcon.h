@@ -1,16 +1,14 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: DifficultyIcon.h
+ Class: DifficultyIcon
 
- Desc: A graphic displayed in the DifficultyIcon during Dancing.
+ Desc: A graphic displayed in Select Music above the Groove Radar.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-
-#ifndef _DifficultyIcon_H_
-#define _DifficultyIcon_H_
 
 
 #include "Sprite.h"
@@ -24,7 +22,7 @@ class DifficultyIcon : public Sprite
 public:
 	DifficultyIcon()
 	{
-		Load( THEME->GetPathTo(GRAPHIC_DIFFICULTY_ICONS) );
+		Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_DIFFICULTY_BANNER_ICONS) );
 		StopAnimating();
 
 		SetFromNotes( NULL );
@@ -61,4 +59,3 @@ private:
 	};
 };
 
-#endif

@@ -42,6 +42,7 @@ void FootMeter::SetFromNotes( Notes* pNotes )
 	}
 	else
 	{
+		this->SetEffectNone();
 		SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 		SetNumFeet( 0, "" );
 	}

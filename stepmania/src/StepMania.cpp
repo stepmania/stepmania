@@ -48,19 +48,10 @@
 #include "ScreenMusicScroll.h"
 #include "ScreenSelectMusic.h"
 #include "ScreenGameplay.h"
-
-// error catcher stuff
-#include "ErrorCatcher/ErrorCatcher.h"
-#pragma comment(lib, "ErrorCatcher/dbghelp.lib") 
-#if defined(DEBUG) | defined(_DEBUG)
-	#pragma comment(lib, "ErrorCatcher/ErrorCatcherD.lib") 
-#else
-	#pragma comment(lib, "ErrorCatcher/ErrorCatcher.lib") 
-#endif
+#include "ScreenSelectDifficulty.h"
 
 
 #include "dxerr8.h"
-#include "DXUtil.h"
 #include <Afxdisp.h>
 
 //-----------------------------------------------------------------------------
@@ -107,6 +98,7 @@ VOID		DestroyObjects();			// deallocate game objects when we're done with them
 
 void ApplyGraphicOptions();	// Set the display mode according to the user's preferences
 
+CString		g_sErrorString;
 
 //-----------------------------------------------------------------------------
 // Name: WinMain()
@@ -114,98 +106,140 @@ void ApplyGraphicOptions();	// Set the display mode according to the user's pref
 //-----------------------------------------------------------------------------
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 {
-	// Initialize ActiveX for Flash
-	//AfxEnableControlContainer();
-
-	//
-	// Check to see if the app is already running.
-	//
-	g_hMutex = CreateMutex( NULL, TRUE, g_sAppName );
-	if( GetLastError() == ERROR_ALREADY_EXISTS )
-	{
-		CloseHandle( g_hMutex );
-	}
-
-
-	//
-	// Make sure the current directory is the root program directory
-	//
-	if( !DoesFileExist("Songs") )
-	{
-		// change dir to path of the execuctable
-		TCHAR szFullAppPath[MAX_PATH];
-		GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
-		
-		// strip off executable name
-		LPSTR pLastBackslash = strrchr(szFullAppPath, '\\');
-		*pLastBackslash = '\0';	// terminate the string
-
-		SetCurrentDirectory( szFullAppPath );
-	}
-
-
-	CoInitialize (NULL);    // Initialize COM
-
-	// Register the window class
-	WNDCLASS wndClass = { 
-		0,
-		WndProc,	// callback handler
-		0,			// cbClsExtra; 
-		0,			// cbWndExtra; 
-		hInstance,
-		LoadIcon( hInstance, MAKEINTRESOURCE(IDI_ICON) ), 
-		LoadCursor( hInstance, IDC_ARROW),
-		(HBRUSH)GetStockObject( BLACK_BRUSH ),
-		NULL,				// lpszMenuName; 
-		g_sAppClassName	// lpszClassName; 
-	}; 
- 	RegisterClass( &wndClass );
-
-
-	// Set the window's initial width
-	RECT rcWnd;
-	SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
-	AdjustWindowRect( &rcWnd, g_dwWindowStyle, FALSE );
-
-
-	// Create our main window
-	g_hWndMain = CreateWindow(
-					g_sAppClassName,// pointer to registered class name
-					g_sAppName,		// pointer to window name
-					g_dwWindowStyle,	// window StyleDef
-					CW_USEDEFAULT,	// horizontal position of window
-					CW_USEDEFAULT,	// vertical position of window
-					RECTWIDTH(rcWnd),	// window width
-					RECTHEIGHT(rcWnd),// window height
-					NULL,				// handle to parent or owner window
-					NULL,				// handle to menu, or child-window identifier
-					hInstance,		// handle to application instance
-					NULL				// pointer to window-creation data
-				);
- 	if( NULL == g_hWndMain )
-		exit(1);
-
-	ShowWindow( g_hWndMain, SW_HIDE );
-
-
-	// Don't catch errors if we're running in the debugger.  This way, the debugger
-	// will give us a nice stack trace.
-#ifdef _DEBUG
-	#define bCatchErrors false
-#else
-	#define bCatchErrors true
+#ifdef RELEASE
+	try
 #endif
+	{
+		// Initialize ActiveX for Flash
+		//AfxEnableControlContainer();
 
-	bool bSuccess = RunAndCatchErrors( MainLoop, bCatchErrors );
+		//
+		// Check to see if the app is already running.
+		//
+		g_hMutex = CreateMutex( NULL, TRUE, g_sAppName );
+		if( GetLastError() == ERROR_ALREADY_EXISTS )
+		{
+			CloseHandle( g_hMutex );
+		}
 
 
+		//
+		// Make sure the current directory is the root program directory
+		//
+		if( !DoesFileExist("Songs") )
+		{
+			// change dir to path of the execuctable
+			TCHAR szFullAppPath[MAX_PATH];
+			GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
+			
+			// strip off executable name
+			LPSTR pLastBackslash = strrchr(szFullAppPath, '\\');
+			*pLastBackslash = '\0';	// terminate the string
 
-	// clean up after a normal exit 
-	DestroyObjects();			// deallocate our game objects and leave fullscreen
-	ShowWindow( g_hWndMain, SW_HIDE );
+			SetCurrentDirectory( szFullAppPath );
+		}
 
 
-	if( !bSuccess )
+		CoInitialize (NULL);    // Initialize COM
+
+		// Register the window class
+		WNDCLASS wndClass = { 
+			0,
+			WndProc,	// callback handler
+			0,			// cbClsExtra; 
+			0,			// cbWndExtra; 
+			hInstance,
+			LoadIcon( hInstance, MAKEINTRESOURCE(IDI_ICON) ), 
+			LoadCursor( hInstance, IDC_ARROW),
+			(HBRUSH)GetStockObject( BLACK_BRUSH ),
+			NULL,				// lpszMenuName; 
+			g_sAppClassName	// lpszClassName; 
+		}; 
+ 		RegisterClass( &wndClass );
+
+
+		// Set the window's initial width
+		RECT rcWnd;
+		SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
+		AdjustWindowRect( &rcWnd, g_dwWindowStyle, FALSE );
+
+
+		// Create our main window
+		g_hWndMain = CreateWindow(
+						g_sAppClassName,// pointer to registered class name
+						g_sAppName,		// pointer to window name
+						g_dwWindowStyle,	// window StyleDef
+						CW_USEDEFAULT,	// horizontal position of window
+						CW_USEDEFAULT,	// vertical position of window
+						RECTWIDTH(rcWnd),	// window width
+						RECTHEIGHT(rcWnd),// window height
+						NULL,				// handle to parent or owner window
+						NULL,				// handle to menu, or child-window identifier
+						hInstance,		// handle to application instance
+						NULL				// pointer to window-creation data
+					);
+ 		if( NULL == g_hWndMain )
+			exit(1);
+
+		ShowWindow( g_hWndMain, SW_HIDE );
+
+
+		// Load keyboard accelerators
+		HACCEL hAccel = LoadAccelerators( NULL, MAKEINTRESOURCE(IDR_MAIN_ACCEL) );
+
+		// run the game
+		CreateObjects( g_hWndMain );	// Create the game objects
+
+		ShowWindow( g_hWndMain, SW_SHOW );
+	#ifdef RELEASE
+		LOG->HideConsole();
+	#endif
+
+		// Now we're ready to recieve and process Windows messages.
+		MSG msg;
+		ZeroMemory( &msg, sizeof(msg) );
+
+		while( WM_QUIT != msg.message  )
+		{
+			// Look for messages, if none are found then 
+			// update the state and display it
+			if( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
+			{
+				GetMessage(&msg, NULL, 0, 0 );
+
+				// Translate and dispatch the message
+				if( 0 == TranslateAccelerator( g_hWndMain, hAccel, &msg ) )
+				{
+					TranslateMessage( &msg ); 
+					DispatchMessage( &msg );
+				}
+			}
+			else	// No messages are waiting.  Render a frame during idle time.
+			{
+				Update();
+				Render();
+				if( DISPLAY  &&  DISPLAY->IsWindowed() )
+					::Sleep( 1 );	// give some time to other processes
+			}
+		}	// end  while( WM_QUIT != msg.message  )
+
+
+		// clean up after a normal exit 
+		DestroyObjects();			// deallocate our game objects and leave fullscreen
+		ShowWindow( g_hWndMain, SW_HIDE );
+
+	}
+#ifdef _RELEASE
+	catch( RageException e )
+	{
+		g_sErrorString = e.GetError();
+	}
+	catch( ... )
+	{
+		g_sErrorString = "access violation or other run-time error.";
+	}
+
+	if( g_sErrorString != "" )
 	{
 		// throw up a pretty error dialog
 		DialogBox(
@@ -215,6 +249,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			ErrorWndProc
 			);
 	}
+#endif
 
 	DestroyWindow( g_hWndMain );
 	UnregisterClass( g_sAppClassName, hInstance );
@@ -222,49 +257,6 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 	CloseHandle( g_hMutex );
 
 	return 0L;
-}
-
-void MainLoop()
-{
-	// Load keyboard accelerators
-	HACCEL hAccel = LoadAccelerators( NULL, MAKEINTRESOURCE(IDR_MAIN_ACCEL) );
-
-	// run the game
-	CreateObjects( g_hWndMain );	// Create the game objects
-
-	ShowWindow( g_hWndMain, SW_SHOW );
-#ifdef RELEASE
-	LOG->HideConsole();
-#endif
-
-	// Now we're ready to recieve and process Windows messages.
-	MSG msg;
-	ZeroMemory( &msg, sizeof(msg) );
-
-	while( WM_QUIT != msg.message  )
-	{
-		// Look for messages, if none are found then 
-		// update the state and display it
-		if( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
-		{
-			GetMessage(&msg, NULL, 0, 0 );
-
-			// Translate and dispatch the message
-			if( 0 == TranslateAccelerator( g_hWndMain, hAccel, &msg ) )
-			{
-				TranslateMessage( &msg ); 
-				DispatchMessage( &msg );
-			}
-		}
-		else	// No messages are waiting.  Render a frame during idle time.
-		{
-			Update();
-			Render();
-			if( DISPLAY  &&  DISPLAY->IsWindowed() )
-				::Sleep( 1 );	// give some time to other processes
-		}
-	}	// end  while( WM_QUIT != msg.message  )
-
 }
 
 
@@ -278,11 +270,7 @@ BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 	{
 	case WM_INITDIALOG:
 		{
-			CString sMessage = ssprintf("%s", GetError() );
-			if( GetErrorHr() != 0 )
-				sMessage += ssprintf(" ('%d - %s)'", GetErrorHr(), DXGetErrorString8(GetErrorHr()) );
-			sMessage +=	ssprintf("\n\nStack Trace: (PDB file required for function names)", GetStackTrace() );
-			sMessage +=	ssprintf("\n\n%s", GetStackTrace() );
+			CString sMessage = g_sErrorString;
 			sMessage.Replace( "\n", "\r\n" );
 			SendDlgItemMessage( 
 				hWnd, 
@@ -492,15 +480,16 @@ HRESULT CreateObjects( HWND hWnd )
 	//
 	srand( (unsigned)time(NULL) );	// seed number generator
 	
-	LOG		= new RageLog();
-	SOUND	= new RageSound( hWnd );
-	MUSIC	= new RageSoundStream;
-	INPUTMAN= new RageInput( hWnd );
+	LOG			= new RageLog();
+	TIMER		= new RageTimer;
+	SOUND		= new RageSound( hWnd );
+	MUSIC		= new RageSoundStream;
+	INPUTMAN	= new RageInput( hWnd );
 	PREFSMAN	= new PrefsManager;
-	DISPLAY	= new RageDisplay( hWnd );
-	SONGMAN	= new SongManager;		// this takes a long time to load
-	GAMEMAN	= new GameManager;
-	THEME	= new ThemeManager;
+	DISPLAY		= new RageDisplay( hWnd );
+	SONGMAN		= new SongManager;		// this takes a long time to load
+	GAMEMAN		= new GameManager;
+	THEME		= new ThemeManager;
 	ANNOUNCER	= new AnnouncerManager;
 	INPUTFILTER	= new InputFilter();
 	INPUTMAPPER	= new InputMapper();
@@ -524,15 +513,13 @@ HRESULT CreateObjects( HWND hWnd )
 	//SCREENMAN->SetNewScreen( new ScreenLoading );
 	//SCREENMAN->SetNewScreen( new ScreenSandbox );
 	//SCREENMAN->SetNewScreen( new ScreenResults(false) );
+	//SCREENMAN->SetNewScreen( new ScreenSelectDifficulty );
 	//SCREENMAN->SetNewScreen( new ScreenPlayerOptions );
-	//SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 	//SCREENMAN->SetNewScreen( new ScreenGameplay );
 	//SCREENMAN->SetNewScreen( new ScreenMusicScroll );
-	SCREENMAN->SetNewScreen( new ScreenSelectMusic );
+	//SCREENMAN->SetNewScreen( new ScreenSelectMusic );
 	//SCREENMAN->SetNewScreen( new ScreenSelectGroup );
-
-
-    DXUtil_Timer( TIMER_START );    // Start the accurate timer
 
 
 	return S_OK;
@@ -544,8 +531,6 @@ HRESULT CreateObjects( HWND hWnd )
 //-----------------------------------------------------------------------------
 void DestroyObjects()
 {
-    DXUtil_Timer( TIMER_STOP );
-
 	SAFE_DELETE( SCREENMAN );
 	SAFE_DELETE( FONT );
 	SAFE_DELETE( TEXTUREMAN );
@@ -561,6 +546,7 @@ void DestroyObjects()
 	SAFE_DELETE( INPUTMAN );
 	SAFE_DELETE( MUSIC );
 	SAFE_DELETE( SOUND );
+	SAFE_DELETE( TIMER );
 	SAFE_DELETE( LOG );
 }
 
@@ -627,7 +613,7 @@ HRESULT InvalidateObjects()
 //-----------------------------------------------------------------------------
 void Update()
 {
-	float fDeltaTime = DXUtil_Timer( TIMER_GETELAPSEDTIME );
+	float fDeltaTime = TIMER->GetDeltaTime();
 	
 	// This was a hack to fix timing issues with the old ScreenSelectSong
 	//
@@ -702,7 +688,7 @@ void Render()
             }
 			else
 			{
-				FatalErrorHr( hr, "Failed to DISPLAY->Reset()" );
+				throw RageException( hr, "Failed to DISPLAY->Reset()" );
 			}
 
 			break;
@@ -789,7 +775,7 @@ void ApplyGraphicOptions()
 					dwHeight = 240;
 					if( !DISPLAY->SwitchDisplayMode(bWindowed, dwWidth, dwHeight, dwDisplayBPP) )
 					{
-						FatalError( "Tried every possible display mode, and couldn't find one that works." );
+						throw RageException( "Tried every possible display mode, and couldn't find one that works." );
 					}
 				}
 			}
