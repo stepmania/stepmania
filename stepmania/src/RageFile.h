@@ -27,6 +27,7 @@ class Rageifstream : public std::ifstream
 {
 public:
 	Rageifstream() {};
+	Rageifstream( Rageifstream &cpy ); /* not defined; hush warning */
 	Rageifstream( const char *szPath ) : ifstream(FixSlashes(szPath)) {}
 	void open( const char *szPath ) { ifstream::open(FixSlashes(szPath)); }
 };
