@@ -145,7 +145,19 @@ void RageDisplay::SetupOpenGL()
 	/* Initialize the default ortho projection. */
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
-	glOrtho(0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, SCREEN_NEAR, SCREEN_FAR );
+
+	float left = 0, right = SCREEN_WIDTH, bottom = SCREEN_HEIGHT, top = 0;
+	if(strncmp((const char*)glGetString(GL_RENDERER),"GLDirect",strlen("GLDirect"))==0)
+	{
+	    /* GLDirect incorrectly uses Direct3D's device coordinate system
+	     * instead of OpenGL's, so we need to compensate. */
+	    left += 0.5f;
+	    right += 0.5f;
+	    bottom += 0.5f;
+	    top += 0.5f;
+	}
+
+	glOrtho(left, right, bottom, top, SCREEN_NEAR, SCREEN_FAR );
 	glMatrixMode( GL_MODELVIEW );
 }
 
