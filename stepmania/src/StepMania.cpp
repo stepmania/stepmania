@@ -94,13 +94,15 @@ static void ChangeToDirOfExecutable(const char *argv0)
 	InitialWorkingDirectory = tmp;
 
 #ifdef _XBOX
-	DirOfExecutable = "D:\\" ;
-	return ;
+	DirOfExecutable = "D:/";
+	return;
 #else
 
 	DirOfExecutable = argv0;
+	DirOfExecutable.Replace( "\\", "/" );
+
 	// strip off executable name
-	unsigned n = DirOfExecutable.find_last_of("/\\");
+	unsigned n = DirOfExecutable.find_last_of("/");
 	if( n != DirOfExecutable.npos )
 		DirOfExecutable.erase(n);
 	else
