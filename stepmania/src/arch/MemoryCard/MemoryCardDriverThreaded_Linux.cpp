@@ -638,9 +638,24 @@ void MemoryCardDriverThreaded_Linux::Flush( UsbStorageDevice* pDevice )
 
 void MemoryCardDriverThreaded_Linux::ResetUsbStorage()
 {
-  // This isn't necessary in 2.6 because SCSI file devices are recycled. 
-  // ExecuteCommand( "rmmod usb-storage" );
-  // ExecuteCommand( "modprobe usb-storage" );
+  //
+  // if usb-storage gets in a bad state, resetting usb-storage will sometimes fix it.
+  //
+
+  LockMut( m_mutexStorageDevices );
+ 
+  // unmount all devices before trying to remove the module
+  for( unsigned i=0; i<m_vStorageDevices.size(); i++ )
+    {
+      UsbStorageDeviceEx &d = m_vStorageDevices[i];
+      CString sCommand = "umount " + d.sOsMountDir;
+      ExecuteCommand( sCommand );
+    }
+
+  ExecuteCommand( "rmmod usb-storage" );
+  ExecuteCommand( "modprobe usb-storage" );
+
+  // let the mounting thread re-mount everything
 }
 
 
