@@ -22,7 +22,6 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ssprintf( "#LYRICSPATH:%s;", out.m_sLyricsFile.c_str() ) );
 	f.PutLine( ssprintf( "#CDTITLE:%s;", out.m_sCDTitleFile.c_str() ) );
 	f.PutLine( ssprintf( "#MUSIC:%s;", out.m_sMusicFile.c_str() ) );
-	f.PutLine( ssprintf( "#MUSICLENGTH:%.3f;", out.m_fMusicLengthSeconds ) );
 	f.PutLine( ssprintf( "#OFFSET:%.3f;", out.m_Timing.m_fBeat0OffsetInSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds ) );
@@ -183,11 +182,14 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 	WriteGlobalTags( f, out );
 	if( bSavingCache )
 	{
+		f.PutLine( ssprintf( "// cache tags:\n", out.m_fFirstBeat ) );
 		f.PutLine( ssprintf( "#FIRSTBEAT:%.3f;\n", out.m_fFirstBeat ) );
 		f.PutLine( ssprintf( "#LASTBEAT:%.3f;\n", out.m_fLastBeat ) );
 		f.PutLine( ssprintf( "#SONGFILENAME:%s;\n", out.m_sSongFileName.c_str() ) );
 		f.PutLine( ssprintf( "#HASMUSIC:%i;\n", out.m_bHasMusic ) );
 		f.PutLine( ssprintf( "#HASBANNER:%i;\n", out.m_bHasBanner ) );
+		f.PutLine( ssprintf( "#MUSICLENGTH:%.3f;", out.m_fMusicLengthSeconds ) );
+		f.PutLine( ssprintf( "// end cache tags\n", out.m_fFirstBeat ) );
 	}
 
 	//

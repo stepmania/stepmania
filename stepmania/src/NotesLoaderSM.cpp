@@ -227,7 +227,14 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			out.m_sMusicFile = sParams[1];
 
 		else if( 0==stricmp(sValueName,"MUSICLENGTH") )
+		{
+			if(!FromCache)
+			{
+				LOG->Trace("Ignored #MUSICLENGTH (cache only)");
+				continue;
+			}
 			out.m_fMusicLengthSeconds = (float)atof( sParams[1] );
+		}
 
 		else if( 0==stricmp(sValueName,"MUSICBYTES") )
 			; /* ignore */
