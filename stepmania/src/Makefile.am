@@ -1,14 +1,8 @@
 bin_PROGRAMS = stepmania
 
 AM_LDFLAGS =
-AM_CXXFLAGS =
+AM_CXXFLAGS = -O2
 AM_CFLAGS =
-
-if DARWIN
-AM_LDFLAGS += -framework Cocoa -framework Quicktime -framework Carbon -framework OpenGL -framework IOKit
-endif
-
-AM_CXXFLAGS += -O2
 
 if NHAVE_SDL
 AM_CXXFLAGS += -ISDL-1.2.6/include
@@ -112,13 +106,7 @@ ArchUtils += archutils/Unix/CrashHandler.cpp archutils/Unix/CrashHandler.h \
 endif
 
 Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) $(LowLevelWindow) $(ArchUtils) \
-       arch/arch.cpp arch/arch.h arch/arch_default.h
-
-if DARWIN
-Arch += arch/arch_darwin.h
-else
-Arch += arch/arch_linux.h
-endif
+       arch/arch.cpp arch/arch.h arch/arch_default.h arch/arch_linux.h
 
 RageSoundFileReaders = \
 RageSoundReader_WAV.cpp RageSoundReader_WAV.h 

@@ -165,9 +165,6 @@ AH_VERBATIM([VA_ZZZ_NEEDED_FUNCS],
 AC_CHECK_DECLS([SIGPWR],,,[#include <signal.h>])
 
 case $host in
-	*-*-darwin*)
-		AC_DEFINE(DARWIN, 1, [Use different sound drivers than linux])
-		darwin=true;;
 	# This is just a general define for things we do in Linux that aren't
 	# yet fully generalized.  It should probably be defined in other *nixes,
 	# too.
@@ -175,6 +172,5 @@ case $host in
 		AC_DEFINE(LINUX, 1, [Linux])
 		;;
 esac
-AM_CONDITIONAL(DARWIN, test x$darwin = xtrue)
 
 AC_OUTPUT([Makefile src/Makefile])
