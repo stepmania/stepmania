@@ -24,9 +24,10 @@
 #include "DifficultyIcon.h"
 #include "BPMDisplay.h"
 class Inventory;
-//#include "BeginnerHelper.h"	// uncomment once it's checked in
+#include "BeginnerHelper.h"
 #include "LyricDisplay.h"
 #include "TimingAssist.h"
+#include "Character.h"
 
 // messages sent by Combo
 const ScreenMessage SM_PlayToasty			= ScreenMessage(SM_User+104);
@@ -64,9 +65,6 @@ public:
 
 
 protected:
-	//BeginnerHelper	m_bhDancer; // The model for training
-	Sprite	m_bhDancer;
-
 	void TweenOnScreen();
 	void TweenOffScreen();
 
@@ -186,6 +184,9 @@ protected:
 
 	RageSound		m_soundAssistTick;
 	RageSound		m_soundMusic;
+
+	BeginnerHelper	m_BeginnerHelper;
+	int				m_iPOB;	// Number of any player on Beginner.. Used for step-sensing
 };
 
 

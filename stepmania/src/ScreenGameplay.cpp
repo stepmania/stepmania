@@ -210,28 +210,14 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	//m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 	
 	m_bZeroDeltaOnNextUpdate = false;
-
-	// If this is beginner mode, show the helper
-	/* !! Working on this.. having probs loading the BG sequences -- Miryokuteki */
-		
-		//this->AddChild( &m_bhDancer );
-		//m_bhDancer.Load( THEME->GetPathToG( "select difficulty ex picture easy") );
-			//m_bhDancer.SetXY( -100,-100 );  //<-- causing entire screen to offset!
-		//m_bhDancer.SetDiffuse( RageColor(1,1,1,1) );
-		//m_bhDancer.SetEffectGlowShift( 0.5f );
-		//m_bhDancer.BeginDraw();
-
-	/* */
-
+	
+	 const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 	// init old offset in case offset changes in song
 	if( GAMESTATE->IsCourseMode() )
 		g_fOldOffset = -1000;
 	else
 		g_fOldOffset = GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds;
 
-
-
-	const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 
 
 	m_Background.SetDiffuse( RageColor(0.4f,0.4f,0.4f,1) );
@@ -792,11 +778,32 @@ void ScreenGameplay::LoadNextSong()
 	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath() );
 	
 	/* Set up song-specific graphics. */
-	m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
+	
+	
+	
+	if( PREFSMAN->m_bShowBeginnerHelper )
+	{
+		// Beginner steps are always the same on both players.. Just get the # of 1 player that's using the Beginner steps, and go on.
+		for( int pb=0; pb<NUM_PLAYERS; pb++ )
+			if( GAMESTATE->IsPlayerEnabled(pb) && GAMESTATE->m_PreferredDifficulty[pb] )
+					m_iPOB = pb;
+
+		m_Background.Unload();	// BeginnerHelper has it's own BG control.
+		m_Background.StopAnimating();
+		
+		//m_BeginnerHelper.m_bEnabled = true;	// Not yet implemented
+		m_BeginnerHelper.Initialize( 2 );	// Init for doubles
+		m_BeginnerHelper.SetX( CENTER_X );
+		m_BeginnerHelper.SetY( CENTER_Y );
+	}
+	else
+	{
+		m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
+	}
+
 	m_Background.SetDiffuse( RageColor(0.5f,0.5f,0.5f,1) );
 	m_Background.BeginTweening( 2 );
 	m_Background.SetDiffuse( RageColor(1,1,1,1) );
-
 
 
 	m_fTimeLeftBeforeDancingComment = GAMESTATE->m_pCurSong->m_fFirstBeat + SECONDS_BETWEEN_COMMENTS;
@@ -979,9 +986,34 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
 	int pn;
+	m_BeginnerHelper.Update(fDeltaTime*GAMESTATE->m_fCurBPS);
+	
 	switch( m_DancingState )
 	{
 	case STATE_DANCING:
+			// Check to see what we animate on this one
+		if( PREFSMAN->m_bShowBeginnerHelper )
+		{
+			int iStep = 0;
+			if((m_Player[m_iPOB].IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.45f)))))
+			{
+				for( int k=0; k<m_Player[m_iPOB].GetNumTracks(); k++ )
+					if( m_Player[m_iPOB].GetTapNote(k, BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.45f)) ) == TAP_TAP )
+					{
+						switch(k)
+						{
+						case 0: iStep += 6; break;
+						case 1: iStep += 3; break;
+						case 2: iStep += 8; break;
+						case 3: iStep += 4; break;
+						};
+					}
+				m_BeginnerHelper.Step( iStep );
+			}
+		}
+		// -------------------------------------------
+
+
 		//
 		// Update living players' alive time
 		//
@@ -1153,12 +1185,16 @@ void ScreenGameplay::Update( float fDeltaTime )
 		}
 	}
 	if( GAMESTATE->m_SongOptions.m_bAssistTick && IsTimeToPlayTicks())
+	{
 		m_soundAssistTick.Play();
+		m_BeginnerHelper.FlashOnce();
+	}
 }
 
 
 void ScreenGameplay::DrawPrimitives()
 {
+	m_BeginnerHelper.DrawPrimitives();
 	Screen::DrawPrimitives();
 }
 
