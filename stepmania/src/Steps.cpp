@@ -1,7 +1,7 @@
 #include "global.h"
 /*
 -----------------------------------------------------------------------------
- Class: Notes
+ Class: Steps
 
  Desc: See header.
 
@@ -11,9 +11,9 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Notes.h"
+#include "Steps.h"
 #include "song.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "IniFile.h"
 #include "math.h"	// for fabs()
 #include "RageUtil.h"
@@ -26,7 +26,7 @@
 
 
 
-Notes::Notes()
+Steps::Steps()
 {
 	/* FIXME: should we init this to NOTES_TYPE_INVALID? 
 	 * I have a feeling that it's the right thing to do but that
@@ -50,13 +50,13 @@ Notes::Notes()
 	}
 }
 
-Notes::~Notes()
+Steps::~Steps()
 {
 	delete notes;
 	delete notes_comp;
 }
 
-void Notes::SetNoteData( NoteData* pNewNoteData )
+void Steps::SetNoteData( NoteData* pNewNoteData )
 {
 	ASSERT( pNewNoteData->GetNumTracks() == GameManager::NotesTypeToNumTracks(m_NotesType) );
 
@@ -69,7 +69,7 @@ void Notes::SetNoteData( NoteData* pNewNoteData )
 	notes = new NoteData(*pNewNoteData);
 }
 
-void Notes::GetNoteData( NoteData* pNoteDataOut ) const
+void Steps::GetNoteData( NoteData* pNoteDataOut ) const
 {
 	ASSERT(this);
 	ASSERT(pNoteDataOut);
@@ -85,7 +85,7 @@ void Notes::GetNoteData( NoteData* pNoteDataOut ) const
 	}
 }
 
-void Notes::SetSMNoteData( const CString &out )
+void Steps::SetSMNoteData( const CString &out )
 {
 	delete notes;
 	notes = NULL;
@@ -96,7 +96,7 @@ void Notes::SetSMNoteData( const CString &out )
 	*notes_comp = out;
 }
 
-CString Notes::GetSMNoteData() const
+CString Steps::GetSMNoteData() const
 {
 	if(!notes_comp)
 	{
@@ -107,7 +107,7 @@ CString Notes::GetSMNoteData() const
 	return *notes_comp;
 }
 
-void Notes::TidyUpData()
+void Steps::TidyUpData()
 {
 	if( GetDifficulty() == DIFFICULTY_INVALID )
 		SetDifficulty(StringToDifficulty(GetDescription()));
@@ -147,7 +147,7 @@ void Notes::TidyUpData()
 	}
 }
 
-void Notes::Decompress() const
+void Steps::Decompress() const
 {
 	if(notes)
 	{
@@ -182,7 +182,7 @@ void Notes::Decompress() const
 	}
 }
 
-void Notes::Compress() const
+void Steps::Compress() const
 {
 	if(!notes_comp)
 	{
@@ -196,7 +196,7 @@ void Notes::Compress() const
 
 /* Copy our parent's data.  This is done when we're being changed from autogen
  * to normal. (needed?) */
-void Notes::DeAutogen()
+void Steps::DeAutogen()
 {
 	if(!parent)
 		return; /* OK */
@@ -214,13 +214,13 @@ void Notes::DeAutogen()
 	Compress();
 }
 
-void Notes::AutogenFrom( Notes *parent_, NotesType ntTo )
+void Steps::AutogenFrom( Steps *parent_, NotesType ntTo )
 {
 	parent = parent_;
 	m_NotesType = ntTo;
 }
 
-void Notes::CopyFrom( Notes* pSource, NotesType ntTo )	// pSource does not have to be of the same NotesType!
+void Steps::CopyFrom( Steps* pSource, NotesType ntTo )	// pSource does not have to be of the same NotesType!
 {
 	m_NotesType = ntTo;
 	NoteData noteData;
@@ -236,7 +236,7 @@ void Notes::CopyFrom( Notes* pSource, NotesType ntTo )	// pSource does not have 
 		this->SetRadarValue( (RadarCategory)r, radarValues[r] );
 }
 
-void Notes::CreateBlank( NotesType ntTo )
+void Steps::CreateBlank( NotesType ntTo )
 {
 	m_NotesType = ntTo;
 	NoteData noteData;
@@ -245,36 +245,36 @@ void Notes::CreateBlank( NotesType ntTo )
 }
 
 
-const Notes *Notes::Real() const
+const Steps *Steps::Real() const
 {
 	if(parent) return parent;
 	return this;
 }
 
-bool Notes::IsAutogen() const
+bool Steps::IsAutogen() const
 {
 	return parent != NULL;
 }
 
-void Notes::SetDescription(CString desc)
+void Steps::SetDescription(CString desc)
 {
 	DeAutogen();
 	m_sDescription = desc;
 }
 
-void Notes::SetDifficulty(Difficulty d)
+void Steps::SetDifficulty(Difficulty d)
 {
 	DeAutogen();
 	m_Difficulty = d;
 }
 
-void Notes::SetMeter(int meter)
+void Steps::SetMeter(int meter)
 {
 	DeAutogen();
 	m_iMeter = meter;
 }
 
-void Notes::SetRadarValue(int r, float val)
+void Steps::SetRadarValue(int r, float val)
 {
 	DeAutogen();
 	ASSERT(r < NUM_RADAR_CATEGORIES);
@@ -287,7 +287,7 @@ void Notes::SetRadarValue(int r, float val)
  * XXX: Isn't it possible to beat the grade but not beat the score, since
  * grading and scores are on completely different systems?  Should we be
  * checking for these completely separately? */
-bool Notes::MemCardScore::HigherScore( int vsScore, Grade vsGrade ) const
+bool Steps::MemCardScore::HigherScore( int vsScore, Grade vsGrade ) const
 {
 	if( vsScore > this->iScore )
 		return true;
@@ -296,7 +296,7 @@ bool Notes::MemCardScore::HigherScore( int vsScore, Grade vsGrade ) const
 	return vsGrade > this->grade;
 }
 
-void Notes::AddScore( PlayerNumber pn, Grade grade, int iScore, bool& bNewRecordOut )
+void Steps::AddScore( PlayerNumber pn, Grade grade, int iScore, bool& bNewRecordOut )
 {
 	bNewRecordOut = false;
 
@@ -322,7 +322,7 @@ void Notes::AddScore( PlayerNumber pn, Grade grade, int iScore, bool& bNewRecord
 // Sorting stuff
 //
 
-bool CompareNotesPointersByRadarValues(const Notes* pNotes1, const Notes* pNotes2)
+bool CompareNotesPointersByRadarValues(const Steps* pNotes1, const Steps* pNotes2)
 {
 	float fScore1 = 0;
 	float fScore2 = 0;
@@ -336,17 +336,17 @@ bool CompareNotesPointersByRadarValues(const Notes* pNotes1, const Notes* pNotes
 	return fScore1 < fScore2;
 }
 
-bool CompareNotesPointersByMeter(const Notes *pNotes1, const Notes* pNotes2)
+bool CompareNotesPointersByMeter(const Steps *pNotes1, const Steps* pNotes2)
 {
 	return pNotes1->GetMeter() < pNotes2->GetMeter();
 }
 
-bool CompareNotesPointersByDifficulty(const Notes *pNotes1, const Notes *pNotes2)
+bool CompareNotesPointersByDifficulty(const Steps *pNotes1, const Steps *pNotes2)
 {
 	return pNotes1->GetDifficulty() < pNotes2->GetDifficulty();
 }
 
-void SortNotesArrayByDifficulty( vector<Notes*> &arraySteps )
+void SortNotesArrayByDifficulty( vector<Steps*> &arraySteps )
 {
 	/* Sort in reverse order of priority. */
 	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByRadarValues );
