@@ -13,10 +13,12 @@
 #include "GrayArrowRow.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "ColorNote.h"
 #include "ArrowEffects.h"
 #include "GameManager.h"
+#include "GameState.h"
+#include "PrefsManager.h"
 
 
 GrayArrowRow::GrayArrowRow()
@@ -28,13 +30,13 @@ void GrayArrowRow::Load( PlayerNumber pn, StyleDef* pStyleDef, PlayerOptions po 
 {
 	m_PlayerOptions = po;
 
-	GameDef* pGameDef = GAMEMAN->GetCurrentGameDef();
+	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 
 	m_iNumCols = pStyleDef->m_iColsPerPlayer;
 
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		m_GrayArrow[c].Load( GAMEMAN->GetPathToGraphic(pn, c, GRAPHIC_RECEPTOR) );
+		m_GrayArrow[c].Load( GAMEMAN->GetPathTo(c, GRAPHIC_RECEPTOR) );
 		m_GrayArrow[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
 	}
 	

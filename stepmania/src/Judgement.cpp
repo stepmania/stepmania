@@ -1,19 +1,20 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: Judgement.h
+ Class: Judgement
 
- Desc: A graphic displayed in the Judgement during Dancing.
+ Desc: See header
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
 #include "Judgement.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
-#include "GameManager.h"
+#include "PrefsManager.h"
+#include "GameState.h"
 
 const float JUDGEMENT_DISPLAY_TIME	=	0.8f;
 
@@ -24,7 +25,7 @@ Judgement::Judgement()
 	m_sprJudgement.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_JUDGEMENT) );
 	m_sprJudgement.StopAnimating();
 	m_sprJudgement.TurnShadowOn();
-	this->AddActor( &m_sprJudgement );
+	this->AddSubActor( &m_sprJudgement );
 }
 
 void Judgement::Update( float fDeltaTime )
@@ -59,7 +60,7 @@ void Judgement::SetJudgement( TapNoteScore score )
 	default:	ASSERT( false );
 	}
 
-	if ( GAMEMAN->m_CurGame == GAME_EZ2 ) // Resize Judgement graphics for Ez2.
+	if ( GAMESTATE->GetCurGame() == GAME_EZ2 ) // Resize Judgement graphics for Ez2.
 	{
 		m_sprJudgement.SetHeight( 22.0f * 2.1f );
 		m_sprJudgement.SetWidth( 143.0f * 2.1f );

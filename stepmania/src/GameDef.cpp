@@ -18,7 +18,7 @@
 #include "StyleDef.h"
 
 
-CString GameDef::ElementToGraphicSuffix( const GameButtonGraphic gbg ) 
+CString GameDef::ElementToGraphicSuffix( const SkinElement gbg ) 
 {
 	CString sAssetPath;		// fill this in below
 
@@ -38,10 +38,9 @@ CString GameDef::ElementToGraphicSuffix( const GameButtonGraphic gbg )
 	return sAssetPath;
 }
 
-CString GameDef::GetPathToGraphic( const CString sSkinName, const int iInstrumentButton, const GameButtonGraphic gbg ) 
+CString GameDef::GetPathToGraphic( const CString sSkinName, const CString sButtonName, const SkinElement gbg ) 
 {
 	const CString sSkinDir	= ssprintf("Skins\\%s\\%s\\", m_szName, sSkinName);
-	const CString sButtonName = m_szButtonNames[ iInstrumentButton ];
 	const CString sGraphicSuffix = ElementToGraphicSuffix( gbg );
 
 	CStringArray arrayPossibleFileNames;		// fill this with the possible files
@@ -58,10 +57,9 @@ CString GameDef::GetPathToGraphic( const CString sSkinName, const int iInstrumen
 	return "";
 }
 
-void GameDef::GetTweenColors( const CString sSkinName, const int iInstrumentButton, CArray<D3DXCOLOR,D3DXCOLOR> &arrayTweenColors )
+void GameDef::GetTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &arrayTweenColors )
 {
 	const CString sSkinDir	= ssprintf("Skins\\%s\\%s\\", m_szName, sSkinName);
-	const CString sButtonName = m_szButtonNames[ iInstrumentButton ];
 
 	const CString sColorsFilePath = sSkinDir + sButtonName + ".colors";
 
@@ -115,16 +113,19 @@ void GameDef::AssertSkinsAreComplete()
 	GetSkinNames( asSkinNames );
 
 	for( int i=0; i<asSkinNames.GetSize(); i++ )
-	{
-		CString sSkin = asSkinNames[i];
-		CString sGameSkinFolder = "Skins\\" + sSkin + "\\";
+		AssertSkinIsComplete( asSkinNames[i] );
+}
 
-		for( int i=0; i<NUM_GAME_BUTTON_GRAPHICS; i++ )
-		{
-			GameButtonGraphic gbg = (GameButtonGraphic)i;
-			CString sPathToGraphic = GetPathToGraphic( sSkin, INSTRUMENT_1, gbg );
-			if( !DoesFileExist(sPathToGraphic) )
-				throw RageException( "Game button graphic at %s is missing.", sPathToGraphic );
-		}		
-	}
+void GameDef::AssertSkinIsComplete( CString sSkin )
+{
+	CString sGameSkinFolder = "Skins\\" + sSkin + "\\";
+
+	for( int j=0; j<NUM_GAME_BUTTON_GRAPHICS; j++ )
+	{
+		SkinElement gbg = (SkinElement)j;
+		CString sButtonName = m_szButtonNames[j];
+		CString sPathToGraphic = GetPathToGraphic( sSkin, sButtonName, gbg );
+		if( !DoesFileExist(sPathToGraphic) )
+			throw RageException( "Game button graphic at %s is missing.", sPathToGraphic );
+	}		
 }

@@ -21,6 +21,7 @@
 #include "TransitionFadeWipe.h"
 #include "TransitionKeepAlive.h"
 #include "TransitionInvisible.h"
+#include "TipDisplay.h"
 
 
 const float MENU_ELEMENTS_TWEEN_TIME	=	0.30f;
@@ -69,7 +70,7 @@ protected:
 
 	// stuff in the main frame
 	Sprite		m_sprBG;
-	BitmapText	m_textHelp;
+	TipDisplay	m_textHelp;
 	BitmapText	m_textCreditInfo[NUM_PLAYERS];
 
 	TransitionFadeWipe	m_Wipe;

@@ -20,7 +20,7 @@
 const int MAX_STYLES_PER_GAME = 10;
 
 
-enum GameButtonGraphic { 
+enum SkinElement { 
 	GRAPHIC_NOTE_COLOR_PART,
 	GRAPHIC_NOTE_GRAY_PART,
 	GRAPHIC_RECEPTOR,
@@ -57,10 +57,11 @@ public:
 	void GetSkinNames( CStringArray &asSkinNames );
 	bool HasASkinNamed( CString sSkin );
 	void AssertSkinsAreComplete();
+	void AssertSkinIsComplete( CString sSkin );
 
-	CString GetPathToGraphic( const CString sSkinName, const int iInstrumentButton, const GameButtonGraphic gbg );
-	void	GetTweenColors( const CString sSkinName, const int iInstrumentButton, CArray<D3DXCOLOR,D3DXCOLOR> &arrayTweenColors );
-	CString ElementToGraphicSuffix( const GameButtonGraphic gbg );
+	CString GetPathToGraphic( const CString sSkinName, const CString sButtonName, const SkinElement gbg );
+	void	GetTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &arrayTweenColors );
+	CString ElementToGraphicSuffix( const SkinElement gbg );
 
 
 	inline MenuInput GameInputToMenuInput( const GameInput GameI )

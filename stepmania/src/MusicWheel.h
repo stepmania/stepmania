@@ -23,7 +23,7 @@
 #include "MusicSortDisplay.h"
 #include "MusicStatusDisplay.h"
 #include "Screen.h"		// for ScreenMessage
-#include "ScoreDisplayRolling.h"
+#include "ScoreDisplayNormal.h"
 #include "ScrollBar.h"
 #include "Course.h"
 
@@ -137,7 +137,7 @@ protected:
 	// Actors inside of m_frameOverlay
 	Sprite				m_sprSelectionOverlay;
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
-	ScoreDisplayRolling	m_HighScore[NUM_PLAYERS];
+	ScoreDisplayNormal	m_HighScore[NUM_PLAYERS];
 
 
 	CArray<WheelItemData, WheelItemData&> m_WheelItemDatas[NUM_SORT_ORDERS];

@@ -5,7 +5,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "HoldGhostArrow.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 
 const float  HOLD_GHOST_ARROW_TWEEN_TIME = 0.5f;

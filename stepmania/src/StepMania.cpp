@@ -3,9 +3,10 @@
 -----------------------------------------------------------------------------
  File: StepMania.cpp
 
- Desc: 
+ Desc: Entry point for program.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -19,7 +20,8 @@
 //
 #include "PrefsManager.h"
 #include "SongManager.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
+#include "GameState.h"
 #include "AnnouncerManager.h"
 #include "ScreenManager.h"
 #include "GameManager.h"
@@ -42,17 +44,12 @@
 
 
 #include "ScreenSandbox.h"
-#include "ScreenEvaluation.h"
 #include "ScreenTitleMenu.h"
-#include "ScreenPlayerOptions.h"
-#include "ScreenMusicScroll.h"
-#include "ScreenSelectMusic.h"
-#include "ScreenGameplay.h"
-#include "ScreenSelectDifficulty.h"
+#include "ScreenLoading.h"
 
 
 #include "dxerr8.h"
-#include <Afxdisp.h>
+//#include <Afxdisp.h>
 
 //-----------------------------------------------------------------------------
 // Links
@@ -165,6 +162,33 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			SetCurrentDirectory( szFullAppPath );
 		}
 
+		//
+		// Check for packages in the AutoInstall folder
+		//
+		CStringArray asPackagePaths;
+		GetDirListing( "AutoInstall\\*.smzip", asPackagePaths, false, true );
+		for( int i=0; i<asPackagePaths.GetSize(); i++ )
+		{
+			CString sCommandLine = ssprintf( "smpackage.exe %s", asPackagePaths[i] );
+
+			PROCESS_INFORMATION pi;
+			STARTUPINFO	si;
+			ZeroMemory( &si, sizeof(si) );
+
+			CreateProcess(
+				NULL,		// pointer to name of executable module
+				sCommandLine.GetBuffer(MAX_PATH),		// pointer to command line string
+				NULL,  // process security attributes
+				NULL,   // thread security attributes
+				false,  // handle inheritance flag
+				0, // creation flags
+				NULL,  // pointer to new environment block
+				NULL,   // pointer to current directory name
+				&si,  // pointer to STARTUPINFO
+				&pi  // pointer to PROCESS_INFORMATION
+			);
+		}
+
 
 		CoInitialize (NULL);    // Initialize COM
 
@@ -207,7 +231,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
  		if( NULL == g_hWndMain )
 			exit(1);
 
-		ShowWindow( g_hWndMain, SW_HIDE );
+		//ShowWindow( g_hWndMain, SW_HIDE );
 
 
 		// Load keyboard accelerators
@@ -216,10 +240,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 		// run the game
 		CreateObjects( g_hWndMain );	// Create the game objects
 
-		ShowWindow( g_hWndMain, SW_SHOW );
-#ifndef _DEBUG	// release
-		LOG->HideConsole();
-#endif
+		//ShowWindow( g_hWndMain, SW_SHOW );
 
 		// Now we're ready to recieve and process Windows messages.
 		MSG msg;
@@ -245,7 +266,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 				Update();
 				Render();
 				if( DISPLAY  &&  DISPLAY->IsWindowed() )
-					::Sleep( 1 );	// give some time to other processes
+					::Sleep( 0 );	// give some time to other processes
 			}
 		}	// end  while( WM_QUIT != msg.message  )
 
@@ -276,7 +297,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			LOG->WriteLine( 
 				"\n"
 				"//////////////////////////////////////////////////////\n"
-				"Exception: %s"
+				"Exception: %s\n"
 				"//////////////////////////////////////////////////////\n"
 				"\n",
 				g_sErrorString
@@ -311,8 +332,12 @@ BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 	{
 	case WM_INITDIALOG:
 		{
+			LOG->Flush();
+
 			CString sMessage = g_sErrorString;
+
 			sMessage.Replace( "\n", "\r\n" );
+			
 			SendDlgItemMessage( 
 				hWnd, 
 				IDC_EDIT_ERROR, 
@@ -406,7 +431,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 				// Don't allow the window to be resized smaller than the screen resolution.
 				// This should snap to multiples of the Window size two!
 				RECT rcWnd;
-				SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
+				SetRect( &rcWnd, 0, 0, PREFSMAN->m_iDisplayResolution, PREFSMAN->GetDisplayHeight() );
 				DWORD dwWindowStyle = GetWindowLong( g_hWndMain, GWL_STYLE );
 				AdjustWindowRect( &rcWnd, dwWindowStyle, FALSE );
 
@@ -450,7 +475,16 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 					ApplyGraphicOptions();
 					return 0;
 				case IDM_CHANGEDETAIL:
-					PREFSMAN->m_bHighDetail = !PREFSMAN->m_bHighDetail;
+					if( PREFSMAN->m_iDisplayResolution != 640 )
+					{
+						PREFSMAN->m_iDisplayResolution = 640;
+						PREFSMAN->m_iTextureResolution = 512;
+					}
+					else
+					{
+						PREFSMAN->m_iDisplayResolution = 400;
+						PREFSMAN->m_iTextureResolution = 256;
+					}
 					ApplyGraphicOptions();
 					return 0;
                case IDM_EXIT:
@@ -490,7 +524,7 @@ HRESULT CreateObjects( HWND hWnd )
 	//
 	// Draw a splash bitmap so the user isn't looking at a black Window
 	//
-	HBITMAP hSplashBitmap = (HBITMAP)LoadImage( 
+/*	HBITMAP hSplashBitmap = (HBITMAP)LoadImage( 
 		GetModuleHandle( NULL ),
 		TEXT("BITMAP_SPLASH"), 
 		IMAGE_BITMAP,
@@ -512,7 +546,7 @@ HRESULT CreateObjects( HWND hWnd )
 	
 	// Delete the bitmap
 	DeleteObject( hSplashBitmap );
-
+*/
 
 
 	//
@@ -521,22 +555,22 @@ HRESULT CreateObjects( HWND hWnd )
 	srand( (unsigned)time(NULL) );	// seed number generator
 	
 	LOG			= new RageLog();
+#ifdef _DEBUG
+		LOG->ShowConsole();
+#endif
 	TIMER		= new RageTimer;
+	GAMESTATE	= new GameState;
+	PREFSMAN	= new PrefsManager;
+	GAMEMAN		= new GameManager;
+	THEME		= new ThemeManager;
 	SOUND		= new RageSound( hWnd );
 	MUSIC		= new RageSoundStream;
 	INPUTMAN	= new RageInput( hWnd );
-	PREFSMAN	= new PrefsManager;
-	DISPLAY		= new RageDisplay( hWnd );
-	SONGMAN		= new SongManager;		// this takes a long time to load
-	GAMEMAN		= new GameManager;
-	THEME		= new ThemeManager;
 	ANNOUNCER	= new AnnouncerManager;
 	INPUTFILTER	= new InputFilter();
 	INPUTMAPPER	= new InputMapper();
 	INPUTQUEUE	= new InputQueue();
-
-	BringWindowToTop( hWnd );
-	SetForegroundWindow( hWnd );
+	DISPLAY		= new RageDisplay( hWnd );
 
 	// We can't do any texture loading unless the D3D device is created.  
 	// Set the display mode to make sure the D3D device is created.
@@ -544,10 +578,19 @@ HRESULT CreateObjects( HWND hWnd )
 
 	TEXTUREMAN	= new RageTextureManager( DISPLAY );
 
-	// These things depend on the TextureManager, so do them last!
+	// These things depend on the TextureManager, so do them after!
 	FONT		= new FontManager;
 	SCREENMAN	= new ScreenManager;
 
+	SCREENMAN->SetNewScreen( new ScreenLoading );
+	Update();
+	Render();
+	::Sleep( 10000 );
+
+	SONGMAN		= new SongManager( Render );		// this takes a long time to load
+
+	BringWindowToTop( hWnd );
+	SetForegroundWindow( hWnd );
 
 
 	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
@@ -571,22 +614,23 @@ HRESULT CreateObjects( HWND hWnd )
 //-----------------------------------------------------------------------------
 void DestroyObjects()
 {
-	SAFE_DELETE( SCREENMAN );
-	SAFE_DELETE( FONT );
-	SAFE_DELETE( TEXTUREMAN );
 	SAFE_DELETE( INPUTQUEUE );
 	SAFE_DELETE( INPUTMAPPER );
 	SAFE_DELETE( INPUTFILTER );
-	SAFE_DELETE( ANNOUNCER );
-	SAFE_DELETE( THEME );
-	SAFE_DELETE( GAMEMAN );
 	SAFE_DELETE( SONGMAN );
-	SAFE_DELETE( DISPLAY );
 	SAFE_DELETE( PREFSMAN );
+	SAFE_DELETE( GAMESTATE );
+	SAFE_DELETE( GAMEMAN );
+	SAFE_DELETE( THEME );
+	SAFE_DELETE( ANNOUNCER );
 	SAFE_DELETE( INPUTMAN );
 	SAFE_DELETE( MUSIC );
 	SAFE_DELETE( SOUND );
 	SAFE_DELETE( TIMER );
+	SAFE_DELETE( SCREENMAN );
+	SAFE_DELETE( FONT );
+	SAFE_DELETE( TEXTUREMAN );
+	SAFE_DELETE( DISPLAY );
 	SAFE_DELETE( LOG );
 }
 
@@ -603,13 +647,18 @@ HRESULT RestoreObjects()
 
     // Set window size
     RECT rcWnd;
+	DWORD dwWindowStyle = g_dwWindowStyle;
+
 	if( DISPLAY->IsWindowed() )
 	{
-		SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
-  		AdjustWindowRect( &rcWnd, g_dwWindowStyle, FALSE );
+//		dwWindowStyle &= WS_THICKFRAME;
+//		SetWindowLong( g_hWndMain, GWL_STYLE, dwWindowStyle );
+		SetRect( &rcWnd, 0, 0, PREFSMAN->m_iDisplayResolution, PREFSMAN->GetDisplayHeight() );
+  		AdjustWindowRect( &rcWnd, dwWindowStyle, FALSE );
 	}
 	else	// if fullscreen
 	{
+//		SetWindowLong( g_hWndMain, GWL_STYLE, dwWindowStyle );
 		SetRect( &rcWnd, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) );
 	}
 
@@ -782,61 +831,94 @@ void ApplyGraphicOptions()
 {
 	InvalidateObjects();
 
-	bool bWindowed			= PREFSMAN->m_bWindowed;
-	CString sProfileName	= PREFSMAN->m_bHighDetail ? "High Detail" : "Low Detail";
-	DWORD dwWidth			= PREFSMAN->m_bHighDetail ? 640 : 320;
-	DWORD dwHeight			= PREFSMAN->m_bHighDetail ? 480 : 240;
-	DWORD dwDisplayBPP		= PREFSMAN->m_bHighDetail ? 16 : 16;
-	DWORD dwTextureBPP		= PREFSMAN->m_bHighDetail ? 16 : 16;
-	DWORD dwMaxTextureSize	= PREFSMAN->m_bHighDetail ? 
-		(PREFSMAN->m_bHighTextureDetail ? 1024 : 512) : 
-		(PREFSMAN->m_bHighTextureDetail ? 512 : 256);
+	bool &bWindowed			= PREFSMAN->m_bWindowed;
+	
+	int &iDisplayWidth	= PREFSMAN->m_iDisplayResolution;
+	int iDisplayHeight	= PREFSMAN->GetDisplayHeight();
+
+	int iDisplayBPP		= 16;
+	
+	int &iTextureSize	= PREFSMAN->m_iTextureResolution;
+	switch( iTextureSize )
+	{
+	case 1024:	break;
+	case 512:	break;
+	case 256:	break;
+	default:	throw RageException( "Invalid TextureResolution '%d'", iTextureSize );
+	}
+
+	int iTextureBPP		= 16;
+
+	int &iRefreshRate	= PREFSMAN->m_iRefreshRate;
+	switch( iRefreshRate )
+	{
+	case 120:	break;
+	case 100:	break;
+	case 85:	break;
+	case 75:	break;
+	case 60:	break;
+	default:	throw RageException( "Invalid RefreshRate '%d'", iRefreshRate );
+	}
+
+	CString sMessage = ssprintf( "%s - %dx%d, %dx%d textures%s", 
+		bWindowed ? "Windowed" : "FullScreen", 
+		iDisplayWidth, 
+		iDisplayHeight, 
+		iTextureSize, 
+		iTextureSize,
+		bWindowed ? "" : ssprintf(", %dHz", iRefreshRate) 
+		);
 
 	//
 	// If the requested resolution doesn't work, keep switching until we find one that does.
 	//
-	if( !DISPLAY->SwitchDisplayMode(bWindowed, dwWidth, dwHeight, dwDisplayBPP) )
-	{
-		// We failed.  Try full screen with same params.
-		bWindowed = false;
-		if( !DISPLAY->SwitchDisplayMode(bWindowed, dwWidth, dwHeight, dwDisplayBPP) )
-		{
-			// Failed again.  Try 16 BPP
-			dwDisplayBPP = 16;
-			if( !DISPLAY->SwitchDisplayMode(bWindowed, dwWidth, dwHeight, dwDisplayBPP) )
-			{
-				// Failed again.  Try 640x480
-				dwWidth = 640;
-				dwHeight = 480;
-				if( !DISPLAY->SwitchDisplayMode(bWindowed, dwWidth, dwHeight, dwDisplayBPP) )
-				{
-					// Failed again.  Try 320x240
-					dwWidth = 320;
-					dwHeight = 240;
-					if( !DISPLAY->SwitchDisplayMode(bWindowed, dwWidth, dwHeight, dwDisplayBPP) )
-					{
-						throw RageException( "Tried every possible display mode, and couldn't find one that works." );
-					}
-				}
-			}
-		}
-	}
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate) )
+		goto success;
+
+	// We failed.  Try full screen with same params.
+	iRefreshRate = 60;
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate) )
+		goto success;
+
+	// We failed.  Try full screen with same params.
+	bWindowed = false;
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate) )
+		goto success;
+
+	// Failed again.  Try 16 BPP
+	iDisplayBPP = 16;
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate) )
+		goto success;
+
+	// Failed again.  Try 640x480
+	iDisplayWidth = 640;
+	iDisplayHeight = 480;
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate) )
+		goto success;
+
+	// Failed again.  Try 320x240
+	iDisplayWidth = 320;
+	iDisplayHeight = 240;
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate) )
+		goto success;
+
+	throw RageException( "Tried every possible display mode, and couldn't find one that works." );
+
+success:
 
 	//
 	// Let the texture manager know about our preferences
 	//
 	if( TEXTUREMAN != NULL )
-		TEXTUREMAN->SetPrefs( dwMaxTextureSize, dwTextureBPP );
+		TEXTUREMAN->SetPrefs( iTextureSize, iTextureBPP );
 
 	RestoreObjects();
 
-	PREFSMAN->SavePrefsToDisk();
+	PREFSMAN->SaveGlobalPrefsToDisk();
 
 	if( SCREENMAN )
-	{
-		CString sMessage = ssprintf("%s - %s detail", bWindowed ? "Windowed" : "FullScreen", sProfileName );
 		SCREENMAN->SystemMessage( sMessage );
-	}
+
 }
 
 

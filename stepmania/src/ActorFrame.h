@@ -1,11 +1,12 @@
 #pragma once
 /*
 -----------------------------------------------------------------------------
- File: ActorFrame.h
+ Class: ActorFrame
 
- Desc: Base class for all objects that appear on the screen.
+ Desc: A container for other actors.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -23,7 +24,7 @@ protected:
 
 
 public:
-	void AddActor( Actor* pActor);
+	void AddSubActor( Actor* pActor);
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

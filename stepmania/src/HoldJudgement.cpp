@@ -12,7 +12,7 @@
 #include "HoldJudgement.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 
 const float JUDGEMENT_DISPLAY_TIME	=	0.6f;
@@ -24,7 +24,7 @@ HoldJudgement::HoldJudgement()
 	m_sprJudgement.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_JUDGEMENT) );
 	m_sprJudgement.StopAnimating();
 	m_sprJudgement.TurnShadowOn();
-	this->AddActor( &m_sprJudgement );
+	this->AddSubActor( &m_sprJudgement );
 }
 
 void HoldJudgement::Update( float fDeltaTime )

@@ -17,9 +17,10 @@
 #include "IniFile.h"
 #include "Song.h"
 #include "NoteData.h"
+#include "MsdFile.h"
 
 
-const int FILE_CACHE_VERSION = 43;	// increment this to force a cache reload (useful when the SM file format changes)
+const int FILE_CACHE_VERSION = 45;	// increment this to force a cache reload (useful when the SM file format changes)
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
@@ -309,7 +310,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	{
 		if( !DoesFileExist(GetCacheFilePath()) )
 			goto load_without_cache;
-		LoadFromSMFile( GetCacheFilePath() );	// don't load NoteData
+		LoadFromSMFile( GetCacheFilePath() );
 
 		LOG->WriteLine( "Loading '%s' from cache file '%s'.", m_sSongDir, GetCacheFilePath() );
 		return true;
@@ -822,105 +823,68 @@ bool Song::LoadFromSMFile( CString sPath )
 	m_sGroupName = sDirectoryParts[1];
 
 
-	CStdioFile file;	
-	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
-		throw RageException( "Error opening SM file '%s'.", sPath );
+	MsdFile msd;
+	bool bResult = msd.ReadFile( sPath );
 
-
-	// read the whole file into a sFileText
-	CString sFileText;
-	CString buffer;
-	while( file.ReadString(buffer) )
-		sFileText += buffer + "\n";
-	file.Close();
-
-	// strip comments out of sFileText
-	while( sFileText.Find("//") != -1 )
+	for( i=0; i<msd.m_iNumValues; i++ )
 	{
-		int iIndexCommentStart = sFileText.Find("//");
-		int iIndexCommentEnd = sFileText.Find("\n", iIndexCommentStart);
-		if( iIndexCommentEnd == -1 )	// comment doesn't have an end?
-			sFileText.Delete( iIndexCommentStart, 2 );
-		else
-			sFileText.Delete( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
-	}
-
-	// split sFileText into strings containing each value expression
-	CStringArray arrayValueStrings;
-	split( sFileText, ";", arrayValueStrings, false );
-
-
-	// for each value expression string, parse it into a value name and data
-	for( i=0; i < arrayValueStrings.GetSize(); i++ )
-	{
-		CString sValueString = arrayValueStrings[i];
-
-		// split the value string into tokens
-		CStringArray arrayValueTokens;
-		split( sValueString, ":", arrayValueTokens, false );
-		for( int j=0; j<arrayValueTokens.GetSize(); j++ )
-		{
-			arrayValueTokens[j].TrimLeft();
-			arrayValueTokens[j].TrimRight();
-		}
-		if( arrayValueTokens.GetSize() == 0 )
-			continue;
-
-		CString sValueName = arrayValueTokens.GetAt( 0 );
+		int iNumParams = msd.m_iNumParams[i];
+		CString* sParams = msd.m_sValuesAndParams[i];
+		CString sValueName = sParams[0];
 
 		// handle the data
-		if( 0==stricmp(sValueName,"#TITLE") )
-			GetMainAndSubTitlesFromFullTitle( arrayValueTokens[1], m_sMainTitle, m_sSubTitle );
+		if( 0==stricmp(sValueName,"TITLE") )
+			GetMainAndSubTitlesFromFullTitle( sParams[1], m_sMainTitle, m_sSubTitle );
 
-		else if( 0==stricmp(sValueName,"#SUBTITLE") )
-			m_sSubTitle = arrayValueTokens[1];
+		else if( 0==stricmp(sValueName,"SUBTITLE") )
+			m_sSubTitle = sParams[1];
 
-		else if( 0==stricmp(sValueName,"#ARTIST") )
-			m_sArtist = arrayValueTokens[1];
+		else if( 0==stricmp(sValueName,"ARTIST") )
+			m_sArtist = sParams[1];
 
-		else if( 0==stricmp(sValueName,"#CREDIT") )
-			m_sCredit = arrayValueTokens[1];
+		else if( 0==stricmp(sValueName,"CREDIT") )
+			m_sCredit = sParams[1];
 
-		else if( 0==stricmp(sValueName,"#BANNER") )
-			m_sBannerFile = arrayValueTokens[1];
+		else if( 0==stricmp(sValueName,"BANNER") )
+			m_sBannerFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"#BACKGROUND") )
-			m_sBackgroundFile = arrayValueTokens[1];
+		else if( 0==stricmp(sValueName,"BACKGROUND") )
+			m_sBackgroundFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"#CDTITLE") )
-			m_sCDTitleFile = arrayValueTokens[1];
+		else if( 0==stricmp(sValueName,"CDTITLE") )
+			m_sCDTitleFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"#MOVIEBACKGROUND") )
-			m_sMovieBackgroundFile = arrayValueTokens[1];
+		else if( 0==stricmp(sValueName,"MOVIEBACKGROUND") )
+			m_sMovieBackgroundFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"#MUSIC") )
-			m_sMusicFile = arrayValueTokens[1];
+		else if( 0==stricmp(sValueName,"MUSIC") )
+			m_sMusicFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"#MUSICBYTES") )
-			m_iMusicBytes = atoi( arrayValueTokens[1] );
+		else if( 0==stricmp(sValueName,"MUSICBYTES") )
+			m_iMusicBytes = atoi( sParams[1] );
 
-		else if( 0==stricmp(sValueName,"#MUSICLENGTH") )
-			m_fMusicLengthSeconds = (float)atof( arrayValueTokens[1] );
+		else if( 0==stricmp(sValueName,"MUSICLENGTH") )
+			m_fMusicLengthSeconds = (float)atof( sParams[1] );
 
-		else if( 0==stricmp(sValueName,"#FIRSTBEAT") )
-			m_fFirstBeat = (float)atof( arrayValueTokens[1] );
+		else if( 0==stricmp(sValueName,"FIRSTBEAT") )
+			m_fFirstBeat = (float)atof( sParams[1] );
 
-		else if( 0==stricmp(sValueName,"#LASTBEAT") )
-			m_fLastBeat = (float)atof( arrayValueTokens[1] );
+		else if( 0==stricmp(sValueName,"LASTBEAT") )
+			m_fLastBeat = (float)atof( sParams[1] );
 
-		else if( 0==stricmp(sValueName,"#SAMPLESTART") )
-			m_fMusicSampleStartSeconds = TimeToSeconds( arrayValueTokens[1] );
+		else if( 0==stricmp(sValueName,"SAMPLESTART") )
+			m_fMusicSampleStartSeconds = TimeToSeconds( sParams[1] );
 
-		else if( 0==stricmp(sValueName,"#SAMPLELENGTH") )
-			m_fMusicSampleLengthSeconds = TimeToSeconds( arrayValueTokens[1] );
+		else if( 0==stricmp(sValueName,"SAMPLELENGTH") )
+			m_fMusicSampleLengthSeconds = TimeToSeconds( sParams[1] );
 
-		else if( 0==stricmp(sValueName,"#OFFSET") )
-			m_fBeat0OffsetInSeconds = (float)atof( arrayValueTokens[1] );
+		else if( 0==stricmp(sValueName,"OFFSET") )
+			m_fBeat0OffsetInSeconds = (float)atof( sParams[1] );
 
-		else if( 0==stricmp(sValueName,"#STOPS") || 0==stricmp(sValueName,"#FREEZES") )
+		else if( 0==stricmp(sValueName,"STOPS") || 0==stricmp(sValueName,"FREEZES") )
 		{
 			CStringArray arrayFreezeExpressions;
-			split( arrayValueTokens[1], ",", arrayFreezeExpressions );
+			split( sParams[1], ",", arrayFreezeExpressions );
 
 			for( int f=0; f<arrayFreezeExpressions.GetSize(); f++ )
 			{
@@ -939,10 +903,10 @@ bool Song::LoadFromSMFile( CString sPath )
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"#BPMS") )
+		else if( 0==stricmp(sValueName,"BPMS") )
 		{
 			CStringArray arrayBPMChangeExpressions;
-			split( arrayValueTokens[1], ",", arrayBPMChangeExpressions );
+			split( sParams[1], ",", arrayBPMChangeExpressions );
 
 			for( int b=0; b<arrayBPMChangeExpressions.GetSize(); b++ )
 			{
@@ -959,10 +923,10 @@ bool Song::LoadFromSMFile( CString sPath )
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"#ANIMATIONS") )
+		else if( 0==stricmp(sValueName,"ANIMATIONS") )
 		{
 			CStringArray arrayAnimationExpressions;
-			split( arrayValueTokens[1], ",", arrayAnimationExpressions );
+			split( sParams[1], ",", arrayAnimationExpressions );
 
 			for( int b=0; b<arrayAnimationExpressions.GetSize(); b++ )
 			{
@@ -976,31 +940,22 @@ bool Song::LoadFromSMFile( CString sPath )
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"#NOTES") )
+		else if( 0==stricmp(sValueName,"NOTES") )
 		{
-			Notes* pNewNotes = NULL;
-			// Check to see if this notes already has been allocated
-			for( int j=0; j<m_apNotes.GetSize(); j++ )
-				if( m_apNotes[j]->m_NotesType == StringToNotesType(arrayValueTokens[1])  &&
-					m_apNotes[j]->m_sDescription == arrayValueTokens[2] )
-					pNewNotes = m_apNotes[j];
+			Notes* pNewNotes = new Notes;
+			ASSERT( pNewNotes );
+			m_apNotes.Add( pNewNotes );
 
-			if( pNewNotes == NULL )	// we didn't find a match that was already loaded
-			{
-				pNewNotes = new Notes;
-				m_apNotes.Add( pNewNotes );
-			}
-
-			if( arrayValueTokens.GetSize() != 7 )
-				throw RageException( "The song file '%s' is has %d fields in a #NOTES tag, but should have %d.", sPath, arrayValueTokens.GetSize(), 7 );
+			if( iNumParams != 7 )
+				throw RageException( "The song file '%s' is has %d fields in a #NOTES tag, but should have %d.", sPath, iNumParams, 7 );
 
 			pNewNotes->LoadFromSMTokens( 
-				arrayValueTokens[1], 
-				arrayValueTokens[2], 
-				arrayValueTokens[3], 
-				arrayValueTokens[4], 
-				arrayValueTokens[5], 
-				arrayValueTokens[6]
+				sParams[1], 
+				sParams[2], 
+				sParams[3], 
+				sParams[4], 
+				sParams[5], 
+				sParams[6]
 				);
 		}
 
@@ -1103,13 +1058,13 @@ void Song::TidyUpData()
 	{
 		// Skip any image that we've already classified
 
-		if( HasBanner()  &&  stricmp(GetBannerPath(), arrayImages[i])==0 )
+		if( HasBanner()  &&  stricmp(m_sBannerFile, arrayImages[i])==0 )
 			continue;	// skip
 
-		if( HasBackground()  &&  stricmp(GetBackgroundPath(), arrayImages[i])==0 )
+		if( HasBackground()  &&  stricmp(m_sBackgroundFile, arrayImages[i])==0 )
 			continue;	// skip
 
-		if( HasCDTitle()  &&  stricmp(GetCDTitlePath(), arrayImages[i])==0 )
+		if( HasCDTitle()  &&  stricmp(m_sCDTitleFile, arrayImages[i])==0 )
 			continue;	// skip
 
 		D3DXIMAGE_INFO ddii;
@@ -1120,12 +1075,12 @@ void Song::TidyUpData()
 				m_sBackgroundFile = arrayImages[i];
 				continue;
 			}
-			if( !HasBanner()  &&  100 < ddii.Width &&  ddii.Width < 320  &&  64 < ddii.Height  &&  ddii.Height < 240 )
+			if( !HasBanner()  &&  100 < ddii.Width &&  ddii.Width < 320  &&  50 < ddii.Height  &&  ddii.Height < 240 )
 			{
 				m_sBannerFile = arrayImages[i];
 				continue;
 			}
-			if( !HasCDTitle()  &&  ddii.Width <= 100  &&  ddii.Height <= 64 )
+			if( !HasCDTitle()  &&  ddii.Width <= 100  &&  ddii.Height <= 50 )
 			{
 				m_sCDTitleFile = arrayImages[i];
 				continue;

@@ -20,20 +20,32 @@ class LifeMeterBar : public LifeMeter
 public:
 	LifeMeterBar();
 	
+	virtual void Load( PlayerNumber p, const PlayerOptions &po );
+
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
 	virtual void ChangeLife( TapNoteScore score );
 	virtual bool IsInDanger();
 	virtual bool IsHot();
-	virtual bool HasFailed();
+	virtual bool IsFailing();
+	virtual bool FailedEarlier();
 
 private:
-	D3DXCOLOR GetColor( float fPercentIntoSection );
 	void ResetBarVelocity();
+
+	ActorFrame	m_frame;	// hold everything and mirror this for PLAYER_2 instead of mirroring all the individual Actors 
+
+	Quad		m_quadBlackBackground;
+	Sprite		m_sprStreamNormal;
+	Sprite		m_sprStreamHot;
+	Sprite		m_sprFrame;
+
+	PlayerOptions m_PlayerOptions;
 
 	float		m_fLifePercentage;
 	float		m_fTrailingLifePercentage;	// this approaches m_fLifePercentage
 	float		m_fLifeVelocity;	// how m_fTrailingLifePercentage approaches m_fLifePercentage
-	bool		m_bHasFailed;		// set this to true when life dips below 0
+	float		m_fHotAlpha;
+	bool		m_bFailedEarlier;		// set this to true when life dips below 0
 };

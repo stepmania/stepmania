@@ -12,7 +12,7 @@
 #include "RageUtil.h"
 
 #include "CroppedSprite.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "RageBitmapTexture.h"
 
 

@@ -13,7 +13,7 @@
 
 #include "TransitionKeepAlive.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 
 const float KEEP_ALIVE_FORWARD_TRANSITION_TIME	=	0.8f;

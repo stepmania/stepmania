@@ -19,7 +19,7 @@
 #include "RageMusic.h"
 #include "ScreenTitleMenu.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "ScreenGameplay.h"
 #include "ScreenPrompt.h"
 #include "ScreenPlayerOptions.h"
@@ -28,13 +28,14 @@
 #include "InputQueue.h"
 #include "ScreenStage.h"
 #include "AnnouncerManager.h"
+#include "GameState.h"
 
 
 const float COURSE_INFO_FRAME_X	= 160;
 const float COURSE_INFO_FRAME_Y	= SCREEN_TOP+118;
 
 const float COURSE_CONTENTS_FRAME_X	= 160;
-const float COURSE_CONTENTS_FRAME_Y	= CENTER_Y+100;
+const float COURSE_CONTENTS_FRAME_Y	= CENTER_Y+70;
 
 const float WHEEL_X		= CENTER_X+160;
 const float WHEEL_Y		= CENTER_Y+8;
@@ -54,8 +55,8 @@ ScreenSelectCourse::ScreenSelectCourse()
 	LOG->WriteLine( "ScreenSelectCourse::ScreenSelectCourse()" );
 
 	// for debugging
-	if( GAMEMAN->m_CurStyle == STYLE_NONE )
-		GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;
+	if( GAMESTATE->m_CurStyle == STYLE_NONE )
+		GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
 
 	m_Menu.Load(
 		THEME->GetPathTo(GRAPHIC_SELECT_COURSE_BACKGROUND), 
@@ -64,16 +65,16 @@ ScreenSelectCourse::ScreenSelectCourse()
 		char(1), char(2), char(3), char(3), char(4), char(4), char(3), char(4), char(3), char(4) ),
 		false, true, 60 
 		);
-	this->AddActor( &m_Menu );
+	this->AddSubActor( &m_Menu );
 
 	m_CourseInfoFrame.SetXY( COURSE_INFO_FRAME_X, COURSE_INFO_FRAME_Y );
-	this->AddActor( &m_CourseInfoFrame );
+	this->AddSubActor( &m_CourseInfoFrame );
 
 	m_CourseContentsFrame.SetXY( COURSE_CONTENTS_FRAME_X, COURSE_CONTENTS_FRAME_Y );
-	this->AddActor( &m_CourseContentsFrame );
+	this->AddSubActor( &m_CourseContentsFrame );
 
 	m_MusicWheel.SetXY( WHEEL_X, WHEEL_Y );
-	this->AddActor( &m_MusicWheel );
+	this->AddSubActor( &m_MusicWheel );
 
 	m_textHoldForOptions.Load( THEME->GetPathTo(FONT_STAGE) );
 	m_textHoldForOptions.SetXY( CENTER_X, CENTER_Y );
@@ -82,7 +83,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 	m_textHoldForOptions.SetZoomY( 0 );
 	m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	m_textHoldForOptions.SetZ( -2 );
-	this->AddActor( &m_textHoldForOptions );
+	this->AddSubActor( &m_textHoldForOptions );
 
 
 	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
@@ -222,7 +223,7 @@ void ScreenSelectCourse::MenuStart( const PlayerNumber p )
 
 		m_Menu.TweenOffScreenToBlack( SM_None, false );
 
-		SONGMAN->m_pCurCourse = m_MusicWheel.GetSelectedCourse();
+		GAMESTATE->m_pCurCourse = m_MusicWheel.GetSelectedCourse();
 
 		this->SendScreenMessage( SM_GoToNextState, 2.5f );
 		

@@ -12,7 +12,7 @@
 */
 
 #include "GrayArrow.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 const float GRAY_ARROW_POP_UP_TIME			= 0.15f;
 

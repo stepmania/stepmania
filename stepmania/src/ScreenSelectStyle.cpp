@@ -18,12 +18,13 @@
 #include "ScreenTitleMenu.h"
 #include "ScreenCaution.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "ScreenSelectDifficulty.h"
 #include "ScreenSandbox.h"
 #include "GameManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
+#include "GameState.h"
 
 
 const float ICONS_START_X	= SCREEN_LEFT + 60;
@@ -50,13 +51,13 @@ ScreenSelectStyle::ScreenSelectStyle()
 
 
 	// Reset the current style and game
-	GAMEMAN->m_CurStyle = STYLE_NONE;
+	GAMESTATE->m_CurStyle = STYLE_NONE;
 
 
 	for( int s=0; s<NUM_STYLES; s++ )
 	{
 		Style style = (Style)s;
-		if( StyleToGame(style) == GAMEMAN->m_CurGame )	// games match
+		if( StyleToGame(style) == GAMESTATE->GetCurGame() )	// games match
 			m_aPossibleStyles.Add( style );		
 	}
 
@@ -69,18 +70,18 @@ ScreenSelectStyle::ScreenSelectStyle()
 		m_sprIcon[i].StopAnimating();
 		m_sprIcon[i].SetState( style );
 		m_sprIcon[i].SetXY( ICONS_START_X + ICONS_SPACING_X*i, ICON_Y );
-		this->AddActor( &m_sprIcon[i] );
+		this->AddSubActor( &m_sprIcon[i] );
 	}
 
 	m_sprExplanation.Load( THEME->GetPathTo(GRAPHIC_SELECT_STYLE_EXPLANATION) );
 	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
-	this->AddActor( &m_sprExplanation );
+	this->AddSubActor( &m_sprExplanation );
 	
 	m_sprPreview.SetXY( PREVIEW_X, PREVIEW_Y );
-	this->AddActor( &m_sprPreview );
+	this->AddSubActor( &m_sprPreview );
 	
 	m_sprInfo.SetXY( INFO_X, INFO_Y );
-	this->AddActor( &m_sprInfo );
+	this->AddSubActor( &m_sprInfo );
 	
 
 	// Load dummy Sprites
@@ -102,7 +103,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 		ssprintf("Use %c %c to select, then press START", char(1), char(2) ),
 		false, true, 40 
 		);
-	this->AddActor( &m_Menu );
+	this->AddSubActor( &m_Menu );
 
 	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_STYLE_CHANGE) );
 	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
@@ -232,11 +233,11 @@ void ScreenSelectStyle::MenuRight( const PlayerNumber p )
 void ScreenSelectStyle::MenuStart( const PlayerNumber p )
 {
 	if( p != PLAYER_INVALID )
-		GAMEMAN->m_sMasterPlayerNumber = p;
-	GAMEMAN->m_CurStyle = GetSelectedStyle();
+		GAMESTATE->m_MasterPlayerNumber = p;
+	GAMESTATE->m_CurStyle = GetSelectedStyle();
 
 	AnnouncerElement ae;
-	switch( GAMEMAN->m_CurStyle )
+	switch( GAMESTATE->m_CurStyle )
 	{
 		case STYLE_DANCE_SINGLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_SINGLE;		break;
 		case STYLE_DANCE_VERSUS:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_VERSUS;		break;

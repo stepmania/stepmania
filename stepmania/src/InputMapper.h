@@ -29,13 +29,6 @@ public:
 	InputMapper();
 	~InputMapper();
 
-	void SwitchGame( CString sNewGame )
-	{
-		SaveMappingsToDisk();
-		m_sCurrentGame = sNewGame;
-		ReadMappingsFromDisk();
-	};
-
 	void ReadMappingsFromDisk();
 	void SaveMappingsToDisk();
 
@@ -63,8 +56,6 @@ public:
 
 
 protected:
-	CString m_sCurrentGame;
-
 	// all the DeviceInputs that map to a GameInput
 	DeviceInput m_GItoDI[MAX_INSTRUMENTS][MAX_INSTRUMENT_BUTTONS][NUM_GAME_TO_DEVICE_SLOTS];
 

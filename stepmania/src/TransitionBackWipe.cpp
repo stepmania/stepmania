@@ -12,7 +12,7 @@
 
 #include "TransitionBackWipe.h"
 #include "RageUtil.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 
 #define RECTANGLE_WIDTH	20

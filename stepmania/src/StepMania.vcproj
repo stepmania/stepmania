@@ -210,6 +210,12 @@
 				RelativePath="ScreenGameplay.h">
 			</File>
 			<File
+				RelativePath="ScreenLoading.cpp">
+			</File>
+			<File
+				RelativePath="ScreenLoading.h">
+			</File>
+			<File
 				RelativePath="ScreenManager.cpp">
 			</File>
 			<File
@@ -420,6 +426,12 @@
 			</File>
 			<File
 				RelativePath=".\IniFile.h">
+			</File>
+			<File
+				RelativePath="MsdFile.cpp">
+			</File>
+			<File
+				RelativePath="MsdFile.h">
 			</File>
 		</Filter>
 		<Filter
@@ -744,10 +756,10 @@
 				RelativePath="LifeMeterBar.h">
 			</File>
 			<File
-				RelativePath=".\LifeMeterPills.cpp">
+				RelativePath="LifeMeterBattery.cpp">
 			</File>
 			<File
-				RelativePath=".\LifeMeterPills.h">
+				RelativePath="LifeMeterBattery.h">
 			</File>
 			<File
 				RelativePath=".\MotionBlurSprite.cpp">
@@ -762,10 +774,22 @@
 				RelativePath="NoteField.h">
 			</File>
 			<File
-				RelativePath="ScoreDisplayRolling.cpp">
+				RelativePath="ScoreDisplay.cpp">
 			</File>
 			<File
-				RelativePath="ScoreDisplayRolling.h">
+				RelativePath="ScoreDisplay.h">
+			</File>
+			<File
+				RelativePath="ScoreDisplayNormal.cpp">
+			</File>
+			<File
+				RelativePath="ScoreDisplayNormal.h">
+			</File>
+			<File
+				RelativePath="ScoreDisplayOni.cpp">
+			</File>
+			<File
+				RelativePath="ScoreDisplayOni.h">
 			</File>
 		</Filter>
 		<Filter
@@ -910,6 +934,12 @@
 			</File>
 			<File
 				RelativePath=".\GameManager.h">
+			</File>
+			<File
+				RelativePath="GameState.cpp">
+			</File>
+			<File
+				RelativePath="GameState.h">
 			</File>
 			<File
 				RelativePath="InputFilter.cpp">

@@ -42,6 +42,7 @@ enum AnnouncerElement {
 	ANNOUNCER_EVALUATION_FINAL_B,
 	ANNOUNCER_EVALUATION_FINAL_C,
 	ANNOUNCER_EVALUATION_FINAL_D,
+	ANNOUNCER_EVALUATION_FINAL_E,
 	ANNOUNCER_GAME_OVER,
 	ANNOUNCER_MENU_HURRY_UP,
 	ANNOUNCER_MUSIC_SCROLL,
@@ -51,6 +52,7 @@ enum AnnouncerElement {
 	ANNOUNCER_EVALUATION_B,
 	ANNOUNCER_EVALUATION_C,
 	ANNOUNCER_EVALUATION_D,
+	ANNOUNCER_EVALUATION_E,
 	ANNOUNCER_SELECT_COURSE_INTRO,
 	ANNOUNCER_SELECT_DIFFICULTY_COMMENT_EASY,
 	ANNOUNCER_SELECT_DIFFICULTY_COMMENT_HARD,
@@ -76,8 +78,10 @@ enum AnnouncerElement {
 	ANNOUNCER_STAGE_3,
 	ANNOUNCER_STAGE_4,
 	ANNOUNCER_STAGE_5,
-	ANNOUNCER_STAGE_EXTRA,
 	ANNOUNCER_STAGE_FINAL,
+	ANNOUNCER_STAGE_EXTRA,
+	ANNOUNCER_STAGE_ANOTHER_EXTRA,
+	ANNOUNCER_STAGE_CHALLENGE,
 	ANNOUNCER_TITLE_MENU_ATTRACT,
 	ANNOUNCER_TITLE_MENU_GAME_NAME,
 
@@ -91,19 +95,23 @@ public:
 	AnnouncerManager();
 
 	void GetAnnouncerNames( CStringArray& AddTo );
-	CString GetCurrentAnnouncerName() { return m_sCurAnnouncerName; }
-	void SwitchAnnouncer( CString sAnnouncerName );		// return false if Announcer doesn't exist
-	void AssertAnnouncerIsComplete( CString sAnnouncerName );		// return false if Announcer doesn't exist
+	bool DoesAnnouncerExist( CString sAnnouncerName );
+	void SwitchAnnouncer( CString sNewAnnouncerName );
+	CString GetCurAnnouncerName() { return m_sCurAnnouncerName; };
+
 	CString GetPathTo( AnnouncerElement ae );
-	CString GetPathTo( AnnouncerElement ae, CString sAnnouncerName );
 
 protected:
-	CString GetAnnouncerDirFromName( CString sAnnouncerName );
+	void AssertAnnouncerIsComplete( CString sAnnouncerName );		// only used in Debug
+	CString GetPathTo( AnnouncerElement ae, CString sAnnouncerName );
+
+	static CString GetAnnouncerDirFromName( CString sAnnouncerName );
 	CString GetElementDir( AnnouncerElement te );
 
-	CString m_sCurAnnouncerName;	// "" means no announcer
+	CString m_sCurAnnouncerName;
 };
 
 
 
 extern AnnouncerManager*	ANNOUNCER;	// global and accessable from anywhere in our program
+	

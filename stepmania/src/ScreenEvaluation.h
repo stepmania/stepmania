@@ -18,7 +18,7 @@
 #include "GradeDisplay.h"
 #include "MenuElements.h"
 #include "Banner.h"
-#include "ScoreDisplayRolling.h"
+#include "ScoreDisplayNormal.h"
 #include "BonusInfoFrame.h"
 #include "BannerWithFrame.h"
 
@@ -58,7 +58,7 @@ protected:
 	BitmapText			m_textJudgeNumbers[NUM_JUDGE_LINES][NUM_PLAYERS];
 
 	Sprite				m_sprScoreLabel;
-	ScoreDisplayRolling	m_ScoreDisplay[NUM_PLAYERS];
+	ScoreDisplayNormal	m_ScoreDisplay[NUM_PLAYERS];
 
 	bool				m_bNewRecord[NUM_PLAYERS];
 	BitmapText			m_textNewRecord[NUM_PLAYERS];

@@ -23,6 +23,8 @@ public:
 	virtual void MenuStart( const PlayerNumber p );
 
 private:
+
+	bool m_bClosing;
 	Sprite			m_sprGameOver;
 };
 

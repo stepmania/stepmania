@@ -1,18 +1,21 @@
 #include "stdafx.h"	// testing updates
 /*
 -----------------------------------------------------------------------------
- File: ActorFrame.h
+ Class: ActorFrame
 
- Desc: Base class for all objects that appear on the screen.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
 #include "ActorFrame.h"
 
-void ActorFrame::AddActor( Actor* pActor)
+void ActorFrame::AddSubActor( Actor* pActor)
 {
+	ASSERT( pActor );
+	ASSERT( (void*)pActor != (void*)0xC0000005 );
 	m_SubActors.Add( pActor );
 }
 

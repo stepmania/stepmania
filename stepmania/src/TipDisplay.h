@@ -31,11 +31,9 @@ protected:
 	BitmapText m_textTip;
 
 	CStringArray m_arrayTips;
-	int iLastTipShown;
+	int m_iCurTipIndex;
 	
-	enum TipState { STATE_FADING_IN, STATE_SHOWING, STATE_FADING_OUT };
-	TipState m_TipState;
-	float m_fTimeLeftInState;
+	float m_fSecsUntilSwitch;
 };
 
 #endif

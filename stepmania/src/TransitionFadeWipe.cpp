@@ -13,7 +13,7 @@
 
 #include "TransitionFadeWipe.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 const float FADE_RECT_WIDTH		=	SCREEN_WIDTH/2;
 

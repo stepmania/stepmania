@@ -21,22 +21,25 @@
 #include "ScreenTitleMenu.h"
 #include "GameConstantsAndTypes.h"
 #include "StepMania.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
 #include "GameManager.h"
+#include "GameState.h"
 
 
 
 enum {
 	AO_ANNOUNCER = 0,
+	AO_THEME,
 	AO_SKIN,
 	NUM_APPEARANCE_OPTIONS_LINES
 };
 
 OptionLineData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 	{ "Announcer",	1, {"OFF"} },	// fill this in on ImportOptions()
-	{ "Note Skin",	0, {""} },	// fill this in on ImportOptions()
+	{ "Theme",		0, {""} },		// fill this in on ImportOptions()
+	{ "Note Skin",	0, {""} },		// fill this in on ImportOptions()
 };
 
 ScreenAppearanceOptions::ScreenAppearanceOptions() :
@@ -57,7 +60,9 @@ ScreenAppearanceOptions::ScreenAppearanceOptions() :
 
 void ScreenAppearanceOptions::ImportOptions()
 {
+	//
 	// fill in announcer names
+	//
 	CStringArray arrayAnnouncerNames;
 	ANNOUNCER->GetAnnouncerNames( arrayAnnouncerNames );
 
@@ -71,7 +76,7 @@ void ScreenAppearanceOptions::ImportOptions()
 	m_iSelectedOption[0][AO_ANNOUNCER] = -1;
 	for( i=1; i<m_OptionLineData[AO_ANNOUNCER].iNumOptions; i++ )
 	{
-		if( stricmp(m_OptionLineData[AO_ANNOUNCER].szOptionsText[i], ANNOUNCER->GetCurrentAnnouncerName())==0 )
+		if( 0==stricmp(m_OptionLineData[AO_ANNOUNCER].szOptionsText[i], ANNOUNCER->GetCurAnnouncerName()) )
 		{
 			m_iSelectedOption[0][AO_ANNOUNCER] = i;
 			break;
@@ -81,9 +86,37 @@ void ScreenAppearanceOptions::ImportOptions()
 		m_iSelectedOption[0][AO_ANNOUNCER] = 0;
 
 
+	//
+	// fill in theme names
+	//
+	CStringArray arrayThemeNames;
+	THEME->GetThemeNames( arrayThemeNames );
+
+	m_OptionLineData[AO_THEME].iNumOptions	=	arrayThemeNames.GetSize() + 1; 
+	
+	for( i=0; i<arrayThemeNames.GetSize(); i++ )
+		strcpy( m_OptionLineData[AO_THEME].szOptionsText[i+1], arrayThemeNames[i] ); 
+
+
+	// highlight currently selected theme
+	m_iSelectedOption[0][AO_THEME] = -1;
+	for( i=1; i<m_OptionLineData[AO_THEME].iNumOptions; i++ )
+	{
+		if( 0==stricmp(m_OptionLineData[AO_THEME].szOptionsText[i], THEME->GetCurThemeName()) )
+		{
+			m_iSelectedOption[0][AO_THEME] = i;
+			break;
+		}
+	}
+	if( m_iSelectedOption[0][AO_THEME] == -1 )
+		m_iSelectedOption[0][AO_THEME] = 0;
+
+
+	//
 	// fill in skin names
+	//
 	CStringArray arraySkinNames;
-	GAMEMAN->GetSkinNames( arraySkinNames );
+	GAMEMAN->GetNoteSkinNames( arraySkinNames );
 
 	m_OptionLineData[AO_SKIN].iNumOptions	=	arraySkinNames.GetSize(); 
 	
@@ -94,7 +127,7 @@ void ScreenAppearanceOptions::ImportOptions()
 	m_iSelectedOption[0][AO_SKIN] = -1;
 	for( i=0; i<m_OptionLineData[AO_SKIN].iNumOptions; i++ )
 	{
-		if( stricmp(m_OptionLineData[AO_SKIN].szOptionsText[i], GAMEMAN->m_sCurrentSkin)==0 )
+		if( 0==stricmp(m_OptionLineData[AO_SKIN].szOptionsText[i], GAMEMAN->GetCurNoteSkin()) )
 		{
 			m_iSelectedOption[0][AO_SKIN] = i;
 			break;
@@ -110,26 +143,26 @@ void ScreenAppearanceOptions::ExportOptions()
 	CString sNewAnnouncer = m_OptionLineData[AO_ANNOUNCER].szOptionsText[iSelectedAnnouncer];
 	if( iSelectedAnnouncer == 0 )
 		sNewAnnouncer = "";
-	PREFSMAN->m_sAnnouncer = sNewAnnouncer;
 	ANNOUNCER->SwitchAnnouncer( sNewAnnouncer );
+
+	int iSelectedTheme = m_iSelectedOption[0][AO_THEME];
+	CString sNewTheme = m_OptionLineData[AO_THEME].szOptionsText[iSelectedTheme];
+	THEME->SwitchTheme( sNewTheme );
 
 	int iSelectedSkin = m_iSelectedOption[0][AO_SKIN];
 	CString sNewSkin = m_OptionLineData[AO_SKIN].szOptionsText[iSelectedSkin];
-	PREFSMAN->m_sNoteSkin = sNewSkin;
-	GAMEMAN->m_sCurrentSkin = sNewSkin;
+	GAMEMAN->SwitchNoteSkin( sNewSkin );
 }
 
 void ScreenAppearanceOptions::GoToPrevState()
 {
-	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
-	PREFSMAN->SavePrefsToDisk();
-
+	GoToNextState();
 }
 
 void ScreenAppearanceOptions::GoToNextState()
 {
 	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
-	PREFSMAN->SavePrefsToDisk();
+	PREFSMAN->SaveGlobalPrefsToDisk();
 }
 
 

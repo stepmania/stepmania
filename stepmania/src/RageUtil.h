@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
  File: RageUtil
 
- Desc: Miscellaneous helper functions.
+ Desc: Miscellaneous helper macros and functions.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -18,10 +18,8 @@
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
 #define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
 
+#define ZERO(x)					memset(&x, 0, sizeof(x))
 
-//-----------------------------------------------------------------------------
-// Other Macros
-//-----------------------------------------------------------------------------
 #define RECTWIDTH(rect)   ((rect).right  - (rect).left)
 #define RECTHEIGHT(rect)  ((rect).bottom - (rect).top)
 inline int RECTCENTERX(RECT rect) { return rect.left + (rect.right-rect.left)/2; }
@@ -37,10 +35,54 @@ inline int RECTCENTERY(RECT rect) { return rect.top + (rect.bottom-rect.top)/2; 
 
 #define clamp(val,low,high)		( max( (low), min((val),(high)) ) )
 
+#define PI		D3DX_PI
+#define DEG		(PI / 180.0f)
+#define RAD		(180.0f / PI)
+// Scales x so that l1 corresponds to l2 and h1 corresponds to h2.  Does not modify x, MUST assign the result to something!
+#define SCALE(x, l1, h1, l2, h2)	(((x) - (l1)) / ((h1) - (l1)) * ((h2) - (l2)) + (l2))
+// Clamps x
+#define CLAMP(x, l, h)	{if (x > h) x = h; else if (x < l) x = l;}
+
 
 //-----------------------------------------------------------------------------
 // Misc helper functions
 //-----------------------------------------------------------------------------
+
+// Fast random number generators
+// Taken from "Numerical Recipes in C"
+
+extern ULONG randseed;
+
+inline ULONG Random()
+{
+	randseed = 1664525L * randseed + 1013904223L;
+	return randseed;
+}
+
+inline float RandomFloat()
+{
+	randseed = 1664525L * randseed + 1013904223L;
+	ULONG itemp = 0x3f800000 | (0x007fffff & randseed);
+	return (*(float *)&itemp) - 1.0f;
+}
+
+// Returns a float between dLow and dHigh inclusive
+inline float RandomFloat(float fLow, float fHigh)
+{
+	return RandomFloat() * (fHigh - fLow) + fLow;
+}
+
+// Returns an integer between nLow and nHigh inclusive
+inline int RandomInt(int nLow, int nHigh)
+{
+	return ((Random() >> 2) % (nHigh - nLow + 1)) + nLow;
+}
+
+// Debug new for memory leak tracing
+//#ifdef _DEBUG
+//#define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
+//#endif
+
 
 // Simple function for generating random numbers
 inline float randomf( const float low=-1.0f, const float high=1.0f )
@@ -98,7 +140,6 @@ CString join(
 
 void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
 int GetHashForString( CString s );
-unsigned int GetCrc32ForString( CString s );
 int GetHashForFile( CString sPath );
 int GetHashForDirectory( CString sDir );	// a hash value that remains the same as long as nothing in the directory has changed
 

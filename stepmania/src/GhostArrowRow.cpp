@@ -12,11 +12,12 @@
 #include "GhostArrowRow.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "ColorNote.h"
 #include "ArrowEffects.h"
 #include "GameManager.h"
-
+#include "GameState.h"
+#include "PrefsManager.h"
 
 
 GhostArrowRow::GhostArrowRow()
@@ -28,16 +29,16 @@ void GhostArrowRow::Load( PlayerNumber pn, StyleDef* pStyleDef, PlayerOptions po
 {
 	m_PlayerOptions = po;
 
-	GameDef* pGameDef = GAMEMAN->GetCurrentGameDef();
+	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 
 	m_iNumCols = pStyleDef->m_iColsPerPlayer;
 
 	// init arrows
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		m_GhostArrowRow[c].Load( GAMEMAN->GetPathToGraphic(pn, c, GRAPHIC_TAP_EXPLOSION_DIM) );
-		m_GhostArrowRowBright[c].Load( GAMEMAN->GetPathToGraphic(pn, c, GRAPHIC_TAP_EXPLOSION_BRIGHT) );
-		m_HoldGhostArrowRow[c].Load( GAMEMAN->GetPathToGraphic(pn, c, GRAPHIC_HOLD_EXPLOSION) );
+		m_GhostArrowRow[c].Load( GAMEMAN->GetPathTo(c, GRAPHIC_TAP_EXPLOSION_DIM) );
+		m_GhostArrowRowBright[c].Load( GAMEMAN->GetPathTo(c, GRAPHIC_TAP_EXPLOSION_BRIGHT) );
+		m_HoldGhostArrowRow[c].Load( GAMEMAN->GetPathTo(c, GRAPHIC_HOLD_EXPLOSION) );
 
 		m_GhostArrowRow[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
 		m_GhostArrowRowBright[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );

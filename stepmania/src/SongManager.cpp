@@ -15,6 +15,7 @@
 #include "IniFile.h"
 #include "RageLog.h"
 
+#include "GameState.h"
 #include "PrefsManager.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
@@ -23,7 +24,7 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 const CString g_sStatisticsFileName = "statistics.ini";
 
 D3DXCOLOR GROUP_COLORS[] = { 
-	D3DXCOLOR( 0.9f, 0.0f, 0.2f, 1 ),	// red
+//	D3DXCOLOR( 0.9f, 0.0f, 0.2f, 1 ),	// red
 	D3DXCOLOR( 0.7f, 0.0f, 0.5f, 1 ),	// pink
 	D3DXCOLOR( 0.4f, 0.2f, 0.6f, 1 ),	// purple
 	D3DXCOLOR( 0.0f, 0.4f, 0.8f, 1 ),	// sky blue
@@ -34,19 +35,13 @@ D3DXCOLOR GROUP_COLORS[] = {
 const int NUM_GROUP_COLORS = sizeof(GROUP_COLORS) / sizeof(D3DXCOLOR);
 
 
-SongManager::SongManager()
+SongManager::SongManager( void(*callback)() )
 {
-	m_pCurSong = NULL;
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		m_pCurNotes[p] = NULL;
-	m_pCurCourse = NULL;
-
-	InitSongArrayFromDisk();
+	InitSongArrayFromDisk( callback );
 	ReadStatisticsFromDisk();
 
 	InitCoursesFromDisk();
 }
-
 
 SongManager::~SongManager()
 {
@@ -58,38 +53,12 @@ SongManager::~SongManager()
 }
 
 
-Song* SongManager::GetCurrentSong()
+void SongManager::InitSongArrayFromDisk( void(*callback)() )
 {
-	return m_pCurSong;
-}
-
-Notes* SongManager::GetCurrentNotes( PlayerNumber p )
-{
-	return m_pCurNotes[p];
-}
-
-void SongManager::SetCurrentSong( Song* pSong )
-{
-	m_pCurSong = pSong;
-}
-
-void SongManager::SetCurrentNotes( PlayerNumber p, Notes* pNotes )
-{
-	m_pCurNotes[p] = pNotes;
-}
-
-GameplayStatistics SongManager::GetLatestGameplayStatistics( PlayerNumber p )
-{
-	ASSERT( m_aGameplayStatistics[p].GetSize() > 0 );
-	return m_aGameplayStatistics[p][ m_aGameplayStatistics[p].GetSize()-1 ];
-}
-
-void SongManager::InitSongArrayFromDisk()
-{
-	LoadStepManiaSongDir( "Songs" );
+	LoadStepManiaSongDir( "Songs", callback );
 
 	for( int i=0; i<PREFSMAN->m_asSongFolders.GetSize(); i++ )
-        LoadStepManiaSongDir( PREFSMAN->m_asSongFolders[i] );
+        LoadStepManiaSongDir( PREFSMAN->m_asSongFolders[i], callback );
 	
 	// compute group names
 	CArray<Song*, Song*> arraySongs;
@@ -108,7 +77,7 @@ void SongManager::InitSongArrayFromDisk()
 	LOG->WriteLine( "Found %d Songs.", m_pSongs.GetSize() );
 }
 
-void SongManager::LoadStepManiaSongDir( CString sDir )
+void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 {
 	// trim off the trailing slash if any
 	sDir.TrimRight( "/\\" );
@@ -132,8 +101,10 @@ void SongManager::LoadStepManiaSongDir( CString sDir )
 		GetDirListing( ssprintf("%s\\%s\\*.wav", sDir, sGroupDirName), arrayFiles );
 		if( arrayFiles.GetSize() > 0 )
 			throw RageException( 
-				ssprintf( "The song folder '%s' must be placed inside of a group folder.\n\n"
-					"All song folders must be placed below a group folder.  For example, 'Songs\\DDR 4th Mix\\B4U'.  See the StepMania readme for more info.",
+				ssprintf( "The folder '%s' contains music files.\n\n"
+					"This probably means that you have a song outside of a group folder.\n"
+					"All song folders must reside in a group folder.  For example, 'Songs\\DDR 4th Mix\\B4U'.\n"
+					"See the StepMania readme for more info.",
 					ssprintf("%s\\%s", sDir, sGroupDirName ) )
 			);
 		
@@ -162,11 +133,17 @@ void SongManager::LoadStepManiaSongDir( CString sDir )
 				continue;		// ignore it
 
 			// this is a song directory.  Load a new song!
+			GAMESTATE->m_sLoadingMessage = ssprintf("Loading songs...\n%s\n\n%s", sGroupDirName, sSongDirName);
+			if( callback )
+				callback();
 			Song* pNewSong = new Song;
 			pNewSong->LoadFromSongDir( ssprintf("%s\\%s\\%s", sDir, sGroupDirName, sSongDirName) );
 			m_pSongs.Add( pNewSong );
 		}
 	}
+	GAMESTATE->m_sLoadingMessage = "Done loading songs.";
+	if( callback )
+		callback();
 }
 
 
@@ -237,7 +214,7 @@ void SongManager::FreeSongArray()
 
 void SongManager::ReloadSongArray()
 {
-	InitSongArrayFromDisk();
+	InitSongArrayFromDisk( NULL );
 	FreeSongArray();
 }
 
@@ -254,24 +231,22 @@ void SongManager::ReadStatisticsFromDisk()
 
 
 	// load song statistics
-	CMapStringToString* pKey = ini.GetKeyPointer( "Statistics" );
+	IniFile::key* pKey = ini.GetKey( "Statistics" );
 	if( pKey )
 	{
-		for( POSITION pos = pKey->GetStartPosition(); pos != NULL; )
+		for( int i=0; i<pKey->names.GetSize(); i++ )
 		{
-			CString name_string, value_string;
-
-			pKey->GetNextAssoc( pos, name_string, value_string );
+			CString name = pKey->names[i];
+			CString value = pKey->values[i];
 
 			// Each value has the format "SongName::StepsName=TimesPlayed::TopGrade::TopScore::MaxCombo".
-
 			char szSongDir[256];
 			char szNotesName[256];
 			int iRetVal;
 			int i;
 
 			// Parse for Song name and Notes name
-			iRetVal = sscanf( name_string, "%[^:]::%[^\n]", szSongDir, szNotesName );
+			iRetVal = sscanf( name, "%[^:]::%[^\n]", szSongDir, szNotesName );
 			if( iRetVal != 2 )
 				continue;	// this line doesn't match what is expected
 	
@@ -308,7 +283,7 @@ void SongManager::ReadStatisticsFromDisk()
 			char szGradeLetters[10];	// longest possible string is "AAA"
 
 			iRetVal = sscanf( 
-				value_string, 
+				value, 
 				"%d::%[^:]::%d::%d", 
 				&pNotes->m_iNumTimesPlayed,
 				szGradeLetters,
@@ -430,28 +405,13 @@ void SongManager::InitCoursesFromDisk()
 	for( int g=0; g<saGroupNames.GetSize(); g++ )	// foreach Group
 	{
 		CString sGroupName = saGroupNames[g];
-		CString sShortGroupName = this->ShortenGroupName( sGroupName );
+		CArray<Song*, Song*> apGroupSongs;
+		GetSongsInGroup( sGroupName, apGroupSongs );
 
-		CArray<Song*, Song*> apSongs;
-		this->GetSongsInGroup( sGroupName, apSongs );
-		
-
-		for( DifficultyClass dc=CLASS_MEDIUM; dc<=CLASS_HARD; dc=DifficultyClass(dc+1) )	// foreach DifficultyClass
+		for( DifficultyClass dc=CLASS_EASY; dc<=CLASS_HARD; dc=DifficultyClass(dc+1) )	// foreach DifficultyClass
 		{
 			Course course;
-			course.m_sName = sShortGroupName + " ";
-			switch( dc )
-			{
-			case CLASS_EASY:	course.m_sName += "Easy";	break;
-			case CLASS_MEDIUM:	course.m_sName += "Medium";	break;
-			case CLASS_HARD:	course.m_sName += "Hard";	break;
-			}
-
-			for( int s=0; s<apSongs.GetSize(); s++ )
-			{
-				Song* pSong = apSongs[s];
-				course.AddStage( pSong, dc );
-			}
+			course.CreateFromGroupAndDifficultyClass( sGroupName, dc, apGroupSongs );
 
 			if( course.m_iStages > 0 )
 				m_aCourses.Add( course );

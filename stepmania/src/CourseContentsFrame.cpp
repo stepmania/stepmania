@@ -13,74 +13,156 @@
 #include "CourseContentsFrame.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "RageLog.h"
 #include "PrefsManager.h"
 #include "Course.h"
+#include "SongManager.h"
 
-const float NAME_X		= -100;
-const float METER_X		= +50;
-const float GAP_Y		= 34;
-const float START_Y		= 0 - MAX_COURSE_CONTENTS/2*GAP_Y;
+
+const float TEXT_BANNER_X	= 0;
+const float TEXT_BANNER_Y	= 0;
+
+const float NUMBER_X		= -118;
+const float NUMBER_Y		= 0;
+
+const float FOOT_X			= 102;
+const float FOOT_Y			= 8;
+
+const float DIFFICULTY_X	= FOOT_X+18;
+const float DIFFICULTY_Y	= FOOT_Y;
+
+const float CONTENTS_BAR_WIDTH	= 270;
+const float CONTENTS_BAR_HEIGHT = 44;
+
+
+CourseContentDisplay::CourseContentDisplay()
+{
+	m_sprFrame.Load( THEME->GetPathTo(GRAPHIC_SELECT_COURSE_CONTENT_BAR) );
+	this->AddSubActor( &m_sprFrame );
+	
+	m_textNumber.Load( THEME->GetPathTo(FONT_HEADER2) );
+	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
+	m_textNumber.TurnShadowOff();
+	this->AddSubActor( &m_textNumber );
+
+	m_TextBanner.SetXY( TEXT_BANNER_X, TEXT_BANNER_Y );
+	this->AddSubActor( &m_TextBanner );
+
+	m_textFoot.Load( THEME->GetPathTo(FONT_METER) );
+	m_textFoot.SetXY( FOOT_X, FOOT_Y );
+	m_textFoot.TurnShadowOff();
+	this->AddSubActor( &m_textFoot );
+
+	m_textDifficultyNumber.Load( THEME->GetPathTo(FONT_NORMAL) );
+	m_textDifficultyNumber.SetXY( DIFFICULTY_X, DIFFICULTY_Y );
+	m_textDifficultyNumber.SetZoom( 0.8f );
+	m_textDifficultyNumber.TurnShadowOff();
+	this->AddSubActor( &m_textDifficultyNumber );
+}
+
+void CourseContentDisplay::Load( int iNum, Song* pSong, Notes* pNotes )
+{
+	m_textNumber.SetText( ssprintf("%d", iNum) );
+
+	D3DXCOLOR colorGroup = SONGMAN->GetGroupColor( pSong->m_sGroupName );
+	D3DXCOLOR colorDifficulty = DifficultyClassToColor( pNotes->m_DifficultyClass );
+
+	m_TextBanner.LoadFromSong( pSong );
+	m_TextBanner.SetDiffuseColor( colorGroup );
+
+	m_textFoot.SetText( "1" );
+	m_textFoot.SetDiffuseColor( colorDifficulty );
+
+	m_textDifficultyNumber.SetText( ssprintf("%d", pNotes->m_iMeter) );
+	m_textDifficultyNumber.SetDiffuseColor( colorDifficulty );
+}
+
 
 
 CourseContentsFrame::CourseContentsFrame()
 {
-	for( int i=0; i<MAX_COURSE_CONTENTS; i++ )
-	{
-		m_textContents[i].Load( THEME->GetPathTo(FONT_TEXT_BANNER) );
-		m_textContents[i].SetHorizAlign( Actor::align_left );
-		m_textContents[i].SetXY( NAME_X, START_Y + GAP_Y*i );
-		m_textContents[i].SetText( "" );
-		m_textContents[i].SetZoom( 0.7f );
-		this->AddActor( &m_textContents[i] );
+	m_iNumContents = 0;
+	m_quad.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );	// invisible, since we want to write only to the Zbuffer
 
-		m_Meters[i].SetXY( METER_X, START_Y + GAP_Y*i + 10 );
-		this->AddActor( &m_Meters[i] );
-	}
-}
-
-void CourseContentsFrame::Update( float fDeltaTime )
-{
-	ActorFrame::Update( fDeltaTime );
+	m_fTimeUntilScroll = 0;
+	m_fItemAtTopOfList = 0;
 }
 
 void CourseContentsFrame::SetFromCourse( Course* pCourse )
 {
 	ASSERT( pCourse != NULL );
 
-	int i;
+	m_fTimeUntilScroll = 3;
+	m_fItemAtTopOfList = 0;
 
-	// turn all lines "off"
-	for( i=0; i<MAX_COURSE_CONTENTS; i++ )
+	m_iNumContents = 0; 
+
+	for( int i=0; i<min(pCourse->m_iStages, MAX_TOTAL_CONTENTS); i++ )
 	{
-		m_textContents[i].SetText( "" );
-		m_Meters[i].SetFromNotes( NULL );
-	}
-
-	for( i=0; i<min(pCourse->m_iStages, MAX_COURSE_CONTENTS); i++ )
-	{
-		m_textContents[i].SetText( pCourse->m_apSongs[i]->GetFullTitle() );
-		m_textContents[i].SetDiffuseColor( DifficultyClassToColor(pCourse->m_aDifficultyClasses[i]) );
-
-		m_Meters[i].SetFromNotes( NULL );
-
 		Song* pSong = pCourse->m_apSongs[i];
-		for( int j=0; j<pSong->m_apNotes.GetSize(); j++ )
-		{
-			Notes* pNotes = pSong->m_apNotes[j];
-			if( pSong->m_apNotes[j]->m_DifficultyClass == pCourse->m_aDifficultyClasses[i] )
-			{
-				m_Meters[i].SetFromNotes( pNotes );
-				break;
-			}
-		}
+		Notes* pNotes = pCourse->GetNotesForStage(i);
 
+		if( pNotes == NULL )
+			continue;	// skip
+
+		printf( "Adding song '%s'\n", pSong->m_sMainTitle );
+		m_CourseContentDisplays[m_iNumContents].Load( m_iNumContents+1, pSong, pNotes );
+		
+		m_iNumContents ++;
 	}
+	printf( "m_iNumContents is %d\n", m_iNumContents );
+}
 
-	if( pCourse->m_iStages >= MAX_COURSE_CONTENTS )
+void CourseContentsFrame::Update( float fDeltaTime )
+{
+	if( m_fTimeUntilScroll > 0  &&  m_iNumContents > MAX_VISIBLE_CONTENTS)
+		m_fTimeUntilScroll -= fDeltaTime;
+	if( m_fTimeUntilScroll <= 0 )
+		m_fItemAtTopOfList += fDeltaTime;
+	if( m_fItemAtTopOfList > m_iNumContents )
+		m_fItemAtTopOfList -= m_iNumContents;
+
+	for( int i=0; i<m_iNumContents; i++ )
+		m_CourseContentDisplays[i].Update( fDeltaTime );
+}
+
+void CourseContentsFrame::DrawPrimitives()
+{
+	// turn on Z buffer to clip items
+	LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
+	pd3dDevice->SetRenderState( D3DRS_ZENABLE,      TRUE );
+	pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
+
+
+	// write to z buffer so that top and bottom are clipped
+	m_quad.SetZ( -1 );
+
+	CRect rectBarSize(-(int)CONTENTS_BAR_WIDTH/2, -(int)CONTENTS_BAR_HEIGHT/2, (int)CONTENTS_BAR_WIDTH/2, (int)CONTENTS_BAR_HEIGHT/2);
+	m_quad.StretchTo( rectBarSize );
+
+	m_quad.SetY( (-(MAX_VISIBLE_CONTENTS-1)/2 - 1) * CONTENTS_BAR_HEIGHT );
+	m_quad.Draw();
+
+	m_quad.SetY( ((MAX_VISIBLE_CONTENTS-1)/2 + 1) * CONTENTS_BAR_HEIGHT );
+	m_quad.Draw();
+
+
+	int iItemToDraw = (int)m_fItemAtTopOfList;
+	float fY = (iItemToDraw-m_fItemAtTopOfList-(MAX_VISIBLE_CONTENTS-1)/2) * CONTENTS_BAR_HEIGHT;
+
+	for( int i=0; i<min(MAX_VISIBLE_CONTENTS+1, m_iNumContents); i++ )
 	{
-		m_textContents[MAX_COURSE_CONTENTS-1].SetText( ssprintf("%d more...", pCourse->m_iStages-(MAX_COURSE_CONTENTS-1)) );
-		m_Meters[MAX_COURSE_CONTENTS-1].SetFromNotes( NULL );
+		m_CourseContentDisplays[iItemToDraw].SetY( fY );
+		m_CourseContentDisplays[iItemToDraw].Draw();
+		iItemToDraw++;
+		if( iItemToDraw >= m_iNumContents )
+			iItemToDraw -= m_iNumContents;
+		fY += CONTENTS_BAR_HEIGHT;
 	}
+
+
+	// turn off Z buffer
+	pd3dDevice->SetRenderState( D3DRS_ZENABLE,      FALSE );
+	pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
 }

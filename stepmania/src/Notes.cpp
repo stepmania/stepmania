@@ -412,7 +412,6 @@ bool Notes::LoadFromDWITokens(
 
 	NoteData* pNoteData = new NoteData;
 	ASSERT( pNoteData );
-	printf( "sizeof NoteData = %d\n", sizeof(NoteData) );
 	pNoteData->m_iNumTracks = mapDanceNoteToNoteDataColumn.GetCount();
 
 	for( int pad=0; pad<2; pad++ )		// foreach pad
@@ -528,15 +527,23 @@ bool Notes::LoadFromDWITokens(
 }
 
 void Notes::LoadFromSMTokens( 
-	const CString &sNotesType, 
-	const CString &sDescription,
-	const CString &sDifficultyClass,
-	const CString &sMeter,
-	const CString &sRadarValues,
-	const CString &sNoteData
+	CString sNotesType, 
+	CString sDescription,
+	CString sDifficultyClass,
+	CString sMeter,
+	CString sRadarValues,
+	CString sNoteData
 )
 {
-	LOG->WriteLine( "Notes::LoadFromSMTokens()" );
+	sNotesType.TrimLeft(); 
+	sNotesType.TrimRight(); 
+	sDescription.TrimLeft(); 
+	sDescription.TrimRight(); 
+	sDifficultyClass.TrimLeft(); 
+	sDifficultyClass.TrimRight(); 
+
+
+//	LOG->WriteLine( "Notes::LoadFromSMTokens()" );
 
 	m_NotesType = StringToNotesType(sNotesType);
 	m_sDescription = sDescription;
@@ -603,18 +610,21 @@ DifficultyClass Notes::DifficultyClassFromDescriptionAndMeter( CString sDescript
 {
 	sDescription.MakeLower();
 
-	const CString sDescriptionParts[NUM_DIFFICULTY_CLASSES][3] = {
+	const CString sDescriptionParts[NUM_DIFFICULTY_CLASSES][4] = {
 		{
+			"easy",
 			"basic",
             "light",
 			"SDFKSJDKFJS",
 		},
 		{
+			"medium",
 			"another",
             "trick",
             "standard",
 		},
 		{
+			"hard",
 			"ssr",
             "maniac",
             "heavy",

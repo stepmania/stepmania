@@ -22,30 +22,14 @@ const int MAX_SONG_QUEUE_SIZE = 400;	// this has to be gigantic to fit an "endle
 class SongManager
 {
 public:
-	SongManager();
+	SongManager( void(*callback)() );
 	~SongManager();
-
-	Song*		m_pCurSong;
-	Notes*		m_pCurNotes[NUM_PLAYERS];
-	Course*		m_pCurCourse;
-	CString		m_sPreferredGroup;
-
-	CArray<GameplayStatistics,GameplayStatistics>	m_aGameplayStatistics[NUM_PLAYERS];	// for passing from Dancing to Results
-
 
 	CArray<Song*, Song*>	m_pSongs;	// all songs that can be played
 
-	void InitSongArrayFromDisk();
+	void InitSongArrayFromDisk( void(*callback)() );
 	void FreeSongArray();
 	void ReloadSongArray();
-
-
-	Song* GetCurrentSong();
-	Notes* GetCurrentNotes( PlayerNumber p );
-	void SetCurrentSong( Song* pSong );
-	void SetCurrentNotes( PlayerNumber p, Notes* pNotes );
-	GameplayStatistics	GetLatestGameplayStatistics( PlayerNumber p );
-
 
 	void ReadStatisticsFromDisk();
 	void SaveStatisticsToDisk();
@@ -55,7 +39,7 @@ public:
 	void GetGroupNames( CStringArray &AddTo );
 	D3DXCOLOR GetGroupColor( const CString &sGroupName );
 
-	CString ShortenGroupName( const CString &sOrigGroupName );
+	static CString ShortenGroupName( const CString &sOrigGroupName );
 
 	void GetSongsInGroup( const CString sGroupName, CArray<Song*,Song*> &AddTo );
 
@@ -68,7 +52,7 @@ public:
 
 
 protected:
-	void LoadStepManiaSongDir( CString sDir );
+	void LoadStepManiaSongDir( CString sDir, void(*callback)() );
 	void LoadDWISongDir( CString sDir );
 	CMapStringToString	m_mapGroupToBannerPath;		// each song group has a banner associated with it
 	CStringArray		m_arrayGroupNames;

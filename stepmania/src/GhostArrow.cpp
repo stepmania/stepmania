@@ -5,7 +5,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "GhostArrow.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 const float  GRAY_ARROW_TWEEN_TIME = 0.5f;
 

@@ -12,6 +12,7 @@
 
 #include "Screen.h"
 #include "GameManager.h"
+#include "GameState.h"
 
 Screen::Screen()
 {
@@ -51,7 +52,7 @@ void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const
 	if( !MenuI.IsValid() )
 		return;
 
-	if( !GAMEMAN->IsPlayerEnabled(MenuI.player) )
+	if( !GAMESTATE->IsPlayerEnabled(MenuI.player) )
 		return;
 
 	switch( MenuI.button )

@@ -1,21 +1,18 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: Combo.h
+ Class: Combo
 
- Desc: A graphic displayed in the Combo during Dancing.
+ Desc: Text that displays the size of the current combo.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-
-#ifndef _Combo_H_
-#define _Combo_H_
-
-
 #include "ActorFrame.h"
 #include "Sprite.h"
-#include "ScoreDisplayRolling.h"
+#include "BitmapText.h"
 
 
 
@@ -38,5 +35,3 @@ protected:
 	Sprite		m_sprCombo;
 	BitmapText	m_textComboNumber;
 };
-
-#endif

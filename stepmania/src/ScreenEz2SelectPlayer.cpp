@@ -15,13 +15,14 @@ Andrew Livy
 #include "ScreenTitleMenu.h"
 #include "ScreenCaution.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "ScreenSelectDifficulty.h"
 #include "ScreenSandbox.h"
 #include "GameManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
 #include "ScreenEz2SelectStyle.h"
+#include "GameState.h"
 
 /* Constants */
 
@@ -58,9 +59,9 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 	LOG->WriteLine( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
 	ez2_lasttimercheck[0] = TIMER->GetTimeSinceStart();
 	ez2_lasttimercheck[1] = 0.0f;
-	m_iSelectedStyle=3; // set to invalid style
-	GAMEMAN->m_CurStyle = STYLE_NONE;
-	GAMEMAN->m_sMasterPlayerNumber = PLAYER_INVALID;
+	m_iSelectedStyle=0;
+	GAMESTATE->m_CurStyle = STYLE_NONE;
+	GAMESTATE->m_MasterPlayerNumber = PLAYER_INVALID;
 
 // Load in the sprites we will be working with.
 	for( int i=0; i<NUM_EZ2_GRAPHICS; i++ )
@@ -84,7 +85,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 		m_sprOpt[i].Load( sPadGraphicPath );
 		m_sprOpt[i].SetXY( OPT_X[i], OPT_Y[i] );
 		m_sprOpt[i].SetZoom( 1 );
-		this->AddActor( &m_sprOpt[i] );
+		this->AddSubActor( &m_sprOpt[i] );
 	}
 
 
@@ -94,7 +95,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 		ssprintf("Press %c on the pad you wish to play on", char(4) ),
 		false, true, 40 
 		);
-	this->AddActor( &m_Menu );
+	this->AddSubActor( &m_Menu );
 
 	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_STYLE_CHANGE) );
 	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
@@ -181,18 +182,18 @@ void ScreenEz2SelectPlayer::DrawPrimitives()
 		
 		if (m_iSelectedStyle == 0) // only the left pad was selected
 		{
-			GAMEMAN->m_sMasterPlayerNumber = PLAYER_1;
-			GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;
+			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;
 		}
 		else if (m_iSelectedStyle == 1) // only the right pad was selected
 		{
-			GAMEMAN->m_sMasterPlayerNumber = PLAYER_2;
-			GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;
+			GAMESTATE->m_MasterPlayerNumber = PLAYER_2;
+			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;
 		}
 		else // they both selected
 		{
-			GAMEMAN->m_sMasterPlayerNumber = PLAYER_1;
-			GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;
+			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;
 		}
 
 		MUSIC->Stop();
@@ -287,9 +288,11 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 	}
 
 	// figure out whether we should add a player into the fray or not
-//	if(	GAMEMAN->m_sMasterPlayerNumber != PLAYER_2 && GAMEMAN->m_sMasterPlayerNumber != PLAYER_1 )
+//	if(	GAMESTATE->m_MasterPlayerNumber != PLAYER_2 && GAMESTATE->m_MasterPlayerNumber != PLAYER_1 )
 	if (m_iSelectedStyle == 3)
 	{
+		GAMESTATE->m_MasterPlayerNumber = p;
+
 		if (p == PLAYER_1)
 		{
 			m_iSelectedStyle = 0;

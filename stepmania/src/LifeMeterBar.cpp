@@ -11,24 +11,55 @@
 */
 
 #include "LifeMeterBar.h"
-#include "ThemeManager.h"
-#include "GameManager.h"
+#include "PrefsManager.h"
 
-const int NUM_SECTIONS = 3;
-const float SECTION_WIDTH = 1.0f/NUM_SECTIONS;
+const int NUM_LIFE_STREAM_SECTIONS = 3;
+const float LIFE_STREAM_SECTION_WIDTH = 1.0f/NUM_LIFE_STREAM_SECTIONS;
 
+const float METER_WIDTH = 258;
+const float METER_HEIGHT = 20;
 
-const float DANGER_THRESHOLD = -0.3f;
+const float DANGER_THRESHOLD = 0.4f;
 const float FAIL_THRESHOLD = 0;
+
+
+
 
 LifeMeterBar::LifeMeterBar()
 {
 	m_fLifePercentage = 0.5f;
 	m_fTrailingLifePercentage = 0;
 	m_fLifeVelocity = 0;
-	m_bHasFailed = false;
+	m_fHotAlpha = 0;
+	m_bFailedEarlier = false;
+
+	m_frame;
+
+	m_quadBlackBackground.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
+	m_quadBlackBackground.SetZoomX( METER_WIDTH );
+	m_quadBlackBackground.SetZoomY( METER_HEIGHT );
+	m_frame.AddSubActor( &m_quadBlackBackground );
+
+	m_sprStreamNormal.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_LIFEMETER_STREAM_NORMAL) );
+	m_frame.AddSubActor( &m_sprStreamNormal );
+
+	m_sprStreamHot.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_LIFEMETER_STREAM_HOT) );
+	m_frame.AddSubActor( &m_sprStreamHot );
+
+	m_sprFrame.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_LIFEMETER_BAR) );
+	m_frame.AddSubActor( &m_sprFrame );
+
+	this->AddSubActor( &m_frame );
 
 	ResetBarVelocity();
+}
+
+void LifeMeterBar::Load( PlayerNumber p, const PlayerOptions &po )
+{
+	LifeMeter::Load( p, po );
+
+	if( p == PLAYER_2 )
+		m_frame.SetZoomX( -1 );
 }
 
 void LifeMeterBar::ChangeLife( TapNoteScore score )
@@ -36,23 +67,41 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	bool bWasHot = IsHot();
 
 	float fDeltaLife;
-	switch( score )
+	switch( m_PlayerOptions.m_DrainType )
 	{
-	case TNS_PERFECT:	fDeltaLife = +0.008f;	break;
-	case TNS_GREAT:		fDeltaLife = +0.004f;	break;
-	case TNS_GOOD:		fDeltaLife = +0.000f;	break;
-	case TNS_BOO:		fDeltaLife = -0.040f;	break;
-	case TNS_MISS:		fDeltaLife = -0.080f;	break;
+	case PlayerOptions::DRAIN_NORMAL:
+		switch( score )
+		{
+		case TNS_PERFECT:	fDeltaLife = +0.008f;	break;
+		case TNS_GREAT:		fDeltaLife = +0.004f;	break;
+		case TNS_GOOD:		fDeltaLife = +0.000f;	break;
+		case TNS_BOO:		fDeltaLife = -0.040f;	break;
+		case TNS_MISS:		fDeltaLife = -0.080f;	break;
+		}
+		if( IsHot()  &&  score < TNS_GOOD )
+			fDeltaLife = -0.10f;		// make it take a while to get back to "doing great"
+		break;
+	case PlayerOptions::DRAIN_NO_RECOVER:
+		switch( score )
+		{
+		case TNS_PERFECT:	fDeltaLife = +0.000f;	break;
+		case TNS_GREAT:		fDeltaLife = +0.000f;	break;
+		case TNS_GOOD:		fDeltaLife = +0.000f;	break;
+		case TNS_BOO:		fDeltaLife = -0.040f;	break;
+		case TNS_MISS:		fDeltaLife = -0.080f;	break;
+		}
+		break;
+	case PlayerOptions::DRAIN_SUDDEN_DEATH:
+		fDeltaLife = -1;
+		break;
 	}
 
-	if( IsHot()  &&  score < TNS_GOOD )
-		fDeltaLife = -0.10f;		// make it take a while to get back to "doing great"
 
 	m_fLifePercentage += fDeltaLife;
-	m_fLifePercentage = min( m_fLifePercentage, 1 );
+	CLAMP( m_fLifePercentage, 0, 1 );
 
 	if( m_fLifePercentage < FAIL_THRESHOLD )
-		m_bHasFailed = true;
+		m_bFailedEarlier = true;
 
 	ResetBarVelocity();
 }
@@ -75,13 +124,20 @@ bool LifeMeterBar::IsInDanger()
 	return m_fLifePercentage < DANGER_THRESHOLD; 
 }
 
-bool LifeMeterBar::HasFailed() 
+bool LifeMeterBar::IsFailing() 
 { 
-	return m_bHasFailed; 
+	return m_fLifePercentage <= 0; 
+}
+
+bool LifeMeterBar::FailedEarlier() 
+{ 
+	return m_bFailedEarlier; 
 }
 
 void LifeMeterBar::Update( float fDeltaTime )
 {
+	ActorFrame::Update( fDeltaTime );
+
 	float fDelta = m_fLifePercentage - m_fTrailingLifePercentage;
 	m_fLifeVelocity += fDelta * fDeltaTime;		// accelerate
 	m_fLifeVelocity *= 1-fDeltaTime;		// dampen
@@ -91,9 +147,50 @@ void LifeMeterBar::Update( float fDeltaTime )
 
 	if( fDelta * fNewDelta < 0 )	// the deltas have different signs
 		m_fLifeVelocity /= 4;		// make some drag
-	m_fTrailingLifePercentage = clamp( m_fTrailingLifePercentage, 0, 1 );
+	CLAMP( m_fTrailingLifePercentage, 0, 1 );
+
+
+	// set custom texture coords
+	CRect rectSize( 
+		-METER_WIDTH/2, 
+		-METER_HEIGHT/2, 
+		-METER_WIDTH/2  + METER_WIDTH  * m_fTrailingLifePercentage, 
+		-METER_HEIGHT/2 + METER_HEIGHT );
+
+	float fPrecentOffset = TIMER->GetTimeSinceStart();
+	fPrecentOffset -= (int)fPrecentOffset;
+
+	FRECT frectCustomTexCoords(
+		0 - fPrecentOffset,
+		0,
+		m_fTrailingLifePercentage - fPrecentOffset,
+		1 );
+
+	m_sprStreamNormal.StretchTo( rectSize );
+	m_sprStreamNormal.SetCustomTextureRect( frectCustomTexCoords );
+	m_sprStreamHot.StretchTo( rectSize );
+	m_sprStreamHot.SetCustomTextureRect( frectCustomTexCoords );
+
+	m_fHotAlpha  += IsHot() ? +fDeltaTime*2 : -fDeltaTime*2;
+	CLAMP( m_fHotAlpha, 0, 1 );
+	m_sprStreamHot.SetDiffuseColor(    D3DXCOLOR(1,1,1,m_fHotAlpha) );
 }
 
+void LifeMeterBar::DrawPrimitives()
+{
+	float fPercentRed = IsInDanger() ? sinf( TIMER->GetTimeSinceStart()*D3DX_PI*4 )/2+0.5f : 0;
+	m_quadBlackBackground.SetDiffuseColor( D3DXCOLOR(fPercentRed*0.8f,0,0,1) );
+
+	ActorFrame::DrawPrimitives();
+}
+
+/*
+
+  Chris:  
+  I'm making the coloring of the lifemeter a property of the theme.  
+  That's where it belongs anyway...
+
+  
 const D3DXCOLOR COLOR_EZ2NORMAL_1	= D3DXCOLOR(0.7f,0.4f,0,1);
 const D3DXCOLOR COLOR_EZ2NORMAL_2	= D3DXCOLOR(0.8f,0.4f,0,1);
 const D3DXCOLOR COLOR_EZ2NEARFULL_1	= D3DXCOLOR(0.7f,0.6f,0,1);
@@ -107,11 +204,11 @@ const D3DXCOLOR COLOR_NORMAL_2	= D3DXCOLOR(0,1,0,1);
 const D3DXCOLOR COLOR_FULL_1	= D3DXCOLOR(1,0,0,1);
 const D3DXCOLOR COLOR_FULL_2	= D3DXCOLOR(1,1,0,1);
 
-D3DXCOLOR LifeMeterBar::GetColor( float fPercentIntoSection )
+D3DXCOLOR LifeStream::GetColor( float fPercentIntoSection )
 {
 	float fPercentColor1 = fabsf( fPercentIntoSection*2 - 1 );
 	fPercentColor1 *= fPercentColor1 * fPercentColor1 * fPercentColor1;	// make the color bunch around one side
-	if (GAMEMAN->m_CurGame != GAME_EZ2)
+	if (GAMESTATE->m_CurGame != GAME_EZ2)
 	{
 		if( m_fLifePercentage == 1 )
 			return COLOR_FULL_1 * fPercentColor1 + COLOR_FULL_2 * (1-fPercentColor1);
@@ -131,9 +228,8 @@ D3DXCOLOR LifeMeterBar::GetColor( float fPercentIntoSection )
 	}
 }
 
-void LifeMeterBar::DrawPrimitives()
+void LifeStream::DrawPrimitives()
 {
-
 	// make the object in logical units centered at the origin
 	LPDIRECT3DVERTEXBUFFER8 pVB = DISPLAY->GetVertexBuffer();
 	RAGEVERTEX* v;
@@ -141,7 +237,7 @@ void LifeMeterBar::DrawPrimitives()
 
 	int iNumV = 0;
 
-	float fPercentIntoSection = (TIMER->GetTimeSinceStart()/0.3f* (IsHot() ? 2 : 1) )*SECTION_WIDTH;
+	float fPercentIntoSection = (TIMER->GetTimeSinceStart()/0.3f* (m_bIsHot ? 2 : 1) )*LIFE_STREAM_SECTION_WIDTH;
 	fPercentIntoSection -= (int)fPercentIntoSection;
 	fPercentIntoSection = 1-fPercentIntoSection;
 	fPercentIntoSection -= (int)fPercentIntoSection;
@@ -167,13 +263,13 @@ void LifeMeterBar::DrawPrimitives()
 		{
 			const float fPercentToAdd = 0.5f-fPercentIntoSection;
 			fPercentIntoSection += fPercentToAdd;
-			fX += fPercentToAdd*SECTION_WIDTH;
+			fX += fPercentToAdd*LIFE_STREAM_SECTION_WIDTH;
 		}
 		else if( fPercentIntoSection < 1.0f )
 		{
 			const float fPercentToAdd = 1.0f-fPercentIntoSection;
 			fPercentIntoSection = 0;
-			fX += fPercentToAdd*SECTION_WIDTH;
+			fX += fPercentToAdd*LIFE_STREAM_SECTION_WIDTH;
 		}
 		else
 			ASSERT( false );
@@ -181,7 +277,7 @@ void LifeMeterBar::DrawPrimitives()
 
 	const float fXToSubtract = fX - (m_fTrailingLifePercentage-0.5f);
 	fX -= fXToSubtract;
-	fPercentIntoSection -= fXToSubtract/SECTION_WIDTH;
+	fPercentIntoSection -= fXToSubtract/LIFE_STREAM_SECTION_WIDTH;
 	if( fPercentIntoSection < 0 )
 		fPercentIntoSection += 1;
 
@@ -196,20 +292,6 @@ void LifeMeterBar::DrawPrimitives()
 	v[iNumV++].color = color;
 	v[iNumV++].color = color; 
 
-	//
-	// draw black filler
-	//
-	v[iNumV++].p = D3DXVECTOR3( fX, -0.5f, 0 );
-	v[iNumV++].p = D3DXVECTOR3( fX,  0.5f, 0 );
-	v[iNumV++].p = D3DXVECTOR3( 0.5f, -0.5f, 0 );
-	v[iNumV++].p = D3DXVECTOR3( 0.5f,  0.5f, 0 );
-	
-	iNumV -= 4;
-	const D3DXCOLOR colorBlack = D3DXCOLOR(0,0,0,1); 
-	v[iNumV++].color = colorBlack;
-	v[iNumV++].color = colorBlack; 
-	v[iNumV++].color = colorBlack;
-	v[iNumV++].color = colorBlack; 
 
 
 	pVB->Unlock();
@@ -236,3 +318,4 @@ void LifeMeterBar::DrawPrimitives()
 	pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, iNumV-2 );
 
 }
+*/

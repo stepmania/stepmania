@@ -14,6 +14,7 @@
 #include "ColorNote.h"
 #include "GameConstantsAndTypes.h"
 #include "GameManager.h"
+#include "GameState.h"
 
 
 float ArrowGetYOffset( const PlayerOptions& po, float fStepIndex, float fSongBeat )
@@ -34,8 +35,7 @@ float ArrowGetYOffset( const PlayerOptions& po, float fStepIndex, float fSongBea
 
 float ArrowGetXPos( const PlayerOptions& po, int iColNum, float fYOffset, float fSongBeat ) 
 {
-	float fColOffsetFromCenter = iColNum - (GAMEMAN->GetCurrentStyleDef()->m_iColsPerPlayer-1)/2.0f;
-	float fPixelOffsetFromCenter = fColOffsetFromCenter * ARROW_SIZE;
+	float fPixelOffsetFromCenter = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[PLAYER_1][iColNum].fXOffset;
 	
 	// BUG OR FEATURE??? THIS IS WHERE THE REAL COLUMN PLACEMENT HAPPENS!!!
 	// GAMEMANAGER SITS AROUND ON ITS ASS DOING NOTHING
@@ -44,22 +44,27 @@ float ArrowGetXPos( const PlayerOptions& po, int iColNum, float fYOffset, float 
 	// can possibly change my arrow placements, Ez2dancer column setups will be here until
 	// somebody makes some other system. In the meantime, if it works, i'm using it.
 
-	if ( GAMEMAN->m_CurGame == GAME_EZ2 )
+	// Chris:
+	// It's working now, so I'm commenting out your placement code below.
+
+	/*
+	if ( GAMESTATE->m_CurGame == GAME_EZ2 )
 	{
 		fPixelOffsetFromCenter = fColOffsetFromCenter * ARROW_SIZE / 1.3f;
-		if ( GAMEMAN->m_CurStyle == STYLE_EZ2_REAL || GAMEMAN->m_CurStyle == STYLE_EZ2_REAL_VERSUS ) // real gets MEGA squashed
+		if ( GAEMSTATE->m_CurStyle == STYLE_EZ2_REAL || GAEMSTATE->m_CurStyle == STYLE_EZ2_REAL_VERSUS ) // real gets MEGA squashed
 		{
 			fPixelOffsetFromCenter = fColOffsetFromCenter * ARROW_SIZE / 1.6f;
 		}
-		else if ( GAMEMAN->m_CurStyle == STYLE_EZ2_DOUBLE && GAMEMAN->m_sMasterPlayerNumber == PLAYER_1)
+		else if ( GAEMSTATE->m_CurStyle == STYLE_EZ2_DOUBLE && GAEMSTATE->m_sMasterPlayerNumber == PLAYER_1)
 		{
 			fPixelOffsetFromCenter = (fColOffsetFromCenter + 2.9f) * ARROW_SIZE / 1.3f;
 		}
-		else if ( GAMEMAN->m_CurStyle == STYLE_EZ2_DOUBLE && GAMEMAN->m_sMasterPlayerNumber == PLAYER_2)
+		else if ( GAEMSTATE->m_CurStyle == STYLE_EZ2_DOUBLE && GAEMSTATE->m_sMasterPlayerNumber == PLAYER_2)
 		{
 			fPixelOffsetFromCenter = (fColOffsetFromCenter - 3.1f) * ARROW_SIZE / 1.3f;
 		}
 	}
+	*/
 	
 	switch( po.m_EffectType )
 	{

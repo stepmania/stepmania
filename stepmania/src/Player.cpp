@@ -14,12 +14,13 @@
 #include "Math.h" // for fabs()
 #include "Player.h"
 #include "RageUtil.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
 #include "ArrowEffects.h"
 #include "GameManager.h"
 #include "InputMapper.h"
 #include "SongManager.h"
+#include "GameState.h"
 
 
 // these two items are in the
@@ -42,20 +43,22 @@ Player::Player()
 	m_pLifeMeter = NULL;
 	m_pScore = NULL;
 
-	this->AddActor( &m_GrayArrowRow );
-	this->AddActor( &m_NoteField );
-	this->AddActor( &m_GhostArrowRow );
+	this->AddSubActor( &m_GrayArrowRow );
+	this->AddSubActor( &m_NoteField );
+	this->AddSubActor( &m_GhostArrowRow );
 
-	m_frameJudgeAndCombo.AddActor( &m_Judgement );
-	m_frameJudgeAndCombo.AddActor( &m_Combo );
-	this->AddActor( &m_frameJudgeAndCombo );
+	m_frameJudgement.AddSubActor( &m_Judgement );
+	this->AddSubActor( &m_frameJudgement );
+
+	m_frameCombo.AddSubActor( &m_Combo );
+	this->AddSubActor( &m_frameCombo );
 	
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
-		this->AddActor( &m_HoldJudgement[c] );
+		this->AddSubActor( &m_HoldJudgement[c] );
 }
 
 
-void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore, int iOriginalNumNotes, int iNotesMeter )
+void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteData, const PlayerOptions& po, LifeMeter* pLM, ScoreDisplay* pScore, int iOriginalNumNotes, int iNotesMeter )
 {
 	//LOG->WriteLine( "Player::Load()", );
 	this->CopyAll( pNoteData );
@@ -84,7 +87,8 @@ void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteD
 	m_GrayArrowRow.Load( player_no, pStyleDef, po );
 	m_GhostArrowRow.Load( player_no, pStyleDef, po );
 
-	m_frameJudgeAndCombo.SetY( FRAME_JUDGE_AND_COMBO_Y );
+	m_frameJudgement.SetY( FRAME_JUDGE_AND_COMBO_Y );
+	m_frameCombo.SetY( FRAME_JUDGE_AND_COMBO_Y );
 	m_Combo.SetY( po.m_bReverseScroll ?  -COMBO_Y_OFFSET : COMBO_Y_OFFSET );
 	m_Judgement.SetY( po.m_bReverseScroll ? -JUDGEMENT_Y_OFFSET : JUDGEMENT_Y_OFFSET );
 
@@ -102,6 +106,7 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 {
 	//LOG->WriteLine( "Player::Update(%f, %f, %f)", fDeltaTime, fSongBeat, fMaxBeatDifference );
 
+	m_fSongBeat = fSongBeat;	// save song beat
 
 	//
 	// Check for TapNote misses
@@ -125,7 +130,7 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		float fEndBeat = NoteRowToBeat( (float)hn.m_iEndIndex );
 
 		const StyleInput StyleI( m_PlayerNumber, hn.m_iTrack );
-		const GameInput GameI = GAMEMAN->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
+		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 
 
 		// update the life
@@ -162,6 +167,7 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		if( fLife == 0 )	// the player has not pressed the button for a long time!
 		{
 			hns = HNS_NG;
+			GAMESTATE->GetLatestGameplayStatistics().iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( hns );
 			m_Combo.EndCombo();
 			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_NG );
 		}
@@ -172,6 +178,7 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 			// At this point fLife > 0, or else we would have marked it NG above
 			fLife = 1;
 			hns = HNS_OK;
+			GAMESTATE->GetLatestGameplayStatistics().iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( hns );
 			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_OK );
 			m_NoteField.SetHoldNoteLife( i, fLife );	// update the NoteField display
 		}
@@ -181,7 +188,8 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 
 	ActorFrame::Update( fDeltaTime );
 
-	m_frameJudgeAndCombo.Update( fDeltaTime );
+	m_frameJudgement.Update( fDeltaTime );
+	m_frameCombo.Update( fDeltaTime );
 
 	if( m_pLifeMeter )
 		m_pLifeMeter->SetBeat( fSongBeat );
@@ -189,9 +197,6 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 	m_GrayArrowRow.Update( fDeltaTime, fSongBeat );
 	m_NoteField.Update( fDeltaTime, fSongBeat );
 	m_GhostArrowRow.Update( fDeltaTime, fSongBeat );
-
-	m_fSongBeat = fSongBeat;	// save song beat
-
 }
 
 void Player::DrawPrimitives()
@@ -222,6 +227,8 @@ void Player::DrawPrimitives()
 		DISPLAY->GetDevice()->SetTransform( D3DTS_PROJECTION, &matNewProj );
 	}
 
+	m_frameCombo.Draw();
+
 	m_GrayArrowRow.Draw();
 	m_NoteField.Draw();
 	m_GhostArrowRow.Draw();
@@ -237,7 +244,7 @@ void Player::DrawPrimitives()
 		DISPLAY->GetDevice()->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
 	}
 
-	m_frameJudgeAndCombo.Draw();
+	m_frameJudgement.Draw();
 
 	for( int c=0; c<m_iNumTracks; c++ )
 		m_HoldJudgement[c].Draw();
@@ -359,6 +366,9 @@ void Player::OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int i
 			if( m_pScore )
 				m_pScore->AddToScore( score, m_Combo.GetCurrentCombo() );	// update score - called once per note in this row
 
+			// update dance points for Oni lifemeter
+			GAMESTATE->GetLatestGameplayStatistics().iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( score );
+
 			// update combo - called once per note in this row
 			switch( score )
 			{
@@ -383,9 +393,13 @@ void Player::OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int i
 	case TNS_GOOD:		fStartZoom = 1.2f;	break;
 	case TNS_BOO:		fStartZoom = 1.0f;	break;
 	}
-	m_frameJudgeAndCombo.SetZoom( fStartZoom );
-	m_frameJudgeAndCombo.BeginTweening( 0.2f );
-	m_frameJudgeAndCombo.SetTweenZoom( 1 );
+	m_frameJudgement.SetZoom( fStartZoom );
+	m_frameJudgement.BeginTweening( 0.2f );
+	m_frameJudgement.SetTweenZoom( 1 );
+
+	m_frameCombo.SetZoom( fStartZoom );
+	m_frameCombo.BeginTweening( 0.2f );
+	m_frameCombo.SetTweenZoom( 1 );
 }
 
 
@@ -443,16 +457,12 @@ void Player::CrossedRow( int iNoteRow, float fSongBeat, float fMaxBeatDiff )
 
 
 
-GameplayStatistics Player::GetGameplayStatistics( Song* pS, Notes* pN )
+void Player::SaveGameplayStatistics()
 {
-	GameplayStatistics GSreturn;
+	GameplayStatistics& GS = GAMESTATE->m_aGameplayStatistics[GAMESTATE->m_aGameplayStatistics.GetSize()-1];
+	int p = m_PlayerNumber;
 
-	GSreturn.pSong = pS;
-	Notes* pNotes = pN;
-	GSreturn.dc = pNotes->m_DifficultyClass;
-	GSreturn.meter = pNotes->m_iMeter;
-	GSreturn.iPossibleDancePoints = ((NoteData*)this)->GetPossibleDancePoints();
-	GSreturn.iActualDancePoints = 0;
+	GS.iActualDancePoints[p] = 0;
 
 	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
 	{
@@ -463,41 +473,36 @@ GameplayStatistics Player::GetGameplayStatistics( Song* pS, Notes* pN )
 
 			switch( m_TapNoteScores[t][r] )
 			{
-			case TNS_PERFECT:	GSreturn.perfect++;	break;
-			case TNS_GREAT:		GSreturn.great++;	break;
-			case TNS_GOOD:		GSreturn.good++;	break;
-			case TNS_BOO:		GSreturn.boo++;		break;
-			case TNS_MISS:		GSreturn.miss++;	break;
+			case TNS_PERFECT:	GS.perfect[p]++;	break;
+			case TNS_GREAT:		GS.great[p]++;		break;
+			case TNS_GOOD:		GS.good[p]++;		break;
+			case TNS_BOO:		GS.boo[p]++;		break;
+			case TNS_MISS:		GS.miss[p]++;		break;
 			case TNS_NONE:							break;
 			default:		ASSERT( false );
 			}
-			GSreturn.iActualDancePoints += TapNoteScoreToDancePoints( m_TapNoteScores[t][r] );
+			GS.iActualDancePoints[p] += TapNoteScoreToDancePoints( m_TapNoteScores[t][r] );
 		}
 	}
 	for( int i=0; i<m_iNumHoldNotes; i++ ) 
 	{
 		switch( m_HoldNoteScores[i] )
 		{
-		case HNS_NG:	GSreturn.ng++;	break;
-		case HNS_OK:	GSreturn.ok++;	break;
-		case HNS_NONE:					break;
+		case HNS_NG:	GS.ng[p]++;	break;
+		case HNS_OK:	GS.ok[p]++;	break;
+		case HNS_NONE:				break;
 		default:		ASSERT( false );
 		}
-		GSreturn.iActualDancePoints += HoldNoteScoreToDancePoints( m_HoldNoteScores[i] );
+		GS.iActualDancePoints[p] += HoldNoteScoreToDancePoints( m_HoldNoteScores[i] );
 	}
-	GSreturn.max_combo = m_Combo.GetMaxCombo();
-	GSreturn.score = m_pScore ? m_pScore->GetScore() : 0;
+	GS.max_combo[p] = m_Combo.GetMaxCombo();
+	GS.score[p] = m_pScore ? m_pScore->GetScore() : 0;
 
-	GSreturn.failed = m_pLifeMeter ? m_pLifeMeter->HasFailed() : false;
+	GS.failed[p] = m_pLifeMeter ? m_pLifeMeter->FailedEarlier() : false;
 
 	for( int r=0; r<NUM_RADAR_VALUES; r++ )
 	{
-		GSreturn.fRadarPossible[r] = this->GetRadarValue( (RadarCategory)r, pS->m_fMusicLengthSeconds );
-		GSreturn.fRadarActual[r] = this->GetActualRadarValue( (RadarCategory)r, pS->m_fMusicLengthSeconds );
-
-		GSreturn.fRadarPossible[r] = clamp( GSreturn.fRadarPossible[r], 0, 1 );
-		GSreturn.fRadarActual[r] = clamp( GSreturn.fRadarActual[r], 0, 1 );
+		GS.fRadarActual[p][r] = this->GetActualRadarValue( (RadarCategory)r, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
+		CLAMP( GS.fRadarActual[p][r], 0, 1 );
 	}
-
-	return GSreturn;
 }

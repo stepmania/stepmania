@@ -1,20 +1,15 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: IniFile.h
+ Class: IniFile
 
  Desc: Wrapper for reading and writing an .ini file.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Adam Clauss
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-
-#ifndef _INIFILE_H_
-#define _INIFILE_H_
-
-#include <afxtempl.h>
-//#include <iostream.h>
-
 
 class IniFile  
 {
@@ -24,19 +19,29 @@ private:
 	//stores pathname of ini file to read/write
 	CString path;
 	
+public:
 	//all keys are of this time
-	typedef CMapStringToString key;
+	struct key
+	{
+		//list of values in key
+		CArray<CString, CString> values; 
 
+		//corresponding list of value names
+		CArray<CString, CString> names;
+	};
+
+private:
 	//list of keys in ini
 	CArray<key, key> keys; 
 
 	//corresponding list of keynames
 	CArray<CString, CString> names; 
-
-
+	
 	
 	//all private functions
 private:
+	//returns index of specified value, in the specified key, or -1 if not found
+	int FindValue(int keynum, CString valuename);
 
 	//returns index of specified key, or -1 if not found
 	int FindKey(CString keyname);
@@ -66,7 +71,7 @@ public:
 
 	//reads ini file specified using IniFile::SetPath()
 	//returns true if successful, false otherwise
-	BOOL ReadFile();
+	bool ReadFile();
 
 	//writes data stored in class to ini file
 	void WriteFile(); 
@@ -77,37 +82,33 @@ public:
 	//returns number of keys currently in the ini
 	int GetNumKeys();
 
-	//returns a pointer to the key for direct modification
-	CMapStringToString* GetKeyPointer( CString keyname );
-
 	//returns number of values stored for specified key
-	int GetNumValues( CString keyname );
+	int GetNumValues(CString keyname);
 
 	//gets value of [keyname] valuename = 
 	//overloaded to return CString, int, and double,
 	//returns "", or 0 if key/value not found.  Sets error member to show problem
-	bool GetValue(CString keyname, CString valuename, CString &value_out); 
-	bool GetValueI(CString keyname, CString valuename, int &value_out); 
-	bool GetValueF(CString keyname, CString valuename, float &value_out);
-	bool GetValueB(CString keyname, CString valuename, bool &value_out);
+	bool GetValue(CString key, CString valuename, CString& value);
+	bool GetValueI(CString key, CString valuename, int& value);
+	bool GetValueF(CString key, CString valuename, float& value);
+	bool GetValueB(CString key, CString valuename, bool& value);
 
 	//sets value of [keyname] valuename =.
 	//specify the optional paramter as false (0) if you do not want it to create
 	//the key if it doesn't exist. Returns true if data entered, false otherwise
 	//overloaded to accept CString, int, and double
-	bool SetValue(CString key, CString valuename, CString value, BOOL create = 1);
-	bool SetValueI(CString key, CString valuename, int value, BOOL create = 1);
-	bool SetValueF(CString key, CString valuename, double value, BOOL create = 1);
-	bool SetValueB(CString key, CString valuename, bool value, BOOL create = 1);
+	bool SetValue(CString key, CString valuename, CString value, bool create = 1);
+	bool SetValueI(CString key, CString valuename, int value, bool create = 1);
+	bool SetValueF(CString key, CString valuename, float value, bool create = 1);
+	bool SetValueB(CString key, CString valuename, bool value, bool create = 1);
 
 	//deletes specified value
 	//returns true if value existed and deleted, false otherwise
-	BOOL DeleteValue(CString keyname, CString valuename);
+	bool DeleteValue(CString keyname, CString valuename);
 
 	//deletes specified key and all values contained within
 	//returns true if key existed and deleted, false otherwise
-	BOOL DeleteKey(CString keyname);
+	bool DeleteKey(CString keyname);
+
+	key* GetKey(CString keyname);
 };
-
-
-#endif

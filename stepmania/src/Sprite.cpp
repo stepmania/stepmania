@@ -94,11 +94,8 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, bool bForceReload, int iMi
 	// overwriting the states that LoadFromTexture created.
 	for( UINT i=0; i<MAX_SPRITE_STATES; i++ )
 	{
-		CString sStateNo;
-		sStateNo.Format( "%u%u%u%u", (i%10000)/1000, (i%1000)/100, (i%100)/10, (i%10) );	// four digit state no
-
-		CString sFrameKey( CString("Frame") + sStateNo );
-		CString sDelayKey( CString("Delay") + sStateNo );
+		CString sFrameKey = ssprintf( "Frame%04d", i );
+		CString sDelayKey = ssprintf( "Delay%04d", i );
 		
 		m_iStateToFrame[i] = 0;
 		if( !ini.GetValueI( "Sprite", sFrameKey, m_iStateToFrame[i] ) )
@@ -194,11 +191,7 @@ void Sprite::Update( float fDeltaTime )
 void Sprite::DrawPrimitives()
 {
 	// offset so that pixels are aligned to texels
-	if( PREFSMAN->m_bHighDetail )	// 640x480
-		DISPLAY->TranslateLocal( -0.5f, -0.5f, 0 );
-	else		// 320x240
-		DISPLAY->TranslateLocal( -0.5f, -0.5f, 0 );
-//		DISPLAY->TranslateLocal( -1, -1, 0 );	// offset so that pixels are aligned to texels
+	DISPLAY->TranslateLocal( -0.5f, -0.5f, 0 );
 
 	if( m_pTexture == NULL )
 		return;

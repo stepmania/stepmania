@@ -12,9 +12,12 @@
 
 #include "GameManager.h"
 #include "PrefsManager.h"
+#include "GameConstantsAndTypes.h"
+#include "GameState.h"
 
 
 GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
+
 
 InstrumentButton	DANCE_BUTTON_LEFT		= (InstrumentButton)0;
 InstrumentButton	DANCE_BUTTON_RIGHT		= (InstrumentButton)1;
@@ -584,34 +587,28 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 
 GameManager::GameManager()
 {
-	m_CurGame = GAME_DANCE;
-	m_CurStyle = STYLE_NONE;
-
-	CStringArray asSkinNames;	
-	GetSkinNames( asSkinNames );
-	m_sCurrentSkin = PREFSMAN->m_sNoteSkin;
-	for( int i=0; i<asSkinNames.GetSize(); i++ )
-	{
-		if( m_sCurrentSkin == asSkinNames[i] )
-			goto skin_exists;
-	}
-	m_sCurrentSkin = asSkinNames[0];
-	
-skin_exists:
-	
-	m_sMasterPlayerNumber = PLAYER_1;
 }
 
 
-GameDef* GameManager::GetCurrentGameDef()
+GameDef* GameManager::GetGameDefForGame( Game g )
 {
-	return &g_GameDefs[ m_CurGame ];
+	ASSERT( g != GAME_INVALID );
+	return &g_GameDefs[ g ];
 }
 
-StyleDef* GameManager::GetCurrentStyleDef()
+StyleDef* GameManager::GetStyleDefForStyle( Style s )
 {
-	ASSERT( m_CurStyle != STYLE_NONE );
-	return &g_StyleDefs[ m_CurStyle ];
+	ASSERT( s != STYLE_NONE );
+	return &g_StyleDefs[ s ];
+}
+
+Style GameManager::GetStyleThatPlaysNotesType( NotesType nt )
+{
+	for( int i=0; i<NUM_STYLES; i++ )
+		if( g_StyleDefs[i].m_NotesType == nt )
+			return (Style)i;
+
+	return STYLE_NONE;
 }
 
 void GameManager::GetGameNames( CStringArray &AddTo )
@@ -620,31 +617,64 @@ void GameManager::GetGameNames( CStringArray &AddTo )
 		AddTo.Add( g_GameDefs[i].m_szName );
 }
 
-void GameManager::GetSkinNames( CStringArray &AddTo )
+
+void GameManager::GetNoteSkinNames( CStringArray &AddTo )
 {
-	GetCurrentGameDef()->GetSkinNames( AddTo );
+	GAMESTATE->GetCurrentGameDef()->GetSkinNames( AddTo );
 }
 
-bool GameManager::IsPlayerEnabled( PlayerNumber pn )
+bool GameManager::DoesNoteSkinExist( CString sSkinName )
 {
-	if( m_CurStyle == STYLE_NONE )	// if no style set (we're in TitleMenu, ConfigInstruments or something)
-		return true;				// allow input from both sides
-
-	return ( pn == m_sMasterPlayerNumber ) ||  
-		( GetCurrentStyleDef()->m_StyleType == StyleDef::TWO_PLAYERS_USE_TWO_SIDES );
-};
-
-CString GameManager::GetPathToGraphic( const PlayerNumber p, const int col, const GameButtonGraphic gbg )
-{
-	StyleInput si( p, col );
-	GameInput gi = GetCurrentStyleDef()->StyleInputToGameInput( si );
-	InstrumentButton b = gi.button;
-	return GetCurrentGameDef()->GetPathToGraphic( m_sCurrentSkin, b, gbg );
+	CStringArray asSkinNames;	
+	GetNoteSkinNames( asSkinNames );
+	for( int i=0; i<asSkinNames.GetSize(); i++ )
+		if( 0==stricmp(sSkinName, asSkinNames[i]) )
+			return true;
+	return false;
 }
 
-void GameManager::GetTweenColors( const PlayerNumber p, const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo )
+void GameManager::SwitchNoteSkin( CString sNewNoteSkin )
 {
-	StyleInput StyleI( p, col );
-	GameInput GameI = GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
-	GetCurrentGameDef()->GetTweenColors( m_sCurrentSkin, GameI.button, aTweenColorsAddTo );
+	if( sNewNoteSkin == ""  ||  !DoesNoteSkinExist(sNewNoteSkin) )
+	{
+		CStringArray as;
+		GetNoteSkinNames( as );
+		m_sCurNoteSkin = as[0];
+	}
+	else
+		m_sCurNoteSkin = sNewNoteSkin;
+}
+
+CString GameManager::GetPathTo( Game g, CString sSkinName, CString sButtonName, const SkinElement gbg )
+{
+	return GetGameDefForGame(g)->GetPathToGraphic( sSkinName, sButtonName, gbg );
+}
+
+void GameManager::GetTweenColors( Game g, CString sSkinName, CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo )
+{
+	GetGameDefForGame(g)->GetTweenColors( sSkinName, sButtonName, aTweenColorsAddTo );
+}
+
+CString GameManager::GetPathTo( const int col, const SkinElement gbg )	// looks in GAMESTATE for the current Style
+{
+	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+
+	StyleInput SI( PLAYER_1, col );
+	GameInput GI = pStyleDef->StyleInputToGameInput( SI );
+	CString sButtonName = pGameDef->m_szButtonNames[GI.button];
+	return pGameDef->GetPathToGraphic( m_sCurNoteSkin, sButtonName, gbg );
+}
+
+void GameManager::GetTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo )	// looks in GAMESTATE for the current Style
+{
+	ASSERT( m_sCurNoteSkin != "" );	// if this == NULL, SwitchGame() was never called
+
+	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+
+	StyleInput SI( PLAYER_1, col );
+	GameInput GI = pStyleDef->StyleInputToGameInput( SI );
+	CString sButtonName = pGameDef->m_szButtonNames[GI.button];
+	pGameDef->GetTweenColors( m_sCurNoteSkin, sButtonName, aTweenColorsAddTo );
 }

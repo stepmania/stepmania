@@ -16,7 +16,7 @@
 #include "RageMusic.h"
 #include "ScreenTitleMenu.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 ScreenPrompt::ScreenPrompt( CString sText, PromptType pt, bool* pbAnswer )
 {
@@ -37,7 +37,7 @@ ScreenPrompt::ScreenPrompt( CString sText, PromptType pt, bool* pbAnswer )
 	m_Fade.SetOpened();
 	m_Fade.CloseWipingRight();
 	m_Fade.SetZ(-2);
-	this->AddActor( &m_Fade );
+	this->AddSubActor( &m_Fade );
 
 	CStringArray arrayTextLines;
 	split( sText, "\n", arrayTextLines );
@@ -47,7 +47,7 @@ ScreenPrompt::ScreenPrompt( CString sText, PromptType pt, bool* pbAnswer )
 		m_textQuestion[i].SetText( arrayTextLines[i] );
 		m_textQuestion[i].SetXY( CENTER_X, CENTER_Y-50 + i*27 - arrayTextLines.GetSize()*27/2 );
 		m_textQuestion[i].SetZ(-2);
-		this->AddActor( &m_textQuestion[i] );
+		this->AddSubActor( &m_textQuestion[i] );
 	}
 
 	m_rectAnswerBox.SetDiffuseColor( D3DXCOLOR(0.5f,0.5f,1.0f,0.7f) );
@@ -55,7 +55,7 @@ ScreenPrompt::ScreenPrompt( CString sText, PromptType pt, bool* pbAnswer )
 	m_rectAnswerBox.SetZoomX( m_textAnswer[*m_pbAnswer].GetWidestLineWidthInSourcePixels()+10.0f );
 	m_rectAnswerBox.SetZoomY( 30 );
 	m_rectAnswerBox.SetZ(-2);
-	this->AddActor( &m_rectAnswerBox );
+	this->AddSubActor( &m_rectAnswerBox );
 
 	m_textAnswer[0].Load( THEME->GetPathTo(FONT_HEADER1) );
 	m_textAnswer[1].Load( THEME->GetPathTo(FONT_HEADER1) );
@@ -63,8 +63,8 @@ ScreenPrompt::ScreenPrompt( CString sText, PromptType pt, bool* pbAnswer )
 	m_textAnswer[1].SetY( CENTER_Y+120 );
 	m_textAnswer[0].SetZ(-2);
 	m_textAnswer[1].SetZ(-2);
-	this->AddActor( &m_textAnswer[0] );
-	this->AddActor( &m_textAnswer[1] );
+	this->AddSubActor( &m_textAnswer[0] );
+	this->AddSubActor( &m_textAnswer[1] );
 
 	
 

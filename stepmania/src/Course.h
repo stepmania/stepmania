@@ -32,18 +32,22 @@ public:
 	CString		m_sCDTitlePath;
 	int			m_iStages;
 	Song*		m_apSongs[MAX_COURSE_STAGES];
-	DifficultyClass m_aDifficultyClasses[MAX_COURSE_STAGES];
+	CString		m_asDescriptions[MAX_COURSE_STAGES];
+	Notes*		GetNotesForStage( int iStage );
 	bool		m_bRepeat;	// repeat after last song?
 	PlayerOptions	m_PlayerOptions;
 
-	void LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs );
 
-	void AddStage( Song* pSong, DifficultyClass dc )
+	void LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs );
+	void CreateFromGroupAndDifficultyClass( CString sGroupName, DifficultyClass dc, CArray<Song*,Song*> &apSongsInGroup );
+
+	void AddStage( Song* pSong, CString sDescription )
 	{
 		ASSERT( m_iStages <= MAX_COURSE_STAGES );
 		m_apSongs[m_iStages] = pSong;
-		m_aDifficultyClasses[m_iStages] = dc;
+		m_asDescriptions[m_iStages] = sDescription;
 		m_iStages++;
 	}
 
+	void GetSongAndNotesForCurrentStyle( CArray<Song*,Song*>& apSongsOut, CArray<Notes*,Notes*> apNotesOut[NUM_PLAYERS] );
 };

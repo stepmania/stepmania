@@ -15,6 +15,7 @@
 #include "Quad.h"
 #include "TransitionStarWipe.h"
 #include "MenuElements.h"
+#include "TipDisplay.h"
 
 
 class ScreenSandbox : public Screen
@@ -27,7 +28,8 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	BitmapText m_text;
+	TipDisplay m_text;
+	MenuElements m_Menu;
 	RageSoundStream	m_sound;
 };
 

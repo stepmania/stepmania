@@ -14,28 +14,35 @@
 #include "StyleDef.h"
 
 
-const int MAX_GAME_DEFS = 10;
-
-
 class GameManager
 {
 public:
 	GameManager();
 
-	Game			m_CurGame;
-	Style			m_CurStyle;
-	NotesType		m_CurNotesType;		// only used in Edit
-	CString			m_sCurrentSkin;
-	PlayerNumber	m_sMasterPlayerNumber;
+	GameDef*	GetGameDefForGame( Game g );
+	StyleDef*	GetStyleDefForStyle( Style s );
 
-	GameDef*		GetCurrentGameDef();
-	StyleDef*		GetCurrentStyleDef();
+	Style		GetStyleThatPlaysNotesType( NotesType nt );
 
 	void GetGameNames( CStringArray &AddTo );
-	void GetSkinNames( CStringArray &AddTo );
-	bool IsPlayerEnabled( PlayerNumber PlayerNo );
-	CString GetPathToGraphic( const PlayerNumber p, const int col, const GameButtonGraphic gbg );
-	void GetTweenColors( const PlayerNumber p, const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo );
+	bool DoesGameExist( CString sGameName );
+	void SwitchGame( Game newGame );
+
+	void GetNoteSkinNames( CStringArray &AddTo );	// looks up current Game in GAMESTATE
+	bool DoesNoteSkinExist( CString sSkinName );	// looks up current Game in GAMESTATE
+	void SwitchNoteSkin( CString sNewNoteSkin );	// looks up current Game in GAMESTATE
+	CString GetCurNoteSkin() { return m_sCurNoteSkin; };
+
+	CString GetPathTo( const int col, const SkinElement gbg );	// looks in GAMESTATE for the current Style
+	void GetTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo );	// looks in GAMESTATE for the current Style
+
+protected:
+
+	CString GetPathTo( Game g, CString sSkinName, CString sButtonName, const SkinElement gbg );
+	void GetTweenColors( Game g, CString sSkinName, CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo );
+
+	CString m_sCurNoteSkin;	
+
 };
 
 extern GameManager*	GAMEMAN;	// global and accessable from anywhere in our program

@@ -17,11 +17,13 @@
 #include "ScreenSelectMusic.h"
 #include "ScreenEvaluation.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "GameManager.h"
 #include "ScreenEditMenu.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
+#include "GameState.h"
+#include "GameState.h"
 
 
 //
@@ -87,9 +89,9 @@ ScreenEdit::ScreenEdit()
 {
 	LOG->WriteLine( "ScreenEdit::ScreenEdit()" );
 
-	m_pSong = SONGMAN->GetCurrentSong();
+	m_pSong = GAMESTATE->m_pCurSong;
 
-	m_pNotes = SONGMAN->m_pCurNotes[PLAYER_1];
+	m_pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
 	if( m_pNotes == NULL )
 	{
 		m_pNotes = new Notes;
@@ -107,7 +109,7 @@ ScreenEdit::ScreenEdit()
 		// GAMEMAN->m_CurStyle is set to the target game style
 		// of the current edit. Naturally, this is where we'll
 		// want to extract the NotesType for a (NEW) sequence.
-		m_pNotes->m_NotesType = StyleToNotesType( GAMEMAN->m_CurStyle );
+		m_pNotes->m_NotesType = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
 
 		m_pSong->m_apNotes.Add( m_pNotes );
 	}
@@ -134,27 +136,27 @@ ScreenEdit::ScreenEdit()
 	m_GranularityIndicator.SetZoom( 0.5f );
 
 	m_GrayArrowRowEdit.SetXY( EDIT_X, EDIT_GRAY_Y );
-	m_GrayArrowRowEdit.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions );
+	m_GrayArrowRowEdit.Load( PLAYER_1, GAMESTATE->GetCurrentStyleDef(), m_PlayerOptions );
 	m_GrayArrowRowEdit.SetZoom( 0.5f );
 
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
-	m_NoteFieldEdit.Load( &noteData, PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions, 10, 12, NoteField::MODE_EDITING );
+	m_NoteFieldEdit.Load( &noteData, PLAYER_1, GAMESTATE->GetCurrentStyleDef(), m_PlayerOptions, 10, 12, NoteField::MODE_EDITING );
 
 	m_rectRecordBack.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_rectRecordBack.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
 
 	m_GrayArrowRowRecord.SetXY( EDIT_X, EDIT_GRAY_Y );
-	m_GrayArrowRowRecord.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions );
+	m_GrayArrowRowRecord.Load( PLAYER_1, GAMESTATE->GetCurrentStyleDef(), m_PlayerOptions );
 	m_GrayArrowRowRecord.SetZoom( 1.0f );
 
 	m_NoteFieldRecord.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_NoteFieldRecord.SetZoom( 1.0f );
-	m_NoteFieldRecord.Load( &noteData, PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions, 2, 5, NoteField::MODE_EDITING );
+	m_NoteFieldRecord.Load( &noteData, PLAYER_1, GAMESTATE->GetCurrentStyleDef(), m_PlayerOptions, 2, 5, NoteField::MODE_EDITING );
 
 	m_Clipboard.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
 
-	m_Player.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), &noteData, PlayerOptions(), NULL, NULL, 1, 1 );
+	m_Player.Load( PLAYER_1, GAMESTATE->GetCurrentStyleDef(), &noteData, PlayerOptions(), NULL, NULL, 1, 1 );
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
 
 	m_Fade.SetClosed();
@@ -314,7 +316,7 @@ void ScreenEdit::Update( float fDeltaTime )
 		m_fBeat,
 		m_NoteFieldEdit.m_fBeginMarker,	m_NoteFieldEdit.m_fEndMarker,
 		DifficultyClassToString( m_pNotes->m_DifficultyClass ),
-		SONGMAN->GetCurrentNotes(PLAYER_1) ? SONGMAN->GetCurrentNotes(PLAYER_1)->m_sDescription : "no description",
+		GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->m_sDescription : "no description",
 		iNumTapNotes, iNumHoldNotes,
 		m_pSong->m_fBeat0OffsetInSeconds,
 		m_pSong->m_fMusicSampleStartSeconds, m_pSong->m_fMusicSampleLengthSeconds
@@ -423,21 +425,21 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		case DIK_S:
 			{
 				// copy edit into current Notes
-				Song* pSong = SONGMAN->GetCurrentSong();
-				Notes* pNotes = SONGMAN->GetCurrentNotes(PLAYER_1);
+				Song* pSong = GAMESTATE->m_pCurSong;
+				Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
 
 				if( pNotes == NULL )
 				{
 					// allocate a new Notes
 					pNotes = new Notes;
 					pSong->m_apNotes.Add( pNotes );
-					pNotes->m_NotesType = GAMEMAN->m_CurNotesType;
+					pNotes->m_NotesType = GAMEMAN->GetStyleDefForStyle( GAMESTATE->m_CurStyle )->m_NotesType;
 					pNotes->m_sDescription = "Untitled";
 					pNotes->m_iMeter = 1;
 				}
 
 				pNotes->SetNoteData( (NoteData*)&m_NoteFieldEdit );
-				SONGMAN->GetCurrentSong()->SaveToSMFile();
+				GAMESTATE->m_pCurSong->SaveToSMFile();
 			}
 			break;
 		case DIK_UP:
@@ -567,7 +569,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 				m_Mode = MODE_PLAY;
 
-				m_Player.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), (NoteData*)&m_NoteFieldEdit, PlayerOptions(), NULL, NULL, 1, 1 );
+				m_Player.Load( PLAYER_1, GAMESTATE->GetCurrentStyleDef(), (NoteData*)&m_NoteFieldEdit, PlayerOptions(), NULL, NULL, 1, 1 );
 
 				m_rectRecordBack.BeginTweening( 0.5f );
 				m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
@@ -882,7 +884,7 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 	float fSongBeat, fBPS;
 	bool bFreeze;
 	m_pSong->GetBeatAndBPSFromElapsedTime( m_soundMusic.GetPositionSeconds(), fSongBeat, fBPS, bFreeze );
-	const float fMaxBeatDifference = fBPS * PREFSMAN->m_fJudgeWindow / PREFSMAN->m_SongOptions.m_fMusicRate;
+	const float fMaxBeatDifference = fBPS * PREFSMAN->m_fJudgeWindow / GAMESTATE->m_SongOptions.m_fMusicRate;
 
 	switch( StyleI.player )
 	{

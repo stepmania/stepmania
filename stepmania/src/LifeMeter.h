@@ -10,9 +10,11 @@
 -----------------------------------------------------------------------------
 */
 
-#include "ActorFrame.h"
 #include "GameConstantsAndTypes.h"
-#include "NoteData.h"
+#include "ActorFrame.h"
+
+
+class Song;
 
 
 class LifeMeter : public ActorFrame
@@ -21,15 +23,18 @@ public:
 	LifeMeter() { m_fSongBeat = 0; };
 	virtual ~LifeMeter() {};
 	
-	void SetPlayerOptions(const PlayerOptions &po) { m_po = po; }
-	void SetBeat( float fSongBeat ) { m_fSongBeat = fSongBeat; };
+	virtual void Load( PlayerNumber p, const PlayerOptions &po ) { m_PlayerNumber = p; m_po = po; }
+	virtual void SetBeat( float fSongBeat ) { m_fSongBeat = fSongBeat; };
 
+	virtual void NextSong( Song* pSong ) {};
 	virtual void ChangeLife( TapNoteScore score ) = 0;
 	virtual bool IsInDanger() = 0;
 	virtual bool IsHot() = 0;
-	virtual bool HasFailed() = 0;
+	virtual bool IsFailing() = 0;
+	virtual bool FailedEarlier() = 0;
 
 protected:
 	float m_fSongBeat;
+	PlayerNumber	m_PlayerNumber;
 	PlayerOptions	m_po;
 };

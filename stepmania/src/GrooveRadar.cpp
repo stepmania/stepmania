@@ -13,7 +13,7 @@
 #include "RageUtil.h"
 
 #include "GrooveRadar.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "RageBitmapTexture.h"
 #include "GameConstantsAndTypes.h"
 
@@ -22,7 +22,7 @@ float RADAR_VALUE_ROTATION( int iValueIndex ) {	return D3DX_PI/2 + D3DX_PI*2 / 5
 
 GrooveRadar::GrooveRadar()
 {
-	this->AddActor( &m_GrooveRadarValueMap );
+	this->AddSubActor( &m_GrooveRadarValueMap );
 
 	for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
 	{
@@ -48,7 +48,7 @@ GrooveRadar::GrooveRadar()
 		m_sprRadarLabels[c].StopAnimating();
 		m_sprRadarLabels[c].SetState( c );
 		m_sprRadarLabels[c].SetXY( fX, fY );
-		this->AddActor( &m_sprRadarLabels[c] );
+		this->AddSubActor( &m_sprRadarLabels[c] );
 	}
 }
 
@@ -88,7 +88,7 @@ void GrooveRadar::TweenOffScreen()
 GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 {
 	m_sprRadarBase.Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_RADAR_BASE) );
-	this->AddActor( &m_sprRadarBase );
+	this->AddSubActor( &m_sprRadarBase );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{

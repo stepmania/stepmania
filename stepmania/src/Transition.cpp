@@ -12,7 +12,7 @@
 #include "RageUtil.h"
 
 #include "Transition.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 
 Transition::Transition()

@@ -31,8 +31,6 @@ RageLog::RageLog()
 	// delete old log files
 	DeleteFile( LOG_FILE_NAME );
 
-	ShowConsole();
-
 	// Open log file and leave it open.  Let the OS close it when the app exits
 	m_fileLog = fopen( LOG_FILE_NAME, "w" );
 

@@ -15,7 +15,7 @@
 #include "GradeDisplay.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 
 const float SCROLL_TIME = 5.0f;

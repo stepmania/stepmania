@@ -13,6 +13,7 @@
 #include "InputMapper.h"
 #include "IniFile.h"
 #include "GameManager.h"
+#include "GameState.h"
 
 
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
@@ -20,9 +21,6 @@ InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our p
 
 InputMapper::InputMapper()
 {
-	m_sCurrentGame = GAMEMAN->GetCurrentGameDef()->m_szName;
-
-	ReadMappingsFromDisk();
 }
 
 
@@ -38,34 +36,33 @@ void InputMapper::ReadMappingsFromDisk()
 	ASSERT( GAMEMAN != NULL );
 
 	IniFile ini;
-	ini.SetPath( m_sCurrentGame + ".ini" );
+	ini.SetPath( GAMESTATE->GetCurrentGameDef()->m_szName + CString("Map.ini") );
 	if( !ini.ReadFile() ) {
 		return;		// load nothing
 		//throw RageException( "could not read config file" );
 	}
 
-	CMapStringToString* pKey = ini.GetKeyPointer("Input");
-	CString name_string, value_string;
+	IniFile::key* pKey = ini.GetKey( "Input" );
 
-	if( pKey != NULL )
+	if( pKey == NULL )
+		return;
+	for( int i=0; i<pKey->names.GetSize(); i++ )
 	{
-		for( POSITION pos = pKey->GetStartPosition(); pos != NULL; )
+		CString name = pKey->names[i];
+		CString value = pKey->values[i];
+
+		GameInput GameI;
+		GameI.fromString( name );
+
+		CStringArray sDeviceInputStrings;
+		split( value, ",", sDeviceInputStrings, false );
+
+		for( int i=0; i<sDeviceInputStrings.GetSize() && i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
 		{
-			pKey->GetNextAssoc( pos, name_string, value_string );
-
-			GameInput GameI;
-			GameI.fromString(name_string);
-
-			CStringArray sDeviceInputStrings;
-			split( value_string, ",", sDeviceInputStrings, false );
-
-			for( int i=0; i<sDeviceInputStrings.GetSize() && i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
-			{
-				DeviceInput DeviceI;
-				DeviceI.fromString( sDeviceInputStrings[i] );
-				if( !DeviceI.IsBlank() )
-					SetInputMap( DeviceI, GameI, i );
-			}
+			DeviceInput DeviceI;
+			DeviceI.fromString( sDeviceInputStrings[i] );
+			if( !DeviceI.IsBlank() )
+				SetInputMap( DeviceI, GameI, i );
 		}
 	}
 }
@@ -74,7 +71,7 @@ void InputMapper::ReadMappingsFromDisk()
 void InputMapper::SaveMappingsToDisk()
 {
 	IniFile ini;
-	ini.SetPath( m_sCurrentGame + ".ini" );
+	ini.SetPath( GAMESTATE->GetCurrentGameDef()->m_szName + CString("Map.ini") );
 //	ini.ReadFile();		// don't read the file so that we overwrite everything there
 
 
@@ -235,31 +232,31 @@ DeviceInput InputMapper::MenuToDevice( MenuInput MenuI )
 
 void InputMapper::GameToStyle( GameInput GameI, StyleInput &StyleI )
 {
-	if( GAMEMAN->m_CurStyle == STYLE_NONE )
+	if( GAMESTATE->m_CurStyle == STYLE_NONE )
 	{
 		StyleI.MakeBlank();
 		return;
 	}
 
-	StyleDef* pStyleDef = GAMEMAN->GetCurrentStyleDef();
+	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 	StyleI = pStyleDef->GameInputToStyleInput( GameI );
 }
 
 void InputMapper::GameToMenu( GameInput GameI, MenuInput &MenuI )
 {
-	GameDef* pGameDef = GAMEMAN->GetCurrentGameDef();
+	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 	MenuI = pGameDef->GameInputToMenuInput( GameI );
 }
 
 void InputMapper::StyleToGame( StyleInput StyleI, GameInput &GameI )
 {
-	StyleDef* pStyleDef = GAMEMAN->GetCurrentStyleDef();
+	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 	GameI = pStyleDef->StyleInputToGameInput( StyleI );
 }
 
 void InputMapper::MenuToGame( MenuInput MenuI, GameInput &GameI )
 {
-	GameDef* pGameDef = GAMEMAN->GetCurrentGameDef();
+	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 	GameI = pGameDef->MenuInputToGameInput( MenuI );
 }
 

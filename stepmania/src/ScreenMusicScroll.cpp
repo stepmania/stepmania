@@ -14,13 +14,14 @@
 #include "ScreenMusicScroll.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "ScreenSelectMusic.h"
 #include "ScreenTitleMenu.h"
 #include "GameManager.h"
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"
 #include "SongManager.h"
+#include "GameState.h"
 
 
 const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
@@ -60,8 +61,9 @@ const CString CREDIT_LINES[] =
 	"",
 	"PROGRAMMING:",
 	"Chris Danford",
-	"Ben Nordstrom",
 	"Lord Frieza (Andrew Livy)",
+	"Dro Kulix",
+	"Ben Nordstrom",
 	"Parasyte (Chris Gomez)",
 	"angedelamort (Sauleil Lamarre)",
 	"Edwin Evans",
@@ -112,8 +114,7 @@ const CString CREDIT_LINES[] =
 	"",
 	"",
 	"",
-	"If your name is missing from this list,",
-	"                      send me an e-mail!",
+	"Please, join the StepMania team and help us out!"
 	"                                -Chris"
 };
 const int NUM_CREDIT_LINES = sizeof(CREDIT_LINES) / sizeof(CString);
@@ -125,12 +126,9 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 	 int i;
 
-	// BUGFIX by ANDY: Stage will now reset back to 0 when game ends.
-	PREFSMAN->m_iCurrentStageIndex = 0;
-
 	m_sprBackground.Load( THEME->GetPathTo(GRAPHIC_MUSIC_SCROLL_BACKGROUND) );
 	m_sprBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-	this->AddActor( &m_sprBackground );
+	this->AddSubActor( &m_sprBackground );
 
 
 	CArray<Song*, Song*> arraySongs;
@@ -153,7 +151,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 	{
 		m_textLines[m_iNumLines].Load( THEME->GetPathTo(FONT_NORMAL) );
 		m_textLines[m_iNumLines].SetText( CREDIT_LINES[i] );
-//		this->AddActor( &m_textLines[m_iNumLines] );
+//		this->AddSubActor( &m_textLines[m_iNumLines] );
 
 		m_iNumLines++;
 	}
@@ -169,9 +167,9 @@ ScreenMusicScroll::ScreenMusicScroll()
 	
 	this->SendScreenMessage( SM_StartFadingOut, 0.3f * i + 3.0f );
 
-	this->AddActor( &m_Fade );
+	this->AddSubActor( &m_Fade );
 
-	if ( GAMEMAN->m_CurGame != GAME_EZ2 )	
+	if ( GAMESTATE->GetCurGame() != GAME_EZ2 )	
 	{
 		m_soundMusic.Load( THEME->GetPathTo(SOUND_MUSIC_SCROLL_MUSIC) );
 	}
@@ -181,7 +179,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 	}
 
 	m_Fade.OpenWipingRight();
-	if ( GAMEMAN->m_CurGame != GAME_EZ2 )
+	if ( GAMESTATE->GetCurGame() != GAME_EZ2 )
 	{
 		m_soundMusic.Play( true );
 	}

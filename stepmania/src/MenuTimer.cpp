@@ -13,7 +13,7 @@
 #include "MenuTimer.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "ScreenManager.h"
 #include "AnnouncerManager.h"
 
@@ -28,12 +28,12 @@ MenuTimer::MenuTimer()
 	m_textDigit1.Load( THEME->GetPathTo(FONT_TIMER_NUMBERS) );
 	m_textDigit1.TurnShadowOff();
 	m_textDigit1.SetXY( -18, 0 );
-	this->AddActor( &m_textDigit1 );
+	this->AddSubActor( &m_textDigit1 );
 
 	m_textDigit2.Load( THEME->GetPathTo(FONT_TIMER_NUMBERS) );
 	m_textDigit2.TurnShadowOff();
 	m_textDigit2.SetXY( +18, 0 );
-	this->AddActor( &m_textDigit2 );
+	this->AddSubActor( &m_textDigit2 );
 
 	m_soundBeep.Load( THEME->GetPathTo(SOUND_MENU_TIMER) );
 }

@@ -31,6 +31,9 @@ RandomSample::~RandomSample()
 
 bool RandomSample::LoadSoundDir( CString sDir )
 {
+	if( sDir == "" )
+		return true;
+
 	// make sure there's a backslash at the end of this path
 	if( sDir[sDir.GetLength()-1] != '\\' )
 		sDir += "\\";

@@ -13,7 +13,7 @@
 #include "ScreenSelectDifficulty.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "ScreenSelectGroup.h"
 #include "ScreenTitleMenu.h"
 #include "GameManager.h"
@@ -21,6 +21,7 @@
 #include "GameConstantsAndTypes.h"
 #include "AnnouncerManager.h"
 #include "ScreenSelectCourse.h"
+#include "GameState.h"
 
 
 const float MORE_ARROWS_X[NUM_PAGES]	=	{ SCREEN_RIGHT-60, SCREEN_WIDTH + SCREEN_LEFT+60};
@@ -73,7 +74,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 	LOG->WriteLine( "ScreenSelectDifficulty::ScreenSelectDifficulty()" );
 
 	// Reset the current PlayMode
-	PREFSMAN->m_PlayMode = PLAY_MODE_INVALID;
+	GAMESTATE->m_PlayMode = PLAY_MODE_INVALID;
 
 
 	int p;
@@ -84,7 +85,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 		ssprintf("Use %c %c to select, then press START", char(1), char(2)),
 		false, true, 40 
 		);
-	this->AddActor( &m_Menu );
+	this->AddSubActor( &m_Menu );
 
 
 	for( int d=0; d<NUM_DIFFICULTY_ITEMS; d++ )
@@ -103,26 +104,26 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 		m_sprPicture[d].SetXY( DIFFICULTY_ITEM_X[d], DIFFICULTY_ITEM_Y[d] );
 		m_sprPicture[d].SetVertAlign( align_bottom );
 		m_sprPicture[d].TurnShadowOff();
-		m_framePages.AddActor( &m_sprPicture[d] );
+		m_framePages.AddSubActor( &m_sprPicture[d] );
 
 		m_sprHeader[d].Load( THEME->GetPathTo(te_header) );
 		m_sprHeader[d].SetXY( DIFFICULTY_ITEM_X[d], DIFFICULTY_ITEM_Y[d] );
 		m_sprHeader[d].SetVertAlign( align_top );
 		m_sprHeader[d].TurnShadowOff();
-		m_framePages.AddActor( &m_sprHeader[d] );
+		m_framePages.AddSubActor( &m_sprHeader[d] );
 	}
 
 	for( p=0; p<NUM_PAGES; p++ )
 	{
 		m_sprMoreArrows[p].Load( THEME->GetPathTo( p==0 ? GRAPHIC_ARROWS_RIGHT : GRAPHIC_ARROWS_LEFT ) );
 		m_sprMoreArrows[p].SetXY( MORE_ARROWS_X[p], MORE_ARROWS_Y[p] );
-		m_framePages.AddActor( &m_sprMoreArrows[p] );
+		m_framePages.AddSubActor( &m_sprMoreArrows[p] );
 
 		m_sprExplanation[p].Load( THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_EXPLANATION) );
 		m_sprExplanation[p].SetXY( EXPLANATION_X[p], EXPLANATION_Y[p] );
 		m_sprExplanation[p].StopAnimating();
 		m_sprExplanation[p].SetState( p );
-		m_framePages.AddActor( &m_sprExplanation[p] );
+		m_framePages.AddSubActor( &m_sprExplanation[p] );
 	}
 
 
@@ -131,7 +132,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 		m_iSelection[p] = 1;	// Select "medium"
 		m_bChosen[p] = false;
 
-		if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
+		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
 		m_sprArrowShadow[p].Load( THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_ARROWS) );
@@ -139,7 +140,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 		m_sprArrowShadow[p].SetState( p );
 		m_sprArrowShadow[p].TurnShadowOff();
 		m_sprArrowShadow[p].SetDiffuseColor( D3DXCOLOR(0,0,0,0.6f) );
-		m_framePages.AddActor( &m_sprArrowShadow[p] );
+		m_framePages.AddSubActor( &m_sprArrowShadow[p] );
 
 		m_sprArrow[p].Load( THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_ARROWS) );
 		m_sprArrow[p].StopAnimating();
@@ -147,13 +148,13 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 		m_sprArrow[p].TurnShadowOff();
 		m_sprArrow[p].SetDiffuseColor( PlayerToColor((PlayerNumber)p) );
 		m_sprArrow[p].SetEffectGlowing();
-		m_framePages.AddActor( &m_sprArrow[p] );
+		m_framePages.AddSubActor( &m_sprArrow[p] );
 
 		m_sprOK[p].Load( THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_OK) );
-		m_framePages.AddActor( &m_sprOK[p] );
+		m_framePages.AddSubActor( &m_sprOK[p] );
 	}
 
-	this->AddActor( &m_framePages );
+	this->AddSubActor( &m_framePages );
 	
 	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_DIFFICULTY_CHANGE) );
 	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
@@ -216,9 +217,9 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				switch( m_iSelection[p] )
 				{
-				case 0:	PREFSMAN->m_PreferredDifficultyClass[p] = CLASS_EASY;	break;
-				case 1:	PREFSMAN->m_PreferredDifficultyClass[p] = CLASS_MEDIUM;	break;
-				case 2:	PREFSMAN->m_PreferredDifficultyClass[p] = CLASS_HARD;	break;
+				case 0:	GAMESTATE->m_PreferredDifficultyClass[p] = CLASS_EASY;	break;
+				case 1:	GAMESTATE->m_PreferredDifficultyClass[p] = CLASS_MEDIUM;	break;
+				case 2:	GAMESTATE->m_PreferredDifficultyClass[p] = CLASS_HARD;	break;
 				}
 		}
 
@@ -227,12 +228,12 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 		case 0:
 		case 1:
 		case 2:	// something on page 1 was chosen
-			PREFSMAN->m_PlayMode = PLAY_MODE_ARCADE;
+			GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 			SCREENMAN->SetNewScreen( new ScreenSelectGroup );
 			break;
 		case 3:
 		case 4:
-			PREFSMAN->m_PlayMode = PLAY_MODE_ONI;
+			GAMESTATE->m_PlayMode = PLAY_MODE_ONI;
 			SCREENMAN->SetNewScreen( new ScreenSelectCourse );
 			break;
 		default:
@@ -378,7 +379,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	// check to see if everyone has chosen
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( GAMEMAN->IsPlayerEnabled((PlayerNumber)p)  &&  m_bChosen[p] == false )
+		if( GAMESTATE->IsPlayerEnabled((PlayerNumber)p)  &&  m_bChosen[p] == false )
 			return;
 	}
 	this->SendScreenMessage( SM_StartTweeningOffScreen, 0.7f );
@@ -405,7 +406,7 @@ void ScreenSelectDifficulty::TweenOffScreen()
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
+		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
 		m_sprArrow[p].BeginTweening( 0.3f );
@@ -449,8 +450,6 @@ void ScreenSelectDifficulty::TweenOnScreen()
 {
 	int p;
 
-	m_Menu.TweenOnScreenFromMenu( SM_None );
-
 	for( p=0; p<NUM_PAGES; p++ )
 	{
 		m_sprExplanation[p].SetXY( EXPLANATION_OFF_SCREEN_X[p], EXPLANATION_OFF_SCREEN_Y[p] );
@@ -464,7 +463,7 @@ void ScreenSelectDifficulty::TweenOnScreen()
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
+		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
 		int iSelection = m_iSelection[p];

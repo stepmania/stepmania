@@ -3,9 +3,7 @@
 -----------------------------------------------------------------------------
  Class: PrefsManager
 
- Desc: Holds user-chosen preferences and saves it between sessions.  This class 
-    also has temporary holders for information that passed between windows - e.g.
-	GameplayStatistics.
+ Desc: Holds user-chosen preferences that are saved between sessions.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -15,7 +13,9 @@
 #include "GameConstantsAndTypes.h"
 
 
-const int NUM_PAD_TO_DEVICE_SLOTS	= 3;	// three device inputs may map to one pad input
+#include "AnnouncerManager.h"
+#include "ThemeManager.h"
+#include "GameManager.h"
 
 
 class PrefsManager
@@ -28,8 +28,9 @@ public:
 
 	// GameOptions (ARE saved between sessions)
 	bool	m_bWindowed;
-	bool	m_bHighDetail;
-	bool	m_bHighTextureDetail;
+	int		m_iDisplayResolution;
+	int		m_iTextureResolution;
+	int		m_iRefreshRate;
 	bool	m_bIgnoreJoyAxes;
 	bool	m_bShowFPS;
 	BackgroundMode	m_BackgroundMode;
@@ -40,32 +41,34 @@ public:
 	bool	m_bAutoPlay;
 	float	m_fJudgeWindow;
 
-	// AppearanceOptions (ARE saved between sessions)
-	CString m_sAnnouncer;
-	CString m_sNoteSkin;
-
 	CStringArray m_asSongFolders;
 
-	void ReadPrefsFromDisk();
-	void SavePrefsToDisk();
+	int GetDisplayHeight()
+	{
+		switch( m_iDisplayResolution )
+		{
+		case 1280:	return 1024;	break;
+		case 1024:	return 768;	break;
+		case 800:	return 600;	break;
+		case 640:	return 480;	break;
+		case 512:	return 384;	break;
+		case 400:	return 300;	break;
+		case 320:	return 240;	break;
+		default:	throw RageException( "Invalid DisplayWidth '%d'", m_iDisplayResolution );	return 480;
+		}
+	}
+
+	void ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame );
+	void SaveGlobalPrefsToDisk();
 
 
-	// Options that are NOT saved between sessions
-	DifficultyClass	m_PreferredDifficultyClass[NUM_PLAYERS];
-	SongSortOrder	m_SongSortOrder;			// used by MusicWheel and should be saved until the app exits
-	PlayMode		m_PlayMode;
-	int				m_iCurrentStageIndex;		// starts at 0, and is incremented with each Stage Clear
+	// AppearanceOptions (ARE saved between sessions, and saved per game)
+//	CString m_sAnnouncer;	// need to make sure to call ANNOUNCER->SwitchAnnouncer() when this changes
+//	CString m_sTheme;		// need to make sure to call THEME->SwitchTheme() when this changes
+//	CString m_sNoteSkin;	
 
-	int				GetStageIndex();
-	bool			IsFinalStage();
-	bool			IsExtraStage();
-	bool			IsExtraStage2();
-	CString			GetStageText();
-	D3DXCOLOR		GetStageColor();
-
-
-	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];
-	SongOptions		m_SongOptions;
+	void ReadGamePrefsFromDisk();
+	void SaveGamePrefsToDisk();
 };
 
 

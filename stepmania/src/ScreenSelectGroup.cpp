@@ -14,7 +14,7 @@
 #include "ScreenSelectGroup.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "ScreenSelectMusic.h"
 #include "ScreenTitleMenu.h"
 #include "GameManager.h"
@@ -22,6 +22,7 @@
 #include "GameConstantsAndTypes.h"
 #include "SongManager.h"
 #include "AnnouncerManager.h"
+#include "GameState.h"
 
 
 const float GROUP_INFO_FRAME_X	=	SCREEN_LEFT + 180;
@@ -48,11 +49,7 @@ const ScreenMessage SM_StartFadingOut		 =	ScreenMessage(SM_User + 3);
 ScreenSelectGroup::ScreenSelectGroup()
 {
 	
-	LOG->WriteLine( "ScreenSelectGroup::ScreenSelectGroup()" );
-
-#define CSKEY(s) GetCrc32ForString(s) // Allows (indirect) use of strings as map keys
-#define CSKEY_TYPE unsigned int 
-	
+	LOG->WriteLine( "ScreenSelectGroup::ScreenSelectGroup()" );	
 
 
 	int i;
@@ -65,7 +62,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	// -- dro kulix
 	
 	// m_arrayGroupNames will contain all relevant group names
-	CMap<CSKEY_TYPE, CSKEY_TYPE, CArray<Song*, Song*>*, CArray<Song*, Song*>*>
+	CMap<int, int, CArray<Song*, Song*>*, CArray<Song*, Song*>*>
 		mapGroupToSongArray; // Will contain all relevant songs
 
 	{	// Let's get local!
@@ -87,7 +84,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 			const CString &sCurGroupName = m_arrayGroupNames[i];
 			
 			SONGMAN->GetSongsInGroup( sCurGroupName, *p_arrayGroupSongs );
-			mapGroupToSongArray.SetAt(CSKEY(sCurGroupName), p_arrayGroupSongs);
+			mapGroupToSongArray.SetAt(GetHashForString(sCurGroupName), p_arrayGroupSongs);
 		}
 
 		{
@@ -97,7 +94,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 			m_arrayGroupNames.InsertAt(0, "ALL MUSIC");
 			
 			p_arrayGroupSongs->Copy( arrayAllSongs );
-			mapGroupToSongArray.SetAt(CSKEY("ALL MUSIC"), p_arrayGroupSongs);
+			mapGroupToSongArray.SetAt(GetHashForString("ALL MUSIC"), p_arrayGroupSongs);
 		}
 
 		// Now, create a map of all songs to their support for the current style.
@@ -106,8 +103,8 @@ ScreenSelectGroup::ScreenSelectGroup()
 		mapStyleSupport.InitHashTable(arrayAllSongs.GetSize());
 
 		// The following loop is functionally identical to one used in MusicWheel
-		NotesType curNotesType = GAMEMAN->GetCurrentStyleDef()->m_NotesType;
-		for( i=0; i < arrayAllSongs.GetSize(); i++ )
+		NotesType curNotesType = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+		for( i=0; i<arrayAllSongs.GetSize(); i++ )
 		{
 			CArray<Notes*, Notes*> arraySteps;
 
@@ -133,7 +130,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 
 				int si = 0;
 
-				CSKEY_TYPE curKey = CSKEY(m_arrayGroupNames.GetAt(gi));
+				int curKey = GetHashForString(m_arrayGroupNames.GetAt(gi));
 				CArray <Song*, Song*>* p_arrayGroupSongs = 0;
 				mapGroupToSongArray.Lookup(curKey, p_arrayGroupSongs);
 
@@ -195,19 +192,19 @@ ScreenSelectGroup::ScreenSelectGroup()
 		ssprintf("Use %c %c to select, then press START", char(1), char(2)),
 		false, true, 40 
 		);
-	this->AddActor( &m_Menu );
+	this->AddSubActor( &m_Menu );
 
 	m_sprExplanation.Load( THEME->GetPathTo(GRAPHIC_SELECT_GROUP_EXPLANATION) );
 	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
-	this->AddActor( &m_sprExplanation );
+	this->AddSubActor( &m_sprExplanation );
 
 	m_GroupInfoFrame.SetXY( GROUP_INFO_FRAME_X, GROUP_INFO_FRAME_Y );
-	this->AddActor( &m_GroupInfoFrame );
+	this->AddSubActor( &m_GroupInfoFrame );
 
 	m_sprContentsHeader.Load( THEME->GetPathTo(GRAPHIC_SELECT_GROUP_CONTENTS_HEADER) );
 	m_sprContentsHeader.SetVertAlign( Actor::align_top );
 	m_sprContentsHeader.SetXY( CONTENTS_X, CONTENTS_START_Y );
-	this->AddActor( &m_sprContentsHeader );
+	this->AddSubActor( &m_sprContentsHeader );
 
 	for( i=0; i<NUM_CONTENTS_COLUMNS; i++ )
 	{
@@ -218,7 +215,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 		m_textContents[i].SetVertAlign( Actor::align_bottom );
 		m_textContents[i].SetZoom( 0.5f );
 		m_textContents[i].SetShadowLength( 2 );
-		this->AddActor( &m_textContents[i] );
+		this->AddSubActor( &m_textContents[i] );
 	}
 	
 
@@ -229,7 +226,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 
 		m_sprGroupButton[i].Load( THEME->GetPathTo(GRAPHIC_SELECT_GROUP_BUTTON) );
 		m_sprGroupButton[i].SetXY( BUTTON_X, BUTTON_START_Y + BUTTON_GAP_Y*i );
-		this->AddActor( &m_sprGroupButton[i] );
+		this->AddSubActor( &m_sprGroupButton[i] );
 
 		m_textGroup[i].Load( THEME->GetPathTo(FONT_NORMAL) );
 		m_textGroup[i].SetXY( BUTTON_X, BUTTON_START_Y + BUTTON_GAP_Y*i );
@@ -240,7 +237,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 		if( i == 0 )	m_textGroup[i].TurnRainbowOn();
 		else			m_textGroup[i].SetDiffuseColor( SONGMAN->GetGroupColor(sGroupName) );
 
-		this->AddActor( &m_textGroup[i] );
+		this->AddSubActor( &m_textGroup[i] );
 	}
 
 	//
@@ -287,7 +284,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 		CArray<Song*, Song*>* p_arraySongs;
 		const CString &sCurGroupName = m_arrayGroupNames[i];
 		
-		mapGroupToSongArray.Lookup(CSKEY(sCurGroupName), p_arraySongs);
+		mapGroupToSongArray.Lookup( GetHashForString(sCurGroupName), p_arraySongs);
 
 		m_iNumSongsInGroup[i] = p_arraySongs->GetSize();
 
@@ -329,7 +326,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 
 	// Deallocate remaining song arrays in map
 	{
-		CSKEY_TYPE csKey;
+		int csKey;
 		CArray<Song*, Song*>* pSongArray;
 
 		POSITION Pos;
@@ -342,9 +339,6 @@ ScreenSelectGroup::ScreenSelectGroup()
 			delete pSongArray;
 		}
 	}
-			
-#undef CSKEY_TYPE
-#undef CSKEY
 }
 
 
@@ -480,10 +474,10 @@ void ScreenSelectGroup::MenuStart( const PlayerNumber p )
 	m_soundSelect.PlayRandom();
 	m_bChosen = true;
 
-	SONGMAN->SetCurrentSong( NULL );
-	SONGMAN->m_sPreferredGroup = m_arrayGroupNames[m_iSelection];
+	GAMESTATE->m_pCurSong = NULL;
+	GAMESTATE->m_sPreferredGroup = m_arrayGroupNames[m_iSelection];
 
-	if( 0 == stricmp(SONGMAN->m_sPreferredGroup, "All Music") )
+	if( 0 == stricmp(GAMESTATE->m_sPreferredGroup, "All Music") )
         SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_GROUP_COMMENT_ALL_MUSIC) );
 	else
         SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_GROUP_COMMENT_GENERAL) );
@@ -543,8 +537,6 @@ void ScreenSelectGroup::TweenOffScreen()
 
 void ScreenSelectGroup::TweenOnScreen() 
 {
-	m_Menu.TweenOnScreenFromMenu( SM_None );
-
 	m_sprExplanation.SetX( EXPLANATION_X-400 );
 	m_sprExplanation.BeginTweening( 0.5f, TWEEN_BOUNCE_END );
 	m_sprExplanation.SetTweenX( EXPLANATION_X );

@@ -1,7 +1,7 @@
 #pragma once
 /*
 -----------------------------------------------------------------------------
- File: Player.h
+ Class: Player
 
  Desc: Object that accepts pad input, knocks down ColorNotes that were stepped on, 
 		and keeps score for the player.
@@ -23,7 +23,7 @@
 #include "HoldGhostArrow.h"
 #include "ActorFrame.h"
 #include "RandomSample.h"
-#include "ScoreDisplayRolling.h"
+#include "ScoreDisplay.h"
 #include "LifeMeterBar.h"
 #include "Judgement.h"
 #include "HoldJudgement.h"
@@ -44,12 +44,12 @@ public:
 	void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
 	void DrawPrimitives();
 
-	void Load( PlayerNumber player_no, StyleDef *pStyleDef, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore, int iOriginalNumNotes, int iNotesMeter );
+	void Load( PlayerNumber player_no, StyleDef *pStyleDef, NoteData* pNoteData, const PlayerOptions& po, LifeMeter* pLM, ScoreDisplay* pScore, int iOriginalNumNotes, int iNotesMeter );
 	void CrossedRow( int iNoteRow, float fSongBeat, float fMaxBeatDiff );
 	void HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff );
 	int UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 
-	GameplayStatistics GetGameplayStatistics( Song* pS, Notes* pN );
+	void SaveGameplayStatistics();
 
 	void	SetOverrideAdd( float fAdd )	{ m_NoteField.m_fOverrideAdd = fAdd; };
 	float	GetOverrideAdd()				{ return m_NoteField.m_fOverrideAdd; };
@@ -74,10 +74,14 @@ protected:
 	GhostArrowRow		m_GhostArrowRow;
 
 	HoldJudgement			m_HoldJudgement[MAX_NOTE_TRACKS];
-	ActorFrame				m_frameJudgeAndCombo;
+
+	ActorFrame				m_frameJudgement;
 	Judgement				m_Judgement;
+	
+	ActorFrame				m_frameCombo;
 	Combo					m_Combo;
-	LifeMeterBar*			m_pLifeMeter;
-	ScoreDisplayRolling*	m_pScore;
+
+	LifeMeter*				m_pLifeMeter;
+	ScoreDisplay*			m_pScore;
 	
 };

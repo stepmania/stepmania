@@ -18,7 +18,7 @@ and sloppy and err needs cleaning up ;)
 #include "ScreenTitleMenu.h"
 #include "ScreenCaution.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "ScreenSelectDifficulty.h"
 #include "ScreenSandbox.h"
 #include "GameManager.h"
@@ -27,6 +27,7 @@ and sloppy and err needs cleaning up ;)
 #include "GameConstantsAndTypes.h"
 #include "Background.h"
 #include "ScreenSelectGroup.h"
+#include "GameState.h"
 
 /* Constants */
 
@@ -146,7 +147,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 		m_sprBackground[i].Load( sPadGraphicPath );
 		m_sprBackground[i].SetXY( CENTER_X, CENTER_Y );
 		m_sprBackground[i].SetZoom( 1 );
-		this->AddActor( &m_sprBackground[i] );
+		this->AddSubActor( &m_sprBackground[i] );
 	}
 
 	for( i=0; i<NUM_EZ2STYLE_GRAPHICS; i++ )
@@ -170,7 +171,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 		m_sprOpt[i].Load( sPadGraphicPath );
 		m_sprOpt[i].SetXY( OPT_X[i], OPT_Y[i] );
 		m_sprOpt[i].SetZoom( 1 );
-		this->AddActor( &m_sprOpt[i] );
+		this->AddSubActor( &m_sprOpt[i] );
 	}
 
 	for( i=0; i<NUM_EZ2P_GRAPHICS; i++ )
@@ -194,16 +195,16 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 		m_sprPly[i].Load( sPadGraphicPath );
 		m_sprPly[i].SetXY( OPT_XP[i], OPT_YP[i] );
 		m_sprPly[i].SetZoom( 1 );
-		this->AddActor( &m_sprPly[i] );
+		this->AddSubActor( &m_sprPly[i] );
 	}
 
 	m_Menu.Load( 	
-		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_0), 
+		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
 		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_TOP_EDGE),
 		ssprintf("Use %c %c to select, then press START", char(1), char(2) ),
 		false, true, 40 
 		);
-	this->AddActor( &m_Menu );
+	this->AddSubActor( &m_Menu );
 
 	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_STYLE_CHANGE) );
 	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
@@ -218,7 +219,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
         MUSIC->Play( true );
 	}
 
-	if ( GAMEMAN->m_sMasterPlayerNumber == PLAYER_1 && GAMEMAN->m_CurStyle == STYLE_EZ2_SINGLE) //if p1 already selected hide graphic.
+	if ( GAMESTATE->m_MasterPlayerNumber == PLAYER_1 && GAMESTATE->m_CurStyle == STYLE_EZ2_SINGLE) //if p1 already selected hide graphic.
 	{
 		m_iSelectedPlayer = 0;
 		m_sprPly[1].BeginTweening( 0 );
@@ -226,7 +227,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 		m_sprPly[2].BeginTweening( 0 );
 		m_sprPly[2].SetTweenZoomY( 0 );
 	}
-	else if ( GAMEMAN->m_sMasterPlayerNumber == PLAYER_2 && GAMEMAN->m_CurStyle == STYLE_EZ2_SINGLE) //if p2 already selected hide graphic.
+	else if ( GAMESTATE->m_MasterPlayerNumber == PLAYER_2 && GAMESTATE->m_CurStyle == STYLE_EZ2_SINGLE) //if p2 already selected hide graphic.
 	{
 		m_iSelectedPlayer = 1;
 		m_sprPly[3].BeginTweening( 0 );
@@ -256,7 +257,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 		MenuLeft( PLAYER_1 ); // shift left so that we're clean again.
 
 	}
-	GAMEMAN->m_CurStyle = STYLE_NONE; // why reset this? because we want player2 to be able to input at this stage.
+	GAMESTATE->m_CurStyle = STYLE_NONE; // why reset this? because we want player2 to be able to input at this stage.
 	
 	
 	m_Menu.TweenOnScreenFromBlack( SM_None );
@@ -324,7 +325,6 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 			
 			if (m_iSelectedStyle == 0) // easy
 			{
-				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	
 			}
 			else if (m_iSelectedStyle == 1) // hard
 			{
@@ -334,7 +334,7 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 			}
 			else if (m_iSelectedStyle == 2) // real
 			{
-				GAMEMAN->m_CurStyle = STYLE_EZ2_REAL_VERSUS;	
+				GAMESTATE->m_CurStyle = STYLE_EZ2_REAL_VERSUS;	
 				//m_soundInvalid.PlayRandom();
 				//return;
 			}
@@ -352,17 +352,17 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 			}
 			else if (m_iSelectedStyle == 2) // real
 			{
-				GAMEMAN->m_CurStyle = STYLE_EZ2_REAL;	
+				GAMESTATE->m_CurStyle = STYLE_EZ2_REAL;	
 			}
 			else // club
 			{
-				GAMEMAN->m_CurStyle = STYLE_EZ2_DOUBLE;
-				GAMEMAN->m_sMasterPlayerNumber = PLAYER_1;
+				GAMESTATE->m_CurStyle = STYLE_EZ2_DOUBLE;
+				GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 			}
 		}
 
 		m_soundSelect.PlayRandom();
-		PREFSMAN->m_PlayMode = PLAY_MODE_ARCADE;
+		GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 		SCREENMAN->SetNewScreen( new ScreenSelectGroup );
 
 		break;
@@ -388,7 +388,7 @@ void ScreenEz2SelectStyle::MenuBack( const PlayerNumber p )
 	MUSIC->Stop();
 
 	m_Menu.TweenOffScreenToBlack( SM_GoToPrevState, true );
-	GAMEMAN->m_CurStyle = STYLE_NONE; // Make sure that both players can scroll around title menu...
+	GAMESTATE->m_CurStyle = STYLE_NONE; // Make sure that both players can scroll around title menu...
 
 //	m_Fade.CloseWipingLeft( SM_GoToPrevState );
 
@@ -687,7 +687,7 @@ presses the button bound to start
 ************************************/
 void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 {
-//	GAMEMAN->m_CurStyle = DANCE_STYLES[m_iSelectedStyle];
+//	GAMESTATE->m_CurStyle = DANCE_STYLES[m_iSelectedStyle];
 	
 	if ((m_iSelectedPlayer == 0 && p == PLAYER_2) || (m_iSelectedPlayer == 1 && p == PLAYER_1))
 	{
@@ -742,14 +742,15 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 			}
 			else if (m_iSelectedStyle == 2) // real
 			{
-				GAMEMAN->m_CurStyle = STYLE_EZ2_REAL;	
+				GAMESTATE->m_CurStyle = STYLE_EZ2_REAL;	
 				//m_soundInvalid.PlayRandom();
 				//return;
 			}
 			else // club
 			{
-				GAMEMAN->m_CurStyle = STYLE_EZ2_DOUBLE;
-				GAMEMAN->m_sMasterPlayerNumber = PLAYER_1;
+				GAMESTATE->m_CurStyle = STYLE_EZ2_DOUBLE;
+				GAMESTATE->m_CurStyle = STYLE_EZ2_DOUBLE;
+				GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 				//m_soundInvalid.PlayRandom();
 				//return;
 			}
@@ -758,7 +759,7 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 	
 		this->ClearMessageQueue();
 	
-		PREFSMAN->m_PlayMode = PLAY_MODE_ARCADE;
+		GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 
 		m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
 

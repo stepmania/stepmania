@@ -1,16 +1,17 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: Combo.h
+ Class: Combo
 
- Desc: A graphic displayed in the Combo during Dancing.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
 #include "Combo.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "ScreenManager.h"
 #include "ScreenGameplay.h"
 
@@ -35,8 +36,8 @@ Combo::Combo()
 	m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
 
 
-	this->AddActor( &m_textComboNumber );
-	this->AddActor( &m_sprCombo );
+	this->AddSubActor( &m_textComboNumber );
+	this->AddSubActor( &m_sprCombo );
 }
 
 

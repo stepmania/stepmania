@@ -13,11 +13,11 @@
 #include "NoteField.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "ArrowEffects.h"
 #include "PrefsManager.h"
 #include "GameManager.h"
-#include "SongManager.h"
+#include "GameState.h"
 
 const float HOLD_NOTE_BITS_PER_BEAT	= 6;
 const float HOLD_NOTE_BITS_PER_ROW	= HOLD_NOTE_BITS_PER_BEAT / ELEMENTS_PER_BEAT;
@@ -54,10 +54,10 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber p, StyleDef* pStyleDef, 
 	for( int c=0; c<m_iNumTracks; c++ ) 
 	{
 		CArray<D3DXCOLOR,D3DXCOLOR>	arrayTweenColors;
-		GAMEMAN->GetTweenColors( p, c, arrayTweenColors );
+		GAMEMAN->GetTweenColors( c, arrayTweenColors );
 
-		m_ColorNote[c].m_sprColorPart.Load( GAMEMAN->GetPathToGraphic( p, c, GRAPHIC_NOTE_COLOR_PART) );
-		m_ColorNote[c].m_sprGrayPart.Load( GAMEMAN->GetPathToGraphic( p, c, GRAPHIC_NOTE_GRAY_PART) );
+		m_ColorNote[c].m_sprColorPart.Load( GAMEMAN->GetPathTo(c, GRAPHIC_NOTE_COLOR_PART) );
+		m_ColorNote[c].m_sprGrayPart.Load( GAMEMAN->GetPathTo(c, GRAPHIC_NOTE_GRAY_PART) );
 	}
 
 
@@ -65,7 +65,7 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber p, StyleDef* pStyleDef, 
 		m_HoldNoteLife[i] = 1;		// start with full life
 
 
-	ASSERT( m_iNumTracks == GAMEMAN->GetCurrentStyleDef()->m_iColsPerPlayer );
+	ASSERT( m_iNumTracks == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
 }
 
 void NoteField::Update( float fDeltaTime, float fSongBeat )
@@ -214,7 +214,7 @@ void NoteField::DrawPrimitives()
 		//
 		// BPM text
 		//
-		CArray<BPMSegment,BPMSegment&> &aBPMSegments = SONGMAN->GetCurrentSong()->m_BPMSegments;
+		CArray<BPMSegment,BPMSegment&> &aBPMSegments = GAMESTATE->m_pCurSong->m_BPMSegments;
 		for( i=0; i<aBPMSegments.GetSize(); i++ )
 		{
 			DrawBPMText( BeatToNoteRow(aBPMSegments[i].m_fStartBeat), aBPMSegments[i].m_fBPM );
@@ -223,7 +223,7 @@ void NoteField::DrawPrimitives()
 		//
 		// Freeze text
 		//
-		CArray<StopSegment,StopSegment&> &aStopSegments = SONGMAN->GetCurrentSong()->m_StopSegments;
+		CArray<StopSegment,StopSegment&> &aStopSegments = GAMESTATE->m_pCurSong->m_StopSegments;
 		for( i=0; i<aStopSegments.GetSize(); i++ )
 		{
 			DrawFreezeText( BeatToNoteRow(aStopSegments[i].m_fStartBeat), aStopSegments[i].m_fStopSeconds );

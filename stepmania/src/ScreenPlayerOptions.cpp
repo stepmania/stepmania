@@ -18,10 +18,11 @@
 #include "ScreenGameplay.h"
 #include "ScreenSongOptions.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "ScreenSelectMusic.h"
 #include "RageLog.h"
 #include "GameManager.h"
+#include "GameState.h"
 
 
 enum {
@@ -38,7 +39,7 @@ enum {
 	NUM_PLAYER_OPTIONS_LINES
 };
 OptionLineData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
-	{ "Speed",	6, {"x1","x1.5","x2","x3","x5","x8"} },	
+	{ "Speed",	8, {"x0.5","x0.75","x1","x1.5","x2","x3","x5","x8"} },	
 	{ "Effect", 6, {"OFF","BOOST","WAVE", "DRUNK", "DIZZY", "SPACE"} },	
 	{ "Appear", 4, {"VISIBLE","HIDDEN","SUDDEN","STEALTH"} },	
 	{ "Turn",	5, {"OFF","MIRROR","LEFT","RIGHT","SHUFFLE"} },	
@@ -72,15 +73,17 @@ void ScreenPlayerOptions::ImportOptions()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		PlayerOptions &po = PREFSMAN->m_PlayerOptions[p];
+		PlayerOptions &po = GAMESTATE->m_PlayerOptions[p];
 		
-		if(		 po.m_fArrowScrollSpeed == 1.0f )	m_iSelectedOption[p][PO_SPEED] = 0;
-		else if( po.m_fArrowScrollSpeed == 1.5f )	m_iSelectedOption[p][PO_SPEED] = 1;
-		else if( po.m_fArrowScrollSpeed == 2.0f )	m_iSelectedOption[p][PO_SPEED] = 2;
-		else if( po.m_fArrowScrollSpeed == 3.0f )	m_iSelectedOption[p][PO_SPEED] = 3;
-		else if( po.m_fArrowScrollSpeed == 5.0f )	m_iSelectedOption[p][PO_SPEED] = 4;
-		else if( po.m_fArrowScrollSpeed == 8.0f )	m_iSelectedOption[p][PO_SPEED] = 5;
-		else										m_iSelectedOption[p][PO_SPEED] = 0;
+		if(		 po.m_fArrowScrollSpeed == 0.5f )	m_iSelectedOption[p][PO_SPEED] = 0;
+		else if( po.m_fArrowScrollSpeed == 0.75f)	m_iSelectedOption[p][PO_SPEED] = 1;
+		else if( po.m_fArrowScrollSpeed == 1.0f )	m_iSelectedOption[p][PO_SPEED] = 2;
+		else if( po.m_fArrowScrollSpeed == 1.5f )	m_iSelectedOption[p][PO_SPEED] = 3;
+		else if( po.m_fArrowScrollSpeed == 2.0f )	m_iSelectedOption[p][PO_SPEED] = 4;
+		else if( po.m_fArrowScrollSpeed == 3.0f )	m_iSelectedOption[p][PO_SPEED] = 5;
+		else if( po.m_fArrowScrollSpeed == 5.0f )	m_iSelectedOption[p][PO_SPEED] = 6;
+		else if( po.m_fArrowScrollSpeed == 8.0f )	m_iSelectedOption[p][PO_SPEED] = 7;
+		else										m_iSelectedOption[p][PO_SPEED] = 2;
 
 		m_iSelectedOption[p][PO_EFFECT]		= po.m_EffectType;
 		m_iSelectedOption[p][PO_APPEAR]		= po.m_AppearanceType;
@@ -98,16 +101,18 @@ void ScreenPlayerOptions::ExportOptions()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		PlayerOptions &po = PREFSMAN->m_PlayerOptions[p];
+		PlayerOptions &po = GAMESTATE->m_PlayerOptions[p];
 
 		switch( m_iSelectedOption[p][PO_SPEED] )
 		{
-		case 0:	po.m_fArrowScrollSpeed = 1.0f;	break;
-		case 1:	po.m_fArrowScrollSpeed = 1.5f;	break;
-		case 2:	po.m_fArrowScrollSpeed = 2.0f;	break;
-		case 3:	po.m_fArrowScrollSpeed = 3.0f;	break;
-		case 4:	po.m_fArrowScrollSpeed = 5.0f;	break;
-		case 5:	po.m_fArrowScrollSpeed = 8.0f;	break;
+		case 0:	po.m_fArrowScrollSpeed = 0.5f;	break;
+		case 1:	po.m_fArrowScrollSpeed = 0.75f;	break;
+		case 2:	po.m_fArrowScrollSpeed = 1.0f;	break;
+		case 3:	po.m_fArrowScrollSpeed = 1.5f;	break;
+		case 4:	po.m_fArrowScrollSpeed = 2.0f;	break;
+		case 5:	po.m_fArrowScrollSpeed = 3.0f;	break;
+		case 6:	po.m_fArrowScrollSpeed = 5.0f;	break;
+		case 7:	po.m_fArrowScrollSpeed = 8.0f;	break;
 		}
 
 

@@ -16,10 +16,11 @@
 #include "ScreenEdit.h"
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "GameManager.h"
 #include "ScreenPrompt.h"
 #include "RageLog.h"
+#include "GameState.h"
 
 
 //
@@ -70,33 +71,33 @@ ScreenEditMenu::ScreenEditMenu()
 	m_textGroup.Load( THEME->GetPathTo(FONT_HEADER1) );
 	m_textGroup.SetXY( GROUP_X, GROUP_Y );
 	m_textGroup.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
-	this->AddActor( &m_textGroup );
+	this->AddSubActor( &m_textGroup );
 
 	m_Banner.SetXY( SONG_BANNER_X, SONG_BANNER_Y );
-	this->AddActor( &m_Banner );
+	this->AddSubActor( &m_Banner );
 
 	m_TextBanner.SetXY( SONG_TEXT_BANNER_X, SONG_TEXT_BANNER_Y );
-	this->AddActor( &m_TextBanner );
+	this->AddSubActor( &m_TextBanner );
 	
 	m_sprArrowLeft.Load( THEME->GetPathTo(GRAPHIC_ARROWS_LEFT) );
 	m_sprArrowLeft.SetXY( ARROWS_X[0], ARROWS_Y[0] );
 	m_sprArrowLeft.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-	this->AddActor( &m_sprArrowLeft );
+	this->AddSubActor( &m_sprArrowLeft );
 
 	m_sprArrowRight.Load( THEME->GetPathTo(GRAPHIC_ARROWS_RIGHT) );
 	m_sprArrowRight.SetXY( ARROWS_X[1], ARROWS_Y[1] );
 	m_sprArrowRight.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-	this->AddActor( &m_sprArrowRight );
+	this->AddSubActor( &m_sprArrowRight );
 
 	m_textNotesType.Load( THEME->GetPathTo(FONT_HEADER1) );
 	m_textNotesType.SetXY( GAME_STYLE_X, GAME_STYLE_Y );
 	m_textNotesType.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
-	this->AddActor( &m_textNotesType );
+	this->AddSubActor( &m_textNotesType );
 
 	m_textNotes.Load( THEME->GetPathTo(FONT_HEADER1) );
 	m_textNotes.SetXY( STEPS_X, STEPS_Y );
 	m_textNotes.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
-	this->AddActor( &m_textNotes );
+	this->AddSubActor( &m_textNotes );
 
 
 	AfterRowChange();
@@ -107,7 +108,7 @@ ScreenEditMenu::ScreenEditMenu()
 	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	m_textExplanation.SetText( EXPLANATION_TEXT );
 	m_textExplanation.SetZoom( 0.7f );
-	this->AddActor( &m_textExplanation );
+	this->AddSubActor( &m_textExplanation );
 
 	m_Menu.Load( 
 		THEME->GetPathTo(GRAPHIC_EDIT_BACKGROUND), 
@@ -115,11 +116,11 @@ ScreenEditMenu::ScreenEditMenu()
 		ssprintf("%s %s change music    START to continue", CString(char(1)), CString(char(2)) ),
 		false, true, 40 
 		);
-	this->AddActor( &m_Menu );
+	this->AddSubActor( &m_Menu );
 
 
 	m_Fade.SetOpened();
-	this->AddActor( &m_Fade);
+	this->AddSubActor( &m_Fade);
 
 
 	m_soundChangeMusic.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_CHANGE_MUSIC) );
@@ -163,20 +164,16 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToNextState:
 		// set the current style based on the notes type
 
-		//switch( GetSelectedNotesType() )
-		//{
-		//case NOTES_TYPE_DANCE_SINGLE:	GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;	break;
-		//case NOTES_TYPE_DANCE_DOUBLE:	GAMEMAN->m_CurStyle = STYLE_DANCE_DOUBLE;	break;
-		//case NOTES_TYPE_DANCE_COUPLE:	GAMEMAN->m_CurStyle = STYLE_DANCE_COUPLE;	break;
-		//case NOTES_TYPE_DANCE_SOLO:		GAMEMAN->m_CurStyle = STYLE_DANCE_SOLO;		break;
-		//case NOTES_TYPE_PUMP_SINGLE:	GAMEMAN->m_CurStyle = STYLE_PUMP_SINGLE;	break;
-		//case NOTES_TYPE_PUMP_DOUBLE:	GAMEMAN->m_CurStyle = STYLE_PUMP_DOUBLE;	break;
-		//}
-
 		// Dro Kulix:
 		// A centralized solution for this switching mess...
 		// (See GameConstantsAndTypes.h)
-		GAMEMAN->m_CurStyle = NotesTypeToStyle( GetSelectedNotesType() );
+		//
+		// Chris:
+		//	Find the first Style that will play the selected notes type.
+		//  Set the current Style, then let ScreenEdit infer the desired
+		//  NotesType from that Style.
+		NotesType nt = GetSelectedNotesType();
+		GAMESTATE->m_CurStyle = GAMEMAN->GetStyleThatPlaysNotesType( nt );
 
 		SCREENMAN->SetNewScreen( new ScreenEdit );
 		break;
@@ -349,9 +346,12 @@ void ScreenEditMenu::MenuStart( const PlayerNumber p )
 
 	MUSIC->Stop();
 
-	SONGMAN->SetCurrentSong( GetSelectedSong() );
-	GAMEMAN->m_CurNotesType = GetSelectedNotesType();
-	SONGMAN->SetCurrentNotes( PLAYER_1, GetSelectedNotes() );
+	GAMESTATE->m_pCurSong = GetSelectedSong();
+
+	// find the first style that matches this notes type
+	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	GAMESTATE->m_CurStyle = GAMEMAN->GetStyleThatPlaysNotesType( GetSelectedNotesType() );
+	GAMESTATE->m_pCurNotes[PLAYER_1] = GetSelectedNotes();
 
 	m_soundSelect.PlayRandom();
 

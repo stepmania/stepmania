@@ -18,10 +18,11 @@
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
 #include "Notes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
 #include "ScreenMusicScroll.h"
+#include "GameState.h"
 
 
 const float BANNER_X					= CENTER_X;
@@ -66,7 +67,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	///////////////////////////
 	// Set m_ResultMode.  This enum will make our life easier later when we init different pieces depending on context.
 	///////////////////////////
-	switch( PREFSMAN->m_PlayMode )
+	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
 		m_ResultMode = bSummary ? RM_ARCADE_SUMMARY : RM_ARCADE_STAGE;
@@ -83,78 +84,103 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	///////////////////////////
 	// Calculate total statistics depending on m_ResultMode
 	///////////////////////////
-	GameplayStatistics total_statistics[NUM_PLAYERS];
-	for( p=0; p<NUM_PLAYERS; p++ )
+	GameplayStatistics totalGS;
+	switch( m_ResultMode )
 	{
-		PlayerNumber pn = (PlayerNumber)p;
-
-		if( !GAMEMAN->IsPlayerEnabled(pn) )
-			continue;	// skip
-
-		switch( m_ResultMode )
+	case RM_ARCADE_STAGE:
 		{
-		case RM_ARCADE_STAGE:
-			total_statistics[p] = SONGMAN->GetLatestGameplayStatistics((PlayerNumber)p);
-			break;
-		case RM_ARCADE_SUMMARY:
+			// take the latest GameplayStatistics
+			totalGS = GAMESTATE->m_aGameplayStatistics[GAMESTATE->m_aGameplayStatistics.GetSize()-1];
+		}
+		break;
+	case RM_ARCADE_SUMMARY:
+	case RM_ONI:
+		{
+			int iFirstToTakeFrom;
+			switch( m_ResultMode )
 			{
-				int iStageIndex = PREFSMAN->GetStageIndex();
-				int s = 0;
-				for( int i=max(0,iStageIndex-STAGES_TO_SHOW_IN_SUMMARY); i<=iStageIndex; i++, s++ )
+			case RM_ARCADE_SUMMARY:
+				iFirstToTakeFrom = max( 0, GAMESTATE->m_aGameplayStatistics.GetSize()-STAGES_TO_SHOW_IN_SUMMARY );
+				break;
+			case RM_ONI:
+				iFirstToTakeFrom = 0;
+				break;
+			default:
+				ASSERT(0);
+			}
+
+			for( int i=iFirstToTakeFrom; i<GAMESTATE->m_aGameplayStatistics.GetSize(); i++ )
+				totalGS += GAMESTATE->m_aGameplayStatistics[i];
+
+			// Chris:
+			// ugly...  GameplayStatistics::operator+= simply sums the radar values, so we need
+			// to divide by the number of stages taken from to normalize the values.
+			int iNumTakenFrom = GAMESTATE->m_aGameplayStatistics.GetSize() - iFirstToTakeFrom;
+
+			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
+				for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
 				{
-						total_statistics[p] = SONGMAN->GetLatestGameplayStatistics((PlayerNumber)p);
+					totalGS.fRadarActual[p][r] /= iNumTakenFrom;
+					totalGS.fRadarPossible[p][r] /= iNumTakenFrom;
 				}
 			}
-			break;
-		case RM_ONI:
-			{
-				int iStageIndex = PREFSMAN->GetStageIndex();
-				int s = 0;
-				for( int i=0; i<=iStageIndex; i++ )
-					total_statistics[p] = SONGMAN->GetLatestGameplayStatistics((PlayerNumber)p);
-			}
-			break;
+		}
+		break;
+	}
+
+	// Andy:
+	// Fake COOL! / GOOD / OOPS for Ez2dancer using the DDR Rankings.
+	if( GAMESTATE->GetCurGame() == GAME_EZ2 ) 
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			totalGS.perfect[p] += totalGS.great[p];
+			totalGS.great[p] = 0;
+			totalGS.miss[p] += totalGS.boo[p];
+			totalGS.boo[p] = 0;
 		}
 	}
 
-
-	if (GAMEMAN->m_CurGame != GAME_EZ2 )
+	///////////////////////////
+	// Init the song banners depending on m_ResultMode
+	///////////////////////////
+	if( GAMESTATE->GetCurGame() != GAME_EZ2 )
 	{
-		///////////////////////////
-		// Init the song banners depending on m_ResultMode
-		///////////////////////////
 		switch( m_ResultMode )
 		{
 		case RM_ARCADE_STAGE:
-			m_BannerWithFrame[0].LoadFromSong( SONGMAN->GetCurrentSong() );
+			m_BannerWithFrame[0].LoadFromSong( GAMESTATE->m_pCurSong );
 			m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
-			this->AddActor( &m_BannerWithFrame[0] );
+			this->AddSubActor( &m_BannerWithFrame[0] );
 			break;
 		case RM_ARCADE_SUMMARY:
 			{
 				// crop down to 3
 				for( int p=0; p<NUM_PLAYERS; p++ )
-					if( SONGMAN->m_aGameplayStatistics[p].GetSize() > STAGES_TO_SHOW_IN_SUMMARY )
-						SONGMAN->m_aGameplayStatistics[p].RemoveAt( 0, SONGMAN->m_aGameplayStatistics[p].GetSize() - STAGES_TO_SHOW_IN_SUMMARY );
+				{
+					if( GAMESTATE->m_aGameplayStatistics.GetSize() > STAGES_TO_SHOW_IN_SUMMARY )
+						GAMESTATE->m_aGameplayStatistics.RemoveAt( 0, GAMESTATE->m_aGameplayStatistics.GetSize() - STAGES_TO_SHOW_IN_SUMMARY );
+				}
 
-				const int iSongsToShow = SONGMAN->m_aGameplayStatistics[0].GetSize();
+				const int iSongsToShow = GAMESTATE->m_aGameplayStatistics.GetSize();
 				ASSERT( iSongsToShow > 0 );
 
 				for( int i=0; i<iSongsToShow; i++ )
 				{
-					GameplayStatistics &GS = SONGMAN->m_aGameplayStatistics[0][i];
+					GameplayStatistics &GS = GAMESTATE->m_aGameplayStatistics[i];
 					m_BannerWithFrame[i].LoadFromSong( GS.pSong );
 					float fBannerOffset = i - (iSongsToShow-1)/2.0f;
 					m_BannerWithFrame[i].SetXY( BANNER_X + fBannerOffset*32, BANNER_Y + fBannerOffset*16 );
 					m_BannerWithFrame[i].SetZoom( 0.70f );
-					this->AddActor( &m_BannerWithFrame[i] );
+					this->AddSubActor( &m_BannerWithFrame[i] );
 				}
 			}
 			break;
 		case RM_ONI:
-			m_BannerWithFrame[0].LoadFromGroup( SONGMAN->m_sPreferredGroup );
+			m_BannerWithFrame[0].LoadFromGroup( GAMESTATE->m_sPreferredGroup );
 			m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
-			this->AddActor( &m_BannerWithFrame[0] );
+			this->AddSubActor( &m_BannerWithFrame[0] );
 			break;
 		}
 	}
@@ -170,19 +196,19 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		"Press START to continue.",
 		false, true, 40 
 		);
-	this->AddActor( &m_Menu );
+	this->AddSubActor( &m_Menu );
 
 
 	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
-		if (GAMEMAN->m_CurGame != GAME_EZ2)
+		if (GAMESTATE->GetCurGame() != GAME_EZ2)
 		{
 			m_sprJudgeLabels[l].Load( THEME->GetPathTo(GRAPHIC_EVALUATION_JUDGE_LABELS) );
 			m_sprJudgeLabels[l].StopAnimating();
 			m_sprJudgeLabels[l].SetState( l );
 			m_sprJudgeLabels[l].SetXY( JUDGE_LABELS_X, JUDGE_START_Y + l*JUDGE_SPACING );
 			m_sprJudgeLabels[l].SetZoom( 1.0f );
-			this->AddActor( &m_sprJudgeLabels[l] );
+			this->AddSubActor( &m_sprJudgeLabels[l] );
 		}
 
 		for( int p=0; p<NUM_PLAYERS; p++ ) 
@@ -196,23 +222,23 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 			// RE-ARRANGE the scoreboard for EZ2Dancer Scoring
 
-			if (l == 0 && GAMEMAN->m_CurGame == GAME_EZ2) // Change Position For Ez2dancer
+			if (l == 0 && GAMESTATE->GetCurGame() == GAME_EZ2) // Change Position For Ez2dancer
 			{
 				m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p], JUDGE_EZ2_COOL_Y);
 			}
-			else if (l == 2 && GAMEMAN->m_CurGame == GAME_EZ2)
+			else if (l == 2 && GAMESTATE->GetCurGame() == GAME_EZ2)
 			{
 				m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p], JUDGE_EZ2_COOL_Y + 55);
 			}
-			else if (l == 4 && GAMEMAN->m_CurGame == GAME_EZ2)
+			else if (l == 4 && GAMESTATE->GetCurGame() == GAME_EZ2)
 			{
 				m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p], JUDGE_EZ2_COOL_Y + 120);
 			}
-			else if ((l == 1 || l == 3 ) && GAMEMAN->m_CurGame == GAME_EZ2)
+			else if ((l == 1 || l == 3 ) && GAMESTATE->GetCurGame() == GAME_EZ2)
 			{
 				m_textJudgeNumbers[l][p].SetZoomX(0); // Hide These Ones
 			}
-			else if (l == 5 && GAMEMAN->m_CurGame == GAME_EZ2 ) // sneakily use this one for the max combo.
+			else if (l == 5 && GAMESTATE->GetCurGame() == GAME_EZ2 ) // sneakily use this one for the max combo.
 			{
 				if (p == PLAYER_1 )
 				{
@@ -224,117 +250,75 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				}
 			}
 
-			this->AddActor( &m_textJudgeNumbers[l][p] );
+			this->AddSubActor( &m_textJudgeNumbers[l][p] );
 		}
 	}
 
-	if (GAMEMAN->m_CurGame != GAME_EZ2)
+	if (GAMESTATE->GetCurGame() != GAME_EZ2)
 	{
 		m_sprScoreLabel.Load( THEME->GetPathTo(GRAPHIC_EVALUATION_SCORE_LABELS) );
 		m_sprScoreLabel.StopAnimating();
 		m_sprScoreLabel.SetXY( SCORE_LABEL_X, SCORE_Y );
 		m_sprScoreLabel.SetZoom( 1.0f );
-		this->AddActor( &m_sprScoreLabel );
+		this->AddSubActor( &m_sprScoreLabel );
 	}
 
 	for( p=0; p<NUM_PLAYERS; p++ ) 
 	{
-		if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) || GAMEMAN->m_CurGame == GAME_EZ2 )
+		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) || GAMESTATE->GetCurGame() == GAME_EZ2 )
 			continue;	// skip
 
 		m_ScoreDisplay[p].SetXY( SCORE_DISPLAY_X[p], SCORE_Y );
 		m_ScoreDisplay[p].SetZoomY( 0.9f );
 		m_ScoreDisplay[p].SetDiffuseColor( PlayerToColor(p) );
-		this->AddActor( &m_ScoreDisplay[p] );
+		this->AddSubActor( &m_ScoreDisplay[p] );
 	}
 
 
 
+	//
+	// Calculate grades
+	//
 	Grade grade[NUM_PLAYERS];
+	Grade max_grade = GRADE_NO_DATA;
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		PlayerNumber pn = (PlayerNumber)p;
+		grade[p] = !GAMESTATE->IsPlayerEnabled(pn) ? GRADE_NO_DATA : totalGS.GetGrade(pn);
+		max_grade = max( max_grade, grade[p] ); 
+	}
+
 
 	//////////////////////////
 	// Set Numbers 
 	//////////////////////////
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
+		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 			continue;	// skip
 
-		GameplayStatistics GS[NUM_PLAYERS];	// fill this in depending on m_ResultMode
-		
-		switch( m_ResultMode )
-		{
-		case RM_ARCADE_STAGE:
-			{
-				GS[p] = SONGMAN->m_aGameplayStatistics[p][SONGMAN->m_aGameplayStatistics[p].GetSize()-1];
-			}
-			break;
-		case RM_ARCADE_SUMMARY:
-		case RM_ONI:
-			{
-				const int iSongsToShow = SONGMAN->m_aGameplayStatistics[0].GetSize();
-				ASSERT( iSongsToShow > 0 );
+		m_textJudgeNumbers[0][p].SetText( ssprintf("%4d", totalGS.perfect[p]) );
+		m_textJudgeNumbers[1][p].SetText( ssprintf("%4d", totalGS.great[p]) );
+		m_textJudgeNumbers[2][p].SetText( ssprintf("%4d", totalGS.good[p]) );
+		m_textJudgeNumbers[3][p].SetText( ssprintf("%4d", totalGS.boo[p]) );
+		m_textJudgeNumbers[4][p].SetText( ssprintf("%4d", totalGS.miss[p]) );
+		m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", totalGS.ok[p]) );
 
-				for( int i=0; i<iSongsToShow; i++ )
-				{
-					GameplayStatistics &GSstage = SONGMAN->m_aGameplayStatistics[p][i];
-
-					GS[p].iPossibleDancePoints += GSstage.iPossibleDancePoints;
-					GS[p].iActualDancePoints += GSstage.iActualDancePoints;
-
-					GS[p].perfect	+= GSstage.perfect;
-					GS[p].great		+= GSstage.great;
-					GS[p].good		+= GSstage.good;
-					GS[p].boo		+= GSstage.boo;
-					GS[p].miss		+= GSstage.miss;
-					GS[p].ok		+= GSstage.ok;
-					GS[p].ng		+= GSstage.ng;
-					GS[p].max_combo = max( GS[p].max_combo, GSstage.max_combo );
-					GS[p].score		+= GSstage.score;
-
-					for( int i=0; i<NUM_RADAR_VALUES; i++ )
-					{
-						GS[p].fRadarPossible[i] += GSstage.fRadarPossible[i];
-						GS[p].fRadarActual[i] += GSstage.fRadarActual[i];
-					}
-				}
-				for( i=0; i<NUM_RADAR_VALUES; i++ )
-				{
-					GS[p].fRadarPossible[i] /= iSongsToShow;
-					GS[p].fRadarActual[i] /= iSongsToShow;
-				}
-
-			}
-			break;
-		}
-			
-		if (GAMEMAN->m_CurGame == GAME_EZ2) // Fake COOL! / GOOD / OOPS for Ez2dancer using the DDR Rankings.
-		{
-			GS[p].perfect += GS[p].great;
-			GS[p].great = 0;
-			GS[p].miss += GS[p].boo;
-			GS[p].boo = 0;
-		}
-		grade[p] = GS[p].GetGrade();
-
-		m_textJudgeNumbers[0][p].SetText( ssprintf("%4d", GS[p].perfect) );
-		m_textJudgeNumbers[1][p].SetText( ssprintf("%4d", GS[p].great) );
-		m_textJudgeNumbers[2][p].SetText( ssprintf("%4d", GS[p].good) );
-		m_textJudgeNumbers[3][p].SetText( ssprintf("%4d", GS[p].boo) );
-		m_textJudgeNumbers[4][p].SetText( ssprintf("%4d", GS[p].miss) );
-		m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", GS[p].ok) );
+		m_ScoreDisplay[p].SetScore( (float)totalGS.max_combo[p] * 1000 );
+		m_ScoreDisplay[p].SetScore( (float)totalGS.score[p] );
 
 		// SNEAKY! We take the max combo, and put it into element 5, because Ez2dancer 
 		// doesn't care for OK's and plus this text element is already nicely aligned =)
-		if (GAMEMAN->m_CurGame == GAME_EZ2)
+		if (GAMESTATE->GetCurGame() == GAME_EZ2)
 		{
-			m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", GS[p].max_combo) );
+			m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", totalGS.max_combo[p]) );
 		}
 
-		m_ScoreDisplay[p].SetScore( (float)GS[p].max_combo * 1000 );
-		m_ScoreDisplay[p].SetScore( (float)GS[p].score );
+		m_ScoreDisplay[p].SetScore( (float)totalGS.max_combo[p] * 1000 );
+		m_ScoreDisplay[p].SetScore( (float)totalGS.score[p] );
 
-		m_BonusInfoFrame[p].SetBonusInfo( (PlayerNumber)p, GS[p].fRadarPossible, GS[p].fRadarActual, GS[p].max_combo );
+
+		m_BonusInfoFrame[p].SetBonusInfo( (PlayerNumber)p, totalGS.fRadarPossible[p], totalGS.fRadarActual[p], totalGS.max_combo[p] );
 
 		switch( m_ResultMode )
 		{
@@ -343,15 +327,15 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			// update song stats
 			////////////////////////
 
-			Notes* pNotes = SONGMAN->GetCurrentNotes((PlayerNumber)p);
+			Notes* pNotes = GAMESTATE->m_pCurNotes[p];
 			pNotes->m_iNumTimesPlayed++;
 
-			if( GS[p].max_combo > pNotes->m_iMaxCombo )
-				pNotes->m_iMaxCombo = GS[p].max_combo;
+			if( totalGS.max_combo[p] > pNotes->m_iMaxCombo )
+				pNotes->m_iMaxCombo = totalGS.max_combo[p];
 
-			if( GS[p].score > pNotes->m_iTopScore )
+			if( totalGS.score[p] > pNotes->m_iTopScore )
 			{
-				pNotes->m_iTopScore = (int)GS[p].score;
+				pNotes->m_iTopScore = (int)totalGS.score[p];
 				m_bNewRecord[p] = true;
 			}
 
@@ -363,20 +347,16 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	
 
 
-	Grade max_grade = GRADE_NO_DATA;
-	for( p=0; p<NUM_PLAYERS; p++ )
-		max_grade = max( max_grade, grade[p] ); 
-
 	
 	m_bTryExtraStage = false;
-	if( (PREFSMAN->IsFinalStage() || PREFSMAN->IsExtraStage())  &&  m_ResultMode==RM_ARCADE_STAGE )
+	if( (GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage())  &&  m_ResultMode==RM_ARCADE_STAGE )
 	{
 		for( p=0; p<NUM_PLAYERS; p++ )
 		{
-			if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
+			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
 
-			if( SONGMAN->GetCurrentNotes((PlayerNumber)p)->m_DifficultyClass == CLASS_HARD  &&  grade[p] >= GRADE_AA )
+			if( GAMESTATE->m_pCurNotes[p]->m_DifficultyClass == CLASS_HARD  &&  grade[p] >= GRADE_AA )
 				m_bTryExtraStage = true;
 		}
 	}
@@ -387,32 +367,41 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
+		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 			continue;	// skip
-		if ( GAMEMAN->m_CurGame != GAME_EZ2)
+
+		if ( GAMESTATE->GetCurGame() != GAME_EZ2)
 		{
 			m_sprGradeFrame[p].Load( THEME->GetPathTo(GRAPHIC_EVALUATION_GRADE_FRAME) );
 			m_sprGradeFrame[p].StopAnimating();
 			m_sprGradeFrame[p].SetState( p );
 			m_sprGradeFrame[p].SetXY( GRADE_X[p], GRADE_Y );
-			this->AddActor( &m_sprGradeFrame[p] );
+			this->AddSubActor( &m_sprGradeFrame[p] );
 		}
 
 		switch( m_ResultMode )
 		{
 		case RM_ONI:
-			m_textOniPercent[p].Load( THEME->GetPathTo(FONT_HEADER1) );
-			m_textOniPercent[p].SetXY( GRADE_X[p], GRADE_Y );
-			m_textOniPercent[p].SetShadowLength( 2 );
-			m_textOniPercent[p].SetZoomX( 1.5f );
-			m_textOniPercent[p].SetZoomY( 3 );
-			m_textOniPercent[p].SetEffectGlowing( 1.0f );
-			m_textOniPercent[p].SetText( "100.0%" );
-			this->AddActor( &m_textOniPercent[p] );
+			{
+				m_textOniPercent[p].Load( THEME->GetPathTo(FONT_HEADER1) );
+				m_textOniPercent[p].SetXY( GRADE_X[p], GRADE_Y );
+				m_textOniPercent[p].SetShadowLength( 2 );
+				m_textOniPercent[p].SetZoomX( 1.3f );
+				m_textOniPercent[p].SetZoomY( 2.5f );
+				m_textOniPercent[p].SetEffectGlowing( 1.0f );
+
+				int iActualDancePoints = 0;
+				for( int i=0; i<GAMESTATE->m_aGameplayStatistics.GetSize(); i++ )
+					iActualDancePoints += GAMESTATE->m_aGameplayStatistics[i].iActualDancePoints[p];
+				int iPossibleDancePoints = GAMESTATE->m_iCoursePossibleDancePoints;
+				float fPercentDancePoints =  iActualDancePoints / (float)iPossibleDancePoints + 0.0001f;	// correct for rounding errors
+				m_textOniPercent[p].SetText( ssprintf("%.1f%%", fPercentDancePoints*100) );
+				this->AddSubActor( &m_textOniPercent[p] );
+			}
 			break;
 		case RM_ARCADE_STAGE:
 		case RM_ARCADE_SUMMARY:
-			if (GAMEMAN->m_CurGame != GAME_EZ2 )
+			if (GAMESTATE->GetCurGame() != GAME_EZ2 )
 			{
 				m_Grades[p].SetXY( GRADE_X[p], GRADE_Y );
 				m_Grades[p].SetZ( -2 );
@@ -437,15 +426,15 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_Grades[p].SetTweenZoom( 2 );
 
 			}
-			this->AddActor( &m_Grades[p] );
+			this->AddSubActor( &m_Grades[p] );
 			break;
 		}
 
-		if ( GAMEMAN->m_CurGame == GAME_EZ2)
+		if ( GAMESTATE->GetCurGame() == GAME_EZ2)
 			continue;
 
 		m_BonusInfoFrame[p].SetXY( BONUS_FRAME_X[p], BONUS_FRAME_Y );
-		this->AddActor( &m_BonusInfoFrame[p] );
+		this->AddSubActor( &m_BonusInfoFrame[p] );
 
 		m_bNewRecord[p] = false;
 
@@ -457,7 +446,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			m_textNewRecord[p].SetText( "IT'S A NEW RECORD!" );
 			m_textNewRecord[p].SetZoom( 0.5f );
 			m_textNewRecord[p].SetEffectGlowing( 1.0f );
-			this->AddActor( &m_textNewRecord[p] );
+			this->AddSubActor( &m_textNewRecord[p] );
 		}
 	}
 	
@@ -466,35 +455,60 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	{
 		m_textTryExtraStage.Load( THEME->GetPathTo(FONT_HEADER1) );
 		m_textTryExtraStage.SetXY( TRY_EXTRA_STAGE_X, TRY_EXTRA_STAGE_Y );
-		if( PREFSMAN->IsExtraStage() )
+		if( GAMESTATE->IsExtraStage() )
 			m_textTryExtraStage.SetText( "Try Another Extra Stage!" );
 		else
 			m_textTryExtraStage.SetText( "Try Extra Stage!" );
 		m_textTryExtraStage.SetZoom( 1 );
 		m_textTryExtraStage.SetEffectGlowing( 1.0f );
-		this->AddActor( &m_textTryExtraStage );
+		this->AddSubActor( &m_textTryExtraStage );
 
 		SOUND->PlayOnceStreamed( THEME->GetPathTo(SOUND_EVALUATION_EXTRA_STAGE) );
 	}
 	else
 	{
 		
-		switch( max_grade )
+		switch( m_ResultMode )
 		{
-		case GRADE_D:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_D) );		break;
-		case GRADE_C:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_C) );		break;
-		case GRADE_B:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_B) );		break;
-		case GRADE_A:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_A) );		break;
-		case GRADE_AA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_AA) );	break;
-		case GRADE_AAA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_AAA) );	break;
-		case GRADE_NO_DATA:
+		case RM_ARCADE_STAGE:
+			switch( max_grade )
+			{
+			case GRADE_E:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_E) );		break;
+			case GRADE_D:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_D) );		break;
+			case GRADE_C:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_C) );		break;
+			case GRADE_B:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_B) );		break;
+			case GRADE_A:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_A) );		break;
+			case GRADE_AA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_AA) );	break;
+			case GRADE_AAA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_AAA) );	break;
+			case GRADE_NO_DATA:
+			default:
+				ASSERT(0);	// invalid grade
+			}
+			break;
+		case RM_ONI:
+		case RM_ARCADE_SUMMARY:
+			switch( max_grade )
+			{
+			case GRADE_E:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_FINAL_E) );	break;
+			case GRADE_D:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_FINAL_D) );	break;
+			case GRADE_C:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_FINAL_C) );	break;
+			case GRADE_B:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_FINAL_B) );	break;
+			case GRADE_A:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_FINAL_A) );	break;
+			case GRADE_AA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_FINAL_AA) );	break;
+			case GRADE_AAA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_FINAL_AAA) );	break;
+			case GRADE_NO_DATA:
+			default:
+				ASSERT(0);	// invalid grade
+			}
+			break;
 		default:
-			ASSERT(0);	// invalid grade
+			ASSERT(0);
 		}
 	}
 
 	m_Menu.TweenOnScreenFromBlack( SM_None );
 }
+
 
 void ScreenEvaluation::TweenOnScreen()
 {
@@ -515,7 +529,7 @@ void ScreenEvaluation::TweenOnScreen()
 
 	for( i=0; i<NUM_JUDGE_LINES; i++ ) 
 	{
-		if (GAMEMAN->m_CurGame != GAME_EZ2)
+		if (GAMESTATE->GetCurGame() != GAME_EZ2)
 		{
 			fOriginalY = m_sprJudgeLabels[i].GetY();
 			m_sprJudgeLabels[i].SetY( fOriginalY + SCREEN_HEIGHT );
@@ -534,7 +548,7 @@ void ScreenEvaluation::TweenOnScreen()
 		}
 	}
 
-	if (GAMEMAN->m_CurGame != GAME_EZ2)
+	if (GAMESTATE->GetCurGame() != GAME_EZ2)
 	{
 
 		fOriginalY = m_sprScoreLabel.GetY();
@@ -590,7 +604,7 @@ void ScreenEvaluation::TweenOffScreen()
 
 	for( i=0; i<NUM_JUDGE_LINES; i++ ) 
 	{
-		if (GAMEMAN->m_CurGame != GAME_EZ2)
+		if (GAMESTATE->GetCurGame() != GAME_EZ2)
 		{
 			m_sprJudgeLabels[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
 			m_sprJudgeLabels[i].SetTweenZoomY( 0 );
@@ -603,7 +617,7 @@ void ScreenEvaluation::TweenOffScreen()
 		}
 	}
 	
-	if (GAMEMAN->m_CurGame != GAME_EZ2)
+	if (GAMESTATE->GetCurGame() != GAME_EZ2)
 	{
 		m_sprScoreLabel.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
 		m_sprScoreLabel.SetTweenZoomY( 0 );
@@ -690,7 +704,7 @@ void ScreenEvaluation::MenuStart( const PlayerNumber p )
 
 	if( PREFSMAN->m_bEventMode )
 	{
-		PREFSMAN->m_iCurrentStageIndex++;
+		GAMESTATE->m_iCurrentStageIndex++;
 		m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
 		return;
 	}
@@ -703,19 +717,19 @@ void ScreenEvaluation::MenuStart( const PlayerNumber p )
 	case RM_ARCADE_STAGE:
 		if( m_bTryExtraStage )
 		{
-			PREFSMAN->m_iCurrentStageIndex++;
+			GAMESTATE->m_iCurrentStageIndex++;
 			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
 		}
 		else if( 
-			PREFSMAN->m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages-1 ||
-			PREFSMAN->IsExtraStage() || 
-			PREFSMAN->IsExtraStage2() )
+			GAMESTATE->m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages-1 ||
+			GAMESTATE->IsExtraStage() || 
+			GAMESTATE->IsExtraStage2() )
 		{
 			m_Menu.TweenOffScreenToMenu( SM_GoToFinalEvaluation );
 		}
 		else
 		{
-			PREFSMAN->m_iCurrentStageIndex++;
+			GAMESTATE->m_iCurrentStageIndex++;
 			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
 		}
 

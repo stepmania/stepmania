@@ -19,7 +19,7 @@
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
 #include "StepMania.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "ScreenEditMenu.h"
 #include "ScreenSelectStyle.h"
 #include "ScreenSelectGame.h"
@@ -28,7 +28,7 @@
 #include "SongManager.h"
 #include "AnnouncerManager.h"
 #include "ScreenEz2SelectPlayer.h"
-
+#include "GameState.h"
 #include "GameManager.h"
 
 
@@ -71,10 +71,10 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 
 	// reset game info
-//	GAMEMAN->m_sMasterPlayerNumber = PLAYER_INVALID;
-//	GAMEMAN->m_CurGame = GAME_INVALID;
-//	GAMEMAN->m_CurGame = GAME_INVALID;
-
+	GAMESTATE->SwitchGame( GAMESTATE->GetCurGame() );
+	GAMESTATE->Reset();
+	PREFSMAN->ReadGamePrefsFromDisk();
+	INPUTMAPPER->ReadMappingsFromDisk();
 
 	int i;
 
@@ -82,7 +82,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_sprBG.StretchTo( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT) );
 	m_sprBG.SetDiffuseColor( D3DXCOLOR(0.6f,0.6f,0.6f,1) );
 	m_sprBG.TurnShadowOff();
-	this->AddActor( &m_sprBG );
+	this->AddSubActor( &m_sprBG );
 
 	m_sprLogo.Load( THEME->GetPathTo(GRAPHIC_TITLE_MENU_LOGO) );
 	m_sprLogo.SetXY( CENTER_X, CENTER_Y );
@@ -92,7 +92,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_sprLogo.BeginTweeningQueued( 0.5f, Actor::TWEEN_BOUNCE_END );
 	m_sprLogo.SetEffectGlowing(1, D3DXCOLOR(1,1,1,0.1f), D3DXCOLOR(1,1,1,0.3f) );
 	m_sprLogo.SetTweenZoom( 1 );
-	this->AddActor( &m_sprLogo );
+	this->AddSubActor( &m_sprLogo );
 
 	m_textHelp.Load( THEME->GetPathTo(FONT_NORMAL) );
 	m_textHelp.SetText( ssprintf("Use %c %c to select, then press START", char(3), char(4)) );
@@ -100,7 +100,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetEffectBlinking();
 	m_textHelp.SetShadowLength( 2 );
-	this->AddActor( &m_textHelp );
+	this->AddSubActor( &m_textHelp );
 
 	
 	m_textVersion.Load( THEME->GetPathTo(FONT_NORMAL) );
@@ -109,7 +109,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_textVersion.SetDiffuseColor( D3DXCOLOR(0.6f,0.6f,0.6f,1) );	// light gray
 	m_textVersion.SetXY( SCREEN_RIGHT-16, SCREEN_BOTTOM-20 );
 	m_textVersion.SetZoom( 0.5f );
-	this->AddActor( &m_textVersion );
+	this->AddSubActor( &m_textVersion );
 
 
 	m_textSongs.Load( THEME->GetPathTo(FONT_NORMAL) );
@@ -118,7 +118,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_textSongs.SetDiffuseColor( D3DXCOLOR(0.6f,0.6f,0.6f,1) );	// light gray
 	m_textSongs.SetXY( SCREEN_LEFT+16, SCREEN_HEIGHT-20 );
 	m_textSongs.SetZoom( 0.5f );
-	this->AddActor( &m_textSongs );
+	this->AddSubActor( &m_textSongs );
 
 
 	for( i=0; i< NUM_TITLE_MENU_CHOICES; i++ )
@@ -127,14 +127,18 @@ ScreenTitleMenu::ScreenTitleMenu()
 		m_textChoice[i].SetText( CHOICE_TEXT[i] );
 		m_textChoice[i].SetXY( CENTER_X, CHOICES_START_Y + i*CHOICES_GAP_Y );
 		m_textChoice[i].SetShadowLength( 5 );
-		this->AddActor( &m_textChoice[i] );
+		this->AddSubActor( &m_textChoice[i] );
 	}	
 	
 	m_Fade.SetClosed();
 	m_Fade.OpenWipingRight( SM_DoneOpening );
 
-	this->AddActor( &m_Fade );
+	this->AddSubActor( &m_Fade );
 
+	/*
+	
+	// Chris:
+	// I'm removing thos not that announcer prefs are saved per Game.
 	
 	// LEAVE THIS HERE! ITS ESSENTIAL
 	// I know you're a fan of removing my code, but if this isn't here
@@ -143,6 +147,11 @@ ScreenTitleMenu::ScreenTitleMenu()
 	// so just leave it yeah?
 	// I don't wanna fix this a 3rd TIME!!
 	// - Andy.
+
+	if( GAMESTATE->GetCurGame() != GAME_EZ2 )
+		PREFSMAN->m_sAnnouncer = "";
+
+
 	// if (GAMEMAN->m_CurGame != GAME_EZ2)
 	//{
 	//	ANNOUNCER->SwitchAnnouncer( "default" );
@@ -176,14 +185,16 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	static int announcercheck=0; 
 
-	if (GAMEMAN->m_CurGame != GAME_EZ2 && PREFSMAN->m_sAnnouncer == "ez2" && announcercheck == 0)
+	if( GAMESTATE->GetCurGame() != GAME_EZ2  &&  PREFSMAN->m_sAnnouncer == "ez2" && announcercheck == 0)
 	{
 		ANNOUNCER->SwitchAnnouncer( "default" );
 		announcercheck = 1;
 	}
 
+	*/
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_GAME_NAME) );
+
 
 	m_soundAttract.Load( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_ATTRACT) );
 	m_soundChange.Load( THEME->GetPathTo(SOUND_TITLE_MENU_CHANGE) );	
@@ -305,12 +316,12 @@ void ScreenTitleMenu::MenuDown( const PlayerNumber p )
 
 void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 {	
-	GAMEMAN->m_sMasterPlayerNumber = p;
+	GAMESTATE->m_MasterPlayerNumber = p;
 
 	switch( m_TitleMenuChoice )
 	{
 	case CHOICE_GAME_START:
-		if ( GAMEMAN->m_CurGame == GAME_EZ2 )
+		if( GAMESTATE->GetCurGame() == GAME_EZ2 )
 		{
 			m_soundSelect.PlayRandom();
 			m_Fade.CloseWipingRight( SM_GoToEz2 );

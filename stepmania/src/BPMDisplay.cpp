@@ -12,7 +12,7 @@
 #include "BPMDisplay.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 
 
@@ -44,9 +44,9 @@ BPMDisplay::BPMDisplay()
 	m_textLabel.SetDiffuseColorTopEdge( D3DXCOLOR(1,1,0,1) );	// yellow
 	m_textLabel.SetDiffuseColorBottomEdge( D3DXCOLOR(1,0.5f,0,1) );	// orange
 
-	//this->AddActor( &m_rectFrame );
-	this->AddActor( &m_textBPM );
-	this->AddActor( &m_textLabel );
+	//this->AddSubActor( &m_rectFrame );
+	this->AddSubActor( &m_textBPM );
+	this->AddSubActor( &m_textLabel );
 }
 
 

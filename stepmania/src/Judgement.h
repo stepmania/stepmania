@@ -17,7 +17,7 @@
 #include "ActorFrame.h"
 #include "Song.h"
 #include "BitmapText.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 
 class Judgement : public ActorFrame

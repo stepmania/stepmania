@@ -103,9 +103,12 @@ RageDisplay::~RageDisplay()
 // Desc:
 //-----------------------------------------------------------------------------
 bool RageDisplay::SwitchDisplayMode( 
-	const bool bWindowed, const DWORD dwWidth, const DWORD dwHeight, const DWORD dwBPP )
+	const bool bWindowed, const int iWidth, const int iHeight, const int iBPP, const int iFullScreenHz )
 {
-	LOG->WriteLine( "RageDisplay::SwitchDisplayModes( %d, %u, %u, %u )", bWindowed, dwWidth, dwHeight, dwBPP );
+	LOG->WriteLine( "RageDisplay::SwitchDisplayModes( %d, %d, %d, %d, %d )", bWindowed, iWidth, iHeight, iBPP, iFullScreenHz );
+
+	if( !bWindowed )
+		SetCursor( NULL );
 
 
 	HRESULT hr;
@@ -126,7 +129,7 @@ bool RageDisplay::SwitchDisplayMode(
 	else		// full screen
 	{
 		// add only the formats that match dwBPP
-		switch( dwBPP )
+		switch( iBPP )
 		{
 		case 16:
 			arrayBackBufferFormats.Add( D3DFMT_R5G6B5 );
@@ -139,7 +142,7 @@ bool RageDisplay::SwitchDisplayMode(
 			arrayBackBufferFormats.Add( D3DFMT_A8R8G8B8 );
 			break;
 		default:
-			throw RageException( ssprintf("Invalid BPP '%u' specified", dwBPP) );
+			throw RageException( ssprintf("Invalid BPP '%u' specified", iBPP) );
 			return false;
 		}
 	}
@@ -184,7 +187,7 @@ bool RageDisplay::SwitchDisplayMode(
 
 	if( i == arrayBackBufferFormats.GetSize() )		// we didn't find an appropriate format
 	{
-		LOG->WriteLineHr( hr, "failed to find an appropriate format for %d, %u, %u, %u.", bWindowed, dwWidth, dwHeight, dwBPP );
+		LOG->WriteLineHr( hr, "failed to find an appropriate format for %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
 		return false;
 	}
 
@@ -193,8 +196,8 @@ bool RageDisplay::SwitchDisplayMode(
     // Set up presentation parameters for the display
     ZeroMemory( &m_d3dpp, sizeof(m_d3dpp) );
     
-	m_d3dpp.BackBufferWidth			=	dwWidth;
-    m_d3dpp.BackBufferHeight		=	dwHeight;
+	m_d3dpp.BackBufferWidth			=	iWidth;
+    m_d3dpp.BackBufferHeight		=	iHeight;
     m_d3dpp.BackBufferFormat		=	fmtBackBuffer;
     m_d3dpp.BackBufferCount			=	1;
     m_d3dpp.MultiSampleType			=	D3DMULTISAMPLE_NONE;
@@ -204,7 +207,7 @@ bool RageDisplay::SwitchDisplayMode(
     m_d3dpp.EnableAutoDepthStencil	=	TRUE;
     m_d3dpp.AutoDepthStencilFormat	=	D3DFMT_D16;
     m_d3dpp.Flags					=	0;
-	m_d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+	m_d3dpp.FullScreen_RefreshRateInHz = bWindowed ? D3DPRESENT_RATE_DEFAULT : iFullScreenHz;
 	m_d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 
 	LOG->WriteLine( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
@@ -245,7 +248,7 @@ bool RageDisplay::SwitchDisplayMode(
 											D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
 											&m_d3dpp, &m_pd3dDevice) ) )
 		{
-			LOG->WriteLineHr( hr, "failed to create device: %d, %u, %u, %u.", bWindowed, dwWidth, dwHeight, dwBPP );
+			LOG->WriteLineHr( hr, "failed to create device: %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
 			return false;
 		}
 		LOG->WriteLine( 
@@ -261,7 +264,7 @@ bool RageDisplay::SwitchDisplayMode(
 		// device is already created.  Just reset it.
 		if( FAILED( hr = m_pd3dDevice->Reset( &m_d3dpp ) ) )
 		{
-			LOG->WriteLineHr( hr, "failed to reset device: %d, %u, %u, %u.", bWindowed, dwWidth, dwHeight, dwBPP );
+			LOG->WriteLineHr( hr, "failed to reset device: %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
 			return false;
 		}
 	}

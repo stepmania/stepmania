@@ -353,6 +353,19 @@ inline Game StyleToGame( Style s )
 	}
 }
 
+/*
+
+	Chris:
+	
+	Very cool system :-)  
+	
+	However, the NotesType is a property of the StyleDef, so we can look it up there.
+	Get the the NotesType for a style with:
+		GAMESTATE->GetCurrentStyleDef()->m_NotesType		- or -
+		GAMEMAN->GetStyleDefForStyle(style)->m_NotesType
+	I'll add a new method to GAMEMAN called GetStyleThatPlaysNotesType():
+		Style s = GAMEMAN->GetStyleThatPlaysNotesType( nt );	
+
 ////////////////////////////////
 // NotesType/Style conversions
 ////////////////////////////////
@@ -496,7 +509,7 @@ print "\t\tdefault:\treturn NOTES_TYPE_INVALID;
 <- End of Perl file
 */
 
-
+/*
 //
 // NotesTypeToStyle(nt): Converts nt to a Style
 //
@@ -549,7 +562,7 @@ inline NotesType StyleToNotesType ( Style s )
 	}
 }
 
-
+*/
 
 ///////////////////////////
 // Options stuff

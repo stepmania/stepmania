@@ -100,14 +100,6 @@ SOURCE=.\RageBitmapTexture.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\RageCRC32.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageCRC32.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\RageDisplay.cpp
 # End Source File
 # Begin Source File
@@ -353,6 +345,14 @@ SOURCE=.\IniFile.cpp
 # Begin Source File
 
 SOURCE=.\IniFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MsdFile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MsdFile.h
 # End Source File
 # End Group
 # Begin Group "System"
@@ -804,6 +804,14 @@ SOURCE=.\Judgement.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\LifeMeter.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LifeMeter.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\LifeMeterBar.cpp
 # End Source File
 # Begin Source File
@@ -812,11 +820,11 @@ SOURCE=.\LifeMeterBar.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\LifeMeterPills.cpp
+SOURCE=.\LifeMeterBattery.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\LifeMeterPills.h
+SOURCE=.\LifeMeterBattery.h
 # End Source File
 # Begin Source File
 
@@ -836,11 +844,27 @@ SOURCE=.\NoteField.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScoreDisplayRolling.cpp
+SOURCE=.\ScoreDisplay.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScoreDisplayRolling.h
+SOURCE=.\ScoreDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayNormal.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayNormal.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayOni.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayOni.h
 # End Source File
 # End Group
 # Begin Group "Screens"
@@ -933,6 +957,14 @@ SOURCE=.\ScreenGameplay.cpp
 # Begin Source File
 
 SOURCE=.\ScreenGameplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenLoading.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenLoading.h
 # End Source File
 # Begin Source File
 
@@ -1093,6 +1125,14 @@ SOURCE=.\GameManager.cpp
 # Begin Source File
 
 SOURCE=.\GameManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameState.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameState.h
 # End Source File
 # Begin Source File
 

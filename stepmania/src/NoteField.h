@@ -15,7 +15,7 @@
 #include "ActorFrame.h"
 #include "Song.h"
 #include "BitmapText.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "StyleDef.h"
 #include "ColorNote.h"
 #include "BitmapText.h"

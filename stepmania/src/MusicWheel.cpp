@@ -14,11 +14,12 @@
 #include "RageUtil.h"
 #include "SongManager.h"
 #include "GameManager.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "RageMusic.h"
 #include "ScreenManager.h"	// for sending SM_PlayMusicSample
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"
+#include "GameState.h"
 
 
 const float FADE_TIME	=	1.0f;
@@ -200,7 +201,7 @@ void WheelItemDisplay::RefreshGrades()
 	// Refresh Grades
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
+		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 		{
 			m_GradeDisplay[p].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 			continue;
@@ -208,8 +209,8 @@ void WheelItemDisplay::RefreshGrades()
 
 		if( m_pSong )	// this is a song display
 		{
-			const DifficultyClass dc = PREFSMAN->m_PreferredDifficultyClass[p];
-			const Grade grade = m_pSong->GetGradeForDifficultyClass( GAMEMAN->GetCurrentStyleDef()->m_NotesType, dc );
+			const DifficultyClass dc = GAMESTATE->m_PreferredDifficultyClass[p];
+			const Grade grade = m_pSong->GetGradeForDifficultyClass( GAMESTATE->GetCurrentStyleDef()->m_NotesType, dc );
 			m_GradeDisplay[p].SetGrade( grade );
 			m_GradeDisplay[p].SetDiffuseColor( PlayerToColor((PlayerNumber)p) );
 		}
@@ -301,25 +302,25 @@ MusicWheel::MusicWheel()
 
 	
 	// for debugging
-	if( GAMEMAN->m_CurStyle == STYLE_NONE )
-		GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;
+	if( GAMESTATE->m_CurStyle == STYLE_NONE )
+		GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
 
 
 	m_frameOverlay.SetXY( 0, 0 );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
+		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;	// skip
 
 		m_sprHighScoreFrame[p].Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_SCORE_FRAME) );
 		m_sprHighScoreFrame[p].SetXY( SCORE_X, SCORE_Y[p] );
-		m_frameOverlay.AddActor( &m_sprHighScoreFrame[p] );
+		m_frameOverlay.AddSubActor( &m_sprHighScoreFrame[p] );
 
 		m_HighScore[p].SetXY( SCORE_X, SCORE_Y[p]*0.97f );
 		m_HighScore[p].SetZoom( 0.6f );
 		m_HighScore[p].SetDiffuseColor( PlayerToColor(p) );
-		m_frameOverlay.AddActor( &m_HighScore[p] );
+		m_frameOverlay.AddSubActor( &m_HighScore[p] );
 	}
 	
 	m_sprHighScoreFrame[1].SetZoomY( -1 );	// flip vertically
@@ -329,17 +330,17 @@ MusicWheel::MusicWheel()
 	m_sprSelectionOverlay.SetXY( 0, 0 );
 	m_sprSelectionOverlay.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 	m_sprSelectionOverlay.SetEffectGlowing( 1.0f, D3DXCOLOR(1,1,1,0.4f), D3DXCOLOR(1,1,1,1) );
-	m_frameOverlay.AddActor( &m_sprSelectionOverlay );
+	m_frameOverlay.AddSubActor( &m_sprSelectionOverlay );
 
 	m_MusicSortDisplay.SetXY( SORT_ICON_ON_SCREEN_X, SORT_ICON_ON_SCREEN_Y );
 	m_MusicSortDisplay.SetEffectGlowing( 1.0f );
-	m_frameOverlay.AddActor( &m_MusicSortDisplay );
+	m_frameOverlay.AddSubActor( &m_MusicSortDisplay );
 
-	this->AddActor( &m_frameOverlay );
+	this->AddSubActor( &m_frameOverlay );
 
 
 	m_ScrollBar.SetX( SCROLLBAR_X ); 
-	this->AddActor( &m_ScrollBar );
+	this->AddSubActor( &m_ScrollBar );
 	
 
 	m_soundChangeMusic.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_CHANGE_MUSIC), 16 );
@@ -359,7 +360,7 @@ MusicWheel::MusicWheel()
 	
 
 
-	m_SortOrder = PREFSMAN->m_SongSortOrder;
+	m_SortOrder = GAMESTATE->m_SongSortOrder;
 	m_MusicSortDisplay.Set( m_SortOrder );
 	m_MusicSortDisplay.SetXY( SORT_ICON_ON_SCREEN_X, SORT_ICON_ON_SCREEN_Y );
 
@@ -380,23 +381,23 @@ MusicWheel::MusicWheel()
 		BuildWheelItemDatas( m_WheelItemDatas[so], SongSortOrder(so) );
 
 	// select a song if none are selected
-	if( SONGMAN->m_pCurSong == NULL && 	// if there is no currently selected song
+	if( GAMESTATE->m_pCurSong == NULL && 	// if there is no currently selected song
 		SONGMAN->m_pSongs.GetSize() > 0 )		// and there is at least one song
 	{
 		CArray<Song*, Song*> arraySongs;
-		SONGMAN->GetSongsInGroup( SONGMAN->m_sPreferredGroup, arraySongs );
+		SONGMAN->GetSongsInGroup( GAMESTATE->m_sPreferredGroup, arraySongs );
 	
 		if( arraySongs.GetSize() > 0 )
-			SONGMAN->SetCurrentSong( arraySongs[0] );	// select the first song
+			GAMESTATE->m_pCurSong = arraySongs[0];	// select the first song
 	}
 
 
-	if( SONGMAN->m_pCurSong != NULL )
+	if( GAMESTATE->m_pCurSong != NULL )
 	{
 		// find the previously selected song (if any)
 		for( int i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
 		{
-			if( GetCurWheelItemDatas()[i].m_pSong == SONGMAN->GetCurrentSong() )
+			if( GetCurWheelItemDatas()[i].m_pSong == GAMESTATE->m_pCurSong )
 			{
 				m_iSelection = i;		// select it
 				m_sExpandedSectionName = GetCurWheelItemDatas()[m_iSelection].m_sSectionName;	// make its group the currently expanded group
@@ -412,14 +413,14 @@ MusicWheel::MusicWheel()
 
 MusicWheel::~MusicWheel()
 {
-	PREFSMAN->m_SongSortOrder = m_SortOrder;
+	GAMESTATE->m_SongSortOrder = m_SortOrder;
 }
 
 void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arrayWheelItemDatas, SongSortOrder so, bool bRoulette )
 {
 	int i;
 
-	switch( PREFSMAN->m_PlayMode )
+	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
 		{
@@ -434,7 +435,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 				Song* pSong = SONGMAN->m_pSongs[i];
 
 				CArray<Notes*, Notes*> arraySteps;
-				pSong->GetNotesThatMatch( GAMEMAN->GetCurrentStyleDef()->m_NotesType, arraySteps );
+				pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, arraySteps );
 
 				if( arraySteps.GetSize() > 0 )
 					arraySongs.Add( pSong );
@@ -477,7 +478,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			{
 			case SORT_MOST_PLAYED:	bUseSections = false;	break;
 			case SORT_BPM:			bUseSections = false;	break;
-			case SORT_GROUP:		bUseSections = SONGMAN->m_sPreferredGroup != "ALL MUSIC";	break;
+			case SORT_GROUP:		bUseSections = GAMESTATE->m_sPreferredGroup != "ALL MUSIC";	break;
 			case SORT_TITLE:		bUseSections = true;	break;
 			default:		ASSERT( false );
 			}
@@ -568,7 +569,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 		arrayWheelItemDatas.SetSize( 1 );
 		arrayWheelItemDatas[0].Load( TYPE_SECTION, NULL, "NO SONGS", NULL, D3DXCOLOR(1,0,0,1) );
 	}
-	else if( PREFSMAN->m_PlayMode == PLAY_MODE_ARCADE  &&  !bRoulette )
+	else if( GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE  &&  !bRoulette )
 	{
 		arrayWheelItemDatas.SetSize( arrayWheelItemDatas.GetSize()+1 );
 		arrayWheelItemDatas[arrayWheelItemDatas.GetSize()-1].Load( TYPE_ROULETTE, NULL, "", NULL, D3DXCOLOR(1,0,0,1) );
@@ -667,9 +668,9 @@ void MusicWheel::RebuildWheelItemDisplays()
 
 void MusicWheel::NotesChanged( PlayerNumber pn )	// update grade graphics and top score
 {
-	DifficultyClass dc = PREFSMAN->m_PreferredDifficultyClass[pn];
-	Song* pSong = SONGMAN->GetCurrentSong();
-	Notes* m_pNotes = SONGMAN->GetCurrentNotes( pn );
+	DifficultyClass dc = GAMESTATE->m_PreferredDifficultyClass[pn];
+	Song* pSong = GAMESTATE->m_pCurSong;
+	Notes* m_pNotes = GAMESTATE->m_pCurNotes[ pn ];
 	
 	if( m_pNotes )
 		m_HighScore[pn].SetScore( (float)m_pNotes->m_iTopScore );

@@ -13,7 +13,7 @@
 #include "BannerWithFrame.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "RageLog.h"
 
 
@@ -23,8 +23,8 @@ BannerWithFrame::BannerWithFrame()
 	m_sprBannerFrame.Load( THEME->GetPathTo(GRAPHIC_EVALUATION_BANNER_FRAME) );
 	m_Banner.SetCroppedSize( m_sprBannerFrame.GetUnzoomedWidth()-6, m_sprBannerFrame.GetUnzoomedHeight()-6 );
 
-	this->AddActor( &m_Banner );
-	this->AddActor( &m_sprBannerFrame );
+	this->AddSubActor( &m_Banner );
+	this->AddSubActor( &m_sprBannerFrame );
 }
 
 void BannerWithFrame::LoadFromSong( Song* pSong )

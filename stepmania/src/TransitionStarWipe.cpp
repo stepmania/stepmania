@@ -13,7 +13,7 @@
 
 #include "TransitionStarWipe.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 
 TransitionStarWipe::TransitionStarWipe()

@@ -12,7 +12,7 @@
 #include "RageUtil.h"
 
 #include "Banner.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "SongManager.h"
 #include "RageBitmapTexture.h"
 

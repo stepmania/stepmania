@@ -14,7 +14,7 @@ Desc: Screen that displays while resources are being loaded.
 #include "GameConstantsAndTypes.h"
 #include "ScreenSelectStyle.h"
 #include "RageTextureManager.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "AnnouncerManager.h"
 
 
@@ -27,10 +27,10 @@ ScreenCaution::ScreenCaution()
 {
 	m_sprCaution.Load( THEME->GetPathTo(GRAPHIC_CAUTION) );
 	m_sprCaution.StretchTo( CRect(0,0,640,480) );
-	this->AddActor( &m_sprCaution );
+	this->AddSubActor( &m_sprCaution );
 	
 	m_Wipe.OpenWipingRight( SM_DoneOpening );
-	this->AddActor( &m_Wipe );
+	this->AddSubActor( &m_Wipe );
 
 	this->SendScreenMessage( SM_StartClosing, 3 );
 }

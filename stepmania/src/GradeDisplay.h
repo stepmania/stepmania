@@ -12,7 +12,7 @@
 
 
 #include "Sprite.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "Grade.h"
 
 

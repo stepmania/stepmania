@@ -1,14 +1,16 @@
+#include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: IniFile.h
+ Class: IniFile
 
- Desc: Wrapper for reading and writing an .ini file.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Adam Clauss
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-#include "stdafx.h"
 #include "IniFile.h"
 
 
@@ -45,23 +47,26 @@ void IniFile::SetPath(CString newpath)
 
 //reads ini file specified using IniFile::SetPath()
 //returns true if successful, false otherwise
-BOOL IniFile::ReadFile()
+bool IniFile::ReadFile()
 {
 	CStdioFile file;
-	if( !file.Open(path, CFile::modeRead) )
+	CFileStatus status;
+	if (!file.GetStatus(path,status))
+		return 0;
+	int curkey = -1, curval = -1;
+	if (!file.Open(path, CFile::modeRead))
 	{
 		error = "Unable to open ini file.";
-		return FALSE;
+		return 0;
 	}
-
-	CString line;
-	int curkey = -1, curval = -1;
 	CString keyname, valuename, value;
-	while( file.ReadString(line) )
+	CString temp;
+	CString line;
+	while (file.ReadString(line))
 	{
-		if( line != "" )
+		if (line != "")
 		{
-			if( line[0] == '[' && line[line.GetLength()-1] == ']' ) //if a section heading
+			if (line[0] == '[' && line[line.GetLength()-1] == ']') //if a section heading
 			{
 				keyname = line;
 				keyname.TrimLeft('[');
@@ -69,10 +74,7 @@ BOOL IniFile::ReadFile()
 			}
 			else //if a value
 			{
-				int iIndexOfEqual = line.Find("=");
-				if( iIndexOfEqual == -1 )	// this is a malformed line
-					continue;
-				valuename = line.Left( iIndexOfEqual );
+				valuename = line.Left(line.Find("="));
 				value = line.Right(line.GetLength()-valuename.GetLength()-1);
 				SetValue(keyname,valuename,value);
 			}
@@ -85,36 +87,18 @@ BOOL IniFile::ReadFile()
 //writes data stored in class to ini file
 void IniFile::WriteFile()
 {
-	CStdioFile file;
-	if( !file.Open(path, CFile::modeCreate | CFile::modeWrite ) )
+	FILE* fp = fopen( path, "w" );
+	for (int keynum = 0; keynum <= names.GetUpperBound(); keynum++)
 	{
-		error = "Unable to open ini for writing.";
-		return;
-	}
-
-	// foreach key
-	for( int keynum = 0; keynum <= names.GetUpperBound(); keynum++ )
-	{
-		CString sTemp;
-		sTemp.Format( "[%s]\n", names[keynum] );
-		file.WriteString( sTemp );
-
-		CMapStringToString &map = keys[keynum];
-
-		// for each value_name/value pair
-		for( POSITION pos = map.GetStartPosition(); pos != NULL; )
+		if (keys[keynum].names.GetSize() != 0)
 		{
-			CString value_name;
-			CString value;
-			map.GetNextAssoc( pos, value_name, value );
-
-			sTemp.Format( "%s=%s\n", value_name, value );
-			file.WriteString( sTemp );
+			fprintf( fp, "[%s]\n", names[keynum] );
+			for (int valuenum = 0; valuenum <= keys[keynum].names.GetUpperBound(); valuenum++)
+				fprintf( fp, "%s=%s\n", keys[keynum].names[valuenum], keys[keynum].values[valuenum] );
+			fprintf( fp, "\n" );
 		}
-		file.WriteString( "\n" );
 	}
-
-	file.Close();
+	fclose( fp );
 }
 
 //deletes all stored ini data
@@ -130,68 +114,71 @@ int IniFile::GetNumKeys()
 	return keys.GetSize();
 }
 
-//returns a pointer to the key for direct modification
-CMapStringToString* IniFile::GetKeyPointer( CString keyname )
-{
-	int keynum = FindKey(keyname);
-	if (keynum == -1)
-		return NULL;
-	else
-		return &keys[keynum];
-}
-
-//returns number of values stored for specified key, or -1 if key not found
+//returns number of values stored for specified key, or -1 if key found
 int IniFile::GetNumValues(CString keyname)
 {
 	int keynum = FindKey(keyname);
 	if (keynum == -1)
 		return -1;
 	else
-		return keys[keynum].GetCount();
+		return keys[keynum].names.GetSize();
 }
 
 //gets value of [keyname] valuename = 
 //overloaded to return CString, int, and double
-bool IniFile::GetValue(CString keyname, CString valuename, CString &value_out)
+bool IniFile::GetValue(CString keyname, CString valuename, CString& value)
 {
-	int keynum = FindKey(keyname);//, valuenum = FindValue(keynum,valuename);
-	if( keynum == -1 )
-		return false;
+	int keynum = FindKey(keyname), valuenum = FindValue(keynum,valuename);
 
-	CMapStringToString &map = keys[keynum];
-	return 1 == map.Lookup(valuename, value_out);
-}
-
-//gets value of [keyname] valuename = 
-//overloaded to return CString, int, and double
-bool IniFile::GetValueI(CString keyname, CString valuename, int &value_out)
-{
-	CString sValue;
-	if( !GetValue(keyname, valuename, sValue) )
+	if (keynum == -1)
+	{
+		error = "Unable to locate specified key.";
 		return false;
-	value_out = atoi(sValue);
+	}
+
+	if (valuenum == -1)
+	{
+		error = "Unable to locate specified value.";
+		return false;
+	}
+
+	value = keys[keynum].values[valuenum];
 	return true;
 }
 
 //gets value of [keyname] valuename = 
 //overloaded to return CString, int, and double
-bool IniFile::GetValueF(CString keyname, CString valuename, float &value_out)
+bool IniFile::GetValueI(CString keyname, CString valuename, int& value)
 {
 	CString sValue;
-	if( !GetValue(keyname, valuename, sValue) )
+	bool bSuccess = GetValue(keyname,valuename,sValue);
+	if( !bSuccess )
 		return false;
-	value_out = (float)atof(sValue);
+	value = atoi(sValue);
 	return true;
 }
 
 //gets value of [keyname] valuename = 
 //overloaded to return CString, int, and double
-bool IniFile::GetValueB(CString keyname, CString valuename, bool &value_out)
+bool IniFile::GetValueF(CString keyname, CString valuename, float& value)
 {
 	CString sValue;
-	if( !GetValue(keyname, valuename, sValue) )
+	bool bSuccess = GetValue(keyname,valuename,sValue);
+	if( !bSuccess )
 		return false;
-	value_out = sValue == "1";
+	value = (float)atof(sValue);
+	return true;
+}
+
+//gets value of [keyname] valuename = 
+//overloaded to return CString, int, and double
+bool IniFile::GetValueB(CString keyname, CString valuename, bool& value)
+{
+	CString sValue;
+	bool bSuccess = GetValue(keyname,valuename,sValue);
+	if( !bSuccess )
+		return false;
+	value = atoi(sValue) != 0;
 	return true;
 }
 
@@ -199,34 +186,40 @@ bool IniFile::GetValueB(CString keyname, CString valuename, bool &value_out)
 //specify the optional paramter as false (0) if you do not want it to create
 //the key if it doesn't exist. Returns true if data entered, false otherwise
 //overloaded to accept CString, int, and double
-bool IniFile::SetValue(CString keyname, CString valuename, CString value, BOOL create)
+bool IniFile::SetValue(CString keyname, CString valuename, CString value, bool create)
 {
-	int keynum = FindKey(keyname);
-
-	if( keynum == -1 ) //if key doesn't exist
+	int keynum = FindKey(keyname), valuenum = 0;
+	//find key
+	if (keynum == -1) //if key doesn't exist
 	{
-		if( !create ) //and user does not want to create it,
-			return FALSE; //stop entering this key
+		if (!create) //and user does not want to create it,
+			return 0; //stop entering this key
 		names.SetSize(names.GetSize()+1);
 		keys.SetSize(keys.GetSize()+1);
 		keynum = names.GetSize()-1;
 		names[keynum] = keyname;
 	}
 
-	// insert value
-	CMapStringToString &map = keys[keynum];
-	CString oldvalue;
-	if( !map.Lookup(valuename, oldvalue) && !create )
-		return FALSE;
-	map[valuename] = value;
-	return TRUE;
+	//find value
+	valuenum = FindValue(keynum,valuename);
+	if (valuenum == -1)
+	{
+		if (!create)
+			return 0;
+		keys[keynum].names.SetSize(keys[keynum].names.GetSize()+1);
+		keys[keynum].values.SetSize(keys[keynum].names.GetSize()+1);
+		valuenum = keys[keynum].names.GetSize()-1;
+		keys[keynum].names[valuenum] = valuename;
+	}
+	keys[keynum].values[valuenum] = value;
+	return 1;
 }
 
 //sets value of [keyname] valuename =.
 //specify the optional paramter as false (0) if you do not want it to create
 //the key if it doesn't exist. Returns true if data entered, false otherwise
 //overloaded to accept CString, int, and double
-bool IniFile::SetValueI(CString keyname, CString valuename, int value, BOOL create)
+bool IniFile::SetValueI(CString keyname, CString valuename, int value, bool create)
 {
 	CString temp;
 	temp.Format("%d",value);
@@ -237,10 +230,10 @@ bool IniFile::SetValueI(CString keyname, CString valuename, int value, BOOL crea
 //specify the optional paramter as false (0) if you do not want it to create
 //the key if it doesn't exist. Returns true if data entered, false otherwise
 //overloaded to accept CString, int, and double
-bool IniFile::SetValueF(CString keyname, CString valuename, double value, BOOL create)
+bool IniFile::SetValueF(CString keyname, CString valuename, float value, bool create)
 {
 	CString temp;
-	temp.Format("%f",value);
+	temp.Format("%e",value);
 	return SetValue(keyname, valuename, temp, create);
 }
 
@@ -248,7 +241,7 @@ bool IniFile::SetValueF(CString keyname, CString valuename, double value, BOOL c
 //specify the optional paramter as false (0) if you do not want it to create
 //the key if it doesn't exist. Returns true if data entered, false otherwise
 //overloaded to accept CString, int, and double
-bool IniFile::SetValueB(CString keyname, CString valuename, bool value, BOOL create)
+bool IniFile::SetValueB(CString keyname, CString valuename, bool value, bool create)
 {
 	CString temp;
 	temp.Format("%d",value);
@@ -257,19 +250,20 @@ bool IniFile::SetValueB(CString keyname, CString valuename, bool value, BOOL cre
 
 //deletes specified value
 //returns true if value existed and deleted, false otherwise
-BOOL IniFile::DeleteValue(CString keyname, CString valuename)
+bool IniFile::DeleteValue(CString keyname, CString valuename)
 {
-	int keynum = FindKey(keyname);
-	if( keynum == -1 )
-		return FALSE;
+	int keynum = FindKey(keyname), valuenum = FindValue(keynum,valuename);
+	if (keynum == -1 || valuenum == -1)
+		return 0;
 
-	CMapStringToString &map = keys[keynum];
-	return map.RemoveKey( valuename );
+	keys[keynum].names.RemoveAt(valuenum);
+	keys[keynum].values.RemoveAt(valuenum);
+	return 1;
 }
 
 //deletes specified key and all values contained within
 //returns true if key existed and deleted, false otherwise
-BOOL IniFile::DeleteKey(CString keyname)
+bool IniFile::DeleteKey(CString keyname)
 {
 	int keynum = FindKey(keyname);
 	if (keynum == -1)
@@ -277,6 +271,16 @@ BOOL IniFile::DeleteKey(CString keyname)
 	keys.RemoveAt(keynum);
 	names.RemoveAt(keynum);
 	return 1;
+}
+
+//deletes specified key and all values contained within
+//returns true if key existed and deleted, false otherwise
+IniFile::key* IniFile::GetKey(CString keyname)
+{
+	int keynum = FindKey(keyname);
+	if (keynum == -1)
+		return NULL;
+	return &keys[keynum];
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -294,3 +298,15 @@ int IniFile::FindKey(CString keyname)
 	return keynum;
 }
 
+//returns index of specified value, in the specified key, or -1 if not found
+int IniFile::FindValue(int keynum, CString valuename)
+{
+	if (keynum == -1)
+		return -1;
+	int valuenum = 0;
+	while (valuenum < keys[keynum].names.GetSize() && keys[keynum].names[valuenum] != valuename)
+		valuenum++;
+	if (valuenum == keys[keynum].names.GetSize())
+		return -1;
+	return valuenum;
+}

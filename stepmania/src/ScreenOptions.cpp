@@ -17,7 +17,7 @@
 #include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "ScreenGameplay.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 
@@ -53,7 +53,7 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sTopEdgePath )
 		ssprintf("%s %s to change line   %s %s to select between options      then press START", CString(char(3)), CString(char(4)), CString(char(1)), CString(char(2)) ),
 		false, true, 40 
 		);
-	this->AddActor( &m_Menu );
+	this->AddSubActor( &m_Menu );
 	m_Menu.TweenOnScreenFromBlack( SM_None );
 
 	// init row numbers and element colors
@@ -62,32 +62,32 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sTopEdgePath )
 		m_iCurrentRow[p] = 0;
 		m_SelectionHighlight[p].SetDiffuseColor( PlayerToColor((PlayerNumber)p) );
 	
-		this->AddActor( &m_SelectionHighlight[p] );
+		this->AddSubActor( &m_SelectionHighlight[p] );
 
 		for( int l=0; l<MAX_OPTION_LINES; l++ )
 		{
 			m_iSelectedOption[p][l] = 0;
 	
 			m_OptionUnderline[p][l].SetDiffuseColor( PlayerToColor(p) );
-			this->AddActor( &m_OptionUnderline[p][l] );
+			this->AddSubActor( &m_OptionUnderline[p][l] );
 		}
 	}
 
 	// add sub actors
 	for( int i=0; i<MAX_OPTION_LINES; i++ )		// foreach line
 	{
-		this->AddActor( &m_textOptionLineTitles[i] );
+		this->AddSubActor( &m_textOptionLineTitles[i] );
 
 		for( int j=0; j<MAX_OPTIONS_PER_LINE; j++ )
 		{
 			m_textOptions[i][j].SetZ( -1 );
-			this->AddActor( &m_textOptions[i][j] );	// this array has to be big enough to hold all of the options
+			this->AddSubActor( &m_textOptions[i][j] );	// this array has to be big enough to hold all of the options
 		}
 	}
 
 
 	m_Wipe.OpenWipingRight(SM_None);
-	this->AddActor( &m_Wipe );
+	this->AddSubActor( &m_Wipe );
 }
 
 void ScreenOptions::Init( InputMode im, OptionLineData optionLineData[], int iNumOptionLines )
@@ -149,7 +149,7 @@ void ScreenOptions::InitOptionsText()
 		title.SetXY( LABELS_X, fY );
 		title.SetZoom( 0.7f );
 		title.SetVertAlign( Actor::align_middle );		
-		this->AddActor( &title );
+		this->AddSubActor( &title );
 
 		// init all text in this line and count the width of the line
 		float fX = 150;	// indent 70 pixels
@@ -162,7 +162,7 @@ void ScreenOptions::InitOptionsText()
 			option.SetText( optline.szOptionsText[j] );
 			option.SetZoom( 0.65f );
 			option.SetShadowLength( 2 );
-			this->AddActor( &option );
+			this->AddSubActor( &option );
 
 			// set the XY position of each item in the line
 			float fItemWidth = option.GetWidestLineWidthInSourcePixels() * option.GetZoomX();

@@ -21,8 +21,8 @@
 #include "RageMusic.h"
 #include "MotionBlurSprite.h"
 #include "Background.h"
-#include "LifeMeterBar.h"
-#include "ScoreDisplayRolling.h"
+#include "LifeMeter.h"
+#include "ScoreDisplay.h"
 #include "DifficultyBanner.h"
 
 
@@ -61,14 +61,12 @@ public:
 private:
 	void TweenOnScreen();
 	void TweenOffScreen();
-	void SaveSummary();
-	void LoadNextSong();
+
+	void LoadNextSong( bool bPlayMusic );
 
 
 	DancingState			m_DancingState;
 
-	Song*					m_pCurSong;
-	Notes*					m_pCurNotes[NUM_PLAYERS];
 	CArray<Song*,Song*>		m_apSongQueue;	// nearest songs are on back of queue
 	CArray<Notes*,Notes*>	m_apNotesQueue[NUM_PLAYERS];	// nearest notes are on back of queue
 	bool					m_bBothHaveFailed;
@@ -80,13 +78,12 @@ private:
 
 	ActorFrame				m_frameTop;
 	Sprite					m_sprTopFrame;
-	Quad					m_quadLifeMeterBG[NUM_PLAYERS];	// just a black quad to fill in hole for the life meter
-	LifeMeterBar			m_LifeMeter[NUM_PLAYERS];
+	LifeMeter*				m_pLifeMeter[NUM_PLAYERS];
 	BitmapText				m_textStageNumber;
 
 	ActorFrame				m_frameBottom;
 	Sprite					m_sprBottomFrame;
-	ScoreDisplayRolling		m_ScoreDisplay[NUM_PLAYERS];
+	ScoreDisplay*			m_pScoreDisplay[NUM_PLAYERS];
 	BitmapText				m_textPlayerOptions[NUM_PLAYERS];
 
 	BitmapText				m_textDebug;

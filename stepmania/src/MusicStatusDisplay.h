@@ -16,7 +16,7 @@ class MusicStatusDisplay;
 
 
 #include "Sprite.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 
 enum MusicStatusDisplayType { TYPE_NEW, TYPE_NONE, TYPE_CROWN1, TYPE_CROWN2, TYPE_CROWN3 };

@@ -11,8 +11,11 @@
 */
 
 #include "Course.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "Song.h"
+#include "GameManager.h"
+#include "SongManager.h"
+#include "GameState.h"
 
 
 void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
@@ -88,13 +91,77 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 
 			if( pSong == NULL )	// we didn't find the Song
 				continue;	// skip this song
-
-			DifficultyClass dc = Notes::DifficultyClassFromDescriptionAndMeter( sNotesDescription, 6 );
 			
-			AddStage( pSong, dc );
+			AddStage( pSong, sNotesDescription );
 		}
 
 		else
 			LOG->WriteLine( "Unexpected value named '%s'", sValueName );
+	}
+}
+
+
+void Course::CreateFromGroupAndDifficultyClass( CString sGroupName, DifficultyClass dc, CArray<Song*,Song*> &apSongsInGroup )
+{
+	CString sShortGroupName = SONGMAN->ShortenGroupName( sGroupName );	
+
+	m_sName = sShortGroupName + " ";
+	switch( dc )
+	{
+	case CLASS_EASY:	m_sName += "Easy";		break;
+	case CLASS_MEDIUM:	m_sName += "Medium";	break;
+	case CLASS_HARD:	m_sName += "Hard";		break;
+	}
+
+	for( int s=0; s<apSongsInGroup.GetSize(); s++ )
+	{
+		Song* pSong = apSongsInGroup[s];
+		AddStage( pSong, DifficultyClassToString(dc) );
+	}
+}
+
+
+Notes* Course::GetNotesForStage( int iStage )
+{
+	Song* pSong = m_apSongs[iStage];
+	CString sDescription = m_asDescriptions[iStage];
+
+	for( int i=0; i<pSong->m_apNotes.GetSize(); i++ )
+	{
+		Notes* pNotes = pSong->m_apNotes[i];
+		if( 0==stricmp(pNotes->m_sDescription, sDescription)  &&
+			pNotes->m_NotesType == GAMESTATE->GetCurrentStyleDef()->m_NotesType )
+			return pNotes;
+	}
+
+
+	// Didn't find a matching description.  Try to match the DifficultyClass instead.
+	DifficultyClass dc = Notes::DifficultyClassFromDescriptionAndMeter( sDescription, 5 );
+
+	for( i=0; i<pSong->m_apNotes.GetSize(); i++ )
+	{
+		Notes* pNotes = pSong->m_apNotes[i];
+		if( pNotes->m_DifficultyClass == dc )
+			return pNotes;
+	}
+
+
+	return NULL;
+}
+
+
+void Course::GetSongAndNotesForCurrentStyle( CArray<Song*,Song*>& apSongsOut, CArray<Notes*,Notes*> apNotesOut[NUM_PLAYERS] )
+{
+	for( int i=0; i<m_iStages; i++ )
+	{
+		Song* pSong = m_apSongs[i];
+		Notes* pNotes = GetNotesForStage( i );
+
+		if( pNotes == NULL )
+			continue;	// skip
+
+		apSongsOut.Add( pSong );
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			apNotesOut[p].Add( pNotes );
 	}
 }

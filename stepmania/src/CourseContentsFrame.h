@@ -12,22 +12,51 @@
 
 #include "FootMeter.h"
 #include "BitmapText.h"
+#include "TextBanner.h"
 #include "ActorFrame.h"
+#include "Sprite.h"
+#include "Quad.h"
 class Course;
+class Song;
+struct Notes;
 
-const int MAX_COURSE_CONTENTS = 8;
+
+const int MAX_VISIBLE_CONTENTS = 5;
+const int MAX_TOTAL_CONTENTS = 56;
+
+
+class CourseContentDisplay : public ActorFrame
+{
+public:
+	CourseContentDisplay();
+
+	void Load( int iNum, Song* pSong, Notes* pNotes );
+
+	Sprite		m_sprFrame;
+	BitmapText	m_textNumber;
+	TextBanner	m_TextBanner;
+	BitmapText	m_textFoot;
+	BitmapText	m_textDifficultyNumber;
+};
+
 
 class CourseContentsFrame : public ActorFrame
 {
 public:
 	CourseContentsFrame();
 
-	void Update( float fDeltaTime );
+	virtual void Update( float fDeltaTime );
+	virtual void DrawPrimitives();
 
 	void SetFromCourse( Course* pCourse );
 
 protected:
 
-	BitmapText		m_textContents[MAX_COURSE_CONTENTS];
-	FootMeter		m_Meters[MAX_COURSE_CONTENTS];
+	Quad		m_quad;
+
+	int						m_iNumContents;
+	CourseContentDisplay	m_CourseContentDisplays[MAX_TOTAL_CONTENTS];
+
+	float m_fTimeUntilScroll;
+	float m_fItemAtTopOfList;	// between 0 and m_iNumContents
 };

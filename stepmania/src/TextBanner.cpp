@@ -12,7 +12,7 @@
 #include "RageUtil.h"
 
 #include "TextBanner.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 
 
@@ -34,9 +34,9 @@ TextBanner::TextBanner()
 	m_textSubTitle.TurnShadowOff();
 	m_textArtist.TurnShadowOff();
 
-	this->AddActor( &m_textTitle );
-	this->AddActor( &m_textSubTitle );
-	this->AddActor( &m_textArtist );
+	this->AddSubActor( &m_textTitle );
+	this->AddSubActor( &m_textSubTitle );
+	this->AddSubActor( &m_textArtist );
 }
 
 

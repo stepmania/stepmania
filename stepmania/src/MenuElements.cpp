@@ -17,10 +17,11 @@
 #include "ScreenManager.h"
 #include "ScreenGameplay.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "RageLog.h"
 #include "RageLog.h"
 #include "GameManager.h"
+#include "GameState.h"
 
 
 const float HELP_X		=	CENTER_X;
@@ -38,28 +39,28 @@ const float CREDIT_Y[NUM_PLAYERS]	=	{SCREEN_BOTTOM-8, SCREEN_BOTTOM-8};
 
 MenuElements::MenuElements()
 {
-	m_frameTopBar.AddActor( &m_sprTopEdge );
-	m_frameTopBar.AddActor( &m_sprStyleIcon );
-	m_frameTopBar.AddActor( &m_MenuTimer );
+	m_frameTopBar.AddSubActor( &m_sprTopEdge );
+	m_frameTopBar.AddSubActor( &m_sprStyleIcon );
+	m_frameTopBar.AddSubActor( &m_MenuTimer );
 
-	m_frameBottomBar.AddActor( &m_sprBottomEdge );
+	m_frameBottomBar.AddSubActor( &m_sprBottomEdge );
 
-	this->AddActor( &m_sprBG );
-	this->AddActor( &m_frameTopBar );
-	this->AddActor( &m_frameBottomBar );
-	this->AddActor( &m_textHelp );
+	this->AddSubActor( &m_sprBG );
+	this->AddSubActor( &m_frameTopBar );
+	this->AddSubActor( &m_frameBottomBar );
+	this->AddSubActor( &m_textHelp );
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		this->AddActor( &m_textCreditInfo[p] );
+		this->AddSubActor( &m_textCreditInfo[p] );
 
 	m_KeepAlive.SetZ( -2 );
 	m_KeepAlive.SetOpened();
-	this->AddActor( &m_KeepAlive );
+	this->AddSubActor( &m_KeepAlive );
 
 	m_Wipe.SetZ( -2 );
 	m_Wipe.SetOpened();
-	this->AddActor( &m_Wipe );
+	this->AddSubActor( &m_Wipe );
 
-	this->AddActor( &m_Invisible );
+	this->AddSubActor( &m_Invisible );
 }
 
 void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText, bool bShowStyleIcon, bool bTimerEnabled, int iTimerSeconds )
@@ -80,10 +81,10 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_sprStyleIcon.StopAnimating();
 	m_sprStyleIcon.SetXY( STYLE_ICON_LOCAL_X, STYLE_ICON_LOCAL_Y );
 	m_sprStyleIcon.SetZ( -1 );
-	if( GAMEMAN->m_CurStyle == STYLE_NONE  ||  !bShowStyleIcon )
+	if( GAMESTATE->m_CurStyle == STYLE_NONE  ||  !bShowStyleIcon )
 		m_sprStyleIcon.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	else
-		m_sprStyleIcon.SetState( GAMEMAN->m_CurStyle );
+		m_sprStyleIcon.SetState( GAMESTATE->m_CurStyle );
 
 	m_MenuTimer.SetXY( TIMER_LOCAL_X, TIMER_LOCAL_Y );
 	m_MenuTimer.SetZ( -1 );
@@ -100,13 +101,13 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_sprBottomEdge.Load( THEME->GetPathTo(GRAPHIC_MENU_BOTTOM_EDGE) );
 	m_sprBottomEdge.TurnShadowOff();
 
-	m_textHelp.Load( THEME->GetPathTo(FONT_NORMAL) );
 	m_textHelp.SetXY( HELP_X, HELP_Y );
-	m_textHelp.SetZ( -1 );
-	m_textHelp.SetText( sHelpText );
+//	m_textHelp.SetZ( -1 );
+	CStringArray asHelpTips;
+	split( sHelpText, "\n", asHelpTips );
+	m_textHelp.SetTips( asHelpTips );
+	//m_textHelp.SetText( sHelpText );
 	m_textHelp.SetZoom( 0.5f );
-	m_textHelp.SetEffectBlinking();
-	m_textHelp.TurnShadowOff();
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -114,9 +115,9 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 		m_textCreditInfo[p].SetXY( CREDIT_X[p], CREDIT_Y[p] );
 		m_textCreditInfo[p].SetZ( -1 );
 
-		if( GAMEMAN->m_CurStyle == STYLE_NONE )
+		if( GAMESTATE->m_CurStyle == STYLE_NONE )
 			m_textCreditInfo[p].SetText( "PRESS START" );
-		else if( GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
+		else if( GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 			m_textCreditInfo[p].SetText( "" );
 		else	// not enabled
 			m_textCreditInfo[p].SetText( "NOT PRESENT" );

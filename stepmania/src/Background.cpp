@@ -12,7 +12,7 @@
 #include "Background.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "PrefsManager.h"
 #include "RageBitmapTexture.h"
 
@@ -300,7 +300,7 @@ void Background::DrawPrimitives()
 
 bool Background::DangerVisible()
 {
-	return m_bInDanger && (TIMER->GetTimeSinceStart() - (int)TIMER->GetTimeSinceStart()) > 0.5f;
+	return m_bInDanger && (TIMER->GetTimeSinceStart() - (int)TIMER->GetTimeSinceStart()) < 0.5f;
 }
 
 

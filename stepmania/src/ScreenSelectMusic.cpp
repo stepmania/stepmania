@@ -19,7 +19,7 @@
 #include "RageMusic.h"
 #include "ScreenTitleMenu.h"
 #include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "ScreenGameplay.h"
 #include "ScreenPrompt.h"
 #include "ScreenPlayerOptions.h"
@@ -28,6 +28,8 @@
 #include "InputQueue.h"
 #include "ScreenStage.h"
 #include "AnnouncerManager.h"
+#include "InputMapper.h"
+#include "GameState.h"
 
 
 const float SONG_INFO_FRAME_X	= 160;
@@ -65,50 +67,50 @@ ScreenSelectMusic::ScreenSelectMusic()
 	LOG->WriteLine( "ScreenSelectMusic::ScreenSelectMusic()" );
 
 	// for debugging
-	if( GAMEMAN->m_CurStyle == STYLE_NONE )
-		GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;
+	if( GAMESTATE->m_CurStyle == STYLE_NONE )
+		GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
 
 	int p;
 
 	m_Menu.Load(
 		THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_BACKGROUND), 
 		THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_TOP_EDGE),
-		ssprintf("%c or %c change music    %c%c easier difficulty     %c%c harder difficulty      %c%c%c%c change sort", 
-		char(1), char(2), char(3), char(3), char(4), char(4), char(3), char(4), char(3), char(4) ),
+		ssprintf("%c or %c change music     Hold %c and %c then press START to change sort\n%c%c easier difficulty     %c%c harder difficulty", 
+		char(1), char(2), char(1), char(2), char(3), char(3), char(4), char(4) ),
 		false, true, 60 
 		);
-	this->AddActor( &m_Menu );
+	this->AddSubActor( &m_Menu );
 
 	m_SongInfoFrame.SetXY( SONG_INFO_FRAME_X, SONG_INFO_FRAME_Y );
-	this->AddActor( &m_SongInfoFrame );
+	this->AddSubActor( &m_SongInfoFrame );
 
 	m_sprDifficultyFrame.Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_DIFFICULTY_FRAME) );
 	m_sprDifficultyFrame.SetXY( DIFFICULTY_X, DIFFICULTY_Y );
-	this->AddActor( &m_sprDifficultyFrame );
+	this->AddSubActor( &m_sprDifficultyFrame );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_DifficultyIcon[p].SetXY( ICON_X[p], ICON_Y );
-		this->AddActor( &m_DifficultyIcon[p] );
+		this->AddSubActor( &m_DifficultyIcon[p] );
 	}
 
 	m_GrooveRadar.SetXY( RADAR_X, RADAR_Y );
-	this->AddActor( &m_GrooveRadar );
+	this->AddSubActor( &m_GrooveRadar );
 
 	m_sprMeterFrame.Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_METER_FRAME) );
 	m_sprMeterFrame.SetXY( METER_FRAME_X, METER_FRAME_Y );
-	this->AddActor( &m_sprMeterFrame );
+	this->AddSubActor( &m_sprMeterFrame );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_FootMeter[p].Load( THEME->GetPathTo(FONT_METER) );
 		m_FootMeter[p].SetXY( METER_X[p], METER_Y[p] );
 		m_FootMeter[p].SetShadowLength( 2 );
-		this->AddActor( &m_FootMeter[p] );
+		this->AddSubActor( &m_FootMeter[p] );
 	}
 
 	m_MusicWheel.SetXY( WHEEL_X, WHEEL_Y );
-	this->AddActor( &m_MusicWheel );
+	this->AddSubActor( &m_MusicWheel );
 
 	m_textHoldForOptions.Load( THEME->GetPathTo(FONT_STAGE) );
 	m_textHoldForOptions.SetXY( CENTER_X, CENTER_Y );
@@ -117,7 +119,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_textHoldForOptions.SetZoomY( 0 );
 	m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	m_textHoldForOptions.SetZ( -2 );
-	this->AddActor( &m_textHoldForOptions );
+	this->AddSubActor( &m_textHoldForOptions );
 
 
 	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
@@ -245,11 +247,6 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType 
 		HarderDifficulty( MenuI.player );
 		return;
 	}
-	if( INPUTQUEUE->MatchesPattern(MenuI.player, NEXT_SORT_PATTERN, NEXT_SORT_PATTERN_SIZE) )
-	{
-		m_MusicWheel.NextSort();
-		return;
-	}
 	
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
@@ -260,7 +257,7 @@ void ScreenSelectMusic::EasierDifficulty( const PlayerNumber p )
 {
 	LOG->WriteLine( "ScreenSelectMusic::EasierDifficulty( %d )", p );
 
-	if( !GAMEMAN->IsPlayerEnabled(p) )
+	if( !GAMESTATE->IsPlayerEnabled(p) )
 		return;
 	if( m_arrayNotes.GetSize() == 0 )
 		return;
@@ -277,7 +274,7 @@ void ScreenSelectMusic::HarderDifficulty( const PlayerNumber p )
 {
 	LOG->WriteLine( "ScreenSelectMusic::HarderDifficulty( %d )", p );
 
-	if( !GAMEMAN->IsPlayerEnabled(p) )
+	if( !GAMESTATE->IsPlayerEnabled(p) )
 		return;
 	if( m_arrayNotes.GetSize() == 0 )
 		return;
@@ -338,17 +335,31 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenSelectMusic::MenuLeft( const PlayerNumber p, const InputEventType type )
 {
+	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) ) )
+		return;		// ignore
+	
 	m_MusicWheel.PrevMusic();
 }
 
 
 void ScreenSelectMusic::MenuRight( const PlayerNumber p, const InputEventType type )
 {
+	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) ) )
+		return;		// ignore
+
 	m_MusicWheel.NextMusic();
 }
 
 void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 {
+	if( INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) )  &&
+		INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) ) )
+	{
+		m_MusicWheel.NextSort();
+		return;
+	}
+
+
 	// this needs to check whether valid Notes are selected!
 	bool bResult = m_MusicWheel.Select();
 
@@ -369,9 +380,9 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 				bool bIsHard = false;
 				for( int p=0; p<NUM_PLAYERS; p++ )
 				{
-					if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
+					if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 						continue;	// skip
-					if( SONGMAN->GetCurrentNotes((PlayerNumber)p)  &&  SONGMAN->GetCurrentNotes((PlayerNumber)p)->m_iMeter >= 9 )
+					if( GAMESTATE->m_pCurNotes[p]  &&  GAMESTATE->m_pCurNotes[p]->m_iMeter >= 9 )
 						bIsHard = true;
 				}
 
@@ -425,7 +436,7 @@ void ScreenSelectMusic::MenuBack( const PlayerNumber p )
 
 void ScreenSelectMusic::AfterNotesChange( const PlayerNumber p )
 {
-	if( !GAMEMAN->IsPlayerEnabled(p) )
+	if( !GAMESTATE->IsPlayerEnabled(p) )
 		return;
 	
 	m_iSelection[p] = clamp( m_iSelection[p], 0, m_arrayNotes.GetSize()-1 );	// bounds clamping
@@ -433,9 +444,9 @@ void ScreenSelectMusic::AfterNotesChange( const PlayerNumber p )
 	Notes* pNotes = m_arrayNotes.GetSize()>0 ? m_arrayNotes[m_iSelection[p]] : NULL;
 
 	if( pNotes )
-		PREFSMAN->m_PreferredDifficultyClass[p] = pNotes->m_DifficultyClass;
+		GAMESTATE->m_PreferredDifficultyClass[p] = pNotes->m_DifficultyClass;
 
-	SONGMAN->SetCurrentNotes( p, pNotes );
+	GAMESTATE->m_pCurNotes[p] = pNotes;
 
 	m_DifficultyIcon[p].SetFromNotes( pNotes );
 	m_FootMeter[p].SetFromNotes( pNotes );
@@ -446,7 +457,7 @@ void ScreenSelectMusic::AfterNotesChange( const PlayerNumber p )
 void ScreenSelectMusic::AfterMusicChange()
 {
 	Song* pSong = m_MusicWheel.GetSelectedSong();
-	SONGMAN->SetCurrentSong( pSong );
+	GAMESTATE->m_pCurSong = pSong;
 
 	m_arrayNotes.RemoveAll();
 
@@ -464,15 +475,15 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	case TYPE_SONG:
 		{
-			pSong->GetNotesThatMatch( GAMEMAN->GetCurrentStyleDef()->m_NotesType, m_arrayNotes );
+			pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, m_arrayNotes );
 			SortNotesArrayByDifficultyClass( m_arrayNotes );
 			m_SongInfoFrame.SetFromSong( pSong );
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				if( !GAMEMAN->IsPlayerEnabled( PlayerNumber(p) ) )
+				if( !GAMESTATE->IsPlayerEnabled( PlayerNumber(p) ) )
 					continue;
 				for( int i=0; i<m_arrayNotes.GetSize(); i++ )
-					if( m_arrayNotes[i]->m_DifficultyClass == PREFSMAN->m_PreferredDifficultyClass[p] )
+					if( m_arrayNotes[i]->m_DifficultyClass == GAMESTATE->m_PreferredDifficultyClass[p] )
 						m_iSelection[p] = i;
 
 				m_iSelection[p] = clamp( m_iSelection[p], 0, m_arrayNotes.GetSize() ) ;

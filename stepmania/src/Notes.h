@@ -33,12 +33,12 @@ public:
 		CString sStepData1, const CString sStepData2 
 		);
 	void LoadFromSMTokens( 
-		const CString &sNotesType, 
-		const CString &sDescription,
-		const CString &sDifficultyClass,
-		const CString &sMeter,
-		const CString &sRadarValues,
-		const CString &sNoteDataOut
+		CString sNotesType, 
+		CString sDescription,
+		CString sDifficultyClass,
+		CString sMeter,
+		CString sRadarValues,
+		CString sNoteDataOut
 		);
 	void WriteSMNotesTag( FILE* fp );
 

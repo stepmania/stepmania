@@ -24,7 +24,7 @@ FocusingSprite::FocusingSprite()
 {
 	for( int i=0; i<3; i++ )
 	{
-		this->AddActor( &m_sprites[i] );
+		this->AddSubActor( &m_sprites[i] );
 	}
 	
 	m_fPercentBlurred = 1.0f;

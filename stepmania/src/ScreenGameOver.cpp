@@ -11,7 +11,7 @@
 */
 
 #include "ScreenGameOver.h"
-#include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "RageLog.h"
 #include "TransitionFadeWipe.h"
 #include "Sprite.h"
@@ -19,6 +19,8 @@
 #include "ScreenManager.h"
 #include "ScreenTitleMenu.h"
 #include "AnnouncerManager.h"
+#include "GameState.h"
+
 
 const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState	=	ScreenMessage(SM_User + 2);
@@ -27,9 +29,11 @@ const ScreenMessage SM_PlayAnnouncer	=	ScreenMessage(SM_User + 3);
 
 ScreenGameOver::ScreenGameOver()
 {
+	m_bClosing = false;
+
 	m_sprGameOver.Load( THEME->GetPathTo(GRAPHIC_GAME_OVER) );
 	m_sprGameOver.SetXY( CENTER_X, CENTER_Y );
-	this->AddActor( &m_sprGameOver );
+	this->AddSubActor( &m_sprGameOver );
 
 	// tween game over
 	m_sprGameOver.SetAddColor( D3DXCOLOR(1,1,1,0) );
@@ -45,7 +49,7 @@ ScreenGameOver::ScreenGameOver()
 	m_sprGameOver.SetTweenAddColor( D3DXCOLOR(1,1,1,0) );
 
 	// BUGFIX by ANDY: Stage will now reset back to 0 when game ends.
-	PREFSMAN->m_iCurrentStageIndex = 0;
+	GAMESTATE->m_iCurrentStageIndex = 0;
 
 	this->SendScreenMessage( SM_PlayAnnouncer, 0.5 );
 	this->SendScreenMessage( SM_StartFadingOut, 5 );
@@ -60,6 +64,7 @@ void ScreenGameOver::HandleScreenMessage( const ScreenMessage SM )
 		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_GAME_OVER) );
 		break;
 	case SM_StartFadingOut:
+		m_bClosing = true;
 		m_sprGameOver.BeginTweening( 0.8f );
 		m_sprGameOver.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 		this->SendScreenMessage( SM_GoToNextState, 0.8f );
@@ -72,6 +77,9 @@ void ScreenGameOver::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenGameOver::MenuStart( PlayerNumber p )
 {
+	if( m_bClosing )
+		return;
+
 	this->ClearMessageQueue();
 	this->SendScreenMessage( SM_StartFadingOut, 0 );
 }
