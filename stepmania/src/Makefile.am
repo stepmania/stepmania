@@ -135,7 +135,8 @@ LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.h \
 		 arch/LowLevelWindow/LowLevelWindow_SDL.cpp arch/LowLevelWindow/LowLevelWindow_SDL.h
 
 ArchUtils = archutils/Unix/SignalHandler.cpp archutils/Unix/SignalHandler.h \
-	    archutils/Unix/GetSysInfo.cpp archutils/Unix/GetSysInfo.h
+	    archutils/Unix/GetSysInfo.cpp archutils/Unix/GetSysInfo.h \
+	    archutils/Unix/AssertionHandler.cpp
 
 if USE_CRASH_HANDLER
 ArchUtils += archutils/Unix/CrashHandler.cpp archutils/Unix/CrashHandler.h \
