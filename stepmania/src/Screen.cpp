@@ -264,7 +264,6 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenSelectGame.h"
 #include "ScreenSelectGroup.h"
 #include "ScreenSelectMusic.h"
-#include "ScreenSelectStyle5th.h"
 #include "ScreenSelectStyle.h"
 #include "ScreenSongOptions.h"
 #include "ScreenSoundOptions.h"
