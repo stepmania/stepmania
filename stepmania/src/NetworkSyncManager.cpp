@@ -69,7 +69,8 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
    
 	useSMserver = false;
 	isSMOnline = false;
-	isSMOLoggedIn = false;
+	FOREACH_PlayerNumber(pn)
+		isSMOLoggedIn[pn] = false;
 
 	m_startupStatus = 0;	//By default, connection not tried.
 
@@ -98,7 +99,8 @@ void NetworkSyncManager::CloseConnection()
 		return ;
 	m_ServerVersion = 0;
    	useSMserver = false;
-	isSMOLoggedIn = false;
+	FOREACH_PlayerNumber(pn)
+		isSMOLoggedIn[pn] = false;
 	m_startupStatus = 0;
 	NetPlayerClient->close();
 }
@@ -126,7 +128,8 @@ void NetworkSyncManager::PostStartUp(const CString& ServerIP)
 		}
 	}
 
-	isSMOLoggedIn = false;
+	FOREACH_PlayerNumber(pn)
+		isSMOLoggedIn[pn] = false;
 
 	useSMserver = true;
 
@@ -510,7 +513,9 @@ void NetworkSyncManager::ProcessInput()
 		SCREENMAN->SystemMessageNoAnimate("Connection to server dropped.");
 		useSMserver=false;
 		isSMOnline = false;
-		isSMOLoggedIn = false;
+		FOREACH_PlayerNumber(pn)
+			isSMOLoggedIn[pn] = false;
+		NetPlayerClient->close();
 		return;
 	}
 
@@ -815,7 +820,8 @@ void PacketFunctions::ClearPacket()
 
 LuaFunction_NoArgs( IsNetConnected,			NSMAN->useSMserver )
 LuaFunction_NoArgs( IsNetSMOnline,			NSMAN->isSMOnline )
-LuaFunction_NoArgs(	IsSMOnlineLoggedIn,		NSMAN->isSMOLoggedIn )
+
+LuaFunction_PlayerNumber( IsSMOnlineLoggedIn,	NSMAN->isSMOLoggedIn[pn] )
 /*
  * (c) 2003-2004 Charles Lohr, Joshua Allen
  * All rights reserved.

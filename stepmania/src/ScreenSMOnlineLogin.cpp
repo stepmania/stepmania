@@ -60,7 +60,7 @@ ScreenSMOnlineLogin::ScreenSMOnlineLogin( const CString& sName ) : ScreenWithMen
 	SET_XY_AND_ON_COMMAND( m_textLoginMessage );
 	this->AddChild( &m_textLoginMessage );
 
-	NSMAN->isSMOLoggedIn = false;
+	NSMAN->isSMOLoggedIn[m_iPlayer] = false;
 }
 
 void ScreenSMOnlineLogin::Input( const DeviceInput& DeviceI, const InputEventType type,
@@ -157,7 +157,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage( const ScreenMessage SM )
 			int Status = NSMAN->m_SMOnlinePacket.Read1();
 			if ( Status == 0 )
 			{
-				NSMAN->isSMOLoggedIn = true;
+				NSMAN->isSMOLoggedIn[m_iPlayer] = true;
 				SCREENMAN->SendMessageToTopScreen( SM_GoToNextScreen );
 			} 
 			else 
