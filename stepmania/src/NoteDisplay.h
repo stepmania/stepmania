@@ -55,19 +55,6 @@ protected:
 
 #define NOTE_COLOR_IMAGES 6
 
-	Actor*		m_pTapNote[NOTE_COLOR_IMAGES];
-	Actor*		m_pTapAddition;
-	Actor*		m_pTapMine;
-	Actor*		m_pHoldHeadActive[NOTE_COLOR_IMAGES];
-	Actor*		m_pHoldHeadInactive[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldTopCapActive[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldTopCapInactive[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldBodyActive[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldBodyInactive[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldBottomCapActive[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldBottomCapInactive[NOTE_COLOR_IMAGES];
-	Actor*		m_pHoldTailActive[NOTE_COLOR_IMAGES];
-	Actor*		m_pHoldTailInactive[NOTE_COLOR_IMAGES];
 	float		m_fYReverseOffsetPixels;
 };
 

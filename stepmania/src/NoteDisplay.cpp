@@ -105,10 +105,50 @@ struct NoteMetricCache_t {
 	float m_fHoldNGGrayPercent;
 	bool m_bUseLighting;
 
-	void Load(PlayerNumber pn, const CString &name);
+	Actor*		m_pTapNote[NOTE_COLOR_IMAGES];
+	Actor*		m_pTapAddition;
+	Actor*		m_pTapMine;
+	Actor*		m_pHoldHeadActive[NOTE_COLOR_IMAGES];
+	Actor*		m_pHoldHeadInactive[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldTopCapActive[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldTopCapInactive[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldBodyActive[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldBodyInactive[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldBottomCapActive[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldBottomCapInactive[NOTE_COLOR_IMAGES];
+	Actor*		m_pHoldTailActive[NOTE_COLOR_IMAGES];
+	Actor*		m_pHoldTailInactive[NOTE_COLOR_IMAGES];
+
+	NoteMetricCache_t();
+	~NoteMetricCache_t();
+	void Load( int iColNum, PlayerNumber pn, const CString &name );
 } *NoteMetricCache;
 
-void NoteMetricCache_t::Load(PlayerNumber pn, const CString &name)
+NoteMetricCache_t::NoteMetricCache_t()
+{
+	for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
+	{
+		m_pTapNote[i] = NULL;
+		m_pHoldHeadActive[i] = NULL;
+		m_pHoldHeadInactive[i] = NULL;
+	}
+	m_pTapAddition = NULL;
+	m_pTapMine = NULL;
+}
+
+NoteMetricCache_t::~NoteMetricCache_t()
+{
+	for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
+	{
+		delete m_pTapNote[i];
+		delete m_pHoldHeadActive[i];
+		delete m_pHoldHeadInactive[i];
+	}
+	delete m_pTapAddition;
+	delete m_pTapMine;
+}
+
+void NoteMetricCache_t::Load( int iColNum, PlayerNumber pn, const CString &name )
 {
 	m_bDrawHoldHeadForTapsOnSameRow = DRAW_HOLD_HEAD_FOR_TAPS_ON_SAME_ROW;
 	m_fTapNoteAnimationLengthInBeats = TAP_NOTE_ANIMATION_LENGTH_IN_BEATS;
@@ -139,47 +179,6 @@ void NoteMetricCache_t::Load(PlayerNumber pn, const CString &name)
 	m_iStopDrawingHoldBodyOffsetFromTail = STOP_DRAWING_HOLD_BODY_OFFSET_FROM_TAIL;
 	m_fHoldNGGrayPercent = HOLD_NG_GRAY_PERCENT;
 	m_bUseLighting = USE_LIGHTING;
-}
-
-NoteDisplay::NoteDisplay()
-{
-	for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-	{
-		m_pTapNote[i] = NULL;
-		m_pHoldHeadActive[i] = NULL;
-		m_pHoldHeadInactive[i] = NULL;
-	}
-	m_pTapAddition = NULL;
-	m_pTapMine = NULL;
-
-	cache = new NoteMetricCache_t;
-}
-
-NoteDisplay::~NoteDisplay()
-{
-	for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-	{
-		delete m_pTapNote[i];
-		delete m_pHoldHeadActive[i];
-		delete m_pHoldHeadInactive[i];
-	}
-	delete m_pTapAddition;
-	delete m_pTapMine;
-
-	delete cache;
-}
-
-void NoteDisplay::Load( int iColNum, PlayerNumber pn, float fYReverseOffsetPixels )
-{
-	m_PlayerNumber = pn;
-	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
-
-	/* Normally, this is empty and we use the style table entry via ColToButtonName. */
-	CString Button = g_NoteFieldMode[m_PlayerNumber].NoteButtonNames[iColNum];
-	if(Button == "")
-		Button = NoteSkinManager::ColToButtonName(iColNum);
-
-	cache->Load( pn, Button );
 
 	// Look up note names once and store them here.
 	CString sNoteType[ NOTE_COLOR_IMAGES ];
@@ -187,89 +186,111 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, float fYReverseOffsetPixel
 		sNoteType[i] = NoteTypeToString( (NoteType)i );
 
 
-	if( cache->m_bTapNoteAnimationIsNoteColor )
+	if( m_bTapNoteAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-			m_pTapNote[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "tap note "+sNoteType[i]) );
+			m_pTapNote[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, name, "tap note "+sNoteType[i]) );
 	}
 	else
 	{
-		m_pTapNote[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "tap note") );
+		m_pTapNote[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, name, "tap note") );
 	}
 
-	m_pTapAddition = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "tap addition") );
+	m_pTapAddition = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, name, "tap addition") );
 
-	m_pTapMine = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "tap mine") );
+	m_pTapMine = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, name, "tap mine") );
 
-	if( cache->m_bHoldHeadAnimationIsNoteColor )
+	if( m_bHoldHeadAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_pHoldHeadActive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold head active "+sNoteType[i]) );
-			m_pHoldHeadInactive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold head inactive "+sNoteType[i]) );
+			m_pHoldHeadActive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, name, "hold head active "+sNoteType[i]) );
+			m_pHoldHeadInactive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, name, "hold head inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_pHoldHeadActive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold head active") );
-		m_pHoldHeadInactive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold head inactive") );
+		m_pHoldHeadActive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, name, "hold head active") );
+		m_pHoldHeadInactive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, name, "hold head inactive") );
 	}
 
-	if( cache->m_bHoldTopCapAnimationIsNoteColor )
+	if( m_bHoldTopCapAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldTopCapActive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold topcap active "+sNoteType[i]) );
-			m_sprHoldTopCapInactive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold topcap inactive "+sNoteType[i]) );
+			m_sprHoldTopCapActive[i].Load( NOTESKIN->GetPathTo(pn, name, "hold topcap active "+sNoteType[i]) );
+			m_sprHoldTopCapInactive[i].Load( NOTESKIN->GetPathTo(pn, name, "hold topcap inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldTopCapActive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold topcap active") );
-		m_sprHoldTopCapInactive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold topcap inactive") );
+		m_sprHoldTopCapActive[0].Load( NOTESKIN->GetPathTo(pn, name, "hold topcap active") );
+		m_sprHoldTopCapInactive[0].Load( NOTESKIN->GetPathTo(pn, name, "hold topcap inactive") );
 	}
 
-	if( cache->m_bHoldBodyAnimationIsNoteColor )
+	if( m_bHoldBodyAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldBodyActive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold body active "+sNoteType[i]) );
-			m_sprHoldBodyInactive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold body inactive "+sNoteType[i]) );
+			m_sprHoldBodyActive[i].Load( NOTESKIN->GetPathTo(pn, name, "hold body active "+sNoteType[i]) );
+			m_sprHoldBodyInactive[i].Load( NOTESKIN->GetPathTo(pn, name, "hold body inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldBodyActive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold body active") );
-		m_sprHoldBodyInactive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold body inactive") );
+		m_sprHoldBodyActive[0].Load( NOTESKIN->GetPathTo(pn, name, "hold body active") );
+		m_sprHoldBodyInactive[0].Load( NOTESKIN->GetPathTo(pn, name, "hold body inactive") );
 	}
 
-	if( cache->m_bHoldBottomCapAnimationIsNoteColor )
+	if( m_bHoldBottomCapAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldBottomCapActive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold bottomcap active "+sNoteType[i]) );
-			m_sprHoldBottomCapInactive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold bottomcap inactive "+sNoteType[i]) );
+			m_sprHoldBottomCapActive[i].Load( NOTESKIN->GetPathTo(pn, name, "hold bottomcap active "+sNoteType[i]) );
+			m_sprHoldBottomCapInactive[i].Load( NOTESKIN->GetPathTo(pn, name, "hold bottomcap inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldBottomCapActive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold bottomcap active") );
-		m_sprHoldBottomCapInactive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold bottomcap inactive") );
+		m_sprHoldBottomCapActive[0].Load( NOTESKIN->GetPathTo(pn, name, "hold bottomcap active") );
+		m_sprHoldBottomCapInactive[0].Load( NOTESKIN->GetPathTo(pn, name, "hold bottomcap inactive") );
 	}
 
-	if( cache->m_bHoldTailAnimationIsNoteColor )
+	if( m_bHoldTailAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_pHoldTailActive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold tail active "+sNoteType[i]) );
-			m_pHoldTailInactive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold tail inactive "+sNoteType[i]) );
+			m_pHoldTailActive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, name, "hold tail active "+sNoteType[i]) );
+			m_pHoldTailInactive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, name, "hold tail inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_pHoldTailActive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold tail active") );
-		m_pHoldTailInactive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold tail inactive") );
+		m_pHoldTailActive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, name, "hold tail active") );
+		m_pHoldTailInactive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, name, "hold tail inactive") );
 	}
+}
+
+NoteDisplay::NoteDisplay()
+{
+	cache = new NoteMetricCache_t;
+}
+
+NoteDisplay::~NoteDisplay()
+{
+	delete cache;
+}
+
+void NoteDisplay::Load( int iColNum, PlayerNumber pn, float fYReverseOffsetPixels )
+{
+	m_PlayerNumber = pn;
+	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
+	/* Normally, this is empty and we use the style table entry via ColToButtonName. */
+	CString Button = g_NoteFieldMode[m_PlayerNumber].NoteButtonNames[iColNum];
+	if(Button == "")
+		Button = NoteSkinManager::ColToButtonName(iColNum);
+
+	cache->Load( iColNum, pn, Button );
 }
 
 
@@ -299,7 +320,7 @@ Actor * NoteDisplay::GetTapNoteActor( float fNoteBeat )
 		nt = BeatToNoteType( fNoteBeat );
 	if( nt == NOTE_TYPE_INVALID )
 		nt = NOTE_TYPE_32ND;
-	Actor *pActorOut = m_pTapNote[nt];
+	Actor *pActorOut = cache->m_pTapNote[nt];
 
 	SetActiveFrame( 
 		fNoteBeat, 
@@ -315,24 +336,24 @@ Actor * NoteDisplay::GetTapAdditionActor( float fNoteBeat )
 {
 	SetActiveFrame( 
 		fNoteBeat, 
-		*m_pTapAddition,
+		*cache->m_pTapAddition,
 		cache->m_fTapAdditionAnimationLengthInBeats, 
 		cache->m_bTapAdditionAnimationIsVivid, 
 		false );
 
-	return m_pTapAddition;
+	return cache->m_pTapAddition;
 }
 
 Actor * NoteDisplay::GetTapMineActor( float fNoteBeat )
 {
 	SetActiveFrame( 
 		fNoteBeat, 
-		*m_pTapMine,
+		*cache->m_pTapMine,
 		cache->m_fTapMineAnimationLengthInBeats, 
 		cache->m_bTapMineAnimationIsVivid, 
 		false );
 
-	return m_pTapMine;
+	return cache->m_pTapMine;
 }
 
 Sprite * NoteDisplay::GetHoldTopCapSprite( float fNoteBeat, bool bActive )
@@ -343,7 +364,7 @@ Sprite * NoteDisplay::GetHoldTopCapSprite( float fNoteBeat, bool bActive )
 	if( nt == NOTE_TYPE_INVALID )
 		nt = NOTE_TYPE_32ND;
 	
-	Sprite *pSpriteOut = bActive ? &m_sprHoldTopCapActive[nt] : &m_sprHoldTopCapInactive[nt];
+	Sprite *pSpriteOut = bActive ? &cache->m_sprHoldTopCapActive[nt] : &cache->m_sprHoldTopCapInactive[nt];
 
 	SetActiveFrame( 
 		fNoteBeat, 
@@ -363,7 +384,7 @@ Sprite * NoteDisplay::GetHoldBottomCapSprite( float fNoteBeat, bool bActive )
 	if( nt == NOTE_TYPE_INVALID )
 		nt = NOTE_TYPE_32ND;
 	
-	Sprite *pSpriteOut = bActive ? &m_sprHoldBottomCapActive[nt] : &m_sprHoldBottomCapInactive[nt];
+	Sprite *pSpriteOut = bActive ? &cache->m_sprHoldBottomCapActive[nt] : &cache->m_sprHoldBottomCapInactive[nt];
 
 	SetActiveFrame( 
 		fNoteBeat, 
@@ -384,7 +405,7 @@ Actor* NoteDisplay::GetHoldHeadActor( float fNoteBeat, bool bActive )
 	if( nt == NOTE_TYPE_INVALID )
 		nt = NOTE_TYPE_32ND;
 
-	Actor *pActorOut = bActive ? m_pHoldHeadActive[nt] : m_pHoldHeadInactive[nt];
+	Actor *pActorOut = bActive ? cache->m_pHoldHeadActive[nt] : cache->m_pHoldHeadInactive[nt];
 
 	SetActiveFrame( 
 		fNoteBeat, 
@@ -404,7 +425,7 @@ Sprite *NoteDisplay::GetHoldBodySprite( float fNoteBeat, bool bActive )
 	if( nt == NOTE_TYPE_INVALID )
 		nt = NOTE_TYPE_32ND;
 
-	Sprite *pSpriteOut = bActive ? &m_sprHoldBodyActive[nt] : &m_sprHoldBodyInactive[nt];
+	Sprite *pSpriteOut = bActive ? &cache->m_sprHoldBodyActive[nt] : &cache->m_sprHoldBodyInactive[nt];
 
 	SetActiveFrame( 
 		fNoteBeat, 
@@ -424,7 +445,7 @@ Actor* NoteDisplay::GetHoldTailActor( float fNoteBeat, bool bActive )
 	if( nt == NOTE_TYPE_INVALID )
 		nt = NOTE_TYPE_32ND;
 
-	Actor *pActorOut = bActive ? m_pHoldTailActive[nt] : m_pHoldTailInactive[nt];
+	Actor *pActorOut = bActive ? cache->m_pHoldTailActive[nt] : cache->m_pHoldTailInactive[nt];
 
 	SetActiveFrame( 
 		fNoteBeat, 
