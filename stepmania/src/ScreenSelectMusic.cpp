@@ -442,33 +442,6 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
 		return;
 	}
-
-	if( GAMESTATE->IsExtraStage() && PREFSMAN->m_bPickExtraStage && MenuI.button == MENU_BUTTON_START )
-	{
-		//Check if user selected the extrastage from the course file
-		Song* pSongSel; //Song user selected
-		Song* pSongCourse; //Song from the Extra Course or that we picked
-		Notes* pNotes;
-		PlayerOptions po;
-		SongOptions so;
-		SONGMAN->GetExtraStageInfo( false, GAMESTATE->m_pCurSong->m_sGroupName, GAMESTATE->GetCurrentStyleDef(), pSongCourse, pNotes, po, so );
-		
-		if( pSongCourse == NULL )
-		{
-			//no song defined, so allow anyways... This means there was no course, and we couldn't find an applicable song for EX1
-			GAMESTATE->m_bAllow2ndExtraStage = true;
-		}
-		else
-		{
-			pSongSel = m_MusicWheel.GetSelectedSong();
-
-			/*Enable 2nd extra stage if user chose the correct song*/
-			if( pSongSel == pSongCourse )
-				GAMESTATE->m_bAllow2ndExtraStage = true;
-			else
-				GAMESTATE->m_bAllow2ndExtraStage = false;
-		}
-	}
 	
 	if( m_Menu.IsClosing() )	return;		// ignore
 
@@ -582,11 +555,11 @@ void ScreenSelectMusic::AdjustOptions()
 		/* Beginners get a freebie and then end-of-song. */
 		if(GAMESTATE->m_iCurrentStageIndex == 0)
 			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FailType::FAIL_OFF;
-		else
+		else if(!GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2())
 			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FailType::FAIL_END_OF_SONG;
 	}
 	/* Easy is always end-of-song. */
-	else if(dc == DIFFICULTY_EASY)
+	else if(dc == DIFFICULTY_EASY && !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2())
 		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FailType::FAIL_END_OF_SONG;
 }
 
@@ -731,6 +704,23 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		break;
 	case TYPE_ROULETTE:
 		break;
+	}
+
+	if( GAMESTATE->IsExtraStage() && PREFSMAN->m_bPickExtraStage )
+	{
+		/* Check if user selected the real extra stage. */
+		Song* pSong;
+		Notes* pNotes;
+		PlayerOptions po;
+		SongOptions so;
+		SONGMAN->GetExtraStageInfo( false, GAMESTATE->m_pCurSong->m_sGroupName, GAMESTATE->GetCurrentStyleDef(), pSong, pNotes, po, so );
+		ASSERT(pSong);
+		
+		/* Enable 2nd extra stage if user chose the correct song */
+		if( m_MusicWheel.GetSelectedSong() == pSong )
+			GAMESTATE->m_bAllow2ndExtraStage = true;
+		else
+			GAMESTATE->m_bAllow2ndExtraStage = false;
 	}
 }
 
