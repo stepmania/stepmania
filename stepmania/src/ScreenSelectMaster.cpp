@@ -71,7 +71,7 @@ ScreenSelectMaster::ScreenSelectMaster() : ScreenSelect( "ScreenSelectMaster" )
 
 	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
 	{
-		const ModeChoice& mc = m_aModeChoices[c];
+//		const ModeChoice& mc = m_aModeChoices[c];
 
 		for( i=0; i<NUM_ICON_PARTS; i++ )
 		{
@@ -451,7 +451,7 @@ float ScreenSelectMaster::TweenOnScreen()
 			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 			{
 				SET_XY( m_sprPreview[i][c][p] );
-				if( c==m_iChoice[p] )
+				if( int(c)==m_iChoice[p] )
 					fSecs = max( fSecs, ON_COMMAND( m_sprPreview[i][c][p] ) );
 				else
 					m_sprPreview[i][c][p].SetDiffuseAlpha(0);
@@ -464,7 +464,7 @@ float ScreenSelectMaster::TweenOnScreen()
 					for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 					{
 						SET_XY( m_sprPreview[i][c][p] );
-						if( c==m_iChoice[p] )
+						if( int(c)==m_iChoice[p] )
 							fSecs = max( fSecs, ON_COMMAND( m_sprPreview[i][c][p] ) );
 						else
 							m_sprPreview[i][c][p].SetDiffuseAlpha(0);
