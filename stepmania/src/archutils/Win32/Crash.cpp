@@ -153,15 +153,18 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 
 	RageThread::HaltAllThreads( false );
 
-	static bool InHere = false;
-	if(InHere)
+	static int InHere = 0;
+	if( InHere > 0 )
 	{
-		/* If we get here, then we've been called recursively, which means
-		 * we crashed.
-		 */
+		/* If we get here, then we've been called recursively, which means we crashed.
+		 * If InHere is greater than 1, then we crashed after writing the crash dump;
+		 * say so. */
 		SetUnhandledExceptionFilter(NULL);
 		MessageBox( NULL,
-			"The error reporting interface has crashed.\n",
+			InHere == 1?
+			"The error reporting interface has crashed.\n":
+			"The error reporting interface has crashed.  However, crashinfo.txt was"
+			"written successfully to the program directory.\n",
 			"Fatal Error", MB_OK );
 #ifdef DEBUG
 		DebugBreak();
@@ -169,7 +172,7 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 
 		return EXCEPTION_EXECUTE_HANDLER;
 	}
-	InHere=true;
+	++InHere;
 	/////////////////////////
 
 	hFontMono = CreateFont(
@@ -201,6 +204,8 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 	/* In case something goes amiss before the user can view the crash
 	 * dump, save it now. */
 	DoSave(pExc);
+
+	++InHere;
 
 	/* Now things get more risky.  If we're fullscreen, the window will obscure the
 	 * crash dialog.  Try to hide the window.  We stopped threads above; we need to
