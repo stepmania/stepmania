@@ -567,14 +567,6 @@ SOURCE=.\IniFile.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\LRCFile.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\LRCFile.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\MsdFile.cpp
 # End Source File
 # Begin Source File

@@ -709,12 +709,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\IniFile.h">
 			</File>
 			<File
-				RelativePath="LRCFile.cpp">
-			</File>
-			<File
-				RelativePath="LRCFile.h">
-			</File>
-			<File
 				RelativePath="MsdFile.cpp">
 			</File>
 			<File

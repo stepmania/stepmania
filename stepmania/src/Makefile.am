@@ -50,7 +50,7 @@ SongOptions.cpp SongOptions.h StageStats.cpp StageStats.h StyleDef.cpp StyleDef.
 TitleSubstitution.cpp TitleSubstitution.h Inventory.cpp Inventory.h PlayerNumber.cpp PlayerNumber.h \
 LyricsLoader.cpp LyricsLoader.h
 
-FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h LRCFile.cpp LRCFile.h
+FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h
 
 
 StepMania = global.h ScreenDimensions.h StdString.h StepMania.cpp StepMania.h
