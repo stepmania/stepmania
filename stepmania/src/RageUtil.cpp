@@ -25,6 +25,15 @@
 
 unsigned long randseed = time(NULL);
 
+/* Return a positive x mod y. */
+float fmodfp(float x, float y)
+{
+	x = fmodf(x, y);	/* x is [-y,y] */
+	x += y;				/* x is [0,y*2] */
+	x = fmodf(x, y);	/* x is [0,y] */
+	return x;
+}
+
 int power_of_two(int input)
 {
     int value = 1;

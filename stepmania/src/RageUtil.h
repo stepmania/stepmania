@@ -113,6 +113,9 @@ inline float froundf( const float f, const float fRoundInterval )
 	return int( (f + fRoundInterval/2)/fRoundInterval ) * fRoundInterval;
 }
 
+/* Return a positive x mod y. */
+float fmodfp(float x, float y);
+
 int power_of_two(int input);
 bool IsAnInt( const CString &s );
 bool IsHexVal( const CString &s );
