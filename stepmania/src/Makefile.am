@@ -7,6 +7,10 @@ AM_LDFLAGS =
 AM_CXXFLAGS = 
 AM_CFLAGS = 
 
+# Relax inlining; the default of 600 takes way too long to compile and
+# generates enormous output.
+AM_CXXFLAGS += -finline-limit=300
+
 if NHAVE_SDL
 # We use our own copy of SDL if the one on the system isn't new enough.  (Most
 # systems have 1.2.5; we need 1.2.6.)  We still end up linking dynamically to
