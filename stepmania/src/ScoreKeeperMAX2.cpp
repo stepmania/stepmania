@@ -357,9 +357,13 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	}
 	const int ComboCountIfHit = ComboIsPerRow? 1: iNumTapsInRow;
 	TapNoteScore MinScoreToContinueCombo = GAMESTATE->m_PlayMode == PLAY_MODE_ONI? TNS_PERFECT:TNS_GREAT;
+	TapNoteScore MinScoreToMaintainCombo = TNS_GREAT;
 
 	if( scoreOfLastTap >= MinScoreToContinueCombo )
 		m_pPlayerStageStats->iCurCombo += ComboCountIfHit;
+	else
+		if( scoreOfLastTap < MinScoreToMaintainCombo )
+			m_pPlayerStageStats->iCurCombo = 0;
 
 	AddScore( scoreOfLastTap );		// only score once per row
 

@@ -1290,32 +1290,34 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 
 	/* Update miss combo, and handle "combo stopped" messages. */
 	int iDummy = 0;
-	int &iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurCombo : iDummy;
+	int &iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurMissCombo : iDummy;
 	switch( scoreOfLastTap )
 	{
 	case TNS_MARVELOUS:
 	case TNS_PERFECT:
 	case TNS_GREAT:
-		iCurCombo = 0;
+		iCurMissCombo = 0;
 		SCREENMAN->PostMessageToTopScreen( SM_MissComboAborted, 0 );
 		break;
 
 	case TNS_MISS:
-		++iCurCombo;
+		++iCurMissCombo;
 		m_iDCState = AS2D_MISS; // update dancing 2d characters that may have missed a note
 	
 	case TNS_GOOD:
 	case TNS_BOO:
-		if( iCurCombo > 50 )
+		if( iCurMissCombo > 50 )
 			SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
-		iCurCombo = 0;
+		iCurMissCombo = 0;
 		break;
 	
 	default:
 		ASSERT( 0 );
 	}
 
-	/* The score keeper updates the hit combo.  Remember the old combo for handling announcers. */
+	/* The score keeper updates the hit combo. */
+	int &iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurCombo : iDummy;
+	/* Remember the old combo for handling announcers. */
 	const int iOldCombo = 0;
 	if( m_pPlayerStageStats )
 		m_pPlayerStageStats->iCurCombo;
