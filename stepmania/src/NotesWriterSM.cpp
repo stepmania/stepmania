@@ -173,8 +173,16 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 
 	unsigned i;
 
+	int flags = RageFile::WRITE;
+
+	/* If we're not saving cache, we're saving real data, so enable SLOW_FLUSH
+	 * to prevent data loss.  If we're saving cache, this will slow things down
+	 * too much. */
+	if( !bSavingCache )
+		flags |= RageFile::SLOW_FLUSH;
+
 	RageFile f;
-	if( !f.Open( sPath, RageFile::WRITE ) )
+	if( !f.Open( sPath, flags ) )
 	{
 		LOG->Warn( "Error opening song file '%s' for writing: %s", sPath.c_str(), f.GetError().c_str() );
 		return false;
