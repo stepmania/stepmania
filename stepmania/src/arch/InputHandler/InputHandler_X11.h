@@ -12,7 +12,7 @@ public:
 	~InputHandler_X11();
 	void Update(float fDeltaTime);
 	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
-}
+};
 
 #endif
 

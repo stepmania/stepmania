@@ -1,10 +1,9 @@
-#include "InputHandler_X11.h"
-
 #include "global.h"
-#include "InputHandler_Xlib.h"
+#include "InputHandler_X11.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
+#include "archutils/Unix/X11Helper.h"
 
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
@@ -110,13 +109,13 @@ static RageKeySym XSymToKeySym( int key )
 	return KEY_INVALID;
 }
 
-InputHandler_X11::InputHandler_Xlib()
+InputHandler_X11::InputHandler_X11()
 {
 	X11Helper::Go();
 	X11Helper::OpenMask(KeyPressMask); X11Helper::OpenMask(KeyReleaseMask);
 }
 
-InputHandler_X11::~InputHandler_Xlib()
+InputHandler_X11::~InputHandler_X11()
 {
 	X11Helper::CloseMask(KeyPressMask); X11Helper::CloseMask(KeyReleaseMask);
 	X11Helper::Stop();
@@ -129,12 +128,12 @@ void InputHandler_X11::Update(float fDeltaTime)
 		|| XCheckTypedEvent(X11Helper::Dpy(), KeyRelease, &event) )
 	{
 		LOG->Trace("key: sym %i, key %i, state %i",
-			event.xkey.keycode, XSymToKeySym(event.key.keycode),
-							event.key.state );
+			event.xkey.keycode, XSymToKeySym(event.xkey.keycode),
+							event.xkey.state );
 
 		DeviceInput di( DEVICE_KEYBOARD,
-					XSymToKeySym(event.key.keycode) );
-		ButtonPressed(di, event.key.state);
+					XSymToKeySym(event.xkey.keycode) );
+		ButtonPressed(di, event.xkey.state);
 	}
 
 	InputHandler::UpdateTimer();
