@@ -30,6 +30,7 @@
 #include "NotesLoaderDWI.h"
 #include "NotesLoaderBMS.h"
 #include "NotesLoaderKSF.h"
+#include "NotesWriterDWI.h"
 
 const int FILE_CACHE_VERSION = 65;	// increment this when Song or Notes changes to invalidate cache
 
@@ -719,44 +720,8 @@ void Song::SaveToSongFileAndDWI()
 	CString sPath = GetSongFilePath();
 	sPath.Replace( ".sm", ".dwi" );
 
-
-	FILE* fp = fopen( sPath, "w" );	
-	if( fp == NULL )
-		throw RageException( "Error opening song file '%s' for writing.", sPath );
-
-	fprintf( fp, "#TITLE:%s;\n", GetFullTitle() );
-	fprintf( fp, "#ARTIST:%s;\n", m_sArtist );
-	ASSERT( m_BPMSegments[0].m_fStartBeat == 0 );
-	fprintf( fp, "#BPM:%.2f;\n", m_BPMSegments[0].m_fBPM );
-	fprintf( fp, "#GAP:%d;\n", -roundf( m_fBeat0OffsetInSeconds*1000 ) );
-
-	fprintf( fp, "#FREEZE:" );
-	for( int i=0; i<m_StopSegments.GetSize(); i++ )
-	{
-		StopSegment &fs = m_StopSegments[i];
-		fprintf( fp, "%.2f=%.2f", BeatToNoteRow( fs.m_fStartBeat ) / ROWS_PER_BEAT * 4.0f, roundf(fs.m_fStopSeconds*1000) );
-		if( i != m_StopSegments.GetSize()-1 )
-			fprintf( fp, "," );
-	}
-	fprintf( fp, ";\n" );
-
-	fprintf( fp, "#CHANGEBPM:" );
-	for( i=1; i<m_BPMSegments.GetSize(); i++ )
-	{
-		BPMSegment &bs = m_BPMSegments[i];
-		fprintf( fp, "%.2f=%.2f", BeatToNoteRow( bs.m_fStartBeat ) / ROWS_PER_BEAT * 4.0f, bs.m_fBPM );
-		if( i != m_BPMSegments.GetSize()-1 )
-			fprintf( fp, "," );
-	}
-	fprintf( fp, ";\n" );
-	
-	//
-	// Save all Notes for this file
-	//
-	for( i=0; i<m_apNotes.GetSize(); i++ ) 
-		m_apNotes[i]->WriteDWINotesTag( fp );
-
-	fclose( fp );
+	NotesWriterDWI wr;
+	wr.Write(sPath, *this);
 }
 
 struct AutoGenMapping
