@@ -46,22 +46,11 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
 {
     CStringArray parts;
 
-    split(line, ":", parts);
-
-    if (!mInstalling)
-    {
-        if (parts[0] == "FILE")
-        {
-            if (parts.size() != 3)
-                goto error;
-            (*mHandleFile)(parts[1], mPath, true);
-        }
-        ++nextLine;
-        return;
-    }
+    split(line, ":", parts);    
 
     if (parts[0] == "LABEL")
     {
+        printf("%u: %s\n", nextLine, line.c_str());
         if (parts.size() != 2)
             goto error;
         if (mDoGoto && parts[1] == mLabel)
@@ -74,6 +63,54 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
     }
     
     if (mDoGoto)
+    {
+        ++nextLine;
+        return;
+    }
+
+    printf("%u: %s\n", nextLine, line.c_str());
+
+    if (parts[0] == "FILE")
+    {
+        if (parts.size() != 3)
+            goto error;
+        bool overwrite = ResolveConditional(parts[2]);
+        (*mHandleFile)(parts[1], mCWD, mPath, overwrite);
+
+        ++nextLine;
+        return;
+    }
+    
+    if (parts[0] == "GETPATH")
+    {
+        if (parts.size() != 3)
+            goto error;
+        mVars[parts[2]] = (*mGetPath)(parts[1]);
+        ++nextLine;
+        return;
+    }
+        
+    if (parts[0] == "CD")
+    {
+        if (parts.size() != 3)
+            goto error;
+        ++nextLine;
+        if (!ResolveConditional(parts[2]))
+            return;
+        CString path = ResolveVar(parts[1]);
+        if (path[0] == '/')
+            mCWD = path;
+        else
+            mCWD += "/" + path;
+        struct stat st;
+        if (stat(mCWD, &st))
+            (*mError)("%s\n", strerror(errno));
+        if (!(st.st_mode & S_IFDIR))
+            (*mError)("%s is not a directory.\n", mCWD.c_str());
+        return;
+    }
+
+    if (!mInstalling)
     {
         ++nextLine;
         return;
@@ -96,8 +133,8 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         mDoGoto = true;
         mReturnStack.push(++nextLine);
         return;
-    }
-
+    }    
+    
     if (parts[0] == "IF")
     {
         if (parts.size() != 4)
@@ -123,17 +160,6 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         return;
     }
 
-    if (parts[0] == "FILE")
-    {
-        if (parts.size() != 3)
-            goto error;
-        bool overwrite = ResolveConditional(parts[2]);
-        (*mHandleFile)(parts[1], mPath, overwrite);
-
-        ++nextLine;
-        return;
-    }
-
     if (parts[0] == "RETURN")
     {
         if (mReturnStack.empty())
@@ -146,22 +172,13 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         return;
     }
 
-    if (parts[0] == "GETPATH")
-    {
-        if (parts.size() != 3)
-            goto error;
-        mVars[parts[2]] = (*mGetPath)(parts[1]);
-        ++nextLine;
-        return;
-    }
-
     if (parts[0] == "SETVAR")
     {
         if (parts.size() < 3)
             goto error;
         CString temp = "";
         for (unsigned i=2; i<parts.size(); ++i)
-            temp += parts[i];
+            temp += ResolveVar(parts[i]);
         mVars[parts[1]] = temp;
         ++nextLine;
         return;
@@ -171,27 +188,12 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
     {
         if (parts.size() != 2)
             goto error;
-        CString path = mCWD + ResolveVar(parts[1]);
-        if (mkdir(path, 777))
-            (*mError)("%s\n", strerror(errno));
-        ++nextLine;
-        return;
-    }
-
-    if (parts[0] == "CD")
-    {
-        if (parts.size() != 2)
-            goto error;
-        CString path = ResolveVar(parts[1]);
-        if (path[0] == '/')
-            mCWD = path;
-        else
-            mCWD += "/" + path;
-        struct stat st;
-        if (stat(mCWD, &st))
-            (*mError)("%s\n", strerror(errno));
-        if (!(st.st_mode & S_IFDIR))
-            (*mError)("%s is not a directory.\n", mCWD.c_str());
+        CString path = mCWD + "/" + ResolveVar(parts[1]);
+        if (mkdir(path, 0777))
+        {
+            if (errno != EEXIST)
+                (*mError)("%s\n", strerror(errno));
+        }
         ++nextLine;
         return;
     }
@@ -214,6 +216,8 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         if (parts.size() != 3)
             goto error;
         mVars[parts[1]] = (*mAsk)(parts[2]);
+        ++nextLine;
+        return;
     }
 
 error:

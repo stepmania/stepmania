@@ -12,28 +12,55 @@ using namespace std;
 #include "StdString.h"
 #include "InstallerFile.h"
 #include "Processor.h"
+#include <unistd.h>
+#include <sys/param.h>
 #include <cstdio>
 #include <cstdlib>
 #include <stack>
 #include <map>
 
-void HandleFile(const CString& file, const CString& archivePath, bool overwrite)
+void HandleFile(const CString& file, const CString& dir, const CString& archivePath, bool overwrite)
 {
     static bool archiveMade = false;
     CString command;
 
     if (archiveMade)
-        command = "tar rfP '";
+        command = "tar rfPC '";
     else
     {
         archiveMade = true;
-        command = "tar cfP '";
+        command = "tar cfPC '";
     }
-    command += archivePath + "' '" + file + "'";
+    command += archivePath + "' '" + dir +"' '" + file + "'";
     
     system(command);
     
     printf("%s\n", file.c_str());
+}
+
+const CString GetPath(const CString& ID)
+{
+    if (ID == "install path")
+    {
+        char cwd[MAXPATHLEN];
+        char path[MAXPATHLEN];
+        char *ptr;
+
+        getwd(cwd);
+        printf("Enter a path (relative or absolute) to the install files\n"
+               "The current working directory is: %s\n"
+               "> ", cwd);
+        ptr = gets(path);
+        ASSERT(ptr);
+        while (*ptr != '\000' && (*ptr == ' ' || *ptr == '\t'))
+            ++ptr;
+        if (*ptr == '/')
+            return ptr;
+        return CString(cwd) + "/" + CString(ptr);       
+    }
+    
+    fprintf(stderr, "Unknown path command, return `.'\n");
+    return ".";
 }
 
 void PrintUsage(int err)
@@ -94,7 +121,7 @@ int main(int argc, char *argv[])
 
     CString archivePath = outDir + "/archive.tar";
 
-    Processor p(archivePath, HandleFile, NULL, NULL, false);
+    Processor p(archivePath, HandleFile, GetPath, NULL, false);
 
     while (nextLine < config.GetNumLines())
         p.ProcessLine(config.GetLine(nextLine), nextLine);
