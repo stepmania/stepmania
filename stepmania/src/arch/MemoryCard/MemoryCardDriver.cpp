@@ -18,14 +18,11 @@ bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
 #undef COMPARE
 }
 
-// What is this?
-#if 0
 void UsbStorageDevice::SetOsMountDir( const CString &s )
 {
 	sOsMountDir = s;
 	FixSlashesInPlace( sOsMountDir );
 }
-#endif
 
 MemoryCardDriver *MakeMemoryCardDriver()
 {

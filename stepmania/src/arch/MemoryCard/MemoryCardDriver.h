@@ -36,7 +36,8 @@ struct UsbStorageDevice
   CString sVendor;
   CString sProduct;
 
-	bool IsBlank() { return sOsMountDir.empty(); }
+  bool IsBlank() const { return sOsMountDir.empty(); }
+  void SetOsMountDir( const CString &s );
 
   bool operator==(const UsbStorageDevice& other) const;
 };
