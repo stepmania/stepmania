@@ -14,7 +14,6 @@
 
 class Screen;
 struct Menu;
-class ScreenSystemLayer;
 class BGAnimation;
 
 
@@ -66,7 +65,7 @@ public:
 	void	PlaySharedBackgroundOffCommand();
 private:
 	vector<Screen*>		m_ScreenStack;	// bottommost to topmost
-	ScreenSystemLayer	*m_SystemLayer;
+	Screen				*m_SystemLayer;
 
 	CString				m_sLastLoadedBackgroundPath;
 	CString				m_sDelayedScreen;
