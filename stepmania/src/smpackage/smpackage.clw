@@ -13,10 +13,10 @@ Class2=CSmpackageDlg
 
 ResourceCount=5
 Resource1=IDR_MAINFRAME
-Resource2=IDD_DIALOG_NAME
+Resource2=IDD_INSTALL
 Class3=CSMPackageInstallDlg
 Class4=CSmpackageExportDlg
-Resource3=IDD_INSTALL
+Resource3=IDD_DIALOG_NAME
 Class5=EnterName
 Resource4=IDD_EXPORTER
 Class6=EditInsallations

@@ -93,8 +93,8 @@ PrefsManager::PrefsManager()
 	 * stage CRS files) don't get it changed around on them. */
 	m_bPickExtraStage = false;
 
-	m_fLongVerSongSeconds = 60*3;
-	m_fMarathonVerSongSeconds = 60*5;
+	m_fLongVerSongSeconds = 60*2.5f;	// Dynamite Rave is 2:55
+	m_fMarathonVerSongSeconds = 60*5.f;
 
 	/* I'd rather get occasional people asking for support for this even though it's
 	 * already here than lots of people asking why songs aren't being displayed. */

@@ -91,9 +91,17 @@ void GetFilePaths( CString sDirOrFile, CStringArray& asPathToFilesOut )
 	// Not sure if this is ZipArchive's fault.
 
 	if( IsADirectory(sDirOrFile) && sDirOrFile.Right(1) != "\\" )
+	{
 		sDirOrFile += "\\";
+		sDirOrFile += "*.*";
+	}
 	
-	sDirOrFile += "*.*";
+	if( IsAFile(sDirOrFile) )
+	{
+		asPathToFilesOut.Add( sDirOrFile );
+		return;
+	}
+
 
 	GetDirListing( sDirOrFile, asPathToFilesOut, false, true );
 	GetDirListing( sDirOrFile, asDirectoriesToExplore, true, true );
@@ -157,7 +165,6 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 	for( int i=0; i<asDirectoriesToExport.GetSize(); i++ )
 	{
 		CStringArray asFilePaths;
-		asFilePaths.Add( asDirectoriesToExport[i] );
 		GetFilePaths( asDirectoriesToExport[i], asFilePaths );
  
 		for( int j=0; j<asFilePaths.GetSize(); j++ )
