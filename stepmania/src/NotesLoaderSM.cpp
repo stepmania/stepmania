@@ -167,6 +167,15 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			{
 				CStringArray arrayFreezeValues;
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
+				/* XXX: Once we have a way to display warnings that the user actually
+				 * cares about (unlike most warnings), this should be one of them. */
+				if(arrayFreezeValues.size() != 2)
+				{
+					LOG->Warn("Invalid #%s value \"%s\" (must have exactly one '='), ignored",
+						sValueName.GetString(), arrayFreezeExpressions[f].GetString());
+					continue;
+				}
+
 				float fFreezeBeat = (float)atof( arrayFreezeValues[0] );
 				float fFreezeSeconds = (float)atof( arrayFreezeValues[1] );
 				
@@ -189,6 +198,14 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			{
 				CStringArray arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
+				/* XXX: Once we have a way to display warnings that the user actually
+				 * cares about (unlike most warnings), this should be one of them. */
+				if(arrayBPMChangeValues.size() != 2)
+				{
+					LOG->Warn("Invalid #%s value \"%s\" (must have exactly one '='), ignored",
+						sValueName.GetString(), arrayBPMChangeExpressions[b].GetString());
+					continue;
+				}
 				float fBeat = (float)atof( arrayBPMChangeValues[0] );
 				float fNewBPM = (float)atof( arrayBPMChangeValues[1] );
 				
@@ -209,6 +226,14 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			{
 				CStringArray aBGChangeValues;
 				split( aBGChangeExpressions[b], "=", aBGChangeValues );
+				/* XXX: Once we have a way to display warnings that the user actually
+				 * cares about (unlike most warnings), this should be one of them. */
+				if(aBGChangeValues.size() != 2)
+				{
+					LOG->Warn("Invalid #%s value \"%s\" (must have exactly one '='), ignored",
+						sValueName.GetString(), aBGChangeExpressions[b].GetString());
+					continue;
+				}
 				float fBeat = (float)atof( aBGChangeValues[0] );
 				CString sBGName = aBGChangeValues[1];
 				sBGName.MakeLower();
