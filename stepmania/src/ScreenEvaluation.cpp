@@ -1381,7 +1381,10 @@ void ScreenEvaluation::EndScreen()
 
 	if( PREFSMAN->m_bEventMode )
 	{
-		m_Menu.StartTransitioning( SM_GoToNextScreen );
+		if( GAMESTATE->IsCourseMode() )
+			m_Menu.StartTransitioning( SM_GoToSelectCourse );
+		else
+			m_Menu.StartTransitioning( SM_GoToNextScreen );
 	}
 	else	// not event mode
 	{
