@@ -52,6 +52,8 @@ private:
 	MenuElements m_Menu;
 	Sprite	m_sprOpt[NUM_EZ2STYLE_GRAPHICS];
 	Sprite  m_sprPly[NUM_EZ2P_GRAPHICS];
+	Sprite	m_sprBackground[NUM_EZ2STYLE_GRAPHICS];
+
 	int m_iSelectedStyle;
 	int m_iSelectedPlayer;
 	RandomSample m_soundChange;

@@ -131,6 +131,30 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 		switch( i )
 		{
 		case 0:
+			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_1);	//HACK! Would LIKE to have own filename :)
+			break;
+		case 1:
+			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_2);	
+			break;
+		case 2:
+			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_3);	
+			break;
+		case 3:
+			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_0);	
+			break;
+		}
+		m_sprBackground[i].Load( sPadGraphicPath );
+		m_sprBackground[i].SetXY( CENTER_X, CENTER_Y );
+		m_sprBackground[i].SetZoom( 1 );
+		this->AddActor( &m_sprBackground[i] );
+	}
+
+	for( i=0; i<NUM_EZ2STYLE_GRAPHICS; i++ )
+	{
+		CString sPadGraphicPath;
+		switch( i )
+		{
+		case 0:
 			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_3);	//HACK! Would LIKE to have own filename :)
 			break;
 		case 1:
@@ -174,7 +198,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 	}
 
 	m_Menu.Load( 	
-		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
+		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_0), 
 		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_TOP_EDGE),
 		ssprintf("Use %c %c to select, then press START", char(1), char(2) ),
 		false, true, 40 
@@ -292,7 +316,31 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		MenuStart(PLAYER_INVALID);
+	
+		// DOESNT SUPPORT PLAYER 2 YET!
+		if (m_iSelectedStyle == 0) // easy
+		{
+			GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
+			PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_EASY;
+		}
+		else if (m_iSelectedStyle == 1) // hard
+		{
+			GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
+			PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_MEDIUM;
+		}
+		else if (m_iSelectedStyle == 2) // real
+		{
+			GAMEMAN->m_CurStyle = STYLE_EZ2_REAL;	
+		}
+		else // club
+		{
+			GAMEMAN->m_CurStyle = STYLE_EZ2_DOUBLE;
+		}
+
+		m_soundSelect.PlayRandom();
+		PREFSMAN->m_PlayMode = PLAY_MODE_ARCADE;
+		SCREENMAN->SetNewScreen( new ScreenSelectGroup );
+
 		break;
 	case SM_GoToPrevState:
 		MUSIC->Stop();
@@ -701,8 +749,8 @@ Desc: Animates the 1p/2p selection
 void ScreenEz2SelectStyle::AnimateGraphics()
 {
 
-//if (bounce < 10 && direct == 0 && wait == 2) // Bounce 1p/2p up
-if (TIMER->GetTimeSinceStart() > ez2p_lasttimercheck[0] + 0.01f && ez2p_direct == 0)
+	//if (bounce < 10 && direct == 0 && wait == 2) // Bounce 1p/2p up
+	if (TIMER->GetTimeSinceStart() > ez2p_lasttimercheck[0] + 0.01f && ez2p_direct == 0)
 	{
 		ez2p_lasttimercheck[0] = TIMER->GetTimeSinceStart();
 		ez2p_bounce+=1;
@@ -720,13 +768,60 @@ if (TIMER->GetTimeSinceStart() > ez2p_lasttimercheck[0] + 0.01f && ez2p_direct =
 	{
 		ez2p_lasttimercheck[0] = TIMER->GetTimeSinceStart();
 		ez2p_bounce-=1;
-	
+
 		m_sprPly[2].SetXY( OPT_XP[2], OPT_YP[2] - ez2p_bounce);
 		m_sprPly[3].SetXY( OPT_XP[3], OPT_YP[3] - ez2p_bounce);
 
 		if (ez2p_bounce == 0)
 		{
 			ez2p_direct = 0;
+		}
+	}
+
+	if (m_iSelectedPlayer != 2)
+	{
+		if (m_iSelectedStyle == 0) // EASY background
+		{
+			m_sprBackground[3].SetHeight(SCREEN_HEIGHT * 1.7f);
+			m_sprBackground[3].SetWidth(SCREEN_WIDTH * 1.7f);
+			m_sprBackground[3].SetEffectSpinning(1.0f);
+		}
+		else if (m_iSelectedStyle == 3) // CLUB background
+		{
+			m_sprBackground[3].SetHeight(0);
+			m_sprBackground[3].SetWidth(0);
+			m_sprBackground[3].SetEffectNone();
+			m_sprBackground[2].SetHeight(SCREEN_HEIGHT * 3.3f);
+			m_sprBackground[2].SetWidth(SCREEN_WIDTH * 3.3f);
+			m_sprBackground[2].SetEffectSpinning(0.5f);
+			m_sprBackground[2].SetXY( CENTER_X, -250 );
+		}
+		else if (m_iSelectedStyle == 2) // REAL background
+		{
+			m_sprBackground[3].SetHeight(0);
+			m_sprBackground[3].SetWidth(0);
+			m_sprBackground[3].SetEffectNone();
+			m_sprBackground[2].SetHeight(0);
+			m_sprBackground[2].SetWidth(0);
+			m_sprBackground[2].SetEffectNone();
+			m_sprBackground[1].SetHeight(SCREEN_HEIGHT * 1.7f);
+			m_sprBackground[1].SetWidth(SCREEN_WIDTH * 1.7f);
+			m_sprBackground[1].SetEffectSpinning(2.1f);
+		}
+		else if (m_iSelectedStyle == 1) // HARD background
+		{
+			m_sprBackground[3].SetHeight(0);
+			m_sprBackground[3].SetWidth(0);
+			m_sprBackground[3].SetEffectNone();
+			m_sprBackground[2].SetHeight(0);
+			m_sprBackground[2].SetWidth(0);
+			m_sprBackground[2].SetEffectNone();
+			m_sprBackground[1].SetHeight(0);
+			m_sprBackground[1].SetWidth(0);
+			m_sprBackground[1].SetEffectNone();
+			m_sprBackground[0].SetHeight(SCREEN_HEIGHT * 1.7f);
+			m_sprBackground[0].SetWidth(SCREEN_WIDTH * 1.7f);
+			m_sprBackground[0].SetEffectSpinning(1.0f);
 		}
 	}
 }

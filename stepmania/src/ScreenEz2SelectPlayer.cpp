@@ -91,7 +91,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 	m_Menu.Load( 	
 		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
 		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_TOP_EDGE),
-		ssprintf("Use %c %c to select, then press START", char(1), char(2) ),
+		ssprintf("Press %c on the pad you wish to play on", char(4) ),
 		false, true, 40 
 		);
 	this->AddActor( &m_Menu );
@@ -232,7 +232,7 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		MenuStart(PLAYER_INVALID);
+		MenuStart(PLAYER_1); // Automatically Choose Player 1
 		break;
 	case SM_GoToPrevState:
 		MUSIC->Stop();
