@@ -25,7 +25,6 @@ public:
 	virtual void AfterLifeChanged();
 	virtual void OnDancePointsChange() {};	// this life meter doesn't care
 	virtual bool IsInDanger() const;
-	// XXX: Is this the best name for this function?
 	virtual bool IsPastPassmark() const;
 	virtual bool IsHot() const;
 	virtual bool IsFailing() const;
