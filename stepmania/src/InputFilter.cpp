@@ -85,7 +85,7 @@ void InputFilter::Update(float fDeltaTime)
 				if( int(fOldHoldTime/fTimeBetweenRepeats) != int(fNewHoldTime/fTimeBetweenRepeats) )
 				{
 					RageTimer now;
-					DeviceInput di(InputDevice(d),b,now);
+					DeviceInput di(static_cast<InputDevice>(d),b,now);
 					queue.push_back( InputEvent(di,iet) );
 				}
 			}
