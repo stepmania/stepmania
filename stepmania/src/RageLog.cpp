@@ -43,6 +43,10 @@ RageLog* LOG;		// global and accessable from anywhere in the program
 #define LOG_FILE_NAME "log.txt"
 #define INFO_FILE_NAME "info.txt"
 
+#if defined(WIN32)
+extern unsigned long version_num;
+extern const char *version_time;
+#endif
 
 /* staticlog gets info.txt
  * crashlog gets log.txt */
@@ -76,6 +80,9 @@ RageLog::RageLog()
 	this->Trace( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
 		1900+now->tm_year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec );
 	this->Trace( "" );
+#if defined(WIN32)
+	this->Info("Compiled %s (build %i)", version_time, version_num);
+#endif
 }
 
 RageLog::~RageLog()
