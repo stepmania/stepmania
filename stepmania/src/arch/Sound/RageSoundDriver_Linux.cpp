@@ -254,6 +254,10 @@ RageSound_Linux::~RageSound_Linux() {
 	CloseAudio();
 }
 
+void RageSound_Linux::MixerThread() {
+	;
+}
+
 int RageSound_Linux::MixerThread_start(void *p) {
 	((RageSound_Linux *) p)->MixerThread();
 	return 0;
