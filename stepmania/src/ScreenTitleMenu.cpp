@@ -85,7 +85,6 @@ ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) :
 
 	m_textLifeDifficulty.LoadFromFont( THEME->GetPathF(m_sName,"LifeDifficulty") );
 	m_textLifeDifficulty.SetName( "LifeDifficulty" );
-	ON_COMMAND( m_textLifeDifficulty );
 	int iLifeDifficulty;
 	LifeDifficulty( iLifeDifficulty, true, NULL );	
 	iLifeDifficulty++;	// LifeDifficulty returns an index
