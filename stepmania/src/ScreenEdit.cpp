@@ -1027,6 +1027,14 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 		case SDLK_F4:
 			GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
 			break;
+		case SDLK_F8:
+			{
+				PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
+				for( int p=0; p<NUM_PLAYERS; p++ )
+					if( GAMESTATE->IsHumanPlayer(p) )
+						GAMESTATE->m_PlayerController[p] = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
+			}
+			break;
 		case SDLK_F11:
 		case SDLK_F12:
 			{
