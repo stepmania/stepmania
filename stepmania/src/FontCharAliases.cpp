@@ -15,17 +15,20 @@ static map<CString,CString> CharAliasRepl;
  * Just don't change anything you can't read. :) */
 
 /* If we move this to an INI, group these, so we can display them in a help
- * page off of the TextEntry screen reasonably.  Allow putting the actual
- * character on the same line (as below).  Perhaps warn if they don't match.
+ * page off of the TextEntry screen reasonably.
  *
  * [Game Kanji]
- * kakumei1=0x9769 (革)
+ * kakumei1=革
  * [Game Symbols]
+ * doublezeta=SPECIAL
  * [Hiragana]
  * [Katakana]
  * [Punctuation]
  *
- * This will need some mechanism for assigning internal numbers.
+ * I'm not sure how to handle internal-use character, like Zz.  Whenever we write
+ * text to disk, we need to write placeholders (&doublezeta;) for them, and never
+ * Unicode characters, since the codepoint is prone to change.  We can't currently
+ * write &these; to SMs, due to format limitations.
  */
 
 /* Here's a copy-and-paste for a basic Japanese font page:
@@ -264,7 +267,7 @@ static void InitCharAliases()
 	CharAliases["uparrow"]		= 0x2191; /* ↑ */
 	CharAliases["rightarrow"]	= 0x2192; /* → */
 	CharAliases["downarrow"]	= 0x2193; /* ↓ */
-	CharAliases["doublezeta"]	= 0xE009; /* ↓ */
+	CharAliases["doublezeta"]	= 0xE009;
 
 	/* These are internal-use glyphs; they don't have real Unicode codepoints. */
 	CharAliases["up"]			= 0xE000;
