@@ -130,7 +130,7 @@ BannerCache::~BannerCache()
 struct BannerTexture: public RageTexture
 {
 	unsigned m_uTexHandle;
-	unsigned GetTexHandle() { return m_uTexHandle; };	// accessed by RageDisplay
+	unsigned GetTexHandle() const { return m_uTexHandle; };	// accessed by RageDisplay
 	/* This is a reference to a pointer in m_BannerPathToImage. */
 	SDL_Surface *&img;
 	int width, height;

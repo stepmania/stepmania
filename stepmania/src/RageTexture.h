@@ -51,7 +51,7 @@ public:
 	virtual void Update( float fDeltaTime ) {}
 	virtual void Reload() {}
 	virtual void Invalidate() { }	/* only called by RageTextureManager::InvalidateTextures */
-	virtual unsigned GetTexHandle() = 0;	// accessed by RageDisplay
+	virtual unsigned GetTexHandle() const = 0;	// accessed by RageDisplay
 
 	// movie texture/animated texture stuff
 	virtual void Play() {}
