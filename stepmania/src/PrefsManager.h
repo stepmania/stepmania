@@ -154,6 +154,10 @@ public:
 	void SaveGamePrefsToDisk();
 };
 
+/* This is global, because it can be accessed by crash handlers and error handlers
+ * that are run after PREFSMAN shuts down (and probably don't want to deref tht
+ * pointer anyway). */
+extern bool			g_bAutoRestart;
 
 extern PrefsManager*	PREFSMAN;	// global and accessable from anywhere in our program
 

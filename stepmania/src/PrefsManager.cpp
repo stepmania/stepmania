@@ -26,6 +26,8 @@ PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our pro
 
 const float DEFAULT_SOUND_VOLUME = 0.50;
 
+bool g_bAutoRestart = false;
+
 PrefsManager::PrefsManager()
 {
 #ifdef DEBUG
@@ -144,7 +146,7 @@ PrefsManager::PrefsManager()
 	m_fCenterImageScaleY = 1;
 
 	m_bAttractSound = true;
-
+	g_bAutoRestart = false;
 
 	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
 #ifdef _XBOX
@@ -310,6 +312,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "CenterImageScaleX",				m_fCenterImageScaleX );
 	ini.GetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
 	ini.GetValue( "Options", "AttractSound",					m_bAttractSound );
+	ini.GetValue( "Options", "AutoRestart",						g_bAutoRestart );
 
 	CString sAdditionalSongFolders;
 	if( ini.GetValue( "Options", "AdditionalSongFolders",			sAdditionalSongFolders ) )
@@ -437,6 +440,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "CenterImageScaleX",				m_fCenterImageScaleX );
 	ini.SetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
 	ini.SetValue( "Options", "AttractSound",					m_bAttractSound );
+	ini.SetValue( "Options", "AutoRestart",						g_bAutoRestart );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who
