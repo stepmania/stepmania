@@ -20,8 +20,8 @@
 #include "Course.h"
 
 
-ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Notes*>& apNotes, PlayerNumber pn_ ):
-	ScoreKeeper(apNotes, pn_)
+ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Notes*>& apNotes_, PlayerNumber pn_ ):
+	ScoreKeeper(pn_), apNotes(apNotes_)
 {
 	//
 	// Fill in m_CurStageStats, calculate multiplier
@@ -91,7 +91,10 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 	int iMaxPossiblePoints;	// fill this in below
 	if( GAMESTATE->IsCourseMode() )
 	{
-		iMaxPossiblePoints = (iSongInCourseIndex+1) * 1000000;
+		const int numSongsInCourse = apNotes.size();
+		int courseMult = (numSongsInCourse * (numSongsInCourse + 1)) / 2;
+
+		iMaxPossiblePoints = (10000000 * (iSongInCourseIndex+1)) / courseMult;
 	}
 	else
 	{

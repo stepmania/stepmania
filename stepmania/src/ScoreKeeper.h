@@ -38,7 +38,7 @@ protected:
 //	bool Stats_DoublesCount;
 
 public:
-	ScoreKeeper(const vector<Notes*>& apNotes, PlayerNumber pn) { m_PlayerNumber=pn; }
+	ScoreKeeper(PlayerNumber pn) { m_PlayerNumber=pn; }
 	virtual void DrawPrimitives() { }
 
 	virtual void OnNextSong( int iSongInCourseIndex, Notes* pNotes ) = 0;	// before a song plays (called multiple times if course)

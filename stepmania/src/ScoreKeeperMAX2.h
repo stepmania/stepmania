@@ -24,6 +24,8 @@ class ScoreKeeperMAX2: public ScoreKeeper
 
 	int				m_iCurToastyCombo;
 
+	const vector<Notes*>& apNotes;
+
 	void AddScore( TapNoteScore score );
 
 public:
