@@ -82,17 +82,22 @@ fi
 AM_CONDITIONAL(HAVE_VORBIS, test "$have_vorbis" = "yes" )
 
 
-AC_ARG_ENABLE(mp3, AC_HELP_STRING([--disable-mp3], [Disable MP3 support]), enable_mp3=$enableval, enable_mp3=yes)
-if test "$enable_mp3" = "yes"; then
+AC_ARG_WITH(mp3, AC_HELP_STRING([--without-mp3], [Disable MP3 support]), with_mp3=$withval, with_mp3=yes)
+if test "$with_mp3" = "yes"; then
 	AC_SEARCH_LIBS(mad_synth_init, [mad], have_mad=yes,  have_mad=no)
-	if test "$have_mad" = "no"; then
-		echo "WARNING: libmad was not found; MP3 support disabled"
-	fi
 else
 	have_mad=no
 fi
 
 if test "$have_mad" = "no"; then
+	# Require MP3 by default, so people don't compile without MP3 support
+	# by accident and then come asking us why files won't load.
+	if test "$with_mp3" = "yes"; then
+		AC_MSG_ERROR(
+			 [A working installation of MAD could not be found, which is
+required for MP3 support.  If you really want to compile without MP3 support,
+pass the "--without-mp3" flag to configure.])
+	fi
 	AC_DEFINE(NO_MP3_SUPPORT, 1, [MP3 support not available])
 fi
 
