@@ -6,6 +6,9 @@
 #include "RageLog.h"
 #include "UnlockSystem.h"
 
+
+
+
 ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 {
 		LOG->Trace("ScreenUnlock::ScreenUnlock()");
@@ -27,7 +30,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 		};
 		
 		PointsUntilNextUnlock.SetText( sDP );
-		PointsUntilNextUnlock.SetZoom( 3 );
-		PointsUntilNextUnlock.SetXY( 10, 370 );
+		PointsUntilNextUnlock.SetZoom( THEME->GetMetricF("ScreenUnlock","DancePointsZoom") );
+		PointsUntilNextUnlock.SetXY( THEME->GetMetricI("ScreenUnlock","DancePointsDisplayX"), THEME->GetMetricI("ScreenUnlock","DancePointsDisplayY") );
 		this->AddChild( &PointsUntilNextUnlock );
 }
