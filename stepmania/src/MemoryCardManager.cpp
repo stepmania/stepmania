@@ -56,7 +56,7 @@ struct UsbStorageDevice
 
 vector<UsbStorageDevice> g_StorageDevices;
 
-bool UpdateAttachedUsbStorageDevices()
+void UpdateAttachedUsbStorageDevices()
 {
 	vector<UsbStorageDevice> &vDevicesOut = g_StorageDevices;
 
@@ -92,7 +92,7 @@ bool UpdateAttachedUsbStorageDevices()
 		if( !f.is_open() )
 		{
 			LOG->Warn( "can't open '%s'", fn.c_str() );
-			return false;
+			return;
 		}
 
 		UsbStorageDevice usbd;
@@ -155,7 +155,7 @@ bool UpdateAttachedUsbStorageDevices()
 			if( !f.is_open() )
 			{
 				LOG->Warn( "can't open '%s'", fn.c_str() );
-				return false;
+				return;
 			}
 
 			CString sLine;
@@ -186,7 +186,7 @@ bool UpdateAttachedUsbStorageDevices()
 		if( !f.is_open() )
 		{
 			LOG->Warn( "can't open '%s'", fn.c_str() );
-			return false;
+			return;
 		}
 
 		CString sLine;
@@ -216,11 +216,11 @@ bool UpdateAttachedUsbStorageDevices()
 			}
 		}
 	}
-	return true;
+	return;
 #elif defined(_WINDOWS)
-	return false;
+
 #else
-	return false;
+
 #endif
 }
 
@@ -235,35 +235,59 @@ MemoryCardManager::~MemoryCardManager()
 
 }
 
+bool UsbChanged()
+{
+#if defined(LINUX)
+	// UGLY: if the system log changed, then a USB device was connected or 
+	// disconnected.  Use this as a trivial check.
+	static const CString VAR_LOG_MESSAGES = "/var/log/messages";
+	static bool bFirstTime = false;
+	static _stat old_stat;
+	if( bFirstTime )
+	{
+		_fstat(VAR_LOG_MESSAGES, &old_stat);
+		bFirstTime = false;
+		return true;
+	}
+	else
+	{
+		_stat new_stat;
+		_fstat(VAR_LOG_MESSAGES, &new_stat);
+		bool bChanged = old_stat != new_stat;
+		old_stat = new_stat;
+		return bChanged;
+	}
+#elif defined(_WINDOWS)
+	return false;
+#else
+	return false;
+#endif
+}
+
 void MemoryCardManager::Update( float fDelta )
 {
-	/*
-	static count = 0;
-	count++;
-	if( count != 20 )
-		return;
-	count = 0;
-
-	vector<UsbStorageDevice> vOld = g_StorageDevices;
-	UpdateAttachedUsbStorageDevices();
-	vector<UsbStorageDevice> &vNew = g_StorageDevices;
-
-	unsigned i;
-
-	// check for disconnects
-	for( i=0; i<vOld.size(); i++ )
+	if( UsbChanged() )
 	{
-		const UsbStorageDevice old = vOld[i];
-		if( find(vNew.begin(),vNew.end(),old) == vNew.end() )
-			SCREENMAN->SystemMessage( ssprintf("Disconnected bus %d port %d device %d", old.iBus, old.iPortOnHub, old.iDeviceOnBus) );
-	}
+		vector<UsbStorageDevice> vOld = g_StorageDevices;	// make a copy
+		UpdateAttachedUsbStorageDevices();
+		vector<UsbStorageDevice> &vNew = g_StorageDevices;
 
-	// check for connects
-	for( i=0; i<vNew.size(); i++ )
-	{
-		const UsbStorageDevice newd = vNew[i];
-		if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )
-			SCREENMAN->SystemMessage( ssprintf("Connected bus %d port %d device %d", newd.iBus, newd.iPortOnHub, newd.iDeviceOnBus) );
+		unsigned i;
+
+		// check for disconnects
+		for( i=0; i<vOld.size(); i++ )
+		{
+			const UsbStorageDevice old = vOld[i];
+			if( find(vNew.begin(),vNew.end(),old) == vNew.end() )
+				SCREENMAN->SystemMessage( ssprintf("Disconnected bus %d port %d device %d", old.iBus, old.iPortOnHub, old.iDeviceOnBus) );
+		}
+
+		// check for connects
+		for( i=0; i<vNew.size(); i++ )
+		{
+			const UsbStorageDevice newd = vNew[i];
+			if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )
+				SCREENMAN->SystemMessage( ssprintf("Connected bus %d port %d device %d", newd.iBus, newd.iPortOnHub, newd.iDeviceOnBus) );
+		}
 	}
-	*/
 }
