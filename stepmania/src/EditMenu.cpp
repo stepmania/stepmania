@@ -10,6 +10,7 @@
 #include "StepsUtil.h"
 #include "Foreach.h"
 #include "CommonMetrics.h"
+#include "BannerCache.h"
 
 
 static const CString EditMenuRowNames[NUM_EDIT_MENU_ROWS] = {
