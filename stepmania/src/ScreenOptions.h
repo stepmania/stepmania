@@ -27,8 +27,8 @@ struct OptionRowData
 {
 	CString name;
 	bool bOneChoiceForAllPlayers;
-	vector<CString> choices;
 	bool bMultiSelect;
+	vector<CString> choices;
 
 	OptionRowData(): name(""), bOneChoiceForAllPlayers(false), bMultiSelect(false) { }
 
@@ -36,10 +36,10 @@ struct OptionRowData
 	{
 		name = n;
 		bOneChoiceForAllPlayers = !!b;
+		bMultiSelect = false;
 #define PUSH( c )	if(c) choices.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
 #undef PUSH
-		bMultiSelect = false;
 	}
 };
 

@@ -218,23 +218,26 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	{
 		OptionRowData &row = m_OptionRowAlloc[i];
 		
-		CStringArray asParts;
-		split( ROW_LINE(i), ";", asParts );
-		if( asParts.size() < 1 )
+		CString sRowCommands = ROW_LINE(i);
+		
+		vector<ParsedCommand> vCommands;
+		ParseCommands( sRowCommands, vCommands );
+		
+		if( vCommands.size() < 1 )
 			RageException::Throw( "Parse error in %s::Line%i", m_sName.c_str(), i+1 );
 
 		OptionRowHandler hand;
-		for( unsigned part = 0; part < asParts.size(); ++part)
+		for( unsigned part = 0; part < vCommands.size(); ++part)
 		{
-			CStringArray asBits;
-			split( asParts[part], ",", asBits );
+			ParsedCommand& command = vCommands[part];
 
-			const CString name = asBits[0];
-			const CString param = asBits.size() > 1? asBits[1]: "";
+			HandleParams;
+
+			const CString name = sParam(0);
 
 			if( !name.CompareNoCase("list") )
 			{
-				SetList( row, hand, param, row.name );
+				SetList( row, hand, sParam(1), row.name );
 			}
 			else if( !name.CompareNoCase("steps") )
 			{
@@ -243,7 +246,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			}
 			else if( !name.CompareNoCase("conf") )
 			{
-				SetConf( row, hand, param, row.name );
+				SetConf( row, hand, sParam(1), row.name );
 			}
 			else if( !name.CompareNoCase("characters") )
 			{
@@ -257,6 +260,8 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			}
 			else
 				RageException::Throw( "Unexpected type '%s' in %s::Line%i", name.c_str(), m_sName.c_str(), i );
+
+			CheckHandledParams;
 		}
 		OptionRowHandlers.push_back( hand );
 	}
