@@ -421,6 +421,13 @@ void RageDisplay::Flip()
 	}
 }
 
+float RageDisplay::PredictedSecondsUntilNextFlip() const
+{
+	float fps = max( 30.f, GetFPS() );	
+	return 1.f/fps;
+}
+
+
 void RageDisplay::ResetStats()
 {
 	g_iFPS = g_iVPF = 0;

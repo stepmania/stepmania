@@ -38,6 +38,7 @@ public:
 
 	void Clear();
 	void Flip();
+	float PredictedSecondsUntilNextFlip() const;
 	bool IsWindowed() const;
 	int GetWidth() const;
 	int GetHeight() const;

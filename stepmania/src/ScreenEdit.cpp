@@ -372,7 +372,6 @@ void ScreenEdit::Update( float fDeltaTime )
 
 	// update the global music statistics for other classes to access
 	GAMESTATE->m_fMusicSeconds = fPositionSeconds;
-//	GAMESTATE->m_fSongBeat = fSongBeat;
 	GAMESTATE->m_fCurBPS = fBPS;
 	GAMESTATE->m_bFreeze = bFreeze;
 

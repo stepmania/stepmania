@@ -722,10 +722,10 @@ bool ScreenGameplay::IsTimeToPlayTicks() const
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
-	Screen::Update( fDeltaTime );
-
-	if( GAMESTATE->m_pCurSong == NULL )
-		return;
+	/* Very important:  Update GAMESTATE's song beat information
+	 * -before- calling update on all the classes that depend on it.
+	 * If you don't do this first, the classes are all acting on old 
+	 * information and will lag.  -Chris */
 
 	// update the global music statistics for other classes to access
 	/* If ScreenJukebox is changing screens, it'll stop m_soundMusic to tell
@@ -735,8 +735,19 @@ void ScreenGameplay::Update( float fDeltaTime )
 	if(m_soundMusic.IsPlaying())
 		GAMESTATE->UpdateSongPosition(m_soundMusic.GetPositionSeconds());
 
+
+	Screen::Update( fDeltaTime );
+
+
 	m_MaxCombo.SetText( ssprintf("%d", m_Player[GAMESTATE->m_MasterPlayerNumber].GetPlayersMaxCombo()) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
+	
+	
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
+
+
+	if( GAMESTATE->m_pCurSong == NULL )
+		return;
+
 
 	int pn;
 	switch( m_DancingState )
@@ -847,7 +858,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
 	// Send crossed row messages to Player
 	//
-	int iRowNow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
+
+	// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
+	int iRowNow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 	if( iRowNow >= 0  &&  iRowNow < MAX_TAP_NOTE_ROWS )
 	{
 		for( int r=m_iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update

@@ -526,9 +526,11 @@ static void GameLoop()
 
 		TEXTUREMAN->Update( fDeltaTime );
 
+		/* Important:  Process input before updaing game logic, or else game logic will lag for one frame */
+		HandleInputEvents( fDeltaTime );
+
 		SCREENMAN->Update( fDeltaTime );
 		SOUNDMAN->Update( fDeltaTime );
-		HandleInputEvents( fDeltaTime );
 
 		/*
 		 * Render
