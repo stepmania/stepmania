@@ -450,6 +450,25 @@ void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend, int chunksize )
 		wrap( fake_write_cursor, buffersize );
 	}
 
+	/* If the driver is requesting an unreasonably large prefetch, ignore it entirely.
+	 * Some drivers seem to give broken write cursors sporadically, requesting that
+	 * almost the entire buffer be filled.  There's no reason a driver should ever need
+	 * more than 8k frames of writeahead. */
+	int prefetch = cursorend - cursorstart;
+	wrap( prefetch, buffersize );
+
+	if( prefetch >= 1024*32 )
+	{
+		static bool bLogged = false;
+		if( bLogged )
+			return;
+		bLogged = true;
+
+		LOG->Warn("Sound driver is requesting an overly large prefetch: wants %i (cursor at %i..%i), writeahead not adjusted",
+			prefetch/bytes_per_frame(), cursorstart, cursorend );
+		return;
+	}
+
 	LOG->Trace("write_cursor %i, fake_write_cursor %i, fake_buffer_bytes_filled %i",
 		write_cursor, fake_write_cursor, fake_buffer_bytes_filled );
 
@@ -490,9 +509,6 @@ void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend, int chunksize )
 	 * Based on our writeahead and the chunksize, we'll never fill the buffer.  We
 	 * need to increase the writeahead.
 	 */
-
-	int prefetch = cursorend - cursorstart;
-	wrap( prefetch, buffersize );
 
 	int old_writeahead = writeahead;
 	writeahead = writeahead * 4 / 3;
