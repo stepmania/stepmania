@@ -121,19 +121,17 @@ static bool ConvertRawTrackToTapNote( int iRawTrack, BmsTrack &bmsTrackOut, bool
 // Find the largest common substring at the start of both strings.
 static CString FindLargestCommonSubstring( CString string1, CString string2 )
 {
-    // First see if the whole first string matches an appropriately-sized
-    // substring of the second, then keep chopping off the last character of
-    // each until they match.
-    for( int i=string1.GetLength(); i > 0; i-- )
-    {
-	if( string1.substr(0,i) == string2.substr(0,i) )
+	// First see if the whole first string matches an appropriately-sized
+	// substring of the second, then keep chopping off the last character of
+	// each until they match.
+	for( int i=string1.GetLength(); i > 0; i-- )
 	{
-	    return string1.substr(0,i);
-	    break;
+		if( string1.substr(0,i) == string2.substr(0,i) )
+			return string1.substr(0,i);
 	}
-    }
-    // If all else fails, give them nothing.
-    return "";
+
+	// If all else fails, give them nothing.
+	return "";
 }
 
 static StepsType DetermineStepsType( int iPlayer, const NoteData &nd )
