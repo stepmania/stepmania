@@ -26,22 +26,6 @@ enum
 static thread_time_constraint_policy g_oldttcpolicy;
 static float g_fStartedTimeCritAt;
 
-SInt16 ShowAlert(int type, CFStringRef message, CFStringRef OK, CFStringRef cancel = NULL)
-{
-    struct AlertStdCFStringAlertParamRec params = {kStdCFStringAlertVersionOne, true, false, OK, cancel, NULL,
-        kAlertStdAlertOKButton, kAlertStdAlertCancelButton, kWindowAlertPositionParentWindowScreen, NULL};
-    DialogRef dialog;
-    SInt16 result;
-    OSErr err;
-
-    CreateStandardAlert(type, message, NULL, &params, &dialog);
-    err = AutoSizeDialog(dialog);
-    ASSERT(err == noErr);
-    RunStandardAlert(dialog, NULL, &result);
-
-    return result;
-}
-
 static bool IsFatalSignal( int signal )
 {
 	switch( signal )
