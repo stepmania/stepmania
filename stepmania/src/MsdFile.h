@@ -18,6 +18,8 @@ public:
 
 	// Returns true if successful, false otherwise.
 	bool ReadFile( CString sFilePath );
+	void ReadFromString( const CString &sString );
+
 	CString GetError() const { return error; }
 
 	unsigned GetNumValues() const { return values.size(); }

@@ -149,6 +149,15 @@ bool MsdFile::ReadFile( CString sNewPath )
 	return true;
 }
 
+void MsdFile::ReadFromString( const CString &sString )
+{
+	/* Be careful.  ReadBuf modifies the buffer given to it. */
+	char *pCopy = new char[sString.size()];
+	memcpy( pCopy, sString.data(), sString.size() );
+	ReadBuf( pCopy, sString.size() );
+	delete [] pCopy;
+}
+
 CString MsdFile::GetParam(unsigned val, unsigned par) const
 {
 	if(val >= GetNumValues()) return "";
