@@ -18,9 +18,6 @@
 #include "Steps.h"
 #include "ThemeMetric.h"
 
-const int NUM_ACTION_MENU_ITEMS = 23;
-const int NUM_NAMING_MENU_ITEMS = 6;
-
 enum EditButton
 {
 	EDIT_BUTTON_COLUMN_0,
