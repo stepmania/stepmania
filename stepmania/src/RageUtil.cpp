@@ -939,6 +939,39 @@ CString LcharToUTF8( longchar c )
 	return CString(buf, cnt);
 }
 
+struct char_traits_char_nocase: public char_traits<char>
+{
+    static bool eq( char c1, char c2 )
+    { return toupper(c1) == toupper(c2); }
+
+    static bool ne( char c1, char c2 )
+    { return toupper(c1) != toupper(c2); }
+
+    static bool lt( char c1, char c2 )
+    { return toupper(c1) <  toupper(c2); }
+
+    static int compare( const char* s1, const char* s2, size_t n ) {
+		return memicmp( s1, s2, n );
+    }
+
+	static inline char fasttoupper(char a)
+	{
+		if(a < 'a' || a > 'z')
+			return a;
+		return a+('A'-'a');
+	}
+	
+    static const char *find( const char* s, int n, char a ) {
+	  a = fasttoupper(a);
+      while( n-- > 0 && fasttoupper(*s) != a ) {
+          ++s;
+      }
+	  if(fasttoupper(*s) == a)
+		return s;
+	  return NULL;
+    }
+};
+
 
 /* Replace &#nnnn; (decimal) &xnnnn; (hex) with corresponding UTF-8 characters. */
 void Replace_Unicode_Markers( CString &Text )
@@ -981,26 +1014,27 @@ void Replace_Unicode_Markers( CString &Text )
 		Text.replace(pos, p-pos, LcharToUTF8(num));
 	}
 }
+#include "RageLog.h"
 
 void ReplaceText( CString &Text, const map<CString,CString> &m )
 {
+	basic_string<char,char_traits_char_nocase> txt = Text;
+	
 	for(map<CString,CString>::const_iterator it = m.begin(); it != m.end(); ++it)
 	{
 		unsigned start = 0;
 		while(1)
 		{
-			/* This is stupidly inefficient.  If it becomes a bottleneck, write
-			 * a case-insensitive char_traits and just do the copy twice. */
-			CString txt = Text;
-			txt.MakeUpper();
-
 			unsigned pos = txt.find(it->first, start);
 			if(pos == txt.npos)
 				break;
-			Text.replace(pos, it->first.size(), it->second);
+
+			txt.replace(pos, it->first.size(), it->second);
 			start = pos+it->second.size();
 		}
 	}
+
+	Text = txt.c_str();
 }
 
 /* Form a string to identify a wchar_t with ASCII. */
