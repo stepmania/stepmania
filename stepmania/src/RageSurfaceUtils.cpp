@@ -2,6 +2,7 @@
 #include "RageSurfaceUtils.h"
 #include "RageSurface.h"
 #include "RageUtil.h"
+#include "RageLog.h"
 #include "RageFile.h"
 
 uint32_t RageSurfaceUtils::decodepixel( const uint8_t *p, int bpp )
@@ -801,7 +802,17 @@ RageSurface *RageSurfaceUtils::LoadSurface( CString file )
 	RageSurface *img = CreateSurface( h.width, h.height, h.bpp,
 			h.Rmask, h.Gmask, h.Bmask, h.Amask );
 	ASSERT( img );
-	ASSERT( h.pitch == img->pitch );
+
+	/* If the pitch has changed, this surface is either corrupt, or was
+	 * created with a different version whose CreateSurface() behavior
+	 * was different. */
+	if( h.pitch != img->pitch )
+	{
+		LOG->Trace( "Error loading \"%s\": expected pitch %i, got %i (%ibpp, %i width)",
+				file.c_str(), h.pitch, img->pitch, h.bpp, h.width );
+		delete img;
+		return NULL;
+	}
 
 	if( f.Read( img->pixels, h.height * h.pitch ) != h.height * h.pitch )
 	{
