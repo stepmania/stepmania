@@ -27,9 +27,7 @@ RageFileManager::RageFileManager()
 {
 	/* Add file search paths, higher priority first. */
 #if defined(XBOX)
-	RageFileManager::Mount( "dir", ".", "" );
-	/* XXX: drop BASE_PATH and do this instead */
-//	RageFileManager::Mount( "dir", "D:\\", "" );
+	RageFileManager::Mount( "dir", SYS_BASE_PATH, "" );
 #elif defined(LINUX)
 	/* We can almost do this, to have machine profiles be system-global to eg. share
 	 * scores.  It would need to handle permissions properly. */
@@ -83,6 +81,8 @@ RageFileManager::~RageFileManager()
 
 CString LoadedDriver::GetPath( CString path )
 {
+	path.Replace( "\\", "/" );
+
 	/* If the path begins with @, default mount points don't count. */
 	const bool Dedicated = ( path.size() && path[0] == '@' );
 	if( MountPoint.size() == 0 )
@@ -165,6 +165,17 @@ bool RageFileManager::MountpointIsReady( CString MountPoint )
 	}
 
 	return false;
+}
+
+void RageFileManager::FlushDirCache( const CString &sPath )
+{
+	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+	{
+		const CString path = g_Drivers[i].GetPath( sPath );
+		if( path.size() == 0 )
+			continue;
+		g_Drivers[i].driver->FlushDirCache( path );
+	}
 }
 
 RageFileManager::FileType RageFileManager::GetFileType( const CString &sPath )
@@ -313,4 +324,39 @@ RageFileObj *RageFileManager::OpenForWriting( const CString &sPath, RageFile::Op
 bool RageFileManager::IsAFile( const CString &sPath ) { return GetFileType(sPath) == TYPE_FILE; }
 bool RageFileManager::IsADirectory( const CString &sPath ) { return GetFileType(sPath) == TYPE_DIR; }
 bool RageFileManager::DoesFileExist( const CString &sPath ) { return GetFileType(sPath) != TYPE_NONE; }
+
+bool DoesFileExist( const CString &sPath )
+{
+	return FILEMAN->DoesFileExist( sPath );
+}
+
+bool IsAFile( const CString &sPath )
+{
+	return FILEMAN->IsAFile( sPath );
+}
+
+bool IsADirectory( const CString &sPath )
+{
+	return FILEMAN->IsADirectory( sPath );
+}
+
+unsigned GetFileSizeInBytes( const CString &sPath )
+{
+	return FILEMAN->GetFileSizeInBytes( sPath );
+}
+
+int GetFileModTime( const CString &sPath )
+{
+	return FILEMAN->GetFileModTime( sPath );
+}
+
+void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+{
+	FILEMAN->GetDirListing( sPath, AddTo, bOnlyDirs, bReturnPathToo );
+}
+
+void FlushDirCache()
+{
+	FILEMAN->FlushDirCache( "" );
+}
 

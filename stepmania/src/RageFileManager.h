@@ -26,6 +26,8 @@ public:
 	bool IsMounted( CString MountPoint );
 	bool MountpointIsReady( CString MountPoint );
 
+	void FlushDirCache( const CString &sPath );
+
 	/* Used only by RageFile: */
 	RageFileObj *Open( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err );
 
