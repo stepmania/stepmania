@@ -11,12 +11,25 @@ typedef map<CString, longchar, StdStringLessNoCase> aliasmap;
 static aliasmap CharAliases;
 static map<CString,CString> CharAliasRepl;
 
+/* If we move this to an INI, group these, so we can display them in a help
+ * page off of the TextEntry screen reasonably.  Allow putting the actual
+ * character on the same line (as below).  Perhaps warn if they don't match.
+ *
+ * [Game Kanji]
+ * kakumei1=0x9769 (革)
+ * [Game Symbols]
+ * [Hiragana]
+ * [Katakana]
+ * [Punctuation]
+ *
+ * This will need some mechanism for assigning internal numbers.
+ */
+
+
 static void InitCharAliases()
 {
 	if(!CharAliases.empty())
 		return;
-
-	/* XXX at least move this to a separate file */
 
 	CharAliases["default"]		= Font::DEFAULT_GLYPH;	/* ? */
 	CharAliases["invalid"]		= INVALID_CHAR;			/* 0xFFFF */
@@ -56,8 +69,8 @@ static void InitCharAliases()
 	CharAliases["anettai3"]		= 0x4E9C; /* 帯 */
 	CharAliases["bakudan1"]		= 0x7206; /* 爆 */
 	CharAliases["bakudan2"]		= 0x5F3E; /* 弾 */
-	CharAliases["shintani1"]	= 0x8C37; /* 谷 */
-	CharAliases["shintani2"]	= 0x65B0; /* 新 */
+	CharAliases["shintani1"]	= 0x65B0; /* 新 */
+	CharAliases["shintani2"]	= 0x8C37; /* 谷 */
 	CharAliases["ookii"]		= 0x5927; /* 大 */
 	CharAliases["kenkai1"]		= 0x898B; /* 見 */
 	CharAliases["kenkai2"]		= 0x89E3; /* 解 */
@@ -184,6 +197,7 @@ static void InitCharAliases()
 	CharAliases["kgo"]	= 0x30b4; /* ゴ */
 	CharAliases["kza"]	= 0x30b6; /* ザ */
 	CharAliases["kzi"]	= 0x30b8; /* ジ */
+	CharAliases["kji"]	= 0x30b8; /* ジ */ /* zi/ji alias */
 	CharAliases["kzu"]	= 0x30ba; /* ズ */
 	CharAliases["kze"]	= 0x30bc; /* ゼ */
 	CharAliases["kzo"]	= 0x30be; /* ゾ */
@@ -282,6 +296,7 @@ static void InitCharAliases()
 	CharAliases["menuleft"]		= 0xE006;
 	CharAliases["menuright"]	= 0xE007;
 	CharAliases["start"]		= 0xE008;
+	CharAliases["zz"]			= 0xE009;
 
 	for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
 	{
