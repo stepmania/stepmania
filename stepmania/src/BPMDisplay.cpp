@@ -31,20 +31,22 @@ BPMDisplay::BPMDisplay()
 	m_BPMS.push_back(0);
 	m_fPercentInState = 0;
 	m_fCycleTime = 1.0f;
+}
 
+void BPMDisplay::Load()
+{
 	m_textBPM.LoadFromNumbers( THEME->GetPathToN("BPMDisplay") );
 	m_textBPM.EnableShadow( false );
 	m_textBPM.SetHorizAlign( Actor::align_right );
 	m_textBPM.SetDiffuse( NORMAL_COLOR );
 	m_textBPM.SetXY( 0, 0 );
+	this->AddChild( &m_textBPM );
 
 	m_sprLabel.Load( THEME->GetPathToG("BPMDisplay label") );
 	m_sprLabel.EnableShadow( false );
 	m_sprLabel.SetDiffuse( NORMAL_COLOR );
 	m_sprLabel.SetHorizAlign( Actor::align_left );
 	m_sprLabel.SetXY( 0, 0 );
-
-	this->AddChild( &m_textBPM );
 	this->AddChild( &m_sprLabel );
 }
 

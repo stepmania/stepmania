@@ -23,6 +23,7 @@ class BPMDisplay : public ActorFrame
 {
 public:
 	BPMDisplay();
+	void Load();
 	virtual void Update( float fDeltaTime ); 
 	virtual void DrawPrimitives(); 
 	void SetBPM( const Song* pSong );
