@@ -4244,6 +4244,7 @@
 				AA80C75407F20D0D00C99272,
 				AA80C75907F20D6600C99272,
 				AA80C75C07F20D8000C99272,
+				AA6E6E0A07F518E800C3EBB4,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8825,6 +8826,21 @@
 			tabWidth = 4;
 			usesTabs = 1;
 		};
+		AA6E6E0907F518E800C3EBB4 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = Quad.cpp;
+			path = ../src/Quad.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA6E6E0A07F518E800C3EBB4 = {
+			fileRef = AA6E6E0907F518E800C3EBB4;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AA6EFD6D04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
 			fileEncoding = 30;
@@ -11887,6 +11903,7 @@
 				AA6EFFBE04770FFD005F316C,
 				AA6EFFBF04770FFD005F316C,
 				AA6EFFC004770FFD005F316C,
+				AA6E6E0907F518E800C3EBB4,
 				AA6EFFC104770FFD005F316C,
 				AA6EFFC204770FFD005F316C,
 				AA6EFFC304770FFD005F316C,
