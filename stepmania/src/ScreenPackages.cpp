@@ -498,9 +498,9 @@ void ScreenPackages::EnterURL( const CString & sURL )
 	m_sEndName = sAddress.Right( sAddress.length() - j + 1 );
 
 	if( Port == 80 )
-		m_sBaseAddress = "http://" + Server + "/" + sAddress.substr(0, j);
+		m_sBaseAddress = "http://" + Server + "/" + CString(sAddress.substr(0, j));
 	else
-		m_sBaseAddress = "http://" + Server + ssprintf( ":%d/", Port ) + sAddress.substr(0, j);
+		m_sBaseAddress = "http://" + Server + ssprintf( ":%d/", Port ) + CString(sAddress.substr(0, j));
 
 	//Open the file...
 
