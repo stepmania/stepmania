@@ -4,18 +4,14 @@
 -----------------------------------------------------------------------------
  Class: ScreenPlayerOptions
 
- Desc: Select a song.
-
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-#include "ScreenOptions.h"
-#include "PrefsManager.h"
+#include "ScreenOptionsMaster.h"
 
-
-class ScreenPlayerOptions : public ScreenOptions
+class ScreenPlayerOptions : public ScreenOptionsMaster
 {
 public:
 	ScreenPlayerOptions( CString sName );
@@ -26,16 +22,8 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 private:
-	void ImportOptions();
-	void ExportOptions();
-
 	void GoToNextState();
 	void GoToPrevState();
-
-	CString ConvertParamToThemeDifficulty( const CString &in ) const;
-
-	float ConvertModToNumber( CString value );
-	bool IsModTimeSpacing( CString value );
 
 	bool            m_bAcceptedChoices;
 	bool            m_bGoToOptions;
