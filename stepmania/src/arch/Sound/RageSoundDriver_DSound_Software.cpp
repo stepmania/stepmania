@@ -78,22 +78,19 @@ bool RageSound_DSound_Software::GetPCM()
 	for(unsigned i = 0; i < sounds.size(); ++i)
 	{
 		if(sounds[i]->stopping)
+			continue;
+
+		/* Call the callback. */
+		unsigned got = sounds[i]->snd->GetPCM((char *) buf, len, play_pos);
+
+		SOUNDMAN->MixAudio(
+			(Uint8 *) locked_buf, (Uint8 *) buf, got, SDL_MIX_MAXVOLUME/2);
+
+		if(got < len)
 		{
-			if(sounds[i]->flush_bufs)
-				sounds[i]->flush_bufs--;
-		} else {
-			/* Call the callback. */
-			unsigned got = sounds[i]->snd->GetPCM((char *) buf, len, play_pos);
-
-			SOUNDMAN->MixAudio(
-				(Uint8 *) locked_buf, (Uint8 *) buf, got, SDL_MIX_MAXVOLUME/2);
-
-			if(got < len)
-			{
-				/* This sound is finishing. */
-				sounds[i]->stopping = true;
-				sounds[i]->flush_bufs = 2;
-			}
+			/* This sound is finishing. */
+			sounds[i]->stopping = true;
+			sounds[i]->flush_pos = str_ds->GetMaxPosition();
 		}
 	}
 
@@ -122,11 +119,13 @@ void RageSound_DSound_Software::Update(float delta)
 	vector<sound *> snds = sounds;
 	for(unsigned i = 0; i < snds.size(); ++i)
 	{
-		if(sounds[i]->stopping && !sounds[i]->flush_bufs)
-		{
-			/* This sound is done. */
-			snds[i]->snd->SoundStopped();
-		}
+		if(!snds[i]->stopping)  continue;
+
+		if(GetPosition(snds[i]->snd) < snds[i]->flush_pos)
+			continue; /* stopping but still flushing */
+
+		/* This sound is done. */
+		snds[i]->snd->SoundStopped();
 	}
 }
 

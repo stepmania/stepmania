@@ -12,7 +12,7 @@ class RageSound_WaveOut: public RageSoundDriver
 
 		bool stopping;
 
-		int flush_bufs; /* state == STOPPING only */
+		int flush_pos; /* state == STOPPING only */
 
 	    sound() { snd = NULL; stopping=false; }
 	};
