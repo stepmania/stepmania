@@ -8,6 +8,7 @@
 #include <math.h>	// ceil()
 #define GLX_GLXEXT_PROTOTYPES
 #include <GL/glx.h>	// All sorts of stuff...
+#include <X11/Xatom.h>
 
 // XXX HACK: RageDisplay_OGL is expecting us to set this for it so it can do
 // GLX-specific queries and whatnot. It's one ugly hackish mess, but hey,
@@ -95,6 +96,10 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 			return "Failed to create the window.";
 		}
 		windowIsOpen = true;
+
+		char WindowTitle[] = "StepMania";
+		XChangeProperty(g_X11Display, X11Helper::Win, XA_WM_NAME, XA_STRING, 8, PropModeReplace,
+				reinterpret_cast<unsigned char*>(WindowTitle), strlen(WindowTitle));
 
 		ctxt = glXCreateContext(X11Helper::Dpy, xvi, NULL, True);
 
