@@ -28,6 +28,7 @@ void ModeChoice::Init()
 	m_sScreen = "";
 	m_pSteps = NULL;
 	m_pCharacter = NULL;
+	m_CourseDifficulty = COURSE_DIFFICULTY_INVALID;
 }
 
 bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
