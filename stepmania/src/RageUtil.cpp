@@ -35,7 +35,7 @@ RandomGen::RandomGen( unsigned long seed_ )
 int RandomGen::operator() ( int maximum )
 {
 	seed = 1664525L * seed + 1013904223L;
-	return (seed >> 2) % (maximum + 1);
+	return (seed >> 2) % maximum;
 }
 
 
