@@ -574,6 +574,18 @@ void ScreenSelectMusic::AdjustOptions()
 	/* Easy is always end-of-song. */
 	else if(dc == DIFFICULTY_EASY && !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2())
 		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_END_OF_SONG;
+
+	if(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
+	{
+		/* Extra stage.  We need to make sure we undo any changes above from
+		 * previous rounds; eg. where one player is on beginner and the other
+		 * is on hard, we've changed the fail mode in previous rounds and we
+		 * want to reset it for the extra stage.
+		 *
+		 * Besides, extra stage should probably always be FAIL_ARCADE anyway,
+		 * unless the extra stage course says otherwise. */
+		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_ARCADE;
+	}
 }
 
 void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
