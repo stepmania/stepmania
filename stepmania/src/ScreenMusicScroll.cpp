@@ -202,13 +202,13 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 void ScreenMusicScroll::Update( float fDeltaTime )
 {
-	Screen::Update( fDeltaTime );
-	
 	for( unsigned i=0; i<m_iNumLines; i++ )
 		m_textLines[i].Update( fDeltaTime );
 
 	m_In.Update( fDeltaTime );
 	m_Out.Update( fDeltaTime );
+
+	Screen::Update( fDeltaTime );
 }	
 
 
