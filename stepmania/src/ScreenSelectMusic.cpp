@@ -732,20 +732,12 @@ void ScreenSelectMusic::AfterMusicChange()
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)
 		m_arrayNotes[pn].clear();
 
-	/* If we're rouletting, and we're moving fast, don't touch the banner. */
 	bool no_banner_change = false;
-//	if(m_MusicWheel.IsMoving()) 
-//	{
-//		/* We're moving fast.  Don't change banners if we're rouletting, or if
-//		 * we've been told to never change banners when moving fast.
-//		 *
-//		 * XXX: When we're not changing banners and not rouletting, show some
-//		 * kind of "moving fast" fallback banner.  (When rouletting, just keep
-//		 * showing the roulette banner.) */
-//		if(m_MusicWheel.IsRouletting() ||
-//			(m_MusicWheel.IsMoving() && !PREFSMAN->m_bChangeBannersWhenFast))
-//			no_banner_change = true;
-//	}
+	if(PREFSMAN->m_BannerCacheType == PREFSMAN->preload_none && m_MusicWheel.IsMoving()) 
+	{
+		/* If we're moving fast and we didn't preload banners, don't touch it. */
+		no_banner_change = true;
+	}
 
 	m_sprMarathonBalloon.StopTweening();
 	OFF_COMMAND( m_sprMarathonBalloon );

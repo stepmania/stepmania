@@ -76,7 +76,6 @@ PrefsManager::PrefsManager()
 	m_bDelayedTextureDelete = true;
 	m_MusicWheelUsesSections = ALWAYS;
 	m_iMusicWheelSwitchSpeed = 10;
-	m_bChangeBannersWhenFast = false;
 	m_bEasterEggs = true;
 	m_bMarvelousTiming = true;
 	m_iCoinMode = COIN_HOME;
@@ -91,7 +90,8 @@ PrefsManager::PrefsManager()
 	m_bAutogenMissingTypes = true;
 	m_bAutogenGroupCourses = true;
 	m_bBreakComboToGetItem = false;
-
+	m_BannerCacheType = preload_group;
+	
 	/* DDR Extreme-style extra stage support.
 	 * Default off so people used to the current behavior (or those with extra
 	 * stage CRS files) don't get it changed around on them. */
@@ -168,7 +168,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "DelayedTextureDelete",		m_bDelayedTextureDelete );
 	ini.GetValueI( "Options", "MusicWheelUsesSections",		(int&)m_MusicWheelUsesSections );
 	ini.GetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
-	ini.GetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );
 	ini.GetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	ini.GetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.GetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
@@ -192,6 +191,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "Timestamping",				m_bTimestamping );
 	ini.GetValue ( "Options", "DefaultModifiers",			m_sDefaultModifiers );
 	ini.GetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
+	ini.GetValueI( "Options", "BannerCacheType",			(int&)m_BannerCacheType );
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
@@ -251,7 +251,6 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "DelayedTextureDelete",		m_bDelayedTextureDelete );
 	ini.SetValueI( "Options", "MusicWheelUsesSections",		m_MusicWheelUsesSections );
 	ini.SetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
-	ini.SetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );
 	ini.SetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.SetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
 	ini.SetValueB( "Options", "SoundPreloadAll",			m_bSoundPreloadAll );
@@ -273,6 +272,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "Timestamping",				m_bTimestamping );
 	ini.SetValue ( "Options", "DefaultModifiers",			m_sDefaultModifiers );
 	ini.SetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
+	ini.SetValueI( "Options", "BannerCacheType",			m_BannerCacheType );
 
 
 	/* Only write these if they aren't the default.  This ensures that we can change

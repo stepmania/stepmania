@@ -56,7 +56,6 @@ public:
 	bool			m_bArcadeOptionsNavigation;
 	enum			{ NEVER, ALWAYS, ABC_ONLY } m_MusicWheelUsesSections;
 	int				m_iMusicWheelSwitchSpeed;
-	bool			m_bChangeBannersWhenFast;
 	bool			m_bEasterEggs;
 	bool			m_bMarvelousTiming;
 	int				m_iCoinMode;
@@ -88,6 +87,9 @@ public:
 	float			m_fSoundVolume;
 	bool			m_bSoundPreloadAll;
 	bool			m_bAllowSoftwareRenderer;
+
+	enum BannerCacheType { preload_none, preload_all, preload_group };
+	BannerCacheType	m_BannerCacheType;
 
 	/* Game-specific prefs: */
 	CString			m_sDefaultNoteSkin;
