@@ -445,7 +445,8 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 					m_sprPossibleBar[p][l].SetRotation( BAR_ROTATION(p) );
 					m_sprPossibleBar[p][l].SetZoomX( 0 );
 					m_sprPossibleBar[p][l].ZoomToHeight( BAR_HEIGHT );
-					m_sprPossibleBar[p][l].BeginTweening( 0.5f );
+					m_sprPossibleBar[p][l].BeginTweening( 0.2f + l*0.1f );	// sleep
+					m_sprPossibleBar[p][l].BeginTweening( 0.5f );			// tween
 					m_sprPossibleBar[p][l].SetTweenZoomToWidth( BAR_WIDTH*fPossibleRadarValues[p][l] );
 					this->AddChild( &m_sprPossibleBar[p][l] );
 
@@ -458,7 +459,8 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 					m_sprActualBar[p][l].SetRotation( BAR_ROTATION(p) );
 					m_sprActualBar[p][l].SetZoomX( 0 );
 					m_sprActualBar[p][l].ZoomToHeight( BAR_HEIGHT );
-					m_sprActualBar[p][l].BeginTweening( 0.5f );
+					m_sprActualBar[p][l].BeginTweening( 1.0f + l*0.2f );	// sleep
+					m_sprActualBar[p][l].BeginTweening( 1.0f );				// tween
 					m_sprActualBar[p][l].SetTweenZoomToWidth( BAR_WIDTH*fActualRadarValues[p][l] );
 					if( fActualRadarValues[p][l] == fPossibleRadarValues[p][l] )
 						m_sprActualBar[p][l].SetEffectGlowing();
@@ -706,35 +708,23 @@ void ScreenEvaluation::TweenOffScreen()
 	int i, p;
 
 	for( i=0; i<STAGES_TO_SHOW_IN_SUMMARY; i++ )
-	{
-		m_BannerWithFrame[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
-		m_BannerWithFrame[i].SetTweenZoomY( 0 );
-	}
+		m_BannerWithFrame[i].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
 
-	m_textStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
-	m_textStage.SetTweenZoomY( 0 );
+	m_textStage.FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
 
 	for( i=0; i<NUM_JUDGE_LINES; i++ ) 
 	{
-		m_sprJudgeLabels[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
-		m_sprJudgeLabels[i].SetTweenZoomY( 0 );
+		m_sprJudgeLabels[i].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
 
 		for( int p=0; p<NUM_PLAYERS; p++ ) 
-		{
-			m_textJudgeNumbers[i][p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
-			m_textJudgeNumbers[i][p].SetTweenZoomY( 0 );
-		}
+			m_textJudgeNumbers[i][p].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
 	}
 	
-	m_sprScoreLabel.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
-	m_sprScoreLabel.SetTweenZoomY( 0 );
+	m_sprScoreLabel.FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
 
 
 	for( p=0; p<NUM_PLAYERS; p++ ) 
-	{
-		m_ScoreDisplay[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
-		m_ScoreDisplay[p].SetTweenZoomY( 0 );
-	}
+		m_ScoreDisplay[p].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -742,39 +732,27 @@ void ScreenEvaluation::TweenOffScreen()
 
 		m_Grades[p].SettleImmediately();
 
-		CArray<Actor*,Actor*> apActorsInBonusOrStageInfo;
-		apActorsInBonusOrStageInfo.Add( &m_sprBonusFrame[p] );
 		for( i=0; i<NUM_RADAR_VALUES; i++ )
 		{
-			apActorsInBonusOrStageInfo.Add( &m_sprPossibleBar[p][i] );
-			apActorsInBonusOrStageInfo.Add( &m_sprActualBar[p][i] );
-		}
-		apActorsInBonusOrStageInfo.Add( &m_sprCourseFrame[p] );
-		apActorsInBonusOrStageInfo.Add( &m_textTime[p] );
-		apActorsInBonusOrStageInfo.Add( &m_textSongsSurvived[p] );
-		for( i=0; i<apActorsInBonusOrStageInfo.GetSize(); i++ )
-		{
-			apActorsInBonusOrStageInfo[i]->BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
-			apActorsInBonusOrStageInfo[i]->SetTweenZoomY( 0 );
+			m_sprPossibleBar[p][i].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
+			m_sprActualBar[p][i].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
 		}
 
-		CArray<Actor*,Actor*> apActorsInGradeOrPercentFrame;
-		apActorsInGradeOrPercentFrame.Add( &m_sprBonusFrame[p] );
-		apActorsInGradeOrPercentFrame.Add( &m_sprGradeFrame[p] );
-		apActorsInGradeOrPercentFrame.Add( &m_Grades[p] );
-		apActorsInGradeOrPercentFrame.Add( &m_sprPercentFrame[p] );
-		apActorsInGradeOrPercentFrame.Add( &m_textOniPercentLarge[p] );
-		apActorsInGradeOrPercentFrame.Add( &m_textOniPercentSmall[p] );
-		apActorsInGradeOrPercentFrame.Add( &m_sprNewRecord[p] );
-		for( i=0; i<apActorsInGradeOrPercentFrame.GetSize(); i++ )
-		{
-			apActorsInGradeOrPercentFrame[i]->BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-			apActorsInGradeOrPercentFrame[i]->SetTweenZoomY( 0 );
-		}
+		m_sprCourseFrame[p].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
+		m_textTime[p].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
+		m_textSongsSurvived[p].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
+
+
+		m_sprBonusFrame[p].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
+		m_sprGradeFrame[p].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
+		m_Grades[p].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
+		m_sprPercentFrame[p].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
+		m_textOniPercentLarge[p].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
+		m_textOniPercentSmall[p].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
+		m_sprNewRecord[p].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
 	}
 	
-	m_sprTryExtraStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_sprTryExtraStage.SetTweenZoomY( 0 );
+	m_sprTryExtraStage.FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
 }
 
 
