@@ -13,6 +13,7 @@
 #include "GameState.h"
 #include "NetworkManager.h"
 #include "RageLog.h"
+#include "RageException.h"
 #include "SongManager.h"
 NetworkManager*	NETWORKMAN = NULL;
 
@@ -33,16 +34,30 @@ NetworkManager::~NetworkManager()
 bool NetworkManager::Connect()
 {
 	LOG->Trace("NetworkManager::Connect()");
-	
+	RageException*	Bitcher;
+
 	IPaddress ip;
 	TCPsocket tcpsock;
+	SDLNet_SocketSet socketset;
 
-	if(SDLNet_ResolveHost(&ip,"localhost",9999)==-1)	// Establish a connection.
+	/* Allocate the socket set for polling the network */
+	socketset = SDLNet_AllocSocketSet(2);
+	if ( socketset == NULL )
+		Bitcher->Throw("Couldn't create socket set: %s\n",SDLNet_GetError());
+	SDLNet_TCP_AddSocket(socketset, tcpsock);
+
+
+
+	if(SDLNet_ResolveHost(&ip,"127.0.0.1",6288))	// Establish a connection.
+	{
 		LOG->Trace("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+		Bitcher->Throw("SDLNet_ResolveHost() FAILED.  --> %s", SDLNet_GetError());
+		throw;
+	}
 
-	tcpsock=SDLNet_TCP_Open(&ip);
+	tcpsock=SDLNet_UDP_Open(&ip);
 	if(!tcpsock)	// Make sure we opened a valid connection.
-		LOG->Trace("NetworkManager::SDLNet_TCP_Open: %s\n", SDLNet_GetError());
+		Bitcher->Throw("NetworkManager::SDLNet_TCP_Open: %s\n", SDLNet_GetError());
 
 
 
