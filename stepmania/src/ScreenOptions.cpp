@@ -496,18 +496,6 @@ void ScreenOptions::MenuUp( PlayerNumber pn )
 			return;	// can't go up any more
 
 		m_iCurrentRow[p]--;
-
-
-//	Chris:  Will add back in later
-//		/* Find the prev row with any un-dimmed entries. */
-//		int new_row = m_iCurrentRow[p];
-//		do {
-///			if(--new_row < 0)
-//				new_row = m_iNumOptionRows-1; // wrap around
-//			if(!RowCompletelyDimmed(new_row)) break;
-//		} while(new_row != m_iCurrentRow[p]);
-//		m_iCurrentRow[p] = new_row;
-
 		TweenCursor( (PlayerNumber)p );
 	}
 	m_SoundPrevRow.Play();
@@ -526,17 +514,6 @@ void ScreenOptions::MenuDown( PlayerNumber pn )
 			return;	// can't go down any more
 
 		m_iCurrentRow[p]++;
-
-// Chris:  Commented this out, but will add back in later.
-//		/* Find the next row with any un-dimmed entries. */
-//		int new_row = m_iCurrentRow[p];
-//		do {
-//			if( ++new_row == m_iNumOptionRows )
-//				new_row = 0; // wrap around
-//			if(!RowCompletelyDimmed(new_row)) break;
-//		} while(new_row != m_iCurrentRow[p]);
-//		m_iCurrentRow[p] = new_row;
-
 		TweenCursor( (PlayerNumber)p );
 	}
 	m_SoundNextRow.Play();
