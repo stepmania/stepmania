@@ -717,6 +717,8 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	else if( sName=="scaletofit" )		{ RectF R(fParam(1), fParam(2), fParam(3), fParam(4));  ScaleToFitInside(R); }
 	// Commands that take effect immediately (ignoring the tweening queue):
 	else if( sName=="animate" )			EnableAnimation( bParam(1) );
+	else if( sName=="play" )			EnableAnimation( true );
+	else if( sName=="pause" )			EnableAnimation( false );
 	else if( sName=="setstate" )		SetState( iParam(1) );
 	else if( sName=="texturewrapping" )	SetTextureWrapping( bParam(1) );
 	else if( sName=="additiveblend" )	SetBlendMode( bParam(1) ? BLEND_ADD : BLEND_NORMAL );
@@ -745,8 +747,8 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	 * GainFocus and LoseFocus.  So, don't run CheckHandledParams 
 	 * on these commands. */
 	else if( sName=="customtexturerect" || sName=="texcoordvelocity" || sName=="scaletoclipped" ||
-		 sName=="stretchtexcoords" || sName=="position" || sName=="loop" || sName=="play" ||
-		 sName=="pause" || sName=="rate" || sName=="propagate" )
+		 sName=="stretchtexcoords" || sName=="position" || sName=="loop" ||
+		 sName=="rate" || sName=="propagate" )
 		return;
 	else
 	{

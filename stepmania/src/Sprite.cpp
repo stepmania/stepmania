@@ -879,8 +879,6 @@ void Sprite::HandleCommand( const ParsedCommand &command )
 	 * shouldn't depend on Actor. */
 	else if( sName=="position" )		GetTexture()->SetPosition( fParam(1) );
 	else if( sName=="loop" )			GetTexture()->SetLooping( bParam(1) );
-	else if( sName=="play" )			GetTexture()->Play();
-	else if( sName=="pause" )			GetTexture()->Pause();
 	else if( sName=="rate" )			GetTexture()->SetPlaybackRate( fParam(1) );
 	else
 	{
