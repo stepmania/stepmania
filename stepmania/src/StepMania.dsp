@@ -652,6 +652,14 @@ SOURCE=.\MenuTimer.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\MusicList.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MusicList.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\MusicSortDisplay.cpp
 # End Source File
 # Begin Source File

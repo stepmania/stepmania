@@ -647,6 +647,12 @@
 				RelativePath="MenuTimer.h">
 			</File>
 			<File
+				RelativePath="MusicList.cpp">
+			</File>
+			<File
+				RelativePath="MusicList.h">
+			</File>
+			<File
 				RelativePath=".\MusicSortDisplay.cpp">
 			</File>
 			<File

@@ -14,7 +14,6 @@
 #include "ScreenSelectGroup.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
-#include "PrefsManager.h"
 #include "ScreenSelectMusic.h"
 #include "ScreenTitleMenu.h"
 #include "GameManager.h"
@@ -41,11 +40,7 @@
 #define BUTTON_SPACING_Y	THEME->GetMetricF("SelectGroup","ButtonSpacingY")
 #define CONTENTS_X			THEME->GetMetricF("SelectGroup","ContentsX")
 #define CONTENTS_Y			THEME->GetMetricF("SelectGroup","ContentsY")
-#define TITLES_START_X		THEME->GetMetricF("SelectGroup","TitlesStartX")
-#define TITLES_SPACING_X	THEME->GetMetricF("SelectGroup","TitlesSpacingX")
-#define TITLES_START_Y		THEME->GetMetricF("SelectGroup","TitlesStartY")
-#define TITLES_COLUMNS		THEME->GetMetricI("SelectGroup","TitlesColumns")
-#define TITLES_ROWS			THEME->GetMetricI("SelectGroup","TitlesRows")
+
 #define HELP_TEXT			THEME->GetMetric("SelectGroup","HelpText")
 #define TIMER_SECONDS		THEME->GetMetricI("SelectGroup","TimerSeconds")
 
@@ -107,25 +102,24 @@ ScreenSelectGroup::ScreenSelectGroup()
 	}
 	SortCStringArray( m_asGroupNames, true );
 
-	// Add songs to groups (this isn't very efficient, but oh well...
-	CArray<Song*,Song*> aSongsInGroup[MAX_GROUPS];
-	aSongsInGroup[0].Copy( aAllSongs );		// add to ALL MUSIC
-	for( i=0; i<aAllSongs.GetSize(); i++ )		// foreach Song
+	// Add songs to the MusicList.
+	for( int j=0; j<min(m_asGroupNames.GetSize(), MAX_GROUPS); j++ ) /* for each group */
 	{
-		Song* pSong = aAllSongs[i];
-		// find the corresponding group
-		for( int j=1; j<m_asGroupNames.GetSize(); j++ )
+		CArray<Song*,Song*> aSongsInGroup;
+		/* find all songs */
+		for( i=0; i<aAllSongs.GetSize(); i++ )		// foreach Song
 		{
-			if( pSong->m_sGroupName == m_asGroupNames[j] )
-			{
-				aSongsInGroup[j].Add( pSong );
-				break;
-			}
+			if( j != 0 && aAllSongs[i]->m_sGroupName != m_asGroupNames[j] )
+				continue;
+
+			aSongsInGroup.Add( aAllSongs[i] );
 		}
+
+		SortSongPointerArrayByTitle( aSongsInGroup );
+
+		m_MusicList.AddGroup();
+		m_MusicList.AddSongsToGroup(aSongsInGroup);
 	}
-	
-
-
 
 	m_iSelection = 0;
 	m_bChosen = false;
@@ -161,17 +155,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_sprContents.SetXY( CONTENTS_X, CONTENTS_Y );
 	this->AddSubActor( &m_sprContents );
 
-	for( i=0; i<TITLES_COLUMNS; i++ )
-	{
-		m_textTitles[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-		m_textTitles[i].SetXY( TITLES_START_X + i*TITLES_SPACING_X, TITLES_START_Y );
-		m_textTitles[i].SetHorizAlign( Actor::align_left );
-		m_textTitles[i].SetVertAlign( Actor::align_top );
-		m_textTitles[i].SetZoom( 0.5f );
-		m_textTitles[i].SetShadowLength( 2 );
-		this->AddSubActor( &m_textTitles[i] );
-	}
-	
+	this->AddSubActor( &m_MusicList );
 
 	for( i=0; i<min(m_asGroupNames.GetSize(), MAX_GROUPS); i++ )
 	{
@@ -191,45 +175,6 @@ ScreenSelectGroup::ScreenSelectGroup()
 		else			m_textLabel[i].SetDiffuseColor( SONGMAN->GetGroupColor(sGroupName) );
 
 		this->AddSubActor( &m_textLabel[i] );
-	}
-
-
-
-	//
-	// Generate what text will show in the contents for each group
-	//
-	for( i=0; i<min(m_asGroupNames.GetSize(), MAX_GROUPS); i++ )
-	{
-		CArray<Song*,Song*>& aSongs = aSongsInGroup[i];
-		m_iNumSongsInGroup[i] = aSongs.GetSize();
-		SortSongPointerArrayByTitle( aSongs );
-
-		for( int c=0; c<TITLES_COLUMNS; c++ )	// foreach col
-		{
-			CString sText;
-			for( int r=0; r<TITLES_ROWS; r++ )	// foreach row
-			{
-				int iIndex = c*TITLES_ROWS + r;
-				if( iIndex >= aSongs.GetSize() )
-					continue;
-
-				if( c == TITLES_COLUMNS-1  &&  r == TITLES_ROWS-1 )
-				{
-					sText += ssprintf( "%d more.....", aSongs.GetSize() - TITLES_COLUMNS * TITLES_ROWS - 1 );
-					continue;
-				}
-
-				CString sTitle = aSongs[iIndex]->GetFullTitle();
-				// TODO:  Move this crop threshold into a theme metric or make automatic based on column width
-				if( sTitle.GetLength() > 40 )
-				{
-					sTitle = sTitle.Left( 37 );
-					sTitle += "...";
-				}
-				sText += sTitle + "\n";
-			}
-			m_sContentsText[i][c] = sText;
-		}
 	}
 
 	m_soundChange.Load( THEME->GetPathTo("Sounds","select group change") );
@@ -318,11 +263,7 @@ void ScreenSelectGroup::AfterChange()
 	m_textLabel[iSel].SetTweenX( BUTTON_SELECTED_X );
 	m_textLabel[iSel].SetEffectGlowing();
 
-	for( int c=0; c<TITLES_COLUMNS; c++ )
-	{
-		m_textTitles[c].SetText( m_sContentsText[m_iSelection][c] );
-		m_textTitles[c].CropToWidth( int(TITLES_SPACING_X/m_textTitles[c].GetZoom()) );
-	}
+	m_MusicList.SetGroupNo(m_iSelection);
 
 	CString sSelectedGroupName = m_asGroupNames[m_iSelection];
 
@@ -334,7 +275,7 @@ void ScreenSelectGroup::AfterChange()
 	else
 		sGroupBannerPath = THEME->GetPathTo("Graphics","fallback banner");
 
-	const int iNumSongs = m_iNumSongsInGroup[m_iSelection];
+	const int iNumSongs = m_MusicList.GetNumSongs();
 	m_textNumber.SetText( ssprintf("%d", iNumSongs) );
 
 	m_Banner.SetFromGroup( sSelectedGroupName );
@@ -425,13 +366,9 @@ void ScreenSelectGroup::TweenOffScreen()
 	m_sprContents.BeginTweeningQueued( 0.7f );
 	m_sprContents.BeginTweeningQueued( 0.5f, TWEEN_BIAS_END );
 	m_sprContents.SetTweenY( CONTENTS_Y+400 );
-	for( i=0; i<TITLES_COLUMNS; i++ )
-	{
-		m_textTitles[i].BeginTweeningQueued( 0.7f );
-		m_textTitles[i].BeginTweeningQueued( 0.5f );
-		m_textTitles[i].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
-	}
+
 	
+	m_MusicList.TweenOffScreen();
 
 	for( i=0; i<min(m_asGroupNames.GetSize(), MAX_GROUPS); i++ )
 	{
@@ -472,14 +409,7 @@ void ScreenSelectGroup::TweenOnScreen()
 	m_sprContents.BeginTweeningQueued( 0.5f, TWEEN_BIAS_END );
 	m_sprContents.SetTweenY( CONTENTS_Y );
 
-	for( i=0; i<TITLES_COLUMNS; i++ )
-	{
-		m_textTitles[i].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-		m_textTitles[i].BeginTweeningQueued( 0.5f );
-		m_textTitles[i].BeginTweeningQueued( 0.5f );
-		m_textTitles[i].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
-	}
-	
+	m_MusicList.TweenOnScreen();
 
 	for( i=0; i<min(m_asGroupNames.GetSize(), MAX_GROUPS); i++ )
 	{

@@ -16,10 +16,10 @@
 #include "Quad.h"
 #include "MenuElements.h"
 #include "FadingBanner.h"
+#include "MusicList.h"
 
 
 const int MAX_GROUPS = 15;
-const int MAX_COLUMNS = 5;
 
 class ScreenSelectGroup : public Screen
 {
@@ -55,10 +55,7 @@ private:
 	Sprite			m_sprButton[MAX_GROUPS];
 	BitmapText		m_textLabel[MAX_GROUPS];
 	Sprite			m_sprContents;
-	BitmapText		m_textTitles[MAX_COLUMNS];
-
-	CString			m_sContentsText[MAX_GROUPS][MAX_COLUMNS];
-	int				m_iNumSongsInGroup[MAX_GROUPS];
+	MusicList		m_MusicList;
 
 	RandomSample m_soundChange;
 	RandomSample m_soundSelect;
