@@ -19,6 +19,7 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "ThemeManager.h"
+#include "PrefsManager.h"
 
 
 #define HELP_TEXT				THEME->GetMetric("ScreenHowToPlay","HelpText")
