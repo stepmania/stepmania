@@ -855,7 +855,7 @@ void NoteDataUtil::Little( NoteData &inout, int iStartIndex, int iEndIndex )
 void NoteDataUtil::Wide( NoteData &inout, int iStartIndex, int iEndIndex )
 {
 	// Make all all quarter notes into jumps.
-	inout.ConvertHoldNotesTo4s();
+	inout.ConvertHoldNotesTo2sAnd3s();
 
 	/* Start on an even beat. */
 	iStartIndex = Quantize( iStartIndex, BeatToNoteRow(2.0f) );
@@ -864,7 +864,11 @@ void NoteDataUtil::Wide( NoteData &inout, int iStartIndex, int iEndIndex )
 
 	for( int i=iStartIndex; i<iEndIndex; i+=ROWS_PER_BEAT*2 ) // every even beat
 	{
-		if( inout.GetNumTapNonEmptyTracks(i) != 1 )
+		bool bHoldNoteAtBeat = false;
+		for( int t = 0; !bHoldNoteAtBeat && t < inout.GetNumTracks(); ++t )
+			if( inout.IsHoldNoteAtBeat(t, i) )
+				bHoldNoteAtBeat = true;
+		if( bHoldNoteAtBeat )
 			continue;	// skip.  Don't place during holds
 
 		if( inout.GetNumTracksWithTap(i) != 1 )
@@ -900,7 +904,7 @@ void NoteDataUtil::Wide( NoteData &inout, int iStartIndex, int iEndIndex )
 		inout.SetTapNote(iTrackToAdd, i, TAP_ADDITION_TAP);
 	}
 
-	inout.Convert4sToHoldNotes();
+	inout.Convert2sAnd3sToHoldNotes();
 }
 
 void NoteDataUtil::Big( NoteData &inout, int iStartIndex, int iEndIndex )
