@@ -36,6 +36,7 @@ public:
 	int GetMeter() const { return Real()->m_iMeter; }
 	const RadarValues& GetRadarValues() const { return Real()->m_RadarValues; }
 
+	void SetFile( CString fn );
 	void SetDescription(CString desc);
 	void SetDifficulty(Difficulty d);
 	void SetLoadedFromProfile( ProfileSlot slot ) { m_LoadedFromProfile = slot; }
@@ -69,6 +70,8 @@ protected:
 	mutable CompressedNoteData *notes_comp;
 
 	const Steps *Real() const;
+
+	CString			m_sFilename;
 
 	/* These values are pulled from the autogen source first, if there is one. */
 	ProfileSlot		m_LoadedFromProfile;	// PROFILE_SLOT_INVALID if wasn't loaded from a profile

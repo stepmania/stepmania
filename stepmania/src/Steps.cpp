@@ -1,5 +1,21 @@
+/*
+ * This stores a single note pattern for a song.
+ *
+ * We can have too much data to keep everything decompressed as NoteData, so most
+ * songs are kept in memory compressed as SMData until requested.  NoteData is normally
+ * not requested casually during gameplay; we can move through screens, the music
+ * wheel, etc. without touching any NoteData.
+ *
+ * To save more memory, if data is cached on disk, read it from disk on demand.  Not
+ * all Steps will have an associated file for this purpose.  (Profile edits don't do
+ * this yet.)
+ *
+ * Data can be on disk (always compressed), compressed in memory, and uncompressed in
+ * memory.
+ */
 #include "global.h"
 #include "Steps.h"
+#include "StepsUtil.h"
 #include "song.h"
 #include "Steps.h"
 #include "IniFile.h"
@@ -13,6 +29,7 @@
 #include "NoteDataUtil.h"
 #include "ProfileManager.h"
 #include "PrefsManager.h"
+#include "NotesLoaderSM.h"
 
 Steps::Steps()
 {
@@ -143,10 +160,9 @@ void Steps::TidyUpData()
 void Steps::Decompress() const
 {
 	if(notes)
-	{
 		return;	// already decompressed
-	}
-	else if(parent)
+
+	if(parent)
 	{
 		// get autogen notes
 		NoteData pdata;
@@ -164,8 +180,36 @@ void Steps::Decompress() const
 
 			NoteDataUtil::FixImpossibleRows( *notes, m_StepsType );
 		}
+		return;
 	}
-	else if(!notes_comp)
+
+	if( !m_sFilename.empty() && notes_comp == NULL )
+	{
+		/* We have data on disk and not in memory.  Load it. */
+		Song s;
+		SMLoader ld;
+		if( !ld.LoadFromSMFile( m_sFilename, s, true ) )
+		{
+			LOG->Warn( "Couldn't load \"%s\"", m_sFilename.c_str() );
+			return;
+		}
+
+		/* Find the steps. */
+		StepsID ID;
+		ID.FromSteps( this );
+
+		Steps *pSteps = ID.ToSteps( &s, true );
+		if( pSteps == NULL )
+		{
+			LOG->Warn( "Couldn't find %s in \"%s\"", ID.ToString().c_str(), m_sFilename.c_str() );
+			return;
+		}
+
+		notes_comp = new CompressedNoteData;
+		pSteps->GetSMNoteData( notes_comp->notes, notes_comp->attacks );
+	}
+
+	if( notes_comp == NULL )
 	{
 		/* there is no data, do nothing */
 	}
@@ -181,6 +225,16 @@ void Steps::Decompress() const
 
 void Steps::Compress() const
 {
+	if( !m_sFilename.empty() )
+	{
+		/* We have a file on disk; clear all data in memory. */
+		delete notes;
+		notes = NULL;
+		delete notes_comp;
+		notes_comp = NULL;
+		return;
+	}
+
 	if(!notes_comp)
 	{
 		if(!notes) return; /* no data is no data */
@@ -249,6 +303,11 @@ const Steps *Steps::Real() const
 bool Steps::IsAutogen() const
 {
 	return parent != NULL;
+}
+
+void Steps::SetFile( CString fn )
+{
+	m_sFilename = fn;
 }
 
 void Steps::SetDescription(CString desc)

@@ -262,6 +262,17 @@ bool Song::LoadFromSongDir( CString sDir )
 		SaveToCacheFile();
 	}
 
+
+	
+	for( unsigned i=0; i<m_vpSteps.size(); i++ )
+	{
+		m_vpSteps[i]->SetFile( GetCacheFilePath() );
+
+		/* Compress all Steps.  During initial caching, this will remove cached NoteData;
+		 * during cached loads, this will just remove cached SMData. */
+		m_vpSteps[i]->Compress();
+	}
+
 	/* Load the cached banners, if it's not loaded already. */
 	if( m_bHasBanner )
 		BANNERCACHE->LoadBanner( GetBannerPath() );
@@ -813,13 +824,6 @@ void Song::TidyUpData()
 				m_sSongFileName += ".sm";
 			}
 		}
-	}
-
-
-	// Compress all Steps
-	for( i=0; i<m_vpSteps.size(); i++ )
-	{
-		m_vpSteps[i]->Compress();
 	}
 }
 
