@@ -15,7 +15,6 @@
 
 unsigned long randseed = time(NULL);
 
-#include <direct.h>
 #include <numeric>
 #include <math.h>
 #include <sys/stat.h>
@@ -25,7 +24,7 @@ bool IsAnInt( const char *s )
 	if( s[0] == '\0' )
 		return false;
 
-	for( UINT i=0; s[i]; i++ )
+	for( int i=0; s[i]; i++ )
 		if( s[i] < '0' || s[i] > '9' )
 			return false;
 
@@ -245,10 +244,10 @@ bool CreateDirectories( CString Path )
 	for(unsigned i = 0; i < parts.size(); ++i)
 	{
 		curpath += parts[i] + "/";
-		if(CreateDirectory( curpath, NULL ))
+		if(mkdir( curpath ))
 			continue;
 
-		if(GetLastError() != ERROR_ALREADY_EXISTS)
+		if(errno != EEXIST)
 			return false;
 
 		/* Make sure it's a directory. */
@@ -295,8 +294,8 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 
 void GetCwd(CString &s)
 {
-	char buf[_MAX_PATH];
-	bool ret = getcwd(buf, _MAX_PATH) != NULL;
+	char buf[PATH_MAX];
+	bool ret = getcwd(buf, PATH_MAX) != NULL;
 	ASSERT(ret);
 
 	s = buf;
