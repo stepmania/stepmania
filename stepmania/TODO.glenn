@@ -364,4 +364,12 @@ but backgrounds can result in multiple fullscreen passes.
 
 debug option to show console in release
 
+********
+
+Overload theme metrics on the commandline.
+
+--metric "Common::InitialScreen=ScreenDemonstration"
+--metric "ScreenDemonstration::NextScreen=Exit"
+
+could be used to run a demo and exit, for benchmarking and profiling.
 
