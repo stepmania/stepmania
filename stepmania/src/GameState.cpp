@@ -716,7 +716,7 @@ Character* GameState::GetRandomCharacter()
 	vector<Character*> apCharacters;
 	GetCharacters( apCharacters );
 	if( apCharacters.size() )
-		return m_pCharacters[rand()%apCharacters.size()];
+		return apCharacters[rand()%apCharacters.size()];
 	else
 		return GetDefaultCharacter();
 }
