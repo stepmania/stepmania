@@ -1,0 +1,13 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {pushedButton = id; }; 
+            CLASS = InstallerWindowController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {button = NSButton; textView = NSTextView; }; 
+            SUPERCLASS = NSWindowController; 
+        }
+    ); 
+    IBVersion = 1; 
+}
