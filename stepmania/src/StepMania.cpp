@@ -1128,14 +1128,19 @@ CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature,
 	 * is deleted, we won't fill in the hole (which makes screenshots hard to find). */
 	if( iIndex == -1 ) 
 	{
-		for( int i = files.size()-1; i >= 0; --i )
-			if( sscanf( files[i], "screen%d.%*s", &iIndex ) == 1 )
-				break;
+		iIndex = 0;
 
-		if( iIndex == -1 )
-			iIndex = 0;
-		else
-			++iIndex;
+		for( int i = files.size()-1; i >= 0; --i )
+		{
+			static Regex re( "^screen([0-9]{5})\\....$" );
+			vector<CString> matches;
+			if( !re.Compare( files[i], matches ) )
+				continue;
+
+			ASSERT( matches.size() == 1 );
+			iIndex = atoi( matches[0] )+1;
+			break;
+		}
 	}
 
 	//
