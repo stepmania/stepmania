@@ -32,6 +32,7 @@ public:
 
 	void Update( float fDeltaTime );
 	void DrawPrimitives();
+	bool EarlyAbortDraw();
 
 	float GetMaxTweenTimeLeft() const;
 	void GainingFocus( float fRate, bool bRewindMovie, bool bLoop );
@@ -95,6 +96,8 @@ protected:
 	float m_fUpdateRate;	// set by GainingFocus
 	float m_fFOV;	// -1 = no change
 	bool m_bLighting;
+
+	CString m_sDrawCond;
 
 	// stretch stuff
 	float m_fTexCoordVelocityX;

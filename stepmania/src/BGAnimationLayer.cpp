@@ -540,6 +540,8 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	ini.GetValue( sLayer, "Lighting", m_bLighting );
 	ini.GetValue( sLayer, "TexCoordVelocityX", m_fTexCoordVelocityX );
 	ini.GetValue( sLayer, "TexCoordVelocityY", m_fTexCoordVelocityY );
+	ini.GetValue( sLayer, "DrawCond", m_sDrawCond );
+
 	// compat:
 	ini.GetValue( sLayer, "StretchTexCoordVelocityX", m_fTexCoordVelocityX );
 	ini.GetValue( sLayer, "StretchTexCoordVelocityY", m_fTexCoordVelocityY );
@@ -933,6 +935,17 @@ void BGAnimationLayer::Update( float fDeltaTime )
 			m_fSecondsUntilNextCommand += m_fRepeatCommandEverySeconds;
 		}
 	}
+}
+
+bool BGAnimationLayer::EarlyAbortDraw()
+{
+	if( m_sDrawCond.empty() )
+		return false;
+
+	if( !Lua::RunExpression( m_sDrawCond ) )
+		return true;
+
+	return false;
 }
 
 void BGAnimationLayer::DrawPrimitives()
