@@ -1,7 +1,7 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- Class: ScoreDisplayOni.h
+ Class: ScoreDisplayOni
 
  Desc: A graphic displayed in the ScoreDisplayOni during Dancing.
 
@@ -26,7 +26,7 @@ ScoreDisplayOni::ScoreDisplayOni()
 	LOG->Trace( "ScoreDisplayOni::ScoreDisplayOni()" );
 
 	// init the text
-	LoadFromFont( THEME->GetPathTo("Fonts","score numbers") );
+	BitmapText::LoadFromTextureAndChars( THEME->GetPathTo("Graphics","gameplay score numbers"), "01234 :56789%." );
 	TurnShadowOff();
 }
 

@@ -261,6 +261,7 @@ void Player::Update( float fDeltaTime )
 			fLife = 1;
 			hns = HNS_OK;
 			HandleNoteScore( hns );
+			m_GhostArrowRow.TapNote( StyleI.col, TNS_PERFECT, true );	// bright ghost flash
 			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_OK );
 			m_NoteField.m_fHoldNoteLife[i] = fLife;		// update the NoteField display
 			m_NoteField.m_HoldNoteScores[i] = HNS_OK;	// update the NoteField display
@@ -627,7 +628,13 @@ void Player::HandleNoteScore( HoldNoteScore score )
 
 	// HoldNoteScores don't effect m_fScore
 }
+
 float Player::GetMaxBeatDifference()
 {
 	return GAMESTATE->m_fCurBPS * PREFSMAN->m_fJudgeWindow * GAMESTATE->m_SongOptions.m_fMusicRate;
+}
+
+void Player::FadeToFail()
+{
+	m_NoteField.FadeToFail();
 }

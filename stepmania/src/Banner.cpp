@@ -16,6 +16,14 @@
 #include "SongManager.h"
 #include "RageBitmapTexture.h"
 
+Banner::Banner()
+{
+	m_bScrolling = false;
+	m_fPercentScrolling = 0;
+
+	Banner::Load( THEME->GetPathTo("Graphics","fallback banner") );
+}
+
 bool Banner::Load( CString sFilePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
 {
 	// note that the defaults are changes for faster loading

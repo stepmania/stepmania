@@ -46,7 +46,7 @@ public:
 	void Step( int col );
 
 
-	void	FadeToFail()	{ m_NoteField.FadeToFail(); };
+	void	FadeToFail();
 	
 protected:
 	int UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );

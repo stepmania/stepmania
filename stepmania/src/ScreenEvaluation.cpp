@@ -419,7 +419,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_sprPercentFrame[p].SetXY( GRADE_X(p), GRADE_Y );
 				this->AddChild( &m_sprPercentFrame[p] );
 
-				m_textOniPercentLarge[p].LoadFromFont( THEME->GetPathTo("Fonts","oni percent numbers") );
+				m_textOniPercentLarge[p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation percent numbers 5x3"),"1234567890%.   " );
 				m_textOniPercentLarge[p].TurnShadowOff();
 				m_textOniPercentLarge[p].SetXY( PERCENT_BASE_X(p), PERCENT_BASE_Y );
 				m_textOniPercentLarge[p].SetHorizAlign( Actor::align_right );
@@ -427,7 +427,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_textOniPercentLarge[p].SetEffectGlowing( 1.0f );
 				this->AddChild( &m_textOniPercentLarge[p] );
 
-				m_textOniPercentSmall[p].LoadFromFont( THEME->GetPathTo("Fonts","oni percent numbers") );
+				m_textOniPercentSmall[p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation percent numbers 5x3"),"1234567890%.   " );
 				m_textOniPercentSmall[p].TurnShadowOff();
 				m_textOniPercentSmall[p].SetZoom( 0.5f );
 				m_textOniPercentSmall[p].SetXY( PERCENT_BASE_X(p), PERCENT_BASE_Y );
@@ -438,6 +438,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 				iPossibleDancePoints[p] = max( 1, iPossibleDancePoints[p] );
 				float fPercentDancePoints =  iActualDancePoints[p] / (float)iPossibleDancePoints[p] + 0.0001f;	// correct for rounding errors
+				fPercentDancePoints = max( fPercentDancePoints, 0 );
 				int iPercentDancePointsLarge = int(fPercentDancePoints*100);
 				int iPercentDancePointsSmall = int( (fPercentDancePoints*100 - int(fPercentDancePoints*100)) * 10 );
 				m_textOniPercentLarge[p].SetText( ssprintf("%02d%", iPercentDancePointsLarge) );
@@ -450,7 +451,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_sprCourseFrame[p].SetXY( BONUS_X(p), BONUS_Y );
 				this->AddChild( &m_sprCourseFrame[p] );
 		
-				m_textSongsSurvived[p].LoadFromFont( THEME->GetPathTo("Fonts","oni stage numbers") );
+				m_textSongsSurvived[p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation stage numbers 5x3"),"1234567890%.   ");
 				m_textSongsSurvived[p].TurnShadowOff();
 				m_textSongsSurvived[p].SetXY( SONGS_SURVIVED_X(p), SONGS_SURVIVED_Y );
 				m_textSongsSurvived[p].SetText( ssprintf("%02d", GAMESTATE->m_iSongsBeforeFail[p]) );

@@ -2,6 +2,9 @@
 Fix
 /////////////////////////
 
+arcade mode
+
+about us page
 
 new phpwebhosting account
 
@@ -27,15 +30,13 @@ precise timing adjustment
 
 draw taps on same row as hold with hold head
 
-texture cache
-
 max style lifemeter animation
-
-TICK_MELODY
 
 164 theme
 
-pause in course contents scroll
+warning
+
+name entry
 
 gap between wheel items
 
@@ -47,15 +48,17 @@ ready, here we go between each stage of a course
 
 send disc to Penny Arcade
 
-danger BGA, danger movie
-
 different top bar frame for oni
-
-move NoteSkin to Theme
 
 /////////////////////
 Punt:
 /////////////////////
+
+texture cache
+
+move NoteSkin to Theme
+
+TICK_MELODY
 
 texture cache
 

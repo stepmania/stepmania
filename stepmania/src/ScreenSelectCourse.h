@@ -46,6 +46,7 @@ protected:
 
 	MenuElements		m_Menu;
 
+	Sprite				m_sprExplanation;
 	Sprite				m_sprBannerFrame;
 	FadingBanner		m_Banner;
 	BitmapText			m_textNumSongs;

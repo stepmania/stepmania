@@ -444,10 +444,15 @@ void ScreenOptions::MenuBack( PlayerNumber pn )
 
 void ScreenOptions::MenuStart( PlayerNumber pn )
 {
-	if( m_iCurrentRow[pn] == m_iNumOptionRows )	// not on exit
-		this->SendScreenMessage( SM_TweenOffScreen, 0 );
-	else
+	bool bAllOnExit = true;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( GAMESTATE->IsPlayerEnabled(p)  &&  m_iCurrentRow[p] != m_iNumOptionRows )
+			bAllOnExit = false;
+
+	if( m_iCurrentRow[pn] != m_iNumOptionRows )	// not on exit
 		MenuDown( pn );	// can't go down any more
+	else if( bAllOnExit )
+		this->SendScreenMessage( SM_TweenOffScreen, 0 );
 }
 
 void ScreenOptions::MenuLeft( PlayerNumber pn ) 

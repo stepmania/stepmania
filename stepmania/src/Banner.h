@@ -18,11 +18,7 @@ class Course;
 class Banner : public CroppedSprite
 {
 public:
-	Banner()
-	{
-		m_bScrolling = false;
-		m_fPercentScrolling = 0;
-	};
+	Banner();
 
 	virtual bool Load( CString sFilePath, bool bForceReload = false, int iMipMaps = 0, int iAlphaBits = 0, bool bDither = false, bool bStretch = false );
 

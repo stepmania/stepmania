@@ -129,13 +129,23 @@ float ArrowGetPercentVisible( PlayerNumber pn, float fYPos )
 	return clamp( fAlpha, 0, 1 );
 }
 
-float ArrowGetAlpha( PlayerNumber pn, float fYPos )
+float ArrowGetAlpha( PlayerNumber pn, float fYPos, float fPercentFadeToFail )
 {
-	return (ArrowGetPercentVisible(pn,fYPos) > 0.5f) ? 1.0f : 0.0f;
+	float fPercentVisible = ArrowGetPercentVisible(pn,fYPos);
+
+	if( fPercentFadeToFail != -1 )
+		fPercentVisible = 1 - fPercentFadeToFail;
+
+	return (fPercentVisible>0.5f) ? 1.0f : 0.0f;
 }
 
-float ArrowGetGlow( PlayerNumber pn, float fYPos )
+float ArrowGetGlow( PlayerNumber pn, float fYPos, float fPercentFadeToFail )
 {
-	const float fDistFromHalf = fabsf( ArrowGetPercentVisible(pn,fYPos) - 0.5f );
+	float fPercentVisible = ArrowGetPercentVisible(pn,fYPos);
+
+	if( fPercentFadeToFail != -1 )
+		fPercentVisible = 1 - fPercentFadeToFail;
+
+	const float fDistFromHalf = fabsf( fPercentVisible - 0.5f );
 	return SCALE( fDistFromHalf, 0, 0.5f, 1.3f, 0 );
 }

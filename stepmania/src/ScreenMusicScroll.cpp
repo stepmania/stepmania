@@ -56,6 +56,7 @@ const CString CREDIT_LINES[] =
 	"",
 	"SOUND:",
 	"Kyle 'KeeL' Ward",
+	"Animechanic"
 	"",
 	"",
 	"",

@@ -54,11 +54,13 @@ ScreenHowToPlay::ScreenHowToPlay()
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
+		sHowToPlayPath = THEME->GetPathTo("Graphics","how to play arcade");
+		break;
 	case PLAY_MODE_ENDLESS:
-		sHowToPlayPath = THEME->GetPathTo("Graphics","How To Play Arcade");
+		sHowToPlayPath = THEME->GetPathTo("Graphics","how to play endless");
 		break;
 	case PLAY_MODE_ONI:
-		sHowToPlayPath = THEME->GetPathTo("Graphics","How To Play Arcade");
+		sHowToPlayPath = THEME->GetPathTo("Graphics","how to play oni");
 		break;
 	default:
 		ASSERT(0);

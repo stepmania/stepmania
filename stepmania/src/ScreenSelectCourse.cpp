@@ -28,6 +28,8 @@
 #include "CodeDetector.h"
 
 
+#define EXPLANATION_X		THEME->GetMetricF("ScreenSelectCourse","ExplanationX")
+#define EXPLANATION_Y		THEME->GetMetricF("ScreenSelectCourse","ExplanationY")
 #define BANNER_FRAME_X		THEME->GetMetricF("ScreenSelectCourse","BannerFrameX")
 #define BANNER_FRAME_Y		THEME->GetMetricF("ScreenSelectCourse","BannerFrameY")
 #define BANNER_X			THEME->GetMetricF("ScreenSelectCourse","BannerX")
@@ -71,11 +73,15 @@ ScreenSelectCourse::ScreenSelectCourse()
 		);
 	this->AddChild( &m_Menu );
 
+	m_sprExplanation.Load( THEME->GetPathTo("Graphics","select course explanation") );
+	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
+	this->AddChild( &m_sprExplanation );
+
 	m_Banner.SetXY( BANNER_X, BANNER_Y );
 	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
 	this->AddChild( &m_Banner );
 
-	m_sprBannerFrame.Load( THEME->GetPathTo("Graphics","select course info frame") );
+	m_sprBannerFrame.Load( THEME->GetPathTo("Graphics","select course banner frame") );
 	m_sprBannerFrame.SetXY( BANNER_FRAME_X, BANNER_FRAME_Y );
 	this->AddChild( &m_sprBannerFrame );
 
@@ -112,7 +118,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 		this->AddChild( &m_HighScore[p] );
 	}	
 
-	m_textHoldForOptions.LoadFromFont( THEME->GetPathTo("Fonts","Stage") );
+	m_textHoldForOptions.LoadFromFont( THEME->GetPathTo("Fonts","select music hold") );
 	m_textHoldForOptions.SetXY( CENTER_X, CENTER_Y );
 	m_textHoldForOptions.SetText( "press START again for options" );
 	m_textHoldForOptions.SetZoom( 1 );
@@ -151,56 +157,33 @@ void ScreenSelectCourse::DrawPrimitives()
 
 void ScreenSelectCourse::TweenOnScreen()
 {
-	Actor* pActorsInCourseInfoFrame[] = { &m_sprBannerFrame, &m_Banner, &m_textNumSongs, &m_textTime };
-	const int iNumActorsInGroupInfoFrame = sizeof(pActorsInCourseInfoFrame) / sizeof(Actor*);
-	int i;
-	for( i=0; i<iNumActorsInGroupInfoFrame; i++ )
+	m_sprExplanation.FadeOn( 0.5f, "left bounce", TWEEN_TIME );
+	m_sprBannerFrame.FadeOn( 0, "left bounce", TWEEN_TIME );
+	m_Banner.FadeOn( 0, "left bounce", TWEEN_TIME );
+	m_textNumSongs.FadeOn( 0, "left bounce", TWEEN_TIME );
+	m_textTime.FadeOn( 0, "left bounce", TWEEN_TIME );
+	m_CourseContentsFrame.FadeOn( 0, "foldy", TWEEN_TIME );
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		float fOriginalX = pActorsInCourseInfoFrame[i]->GetX();
-		pActorsInCourseInfoFrame[i]->SetX( fOriginalX-400 );
-		pActorsInCourseInfoFrame[i]->BeginTweening( TWEEN_TIME, TWEEN_BOUNCE_END );
-		pActorsInCourseInfoFrame[i]->SetTweenX( fOriginalX );
+		m_sprHighScoreFrame[p].FadeOn( 0, "right bounce", TWEEN_TIME );
+		m_HighScore[p].FadeOn( 0, "right bounce", TWEEN_TIME );
 	}
-
-	m_CourseContentsFrame.SetXY( CONTENTS_X - 400, CONTENTS_Y );
-	m_CourseContentsFrame.BeginTweening( TWEEN_TIME, Actor::TWEEN_BIAS_END );
-	m_CourseContentsFrame.SetTweenXY( CONTENTS_X, CONTENTS_Y );
-
-	Actor* pActorsInScore[] = { &m_sprHighScoreFrame[0], &m_sprHighScoreFrame[1], &m_HighScore[0], &m_HighScore[1] };
-	const int iNumActorsInScore = sizeof(pActorsInScore) / sizeof(Actor*);
-	for( i=0; i<iNumActorsInScore; i++ )
-	{
-		float fOriginalX = pActorsInScore[i]->GetX();
-		pActorsInScore[i]->SetX( fOriginalX+400 );
-		pActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_END );
-		pActorsInScore[i]->SetTweenX( fOriginalX );
-	}
-
 	m_MusicWheel.TweenOnScreen();
 }
 
 void ScreenSelectCourse::TweenOffScreen()
 {
-	Actor* pActorsInCourseInfoFrame[] = { &m_sprBannerFrame, &m_Banner, &m_textNumSongs, &m_textTime };
-	const int iNumActorsInGroupInfoFrame = sizeof(pActorsInCourseInfoFrame) / sizeof(Actor*);
-	int i;
-	for( i=0; i<iNumActorsInGroupInfoFrame; i++ )
+	m_sprExplanation.FadeOff( 0, "left bounce", TWEEN_TIME );
+	m_sprBannerFrame.FadeOff( 0, "left bounce", TWEEN_TIME );
+	m_Banner.FadeOff( 0, "left bounce", TWEEN_TIME );
+	m_textNumSongs.FadeOff( 0, "left bounce", TWEEN_TIME );
+	m_textTime.FadeOff( 0, "left bounce", TWEEN_TIME );
+	m_CourseContentsFrame.FadeOff( 0, "foldy", TWEEN_TIME );
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		pActorsInCourseInfoFrame[i]->BeginTweening( TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
-		pActorsInCourseInfoFrame[i]->SetTweenX( pActorsInCourseInfoFrame[i]->GetX()-400 );
+		m_sprHighScoreFrame[p].FadeOff( 0, "right bounce", TWEEN_TIME );
+		m_HighScore[p].FadeOff( 0, "right bounce", TWEEN_TIME );
 	}
-
-	m_CourseContentsFrame.BeginTweening( TWEEN_TIME, Actor::TWEEN_BOUNCE_BEGIN );
-	m_CourseContentsFrame.SetTweenXY( CONTENTS_X - 400, CONTENTS_Y );
-
-	Actor* pActorsInScore[] = { &m_sprHighScoreFrame[0], &m_sprHighScoreFrame[1], &m_HighScore[0], &m_HighScore[1] };
-	const int iNumActorsInScore = sizeof(pActorsInScore) / sizeof(Actor*);
-	for( i=0; i<iNumActorsInScore; i++ )
-	{
-		pActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_BEGIN );
-		pActorsInScore[i]->SetTweenX( pActorsInScore[i]->GetX()+400 );
-	}
-
 	m_MusicWheel.TweenOffScreen();
 }
 

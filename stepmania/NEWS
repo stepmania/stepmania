@@ -1,5 +1,9 @@
 ﻿------------------------CVS after 3.00 beta 6----------------
-CHANGE:  Font format is not simpler.  See README for details.
+CHANGE:  Hold head now drawn in place tap note graphic when a Hold starts
+	on the same row.
+CHANGE:  Added bright ghost flash on hold note score of OK.
+CHANGE:  Font format new easier to export for font creators.  See README 
+	for details.
 NEW FEATURE:  Option Icons.
 NEW FEATURE:  Best sort now shows only top 30 songs.
 NEW FEATURE:  Option codes on the Select Music and Select Course screens

@@ -225,10 +225,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		ASSERT( fBottomDistFromTailTop-0.0001 <= fFrameHeight );
 		const float fTexCoordLeft	= bActive ? 0.25f : 0.00f;
 		const float fTexCoordRight	= bActive ? 0.50f : 0.25f;
-		const float	fAlphaTop		= ArrowGetAlpha( m_PlayerNumber, fYTop );
-		const float	fAlphaBottom	= ArrowGetAlpha( m_PlayerNumber, fYBottom );
-		const float	fGlowTop		= ArrowGetGlow( m_PlayerNumber, fYTop );
-		const float	fGlowBottom		= ArrowGetGlow( m_PlayerNumber, fYBottom );
+		const float	fAlphaTop		= ArrowGetAlpha( m_PlayerNumber, fYTop, fPercentFadeToFail );
+		const float	fAlphaBottom	= ArrowGetAlpha( m_PlayerNumber, fYBottom, fPercentFadeToFail );
+		const float	fGlowTop		= ArrowGetGlow( m_PlayerNumber, fYTop, fPercentFadeToFail );
+		const float	fGlowBottom		= ArrowGetGlow( m_PlayerNumber, fYBottom, fPercentFadeToFail );
 		const float fColorScale		= SCALE(fLife,0,1,0.5f,1);
 		const D3DXCOLOR colorDiffuseTop		= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaTop);
 		const D3DXCOLOR colorDiffuseBottom	= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaBottom);
@@ -268,10 +268,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float fTexCoordBottom = SCALE( fBottomDistFromTailTop, 0, fBodyHeight, 1, 0 );
 		const float fTexCoordLeft	= bActive ? 0.75f : 0.50f;
 		const float fTexCoordRight	= bActive ? 1.00f : 0.75f;
-		const float	fAlphaTop		= ArrowGetAlpha( m_PlayerNumber, fYTop );
-		const float	fAlphaBottom	= ArrowGetAlpha( m_PlayerNumber, fYBottom );
-		const float	fGlowTop		= ArrowGetGlow( m_PlayerNumber, fYTop );
-		const float	fGlowBottom		= ArrowGetGlow( m_PlayerNumber, fYBottom );
+		const float	fAlphaTop		= ArrowGetAlpha( m_PlayerNumber, fYTop, fPercentFadeToFail );
+		const float	fAlphaBottom	= ArrowGetAlpha( m_PlayerNumber, fYBottom, fPercentFadeToFail );
+		const float	fGlowTop		= ArrowGetGlow( m_PlayerNumber, fYTop, fPercentFadeToFail );
+		const float	fGlowBottom		= ArrowGetGlow( m_PlayerNumber, fYBottom, fPercentFadeToFail );
 		const float fColorScale		= SCALE(fLife,0,1,0.5f,1);
 		const D3DXCOLOR colorDiffuseTop		= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaTop);
 		const D3DXCOLOR colorDiffuseBottom	= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaBottom);
@@ -299,8 +299,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	{
 		fY							= fYHead;
 		const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );
-		const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, fY );
-		const float	fGlow			= ArrowGetGlow( m_PlayerNumber, fY );
+		const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, fY, fPercentFadeToFail );
+		const float	fGlow			= ArrowGetGlow( m_PlayerNumber, fY, fPercentFadeToFail );
 		const float fColorScale		= SCALE(fLife,0,1,0.5f,1);
 		const D3DXCOLOR colorDiffuse= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlpha);
 		const D3DXCOLOR colorGlow	= D3DXCOLOR(1,1,1,fGlow);
@@ -331,38 +331,49 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bUseHol
 	const float fYPos			= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 	const float fRotation		= ArrowGetRotation(	m_PlayerNumber, iCol, fYOffset );
 	const float fXPos			= ArrowGetXPos(		m_PlayerNumber, iCol, fYPos );
-	const float fAlpha			= ArrowGetAlpha(	m_PlayerNumber, fYPos );
-	const float fGlow			= ArrowGetGlow(		m_PlayerNumber, fYPos );
+	const float fAlpha			= ArrowGetAlpha(	m_PlayerNumber, fYPos, fPercentFadeToFail );
+	const float fGlow			= ArrowGetGlow(		m_PlayerNumber, fYPos, fPercentFadeToFail );
 	const int iGrayPartFrameNo	= GetTapGrayFrameNo( fBeat );
 	const int iColorPartFrameNo	= GetTapColorFrameNo( fBeat );
 
 	D3DXCOLOR colorGrayPart = D3DXCOLOR(1,1,1,1);
 	D3DXCOLOR colorLeadingEdge;
 	D3DXCOLOR colorTrailingEdge;
-	if( bUseHoldColor )
-		colorLeadingEdge = colorTrailingEdge = D3DXCOLOR(0,1,0,1);	// HACK: green.  Move this into the note skin
-	else
-		GetTapEdgeColors( fBeat, colorLeadingEdge, colorTrailingEdge );
+	GetTapEdgeColors( fBeat, colorLeadingEdge, colorTrailingEdge );
 	colorGrayPart.a		*= fAlpha;
 	colorLeadingEdge.a	*= fAlpha;
 	colorTrailingEdge.a *= fAlpha;
 
-	m_sprTapParts.SetXY( fXPos, fYPos );
-	m_sprTapParts.SetRotation( fRotation );
-	m_sprTapParts.SetGlow( D3DXCOLOR(1,1,1,fGlow) );
+	if( bUseHoldColor )
+	{
+		//
+		// draw hold head
+		//
+		m_sprHoldParts.SetXY( fXPos, fYPos );
+		m_sprHoldParts.SetDiffuse( colorGrayPart );
+		m_sprHoldParts.SetGlow( D3DXCOLOR(1,1,1,fGlow) );
+		m_sprHoldParts.SetState( 0 );
+		m_sprHoldParts.Draw();
+	}
+	else	
+	{
+		m_sprTapParts.SetXY( fXPos, fYPos );
+		m_sprTapParts.SetRotation( fRotation );
+		m_sprTapParts.SetGlow( D3DXCOLOR(1,1,1,fGlow) );
 
-	//
-	// draw gray part
-	//
-	m_sprTapParts.SetState( iGrayPartFrameNo );
-	m_sprTapParts.SetDiffuse( colorGrayPart );
-	m_sprTapParts.Draw();
+		//
+		// draw gray part
+		//
+		m_sprTapParts.SetState( iGrayPartFrameNo );
+		m_sprTapParts.SetDiffuse( colorGrayPart );
+		m_sprTapParts.Draw();
 
-	//
-	// draw color part
-	//
-	m_sprTapParts.SetState( iColorPartFrameNo );
-	m_sprTapParts.SetDiffuseTopEdge( colorLeadingEdge );
-	m_sprTapParts.SetDiffuseBottomEdge( colorTrailingEdge );
-	m_sprTapParts.Draw();
+		//
+		// draw color part
+		//
+		m_sprTapParts.SetState( iColorPartFrameNo );
+		m_sprTapParts.SetDiffuseTopEdge( colorLeadingEdge );
+		m_sprTapParts.SetDiffuseBottomEdge( colorTrailingEdge );
+		m_sprTapParts.Draw();
+	}
 }

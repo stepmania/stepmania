@@ -49,7 +49,7 @@ CourseContentDisplay::CourseContentDisplay()
 	m_TextBanner.SetXY( TEXT_BANNER_X, TEXT_BANNER_Y );
 	this->AddChild( &m_TextBanner );
 
-	m_textFoot.LoadFromFont( THEME->GetPathTo("Fonts","meter") );
+	m_textFoot.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","select music meter 2x1"),"10" );
 	m_textFoot.SetXY( FOOT_X, FOOT_Y );
 	m_textFoot.TurnShadowOff();
 	this->AddChild( &m_textFoot );
@@ -153,7 +153,11 @@ void CourseContentsFrame::DrawPrimitives()
 
 	int iItemToDraw = (int)m_fItemAtTopOfList;
 
-	float fY = (iItemToDraw-m_fItemAtTopOfList-(MAX_VISIBLE_CONTENTS-1)/2) * CONTENTS_BAR_HEIGHT;
+	// HACK:  Insert a little pause as a new item appears on the screen
+	float fRemainder = m_fItemAtTopOfList - (int)m_fItemAtTopOfList;
+	fRemainder = min( fRemainder*1.5f, 1 );
+
+	float fY = (-fRemainder-(MAX_VISIBLE_CONTENTS-1)/2) * CONTENTS_BAR_HEIGHT;
 
 	for( int i=0; i<min(MAX_VISIBLE_CONTENTS+1, m_iNumContents); i++ )
 	{

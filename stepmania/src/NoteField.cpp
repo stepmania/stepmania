@@ -76,44 +76,8 @@ void NoteField::Update( float fDeltaTime )
 	m_rectMarkerBar.Update( fDeltaTime );
 
 	if( m_fPercentFadeToFail >= 0 )
-		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/3, 1 );	// take 3 seconds to totally fade
+		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/1.5, 1 );	// take 1.5 seconds to totally fade
 }
-
-
-
-
-/*
-void NoteField::CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, const float fIndex, const bool bUseHoldNoteBeginColor )
-{
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, fIndex );
-	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
-	const float fRotation	= ArrowGetRotation(	m_PlayerNumber, iCol, fYOffset );
-	const float fXPos		= ArrowGetXPos(		m_PlayerNumber, iCol, fYOffset );
-	      float fAlpha		= ArrowGetAlpha(	m_PlayerNumber, fYPos );
-
-	if( m_fPercentFadeToFail != -1 )
-		fAlpha = 1-m_fPercentFadeToFail;
-
-	D3DXCOLOR colorLeading, colorTrailing;	// of the color part.  Alpha here be overwritten with fAlpha!
-	if( bUseHoldNoteBeginColor )
-		colorLeading = colorTrailing = m_ColorNote[iCol].GetHoldColorFromPercentIntoHold( 0 );
-	else
-		m_ColorNote[iCol].GetEdgeColorsFromIndexAndBeat( roundf(fIndex), colorLeading, colorTrailing );
-
-	float fAddAlpha = m_ColorNote[iCol].GetAddAlphaFromDiffuseAlpha( fAlpha );
-	int iColorPartFrameNo = m_ColorNote[iCol].GetColorPartFrameNoFromIndexAndBeat( roundf(fIndex), GAMESTATE->m_fSongBeat );
-	int iGrayPartFrameNo  = m_ColorNote[iCol].GetGrayPartFrameNoFromIndexAndBeat(  roundf(fIndex), GAMESTATE->m_fSongBeat );
-
-	if( iCol == 2 )
-		printf( "iColorPartFrameNo = %d\n", iColorPartFrameNo );
-
-	cni = ColorNoteInstance( fXPos, fYPos, fRotation, fAlpha, colorLeading, colorTrailing, fAddAlpha, iColorPartFrameNo, iGrayPartFrameNo );
-}
-
-void NoteField::CreateHoldNoteInstance( ColorNoteInstance &cni, const bool bActive, const float fIndex, const HoldNote &hn, const float fHoldNoteLife )
-{
-}
-*/
 
 void NoteField::DrawMeasureBar( int iMeasureIndex )
 {
