@@ -57,10 +57,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\Stepmania\stepmania
+TargetDir=\temp\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                    	cl                                     /Zl                                     /nologo                                     /c                                     verstub.cpp                                     /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                     	cl                                      /Zl                                      /nologo                                      /c                                      verstub.cpp                                      /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -92,10 +92,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\Stepmania\stepmania
+TargetDir=\temp\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                    	cl                                     /Zl                                     /nologo                                     /c                                     verstub.cpp                                     /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                     	cl                                      /Zl                                      /nologo                                      /c                                      verstub.cpp                                      /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -111,6 +111,30 @@ PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania
 # Begin Group "Helpers"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\RageSound.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSound.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSoundManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSoundManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageThreads.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageThreads.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\SDL_dither.cpp
@@ -555,6 +579,38 @@ SOURCE=.\arch\LoadingWindow\LoadingWindow_Win32.cpp
 # Begin Source File
 
 SOURCE=.\arch\LoadingWindow\LoadingWindow_Win32.h
+# End Source File
+# End Group
+# Begin Group "Sound"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\arch\Sound\DSoundHelpers.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\Sound\DSoundHelpers.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\Sound\RageSoundDriver.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\Sound\RageSoundDriver_DSound.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\Sound\RageSoundDriver_DSound.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\Sound\RageSoundDriver_DSound_Software.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\Sound\RageSoundDriver_DSound_Software.h
 # End Source File
 # End Group
 # Begin Source File

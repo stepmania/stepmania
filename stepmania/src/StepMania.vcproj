@@ -624,6 +624,31 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					RelativePath="arch\LoadingWindow\LoadingWindow_Win32.h">
 				</File>
 			</Filter>
+			<Filter
+				Name="Sound"
+				Filter="">
+				<File
+					RelativePath="arch\Sound\DSoundHelpers.cpp">
+				</File>
+				<File
+					RelativePath="arch\Sound\DSoundHelpers.h">
+				</File>
+				<File
+					RelativePath="arch\Sound\RageSoundDriver.h">
+				</File>
+				<File
+					RelativePath="arch\Sound\RageSoundDriver_DSound.cpp">
+				</File>
+				<File
+					RelativePath="arch\Sound\RageSoundDriver_DSound.h">
+				</File>
+				<File
+					RelativePath="arch\Sound\RageSoundDriver_DSound_Software.cpp">
+				</File>
+				<File
+					RelativePath="arch\Sound\RageSoundDriver_DSound_Software.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Transitions"
@@ -763,6 +788,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="MenuTimer.h">
+			</File>
+			<File
+				RelativePath="MusicBannerWheel.cpp">
+			</File>
+			<File
+				RelativePath="MusicBannerWheel.h">
 			</File>
 			<File
 				RelativePath="MusicList.cpp">
@@ -1076,10 +1107,22 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageNetworkServer.h">
 			</File>
 			<File
+				RelativePath="RageSound.cpp">
+			</File>
+			<File
+				RelativePath="RageSound.h">
+			</File>
+			<File
 				RelativePath=".\RageSoundBass.cpp">
 			</File>
 			<File
 				RelativePath=".\RageSoundBass.h">
+			</File>
+			<File
+				RelativePath="RageSoundManager.cpp">
+			</File>
+			<File
+				RelativePath="RageSoundManager.h">
 			</File>
 			<File
 				RelativePath=".\RageSoundSample.cpp">
@@ -1104,6 +1147,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\RageTextureManager.h">
+			</File>
+			<File
+				RelativePath="RageThreads.cpp">
+			</File>
+			<File
+				RelativePath="RageThreads.h">
 			</File>
 			<File
 				RelativePath="RageTimer.cpp">
