@@ -50,6 +50,9 @@ bool UnlockSystem::SongIsRoulette( CString sSongName )
 	return false;
 }
 
+/* These don't appear to be used.  If you need them, I'd suggest making them
+ * members.  They also need return types. */
+#if 0
 operator == (const SongEntry &a, const SongEntry &b)
 {
 	return a.m_sSongName == b.m_sSongName;
@@ -79,6 +82,7 @@ operator < (const SongEntry &a, const SongEntry &b)
 {
 	return a.m_sSongName <= b.m_sSongName;
 }
+#endif
 
 SongEntry::SongEntry()
 {
@@ -273,21 +277,17 @@ bool SongEntry::SelectableRoulette()
 
 float UnlockSystem::NumPointsUntilNextUnlock()
 {
-	float fSmallestPoints;
-	fSmallestPoints = 4000000000;   // or an arbitrarily large value
-	for( unsigned a=0; a<100; a++ )
+	float fSmallestPoints = 400000000;   // or an arbitrarily large value
+	for( unsigned a=0; a<m_SongEntries.size(); a++ )
 	{
 		// old line:	if( m_SongEntries[a].m_fDancePointsRequired >= fSmallestPoints )
 		// new: it makes sure the number of points to the song is positive, AND it is less than
 		//      the currently smallest one. (cure)
-		if( m_SongEntries[a].m_fDancePointsRequired < fSmallestPoints && m_SongEntries[a].m_fDancePointsRequired > PREFSMAN->m_fDancePointsAccumulated)
-		{
-			fSmallestPoints = m_SongEntries[a].m_fDancePointsRequired;
-		}
+		if( m_SongEntries[a].m_fDancePointsRequired > PREFSMAN->m_fDancePointsAccumulated)
+			fSmallestPoints = min(fSmallestPoints, m_SongEntries[a].m_fDancePointsRequired);
 	}
 	
-	float fResults = (fSmallestPoints - PREFSMAN->m_fDancePointsAccumulated);
-	return fResults;
+	return fSmallestPoints - PREFSMAN->m_fDancePointsAccumulated;
 }
 
 
