@@ -28,7 +28,7 @@ namespace NoteDataUtil
 {
 	NoteType GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex );
 	void LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData );
-	CString GetSMNoteDataString(NoteData &in);
+	void GetSMNoteDataString( const NoteData &in, CString &out );
 
 	float GetStreamRadarValue( const NoteData &in, float fSongSeconds );
 	float GetVoltageRadarValue( const NoteData &in, float fSongSeconds );

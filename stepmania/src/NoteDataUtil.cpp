@@ -127,15 +127,19 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 	out.Convert2sAnd3sToHoldNotes();
 }
 
-CString NoteDataUtil::GetSMNoteDataString(NoteData &in)
+void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &out )
 {
-	in.ConvertHoldNotesTo2sAnd3s();
+	NoteData in;
+	in_.Get2sAnd3s( in );
 
 	float fLastBeat = in.GetLastBeat();
 	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
 
-	CString sRet = "\n"; /* data begins on a new line when written to disk */
+	CString &sRet = out;
 
+	sRet = "\n"; /* data begins on a new line when written to disk */
+	sRet.reserve( 1024*32 );
+	
 	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
 	{
 		NoteType nt = GetSmallestNoteTypeForMeasure( in, m );
@@ -170,10 +174,6 @@ CString NoteDataUtil::GetSMNoteDataString(NoteData &in)
 
 		sRet.append(1, ',');
 	}
-
-	in.Convert2sAnd3sToHoldNotes();
-
-	return sRet;
 }
 
 float NoteDataUtil::GetRadarValue( const NoteData &in, RadarCategory rv, float fSongSeconds )

@@ -101,7 +101,8 @@ CString Steps::GetSMNoteData() const
 	if(!notes_comp)
 	{
 		if(!notes) return ""; /* no data is no data */
-		notes_comp = new CString(NoteDataUtil::GetSMNoteDataString(*notes));
+		notes_comp = new CString;
+		NoteDataUtil::GetSMNoteDataString( *notes, *notes_comp );
 	}
 
 	return *notes_comp;
@@ -195,7 +196,8 @@ void Steps::Compress() const
 	if(!notes_comp)
 	{
 		if(!notes) return; /* no data is no data */
-		notes_comp = new CString(NoteDataUtil::GetSMNoteDataString(*notes));
+		notes_comp = new CString;
+		NoteDataUtil::GetSMNoteDataString( *notes, *notes_comp );
 	}
 
 	delete notes;
