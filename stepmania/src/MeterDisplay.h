@@ -13,7 +13,7 @@
 
 #include "ActorFrame.h"
 #include "Sprite.h"
-#include "Quad.h"
+#include "ActorUtil.h"
 
 
 class MeterDisplay : public ActorFrame
@@ -28,7 +28,7 @@ private:
 	float	m_fStreamWidth;
 	float	m_fPercent;
 	Sprite  m_sprStream;
-	Sprite  m_sprTip;
+	AutoActor  m_sprTip;
 };
 
 #endif

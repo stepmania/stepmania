@@ -191,7 +191,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		if( GAMESTATE->IsPlayerEnabled(p) )
 			grade[p] = stageStats.GetGrade( (PlayerNumber)p );
 		else
-			grade[p] = GRADE_E;
+			grade[p] = GRADE_FAILED;
 
 		if (PREFSMAN->m_iScoringType == PrefsManager::SCORING_5TH)
 		{
@@ -209,7 +209,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		// if its extra stage, update # passed stages
 		if (PREFSMAN->m_bUseUnlockSystem &&
 			(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() ) &&
-			grade[p] > GRADE_E &&
+			grade[p] > GRADE_FAILED &&
 			m_Type != summary)
 					UNLOCKSYS->UnlockClearExtraStage();
 	}
@@ -434,6 +434,10 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	//
 	if( SHOW_GRADE_AREA )
 	{
+		// ugly: Touch all possible grade files to make sure their all present
+		for( int g=GRADE_TIER_1; g<NUM_GRADES; g++ )
+			THEME->GetPathToG( "ScreenEvaluation grade "+ GradeToString((Grade)g) );
+
 		for( p=0; p<NUM_PLAYERS; p++ ) 
 		{
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
@@ -451,6 +455,11 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			if( SPIN_GRADES )
 				m_Grades[p].Spin();
 			this->AddChild( &m_Grades[p] );
+
+			m_sprGrade[p].Load( THEME->GetPathToG( "ScreenEvaluation grade "+ GradeToString(grade[p]) ) );
+			m_sprGrade[p]->SetName( ssprintf("GradeP%d",p+1) );
+			SET_XY_AND_ON_COMMAND( m_sprGrade[p] );
+			this->AddChild( m_sprGrade[p] );
 		}
 	}
 
@@ -828,9 +837,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 	switch( max_grade )
 	{
-	case GRADE_AA:
-	case GRADE_AAA:	
-	case GRADE_AAAA:	
+	case GRADE_TIER_1:
+	case GRADE_TIER_2:	
+	case GRADE_TIER_3:	
 		this->PostScreenMessage( SM_PlayCheer, CHEER_DELAY_SECONDS );	
 		break;
 	}
@@ -1002,6 +1011,7 @@ void ScreenEvaluation::TweenOffScreen()
 			continue;
 		OFF_COMMAND( m_sprGradeFrame[p] );
 		OFF_COMMAND( m_Grades[p] );
+		OFF_COMMAND( m_sprGrade[p] );
 	}
 
 	if( SHOW_GRAPH_AREA )

@@ -14,8 +14,6 @@
 
 MeterDisplay::MeterDisplay()
 {
-	this->AddChild( &m_sprStream );
-	this->AddChild( &m_sprTip );
 }
 
 void MeterDisplay::Load( CString sStreamPath, float fStreamWidth, CString sTipPath )
@@ -27,6 +25,9 @@ void MeterDisplay::Load( CString sStreamPath, float fStreamWidth, CString sTipPa
 
 	m_sprTip.Load( sTipPath );
 
+	this->AddChild( &m_sprStream );
+	this->AddChild( m_sprTip );
+
 	SetPercent( 0.5f );
 }
 
@@ -36,5 +37,5 @@ void MeterDisplay::SetPercent( float fPercent )
 
 	m_sprStream.SetCropRight( 1-fPercent );
 
-	m_sprTip.SetX( SCALE(fPercent, 0.f, 1.f, -m_fStreamWidth/2, m_fStreamWidth/2) );
+	m_sprTip->SetX( SCALE(fPercent, 0.f, 1.f, -m_fStreamWidth/2, m_fStreamWidth/2) );
 }

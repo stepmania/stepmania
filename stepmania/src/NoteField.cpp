@@ -332,7 +332,9 @@ NoteField::NoteDisplayCols *NoteField::SearchForBeat( float Beat )
 {
 	NDMap::iterator it = m_BeatToNoteDisplays.lower_bound( Beat );
 	/* The first entry should always be lower than any Beat we might receive. */
-	RAGE_ASSERT_M( it != m_BeatToNoteDisplays.begin(), ssprintf("%f",Beat) );
+	// This assert is firing with Beat = -7408. -Chris
+	// Again with -4976.
+ 	RAGE_ASSERT_M( it != m_BeatToNoteDisplays.begin(), ssprintf("%f",Beat) );
 	--it;
 	RAGE_ASSERT_M( it != m_BeatToNoteDisplays.end(), ssprintf("%f",Beat) );
 

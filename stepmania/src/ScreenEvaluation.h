@@ -84,6 +84,7 @@ protected:
 	// grade area
 	Sprite				m_sprGradeFrame[NUM_PLAYERS];
 	GradeDisplay		m_Grades[NUM_PLAYERS];
+	AutoActor			m_sprGrade[NUM_PLAYERS];
 
 	// graph area
 	Sprite				m_sprGraphFrame[NUM_PLAYERS];

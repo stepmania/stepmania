@@ -36,13 +36,13 @@ bool EvaluateCondition( CString sCondition )
 
 	if( as.size()==3 && as[0].CompareNoCase("topgrade")==0 )
 	{
-		Grade top_grade = GRADE_E;
+		Grade top_grade = GRADE_FAILED;
 		vector<Song*> vSongs;
 		StageStats stats;
 		GAMESTATE->GetFinalEvalStatsAndSongs( stats, vSongs );
 		for( int p=0; p<NUM_PLAYERS; p++ )
 			if( GAMESTATE->IsHumanPlayer(p) )
-				top_grade = max( top_grade, stats.GetGrade((PlayerNumber)p) );
+				top_grade = min( top_grade, stats.GetGrade((PlayerNumber)p) );
 
 		CString &sOp = as[1];
 

@@ -115,11 +115,16 @@ PrefsManager::PrefsManager()
 	m_iGradeHitMineWeight = -8;
 	m_iGradeOKWeight = 6;
 	m_iGradeNGWeight = 0;
-	m_fGradePercentAA = 0.93f;
-	m_fGradePercentA = 0.80f;
-	m_fGradePercentB = 0.65f;
-	m_fGradePercentC = 0.45f;
-	m_fGradePercentD = 0;
+	m_bGradeTier1IsAllMarvelouses = true;
+	m_bGradeTier2IsAllPerfects = true;
+	for( int i=0; i<NUM_GRADE_TIERS; i++ )
+		m_fGradePercentTier[i] = 0;
+	m_fGradePercentTier[GRADE_TIER_1] = 1.0f;
+	m_fGradePercentTier[GRADE_TIER_2] = 1.0f;
+	m_fGradePercentTier[GRADE_TIER_3] = 0.93f;	// AA
+	m_fGradePercentTier[GRADE_TIER_4] = 0.80f;	// A
+	m_fGradePercentTier[GRADE_TIER_5] = 0.65f;	// B
+	m_fGradePercentTier[GRADE_TIER_6] = 0.45f;	// C
 	
 	m_fSuperMeterMarvelousPercentChange =	+0.05f;
 	m_fSuperMeterPerfectPercentChange =		+0.04f;
@@ -364,11 +369,12 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "GradeHitMineWeight",				m_iGradeHitMineWeight );
 	ini.GetValue( "Options", "GradeOKWeight",					m_iGradeOKWeight );
 	ini.GetValue( "Options", "GradeNGWeight",					m_iGradeNGWeight );
-	ini.GetValue( "Options", "GradePercentAA",					m_fGradePercentAA );
-	ini.GetValue( "Options", "GradePercentA",					m_fGradePercentA );
-	ini.GetValue( "Options", "GradePercentB",					m_fGradePercentB );
-	ini.GetValue( "Options", "GradePercentC",					m_fGradePercentC );
-	ini.GetValue( "Options", "GradePercentD",					m_fGradePercentD );
+	for( int g=0; g<NUM_GRADE_TIERS; g++ )
+	{
+		Grade grade = (Grade)g;
+		CString s = GradeToString( grade );
+		ini.GetValue( "Options", "GradePercentTier"+s,			m_fGradePercentTier[g] );
+	}
 
 	ini.GetValue( "Options", "SuperMeterMarvelousPercentChange",m_fSuperMeterMarvelousPercentChange );
 	ini.GetValue( "Options", "SuperMeterPerfectPercentChange",	m_fSuperMeterPerfectPercentChange );
@@ -569,11 +575,12 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "GradeHitMineWeight",				m_iGradeHitMineWeight );
 	ini.SetValue( "Options", "GradeOKWeight",					m_iGradeOKWeight );
 	ini.SetValue( "Options", "GradeNGWeight",					m_iGradeNGWeight );
-	ini.SetValue( "Options", "GradePercentAA",					m_fGradePercentAA );
-	ini.SetValue( "Options", "GradePercentA",					m_fGradePercentA );
-	ini.SetValue( "Options", "GradePercentB",					m_fGradePercentB );
-	ini.SetValue( "Options", "GradePercentC",					m_fGradePercentC );
-	ini.SetValue( "Options", "GradePercentD",					m_fGradePercentD );
+	for( int g=0; g<NUM_GRADE_TIERS; g++ )
+	{
+		Grade grade = (Grade)g;
+		CString s = GradeToString( grade );
+		ini.SetValue( "Options", "GradePercentTier"+s,			m_fGradePercentTier[g] );
+	}
 
 	ini.SetValue( "Options", "SuperMeterMarvelousPercentChange",m_fSuperMeterMarvelousPercentChange );
 	ini.SetValue( "Options", "SuperMeterPerfectPercentChange",	m_fSuperMeterPerfectPercentChange );

@@ -12,6 +12,7 @@
 -----------------------------------------------------------------------------
 */
 #include "PlayerNumber.h"
+#include "Grade.h"	// for NUM_GRADE_TIERS
 
 class PrefsManager
 {
@@ -111,11 +112,9 @@ public:
 	int				m_iGradeHitMineWeight;
 	int				m_iGradeOKWeight;
 	int				m_iGradeNGWeight;
-	float			m_fGradePercentAA;
-	float			m_fGradePercentA;
-	float			m_fGradePercentB;
-	float			m_fGradePercentC;
-	float			m_fGradePercentD;
+	bool			m_bGradeTier1IsAllMarvelouses;
+	bool			m_bGradeTier2IsAllPerfects;
+	float			m_fGradePercentTier[NUM_GRADE_TIERS];
 
 	float			m_fSuperMeterMarvelousPercentChange;
 	float			m_fSuperMeterPerfectPercentChange;

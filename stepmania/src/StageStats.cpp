@@ -140,7 +140,7 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 	ASSERT( GAMESTATE->IsPlayerEnabled(pn) );	// shouldn't be calling this is player isn't joined!
 
 	if( bFailedEarlier[pn] )
-		return GRADE_E;
+		return GRADE_FAILED;
 
 	/* XXX: This entire calculation should be in ScoreKeeper, but final evaluation
 	 * is tricky since at that point the ScoreKeepers no longer exist. 
@@ -184,7 +184,8 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 
 	/* check for "AAAA".  Check DP == 100%: if we're using eg. "LITTLE", we might have all
 	 * marvelouses but still not qualify for a AAAA. */
-	if( fPercentDancePoints > .9999 &&
+	if( PREFSMAN->m_bGradeTier1IsAllMarvelouses &&
+		fPercentDancePoints > .9999 &&
 		iTapNoteScores[pn][TNS_MARVELOUS] > 0 &&
 		iTapNoteScores[pn][TNS_PERFECT] == 0 &&
 		iTapNoteScores[pn][TNS_GREAT] == 0 &&
@@ -192,35 +193,33 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 		iTapNoteScores[pn][TNS_BOO] == 0 &&
 		iTapNoteScores[pn][TNS_MISS] == 0 &&
 		iHoldNoteScores[pn][HNS_NG] == 0 )
-		return GRADE_AAAA;
+		return GRADE_TIER_1;
 
-	if( fPercentDancePoints > .9999 &&
+	if( PREFSMAN->m_bGradeTier2IsAllPerfects &&
+		fPercentDancePoints > .9999 &&
 		iTapNoteScores[pn][TNS_PERFECT] > 0 &&
 		iTapNoteScores[pn][TNS_GREAT] == 0 &&
 		iTapNoteScores[pn][TNS_GOOD] == 0 &&
 		iTapNoteScores[pn][TNS_BOO] == 0 &&
 		iTapNoteScores[pn][TNS_MISS] == 0 &&
 		iHoldNoteScores[pn][HNS_NG] == 0 )
-		return GRADE_AAA;
+		return GRADE_TIER_2;
 
-	/* Based on the percentage of your total "Dance Points" to the maximum
-	 * possible number, the following rank is assigned: 
-	 *
-	 * 100% - AAA
-	 *  93% - AA
-	 *  80% - A
-	 *  65% - B
-	 *  45% - C
-	 * Less - D
-	 * Fail - E
-	 */
 
-		 if( fPercentDancePoints >= 0.93 )		return GRADE_AA;
-	else if( fPercentDancePoints >= 0.80 )		return GRADE_A;
-	else if( fPercentDancePoints >= 0.65 )		return GRADE_B;
-	else if( fPercentDancePoints >= 0.45 )		return GRADE_C;
-	else if( fPercentDancePoints >= 0    )		return GRADE_D;
-	else										return GRADE_E;
+	// Start checking at TIER_3 if m_bGradeTier2IsAllPerfects is true.
+	// Start checking at TIER_2 if m_bGradeTier1IsAllMarvelouses is true.
+	int g;
+	if( PREFSMAN->m_bGradeTier2IsAllPerfects )
+		g = 2;
+	else if( PREFSMAN->m_bGradeTier1IsAllMarvelouses )
+		g = 1;
+	else
+		g = 0;
+	for( ; g<NUM_GRADE_TIERS; g++ )
+		if( fPercentDancePoints >= PREFSMAN->m_fGradePercentTier[g] )
+			return (Grade)(GRADE_TIER_1+g);
+
+	return (Grade)(GRADE_TIER_1+NUM_GRADE_TIERS-1);
 }
 
 bool StageStats::OnePassed() const

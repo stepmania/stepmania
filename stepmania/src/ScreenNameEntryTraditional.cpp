@@ -82,7 +82,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				st.iActualDancePoints[i] = 985;
 
 				Steps::MemCardData::HighScore hs;
-				hs.grade = GRADE_A;
+				hs.grade = GRADE_TIER_3;
 				hs.iScore = 42;
 				int a, b;
 				GAMESTATE->m_pCurNotes[i]->AddHighScore( (PlayerNumber)i, hs, a, b );
@@ -388,19 +388,16 @@ void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			}
 
-			Grade max_grade = GRADE_E;
+			Grade max_grade = GRADE_FAILED;
 			vector<Song*> vSongs;
 			StageStats stats;
 			GAMESTATE->GetFinalEvalStatsAndSongs( stats, vSongs );
 
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsHumanPlayer(p) )
-					max_grade = max( max_grade, stats.GetGrade((PlayerNumber)p) );
-		//	if( max_grade >= GRADE_AA )
-		//		SCREENMAN->SetNewScreen( "ScreenCredits" );
-		//	else
-			//	SCREENMAN->SetNewScreen( "ScreenMusicScroll" );
-				SCREENMAN->SetNewScreen( NEXT_SCREEN );
+					max_grade = min( max_grade, stats.GetGrade((PlayerNumber)p) );
+
+			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		}
 		break;
 	}

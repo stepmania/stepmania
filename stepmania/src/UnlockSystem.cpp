@@ -425,13 +425,25 @@ float UnlockSystem::UnlockAddAP(float credit)
 	return ArcadePoints;
 }
 
-float UnlockSystem::UnlockAddAP(Grade credit)
+float UnlockSystem::UnlockAddAP(Grade grade)
 {
 	ReadValues( MEMCARD_PATH );
-	if (credit != GRADE_E && credit != GRADE_D)
-	ArcadePoints += 1;
-	if (credit == GRADE_AAA)
+	switch( grade )
+	{
+	case GRADE_FAILED:
+		;	// no points
+		break;
+	case GRADE_TIER_1:
+	case GRADE_TIER_2:
 		ArcadePoints += 9;
+		break;
+	case GRADE_NO_DATA:
+		ASSERT(0);
+		break;
+	default:
+		ArcadePoints += 1;
+		break;
+	}
 	WriteValues( MEMCARD_PATH );
 
 	return ArcadePoints;
@@ -457,12 +469,22 @@ float UnlockSystem::UnlockAddSP(float credit)
 	return SongPoints;
 }
 
-float UnlockSystem::UnlockAddSP(Grade credit)
+float UnlockSystem::UnlockAddSP( Grade grade )
 {
 	ReadValues( MEMCARD_PATH );
-	const float SongPointsVals[NUM_GRADES] = { -1 /* unused */, 0, 1, 2, 3, 4, 5, 10, 20 };
 
-	SongPoints += SongPointsVals[credit];
+	// TODO: move these to PREFS
+	switch( grade )
+	{
+	case GRADE_TIER_1:/*AAAA*/	SongPoints += 20;	break;
+	case GRADE_TIER_2:/*AAA*/	SongPoints += 10;	break;
+	case GRADE_TIER_3:/*AA*/	SongPoints += 5;	break;
+	case GRADE_TIER_4:/*A*/		SongPoints += 4;	break;
+	case GRADE_TIER_5:/*B*/		SongPoints += 3;	break;
+	case GRADE_TIER_6:/*C*/		SongPoints += 2;	break;
+	case GRADE_TIER_7:/*D*/		SongPoints += 1;	break;
+	}
+
 	WriteValues( MEMCARD_PATH );
 
 	return SongPoints;

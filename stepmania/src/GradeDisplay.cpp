@@ -96,17 +96,15 @@ int GradeDisplay::GetFrameNo( PlayerNumber pn, Grade g )
 	int iFrame;
 	switch( g )
 	{
-	case GRADE_AAAA:	iFrame = 0;	break;
-	case GRADE_AAA:		iFrame = 1;	break;
-	case GRADE_AA:		iFrame = 2;	break;
-	case GRADE_A:		iFrame = 3;	break;
-	case GRADE_B:		iFrame = 4;	break;
-	case GRADE_C:		iFrame = 5;	break;
-	case GRADE_D:		iFrame = 6;	break;
-	case GRADE_E:		iFrame = 7;	break;
-	default:
-		ASSERT(0);
-	case GRADE_NO_DATA:	iFrame = 0;	break;
+	case GRADE_TIER_1:	iFrame = 0;	break;
+	case GRADE_TIER_2:	iFrame = 1;	break;
+	case GRADE_TIER_3:	iFrame = 2;	break;
+	case GRADE_TIER_4:	iFrame = 3;	break;
+	case GRADE_TIER_5:	iFrame = 4;	break;
+	case GRADE_TIER_6:	iFrame = 5;	break;
+	case GRADE_TIER_7:	iFrame = 6;	break;
+	case GRADE_FAILED:	iFrame = 7;	break;
+	default:			iFrame = 7;	break;
 	}
 	iFrame *= iNumCols;
 	if( iNumCols==2 )
