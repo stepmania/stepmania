@@ -50,7 +50,7 @@ inline CString LastPathComponent(const CString& path)
 
     if (pos == path.npos)
         pos = 0;
-    return path.substr(pos);
+    return path.substr(pos+1);
 }
 
 void FileListingForDirectoryWithIgnore(const CString& path, CStringArray& list, CStringArray& dirs,

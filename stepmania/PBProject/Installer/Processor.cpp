@@ -169,16 +169,16 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         return;
     }
 
+#pragma mark IGNORE
+    if (parts[0] == "IGNORE")
+    {
+        if (parts.size() != 2)
+            goto error;
+        mIgnore.insert(ResolveVar(parts[1]));
+    }    
+    
     if (!mInstalling)
     {
-#pragma mark IGNORE
-        if (parts[0] == "IGNORE")
-        {
-            if (parts.size() != 2)
-                goto error;
-            mIgnore.insert(ResolveVar(parts[1]));
-        }
-        
         ++nextLine;
         return;
     }
