@@ -141,12 +141,15 @@ void Sprite::UnloadTexture()
 
 bool Sprite::LoadFromTexture( RageTextureID ID )
 {
-	if( m_pTexture  &&  m_pTexture->GetID()==ID )		// don't do anything if this texture is already loaded
-		return true;
+	if( !m_pTexture || !(m_pTexture->GetID() == ID) )
+	{
+		/* Load the texture if it's not already loaded.  We still need
+		 * to do the rest, even if it's the same texture, since we need
+		 * to reset Sprite::m_size, etc. */
+		UnloadTexture();
+		m_pTexture = TEXTUREMAN->LoadTexture( ID );
+	}
 
-	UnloadTexture();
-
-	m_pTexture = TEXTUREMAN->LoadTexture( ID );
 	ASSERT( m_pTexture != NULL );
 
 	// the size of the sprite is the size of the image before it was scaled
