@@ -123,13 +123,14 @@ float Steps::PredictMeter() const
 	
 	const float DifficultyCoeffs[NUM_DIFFICULTIES] =
 	{	-0.877f, -0.877f, 0, 0.722f, 0.722f	};
-	pMeter += DifficultyCoeffs[this->GetDifficulty()]
+	pMeter += DifficultyCoeffs[this->GetDifficulty()];
 	
 	// Init non-radar values
 	const float SV = this->GetRadarValues()[RADAR_STREAM] * this->GetRadarValues()[RADAR_VOLTAGE];
 	const float ChaosSquare = this->GetRadarValues()[RADAR_CHAOS] * this->GetRadarValues()[RADAR_CHAOS];
-	pMeter += SXV * SV;
-	pMeter += CSQUARE * ChaosSquare;
+	pMeter += -6.35f * SV;
+	pMeter += -2.58f * ChaosSquare;
+	if (pMeter > 1) pMeter = 1;	
 	return pMeter;
 }
 
@@ -149,6 +150,9 @@ void Steps::TidyUpData()
 
 	if( GetMeter() < 1) // meter is invalid
 	{
+		// Why not just use PredictMeter()
+		SetMeter(PredictMeter());
+		/*
 		// guess meter from difficulty class
 		switch( GetDifficulty() )
 		{
@@ -159,7 +163,7 @@ void Steps::TidyUpData()
 		case DIFFICULTY_CHALLENGE:	SetMeter(8);	break;
 		case DIFFICULTY_INVALID:	SetMeter(5);	break;
 		default:	ASSERT(0);
-		}
+		}*/
 	}
 
 	if( m_sDescription.empty() )
