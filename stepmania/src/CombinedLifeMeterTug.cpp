@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
  File: CombinedLifeMeterTug.h
 
- Desc: The song's CombinedLifeMeterTug displayed in SelectSong.
+ Desc: Dance Magic-like tug-o-war life meter.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
@@ -15,7 +15,7 @@
 #include "PrefsManager.h"
 
 
-const float METER_WIDTH = 550;
+CachedThemeMetricF METER_WIDTH		("CombinedLifeMeterTug","MeterWidth");
 
 const float FACE_X[NUM_PLAYERS] = { -300, +300 };
 const float FACE_Y[NUM_PLAYERS] = { 0, 0 };
@@ -23,6 +23,8 @@ const float FACE_Y[NUM_PLAYERS] = { 0, 0 };
 
 CombinedLifeMeterTug::CombinedLifeMeterTug() 
 {
+	METER_WIDTH.Refresh();
+
 	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
