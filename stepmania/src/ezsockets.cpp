@@ -60,7 +60,15 @@ bool EzSockets::create(int Protocol) {
 	case IPPROTO_UDP:
 	  return create(IPPROTO_UDP, SOCK_DGRAM);
 	default:
+		//XBOX does not support the raw socket.
+		//So, since there's no need, we aren't
+		//going to allow it on XBOX
+#if defined(_XBOX)
+	  return false;
+#else
 	  return create(Protocol, SOCK_RAW);
+#endif
+
   }
 }
 
