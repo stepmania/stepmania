@@ -259,6 +259,7 @@ void LowLevelWindow_SDL::Update(float fDeltaTime)
 
 			{
 				uint8_t i = SDL_GetAppState();
+				LOG->Trace( "SDL_GetAppState: %i", i );
 				FocusChanged( i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE );
 			}
 			break;
