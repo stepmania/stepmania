@@ -556,7 +556,7 @@ void Song::TidyUpData()
 				m_sBackgroundFile = arrayImages[i];
 				continue;
 			}
-			if( !HasBanner()  &&  100<width  &&  width<320  &&  50<height  &&  height<240 )
+			if( !HasBanner()  &&  100<=width  &&  width<=320  &&  50<=height  &&  height<=240 )
 			{
 				m_sBannerFile = arrayImages[i];
 				continue;
