@@ -76,7 +76,7 @@ HRESULT		InvalidateObjects();		// invalidate game objects before a display mode 
 HRESULT		RestoreObjects();			// restore game objects after a display mode change
 VOID		DestroyObjects();			// deallocate game objects when we're done with them
 
-BOOL SwitchDisplayMode( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD dwBPP );
+BOOL SwitchDisplayMode();// BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD dwBPP );
 
 BOOL WeAreAlone( LPSTR szName );
 
@@ -181,7 +181,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			Update();
 			Render();
 			//if( !g_bFullscreen )
-			::Sleep(4 );	// give some time for the movie decoding thread
+			::Sleep(0 );	// give some time for the movie decoding thread
 		}
 	}	// end  while( WM_QUIT != msg.message  )
 
@@ -259,10 +259,30 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 
 
 		case WM_COMMAND:
+		{
+			GameOptions &go = GAMEINFO->m_GameOptions;
             switch( LOWORD(wParam) )
             {
+
 				case IDM_TOGGLEFULLSCREEN:
-					SwitchDisplayMode( !SCREEN->IsWindowed(), SCREEN_WIDTH, SCREEN_HEIGHT, 16 );
+					go.m_bWindowed = !go.m_bWindowed;
+					SwitchDisplayMode();// !SCREEN->IsWindowed(), SCREEN_WIDTH, SCREEN_HEIGHT, 16 );
+					return 0;
+				case IDM_CHANGERESOLUTION:
+					go.m_iResolution = (go.m_iResolution==640) ? 320 : 640;
+					SwitchDisplayMode();
+					return 0;
+				case IDM_CHANGEDISPLAYCOLOR:
+					go.m_iDisplayColor = (go.m_iDisplayColor==16) ? 32 : 16;
+					SwitchDisplayMode();
+					return 0;
+				case IDM_CHANGETEXTURECOLOR:
+					go.m_iTextureColor = (go.m_iTextureColor==16) ? 32 : 16;
+					SwitchDisplayMode();
+					return 0;
+				case IDM_TOGGLESTATISTICS:
+					go.m_bShowFPS = !go.m_bShowFPS;
+					SwitchDisplayMode();
 					return 0;
                 case IDM_EXIT:
                     // Recieved key/menu command to exit app
@@ -270,7 +290,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
                     return 0;
             }
             break;
-
+		}
         case WM_NCHITTEST:
             // Prevent the user from selecting the menu in fullscreen mode
             if( !SCREEN->IsWindowed() )
@@ -342,13 +362,12 @@ HRESULT CreateObjects( HWND hWnd )
 	SetForegroundWindow( hWnd );
 
 	// switch the screen resolution according to user's prefs
-	GameOptions &go = GAMEINFO->m_GameOptions;
-	SwitchDisplayMode( 
-		go.m_bWindowed, 
-		go.m_iResolution,
-		go.m_iResolution==640 ? 480 : 240,
-		go.m_iDisplayColor
-	);
+	SwitchDisplayMode(); 
+//		go.m_bWindowed, 
+//		go.m_iResolution,
+//		go.m_iResolution==640 ? 480 : 240,
+//		go.m_iDisplayColor
+//	);
 
 	TM		= new RageTextureManager( SCREEN );
 	THEME	= new ThemeManager;
@@ -356,12 +375,12 @@ HRESULT CreateObjects( HWND hWnd )
 
 	
 	// Ugly...  Switch the screen resolution again so that the system message will display
-	SwitchDisplayMode( 
-		go.m_bWindowed, 
-		go.m_iResolution,
-		go.m_iResolution==640 ? 480 : 240,
-		go.m_iDisplayColor
-	);
+	SwitchDisplayMode(); 
+//		go.m_bWindowed, 
+//		go.m_iResolution,
+//		go.m_iResolution==640 ? 480 : 240,
+//		go.m_iDisplayColor
+//	);
 
 	WM->SystemMessage( ssprintf("Found %d songs.", GAMEINFO->m_pSongs.GetSize()) );
 
@@ -566,9 +585,18 @@ void ShowFrame()
 // Name: SwitchDisplayMode()
 // Desc:
 //-----------------------------------------------------------------------------
-BOOL SwitchDisplayMode( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD dwBPP )
+BOOL SwitchDisplayMode()//( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD dwBPP )
 {
 	InvalidateObjects();
+
+
+	// use GameOptions to get the display settings
+	GameOptions &go = GAMEINFO->m_GameOptions;
+	bool bWindowed	=	go.m_bWindowed;
+	DWORD dwWidth	=	go.m_iResolution;
+	DWORD dwHeight	=	go.m_iResolution==640 ? 480 : 240;
+	DWORD dwBPP		=	go.m_iDisplayColor;
+
 
 	// If the requested resolution doesn't work, keep switching until we find one that does.
 

@@ -13,20 +13,16 @@
 
 #include "Banner.h"
 #include "ThemeManager.h"
-
+#include "RageBitmapTexture.h"
 
 
 
 bool Banner::LoadFromSong( Song* pSong )		// NULL means no song
 {
-	if( pSong == NULL )
-		Sprite::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
-	else if( pSong->HasBanner() )
-		Sprite::Load( pSong->GetBannerPath() );
-	else if( pSong->HasBackground() )
-		Sprite::Load( pSong->GetBackgroundPath() );
-	else
-		Sprite::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
+	if( pSong == NULL )					Sprite::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER), HINT_NOMIPMAPS );
+	else if( pSong->HasBanner() )		Sprite::Load( pSong->GetBannerPath(), HINT_NOMIPMAPS );
+	else if( pSong->HasBackground() )	Sprite::Load( pSong->GetBackgroundPath(), HINT_NOMIPMAPS );
+	else								Sprite::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER), HINT_NOMIPMAPS );
 
 	Sprite::TurnShadowOff();
 

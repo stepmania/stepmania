@@ -51,7 +51,7 @@ RageTextureManager::~RageTextureManager()
 //-----------------------------------------------------------------------------
 // Load/Unload textures from disk
 //-----------------------------------------------------------------------------
-LPRageTexture RageTextureManager::LoadTexture( CString sTexturePath )
+LPRageTexture RageTextureManager::LoadTexture( CString sTexturePath, DWORD dwHints, bool bForceReload )
 {
 //	RageLog( "RageTextureManager::LoadTexture(%s).", sTexturePath );
 
@@ -77,7 +77,7 @@ LPRageTexture RageTextureManager::LoadTexture( CString sTexturePath )
 		if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
 			pTexture = (LPRageTexture) new RageMovieTexture( m_pScreen, sTexturePath );
 		else
-			pTexture = (LPRageTexture) new RageBitmapTexture( m_pScreen, sTexturePath );
+			pTexture = (LPRageTexture) new RageBitmapTexture( m_pScreen, sTexturePath, dwHints );
 
 
 		RageLog( "RageTextureManager: allocating space for '%s' (%ux%u).", sTexturePath, pTexture->GetTextureWidth(), pTexture->GetTextureHeight() );

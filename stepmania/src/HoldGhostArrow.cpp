@@ -44,6 +44,14 @@ void HoldGhostArrow::Update( float fDeltaTime )
 
 	int iStateNum = min( m_fHeatLevel * GetNumStates(), GetNumStates()-1 );
 	SetState( iStateNum );
+
+	if( m_fHeatLevel == 1 )
+	{
+		bool bZooomALittle = (GetTickCount() % 50) > 25;
+		SetZoom( bZooomALittle ? 1.04f : 1.0f );
+	}
+	else
+		SetZoom( 1 );
 	
 	SetDiffuseColor( D3DXCOLOR(1,1,1,m_fHeatLevel*3) );
 

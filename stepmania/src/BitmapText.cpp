@@ -258,31 +258,33 @@ void BitmapText::RebuildVertexBuffer()
 			if( fPercentExtra > 1-fPercentageOfFrame )
 				fPercentExtra = 1-fPercentageOfFrame;
 
-
-			// set vertex positions
-
-			v[m_iNumV++].p = D3DXVECTOR3( fX,	fY+fHeight/2,	0 );	// bottom left
-			v[m_iNumV++].p = D3DXVECTOR3( fX,	fY-fHeight/2,	0 );	// top left
-			
-			fX += fCharWidth;
-
 			float fExtraPixels = fPercentExtra * GetUnzoomedWidth();
 
-			v[m_iNumV++].p = D3DXVECTOR3( fX+fExtraPixels,	fY+fHeight/2,	0 );	// bottom right
+			// first triangle
+			v[m_iNumV++].p = D3DXVECTOR3( fX,	fY-fHeight/2,	0 );				// top left
+			v[m_iNumV++].p = D3DXVECTOR3( fX,	fY+fHeight/2,	0 );				// bottom left
+			fX += fCharWidth;
 			v[m_iNumV++].p = D3DXVECTOR3( fX+fExtraPixels,	fY-fHeight/2,	0 );	// top right
+			
+			// 2nd triangle
+			v[m_iNumV++].p = v[m_iNumV-1].p;										// top right
+			v[m_iNumV++].p = v[m_iNumV-3].p;										// bottom left
+			v[m_iNumV++].p = D3DXVECTOR3( fX+fExtraPixels,	fY+fHeight/2,	0 );	// bottom right
 
 
 			// set texture coordinates
-			m_iNumV -= 4;
+			m_iNumV -= 6;
 
 			FRECT* pTexCoordRect = m_pTexture->GetTextureCoordRect( iFrameNo );
 
 			float fExtraTexCoords = fPercentExtra * m_pTexture->GetTextureFrameWidth() / m_pTexture->GetTextureWidth();
 
-			v[m_iNumV].tu = pTexCoordRect->left;					v[m_iNumV++].tv = pTexCoordRect->bottom;	// bottom left
 			v[m_iNumV].tu = pTexCoordRect->left;					v[m_iNumV++].tv = pTexCoordRect->top;		// top left
-			v[m_iNumV].tu = pTexCoordRect->right + fExtraTexCoords;	v[m_iNumV++].tv = pTexCoordRect->bottom;	// bottom right
+			v[m_iNumV].tu = pTexCoordRect->left;					v[m_iNumV++].tv = pTexCoordRect->bottom;	// bottom left
 			v[m_iNumV].tu = pTexCoordRect->right + fExtraTexCoords;	v[m_iNumV++].tv = pTexCoordRect->top;		// top right
+			v[m_iNumV].tu = v[m_iNumV-1].tu;						v[m_iNumV++].tv = v[m_iNumV-1].tv;			// top right
+			v[m_iNumV].tu = v[m_iNumV-3].tu;						v[m_iNumV++].tv = v[m_iNumV-3].tv;			// bottom left
+			v[m_iNumV].tu = pTexCoordRect->right + fExtraTexCoords;	v[m_iNumV++].tv = pTexCoordRect->bottom;	// bottom right
 
 
 		}
@@ -352,7 +354,7 @@ void BitmapText::RenderPrimitives()
 
 
 
-//	RebuildVertexBuffer();
+	RebuildVertexBuffer();
 
 
 	LPDIRECT3DVERTEXBUFFER8 pVB = m_pVB;
@@ -399,8 +401,7 @@ void BitmapText::RenderPrimitives()
 			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
 			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 			
-			for( i=0; i<m_iNumV; i+=4 )
-				pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, i, 2 );
+			pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, m_iNumV/3 );
 
 			SCREEN->PopMatrix();
 		}
@@ -430,9 +431,7 @@ void BitmapText::RenderPrimitives()
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );//bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
 
-
-		for( i=0; i<m_iNumV; i+=4 )
-			pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, i, 2 );
+		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, m_iNumV/3 );
 	}
 
 
@@ -455,8 +454,7 @@ void BitmapText::RenderPrimitives()
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 		
-		for( i=0; i<m_iNumV; i+=4 )
-			pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, i, 2 );
+		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, m_iNumV/3 );
 	}
 
 }

@@ -81,8 +81,8 @@ protected:
 	// color arrows
 	void SetColorArrowsX( int iX );
 	void UpdateColorArrows( float fDeltaTime );
-	float GetColorArrowYPos( int iStepIndex, float fSongBeat );
-	float GetColorArrowYOffset( int iStepIndex, float fSongBeat );
+	float GetColorArrowYPos( float fStepIndex, float fSongBeat );
+	float GetColorArrowYOffset( float fStepIndex, float fSongBeat );
 	float GetColorArrowAlphaFromYOffset( float fYOffset );
 	void DrawColorArrows();
 	int			m_iColorArrowFrameOffset[MAX_STEP_ELEMENTS];

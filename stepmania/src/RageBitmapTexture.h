@@ -25,19 +25,23 @@ typedef RageBitmapTexture* LPRageBitmapTexture;
 //#include <d3d8types.h>
 
 
+const DWORD HINT_NOMIPMAPS	=	1 << 0;
+const DWORD HINT_DITHER		=	1 << 1;
+
+
 //-----------------------------------------------------------------------------
 // RageBitmapTexture Class Declarations
 //-----------------------------------------------------------------------------
 class RageBitmapTexture : public RageTexture
 {
 public:
-	RageBitmapTexture( LPRageScreen pScreen, CString sFilePath );
+	RageBitmapTexture( LPRageScreen pScreen, CString sFilePath, DWORD dwHints = 0 );
 	~RageBitmapTexture();
 
 	virtual LPDIRECT3DTEXTURE8 GetD3DTexture();
 
 protected:
-	virtual VOID Create();
+	virtual VOID Create( DWORD dwHints );
 
 	LPDIRECT3DTEXTURE8  m_pd3dTexture;
 };

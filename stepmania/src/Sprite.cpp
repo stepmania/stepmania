@@ -58,12 +58,12 @@ Sprite::~Sprite()
 }
 
 
-bool Sprite::LoadFromTexture( CString sTexturePath )
+bool Sprite::LoadFromTexture( CString sTexturePath, DWORD dwHints, bool bForceReload )
 {
 	RageLog( ssprintf("Sprite::LoadFromTexture(%s)", sTexturePath) );
 
 	//Init();
-	return LoadTexture( sTexturePath );
+	return LoadTexture( sTexturePath, dwHints, bForceReload );
 }
 
 // Sprite file has the format:
@@ -74,7 +74,7 @@ bool Sprite::LoadFromTexture( CString sTexturePath )
 // Delay0000=1.0
 // Frame0001=3
 // Delay0000=2.0
-bool Sprite::LoadFromSpriteFile( CString sSpritePath )
+bool Sprite::LoadFromSpriteFile( CString sSpritePath, DWORD dwHints, bool bForceReload )
 {
 	RageLog( ssprintf("Sprite::LoadFromSpriteFile(%s)", sSpritePath) );
 
@@ -141,7 +141,7 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath )
 	return true;
 }
 
-bool Sprite::LoadTexture( CString sTexturePath )
+bool Sprite::LoadTexture( CString sTexturePath, DWORD dwHints, bool bForceReload )
 {
 	if( m_sTexturePath != "" )			// If there was a previous bitmap...
 		TM->UnloadTexture( m_sTexturePath );	// Unload it.
@@ -149,7 +149,7 @@ bool Sprite::LoadTexture( CString sTexturePath )
 
 	m_sTexturePath = sTexturePath;
 
-	m_pTexture = TM->LoadTexture( m_sTexturePath );
+	m_pTexture = TM->LoadTexture( m_sTexturePath, dwHints, bForceReload );
 	assert( m_pTexture != NULL );
 
 	// the size of the sprite is the size of the image before it was scaled

@@ -31,14 +31,14 @@
 //-----------------------------------------------------------------------------
 // RageBitmapTexture constructor
 //-----------------------------------------------------------------------------
-RageBitmapTexture::RageBitmapTexture( LPRageScreen pScreen, CString sFilePath ) :
+RageBitmapTexture::RageBitmapTexture( LPRageScreen pScreen, CString sFilePath, DWORD dwHints ) :
 	RageTexture( pScreen, sFilePath )
 {
 //	RageLog( "RageBitmapTexture::RageBitmapTexture()" );
 
 	m_pd3dTexture = NULL;
 
-	Create();
+	Create( dwHints );
 	
 	CreateFrameRects();
 }
@@ -58,7 +58,7 @@ LPDIRECT3DTEXTURE8 RageBitmapTexture::GetD3DTexture()
 }
 
 
-void RageBitmapTexture::Create()
+void RageBitmapTexture::Create( DWORD dwHints )
 {
 	HRESULT hr;
 
@@ -84,7 +84,11 @@ void RageBitmapTexture::Create()
 
 
 	// look in the file name for a dither hint
-	bool bDither = false;//-1 == m_sFilePath.Find("no dither");
+	bool bDither = (dwHints & HINT_DITHER)  
+	           ||  -1 != m_sFilePath.Find("dither");
+
+
+	bool bCreateMipMaps = !(dwHints & HINT_NOMIPMAPS);
 
 	
 	// if the user has requested high color textures, use the higher color
@@ -120,7 +124,7 @@ void RageBitmapTexture::Create()
 		m_pd3dDevice,				// device
 		m_sFilePath,				// soure file
 		D3DX_DEFAULT, D3DX_DEFAULT,	// width, height 
-		4,							// mip map levels
+		bCreateMipMaps ? 4 : 0,		// mip map levels
 		0,							// usage (is a render target?)
 		fmtTexture,					// our preferred texture format
 		D3DPOOL_MANAGED,			// which memory pool

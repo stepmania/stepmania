@@ -60,6 +60,7 @@ const float PILL_OFFSET_Y[LIEFMETER_NUM_PILLS] = {
 
 const float SCORE_Y					= SCREEN_HEIGHT - 40;
 
+const float HOLD_ARROW_NG_TIME	=	0.27f;
 
 Player::Player()
 {
@@ -470,6 +471,8 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 	for( int i=0; i<m_HoldSteps.GetSize(); i++ )
 	{
 		HoldStep &hs = m_HoldSteps[i];
+		HoldStepScore &hss = m_HoldStepScores[i];
+
 		float fStartBeat = StepIndexToBeat( hs.m_iStartIndex );
 		float fEndBeat = StepIndexToBeat( hs.m_iEndIndex );
 
@@ -480,6 +483,7 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 			PlayerInput PlayerI = { m_PlayerNumber, hs.m_Step };
 			if( GAMEINFO->IsButtonDown( PlayerI ) )		// they're holding the button down
 			{
+				hss.m_fTimeNotHeld = clamp( hss.m_fTimeNotHeld-fDeltaTime, 0, HOLD_ARROW_NG_TIME );
 				int iCol = m_StepToColumnNumber[ hs.m_Step ];
 				m_HoldGhostArrow[iCol].Step();
 			}
@@ -492,9 +496,14 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 			PlayerInput PlayerI = { m_PlayerNumber, hs.m_Step };
 			if( !GAMEINFO->IsButtonDown( PlayerI ) )		// they're not holding the button down
 			{
-				m_HoldStepScores[i].m_HoldScore = HoldStepScore::HOLD_SCORE_NG;
-				int iCol = m_StepToColumnNumber[ hs.m_Step ];
-				SetHoldJudgement( iCol, HoldStepScore::HOLD_SCORE_NG );
+				hss.m_fTimeNotHeld = clamp( hss.m_fTimeNotHeld+fDeltaTime, 0, HOLD_ARROW_NG_TIME );
+				if( hss.m_fTimeNotHeld >= HOLD_ARROW_NG_TIME )	// the player has not pressed the button for a long time!
+				{
+					hss.m_fTimeNotHeld = HOLD_ARROW_NG_TIME;
+					hss.m_HoldScore = HoldStepScore::HOLD_SCORE_NG;
+					int iCol = m_StepToColumnNumber[ hs.m_Step ];
+					SetHoldJudgement( iCol, HoldStepScore::HOLD_SCORE_NG );
+				}
 			}
 		}
 	}
@@ -503,11 +512,13 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 	for( i=0; i<m_HoldSteps.GetSize(); i++ )
 	{
 		HoldStep &hs = m_HoldSteps[i];
+		HoldStepScore &hss = m_HoldStepScores[i];
 		float fEndBeat = StepIndexToBeat( hs.m_iEndIndex );
 
 		if(  m_fSongBeat > fEndBeat  &&					// if this hold step is in the past
 			m_HoldStepScores[i].m_HoldScore == HoldStepScore::HOLD_STEPPED_ON )	// and it doesn't yet have a score
 		{
+			hss.m_fTimeNotHeld = 0;
 			m_HoldStepScores[i].m_HoldScore = HoldStepScore::HOLD_SCORE_OK;
 			int iCol = m_StepToColumnNumber[ hs.m_Step ];
 			SetHoldJudgement( iCol, HoldStepScore::HOLD_SCORE_OK );
@@ -913,6 +924,7 @@ void Player::DrawColorArrows()
 
 	//RageLog( "Drawing elements %d through %d", iIndexFirstArrowToDraw, iIndexLastArrowToDraw );
 
+	// draw all normal arrows
 	for( int i=iIndexFirstArrowToDraw; i<=iIndexLastArrowToDraw; i++ )	//	 for each row
 	{				
 		if( m_LeftToStepOn[i] != 0  || 	// this step is not yet complete 
@@ -929,10 +941,30 @@ void Player::DrawColorArrows()
 
 			//RageLog( "iYPos: %d, iFrameNo: %d, m_OriginalStep[i]: %d", iYPos, iFrameNo, m_OriginalStep[i] );
 
-			for( int c=0; c < m_iNumColumns; c++ ) {	// for each arrow column
-				if( m_OriginalStep[i] & m_ColumnNumberToStep[c] ) {	// this column is still unstepped on?
+			// See if there is a hold step that begins on this beat.  Terribly inefficient!
+			bool bHoldStepOnThisBeat = false;
+			for (int j=0; j<m_HoldSteps.GetSize(); j++ )
+			{
+				if( m_HoldSteps[j].m_iStartIndex == i )
+				{
+					bHoldStepOnThisBeat = true;
+					break;
+				}
+			}
+
+
+			for( int c=0; c<m_iNumColumns; c++ )	// for each arrow column
+			{
+				if( m_OriginalStep[i] & m_ColumnNumberToStep[c] ) 	// this column is still unstepped on?
+				{
 					m_ColorArrow[c].SetY( fYPos );
-					m_ColorArrow[c].SetIndexAndBeat( i, m_fSongBeat );
+				
+					if( bHoldStepOnThisBeat )
+						m_ColorArrow[c].SetDiffuseColor( D3DXCOLOR(0,1,0,1) );
+					else
+						m_ColorArrow[c].SetColorPartFromIndexAndBeat( i, m_fSongBeat );
+
+					m_ColorArrow[c].SetGrayPartFromIndexAndBeat( i, m_fSongBeat );
 					m_ColorArrow[c].SetAlpha( fAlpha );
 					m_ColorArrow[c].Draw();
 				}
@@ -955,11 +987,11 @@ void Player::DrawColorArrows()
 			continue;
 		}
 
-		HoldStepScore::HoldScore &score = m_HoldStepScores[i].m_HoldScore;
+		HoldStepScore &hss = m_HoldStepScores[i];
 
 		int iColNum = m_StepToColumnNumber[ hs.m_Step ];
 
-		switch( score )
+		switch( hss.m_HoldScore )
 		{
 		case HoldStepScore::HOLD_SCORE_OK:
 			continue;	// don't draw
@@ -973,9 +1005,9 @@ void Player::DrawColorArrows()
 		}
 
 		// draw the gray parts
-		for( int j=hs.m_iEndIndex; j>=hs.m_iStartIndex; j-- )	// for each arrow in this freeze
+		for( float j=hs.m_iStartIndex; j<=hs.m_iEndIndex; j+=1.5f )	// for each arrow in this freeze
 		{
-			// check if this hold step is off the the screen
+			// check if this arrow is off the the screen
 			if( j < iIndexFirstArrowToDraw || iIndexLastArrowToDraw < j)
 				continue;	// skip this arrow
 
@@ -983,7 +1015,7 @@ void Player::DrawColorArrows()
 			float fYOffset = GetColorArrowYOffset( j, m_fSongBeat );
 
 			float fYPos = GetColorArrowYPos( j, m_fSongBeat );
-			if( score == HoldStepScore::HOLD_STEPPED_ON  ||  score == HoldStepScore::HOLD_SCORE_OK )
+			if( hss.m_HoldScore == HoldStepScore::HOLD_STEPPED_ON  ||  hss.m_HoldScore == HoldStepScore::HOLD_SCORE_OK )
 			{
 				if( fYPos < GetGrayArrowYPos() )
 					continue;		// don't draw
@@ -996,17 +1028,17 @@ void Player::DrawColorArrows()
 		}
 
 		// draw the color parts
-		for( j=hs.m_iEndIndex; j>=hs.m_iStartIndex; j-- )	// for each arrow in this freeze
+		for( j=hs.m_iStartIndex; j<=hs.m_iEndIndex; j+=1.5f )	// for each arrow in this freeze
 		{
-			// check if this hold step is off the the screen
-			if( j < iIndexFirstArrowToDraw || iIndexLastArrowToDraw < j)
+			// check if this arrow is off the the screen
+			if( j < iIndexFirstArrowToDraw || iIndexLastArrowToDraw < j )
 				continue;	// skip this arrow
 
 			float fYOffset = GetColorArrowYOffset( j, m_fSongBeat );
 	
 			float fYPos = GetColorArrowYPos( j, m_fSongBeat );
 			m_ColorArrow[iColNum].SetY( fYPos );
-			if( score == HoldStepScore::HOLD_STEPPED_ON  ||  score == HoldStepScore::HOLD_SCORE_OK )
+			if( hss.m_HoldScore == HoldStepScore::HOLD_STEPPED_ON  ||  hss.m_HoldScore == HoldStepScore::HOLD_SCORE_OK )
 			{
 				if( fYPos < GetGrayArrowYPos() )
 					continue;		// don't draw
@@ -1014,27 +1046,53 @@ void Player::DrawColorArrows()
 			if( m_PlayerOptions.m_bReverseScroll )	fYPos = SCREEN_HEIGHT - fYPos;
 			m_ColorArrow[iColNum].SetY( fYPos );
 			D3DXCOLOR color( (float)(j-hs.m_iStartIndex)/(float)(hs.m_iEndIndex-hs.m_iStartIndex), 1, 0, 1 );	// color shifts from green to yellow
+			float fPercentageDead = hss.m_fTimeNotHeld / HOLD_ARROW_NG_TIME;
+			color *= 1 - fPercentageDead / 1.2f;
+			color.a = 1;
 			m_ColorArrow[iColNum].SetDiffuseColor( color );	
 			float fAlpha = GetColorArrowAlphaFromYOffset( fYOffset );
 			m_ColorArrow[iColNum].SetAlpha( fAlpha );
 			m_ColorArrow[iColNum].DrawColorPart();
 		}
 
+		
 		// draw the first arrow on top of the others
 		j = hs.m_iStartIndex;
 
+		// check if this arrow is off the the screen
+		if( j < iIndexFirstArrowToDraw || iIndexLastArrowToDraw < j)
+			continue;	// skip this arrow
+
+
 		float fYOffset = GetColorArrowYOffset( j, m_fSongBeat );
+
 		float fYPos = GetColorArrowYPos( j, m_fSongBeat );
-		if( score == HoldStepScore::HOLD_STEPPED_ON  ||  score == HoldStepScore::HOLD_SCORE_OK )
+		if( hss.m_HoldScore == HoldStepScore::HOLD_STEPPED_ON  ||  hss.m_HoldScore == HoldStepScore::HOLD_SCORE_OK )
+		{
+			if( fYPos < GetGrayArrowYPos() )
+				continue;		// don't draw
+		}
+		if( m_PlayerOptions.m_bReverseScroll )	fYPos = SCREEN_HEIGHT - fYPos;
+		m_ColorArrow[iColNum].SetY( fYPos );
+		float fAlpha = GetColorArrowAlphaFromYOffset( fYOffset );
+		m_ColorArrow[iColNum].SetAlpha( fAlpha );
+		m_ColorArrow[iColNum].DrawGrayPart();
+
+
+		if( hss.m_HoldScore == HoldStepScore::HOLD_STEPPED_ON  ||  hss.m_HoldScore == HoldStepScore::HOLD_SCORE_OK )
 			fYPos = max( fYPos, GetGrayArrowYPos() );
 		if( m_PlayerOptions.m_bReverseScroll )	fYPos = SCREEN_HEIGHT - fYPos;
 		m_ColorArrow[iColNum].SetY( fYPos );
-		m_ColorArrow[iColNum].SetIndexAndBeat( i, m_fSongBeat );
+		m_ColorArrow[iColNum].SetColorPartFromIndexAndBeat( i, m_fSongBeat );
+		m_ColorArrow[iColNum].SetGrayPartFromIndexAndBeat( i, m_fSongBeat );
 		D3DXCOLOR color( 0, 1, 0, 1 );	// color shifts from green to yellow
+		float fPercentageDead = hss.m_fTimeNotHeld / 0.5f;	// Hack!  Hard coded hold period
+		color *= 1 - fPercentageDead / 1.2f;
+		color.a = 1;
 		m_ColorArrow[iColNum].SetDiffuseColor( color );
-		float fAlpha = GetColorArrowAlphaFromYOffset( fYOffset );
 		m_ColorArrow[iColNum].SetAlpha( fAlpha );
 		m_ColorArrow[iColNum].Draw();
+		
 
 	}
 
@@ -1042,9 +1100,9 @@ void Player::DrawColorArrows()
 
 
 
-float Player::GetColorArrowYPos( int iStepIndex, float fSongBeat )
+float Player::GetColorArrowYPos( float fStepIndex, float fSongBeat )
 {
-	float fBeatsUntilStep = StepIndexToBeat( iStepIndex ) - fSongBeat;
+	float fBeatsUntilStep = StepIndexToBeat( fStepIndex ) - fSongBeat;
 	float fYOffset = fBeatsUntilStep * ARROW_GAP * m_PlayerOptions.m_fArrowScrollSpeed;
 	switch( m_PlayerOptions.m_EffectType )
 	{
@@ -1061,9 +1119,9 @@ float Player::GetColorArrowYPos( int iStepIndex, float fSongBeat )
 
 }
 
-float Player::GetColorArrowYOffset( int iStepIndex, float fSongBeat )
+float Player::GetColorArrowYOffset( float fStepIndex, float fSongBeat )
 {
-	float fBeatsUntilStep = StepIndexToBeat( iStepIndex ) - fSongBeat;
+	float fBeatsUntilStep = StepIndexToBeat( fStepIndex ) - fSongBeat;
 	float fYOffset = fBeatsUntilStep * ARROW_GAP * m_PlayerOptions.m_fArrowScrollSpeed;
 	switch( m_PlayerOptions.m_EffectType )
 	{

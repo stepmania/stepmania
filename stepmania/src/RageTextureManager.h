@@ -32,7 +32,7 @@ public:
 	RageTextureManager( LPRageScreen pScreen );
 	~RageTextureManager();
 
-	LPRageTexture LoadTexture( CString sTexturePath );
+	LPRageTexture LoadTexture( CString sTexturePath, DWORD dwHints = 0, bool bForceReload = false );
 	bool IsTextureLoaded( CString sTexturePath );
 	void UnloadTexture( CString sTexturePath );
 

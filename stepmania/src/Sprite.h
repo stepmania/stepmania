@@ -28,12 +28,12 @@ public:
 	Sprite();
 	virtual ~Sprite();
 
-	virtual bool Load( CString sFilePath )
+	virtual bool Load( CString sFilePath, DWORD dwHints = 0, bool bForceReload = false )
 	{
 		if( sFilePath.Right(7) == ".sprite" )
-			return LoadFromSpriteFile( sFilePath );
+			return LoadFromSpriteFile( sFilePath, dwHints, bForceReload  );
 		else 
-			return LoadFromTexture( sFilePath );
+			return LoadFromTexture( sFilePath, dwHints, bForceReload );
 	};
 
 	virtual void RenderPrimitives();
@@ -61,12 +61,12 @@ public:
 
 protected:
 
-	virtual bool LoadFromTexture( CString sTexturePath );
-	virtual bool LoadFromSpriteFile( CString sSpritePath );
+	virtual bool LoadFromTexture( CString sTexturePath, DWORD dwHints = 0, bool bForceReload = false );
+	virtual bool LoadFromSpriteFile( CString sSpritePath, DWORD dwHints = 0, bool bForceReload = false );
 	
+	virtual bool LoadTexture( CString sTexture, DWORD dwHints = 0, bool bForceReload = false );
 
 
-	bool LoadTexture( CString sTexture );
 
 	CString	m_sSpritePath;
 	RageTexture* m_pTexture;
