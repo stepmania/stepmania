@@ -400,7 +400,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 		{
 			m_textPlayerName[p].LoadFromFont( THEME->GetPathToF( "ScreenOptions player") );
 			m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
-			m_textPlayerName[p].SetText( PROFILEMAN->GetPlayerName((PlayerNumber)p) );
+			m_textPlayerName[p].SetText( GAMESTATE->GetPlayerDisplayName((PlayerNumber)p) );
 			UtilSetXYAndOnCommand( m_textPlayerName[p], "ScreenOptions" );
 			m_framePage.AddChild( &m_textPlayerName[p] );
 		}
