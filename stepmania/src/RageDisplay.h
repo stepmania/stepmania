@@ -97,6 +97,10 @@ protected:
 	/* Don't use this to check extensions; use GetSpecs. */
 	bool HasExtension(CString ext) const;
 	void RageDisplay::DumpOpenGLDebugInfo();
+
+	void DrawPolyLine(const RageVertex &p1, const RageVertex &p2, float LineWidth );
+	void DrawLoop_LinesAndPoints( const RageVertex v[], int iNumVerts, float LineWidth );
+	void DrawLoop_Polys( const RageVertex v[], int iNumVerts, float LineWidth );
 };
 
 

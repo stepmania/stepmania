@@ -24,6 +24,8 @@
 #include "GameConstantsAndTypes.h"
 #include "StepMania.h"
 
+#include <math.h>
+
 RageDisplay*		DISPLAY	= NULL;
 
 ////////////
@@ -456,7 +458,67 @@ void RageDisplay::DrawStrip( const RageVertex v[], int iNumVerts )
 	g_iVertsRenderedSinceLastCheck += iNumVerts;
 }
 
-void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth )
+/* Draw a line as a quad.  GL_LINES with antialiasing off can draw odd
+ * ends at odd angles--they're forced to axis-alignment regardless of the
+ * angle of the line. */
+void RageDisplay::DrawPolyLine(const RageVertex &p1, const RageVertex &p2, float LineWidth )
+{
+	/* soh cah toa strikes strikes again! */
+	float opp = p2.p.x - p1.p.x;
+	float adj = p2.p.y - p1.p.y;
+	float hyp = powf(opp*opp + adj*adj, 0.5f);
+
+	float lsin = opp/hyp;
+	float lcos = adj/hyp;
+
+	RageVertex p[4];
+	p[0] = p[1] = p1;
+	p[2] = p[3] = p2;
+
+	float ydist = lsin * LineWidth/2;
+	float xdist = lcos * LineWidth/2;
+	
+	p[0].p.x += xdist;
+	p[0].p.y -= ydist;
+	p[1].p.x -= xdist;
+	p[1].p.y += ydist;
+	p[2].p.x -= xdist;
+	p[2].p.y += ydist;
+	p[3].p.x += xdist;
+	p[3].p.y -= ydist;
+
+	DrawQuad(p);
+}
+
+/* Draw a line loop with rounded corners using polys.  This is used on
+ * cards that have strange allergic reactions to antialiased points and
+ * lines. */
+void RageDisplay::DrawLoop_Polys( const RageVertex v[], int iNumVerts, float LineWidth )
+{
+	ASSERT( iNumVerts >= 3 );
+
+	for(int i = 0; i < iNumVerts; ++i)
+		DrawPolyLine(v[i], v[(i+1)%iNumVerts], LineWidth);
+
+	/* Join the lines with circles so we get rounded corners. */
+	GLUquadricObj *q =  gluNewQuadric();
+	for(int i = 0; i < iNumVerts; ++i)
+	{
+		glPushMatrix();
+		glColor4fv(v[i].c);
+		glTexCoord3fv(v[i].t);
+		glTranslatef(v[i].p.x, v[i].p.y, v[i].p.z);
+
+		gluDisk(q, 0, LineWidth/2, 32, 32);
+		glPopMatrix();
+	}
+	gluDeleteQuadric(q);
+}
+
+/* Draw a nice AA'd line loop.  One problem with this is that point and line
+ * sizes don't always precisely match, which doesn't look quite right.
+ * It's worth it for the AA, though. */
+void RageDisplay::DrawLoop_LinesAndPoints( const RageVertex v[], int iNumVerts, float LineWidth )
 {
 	ASSERT( iNumVerts >= 3 );
 
@@ -478,7 +540,6 @@ void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth
 	 * if lines are .5 and points are .25, we might want to snap the width to the
 	 * nearest .5, so the hardware doesn't snap them to different sizes.  Does it
 	 * matter? */
-
 	glLineWidth(LineWidth);
 
 	/* Draw the line loop: */
@@ -496,7 +557,9 @@ void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth
 	 * any points at all, since there's nothing to connect.  That'll happen
 	 * if both scale factors in the matrix are ~0.  (Actually, I think
 	 * it's true if two of the three scale factors are ~0, but we don't
-	 * use this for anything 3d at the moment anyway ...) */
+	 * use this for anything 3d at the moment anyway ...)  This is needed
+	 * because points aren't scaled like regular polys--a zero-size point
+	 * will still be drawn. */
 	RageMatrix mat;
 	glGetFloatv( GL_MODELVIEW_MATRIX, (float*)mat );
 
@@ -509,6 +572,13 @@ void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth
 	glDrawArrays( GL_POINTS, 0, iNumVerts );
 
 	glDisable(GL_POINT_SMOOTH);
+}
+
+void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth )
+{
+	/* XXX: need to autodetect voodoo 3500 (and any others that need this) */
+//	DrawLoop_LinesAndPoints(v, iNumVerts, LineWidth);
+	DrawLoop_Polys(v, iNumVerts, LineWidth);
 }
 
 void RageDisplay::PushMatrix() 
