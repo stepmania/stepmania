@@ -365,12 +365,12 @@ void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAni
 
 	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fPercentIntoAnimation = fmodf(fSongBeat,fAnimationLengthInBeats) / fAnimationLengthInBeats;
-	float fNoteBeatFraction = fmodf( fNoteBeat, 1.0f );
 
 	if( bVivid )
 	{
 		// changed to deal with the minor complaint that the color cycling is
 		// one tick off in general
+		const float fNoteBeatFraction = fmodf( fNoteBeat, 1.0f );
 		const float fFraction = fNoteBeatFraction - 0.25f/fAnimationLengthInBeats;
 		const float fInterval = 1.f / fAnimationLengthInBeats;
 		fPercentIntoAnimation += Quantize(fFraction,fInterval);
