@@ -93,6 +93,22 @@ ScreenEdit::ScreenEdit()
 	if( m_pNotes == NULL )
 	{
 		m_pNotes = new Notes;
+		// Dro Kulix: If m_pNotes->m_NotesType is not changed here,
+		// the edit mode is somehow stuck only being able to edit
+		// the first four columns of a (NEW) sequence.
+		// I've determined that this is because m_NotesType is
+		// initialized in the constructor as
+		// NOTES_TYPE_DANCE_SINGLE. For minimal impact, I am
+		// changing m_NotesType here, but at some point we
+		// may want to consider changing it in the Notes
+		// constructor, if another reason to do so pops up...
+
+		// In ScreenEditMenu, the screen preceding this one,
+		// GAMEMAN->m_CurStyle is set to the target game style
+		// of the current edit. Naturally, this is where we'll
+		// want to extract the NotesType for a (NEW) sequence.
+		m_pNotes->m_NotesType = StyleToNotesType( GAMEMAN->m_CurStyle );
+
 		m_pSong->m_apNotes.Add( m_pNotes );
 	}
 

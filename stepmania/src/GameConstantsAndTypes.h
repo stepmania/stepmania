@@ -343,6 +343,200 @@ inline Game StyleToGame( Style s )
 	}
 }
 
+////////////////////////////////
+// NotesType/Style conversions
+////////////////////////////////
+
+// Dro Kulix: This part really is necessary.
+// Several subroutines call for conversions between
+// NotesType and Style, both ways. It would make
+// things a bit easier to keep them central.
+
+// The next two functions have self-explanatory
+// names, NotesTypeToStyle(nt) and
+// StyleToNotesType(s).
+
+// Both of these functions involve a tedious
+// switch-based one-to-one mapping between
+// NotesTypes and Styles. I have written a
+// Perl script which will actually write both
+// of the functions for you. All you need to do
+// is keep updated the list of Styles and
+// NotesTypes near the beginning of the script.
+
+// If you need a copy of Perl for Win32,
+// http://www.activeperl.com/Products/ActivePerl/
+// will suit nicely.
+
+/*
+
+Begin Perl file ->
+
+# StyleNotesType.pl
+
+# Perl script to write StyleToNotesType and
+# NotesTypeToStyle functions for StepMania.
+
+# Usage: perl StyleNotesType.pl > code.txt
+# (outputs C++ functions to file code.txt)
+
+# Keep the following list updated to produce
+# correct code.
+
+# First column is Styles, second is NotesTypes.
+
+# These mapping sequences only make the first possible
+# mapping. That is, STYLE_DANCE_SINGLE will map to
+# NOTES_TYPE_DANCE_SINGLE, and STYLE_DANCE_VERSUS will
+# map to NOTES_TYPE_DANCE_SINGLE, but
+# NOTES_TYPE_DANCE_SINGLE will only map to
+# STYLE_DANCE_SINGLE.
+
+my @Types = qw[
+	DANCE_SINGLE		DANCE_SINGLE
+	DANCE_VERSUS		DANCE_SINGLE
+	DANCE_DOUBLE		DANCE_DOUBLE
+	DANCE_COUPLE		DANCE_COUPLE
+	DANCE_SOLO		DANCE_SOLO
+	PUMP_SINGLE		PUMP_SINGLE
+	PUMP_VERSUS		PUMP_SINGLE
+	PUMP_DOUBLE		PUMP_DOUBLE
+	EZ2_SINGLE		EZ2_SINGLE
+	EZ2_DOUBLE		EZ2_DOUBLE
+	EZ2_REAL		EZ2_REAL
+	EZ2_SINGLE_VERSUS	EZ2_SINGLE_VERSUS
+	EZ2_REAL_VERSUS		EZ2_REAL_VERSUS
+	NONE			INVALID
+];
+
+
+
+my %StyleToNotesType = ();
+{
+	my @tmpTypes = @Types;
+	# Map Style to NotesType
+	while (@tmpTypes) {
+		my $key = shift(@tmpTypes);
+		my $value = shift(@tmpTypes);
+		if (!exists($StyleToNotesType{$key})) {
+			$StyleToNotesType{$key} = $value;
+		}
+	}
+}
+
+my %NotesTypeToStyle = ();
+{
+	my @tmpTypes = @Types;
+	# Map NotesType to Style
+	while (@tmpTypes) {
+		my $value = shift(@tmpTypes);
+		my $key = shift(@tmpTypes);
+		if (!exists($NotesTypeToStyle{$key})) {
+			$NotesTypeToStyle{$key} = $value;
+		}
+	}
+}
+
+# Produce NotesTypeToStyle
+print "
+//
+// NotesTypeToStyle(nt): Converts nt to a Style
+//
+inline Style NotesTypeToStyle ( NotesType nt )
+{
+	switch ( nt )
+	{
+";
+
+foreach (sort keys %NotesTypeToStyle) {
+	my $key = "NOTES_TYPE_$_";
+	my $value = 'STYLE_' . $NotesTypeToStyle{$_};
+	print "\t\tcase $key:\treturn $value;\n";
+}
+
+print "\t\tdefault:\treturn STYLE_NONE;
+	}
+}
+";
+
+# Produce StyleToNotesType
+print "
+//
+// StyleToNotesType(s): Converts s to a NotesType
+//
+inline NotesType StyleToNotesType ( Style s )
+{
+	switch ( s )
+	{
+";
+
+foreach (sort keys %StyleToNotesType) {
+	my $key = "STYLE_$_";
+	my $value = 'NOTES_TYPE_' . $StyleToNotesType{$_};
+	print "\t\tcase $key:\treturn $value;\n";
+}
+
+print "\t\tdefault:\treturn NOTES_TYPE_INVALID;
+	}
+}
+";
+
+# Finished.
+
+<- End of Perl file
+*/
+
+
+//
+// NotesTypeToStyle(nt): Converts nt to a Style
+//
+inline Style NotesTypeToStyle ( NotesType nt )
+{
+	switch ( nt )
+	{
+		case NOTES_TYPE_DANCE_COUPLE:	return STYLE_DANCE_COUPLE;
+		case NOTES_TYPE_DANCE_DOUBLE:	return STYLE_DANCE_DOUBLE;
+		case NOTES_TYPE_DANCE_SINGLE:	return STYLE_DANCE_SINGLE;
+		case NOTES_TYPE_DANCE_SOLO:	return STYLE_DANCE_SOLO;
+		case NOTES_TYPE_EZ2_DOUBLE:	return STYLE_EZ2_DOUBLE;
+		case NOTES_TYPE_EZ2_REAL:	return STYLE_EZ2_REAL;
+		case NOTES_TYPE_EZ2_REAL_VERSUS:	return STYLE_EZ2_REAL_VERSUS;
+		case NOTES_TYPE_EZ2_SINGLE:	return STYLE_EZ2_SINGLE;
+		case NOTES_TYPE_EZ2_SINGLE_VERSUS:	return STYLE_EZ2_SINGLE_VERSUS;
+		case NOTES_TYPE_INVALID:	return STYLE_NONE;
+		case NOTES_TYPE_PUMP_DOUBLE:	return STYLE_PUMP_DOUBLE;
+		case NOTES_TYPE_PUMP_SINGLE:	return STYLE_PUMP_SINGLE;
+		default:	return STYLE_NONE;
+	}
+}
+
+//
+// StyleToNotesType(s): Converts s to a NotesType
+//
+inline NotesType StyleToNotesType ( Style s )
+{
+	switch ( s )
+	{
+		case STYLE_DANCE_COUPLE:	return NOTES_TYPE_DANCE_COUPLE;
+		case STYLE_DANCE_DOUBLE:	return NOTES_TYPE_DANCE_DOUBLE;
+		case STYLE_DANCE_SINGLE:	return NOTES_TYPE_DANCE_SINGLE;
+		case STYLE_DANCE_SOLO:	return NOTES_TYPE_DANCE_SOLO;
+		case STYLE_DANCE_VERSUS:	return NOTES_TYPE_DANCE_SINGLE;
+		case STYLE_EZ2_DOUBLE:	return NOTES_TYPE_EZ2_DOUBLE;
+		case STYLE_EZ2_REAL:	return NOTES_TYPE_EZ2_REAL;
+		case STYLE_EZ2_REAL_VERSUS:	return NOTES_TYPE_EZ2_REAL_VERSUS;
+		case STYLE_EZ2_SINGLE:	return NOTES_TYPE_EZ2_SINGLE;
+		case STYLE_EZ2_SINGLE_VERSUS:	return NOTES_TYPE_EZ2_SINGLE_VERSUS;
+		case STYLE_NONE:	return NOTES_TYPE_INVALID;
+		case STYLE_PUMP_DOUBLE:	return NOTES_TYPE_PUMP_DOUBLE;
+		case STYLE_PUMP_SINGLE:	return NOTES_TYPE_PUMP_SINGLE;
+		case STYLE_PUMP_VERSUS:	return NOTES_TYPE_PUMP_SINGLE;
+		default:	return NOTES_TYPE_INVALID;
+	}
+}
+
+
+
 ///////////////////////////
 // Options stuff
 ///////////////////////////

@@ -162,15 +162,21 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToNextState:
 		// set the current style based on the notes type
-		switch( GetSelectedNotesType() )
-		{
-		case NOTES_TYPE_DANCE_SINGLE:	GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;	break;
-		case NOTES_TYPE_DANCE_DOUBLE:	GAMEMAN->m_CurStyle = STYLE_DANCE_DOUBLE;	break;
-		case NOTES_TYPE_DANCE_COUPLE:	GAMEMAN->m_CurStyle = STYLE_DANCE_COUPLE;	break;
-		case NOTES_TYPE_DANCE_SOLO:		GAMEMAN->m_CurStyle = STYLE_DANCE_SOLO;		break;
-		case NOTES_TYPE_PUMP_SINGLE:	GAMEMAN->m_CurStyle = STYLE_PUMP_SINGLE;	break;
-		case NOTES_TYPE_PUMP_DOUBLE:	GAMEMAN->m_CurStyle = STYLE_PUMP_DOUBLE;	break;
-		}
+
+		//switch( GetSelectedNotesType() )
+		//{
+		//case NOTES_TYPE_DANCE_SINGLE:	GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;	break;
+		//case NOTES_TYPE_DANCE_DOUBLE:	GAMEMAN->m_CurStyle = STYLE_DANCE_DOUBLE;	break;
+		//case NOTES_TYPE_DANCE_COUPLE:	GAMEMAN->m_CurStyle = STYLE_DANCE_COUPLE;	break;
+		//case NOTES_TYPE_DANCE_SOLO:		GAMEMAN->m_CurStyle = STYLE_DANCE_SOLO;		break;
+		//case NOTES_TYPE_PUMP_SINGLE:	GAMEMAN->m_CurStyle = STYLE_PUMP_SINGLE;	break;
+		//case NOTES_TYPE_PUMP_DOUBLE:	GAMEMAN->m_CurStyle = STYLE_PUMP_DOUBLE;	break;
+		//}
+
+		// Dro Kulix:
+		// A centralized solution for this switching mess...
+		// (See GameConstantsAndTypes.h)
+		GAMEMAN->m_CurStyle = NotesTypeToStyle( GetSelectedNotesType() );
 
 		SCREENMAN->SetNewScreen( new ScreenEdit );
 		break;
