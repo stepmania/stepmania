@@ -15,7 +15,10 @@
 #include "RageUtil.h"
 #include "IniFile.h"
 
+class FontPage;
+
 struct glyph {
+	FontPage *fp;
 	RageTexture *Texture;
 
 	/* Number of pixels to advance horizontally after drawing this character. */
@@ -35,8 +38,11 @@ struct FontPageSettings {
 	int DrawExtraPixelsLeft,
 		DrawExtraPixelsRight,
 		AddToAllWidths,
-		LineSpacing;
+		LineSpacing,
+		Baseline,
+		Center;
 	float ScaleAllWidthsBy;
+	bool Kanji;
 	
 	map<longchar,int> CharToGlyphNo;
 	/* If a value is missing, the width of the texture frame is used. */
@@ -46,7 +52,10 @@ struct FontPageSettings {
 		DrawExtraPixelsLeft(0), DrawExtraPixelsRight(0),
 		AddToAllWidths(0), 
 		LineSpacing(-1),
-		ScaleAllWidthsBy(1)
+		ScaleAllWidthsBy(1),
+		Baseline(-1),
+		Center(-1),
+		Kanji(false)
 	{ }
 };
 
@@ -66,6 +75,10 @@ public:
 	~FontPage();
 
 	void Load( const CString &sASCIITexturePath, const FontPageSettings &cfg );
+
+	/* Page-global properties. */
+	int baseline, center;
+	bool kanji;
 
 private:
 	void SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight);
@@ -97,12 +110,22 @@ public:
 	/* Load font-wide settings. */
 	void CapsOnly();
 
+	int GetBaseline() const { return def->baseline; }
+	bool IsKanjiFont() const { return def->kanji; }
+	int GetCenter() const { return def->center; }
+
+	void SetDefaultGlyph(FontPage *fp);
+
 	static const longchar DEFAULT_GLYPH;
 
 private:
 	/* List of pages and fonts that we're responsible for freeing. */
 	vector<FontPage *> pages;
 	vector<Font *> merged_fonts;
+
+	/* This is the primary fontpage of this font; font-wide baseline, ascender,
+	 * etc. is pulled from it. */
+	FontPage *def;
 };
 
 #endif

@@ -83,6 +83,9 @@ void FontManager::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, cons
 	ini.GetValueI( PageName, "AddToAllWidths", cfg.AddToAllWidths );
 	ini.GetValueF( PageName, "ScaleAllWidthsBy", cfg.ScaleAllWidthsBy );
 	ini.GetValueI( PageName, "LineSpacing", cfg.LineSpacing );
+	ini.GetValueI( PageName, "Baseline", cfg.Baseline );
+	ini.GetValueI( PageName, "Center", cfg.Center );
+	ini.GetValueB( PageName, "Kanji", cfg.Kanji );
 
 	/* Iterate over all keys. */
 	const IniFile::key *k = ini.GetKey(PageName);
@@ -264,9 +267,11 @@ Font *FontManager::LoadFontInt(const CString &sFontOrTextureFilePath, CString sC
 		}
 		LoadStack.push_back(sFontOrTextureFilePath);
 	}
+
 	/* The font is not already loaded.  Figure out what we have. */
 //	LOG->Trace( "FontManager::LoadFont(%s).", sFontFilePath.GetString() );
 
+	/* Get the filenames associated with this font. */
 	CStringArray TexturePaths;
 	CString IniPath;
 	GetFontPaths(sFontOrTextureFilePath, TexturePaths, IniPath);
@@ -276,6 +281,7 @@ Font *FontManager::LoadFontInt(const CString &sFontOrTextureFilePath, CString sC
 	
 	bool CapitalsOnly = false;
 
+	/* If we have an INI, load it. */
 	IniFile ini;
 	if( !IniPath.empty() )
 	{
@@ -288,7 +294,7 @@ Font *FontManager::LoadFontInt(const CString &sFontOrTextureFilePath, CString sC
 	{
 		/* Check to see if we need to import any other fonts.  Do this
 		 * before loading this font, so any characters in this font
-		 * override those imported. */
+		 * override imported characters. */
 		CString imports;
 		ini.GetValue( "main", "import", imports );
 		CStringArray ImportList;
@@ -304,6 +310,7 @@ Font *FontManager::LoadFontInt(const CString &sFontOrTextureFilePath, CString sC
 			LoadingDefaultFont = false;
 		}
 
+		/* Load imports. */
 		for(unsigned i = 0; i < ImportList.size(); ++i)
 		{
 			CString path = THEME->GetPathTo("Fonts", ImportList[i]);
@@ -312,42 +319,44 @@ Font *FontManager::LoadFontInt(const CString &sFontOrTextureFilePath, CString sC
 	}
 
 	/* Load each font page. */
-	int expect = -1;
 	for(unsigned i = 0; i < TexturePaths.size(); ++i)
 	{
 		FontPage *fp = new FontPage;
-		int frames;
-		{
-			int wide, high;
-			RageTexture::GetFrameDimensionsFromFileName(TexturePaths[i], &wide, &high );
-			frames = wide*high;
-		}
+
+		int frames = RageTexture::GetFrameCountFromFileName(TexturePaths[i]);
 
 		/* Grab the page name, eg "foo" from "Normal [foo].png". */
 		CString pagename = GetPageNameFromFileName(TexturePaths[i]);
 
+		/* Load settings for this page from the INI. */
 		FontPageSettings cfg;
-		if( !sChars.empty() )
+
+		/* If we have any characters to map, add them. */
+		for( unsigned n=0; n<sChars.size(); n++ )
 		{
-			/* Map characters to frames. */
-			for( int i=0; i<sChars.GetLength(); i++ )
-			{
-				char c = sChars[i];
-				cfg.CharToGlyphNo[c] = i;
-			}
-			expect = sChars.GetLength();
+			char c = sChars[n];
+			cfg.CharToGlyphNo[c] = n;
 		}
 
+
+		/* Go. */
 		LoadFontPageSettings(cfg, ini, pagename, frames);
 		fp->Load(TexturePaths[i], cfg);
-		if( expect != -1 && fp->m_pTexture->GetNumFrames() < expect )
+
+		/* Expect at least as many frames as we have premapped characters. */
+		if( unsigned(fp->m_pTexture->GetNumFrames()) < sChars.size() )
 			RageException::Throw( "The font '%s' has %d frames; expected at least %i frames.",
-				fp->m_pTexture->GetNumFrames(), expect );
+				fp->m_pTexture->GetNumFrames(), sChars.size() );
 
 		LOG->Trace("Adding page %s (%s) to %s; %i glyphs",
 			TexturePaths[i].GetString(), pagename.GetString(),
 			sFontOrTextureFilePath.GetString(), fp->m_iCharToGlyphNo.size());
 		pFont->AddPage(fp);
+
+		/* If this is the first font loaded, or it's called "main", this page's
+		 * properties become the font's properties. */
+		if(i == 0 || pagename == "main")
+			pFont->SetDefaultGlyph(fp);
 	}
 
 	if(CapitalsOnly)
@@ -453,7 +462,7 @@ void FontManager::InitCharAliases()
 	if(!CharAliases.empty())
 		return;
 	/* XXX; these should be in a data file somewhere (theme metrics?) 
-		* (The comments here are UTF-8; they won't show up in VC6.) */
+	 * (The comments here are UTF-8; they won't show up in VC6.) */
 	CharAliases["default"]		= Font::DEFAULT_GLYPH; /* ? */
 	CharAliases["kakumei1"]		= 0x9769; /* 革 */
 	CharAliases["kakumei2"]		= 0x547D; /* 命 */
@@ -464,7 +473,9 @@ void FontManager::InitCharAliases()
 	CharAliases["omega"]		= 0x03a9; /* Ω */
 	CharAliases["whiteheart"]	= 0x2661; /* ♡ */
 	CharAliases["blackstar"]	= 0x2605; /* ★ */
+	CharAliases["whitestar"]	= 0x2606; /* ☆ */
 
+	/* These are internal-use glyphs; they don't have real Unicode codepoints. */
 	CharAliases["up"]			= 0x100000;
 	CharAliases["down"]			= 0x100001;
 	CharAliases["left"]			= 0x100002;

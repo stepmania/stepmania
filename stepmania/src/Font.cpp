@@ -37,6 +37,25 @@ void FontPage::Load( const CString &TexturePath, const FontPageSettings &cfg )
 	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath );
 	ASSERT( m_pTexture != NULL );
 
+	/* All characters on a page have the same vertical spacing, baseline
+	 * and center. */
+	baseline = cfg.Baseline;
+	if(baseline == -1)
+	{
+		/* The default baseline is 75% down the frame; this is where it
+		 * tends to be. */
+		baseline = int(m_pTexture->GetTextureFrameHeight() * .75f);
+	}
+
+	center = cfg.Center;
+	if(center == -1)
+	{
+		/* We don't know the center, so assume it's the center of the frame. */
+		center = m_pTexture->GetSourceFrameHeight()/2;
+	}
+
+	kanji = cfg.Kanji;
+
 	// load character widths
 	vector<int> FrameWidths;
 	int i;
@@ -66,7 +85,6 @@ void FontPage::Load( const CString &TexturePath, const FontPageSettings &cfg )
 
 	m_iCharToGlyphNo = cfg.CharToGlyphNo;
 
-	/* All characters on a page have the same vertical spacing. */
 	int LineSpacing = cfg.LineSpacing;
 	if(LineSpacing == -1)
 		LineSpacing = m_pTexture->GetSourceFrameHeight();
@@ -81,6 +99,8 @@ void FontPage::SetTextureCoords(const vector<int> &widths, int LineSpacing)
 	{
 		glyph g;
 
+		g.fp = this;
+
 		/* Make a copy of each texture rect, reducing each to the actual dimensions
 		 * of the character (most characters don't take a full block). */
 		g.rect = *m_pTexture->GetTextureCoordRect(i);;
@@ -92,10 +112,11 @@ void FontPage::SetTextureCoords(const vector<int> &widths, int LineSpacing)
 		/* By default, advance one pixel more than the width.  (This could be
 		 * an option.) */
 		g.hadvance = int(g.width + 1);
+		g.vadvance = LineSpacing;
 
 		/* Shift the character up so the top of the rendered quad is at the top
 		 * of the character. */
-		g.vshift = -(m_pTexture->GetSourceFrameHeight() - LineSpacing)/2.0f;
+		g.vshift = -(m_pTexture->GetSourceFrameHeight() - g.vadvance)/2.0f;
 
 		/* Do the same thing with X.  Do this by changing the actual rendered
 		 * rect, instead of shifting it, so we don't render more than we need to. */
@@ -115,7 +136,6 @@ void FontPage::SetTextureCoords(const vector<int> &widths, int LineSpacing)
 			g.rect.right -= fTexCoordsToChopOff/2;
 		}
 
-		g.vadvance = LineSpacing;
 		g.Texture = m_pTexture;
 
 		glyphs.push_back(g);
@@ -157,7 +177,6 @@ FontPage::~FontPage()
 	if( m_pTexture != NULL )
 		TEXTUREMAN->UnloadTexture( m_pTexture );
 }
-
 
 int Font::GetLineWidthInSourcePixels( const lstring &szLine ) const
 {
@@ -261,3 +280,12 @@ void Font::CapsOnly()
 		m_iCharToGlyph[(char) tolower(c)] = it->second;
 	}
 }
+
+void Font::SetDefaultGlyph(FontPage *fp)
+{
+	ASSERT(fp);
+	ASSERT(!fp->glyphs.empty());
+	def = fp;
+}
+
+
