@@ -24,7 +24,7 @@ public:
 
 	static void Unsubscribe( T* p )
 	{
-		set<T*>::iterator iter = s_pSubscribers->find( p );
+		typename set<T*>::iterator iter = s_pSubscribers->find( p );
 		ASSERT( iter != s_pSubscribers->end() );
 		s_pSubscribers->erase( iter );
 	}
