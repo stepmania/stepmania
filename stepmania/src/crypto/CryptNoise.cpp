@@ -88,11 +88,13 @@ static int read_dev_urandom(char *buf, int len)
 void noise_get_heavy(void (*func) (void *, int))
 {
 	char buf[512];
-	FILE *fp;
-	int ret;
 
 	if (read_dev_urandom(buf, 32))
 		func(buf, 32);
+
+#if defined(UNIX)
+	FILE *fp;
+	int ret;
 
 	fp = popen("ps -axu 2>/dev/null", "r");
 	while ( (ret = fread(buf, 1, sizeof(buf), fp)) > 0)
@@ -103,6 +105,7 @@ void noise_get_heavy(void (*func) (void *, int))
 	while ( (ret = fread(buf, 1, sizeof(buf), fp)) > 0)
 		func(buf, ret);
 	pclose(fp);
+#endif
 }
 
 /*
