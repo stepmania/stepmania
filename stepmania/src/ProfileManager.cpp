@@ -243,12 +243,8 @@ bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )
 	if( lr != Profile::success )
 		return false;
 	pro.m_sDisplayName = sNewName;
-	bool bSuccess;
-	bSuccess = pro.SaveAllToDir( sProfileDir, PREFSMAN->m_bSignProfileData );
-	if( !bSuccess )
-		return false;
 
-	return true;
+	return pro.SaveAllToDir( sProfileDir, PREFSMAN->m_bSignProfileData );
 }
 
 bool ProfileManager::DeleteLocalProfile( CString sProfileID )
