@@ -1,3 +1,31 @@
+* Alpha 21
+Fixed edits causing malformed DWI tags to be written.
+Fixed course selection music in SMMAX2.
+Fixed paletted textures.
+Fixed some OpenBSD compilation issues.
+Fixed difficulty changes not always visible in the course display.
+Fixed crashes on song reload.
+Fixed edits causing malformed DWI tags to be written.
+Fixed doubles premium.
+Fixed blending artifacts on paletted images.
+Disabled memory card reading by default.
+Optimized Catalog.xml writing.
+Changing course difficulties no longer retweens the course entry list.
+Linux: Fixed crash in 2.6 when NPTL is not in use.
+Linux: Fixed crash when trying to read directories with -r+x permissions.
+Linux: Fixed crash when reading from directories without read permissions.
+Linux: Fixed signal handling in 2.6 kernels when LinuxThreads is in use.
+Linux: Fixed linking against libjpeg.
+Editor: Fixed spurious assist ticks at start of Play.
+Editor: Fixed "m" not rewinding the sample music.
+SMMAX2: Fixed course selection music.
+Added TournaMix 5 transliterations.
+Theme changes:
+  file "ScreenGameplay extra life frame" -> "ScreenGameplayExtra life frame"
+  file "ScreenGameplay score score frame" -> "ScreenGameplayExtra score frame"
+  metrics "ScreenGameplay::LifeFrameExtra*" are now "ScreenGameplayExtra::LifeFrame"; same for all gameplay extra stage metrics
+  metric "CDTitleSpinSeconds" -> "CDTitleFrontCommand" and "CDTitleBackCommand".
+
 * Alpha 20
 Fixed image loading crashes.
 Fixed GIF loading.
