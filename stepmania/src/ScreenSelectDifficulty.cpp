@@ -305,6 +305,7 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 			}
 		}
 	}
+	ASSERT( iSwitchToIndex != -1 );
 
 	// change both players
 	FOREACH_PlayerNumber( p )
@@ -320,6 +321,8 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 
 bool ScreenSelectDifficulty::ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages )
 {
+	ASSERT_M( iNewChoice >= 0 && iNewChoice < (int) m_ModeChoices[m_CurrentPage].size(), ssprintf("%i, %i", iNewChoice, (int) m_ModeChoices[m_CurrentPage].size()) );
+
 	bool bAnyChanged = false;
 	FOREACH_HumanPlayer( p )
 	{
