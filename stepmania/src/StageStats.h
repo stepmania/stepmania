@@ -51,6 +51,9 @@ struct PlayerStageStats
 	int		iSongsPlayed;
 	int		iTotalError;
 
+	// workout
+	float	fCaloriesBurned;
+
 	map<float,float>	fLifeRecord;
 	void	SetLifeRecordAt( float fLife, float fSecond );
 	void	GetLifeRecord( float *fLifeOut, int iNumSamples ) const;
