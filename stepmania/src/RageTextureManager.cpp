@@ -121,7 +121,6 @@ RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 		/* Found the texture.  Just increase the refcount and return it. */
 		RageTexture* pTexture = p->second;
 		pTexture->m_iRefCount++;
-		LOG->UnmapLog( "LoadTexture" );
 		return pTexture;
 	}
 
@@ -136,7 +135,6 @@ RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 
 	m_mapPathToTexture[ID] = pTexture;
 
-	LOG->UnmapLog( "LoadTexture" );
 	return pTexture;
 }
 
