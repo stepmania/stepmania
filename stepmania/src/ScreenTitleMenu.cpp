@@ -44,6 +44,7 @@
 #define COLOR_SELECTED				THEME->GetMetricC("ScreenTitleMenu","ColorSelected")
 #define ZOOM_NOT_SELECTED			THEME->GetMetricF("ScreenTitleMenu","ZoomNotSelected")
 #define ZOOM_SELECTED				THEME->GetMetricF("ScreenTitleMenu","ZoomSelected")
+#define MENU_TEXT_ALIGN				THEME->GetMetricI("ScreenTitleMenu","MenuTextAlign")
 #define SECONDS_BETWEEN_COMMENTS	THEME->GetMetricF("ScreenTitleMenu","SecondsBetweenComments")
 #define SECONDS_BEFORE_ATTRACT		THEME->GetMetricF("ScreenTitleMenu","SecondsBeforeAttract")
 #define HELP_TEXT( coin_mode )		THEME->GetMetric("ScreenTitleMenu","HelpText"+Capitalize(CoinModeToString(coin_mode)))
@@ -107,6 +108,7 @@ ScreenTitleMenu::ScreenTitleMenu() : Screen("ScreenTitleMenu")
 		for( i=0; i<NUM_CHOICES; i++ )
 		{
 			m_textChoice[i].LoadFromFont( THEME->GetPathToF("ScreenTitleMenu choices") );
+			m_textChoice[i].SetHorizAlign( (enum Actor::HorizAlign)MENU_TEXT_ALIGN );
 			m_textChoice[i].SetText( ChoiceToString((Choice)i) );
 			m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
 			m_textChoice[i].SetShadowLength( CHOICES_SHADOW_LENGTH );

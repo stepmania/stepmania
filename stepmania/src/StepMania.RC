@@ -77,7 +77,7 @@ END
 // Cursor
 //
 
-IDC_CURSOR1             CURSOR  DISCARDABLE     "cursor1.cur"
+//IDC_CURSOR1             CURSOR  DISCARDABLE     "cursor1.cur"
 #endif    // Japanese resources
 /////////////////////////////////////////////////////////////////////////////
 
