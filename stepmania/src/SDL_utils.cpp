@@ -232,6 +232,7 @@ SDL_Surface *SDL_CreateRGBSurfaceSane
 	return SDL_CreateRGBSurface(flags, width, height, depth,
 		Rmask, Gmask, Bmask, Amask);
 }
+
 static void FindAlphaRGB(const SDL_Surface *img, Uint8 &r, Uint8 &g, Uint8 &b, bool reverse)
 {
 	/* If we have no alpha or no color key, there's no alpha color. */
@@ -338,4 +339,111 @@ void FixHiddenAlpha(SDL_Surface *img)
 		r = g = b = 0;
 
 	SetAlphaRGB(img, r, g, b);
+}
+
+/* XXX: currently only TRAIT_NO_TRANSPARENCY and TRAIT_BOOL_TRANSPARENCY work. */
+/* Find various traits of a surface.  Do these all at once, so we only have to
+ * iterate the surface once. */
+
+/* We could theoretically do a test to see if an image fits in GL_ALPHA4,
+ * by looking at the least significant bits of each alpha value.  This is
+ * not likely to ever find a match, though, so don't bother; only use 8alphaonly
+ * if it's explicitly enabled. 
+ *
+ * XXX: We could do the FindAlphaRGB search here, too, but we need that information
+ * in a different place. */
+// #define TRAIT_CONSISTENT_TRANSPARENT_COLOR	0x0008
+
+int FindSurfaceTraits(const SDL_Surface *img)
+//							  Uint8 AlphaColor[3])
+{
+//	bool HaveAlphaValue = false; /* whether ar, ag, ab is valid */
+//	bool HaveConsistentAlphaValue = true;
+	bool HaveTransparency = false;
+	bool HaveTranslucensy = false;
+//	bool WhiteOnly = true;
+
+	for(int y = 0; y < img->h; ++y)
+	{
+		Uint8 *row = (Uint8 *)img->pixels + img->pitch*y;
+//		bool FirstVisible = true;
+
+		for(int x = 0; x < img->w; ++x)
+		{
+			Uint32 val = decodepixel(row, img->format->BytesPerPixel);
+
+			bool Transparent = false;
+			bool Translucent = false;
+			if( img->format->BitsPerPixel == 8 ) {
+				if(img->flags & SDL_SRCCOLORKEY && val == img->format->colorkey )
+					Transparent = true;
+			} else if(img->format->Amask) {
+				Uint32 masked_alpha = val & img->format->Amask;
+				if(masked_alpha == 0) Transparent = true;
+				else if(masked_alpha != img->format->Amask) Translucent = true;
+			}
+
+			if(Transparent) HaveTransparency = true;
+			if(Translucent) HaveTranslucensy = true;
+
+#if 0
+			/* Hmm.  This doesn't quite work.  For example, the ScreenCompany
+			 * shadow is actually black; we load it as 8alphaonly, which discards
+			 * the black completely (making it a white shadow), and then we make
+			 * it black again by setting the diffuse color to black.  This is hard
+			 * to generalize.  I guess we could just make the shadow white, but
+			 * that's a little ugly to edit.
+			 *
+			 * Also, for some reason, the font borders are actually a combination
+			 * of a shade of gray and some alpha value.  Those need to be simplified
+			 * to white and some alpha value (multiply the luma by alpha), but
+			 * that's another special case.
+			 *
+			 * So, this doesn't actually help anything right now, and we still
+			 * need 8alphaonly. */
+			if( img->format->BitsPerPixel != 8 ) {
+				/* If the pixel isn't transparent, and isn't completely white: */
+				if(!Transparent &&
+					(val & img->format->Rmask) != img->format->Rmask &&
+					(val & img->format->Gmask) != img->format->Gmask &&
+					(val & img->format->Bmask) != img->format->Bmask)
+					WhiteOnly=false;
+
+			}
+#endif
+
+#if 0
+			/* Is this the first non-invisible pixel on this row? */
+			if(!Invisible && FirstVisible)
+			{
+				FirstVisible = false;
+
+				Uint8 r, g, b;
+				SDL_GetRGB(val, img->format, &r, &g, &b);
+
+				if(!HaveAlphaValue) {
+					/* We don't have the border color yet; set it. */
+					HaveAlphaValue = true;
+					AlphaColor[0] = r;
+					AlphaColor[1] = g;
+					AlphaColor[2] = b;
+				} else if(HaveConsistentAlphaValue) {
+					/* We already have an alpha color from the previous row;
+					 * if it's not the same, it's inconsistent. */
+					if(r != AlphaColor[0] || g != AlphaColor[1] || b != AlphaColor[2])
+						HaveConsistentAlphaValue = false;
+				}
+			}
+#endif
+
+			row += img->format->BytesPerPixel;
+		}
+	}
+
+	int ret = 0;
+//	if(HaveConsistentAlphaValue) ret |= TRAIT_CONSISTENT_TRANSPARENT_COLOR;
+	if(!HaveTransparency) ret |= TRAIT_NO_TRANSPARENCY;
+	if(!HaveTranslucensy) ret |= TRAIT_BOOL_TRANSPARENCY;
+//	if(WhiteOnly) ret |= TRAIT_WHITE_ONLY;
+	return ret;
 }

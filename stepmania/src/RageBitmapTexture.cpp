@@ -148,24 +148,6 @@ void RageBitmapTexture::Reload()
  */
 SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
 {
-	// look in the file name for a format hints
-	CString HintString = GetFilePath();
-	HintString.MakeLower();
-
-	if( HintString.Find("4alphaonly") != -1 )		m_ActualID.iTransparencyOnly = 4;
-	else if( HintString.Find("8alphaonly") != -1 )	m_ActualID.iTransparencyOnly = 8;
-	else if( HintString.Find("no alpha") != -1 )	m_ActualID.iAlphaBits = 0;
-	else if( HintString.Find("0alpha") != -1 )		m_ActualID.iAlphaBits = 0;
-	else if( HintString.Find("1 alpha") != -1 )		m_ActualID.iAlphaBits = 1;
-	else if( HintString.Find("1alpha") != -1 )		m_ActualID.iAlphaBits = 1;
-	if( HintString.Find("dither") != -1 )			m_ActualID.bDither = true;
-
-	if( m_ActualID.iTransparencyOnly )
-	{
-		/* Treat the image as 32-bit, so we don't lose any alpha precision. */
-		m_ActualID.iColorDepth = 32;
-	}
-
 	/* Load the image into an SDL surface. */
 	SDL_Surface *img = IMG_Load(GetFilePath());
 
@@ -192,6 +174,35 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
 			SDL_SetColorKey( img, SDL_SRCCOLORKEY, color);
 	}
 
+	{
+		/* This should eventually obsolete 8alphaonly, 0alpha and 1alpha,
+		 * and remove the need to special case background loads.  Do this
+		 * after setting the color key for paletted images; it'll also return
+		 * TRAIT_NO_TRANSPARENCY if the color key is never used. */
+		int traits = FindSurfaceTraits(img);
+		if(traits & TRAIT_NO_TRANSPARENCY) m_ActualID.iAlphaBits = 0;
+		else if(traits & TRAIT_BOOL_TRANSPARENCY) m_ActualID.iAlphaBits = 1;
+		if(traits & TRAIT_WHITE_ONLY) m_ActualID.iTransparencyOnly = 8;
+	}
+
+	// look in the file name for a format hints
+	CString HintString = GetFilePath();
+	HintString.MakeLower();
+
+	if( HintString.Find("4alphaonly") != -1 )		m_ActualID.iTransparencyOnly = 4;
+	else if( HintString.Find("8alphaonly") != -1 )	m_ActualID.iTransparencyOnly = 8;
+//	else if( HintString.Find("no alpha") != -1 )	m_ActualID.iAlphaBits = 0;
+//	else if( HintString.Find("0alpha") != -1 )		m_ActualID.iAlphaBits = 0;
+//	else if( HintString.Find("1 alpha") != -1 )		m_ActualID.iAlphaBits = 1;
+//	else if( HintString.Find("1alpha") != -1 )		m_ActualID.iAlphaBits = 1;
+	if( HintString.Find("dither") != -1 )			m_ActualID.bDither = true;
+
+	if( m_ActualID.iTransparencyOnly )
+	{
+		/* Treat the image as 32-bit, so we don't lose any alpha precision. */
+		m_ActualID.iColorDepth = 32;
+	}
+
 	GLenum fmtTexture;
 	/* Figure out which texture format to use. */
 	if( m_ActualID.iColorDepth == 16 )
@@ -209,9 +220,6 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
 
 		/* Don't use more than we were hinted to. */
 		src_alpha_bits = min( m_ActualID.iAlphaBits, src_alpha_bits );
-
-		/* XXX Scan the image, and see if it actually uses its alpha channel/color key
-		* (if any).  Reduce to 1 or 0 bits of alpha if possible. */
 
 		switch( src_alpha_bits ) {
 		case 0:
@@ -410,12 +418,17 @@ retry:
 		/* (don't change internalfmt) */
 	}
 
-	/* Override the internalformat with an alpha format if it was requested. */
-	if(m_ActualID.iTransparencyOnly == 4)
-		internalfmt = GL_ALPHA4;
-	else if(m_ActualID.iTransparencyOnly == 8)
-		internalfmt = GL_ALPHA8;
-	else ASSERT(m_ActualID.iTransparencyOnly == 0);
+	if(internalfmt != GL_COLOR_INDEX8_EXT)
+	{
+		/* Override the internalformat with an alpha format if it was requested. 
+		 * Don't use iTransparencyOnly with paletted images; there's no point--paletted
+		 * images are as small or smaller (and the load will fail). */
+		if(m_ActualID.iTransparencyOnly == 4)
+			internalfmt = GL_ALPHA4;
+		else if(m_ActualID.iTransparencyOnly == 8)
+			internalfmt = GL_ALPHA8;
+		else ASSERT(m_ActualID.iTransparencyOnly == 0);
+	}
 
 	glTexImage2D(GL_TEXTURE_2D, 0, internalfmt, 
 			m_iTextureWidth, m_iTextureHeight, 0,
@@ -444,10 +457,17 @@ retry:
 	SDL_FreeSurface(img);
 
 	CreateFrameRects();
-
-//	LOG->Trace( "RageBitmapTexture: Loaded '%s' (%ux%u) from disk.  bStretch = %d, source %d,%d;  image %d,%d.", 
-//		m_sFilePath.GetString(), GetTextureWidth(), GetTextureHeight(),
-//		bStretch, m_iSourceWidth, m_iSourceHeight,
-//		m_iImageWidth,	m_iImageHeight);
+	CString props = " ";
+	if(m_ActualID.iAlphaBits == 0) props += "opaque ";
+	if(m_ActualID.iAlphaBits == 1) props += "matte ";
+	if(m_ActualID.iTransparencyOnly) props += "mask ";
+	if(m_ActualID.bStretch) props += "stretch ";
+	if(m_ActualID.bDither) props += "dither ";
+	if(IsPackedPixelFormat(pixfmt)) props += "paletted ";
+	props.erase(props.size()-1);
+	LOG->Trace( "RageBitmapTexture: Loaded '%s' (%ux%u); %s, source %d,%d;  image %d,%d.", 
+		m_ActualID.filename.GetString(), GetTextureWidth(), GetTextureHeight(),
+		props.GetString(), m_iSourceWidth, m_iSourceHeight,
+		m_iImageWidth,	m_iImageHeight);
 }
 

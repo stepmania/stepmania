@@ -28,6 +28,17 @@ SDL_Surface *SDL_CreateRGBSurfaceSane
 
 void FixHiddenAlpha(SDL_Surface *img);
 
+/* The surface contains no transparent pixels and/or never uses its color
+ * key, so it doesn't need any alpha bits at all. */
+#define TRAIT_NO_TRANSPARENCY   0x0001 /* 0alpha */
+/* The surface contains only transparent values of 0 or 1; no translucency.
+ * It only needs one bit of alpha. */
+#define TRAIT_BOOL_TRANSPARENCY 0x0002 /* 1alpha */
+/* All opaque pixels in this image are completely white, so it doesn't need
+ * any color bits at all; use a GL_ALPHA8 and only store the transparency. */
+#define TRAIT_WHITE_ONLY		0x0004 /* 8alphaonly */
+int FindSurfaceTraits(const SDL_Surface *img);
+
 struct char_traits_Sint32: public char_traits<Sint32>
 {
 	static Sint32 *copy(Sint32 *s, const Sint32 *p, size_t n)
