@@ -26,7 +26,7 @@ public:
 	bool LoadFromFont( CString sFontName );
 	bool LoadFromNumbers( CString sTexturePath )	{ return LoadFromTextureAndChars(sTexturePath,"0123456789%. :x"); };
 	bool LoadFromTextureAndChars( CString sTexturePath, CString sChars );
-	void SetText( CString sText );
+	void SetText( CString sText, CString sAlternateText = "" );
 
 	int GetWidestLineWidthInSourcePixels() { return m_iWidestLineWidth; };
 	void CropToWidth( int iWidthInSourcePixels );
@@ -39,8 +39,9 @@ public:
 	void SetHorizAlign( HorizAlign ha );
 	void SetVertAlign( VertAlign va );
 
+	CString GetText() const { return m_szText; }
+
 public:
-	CString m_sFontFilePath;
 	Font* m_pFont;
 
 protected:

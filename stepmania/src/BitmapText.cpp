@@ -129,6 +129,7 @@ void BitmapText::BuildChars()
 	/* calculate line lengths and widths */
 	m_iWidestLineWidth = 0;
 
+	m_iLineWidths.clear();
 	for( unsigned l=0; l<m_szTextLines.size(); l++ )	// for each line
 	{
 		m_iLineWidths.push_back(m_pFont->GetLineWidthInSourcePixels( m_szTextLines[l] ));
@@ -218,10 +219,24 @@ void BitmapText::DrawChars()
 	}
 }
 
-/* sText is UTF-8. */
-void BitmapText::SetText( CString sText )
+/* sText is UTF-8.  If PREFSMAN->UseAlternateText is enabled, and not all
+ * of the characters in sText are available in the font, sAlternateText
+ * will be used instead.  This is normally enabled; the option exists
+ * as a troubleshooting option (so should only be shown in a debug options
+ * menu) for the case that a string isn't being displayed, to find out
+ * which character is causing problems.  If there are unavailable characters
+ * in sAlternateText, too, just use sText. 
+ * XXX: implement PREFSMAN->UseAlternateText */
+void BitmapText::SetText( CString sText, CString sAlternateText )
 {
 	ASSERT( m_pFont );
+
+	if(sAlternateText.size())
+	{
+		if(!m_pFont->FontCompleteForString(CStringToWstring(sText)) &&
+			m_pFont->FontCompleteForString(CStringToWstring(sAlternateText)))
+			sText = sAlternateText;
+	}
 
 	if(m_szText == sText)
 		return;
@@ -230,9 +245,7 @@ void BitmapText::SetText( CString sText )
 
 	/* Break the string into lines. */
 	m_szTextLines.clear();
-	m_iLineWidths.clear();
-
-	split(CStringToWstring(sText), L"\n", m_szTextLines, false);
+	split(CStringToWstring(m_szText), L"\n", m_szTextLines, false);
 	
 	BuildChars();
 }
