@@ -79,10 +79,12 @@ void Combo::SetCombo( int iCombo )
 		m_textComboNumber.SetText( txt );
 		float fNumberZoom = SCALE(iCombo,0.f,(float)NUMBER_MAX_ZOOM_AT,(float)NUMBER_MIN_ZOOM,(float)NUMBER_MAX_ZOOM);
 		CLAMP( fNumberZoom, (float)NUMBER_MIN_ZOOM, (float)NUMBER_MAX_ZOOM );
+		m_textComboNumber.StopTweening();
 		m_textComboNumber.SetZoom( fNumberZoom * (float)PULSE_ZOOM ); 
 		m_textComboNumber.BeginTweening( C_TWEEN_SECONDS );
 		m_textComboNumber.SetZoom( fNumberZoom );
 
+		m_sprCombo.StopTweening();
 		m_sprCombo.SetZoom( PULSE_ZOOM ); 
 		m_sprCombo.BeginTweening( C_TWEEN_SECONDS );
 		m_sprCombo.SetZoom( 1 );
