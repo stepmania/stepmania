@@ -25,6 +25,8 @@
 #include "ThemeManager.h"
 #include "RageSoundManager.h"
 
+const int NUM_SCORE_DIGITS	=	9;
+
 // metrics that are common to all ScreenEvaluation classes
 #define BANNER_WIDTH						THEME->GetMetricF("ScreenEvaluation","BannerWidth")
 #define BANNER_HEIGHT						THEME->GetMetricF("ScreenEvaluation","BannerHeight")
@@ -104,7 +106,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 	//
 	// debugging
 	//
-	GAMESTATE->m_PlayMode = PLAY_MODE_NONSTOP;
+/*	GAMESTATE->m_PlayMode = PLAY_MODE_NONSTOP;
 	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 	GAMESTATE->m_pCurSong = SONGMAN->GetAllSongs()[0];
@@ -116,7 +118,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 2;
 	GAMESTATE->m_PlayerOptions[PLAYER_2].m_fScrollSpeed = 2;
 	GAMESTATE->m_iCurrentStageIndex = 2;
-
+*/
 
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
 
@@ -144,6 +146,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 		ASSERT(0);
 	}
 
+/*
 	//
 	// Debugging
 	//
@@ -155,6 +158,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 				stageStats.fRadarActual[p][r] = 0.5f + r/10.0f;
 			}
 	}
+*/
 
 	//
 	// Calculate grades
@@ -481,7 +485,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 				case 5:	iValue = stageStats.iTapNoteScores[p][TNS_MISS];		break;
 				case 6:	iValue = stageStats.iTapNoteScores[p][HNS_OK];			break;
 				case 7:	iValue = stageStats.iMaxCombo[p];						break;
-				default:	ASSERT(0);
+				default:	iValue = 0;	ASSERT(0);
 				}
 				m_textJudgeNumbers[l][p].SetText( ssprintf("%4d",iValue) );
 			}
@@ -508,10 +512,13 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
 
-			m_ScoreDisplay[p].Init( (PlayerNumber)p );
-			m_ScoreDisplay[p].Command( SCORE_NUMBER_ON_COMMAND(p) );
-			m_ScoreDisplay[p].SetScore( stageStats.fScore[p] );
-			this->AddChild( &m_ScoreDisplay[p] );
+			m_textScore[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenEvaluation score numbers") );
+			m_textScore[p].EnableShadow( false );
+			m_textScore[p].SetDiffuse( PlayerToColor(p) );
+			m_textScore[p].Command( SCORE_NUMBER_ON_COMMAND(p) );
+			m_textScore[p].SetText( ssprintf("%*.0f", NUM_SCORE_DIGITS, stageStats.fScore[p]) );
+
+			this->AddChild( &m_textScore[p] );
 
 		}
 	}
@@ -532,10 +539,12 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
 
-			m_TimeDisplay[p].Init( (PlayerNumber)p );
-			m_TimeDisplay[p].Command( TIME_NUMBER_ON_COMMAND(p) );
-			m_TimeDisplay[p].SetText( SecondsToTime(stageStats.fAliveSeconds[p]) );
-			this->AddChild( &m_TimeDisplay[p] );
+			m_textTime[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenEvaluation score numbers") );
+			m_textTime[p].EnableShadow( false );
+			m_textTime[p].SetDiffuse( PlayerToColor(p) );
+			m_textTime[p].Command( TIME_NUMBER_ON_COMMAND(p) );
+			m_textTime[p].SetText( SecondsToTime(stageStats.fAliveSeconds[p]) );
+			this->AddChild( &m_textTime[p] );
 		}
 	}
 
@@ -670,12 +679,12 @@ void ScreenEvaluation::TweenOffScreen()
 	// score area
 	m_sprScoreLabel.Command( SCORE_LABEL_OFF_COMMAND );
 	for( p=0; p<NUM_PLAYERS; p++ )
-		m_ScoreDisplay[p].Command( SCORE_NUMBER_OFF_COMMAND(p) );
+		m_textScore[p].Command( SCORE_NUMBER_OFF_COMMAND(p) );
 
 	// time area
 	m_sprTimeLabel.Command( TIME_LABEL_OFF_COMMAND );
 	for( p=0; p<NUM_PLAYERS; p++ )
-		m_TimeDisplay[p].Command( TIME_NUMBER_OFF_COMMAND(p) );
+		m_textTime[p].Command( TIME_NUMBER_OFF_COMMAND(p) );
 
 	// extra area
 	for( p=0; p<NUM_PLAYERS; p++ )

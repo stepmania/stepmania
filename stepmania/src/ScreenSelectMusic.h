@@ -74,7 +74,7 @@ protected:
 	DifficultyMeter			m_DifficultyMeter[NUM_PLAYERS];
 	MusicSortDisplay	m_MusicSortDisplay;
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
-	ScoreDisplayNormal	m_HighScore[NUM_PLAYERS];
+	BitmapText			m_textHighScore[NUM_PLAYERS];
 	MusicWheel			m_MusicWheel;
 	Sprite				m_sprMarathonBalloon;
 	Sprite				m_sprLongBalloon;

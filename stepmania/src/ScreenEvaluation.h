@@ -83,11 +83,11 @@ protected:
 
 	// score area
 	Sprite				m_sprScoreLabel;
-	ScoreDisplayNormal	m_ScoreDisplay[NUM_PLAYERS];
+	BitmapText			m_textScore[NUM_PLAYERS];
 
 	// time area
 	Sprite				m_sprTimeLabel;
-	ScoreDisplayNormal	m_TimeDisplay[NUM_PLAYERS];
+	BitmapText			m_textTime[NUM_PLAYERS];
 
 	// extra area
 	Sprite				m_sprNewRecord[NUM_PLAYERS];

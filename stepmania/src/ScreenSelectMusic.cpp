@@ -31,6 +31,7 @@
 #include "ThemeManager.h"
 #include "Notes.h"
  
+const int NUM_SCORE_DIGITS	=	9;
 
 #define BANNER_FRAME_ON_COMMAND				THEME->GetMetric ("ScreenSelectMusic","BannerFrameOnCommand")
 #define BANNER_FRAME_OFF_COMMAND			THEME->GetMetric ("ScreenSelectMusic","BannerFrameOffCommand")
@@ -153,8 +154,10 @@ ScreenSelectMusic::ScreenSelectMusic()
 		m_sprHighScoreFrame[p].SetState( p );
 		this->AddChild( &m_sprHighScoreFrame[p] );
 
-		m_HighScore[p].SetDiffuse( PlayerToColor(p) );
-		this->AddChild( &m_HighScore[p] );
+		m_textHighScore[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenSelectMusic score numbers") );
+		m_textHighScore[p].EnableShadow( false );
+		m_textHighScore[p].SetDiffuse( PlayerToColor(p) );
+		this->AddChild( &m_textHighScore[p] );
 	}	
 
 	m_MusicSortDisplay.Set( GAMESTATE->m_SongSortOrder );
@@ -209,50 +212,6 @@ void ScreenSelectMusic::DrawPrimitives()
 
 void ScreenSelectMusic::TweenOnScreen()
 {
-/*
-	int p;
-
-	m_sprBannerFrame.Command( 0, "bounce left", TWEEN_TIME );
-	m_Banner.FadeOn( 0, "bounce left", TWEEN_TIME );
-	m_BPMDisplay.FadeOn( 0, "bounce left", TWEEN_TIME );
-	m_sprStage.FadeOn( 0, "bounce left", TWEEN_TIME );
-	m_sprCDTitle.FadeOn( 0, "bounce left", TWEEN_TIME );
-
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		m_sprDifficultyFrame[p].FadeOn( 0, "fade", TWEEN_TIME );
-		m_sprMeterFrame[p].FadeOn( 0, "fade", TWEEN_TIME );
-	}
-
-	m_GrooveRadar.TweenOnScreen();
-	
-	m_textSongOptions.FadeOn( 0, "fade", TWEEN_TIME );
-	
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{		
-		m_OptionIconRow[p].FadeOn( 0, "foldy", TWEEN_TIME );
-//		fOriginalZoomY = m_textPlayerOptions[p].GetZoomY();
-//		m_textPlayerOptions[p].BeginTweening( TWEEN_TIME );
-//		m_textPlayerOptions[p].SetTweenZoomY( fOriginalZoomY );
-
-		m_DifficultyIcon[p].FadeOn( 0, "foldy", TWEEN_TIME );
-		m_AutoGenIcon[p].FadeOn( 0, "foldy", TWEEN_TIME );
-
-		m_DifficultyMeter[p].FadeOn( 0, "foldy", TWEEN_TIME );
-	}
-
-	m_MusicSortDisplay.FadeOn( 0, "fade", TWEEN_TIME );
-
-
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		m_sprHighScoreFrame[p].FadeOn( 0, SCORE_CONNECTED_TO_MUSIC_WHEEL?"accelerate right":"accelerate left", TWEEN_TIME );
-		m_HighScore[p].FadeOn( 0, SCORE_CONNECTED_TO_MUSIC_WHEEL?"accelerate right":"accelerate left", TWEEN_TIME );
-	}
-
-	m_MusicWheel.TweenOnScreen();
-*/
-
 	m_sprBannerFrame.Command( BANNER_FRAME_ON_COMMAND );
 	m_Banner.Command( BANNER_ON_COMMAND );
 	m_BPMDisplay.Command( BPM_ON_COMMAND );
@@ -274,7 +233,7 @@ void ScreenSelectMusic::TweenOnScreen()
 		m_AutoGenIcon[p].Command( AUTOGEN_ICON_ON_COMMAND(p) );
 		m_DifficultyMeter[p].Command( METER_ON_COMMAND(p) );
 		m_sprHighScoreFrame[p].Command( SCORE_FRAME_ON_COMMAND(p) );
-		m_HighScore[p].Command( SCORE_ON_COMMAND(p) );
+		m_textHighScore[p].Command( SCORE_ON_COMMAND(p) );
 	}
 
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
@@ -304,7 +263,7 @@ void ScreenSelectMusic::TweenOffScreen()
 		m_AutoGenIcon[p].Command( AUTOGEN_ICON_OFF_COMMAND(p) );
 		m_DifficultyMeter[p].Command( METER_OFF_COMMAND(p) );
 		m_sprHighScoreFrame[p].Command( SCORE_FRAME_OFF_COMMAND(p) );
-		m_HighScore[p].Command( SCORE_OFF_COMMAND(p) );
+		m_textHighScore[p].Command( SCORE_OFF_COMMAND(p) );
 	}
 }
 
@@ -317,7 +276,7 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		apActorsInScore.push_back( &m_sprHighScoreFrame[p] );
-		apActorsInScore.push_back( &m_HighScore[p] );
+		apActorsInScore.push_back( &m_textHighScore[p] );
 	}
 	for( unsigned i=0; i<apActorsInScore.size(); i++ )
 	{
@@ -753,7 +712,7 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 	Notes* m_pNotes = GAMESTATE->m_pCurNotes[pn];
 	
 	if( m_pNotes && SONGMAN->IsUsingMemoryCard(pn) )
-		m_HighScore[pn].SetScore( m_pNotes->m_MemCardScores[pn].fScore );
+		m_textHighScore[pn].SetText( ssprintf("%*.0f", NUM_SCORE_DIGITS, m_pNotes->m_MemCardScores[pn].fScore) );
 
 	m_DifficultyIcon[pn].SetFromNotes( pn, pNotes );
 	if( pNotes && pNotes->IsAutogen() )

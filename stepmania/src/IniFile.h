@@ -13,6 +13,7 @@
 */
 
 #include <map>
+using namespace std;
 
 class IniFile  
 {
