@@ -149,19 +149,19 @@ void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 
 void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 {
-	Song* pSong = GAMESTATE->m_pCurSong;
-	CString sSongBGPath;
-	if( pSong && pSong->HasBackground() )
-		sSongBGPath = pSong->GetBackgroundPath();
-	else
-		sSongBGPath = THEME->GetPathToG("Common fallback background");
-
 	Init();
 	CString lcPath = sPath;
 	lcPath.MakeLower();
 
 	if( lcPath.Find("usesongbg") != -1 )
 	{
+		const Song* pSong = GAMESTATE->m_pCurSong;
+		CString sSongBGPath;
+		if( pSong && pSong->HasBackground() )
+			sSongBGPath = pSong->GetBackgroundPath();
+		else
+			sSongBGPath = THEME->GetPathToG("Common fallback background");
+
 		LoadFromStaticGraphic( sSongBGPath );
 		return;		// this will ignore other effects in the file name
 	}
@@ -490,7 +490,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	}
 	else if( sFile.CompareNoCase("songbanner")==0 )
 	{
-		Song *pSong = GAMESTATE->m_pCurSong;
+		const Song *pSong = GAMESTATE->m_pCurSong;
 		if( pSong && pSong->HasBanner() )
 			sPath = pSong->GetBannerPath();
 		else
