@@ -20,10 +20,9 @@
 
 #define CHOICE_NAMES			THEME->GetMetric (m_sName,"ChoiceNames")
 #define CHOICE( sChoiceName )	THEME->GetMetricA(m_sName,ssprintf("Choice%s",sChoiceName.c_str()))
-#define NUM_CODES				THEME->GetMetricI(m_sName,"NumCodes")
+#define CODE_NAMES				THEME->GetMetric (m_sName,"CodeNames")
 #define CODE( c )				THEME->GetMetric (m_sName,ssprintf("Code%d",c+1))
 #define CODE_ACTION( c )		THEME->GetMetricA(m_sName,ssprintf("Code%dAction",c+1))
-#define HELP_TEXT				THEME->GetMetric (m_sName,"HelpText")
 #define NEXT_SCREEN( c )		THEME->GetMetric (m_sName,ssprintf("NextScreen%d",c+1))
 #define IDLE_TIMEOUT_SCREEN		THEME->GetMetric (m_sName,"IdleTimeoutScreen")
 #define ALLOW_DISABLED_PLAYER_INPUT		THEME->GetMetricB(m_sName,"AllowDisabledPlayerInput")
@@ -34,9 +33,6 @@ ScreenSelect::ScreenSelect( CString sClassName ) :
 	IDLE_TIMEOUT_SECONDS(m_sName,"IdleTimeoutSeconds")
 {
 	LOG->Trace( "ScreenSelect::ScreenSelect()" );
-
-	IDLE_COMMENT_SECONDS.Read();
-	IDLE_TIMEOUT_SECONDS.Read();
 
 	m_sName = sClassName;
 
@@ -71,16 +67,23 @@ ScreenSelect::ScreenSelect( CString sClassName ) :
 	//
 	// Load codes
 	//
-	for( int c=0; c<NUM_CODES; c++ )
 	{
-		CodeItem code;
-		if( !code.Load( CODE(c) ) )
-			continue;
+		CStringArray vsCodeNames;
+		split( CODE_NAMES, ",", vsCodeNames, true );
 
-		m_aCodes.push_back( code );
-		GameCommand mc;
-		mc.Load( c, CODE_ACTION(c) );
-		m_aCodeChoices.push_back( mc );
+		for( unsigned c=0; c<vsCodeNames.size(); c++ )
+		{
+			CString sCodeName = vsCodeNames[c];
+
+			CodeItem code;
+			if( !code.Load( CODE(c) ) )
+				continue;
+
+			m_aCodes.push_back( code );
+			GameCommand mc;
+			mc.Load( c, CODE_ACTION(c) );
+			m_aCodeChoices.push_back( mc );
+		}
 	}
 
 	if( !m_aGameCommands.size() )
