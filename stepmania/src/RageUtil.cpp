@@ -111,8 +111,8 @@ CString SecondsToMMSSMsMs( float fSecs )
 {
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
-	const float fLeftoverDisplay = (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100;
-	CString sReturn = ssprintf( "%02d:%02d.%02.0f", iMinsDisplay, iSecsDisplay, min(99.0f,fLeftoverDisplay) );
+	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100 );
+	CString sReturn = ssprintf( "%02d:%02d.%02d", iMinsDisplay, iSecsDisplay, min(99,iLeftoverDisplay) );
 	return sReturn;
 }
 
@@ -120,8 +120,8 @@ CString SecondsToMMSSMsMsMs( float fSecs )
 {
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
-	const float fLeftoverDisplay = (fSecs - iMinsDisplay*60 - iSecsDisplay) * 1000;
-	CString sReturn = ssprintf( "%02d:%02d.%03.0f", iMinsDisplay, iSecsDisplay, min(999.0f,fLeftoverDisplay) );
+	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 1000 );
+	CString sReturn = ssprintf( "%02d:%02d.%03d", iMinsDisplay, iSecsDisplay, min(999,iLeftoverDisplay) );
 	return sReturn;
 }
 
