@@ -27,13 +27,20 @@ class RageFile
 private:
     FILE    *mFP;
     CString mPath;
-    
+
+	enum { BSIZE = 256 };
+	char	m_Buffer[BSIZE];
+	char	*m_pBuf;
+	int		m_BufUsed;
+
+	void ResetBuf();
 public:
+	enum OpenMode { READ, WRITE };
     RageFile() : mPath("") { mFP = NULL; }
-    RageFile(const CString& path, const char *mode = "r");
+    RageFile( const CString& path, OpenMode mode = READ );
     ~RageFile() { Close(); }
     
-    bool Open(const CString& path, const char *mode = "r");
+    bool Open( const CString& path, OpenMode mode = READ );
     void Close();
     
     bool IsOpen() { return (mFP != NULL); }
@@ -45,11 +52,15 @@ public:
     bool Seek(long offset, int origin = SEEK_CUR) { return !fseek(mFP, offset, origin); }
     void Rewind() { rewind(mFP); }
     
+	/* Raw I/O: */
     // GetLine() strips new lines
+	bool PutString(const CString& string) { return fputs(string, mFP) >= 0; }
+	int Read(void *buffer, size_t bytes);
+	int Write(const void *buffer, size_t bytes);
+
+	/* Line-based I/O: */
     CString GetLine();
-    bool PutString(const CString& string) { return fputs(string, mFP) >= 0; }
-    size_t Read(void *buffer, size_t bytes);
-    size_t Write(const void *buffer, size_t bytes);
+	void GetLine( CString &out );
 };
 
 #endif

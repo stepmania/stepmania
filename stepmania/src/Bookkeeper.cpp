@@ -92,7 +92,7 @@ void Bookkeeper::ReadFromDisk()
 	ini.GetValue( "MachineStatistics", "TotalPlays",			m_iTotalPlays ); 
 
 	// read dat
-    RageFile file(COINS_DAT, "r");
+    RageFile file( COINS_DAT );
     if (file.IsOpen())
     {
 		const CString line = file.GetLine();
@@ -130,7 +130,7 @@ void Bookkeeper::WriteToDisk()
 	ini.WriteFile();
 
 	// write dat
-    RageFile file(COINS_DAT, "w");
+    RageFile file( COINS_DAT, RageFile::WRITE );
     
     if (file.IsOpen())
     {
