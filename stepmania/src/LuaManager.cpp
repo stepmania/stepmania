@@ -230,14 +230,16 @@ bool LuaManager::RunScriptFile( const CString &sFile )
 	RageFile f;
 	if( !f.Open( sFile ) )
 	{
-		LOG->Warn( "Couldn't open Lua script \"%s\": %s", sFile.c_str(), f.GetError().c_str() );
+		CString sError = ssprintf( "Couldn't open Lua script \"%s\": %s", sFile.c_str(), f.GetError().c_str() );
+		Dialog::OK( sError, "LUA_ERROR" );
 		return false;
 	}
 
 	CString sScript;
 	if( f.Read( sScript ) == -1 )
 	{
-		LOG->Warn( "Error reading Lua script \"%s\": %s", sFile.c_str(), f.GetError().c_str() );
+		CString sError = ssprintf( "Error reading Lua script \"%s\": %s", sFile.c_str(), f.GetError().c_str() );
+		Dialog::OK( sError, "LUA_ERROR" );
 		return false;
 	}
 
@@ -279,6 +281,7 @@ bool LuaManager::RunScript( const CString &sScript, int iReturnValues )
 
 	return true;
 }
+
 
 bool LuaManager::RunExpression( const CString &str )
 {
