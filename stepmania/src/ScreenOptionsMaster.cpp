@@ -77,9 +77,9 @@ void ScreenOptionsMaster::SetList( OptionRowDefinition &row, OptionRowHandler &h
 		if( asParts[i].CompareNoCase("together") == 0 )
 			row.bOneChoiceForAllPlayers = true;
 		else if( asParts[i].CompareNoCase("SelectMultiple") == 0 )
-			row.selectType = OptionRowDefinition::SELECT_MULTIPLE;
+			row.selectType = SELECT_MULTIPLE;
 		else if( asParts[i].CompareNoCase("SelectNone") == 0 )
-			row.selectType = OptionRowDefinition::SELECT_NONE;
+			row.selectType = SELECT_NONE;
 	}
 
 	for( int col = 0; col < NumCols; ++col )
@@ -414,7 +414,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const Op
 					/* The entry has no effect.  This is usually a default "none of the
 					 * above" entry.  It will always return true for DescribesCurrentMode().
 					 * It's only the selected choice if nothing else matches. */
-					if( row.selectType != OptionRowDefinition::SELECT_MULTIPLE )
+					if( row.selectType != SELECT_MULTIPLE )
 						FallbackOption = e;
 					continue;
 				}
@@ -424,7 +424,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const Op
 					if( mc.DescribesCurrentModeForAllPlayers() )
 					{
 						UseFallbackOption = false;
-						if( row.selectType != OptionRowDefinition::SELECT_MULTIPLE )
+						if( row.selectType != SELECT_MULTIPLE )
 							SelectExactlyOne( e, vbSelectedOut );
 						else
 							vbSelectedOut[e] = true;
@@ -435,7 +435,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const Op
 					if( mc.DescribesCurrentMode(  pn) )
 					{
 						UseFallbackOption = false;
-						if( row.selectType != OptionRowDefinition::SELECT_MULTIPLE )
+						if( row.selectType != SELECT_MULTIPLE )
 							SelectExactlyOne( e, vbSelectedOut );
 						else
 							vbSelectedOut[e] = true;
@@ -443,7 +443,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const Op
 				}
 			}
 
-			if( row.selectType == OptionRowDefinition::SELECT_ONE && 
+			if( row.selectType == SELECT_ONE && 
 				UseFallbackOption && 
 				FallbackOption != -1 )
 			{
@@ -464,7 +464,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const Op
 		ASSERT(0);
 	}
 
-	if( row.selectType != OptionRowDefinition::SELECT_MULTIPLE )
+	if( row.selectType != SELECT_MULTIPLE )
 	{
 		// The first row ("go down") should not be selected.
 		ASSERT( !vbSelectedOut[0] );

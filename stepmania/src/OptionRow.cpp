@@ -2,6 +2,21 @@
 #include "OptionRow.h"
 #include "RageUtil.h"
 
+static const CString SelectTypeNames[NUM_SELECT_TYPES] = {
+	"SelectOne",
+	"SelectMultiple",
+	"SelectNone",
+};
+XToString( SelectType );
+StringToX( SelectType );
+
+static const CString LayoutTypeNames[NUM_LAYOUT_TYPES] = {
+	"ShowAllInLine",
+	"ShowOneLine",
+};
+XToString( LayoutType );
+StringToX( LayoutType );
+
 OptionRow::OptionRow()
 {
 }

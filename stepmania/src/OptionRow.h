@@ -8,12 +8,20 @@
 #include "OptionsCursor.h"
 #include "OptionIcon.h"
 
+enum SelectType { SELECT_ONE, SELECT_MULTIPLE, SELECT_NONE, NUM_SELECT_TYPES, SELECT_INVALID };
+const CString& SelectTypeToString( SelectType pm );
+SelectType StringToSelectType( const CString& s );
+
+enum LayoutType { SHOW_ALL_IN_LINE, SHOW_ONE_IN_LINE, NUM_LAYOUT_TYPES, LAYOUT_INVALID };
+const CString& LayoutTypeToString( LayoutType pm );
+LayoutType StringToLayoutType( const CString& s );
+
 struct OptionRowDefinition
 {
 	CString name;
 	bool bOneChoiceForAllPlayers;
-	enum SelectType { SELECT_ONE, SELECT_MULTIPLE, SELECT_NONE } selectType;
-	enum LayoutType { SHOW_ALL_IN_LINE, SHOW_ONE_IN_LINE } layoutType;
+	enum SelectType selectType;
+	enum LayoutType layoutType;
 	vector<CString> choices;
 
 	OptionRowDefinition(): name(""), bOneChoiceForAllPlayers(false), selectType(SELECT_ONE), layoutType(SHOW_ALL_IN_LINE) { }

@@ -167,7 +167,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 				vbSelected[j] = false;
 			
 			// set select the first item if a SELECT_ONE row
-			if( row.m_RowDef.selectType == OptionRowDefinition::SELECT_ONE )
+			if( row.m_RowDef.selectType == SELECT_ONE )
 				vbSelected[0] = true;
 		}
 	}
@@ -195,7 +195,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 			{
 				row.m_iChoiceInRowWithFocus[p] = 0;	// focus on the first row, which is "go down"
 			}
-			else if( row.m_RowDef.selectType == OptionRowDefinition::SELECT_ONE )
+			else if( row.m_RowDef.selectType == SELECT_ONE )
 			{
 				/* Make sure the row actually has a selection. */
 				bool bHasSelection = false;
@@ -284,7 +284,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 
 				if( fX > ITEMS_END_X ) 
 				{
-					row.m_RowDef.layoutType = OptionRowDefinition::SHOW_ONE_IN_LINE;
+					row.m_RowDef.layoutType = SHOW_ONE_IN_LINE;
 					break;
 				}
 			}
@@ -292,7 +292,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 
 		switch( row.m_RowDef.layoutType )
 		{
-		case OptionRowDefinition::SHOW_ONE_IN_LINE:
+		case SHOW_ONE_IN_LINE:
 			// init text
 			FOREACH_HumanPlayer( p )
 			{
@@ -330,7 +330,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 			}
 			break;
 
-		case OptionRowDefinition::SHOW_ALL_IN_LINE:
+		case SHOW_ALL_IN_LINE:
 			{
 				float fX = ITEMS_START_X;
 				for( unsigned c=0; c<optline.choices.size(); c++ )
@@ -587,13 +587,13 @@ BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iCh
 	int index = -1;
 	switch( row.m_RowDef.layoutType )
 	{
-	case OptionRowDefinition::SHOW_ONE_IN_LINE:
+	case SHOW_ONE_IN_LINE:
 		index = bOneChoice ? 0 : pn;
 		/* If only P2 is enabled, his selections will be in index 0. */
 		if( row.m_textItems.size() == 1 )
 			index = 0;
 		break;
-	case OptionRowDefinition::SHOW_ALL_IN_LINE:
+	case SHOW_ALL_IN_LINE:
 		index = iChoiceOnRow;
 		break;
 	default:
@@ -666,13 +666,13 @@ void ScreenOptions::PositionUnderlines()
 		{
 			vector<OptionsCursor*> &vpUnderlines = row.m_Underline[p];
 
-			const int iNumUnderlines = (row.m_RowDef.layoutType == OptionRowDefinition::SHOW_ONE_IN_LINE) ? 1 : vpUnderlines.size();
+			const int iNumUnderlines = (row.m_RowDef.layoutType == SHOW_ONE_IN_LINE) ? 1 : vpUnderlines.size();
 			
 			for( int i=0; i<iNumUnderlines; i++ )
 			{
 				OptionsCursor& ul = *vpUnderlines[i];
 	
-				int iChoiceWithFocus = (row.m_RowDef.layoutType == OptionRowDefinition::SHOW_ONE_IN_LINE) ? row.m_iChoiceInRowWithFocus[p] : i;
+				int iChoiceWithFocus = (row.m_RowDef.layoutType == SHOW_ONE_IN_LINE) ? row.m_iChoiceInRowWithFocus[p] : i;
 
 				/* Don't tween X movement and color changes. */
 				int iWidth, iX, iY;
@@ -801,7 +801,7 @@ void ScreenOptions::UpdateText( int iRow )
 	OptionRow &row = *m_Rows[iRow];
 	const OptionRowDefinition &data = row.m_RowDef;
 
-	if( !row.m_RowDef.layoutType == OptionRowDefinition::SHOW_ONE_IN_LINE )
+	if( !row.m_RowDef.layoutType == SHOW_ONE_IN_LINE )
 		return;
 
 	FOREACH_HumanPlayer( pn )
@@ -1216,7 +1216,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 	}
 	
 	// If this is a bFirstChoiceGoesDown, then if this is a multiselect row.
-	if( data.selectType == OptionRowDefinition::SELECT_MULTIPLE )
+	if( data.selectType == SELECT_MULTIPLE )
 	{
 		int iChoiceInRow = row.m_iChoiceInRowWithFocus[pn];
 		row.m_vbSelected[pn][iChoiceInRow] = !row.m_vbSelected[pn][iChoiceInRow];
@@ -1242,7 +1242,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 			break;
 		case NAV_TOGGLE_THREE_KEY:
 		case NAV_TOGGLE_FIVE_KEY:
-			if( data.selectType != OptionRowDefinition::SELECT_MULTIPLE )
+			if( data.selectType != SELECT_MULTIPLE )
 			{
 				int iChoiceInRow = row.m_iChoiceInRowWithFocus[pn];
 				if( row.m_RowDef.bOneChoiceForAllPlayers )
@@ -1273,7 +1273,7 @@ void ScreenOptions::StoreFocus( PlayerNumber pn )
 {
 	/* Long rows always put us in the center, so don't update the focus. */
 	const OptionRow &OptionRow = *m_Rows[m_iCurrentRow[pn]];
-	if( OptionRow.m_RowDef.layoutType == OptionRowDefinition::SHOW_ONE_IN_LINE )
+	if( OptionRow.m_RowDef.layoutType == SHOW_ONE_IN_LINE )
 		return;
 
 	int iWidth, iY;
@@ -1353,7 +1353,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 			}
 			else
 			{
-				if( optrow.selectType == OptionRowDefinition::SELECT_MULTIPLE )
+				if( optrow.selectType == SELECT_MULTIPLE )
 					;	// do nothing.  User must press Start to toggle the selection.
 				else
 					row.SetOneSelection( p, iNewChoiceWithFocus );			
@@ -1368,7 +1368,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		}
 		else
 		{
-			if( optrow.selectType == OptionRowDefinition::SELECT_MULTIPLE )
+			if( optrow.selectType == SELECT_MULTIPLE )
 				;	// do nothing.  User must press Start to toggle the selection.
 			else
 				row.SetOneSelection( pn, iNewChoiceWithFocus );
@@ -1417,7 +1417,7 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 		{
 		case NAV_TOGGLE_THREE_KEY:
 		case NAV_TOGGLE_FIVE_KEY:
-			if( m_Rows[row]->m_RowDef.layoutType != OptionRowDefinition::SHOW_ONE_IN_LINE )
+			if( m_Rows[row]->m_RowDef.layoutType != SHOW_ONE_IN_LINE )
 			{
 				int iSelectionDist = -1;
 				for( unsigned i = 0; i < m_Rows[row]->m_textItems.size(); ++i )
