@@ -37,7 +37,7 @@ NoteSkinManager::~NoteSkinManager()
 
 void NoteSkinManager::RefreshNoteSkinData( Game game )
 {
-	GameDef* pGameDef = GAMEMAN->GetGameDefForGame( GAMESTATE->m_CurGame );
+	GameDef* pGameDef = GAMEMAN->GetGameDefForGame( game );
 
 	CString sBaseSkinFolder = NOTESKINS_DIR + pGameDef->m_szName + "/";
 	CStringArray asNoteSkinNames;
@@ -84,7 +84,7 @@ void NoteSkinManager::GetNoteSkinNames( CStringArray &AddTo )
 
 void NoteSkinManager::GetNoteSkinNames( Game game, CStringArray &AddTo )
 {
-	RefreshNoteSkinData( game );	// now is a good time for this
+	RefreshNoteSkinData( game );
 
 	for( map<CString,NoteSkinData>::const_iterator iter = m_mapNameToData.begin(); 
 		iter != m_mapNameToData.end();
@@ -92,6 +92,9 @@ void NoteSkinManager::GetNoteSkinNames( Game game, CStringArray &AddTo )
 	{
 		AddTo.push_back( iter->second.sName );
 	}
+
+	/* Put the note skins back. */
+	RefreshNoteSkinData( GAMESTATE->m_CurGame );
 }
 
 
