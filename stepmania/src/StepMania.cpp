@@ -115,13 +115,13 @@ void ApplyGraphicOptions()
 }
 
 
-void GameLoop();
+static void GameLoop();
 #include "SDL_utils.h"
 #include "SDL_image.h"
 #include "SDL_rotozoom.h"
 #include "StepMania.xpm" /* icon */
 
-void SetIcon()
+static void SetIcon()
 {
 	SDL_Surface *srf = IMG_ReadXPMFromArray(icon);
 	SDL_SetColorKey( srf, SDL_SRCCOLORKEY, SDL_MapRGB(srf->format, 0xFF, 0, 0xFF));
@@ -396,7 +396,7 @@ static void HandleInputEvents(float fDeltaTime)
 	}
 }
 
-void GameLoop()
+static void GameLoop()
 {
 	RageTimer timer;
 	while(1)
