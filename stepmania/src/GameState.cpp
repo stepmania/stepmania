@@ -558,28 +558,37 @@ float GameState::GetSongPercent( float beat ) const
 	return (beat - m_pCurSong->m_fFirstBeat) / m_pCurSong->m_fLastBeat;
 }
 
+static int GetNumStagesForCurrentSong()
+{
+	int iNumStagesOfThisSong = 1;
+	if( GAMESTATE->m_pCurSong )
+		iNumStagesOfThisSong = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
+	else if( GAMESTATE->m_pCurCourse )
+		iNumStagesOfThisSong = 1;
+	else
+		return -1;
+
+	ASSERT( iNumStagesOfThisSong >= 1 && iNumStagesOfThisSong <= 3 );
+
+	/* Never increment more than one past final stage.  That is, if the current
+	 * stage is the final stage, and we picked a stage that takes two songs, it
+	 * only counts as one stage (so it doesn't bump us all the way to Ex2).
+	 * One case where this happens is a long/marathon extra stage.  Another is
+	 * if a long/marathon song is selected explicitly in the theme with a ModeChoice,
+	 * and PREFSMAN->m_iNumArcadeStages is less than the number of stages that
+	 * song takes. */
+	int iNumStagesLeft = PREFSMAN->m_iNumArcadeStages - GAMESTATE->m_iCurrentStageIndex;
+	iNumStagesOfThisSong = min( iNumStagesOfThisSong, iNumStagesLeft );
+	iNumStagesOfThisSong = max( iNumStagesOfThisSong, 1 );
+
+	return iNumStagesOfThisSong;
+}
+
 /* Called by ScreenGameplay.  Set the length of the current song. */
 void GameState::BeginStage()
 {
-	if( m_pCurSong )
-		m_iNumStagesOfThisSong = SongManager::GetNumStagesForSong( this->m_pCurSong );
-	else if( m_pCurCourse )
-		m_iNumStagesOfThisSong = 1;
-	else
-		FAIL_M("fail"); /* what are we playing? */
-
-	ASSERT( m_iNumStagesOfThisSong >= 1 && m_iNumStagesOfThisSong <= 3 );
-
-	if( this->IsExtraStage() || this->IsExtraStage2() )
-	{
-		/* If it's an extra stage, always increment by one.  This is because in some
-		 * unusual cases we can pick a long or marathon song as an extra stage.  The
-		 * most common cause of this is when an entire group of songs is long/nonstop mixes.
-		 * 
-		 * We can't simply not choose long songs as extra stages: if there are no
-		 * regular songs to choose, we'll end up with no song to use as an extra stage. */
-		m_iNumStagesOfThisSong = 1;
-	}
+	m_iNumStagesOfThisSong = GetNumStagesForCurrentSong();
+	ASSERT( m_iNumStagesOfThisSong != -1 );
 }
 
 void GameState::CancelStage()
@@ -626,9 +635,9 @@ bool GameState::IsFinalStage() const
 		return true;
 
 	/* This changes dynamically on ScreenSelectMusic as the wheel turns. */
-	int iPredictedStageForCurSong = 1;
-	if( m_pCurSong != NULL )
-		iPredictedStageForCurSong = SongManager::GetNumStagesForSong( m_pCurSong );
+	int iPredictedStageForCurSong = GetNumStagesForCurrentSong();
+	if( iPredictedStageForCurSong == -1 )
+		iPredictedStageForCurSong = 1;
 	return m_iCurrentStageIndex + iPredictedStageForCurSong == PREFSMAN->m_iNumArcadeStages;
 }
 
