@@ -52,9 +52,13 @@ void ThemeManager::GetAllThemeNames( CStringArray& AddTo )
 	GetDirListing( THEMES_DIR+"\\*", AddTo, true );
 	
 	// strip out the folder called "CVS"
-	for( int i=AddTo.size()-1; i >= 0; i-- )
-		if( 0 == stricmp(AddTo[i],"cvs") )
-			AddTo.RemoveAt(i);
+	for( CStringArray::iterator i=AddTo.begin(); i != AddTo.end(); ++i )
+	{
+		if( !stricmp(*i,"cvs") ) {
+			AddTo.erase(i, i+1);
+			break;
+		}
+	}
 }
 
 void ThemeManager::GetThemeNamesForCurGame( CStringArray& AddTo )

@@ -624,7 +624,7 @@ void RageDisplay::PushMatrix()
 
 void RageDisplay::PopMatrix() 
 { 
-	m_MatrixStack.RemoveAt( m_MatrixStack.size()-1 ); 
+	m_MatrixStack.erase( m_MatrixStack.end()-1, m_MatrixStack.end() ); 
 }
 
 void RageDisplay::Translate( float x, float y, float z )

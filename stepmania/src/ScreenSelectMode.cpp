@@ -232,7 +232,8 @@ void ScreenSelectMode::RefreshModeChoices()
 	// remove ModeChoices that won't work with the current number of players
 	for( i=m_aPossibleModeChoices.size()-1; i>=0; i-- )
 		if( m_aPossibleModeChoices[i].numSidesJoinedToPlay != iNumSidesJoined )
-			m_aPossibleModeChoices.RemoveAt( i );
+			m_aPossibleModeChoices.erase( m_aPossibleModeChoices.begin()+i, 
+										  m_aPossibleModeChoices.begin()+i+1 );
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 

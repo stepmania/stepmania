@@ -30,8 +30,9 @@ InputQueue::InputQueue()
 void InputQueue::RememberInput( const GameInput GameI )
 {
 	int c = GameI.controller;
+	/* XXX: this should be a deque, and just pop_back */
 	if( m_aQueue[c].size() >= MAX_INPUT_QUEUE_LENGTH )	// full
-		m_aQueue[c].RemoveAt( 0, m_aQueue[c].size()-MAX_INPUT_QUEUE_LENGTH+1 );
+		m_aQueue[c].erase( m_aQueue[c].begin(), m_aQueue[c].begin() + (m_aQueue[c].size()-MAX_INPUT_QUEUE_LENGTH+1) );
 	m_aQueue[c].Add( GameButtonAndTime(GameI.button,TIMER->GetTimeSinceStart()) );
 };
 

@@ -218,7 +218,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
 				if( GAMESTATE->m_apSongsPlayed.size() > STAGES_TO_SHOW_IN_SUMMARY )
-					GAMESTATE->m_apSongsPlayed.RemoveAt( 0, GAMESTATE->m_apSongsPlayed.size() - STAGES_TO_SHOW_IN_SUMMARY );
+					GAMESTATE->m_apSongsPlayed.erase( GAMESTATE->m_apSongsPlayed.begin(), GAMESTATE->m_apSongsPlayed.begin() + (GAMESTATE->m_apSongsPlayed.size() - STAGES_TO_SHOW_IN_SUMMARY) );
 			}
 
 			const unsigned iSongsToShow = GAMESTATE->m_apSongsPlayed.size();

@@ -190,7 +190,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 				 !stricmp(asBits[2], "hard") ||
 				 !stricmp(asBits[2], "crazy")) )
 			{
-				asBits.RemoveAt(2);
+				asBits.erase(asBits.begin()+2, asBits.begin()+3);
 			}
 
 			if( asBits.size() == 2 )

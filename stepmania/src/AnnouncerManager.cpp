@@ -33,11 +33,11 @@ void AnnouncerManager::GetAnnouncerNames( CStringArray& AddTo )
 	// strip out the folder called "CVS" and EMPTY_ANNOUNCER_NAME
 	for( int i=AddTo.size()-1; i>=0; i-- )
 		if( !stricmp( AddTo[i], "cvs" ) )
-			AddTo.RemoveAt(i);
+			AddTo.erase(AddTo.begin()+i, AddTo.begin()+i+1 );
 
 	for( int i=AddTo.size()-1; i>=0; i-- )
 		if( !stricmp( AddTo[i], EMPTY_ANNOUNCER_NAME ) )
-			AddTo.RemoveAt(i);
+			AddTo.erase(AddTo.begin()+i, AddTo.begin()+i+1 );
 }
 
 bool AnnouncerManager::DoesAnnouncerExist( CString sAnnouncerName )

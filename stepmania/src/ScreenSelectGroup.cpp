@@ -75,7 +75,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 			aAllSongs[j]->NormallyDisplayed() )
 			continue;
 
-		aAllSongs.RemoveAt( j );
+		aAllSongs.erase( aAllSongs.begin()+j, aAllSongs.begin()+j+1 );
 	}
 
 	CStringArray asGroupNames;
@@ -87,7 +87,8 @@ ScreenSelectGroup::ScreenSelectGroup()
 	SortCStringArray(asGroupNames, true);
 	for( i=asGroupNames.size()-1; i > 0; --i ) {
 		if( asGroupNames[i] == asGroupNames[i-1] )
-			asGroupNames.RemoveAt( i );
+			asGroupNames.erase( asGroupNames.begin()+i,
+								   asGroupNames.begin()+i+1 );
 	}
 
 	asGroupNames.insert(asGroupNames.begin(), "ALL MUSIC" );

@@ -289,7 +289,7 @@ void ScreenManager::PopTopScreen( ScreenMessage SM )
 {
 	Screen* pScreenToPop = m_ScreenStack.back();	// top menu
 	//pScreenToPop->HandleScreenMessage( SM_LosingInputFocus );
-	m_ScreenStack.RemoveAt(m_ScreenStack.size()-1);
+	m_ScreenStack.erase(m_ScreenStack.end()-1, m_ScreenStack.end());
 	m_ScreensToDelete.Add( pScreenToPop );
 	
 	Screen* pNewTopScreen = m_ScreenStack[m_ScreenStack.size()-1];

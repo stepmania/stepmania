@@ -625,7 +625,8 @@ void AddBGChange( CString sBGName )
 	}
 
 	if( i != pSong->m_BackgroundChanges.size() )	// there is already a BGChange here
-		pSong->m_BackgroundChanges.RemoveAt( i );
+		pSong->m_BackgroundChanges.erase( pSong->m_BackgroundChanges.begin()+i,
+										  pSong->m_BackgroundChanges.begin()+i+1);
 
 	// create a new BGChange
 	if( sBGName != "" )
@@ -1094,7 +1095,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			else	// BPMSegment being modified is m_BPMSegments[i]
 			{
 				if( i > 0  &&  fabsf(m_pSong->m_BPMSegments[i-1].m_fBPM - fNewBPM) < 0.025f )
-					m_pSong->m_BPMSegments.RemoveAt( i );
+					m_pSong->m_BPMSegments.erase( m_pSong->m_BPMSegments.begin()+i,
+												  m_pSong->m_BPMSegments.begin()+i+1);
 				else
 					m_pSong->m_BPMSegments[i].m_fBPM = fNewBPM;
 			}
@@ -1133,7 +1135,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 				m_pSong->m_StopSegments[i].m_fStopSeconds += fStopDelta;
 				if( m_pSong->m_StopSegments[i].m_fStopSeconds <= 0 )
-					m_pSong->m_StopSegments.RemoveAt( i );
+					m_pSong->m_StopSegments.erase( m_pSong->m_StopSegments.begin()+i,
+													  m_pSong->m_StopSegments.begin()+i+1);
 			}
 		}
 		break;

@@ -264,14 +264,16 @@ void Background::LoadFromSong( Song* pSong )
 				// strip out "cvs" and "danger
 				for( int i=arrayPossibleAnims.size()-1; i>=0; i-- )
 					if( 0==stricmp(arrayPossibleAnims[i].Right(3),"cvs") || 0==stricmp(arrayPossibleAnims[i].Right(3),"danger") )
-						arrayPossibleAnims.RemoveAt(i);
+						arrayPossibleAnims.erase(arrayPossibleAnims.begin()+i,
+													arrayPossibleAnims.begin()+i+1);
 				for( i=0; i<4 && !arrayPossibleAnims.empty(); i++ )
 				{
 					unsigned index = rand() % arrayPossibleAnims.size();
 					BGAnimation *pTempBGA = new BGAnimation;
 					pTempBGA->LoadFromAniDir( arrayPossibleAnims[index], sSongBackgroundPath );
 					m_BGAnimations.Add( pTempBGA );
-					arrayPossibleAnims.RemoveAt( index );
+					arrayPossibleAnims.erase( arrayPossibleAnims.begin()+index,
+												 arrayPossibleAnims.begin()+index+1 );
 				}
 			}
 			break;
@@ -287,7 +289,8 @@ void Background::LoadFromSong( Song* pSong )
 					BGAnimation *pTempBGA = new BGAnimation;
 					pTempBGA->LoadFromMovie( arrayPossibleMovies[index], true, false );
 					m_BGAnimations.Add( pTempBGA );
-					arrayPossibleMovies.RemoveAt( index );
+					arrayPossibleMovies.erase( arrayPossibleMovies.begin()+index,
+												  arrayPossibleMovies.begin()+index+1 );
 				}	
 			}
 			break;

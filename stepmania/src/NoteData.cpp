@@ -573,7 +573,8 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 			{
 				int iRandTrackIndex = rand()%aiTracksLeftToMap.size();
 				int iRandTrack = aiTracksLeftToMap[iRandTrackIndex];
-				aiTracksLeftToMap.RemoveAt( iRandTrackIndex );
+				aiTracksLeftToMap.erase( aiTracksLeftToMap.begin()+iRandTrackIndex,
+										 aiTracksLeftToMap.begin()+iRandTrackIndex+1 );
 				iTakeFromTrack[t] = iRandTrack;
 			}
 		}
@@ -634,7 +635,8 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 				{
 					int iRandIndex = rand() % aiTracksThatCouldHaveTapNotes.size();
 					int iTo = aiTracksThatCouldHaveTapNotes[ iRandIndex ];
-					aiTracksThatCouldHaveTapNotes.RemoveAt( iRandIndex );
+					aiTracksThatCouldHaveTapNotes.erase( aiTracksThatCouldHaveTapNotes.begin()+iRandIndex,
+													     aiTracksThatCouldHaveTapNotes.begin()+iRandIndex+1 );
 	
 					tempNoteData.SetTapNote(iTo, r, GetTapNote(t, r));
 				}

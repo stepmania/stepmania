@@ -1346,7 +1346,7 @@ void GameManager::GetNoteSkinNames( Game game, CStringArray &AddTo ) const
 	// strip out "CVS"
 	for( int i=AddTo.size()-1; i>=0; i-- )
 		if( 0 == stricmp("cvs", AddTo[i]) )
-			AddTo.RemoveAt( i );
+			AddTo.erase( AddTo.begin()+i, AddTo.begin()+i+1 );
 }
 
 void GameManager::GetNoteSkinNames( CStringArray &AddTo ) const
