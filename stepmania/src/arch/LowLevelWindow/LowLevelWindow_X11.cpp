@@ -21,7 +21,7 @@ LowLevelWindow_X11::LowLevelWindow_X11()
 	{
 		RageException::Throw("Failed to establish a connection with the X server.");
 	}
-	g_X11Display = X11Helper::Dpy();
+	g_X11Display = X11Helper::Dpy;
 }
 
 LowLevelWindow_X11::~LowLevelWindow_X11()
@@ -39,14 +39,11 @@ void *LowLevelWindow_X11::GetProcAddress(CString s)
 
 CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &bNewDeviceOut)
 {
-	int i;
-	int bpppc;	// Bits per pixel per channel
-	int visAttribs[11];
-	XVisualInfo *xvi;
-	XEvent ev;
 	XSizeHints hints;
-	GLXContext ctxt;
+	XEvent ev;
 	stack<XEvent> otherEvs;
+
+	int i;
 
 	// XXX: LLW_SDL allows the window to be resized. Do we really want to?
 	hints.flags = PMinSize | PMaxSize | PBaseSize;
@@ -57,39 +54,53 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 
 	if(!windowIsOpen || p.bpp != CurrentParams.bpp)
 	{
+		int visAttribs[32];
+		XVisualInfo *xvi;
+		GLXContext ctxt;
+
 		// Different depth, or we didn't make a window before. New context.
 		bNewDeviceOut = true;
-	
-		bpppc = (int) ceil(p.bpp / 4.0);
 
-		visAttribs[0] = GLX_RGBA;
-		visAttribs[1] = GLX_DOUBLEBUFFER;
-		visAttribs[2] = GLX_RED_SIZE;		visAttribs[3] = bpppc;
-		visAttribs[4] = GLX_GREEN_SIZE;		visAttribs[5] = bpppc;
-		visAttribs[6] = GLX_BLUE_SIZE;		visAttribs[7] = bpppc;
-		visAttribs[8] = GLX_ALPHA_SIZE;		visAttribs[9] = p.bpp
-								- (bpppc * 3);
-					// Alpha gets however many bits are left...
-		visAttribs[10] = None;
+		i = 0;
+		ASSERT(p.bpp == 16 || p.bpp == 32);
+		if(p.bpp == 32)
+		{
+			visAttribs[i++] = GLX_RED_SIZE;		visAttribs[i++] = 8;
+			visAttribs[i++] = GLX_GREEN_SIZE;	visAttribs[i++] = 8;
+			visAttribs[i++] = GLX_BLUE_SIZE;	visAttribs[i++] = 8;
+		}
+		else
+		{
+			visAttribs[i++] = GLX_RED_SIZE;		visAttribs[i++] = 5;
+			visAttribs[i++] = GLX_GREEN_SIZE;	visAttribs[i++] = 6;
+			visAttribs[i++] = GLX_BLUE_SIZE;	visAttribs[i++] = 5;
+		}
 
-		xvi = glXChooseVisual(X11Helper::Dpy(),
-				DefaultScreen(X11Helper::Dpy() ), visAttribs);
+		visAttribs[i++] = GLX_DEPTH_SIZE;	visAttribs[i++] = 16;
+		visAttribs[i++] = GLX_RGBA;
+		visAttribs[i++] = GLX_DOUBLEBUFFER;
+
+		visAttribs[i++] = None;
+
+		xvi = glXChooseVisual(X11Helper::Dpy,
+				DefaultScreen(X11Helper::Dpy), visAttribs);
 
 		if(!xvi)
 		{
 			return "No visual available for that depth.";
 		}
 
-		if(!X11Helper::MakeWindow(xvi->screen, xvi->depth, xvi->visual,
-							p.width, p.height) )
+		// Taking a hint from SDL. 
+
+		if(!X11Helper::MakeWindow(xvi->screen, xvi->depth, xvi->visual) )
 		{
 			return "Failed to create the window.";
 		}
 		windowIsOpen = true;
 
-		ctxt = glXCreateContext(X11Helper::Dpy(), xvi, NULL, True);
+		ctxt = glXCreateContext(X11Helper::Dpy, xvi, NULL, True);
 
-		glXMakeCurrent(X11Helper::Dpy(), X11Helper::Win(), ctxt);
+		glXMakeCurrent(X11Helper::Dpy, X11Helper::Win, ctxt);
 
 	}
 	else
@@ -99,12 +110,12 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 		bNewDeviceOut = false;
 		// Remap the window to work around possible buggy WMs and/or
 		// X servers
-		XUnmapWindow(X11Helper::Dpy(), X11Helper::Win() );
+		XUnmapWindow(X11Helper::Dpy, X11Helper::Win);
 	}
 
-	XSetWMNormalHints(X11Helper::Dpy(), X11Helper::Win(), &hints);
+	XSetWMNormalHints(X11Helper::Dpy, X11Helper::Win, &hints);
 
-	XMapWindow(X11Helper::Dpy(), X11Helper::Win() );
+	XMapWindow(X11Helper::Dpy, X11Helper::Win);
 
 	// HACK: Wait for the MapNotify event, without spinning and
 	// eating CPU unnecessarily, and without smothering other
@@ -113,7 +124,7 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 	// after MapNotify arrives.
 	while(true)
 	{
-		XNextEvent(X11Helper::Dpy(), &ev);
+		XNextEvent(X11Helper::Dpy, &ev);
 		if(ev.type == MapNotify)
 		{
 			break;
@@ -125,7 +136,7 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 	}
 	while(!otherEvs.empty() )
 	{
-		XPutBackEvent(X11Helper::Dpy(), &otherEvs.top() );
+		XPutBackEvent(X11Helper::Dpy, &otherEvs.top() );
 		otherEvs.pop();
 	}
 
@@ -138,7 +149,11 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 
 void LowLevelWindow_X11::SwapBuffers()
 {
-	glXSwapBuffers(X11Helper::Dpy(), X11Helper::Win() );
+	glXSwapBuffers(X11Helper::Dpy, X11Helper::Win);
+	// XXX HACK: I added this sleep on a strange hunch while trying to find
+	// the source of crippling performance issues, and suddenly
+	// those performance issues simply stopped...
+	usleep(10000); // Allows up to ~100fps
 }
 
 /*

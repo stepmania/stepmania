@@ -7,18 +7,20 @@
 
 #include "RageLog.h"		// LOG
 #include "RageDisplay.h"	// RageDisplay
+#include "RageThreads.h"	// Don't make me list everything...
 
 vector<long>		pMasks;				// Currently open masks
-Display			*pDpy		= NULL;		// Running X connection
 bool			pHaveWin	= false;	// Do we have a window?
-Window			pWin;				// Current window
 unsigned short int	pCt		= 0;		// Number of subsystems
 							// using the X connection
 
+Display *X11Helper::Dpy = NULL;
+Window X11Helper::Win;
+
 int protoErrorCallback(Display *d, XErrorEvent *err)
 {
-	char errText[1024];
-	XGetErrorText(d,  err->error_code, errText, 1024);
+	char errText[512];
+	XGetErrorText(d,  err->error_code, errText, 512);
 	LOG->Warn("X11 Protocol error %s (%d) has occurred, caused by request %d,%d, resource ID %d",
 		errText, err->error_code, err->request_code, err->minor_code, err->resourceid);
 
@@ -32,11 +34,14 @@ int protoFatalCallback(Display *d)
 
 bool X11Helper::Go()
 {
+	int i;
+
 	if(pCt == 0)
 	{
-		pDpy = XOpenDisplay(0);
-		if(pDpy == NULL) { return false; }
+		Dpy = XOpenDisplay(0);
+		if(Dpy == NULL) { return false; }
 
+		XSetIOErrorHandler(&protoFatalCallback);
 		XSetErrorHandler(&protoErrorCallback);
 	}
 	pCt++;
@@ -44,20 +49,12 @@ bool X11Helper::Go()
 	return true;
 }
 
-Display *X11Helper::Dpy()
-{
-	return pDpy;
-}
-
-Window& X11Helper::Win()
-{
-	return pWin;
-}
-
 static bool pApplyMasks()
 {
 	unsigned int i;
 	long finalMask;
+
+	LOG->Trace("X11Helper: Reapplying event masks.");
 
 	i = 0;
 	while(i < pMasks.size() )
@@ -66,7 +63,10 @@ static bool pApplyMasks()
 		i++;
 	}
 
-	if(XSelectInput(pDpy, pWin, finalMask) == 0) { return false; }
+	if(XSelectInput(X11Helper::Dpy, X11Helper::Win, finalMask) == 0) { return false; }
+
+	// Sync, so that the event mask applies now.
+	XSync(X11Helper::Dpy, false);
 
 	return true;
 }
@@ -114,9 +114,9 @@ bool X11Helper::MakeWindow(int screenNum, int depth, Visual *visual, int width, 
 {
 	vector<long>::iterator i;
 	
-	if(pDpy == NULL) { return false; }
+	if(pCt == 0) { return false; }
 
-	if(pHaveWin) { XDestroyWindow(pDpy, pWin); pHaveWin = false; }
+	if(pHaveWin) { XDestroyWindow(Dpy, Win); pHaveWin = false; }
 
 	XSetWindowAttributes winAttribs;
 
@@ -131,10 +131,10 @@ bool X11Helper::MakeWindow(int screenNum, int depth, Visual *visual, int width, 
 
 	// XXX: Error catching/handling?
 
-	winAttribs.colormap = XCreateColormap(pDpy, RootWindow(pDpy, screenNum),
+	winAttribs.colormap = XCreateColormap(Dpy, RootWindow(Dpy, screenNum),
 							visual, AllocNone);
 
-	pWin = XCreateWindow(pDpy, RootWindow(pDpy, screenNum), 0, 0, width,
+	Win = XCreateWindow(Dpy, RootWindow(Dpy, screenNum), 0, 0, width,
 		height, 0, depth, InputOutput, visual,
 		CWBorderPixel | CWColormap | CWEventMask, &winAttribs);
 
@@ -149,7 +149,7 @@ void X11Helper::Stop()
 
 	if(pCt == 0)
 	{
-		XCloseDisplay(pDpy);
+		XCloseDisplay(Dpy);
 		pMasks.clear();
 	}
 }

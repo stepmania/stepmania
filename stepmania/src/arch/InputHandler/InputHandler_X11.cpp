@@ -126,9 +126,12 @@ void InputHandler_X11::Update(float fDeltaTime)
 	Display *display = X11Helper::Dpy();
 	Window window = X11Helper::Win();
 	XEvent event;
-	if (window)
-		while(XCheckTypedWindowEvent(display, window, KeyPress, &event)
-			|| XCheckTypedWindowEvent(display, window, KeyRelease, &event) )
+
+	if (X11Helper::Win)
+		while(XCheckTypedWindowEvent(X11Helper::Dpy,
+					X11Helper::Win, KeyPress, &event)
+			|| XCheckTypedWindowEvent(X11Helper::Dpy,
+					X11Helper::Win, KeyRelease, &event) )
 		{
 			LOG->Trace("key: sym %i, key %i, state %i",
 				XLookupKeysym(&event.xkey,0), XSymToKeySym(XLookupKeysym(&event.xkey,0)),
