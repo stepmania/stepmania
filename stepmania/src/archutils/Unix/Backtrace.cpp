@@ -292,7 +292,7 @@ typedef struct Frame
 
 void GetExceptionBacktraceContext( BacktraceContext *ctx, ExceptionInformation *exception )
 {
-	ctx->FramePtr = (void *) theException->registerImage->R1.lo;
+	ctx->FramePtr = (void *) exception->registerImage->R1.lo;
 }
 
 void GetCurrentBacktraceContext( BacktraceContext *ctx )
