@@ -88,24 +88,19 @@ CString GetPrimaryVideoName9xAnd2k()
 	return sPrimaryDeviceName;
 }
 
-void GetPrimaryVideoDriverInfo(VideoDriverInfo &info)
+CString GetPrimaryVideoDriverInfo()
 {
 	const CString sPrimaryDeviceName = GetPrimaryVideoName9xAnd2k();
-	if( sPrimaryDeviceName == "" )
-		LOG->Warn("GetPrimaryVideoName9xAnd2k failed; renderer selection may be wrong");
+	if( sPrimaryDeviceName != "" )
+		return sPrimaryDeviceName;
+	
+	LOG->Warn("GetPrimaryVideoName9xAnd2k failed; renderer selection may be wrong");
 
-	for( int i=0; true; i++ )
-	{
-		if( !GetVideoDriverInfo(i, info) )
-			RageException::Throw( "Got video name \"%s\" but wasn't enumerated among %i devices",
-				sPrimaryDeviceName.c_str(), i );
-		
-		if( sPrimaryDeviceName == "" )	// failed to get primary display name (NT4)
-			return;
+	VideoDriverInfo info;
+	if( !GetVideoDriverInfo(0, info) )
+		RageException::Throw( "GetVideoDriverInfo(0) failed");
 
-		if( info.sDescription == sPrimaryDeviceName )
-			return;
-	}
+	return info.sDescription;
 }
 
 /* Get info for the given card number.  Return false if that card doesn't exist. */
