@@ -44,6 +44,7 @@
 #include "RageFileDriverTimeout.h"
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
+#include "RageUtil_WorkerThread.h"
 #include "RageLog.h"
 #include <errno.h>
 
@@ -58,20 +59,14 @@ enum ThreadRequest
 	REQ_COPY,
 	REQ_POPULATE_FILE_SET,
 	REQ_FLUSH_DIR_CACHE,
-
-	REQ_SHUTDOWN,
-	REQ_INVALID,
-	NUM_REQUESTS,
 };
 
 /* This is the class that does most of the work. */
-class ThreadedFileWorker
+class ThreadedFileWorker: public WorkerThread
 {
 public:
 	ThreadedFileWorker( CString sPath );
 	~ThreadedFileWorker();
-
-	void SetTimeout( float fSeconds );
 
 	/* Threaded operations.  If a file operation times out, the caller loses all access
 	 * to the file and should fail all future operations; this is because the thread
@@ -87,29 +82,18 @@ public:
 	bool FlushDirCache( const CString &sPath );
 	bool PopulateFileSet( FileSet &fs, const CString &sPath );
 
+protected:
+	void RequestTimedOut();
+
 private:
-	static int StartWorkerMain( void *pThis ) { ((ThreadedFileWorker *) (pThis))->WorkerMain(); return 0; }
-	void WorkerMain();
-
-	/* Run the given request.  Return true if the operation completed, false on timeout.
-	 * All other return values (including error returns from the request) are returned
-	 * below. */
-	bool DoRequest( ThreadRequest r );
-
-	RageThread m_WorkerThread;
-	RageEvent m_WorkerEvent;
-
-	RageFileDriver *m_pChildDriver;
-
-	RageTimer m_Timeout;
+	void HandleRequest( int iRequest );
 
 	/* All requests: */
-	ThreadRequest m_Request;
-	bool m_bRequestFinished;
-	bool m_bTimedOut;
+	RageFileDriver *m_pChildDriver;
 
 	/* List of files to delete: */
 	vector<RageFileBasic *> m_apDeletedFiles;
+	RageMutex m_DeletedFilesLock;
 
 	/* REQ_OPEN, REQ_POPULATE_FILE_SET, REQ_FLUSH_DIR_CACHE: */
 	CString m_sRequestPath; /* in */
@@ -154,47 +138,28 @@ void RageFileDriverTimeout::SetTimeout( float fSeconds )
 
 
 ThreadedFileWorker::ThreadedFileWorker( CString sPath ):
-	m_WorkerEvent( "\"" + sPath + "\" worker event" )
+	WorkerThread( sPath ),
+	m_DeletedFilesLock( sPath + "DeletedFilesLock" )
 {
 	/* Grab a reference to the child driver.  We'll operate on it directly. */
 	m_pChildDriver = FILEMAN->GetFileDriver( sPath );
 	if( m_pChildDriver == NULL )
 		LOG->Warn( "ThreadedFileWorker: Mountpoint \"%s\" not found", sPath.c_str() );
 
-	m_Timeout.SetZero();
-	m_Request = REQ_INVALID;
-	m_bTimedOut = false;
 	m_pResultFile = NULL;
 	m_pRequestFile = NULL;
 	m_pResultBuffer = NULL;
 
-	m_WorkerThread.SetName( "ThreadedFileWorker fileset worker \"" + sPath + "\"" );
-	m_WorkerThread.Create( StartWorkerMain, this );
-
 	g_apWorkersMutex.Lock();
 	g_apWorkers.push_back( this );
 	g_apWorkersMutex.Unlock();
+
+	StartThread();
 }
 
 ThreadedFileWorker::~ThreadedFileWorker()
 {
-	/* If we're timed out, wait. */
-	m_WorkerEvent.Lock();
-	if( m_bTimedOut )
-	{
-		LOG->Trace( "Waiting for timed-out fs \"%s\" to complete ..." );
-		while( m_bTimedOut )
-			m_WorkerEvent.Wait();
-	}
-	m_WorkerEvent.Unlock();
-
-	/* Disable the timeout.  This will ensure that we really wait for the worker
-	 * thread to shut down. */
-	SetTimeout( -1 );
-
-	/* Shut down. */
-	DoRequest( REQ_SHUTDOWN );
-	m_WorkerThread.Wait();
+	StopThread();
 
 	if( m_pChildDriver != NULL )
 		FILEMAN->ReleaseFileDriver( m_pChildDriver );
@@ -212,183 +177,88 @@ ThreadedFileWorker::~ThreadedFileWorker()
 	g_apWorkersMutex.Unlock();
 }
 
-void ThreadedFileWorker::SetTimeout( float fSeconds )
+void ThreadedFileWorker::HandleRequest( int iRequest )
 {
-	m_WorkerEvent.Lock();
-	if( fSeconds == -1 )
-		m_Timeout.SetZero();
-	else
 	{
-		m_Timeout.Touch();
-		m_Timeout += fSeconds;
-	}
-	m_WorkerEvent.Unlock();
-}
-
-bool ThreadedFileWorker::DoRequest( ThreadRequest r )
-{
-	ASSERT( !m_bTimedOut );
-	ASSERT( m_Request == REQ_INVALID );
-
-	/* Set the request, and wake up the worker thread. */
-	m_WorkerEvent.Lock();
-	m_Request = r;
-	m_WorkerEvent.Broadcast();
-
-	/* Wait for it to complete or time out. */
-	while( !m_bRequestFinished )
-	{
-		bool bTimedOut = !m_WorkerEvent.Wait( &m_Timeout );
-		if( bTimedOut )
-			break;
-	}
-
-	/* Don't depend on bTimedOut to tell if we timed out; only look at m_bRequestFinished,
-	 * to avoid a race condition where the event times out and the operation completes
-	 * simultaneously. */
-	bool bRequestFinished = m_bRequestFinished;
-	if( !m_bRequestFinished )
-	{
-		/* Set m_bTimedOut true.  It'll be set to false when the operation actually
-		 * completes. */
-		m_bTimedOut = true;
-	}
-	else
-	{
-		/* The operation completed; make sure that the worker thread doesn't erase the file. */
-		m_pRequestFile = NULL;
-		m_bRequestFinished = false;
-	}
-	m_WorkerEvent.Unlock();
-
-	return bRequestFinished;
-}
-
-void ThreadedFileWorker::WorkerMain()
-{
-	while(1)
-	{
-		m_WorkerEvent.Lock();
-		while( m_Request == REQ_INVALID && m_apDeletedFiles.empty() )
-			m_WorkerEvent.Wait();
-		const ThreadRequest r = m_Request;
-		m_Request = REQ_INVALID;
-
-		/* We're going to clean up any deleted files.  Make a copy of the list; don't
-		 * hold the lock while we delete. */
+		m_DeletedFilesLock.Lock();
 		vector<RageFileBasic *> apDeletedFiles = m_apDeletedFiles;
 		m_apDeletedFiles.clear();
-
-		m_WorkerEvent.Unlock();
+		m_DeletedFilesLock.Unlock();
 
 		for( unsigned i = 0; i < apDeletedFiles.size(); ++i )
 			delete apDeletedFiles[i];
-		apDeletedFiles.clear();
-
-		if( r == REQ_INVALID )
-			continue;
-		
-		/* We have a request. */
-		switch( r )
-		{
-		case REQ_OPEN:
-			ASSERT( m_pResultFile == NULL );
-			ASSERT( !m_sRequestPath.empty() );
-			m_iResultRequest = 0;
-			m_pResultFile = m_pChildDriver->Open( m_sRequestPath, m_iRequestMode, m_iResultRequest );
-			break;
-
-		case REQ_CLOSE:
-			ASSERT( m_pRequestFile != NULL );
-			m_apDeletedFiles.push_back( m_pRequestFile );
-			break;
-
-		case REQ_GET_FILE_SIZE:
-			ASSERT( m_pRequestFile != NULL );
-			m_iResultRequest = m_pRequestFile->GetFileSize();
-			break;
-
-		case REQ_READ:
-			ASSERT( m_pRequestFile != NULL );
-			ASSERT( m_pResultBuffer != NULL );
-			m_iResultRequest = m_pRequestFile->Read( m_pResultBuffer, m_iRequestSize );
-            m_sResultError = m_pRequestFile->GetError();
-			break;
-
-		case REQ_WRITE:
-			ASSERT( m_pRequestFile != NULL );
-			ASSERT( m_pRequestBuffer != NULL );
-			m_iResultRequest = m_pRequestFile->Write( m_pRequestBuffer, m_iRequestSize );
-            m_sResultError = m_pRequestFile->GetError();
-			break;
-
-		case REQ_FLUSH:
-			ASSERT( m_pRequestFile != NULL );
-			m_iResultRequest = m_pRequestFile->Flush();
-            m_sResultError = m_pRequestFile->GetError();
-			break;
-
-		case REQ_COPY:
-			ASSERT( m_pRequestFile != NULL );
-			m_pResultFile = m_pRequestFile->Copy();
-			break;
-
-		case REQ_POPULATE_FILE_SET:
-			ASSERT( !m_bRequestFinished );
-			ASSERT( !m_sRequestPath.empty() );
-
-			m_ResultFileSet = FileSet();
-			m_pChildDriver->FDB->GetFileSetCopy( m_sRequestPath, m_ResultFileSet );
-			break;
-
-		case REQ_FLUSH_DIR_CACHE:
-			m_pChildDriver->FlushDirCache( m_sRequestPath );
-			break;
-
-		case REQ_SHUTDOWN:
-			break;
-
-		default:
-			FAIL_M( ssprintf("%i", r) );
-		}
-
-		m_WorkerEvent.Lock();
-
-		if( m_bTimedOut )
-		{
-			/* The event timed out.  Clean up any residue from the last action. */
-			if( m_pRequestFile != NULL )
-			{
-				m_apDeletedFiles.push_back( m_pResultFile );
-				m_pResultFile = NULL;
-				break;
-			}
-
-			if( m_pResultFile != NULL )
-			{
-				m_apDeletedFiles.push_back( m_pResultFile );
-				m_pResultFile = NULL;
-				break;
-			}
-
-			delete m_pRequestBuffer;
-			m_pRequestBuffer = NULL;
-			delete m_pResultBuffer;
-			m_pResultBuffer = NULL;
-
-			/* Clear the time-out flag, indicating that we can work again. */
-			m_bTimedOut = false;
-		}
-		else
-			m_bRequestFinished = true;
-
-		/* We're finished.  Wake up the requester (if he's still around). */
-		m_WorkerEvent.Broadcast();
-		m_WorkerEvent.Unlock();
-
-		if( r == REQ_SHUTDOWN )
-			break;
 	}
+
+	/* We have a request. */
+	switch( iRequest )
+	{
+	case REQ_OPEN:
+		ASSERT( m_pResultFile == NULL );
+		ASSERT( !m_sRequestPath.empty() );
+		m_iResultRequest = 0;
+		m_pResultFile = m_pChildDriver->Open( m_sRequestPath, m_iRequestMode, m_iResultRequest );
+		break;
+
+	case REQ_CLOSE:
+		ASSERT( m_pRequestFile != NULL );
+		delete m_pRequestFile;
+		m_pRequestFile = NULL;
+
+		break;
+
+	case REQ_GET_FILE_SIZE:
+		ASSERT( m_pRequestFile != NULL );
+		m_iResultRequest = m_pRequestFile->GetFileSize();
+		break;
+
+	case REQ_READ:
+		ASSERT( m_pRequestFile != NULL );
+		ASSERT( m_pResultBuffer != NULL );
+		m_iResultRequest = m_pRequestFile->Read( m_pResultBuffer, m_iRequestSize );
+        m_sResultError = m_pRequestFile->GetError();
+		break;
+
+	case REQ_WRITE:
+		ASSERT( m_pRequestFile != NULL );
+		ASSERT( m_pRequestBuffer != NULL );
+		m_iResultRequest = m_pRequestFile->Write( m_pRequestBuffer, m_iRequestSize );
+        m_sResultError = m_pRequestFile->GetError();
+		break;
+
+	case REQ_FLUSH:
+		ASSERT( m_pRequestFile != NULL );
+		m_iResultRequest = m_pRequestFile->Flush();
+        m_sResultError = m_pRequestFile->GetError();
+		break;
+
+	case REQ_COPY:
+		ASSERT( m_pRequestFile != NULL );
+		m_pResultFile = m_pRequestFile->Copy();
+		break;
+
+	case REQ_POPULATE_FILE_SET:
+		ASSERT( !m_sRequestPath.empty() );
+
+		m_ResultFileSet = FileSet();
+		m_pChildDriver->FDB->GetFileSetCopy( m_sRequestPath, m_ResultFileSet );
+		break;
+
+	case REQ_FLUSH_DIR_CACHE:
+		m_pChildDriver->FlushDirCache( m_sRequestPath );
+		break;
+
+	default:
+		FAIL_M( ssprintf("%i", iRequest) );
+	}
+}
+
+void ThreadedFileWorker::RequestTimedOut()
+{
+	/* The event timed out.  Clean up any residue from the last action. */
+	SAFE_DELETE( m_pRequestFile );
+	SAFE_DELETE( m_pResultFile );
+	SAFE_DELETE( m_pRequestBuffer );
+	SAFE_DELETE( m_pResultBuffer );
 }
 
 RageFileBasic *ThreadedFileWorker::Open( const CString &sPath, int iMode, int &iErr )
@@ -400,7 +270,7 @@ RageFileBasic *ThreadedFileWorker::Open( const CString &sPath, int iMode, int &i
 	}
 
 	/* If we're currently in a timed-out state, fail. */
-	if( m_bTimedOut )
+	if( IsTimedOut() )
 	{
 		iErr = EFAULT; /* Win32 has no ETIMEDOUT */
 		return NULL;
@@ -412,7 +282,8 @@ RageFileBasic *ThreadedFileWorker::Open( const CString &sPath, int iMode, int &i
 	if( !DoRequest(REQ_OPEN) )
 	{
 		LOG->Trace( "Open(%s) timed out", sPath.c_str() );
-		return false;
+		iErr = EFAULT; /* Win32 has no ETIMEDOUT */
+		return NULL;
 	}
 
 	iErr = m_iResultRequest;
@@ -426,20 +297,20 @@ void ThreadedFileWorker::Close( RageFileBasic *pFile )
 {
 	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
 
-	if( !m_bTimedOut )
+	if( IsTimedOut() )
 	{
 		/* If we're not in a timed-out state, try to wait for the deletion to complete
 		 * before continuing. */
 		m_pRequestFile = pFile;
 		DoRequest( REQ_CLOSE );
+		m_pRequestFile = NULL;
 	}
 	else
 	{
 		/* Delete the file when the timeout completes. */
-		m_WorkerEvent.Lock();
+		m_DeletedFilesLock.Lock();
 		m_apDeletedFiles.push_back( pFile );
-		m_WorkerEvent.Broadcast();
-		m_WorkerEvent.Unlock();
+		m_DeletedFilesLock.Unlock();
 	}
 }
 
@@ -448,7 +319,7 @@ int ThreadedFileWorker::GetFileSize( RageFileBasic *&pFile )
 	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
 	
 	/* If we're currently in a timed-out state, fail. */
-	if( m_bTimedOut )
+	if( IsTimedOut() )
 	{
 		this->Close( pFile );
 		pFile = NULL;
@@ -476,7 +347,7 @@ int ThreadedFileWorker::Read( RageFileBasic *&pFile, void *pBuf, int iSize, CStr
 	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
 
 	/* If we're currently in a timed-out state, fail. */
-	if( m_bTimedOut )
+	if( IsTimedOut() )
 	{
 		this->Close( pFile );
 		pFile = NULL;
@@ -515,7 +386,7 @@ int ThreadedFileWorker::Write( RageFileBasic *&pFile, const void *pBuf, int iSiz
 	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
 
 	/* If we're currently in a timed-out state, fail. */
-	if( m_bTimedOut )
+	if( IsTimedOut() )
 	{
 		this->Close( pFile );
 		pFile = NULL;
@@ -554,7 +425,7 @@ int ThreadedFileWorker::Flush( RageFileBasic *&pFile, CString &sError )
 	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
 
 	/* If we're currently in a timed-out state, fail. */
-	if( m_bTimedOut )
+	if( IsTimedOut() )
 	{
 		this->Close( pFile );
 		pFile = NULL;
@@ -576,6 +447,8 @@ int ThreadedFileWorker::Flush( RageFileBasic *&pFile, CString &sError )
 		return -1;
 	}
 
+	m_pRequestFile = NULL;
+
 	return m_iResultRequest;
 }
 
@@ -584,7 +457,7 @@ RageFileBasic *ThreadedFileWorker::Copy( RageFileBasic *&pFile, CString &sError 
 	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
 
 	/* If we're currently in a timed-out state, fail. */
-	if( m_bTimedOut )
+	if( IsTimedOut() )
 	{
 		this->Close( pFile );
 		pFile = NULL;
@@ -606,6 +479,7 @@ RageFileBasic *ThreadedFileWorker::Copy( RageFileBasic *&pFile, CString &sError 
 	}
 
 	RageFileBasic *pRet = m_pResultFile;
+	m_pRequestFile = NULL;
 	m_pResultFile = NULL;
 
 	return pRet;
@@ -618,12 +492,11 @@ bool ThreadedFileWorker::PopulateFileSet( FileSet &fs, const CString &sPath )
 		return false;
 
 	/* If we're currently in a timed-out state, fail. */
-	if( m_bTimedOut )
+	if( IsTimedOut() )
 		return false;
 
 	/* Fill in a different FileSet; copy the results in on success. */
 	m_sRequestPath = sPath;
-	m_bRequestFinished = false;
 
 	/* Kick off the worker thread, and wait for it to finish. */
 	if( !DoRequest(REQ_POPULATE_FILE_SET) )
@@ -642,7 +515,7 @@ bool ThreadedFileWorker::FlushDirCache( const CString &sPath )
 		return false;
 
 	/* If we're currently in a timed-out state, fail. */
-	if( m_bTimedOut )
+	if( IsTimedOut() )
 		return false;
 
 	m_sRequestPath = sPath;
