@@ -24,20 +24,36 @@
 
 NoteData::NoteData()
 {
+	for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
+		m_TapNotes[t] = new TapNote[MAX_TAP_NOTE_ROWS];
 	Init();
+}
+
+NoteData::NoteData(const NoteData &cpy) { *this = cpy; }
+NoteData &NoteData::operator= (const NoteData &cpy)
+{
+	for(int t = 0; t < MAX_NOTE_TRACKS; ++t) {
+		m_TapNotes[t] = new TapNote[MAX_TAP_NOTE_ROWS];
+		memmove( m_TapNotes[t], cpy.m_TapNotes[t], sizeof(TapNote) * MAX_TAP_NOTE_ROWS );
+	}
+	m_iNumTracks = cpy.m_iNumTracks;
+	m_iNumHoldNotes = cpy.m_iNumHoldNotes;
+	return *this;
 }
 
 void NoteData::Init()
 {
-	memset( m_TapNotes, '0', MAX_NOTE_TRACKS*MAX_TAP_NOTE_ROWS*sizeof(m_TapNotes[0][0]) );
+	for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
+		memset( m_TapNotes[t], '0', sizeof(TapNote) * MAX_TAP_NOTE_ROWS );
 	m_iNumTracks = 0;
 	m_iNumHoldNotes = 0;
 }
 
 NoteData::~NoteData()
 {
+	for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
+		delete[] m_TapNotes[t];
 }
-
 
 void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
 {

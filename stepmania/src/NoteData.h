@@ -27,11 +27,13 @@ class NoteData
 {
 public:
 	NoteData();
-	void Init();
 	~NoteData();
+	NoteData(const NoteData &cpy);
+	void Init();
+	NoteData &operator=(const NoteData &cpy);
 
 	int			m_iNumTracks;
-	TapNote		m_TapNotes[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];
+	TapNote		*m_TapNotes[MAX_NOTE_TRACKS];
 	HoldNote	m_HoldNotes[MAX_HOLD_NOTES];
 	int			m_iNumHoldNotes;
 
