@@ -214,6 +214,7 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 		else if( sName == "lua" )
 		{
 			m_LuaFunction.SetFromExpression( sValue );
+			ASSERT_M( !m_LuaFunction.IsNil(), ssprintf("\"%s\" evaluated to nil", sValue.c_str()) );
 		}
 		
 		else if( sName == "screen" )
