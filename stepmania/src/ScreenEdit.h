@@ -55,7 +55,7 @@ protected:
 	EditMode m_EditMode;
 
 	Song*			m_pSong;
-	Steps*			m_pNotes;
+	Steps*			m_pSteps;
 
 	BGAnimation		m_BGAnimation;
 

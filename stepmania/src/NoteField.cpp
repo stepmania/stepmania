@@ -581,7 +581,7 @@ void NoteField::DrawPrimitives()
 		
 
 		//
-		// Draw all TapNotes in this column
+		// Draw all TapSteps in this column
 		//
 		CurDisplay = m_BeatToNoteDisplays.begin();
 		NextDisplay = CurDisplay; ++NextDisplay;

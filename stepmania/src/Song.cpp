@@ -93,18 +93,18 @@ Song::Song()
 
 Song::~Song()
 {
-	for( unsigned i=0; i<m_apNotes.size(); i++ )
-		SAFE_DELETE( m_apNotes[i] );
+	for( unsigned i=0; i<m_vpSteps.size(); i++ )
+		SAFE_DELETE( m_vpSteps[i] );
 
-	m_apNotes.clear();
+	m_vpSteps.clear();
 }
 
 /* Reset to an empty song. */
 void Song::Reset()
 {
-	for( unsigned i=0; i<m_apNotes.size(); i++ )
-		SAFE_DELETE( m_apNotes[i] );
-	m_apNotes.clear();
+	for( unsigned i=0; i<m_vpSteps.size(); i++ )
+		SAFE_DELETE( m_vpSteps[i] );
+	m_vpSteps.clear();
 
 	Song empty;
 	*this = empty;
@@ -394,14 +394,14 @@ static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 			LOG->Trace("Removed %p duplicate steps in song \"%s\" with description \"%s\" and meter \"%i\"",
 				s2, song->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetMeter() );
 				
-			/* Don't use RemoveNotes; autogen notes havn't yet been created and it'll
+			/* Don't use RemoveSteps; autogen notes havn't yet been created and it'll
 			 * create them. */
-			for( int k=song->m_apNotes.size()-1; k>=0; k-- )
+			for( int k=song->m_vpSteps.size()-1; k>=0; k-- )
 			{
-				if( song->m_apNotes[k] == s2 )
+				if( song->m_vpSteps[k] == s2 )
 				{
-					delete song->m_apNotes[k];
-					song->m_apNotes.erase( song->m_apNotes.begin()+k );
+					delete song->m_vpSteps[k];
+					song->m_vpSteps.erase( song->m_vpSteps.begin()+k );
 					break;
 				}
 			}
@@ -813,9 +813,9 @@ void Song::TidyUpData()
 
 
 	// Compress all Steps
-	for( i=0; i<m_apNotes.size(); i++ )
+	for( i=0; i<m_vpSteps.size(); i++ )
 	{
-		m_apNotes[i]->Compress();
+		m_vpSteps[i]->Compress();
 	}
 }
 
@@ -829,12 +829,12 @@ void Song::TranslateTitles()
 
 void Song::ReCalculateRadarValuesAndLastBeat()
 {
-	for( unsigned i=0; i<m_apNotes.size(); i++ )
+	for( unsigned i=0; i<m_vpSteps.size(); i++ )
 	{
-		Steps* pNotes = m_apNotes[i];
+		Steps* pSteps = m_vpSteps[i];
 
 		/* If it's autogen, radar vals and first/last beat will come from the parent. */
-		if( pNotes->IsAutogen() )
+		if( pSteps->IsAutogen() )
 			continue;
 
 
@@ -842,12 +842,12 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		// calculate radar values
 		//
 		NoteData tempNoteData;
-		pNotes->GetNoteData( &tempNoteData );
+		pSteps->GetNoteData( &tempNoteData );
 
 		for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
 		{
 			float fVal = NoteDataUtil::GetRadarValue( tempNoteData, (RadarCategory)r, m_fMusicLengthSeconds );
-			pNotes->SetRadarValue(r, fVal);
+			pSteps->SetRadarValue(r, fVal);
 		}
 
 
@@ -860,7 +860,7 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 
 		// Don't set first/last beat based on lights.  They often start very 
 		// early and end very late.
-		if( pNotes->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
+		if( pSteps->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
 			continue;
 
 		float fFirstBeat = tempNoteData.GetFirstBeat();
@@ -882,12 +882,12 @@ void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType st, Difficulty dc, in
 	if( st != STEPS_TYPE_LIGHTS_CABINET && !PREFSMAN->m_bAutogenSteps )
 		bIncludeAutoGen = false;
 
-	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Steps
+	for( unsigned i=0; i<m_vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
 		if( !Max )
 			break;
 
-		Steps* pSteps = m_apNotes[i];
+		Steps* pSteps = m_vpSteps[i];
 
 		if( st != STEPS_TYPE_INVALID && pSteps->m_StepsType != st ) 
 			continue;
@@ -943,29 +943,29 @@ Steps* Song::GetStepsByDescription( StepsType st, CString sDescription ) const
 Steps* Song::GetClosestNotes( StepsType st, Difficulty dc ) const
 {
 	Difficulty newDC = dc;
-	Steps* pNotes;
-	pNotes = GetStepsByDifficulty( st, newDC );
-	if( pNotes )
-		return pNotes;
+	Steps* pSteps;
+	pSteps = GetStepsByDifficulty( st, newDC );
+	if( pSteps )
+		return pSteps;
 	newDC = (Difficulty)(dc-1);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetStepsByDifficulty( st, newDC );
-	if( pNotes )
-		return pNotes;
+	pSteps = GetStepsByDifficulty( st, newDC );
+	if( pSteps )
+		return pSteps;
 	newDC = (Difficulty)(dc+1);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetStepsByDifficulty( st, newDC );
-	if( pNotes )
-		return pNotes;
+	pSteps = GetStepsByDifficulty( st, newDC );
+	if( pSteps )
+		return pSteps;
 	newDC = (Difficulty)(dc-2);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetStepsByDifficulty( st, newDC );
-	if( pNotes )
-		return pNotes;
+	pSteps = GetStepsByDifficulty( st, newDC );
+	if( pSteps )
+		return pSteps;
 	newDC = (Difficulty)(dc+2);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetStepsByDifficulty( st, newDC );
-	return pNotes;
+	pSteps = GetStepsByDifficulty( st, newDC );
+	return pSteps;
 }
 
 /* Return whether the song is playable in the given style. */
@@ -1057,12 +1057,12 @@ void Song::AddAutoGenNotes()
 {
 	bool HasNotes[NUM_STEPS_TYPES];
 	memset( HasNotes, 0, sizeof(HasNotes) );
-	for( unsigned i=0; i < m_apNotes.size(); i++ ) // foreach Steps
+	for( unsigned i=0; i < m_vpSteps.size(); i++ ) // foreach Steps
 	{
-		if( m_apNotes[i]->IsAutogen() )
+		if( m_vpSteps[i]->IsAutogen() )
 			continue;
 
-		StepsType st = m_apNotes[i]->m_StepsType;
+		StepsType st = m_vpSteps[i]->m_StepsType;
 		HasNotes[st] = true;
 	}
 		
@@ -1102,26 +1102,26 @@ void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 {
 //	int iNumTracksOfTo = GAMEMAN->NotesTypeToNumTracks(ntTo);
 
-	for( unsigned int j=0; j<m_apNotes.size(); j++ )
+	for( unsigned int j=0; j<m_vpSteps.size(); j++ )
 	{
-		const Steps* pOriginalNotes = m_apNotes[j];
+		const Steps* pOriginalNotes = m_vpSteps[j];
 		if( pOriginalNotes->m_StepsType == ntFrom )
 		{
 			Steps* pNewNotes = new Steps;
 			pNewNotes->AutogenFrom(pOriginalNotes, ntTo);
-			this->m_apNotes.push_back( pNewNotes );
+			this->m_vpSteps.push_back( pNewNotes );
 		}
 	}
 }
 
 void Song::RemoveAutoGenNotes()
 {
-	for( int j=m_apNotes.size()-1; j>=0; j-- )
+	for( int j=m_vpSteps.size()-1; j>=0; j-- )
 	{
-		if( m_apNotes[j]->IsAutogen() )
+		if( m_vpSteps[j]->IsAutogen() )
 		{
-			delete m_apNotes[j];
-			m_apNotes.erase( m_apNotes.begin()+j );
+			delete m_vpSteps[j];
+			m_vpSteps.erase( m_vpSteps.begin()+j );
 		}
 	}
 }
@@ -1150,9 +1150,9 @@ bool Song::IsEasy( StepsType st ) const
 
 bool Song::HasEdits( StepsType st ) const
 {
-	for( unsigned i=0; i<m_apNotes.size(); i++ )
+	for( unsigned i=0; i<m_vpSteps.size(); i++ )
 	{
-		Steps* pSteps = m_apNotes[i];
+		Steps* pSteps = m_vpSteps[i];
 		if( pSteps->m_StepsType == st &&
 			pSteps->GetDifficulty() == DIFFICULTY_EDIT )
 		{
@@ -1269,24 +1269,24 @@ CString Song::GetFullTranslitTitle() const
 	return Title;
 }
 
-void Song::AddNotes( Steps* pNotes )
+void Song::AddSteps( Steps* pSteps )
 {
-	m_apNotes.push_back( pNotes );
+	m_vpSteps.push_back( pSteps );
 }
 
-void Song::RemoveNotes( const Steps* pNotes )
+void Song::RemoveSteps( const Steps* pSteps )
 {
 	// Avoid any stale Note::parent pointers by removing all AutoGen'd Steps,
 	// then adding them again.
 
 	RemoveAutoGenNotes();
 
-	for( int j=m_apNotes.size()-1; j>=0; j-- )
+	for( int j=m_vpSteps.size()-1; j>=0; j-- )
 	{
-		if( m_apNotes[j] == pNotes )
+		if( m_vpSteps[j] == pSteps )
 		{
-			delete m_apNotes[j];
-			m_apNotes.erase( m_apNotes.begin()+j );
+			delete m_vpSteps[j];
+			m_vpSteps.erase( m_vpSteps.begin()+j );
 			break;
 		}
 	}
@@ -1317,20 +1317,20 @@ bool Song::Matches(CString sGroup, CString sSong) const
 
 void Song::FreeAllLoadedFromProfiles()
 {
-	for( unsigned s=0; s<m_apNotes.size(); s++ )
+	for( unsigned s=0; s<m_vpSteps.size(); s++ )
 	{
-		Steps* pSteps = m_apNotes[s];
+		Steps* pSteps = m_vpSteps[s];
 		if( pSteps->WasLoadedFromProfile() )
-			this->RemoveNotes( pSteps );
+			this->RemoveSteps( pSteps );
 	}
 }
 
 int Song::GetNumStepsLoadedFromProfile( ProfileSlot slot ) const
 {
 	int iCount = 0;
-	for( unsigned s=0; s<m_apNotes.size(); s++ )
+	for( unsigned s=0; s<m_vpSteps.size(); s++ )
 	{
-		Steps* pSteps = m_apNotes[s];
+		Steps* pSteps = m_vpSteps[s];
 		if( pSteps->GetLoadedFromProfileSlot() == slot )
 			iCount++;
 	}
@@ -1341,9 +1341,9 @@ bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
 {
 	ASSERT( pSteps->GetDifficulty() == DIFFICULTY_EDIT );
 
-	for( unsigned i=0; i<m_apNotes.size(); i++ )
+	for( unsigned i=0; i<m_vpSteps.size(); i++ )
 	{
-		Steps* pOther = m_apNotes[i];
+		Steps* pOther = m_vpSteps[i];
 		if( pOther->GetDifficulty() == DIFFICULTY_EDIT &&
 			pOther->m_StepsType == pSteps->m_StepsType &&
 			pOther->GetHash() == pSteps->GetHash() )

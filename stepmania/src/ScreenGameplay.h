@@ -96,7 +96,7 @@ protected:
 		NUM_DANCING_STATES
 	} m_DancingState;
 	vector<Song*>		m_apSongsQueue;					// size may be >1 if playing a course
-	vector<Steps*>		m_apNotesQueue[NUM_PLAYERS];	// size may be >1 if playing a course
+	vector<Steps*>		m_vpStepsQueue[NUM_PLAYERS];	// size may be >1 if playing a course
 	vector<AttackArray>	m_asModifiersQueue[NUM_PLAYERS];// size may be >1 if playing a course
 
 	bool				m_bChangedOffsetOrBPM;

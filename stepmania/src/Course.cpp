@@ -484,7 +484,7 @@ static vector<Song*> GetFilteredBestSongs( StepsType st )
 			continue;
 
 		bool FoundMedium = false, FoundHard = false;
-		FOREACH( Steps*, pSong->m_apNotes, pSteps )
+		FOREACH( Steps*, pSong->m_vpSteps, pSteps )
 		{
 			if( (*pSteps)->m_StepsType != st )
 				continue;
@@ -563,7 +563,7 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 			entry_difficulty = COURSE_DIFFICULTY_REGULAR;
 
 		Song* pSong = NULL;	// fill this in
-		Steps* pNotes = NULL;	// fill this in
+		Steps* pSteps = NULL;	// fill this in
 
 		/* This applies difficult mode for meter ranges.  (If it's a difficulty
 		 * class, we'll do it below.) */
@@ -577,11 +577,11 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 			if( pSong )
 			{
 				if( e.difficulty != DIFFICULTY_INVALID )
-					pNotes = pSong->GetStepsByDifficulty( st, e.difficulty );
+					pSteps = pSong->GetStepsByDifficulty( st, e.difficulty );
 				else if( e.low_meter != -1  &&  e.high_meter != -1 )
-					pNotes = pSong->GetStepsByMeter( st, low_meter, high_meter );
+					pSteps = pSong->GetStepsByMeter( st, low_meter, high_meter );
 				else
-					pNotes = pSong->GetStepsByDifficulty( st, DIFFICULTY_MEDIUM );
+					pSteps = pSong->GetStepsByDifficulty( st, DIFFICULTY_MEDIUM );
 			}
 			break;
 		case COURSE_ENTRY_RANDOM:
@@ -608,15 +608,15 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 					   continue; /* wrong group */
 
 					if( e.difficulty == DIFFICULTY_INVALID )
-						pNotes = pSong->GetStepsByMeter( st, low_meter, high_meter );
+						pSteps = pSong->GetStepsByMeter( st, low_meter, high_meter );
 					else
-						pNotes = pSong->GetStepsByDifficulty( st, e.difficulty );
+						pSteps = pSong->GetStepsByDifficulty( st, e.difficulty );
 
-					if( pNotes )	// found a match
+					if( pSteps )	// found a match
 						break;		// stop searching
 
 					pSong = NULL;
-					pNotes = NULL;
+					pSteps = NULL;
 				}
 			}
 			break;
@@ -645,19 +645,19 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 				}
 
 				if( e.difficulty == DIFFICULTY_INVALID )
-					pNotes = pSong->GetStepsByMeter( st, low_meter, high_meter );
+					pSteps = pSong->GetStepsByMeter( st, low_meter, high_meter );
 				else
-					pNotes = pSong->GetStepsByDifficulty( st, e.difficulty );
+					pSteps = pSong->GetStepsByDifficulty( st, e.difficulty );
 
-				if( pNotes == NULL )
-					pNotes = pSong->GetClosestNotes( st, DIFFICULTY_MEDIUM );
+				if( pSteps == NULL )
+					pSteps = pSong->GetClosestNotes( st, DIFFICULTY_MEDIUM );
 			}
 			break;
 		default:
 			ASSERT(0);
 		}
 
-		if( !pSong || !pNotes )
+		if( !pSong || !pSteps )
 			continue;	// this song entry isn't playable.  Skip.
 
 		/* If e.difficulty == DIFFICULTY_INVALID, then we already adjusted difficulty
@@ -666,20 +666,20 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 		{
 			/* See if we can find a NoteData after adjusting the difficulty by COURSE_DIFFICULTY_CLASS_CHANGE.
 			 * If we can't, just use the one we already have. */
-			Difficulty original_dc = pNotes->GetDifficulty();
+			Difficulty original_dc = pSteps->GetDifficulty();
 			Difficulty dc = Difficulty( original_dc + COURSE_DIFFICULTY_CLASS_CHANGE[entry_difficulty] );
 			dc = clamp( dc, DIFFICULTY_BEGINNER, DIFFICULTY_CHALLENGE );
 			if( dc != original_dc )
 			{
 				Steps* pNewNotes = pSong->GetStepsByDifficulty( st, dc );
 				if( pNewNotes )
-					pNotes = pNewNotes;
+					pSteps = pNewNotes;
 			}
 		}
 
 		TrailEntry te;
 		te.pSong = pSong;
-		te.pNotes = pNotes;
+		te.pSteps = pSteps;
 		te.Modifiers = e.modifiers;
 		te.Attacks = e.attacks;
 		te.bMystery = e.mystery;

@@ -362,8 +362,8 @@ void ProfileManager::ReadSM300NoteScores()
 			Difficulty dc = StringToDifficulty( szStepsDescription );
 
 			// Search for the corresponding Notes poister.
-			Steps* pNotes = pSong->GetStepsByDifficulty( st, dc );
-			if( pNotes == NULL )	// didn't find a match
+			Steps* pSteps = pSong->GetStepsByDifficulty( st, dc );
+			if( pSteps == NULL )	// didn't find a match
 				continue;	// skip this estry
 
 
@@ -371,20 +371,20 @@ void ProfileManager::ReadSM300NoteScores()
 			char szGradeLetters[10];	// longest possible string is "AAA"
 			int iMaxCombo;	// throw away
 
-			pNotes->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores.resize(1);
+			pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores.resize(1);
 
 			iRetVal = sscanf( 
 				value, 
 				"%d::%[^:]::%d::%d", 
-				&pNotes->m_MemCardDatas[PROFILE_SLOT_MACHINE].iNumTimesPlayed,
+				&pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].iNumTimesPlayed,
 				szGradeLetters,
-				&pNotes->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores[0].iScore,
+				&pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores[0].iScore,
 				&iMaxCombo
 			);
 			if( iRetVal != 4 )
 				continue;
 
-			pNotes->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores[0].grade = StringToGrade( szGradeLetters );
+			pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores[0].grade = StringToGrade( szGradeLetters );
 		}
 	}
 }

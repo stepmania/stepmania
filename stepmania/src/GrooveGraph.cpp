@@ -63,9 +63,9 @@ void GrooveGraph::SetFromSong( Song* pSong )
 	{
 		for( int i=0; i<NUM_DIFFICULTIES; i++ )
 		{
-			Steps* pNotes = pSong->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, (Difficulty)i );
-			if( pNotes )
-				rvs[i] = pNotes->GetRadarValues();
+			Steps* pSteps = pSong->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, (Difficulty)i );
+			if( pSteps )
+				rvs[i] = pSteps->GetRadarValues();
 		}
 	}
 

@@ -31,9 +31,9 @@ void NoteDataWithScoring::Init()
 	m_HoldNoteScores.clear();
 }
 
-int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat, float fEndBeat ) const
+int NoteDataWithScoring::GetNumTapStepsWithScore( TapNoteScore tns, const float fStartBeat, float fEndBeat ) const
 { 
-	int iNumSuccessfulTapNotes = 0;
+	int iNumSuccessfulTapSteps = 0;
 
 	if(fEndBeat == -1)
 		fEndBeat = GetMaxBeat()+1;
@@ -46,11 +46,11 @@ int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float 
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
 			if( this->GetTapNote(t, i) != TAP_EMPTY && GetTapNoteScore(t, i) >= tns )
-				iNumSuccessfulTapNotes++;
+				iNumSuccessfulTapSteps++;
 		}
 	}
 	
-	return iNumSuccessfulTapNotes;
+	return iNumSuccessfulTapSteps;
 }
 
 int NoteDataWithScoring::GetNumNWithScore( TapNoteScore tns, int MinTaps, const float fStartBeat, float fEndBeat ) const
@@ -281,17 +281,17 @@ float NoteDataWithScoring::GetActualRadarValue( RadarCategory rv, PlayerNumber p
 
 float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
-	int TotalSteps = GetNumTapNotes();
+	int TotalSteps = GetNumTapSteps();
 	if( !TotalSteps )
 		return 1;
 
-	const int Perfects = GetNumTapNotesWithScore(TNS_PERFECT);
+	const int Perfects = GetNumTapStepsWithScore(TNS_PERFECT);
 	return clamp( float(Perfects)/TotalSteps, 0.0f, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
-	/* g_CurStageStats.iMaxCombo is unrelated to GetNumTapNotes: m_bComboContinuesBetweenSongs
+	/* g_CurStageStats.iMaxCombo is unrelated to GetNumTapSteps: m_bComboContinuesBetweenSongs
 	 * might be on, and the way combo is counted varies depending on the mode and score
 	 * keeper.  Instead, let's use the length of the longest recorded combo.  This is
 	 * only subtly different: it's the percent of the song the longest combo took to get. */

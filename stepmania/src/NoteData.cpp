@@ -42,14 +42,14 @@ void NoteData::SetNumTracks( int iNewNumTracks )
 
 	// Make sure that all tracks are of the same length
 	ASSERT( m_iNumTracks > 0 );
-	int rows = m_TapNotes[0].size();
+	int rows = m_TapSteps[0].size();
 
 	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
 	{
 		if( t<m_iNumTracks )
-			m_TapNotes[t].resize( rows, TAP_EMPTY );
+			m_TapSteps[t].resize( rows, TAP_EMPTY );
 		else
-			m_TapNotes[t].clear();
+			m_TapSteps[t].clear();
 	}
 
 	/* Remove all hold notes that are out of bounds. */
@@ -74,7 +74,7 @@ void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 void NoteData::ClearAll()
 {
 	for( int t=0; t<m_iNumTracks; t++ )
-		m_TapNotes[t].clear();
+		m_TapSteps[t].clear();
 	m_HoldNotes.clear();
 }
 
@@ -88,7 +88,7 @@ void NoteData::CopyRange( const NoteData* pFrom, int iFromIndexBegin, int iFromI
 	From.To4s( *pFrom );
 	To.To4s( *this );
 
-	// copy recorded TapNotes
+	// copy recorded TapSteps
 	int f = iFromIndexBegin, t = iToIndexBegin;
 	
 	while( f<=iFromIndexEnd )
@@ -124,7 +124,7 @@ void NoteData::CopyAll( const NoteData* pFrom )
 	ClearAll();
 
 	for( int c=0; c<m_iNumTracks; c++ )
-		m_TapNotes[c] = pFrom->m_TapNotes[c];
+		m_TapSteps[c] = pFrom->m_TapSteps[c];
 	m_HoldNotes = pFrom->m_HoldNotes;
 	m_AttackMap = pFrom->m_AttackMap;
 }
@@ -271,7 +271,7 @@ void NoteData::AddHoldNote( HoldNote add )
 	int iAddStartIndex = add.iStartRow;
 	int iAddEndIndex = add.iEndRow;
 
-	// delete TapNotes under this HoldNote
+	// delete TapSteps under this HoldNote
 	for( i=iAddStartIndex+1; i<=iAddEndIndex; i++ )
 		SetTapNote(add.iTrack, i, TAP_EMPTY);
 
@@ -345,7 +345,7 @@ void NoteData::PruneUnusedAttacksFromMap()
 	}
 
 	// Remove all items from m_AttackMap that don't have corresponding
-	// TapNotes in use.
+	// TapSteps in use.
 	for( TapNote tn = TAP_ATTACK_BEGIN; tn<=TAP_ATTACK_END; tn++ )
 	{
 		bool bInAttackMap = m_AttackMap.find(tn) != m_AttackMap.end();
@@ -376,7 +376,7 @@ int NoteData::GetFirstRow() const
 	
 	int i;
 
-	for( i=0; i < int(m_TapNotes[0].size()); i++ )
+	for( i=0; i < int(m_TapSteps[0].size()); i++ )
 	{
 		if( !IsRowEmpty(i) )
 		{
@@ -409,7 +409,7 @@ int NoteData::GetLastRow() const
 	
 	int i;
 
-	for( i = int(m_TapNotes[0].size()); i>=0; i-- )		// iterate back to front
+	for( i = int(m_TapSteps[0].size()); i>=0; i-- )		// iterate back to front
 	{
 		if( !IsRowEmpty(i) )
 		{
@@ -432,7 +432,7 @@ float NoteData::GetLastBeat() const
 	return NoteRowToBeat( GetLastRow() );
 }
 
-int NoteData::GetNumTapNotes( float fStartBeat, float fEndBeat ) const
+int NoteData::GetNumTapSteps( float fStartBeat, float fEndBeat ) const
 {
 	int iNumNotes = 0;
 
@@ -755,7 +755,7 @@ void NoteData::LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, co
 
 		if( iOriginalTrack == -1 )
 			continue;
-		m_TapNotes[t] = Original.m_TapNotes[iOriginalTrack];
+		m_TapSteps[t] = Original.m_TapSteps[iOriginalTrack];
 	}
 
 	Convert4sToHoldNotes();
@@ -795,7 +795,7 @@ void NoteData::LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks )
 			const int iTrackFrom = i;
 			int &iTrackTo = DestRow[i];
 
-			const TapNote iStepFrom = in.m_TapNotes[iTrackFrom][row];
+			const TapNote iStepFrom = in.m_TapSteps[iTrackFrom][row];
 			if( iStepFrom == TAP_EMPTY )
 				continue;
 
@@ -891,49 +891,49 @@ void NoteData::LoadTransformedSlidingWindow( const NoteData* pOriginal, int iNew
 	m_AttackMap = Original.GetAttackMap();
 }
 
-void NoteData::PadTapNotes(int rows)
+void NoteData::PadTapSteps(int rows)
 {
-	int needed = rows - m_TapNotes[0].size() + 1;
+	int needed = rows - m_TapSteps[0].size() + 1;
 	if(needed < 0) 
 		return;
 
 	needed += 100; /* optimization: give it a little more than it needs */
 
 	for(int track = 0; track < m_iNumTracks; ++track)
-		m_TapNotes[track].insert(m_TapNotes[track].end(), needed, TAP_EMPTY);
+		m_TapSteps[track].insert(m_TapSteps[track].end(), needed, TAP_EMPTY);
 }
 
 void NoteData::MoveTapNoteTrack(int dest, int src)
 {
 	if(dest == src) return;
-	m_TapNotes[dest] = m_TapNotes[src];
-	m_TapNotes[src].clear();
+	m_TapSteps[dest] = m_TapSteps[src];
+	m_TapSteps[src].clear();
 }
 
 void NoteData::SetTapNote(int track, int row, TapNote t)
 {
 	if(row < 0) return;
 
-	PadTapNotes(row);
-	m_TapNotes[track][row]=t;
+	PadTapSteps(row);
+	m_TapSteps[track][row]=t;
 }
 
 void NoteData::ReserveRows( int row )
 {
 	for(int track = 0; track < m_iNumTracks; ++track)
-		m_TapNotes[track].reserve( row );
+		m_TapSteps[track].reserve( row );
 }
 
 void NoteData::EliminateAllButOneTap(int row)
 {
 	if(row < 0) return;
 
-	PadTapNotes(row);
+	PadTapSteps(row);
 
 	int track;
 	for(track = 0; track < m_iNumTracks; ++track)
 	{
-		if( m_TapNotes[track][row] == TAP_TAP )
+		if( m_TapSteps[track][row] == TAP_TAP )
 			break;
 	}
 
@@ -941,8 +941,8 @@ void NoteData::EliminateAllButOneTap(int row)
 
 	for( ; track < m_iNumTracks; ++track)
 	{
-		if( m_TapNotes[track][row] == TAP_TAP )
-			m_TapNotes[track][row] = TAP_EMPTY;
+		if( m_TapSteps[track][row] == TAP_TAP )
+			m_TapSteps[track][row] = TAP_EMPTY;
 	}
 }
 

@@ -21,7 +21,7 @@ public:
 	// Overrides
 	ScoreKeeperRave(PlayerNumber pn);
 	void Update( float fDelta );
-	void OnNextSong( int iSongInCourseIndex, const Steps* pNotes, const NoteData* pNoteData );	// before a song plays (called multiple times if course)
+	void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData );	// before a song plays (called multiple times if course)
 	void HandleTapScore( TapNoteScore score );
 	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );

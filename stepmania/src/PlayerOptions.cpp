@@ -578,7 +578,7 @@ bool PlayerOptions::IsEasierForCourse( Course* pCourse, StepsType st, CourseDiff
 
 	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 	{
-		if( e->pSong && IsEasierForSongAndSteps(e->pSong, e->pNotes) )
+		if( e->pSong && IsEasierForSongAndSteps(e->pSong, e->pSteps) )
 			return true;
 	}
 	return false;

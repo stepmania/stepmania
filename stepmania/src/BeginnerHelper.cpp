@@ -106,10 +106,10 @@ void BeginnerHelper::SetFlash( CString sFilename, float fX, float fY )
 	m_sFlash.SetY(fY);
 }
 
-void BeginnerHelper::AddPlayer( int pn, NoteData *pNotes )
+void BeginnerHelper::AddPlayer( int pn, NoteData *pSteps )
 {
 	ASSERT( !m_bInitialized );
-	ASSERT( pNotes != NULL );
+	ASSERT( pSteps != NULL );
 	ASSERT( pn >= 0 && pn < NUM_PLAYERS );
 	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 
@@ -120,7 +120,7 @@ void BeginnerHelper::AddPlayer( int pn, NoteData *pNotes )
 	if( !DoesFileExist( Character->GetModelPath() ) )
 		return;
 
-	m_NoteData[pn].CopyAll( pNotes );
+	m_NoteData[pn].CopyAll( pSteps );
 	m_bPlayerEnabled[pn] = true;
 }
 

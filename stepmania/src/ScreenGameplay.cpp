@@ -179,7 +179,7 @@ void ScreenGameplay::Init()
 
 
 	//
-	// fill in m_apSongsQueue, m_apNotesQueue, m_asModifiersQueue
+	// fill in m_apSongsQueue, m_vpStepsQueue, m_asModifiersQueue
 	//
 	if( GAMESTATE->IsCourseMode() )
 	{
@@ -209,11 +209,11 @@ void ScreenGameplay::Init()
 		{
 			Trail *pTrail = pCourse->GetTrail( st, GAMESTATE->m_PreferredCourseDifficulty[p] );
 
-			m_apNotesQueue[p].clear();
+			m_vpStepsQueue[p].clear();
 			m_asModifiersQueue[p].clear();
 			FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 			{
-				m_apNotesQueue[p].push_back( e->pNotes );
+				m_vpStepsQueue[p].push_back( e->pSteps );
 				AttackArray a;
 				e->GetAttackArray( a );
 				m_asModifiersQueue[p].push_back( a );
@@ -226,7 +226,7 @@ void ScreenGameplay::Init()
 		m_apSongsQueue.push_back( GAMESTATE->m_pCurSong );
         FOREACH_PlayerNumber(p)
 		{
-			m_apNotesQueue[p].push_back( GAMESTATE->m_pCurNotes[p] );
+			m_vpStepsQueue[p].push_back( GAMESTATE->m_pCurNotes[p] );
 			m_asModifiersQueue[p].push_back( AttackArray() );
 		}
 	}
@@ -240,9 +240,9 @@ void ScreenGameplay::Init()
 
     FOREACH_EnabledPlayer(p)
 	{
-		ASSERT( !m_apNotesQueue[p].empty() );
-		g_CurStageStats.pSteps[p] = m_apNotesQueue[p][0];
-		g_CurStageStats.iMeter[p] = m_apNotesQueue[p][0]->GetMeter();
+		ASSERT( !m_vpStepsQueue[p].empty() );
+		g_CurStageStats.pSteps[p] = m_vpStepsQueue[p][0];
+		g_CurStageStats.iMeter[p] = m_vpStepsQueue[p][0]->GetMeter();
 
 		/* Record combo rollover. */
 		g_CurStageStats.UpdateComboList( (PlayerNumber)p, 0, true );
@@ -265,7 +265,7 @@ void ScreenGameplay::Init()
 		{
 		case PrefsManager::SCORING_MAX2:
 		case PrefsManager::SCORING_5TH:
-			m_pPrimaryScoreKeeper[p] = new ScoreKeeperMAX2( m_apSongsQueue, m_apNotesQueue[p], m_asModifiersQueue[p], (PlayerNumber)p );
+			m_pPrimaryScoreKeeper[p] = new ScoreKeeperMAX2( m_apSongsQueue, m_vpStepsQueue[p], m_asModifiersQueue[p], (PlayerNumber)p );
 			break;
 		default: ASSERT(0);
 		}
@@ -794,7 +794,7 @@ void ScreenGameplay::SetupSong( int p, int iSongIndex )
 	/* This is the first beat that can be changed without it being visible.  Until
 	 * we draw for the first time, any beat can be changed. */
 	GAMESTATE->m_fLastDrawnBeat[p] = -100;
-	GAMESTATE->m_pCurNotes[p] = m_apNotesQueue[p][iSongIndex];
+	GAMESTATE->m_pCurNotes[p] = m_vpStepsQueue[p][iSongIndex];
 
 	// Put course options into effect.
 	GAMESTATE->m_ModsToApply[p].clear();

@@ -321,7 +321,7 @@ float NoteDataUtil::GetStreamRadarValue( const NoteData &in, float fSongSeconds 
 	if( !fSongSeconds )
 		return 0.0f;
 	// density of steps
-	int iNumNotes = in.GetNumTapNotes() + in.GetNumHoldNotes();
+	int iNumNotes = in.GetNumTapSteps() + in.GetNumHoldNotes();
 	float fNotesPerSecond = iNumNotes/fSongSeconds;
 	float fReturn = fNotesPerSecond / 7;
 	return min( fReturn, 1.0f );
@@ -342,7 +342,7 @@ float NoteDataUtil::GetVoltageRadarValue( const NoteData &in, float fSongSeconds
 
 	for( int i=0; i<=int(fLastBeat); i+=BEAT_WINDOW )
 	{
-		int iNumNotesThisWindow = in.GetNumTapNotes((float)i,(float)i+BEAT_WINDOW) + in.GetNumHoldNotes((float)i,(float)i+BEAT_WINDOW);
+		int iNumNotesThisWindow = in.GetNumTapSteps((float)i,(float)i+BEAT_WINDOW) + in.GetNumHoldNotes((float)i,(float)i+BEAT_WINDOW);
 		float fDensityThisWindow = iNumNotesThisWindow/(float)BEAT_WINDOW;
 		fMaxDensitySoFar = max( fMaxDensitySoFar, fDensityThisWindow );
 	}
@@ -392,7 +392,7 @@ void NoteDataUtil::RemoveHoldNotes(NoteData &in, float fStartBeat, float fEndBea
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
-	// turn all the HoldNotes into TapNotes
+	// turn all the HoldNotes into TapSteps
 	for( int i=in.GetNumHoldNotes()-1; i>=0; i-- )	// iterate backwards so we can delete
 	{
 		const HoldNote hn = in.GetHoldNote( i );
@@ -410,7 +410,7 @@ void NoteDataUtil::RemoveSimultaneousNotes(NoteData &in, int iMaxSimultaneous, f
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
-	// turn all the HoldNotes into TapNotes
+	// turn all the HoldNotes into TapSteps
 	for( int r=iStartIndex; r<=iEndIndex; r++ )	// iterate backwards so we can delete
 	{
 		if( in.IsRowEmpty(r) )
@@ -629,7 +629,7 @@ static void SuperShuffleTaps( NoteData &in, int iStartIndex, int iEndIndex )
 {
 	/* We already did the normal shuffling code above, which did a good job
 	 * of shuffling HoldNotes without creating impossible patterns.
-	 * Now, go in and shuffle the TapNotes per-row.
+	 * Now, go in and shuffle the TapSteps per-row.
 	 *
 	 * This is only called by NoteDataUtil::Turn.  "in" is in 4s, and iStartIndex
 	 * and iEndIndex are in range. */
@@ -1192,7 +1192,7 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType n
 
 	in.ConvertHoldNotesTo2sAnd3s();
 
-	// iterate over all TapNotes in the interval and snap them
+	// iterate over all TapSteps in the interval and snap them
 	for( int i=iNoteIndexBegin; i<=iNoteIndexEnd; i++ )
 	{
 		int iOldIndex = i;
@@ -1218,7 +1218,7 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType n
 			const TapNote oldnote = in.GetTapNote(c, iNewIndex);
 			if( note == TAP_TAP &&
 				(oldnote == TAP_HOLD_HEAD || oldnote == TAP_HOLD_TAIL) )
-				continue; // HoldNotes override TapNotes
+				continue; // HoldNotes override TapSteps
 
 			/* If two hold note boundaries are getting snapped together,
 			 * merge them. */

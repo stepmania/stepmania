@@ -22,9 +22,9 @@ struct XNode;
 
 namespace StepsUtil
 {
-	bool CompareNotesPointersByRadarValues(const Steps* pNotes1, const Steps* pNotes2);
-	bool CompareNotesPointersByMeter(const Steps *pNotes1, const Steps* pNotes2);
-	bool CompareNotesPointersByDifficulty(const Steps *pNotes1, const Steps *pNotes2);
+	bool CompareNotesPointersByRadarValues(const Steps* pSteps1, const Steps* pSteps2);
+	bool CompareNotesPointersByMeter(const Steps *pSteps1, const Steps* pSteps2);
+	bool CompareNotesPointersByDifficulty(const Steps *pSteps1, const Steps *pSteps2);
 	void SortNotesArrayByDifficulty( vector<Steps*> &arrayNotess );
 	bool CompareStepsPointersByTypeAndDifficulty(const Steps *pStep1, const Steps *pStep2);
 	void SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers );

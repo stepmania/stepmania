@@ -150,14 +150,14 @@ void MusicWheel::Load()
 		}
 
 		Song* pSong;
-		Steps* pNotes;
+		Steps* pSteps;
 		PlayerOptions po;
 		SongOptions so;
 		SONGMAN->GetExtraStageInfo(
 			GAMESTATE->IsExtraStage2(),
 			GAMESTATE->GetCurrentStyleDef(),
 			pSong,
-			pNotes,
+			pSteps,
 			po,
 			so );
 		GAMESTATE->m_pCurSong = pSong;
@@ -165,9 +165,9 @@ void MusicWheel::Load()
 		{
 			if( GAMESTATE->IsHumanPlayer(p) )
 			{
-				GAMESTATE->m_pCurNotes[p] = pNotes;
+				GAMESTATE->m_pCurNotes[p] = pSteps;
 				GAMESTATE->m_PlayerOptions[p] = po;
-				GAMESTATE->m_PreferredDifficulty[p] = pNotes->GetDifficulty();
+				GAMESTATE->m_PreferredDifficulty[p] = pSteps->GetDifficulty();
 			}
 		}
 		GAMESTATE->m_SongOptions = so;
@@ -593,10 +593,10 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 		{
 			Song* pSong;
-			Steps* pNotes;
+			Steps* pSteps;
 			PlayerOptions po;
 			SongOptions so;
-			SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyleDef(), pSong, pNotes, po, so );
+			SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyleDef(), pSong, pSteps, po, so );
 			
 			bool bFoundExtraSong = false;
 

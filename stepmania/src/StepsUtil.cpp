@@ -77,28 +77,28 @@ void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers,
 	steps_sort_val.clear();
 }
 
-bool StepsUtil::CompareNotesPointersByRadarValues(const Steps* pNotes1, const Steps* pNotes2)
+bool StepsUtil::CompareNotesPointersByRadarValues(const Steps* pSteps1, const Steps* pSteps2)
 {
 	float fScore1 = 0;
 	float fScore2 = 0;
 	
 	for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
 	{
-		fScore1 += pNotes1->GetRadarValues()[r];
-		fScore2 += pNotes2->GetRadarValues()[r];
+		fScore1 += pSteps1->GetRadarValues()[r];
+		fScore2 += pSteps2->GetRadarValues()[r];
 	}
 
 	return fScore1 < fScore2;
 }
 
-bool StepsUtil::CompareNotesPointersByMeter(const Steps *pNotes1, const Steps* pNotes2)
+bool StepsUtil::CompareNotesPointersByMeter(const Steps *pSteps1, const Steps* pSteps2)
 {
-	return pNotes1->GetMeter() < pNotes2->GetMeter();
+	return pSteps1->GetMeter() < pSteps2->GetMeter();
 }
 
-bool StepsUtil::CompareNotesPointersByDifficulty(const Steps *pNotes1, const Steps *pNotes2)
+bool StepsUtil::CompareNotesPointersByDifficulty(const Steps *pSteps1, const Steps *pSteps2)
 {
-	return pNotes1->GetDifficulty() < pNotes2->GetDifficulty();
+	return pSteps1->GetDifficulty() < pSteps2->GetDifficulty();
 }
 
 void StepsUtil::SortNotesArrayByDifficulty( vector<Steps*> &arraySteps )

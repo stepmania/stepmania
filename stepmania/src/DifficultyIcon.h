@@ -27,7 +27,7 @@ public:
 
 	bool Load( CString sFilePath );
 
-	void SetFromNotes( PlayerNumber pn, Steps* pNotes );
+	void SetFromNotes( PlayerNumber pn, Steps* pSteps );
 	void SetFromDifficulty( PlayerNumber pn, Difficulty dc );
 	void SetFromCourseDifficulty( PlayerNumber pn, CourseDifficulty cd );
 };

@@ -26,19 +26,19 @@
 #include "ProfileManager.h"
 #include "NetworkSyncManager.h"
 
-ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Steps*>& apNotes_, const vector<AttackArray> &asModifiers, PlayerNumber pn_ ):
-	ScoreKeeper(pn_), apNotes(apNotes_)
+ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Steps*>& apSteps_, const vector<AttackArray> &asModifiers, PlayerNumber pn_ ):
+	ScoreKeeper(pn_), apSteps(apSteps_)
 {
-	ASSERT( apSongs.size() == apNotes_.size() );
+	ASSERT( apSongs.size() == apSteps_.size() );
 	ASSERT( apSongs.size() == asModifiers.size() );
 	//
 	// Fill in g_CurStageStats, calculate multiplier
 	//
 	int iTotalPossibleDancePoints = 0;
-	for( unsigned i=0; i<apNotes.size(); i++ )
+	for( unsigned i=0; i<apSteps.size(); i++ )
 	{
 		Song* pSong = apSongs[i];
-		Steps* pSteps = apNotes[i];
+		Steps* pSteps = apSteps[i];
 		NoteData notedata;
 		pSteps->GetNoteData( &notedata );
 
@@ -108,7 +108,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Ste
 
 }
 
-void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, const Steps* pNotes, const NoteData* pNoteData )
+void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData )
 {
 /*
   http://www.aaroninjapan.com/ddr2.html
@@ -133,7 +133,7 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, const Steps* pNotes, c
 	m_iMaxPossiblePoints = 0;
 	if( GAMESTATE->IsCourseMode() )
 	{
-		const int numSongsInCourse = apNotes.size();
+		const int numSongsInCourse = apSteps.size();
 		ASSERT( numSongsInCourse != 0 );
 
 		const int iIndex = iSongInCourseIndex % numSongsInCourse;
@@ -158,7 +158,7 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, const Steps* pNotes, c
 	}
 	else
 	{
-		const int iMeter = clamp( pNotes->GetMeter(), 1, 10 );
+		const int iMeter = clamp( pSteps->GetMeter(), 1, 10 );
 
 		// long ver and marathon ver songs have higher max possible scores
 		int iLengthMultiplier = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
@@ -183,7 +183,7 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, const Steps* pNotes, c
 
 	ASSERT( m_iPointBonus >= 0 );
 
-	m_iTapNotesHit = 0;
+	m_iTapStepsHit = 0;
 }
 
 static int GetScore(int p, int B, int S, int n)
@@ -267,7 +267,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	default:			p = 0;		break;
 	}
 
-	m_iTapNotesHit++;
+	m_iTapStepsHit++;
 
 	const int N = m_iNumTapsAndHolds;
 	const int sum = (N * (N + 1)) / 2;
@@ -286,15 +286,15 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	}
 	else
 	{
-		iScore += GetScore(p, B, sum, m_iTapNotesHit);
+		iScore += GetScore(p, B, sum, m_iTapStepsHit);
 		const int &iCurrentCombo = g_CurStageStats.iCurCombo[m_PlayerNumber];
 		g_CurStageStats.iBonus[m_PlayerNumber] += m_ComboBonusFactor[score] * iCurrentCombo;
 	}
 
 	/* Subtract the maximum this step could have been worth from the bonus. */
-	m_iPointBonus -= GetScore(10, B, sum, m_iTapNotesHit);
+	m_iPointBonus -= GetScore(10, B, sum, m_iTapStepsHit);
 
-	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_PERFECT )
+	if ( m_iTapStepsHit == m_iNumTapsAndHolds && score >= TNS_PERFECT )
 	{
 		if (!g_CurStageStats.bFailedEarlier[m_PlayerNumber])
 			iScore += m_iPointBonus;

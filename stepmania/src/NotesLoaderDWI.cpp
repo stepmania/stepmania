@@ -455,7 +455,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 				*pNewNotes
 				);
 			if(pNewNotes->m_StepsType != STEPS_TYPE_INVALID)
-				out.m_apNotes.push_back( pNewNotes );
+				out.m_vpSteps.push_back( pNewNotes );
 			else
 				delete pNewNotes;
 		}

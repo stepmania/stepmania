@@ -180,12 +180,12 @@ public:
 	bool HasSignificantBpmChangesOrStops() const;
 	
 	
-	vector<Steps*> m_apNotes;
+	vector<Steps*> m_vpSteps;
 
 	bool SongCompleteForStyle( const StyleDef *st ) const;
 	bool SongHasNotesType( StepsType st ) const;
 	bool SongHasNotesTypeAndDifficulty( StepsType st, Difficulty dc ) const;
-	const vector<Steps*>& GetAllSteps() const { return m_apNotes; }
+	const vector<Steps*>& GetAllSteps() const { return m_vpSteps; }
 	void GetSteps( vector<Steps*>& arrayAddTo, StepsType st = STEPS_TYPE_INVALID, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, const CString &sDescription = "", bool bIncludeAutoGen = true, int Max = -1 ) const;
 	Steps* GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen = true ) const;
 	Steps* GetStepsByMeter( StepsType st, int iMeterLow, int iMeterHigh ) const;
@@ -198,8 +198,8 @@ public:
 	bool NeverDisplayed() const { return GetDisplayed() == SHOW_NEVER; }
 	bool RouletteDisplayed() const { return GetDisplayed() != SHOW_NEVER; }
 
-	void AddNotes( Steps* pNotes );		// we are responsible for deleting the memory pointed to by pNotes!
-	void RemoveNotes( const Steps* pNotes );
+	void AddSteps( Steps* pSteps );		// we are responsible for deleting the memory pointed to by pSteps!
+	void RemoveSteps( const Steps* pSteps );
 
 	void FreeAllLoadedFromProfiles();
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }

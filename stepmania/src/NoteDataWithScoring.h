@@ -65,7 +65,7 @@ public:
 	void Init();
 
 	// statistics
-	int GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
+	int GetNumTapStepsWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	int GetNumNWithScore( TapNoteScore tns, int MinTaps, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	int GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	int GetSuccessfulMines( const float fStartBeat = 0, const float fEndBeat = -1 ) const;

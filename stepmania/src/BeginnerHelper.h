@@ -18,7 +18,7 @@ public:
 	bool Initialize( int iDancePadType );
 	bool IsInitialized() { return m_bInitialized; }
 	static bool CanUse();
-	void AddPlayer( int pn, NoteData *pNotes );
+	void AddPlayer( int pn, NoteData *pSteps );
 	void SetFlash(CString sFilename, float fX, float fY);
 	void ShowStepCircle( int pn, int CSTEP );
 	void TurnFlashOff();

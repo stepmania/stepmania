@@ -20,7 +20,7 @@ struct TrailEntry
 {
 	TrailEntry(): 
 		pSong(NULL), 
-		pNotes(NULL),
+		pSteps(NULL),
 		bMystery(false),
 		iLowMeter(-1),
 		iHighMeter(-1)
@@ -29,7 +29,7 @@ struct TrailEntry
 	void GetAttackArray( AttackArray &out ) const;
 
 	Song*		pSong;
-	Steps*		pNotes;
+	Steps*		pSteps;
 	CString		Modifiers;
 	AttackArray Attacks;
 	bool		bMystery;

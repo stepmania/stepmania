@@ -361,7 +361,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 			continue;
 		}
 
-		out.m_apNotes.push_back( pNewNotes );
+		out.m_vpSteps.push_back( pNewNotes );
 	}
 
 	return true;

@@ -91,17 +91,17 @@ GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 	}
 }
 
-void GrooveRadar::GrooveRadarValueMap::SetFromNotes( PlayerNumber pn, Steps* pNotes )		// NULL means no song
+void GrooveRadar::GrooveRadarValueMap::SetFromNotes( PlayerNumber pn, Steps* pSteps )		// NULL means no song
 {
 	if(DISABLE_RADAR == 1) // if the theme says not to disable it
 		return;
-	if( pNotes != NULL )
+	if( pSteps != NULL )
 	{
 		for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 		{
 			const float fValueCurrent = m_fValuesOld[pn][c] * (1-m_PercentTowardNew[pn]) + m_fValuesNew[pn][c] * m_PercentTowardNew[pn];
 			m_fValuesOld[pn][c] = fValueCurrent;
-			m_fValuesNew[pn][c] = pNotes->GetRadarValues()[c];
+			m_fValuesNew[pn][c] = pSteps->GetRadarValues()[c];
 		}	
 
 		if( m_bValuesVisible[pn] == false )	// the values WERE invisible
@@ -111,7 +111,7 @@ void GrooveRadar::GrooveRadarValueMap::SetFromNotes( PlayerNumber pn, Steps* pNo
 
 		m_bValuesVisible[pn] = true;
 	}
-	else	// pNotes == NULL
+	else	// pSteps == NULL
 	{
 		m_bValuesVisible[pn] = false;
 	}

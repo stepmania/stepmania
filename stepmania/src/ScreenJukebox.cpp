@@ -85,18 +85,18 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 			continue;	// skip
 
 		Difficulty dc = vDifficultiesToShow[ rand()%vDifficultiesToShow.size() ];
-		Steps* pNotes = pSong->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, dc );
+		Steps* pSteps = pSong->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, dc );
 
-		if( pNotes == NULL )
+		if( pSteps == NULL )
 			continue;	// skip
 
-		if( !PREFSMAN->m_bAutogenSteps && pNotes->IsAutogen())
+		if( !PREFSMAN->m_bAutogenSteps && pSteps->IsAutogen())
 			continue;	// skip
 
 		// Found something we can use!
 		GAMESTATE->m_pCurSong = pSong;
 		for( int p=0; p<NUM_PLAYERS; p++ )
-			GAMESTATE->m_pCurNotes[p] = pNotes;
+			GAMESTATE->m_pCurNotes[p] = pSteps;
 		
 		return true;	// done looking
 	}

@@ -84,8 +84,8 @@ void ScreenEditMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 void DeleteCurNotes( void* pThrowAway )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
-	Steps* pNotesToDelete = GAMESTATE->m_pCurNotes[PLAYER_1];
-	pSong->RemoveNotes( pNotesToDelete );
+	Steps* pStepsToDelete = GAMESTATE->m_pCurNotes[PLAYER_1];
+	pSong->RemoveSteps( pStepsToDelete );
 	pSong->Save();
 }
 
@@ -98,7 +98,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	Song* pSong					= m_Selector.GetSelectedSong();
 	StepsType st				= m_Selector.GetSelectedNotesType();
 	Difficulty dc				= m_Selector.GetSelectedDifficulty();
-	Steps* pNotes				= m_Selector.GetSelectedNotes();
+	Steps* pSteps				= m_Selector.GetSelectedNotes();
 //	StepsType soureNT			= m_Selector.GetSelectedSourceNotesType();
 //	Difficulty sourceDiff		= m_Selector.GetSelectedSourceDifficulty();
 	Steps* pSourceNotes			= m_Selector.GetSelectedSourceNotes();
@@ -106,7 +106,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 	GAMESTATE->m_pCurSong = pSong;
 	GAMESTATE->m_CurStyle = GAMEMAN->GetEditorStyleForNotesType( st );
-	GAMESTATE->m_pCurNotes[PLAYER_1] = pNotes;
+	GAMESTATE->m_pCurNotes[PLAYER_1] = pSteps;
 
 	//
 	// handle error cases
@@ -122,18 +122,18 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	{
 	case EditMenu::ACTION_EDIT:
 		// Prepare prepare for ScreenEdit
-		ASSERT( pNotes );
+		ASSERT( pSteps );
 		SOUND->StopMusic();
 		SCREENMAN->PlayStartSound();
 		StartTransitioning( SM_GoToNextScreen );
 		break;
 	case EditMenu::ACTION_DELETE:
-		ASSERT( pNotes );
+		ASSERT( pSteps );
 		SCREENMAN->Prompt( SM_RefreshSelector, "These notes will be lost permanently.\n\nContinue with delete?", true, false, DeleteCurNotes );
 		m_Selector.RefreshNotes();
 		return;
 	case EditMenu::ACTION_COPY:
-		ASSERT( !pNotes );
+		ASSERT( !pSteps );
 		ASSERT( pSourceNotes );
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since
@@ -141,7 +141,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			Steps* pNewNotes = new Steps;
 			pNewNotes->CopyFrom( pSourceNotes, st );
 			pNewNotes->SetDifficulty( dc );
-			pSong->AddNotes( pNewNotes );
+			pSong->AddSteps( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Steps created from copy." );
 			SOUND->PlayOnce( THEME->GetPathToS("ScreenEditMenu create") );
@@ -150,7 +150,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		}
 		return;
 	case EditMenu::ACTION_AUTOGEN:
-		ASSERT( !pNotes );
+		ASSERT( !pSteps );
 		ASSERT( pSourceNotes );
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since
@@ -159,7 +159,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pNewNotes->AutogenFrom( pSourceNotes, st );
 			pNewNotes->DeAutogen();
 			pNewNotes->SetDifficulty( dc );	// override difficulty with the user's choice
-			pSong->AddNotes( pNewNotes );
+			pSong->AddSteps( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Steps created from AutoGen." );
 			SOUND->PlayOnce( THEME->GetPathToS("ScreenEditMenu create") );
@@ -168,7 +168,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		}
 		return;
 	case EditMenu::ACTION_BLANK:
-		ASSERT( !pNotes );
+		ASSERT( !pSteps );
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since
 			// Song allocates all of the other Steps.
@@ -176,7 +176,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pNewNotes->CreateBlank( st );
 			pNewNotes->SetDifficulty( dc );
 			pNewNotes->SetMeter( 1 );
-			pSong->AddNotes( pNewNotes );
+			pSong->AddSteps( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Blank Steps created." );
 			SOUND->PlayOnce( THEME->GetPathToS("ScreenEditMenu create") );

@@ -84,7 +84,7 @@ public:
 	void GetEndlessCourses( vector<Course*> &AddTo, bool bIncludeAutogen );	// add to if set to REPEAT.
 
 	void GetExtraStageInfo( bool bExtra2, const StyleDef *s, 
-		Song*& pSongOut, Steps*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );
+		Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out );
 
 	Song* GetSongFromDir( CString sDir );
 	Course* GetCourseFromPath( CString sPath );	// path to .crs file, or path to song group dir
@@ -101,7 +101,7 @@ protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );
 	void LoadDWISongDir( CString sDir );
 	bool GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
-					   Song*& pSongOut, Steps*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );
+					   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out );
 	void SanityCheckGroupDir( CString sDir ) const;
 	void AddGroup( CString sDir, CString sGroupDirName );
 

@@ -281,7 +281,7 @@ void SongManager::LoadGroupSymLinks(CString sDir, CString sGroupFolder)
 			delete pNewSong; // The song failed to load.
 		else
 		{
-			pNewSong->m_apNotes.clear();	// No memory hogs..
+			pNewSong->m_vpSteps.clear();	// No memory hogs..
 			pNewSong->m_BackgroundChanges.clear();
 
 			pNewSong->m_bIsSymLink = true;	// Very important so we don't double-parse later
@@ -388,20 +388,20 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	 * set up, which is too restrictive.  How to handle this?
 	 */
 //	const StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-	for( unsigned i=0; i<pSong->m_apNotes.size(); i++ )
+	for( unsigned i=0; i<pSong->m_vpSteps.size(); i++ )
 	{
-		const Steps* pNotes = pSong->m_apNotes[i];
-		switch( pNotes->GetDifficulty() )
+		const Steps* pSteps = pSong->m_vpSteps[i];
+		switch( pSteps->GetDifficulty() )
 		{
 		case DIFFICULTY_CHALLENGE:
 		case DIFFICULTY_EDIT:
 			continue;
 		}
 
-//		if(pNotes->m_StepsType != nt)
+//		if(pSteps->m_StepsType != nt)
 //			continue;
 
-		if( pNotes->GetMeter() >= EXTRA_COLOR_METER )
+		if( pSteps->GetMeter() >= EXTRA_COLOR_METER )
 			return EXTRA_COLOR;
 	}
 
@@ -607,10 +607,10 @@ void SongManager::Cleanup()
 	for( i=0; i<m_pSongs.size(); i++ )
 	{
 		Song* pSong = m_pSongs[i];
-		for( unsigned n=0; n<pSong->m_apNotes.size(); n++ )
+		for( unsigned n=0; n<pSong->m_vpSteps.size(); n++ )
 		{
-			Steps* pNotes = pSong->m_apNotes[n];
-			pNotes->Compress();
+			Steps* pSteps = pSong->m_vpSteps[n];
+			pSteps->Compress();
 		}
 	}
 
@@ -652,7 +652,7 @@ void SongManager::GetEndlessCourses( vector<Course*> &AddTo, bool bIncludeAutoge
 
 
 bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
-								   Song*& pSongOut, Steps*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
+								   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out )
 {
 	const CString sCourseSuffix = sPreferredGroup + "/" + (bExtra2 ? "extra2" : "extra1") + ".crs";
 	CString sCoursePath = SONGS_DIR + sCourseSuffix;
@@ -675,7 +675,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 	so_out.FromString( pTrail->m_vEntries[0].Modifiers );
 
 	pSongOut = pTrail->m_vEntries[0].pSong;
-	pNotesOut = pTrail->m_vEntries[0].pNotes;
+	pStepsOut = pTrail->m_vEntries[0].pSteps;
 	return true;
 }
 
@@ -698,7 +698,7 @@ bool CompareNotesPointersForExtra(const Steps *n1, const Steps *n2)
 }
 
 void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd, 
-								   Song*& pSongOut, Steps*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
+								   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out )
 {
 	CString sGroup = GAMESTATE->m_sPreferredGroup;
 	if( sGroup == GROUP_ALL_MUSIC )
@@ -717,7 +717,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->GetSongDir().c_str():"",
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->m_sGroupName.c_str():"") );
 
-	if(GetExtraStageInfoFromCourse(bExtra2, sGroup, pSongOut, pNotesOut, po_out, so_out))
+	if(GetExtraStageInfoFromCourse(bExtra2, sGroup, pSongOut, pStepsOut, po_out, so_out))
 		return;
 	
 	// Choose a hard song for the extra stage
@@ -732,25 +732,25 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 	{
 		Song* pSong = apSongs[s];
 
-		vector<Steps*> apNotes;
-		pSong->GetSteps( apNotes, sd->m_StepsType );
-		for( unsigned n=0; n<apNotes.size(); n++ )	// foreach Steps
+		vector<Steps*> apSteps;
+		pSong->GetSteps( apSteps, sd->m_StepsType );
+		for( unsigned n=0; n<apSteps.size(); n++ )	// foreach Steps
 		{
-			Steps* pNotes = apNotes[n];
+			Steps* pSteps = apSteps[n];
 
-			if( pExtra1Notes == NULL || CompareNotesPointersForExtra(pExtra1Notes,pNotes) )	// pNotes is harder than pHardestNotes
+			if( pExtra1Notes == NULL || CompareNotesPointersForExtra(pExtra1Notes,pSteps) )	// pSteps is harder than pHardestNotes
 			{
 				pExtra1Song = pSong;
-				pExtra1Notes = pNotes;
+				pExtra1Notes = pSteps;
 			}
 
 			// for extra 2, we don't want to choose the hardest notes possible.  So, we'll disgard Steps with meter > 8
-			if(	bExtra2  &&  pNotes->GetMeter() > 8 )	
+			if(	bExtra2  &&  pSteps->GetMeter() > 8 )	
 				continue;	// skip
-			if( pExtra2Notes == NULL  ||  CompareNotesPointersForExtra(pExtra2Notes,pNotes) )	// pNotes is harder than pHardestNotes
+			if( pExtra2Notes == NULL  ||  CompareNotesPointersForExtra(pExtra2Notes,pSteps) )	// pSteps is harder than pHardestNotes
 			{
 				pExtra2Song = pSong;
-				pExtra2Notes = pNotes;
+				pExtra2Notes = pSteps;
 			}
 		}
 	}
@@ -767,7 +767,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 	ASSERT( pExtra2Song && pExtra1Song && pExtra2Notes && pExtra1Notes );
 
 	pSongOut = (bExtra2 ? pExtra2Song : pExtra1Song);
-	pNotesOut = (bExtra2 ? pExtra2Notes : pExtra1Notes);
+	pStepsOut = (bExtra2 ? pExtra2Notes : pExtra1Notes);
 
 
 	po_out.Init();
@@ -1037,7 +1037,7 @@ static bool CheckPointer( const Steps *p )
 	for( unsigned i = 0; i < songs.size(); ++i )
 	{
 		for( unsigned j = 0; j < songs.size(); ++j )
-			if( songs[i]->m_apNotes[j] == p )
+			if( songs[i]->m_vpSteps[j] == p )
 				return true;
 	}
 	return false;

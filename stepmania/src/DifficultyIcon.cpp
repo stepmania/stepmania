@@ -49,12 +49,12 @@ bool DifficultyIcon::Load( CString sPath )
 	return true;
 }
 
-void DifficultyIcon::SetFromNotes( PlayerNumber pn, Steps* pNotes )
+void DifficultyIcon::SetFromNotes( PlayerNumber pn, Steps* pSteps )
 {
-	if( pNotes == NULL )
+	if( pSteps == NULL )
 		m_bBlank = true;
 	else
-		SetFromDifficulty( pn, pNotes->GetDifficulty() );
+		SetFromDifficulty( pn, pSteps->GetDifficulty() );
 }
 
 void DifficultyIcon::SetFromDifficulty( PlayerNumber pn, Difficulty dc )

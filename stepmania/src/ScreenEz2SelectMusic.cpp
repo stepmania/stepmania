@@ -680,22 +680,22 @@ void ScreenEz2SelectMusic::AfterNotesChange( PlayerNumber pn )
 
 	m_iSelection[pn] = clamp( m_iSelection[pn], 0, int(m_arrayNotes[pn].size()-1) );	// bounds clamping
 
-	Steps* pNotes = m_arrayNotes[pn].empty()? NULL: m_arrayNotes[pn][m_iSelection[pn]];
+	Steps* pSteps = m_arrayNotes[pn].empty()? NULL: m_arrayNotes[pn][m_iSelection[pn]];
 
-	GAMESTATE->m_pCurNotes[pn] = pNotes;
+	GAMESTATE->m_pCurNotes[pn] = pSteps;
 
 
-	if( pNotes != NULL && pn == GAMESTATE->m_MasterPlayerNumber )
+	if( pSteps != NULL && pn == GAMESTATE->m_MasterPlayerNumber )
 	{
-		m_PumpDifficultyRating.SetText(ssprintf("Lv.%d",pNotes->GetMeter()));
-		m_PumpDifficultyRating.SetDiffuse(  SONGMAN->GetDifficultyColor(pNotes->GetDifficulty()) );
-		m_DifficultyRating.SetDifficulty(pNotes->GetMeter());
+		m_PumpDifficultyRating.SetText(ssprintf("Lv.%d",pSteps->GetMeter()));
+		m_PumpDifficultyRating.SetDiffuse(  SONGMAN->GetDifficultyColor(pSteps->GetDifficulty()) );
+		m_DifficultyRating.SetDifficulty(pSteps->GetMeter());
 	}
 
-//	GAMESTATE->m_pCurNotes[pn] = pNotes;
+//	GAMESTATE->m_pCurNotes[pn] = pSteps;
 
-//	Steps* m_pNotes = GAMESTATE->m_pCurNotes[pn];
+//	Steps* m_pSteps = GAMESTATE->m_pCurNotes[pn];
 
-//	m_FootMeter[pn].SetFromNotes( pNotes );
+//	m_FootMeter[pn].SetFromNotes( pSteps );
 }
 

@@ -98,16 +98,16 @@ void DifficultyMeter::Load()
 	Unset();
 }
 
-void DifficultyMeter::SetFromNotes( const Steps* pNotes )
+void DifficultyMeter::SetFromNotes( const Steps* pSteps )
 {
-	if( pNotes == NULL )
+	if( pSteps == NULL )
 	{
 		Unset();
 		return;
 	}
 
-	SetMeter( pNotes->GetMeter(), pNotes->GetDifficulty() );
-	SetDifficulty( DifficultyToString( pNotes->GetDifficulty() ) );
+	SetMeter( pSteps->GetMeter(), pSteps->GetDifficulty() );
+	SetDifficulty( DifficultyToString( pSteps->GetDifficulty() ) );
 }
 
 void DifficultyMeter::SetFromCourse( const Course* pCourse, PlayerNumber pn )

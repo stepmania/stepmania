@@ -96,7 +96,7 @@ void CourseEntryDisplay::LoadFromTrailEntry( int iNum, const Course *pCourse, Tr
 		FOREACH_EnabledPlayer(pn)
 		{
 			TrailEntry *te = tes[pn];
-			Difficulty dc = te->pNotes->GetDifficulty();
+			Difficulty dc = te->pSteps->GetDifficulty();
 			if( dc == DIFFICULTY_INVALID )
 			{
 				int iLow = te->iLowMeter;
@@ -115,8 +115,8 @@ void CourseEntryDisplay::LoadFromTrailEntry( int iNum, const Course *pCourse, Tr
 		FOREACH_EnabledPlayer(pn)
 		{
 			TrailEntry *te = tes[pn];
-			RageColor colorNotes = SONGMAN->GetDifficultyColor( te->pNotes->GetDifficulty() );
-			SetDifficulty( pn, ssprintf("%d", te->pNotes->GetMeter()), colorNotes );
+			RageColor colorNotes = SONGMAN->GetDifficultyColor( te->pSteps->GetDifficulty() );
+			SetDifficulty( pn, ssprintf("%d", te->pSteps->GetMeter()), colorNotes );
 		}
 
 		m_TextBanner.LoadFromSong( te->pSong );

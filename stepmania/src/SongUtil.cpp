@@ -290,30 +290,30 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 		}
 	case SORT_EASY_METER:
 		{
-			Steps* pNotes = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_EASY);
-			if( pNotes )	
-				return ssprintf("%02d", pNotes->GetMeter() );
+			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_EASY);
+			if( pSteps )	
+				return ssprintf("%02d", pSteps->GetMeter() );
 			return "N/A";
 		}
 	case SORT_MEDIUM_METER:
 		{
-			Steps* pNotes = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_MEDIUM);
-			if( pNotes )	
-				return ssprintf("%02d", pNotes->GetMeter() );
+			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_MEDIUM);
+			if( pSteps )	
+				return ssprintf("%02d", pSteps->GetMeter() );
 			return "N/A";
 		}
 	case SORT_HARD_METER:
 		{
-			Steps* pNotes = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_HARD);
-			if( pNotes )	
-				return ssprintf("%02d", pNotes->GetMeter() );
+			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_HARD);
+			if( pSteps )	
+				return ssprintf("%02d", pSteps->GetMeter() );
 			return "N/A";
 		}
 	case SORT_CHALLENGE_METER:
 		{
-			Steps* pNotes = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_CHALLENGE);
-			if( pNotes )	
-				return ssprintf("%02d", pNotes->GetMeter() );
+			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_CHALLENGE);
+			if( pSteps )	
+				return ssprintf("%02d", pSteps->GetMeter() );
 			return "N/A";
 		}
 	case SORT_SORT_MENU:
@@ -352,8 +352,8 @@ void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Di
 	song_sort_val.clear();
 	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
 	{
-		Steps* pNotes = arraySongPointers[i]->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, dc );
-		song_sort_val[arraySongPointers[i]] = ssprintf("%i", pNotes ? pNotes->GetMeter() : 0);
+		Steps* pSteps = arraySongPointers[i]->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, dc );
+		song_sort_val[arraySongPointers[i]] = ssprintf("%i", pSteps ? pSteps->GetMeter() : 0);
 	}
 	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueAscending );
 }

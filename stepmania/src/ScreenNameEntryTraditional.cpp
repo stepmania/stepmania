@@ -155,10 +155,10 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			ss.iActualDancePoints[PLAYER_2] = 100;
 			ss.iScore[PLAYER_2] = 100;
 			ASSERT( ss.pSong );
-			ASSERT( ss.pSong->m_apNotes.size() );
+			ASSERT( ss.pSong->m_vpSteps.size() );
 			FOREACH_PlayerNumber( p )
 			{
-				GAMESTATE->m_pCurNotes[p] = ss.pSteps[p] = ss.pSong->m_apNotes[0];
+				GAMESTATE->m_pCurNotes[p] = ss.pSteps[p] = ss.pSong->m_vpSteps[0];
 				ss.iPossibleDancePoints[p] = 1000;
 				ss.iActualDancePoints[p] = 985;
 

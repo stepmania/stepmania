@@ -26,7 +26,7 @@ ScoreKeeperRave::ScoreKeeperRave(PlayerNumber pn) : ScoreKeeper(pn)
 	ATTACK_DURATION_SECONDS.Refresh();
 }
 
-void ScoreKeeperRave::OnNextSong( int iSongInCourseIndex, const Steps* pNotes, const NoteData* pNoteData )
+void ScoreKeeperRave::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData )
 {
 	
 }

@@ -61,7 +61,7 @@ public:
 	static float GetMaxStepDistanceSeconds();
 
 protected:
-	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
+	void UpdateTapStepsMissedOlderThan( float fMissIfOlderThanThisBeat );
 	void OnRowCompletelyJudged( int iStepIndex );
 	void HandleTapRowScore( unsigned row );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );

@@ -300,7 +300,7 @@ void PlayerMinus::Update( float fDeltaTime )
 	//
 	// Check for TapNote misses
 	//
-	UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
+	UpdateTapStepsMissedOlderThan( GetMaxStepDistanceSeconds() );
 
 	//
 	// update pressed flag
@@ -847,7 +847,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 			/* AI will generate misses here.  Don't handle a miss like a regular note because
 			 * we want the judgment animation to appear delayed.  Instead, return early if
-			 * AI generated a miss, and let UpdateMissedTapNotesOlderThan() detect and handle the 
+			 * AI generated a miss, and let UpdateMissedTapStepsOlderThan() detect and handle the 
 			 * misses. */
 			if( score == TNS_MISS )
 				return;
@@ -1030,9 +1030,9 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 }
 
 
-void PlayerMinus::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
+void PlayerMinus::UpdateTapStepsMissedOlderThan( float fMissIfOlderThanSeconds )
 {
-	//LOG->Trace( "Steps::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
+	//LOG->Trace( "Steps::UpdateTapStepsMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
 	int iMissIfOlderThanThisIndex;
 	{
 		const float fEarliestTime = GAMESTATE->m_fMusicSeconds - fMissIfOlderThanSeconds;

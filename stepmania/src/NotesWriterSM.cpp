@@ -204,17 +204,17 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 	//
 	// Save all Steps for this file
 	//
-	for( i=0; i<out.m_apNotes.size(); i++ ) 
+	for( i=0; i<out.m_vpSteps.size(); i++ ) 
 	{
-		Steps* pNotes = out.m_apNotes[i];
-		if( pNotes->IsAutogen() )
+		Steps* pSteps = out.m_vpSteps[i];
+		if( pSteps->IsAutogen() )
 			continue; /* don't write autogen notes */
 
 		/* Only save steps that weren't loaded from a profile. */
-		if( pNotes->WasLoadedFromProfile() )
+		if( pSteps->WasLoadedFromProfile() )
 			continue;
 
-		WriteSMNotesTag( *out.m_apNotes[i], f, bSavingCache );
+		WriteSMNotesTag( *out.m_vpSteps[i], f, bSavingCache );
 	}
 
 	return true;

@@ -20,7 +20,7 @@ class ScoreKeeperMAX2: public ScoreKeeper
 {
 	int				m_iScoreRemainder;
 	int				m_iMaxPossiblePoints;
-	int				m_iTapNotesHit;	// number of notes judged so far, needed by scoring
+	int				m_iTapStepsHit;	// number of notes judged so far, needed by scoring
 
 	int				m_iNumTapsAndHolds;
 	int			    m_iMaxScoreSoFar; // for nonstop scoring
@@ -28,7 +28,7 @@ class ScoreKeeperMAX2: public ScoreKeeper
  	int				m_iCurToastyCombo;
 	bool			m_bIsLastSongInCourse;
 
-	const vector<Steps*>& apNotes;
+	const vector<Steps*>& apSteps;
 
 	void AddScore( TapNoteScore score );
 
@@ -38,10 +38,10 @@ class ScoreKeeperMAX2: public ScoreKeeper
 	int				m_ComboBonusFactor[NUM_TAP_NOTE_SCORES];
 
 public:
-	ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Steps*>& apNotes, const vector<AttackArray> &asModifiers, PlayerNumber pn);
+	ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Steps*>& apSteps, const vector<AttackArray> &asModifiers, PlayerNumber pn);
 
 	// before a song plays (called multiple times if course)
-	void OnNextSong( int iSongInCourseIndex, const Steps* pNotes, const NoteData* pNoteData );
+	void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData );
 
 	void HandleTapScore( TapNoteScore score );
 	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );

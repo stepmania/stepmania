@@ -37,9 +37,9 @@ RadarValues Trail::GetRadarValues() const
 
 	FOREACH_CONST( TrailEntry, m_vEntries, e )
 	{
-		const Steps *pNotes = e->pNotes;
-		ASSERT( pNotes );
-		rv += pNotes->GetRadarValues();
+		const Steps *pSteps = e->pSteps;
+		ASSERT( pSteps );
+		rv += pSteps->GetRadarValues();
 	}
 
 	return rv;
@@ -58,7 +58,7 @@ int Trail::GetTotalMeter() const
 	int iTotalMeter = 0;
 	FOREACH_CONST( TrailEntry, m_vEntries, e )
 	{
-		iTotalMeter += e->pNotes->GetMeter();
+		iTotalMeter += e->pSteps->GetMeter();
 	}
 
 	return iTotalMeter;
