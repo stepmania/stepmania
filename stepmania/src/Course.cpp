@@ -754,7 +754,7 @@ bool Course::HasMods() const
 
 bool Course::AllSongsAreFixed() const
 {
-	for( int i=0; i<m_entries.size(); i++ )
+	for( unsigned i=0; i<m_entries.size(); i++ )
 	{
 		if( m_entries[i].type != COURSE_ENTRY_FIXED )
 			return false;
