@@ -273,6 +273,15 @@ bool GameState::IsHumanPlayer( PlayerNumber pn )
 	}
 }
 
+PlayerNumber GameState::GetFirstHumanPlayer()
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( IsHumanPlayer(p) )
+			return (PlayerNumber)p;
+	ASSERT(0);	// there must be at least 1 human player
+	return PLAYER_INVALID;
+}
+
 bool GameState::IsCpuPlayer( PlayerNumber pn )
 {
 	return IsPlayerEnabled(pn) && !IsHumanPlayer(pn);

@@ -48,7 +48,7 @@ void RaveHelper::Update( float fDelta )
 	if( GAMESTATE->m_bActiveAttackEndedThisUpdate[m_PlayerNumber] )
 		m_soundAttackEnding.Play();
 
-	PlayerNumber pn = m_PlayerNumber;
+//	PlayerNumber pn = m_PlayerNumber;
 
 	// TODO: Award item based on Super meter
 /*	

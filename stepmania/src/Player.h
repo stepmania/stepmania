@@ -36,6 +36,7 @@ class Inventory;
 
 #define	SAMPLE_COUNT	16
 
+
 class Player : public NoteDataWithScoring, public ActorFrame
 {
 public:

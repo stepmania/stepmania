@@ -170,7 +170,7 @@ void MusicWheelItem::RefreshGrades()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !data->m_pSong  ||	// this isn't a song display
-			!GAMESTATE->IsPlayerEnabled(p)  ||
+			!GAMESTATE->IsHumanPlayer(p)  ||
 			!SONGMAN->IsUsingMemoryCard((PlayerNumber)p) )
 		{
 			m_GradeDisplay[p].SetDiffuse( RageColor(1,1,1,0) );

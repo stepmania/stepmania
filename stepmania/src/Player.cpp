@@ -42,6 +42,74 @@ CachedThemeMetricI					BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboTh
 static const float StepSearchDistanceBackwards = 1.0f;
 static const float StepSearchDistanceForwards = 1.0f;
 
+struct TapScoreDistribution
+{
+	float fCumulativeProbability[NUM_TAP_NOTE_SCORES];
+	TapNoteScore GetTapNoteScore()
+	{
+		float fRand = randomf(0,1);
+		for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
+			if( fRand <= fCumulativeProbability[i] )
+				return (TapNoteScore)i;
+		ASSERT(0);	// the last probability must be 1.0, so we should never get here!
+		return TNS_MARVELOUS;
+	}
+};
+TapScoreDistribution TAP_SCORE_DISTRIBUTIONS[NUM_PLAYER_CONTROLLERS] = 
+{
+	// HUMAN
+	{
+		0.00f,	// TNS_NONE 
+		1.00f,	// TNS_MISS	// don't ever hit automatically when human
+		0.00f,	// TNS_BOO 
+		0.00f,	// TNS_GOOD 
+		0.00f,	// TNS_GREAT 
+		0.00f,	// TNS_PERFECT 
+		0.00f,	// TNS_MARVELOUS 
+	},
+	// CPU_EASY
+	{
+		0.00f,	// TNS_NONE 
+		0.02f,	// TNS_MISS
+		0.06f,	// TNS_BOO 
+		0.10f,	// TNS_GOOD 
+		0.55f,	// TNS_GREAT 
+		0.80f,	// TNS_PERFECT 
+		1.00f,	// TNS_MARVELOUS 
+	},
+	// CPU_MEDIUM
+	{
+		0.00f,	// TNS_NONE 
+		0.01f,	// TNS_MISS
+		0.02f,	// TNS_BOO 
+		0.05f,	// TNS_GOOD 
+		0.45f,	// TNS_GREAT 
+		0.70f,	// TNS_PERFECT 
+		1.00f,	// TNS_MARVELOUS 
+	},
+	// CPU_HARD
+	{
+		0.00f,	// TNS_NONE 
+		0.005f,	// TNS_MISS
+		0.010f,	// TNS_BOO 
+		0.02f,	// TNS_GOOD 
+		0.10f,	// TNS_GREAT 
+		0.50f,	// TNS_PERFECT 
+		1.00f,	// TNS_MARVELOUS 
+	},
+	// CPU_AUTOPLAY
+	{
+		0.00f,	// TNS_NONE 
+		0.00f,	// TNS_MISS
+		0.00f,	// TNS_BOO 
+		0.00f,	// TNS_GOOD 
+		0.00f,	// TNS_GREAT 
+		0.00f,	// TNS_PERFECT 
+		1.00f,	// TNS_MARVELOUS 
+	},
+};
+
+
 Player::Player()
 {
 	BRIGHT_GHOST_COMBO_THRESHOLD.Refresh();
@@ -191,7 +259,7 @@ void Player::Update( float fDeltaTime )
 		if( hn.fStartBeat < fSongBeat && fSongBeat < hn.fEndBeat )	// if the song beat is in the range of this hold
 		{
 			bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
-			if( !GAMESTATE->m_bEditing  &&  (PREFSMAN->m_bAutoPlay  ||  GAMESTATE->m_bDemonstrationOrJukebox) )
+			if( GAMESTATE->m_PlayerController[m_PlayerNumber] != HUMAN )	// TODO: Make the CPU miss sometimes.
 				bIsHoldingButton = true;
 
 			m_NoteField.m_bIsHoldingHoldNote[i] = bIsHoldingButton && bSteppedOnTapNote;	// set host flag so NoteField can do intelligent drawing
@@ -348,27 +416,31 @@ void Player::Step( int col )
 	if( iIndexOverlappingNote != -1 )
 	{
 		// compute the score for this hit
-		const float fStepBeat = NoteRowToBeat( (float)iIndexOverlappingNote );
+		float fStepBeat = NoteRowToBeat( (float)iIndexOverlappingNote );
 
-		const float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
+		float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
 
 		// The offset from the actual step in seconds:
-		const float fNoteOffset = fStepSeconds - GAMESTATE->m_fMusicSeconds;
+		float fNoteOffset = fStepSeconds - GAMESTATE->m_fMusicSeconds;
 
-		const float fSecondsFromPerfect = fabsf( fNoteOffset ) / GAMESTATE->m_SongOptions.m_fMusicRate;	// account for music rate
+		float fSecondsFromPerfect = fabsf( fNoteOffset ) / GAMESTATE->m_SongOptions.m_fMusicRate;	// account for music rate
 
-
+		// calculate TapNoteScore
 		TapNoteScore score;
 
-		if(		 fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_MARVELOUS;
-		else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
-		else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
-		else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
-		else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
-		else																		score = TNS_NONE;
-
-		if( !GAMESTATE->m_bEditing && (GAMESTATE->m_bDemonstrationOrJukebox  ||  PREFSMAN->m_bAutoPlay) )
-			score = TNS_MARVELOUS;
+		if( GAMESTATE->m_PlayerController[m_PlayerNumber] == HUMAN )
+		{
+			if(		 fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_MARVELOUS;
+			else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
+			else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
+			else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
+			else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
+			else																		score = TNS_NONE;
+		}
+		else
+		{
+			score = TAP_SCORE_DISTRIBUTIONS[GAMESTATE->m_PlayerController[m_PlayerNumber]].GetTapNoteScore();
+		}
 
 		if( score==TNS_MARVELOUS  &&  !PREFSMAN->m_bMarvelousTiming )
 			score = TNS_PERFECT;
@@ -505,14 +577,14 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 void Player::CrossedRow( int iNoteRow )
 {
-	if( PREFSMAN->m_bAutoPlay  ||  GAMESTATE->m_bDemonstrationOrJukebox )
+	// check to see if there's at the crossed row
+	for( int t=0; t<GetNumTracks(); t++ )
 	{
-		// check to see if there's at the crossed row
-		for( int t=0; t<GetNumTracks(); t++ )
+		if( GetTapNote(t, iNoteRow) != TAP_EMPTY )
 		{
-			if( GetTapNote(t, iNoteRow) != TAP_EMPTY )
+			TapNoteScore tns = TAP_SCORE_DISTRIBUTIONS[ GAMESTATE->m_PlayerController[m_PlayerNumber] ].GetTapNoteScore();
+			if( tns!=TNS_MISS )
 				this->Step( t );
-				
 		}
 	}
 }
@@ -531,7 +603,7 @@ void Player::HandleTapRowScore( unsigned row )
 
 #ifndef DEBUG
 	// don't accumulate points if AutoPlay is on.
-	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstrationOrJukebox )
+	if( m_PlayerController == CPU_AUTOPLAY  &&  !GAMESTATE->m_bDemonstrationOrJukebox )
 		return;
 #endif //DEBUG
 
@@ -552,7 +624,7 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 {
 #ifndef DEBUG
 	// don't accumulate points if AutoPlay is on.
-	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstrationOrJukebox )
+	if( m_PlayerController == CPU_AUTOPLAY  &&  !GAMESTATE->m_bDemonstrationOrJukebox )
 		return;
 #endif //DEBUG
 

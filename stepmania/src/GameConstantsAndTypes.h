@@ -181,6 +181,20 @@ const CString GROUP_ALL_MUSIC = "";
 
 
 //
+//
+//
+enum PlayerController
+{
+	HUMAN,
+	CPU_EASY,
+	CPU_MEDIUM,
+	CPU_HARD,
+	CPU_AUTOPLAY,
+	NUM_PLAYER_CONTROLLERS
+};
+
+
+//
 // Battle stuff
 //
 const int NUM_INVENTORY_SLOTS	= 3;

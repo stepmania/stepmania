@@ -14,6 +14,8 @@
 #include "ThemeManager.h"
 #include "RageUtil.h"
 #include "GameState.h"
+#include "RageTimer.h"
+
 
 #define NUM_ITEM_TYPES				THEME->GetMetricF("Inventory","NumItemTypes")
 #define ITEM_DURATION_SECONDS		THEME->GetMetricF("Inventory","ItemDurationSeconds")
@@ -21,6 +23,7 @@
 #define ITEM_EFFECT( i )			THEME->GetMetric ("Inventory",ssprintf("Item%dEffect",i+1))
 
 const PlayerNumber	OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
+
 
 struct Item
 {
@@ -37,6 +40,7 @@ void ReloadItems()
 		Item item;
 		item.iCombo = ITEM_COMBO(i);
 		item.sModifier = ITEM_EFFECT(i);
+		g_Items.push_back( item );
 	}
 }
 
@@ -56,9 +60,9 @@ void Inventory::Load( PlayerNumber pn )
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			m_soundAcquireItem.Load( THEME->GetPathTo("Sounds",ssprintf("Inventory aquire item p%d",p+1)) );
-			m_soundUseItem.Load( THEME->GetPathTo("Sounds",ssprintf("Inventory use item p%d",p+1)) );
-			m_soundItemEnding.Load( THEME->GetPathTo("Sounds",ssprintf("Inventory item ending p%d",p+1)) );
+			m_soundAcquireItem.Load( THEME->GetPathTo("Sounds","Inventory aquire item") );
+			m_soundUseItem.Load( THEME->GetPathTo("Sounds","Inventory use item") );
+			m_soundItemEnding.Load( THEME->GetPathTo("Sounds","Inventory item ending") );
 		}
 	}
 }
@@ -88,6 +92,24 @@ void Inventory::Update( float fDelta )
 			{
 				AwardItem( i );
 				break;
+			}
+		}
+	}
+
+
+	// use items if this player is CPU-controlled
+	if( GAMESTATE->m_PlayerController[m_PlayerNumber] != HUMAN )
+	{
+		// every one second, consider using an item
+		int iLastSecond = (int)RageTimer::GetTimeSinceStart() - fDelta;
+		int iThisSecond = (int)RageTimer::GetTimeSinceStart();
+		if( iLastSecond != iThisSecond )
+		{
+			int iSlotToConsider = rand()%NUM_INVENTORY_SLOTS;
+			if( GAMESTATE->m_sInventory[m_PlayerNumber][iSlotToConsider] != ""  &&
+				rand()%5 == 0 )
+			{
+				UseItem( iSlotToConsider );
 			}
 		}
 	}

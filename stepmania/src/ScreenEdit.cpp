@@ -268,6 +268,7 @@ ScreenEdit::ScreenEdit()
 	NOTESKIN->SwitchNoteSkin( PLAYER_1, "default" );	// change noteskin back to default before loading player
 
 	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL, NULL );
+	GAMESTATE->m_PlayerController[PLAYER_1] = HUMAN;
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
 
 	m_Fade.SetClosed();
@@ -1403,6 +1404,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				m_EditMode = MODE_PLAYING;
 
 				m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL, NULL, NULL );
+				GAMESTATE->m_PlayerController[PLAYER_1] = PREFSMAN->m_bAutoPlay?CPU_AUTOPLAY:HUMAN;
 
 				m_rectRecordBack.StopTweening();
 				m_rectRecordBack.BeginTweening( 0.5f );

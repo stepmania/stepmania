@@ -109,6 +109,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 {
 	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
 
+	int p;
+
 	m_bDemonstration = bDemonstration;
 
 	SECONDS_BETWEEN_COMMENTS.Refresh();
@@ -121,14 +123,19 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	/* Save selected options before we change them. */
 	GAMESTATE->StoreSelectedOptions();
 
+
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
-		{
-			m_pLifeMeter[p] = NULL;
-			m_pScoreDisplay[p] = NULL;
-			m_pScoreKeeper[p] = NULL;
-		}
+		m_pLifeMeter[p] = NULL;
+		m_pScoreDisplay[p] = NULL;
+		m_pScoreKeeper[p] = NULL;
 	}
+
+
+	// fill in difficulty of CPU players with that of the first human player
+	for( p=0; p<NUM_PLAYERS; p++ )
+		if( GAMESTATE->IsCpuPlayer(p) )
+			GAMESTATE->m_pCurNotes[p] = GAMESTATE->m_pCurNotes[ GAMESTATE->GetFirstHumanPlayer() ];
 
 
 	GAMESTATE->m_CurStageStats = StageStats();	// clear values
@@ -161,7 +168,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	//
 	// Init ScoreKeepers
 	//
-	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
@@ -585,6 +591,29 @@ void ScreenGameplay::LoadNextSong()
 		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &pOriginalNoteData, &pNewNoteData );
 
 		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pScoreDisplay[p], &m_Inventory[p], m_pScoreKeeper[p] );
+		if( m_bDemonstration )
+			GAMESTATE->m_PlayerController[p] = CPU_MEDIUM;
+		else if( GAMESTATE->IsCpuPlayer(p) )
+		{
+			switch( GAMESTATE->m_pCurNotes[p]->GetDifficulty() )
+			{
+			case DIFFICULTY_BEGINNER:
+			case DIFFICULTY_EASY:
+				GAMESTATE->m_PlayerController[p] = CPU_EASY;
+				break;
+			case DIFFICULTY_MEDIUM:
+				GAMESTATE->m_PlayerController[p] = CPU_MEDIUM;
+				break;
+			case DIFFICULTY_HARD:
+			case DIFFICULTY_CHALLENGE:
+				GAMESTATE->m_PlayerController[p] = CPU_HARD;
+				break;
+			}
+		}
+		else if( PREFSMAN->m_bAutoPlay )
+			GAMESTATE->m_PlayerController[p] = CPU_AUTOPLAY;
+		else
+			GAMESTATE->m_PlayerController[p] = HUMAN;
 
 		m_TimingAssist.Reset();
 	}
@@ -1004,8 +1033,13 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			m_textDebug.SetTweenDiffuse( RageColor(1,1,1,0) );
 			break;
 		case SDLK_F8:
-			PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
-			UpdateAutoPlayText();
+			{
+				PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
+				UpdateAutoPlayText();
+				for( int p=0; p<NUM_PLAYERS; p++ )
+					if( GAMESTATE->IsHumanPlayer(p) )
+						GAMESTATE->m_PlayerController[p] = PREFSMAN->m_bAutoPlay?CPU_AUTOPLAY:HUMAN;
+			}
 			break;
 		case SDLK_F9:
 		case SDLK_F10:

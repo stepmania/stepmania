@@ -70,6 +70,7 @@ public:
 	bool IsPlayerEnabled( int p ) { return IsPlayerEnabled( (PlayerNumber)p ); };
 	bool IsHumanPlayer( PlayerNumber pn );
 	bool IsHumanPlayer( int p ) { return IsHumanPlayer( (PlayerNumber)p ); };
+	PlayerNumber GetFirstHumanPlayer();
 	bool IsCpuPlayer( PlayerNumber pn );
 	bool IsCpuPlayer( int p ) { return IsCpuPlayer( (PlayerNumber)p ); };
 	bool AnyPlayersAreCpu()
@@ -79,6 +80,10 @@ public:
 				return true;
 		return false;
 	}
+
+	PlayerController	m_PlayerController[NUM_PLAYERS];
+
+
 	bool IsCourseMode() const;
 
 	CString			m_sLoadingMessage;	// used in loading screen

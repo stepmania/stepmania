@@ -26,17 +26,21 @@ ScoreDisplayBattle::ScoreDisplayBattle()
 	{
 		float fX = (float)SCALE(i,0.f,2.f,-60.f,60.f);
 
-		m_Inventory[i].SetX( fX );
-		this->AddChild( &m_Inventory[i] );
+		m_ItemFrame[i].Load( THEME->GetPathTo("Graphics","ScoreDisplayBattle frames") );
+		m_ItemFrame[i].SetX( fX );
+		m_ItemFrame[i].StopAnimating();
+		m_ItemFrame[i].SetState( i );
+		this->AddChild( &m_ItemFrame[i] );
+
+		m_ItemIcon[i].SetX( fX );
+		m_ItemIcon[i].StopAnimating();
+		this->AddChild( &m_ItemIcon[i] );
 	}
 }
 
 void ScoreDisplayBattle::Init( PlayerNumber pn )
 {
 	ScoreDisplay::Init( pn );
-
-	for( int i=0; i<NUM_INVENTORY_SLOTS; i++ )
-		m_Inventory[i].Load( m_PlayerNumber, "" );
 }
 
 void ScoreDisplayBattle::Update( float fDelta )
@@ -51,14 +55,14 @@ void ScoreDisplayBattle::Update( float fDelta )
 		{
 			m_iLastSeenInventory[s] = sNewItem;
 
-			m_Inventory[s].Load( m_PlayerNumber, sNewItem );
-
 			if( sNewItem == "" )
-				m_Inventory[s].Command( "linear,0.25;zoom,0" );
+				m_ItemIcon[s].Command( "linear,0.25;zoom,0" );
 			else
 			{
-				m_Inventory[s].StopTweening();
-				m_Inventory[s].Command( "diffuse,1,1,1,1;zoom,1;"
+				// TODO:  Cache all of the icon graphics so we don't load them dynamically from disk.
+				m_ItemIcon[s].Load( THEME->GetPathTo("Graphics","ScoreDisplayBattle icon "+sNewItem) );
+				m_ItemIcon[s].StopTweening();
+				m_ItemIcon[s].Command( "diffuse,1,1,1,1;zoom,1;"
 					"sleep,0.1;linear,0;diffusealpha,0;"
 					"sleep,0.1;linear,0;diffusealpha,1;"
 					"sleep,0.1;linear,0;diffusealpha,0;"
@@ -67,5 +71,5 @@ void ScoreDisplayBattle::Update( float fDelta )
 					"sleep,0.1;linear,0;diffusealpha,1;" );
 			}
 		}
-	}	
+	}
 }

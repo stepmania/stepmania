@@ -122,7 +122,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
+		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
 
 		m_sprDifficultyFrame[p].Load( THEME->GetPathTo("Graphics","ScreenSelectMusic difficulty frame 2x1") );
@@ -345,7 +345,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	if( MenuI.button == MENU_BUTTON_RIGHT || MenuI.button == MENU_BUTTON_LEFT )
 	{
 		if( !MenuI.IsValid() ) return;
-		if( !GAMESTATE->IsPlayerEnabled(MenuI.player) ) return;
+		if( !GAMESTATE->IsHumanPlayer(MenuI.player) ) return;
 
 		/* If we're rouletting, hands off. */
 		if(m_MusicWheel.IsRouletting())
@@ -433,7 +433,7 @@ void ScreenSelectMusic::EasierDifficulty( PlayerNumber pn )
 {
 	LOG->Trace( "ScreenSelectMusic::EasierDifficulty( %d )", pn );
 
-	if( !GAMESTATE->IsPlayerEnabled(pn) )
+	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 	if( m_arrayNotes[pn].empty() )
 		return;
@@ -453,7 +453,7 @@ void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
 {
 	LOG->Trace( "ScreenSelectMusic::HarderDifficulty( %d )", pn );
 
-	if( !GAMESTATE->IsPlayerEnabled(pn) )
+	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 	if( m_arrayNotes[pn].empty() )
 		return;
@@ -477,7 +477,7 @@ void ScreenSelectMusic::AdjustOptions()
 	Difficulty dc = DIFFICULTY_INVALID;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
+		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
 
 		dc = min(dc, GAMESTATE->m_pCurNotes[p]->GetDifficulty());
@@ -614,7 +614,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		bool bIsHard = false;
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+			if( !GAMESTATE->IsHumanPlayer( (PlayerNumber)p ) )
 				continue;	// skip
 			if( GAMESTATE->m_pCurNotes[p]  &&  GAMESTATE->m_pCurNotes[p]->GetMeter() >= 10 )
 				bIsHard = true;
@@ -695,7 +695,7 @@ void ScreenSelectMusic::MenuBack( PlayerNumber pn )
 
 void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 {
-	if( !GAMESTATE->IsPlayerEnabled(pn) )
+	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 	
 	m_iSelection[pn] = clamp( m_iSelection[pn], 0, int(m_arrayNotes[pn].size()-1) );	// bounds clamping
@@ -807,7 +807,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_sprCDTitle.Load( THEME->GetPathTo("Graphics","ScreenSelectMusic fallback cdtitle") );
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				if( !GAMESTATE->IsPlayerEnabled( PlayerNumber(p) ) )
+				if( !GAMESTATE->IsHumanPlayer( PlayerNumber(p) ) )
 					continue;
 
 				/* Find the closest match to the user's preferred difficulty. */
@@ -890,7 +890,7 @@ void ScreenSelectMusic::UpdateOptionsDisplays()
 	{
 		m_OptionIconRow[p].Refresh( (PlayerNumber)p  );
 
-		if( GAMESTATE->IsPlayerEnabled(p) )
+		if( GAMESTATE->IsHumanPlayer(p) )
 		{
 			CString s = GAMESTATE->m_PlayerOptions[p].GetString();
 			s.Replace( ", ", "\n" );
