@@ -87,8 +87,8 @@ int Course::GetMeter() const
 	if( m_iMeter != -1 )
 		return m_iMeter + GAMESTATE->m_bDifficultCourses? DifficultMeterRamp:0;
 
-	LOG->Trace( "Course file '%s' contains a song '%s%s%s' that is not present",
-			m_sPath.c_str(), sGroup.c_str(), sGroup.size()? SLASH:"", sSong.c_str());
+	/*LOG->Trace( "Course file '%s' contains a song '%s%s%s' that is not present",
+			m_sPath.c_str(), sGroup.c_str(), sGroup.size()? SLASH:"", sSong.c_str());*/
 	vector<Info> ci;
 	GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci );
 
