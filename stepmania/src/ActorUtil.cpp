@@ -60,6 +60,8 @@ static Actor* LoadActor( CString sPath )
 		 * theme font dirs, too. */
 		CString alttext;
 		ini.GetValue ( "Actor", "AltText", alttext );
+		text.Replace( "::", "\n" );
+		alttext.Replace( "::", "\n" );
 
 		BitmapText* pBitmapText = new BitmapText;
 		pActor = pBitmapText;
