@@ -12,6 +12,7 @@ class ScreenOptionsMaster: public ScreenOptions
 public:
 	ScreenOptionsMaster( CString sName );
 	virtual ~ScreenOptionsMaster();
+	void Update( float fDelta );
 
 private:
 

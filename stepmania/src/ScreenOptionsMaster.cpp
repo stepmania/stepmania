@@ -366,13 +366,6 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 {
 	LOG->Trace("ScreenOptionsMaster::ScreenOptionsMaster(%s)", m_sName.c_str() );
 
-	/* If this file doesn't exist, leave the music alone (eg. ScreenPlayerOptions music sample
-	 * left over from ScreenSelectMusic).  If you really want to play no music, add a redir
-	 * to _silent. */
-	CString MusicPath = THEME->GetPathS( m_sName, "music", true );
-	if( MusicPath != "" )
-		SOUND->PlayMusic( MusicPath );
-
 	CStringArray asLineNames;
 	split( LINE_NAMES, ",", asLineNames );
 	if( asLineNames.empty() )
@@ -463,6 +456,24 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 ScreenOptionsMaster::~ScreenOptionsMaster()
 {
 	delete [] m_OptionRowAlloc;
+}
+
+void ScreenOptionsMaster::Update( float fDelta )
+{
+	if( m_bFirstUpdate )
+	{
+		/*
+		 * Don't play sounds during the ctor, since derived classes havn't loaded yet.
+		 * If this file doesn't exist, leave the music alone (eg. ScreenPlayerOptions music sample
+		 * left over from ScreenSelectMusic).  If you really want to play no music, add a redir
+		 * to _silent.
+		 */
+		CString MusicPath = THEME->GetPathS( m_sName, "music", true );
+		if( MusicPath != "" )
+			SOUND->PlayMusic( MusicPath );
+	}
+
+	ScreenOptions::Update( fDelta );
 }
 
 void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
