@@ -212,7 +212,7 @@ MOVE( Lyrics,				PREFSMAN->m_bShowLyrics );
 /* Misc. options */
 MOVE( AutogenMissingTypes,	PREFSMAN->m_bAutogenMissingTypes );
 MOVE( AutogenGroupCourses,	PREFSMAN->m_bAutogenGroupCourses );
-MOVE( CheckSongCacheOnLoad,	PREFSMAN->m_bCheckSongCacheOnLoad );
+MOVE( FastLoad,				PREFSMAN->m_bFastLoad );
 
 /* Background options */
 MOVE( BackgroundMode,		PREFSMAN->m_BackgroundMode );
@@ -424,7 +424,7 @@ static const ConfOption g_ConfOptions[] =
 	/* Misc options */
 	ConfOption( "Autogen\nMissing Types", AutogenMissingTypes, "OFF","ON" ),
 	ConfOption( "Autogen\nGroup Courses", AutogenGroupCourses, "OFF","ON" ),
-	ConfOption( "Fast\nLoad",			  CheckSongCacheOnLoad,"OFF","ON" ),
+	ConfOption( "Fast\nLoad",			  FastLoad,			   "OFF","ON" ),
 
 	/* Background options */
 	ConfOption( "Background\nMode",		BackgroundMode,		"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ),

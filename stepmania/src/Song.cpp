@@ -190,8 +190,8 @@ NotesLoader *Song::MakeLoader( CString sDir ) const
 static set<istring> BlacklistedImages;
 
 /*
- * If PREFSMAN->m_bCheckSongCacheOnLoad is false, always load from cache if possible.
- * Don't load the contents of sDir if we can avoid it.  That means we can't call HasMusic(),
+ * If PREFSMAN->m_bFastLoad is true, always load from cache if possible. Don't read
+ * the contents of sDir if we can avoid it.  That means we can't call HasMusic(),
  * HasBanner() or GetHashForDirectory().
  *
  * If true, check the directory hash and reload the song from scratch if it's changed.
@@ -222,7 +222,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	bool bUseCache = true;
 	if( !DoesFileExist(GetCacheFilePath()) )
 		bUseCache = false;
-	if( PREFSMAN->m_bCheckSongCacheOnLoad && GetHashForDirectory(m_sSongDir) != uDirHash )
+	if( !PREFSMAN->m_bFastLoad && GetHashForDirectory(m_sSongDir) != uDirHash )
 		bUseCache = false; // this cache is out of date 
 
 	if( bUseCache )
