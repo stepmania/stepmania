@@ -91,7 +91,6 @@ public:
 	CString m_sGroupName;
 
 	ProfileSlot	m_LoadedFromProfile;	// PROFILE_SLOT_INVALID if wasn't loaded from a profile
-	bool	m_bChangedSinceSave;
 	bool	m_bIsSymLink;
 
 	CString	m_sMainTitle, m_sSubTitle, m_sArtist;

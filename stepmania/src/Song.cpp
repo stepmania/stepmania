@@ -63,7 +63,6 @@ void SortBackgroundChangesArray( vector<BackgroundChange> &arrayBackgroundChange
 Song::Song()
 {
 	m_LoadedFromProfile = PROFILE_SLOT_INVALID;
-	m_bChangedSinceSave = false;
 	m_fMusicSampleStartSeconds = -1;
 	m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 	m_fMusicLengthSeconds = 0;
