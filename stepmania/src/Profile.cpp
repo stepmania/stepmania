@@ -41,6 +41,8 @@ const CString COMMON_XSL	= "Common.xsl";
 	* 10 /* HighScores per Steps */		\
 	* 1024 /* size in bytes of a HighScores XNode */
 
+#define MAX_DISPLAY_NAME_LENGTH 12
+
 #if defined(WIN32)
 #pragma warning (disable : 4706) // assignment within conditional expression
 #endif
@@ -925,8 +927,8 @@ void Profile::LoadEditableDataFromDir( CString sDir )
 
 	// This is data that the user can change, so we have to validate it.
 	wstring wstr = CStringToWstring(m_sDisplayName);
-	if( wstr.size() > 12 )
-		wstr = wstr.substr(0, 12);
+	if( wstr.size() > MAX_DISPLAY_NAME_LENGTH )
+		wstr = wstr.substr(0, MAX_DISPLAY_NAME_LENGTH);
 	m_sDisplayName = WStringToCString(wstr);
 	// TODO: strip invalid chars?
 	if( m_iWeightPounds != 0 )
