@@ -178,10 +178,17 @@ void RageFileManager::FlushDirCache( const CString &sPath )
 {
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
-		const CString path = g_Drivers[i].GetPath( sPath );
-		if( path.size() == 0 )
-			continue;
-		g_Drivers[i].driver->FlushDirCache( path );
+		if( sPath.size() == 0 )
+		{
+			g_Drivers[i].driver->FlushDirCache( "" );
+		}
+		else
+		{
+			const CString path = g_Drivers[i].GetPath( sPath );
+			if( path.size() == 0 )
+				continue;
+			g_Drivers[i].driver->FlushDirCache( path );
+		}
 	}
 }
 
