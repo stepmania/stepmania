@@ -29,7 +29,7 @@ void PlayerOptions::Init()
 	m_fPerspectiveTilt = 0;		m_SpeedfPerspectiveTilt = 1.0f;
 	m_fSkew = 0;				m_SpeedfSkew = 1.0f;
 	m_fPassmark = 0;			m_SpeedfPassmark = 1.0f;
-	m_fRandomSpeed = 1.0f;      m_SpeedfRandomSpeed = 1.0f;
+	m_fRandomSpeed = 0;			m_SpeedfRandomSpeed = 1.0f;
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bProTiming = false;
@@ -132,6 +132,8 @@ CString PlayerOptions::GetString() const
 
 	sReturn += AddPart( m_fPassmark, "Passmark");
 
+	sReturn += AddPart( m_fRandomSpeed,	"RandomSpeed" );
+
 	if( m_bTurns[TURN_MIRROR] )			sReturn += "Mirror, ";
 	if( m_bTurns[TURN_LEFT] )			sReturn += "Left, ";
 	if( m_bTurns[TURN_RIGHT] )			sReturn += "Right, ";
@@ -172,8 +174,6 @@ CString PlayerOptions::GetString() const
 	if( !m_sNoteSkin.empty()  &&  m_sNoteSkin.CompareNoCase("default")!=0 )
 		sReturn += m_sNoteSkin + ", ";
 
-	if( m_fRandomSpeed > 1 )
-		sReturn += "RandomSpeed, ";
 	if( sReturn.GetLength() > 2 )
 		sReturn.erase( sReturn.GetLength()-2 );	// delete the trailing ", "
 	return sReturn;
@@ -515,6 +515,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fTimeSpacing);
 	COMPARE(m_fScrollSpeed);
 	COMPARE(m_fScrollBPM);
+	COMPARE(m_fRandomSpeed);
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
 	COMPARE(m_fCover);

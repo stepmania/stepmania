@@ -86,7 +86,7 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat, bool bAbsolut
 		fYOffset +=	fAccels[PlayerOptions::ACCEL_BOOMERANG] * (fYOffset * SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 1.5f, 0.5f )- fYOffset);
 
 	float fScrollSpeed = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
-	if( GAMESTATE->m_CurrentPlayerOptions[pn].m_fRandomSpeed > 1.0f && !bAbsolute )
+	if( GAMESTATE->m_CurrentPlayerOptions[pn].m_fRandomSpeed > 0 && !bAbsolute )
 	{
 		int seed = GAMESTATE->m_iRoundSeed + ( BeatToNoteRow( fNoteBeat ) << 8 ) + (iCol * 100);
 
@@ -95,10 +95,12 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat, bool bAbsolut
 		RandomFloat( seed );
 		float fRandom = RandomFloat( seed );
 
+		/* Random speed always increases speed: a random speed of 10 indicates [1,11].
+		 * This keeps it consistent with other mods: 0 means no effect. */
 		fScrollSpeed *=
 				SCALE( fRandom,
 						0.0f, 1.0f,
-						1.0f, GAMESTATE->m_CurrentPlayerOptions[pn].m_fRandomSpeed ); // min. scale shold be defined as a constatnt somewhere
+						1.0f, GAMESTATE->m_CurrentPlayerOptions[pn].m_fRandomSpeed + 1.0f );
 	}	
 
 
