@@ -182,30 +182,29 @@ static bool CompareSongEntries(const SongEntry &se1, const SongEntry &se2)
 	return se1.m_sSongName < se2.m_sSongName;
 }
 
+/*
+ * Why not just use one of the established, well-understood file formats?
+ * MsdFile should work fine, eg.
+ * #LOCK:song name:DP=50,SP=3;
+ * #LOCK...;
+ * and people don't have to learn a new file format.
+ */
 bool UnlockSystem::ParseRow(CString text, CString &type, float &qty,
 							CString &songname)
 {
-	int pos = 0;
 	int end = 0;  // sets a value in case | does not exist
 	char unlock_type[4];
 	char qty_text[20];
 
-	/* XXX: What's this supposed to do?  text[-1] is invalid, and it's not
-	 * legal to access text[5] if text == "hello"; they're not NULL-terminated
-	 * like C strings (unless you use c_str(), but that's ugly).  Did you mean
-	 * "pos < text.size()"? */
-
-	// thanks, i never thought of that
-	while (pos < text.size())
+	for(unsigned pos = 0; pos < text.size(); pos++ )
 	{
 		if (text[pos] == '[') text[pos] = ' ';
-		if (text[pos] == ']') text[pos] = ' ';;
+		if (text[pos] == ']') text[pos] = ' ';
 		if (text[pos] == '|') 
 		{
 			end = pos;
 			text[pos] = ' ';
 		}
-		pos++;
 	}
 	// this will bypass the last character, but it can't be |
 	// since then it would be end of string
