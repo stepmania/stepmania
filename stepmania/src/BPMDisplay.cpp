@@ -104,8 +104,14 @@ void BPMDisplay::Update( float fDeltaTime )
 	case counting_up:
 	case holding_up:
 	case holding_down:
-		if( (int)m_fCurrentBPM != iLastCurBPM )
-			m_textBPM.SetText( ssprintf("%03.0f", m_fCurrentBPM) ); 
+		//if( (int)m_fCurrentBPM != iLastCurBPM )
+		//	m_textBPM.SetText( ssprintf("%03.0f", m_fCurrentBPM) ); 
+
+		/* BUG FIXED:: Just set the BPM.. This was causing an error that would not change
+			the BPM to what it should be, if you changed the selection from a Group
+			to a song. There's no great reason to check if it is higher or lower
+			than the previous BPM -- Miryokuteki */
+		m_textBPM.SetText( ssprintf("%03.0f", m_fCurrentBPM) );
 		break;
 	}
 }
