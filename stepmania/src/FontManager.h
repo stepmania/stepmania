@@ -11,10 +11,13 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Font.h"
+#include "RageUtil.h"
 #include "Game.h"
 
 #include <map>
+class Font;
+class IniFile;
+struct FontPageSettings;
 
 //-----------------------------------------------------------------------------
 // FontManager Class Declarations
