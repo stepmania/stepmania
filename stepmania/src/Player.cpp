@@ -939,14 +939,13 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	const float beat = GAMESTATE->m_fSongBeat;
 	GAMESTATE->m_CurStageStats.UpdateComboList( m_PlayerNumber, GAMESTATE->GetSongPercent(beat) );
 
-	float life=0;
+	float life = -1;
 	if( m_pLifeMeter )
 		life = m_pLifeMeter->GetLife();
-	else if( m_pCombinedLifeMeter )
-		life = .5f; // TODO m_pCombinedLifeMeter->GetLife();
-	else
-		ASSERT( 0 );
-	GAMESTATE->m_CurStageStats.SetLifeRecord( m_PlayerNumber, life, GAMESTATE->GetSongPercent(beat) );
+//	else if( m_pCombinedLifeMeter )
+//		life = m_pCombinedLifeMeter->GetLife(); // TODO 
+	if( life != -1 )
+		GAMESTATE->m_CurStageStats.SetLifeRecord( m_PlayerNumber, life, GAMESTATE->GetSongPercent(beat) );
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
