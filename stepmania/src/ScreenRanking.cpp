@@ -184,7 +184,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		vector<Song*> vpSongs = SONGMAN->GetAllSongs();
 		for( unsigned i=0; i<aNotesTypesToShow.size(); i++ )
 		{
-			for( int j=0; j<vpSongs.size(); j++ )
+			for( unsigned j=0; j<vpSongs.size(); j++ )
 			{
 				PageToShow pts;
 				pts.type = PageToShow::TYPE_SONG;
@@ -258,7 +258,7 @@ void ScreenRanking::SetPage( PageToShow pts )
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
 				SongManager::CategoryData::HighScore hs;
-				if( l < SONGMAN->m_CategoryDatas[pts.nt][pts.category].vHighScores.size() )
+				if( l < (int)SONGMAN->m_CategoryDatas[pts.nt][pts.category].vHighScores.size() )
 				{
 					hs = SONGMAN->m_CategoryDatas[pts.nt][pts.category].vHighScores[l];
 				}
@@ -317,7 +317,7 @@ void ScreenRanking::SetPage( PageToShow pts )
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
 				Course::MemCardData::HighScore hs;
-				if( l < pts.pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores.size() )
+				if( l < (int)pts.pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores.size() )
 				{
 					hs = pts.pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores[l];
 				}
@@ -388,7 +388,7 @@ void ScreenRanking::SetPage( PageToShow pts )
 					Steps* pSteps = pts.pSong->GetStepsByDifficulty( pts.nt, dc );
 					
 					Steps::MemCardData::HighScore hs;
-					if( l < pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores.size() )
+					if( l < (int)pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores.size() )
 					{
 						hs = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[l];
 					}
