@@ -992,10 +992,7 @@ void RageDisplay_OGL::UpdateTexture(
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-	/* XXX: We should use m_lVidPitch; we might be padded.  However, I can't
-	 * find any codec that don't force the width to a multiple of at least
-	 * 4 anyway, so I can't test it, so I'll leave it like this for now. */
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->w);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 
 //	GLenum glTexFormat = GL_PIXFMT_INFO[pixfmt].internalfmt;
 	GLenum glImageFormat = GL_PIXFMT_INFO[pixfmt].format;
