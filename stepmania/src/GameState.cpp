@@ -643,34 +643,42 @@ void GameState::ActivateAttack( PlayerNumber target, int slot, bool ActivingDela
 	else
 		type = START_IMMEDIATELY;
 
+	float StartBeat = 0, EndBeat = 0;
+	switch( type )
+	{
+	case QUEUE_FOR_LATER:
+		StartBeat = this->m_pCurSong->GetBeatFromElapsedTime( a.fStartSecond );
+		EndBeat = this->m_pCurSong->GetBeatFromElapsedTime( a.fStartSecond+a.fSecsRemaining );
+		break;
+	case START_IMMEDIATELY:
+		/* We're setting this effect on the fly.  If it's an arrow-changing effect
+		 * (transform or note skin), apply it in the future, past what's currently on
+		 * screen, so new arrows will scroll on screen with this effect. */
+		GetUndisplayedBeats( target, a.fSecsRemaining, StartBeat, EndBeat );
+		break;
+	}
+
 	//
-	// Peek at the effect being applied.  If it's a transform, add it to 
-	// a list of transforms that should be applied by the Player on its 
-	// next update.
+	// Peek at the effect being applied.
 	//
 	PlayerOptions po;
 	po.FromString( a.sModifier );
-	if( type != QUEUE_FOR_LATER && po.m_Transform != PlayerOptions::TRANSFORM_NONE )
-	{
-		m_TransformsToApply[target].push_back( po.m_Transform );
-	}
 
-	if( po.m_sNoteSkin != "" )
+	switch( type )
 	{
-		if( type == QUEUE_FOR_LATER )
+	case QUEUE_FOR_LATER:
+	case START_IMMEDIATELY:
+		if( po.m_sNoteSkin != "" )
 		{
-			float StartBeat = this->m_pCurSong->GetBeatFromElapsedTime( a.fStartSecond );
-			float EndBeat = this->m_pCurSong->GetBeatFromElapsedTime( a.fStartSecond+a.fSecsRemaining );
-			LOG->Trace("... x queue at %f..%f", StartBeat, EndBeat );
 			SetNoteSkinForBeatRange( target, po.m_sNoteSkin, StartBeat, EndBeat );
+			LOG->Trace("skin ...");
 		}
-		else if( type == START_IMMEDIATELY )
+		/* If it's a transform, add it to the list of transforms that should be applied
+		 * by the Player on its next update. */
+		if( po.m_Transform != PlayerOptions::TRANSFORM_NONE )
 		{
-			/* We're changing note skins on the fly.  Add it in the future, past what's
-			 * currently on screen, so new arrows will scroll on screen with this skin. */
-			float StartBeat, EndBeat;
-			GetUndisplayedBeats( target, a.fSecsRemaining, StartBeat, EndBeat );
-			SetNoteSkinForBeatRange( target, po.m_sNoteSkin, StartBeat, EndBeat );
+			m_TransformsToApply[target].push_back( 
+				TransformToApply_t( po.m_Transform, StartBeat, EndBeat ) );
 		}
 	}
 }

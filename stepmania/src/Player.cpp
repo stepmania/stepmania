@@ -334,39 +334,35 @@ void PlayerMinus::Update( float fDeltaTime )
 	// process transforms that are waiting to be applied
 	for( unsigned j=0; j<GAMESTATE->m_TransformsToApply[m_PlayerNumber].size(); j++ )
 	{
-		// Start beat needs to be far enough ahead to be off screen so that
-		// addition arrows don't suddenly pop on.
-		float fStartBeat, fEndBeat;
-		GAMESTATE->GetUndisplayedBeats( m_PlayerNumber, 10 /*XXX*/, fStartBeat, fEndBeat );
+		const GameState::TransformToApply_t &tr = GAMESTATE->m_TransformsToApply[m_PlayerNumber][j];
 
-		LOG->Trace( "Applying transform from %f to %f", fStartBeat, fEndBeat );
-
-		switch( GAMESTATE->m_TransformsToApply[m_PlayerNumber][j] )
+		LOG->Trace( "Applying transform from %f to %f", tr.fStartBeat, tr.fEndBeat );
+		switch( tr.trans )
 		{
 		case PlayerOptions::TRANSFORM_LITTLE:
-			NoteDataUtil::Little( *this, fStartBeat, fEndBeat );
+			NoteDataUtil::Little( *this, tr.fStartBeat, tr.fEndBeat );
 			break;
 		case PlayerOptions::TRANSFORM_WIDE:
-			NoteDataUtil::Wide( *this, fStartBeat, fEndBeat );
+			NoteDataUtil::Wide( *this, tr.fStartBeat, tr.fEndBeat );
 			break;
 		case PlayerOptions::TRANSFORM_BIG:
-			NoteDataUtil::Big( *this, fStartBeat, fEndBeat );
+			NoteDataUtil::Big( *this, tr.fStartBeat, tr.fEndBeat );
 			break;
 		case PlayerOptions::TRANSFORM_QUICK:
-			NoteDataUtil::Quick( *this, fStartBeat, fEndBeat );
+			NoteDataUtil::Quick( *this, tr.fStartBeat, tr.fEndBeat );
 			break;
 		case PlayerOptions::TRANSFORM_SKIPPY:
-			NoteDataUtil::Skippy( *this, fStartBeat, fEndBeat );
+			NoteDataUtil::Skippy( *this, tr.fStartBeat, tr.fEndBeat );
 			break;
 		case PlayerOptions::TRANSFORM_MINES:
-			NoteDataUtil::Mines( *this, fStartBeat, fEndBeat );
+			NoteDataUtil::Mines( *this, tr.fStartBeat, tr.fEndBeat );
 			break;
 		case PlayerOptions::TRANSFORM_NONE:
 		default:
 			ASSERT(0);
 		}
 
-		m_pNoteField->CopyRange( this, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), BeatToNoteRow(fStartBeat)-1 );
+		m_pNoteField->CopyRange( this, BeatToNoteRow(tr.fStartBeat), BeatToNoteRow(tr.fEndBeat), BeatToNoteRow(tr.fStartBeat) );
 	}
 	GAMESTATE->m_TransformsToApply[m_PlayerNumber].clear();
 

@@ -180,7 +180,16 @@ public:
 	};
 	enum { MAX_SIMULTANEOUS_ATTACKS=16 };
 	Attack	m_ActiveAttacks[NUM_PLAYERS][MAX_SIMULTANEOUS_ATTACKS];
-	vector<PlayerOptions::Transform>	m_TransformsToApply[NUM_PLAYERS];
+
+	struct TransformToApply_t
+	{
+		PlayerOptions::Transform trans;
+		float fStartBeat, fEndBeat;
+		TransformToApply_t( PlayerOptions::Transform trans_, float fStartBeat_, float fEndBeat_ ): 
+			trans(trans_), fStartBeat(fStartBeat_), fEndBeat(fEndBeat_) { }
+	};
+	vector<TransformToApply_t>	m_TransformsToApply[NUM_PLAYERS];
+
 	void ActivateAttack( PlayerNumber target, int slot, bool ActivingDelayedAttack );
 	void SetNoteSkinForBeatRange( PlayerNumber pn, CString sNoteSkin, float StartBeat, float EndBeat );
 

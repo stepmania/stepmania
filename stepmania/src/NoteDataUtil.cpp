@@ -507,6 +507,8 @@ void NoteDataUtil::Wide( NoteData &in, float fStartBeat, float fEndBeat )
 
 	in.ConvertHoldNotesTo4s();
 
+	/* Start on an even beat. */
+	fStartBeat = froundf( fStartBeat, 2 );
 
 	int first_row = 0;
 	if( fStartBeat != -1 )
@@ -577,6 +579,9 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval, flo
 	ASSERT( fInsertBeatOffset <= fBeatInterval );
 
 	in.ConvertHoldNotesTo4s();
+
+	/* Start on an integral beat. */
+	fStartBeat = roundf( fStartBeat );
 
 	// Insert a beat in the middle of every fBeatInterval.
 
