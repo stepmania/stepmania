@@ -87,8 +87,8 @@ void MenuTimer::Update( float fDeltaTime )
 		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("hurry up") );
 	else if( fOldSecondsLeft > 5  &&  fNewSecondsLeft < 5 )	// transition to below 5
 	{
-		m_textDigit1.SetEffectGlowing( 10, RageColor(1,0,0,0), RageColor(1,0,0,1) );
-		m_textDigit2.SetEffectGlowing( 10, RageColor(1,0,0,0), RageColor(1,0,0,1) );
+		m_textDigit1.SetEffectGlowCamelion( 0.15f, RageColor(1,0,0,0), RageColor(1,0,0,1) );
+		m_textDigit2.SetEffectGlowCamelion( 0.15f, RageColor(1,0,0,0), RageColor(1,0,0,1) );
 		m_soundBeep.Play();
 	}
 	else if( fOldSecondsLeft > 4  &&  fNewSecondsLeft < 4 )	// transition to below 4

@@ -30,14 +30,17 @@ const CString NOTESKINS_DIR  = "NoteSkins/";
 
 NoteSkinManager::NoteSkinManager()
 {
-	m_pIniMetrics = new IniFile;
-
-	m_sCurNoteSkinName = BASE_NOTESKIN_NAME;	// Use the base theme for now.  It's up to PrefsManager to change this.
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_pIniMetrics[p] = new IniFile;
+		SwitchNoteSkin( (PlayerNumber)p, BASE_NOTESKIN_NAME );
+	}
 }
 
 NoteSkinManager::~NoteSkinManager()
 {
-	delete m_pIniMetrics;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		delete m_pIniMetrics[p];
 }
 
 void NoteSkinManager::GetNoteSkinNames( Game game, CStringArray &AddTo ) const
@@ -68,7 +71,7 @@ bool NoteSkinManager::DoesNoteSkinExist( CString sSkinName ) const
 	return false;
 }
 
-void NoteSkinManager::SwitchNoteSkin( CString sNewNoteSkin )
+void NoteSkinManager::SwitchNoteSkin( PlayerNumber pn, CString sNewNoteSkin )
 {
 	if( sNewNoteSkin == ""  ||  !DoesNoteSkinExist(sNewNoteSkin) )
 	{
@@ -82,9 +85,9 @@ void NoteSkinManager::SwitchNoteSkin( CString sNewNoteSkin )
 			if(!as[i].CompareNoCase("default")) sNewNoteSkin = "default";
 	}
 
-	m_sCurNoteSkinName = sNewNoteSkin;
+	m_sCurNoteSkinName[pn] = sNewNoteSkin;
 
-	m_pIniMetrics->Reset();
+	m_pIniMetrics[pn]->Reset();
 
 	/* Read only the default keys from the default noteskin. */
 	IniFile defaults;
@@ -92,11 +95,11 @@ void NoteSkinManager::SwitchNoteSkin( CString sNewNoteSkin )
 	defaults.ReadFile();
 	const IniFile::key *def = defaults.GetKey("NoteDisplay");
 	if(def)
-		m_pIniMetrics->SetValue("NoteDisplay", *def);
+		m_pIniMetrics[pn]->SetValue("NoteDisplay", *def);
 
 	/* Read the active theme. */
-	m_pIniMetrics->SetPath( GetNoteSkinDir(m_sCurNoteSkinName)+"metrics.ini" );
-	m_pIniMetrics->ReadFile();
+	m_pIniMetrics[pn]->SetPath( GetNoteSkinDir(sNewNoteSkin)+"metrics.ini" );
+	m_pIniMetrics[pn]->ReadFile();
 }
 
 CString NoteSkinManager::GetNoteSkinDir( CString sSkinName )
@@ -106,36 +109,36 @@ CString NoteSkinManager::GetNoteSkinDir( CString sSkinName )
 	return NOTESKINS_DIR + ssprintf("%s/%s/", pGameDef->m_szName, sSkinName.GetString());
 }
 
-CString NoteSkinManager::GetMetric( CString sButtonName, CString sValue )	// looks in GAMESTATE for the current Style
+CString NoteSkinManager::GetMetric( PlayerNumber pn, CString sButtonName, CString sValue )	// looks in GAMESTATE for the current Style
 {
 	CString sReturn;
-	if( m_pIniMetrics->GetValue( sButtonName, sValue, sReturn ) )
+	if( m_pIniMetrics[pn]->GetValue( sButtonName, sValue, sReturn ) )
 		return sReturn;
-	if( !m_pIniMetrics->GetValue( "NoteDisplay", sValue, sReturn ) )
+	if( !m_pIniMetrics[pn]->GetValue( "NoteDisplay", sValue, sReturn ) )
 		RageException::Throw( "Could not read metric '%s - %s' or 'NoteDisplay - %s'",
 			sButtonName.GetString(), sValue.GetString(), sValue.GetString() );
 	return sReturn;
 }
 
-int NoteSkinManager::GetMetricI( CString sButtonName, CString sValueName )
+int NoteSkinManager::GetMetricI( PlayerNumber pn, CString sButtonName, CString sValueName )
 {
-	return atoi( GetMetric(sButtonName,sValueName) );
+	return atoi( GetMetric(pn,sButtonName,sValueName) );
 }
 
-float NoteSkinManager::GetMetricF( CString sButtonName, CString sValueName )
+float NoteSkinManager::GetMetricF( PlayerNumber pn, CString sButtonName, CString sValueName )
 {
-	return (float)atof( GetMetric(sButtonName,sValueName) );
+	return (float)atof( GetMetric(pn,sButtonName,sValueName) );
 }
 
-bool NoteSkinManager::GetMetricB( CString sButtonName, CString sValueName )
+bool NoteSkinManager::GetMetricB( PlayerNumber pn, CString sButtonName, CString sValueName )
 {
-	return atoi( GetMetric(sButtonName,sValueName) ) != 0;
+	return atoi( GetMetric(pn,sButtonName,sValueName) ) != 0;
 }
 
-RageColor NoteSkinManager::GetMetricC( CString sButtonName, CString sValueName )
+RageColor NoteSkinManager::GetMetricC( PlayerNumber pn, CString sButtonName, CString sValueName )
 {
 	float r=1,b=1,g=1,a=1;	// initialize in case sscanf fails
-	CString sValue = GetMetric(sButtonName,sValueName);
+	CString sValue = GetMetric(pn,sButtonName,sValueName);
 	char szValue[40];
 	strncpy( szValue, sValue, 39 );
 	int result = sscanf( szValue, "%f,%f,%f,%f", &r, &g, &b, &a );
@@ -158,15 +161,15 @@ CString NoteSkinManager::ColToButtonName(int col)
 	return pGameDef->m_szButtonNames[GI.button];
 }
 
-CString NoteSkinManager::GetPathTo( int col, CString sFileName )	// looks in GAMESTATE for the current Style
+CString NoteSkinManager::GetPathTo( PlayerNumber pn, int col, CString sFileName )	// looks in GAMESTATE for the current Style
 {
 	CString sButtonName = ColToButtonName(col);
 
-	CString sCurNoteSkinName = m_sCurNoteSkinName;
+	CString sCurNoteSkinName = m_sCurNoteSkinName[pn];
 	if( GAMESTATE->m_bEditing )
 		sCurNoteSkinName = "note";
 
-	CString ret = GetPathTo( m_sCurNoteSkinName, sButtonName, sFileName );
+	CString ret = GetPathTo( sCurNoteSkinName, sButtonName, sFileName );
 	if( !ret.empty() )	// we found something
 		return ret;
 	ret = GetPathTo( BASE_NOTESKIN_NAME, sButtonName, sFileName);
@@ -174,7 +177,7 @@ CString NoteSkinManager::GetPathTo( int col, CString sFileName )	// looks in GAM
 	if( ret.empty() )
 		RageException::Throw( "The NoteSkin element '%s %s' could not be found in '%s' or '%s'.", 
 		sButtonName.GetString(), sFileName.GetString(), 
-		GetNoteSkinDir(m_sCurNoteSkinName).GetString(),
+		GetNoteSkinDir(sCurNoteSkinName).GetString(),
 		GetNoteSkinDir(BASE_NOTESKIN_NAME).GetString() );
 
 	return ret;

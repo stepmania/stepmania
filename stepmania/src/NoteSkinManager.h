@@ -14,6 +14,7 @@
 
 #include "RageTypes.h"
 #include "Game.h"
+#include "GameConstantsAndTypes.h"
 
 class IniFile;
 
@@ -26,16 +27,16 @@ public:
 	void GetNoteSkinNames( Game game, CStringArray &AddTo ) const;
 	void GetNoteSkinNames( CStringArray &AddTo ) const;	// looks up current Game in GAMESTATE
 	bool DoesNoteSkinExist( CString sSkinName ) const;	// looks up current Game in GAMESTATE
-	void SwitchNoteSkin( CString sNewNoteSkin );	// looks up current Game in GAMESTATE
-	CString GetCurNoteSkinName() const { return m_sCurNoteSkinName; };
+	void SwitchNoteSkin( PlayerNumber pn, CString sNewNoteSkin );	// looks up current Game in GAMESTATE
+	CString GetCurNoteSkinName( PlayerNumber pn ) const { return m_sCurNoteSkinName[pn]; };
 
-	CString GetPathTo( int col, CString sFileName );
+	CString GetPathTo( PlayerNumber pn, int col, CString sFileName );
 
-	CString		GetMetric( CString sButtonName, CString sValueName );
-	int			GetMetricI( CString sButtonName, CString sValueName );
-	float		GetMetricF( CString sButtonName, CString sValueName );
-	bool		GetMetricB( CString sButtonName, CString sValueName );
-	RageColor	GetMetricC( CString sButtonName, CString sValueName );
+	CString		GetMetric( PlayerNumber pn, CString sButtonName, CString sValueName );
+	int			GetMetricI( PlayerNumber pn, CString sButtonName, CString sValueName );
+	float		GetMetricF( PlayerNumber pn, CString sButtonName, CString sValueName );
+	bool		GetMetricB( PlayerNumber pn, CString sButtonName, CString sValueName );
+	RageColor	GetMetricC( PlayerNumber pn, CString sButtonName, CString sValueName );
 
 	static CString NoteSkinManager::ColToButtonName(int col);
 
@@ -43,10 +44,10 @@ protected:
 	CString GetPathTo( CString sSkinName, CString sButtonName, CString sFileName );
 	CString GetNoteSkinDir( CString sSkinName );
 
-	CString m_sCurNoteSkinName;	
-	IniFile* m_pIniMetrics;
-	unsigned m_uHashForCurThemeMetrics;
-	unsigned m_uHashForBaseThemeMetrics;
+	CString m_sCurNoteSkinName[NUM_PLAYERS];	
+	IniFile* m_pIniMetrics[NUM_PLAYERS];
+	unsigned m_uHashForCurThemeMetrics[NUM_PLAYERS];
+	unsigned m_uHashForBaseThemeMetrics[NUM_PLAYERS];
 };
 
 

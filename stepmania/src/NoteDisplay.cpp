@@ -26,28 +26,28 @@
 #include "NoteTypes.h"
 
 
-#define DRAW_HOLD_HEAD_FOR_TAPS_ON_SAME_ROW			NOTESKIN->GetMetricB(name,"DrawHoldHeadForTapsOnSameRow")
-#define TAP_NOTE_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(name,"TapNoteAnimationLengthInBeats")
-#define HOLD_HEAD_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(name,"HoldHeadAnimationLengthInBeats")
-#define HOLD_TOPCAP_ANIMATION_LENGTH_IN_BEATS		NOTESKIN->GetMetricF(name,"HoldTopCapAnimationLengthInBeats")
-#define HOLD_BODY_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(name,"HoldBodyAnimationLengthInBeats")
-#define HOLD_BOTTOMCAP_ANIMATION_LENGTH_IN_BEATS	NOTESKIN->GetMetricF(name,"HoldBottomCapAnimationLengthInBeats")
-#define HOLD_TAIL_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(name,"HoldTailAnimationLengthInBeats")
-#define TAP_NOTE_ANIMATION_IS_VIVID					NOTESKIN->GetMetricB(name,"TapNoteAnimationIsVivid")
-#define HOLD_HEAD_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(name,"HoldHeadAnimationIsVivid")
-#define HOLD_TOPCAP_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(name,"HoldTopCapAnimationIsVivid")
-#define HOLD_BODY_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(name,"HoldBodyAnimationIsVivid")
-#define HOLD_BOTTOMCAP_ANIMATION_IS_VIVID			NOTESKIN->GetMetricB(name,"HoldBottomCapAnimationIsVivid")
-#define HOLD_TAIL_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(name,"HoldTailAnimationIsVivid")
-#define TAP_NOTE_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(name,"TapNoteAnimationIsNoteColor")
-#define HOLD_HEAD_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(name,"HoldHeadAnimationIsNoteColor")
-#define HOLD_TOPCAP_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(name,"HoldTopCapAnimationIsNoteColor")
-#define HOLD_BODY_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(name,"HoldBodyAnimationIsNoteColor")
-#define HOLD_BOTTOMCAP_ANIMATION_IS_NOTE_COLOR		NOTESKIN->GetMetricB(name,"HoldBottomCapAnimationIsNoteColor")
-#define HOLD_TAIL_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(name,"HoldTailAnimationIsNoteColor")
-#define START_DRAWING_HOLD_BODY_OFFSET_FROM_HEAD	NOTESKIN->GetMetricI(name,"StartDrawingHoldBodyOffsetFromHead")
-#define STOP_DRAWING_HOLD_BODY_OFFSET_FROM_TAIL		NOTESKIN->GetMetricI(name,"StopDrawingHoldBodyOffsetFromTail")
-#define HOLD_NG_GRAY_PERCENT						NOTESKIN->GetMetricF(name,"HoldNGGrayPercent")
+#define DRAW_HOLD_HEAD_FOR_TAPS_ON_SAME_ROW			NOTESKIN->GetMetricB(pn,name,"DrawHoldHeadForTapsOnSameRow")
+#define TAP_NOTE_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(pn,name,"TapNoteAnimationLengthInBeats")
+#define HOLD_HEAD_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(pn,name,"HoldHeadAnimationLengthInBeats")
+#define HOLD_TOPCAP_ANIMATION_LENGTH_IN_BEATS		NOTESKIN->GetMetricF(pn,name,"HoldTopCapAnimationLengthInBeats")
+#define HOLD_BODY_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(pn,name,"HoldBodyAnimationLengthInBeats")
+#define HOLD_BOTTOMCAP_ANIMATION_LENGTH_IN_BEATS	NOTESKIN->GetMetricF(pn,name,"HoldBottomCapAnimationLengthInBeats")
+#define HOLD_TAIL_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(pn,name,"HoldTailAnimationLengthInBeats")
+#define TAP_NOTE_ANIMATION_IS_VIVID					NOTESKIN->GetMetricB(pn,name,"TapNoteAnimationIsVivid")
+#define HOLD_HEAD_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(pn,name,"HoldHeadAnimationIsVivid")
+#define HOLD_TOPCAP_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(pn,name,"HoldTopCapAnimationIsVivid")
+#define HOLD_BODY_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(pn,name,"HoldBodyAnimationIsVivid")
+#define HOLD_BOTTOMCAP_ANIMATION_IS_VIVID			NOTESKIN->GetMetricB(pn,name,"HoldBottomCapAnimationIsVivid")
+#define HOLD_TAIL_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(pn,name,"HoldTailAnimationIsVivid")
+#define TAP_NOTE_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(pn,name,"TapNoteAnimationIsNoteColor")
+#define HOLD_HEAD_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(pn,name,"HoldHeadAnimationIsNoteColor")
+#define HOLD_TOPCAP_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(pn,name,"HoldTopCapAnimationIsNoteColor")
+#define HOLD_BODY_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(pn,name,"HoldBodyAnimationIsNoteColor")
+#define HOLD_BOTTOMCAP_ANIMATION_IS_NOTE_COLOR		NOTESKIN->GetMetricB(pn,name,"HoldBottomCapAnimationIsNoteColor")
+#define HOLD_TAIL_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(pn,name,"HoldTailAnimationIsNoteColor")
+#define START_DRAWING_HOLD_BODY_OFFSET_FROM_HEAD	NOTESKIN->GetMetricI(pn,name,"StartDrawingHoldBodyOffsetFromHead")
+#define STOP_DRAWING_HOLD_BODY_OFFSET_FROM_TAIL		NOTESKIN->GetMetricI(pn,name,"StopDrawingHoldBodyOffsetFromTail")
+#define HOLD_NG_GRAY_PERCENT						NOTESKIN->GetMetricF(pn,name,"HoldNGGrayPercent")
 
 // cache
 struct NoteMetricCache_t {
@@ -74,10 +74,10 @@ struct NoteMetricCache_t {
 	int m_iStopDrawingHoldBodyOffsetFromTail;
 	float m_fHoldNGGrayPercent;
 
-	void Load(const CString &name);
+	void Load(PlayerNumber pn, const CString &name);
 } *NoteMetricCache;
 
-void NoteMetricCache_t::Load(const CString &name)
+void NoteMetricCache_t::Load(PlayerNumber pn, const CString &name)
 {
 	m_bDrawHoldHeadForTapsOnSameRow = DRAW_HOLD_HEAD_FOR_TAPS_ON_SAME_ROW;
 	m_fTapNoteAnimationLengthInBeats = TAP_NOTE_ANIMATION_LENGTH_IN_BEATS;
@@ -117,7 +117,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
-	cache->Load(NoteSkinManager::ColToButtonName(iColNum));
+	cache->Load( pn, NoteSkinManager::ColToButtonName(iColNum) );
 
 	// Look up note names once and store them here.
 	CString sNoteType[ NOTE_COLOR_IMAGES ];
@@ -128,81 +128,81 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 	if( cache->m_bTapNoteAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-			m_sprTapNote[i].Load( NOTESKIN->GetPathTo(iColNum, "tap note "+sNoteType[i]) );
+			m_sprTapNote[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "tap note "+sNoteType[i]) );
 	}
 	else
 	{
-		m_sprTapNote[0].Load( NOTESKIN->GetPathTo(iColNum, "tap note") );
+		m_sprTapNote[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "tap note") );
 	}
 
 	if( cache->m_bHoldHeadAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldHeadActive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold head active "+sNoteType[i]) );
-			m_sprHoldHeadInactive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold head inactive "+sNoteType[i]) );
+			m_sprHoldHeadActive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold head active "+sNoteType[i]) );
+			m_sprHoldHeadInactive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold head inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldHeadActive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold head active") );
-		m_sprHoldHeadInactive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold head inactive") );
+		m_sprHoldHeadActive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold head active") );
+		m_sprHoldHeadInactive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold head inactive") );
 	}
 
 	if( cache->m_bHoldTopCapAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldTopCapActive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold topcap active "+sNoteType[i]) );
-			m_sprHoldTopCapInactive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold topcap inactive "+sNoteType[i]) );
+			m_sprHoldTopCapActive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold topcap active "+sNoteType[i]) );
+			m_sprHoldTopCapInactive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold topcap inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldTopCapActive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold topcap active") );
-		m_sprHoldTopCapInactive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold topcap inactive") );
+		m_sprHoldTopCapActive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold topcap active") );
+		m_sprHoldTopCapInactive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold topcap inactive") );
 	}
 
 	if( cache->m_bHoldBodyAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldBodyActive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold body active "+sNoteType[i]) );
-			m_sprHoldBodyInactive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold body inactive "+sNoteType[i]) );
+			m_sprHoldBodyActive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold body active "+sNoteType[i]) );
+			m_sprHoldBodyInactive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold body inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldBodyActive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold body active") );
-		m_sprHoldBodyInactive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold body inactive") );
+		m_sprHoldBodyActive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold body active") );
+		m_sprHoldBodyInactive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold body inactive") );
 	}
 
 	if( cache->m_bHoldBottomCapAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldBottomCapActive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold bottomcap active "+sNoteType[i]) );
-			m_sprHoldBottomCapInactive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold bottomcap inactive "+sNoteType[i]) );
+			m_sprHoldBottomCapActive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold bottomcap active "+sNoteType[i]) );
+			m_sprHoldBottomCapInactive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold bottomcap inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldBottomCapActive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold bottomcap active") );
-		m_sprHoldBottomCapInactive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold bottomcap inactive") );
+		m_sprHoldBottomCapActive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold bottomcap active") );
+		m_sprHoldBottomCapInactive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold bottomcap inactive") );
 	}
 
 	if( cache->m_bHoldTailAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldTailActive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold tail active "+sNoteType[i]) );
-			m_sprHoldTailInactive[i].Load( NOTESKIN->GetPathTo(iColNum, "hold tail inactive "+sNoteType[i]) );
+			m_sprHoldTailActive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold tail active "+sNoteType[i]) );
+			m_sprHoldTailInactive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold tail inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldTailActive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold tail active") );
-		m_sprHoldTailInactive[0].Load( NOTESKIN->GetPathTo(iColNum, "hold tail inactive") );
+		m_sprHoldTailActive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold tail active") );
+		m_sprHoldTailInactive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold tail inactive") );
 	}
 }
 

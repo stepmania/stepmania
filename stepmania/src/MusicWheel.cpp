@@ -78,7 +78,7 @@ MusicWheel::MusicWheel()
 	m_sprSelectionOverlay.Load( THEME->GetPathTo("Graphics","select music song highlight") );
 	m_sprSelectionOverlay.SetXY( 0, 0 );
 	m_sprSelectionOverlay.SetDiffuse( RageColor(1,1,1,1) );
-	m_sprSelectionOverlay.SetEffectGlowing( 1.0f, RageColor(1,1,1,0.4f), RageColor(1,1,1,1) );
+	m_sprSelectionOverlay.SetEffectGlowCamelion( 1.0f, RageColor(1,1,1,0.4f), RageColor(1,1,1,1) );
 	AddChild( &m_sprSelectionOverlay );
 
 	m_ScrollBar.SetX( SCROLL_BAR_X ); 

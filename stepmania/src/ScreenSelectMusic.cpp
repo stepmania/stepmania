@@ -150,27 +150,10 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_textSongOptions.SetXY( SONG_OPTIONS_X, SONG_OPTIONS_Y );
 	m_textSongOptions.SetZoom( 0.5f );
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-		m_textSongOptions.SetEffectCamelion( 2.5f, RageColor(1,0,0,1), RageColor(1,1,1,1) );	// blink red
+		m_textSongOptions.SetEffectDiffuseCamelion( 2.5f, RageColor(1,0,0,1), RageColor(1,1,1,1) );	// blink red
 	m_textSongOptions.SetDiffuse( RageColor(1,1,1,1) );	// white
 	this->AddChild( &m_textSongOptions );
 
-/*	
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-
-		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-		m_textPlayerOptions[p].SetXY( PLAYER_OPTIONS_X(p), PLAYER_OPTIONS_Y(p) );
-		m_textPlayerOptions[p].SetZoom( 0.5f );
-		m_textPlayerOptions[p].SetHorizAlign( p==PLAYER_1 ? Actor::align_left : Actor::align_right );
-		m_textPlayerOptions[p].SetVertAlign( Actor::align_middle );
-		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-			m_textPlayerOptions[p].SetEffectCamelion( 2.5f, RageColor(1,0,0,1), RageColor(1,1,1,1) );	// blink red
-		m_textPlayerOptions[p].SetDiffuse( RageColor(1,1,1,1) );	// white
-		this->AddChild( &m_textPlayerOptions[p] );
-	}
-*/
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
@@ -790,7 +773,7 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 	m_DifficultyIcon[pn].SetFromNotes( pn, pNotes );
 	if( pNotes && pNotes->IsAutogen() )
 	{
-		m_AutoGenIcon[pn].SetEffectCamelion();
+		m_AutoGenIcon[pn].SetEffectDiffuseCamelion();
 	}
 	else
 	{

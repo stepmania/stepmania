@@ -25,7 +25,7 @@ TipDisplay::TipDisplay()
 	LOG->Trace( "TipDisplay::TipDisplay()" );
 
 	m_textTip.LoadFromFont( THEME->GetPathTo("Fonts","help") );
-	m_textTip.SetEffectBlinking();
+	m_textTip.SetEffectDiffuseBlinking();
 	m_textTip.TurnShadowOff();
 	this->AddChild( &m_textTip );
 

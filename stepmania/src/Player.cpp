@@ -28,61 +28,16 @@
 #include "ThemeManager.h"
 #include "Combo.h"
 
-#define JUDGE_MARVELOUS_ZOOM_X		THEME->GetMetricF("Player","JudgeMarvelousZoomX")
-#define JUDGE_MARVELOUS_ZOOM_Y		THEME->GetMetricF("Player","JudgeMarvelousZoomY")
-#define JUDGE_PERFECT_ZOOM_X		THEME->GetMetricF("Player","JudgePerfectZoomX")
-#define JUDGE_PERFECT_ZOOM_Y		THEME->GetMetricF("Player","JudgePerfectZoomY")
-#define JUDGE_GREAT_ZOOM_X			THEME->GetMetricF("Player","JudgeGreatZoomX")
-#define JUDGE_GREAT_ZOOM_Y			THEME->GetMetricF("Player","JudgeGreatZoomY")
-#define JUDGE_GOOD_ZOOM_X			THEME->GetMetricF("Player","JudgeGoodZoomX")
-#define JUDGE_GOOD_ZOOM_Y			THEME->GetMetricF("Player","JudgeGoodZoomY")
-#define JUDGE_BOO_ZOOM_X			THEME->GetMetricF("Player","JudgeBooZoomX")
-#define JUDGE_BOO_ZOOM_Y			THEME->GetMetricF("Player","JudgeBooZoomY")
-#define COMBO_JUDGE_TWEEN_SECONDS	THEME->GetMetricF("Player","ComboJudgeTweenSeconds")
-#define BRIGHT_GHOST_THRESHOLD		THEME->GetMetricI("Player","BrightGhostThreshold")
-
-
-// cache because reading from theme metrics is slow
-float 
-	g_fJudgeMarvelousZoomX,
-	g_fJudgeMarvelousZoomY,
-	g_fJudgePerfectZoomX,
-	g_fJudgePerfectZoomY,
-	g_fJudgeGreatZoomX,
-	g_fJudgeGreatZoomY,
-	g_fJudgeGoodZoomX,
-	g_fJudgeGoodZoomY,
-	g_fJudgeBooZoomX,
-	g_fJudgeBooZoomY,
-	g_fComboJudgeTweenSeconds;
-int	  g_iBrightGhostThreshold;
-
-// these two items are in the
-const float FRAME_JUDGE_AND_COMBO_Y = CENTER_Y;
-const float JUDGEMENT_Y_OFFSET	= -26;
-const float COMBO_Y_OFFSET		= +26;
-
-const float FRAME_JUDGE_AND_COMBO_BEAT_TIME = 0.2f;
-
-const float ARROWS_Y			= SCREEN_TOP + ARROW_SIZE * 1.5f;
-const float HOLD_JUDGEMENT_Y	= ARROWS_Y + 80;
+#define GRAY_ARROWS_Y		THEME->GetMetricF("Player","GrayArrowsY")
+#define JUDGMENT_Y			THEME->GetMetricF("Player","JudgmentY")
+#define COMBO_Y				THEME->GetMetricF("Player","ComboY")
+#define HOLD_JUDGMENT_Y		THEME->GetMetricF("Player","HoldJudgmentY")
+CachedThemeMetric			BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
 
 
 Player::Player()
 {
-	// Update theme metrics cache
-	g_fJudgeMarvelousZoomX = JUDGE_MARVELOUS_ZOOM_X;
-	g_fJudgeMarvelousZoomY = JUDGE_MARVELOUS_ZOOM_Y;
-	g_fJudgePerfectZoomX = JUDGE_PERFECT_ZOOM_X;
-	g_fJudgePerfectZoomY = JUDGE_PERFECT_ZOOM_Y;
-	g_fJudgeGreatZoomX = JUDGE_GREAT_ZOOM_X;
-	g_fJudgeGreatZoomY = JUDGE_GREAT_ZOOM_Y;
-	g_fJudgeGoodZoomX = JUDGE_GOOD_ZOOM_X;
-	g_fJudgeGoodZoomY = JUDGE_GOOD_ZOOM_Y;
-	g_fJudgeBooZoomX = JUDGE_BOO_ZOOM_X;
-    g_fJudgeBooZoomY = JUDGE_BOO_ZOOM_Y;
-	g_fComboJudgeTweenSeconds = COMBO_JUDGE_TWEEN_SECONDS;
-	g_iBrightGhostThreshold = BRIGHT_GHOST_THRESHOLD;
+	BRIGHT_GHOST_COMBO_THRESHOLD.Refresh();
 
 	m_PlayerNumber = PLAYER_INVALID;
 
@@ -95,29 +50,21 @@ Player::Player()
 	this->AddChild( &m_GrayArrowRow );
 	this->AddChild( &m_NoteField );
 	this->AddChild( &m_GhostArrowRow );
-
-	m_frameJudgement.AddChild( &m_Judgement );
-	this->AddChild( &m_frameJudgement );
-
-	m_frameCombo.AddChild( &m_Combo );
-	this->AddChild( &m_frameCombo );
-	
+	this->AddChild( &m_Judgment );
+	this->AddChild( &m_Combo );
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
-		this->AddChild( &m_HoldJudgement[c] );
+		this->AddChild( &m_HoldJudgment[c] );
 }
-
 
 int Player::GetPlayersMaxCombo()
 {
 	return(	m_Combo.GetMaxCombo() );
 }
 
-
 Player::~Player()
 {
 	delete m_ScoreKeeper;
 }
-
 
 void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDisplay* pScore )
 {
@@ -140,9 +87,9 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	/* The editor reuses Players ... so we really need to make sure everything
 	 * is reset and not tweening.  Perhaps ActorFrame should recurse to subactors;
 	 * then we could just this->StopTweening()? -glenn */
-	m_frameJudgement.StopTweening();
+	m_Judgment.StopTweening();
 //	m_Combo.Reset();		// don't reset combos between songs in a course!
-	m_Judgement.Reset();
+	m_Judgment.Reset();
 
 	if(m_ScoreKeeper) delete m_ScoreKeeper;
 	m_ScoreKeeper = new ScoreKeeperMAX2(GAMESTATE->m_pCurNotes[m_PlayerNumber], *this, pn);
@@ -190,20 +137,20 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	m_GrayArrowRow.Load( pn );
 	m_GhostArrowRow.Load( pn );
 
-	m_frameJudgement.SetY( FRAME_JUDGE_AND_COMBO_Y );
-	m_frameCombo.SetY( FRAME_JUDGE_AND_COMBO_Y );
-	m_Combo.SetY( GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ?  -COMBO_Y_OFFSET : COMBO_Y_OFFSET );
-	m_Judgement.SetY( GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ? -JUDGEMENT_Y_OFFSET : JUDGEMENT_Y_OFFSET );
+	bool bReverse = GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll;
+	m_Combo.SetY( bReverse ? SCREEN_BOTTOM-COMBO_Y : SCREEN_TOP+COMBO_Y );
+	m_Judgment.SetY( bReverse ? SCREEN_BOTTOM-JUDGMENT_Y : SCREEN_TOP+JUDGMENT_Y );
 
 	int c;
 	for( c=0; c<pStyleDef->m_iColsPerPlayer; c++ )
-		m_HoldJudgement[c].SetY( GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ? SCREEN_HEIGHT - HOLD_JUDGEMENT_Y : HOLD_JUDGEMENT_Y );
-	for( c=0; c<pStyleDef->m_iColsPerPlayer; c++ )
-		m_HoldJudgement[c].SetX( (float)pStyleDef->m_ColumnInfo[pn][c].fXOffset );
+	{
+		m_HoldJudgment[c].SetY( bReverse ? SCREEN_BOTTOM-HOLD_JUDGMENT_Y : SCREEN_TOP+HOLD_JUDGMENT_Y );
+		m_HoldJudgment[c].SetX( (float)pStyleDef->m_ColumnInfo[pn][c].fXOffset );
+	}
 
-	m_NoteField.SetY( GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
-	m_GrayArrowRow.SetY( GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
-	m_GhostArrowRow.SetY( GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
+	m_NoteField.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
+	m_GrayArrowRow.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
+	m_GhostArrowRow.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
 
 	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_MINI] )
 	{
@@ -216,7 +163,6 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 void Player::Update( float fDeltaTime )
 {
 	//LOG->Trace( "Player::Update(%f)", fDeltaTime );
-
 
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
 
@@ -296,7 +242,7 @@ void Player::Update( float fDeltaTime )
 		{
 			/* this note's been judged */
 			HandleHoldNoteScore( hns, tns );
-			m_HoldJudgement[hn.iTrack].SetHoldJudgement( hns );
+			m_HoldJudgment[hn.iTrack].SetHoldJudgment( hns );
 		}
 
 		m_NoteField.SetHoldNoteLife(i, fLife);	// update the NoteField display
@@ -313,7 +259,7 @@ void Player::Update( float fDeltaTime )
 
 void Player::DrawPrimitives()
 {
-	m_frameCombo.Draw();	// draw this below everything else
+	m_Combo.Draw();	// draw this below everything else
 
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bEffects[PlayerOptions::EFFECT_SPACE] )
 	{
@@ -343,10 +289,10 @@ void Player::DrawPrimitives()
 		DISPLAY->PopMatrix();
 	}
 
-	m_frameJudgement.Draw();
+	m_Judgment.Draw();
 
 	for( int c=0; c<GetNumTracks(); c++ )
-		m_HoldJudgement[c].Draw();
+		m_HoldJudgment[c].Draw();
 }
 
 int Player::GetClosestNoteDirectional( int col, float fBeat, float fMaxSecondsDistance, int iDirection  )
@@ -525,43 +471,18 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 
 			// show the ghost arrow for this column
 			if(score == TNS_GREAT || score == TNS_PERFECT || score == TNS_MARVELOUS)
-				m_GhostArrowRow.TapNote( c, score, m_Combo.GetCurrentCombo()>g_iBrightGhostThreshold );
+				m_GhostArrowRow.TapNote( c, score, m_Combo.GetCurrentCombo()>(int)BRIGHT_GHOST_COMBO_THRESHOLD);
 		}
 	}
 		
 	if( iNumNotesInThisRow > 0 )
 	{
 		HandleNoteScore( score, iNumNotesInThisRow );	// update score
-		m_Combo.UpdateScore( score, iNumNotesInThisRow );
+		m_Combo.SetScore( score, iNumNotesInThisRow );
 		GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber] = max( GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber], m_Combo.GetCurrentCombo() );
 	}
 
-	// update the judgement, score, and life
-	m_Judgement.SetJudgement( score );
-
-	// zoom the judgement and combo like a heart beat
-	float fStartZoomX=0.f, fStartZoomY=0.f;
-	switch( score )
-	{
-	case TNS_MARVELOUS:	fStartZoomX = g_fJudgeMarvelousZoomX;	fStartZoomY = g_fJudgeMarvelousZoomY;	break;
-	case TNS_PERFECT:	fStartZoomX = g_fJudgePerfectZoomX;		fStartZoomY = g_fJudgePerfectZoomY;		break;
-	case TNS_GREAT:		fStartZoomX = g_fJudgeGreatZoomX;		fStartZoomY = g_fJudgeGreatZoomY;		break;
-	case TNS_GOOD:		fStartZoomX = g_fJudgeGoodZoomX;		fStartZoomY = g_fJudgeGoodZoomY;		break;
-	case TNS_BOO:		fStartZoomX = g_fJudgeBooZoomX;			fStartZoomY = g_fJudgeBooZoomY;			break;
-	default:
-		ASSERT(0);
-	}
-	m_frameJudgement.StopTweening();
-	m_frameJudgement.SetZoomX( fStartZoomX );
-	m_frameJudgement.SetZoomY( fStartZoomY );
-	m_frameJudgement.BeginTweening( g_fComboJudgeTweenSeconds );
-	m_frameJudgement.SetTweenZoom( 1 );
-
-	m_frameCombo.StopTweening();
-	m_frameCombo.SetZoomX( fStartZoomX );
-	m_frameCombo.SetZoomY( fStartZoomY );
-	m_frameCombo.BeginTweening( g_fComboJudgeTweenSeconds );
-	m_frameCombo.SetTweenZoom( 1 );
+	m_Judgment.SetJudgment( score );
 }
 
 
@@ -599,13 +520,13 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		if( iNumMissesThisRow > 0 )
 		{
 			HandleNoteScore( TNS_MISS, iNumMissesThisRow );
-			m_Combo.UpdateScore( TNS_MISS, iNumMissesThisRow );
+			m_Combo.SetScore( TNS_MISS, iNumMissesThisRow );
 		}
 	}
 
 	if( iNumMissesFound > 0 )
 	{
-		m_Judgement.SetJudgement( TNS_MISS );
+		m_Judgment.SetJudgment( TNS_MISS );
 	}
 
 	return iNumMissesFound;

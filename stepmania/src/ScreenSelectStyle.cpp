@@ -184,7 +184,7 @@ void ScreenSelectStyle::BeforeChange()
 
 void ScreenSelectStyle::AfterChange()
 {
-	m_sprIcon[m_iSelection]->SetEffectGlowing();
+	m_sprIcon[m_iSelection]->SetEffectGlowCamelion();
 
 	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 	const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle( m_aPossibleStyles[m_iSelection] );

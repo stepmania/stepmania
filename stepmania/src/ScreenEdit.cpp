@@ -1444,7 +1444,7 @@ void ScreenEdit::OnSnapModeChange()
 
 void ScreenEdit::MenuItemGainFocus( BitmapText* menuitem )
 {
-	menuitem->SetEffectCamelion( 2.5, RageColor(1,1,1,1), RageColor(0,1,0,1) );
+	menuitem->SetEffectDiffuseCamelion( 1.0f, RageColor(1,1,1,1), RageColor(0,1,0,1) );
 	menuitem->SetZoom( 0.7f );
 	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","edit menu row") );
 }

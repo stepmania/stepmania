@@ -51,8 +51,44 @@ protected:
 	unsigned m_uHashForBaseThemeMetrics;
 };
 
-
-
 extern ThemeManager*	THEME;	// global and accessable from anywhere in our program
+
+class CachedThemeMetric
+{
+	CString m_sClassName;
+	CString m_sValueName;
+	bool	m_bInited;
+
+	CString		m_sValue;
+	int			m_iValue;
+	float		m_fValue;
+	bool		m_bValue;
+	RageColor	m_cValue;
+
+public:
+	CachedThemeMetric( CString sClassName, CString sValueName )
+	{
+		m_sClassName = sClassName;
+		m_sValueName = sValueName;
+		m_bInited = false;
+	}
+
+	void Refresh()
+	{
+		m_sValue = THEME->GetMetric(m_sClassName,m_sValueName);
+		m_iValue = atoi( m_sValue );
+		m_fValue = (float)atof( m_sValue );
+		m_bValue = atoi( m_sValue ) != 0;
+		m_cValue = RageColor(1,1,1,1);
+		sscanf( m_sValue, "%f,%f,%f,%f", &m_cValue.r, &m_cValue.g, &m_cValue.b, &m_cValue.a );
+		m_bInited = true;
+	}
+
+    operator const CString () const		{ ASSERT(m_bInited);	return m_sValue; };
+	operator const int () const			{ ASSERT(m_bInited);	return m_iValue; };
+    operator const float () const		{ ASSERT(m_bInited);	return m_fValue; };
+    operator const bool () const		{ ASSERT(m_bInited);	return m_bValue; };
+    operator const RageColor () const	{ ASSERT(m_bInited);	return m_cValue; };
+};
 
 #endif

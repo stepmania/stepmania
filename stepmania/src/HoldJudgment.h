@@ -1,10 +1,10 @@
-#ifndef HOLDJUDGEMENT_H
-#define HOLDJUDGEMENT_H
+#ifndef HOLDJudgment_H
+#define HOLDJudgment_H
 /*
 -----------------------------------------------------------------------------
- Class: HoldJudgement
+ Class: HoldJudgment
 
- Desc: A graphic displayed in the HoldJudgement during Dancing.
+ Desc: A graphic displayed in the HoldJudgment during Dancing.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -18,18 +18,17 @@
 #include "PrefsManager.h"
 
 
-class HoldJudgement : public ActorFrame
+class HoldJudgment : public ActorFrame
 {
 public:
-	HoldJudgement();
-	void SetHoldJudgement( HoldNoteScore hns );
+	HoldJudgment();
+	void SetHoldJudgment( HoldNoteScore hns );
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
 protected:
-	Sprite		m_sprJudgement;
-	float		m_fDisplayTime;
-	float		m_fDisplayCountdown;
+	Sprite		m_sprJudgment;
+	float		m_fShowCountdown;
 };
 
 #endif

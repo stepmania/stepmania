@@ -18,6 +18,57 @@
 #include "ThemeManager.h"
 
 
+CachedThemeMetric	LABEL_X				("Combo","LabelX");
+CachedThemeMetric	LABEL_Y				("Combo","LabelY");
+CachedThemeMetric	LABEL_HORIZ_ALIGN	("Combo","LabelHorizAlign");
+CachedThemeMetric	LABEL_VERT_ALIGN	("Combo","LabelVertAlign");
+CachedThemeMetric	NUMBER_X			("Combo","NumberX");
+CachedThemeMetric	NUMBER_Y			("Combo","NumberY");
+CachedThemeMetric	NUMBER_HORIZ_ALIGN	("Combo","NumberHorizAlign");
+CachedThemeMetric	NUMBER_VERT_ALIGN	("Combo","NumberVertAlign");
+CachedThemeMetric	SHOW_COMBO_AT		("Combo","ShowComboAt");
+CachedThemeMetric	NUMBER_MIN_ZOOM		("Combo","NumberMinZoom");
+CachedThemeMetric	NUMBER_MAX_ZOOM		("Combo","NumberMaxZoom");
+CachedThemeMetric	NUMBER_MAX_ZOOM_AT	("Combo","NumberMaxZoomAt");
+CachedThemeMetric	PULSE_ZOOM			("Combo","PulseZoom");
+CachedThemeMetric	C_TWEEN_SECONDS		("Combo","TweenSeconds");
+
+
+Combo::Combo()
+{
+	LABEL_X.Refresh();
+	LABEL_Y.Refresh();
+	LABEL_HORIZ_ALIGN.Refresh();
+	LABEL_VERT_ALIGN.Refresh();
+	NUMBER_X.Refresh();
+	NUMBER_Y.Refresh();
+	NUMBER_HORIZ_ALIGN.Refresh();
+	NUMBER_VERT_ALIGN.Refresh();
+	SHOW_COMBO_AT.Refresh();
+	NUMBER_MIN_ZOOM.Refresh();
+	NUMBER_MAX_ZOOM.Refresh();
+	NUMBER_MAX_ZOOM_AT.Refresh();
+	PULSE_ZOOM.Refresh();
+	C_TWEEN_SECONDS.Refresh();
+
+	Reset();
+
+	m_sprCombo.Load( THEME->GetPathTo("Graphics", "gameplay combo label") );
+	m_sprCombo.TurnShadowOn();
+	m_sprCombo.StopAnimating();
+	m_sprCombo.SetXY( LABEL_X, LABEL_Y );
+	m_sprCombo.SetHorizAlign( (Actor::HorizAlign)(int)LABEL_HORIZ_ALIGN );
+	m_sprCombo.SetVertAlign( (Actor::VertAlign)(int)LABEL_VERT_ALIGN );
+	this->AddChild( &m_sprCombo );
+
+	m_textComboNumber.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay combo numbers") );
+	m_textComboNumber.TurnShadowOn();
+	m_textComboNumber.SetXY( NUMBER_X, NUMBER_Y );
+	m_textComboNumber.SetHorizAlign( (Actor::HorizAlign)(int)NUMBER_HORIZ_ALIGN );
+	m_textComboNumber.SetVertAlign( (Actor::VertAlign)(int)NUMBER_VERT_ALIGN );
+	this->AddChild( &m_textComboNumber );
+}
+
 void Combo::Reset()
 {
 	m_iCurCombo = m_iMaxCombo = m_iCurComboOfPerfects = 0; 
@@ -26,27 +77,7 @@ void Combo::Reset()
 	m_sprCombo.SetDiffuse( RageColor(1,1,1,0) );	// invisible
 }
 
-Combo::Combo()
-{
-	Reset();
-
-	m_sprCombo.Load( THEME->GetPathTo("Graphics", "gameplay combo label") );
-	m_sprCombo.TurnShadowOn();
-	m_sprCombo.StopAnimating();
-	m_sprCombo.SetX( 40 );
-	m_sprCombo.SetZoom( 1.0f );
-
-	m_textComboNumber.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay combo numbers") );
-	m_textComboNumber.TurnShadowOn();
-	m_textComboNumber.SetHorizAlign( Actor::align_right );
-	m_textComboNumber.SetX( 0 );
-
-	this->AddChild( &m_textComboNumber );
-	this->AddChild( &m_sprCombo );
-}
-
-
-void Combo::UpdateScore( TapNoteScore score, int iNumNotesInThisRow )
+void Combo::SetScore( TapNoteScore score, int iNumNotesInThisRow )
 {
 #ifndef DEBUG
 	if( PREFSMAN->m_bAutoPlay && !GAMESTATE->m_bDemonstration )	// cheaters never prosper
@@ -100,24 +131,28 @@ void Combo::UpdateScore( TapNoteScore score, int iNumNotesInThisRow )
 			m_iMaxCombo = max(m_iMaxCombo, m_iCurCombo);
 
 
-			if( m_iCurCombo <= 4 )
-			{
-				m_textComboNumber.SetDiffuse( RageColor(1,1,1,0) );	// invisible
-				m_sprCombo.SetDiffuse( RageColor(1,1,1,0) );	// invisible
-			}
-			else
+			if( m_iCurCombo >= (int)SHOW_COMBO_AT )
 			{
 				m_textComboNumber.SetDiffuse( RageColor(1,1,1,1) );	// visible
 				m_sprCombo.SetDiffuse( RageColor(1,1,1,1) );	// visible
 
 				m_textComboNumber.SetText( ssprintf("%d", m_iCurCombo) );
-				float fNewZoom = min( 0.5f + m_iCurCombo/800.0f, 1.0f );
-				m_textComboNumber.SetZoom( fNewZoom ); 
-				
-				//this->SetZoom( 1.2f );
-				//this->BeginTweening( 0.3f );
-				//this->SetTweenZoom( 1 );
+				float fNumberZoom = SCALE(m_iCurCombo,0.f,(float)NUMBER_MAX_ZOOM_AT,(float)NUMBER_MIN_ZOOM,(float)NUMBER_MAX_ZOOM);
+				CLAMP( fNumberZoom, (float)NUMBER_MIN_ZOOM, (float)NUMBER_MAX_ZOOM );
+				m_textComboNumber.SetZoom( fNumberZoom * (float)PULSE_ZOOM ); 
+				m_textComboNumber.BeginTweening( C_TWEEN_SECONDS );
+				m_textComboNumber.SetTweenZoom( fNumberZoom );
+
+				m_sprCombo.SetZoom( PULSE_ZOOM ); 
+				m_sprCombo.BeginTweening( C_TWEEN_SECONDS );
+				m_sprCombo.SetTweenZoom( 1 );
 			}
+			else
+			{
+				m_textComboNumber.SetDiffuse( RageColor(1,1,1,0) );	// invisible
+				m_sprCombo.SetDiffuse( RageColor(1,1,1,0) );	// invisible
+			}
+
 		}
 		break;
 	case TNS_GOOD:

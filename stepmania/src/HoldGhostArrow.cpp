@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
  Class: HoldGhostArrow
 
- Desc: A graphic displayed in the HoldJudgement during Dancing.
+ Desc: A graphic displayed in the HoldJudgment during Dancing.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Ben Nordstrom
@@ -16,18 +16,21 @@
 #include "RageException.h"
 #include "RageTimer.h"
 #include <math.h>
+#include "ThemeManager.h"
 
 
-const float  HOLD_GHOST_ARROW_TWEEN_TIME = 0.5f;
+CachedThemeMetric		WARM_UP_SECONDS		("HoldGhostArrow","WarmUpSeconds");
+
 
 HoldGhostArrow::HoldGhostArrow()
 {
+	WARM_UP_SECONDS.Refresh();
+
 	m_bWasSteppedOnLastFrame = false;
 	m_fHeatLevel = 0;
 
 //	LoadFromSpriteFile( THEME->GetPathTo(GRAPHIC_HOLD_GHOST_ARROW) );
 	SetDiffuse( RageColor(1,1,1,1) );
-//	SetZoom( 1.1f );
 }
 
 void HoldGhostArrow::Update( float fDeltaTime )
@@ -35,13 +38,11 @@ void HoldGhostArrow::Update( float fDeltaTime )
 	Sprite::Update( fDeltaTime );
 
 	if( m_bWasSteppedOnLastFrame )
-		m_fHeatLevel += fDeltaTime * 4;
+		m_fHeatLevel += fDeltaTime/(float)WARM_UP_SECONDS;
 	else
-		m_fHeatLevel -= fDeltaTime * 4;
+		m_fHeatLevel -= fDeltaTime/(float)WARM_UP_SECONDS;
 
 	CLAMP( m_fHeatLevel, 0, 1 );
-//	if( m_fHeatLevel > 0 )
-//		LOG->Trace( "m_fHeatLevel = %f\n", m_fHeatLevel );
 
 	int iStateNum = (int)min( m_fHeatLevel * GetNumStates(), GetNumStates()-1 );
 	SetState( iStateNum );

@@ -29,9 +29,9 @@ const unsigned MAX_OPTIONS_PER_LINE = 20;
 
 // used to pass menu info into this class
 struct OptionRowData {
-	char szTitle[30];
+	char szTitle[40];
 	unsigned iNumOptions;
-	char szOptionsText[MAX_OPTIONS_PER_LINE][60];
+	char szOptionsText[MAX_OPTIONS_PER_LINE][80];
 	char szExplanation[2048];
 };
 

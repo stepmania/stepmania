@@ -23,7 +23,7 @@ class Combo : public ActorFrame
 public:
 	Combo();
 
-	void UpdateScore( TapNoteScore score, int iNumNotesInThisRow );
+	void SetScore( TapNoteScore score, int iNumNotesInThisRow );
 
 	int GetCurrentCombo() const { return m_iCurCombo; }
 	int GetMaxCombo() const { return m_iMaxCombo; }
@@ -34,7 +34,6 @@ protected:
 	int			m_iMaxCombo;
 	int			m_iCurComboOfPerfects;
 
-	bool		m_bComboVisible;
 	Sprite		m_sprCombo;
 	BitmapText	m_textComboNumber;
 };

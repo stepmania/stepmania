@@ -37,7 +37,7 @@ NoteField::NoteField()
 	m_textMeasureNumber.SetZoom( 1.0f );
 
 	m_rectMarkerBar.TurnShadowOff();
-	m_rectMarkerBar.SetEffectGlowing();
+	m_rectMarkerBar.SetEffectGlowCamelion();
 
 	m_fBeginMarker = m_fEndMarker = -1;
 

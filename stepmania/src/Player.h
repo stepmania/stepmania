@@ -25,8 +25,8 @@
 #include "RandomSample.h"
 #include "ScoreDisplay.h"
 #include "LifeMeterBar.h"
-#include "Judgement.h"
-#include "HoldJudgement.h"
+#include "Judgment.h"
+#include "HoldJudgment.h"
 #include "Combo.h"
 #include "NoteField.h"
 #include "GrayArrowRow.h"
@@ -72,12 +72,10 @@ protected:
 	NoteField		m_NoteField;
 	GhostArrowRow	m_GhostArrowRow;
 
-	HoldJudgement	m_HoldJudgement[MAX_NOTE_TRACKS];
+	HoldJudgment	m_HoldJudgment[MAX_NOTE_TRACKS];
 
-	ActorFrame		m_frameJudgement;
-	Judgement		m_Judgement;
+	Judgment		m_Judgment;
 	
-	ActorFrame		m_frameCombo;
 	Combo			m_Combo;
 
 	LifeMeter*		m_pLifeMeter;

@@ -31,7 +31,8 @@ public:
 		TWEEN_SPRING,
 	};
 	enum Effect { no_effect,
-				blinking,	camelion,   glowing,
+				diffuse_blinking,	diffuse_camelion,
+				glow_blinking,		glow_camelion,
 				wagging,	spinning,
 				vibrating,	flickering,
 				bouncing,	bobbing
@@ -152,15 +153,18 @@ public:
 
 	// effects
 	void SetEffectNone();
-	void SetEffectBlinking( float fDeltaPercentPerSecond = 2.5,
-						    RageColor Color  = RageColor(0.5f,0.5f,0.5f,1), 
-						    RageColor Color2 = RageColor(1,1,1,1) );
-	void SetEffectCamelion( float fDeltaPercentPerSecond = 2.5,
-						    RageColor Color  = RageColor(0,0,0,1), 
-						    RageColor Color2 = RageColor(1,1,1,1) );
-	void SetEffectGlowing( float fDeltaPercentPerSecond = 2.5,
-						   RageColor Color  = RageColor(1,1,1,0.2f),
-						   RageColor Color2 = RageColor(1,1,1,0.8f) );
+	void SetEffectDiffuseBlinking( float fEffectPeriodSeconds = 1.0f,
+						    RageColor c1 = RageColor(0.5f,0.5f,0.5f,1), 
+						    RageColor c2 = RageColor(1,1,1,1) );
+	void SetEffectDiffuseCamelion( float fEffectPeriodSeconds = 1.0f,
+						    RageColor c1 = RageColor(0,0,0,1), 
+						    RageColor c2 = RageColor(1,1,1,1) );
+	void SetEffectGlowBlinking( float fEffectPeriodSeconds = 1.0f,
+						   RageColor c1 = RageColor(1,1,1,0.2f),
+						   RageColor c2 = RageColor(1,1,1,0.8f) );
+	void SetEffectGlowCamelion( float fEffectPeriodSeconds = 1.0f,
+						   RageColor c1 = RageColor(1,1,1,0.2f),
+						   RageColor c2 = RageColor(1,1,1,0.8f) );
 	void SetEffectWagging( float fWagRadians =  0.2,
 						   float fWagPeriod = 2.0 );
 	void SetEffectSpinning( RageVector3 vectRotationVelocity );
@@ -271,21 +275,15 @@ protected:
 	// Stuff for effects
 	//
 	Effect m_Effect;
-
+	float m_fSecsIntoEffect;
+	float m_fEffectPeriodSeconds;
 
 	// Counting variables for camelion and glowing:
-	RageColor   m_effect_colorDiffuse1;
-	RageColor   m_effect_colorDiffuse2;
-	RageColor   m_effect_colorGlow1;
-	RageColor   m_effect_colorGlow2;
-	float m_fPercentBetweenColors;
-	bool  m_bTweeningTowardEndColor;	// TRUE is fading toward end_color, FALSE if fading toward start_color
-	float m_fDeltaPercentPerSecond;	// percentage change in tweening per second
+	RageColor   m_effectColor1;
+	RageColor   m_effectColor2;
 
 	// wagging:
 	float m_fWagRadians;
-	float m_fWagPeriod;		// seconds to complete a wag (back and forth)
-	float m_fWagTimer;		// num of seconds into this wag
 
 	// spinning:
 	RageVector3 m_vSpinVelocity;	// delta per second
@@ -298,8 +296,6 @@ protected:
 
 	// bouncing:
 	RageVector3 m_vectBounce;
-	float m_fBouncePeriod;
-	float m_fTimeIntoBounce;
 
 
 	//

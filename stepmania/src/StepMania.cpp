@@ -121,11 +121,15 @@ void ResetGame()
 	INPUTMAPPER->ReadMappingsFromDisk();
 	GAMESTATE->m_bPlayersCanJoin = true;
 
-	if( !NOTESKIN->DoesNoteSkinExist( NOTESKIN->GetCurNoteSkinName() ) )
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		CStringArray asNoteSkinNames;
-		NOTESKIN->GetNoteSkinNames( asNoteSkinNames );
-		NOTESKIN->SwitchNoteSkin( asNoteSkinNames[0] );
+		PlayerNumber pn = (PlayerNumber)p;
+		if( !NOTESKIN->DoesNoteSkinExist( NOTESKIN->GetCurNoteSkinName(pn) ) )
+		{
+			CStringArray asNoteSkinNames;
+			NOTESKIN->GetNoteSkinNames( asNoteSkinNames );
+			NOTESKIN->SwitchNoteSkin( pn, asNoteSkinNames[0] );
+		}
 	}
 	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
 	{

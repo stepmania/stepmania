@@ -17,6 +17,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
+#include "NoteSkinManager.h"
 
 #define SONGSEL_SCREEN				THEME->GetMetric("ScreenGameplay","SongSelectScreen")
 
@@ -28,7 +29,7 @@ enum {
 	PO_TURN,
 	PO_TRANSFORM,
 	PO_SCROLL,
-	PO_COLOR,
+	PO_NOTE_SKIN,
 	PO_HOLD_NOTES,
 	PO_DARK,
 	NUM_PLAYER_OPTIONS_LINES
@@ -41,7 +42,7 @@ OptionRowData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	{ "Turn",			6, {"OFF","MIRROR","LEFT","RIGHT","SHUFFLE","SUPER SHUFFLE"} },	
 	{ "Trans\n-form",	3, {"OFF","LITTLE","BIG"} },	
 	{ "Scroll",			2, {"STANDARD","REVERSE"} },	
-	{ "Color",			3, {"VIVID","NOTE","FLAT"} },	
+	{ "Note\nSkin",		0, {""} },	
 	{ "Holds",			2, {"OFF","ON"} },	
 	{ "Dark",			2, {"OFF","ON"} },	
 };
@@ -68,6 +69,21 @@ ScreenPlayerOptions::ScreenPlayerOptions() :
 
 void ScreenPlayerOptions::ImportOptions()
 {
+	//
+	// fill in skin names
+	//
+	CStringArray arraySkinNames;
+	NOTESKIN->GetNoteSkinNames( arraySkinNames );
+
+	m_OptionRowData[PO_NOTE_SKIN].iNumOptions	=	arraySkinNames.size(); 
+
+	for( unsigned i=0; i<arraySkinNames.size(); i++ )
+	{
+		arraySkinNames[i].MakeUpper();
+		strcpy( m_OptionRowData[PO_NOTE_SKIN].szOptionsText[i], arraySkinNames[i] ); 
+	}
+
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		PlayerOptions &po = GAMESTATE->m_PlayerOptions[p];
@@ -97,7 +113,22 @@ void ScreenPlayerOptions::ImportOptions()
 		m_iSelectedOption[p][PO_TURN]		= po.m_TurnType;
 		m_iSelectedOption[p][PO_TRANSFORM]	= po.m_Transform;
 		m_iSelectedOption[p][PO_SCROLL]		= po.m_bReverseScroll ? 1 : 0 ;
-		m_iSelectedOption[p][PO_COLOR]		= po.m_ColorType;
+
+
+		// highlight currently selected skin
+		m_iSelectedOption[p][PO_NOTE_SKIN] = -1;
+		for( unsigned i=0; i<m_OptionRowData[PO_NOTE_SKIN].iNumOptions; i++ )
+		{
+			if( 0==stricmp(m_OptionRowData[PO_NOTE_SKIN].szOptionsText[i], NOTESKIN->GetCurNoteSkinName((PlayerNumber)p)) )
+			{
+				m_iSelectedOption[p][PO_NOTE_SKIN] = i;
+				break;
+			}
+		}
+		if( m_iSelectedOption[p][PO_NOTE_SKIN] == -1 )
+			m_iSelectedOption[p][PO_NOTE_SKIN] = 0;
+
+
 		m_iSelectedOption[p][PO_HOLD_NOTES]	= po.m_bHoldNotes ? 1 : 0;
 		m_iSelectedOption[p][PO_DARK]		= po.m_bDark ? 1 : 0;
 	}
@@ -134,7 +165,13 @@ void ScreenPlayerOptions::ExportOptions()
 		po.m_TurnType		= (PlayerOptions::TurnType)m_iSelectedOption[p][PO_TURN];
 		po.m_Transform		= (PlayerOptions::Transform)m_iSelectedOption[p][PO_TRANSFORM];
 		po.m_bReverseScroll	= (m_iSelectedOption[p][PO_SCROLL] == 1);
-		po.m_ColorType		= (PlayerOptions::ColorType)m_iSelectedOption[p][PO_COLOR];
+
+
+		int iSelectedSkin = m_iSelectedOption[p][PO_NOTE_SKIN];
+		CString sNewSkin = m_OptionRowData[PO_NOTE_SKIN].szOptionsText[iSelectedSkin];
+		NOTESKIN->SwitchNoteSkin( (PlayerNumber)p, sNewSkin );
+
+
 		po.m_bHoldNotes		= (m_iSelectedOption[p][PO_HOLD_NOTES] == 1);
 		po.m_bDark			= (m_iSelectedOption[p][PO_DARK] == 1);
 	}

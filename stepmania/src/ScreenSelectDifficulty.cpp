@@ -127,12 +127,12 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 
 		m_sprPicture[c].Load( THEME->GetPathTo("Graphics",sPictureFile) );
 		m_sprPicture[c].SetXY( CHOICE_X(c), CHOICE_Y(c) );
-		m_sprPicture[c].SetVertAlign( align_bottom );
+		m_sprPicture[c].SetVertAlign( align_top );
 		m_framePages.AddChild( &m_sprPicture[c] );
 
 		m_sprHeader[c].Load( THEME->GetPathTo("Graphics",sHeaderFile) );
 		m_sprHeader[c].SetXY( CHOICE_X(c), CHOICE_Y(c) );
-		m_sprHeader[c].SetVertAlign( align_top );
+		m_sprHeader[c].SetVertAlign( align_bottom );
 		m_framePages.AddChild( &m_sprHeader[c] );
 	}
 
@@ -170,7 +170,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 		m_sprCursor[p].StopAnimating();
 		m_sprCursor[p].SetState( p );
 		m_sprCursor[p].TurnShadowOff();
-		m_sprCursor[p].SetEffectGlowing();
+		m_sprCursor[p].SetEffectGlowCamelion();
 		m_framePages.AddChild( &m_sprCursor[p] );
 
 		m_sprOK[p].Load( THEME->GetPathTo("Graphics", "select difficulty ok 2x1") );

@@ -379,7 +379,7 @@ void ScreenOptions::UpdateEnabledDisabled()
 			bThisRowIsSelectedByBoth = false;
 		m_textOptions[i][0].SetDiffuse( bThisRowIsSelectedByBoth ? colorNotSelected : colorSelected );
 	if( bThisRowIsSelectedByBoth )
-		m_textOptions[i][0].SetEffectCamelion( 2.5, colorSelected, colorNotSelected );
+		m_textOptions[i][0].SetEffectDiffuseCamelion( 1.0f, colorSelected, colorNotSelected );
 	else
 		m_textOptions[i][0].SetEffectNone();
 }

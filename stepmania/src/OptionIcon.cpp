@@ -40,7 +40,7 @@ OptionIcon::OptionIcon()
 
 void OptionIcon::Load( PlayerNumber pn, CString sText, bool bHeader )
 {
-	static CString sStopWords[] = { "OFF", "VISIBLE", "VIVID", "STANDARD", "X1", "HOLDS" };
+	static CString sStopWords[] = { "OFF", "VISIBLE", "VIVID", "STANDARD", "X1", "HOLDS", "DEFAULT" };
 	const int iNumStopWords = sizeof(sStopWords)/sizeof(sStopWords[0]);
 	
 	for( int i=0; i<iNumStopWords; i++ )

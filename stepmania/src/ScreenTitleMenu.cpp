@@ -73,7 +73,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_textHelp.SetText( sHelpText );
 	m_textHelp.SetXY( HELP_X, HELP_Y );
 	m_textHelp.SetZoom( 0.5f );
-	m_textHelp.SetEffectBlinking();
+	m_textHelp.SetEffectDiffuseBlinking();
 	m_textHelp.TurnShadowOn();
 	m_textHelp.SetShadowLength( 2 );
 	this->AddChild( &m_textHelp );
@@ -357,6 +357,6 @@ void ScreenTitleMenu::GainFocus( int iChoiceIndex )
 	color1 = COLOR_SELECTED;
 	color2 = color1 * 0.5f;
 	color2.a = 1;
-	m_textChoice[iChoiceIndex].SetEffectCamelion( 2.5f, color1, color2 );
+	m_textChoice[iChoiceIndex].SetEffectDiffuseCamelion( 0.5f, color1, color2 );
 }
 

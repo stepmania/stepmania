@@ -34,13 +34,10 @@ Actor::Actor()
 	m_HorizAlign = align_center;
 	m_VertAlign = align_middle;
 
-	m_Effect =  no_effect ;
-	m_fPercentBetweenColors = 0.0f;
-	m_bTweeningTowardEndColor = true;
-	m_fDeltaPercentPerSecond = 1.0f;
+	m_Effect =  no_effect;
+	m_fSecsIntoEffect = 0;
+	m_fEffectPeriodSeconds = 1;
 	m_fWagRadians =  0.2f;
-	m_fWagPeriod =  2.0f;
-	m_fWagTimer =  0.0f;
 	m_vSpinVelocity =  RageVector3(0,0,0);
 	m_fVibrationDistance =  5.0f;
 	m_bVisibleThisFrame = false;
@@ -72,35 +69,35 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	//
 	// set temporary drawing properties based on Effects 
 	//
+
+	bool bBlinkOn = m_fSecsIntoEffect/m_fEffectPeriodSeconds > 0.5f;
+	float fPercentBetweenColors = sinf( m_fSecsIntoEffect/m_fEffectPeriodSeconds * 2 * PI ) / 2 + 0.5f;
+	ASSERT( fPercentBetweenColors >= 0  &&  fPercentBetweenColors <= 1 );
+	float fOriginalAlpha = m_temp.diffuse[0].a;
+
 	switch( m_Effect )
 	{
 	case no_effect:
 		break;
-	case blinking:
+	case diffuse_blinking:
 		for(i=0; i<4; i++)
-		{
-			float fOriginalAlpha = m_temp.diffuse[i].a;
-			m_temp.diffuse[i] = m_bTweeningTowardEndColor ? m_effect_colorDiffuse1 : m_effect_colorDiffuse2;
-			m_temp.diffuse[i].a *= fOriginalAlpha;
-		}
+			m_temp.diffuse[i] = bBlinkOn ? m_effectColor1 : m_effectColor2;
 		break;
-	case camelion:
+	case diffuse_camelion:
 		for(i=0; i<4; i++)
-		{
-			float fOriginalAlpha = m_temp.diffuse[i].a;
-			m_temp.diffuse[i] = m_effect_colorDiffuse1*m_fPercentBetweenColors + m_effect_colorDiffuse2*(1.0f-m_fPercentBetweenColors);
-			m_temp.diffuse[i].a *= fOriginalAlpha;
-		}
+			m_temp.diffuse[i] = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
 		break;
-	case glowing:
-		float fCurvedPercent;
-		fCurvedPercent = sinf( m_fPercentBetweenColors * PI );
-		m_temp.glow = m_effect_colorGlow1*fCurvedPercent + m_effect_colorGlow2*(1.0f-fCurvedPercent);
-		m_temp.glow.a *= m_temp.diffuse[0].a;	// don't glow if the Actor is transparent!
+	case glow_blinking:
+		m_temp.glow = bBlinkOn ? m_effectColor1 : m_effectColor2;
+		m_temp.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
+		break;
+	case glow_camelion:
+		m_temp.glow = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
+		m_temp.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
 		break;
 	case wagging:
 		m_temp.rotation.z = m_fWagRadians * sinf( 
-			(m_fWagTimer / m_fWagPeriod)	// percent through wag
+			(m_fSecsIntoEffect / m_fEffectPeriodSeconds)	// percent through wag
 			* 2.0f * PI );
 		break;
 	case spinning:
@@ -118,14 +115,14 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		break;
 	case bouncing:
 		{
-		float fPercentThroughBounce = m_fTimeIntoBounce / m_fBouncePeriod;
-		float fPercentOffset = sinf( fPercentThroughBounce*PI ); 
-		m_temp.pos += m_vectBounce * fPercentOffset;
+			float fPercentThroughBounce = m_fSecsIntoEffect / m_fEffectPeriodSeconds;
+			float fPercentOffset = sinf( fPercentThroughBounce*PI ); 
+			m_temp.pos += m_vectBounce * fPercentOffset;
 		}
 		break;
 	case bobbing:
 		{
-		float fPercentThroughBounce = m_fTimeIntoBounce / m_fBouncePeriod;
+		float fPercentThroughBounce = m_fSecsIntoEffect / m_fEffectPeriodSeconds;
 		float fPercentOffset = sinf( fPercentThroughBounce*PI*2 ); 
 		m_temp.pos += m_vectBounce * fPercentOffset;
 		}
@@ -226,30 +223,16 @@ void Actor::Update( float fDeltaTime )
 	{
 	case no_effect:
 		break;
-	case blinking:
-	case camelion:
-	case glowing:
-		if( m_bTweeningTowardEndColor ) {
-			m_fPercentBetweenColors += m_fDeltaPercentPerSecond * fDeltaTime;
-			if( m_fPercentBetweenColors > 1.0f ) {
-				m_fPercentBetweenColors = 1.0f;
-
-				m_bTweeningTowardEndColor = false;
-			}
-		}
-		else {		// !m_bTweeningTowardEndColor
-			m_fPercentBetweenColors -= m_fDeltaPercentPerSecond * fDeltaTime;
-			if( m_fPercentBetweenColors < 0.0f ) {
-				m_fPercentBetweenColors = 0.0f;
-				m_bTweeningTowardEndColor = true;
-			}
-		}
-		//LOG->Trace( "Actor::m_fPercentBetweenColors %f", m_fPercentBetweenColors );
-		break;
+	case diffuse_blinking:
+	case diffuse_camelion:
+	case glow_blinking:
+	case glow_camelion:
 	case wagging:
-		m_fWagTimer += fDeltaTime;
-		if( m_fWagTimer > m_fWagPeriod )
-			m_fWagTimer -= m_fWagPeriod;
+	case bouncing:
+	case bobbing:
+		m_fSecsIntoEffect += fDeltaTime;
+		while( m_fSecsIntoEffect >= m_fEffectPeriodSeconds )
+			m_fSecsIntoEffect -= m_fEffectPeriodSeconds;
 		break;
 	case spinning:
 		m_current.rotation += m_vSpinVelocity;
@@ -260,12 +243,6 @@ void Actor::Update( float fDeltaTime )
 	case vibrating:
 		break;
 	case flickering:
-		break;
-	case bouncing:
-	case bobbing:
-		m_fTimeIntoBounce += fDeltaTime;
-		if( m_fTimeIntoBounce >= m_fBouncePeriod )
-			m_fTimeIntoBounce -= m_fBouncePeriod;
 		break;
 	}
 
@@ -414,38 +391,47 @@ void Actor::SetEffectNone()
 	//m_color = RageColor( 1.0,1.0,1.0,1.0 );
 }
 
-void Actor::SetEffectBlinking( float fDeltaPercentPerSecond, RageColor Color, RageColor Color2 )
+void Actor::SetEffectDiffuseBlinking( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
-	m_Effect = blinking;
-	m_effect_colorDiffuse1 = Color;
-	m_effect_colorDiffuse2 = Color2;
-
-	m_fDeltaPercentPerSecond = fDeltaPercentPerSecond;
+	m_Effect = diffuse_blinking;
+	m_effectColor1 = c1;
+	m_effectColor2 = c2;
+	m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+	m_fSecsIntoEffect = 0;
 }
 
-void Actor::SetEffectCamelion( float fDeltaPercentPerSecond, RageColor Color, RageColor Color2 )
+void Actor::SetEffectDiffuseCamelion( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
-	m_Effect = camelion;
-	m_effect_colorDiffuse1 = Color;
-	m_effect_colorDiffuse2 = Color2;
-
-	m_fDeltaPercentPerSecond = fDeltaPercentPerSecond;
+	m_Effect = diffuse_camelion;
+	m_effectColor1 = c1;
+	m_effectColor2 = c2;
+	m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+	m_fSecsIntoEffect = 0;
 }
 
-void Actor::SetEffectGlowing( float fDeltaPercentPerSecond, RageColor Color, RageColor Color2 )
+void Actor::SetEffectGlowBlinking( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
-	m_Effect = glowing;
-	m_effect_colorGlow1 = Color;
-	m_effect_colorGlow2 = Color2;
+	m_Effect = glow_blinking;
+	m_effectColor1 = c1;
+	m_effectColor2 = c2;
+	m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+	m_fSecsIntoEffect = 0;
+}
 
-	m_fDeltaPercentPerSecond = fDeltaPercentPerSecond;
+void Actor::SetEffectGlowCamelion( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+{
+	m_Effect = glow_camelion;
+	m_effectColor1 = c1;
+	m_effectColor2 = c2;
+	m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+	m_fSecsIntoEffect = 0;
 }
 
 void Actor::SetEffectWagging(	float fWagRadians, float fWagPeriod )
 {
 	m_Effect = wagging;
 	m_fWagRadians = fWagRadians;
-	m_fWagPeriod = fWagPeriod;
+	m_fEffectPeriodSeconds = fWagPeriod;
 }
 
 void Actor::SetEffectSpinning( RageVector3 vectRotationVelocity )
@@ -470,8 +456,8 @@ void Actor::SetEffectBouncing( RageVector3 vectBounce, float fPeriod )
 	m_Effect = bouncing;
 	
 	m_vectBounce = vectBounce;
-	m_fBouncePeriod = fPeriod;
-	m_fTimeIntoBounce = 0;
+	m_fEffectPeriodSeconds = fPeriod;
+	m_fSecsIntoEffect = 0;
 
 }
 
@@ -480,8 +466,8 @@ void Actor::SetEffectBobbing( RageVector3 vectBob, float fPeriod )
 	m_Effect = bobbing;
 	
 	m_vectBounce = vectBob;
-	m_fBouncePeriod = fPeriod;
-	m_fTimeIntoBounce = 0;
+	m_fEffectPeriodSeconds = fPeriod;
+	m_fSecsIntoEffect = 0;
 
 }
 

@@ -84,12 +84,12 @@ void GroupList::AfterChange()
 	m_sprButton[iSel].StopTweening();
 	m_sprButton[iSel].BeginTweening( 0.2f );
 	m_sprButton[iSel].SetTweenX( BUTTON_SELECTED_X );
-	m_sprButton[iSel].SetEffectGlowing();
+	m_sprButton[iSel].SetEffectGlowCamelion();
 
 	m_screenLabels[iSel].StopTweening();
 	m_screenLabels[iSel].BeginTweening( 0.2f );
 	m_screenLabels[iSel].SetTweenX( BUTTON_SELECTED_X );
-	m_screenLabels[iSel].SetEffectGlowing();
+	m_screenLabels[iSel].SetEffectGlowCamelion();
 }
 
 void GroupList::Up()

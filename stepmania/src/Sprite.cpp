@@ -198,17 +198,17 @@ void Sprite::DrawPrimitives()
 
 	switch( m_HorizAlign )
 	{
-	case align_top:		quadVerticies.left = 0;				quadVerticies.right = m_size.x;		break;
-	case align_middle:	quadVerticies.left = -m_size.x/2;	quadVerticies.right = m_size.x/2;	break;
-	case align_bottom:	quadVerticies.left = -m_size.x;		quadVerticies.right = 0;			break;
+	case align_left:	quadVerticies.left = 0;				quadVerticies.right = m_size.x;		break;
+	case align_center:	quadVerticies.left = -m_size.x/2;	quadVerticies.right = m_size.x/2;	break;
+	case align_right:	quadVerticies.left = -m_size.x;		quadVerticies.right = 0;			break;
 	default:		ASSERT( false );
 	}
 
 	switch( m_VertAlign )
 	{
-	case align_bottom:	quadVerticies.top = 0;				quadVerticies.bottom = m_size.y;	break;
+	case align_top:		quadVerticies.top = 0;				quadVerticies.bottom = m_size.y;	break;
 	case align_middle:	quadVerticies.top = -m_size.y/2;	quadVerticies.bottom = m_size.y/2;	break;
-	case align_top:		quadVerticies.top = -m_size.y;		quadVerticies.bottom = 0;			break;
+	case align_bottom:	quadVerticies.top = -m_size.y;		quadVerticies.bottom = 0;			break;
 	default:		ASSERT( false );
 	}
 

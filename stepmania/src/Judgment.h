@@ -1,17 +1,15 @@
+#ifndef Judgment_H
+#define Judgment_H
 /*
 -----------------------------------------------------------------------------
- File: Judgement.h
+ File: Judgment.h
 
- Desc: A graphic displayed in the Judgement during Dancing.
+ Desc: A graphic displayed in the Judgment during Dancing.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-
-#ifndef JUDGEMENT_H
-#define JUDGEMENT_H
-
 
 #include "Sprite.h"
 #include "ActorFrame.h"
@@ -20,19 +18,19 @@
 #include "PrefsManager.h"
 
 
-class Judgement : public ActorFrame
+class Judgment : public ActorFrame
 {
 public:
-	Judgement();
-	virtual ~Judgement() { }
-	void SetJudgement( TapNoteScore score );
+	Judgment();
+	virtual ~Judgment() { }
+	void SetJudgment( TapNoteScore score );
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
-	virtual void Reset() { m_fDisplayCountdown = .0f; }
+	virtual void Reset() { m_fShowCountdown = .0f; }
 
 protected:
-	Sprite		m_sprJudgement;
-	float		m_fDisplayCountdown;
+	Sprite		m_sprJudgment;
+	float		m_fShowCountdown;
 };
 
 #endif
