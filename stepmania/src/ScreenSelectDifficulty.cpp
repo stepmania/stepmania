@@ -220,7 +220,7 @@ void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 		return;
 
 	int iSwitchToIndex = -1;
-	for( int i=m_iChoiceOnPage[pn]+1; i<m_ModeChoices[m_CurrentPage].size(); i++ )
+	for( int i=m_iChoiceOnPage[pn]+1; i<(int) m_ModeChoices[m_CurrentPage].size(); i++ )
 	{
 		if( GAMESTATE->IsPlayable(m_ModeChoices[m_CurrentPage][i]))
 		{
@@ -273,7 +273,7 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 			}
 		}
 	} else {
-		for( int i=0; i<m_ModeChoices[newPage].size(); i++ )
+		for( unsigned i=0; i<m_ModeChoices[newPage].size(); i++ )
 		{
 			if( GAMESTATE->IsPlayable(m_ModeChoices[newPage][i]))
 			{

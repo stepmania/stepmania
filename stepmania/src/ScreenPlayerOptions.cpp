@@ -530,11 +530,11 @@ float ScreenPlayerOptions::ConvertModToNumber(CString value)
 {
 	if (IsModTimeSpacing(value))
 	{
-		return atof(value.c_str() + 1 );
+		return (float) atof(value.c_str() + 1 );
 	}
 	else
 	{
-		return atof(value.c_str() );
+		return (float) atof(value.c_str() );
 	}
 }
 
