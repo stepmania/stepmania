@@ -90,6 +90,13 @@ void FadingBanner::BeforeChange()
 /* If this returns false, the banner couldn't be loaded. */
 void FadingBanner::LoadFromCachedBanner( const CString &path )
 {
+	/* If we're already on the given banner, don't fade again. */
+	if( m_Banner[GetBackIndex()].GetTexturePath() == path )
+		return;
+
+	/* If we're currently fading to the given banner, go through this again,
+	 * which will cause the fade-in to be further delayed. */
+
 	/* No matter what we load, ensure we don't fade to a stale path. */
 	m_sPendingBanner = "";
 
