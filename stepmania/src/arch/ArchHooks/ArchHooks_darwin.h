@@ -14,13 +14,14 @@
 
 class ArchHooks_darwin : public ArchHooks {
 private:
-    queue<CString> logs;
-    CString aLog;
+    queue<CString> crashLog;
+    vector<CString> staticLog;
+    CString additionalLog;
 
 public:
     ArchHooks_darwin();
     void Log(CString str, bool important);
-    void AdditionalLog(CString str) { aLog = str; }
+    void AdditionalLog(CString str) { additionalLog = str; }
     void MessageBoxOK(CString sMessage, CString ID = "");
     MessageBoxResult MessageBoxAbortRetryIgnore(CString sMessage, CString ID = "");
 };
