@@ -210,17 +210,45 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 }
 
 
+float Song::GetElapsedTimeFromBeat( float fBeat ) const
+{
+	float fElapsedTime = -m_fBeat0OffsetInSeconds;
+
+	for( unsigned j=0; j<m_StopSegments.size(); j++ )	// foreach freeze
+	{
+		if( m_StopSegments[j].m_fStartBeat >= fBeat )
+			break;
+		fElapsedTime += m_StopSegments[j].m_fStopSeconds;
+	}
+
+	for( unsigned i=0; i<m_BPMSegments.size(); i++ ) // foreach BPMSegment
+	{
+		const float fStartBeatThisSegment = m_BPMSegments[i].m_fStartBeat;
+		const bool bIsLastBPMSegment = i==m_BPMSegments.size()-1;
+		const float fStartBeatNextSegment = bIsLastBPMSegment ? 40000/*inf*/ : m_BPMSegments[i+1].m_fStartBeat; 
+		const float fBPS = m_BPMSegments[i].m_fBPM / 60.0f;
+		const float fBeatsInThisSegment = fStartBeatNextSegment - fStartBeatThisSegment;
+
+		fElapsedTime += min(fBeat, fBeatsInThisSegment) / fBPS;
+		fBeat -= fBeatsInThisSegment;
+		
+		if( fBeat <= 0 )
+			return fElapsedTime;
+	}
+
+	ASSERT(0);
+	return fElapsedTime;
+#if 0
 // This is a super hack, but it's only called from ScreenEdit, so it's OK.
 // Writing an inverse function of GetBeatAndBPSFromElapsedTime() uber difficult,
 // so do a binary search to get close to the correct elapsed time.
-float Song::GetElapsedTimeFromBeat( float fBeat ) const
-{
+
 	float fElapsedTimeBestGuess = this->m_fMusicLengthSeconds/2;	//  seconds
 	float fSecondsToMove = fElapsedTimeBestGuess;	//  seconds
 	float fBeatOut, fBPSOut;
 	bool bFreezeOut;
 
-	/* 0.001 gives higher precision and *takes about 7 more iterations than
+	/* 0.001 gives higher precision and takes about 7 more iterations than
 	 * 0.100. A 90-second song took about 9 iterations; now it takes about
 	 * 16.  -glenn */
 	while( fSecondsToMove > 0.001f )
@@ -242,6 +270,7 @@ float Song::GetElapsedTimeFromBeat( float fBeat ) const
 	}
 
 	return fElapsedTimeBestGuess;
+#endif
 }
 
 CString Song::GetCacheFilePath() const
