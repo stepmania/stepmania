@@ -7,20 +7,23 @@
 #include <windows.h>
 #include "../../archutils/Win32/AppInstance.h"
 
-class LoadingWindow_Win32: public LoadingWindow {
-	AppInstance handle;
-	HWND hwnd;
-	CString text[3];
-
-	static BOOL CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
-
+class LoadingWindow_Win32: public LoadingWindow
+{
 public:
-
 	LoadingWindow_Win32();
 	~LoadingWindow_Win32();
 
 	void SetText(CString str);
 	void Paint();
+	void SetIcon( const RageSurface *pIcon );
+
+private:
+	AppInstance handle;
+	HWND hwnd;
+	CString text[3];
+	HICON m_hIcon;
+
+	static BOOL CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 };
 
 #define HAVE_LOADING_WINDOW_WIN32

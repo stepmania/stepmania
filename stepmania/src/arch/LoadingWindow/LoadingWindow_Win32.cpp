@@ -4,6 +4,7 @@
 #include "LoadingWindow_Win32.h"
 #include "RageFileManager.h"
 #include "archutils/win32/WindowsResources.h"
+#include "archutils/win32/WindowIcon.h"
 #include <windows.h>
 #include "RageSurface_Load.h"
 #include "RageSurface.h"
@@ -70,8 +71,19 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 	return FALSE;
 }
 
+void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
+{
+	if( m_hIcon != NULL )
+		DestroyIcon( m_hIcon );
+
+	m_hIcon = IconFromSurface( pIcon );
+	if( m_hIcon != NULL )
+		SetClassLong( hwnd, GCL_HICON, (LONG) m_hIcon );
+}
+
 LoadingWindow_Win32::LoadingWindow_Win32()
 {
+	m_hIcon = NULL;
 	hwnd = CreateDialog(handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc);
 	for( unsigned i = 0; i < 3; ++i )
 		text[i] = "ABC"; /* always set on first call */
@@ -83,6 +95,8 @@ LoadingWindow_Win32::~LoadingWindow_Win32()
 {
 	if( hwnd )
 		DestroyWindow( hwnd );
+	if( m_hIcon != NULL )
+		DestroyIcon( m_hIcon );
 }
 
 void LoadingWindow_Win32::Paint()
