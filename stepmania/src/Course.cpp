@@ -909,24 +909,26 @@ void Course::UpdateCourseStats()
 
 	unsigned i;
 
+	// courses with random/players best-worst songs should go at the end
+	for(i = 0; i < m_entries.size(); i++)
+	{
+		if ( m_entries[i].type == Entry::fixed )
+			continue;
+
+		SortOrder_AvgDifficulty = 9999999; // large number
+		if ( SortOrder_Ranking == 2 )
+			SortOrder_Ranking = 3;
+		SortOrder_TotalDifficulty = 999999;     // large number
+		return;
+	}
+
 	vector<Info> ci;
 	GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci );
 
-	for(i = 0; i < ci.size(); i++)
-	{
-		// courses with random/players best-worst songs should go at the end
-		if (m_entries[ ci[i].CourseIndex ].type != Entry::fixed)
-		{
-			SortOrder_AvgDifficulty = 9999999; // large number
-			if (SortOrder_Ranking == 2) SortOrder_Ranking++;
-			SortOrder_TotalDifficulty = 999999;     // large number
-			return;
-		}
+	for( i = 0; i < ci.size(); i++ )
 		SortOrder_TotalDifficulty += ci[i].pNotes->GetMeter();
-	}
 
 	SortOrder_AvgDifficulty = (float)SortOrder_TotalDifficulty/GetEstimatedNumStages();
-	if (GetEstimatedNumStages() > 7 && SortOrder_Ranking != 1) SortOrder_Ranking = 3;
 
 	// OPTIMIZATION: Ranking info isn't dependant on style, so
 	// call it sparingly.  Its handled on startup and when
