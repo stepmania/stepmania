@@ -96,15 +96,48 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 	default:
 		char c;
 		c = DeviceI.ToChar();
-		if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT)) ||
-			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_RSHIFT)))
+
+		bool bHoldingShift = 
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT)) ||
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_RSHIFT));
+
+		// International keyboards often have other keys mapped to shifted keys, and always 
+		// using a US layout is a bit gimped.  This is better than nothing though.
+		if( bHoldingShift )
 		{
 			c = (char)toupper(c);
+
+			switch( c )
+			{
+			case '`':	c='~';	break;
+			case '1':	c='!';	break;
+			case '2':	c='@';	break;
+			case '3':	c='#';	break;
+			case '4':	c='$';	break;
+			case '5':	c='%';	break;
+			case '6':	c='^';	break;
+			case '7':	c='&';	break;
+			case '8':	c='*';	break;
+			case '9':	c='(';	break;
+			case '0':	c=')';	break;
+			case '-':	c='_';	break;
+			case '=':	c='+';	break;
+			case '[':	c='{';	break;
+			case ']':	c='}';	break;
+			case '\\':	c='|';	break;
+			case ';':	c=':';	break;
+			case '\'':	c='"';	break;
+			case ',':	c='<';	break;
+			case '.':	c='>';	break;
+			case '/':	c='?';	break;
+			}
 		}
 
 		if( c != '\0' )
+		{
 			m_sAnswer += c;
-		m_textAnswer.SetText( m_sAnswer );
+			m_textAnswer.SetText( m_sAnswer );
+		}
 		break;
 	}
 }

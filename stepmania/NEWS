@@ -22,6 +22,12 @@ BUG FIX:  Fixed ez2 real style spacing
 CHANGE:  #SAMPLESTART tag now written in DWI files
 CHANGE:  Editor now snaps while recording
 OPTIMIZATION:  More efficient texture memory usage
+BUG FIX:  Text entry now supports puntuation while holding Shift
+CHANGE:  AutoGen now only generated dance->pump and pump->dance to cut
+	down on initial load time
+CHANGE:  Texure cache disabled because of performance problems on low memory 
+	systems.  If you have >= 128MB memory, you may want re-enable it by 
+	setting UnloadTextureDelaySeconds=1800.
 	
 ------------------------CVS after 3.00 beta 6----------------
 CHANGE:  Missing a jump with the Oni life meter now subtracts only 1 life.

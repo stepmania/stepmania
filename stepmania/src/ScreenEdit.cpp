@@ -82,7 +82,7 @@ const CString SHORTCUT_TEXT = "";
 /*	"S: save changes\n"
 	"W: save as SM and DWI (lossy)\n"
 	"Enter/Space: set begin/end selection markers\n"
-	"G/H/J/K/L: Snap selection to nearest\n"
+	"G/H/J/K/L: Quantize selection to nearest\n"
 	"      4th / 8th / 12th / 16th / 12th or 16th\n"
 	"P: Play selected area\n"
 	"R: Record in selected area\n"
@@ -116,11 +116,11 @@ const CString ACTION_MENU_ITEM_TEXT[NUM_ACTION_MENU_ITEMS] = {
 	"B:      Add/Edit background change at current beat",
 	"Ins:    Insert blank beat and shift down",
 	"Del:    Delete blank beat and shift up",
-	"G:      Snap selection to nearest quarter note",
-	"H:      Snap selection to nearest eighth note",
-	"J:      Snap selection to nearest triplet",
-	"K:      Snap selection to nearest sixteenth note",
-	"L:      Snap selection to nearest triplet or sixteenth note",
+	"G:      Quantize selection to 4th notes",
+	"H:      Quantize selection to 8th notes",
+	"J:      Quantize selection to 12th notes",
+	"K:      Quantize selection to 16th notes",
+	"L:      Quantize selection to 12th or 16th notes",
 	"M:      Play sample music",
 	"S:      Save changes as SM and DWI",
 	"Q:      Quit"
