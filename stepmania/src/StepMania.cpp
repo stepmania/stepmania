@@ -109,7 +109,10 @@ static void ChangeToDirOfExecutable(const char *argv0)
 	 * are and use paths as needed, so we don't depend on the binary being
 	 * in the same place as "Songs" ... */
 	if( !DoesFileExist("Songs") )
+	{
 		chdir( DirOfExecutable );
+		FlushDirCache();
+	}
 #endif
 }
 
