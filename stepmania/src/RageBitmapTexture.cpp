@@ -233,7 +233,7 @@ void RageBitmapTexture::Create()
 		RageSurface *dst = CreateSurface( img->w, img->h, pfd->bpp,
 			pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 
-		SM_SDL_ErrorDiffusionDither(img, dst);
+		RageSurfaceUtils::ErrorDiffusionDither( img, dst );
 		delete img;
 		img = dst;
 	}

@@ -383,9 +383,9 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 		RageSurface *dst = CreateSurface( img->w, img->h, 16,
 			0x7C00, 0x03E0, 0x001F, 0x8000 );
 
-		/* SM_SDL_OrderedDither is still faster than SM_SDL_ErrorDiffusionDither, and
+		/* OrderedDither is still faster than ErrorDiffusionDither, and
 		 * these images are very small and only displayed briefly. */
-		SM_SDL_OrderedDither(img, dst);
+		RageSurfaceUtils::OrderedDither( img, dst );
 		delete img;
 		img = dst;
 	}

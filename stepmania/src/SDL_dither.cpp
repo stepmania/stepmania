@@ -52,7 +52,7 @@ static uint8_t DitherPixel(int x, int y, int intensity,  int conv)
 	return uint8_t((out_intensity + 1) >> 16);
 }
 
-void SM_SDL_OrderedDither(const RageSurface *src, RageSurface *dst)
+void RageSurfaceUtils::OrderedDither( const RageSurface *src, RageSurface *dst )
 {
 	static bool DitherMatCalc_initted = false;
 	if( !DitherMatCalc_initted )
@@ -167,7 +167,7 @@ void SM_SDL_OrderedDither(const RageSurface *src, RageSurface *dst)
 /* This is very similar to SM_SDL_OrderedDither, except instead of using a matrix
  * containing rounding values, we truncate and then add the resulting error for
  * each pixel to the next pixel on the same line.  (Maybe we could do both?) */
-void SM_SDL_ErrorDiffusionDither(const RageSurface *src, RageSurface *dst)
+void RageSurfaceUtils::ErrorDiffusionDither( const RageSurface *src, RageSurface *dst )
 {
 	/* We can't dither to paletted surfaces. */
 	ASSERT( dst->format->BytesPerPixel > 1 );

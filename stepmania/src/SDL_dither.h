@@ -2,8 +2,11 @@
 #define SM_SDL_DITHER_H
 
 struct RageSurface;
-void SM_SDL_OrderedDither(const RageSurface *src, RageSurface *dst);
-void SM_SDL_ErrorDiffusionDither(const RageSurface *src, RageSurface *dst);
+namespace RageSurfaceUtils
+{
+	void OrderedDither(const RageSurface *src, RageSurface *dst);
+	void ErrorDiffusionDither(const RageSurface *src, RageSurface *dst);
+};
 
 #endif
 
