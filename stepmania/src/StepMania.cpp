@@ -31,6 +31,8 @@
 #include "CodeDetector.h"
 #include "CommonMetrics.h"
 #include "Game.h"
+#include "RageSurface.h"
+#include "RageSurface_Load.h"
 
 // temp
 #include "Command.h"
