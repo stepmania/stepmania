@@ -301,7 +301,7 @@ void ScreenSystemLayer::UpdateTimestampAndSkips()
 			if( PREFSMAN->m_bTimestamping )
 				AddTimestampLine( ssprintf("%s: %.0fms (%.0f)", time.c_str(), 1000*UpdateTime, UpdateTime/ExpectedUpdate),
 					colors[skip] );
-			if( PREFSMAN->m_bLogSkips && skip > 1 )
+			if( PREFSMAN->m_bLogSkips )
 				LOG->Trace( "Frame skip: %.0fms (%.0f)", 1000*UpdateTime, UpdateTime/ExpectedUpdate );
 		}
 	}
