@@ -18,6 +18,10 @@ private:
 
 	void GoToNextState();
 	void GoToPrevState();
+
+	void UpdateConnectStatus();
+
+	CString m_sClassName;
 };
 
 #endif

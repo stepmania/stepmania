@@ -318,7 +318,6 @@ void PrefsManager::Init()
 	m_sMemoryCardProfileSubdir = PRODUCT_NAME;
 	m_iProductID = 1;
 
-
 	FOREACH_CONST( IPreference*, *g_pvpSubscribers, p ) (*p)->LoadDefault();
 }
 
@@ -584,6 +583,10 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Debug", "LogCheckpoints",					m_bLogCheckpoints );
 	ini.GetValue( "Debug", "ShowLoadingWindow",					m_bShowLoadingWindow );
 
+#if defined (WITHOUT_NETWORKING)
+#else
+	ini.GetValue( "Options", "LastConnectedServer",				m_sLastServer );
+#endif
 
 	FOREACH( IPreference*, *g_pvpSubscribers, p ) (*p)->ReadFrom( ini );
 }
@@ -829,6 +832,11 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Debug", "LogSkips",							m_bLogSkips );
 	ini.SetValue( "Debug", "LogCheckpoints",					m_bLogCheckpoints );
 	ini.SetValue( "Debug", "ShowLoadingWindow",					m_bShowLoadingWindow );
+
+#if defined (WITHOUT_NETWORKING)
+#else
+	ini.SetValue( "Options", "LastConnectedServer",				m_sLastServer );
+#endif
 
 	FOREACH_CONST( IPreference*, *g_pvpSubscribers, p ) (*p)->WriteTo( ini );
 

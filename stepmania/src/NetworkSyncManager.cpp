@@ -11,6 +11,7 @@ NetworkSyncManager::~NetworkSyncManager () { }
 void NetworkSyncManager::CloseConnection() { }
 void NetworkSyncManager::PostStartUp(const CString& ServerIP ) { }
 bool NetworkSyncManager::Connect(const CString& addy, unsigned short port) { return false; }
+CString NetworkSyncManager::GetServerName() { }
 void NetworkSyncManager::ReportNSSOnOff(int i) { }
 void NetworkSyncManager::ReportTiming(float offset, int PlayerNumber) { }
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo) { }
@@ -254,6 +255,11 @@ void NetworkSyncManager::ReportNSSOnOff(int i)
 	m_packet.Write1( NSCSMS );
 	m_packet.Write1( (uint8_t) i );
 	NetPlayerClient->SendPack((char*)m_packet.Data, m_packet.Position);
+}
+
+CString NetworkSyncManager::GetServerName() 
+{ 
+	return m_ServerName;
 }
 
 void NetworkSyncManager::ReportTiming(float offset, int PlayerNumber)

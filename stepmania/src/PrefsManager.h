@@ -283,6 +283,13 @@ public:
 
 	void ResetToFactoryDefaults();
 
+#if defined (WITHOUT_NETWORKING)
+#else
+	/* Network Info */
+	CString			m_sLastServer;
+#endif
+
+
 	//
 	// For self-registering prefs
 	//

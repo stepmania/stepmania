@@ -91,6 +91,7 @@ public:
 	void ReportStyle();		//Report to server the style, players, and names
 	void ReportNSSOnOff(int i);	//Report song selection screen on/off
 	void StartRequest(short position);	//Request a start.  Block until granted.
+	CString GetServerName();
 	
 	//SMOnline stuff
 	void SendSMOnline( PacketFunctions &PackData );

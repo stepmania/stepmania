@@ -12,16 +12,10 @@
 #include "ScreenPrompt.h"
 #include "NetworkSyncServer.h"
 
-
 enum {
 	PO_CONNECTION,
 	PO_SERVER,
 	NUM_NETWORK_OPTIONS_LINES
-};
-
-enum {
-	NO_DISCONNECT=0,
-	NO_CONNECT
 };
 
 enum {
@@ -41,14 +35,17 @@ ScreenNetworkOptions::ScreenNetworkOptions( CString sClassName ) : ScreenOptions
 {
 	LOG->Trace( "ScreenNetworkOptions::ScreenNetworkOptions()" );
 
+	m_sClassName = sClassName;
+
 	g_NetworkOptionsLines[PO_CONNECTION].choices.clear();
-	g_NetworkOptionsLines[PO_CONNECTION].choices.push_back("Disconnect");
-	g_NetworkOptionsLines[PO_CONNECTION].choices.push_back("Connect...");
+	if ( NSMAN->useSMserver )
+		g_NetworkOptionsLines[PO_CONNECTION].choices.push_back("Disconnect from "+NSMAN->GetServerName());
+	else
+		g_NetworkOptionsLines[PO_CONNECTION].choices.push_back("Connect...");
 
 	g_NetworkOptionsLines[PO_SERVER].choices.clear();
 	g_NetworkOptionsLines[PO_SERVER].choices.push_back("Stop");
 	g_NetworkOptionsLines[PO_SERVER].choices.push_back("Start...");
-	
 	
 	Init( 
 		INPUTMODE_SHARE_CURSOR, 
@@ -79,6 +76,11 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 			CString sNewName = ScreenTextEntry::s_sLastAnswer;
 			NSMAN->PostStartUp(sNewName);
 			NSMAN->DisplayStartupStatus();
+			UpdateConnectStatus( );
+#if defined( WITHOUT_NETWORKING )
+#else
+			PREFSMAN->m_sLastServer = ScreenTextEntry::s_sLastAnswer;
+#endif
 		}
 		break;
 	case SM_ServerNameEnter:
@@ -103,18 +105,17 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 {
+#if defined( WITHOUT_NETWORKING )
+#else
 	switch( GetCurrentRow() )
 	{
 	case PO_CONNECTION:
-		switch (m_Rows[GetCurrentRow()]->GetOneSharedSelection())
-		{
-		case NO_CONNECT:
-			SCREENMAN->TextEntry( SM_DoneConnecting, "Enter a Network Address\n127.0.0.1 to connect to yourself", "", NULL );
-			break;
-		case NO_DISCONNECT:
+		if ( !NSMAN->useSMserver )
+			SCREENMAN->TextEntry( SM_DoneConnecting, "Enter a Network Address\n127.0.0.1 to connect to yourself", PREFSMAN->m_sLastServer );
+		else {
 			NSMAN->CloseConnection();
 			SCREENMAN->SystemMessage("Disconnected from server.");
-			break;
+			UpdateConnectStatus( );
 		}
 		break;
 	case PO_SERVER:
@@ -135,17 +136,16 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 	default:
 		ScreenOptions::MenuStart( pn, type );
 	}
+#endif
 }
 
-void ScreenNetworkOptions::ImportOptions()
+void ScreenNetworkOptions::ImportOptions() { }
+void ScreenNetworkOptions::ExportOptions() { }
+
+void ScreenNetworkOptions::UpdateConnectStatus( )
 {
-
+	SCREENMAN->SetNewScreen( m_sClassName );
 }
-void ScreenNetworkOptions::ExportOptions()
-{
-
-}
-
 #endif
 
 /*
