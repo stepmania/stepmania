@@ -21,6 +21,9 @@ public:
 	void WriteLineHr( HRESULT hr, LPCTSTR fmt, ...);
 	void Flush();
 
+	void ShowConsole();
+	void HideConsole();
+
 protected:
 	FILE* m_fileLog;
 };

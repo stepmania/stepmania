@@ -310,9 +310,9 @@ void ScreenEditMenu::MenuStart( const PlayerNumber p )
 
 	MUSIC->Stop();
 
-	SONGMAN->m_pCurSong = GetSelectedSong();
+	SONGMAN->SetCurrentSong( GetSelectedSong() );
 	GAMEMAN->m_CurNotesType = GetSelectedNotesType();
-	SONGMAN->m_pCurNotes[PLAYER_1] = GetSelectedNotes();
+	SONGMAN->SetCurrentNotes( PLAYER_1, GetSelectedNotes() );
 
 	m_soundSelect.PlayRandom();
 

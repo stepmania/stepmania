@@ -190,7 +190,7 @@ void MenuElements::TweenOnScreenFromBlack( ScreenMessage smSendWhenDone )
 {
 	TweenTopLayerOnScreen();
 	TweenBottomLayerOnScreen();
-	m_Wipe.OpenWipingRight( smSendWhenDone );
+	//m_Wipe.OpenWipingRight( smSendWhenDone );
 	m_soundSwoosh.Play();
 }
 
@@ -201,9 +201,11 @@ void MenuElements::TweenOffScreenToBlack( ScreenMessage smSendWhenDone, bool bPl
 		TweenTopLayerOffScreen();
 		TweenBottomLayerOffScreen();
 	}
-	m_Wipe.CloseWipingRight( smSendWhenDone );
-	if( bPlayBackSound )
+	else
+	{
 		m_soundBack.Play();
+		m_Wipe.CloseWipingLeft( smSendWhenDone );
+	}
 }
 
 void MenuElements::DrawPrimitives()

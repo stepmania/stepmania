@@ -233,7 +233,9 @@ void MainLoop()
 	CreateObjects( g_hWndMain );	// Create the game objects
 
 	ShowWindow( g_hWndMain, SW_SHOW );
-
+#ifdef RELEASE
+	LOG->HideConsole();
+#endif
 
 	// Now we're ready to recieve and process Windows messages.
 	MSG msg;

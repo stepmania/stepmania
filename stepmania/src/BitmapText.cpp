@@ -229,9 +229,73 @@ void BitmapText::DrawPrimitives()
 		iY += iHeight;
 	}
 
-	//
+	pVB->Unlock();
+
+
+
+	// Set the stage...
+	LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
+	pd3dDevice->SetTexture( 0, pTexture->GetD3DTexture() );
+
+	pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
+	pd3dDevice->SetRenderState( D3DRS_DESTBLEND, m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
+
+	pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
+	pd3dDevice->SetStreamSource( 0, pVB, sizeof(RAGEVERTEX) );
+
+
+
+	//////////////////////
+	// render the shadow
+	//////////////////////
+	if( m_bShadow  &&  m_temp_colorDiffuse[0].a != 0 )
+	{
+		DISPLAY->PushMatrix();
+		DISPLAY->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
+
+		DWORD dwColor = D3DXCOLOR(0,0,0,0.5f*m_temp_colorDiffuse[0].a);	// semi-transparent black
+
+		/*
+		// YUCK.  It is very common in crapier drivers that the texture factor doesn't work.
+		// Too bad because using the texture factor instead of recoloring the verticies is very fast.
+		pd3dDevice->SetRenderState( D3DRS_TEXTUREFACTOR, dwColor );
+
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TFACTOR );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG1 );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_TFACTOR );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+		*/
+
+		// recolor the verticies for a shadow
+		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+		for( int i=0; i<iNumV; i++ )
+			v[i].color = dwColor;
+		pVB->Unlock();
+
+		
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+
+
+		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, iNumV/3 );
+
+		DISPLAY->PopMatrix();
+	}
+
+
+	//////////////////////
+	// render the diffuse pass
+	//////////////////////
+
+		//
 	// set vertex colors for the diffuse pass
 	//
+	pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+
 	if( m_bRainbow )
 	{
 		int color_index = (GetTickCount() / 200) % NUM_RAINBOW_COLORS;
@@ -259,46 +323,6 @@ void BitmapText::DrawPrimitives()
 
 	pVB->Unlock();
 
-
-
-	// Set the stage...
-	LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
-	pd3dDevice->SetTexture( 0, pTexture->GetD3DTexture() );
-
-	pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
-	pd3dDevice->SetRenderState( D3DRS_DESTBLEND, m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
-
-	pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
-	pd3dDevice->SetStreamSource( 0, pVB, sizeof(RAGEVERTEX) );
-
-
-
-	//////////////////////
-	// render the shadow
-	//////////////////////
-	if( m_bShadow  &&  m_temp_colorDiffuse[0].a != 0 )
-	{
-		DISPLAY->PushMatrix();
-		DISPLAY->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
-
-		DWORD dwColor = D3DXCOLOR(0,0,0,0.5f*m_temp_colorDiffuse[0].a);	// semi-transparent black
-		pd3dDevice->SetRenderState( D3DRS_TEXTUREFACTOR, dwColor );
-
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TFACTOR );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG1 );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_TFACTOR );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-
-		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, iNumV/3 );
-
-		DISPLAY->PopMatrix();
-	}
-
-
-	//////////////////////
-	// render the diffuse pass
-	//////////////////////
 	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
 	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
 	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );
@@ -315,6 +339,11 @@ void BitmapText::DrawPrimitives()
 	if( m_temp_colorAdd.a != 0 )
 	{
 		DWORD dwColor = m_temp_colorAdd;
+
+		/*
+		// See above comment about some cards not correctly handling the
+		// texture factor render state.
+
 		pd3dDevice->SetRenderState( D3DRS_TEXTUREFACTOR, dwColor );
 
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TFACTOR );
@@ -322,7 +351,20 @@ void BitmapText::DrawPrimitives()
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_TFACTOR );
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-		
+		*/
+
+		// recolor the verticies for
+		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+		for( int i=0; i<iNumV; i++ )
+			v[i].color = dwColor;
+		pVB->Unlock();
+
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+
 		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, iNumV/3 );
 	}
 

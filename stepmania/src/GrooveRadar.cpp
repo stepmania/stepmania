@@ -146,12 +146,10 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	LPDIRECT3DVERTEXBUFFER8 pVB = DISPLAY->GetVertexBuffer();
 	LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
 	pd3dDevice->SetTexture( 0, NULL );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
 	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
 	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
 	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_SELECTARG2 );
 	RAGEVERTEX* v;
 
 	for( int p=0; p<NUM_PLAYERS; p++ )

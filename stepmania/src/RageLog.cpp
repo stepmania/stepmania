@@ -31,10 +31,7 @@ RageLog::RageLog()
 	// delete old log files
 	DeleteFile( LOG_FILE_NAME );
 
-	// create a new console window and attach standard handles
-	AllocConsole();
-	freopen("CONOUT$","wb",stdout);
-	freopen("CONOUT$","wb",stderr);
+	ShowConsole();
 
 	// Open log file and leave it open.  Let the OS close it when the app exits
 	m_fileLog = fopen( LOG_FILE_NAME, "w" );
@@ -51,9 +48,22 @@ RageLog::RageLog()
 
 RageLog::~RageLog()
 {
-	FreeConsole();
 	Flush();
+	FreeConsole();
 	fclose( m_fileLog );
+}
+
+void RageLog::ShowConsole()
+{
+	// create a new console window and attach standard handles
+	AllocConsole();
+	freopen("CONOUT$","wb",stdout);
+	freopen("CONOUT$","wb",stderr);
+}
+
+void RageLog::HideConsole()
+{
+	FreeConsole();
 }
 
 void RageLog::WriteLine( LPCTSTR fmt, ...)

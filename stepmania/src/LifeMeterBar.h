@@ -35,5 +35,5 @@ private:
 	float		m_fLifePercentage;
 	float		m_fTrailingLifePercentage;	// this approaches m_fLifePercentage
 	float		m_fLifeVelocity;	// how m_fTrailingLifePercentage approaches m_fLifePercentage
-	bool		m_bHasFailed;
+	bool		m_bHasFailed;		// set this to true when life dips below 0
 };

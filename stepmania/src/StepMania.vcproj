@@ -719,12 +719,6 @@
 			<File
 				RelativePath="ScoreDisplayRolling.h">
 			</File>
-			<File
-				RelativePath="ScoreDisplayRollingWithFrame.cpp">
-			</File>
-			<File
-				RelativePath="ScoreDisplayRollingWithFrame.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Rage"

@@ -42,10 +42,11 @@ public:
 
 	// Options that are NOT saved between sessions
 	DifficultyClass	m_PreferredDifficultyClass[NUM_PLAYERS];
-	SongSortOrder	m_SongSortOrder;				// used by MusicWheel and should be saved until the app exits
+	SongSortOrder	m_SongSortOrder;			// used by MusicWheel and should be saved until the app exits
 	PlayMode		m_PlayMode;
-	int				m_iCurrentStage;				// starts at 1, and is incremented with each Stage Clear
+	int				m_iCurrentStageIndex;		// starts at 0, and is incremented with each Stage Clear
 
+	int				GetStageIndex();
 	int				GetStageNumber();
 	bool			IsFinalStage();
 	CString			GetStageText();

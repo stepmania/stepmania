@@ -15,6 +15,9 @@
 #include "ThemeManager.h"
 
 
+const float SCORE_TWEEN_TIME = 0.5f;
+
+
 ScoreDisplayRolling::ScoreDisplayRolling()
 {
 	LOG->WriteLine( "ScoreDisplayRolling::ScoreDisplayRolling()" );
@@ -23,12 +26,7 @@ ScoreDisplayRolling::ScoreDisplayRolling()
 	Load( THEME->GetPathTo(FONT_SCORE_NUMBERS) );
 	TurnShadowOff();
 
-	// init the digits
-	for( int i=0; i<NUM_SCORE_DIGITS; i++ )
-	{
-		m_iCurrentScoreDigits[i] = 0;
-		m_iDestinationScoreDigits[i] = 0;
-	}
+	m_fTrailingScore = 0;
 
 	SetScore( 0 );
 }
@@ -43,15 +41,9 @@ void ScoreDisplayRolling::SetScore( float fNewScore )
 { 
 	m_fScore = fNewScore;
 
-	// super inefficient (but isn't called very often)
-	CString sFormatString = ssprintf( "%%%d.0f", NUM_SCORE_DIGITS );
-	CString sScore = ssprintf( sFormatString, fNewScore );
+	float fDelta = m_fScore - m_fTrailingScore;
 
-	for( int i=0; i<NUM_SCORE_DIGITS; i++ )
-	{
-		m_iDestinationScoreDigits[i] = atoi( sScore.Mid(i,1) );
-	}
-
+	m_fScoreVelocity = fDelta / SCORE_TWEEN_TIME;	// in score units per second
 }
 
 
@@ -64,35 +56,31 @@ float ScoreDisplayRolling::GetScore()
 void ScoreDisplayRolling::Update( float fDeltaTime )
 {
 	BitmapText::Update( fDeltaTime );
+
+	float fDeltaBefore = m_fScore - m_fTrailingScore;
+	m_fTrailingScore += m_fScoreVelocity * fDeltaTime;
+	float fDeltaAfter = m_fScore - m_fTrailingScore;
+
+	if( fDeltaBefore * fDeltaAfter < 0 )	// the sign changed
+	{
+		m_fTrailingScore = m_fScore;
+		m_fScoreVelocity = 0;
+	}
+
 }
 
 void ScoreDisplayRolling::Draw()
 {
-	// find the leftmost current digit that doesn't match the destination digit
-	for( int i=0; i<NUM_SCORE_DIGITS; i++ )
+	if( m_fScore == 0 )
 	{
-		if( m_iCurrentScoreDigits[i] != m_iDestinationScoreDigits[i] )
-			break;
+		CString sFormat = ssprintf( "%%%d.0d", NUM_SCORE_DIGITS );
+		SetText( ssprintf(sFormat, 0) );
 	}
-
-	// and increment that digit and everything after
-	for( ; i<NUM_SCORE_DIGITS; i++ )
+	else
 	{
-		m_iCurrentScoreDigits[i]++;
-		if( m_iCurrentScoreDigits[i] > 9 )
-			m_iCurrentScoreDigits[i] = 0;
+		CString sFormat = ssprintf( "%%%d.0f", NUM_SCORE_DIGITS );
+		SetText( ssprintf(sFormat, m_fTrailingScore) );
 	}
-
-	int iCurScore = 0;
-	int iMultiplier = 1;
-	for( int d=NUM_SCORE_DIGITS-1; d>=0; d-- )		// foreach digit
-	{
-		iCurScore += m_iCurrentScoreDigits[d] * iMultiplier;
-		iMultiplier *= 10;
-	}
-
-	CString sFormat = ssprintf( "%%%d.0d", NUM_SCORE_DIGITS );
-	SetText( ssprintf(sFormat, iCurScore) );
 
 	BitmapText::Draw();
 }

@@ -31,20 +31,24 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 {
 	bool bWasDoingGreat = IsDoingGreat();
 
+	float fDeltaLife;
 	switch( score )
 	{
-	case TNS_PERFECT:	m_fLifePercentage += 0.02f;	break;
-	case TNS_GREAT:		m_fLifePercentage += 0.01f;	break;
-	case TNS_GOOD:		m_fLifePercentage += 0.00f;	break;
-	case TNS_BOO:		m_fLifePercentage -= 0.05f;	break;
-	case TNS_MISS:		m_fLifePercentage -= 0.10f;	break;
+	case TNS_PERFECT:	fDeltaLife = +0.02f;	break;
+	case TNS_GREAT:		fDeltaLife = +0.01f;	break;
+	case TNS_GOOD:		fDeltaLife = +0.00f;	break;
+	case TNS_BOO:		fDeltaLife = -0.06f;	break;
+	case TNS_MISS:		fDeltaLife = -0.12f;	break;
 	}
+
+	if( bWasDoingGreat && !IsDoingGreat() )
+		fDeltaLife = -0.12f;		// make it take a while to get back to "doing great"
+
+	m_fLifePercentage += fDeltaLife;
 	m_fLifePercentage = clamp( m_fLifePercentage, 0, 1 );
 
-	bool bIsDoingGreat = IsDoingGreat();
-
-	if( bWasDoingGreat && !bIsDoingGreat )
-		m_fLifePercentage -= 0.10f;		// make it take a while to get back to "doing great"
+	if( m_fLifePercentage == 0 )
+		m_bHasFailed = true;
 
 	ResetBarVelocity();
 }
@@ -74,24 +78,16 @@ bool LifeMeterBar::HasFailed()
 
 void LifeMeterBar::Update( float fDeltaTime )
 {
-	m_fLifeVelocity *= 1-fDeltaTime*2;	// dampen
+	float fDelta = m_fLifePercentage - m_fTrailingLifePercentage;
+	m_fLifeVelocity += fDelta * fDeltaTime;		// accelerate
+	m_fLifeVelocity *= 1-fDeltaTime;		// dampen
+	m_fTrailingLifePercentage += m_fLifeVelocity * fDeltaTime;
 
-	// there are some cases where we want to snap the meter
-	bool bSnap = m_fTrailingLifePercentage >= 1;
+	float fNewDelta = m_fLifePercentage - m_fTrailingLifePercentage;
 
-	if( bSnap )
-	{
-		m_fTrailingLifePercentage = m_fLifePercentage;
-		m_fLifeVelocity = 0;
-	}
-	else
-	{
-		m_fTrailingLifePercentage += m_fLifeVelocity * fDeltaTime;
-		m_fTrailingLifePercentage = clamp( m_fTrailingLifePercentage, 0, 1 );
-	}
-
-	if( m_fLifePercentage == 0 )
-		m_bHasFailed = true;
+	if( fDelta * fNewDelta < 0 )	// the deltas have different signs
+		m_fLifeVelocity /= 4;
+	m_fTrailingLifePercentage = clamp( m_fTrailingLifePercentage, 0, 1 );
 }
 
 

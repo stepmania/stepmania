@@ -71,8 +71,6 @@ void GradeDisplay::SetGrade( Grade g )
 
 	StopUsingCustomCoords();
 
-	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-
 	switch( g )
 	{
 	case GRADE_AAA:		SetState(0);	break;

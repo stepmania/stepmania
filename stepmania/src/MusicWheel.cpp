@@ -146,14 +146,14 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 		break;
 	case TYPE_SONG:
 		{
-		m_TextBanner.LoadFromSong( m_pSong );
-		D3DXCOLOR color = m_color;
-		color.r += 0.15f;
-		color.g += 0.15f;
-		color.b += 0.15f;
-		m_TextBanner.SetDiffuseColor( color );
-		m_MusicStatusDisplay.SetType( m_MusicStatusDisplayType );
-		RefreshGrades();
+			m_TextBanner.LoadFromSong( m_pSong );
+			D3DXCOLOR color = m_color;
+			color.r += 0.15f;
+			color.g += 0.15f;
+			color.b += 0.15f;
+			m_TextBanner.SetDiffuseColor( color );
+			m_MusicStatusDisplay.SetType( m_MusicStatusDisplayType );
+			RefreshGrades();
 		}
 		break;
 	case TYPE_ROULETTE:
@@ -167,6 +167,7 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 
 void WheelItemDisplay::RefreshGrades()
 {
+	// Refresh Grades
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
@@ -175,19 +176,21 @@ void WheelItemDisplay::RefreshGrades()
 			continue;
 		}
 
-		const DifficultyClass dc = PREFSMAN->m_PreferredDifficultyClass[p];
 		if( m_pSong )	// this is a song display
 		{
+			const DifficultyClass dc = PREFSMAN->m_PreferredDifficultyClass[p];
 			const Grade grade = m_pSong->GetGradeForDifficultyClass( GAMEMAN->GetCurrentStyleDef()->m_NotesType, dc );
 			m_GradeDisplay[p].SetGrade( grade );
-			m_GradeDisplay[p].SetDiffuseColor( PlayerToColor((PlayerNumber)p) );
+			//m_GradeDisplay[p].SetDiffuseColor( PlayerToColor((PlayerNumber)p) );
 		}
 		else	// this is a section display
 		{
 			m_GradeDisplay[p].SetGrade( GRADE_NO_DATA );
 		}
 	}
+
 }
+
 
 void WheelItemDisplay::Update( float fDeltaTime )
 {
@@ -247,15 +250,20 @@ MusicWheel::MusicWheel()
 		GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;
 
 
+	m_frameOverlay.SetXY( 0, 0 );
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
+		if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
+			continue;	// skip
+
 		m_sprHighScoreFrame[p].Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_SCORE_FRAME) );
 		m_sprHighScoreFrame[p].SetXY( SCORE_X, SCORE_Y[p] );
-		this->AddActor( &m_sprHighScoreFrame[p] );
+		m_frameOverlay.AddActor( &m_sprHighScoreFrame[p] );
 
 		m_HighScore[p].SetXY( SCORE_X, SCORE_Y[p]*0.97f );
 		m_HighScore[p].SetZoom( 0.6f );
-		this->AddActor( &m_HighScore[p] );
+		m_frameOverlay.AddActor( &m_HighScore[p] );
 	}
 	
 	m_sprHighScoreFrame[1].SetZoomY( -1 );	// flip vertically
@@ -265,11 +273,14 @@ MusicWheel::MusicWheel()
 	m_sprSelectionOverlay.SetXY( 0, 0 );
 	m_sprSelectionOverlay.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 	m_sprSelectionOverlay.SetEffectGlowing( 1.0f, D3DXCOLOR(1,1,1,0.4f), D3DXCOLOR(1,1,1,1) );
-	this->AddActor( &m_sprSelectionOverlay );
+	m_frameOverlay.AddActor( &m_sprSelectionOverlay );
 
 	m_MusicSortDisplay.SetXY( SORT_ICON_ON_SCREEN_X, SORT_ICON_ON_SCREEN_Y );
 	m_MusicSortDisplay.SetEffectGlowing( 1.0f );
-	this->AddActor( &m_MusicSortDisplay );
+	m_frameOverlay.AddActor( &m_MusicSortDisplay );
+
+	this->AddActor( &m_frameOverlay );
+
 
 	m_ScrollBar.SetX( SCROLLBAR_X ); 
 	this->AddActor( &m_ScrollBar );
@@ -315,7 +326,7 @@ MusicWheel::MusicWheel()
 		SONGMAN->GetSongsInGroup( SONGMAN->m_sPreferredGroup, arraySongs );
 	
 		if( arraySongs.GetSize() > 0 )
-			SONGMAN->m_pCurSong = arraySongs[0];	// select the first song
+			SONGMAN->SetCurrentSong( arraySongs[0] );	// select the first song
 	}
 
 
@@ -324,7 +335,7 @@ MusicWheel::MusicWheel()
 		// find the previously selected song (if any)
 		for( int i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
 		{
-			if( GetCurWheelItemDatas()[i].m_pSong == SONGMAN->m_pCurSong )
+			if( GetCurWheelItemDatas()[i].m_pSong == SONGMAN->GetCurrentSong() )
 			{
 				m_iSelection = i;		// select it
 				m_sExpandedSectionName = GetCurWheelItemDatas()[m_iSelection].m_sSectionName;	// make its group the currently expanded group
@@ -572,8 +583,8 @@ void MusicWheel::RebuildWheelItemDisplays()
 void MusicWheel::NotesChanged( PlayerNumber pn )	// update grade graphics and top score
 {
 	DifficultyClass dc = PREFSMAN->m_PreferredDifficultyClass[pn];
-	Song* pSong = SONGMAN->m_pCurSong;
-	Notes* m_pNotes = SONGMAN->m_pCurNotes[pn];
+	Song* pSong = SONGMAN->GetCurrentSong();
+	Notes* m_pNotes = SONGMAN->GetCurrentNotes( pn );
 	
 	if( m_pNotes )
 		m_HighScore[pn].SetScore( (float)m_pNotes->m_iTopScore );
@@ -886,12 +897,22 @@ void MusicWheel::TweenOnScreen()
 	}
 
 
-	float fX = GetBannerX(0);
-	float fY = GetBannerY(0);
-	m_sprSelectionOverlay.SetXY( fX+320, fY );
-	m_sprSelectionOverlay.BeginTweeningQueued( 0.5f );	// sleep
-	m_sprSelectionOverlay.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_BEGIN );
-	m_sprSelectionOverlay.SetTweenX( fX );
+	float fX, fY;
+	
+	fX = GetBannerX(0);
+	fY = GetBannerY(0);
+	m_frameOverlay.SetXY( fX+320, fY );
+	m_frameOverlay.BeginTweeningQueued( 0.5f );	// sleep
+	m_frameOverlay.BeginTweeningQueued( 0.4f, Actor::TWEEN_BIAS_BEGIN );
+	m_frameOverlay.SetTweenX( fX );
+
+
+	fX = m_ScrollBar.GetX();
+	fY = m_ScrollBar.GetY();
+	m_ScrollBar.SetXY( fX+30, fY );
+	m_ScrollBar.BeginTweeningQueued( 0.7f );	// sleep
+	m_ScrollBar.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_BEGIN );
+	m_ScrollBar.SetTweenX( fX );	
 
 
 	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
@@ -927,12 +948,18 @@ void MusicWheel::TweenOffScreen()
 	}
 
 
-	float fX = GetBannerX(0);
-	float fY = GetBannerY(0);
-	m_sprSelectionOverlay.SetXY( fX, fY );
-	m_sprSelectionOverlay.BeginTweeningQueued( 0 );	// sleep
-	m_sprSelectionOverlay.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_END );
-	m_sprSelectionOverlay.SetTweenX( fX+320 );
+	float fX, fY;
+	fX = GetBannerX(0);
+	fY = GetBannerY(0);
+	m_frameOverlay.SetXY( fX, fY );
+	m_frameOverlay.BeginTweeningQueued( 0 );	// sleep
+	m_frameOverlay.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_END );
+	m_frameOverlay.SetTweenX( fX+320 );
+
+
+	m_ScrollBar.BeginTweeningQueued( 0 );
+	m_ScrollBar.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_BEGIN );
+	m_ScrollBar.SetTweenX( m_ScrollBar.GetX()+30 );	
 
 
 	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )

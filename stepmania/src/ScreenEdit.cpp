@@ -53,7 +53,7 @@ ScreenEdit::ScreenEdit()
 {
 	LOG->WriteLine( "ScreenEdit::ScreenEdit()" );
 
-	m_pSong = SONGMAN->m_pCurSong;
+	m_pSong = SONGMAN->GetCurrentSong();
 
 	m_Mode = MODE_EDIT;
 
@@ -80,7 +80,7 @@ ScreenEdit::ScreenEdit()
 	NoteData noteData;
 	noteData.m_iNumTracks = GAMEMAN->GetCurrentStyleDef()->m_iColsPerPlayer;
 	if( SONGMAN->m_pCurNotes[PLAYER_1] != NULL )
-		noteData = *SONGMAN->m_pCurNotes[PLAYER_1]->GetNoteData();
+		noteData = *SONGMAN->GetCurrentNotes(PLAYER_1)->GetNoteData();
 
 	m_NoteFieldEdit.SetXY( EDIT_CENTER_X, EDIT_GRAY_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
@@ -364,20 +364,20 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		case DIK_S:
 			// copy edit into current Notes
 			Notes* pNotes;
-			pNotes = SONGMAN->m_pCurNotes[PLAYER_1];
+			pNotes = SONGMAN->GetCurrentNotes(PLAYER_1);
 
 			if( pNotes == NULL )
 			{
 				// allocate a new Notes
-				SONGMAN->m_pCurSong->m_arrayNotes.SetSize( SONGMAN->m_pCurSong->m_arrayNotes.GetSize() + 1 );
-				pNotes = &SONGMAN->m_pCurSong->m_arrayNotes[ SONGMAN->m_pCurSong->m_arrayNotes.GetSize()-1 ];
+				SONGMAN->GetCurrentSong()->m_arrayNotes.SetSize( SONGMAN->GetCurrentSong()->m_arrayNotes.GetSize() + 1 );
+				pNotes = &SONGMAN->GetCurrentSong()->m_arrayNotes[ SONGMAN->GetCurrentSong()->m_arrayNotes.GetSize()-1 ];
 				pNotes->m_NotesType = GAMEMAN->m_CurNotesType;
 				pNotes->m_sDescription = "Untitled";
 				pNotes->m_iMeter = 1;
 			}
 
 			pNotes->SetNoteData( (NoteData*)&m_NoteFieldEdit );
-			SONGMAN->m_pCurSong->Save();
+			SONGMAN->GetCurrentSong()->Save();
 			break;
 		case DIK_UP:
 		case DIK_DOWN:

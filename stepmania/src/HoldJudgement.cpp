@@ -23,6 +23,7 @@ HoldJudgement::HoldJudgement()
 	m_fDisplayCountdown = 0;
 	m_sprJudgement.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_JUDGEMENT) );
 	m_sprJudgement.StopAnimating();
+	m_sprJudgement.TurnShadowOn();
 	this->AddActor( &m_sprJudgement );
 }
 

@@ -15,6 +15,7 @@
 #include "IniFile.h"
 #include "RageLog.h"
 #include "ErrorCatcher/ErrorCatcher.h"
+#include "PrefsManager.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -35,9 +36,12 @@ const int NUM_GROUP_COLORS = sizeof(GROUP_COLORS) / sizeof(D3DXCOLOR);
 
 SongManager::SongManager()
 {
-	m_pCurSong = NULL;
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		m_pCurNotes[p] = NULL;
+	for( int i=0; i<MAX_SONG_QUEUE_SIZE; i++ )
+	{
+		m_pCurSong[i] = NULL;
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			m_pCurNotes[i][p] = NULL;
+	}
 
 	InitSongArrayFromDisk();
 	ReadStatisticsFromDisk();
@@ -49,6 +53,27 @@ SongManager::~SongManager()
 	SaveStatisticsToDisk();
 	CleanUpSongArray();
 	m_arrayGroupNames.RemoveAll();
+}
+
+
+Song* SongManager::GetCurrentSong()
+{
+	return m_pCurSong[ PREFSMAN->GetStageIndex() ];
+}
+
+Notes* SongManager::GetCurrentNotes( PlayerNumber p )
+{
+	return m_pCurNotes[ PREFSMAN->GetStageIndex() ][p];
+}
+
+void SongManager::SetCurrentSong( Song* pSong )
+{
+	m_pCurSong[ PREFSMAN->GetStageIndex() ] = pSong;
+}
+
+void SongManager::SetCurrentNotes( PlayerNumber p, Notes* pNotes )
+{
+	m_pCurNotes[ PREFSMAN->GetStageIndex() ][p] = pNotes;
 }
 
 

@@ -280,7 +280,7 @@ void ScreenSelectGroup::MenuStart( const PlayerNumber p )
 	m_soundSelect.PlayRandom();
 	m_bChosen = true;
 
-	SONGMAN->m_pCurSong = NULL;
+	SONGMAN->SetCurrentSong( NULL );
 	SONGMAN->m_sPreferredGroup = m_arrayGroupNames[m_iSelection];
 
 	if( 0 == stricmp(SONGMAN->m_sPreferredGroup, "All Music") )

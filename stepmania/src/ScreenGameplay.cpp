@@ -71,10 +71,10 @@ ScreenGameplay::ScreenGameplay()
 	m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
 
 	m_bHasFailed = false;
-	m_pSong = SONGMAN->m_pCurSong;
+	m_pSong = SONGMAN->GetCurrentSong();
 
 
-	m_Background.LoadFromSong( SONGMAN->m_pCurSong );
+	m_Background.LoadFromSong( m_pSong );
 	m_Background.SetDiffuseColor( D3DXCOLOR(0.4f,0.4f,0.4f,1) );
 	this->AddActor( &m_Background );
 
@@ -91,11 +91,11 @@ ScreenGameplay::ScreenGameplay()
 		if( PREFSMAN->m_PlayerOptions[p].m_bReverseScroll )
 			fDifficultyY = SCREEN_HEIGHT - DIFFICULTY_Y;
 		m_DifficultyBanner[p].SetXY( DIFFICULTY_X[p], fDifficultyY );
-		m_DifficultyBanner[p].SetFromNotes( SONGMAN->m_pCurNotes[p] );
+		m_DifficultyBanner[p].SetFromNotes( SONGMAN->GetCurrentNotes((PlayerNumber)p) );
 		this->AddActor( &m_DifficultyBanner[p] );
 
 
-		NoteData* pOriginalNoteData = SONGMAN->m_pCurNotes[p]->GetNoteData();
+		NoteData* pOriginalNoteData = SONGMAN->GetCurrentNotes((PlayerNumber)p)->GetNoteData();
 		
 		NoteData newNoteData;
 		GAMEMAN->GetCurrentStyleDef()->GetTransformedNoteDataForStyle( (PlayerNumber)p, pOriginalNoteData, newNoteData );

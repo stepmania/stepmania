@@ -114,7 +114,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_textHoldForOptions.SetZoom( 1 );
 	m_textHoldForOptions.SetZoomY( 0 );
 	m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-	m_textHoldForOptions.SetZ( -4 );
+	m_textHoldForOptions.SetZ( -2 );
 	this->AddActor( &m_textHoldForOptions );
 
 
@@ -348,18 +348,13 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 				return;
 			}
 
-			TweenOffScreen();
-			m_Menu.TweenOffScreenToBlack( SM_None, false );
-
-			m_soundSelect.PlayRandom();
-
 			bool bIsNew = m_MusicWheel.GetSelectedSong()->IsNew();
 			bool bIsHard = false;
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
 				if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
 					continue;	// skip
-				if( SONGMAN->m_pCurNotes[p]  &&  SONGMAN->m_pCurNotes[p]->m_iMeter >= 9 )
+				if( SONGMAN->GetCurrentNotes((PlayerNumber)p)  &&  SONGMAN->GetCurrentNotes((PlayerNumber)p)->m_iMeter >= 9 )
 					bIsHard = true;
 			}
 
@@ -370,12 +365,16 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 			else
 				SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_COMMENT_GENERAL) );
 
-			;
+
+			TweenOffScreen();
+
+			m_soundSelect.PlayRandom();
 
 			// show "hold NEXT for options"
 			m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 			m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade in
 			m_textHoldForOptions.SetTweenZoomY( 1 );
+			m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
 			m_textHoldForOptions.BeginTweeningQueued( 2.0f );	// sleep
 			m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade out
 			m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
@@ -412,7 +411,7 @@ void ScreenSelectMusic::AfterNotesChange( const PlayerNumber p )
 
 	Notes* pNotes = m_arrayNotes.GetSize()>0 ? m_arrayNotes[m_iSelection[p]] : NULL;
 
-	SONGMAN->m_pCurNotes[p] = pNotes;
+	SONGMAN->SetCurrentNotes( p, pNotes );
 
 	m_DifficultyIcon[p].SetFromNotes( pNotes );
 	m_FootMeter[p].SetFromNotes( pNotes );
@@ -423,7 +422,7 @@ void ScreenSelectMusic::AfterNotesChange( const PlayerNumber p )
 void ScreenSelectMusic::AfterMusicChange()
 {
 	Song* pSong = m_MusicWheel.GetSelectedSong();
-	SONGMAN->m_pCurSong = pSong;
+	SONGMAN->SetCurrentSong( pSong );
 
 	m_arrayNotes.RemoveAll();
 

@@ -65,7 +65,7 @@ LINK32=link.exe
 # PROP Use_MFC 1
 # PROP Use_Debug_Libraries 1
 # PROP Output_Dir "../"
-# PROP Intermediate_Dir "../Debug"
+# PROP Intermediate_Dir "../Debug-VC6"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
@@ -79,7 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 /nologo /subsystem:windows /debug /machine:I386 /out:"../StepMania-debug.exe" /pdbtype:sept
+# ADD LINK32 /nologo /subsystem:windows /debug /machine:I386 /out:"../StepMania-debug-VC6.exe" /pdbtype:sept
 
 !ENDIF 
 

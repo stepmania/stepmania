@@ -115,14 +115,7 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 	//
 	// Check for TapNote misses
 	//
-	int iNumMisses = UpdateTapNotesMissedOlderThan( m_fSongBeat-fMaxBeatDifference );
-	if( iNumMisses > 0 )
-	{
-		m_Judgement.SetJudgement( TNS_MISS );
-		m_Combo.EndCombo();
-		for( int i=0; i<iNumMisses; i++ )
-			m_pLifeMeter->ChangeLife( TNS_MISS );
-	}
+	UpdateTapNotesMissedOlderThan( m_fSongBeat-fMaxBeatDifference );
 
 
 	//
@@ -358,6 +351,8 @@ void Player::CheckForCompleteRow( float fSongBeat, int col, float fMaxBeatDiff )
 	
 	//LOG->WriteLine( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
+	int iIndexOverlappingNote = -1;		// leave as -1 if we don't find any
+
 	// Start at iIndexStartLookingAt and search outward.  The first one that overlaps the player's step is the closest match.
 	for( int delta=0; delta <= iNumElementsToExamine; delta++ )
 	{
@@ -374,18 +369,10 @@ void Player::CheckForCompleteRow( float fSongBeat, int col, float fMaxBeatDiff )
 		//LOG->WriteLine( "Checking Notes[%d]", iCurrentIndexEarlier );
 		if( m_TapNotes[col][iCurrentIndexEarlier] != '0' )	// these Notes overlap
 		{
-			m_TapNotes[col][iCurrentIndexEarlier] = '0';	// mark hit
-			
-			bool bRowDestroyed = true;
-			for( int t=0; t<m_iNumTracks; t++ )			// did this complete the elminiation of the row?
-			{
-				if( m_TapNotes[col][iCurrentIndexEarlier] != '0' )
-					bRowDestroyed = false;
-			}
-			if( bRowDestroyed )
-				OnRowDestroyed( fSongBeat, col, fMaxBeatDiff, iCurrentIndexEarlier );
-			return;
+			iIndexOverlappingNote = iCurrentIndexEarlier;
+			break;
 		}
+
 
 		////////////////////////////
 		// check the step to the right of iIndexStartLookingAt
@@ -393,18 +380,23 @@ void Player::CheckForCompleteRow( float fSongBeat, int col, float fMaxBeatDiff )
 		//LOG->WriteLine( "Checking Notes[%d]", iCurrentIndexLater );
 		if( m_TapNotes[col][iCurrentIndexLater] != '0' )	// these Notes overlap
 		{
-			m_TapNotes[col][iCurrentIndexLater] = '0';	// mark hit
-			
-			bool bRowDestroyed = true;
-			for( int t=0; t<m_iNumTracks; t++ )			// did this complete the elminiation of the row?
-			{
-				if( m_TapNotes[col][iCurrentIndexLater] != '0' )
-					bRowDestroyed = false;
-			}
-			if( bRowDestroyed )
-				OnRowDestroyed( fSongBeat, col, fMaxBeatDiff, iCurrentIndexLater );
-			return;
+			iIndexOverlappingNote = iCurrentIndexLater;
+			break;
 		}
+	}
+
+	if( iIndexOverlappingNote != -1 )
+	{
+		m_TapNotes[col][iIndexOverlappingNote] = '0';	// mark hit
+		
+		bool bRowDestroyed = true;
+		for( int t=0; t<m_iNumTracks; t++ )			// did this complete the elminiation of the row?
+		{
+			if( m_TapNotes[t][iIndexOverlappingNote] != '0' )
+				bRowDestroyed = false;
+		}
+		if( bRowDestroyed )
+			OnRowDestroyed( fSongBeat, col, fMaxBeatDiff, iIndexOverlappingNote );
 	}
 }
 
@@ -540,6 +532,12 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 			iNumMissesFound++;
 			m_pLifeMeter->ChangeLife( TNS_MISS );
 		}
+	}
+
+	if( iNumMissesFound > 0 )
+	{
+		m_Judgement.SetJudgement( TNS_MISS );
+		m_Combo.EndCombo();
 	}
 
 	return iNumMissesFound;

@@ -120,13 +120,16 @@ protected:
 
 	ScrollBar	m_ScrollBar;
 
-	Sprite		m_sprSelectionOverlay;
 
+	SongSortOrder		m_SortOrder;
 	MusicSortDisplay	m_MusicSortDisplay;
+
+	ActorFrame			m_frameOverlay;
+	// Actors inside of m_frameOverlay
+	Sprite				m_sprSelectionOverlay;
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
 	ScoreDisplayRolling	m_HighScore[NUM_PLAYERS];
 
-	SongSortOrder		m_SortOrder;
 
 	CArray<WheelItemData, WheelItemData&> m_WheelItemDatas[NUM_SORT_ORDERS];
 	CArray<WheelItemData, WheelItemData&> &GetCurWheelItemDatas() { return m_WheelItemDatas[m_SortOrder]; };

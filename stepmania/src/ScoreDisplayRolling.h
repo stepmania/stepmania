@@ -35,6 +35,6 @@ public:
 protected:
 	float m_fScore;
 
-	int m_iCurrentScoreDigits[NUM_SCORE_DIGITS];
-	int m_iDestinationScoreDigits[NUM_SCORE_DIGITS];
+	float m_fTrailingScore;
+	float m_fScoreVelocity;
 };

@@ -15,6 +15,7 @@
 #include "Song.h"
 //#include <d3dxmath.h>	// for D3DXCOLOR
 
+const int MAX_SONG_QUEUE_SIZE = 30;
 
 class SongManager
 {
@@ -22,13 +23,20 @@ public:
 	SongManager();
 	~SongManager();
 
-	Song*		m_pCurSong;
-	Notes*	m_pCurNotes[NUM_PLAYERS];
+	Song*		m_pCurSong[MAX_SONG_QUEUE_SIZE];
+	Notes*		m_pCurNotes[MAX_SONG_QUEUE_SIZE][NUM_PLAYERS];
 	CString		m_sPreferredGroup;
 
 	CArray<Song*, Song*>	m_pSongs;	// all songs that can be played
 
 	void InitSongArrayFromDisk();
+
+
+	Song* GetCurrentSong();
+	Notes* GetCurrentNotes( PlayerNumber p );
+	void SetCurrentSong( Song* pSong );
+	void SetCurrentNotes( PlayerNumber p, Notes* pNotes );
+
 
 	void CleanUpSongArray();
 	void ReloadSongArray();

@@ -215,14 +215,16 @@ void Actor::Update( float fDeltaTime )
 
 		if( TS.m_fTimeLeftInTween <= 0 )	// The tweening is over.  Stop the tweening
 		{
+			int i;
+
 			m_pos			= TS.m_end_pos;
 			m_scale			= TS.m_end_scale;
 			m_rotation		= TS.m_end_rotation;
-			for(int i=0; i<4; i++) m_colorDiffuse[i] = TS.m_end_colorDiffuse[i];
+			for(i=0; i<4; i++) m_colorDiffuse[i] = TS.m_end_colorDiffuse[i];
 			m_colorAdd		= TS.m_end_colorAdd;
 			
 			// delete the head tween
-			for( int i=0; i<m_iNumTweenStates-1; i++ )
+			for( i=0; i<m_iNumTweenStates-1; i++ )
                 m_QueuedTweens[i] = m_QueuedTweens[i+1];
 			m_iNumTweenStates--;
 			return;

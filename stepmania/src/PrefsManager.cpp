@@ -35,7 +35,7 @@ PrefsManager::PrefsManager()
 		m_PreferredDifficultyClass[p] = CLASS_EASY;
 	m_SongSortOrder = SORT_GROUP;
 	m_PlayMode = PLAY_MODE_ARCADE;
-	m_iCurrentStage = 1;
+	m_iCurrentStageIndex = 0;
 
 	ReadPrefsFromDisk();
 }
@@ -84,29 +84,36 @@ void PrefsManager::SavePrefsToDisk()
 	ini.WriteFile();
 }
 
+int PrefsManager::GetStageIndex()
+{
+	return m_iCurrentStageIndex;
+}
+
 int PrefsManager::GetStageNumber()
 {
-	return m_iCurrentStage;
+	return m_iCurrentStageIndex+1;
 }
 
 bool PrefsManager::IsFinalStage()
 {
-	return m_iNumArcadeStages == m_iCurrentStage;
+	return m_iCurrentStageIndex == m_iNumArcadeStages-1;
 }
 
 CString PrefsManager::GetStageText()
 {
-	if( m_iCurrentStage == 3 )
+	if( m_iCurrentStageIndex == m_iNumArcadeStages-1 )
 		return "Final";
 
+	int iStageNo = m_iCurrentStageIndex+1;
+
 	CString sNumberSuffix;
-	if( ( (m_iCurrentStage/10) % 10 ) == 1 )	// in the teens (e.g. 19, 213)
+	if( ( (iStageNo/10) % 10 ) == 1 )	// in the teens (e.g. 19, 213)
 	{
 		sNumberSuffix = "th";
 	}
 	else	// not in the teens
 	{
-		const int iLastDigit = m_iCurrentStage%10;
+		const int iLastDigit = iStageNo%10;
 		switch( iLastDigit )
 		{
 		case 1:	sNumberSuffix = "st";	break;
@@ -115,6 +122,6 @@ CString PrefsManager::GetStageText()
 		default:sNumberSuffix = "th";	break;
 		}
 	}
-	return ssprintf( "%d%s", PREFSMAN->m_iCurrentStage, sNumberSuffix );
+	return ssprintf( "%d%s", this->GetStageNumber(), sNumberSuffix );
 }
 
