@@ -74,7 +74,7 @@ ThreadImpl *MakeThisThread()
 #endif
 
 #if defined(DARWIN)
-	MachThreadHandle = mach_thread_self();
+	thread->MachThreadHandle = mach_thread_self();
 #endif
 
 	return thread;
@@ -89,7 +89,7 @@ static void *StartThread( void *pData )
 #endif
 
 #if defined(DARWIN)
-	MachThreadHandle = mach_thread_self();
+	pThis->MachThreadHandle = mach_thread_self();
 #endif
 
 	return (void *) pThis->m_pFunc( pThis->m_pData );
@@ -128,7 +128,7 @@ MutexImpl_Pthreads::~MutexImpl_Pthreads()
 
 bool MutexImpl_Pthreads::Lock()
 {
-	if( LockedBy == (uint64_t) GetCurrentThreadId() )
+	if( LockedBy == (uint64_t) GetThisThreadId() )
 	{
 		++LockCnt;
 		return true;
@@ -171,7 +171,7 @@ bool MutexImpl_Pthreads::Lock()
 	int ret = pthread_mutex_lock( &mutex );
 	if( ret )
 		RageException::Throw( "pthread_mutex_lock failed: %s", strerror(ret) );
-	LockedBy = GetCurrentThreadId();
+	LockedBy = GetThisThreadId();
 	return true;
 #endif
 }
