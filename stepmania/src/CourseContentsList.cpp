@@ -63,9 +63,9 @@ void CourseContentsList::SetFromCourse( Course* pCourse )
 	
 		if( ci[i].Random )
 		{
-			Difficulty dc = pCourse->GetDifficulty(i);
+			Difficulty dc = pCourse->GetDifficulty( ci[i] );
 			int iMeterLow, iMeterHigh;
-			pCourse->GetMeterRange(i, iMeterLow, iMeterHigh);
+			pCourse->GetMeterRange(ci[i], iMeterLow, iMeterHigh);
 
 			if( dc == DIFFICULTY_INVALID )
 				display.LoadFromMeterRange( m_iNumContents+1, iMeterLow, iMeterHigh, ci[i].Modifiers );

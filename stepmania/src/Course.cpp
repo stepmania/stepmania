@@ -585,9 +585,9 @@ RageColor Course::GetColor() const
 }
 
 
-Difficulty Course::GetDifficulty( int stage ) const
+Difficulty Course::GetDifficulty( const Info &stage ) const
 {
-	Difficulty dc = m_entries[stage].difficulty;
+	Difficulty dc = m_entries[stage.CourseIndex].difficulty;
 
 	if(GAMESTATE->m_bDifficultCourses && dc < DIFFICULTY_CHALLENGE)
 		dc  = Difficulty(dc + 1);
@@ -606,6 +606,12 @@ void Course::GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut ) c
 		iMeterLowOut += DIFFICULT_METER_CHANGE;
 		iMeterLowOut = min( iMeterLowOut, MAX_BOTTOM_RANGE );
 	}
+}
+
+
+void Course::GetMeterRange( const Info &stage, int& iMeterLowOut, int& iMeterHighOut ) const
+{
+	GetMeterRange( stage.CourseIndex, iMeterLowOut, iMeterHighOut );
 }
 
 bool Course::GetTotalSeconds( float& fSecondsOut ) const

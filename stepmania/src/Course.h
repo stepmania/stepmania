@@ -86,8 +86,8 @@ public:
 		CString& sModifiersOut, 
 		NotesType nt ) const;
 	RageColor GetColor() const;
-	Difficulty GetDifficulty( int stage ) const;
-	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut ) const;
+	Difficulty GetDifficulty( const Info &stage ) const;
+	void GetMeterRange( const Info &stage, int& iMeterLowOut, int& iMeterHighOut ) const;
 	bool GetTotalSeconds( float& fSecondsOut ) const;
 
 	bool IsNonstop() const { return !m_bRepeat && m_iLives <= 0; } 	// use bar life meter
@@ -122,6 +122,7 @@ public:
 private:
 	Song *FindSong(CString sGroup, CString sSong) const;
 	void SetDefaultScore();
+	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut ) const;
 };
 
 
