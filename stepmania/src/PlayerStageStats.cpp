@@ -121,7 +121,8 @@ Grade PlayerStageStats::GetGrade() const
 		default: FAIL_M( ssprintf("%i", tns) );											break;
 		}
 		Actual += iTapNoteScores[tns] * iTapScoreValue;
-		Possible += iTapNoteScores[tns] * PREFSMAN->m_iGradeWeightMarvelous;
+		if( tns != TNS_HIT_MINE )
+			Possible += iTapNoteScores[tns] * PREFSMAN->m_iGradeWeightMarvelous;
 	}
 
 	FOREACH_HoldNoteScore( hns )
