@@ -195,9 +195,8 @@ XNode* StepsID::CreateNode() const
 }
 
 
-void StepsID::Invalidate( Song *pStaleSong )
+void StepsID::ClearCache()
 {
-	// FIXME: Only flush entries with the stale song
 	g_Cache.clear();
 }
 

@@ -1225,6 +1225,9 @@ void SongManager::FreeAllLoadedFromProfiles()
 		Song* pSong = m_pSongs[s];
 		pSong->FreeAllLoadedFromProfiles();
 	}
+
+	// After freeing some Steps pointers, the cache will be invalid.
+	SongID::ClearCache();
 }
 
 static bool CheckPointer( const Song *p )

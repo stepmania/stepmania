@@ -39,7 +39,7 @@ public:
 	void LoadFromNode( const XNode* pNode );
 	CString ToString() const;
 	bool IsValid() const;
-	static void Invalidate( Song *pStaleSong );
+	static void ClearCache();
 };
 
 #endif
