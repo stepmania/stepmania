@@ -998,7 +998,7 @@ int main(int argc, char* argv[])
 	SetupSDL();
 #endif
 
-	/* This should be done after PREFSMAN is set up, so it can use Dialog::OK(). */
+	/* This needs PREFSMAN. */
 	Dialog::Init();
 
 	//
@@ -1016,10 +1016,14 @@ int main(int argc, char* argv[])
 
 	srand( time(NULL) );	// seed number generator	
 	
+	/* Do this early, so we have debugging output if anything else fails.  LOG and
+	 * Dialog must be set up first.  It shouldn't take long, but it might take a
+	 * little time; do this after the LoadingWindow is shown, since we don't want
+	 * that to appear delayed. */
+	HOOKS->DumpDebugInfo();
+
 	if( PREFSMAN->m_bFirstRun )
 		OnFirstRun();
-
-	HOOKS->DumpDebugInfo();
 
 	CheckSettings();
 
