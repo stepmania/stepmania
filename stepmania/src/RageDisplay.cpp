@@ -162,7 +162,7 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 
 	bool need_reload = false;
 
-#ifndef SDL_HAS_CHANGEVIDEOMODEx
+#ifndef SDL_HAS_CHANGEVIDEOMODE
 	/* We can't change the video mode without nuking the GL context.  If we have
 	 * a screen, NULL it out, and signal the caller to reload all textures. */
 	if(g_screen) {
@@ -179,7 +179,7 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 
 		SDL_WM_SetCaption("StepMania", "StepMania");
 	}
-#ifdef SDL_HAS_CHANGEVIDEOMODEx
+#ifdef SDL_HAS_CHANGEVIDEOMODE
 	else
 	{
 		SDL_SM_ChangeVideoMode_OpenGL(g_flags, g_screen, width, height);
