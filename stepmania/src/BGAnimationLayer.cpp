@@ -106,9 +106,10 @@ void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 
 void BGAnimationLayer::LoadFromAniLayerFile( CString sPath, CString sSongBGPath )
 {
-	sPath.MakeLower();
+	CString lcPath = sPath;
+	lcPath.MakeLower();
 
-	if( sPath.Find("usesongbg") != -1 )
+	if( lcPath.Find("usesongbg") != -1 )
 	{
 		LoadFromStaticGraphic( sSongBGPath );
 		return;		// this will ignore other effects in the file name
@@ -145,7 +146,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath, CString sSongBGPath 
 
 	for( int i=0; i<NUM_EFFECTS; i++ )
 	{
-		if( sPath.Find(EFFECT_STRING[i]) != -1 )
+		if( lcPath.Find(EFFECT_STRING[i]) != -1 )
 		{
 			m_Effect = (Effect)i;
 			goto found_effect;

@@ -38,7 +38,6 @@ void FontPage::Load( FontPageSettings cfg )
 	m_sTexturePath = cfg.TexturePath;
 
 	// load texture
-	m_sTexturePath.MakeLower();
 	RageTextureID ID(m_sTexturePath);
 	ID.bStretch = true;
 
