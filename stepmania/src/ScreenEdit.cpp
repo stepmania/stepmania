@@ -345,6 +345,7 @@ void ScreenEdit::Update( float fDeltaTime )
 			{
 				TransitionFromRecordToEdit();
 				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fEndMarker;
+				m_rectRecordBack.StopTweening();
 				m_rectRecordBack.BeginTweening( 0.5f );
 				m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 			}
@@ -353,6 +354,7 @@ void ScreenEdit::Update( float fDeltaTime )
 				m_soundMusic.Stop();
 				m_EditMode = MODE_EDITING;
 				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fEndMarker;
+				m_rectRecordBack.StopTweening();
 				m_rectRecordBack.BeginTweening( 0.5f );
 				m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 			}
@@ -886,6 +888,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_iMenuSelection = 0;
 			MenuItemGainFocus( &m_textActionMenu[m_iMenuSelection] );
 
+			m_rectRecordBack.StopTweening();
 			m_rectRecordBack.BeginTweening( 0.5f );
 			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0.8f) );
 		}
@@ -896,6 +899,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_iMenuSelection = 0;
 			MenuItemGainFocus( &m_textNamingMenu[m_iMenuSelection] );
 
+			m_rectRecordBack.StopTweening();
 			m_rectRecordBack.BeginTweening( 0.5f );
 			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0.8f) );
 		}
@@ -911,6 +915,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL );
 
+			m_rectRecordBack.StopTweening();
 			m_rectRecordBack.BeginTweening( 0.5f );
 			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0.8f) );
 
@@ -937,6 +942,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 
 			m_EditMode = MODE_RECORDING;
+			m_rectRecordBack.StopTweening();
 			m_rectRecordBack.BeginTweening( 0.5f );
 			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0.8f) );
 
@@ -1186,6 +1192,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 		case DIK_ESCAPE:
 			TransitionFromRecordToEdit();
 			
+			m_rectRecordBack.StopTweening();
 			m_rectRecordBack.BeginTweening( 0.5f );
 			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 
@@ -1253,6 +1260,7 @@ void ScreenEdit::InputActionMenu( const DeviceInput& DeviceI, const InputEventTy
 	case DIK_RETURN:
 	case DIK_ESCAPE:
 		m_EditMode = MODE_EDITING;
+		m_rectRecordBack.StopTweening();
 		m_rectRecordBack.BeginTweening( 0.5f );
 		m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 		MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
@@ -1268,6 +1276,7 @@ void ScreenEdit::InputActionMenu( const DeviceInput& DeviceI, const InputEventTy
 		for(int i=0; i<NUM_ACTION_MENU_ITEMS; i++) {
 			if( DeviceI.button == ACTION_MENU_ITEM_KEY[i] ) {
 				m_EditMode = MODE_EDITING;
+				m_rectRecordBack.StopTweening();
 				m_rectRecordBack.BeginTweening( 0.5f );
 				m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 				MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
@@ -1297,6 +1306,7 @@ void ScreenEdit::InputNamingMenu( const DeviceInput& DeviceI, const InputEventTy
 	case DIK_ESCAPE:
 	case DIK_RETURN:
 		m_EditMode = MODE_EDITING;
+		m_rectRecordBack.StopTweening();
 		m_rectRecordBack.BeginTweening( 0.5f );
 		m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 		MenuItemLoseFocus( &m_textNamingMenu[m_iMenuSelection] );
@@ -1361,6 +1371,7 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 		case DIK_ESCAPE:
 			m_EditMode = MODE_EDITING;
 			m_soundMusic.Stop();
+			m_rectRecordBack.StopTweening();
 			m_rectRecordBack.BeginTweening( 0.5f );
 			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 
