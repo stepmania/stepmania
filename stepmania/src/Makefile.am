@@ -161,9 +161,11 @@ if HAVE_SDL
 # InputHandler_SDL depends on LowLevelWindow_SDL
 InputHandler += arch/InputHandler/InputHandler_SDL.cpp arch/InputHandler/InputHandler_SDL.h
 LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_SDL.cpp arch/LowLevelWindow/LowLevelWindow_SDL.h
+endif
+endif
+if HAVE_SDL
 LoadingWindow += arch/LoadingWindow/LoadingWindow_SDL.cpp arch/LoadingWindow/LoadingWindow_SDL.h
 StepMania += SDL_utils.cpp SDL_utils.h
-endif
 endif
 
 # Platform-specific drivers:
