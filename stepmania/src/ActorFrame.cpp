@@ -6,6 +6,13 @@
 ActorFrame::ActorFrame()
 {
 	m_bPropagateCommands = false;
+	m_bDeleteChildren = false;
+}
+
+ActorFrame::~ActorFrame()
+{
+	if( m_bDeleteChildren )
+		DeleteAllChildren();
 }
 
 void ActorFrame::AddChild( Actor* pActor )

@@ -9,14 +9,14 @@ class ActorFrame : public Actor
 {
 public:
 	ActorFrame();
+	virtual ~ActorFrame();
 	virtual void AddChild( Actor* pActor );
 	virtual void RemoveChild( Actor* pActor );
 	virtual void MoveToTail( Actor* pActor );
 	virtual void MoveToHead( Actor* pActor );
 	virtual void SortByDrawOrder();
 
-	virtual ~ActorFrame() { }
-	
+	void DeleteChildrenWhenDone( bool bDelete=true ) { m_bDeleteChildren = bDelete; }
 	void DeleteAllChildren();
 
 	virtual void RunCommandOnChildren( const Commands &cmds ); /* but not on self */
@@ -44,6 +44,7 @@ public:
 protected:
 	vector<Actor*>	m_SubActors;
 	bool m_bPropagateCommands;
+	bool m_bDeleteChildren;
 };
 
 #endif

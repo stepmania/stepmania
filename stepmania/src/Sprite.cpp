@@ -934,6 +934,34 @@ void Sprite::HandleCommand( const Command &command )
 	EndHandleArgs;
 }
 
+void Sprite::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
+{
+	//
+	// The order of these actions is important.
+	// At this point, the movie is probably paused (by LoseFocus()).
+	// Play the movie, then set the playback rate (which can 
+	// potentially pause the movie again).
+	//
+	RageTexture *pTexture = GetTexture();
+	if( pTexture != NULL )
+	{
+		if( bRewindMovie )
+			pTexture->SetPosition( 0 );
+		pTexture->SetLooping( bLoop );
+		pTexture->SetPlaybackRate( fRate );
+	}
+	EnableAnimation( true );
+
+	Actor::GainFocus( fRate, bRewindMovie, bLoop );
+}
+
+void Sprite::LoseFocus()
+{
+	EnableAnimation( false );
+
+	Actor::LoseFocus();
+}
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

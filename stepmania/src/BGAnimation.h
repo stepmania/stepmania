@@ -20,7 +20,6 @@ public:
 	void LoadFromStaticGraphic( const CString &sPath );
 	void LoadFromAniDir( const CString &sAniDir );
 	void LoadFromMovie( const CString &sMoviePath );
-	void LoadFromVisualization( const CString &sMoviePath );
 	void LoadFromNode( const CString &sDir, const XNode& node );
 
 protected:

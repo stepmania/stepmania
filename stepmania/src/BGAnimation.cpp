@@ -187,23 +187,6 @@ void BGAnimation::LoadFromMovie( const CString &sMoviePath )
 	AddChild( pLayer );
 }
 
-void BGAnimation::LoadFromVisualization( const CString &sVisPath )
-{
-	Unload();
-	BGAnimationLayer* pLayer;
-	
-	const Song* pSong = GAMESTATE->m_pCurSong;
-	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background");
-
-	pLayer = new BGAnimationLayer( m_bGeneric );
-	pLayer->LoadFromStaticGraphic( sSongBGPath );
-	AddChild( pLayer );
-
-	pLayer = new BGAnimationLayer( m_bGeneric );
-	pLayer->LoadFromVisualization( sVisPath );
-	AddChild( pLayer );
-}
-
 void BGAnimation::LoadFromNode( const CString &sDir, const XNode& node )
 {
 	DEBUG_ASSERT( node.m_sName == "BGAnimation" );

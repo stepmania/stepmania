@@ -98,7 +98,7 @@ Background::~Background()
 
 void Background::Unload()
 {
-    for( map<CString,BGAnimation*>::iterator iter = m_BGAnimations.begin();
+    for( map<CString,Actor*>::iterator iter = m_BGAnimations.begin();
 		 iter != m_BGAnimations.end();
 		 iter++ )
 		delete iter->second;
@@ -114,7 +114,29 @@ void Background::Unload()
 	m_fLastMusicSeconds	= -9999;
 }
 
-BGAnimation *Background::CreateSongBGA( CString sBGName ) const
+Actor *MakeVisualization( const CString &sVisPath )
+{
+	ActorFrame *pFrame = new ActorFrame;
+	pFrame->DeleteChildrenWhenDone();
+
+	const Song* pSong = GAMESTATE->m_pCurSong;
+	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background");
+
+	Sprite* pSprite = new Sprite;
+	pSprite->LoadBG( sSongBGPath );
+	pSprite->StretchTo( FullScreenRectF );
+	pFrame->AddChild( pSprite );
+
+	pSprite = new Sprite;
+	pSprite->LoadBG( sVisPath );
+	pSprite->StretchTo( FullScreenRectF );
+	pSprite->SetBlendMode( BLEND_ADD );
+	pFrame->AddChild( pSprite );
+
+	return pFrame;
+}
+
+Actor *Background::CreateSongBGA( CString sBGName ) const
 {
 	BGAnimation *pTempBGA;
 
@@ -166,11 +188,7 @@ BGAnimation *Background::CreateSongBGA( CString sBGName ) const
 	// Look for BGAnims in the BGAnims dir
 	GetDirListing( VISUALIZATIONS_DIR+sBGName, asFiles, false, true );
 	if( !asFiles.empty() )
-	{
-		pTempBGA = new BGAnimation;
-		pTempBGA->LoadFromVisualization( asFiles[0] );
-		return pTempBGA;
-	}
+		return MakeVisualization( asFiles[0] );
 
 	// There is no background by this name.  
 	return NULL;
@@ -243,12 +261,25 @@ CString Background::CreateRandomBGA()
 		file = arrayPaths[i];
 	}
 
-	BGAnimation *ret = new BGAnimation;
+	Actor *ret;
 	switch( PREFSMAN->m_iBackgroundMode )
 	{
-	case PrefsManager::BGMODE_ANIMATIONS:	ret->LoadFromAniDir( file ); break;
-	case PrefsManager::BGMODE_MOVIEVIS:		ret->LoadFromVisualization( file ); break;
-	case PrefsManager::BGMODE_RANDOMMOVIES:	ret->LoadFromMovie( file ); break;
+	case PrefsManager::BGMODE_ANIMATIONS:
+	{
+		BGAnimation *p = new BGAnimation;
+		p->LoadFromAniDir( file ); 
+		ret = p;
+		break;
+	}
+	case PrefsManager::BGMODE_MOVIEVIS:		ret = MakeVisualization( file ); break;
+	case PrefsManager::BGMODE_RANDOMMOVIES:
+	{
+		BGAnimation *p = new BGAnimation;
+		p->LoadFromMovie( file );
+		ret = p;
+		break;
+	}
+	default: FAIL_M( ssprintf("%i", PREFSMAN->m_iBackgroundMode) );
 	}
 	ret->PlayCommand( "On" );
 
@@ -325,7 +356,7 @@ void Background::LoadFromSong( const Song* pSong )
 
 			if( sBGName.CompareNoCase("-random-") && !bIsAlreadyLoaded )
 			{
-				BGAnimation *pTempBGA = CreateSongBGA( sBGName );
+				Actor *pTempBGA = CreateSongBGA( sBGName );
 				if( pTempBGA )
 				{
 					pTempBGA->PlayCommand( "On" );
@@ -398,7 +429,7 @@ void Background::LoadFromSong( const Song* pSong )
 	// Re-sort.
 	SortBackgroundChangesArray( m_aBGChanges );
 
-    for( map<CString,BGAnimation*>::iterator iter = m_BGAnimations.begin();
+    for( map<CString,Actor*>::iterator iter = m_BGAnimations.begin();
 		 iter != m_BGAnimations.end();
 		 iter++ )
 	{
@@ -433,10 +464,10 @@ void Background::LoadFromSong( const Song* pSong )
 	 * which sync from the regular clock by default.  If you don't want this, set
 	 * the clock back with "effectclock,timer" in your OnCommand.  Note that at this
 	 * point, we havn't run the OnCommand yet, so it'll override correctly. */
-	map<CString,BGAnimation*>::iterator it;
+	map<CString,Actor*>::iterator it;
 	for( it = m_BGAnimations.begin(); it != m_BGAnimations.end(); ++it )
 	{
-		BGAnimation *pBGA = it->second;
+		Actor *pBGA = it->second;
 
 		/* Be sure that we run this command recursively on all children; the tree
 		 * may look something like "BGAnimation, BGAnimationLayer, Sprite" or it
@@ -492,7 +523,7 @@ void Background::UpdateCurBGChange( float fCurrentTime )
 
 		const BackgroundChange& change = m_aBGChanges[i];
 
-		BGAnimation* pOld = m_pCurrentBGA;
+		Actor *pOld = m_pCurrentBGA;
 
 		if( change.m_bFadeLast )
 			m_pFadingBGA = m_pCurrentBGA;

@@ -64,15 +64,15 @@ protected:
 
 	BGAnimation		m_DeadPlayer[NUM_PLAYERS];
 
-	BGAnimation* CreateSongBGA( CString sBGName ) const;
+	Actor *CreateSongBGA( CString sBGName ) const;
 	CString CreateRandomBGA();
 
-	map<CString,BGAnimation*> m_BGAnimations;
+	map<CString,Actor*> m_BGAnimations;
 	deque<CString> m_RandomBGAnimations;
 	vector<BackgroundChange> m_aBGChanges;
 	int				m_iCurBGChangeIndex;
-	BGAnimation* m_pCurrentBGA;
-	BGAnimation* m_pFadingBGA;
+	Actor *m_pCurrentBGA;
+	Actor *m_pFadingBGA;
 	float m_fSecsLeftInFade;
 	float m_fLastMusicSeconds;
 	Quad m_quadBorder[4];	// l, t, r, b - cover up the edge of animations that might hang outside of the background rectangle

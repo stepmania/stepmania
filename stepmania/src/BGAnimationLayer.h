@@ -20,7 +20,6 @@ public:
 	void LoadFromStaticGraphic( const CString& sPath );
 	void LoadFromAniLayerFile( const CString& sPath );
 	void LoadFromMovie( const CString& sMoviePath );
-	void LoadFromVisualization( const CString& sMoviePath );
 	void LoadFromNode( const CString& sAniDir, const XNode& layer );
 
 	void Update( float fDeltaTime );
