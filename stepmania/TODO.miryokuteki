@@ -1,13 +1,25 @@
 ////////////////////////////////////
-//Miryokuteki's Todo/Done Record//
+// Miryokuteki's Todo/Done Record //
 ////////////////////////////////////
 
-// Last Updated February 11th, 2003
+// Last Updated February 12th, 2003
 
 Todo List:
-  
+  ** Find a way to get the length of a movie being played, so ScreenIntroMovie does not have to have a pre-determined length (I.e: exits when the movie is finished playing)
 
-Done List:
+
+
+      
+Done as of 02/12/03:
+         CHANGE** Game no longer resets when coin mode is changed.
+         CHANGE** Coin mode can be changed instantly, without a reset, at any screen with F3.
+  FEATURE FIXED** Operator & InsertCoin keys are no longer static, and are now configurable AND global. Also, Operator key -only- works outside of the edit system & options screens.. This saves hassles of "oops, hit the operator key, my edit is gone!"
+     FILE FIXED** For some reason, ScreenIntroMovie.h never made it into the project workspace.. fixed :-p
+
+
+
+
+Done as of 02/11/03:
       BUG FIXED** 2nd player could join in reguardless of joint premium or credits
       BUG FIXED** Credits could only be added on certain screens, the credit key is now predefined to F1 and is global
     NEW FEATURE** Global Operator key (Left-CTRL)
