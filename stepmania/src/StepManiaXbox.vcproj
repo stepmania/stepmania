@@ -715,6 +715,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="Attack.h">
 			</File>
 			<File
+				RelativePath="AutoKeysounds.cpp">
+			</File>
+			<File
+				RelativePath="AutoKeysounds.h">
+			</File>
+			<File
 				RelativePath="BannerCache.cpp">
 			</File>
 			<File
@@ -1909,6 +1915,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageSoundManager.h">
 			</File>
 			<File
+				RelativePath="RageSoundMixBuffer.cpp">
+			</File>
+			<File
+				RelativePath="RageSoundMixBuffer.h">
+			</File>
+			<File
 				RelativePath="RageSoundPosMap.cpp">
 			</File>
 			<File
@@ -1916,6 +1928,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="RageSoundReader.h">
+			</File>
+			<File
+				RelativePath="RageSoundReader_Chain.cpp">
+			</File>
+			<File
+				RelativePath="RageSoundReader_Chain.h">
 			</File>
 			<File
 				RelativePath="RageSoundReader_FileReader.cpp">
@@ -1970,6 +1988,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="RageSoundResampler.h">
+			</File>
+			<File
+				RelativePath="RageSoundUtil.cpp">
+			</File>
+			<File
+				RelativePath="RageSoundUtil.h">
 			</File>
 			<File
 				RelativePath="RageSurface.cpp">
