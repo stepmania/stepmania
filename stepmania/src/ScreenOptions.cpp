@@ -189,7 +189,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 
 	// init m_textItems from optionLines
 	{
-		for( int r=0; r<m_Rows.size(); r++ )		// foreach row
+		for( unsigned  r=0; r<m_Rows.size(); r++ )		// foreach row
 		{
 			Row &row = *m_Rows[r];
 			row.Type = Row::ROW_NORMAL;
@@ -300,10 +300,10 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 			// Add children here and not above because of the logic that starts
 			// over if we run off the right edge of the screen.
 			{
-				for( int c=0; c<textItems.size(); c++ )
+				for( unsigned c=0; c<textItems.size(); c++ )
 					m_framePage.AddChild( textItems[c] );
 				for( int p=0; p<NUM_PLAYERS; p++ )
-					for( int c=0; c<row.m_Underline[p].size(); c++ )
+					for( unsigned c=0; c<row.m_Underline[p].size(); c++ )
 						m_framePage.AddChild( row.m_Underline[p][c] );
 			}
 		}
@@ -590,7 +590,7 @@ void ScreenOptions::PositionUnderlines()
 			}
 			else	// !row.m_bRowIsLong
 			{
-				for( int i=0; i<vpUnderlines.size(); i++ )
+				for( unsigned i=0; i<vpUnderlines.size(); i++ )
 				{
 					OptionsCursor& ul = *vpUnderlines[i];
 

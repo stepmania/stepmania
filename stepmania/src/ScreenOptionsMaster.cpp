@@ -576,7 +576,7 @@ void ScreenOptionsMaster::RefreshIcons()
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
 
-		for( int i=0; i<m_Rows.size(); i++ )	// foreach options line
+        for( unsigned i=0; i<m_Rows.size(); ++i )     // foreach options line
 		{
 			if( m_Rows[i]->Type == Row::ROW_EXIT )
 				continue;	// skip
