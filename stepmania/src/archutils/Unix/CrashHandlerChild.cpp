@@ -36,6 +36,7 @@ struct BacktraceNames
     void FromString( CString str );
     void Demangle();
     CString Format() const;
+	BacktraceNames(): Address(0), Offset(0) { }
 };
 
 #if defined(HAVE_LIBIBERTY)
@@ -124,13 +125,14 @@ CString BacktraceNames::Format() const
 #include <dlfcn.h>
 void BacktraceNames::FromAddr( void *p )
 {
+    Address = (int) p;
+
     Dl_info di;
     if( !dladdr(p, &di) )
         return;
 
     Symbol = di.dli_sname;
     File = di.dli_fname;
-    Address = (int) p;
     Offset = (char*)(p)-(char*)di.dli_saddr;
 }
 
@@ -139,11 +141,12 @@ void BacktraceNames::FromAddr( void *p )
 #include <execinfo.h>
 void BacktraceNames::FromAddr( void *p )
 {
+    Address = (int) p;
+
     char **foo = backtrace_symbols(&p, 1);
     if( foo == NULL )
         return;
     FromString( foo[0] );
-    Address = (int) p;
     free(foo);
 }
 
