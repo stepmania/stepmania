@@ -40,8 +40,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="$(intdir)\verstub.obj"
+				AdditionalOptions="/MACHINE:I386 $(intdir)\verstub.obj"
 				OutputFile="../StepMania-debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
@@ -116,8 +115,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\"/>
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="$(intdir)\verstub.obj"
+				AdditionalOptions="/MACHINE:I386 $(intdir)\verstub.obj"
 				OutputFile=".\../StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
