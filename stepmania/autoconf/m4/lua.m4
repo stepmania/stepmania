@@ -2,8 +2,8 @@ AC_DEFUN(SM_LUA, [
 
 AC_CHECK_PROGS(LUA_CONFIG, [lua-config50 lua-config], "")
 if test "$LUA_CONFIG" != ""; then
-	LUA_CFLAGS=`lua-config --include`
-	LUA_LIBS=`lua-config --static`
+	LUA_CFLAGS=`$LUA_CONFIG --include`
+	LUA_LIBS=`$LUA_CONFIG --static`
 else
 	if test "$LIB_LUA" = ""; then
 		AC_CHECK_LIB(lua, lua_open, LIB_LUA=-llua)
