@@ -83,6 +83,7 @@ if test "x$have_SDL_image" = "xno"; then
   exit 0;
 fi
 
+SM_LUA
 SM_ZLIB
 SM_AUDIO
 
