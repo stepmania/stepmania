@@ -44,8 +44,9 @@
 #define ICONS_OFF_COMMAND( p )				THEME->GetMetric ("ScreenSelectCharacter",ssprintf("IconsP%dOffCommand",p+1))
 #define HELP_TEXT							THEME->GetMetric ("ScreenSelectCharacter","HelpText")
 #define TIMER_SECONDS						THEME->GetMetricI("ScreenSelectCharacter","TimerSeconds")
-#define NEXT_SCREEN							THEME->GetMetric ("ScreenSelectCharacter","NextScreen")
 #define SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF("ScreenSelectCharacter","SleepAfterTweenOffSeconds")
+#define PREV_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectCharacter","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
+#define NEXT_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectCharacter","NextScreen"+Capitalize(PlayModeToString(play_mode)))
 
 #define LEVEL_CURSOR_X( p, l )	( ICONS_START_X(p)+ICONS_SPACING_X*((NUM_ATTACKS_PER_LEVEL-1)/2.f) )
 #define LEVEL_CURSOR_Y( p, l )	( ICONS_START_Y(p)+ICONS_SPACING_Y*l )
@@ -53,16 +54,33 @@
 const PlayerNumber	CPU_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
 
 
+
 ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 {	
 	LOG->Trace( "ScreenSelectCharacter::ScreenSelectCharacter()" );	
 
-	if(	GAMESTATE->m_pCharacters.empty() ||
-		(GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE && GAMESTATE->m_PlayMode != PLAY_MODE_RAVE && PREFSMAN->m_ShowDancingCharacters != PrefsManager::CO_SELECT ))
+
+	switch( GAMESTATE->m_PlayMode )
 	{
-		HandleScreenMessage( SM_GoToNextScreen );
-		return;
+	//
+	// Must have at least one character installed to play battle or rave
+	//
+	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_RAVE:
+		SCREENMAN->Prompt( SM_GoToPrevScreen, "No characters are installed.\n\nAt least one character must be installed\nto play this mode." );
+		break;
+		
+	default:
+		//
+		//
+		if(	GAMESTATE->m_pCharacters.empty() || 		// Bail early if no characters
+			PREFSMAN->m_ShowDancingCharacters != PrefsManager::CO_SELECT )		// Bail early if this screen should be hidden
+		{
+			HandleScreenMessage( SM_GoToNextScreen );
+			return;
+		}
 	}
+
 	
 	
 	m_Menu.Load( "ScreenSelectCharacter" );
@@ -184,10 +202,10 @@ void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage SM )
 		MenuStart(PLAYER_1);
 		break;
 	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+		SCREENMAN->SetNewScreen( PREV_SCREEN(GAMESTATE->m_PlayMode) );
 		break;
 	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
+		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 		break;
 	}
 }
