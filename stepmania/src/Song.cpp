@@ -428,20 +428,7 @@ static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 		}
 	}
 }
-/*
-static bool ImageIsLoadable( const CString &sPath )
-{
-	SDL_Surface *img = SDL_LoadImage( sPath );
-	if( !img )
-	{
-		LOG->Warn( "Error loading song image \"%s\": %s", sPath.c_str(), SDL_GetError() );
-		return false;
-	}
 
-	SDL_FreeSurface( img );
-	return true;
-}
-*/
 /* Fix up song paths.  If there's a leading "./", be sure to keep it: it's
  * a signal that the path is from the root directory, not the song directory.
  * Other than a leading "./", song paths must never contain "." or "..". */
@@ -645,20 +632,6 @@ void Song::TidyUpData()
 			m_sLyricsFile = arrayLyricFiles[0];
 	}
 
-	/* This takes a long time--sometimes as much as half of load time.  This only matters
-	 * if there is both a corrupt image pointed to by the metadata *and* another valid file
-	 * for the image, which is very rare.  Let's just tolerate failed images.
-	 *
-	 * We may still have to poke at the image below, but that's not always needed, and that
-	 * can be optimized. */
-	/*
-	if( HasBanner() && !ImageIsLoadable( GetBannerPath() ) )
-		m_sBannerFile = "";
-	if( HasBackground() && !ImageIsLoadable( GetBackgroundPath() ) )
-		m_sBackgroundFile = "";
-	if( HasCDTitle() && !ImageIsLoadable( GetCDTitlePath() ) )
-		m_sCDTitleFile = "";
-	*/
 	//
 	// Now, For the images we still haven't found, look at the image dimensions of the remaining unclassified images.
 	//
