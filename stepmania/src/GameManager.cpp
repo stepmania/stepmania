@@ -2903,9 +2903,7 @@ void GameManager::GetEnabledGames( vector<const Game*>& aGamesOut )
 	for( int g=0; g<NUM_GAMES; g++ )
 	{
 		const Game *pGame = &g_Games[g];
-		CStringArray asNoteSkins;
-		NOTESKIN->GetNoteSkinNames( pGame, asNoteSkins );
-		if( !asNoteSkins.empty() )
+		if( IsGameEnabled( pGame ) )
 			aGamesOut.push_back( pGame );
 	}
 }
@@ -2935,9 +2933,13 @@ const Game* GameManager::GetGameFromIndex( int index )
 
 bool GameManager::IsGameEnabled( const Game *pGame )
 {
-	vector<const Game*> aGames;
-	GetEnabledGames( aGames );
-	return find( aGames.begin(), aGames.end(), pGame ) != aGames.end();
+	CStringArray asNoteSkins;
+	NOTESKIN->GetNoteSkinNames( pGame, asNoteSkins );
+	for( unsigned i = 0; i < asNoteSkins.size(); ++i )
+		if( asNoteSkins[i].CompareNoCase("default") )
+			return true;
+
+	return false;
 }
 
 int GameManager::StepsTypeToNumTracks( StepsType st )
