@@ -293,7 +293,7 @@ public:
 	RageTimer ts;
 
 	DeviceInput(): device(DEVICE_NONE), button(-1), level(0), ts(RageZeroTimer) { }
-	DeviceInput( InputDevice d, int b, float l=0 ): device(d), level(l), button(b), ts(RageZeroTimer) { }
+	DeviceInput( InputDevice d, int b, float l=0 ): device(d), button(b), level(l), ts(RageZeroTimer) { }
 	DeviceInput( InputDevice d, int b, float l, const RageTimer &t ):
 		device(d), button(b), level(l), ts(t) { }
 
