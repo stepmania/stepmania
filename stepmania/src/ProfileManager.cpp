@@ -264,11 +264,11 @@ bool Profile::LoadFromIni( CString sIniPath )
 	for( i=0; i<NUM_PLAY_MODES; i++ )
 		ini.GetValue( "Profile", "NumSongsPlayedByPlayMode"+Capitalize(PlayModeToString((PlayMode)i)), m_iNumSongsPlayedByPlayMode[i] );
 	for( i=0; i<NUM_STYLES; i++ )
-		ini.GetValue( "Profile", "NumSongsPlayedByStyle"+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByStyle[i] );
+		ini.GetValue( "Profile", "NumSongsPlayedByStyle"+Capitalize(GAMEMAN->GetGameDefForGame(GAMEMAN->GetStyleDefForStyle((Style)i)->m_Game)->m_szName)+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByStyle[i] );
 	for( i=0; i<NUM_DIFFICULTIES; i++ )
-		ini.GetValue( "Profile", "NumSongsPlayedByDifficulty"+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByDifficulty[i] );
+		ini.GetValue( "Profile", "NumSongsPlayedByDifficulty"+Capitalize(DifficultyToString((Difficulty)i)), m_iNumSongsPlayedByDifficulty[i] );
 	for( i=0; i<MAX_METER+1; i++ )
-		ini.GetValue( "Profile", "NumSongsPlayedByMeter"+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByMeter[i] );
+		ini.GetValue( "Profile", "NumSongsPlayedByMeter"+ssprintf("%d",i), m_iNumSongsPlayedByMeter[i] );
 	return true;
 }
 
@@ -288,11 +288,11 @@ bool Profile::SaveToIni( CString sIniPath )
 	for( i=0; i<NUM_PLAY_MODES; i++ )
 		ini.SetValue( "Profile", "NumSongsPlayedByPlayMode"+Capitalize(PlayModeToString((PlayMode)i)), m_iNumSongsPlayedByPlayMode[i] );
 	for( i=0; i<NUM_STYLES; i++ )
-		ini.SetValue( "Profile", "NumSongsPlayedByStyle"+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByStyle[i] );
+		ini.SetValue( "Profile", "NumSongsPlayedByStyle"+Capitalize(GAMEMAN->GetGameDefForGame(GAMEMAN->GetStyleDefForStyle((Style)i)->m_Game)->m_szName)+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByStyle[i] );
 	for( i=0; i<NUM_DIFFICULTIES; i++ )
-		ini.SetValue( "Profile", "NumSongsPlayedByDifficulty"+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByDifficulty[i] );
+		ini.SetValue( "Profile", "NumSongsPlayedByDifficulty"+Capitalize(DifficultyToString((Difficulty)i)), m_iNumSongsPlayedByDifficulty[i] );
 	for( i=0; i<MAX_METER+1; i++ )
-		ini.SetValue( "Profile", "NumSongsPlayedByMeter"+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByMeter[i] );
+		ini.SetValue( "Profile", "NumSongsPlayedByMeter"+ssprintf("%d",i), m_iNumSongsPlayedByMeter[i] );
 	
 	ini.WriteFile();
 	return true;
