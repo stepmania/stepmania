@@ -556,6 +556,47 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 // =============================================================================
 
 //#define CStdStr _SS	// avoid compiler warning 4786
+template<typename CT>
+class CStdStr;
+
+template<typename CT>
+inline
+CStdStr<CT> operator+(const  CStdStr<CT>& str1, const  CStdStr<CT>& str2)
+{
+	CStdStr<CT> strRet(str1);
+	strRet.append(str2);
+	return strRet;
+}
+
+template<typename CT>	
+inline
+CStdStr<CT> operator+(const  CStdStr<CT>& str, CT t)
+{
+	// this particular overload is needed for disabling reference counting
+	// though it's only an issue from line 1 to line 2
+
+	CStdStr<CT> strRet(str);	// 1
+	strRet.append(1, t);				// 2
+	return strRet;
+}
+
+template<typename CT>
+inline
+CStdStr<CT> operator+(const  CStdStr<CT>& str, PCSTR pA)
+{
+	return CStdStr<CT>(str) + CStdStr<CT>(pA);
+}
+
+template<typename CT>
+inline
+CStdStr<CT> operator+(PCSTR pA, const  CStdStr<CT>& str)
+{
+	CStdStr<CT> strRet(pA);
+	strRet.append(str);
+	return strRet;
+}
+
+
 
 template<typename CT>
 class CStdStr : public std::basic_string<CT>
@@ -800,7 +841,7 @@ public:
 
 		// But practically speaking, this works faster
 
-		if ( !empty() )
+		if ( !this->empty() )
 			ssupr(GetBuf(), this->size());
 
 		return *this;
@@ -819,7 +860,7 @@ public:
 
 		// But practically speaking, this works faster
 
-		if ( !empty() )
+		if ( !this->empty() )
 			sslwr(GetBuf(), this->size());
 
 		return *this;
@@ -834,7 +875,7 @@ public:
 	// -------------------------------------------------------------------------
 	CT* GetBuf(int nMinLen=-1)
 	{
-		if ( static_cast<int>(size()) < nMinLen )
+		if ( static_cast<int>(this->size()) < nMinLen )
 			this->resize(static_cast<MYSIZE>(nMinLen));
 
 		return this->empty() ? const_cast<CT*>(this->data()) : &(this->at(0));
@@ -1186,42 +1227,6 @@ public:
 // -----------------------------------------------------------------------------
 // CStdStr friend addition functions defined as inline
 // -----------------------------------------------------------------------------
-template<typename CT>
-inline
-CStdStr<CT> operator+(const  CStdStr<CT>& str1, const  CStdStr<CT>& str2)
-{
-	CStdStr<CT> strRet(str1);
-	strRet.append(str2);
-	return strRet;
-}
-
-template<typename CT>	
-inline
-CStdStr<CT> operator+(const  CStdStr<CT>& str, CT t)
-{
-	// this particular overload is needed for disabling reference counting
-	// though it's only an issue from line 1 to line 2
-
-	CStdStr<CT> strRet(str);	// 1
-	strRet.append(1, t);				// 2
-	return strRet;
-}
-
-template<typename CT>
-inline
-CStdStr<CT> operator+(const  CStdStr<CT>& str, PCSTR pA)
-{
-	return CStdStr<CT>(str) + CStdStr<CT>(pA);
-}
-
-template<typename CT>
-inline
-CStdStr<CT> operator+(PCSTR pA, const  CStdStr<CT>& str)
-{
-	CStdStr<CT> strRet(pA);
-	strRet.append(str);
-	return strRet;
-}
 
 
 
