@@ -704,6 +704,14 @@ SOURCE=.\ScrollBar.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScrollingList.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScrollingList.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\SnapDisplay.cpp
 # End Source File
 # Begin Source File

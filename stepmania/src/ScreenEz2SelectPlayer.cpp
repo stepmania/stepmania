@@ -26,20 +26,13 @@ Andrew Livy
 #include "GameState.h"
 #include "RageException.h"
 #include "RageTimer.h"
-#include "ScreenSelectStyle5th.h"
 
 /* Constants */
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
 
-#define SELECT_STYLE_TYPE		THEME->GetMetricI("General","SelectStyleType")
-enum SelectStyleType // for use with the metric above
-{
-	SELECT_STYLE_TYPE_MAX = 0,
-	SELECT_STYLE_TYPE_5TH,
-	SELECT_STYLE_TYPE_EZ2,
-};
+#define USE_NORMAL_OR_EZ2_SELECT_STYLE		THEME->GetMetricB("General","UseNormalOrEZ2SelectStyle")
 
 const float TWEEN_TIME		= 0.35f;
 const D3DXCOLOR OPT_NOT_SELECTED = D3DXCOLOR(0.3f,0.3f,0.3f,1);
@@ -116,6 +109,10 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 		MUSIC->Load( THEME->GetPathTo("Sounds","select player music") );
         MUSIC->Play( true );
 	}
+
+//	GAMESTATE->m_bPlayersCanJoin = true;
+//	GAMESTATE->m_bIsJoined[PLAYER_1] = false;
+//	GAMESTATE->m_bIsJoined[PLAYER_2] = false;
 
 //	AfterChange();
 //	TweenOnScreen();
@@ -247,21 +244,10 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
 	case SM_GoToNextState:
-		switch( SELECT_STYLE_TYPE )
-		{
-		case SELECT_STYLE_TYPE_MAX:
-			SCREENMAN->SetNewScreen( new ScreenSelectStyle );
-			break;
-		case SELECT_STYLE_TYPE_5TH:
-			SCREENMAN->SetNewScreen( new ScreenSelectStyle5th );
-			break;
-		case SELECT_STYLE_TYPE_EZ2:
+		if( USE_NORMAL_OR_EZ2_SELECT_STYLE )
 			SCREENMAN->SetNewScreen( new ScreenEz2SelectStyle );
-			break;
-		default:
-			ASSERT(0);
-			break;
-		}
+		else
+			SCREENMAN->SetNewScreen( new ScreenSelectStyle );
 		break;
 	}
 }
@@ -316,11 +302,13 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 
 		if (p == PLAYER_1)
 		{
+//			GAMESTATE->m_bIsJoined[PLAYER_1] = true;
 			m_iSelectedStyle = 0;
 		}
 		else
 		{
 			m_iSelectedStyle = 1;
+//			GAMESTATE->m_bIsJoined[PLAYER_2] = true;
 		}
 		m_soundSelect.PlayRandom();
 		ez2_lasttimercheck[1] = TIMER->GetTimeSinceStart(); // start the timer for going to next state
@@ -328,6 +316,8 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 	else
 	{
 		m_iSelectedStyle = 2;
+//		GAMESTATE->m_bIsJoined[PLAYER_1] = true;
+//		GAMESTATE->m_bIsJoined[PLAYER_2] = true;
 		m_soundSelect.PlayRandom();
 	}
 

@@ -1,6 +1,6 @@
 /********************************
 ScreenEz2SelectStyle.h
-Desc: The "Player Select Screen" for Ez2dancer
+Desc: The "Style Select Screen" for Ez2dancer
 Copyright (c):
 Andrew Livy
 *********************************/
@@ -16,11 +16,12 @@ Andrew Livy
 #include "RandomSample.h"
 #include "Quad.h"
 #include "MenuElements.h"
+#include "ScrollingList.h"
 
 /* Class Definition */
 
-const int NUM_EZ2STYLE_GRAPHICS = 4;
-const int NUM_EZ2P_GRAPHICS = 4;
+ const int NUM_EZ2STYLE_GRAPHICS = 4;
+// const int NUM_EZ2P_GRAPHICS = 4;
 
 class ScreenEz2SelectStyle : public Screen
 {
@@ -51,9 +52,12 @@ private:
 	/* Variable Declarations */
 
 	MenuElements m_Menu;
-	Sprite	m_sprOpt[NUM_EZ2STYLE_GRAPHICS];
-	Sprite  m_sprPly[NUM_EZ2P_GRAPHICS];
+//	Sprite	m_sprOpt[NUM_EZ2STYLE_GRAPHICS];
+//	Sprite  m_sprPly[NUM_EZ2P_GRAPHICS];
 	Sprite	m_sprBackground[NUM_EZ2STYLE_GRAPHICS];
+
+	ScrollingList m_ScrList;
+
 
 	int m_iSelectedStyle;
 	int m_iSelectedPlayer;
