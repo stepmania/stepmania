@@ -62,7 +62,6 @@
 
 #if defined(XBOX)
 #include "Archutils/Xbox/VirtualMemory.h"
-#include <new.h>
 #endif
 
 #define ZIPS_DIR "Packages/"
