@@ -50,6 +50,7 @@
 #include "ProfileManager.h"
 #include "ThemeManager.h"
 #include "MemoryCardManager.h"
+#include "CodeDetector.h"
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -482,6 +483,14 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 {
 //	LOG->Trace( "ScreenManager::Input( %d-%d, %d-%d, %d-%d, %d-%d )", 
 //		DeviceI.device, DeviceI.button, GameI.controller, GameI.button, MenuI.player, MenuI.button, StyleI.player, StyleI.col );
+
+	// check back in event mode
+	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_BACK_IN_EVENT_MODE) )
+	{
+		MenuInput mi(MenuI.player,MENU_BUTTON_BACK);
+		m_ScreenStack.back()->Input( DeviceI, type, GameI, mi, StyleI );
+		return;
+	}
 
 	// pass input only to topmost state
 	if( !m_ScreenStack.empty() )
