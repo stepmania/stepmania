@@ -495,7 +495,8 @@ void OptionRow::UpdateEnabledDisabled()
 	FOREACH_HumanPlayer( p )
 		bThisRowHasFocusByAll &= m_bRowHasFocus[p];
 	
-	float fDiffuseAlpha = m_bHidden? 0.0f:1.0f;
+	bool bRowEnabled = !m_RowDef.m_vEnabledForPlayers.empty();
+	float fDiffuseAlpha = (m_bHidden || !bRowEnabled)? 0.0f:1.0f;
 
 	/* Don't tween selection colors at all. */
 	RageColor color = bThisRowHasFocusByAny ? COLOR_SELECTED:COLOR_NOT_SELECTED;
@@ -569,14 +570,14 @@ void OptionRow::UpdateEnabledDisabled()
 			m_textItems[0]->SetEffectNone();
 	}
 
-	if( m_sprBullet.GetDestY() != m_fY ) 	 
+	if( m_sprBullet.GetDestY() != m_fY || m_sprBullet.DestTweenState().diffuse[0][3] != fDiffuseAlpha )
 	{
 		m_sprBullet.StopTweening();
 		m_textTitle.StopTweening();
 		m_sprBullet.BeginTweening( TWEEN_SECONDS );
 		m_textTitle.BeginTweening( TWEEN_SECONDS );
-		m_sprBullet.SetDiffuseAlpha( m_bHidden? 0.0f:1.0f );
-		m_textTitle.SetDiffuseAlpha( m_bHidden? 0.0f:1.0f );
+		m_sprBullet.SetDiffuseAlpha( fDiffuseAlpha );
+		m_textTitle.SetDiffuseAlpha( fDiffuseAlpha );
 		m_sprBullet.SetY( m_fY );
 		m_textTitle.SetY( m_fY );
 	}
