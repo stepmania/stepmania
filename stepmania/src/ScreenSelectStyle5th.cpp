@@ -441,12 +441,10 @@ void ScreenSelectStyle5th::TweenOnScreen()
 	m_sprStyleIcon.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 	m_sprStyleIcon.SetTweenZoomY( 1 );
 
-	float fOrigExplanation1ZoomX = m_textExplanation1.GetZoomX();
 	m_textExplanation1.SetZoomX( 0 );
 	m_textExplanation1.BeginTweening( 0.6f );
 	m_textExplanation1.SetTweenZoomX( EXPLANATION1_ZOOM_X );
 
-	float fOrigExplanation2ZoomX = m_textExplanation2.GetZoomX();
 	m_textExplanation2.SetZoomX( 0 );
 	m_textExplanation2.SetZoomX( 0 );
 

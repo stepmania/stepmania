@@ -190,7 +190,7 @@ void Player::Update( float fDeltaTime )
 	//
 	// Check for TapNote misses
 	//
-	int iNumMisses = UpdateTapNotesMissedOlderThan( GAMESTATE->m_fSongBeat - GetMaxBeatDifference() );
+	UpdateTapNotesMissedOlderThan( GAMESTATE->m_fSongBeat - GetMaxBeatDifference() );
 
 	//
 	// update HoldNotes logic
