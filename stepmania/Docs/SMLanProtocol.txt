@@ -153,6 +153,17 @@ CLIENT to SERVER protocol:
     NT		Player 0's options
     NT		Player 1's options
 
+
+012:	SMOnline Packet.	//SPECIAL CASE!!!
+	NOTE: The smonline packet is not defined here.
+	The SMLan packet 12 is a wrapper for the SMOnline packet.
+	This is so that we can have "protection" of sorts when 
+	it comes to the coding of SMOnline, so we don't have to
+	use the lower level commands when dealing with SMOnline.
+ Size:
+    2		SMOnline command
+ <VARIABLE>	SMOnline data
+
 SERVER to CLIENT protocol: (begins at 128)
 
 NOTE: Server responces always add 128, thus a server responce for no operation
@@ -284,18 +295,71 @@ NOTE: Server responces always add 128, thus a server responce for no operation
 
 011:	Reserved
 
-///Potential for SMOnline/SMLAN  (Changed to 020)
-020:	SMonline Packet.  (Adam)
-      Bytemap(Game Packet - SMO/TCP[C=010] Data)
-      +----+---//---+-+---//---+-+---+------+-----+
-      |iiii|GameName|0|SongName|0|pmd|Length|Steps|
-      +----+-//-----+-+-//-----+-+---+------+-----+
-      Byte[4]      iiii         IPAddress of Host/Creator(WAN)
-      char*        GameName     Name of the Game
-      char*        SongName     Title of the Song
-      Byte         p            Current number of Players
-      Byte         m            Maximum allowed Players(Set by creator; values 1-14 valid)
-      Enum Byte    d            Average Player Difficulty(values 0-4 valid)
-      Long         Length       Length of .sm file for Song in Bytes(For validation)
-      Long         Steps        Total number of steps in all stepcharts for this song(For validation)
 
+012:	SMOnline Packet.	//SPECIAL CASE!!!
+	NOTE: The smonline packet is not defined here.
+	The SMLan packet 12 is a wrapper for the SMOnline packet.
+	This is so that we can have "protection" of sorts when 
+	it comes to the coding of SMOnline, so we don't have to
+	use the lower level commands when dealing with SMOnline.
+ Size:
+    2		SMOnline command
+ <VARIABLE>	SMOnline data
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------------
+Client SMOnline packets:
+000:  Send Login Information
+ Size:
+    1		Encryption text
+		0: Plain Text
+		(More will be added)
+    NT		Username
+    NT		Password
+
+001:  Room Update
+ Size:
+    1		Type of update
+		0: Change Room Title
+		1: Update List of other rooms (or games)
+
+	If Room Title Update:
+    NT		Room Title
+    NT		Room Description
+	
+	If Room List Update:
+    1		Number of rooms
+    NT		Room1 Title
+    NT		Room1 Description		
+    NT		Room2 Title
+    NT		Room2 Description		
+	...
+    NT		RoomN Title
+    NT		RoomN Description		
+
+Server SMOnline packets:
+000:  Login Responce
+    1		Approval Status
+		0: Approved
+		1: Approval Failed
+    NT		MOTD (if passed)
+	    or	Reason for failure (if failed)
+
+001: User asks to enter room
+ Size:
+    1		Enter/Exit?
+		0: User wishes to exit room
+		1: User wishes to enter room 
+    NT		Room Name (Used when entering rooms)
