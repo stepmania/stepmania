@@ -48,6 +48,7 @@
 const ScreenMessage	SM_ChangeDisplayedFeat			= ScreenMessage(SM_User+0);
 
 static const int CHAR_OK = -1;
+static const int CHAR_BACK = -2;
 
 
 ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : Screen( sClassName )
@@ -150,6 +151,21 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			Letter->Command( THEME->GetMetric("ScreenNameEntryTraditional","AlphabetInitCommand") );
 
 			m_AlphabetLetter[p].push_back( Chars[ch] );
+		}
+
+		/* Add "<-". */
+		{
+			BitmapText *Letter = new BitmapText;
+			Letter->SetName( ssprintf("LetterP%i",p+1) );
+			Letter->LoadFromFont( fontpath );
+			CString text = "&leftarrow;";
+			FontCharAliases::ReplaceMarkers( text );
+			Letter->SetText( text );
+			m_textAlphabet[p].push_back( Letter );
+			m_Keyboard[p].AddChild( Letter );
+
+			m_AlphabetLetter[p].push_back( CHAR_BACK );
+			Letter->Command( THEME->GetMetric("ScreenNameEntryTraditional","OKInitCommand") );
 		}
 
 		/* Add "OK". */
@@ -428,8 +444,21 @@ void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventTyp
 	case CHAR_OK:
 		m_soundKey.Play();
 		Finish( pn );
+		break;
+
+	case CHAR_BACK:
+		if( !m_sSelection[pn].size()  )
+		{
+			/* XXX play invalid sound */
+			break;
+		}
+
+		m_sSelection[pn].erase( m_sSelection[pn].size()-1, 1 );
+		UpdateSelectionText( pn );
+		m_soundKey.Play();
 
 		break;
+
 	default:
 		/* If we have room, add a new character. */
 		if( (int) m_sSelection[pn].size() == MAX_RANKING_NAME_LENGTH )
