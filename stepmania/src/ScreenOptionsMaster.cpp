@@ -45,7 +45,6 @@ void ScreenOptionsMaster::Init()
 	split( OPTION_MENU_FLAGS, ";", Flags, true );
 	InputMode im = INPUTMODE_INDIVIDUAL;
 	bool Explanations = false;
-	bool bShowUnderlines = true;
 	
 	for( unsigned i = 0; i < Flags.size(); ++i )
 	{
@@ -66,8 +65,6 @@ void ScreenOptionsMaster::Init()
 			SetNavigation( NAV_THREE_KEY_MENU );
 		else if( sFlag == "toggle" || sFlag == "firstchoicegoesdown" )
 			SetNavigation( PREFSMAN->m_bArcadeOptionsNavigation? NAV_TOGGLE_THREE_KEY:NAV_TOGGLE_FIVE_KEY );
-		else if( sFlag == "hideunderlines" )
-			bShowUnderlines = false;
 		else
 			RageException::Throw( "Unknown flag \"%s\"", sFlag.c_str() );
 	}
@@ -95,7 +92,7 @@ void ScreenOptionsMaster::Init()
 
 	ASSERT( OptionRowHandlers.size() == asLineNames.size() );
 
-	InitMenu( im, m_OptionRowAlloc, OptionRowHandlers, bShowUnderlines );
+	InitMenu( im, m_OptionRowAlloc, OptionRowHandlers );
 }
 
 ScreenOptionsMaster::~ScreenOptionsMaster()

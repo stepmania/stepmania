@@ -122,8 +122,6 @@ void ScreenOptions::Init()
 		m_bGotAtLeastOneStartPressed[p] = false;
 	}
 
-	m_bShowUnderlines = true;
-
 	m_framePage.RunCommands( FRAME_ON_COMMAND );
 }
 
@@ -132,15 +130,13 @@ void ScreenOptions::LoadOptionIcon( PlayerNumber pn, int iRow, CString sText )
 	m_Rows[iRow]->LoadOptionIcon( pn, sText );
 }
 
-void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands, bool bShowUnderlines )
+void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands )
 {
 	LOG->Trace( "ScreenOptions::Set()" );
 
 	ASSERT( vDefs.size() == vHands.size() );
 
 	m_InputMode = im;
-
-	m_bShowUnderlines = bShowUnderlines;
 
 	for( unsigned r=0; r<vDefs.size(); r++ )		// foreach row
 	{
