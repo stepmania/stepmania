@@ -22,7 +22,7 @@ const float SCORE_TWEEN_TIME = 0.5f;
 
 ScoreDisplayRolling::ScoreDisplayRolling()
 {
-	LOG->WriteLine( "ScoreDisplayRolling::ScoreDisplayRolling()" );
+	LOG->Trace( "ScoreDisplayRolling::ScoreDisplayRolling()" );
 
 	// init the text
 	Load( THEME->GetPathTo(FONT_SCORE_NUMBERS) );

@@ -413,7 +413,7 @@ const DirCache::CacheEntry *DirCache::SearchDirCache( const CString &sPath )
 bool GetExtDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo, ... )
 {
 	const char *masks[32];
-	int nmasks = 0;
+	unsigned nmasks = 0;
     va_list	va;
 	
     va_start(va, bReturnPathToo);

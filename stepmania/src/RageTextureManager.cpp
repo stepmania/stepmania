@@ -16,7 +16,7 @@
 //-----------------------------------------------------------------------------
 #include "RageTextureManager.h"
 #include "RageBitmapTexture.h"
-#include "RageMovieTexture.h"
+//#include "RageMovieTexture.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"

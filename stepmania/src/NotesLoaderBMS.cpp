@@ -259,7 +259,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		throw RageException( "Couldn't find any BMS files in '%s'", sDir.GetString() );
 
 	// load the Notes from the rest of the BMS files
-	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ ) 
+	unsigned i;
+	for( i=0; i<arrayBMSFileNames.size(); i++ ) 
 	{
 		Notes* pNewNotes = new Notes;
 

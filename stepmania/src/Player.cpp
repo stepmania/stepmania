@@ -178,7 +178,8 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	m_Combo.SetY( GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ?  -COMBO_Y_OFFSET : COMBO_Y_OFFSET );
 	m_Judgement.SetY( GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ? -JUDGEMENT_Y_OFFSET : JUDGEMENT_Y_OFFSET );
 
-	for( int c=0; c<pStyleDef->m_iColsPerPlayer; c++ )
+	int c;
+	for( c=0; c<pStyleDef->m_iColsPerPlayer; c++ )
 		m_HoldJudgement[c].SetY( GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ? SCREEN_HEIGHT - HOLD_JUDGEMENT_Y : HOLD_JUDGEMENT_Y );
 	for( c=0; c<pStyleDef->m_iColsPerPlayer; c++ )
 		m_HoldJudgement[c].SetX( (float)pStyleDef->m_ColumnInfo[pn][c].fXOffset );
@@ -294,8 +295,6 @@ void Player::Update( float fDeltaTime )
 void Player::DrawPrimitives()
 {
 	m_frameCombo.Draw();	// draw this below everything else
-
-	RageMatrix matOldProj;
 
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bEffects[PlayerOptions::EFFECT_SPACE] )
 	{

@@ -23,7 +23,7 @@
 
 OptionIconRow::OptionIconRow()
 {
-	for( int i=0; i<NUM_OPTION_COLS; i++ )
+	for( unsigned i=0; i<NUM_OPTION_COLS; i++ )
 	{
 		m_OptionIcon[i].SetXY( i*SPACING_X, i*SPACING_Y );
 		this->AddChild( &m_OptionIcon[i] );
@@ -107,7 +107,7 @@ void OptionIconRow::Refresh( PlayerNumber pn )
 			continue;	// skip
 
 		// search for a vacant spot
-		for( int i=iPerferredCol; i<NUM_OPTION_COLS-1; i++ )
+		for( unsigned i=iPerferredCol; i<NUM_OPTION_COLS-1; i++ )
 		{
 			if( asTabs[i] != "" )
 				continue;

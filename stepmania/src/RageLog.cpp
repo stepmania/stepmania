@@ -38,7 +38,10 @@ RageLog::RageLog()
 	SYSTEMTIME st;
     GetLocalTime( &st );
 
+#if defined(_MSC_VER)
 	this->Trace( "Last compiled on %s.", __TIMESTAMP__ );
+#endif
+
 	this->Trace( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
 					 st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
 	this->Trace( "\n" );

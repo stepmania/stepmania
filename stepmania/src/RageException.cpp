@@ -40,7 +40,7 @@ RageException::RageException( HRESULT hr, const char *fmt, ...)
 #endif
 }
 
-const char* RageException::what() const
+const char* RageException::what() const throw ()
 {
 	return m_sError;
 }

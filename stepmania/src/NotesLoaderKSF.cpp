@@ -162,7 +162,8 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 		throw RageException( "Couldn't find any KSF files in '%s'", sDir.GetString() );
 
 	// load the Notes from the rest of the KSF files
-	for( unsigned i=0; i<arrayKSFFileNames.size(); i++ ) 
+	unsigned i;
+	for( i=0; i<arrayKSFFileNames.size(); i++ ) 
 	{
 		Notes* pNewNotes = new Notes;
 		LoadFromKSFFile( out.m_sSongDir + arrayKSFFileNames[i], *pNewNotes );

@@ -15,7 +15,7 @@
 #include "Song.h"
 #include "ActorFrame.h"
 #include "BitmapText.h"
-
+#include "PlayerOptions.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
