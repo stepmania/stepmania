@@ -306,9 +306,10 @@ bool Song::LoadFromSongDir( CString sDir )
 	{
 		if( !DoesFileExist(GetCacheFilePath()) )
 			goto load_without_cache;
+		
+		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir, GetCacheFilePath() );
 		LoadFromSMFile( GetCacheFilePath() );
 
-		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir, GetCacheFilePath() );
 		return true;
 	}
 
