@@ -67,7 +67,7 @@ public:
 	float UnlockFailExtraStage();
 	float UnlockClearStage();
 	float UnlockToasty();
-	bool UnlockRouletteSeed(int seed);
+	bool RouletteUnlock( const Song *song );
 
 private:
 	void SortSongEntriesArray();  // sorts unlocks

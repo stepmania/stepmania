@@ -314,9 +314,8 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 			/* Hide songs that asked to be hidden via #SELECTABLE. */
 			if( so!=SORT_ROULETTE && !pSong->NormallyDisplayed() )
 				continue;
-			if( so==SORT_ROULETTE && !pSong->RouletteDisplayed() )
-				continue;
-			if( so==SORT_ROULETTE && GAMESTATE->m_pUnlockingSys->SongIsRoulette( pSong ) )
+			if( so==SORT_ROULETTE && !(pSong->RouletteDisplayed()
+				|| GAMESTATE->m_pUnlockingSys->SongIsRoulette( pSong )) )
 				continue;
 		}
 
@@ -326,7 +325,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 		if( !arraySteps.empty() )
 		{
 			// If we're using unlocks, check it here to prevent from being shown
-			if( PREFSMAN->m_bUseUnlockSystem )
+			if( PREFSMAN->m_bUseUnlockSystem && so!=SORT_ROULETTE )
 			{ 
 				pSong->m_bIsLocked = GAMESTATE->m_pUnlockingSys->SongIsLocked( pSong );
 				if( pSong->m_bIsLocked ) { continue; }
@@ -1109,13 +1108,16 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 			SetOpenGroup(m_sExpandedSectionName);
 		}
 		return false;
-	case TYPE_ROULETTE:
+	case TYPE_ROULETTE:  
 		StartRoulette();
 		return false;
 	case TYPE_RANDOM:
 		StartRandom();
 		return false;
 	case TYPE_SONG:
+		if (PREFSMAN->m_bUseUnlockSystem)
+			GAMESTATE->m_pUnlockingSys->RouletteUnlock( m_CurWheelItemData[m_iSelection]->m_pSong );
+		// fall-through - we want to check for unlocking only if its a song
 	case TYPE_COURSE:
 		return true;
 	case TYPE_SORT:

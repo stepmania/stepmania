@@ -28,17 +28,48 @@ UnlockSystem::UnlockSystem()
 {
 }
 
+bool UnlockSystem::RouletteUnlock( const Song *song )
+{
+	SongEntry *p = FindSong( song );
+	if (p->m_iRouletteSeed == 0) return false;  // already unlocked
+
+	PREFSMAN->m_RouletteSeeds[p->m_iRouletteSeed] = '1';
+	return true;
+}
+
+
 
 bool UnlockSystem::SongIsLocked( const Song *song )
 {
 	SongEntry *p = FindSong( song );
+
+	CString tmp;
+
+	if (p)
+	{
+		p->updateLocked();
+
+		if (!p->isLocked) tmp = "un";
+
+		LOG->Trace( "UnlockSystem entry: %s", (p->m_sSongName).c_str() );
+		LOG->Trace( "current status: %slocked", tmp.c_str() );
+	}
+	
 	return p && p->isLocked;
 }
 
 bool UnlockSystem::SongIsRoulette( const Song *song )
 {
 	SongEntry *p = FindSong( song );
-	return p && p->m_iRouletteSeed != 0;
+	
+	CString item;
+
+	if (p && (p->m_iRouletteSeed != 0))
+		LOG->Trace("Item %s is roulettable.");
+	else
+		LOG->Trace("Item %s is not roulettable.");
+	
+	return p && (p->m_iRouletteSeed != 0) ;
 }
 
 SongEntry *UnlockSystem::FindSong( const Song *pSong )
@@ -116,7 +147,7 @@ bool UnlockSystem::ParseRow(CString text, CString &type, float &qty,
 
 bool SongEntry::updateLocked()
 {
-	if (!isLocked) return true;  // if its already true
+	if (!(isLocked)) return true;  // if its already true
 	
 	if (m_fArcadePointsRequired != 0)
 		isLocked = (PREFSMAN->m_fArcadePointsAccumulated < m_fArcadePointsRequired);
@@ -140,7 +171,18 @@ bool SongEntry::updateLocked()
 		isLocked = (PREFSMAN->m_fTotalToastysSeen < m_fToastysSeen);
 
 	if (m_iRouletteSeed != 0)
-		isLocked = (PREFSMAN->m_RouletteSeeds[m_iRouletteSeed] == '0');
+	{
+		CString tmp = PREFSMAN->m_RouletteSeeds;
+
+		LOG->Trace("Seed in question: %d Roulette seeds: %s", 
+			m_iRouletteSeed, tmp.c_str() );
+		isLocked = (tmp[m_iRouletteSeed] != '1');
+
+		if (isLocked)
+			LOG->Trace("Song is currently LOCKED");
+		else
+			LOG->Trace("Song is currently UNLOCKED");
+	}
 
 	return !isLocked;
 }
@@ -216,7 +258,7 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 		if (unlock_type == "RO")
 		{
 			current.m_iRouletteSeed = (int)datavalue;
-			current.isLocked = (PREFSMAN->m_fArcadePointsAccumulated < datavalue);
+			current.isLocked = ((PREFSMAN->m_RouletteSeeds)[(int)datavalue] != '1');
 		}
 
 		m_SongEntries.push_back(current);
@@ -225,10 +267,13 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 	sort( m_SongEntries.begin(), m_SongEntries.end(), CompareSongEntries );
 	
 	for(unsigned i=0; i < m_SongEntries.size(); i++)
+	{
+		CString tmp = "  ";
+		if (!m_SongEntries[i].isLocked) tmp = "un";
 		LOG->Trace( "UnlockSystem entry: %s", m_SongEntries[i].m_sSongName.c_str() );
+		LOG->Trace( "Initial status:%slocked", tmp.c_str() );
+	}
 	
-	
-
 	return true;
 }
 
