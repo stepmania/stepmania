@@ -379,15 +379,30 @@ void ScreenSelectMusic::TweenCoursePartsOnScreen( bool Initial )
 {
 	m_CourseContentsFrame.SetZoomY( 1 );
 	if( Initial )
+	{
 		m_CourseContentsFrame.FadeOn( 0, "foldy", 0.3f );
+		COMMAND( m_CourseContentsFrame, "On" );
+	}
 	else
+	{
 		m_CourseContentsFrame.SetFromCourse(NULL);
+		COMMAND( m_CourseContentsFrame, "Show" );
+	}
+	// XXX: if !Initial, m_CourseContentsFrame.Hide?
 }
 
 void ScreenSelectMusic::TweenCoursePartsOffScreen( bool Final )
 {
-	m_CourseContentsFrame.SetZoomY( 1 );
-	m_CourseContentsFrame.FadeOff( 0, "foldy", 0.3f );
+	if( Final )
+	{
+		m_CourseContentsFrame.SetZoomY( 1 );
+		m_CourseContentsFrame.FadeOff( 0, "foldy", 0.3f );
+		OFF_COMMAND( m_CourseContentsFrame );
+	}
+	else
+	{
+		COMMAND( m_CourseContentsFrame, "Hide" );
+	}
 }
 
 void ScreenSelectMusic::SkipSongPartTweens()
