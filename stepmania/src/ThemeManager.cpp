@@ -18,6 +18,7 @@
 #include "GameState.h"
 #include "GameDef.h"
 #include "IniFile.h"
+#include "RageTimer.h"
 
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
@@ -31,9 +32,9 @@ ThemeManager::ThemeManager()
 	m_pIniMetrics = new IniFile;
 
 	/* Update the metric cache on the first call to GetMetric. */
-	m_uNextReloadTicks = 0;
+	m_fNextReloadTicks = 0;
 
-	m_sCurThemeName = BASE_THEME_NAME;	// Use te base theme for now.  It's up to PrefsManager to change this.
+	m_sCurThemeName = BASE_THEME_NAME;	// Use the base theme for now.  It's up to PrefsManager to change this.
 
 	CStringArray arrayThemeNames;
 	GetAllThemeNames( arrayThemeNames );
@@ -233,9 +234,10 @@ try_metric_again:
 	CString sDefaultMetricPath = GetMetricsPathFromName(BASE_THEME_NAME);
 
 	// Is our metric cache out of date?
-	if (m_uNextReloadTicks == 0 || ::GetTickCount() > m_uNextReloadTicks)
+	// XXX: GTSS wraps every ~40 days.  Need a better way to handler timers like this.
+	if (TIMER->GetTimeSinceStart() >= m_fNextReloadTicks)
 	{
-		m_uNextReloadTicks = GetTickCount()+1000;
+		m_fNextReloadTicks = TIMER->GetTimeSinceStart()+1.0f;
 		if( m_uHashForCurThemeMetrics != GetHashForFile(sCurMetricPath)  ||
 			m_uHashForBaseThemeMetrics != GetHashForFile(sDefaultMetricPath) )
 		{
