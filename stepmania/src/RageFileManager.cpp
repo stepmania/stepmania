@@ -140,7 +140,7 @@ RageFileManager::~RageFileManager()
 		delete g_Drivers[i].driver;
 	g_Drivers.clear();
 
-//	delete g_Mountpoints; // g_Mountpoints was g_Drivers
+//	delete g_Mountpoints; // g_Mountpoints was in g_Drivers
 	g_Mountpoints = NULL;
 
 	delete g_Mutex;
