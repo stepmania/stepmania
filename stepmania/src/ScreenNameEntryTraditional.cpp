@@ -205,6 +205,12 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		for( i = 0; i < m_textAlphabet[p].size(); ++i )
 			m_textAlphabet[p][i]->FinishTweening();
 
+		/* We always show the banner frame (if any), because fading from a graphic to
+		 * itself is ugly. */
+		m_sprBannerFrame[p].SetName( ssprintf("BannerFrameP%i",p+1) );
+		m_sprBannerFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenNameEntryTraditional banner frame p%i",p+1)) );
+		SET_XY_AND_ON_COMMAND( m_textSelection[p] );
+		this->AddChild( &m_sprBannerFrame[p] );
 
 		/* Show feat 0, hide others without tweening.  Run the ON command for
 		 * all actors, even if we're going to hide it anyway, so any style commands

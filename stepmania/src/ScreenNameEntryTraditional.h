@@ -55,6 +55,7 @@ private:
 	BitmapText		m_textCategory[NUM_PLAYERS][MAX_DISPLAYED_FEATS];
 	BitmapText		m_textScore[NUM_PLAYERS][MAX_DISPLAYED_FEATS];
 	Banner			m_sprBanner[NUM_PLAYERS][MAX_DISPLAYED_FEATS];
+	Sprite			m_sprBannerFrame[NUM_PLAYERS];
 	
 	Sprite			m_sprNameFrame[NUM_PLAYERS];
 
