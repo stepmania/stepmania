@@ -65,6 +65,8 @@ int mySDL_MapRGBExact(SDL_PixelFormat *fmt, Uint8 R, Uint8 G, Uint8 B);
 
 void mySDL_BlitTransform( const SDL_Surface *src, SDL_Surface *dst, 
 					const float fCoords[8] /* TL, BR, BL, TR */ );
+void mySDL_BlitSurface( 
+	SDL_Surface *src, SDL_Surface *dst, int width, int height, bool ckey);
 
 #endif
 

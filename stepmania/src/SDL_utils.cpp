@@ -779,3 +779,256 @@ void mySDL_BlitTransform( const SDL_Surface *src, SDL_Surface *dst,
 	}
 }
 
+/* Templated blitter.  This has a couple advantages:
+ *
+ * The generic implementations will see the parameters at compile-time, and
+ * the compiler can elide them completely, giving a smaller loop.
+ *
+ * Also, we can enable and disable specializations simply by commenting out
+ * a blit function; if it's not there, it'll fall back on the generic version
+ * automatically. 
+ *
+ * This is not yet intended for widespread use; it's currently only used in
+ * the RageDisplay Create/UpdateTexture functions.  I wrote this because
+ * I'm tired of fighting with SDL's blit.  This can replace the SDL blits
+ * completely after the release, but that'll take a lot of testing.
+ *
+ * Simplified:
+ *
+ * No source alpha.
+ * Palette -> palette blits assume the palette is identical (no mapping).
+ * Color key removal controlled by a parameter, not a flag.
+ * No general blitting rects.
+ */
+struct blit_traits_true {  enum { val = true };  };
+struct blit_traits_false { enum { val = false }; };
+enum { IDENTITY, DIFFERENT_RGBA, PAL_TO_RGBA };
+struct blit_traits_identity { enum { convert = IDENTITY }; };
+/* Nonidentical RGBA->RGBA; convert. */
+struct blit_traits_rescale { enum { convert = DIFFERENT_RGBA }; };
+/* PAL->RGBA; convert. */
+struct blit_traits_depallete { enum { convert = PAL_TO_RGBA }; };
+
+template<class ckey,class blit_traits>
+static void blit( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height );
+
+static void blit<blit_traits_false,blit_traits_identity>( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
+{
+	const char *src = (const char *) src_surf->pixels;
+	const char *dst = (const char *) dst_surf->pixels;
+
+	/* Bytes to skip at the end of a line. */
+	const int srcskip = src_surf->pitch - width*src_surf->format->BytesPerPixel;
+	const int dstskip = dst_surf->pitch - width*dst_surf->format->BytesPerPixel;
+
+	/* XXX: duff's this */
+	while( height-- )
+	{
+		int x = 0;
+		while( x++ < width )
+		{
+			/* (Relatively) fast. */
+			switch( src_surf->format->BytesPerPixel )
+			{
+			case 1: *((Uint8 *)dst) = *((Uint8 *)src); break;
+			case 2: *((Uint16 *)dst) = *((Uint16 *)src); break;
+			case 3: ((Uint8 *)dst)[0] = ((Uint8 *)src)[0];
+					((Uint8 *)dst)[1] = ((Uint8 *)src)[1];
+					((Uint8 *)dst)[2] = ((Uint8 *)src)[2];
+					break;
+			case 4: *((Uint32 *)dst) = *((Uint32 *)src); break;
+			}
+
+			src += src_surf->format->BytesPerPixel;
+			dst += dst_surf->format->BytesPerPixel;
+		}
+
+		src += srcskip;
+		dst += dstskip;
+	}
+}
+
+/* Rescaling blit with no ckey.  This is what gets used to update moveis in
+ * D3D, so optimization is very important. */
+static void blit<blit_traits_false,blit_traits_rescale>( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
+{
+	const char *src = (const char *) src_surf->pixels;
+	const char *dst = (const char *) dst_surf->pixels;
+
+	/* Bytes to skip at the end of a line. */
+	const int srcskip = src_surf->pitch - width*src_surf->format->BytesPerPixel;
+	const int dstskip = dst_surf->pitch - width*dst_surf->format->BytesPerPixel;
+
+	Uint32 src_bits[4], dst_bits[4];
+	mySDL_GetBitsPerChannel(src_surf->format, src_bits);
+	mySDL_GetBitsPerChannel(dst_surf->format, dst_bits);
+
+	const int rshifts[4] = {
+		src_surf->format->Rshift + src_bits[0] - dst_bits[0],
+		src_surf->format->Gshift + src_bits[1] - dst_bits[1],
+		src_surf->format->Bshift + src_bits[2] - dst_bits[2],
+		src_surf->format->Ashift + src_bits[3] - dst_bits[3],
+	};
+	const int lshifts[4] = {
+		dst_surf->format->Rshift,
+		dst_surf->format->Gshift,
+		dst_surf->format->Bshift,
+		dst_surf->format->Ashift,
+	};
+
+	const Uint32 masks[4] = {
+		src_surf->format->Rmask,
+		src_surf->format->Gmask,
+		src_surf->format->Bmask,
+		src_surf->format->Amask
+	};
+
+	int or = 0;
+	if( src_surf->format->Amask == 0 )
+		or = dst_surf->format->Amask;
+
+	while( height-- )
+	{
+		int x = 0;
+		while( x++ < width )
+		{
+			unsigned int pixel = decodepixel((Uint8 *) src, src_surf->format->BytesPerPixel);
+
+			/* Convert pixel to the destination RGBA. */
+			unsigned int opixel = 0;
+			opixel |= (pixel & masks[0]) >> rshifts[0] << lshifts[0];
+			opixel |= (pixel & masks[1]) >> rshifts[1] << lshifts[1];
+			opixel |= (pixel & masks[2]) >> rshifts[2] << lshifts[2];
+			opixel |= (pixel & masks[3]) >> rshifts[3] << lshifts[3];
+
+			// Correct surfaces that don't have an alpha channel.
+			opixel |= or;
+
+			/* Store it. */
+			encodepixel((Uint8 *) dst, dst_surf->format->BytesPerPixel, opixel);
+
+			src += src_surf->format->BytesPerPixel;
+			dst += dst_surf->format->BytesPerPixel;
+		}
+
+		src += srcskip;
+		dst += dstskip;
+	}
+}
+
+template<class ckey,class blit_traits>
+static void blit( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
+{
+	const char *src = (const char *) src_surf->pixels;
+	const char *dst = (const char *) dst_surf->pixels;
+
+	/* Bytes to skip at the end of a line. */
+	const int srcskip = src_surf->pitch - width*src_surf->format->BytesPerPixel;
+	const int dstskip = dst_surf->pitch - width*dst_surf->format->BytesPerPixel;
+
+	while( height-- )
+	{
+		int x = 0;
+		while( x++ < width )
+		{
+			unsigned int pixel = decodepixel((Uint8 *) src, src_surf->format->BytesPerPixel);
+
+			if( ckey::val == true )
+			{
+				/* dst_surf->format->BytesPerPixel is not 1 (not paletted). 
+				 * We don't check this, for efficiency. */
+				// ASSERT(dst_surf->format->BytesPerPixel != 1);
+
+				if( pixel == src_surf->format->colorkey )
+				{
+					pixel = 0;
+
+					/* Skip the conversion. */
+					goto skip_convert;
+				}
+			}
+
+			if( blit_traits::convert )
+			{
+				Uint8 colors[4];
+				if( blit_traits::convert == DIFFERENT_RGBA )
+				{
+					/* Convert pixel to the destination RGBA. */
+					mySDL_GetRGBAV(pixel, src_surf, colors);
+				} else if( blit_traits::convert == PAL_TO_RGBA ) {
+					/* Convert pixel to the destination RGBA. */
+					colors[0] = src_surf->format->palette->colors[pixel].r;
+					colors[1] = src_surf->format->palette->colors[pixel].g;
+					colors[2] = src_surf->format->palette->colors[pixel].b;
+					colors[3] = 0xFF;
+				}
+				pixel = mySDL_SetRGBAV(dst_surf->format, colors);
+			}
+skip_convert:
+
+			/* Store it. */
+			encodepixel((Uint8 *) dst, dst_surf->format->BytesPerPixel, pixel);
+
+			src += src_surf->format->BytesPerPixel;
+			dst += dst_surf->format->BytesPerPixel;
+		}
+
+		src += srcskip;
+		dst += dstskip;
+	}
+
+}
+
+void mySDL_BlitSurface( 
+	SDL_Surface *src, SDL_Surface *dst, int width, int height, bool ckey)
+{
+	if(width == -1)
+		width = src->w;
+	if(height == -1)
+		height = src->h;
+	width = min(src->w, dst->w);
+	height = min(src->h, dst->h);
+
+	/* Types of blits:
+	 * RGBA->RGBA, same format without colorkey
+	 * RGBA->RGBA, same format with colorkey
+	 * PAL->PAL; ignore colorkey flag
+	 * RGBA->RGBA different format without colorkey
+	 * RGBA->RGBA different format with colorkey
+	 * PAL->RGBA with colorkey
+	 * PAL->RGBA without colorkey
+	 */
+	if( src->format->BytesPerPixel == dst->format->BytesPerPixel &&
+		src->format->Rmask == dst->format->Rmask &&
+		src->format->Gmask == dst->format->Gmask &&
+		src->format->Bmask == dst->format->Bmask &&
+		src->format->Amask == dst->format->Amask )
+	{
+		/* RGBA->RGBA with the same format, or PAL->PAL.  Simple copy. */
+		if(src->format->BitsPerPixel != 8 && ckey)
+			blit<blit_traits_true,blit_traits_identity>(src, dst, width, height);
+		else
+			blit<blit_traits_false,blit_traits_identity>(src, dst, width, height);
+	}
+
+	else if( src->format->BytesPerPixel != 1 && dst->format->BytesPerPixel != 1 )
+	{
+		/* RGBA->RGBA with different formats. */
+		if(ckey)
+			blit<blit_traits_true,blit_traits_rescale>(src, dst, width, height);
+		else
+			blit<blit_traits_false,blit_traits_rescale>(src, dst, width, height);
+	}
+
+	else if( src->format->BytesPerPixel == 1 && dst->format->BytesPerPixel != 1 )
+	{
+		/* RGBA->PAL. */
+		if(ckey)
+			blit<blit_traits_true,blit_traits_depallete>(src, dst, width, height);
+		else
+			blit<blit_traits_false,blit_traits_depallete>(src, dst, width, height);
+	}
+	else
+		/* We don't do RGBA->PAL. */
+		ASSERT(0);
+}
