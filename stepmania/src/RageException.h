@@ -36,10 +36,10 @@ protected:
 //#define RAGE_ASSERT(COND) RAGE_ASSERT_M((COND), "Assertion failure")
 
 /* Make this the default assert handler. */
-//#ifdef ASSERT
-//#undef ASSERT
-//#endif
-//#define ASSERT RAGE_ASSERT
+#ifdef ASSERT
+#undef ASSERT
+#endif
+#define ASSERT(x) ;
 
 
 #endif

@@ -369,6 +369,8 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 	#endif
 
 #endif // #ifndef W32BASE_H
+#undef ASSERT
+#define ASSERT(x) ;
 
 // Standard headers needed
 
