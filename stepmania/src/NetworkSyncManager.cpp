@@ -19,6 +19,11 @@ NOTE TO DEVS:
 
 This file is still under heavy editing.
 Don't bother to edit it.  I will be editing it as I go.
+
+
+
+  IF YOU DO EDIT THIS FILE PLEASE LEAVE A NOTE!
+  I AM CONSTANTLY EDITING IT.
 -----------------------
 */
 
@@ -62,7 +67,7 @@ NetworkSyncManager::NetworkSyncManager(int argc, char **argv)
 	if (useSMserver) {
 		int ClientCommand=3;
 		NetPlayerClient->send((char*) &ClientCommand, 4);
-		NetPlayerClient->send(0);//Send 0 for flash client
+//		NetPlayerClient->send(0);//Send 0 for flash client
 
 		NetPlayerClient->receive(m_ServerVersion);
 			//If network play is desired
