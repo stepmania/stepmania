@@ -71,7 +71,9 @@ RadarValues Trail::GetRadarValues() const
 		{
 			const Steps *pSteps = e->pSteps;
 			ASSERT( pSteps );
-			if( e->ContainsTransformOrTurn() )
+			/* Hack: don't calculate for autogen entries; it makes writing Catalog.xml
+			 * take way too long.  (Tournamix 4 Sample.crs takes me ~10s.) */
+			if( !pSteps->IsAutogen() && e->ContainsTransformOrTurn() )
 			{
 				NoteData nd;
 				pSteps->GetNoteData( &nd );
