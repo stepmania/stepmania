@@ -55,14 +55,14 @@ EditMenu::EditMenu()
 
 	for( int i=0; i<NUM_ROWS; i++ )
 	{
-		m_textLabel[i].LoadFromFont( THEME->GetPathF("Common","title") );
+		m_textLabel[i].LoadFromFont( THEME->GetPathF("EditMenu","title") );
 		m_textLabel[i].SetXY( ROW_LABELS_X, ROW_Y(i) );
 		m_textLabel[i].SetText( RowToString((Row)i) );
 		m_textLabel[i].SetZoom( 0.8f );
 		m_textLabel[i].SetHorizAlign( Actor::align_left );
 		this->AddChild( &m_textLabel[i] );
 
-		m_textValue[i].LoadFromFont( THEME->GetPathF("Common","normal") );
+		m_textValue[i].LoadFromFont( THEME->GetPathF("EditMenu","value") );
 		m_textValue[i].SetXY( ROW_VALUE_X(i), ROW_Y(i) );
 		m_textValue[i].SetText( "blah" );
 		m_textValue[i].SetZoom( 0.8f );
@@ -129,7 +129,6 @@ EditMenu::EditMenu()
 				}
 			}
 		}
-
 	}
 }
 

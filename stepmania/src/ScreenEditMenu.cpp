@@ -39,14 +39,14 @@ void ScreenEditMenu::Init()
 
 
 	m_textExplanation.SetName( "Explanation" );
-	m_textExplanation.LoadFromFont( THEME->GetPathF("Common","normal") );
+	m_textExplanation.LoadFromFont( THEME->GetPathF(m_sName,"explanation") );
 	SET_XY_AND_ON_COMMAND( m_textExplanation );
 	m_textExplanation.SetText( EXPLANATION_TEXT );
 	this->AddChild( &m_textExplanation );
 
 	this->SortByDrawOrder();
 
-	SOUND->PlayMusic( THEME->GetPathS("ScreenEditMenu","music") );
+	SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 }
 
 void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
@@ -150,7 +150,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pSong->AddSteps( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Steps created from copy." );
-			SOUND->PlayOnce( THEME->GetPathS("ScreenEditMenu","create") );
+			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
 			m_Selector.RefreshNotes();
 			pSong->Save();
 		}
@@ -168,7 +168,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pSong->AddSteps( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Steps created from AutoGen." );
-			SOUND->PlayOnce( THEME->GetPathS("ScreenEditMenu","create") );
+			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
 			m_Selector.RefreshNotes();
 			pSong->Save();
 		}
@@ -185,7 +185,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pSong->AddSteps( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Blank Steps created." );
-			SOUND->PlayOnce( THEME->GetPathS("ScreenEditMenu","create") );
+			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
 			m_Selector.RefreshNotes();
 			pSong->Save();
 		}
