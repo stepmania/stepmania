@@ -162,6 +162,10 @@ void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevic
 				if( iRet == 1 )	// we found our line
 				{
 					usbd.iUsbStorageIndex = i;
+
+					LOG->Trace( "iUsbStorageIndex: %d, iBus: %d, iDeviceOnBus: %d, iPortOnHub: %d",
+						usbd.iUsbStorageIndex, usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub );
+
 					break;	// stop looking
 				}
 			}
