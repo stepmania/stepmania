@@ -11,14 +11,13 @@
 */
 #include "RageMath.h"
 #include "RageUtil.h"
-#include "RageUtil_FileDB.h"
 #include "RageLog.h"
+#include "RageFile.h"
 #include "arch/arch.h"
 
 #include <numeric>
 #include <time.h>
 #include <math.h>
-#include "RageFile.h"
 #include <map>
 #include <sys/types.h>
 #include <sys/stat.h>
