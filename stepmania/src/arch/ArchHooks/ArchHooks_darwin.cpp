@@ -29,7 +29,8 @@ static queue<CString> crashLog;
 static vector<CString> staticLog;
 static CString additionalLog;
 
-ArchHooks_darwin::ArchHooks_darwin() {
+ArchHooks_darwin::ArchHooks_darwin()
+{
     long response;
     CString error = "";
     OSErr err = Gestalt(gestaltSystemVersion, &response);
@@ -39,14 +40,16 @@ ArchHooks_darwin::ArchHooks_darwin() {
     else if (response < kMacOSX_10_2)
         error = "StepMania is not supported on any version of Mac OS X "
             "other than OS X 10.2.x. This is not a bug.";
-    if (error != "") {
+    if (error != "")
+	{
         MessageBoxOK(error, "");
         exit(0);
     }
     InstallExceptionHandler(HandleException);
 }
 
-void ArchHooks_darwin::Log(CString str, bool important) {
+void ArchHooks_darwin::Log(CString str, bool important)
+{
     if (important)
         staticLog.push_back(str);
     
@@ -56,14 +59,16 @@ void ArchHooks_darwin::Log(CString str, bool important) {
     crashLog.push(str);
 }
 
-void ArchHooks_darwin::AdditionalLog(CString str) {
+void ArchHooks_darwin::AdditionalLog(CString str)
+{
     additionalLog = str;
 }
 
 #define CASE_GESTALT_M(str,code,result) case gestalt##code: str = result; break
 #define CASE_GESTALT(str,code) CASE_GESTALT_M(str, code, #code)
 
-void ArchHooks_darwin::DumpDebugInfo() {
+void ArchHooks_darwin::DumpDebugInfo()
+{
     CString date = __DATE__;
     CString systemVersion;
     long ram;
@@ -227,7 +232,8 @@ void ArchHooks_darwin::DumpDebugInfo() {
               dDescription.c_str(), dVersion.c_str(), dDate.c_str(), dDeviceID.c_str());
 }
 
-void ArchHooks_darwin::MessageBoxOK(CString sMessage, CString ID) {
+void ArchHooks_darwin::MessageBoxOK(CString sMessage, CString ID)
+{
     bool allowHush = ID != "";
     
     if (allowHush && MessageIsIgnored(ID))
@@ -255,7 +261,8 @@ void ArchHooks_darwin::MessageBoxOK(CString sMessage, CString ID) {
     ASSERT(err == noErr);
     
     RunStandardAlert(dialog, NULL, &unused);
-    if (allowHush && GetControl32BitValue(box)){
+    if (allowHush && GetControl32BitValue(box))
+	{
         LOG->Trace("Ignore dialog ID, \"%s\"", ID.c_str());
         IgnoreMessage(ID);
     }
@@ -264,7 +271,8 @@ void ArchHooks_darwin::MessageBoxOK(CString sMessage, CString ID) {
     CFRelease(boxName);
 }
 
-ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString sMessage, CString ID) {
+ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString sMessage, CString ID)
+{
     SInt16 button;
     /* I see no reason for an abort button */
     CFStringRef r = CFStringCreateWithCString(NULL, "Retry", kCFStringEncodingASCII);
@@ -281,14 +289,14 @@ ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString
     RunStandardAlert(dialog, NULL, &button);
     
     switch (button) {
-        case kAlertStdAlertOKButton:
-            result =  retry;
-            break;
-        case kAlertStdAlertCancelButton:
-            result =  ignore;
-            break;
-        default:
-            ASSERT(0);
+    case kAlertStdAlertOKButton:
+        result =  retry;
+        break;
+    case kAlertStdAlertCancelButton:
+        result =  ignore;
+        break;
+    default:
+        ASSERT(0);
     }
     CFRelease(error);
     CFRelease(i);
@@ -298,13 +306,15 @@ ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString
 
 #define CASE_CODE(code,addr) case k##code: strcpy((addr),#code); break
 
-OSStatus HandleException(ExceptionInformation *theException) {
+OSStatus HandleException(ExceptionInformation *theException)
+{
     InstallExceptionHandler(NULL); /* Remove this handler */
     
     FILE *fp = fopen("crashinfo.txt", "w");
     char code[31];
 
-    switch (theException->theKind) {
+    switch (theException->theKind)
+	{
         CASE_CODE(UnknownException, code);
         CASE_CODE(IllegalInstructionException, code);
         CASE_CODE(TrapException, code);
@@ -331,11 +341,13 @@ OSStatus HandleException(ExceptionInformation *theException) {
             "Preferences->Crashes->Enable crash reporting.\n"
             "************************\n\n"
             "Static log:\n", code);
-    unsigned size = staticLog.size();
+
+	unsigned size = staticLog.size();
     for (unsigned i=0; i<size; ++i)
         fprintf(fp, "%s\n", staticLog[i].c_str());
     fprintf(fp, "\nPartial log:\n");
-    while (!crashLog.empty()) {
+    while (!crashLog.empty())
+	{
         CString s = crashLog.front();
         fprintf(fp, "%s\n", s.c_str());
         crashLog.pop();
@@ -344,9 +356,11 @@ OSStatus HandleException(ExceptionInformation *theException) {
     fclose(fp);
 
     /* Check for sh */
-    if (system(NULL)) {
+    if (system(NULL))
+	{
         char path[MAXPATHLEN];
-        if (getcwd(path, MAXPATHLEN)) {
+        if (getcwd(path, MAXPATHLEN))
+		{
             int pos = strlen(path);
             strcpy(&path[pos], "/crashinfo.txt");
         } else
