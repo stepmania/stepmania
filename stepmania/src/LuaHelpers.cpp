@@ -230,11 +230,13 @@ float Lua::RunExpressionF( const CString &str )
 
 		RunExpression( str );
 
-		float result = lua_tonumber( L, -1 );
+		float result = (float) lua_tonumber( L, -1 );
 		lua_pop( L, -1 );
 
 		return result;
 	} catch( const CString &err ) {
+		/* Why does VC7 say "unreachable code" here?  This isn't unreachable, and
+		 * it doesn't warn in RunExpressionB ... */
 		RageException::Throw( "Error running \"%s\": %s", str.c_str(), err.c_str() );
 	}
 }
