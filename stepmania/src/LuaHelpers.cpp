@@ -98,22 +98,6 @@ bool Lua::GetStack( lua_State *L, int pos, int &out )
 	return true;
 }
 
-void LoadFromString( lua_State *L, const CString &str )
-{
-	ChunkReaderData data;
-	data.buf = &str;
-	int ret = lua_load( L, ChunkReaderString, &data, "in" );
-
-	if( ret )
-	{
-		CString err;
-		Lua::PopStack( L, err );
-		CString sError = ssprintf( "Runtime error running \"%s\": %s", str.c_str(), err.c_str() );
-		Dialog::OK( sError, "LUA_ERROR" );
-	}
-}
-
-
 
 
 
@@ -200,26 +184,48 @@ void Lua::PrepareExpression( CString &sInOut )
 		sInOut.erase( 0, 1 );
 }
 
-void RunExpression( const CString &str )
+bool RunExpression( const CString &str )
 {
-	LoadFromString( L, "return " + str );
-	ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
-
-	int ret = lua_pcall(L, 0, 1, 0);
-	if( ret )
+	// load string
 	{
-		CString err;
-		Lua::PopStack( L, err );
-		CString sError = ssprintf( "Runtime error running \"%s\": %s", str.c_str(), err.c_str() );
-		Dialog::OK( sError, "LUA_ERROR" );
+		ChunkReaderData data;
+		CString sStatement = "return " + str;
+		data.buf = &sStatement;
+		int ret = lua_load( L, ChunkReaderString, &data, "in" );
+
+		if( ret )
+		{
+			CString err;
+			Lua::PopStack( L, err );
+			CString sError = ssprintf( "Runtime error running \"%s\": %s", str.c_str(), err.c_str() );
+			Dialog::OK( sError, "LUA_ERROR" );
+			return false;
+		}
+
+		ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
 	}
 
-	ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
+	// evaluate
+	{
+		int ret = lua_pcall(L, 0, 1, 0);
+		if( ret )
+		{
+			CString err;
+			Lua::PopStack( L, err );
+			CString sError = ssprintf( "Runtime error running \"%s\": %s", str.c_str(), err.c_str() );
+			Dialog::OK( sError, "LUA_ERROR" );
+			return false;
+		}
 
-	/* Don't accept a function as a return value; if you really want to use a function
-	 * as a boolean, convert it before returning. */
-	if( lua_isfunction( L, -1 ) )
-		throw CString( "result is a function; did you forget \"()\"?" );
+		ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
+
+		/* Don't accept a function as a return value; if you really want to use a function
+		 * as a boolean, convert it before returning. */
+		if( lua_isfunction( L, -1 ) )
+			throw CString( "result is a function; did you forget \"()\"?" );
+	}
+
+	return true;
 }
 
 bool Lua::RunExpressionB( const CString &str )
@@ -228,7 +234,8 @@ bool Lua::RunExpressionB( const CString &str )
 		if( L == NULL )
 			OpenLua();
 
-		RunExpression( str );
+		if( !RunExpression( str ) )
+			return false;
 
 		bool result = !!lua_toboolean( L, -1 );
 		lua_pop( L, -1 );
@@ -245,7 +252,8 @@ float Lua::RunExpressionF( const CString &str )
 		if( L == NULL )
 			OpenLua();
 
-		RunExpression( str );
+		if( !RunExpression( str ) )
+			return 0;
 
 		float result = (float) lua_tonumber( L, -1 );
 		lua_pop( L, -1 );
