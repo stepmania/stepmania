@@ -731,26 +731,34 @@ void StepManiaLanServer::SendUserList()
 
 void StepManiaLanServer::ScreenNetMusicSelectStatus(PacketFunctions& Packet, int clientNum)
 {
-	LOG->Info("SNMS Change");
 	CString message = servername;
 	message += ": ";
-	if (Packet.Read1() == 1)
-	{
+	int EntExitCode = Packet.Read1();
+
+	message += Client[clientNum].Player[0].name;
+	if (Client[clientNum].twoPlayers)
+		message += "&";
+	message += Client[clientNum].Player[1].name;
+
+	if (EntExitCode % 2 == 1)
 		Client[clientNum].inNetMusicSelect = true;
-		message += Client[clientNum].Player[0].name;
-		if (Client[clientNum].twoPlayers)
-			message += "&";
-		message += Client[clientNum].Player[1].name;
-		message += " entered the game.";
-	}
 	else
-	{
 		Client[clientNum].inNetMusicSelect = false;
-		message += Client[clientNum].Player[0].name;
-		if (Client[clientNum].twoPlayers)
-			message += "&";
-		message += Client[clientNum].Player[1].name;
-		message += " left the game.";
+
+	switch (EntExitCode)
+	{
+	case 0:
+		message += " left the song selection.";
+		break;
+	case 1:
+		message += " entered the song selection.";
+		break;
+	case 2:
+		message += " went into options.";
+		break;
+	case 3:
+		message += " came back from options.";
+		break;
 	}
 	ServerChat(message);
 }
