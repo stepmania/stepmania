@@ -185,14 +185,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		case stage:
 			{
 				ASSERT( GAMESTATE->m_pCurNotes[p] );
-				int score;
-				if( PREFSMAN->m_bPercentageScoring )
-					score = stageStats.GetPercentDancePoints( (PlayerNumber)p );
-				else
-					score = stageStats.iScore[p] + stageStats.iBonus[p];
 				Steps::MemCardData::HighScore hs;
 				hs.grade = grade[p];
-				hs.iScore = score;
+				hs.iScore = stageStats.iScore[p] + stageStats.iBonus[p];
 				hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
 				GAMESTATE->m_pCurNotes[p]->AddHighScore( (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
 					

@@ -822,7 +822,10 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 					feat.Feat = ssprintf("MR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
 					feat.pStringToFill = &vMachineHighScores[j].sName;
 					feat.g = vMachineHighScores[j].grade;
-					feat.Score = (float) vMachineHighScores[j].iScore;
+					if( PREFSMAN->m_bPercentageScoring )
+						feat.Score = vMachineHighScores[j].fPercentDP;
+					else
+						feat.Score = (float) vMachineHighScores[j].iScore;
 
 					// XXX: temporary hack
 					if( pSong->HasBackground() )
