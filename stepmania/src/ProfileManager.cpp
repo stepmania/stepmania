@@ -457,7 +457,7 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 {
 	hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
 	
-	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForHighScore )
+	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForMachineSongHighScore )
 	{
 		if( PROFILEMAN->IsUsingProfile(pn) )
 			PROFILEMAN->GetProfile(pn)->AddStepsHighScore( pSong, pSteps, hs, iPersonalIndexOut );
@@ -502,8 +502,7 @@ HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const StyleD
 //
 void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
-	// Don't use a minimum percentage for Course scores
-//	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForHighScore )
+	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForMachineCourseHighScore )
 	{
 		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
 		if( PROFILEMAN->IsUsingProfile(pn) )
@@ -531,7 +530,7 @@ void ProfileManager::IncrementCoursePlayCount( const Course* pCourse, const Trai
 //
 void ProfileManager::AddCategoryScore( StepsType st, RankingCategory rc, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
-	if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
+	if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForMachineSongHighScore )
 	{
 		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
 		if( PROFILEMAN->IsUsingProfile(pn) )
