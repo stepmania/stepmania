@@ -371,6 +371,7 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongs
 	e.type = Entry::random_within_group;
 	e.group_name = sGroupName;
 	e.difficulty = DIFFICULTY_MEDIUM;
+	e.mystery = true;
 
 	vector<Song*> vSongs;
 	SONGMAN->GetSongs( vSongs, e.group_name );
