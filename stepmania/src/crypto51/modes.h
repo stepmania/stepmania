@@ -113,41 +113,6 @@ protected:
 	unsigned int m_feedbackSize;
 };
 
-class OFB_ModePolicy : public ModePolicyCommonTemplate<AdditiveCipherAbstractPolicy>
-{
-	unsigned int GetBytesPerIteration() const {return BlockSize();}
-	unsigned int GetIterationsToBuffer() const {return 1;}
-	void WriteKeystream(byte *keystreamBuffer, unsigned int iterationCount)
-	{
-		assert(iterationCount == 1);
-		m_cipher->ProcessBlock(keystreamBuffer);
-	}
-	void CipherResynchronize(byte *keystreamBuffer, const byte *iv)
-	{
-		memcpy(keystreamBuffer, iv, BlockSize());
-	}
-	bool IsRandomAccess() const {return false;}
-	IV_Requirement IVRequirement() const {return STRUCTURED_IV;}
-};
-
-class CTR_ModePolicy : public ModePolicyCommonTemplate<AdditiveCipherAbstractPolicy>
-{
-	unsigned int GetBytesPerIteration() const {return BlockSize();}
-	unsigned int GetIterationsToBuffer() const {return m_cipher->OptimalNumberOfParallelBlocks();}
-	void WriteKeystream(byte *buffer, unsigned int iterationCount)
-		{OperateKeystream(WRITE_KEYSTREAM, buffer, NULL, iterationCount);}
-	bool CanOperateKeystream() const {return true;}
-	void OperateKeystream(KeystreamOperation operation, byte *output, const byte *input, unsigned int iterationCount);
-	void CipherResynchronize(byte *keystreamBuffer, const byte *iv);
-	bool IsRandomAccess() const {return true;}
-	void SeekToIteration(dword iterationCount);
-	IV_Requirement IVRequirement() const {return STRUCTURED_IV;}
-
-	inline void ProcessMultipleBlocks(byte *output, const byte *input, unsigned int n);
-
-	SecByteBlock m_counterArray;
-};
-
 class BlockOrientedCipherModeBase : public CipherModeBase
 {
 public:
@@ -169,15 +134,6 @@ protected:
 	}
 
 	SecByteBlock m_buffer;
-};
-
-class ECB_OneWay : public BlockOrientedCipherModeBase
-{
-public:
-	IV_Requirement IVRequirement() const {return NOT_RESYNCHRONIZABLE;}
-	unsigned int OptimalBlockSize() const {return BlockSize() * m_cipher->OptimalNumberOfParallelBlocks();}
-	void ProcessBlocks(byte *outString, const byte *inString, unsigned int numberOfBlocks)
-		{m_cipher->ProcessAndXorMultipleBlocks(inString, NULL, outString, numberOfBlocks);}
 };
 
 class CBC_ModeBase : public BlockOrientedCipherModeBase
@@ -225,13 +181,6 @@ protected:
 	SecByteBlock m_temp;
 };
 
-class CBC_CTS_Decryption : public CBC_Decryption
-{
-public:
-	unsigned int MinLastBlockSize() const {return BlockSize()+1;}
-	void ProcessLastBlock(byte *outString, const byte *inString, unsigned int length);
-};
-
 //! .
 template <class CIPHER, class BASE>
 class CipherModeFinalTemplate_CipherHolder : public ObjectHolder<CIPHER>, public BASE
@@ -254,78 +203,12 @@ public:
 	}
 };
 
-//! .
-template <class BASE>
-class CipherModeFinalTemplate_ExternalCipher : public BASE
-{
-public:
-	CipherModeFinalTemplate_ExternalCipher(BlockCipher &cipher, const byte *iv = NULL, int feedbackSize = 0)
-	{
-		m_cipher = &cipher;
-		ResizeBuffers();
-		SetFeedbackSize(feedbackSize);
-		SetIV(iv);
-	}
-};
-
 //! CFB mode
 template <class CIPHER>
 struct CFB_Mode : public CipherModeDocumentation
 {
 	typedef CipherModeFinalTemplate_CipherHolder<CPP_TYPENAME CIPHER::Encryption, ConcretePolicyHolder<Empty, CFB_EncryptionTemplate<AbstractPolicyHolder<CFB_CipherAbstractPolicy, CFB_ModePolicy> > > > Encryption;
 	typedef CipherModeFinalTemplate_CipherHolder<CPP_TYPENAME CIPHER::Encryption, ConcretePolicyHolder<Empty, CFB_DecryptionTemplate<AbstractPolicyHolder<CFB_CipherAbstractPolicy, CFB_ModePolicy> > > > Decryption;
-};
-
-//! CFB mode, external cipher
-struct CFB_Mode_ExternalCipher : public CipherModeDocumentation
-{
-	typedef CipherModeFinalTemplate_ExternalCipher<ConcretePolicyHolder<Empty, CFB_EncryptionTemplate<AbstractPolicyHolder<CFB_CipherAbstractPolicy, CFB_ModePolicy> > > > Encryption;
-	typedef CipherModeFinalTemplate_ExternalCipher<ConcretePolicyHolder<Empty, CFB_DecryptionTemplate<AbstractPolicyHolder<CFB_CipherAbstractPolicy, CFB_ModePolicy> > > > Decryption;
-};
-
-//! OFB mode
-template <class CIPHER>
-struct OFB_Mode : public CipherModeDocumentation
-{
-	typedef CipherModeFinalTemplate_CipherHolder<CPP_TYPENAME CIPHER::Encryption, ConcretePolicyHolder<Empty, AdditiveCipherTemplate<AbstractPolicyHolder<AdditiveCipherAbstractPolicy, OFB_ModePolicy> > > > Encryption;
-	typedef Encryption Decryption;
-};
-
-//! OFB mode, external cipher
-struct OFB_Mode_ExternalCipher : public CipherModeDocumentation
-{
-	typedef CipherModeFinalTemplate_ExternalCipher<ConcretePolicyHolder<Empty, AdditiveCipherTemplate<AbstractPolicyHolder<AdditiveCipherAbstractPolicy, OFB_ModePolicy> > > > Encryption;
-	typedef Encryption Decryption;
-};
-
-//! CTR mode
-template <class CIPHER>
-struct CTR_Mode : public CipherModeDocumentation
-{
-	typedef CipherModeFinalTemplate_CipherHolder<CPP_TYPENAME CIPHER::Encryption, ConcretePolicyHolder<Empty, AdditiveCipherTemplate<AbstractPolicyHolder<AdditiveCipherAbstractPolicy, CTR_ModePolicy> > > > Encryption;
-	typedef Encryption Decryption;
-};
-
-//! CTR mode, external cipher
-struct CTR_Mode_ExternalCipher : public CipherModeDocumentation
-{
-	typedef CipherModeFinalTemplate_ExternalCipher<ConcretePolicyHolder<Empty, AdditiveCipherTemplate<AbstractPolicyHolder<AdditiveCipherAbstractPolicy, CTR_ModePolicy> > > > Encryption;
-	typedef Encryption Decryption;
-};
-
-//! ECB mode
-template <class CIPHER>
-struct ECB_Mode : public CipherModeDocumentation
-{
-	typedef CipherModeFinalTemplate_CipherHolder<CPP_TYPENAME CIPHER::Encryption, ECB_OneWay> Encryption;
-	typedef CipherModeFinalTemplate_CipherHolder<CPP_TYPENAME CIPHER::Decryption, ECB_OneWay> Decryption;
-};
-
-//! ECB mode, external cipher
-struct ECB_Mode_ExternalCipher : public CipherModeDocumentation
-{
-	typedef CipherModeFinalTemplate_ExternalCipher<ECB_OneWay> Encryption;
-	typedef Encryption Decryption;
 };
 
 //! CBC mode
@@ -335,35 +218,6 @@ struct CBC_Mode : public CipherModeDocumentation
 	typedef CipherModeFinalTemplate_CipherHolder<CPP_TYPENAME CIPHER::Encryption, CBC_Encryption> Encryption;
 	typedef CipherModeFinalTemplate_CipherHolder<CPP_TYPENAME CIPHER::Decryption, CBC_Decryption> Decryption;
 };
-
-//! CBC mode, external cipher
-struct CBC_Mode_ExternalCipher : public CipherModeDocumentation
-{
-	typedef CipherModeFinalTemplate_ExternalCipher<CBC_Encryption> Encryption;
-	typedef CipherModeFinalTemplate_ExternalCipher<CBC_Decryption> Decryption;
-};
-
-//! CBC mode with ciphertext stealing
-template <class CIPHER>
-struct CBC_CTS_Mode : public CipherModeDocumentation
-{
-	typedef CipherModeFinalTemplate_CipherHolder<CPP_TYPENAME CIPHER::Encryption, CBC_CTS_Encryption> Encryption;
-	typedef CipherModeFinalTemplate_CipherHolder<CPP_TYPENAME CIPHER::Decryption, CBC_CTS_Decryption> Decryption;
-};
-
-//! CBC mode with ciphertext stealing, external cipher
-struct CBC_CTS_Mode_ExternalCipher : public CipherModeDocumentation
-{
-	typedef CipherModeFinalTemplate_ExternalCipher<CBC_CTS_Encryption> Encryption;
-	typedef CipherModeFinalTemplate_ExternalCipher<CBC_CTS_Decryption> Decryption;
-};
-
-#ifdef CRYPTOPP_MAINTAIN_BACKWARDS_COMPATIBILITY
-typedef CFB_Mode_ExternalCipher::Encryption CFBEncryption;
-typedef CFB_Mode_ExternalCipher::Decryption CFBDecryption;
-typedef OFB_Mode_ExternalCipher::Encryption OFB;
-typedef CTR_Mode_ExternalCipher::Encryption CounterMode;
-#endif
 
 NAMESPACE_END
 
