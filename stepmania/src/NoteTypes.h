@@ -135,8 +135,13 @@ extern TapNote TAP_ADDITION_MINE;
 // TODO: Don't have a hard-coded track limit.
 const int MAX_NOTE_TRACKS = 16;
 
+/* This is a divisor for our "fixed-point" time/beat representation.  It must be evenly divisible
+ * by 2, 3, and 4, to exactly represent 8th, 12th and 16th notes.  It must be divisible by 1000, to
+ * exactly represent 0.001.  It must leave enough precision before the decimal place to store
+ * numbers into the tens of thousands, so we don't have any attainable maximum tap note row. */
+const int ROWS_PER_BEAT	= 48*1000;
+
 const int BEATS_PER_MEASURE = 4;
-const int ROWS_PER_BEAT	= 48;	// It is important that this number is evenly divisible by 2, 3, and 4.
 const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
 const int MAX_NOTE_ROW = (1<<30);
 
