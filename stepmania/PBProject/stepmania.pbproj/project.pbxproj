@@ -135,7 +135,7 @@
 		};
 		29B97314FDCFA39411CA2CEA = {
 			children = (
-				AABD098805DF0A05004F7929,
+				AA4E8F5D05E6090F0091C1A8,
 				AA6EFF7404770F8B005F316C,
 				AA6EFEFA04770E84005F316C,
 				AA6EFE6D04770D3E005F316C,
@@ -273,21 +273,6 @@
 //AA2
 //AA3
 //AA4
-		AA010A9605E1954100FEB8AE = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = zlib.h;
-			path = /Users/steve/stepmania/src/crypto51/zlib.h;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		AA010A9705E1954100FEB8AE = {
-			fileRef = AA010A9605E1954100FEB8AE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA0DF1B00503C262003DE00C = {
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
@@ -905,7 +890,7 @@
 				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" Frameworks /Users/steve/stepmania/PBProject/Frameworks";
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = PBBUILD;
 				GCC_USE_GCC3_PFE_SUPPORT = NO;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
@@ -915,7 +900,8 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = /usr/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OTHER_CFLAGS = "-Wno-switch -Wno-missing-braces -fcoalesce-templates";
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "-finline-limit=300 -Wno-switch -Wno-missing-braces -fcoalesce-templates";
 				OTHER_LDFLAGS = "-lz  -lstdc++";
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
@@ -1244,40 +1230,17 @@
 				AABBD80905D8E9FC00B44FC2,
 				AA96881D05DE34B600478B95,
 				AA96882105DE34CD00478B95,
-				AABD09BF05DF0B71004F7929,
-				AABD09C105DF0B71004F7929,
-				AABD09C305DF0B71004F7929,
-				AABD09C505DF0B71004F7929,
-				AABD09C605DF0B71004F7929,
-				AABD09C805DF0B71004F7929,
-				AABD09CA05DF0B71004F7929,
-				AABD09CF05DF0B71004F7929,
-				AABD09D105DF0B71004F7929,
-				AABD09D305DF0B71004F7929,
-				AABD09D505DF0B71004F7929,
-				AABD09D705DF0B71004F7929,
-				AABD09D905DF0B71004F7929,
-				AABD09DB05DF0B71004F7929,
-				AABD09DC05DF0B71004F7929,
-				AABD09DE05DF0B71004F7929,
-				AABD09E005DF0B71004F7929,
-				AABD09E205DF0B71004F7929,
-				AABD09E405DF0B71004F7929,
-				AABD09E605DF0B71004F7929,
-				AABD09E805DF0B71004F7929,
-				AABD09EA05DF0B71004F7929,
-				AABD09EC05DF0B71004F7929,
-				AABD09EE05DF0B71004F7929,
-				AABD09F005DF0B71004F7929,
-				AABD09F205DF0B71004F7929,
-				AABD0B3905DF3F22004F7929,
 				AABD0B3B05DF3F22004F7929,
-				AABD0B4105DF42A4004F7929,
-				AA010A9705E1954100FEB8AE,
 				AAEA08FC05E2335300D38622,
 				AAEA090905E23DF900D38622,
 				AAEA090B05E23DF900D38622,
-				AAEA094505E2484E00D38622,
+				AA4E8F6E05E609100091C1A8,
+				AA4E8F7005E609100091C1A8,
+				AA4E8F7305E609100091C1A8,
+				AA4E8F7505E609100091C1A8,
+				AA4E8F7705E609100091C1A8,
+				AA4E8F7905E609100091C1A8,
+				AA4E8F7B05E609100091C1A8,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3190,37 +3153,17 @@
 				AABBD80805D8E9FC00B44FC2,
 				AA96881C05DE34B600478B95,
 				AA96882005DE34CD00478B95,
-				AABD09BE05DF0B71004F7929,
-				AABD09C005DF0B71004F7929,
-				AABD09C205DF0B71004F7929,
-				AABD09C405DF0B71004F7929,
-				AABD09C705DF0B71004F7929,
-				AABD09C905DF0B71004F7929,
-				AABD09CB05DF0B71004F7929,
-				AABD09CE05DF0B71004F7929,
-				AABD09D005DF0B71004F7929,
-				AABD09D205DF0B71004F7929,
-				AABD09D405DF0B71004F7929,
-				AABD09D605DF0B71004F7929,
-				AABD09D805DF0B71004F7929,
-				AABD09DA05DF0B71004F7929,
-				AABD09DD05DF0B71004F7929,
-				AABD09DF05DF0B71004F7929,
-				AABD09E105DF0B71004F7929,
-				AABD09E305DF0B71004F7929,
-				AABD09E505DF0B71004F7929,
-				AABD09E705DF0B71004F7929,
-				AABD09E905DF0B71004F7929,
-				AABD09EB05DF0B71004F7929,
-				AABD09ED05DF0B71004F7929,
-				AABD09EF05DF0B71004F7929,
-				AABD09F105DF0B71004F7929,
-				AABD0B3805DF3F22004F7929,
 				AABD0B3A05DF3F22004F7929,
-				AABD0B4005DF42A4004F7929,
 				AAEA08FB05E2335300D38622,
 				AAEA090A05E23DF900D38622,
-				AAEA094605E2485000D38622,
+				AA4E8F6D05E609100091C1A8,
+				AA4E8F6F05E609100091C1A8,
+				AA4E8F7105E609100091C1A8,
+				AA4E8F7205E609100091C1A8,
+				AA4E8F7405E609100091C1A8,
+				AA4E8F7605E609100091C1A8,
+				AA4E8F7805E609100091C1A8,
+				AA4E8F7A05E609100091C1A8,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5041,6 +4984,240 @@
 		};
 		AA4B5DD1057421F4005FB5DB = {
 			fileRef = AA4B5CC40573AD81005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4E8F5D05E6090F0091C1A8 = {
+			children = (
+				AA4E8F5E05E6090F0091C1A8,
+				AA4E8F5F05E6090F0091C1A8,
+				AA4E8F6005E6090F0091C1A8,
+				AA4E8F6105E6090F0091C1A8,
+				AA4E8F6205E6090F0091C1A8,
+				AA4E8F6305E6090F0091C1A8,
+				AA4E8F6405E6090F0091C1A8,
+				AA4E8F6505E6090F0091C1A8,
+				AA4E8F6605E6090F0091C1A8,
+				AA4E8F6705E6090F0091C1A8,
+				AA4E8F6805E6090F0091C1A8,
+				AA4E8F6905E6090F0091C1A8,
+				AA4E8F6A05E6090F0091C1A8,
+				AA4E8F6B05E6090F0091C1A8,
+				AA4E8F6C05E6090F0091C1A8,
+			);
+			isa = PBXGroup;
+			name = crypto;
+			path = /Users/steve/stepmania/src/crypto;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AA4E8F5E05E6090F0091C1A8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CryptBn.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4E8F5F05E6090F0091C1A8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CryptBn.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4E8F6005E6090F0091C1A8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CryptMD5.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4E8F6105E6090F0091C1A8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CryptMD5.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4E8F6205E6090F0091C1A8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CryptNoise.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4E8F6305E6090F0091C1A8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CryptPrime.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4E8F6405E6090F0091C1A8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CryptPrime.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4E8F6505E6090F0091C1A8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CryptRand.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4E8F6605E6090F0091C1A8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CryptRand.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4E8F6705E6090F0091C1A8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CryptRSA.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4E8F6805E6090F0091C1A8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CryptRSA.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4E8F6905E6090F0091C1A8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CryptSH512.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4E8F6A05E6090F0091C1A8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CryptSH512.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4E8F6B05E6090F0091C1A8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CryptSHA.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4E8F6C05E6090F0091C1A8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CryptSHA.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4E8F6D05E609100091C1A8 = {
+			fileRef = AA4E8F5E05E6090F0091C1A8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4E8F6E05E609100091C1A8 = {
+			fileRef = AA4E8F5F05E6090F0091C1A8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4E8F6F05E609100091C1A8 = {
+			fileRef = AA4E8F6005E6090F0091C1A8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4E8F7005E609100091C1A8 = {
+			fileRef = AA4E8F6105E6090F0091C1A8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4E8F7105E609100091C1A8 = {
+			fileRef = AA4E8F6205E6090F0091C1A8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4E8F7205E609100091C1A8 = {
+			fileRef = AA4E8F6305E6090F0091C1A8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4E8F7305E609100091C1A8 = {
+			fileRef = AA4E8F6405E6090F0091C1A8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4E8F7405E609100091C1A8 = {
+			fileRef = AA4E8F6505E6090F0091C1A8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4E8F7505E609100091C1A8 = {
+			fileRef = AA4E8F6605E6090F0091C1A8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4E8F7605E609100091C1A8 = {
+			fileRef = AA4E8F6705E6090F0091C1A8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4E8F7705E609100091C1A8 = {
+			fileRef = AA4E8F6805E6090F0091C1A8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4E8F7805E609100091C1A8 = {
+			fileRef = AA4E8F6905E6090F0091C1A8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4E8F7905E609100091C1A8 = {
+			fileRef = AA4E8F6A05E6090F0091C1A8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4E8F7A05E609100091C1A8 = {
+			fileRef = AA4E8F6B05E6090F0091C1A8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4E8F7B05E609100091C1A8 = {
+			fileRef = AA4E8F6C05E6090F0091C1A8;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -12629,878 +12806,6 @@
 			settings = {
 			};
 		};
-		AABD098805DF0A05004F7929 = {
-			children = (
-				AA010A9605E1954100FEB8AE,
-				AABD0B3E05DF42A3004F7929,
-				AABD0B3F05DF42A3004F7929,
-				AABD098905DF0B70004F7929,
-				AABD098A05DF0B70004F7929,
-				AABD098B05DF0B70004F7929,
-				AABD098C05DF0B70004F7929,
-				AABD098D05DF0B70004F7929,
-				AABD098E05DF0B70004F7929,
-				AABD098F05DF0B70004F7929,
-				AABD099005DF0B70004F7929,
-				AABD099105DF0B70004F7929,
-				AABD099205DF0B70004F7929,
-				AABD099305DF0B70004F7929,
-				AABD099405DF0B70004F7929,
-				AABD099505DF0B70004F7929,
-				AABD099605DF0B70004F7929,
-				AABD099705DF0B70004F7929,
-				AABD099805DF0B70004F7929,
-				AABD099905DF0B70004F7929,
-				AABD099A05DF0B70004F7929,
-				AABD099B05DF0B70004F7929,
-				AABD099C05DF0B70004F7929,
-				AABD099D05DF0B70004F7929,
-				AABD099E05DF0B70004F7929,
-				AABD099F05DF0B70004F7929,
-				AABD09A005DF0B70004F7929,
-				AABD09A105DF0B70004F7929,
-				AABD09A205DF0B70004F7929,
-				AABD09A305DF0B70004F7929,
-				AABD09A405DF0B70004F7929,
-				AABD09A505DF0B70004F7929,
-				AABD09A605DF0B70004F7929,
-				AABD09A705DF0B70004F7929,
-				AABD09A805DF0B70004F7929,
-				AABD09A905DF0B70004F7929,
-				AABD09AA05DF0B70004F7929,
-				AABD09AB05DF0B70004F7929,
-				AABD09AC05DF0B70004F7929,
-				AABD09AD05DF0B70004F7929,
-				AABD09AE05DF0B70004F7929,
-				AABD09AF05DF0B70004F7929,
-				AABD09B005DF0B70004F7929,
-				AABD09B105DF0B70004F7929,
-				AABD09B205DF0B70004F7929,
-				AABD09B305DF0B70004F7929,
-				AABD09B405DF0B70004F7929,
-				AABD09B505DF0B70004F7929,
-				AABD09B605DF0B70004F7929,
-				AABD09B705DF0B70004F7929,
-				AABD09B805DF0B70004F7929,
-				AABD09B905DF0B70004F7929,
-				AABD09BA05DF0B70004F7929,
-				AABD09BB05DF0B70004F7929,
-				AABD09BC05DF0B70004F7929,
-				AABD09BD05DF0B70004F7929,
-			);
-			isa = PBXGroup;
-			name = CryptoPP;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD098905DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = algparam.cpp;
-			path = ../src/crypto51/algparam.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD098A05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = algparam.h;
-			path = ../src/crypto51/algparam.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD098B05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = asn.cpp;
-			path = ../src/crypto51/asn.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD098C05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = asn.h;
-			path = ../src/crypto51/asn.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD098D05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = basecode.cpp;
-			path = ../src/crypto51/basecode.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD098E05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = basecode.h;
-			path = ../src/crypto51/basecode.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD098F05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = channels.cpp;
-			path = ../src/crypto51/channels.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099005DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = channels.h;
-			path = ../src/crypto51/channels.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099105DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = config.h;
-			path = ../src/crypto51/config.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099205DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = cryptlib.cpp;
-			path = ../src/crypto51/cryptlib.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099305DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = cryptlib.h;
-			path = ../src/crypto51/cryptlib.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099405DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = des.cpp;
-			path = ../src/crypto51/des.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099505DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = des.h;
-			path = ../src/crypto51/des.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099605DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = dessp.cpp;
-			path = ../src/crypto51/dessp.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099705DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = files.cpp;
-			path = ../src/crypto51/files.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099805DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = files.h;
-			path = ../src/crypto51/files.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099905DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = filters.cpp;
-			path = ../src/crypto51/filters.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099A05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = filters.h;
-			path = ../src/crypto51/filters.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099B05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = fips140.cpp;
-			path = ../src/crypto51/fips140.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099C05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = fips140.h;
-			path = ../src/crypto51/fips140.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099D05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = hex.cpp;
-			path = ../src/crypto51/hex.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099E05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = hex.h;
-			path = ../src/crypto51/hex.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD099F05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = integer.cpp;
-			path = ../src/crypto51/integer.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09A005DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = integer.h;
-			path = ../src/crypto51/integer.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09A105DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = iterhash.cpp;
-			path = ../src/crypto51/iterhash.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09A205DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = iterhash.h;
-			path = ../src/crypto51/iterhash.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09A305DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = md5.cpp;
-			path = ../src/crypto51/md5.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09A405DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = md5.h;
-			path = ../src/crypto51/md5.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09A505DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = misc.cpp;
-			path = ../src/crypto51/misc.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09A605DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = misc.h;
-			path = ../src/crypto51/misc.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09A705DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = modarith.h;
-			path = ../src/crypto51/modarith.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09A805DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = modes.cpp;
-			path = ../src/crypto51/modes.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09A905DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = modes.h;
-			path = ../src/crypto51/modes.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09AA05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = mqueue.cpp;
-			path = ../src/crypto51/mqueue.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09AB05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = mqueue.h;
-			path = ../src/crypto51/mqueue.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09AC05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = nbtheory.cpp;
-			path = ../src/crypto51/nbtheory.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09AD05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = nbtheory.h;
-			path = ../src/crypto51/nbtheory.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09AE05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = pkcspad.cpp;
-			path = ../src/crypto51/pkcspad.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09AF05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = pkcspad.h;
-			path = ../src/crypto51/pkcspad.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09B005DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = pssr.cpp;
-			path = ../src/crypto51/pssr.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09B105DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = pssr.h;
-			path = ../src/crypto51/pssr.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09B205DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = pubkey.cpp;
-			path = ../src/crypto51/pubkey.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09B305DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = pubkey.h;
-			path = ../src/crypto51/pubkey.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09B405DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = queue.cpp;
-			path = ../src/crypto51/queue.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09B505DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = queue.h;
-			path = ../src/crypto51/queue.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09B605DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = randpool.cpp;
-			path = ../src/crypto51/randpool.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09B705DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = randpool.h;
-			path = ../src/crypto51/randpool.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09B805DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = rsa.cpp;
-			path = ../src/crypto51/rsa.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09B905DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = rsa.h;
-			path = ../src/crypto51/rsa.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09BA05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = sha.cpp;
-			path = ../src/crypto51/sha.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09BB05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = sha.h;
-			path = ../src/crypto51/sha.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09BC05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = strciphr.cpp;
-			path = ../src/crypto51/strciphr.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09BD05DF0B70004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = strciphr.h;
-			path = ../src/crypto51/strciphr.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD09BE05DF0B71004F7929 = {
-			fileRef = AABD098905DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09BF05DF0B71004F7929 = {
-			fileRef = AABD098A05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09C005DF0B71004F7929 = {
-			fileRef = AABD098B05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09C105DF0B71004F7929 = {
-			fileRef = AABD098C05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09C205DF0B71004F7929 = {
-			fileRef = AABD098D05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09C305DF0B71004F7929 = {
-			fileRef = AABD098E05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09C405DF0B71004F7929 = {
-			fileRef = AABD098F05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09C505DF0B71004F7929 = {
-			fileRef = AABD099005DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09C605DF0B71004F7929 = {
-			fileRef = AABD099105DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09C705DF0B71004F7929 = {
-			fileRef = AABD099205DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09C805DF0B71004F7929 = {
-			fileRef = AABD099305DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09C905DF0B71004F7929 = {
-			fileRef = AABD099405DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09CA05DF0B71004F7929 = {
-			fileRef = AABD099505DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09CB05DF0B71004F7929 = {
-			fileRef = AABD099605DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09CE05DF0B71004F7929 = {
-			fileRef = AABD099905DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09CF05DF0B71004F7929 = {
-			fileRef = AABD099A05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09D005DF0B71004F7929 = {
-			fileRef = AABD099B05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09D105DF0B71004F7929 = {
-			fileRef = AABD099C05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09D205DF0B71004F7929 = {
-			fileRef = AABD099D05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09D305DF0B71004F7929 = {
-			fileRef = AABD099E05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09D405DF0B71004F7929 = {
-			fileRef = AABD099F05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09D505DF0B71004F7929 = {
-			fileRef = AABD09A005DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09D605DF0B71004F7929 = {
-			fileRef = AABD09A105DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09D705DF0B71004F7929 = {
-			fileRef = AABD09A205DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09D805DF0B71004F7929 = {
-			fileRef = AABD09A305DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09D905DF0B71004F7929 = {
-			fileRef = AABD09A405DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09DA05DF0B71004F7929 = {
-			fileRef = AABD09A505DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09DB05DF0B71004F7929 = {
-			fileRef = AABD09A605DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09DC05DF0B71004F7929 = {
-			fileRef = AABD09A705DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09DD05DF0B71004F7929 = {
-			fileRef = AABD09A805DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09DE05DF0B71004F7929 = {
-			fileRef = AABD09A905DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09DF05DF0B71004F7929 = {
-			fileRef = AABD09AA05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09E005DF0B71004F7929 = {
-			fileRef = AABD09AB05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09E105DF0B71004F7929 = {
-			fileRef = AABD09AC05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09E205DF0B71004F7929 = {
-			fileRef = AABD09AD05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09E305DF0B71004F7929 = {
-			fileRef = AABD09AE05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09E405DF0B71004F7929 = {
-			fileRef = AABD09AF05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09E505DF0B71004F7929 = {
-			fileRef = AABD09B005DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09E605DF0B71004F7929 = {
-			fileRef = AABD09B105DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09E705DF0B71004F7929 = {
-			fileRef = AABD09B205DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09E805DF0B71004F7929 = {
-			fileRef = AABD09B305DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09E905DF0B71004F7929 = {
-			fileRef = AABD09B405DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09EA05DF0B71004F7929 = {
-			fileRef = AABD09B505DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09EB05DF0B71004F7929 = {
-			fileRef = AABD09B605DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09EC05DF0B71004F7929 = {
-			fileRef = AABD09B705DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09ED05DF0B71004F7929 = {
-			fileRef = AABD09B805DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09EE05DF0B71004F7929 = {
-			fileRef = AABD09B905DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09EF05DF0B71004F7929 = {
-			fileRef = AABD09BA05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09F005DF0B71004F7929 = {
-			fileRef = AABD09BB05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD09F105DF0B71004F7929 = {
-			fileRef = AABD09BC05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD09F205DF0B71004F7929 = {
-			fileRef = AABD09BD05DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AABD0B2905DF12FA004F7929 = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
@@ -13551,19 +12856,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		AABD0B3805DF3F22004F7929 = {
-			fileRef = AABD0B3405DF3F22004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD0B3905DF3F22004F7929 = {
-			fileRef = AABD0B3505DF3F22004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AABD0B3A05DF3F22004F7929 = {
 			fileRef = AABD0B3605DF3F22004F7929;
 			isa = PBXBuildFile;
@@ -13573,37 +12865,6 @@
 		};
 		AABD0B3B05DF3F22004F7929 = {
 			fileRef = AABD0B3705DF3F22004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABD0B3E05DF42A3004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = osrng.cpp;
-			path = ../src/crypto51/osrng.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD0B3F05DF42A3004F7929 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = osrng.h;
-			path = ../src/crypto51/osrng.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AABD0B4005DF42A4004F7929 = {
-			fileRef = AABD0B3E05DF42A3004F7929;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-O0";
-			};
-		};
-		AABD0B4105DF42A4004F7929 = {
-			fileRef = AABD0B3F05DF42A3004F7929;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -15507,18 +14768,6 @@
 		};
 		AAEA090B05E23DF900D38622 = {
 			fileRef = AAEA090805E23DF900D38622;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AAEA094505E2484E00D38622 = {
-			fileRef = AABD099805DF0B70004F7929;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AAEA094605E2485000D38622 = {
-			fileRef = AABD099705DF0B70004F7929;
 			isa = PBXBuildFile;
 			settings = {
 			};
