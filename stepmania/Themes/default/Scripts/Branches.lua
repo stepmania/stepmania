@@ -1,3 +1,13 @@
+function ScreenTitleBranch()
+	if CoinMode() == "home" then return "ScreenTitleMenu" end
+	return "ScreenTitleJoin"
+end
+
+function ScreenCautionBranch()
+	if ShowCaution() then return "ScreenCaution" end
+	return "ScreenSelectStyle"
+end
+
 function SongSelectionScreen()
 	if PlayModeName() == "Nonstop" then return "ScreenSelectCourseNonstop" end
 	if PlayModeName() == "Oni" then return "ScreenSelectCourseOni" end
@@ -13,6 +23,11 @@ function SMOnlineScreen()
 	if ( not IsSMOnlineLoggedIn(2) ) and IsPlayerEnabled(2) then return "ScreenSMOnlineLogin" end
 	return "ScreenNetRoom"
 end	
+
+function SelectFirstOptionsScreen()
+	if PlayModeName() == "Rave" then return "ScreenRaveOptions" end
+	return "ScreenPlayerOptions"
+end
 
 function SelectGameplayScreen()
 	if IsExtraStage() or IsExtraStage2() then return "ScreenGameplay" end
@@ -30,13 +45,20 @@ function SelectEvaluationScreen()
 	if( Mode == "Battle" ) then return "ScreenEvaluationBattle" end
 end
 
-function SelectFirstOptionsScreen()
-	if PlayModeName() == "Rave" then return "ScreenRaveOptions" end
-	return "ScreenPlayerOptions"
+function ScreenEvaluationExitBranch()
+	if( IsNetSMOnline() ) then return "ScreenNetRoom" end
+	if( IsNetConnected() ) then return "ScreenNetSelectMusic" end
+	return "ScreenSelectMusic"
 end
 
+function ScreenBranchNetAfterEval()
+	if IsNetSMOnline() then return "ScreenSMOnlineSelectMusic" end
+	if IsNetConnected() then return "ScreenNetSelectMusic" end
+	return "ScreenSelectMusic"
+end	
+
 function SelectEndingScreen()
-	if GetBestFinalGrade() >= Grade("AAA") then return "ScreenMusicScroll" end
+	if GetBestFinalGrade() >= Grade("AA") then return "ScreenMusicScroll" end
 	return "ScreenCredits"
 end	
 
