@@ -402,7 +402,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	m_textDebug.SetXY( DEBUG_X, DEBUG_Y );
 	m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 	this->AddChild( &m_textDebug );
-	this->AddChild( &m_textLyrics );
+	//this->AddChild( &m_textLyrics ); -- THIS IS NOT DONE YET!! (Miryokuteki)
 	
 
 	for( int s=0; s<NUM_STATUS_ICONS; s++ )
