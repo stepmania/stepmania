@@ -101,7 +101,7 @@ protected:
 
 protected:	// derived classes need access to these
 	void LoadOptionIcon( PlayerNumber pn, int iRow, CString sText );
-	enum Navigation { NAV_THREE_KEY, NAV_THREE_KEY_MENU, NAV_FIVE_KEY };
+	enum Navigation { NAV_THREE_KEY, NAV_THREE_KEY_MENU, NAV_FIVE_KEY, NAV_FIRST_CHOICE_GOES_DOWN };
 	void SetNavigation( Navigation nav ) { m_OptionsNavigation = nav; }
 
 protected:

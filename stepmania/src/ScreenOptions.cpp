@@ -81,6 +81,14 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
  * This is a specialized navigation for ScreenOptionsMenu.  It must be enabled to
  * allow screens that use rows to select other screens to work with only three
  * buttons.  (It's also used when in five-key mode.)
+ *
+ * NAV_FIRST_CHOICE_GOES_DOWN:
+ *  left, right -> change row
+ *  up, down -> change row
+ *  start -> next screen
+ * This is a specialized navigation for ScreenOptionsMenu.  It must be enabled to
+ * allow screens that use rows to select other screens to work with only three
+ * buttons.  (It's also used when in five-key mode.)
  */
 
 ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
@@ -523,7 +531,7 @@ BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iCh
 	if( row.Type == Row::ROW_EXIT )
 		return *row.m_textItems[0];
 
-	bool bOneChoice = m_Rows[iRow]->m_RowDef.bOneChoiceForAllPlayers;
+	bool bOneChoice = row.m_RowDef.bOneChoiceForAllPlayers;
 	int index = -1;
 	if( row.m_bRowIsLong )
 		index = bOneChoice ? 0 : pn;
@@ -762,20 +770,24 @@ void ScreenOptions::UpdateEnabledDisabled()
 		row.m_sprBullet.SetGlobalDiffuseColor( color );
 		row.m_textTitle.SetGlobalDiffuseColor( color );
 
-		for( unsigned j=0; j<row.m_textItems.size(); j++ )
-			row.m_textItems[j]->SetGlobalDiffuseColor( color );
-
-		for( unsigned j=0; j<row.m_textItems.size(); j++ )
 		{
-			const float DiffuseAlpha = row.m_bHidden? 0.0f:1.0f;
-			if( row.m_textItems[j]->GetDestY() == row.m_fY &&
-			    row.m_textItems[j]->DestTweenState().diffuse[0][3] == DiffuseAlpha )
-				continue;
+			for( unsigned j=0; j<row.m_textItems.size(); j++ )
+				row.m_textItems[j]->SetGlobalDiffuseColor( color );
+		}
 
-			row.m_textItems[j]->StopTweening();
-			row.m_textItems[j]->BeginTweening( 0.3f );
-			row.m_textItems[j]->SetDiffuseAlpha( DiffuseAlpha );
-			row.m_textItems[j]->SetY( row.m_fY );
+		{
+			for( unsigned j=0; j<row.m_textItems.size(); j++ )
+			{
+				const float DiffuseAlpha = row.m_bHidden? 0.0f:1.0f;
+				if( row.m_textItems[j]->GetDestY() == row.m_fY &&
+					row.m_textItems[j]->DestTweenState().diffuse[0][3] == DiffuseAlpha )
+					continue;
+
+				row.m_textItems[j]->StopTweening();
+				row.m_textItems[j]->BeginTweening( 0.3f );
+				row.m_textItems[j]->SetDiffuseAlpha( DiffuseAlpha );
+				row.m_textItems[j]->SetY( row.m_fY );
+			}
 		}
 
 		if( row.Type == Row::ROW_EXIT )
@@ -854,11 +866,11 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 
 	if( type != IET_RELEASE && bHoldingLeftAndRight )
 	{
-		// If moving up from a multiselect row, put focus back on the first 
-		// choice before moving up.
+		// If moving up from a bFirstChoiceGoesDown row, put focus back on 
+		// the first choice before moving up.
 		int iCurrentRow = m_iCurrentRow[MenuI.player];
 		Row &row = *m_Rows[iCurrentRow];
-		if( row.m_RowDef.bMultiSelect )
+		if( NAV_FIRST_CHOICE_GOES_DOWN )
 			row.m_iChoiceWithFocus[MenuI.player] = 0;
 
 		MoveRow( MenuI.player, -1, type != IET_FIRST_PRESS );
@@ -1036,6 +1048,9 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 	/* Update all players, since changing one player can move both cursors. */
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;	// skip
+
 		TweenCursor( (PlayerNumber) p );
 
 		/* If the last row is EXIT, and is hidden, then show MORE. */
@@ -1105,45 +1120,49 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	Row &row = *m_Rows[m_iCurrentRow[pn]];
 	OptionRowData &data = row.m_RowDef;
 	
-	// Toggle selection if this is a multiselect row.
+	if( m_OptionsNavigation == NAV_FIRST_CHOICE_GOES_DOWN )
+	{
+		int iChoiceInRow = row.m_iChoiceWithFocus[pn];
+		if( iChoiceInRow == 0 )
+		{
+			MenuDown( pn, type );
+			return;
+		}
+	}
+	// If this is a bFirstChoiceGoesDown, then  if this is a multiselect row.
 	// Is this the right thing to do for five key navigation?
 	if( data.bMultiSelect )
 	{
 		int iChoiceInRow = row.m_iChoiceWithFocus[pn];
-
-		if( iChoiceInRow == 0 )
-		{
-			MenuDown( pn, type );	// can't go down any more		
-		}
+		row.m_vbSelected[pn][iChoiceInRow] = !row.m_vbSelected[pn][iChoiceInRow];
+		if( row.m_vbSelected[pn][iChoiceInRow] )
+			m_SoundToggleOn.Play();
 		else
-		{
-			row.m_vbSelected[pn][iChoiceInRow] = !row.m_vbSelected[pn][iChoiceInRow];
-			if( row.m_vbSelected[pn][iChoiceInRow] )
-				m_SoundToggleOn.Play();
-			else
-				m_SoundToggleOff.Play();
-			PositionUnderlines();
-			RefreshIcons();
-			
-			// move to the first choice
-			ChangeValueInRow( pn, -row.m_iChoiceWithFocus[pn], type != IET_FIRST_PRESS );
-		}
+			m_SoundToggleOff.Play();
+		PositionUnderlines();
+		RefreshIcons();
+
+		if( m_OptionsNavigation == NAV_FIRST_CHOICE_GOES_DOWN )
+			ChangeValueInRow( pn, -row.m_iChoiceWithFocus[pn], type != IET_FIRST_PRESS );	// move to the first choice
 	}
 	else
 	{
 		switch( m_OptionsNavigation )
 		{
 		case NAV_THREE_KEY:
+		case NAV_FIRST_CHOICE_GOES_DOWN:
 			{
 				bool bAllOnExit = true;
 				for( int p=0; p<NUM_PLAYERS; p++ )
 					if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->Type != Row::ROW_EXIT )
 						bAllOnExit = false;
 
-				if( m_Rows[m_iCurrentRow[pn]]->Type != Row::ROW_EXIT )	// not on exit
-					MenuDown( pn, type );	// can't go down any more
-				else if( bAllOnExit && type == IET_FIRST_PRESS )
+				if( row.Type == Row::ROW_EXIT  &&  bAllOnExit  &&  type == IET_FIRST_PRESS )
 					StartGoToNextState();
+				else if( m_OptionsNavigation == NAV_FIRST_CHOICE_GOES_DOWN )
+					ChangeValueInRow( pn, -row.m_iChoiceWithFocus[pn], type != IET_FIRST_PRESS );	// move to the first choice
+				else
+					MenuDown( pn, type );
 			}
 			break;
 		case NAV_THREE_KEY_MENU:
@@ -1196,11 +1215,18 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		{
 			row.m_iChoiceWithFocus[p] = iNewChoiceWithFocus;
 
-			if( optrow.bMultiSelect )
-				;	// do nothing.  User must press Start to toggle the selection.
+			if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN && iNewChoiceWithFocus==0 )
+			{
+				;	// do nothing
+			}
 			else
-				row.SetOneSelection( (PlayerNumber)p, iNewChoiceWithFocus );
-			
+			{
+				if( optrow.bMultiSelect )
+					;	// do nothing.  User must press Start to toggle the selection.
+				else
+					row.SetOneSelection( (PlayerNumber)p, iNewChoiceWithFocus );			
+			}
+
 			UpdateText( (PlayerNumber)p, iCurRow );
 		}
 	}
@@ -1208,11 +1234,18 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	{
 		row.m_iChoiceWithFocus[pn] = iNewChoiceWithFocus;
 
-		if( optrow.bMultiSelect )
-			;	// do nothing.  User must press Start to toggle the selection.
+		if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN && iNewChoiceWithFocus==0 )
+		{
+			;	// do nothing
+		}
 		else
-			row.SetOneSelection( pn, iNewChoiceWithFocus );
-		
+		{
+			if( optrow.bMultiSelect )
+				;	// do nothing.  User must press Start to toggle the selection.
+			else
+				row.SetOneSelection( pn, iNewChoiceWithFocus );
+		}
+
 		UpdateText( pn, iCurRow );
 	}
 

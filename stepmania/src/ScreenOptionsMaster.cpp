@@ -89,7 +89,9 @@ void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, C
 
 		hand.ListEntries.push_back( mc );
 
-		row.choices.push_back( ENTRY_NAME(mc.m_sName) );
+		CString sName = mc.m_sName;
+		CString sChoice = ENTRY_NAME(mc.m_sName);
+		row.choices.push_back( sChoice );
 	}
 }
 
@@ -213,6 +215,8 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 		}
 		if( Flags[i] == "smnavigation" )
 			SetNavigation( NAV_THREE_KEY_MENU );
+		if( Flags[i] == "firstchoicegoesdown" )
+			SetNavigation( NAV_FIRST_CHOICE_GOES_DOWN );
 	}
 
 	if( NumRows == -1 )
@@ -268,6 +272,14 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 
 			CheckHandledParams;
 		}
+
+		// TRICKY:  Insert a down arrow as the first choice in the row.
+		if( m_OptionsNavigation == NAV_FIRST_CHOICE_GOES_DOWN )
+		{
+			row.choices.insert( row.choices.begin(), ENTRY_NAME("NextRow") );
+			hand.ListEntries.insert( hand.ListEntries.begin(), ModeChoice() );
+		}
+
 		OptionRowHandlers.push_back( hand );
 	}
 
@@ -331,17 +343,6 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 					}
 				}
 			}
-
-			if( !row.bMultiSelect )
-			{
-				// there should be exactly one option selected
-				int iNumSelected = 0;
-				for( unsigned e = 0; e < hand.ListEntries.size(); ++e )
-					if( vbSelectedOut[e] )
-						iNumSelected++;
-				ASSERT( iNumSelected == 1 );
-			}
-
 			return;
 		}
 	case ROW_STEP:
@@ -355,9 +356,9 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 		{
 			if( GAMESTATE->m_bDifficultCourses &&
 				GAMESTATE->m_pCurCourse->HasDifficult( GAMESTATE->GetCurrentStyleDef()->m_StepsType ) )
-				SelectExactlyOne( 1, vbSelectedOut );
+				SelectExactlyOne( 1+(row.bMultiSelect?1:0), vbSelectedOut );
 			else
-				SelectExactlyOne( 0, vbSelectedOut );
+				SelectExactlyOne( 0+(row.bMultiSelect?1:0), vbSelectedOut );
 			return;
 		}
 
@@ -370,12 +371,12 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 			{
 				if( GAMESTATE->m_pCurNotes[pn] == vNotes[i] )
 				{
-					SelectExactlyOne( i, vbSelectedOut );
+					SelectExactlyOne( i+(row.bMultiSelect?1:0), vbSelectedOut );
 					return;
 				}
 			}
 		}
-		SelectExactlyOne( 0, vbSelectedOut );
+		SelectExactlyOne( 0+(row.bMultiSelect?1:0), vbSelectedOut );
 		return;
 
 	case ROW_CHARACTER:
@@ -385,26 +386,39 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 			for( unsigned i=0; i<apCharacters.size(); i++ )
 				if( GAMESTATE->m_pCurCharacters[pn] == apCharacters[i] )
 				{
-					SelectExactlyOne( i+1, vbSelectedOut );
+					SelectExactlyOne( i+1+(row.bMultiSelect?1:0), vbSelectedOut );
 					return;
 				}
-			SelectExactlyOne( 0, vbSelectedOut );
+			SelectExactlyOne( 0+(row.bMultiSelect?1:0), vbSelectedOut );
 			return;
 		}
 
 	case ROW_CONFIG:
 		{
 			int iSelection = hand.opt->Get( row.choices );
-			SelectExactlyOne( iSelection, vbSelectedOut );
+			SelectExactlyOne( iSelection+(row.bMultiSelect?1:0), vbSelectedOut );
 			return;
 		}
 
 	case ROW_SAVE_TO_PROFILE:
-		SelectExactlyOne( 0, vbSelectedOut );
+		SelectExactlyOne( 0+(row.bMultiSelect?1:0), vbSelectedOut );
 		return;
 
 	default:
 		ASSERT(0);
+	}
+
+	if( !row.bMultiSelect )
+	{
+		// The first row ("go down") should not be selected.
+		ASSERT( vbSelectedOut[0] == false );
+
+		// there should be exactly one option selected
+		int iNumSelected = 0;
+		for( unsigned e = 1; e < hand.ListEntries.size(); ++e )
+			if( vbSelectedOut[e] )
+				iNumSelected++;
+		ASSERT( iNumSelected == 1 );
 	}
 }
 
