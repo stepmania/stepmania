@@ -19,6 +19,7 @@
 #include "RageFile.h"
 #include "RageLog.h"
 #include "ActorUtil.h"
+#include <errno.h>
 
 const float FRAMES_PER_SECOND = 30;
 const CString DEFAULT_ANIMATION_NAME = "default";
