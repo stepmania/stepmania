@@ -52,7 +52,7 @@ bool X11Helper::Go()
 static bool pApplyMasks()
 {
 	unsigned int i;
-	long finalMask;
+	long finalMask = 0;
 
 	LOG->Trace("X11Helper: Reapplying event masks.");
 
