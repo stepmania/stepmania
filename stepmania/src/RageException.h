@@ -34,4 +34,10 @@ protected:
 #define RAGE_ASSERT_M(COND, MESSAGE) { if(!(COND)) { VDCHECKPOINT_M(MESSAGE); *(char*)0=0; } }
 #define RAGE_ASSERT(COND) RAGE_ASSERT_M((COND), "Assertion failure")
 
+/* Make this the default assert handler. */
+#ifdef ASSERT
+#undef ASSERT
+#endif
+#define ASSERT RAGE_ASSERT
+
 #endif
