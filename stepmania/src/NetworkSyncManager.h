@@ -13,6 +13,25 @@ const int NETPROTOCOLVERSION=1;
 const int NETMAXBUFFERSIZE=1020; //1024 - 4 bytes for EzSockets
 const int NETNUMTAPSCORES=8;
 
+enum NSCommand
+{
+	NSCPing = 0,
+	NSCPingR,		//1
+	NSCHello,		//2
+	NSCGSR,			//3
+	NSCGON,			//4
+	NSCGSU,			//5
+	NSCSU,			//6
+	NSCCM,			//7
+	NSCRSG,			//8
+	NSCUUL,			//9
+	NSCSMS,			//10
+	NSCUPOpts,		//11
+	NUM_NS_COMMANDS
+};
+
+const NSCommand NSServerOffset = (NSCommand)128;
+
 struct EndOfGame_PlayerData
 {
 	int name;

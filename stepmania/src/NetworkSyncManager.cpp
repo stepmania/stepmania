@@ -127,7 +127,7 @@ void NetworkSyncManager::PostStartUp(const CString& ServerIP)
 
 	m_packet.ClearPacket();
 
-	m_packet.Write1(2);	//Hello Packet
+	m_packet.Write1( NSCHello );	//Hello Packet
 
 	m_packet.Write1(NETPROTOCOLVERSION);
 
@@ -161,7 +161,7 @@ void NetworkSyncManager::PostStartUp(const CString& ServerIP)
 		m_packet.ClearPacket();
 		if (NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)<1)
 			dontExit=false; // Also allow exit if there is a problem on the socket
-		if (m_packet.Read1() == (128+2))
+		if (m_packet.Read1() == (NSServerOffset + NSCHello))
 			dontExit=false;
 		//Only allow passing on handshake. 
 		//Otherwise scoreboard updates and such will confuse us.
@@ -250,7 +250,7 @@ bool NetworkSyncManager::Listen(unsigned short port)
 void NetworkSyncManager::ReportNSSOnOff(int i) 
 {
 	m_packet.ClearPacket();
-	m_packet.Write1( 10 );
+	m_packet.Write1( NSCSMS );
 	m_packet.Write1( (uint8_t) i );
 	NetPlayerClient->SendPack((char*)m_packet.Data, m_packet.Position);
 }
@@ -267,7 +267,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	
 	m_packet.ClearPacket();
 
-	m_packet.Write1(5);
+	m_packet.Write1( NSCGSU );
 	uint8_t ctr = (uint8_t) (playerID * 16 + step - 1);
 	m_packet.Write1(ctr);
 
@@ -314,7 +314,7 @@ void NetworkSyncManager::ReportSongOver()
 
 	m_packet.ClearPacket();
 
-	m_packet.Write1(4);
+	m_packet.Write1( NSCGON );
 
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 	return;
@@ -325,7 +325,7 @@ void NetworkSyncManager::ReportStyle()
 	if (!useSMserver)
 		return;
 	m_packet.ClearPacket();
-	m_packet.Write1(6);
+	m_packet.Write1( NSCSU );
 	m_packet.Write1( (int8_t) GAMESTATE->GetNumPlayersEnabled() );
 
 	FOREACH_EnabledPlayer( pn ) 
@@ -349,7 +349,7 @@ void NetworkSyncManager::StartRequest(short position)
 
 	m_packet.ClearPacket();
 
-	m_packet.Write1( 3 );
+	m_packet.Write1( NSCGSR );
 
 	unsigned char ctr=0;
 
@@ -454,7 +454,7 @@ void NetworkSyncManager::StartRequest(short position)
 				dontExit=false; // Also allow exit if there is a problem on the socket
 								// Only do if we are not the server, otherwise the sync
 								// gets hosed up due to non blocking mode.
-		if (m_packet.Read1() == (128+3))
+		if (m_packet.Read1() == (NSServerOffset + NSCGSR))
 			dontExit=false;
 		//Only allow passing on Start request. 
 		//Otherwise scoreboard updates and such will confuse us.
@@ -512,26 +512,26 @@ void NetworkSyncManager::ProcessInput()
 	{
 		int command = m_packet.Read1();
 		//Check to make sure command is valid from server
-		if (command<128)
+		if (command < NSServerOffset)
 		{		
 			LOG->Trace("CMD (below 128) Invalid> %d",command);
  			break;
 		}
 
-		command+=-128;
+		command = command - NSServerOffset;
 
 		switch (command)
 		{
-		case 0: //Ping packet responce
+		case NSCPing: //Ping packet responce
 			m_packet.ClearPacket();
-			m_packet.Write1(0);
+			m_packet.Write1( NSCPingR );
 			NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
 			break;
-		case 1:	//These are in responce to when/if we send packet 0's
-		case 2: //This is already taken care of by the blocking code earlier on
-		case 3: //This is taken care of by the blocking start code
+		case NSCPingR:	//These are in responce to when/if we send packet 0's
+		case NSCHello: //This is already taken care of by the blocking code earlier on
+		case NSCGSR: //This is taken care of by the blocking start code
 			break;
-		case 4: 
+		case NSCGON: 
 			{
 				int PlayersInPack = m_packet.Read1();
 				for (int i=0; i<PlayersInPack; ++i)
@@ -550,7 +550,7 @@ void NetworkSyncManager::ProcessInput()
 				SCREENMAN->SendMessageToTopScreen( SM_GotEval );
 			}
 			break;
-		case 5: //Scoreboard Update
+		case NSCGSU: //Scoreboard Update
 			{	//Ease scope
 				int ColumnNumber=m_packet.Read1();
 				int NumberPlayers=m_packet.Read1();
@@ -558,17 +558,17 @@ void NetworkSyncManager::ProcessInput()
 				int i;
 				switch (ColumnNumber)
 				{
-				case 0:
+				case NSSB_NAMES:
 					ColumnData = "Names\n";
 					for (i=0; i<NumberPlayers; ++i)
 						ColumnData += m_PlayerNames[m_packet.Read1()] + "\n";
 					break;
-				case 1:
+				case NSSB_COMBO:
 					ColumnData = "Combo\n";
 					for (i=0; i<NumberPlayers; ++i)
 						ColumnData += ssprintf("%d\n",m_packet.Read2());
 					break;
-				case 2:
+				case NSSB_GRADE:
 					ColumnData = "Grade\n";
 					for (i=0;i<NumberPlayers;i++)
 						switch (m_packet.Read1())
@@ -596,13 +596,13 @@ void NetworkSyncManager::ProcessInput()
 				m_scoreboardchange[ColumnNumber]=true;
 			}
 			break;
-		case 6:	//System message from server
+		case NSCSU:	//System message from server
 			{
 				CString SysMSG = m_packet.ReadNT();
 				SCREENMAN->SystemMessage( SysMSG );
 			}
 			break;
-		case 7:	//Chat message from server					
+		case NSCCM:	//Chat message from server					
 			{
 				m_sChatText += m_packet.ReadNT() + " \n ";
 				//10000 chars backlog should be more than enough
@@ -610,7 +610,7 @@ void NetworkSyncManager::ProcessInput()
 				SCREENMAN->SendMessageToTopScreen( SM_AddToChat );
 			}
 			break;
-		case 8: //Select Song/Play song
+		case NSCRSG: //Select Song/Play song
 			{
 				m_iSelectMode = m_packet.Read1();
 				m_sMainTitle = m_packet.ReadNT();
@@ -619,7 +619,7 @@ void NetworkSyncManager::ProcessInput()
 				SCREENMAN->SendMessageToTopScreen( SM_ChangeSong );
 			}
 			break;
-		case 9:
+		case NSCUUL:
 			{
 				/*int ServerMaxPlayers=*/m_packet.Read1();
 				int PlayersInThisPacket=m_packet.Read1();
@@ -639,7 +639,7 @@ void NetworkSyncManager::ProcessInput()
 				}
 			}
 			break;
-		case 10:
+		case NSCSMS:
 			{
 				CString StyleName, GameName;
 				GameName = m_packet.ReadNT();
@@ -667,7 +667,7 @@ bool NetworkSyncManager::ChangedScoreboard(int Column)
 void NetworkSyncManager::SendChat(const CString& message) 
 {
 	m_packet.ClearPacket();
-	m_packet.Write1( 7 );
+	m_packet.Write1( NSCCM );
 	m_packet.WriteNT( message );
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 }
@@ -675,7 +675,7 @@ void NetworkSyncManager::SendChat(const CString& message)
 void NetworkSyncManager::ReportPlayerOptions()
 {
 	m_packet.ClearPacket();
-	m_packet.Write1( 11 );
+	m_packet.Write1( NSCUPOpts );
 	FOREACH_PlayerNumber (pn)
 		m_packet.WriteNT( GAMESTATE->m_PlayerOptions[pn].GetString() );
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
@@ -684,7 +684,7 @@ void NetworkSyncManager::ReportPlayerOptions()
 void NetworkSyncManager::SelectUserSong()
 {
 	m_packet.ClearPacket();
-	m_packet.Write1( 8 );
+	m_packet.Write1( NSCRSG );
 	m_packet.Write1( (uint8_t) m_iSelectMode );
 	m_packet.WriteNT( m_sMainTitle );
 	m_packet.WriteNT( m_sArtist );
