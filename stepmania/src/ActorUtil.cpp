@@ -27,26 +27,23 @@ Actor* LoadFromActorFile( const CString &sIniPath, const CString &sLayer )
 	if( !ini.ReadFile( sIniPath ) )
 		RageException::Throw( "%s", ini.GetError().c_str() );
 	
-	if( !ini.GetKey(sLayer) )
-		RageException::Throw( "The file '%s' doesn't have layer '%s'.", sIniPath.c_str(), sLayer.c_str() );
-
 	CString sDir = Dirname( sIniPath );
 
-	const IniFile::key* k = ini.GetKey( sLayer );
-	if( k == NULL )
+	const XNode* pLayer = ini.GetChild(sLayer);
+	if( pLayer == NULL )
 		RageException::Throw( "The file '%s' doesn't have layer '%s'.", sIniPath.c_str(), sLayer.c_str() );
 
-	return LoadFromActorFile( sDir, *k );
+	return LoadFromActorFile( sDir, *pLayer );
 }
 
-Actor* LoadFromActorFile( const CString& sAniDir, const IniKey& layer )
+Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 {
 	Actor* pActor = NULL;	// fill this in before we return;
 
 	CString sType;
-	layer.GetValue( "Type", sType );
+	layer.GetAttrValue( "Type", sType );
 	CString sFile;
-	layer.GetValue( "File", sFile );
+	layer.GetAttrValue( "File", sFile );
 	FixSlashesInPlace( sFile );
 
 	if( sType == "SongCreditDisplay" )
@@ -72,14 +69,14 @@ Actor* LoadFromActorFile( const CString& sAniDir, const IniKey& layer )
 				sAniDir.c_str() );
 
 		CString text;
-		if( layer.GetValue("Text", text) )
+		if( layer.GetAttrValue("Text", text) )
 		{
 			/* It's a BitmapText. Note that we could do the actual text setting with metrics,
 			 * by adding "text" and "alttext" commands, but right now metrics can't contain
 			 * commas or semicolons.  It's useful to be able to refer to fonts in the real
 			 * theme font dirs, too. */
 			CString alttext;
-			layer.GetValue("AltText", alttext );
+			layer.GetAttrValue("AltText", alttext );
 			text.Replace( "::", "\n" );
 			alttext.Replace( "::", "\n" );
 
@@ -233,27 +230,26 @@ retry:
 	}
 
 	float f;
-	if( layer.GetValue( "BaseRotationXDegrees", f ) )	pActor->SetBaseRotationX( f );
-	if( layer.GetValue( "BaseRotationYDegrees", f ) )	pActor->SetBaseRotationY( f );
-	if( layer.GetValue( "BaseRotationZDegrees", f ) )	pActor->SetBaseRotationZ( f );
-	if( layer.GetValue( "BaseZoomX", f ) )				pActor->SetBaseZoomX( f );
-	if( layer.GetValue( "BaseZoomY", f ) )				pActor->SetBaseZoomY( f );
-	if( layer.GetValue( "BaseZoomZ", f ) )				pActor->SetBaseZoomZ( f );
+	if( layer.GetAttrValue( "BaseRotationXDegrees", f ) )	pActor->SetBaseRotationX( f );
+	if( layer.GetAttrValue( "BaseRotationYDegrees", f ) )	pActor->SetBaseRotationY( f );
+	if( layer.GetAttrValue( "BaseRotationZDegrees", f ) )	pActor->SetBaseRotationZ( f );
+	if( layer.GetAttrValue( "BaseZoomX", f ) )				pActor->SetBaseZoomX( f );
+	if( layer.GetAttrValue( "BaseZoomY", f ) )				pActor->SetBaseZoomY( f );
+	if( layer.GetAttrValue( "BaseZoomZ", f ) )				pActor->SetBaseZoomZ( f );
 
 
 	//
 	// Load commands
 	//
-	for( IniKey::const_iterator i = layer.begin();
-		 i != layer.end(); ++i)
+	FOREACH_CONST_Attr( &layer, a )
 	{
-		CString KeyName = i->first; /* "OnCommand" */
+		CString KeyName = a->m_sName; /* "OnCommand" */
 		KeyName.MakeLower();
 
 		if( KeyName.Right(7) != "command" )
 			continue; /* not a command */
 
-		const CString &sCommands = i->second;
+		const CString &sCommands = a->m_sValue;
 		Commands cmds = ParseCommands( sCommands );
 		CString sCmdName;
 		/* Special case: "Command=foo" -> "OnCommand=foo" */

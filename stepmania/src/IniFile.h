@@ -3,46 +3,15 @@
 #ifndef INIFILE_H
 #define INIFILE_H
 
-#include <map>
+#include "XmlFile.h"
 using namespace std;
 
 class RageFileBasic;
 
-class IniKey : public map<CString, CString>
+class IniFile : public XNode
 {
-public:
-	bool GetValue( const CString &valuename, CString& value ) const;
-	bool GetValue( const CString &valuename, int& value ) const;
-	bool GetValue( const CString &valuename, unsigned& value ) const;
-	bool GetValue( const CString &valuename, float& value ) const;
-	bool GetValue( const CString &valuename, bool& value ) const;
-
-	bool SetValue( const CString &valuename, const CString &value );
-	bool SetValue( const CString &valuename, int value );
-	bool SetValue( const CString &valuename, unsigned value );
-	bool SetValue( const CString &valuename, float value );
-	bool SetValue( const CString &valuename, bool value );
-};
-
-class IniFile  
-{
-public:
-	// all keys are of this type
-	typedef IniKey key;
-	typedef map<CString, key> keymap;
-
-	typedef keymap::const_iterator const_iterator;
-	const_iterator begin() const { return keys.begin(); }
-	const_iterator end() const { return keys.end(); }
-
-	typedef keymap::iterator iterator;
-	iterator begin() { return keys.begin(); }
-	iterator end() { return keys.end(); }
-
 private:
 	CString m_sPath;
-
-	keymap keys;
 
 	mutable CString m_sError;
 
@@ -53,12 +22,8 @@ public:
 
 	bool ReadFile( const CString &sPath );
 	bool ReadFile( RageFileBasic &sFile );
-	bool WriteFile( const CString &sPath );
-	bool WriteFile( RageFileBasic &sFile );
-	void Reset();
-
-	int GetNumKeys() const;
-	int GetNumValues( const CString &keyname ) const;
+	bool WriteFile( const CString &sPath ) const;
+	bool WriteFile( RageFileBasic &sFile ) const;
 
 	bool GetValue( const CString &key, const CString &valuename, CString& value ) const;
 	bool GetValue( const CString &key, const CString &valuename, int& value ) const;
@@ -66,22 +31,19 @@ public:
 	bool GetValue( const CString &key, const CString &valuename, float& value ) const;
 	bool GetValue( const CString &key, const CString &valuename, bool& value ) const;
 
-	bool SetValue( const CString &key, const CString &valuename, const CString &value );
-	bool SetValue( const CString &key, const CString &valuename, int value );
-	bool SetValue( const CString &key, const CString &valuename, unsigned value );
-	bool SetValue( const CString &key, const CString &valuename, float value );
-	bool SetValue( const CString &key, const CString &valuename, bool value );
+	void SetValue( const CString &key, const CString &valuename, const CString &value );
+	void SetValue( const CString &key, const CString &valuename, int value );
+	void SetValue( const CString &key, const CString &valuename, unsigned value );
+	void SetValue( const CString &key, const CString &valuename, float value );
+	void SetValue( const CString &key, const CString &valuename, bool value );
 
 	bool DeleteKey( const CString &keyname );
 	bool DeleteValue( const CString &keyname, const CString &valuename );
 
-	const key *GetKey( const CString &keyname ) const;
-	void SetValue( const CString &keyname, const key &key );
-
 	/* Rename a key. For example, call RenameKey("foo", "main") after
 	 * reading an INI where [foo] is an alias to [main].  If to already
 	 * exists, nothing happens. */
-	void RenameKey( const CString &from, const CString &to );
+	bool RenameKey( const CString &from, const CString &to );
 };
 
 #endif

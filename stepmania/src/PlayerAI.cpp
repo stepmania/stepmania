@@ -40,17 +40,18 @@ void PlayerAI::InitFromDisk()
 	for( int i=0; i<NUM_SKILL_LEVELS; i++ )
 	{
 		CString sKey = ssprintf("Skill%d", i);
-		if( ini.GetKey(sKey)==NULL )
+		XNode* pNode = ini.GetChild(sKey);
+		if( pNode == NULL )
 			RageException::Throw( "AI.ini: '%s' doesn't exist.", sKey.c_str() );
 
 		TapScoreDistribution& dist = g_Distributions[i];
 		dist.fPercent[TNS_NONE] = 0;
-		ini.GetValue ( sKey, "MissWeight", dist.fPercent[TNS_MISS] );
-		ini.GetValue ( sKey, "BooWeight", dist.fPercent[TNS_BOO] );
-		ini.GetValue ( sKey, "GoodWeight", dist.fPercent[TNS_GOOD] );
-		ini.GetValue ( sKey, "GreatWeight", dist.fPercent[TNS_GREAT] );
-		ini.GetValue ( sKey, "PerfectWeight", dist.fPercent[TNS_PERFECT] );
-		ini.GetValue ( sKey, "MarvelousWeight", dist.fPercent[TNS_MARVELOUS] );
+		pNode->GetAttrValue( "MissWeight", dist.fPercent[TNS_MISS] );
+		pNode->GetAttrValue( "BooWeight", dist.fPercent[TNS_BOO] );
+		pNode->GetAttrValue( "GoodWeight", dist.fPercent[TNS_GOOD] );
+		pNode->GetAttrValue( "GreatWeight", dist.fPercent[TNS_GREAT] );
+		pNode->GetAttrValue( "PerfectWeight", dist.fPercent[TNS_PERFECT] );
+		pNode->GetAttrValue( "MarvelousWeight", dist.fPercent[TNS_MARVELOUS] );
 		
 		float fSum = 0;
 		for( int j=0; j<NUM_TAP_NOTE_SCORES; j++ )

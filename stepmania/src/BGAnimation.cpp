@@ -77,10 +77,10 @@ void AddLayersFromAniDir( CString sAniDir, vector<Actor*> &layersAddTo, bool Gen
 
 	{
 		vector<CString> vsLayerNames;
-		for( IniFile::const_iterator iter = ini.begin(); iter != ini.end(); iter++ )
+		FOREACH_CONST_Child( &ini, pLayer )
 		{
-			if( strncmp(iter->first, "Layer", 5) == 0 )
-				vsLayerNames.push_back( iter->first );
+			if( strncmp(pLayer->m_sName, "Layer", 5) == 0 )
+				vsLayerNames.push_back( pLayer->m_sName );
 		}
 
 		sort( vsLayerNames.begin(), vsLayerNames.end(), CompareLayerNames );
@@ -88,15 +88,15 @@ void AddLayersFromAniDir( CString sAniDir, vector<Actor*> &layersAddTo, bool Gen
 
 		FOREACH_CONST( CString, vsLayerNames, s )
 		{
-			const CString sLayer = *s;
-			const IniFile::key* pKey = ini.GetKey( sLayer );
+			const CString &sLayer = *s;
+			const XNode* pKey = ini.GetChild( sLayer );
 			ASSERT( pKey );
 
 			CString sImportDir;
-			if( ini.GetValue(sLayer, "Import", sImportDir) )
+			if( pKey->GetAttrValue("Import", sImportDir) )
 			{
 				CString expr;
-				if( ini.GetValue(sLayer,"Condition",expr) )
+				if( pKey->GetAttrValue("Condition",expr) )
 				{
 					if( !Lua::RunExpressionB( expr ) )
 						continue;

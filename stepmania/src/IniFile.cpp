@@ -3,6 +3,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageFile.h"
+#include "Foreach.h"
 
 bool IniFile::ReadFile( const CString &sPath )
 {
@@ -61,7 +62,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 	}
 }
 
-bool IniFile::WriteFile( const CString &sPath )
+bool IniFile::WriteFile( const CString &sPath ) const
 {
 	RageFile f;
 	if( !f.Open( sPath, RageFile::WRITE ) )
@@ -74,22 +75,22 @@ bool IniFile::WriteFile( const CString &sPath )
 	return IniFile::WriteFile( f );
 }
 
-bool IniFile::WriteFile( RageFileBasic &f )
+bool IniFile::WriteFile( RageFileBasic &f ) const
 {
-	for( keymap::const_iterator k = keys.begin(); k != keys.end(); ++k )
+	FOREACH_CONST_Child( this, pKey ) 
 	{
-		if( k->second.empty() )
-			continue;
-
-		if( f.PutLine( ssprintf("[%s]", k->first.c_str()) ) == -1 )
+		if( f.PutLine( ssprintf("[%s]", pKey->m_sName.c_str()) ) == -1 )
 		{
 			m_sError = f.GetError();
 			return false;
 		}
 
-
-		for( key::const_iterator i = k->second.begin(); i != k->second.end(); ++i )
-			f.PutLine( ssprintf("%s=%s", i->first.c_str(), i->second.c_str()) );
+		FOREACH_CONST_Attr( pKey, pAttr )
+		{
+			f.PutLine( ssprintf("%s=%s", pAttr->m_sName.c_str(), pAttr->m_sValue.c_str()) );
+			m_sError = f.GetError();
+			return false;
+		}
 
 		if( f.PutLine( "" ) == -1 )
 		{
@@ -100,68 +101,35 @@ bool IniFile::WriteFile( RageFileBasic &f )
 	return true;
 }
 
-void IniFile::Reset()
-{
-	keys.clear();
-}
-
-int IniFile::GetNumKeys() const
-{
-	return keys.size();
-}
-
-int IniFile::GetNumValues( const CString &keyname ) const
-{
-	keymap::const_iterator k = keys.find(keyname);
-	if( k == keys.end() )
-		return -1;
-
-	return k->second.size();
-}
-
-bool IniKey::GetValue( const CString &valuename, CString& value ) const
-{
-	const_iterator i = find(valuename);
-
-	if( i == end() )
-		return false;
-
-	value = i->second;
-	return true;
-}
-
-bool IniKey::SetValue(  const CString &valuename, const CString &value )
-{
-	(*this)[valuename] = value;
-	return true;
-}
-
 bool IniFile::GetValue( const CString &keyname, const CString &valuename, CString& value ) const
 {
-	keymap::const_iterator k = keys.find(keyname);
-	if (k == keys.end())
+	const XNode* pNode = GetChild( keyname );
+	if( pNode == NULL )
 		return false;
-	return k->second.GetValue( valuename, value );
+	return pNode->GetAttrValue( valuename, value );
 }
 
-bool IniFile::SetValue( const CString &keyname, const CString &valuename, const CString &value )
+void IniFile::SetValue( const CString &keyname, const CString &valuename, const CString &value )
 {
-	keys[keyname].SetValue( valuename, value );
-	return true;
+	XNode* pNode = GetChild( keyname );
+	if( pNode == NULL )
+		pNode = AppendChild( keyname );
+	pNode->SetAttrValue( valuename, value );
 }
+
+bool IniFile::DeleteValue(const CString &keyname, const CString &valuename)
+{
+	XNode* pNode = GetChild( keyname );
+	if( pNode == NULL )
+		return false;
+	XAttr* pAttr = pNode->GetAttr( valuename );
+	if( pAttr == NULL )
+		return false;
+	return pNode->RemoveAttr( pAttr );
+}
+
 
 #define TYPE(T) \
-	bool IniKey::GetValue( const CString &valuename, T &value ) const \
-	{ \
-		CString sValue; \
-		if( !GetValue(valuename,sValue) ) \
-			return false; \
-		return FromString( sValue, value ); \
-	} \
-	bool IniKey::SetValue( const CString &valuename, T value ) \
-	{ \
-		return SetValue( valuename, ToString(value) ); \
-	} \
 	bool IniFile::GetValue( const CString &keyname, const CString &valuename, T &value ) const \
 	{ \
 		CString sValue; \
@@ -169,9 +137,9 @@ bool IniFile::SetValue( const CString &keyname, const CString &valuename, const 
 			return false; \
 		return FromString( sValue, value ); \
 	} \
-	bool IniFile::SetValue( const CString &keyname, const CString &valuename, T value ) \
+	void IniFile::SetValue( const CString &keyname, const CString &valuename, T value ) \
 	{ \
-		return SetValue( keyname, valuename, ToString(value) ); \
+		SetValue( keyname, valuename, ToString(value) ); \
 	}
 
 TYPE(int);
@@ -179,52 +147,34 @@ TYPE(unsigned);
 TYPE(float);
 TYPE(bool);
 
-bool IniFile::DeleteValue(const CString &keyname, const CString &valuename)
-{
-	keymap::iterator k = keys.find(keyname);
-	if( k == keys.end() )
-		return false;
-
-	key::iterator i = k->second.find(valuename);
-	if( i == k->second.end() )
-		return false;
-
-	k->second.erase(i);
-	return true;
-}
 
 bool IniFile::DeleteKey(const CString &keyname)
 {
-	keymap::iterator k = keys.find(keyname);
-	if( k == keys.end() )
+	XNode* pNode = GetChild( keyname );
+	if( pNode == NULL )
+		return false;
+	return RemoveChild( pNode );
+}
+
+bool IniFile::RenameKey(const CString &from, const CString &to)
+{
+	/* If to already exists, do nothing. */
+	XNode* pTo = GetChild( to );
+	if( pTo )
 		return false;
 
-	keys.erase(k);
+	multimap<CString, XNode*>::iterator it = m_childs.find( from );
+	if( it == m_childs.end() )
+		return false;
+
+	XNode* pNode = it->second;
+
+	m_childs.erase( it );
+
+	pNode->m_sName = to;
+	m_childs.insert( pair<CString,XNode*>(pNode->m_sName,pNode) );
+
 	return true;
-}
-
-const IniKey *IniFile::GetKey(const CString &keyname) const
-{
-	keymap::const_iterator i = keys.find(keyname);
-	if( i == keys.end() )
-		return NULL;
-	return &i->second;
-}
-
-void IniFile::SetValue(const CString &keyname, const key &key)
-{
-	keys[keyname] = key;
-}
-
-void IniFile::RenameKey(const CString &from, const CString &to)
-{
-	if( keys.find(from) == keys.end() )
-		return;
-	if( keys.find(to) != keys.end() )
-		return;
-
-	keys[to] = keys[from];
-	keys.erase(from);
 }
 
 

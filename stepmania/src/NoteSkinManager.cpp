@@ -62,7 +62,7 @@ void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 void NoteSkinManager::LoadNoteSkinData( const CString &sNoteSkinName, NoteSkinData& data_out )
 {
 	data_out.sName = sNoteSkinName;
-	data_out.metrics.Reset();
+	data_out.metrics.Clear();
 	data_out.vsDirSearchOrder.clear();
 
 	/* Load global NoteSkin defaults */

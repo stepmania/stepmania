@@ -36,7 +36,7 @@ void SaveCatalogXml()
 	LOG->Trace( "Writing %s ...", fn.c_str() );
 
 	XNode xml;
-	xml.name = "Catalog";
+	xml.m_sName = "Catalog";
 
 	{
 		bool ShowStepsType[NUM_STEPS_TYPES];

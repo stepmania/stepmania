@@ -41,11 +41,12 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 		if( !ini.ReadFile( sTexOrIniPath ) )
 			RageException::Throw( "Error reading %s: %s", sTexOrIniPath.c_str(), ini.GetError().c_str() );
 
-		if( !ini.GetKey("AnimatedTexture") )
+		const XNode* pAnimatedTexture = ini.GetChild("AnimatedTexture");
+		if( pAnimatedTexture == NULL )
 			RageException::Throw( "The animated texture file '%s' doesn't contain a section called 'AnimatedTexture'.", sTexOrIniPath.c_str() );
 		
-		ini.GetValue( "AnimatedTexture", "TexVelocityX", m_fTexVelocityX );
-		ini.GetValue( "AnimatedTexture", "TexVelocityY", m_fTexVelocityY );
+		pAnimatedTexture->GetAttrValue( "TexVelocityX", m_fTexVelocityX );
+		pAnimatedTexture->GetAttrValue( "TexVelocityY", m_fTexVelocityY );
 		
 		for( int i=0; i<1000; i++ )
 		{
@@ -54,8 +55,8 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 
 			CString sFileName;
 			float fDelay = 0;
-			if( ini.GetValue( "AnimatedTexture", sFileKey, sFileName ) &&
-				ini.GetValue( "AnimatedTexture", sDelayKey, fDelay ) ) 
+			if( pAnimatedTexture->GetAttrValue( sFileKey, sFileName ) &&
+				pAnimatedTexture->GetAttrValue( sDelayKey, fDelay ) ) 
 			{
 				RageTextureID ID;
 				ID.filename = Dirname(sTexOrIniPath) + sFileName;

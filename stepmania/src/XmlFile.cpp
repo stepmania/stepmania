@@ -150,18 +150,18 @@ void SetString( char* psz, char* end, CString* ps, bool trim = false, int escape
 
 XNode::~XNode()
 {
-	Close();
+	Clear();
 }
 
-void XNode::Close()
+void XNode::Clear()
 {
 	FOREACH_Child( this, p )
 		SAFE_DELETE( p );
-	childs.clear();
+	m_childs.clear();
 	
 	FOREACH_Attr( this, p2 )
 		SAFE_DELETE( p2 );
-	attrs.clear();
+	m_attrs.clear();
 }
 	
 // attr1="value1" attr2='value2' attr3=value3 />
@@ -201,7 +201,7 @@ char* XNode::LoadAttributes( const char* pszAttrs, PARSEINFO *pi /*= &piDefault*
 				pi->erorr_occur = true;
 				pi->error_pointer = xml;
 				pi->error_code = PIE_ATTR_NO_VALUE;
-				pi->error_string = ssprintf( ("<%s> attribute has error "), name.c_str() );
+				pi->error_string = ssprintf( ("<%s> attribute has error "), m_sName.c_str() );
 			}
 			return NULL;
 		}
@@ -209,10 +209,11 @@ char* XNode::LoadAttributes( const char* pszAttrs, PARSEINFO *pi /*= &piDefault*
 		XAttr *attr = new XAttr;
 
 		// XML Attr Name
-		SetString( xml, pEnd, &attr->name );
+		SetString( xml, pEnd, &attr->m_sName );
 		
 		// add new attribute
-		attrs.insert( pair<CString,XAttr*>(attr->name, attr) );
+		DEBUG_ASSERT( attr->m_sName.size() );
+		m_attrs.insert( pair<CString,XAttr*>(attr->m_sName, attr) );
 		xml = pEnd;
 		
 		// XML Attr Value
@@ -230,7 +231,9 @@ char* XNode::LoadAttributes( const char* pszAttrs, PARSEINFO *pi /*= &piDefault*
 			// or none quote
 			int quote = *xml;
 			if( quote == '"' || quote == '\'' )
+			{
 				pEnd = tcsechr( ++xml, quote, chXMLEscape );
+			}
 			else
 			{
 				//attr= value> 
@@ -241,12 +244,12 @@ char* XNode::LoadAttributes( const char* pszAttrs, PARSEINFO *pi /*= &piDefault*
 
 			bool trim = pi->trim_value;
 			char escape = pi->escape_value;
-			//SetString( xml, pEnd, &attr->value, trim, chXMLEscape );	
-			SetString( xml, pEnd, &attr->value, trim, escape );
+			//SetString( xml, pEnd, &attr->m_sValue, trim, chXMLEscape );	
+			SetString( xml, pEnd, &attr->m_sValue, trim, escape );
 			xml = pEnd;
 			// ATTRVALUE 
 			if( pi->entity_value && pi->entitys )
-				attr->value = pi->entitys->Ref2Entity(attr->value);
+				attr->m_sValue = pi->entitys->Ref2Entity(attr->m_sValue);
 
 			if( quote == '"' || quote == '\'' )
 				xml++;
@@ -274,8 +277,7 @@ char* XNode::LoadAttributes( const char* pszAttrs, PARSEINFO *pi /*= &piDefault*
 //========================================================
 char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 {
-	// Close it
-	Close();
+	Clear();
 
 	char* xml = (char*)pszXml;
 
@@ -290,7 +292,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 	// XML Node Tag Name Open
 	xml++;
 	char* pTagEnd = strpbrk( xml, " />" );
-	SetString( xml, pTagEnd, &name );
+	SetString( xml, pTagEnd, &m_sName );
 	xml = pTagEnd;
 	// Generate XML Attributte List
 	xml = LoadAttributes( xml, pi );
@@ -309,7 +311,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 			// UGLY: We want to ignore all XML meta tags.  So, since the Node we 
 			// just loaded is a meta tag, then Load ourself again using the rest 
 			// of the file until we reach a non-meta tag.
-			if( !name.empty() && name[0] == chXMLTagQuestion )
+			if( !m_sName.empty() && m_sName[0] == chXMLTagQuestion )
 				xml = Load( xml, pi );
 
 			return xml;
@@ -333,8 +335,8 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 	//                        ^- current pointer
 	{
 		// text value가 없으툈E넣도록한다.
-		//if( this->value.empty() || this->value == ("") )
-		if( XIsEmptyString( value ) )
+		//if( this->m_sValue.empty() || this->m_sValue == ("") )
+		if( XIsEmptyString( m_sValue ) )
 		{
 			// Text Value 
 			char* pEnd = tcsechr( ++xml, chXMLTagOpen, chXMLEscape );
@@ -345,7 +347,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 					pi->erorr_occur = true;
 					pi->error_pointer = xml;
 					pi->error_code = PIE_NOT_CLOSED;
-					pi->error_string = ssprintf( "%s must be closed with </%s>", name.c_str(), name.c_str() );
+					pi->error_string = ssprintf( "%s must be closed with </%s>", m_sName.c_str(), m_sName.c_str() );
 				}
 				// error cos not exist CloseTag </TAG>
 				return NULL;
@@ -353,13 +355,13 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 			
 			bool trim = pi->trim_value;
 			char escape = pi->escape_value;
-			//SetString( xml, pEnd, &value, trim, chXMLEscape );
-			SetString( xml, pEnd, &value, trim, escape );
+			//SetString( xml, pEnd, &m_sValue, trim, chXMLEscape );
+			SetString( xml, pEnd, &m_sValue, trim, escape );
 
 			xml = pEnd;
 			// TEXTVALUE reference
 			if( pi->entity_value && pi->entitys )
-				value = pi->entitys->Ref2Entity(value);
+				m_sValue = pi->entitys->Ref2Entity(m_sValue);
 		}
 
 		// generate child nodes
@@ -368,9 +370,10 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 			XNode *node = new XNode;
 			
 			xml = node->Load( xml,pi );
-			if( !node->name.empty() )
+			if( !node->m_sName.empty() )
 			{
-				childs.insert( pair<CString,XNode*>(node->name, node) );
+				DEBUG_ASSERT( node->m_sName.size() );
+				m_childs.insert( pair<CString,XNode*>(node->m_sName, node) );
 			}
 			else
 			{
@@ -398,13 +401,13 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 						pi->erorr_occur = true;
 						pi->error_pointer = xml;
 						pi->error_code = PIE_NOT_CLOSED;
-						pi->error_string = ssprintf( "it must be closed with </%s>", name.c_str() );
+						pi->error_string = ssprintf( "it must be closed with </%s>", m_sName.c_str() );
 					}
 					// error
 					return NULL;
 				}
 				SetString( xml, pEnd, &closename );
-				if( closename == this->name )
+				if( closename == this->m_sName )
 				{
 					// wel-formed open/close
 					xml = pEnd+1;
@@ -420,7 +423,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 						pi->erorr_occur = true;
 						pi->error_pointer = xml;
 						pi->error_code = PIE_NOT_NESTED;
-						pi->error_string = ssprintf( "'<%s> ... </%s>' is not well-formed.", name.c_str(), closename.c_str() );
+						pi->error_string = ssprintf( "'<%s> ... </%s>' is not well-formed.", m_sName.c_str(), closename.c_str() );
 
 					}
 					return NULL;
@@ -430,8 +433,8 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 					// else 해야하는햨E말아야하는햨E의심간다.
 			{
 				
-				//if( xml && this->value.empty() && *xml !=chXMLTagOpen )
-				if( xml && XIsEmptyString( value ) && *xml !=chXMLTagOpen )
+				//if( xml && this->m_sValue.empty() && *xml !=chXMLTagOpen )
+				if( xml && XIsEmptyString( m_sValue ) && *xml !=chXMLTagOpen )
 				{
 					// Text Value 
 					char* pEnd = tcsechr( xml, chXMLTagOpen, chXMLEscape );
@@ -443,20 +446,20 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 							pi->erorr_occur = true;
 							pi->error_pointer = xml;
 							pi->error_code = PIE_NOT_CLOSED;
-							pi->error_string = ssprintf( "it must be closed with </%s>", name.c_str() );
+							pi->error_string = ssprintf( "it must be closed with </%s>", m_sName.c_str() );
 						}
 						return NULL;
 					}
 					
 					bool trim = pi->trim_value;
 					char escape = pi->escape_value;
-					//SetString( xml, pEnd, &value, trim, chXMLEscape );
-					SetString( xml, pEnd, &value, trim, escape );
+					//SetString( xml, pEnd, &m_sValue, trim, chXMLEscape );
+					SetString( xml, pEnd, &m_sValue, trim, escape );
 
 					xml = pEnd;
 					//TEXTVALUE
 					if( pi->entity_value && pi->entitys )
-						value = pi->entitys->Ref2Entity(value);
+						m_sValue = pi->entitys->Ref2Entity(m_sValue);
 				}
 			}
 		}
@@ -476,7 +479,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 //========================================================
 bool XAttr::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
 {
-	return f.Write(name + "='" + (opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value) + "' ") != -1;
+	return f.Write(m_sName + "='" + (opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(m_sValue):m_sValue) + "' ") != -1;
 }
 
 //========================================================
@@ -503,18 +506,18 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
 	}
 
 	// <TAG
-	if( f.Write("<" + name) == -1 )
+	if( f.Write("<" + m_sName) == -1 )
 		return false;
 
 	// <TAG Attr1="Val1" 
-	if( !attrs.empty() )
+	if( !m_attrs.empty() )
 		if( f.Write(" ") == -1 )
 			return false;
 	FOREACH_Attr( this, p )
 		if( !p->GetXML(f, opt) )
 			return false;
 	
-	if( childs.empty() && value.empty() )
+	if( m_childs.empty() && m_sValue.empty() )
 	{
 		// <TAG Attr1="Val1"/> alone tag 
 		if( f.Write("/>") == -1 )
@@ -526,7 +529,7 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
 		if( f.Write(">") == -1 )
 			return false;
 			
-		if( opt && opt->newline && !childs.empty() )
+		if( opt && opt->newline && !m_childs.empty() )
 		{
 			opt->tab_base++;
 		}
@@ -536,9 +539,9 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
 				return false;
 		
 		// Text Value
-		if( value != ("") )
+		if( m_sValue != ("") )
 		{
-			if( opt && opt->newline && !childs.empty() )
+			if( opt && opt->newline && !m_childs.empty() )
 			{
 				if( opt && opt->newline )
 					if( f.Write("\r\n") == -1 )
@@ -548,12 +551,12 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
 						if( f.Write("\t") == -1 )
 							return false;
 			}
-			if( f.Write((opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value)) == -1 )
+			if( f.Write((opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(m_sValue):m_sValue)) == -1 )
 				return false;
 		}
 
 		// </TAG> CloseTag
-		if( opt && opt->newline && !childs.empty() )
+		if( opt && opt->newline && !m_childs.empty() )
 		{
 			if( f.Write("\r\n") == -1 )
 				return false;
@@ -562,12 +565,12 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
 					if( f.Write("\t") == -1 )
 						return false;
 		}
-		if( f.Write("</" + name + ">") == -1 )
+		if( f.Write("</" + m_sName + ">") == -1 )
 			return false;
 
 		if( opt && opt->newline )
 		{
-			if( !childs.empty() )
+			if( !m_childs.empty() )
 				opt->tab_base--;
 		}
 	}
@@ -582,19 +585,19 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
 //--------------------------------------------------------
 // Coder    Date                      Desc
 //========================================================
-void XNode::GetValue(CString &out) const	{ out = value; }
-void XNode::GetValue(int &out) const		{ out = atoi(value); }
-void XNode::GetValue(float &out) const		{ out = strtof(value, NULL); }
-void XNode::GetValue(bool &out) const		{ out = atoi(value) != 0; }
-void XNode::GetValue(unsigned &out) const	{ out = (unsigned)atoi(value) != 0; }
-void XNode::GetValue(DateTime &out) const	{ out.FromString( value ); }
+void XNode::GetValue(CString &out) const	{ out = m_sValue; }
+void XNode::GetValue(int &out) const		{ out = atoi(m_sValue); }
+void XNode::GetValue(float &out) const		{ out = strtof(m_sValue, NULL); }
+void XNode::GetValue(bool &out) const		{ out = atoi(m_sValue) != 0; }
+void XNode::GetValue(unsigned &out) const	{ out = (unsigned)atoi(m_sValue) != 0; }
+void XNode::GetValue(DateTime &out) const	{ out.FromString( m_sValue ); }
 
-void XAttr::GetValue(CString &out) const	{ out = value; }
-void XAttr::GetValue(int &out) const		{ out = atoi(value); }
-void XAttr::GetValue(float &out) const		{ out = strtof(value, NULL); }
-void XAttr::GetValue(bool &out) const		{ out = atoi(value) != 0; }
-void XAttr::GetValue(unsigned &out) const	{ out = (unsigned)atoi(value) != 0; }
-void XAttr::GetValue(DateTime &out) const	{ out.FromString( value ); }
+void XAttr::GetValue(CString &out) const	{ out = m_sValue; }
+void XAttr::GetValue(int &out) const		{ out = atoi(m_sValue); }
+void XAttr::GetValue(float &out) const		{ out = strtof(m_sValue, NULL); }
+void XAttr::GetValue(bool &out) const		{ out = atoi(m_sValue) != 0; }
+void XAttr::GetValue(unsigned &out) const	{ out = (unsigned)atoi(m_sValue) != 0; }
+void XAttr::GetValue(DateTime &out) const	{ out.FromString( m_sValue ); }
 
 //========================================================
 // Name   : SetValue
@@ -604,11 +607,11 @@ void XAttr::GetValue(DateTime &out) const	{ out.FromString( value ); }
 //--------------------------------------------------------
 // Coder    Date                      Desc
 //========================================================
-void XNode::SetValue(int v)				{ value = ssprintf("%d",v); }
-void XNode::SetValue(float v)			{ value = ssprintf("%f",v); }
-void XNode::SetValue(bool v)			{ value = ssprintf("%d",v); }
-void XNode::SetValue(unsigned v)		{ value = ssprintf("%u",v); }
-void XNode::SetValue(const DateTime &v) { value = v.GetString(); }
+void XNode::SetValue(int v)				{ m_sValue = ssprintf("%d",v); }
+void XNode::SetValue(float v)			{ m_sValue = ssprintf("%f",v); }
+void XNode::SetValue(bool v)			{ m_sValue = ssprintf("%d",v); }
+void XNode::SetValue(unsigned v)		{ m_sValue = ssprintf("%u",v); }
+void XNode::SetValue(const DateTime &v) { m_sValue = v.GetString(); }
 
 //========================================================
 // Name   : GetAttr
@@ -621,17 +624,23 @@ void XNode::SetValue(const DateTime &v) { value = v.GetString(); }
 //========================================================
 const XAttr *XNode::GetAttr( const char* attrname ) const
 {
-	multimap<CString, XAttr*>::const_iterator it = attrs.find( name );
-	if( it != attrs.end() )
+	multimap<CString, XAttr*>::const_iterator it = m_attrs.find( attrname );
+	if( it != m_attrs.end() )
+	{
+		DEBUG_ASSERT( attrname == it->second->m_sName );
 		return it->second;
+	}
 	return NULL;
 }
 
 XAttr *XNode::GetAttr( const char* attrname )
 {
-	multimap<CString, XAttr*>::iterator it = attrs.find( name );
-	if( it != attrs.end() )
+	multimap<CString, XAttr*>::iterator it = m_attrs.find( attrname );
+	if( it != m_attrs.end() )
+	{
+		DEBUG_ASSERT( attrname == it->second->m_sName );
 		return it->second;
+	}
 	return NULL;
 }
 
@@ -647,7 +656,7 @@ XAttr *XNode::GetAttr( const char* attrname )
 const char*	XNode::GetAttrValue( const char* attrname )
 {
 	XAttr *attr = GetAttr( attrname );
-	return attr ? (const char*)attr->value : NULL;
+	return attr ? (const char*)attr->m_sValue : NULL;
 }
 
 
@@ -662,7 +671,7 @@ const char*	XNode::GetAttrValue( const char* attrname )
 //========================================================
 int	XNode::GetChildCount()
 {
-	return childs.size();
+	return m_childs.size();
 }
 
 //========================================================
@@ -676,17 +685,24 @@ int	XNode::GetChildCount()
 //========================================================
 XNode *XNode::GetChild( const char* name )
 {
-	multimap<CString, XNode*>::iterator it = childs.find( name );
-	if( it != childs.end() )
+	multimap<CString, XNode*>::iterator it = m_childs.find( name );
+	if( it != m_childs.end() )
+	{
+		DEBUG_ASSERT( name == it->second->m_sName );
 		return it->second;
+	}
 	return NULL;
 }
 
 const XNode *XNode::GetChild( const char* name ) const
 {
-	multimap<CString, XNode*>::const_iterator it = childs.find( name );
-	if( it != childs.end() )
+	multimap<CString, XNode*>::const_iterator it = m_childs.find( name );
+	if( it != m_childs.end() )
+	{
+		XNode* p = it->second;
+		DEBUG_ASSERT( name == it->second->m_sName );
 		return it->second;
+	}
 	return NULL;
 }
 
@@ -702,7 +718,7 @@ const XNode *XNode::GetChild( const char* name ) const
 const char*	XNode::GetChildValue( const char* name )
 {
 	XNode *node = GetChild( name );
-	return (node != NULL)? (const char*)node->value : NULL;
+	return (node != NULL)? (const char*)node->m_sValue : NULL;
 }
 
 XAttr *XNode::GetChildAttr( const char* name, const char* attrname )
@@ -714,7 +730,7 @@ XAttr *XNode::GetChildAttr( const char* name, const char* attrname )
 const char* XNode::GetChildAttrValue( const char* name, const char* attrname )
 {
 	XAttr *attr = GetChildAttr( name, attrname );
-	return attr ? (const char*)attr->value : NULL;
+	return attr ? (const char*)attr->m_sValue : NULL;
 }
 
 
@@ -727,11 +743,11 @@ const char* XNode::GetChildAttrValue( const char* name, const char* attrname )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-XNode *XNode::AppendChild( const char* name, const char* value )		{ XNode *p = new XNode; p->name = name; p->value = value; return AppendChild( p ); }
-XNode *XNode::AppendChild( const char* name, float value )				{ XNode *p = new XNode; p->name = name; p->SetValue( value ); return AppendChild( p ); }
-XNode *XNode::AppendChild( const char* name, int value )				{ XNode *p = new XNode; p->name = name; p->SetValue( value ); return AppendChild( p ); }
-XNode *XNode::AppendChild( const char* name, unsigned value )			{ XNode *p = new XNode; p->name = name; p->SetValue( value ); return AppendChild( p ); }
-XNode *XNode::AppendChild( const char* name, const DateTime &value )	{ XNode *p = new XNode; p->name = name; p->SetValue( value ); return AppendChild( p ); }
+XNode *XNode::AppendChild( const char* name, const char* value )		{ XNode *p = new XNode; p->m_sName = name; p->m_sValue = value; return AppendChild( p ); }
+XNode *XNode::AppendChild( const char* name, float value )				{ XNode *p = new XNode; p->m_sName = name; p->SetValue( value ); return AppendChild( p ); }
+XNode *XNode::AppendChild( const char* name, int value )				{ XNode *p = new XNode; p->m_sName = name; p->SetValue( value ); return AppendChild( p ); }
+XNode *XNode::AppendChild( const char* name, unsigned value )			{ XNode *p = new XNode; p->m_sName = name; p->SetValue( value ); return AppendChild( p ); }
+XNode *XNode::AppendChild( const char* name, const DateTime &value )	{ XNode *p = new XNode; p->m_sName = name; p->SetValue( value ); return AppendChild( p ); }
 
 //========================================================
 // Name   : AppendChild
@@ -744,7 +760,8 @@ XNode *XNode::AppendChild( const char* name, const DateTime &value )	{ XNode *p 
 //========================================================
 XNode *XNode::AppendChild( XNode *node )
 {
-	childs.insert( pair<CString,XNode*>(node->name,node) );
+	DEBUG_ASSERT( node->m_sName.size() );
+	m_childs.insert( pair<CString,XNode*>(node->m_sName,node) );
 	return node;
 }
 
@@ -759,12 +776,12 @@ XNode *XNode::AppendChild( XNode *node )
 //========================================================
 bool XNode::RemoveChild( XNode *node )
 {
-	FOREACHMM( CString, XNode*, childs, p )
+	FOREACHMM( CString, XNode*, m_childs, p )
 	{
 		if( p->second == node )
 		{
 			SAFE_DELETE( p->second );
-			childs.erase( p );
+			m_childs.erase( p );
 			return true;
 		}
 	}
@@ -783,7 +800,8 @@ bool XNode::RemoveChild( XNode *node )
 //========================================================
 XAttr *XNode::AppendAttr( XAttr *attr )
 {
-	attrs.insert( pair<CString,XAttr*>(attr->name,attr) );
+	DEBUG_ASSERT( attr->m_sName.size() );
+	m_attrs.insert( pair<CString,XAttr*>(attr->m_sName,attr) );
 	return attr;
 }
 
@@ -798,50 +816,16 @@ XAttr *XNode::AppendAttr( XAttr *attr )
 //========================================================
 bool XNode::RemoveAttr( XAttr *attr )
 {
-	FOREACHMM( CString, XAttr*, attrs, p )
+	FOREACHMM( CString, XAttr*, m_attrs, p )
 	{
 		if( p->second == attr )
 		{
 			SAFE_DELETE( p->second );
-			attrs.erase( p );
+			m_attrs.erase( p );
 			return true;
 		}
 	}
 	return false;
-}
-
-//========================================================
-// Name   : CreateNode
-// Desc   : Create node object and return it
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
-XNode *XNode::CreateNode( const char* name /*= NULL*/, const char* value /*= NULL*/ )
-{
-	XNode *node = new XNode;
-	node->name = name;
-	node->value = value;
-	return node;
-}
-
-//========================================================
-// Name   : CreateAttr
-// Desc   : create Attribute object and return it
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
-XAttr *XNode::CreateAttr( const char* name /*= NULL*/, const char* value /*= NULL*/ )
-{
-	XAttr *attr = new XAttr;
-	attr->name = name;
-	attr->value = value;
-	return attr;
 }
 
 //========================================================
@@ -855,12 +839,33 @@ XAttr *XNode::CreateAttr( const char* name /*= NULL*/, const char* value /*= NUL
 //========================================================
 XAttr *XNode::AppendAttr( const char* name /*= NULL*/, const char* value /*= NULL*/ )
 {
-	return AppendAttr( CreateAttr( name, value ) );
+	XAttr *attr = new XAttr;
+	attr->m_sName = name;
+	attr->m_sValue = value;
+	return AppendAttr( attr );
 }
 
 XAttr *XNode::AppendAttr( const char* name, float value ){ return AppendAttr(name,ssprintf("%f",value)); }
 XAttr *XNode::AppendAttr( const char* name, int value )	{ return AppendAttr(name,ssprintf("%d",value)); }
 XAttr *XNode::AppendAttr( const char* name, unsigned value )	{ return AppendAttr(name,ssprintf("%u",value)); }
+
+//========================================================
+// Name   : SetAttrValue
+// Desc   : add attribute
+// Param  :
+// Return : 
+//--------------------------------------------------------
+// Coder    Date                      Desc
+// bro      2002-10-29
+//========================================================
+void XNode::SetAttrValue( const char* name, const char* value )
+{
+	XAttr* pAttr = GetAttr( name );
+	if( pAttr )
+		pAttr->m_sValue = value;
+	else
+		AppendAttr( name, value );
+}
 
 
 XENTITYS::XENTITYS( XENTITY *entities, int count )

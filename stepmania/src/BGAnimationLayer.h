@@ -7,7 +7,7 @@
 #include "ActorFrame.h"
 #include <map>
 
-class IniKey;
+struct XNode;
 
 class BGAnimationLayer : public ActorFrame
 {
@@ -21,7 +21,7 @@ public:
 	void LoadFromAniLayerFile( const CString& sPath );
 	void LoadFromMovie( const CString& sMoviePath );
 	void LoadFromVisualization( const CString& sMoviePath );
-	void LoadFromIni( const CString& sAniDir, const IniKey& layer );
+	void LoadFromIni( const CString& sAniDir, const XNode& layer );
 
 	void Update( float fDeltaTime );
 	void DrawPrimitives();

@@ -396,15 +396,14 @@ void InputMapper::ReadMappingsFromDisk()
 	if( !ini.ReadFile( KEYMAPS_PATH ) )
 		LOG->Trace( "Couldn't open mapping file \"%s\": %s.", KEYMAPS_PATH, ini.GetError().c_str() );
 
-	const IniFile::key *Key = ini.GetKey( GAMESTATE->GetCurrentGame()->m_szName );
+	const XNode *Key = ini.GetChild( GAMESTATE->GetCurrentGame()->m_szName );
 
 	if( Key  )
 	{
-		for( IniFile::key::const_iterator i = Key->begin(); 
-			i != Key->end(); ++i )
+		FOREACH_CONST_Child( Key, i )
 		{
-			CString name = i->first;
-			CString value = i->second;
+			const CString &name = i->m_sName;
+			const CString &value = i->m_sValue;
 
 			GameInput GameI;
 			GameI.fromString( name );

@@ -66,7 +66,7 @@ void SongCacheIndex::ReadCacheIndex()
 	EmptyDir( CACHE_DIR "Banners/" );
 	EmptyDir( CACHE_DIR "Songs/" );
 
-	CacheIndex.Reset();
+	CacheIndex.Clear();
 }
 
 void SongCacheIndex::AddCacheIndex(const CString &path, unsigned hash)

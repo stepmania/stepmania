@@ -42,7 +42,7 @@ const CString ELEMENT_CATEGORY_STRING[NUM_ELEMENT_CATEGORIES] =
 struct Theme
 {
 	CString sThemeName;
-	IniFile iniMetrics;	// make this a pointer so we don't have to include IniFile here
+	IniFile *iniMetrics;	// pointer because the copy constructor isn't a deep copy
 };
 // When looking for a metric or an element, search these from head to tail.
 deque<Theme> g_vThemes;
@@ -190,17 +190,18 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThem
 		loaded_base = true;
 
 	Theme t;
+	t.iniMetrics = new IniFile;
 	t.sThemeName = sThemeName;
-	t.iniMetrics.ReadFile( GetMetricsIniPath(sThemeName) );
-	t.iniMetrics.ReadFile( GetLanguageIniPath(sThemeName,BASE_LANGUAGE) );
+	t.iniMetrics->ReadFile( GetMetricsIniPath(sThemeName) );
+	t.iniMetrics->ReadFile( GetLanguageIniPath(sThemeName,BASE_LANGUAGE) );
 	if( m_sCurLanguage.CompareNoCase(BASE_LANGUAGE) )
-		t.iniMetrics.ReadFile( GetLanguageIniPath(sThemeName,m_sCurLanguage) );
+		t.iniMetrics->ReadFile( GetLanguageIniPath(sThemeName,m_sCurLanguage) );
 
 	/* Read the fallback theme.  If no fallback theme is specified, and we havn't
 	 * already loaded it, fall back on BASE_THEME_NAME.  That way, default theme
 	 * fallbacks can be disabled with "FallbackTheme=". */
 	CString sFallback;
-	if( !t.iniMetrics.GetValue("Global","FallbackTheme",sFallback) )
+	if( !t.iniMetrics->GetValue("Global","FallbackTheme",sFallback) )
 	{
 		if( sThemeName.CompareNoCase( BASE_THEME_NAME ) && !loaded_base )
 			sFallback = BASE_THEME_NAME;
@@ -253,7 +254,7 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName, const CStr
 		if( !re.Compare( sMetric, sBits ) )
 			RageException::Throw( "Invalid argument \"--metric=%s\"", sMetric.c_str() );
 
-		g_vThemes.front().iniMetrics.SetValue( sBits[0], sBits[1], sBits[2] );
+		g_vThemes.front().iniMetrics->SetValue( sBits[0], sBits[1], sBits[2] );
 	}
 	
 	LOG->MapLog("theme", "Theme: %s", sTheme.c_str());
@@ -568,9 +569,9 @@ bool ThemeManager::GetMetricRaw( const CString &sClassName, const CString &sValu
 		iter != g_vThemes.end();
 		iter++ )
 	{
-		if( iter->iniMetrics.GetValue(sClassName,sValueName,ret) )
+		if( iter->iniMetrics->GetValue(sClassName,sValueName,ret) )
 			return true;
-		if( iter->iniMetrics.GetValue(sClassName,"Fallback",sFallback) )
+		if( iter->iniMetrics->GetValue(sClassName,"Fallback",sFallback) )
 		{
 			if( GetMetricRaw(sFallback,sValueName,ret,level+1) )
 				return true;
@@ -735,11 +736,11 @@ void ThemeManager::GetModifierNames( set<CString>& AddTo )
 		iter != g_vThemes.end();
 		++iter )
 	{
-		const IniFile::key *cur = iter->iniMetrics.GetKey( "OptionNames" );
+		const XNode *cur = iter->iniMetrics->GetChild( "OptionNames" );
 		if( cur )
 		{
-			for( IniFile::key::const_iterator iter = cur->begin(); iter != cur->end(); ++iter )
-				AddTo.insert( iter->first );
+			FOREACH_CONST_Attr( cur, p )
+				AddTo.insert( p->m_sName );
 		}
 	}
 }

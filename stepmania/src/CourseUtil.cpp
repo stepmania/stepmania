@@ -220,7 +220,7 @@ Course *CourseID::ToCourse() const
 XNode* CourseID::CreateNode() const
 {
 	XNode* pNode = new XNode;
-	pNode->name = "Course";
+	pNode->m_sName = "Course";
 
 	if( !sPath.empty() )
 		pNode->AppendAttr( "Path", sPath );
@@ -232,7 +232,7 @@ XNode* CourseID::CreateNode() const
 
 void CourseID::LoadFromNode( const XNode* pNode ) 
 {
-	ASSERT( pNode->name == "Course" );
+	ASSERT( pNode->m_sName == "Course" );
 	pNode->GetAttrValue("Path", sPath);
 	pNode->GetAttrValue("FullTitle", sFullTitle);
 }

@@ -181,7 +181,7 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
 XNode* StepsID::CreateNode() const
 {
 	XNode* pNode = new XNode;
-	pNode->name = "Steps";
+	pNode->m_sName = "Steps";
 
 	pNode->AppendAttr( "StepsType", GameManager::StepsTypeToString(st) );
 	pNode->AppendAttr( "Difficulty", DifficultyToString(dc) );
@@ -202,7 +202,7 @@ void StepsID::ClearCache()
 
 void StepsID::LoadFromNode( const XNode* pNode ) 
 {
-	ASSERT( pNode->name == "Steps" );
+	ASSERT( pNode->m_sName == "Steps" );
 
 	CString sTemp;
 

@@ -6,12 +6,13 @@
 #include "Command.h"
 
 class IniFile;
+struct XNode;
 
 struct NoteFieldMode
 {
 	NoteFieldMode();
 	bool MatchesCurrentGame() const;
-	void Load(IniFile &ini, CString id, int pn = -1);
+	void Load(const XNode* pNode, int pn = -1);
 
 	void BeginDrawTrack(int tn);
 	void EndDrawTrack(int tn);

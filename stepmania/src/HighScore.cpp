@@ -36,7 +36,7 @@ bool HighScore::operator>=( const HighScore& other ) const
 XNode* HighScore::CreateNode() const
 {
 	XNode* pNode = new XNode;
-	pNode->name = "HighScore";
+	pNode->m_sName = "HighScore";
 
 	// TRICKY:  Don't write "name to fill in" markers.
 	pNode->AppendChild( "Name", IsRankingToFillIn(sName) ? CString("") : sName );
@@ -64,7 +64,7 @@ XNode* HighScore::CreateNode() const
 
 void HighScore::LoadFromNode( const XNode* pNode ) 
 {
-	ASSERT( pNode->name == "HighScore" );
+	ASSERT( pNode->m_sName == "HighScore" );
 
 	CString s;
 
@@ -151,7 +151,7 @@ const HighScore& HighScoreList::GetTopScore() const
 XNode* HighScoreList::CreateNode() const
 {
 	XNode* pNode = new XNode;
-	pNode->name = "HighScoreList";
+	pNode->m_sName = "HighScoreList";
 
 	pNode->AppendChild( "NumTimesPlayed", iNumTimesPlayed );
 
@@ -168,14 +168,14 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 {
 	Init();
 
-	ASSERT( pHighScoreList->name == "HighScoreList" );
+	ASSERT( pHighScoreList->m_sName == "HighScoreList" );
 	FOREACH_CONST_Child( pHighScoreList, p )
 	{
-		if( p->name == "NumTimesPlayed" )
+		if( p->m_sName == "NumTimesPlayed" )
 		{
 			p->GetValue( iNumTimesPlayed );
 		}
-		else if( p->name == "HighScore" )
+		else if( p->m_sName == "HighScore" )
 		{
 			vHighScores.resize( vHighScores.size()+1 );
 			vHighScores.back().LoadFromNode( p );
@@ -190,7 +190,7 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 XNode* Screenshot::CreateNode() const
 {
 	XNode* pNode = new XNode;
-	pNode->name = "Screenshot";
+	pNode->m_sName = "Screenshot";
 
 	// TRICKY:  Don't write "name to fill in" markers.
 	pNode->AppendChild( "FileName",		sFileName );
@@ -202,7 +202,7 @@ XNode* Screenshot::CreateNode() const
 
 void Screenshot::LoadFromNode( const XNode* pNode ) 
 {
-	ASSERT( pNode->name == "Screenshot" );
+	ASSERT( pNode->m_sName == "Screenshot" );
 
 	pNode->GetChildValue( "FileName",	sFileName );
 	pNode->GetChildValue( "MD5",		sMD5 );

@@ -12,6 +12,7 @@
 #include "Game.h"
 #include "ScreenDimensions.h"
 #include "PlayerState.h"
+#include "XmlFile.h"
 
 /* Copies of the current mode.  Update this by calling Load. */
 NoteFieldMode g_NoteFieldMode[NUM_PLAYERS];
@@ -50,51 +51,49 @@ void NoteFieldMode::EndDrawTrack(int tn)
 }
 
 template <class T>
-static bool GetValue(IniFile &ini, int pn,
-				   const CString &key, const CString &valuename, T &value )
+static bool GetValue(const XNode *pNode, int pn, const CString &valuename, T &value )
 {
-	if(pn != -1 && ini.GetValue(key, ssprintf("P%i%s", pn+1, valuename.c_str()), value))
+	if(pn != -1 && pNode->GetAttrValue( ssprintf("P%i%s", pn+1, valuename.c_str()), value))
 		return true;
-	return ini.GetValue(key, valuename, value);
+	return pNode->GetAttrValue( valuename, value );
 }
 
-void NoteFieldMode::Load(IniFile &ini, CString id, int pn)
+void NoteFieldMode::Load(const XNode *pNode, int pn)
 {
-	m_Id = id;
+	m_Id = pNode->m_sName;
 
 	/* Required: */
-	ASSERT( ini.GetValue ( id, "Name",			m_Name ) );
+	ASSERT( pNode->GetAttrValue("Name",			m_Name ) );
 
 	// if we aren't loading a player, we can bail here.
 	if(pn == -1)
 		return;
 
-	GetValue( ini, pn, id, "Backdrop",				m_Backdrop );
-	GetValue( ini, pn, id, "FOV",					m_fFov );
-	GetValue( ini, pn, id, "NearClipDistance",		m_fNear );
-	GetValue( ini, pn, id, "FarClipDistance",		m_fFar );
-	GetValue( ini, pn, id, "PixelsDrawAheadScale",	m_fFirstPixelToDrawScale );
-	GetValue( ini, pn, id, "PixelsDrawBehindScale",	m_fLastPixelToDrawScale );
+	GetValue( pNode, pn, "Backdrop",				m_Backdrop );
+	GetValue( pNode, pn, "FOV",					m_fFov );
+	GetValue( pNode, pn, "NearClipDistance",		m_fNear );
+	GetValue( pNode, pn, "FarClipDistance",		m_fFar );
+	GetValue( pNode, pn, "PixelsDrawAheadScale",	m_fFirstPixelToDrawScale );
+	GetValue( pNode, pn, "PixelsDrawBehindScale",	m_fLastPixelToDrawScale );
 
 	CString s;
-	if( GetValue( ini, pn, id, "Judgment",			s ) )	m_JudgmentCmd = ParseCommands(s);
-	if( GetValue( ini, pn, id, "Combo",				s ) )	m_ComboCmd = ParseCommands(s);
+	if( GetValue( pNode, pn, "Judgment",			s ) )	m_JudgmentCmd = ParseCommands(s);
+	if( GetValue( pNode, pn, "Combo",				s ) )	m_ComboCmd = ParseCommands(s);
 
 	/* Load per-track data: */
-	int t;
-	for(t = 0; t < MAX_NOTE_TRACKS; ++t)
+	for( int t = 0; t < MAX_NOTE_TRACKS; ++t )
 	{
-		GetValue( ini, pn, id, ssprintf("GrayButton"), GrayButtonNames[t] );
-		GetValue( ini, pn, id, ssprintf("GrayButton%i", t+1), GrayButtonNames[t] );
+		GetValue( pNode, pn, ssprintf("GrayButton"), GrayButtonNames[t] );
+		GetValue( pNode, pn, ssprintf("GrayButton%i", t+1), GrayButtonNames[t] );
 
-		GetValue( ini, pn, id, ssprintf("NoteButton"), NoteButtonNames[t] );
-		GetValue( ini, pn, id, ssprintf("NoteButton%i", t+1), NoteButtonNames[t] );
+		GetValue( pNode, pn, ssprintf("NoteButton"), NoteButtonNames[t] );
+		GetValue( pNode, pn, ssprintf("NoteButton%i", t+1), NoteButtonNames[t] );
 
-		GetValue( ini, pn, id, ssprintf("GhostButton"), GhostButtonNames[t] );
-		GetValue( ini, pn, id, ssprintf("GhostButton%i", t+1), GhostButtonNames[t] );
+		GetValue( pNode, pn, ssprintf("GhostButton"), GhostButtonNames[t] );
+		GetValue( pNode, pn, ssprintf("GhostButton%i", t+1), GhostButtonNames[t] );
 
-		if( GetValue( ini, pn, id, ssprintf("HoldJudgment"),       s ) )	m_HoldJudgmentCmd[t] = ParseCommands(s);
-		if( GetValue( ini, pn, id, ssprintf("HoldJudgment%i",t+1), s ) )	m_HoldJudgmentCmd[t] = ParseCommands(s);
+		if( GetValue( pNode, pn, ssprintf("HoldJudgment"),       s ) )	m_HoldJudgmentCmd[t] = ParseCommands(s);
+		if( GetValue( pNode, pn, ssprintf("HoldJudgment%i",t+1), s ) )	m_HoldJudgmentCmd[t] = ParseCommands(s);
 	}
 }
 
@@ -105,10 +104,10 @@ NoteFieldPositioning::NoteFieldPositioning(CString fn)
 	if( !ini.ReadFile(fn) )
 		return;
 
-	for(IniFile::const_iterator i = ini.begin(); i != ini.end(); ++i)
+	FOREACH_CONST_Child( &ini, i )
 	{
 		NoteFieldMode m;
-		m.Load(ini, i->first);
+		m.Load( i );
 
 		Modes.push_back(m);
 	}
@@ -145,7 +144,9 @@ void NoteFieldPositioning::Load(PlayerNumber pn)
 	if( !ini.ReadFile(m_Filename) )
 		return;
 
-	mode.Load(ini, Modes[ModeNum].m_Id, pn);
+	XNode* pNode = ini.GetChild( Modes[ModeNum].m_Id );
+	ASSERT( pNode );
+	mode.Load( pNode, pn );
 }
 
 

@@ -31,29 +31,29 @@ typedef multimap<CString,XNode*> XNodes;
 #define FOREACH_Attr( pNode, Var ) \
 	XAttrs::iterator Var##Iter; \
 	XAttr *Var = NULL; \
-	for( Var##Iter = pNode->attrs.begin(); \
-		(Var##Iter != pNode->attrs.end() && (Var = Var##Iter->second) ),  Var##Iter != pNode->attrs.end(); \
+	for( Var##Iter = (pNode)->m_attrs.begin(); \
+		(Var##Iter != (pNode)->m_attrs.end() && (Var = Var##Iter->second) ),  Var##Iter != (pNode)->m_attrs.end(); \
 		++Var##Iter )
 
 #define FOREACH_CONST_Attr( pNode, Var ) \
 	XAttrs::const_iterator Var##Iter; \
 	const XAttr *Var = NULL; \
-	for( Var##Iter = pNode->attrs.begin(); \
-		(Var##Iter != pNode->attrs.end() && (Var = Var##Iter->second) ),  Var##Iter != pNode->attrs.end(); \
+	for( Var##Iter = (pNode)->m_attrs.begin(); \
+		(Var##Iter != (pNode)->m_attrs.end() && (Var = Var##Iter->second) ),  Var##Iter != (pNode)->m_attrs.end(); \
 		++Var##Iter )
 
 #define FOREACH_Child( pNode, Var ) \
 	XNodes::iterator Var##Iter; \
 	XNode *Var = NULL; \
-	for( Var##Iter = pNode->childs.begin(); \
-		(Var##Iter != pNode->childs.end() && (Var = Var##Iter->second) ),  Var##Iter != pNode->childs.end(); \
+	for( Var##Iter = (pNode)->m_childs.begin(); \
+		(Var##Iter != (pNode)->m_childs.end() && (Var = Var##Iter->second) ),  Var##Iter != (pNode)->m_childs.end(); \
 		++Var##Iter )
 
 #define FOREACH_CONST_Child( pNode, Var ) \
 	XNodes::const_iterator Var##Iter; \
 	const XNode *Var = NULL; \
-	for( Var##Iter = pNode->childs.begin(); \
-		(Var##Iter != pNode->childs.end() && (Var = Var##Iter->second) ),  Var##Iter != pNode->childs.end(); \
+	for( Var##Iter = (pNode)->m_childs.begin(); \
+		(Var##Iter != (pNode)->m_childs.end() && (Var = Var##Iter->second) ),  Var##Iter != (pNode)->m_childs.end(); \
 		++Var##Iter )
 
 
@@ -135,8 +135,8 @@ extern DISP_OPT optDefault;
 // XAttr : Attribute Implementation
 struct XAttr
 {
-	CString name;	// a duplicate of the name in the parent's map
-	CString	value;
+	CString m_sName;	// a duplicate of the m_sName in the parent's map
+	CString	m_sValue;
 	void GetValue(CString &out) const;
 	void GetValue(int &out) const;
 	void GetValue(float &out) const;
@@ -150,8 +150,8 @@ struct XAttr
 // XMLNode structure
 struct XNode
 {
-	CString name;	// a duplicate of the name in the parent's map
-	CString	value;
+	CString m_sName;	// a duplicate of the m_sName in the parent's map
+	CString	m_sValue;
 	void GetValue(CString &out) const;
 	void GetValue(int &out) const;
 	void GetValue(float &out) const;
@@ -165,8 +165,8 @@ struct XNode
 	void SetValue(const DateTime &v);
 
 	// internal variables
-	XNodes	childs;		// child node
-	XAttrs	attrs;		// attributes
+	XNodes	m_childs;		// child node
+	XAttrs	m_attrs;		// attributes
 
 	// Load/Save XML
 	char*	Load( const char* pszXml, PARSEINFO *pi = &piDefault );
@@ -189,9 +189,9 @@ struct XNode
 	bool GetAttrValue(const char* name,DateTime &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 
 	// in one level child nodes
-	const XNode *GetChild( const char* name ) const; 
-	XNode *GetChild( const char* name ); 
-	const char*	GetChildValue( const char* name ); 
+	const XNode *GetChild( const char* m_sName ) const; 
+	XNode *GetChild( const char* m_sName ); 
+	const char*	GetChildValue( const char* m_sName ); 
 	bool GetChildValue(const char* name,CString &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	bool GetChildValue(const char* name,int &out) const		{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	bool GetChildValue(const char* name,float &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
@@ -204,28 +204,29 @@ struct XNode
 	
 	// modify DOM 
 	int		GetChildCount();
-	XNode *CreateNode( const char* name = NULL, const char* value = NULL );
-	XNode	*AppendChild( const char* name = NULL, const char* value = NULL );
-	XNode	*AppendChild( const char* name, float value );
-	XNode	*AppendChild( const char* name, int value );
-	XNode	*AppendChild( const char* name, unsigned value );
-	XNode	*AppendChild( const char* name, const DateTime &value );
+	XNode	*AppendChild( const char* m_sName = NULL, const char* value = NULL );
+	XNode	*AppendChild( const char* m_sName, float value );
+	XNode	*AppendChild( const char* m_sName, int value );
+	XNode	*AppendChild( const char* m_sName, unsigned value );
+	XNode	*AppendChild( const char* m_sName, const DateTime &value );
 	XNode	*AppendChild( XNode *node );
 	bool	RemoveChild( XNode *node );
 
-	XAttr *CreateAttr( const char* anem = NULL, const char* value = NULL );
-	XAttr *AppendAttr( const char* name = NULL, const char* value = NULL );
-	XAttr *AppendAttr( const char* name, float value );
-	XAttr *AppendAttr( const char* name, int value );
-	XAttr *AppendAttr( const char* name, unsigned value );
-	XAttr *AppendAttr( const char* name, const DateTime &value );
+	XAttr *AppendAttr( const char* m_sName = NULL, const char* value = NULL );
+	XAttr *AppendAttr( const char* m_sName, float value );
+	XAttr *AppendAttr( const char* m_sName, int value );
+	XAttr *AppendAttr( const char* m_sName, unsigned value );
+	XAttr *AppendAttr( const char* m_sName, const DateTime &value );
 	XAttr	*AppendAttr( XAttr *attr );
 	bool	RemoveAttr( XAttr *attr );
+
+	// creates the attribute if it doesn't already exist
+	void	SetAttrValue( const char* m_sName, const char* value );
 
 	XNode() { }
 	~XNode();
 
-	void Close();
+	void Clear();
 };
 
 // Helper Funtion

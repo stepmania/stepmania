@@ -475,25 +475,25 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 	ini.GetValue( PageName, "TextureHints", cfg.TextureHints );
 
 	/* Iterate over all keys. */
-	const IniFile::key *k = ini.GetKey(PageName);
-	if( k )
+	const XNode* pNode = ini.GetChild( PageName );
+	if( pNode )
 	{
-		for(IniFile::key::const_iterator key = k->begin(); key != k->end(); ++key)
+		FOREACH_CONST_Attr( pNode, pAttr )
 		{
-			CString val = key->first;
-			CString data = key->second;
+			CString name = pAttr->m_sName;
+			const CString &value = pAttr->m_sValue;
 
-			val.MakeUpper();
+			name.MakeUpper();
 
 			/* If val is an integer, it's a width, eg. "10=27". */
-			if(IsAnInt(val))
+			if(IsAnInt(name))
 			{
-				cfg.GlyphWidths[atoi(val)] = atoi(data);
+				cfg.GlyphWidths[atoi(name)] = atoi(value);
 				continue;
 			}
 
 			/* "map codepoint=frame" maps a char to a frame. */
-			if(val.substr(0, 4) == "MAP ")
+			if(name.substr(0, 4) == "MAP ")
 			{
 				/* map CODEPOINT=frame. CODEPOINT can be
 				 * 1. U+hexval
@@ -504,7 +504,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 				 * map 1=2 is the same as
 				 * range unicode #1-1=2
 				 */
-				CString codepoint = val.substr(4); /* "CODEPOINT" */
+				CString codepoint = name.substr(4); /* "CODEPOINT" */
 			
 				const Game* pGame = NULL;
 
@@ -534,21 +534,21 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 					c = utf8_get_char(codepoint.c_str());
 					if(c == wchar_t(-1))
 						LOG->Warn("Font definition '%s' has an invalid value '%s'.",
-							ini.GetPath().c_str(), val.c_str() );
+							ini.GetPath().c_str(), name.c_str() );
 				}
 				else if(!FontCharAliases::GetChar(codepoint, c))
 				{
 					LOG->Warn("Font definition '%s' has an invalid value '%s'.",
-						ini.GetPath().c_str(), val.c_str() );
+						ini.GetPath().c_str(), name.c_str() );
 					continue;
 				}
 
-				cfg.CharToGlyphNo[c] = atoi(data);
+				cfg.CharToGlyphNo[c] = atoi(value);
 
 				continue;
 			}
 
-			if(val.substr(0, 6) == "RANGE ")
+			if(name.substr(0, 6) == "RANGE ")
 			{
 				/* range CODESET=first_frame or
 				 * range CODESET #start-end=first_frame
@@ -567,13 +567,13 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 				 */
 				vector<CString> matches;
 				static Regex parse("^RANGE ([A-Z\\-]+)( ?#([0-9A-F]+)-([0-9A-F]+))?$");
-				bool match = parse.Compare(val, matches);
+				bool match = parse.Compare(name, matches);
 				
 				ASSERT(matches.size() == 4); /* 4 parens */
 
 				if(!match || matches[0].empty())
 					RageException::Throw("Font definition '%s' has an invalid range '%s': parse error",
-						ini.GetPath().c_str(), val.c_str() );
+						ini.GetPath().c_str(), name.c_str() );
 				
 				/* We must have either 1 match (just the codeset) or 4 (the whole thing). */
 
@@ -586,20 +586,20 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 					sscanf(matches[3].c_str(), "%x", &last);
 					if(last < first)
 						RageException::Throw("Font definition '%s' has an invalid range '%s': %i < %i.",
-							ini.GetPath().c_str(), val.c_str(), last < first );
+							ini.GetPath().c_str(), name.c_str(), last < first );
 
 					cnt = last-first+1;
 				}
 
-				CString ret = cfg.MapRange(matches[0], first, atoi(data), cnt);
+				CString ret = cfg.MapRange(matches[0], first, atoi(value), cnt);
 				if(!ret.empty())
 					RageException::Throw("Font definition '%s' has an invalid range '%s': %s.",
-						ini.GetPath().c_str(), val.c_str(), ret.c_str() );
+						ini.GetPath().c_str(), name.c_str(), ret.c_str() );
 
 				continue;
 			}
 
-			if(val.substr(0, 5) == "LINE ")
+			if(name.substr(0, 5) == "LINE ")
 			{
 				/* line ROW=CHAR1CHAR2CHAR3CHAR4
 				 * eg.
@@ -607,7 +607,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 				 *
 				 * This lets us assign characters very compactly and readably. */
 
-				CString row_str = val.substr(5);
+				CString row_str = name.substr(5);
 				ASSERT(IsAnInt(row_str));
 				const int row = atoi(row_str.c_str());
 				const int first_frame = row * NumFramesWide;
@@ -617,7 +617,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 						ini.GetPath().c_str(), first_frame, NumFramesHigh);
 
 				/* Decode the string. */
-				const wstring wdata(CStringToWstring(data));
+				const wstring wdata(CStringToWstring(value));
 
 				if(int(wdata.size()) > NumFramesWide)
 					RageException::Throw("The font definition \"%s\" assigns %i characters to row %i (\"%ls\"), but the font only has %i characters wide",

@@ -32,7 +32,7 @@ const Style *StyleID::ToStyle() const
 XNode* StyleID::CreateNode() const
 {
 	XNode* pNode = new XNode;
-	pNode->name = "Style";
+	pNode->m_sName = "Style";
 
 	pNode->AppendAttr( "Game", sGame );
 	pNode->AppendAttr( "Style", sStyle );
@@ -43,7 +43,7 @@ XNode* StyleID::CreateNode() const
 void StyleID::LoadFromNode( const XNode* pNode ) 
 {
 	Unset();
-	ASSERT( pNode->name == "Style" );
+	ASSERT( pNode->m_sName == "Style" );
 
 	sGame = "";
 	pNode->GetAttrValue("Game", sGame);
