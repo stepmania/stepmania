@@ -1218,7 +1218,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		// Check for end of song
 		//
-		float fSecondsToStop = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat ) + 1;
+		float fSecondsToStop = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat );
 		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop  &&  !m_NextSongOut.IsTransitioning() )
 			this->PostScreenMessage( SM_NotesEnded, 0 );
 
