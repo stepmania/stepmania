@@ -4,14 +4,13 @@
 #include "ScreenOptions.h"
 
 class ScreenSMOnlineLogin : public ScreenOptions {
-
-  public:
+public:
 	ScreenSMOnlineLogin(CString sName);
 	virtual void HandleScreenMessage(const ScreenMessage SM);
 	virtual void MenuStart(PlayerNumber pn,const InputEventType type);
 	void SendLogin(CString sPassword);
 
-  private:
+private:
 	void ImportOptions();
 	void ExportOptions();
 	void GoToNextScreen();
