@@ -36,70 +36,37 @@
 const int FILE_CACHE_VERSION = 102;	// increment this when Song or Notes changes to invalidate cache
 
 
-int CompareBPMSegments(const void *arg1, const void *arg2)
+static int CompareBPMSegments(const BPMSegment &seg1, const BPMSegment &seg2)
 {
-	// arg1 and arg2 are of type Step**
-	const BPMSegment* seg1 = (const BPMSegment*)arg1;
-	const BPMSegment* seg2 = (const BPMSegment*)arg2;
-
-	float score1 = seg1->m_fStartBeat;
-	float score2 = seg2->m_fStartBeat;
-
-	if( score1 == score2 )
-		return 0;
-	else if( score1 < score2 )
-		return -1;
-	else
-		return 1;
+	return seg1.m_fStartBeat < seg2.m_fStartBeat;
 }
 
 void SortBPMSegmentsArray( CArray<BPMSegment,BPMSegment&> &arrayBPMSegments )
 {
-	qsort( arrayBPMSegments.GetData(), arrayBPMSegments.GetSize(), sizeof(BPMSegment), CompareBPMSegments );
+	sort( arrayBPMSegments.GetData(),
+		arrayBPMSegments.GetData()+arrayBPMSegments.GetSize(), CompareBPMSegments );
 }
 
-int CompareStopSegments(const void *arg1, const void *arg2)
+static int CompareStopSegments(const StopSegment &seg1, const StopSegment &seg2)
 {
-	// arg1 and arg2 are of type Step**
-	const StopSegment* seg1 = (const StopSegment*)arg1;
-	const StopSegment* seg2 = (const StopSegment*)arg2;
-
-	float score1 = seg1->m_fStartBeat;
-	float score2 = seg2->m_fStartBeat;
-
-	if( score1 == score2 )
-		return 0;
-	else if( score1 < score2 )
-		return -1;
-	else
-		return 1;
+	return seg1.m_fStartBeat < seg2.m_fStartBeat;
 }
 
 void SortStopSegmentsArray( CArray<StopSegment,StopSegment&> &arrayStopSegments )
 {
-	qsort( arrayStopSegments.GetData(), arrayStopSegments.GetSize(), sizeof(StopSegment), CompareStopSegments );
+	sort( arrayStopSegments.GetData(),
+		arrayStopSegments.GetData()+arrayStopSegments.GetSize(), CompareStopSegments );
 }
 
-int CompareBackgroundChanges(const void *arg1, const void *arg2)
+int CompareBackgroundChanges(const BackgroundChange &seg1, const BackgroundChange &seg2)
 {
-	// arg1 and arg2 are of type Step**
-	const BackgroundChange* seg1 = (const BackgroundChange*)arg1;
-	const BackgroundChange* seg2 = (const BackgroundChange*)arg2;
-
-	float score1 = seg1->m_fStartBeat;
-	float score2 = seg2->m_fStartBeat;
-
-	if( score1 == score2 )
-		return 0;
-	else if( score1 < score2 )
-		return -1;
-	else
-		return 1;
+	return seg1.m_fStartBeat < seg2.m_fStartBeat;
 }
 
 void SortBackgroundChangesArray( CArray<BackgroundChange,BackgroundChange&> &arrayBackgroundChanges )
 {
-	qsort( arrayBackgroundChanges.GetData(), arrayBackgroundChanges.GetSize(), sizeof(BackgroundChange), CompareBackgroundChanges );
+	sort( arrayBackgroundChanges.GetData(), 
+		arrayBackgroundChanges.GetData()+arrayBackgroundChanges.GetSize(), CompareBackgroundChanges );
 }
 
 
@@ -907,17 +874,15 @@ bool Song::IsEasy( NotesType nt ) const
 // Sorting
 /////////////////////////////////////
 
-int CompareSongPointersByTitle(const void *arg1, const void *arg2)
+int CompareSongPointersByTitle(const Song *pSong1, const Song *pSong2)
 {
-	const Song* pSong1 = *(const Song**)arg1;
-	const Song* pSong2 = *(const Song**)arg2;
-	
 	//Prefer transliterations to full titles
 	CString sTitle1 = pSong1->GetSortTitle();
 	CString sTitle2 = pSong2->GetSortTitle();
 
 	int ret = sTitle1.CompareNoCase(sTitle2);
-	if(ret != 0) return ret;
+	if(ret < 0) return true;
+	if(ret > 0) return false;
 
 	/* The titles are the same.  Ensure we get a consistent ordering
 	 * by comparing the unique SongFilePaths. */
@@ -926,14 +891,13 @@ int CompareSongPointersByTitle(const void *arg1, const void *arg2)
 
 void SortSongPointerArrayByTitle( CArray<Song*, Song*> &arraySongPointers )
 {
-	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByTitle );
+	sort( arraySongPointers.GetData(), 
+		arraySongPointers.GetData()+arraySongPointers.GetSize(),
+		   CompareSongPointersByTitle );
 }
 
-int CompareSongPointersByDifficulty(const void *arg1, const void *arg2)
+int CompareSongPointersByDifficulty(const Song *pSong1, const Song *pSong2)
 {
-	const Song* pSong1 = *(const Song**)arg1;
-	const Song* pSong2 = *(const Song**)arg2;
-
 	CArray<Notes*,Notes*> aNotes1;
 	CArray<Notes*,Notes*> aNotes2;
 
@@ -950,106 +914,98 @@ int CompareSongPointersByDifficulty(const void *arg1, const void *arg2)
 		iEasiestMeter2 = min( iEasiestMeter2, aNotes2[i]->m_iMeter );
 
 	if( iEasiestMeter1 < iEasiestMeter2 )
-		return -1;
-	else if( iEasiestMeter1 == iEasiestMeter2 )
-		return CompareSongPointersByTitle( arg1, arg2 );
-	else 
-		return +1;
+		return true;
+	if( iEasiestMeter1 > iEasiestMeter2 )
+		return false;
+	return CompareSongPointersByTitle( pSong1, pSong2 );
 }
 
 void SortSongPointerArrayByDifficulty( CArray<Song*, Song*> &arraySongPointers )
 {
-	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByDifficulty );
+	sort( arraySongPointers.GetData(), 
+		arraySongPointers.GetData()+arraySongPointers.GetSize(),
+		   CompareSongPointersByDifficulty );
 }
 
-int CompareSongPointersByBPM(const void *arg1, const void *arg2)
+bool CompareSongPointersByBPM(const Song *pSong1, const Song *pSong2)
 {
-	const Song* pSong1 = *(const Song**)arg1;
-	const Song* pSong2 = *(const Song**)arg2;
-		
 	float fMinBPM1, fMaxBPM1, fMinBPM2, fMaxBPM2;
 	pSong1->GetMinMaxBPM( fMinBPM1, fMaxBPM1 );
 	pSong2->GetMinMaxBPM( fMinBPM2, fMaxBPM2 );
 
-	CString sFilePath1 = pSong1->GetSongFilePath();		// this is unique among songs
-	CString sFilePath2 = pSong2->GetSongFilePath();
-
 	if( fMaxBPM1 < fMaxBPM2 )
-		return -1;
-	else if( fMaxBPM1 == fMaxBPM2 )
-		return CompareCStringsAsc( (void*)&sFilePath1, (void*)&sFilePath2 );
-	else
-		return 1;
+		return true;
+	if( fMaxBPM1 > fMaxBPM2 )
+		return false;
+	
+	return CompareCStringsAsc( pSong1->GetSongFilePath(), pSong2->GetSongFilePath() );
 }
 
 void SortSongPointerArrayByBPM( CArray<Song*, Song*> &arraySongPointers )
 {
-	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByBPM );
+	sort( arraySongPointers.GetData(), 
+		arraySongPointers.GetData()+arraySongPointers.GetSize(),
+		   CompareSongPointersByBPM );
 }
 
 
-int CompareSongPointersByArtist(const void *arg1, const void *arg2)
+int CompareSongPointersByArtist(const Song *pSong1, const Song *pSong2)
 {
-	const Song* pSong1 = *(const Song**)arg1;
-	const Song* pSong2 = *(const Song**)arg2;
-		
 	CString sArtist1 = pSong1->m_sArtist;
 	CString sArtist2 = pSong2->m_sArtist;
 
 	if( sArtist1 < sArtist2 )
-		return -1;
-	else if( sArtist1 == sArtist2 )
-		return CompareSongPointersByTitle( arg1, arg2 );
-	else
-		return 1;
+		return true;
+	if( sArtist1 > sArtist2 )
+		return false;
+	return CompareSongPointersByTitle( pSong1, pSong2 );
 }
 
 void SortSongPointerArrayByArtist( CArray<Song*, Song*> &arraySongPointers )
 {
-	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByArtist );
+	sort( arraySongPointers.GetData(), 
+		arraySongPointers.GetData()+arraySongPointers.GetSize(),
+		   CompareSongPointersByArtist );
 }
 
-int CompareSongPointersByGroup(const void *arg1, const void *arg2)
+int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
 {
-	const Song* pSong1 = *(const Song**)arg1;
-	const Song* pSong2 = *(const Song**)arg2;
-		
 	const CString &sGroup1 = pSong1->m_sGroupName;
 	const CString &sGroup2 = pSong2->m_sGroupName;
 
 	if( sGroup1 < sGroup2 )
-		return -1;
-	else if( sGroup1 > sGroup2 )
-		return 1;
+		return true;
+	if( sGroup1 > sGroup2 )
+		return false;
 
 	/* Same group; compare by difficulty. */
-	return CompareSongPointersByDifficulty( arg1, arg2 );
+	return CompareSongPointersByDifficulty( pSong1, pSong2 );
 }
 
 void SortSongPointerArrayByGroup( CArray<Song*, Song*> &arraySongPointers )
 {
-	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByGroup );
+	sort( arraySongPointers.GetData(), 
+		arraySongPointers.GetData()+arraySongPointers.GetSize(),
+		   CompareSongPointersByGroup );
 }
 
-int CompareSongPointersByMostPlayed(const void *arg1, const void *arg2)
+int CompareSongPointersByMostPlayed(const Song *pSong1, const Song *pSong2)
 {
-	const Song* pSong1 = *(const Song**)arg1;
-	const Song* pSong2 = *(const Song**)arg2;
-		
 	int iNumTimesPlayed1 = pSong1->GetNumTimesPlayed();
 	int iNumTimesPlayed2 = pSong2->GetNumTimesPlayed();
 
 	if( iNumTimesPlayed1 > iNumTimesPlayed2 )
-		return -1;
-	else if( iNumTimesPlayed1 == iNumTimesPlayed2 )
-		return CompareSongPointersByTitle( arg1, arg2 );
-	else
-		return 1;
+		return true;
+	if( iNumTimesPlayed1 < iNumTimesPlayed2 )
+		return false;
+	return CompareSongPointersByTitle( pSong1, pSong2 );
 }
 
 void SortSongPointerArrayByMostPlayed( CArray<Song*, Song*> &arraySongPointers )
 {
-	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByMostPlayed );
+	sort( arraySongPointers.GetData(), 
+		arraySongPointers.GetData()+arraySongPointers.GetSize(),
+		   CompareSongPointersByMostPlayed );
 }
 
 bool Song::NormallyDisplayed() const 
@@ -1144,3 +1100,39 @@ CString Song::GetBackgroundPath() const
 {
 	return m_sSongDir+m_sBackgroundFile;
 }
+
+/* Get the first/last beat of any currently active note pattern.  If two
+ * players are active, they often have the same start beat, but they don't
+ * have to. 
+ *
+ * This is currently slow (notedata can't cache the return, and getnotedata
+ * is slow). */
+#if 0 /* XXX not finished/tested/used yet -glenn */
+float Song::GetFirstBeat() const
+{
+	float first = MAX_BEATS;
+	for( int pn = 0; pn < NUM_PLAYERS; ++pn) {
+		if(!GAMESTATE->IsPlayerEnabled(pn)) continue;
+
+		NoteData tempNoteData;
+		GAMESTATE->m_pCurNotes[pn]->GetNoteData( &tempNoteData );
+
+		first = min(first, tempNoteData.GetFirstBeat());
+	}
+	return first;
+}
+
+float Song::GetLastBeat() const
+{
+	float last = MAX_BEATS;
+	for( int pn = 0; pn < NUM_PLAYERS; ++pn) {
+		if(!GAMESTATE->IsPlayerEnabled(pn)) continue;
+
+		NoteData tempNoteData;
+		GAMESTATE->m_pCurNotes[pn]->GetNoteData( &tempNoteData );
+
+		last = max(last, tempNoteData.GetLastBeat());
+	}
+	return last;
+}
+#endif
