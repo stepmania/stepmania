@@ -21,7 +21,7 @@ CString PlayerOptions::GetString()
 	if( m_fArrowScrollSpeed != 1 )
 	{
 		CString s = ssprintf( "%2.1f", m_fArrowScrollSpeed );
-		if( s.Right(1) == '0' )
+		if( s[s.GetLength()-1] == '0' )
 			s.Delete(s.GetLength()-2, 2);	// delete last 2 chars
 		sReturn += s + "X, ";
 	}
