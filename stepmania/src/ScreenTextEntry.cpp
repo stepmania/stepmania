@@ -32,6 +32,7 @@ ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuesti
 	m_pOnOK = OnOK;
 	m_pOnCancel = OnCancel;
 	m_sAnswer = sInitialAnswer;
+	m_bCancelled = false;
 
 	m_Fade.SetTransitionTime( 0.5f );
 	m_Fade.SetDiffuse( D3DXCOLOR(0,0,0,0.7f) );
@@ -149,12 +150,11 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 
 	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
 
-	if( m_bCancelled )
-		if( m_pOnCancel )
-			m_pOnCancel();
-	else
-		if( m_pOnOK )
-			m_pOnOK( m_sAnswer );
+	if( m_bCancelled ) {
+		if( m_pOnCancel ) m_pOnCancel();
+	} else {
+		if( m_pOnOK ) m_pOnOK( m_sAnswer );
+	}
 }
 
 void ScreenTextEntry::MenuBack( PlayerNumber pn )
