@@ -74,7 +74,6 @@ ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer ) : Screen("
 	m_framePage.SetX( SCREEN_LEFT-SCREEN_WIDTH );
 	m_framePage.BeginTweening( 0.3f, Actor::TWEEN_DECELERATE );
 	m_framePage.SetX( 0 );
-	memset(&m_OptionDim, 0, sizeof(m_OptionDim));
 	memset(&m_bRowIsLong, 0, sizeof(m_bRowIsLong));
 }
 
@@ -252,27 +251,6 @@ void ScreenOptions::InitOptionsText()
 	option.SetShadowLength( 2 );
 	float fY = ITEMS_START_Y + fLineGap*i;
 	option.SetXY( CENTER_X, fY );
-}
-
-void ScreenOptions::DimOption(int line, int option, bool dim)
-{
-	if(m_OptionDim[line][option] == dim)
-		return;
-
-	m_OptionDim[line][option] = dim;
-	m_textItems[line][option].StopTweening();
-	m_textItems[line][option].BeginTweening(.250);
-	if(m_OptionDim[line][option])
-		m_textItems[line][option].SetDiffuse( RageColor(.5,.5,.5,1) );
-	else
-		m_textItems[line][option].SetDiffuse( RageColor(1,1,1,1) );
-}
-
-bool ScreenOptions::RowCompletelyDimmed(int line) const
-{
-	for(unsigned i = 0; i < m_OptionRow[line].choices.size(); ++i)
-		if(!m_OptionDim[line][i]) return false;
-	return true;
 }
 
 void ScreenOptions::PositionUnderlines()

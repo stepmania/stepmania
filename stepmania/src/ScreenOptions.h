@@ -99,21 +99,16 @@ protected:
 	Sprite			m_sprBullets[MAX_OPTION_LINES];
 	BitmapText		m_textTitles[MAX_OPTION_LINES];
 	BitmapText		m_textItems[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];	// this array has to be big enough to hold all of the options
-	bool			m_OptionDim[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];
-	void DimOption(int line, int option, bool dim);
-	bool RowCompletelyDimmed(int line) const;
 
 	bool m_bRowIsLong[MAX_OPTION_LINES];	// goes off edge of screen
 	int m_iSelectedOption[NUM_PLAYERS][MAX_OPTION_LINES];
 	int m_iCurrentRow[NUM_PLAYERS];
 
-//	Quad m_OptionUnderline[NUM_PLAYERS][MAX_OPTION_LINES];
-//	Quad m_SelectionHighlight[NUM_PLAYERS];
-
 	OptionsCursor	m_Underline[NUM_PLAYERS][MAX_OPTION_LINES];
 	OptionIcon		m_OptionIcons[NUM_PLAYERS][MAX_OPTION_LINES];
 	OptionsCursor	m_Highlight[NUM_PLAYERS];
 
+private:
 	BitmapText		m_textExplanation;
 
 	RageSound		m_SoundChangeCol;
