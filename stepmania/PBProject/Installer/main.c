@@ -7,14 +7,14 @@
  *
  */
 
-#import <Cocoa/Cocoa.h>
-#import <Carbon/Carbon.h>
+#include <Carbon/Carbon.h>
 
 enum
 {
-    kMacOSX_10_2 = 0x1020,
+    kMacOSX_10_2 = 0x1020
 };
 
+extern int NSApplicationMain(int argc, const char *argv[]);
 
 int main(int argc, const char *argv[])
 {
