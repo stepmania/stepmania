@@ -11,42 +11,36 @@
  *
  */
 
-/* ugh, what a hack! QT includes Carbon/Carbon.h which
-* has defs for a few things defined in RageUtil.h which
-* is included in arch.cpp along w/ (eventually) this.
-* How do I do this without using phony namespaces?
-* --Steve
-*/
 namespace QT
 {
 #include <QuickTime/QuickTime.h>
 }
 #include "RageSound.h"
-#include "RageSoundDriver.h"
+#include "RageSoundDriver_Generic_Software.h"
 
-class RageSound_QT1: public RageSoundDriver
+class RageSound_QT1: public RageSound_Generic_Software
 {
 private:
-    struct sound
+/*    struct sound
     {
         RageSoundBase *snd;
         bool stopping;
         int flush_pos;
         sound() { snd=NULL; stopping=false; flush_pos=0; }
-    };
+    };*/
 
-    vector<sound *> sounds;
+//    vector<sound *> sounds;
     QT::ComponentInstance clock;
     QT::SndChannelPtr channel;
     int last_pos;
     float latency;
 
 protected:
-    virtual void StartMixing(RageSoundBase *snd);
-    virtual void StopMixing(RageSoundBase *snd);
-    virtual int64_t GetPosition(const RageSoundBase *snd) const;
-    virtual void Update (float delta);
-    virtual float GetPlayLatency() const;
+//    virtual void StartMixing(RageSoundBase *snd);
+//    virtual void StopMixing(RageSoundBase *snd);
+    int64_t GetPosition(const RageSoundBase *snd) const;
+//    void Update (float delta);
+    float GetPlayLatency() const;
 
 public:
     RageSound_QT1();

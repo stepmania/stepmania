@@ -24,9 +24,12 @@ const unsigned samples = 2048;
 const unsigned freq = 44100;
 const unsigned buffersize = samples*samplesize/8;
 
-static volatile Uint32 fill_me = 0;
-static UInt8  *buffer[2];
-static CmpSoundHeader header;
+namespace
+{
+    volatile Uint32 fill_me = 0;
+    UInt8  *buffer[2];
+    CmpSoundHeader header;
+}
 
 RageSound_QT1::RageSound_QT1()
 {
@@ -89,120 +92,59 @@ RageSound_QT1::~RageSound_QT1()
     SAFE_DELETE_ARRAY(buffer[1]);
 }
 
-void RageSound_QT1::GetData(SndChannel *chan, SndCommand *cmd_passed)
+void RageSound_QT1::GetData(SndChannelPtr chan, SndCommand *cmd_passed)
 {
-    while (!SOUNDMAN)
-        SDL_Delay(10);
-    LockMutex L(SOUNDMAN->lock);
-    static SoundMixBuffer mix;
+//    while (!SOUNDMAN)
+//        SDL_Delay(10);
+//    LockMutex L(SOUNDMAN->lock);
     RageSound_QT1 *P = reinterpret_cast<RageSound_QT1 *>(chan->userInfo);
+    LOG->Trace("GetData");
+    LOG->Flush();
 
     fill_me = cmd_passed->param2;
     UInt32 play_me = !fill_me;
 
     if (!P->last_pos)
     {
-        TimeRecord tr;
-        ClockGetTime(P->clock, &tr);
-        UInt64 temp = tr.value.hi;
-        temp <<= 32;
-        temp |= tr.value.lo;
-        double d = static_cast<double>(temp)/tr.scale*freq;
-        temp = static_cast<UInt64>(d);
-        P->last_pos = static_cast<UInt32>(temp & 0x00000000FFFFFFFFLL);
+        P->last_pos = P->GetPosition(NULL);
+        // Why the hell do I do this?
+        // Maybe because there should be a hardware interrupt when the sound buffer
+        // is half empty? But what does that have to do with the number of samples?
         P->last_pos += samples * 3 / 2;
     }
     else
         P->last_pos += samples;
 
-    bool moreThanOneSound;
     /* Swap buffers */
     header.samplePtr = reinterpret_cast<Ptr>(buffer[play_me]);
     SndCommand cmd;
     cmd.cmd = bufferCmd;
     cmd.param1 = 0;
     cmd.param2 = reinterpret_cast<long>(&header);
-    OSErr err = SndDoCommand(chan, &cmd, 0);
+    OSErr err = SndDoCommand(chan, &cmd, false);
     if (err != noErr)
         goto bail;
+    LOG->Trace("First command");
+    LOG->Flush();
 
     /* Clear the fill buffer */
-    memset(buffer[fill_me], 0, buffersize);
-    moreThanOneSound = P->sounds.size() > 1;
+//    memset(buffer[fill_me], 0, buffersize);
+//    moreThanOneSound = P->sounds.size() > 1;
 
-    for (unsigned i=0; i<P->sounds.size(); ++i)
-    {
-        if (P->sounds[i]->stopping)
-            continue;
-
-        unsigned got = P->sounds[i]->snd->GetPCM(reinterpret_cast<char *>(buffer[fill_me]),
-                                                 buffersize, P->last_pos);
-        if (moreThanOneSound)
-            mix.write(reinterpret_cast<SInt16 *>(buffer[fill_me]), got / 2);
-        if (got < buffersize)
-        {
-            P->sounds[i]->stopping = true;
-            P->sounds[i]->flush_pos = P->last_pos + (got * 8 / samplesize);
-        }
-    }
-
-    if (moreThanOneSound)
-        mix.read(reinterpret_cast<SInt16 *>(buffer[fill_me]));
-
+    P->Mix((int16_t *)buffer[fill_me], buffersize/channels, P->last_pos, P->GetPosition(NULL));
     cmd.cmd = callBackCmd;
     cmd.param2 = play_me;
-    err = SndDoCommand(chan, &cmd, 0);
+    err = SndDoCommand(chan, &cmd, false);
     if (err != noErr)
         goto bail;
+    LOG->Trace("Second command");
+    LOG->Flush();
+
     return;
 
 bail:
     RageException::Throw("SndDoCommand failed with error %d", err);
 
-}
-
-void RageSound_QT1::StartMixing(RageSoundBase *snd)
-{
-    sound *s = new sound;
-    s->snd = snd;
-
-    LockMutex L(SOUNDMAN->lock);
-    sounds.push_back(s);
-}
-
-void RageSound_QT1::StopMixing(RageSoundBase *snd)
-{
-    LockMutex L(SOUNDMAN->lock);
-
-    /* Find the sound. */
-    unsigned i;
-    for(i = 0; i < sounds.size(); ++i)
-        if(sounds[i]->snd == snd) break;
-    if(i == sounds.size())
-    {
-        LOG->Trace("not stopping a sound because it's not playing");
-        return;
-    }
-
-    delete sounds[i];
-    sounds.erase(sounds.begin()+i, sounds.begin()+i+1);
-    LOG->Trace("There are %ld sounds playing", sounds.size());
-}
-
-void RageSound_QT1::Update(float delta)
-{
-#pragma unused (delta)
-    LockMutex L(SOUNDMAN->lock);
-
-    vector<sound *>snds = sounds;
-    for (unsigned i = 0; i < snds.size(); ++i)
-    {
-        if (!sounds[i]->stopping)
-            continue;
-        if (GetPosition(snds[i]->snd) < sounds[i]->flush_pos)
-            continue;
-        snds[i]->snd->StopPlaying();
-    }
 }
 
 int64_t RageSound_QT1::GetPosition(const RageSoundBase *snd) const
@@ -214,7 +156,7 @@ int64_t RageSound_QT1::GetPosition(const RageSoundBase *snd) const
     temp <<= 32;
     temp |= tr.value.lo;
     double d = static_cast<double>(temp)/tr.scale*freq;
-    return static_cast<UInt64>(d);
+    return static_cast<int64_t>(d);
 }
 
 float RageSound_QT1::GetPlayLatency() const
