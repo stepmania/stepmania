@@ -29,32 +29,14 @@ const float SPIRAL_MIN_ZOOM = 0.3f;
 #define FullScreenRectF RectF(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM)
 
 
-BGAnimationLayer::BGAnimationLayer( bool Generic )
+BGAnimationLayer::BGAnimationLayer( bool bGeneric )
 {
-	/* If Generic is false, this is a layer in a real BGA--one that was loaded
-	 * by simply constructing a BGAnimation.  These normally have a position
-	 * of 0,0 (top-left of the screen).  Loaded images are given a default position
-	 * of 320x240, centered in the screen.  Additionally, the "On" command will
-	 * be run automatically.  Example:
-	 *
-	 * BGAnimation bga;
-	 * bga.Load( path );
-	 * this->AddChind( &bga );
-	 *
-	 * If Generic is true, then we act like any other actor.  We assume we don't
-	 * know anything about where we're positioned.  Loaded images are given a
-	 * default position of 0x0.  The "On" command is not run; we'll receive that
-	 * from the owner through COMMAND().  Example:
-	 * 
-	 * AutoActor image;
-	 * image.Load( path );
-	 * ON_COMMAND( image );
-	 * this->AddChind( &image );
-	 *
-	 * TYPE_PARTICLES and TYPE_TILES are currently not supported in this mode.
-	 * 
+	/*
+	 * If Generic is false, this is a layer in a real BGA--one that was loaded
+	 * by simply constructing a BGAnimation.  In this mode, loaded images are given
+	 * a default position of SCREEN_CENTER_X, SCREEN_CENTER_Y.
 	 */
-	m_bGeneric = Generic;
+	m_bGeneric = bGeneric;
 
 	Init();
 }

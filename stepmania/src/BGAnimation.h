@@ -24,6 +24,7 @@ public:
 	void LoadFromNode( const CString &sDir, const XNode& node );
 
 protected:
+	void AddLayersFromAniDir( const CString &_sAniDir, vector<Actor*> &layersAddTo );
 	bool	m_bGeneric;
 };
 

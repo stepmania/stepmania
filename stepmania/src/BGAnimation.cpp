@@ -13,10 +13,10 @@
 #include "Foreach.h"
 
 
-BGAnimation::BGAnimation( bool Generic )
+BGAnimation::BGAnimation( bool bGeneric )
 {
 	/* See BGAnimationLayer::BGAnimationLayer for explanation. */
-	m_bGeneric = Generic;
+	m_bGeneric = bGeneric;
 }
 
 BGAnimation::~BGAnimation()
@@ -50,7 +50,7 @@ static bool CompareLayerNames( const CString& s1, const CString& s2 )
 	return i1 < i2;
 }
 
-void AddLayersFromAniDir( const CString &_sAniDir, vector<Actor*> &layersAddTo, bool Generic )
+void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, vector<Actor*> &layersAddTo )
 {
 	if( _sAniDir.empty() )
 		 return;
@@ -105,12 +105,12 @@ void AddLayersFromAniDir( const CString &_sAniDir, vector<Actor*> &layersAddTo, 
 				// import a whole BGAnimation
 				sImportDir = sAniDir + sImportDir;
 				CollapsePath( sImportDir );
-				AddLayersFromAniDir( sImportDir, layersAddTo, Generic );
+				AddLayersFromAniDir( sImportDir, layersAddTo );
 			}
 			else
 			{
 				// import as a single layer
-				BGAnimationLayer* pLayer = new BGAnimationLayer( Generic );
+				BGAnimationLayer* pLayer = new BGAnimationLayer( m_bGeneric );
 				pLayer->LoadFromNode( sAniDir, *pKey );
 				layersAddTo.push_back( pLayer );
 			}
@@ -136,7 +136,7 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir )
 	if( DoesFileExist(sPathToIni) )
 	{
 		// This is a new style BGAnimation (using .ini)
-		AddLayersFromAniDir( sAniDir, m_SubActors, m_bGeneric );	// TODO: Check for circular load
+		AddLayersFromAniDir( sAniDir, m_SubActors );	// TODO: Check for circular load
 
 		IniFile ini;
 		ini.ReadFile( sPathToIni );
