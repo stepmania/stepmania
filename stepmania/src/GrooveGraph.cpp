@@ -59,23 +59,26 @@ GrooveGraph::GrooveGraph()
 
 void GrooveGraph::SetFromSong( Song* pSong )
 {
-	float fValues[NUM_SHOWN_RADAR_CATEGORIES][NUM_DIFFICULTIES];
-	ZERO( fValues );
+	RadarValues rvs[NUM_DIFFICULTIES];
 
 	if( pSong )
 	{
 		for( int i=0; i<NUM_DIFFICULTIES; i++ )
 		{
 			Steps* pNotes = pSong->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, (Difficulty)i );
-			const float* fRadarValues = pNotes ? pNotes->GetRadarValues() : NULL;
-			for( int j=0; j<NUM_SHOWN_RADAR_CATEGORIES; j++ )
-				fValues[j][i] = fRadarValues ? fRadarValues[j] : 0;
+			if( pNotes )
+				rvs[i] = pNotes->GetRadarValues();
 		}
 	}
 
 	for( int j=0; j<NUM_SHOWN_RADAR_CATEGORIES; j++ )
 	{
-		m_Mountains[j].SetValues( fValues[j] );	
+		float fValues[NUM_DIFFICULTIES];
+		FOREACH_Difficulty( dc )
+		{
+			fValues[dc] = rvs[j][dc];
+		}		
+		m_Mountains[j].SetValues( fValues );	
 	}
 }
 

@@ -40,7 +40,7 @@ public:
 	CString GetDescription() const { return Real()->m_sDescription; }
 	Difficulty GetDifficulty() const { return Real()->m_Difficulty; }
 	int GetMeter() const { return Real()->m_iMeter; }
-	const float *GetRadarValues() const { return Real()->m_fRadarValues; }
+	const RadarValues& GetRadarValues() const { return Real()->m_RadarValues; }
 
 	void SetDescription(CString desc);
 	void SetDifficulty(Difficulty d);
@@ -80,8 +80,7 @@ protected:
 	CString			m_sDescription;		// Step author, edit name, or something meaningful
 	Difficulty		m_Difficulty;		// difficulty classification
 	int				m_iMeter;			// difficulty rating from MIN_METER to MAX_METER
-	float			m_fRadarValues[NUM_RADAR_CATEGORIES];	// between 0.0-1.2 starting from 12-o'clock rotating clockwise
-
+	RadarValues		m_RadarValues;
 };
 
 bool CompareNotesPointersByRadarValues(const Steps* pNotes1, const Steps* pNotes2);

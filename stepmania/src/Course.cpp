@@ -1044,6 +1044,27 @@ bool Course::IsRanking() const
 	return false;
 }
 
+
+RadarValues Course::GetRadarValues( StepsType st, CourseDifficulty cd ) const
+{
+	RadarValues rv;
+
+	vector<Course::Info> ci;
+	GAMESTATE->m_pCurCourse->GetCourseInfo( st, ci, cd );
+	for( unsigned i = 0; i < ci.size(); ++i )
+	{
+		const Steps *pNotes = ci[i].pNotes;
+		ASSERT( pNotes );
+		rv += pNotes->GetRadarValues();
+	}
+
+	return rv;
+}
+
+
+//
+// Sorting stuff
+//
 static map<const Course*, float> course_sort_val;
 
 bool CompareCoursePointersBySortValueAscending(const Course *pSong1, const Course *pSong2)

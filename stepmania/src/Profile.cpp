@@ -176,20 +176,45 @@ int Profile::GetTotalNumSongsPassed() const
 int Profile::GetTotalHighScoreDancePointsForStepsType( StepsType st ) const
 {
 	int iTotal = 0;
-	for( std::map<const Steps*,HighScoresForASteps>::const_iterator iter = m_StepsHighScores.begin();
-		iter != m_StepsHighScores.end();
-		iter++ )
+	
+	// add steps high scores
 	{
-		const Steps* pSteps = iter->first;
-		ASSERT( pSteps );
-		const HighScoresForASteps& h = iter->second;
-		if( pSteps->m_StepsType == st )
+		for( std::map<const Steps*,HighScoresForASteps>::const_iterator iter = m_StepsHighScores.begin();
+			iter != m_StepsHighScores.end();
+			iter++ )
 		{
-			const float* fRadars = pSteps->GetRadarValues();
-			int iPossibleDP = ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
-			iTotal += (int)truncf( h.hs.GetTopScore().fPercentDP * iPossibleDP );
+			const Steps* pSteps = iter->first;
+			ASSERT( pSteps );
+			const HighScoresForASteps& h = iter->second;
+			const HighScoreList& hs = h.hs;
+			if( pSteps->m_StepsType == st )
+			{
+				const float* fRadars = pSteps->GetRadarValues();
+				int iPossibleDP = ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
+				iTotal += (int)truncf( hs.GetTopScore().fPercentDP * iPossibleDP );
+			}
 		}
 	}
+
+	// add course high scores
+	{
+		for( std::map<const Course*,HighScoresForACourse>::const_iterator iter = m_CourseHighScores.begin();
+			iter != m_CourseHighScores.end();
+			iter++ )
+		{
+			const Course* pCourse = iter->first;
+			ASSERT( pCourse );
+			const HighScoresForACourse& h = iter->second;
+			FOREACH_CourseDifficulty( cd )
+			{
+				const HighScoreList& hs = h.hs[st][cd];
+				const float* fRadars = pCourse->GetRadarValues(st,cd);
+				int iPossibleDP = ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
+				iTotal += (int)truncf( hs.GetTopScore().fPercentDP * iPossibleDP );
+			}
+		}
+	}
+
 
 	return iTotal;
 }

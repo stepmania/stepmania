@@ -64,6 +64,27 @@ enum RadarCategory
 
 CString RadarCategoryToString( RadarCategory cat );
 
+struct RadarValues
+{
+	float value[NUM_RADAR_CATEGORIES];
+
+	RadarValues()
+	{
+		FOREACH_RadarCategory( rc )
+			value[rc] = 0;
+	}
+
+    operator const float* () const	{ return value; };
+    operator float* ()				{ return value; };
+
+	RadarValues& operator+=( const RadarValues& other )
+	{
+		FOREACH_RadarCategory( rc )
+			value[rc] += other.value[rc];
+		return *this;
+	}
+};
+
 
 enum Difficulty 
 {

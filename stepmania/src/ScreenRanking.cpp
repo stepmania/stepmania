@@ -668,7 +668,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 	case PageToShow::TYPE_CATEGORY:
 		{
 			m_textCategory.SetText( ssprintf("Type %c", 'A'+pts.category) );
-			m_textStepsType.SetText( GameManager::NotesTypeToString(pts.nt) );
+			m_textStepsType.SetText( GameManager::NotesTypeToThemedString(pts.nt) );
 
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{

@@ -39,8 +39,6 @@ Steps::Steps()
 	m_LoadedFromProfile = PROFILE_SLOT_INVALID;
 	m_Difficulty = DIFFICULTY_INVALID;
 	m_iMeter = 0;
-	for(int i = 0; i < NUM_RADAR_CATEGORIES; ++i)
-		m_fRadarValues[i] = -1; /* unknown */
 
 	notes = NULL;
 	notes_comp = NULL;
@@ -236,8 +234,7 @@ void Steps::DeAutogen()
 	m_sDescription	= Real()->m_sDescription;
 	m_Difficulty	= Real()->m_Difficulty;
 	m_iMeter		= Real()->m_iMeter;
-	for(int i = 0; i < NUM_RADAR_CATEGORIES; ++i)
-		m_fRadarValues[i] = Real()->m_fRadarValues[i];
+	m_RadarValues   = Real()->m_RadarValues;
 
 	parent = NULL;
 
@@ -309,7 +306,7 @@ void Steps::SetRadarValue(int r, float val)
 {
 	DeAutogen();
 	ASSERT(r < NUM_RADAR_CATEGORIES);
-	m_fRadarValues[r] = val;
+	m_RadarValues[r] = val;
 }
 
 

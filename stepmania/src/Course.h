@@ -140,6 +140,7 @@ public:
 	void AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup );
 	void AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup );
 
+	RadarValues GetRadarValues( StepsType st, CourseDifficulty cd ) const;
 
 	// sorting values
 	int		SortOrder_TotalDifficulty;
