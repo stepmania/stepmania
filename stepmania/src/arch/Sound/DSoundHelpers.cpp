@@ -13,11 +13,11 @@
 
 #pragma comment(lib, "dsound.lib")
 
-BOOL CALLBACK DSound::EnumCallback(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext)
+BOOL CALLBACK DSound::EnumCallback( LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext )
 {
-	LOG->Info("DirectSound Driver: %s (%s)", lpcstrDescription, lpcstrModule);
+	LOG->Info( "DirectSound Driver: %s (%s)", lpcstrDescription, lpcstrModule );
 	if(lpGuid)
-		LOG->Info("    ID: {%8.8x-%4.4x-%4.4x-%6.6x}", lpGuid->Data1, lpGuid->Data2, lpGuid->Data3, lpGuid->Data4);
+		LOG->Info( "    ID: {%8.8x-%4.4x-%4.4x-%6.6x}", lpGuid->Data1, lpGuid->Data2, lpGuid->Data3, lpGuid->Data4 );
 
 	return TRUE;
 }
@@ -26,7 +26,7 @@ void DSound::SetPrimaryBufferMode()
 {
 #ifndef _XBOX
 	DSBUFFERDESC format;
-	memset(&format, 0, sizeof(format));
+	memset( &format, 0, sizeof(format) );
 	format.dwSize = sizeof(format);
 	format.dwFlags = DSBCAPS_PRIMARYBUFFER;
 	format.dwBufferBytes = 0;
@@ -53,7 +53,7 @@ void DSound::SetPrimaryBufferMode()
 	// Set the primary buffer's format
     hr = IDirectSoundBuffer_SetFormat( buf, &waveformat );
 	if( FAILED(hr) )
-		LOG->Warn(hr_ssprintf(hr, "SetFormat on primary buffer"));
+		LOG->Warn( hr_ssprintf(hr, "SetFormat on primary buffer") );
 
 	/* MS docs:
 	 *
@@ -93,7 +93,7 @@ DSound::DSound()
 	DirectSoundEnumerate(EnumCallback, 0);
 	
 	/* Try to set primary mixing privileges */
-	hr = ds->SetCooperativeLevel(GetDesktopWindow(), DSSCL_PRIORITY);
+	hr = ds->SetCooperativeLevel( GetDesktopWindow(), DSSCL_PRIORITY );
 #endif
 
 	SetPrimaryBufferMode();
@@ -115,9 +115,9 @@ bool DSound::IsEmulated() const
 	DSCAPS Caps;
 	Caps.dwSize = sizeof(Caps);
 	HRESULT hr;
-	if(FAILED(hr = ds->GetCaps(&Caps)))
+	if( FAILED(hr = ds->GetCaps(&Caps)) )
 	{
-		LOG->Warn(hr_ssprintf(hr, "ds->GetCaps failed"));
+		LOG->Warn( hr_ssprintf(hr, "ds->GetCaps failed") );
 		/* This is strange, so let's be conservative. */
 		return true;
 	}
@@ -128,8 +128,8 @@ bool DSound::IsEmulated() const
 #endif
 }
 
-DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
-			int channels_, int samplerate_, int samplebits_, int writeahead_)
+DSoundBuf::DSoundBuf( DSound &ds, DSoundBuf::hw hardware,
+					  int channels_, int samplerate_, int samplebits_, int writeahead_ )
 {
 	channels = channels_;
 	samplerate = samplerate_;
@@ -147,12 +147,12 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	buffersize = max( buffersize, writeahead );
 
 	WAVEFORMATEX waveformat;
-	memset(&waveformat, 0, sizeof(waveformat));
+	memset( &waveformat, 0, sizeof(waveformat) );
 	waveformat.cbSize = sizeof(waveformat);
 	waveformat.wFormatTag = WAVE_FORMAT_PCM;
 
 	bool NeedCtrlFrequency = false;
-	if(samplerate == DYNAMIC_SAMPLERATE)
+	if( samplerate == DYNAMIC_SAMPLERATE )
 	{
 		samplerate = 44100;
 		NeedCtrlFrequency = true;
@@ -167,7 +167,7 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 
 	/* Try to create the secondary buffer */
 	DSBUFFERDESC format;
-	memset(&format, 0, sizeof(format));
+	memset( &format, 0, sizeof(format) );
 	format.dwSize = sizeof(format);
 #ifdef _XBOX
 	format.dwFlags = 0;
@@ -178,29 +178,30 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 #ifndef _XBOX
 	/* Don't use DSBCAPS_STATIC.  It's meant for static buffers, and we
 	 * only use streaming buffers. */
-	if(hardware == HW_HARDWARE)
+	if( hardware == HW_HARDWARE )
 		format.dwFlags |= DSBCAPS_LOCHARDWARE;
 	else
 		format.dwFlags |= DSBCAPS_LOCSOFTWARE;
 #endif
 
-	if(NeedCtrlFrequency)
+	if( NeedCtrlFrequency )
 		format.dwFlags |= DSBCAPS_CTRLFREQUENCY;
 
 	format.dwBufferBytes = buffersize;
 #ifndef _XBOX
 	format.dwReserved = 0;
 #else
-	DSMIXBINVOLUMEPAIR dsmbvp[8] = {
-		{DSMIXBIN_FRONT_LEFT, DSBVOLUME_MAX},   // left channel
-		{DSMIXBIN_FRONT_RIGHT, DSBVOLUME_MAX},  // right channel
-		{DSMIXBIN_FRONT_CENTER, DSBVOLUME_MAX}, // left channel
-		{DSMIXBIN_FRONT_CENTER, DSBVOLUME_MAX}, // right channel
-		{DSMIXBIN_BACK_LEFT, DSBVOLUME_MAX},    // left channel
-		{DSMIXBIN_BACK_RIGHT, DSBVOLUME_MAX},   // right channel
-		{DSMIXBIN_LOW_FREQUENCY, DSBVOLUME_MAX},    // left channel
-		{DSMIXBIN_LOW_FREQUENCY, DSBVOLUME_MAX}};   // right channel
-		
+	DSMIXBINVOLUMEPAIR dsmbvp[8] =
+	{
+		{ DSMIXBIN_FRONT_LEFT,		DSBVOLUME_MAX}, // left channel
+		{ DSMIXBIN_FRONT_RIGHT,		DSBVOLUME_MAX}, // right channel
+		{ DSMIXBIN_FRONT_CENTER,	DSBVOLUME_MAX}, // left channel
+		{ DSMIXBIN_FRONT_CENTER,	DSBVOLUME_MAX}, // right channel
+		{ DSMIXBIN_BACK_LEFT,		DSBVOLUME_MAX}, // left channel
+		{ DSMIXBIN_BACK_RIGHT,		DSBVOLUME_MAX}, // right channel
+		{ DSMIXBIN_LOW_FREQUENCY,	DSBVOLUME_MAX}, // left channel
+		{ DSMIXBIN_LOW_FREQUENCY,	DSBVOLUME_MAX}  // right channel
+	};
 	DSMIXBINS dsmb;
 	dsmb.dwMixBinCount = 8;
 	dsmb.lpMixBinVolumePairs = dsmbvp;
@@ -210,32 +211,22 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 
 	format.lpwfxFormat = &waveformat;
 
-	/* Query IID_IDirectSoundBuffer instead of IID_IDirectSoundBuffer8. -Chris */
-//	IDirectSoundBuffer *sndbuf_buf;
-//	HRESULT hr = ds.GetDS()->CreateSoundBuffer(&format, &sndbuf_buf, NULL);
-//	if (FAILED(hr))
-//		RageException::ThrowNonfatal(hr_ssprintf(hr, "CreateSoundBuffer failed"));
-//
-//	sndbuf_buf->QueryInterface(IID_IDirectSoundBuffer8, (LPVOID*) &buf);
-//	ASSERT(buf);
-
-	HRESULT hr = ds.GetDS()->CreateSoundBuffer(&format, &buf, NULL);
-	if (FAILED(hr))
-		RageException::ThrowNonfatal(hr_ssprintf(hr, "CreateSoundBuffer failed"));
+	HRESULT hr = ds.GetDS()->CreateSoundBuffer( &format, &buf, NULL );
+	if( FAILED(hr) )
+		RageException::ThrowNonfatal( hr_ssprintf(hr, "CreateSoundBuffer failed") );
 
 #ifndef _XBOX
 	/* I'm not sure this should ever be needed, but ... */
 	DSBCAPS bcaps;
 	bcaps.dwSize=sizeof(bcaps);
 	hr = buf->GetCaps(&bcaps);
-	if(FAILED(hr))
+	if( FAILED(hr) )
 		RageException::Throw(hr_ssprintf(hr, "buf->GetCaps"));
-	if(int(bcaps.dwBufferBytes) != buffersize)
+	if( int(bcaps.dwBufferBytes) != buffersize )
 	{
-		LOG->Warn("bcaps.dwBufferBytes (%i) != buffersize(%i); adjusting",
-			bcaps.dwBufferBytes, buffersize);
+		LOG->Warn( "bcaps.dwBufferBytes (%i) != buffersize(%i); adjusting", bcaps.dwBufferBytes, buffersize );
 		buffersize = bcaps.dwBufferBytes;
-		writeahead = min(writeahead, buffersize);
+		writeahead = min( writeahead, buffersize );
 	}
 #endif
 }
@@ -243,9 +234,9 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 void DSoundBuf::SetSampleRate(int hz)
 {
 	samplerate = hz;
-	HRESULT hr = buf->SetFrequency(hz);
-	if(FAILED(hr))
-		RageException::Throw(hr_ssprintf(hr, "buf->SetFrequency(%i)", hz));
+	HRESULT hr = buf->SetFrequency( hz );
+	if( FAILED(hr) )
+		RageException::Throw( hr_ssprintf(hr, "buf->SetFrequency(%i)", hz) );
 }
 
 void DSoundBuf::SetVolume(float vol)
@@ -268,9 +259,9 @@ void DSoundBuf::SetVolume(float vol)
 }
 
 /* Determine if "pos" is between "start" and "end", for a circular buffer. */
-bool contained(int start, int end, int pos)
+static bool contained( int start, int end, int pos )
 {
-	if(end >= start) /* start ... pos ... end */
+	if( end >= start ) /* start ... pos ... end */
 		return start <= pos && pos <= end;
 	else
 		return pos >= start || pos <= end;
@@ -281,7 +272,7 @@ DSoundBuf::~DSoundBuf()
 	buf->Release();
 }
 
-bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
+bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
 {
 	ASSERT(!buffer_locked);
 
@@ -293,16 +284,16 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 
 	/* It's easiest to think of the cursor as a block, starting and ending at
 	 * the two values returned by GetCurrentPosition, that we can't write to. */
-	result = buf->GetCurrentPosition(&cursorstart, &cursorend);
+	result = buf->GetCurrentPosition( &cursorstart, &cursorend );
 #ifndef _XBOX
 	if ( result == DSERR_BUFFERLOST )
 	{
 		buf->Restore();
-		result = buf->GetCurrentPosition(&cursorstart, &cursorend);
+		result = buf->GetCurrentPosition( &cursorstart, &cursorend );
 	}
 	if ( result != DS_OK )
 	{
-		LOG->Warn(hr_ssprintf(result, "DirectSound::GetCurrentPosition failed"));
+		LOG->Warn( hr_ssprintf(result, "DirectSound::GetCurrentPosition failed") );
 		return false;
 	}
 #endif
@@ -379,14 +370,14 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 
 
 	/* If we already have enough bytes written ahead, stop. */
-	if(buffer_bytes_filled > writeahead)
+	if( buffer_bytes_filled > writeahead )
 		return false;
 
 	int num_bytes_empty = writeahead-buffer_bytes_filled;
 
 	/* num_bytes_empty is the amount of free buffer space.  If it's
 	 * too small, come back later. */
-	if(num_bytes_empty < chunksize)
+	if( num_bytes_empty < chunksize )
 		return false;
 
 	/* I don't want to deal with DSound's split-circular-buffer locking stuff, so clamp
@@ -402,25 +393,28 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 
 	/* Lock the audio buffer. */
 #ifdef _XBOX
-	result = buf->Lock(write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, NULL, 0);
+	result = buf->Lock( write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, NULL, 0 );
 #else
 	DWORD junk;
-	result = buf->Lock(write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, &junk, 0);
+	result = buf->Lock( write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, &junk, 0 );
 #endif
 
 #ifndef _XBOX
-	if ( result == DSERR_BUFFERLOST ) {
+	if ( result == DSERR_BUFFERLOST )
+	{
 		buf->Restore();
-		result = buf->Lock(write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, &junk, 0);
+		result = buf->Lock( write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, &junk, 0 );
 	}
 #endif
-	if ( result != DS_OK ) {
-		LOG->Warn(hr_ssprintf(result, "Couldn't lock the DirectSound buffer."));
+	if ( result != DS_OK )
+	{
+		LOG->Warn( hr_ssprintf(result, "Couldn't lock the DirectSound buffer.") );
 		return false;
 	}
 
 	write_cursor += num_bytes_empty;
-	if(write_cursor >= buffersize) write_cursor -= buffersize;
+	if( write_cursor >= buffersize )
+		write_cursor -= buffersize;
 
 	buffer_bytes_filled += num_bytes_empty;
 
@@ -432,16 +426,16 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 	return true;
 }
 
-void DSoundBuf::release_output_buf(char *buffer, unsigned bufsiz)
+void DSoundBuf::release_output_buf( char *buffer, unsigned bufsiz )
 {
-	buf->Unlock(buffer, bufsiz, NULL, 0);
+	buf->Unlock( buffer, bufsiz, NULL, 0 );
 	buffer_locked = false;
 }
 
 int64_t DSoundBuf::GetPosition() const
 {
 	DWORD cursor, junk;
-	buf->GetCurrentPosition(&cursor, &junk);
+	buf->GetCurrentPosition( &cursor, &junk );
 	int cursor_frames = int(cursor) / bytes_per_frame();
 	int write_cursor_frames = write_cursor  / bytes_per_frame();
 
@@ -455,7 +449,7 @@ int64_t DSoundBuf::GetPosition() const
 
 	/* Failsafe: never return a value smaller than we've already returned.
 	 * This can happen once in a while in underrun conditions. */
-	ret = max(LastPosition, ret);
+	ret = max( LastPosition, ret );
 	LastPosition = ret;
 
 	return ret;
@@ -465,7 +459,7 @@ void DSoundBuf::Play()
 {
 	if( playing )
 		return;
-	buf->Play(0, 0, DSBPLAY_LOOPING);
+	buf->Play( 0, 0, DSBPLAY_LOOPING );
 	playing = true;
 }
 
