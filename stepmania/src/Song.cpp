@@ -1249,7 +1249,9 @@ bool Song::SongCompleteForStyle( const StyleDef *st ) const
 	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
 	{
 		if(st->m_NotesTypes[pn] == NOTES_TYPE_INVALID) continue; /* unused */
-		if(!SongHasNotesType(st->m_NotesTypes[pn])) return false;
+		if(!SongHasNotesType(st->m_NotesTypes[pn]) &&
+		   !SongHasNotesType(st->m_FallbackNotesType))
+			return false;
 	}
 	return true;
 }
