@@ -182,21 +182,15 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 
 	SDL_ShowCursor( ~g_flags & SDL_FULLSCREEN );
 
+	ASSERT( bpp == 16 || bpp == 32 );
 	switch( bpp )
 	{
-	case 15:
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
-		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-		break;
 	case 16:
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 6);
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
 		break;
-	case 24:
 	case 32:
-	default:
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
@@ -212,34 +206,37 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 		SDL_SM_SetRefreshRate(rate);
 #endif
 
-	bool need_reload = false;
-
-#ifndef SDL_HAS_CHANGEVIDEOMODE
-	/* We can't change the video mode without nuking the GL context. */
-	need_reload = true;
-#endif
-
-	if( bpp != g_CurrentBPP )
-		need_reload = true; /* can't do this with SDL_SM_ChangeVideoMode_OpenGL */
-
-	if(need_reload) {
-		if(TEXTUREMAN)
-			TEXTUREMAN->InvalidateTextures();
+	bool NewOpenGLContext = false;
+#ifdef SDL_HAS_CHANGEVIDEOMODE
+	if(g_screen)
+	{
+		/* We can change the video mode without nuking the GL context. */
+		NewOpenGLContext = !!SDL_SM_ChangeVideoMode_OpenGL(&g_screen, width, height, bpp, g_flags);
+		ASSERT(g_screen);
 	}
-
-	if(!g_screen || need_reload) {
+	else
+#endif
+	{
 		g_screen = SDL_SetVideoMode(width, height, bpp, g_flags);
 		if(!g_screen)
 			RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
 
+		NewOpenGLContext = true;
+	}
+
+	if(NewOpenGLContext)
+	{
+		LOG->Trace("New OpenGL context");
+
+		/* We have a new OpenGL context, so we have to tell our textures that
+		 * their OpenGL texture number is invalid. */
+		if(TEXTUREMAN)
+			TEXTUREMAN->InvalidateTextures();
+
+		SetupOpenGL();
+
 		SDL_WM_SetCaption("StepMania", "StepMania");
 	}
-#ifdef SDL_HAS_CHANGEVIDEOMODE
-	else
-	{
-		SDL_SM_ChangeVideoMode_OpenGL(g_flags, g_screen, width, height);
-	}
-#endif
 
 	/* Now that we've initialized, we can search for extensions (some of which
 	 * we may need to set up the video mode). */
@@ -250,15 +247,25 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	if(m_oglspecs->WGL_EXT_swap_control) {
 	    wglSwapIntervalEXT(vsync);
 	}
-
-	if(need_reload) {
-		/* OpenGL state was lost; set up again. */
-		SetupOpenGL();
-	}
 	
 	g_CurrentWidth = g_screen->w;
 	g_CurrentHeight = g_screen->h;
 	g_CurrentBPP = bpp;
+
+	{
+		/* Find out what we really got. */
+		int r,g,b,a, colorbits, depth, stencil;
+		
+		SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &r);
+		SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &g);
+		SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &b);
+		SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &a);
+		SDL_GL_GetAttribute(SDL_GL_BUFFER_SIZE, &colorbits);
+		SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &depth);
+		SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &stencil);
+		LOG->Info("Got %i bpp (%i%i%i%i), %i depth, %i stencil",
+			colorbits, r, g, b, a, depth, stencil);
+	}
 
 	SetViewport(0,0);
 
@@ -266,7 +273,7 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	Clear();
 	Flip();
 
-	return need_reload;
+	return NewOpenGLContext;
 }
 
 void RageDisplay::ResolutionChanged(int width, int height)
