@@ -706,6 +706,12 @@
 			<File
 				RelativePath=".\TipDisplay.h">
 			</File>
+			<File
+				RelativePath="SongSelector.cpp">
+			</File>
+			<File
+				RelativePath="SongSelector.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Actors used in Gameplay"
