@@ -51,7 +51,7 @@ GameState::GameState()
 
 	m_CurGame = GAME_DANCE;
 	m_iCoins = 0;
-	m_timeGameStarted = 0;
+	m_timeGameStarted.SetZero();
 	m_bIsOnSystemMenu = false;
 
 	ReloadCharacters();
@@ -72,7 +72,7 @@ GameState::~GameState()
 
 void GameState::Reset()
 {
-	if( m_timeGameStarted != 0 && g_vPlayedStageStats.size() )	// we were in the middle of a game and played at least one song
+	if( !m_timeGameStarted.IsZero() && g_vPlayedStageStats.size() )	// we were in the middle of a game and played at least one song
 		EndGame();
 	
 	
@@ -80,7 +80,7 @@ void GameState::Reset()
 
 	int p;
 
-	m_timeGameStarted = 0;
+	m_timeGameStarted.SetZero();
 	m_CurStyle = STYLE_INVALID;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_bSideIsJoined[p] = false;
@@ -168,7 +168,7 @@ void GameState::Reset()
 
 void GameState::BeginGame()
 {
-	m_timeGameStarted = time(NULL);
+	m_timeGameStarted.Touch();
 
 	m_vpsNamesThatWereFilled.clear();
 
@@ -194,13 +194,38 @@ void GameState::PlayersFinalized()
 	SONGMAN->LoadAllFromProfiles();
 }
 
+/* This data is added to each player profile, and to the machine profile per-player. */
+void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNumber p )
+{
+	CheckStageStats( ss, p );
+	CHECKPOINT;
+	const int iMeter = clamp( ss.iMeter[p], 0, MAX_METER );
+
+	pProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
+	pProfile->m_iNumSongsPlayedByStyle[ss.style]++;
+	pProfile->m_iNumSongsPlayedByDifficulty[ss.pSteps[p]->GetDifficulty()]++;
+	pProfile->m_iNumSongsPlayedByMeter[iMeter]++;
+	pProfile->m_iTotalDancePoints += ss.iActualDancePoints[p];
+
+	if( ss.StageType == StageStats::STAGE_EXTRA || ss.StageType == StageStats::STAGE_EXTRA2 )
+	{
+		if( ss.bFailed[p] )
+			++pProfile->m_iNumExtraStagesFailed;
+		else
+			++pProfile->m_iNumExtraStagesPassed;
+	}
+
+	if( !ss.bFailed[p] )
+	{
+		pProfile->m_iNumSongsPassedByPlayMode[ss.playMode]++;
+		pProfile->m_iNumSongsPassedByGrade[ss.GetGrade((PlayerNumber)p)]++;
+	}
+}
+
 void GameState::EndGame()
 {
 	// Update profile stats
-	time_t now = time(NULL);
-	int iPlaySeconds = now - m_timeGameStarted;
-	if( iPlaySeconds < 0 )
-		iPlaySeconds = 0;
+	int iPlaySeconds = max( 0, (int) m_timeGameStarted.PeekDeltaTime() );
 
 	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
 
@@ -237,48 +262,10 @@ void GameState::EndGame()
 		for( unsigned i=0; i<g_vPlayedStageStats.size(); i++ )
 		{
 			const StageStats& ss = g_vPlayedStageStats[i];
-			CheckStageStats( ss, p );
-			CHECKPOINT;
-			const int iMeter = clamp( ss.iMeter[p], 0, MAX_METER );
-
-			pMachineProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
-			pMachineProfile->m_iNumSongsPlayedByStyle[ss.style]++;
-			pMachineProfile->m_iNumSongsPlayedByDifficulty[ss.pSteps[p]->GetDifficulty()]++;
-			pMachineProfile->m_iNumSongsPlayedByMeter[iMeter]++;
-			pMachineProfile->m_iTotalDancePoints += ss.iActualDancePoints[p];
-			if( ss.StageType == StageStats::STAGE_EXTRA || ss.StageType == StageStats::STAGE_EXTRA2 )
-			{
-				if( ss.bFailed[p] )
-					++pMachineProfile->m_iNumExtraStagesFailed;
-				else
-					++pMachineProfile->m_iNumExtraStagesPassed;
-			}
-			if( !ss.bFailed[p] )
-			{
-				pMachineProfile->m_iNumSongsPassedByPlayMode[ss.playMode]++;
-				pMachineProfile->m_iNumSongsPassedByGrade[ss.GetGrade((PlayerNumber)p)]++;
-			}
+			AddPlayerStatsToProfile( pMachineProfile, ss, (PlayerNumber) p );
 
 			if( pPlayerProfile )
-			{
-				pPlayerProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
-				pPlayerProfile->m_iNumSongsPlayedByStyle[ss.style]++;
-				pPlayerProfile->m_iNumSongsPlayedByDifficulty[ss.pSteps[p]->GetDifficulty()]++;
-				pPlayerProfile->m_iNumSongsPlayedByMeter[iMeter]++;
-				pPlayerProfile->m_iTotalDancePoints += ss.iActualDancePoints[p];
-				if( ss.StageType == StageStats::STAGE_EXTRA || ss.StageType == StageStats::STAGE_EXTRA2 )
-				{
-					if( ss.bFailed[p] )
-						++pPlayerProfile->m_iNumExtraStagesFailed;
-					else
-						++pPlayerProfile->m_iNumExtraStagesPassed;
-				}
-				if( !ss.bFailed[p] )
-				{
-					pPlayerProfile->m_iNumSongsPassedByPlayMode[ss.playMode]++;
-					pPlayerProfile->m_iNumSongsPassedByGrade[ss.GetGrade((PlayerNumber)p)]++;
-				}
-			}
+				AddPlayerStatsToProfile( pPlayerProfile, ss, (PlayerNumber) p );
 		}
 
 		CHECKPOINT;

@@ -57,7 +57,7 @@ public:
 	bool			m_bIsOnSystemMenu; // system screens will not be effected by the operator key -- Miryokuteki
 	CourseDifficulty	m_CourseDifficulty[NUM_PLAYERS]; // used in nonstop
 	bool ChangeCourseDifficulty( PlayerNumber pn, int dir );
-	time_t			m_timeGameStarted;	// from the moment the first player pressed Start
+	RageTimer		m_timeGameStarted;	// from the moment the first player pressed Start
 
 	/* This is set to a random number per-game/round; it can be used for a random seed. */
 	int				m_iGameSeed, m_iRoundSeed;
