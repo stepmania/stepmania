@@ -471,6 +471,8 @@ void Profile::LoadSongScoresFromDirSM390a12( CString sDir )
 	ASSERT( pProfile );
 
 	CString fn = sDir + SM_390A12_SONG_SCORES_DAT;
+	if( !IsAFile(fn) )
+		return;
 
 	RageFile f;
 	if( !f.Open(fn, RageFile::READ) )
@@ -593,6 +595,8 @@ void Profile::LoadCategoryScoresFromDirSM390a12( CString sDir )
 	ASSERT( pProfile );
 
 	CString fn = sDir + SM_390A12_CATEGORY_SCORES_DAT;
+	if( !IsAFile(fn) )
+		return;
 
 	RageFile f;
 	if( !f.Open(fn, RageFile::READ) )
@@ -648,6 +652,8 @@ void Profile::LoadCourseScoresFromDirSM390a12( CString sDir )
 	ASSERT( pProfile );
 
 	CString fn = sDir + SM_390A12_COURSE_SCORES_DAT;
+	if( !IsAFile(fn) )
+		return;
 
 	RageFile f;
 	if( !f.Open(fn, RageFile::READ) )
