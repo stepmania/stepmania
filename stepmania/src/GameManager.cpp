@@ -467,7 +467,62 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			3,0,6,2,4,1,5 // This should be from back to front: Down, UpLeft, UpRight, Lower Left Hand, Lower Right Hand, Upper Left Hand, Upper Right Hand 
 		},
 	},
-
+	{	// EZ2_STYLE_SINGLE_VERSUS
+		"ez2-single-versus",							// m_szName
+		NOTES_TYPE_EZ2_SINGLE,					// m_NotesType
+		StyleDef::TWO_PLAYERS_USE_TWO_SIDES,	// m_StyleType
+		{ 160, 480 },							// m_iCenterX
+		5,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFT,		-EZ2_COL_SPACING*2 },   // CHANGE THESE WHEN WE CAN SEE THE
+				{ TRACK_2,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFTHAND,	-EZ2_COL_SPACING*1 },  // NOTES IN-GAME !!!!!!!!!!
+				{ TRACK_3,	INSTRUMENT_1,	EZ2_BUTTON_DOWN,		+EZ2_COL_SPACING*0 },
+				{ TRACK_4,	INSTRUMENT_1,	EZ2_BUTTON_UPRIGHTHAND,	+EZ2_COL_SPACING*1 },
+				{ TRACK_5,	INSTRUMENT_1,	EZ2_BUTTON_UPRIGHT,		+EZ2_COL_SPACING*2 },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFT,		-EZ2_COL_SPACING*2 },   // CHANGE THESE WHEN WE CAN SEE THE
+				{ TRACK_2,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFTHAND,	-EZ2_COL_SPACING*1 },  // NOTES IN-GAME !!!!!!!!!!
+				{ TRACK_3,	INSTRUMENT_1,	EZ2_BUTTON_DOWN,		+EZ2_COL_SPACING*0 },
+				{ TRACK_4,	INSTRUMENT_1,	EZ2_BUTTON_UPRIGHTHAND,	+EZ2_COL_SPACING*1 },
+				{ TRACK_5,	INSTRUMENT_1,	EZ2_BUTTON_UPRIGHT,		+EZ2_COL_SPACING*2 },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			2,0,4,1,3 // This should be from back to front: Down, UpLeft, UpRight, Upper Left Hand, Upper Right Hand 
+		},
+	},
+	{	// EZ2_STYLE_REAL_VERSUS
+		"ez2-real-versus",							// m_szName
+		NOTES_TYPE_EZ2_REAL,					// m_NotesType
+		StyleDef::TWO_PLAYERS_USE_TWO_SIDES,	// m_StyleType
+		{ 160, 480 },							// m_iCenterX
+		7,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFT,		-EZ2_COL_SPACING*3 },   // CHANGE THESE WHEN WE CAN SEE THE
+				{ TRACK_2,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFTHAND,	-EZ2_COL_SPACING*2 },  // NOTES IN-GAME !!!!!!!!!!
+				{ TRACK_3,	INSTRUMENT_1,	EZ2_BUTTON_LRLEFTHAND,	-EZ2_COL_SPACING*1 }, 
+				{ TRACK_4,	INSTRUMENT_1,	EZ2_BUTTON_DOWN,		+EZ2_COL_SPACING*0 },
+				{ TRACK_5,	INSTRUMENT_1,	EZ2_BUTTON_LRRIGHTHAND,	+EZ2_COL_SPACING*1 }, 
+				{ TRACK_6,	INSTRUMENT_1,	EZ2_BUTTON_UPRIGHTHAND,	+EZ2_COL_SPACING*2 },
+				{ TRACK_7,	INSTRUMENT_1,	EZ2_BUTTON_UPRIGHT,		+EZ2_COL_SPACING*3 },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFT,		-EZ2_COL_SPACING*3 },   // CHANGE THESE WHEN WE CAN SEE THE
+				{ TRACK_2,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFTHAND,	-EZ2_COL_SPACING*2 },  // NOTES IN-GAME !!!!!!!!!!
+				{ TRACK_3,	INSTRUMENT_1,	EZ2_BUTTON_LRLEFTHAND,	-EZ2_COL_SPACING*1 }, 
+				{ TRACK_4,	INSTRUMENT_1,	EZ2_BUTTON_DOWN,		+EZ2_COL_SPACING*0 },
+				{ TRACK_5,	INSTRUMENT_1,	EZ2_BUTTON_LRRIGHTHAND,	+EZ2_COL_SPACING*1 }, 
+				{ TRACK_6,	INSTRUMENT_1,	EZ2_BUTTON_UPRIGHTHAND,	+EZ2_COL_SPACING*2 },
+				{ TRACK_7,	INSTRUMENT_1,	EZ2_BUTTON_UPRIGHT,		+EZ2_COL_SPACING*3 },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			3,0,6,2,4,1,5 // This should be from back to front: Down, UpLeft, UpRight, Lower Left Hand, Lower Right Hand, Upper Left Hand, Upper Right Hand 
+		},
+	},
 };
 
 

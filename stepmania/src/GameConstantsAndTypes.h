@@ -185,6 +185,8 @@ enum NotesType
 	NOTES_TYPE_EZ2_SINGLE,
 	NOTES_TYPE_EZ2_DOUBLE,
 	NOTES_TYPE_EZ2_REAL,
+	NOTES_TYPE_EZ2_SINGLE_VERSUS,
+	NOTES_TYPE_EZ2_REAL_VERSUS,
 	NUM_NOTES_TYPES,		// leave this at the end
 	NOTES_TYPE_INVALID,
 };
@@ -202,6 +204,8 @@ inline int NotesTypeToNumTracks( NotesType nt )
 	case NOTES_TYPE_EZ2_SINGLE:		return 5; // Single: TL,LHH,D,RHH,TR
 	case NOTES_TYPE_EZ2_DOUBLE:		return 10; // Double: Single x2
 	case NOTES_TYPE_EZ2_REAL:		return 7; // Real: TL,LHH,LHL,D,RHL,RHH,TR
+	case NOTES_TYPE_EZ2_SINGLE_VERSUS:		return 10; 
+	case NOTES_TYPE_EZ2_REAL_VERSUS:		return 10;
 	default:	ASSERT(0);		return -1;	// invalid NotesType
 	}
 }
@@ -218,6 +222,8 @@ inline NotesType StringToNotesType( CString sNotesType )
 	else if( sNotesType == "ez2-single" )	return NOTES_TYPE_EZ2_SINGLE;
 	else if( sNotesType == "ez2-double" )	return NOTES_TYPE_EZ2_DOUBLE;
 	else if( sNotesType == "ez2-real" )		return NOTES_TYPE_EZ2_REAL;
+	else if( sNotesType == "ez2-real-versus" )		return NOTES_TYPE_EZ2_REAL_VERSUS;
+	else if( sNotesType == "ez2-single-versus" )		return NOTES_TYPE_EZ2_SINGLE_VERSUS;
 	else	ASSERT(0);	return NOTES_TYPE_DANCE_SINGLE;	// invalid NotesType
 }
 
@@ -234,6 +240,8 @@ inline CString NotesTypeToString( NotesType nt )
 	case NOTES_TYPE_EZ2_SINGLE:		return "ez2-single";
 	case NOTES_TYPE_EZ2_DOUBLE:		return "ez2-double";
 	case NOTES_TYPE_EZ2_REAL:		return "ez2-real";
+	case NOTES_TYPE_EZ2_REAL_VERSUS:		return "ez2-real-versus";
+	case NOTES_TYPE_EZ2_SINGLE_VERSUS:		return "ez2-single-versus";
 	default:	ASSERT(0);		return "";	// invalid NotesType
 	}
 }
@@ -303,6 +311,8 @@ enum Style
 	STYLE_EZ2_SINGLE,
 	STYLE_EZ2_DOUBLE,
 	STYLE_EZ2_REAL,
+	STYLE_EZ2_SINGLE_VERSUS,
+	STYLE_EZ2_REAL_VERSUS,
 	NUM_STYLES,	// leave this at the end
 	STYLE_NONE,
 };
@@ -324,6 +334,8 @@ inline Game StyleToGame( Style s )
 	case STYLE_EZ2_SINGLE:
 	case STYLE_EZ2_DOUBLE:
 	case STYLE_EZ2_REAL:
+	case STYLE_EZ2_SINGLE_VERSUS:
+	case STYLE_EZ2_REAL_VERSUS:
 		return GAME_EZ2;
 	default:
 		ASSERT(0);	// invalid Style

@@ -177,6 +177,22 @@ void ScreenEz2SelectPlayer::DrawPrimitives()
 	if (ez2_lasttimercheck[1] != 0.0f && TIMER->GetTimeSinceStart() > ez2_lasttimercheck[1] + 1)
 	{
 		ez2_lasttimercheck[1] = 0.0f;
+		
+		if (m_iSelectedStyle == 0) // only the left pad was selected
+		{
+			GAMEMAN->m_sMasterPlayerNumber = PLAYER_1;
+			GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;
+		}
+		else if (m_iSelectedStyle == 1) // only the right pad was selected
+		{
+			GAMEMAN->m_sMasterPlayerNumber = PLAYER_2;
+			GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;
+		}
+		else // they both selected
+		{
+			GAMEMAN->m_sMasterPlayerNumber = PLAYER_1;
+			GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;
+		}
 
 		MUSIC->Stop();
 		

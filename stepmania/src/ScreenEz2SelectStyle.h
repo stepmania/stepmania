@@ -7,6 +7,7 @@ Andrew Livy
 
 /* Includes */
 
+#include "Background.h"
 #include "Screen.h"
 #include "Sprite.h"
 #include "BitmapText.h"
@@ -19,6 +20,7 @@ Andrew Livy
 /* Class Definition */
 
 const int NUM_EZ2STYLE_GRAPHICS = 4;
+const int NUM_EZ2P_GRAPHICS = 4;
 
 class ScreenEz2SelectStyle : public Screen
 {
@@ -36,21 +38,23 @@ public:
 	void MenuStart( const PlayerNumber p );
 	void MenuBack( const PlayerNumber p );
 	void TweenOffScreen();
-//	void TweenOnScreen();
+	void TweenPlyOffScreen();
 
 private:
 	/* Private Function Prototypes */
-
+	void AnimateGraphics();
 	//	void BeforeChange();
-	void AfterChange();
 	void SetFadedStyles();
 //	void AnimateGraphics();
 	/* Variable Declarations */
 
 	MenuElements m_Menu;
 	Sprite	m_sprOpt[NUM_EZ2STYLE_GRAPHICS];
+	Sprite  m_sprPly[NUM_EZ2P_GRAPHICS];
 	int m_iSelectedStyle;
-
+	int m_iSelectedPlayer;
 	RandomSample m_soundChange;
 	RandomSample m_soundSelect;	
+
+protected:
 };
