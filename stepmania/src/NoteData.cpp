@@ -623,6 +623,11 @@ void NoteData::MakeLittle()
 /* ConvertHoldNotesTo2sAnd3s also clears m_iNumHoldNotes;
  * shouldn't this do likewise and set all 2/3's to 0? 
  * -glenn
+ *
+ * Other code assumes != '0' means there's a tap note, so I changed
+ * this to do this. -glenn
+ *
+
  */
 void NoteData::Convert2sAnd3sToHoldNotes()
 {
@@ -635,12 +640,15 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 		{
 			if( m_TapNotes[col][i] != '2' )	// this is a HoldNote begin marker
 				continue;
+			m_TapNotes[col][i] = '0';
 
 			for( int j=i+1; j<MAX_TAP_NOTE_ROWS; j++ )	// search for end of HoldNote
 			{
 				// end hold on the next note we see
 				if( m_TapNotes[col][j] == '0' )
 					continue;
+
+				m_TapNotes[col][j] = '0';
 
 				HoldNote hn = { col, NoteRowToBeat(i), NoteRowToBeat(j) };
 				AddHoldNote( hn );
