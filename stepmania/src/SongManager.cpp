@@ -306,7 +306,7 @@ void SongManager::InitMachineScoresFromDisk()
 		{
 			int version;
 			fscanf(fp, "%d\n", &version );
-			if( version == COURSE_SCORES_VERSION )
+			if( version == NOTES_SCORES_VERSION )
 			{			
 				while( fp && !feof(fp) )
 				{
