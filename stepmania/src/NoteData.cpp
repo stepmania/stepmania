@@ -536,7 +536,7 @@ void NoteData::SetTapNote(int track, int row, TapNote t)
 
 	/* Decompress if needed. */
 	if((row % TapRowDivisor) != 0)
-		Decompress();
+		SetDivisor(1);
 
 	PadTapNotes(row);
 	row /= TapRowDivisor;
@@ -573,50 +573,6 @@ void NoteData::SetDivisor(int div)
 	}
 
 	TapRowDivisor = div;
-}
-
-void NoteData::Compress()
-{
-	/* We could optimize a little by being able to compress compressed data,
-	 * but let's not bother for now. */
-	Decompress();
-
-	/* Find the largest divisor; the largest D such that all notes M such that
-	 * (M%D) != 0 are empty. */
-	const int max_divisor = 64;
-	bool *ok = new bool[max_divisor];
-	memset(ok, 1, sizeof(ok));
-
-	int t, row, rows = GetLastRow();
-	
-	for(t=0; t < m_iNumTracks; t++)
-	{
-		for(row = 0; row < rows; ++row)
-		{
-			/* If there's nothing here, then it doesn't make any divisors invalid. */
-			if(GetTapNote(t, row) == TAP_EMPTY)
-				continue;
-
-			for(int div = 2; div < max_divisor; ++div)
-			{
-				if((row % div) != 0) ok[div] = false;
-			}
-		}
-	}
-
-	ASSERT(ok[1]);
-	int best_div = max_divisor-1;
-	while(!ok[best_div])
-		best_div--;
-
-	delete [] ok;
-
-	SetDivisor(best_div);
-}
-
-void NoteData::Decompress()
-{
-	SetDivisor(1);
 }
 
 NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex )
@@ -721,8 +677,6 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 		}
 	}
 	out.Convert2sAnd3sToHoldNotes();
-
-	out.Compress();
 }
 
 CString NoteDataUtil::GetSMNoteDataString(NoteData &in)
@@ -747,6 +701,7 @@ CString NoteDataUtil::GetSMNoteDataString(NoteData &in)
 
 		const int iMeasureStartRow = m * ROWS_PER_MEASURE;
 		const int iMeasureLastRow = (m+1) * ROWS_PER_MEASURE - 1;
+
 		for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
 		{
 			for( int t=0; t<in.m_iNumTracks; t++ ) {

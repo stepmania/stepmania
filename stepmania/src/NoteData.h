@@ -46,9 +46,6 @@ public:
 	~NoteData();
 	void Init();
 
-	void Compress();
-	void Decompress();
-
 	/* Return the note at the given track and row.  Row may be out of
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
 	inline TapNote GetTapNote(unsigned track, unsigned row) const
