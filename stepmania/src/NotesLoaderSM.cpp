@@ -336,7 +336,6 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		{
 			Steps* pNewNotes = new Steps;
 			ASSERT( pNewNotes );
-			out.AddSteps( pNewNotes );
 
 			if( iNumParams < 7 )
 			{
@@ -347,6 +346,8 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			LoadFromSMTokens( 
 				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:"",
 				*pNewNotes);
+
+			out.AddSteps( pNewNotes );
 		}
 		else if( 0==stricmp(sValueName,"OFFSET") || 0==stricmp(sValueName,"BPMS") ||
 				 0==stricmp(sValueName,"STOPS") || 0==stricmp(sValueName,"FREEZES") )
