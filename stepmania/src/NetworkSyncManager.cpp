@@ -108,20 +108,36 @@ void NetworkSyncManager::CloseConnection()
 
 void NetworkSyncManager::PostStartUp(const CString& ServerIP)
 {
+	CString sAddress;
+	int iPort;
+	
+	int cLoc = ServerIP.Find( ":" );
+	if ( ServerIP.Find( ":" ) > 0 )
+	{
+		iPort = atoi( ServerIP.substr( cLoc + 1 ).c_str() );
+		sAddress = ServerIP.substr( 0, cLoc );
+	}
+	else
+	{
+		iPort = 8765;
+		sAddress = ServerIP;
+	}
+
+	LOG->Info( "Attempting to connect to: %s, Port: %d", sAddress.c_str(), iPort );
+
 	CloseConnection();
 	if( ServerIP!="LISTEN" )
 	{
-		if( !Connect(ServerIP.c_str(), 8765) )
+		if( !Connect(sAddress.c_str(), iPort) )
 		{
 			m_startupStatus = 2;
 			LOG->Warn( "Network Sync Manager failed to connect" );
 			return;
 		}
-
 	}
 	else
 	{
-		if( !Listen(8765) )
+		if( !Listen(iPort) )
 		{
 			m_startupStatus = 2;
 			LOG->Warn( "Listen() failed" );
@@ -219,8 +235,6 @@ void NetworkSyncManager::StartUp()
 bool NetworkSyncManager::Connect(const CString& addy, unsigned short port)
 {
 	LOG->Info("Beginning to connect");
-	if (port != 8765) 
-		return false;
 
     NetPlayerClient->create(); // Initilize Socket
     useSMserver = NetPlayerClient->connect(addy, port);
@@ -235,13 +249,6 @@ bool NetworkSyncManager::Connect(const CString& addy, unsigned short port)
 bool NetworkSyncManager::Listen(unsigned short port)
 {
 	LOG->Info("Beginning to Listen");
-	if (port != 8765) 
-		return false;
-	//Make sure using port 8765
-	//This may change in future versions
-	//It is this way now for protocol's purpose.
-	//If there is a new protocol developed down the road
-
 
 	EzSockets * EZListener = new EzSockets;
 
