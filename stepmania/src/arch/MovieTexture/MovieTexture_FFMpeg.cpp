@@ -7,7 +7,6 @@
 #include "SDL_utils.h"
 #include "SDL_endian.h"
 
-/* TODO: implement m_bLoop */
 
 #if defined(_WIN32)
 	#pragma comment(lib, "ffmpeg/lib/avcodec.lib")
@@ -135,8 +134,32 @@ MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
 	m_BufferFinished = SDL_CreateSemaphore(0);
 	m_OneFrameDecoded = SDL_CreateSemaphore(0);
 
-	Create();
+	CreateDecoder();
+
+	LOG->Trace("Codec: %s", m_codec->name );
+	LOG->Trace("Resolution: %ix%i (%ix%i, %ix%i)",
+			m_iSourceWidth, m_iSourceHeight,
+			m_iImageWidth, m_iImageHeight, m_iTextureWidth, m_iTextureHeight);
+	LOG->Trace("Bitrate: %i", m_stream->codec.bit_rate );
+	LOG->Trace("Codec pixel format: %i", m_stream->codec.pix_fmt );
+
+	CreateTexture();
+	StartThread();
+
 	CreateFrameRects();
+
+	/* Wait until we decode one frame, to guarantee that the texture is
+	 * drawn when this function returns. */
+    ASSERT( m_State == PAUSE_DECODER );
+	CHECKPOINT;
+    m_State = PLAYING_ONE;
+	SDL_SemWait( m_OneFrameDecoded );
+	CHECKPOINT;
+	m_State = PAUSE_DECODER;
+    CheckFrame();
+	CHECKPOINT;
+
+    Play();
 }
 
 static CString averr_ssprintf( int err, const char *fmt, ... )
@@ -164,12 +187,9 @@ static CString averr_ssprintf( int err, const char *fmt, ... )
 }
 
 
-
-void MovieTexture_FFMpeg::Create()
+void MovieTexture_FFMpeg::CreateDecoder()
 {
 	m_Timer = 0;
-
-    ASSERT( m_State == DECODER_QUIT );
 
 	RageTextureID actualID = GetID();
 
@@ -209,40 +229,22 @@ void MovieTexture_FFMpeg::Create()
 	/* Texture dimensions need to be a power of two; jump to the next. */
 	m_iTextureWidth = power_of_two(m_iImageWidth);
 	m_iTextureHeight = power_of_two(m_iImageHeight);
-
-	LOG->Trace("Codec: %s", m_codec->name );
-	LOG->Trace("Resolution: %ix%i (%ix%i, %ix%i)",
-			m_iSourceWidth, m_iSourceHeight,
-			m_iImageWidth, m_iImageHeight, m_iTextureWidth, m_iTextureHeight);
-	LOG->Trace("Bitrate: %i", m_stream->codec.bit_rate );
-	LOG->Trace("Codec pixel format: %i", m_stream->codec.pix_fmt );
-
-	/* We've set up the movie, so we know the dimensions we need.  Set
-	 * up the texture. */
-	CreateTexture();
-
-	StartThread();
-
-	/* Wait until we decode one frame, to guarantee that the texture is
-	 * drawn when this function returns. */
-    ASSERT( m_State == PAUSE_DECODER );
-	CHECKPOINT;
-    m_State = PLAYING_ONE;
-	SDL_SemWait( m_OneFrameDecoded );
-	CHECKPOINT;
-	m_State = PAUSE_DECODER;
-    CheckFrame();
-	CHECKPOINT;
-
-    Play();
 }
 
-void MovieTexture_FFMpeg::Destroy()
-{
-	StopThread();
 
+/* Delete the decoder.  The decoding thread must be stopped. */
+void MovieTexture_FFMpeg::DestroyDecoder()
+{
 	avcodec::avcodec_close( &m_stream->codec );
-	avcodec::av_close_input_file( m_fctx ); m_fctx = NULL;
+	avcodec::av_close_input_file( m_fctx );
+	m_fctx = NULL;
+	m_stream = NULL;
+}
+
+/* Delete the surface and texture.  The decoding thread must be stopped, and this
+ * is normally done after destroying the decoder. */
+void MovieTexture_FFMpeg::DestroyTexture()
+{
 	if( m_img )
 	{
 		SDL_FreeSurface( m_img );
@@ -365,6 +367,24 @@ void MovieTexture_FFMpeg::DecoderThread()
 		{
 			CHECKPOINT;
 			int ret = avcodec::av_read_packet(m_fctx, &pkt);
+			if( ret == -1 )
+			{
+				/* EOF. */
+				if( !m_bLoop )
+					return;
+
+				/* Restart. */
+				DestroyDecoder();
+				CreateDecoder();
+
+				CurrentTimestamp = Last_IP_Timestamp = 0;
+				GetNextTimestamp = true;
+				FrameSkipMode = false;
+				Frame = 0;
+				LastFrameDelay = 0;
+				continue;
+			}
+
 			if( ret < 0 )
 			{
 				/* XXX ? */
@@ -518,7 +538,9 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 MovieTexture_FFMpeg::~MovieTexture_FFMpeg()
 {
-	Destroy();
+	StopThread();
+	DestroyDecoder();
+	DestroyTexture();
 
 	SDL_DestroySemaphore( m_BufferFinished );
 	SDL_DestroySemaphore( m_OneFrameDecoded );
@@ -615,8 +637,12 @@ void MovieTexture_FFMpeg::SetPosition( float fSeconds )
 	LOG->Trace( "Seek to %f (from %f)", fSeconds, m_Position );
     State OldState = m_State;
 
-	Destroy();
-	Create();
+	/* Recreate the decoder.  Do this without touching the actual texture, and without waiting
+	 * for the first frame to be decoded, so we don't take too long. */
+	StopThread();
+	DestroyDecoder();
+	CreateDecoder();
+	StartThread();
 
 	m_State = OldState;
 }

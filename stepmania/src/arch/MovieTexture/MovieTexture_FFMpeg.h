@@ -108,9 +108,10 @@ private:
 	void DecoderThread();
 	RageThread m_DecoderThread;
 
-	void Create();
-	void Destroy();
+	void CreateDecoder();
 	void CreateTexture();
+	void DestroyDecoder();
+	void DestroyTexture();
 	void CheckFrame();
 	void StartThread();
 	void StopThread();
