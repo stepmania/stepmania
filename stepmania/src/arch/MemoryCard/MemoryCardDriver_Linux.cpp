@@ -22,6 +22,21 @@ int MemoryCardDriver_Linux::MountThread_Start( void *p )
   return 0;
 }
 
+template<class T>
+bool VectorsAreEqual( const T &a, const T &b )
+{
+  if( a.size() != b.size() )
+      return false;
+
+  for( unsigned i=0; i<a.size(); i++ )
+    {
+      if( a[i] != b[i] )
+	return false;
+    }
+
+  return true;
+}
+
 void MemoryCardDriver_Linux::MountThreadMain()
 {
   int fd = open(USB_DEVICE_LIST_FILE, O_RDONLY);
@@ -60,51 +75,69 @@ void MemoryCardDriver_Linux::MountThreadMain()
 	  vector<UsbStorageDevice> vDevicesNow;
 	  this->GetStorageDevices( vDevicesNow );
 
-	  bool bDevicesChanged = false;
-	  if( vDevicesLastSeen.size() != vDevicesNow.size() )
+	  vector<UsbStorageDevice> &vNew = vDevicesNow;
+	  vector<UsbStorageDevice> &vOld = vDevicesLastSeen;
+
+	  // check for disconnects
+	  vector<UsbStorageDevice> vDisconnects;
+	  for( unsigned i=0; i<vOld.size(); i++ )
 	    {
-	      bDevicesChanged = true;
-	    }
-	  else
-	    {
-	      for( unsigned i=0; i<vDevicesLastSeen.size(); i++ )
+	      const UsbStorageDevice old = vOld[i];
+	      if( find(vNew.begin(),vNew.end(),old) == vNew.end() )// didn't find
 		{
-		  const UsbStorageDevice d1 = vDevicesLastSeen[i];
-		  const UsbStorageDevice d2 = vDevicesNow[i];
-		  if( d1 != d2 )
-		    {
-		      bDevicesChanged = true;
-		      break;
-		    }
+		  LOG->Trace( ssprintf("Disconnected bus %d port %d device %d path %s", old.iBus, old.iPortOnHub, old.iDeviceOnBus, old.sOsMountDir.c_str()) );
+		  vDisconnects.push_back( old );
 		}
 	    }
 
-	  if( bDevicesChanged )
+	  // check for connects
+          vector<UsbStorageDevice> vConnects;
+	  for( unsigned i=0; i<vNew.size(); i++ )
 	    {
-	      // unmount all old devices
-              for( unsigned i=0; i<vDevicesLastSeen.size(); i++ )
-                {
-                  const UsbStorageDevice d = vDevicesLastSeen[i];
-                  CString sCommand = "umount " + d.sOsMountDir;
-                  LOG->Trace( "executing '%s'", sCommand.c_str() );
-                  if( system(sCommand) == -1 )
-		    LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
-                }
-
-	      for( unsigned i=0; i<vDevicesNow.size(); i++ )
-		{	  
-		  const UsbStorageDevice d = vDevicesNow[i];
-		  CString sCommand = "mount " + d.sOsMountDir;
-		  LOG->Trace( "executing '%s'", sCommand.c_str() );
-		  if( system(sCommand) == -1 )
-                    LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
+	      const UsbStorageDevice newd = vNew[i];
+	      if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )// didn't find
+		{
+		  LOG->Trace( ssprintf("Connected bus %d port %d device %d path %s", newd.iBus, newd.iPortOnHub, newd.iDeviceOnBus, newd.sOsMountDir.c_str()) );
+		  vConnects.push_back( newd );
 		}
-
-	      {
-		LockMut( m_StorageDevicesChangedMutex );
-		m_bStorageDevicesChanged = true;
-	      }
 	    }
+
+	  // unmount all disconnects
+	  for( unsigned i=0; i<vDisconnects.size(); i++ )
+	    {
+	      const UsbStorageDevice &d = vDisconnects[i];
+	      CString sCommand = "umount " + d.sOsMountDir;
+	      LOG->Trace( "executing '%s'", sCommand.c_str() );
+	      if( system(sCommand) == -1 )
+		LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
+	    }
+	  
+	  // mount all connects
+	  for( unsigned i=0; i<vConnects.size(); i++ )
+	    {	  
+	      const UsbStorageDevice d = vConnects[i];
+	      CString sCommand;
+	      
+	      // unmount this device before trying to mount it.  If this device
+	      // wasn't unmounted before, then our mount call will fail and the 
+	      // mount may contain an out-of-date view of the files on the device.
+              sCommand = "umount " + d.sOsMountDir;
+              LOG->Trace( "executing '%s'", sCommand.c_str() );
+              if( system(sCommand) == -1 )
+                LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
+
+	      sCommand = "mount " + d.sOsMountDir;
+	      LOG->Trace( "executing '%s'", sCommand.c_str() );
+	      if( system(sCommand) == -1 )
+		LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
+	    }
+
+	  if( !vDisconnects.empty() || !vConnects.empty() )	  
+	    {
+	      LockMut( m_StorageDevicesChangedMutex );
+	      m_bStorageDevicesChanged = true;
+	    }
+
 	  vDevicesLastSeen = vDevicesNow;
 	}
       usleep( 1000*100 );  // 100 ms
@@ -384,13 +417,20 @@ void MemoryCardDriver_Linux::Flush( UsbStorageDevice* pDevice )
 	// very slow.) -glenn
 	CString sCommand = "mount -o remount " + pDevice->sOsMountDir;
 	LOG->Trace( "executing '%s'", sCommand.c_str() );
-	system( sCommand );
+	if( system(sCommand) == -1 )
+	  LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
+
 }
 
 void MemoryCardDriver_Linux::ResetUsbStorage()
 {
-	system( "rmmod usb-storage" );
-	system( "modprobe usb-storage" );
+  CString sCommand;
+  sCommand = "rmmod usb-storage";
+  if( system(sCommand) == -1 )
+    LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
+  sCommand = "modprobe usb-storage";
+  if( system(sCommand) == -1 )
+    LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
 }
 
 
