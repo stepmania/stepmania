@@ -379,7 +379,7 @@ CString SongManager::GetGroupBannerPath( CString sGroupName )
 
 void SongManager::GetGroupNames( CStringArray &AddTo )
 {
-	AddTo.Copy( m_arrayGroupNames );
+	AddTo.insert(AddTo.end(), m_arrayGroupNames.begin(), m_arrayGroupNames.end() );
 }
 
 D3DXCOLOR SongManager::GetGroupColor( const CString &sGroupName )

@@ -860,7 +860,7 @@ void Update()
 
 
 	static InputEventArray ieArray;
-	ieArray.SetSize( 0, 20 );	// zero the array
+	ieArray.clear();	// empty the array
 	INPUTFILTER->GetInputEvents( ieArray, fDeltaTime );
 
 	for( int i=0; i<ieArray.GetSize(); i++ )

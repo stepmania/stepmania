@@ -35,8 +35,7 @@ TipDisplay::TipDisplay()
 
 void TipDisplay::SetTips( CStringArray &arrayTips )
 { 
-	m_arrayTips.RemoveAll();
-	m_arrayTips.Copy( arrayTips );
+	m_arrayTips = arrayTips;
 	if( m_arrayTips.GetSize() > 0 )
 		m_textTip.SetText( m_arrayTips[0] );
 }

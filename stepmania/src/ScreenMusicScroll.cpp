@@ -144,8 +144,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 	this->AddChild( &m_Background );
 
 
-	CArray<Song*, Song*> arraySongs;
-	arraySongs.Copy( SONGMAN->m_pSongs );
+	CArray<Song*, Song*> arraySongs = SONGMAN->m_pSongs;
 	SortSongPointerArrayByTitle( arraySongs );
 	
 	m_iNumLines = 0;

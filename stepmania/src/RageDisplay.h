@@ -99,7 +99,7 @@ private:
 	unsigned GetBPP(D3DFORMAT fmt) const;
 	HRESULT SetMode();
 	D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP);
-	D3DXMATRIX& GetTopMatrix() { return m_MatrixStack.ElementAt( m_MatrixStack.GetSize()-1 ); };
+	D3DXMATRIX& GetTopMatrix() { return m_MatrixStack.back(); }
 
 	HWND m_hWnd;
 

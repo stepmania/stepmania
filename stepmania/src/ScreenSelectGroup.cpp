@@ -66,8 +66,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	// This will simply the code a bit, and fix a weird case that 
 	// causes a crash when there are duplicate song names.
 	
-	CArray<Song*, Song*> aAllSongs;
-	aAllSongs.Copy( SONGMAN->m_pSongs );
+	CArray<Song*, Song*> aAllSongs = SONGMAN->m_pSongs;
 
 	// Filter out Songs that can't be played by the current Style
 	for( i=aAllSongs.GetSize()-1; i>=0; i-- )		// foreach Song, back to front
@@ -91,7 +90,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 			asGroupNames.RemoveAt( i );
 	}
 
-	asGroupNames.InsertAt(0, "ALL MUSIC" );
+	asGroupNames.insert(asGroupNames.begin(), "ALL MUSIC" );
 
 	// Add songs to the MusicList.
 	for( int j=0; j < asGroupNames.GetSize(); j++ ) /* for each group */

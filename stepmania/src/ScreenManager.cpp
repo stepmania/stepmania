@@ -241,8 +241,8 @@ void ScreenManager::SetNewScreen( Screen *pNewScreen )
 {
 	RefreshCreditsMessages();
 
-	// move current screen to ScreenToDelete
-	m_ScreensToDelete.Copy( m_ScreenStack );
+	// move current screen(s) to ScreenToDelete
+	m_ScreensToDelete.insert(m_ScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());
 
 	m_ScreenStack.RemoveAll();
 	m_ScreenStack.Add( pNewScreen );

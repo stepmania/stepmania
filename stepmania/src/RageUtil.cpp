@@ -37,7 +37,7 @@ float TimeToSeconds( CString sHMS )
 	split( sHMS, ":", arrayBits, false );
 
 	while( arrayBits.GetSize() < 3 )
-		arrayBits.InsertAt( 0, "0" );	// pad missing bits
+		arrayBits.insert(arrayBits.begin(), "0" );	// pad missing bits
 
 	float fSeconds = 0;
 	fSeconds += atoi( arrayBits[0] ) * 60 * 60;
@@ -98,15 +98,14 @@ CString join( const CString &Deliminator, const CStringArray& Source)
 	if( Source.GetSize() == 0 )
 		return "";
 
-	CString csReturn;
 	CString csTmp;
 
 	// Loop through the Array and Append the Deliminator
 	for( int iNum = 0; iNum < Source.GetSize()-1; iNum++ ) {
-		csTmp += Source.GetAt(iNum);
+		csTmp += Source[iNum];
 		csTmp += Deliminator;
 	}
-	csTmp += Source.GetAt( Source.GetSize()-1 );
+	csTmp += Source.back();
 	return csTmp;
 }
 
