@@ -278,6 +278,10 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 	ASSERT( m_pTexture != NULL );
 
 	// flip active texture
+	/* Hmm.  GetD3DTexture says "Return the front buffer because it's guaranteed
+	 * that CTextureRenderer doesn't have it locked."  But what happens if we somehow
+	 * get two movie frames while whoever called GetD3DTexture is still working with
+	 * it?  Maybe we should triple buffer, just to be sure. */
 	m_pTexture->Flip();
 
     return S_OK;
