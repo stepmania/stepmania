@@ -67,6 +67,11 @@ if test "$with_vorbis" = "yes" -a "$have_vorbis" = "no"; then
 	fi
 fi
 
+if test "$have_vorbis" = "no"; then
+	AC_DEFINE(NO_VORBIS_SUPPORT, 1, [Vorbis support not available])
+fi
+
+
 AM_CONDITIONAL(HAVE_VORBIS, test "$have_vorbis" = "yes" )
 
 
