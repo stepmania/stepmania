@@ -276,8 +276,16 @@ struct CompareSongPointerArrayBySectionName
 	CompareSongPointerArrayBySectionName( SongSortOrder so_ ): so(so_) { }
 	bool operator() (const Song *p1, const Song *p2) const
 	{
-		return MusicWheel::GetSectionNameFromSongAndSort( p1, so ) < 
-			   MusicWheel::GetSectionNameFromSongAndSort( p2, so );
+		CString sec1 = MusicWheel::GetSectionNameFromSongAndSort( p1, so );
+		CString sec2 = MusicWheel::GetSectionNameFromSongAndSort( p2, so );
+		/* In the TITLE sort, make sure NUM comes first and OTHER comes last. */
+
+		if(so == SORT_TITLE && sec1 == "NUM" && sec2 != "NUM") return true;
+		if(so == SORT_TITLE && sec1 != "NUM" && sec2 == "NUM") return false;
+		if(so == SORT_TITLE && sec1 != "OTHER" && sec2 == "OTHER") return true;
+		if(so == SORT_TITLE && sec1 == "OTHER" && sec2 != "OTHER") return false;
+
+		return sec1 < sec2;
 	}
 };
 
