@@ -4,7 +4,7 @@
 #include "PlayerOptions.h"
 #include "GameConstantsAndTypes.h"
 #include "BGAnimation.h"
-//#include "StyleDef.h"
+//#include "Style.h"
 
 enum CBGACLEAREDSTATES
 {
@@ -30,7 +30,7 @@ struct BgaCondInfo
 	vector<int> songdows;
 	vector<int> songmonths;
 	vector<int> grades;
-	vector<const StyleDef*> styles;
+	vector<const Style*> styles;
 	PlayerOptions disallowedpo;
 	bool dpoused; // indicate if disallowed po has been set
 };

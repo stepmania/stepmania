@@ -22,7 +22,7 @@ ScreenStyleSplash::ScreenStyleSplash( CString sName ) : ScreenWithMenuElements( 
 	SOUND->StopMusic();
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;	
-	CString sStyleName = GAMESTATE->GetCurrentStyleDef()->m_szName;
+	CString sStyleName = GAMESTATE->GetCurrentStyle()->m_szName;
 
 	LOG->Trace( ssprintf("ScreenStyleSplash: Displaying Splash for style: %s", sStyleName.c_str()));
 

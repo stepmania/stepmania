@@ -105,7 +105,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	EditMenu::Action action		= m_Selector.GetSelectedAction();
 
 	GAMESTATE->m_pCurSong = pSong;
-	GAMESTATE->m_pCurStyleDef = GAMEMAN->GetEditorStyleForNotesType( st );
+	GAMESTATE->m_pCurStyle = GAMEMAN->GetEditorStyleForNotesType( st );
 	GAMESTATE->m_pCurSteps[PLAYER_1] = pSteps;
 
 	//

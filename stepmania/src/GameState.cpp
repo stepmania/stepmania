@@ -101,7 +101,7 @@ void GameState::Reset()
 	ASSERT( THEME );
 
 	m_timeGameStarted.SetZero();
-	m_pCurStyleDef = NULL;
+	m_pCurStyle = NULL;
 	FOREACH_PlayerNumber( p )
 		m_bSideIsJoined[p] = false;
 	m_bPlayersFinalized = false;
@@ -228,7 +228,7 @@ void CheckStageStats( const StageStats &ss, int p )
 		CHECKPOINT_M( ss.pSong->GetFullTranslitTitle() );
 	ASSERT( ss.pSteps[p] );
 	ASSERT_M( ss.playMode < NUM_PLAY_MODES, ssprintf("playmode %i", ss.playMode) );
-	ASSERT( ss.pStyleDef != NULL );
+	ASSERT( ss.pStyle != NULL );
 	ASSERT_M( ss.pSteps[p]->GetDifficulty() < NUM_DIFFICULTIES, ssprintf("difficulty %i", ss.pSteps[p]->GetDifficulty()) );
 	/* Meter values can exceed MAX_METER; MAX_METER is just the highest meter value we
 	 * display/track. */
@@ -287,7 +287,7 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 	const int iMeter = clamp( ss.iMeter[p], 0, MAX_METER );
 
 	pProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
-	pProfile->m_iNumSongsPlayedByStyle[ss.pStyleDef]++;
+	pProfile->m_iNumSongsPlayedByStyle[ss.pStyle]++;
 	pProfile->m_iNumSongsPlayedByDifficulty[ss.pSteps[p]->GetDifficulty()]++;
 	pProfile->m_iNumSongsPlayedByMeter[iMeter]++;
 	pProfile->m_iTotalDancePoints += ss.iActualDancePoints[p];
@@ -744,7 +744,7 @@ CString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
 
 bool GameState::PlayersCanJoin() const
 {
-	return GetNumSidesJoined() == 0 || this->m_pCurStyleDef == NULL;	// selecting a style finalizes the players
+	return GetNumSidesJoined() == 0 || this->m_pCurStyle == NULL;	// selecting a style finalizes the players
 }
 
 bool GameState::EnoughCreditsToJoin() const
@@ -777,7 +777,7 @@ GameDef* GameState::GetCurrentGameDef()
 	return GAMEMAN->GetGameDefForGame( m_CurGame );
 }
 
-const StyleDef* GameState::GetCurrentStyleDef() const
+const Style* GameState::GetCurrentStyle() const
 {
 	/*
 	// HACK: if we're in TM doing PLAY_MODE_BATTLE or PLAY_MODE_RAVE,
@@ -785,10 +785,10 @@ const StyleDef* GameState::GetCurrentStyleDef() const
 	// What is the problem that this is fixing? -Chris
 	if( m_CurGame == GAME_TECHNO &&
 		( m_PlayMode == PLAY_MODE_BATTLE || m_PlayMode == PLAY_MODE_RAVE ) )
-		return GAMEMAN->GetStyleDefForStyle( STYLE_TECHNO_VERSUS8 );
+		return GAMEMAN->GetStyleForStyle( STYLE_TECHNO_VERSUS8 );
 	*/
 
-	return m_pCurStyleDef;
+	return m_pCurStyle;
 }
 
 
@@ -816,12 +816,12 @@ int	GameState::GetNumPlayersEnabled() const
 
 bool GameState::PlayerUsingBothSides() const
 {
-	return this->GetCurrentStyleDef()->m_StyleType==StyleDef::ONE_PLAYER_TWO_CREDITS;
+	return this->GetCurrentStyle()->m_StyleType==Style::ONE_PLAYER_TWO_CREDITS;
 }
 
 bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 {
-	if( m_pCurStyleDef == NULL )	// no style chosen
+	if( m_pCurStyle == NULL )	// no style chosen
 	{
 		if( this->PlayersCanJoin() )	
 			return m_bSideIsJoined[pn];	// only allow input from sides that have already joined
@@ -829,12 +829,12 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 			return true;	// if we can't join, then we're on a screen like MusicScroll or GameOver
 	}
 
-	switch( GetCurrentStyleDef()->m_StyleType )
+	switch( GetCurrentStyle()->m_StyleType )
 	{
-	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
+	case Style::TWO_PLAYERS_TWO_CREDITS:
 		return true;
-	case StyleDef::ONE_PLAYER_ONE_CREDIT:
-	case StyleDef::ONE_PLAYER_TWO_CREDITS:
+	case Style::ONE_PLAYER_ONE_CREDIT:
+	case Style::ONE_PLAYER_TWO_CREDITS:
 		return pn == m_MasterPlayerNumber;
 	default:
 		ASSERT(0);		// invalid style type
@@ -1346,7 +1346,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			CHECKPOINT;
 			unsigned i, j;
 
-			StepsType st = this->GetCurrentStyleDef()->m_StepsType;
+			StepsType st = this->GetCurrentStyle()->m_StepsType;
 
 			//
 			// Find unique Song and Steps combinations that were played.
@@ -1751,7 +1751,7 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 			return false;
 		if( asDiff.find(cd) == asDiff.end() )
 			continue; /* not available */
-		if( !pCourse || pCourse->GetTrail( GAMESTATE->GetCurrentStyleDef()->m_StepsType, cd ) )
+		if( !pCourse || pCourse->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType, cd ) )
 			break;
 	}
 
@@ -1804,7 +1804,7 @@ LuaFunction_NoArgs( IsExtraStage,			GAMESTATE->IsExtraStage() )
 LuaFunction_NoArgs( IsExtraStage2,			GAMESTATE->IsExtraStage2() )
 LuaFunction_NoArgs( CourseSongIndex,		GAMESTATE->GetCourseSongIndex() )
 LuaFunction_NoArgs( PlayModeName,			PlayModeToString(GAMESTATE->m_PlayMode) )
-LuaFunction_NoArgs( CurStyleName,			CString( GAMESTATE->m_pCurStyleDef == NULL ? "none": GAMESTATE->GetCurrentStyleDef()->m_szName ) )
+LuaFunction_NoArgs( CurStyleName,			CString( GAMESTATE->m_pCurStyle == NULL ? "none": GAMESTATE->GetCurrentStyle()->m_szName ) )
 LuaFunction_NoArgs( GetNumPlayersEnabled,	GAMESTATE->GetNumPlayersEnabled() )
 LuaFunction_NoArgs( PlayerUsingBothSides,	GAMESTATE->PlayerUsingBothSides() )
 LuaFunction_NoArgs( GetEasiestNotesDifficulty, GAMESTATE->GetEasiestNotesDifficulty() )

@@ -101,7 +101,7 @@ void ScreenEvaluation::Init()
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2, false);
 
 		GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
-		GAMESTATE->m_pCurStyleDef = GAMEMAN->GameAndStringToStyle( GAME_DANCE, "versus" );
+		GAMESTATE->m_pCurStyle = GAMEMAN->GameAndStringToStyle( GAME_DANCE, "versus" );
 		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
@@ -942,7 +942,7 @@ void ScreenEvaluation::CommitScores(
 			memcpy( hs.iHoldNoteScores, stageStats.iHoldNoteScores[p], sizeof(hs.iHoldNoteScores) );
 			memcpy( hs.fRadarActual, stageStats.fRadarActual[p], sizeof(hs.fRadarActual) );
 
-			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 
 			switch( m_Type )
 			{
@@ -1007,7 +1007,7 @@ void ScreenEvaluation::CommitScores(
 
 			HighScore &hs = m_HighScore[p];
 			Profile* pProfile = PROFILEMAN->GetMachineProfile();
-			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 
 			const HighScoreList *pHSL = NULL;
 			switch( m_Type )
@@ -1413,7 +1413,7 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 
 	if( GameI.IsValid() )
 	{
-		PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
+		PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( GameI.controller );
 		HighScore &hs = m_HighScore[pn];
 
 

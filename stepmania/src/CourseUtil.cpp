@@ -6,7 +6,7 @@
 #include "SongManager.h"
 #include "XmlFile.h"
 #include "GameState.h"
-#include "StyleDef.h"
+#include "Style.h"
 
 
 //
@@ -100,14 +100,14 @@ void CourseUtil::SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses 
 void CourseUtil::SortCoursePointerArrayByRanking( vector<Course*> &apCourses )
 {
 	for(unsigned i=0; i<apCourses.size(); i++)
-		apCourses[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+		apCourses[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyle()->m_StepsType );
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByRanking );
 }
 
 void CourseUtil::SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses )
 {
 	for(unsigned i=0; i<apCourses.size(); i++)
-		apCourses[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+		apCourses[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyle()->m_StepsType );
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTotalDifficulty );
 }
 
@@ -149,7 +149,7 @@ void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCours
 	course_sort_val.clear();
 	for(unsigned i = 0; i < apCourses.size(); ++i)
 	{
-		const Trail* pTrail = apCourses[i]->GetTrail( GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+		const Trail* pTrail = apCourses[i]->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType );
 		course_sort_val[apCourses[i]] = pTrail != NULL? (float) pTrail->GetMeter(): 0.0f;
 	}
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTitle );

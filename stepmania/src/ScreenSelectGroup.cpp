@@ -48,7 +48,7 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuEleme
 		if( UNLOCKMAN->SongIsLocked( aAllSongs[j] ) )
 			DisplaySong = false;
 		
-		if( aAllSongs[j]->SongCompleteForStyle(GAMESTATE->GetCurrentStyleDef()) && 
+		if( aAllSongs[j]->SongCompleteForStyle(GAMESTATE->GetCurrentStyle()) && 
 			DisplaySong )
 			continue;
 

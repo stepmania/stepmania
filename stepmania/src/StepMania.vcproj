@@ -870,13 +870,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="StepsUtil.h">
 			</File>
 			<File
+				RelativePath="Style.cpp">
+			</File>
+			<File
 				RelativePath="Style.h">
-			</File>
-			<File
-				RelativePath=".\StyleDef.cpp">
-			</File>
-			<File
-				RelativePath=".\StyleDef.h">
 			</File>
 			<File
 				RelativePath="StyleInput.h">

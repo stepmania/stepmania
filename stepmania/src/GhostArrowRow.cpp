@@ -20,9 +20,9 @@ void GhostArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffs
 	m_PlayerNumber = pn;
 	m_fYReverseOffsetPixels = fYReverseOffset;
 
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
-	m_iNumCols = pStyleDef->m_iColsPerPlayer;
+	m_iNumCols = pStyle->m_iColsPerPlayer;
 
 	// init arrows
 	for( int c=0; c<m_iNumCols; c++ ) 

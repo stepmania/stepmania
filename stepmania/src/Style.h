@@ -1,7 +1,7 @@
-/* StyleDef - A data structure that holds the definition for one of a Game's styles. */
+/* Style - A data structure that holds the definition for one of a Game's styles. */
 
-#ifndef STYLEDEF_H
-#define STYLEDEF_H
+#ifndef STYLE_H
+#define STYLE_H
 
 #include "StyleInput.h"
 #include "GameInput.h"
@@ -15,7 +15,7 @@ const int MAX_COLS_PER_PLAYER = MAX_NOTE_TRACKS;
 
 class NoteData;
 
-class StyleDef
+class Style
 {
 public:
 	Game		m_Game;				// Which Game is this Style used with?

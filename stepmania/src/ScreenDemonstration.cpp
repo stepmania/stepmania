@@ -20,7 +20,7 @@ const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+10);	// MUST be sam
 
 bool PrepareForDemonstration()		// always return true.
 {
-	GAMESTATE->m_pCurStyleDef = GAMEMAN->GetDemonstrationStyleForGame(GAMESTATE->m_CurGame);
+	GAMESTATE->m_pCurStyle = GAMEMAN->GetDemonstrationStyleForGame(GAMESTATE->m_CurGame);
 
 	GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 

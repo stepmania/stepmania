@@ -9,7 +9,7 @@
 #include "TimingData.h"
 
 class Steps;
-class StyleDef;
+class Style;
 class NotesLoader;
 class LyricsLoader;
 class Profile;
@@ -170,7 +170,7 @@ public:
 	float GetElapsedTimeFromBeat( float fBeat ) const { return m_Timing.GetElapsedTimeFromBeat( fBeat ); }
 	bool HasSignificantBpmChangesOrStops() const;
 
-	bool SongCompleteForStyle( const StyleDef *st ) const;
+	bool SongCompleteForStyle( const Style *st ) const;
 	bool HasStepsType( StepsType st ) const;
 	bool HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const;
 	const vector<Steps*>& GetAllSteps( StepsType st=STEPS_TYPE_INVALID ) const { return st==STEPS_TYPE_INVALID? m_vpSteps:m_vpStepsByType[st]; }

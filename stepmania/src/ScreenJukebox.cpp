@@ -74,7 +74,7 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 			continue;	// skip
 
 		Difficulty dc = vDifficultiesToShow[ rand()%vDifficultiesToShow.size() ];
-		Steps* pSteps = pSong->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, dc );
+		Steps* pSteps = pSong->GetStepsByDifficulty( GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
 
 		if( pSteps == NULL )
 			continue;	// skip
@@ -96,7 +96,7 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 bool ScreenJukebox::PrepareForJukebox( bool bDemonstration )		// always return true.
 {
 	// ScreeJukeboxMenu must set this
-	ASSERT( GAMESTATE->m_pCurStyleDef );
+	ASSERT( GAMESTATE->m_pCurStyle );
 	GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 
 	SetSong( bDemonstration );

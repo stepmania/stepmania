@@ -3,7 +3,7 @@
 #include "song.h"
 #include "Steps.h"
 #include "GameState.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "ProfileManager.h"
 #include "PrefsManager.h"
 #include "SongManager.h"
@@ -77,7 +77,7 @@ void SongUtil::SortSongPointerArrayByTitle( vector<Song*> &arraySongPointers )
 static int GetSongSortDifficulty(const Song *pSong)
 {
 	vector<Steps*> aNotes;
-	pSong->GetSteps( aNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+	pSong->GetSteps( aNotes, GAMESTATE->GetCurrentStyle()->m_StepsType );
 
 	/* Sort by the first difficulty found in the following order: */
 	const Difficulty d[] = { DIFFICULTY_EASY, DIFFICULTY_MEDIUM, DIFFICULTY_HARD,
@@ -151,7 +151,7 @@ void SongUtil::SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers )
 		Song *pSong = arraySongPointers[i];
 
 		int iCounts[NUM_GRADES];
-		PROFILEMAN->GetMachineProfile()->GetGrades( pSong, GAMESTATE->GetCurrentStyleDef()->m_StepsType, iCounts );
+		PROFILEMAN->GetMachineProfile()->GetGrades( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, iCounts );
 
 		CString foo;
 		foo.reserve(256);
@@ -276,7 +276,7 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 	case SORT_GRADE:
 		{
 			int iCounts[NUM_GRADES];
-			PROFILEMAN->GetMachineProfile()->GetGrades( pSong, GAMESTATE->GetCurrentStyleDef()->m_StepsType, iCounts );
+			PROFILEMAN->GetMachineProfile()->GetGrades( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, iCounts );
 
 			for( int i=GRADE_TIER_1; i<NUM_GRADES; ++i )
 			{
@@ -288,28 +288,28 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 		}
 	case SORT_EASY_METER:
 		{
-			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_EASY);
+			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_EASY);
 			if( pSteps )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return "N/A";
 		}
 	case SORT_MEDIUM_METER:
 		{
-			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_MEDIUM);
+			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_MEDIUM);
 			if( pSteps )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return "N/A";
 		}
 	case SORT_HARD_METER:
 		{
-			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_HARD);
+			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_HARD);
 			if( pSteps )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return "N/A";
 		}
 	case SORT_CHALLENGE_METER:
 		{
-			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_CHALLENGE);
+			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_CHALLENGE);
 			if( pSteps )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return "N/A";
@@ -350,7 +350,7 @@ void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Di
 	song_sort_val.clear();
 	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
 	{
-		Steps* pSteps = arraySongPointers[i]->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, dc );
+		Steps* pSteps = arraySongPointers[i]->GetStepsByDifficulty( GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
 		CString &s = song_sort_val[arraySongPointers[i]];
 		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
 		if( PREFSMAN->m_bSubSortByNumSteps )

@@ -10,7 +10,7 @@
 #include "GameState.h"
 #include "MemoryCardManager.h"
 #include "RageLog.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "GameManager.h"
 #include "SongUtil.h"
 #include "ScreenManager.h"
@@ -36,7 +36,7 @@ CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 	case PERCENT_COMPLETE_CHALLENGE:
 		// Ugly...
 		{
-			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 			CString sStepsType = GAMEMAN->NotesTypeToThemedString(st);
 			if( GAMESTATE->IsCourseMode() )
 			{
@@ -72,7 +72,7 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 	case PERCENT_COMPLETE_CHALLENGE:
 		// Ugly...
 		{
-			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 			CString sStepsType = GAMEMAN->NotesTypeToThemedString(st);
 			if( GAMESTATE->IsCourseMode() )
 			{
@@ -102,7 +102,7 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2, false);
 
 		GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
-		GAMESTATE->m_pCurStyleDef = GAMEMAN->GameAndStringToStyle( GAME_DANCE, "versus" );
+		GAMESTATE->m_pCurStyle = GAMEMAN->GameAndStringToStyle( GAME_DANCE, "versus" );
 		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;

@@ -6,7 +6,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "Course.h"
-#include "StyleDef.h"
+#include "Style.h"
 
 
 #define NORMAL_COLOR		THEME->GetMetricC(m_sName,"NormalColor")
@@ -193,7 +193,7 @@ void BPMDisplay::SetBPM( const Course* pCourse )
 {
 	ASSERT( pCourse );
 
-	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 	Trail *pTrail = pCourse->GetTrail( st );
 	ASSERT( pTrail );
 

@@ -19,9 +19,9 @@ void ReceptorArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseO
 	m_PlayerNumber = pn;
 	m_fYReverseOffsetPixels = fYReverseOffset;
 
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
-	m_iNumCols = pStyleDef->m_iColsPerPlayer;
+	m_iNumCols = pStyle->m_iColsPerPlayer;
 
 	for( int c=0; c<m_iNumCols; c++ ) 
 		m_ReceptorArrow[c].Load( NoteSkin, m_PlayerNumber, c );

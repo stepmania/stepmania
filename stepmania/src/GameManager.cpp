@@ -1184,7 +1184,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 	},
 };
 
-StyleDef g_StyleDefs[] = 
+Style g_Styles[] = 
 {
 	{	// STYLE_DANCE_SINGLE
 		GAME_DANCE,								// m_Game
@@ -1194,7 +1194,7 @@ StyleDef g_StyleDefs[] =
 		true,									// m_bUsedForHowToPlay
 		"single",								// m_szName
 		STEPS_TYPE_DANCE_SINGLE,				// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		4,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1225,7 +1225,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"versus",								// m_szName
 		STEPS_TYPE_DANCE_SINGLE,				// m_StepsType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
+		Style::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		4,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1256,7 +1256,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"double",								// m_szName
 		STEPS_TYPE_DANCE_DOUBLE,				// m_StepsType
-		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
+		Style::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1295,7 +1295,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"couple",							// m_szName
 		STEPS_TYPE_DANCE_COUPLE,	// m_StepsType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
+		Style::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
 		{ 160, 480 },						// m_iCenterX
 		4,									// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1326,7 +1326,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"solo",								// m_szName
 		STEPS_TYPE_DANCE_SOLO,				// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
 		{ 320, 320 },						// m_iCenterX
 		6,									// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1361,7 +1361,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"couple-edit",						// m_szName
 		STEPS_TYPE_DANCE_COUPLE,				// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1395,7 +1395,7 @@ StyleDef g_StyleDefs[] =
 /*	{	// STYLE_DANCE_SOLO_VERSUS 
 		"dance-solo-versus",				// m_szName
  		STEPS_TYPE_DANCE_SOLO,				// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
 		{ 160, 480 },						// m_iCenterX
 		6,									// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1430,7 +1430,7 @@ StyleDef g_StyleDefs[] =
 		true,									// m_bUsedForHowToPlay
 		"single",								// m_szName
 		STEPS_TYPE_PUMP_SINGLE,					// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1463,7 +1463,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"versus",								// m_szName
 		STEPS_TYPE_PUMP_SINGLE,					// m_StepsType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
+		Style::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1496,7 +1496,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"halfdouble",								// m_szName
 		STEPS_TYPE_PUMP_HALFDOUBLE,					// m_StepsType
-		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
+		Style::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		6,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1531,7 +1531,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"double",								// m_szName
 		STEPS_TYPE_PUMP_DOUBLE,					// m_StepsType
-		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
+		Style::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		10,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1574,7 +1574,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"couple",								// m_szName
 		STEPS_TYPE_PUMP_COUPLE,					// m_StepsType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
+		Style::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1607,7 +1607,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"couple-edit",						// m_szName
 		STEPS_TYPE_PUMP_COUPLE,					// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		10,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1645,7 +1645,7 @@ StyleDef g_StyleDefs[] =
 		true,									// m_bUsedForHowToPlay
 		"single",								// m_szName
 		STEPS_TYPE_EZ2_SINGLE,					// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1678,7 +1678,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"real",									// m_szName
 		STEPS_TYPE_EZ2_REAL,					// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		7,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1715,7 +1715,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"versus",								// m_szName
 		STEPS_TYPE_EZ2_SINGLE,					// m_StepsType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
+		Style::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1748,7 +1748,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"versusReal",							// m_szName
 		STEPS_TYPE_EZ2_REAL,					// m_StepsType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
+		Style::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		7,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1785,7 +1785,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"double",								// m_szName
 		STEPS_TYPE_EZ2_DOUBLE,					// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		10,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1828,7 +1828,7 @@ StyleDef g_StyleDefs[] =
 		true,									// m_bUsedForHowToPlay
 		"single",								// m_szName
 		STEPS_TYPE_PARA_SINGLE,						// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1861,7 +1861,7 @@ StyleDef g_StyleDefs[] =
 		true,									// m_bUsedForHowToPlay
 		"single",								// m_szName
 		STEPS_TYPE_DS3DDX_SINGLE,						// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1900,7 +1900,7 @@ StyleDef g_StyleDefs[] =
 		true,									// m_bUsedForHowToPlay
 		"single",								// m_szName
 		STEPS_TYPE_BM_SINGLE,					// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		6,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1935,7 +1935,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"double",								// m_szName
 		STEPS_TYPE_BM_DOUBLE,					// m_StepsType
-		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
+		Style::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		12,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1982,7 +1982,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"single7",								// m_szName
 		STEPS_TYPE_IIDX_SINGLE7,				// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2021,7 +2021,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"double7",								// m_szName
 		STEPS_TYPE_IIDX_DOUBLE7,				// m_StepsType
-		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
+		Style::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		16,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2076,7 +2076,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"single5",								// m_szName
 		STEPS_TYPE_IIDX_SINGLE5,				// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2115,7 +2115,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"double5",								// m_szName
 		STEPS_TYPE_IIDX_DOUBLE5,				// m_StepsType
-		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
+		Style::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		16,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2170,7 +2170,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"single5-edit",						// m_szName
 		STEPS_TYPE_IIDX_SINGLE5,				// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2209,7 +2209,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"double5-edit",						// m_szName
 		STEPS_TYPE_IIDX_DOUBLE5,				// m_StepsType
-		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
+		Style::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		16,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2264,7 +2264,7 @@ StyleDef g_StyleDefs[] =
 		true,									// m_bUsedForHowToPlay
 		"single",								// m_szName
 		STEPS_TYPE_MANIAX_SINGLE,				// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		4,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2295,7 +2295,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"versus",								// m_szName
 		STEPS_TYPE_MANIAX_SINGLE,				// m_StepsType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
+		Style::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		4,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2326,7 +2326,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"double",								// m_szName
 		STEPS_TYPE_MANIAX_DOUBLE,				// m_StepsType
-		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
+		Style::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2365,7 +2365,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"single4",								// m_szName
 		STEPS_TYPE_TECHNO_SINGLE4,				// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 112, 528 },							// m_iCenterX
 		4,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2396,7 +2396,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"single5",								// m_szName
 		STEPS_TYPE_TECHNO_SINGLE5,				// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 140, 500 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2429,7 +2429,7 @@ StyleDef g_StyleDefs[] =
 		true,									// m_bUsedForHowToPlay
 		"single8",								// m_szName
 		STEPS_TYPE_TECHNO_SINGLE8,				// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 224, 416 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2468,7 +2468,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"versus4",								// m_szName
 		STEPS_TYPE_TECHNO_SINGLE4,				// m_StepsType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
+		Style::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 112, 528 },							// m_iCenterX
 		4,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2499,7 +2499,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"versus5",								// m_szName
 		STEPS_TYPE_TECHNO_SINGLE5,				// m_StepsType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
+		Style::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 140, 500 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2532,7 +2532,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"versus8",								// m_szName
 		STEPS_TYPE_TECHNO_SINGLE8,				// m_StepsType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
+		Style::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 132, 508 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2571,7 +2571,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"double4",								// m_szName
 		STEPS_TYPE_TECHNO_DOUBLE4,				// m_StepsType
-		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
+		Style::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2610,7 +2610,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"double5",								// m_szName
 		STEPS_TYPE_TECHNO_DOUBLE5,				// m_StepsType
-		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
+		Style::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		10,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2653,7 +2653,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"pnm-five",								// m_szName
 		STEPS_TYPE_PNM_FIVE,				// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2686,7 +2686,7 @@ StyleDef g_StyleDefs[] =
 		true,									// m_bUsedForHowToPlay
 		"pnm-nine",								// m_szName
 		STEPS_TYPE_PNM_NINE,				// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		9,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2727,7 +2727,7 @@ StyleDef g_StyleDefs[] =
 		false,									// m_bUsedForHowToPlay
 		"cabinet",								// m_szName
 		STEPS_TYPE_LIGHTS_CABINET,				// m_StepsType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		NUM_CABINET_LIGHTS,						// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2760,7 +2760,7 @@ StyleDef g_StyleDefs[] =
 	},
 };
 
-#define NUM_STYLES ARRAYSIZE(g_StyleDefs)
+#define NUM_STYLES ARRAYSIZE(g_Styles)
 
 
 GameManager::GameManager()
@@ -2777,11 +2777,11 @@ GameDef* GameManager::GetGameDefForGame( Game g )
 	return &g_GameDefs[ g ];
 }
 
-void GameManager::GetStylesForGame( Game game, vector<const StyleDef*>& aStylesAddTo, bool editor )
+void GameManager::GetStylesForGame( Game game, vector<const Style*>& aStylesAddTo, bool editor )
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
-		const StyleDef* style = &g_StyleDefs[s];
+		const Style* style = &g_Styles[s];
 		if( style->m_Game != game)
 			continue;
 		if( !editor && !style->m_bUsedForGameplay )	
@@ -2793,16 +2793,16 @@ void GameManager::GetStylesForGame( Game game, vector<const StyleDef*>& aStylesA
 	}
 }
 
-const StyleDef* GameManager::GetEditorStyleForNotesType( StepsType st )
+const Style* GameManager::GetEditorStyleForNotesType( StepsType st )
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
-		const StyleDef* style = &g_StyleDefs[s];
+		const Style* style = &g_Styles[s];
 		if( style->m_StepsType == st && style->m_bUsedForEdit )
 			return style;
 	}
 
-	ASSERT(0);	// this Game is missing a StyleDef that can be used with the editor
+	ASSERT(0);	// this Game is missing a Style that can be used with the editor
 	return NULL;
 }
 
@@ -2814,7 +2814,7 @@ void GameManager::GetNotesTypesForGame( Game game, vector<StepsType>& aNotesType
 		bool found = false;
 		for( unsigned s=0; !found && s<NUM_STYLES; s++ )
 		{
-			const StyleDef* style = &g_StyleDefs[s];
+			const Style* style = &g_Styles[s];
 			if( style->m_Game != game )
 				continue;
 			for( int pl = 0; !found && pl < NUM_PLAYERS; ++pl)
@@ -2830,29 +2830,29 @@ void GameManager::GetNotesTypesForGame( Game game, vector<StepsType>& aNotesType
 	}
 }
 
-const StyleDef* GameManager::GetDemonstrationStyleForGame( Game game )
+const Style* GameManager::GetDemonstrationStyleForGame( Game game )
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
-		const StyleDef* style = &g_StyleDefs[s];
+		const Style* style = &g_Styles[s];
 		if( style->m_Game == game && style->m_bUsedForDemonstration )
 			return style;
 	}
 
-	ASSERT(0);	// this Game is missing a StyleDef that can be used with the demonstration
+	ASSERT(0);	// this Game is missing a Style that can be used with the demonstration
 	return NULL;
 }
 
-const StyleDef* GameManager::GetHowToPlayStyleForGame( Game game )
+const Style* GameManager::GetHowToPlayStyleForGame( Game game )
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
-		const StyleDef* style = &g_StyleDefs[s];
+		const Style* style = &g_Styles[s];
 		if( style->m_Game == game && style->m_bUsedForHowToPlay )
 			return style;
 	}
 
-	ASSERT(0);	// this Game is missing a StyleDef that can be used with HowToPlay
+	ASSERT(0);	// this Game is missing a Style that can be used with HowToPlay
 	return NULL;
 }
 
@@ -2930,7 +2930,7 @@ CString GameManager::NotesTypeToThemedString( StepsType st )
 		return s;
 }
 
-CString GameManager::StyleToThemedString( const StyleDef* style )
+CString GameManager::StyleToThemedString( const Style* style )
 {
 	CString s = style->m_szName;
 	s = Capitalize( s );
@@ -2950,11 +2950,11 @@ Game GameManager::StringToGameType( CString sGameType )
 }
 
 
-const StyleDef* GameManager::GameAndStringToStyle( Game game, CString sStyle )
+const Style* GameManager::GameAndStringToStyle( Game game, CString sStyle )
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
-		const StyleDef* style = &g_StyleDefs[s];
+		const Style* style = &g_Styles[s];
 		if( style->m_Game != game )
 			continue;
 		if( sStyle.CompareNoCase(style->m_szName) == 0 )

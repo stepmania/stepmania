@@ -40,7 +40,7 @@ const CString PUBLIC_KEY_FILE		= "public.key";
 const CString SCREENSHOTS_SUBDIR	= "Screenshots/";
 const CString EDITS_SUBDIR			= "Edits/";
 
-class StyleDef;
+class Style;
 
 class Song;
 class Steps;
@@ -111,7 +111,7 @@ public:
 	set<int> m_UnlockedSongs;
 	mutable CString m_sLastPlayedMachineGuid;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
 	int m_iNumSongsPlayedByPlayMode[NUM_PLAY_MODES];
-	map<const StyleDef*,int> m_iNumSongsPlayedByStyle;
+	map<const Style*,int> m_iNumSongsPlayedByStyle;
 	int m_iNumSongsPlayedByDifficulty[NUM_DIFFICULTIES];
 	int m_iNumSongsPlayedByMeter[MAX_METER+1];
 	int m_iNumSongsPassedByPlayMode[NUM_PLAY_MODES];

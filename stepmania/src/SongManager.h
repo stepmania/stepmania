@@ -5,7 +5,7 @@
 
 class LoadingWindow;
 class Song;
-class StyleDef;
+class Style;
 class Course;
 class Steps;
 struct PlayerOptions;
@@ -76,7 +76,7 @@ public:
 	void GetOniCourses( vector<Course*> &AddTo, bool bIncludeAutogen );		// add to if life meter type is BATTERY.
 	void GetEndlessCourses( vector<Course*> &AddTo, bool bIncludeAutogen );	// add to if set to REPEAT.
 
-	void GetExtraStageInfo( bool bExtra2, const StyleDef *s, 
+	void GetExtraStageInfo( bool bExtra2, const Style *s, 
 		Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out );
 
 	Song* GetSongFromDir( CString sDir );

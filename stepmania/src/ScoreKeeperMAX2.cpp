@@ -34,9 +34,9 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Ste
 		/* We might have been given lots of songs; don't keep them in memory uncompressed. */
 		pSteps->Compress();
 
-		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 		NoteData playerNoteData;
-		pStyleDef->GetTransformedNoteDataForStyle( pn_, &notedata, &playerNoteData );
+		pStyle->GetTransformedNoteDataForStyle( pn_, &notedata, &playerNoteData );
 
 		/* Apply transforms to find out how the notes will really look. 
 		 *
@@ -46,7 +46,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Ste
 		 * the last call to StoreSelectedOptions and the modifiers list, but that'd
 		 * mean moving the queues in ScreenGameplay to GameState ... */
 		NoteData playerNoteDataPostModifiers(playerNoteData);
-		NoteDataUtil::TransformNoteData( playerNoteDataPostModifiers, GAMESTATE->m_PlayerOptions[pn_], GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+		NoteDataUtil::TransformNoteData( playerNoteDataPostModifiers, GAMESTATE->m_PlayerOptions[pn_], GAMESTATE->GetCurrentStyle()->m_StepsType );
 
 		for( unsigned j=0; j < asModifiers[i].size(); j++ )
 		{
@@ -57,7 +57,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Ste
 			float fStartBeat, fEndBeat;
 			mod.GetAttackBeats( pSong, m_PlayerNumber, fStartBeat, fEndBeat );
 
-			NoteDataUtil::TransformNoteData( playerNoteDataPostModifiers, po, GAMESTATE->GetCurrentStyleDef()->m_StepsType, fStartBeat, fEndBeat );
+			NoteDataUtil::TransformNoteData( playerNoteDataPostModifiers, po, GAMESTATE->GetCurrentStyle()->m_StepsType, fStartBeat, fEndBeat );
 		}
 
 		RadarValues radarValuesPostModifiers;

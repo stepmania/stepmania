@@ -481,7 +481,7 @@ void PlayerOptions::ToggleOneTurn( Turn t )
 float PlayerOptions::GetReversePercentForColumn( int iCol )
 {
 	float f = 0;
-	int iNumCols = GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer;
+	int iNumCols = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
 
 	f += m_fScrolls[SCROLL_REVERSE];
 	

@@ -489,8 +489,8 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 		bool foundmatchingstyle=false;
 		for(unsigned d=0;d<info.styles.size();d++)
 		{
-			//LOG->Info("info.styles = %d m_CurStyle = %d",info.styles[d],GAMESTATE->m_pCurStyleDef);
-			if(info.styles[d] == GAMESTATE->m_pCurStyleDef)
+			//LOG->Info("info.styles = %d m_CurStyle = %d",info.styles[d],GAMESTATE->m_pCurStyle);
+			if(info.styles[d] == GAMESTATE->m_pCurStyle)
 			{
 				foundmatchingstyle = true;
 				LOG->Info("Found Valid Style");

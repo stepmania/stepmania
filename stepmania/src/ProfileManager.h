@@ -8,7 +8,7 @@
 #include "Profile.h"
 
 class Song;
-class StyleDef;
+class Style;
 
 class ProfileManager
 {
@@ -64,7 +64,7 @@ public:
 	bool IsSongNew( const Song* pSong ) const { return GetSongNumTimesPlayed(pSong,PROFILE_SLOT_MACHINE)==0; }
 	void AddStepsScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps, PlayerNumber pn );
-	HighScore GetHighScoreForDifficulty( const Song *s, const StyleDef *st, ProfileSlot slot, Difficulty dc ) const;
+	HighScore GetHighScoreForDifficulty( const Song *s, const Style *st, ProfileSlot slot, Difficulty dc ) const;
 
 	//
 	// Course stats

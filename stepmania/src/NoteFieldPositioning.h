@@ -2,7 +2,7 @@
 #define NOTEFIELD_POSITIONING_H
 
 #include "PlayerNumber.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "PlayerNumber.h"
 #include "Actor.h"
 
@@ -26,7 +26,7 @@ struct NoteFieldMode
 	CString m_Id;
 
 	/* Styles that this is valid for; empty means all. */
-	set<const StyleDef*> Styles;
+	set<const Style*> Styles;
 
 	Actor m_Center;
 	Actor m_CenterTrack[MAX_NOTE_TRACKS];

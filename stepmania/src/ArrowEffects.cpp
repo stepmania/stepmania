@@ -161,27 +161,27 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYOffset )
 
 	if( fEffects[PlayerOptions::EFFECT_TORNADO] > 0 )
 	{
-		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
 		// TRICKY: Tornado is very unplayable in doubles, so use a smaller
 		// tornado width if there are many columns
-		bool bWideField = pStyleDef->m_iColsPerPlayer > 4;
+		bool bWideField = pStyle->m_iColsPerPlayer > 4;
 		int iTornadoWidth = bWideField ? 2 : 3;
 
 		int iStartCol = iColNum - iTornadoWidth;
 		int iEndCol = iColNum + iTornadoWidth;
-		CLAMP( iStartCol, 0, pStyleDef->m_iColsPerPlayer-1 );
-		CLAMP( iEndCol, 0, pStyleDef->m_iColsPerPlayer-1 );
+		CLAMP( iStartCol, 0, pStyle->m_iColsPerPlayer-1 );
+		CLAMP( iEndCol, 0, pStyle->m_iColsPerPlayer-1 );
 
 		float fMinX = +100000;
 		float fMaxX = -100000;
 		for( int i=iStartCol; i<=iEndCol; i++ )
 		{
-			fMinX = min( fMinX, pStyleDef->m_ColumnInfo[pn][i].fXOffset );
-			fMaxX = max( fMaxX, pStyleDef->m_ColumnInfo[pn][i].fXOffset );
+			fMinX = min( fMinX, pStyle->m_ColumnInfo[pn][i].fXOffset );
+			fMaxX = max( fMaxX, pStyle->m_ColumnInfo[pn][i].fXOffset );
 		}
 
-		const float fRealPixelOffset = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[pn][iColNum].fXOffset;
+		const float fRealPixelOffset = GAMESTATE->GetCurrentStyle()->m_ColumnInfo[pn][iColNum].fXOffset;
 		const float fPositionBetween = SCALE( fRealPixelOffset, fMinX, fMaxX, -1, 1 );
 		float fRads = acosf( fPositionBetween );
 		fRads += fYOffset * 6 / SCREEN_HEIGHT;
@@ -196,7 +196,7 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYOffset )
 	if( fEffects[PlayerOptions::EFFECT_FLIP] > 0 )
 	{
 //		fPixelOffsetFromCenter *= SCALE(fEffects[PlayerOptions::EFFECT_FLIP], 0.f, 1.f, 1.f, -1.f);
-		const float fRealPixelOffset = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[pn][iColNum].fXOffset;
+		const float fRealPixelOffset = GAMESTATE->GetCurrentStyle()->m_ColumnInfo[pn][iColNum].fXOffset;
 		const float fDistance = -fRealPixelOffset * 2;
 		fPixelOffsetFromCenter += fDistance * fEffects[PlayerOptions::EFFECT_FLIP];
 	}
@@ -419,8 +419,8 @@ bool ArrowsNeedZBuffer( PlayerNumber pn )
 
 float ArrowGetZoom( PlayerNumber pn )
 {
-	// FIXME: Move the zoom values into StyleDef
-	if( GAMESTATE->m_pCurStyleDef->m_bNeedsZoomOutWith2Players &&
+	// FIXME: Move the zoom values into Style
+	if( GAMESTATE->m_pCurStyle->m_bNeedsZoomOutWith2Players &&
 		(GAMESTATE->GetNumSidesJoined()==2 || GAMESTATE->AnyPlayersAreCpu()) )
 		return 0.6f;
 	return 1.0f;

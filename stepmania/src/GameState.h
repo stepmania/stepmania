@@ -19,12 +19,12 @@ class Steps;
 class Course;
 class Trail;
 class GameDef;
-class StyleDef;
+class Style;
 class NoteFieldPositioning;
 class Character;
 class TimingData;
 struct StageStats;
-class StyleDef;
+class Style;
 
 class GameState
 {
@@ -46,7 +46,7 @@ public:
 	// Main state info
 	//
 	Game				m_CurGame;
-	const StyleDef*		m_pCurStyleDef;
+	const Style*		m_pCurStyle;
 	bool				m_bSideIsJoined[NUM_PLAYERS];	// left side, right side
 	bool				m_bPlayersFinalized;
 	PlayMode			m_PlayMode;			// many screens display different info depending on this value
@@ -72,7 +72,7 @@ public:
 	int				GetNumSidesJoined() const;
 
 	GameDef*	GetCurrentGameDef();
-	const StyleDef*	GetCurrentStyleDef() const;
+	const Style*	GetCurrentStyle() const;
 
 	void GetPlayerInfo( PlayerNumber pn, bool& bIsEnabledOut, bool& bIsHumanOut );
 	bool IsPlayerEnabled( PlayerNumber pn ) const;

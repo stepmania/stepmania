@@ -7,7 +7,7 @@
 #include "GhostArrow.h"
 #include "HoldGhostArrow.h"
 #include "GameConstantsAndTypes.h"
-#include "StyleDef.h"
+#include "Style.h"
 
 
 

@@ -5,7 +5,7 @@
 #include "GameState.h"
 #include "GameDef.h"
 #include "StyleInput.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "RageUtil.h"
 #include "GameManager.h"
 #include "arch/arch.h"
@@ -185,11 +185,11 @@ RageColor NoteSkinManager::GetMetricC( CString sNoteSkinName, CString sButtonNam
 
 CString NoteSkinManager::ColToButtonName(int col)
 {
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 
 	StyleInput SI( PLAYER_1, col );
-	GameInput GI = pStyleDef->StyleInputToGameInput( SI );
+	GameInput GI = pStyle->StyleInputToGameInput( SI );
 	return pGameDef->m_szButtonNames[GI.button];
 }
 

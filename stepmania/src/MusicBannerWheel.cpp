@@ -16,7 +16,7 @@ TODO:
 #include "SongManager.h"
 #include "ThemeManager.h"
 #include "RageSounds.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "song.h"
 #include "ActorUtil.h"
 

@@ -382,7 +382,7 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	 * XXX: Ack.  This means this function can only be called when we have a style
 	 * set up, which is too restrictive.  How to handle this?
 	 */
-//	const StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+//	const StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 	const vector<Steps*>& vpSteps = pSong->GetAllSteps();
 	for( unsigned i=0; i<vpSteps.size(); i++ )
 	{
@@ -731,7 +731,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 	course.LoadFromCRSFile( sCoursePath );
 	if( course.GetEstimatedNumStages() <= 0 ) return false;
 
-	Trail *pTrail = course.GetTrail( GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+	Trail *pTrail = course.GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType );
 	if( pTrail->m_vEntries.empty() )
 		return false;
 
@@ -763,7 +763,7 @@ bool CompareNotesPointersForExtra(const Steps *n1, const Steps *n2)
 	return StepsUtil::CompareNotesPointersByRadarValues(n1,n2);
 }
 
-void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd, 
+void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, 
 								   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out )
 {
 	CString sGroup = GAMESTATE->m_sPreferredGroup;

@@ -197,9 +197,9 @@ void MusicWheelItem::RefreshGrades()
 			dc = GAMESTATE->m_PreferredDifficulty[p];
 		Grade grade;
 		if( PROFILEMAN->IsUsingProfile((PlayerNumber)p) )
-			grade = PROFILEMAN->GetHighScoreForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyleDef(), (ProfileSlot)p, dc ).grade;
+			grade = PROFILEMAN->GetHighScoreForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyle(), (ProfileSlot)p, dc ).grade;
 		else
-			grade = PROFILEMAN->GetHighScoreForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyleDef(), PROFILE_SLOT_MACHINE, dc ).grade;
+			grade = PROFILEMAN->GetHighScoreForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyle(), PROFILE_SLOT_MACHINE, dc ).grade;
 
 		m_GradeDisplay[p].SetGrade( (PlayerNumber)p, grade );
 	}

@@ -146,7 +146,7 @@ void MusicWheel::Load()
 		SongOptions so;
 		SONGMAN->GetExtraStageInfo(
 			GAMESTATE->IsExtraStage2(),
-			GAMESTATE->GetCurrentStyleDef(),
+			GAMESTATE->GetCurrentStyle(),
 			pSong,
 			pSteps,
 			po,
@@ -389,7 +389,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sP
 			continue;
 
 		vector<Steps*> arraySteps;
-		pSong->GetSteps( arraySteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType, DIFFICULTY_INVALID, -1, -1, "", 1 );
+		pSong->GetSteps( arraySteps, GAMESTATE->GetCurrentStyle()->m_StepsType, DIFFICULTY_INVALID, -1, -1, "", 1 );
 
 		if( !arraySteps.empty() )
 			arraySongs.push_back( pSong );
@@ -589,7 +589,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			Steps* pSteps;
 			PlayerOptions po;
 			SongOptions so;
-			SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyleDef(), pSong, pSteps, po, so );
+			SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps, po, so );
 			
 			bool bFoundExtraSong = false;
 
@@ -667,7 +667,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			}
 
 			// check that this course has at least one song playable in the current style
-			if( !pCourse->IsPlayableIn(GAMESTATE->GetCurrentStyleDef()->m_StepsType) )
+			if( !pCourse->IsPlayableIn(GAMESTATE->GetCurrentStyle()->m_StepsType) )
 				continue;
 
 			if( sThisSection != sLastSection )	// new section, make a section item
@@ -1524,7 +1524,7 @@ int MusicWheel::GetPreferredSelectionForRandomOrPortal()
 		if( GAMESTATE->m_PreferredDifficulty[p] != DIFFICULTY_INVALID )
 			vDifficultiesToRequire.push_back( GAMESTATE->m_PreferredDifficulty[p] );
 
-	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 
 #define NUM_PROBES 1000
 	for( int i=0; i<NUM_PROBES; i++ )

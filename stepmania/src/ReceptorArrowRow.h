@@ -5,7 +5,7 @@
 
 #include "ReceptorArrow.h"
 #include "ActorFrame.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "GameConstantsAndTypes.h"
 
 

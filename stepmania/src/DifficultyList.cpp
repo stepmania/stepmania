@@ -3,7 +3,7 @@
 #include "GameState.h"
 #include "song.h"
 #include "Steps.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "DifficultyMeter.h"
 #include "RageLog.h"
 #include "BitmapText.h"
@@ -303,7 +303,7 @@ void DifficultyList::SetFromGameState()
 		else
 		{
 			vector<Steps*>	CurSteps;
-			song->GetSteps( CurSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+			song->GetSteps( CurSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
 
 			/* Should match the sort in ScreenSelectMusic::AfterMusicChange. */
 			StepsUtil::SortNotesArrayByDifficulty( CurSteps );

@@ -8,7 +8,7 @@
 #include "RageDisplay.h"
 #include "ThemeManager.h"
 #include "Steps.h"
-#include "StyleDef.h"
+#include "Style.h"
 
 // "PLAYER_X" offsets are relative to the pad.. ex: Setting this to 10, and the HELPER to 300, will put the dancer at 310
 #define PLAYER_X( px )		THEME->GetMetricF("BeginnerHelper",ssprintf("Player%d_X",px+1))
@@ -110,7 +110,7 @@ bool BeginnerHelper::CanUse()
 		if(!DoesFileExist(GetAnimPath((Animation)i)))
 			return false;
 
-	return GAMESTATE->m_pCurStyleDef->m_bCanUseBeginnerHelper;
+	return GAMESTATE->m_pCurStyle->m_bCanUseBeginnerHelper;
 }
 
 bool BeginnerHelper::Initialize( int iDancePadType )

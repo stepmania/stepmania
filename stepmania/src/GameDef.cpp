@@ -3,7 +3,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "IniFile.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "RageException.h"
 #include "GameState.h"
 #include "InputMapper.h"
@@ -29,16 +29,16 @@ MenuInput GameDef::GameInputToMenuInput( GameInput GameI ) const
 {
 	PlayerNumber pn;
 
-	StyleDef::StyleType type = StyleDef::TWO_PLAYERS_TWO_CREDITS;
-	if( GAMESTATE->GetCurrentStyleDef() )
-		type = GAMESTATE->GetCurrentStyleDef()->m_StyleType;
+	Style::StyleType type = Style::TWO_PLAYERS_TWO_CREDITS;
+	if( GAMESTATE->GetCurrentStyle() )
+		type = GAMESTATE->GetCurrentStyle()->m_StyleType;
 	switch( type )
 	{
-	case StyleDef::ONE_PLAYER_ONE_CREDIT:
-	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
+	case Style::ONE_PLAYER_ONE_CREDIT:
+	case Style::TWO_PLAYERS_TWO_CREDITS:
 		pn = (PlayerNumber)GameI.controller;
 		break;
-	case StyleDef::ONE_PLAYER_TWO_CREDITS:
+	case Style::ONE_PLAYER_TWO_CREDITS:
 		pn = GAMESTATE->m_MasterPlayerNumber;
 		break;
 	default:
@@ -70,19 +70,19 @@ void GameDef::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) con
 	GameIout[3].MakeInvalid();	
 
 	GameController controller[2];
-	StyleDef::StyleType type = StyleDef::TWO_PLAYERS_TWO_CREDITS;
-	if( GAMESTATE->GetCurrentStyleDef() )
-		type = GAMESTATE->GetCurrentStyleDef()->m_StyleType;
+	Style::StyleType type = Style::TWO_PLAYERS_TWO_CREDITS;
+	if( GAMESTATE->GetCurrentStyle() )
+		type = GAMESTATE->GetCurrentStyle()->m_StyleType;
 
 	int iNumSidesUsing = 1;
 	switch( type )
 	{
-	case StyleDef::ONE_PLAYER_ONE_CREDIT:
-	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
+	case Style::ONE_PLAYER_ONE_CREDIT:
+	case Style::TWO_PLAYERS_TWO_CREDITS:
 		controller[0] = (GameController)MenuI.player;
 		iNumSidesUsing = 1;
 		break;
-	case StyleDef::ONE_PLAYER_TWO_CREDITS:
+	case Style::ONE_PLAYER_TWO_CREDITS:
 		controller[0] = GAME_CONTROLLER_1;
 		controller[1] = GAME_CONTROLLER_2;
 		iNumSidesUsing = 2;

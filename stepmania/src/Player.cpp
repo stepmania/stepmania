@@ -114,7 +114,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	/* Ensure that this is up-to-date. */
 	GAMESTATE->m_pPosition->Load(pn);
 
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
 	// init scoring
 	NoteDataWithScoring::Init();
@@ -140,7 +140,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 //		m_pScore->Init( pn );
 
 	/* Apply transforms. */
-	NoteDataUtil::TransformNoteData( *this, GAMESTATE->m_PlayerOptions[pn], GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+	NoteDataUtil::TransformNoteData( *this, GAMESTATE->m_PlayerOptions[pn], GAMESTATE->GetCurrentStyle()->m_StepsType );
 	
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -148,7 +148,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 		case PLAY_MODE_BATTLE:
 			{
 				// ugly, ugly, ugly.  Works only w/ dance.
-				NoteDataUtil::TransformNoteData( *this, GAMESTATE->m_PlayerOptions[pn], GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+				NoteDataUtil::TransformNoteData( *this, GAMESTATE->m_PlayerOptions[pn], GAMESTATE->GetCurrentStyle()->m_StepsType );
 				
 				// shuffle either p1 or p2
 				static int count = 0;
@@ -186,7 +186,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	m_ArrowBackdrop.SetPlayer( pn );
 
 	const bool bReverse = GAMESTATE->m_PlayerOptions[pn].GetReversePercentForColumn(0) == 1;
-	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyleDef()->m_StyleType==StyleDef::ONE_PLAYER_TWO_CREDITS;
+	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==Style::ONE_PLAYER_TWO_CREDITS;
 	m_Combo.SetX( COMBO_X(m_PlayerNumber,bPlayerUsingBothSides) );
 	m_Combo.SetY( bReverse ? COMBO_Y_REVERSE : COMBO_Y );
 	m_AttackDisplay.SetX( ATTACK_DISPLAY_X(m_PlayerNumber,bPlayerUsingBothSides) );
@@ -203,7 +203,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	m_AttackDisplay.Command( g_NoteFieldMode[pn].m_AttackDisplayCmd );
 
 	int c;
-	for( c=0; c<pStyleDef->m_iColsPerPlayer; c++ )
+	for( c=0; c<pStyle->m_iColsPerPlayer; c++ )
 	{
 		NoteFieldMode &mode = g_NoteFieldMode[pn];
 		m_HoldJudgment[c].Command( mode.m_HoldJudgmentCmd[c] );
@@ -260,7 +260,7 @@ void PlayerMinus::Update( float fDeltaTime )
 	// Update Y positions
 	//
 	{
-		for( int c=0; c<GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer; c++ )
+		for( int c=0; c<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; c++ )
 		{
 			float fPercentReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(c);
 			float fHoldJudgeYPos = SCALE( fPercentReverse, 0.f, 1.f, HOLD_JUDGMENT_Y_STANDARD, HOLD_JUDGMENT_Y_REVERSE );
@@ -296,13 +296,13 @@ void PlayerMinus::Update( float fDeltaTime )
 	//
 	// update pressed flag
 	//
-	const int iNumCols = GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer;
+	const int iNumCols = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
 	ASSERT_M( iNumCols < MAX_COLS_PER_PLAYER, ssprintf("%i >= %i", iNumCols, MAX_COLS_PER_PLAYER) );
 	for( int col=0; col < iNumCols; ++col )
 	{
 		CHECKPOINT_M( ssprintf("%i %i", col, iNumCols) );
 		const StyleInput StyleI( m_PlayerNumber, col );
-		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
+		const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
 		bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && GAMESTATE->m_PlayerController[m_PlayerNumber]==PC_HUMAN )
@@ -327,7 +327,7 @@ void PlayerMinus::Update( float fDeltaTime )
 			continue;	// hold hasn't happened yet
 
 		const StyleInput StyleI( m_PlayerNumber, hn.iTrack );
-		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
+		const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
 
 		// if they got a bad score or haven't stepped on the corresponding tap yet
 		const TapNoteScore tns = GetTapNoteScore( hn.iTrack, hn.iStartRow );
@@ -475,7 +475,7 @@ void PlayerMinus::ApplyWaitingTransforms()
 		if( po.m_sNoteSkin != "" )
 			GAMESTATE->SetNoteSkinForBeatRange( m_PlayerNumber, po.m_sNoteSkin, fStartBeat, fEndBeat );
 
-		NoteDataUtil::TransformNoteData( *this, po, GAMESTATE->GetCurrentStyleDef()->m_StepsType, fStartBeat, fEndBeat );
+		NoteDataUtil::TransformNoteData( *this, po, GAMESTATE->GetCurrentStyle()->m_StepsType, fStartBeat, fEndBeat );
 		m_pNoteField->CopyRange( this, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), BeatToNoteRow(fStartBeat) );
 	}
 	GAMESTATE->m_ModsToApply[m_PlayerNumber].clear();
@@ -484,7 +484,7 @@ void PlayerMinus::ApplyWaitingTransforms()
 void PlayerMinus::DrawPrimitives()
 {
 	// May have both players in doubles (for battle play); only draw primary player.
-	if( GAMESTATE->GetCurrentStyleDef()->m_StyleType == StyleDef::ONE_PLAYER_TWO_CREDITS  &&
+	if( GAMESTATE->GetCurrentStyle()->m_StyleType == Style::ONE_PLAYER_TWO_CREDITS  &&
 		m_PlayerNumber != GAMESTATE->m_MasterPlayerNumber )
 		return;
 
@@ -1055,7 +1055,7 @@ void PlayerMinus::CrossedMineRow( int iNoteRow )
 		if( GetTapNote(t,iNoteRow) == TAP_MINE )
 		{
 			const StyleInput StyleI( m_PlayerNumber, t );
-			const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
+			const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
 			if( PREFSMAN->m_fPadStickSeconds > 0 )
 			{
 				float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );

@@ -7,7 +7,7 @@
 #include "GameState.h"
 #include "SongManager.h"
 #include "Steps.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "CodeDetector.h"
 #include "ProfileManager.h"
 #include "StepMania.h"
@@ -92,7 +92,7 @@ void ScreenAward::Input( const DeviceInput& DeviceI, const InputEventType type, 
 
 	if( GameI.IsValid() )
 	{
-		PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
+		PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( GameI.controller );
 
 		if( CodeDetector::EnteredCode(GameI.controller, CodeDetector::CODE_SAVE_SCREENSHOT) )
 		{

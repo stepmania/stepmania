@@ -67,7 +67,7 @@ PlayerAI.cpp PlayerAI.h PlayerNumber.cpp PlayerNumber.h PlayerOptions.cpp Player
 ProfileHtml.cpp ProfileHtml.h RandomSample.cpp RandomSample.h ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h \
 ScoreKeeperRave.cpp ScoreKeeperRave.h Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h \
 SongOptions.cpp SongOptions.h SongUtil.cpp SongUtil.h StageStats.cpp StageStats.h Steps.cpp Steps.h \
-StepsUtil.cpp StepsUtil.h StyleDef.cpp StyleDef.h \
+StepsUtil.cpp StepsUtil.h Style.cpp Style.h \
 StyleInput.h TimeConstants.cpp TimeConstants.h TimingData.cpp TimingData.h \
 Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitution.h
 

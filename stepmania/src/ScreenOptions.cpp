@@ -12,7 +12,7 @@
 #include "ProfileManager.h"
 #include "song.h"
 #include "Course.h"
-#include "StyleDef.h"
+#include "Style.h"
 
 const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 
@@ -379,7 +379,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 
 	/* Hack: if m_CurStyle is set, we're probably in the player or song options menu, so
 	 * the player name is meaningful.  Otherwise, we're probably in the system menu. */
-	if( GAMESTATE->m_pCurStyleDef != NULL )
+	if( GAMESTATE->m_pCurStyle != NULL )
 	{
 		FOREACH_HumanPlayer( p )
 		{
@@ -529,7 +529,7 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 			else if( GAMESTATE->m_pCurCourse )
 			{
 				Course *pCourse = GAMESTATE->m_pCurCourse;
-				StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+				StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 				Trail* pTrail = pCourse->GetTrail( st );
 				ASSERT( pTrail );
 				pTrail->GetDisplayBpms( bpms );

@@ -9,7 +9,7 @@
 #include "RandomSample.h"
 #include "BitmapText.h"
 
-class StyleDef;
+class Style;
 
 class JukeboxMenu: public ActorFrame 
 {
@@ -49,7 +49,7 @@ public:
 	}
 
 
-	const StyleDef*	GetSelectedStyle()				{ return m_Styles[m_iSelection[ROW_STYLE]]; }
+	const Style*	GetSelectedStyle()				{ return m_Styles[m_iSelection[ROW_STYLE]]; }
 	CString			GetSelectedGroup()				{ return m_sGroups[m_iSelection[ROW_GROUP]]; }
 	CString			GetSelectedDifficultyString()	{ return m_sDifficulties[m_iSelection[ROW_DIFFICULTY]]; }
 	Difficulty		GetSelectedDifficulty()			{ return StringToDifficulty( GetSelectedDifficultyString() ); }
@@ -62,7 +62,7 @@ private:
 	BitmapText	m_textLabel[NUM_ROWS];
 	BitmapText	m_textValue[NUM_ROWS];
 
-	vector<const StyleDef*>	m_Styles;
+	vector<const Style*>	m_Styles;
 	CStringArray			m_sGroups;
 	vector<string>			m_sDifficulties;
 	CStringArray			m_sModifiers;

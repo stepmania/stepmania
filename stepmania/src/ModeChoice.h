@@ -13,7 +13,7 @@ class Steps;
 class Course;
 class Trail;
 class Character;
-class StyleDef;
+class Style;
 
 struct ModeChoice		// used in SelectMode
 {
@@ -33,7 +33,7 @@ struct ModeChoice		// used in SelectMode
 	CString		m_sInvalidReason;
 	int			m_iIndex;
 	Game		m_game;
-	const StyleDef*	m_pStyleDef;
+	const Style*	m_pStyle;
 	PlayMode	m_pm;
 	Difficulty	m_dc;
 	CourseDifficulty	m_CourseDifficulty;

@@ -7,7 +7,7 @@
 #include "ThemeManager.h"
 #include "RageLog.h"
 #include "GameDef.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
 
@@ -224,8 +224,8 @@ bool CodeDetector::EnteredModeMenu( GameController controller )
 
 bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 {
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-	PlayerNumber pn = pStyleDef->ControllerToPlayerNumber( controller );
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
+	PlayerNumber pn = pStyle->ControllerToPlayerNumber( controller );
 
 	for( int c=CODE_MIRROR; c<=CODE_CANCEL_ALL; c++ )
 	{

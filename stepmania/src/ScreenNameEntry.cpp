@@ -180,30 +180,30 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 		GAMESTATE->m_pPosition->Load( (PlayerNumber)p );
 
 		m_ReceptorArrowRow[p].Load( (PlayerNumber)p, GAMESTATE->m_PlayerOptions[p].m_sNoteSkin, 0 );
-		m_ReceptorArrowRow[p].SetX( (float)GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
+		m_ReceptorArrowRow[p].SetX( (float)GAMESTATE->GetCurrentStyle()->m_iCenterX[p] );
 		m_ReceptorArrowRow[p].SetY( SCREEN_TOP + 100 );
 		this->AddChild( &m_ReceptorArrowRow[p] );
 
 
-		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
-		m_ColToStringIndex[p].insert(m_ColToStringIndex[p].begin(), pStyleDef->m_iColsPerPlayer, -1);
+		m_ColToStringIndex[p].insert(m_ColToStringIndex[p].begin(), pStyle->m_iColsPerPlayer, -1);
 		int CurrentStringIndex = 0;
 
-		for( int t=0; t<pStyleDef->m_iColsPerPlayer; t++ )
+		for( int t=0; t<pStyle->m_iColsPerPlayer; t++ )
 		{
 			if(CurrentStringIndex == MAX_RANKING_NAME_LENGTH)
 				continue; /* We have enough columns. */
 
 			/* Find out if this column is associated with the START menu button. */
 			StyleInput si((PlayerNumber)p, t);
-			GameInput gi=GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput(si);
+			GameInput gi=GAMESTATE->GetCurrentStyle()->StyleInputToGameInput(si);
 			MenuInput m=GAMESTATE->GetCurrentGameDef()->GameInputToMenuInput(gi);
 			if(m.button == MENU_BUTTON_START)
 				continue;
 			m_ColToStringIndex[p][t] = CurrentStringIndex++;
 
-			float ColX = pStyleDef->m_iCenterX[p] + pStyleDef->m_ColumnInfo[p][t].fXOffset;
+			float ColX = pStyle->m_iCenterX[p] + pStyle->m_ColumnInfo[p][t].fXOffset;
 
 			m_textSelectedChars[p][t].LoadFromFont( THEME->GetPathToF("ScreenNameEntry letters") );
 			m_textSelectedChars[p][t].SetX( ColX );
@@ -222,7 +222,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 		}
 
 		m_textCategory[p].LoadFromFont( THEME->GetPathToF("ScreenNameEntry category") );
-		m_textCategory[p].SetX( (float)GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
+		m_textCategory[p].SetX( (float)GAMESTATE->GetCurrentStyle()->m_iCenterX[p] );
 		m_textCategory[p].SetY( CATEGORY_Y );
 		m_textCategory[p].SetZoom( CATEGORY_ZOOM );
 		CString joined;
@@ -293,7 +293,7 @@ void ScreenNameEntry::DrawPrimitives()
 	int iStartDrawingIndex = iClosestIndex - NUM_CHARS_TO_DRAW_BEHIND;
 	iStartDrawingIndex += NUM_NAME_CHARS;	// make positive
 
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
 	FOREACH_PlayerNumber( p )
 	{
@@ -306,7 +306,7 @@ void ScreenNameEntry::DrawPrimitives()
 		for( int i=0; i<NUM_CHARS_TO_DRAW_TOTAL; i++ )
 		{
 			char c = NAME_CHARS[iCharIndex];
-			for( int t=0; t<pStyleDef->m_iColsPerPlayer; t++ )
+			for( int t=0; t<pStyle->m_iColsPerPlayer; t++ )
 			{
 				if(m_ColToStringIndex[p][t] == -1)
 					continue;
@@ -330,7 +330,7 @@ void ScreenNameEntry::DrawPrimitives()
 		}
 
 
-		for( int t=0; t<pStyleDef->m_iColsPerPlayer; t++ )
+		for( int t=0; t<pStyle->m_iColsPerPlayer; t++ )
 		{
 			m_textSelectedChars[p][t].Draw();
 		}

@@ -785,11 +785,11 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 
 	{
 		XNode* pNumSongsPlayedByStyle = pGeneralDataNode->AppendChild("NumSongsPlayedByStyle");
-		for( map<const StyleDef*,int>::const_iterator iter = m_iNumSongsPlayedByStyle.begin();
+		for( map<const Style*,int>::const_iterator iter = m_iNumSongsPlayedByStyle.begin();
 			iter != m_iNumSongsPlayedByStyle.end();
 			iter++ )
 		{
-			const StyleDef *s = iter->first;
+			const Style *s = iter->first;
 			const GameDef *g = GAMEMAN->GetGameDefForGame( s->m_Game );
 			ASSERT( g );
 			int iNumPlays = iter->second;
@@ -945,7 +945,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 				CString sStyle;
 				if( !style->GetAttrValue( "Style", sStyle ) )
 					WARN_AND_CONTINUE;
-				const StyleDef* s = GAMEMAN->GameAndStringToStyle( g, sStyle );
+				const Style* s = GAMEMAN->GameAndStringToStyle( g, sStyle );
 				if( s == NULL )
 					WARN_AND_CONTINUE;
 

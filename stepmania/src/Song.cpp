@@ -12,7 +12,7 @@
 #include "SongCacheIndex.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "GameState.h"
 #include "FontCharAliases.h"
 #include "TitleSubstitution.h"
@@ -995,7 +995,7 @@ Steps* Song::GetClosestNotes( StepsType st, Difficulty dc ) const
 }
 
 /* Return whether the song is playable in the given style. */
-bool Song::SongCompleteForStyle( const StyleDef *st ) const
+bool Song::SongCompleteForStyle( const Style *st ) const
 {
 	return HasStepsType( st->m_StepsType );
 }

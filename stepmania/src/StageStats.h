@@ -9,7 +9,7 @@
 #include <map>
 class Song;
 class Steps;
-class StyleDef;
+class Style;
 
 struct StageStats
 {
@@ -23,7 +23,7 @@ struct StageStats
 	float GetPercentDancePoints( PlayerNumber pn ) const;
 
 	PlayMode	playMode;
-	const StyleDef*	pStyleDef;
+	const Style*	pStyle;
 	Song*	pSong;
 	enum { STAGE_INVALID, STAGE_NORMAL, STAGE_EXTRA, STAGE_EXTRA2 } StageType;
 	Steps*  pSteps[NUM_PLAYERS];

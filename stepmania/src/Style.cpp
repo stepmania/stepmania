@@ -13,7 +13,7 @@
  * because two players place from the same set of 4 tracks.
  */
 
-#include "StyleDef.h"
+#include "Style.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "GameDef.h"
@@ -22,7 +22,7 @@
 #include "NoteData.h"
 
 
-void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData* pOriginal, NoteData* pNoteDataOut ) const
+void Style::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData* pOriginal, NoteData* pNoteDataOut ) const
 {
 	int iNewToOriginalTrack[MAX_COLS_PER_PLAYER];
 	for( int col=0; col<m_iColsPerPlayer; col++ )
@@ -37,7 +37,7 @@ void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData* 
 }
 
 
-GameInput StyleDef::StyleInputToGameInput( const StyleInput& StyleI ) const
+GameInput Style::StyleInputToGameInput( const StyleInput& StyleI ) const
 {
 	ASSERT_M( StyleI.player < NUM_PLAYERS, ssprintf("P%i", StyleI.player) );
 	ASSERT_M( StyleI.col < MAX_COLS_PER_PLAYER, ssprintf("C%i", StyleI.col) );
@@ -46,7 +46,7 @@ GameInput StyleDef::StyleInputToGameInput( const StyleInput& StyleI ) const
 	return GameInput( c, b );
 };
 
-StyleInput StyleDef::GameInputToStyleInput( const GameInput &GameI ) const
+StyleInput Style::GameInputToStyleInput( const GameInput &GameI ) const
 {
 	StyleInput SI;
 
@@ -72,7 +72,7 @@ StyleInput StyleDef::GameInputToStyleInput( const GameInput &GameI ) const
 }
 
 
-PlayerNumber StyleDef::ControllerToPlayerNumber( GameController controller ) const
+PlayerNumber Style::ControllerToPlayerNumber( GameController controller ) const
 {
 	switch( m_StyleType )
 	{
@@ -87,14 +87,14 @@ PlayerNumber StyleDef::ControllerToPlayerNumber( GameController controller ) con
 	}
 }
 
-bool StyleDef::MatchesNotesType( StepsType type ) const
+bool Style::MatchesNotesType( StepsType type ) const
 {
 	if(type == m_StepsType) return true;
 
 	return false;
 }
 
-void StyleDef::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const
+void Style::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const
 {
 	fMixXOut = +100000;
 	fMaxXOut = -100000;

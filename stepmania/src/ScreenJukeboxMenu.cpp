@@ -22,7 +22,7 @@ ScreenJukeboxMenu::ScreenJukeboxMenu( CString sClassName ) : ScreenWithMenuEleme
 {
 	LOG->Trace( "ScreenJukeboxMenu::ScreenJukeboxMenu()" );
 
-	GAMESTATE->m_pCurStyleDef = NULL;
+	GAMESTATE->m_pCurStyle = NULL;
 
 	FOREACH_PlayerNumber( pn )
 		GAMESTATE->m_bSideIsJoined[pn] = true;
@@ -84,12 +84,12 @@ void ScreenJukeboxMenu::MenuStart( PlayerNumber pn )
 	if( IsTransitioning() )
 		return;
 
-	const StyleDef *style	= m_Selector.GetSelectedStyle();
+	const Style *style	= m_Selector.GetSelectedStyle();
 	CString sGroup			= m_Selector.GetSelectedGroup();
 	Difficulty dc			= m_Selector.GetSelectedDifficulty();
 	bool bModifiers			= m_Selector.GetSelectedModifiers();
 
-	GAMESTATE->m_pCurStyleDef = style;
+	GAMESTATE->m_pCurStyle = style;
 	GAMESTATE->m_sPreferredGroup = (sGroup=="ALL MUSIC") ? GROUP_ALL_MUSIC : sGroup;
 	FOREACH_PlayerNumber( p )
 		GAMESTATE->m_PreferredDifficulty[p] = dc;

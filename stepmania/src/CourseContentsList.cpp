@@ -10,7 +10,7 @@
 #include "ThemeManager.h"
 #include "Steps.h"
 #include "GameState.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "RageTexture.h"
 
 

@@ -5,7 +5,7 @@
 #include "ActorFrame.h"
 #include "BitmapText.h"
 #include "PrefsManager.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "BitmapText.h"
 #include "Quad.h"
 #include "NoteDataWithScoring.h"

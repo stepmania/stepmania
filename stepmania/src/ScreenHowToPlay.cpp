@@ -130,7 +130,7 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 		m_pLifeMeterBar->FillForHowToPlay( NUM_PERFECTS, NUM_MISSES );
 	}
 
-	GAMESTATE->m_pCurStyleDef = GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_CurGame);
+	GAMESTATE->m_pCurStyle = GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_CurGame);
 
 	if( USEPLAYER )
 	{
@@ -138,15 +138,15 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 		smfile.LoadFromSMFile( THEME->GetPathToO(STEPFILE), m_Song, false );
 		m_Song.AddAutoGenNotes();
 
-		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 		
 		vector<Steps *> notes;
-		m_Song.GetSteps( notes, pStyleDef->m_StepsType );
+		m_Song.GetSteps( notes, pStyle->m_StepsType );
 		ASSERT( notes.size() >= 1 );
 
 		NoteData TempNoteData;
 		notes[0]->GetNoteData( &TempNoteData );
-		pStyleDef->GetTransformedNoteDataForStyle( PLAYER_1, &TempNoteData, &m_NoteData );
+		pStyle->GetTransformedNoteDataForStyle( PLAYER_1, &TempNoteData, &m_NoteData );
 
 		GAMESTATE->m_pCurSong = &m_Song;
 		GAMESTATE->m_bPastHereWeGo = true;

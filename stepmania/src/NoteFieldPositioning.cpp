@@ -97,7 +97,7 @@ void NoteFieldMode::Load(IniFile &ini, CString id, int pn)
 			const Game game = GAMEMAN->StringToGameType( bits[0] );
 			ASSERT(game != GAME_INVALID);
 
-			const StyleDef *style = GAMEMAN->GameAndStringToStyle( game, bits[1] );
+			const Style *style = GAMEMAN->GameAndStringToStyle( game, bits[1] );
 			ASSERT(style != NULL);
 			Styles.insert(style);
 		}
@@ -161,7 +161,7 @@ bool NoteFieldMode::MatchesCurrentGame() const
 	if(Styles.empty())
 		return true;
 
-	if(Styles.find(GAMESTATE->m_pCurStyleDef) == Styles.end())
+	if(Styles.find(GAMESTATE->m_pCurStyle) == Styles.end())
 		return false;
 
 	return true;
@@ -173,7 +173,7 @@ void NoteFieldPositioning::Load(PlayerNumber pn)
 
 	mode = NoteFieldMode(); /* reset */
 
-	const StyleDef *s = GAMESTATE->GetCurrentStyleDef();
+	const Style *s = GAMESTATE->GetCurrentStyle();
 
 	/* Load the settings in the style table by default. */
 	for(int tn = 0; tn < MAX_NOTE_TRACKS; ++tn)

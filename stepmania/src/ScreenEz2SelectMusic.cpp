@@ -6,7 +6,7 @@
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "GameState.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "InputMapper.h"
 #include "CodeDetector.h"
 #include "Steps.h"
@@ -247,7 +247,7 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	if( m_bMadeChoice )
 		return;
 
-	PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
+	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( GameI.controller );
 
 	if( CodeDetector::EnteredEasierDifficulty(GameI.controller) )
 	{
@@ -637,7 +637,7 @@ void ScreenEz2SelectMusic::MusicChanged()
 
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)
 	{
-		pSong->GetSteps( m_arrayNotes[pn], GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+		pSong->GetSteps( m_arrayNotes[pn], GAMESTATE->GetCurrentStyle()->m_StepsType );
 		StepsUtil::SortNotesArrayByDifficulty( m_arrayNotes[pn] );
 	}
 

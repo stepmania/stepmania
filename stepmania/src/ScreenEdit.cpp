@@ -437,7 +437,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	{
 		// add or extend holds
 
-		for( int t=0; t<GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer; t++ )	// for each track
+		for( int t=0; t<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; t++ )	// for each track
 		{
 			StyleInput StyleI( PLAYER_1, t );
 			float fSecsHeld = INPUTMAPPER->GetSecsHeld( StyleI );
@@ -705,7 +705,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			const float fSongBeat = GAMESTATE->m_fSongBeat;
 			const int iSongIndex = BeatToNoteRow( fSongBeat );
 
-			if( iCol >= m_NoteFieldEdit.GetNumTracks() )	// this button is not in the range of columns for this StyleDef
+			if( iCol >= m_NoteFieldEdit.GetNumTracks() )	// this button is not in the range of columns for this Style
 				break;
 
 			int i;
@@ -1751,7 +1751,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			{
 				HandleAreaMenuChoice( cut, NULL );
 				
-				StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+				StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 				TurnType tt = (TurnType)iAnswers[c];
 				switch( tt )
 				{
@@ -1771,7 +1771,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				float fBeginBeat = m_NoteFieldEdit.m_fBeginMarker;
 				float fEndBeat = m_NoteFieldEdit.m_fEndMarker;
 				TransformType tt = (TransformType)iAnswers[c];
-				StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+				StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 				switch( tt )
 				{
 				case noholds:	NoteDataUtil::RemoveHoldNotes( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;

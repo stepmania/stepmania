@@ -10,7 +10,7 @@
 #include "NoteSkinManager.h"
 #include "Course.h"
 #include "Steps.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "song.h"
 #include "SongManager.h"
 #include "Character.h"
@@ -111,7 +111,7 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 		row.bOneChoiceForAllPlayers = PREFSMAN->m_bLockCourseDifficulties;
 
 		vector<Trail*> vTrails;
-		GAMESTATE->m_pCurCourse->GetTrails( vTrails, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+		GAMESTATE->m_pCurCourse->GetTrails( vTrails, GAMESTATE->GetCurrentStyle()->m_StepsType );
 		for( unsigned i=0; i<vTrails.size(); i++ )
 		{
 			Trail* pTrail = vTrails[i];
@@ -126,7 +126,7 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 	else // !GAMESTATE->IsCourseMode(), playing a song
 	{
 		vector<Steps*> vSteps;
-		GAMESTATE->m_pCurSong->GetSteps( vSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+		GAMESTATE->m_pCurSong->GetSteps( vSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
 		StepsUtil::SortNotesArrayByDifficulty( vSteps );
 		for( unsigned i=0; i<vSteps.size(); i++ )
 		{

@@ -8,7 +8,7 @@
 #include "ProfileManager.h"
 #include "SongManager.h"
 #include "Course.h"
-#include "StyleDef.h"
+#include "Style.h"
 
 #define SHIFT_X(p)			THEME->GetMetricF(m_sName, ssprintf("ShiftP%iX", p+1))
 #define SHIFT_Y(p)			THEME->GetMetricF(m_sName, ssprintf("ShiftP%iY", p+1))

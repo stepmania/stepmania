@@ -1,11 +1,11 @@
-/* ArrowEffects - Functions that return properties of arrows based on StyleDef and PlayerOptions. */
+/* ArrowEffects - Functions that return properties of arrows based on Style and PlayerOptions. */
 
 #ifndef ARROWEFFECTS_H
 #define ARROWEFFECTS_H
 
 
 #include "GameConstantsAndTypes.h"
-#include "StyleDef.h"
+#include "Style.h"
 
 
 //	fYOffset is a vertical position in pixels relative to the center.

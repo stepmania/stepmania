@@ -9,7 +9,7 @@
 #include "RageDisplay.h"
 #include "song.h"
 #include "GameState.h"
-#include "StyleDef.h"
+#include "Style.h"
 
 const float GRAPH_EDGE_WIDTH	= 2;
 
@@ -52,7 +52,7 @@ void GrooveGraph::SetFromSong( Song* pSong )
 	{
 		for( int i=0; i<NUM_DIFFICULTIES; i++ )
 		{
-			Steps* pSteps = pSong->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, (Difficulty)i );
+			Steps* pSteps = pSong->GetStepsByDifficulty( GAMESTATE->GetCurrentStyle()->m_StepsType, (Difficulty)i );
 			if( pSteps )
 				rvs[i] = pSteps->GetRadarValues();
 		}

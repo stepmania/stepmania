@@ -9,7 +9,7 @@
 #include "Course.h"
 #include "SongManager.h"
 #include "ActorUtil.h"
-#include "StyleDef.h"
+#include "Style.h"
 
 
 #define NUM_FEET_IN_METER						THEME->GetMetricI(m_sName,"NumFeetInMeter")

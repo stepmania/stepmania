@@ -88,7 +88,7 @@ void NoteField::Load( const NoteData* pNoteData, PlayerNumber pn, int iFirstPixe
 	m_ActiveHoldNotes.clear();
 
 	this->CopyAll( pNoteData );
-	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
+	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
 
 	CacheAllUsedNoteSkins();
 	RefreshBeatToNoteSkin();
@@ -179,9 +179,9 @@ void NoteField::Update( float fDeltaTime )
 
 float NoteField::GetWidth()
 {
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	float fMinX, fMaxX;
-	pStyleDef->GetMinAndMaxColX( m_PlayerNumber, fMinX, fMaxX );
+	pStyle->GetMinAndMaxColX( m_PlayerNumber, fMinX, fMaxX );
 
 	return fMaxX - fMinX + ARROW_SIZE;
 }

@@ -65,7 +65,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	/* Cache: */
 	g_sFallbackCDTitlePath = THEME->GetPathG(m_sName,"fallback cdtitle");
 
-	if( GAMESTATE->m_pCurStyleDef == NULL )
+	if( GAMESTATE->m_pCurStyle == NULL )
 		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
 
 	if( GAMESTATE->m_PlayMode == PLAY_MODE_INVALID )
@@ -680,7 +680,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	/* XXX: What's the difference between this and StyleI.player? */
 	/* StyleI won't be valid if it's a menu button that's pressed.  
 	 * There's got to be a better way of doing this.  -Chris */
-	PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
+	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( GameI.controller );
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 
@@ -1135,7 +1135,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		Steps* pSteps;
 		PlayerOptions po;
 		SongOptions so;
-		SONGMAN->GetExtraStageInfo( false, GAMESTATE->GetCurrentStyleDef(), pSong, pSteps, po, so );
+		SONGMAN->GetExtraStageInfo( false, GAMESTATE->GetCurrentStyle(), pSong, pSteps, po, so );
 		ASSERT(pSong);
 		
 		/* Enable 2nd extra stage if user chose the correct song */
@@ -1295,7 +1295,7 @@ int FindCourseIndexOfSameMode( T begin, T end, const Course *p )
 
 		/* If it's not playable in this mode, don't increment.  It might result in 
 		 * different output in different modes, but that's better than having holes. */
-		if( !(*it)->IsPlayableIn( GAMESTATE->GetCurrentStyleDef()->m_StepsType ) )
+		if( !(*it)->IsPlayableIn( GAMESTATE->GetCurrentStyle()->m_StepsType ) )
 			continue;
 		if( (*it)->GetPlayMode() != pm )
 			continue;
@@ -1407,7 +1407,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_textNumSongs.SetText( ssprintf("%d", SongManager::GetNumStagesForSong(pSong) ) );
 			m_textTotalTime.SetText( SecondsToMMSSMsMs(pSong->m_fMusicLengthSeconds) );
 
-			pSong->GetSteps( m_vpSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+			pSong->GetSteps( m_vpSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
 			StepsUtil::SortNotesArrayByDifficulty( m_vpSteps );
 
 			if ( PREFSMAN->m_bShowBanners )
@@ -1435,7 +1435,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			if( index != -1 )
 				m_MachineRank.SetText( ssprintf("%i", index+1) );
 
-			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType );
 
 			SwitchToPreferredDifficulty();
 
@@ -1512,11 +1512,11 @@ void ScreenSelectMusic::AfterMusicChange()
 	case TYPE_COURSE:
 	{
 		Course* pCourse = m_MusicWheel.GetSelectedCourse();
-		StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 		Trail *pTrail = pCourse->GetTrail( st );
 		ASSERT( pTrail );
 
-		pCourse->GetTrails( m_vpTrails, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+		pCourse->GetTrails( m_vpTrails, GAMESTATE->GetCurrentStyle()->m_StepsType );
 
 		SampleMusicToPlay = THEME->GetPathS(m_sName,"course music");
 		m_fSampleStartSeconds = 0;

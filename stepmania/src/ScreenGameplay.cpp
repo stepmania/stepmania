@@ -222,7 +222,7 @@ void ScreenGameplay::Init()
 
 	g_CurStageStats.pSong = NULL; // set in LoadNextSong
 	g_CurStageStats.playMode = GAMESTATE->m_PlayMode;
-	g_CurStageStats.pStyleDef = GAMESTATE->m_pCurStyleDef;
+	g_CurStageStats.pStyle = GAMESTATE->m_pCurStyle;
 
     FOREACH_EnabledPlayer(p)
 	{
@@ -302,7 +302,7 @@ void ScreenGameplay::Init()
 
     FOREACH_EnabledPlayer(p)
 	{
-		float fPlayerX = (float) GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p];
+		float fPlayerX = (float) GAMESTATE->GetCurrentStyle()->m_iCenterX[p];
 
 		/* Perhaps this should be handled better by defining a new
 		 * StyleType for ONE_PLAYER_ONE_CREDIT_AND_ONE_COMPUTER,
@@ -311,7 +311,7 @@ void ScreenGameplay::Init()
 		if( PREFSMAN->m_bSoloSingle && 
 			GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
 			GAMESTATE->m_PlayMode != PLAY_MODE_RAVE &&
-			GAMESTATE->GetCurrentStyleDef()->m_StyleType == StyleDef::ONE_PLAYER_ONE_CREDIT )
+			GAMESTATE->GetCurrentStyle()->m_StyleType == Style::ONE_PLAYER_ONE_CREDIT )
 			fPlayerX = SCREEN_WIDTH/2;
 
 		m_Player[p].SetX( fPlayerX );
@@ -797,9 +797,9 @@ void ScreenGameplay::SetupSong( int p, int iSongIndex )
 	NoteData pOriginalNoteData;
 	GAMESTATE->m_pCurSteps[p]->GetNoteData( &pOriginalNoteData );
 	
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	NoteData pNewNoteData;
-	pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &pOriginalNoteData, &pNewNoteData );
+	pStyle->GetTransformedNoteDataForStyle( (PlayerNumber)p, &pOriginalNoteData, &pNewNoteData );
 	m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pPrimaryScoreDisplay[p], m_pSecondaryScoreDisplay[p], m_pInventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
 }
 
@@ -1417,7 +1417,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
 	// update lights
 	//
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	bool bBlinkCabinetLight[NUM_CABINET_LIGHTS];
 	bool bBlinkGameButton[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];
 	ZERO( bBlinkCabinetLight );
@@ -1453,7 +1453,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 					if( bBlink )
 					{
 						StyleInput si( pn, t );
-						GameInput gi = pStyleDef->StyleInputToGameInput( si );
+						GameInput gi = pStyle->StyleInputToGameInput( si );
 						bBlinkGameButton[gi.controller][gi.button] |= bBlink;
 					}
 				}
@@ -1478,7 +1478,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 				if( hn.iStartRow <= iSongRow && iSongRow <= hn.iEndRow )
 				{
 					StyleInput si( pn, hn.iTrack );
-					GameInput gi = pStyleDef->StyleInputToGameInput( si );
+					GameInput gi = pStyle->StyleInputToGameInput( si );
 					bBlinkGameButton[gi.controller][gi.button] |= true;
 				}
 			}

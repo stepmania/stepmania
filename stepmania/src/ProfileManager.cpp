@@ -426,7 +426,7 @@ void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pS
 	PROFILEMAN->GetMachineProfile()->IncrementStepsPlayCount( pSong, pSteps );
 }
 
-HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const StyleDef *st, ProfileSlot slot, Difficulty dc ) const
+HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const Style *st, ProfileSlot slot, Difficulty dc ) const
 {
 	// return max grade of notes in difficulty class
 	vector<Steps*> aNotes;

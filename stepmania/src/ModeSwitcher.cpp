@@ -5,7 +5,7 @@
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "ThemeManager.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "song.h"
 #include "ActorUtil.h"
 #include "GameManager.h"
@@ -63,7 +63,7 @@ CString ModeSwitcher::GetStyleName()
 	CString sStyleName;
 	CString sDiff[NUM_PLAYERS];
 
-	sStyleName = GAMESTATE->m_pCurStyleDef->m_szName;
+	sStyleName = GAMESTATE->m_pCurStyle->m_szName;
 	sStyleName.MakeUpper();
 
 	FOREACH_PlayerNumber(i)
@@ -131,7 +131,7 @@ CString ModeSwitcher::GetNextStyleName()
 		{
 			if(GAMESTATE->m_PreferredDifficulty[i] != DIFFICULTY_CHALLENGE)
 			{
-				sStyleName[i] = GAMESTATE->m_pCurStyleDef->m_szName;
+				sStyleName[i] = GAMESTATE->m_pCurStyle->m_szName;
 				sStyleName[i].MakeUpper();
 
 				switch(GAMESTATE->m_PreferredDifficulty[i])
@@ -176,7 +176,7 @@ CString ModeSwitcher::GetNextStyleName()
 			}
 			else
 			{
-				sStyleName[i] = GAMESTATE->m_pCurStyleDef->m_szName;
+				sStyleName[i] = GAMESTATE->m_pCurStyle->m_szName;
 				sStyleName[i].MakeUpper();
 
 				sDiff[i] = "Beginner\n";
@@ -204,7 +204,7 @@ CString ModeSwitcher::GetPrevStyleName()
 		{
 			if(GAMESTATE->m_PreferredDifficulty[i] != DIFFICULTY_BEGINNER)
 			{
-				sStyleName[i] = GAMESTATE->m_pCurStyleDef->m_szName;
+				sStyleName[i] = GAMESTATE->m_pCurStyle->m_szName;
 				sStyleName[i].MakeUpper();
 
 				switch(GAMESTATE->m_PreferredDifficulty[i])
@@ -249,7 +249,7 @@ CString ModeSwitcher::GetPrevStyleName()
 			}
 			else
 			{
-				sStyleName[i] = GAMESTATE->m_pCurStyleDef->m_szName;
+				sStyleName[i] = GAMESTATE->m_pCurStyle->m_szName;
 				sStyleName[i].MakeUpper();
 
 				sDiff[i] = "Challenge\n";
@@ -296,12 +296,12 @@ void ModeSwitcher::ChangeMode(PlayerNumber pn, int dir)
 		}
 
 		// Make a list of all styles for the current Game.
-		vector<const StyleDef*> vPossibleStyles;
+		vector<const Style*> vPossibleStyles;
 		GAMEMAN->GetStylesForGame( GAMESTATE->m_CurGame, vPossibleStyles );
 		ASSERT( !vPossibleStyles.empty() );
 
 		int index = 0;
-		vector<const StyleDef*>::const_iterator iter = find(vPossibleStyles.begin(), vPossibleStyles.end(), GAMESTATE->m_pCurStyleDef );
+		vector<const Style*>::const_iterator iter = find(vPossibleStyles.begin(), vPossibleStyles.end(), GAMESTATE->m_pCurStyle );
 		if( iter != vPossibleStyles.end() )
 		{
 			index = iter - vPossibleStyles.begin();
@@ -309,7 +309,7 @@ void ModeSwitcher::ChangeMode(PlayerNumber pn, int dir)
 			wrap( index, vPossibleStyles.size() );
 		}
 
-		GAMESTATE->m_pCurStyleDef = vPossibleStyles[index];
+		GAMESTATE->m_pCurStyle = vPossibleStyles[index];
 	}
 	m_Stylename.SetText(GetStyleName());
 	m_Nextmode.SetText(GetNextStyleName());

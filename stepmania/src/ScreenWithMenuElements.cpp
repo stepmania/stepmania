@@ -5,7 +5,7 @@
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "GameState.h"
-#include "StyleDef.h"
+#include "Style.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
 
@@ -36,9 +36,9 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 	UtilOnCommand( m_autoHeader, m_sName );
 	this->AddChild( m_autoHeader );
 
-	if( STYLE_ICON && GAMESTATE->m_pCurStyleDef )
+	if( STYLE_ICON && GAMESTATE->m_pCurStyle )
 	{
-		CString sIconFileName = ssprintf("MenuElements icon %s", GAMESTATE->GetCurrentStyleDef()->m_szName );
+		CString sIconFileName = ssprintf("MenuElements icon %s", GAMESTATE->GetCurrentStyle()->m_szName );
 		m_sprStyleIcon.SetName( "StyleIcon" );
 		m_sprStyleIcon.Load( THEME->GetPathToG(sIconFileName) );
 		m_sprStyleIcon.StopAnimating();

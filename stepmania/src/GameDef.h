@@ -31,7 +31,7 @@ const int MAX_STYLES_PER_GAME = 10;
 // MenuLeft and MenuRight as long as "MenuLeft (optional)" and "MenuRight (optional)" are not mapped.
 //
 
-class StyleDef;
+class Style;
 
 #define NO_DEFAULT_KEY -1
 
