@@ -10,7 +10,10 @@ struct TitleTrans
 {
 	Regex TitleFrom, SubFrom, ArtistFrom;
 	CString TitleTo, SubTo, ArtistTo;			/* plain text */
+
+	/* If this is true, no translit fields will be generated automatically. */
 	bool translit;
+	TitleTrans() { translit = true; }
 
 	TitleTrans(CString tf, CString sf, CString af, CString tt, CString st, CString at,
 			   bool translit_):
@@ -31,11 +34,9 @@ bool TitleTrans::Matches(CString title, CString sub, CString artist)
 	return true;
 }
 
-void TitleSubst::AddTrans(const CString &tf, const CString &sf, const CString &af,
-		      const CString &tt, const CString &st, const CString &at,
-			  bool translit)
+void TitleSubst::AddTrans(const TitleTrans &tr)
 {
-	ttab.push_back(new TitleTrans(tf, sf, af, tt, st, at, translit));
+	ttab.push_back(new TitleTrans(tr));
 }
 
 void TitleSubst::Subst(CString &title, CString &subtitle, CString &artist,
@@ -46,23 +47,20 @@ void TitleSubst::Subst(CString &title, CString &subtitle, CString &artist,
 		if(!ttab[i]->Matches(title, subtitle, artist))
 			continue;
 
-		/* The song matches.  Replace whichever strings aren't empty.
-		 * Don't replace any that already have a transliteration set. 
-		 * Wait, do; too many songs have translits set with hacked
-		 * titles. */
-		if(!ttab[i]->TitleTo.empty()) // && ttitle.empty())
+		/* The song matches.  Replace whichever strings aren't empty. */
+		if(!ttab[i]->TitleTo.empty())
 		{
 			if(ttab[i]->translit) ttitle = title;
 			title = ttab[i]->TitleTo;
 			FontCharAliases::ReplaceMarkers( title );
 		}
-		if(!ttab[i]->SubTo.empty()) // && tsubtitle.empty())
+		if(!ttab[i]->SubTo.empty())
 		{
 			if(ttab[i]->translit) tsubtitle = subtitle;
 			subtitle = ttab[i]->SubTo;
 			FontCharAliases::ReplaceMarkers( subtitle );
 		}
-		if(!ttab[i]->ArtistTo.empty()) // && tartist.empty())
+		if(!ttab[i]->ArtistTo.empty())
 		{
 			if(ttab[i]->translit) tartist = artist;
 			artist = ttab[i]->ArtistTo;
@@ -82,13 +80,12 @@ void TitleSubst::Load(const CString &filename, const CString &section)
 	ifstream f;
 	f.open(filename);
 	if(!f.good()) return;
-	CString TitleFrom, ArtistFrom, SubtitleFrom, TitleTo, ArtistTo, SubtitleTo;
-	bool translit = true;
+
 	CString CurrentSection;
+	TitleTrans tr;
 
 	while(!f.eof())
 	{
-
 		CString line;
 		if(!getline(f, line)) continue;
 
@@ -105,10 +102,9 @@ void TitleSubst::Load(const CString &filename, const CString &section)
 		if(line.size() == 0) continue; /* blank */
 		if(line[0] == '#') continue; /* comment */
 
-
 		if(!line.CompareNoCase("DontTransliterate"))
 		{
-			translit = false;
+			tr.translit = false;
 			continue;
 		}
 
@@ -120,31 +116,25 @@ void TitleSubst::Load(const CString &filename, const CString &section)
 			CString txt = line.substr(pos+1);
 			TrimLeft(txt);
 
-			if(!id.CompareNoCase("TitleFrom")) TitleFrom = txt;
-			else if(!id.CompareNoCase("ArtistFrom")) ArtistFrom = txt;
-			else if(!id.CompareNoCase("SubtitleFrom")) SubtitleFrom = txt;
-			else if(!id.CompareNoCase("TitleTo")) TitleTo = txt;
-			else if(!id.CompareNoCase("ArtistTo")) ArtistTo = txt;
-			else if(!id.CompareNoCase("SubtitleTo")) SubtitleTo = txt;
+			/* Surround each regex with ^(...)$, to force all comparisons to default
+			 * to being a full-line match.  (Add ".*" manually if this isn't wanted.) */
+			if(!id.CompareNoCase("TitleFrom")) tr.TitleFrom = "^(" + txt + ")$";
+			else if(!id.CompareNoCase("ArtistFrom")) tr.ArtistFrom = "^(" + txt + ")$";
+			else if(!id.CompareNoCase("SubtitleFrom")) tr.SubFrom = "^(" + txt + ")$";
+			else if(!id.CompareNoCase("TitleTo")) tr.TitleTo = txt;
+			else if(!id.CompareNoCase("ArtistTo")) tr.ArtistTo = txt;
+			else if(!id.CompareNoCase("SubtitleTo")) tr.SubTo = txt;
 		}
 
 		/* Add the translation if this is a terminator (*) or section
 		 * marker ([foo]). */
 		if(line[0] == '*' || line[0] == '[')
 		{
-			/* Surround each regex with ^(...)$, to force all comparisons to default
-			 * to being a full-line match.  (Add ".*" manually if htis isn't wanted.) */
-			if(TitleFrom.size()) TitleFrom = "^(" + TitleFrom + ")$";
-			if(ArtistFrom.size()) ArtistFrom = "^(" + ArtistFrom + ")$";
-			if(SubtitleFrom.size()) SubtitleFrom = "^(" + SubtitleFrom + ")$";
-
-			if(!CurrentSection.CompareNoCase(section) &&
-			   (TitleFrom.size() || SubtitleFrom.size() || ArtistFrom.size()))
-				AddTrans(TitleFrom, SubtitleFrom, ArtistFrom, TitleTo, SubtitleTo, ArtistTo, translit);
+			if(!CurrentSection.CompareNoCase(section))
+				AddTrans(tr);
 			
 			/* Reset. */
-			TitleFrom = ArtistFrom = SubtitleFrom = TitleTo = ArtistTo = SubtitleTo = "";
-			translit = true;
+			tr = TitleTrans();
 		}
 
 		if(line[0] == '[' && line[line.size()-1] == ']')
