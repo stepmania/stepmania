@@ -548,6 +548,14 @@ SOURCE=.\ActorFrame.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Background.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Background.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Banner.cpp
 # End Source File
 # Begin Source File

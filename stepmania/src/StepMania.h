@@ -12,10 +12,7 @@
 #define _STEPMANIA_H_
 
 
-void Update();			// Update the game logic
-void Render();			// Render a frame
-void ShowFrame();		// Display the contents of the back buffer to the screen
-void SetFullscreen( BOOL bFullscreen );	// Switch between fullscreen and windowed modes.
+BOOL SwitchDisplayMode( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD dwBPP );
 
 
 

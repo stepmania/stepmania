@@ -54,7 +54,6 @@ HINSTANCE	g_hInstance;			// The Handle to Window Instance
 const DWORD g_dwWindowStyle = WS_VISIBLE|WS_POPUP|WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_SYSMENU;
 
 
-BOOL	g_bFullscreen	= FALSE;	// Whether app is fullscreen (or windowed)
 BOOL	g_bIsActive		= FALSE;	// Whether the focus is on our app
 
 
@@ -70,13 +69,14 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 void Update();			// Update the game logic
 void Render();			// Render a frame
 void ShowFrame();		// Display the contents of the back buffer to the screen
-void SetFullscreen( BOOL bFullscreen );	// Switch between fullscreen and windowed modes.
 
 // Functions that work with game objects
 HRESULT		CreateObjects( HWND hWnd );	// allocate and initialize game objects
 HRESULT		InvalidateObjects();		// invalidate game objects before a display mode change
 HRESULT		RestoreObjects();			// restore game objects after a display mode change
 VOID		DestroyObjects();			// deallocate game objects when we're done with them
+
+BOOL SwitchDisplayMode( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD dwBPP );
 
 BOOL WeAreAlone( LPSTR szName );
 
@@ -92,18 +92,19 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 		RageError( "StepMania is already running!" );
 	}
 
-
+	// Make sure the current directory is the root program directory
 	if( !DoesFileExist("Songs") )
 	{
 		// change dir to path of the execuctable
 		TCHAR szFullAppPath[MAX_PATH];
 		GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
+		
+		// strip off executable name
 		LPSTR pLastBackslash = strrchr(szFullAppPath, '\\');
 		*pLastBackslash = '\0';	// terminate the string
-		//MessageBox(NULL, szFullAppPath, szFullAppPath, MB_OK);
+
 		SetCurrentDirectory(szFullAppPath);
 	}
-
 
 
     CoInitialize (NULL);    // Initialize COM
@@ -210,9 +211,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 
 		case WM_SIZE:
             // Check to see if we are losing our window...
-			if( SIZE_MAXIMIZED == wParam)
-				MessageBeep( MB_OK );
-			else if( SIZE_MAXHIDE==wParam || SIZE_MINIMIZED==wParam )
+			if( SIZE_MAXHIDE==wParam || SIZE_MINIMIZED==wParam )
                 g_bIsActive = FALSE;
             else
                 g_bIsActive = TRUE;
@@ -220,7 +219,9 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 
 		case WM_GETMINMAXINFO:
 			{
-				// don't allow the window to be resized smaller than the screen resolution
+				// Don't allow the window to be resized smaller than the screen resolution.
+				// This should snap to multiples of the screen size two!
+
 				RECT rcWnd;
 				SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
 				DWORD dwWindowStyle = GetWindowLong( g_hWndMain, GWL_STYLE );
@@ -233,7 +234,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 
 		case WM_SETCURSOR:
 			// Turn off Windows cursor in fullscreen mode
-			if( g_bFullscreen )
+			if( !SCREEN->IsWindowed() )
             {
                 SetCursor( NULL );
                 return TRUE; // prevent Windows from setting the cursor
@@ -250,8 +251,8 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 				case SC_MONITORPOWER:
 					return 1;
 				case SC_MAXIMIZE:
-					SendMessage( g_hWndMain, WM_COMMAND, IDM_TOGGLEFULLSCREEN, 0 );
-					return 1;
+					//SendMessage( g_hWndMain, WM_COMMAND, IDM_TOGGLEFULLSCREEN, 0 );
+					//return 1;
 					break;
 			}
 			break;
@@ -261,28 +262,18 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
             switch( LOWORD(wParam) )
             {
 				case IDM_TOGGLEFULLSCREEN:
-					SetFullscreen( !g_bFullscreen );
+					SwitchDisplayMode( !SCREEN->IsWindowed(), SCREEN_WIDTH, SCREEN_HEIGHT, 16 );
 					return 0;
-
-				case IDM_WINDOWED:
-					SetFullscreen( FALSE );
-					return 0;
-
                 case IDM_EXIT:
                     // Recieved key/menu command to exit app
                     SendMessage( hWnd, WM_CLOSE, 0, 0 );
                     return 0;
-
-                case IDM_PADS:
-
-                    return 0;
-
             }
             break;
 
         case WM_NCHITTEST:
             // Prevent the user from selecting the menu in fullscreen mode
-            if( g_bFullscreen )
+            if( !SCREEN->IsWindowed() )
                 return HTCLIENT;
             break;
 
@@ -312,7 +303,7 @@ HRESULT CreateObjects( HWND hWnd )
 
 	RageLogStart();
 
-	SCREEN	= new RageScreen( hWnd );
+	SCREEN	= new RageScreen( hWnd, true, SCREEN_WIDTH, SCREEN_HEIGHT, 16 );
 	TM		= new RageTextureManager( SCREEN );
 	THEME	= new ThemeManager;
 	WM		= new WindowManager;
@@ -334,8 +325,13 @@ HRESULT CreateObjects( HWND hWnd )
 	BringWindowToTop( hWnd );
 	SetForegroundWindow( hWnd );
 
-	bool bGoFullScreen = GAMEINFO->m_GameOptions.m_bIsFullscreen;
-	SetFullscreen( GAMEINFO->m_GameOptions.m_bIsFullscreen );
+	GameOptions &go = GAMEINFO->m_GameOptions;
+	SwitchDisplayMode( 
+		go.m_bWindowed, 
+		go.m_iResolution,
+		go.m_iResolution==640 ? 480 : 240,
+		go.m_iDisplayColor
+	);
 
 
 	//WM->SetNewWindow( new WindowSandbox );
@@ -383,12 +379,14 @@ HRESULT RestoreObjects()
 	
     // Set window size
     RECT rcWnd;
-	if( g_bFullscreen )
-		SetRect( &rcWnd, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) );
-	else	// if( !g_bFullscreen )
+	if( SCREEN->IsWindowed() )
 	{
 		SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
   		AdjustWindowRect( &rcWnd, g_dwWindowStyle, FALSE );
+	}
+	else	// if fullscreen
+	{
+		SetRect( &rcWnd, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) );
 	}
 
 	// Bring the window to the foreground
@@ -480,14 +478,16 @@ void Render()
 			InvalidateObjects();
 
             // Resize the device
-            if( SUCCEEDED( SCREEN->Reset() ) )
+            if( SUCCEEDED( hr = SCREEN->Reset() ) )
             {
                 // Initialize the app's device-dependent objects
                 RestoreObjects();
 				return;
             }
 			else
-				RageError( "Failed to SCREEN->Reset()" );
+			{
+				RageErrorHr( "Failed to SCREEN->Reset()", hr );
+			}
 
 			break;
 		case S_OK:
@@ -536,24 +536,24 @@ void ShowFrame()
 
 
 //-----------------------------------------------------------------------------
-// Name: SetFullscreen()
+// Name: SwitchDisplayMode()
 // Desc:
 //-----------------------------------------------------------------------------
-void SetFullscreen( BOOL bFullscreen )
+BOOL SwitchDisplayMode( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD dwBPP )
 {
 	InvalidateObjects();
-	g_bFullscreen = bFullscreen;
-	SCREEN->SwitchDisplayModes( g_bFullscreen, 
-								   SCREEN_WIDTH, 
-								   SCREEN_HEIGHT );
+
+	BOOL bResult = SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP );
+	
 	RestoreObjects();
 
 	if( GAMEINFO )
 	{
-    if (bFullscreen == 1) GAMEINFO->m_GameOptions.m_bIsFullscreen = true;
-    else GAMEINFO->m_GameOptions.m_bIsFullscreen = false;
+	    GAMEINFO->m_GameOptions.m_bWindowed = bWindowed;
 		GAMEINFO->SaveConfigToDisk();
 	}
+
+	return bResult;
 }
 
 
