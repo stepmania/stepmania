@@ -18,6 +18,8 @@
 class ArchHooks
 {
 public:
+	/* This receives all logs.  'important' is set for Warn and Info. */
+	virtual void Log(CString str, bool important) { }
 	virtual ~ArchHooks() { }
 };
 

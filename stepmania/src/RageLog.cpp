@@ -11,12 +11,10 @@
 -----------------------------------------------------------------------------
 */
 
+#include "StepMania.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include <fstream>
-
-/* XXX */
-#include "archutils/win32/crash.h"
 
 RageLog* LOG;		// global and accessable from anywhere in the program
 
@@ -48,8 +46,7 @@ RageLog* LOG;		// global and accessable from anywhere in the program
 /* staticlog gets info.txt
  * crashlog gets log.txt */
 enum {
-	TO_LOG = 0x01,
-	TO_INFO = 0x02,
+	TO_INFO = 0x01,
 };
 
 RageLog::RageLog()
@@ -140,15 +137,12 @@ void RageLog::Write( int where, CString str)
 	if( m_fileLog )
 		fprintf(m_fileLog, "%s\n", str.GetString() );
 
-	if( where & TO_INFO )
-	{
-		if( m_fileInfo )
-			fprintf(m_fileInfo, "%s\n", str.GetString() );
-		StaticLog(str);
-	}
+	if( where & TO_INFO && m_fileInfo )
+		fprintf(m_fileInfo, "%s\n", str.GetString() );
+
+	HOOKS->Log(str, where & TO_INFO);
 
 	printf("%s\n", str.GetString() );
-	CrashLog(str);
 
 #ifdef DEBUG
 	Flush();
@@ -161,4 +155,5 @@ void RageLog::Write( int where, CString str)
 void RageLog::Flush()
 {
 	fflush( m_fileLog );
+	fflush( m_fileInfo );
 }
