@@ -24,7 +24,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
-				AdditionalIncludeDirectories=".,SDL-1.2.5/include,SDL_image-1.2,vorbis"
+				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,DEBUG"
 				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="3"
@@ -99,7 +99,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				FavorSizeOrSpeed="2"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".,SDL-1.2.5/include,SDL_image-1.2,vorbis"
+				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,RELEASE"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
@@ -170,28 +170,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Screen.h">
 			</File>
 			<File
-				RelativePath="ScreenAppearanceOptions.cpp">
-			</File>
-			<File
-				RelativePath="ScreenAppearanceOptions.h">
-			</File>
-			<File
 				RelativePath="ScreenAttract.cpp">
 			</File>
 			<File
 				RelativePath="ScreenAttract.h">
-			</File>
-			<File
-				RelativePath="ScreenAutogenOptions.cpp">
-			</File>
-			<File
-				RelativePath="ScreenAutogenOptions.h">
-			</File>
-			<File
-				RelativePath="ScreenBackgroundOptions.cpp">
-			</File>
-			<File
-				RelativePath="ScreenBackgroundOptions.h">
 			</File>
 			<File
 				RelativePath="ScreenCaution.cpp">
@@ -269,28 +251,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenGameplay.h">
 			</File>
 			<File
-				RelativePath="ScreenGameplayOptions.cpp">
-			</File>
-			<File
-				RelativePath="ScreenGameplayOptions.h">
-			</File>
-			<File
-				RelativePath="ScreenGraphicOptions.cpp">
-			</File>
-			<File
-				RelativePath="ScreenGraphicOptions.h">
-			</File>
-			<File
 				RelativePath="ScreenHowToPlay.cpp">
 			</File>
 			<File
 				RelativePath="ScreenHowToPlay.h">
-			</File>
-			<File
-				RelativePath="ScreenInputOptions.cpp">
-			</File>
-			<File
-				RelativePath="ScreenInputOptions.h">
 			</File>
 			<File
 				RelativePath="ScreenInstructions.cpp">
@@ -315,12 +279,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenLogo.h">
-			</File>
-			<File
-				RelativePath="ScreenMachineOptions.cpp">
-			</File>
-			<File
-				RelativePath="ScreenMachineOptions.h">
 			</File>
 			<File
 				RelativePath="ScreenMapControllers.cpp">
@@ -369,12 +327,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenOptionsMasterPrefs.h">
-			</File>
-			<File
-				RelativePath="ScreenOptionsMenu.cpp">
-			</File>
-			<File
-				RelativePath="ScreenOptionsMenu.h">
 			</File>
 			<File
 				RelativePath="ScreenPlayerOptions.cpp">
@@ -449,12 +401,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenSelectDifficultyEX.h">
 			</File>
 			<File
-				RelativePath="ScreenSelectGame.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectGame.h">
-			</File>
-			<File
 				RelativePath="ScreenSelectGroup.cpp">
 			</File>
 			<File
@@ -489,12 +435,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenSongOptions.h">
-			</File>
-			<File
-				RelativePath="ScreenSoundOptions.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSoundOptions.h">
 			</File>
 			<File
 				RelativePath="ScreenStage.cpp">

@@ -45,7 +45,7 @@ CFG=StepMania - Win32 Release
 # PROP Target_Dir ""
 CPP=cl.exe
 # ADD BASE CPP /nologo /MD /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /Fr /YX"global.h" /FD /c
-# ADD CPP /nologo /MD /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /I "SDL_net-1.2.5\lib\sdl_net.lib" /I "SDL_net-1.2.5\include" /I "vorbis" /I "ddk" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /Fr /YX"global.h" /FD /c
+# ADD CPP /nologo /MD /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.6\include" /I "SDL_image-1.2" /I "plib-1.6.0" /I "SDL_net-1.2.5\lib\sdl_net.lib" /I "SDL_net-1.2.5\include" /I "vorbis" /I "ddk" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /Fr /YX"global.h" /FD /c
 MTL=midl.exe
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
@@ -118,7 +118,7 @@ PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania
 # PROP Target_Dir ""
 CPP=cl.exe
 # ADD BASE CPP /nologo /MD /W3 /GX /Zi /O2 /Ob2 /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /FR /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /Zi /O2 /Ob2 /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /I "SDL_net-1.2.5\lib\sdl_net.lib" /I "SDL_net-1.2.5\include" /I "vorbis" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /FR /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GX /Zi /O2 /Ob2 /I "." /I "SDL-1.2.6\include" /I "SDL_image-1.2" /I "plib-1.6.0" /I "SDL_net-1.2.5\lib\sdl_net.lib" /I "SDL_net-1.2.5\include" /I "vorbis" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /FR /YX /FD /c
 MTL=midl.exe
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -3990,25 +3990,6 @@ SOURCE=.\Screen.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenAppearanceOptions.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenAppearanceOptions.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ScreenAttract.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Debug"
@@ -4025,44 +4006,6 @@ SOURCE=.\ScreenAttract.cpp
 # Begin Source File
 
 SOURCE=.\ScreenAttract.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenAutogenOptions.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenAutogenOptions.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenBackgroundOptions.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenBackgroundOptions.h
 # End Source File
 # Begin Source File
 
@@ -4316,44 +4259,6 @@ SOURCE=.\ScreenGameplay.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenGameplayOptions.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenGameplayOptions.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenGraphicOptions.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenGraphicOptions.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ScreenHowToPlay.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Debug"
@@ -4465,25 +4370,6 @@ SOURCE=.\ScreenLogo.cpp
 # Begin Source File
 
 SOURCE=.\ScreenLogo.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenMachineOptions.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenMachineOptions.h
 # End Source File
 # Begin Source File
 
@@ -4625,25 +4511,6 @@ SOURCE=.\ScreenOptionsMasterPrefs.cpp
 # Begin Source File
 
 SOURCE=.\ScreenOptionsMasterPrefs.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenOptionsMenu.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenOptionsMenu.h
 # End Source File
 # Begin Source File
 
@@ -4875,25 +4742,6 @@ SOURCE=.\ScreenSelectDifficultyEX.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenSelectGame.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSelectGame.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ScreenSelectGroup.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Debug"
@@ -5005,25 +4853,6 @@ SOURCE=.\ScreenSongOptions.cpp
 # Begin Source File
 
 SOURCE=.\ScreenSongOptions.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSoundOptions.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSoundOptions.h
 # End Source File
 # Begin Source File
 
