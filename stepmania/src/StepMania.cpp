@@ -135,6 +135,8 @@ void CreateLoadingWindow()
     if( loading_screen == NULL )
         throw RageException( "Couldn't initialize loading window: %s\n", SDL_GetError() );
 
+	SDL_WM_SetCaption("StepMania", "StepMania");
+
     /* Blit onto the screen surface */
     SDL_Rect dest;
     dest.x = 0;
@@ -250,14 +252,19 @@ BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 //-----------------------------------------------------------------------------
 void ApplyGraphicOptions()
 { 
-	DISPLAY->SetVideoMode( 
+	bool ReloadTextures = DISPLAY->SetVideoMode( 
 		PREFSMAN->m_bWindowed, 
 		PREFSMAN->m_iDisplayWidth, 
 		PREFSMAN->m_iDisplayHeight, 
 		PREFSMAN->m_iDisplayColorDepth, 
-		(RefreshRateMode)PREFSMAN->m_iRefreshRateMode,
+		PREFSMAN->m_iRefreshRate,
 		PREFSMAN->m_bVsync );
-	TEXTUREMAN->SetPrefs( PREFSMAN->m_iTextureColorDepth, PREFSMAN->m_iUnloadTextureDelaySeconds );
+
+	if(TEXTUREMAN->SetPrefs( PREFSMAN->m_iTextureColorDepth, PREFSMAN->m_iUnloadTextureDelaySeconds ))
+		ReloadTextures = true;
+
+	if(ReloadTextures)
+		TEXTUREMAN->ReloadAll(); 
 }
 
 
@@ -345,7 +352,7 @@ int main(int argc, char* argv[])
 		PREFSMAN->m_iDisplayWidth, 
 		PREFSMAN->m_iDisplayHeight, 
 		PREFSMAN->m_iDisplayColorDepth, 
-		(RefreshRateMode)PREFSMAN->m_iRefreshRateMode,
+		PREFSMAN->m_iRefreshRate,
 		PREFSMAN->m_bVsync );
 	TEXTUREMAN	= new RageTextureManager( PREFSMAN->m_iTextureColorDepth, PREFSMAN->m_iUnloadTextureDelaySeconds );
 
