@@ -49,8 +49,8 @@ bool GrayArrow::Load( CString NoteSkin, PlayerNumber pn, int iColNo )
 
 	sPath = NOTESKIN->GetPathTo( NoteSkin, Button, "KeypressBlock" );
 	bool ret2 = m_sprPressBlock.Load( sPath );
-	m_sprPressBlock.SetXY(0, THEME->GetMetricI ("ScreenGameplay","PressBlockY"));
-	return ret&ret2; // return both loaded or fail
+	m_sprPressBlock.SetXY(0, THEME->GetMetricF("ScreenGameplay","PressBlockY"));
+	return ret && ret2; // return both loaded or fail
 }
 
 void GrayArrow::Update( float fDeltaTime )
