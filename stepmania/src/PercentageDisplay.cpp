@@ -18,7 +18,7 @@ PercentageDisplay::PercentageDisplay()
 	m_pSource = NULL;
 }
 
-void PercentageDisplay::Load( PlayerNumber pn, StageStats* pSource, bool bAutoRefresh )
+void PercentageDisplay::Load( PlayerNumber pn, PlayerStageStats* pSource, bool bAutoRefresh )
 {
 	ASSERT( m_sName != "" ); // set this!
 	m_PlayerNumber = pn;
@@ -64,7 +64,7 @@ void PercentageDisplay::Update( float fDeltaTime )
 
 void PercentageDisplay::Refresh()
 {
-	const int iActualDancePoints = m_pSource->m_player[m_PlayerNumber].iActualDancePoints;
+	const int iActualDancePoints = m_pSource->iActualDancePoints;
 	if( iActualDancePoints == m_Last )
 		return;
 
@@ -77,7 +77,7 @@ void PercentageDisplay::Refresh()
 	}
 	else
 	{
-		float fPercentDancePoints = m_pSource->m_player[m_PlayerNumber].GetPercentDancePoints();
+		float fPercentDancePoints = m_pSource->GetPercentDancePoints();
 
 		// clamp percentage - feedback is that negative numbers look weird here.
 		CLAMP( fPercentDancePoints, 0.f, 1.f );
