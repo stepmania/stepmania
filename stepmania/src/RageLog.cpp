@@ -245,7 +245,7 @@ void RageLog::AddToInfo( CString str )
 		old_len = 0;
 	}
 
-	strcpy(staticlog+old_len, staticlog_buf + old_len);
+	strcpy(staticlog+old_len, (const char *)(staticlog_buf) + old_len);
 }
 
 const char *RageLog::GetInfo()
