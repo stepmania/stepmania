@@ -32,7 +32,6 @@ void Actor::Reset()
 
 	m_baseRotation = RageVector3( 0, 0, 0 );
 	m_baseScale = RageVector3( 1, 1, 1 );
-	m_size = RageVector2( 1, 1 );
 
 	m_start.Init();
 	m_current.Init();
@@ -60,6 +59,7 @@ void Actor::Reset()
 
 Actor::Actor()
 {
+	m_size = RageVector2( 1, 1 );
 	Reset();
 	m_bFirstUpdate = true;
 }
