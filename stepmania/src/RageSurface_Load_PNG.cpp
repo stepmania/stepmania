@@ -2,7 +2,6 @@
 #include "RageSurface_Load_PNG.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "SDL_utils.h"
 #include "RageFile.h"
 #include "RageSurface.h"
 
@@ -95,11 +94,6 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	{
 		img = CreateSurfaceFrom( width, height, 32, 0, 0, 0, 0, NULL, width*4 );
 		png_destroy_read_struct( &png, &info_ptr, NULL );
-		if( !img )
-		{
-			strcpy( errorbuf, SDL_GetError() );
-			return NULL;
-		}
 
 		return img;
 	}
