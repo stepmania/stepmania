@@ -101,9 +101,6 @@ public:
 	CString			m_sLanguage;
 	CString			m_sDefaultProfile[NUM_PLAYERS];	// directory name of profile on HD
 
-	// custom speed mod, default to 'C500'
-	CString			m_sCustomSpeedMod;
-
 	// course ranking
 	enum CourseSortOrders { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK } m_iCourseSortOrder;
 	bool			m_bMoveRandomToEnd;
