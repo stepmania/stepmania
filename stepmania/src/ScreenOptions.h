@@ -43,7 +43,8 @@ protected:
 	void PositionUnderlines( int row, PlayerNumber pn );
 	void PositionAllUnderlines();
 	void PositionIcons();
-	virtual void RefreshIcons();
+	virtual void RefreshIcons( int row, PlayerNumber pn );
+	void RefreshAllIcons();
 	void PositionCursors();
 	void PositionItems();
 	void TweenCursor( PlayerNumber pn );

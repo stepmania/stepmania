@@ -185,42 +185,36 @@ void ScreenOptionsMaster::GoToPrevScreen()
 	}
 }
 
-void ScreenOptionsMaster::RefreshIcons()
+void ScreenOptionsMaster::RefreshIcons( int r, PlayerNumber pn )
 {
-	FOREACH_HumanPlayer( p )
+	if( m_Rows[r]->GetRowType() == OptionRow::ROW_EXIT )
+		return;	// skip
+
+	OptionRow &row = *m_Rows[r];
+	const OptionRowDefinition &def = row.GetRowDef();
+
+	// find first selection and whether multiple are selected
+	int iFirstSelection = row.GetOneSelection( pn, true );
+
+	// set icon name
+	CString sIcon;
+
+	if( iFirstSelection == -1 )
 	{
-        for( unsigned i=0; i<m_Rows.size(); ++i )     // foreach options line
-		{
-			if( m_Rows[i]->GetRowType() == OptionRow::ROW_EXIT )
-				continue;	// skip
-
-			OptionRow &row = *m_Rows[i];
-			const OptionRowDefinition &def = row.GetRowDef();
-
-			// find first selection and whether multiple are selected
-			int iFirstSelection = row.GetOneSelection( p, true );
-
-			// set icon name
-			CString sIcon;
-
-			if( iFirstSelection == -1 )
-			{
-				sIcon = "Multi";
-			}
-			else if( iFirstSelection != -1 )
-			{
-				const OptionRowHandler *pHand = OptionRowHandlers[i];
-				sIcon = pHand->GetIconText( def, iFirstSelection+(m_OptionsNavigation==NAV_TOGGLE_THREE_KEY?-1:0) );
-			}
-			
-
-			/* XXX: hack to not display text in the song options menu */
-			if( def.bOneChoiceForAllPlayers )
-				sIcon = "";
-
-			LoadOptionIcon( p, i, sIcon );
-		}
+		sIcon = "Multi";
 	}
+	else if( iFirstSelection != -1 )
+	{
+		const OptionRowHandler *pHand = OptionRowHandlers[r];
+		sIcon = pHand->GetIconText( def, iFirstSelection+(m_OptionsNavigation==NAV_TOGGLE_THREE_KEY?-1:0) );
+	}
+	
+
+	/* XXX: hack to not display text in the song options menu */
+	if( def.bOneChoiceForAllPlayers )
+		sIcon = "";
+
+	LoadOptionIcon( pn, r, sIcon );
 }
 
 void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )

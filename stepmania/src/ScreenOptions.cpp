@@ -267,13 +267,12 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	PositionItems();
 	PositionAllUnderlines();
 	PositionIcons();
-	RefreshIcons();
+	RefreshAllIcons();
 	PositionCursors();
 	UpdateEnabledDisabled();
-	{
-		FOREACH_PlayerNumber( p )
-			OnChange( p );
-	}
+
+	FOREACH_PlayerNumber( p )
+		OnChange( p );
 
 	CHECKPOINT;
 
@@ -391,11 +390,17 @@ void ScreenOptions::PositionIcons()
 	}
 }
 
-void ScreenOptions::RefreshIcons()
+void ScreenOptions::RefreshIcons( int row, PlayerNumber pn )
 {
-	// handled by ScreenOptionsMaster
+	// overridden by ScreenOptionsMaster
 }
 
+void ScreenOptions::RefreshAllIcons()
+{
+	FOREACH_HumanPlayer( p )
+        for( unsigned r=0; r<m_Rows.size(); ++r )
+			this->RefreshIcons( r, p );
+}
 
 void ScreenOptions::PositionCursors()
 {
@@ -667,7 +672,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 
 	/* Do positioning. */
 	PositionUnderlines( iCurRow,  pn );
-	RefreshIcons();
+	RefreshIcons( iCurRow, pn );
 	PositionIcons();
 	UpdateEnabledDisabled();
 
@@ -827,7 +832,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 			m_SoundToggleOff.Play();
 
 		PositionUnderlines( iCurRow, pn );
-		RefreshIcons();
+		RefreshIcons( iCurRow, pn );
 
 		if( row.GetFirstItemGoesDown() )
 		{

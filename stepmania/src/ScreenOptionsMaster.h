@@ -30,7 +30,7 @@ protected:
 	virtual void GoToNextScreen();
 	virtual void GoToPrevScreen();
 
-	virtual void RefreshIcons();
+	virtual void RefreshIcons( int row, PlayerNumber pn );
 
 	ThemeMetric<bool> PLAY_MUSIC;
 };
