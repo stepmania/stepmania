@@ -1,6 +1,6 @@
 #include "global.h"
 
-#ifdef _WINDOWS
+#if defined(_WINDOWS)
 #include "windows.h"
 void NORETURN sm_crash()
 {
@@ -10,6 +10,13 @@ void NORETURN sm_crash()
 	/* Do something after calling DebugBreak, so the call/return isn't optimized
 	 * to a jmp; that way, this function will appear in backtrace stack traces. */
 	_asm nop;
+}
+#elif defined(LINUX) || defined(DARWIN)
+#include "archutils/Unix/CrashHandler.h"
+void NORETURN sm_crash()
+{
+	ForceCrashHandler( "Internal error" );
+	_exit( 1 );
 }
 #else
 void NORETURN sm_crash()
