@@ -311,7 +311,7 @@ float NoteData::GetLastBeat()
 	
 	int i;
 
-	for( i=MAX_TAP_NOTE_ROWS-1; i>=0; i-- )		// iterate back to front
+	for( i = int(m_TapNotes[0].size()); i>=0; i-- )		// iterate back to front
 	{
 		if( !IsRowEmpty(i) )
 		{
@@ -725,9 +725,10 @@ void NoteData::ConvertHoldNotesTo2sAnd3s()
  * So, make sure the character after a 4 is always a 0. */
 void NoteData::Convert4sToHoldNotes()
 {
+	int rows = GetLastRow();
 	for( int col=0; col<m_iNumTracks; col++ )	// foreach column
 	{
-		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// foreach TapNote element
+		for( int i=0; i<=rows; i++ )	// foreach TapNote element
 		{
 			if( GetTapNote(col, i) != TAP_HOLD )	// this is a HoldNote body
 				continue;
