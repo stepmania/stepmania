@@ -40,8 +40,6 @@ protected:
 	virtual void UpdateSelectableChoices() = 0;		// derived screens must handle this
 	void FinalizeChoices();
 	
-	CString m_sName;
-
 	MenuElements m_Menu;
 	BGAnimation m_BGAnimations[MAX_CHOICES];
 	vector<ModeChoice>	m_aModeChoices;		// derived classes should look here for what choices are available
