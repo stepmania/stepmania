@@ -53,6 +53,8 @@ public:
 
 	void EmptyDeleteQueue();
 
+	void LoadDelayedScreen();
+
 private:
 	vector<Screen*> m_ScreenStack;	// bottommost to topmost
 	vector<Screen*> m_ScreensToDelete;
@@ -61,6 +63,7 @@ private:
 
 	Screen* MakeNewScreen( CString sClassName );
 	void SetNewScreen( Screen *pNewScreen );
+	CString m_DelayedScreen;
 };
 
 

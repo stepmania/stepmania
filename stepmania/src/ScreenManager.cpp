@@ -315,6 +315,7 @@ void ScreenManager::EmptyDeleteQueue()
  * change state!).  Only do this when we have to, so we don't double
  * the number of updates. */
 static bool g_TopNeedsNeedsNullUpdate = false;
+static bool g_SkipRendering = false;
 
 void ScreenManager::Update( float fDeltaTime )
 {
@@ -331,25 +332,54 @@ void ScreenManager::Update( float fDeltaTime )
 	 * If we cap that large update delta from the screen load, the update
 	 * to load the new screen will come after 4 seconds plus the load time.
 	 *
-	 * So, let's just drop the first update for every screen.
+	 * So, let's just zero the first update for every screen.
+	 *
+	 * XXX:  If a new Screen is set during this Update, that new screen is Drawn
+	 * before it's first Update.
 	 */
-	ASSERT( !m_ScreenStack.empty() );	// Why play the game if there is nothing showing?
-	Screen* pScreen = m_ScreenStack[m_ScreenStack.size()-1];
-	if( pScreen->IsFirstUpdate() )
-		pScreen->Update( 0 );
-	else
-		pScreen->Update( fDeltaTime );
+	ASSERT( !m_ScreenStack.empty() || m_DelayedScreen != "" );	// Why play the game if there is nothing showing?
 
-	// TODO:  If a new Screen is set during this Update, that new screen is Drawn
-	// before it's first Update.
+	if( !m_ScreenStack.empty() )
+	{
+		Screen* pScreen = m_ScreenStack[m_ScreenStack.size()-1];
+		if( pScreen->IsFirstUpdate() )
+			pScreen->Update( 0 );
+		else
+			pScreen->Update( fDeltaTime );
+	}
+
 	m_SystemLayer->Update( fDeltaTime );
 
 	EmptyDeleteQueue();
+
+	if(m_DelayedScreen.size() != 0)
+	{
+		LOG->Trace("loading");
+		/* We have a screen to display.  Delete the current screens and load it. */
+		m_ScreensToDelete.insert(m_ScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());
+		m_ScreenStack.clear();
+		EmptyDeleteQueue();
+		LoadDelayedScreen();
+
+		/* Ack.  We can't Update(0), since we want to skip the *next* update
+		 * (which is the one that will have all this load time in it).  We
+		 * can't draw it until we've updated it.  Let's simply not render
+		 * the next frame, so we'll come around quickly and handle it correctly. */
+		g_SkipRendering = true;
+	}
 }
 
 
 void ScreenManager::Draw()
 {
+	DISPLAY->Clear();
+
+	if(g_SkipRendering)
+	{
+		/* Leave the frame there (if any). */
+		g_SkipRendering = false;
+		return;
+	}
 	if(g_TopNeedsNeedsNullUpdate)
 	{
 		g_TopNeedsNeedsNullUpdate = false;
@@ -362,6 +392,8 @@ void ScreenManager::Draw()
 		for( unsigned i=0; i<m_ScreenStack.size(); i++ )	// Draw all screens bottom to top
 			m_ScreenStack[i]->Draw();
 	m_SystemLayer->Draw();
+
+	DISPLAY->Flip();
 }
 
 
@@ -422,18 +454,33 @@ void ScreenManager::SetNewScreen( Screen *pNewScreen )
 
 	// move current screen(s) to ScreenToDelete
 	m_ScreensToDelete.insert(m_ScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());
-
 	m_ScreenStack.clear();
+
 	m_ScreenStack.push_back( pNewScreen );
 }
 
 void ScreenManager::SetNewScreen( CString sClassName )
 {
+	m_DelayedScreen = sClassName;
+
+	/* If we're not delaying screen loads, load it now.  Otherwise, we'll load
+	 * it on the next iteration.  Only delay if we already have a screen
+	 * loaded; otherwise, there's no reason to delay. */
+	if(!PREFSMAN->m_bDelayedScreenLoad) // || m_ScreenStack.empty() )
+		LoadDelayedScreen();
+}
+
+void ScreenManager::LoadDelayedScreen()
+{
+retry:
+	CString sClassName = m_DelayedScreen;
+	m_DelayedScreen = "";
+
 	/* If we prepped a screen but didn't use it, nuke it. */
 	SAFE_DELETE( m_ScreenBuffered );
 
 	RageTimer t;
-	
+
 	Screen* pOldTopScreen = m_ScreenStack.empty() ? NULL : m_ScreenStack.back();
 
 	// It makes sense that ScreenManager should allocate memory for a new screen since it 
@@ -451,6 +498,13 @@ void ScreenManager::SetNewScreen( CString sClassName )
 		return;
 	}
 
+	if( PREFSMAN->m_bDelayedScreenLoad && m_DelayedScreen != "" )
+	{
+		/* Same deal: the ctor called SetNewScreen again.  Delete the screen
+		 * we just made, but don't delay again. */
+		SAFE_DELETE( pNewScreen );
+		goto retry;
+	}
 	SetNewScreen( pNewScreen );
 
 	/* If this is a system menu, don't let the operator key touch it! 

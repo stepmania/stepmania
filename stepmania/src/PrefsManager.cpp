@@ -74,6 +74,7 @@ PrefsManager::PrefsManager()
 	m_bArcadeOptionsNavigation = false;
 	m_bSoloSingle = false;
 	m_bDelayedTextureDelete = true;
+	m_bDelayedScreenLoad = false;
 	m_MusicWheelUsesSections = ALWAYS;
 	m_iMusicWheelSwitchSpeed = 10;
 	m_bEasterEggs = true;
@@ -166,6 +167,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "ArcadeOptionsNavigation",	m_bArcadeOptionsNavigation );
 	ini.GetValue ( "Options", "DWIPath",					m_DWIPath );
 	ini.GetValueB( "Options", "DelayedTextureDelete",		m_bDelayedTextureDelete );
+	ini.GetValueB( "Options", "DelayedScreenLoad",			m_bDelayedScreenLoad );
 	ini.GetValueI( "Options", "MusicWheelUsesSections",		(int&)m_MusicWheelUsesSections );
 	ini.GetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
 	ini.GetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
@@ -249,6 +251,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "ArcadeOptionsNavigation",	m_bArcadeOptionsNavigation );
 	ini.SetValue ( "Options", "DWIPath",					m_DWIPath );
 	ini.SetValueB( "Options", "DelayedTextureDelete",		m_bDelayedTextureDelete );
+	ini.SetValueB( "Options", "DelayedScreenLoad",			m_bDelayedScreenLoad );
 	ini.SetValueI( "Options", "MusicWheelUsesSections",		m_MusicWheelUsesSections );
 	ini.SetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
 	ini.SetValueB( "Options", "EasterEggs",					m_bEasterEggs );

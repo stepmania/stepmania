@@ -574,9 +574,7 @@ static void GameLoop()
 		/*
 		 * Render
 		 */
-		DISPLAY->Clear();
 		SCREENMAN->Draw();
-		DISPLAY->Flip();
 
 		if(g_bHasFocus)
 			SDL_Delay( 1 );	// give some time to other processes and threads
