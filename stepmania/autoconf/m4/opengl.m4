@@ -32,11 +32,12 @@ AC_DEFUN(SM_OPENGL,
 	EXTRALIBS=
     fi
 
-    AC_SUBST(GL_LIBS)
     if test "$GL_LIBS" = ""; then
-	AC_MSG_ERROR(["No OpenGL libraries could be found.  If you want
+	AC_MSG_ERROR([No OpenGL libraries could be found.  If you want
 to search for MesaGL, pass the "--enable-mesa" flag to configure.])
     fi
+    AC_CHECK_LIB(GLU, gluGetString, GL_LIBS="$GL_LIBS -lGLU",, $GL_LIBS)
+    AC_SUBST(GL_LIBS)
 ])
 
 
