@@ -201,11 +201,12 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			// Yuck.  Doing the memory allocation doesn't seem right since
 			// Song allocates all of the other Notes.
 			Notes* pNewNotes = new Notes;
-			pNewNotes->CopyFrom( pSourceNotes, nt );
+			pNewNotes->AutogenFrom( pSourceNotes, nt );
+			pNewNotes->BakeAutoGen();
 			pNewNotes->SetDifficulty( dc );
 			pSong->AddNotes( pNewNotes );
 		
-			SCREENMAN->SystemMessage( "AutoGen Notes created." );
+			SCREENMAN->SystemMessage( "Notes created from AutoGen." );
 			m_soundCreate.PlayRandom();
 			m_Selector.Refresh();
 			pSong->Save();

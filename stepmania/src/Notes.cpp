@@ -269,14 +269,7 @@ void Notes::BakeAutoGen()
 {
 	NoteData noteData;
 	parent->GetNoteData( &noteData );
-	this->SetNoteData( &noteData );
-	this->SetDescription( "AutoGen'd from "+parent->GetDescription() );
-	this->SetDifficulty( parent->GetDifficulty() );
-	this->SetMeter( parent->GetMeter() );
-
-	const float* radarValues = parent->GetRadarValues();
-	for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
-		this->SetRadarValue( (RadarCategory)r, radarValues[r] );
+	this->SetNoteData( &noteData );		// this will call DeAutoGen
 
 	parent = NULL;
 }
