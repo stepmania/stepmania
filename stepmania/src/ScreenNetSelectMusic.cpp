@@ -332,7 +332,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			vector <wstring> wLines;
 			m_textOutHidden.GetLines( wLines );
 			CString actualText = "";
-			for (unsigned i = max(wLines.size() - SHOW_CHAT_LINES, unsigned(0) ) ; i < wLines.size() ; ++i)
+			for (unsigned i = (unsigned) max(int(wLines.size() - SHOW_CHAT_LINES), (int)0 ) ; i < wLines.size() ; ++i)
 				actualText += WStringToCString(wLines[i])+'\n';
 			m_textChatOutput.SetText( actualText );
 			break;
