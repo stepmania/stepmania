@@ -9,12 +9,13 @@ extern void MakeNewCocoaWindow();
 extern void DisposeOfCocoaWindow();
 extern void SetCocoaWindowText(const char *s);
 
-class LoadingWindow_Cocoa : public LoadingWindow {
+class LoadingWindow_Cocoa : public LoadingWindow
+{
 public:
 	LoadingWindow_Cocoa() { MakeNewCocoaWindow(); }
 	~LoadingWindow_Cocoa() { DisposeOfCocoaWindow(); }
 
-	void Paint() {} /* Not needed */
+	void Paint() { } /* Not needed but pure virtual*/
 	void SetText( CString str ) { SetCocoaWindowText( str ); }
 };
 #define USE_LOADING_WINDOW_COCOA
@@ -22,7 +23,7 @@ public:
 #endif
 
 /*
- * (c) 2003-2004 Steve Checkoway
+ * (c) 2003-2005 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
