@@ -18,79 +18,88 @@ struct RageFileObjMemFile
 
 class RageFileObjMem: public RageFileObj
 {
+public:
+	RageFileObjMem( RageFileObjMemFile *pFile );
+	~RageFileObjMem();
+
+	int ReadInternal( void *buffer, size_t bytes );
+	int WriteInternal( const void *buffer, size_t bytes );
+	int SeekInternal( int offset );
+	int GetFileSize() const;
+	RageFileObj *Copy() const;
+
 private:
 	RageFileObjMemFile *m_pFile;
 	int m_iFilePos;
-
-public:
-	RageFileObjMem( RageFileObjMemFile *pFile )
-	{
-		m_pFile = pFile;
-		m_iFilePos = 0;
-		++m_pFile->m_iRefs;
-	}
-
-	~RageFileObjMem()
-	{
-		m_pFile->m_Mutex.Lock();
-		const int iRefs = --m_pFile->m_iRefs;
-		const bool bShouldDelete = (iRefs == 0 && m_pFile->m_bDeleted);
-		m_pFile->m_Mutex.Unlock();
-		ASSERT( iRefs >= 0 );
-
-		/* If the file was removed while we still had it open, and is now unreferenced,
-		 * delete it. */
-		if( bShouldDelete )
-			delete m_pFile;
-	}
-
-	int ReadInternal( void *buffer, size_t bytes )
-	{
-		m_pFile->m_Mutex.Lock();
-
-		m_iFilePos = min( m_iFilePos, GetFileSize() );
-		bytes = min( bytes, (size_t) GetFileSize() - m_iFilePos );
-		memcpy( buffer, &m_pFile->m_sBuf[m_iFilePos], bytes );
-		m_iFilePos += bytes;
-		m_pFile->m_Mutex.Unlock();
-
-		return bytes;
-	}
-
-	int WriteInternal( const void *buffer, size_t bytes )
-	{
-		m_pFile->m_Mutex.Lock();
-		m_pFile->m_sBuf.append( (const char *) buffer, bytes );
-		m_pFile->m_Mutex.Unlock();
-
-		m_iFilePos += bytes;
-		return bytes;
-	}
-
-	int SeekInternal( int offset )
-	{
-		m_iFilePos = clamp( offset, 0, GetFileSize() );
-		return m_iFilePos;
-	}
-
-	int GetFileSize() const
-	{
-		LockMut(m_pFile->m_Mutex);
-		return m_pFile->m_sBuf.size();
-	}
-
-	RageFileObj *Copy() const
-	{
-		m_pFile->m_Mutex.Unlock();
-		++m_pFile->m_iRefs;
-		m_pFile->m_Mutex.Lock();
-
-		RageFileObjMem *pRet = new RageFileObjMem( m_pFile );
-		pRet->m_iFilePos = m_iFilePos;
-
-		return pRet;
-	}
 };
+
+RageFileObjMem::RageFileObjMem( RageFileObjMemFile *pFile )
+{
+	m_pFile = pFile;
+	m_iFilePos = 0;
+	++m_pFile->m_iRefs;
+}
+
+RageFileObjMem::~RageFileObjMem()
+{
+	m_pFile->m_Mutex.Lock();
+	const int iRefs = --m_pFile->m_iRefs;
+	const bool bShouldDelete = (iRefs == 0 && m_pFile->m_bDeleted);
+	m_pFile->m_Mutex.Unlock();
+	ASSERT( iRefs >= 0 );
+
+	/* If the file was removed while we still had it open, and is now unreferenced,
+	 * delete it. */
+	if( bShouldDelete )
+		delete m_pFile;
+}
+
+int RageFileObjMem::ReadInternal( void *buffer, size_t bytes )
+{
+	m_pFile->m_Mutex.Lock();
+
+	m_iFilePos = min( m_iFilePos, GetFileSize() );
+	bytes = min( bytes, (size_t) GetFileSize() - m_iFilePos );
+	memcpy( buffer, &m_pFile->m_sBuf[m_iFilePos], bytes );
+	m_iFilePos += bytes;
+	m_pFile->m_Mutex.Unlock();
+
+	return bytes;
+}
+
+int RageFileObjMem::WriteInternal( const void *buffer, size_t bytes )
+{
+	m_pFile->m_Mutex.Lock();
+	m_pFile->m_sBuf.append( (const char *) buffer, bytes );
+	m_pFile->m_Mutex.Unlock();
+
+	m_iFilePos += bytes;
+	return bytes;
+}
+
+int RageFileObjMem::SeekInternal( int offset )
+{
+	m_iFilePos = clamp( offset, 0, GetFileSize() );
+	return m_iFilePos;
+}
+
+int RageFileObjMem::GetFileSize() const
+{
+	LockMut(m_pFile->m_Mutex);
+	return m_pFile->m_sBuf.size();
+}
+
+RageFileObj *RageFileObjMem::Copy() const
+{
+	m_pFile->m_Mutex.Unlock();
+	++m_pFile->m_iRefs;
+	m_pFile->m_Mutex.Lock();
+
+	RageFileObjMem *pRet = new RageFileObjMem( m_pFile );
+	pRet->m_iFilePos = m_iFilePos;
+
+	return pRet;
+}
 
 
 RageFileDriverMem::RageFileDriverMem():
