@@ -41,7 +41,6 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 	RAGE_ASSERT_M( m_DecodeThread.IsCreated(), "RageSound_Generic_Software::StartDecodeThread() was never called" );
 
 	static SoundMixBuffer mix;
-//m_Mutex.Lock(); //XXX
 
 	CHECKPOINT;
 	for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
@@ -134,7 +133,6 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 
 	memset( buf, 0, frames*bytes_per_frame );
 	mix.read( (Sint16*)buf );
-//m_Mutex.Unlock(); //XXX
 }
 
 
@@ -201,7 +199,6 @@ void RageSound_Generic_Software::DecodeThread()
  * return false. */
 bool RageSound_Generic_Software::GetDataForSound( sound &s )
 {
-//m_Mutex.Lock(); //XXX
 	sound_block *p[2];
 	unsigned psize[2];
 	s.buffer.get_write_pointers( p, psize );
@@ -222,7 +219,6 @@ bool RageSound_Generic_Software::GetDataForSound( sound &s )
 
 //	LOG->Trace( "%s = %i (%i left) (state %i) (%p)",
 //		foo.c_str(), (int) s.frames_written, (int) s.frames_buffered(), s.state, s.snd );
-//m_Mutex.Unlock(); //XXX
 
 	return !eof;
 }
