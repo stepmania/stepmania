@@ -388,15 +388,14 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 	iMachineIndexOut = -1;
 
 	// In event mode, set the score's name immediately to the Profile's last
-	// used name.  If no profile last used name exists, then don't save the 
-	// score to the player or machine profile.
+	// used name.  If no profile last used name exists, use "EVNT".
 	if( PREFSMAN->m_bEventMode )
 	{
 		Profile* pProfile = PROFILEMAN->GetProfile(pn);
 		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
 			hs.sName = pProfile->m_sLastUsedHighScoreName;
 		else
-			return;	// don't save anything
+			hs.sName = "EVNT";
 	}
 	else
 	{
@@ -453,15 +452,14 @@ void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail,
 	iMachineIndexOut = -1;
 
 	// In event mode, set the score's name immediately to the Profile's last
-	// used name.  If no profile last used name exists, then don't save the 
-	// score to the player or machine profile.
+	// used name.  If no profile last used name exists, use "EVNT".
 	if( PREFSMAN->m_bEventMode )
 	{
 		Profile* pProfile = PROFILEMAN->GetProfile(pn);
 		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
 			hs.sName = pProfile->m_sLastUsedHighScoreName;
 		else
-			return;	// don't save anything
+			hs.sName = "EVNT";
 	}
 	else
 	{
