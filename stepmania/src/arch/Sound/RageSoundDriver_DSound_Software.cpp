@@ -64,6 +64,7 @@ bool RageSound_DSound_Software::GetData()
 	char *locked_buf;
 	unsigned len;
 	const int play_pos = str_ds->GetOutputPosition();
+    const int cur_play_pos = str_ds->GetPosition();
 
 	if(!str_ds->get_output_buf(&locked_buf, &len, chunksize))
 		return false;
@@ -87,12 +88,35 @@ bool RageSound_DSound_Software::GetData()
 		if(sounds[i]->stopping)
 			continue;
 
+        int bytes_read = 0;
+        int bytes_left = len;
+
+		if( !sounds[i]->start_time.IsZero() )
+		{
+			/* If the sound is supposed to start at a time past this buffer, insert silence. */
+			const int iFramesUntilThisBuffer = play_pos - cur_play_pos;
+
+			const float fSecondsBeforeStart = -sounds[i]->start_time.Ago();
+			const int iFramesBeforeStart = int(fSecondsBeforeStart * samplerate);
+			const int iSilentFramesInThisBuffer = max( 0, iFramesBeforeStart-iFramesUntilThisBuffer );
+			const int iSilentBytesInThisBuffer = min( iSilentFramesInThisBuffer * bytes_per_frame, bytes_left );
+
+			memset( buf+bytes_read, 0, iSilentBytesInThisBuffer );
+			bytes_read += iSilentBytesInThisBuffer;
+			bytes_left -= iSilentBytesInThisBuffer;
+
+			if( !iSilentBytesInThisBuffer )
+				sounds[i]->start_time.SetZero();
+		}
+
 		/* Call the callback. */
-		unsigned got = sounds[i]->snd->GetPCM((char *) buf, len, play_pos);
+		int got = sounds[i]->snd->GetPCM( (char *) buf+bytes_read, bytes_left, play_pos+bytes_read/bytes_per_frame );
+        bytes_read += got;
+        bytes_left -= got;
 
-		mix.write((Sint16 *) buf, got/2);
+		mix.write( (Sint16 *) buf, bytes_read / sizeof(Sint16) );
 
-		if(got < len)
+		if( bytes_left > 0 )
 		{
 			/* This sound is finishing. */
 			sounds[i]->stopping = true;
@@ -112,6 +136,7 @@ void RageSound_DSound_Software::StartMixing(RageSound *snd)
 {
 	sound *s = new sound;
 	s->snd = snd;
+	s->start_time = snd->GetStartTime();
 
 	LockMut(SOUNDMAN->lock);
 	sounds.push_back(s);
