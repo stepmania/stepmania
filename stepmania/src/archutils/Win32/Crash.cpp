@@ -123,7 +123,7 @@ static const char *LookupException( DWORD code )
 
 struct CrashInfo
 {
-	char m_CrashReason[256];
+	char m_CrashReason[1024*8];
 
 	const void *m_BacktracePointers[BACKTRACE_MAX_SIZE];
 
@@ -975,7 +975,8 @@ void ForceCrashHandlerDeadlock( CString reason, uint64_t iID )
 			CONTEXT context;
 			context.ContextFlags = CONTEXT_FULL;
 			if( !GetThreadContext( hThread, &context ) )
-				strcat( g_CrashInfo.m_CrashReason, "(GetThreadContext failed)" );
+				wsprintf( g_CrashInfo.m_CrashReason + strlen(g_CrashInfo.m_CrashReason),
+					"; GetThreadContext(%x) failed", (int) hThread );
 			else
 			{
 				static const void *BacktracePointers[BACKTRACE_MAX_SIZE];
