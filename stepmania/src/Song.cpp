@@ -993,7 +993,7 @@ int Song::GetNumTimesPlayed() const
  
 CString Song::GetMusicPath() const
 {
-	if(m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath)
+	if(m_sSongDir != "" && m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath)
 		return PREFSMAN->m_DWIPath+"\\"+m_sMusicFile;
 
 	return m_sMusicFile.Left(2) == ".\\"? m_sMusicFile : m_sSongDir+m_sMusicFile;
@@ -1010,7 +1010,7 @@ CString Song::GetBackgroundPath() const
 }
 CString Song::GetCDTitlePath() const
 {
-	if(m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath)
+	if(m_sSongDir != "" && m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath)
 		return PREFSMAN->m_DWIPath+"\\"+m_sCDTitleFile;
 
 	return m_sMusicFile.Left(2) == ".\\" ? m_sCDTitleFile : m_sSongDir+m_sCDTitleFile;
