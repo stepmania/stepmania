@@ -34,8 +34,7 @@ restrictions:
 
 
 /* Define DEBUG to get debugging output on stdout. */
-
-/* #define DEBUG */
+#undef DEBUG /* noisy */
 
 /* Use a macro for debugging printing, 'cause that eliminates the use of #ifdef
 inline, and there are *still* stupid compilers about that don't like indented
