@@ -10,6 +10,8 @@
 -----------------------------------------------------------------------------
 */
 
+#if !defined(SM_PCH) || SM_PCH == FALSE
+
 #ifndef STDAFX_H
 #define STDAFX_H
 
@@ -163,3 +165,5 @@ inline float roundf( float f )	{ if(f < 0) return truncf(f-0.5f); return truncf(
 /* Don't include our own headers here, since they tend to change often. */
 
 #endif
+
+#endif /* SM_PCH */

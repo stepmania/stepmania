@@ -35,9 +35,10 @@
 //104
 		1058C7A0FEA54F0111CA2CBB = {
 			children = (
+				AA230ECF06043EFD002672F3,
+				AA230EAE06043704002672F3,
+				AA230EAF06043704002672F3,
 				AABD0B2905DF12FA004F7929,
-				AA7D404A04FC3E180020E02B,
-				AA0DF1B00503C262003DE00C,
 				AAA0F7CE047AC7BF005F316C,
 				1058C7A1FEA54F0111CA2CBB,
 				AA5D1C9404FE259500BE5E4F,
@@ -274,15 +275,6 @@
 //AA2
 //AA3
 //AA4
-		AA0DF1B00503C262003DE00C = {
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
-			lastKnownFileType = wrapper.framework;
-			name = AudioUnit.framework;
-			path = ../../../../System/Library/Frameworks/AudioUnit.framework;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
 		AA0E393304DA8EE700D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -692,6 +684,49 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		AA230E800604345B002672F3 = {
+			fileRef = AAD64AA10603FE7300EF8CDE;
+			isa = PBXBuildFile;
+			settings = {
+				COMPILER_FLAGS = "-x c++-header";
+			};
+		};
+		AA230EAE06043704002672F3 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = AudioToolbox.framework;
+			path = /System/Library/Frameworks/AudioToolbox.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AA230EAF06043704002672F3 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = AudioUnit.framework;
+			path = /System/Library/Frameworks/AudioUnit.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AA230EB006043704002672F3 = {
+			fileRef = AA230EAE06043704002672F3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA230EB106043704002672F3 = {
+			fileRef = AA230EAF06043704002672F3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA230ECF06043EFD002672F3 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = CoreServices.framework;
+			path = /System/Library/Frameworks/CoreServices.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
 		AA2344DC05C3B53500C8E1AE = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -888,15 +923,22 @@
 				AA4B42D905736AB5005FB5DB,
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "\"$(BUILD_DIR)/StepMania.app/Contents/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks\" Frameworks \"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks\"";
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = PBBUILD;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = ../src/archutils/Darwin/StepMania.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = "PBBUILD SM_PCH=TRUE";
 				GCC_USE_GCC3_PFE_SUPPORT = NO;
+				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				HEADER_SEARCH_PATHS = "/usr/include \"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers\" ../src \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL_image.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers\"";
+				HEADER_SEARCH_PATHS = "/usr/include   \"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers\" ../src \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL_image.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers\" ";
 				INFOPLIST_FILE = "Info-StepMania.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = /usr/lib;
@@ -1246,6 +1288,7 @@
 				AA56E5BB05FBF36E006B24C7,
 				AAED6F2D0601C528002D2DEE,
 				AAED6F2F0601C528002D2DEE,
+				AAD64AA60604079E00EF8CDE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2858,6 +2901,7 @@
 				AA29CD3D0558741A00961A51,
 				AA29CD3E0558741A00961A51,
 				AA29CD3F0558741A00961A51,
+				AA230E800604345B002672F3,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3174,6 +3218,7 @@
 				AA56E5BA05FBF36E006B24C7,
 				AAED6F2C0601C528002D2DEE,
 				AAED6F2E0601C528002D2DEE,
+				AAD64AA50604079E00EF8CDE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4341,6 +4386,7 @@
 			fileRef = AAEF3D0D04B533CC00D02EE9;
 			isa = PBXBuildFile;
 			settings = {
+				COMPILER_FLAGS = "-x objective-c++";
 			};
 		};
 		AA29CE090558741A00961A51 = {
@@ -4647,8 +4693,6 @@
 				AA29CE400558741A00961A51,
 				AA29CE410558741A00961A51,
 				AA29CE420558741A00961A51,
-				AA29CE430558741A00961A51,
-				AA29CE440558741A00961A51,
 				AA67C0A60558B19B00EF34A6,
 				AA4B425C05733D71005FB5DB,
 				AA4B425D05733D71005FB5DB,
@@ -4664,6 +4708,8 @@
 				AA4B47AD0573970A005FB5DB,
 				AA4B47AE0573970C005FB5DB,
 				AABD0B2A05DF12FA004F7929,
+				AA230EB006043704002672F3,
+				AA230EB106043704002672F3,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4706,18 +4752,6 @@
 		};
 		AA29CE420558741A00961A51 = {
 			fileRef = AAF33F2A04FF213100F93C24;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CE430558741A00961A51 = {
-			fileRef = AA7D404A04FC3E180020E02B;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CE440558741A00961A51 = {
-			fileRef = AA0DF1B00503C262003DE00C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -4980,6 +5014,7 @@
 			fileRef = AA4B59EE0573AA5B005FB5DB;
 			isa = PBXBuildFile;
 			settings = {
+				COMPILER_FLAGS = "-x objective-c++";
 			};
 		};
 		AA4B5CC40573AD81005FB5DB = {
@@ -6401,6 +6436,8 @@
 		};
 		AA6E00090477103E005F316C = {
 			children = (
+				AAD64AA30604079E00EF8CDE,
+				AAD64AA40604079E00EF8CDE,
 				AA6E000A047711F3005F316C,
 				AA6E000B047711F3005F316C,
 				AA6E000C047711F3005F316C,
@@ -11934,15 +11971,6 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
-		AA7D404A04FC3E180020E02B = {
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
-			lastKnownFileType = wrapper.framework;
-			name = AudioToolbox.framework;
-			path = ../../../../System/Library/Frameworks/AudioToolbox.framework;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
 		AA8B6C7804AFD82B00D02EE9 = {
 			children = (
 				AA8B6C7904AFD87300D02EE9,
@@ -14419,6 +14447,45 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		AAD64AA10603FE7300EF8CDE = {
+			explicitFileType = sourcecode.cpp.h;
+			fileEncoding = 30;
+			indentWidth = 4;
+			isa = PBXFileReference;
+			path = StepMania.pch;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAD64AA30604079E00EF8CDE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScreenDownloadMachineStats.cpp;
+			path = /Users/steve/programming/stepmania/src/ScreenDownloadMachineStats.cpp;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AAD64AA40604079E00EF8CDE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScreenDownloadMachineStats.h;
+			path = /Users/steve/programming/stepmania/src/ScreenDownloadMachineStats.h;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AAD64AA50604079E00EF8CDE = {
+			fileRef = AAD64AA30604079E00EF8CDE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAD64AA60604079E00EF8CDE = {
+			fileRef = AAD64AA40604079E00EF8CDE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AADB4E7A04D4FE5D00D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -14569,6 +14636,7 @@
 		};
 		AADB4E8E04D5263200D02EE9 = {
 			children = (
+				AAD64AA10603FE7300EF8CDE,
 				AADB4F5A04D9220700D02EE9,
 				AADB4F5904D9220700D02EE9,
 				AABE7D3F051F07E900D02EE9,

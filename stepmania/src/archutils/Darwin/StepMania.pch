@@ -1,0 +1,8 @@
+/* Override the -DSM_PCH=TRUE temporarily. */
+#undef SM_PCH
+#define SM_PCH FALSE
+#include "global.h"
+/*
+ * I can't decide if RageUtil.h should go here or not. It is used by 200 .cpp
+ * files out of 430 that are in src and subdirs.
+ */
