@@ -663,6 +663,10 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 			}
 		}
 	}
+	
+	/* Run AdvanceFrame once, to set up m_vpBones, just in case we're drawn without
+	 * being Update(). */
+	AdvanceFrame( 0.0f );
 }
 
 float Model::GetCurFrame() { return m_fCurrFrame; };
