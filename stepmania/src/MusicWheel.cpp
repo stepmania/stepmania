@@ -1109,8 +1109,8 @@ void MusicWheel::SetOpenGroup(CString group, SongSortOrder so)
 		//
 		// cache banners
 		//
-		if(from[i].HasBanner() && PREFSMAN->m_BannerCacheType == PREFSMAN->preload_group)
-			TEXTUREMAN->CacheTexture( Banner::BannerTex(from[i].GetBanner()) );
+//		if(from[i].HasBanner() && PREFSMAN->m_BannerCacheType == PREFSMAN->preload_group)
+//			TEXTUREMAN->CacheTexture( Banner::BannerTex(from[i].GetBanner()) );
 	}
 
 
