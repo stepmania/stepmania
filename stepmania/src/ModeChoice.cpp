@@ -96,7 +96,6 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 {
 	m_iIndex = iIndex;
 
-	m_sName = sChoice;
 	m_bInvalid = false;
 
 	CString sSteps;
