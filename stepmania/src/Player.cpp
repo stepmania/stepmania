@@ -220,13 +220,16 @@ void Player::Update( float fDeltaTime )
 
 			m_NoteField.m_bIsHoldingHoldNote[i] = bIsHoldingButton && bSteppedOnTapNote;	// set host flag so NoteField can do intelligent drawing
 
-			if( bSteppedOnTapNote && bIsHoldingButton )
+			if( bSteppedOnTapNote )		// this note is not judged and we stepped on its head
+			{
+				m_NoteField.m_HoldNotes[i].m_fStartBeat = fSongBeat;	// move the start of this Hold
+			}
+
+			if( bIsHoldingButton )
 			{
 				// Increase life
 				fLife += fDeltaTime/HOLD_ARROW_NG_TIME;
 				fLife = min( fLife, 1 );	// clamp
-
-				m_NoteField.m_HoldNotes[i].m_fStartBeat = fSongBeat;	// move the start of this Hold
 
 				m_GhostArrowRow.HoldNote( hn.m_iTrack );		// update the "electric ghost" effect
 			}
