@@ -1234,13 +1234,19 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 	 * correct (we need a place to start from); so if sPath is relative,
 	 * prepend "./" */
 
+	/* Strip off the last path element and use it as a mask. */
 	unsigned pos = sPath.find_last_of("/\\");
-	CString fn="*";
+	CString fn;
 	if(pos != sPath.npos)
 	{
 		fn = sPath.substr(pos+1);
 		sPath = sPath.substr(0, pos+1);
 	}
+
+	/* If there was only one path element, or if the last element was empty,
+	 * use "*". */
+	if(fn.size() == 0)
+		fn = "*";
 
 	unsigned start = AddTo.size();
 	FDB.GetFilesSimpleMatch(sPath, fn, AddTo, bOnlyDirs);
