@@ -84,10 +84,13 @@ void RageBitmapTexture::Create()
 	ResolvePath( actualID.filename );
 	SDL_Surface *img = SDL_LoadImage( actualID.filename );
 
-	/* XXX: Wait, we don't want to throw for all images; in particular, we
-	 * want to tolerate corrupt/unknown background images. */
-	if(img == NULL)
-		RageException::Throw( "RageBitmapTexture: Couldn't load %s: %s", actualID.filename.c_str(), SDL_GetError() );
+	/* Tolerate corrupt/unknown images. */
+	if( img == NULL )
+	{
+		LOG->Warn( "RageBitmapTexture: Couldn't load %s: %s", actualID.filename.c_str(), SDL_GetError() );
+		img = mySDL_MakeDummySurface( 64, 64 );
+		ASSERT( img != NULL );
+	}
 
 	if(actualID.bHotPinkColorKey)
 	{
