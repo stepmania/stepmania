@@ -142,10 +142,12 @@ bool test_thread_backtrace( int ThreadId, const void *expect1, const void *expec
 {
 	BacktraceContext ctx;
 	int ret = GetThreadBacktraceContext( ThreadId, &ctx );
-	ASSERT( ret == 0 );
-
+	ASSERT( ret );
+	
 	const void *BacktracePointers[1024];
 	GetBacktrace( BacktracePointers, 1024, &ctx );
+
+	ResumeThread( ThreadId );
 
 	bool bFound1 = false, bFound2 = false;
 	for( int i = 0; BacktracePointers[i]; ++i)
