@@ -1380,9 +1380,10 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	default:		ASSERT(0);
 	}
 
+	// apply little before others
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_LITTLE] )		NoteDataUtil::Little(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS] )	NoteDataUtil::RemoveHoldNotes(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] )	NoteDataUtil::RemoveMines(nd, fStartBeat, fEndBeat);
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_LITTLE] )		NoteDataUtil::Little(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_WIDE] )		NoteDataUtil::Wide(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_BIG] )		NoteDataUtil::Big(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_QUICK] )		NoteDataUtil::Quick(nd, fStartBeat, fEndBeat);
