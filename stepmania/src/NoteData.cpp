@@ -36,19 +36,18 @@ NoteData::NoteData(const NoteData &cpy)
 NoteData &NoteData::operator= (const NoteData &cpy)
 {
 	Init();
+
 	for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
 		m_TapNotes[t] = cpy.m_TapNotes[t];
-	memmove(m_HoldNotes, cpy.m_HoldNotes, sizeof(m_HoldNotes));
 
 	m_iNumTracks = cpy.m_iNumTracks;
-	m_iNumHoldNotes = cpy.m_iNumHoldNotes;
+	m_HoldNotes = cpy.m_HoldNotes;
 	return *this;
 }
 
 void NoteData::Init()
 {
 	m_iNumTracks = 0;
-	m_iNumHoldNotes = 0;
 }
 
 NoteData::~NoteData()
@@ -239,10 +238,7 @@ void NoteData::AddHoldNote( HoldNote add )
 			add.m_fEndBeat   = max(add.m_fEndBeat, other.m_fEndBeat);
 
 			// delete this HoldNote
-			for( int j=i; j<GetNumHoldNotes()-1; j++ )
-				m_HoldNotes[j] = m_HoldNotes[j+1];
-
-			m_iNumHoldNotes--;
+			m_HoldNotes.erase(m_HoldNotes.begin()+i, m_HoldNotes.begin()+i+1);
 		}
 	}
 
@@ -256,13 +252,13 @@ void NoteData::AddHoldNote( HoldNote add )
 	// add a tap note at the start of this hold
 	SetTapNote(add.m_iTrack, iAddStartIndex, TAP_HOLD_HEAD);		// Hold begin marker.  Don't draw this, but do grade it.
 
-	ASSERT( m_iNumHoldNotes < MAX_HOLD_NOTES );
-	m_HoldNotes[m_iNumHoldNotes++] = add;
+	ASSERT( m_HoldNotes.size() < MAX_HOLD_NOTES );
+	m_HoldNotes.push_back(add);
 }
 
 void NoteData::RemoveHoldNote( int iHoldIndex )
 {
-	ASSERT( iHoldIndex >= 0  &&  iHoldIndex < m_iNumHoldNotes );
+	ASSERT( iHoldIndex >= 0  &&  iHoldIndex < GetNumHoldNotes() );
 
 	HoldNote& hn = GetHoldNote(iHoldIndex);
 
@@ -272,10 +268,7 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 	SetTapNote(hn.m_iTrack, iHoldStartIndex, TAP_EMPTY);
 
 	// remove from list
-	for( int j=iHoldIndex; j<GetNumHoldNotes()-1; j++ )
-		m_HoldNotes[j] = m_HoldNotes[j+1];
-
-	m_iNumHoldNotes--;
+	m_HoldNotes.erase(m_HoldNotes.begin()+iHoldIndex, m_HoldNotes.begin()+iHoldIndex+1);
 }
 
 bool NoteData::IsThereANoteAtRow( int iRow ) const
@@ -440,11 +433,8 @@ void NoteData::CropToLeftSide()
 	{
 		if( c >= iFirstRightSideColumn )
 		{
-			// delete this HoldNote by shifting everything down
-			// XXX: err, why not just call RemoveHoldNote?
-			for( int j=i; j<GetNumHoldNotes()-1; j++ )
-				GetHoldNote(j) = GetHoldNote(j+1);
-			m_iNumHoldNotes--;
+			// delete this HoldNote
+			m_HoldNotes.erase(m_HoldNotes.begin()+i, m_HoldNotes.begin()+i+1);
 		}
 	}
 }
@@ -504,7 +494,7 @@ void NoteData::RemoveHoldNotes()
 	}
 
 	// Remove all HoldNotes
-	m_iNumHoldNotes = 0;
+	m_HoldNotes.clear();
 }
 
 
@@ -683,7 +673,7 @@ void NoteData::MakeLittle()
 	// leave HoldNotes unchanged (what should be do with them?)
 }
 
-/* ConvertHoldNotesTo2sAnd3s also clears m_iNumHoldNotes;
+/* ConvertHoldNotesTo2sAnd3s also clears m_iHoldNotes;
  * shouldn't this do likewise and set all 2/3's to 0? 
  * -glenn
  *
@@ -741,7 +731,7 @@ void NoteData::ConvertHoldNotesTo2sAnd3s()
 			SetTapNote(hn.m_iTrack, iHoldEndIndex, TAP_HOLD_TAIL);
 		}
 	}
-	m_iNumHoldNotes = 0;
+	m_HoldNotes.clear();
 }
 
 /* "104444001" ==
@@ -785,7 +775,7 @@ void NoteData::ConvertHoldNotesTo4s()
 		for( int j = iHoldStartIndex; j < iHoldEndIndex; ++j)
 			SetTapNote(hn.m_iTrack, j, TAP_HOLD);
 	}
-	m_iNumHoldNotes = 0;
+	m_HoldNotes.clear();
 }
 
 void NoteData::SnapToNearestNoteType( NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat )

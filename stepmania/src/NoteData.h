@@ -36,8 +36,7 @@ public:
 
 	int			m_iNumTracks;
 
-	HoldNote	m_HoldNotes[MAX_HOLD_NOTES];
-	int			m_iNumHoldNotes;
+	vector<HoldNote>	m_HoldNotes;
 
 	/* Return the note at the given track and row.  Row may be out of
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
@@ -57,7 +56,7 @@ public:
 	void ClearRange( int iNoteIndexBegin, int iNoteIndexEnd );
 	void ClearAll() { ClearRange( 0, MAX_TAP_NOTE_ROWS ); };
 	void CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin = -1 );
-	void CopyAll( NoteData* pFrom ) { m_iNumTracks = pFrom->m_iNumTracks; m_iNumHoldNotes = 0; CopyRange( pFrom, 0, MAX_TAP_NOTE_ROWS ); };
+	void CopyAll( NoteData* pFrom ) { m_iNumTracks = pFrom->m_iNumTracks; m_HoldNotes.clear(); CopyRange( pFrom, 0, MAX_TAP_NOTE_ROWS ); };
 
 	inline bool IsRowEmpty( int index )
 	{
@@ -84,7 +83,7 @@ public:
 	int GetNumDoubles( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
 	/* optimization: for the default of start to end, use the second (faster) */
 	int GetNumHoldNotes( const float fStartBeat, const float fEndBeat = MAX_BEATS );
-	int GetNumHoldNotes() const { return m_iNumHoldNotes; }
+	int GetNumHoldNotes() const { return m_HoldNotes.size(); }
 
 	int GetPossibleDancePoints();
 
