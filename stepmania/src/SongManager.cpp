@@ -97,6 +97,23 @@ SongManager::~SongManager()
 	FreeSongs();
 }
 
+void SongManager::CategoryData::AddHighScore( HighScore hs, int &iIndexOut )
+{
+	int i;
+	for( i=0; i<(int)vHighScores.size(); i++ )
+	{
+		if( hs > vHighScores[i] )
+			break;
+	}
+	if( i < NUM_RANKING_LINES )
+	{
+		vHighScores.insert( vHighScores.begin()+i, hs );
+		iIndexOut = i;
+		if( vHighScores.size() > NUM_RANKING_LINES )
+			vHighScores.erase( vHighScores.begin()+NUM_RANKING_LINES, vHighScores.end() );
+	}
+}
+
 
 void SongManager::Reload()
 {

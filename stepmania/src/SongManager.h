@@ -101,27 +101,14 @@ public:
 				iScore = 0;
 			}
 
-			bool operator>( const HighScore& other )
+			bool operator>( const HighScore& other ) const
 			{
 				return iScore > other.iScore;
 			}
 		};
 		vector<HighScore> vHighScores;
 
-		void AddHighScore( HighScore hs, int &iIndexOut )
-		{
-			for( int i=0; i<(int)vHighScores.size() && i<NUM_RANKING_LINES; i++ )
-			{
-				if( hs > vHighScores[i] )
-				{
-					vHighScores.insert( vHighScores.begin()+i, hs );
-					iIndexOut = i;
-					break;
-				}
-			}
-			if( vHighScores.size() > NUM_RANKING_LINES )
-				vHighScores.erase( vHighScores.begin()+NUM_RANKING_LINES, vHighScores.end() );
-		}
+		void AddHighScore( HighScore hs, int &iIndexOut );
 
 	} m_CategoryDatas[NUM_STEPS_TYPES][NUM_RANKING_CATEGORIES];
 
