@@ -13,9 +13,11 @@
 #include "LoadingWindow/LoadingWindow_Gtk.h"
 #endif
 
+#include "ArchHooks/ArchHooks_Unix.h"
+
 #endif
 /*
- * Copyright (c) 2002 by the person(s) listed below.  All rights reserved.
+ * Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
  *
  * Glenn Maynard
  */
