@@ -430,6 +430,14 @@ bool Song::LoadFromSongDir( CString sDir )
 }
 
 
+static void GetImageDirListing( CString sPath, CStringArray &AddTo, bool bReturnPathToo=false )
+{
+	GetDirListing( sPath + ".png", AddTo, false, bReturnPathToo ); 
+	GetDirListing( sPath + ".jpg", AddTo, false, bReturnPathToo ); 
+	GetDirListing( sPath + ".bmp", AddTo, false, bReturnPathToo ); 
+	GetDirListing( sPath + ".gif", AddTo, false, bReturnPathToo ); 
+}
+
 void Song::TidyUpData()
 {
 	if( !HasMusic() )
@@ -577,10 +585,12 @@ void Song::TidyUpData()
 
 		// find an image with "banner" in the file name
 		CStringArray arrayPossibleBanners;
-		GetDirListing( m_sSongDir + CString("*banner*.png"), arrayPossibleBanners );
-		GetDirListing( m_sSongDir + CString("*banner*.jpg"), arrayPossibleBanners );
-		GetDirListing( m_sSongDir + CString("*banner*.bmp"), arrayPossibleBanners );
-		GetDirListing( m_sSongDir + CString("*banner*.gif"), arrayPossibleBanners );
+		GetImageDirListing( m_sSongDir + "*banner*", arrayPossibleBanners );
+
+		/* Some people do things differently for the sake of being different.  Don't
+		 * match eg. abnormal, numbness. */
+		GetImageDirListing( m_sSongDir + "* BN", arrayPossibleBanners );
+
 		if( !arrayPossibleBanners.empty() )
 			m_sBannerFile = arrayPossibleBanners[0];
 	}
@@ -591,28 +601,17 @@ void Song::TidyUpData()
 
 		// find an image with "bg" or "background" in the file name
 		CStringArray arrayPossibleBGs;
-		GetDirListing( m_sSongDir + CString("*bg*.png"), arrayPossibleBGs );
-		GetDirListing( m_sSongDir + CString("*bg*.jpg"), arrayPossibleBGs );
-		GetDirListing( m_sSongDir + CString("*bg*.bmp"), arrayPossibleBGs );
-		GetDirListing( m_sSongDir + CString("*bg*.gif"), arrayPossibleBGs );
-		GetDirListing( m_sSongDir + CString("*background*.png"), arrayPossibleBGs );
-		GetDirListing( m_sSongDir + CString("*background*.jpg"), arrayPossibleBGs );
-		GetDirListing( m_sSongDir + CString("*background*.bmp"), arrayPossibleBGs );
-		GetDirListing( m_sSongDir + CString("*background*.gif"), arrayPossibleBGs );
+		GetImageDirListing( m_sSongDir + "*bg*", arrayPossibleBGs );
+		GetImageDirListing( m_sSongDir + "*background*", arrayPossibleBGs );
 		if( !arrayPossibleBGs.empty() )
 			m_sBackgroundFile = arrayPossibleBGs[0];
 	}
 
 	if( !HasCDTitle() )
 	{
-//		m_sCDTitleFile = "";
-
 		// find an image with "cdtitle" in the file name
 		CStringArray arrayPossibleCDTitles;
-		GetDirListing( m_sSongDir + CString("*cdtitle*.png"), arrayPossibleCDTitles );
-		GetDirListing( m_sSongDir + CString("*cdtitle*.jpg"), arrayPossibleCDTitles );
-		GetDirListing( m_sSongDir + CString("*cdtitle*.bmp"), arrayPossibleCDTitles );
-		GetDirListing( m_sSongDir + CString("*cdtitle*.gif"), arrayPossibleCDTitles );
+		GetImageDirListing( m_sSongDir + "*cdtitle*", arrayPossibleCDTitles );
 		if( !arrayPossibleCDTitles.empty() )
 			m_sCDTitleFile = arrayPossibleCDTitles[0];
 	}
@@ -632,10 +631,8 @@ void Song::TidyUpData()
 	// Now, For the images we still haven't found, look at the image dimensions of the remaining unclassified images.
 	//
 	CStringArray arrayImages;
-	GetDirListing( m_sSongDir + CString("*.png"), arrayImages );
-	GetDirListing( m_sSongDir + CString("*.jpg"), arrayImages );
-	GetDirListing( m_sSongDir + CString("*.bmp"), arrayImages );
-	GetDirListing( m_sSongDir + CString("*.gif"), arrayImages );
+	GetImageDirListing( m_sSongDir + "*", arrayImages );
+
 	unsigned i;
 	for( i=0; i<arrayImages.size(); i++ )	// foreach image
 	{
@@ -672,7 +669,7 @@ void Song::TidyUpData()
 			continue;
 		}
 
-		if( CroppedSprite::IsDiagonalBanner(width, height) )
+		if( !HasBanner() && CroppedSprite::IsDiagonalBanner(width, height) )
 		{
 			m_sBannerFile = arrayImages[i];
 			continue;
