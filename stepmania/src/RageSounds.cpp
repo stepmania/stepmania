@@ -51,8 +51,7 @@ struct MusicPlaying
 
 	~MusicPlaying()
 	{
-		if( m_Music )
-			delete m_Music;
+		delete m_Music;
 	}
 };
 
