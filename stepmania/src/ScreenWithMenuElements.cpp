@@ -19,10 +19,11 @@
 ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( sClassName )
 {
 	LOG->Trace( "ScreenWithMenuElements::ScreenWithMenuElements()" );
-	
+
 	m_MenuTimer = new MenuTimer;
 	m_textHelp = new HelpDisplay;
 
+	m_FirstUpdateCommand.Load( sClassName, "FirstUpdateCommand" );
 
 	LOG->Trace( "MenuElements::MenuElements()" );
 
@@ -110,6 +111,17 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 {
 	SAFE_DELETE( m_MenuTimer );
 	SAFE_DELETE( m_textHelp );
+}
+
+void ScreenWithMenuElements::Update( float fDeltaTime )
+{
+	if( m_bFirstUpdate )
+	{
+		/* Evaluate FirstUpdateCommand. */
+		this->RunCommands( m_FirstUpdateCommand );
+	}
+
+	Screen::Update( fDeltaTime );
 }
 
 void ScreenWithMenuElements::ResetTimer()

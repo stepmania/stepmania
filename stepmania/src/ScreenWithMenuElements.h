@@ -7,6 +7,7 @@
 #include "ActorUtil.h"
 #include "RageSound.h"
 #include "MemoryCardDisplay.h"
+#include "ThemeMetric.h"
 
 class MenuTimer;
 class HelpDisplay;
@@ -17,6 +18,7 @@ public:
 	ScreenWithMenuElements( CString sName );
 	virtual ~ScreenWithMenuElements();
 
+	void Update( float fDeltaTime );
 	void StartTransitioning( ScreenMessage smSendWhenDone );
 	void Back( ScreenMessage smSendWhenDone );
 	bool IsTransitioning();
@@ -34,6 +36,7 @@ protected:
 	AutoActor			m_autoFooter;
 	HelpDisplay			*m_textHelp;
 	AutoActor			m_sprOverlay;
+	ThemeMetric<LuaExpression> m_FirstUpdateCommand;
 
 	Transition	m_In;
 	Transition	m_Out;
