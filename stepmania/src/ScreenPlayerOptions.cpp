@@ -198,6 +198,25 @@ void ScreenPlayerOptions::ImportOptions()
 		m_iSelectedOption[p][PO_HOLD_NOTES]	= po.m_bHoldNotes ? 1 : 0;
 		m_iSelectedOption[p][PO_DARK]		= po.m_fDark ? 1 : 0;
 
+		if( GAMESTATE->m_pCurCourse )   // playing a course
+		{
+			if( GAMESTATE->m_bDifficultCourses )
+				m_iSelectedOption[p][PO_STEP] = 1;
+			else
+				m_iSelectedOption[p][PO_STEP] = 0;
+		}
+		else
+		{
+			vector<Notes*> vNotes;
+			GAMESTATE->m_pCurSong->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+			SortNotesArrayByDifficulty( vNotes );
+			for( unsigned i=0; i<vNotes.size(); i++ )
+			{
+				if( GAMESTATE->m_pCurNotes[p] == vNotes[i] )
+					m_iSelectedOption[p][PO_STEP] = i;
+			}
+		}
+
 		/* Default: */
 		m_iSelectedOption[p][PO_PERSPECTIVE] = 1;
 		if(po.m_fPerspectiveTilt == -1)
@@ -275,23 +294,22 @@ void ScreenPlayerOptions::ExportOptions()
 			GAMESTATE->m_PlayerOptions[p].m_sPositioning = m_OptionRow[PO_PERSPECTIVE].choices[choice];
 		}
 
-	    if( GAMESTATE->m_pCurCourse )   // playing a course
+		//
+		// apply difficulty selection
+		//
+		if( GAMESTATE->m_pCurCourse )   // playing a course
 		{
-			if( GAMESTATE->m_bDifficultCourses )
-				m_iSelectedOption[p][PO_STEP] = 1;
+			if( m_iSelectedOption[p][PO_STEP] == 1 )
+				GAMESTATE->m_bDifficultCourses = true;
 			else
-				m_iSelectedOption[p][PO_STEP] = 0;
+				GAMESTATE->m_bDifficultCourses = false;
 		}
 		else
 		{
 			vector<Notes*> vNotes;
 			GAMESTATE->m_pCurSong->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 			SortNotesArrayByDifficulty( vNotes );
-			for( unsigned i=0; i<vNotes.size(); i++ )
-			{
-				if( GAMESTATE->m_pCurNotes[p] == vNotes[i] )
-					m_iSelectedOption[p][PO_STEP] = i;
-			}
+			GAMESTATE->m_pCurNotes[p] = vNotes[ m_iSelectedOption[p][PO_STEP] ];
 		}
 
 		if( m_iSelectedOption[p][PO_CHARACTER] > 0 )
