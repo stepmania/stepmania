@@ -3,6 +3,7 @@
 
 #include "RageSoundDriver.h"
 #include "SDL_Thread.h"
+#include "DSoundHelpers.h"
 
 struct IDirectSound8;
 struct IDirectSoundBuffer8;
@@ -11,7 +12,7 @@ class RageSound_DSound: public RageSoundDriver
 {
 	struct stream {
 	    /* Actual audio stream: */
-		IDirectSoundBuffer8 *str_ds;
+		DSoundBuf *str_ds;
 
 	    /* Sound object that's playing on this stream, or NULL if this
 	     * channel is available: */
@@ -23,29 +24,19 @@ class RageSound_DSound: public RageSoundDriver
 			STOPPING
 		} state;
 
-		int flush_bufs; /* state == STOPPING only */
-		/* Position in the DS buffer that we filled last; always
-		 * either 0 or halfway through the buffer: */
-		int last_cursor_filled;
-		/* Position, in samples, of the last buffer filled: */
-		int last_cursor_pos;
+		int flush_pos; /* state == STOPPING only */
 
-		/* Last time returned for this stream; used to make sure
-		 * we never go backwards. */
-		mutable int LastPosition;
+		bool GetPCM(bool init);
 
-		void GetPCM(bool init);
-
-	    stream() { str_ds = NULL; snd = NULL; state=INACTIVE; LastPosition = -1; }
+	    stream() { str_ds = NULL; snd = NULL; state=INACTIVE; }
 		~stream();
-		void CallAudioCallback(char *buf, unsigned long frames, int outTime, stream *str );
 	};
 	friend struct stream;
 
 	/* Pool of available streams. */
 	vector<stream *> stream_pool;
 
-	IDirectSound8 *ds8;
+	DSound ds;
 
 	bool shutdown; /* tells the MixerThread to shut down */
 	static int MixerThread_start(void *p);

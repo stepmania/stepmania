@@ -23,7 +23,7 @@
 const int channels = 2;
 const int samplesize = channels*2; /* 16-bit */
 const int samplerate = 44100;
-const int buffersize_frames = 2048*2;	/* in frames */
+const int buffersize_frames = 1024*4;	/* in frames */
 const int buffersize = buffersize_frames * samplesize; /* in bytes */
 
 /* We'll fill the buffer in chunks this big.  This should evenly divide the
@@ -46,6 +46,7 @@ void RageSound_DSound_Software::MixerThread()
 	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
 	 * assigns it; we might get here before that happens, though. */
 	while(!SOUNDMAN && !shutdown) Sleep(10);
+
 	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL))
 		LOG->Warn("Failed to set sound thread priority: %i", GetLastError()); /* XXX */
 
@@ -61,49 +62,12 @@ bool RageSound_DSound_Software::GetPCM()
 {
 	LockMut(SOUNDMAN->lock);
 
-	DWORD cursor, junk, write;
+	char *locked_buf;
+	unsigned len;
+	int play_pos;
 
-	HRESULT result;
-
-	result = str_ds->GetCurrentPosition(&cursor, &write);
-	if ( result == DSERR_BUFFERLOST ) {
-		str_ds->Restore();
-		result = str_ds->GetCurrentPosition(&cursor, &write);
-	}
-	if ( result != DS_OK ) {
-		LOG->Warn(hr_ssprintf(result, "DirectSound::GetCurrentPosition failed"));
+	if(!str_ds->get_output_buf(&locked_buf, &len, &play_pos, chunksize))
 		return false;
-	}
-
-	int num_bytes_empty = cursor - write_cursor;
-	if(num_bytes_empty < 0) num_bytes_empty += buffersize; /* unwrap */
-
-	/* num_bytes_empty is now the actual amount of free buffer space.  If it's
-	 * too small, come back later. */
-	if(num_bytes_empty < chunksize)
-		return false;
-
-	/* I don't want to deal with DSound's split-circular-buffer locking stuff, so cap
-	 * the writing space at the end of the physical buffer. */
-	num_bytes_empty = min(num_bytes_empty, buffersize - write_cursor);
-
-	/* Don't fill more than one chunk at a time.  This reduces the maximum
-	 * amount of time until we give data; that way, if we're short on time,
-	 * we'll give some data soon instead of lots of data later. */
-	num_bytes_empty = min(num_bytes_empty, chunksize);
-
-	/* Lock the audio buffer. */
-	DWORD len;
-	char *locked_buf = NULL;
-	result = str_ds->Lock(write_cursor, num_bytes_empty, (LPVOID *)&locked_buf, &len, NULL, &junk, 0);
-	if ( result == DSERR_BUFFERLOST ) {
-		str_ds->Restore();
-		result = str_ds->Lock(write_cursor, num_bytes_empty, (LPVOID *)&locked_buf, &len, NULL, &junk, 0);
-	}
-	if ( result != DS_OK ) {
-		LOG->Warn(hr_ssprintf(result, "Couldn't lock the DirectSound buffer."));
-		return false;
-	}
 
 	/* Silence the buffer. */
 	memset(locked_buf, 0, len);
@@ -128,7 +92,7 @@ bool RageSound_DSound_Software::GetPCM()
 				sounds[i]->flush_bufs--;
 		} else {
 			/* Call the callback. */
-			unsigned got = sounds[i]->snd->GetPCM((char *) buf, len, last_cursor_pos);
+			unsigned got = sounds[i]->snd->GetPCM((char *) buf, len, play_pos);
 
 			SOUNDMAN->MixAudio(
 				(Uint8 *) locked_buf, (Uint8 *) buf, got, SDL_MIX_MAXVOLUME/2);
@@ -142,14 +106,7 @@ bool RageSound_DSound_Software::GetPCM()
 		}
 	}
 
-	str_ds->Unlock(locked_buf, len, NULL, 0);
-
-	write_cursor += num_bytes_empty;
-	if(write_cursor >= buffersize) write_cursor -= buffersize;
-
-	/* Increment last_cursor_pos to point at where the data we're about to
-	 * ask for will actually be played. */
-	last_cursor_pos += buffersize_frames;
+	str_ds->release_output_buf(locked_buf, len);
 
 	return true;
 }
@@ -199,58 +156,32 @@ void RageSound_DSound_Software::StopMixing(RageSound *snd)
 	delete sounds[i];
 	sounds.erase(sounds.begin()+i, sounds.begin()+i+1);
 
+	/* If nothing is playing, reset the sample count; this is just to
+     * prevent eventual overflow. */
 	if(sounds.empty())
-	{
-		/* Nothing is playing.  Reset the sample count; this is just to
-		 * prevent eventual overflow. */
-		last_cursor_pos = LastPosition = 0;
-	}
+		str_ds->Reset();
 }
 
 int RageSound_DSound_Software::GetPosition(const RageSound *snd) const
 {
 	LockMut(SOUNDMAN->lock);
-
-	DWORD cursor, junk;
-	str_ds->GetCurrentPosition(&cursor, &junk);
-	int last_fill = write_cursor;
-
-	int frames_behind = (last_fill - int(cursor)) / samplesize;
-	if(frames_behind < 0)
-		frames_behind += buffersize_frames;
-
-	int ret = last_cursor_pos - frames_behind;
-
-	/* Failsafe: never return a value smaller than we've already returned.
-	 * This can happen once in a while in underrun conditions. */
-	ret = max(LastPosition, ret);
-	LastPosition = ret;
-
-	return ret;
+	return str_ds->GetPosition();
 }
 
 RageSound_DSound_Software::RageSound_DSound_Software()
 {
 	shutdown = false;
-	last_cursor_pos = write_cursor = 0;
-	LastPosition = -1;
 
 	/* XXX make another exception type that doesn't trigger debug stuff
 	 * and use that */
-	/* Fire up DSound. */
-	int hr;
-	if(FAILED(hr=DirectSoundCreate8(NULL, &ds8, NULL)))
-		throw RageException(hr_ssprintf(hr, "DirectSoundCreate8"));
-
-	/* Try to set primary mixing privileges */
-	hr = ds8->SetCooperativeLevel(GetDesktopWindow(), DSSCL_PRIORITY);
 
 	/* Create a DirectSound stream, but don't force it into hardware. */
-	str_ds = CreateBuf(ds8, channels, samplerate, 16, buffersize, false);
-
+	str_ds = new DSoundBuf(ds, 
+		DSoundBuf::HW_DONT_CARE, 
+		channels, samplerate, 16, buffersize);
 	MixerThreadPtr = SDL_CreateThread(MixerThread_start, this);
 
-	hr = str_ds->Play(0, 0, DSBPLAY_LOOPING);
+	str_ds->Play();
 }
 
 RageSound_DSound_Software::~RageSound_DSound_Software()
@@ -261,8 +192,7 @@ RageSound_DSound_Software::~RageSound_DSound_Software()
 	SDL_WaitThread(MixerThreadPtr, NULL);
 	LOG->Trace("Mixer thread shut down.");
 
-	str_ds->Release();
-	ds8->Release();
+	delete str_ds;
 }
 
 float RageSound_DSound_Software::GetPlayLatency() const

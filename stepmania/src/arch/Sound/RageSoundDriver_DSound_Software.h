@@ -3,6 +3,7 @@
 
 #include "RageSoundDriver.h"
 #include "SDL_Thread.h"
+#include "DSoundHelpers.h"
 
 struct IDirectSound8;
 struct IDirectSoundBuffer8;
@@ -22,13 +23,10 @@ class RageSound_DSound_Software: public RageSoundDriver
 	/* List of currently playing sounds: */
 	vector<sound *> sounds;
 
-	mutable int LastPosition;
-
 	bool shutdown;
-	int write_cursor, last_cursor_pos;
 
-	IDirectSound8 *ds8;
-	IDirectSoundBuffer8 *str_ds;
+	DSound ds;
+	DSoundBuf *str_ds;
 
 	bool GetPCM();
 	void Update(float delta);
