@@ -93,7 +93,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				OptimizeForProcessor="2"
-				AdditionalIncludeDirectories=".,sdl_xbox_includes,SDL_image-1.2;vorbis,libjpeg,lua-5.0"
+				AdditionalIncludeDirectories=".,sdl_xbox_includes,SDL_image-1.2;vorbis,libjpeg,lua-5.0/include"
 				PreprocessorDefinitions="WIN32,_XBOX,XBOX,_DEBUG,OGG_ONLY,_INC_WINDOWS"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
@@ -227,7 +227,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories=".;sdl_xbox_includes;SDL_image-1.2;vorbis,libjpeg,lua-5.0"
+				AdditionalIncludeDirectories=".;sdl_xbox_includes;SDL_image-1.2;vorbis,libjpeg,lua-5.0/include"
 				PreprocessorDefinitions="WIN32,_XBOX,XBOX,NDEBUG"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
@@ -563,12 +563,6 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="ScreenSelectDifficulty.h">
-			</File>
-			<File
-				RelativePath="ScreenSelectDifficultyEX.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectDifficultyEX.h">
 			</File>
 			<File
 				RelativePath="ScreenSelectGroup.cpp">
