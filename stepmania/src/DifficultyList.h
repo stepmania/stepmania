@@ -5,12 +5,10 @@
 #include "ActorUtil.h"
 #include "PlayerNumber.h"
 #include "BitmapText.h"
+#include "DifficultyMeter.h"
 
-class DifficultyMeter;
 class Song;
 class Steps;
-
-#define MAX_METERS 16
 
 class DifficultyList: public ActorFrame
 {
@@ -31,11 +29,17 @@ private:
 	void GetCurrentRows( int iCurrentRow[NUM_PLAYERS] ) const;
 	void HideRows();
 
-	DifficultyMeter *m_Meters;
 	AutoActor		m_Cursors[NUM_PLAYERS];
 	ActorFrame		m_CursorFrames[NUM_PLAYERS];
-	BitmapText		m_Descriptions[MAX_METERS];
-	BitmapText		m_Number[MAX_METERS];
+
+	struct Line
+	{
+		DifficultyMeter m_Meter;
+		BitmapText		m_Description;
+		BitmapText		m_Number;
+	};
+	vector<Line>	m_Lines;
+
 	Song			*m_CurSong;
 	bool			m_bShown;
 
