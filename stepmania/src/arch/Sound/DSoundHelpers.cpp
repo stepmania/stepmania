@@ -82,6 +82,13 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	waveformat.cbSize = sizeof(waveformat);
 	waveformat.wFormatTag = WAVE_FORMAT_PCM;
 
+	bool NeedCtrlFrequency = false;
+	if(samplerate == DYNAMIC_SAMPLERATE)
+	{
+		samplerate = 44100;
+		NeedCtrlFrequency = true;
+	}
+
 	int bytes = samplebits/8;
 	waveformat.wBitsPerSample = WORD(samplebits);
 	waveformat.nChannels = WORD(channels);
@@ -94,12 +101,16 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	memset(&format, 0, sizeof(format));
 	format.dwSize = sizeof(format);
 	format.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME;
+		
 	/* Don't use DSBCAPS_STATIC.  It's meant for static buffers, and we
 	 * only use streaming buffers. */
 	if(hardware == HW_HARDWARE)
 		format.dwFlags |= DSBCAPS_LOCHARDWARE;
 	else
 		format.dwFlags |= DSBCAPS_LOCSOFTWARE;
+
+	if(NeedCtrlFrequency)
+		format.dwFlags |= DSBCAPS_CTRLFREQUENCY;
 
 	format.dwBufferBytes = buffersize;
 	format.dwReserved = 0;
@@ -126,6 +137,13 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 		buffersize = bcaps.dwBufferBytes;
 		writeahead = min(writeahead, buffersize);
 	}
+}
+
+void DSoundBuf::SetSampleRate(int hz)
+{
+	samplerate = hz;
+	HRESULT hr = buf->SetFrequency(hz);
+	LOG->Trace(hr_ssprintf(hr, "samp"));
 }
 
 void DSoundBuf::SetVolume(float vol)

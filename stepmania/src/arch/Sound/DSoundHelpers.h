@@ -40,6 +40,10 @@ class DSoundBuf
 
 public:
 	enum hw { HW_HARDWARE, HW_SOFTWARE, HW_DONT_CARE };
+
+	/* If samplerate is DYNAMIC_SAMPLERATE, then call SetSampleRate before
+	 * you use the sample. */
+	enum { DYNAMIC_SAMPLERATE = -1 };
 	DSoundBuf(DSound &ds, hw hardware, 
 		int channels, int samplerate, int samplebits, int writeahead);
 
@@ -50,6 +54,7 @@ public:
 	void Play();
 	void Stop();
 	void SetVolume(float vol);
+	void SetSampleRate(int hz);
 
 	~DSoundBuf();
 	int GetPosition() const;

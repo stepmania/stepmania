@@ -4,7 +4,7 @@
 void ErrorDialog_stdout::ShowError()
 {
 	/* Simplest "dialog" ever. */
-	printf("Error: %s\n", GetErrorText().GetString());
+	printf("Error: %s\n", GetErrorText().c_str());
 }
 
 /*

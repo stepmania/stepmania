@@ -171,7 +171,7 @@ void PrintCodecError(HRESULT hr, CString s)
 	/* Actually, we might need XviD; we might want to look
 	 * at the file and try to figure out if it's something
 	 * common: DIV3, DIV4, DIV5, XVID, or maybe even MPEG2. */
-	CString err = hr_ssprintf(hr, "%s", s.GetString());
+	CString err = hr_ssprintf(hr, "%s", s.c_str());
 	LOG->Warn( 
 		ssprintf(
 		"There was an error initializing a movie: %s.\n"
@@ -179,7 +179,7 @@ void PrintCodecError(HRESULT hr, CString s)
 		"DivX is required to movie textures and must\n"
 		"be installed before running the application.\n\n"
 		"Please visit http://www.divx.com to download the latest version.",
-		err.GetString())
+		err.c_str())
 		);
 }
 
@@ -208,7 +208,7 @@ void MovieTexture_DShow::Create()
     // Add the source filter
     CComPtr<IBaseFilter>    pFSrc;          // Source Filter
     WCHAR wFileName[MAX_PATH];
-	MultiByteToWideChar(CP_ACP, 0, m_ActualID.filename.GetString(), -1, wFileName, MAX_PATH);
+	MultiByteToWideChar(CP_ACP, 0, m_ActualID.filename.c_str(), -1, wFileName, MAX_PATH);
 
 	// if this fails, it's probably because the user doesn't have DivX installed
     if( FAILED( hr = m_pGB->AddSourceFilter( wFileName, L"SOURCE", &pFSrc ) ) )

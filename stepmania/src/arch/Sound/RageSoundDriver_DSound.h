@@ -50,6 +50,8 @@ class RageSound_DSound: public RageSoundDriver
 	void Update(float delta);
 	void VolumeChanged();
 
+	int GetSampleRate() const { return -1; }
+
 public:
 	RageSound_DSound();
 	~RageSound_DSound();

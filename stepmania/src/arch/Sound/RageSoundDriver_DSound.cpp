@@ -162,7 +162,7 @@ RageSound_DSound::RageSound_DSound()
 		try {
 			newbuf = new DSoundBuf(ds, 
 				DSoundBuf::HW_HARDWARE,
-				channels, samplerate, 16, buffersize);
+				channels, DSoundBuf::DYNAMIC_SAMPLERATE, 16, buffersize);
 		} catch(const RageException &e) {
 			/* If we didn't get at least 8, fail. */
 			if(i >= 8) break; /* OK */
@@ -234,6 +234,7 @@ void RageSound_DSound::StartMixing(RageSound *snd)
 
 	/* Give the stream to the playing sound and remove it from the pool. */
 	stream_pool[i]->snd = snd;
+	stream_pool[i]->str_ds->SetSampleRate(snd->GetSampleRate());
 
 	/* Pre-buffer the stream. */
 	/* There are two buffers of data; fill them both ahead of time so the
