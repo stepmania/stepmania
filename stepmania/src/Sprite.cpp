@@ -24,6 +24,7 @@
 #include "GameConstantsAndTypes.h"
 #include "SDL_utils.h"
 #include "ActorUtil.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 Sprite::Sprite()
 {
@@ -81,6 +82,8 @@ bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 {
 	LOG->Trace( ssprintf("Sprite::LoadFromSpriteFile(%s)", ID.filename.c_str()) );
 
+retry:
+
 	//Init();
 
 	m_sSpritePath = ID.filename;
@@ -102,7 +105,20 @@ bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 		vector<CString> asElementPaths;
 		GetDirListing( ID.filename + "*", asElementPaths, false, true );
 		if(asElementPaths.size() == 0)
-			RageException::Throw( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath.c_str(), ID.filename.c_str() );
+		{
+			CString sMessage = ssprintf( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath.c_str(), ID.filename.c_str() );
+			switch( HOOKS->MessageBoxAbortRetryIgnore(sMessage) )
+			{
+			case ArchHooks::abort:	
+				RageException::Throw( "Error reading value 'Texture' from %s.", m_sSpritePath.c_str() );
+			case ArchHooks::retry:	
+				goto retry;
+			case ArchHooks::ignore:
+				return false;
+			default:
+				ASSERT(0);
+			}
+		}
 		if(asElementPaths.size() > 1)
 		{
 			CString message = ssprintf( 
@@ -206,6 +222,20 @@ bool Sprite::LoadFromTexture( RageTextureID ID )
 }
 
 
+void Sprite::UpdateAnimationState()
+{
+	// Don't bother with state switching logic if there's only one state.  
+	// We already know what's going to show.
+	if( m_States.size() > 1 )
+	{
+		while( m_fSecsIntoState > m_States[m_iCurState].fDelay )	// it's time to switch frames
+		{
+			// increment frame and reset the counter
+			m_fSecsIntoState -= m_States[m_iCurState].fDelay;		// leave the left over time for the next frame
+			m_iCurState = (m_iCurState+1) % m_States.size();
+		}
+	}
+}
 
 void Sprite::Update( float fDelta )
 {
@@ -217,17 +247,8 @@ void Sprite::Update( float fDelta )
 	if( !m_pTexture )	// no texture, nothing to animate
 	    return;
 
-	//
-	// update animation frame
-	//
 	m_fSecsIntoState += fDelta;
-
-	while( m_fSecsIntoState > m_States[m_iCurState].fDelay )	// it's time to switch frames
-	{
-		// increment frame and reset the counter
-		m_fSecsIntoState -= m_States[m_iCurState].fDelay;		// leave the left over time for the next frame
-		m_iCurState = (m_iCurState+1) % m_States.size();
-	}
+	UpdateAnimationState();
 
 	//
 	// update scrolling
@@ -564,6 +585,13 @@ void Sprite::SetState( int iNewState )
 	CLAMP(iNewState, 0, (int)m_States.size()-1);
 	m_iCurState = iNewState;
 	m_fSecsIntoState = 0.0; 
+}
+
+void Sprite::SetSecondsIntoAnimation( float fSeconds )
+{
+	SetState( 0 );	// rewind to the first state
+	m_fSecsIntoState = fSeconds;
+	UpdateAnimationState();
 }
 
 CString	Sprite::GetTexturePath() const

@@ -1,10 +1,10 @@
-#ifndef GRAY_ARROW_H
-#define GRAY_ARROW_H
+#ifndef ReceptorArrow_H
+#define ReceptorArrow_H
 /*
 -----------------------------------------------------------------------------
  Class: ReceptorArrow
 
- Desc: A gray arrow that "receives" ColorNotes.
+ Desc: A gray arrow that "receives" the colorful note arrows.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Ben Nordstrom
@@ -13,7 +13,8 @@
 */
 
 
-#include "Sprite.h"
+#include "ActorFrame.h"
+#include "ActorUtil.h"
 #include "PlayerNumber.h"
 
 class ReceptorArrow : public ActorFrame
@@ -23,17 +24,19 @@ public:
 	bool Load( CString NoteSkin, PlayerNumber pn, int iColNo );
 
 	virtual void Draw();
-	virtual void  Update( float fDeltaTime );
+	virtual void Update( float fDeltaTime );
 	void Step();
-	void UpdateBars() { m_bIsPressed = true; };
+	void SetPressed() { m_bIsPressed = true; };
 private:
 
-	Sprite m_sprReceptorWaiting;
-	Sprite m_sprReceptorGo;
+	PlayerNumber m_PlayerNumber;
+	int m_iColNo;
 
-	CString m_sReceptorStepCommand;
-
-	Sprite m_sprPressBlock;
+	AutoActor m_pReceptorWaiting;
+	AutoActor m_pReceptorGo;
+	CString m_sStepCommand;
+	
+	AutoActor m_pPressBlock;
 	bool m_bIsPressed;
 };
 

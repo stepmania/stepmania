@@ -22,7 +22,7 @@
 #include "NoteDataWithScoring.h"
 #include "NoteDisplay.h"
 #include "ArrowBackdrop.h"
-#include "GrayArrowRow.h"
+#include "ReceptorArrowRow.h"
 #include "GhostArrowRow.h"
 
 class Song;
@@ -48,7 +48,7 @@ public:
 	void CacheNoteSkin( CString skin );
 
 	void Step( int iCol );
-	void UpdateBars( int iCol );
+	void SetPressed( int iCol );
 	void DidTapNote( int iCol, TapNoteScore score, bool bBright );
 	void DidHoldNote( int iCol );
 	void DidTapMine( int iCol, TapNoteScore score );
@@ -76,7 +76,7 @@ protected:
 	struct NoteDisplayCols
 	{
 		NoteDisplay		display[MAX_NOTE_TRACKS];
-		GrayArrowRow	m_GrayArrowRow;
+		ReceptorArrowRow	m_ReceptorArrowRow;
 		GhostArrowRow	m_GhostArrowRow;
 	};
 

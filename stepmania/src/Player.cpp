@@ -35,8 +35,8 @@
 #include "ScreenGameplay.h" /* for SM_ComboStopped */
 #include "ScreenManager.h"
 
-CachedThemeMetricF GRAY_ARROWS_Y_STANDARD		("Player","GrayArrowsYStandard");
-CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","GrayArrowsYReverse");
+CachedThemeMetricF GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
+CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
 #define JUDGMENT_X( p, both_sides )	THEME->GetMetricF("Player",both_sides ? "JudgmentXOffsetBothSides" : ssprintf("JudgmentXOffsetOneSideP%d",p+1))
 #define JUDGMENT_Y					THEME->GetMetricF("Player","JudgmentY")
 #define JUDGMENT_Y_REVERSE			THEME->GetMetricF("Player","JudgmentYReverse")
@@ -265,6 +265,9 @@ void PlayerMinus::Update( float fDeltaTime )
 	//
 	UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
 
+	//
+	// update pressed flag
+	//
 	int iNumCols = GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer;
 	for( int bar=0; bar < iNumCols; bar++ )
 	{
@@ -272,7 +275,7 @@ void PlayerMinus::Update( float fDeltaTime )
 		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 		bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
 		if(bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox)
-			m_pNoteField->UpdateBars(bar);
+			m_pNoteField->SetPressed(bar);
 	}
 
 	//
@@ -567,7 +570,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 	
 	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
-	bool bGrayArrowStep = true;
+	bool bReceptorArrowStep = true;
 
 	if( iIndexOverlappingNote != -1 )
 	{
@@ -816,7 +819,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		if( score==TNS_MARVELOUS  &&  !GAMESTATE->ShowMarvelous())
 			score = TNS_PERFECT;
 
-		bGrayArrowStep = score < TNS_GOOD;
+		bReceptorArrowStep = score < TNS_GOOD;
 
 //		LOG->Trace("Note offset: %f (fSecondsFromPerfect = %f), Score: %i", fNoteOffset, fSecondsFromPerfect, score);
 		
@@ -856,7 +859,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 
 
-	if( bGrayArrowStep )
+	if( bReceptorArrowStep )
 		m_pNoteField->Step( col );
 
 }

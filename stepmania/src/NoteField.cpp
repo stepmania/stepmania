@@ -67,7 +67,7 @@ void NoteField::CacheNoteSkin( CString skin )
 	NoteDisplayCols *nd = new NoteDisplayCols;
 	for( int c=0; c<GetNumTracks(); c++ ) 
 		nd->display[c].Load( c, m_PlayerNumber, skin, m_fYReverseOffsetPixels );
-	nd->m_GrayArrowRow.Load( m_PlayerNumber, skin, m_fYReverseOffsetPixels );
+	nd->m_ReceptorArrowRow.Load( m_PlayerNumber, skin, m_fYReverseOffsetPixels );
 	nd->m_GhostArrowRow.Load( m_PlayerNumber, skin, m_fYReverseOffsetPixels );
 
 	m_NoteDisplays[ skin ] = nd;
@@ -156,13 +156,13 @@ void NoteField::Update( float fDeltaTime )
 		if( LastDisplay )
 		{
 			cur->m_GhostArrowRow.CopyTweening( LastDisplay->m_GhostArrowRow );
-			cur->m_GrayArrowRow.CopyTweening( LastDisplay->m_GrayArrowRow );
+			cur->m_ReceptorArrowRow.CopyTweening( LastDisplay->m_ReceptorArrowRow );
 		}
 
 		LastDisplay = cur;
 	}
 
-	cur->m_GrayArrowRow.Update( fDeltaTime );
+	cur->m_ReceptorArrowRow.Update( fDeltaTime );
 	cur->m_GhostArrowRow.Update( fDeltaTime );
 
 	if( m_fPercentFadeToFail >= 0 )
@@ -392,7 +392,7 @@ void NoteField::DrawPrimitives()
 	ASSERT( !m_BeatToNoteDisplays.empty() );
 
 	NoteDisplayCols *cur = SearchForSongBeat();
-	cur->m_GrayArrowRow.Draw();
+	cur->m_ReceptorArrowRow.Draw();
 
 	//
 	// Adjust draw range depending on some effects
@@ -625,8 +625,8 @@ void NoteField::FadeToFail()
 		// don't fade all over again if this is called twice
 }
 
-void NoteField::Step( int iCol ) { SearchForSongBeat()->m_GrayArrowRow.Step( iCol ); }
-void NoteField::UpdateBars( int iCol ) { SearchForSongBeat()->m_GrayArrowRow.UpdateBars( iCol ); }
+void NoteField::Step( int iCol ) { SearchForSongBeat()->m_ReceptorArrowRow.Step( iCol ); }
+void NoteField::SetPressed( int iCol ) { SearchForSongBeat()->m_ReceptorArrowRow.SetPressed( iCol ); }
 void NoteField::DidTapNote( int iCol, TapNoteScore score, bool bBright ) { SearchForSongBeat()->m_GhostArrowRow.DidTapNote( iCol, score, bBright ); }
 void NoteField::DidHoldNote( int iCol ) { SearchForSongBeat()->m_GhostArrowRow.DidHoldNote( iCol ); }
 void NoteField::DidTapMine( int iCol, TapNoteScore score ) { SearchForSongBeat()->m_GhostArrowRow.DidTapMine( iCol, score ); }

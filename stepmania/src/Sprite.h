@@ -26,6 +26,7 @@ public:
 
 	virtual void DrawPrimitives();
 	virtual void Update( float fDeltaTime );
+	void UpdateAnimationState();	// take m_fSecondsIntoState, and move to a new state
 
 	/* Just a convenience function; load an image that'll be used in the
 	 * background. */
@@ -37,6 +38,7 @@ public:
 
 	virtual void EnableAnimation( bool bEnable );
 	virtual void SetState( int iNewState );
+	virtual void SetSecondsIntoAnimation( float fSeconds );
 	
 	virtual int GetNumStates()		{ return m_States.size(); };
 	CString	GetTexturePath() const;

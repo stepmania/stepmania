@@ -295,6 +295,7 @@ public:
 	static float GetCommandLength( CString command );
 
 	virtual void SetState( int iNewState ) {};
+	virtual void SetSecondsIntoAnimation( float fSeconds ) {};
 	virtual int GetNumStates() { return 1; };
 
 protected:

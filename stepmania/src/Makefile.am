@@ -163,8 +163,8 @@ ActorsInGameplay = \
 ArrowBackdrop.cpp ArrowBackdrop.h ArrowEffects.cpp ArrowEffects.h Background.cpp Background.h \
 BeginnerHelper.cpp BeginnerHelper.h \
 CombinedLifeMeterTug.h CombinedLifeMeterTug.cpp Combo.cpp Combo.h DancingCharacters.cpp DancingCharacters.h \
-GhostArrow.cpp GhostArrow.h GhostArrowRow.cpp GhostArrowRow.h GrayArrow.cpp GrayArrow.h \
-GrayArrowRow.cpp GrayArrowRow.h HoldGhostArrow.cpp HoldGhostArrow.h HoldJudgment.cpp HoldJudgment.h \
+GhostArrow.cpp GhostArrow.h GhostArrowRow.cpp GhostArrowRow.h ReceptorArrow.cpp ReceptorArrow.h \
+ReceptorArrowRow.cpp ReceptorArrowRow.h HoldGhostArrow.cpp HoldGhostArrow.h HoldJudgment.cpp HoldJudgment.h \
 Judgment.cpp Judgment.h LifeMeter.h LifeMeterBar.cpp LifeMeterBar.h LifeMeterBattery.cpp LifeMeterBattery.h \
 LyricDisplay.cpp LyricDisplay.h NoteDisplay.cpp NoteDisplay.h NoteField.cpp NoteField.h \
 NoteFieldPlus.h NoteFieldPlus.cpp Player.cpp Player.h ProTimingDisplay.cpp ProTimingDisplay.h \

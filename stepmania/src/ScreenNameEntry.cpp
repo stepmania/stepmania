@@ -41,7 +41,7 @@
 #define CHARS_SPACING_Y				THEME->GetMetricF("ScreenNameEntry","CharsSpacingY")
 #define SCROLLING_CHARS_COLOR		THEME->GetMetricC("ScreenNameEntry","ScrollingCharsColor")
 #define SELECTED_CHARS_COLOR		THEME->GetMetricC("ScreenNameEntry","SelectedCharsColor")
-#define GRAY_ARROWS_Y				THEME->GetMetricF("ScreenNameEntry","GrayArrowsY")
+#define GRAY_ARROWS_Y				THEME->GetMetricF("ScreenNameEntry","ReceptorArrowsY")
 #define NUM_CHARS_TO_DRAW_BEHIND	THEME->GetMetricI("ScreenNameEntry","NumCharsToDrawBehind")
 #define NUM_CHARS_TO_DRAW_TOTAL		THEME->GetMetricI("ScreenNameEntry","NumCharsToDrawTotal")
 #define FAKE_BEATS_PER_SEC			THEME->GetMetricF("ScreenNameEntry","FakeBeatsPerSec")
@@ -55,7 +55,7 @@ float	g_fCharsZoomLarge;
 float	g_fCharsSpacingY;
 RageColor	g_ScrollingCharsColor; 
 RageColor	g_SelectedCharsColor; 
-float	g_fGrayArrowsY;
+float	g_fReceptorArrowsY;
 int		g_iNumCharsToDrawBehind;
 int		g_iNumCharsToDrawTotal;
 float	g_fFakeBeatsPerSec;
@@ -104,7 +104,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 	g_fCharsSpacingY = CHARS_SPACING_Y;
 	g_ScrollingCharsColor = SCROLLING_CHARS_COLOR;
 	g_SelectedCharsColor = SELECTED_CHARS_COLOR;
-	g_fGrayArrowsY = GRAY_ARROWS_Y;
+	g_fReceptorArrowsY = GRAY_ARROWS_Y;
 	g_iNumCharsToDrawBehind = NUM_CHARS_TO_DRAW_BEHIND;
 	g_iNumCharsToDrawTotal = NUM_CHARS_TO_DRAW_TOTAL;
 	g_fFakeBeatsPerSec = FAKE_BEATS_PER_SEC;
@@ -191,10 +191,10 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 		/* Ensure that this is up-to-date. */
 		GAMESTATE->m_pPosition->Load( (PlayerNumber)p );
 
-		m_GrayArrowRow[p].Load( (PlayerNumber)p, GAMESTATE->m_PlayerOptions[p].m_sNoteSkin, 0 );
-		m_GrayArrowRow[p].SetX( (float)GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
-		m_GrayArrowRow[p].SetY( SCREEN_TOP + 100 );
-		this->AddChild( &m_GrayArrowRow[p] );
+		m_ReceptorArrowRow[p].Load( (PlayerNumber)p, GAMESTATE->m_PlayerOptions[p].m_sNoteSkin, 0 );
+		m_ReceptorArrowRow[p].SetX( (float)GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
+		m_ReceptorArrowRow[p].SetY( SCREEN_TOP + 100 );
+		this->AddChild( &m_ReceptorArrowRow[p] );
 
 
 		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
@@ -368,7 +368,7 @@ void ScreenNameEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 		int StringIndex = m_ColToStringIndex[StyleI.player][StyleI.col];
 		if(StringIndex != -1)
 		{
-			m_GrayArrowRow[StyleI.player].Step( StyleI.col );
+			m_ReceptorArrowRow[StyleI.player].Step( StyleI.col );
 			m_soundStep.Play();
 			char c = NAME_CHARS[GetClosestCharIndex(m_fFakeBeat)];
 			m_textSelectedChars[StyleI.player][StyleI.col].SetText( ssprintf("%c",c) );

@@ -13,7 +13,7 @@
 #include "BitmapText.h"
 #include "Transition.h"
 #include "RandomSample.h"
-#include "GrayArrowRow.h"
+#include "ReceptorArrowRow.h"
 #include "BGAnimation.h"
 #include "MenuTimer.h"
 
@@ -37,7 +37,7 @@ private:
 
 	BGAnimation		m_Background;
 
-	GrayArrowRow	m_GrayArrowRow[NUM_PLAYERS];
+	ReceptorArrowRow	m_ReceptorArrowRow[NUM_PLAYERS];
 	BitmapText		m_textSelectedChars[NUM_PLAYERS][ABS_MAX_RANKING_NAME_LENGTH];
 	BitmapText		m_textScrollingChars[NUM_PLAYERS][ABS_MAX_RANKING_NAME_LENGTH];
 	BitmapText		m_textCategory[NUM_PLAYERS];

@@ -65,6 +65,14 @@ inline void wrap( int &x, int n)
 	x %= n;
 }
 
+inline void wrap( float &x, float n)
+{
+	if (x<0)
+		x += ((-x/n)+1)*n;
+	
+	x = fmodf(x,n);
+}
+
 
 
 //-----------------------------------------------------------------------------
