@@ -117,7 +117,8 @@ public:
 			bool bAnisotropicFiltering_,
 			CString sWindowTitle_,
 			CString sIconFile_,
-			bool PAL_
+			bool PAL_,
+			float fDisplayAspectRatio_
 		)
 		{
 			windowed = windowed_;
@@ -133,6 +134,7 @@ public:
 			sWindowTitle = sWindowTitle_;
 			sIconFile = sIconFile_;
 			PAL = PAL_;
+			fDisplayAspectRatio = fDisplayAspectRatio_;
 		}
 		VideoModeParams() {}
 
@@ -147,6 +149,7 @@ public:
 		bool bAnisotropicFiltering;
 		bool interlaced;
 		bool PAL;
+		float fDisplayAspectRatio;
 		CString sWindowTitle;
 		CString sIconFile;
 	};

@@ -669,10 +669,15 @@ bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
 	RageSurface* surface = this->CreateScreenshot();
 
 	/* Unless we're in lossless, resize the image to 640x480.  If we're saving lossy,
-	 * there's no sense in saving 1280x960 screenshots, and if we're in a custom
-	 * resolution (eg. 640x240), we don't want to output in that resolution. */
+	 * there's no sense in saving 1280x960 screenshots, and we don't want to output
+	 * screenshots in a strange (non-1) sample aspect ratio. */
 	if( format != SAVE_LOSSLESS && (surface->h != 640 || surface->w != 480) )
-		RageSurfaceUtils::Zoom( surface, 640, 480 );
+	{
+		/* Maintain the DAR. */
+		int iWidth = lrintf( 640 / GetVideoModeParams().fDisplayAspectRatio );
+		LOG->Trace( "%ix%i -> %ix%i (%.3f)", surface->w, surface->h, 640, iWidth, GetVideoModeParams().fDisplayAspectRatio );
+		RageSurfaceUtils::Zoom( surface, 640, iWidth );
+	}
 
 	RageFile out;
 	if( !out.Open( sPath, RageFile::WRITE ) )
