@@ -55,6 +55,7 @@ void NoteField::Unload()
 		it != m_NoteDisplays.end(); ++it )
 		delete it->second;
 	m_NoteDisplays.clear();
+	LastDisplay = NULL;
 }
 
 void NoteField::CacheNoteSkin( CString skin )
