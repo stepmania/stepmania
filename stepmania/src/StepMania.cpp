@@ -1097,6 +1097,16 @@ int main(int argc, char* argv[])
 	/* Set up the theme and announcer. */
 	ReadGamePrefsFromDisk();
 
+	{
+		/* Now that THEME is loaded, load the icon for the current theme into the
+		 * loading window. */
+		CString sError;
+		RageSurface *pIcon = RageSurfaceUtils::LoadFile( THEME->GetPathG( "Common", "window icon" ), sError );
+		if( pIcon )
+			loading_window->SetIcon( pIcon );
+		delete pIcon;
+	}
+
 	if( PREFSMAN->m_iSoundWriteAhead )
 		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead );
 	SOUNDMAN	= new RageSoundManager;
