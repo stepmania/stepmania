@@ -10,30 +10,17 @@ else
 AM_CXXFLAGS += -DLINUX -DDATADIR=\"$(datadir)\"
 endif
 
-AM_CXXFLAGS += -O2 -ISDL-1.2.5/include -ISDL_sound-1.0.0
+AM_CXXFLAGS += -O2
+AM_CXXFLAGS += -ISDL-1.2.5/include -ISDL_sound-1.0.0
 AM_CFLAGS   += -O2
 
 # This is a little hacky; we use our own version of SDL and SDL_sound, and I don't
 # want to have to integrate their entire build systems.
-# <B.Anderson> Why --disable-alsa --disable-oss? Because SDL and our own
-#              sound system conflict, which might be safe on OSS (SDL simply
-#              gets rejected), but on ALSA, even when going through the OSS
-#              emu, this conflict causes StepMania to hang on soundcards
-#              incapable of handling multiple applications at the same time
-#              (which is basically everything besides SB Lives). This hang
-#              happens because if you try to open() a character device
-#              corresponding to an ALSA soundcard that's being used and
-#              can't handle multiple applications at one time, the open()
-#              call doesn't return until whatever's using the card closes it
-#              (in this case, StepMania, which is waiting for SDL to bring
-#              itself up, which will never happen, because the open() is
-#              hanging, because... you get the idea.) Setting these switches
-#              keep SDL from trying to grab the soundcard, so we have it all
-#              to ourselves, thus preventing that nasty hang on boot.
 
 SDL-1.2.5/src/.libs/libSDL.a:
 	cd SDL-1.2.5 && ./configure \
-		--disable-nasm --disable-arts --disable-esd --enable-static --disable-shared --enable-debug --disable-alsa --disable-oss 
+		--disable-nasm --disable-arts --disable-esd --enable-static --disable-shared \
+		--enable-debug --disable-alsa --disable-oss 
 	make -C SDL-1.2.5
 
 SDL_sound-1.0.0/.libs/libSDL_sound.a:
@@ -153,26 +140,17 @@ ThemeManager.cpp ThemeManager.h UnlockSystem.cpp UnlockSystem.h StepmaniaTemplat
 
 PCRE = pcre/chartables.c pcre/get.c pcre/internal.h pcre/maketables.c pcre/pcre.c pcre/pcre.h pcre/study.c
 
-Sound_OSS = \
-	arch/Sound/RageSoundDriver_OSS.cpp \
-	arch/Sound/RageSoundDriver_OSS.h
-
-Sound_ALSA9 = \
-	arch/Sound/RageSoundDriver_ALSA9.cpp \
-	arch/Sound/RageSoundDriver_ALSA9.h
-
-Sound_Null = \
-	arch/Sound/RageSoundDriver_Null.cpp \
+Sound = arch/Sound/RageSoundDriver_Null.cpp \
 	arch/Sound/RageSoundDriver_Null.h
 
-Sound = $(Sound_Null)
-
 if HAVE_ALSA
-Sound += $(Sound_ALSA9)
+Sound += arch/Sound/RageSoundDriver_ALSA9.cpp \
+	 arch/Sound/RageSoundDriver_ALSA9.h
 endif
 
 if HAVE_OSS
-Sound += $(Sound_OSS)
+Sound += arch/Sound/RageSoundDriver_OSS.cpp \
+	 arch/Sound/RageSoundDriver_OSS.h
 endif
 
 Loading = arch/LoadingWindow/LoadingWindow_SDL.cpp \
@@ -180,31 +158,36 @@ Loading = arch/LoadingWindow/LoadingWindow_SDL.cpp \
 	  arch/LoadingWindow/LoadingWindow_Null.h
 
 if HAVE_GTK
-  Loading += arch/LoadingWindow/LoadingWindow_Gtk.cpp \
-	     arch/LoadingWindow/LoadingWindow_Gtk.h
+Loading += arch/LoadingWindow/LoadingWindow_Gtk.cpp \
+	   arch/LoadingWindow/LoadingWindow_Gtk.h
 endif
+
+Input = arch/InputHandler/InputHandler.cpp \
+	arch/InputHandler/InputHandler.h
+
+Input += arch/InputHandler/InputHandler_SDL.cpp \
+	arch/InputHandler/InputHandler_SDL.h
+
+Movie = arch/MovieTexture/MovieTexture.cpp \
+	arch/MovieTexture/MovieTexture.h \
+	arch/MovieTexture/MovieTexture_Null.cpp \
+	arch/MovieTexture/MovieTexture_Null.h
+
+Window = arch/LowLevelWindow/LowLevelWindow.h
+Window += arch/LowLevelWindow/LowLevelWindow_SDL.cpp \
+	  arch/LowLevelWindow/LowLevelWindow_SDL.h
 
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
 		    arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
 		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \
 		    $(PCRE) \
 		    $(Loading) \
-	            arch/arch.cpp \
-		    arch/arch.h \
-		    arch/InputHandler/InputHandler.cpp \
-		    arch/InputHandler/InputHandler.h \
-		    arch/InputHandler/InputHandler_SDL.cpp \
-		    arch/InputHandler/InputHandler_SDL.h \
-		    arch/MovieTexture/MovieTexture.cpp \
-		    arch/MovieTexture/MovieTexture.h \
-		    arch/MovieTexture/MovieTexture_Null.cpp \
-		    arch/MovieTexture/MovieTexture_Null.h \
+		    $(Input) \
+		    $(Movie) \
 		    $(Sound) \
-		    arch/LowLevelWindow/LowLevelWindow.h \
-		    arch/LowLevelWindow/LowLevelWindow_SDL.cpp \
-		    arch/LowLevelWindow/LowLevelWindow_SDL.h \
-		    archutils/Unix/SignalHandler.cpp \
-		    archutils/Unix/SignalHandler.h
+		    $(Window) \
+	            arch/arch.cpp arch/arch.h \
+		    archutils/Unix/SignalHandler.cpp archutils/Unix/SignalHandler.h
 
 # Note that we still end up linking dynamically to the shared system library
 # for SDL_image.  This is annoying, but it's not a major problem.  The
