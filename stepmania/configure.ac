@@ -79,6 +79,16 @@ if test "$have_SDL_image" = "no"; then
   exit 1
 fi
 
+have_libpng=yes
+AC_SEARCH_LIBS(png_create_read_struct, [png], ,  have_libpng=no)
+AC_CHECK_HEADER(png.h, , have_libpng=no)
+if test "$have_libpng" = "no"; then
+  echo
+  echo "*** libpng is required to build StepMania; please make sure that"
+  echo "*** it is installed to continue the build process."
+  exit 1
+fi
+
 have_libjpeg=yes
 AC_SEARCH_LIBS(jpeg_read_scanlines, [jpeg], ,  have_libjpeg=no)
 AC_CHECK_HEADER(jpeglib.h, , have_libjpeg=no)
