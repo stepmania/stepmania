@@ -31,7 +31,7 @@ StringToX( LayoutType );
 #define FOREACH_OptionsPlayer( pn ) \
 	for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID && (!m_RowDef.bOneChoiceForAllPlayers || pn==0); pn=GetNextHumanPlayer(pn) )
 
-#define PREPARE_ITEM_TEXT( s )	if( s!= "" ) { if( THEME_ITEMS ) s = THEME_OPTION_ITEM( s, false ); if( CAPITALIZE_ALL_OPTION_NAMES ) s.MakeUpper(); }
+#define PREPARE_ITEM_TEXT( s )	if( s!= "" ) { if( m_RowDef.m_bAllowThemeItems && THEME_ITEMS ) s = THEME_OPTION_ITEM( s, false ); if( CAPITALIZE_ALL_OPTION_NAMES ) s.MakeUpper(); }
 
 static CString OPTION_TITLE( CString s ) { return THEME->GetMetric("OptionTitles",s); }
 

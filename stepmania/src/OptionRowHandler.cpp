@@ -248,6 +248,7 @@ public:
 
 		defOut.name = "NoteSkins";
 		defOut.bOneChoiceForAllPlayers = false;
+		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		CStringArray arraySkinNames;
 		NOTESKIN->GetNoteSkinNames( arraySkinNames );
@@ -272,6 +273,7 @@ public:
 
 		defOut.name = "Steps";
 		defOut.bOneChoiceForAllPlayers = false;
+		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		// fill in difficulty names
 		if( GAMESTATE->m_bEditing )
@@ -365,7 +367,7 @@ public:
 
 		defOut.bOneChoiceForAllPlayers = true;
 		defOut.name = "Style";
-		defOut.bOneChoiceForAllPlayers = true;
+		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		vector<const Style*> vStyles;
 		GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
@@ -426,6 +428,7 @@ public:
 		defOut.bOneChoiceForAllPlayers = true;
 		defOut.name = "Difficulty";
 		Default.m_dc = DIFFICULTY_INVALID;
+		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		{
 			defOut.choices.push_back( "AllDifficulties" );
@@ -852,6 +855,7 @@ public:
 		defOut.bOneChoiceForAllPlayers = true;
 		defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		defOut.m_bExportOnChange = true;
+		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		// calculate which StepsTypes to show
 		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, m_vStepsTypesToShow );
@@ -954,6 +958,7 @@ public:
 		defOut.bOneChoiceForAllPlayers = true;
 		defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		defOut.m_bExportOnChange = true;
+		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 		m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_CURRENT_SONG_CHANGED) );
 
 		if( GAMESTATE->m_pCurSong )
@@ -1047,166 +1052,7 @@ public:
 	}
 };
 
-// helpers for MenuStart() below
-static void DeleteCurNotes( void* pThrowAway )
-{
-	Song* pSong = GAMESTATE->m_pCurSong;
-	Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
-	pSong->RemoveSteps( pStepsToDelete );
-	pSong->Save();
-
-	// refresh the list
-	MESSAGEMAN->Broadcast( MESSAGE_CURRENT_SONG_CHANGED );
-}
-
-
-class OptionRowHandlerEditMenuAction : public OptionRowHandler
-{
-public:
-	vector<EditMenuAction> m_vEditMenuActions;
-
-	OptionRowHandlerEditMenuAction::OptionRowHandlerEditMenuAction() { Init(); }
-	void Init()
-	{
-		OptionRowHandler::Init();
-		m_vEditMenuActions.clear();
-	}
-
-	virtual void Load( OptionRowDefinition &defOut, CString sParam )
-	{
-		ASSERT( sParam.size() );
-
-		Init();
-		defOut.Init();
-
-		m_sName = sParam;
-		defOut.name = sParam;
-		defOut.bOneChoiceForAllPlayers = true;
-		defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-		m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_CURRENT_STEPS_P1_CHANGED) );
-		m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_EDIT_SOURCE_STEPS_CHANGED) );
-
-		bool bHasSteps = GAMESTATE->m_pCurSteps[0] != NULL;
-		bool bHasSourceSteps = GAMESTATE->m_pEditSourceSteps != NULL;
-		FOREACH_EditMenuAction( ema )
-		{
-			switch( ema )
-			{
-			case EDIT_MENU_ACTION_EDIT:
-			case EDIT_MENU_ACTION_DELETE:
-				if( !bHasSteps )
-					continue;	// skip
-				break;
-			case EDIT_MENU_ACTION_COPY:
-			case EDIT_MENU_ACTION_AUTOGEN:
-				if( bHasSteps || !bHasSourceSteps )
-					continue;	// skip
-				break;
-			case EDIT_MENU_ACTION_BLANK:
-				if( bHasSteps )
-					continue;	// skip
-				break;
-			default:
-				ASSERT(0);
-			}
-
-			m_vEditMenuActions.push_back( ema );
-			CString s = EditMenuActionToThemedString( ema );
-			defOut.choices.push_back( s );
-		}
-	}
-	virtual void ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
-	{
-		vbSelectedOut[0] = true;
-	}
-	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const
-	{
-		return 0;
-	}
-	virtual CString GetAndEraseScreen( int iChoice )
-	{
-		Song* pSong = GAMESTATE->m_pCurSong;
-		Steps *pSteps = GAMESTATE->m_pCurSteps[0];
-		Difficulty dc = GAMESTATE->m_PreferredDifficulty[0];
-		StepsType st = GAMESTATE->m_stEdit;
-		Steps *pSourceNotes = GAMESTATE->m_pEditSourceSteps;
-
-		EditMenuAction ema = m_vEditMenuActions[iChoice];
-		switch( ema )
-		{
-		case EDIT_MENU_ACTION_EDIT:
-			// Prepare prepare for ScreenEdit
-			ASSERT( pSong );
-			ASSERT( pSteps );
-			GAMESTATE->m_pCurStyle = GAMEMAN->GetEditorStyleForStepsType( st );
-			return "ScreenEdit";
-			break;
-		case EDIT_MENU_ACTION_DELETE:
-			ASSERT( pSteps );
-			SCREENMAN->Prompt( SM_None, "These notes will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO, DeleteCurNotes );
-			break;
-		case EDIT_MENU_ACTION_COPY:
-			ASSERT( !pSteps );
-			ASSERT( pSourceNotes );
-			{
-				// Yuck.  Doing the memory allocation doesn't seem right since
-				// Song allocates all of the other Steps.
-				Steps* pNewSteps = new Steps;
-				pNewSteps->CopyFrom( pSourceNotes, st );
-				pNewSteps->SetDifficulty( dc );
-				pSong->AddSteps( pNewSteps );
-			
-				SCREENMAN->SystemMessage( "Steps created from copy." );
-				SOUND->PlayOnce( THEME->GetPathS("ScreenEditMenu","create") );
-				pSong->Save();
-			}
-			break;
-		case EDIT_MENU_ACTION_AUTOGEN:
-			ASSERT( !pSteps );
-			ASSERT( pSourceNotes );
-			{
-				// Yuck.  Doing the memory allocation doesn't seem right since
-				// Song allocates all of the other Steps.
-				Steps* pNewNotes = new Steps;
-				pNewNotes->AutogenFrom( pSourceNotes, st );
-				pNewNotes->DeAutogen();
-				pNewNotes->SetDifficulty( dc );	// override difficulty with the user's choice
-				pSong->AddSteps( pNewNotes );
-			
-				SCREENMAN->SystemMessage( "Steps created from AutoGen." );
-				SOUND->PlayOnce( THEME->GetPathS("ScreenEditMenu","create") );
-				pSong->Save();
-			}
-			break;
-		case EDIT_MENU_ACTION_BLANK:
-			ASSERT( !pSteps );
-			{
-				// Yuck.  Doing the memory allocation doesn't seem right since
-				// Song allocates all of the other Steps.
-				Steps* pNewNotes = new Steps;
-				pNewNotes->CreateBlank( st );
-				pNewNotes->SetDifficulty( dc );
-				pNewNotes->SetMeter( 1 );
-				pSong->AddSteps( pNewNotes );
-			
-				SCREENMAN->SystemMessage( "Blank Steps created." );
-				SOUND->PlayOnce( THEME->GetPathS("ScreenEditMenu","create") );
-				pSong->Save();
-			}
-			break;
-		default:
-			ASSERT(0);
-		}
-		
-		// refresh the screen since we deleted or added steps
-		MESSAGEMAN->Broadcast( MESSAGE_CURRENT_SONG_CHANGED );
-		return "";
-	}
-};
-
-
 ///////////////////////////////////////////////////////////////////////////////////
-
 
 OptionRowHandler* OptionRowHandlerUtil::Make( const Command &command, OptionRowDefinition &defOut )
 {
@@ -1223,7 +1069,6 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Command &command, OptionRowD
 	else if( name == "conf" )			MAKE( OptionRowHandlerConfig )
 	else if( name == "stepstype" )		MAKE( OptionRowHandlerStepsType )
 	else if( name == "steps" )			MAKE( OptionRowHandlerSteps )
-	else if( name == "editmenuaction" )	MAKE( OptionRowHandlerEditMenuAction )
 
 	EndHandleArgs;
 
