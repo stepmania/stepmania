@@ -19,7 +19,6 @@
 #include "StepMania.h"
 #include "RageUtil.h"
 #include "ThemeManager.h"
-#include "ScreenSelectMusic.h"
 #include "Screen.h"
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
