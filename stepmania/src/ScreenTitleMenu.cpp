@@ -23,6 +23,7 @@
 #include "GameManager.h"
 #include "InputMapper.h"
 #include "ThemeManager.h"
+#include "SDL_Utils.h"
 
 const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"GAME START",
@@ -158,7 +159,6 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_soundChange.Load( THEME->GetPathTo("Sounds","title menu change") );	
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 	m_soundInvalid.Load( THEME->GetPathTo("Sounds","menu invalid") );
-
 
 	m_TitleMenuChoice = CHOICE_GAME_START;
 
@@ -371,9 +371,14 @@ void ScreenTitleMenu::MenuStart( PlayerNumber pn )
 			m_Fade.CloseWipingRight( SM_GoToNextScreen );
 		}
 		break;
-	case CHOICE_EXIT:
+	case CHOICE_EXIT: {
 		m_soundSelect.PlayRandom();
-		PostQuitMessage(0);
+
+		SDL_Event *event;
+		event = (SDL_Event *) malloc(sizeof(event));
+		event->type = SDL_QUIT;
+		SDL_PushEvent(event);
+		}
 		return;
 	default:
 		ASSERT(0);
