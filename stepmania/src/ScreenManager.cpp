@@ -289,6 +289,20 @@ void ScreenManager::EmptyDeleteQueue()
 	m_ScreensToDelete.clear();
 }
 
+/* XXX: Big hack:
+ * All screens must receive at least one update before they draw.
+ * However, no screen should ever receive an update until it's ready
+ * to be drawn; otherwise Gameplay will queue music to start even though
+ * Stage might still be delaying for a while, throwing off timing.
+ *
+ * This is tricky with prepped screens.  We can't do an Update(0) in 
+ * LoadPreppedScreen, since that'll cause the delete queue to be cleared
+ * while the screen is on the stack, and possibly other odd things.
+ * So, update before we draw, which is also a hack (rendering shouldn't
+ * change state!).  Only do this when we have to, so we don't double
+ * the number of updates. */
+static bool g_TopNeedsNeedsNullUpdate = false;
+
 void ScreenManager::Update( float fDeltaTime )
 {
 	EmptyDeleteQueue();
@@ -336,6 +350,12 @@ void ScreenManager::Invalidate()
 
 void ScreenManager::Draw()
 {
+	if(g_TopNeedsNeedsNullUpdate)
+	{
+		g_TopNeedsNeedsNullUpdate = false;
+		m_ScreenStack.back()->Update( 0 );
+	}
+
 	if( !m_ScreenStack.empty() && !m_ScreenStack.back()->IsTransparent() )	// top screen isn't transparent
 		m_ScreenStack.back()->Draw();
 	else
@@ -385,7 +405,7 @@ void ScreenManager::LoadPreppedScreen()
 	
 	// Need to update the new screen once, or else it will be 
 	// drawn before ever being Update()d.
-	Update( 0 );
+	g_TopNeedsNeedsNullUpdate = true;
 	
 	m_ScreenBuffered = NULL;
 }
