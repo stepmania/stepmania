@@ -636,10 +636,10 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				if( arrayWheelItemDatas[i].m_Type == TYPE_SONG )
 					bFoundAnySong = true;
 
-			if( SHOW_RANDOM && bFoundAnySong )
+			if( SHOW_RANDOM.GetValue() && bFoundAnySong )
 				arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1)) );
 
-			if( SHOW_PORTAL && bFoundAnySong )
+			if( SHOW_PORTAL.GetValue() && bFoundAnySong )
 				arrayWheelItemDatas.push_back( WheelItemData(TYPE_PORTAL, NULL, "", NULL, RageColor(1,0,0,1)) );
 		}
 
@@ -783,7 +783,7 @@ void MusicWheel::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, fl
 
 //		printf( "fRotationX_out = %f\n", fRotationX_out );
 	}
-	else if(!USE_LINEAR_WHEEL)
+	else if(!USE_LINEAR_WHEEL.GetValue())
 	{
 		fX_out = (1-cosf(fPosOffsetsFromMiddle/PI))*ITEM_CURVE_X;
 		fY_out = fPosOffsetsFromMiddle*ITEM_SPACING_Y;
