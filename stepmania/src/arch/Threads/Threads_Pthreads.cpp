@@ -6,6 +6,7 @@
 
 #if defined(LINUX)
 #include "archutils/Unix/LinuxThreadHelpers.h"
+#include "archutils/Unix/RunningUnderValgrind.h"
 #endif
 
 #if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) && defined(CRASH_HANDLER)
@@ -138,26 +139,9 @@ MutexImpl_Pthreads::~MutexImpl_Pthreads()
 #if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) && defined(CRASH_HANDLER)
 static bool UseTimedlock()
 {
-#if defined(CPU_X86) && defined(__GNUC__)
+#if defined(LINUX)
 	/* Valgrind crashes and burns on pthread_mutex_timedlock. */
-        static int under_valgrind = -1;
-	if( under_valgrind == -1 )
-	{
-		unsigned int magic[8] = { 0x00001001, 0, 0, 0, 0, 0, 0, 0 };
-		asm(
-			"mov %1, %%eax\n"
-			"mov $0, %%edx\n"
-			"rol $29, %%eax\n"
-			"rol $3, %%eax\n"
-			"ror $27, %%eax\n"
-			"ror $5, %%eax\n"
-			"rol $13, %%eax\n"
-			"rol $19, %%eax\n"
-			"mov %%edx, %0\t"
-			: "=r" (under_valgrind): "r" (magic): "eax", "edx" );
-	}
-	
-	if( under_valgrind )
+	if( RunningUnderValgrind() )
 		return false;
 #endif
 
