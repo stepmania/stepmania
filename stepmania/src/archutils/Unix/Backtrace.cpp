@@ -290,7 +290,7 @@ typedef struct Frame
     void *linkReg;
 } *FramePtr;
 
-void GetExceptionBacktraceContext( BacktraceContext *ctx, ExceptionInformation *exception )
+void GetExceptionBacktraceContext( BacktraceContext *ctx, const ExceptionInformation *exception )
 {
 	ctx->FramePtr = (void *) exception->registerImage->R1.lo;
 }
