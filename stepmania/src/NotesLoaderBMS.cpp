@@ -166,7 +166,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 			//	valuename, sNoteData, iMeasureNo, iNoteNum, iNumNotesInThisMeasure );
 			for( int j=0; j<iNumNotesInThisMeasure; j++ )
 			{
-				if( arrayNotes.GetAt(j) == TRUE )
+				if( arrayNotes[j] )
 				{
 					float fPercentThroughMeasure = (float)j/(float)iNumNotesInThisMeasure;
 

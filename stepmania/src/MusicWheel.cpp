@@ -307,8 +307,7 @@ MusicWheel::MusicWheel()
 
 	// init m_mapGroupNameToBannerColor
 
-	CArray<Song*, Song*> arraySongs;
-	arraySongs.Copy( SONGMAN->m_pSongs );
+	CArray<Song*, Song*> arraySongs = SONGMAN->m_pSongs;
 	SortSongPointerArrayByGroup( arraySongs );
 	
 	m_sExpandedSectionName = "";

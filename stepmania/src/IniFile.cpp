@@ -86,12 +86,12 @@ bool IniFile::ReadFile()
 void IniFile::WriteFile()
 {
 	FILE* fp = fopen( path, "w" );
-	for (int keynum = 0; keynum <= names.GetUpperBound(); keynum++)
+	for (unsigned keynum = 0; keynum < names.size(); keynum++)
 	{
 		if (keys[keynum].names.GetSize() != 0)
 		{
 			fprintf( fp, "[%s]\n", names[keynum] );
-			for (int valuenum = 0; valuenum <= keys[keynum].names.GetUpperBound(); valuenum++)
+			for (unsigned valuenum = 0; valuenum < keys[keynum].names.size(); valuenum++)
 				fprintf( fp, "%s=%s\n", keys[keynum].names[valuenum], keys[keynum].values[valuenum] );
 			fprintf( fp, "\n" );
 		}
@@ -102,8 +102,8 @@ void IniFile::WriteFile()
 //deletes all stored ini data
 void IniFile::Reset()
 {
-	keys.SetSize(0);
-	names.SetSize(0);
+	keys.clear();
+	names.clear();
 }
 
 //returns number of keys currently in the ini
