@@ -1,5 +1,5 @@
-#ifndef RAGEMOVIETEXTURE_H
-#define RAGEMOVIETEXTURE_H
+#ifndef RAGEMOVIETEXTURE_DSHOW_H
+#define RAGEMOVIETEXTURE_DSHOW_H
 /*
 -----------------------------------------------------------------------------
  Class: RageMovieTexture
