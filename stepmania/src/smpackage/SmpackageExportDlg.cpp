@@ -172,11 +172,9 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 			CString sFilePath = asFilePaths[j];
 			
 			// don't export "thumbs.db" files or "CVS" folders
-			CString sDir, sFName, sExt;
-			splitrelpath( sFilePath, sDir, sFName, sExt );
-			if( sFName.CompareNoCase("CVS")==0 )
+			if( sFilePath.Find("CVS")!=-1 )
 				continue;	// skip
-			if( sFName.CompareNoCase("thumbs")==0 )
+			if( sFilePath.Find("Thumbs.db")!=-1 )
 				continue;	// skip
 
 			try
