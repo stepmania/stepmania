@@ -19,7 +19,6 @@
 #endif
 
 #include "algebra.cpp"
-#include "eprecomp.cpp"
 
 NAMESPACE_BEGIN(CryptoPP)
 
@@ -30,8 +29,6 @@ bool FunctionAssignIntToInteger(const std::type_info &valueType, void *pInteger,
 	*reinterpret_cast<Integer *>(pInteger) = *reinterpret_cast<const int *>(pInt);
 	return true;
 }
-
-static int DummyAssignIntToInteger = (AssignIntToInteger = FunctionAssignIntToInteger, 0);
 
 #ifdef SSE2_INTRINSICS_AVAILABLE
 template <class T>
@@ -2876,33 +2873,6 @@ void Integer::BERDecodeAsOctetString(BufferedTransformation &bt, unsigned int le
 		BERDecodeError();
 	Decode(dec, length);
 	dec.MessageEnd();
-}
-
-unsigned int Integer::OpenPGPEncode(byte *output, unsigned int len) const
-{
-	ArraySink sink(output, len);
-	return OpenPGPEncode(sink);
-}
-
-unsigned int Integer::OpenPGPEncode(BufferedTransformation &bt) const
-{
-	word16 bitCount = BitCount();
-	bt.PutWord16(bitCount);
-	return 2 + Encode(bt, BitsToBytes(bitCount));
-}
-
-void Integer::OpenPGPDecode(const byte *input, unsigned int len)
-{
-	StringStore store(input, len);
-	OpenPGPDecode(store);
-}
-
-void Integer::OpenPGPDecode(BufferedTransformation &bt)
-{
-	word16 bitCount;
-	if (bt.GetWord16(bitCount) != 2 || bt.MaxRetrievable() < BitsToBytes(bitCount))
-		throw OpenPGPDecodeErr();
-	Decode(bt, BitsToBytes(bitCount));
 }
 
 void Integer::Randomize(RandomNumberGenerator &rng, unsigned int nbits)

@@ -162,11 +162,6 @@ public:
 		//! encode absolute value as big-endian octet string
 		void DEREncodeAsOctetString(BufferedTransformation &bt, unsigned int length) const;
 
-		//! encode absolute value in OpenPGP format, return length of output
-		unsigned int OpenPGPEncode(byte *output, unsigned int bufferSize) const;
-		//! encode absolute value in OpenPGP format, put result into a BufferedTransformation object
-		unsigned int OpenPGPEncode(BufferedTransformation &bt) const;
-
 		//!
 		void Decode(const byte *input, unsigned int inputLen, Signedness=UNSIGNED);
 		//! 
@@ -181,16 +176,6 @@ public:
 		//! decode nonnegative value as big-endian octet string
 		void BERDecodeAsOctetString(BufferedTransformation &bt, unsigned int length);
 
-		class OpenPGPDecodeErr : public Exception
-		{
-		public: 
-			OpenPGPDecodeErr() : Exception(INVALID_DATA_FORMAT, "OpenPGP decode error") {}
-		};
-
-		//!
-		void OpenPGPDecode(const byte *input, unsigned int inputLen);
-		//!
-		void OpenPGPDecode(BufferedTransformation &bt);
 	//@}
 
 	//! \name ACCESSORS
