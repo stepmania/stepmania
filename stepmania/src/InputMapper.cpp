@@ -95,11 +95,11 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		"GIC USB Joystick",
 		"Boom USB convertor (black/gray)",
 		{
-			{ 0, JOY_16,		DANCE_BUTTON_LEFT },
-			{ 0, JOY_14,		DANCE_BUTTON_RIGHT },
-			{ 0, JOY_13,		DANCE_BUTTON_UP },
-			{ 0, JOY_15,		DANCE_BUTTON_DOWN },
-			{-1, -1, -1 },
+			{ 0, JOY_16,		DANCE_BUTTON_LEFT,		false },
+			{ 0, JOY_14,		DANCE_BUTTON_RIGHT,		false },
+			{ 0, JOY_13,		DANCE_BUTTON_UP,		false },
+			{ 0, JOY_15,		DANCE_BUTTON_DOWN,		false },
+			{-1, -1, -1, false },
 		}
 	},
 	{
@@ -107,11 +107,11 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		"4 axis 16 button joystick",
 		"PC Magic Box",
 		{
-			{ 0, JOY_16,		DANCE_BUTTON_LEFT },
-			{ 0, JOY_14,		DANCE_BUTTON_RIGHT },
-			{ 0, JOY_13,		DANCE_BUTTON_UP },
-			{ 0, JOY_15,		DANCE_BUTTON_DOWN },
-			{-1, -1, -1 },
+			{ 0, JOY_16,		DANCE_BUTTON_LEFT,		false },
+			{ 0, JOY_14,		DANCE_BUTTON_RIGHT,		false },
+			{ 0, JOY_13,		DANCE_BUTTON_UP,		false },
+			{ 0, JOY_15,		DANCE_BUTTON_DOWN,		false },
+			{-1, -1, -1, false },
 		}
 	},
 	{
@@ -119,19 +119,19 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		"GamePad Pro USB ",	// yes, there is a space at the end
 		"GamePad Pro USB",
 		{
-			{ 0, JOY_LEFT,		DANCE_BUTTON_LEFT },
-			{ 0, JOY_RIGHT,		DANCE_BUTTON_RIGHT },
-			{ 0, JOY_UP,		DANCE_BUTTON_UP },
-			{ 0, JOY_DOWN,		DANCE_BUTTON_DOWN },
-			{ 1, JOY_1,			DANCE_BUTTON_LEFT },
-			{ 1, JOY_3,			DANCE_BUTTON_RIGHT },
-			{ 1, JOY_4,			DANCE_BUTTON_UP },
-			{ 1, JOY_2,			DANCE_BUTTON_DOWN },
-			{ 0, JOY_5,			DANCE_BUTTON_UPLEFT },
-			{ 0, JOY_6,			DANCE_BUTTON_UPRIGHT },
-			{ 0, JOY_9,			DANCE_BUTTON_BACK },
-			{ 0, JOY_10,		DANCE_BUTTON_START },
-			{-1, -1, -1 },
+			{ 0, JOY_LEFT,		DANCE_BUTTON_LEFT,		false },
+			{ 0, JOY_RIGHT,		DANCE_BUTTON_RIGHT,		false },
+			{ 0, JOY_UP,		DANCE_BUTTON_UP,		false },
+			{ 0, JOY_DOWN,		DANCE_BUTTON_DOWN,		false },
+			{ 1, JOY_1,			DANCE_BUTTON_LEFT,		false },
+			{ 1, JOY_3,			DANCE_BUTTON_RIGHT,		false },
+			{ 1, JOY_4,			DANCE_BUTTON_UP,		false },
+			{ 1, JOY_2,			DANCE_BUTTON_DOWN,		false },
+			{ 0, JOY_5,			DANCE_BUTTON_UPLEFT,	false },
+			{ 0, JOY_6,			DANCE_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_9,			DANCE_BUTTON_BACK,		false },
+			{ 0, JOY_10,		DANCE_BUTTON_START,		false },
+			{-1, -1, -1, false },
 		}
 	},
 	{
@@ -139,21 +139,21 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		"4 axis 12 button joystick with hat switch",
 		"Super Joy Box 5",
 		{
-			{ 0, JOY_HAT_LEFT,	DANCE_BUTTON_LEFT },
-			{ 0, JOY_HAT_RIGHT,	DANCE_BUTTON_RIGHT },
-			{ 0, JOY_HAT_UP,	DANCE_BUTTON_UP },
-			{ 0, JOY_HAT_DOWN,	DANCE_BUTTON_DOWN },
-			{ 1, JOY_4,			DANCE_BUTTON_LEFT },
-			{ 1, JOY_2,			DANCE_BUTTON_RIGHT },
-			{ 1, JOY_1,			DANCE_BUTTON_UP },
-			{ 1, JOY_3,			DANCE_BUTTON_DOWN },
-			{ 0, JOY_5,			DANCE_BUTTON_UPLEFT },
-			{ 0, JOY_6,			DANCE_BUTTON_UPRIGHT },
-			{ 1, JOY_7,			DANCE_BUTTON_UPLEFT },
-			{ 1, JOY_8,			DANCE_BUTTON_UPRIGHT },
-			{ 0, JOY_10,		DANCE_BUTTON_BACK },
-			{ 0, JOY_9,			DANCE_BUTTON_START },
-			{-1, -1, -1 },
+			{ 0, JOY_HAT_LEFT,	DANCE_BUTTON_LEFT,		false },
+			{ 0, JOY_HAT_RIGHT,	DANCE_BUTTON_RIGHT,		false },
+			{ 0, JOY_HAT_UP,	DANCE_BUTTON_UP,		false },
+			{ 0, JOY_HAT_DOWN,	DANCE_BUTTON_DOWN,		false },
+			{ 1, JOY_4,			DANCE_BUTTON_LEFT,		false },
+			{ 1, JOY_2,			DANCE_BUTTON_RIGHT,		false },
+			{ 1, JOY_1,			DANCE_BUTTON_UP,		false },
+			{ 1, JOY_3,			DANCE_BUTTON_DOWN,		false },
+			{ 0, JOY_5,			DANCE_BUTTON_UPLEFT,	false },
+			{ 0, JOY_6,			DANCE_BUTTON_UPRIGHT,	false },
+			{ 1, JOY_7,			DANCE_BUTTON_UPLEFT,	false },
+			{ 1, JOY_8,			DANCE_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_10,		DANCE_BUTTON_BACK,		false },
+			{ 0, JOY_9,			DANCE_BUTTON_START,		false },
+			{-1, -1, -1, false },
 		}
 	},
 	{
@@ -161,21 +161,21 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		"MP-8866 Dual USB Joypad",
 		"Super Dual Box",
 		{
-			{ 0, JOY_HAT_LEFT,	DANCE_BUTTON_LEFT },
-			{ 0, JOY_HAT_RIGHT,	DANCE_BUTTON_RIGHT },
-			{ 0, JOY_HAT_UP,	DANCE_BUTTON_UP },
-			{ 0, JOY_HAT_DOWN,	DANCE_BUTTON_DOWN },
-			{ 1, JOY_4,			DANCE_BUTTON_LEFT },
-			{ 1, JOY_2,			DANCE_BUTTON_RIGHT },
-			{ 1, JOY_1,			DANCE_BUTTON_UP },
-			{ 1, JOY_3,			DANCE_BUTTON_DOWN },
-			{ 0, JOY_5,			DANCE_BUTTON_UPLEFT },
-			{ 0, JOY_6,			DANCE_BUTTON_UPRIGHT },
-			{ 1, JOY_7,			DANCE_BUTTON_UPLEFT },
-			{ 1, JOY_8,			DANCE_BUTTON_UPRIGHT },
-			{ 0, JOY_10,		DANCE_BUTTON_BACK },
-			{ 0, JOY_9,			DANCE_BUTTON_START },
-			{-1, -1, -1 },
+			{ 0, JOY_HAT_LEFT,	DANCE_BUTTON_LEFT,		false },
+			{ 0, JOY_HAT_RIGHT,	DANCE_BUTTON_RIGHT,		false },
+			{ 0, JOY_HAT_UP,	DANCE_BUTTON_UP,		false },
+			{ 0, JOY_HAT_DOWN,	DANCE_BUTTON_DOWN,		false },
+			{ 1, JOY_4,			DANCE_BUTTON_LEFT,		false },
+			{ 1, JOY_2,			DANCE_BUTTON_RIGHT,		false },
+			{ 1, JOY_1,			DANCE_BUTTON_UP,		false },
+			{ 1, JOY_3,			DANCE_BUTTON_DOWN,		false },
+			{ 0, JOY_5,			DANCE_BUTTON_UPLEFT,	false },
+			{ 0, JOY_6,			DANCE_BUTTON_UPRIGHT,	false },
+			{ 1, JOY_7,			DANCE_BUTTON_UPLEFT,	false },
+			{ 1, JOY_8,			DANCE_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_10,		DANCE_BUTTON_BACK,		false },
+			{ 0, JOY_9,			DANCE_BUTTON_START,		false },
+			{-1, -1, -1, false },
 		}
 	},
 	{
@@ -183,19 +183,19 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		"XBOX Gamepad Plugin V0.01",
 		"X-Box gamepad",
 		{
-			{ 0, JOY_HAT_LEFT,	DANCE_BUTTON_LEFT },
-			{ 0, JOY_HAT_RIGHT,	DANCE_BUTTON_RIGHT },
-			{ 0, JOY_HAT_UP,	DANCE_BUTTON_UP },
-			{ 0, JOY_HAT_DOWN,	DANCE_BUTTON_DOWN },
-			{ 1, JOY_1,			DANCE_BUTTON_DOWN },	// A
-			{ 1, JOY_2,			DANCE_BUTTON_RIGHT },	// B
-			{ 1, JOY_3,			DANCE_BUTTON_LEFT },	// X
-			{ 1, JOY_4,			DANCE_BUTTON_UP },		// Y
-			{ 0, JOY_7,			DANCE_BUTTON_UPLEFT },	// L shoulder
-			{ 0, JOY_8,			DANCE_BUTTON_UPRIGHT },	// R shoulder
-			{ 0, JOY_9,			DANCE_BUTTON_START },
-			{ 0, JOY_10,		DANCE_BUTTON_BACK },
-			{-1, -1, -1 },
+			{ 0, JOY_HAT_LEFT,	DANCE_BUTTON_LEFT,		false },
+			{ 0, JOY_HAT_RIGHT,	DANCE_BUTTON_RIGHT,		false },
+			{ 0, JOY_HAT_UP,	DANCE_BUTTON_UP,		false },
+			{ 0, JOY_HAT_DOWN,	DANCE_BUTTON_DOWN,		false },
+			{ 1, JOY_1,			DANCE_BUTTON_DOWN,		false },	// A
+			{ 1, JOY_2,			DANCE_BUTTON_RIGHT,		false },	// B
+			{ 1, JOY_3,			DANCE_BUTTON_LEFT,		false },	// X
+			{ 1, JOY_4,			DANCE_BUTTON_UP,		false },	// Y
+			{ 0, JOY_7,			DANCE_BUTTON_UPLEFT,	false },	// L shoulder
+			{ 0, JOY_8,			DANCE_BUTTON_UPRIGHT,	false },	// R shoulder
+			{ 0, JOY_9,			DANCE_BUTTON_START,		false },
+			{ 0, JOY_10,		DANCE_BUTTON_BACK,		false },
+			{-1, -1, -1, false },
 		}
 	},
 	{
@@ -204,22 +204,22 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		"EMS USB2",  // just gives us the VendorID and ModelID in hex.
 		{
 			// Player 1.
-			{ 0, JOY_13,		DANCE_BUTTON_UP },
-			{ 0, JOY_16,		DANCE_BUTTON_LEFT },
-			{ 0, JOY_14,		DANCE_BUTTON_RIGHT },
-			{ 0, JOY_15,		DANCE_BUTTON_DOWN },
-			{ 0, JOY_3,			DANCE_BUTTON_UPLEFT },
-			{ 0, JOY_2,			DANCE_BUTTON_UPRIGHT },
-			{ 0, JOY_10,		DANCE_BUTTON_START },
+			{ 0, JOY_13,		DANCE_BUTTON_UP,		false },
+			{ 0, JOY_16,		DANCE_BUTTON_LEFT,		false },
+			{ 0, JOY_14,		DANCE_BUTTON_RIGHT,		false },
+			{ 0, JOY_15,		DANCE_BUTTON_DOWN,		false },
+			{ 0, JOY_3,			DANCE_BUTTON_UPLEFT,	false },
+			{ 0, JOY_2,			DANCE_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_10,		DANCE_BUTTON_START,		false },
 			// Player 2.
-			{ 0, JOY_29,		DANCE_BUTTON_UP,      true },
-			{ 0, JOY_30,		DANCE_BUTTON_RIGHT,   true },
-			{ 0, JOY_31,		DANCE_BUTTON_DOWN,    true },
-			{ 0, JOY_32,		DANCE_BUTTON_LEFT,    true },
-			{ 0, JOY_18,		DANCE_BUTTON_UPRIGHT, true },
-			{ 0, JOY_19,		DANCE_BUTTON_UPLEFT,  true },
-			{ 0, JOY_26,		DANCE_BUTTON_START,   true },
-			{-1, -1, -1 },
+			{ 0, JOY_29,		DANCE_BUTTON_UP,		true },
+			{ 0, JOY_30,		DANCE_BUTTON_RIGHT,		true },
+			{ 0, JOY_31,		DANCE_BUTTON_DOWN,		true },
+			{ 0, JOY_32,		DANCE_BUTTON_LEFT,		true },
+			{ 0, JOY_18,		DANCE_BUTTON_UPRIGHT,	true },
+			{ 0, JOY_19,		DANCE_BUTTON_UPLEFT,	true },
+			{ 0, JOY_26,		DANCE_BUTTON_START,		true },
+			{-1, -1, -1, false },
 		}
 	},
 	{
@@ -227,18 +227,18 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		"Pump USB",
 		"Pump USB pad",
 		{
-			{ 0, PUMP_UL,		PUMP_BUTTON_UPLEFT },
-			{ 0, PUMP_UR,		PUMP_BUTTON_UPRIGHT },
-			{ 0, PUMP_MID,		PUMP_BUTTON_CENTER },
-			{ 0, PUMP_DL,		PUMP_BUTTON_DOWNLEFT },
-			{ 0, PUMP_DR,		PUMP_BUTTON_DOWNRIGHT },
-			{ 0, PUMP_ESCAPE,	PUMP_BUTTON_BACK },
+			{ 0, PUMP_UL,		PUMP_BUTTON_UPLEFT,		false },
+			{ 0, PUMP_UR,		PUMP_BUTTON_UPRIGHT,	false },
+			{ 0, PUMP_MID,		PUMP_BUTTON_CENTER,		false },
+			{ 0, PUMP_DL,		PUMP_BUTTON_DOWNLEFT,	false },
+			{ 0, PUMP_DR,		PUMP_BUTTON_DOWNRIGHT,	false },
+			{ 0, PUMP_ESCAPE,	PUMP_BUTTON_BACK,		false },
 			{ 0, PUMP_2P_UL,	PUMP_BUTTON_UPLEFT,		true },
 			{ 0, PUMP_2P_UR,	PUMP_BUTTON_UPRIGHT,	true },
 			{ 0, PUMP_2P_MID,	PUMP_BUTTON_CENTER,		true },
 			{ 0, PUMP_2P_DL,	PUMP_BUTTON_DOWNLEFT,	true },
 			{ 0, PUMP_2P_DR,	PUMP_BUTTON_DOWNRIGHT,	true },
-			{-1, -1, -1 },
+			{-1, -1, -1, false },
 		}
 	},
 };
