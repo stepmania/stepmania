@@ -45,7 +45,6 @@ private:
 	unsigned m_iChannels;
 
 	map<CString, SoundReader *> m_apLoadedSounds;
-	map<SoundReader *, bool> m_LoadedSoundIsUsed;
 
 	struct sound
 	{

@@ -146,15 +146,8 @@ void RageSoundReader_Chain::Finish()
 		RageSoundReader_Preload::PreloadSound( pSound );
 	}
 
-	for( it = m_apLoadedSounds.begin(); it != m_apLoadedSounds.end(); ++it )
-	{
-		SoundReader *pSound = it->second;
-	    m_LoadedSoundIsUsed[pSound] = false;
-	}
-
 	/* Sort the sounds by start time. */
 	sort( m_Sounds.begin(), m_Sounds.end() );
-
 }
 
 int RageSoundReader_Chain::SetPosition_Accurate( int ms )
@@ -200,28 +193,9 @@ unsigned RageSoundReader_Chain::ActivateSound( const sound &s )
 {
 	SoundReader *pSound = m_apLoadedSounds[s.sPath];
 
-	map<SoundReader *, bool>::iterator it;
-	it = m_LoadedSoundIsUsed.find( pSound );
-	ASSERT( it != m_LoadedSoundIsUsed.end() );
-
 	ActiveSound add;
 	add.fPan = s.fPan;
-
-	if( !it->second )
-	{
-		it->second = true;
-		add.pSound = pSound;
-
-		/* The sound may have been used in the past; rewind it.
-		 * We do this when starting a sound, not when finishing it,
-		 * so we don't' waste time rewinding a sound that we won't
-		 * be reusing. */
-		pSound->SetPosition_Accurate( 0 );
-	}
-	else
-	{
-		add.pSound = pSound->Copy();
-	}
+	add.pSound = pSound->Copy();
 
 	m_apActiveSounds.push_back( add );
 	return m_apActiveSounds.size() - 1;
@@ -232,16 +206,7 @@ void RageSoundReader_Chain::ReleaseSound( unsigned n )
 	ASSERT_M( n < m_apActiveSounds.size(), ssprintf("%u, %u", n, unsigned(m_apActiveSounds.size())) );
 	SoundReader *pSound = m_apActiveSounds[n].pSound;
 
-	/* If pSoundToFree is in m_apLoadedSounds, just set it unused. */
-	map<SoundReader *, bool>::iterator it;
-	it = m_LoadedSoundIsUsed.find( pSound );
-	if( it != m_LoadedSoundIsUsed.end() )
-	{
-		ASSERT( it->second );
-		it->second = false;
-	}
-	else
-		delete pSound;
+	delete pSound;
 
 	m_apActiveSounds.erase( m_apActiveSounds.begin()+n );
 }
