@@ -438,30 +438,6 @@ bool FirstPrime(Integer &p, const Integer &max, const Integer &equiv, const Inte
 	return false;
 }
 
-// the following two functions are based on code and comments provided by Preda Mihailescu
-static bool ProvePrime(const Integer &p, const Integer &q)
-{
-	assert(p < q*q*q);
-	assert(p % q == 1);
-
-// this is the Quisquater test. Numbers p having passed the Lucas - Lehmer test
-// for q and verifying p < q^3 can only be built up of two factors, both = 1 mod q,
-// or be prime. The next two lines build the discriminant of a quadratic equation
-// which holds iff p is built up of two factors (excercise ... )
-
-	Integer r = (p-1)/q;
-	if (((r%q).Squared()-4*(r/q)).IsSquare())
-		return false;
-
-	assert(primeTableSize >= 50);
-	for (int i=0; i<50; i++) 
-	{
-		Integer b = a_exp_b_mod_c(primeTable[i], r, p);
-		if (b != 1) 
-			return a_exp_b_mod_c(b, q, p) == 1;
-	}
-	return false;
-}
 
 Integer CRT(const Integer &xp, const Integer &p, const Integer &xq, const Integer &q, const Integer &u)
 {
