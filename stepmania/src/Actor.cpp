@@ -789,6 +789,7 @@ void Actor::HandleCommand( const CStringArray &asTokens )
 	else if( sName=="blend" )			SetBlendMode( sParam(1) );
 	else if( sName=="zbuffer" )			SetUseZBuffer( bParam(1) );
 	else if( sName=="clearzbuffer" )	SetClearZBuffer( bParam(1) );
+	else if( sName=="playcommand" )		sParam(1); /* nop: only BGAnimation handles this but everyone receives it */
 	else
 	{
 		CString sError = ssprintf( "Actor::HandleCommand: Unrecognized command name '%s'.", sName.c_str() );
