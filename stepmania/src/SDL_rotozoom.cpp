@@ -119,7 +119,7 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 				x1 = c10[c] * ex0[x];
 				x1 += c11[c] * (1-ex0[x]);
 
-				const float res = (x0 * ey0[y]) + (x1 * (1-ey0[y]));
+				const float res = (x0 * ey0[y]) + (x1 * (1-ey0[y])) + 0.5f;
 				color[c] = uint8_t(res);
 			}
 			*dp = *(uint32_t *) color;
