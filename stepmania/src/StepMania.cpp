@@ -118,10 +118,8 @@ static RageDisplay::VideoModeParams GetCurVideoModeParams()
 			PREFSMAN->m_bTrilinearFiltering,
 			PREFSMAN->m_bAnisotropicFiltering,
 			THEME->GetMetric("Common","WindowTitle"),
-			THEME->GetPathToG("Common window icon")
-#ifdef _XBOX
-			, PREFSMAN->m_bPAL
-#endif
+			THEME->GetPathToG("Common window icon"),
+			PREFSMAN->m_bPAL
 	);
 }
 

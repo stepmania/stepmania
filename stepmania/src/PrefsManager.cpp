@@ -238,9 +238,9 @@ void PrefsManager::Init()
 	m_bEditorShowBGChangesPlay = false;
 
 	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
+	m_bPAL = false;
 #ifdef _XBOX
 	m_bInterlaced = true;
-	m_bPAL = false;
 	m_fScreenPosX = 0;
 	m_fScreenPosY = 0;
 	m_fScreenWidth = 640;
@@ -323,8 +323,8 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 
 	ini.GetValue( "Options", "Windowed",						m_bWindowed );
 	ini.GetValue( "Options", "Interlaced",						m_bInterlaced );
-#ifdef _XBOX
 	ini.GetValue( "Options", "PAL",								m_bPAL );
+#ifdef _XBOX
 	ini.GetValue( "Options", "ScreenPosX",						m_fScreenPosX );
 	ini.GetValue( "Options", "ScreenPosY",						m_fScreenPosY );
 	ini.GetValue( "Options", "ScreenWidth",						m_fScreenWidth );
@@ -652,8 +652,8 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
 	ini.SetValue( "Options", "Vsync",							m_bVsync );
 	ini.SetValue( "Options", "Interlaced",						m_bInterlaced );
-#ifdef _XBOX
 	ini.SetValue( "Options", "PAL",								m_bPAL );
+#ifdef _XBOX
 	ini.SetValue( "Options", "ScreenPosX",						m_fScreenPosX );
 	ini.SetValue( "Options", "ScreenPosY",						m_fScreenPosY );
 	ini.SetValue( "Options", "ScreenWidth",						m_fScreenWidth );

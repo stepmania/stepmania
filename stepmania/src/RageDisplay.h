@@ -111,10 +111,8 @@ public:
 			bool bTrilinearFiltering_,
 			bool bAnisotropicFiltering_,
 			CString sWindowTitle_,
-			CString sIconFile_
-#ifdef _XBOX
-			, bool PAL_
-#endif
+			CString sIconFile_,
+			bool PAL_
 		)
 		{
 			windowed = windowed_;
@@ -129,9 +127,7 @@ public:
 			bAnisotropicFiltering = bAnisotropicFiltering_;
 			sWindowTitle = sWindowTitle_;
 			sIconFile = sIconFile_;
-#ifdef _XBOX
 			PAL = PAL_;
-#endif
 		}
 		VideoModeParams() {}
 
@@ -145,9 +141,7 @@ public:
 		bool bTrilinearFiltering;
 		bool bAnisotropicFiltering;
 		bool interlaced;
-#ifdef _XBOX
 		bool PAL;
-#endif
 		CString sWindowTitle;
 		CString sIconFile;
 	};

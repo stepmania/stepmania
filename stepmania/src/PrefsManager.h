@@ -39,8 +39,8 @@ public:
 	bool			m_bHiddenSongs;
 	bool			m_bVsync;
 	bool			m_bInterlaced;
-#ifdef _XBOX
 	bool			m_bPAL;
+#ifdef _XBOX
 	float			m_fScreenPosX;
 	float			m_fScreenPosY;
 	float			m_fScreenWidth;
