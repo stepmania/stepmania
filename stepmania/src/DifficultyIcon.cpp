@@ -44,7 +44,7 @@ void DifficultyIcon::SetFromNotes( PlayerNumber pn, Notes* pNotes )
 		switch( GetNumStates() )
 		{
 		case 5:		SetState( iStateNo );		break;
-		case 10:	SetState( iStateNo*2+pn );	break;
+		case 10:	SetState( iStateNo );		break;
 		default:	ASSERT(0);
 		}
 	}
