@@ -221,6 +221,11 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		{
 			for( unsigned i=0; i<aNotesTypesToShow.size(); i++ )
 			{
+				/* Wrap first; the number of songs can change if we reload. */
+				wrap( g_iLastSongShown,vpSongs.size() ); 
+
+				int FirstSongShown = g_iLastSongShown;
+
 				for( int j=0; j<NUM_SONGS_TO_SHOW; j++ )
 				{
 					PageToShow pts;
@@ -232,6 +237,9 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 					
 					g_iLastSongShown++;
 					wrap( g_iLastSongShown,vpSongs.size() ); 
+
+					if( g_iLastSongShown == FirstSongShown )
+						break; /* don't show songs twice */
 				}
 			}
 		}
