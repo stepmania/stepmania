@@ -307,6 +307,8 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 
 void GameState::EndGame()
 {
+	LOG->Trace( "GameState::EndGame" );
+
 	// Update profile stats
 	int iPlaySeconds = max( 0, (int) m_timeGameStarted.PeekDeltaTime() );
 
