@@ -149,7 +149,6 @@ RageSound_Null::~RageSound_Null()
 	LOG->Trace("Shutting down mixer thread ...");
 	SDL_WaitThread(MixerThreadPtr, NULL);
 	LOG->Trace("Mixer thread shut down.");
-
 }
 
 float RageSound_Null::GetPlayLatency() const
