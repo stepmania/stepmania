@@ -376,10 +376,10 @@ CString SongManager::ShortenGroupName( const CString &sOrigGroupName )
 	sShortName.Replace( "PUMP IT UP", "PIU" );
 	sShortName.Replace( "ParaParaParadise", "PPP" );
 	sShortName.Replace( "paraparaparadise", "PPP" );
-	sShortName.Replace( "PARAPARAPARADUSE", "PPP" );
+	sShortName.Replace( "PARAPARAPARADISE", "PPP" );
 	sShortName.Replace( "Para Para Paradise", "PPP" );
 	sShortName.Replace( "para para paradise", "PPP" );
-	sShortName.Replace( "PARA PARA PARADUSE", "PPP" );
+	sShortName.Replace( "PARA PARA PARADISE", "PPP" );
 	sShortName.Replace( "Dancing Stage", "DS" );
 	sShortName.Replace( "Dancing Stage", "DS" );
 	sShortName.Replace( "Dancing Stage", "DS" );
