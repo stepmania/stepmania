@@ -598,9 +598,6 @@ void GameLoop()
 
 		RageMatrix mat;
 
-		RageMatrixOrthoOffCenterLH( &mat, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, SCREEN_NEAR, SCREEN_FAR );
-		DISPLAY->SetProjectionTransform( &mat );
-
 		RageMatrixIdentity( &mat );
 		DISPLAY->SetViewTransform( &mat );
 

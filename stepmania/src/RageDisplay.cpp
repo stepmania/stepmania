@@ -134,6 +134,12 @@ void RageDisplay::SetupOpenGL()
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	/* Initialize the default ortho projection. */
+	glMatrixMode( GL_PROJECTION );
+	glLoadIdentity();
+	glOrtho(0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, SCREEN_NEAR, SCREEN_FAR );
+	glMatrixMode( GL_MODELVIEW );
 }
 
 RageDisplay::~RageDisplay()
