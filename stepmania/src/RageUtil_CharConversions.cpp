@@ -52,21 +52,17 @@ static bool ConvertFromCharset( CString &txt, const char *charset )
 	}
 
 	/* Copy the string into a char* for iconv */
-	char *txtin = new char[ txt.size() + 1 ];
-	strcpy( txtin, txt );
-	size_t inleft = strlen( txtin );
+	char *txtin = const_cast<char*>( txt.data() );
+	size_t inleft = txt.size();
 
 	/* Create a new string with enough room for the new conversion */
-	char *txtout = new char[ (txt.size() + 1) * 5 ];
-	txtout = (char *)memset( txtout, 0, (txt.size() + 1) * 5 );
-	size_t outleft = inleft * 5;
-	size_t outsize = outleft;
+	CString buf;
+	buf.resize( txt.size() * 5 );
 
+	char *txtout = const_cast<char*>( buf.data() );
+	size_t outleft = buf.size();
 	size_t size = iconv( converter, &txtin, &inleft, &txtout, &outleft );
 
-	/* Redirect the output pointer back to the beginning of the string */
-	outsize -= outleft;
-	txtout -= outsize;
 	iconv_close( converter );
 
 	if( size == (size_t)(-1) )
@@ -74,10 +70,19 @@ static bool ConvertFromCharset( CString &txt, const char *charset )
 		LOG->Trace( "%s\n", strerror( errno ) );
 		return false; /* Returned an error */
 	}
-	if( !strlen(txtout) )
+
+	if( inleft != 0 )
+	{
+		LOG->Warn( "iconv(UTF-8,%s) for \"%s\": whole buffer not converted (%i left)", charset, txt.c_str(), inleft );
+		return false;
+	}
+
+	if( buf.size() == outleft )
 		return false; /* Conversion failed */
 
-	txt = txtout;
+	buf.resize( buf.size()-outleft );
+
+	txt = buf;
 	return true;
 }
 
