@@ -130,7 +130,6 @@ try_element_again:
 	// Search both the current theme and the default theme dirs for this element
 	///////////////////////////////////////
 
-	CString path = sCurrentThemeDir;
 	GetDirListing( sCurrentThemeDir + "Fonts\\"+sFileName + "*",
 					asPossibleElementFilePaths, false, true );
 
@@ -144,12 +143,8 @@ try_element_again:
 	}
 
 	if(asPossibleElementFilePaths.empty())
-	{
-		path = sDefaultThemeDir;
-
 		GetDirListing( sDefaultThemeDir + "Fonts\\"+ sFileName + "*",
 						asPossibleElementFilePaths, false, true );
-	}
 
 	for(i = 0; i < int(asPossibleElementFilePaths.size()); ) {
 		if(Font::GetFontName(sFileName) != Font::GetFontName(asPossibleElementFilePaths[i]))
@@ -208,9 +203,7 @@ try_element_again:
 		goto try_element_again;
 	}
 
-	/* If we're searching for a font, the return value should be the file
-	 * prefix we searched for; don't resolve it to the complete filename. */
-	return path + sAssetCategory+"\\"+sFileName;
+	return asPossibleElementFilePaths[0];
 }
 
 CString ThemeManager::GetPathTo( CString sAssetCategory, CString sFileName ) 
