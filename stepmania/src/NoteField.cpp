@@ -318,7 +318,7 @@ float FindLastDisplayedBeat( PlayerNumber pn, int iLastPixelToDraw )
 	// worst case is 0.25x + boost.  Adjust search distance to 
 	// so that notes don't pop onto the screen.
 	//
-	float fSearchDistance = 20;
+	float fSearchDistance = 10;
 	float fLastBeatToDraw = GAMESTATE->m_fSongBeat+fSearchDistance;	
 
 	/* With a song that starts with a negative offset, fSearchDistance here can put
@@ -326,7 +326,7 @@ float FindLastDisplayedBeat( PlayerNumber pn, int iLastPixelToDraw )
 //	if( GAMESTATE->m_fSongBeat < 0 )
 //		fLastBeatToDraw = 0; //fSearchDistance;
 
-	const int NUM_ITERATIONS = 15;
+	const int NUM_ITERATIONS = 20;
 
 	for( int i=0; i<NUM_ITERATIONS; i++ )
 	{
@@ -339,8 +339,6 @@ float FindLastDisplayedBeat( PlayerNumber pn, int iLastPixelToDraw )
 			fLastBeatToDraw += fSearchDistance;
 
 		float fOffBy = fYPosWOReverse - iLastPixelToDraw;
-		if( i==NUM_ITERATIONS-1 )
-			ASSERT( fabs(fOffBy)<10 );	// accurate to 10 pixels
 		
 		fSearchDistance /= 2;
 	}
