@@ -167,6 +167,11 @@ MusicWheel::MusicWheel()
 	for( int so=0; so<NUM_SORT_ORDERS; so++ )
 		BuildWheelItemDatas( m_WheelItemDatas[so], SongSortOrder(so) );
 
+	// HACK: invalidate currently selected song in the case that it
+	// cannot be played due to lack of stages remaining
+	if( GAMESTATE->m_pCurSong != NULL && SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong ) + GAMESTATE->m_iCurrentStageIndex > PREFSMAN->m_iNumArcadeStages)
+		GAMESTATE->m_pCurSong = NULL;
+
 	// If there is no currently selected song, select one.
 	if( GAMESTATE->m_pCurSong == NULL )
 	{
