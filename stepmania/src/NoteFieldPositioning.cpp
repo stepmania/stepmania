@@ -2,7 +2,6 @@
 #include "NoteFieldPositioning.h"
 
 #include "RageDisplay.h"
-#include "RageDisplayInternal.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageMath.h"
@@ -103,12 +102,12 @@ NoteFieldPositioning::Mode::Mode()
 
 void NoteFieldPositioning::Mode::BeginDrawTrack(int tn) const
 {
-	glMultMatrixf((const float *) m_Position[tn]);
+	DISPLAY->MultMatrix((const float *) m_Position[tn]);
 
 	if(m_fFov[tn])
 		DISPLAY->EnterPerspective(m_fFov[tn]);
 	
-	glMultMatrixf((const float *) m_PerspPosition[tn]);
+	DISPLAY->MultMatrix((const float *) m_PerspPosition[tn]);
 }
 
 void NoteFieldPositioning::Mode::EndDrawTrack(int tn) const

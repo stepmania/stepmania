@@ -648,7 +648,7 @@ void RageDisplay::EnterPerspective(float fov, bool preserve_loc)
 		mat.m[0][1] = matTop.m[0][1];
 		mat.m[1][0] = matTop.m[1][0];
 		mat.m[1][1] = matTop.m[1][1];
-		glMultMatrixf((float *) mat);
+		this->MultMatrix(mat);
 	}
 
 	/* We can't cope with perspective matrices or things that touch Z.  (We shouldn't
@@ -677,8 +677,8 @@ void RageDisplay::ExitPerspective()
 	DISPLAY->SetViewport(0, 0);
 }
 
-/* gluLookAt.  The result is post-multiplied to the matrix (M = L * M) instead of
- * pre-multiplied. */
+/* gluLookAt.  The result is pre-multiplied to the matrix (M = L * M) instead of
+ * post-multiplied. */
 void RageDisplay::LookAt(const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up)
 {
 	glMatrixMode(GL_MODELVIEW);
@@ -690,7 +690,7 @@ void RageDisplay::LookAt(const RageVector3 &Eye, const RageVector3 &At, const Ra
 	glGetFloatv( GL_MODELVIEW_MATRIX, (float*)view ); /* cheesy :) */
 	glPopMatrix();
 
-	smPostMultMatrixf(view);
+	PreMultMatrix(view);
 }
 
 void RageDisplay::Translate( float x, float y, float z )
@@ -704,7 +704,7 @@ void RageDisplay::TranslateLocal( float x, float y, float z )
 	RageMatrix matTemp;
 	RageMatrixTranslation( &matTemp, x, y, z );
 
-	smPostMultMatrixf(matTemp);
+	PreMultMatrix(matTemp);
 }
 
 void RageDisplay::Scale( float x, float y, float z )
@@ -730,7 +730,12 @@ void RageDisplay::RotateZ( float r )
 	glRotatef(r, 0.00001f, 0, 1);
 }
 
-void RageDisplay::smPostMultMatrixf( const RageMatrix &f )
+void RageDisplay::PostMultMatrix( const RageMatrix &f )
+{
+	glMultMatrixf((const float *) f);
+}
+
+void RageDisplay::PreMultMatrix( const RageMatrix &f )
 {
 	RageMatrix m;
 	glGetFloatv( GL_MODELVIEW_MATRIX, (float*)m );

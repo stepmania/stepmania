@@ -52,7 +52,9 @@ public:
 	void RotateX( float r );
 	void RotateY( float r );
 	void RotateZ( float r );
-	void smPostMultMatrixf( const RageMatrix &f );
+	void MultMatrix( const RageMatrix &f ) { PostMultMatrix(f); } /* alias */
+	void PostMultMatrix( const RageMatrix &f );
+	void PreMultMatrix( const RageMatrix &f );
 
 	void SetTexture( RageTexture* pTexture );
 
