@@ -32,7 +32,10 @@ static void EmptyDir( CString dir )
 	CStringArray asCacheFileNames;
 	GetDirListing( dir, asCacheFileNames );
 	for( unsigned i=0; i<asCacheFileNames.size(); i++ )
-		remove( dir + asCacheFileNames[i] );
+	{
+		if( !IsADirectory(dir + asCacheFileNames[i]) )
+			remove( dir + asCacheFileNames[i] );
+	}
 }
 
 void SongCacheIndex::ReadCacheIndex()
