@@ -721,11 +721,6 @@ bool ScreenGameplay::IsTimeToPlayTicks() const
 	return bAnyoneHasANote;
 }
 
-/***********************************
-UPDATE
-(had to add this I was LOST in this code
-hehe - Andy)
-************************************/
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
