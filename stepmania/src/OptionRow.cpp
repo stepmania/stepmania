@@ -8,6 +8,10 @@
 #include "FontManager.h"
 #include "Font.h"
 #include "CommonMetrics.h"
+#include "GameState.h"
+#include "song.h"
+#include "Course.h"
+#include "Style.h"
 
 static const CString SelectTypeNames[NUM_SELECT_TYPES] = {
 	"SelectOne",
@@ -29,6 +33,7 @@ StringToX( LayoutType );
 
 #define PREPARE_ITEM_TEXT( s )	if( s!= "" ) { if( THEME_ITEMS ) s = THEME_OPTION_ITEM( s, false ); if( CAPITALIZE_ALL_OPTION_NAMES ) s.MakeUpper(); }
 
+static CString OPTION_TITLE( CString s ) { return THEME->GetMetric("OptionTitles",s); }
 
 const CString NEXT_ROW_NAME = "NextRow";
 
@@ -106,6 +111,8 @@ void OptionRow::LoadMetrics( const CString &sType )
 	SHOW_UNDERLINES					.Load(m_sType,"ShowUnderlines");
 	TWEEN_SECONDS					.Load(m_sType,"TweenSeconds");
 	THEME_ITEMS						.Load(m_sType,"ThemeItems");
+	THEME_ITEMS						.Load(m_sType,"ThemeItems");
+	SHOW_BPM_IN_SPEED_TITLE			.Load(m_sName,"ShowBpmInSpeedTitle");
 
 	FOREACH_PlayerNumber( p )
 		m_OptionIcons[p].Load( m_sType );
@@ -144,10 +151,54 @@ void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pH
 	}
 }
 
-void OptionRow::AfterImportOptions( 
-	const CString &sTitle,
-	float fY
-	)
+CString OptionRow::GetRowTitle() const
+{
+	CString sLineName = m_RowDef.name;
+	CString sTitle = THEME_TITLES ? OPTION_TITLE(sLineName) : sLineName;
+
+	// HACK: tack the BPM onto the name of the speed line
+	if( sLineName.CompareNoCase("speed")==0 )
+	{
+		bool bShowBpmInSpeedTitle = SHOW_BPM_IN_SPEED_TITLE;
+
+		if( GAMESTATE->m_pCurCourse )
+		{
+			Trail* pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
+			const int iNumCourseEntries = pTrail->m_vEntries.size();
+			if( iNumCourseEntries > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
+				bShowBpmInSpeedTitle = false;
+		}
+
+		if( bShowBpmInSpeedTitle )
+		{
+			DisplayBpms bpms;
+			if( GAMESTATE->m_pCurSong )
+			{
+				Song* pSong = GAMESTATE->m_pCurSong;
+				pSong->GetDisplayBpms( bpms );
+			}
+			else if( GAMESTATE->m_pCurCourse )
+			{
+				Course *pCourse = GAMESTATE->m_pCurCourse;
+				StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+				Trail* pTrail = pCourse->GetTrail( st );
+				ASSERT( pTrail );
+				pTrail->GetDisplayBpms( bpms );
+			}
+
+			if( bpms.IsSecret() )
+				sTitle += ssprintf( " (??" "?)" ); /* split so gcc doesn't think this is a trigraph */
+			else if( bpms.BpmIsConstant() )
+				sTitle += ssprintf( " (%.0f)", bpms.GetMin() );
+			else
+				sTitle += ssprintf( " (%.0f-%.0f)", bpms.GetMin(), bpms.GetMax() );
+		}
+	}
+
+	return sTitle;
+}
+
+void OptionRow::AfterImportOptions( float fY )
 {
 	// Make all selections the same if bOneChoiceForAllPlayers
 	if( m_RowDef.bOneChoiceForAllPlayers )
@@ -312,6 +363,7 @@ void OptionRow::AfterImportOptions(
 
 
 	m_textTitle.LoadFromFont( THEME->GetPathF(m_sType,"title") );
+	CString sTitle = GetRowTitle();
 	m_textTitle.SetText( sTitle );
 	m_textTitle.SetXY( LABELS_X, fY );
 	m_textTitle.RunCommands( LABELS_ON_COMMAND );

@@ -38,7 +38,6 @@ protected:
 	void InitOptionsText();
 	void GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut );
 	CString GetExplanationText( int row ) const;
-	CString GetRowTitle( int row ) const;
 	BitmapText &GetTextItemForRow( PlayerNumber pn, int iRow, int iChoiceOnRow );
 	void PositionUnderlines( int row, PlayerNumber pn );
 	void PositionAllUnderlines();
@@ -134,14 +133,12 @@ protected:
 	ThemeMetric<float>				SCROLL_BAR_HEIGHT;
 	ThemeMetric<float>				SCROLL_BAR_TIME;
 	ThemeMetric<float>				EXPLANATION_ZOOM;
-	ThemeMetric<bool>				SHOW_BPM_IN_SPEED_TITLE;
 	ThemeMetric<apActorCommands>	FRAME_ON_COMMAND;
 	ThemeMetric<apActorCommands>	FRAME_OFF_COMMAND;
 	ThemeMetric<bool>				SHOW_EXIT_ROW;
 	ThemeMetric<bool>				SEPARATE_EXIT_ROW;
 	ThemeMetric<float>				SEPARATE_EXIT_ROW_Y;
 	ThemeMetric<bool>				SHOW_EXPLANATIONS;
-	ThemeMetric<bool>				THEME_TITLES;
 
 	float m_fLockInputSecs;
 };

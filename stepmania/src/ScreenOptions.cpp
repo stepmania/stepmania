@@ -10,12 +10,8 @@
 #include "InputMapper.h"
 #include "ActorUtil.h"
 #include "ProfileManager.h"
-#include "song.h"
-#include "Course.h"
-#include "Style.h"
 #include "ScreenDimensions.h"
 #include "Command.h"
-#include "CommonMetrics.h"
 
 
 /*
@@ -71,10 +67,6 @@ static CString EXPLANATION_X_NAME( size_t p )			{ return ssprintf("ExplanationP%
 static CString EXPLANATION_Y_NAME( size_t p )			{ return ssprintf("ExplanationP%dY",p+1); }
 static CString EXPLANATION_ON_COMMAND_NAME( size_t p )	{ return ssprintf("ExplanationP%dOnCommand",p+1); }
 
-static CString OPTION_TITLE( CString s )
-{
-	return THEME->GetMetric("OptionTitles",s);
-}
 static CString OPTION_EXPLANATION( CString s )
 {
 	return THEME->GetMetric("OptionExplanations",s);
@@ -97,14 +89,12 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	SCROLL_BAR_HEIGHT				(m_sName,"ScrollBarHeight"),
 	SCROLL_BAR_TIME					(m_sName,"ScrollBarTime"),
 	EXPLANATION_ZOOM				(m_sName,"ExplanationZoom"),
-	SHOW_BPM_IN_SPEED_TITLE			(m_sName,"ShowBpmInSpeedTitle"),
 	FRAME_ON_COMMAND				(m_sName,"FrameOnCommand"),
 	FRAME_OFF_COMMAND				(m_sName,"FrameOffCommand"),
 	SHOW_EXIT_ROW					(m_sName,"ShowExitRow"),
 	SEPARATE_EXIT_ROW				(m_sName,"SeparateExitRow"),
 	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY"),
-	SHOW_EXPLANATIONS				(m_sName,"ShowExplanations"),
-	THEME_TITLES					(m_sName,"ThemeTitles")
+	SHOW_EXPLANATIONS				(m_sName,"ShowExplanations")
 {
 	m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
 	
@@ -173,10 +163,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		CLAMP( pos, 0, NUM_ROWS_SHOWN-1 );
 		const float fY = ROW_Y.GetValue( pos );
 
-		row.AfterImportOptions( 
-			GetRowTitle( r ),
-			fY
-			);
+		row.AfterImportOptions( fY );
 	}
 
 	m_sprPage.Load( THEME->GetPathG(m_sName,"page") );
@@ -273,7 +260,6 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	for( int r=0; r<(int)m_Rows.size(); r++ )		// foreach row
 	{
 		GetExplanationText( r );
-		GetRowTitle( r );
 	}
 
 	// put focus on the first enabled row
@@ -332,55 +318,6 @@ CString ScreenOptions::GetExplanationText( int iRow ) const
 	CString sLineName = row.GetRowDef().name;
 	ASSERT( !sLineName.empty() );
 	return SHOW_EXPLANATIONS ? OPTION_EXPLANATION(sLineName) : "";
-}
-
-CString ScreenOptions::GetRowTitle( int iRow ) const
-{
-	OptionRow &row = *m_Rows[iRow];
-	
-	CString sLineName = row.GetRowDef().name;
-	CString sTitle = THEME_TITLES ? OPTION_TITLE(sLineName) : sLineName;
-
-	// HACK: tack the BPM onto the name of the speed line
-	if( sLineName.CompareNoCase("speed")==0 )
-	{
-		bool bShowBpmInSpeedTitle = SHOW_BPM_IN_SPEED_TITLE;
-
-		if( GAMESTATE->m_pCurCourse )
-		{
-			Trail* pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
-			const int iNumCourseEntries = pTrail->m_vEntries.size();
-			if( iNumCourseEntries > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
-				bShowBpmInSpeedTitle = false;
-		}
-
-		if( bShowBpmInSpeedTitle )
-		{
-			DisplayBpms bpms;
-			if( GAMESTATE->m_pCurSong )
-			{
-				Song* pSong = GAMESTATE->m_pCurSong;
-				pSong->GetDisplayBpms( bpms );
-			}
-			else if( GAMESTATE->m_pCurCourse )
-			{
-				Course *pCourse = GAMESTATE->m_pCurCourse;
-				StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-				Trail* pTrail = pCourse->GetTrail( st );
-				ASSERT( pTrail );
-				pTrail->GetDisplayBpms( bpms );
-			}
-
-			if( bpms.IsSecret() )
-				sTitle += ssprintf( " (??" "?)" ); /* split so gcc doesn't think this is a trigraph */
-			else if( bpms.BpmIsConstant() )
-				sTitle += ssprintf( " (%.0f)", bpms.GetMin() );
-			else
-				sTitle += ssprintf( " (%.0f-%.0f)", bpms.GetMin(), bpms.GetMax() );
-		}
-	}
-
-	return sTitle;
 }
 
 BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iChoiceOnRow )

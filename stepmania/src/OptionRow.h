@@ -86,13 +86,12 @@ public:
 	void LoadExit();
 	void LoadOptionIcon( PlayerNumber pn, const CString &sText );
 
+	CString GetRowTitle() const;
+
 	void ImportOptions( PlayerNumber pn );
 	int ExportOptions( PlayerNumber pn );
 
-	void AfterImportOptions( 
-		const CString &sTitle,
-		float fY
-		);
+	void AfterImportOptions( float fY );
 	void DetachHandler();
 
 	void PositionUnderlines( PlayerNumber pn );
@@ -201,6 +200,8 @@ protected:
 	ThemeMetric<bool>				SHOW_UNDERLINES;
 	ThemeMetric<float>				TWEEN_SECONDS;
 	ThemeMetric<bool>				THEME_ITEMS;
+	ThemeMetric<bool>				THEME_TITLES;
+	ThemeMetric<bool>				SHOW_BPM_IN_SPEED_TITLE;
 };
 
 #endif
