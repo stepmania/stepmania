@@ -277,7 +277,7 @@ float Song::GetElapsedTimeFromBeat( float fBeat ) const
 
 CString Song::GetCacheFilePath() const
 {
-	return ssprintf( "Cache/%u", GetHashForString(m_sSongDir) );
+	return ssprintf( "Cache/Songs/%u", GetHashForString(m_sSongDir) );
 }
 
 /* Get a path to the SM containing data for this song.  It might

@@ -12,7 +12,7 @@ SongCacheIndex *SONGINDEX;
 
 SongCacheIndex::SongCacheIndex()
 {
-	mkdir("Cache", 0755);
+	CreateDirectories( "Cache/Songs" );
 	CacheIndex.SetPath( "Cache/index.cache" );
 	ReadCacheIndex();
 }
@@ -50,6 +50,7 @@ void SongCacheIndex::ReadCacheIndex()
 	LOG->Trace( "Cache format is out of date.  Deleting all cache files." );
 	EmptyDir( "Cache/" );
 	EmptyDir( "Cache/Banners/" );
+	EmptyDir( "Cache/Songs/" );
 
 	CacheIndex.Reset();
 }
