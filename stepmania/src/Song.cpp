@@ -1232,6 +1232,11 @@ Song::SelectionDisplay Song::GetDisplayed() const
 	return m_SelectionDisplay;
 }
 
+bool Song::NormallyDisplayed() const { return GetDisplayed() == SHOW_ALWAYS; }
+bool Song::NeverDisplayed() const { return GetDisplayed() == SHOW_NEVER; }
+bool Song::RouletteDisplayed() const { if(IsTutorial()) return false; return GetDisplayed() != SHOW_NEVER; }
+
+
 bool Song::HasMusic() const 		{return m_sMusicFile != ""			&&	IsAFile(GetMusicPath()); }
 bool Song::HasBanner() const 		{return m_sBannerFile != ""			&&  IsAFile(GetBannerPath()); }
 bool Song::HasLyrics() const		{return m_sLyricsFile != ""			&&	IsAFile(GetLyricsPath()); }

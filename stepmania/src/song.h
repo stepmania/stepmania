@@ -183,9 +183,9 @@ public:
 	bool IsTutorial() const;
 	bool HasEdits( StepsType st ) const;
 	SelectionDisplay GetDisplayed() const;
-	bool NormallyDisplayed() const { return GetDisplayed() == SHOW_ALWAYS; }
-	bool NeverDisplayed() const { return GetDisplayed() == SHOW_NEVER; }
-	bool RouletteDisplayed() const { return GetDisplayed() != SHOW_NEVER; }
+	bool NormallyDisplayed() const;
+	bool NeverDisplayed() const;
+	bool RouletteDisplayed() const;
 
 	void AddSteps( Steps* pSteps );		// we are responsible for deleting the memory pointed to by pSteps!
 	void RemoveSteps( const Steps* pSteps );
