@@ -21,9 +21,13 @@
 #include "SongManager.h"
 
 
-const int NUM_FEET_IN_METER					=	10;
-const int MAX_FEET_IN_METER					=	14;
-const int GLOW_IF_METER_GREATER_THAN		=	9;
+//	const int NUM_FEET_IN_METER					=	10;
+//	const int MAX_FEET_IN_METER					=	14;
+//	const int GLOW_IF_METER_GREATER_THAN		=	9;
+
+#define NUM_FEET_IN_METER						THEME->GetMetricI("DifficultyMeter","NumFeetInMeter")
+#define MAX_FEET_IN_METER						THEME->GetMetricI("DifficultyMeter","MaxFeetInMeter")
+#define GLOW_IF_METER_GREATER_THAN				THEME->GetMetricI("DifficultyMeter","GlowIfMeterGreaterThan")
 
 
 DifficultyMeter::DifficultyMeter()
