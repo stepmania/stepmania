@@ -70,9 +70,12 @@ void ReceptorArrow::Update( float fDeltaTime )
 
 void ReceptorArrow::Draw()
 {
+	// draw pressblock under receptors
+	m_pPressBlock->SetHidden( !m_bIsPressed );
+	m_bIsPressed = false;	// it may get turned back on next update
+
 	m_pReceptorGo->SetHidden( !GAMESTATE->m_bPastHereWeGo );
 	m_pReceptorWaiting->SetHidden( GAMESTATE->m_bPastHereWeGo );
-	m_pPressBlock->SetHidden( !m_bIsPressed );
 
 	ActorFrame::Draw();
 }
