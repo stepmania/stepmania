@@ -1155,7 +1155,7 @@ CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature 
 	// thowing out all the cache. -Chris
 	FlushDirCache();
 
-	if( bMakeSignature )
+	if( PREFSMAN->m_bSignProfileData && bMakeSignature )
 		CryptManager::SignFileToFile( sPath );
 
 	return sFileName;
