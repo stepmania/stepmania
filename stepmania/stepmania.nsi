@@ -80,7 +80,7 @@ IntCmpU $1 0 ok old_dx ok
 
 ; We can function without it (using WaveOut), so don't *require* this.
 old_dx:
-MessageBox MB_YESNO|MB_ICONINFORMATION "The latest version of DirectX (8.1 or higher) is strongly recommended.$\n Do you wish to visit Microsoft's site now ?" IDYES open_dx_page
+MessageBox MB_YESNO|MB_ICONINFORMATION "The latest version of DirectX (8.1 or higher) is strongly recommended.$\n Do you wish to visit Microsoft's site now?" IDYES open_dx_page
 Goto ok
 
 open_dx_page:
@@ -129,6 +129,7 @@ SetOutPath "$INSTDIR\CDTitles"
 File "CDTitles\Instructions.txt"
 
 RMDir /r "$INSTDIR\Characters\default"
+CreateDirectory "$INSTDIR\Characters\default"
 SetOutPath "$INSTDIR\Characters"
 File /r "Characters\default"
 # File "Characters\instructions.txt"
@@ -195,7 +196,6 @@ SetOutPath "$INSTDIR\Data"
 File "Data\Translation.dat"
 File "Data\AI.ini"
 File "Data\Unlocks.dat"
-File "Data\VideoCardDefaults.ini"
 File "Data\splash.bmp"
 
 SetOutPath "$INSTDIR"
@@ -294,8 +294,8 @@ RMDir "$INSTDIR\Cache"
 Delete "$INSTDIR\CDTitles\Instructions.txt"
 RMDir "$INSTDIR\CDTitles"
 
-#Delete "$INSTDIR\Characters\instructions.txt"
-#RMDir "$INSTDIR\Characters"
+RMDir /r "$INSTDIR\Characters\default"
+RMDir "$INSTDIR\Characters"
 
 RMDir /r "$INSTDIR\Cache"
 
@@ -336,7 +336,6 @@ RMDir "$INSTDIR\Visualizations"
 ; Don't delete high scores.
 Delete "$INSTDIR\Data\Translation.dat"
 Delete "$INSTDIR\Data\AI.ini"
-Delete "$INSTDIR\Data\VideoCardDefaults.ini"
 Delete "$INSTDIR\Data\stepmania.ini"
 Delete "$INSTDIR\Data\Keymaps.ini"
 Delete "$INSTDIR\Data\GamePrefs.ini"
