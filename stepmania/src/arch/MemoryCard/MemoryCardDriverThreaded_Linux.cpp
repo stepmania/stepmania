@@ -167,6 +167,33 @@ void MemoryCardDriverThreaded_Linux::ResetUsbStorage()
 	MountThreadDoOneUpdate();
 }
 
+bool UsbStorageDevicesChanged()
+{
+  static CString sLastDevices = "";
+  CString sThisDevices;
+
+  // 2.4 kernel style
+
+  // Find the usb-storage device index for all storage class devices.
+  for( unsigned i=0; true; i++ )
+    {
+      CString fn = ssprintf( "/proc/scsi/usb-storage-%d/%d", i, i );
+      RageFile f;
+      if( !f.Open( fn ) )
+	break;
+      CString sFileText;
+      f.Read( sFileText );
+      sThisDevices += sFileText;
+      f.Close();
+    }
+
+  bool bChanged = sThisDevices != sLastDevices;
+  sLastDevices = sThisDevices;
+  if( bChanged )
+    LOG->Trace( "Change in USB storage devices detected." );
+  return bChanged;
+}
+
 void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 {
 	if( m_fd == -1 )
@@ -192,20 +219,8 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 	}
 	else
 	{
-		pollfd pfd = { m_fd, POLLIN, 0 };
-		int ret = poll( &pfd, 1, 100 );
-		switch( ret )
-		{
-		case 1:
-			// file changed.  Fall through.
-			break;
-		case 0: // no change.  Poll again.
-			return;
-		case -1:
-			if( errno != EINTR )
-				LOG->Warn( "Error polling: %s", strerror(errno) );
-			return;
-		}
+	  if( !UsbStorageDevicesChanged() )
+	    return;
 	}
 	
 	// TRICKY: We're waiting for a change in the USB device list, but 
@@ -213,7 +228,11 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 	// on the USB device list because the usb-storage descriptors are separate files per 
 	// device.  So, sleep for a little bit of time after we detect a new USB device and give
 	// usb-storage a chance to initialize.  
-	usleep(1000*300);
+	//usleep(1000*300);
+	// CAREFUL: We can't wait for a fixed amount of time.  Some devices take
+	// a very long time to initialize before they can be mounted (Rio Carbon).
+	// Instead, poll for a change in the usb-storage descriptor.  When the 
+	// descriptor says the device is present, the device is ready to be mounted.
 	
 	vector<UsbStorageDevice> vNew;
 	GetNewStorageDevices( vNew );
@@ -666,6 +685,11 @@ void MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice, CString s
 	
 	FILEMAN->Mount( "dir", pDevice->sOsMountDir, sMountPoint.c_str() );
 	LOG->Trace( "FILEMAN->Mount %s %s", pDevice->sOsMountDir.c_str(), sMountPoint.c_str() );
+
+        // HACK: Do OS mount for m_bMemoryCardsMountOnlyWhenNecessary
+        CString sCommand = "mount " + pDevice->sOsMountDir;
+        LOG->Trace( "hack mount (%s)", sCommand.c_str() );
+        ExecuteCommand( sCommand );
 }
 
 void MemoryCardDriverThreaded_Linux::Unmount( UsbStorageDevice* pDevice, CString sMountPoint )
@@ -674,6 +698,11 @@ void MemoryCardDriverThreaded_Linux::Unmount( UsbStorageDevice* pDevice, CString
 		return;
 	
 	// already unmounted by the mounting thread
+
+	// HACK: Do OS unmount for m_bMemoryCardsMountOnlyWhenNecessary
+	CString sCommand = "umount " + pDevice->sOsMountDir;
+	LOG->Trace( "hack unmount (%s)", sCommand.c_str() );
+	ExecuteCommand( sCommand );
 }
 
 void MemoryCardDriverThreaded_Linux::Flush( UsbStorageDevice* pDevice )
