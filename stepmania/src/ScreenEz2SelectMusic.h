@@ -25,7 +25,7 @@
 class ScreenEz2SelectMusic : public Screen
 {
 public:
-	ScreenEz2SelectMusic();
+	ScreenEz2SelectMusic( CString sName );
 	virtual void DrawPrimitives();
 
 	virtual void Update( float fDeltaTime );

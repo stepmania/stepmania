@@ -18,7 +18,7 @@
 class ScreenEditMenu : public Screen
 {
 public:
-	ScreenEditMenu();
+	ScreenEditMenu( CString sName );
 	virtual ~ScreenEditMenu();
 
 	virtual void DrawPrimitives();

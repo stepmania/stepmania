@@ -15,7 +15,7 @@
 class ScreenCompany : public ScreenAttract
 {
 public:
-	ScreenCompany() : ScreenAttract("ScreenCompany") { };
+	ScreenCompany( CString sName ) : ScreenAttract( sName ) { }
 
 };
 

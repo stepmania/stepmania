@@ -33,7 +33,7 @@
 #define HELP_TEXT					THEME->GetMetric("ScreenJukeboxMenu","HelpText")
 
 
-ScreenJukeboxMenu::ScreenJukeboxMenu() : Screen("ScreenJukeboxMenu")
+ScreenJukeboxMenu::ScreenJukeboxMenu( CString sClassName ) : Screen( sClassName )
 {
 	LOG->Trace( "ScreenJukeboxMenu::ScreenJukeboxMenu()" );
 

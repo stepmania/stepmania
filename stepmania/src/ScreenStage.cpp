@@ -52,7 +52,7 @@ enum StageMode
 };
 */
 
-ScreenStage::ScreenStage() : Screen("ScreenStage")
+ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 {
 	SOUND->StopMusic();
 

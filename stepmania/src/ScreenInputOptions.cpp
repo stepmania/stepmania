@@ -43,8 +43,8 @@ OptionRow g_InputOptionsLines[NUM_INPUT_OPTIONS_LINES] = {
 	OptionRow( "Wheel\nSpeed",			true, "SLOW","NORMAL","FAST","REALLY FAST" ),
 };
 
-ScreenInputOptions::ScreenInputOptions() :
-	ScreenOptions("ScreenInputOptions")
+ScreenInputOptions::ScreenInputOptions( CString sName ) :
+	ScreenOptions( sName )
 {
 	LOG->Trace( "ScreenInputOptions::ScreenInputOptions()" );
 

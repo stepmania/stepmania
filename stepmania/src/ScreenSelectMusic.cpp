@@ -73,7 +73,7 @@ static void FlipSpriteHorizontally(Sprite &s)
 	s.SetCustomTextureCoords(Coords);
 }
 
-ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
+ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName )
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
 

@@ -63,8 +63,8 @@ OptionRow g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 	OptionRow( "Lyrics",			true, "HIDE","SHOW"),
 };
 
-ScreenAppearanceOptions::ScreenAppearanceOptions() :
-	ScreenOptions("ScreenAppearanceOptions")
+ScreenAppearanceOptions::ScreenAppearanceOptions( CString sName ) :
+	ScreenOptions(sName)
 {
 	LOG->Trace( "ScreenAppearanceOptions::ScreenAppearanceOptions()" );
 

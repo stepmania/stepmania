@@ -42,8 +42,8 @@ OptionRow g_BackgroundOptionsLines[NUM_BACKGROUND_OPTIONS_LINES] = {
 	OptionRow( "Random\nBackgrounds",   true, "5","10","15","20" ),
 };
 
-ScreenBackgroundOptions::ScreenBackgroundOptions() :
-	ScreenOptions("ScreenBackgroundOptions")
+ScreenBackgroundOptions::ScreenBackgroundOptions( CString sName ) :
+	ScreenOptions( sName )
 {
 	LOG->Trace( "ScreenBackgroundOptions::ScreenBackgroundOptions()" );
 

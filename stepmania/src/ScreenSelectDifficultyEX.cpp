@@ -53,7 +53,7 @@
 #define SLEEP_AFTER_TWEEN_OFF_SECONDS			THEME->GetMetricF("ScreenSelectDifficultyEX","SleepAfterTweenOffSeconds")
 
 
-ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSelectDifficultyEX" )
+ScreenSelectDifficultyEX::ScreenSelectDifficultyEX( CString sClassName ) : ScreenSelect( sClassName )
 {
 	m_CurrentPage = PAGE_1;
 	int p;

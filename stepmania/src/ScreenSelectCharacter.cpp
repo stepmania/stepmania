@@ -59,7 +59,7 @@ const PlayerNumber	CPU_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
 
 
 
-ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
+ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : Screen( sClassName )
 {	
 	LOG->Trace( "ScreenSelectCharacter::ScreenSelectCharacter()" );	
 

@@ -57,7 +57,7 @@ static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 
 
 
-ScreenSelectCourse::ScreenSelectCourse() : Screen("ScreenSelectCourse")
+ScreenSelectCourse::ScreenSelectCourse( CString sClassName ) : Screen( sClassName )
 {
 	LOG->Trace( "ScreenSelectCourse::ScreenSelectCourse()" );
 

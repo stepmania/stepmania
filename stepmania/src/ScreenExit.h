@@ -10,7 +10,7 @@ class ScreenExit: public Screen
 	RageTimer m_ShutdownTimer;
 
 public:
-	ScreenExit();
+	ScreenExit( CString sName );
 	void Update( float fDelta );
 };
 

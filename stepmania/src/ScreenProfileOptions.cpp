@@ -37,8 +37,7 @@ OptionRow g_ProfileOptionsLines[NUM_GAMEPLAY_OPTIONS_LINES] = {
 	OptionRow( "Rename",			true ),
 };
 
-ScreenProfileOptions::ScreenProfileOptions() :
-	ScreenOptions("ScreenProfileOptions")
+ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions( sClassName )
 {
 	LOG->Trace( "ScreenProfileOptions::ScreenProfileOptions()" );
 

@@ -18,7 +18,7 @@ class Course;
 class ScreenUnlock : public ScreenAttract
 {
 public:
-	ScreenUnlock();
+	ScreenUnlock( CString sName );
 	~ScreenUnlock();
 
 protected:

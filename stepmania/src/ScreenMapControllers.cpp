@@ -46,7 +46,7 @@ const float BUTTON_COLUMN_X[NUM_GAME_TO_DEVICE_SLOTS*MAX_GAME_CONTROLLERS] =
 };
 
 
-ScreenMapControllers::ScreenMapControllers() : Screen("ScreenMapControllers")
+ScreenMapControllers::ScreenMapControllers( CString sClassName ) : Screen( sClassName )
 {
 	LOG->Trace( "ScreenMapControllers::ScreenMapControllers()" );
 	

@@ -20,7 +20,7 @@
 class ScreenPrompt : public Screen
 {
 public:
-	ScreenPrompt();
+	ScreenPrompt( CString sName );
 	ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNoPrompt=false, bool bDefaultAnswer = false, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
 
 	virtual void Update( float fDeltaTime );

@@ -34,7 +34,7 @@
 
 const ScreenMessage SM_PlayPostSwitchPage = (ScreenMessage)(SM_User+1);
 
-ScreenSelectMaster::ScreenSelectMaster() : ScreenSelect( "ScreenSelectMaster" )
+ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sClassName )
 {
 	int p, i;
 

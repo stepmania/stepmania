@@ -26,7 +26,7 @@
 #define NEXT_SCREEN( pm )	THEME->GetMetric("ScreenInstructions","NextScreen"+Capitalize(PlayModeToString(pm)) )
 
 
-ScreenInstructions::ScreenInstructions() : Screen("ScreenInstructions")
+ScreenInstructions::ScreenInstructions( CString sName ) : Screen( sName )
 {
 	LOG->Trace( "ScreenInstructions::ScreenInstructions()" );
 

@@ -19,7 +19,7 @@
 class ScreenJukeboxMenu : public Screen
 {
 public:
-	ScreenJukeboxMenu();
+	ScreenJukeboxMenu( CString sName );
 	virtual ~ScreenJukeboxMenu();
 
 	virtual void DrawPrimitives();

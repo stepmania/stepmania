@@ -16,7 +16,7 @@
 class ScreenGraphicOptions : public ScreenOptions
 {
 public:
-	ScreenGraphicOptions();
+	ScreenGraphicOptions( CString sClassName );
 
 private:
 	void UpdateRefreshRates();

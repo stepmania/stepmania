@@ -23,7 +23,7 @@
 class ScreenSelectDifficulty : public ScreenSelect
 {
 public:
-	ScreenSelectDifficulty();
+	ScreenSelectDifficulty( CString sName );
 
 	virtual void Update( float fDelta );
 

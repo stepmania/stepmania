@@ -14,7 +14,7 @@
 class ScreenSelectGame : public ScreenOptions
 {
 public:
-	ScreenSelectGame();
+	ScreenSelectGame( CString sName );
 
 private:
 	void ImportOptions();

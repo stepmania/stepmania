@@ -21,7 +21,7 @@
 class ScreenSelectGroup : public Screen
 {
 public:
-	ScreenSelectGroup();
+	ScreenSelectGroup( CString sName );
 	virtual ~ScreenSelectGroup();
 
 	virtual void DrawPrimitives();

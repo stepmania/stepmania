@@ -33,8 +33,8 @@ OptionRow g_AutogenOptionsLines[NUM_AUTOGEN_OPTIONS_LINES] = {
 	OptionRow( "Autogen\nGroup Courses",	true, "OFF","ON" ),
 };
 
-ScreenAutogenOptions::ScreenAutogenOptions() :
-	ScreenOptions("ScreenAutogenOptions")
+ScreenAutogenOptions::ScreenAutogenOptions( CString sName ) :
+	ScreenOptions( sName )
 {
 	LOG->Trace( "ScreenAutogenOptions::ScreenAutogenOptions()" );
 

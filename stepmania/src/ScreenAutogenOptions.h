@@ -16,7 +16,7 @@
 class ScreenAutogenOptions : public ScreenOptions
 {
 public:
-	ScreenAutogenOptions();
+	ScreenAutogenOptions( CString sName );
 
 private:
 	void ImportOptions();

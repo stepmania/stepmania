@@ -22,7 +22,7 @@
 class ScreenMapControllers : public Screen
 {
 public:
-	ScreenMapControllers();
+	ScreenMapControllers( CString sName );
 	virtual ~ScreenMapControllers();
 
 	virtual void Update( float fDeltaTime );

@@ -27,7 +27,7 @@ const int NUM_NAMING_MENU_ITEMS = 6;
 class ScreenEdit : public Screen
 {
 public:
-	ScreenEdit();
+	ScreenEdit( CString sName );
 	virtual ~ScreenEdit();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

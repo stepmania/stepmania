@@ -8,7 +8,7 @@
 class ScreenTestFonts: public Screen
 {
 public:
-	ScreenTestFonts();
+	ScreenTestFonts( CString sName );
 
 	void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	void Draw();

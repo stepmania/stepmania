@@ -15,7 +15,7 @@
 class ScreenStage : public Screen
 {
 public:
-	ScreenStage();
+	ScreenStage( CString sName );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

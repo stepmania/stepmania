@@ -76,7 +76,7 @@ static bool HaveAllCharAnimations()
 	return true;
 }
 
-ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
+ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 {
 	m_iPerfects = 0;
 	m_iNumPerfects = NUM_PERFECTS;

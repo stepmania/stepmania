@@ -14,7 +14,7 @@
 class ScreenGameplayOptions : public ScreenOptions
 {
 public:
-	ScreenGameplayOptions();
+	ScreenGameplayOptions( CString sName );
 
 private:
 	void ImportOptions();

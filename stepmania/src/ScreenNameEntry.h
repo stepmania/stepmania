@@ -21,7 +21,7 @@
 class ScreenNameEntry : public Screen
 {
 public:
-	ScreenNameEntry();
+	ScreenNameEntry( CString sName );
 	virtual ~ScreenNameEntry();
 
 	virtual void Update( float fDeltaTime );

@@ -22,7 +22,7 @@
 #include "RageLog.h"
 
 
-ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
+ScreenSandbox::ScreenSandbox( CString sClassName ) : Screen( sClassName )
 {
 //	m_quad1.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 //	m_quad1.SetDiffuse( RageColor(0,0,1,1) );

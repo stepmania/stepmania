@@ -14,7 +14,7 @@
 class ScreenBackgroundOptions : public ScreenOptions
 {
 public:
-	ScreenBackgroundOptions();
+	ScreenBackgroundOptions( CString sName );
 
 private:
 	void ImportOptions();

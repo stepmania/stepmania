@@ -16,7 +16,7 @@
 class ScreenMachineOptions : public ScreenOptions
 {
 public:
-	ScreenMachineOptions();
+	ScreenMachineOptions( CString sName );
 
 private:
 	void ImportOptions();

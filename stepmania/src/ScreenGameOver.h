@@ -17,7 +17,7 @@
 class ScreenGameOver : public Screen
 {
 public:
-	ScreenGameOver();
+	ScreenGameOver( CString sName );
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 

@@ -45,7 +45,7 @@ ScreenEz2SelectPlayer (Constructor)
 Desc: Sets up the screen display
 ************************************/
 
-ScreenEz2SelectPlayer::ScreenEz2SelectPlayer() : Screen("ScreenEz2SelectPlayer")
+ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : Screen( sName )
 {
 	// Unjoin the players, then let them join back in on this screen
 	GAMESTATE->m_bPlayersCanJoin = true;

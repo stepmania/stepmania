@@ -15,7 +15,7 @@
 class ScreenAlbums : public ScreenAttract
 {
 public:
-	ScreenAlbums() : ScreenAttract("ScreenAlbums") { };
+	ScreenAlbums( CString sName ) : ScreenAttract(sName) { };
 
 };
 

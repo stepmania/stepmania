@@ -14,7 +14,7 @@
 class ScreenInputOptions : public ScreenOptions
 {
 public:
-	ScreenInputOptions();
+	ScreenInputOptions( CString sName );
 
 private:
 	void ImportOptions();

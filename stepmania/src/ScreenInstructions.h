@@ -21,7 +21,7 @@
 class ScreenInstructions : public Screen
 {
 public:
-	ScreenInstructions();
+	ScreenInstructions( CString sName );
 	virtual ~ScreenInstructions();
 
 	virtual void Update( float fDeltaTime );

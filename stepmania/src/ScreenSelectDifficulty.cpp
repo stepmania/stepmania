@@ -35,7 +35,7 @@
 #define DISABLED_COLOR						THEME->GetMetricC("ScreenSelectDifficulty","DisabledColor")
 
 
-ScreenSelectDifficulty::ScreenSelectDifficulty() : ScreenSelect( "ScreenSelectDifficulty" )
+ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSelect( sClassName )
 {
 	m_CurrentPage = PAGE_1;
 	int p;

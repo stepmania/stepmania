@@ -23,7 +23,7 @@
 class ScreenSelectCourse : public Screen
 {
 public:
-	ScreenSelectCourse();
+	ScreenSelectCourse( CString sName );
 	virtual ~ScreenSelectCourse();
 
 	virtual void DrawPrimitives();

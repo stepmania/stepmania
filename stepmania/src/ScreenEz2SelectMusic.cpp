@@ -72,7 +72,7 @@ const float TWEEN_TIME		= 0.5f;
 
 const ScreenMessage SM_NoSongs	= ScreenMessage(SM_User+3);
 
-ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
+ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : Screen( sName )
 {
 	i_SkipAheadOffset = 0;
 	LastInputTime = 0;

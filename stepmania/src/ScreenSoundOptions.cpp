@@ -41,8 +41,8 @@ OptionRow g_SoundOptionsLines[NUM_SOUND_OPTIONS_LINES] = {
 	OptionRow( "Resampling\nQuality",	true, "FAST","NORMAL","HIGH QUALITY" ),
 };
 
-ScreenSoundOptions::ScreenSoundOptions() :
-	ScreenOptions("ScreenSoundOptions")
+ScreenSoundOptions::ScreenSoundOptions( CString sClassName ) :
+	ScreenOptions( sClassName )
 {
 	LOG->Trace( "ScreenSoundOptions::ScreenSoundOptions()" );
 

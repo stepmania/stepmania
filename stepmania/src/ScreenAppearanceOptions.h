@@ -16,7 +16,7 @@
 class ScreenAppearanceOptions : public ScreenOptions
 {
 public:
-	ScreenAppearanceOptions();
+	ScreenAppearanceOptions( CString sName );
 
 private:
 	void ImportOptions();

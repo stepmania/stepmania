@@ -47,7 +47,7 @@ const ScreenMessage SM_ShowNextPage		=	(ScreenMessage)(SM_User+67);
 const ScreenMessage SM_HidePage			=	(ScreenMessage)(SM_User+68);
 
 
-ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking")
+ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 {
 	m_sprCategory.SetXY( CATEGORY_X, CATEGORY_Y );
 	this->AddChild( &m_sprCategory );

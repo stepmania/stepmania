@@ -557,7 +557,7 @@ void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 void ScreenManager::TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCanel)() )
 {	
 	// add the new state onto the back of the array
-	m_ScreenStack.push_back( new ScreenTextEntry(SM_SendWhenDone, sQuestion, sInitialAnswer, OnOK, OnCanel) );
+	m_ScreenStack.push_back( new ScreenTextEntry("ScreenTextEntry", SM_SendWhenDone, sQuestion, sInitialAnswer, OnOK, OnCanel) );
 }
 
 void ScreenManager::MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )

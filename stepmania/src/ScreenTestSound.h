@@ -20,7 +20,7 @@ const int nsounds = 5;
 class ScreenTestSound : public Screen
 {
 public:
-	ScreenTestSound();
+	ScreenTestSound( CString sName );
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );

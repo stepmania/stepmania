@@ -23,7 +23,7 @@
 class ScreenMusicScroll : public Screen
 {
 public:
-	ScreenMusicScroll();
+	ScreenMusicScroll( CString sName );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

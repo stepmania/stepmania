@@ -23,7 +23,7 @@
 class ScreenSelectDifficultyEX : public ScreenSelect
 {
 public:
-	ScreenSelectDifficultyEX();
+	ScreenSelectDifficultyEX( CString sName );
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void MenuLeft( PlayerNumber pn );

@@ -22,7 +22,7 @@
 class ScreenSelectStyle : public ScreenSelect
 {
 public:
-	ScreenSelectStyle();
+	ScreenSelectStyle( CString sName );
 
 	virtual void MenuLeft( PlayerNumber pn );
 	virtual void MenuRight( PlayerNumber pn );

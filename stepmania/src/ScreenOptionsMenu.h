@@ -16,7 +16,7 @@
 class ScreenOptionsMenu : public ScreenOptions
 {
 public:
-	ScreenOptionsMenu();
+	ScreenOptionsMenu( CString sName );
 
 protected:
 	void MenuStart( PlayerNumber pn );

@@ -20,7 +20,7 @@ class Course;
 class ScreenRanking : public ScreenAttract
 {
 public:
-	ScreenRanking();
+	ScreenRanking( CString sName );
 
 	void HandleScreenMessage( const ScreenMessage SM );
 

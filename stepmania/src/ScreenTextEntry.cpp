@@ -35,8 +35,8 @@ const float ANSWER_HEIGHT	=	30;
  * Handle UTF-8.  Right now, we need to at least be able to backspace
  * a whole UTF-8 character.  Better would be to operate in longchars.
  */
-ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCancel)() ) :
-  Screen("ScreenTextEntry")
+ScreenTextEntry::ScreenTextEntry( CString sClassName, ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCancel)() ) :
+  Screen( sClassName )
 {
 	m_bIsTransparent = true;	// draw screens below us
 

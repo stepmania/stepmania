@@ -20,7 +20,7 @@
 #include "RageSoundManager.h"
 #include "ThemeManager.h"
 
-ScreenTestSound::ScreenTestSound() : Screen("ScreenTestSound")
+ScreenTestSound::ScreenTestSound( CString sClassName ) : Screen( sClassName )
 {	
 	int i;
 	this->AddChild(&HEEEEEEEEELP);

@@ -106,43 +106,43 @@ protected:
 class ScreenEvaluationStage : public ScreenEvaluation
 {
 public:
-	ScreenEvaluationStage() : ScreenEvaluation("ScreenEvaluationStage",ScreenEvaluation::stage) {};
+	ScreenEvaluationStage( CString sClassName ) : ScreenEvaluation(sClassName,ScreenEvaluation::stage) {};
 };
 
 class ScreenEvaluationSummary : public ScreenEvaluation
 {
 public:
-	ScreenEvaluationSummary() : ScreenEvaluation("ScreenEvaluationSummary",ScreenEvaluation::summary) {};
+	ScreenEvaluationSummary( CString sClassName ) : ScreenEvaluation(sClassName,ScreenEvaluation::summary) {};
 };
 
 class ScreenEvaluationNonstop : public ScreenEvaluation
 {
 public:
-	ScreenEvaluationNonstop() : ScreenEvaluation("ScreenEvaluationNonstop",ScreenEvaluation::course) {};
+	ScreenEvaluationNonstop( CString sClassName ) : ScreenEvaluation(sClassName,ScreenEvaluation::course) {};
 };
 
 class ScreenEvaluationOni : public ScreenEvaluation
 {
 public:
-	ScreenEvaluationOni() : ScreenEvaluation("ScreenEvaluationOni",ScreenEvaluation::course) {};
+	ScreenEvaluationOni( CString sClassName ) : ScreenEvaluation(sClassName, ScreenEvaluation::course) {};
 };
 
 class ScreenEvaluationEndless : public ScreenEvaluation
 {
 public:
-	ScreenEvaluationEndless() : ScreenEvaluation("ScreenEvaluationEndless",ScreenEvaluation::course) {};
+	ScreenEvaluationEndless( CString sClassName ) : ScreenEvaluation(sClassName, ScreenEvaluation::course) {};
 };
 
 class ScreenEvaluationBattle : public ScreenEvaluation
 {
 public:
-	ScreenEvaluationBattle() : ScreenEvaluation("ScreenEvaluationBattle",ScreenEvaluation::stage) {};
+	ScreenEvaluationBattle( CString sClassName ) : ScreenEvaluation(sClassName, ScreenEvaluation::stage) {};
 };
 
 class ScreenEvaluationRave : public ScreenEvaluation
 {
 public:
-	ScreenEvaluationRave() : ScreenEvaluation("ScreenEvaluationRave",ScreenEvaluation::stage) {};
+	ScreenEvaluationRave( CString sClassName ) : ScreenEvaluation(sClassName,ScreenEvaluation::stage) {};
 };
 
 

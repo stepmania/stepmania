@@ -33,8 +33,8 @@ OptionRow g_SelectGameLines[NUM_SELECT_GAME_LINES] =
 };
 
 
-ScreenSelectGame::ScreenSelectGame() :
-	ScreenOptions("ScreenSelectGame")
+ScreenSelectGame::ScreenSelectGame( CString sClassName ) :
+	ScreenOptions( sClassName )
 {
 	LOG->Trace( "ScreenSelectGame::ScreenSelectGame()" );
 

@@ -18,7 +18,7 @@
 class ScreenLogo : public ScreenAttract
 {
 public:
-	ScreenLogo();
+	ScreenLogo( CString sName );
 
 protected:
 	Sprite				m_sprLogo;

@@ -14,7 +14,7 @@
 class ScreenRaveOptions : public ScreenOptions
 {
 public:
-	ScreenRaveOptions();
+	ScreenRaveOptions( CString sName );
 
 private:
 	void ImportOptions();

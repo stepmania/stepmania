@@ -58,8 +58,8 @@ static const int TextureRes[] = {
 	256, 512, 1024, 2048
 };
 
-ScreenGraphicOptions::ScreenGraphicOptions() :
-	ScreenOptions("ScreenGraphicOptions")
+ScreenGraphicOptions::ScreenGraphicOptions( CString sName ) :
+	ScreenOptions( sName )
 {
 	LOG->Trace( "ScreenGraphicOptions::ScreenGraphicOptions()" );
 

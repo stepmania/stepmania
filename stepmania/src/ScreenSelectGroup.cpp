@@ -33,7 +33,7 @@
 #define NEXT_SCREEN						THEME->GetMetric ("ScreenSelectGroup","NextScreen")
 
 
-ScreenSelectGroup::ScreenSelectGroup() : Screen("ScreenSelectGroup")
+ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : Screen( sClassName )
 {	
 	LOG->Trace( "ScreenSelectGroup::ScreenSelectGroup()" );	
 

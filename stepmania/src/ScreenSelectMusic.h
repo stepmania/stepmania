@@ -30,7 +30,7 @@
 class ScreenSelectMusic : public Screen
 {
 public:
-	ScreenSelectMusic();
+	ScreenSelectMusic( CString sName );
 	virtual ~ScreenSelectMusic();
 
 	virtual void DrawPrimitives();

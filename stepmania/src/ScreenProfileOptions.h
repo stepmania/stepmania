@@ -14,7 +14,7 @@
 class ScreenProfileOptions : public ScreenOptions
 {
 public:
-	ScreenProfileOptions();
+	ScreenProfileOptions( CString sName );
 
 	virtual void MenuStart( PlayerNumber pn );
 

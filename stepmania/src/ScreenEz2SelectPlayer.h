@@ -16,7 +16,7 @@ Andrew Livy
 class ScreenEz2SelectPlayer : public Screen
 {
 public:
-	ScreenEz2SelectPlayer(); // Constructor
+	ScreenEz2SelectPlayer( CString sName );
 	virtual ~ScreenEz2SelectPlayer(); // Destructor
 	
 	/* Public Function Prototypes */

@@ -18,7 +18,7 @@
 class ScreenEditCoursesMenu : public Screen
 {
 public:
-	ScreenEditCoursesMenu();
+	ScreenEditCoursesMenu( CString sName );
 	virtual ~ScreenEditCoursesMenu();
 
 	virtual void DrawPrimitives();

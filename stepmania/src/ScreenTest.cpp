@@ -32,14 +32,14 @@ void ScreenTest::SetScreen(int num)
 	delete current;
 	if(num > 2) num = 0;
 	if(num == 0)
-		current=new ScreenSandbox;
+		current=new ScreenSandbox("ScreenSandbox");
 	else if(num == 1)
-		current=new ScreenTestSound;
+		current=new ScreenTestSound("ScreenTestSound");
 	else if(num == 2)
-		current=new ScreenTestFonts;
+		current=new ScreenTestFonts("ScreenTestFonts");
 }
 
-ScreenTest::ScreenTest() : Screen("ScreenTest")
+ScreenTest::ScreenTest( CString sClassName ) : Screen( sClassName )
 {
 	current = NULL;
 	cur_screen = -1;

@@ -56,8 +56,8 @@ OptionRow g_OptionsMenuLines[NUM_OPTIONS_MENU_LINES] = {
 	OptionRow( "",	true, "Reload Songs/Courses" ),
 };
 
-ScreenOptionsMenu::ScreenOptionsMenu() :
-	ScreenOptions("ScreenOptionsMenu")
+ScreenOptionsMenu::ScreenOptionsMenu( CString sClassName ) :
+	ScreenOptions( sClassName )
 {
 	LOG->Trace( "ScreenOptionsMenu::ScreenOptionsMenu()" );
 

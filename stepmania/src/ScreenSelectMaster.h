@@ -21,7 +21,7 @@
 class ScreenSelectMaster : public ScreenSelect
 {
 public:
-	ScreenSelectMaster();
+	ScreenSelectMaster( CString sName );
 
 	virtual void Update( float fDelta );
 
@@ -74,6 +74,8 @@ protected:
 //
 class ScreenSelectStyle5th : public ScreenSelectMaster
 {
+public:
+	ScreenSelectStyle5th( CString sName ): ScreenSelectMaster( sName ) { }
 };
 
 

@@ -39,7 +39,7 @@ ScreenSelectMode (Constructor)
 Desc: Sets up the screen display
 ************************************/
 
-ScreenSelectMode::ScreenSelectMode() : ScreenSelect( "ScreenSelectMode" )
+ScreenSelectMode::ScreenSelectMode( CString sClassName ) : ScreenSelect( sClassName )
 {
 	m_bSelected = false;
 	m_ChoiceListFrame.Load( THEME->GetPathToG("ScreenSelectMode list frame"));

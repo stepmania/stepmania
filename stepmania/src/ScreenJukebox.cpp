@@ -132,7 +132,7 @@ bool ScreenJukebox::PrepareForJukebox()		// always return true.
 	return true;
 }
 
-ScreenJukebox::ScreenJukebox( bool bDemonstration ) : ScreenGameplay( PrepareForJukebox() )	// this is a hack to get some code to execute before the ScreenGameplay constructor
+ScreenJukebox::ScreenJukebox( CString sName, bool bDemonstration ) : ScreenGameplay( "ScreenGameplay", PrepareForJukebox() )	// this is a hack to get some code to execute before the ScreenGameplay constructor
 {
 	LOG->Trace( "ScreenJukebox::ScreenJukebox()" );
 

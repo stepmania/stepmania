@@ -42,8 +42,8 @@ OptionRow g_GameplayOptionsLines[NUM_GAMEPLAY_OPTIONS_LINES] = {
 	OptionRow( "Unlock\nSystem",		true, "OFF","ON" )
 };
 
-ScreenGameplayOptions::ScreenGameplayOptions() :
-	ScreenOptions("ScreenGameplayOptions")
+ScreenGameplayOptions::ScreenGameplayOptions( CString sName ) :
+	ScreenOptions( sName )
 {
 	LOG->Trace( "ScreenGameplayOptions::ScreenGameplayOptions()" );
 

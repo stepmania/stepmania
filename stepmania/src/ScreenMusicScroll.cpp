@@ -37,7 +37,7 @@ const CString CREDIT_LINES[] =
 const unsigned NUM_CREDIT_LINES = sizeof(CREDIT_LINES) / sizeof(CString);
 
 
-ScreenMusicScroll::ScreenMusicScroll() : Screen("ScreenMusicScroll")
+ScreenMusicScroll::ScreenMusicScroll( CString sClassName ) : Screen( sClassName )
 {
 	LOG->Trace( "ScreenMusicScroll::ScreenMusicScroll()" );
 

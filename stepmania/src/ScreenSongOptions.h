@@ -15,7 +15,7 @@
 class ScreenSongOptions : public ScreenOptions
 {
 public:
-	ScreenSongOptions();
+	ScreenSongOptions( CString sName );
 	static CString GetNextScreen();
 
 private:

@@ -26,7 +26,7 @@ Andrew Livy
 class ScreenSelectMode : public ScreenSelect
 {
 public:
-	ScreenSelectMode(); // Constructor
+	ScreenSelectMode( CString sName ); // Constructor
 	virtual ~ScreenSelectMode(); // Destructor
 	virtual void MenuLeft( PlayerNumber pn );
 	virtual void MenuRight( PlayerNumber pn );

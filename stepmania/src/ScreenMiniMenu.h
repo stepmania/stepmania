@@ -66,7 +66,7 @@ struct Menu
 class ScreenMiniMenu : public Screen
 {
 public:
-	ScreenMiniMenu();
+	ScreenMiniMenu( CString sName );
 	ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel );
 
 	virtual void Update( float fDeltaTime );

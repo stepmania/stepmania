@@ -212,7 +212,7 @@ Menu g_BGChange
 );
 
 
-ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
+ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 {
 	LOG->Trace( "ScreenEdit::ScreenEdit()" );
 

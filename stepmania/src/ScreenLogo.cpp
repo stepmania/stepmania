@@ -20,7 +20,7 @@
 #define LOGO_ON_COMMAND			THEME->GetMetric("ScreenLogo","LogoOnCommand")
 
 
-ScreenLogo::ScreenLogo() : ScreenAttract("ScreenLogo")
+ScreenLogo::ScreenLogo( CString sName ) : ScreenAttract( sName )
 {
 	m_sprLogo.Load( THEME->GetPathToG(ssprintf("ScreenLogo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
 	m_sprLogo.Command( LOGO_ON_COMMAND );

@@ -17,7 +17,7 @@
 class ScreenCredits : public Screen
 {
 public:
-	ScreenCredits();
+	ScreenCredits( CString sName );
 	~ScreenCredits();
 
 	virtual void Update( float fDeltaTime );

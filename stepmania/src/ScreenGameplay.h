@@ -57,7 +57,7 @@ class LyricsLoader;
 class ScreenGameplay : public Screen
 {
 public:
-	ScreenGameplay( bool bDemonstration = false );
+	ScreenGameplay( CString sName, bool bDemonstration = false );
 	virtual ~ScreenGameplay();
 
 	virtual void Update( float fDeltaTime );

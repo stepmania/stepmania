@@ -8,7 +8,7 @@
 #include "RageLog.h"
 #include "StepMania.h"
 
-ScreenExit::ScreenExit(): Screen("ScreenExit")
+ScreenExit::ScreenExit( CString sName ): Screen( sName )
 {
 	m_Exited = false;
 

@@ -302,7 +302,22 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 
 Screen* Screen::Create( CString sClassName )
 {
-#define IF_RETURN(X)	if(sClassName.CompareNoCase(#X)==0)	return new X;
+	/* "ScreenCompany@ScreenOtherCompany" loads ScreenCompany with the
+	 * asset "ScreenOtherCompany", so (if it supports it) it'll use
+	 * metric, graphic, etc. names starting with "ScreenOtherCompany". */
+	CStringArray parts;
+	split( sClassName, "@", parts );
+	if( parts.size() != 1 &&  parts.size() != 2 )
+		RageException::Throw("Bad Screen name \"%s\"", sClassName.c_str() );
+
+	CString sName = sClassName;
+	if( parts.size() == 2 )
+	{
+		sClassName = parts[0];
+		sName = parts[1];
+	}
+
+#define IF_RETURN(X)	if(sClassName.CompareNoCase(#X)==0)	return new X(sName);
 
 	IF_RETURN( ScreenAppearanceOptions );
 	IF_RETURN( ScreenCaution );

@@ -22,7 +22,7 @@
 class ScreenSelectCharacter : public Screen
 {
 public:
-	ScreenSelectCharacter();
+	ScreenSelectCharacter( CString sName );
 	virtual ~ScreenSelectCharacter();
 
 	virtual void DrawPrimitives();

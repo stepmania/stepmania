@@ -22,7 +22,7 @@
 class ScreenTitleMenu : public ScreenSelect
 {
 public:
-	ScreenTitleMenu();
+	ScreenTitleMenu( CString sName );
 	virtual ~ScreenTitleMenu();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );

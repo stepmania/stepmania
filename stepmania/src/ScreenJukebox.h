@@ -18,7 +18,7 @@
 class ScreenJukebox : public ScreenGameplay
 {
 public:
-	ScreenJukebox( bool bDemonstration = false );
+	ScreenJukebox(  CString sName, bool bDemonstration = false );
 	~ScreenJukebox();
 
 	virtual void Update( float fDeltaTime );

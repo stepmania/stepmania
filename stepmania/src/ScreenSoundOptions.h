@@ -17,7 +17,7 @@
 class ScreenSoundOptions : public ScreenOptions
 {
 public:
-	ScreenSoundOptions();
+	ScreenSoundOptions( CString sName );
 
 private:
 	void ImportOptions();

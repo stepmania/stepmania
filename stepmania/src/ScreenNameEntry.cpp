@@ -88,7 +88,7 @@ float GetClosestCharYPos( float fFakeBeat )
 }
 
 
-ScreenNameEntry::ScreenNameEntry() : Screen("ScreenNameEntry")
+ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 {
 	LOG->Trace( "ScreenNameEntry::ScreenNameEntry()" );
 

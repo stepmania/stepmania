@@ -57,8 +57,8 @@ OptionRow g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	OptionRow( "Song\nOptions",					true, "HIDE","SHOW","ASK" ),
 };
 
-ScreenMachineOptions::ScreenMachineOptions() :
-	ScreenOptions("ScreenMachineOptions")
+ScreenMachineOptions::ScreenMachineOptions( CString sClassName ) :
+	ScreenOptions( sClassName )
 {
 	LOG->Trace( "ScreenMachineOptions::ScreenMachineOptions()" );
 

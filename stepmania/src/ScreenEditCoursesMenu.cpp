@@ -34,7 +34,7 @@
 
 const ScreenMessage SM_RefreshSelector	=	(ScreenMessage)(SM_User+1);
 
-ScreenEditCoursesMenu::ScreenEditCoursesMenu() : Screen("ScreenEditCoursesMenu")
+ScreenEditCoursesMenu::ScreenEditCoursesMenu( CString sName ) : Screen( sName )
 {
 	LOG->Trace( "ScreenEditCoursesMenu::ScreenEditCoursesMenu()" );
 
