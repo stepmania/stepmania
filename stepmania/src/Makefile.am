@@ -131,8 +131,7 @@ endif
 Lights = arch/Lights/LightsDriver.cpp arch/Lights/LightsDriver.h \
 		arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h
 
-MemoryCard = arch/MemoryCard/MemoryCardDriver.cpp arch/MemoryCard/MemoryCardDriver.h \
-	     arch/MemoryCard/MemoryCardDriverThreaded.cpp arch/MemoryCard/MemoryCardDriverThreaded.h
+MemoryCard = arch/MemoryCard/MemoryCardDriver.cpp arch/MemoryCard/MemoryCardDriver.h
 LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.h
 
 ArchUtils =
