@@ -547,7 +547,7 @@ void Player::HandleTapRowScore( unsigned row )
 
 #ifndef DEBUG
 	// don't accumulate points if AutoPlay is on.
-	if( m_PlayerController == CPU_AUTOPLAY  &&  !GAMESTATE->m_bDemonstrationOrJukebox )
+	if( GAMESTATE->m_PlayerController[m_PlayerNumber] == CPU_AUTOPLAY  &&  !GAMESTATE->m_bDemonstrationOrJukebox )
 		return;
 #endif //DEBUG
 
@@ -568,7 +568,7 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 {
 #ifndef DEBUG
 	// don't accumulate points if AutoPlay is on.
-	if( m_PlayerController == CPU_AUTOPLAY  &&  !GAMESTATE->m_bDemonstrationOrJukebox )
+	if( GAMESTATE->m_PlayerController[m_PlayerNumber] == CPU_AUTOPLAY  &&  !GAMESTATE->m_bDemonstrationOrJukebox )
 		return;
 #endif //DEBUG
 
