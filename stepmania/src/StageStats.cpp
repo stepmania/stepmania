@@ -287,7 +287,7 @@ bool StageStats::FullCombo( PlayerNumber pn ) const
 {
 	if( ComboList[pn].size() != 1 )
 	{
-		LOG->Trace("FullCombo(%i): %lu != 1", pn, ComboList[pn].size());
+		LOG->Trace("FullCombo(%i): %i != 1", pn, (int)ComboList[pn].size());
 		return false;
 	}
 

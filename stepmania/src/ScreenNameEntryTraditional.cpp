@@ -246,7 +246,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			if( PREFSMAN->m_bPercentageScoring )
 				m_textScore[p][i].SetText( ssprintf("%.2f%%", feat.fPercentDP*100) );
 			else
-				m_textScore[p][i].SetText( ssprintf("%.0f", feat.iScore) );
+				m_textScore[p][i].SetText( ssprintf("%i", feat.iScore) );
 			SET_ON( m_textScore[p][i] );
 			this->AddChild( &m_textScore[p][i] );
 
