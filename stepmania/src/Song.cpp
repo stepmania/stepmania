@@ -511,26 +511,40 @@ static void GetImageDirListing( CString sPath, CStringArray &AddTo, bool bReturn
 	GetDirListing( sPath + ".gif", AddTo, false, bReturnPathToo ); 
 }
 
+static CString RemoveInitialWhitespace( CString s )
+{
+	unsigned i = s.find_first_not_of(" \t\r\n");
+	if( i != s.npos )
+		s.erase( 0, i );
+	return s;
+}
+
 /* This is called within TidyUpData, before autogen notes are added. */
 static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 {
 	/* vSteps have the same StepsType and Difficulty.  Delete them if they have the
 	 * same m_sDescription, m_iMeter and SMNoteData. */
+	CHECKPOINT;
 	for( unsigned i=0; i<vSteps.size(); i++ )
 	{
+		CHECKPOINT;
 		const Steps *s1 = vSteps[i];
+		LOG->Trace("comparing %i (%p) ...", i, s1);
 		for( unsigned j=i+1; j<vSteps.size(); j++ )
 		{
+			CHECKPOINT;
 			const Steps *s2 = vSteps[j];
+		LOG->Trace("     with %i (%p) ...", j, s2);
 			if( s1->GetDescription() != s2->GetDescription() )
 				continue;
 			if( s1->GetMeter() != s2->GetMeter() )
 				continue;
-			if( s1->GetSMNoteData() != s2->GetSMNoteData() )
+			/* Compare, ignoring whitespace. */
+			if( RemoveInitialWhitespace(s1->GetSMNoteData()) != RemoveInitialWhitespace(s2->GetSMNoteData()) )
 				continue;
 
-			LOG->Trace("Removed duplicate steps in song \"%s\" with description \"%s\" and meter \"%i\"",
-				song->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetMeter() );
+			LOG->Trace("Removed %p duplicate steps in song \"%s\" with description \"%s\" and meter \"%i\"",
+				s2, song->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetMeter() );
 				
 			/* Don't use RemoveNotes; autogen notes havn't yet been created and it'll
 			 * create them. */
