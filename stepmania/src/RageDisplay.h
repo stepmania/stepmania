@@ -68,6 +68,7 @@ public:
 	void DrawQuads( const RageVertex v[], int iNumVerts );
 	void DrawFan( const RageVertex v[], int iNumVerts );
 	void DrawStrip( const RageVertex v[], int iNumVerts );
+	void DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth );
 	void FlushQueue();
 
 	int GetMaxTextureSize() const;

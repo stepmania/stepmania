@@ -47,7 +47,6 @@ GLenum				g_vertMode = GL_TRIANGLES;
 RageVertex			g_vertQueue[MAX_NUM_VERTICIES];
 RageTimer			g_LastCheckTimer;
 int					g_iNumVerts;
-float				g_fLastCheckTime;
 int					g_iFPS, g_iVPF, g_iDPF;
 int					g_glVersion;
 
@@ -302,6 +301,37 @@ void RageDisplay::DrawStrip( const RageVertex v[], int iNumVerts )
 	AddVerts( v, iNumVerts );
 	FlushQueue();
 }
+
+void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth )
+{
+	ASSERT( iNumVerts >= 3 );
+
+	if( g_vertMode != GL_LINE_LOOP )
+		FlushQueue();
+
+	/* Line antialiasing is fast on most hardware, and saying "don't care"
+	 * should turn it off if it isn't. */
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POINT_SMOOTH);
+	glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+	glHint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
+	glLineWidth(LineWidth);
+
+	/* Draw the line loop: */
+	g_vertMode = GL_LINE_LOOP;
+	AddVerts( v, iNumVerts );
+	FlushQueue();
+
+	/* Round off the corners: */
+	glPointSize(LineWidth);
+	g_vertMode = GL_POINTS;
+	AddVerts( v, iNumVerts-1 );
+	FlushQueue();
+
+	glDisable(GL_LINE_SMOOTH);
+	glDisable(GL_POINT_SMOOTH);
+}
+
 void RageDisplay::AddVerts( const RageVertex v[], int iNumVerts )
 {
 	for( int i=0; i<iNumVerts; i++ )
@@ -341,7 +371,7 @@ void RageDisplay::SetViewTransform( const RageMatrix* pMatrix )
 void RageDisplay::SetProjectionTransform( const RageMatrix* pMatrix )
 {
 	FlushQueue();
-	glMatrixMode( GL_MODELVIEW );
+	glMatrixMode( GL_PROJECTION );
 	glLoadMatrixf( (float*)pMatrix );
 }
 void RageDisplay::GetViewTransform( RageMatrix* pMatrixOut )
