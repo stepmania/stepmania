@@ -10,9 +10,9 @@
 #include "PlayerState.h"
 
 
-CString GetAttackPath( const CString &sAttack )
+CString GetAttackPieceName( const CString &sAttack )
 {
-	CString ret = ssprintf( "AttackDisplay attack %s", sAttack.c_str() );
+	CString ret = ssprintf( "attack %s", sAttack.c_str() );
 
 	/* 1.5x -> 1_5x.  If we pass a period to THEME->GetPathTo, it'll think
 	 * we're looking for a specific file and not search. */
@@ -55,11 +55,10 @@ void AttackDisplay::Init( const PlayerState* pPlayerState )
 
 	for( set<CString>::const_iterator it = attacks.begin(); it != attacks.end(); ++it )
 	{
-		const CString ThemePath = GetAttackPath( *it );
-		const CString path = THEME->GetPathToG( ThemePath, true );
+		const CString path = THEME->GetPathG( "AttackDisplay", GetAttackPieceName( *it ), true );
 		if( path == "" )
 		{
-			LOG->Trace( "Couldn't find \"%s\"", ThemePath.c_str() );
+			LOG->Trace( "Couldn't find \"%s\"", GetAttackPieceName( *it ).c_str() );
 			continue;
 		}
 
@@ -100,7 +99,7 @@ void AttackDisplay::Update( float fDelta )
 
 void AttackDisplay::SetAttack( const CString &sText )
 {
-	const CString path = THEME->GetPathToG( GetAttackPath( sText ), true );
+	const CString path = THEME->GetPathG( "AttackDisplay", GetAttackPieceName(sText), true );
 	if( path == "" )
 		return;
 
