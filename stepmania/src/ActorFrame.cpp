@@ -134,6 +134,8 @@ void ActorFrame::MoveToHead( Actor* pActor )
 
 void ActorFrame::DrawPrimitives()
 {
+	ASSERT_M( !m_bClearZBuffer, "ClearZBuffer not supported on ActorFrames" );
+
 	if( m_fFOV != -1 )
 	{
 		DISPLAY->CameraPushMatrix();
