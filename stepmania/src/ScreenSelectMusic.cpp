@@ -980,7 +980,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			if( m_MusicWheel.GetSelectedType() != TYPE_SONG )
+			if( m_MusicWheel.GetSelectedType() != TYPE_SONG && m_MusicWheel.GetSelectedType() != TYPE_COURSE )
 				m_MusicWheel.StartRandom();
 			MenuStart(PLAYER_INVALID);
 		}
