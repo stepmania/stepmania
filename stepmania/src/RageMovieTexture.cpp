@@ -10,7 +10,6 @@
 -----------------------------------------------------------------------------
 */
 
-
 //-----------------------------------------------------------------------------
 // In-line Links
 //-----------------------------------------------------------------------------
@@ -23,6 +22,13 @@
 #else
 	#pragma comment(lib, "baseclasses/release/strmbase.lib") 
 #endif
+
+//-----------------------------------------------------------------------------
+// Define GUID for Texture Renderer
+// {71771540-2017-11cf-AE26-0020AFD79767}
+//-----------------------------------------------------------------------------
+struct __declspec(uuid("{71771540-2017-11cf-ae26-0020afd79767}")) CLSID_TextureRenderer;
+
  
 //-----------------------------------------------------------------------------
 // Includes
@@ -38,8 +44,42 @@
 #include <stdio.h>
 
 //-----------------------------------------------------------------------------
-// Global Constants
+// CTextureRenderer Class Declarations
+//
+//	Usage: 1) CheckMediaType is called by the graph
+//         2) SetMediaType is called by the graph
+//         3) call GetVidWidth and GetVidHeight to get texture information
+//         4) call SetRenderTarget
+//         5) Do RenderSample is called by the graph
 //-----------------------------------------------------------------------------
+class CTextureRenderer : public CBaseVideoRenderer
+{
+public:
+    CTextureRenderer(LPUNKNOWN pUnk,HRESULT *phr);
+    ~CTextureRenderer();
+
+public:
+	// overwritten methods
+    HRESULT CheckMediaType(const CMediaType *pmt );     // Format acceptable?
+    HRESULT SetMediaType(const CMediaType *pmt );       // Video format notification
+    HRESULT DoRenderSample(IMediaSample *pMediaSample); // New video sample
+
+	// new methods
+	LONG GetVidWidth() {return m_lVidWidth;};
+	LONG GetVidHeight(){return m_lVidHeight;};
+	HRESULT SetRenderTarget( RageMovieTexture* pTexture );
+
+protected:
+	LONG m_lVidWidth;	// Video width
+	LONG m_lVidHeight;	// Video Height
+	LONG m_lVidPitch;	// Video Pitch
+
+	RageMovieTexture*	m_pTexture;	// the video surface we will copy new frames to
+	D3DFORMAT			m_TextureFormat; // Texture format
+	BOOL				m_bBackBufferLocked;
+};
+
+
 
 
 //-----------------------------------------------------------------------------
@@ -155,10 +195,8 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
     // Get the video bitmap buffer
     pSample->GetPointer( &pBmpBuffer );
 
-
 	// Find which texture we should render to.  We want to copy to the "back buffer"
-	int iIndexBackBuffer = !m_pTexture->m_iIndexFrontBuffer;
-	LPDIRECT3DTEXTURE8 pD3DTextureCopyTo = m_pTexture->m_pd3dTexture[iIndexBackBuffer];
+	LPDIRECT3DTEXTURE8 pD3DTextureCopyTo = m_pTexture->GetBackBuffer();
 
     // Lock the Texture
     D3DLOCKED_RECT d3dlr;
@@ -232,8 +270,7 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
     
 
 	// flip active texture
-	m_pTexture->m_iIndexFrontBuffer = !m_pTexture->m_iIndexFrontBuffer;
-
+	m_pTexture->Flip();
 
     return S_OK;
 }

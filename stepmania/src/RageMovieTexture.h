@@ -18,50 +18,7 @@
 
 #include "baseclasses/streams.h"
 
-//-----------------------------------------------------------------------------
-// Define GUID for Texture Renderer
-// {71771540-2017-11cf-AE26-0020AFD79767}
-//-----------------------------------------------------------------------------
-struct __declspec(uuid("{71771540-2017-11cf-ae26-0020afd79767}")) CLSID_TextureRenderer;
-
-class RageMovieTexture;
-
-//-----------------------------------------------------------------------------
-// CTextureRenderer Class Declarations
-//
-//	Usage: 1) CheckMediaType is called by the graph
-//         2) SetMediaType is called by the graph
-//         3) call GetVidWidth and GetVidHeight to get texture information
-//         4) call SetRenderTarget
-//         5) Do RenderSample is called by the graph
-//-----------------------------------------------------------------------------
-class CTextureRenderer : public CBaseVideoRenderer
-{
-public:
-    CTextureRenderer(LPUNKNOWN pUnk,HRESULT *phr);
-    ~CTextureRenderer();
-
-public:
-	// overwritten methods
-    HRESULT CheckMediaType(const CMediaType *pmt );     // Format acceptable?
-    HRESULT SetMediaType(const CMediaType *pmt );       // Video format notification
-    HRESULT DoRenderSample(IMediaSample *pMediaSample); // New video sample
-
-	// new methods
-	LONG GetVidWidth() {return m_lVidWidth;};
-	LONG GetVidHeight(){return m_lVidHeight;};
-	HRESULT SetRenderTarget( RageMovieTexture* pTexture );
-
-protected:
-	LONG m_lVidWidth;	// Video width
-	LONG m_lVidHeight;	// Video Height
-	LONG m_lVidPitch;	// Video Pitch
-
-	RageMovieTexture*	m_pTexture;	// the video surface we will copy new frames to
-	D3DFORMAT			m_TextureFormat; // Texture format
-	BOOL				m_bBackBufferLocked;
-};
-
+class CTextureRenderer;
 
 //-----------------------------------------------------------------------------
 // RageMovieTexture Class Declarations
@@ -99,10 +56,13 @@ public:
 	virtual void TurnLoopOn();
 	virtual void TurnLoopOff();
 
+	LPDIRECT3DTEXTURE8 GetBackBuffer() { return m_pd3dTexture[!m_iIndexFrontBuffer]; }
+	void Flip() { m_iIndexFrontBuffer = !m_iIndexFrontBuffer; }
+
+protected:
 	LPDIRECT3DTEXTURE8  m_pd3dTexture[2];	// double buffered
 	int m_iIndexFrontBuffer;	// index of the buffer that should be rendered from - either 0 or 1
 
-protected:
 	virtual VOID Create();
 
 	virtual HRESULT CreateD3DTexture();
