@@ -1,5 +1,5 @@
-#ifndef RageMath_H
-#define RageMath_H
+#ifndef RAGE_MATH_H
+#define RAGE_MATH_H
 /*
 -----------------------------------------------------------------------------
  File: RageMath.h

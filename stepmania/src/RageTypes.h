@@ -108,32 +108,14 @@ public:
 	float x, y, z, w;
 };
 
-/* nuke this stuff once we're sure RageVColor is OK */
-/* #define RAGECOLOR_ARGB(a,r,g,b) \
-    ((DWORD)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
-
-#define RAGECOLOR_RGBA(r,g,b,a) RAGECOLOR_ARGB(a,r,g,b)
-
-#define RAGECOLOR_COLORVALUE(r,g,b,a) \
-    RAGECOLOR_RGBA((DWORD)((r)*255.f),(DWORD)((g)*255.f),(DWORD)((b)*255.f),(DWORD)((a)*255.f))
-*/
-
 struct RageColor
 {
 public:
     RageColor() {}
     RageColor( const float * f )							{ r=f[0]; g=f[1]; b=f[2]; a=f[3]; }
 	RageColor( float r1, float g1, float b1, float a1 )		{ r=r1; g=g1; b=b1; a=a1; }
-/*	RageColor( unsigned long c )
-	{
-		a = ((c>>24)&0xff) / 255.f;
-		r = ((c>>16)&0xff) / 255.f;
-		g = ((c>>8)&0xff)  / 255.f;
-		b = (c&0xff)       / 255.f; 
-	}
-*/
+
     // casting
-//	operator unsigned long () const							{ return RAGECOLOR_COLORVALUE(min(1.f,max(0.f,r)),min(1.f,max(0.f,g)),min(1.f,max(0.f,b)),min(1.f,max(0.f,a)));	}
 	operator float* ()										{ return &r; };
     operator const float* () const							{ return &r; };
 
@@ -149,11 +131,7 @@ public:
     RageColor operator * ( float f ) const					{ return RageColor( r*f, g*f, b*f, a*f ); }
     RageColor operator / ( float f ) const					{ return RageColor( r/f, g/f, b/f, a/f ); }
 
-	friend RageVector4 operator * ( float f, const RageVector4& other )	{ return other*f; }		// What is this for?  Did I add this?  -Chris
-
-	/* unneeded; this is a POD type */
-//    bool operator == ( const RageColor& other ) const		{ return r==other.r && g==other.g && b==other.b && a==other.a; }
-//    bool operator != ( const RageColor& other ) const		{ return r!=other.r || g!=other.g || b!=other.b || a!=other.a; }
+	friend RageColor operator * ( float f, const RageColor& other )	{ return other*f; }		// What is this for?  Did I add this?  -Chris
 
 	float r, g, b, a;
 };
@@ -173,8 +151,10 @@ class RageVColor
 public:
 
 	RageVColor() { }
-	RageVColor(const RageColor &rc) { 
+	RageVColor(const RageColor &rc) { *this = rc; }
+	RageVColor &operator= (const RageColor &rc) {
 		r = FTOC(rc.r); g = FTOC(rc.g); b = FTOC(rc.b); a = FTOC(rc.a);
+		return *this;
 	}
 };
 
