@@ -374,6 +374,14 @@ SOURCE=.\Steps.cpp
 
 SOURCE=.\Steps.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\Text.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Text.h
+# End Source File
 # End Group
 # Begin Group "File Types"
 

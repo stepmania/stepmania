@@ -26,7 +26,11 @@ public:
 
 	enum TweenType { no_tween, tween_linear, tween_bias_begin, tweening_bias_end };
 
-	virtual void Draw() = 0;
+	// let subclasses override
+	virtual void Restore() {};
+	virtual void Invalidate() {};
+
+	virtual void Draw() PURE;
 	virtual void Update( const FLOAT &fDeltaTime );
 
 	virtual FLOAT GetX()					{ return m_pos.x; };
@@ -61,7 +65,7 @@ public:
 						  D3DXCOLOR col = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 						  TweenType tt = tween_linear );
 
-	virtual void SetTweening( FLOAT time, TweenType tt = tween_linear );
+	virtual void BeginTweening( FLOAT time, TweenType tt = tween_linear );
 	virtual void SetTweenX( FLOAT x );
 	virtual void SetTweenY( FLOAT y );
 	virtual void SetTweenXY( FLOAT x, FLOAT y );

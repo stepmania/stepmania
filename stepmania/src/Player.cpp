@@ -17,78 +17,62 @@
 
 
 
-#define STEP_DOWN_TIME	0.05f
+//const float STEP_DOWN_TIME	= 0.05f;
 
-#define SCORE_ADD_PERFECT	700
-#define SCORE_ADD_GREAT		400
-#define SCORE_ADD_GOOD		200
-#define SCORE_ADD_BOO		100
+const int SCORE_ADD_PERFECT	=	700;
+const int SCORE_ADD_GREAT	=	400;
+const int SCORE_ADD_GOOD	=	200;
+const int SCORE_ADD_BOO		=	100;
 
-#define LIFE_PERFECT	 0.015f
-#define LIFE_GREAT		 0.008f
-#define LIFE_GOOD		 0.000f
-#define LIFE_BOO		-0.015f
-#define LIFE_MISS		-0.060f
+const float LIFE_PERFECT	=	 0.015f;
+const float LIFE_GREAT		=	 0.008f;
+const float LIFE_GOOD		=	 0.000f;
+const float LIFE_BOO		=	-0.015f;
+const float LIFE_MISS		=	-0.060f;
 
-#define SPRITE_COLOR_ARROW_LEFT		"Sprites\\Color Arrow Left.sprite"
-#define SPRITE_COLOR_ARROW_DOWN		"Sprites\\Color Arrow Down.sprite"
-#define SPRITE_COLOR_ARROW_UP		"Sprites\\Color Arrow Up.sprite"
-#define SPRITE_COLOR_ARROW_RIGHT	"Sprites\\Color Arrow Right.sprite"
+const int ARROW_SIZE	=	 64;
 
-
-const int ARROW_X_OFFSET[4] = {
-	(int)(64*-1.5),
-	(int)(64*-0.5),
-	(int)(64* 0.5),
-	(int)(64* 1.5)
+const float ARROW_X_OFFSET[6] = {
+	ARROW_SIZE*-2.5,
+	ARROW_SIZE*-1.5,
+	ARROW_SIZE*-0.5,
+	ARROW_SIZE* 0.5,
+	ARROW_SIZE* 1.5,
+	ARROW_SIZE* 2.5
 };
 
-#define GRAY_ARROW_Y						((int)(64* 1.5))
-#define GRAY_ARROW_POP_UP_TIME				0.30f
-#define ARROW_HEIGHT						70
-#define NUM_FRAMES_IN_COLOR_ARROW_SPRITE	12
+const float GRAY_ARROW_Y					= ARROW_SIZE * 1.5;
+const float GRAY_ARROW_POP_UP_TIME			= 0.30f;
+const float ARROW_GAP						= 70;
+const int NUM_FRAMES_IN_COLOR_ARROW_SPRITE	= 12;
 
-/*
-const CString SPRITE_COLOR_ARROW[4] = {
-	"Sprites\\Color Arrow Left.sprite",
-	"Sprites\\Color Arrow Down.sprite",
-	"Sprites\\Color Arrow Up.sprite",
-	"Sprites\\Color Arrow Right.sprite"
-};
-*/
-const CString SPRITE_COLOR_ARROW = "Sprites\\Color Arrow Left.sprite";
-const CString SPRITE_GRAY_ARROW = "Sprites\\Gray Arrow Left.sprite";
-const float SPRITE_ARROW_ROTATION[4] = {
-	0,
-	0-D3DX_PI/2.0f,
-	0+D3DX_PI/2.0f, 
-	0+D3DX_PI
-};
+const CString SPRITE_COLOR_ARROW = "Sprites\\Color Arrow.sprite";
+const CString SPRITE_GRAY_ARROW = "Sprites\\Gray Arrow.sprite";
 
 
-#define JUDGEMENT_DISPLAY_TIME	1.0f
-#define JUDGEMENT_SPRITE		"Sprites\\Judgement.sprite"
-#define JUDGEMENT_Y				CENTER_Y
+const float JUDGEMENT_DISPLAY_TIME	=	1.0f;
+const CString JUDGEMENT_SPRITE		=	"Sprites\\Judgement.sprite";
+const float JUDGEMENT_Y				=	CENTER_Y;
 
-#define FONT_COMBO				"Fonts\\Font - Arial Bold numbers 30px.font"
+const CString FONT_COMBO			=	"Fonts\\Font - Arial Bold numbers 30px.font";
 
-#define COMBO_TWEEN_TIME		0.5f
-#define COMBO_SPRITE			"Sprites\\Combo.sprite"
-#define COMBO_Y					(CENTER_Y+60)
+const float COMBO_TWEEN_TIME		=	0.5f;
+const CString COMBO_SPRITE			=	"Sprites\\Combo.sprite";
+const float COMBO_Y					=	(CENTER_Y+60);
 
 
-#define LIEFMETER_NUM_PILLS		17
-#define LIFEMETER_FRAME_SPRITE	"Sprites\\Life Meter Frame.sprite"
-#define LIFEMETER_PILLS_SPRITE	"Sprites\\Life Meter Pills.sprite"
-#define LIFEMETER_Y				30
-#define LIFEMETER_PILLS_Y		(LIFEMETER_Y+2)
+const int LIEFMETER_NUM_PILLS		=	17;
+const CString LIFEMETER_FRAME_SPRITE=	"Sprites\\Life Meter Frame.sprite";
+const CString LIFEMETER_PILLS_SPRITE=	"Sprites\\Life Meter Pills.sprite";
+const float LIFEMETER_Y				=	30;
+const float LIFEMETER_PILLS_Y		=	LIFEMETER_Y+2;
 const float PILL_OFFSET_Y[LIEFMETER_NUM_PILLS] = {
-	0.3f, 0.7f, 1.0f, 0.7f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f
+	0.3f, 0.7f, 1.0f, 0.7f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f	// kind of a sin wave
 };
 
-#define FONT_SCORE		"Fonts\\Font - Arial Bold numbers 30px.font"
-#define SCORE_FRAME_TEXTURE	"Textures\\Score Frame 1x1.png"
-#define SCORE_Y				(480-40)
+const CString FONT_SCORE			= "Fonts\\Font - Arial Bold numbers 30px.font";
+const CString SCORE_FRAME_TEXTURE	= "Textures\\Score Frame 1x1.png";
+const float SCORE_Y					= SCREEN_HEIGHT - 40;
 
 
 Player::Player()
@@ -98,28 +82,116 @@ Player::Player()
 	m_fLifePercentage = 0.50f;
 	m_fScore = 0.0f;
 
-	for( int i=0; i<MAX_STEP_ELEMENTS; i++ ) {
+	// init step elements
+	for( int i=0; i<MAX_STEP_ELEMENTS; i++ )
+	{
 		m_OriginalStep[i] = 0;
 		m_LeftToStepOn[i] = 0;
 		m_StepScore[i] = none;
 		m_iColorArrowFrameOffset[i] = 0;
 	}
 
-	for( i=0; i<4; i++ ) {
-		// gray arrows
-		m_sprGrayArrow[i].LoadFromSpriteFile( SPRITE_GRAY_ARROW );
-		m_sprGrayArrow[i].SetRotation( SPRITE_ARROW_ROTATION[i] );
 
-		m_sprGrayArrowGhost[i].LoadFromSpriteFile( SPRITE_GRAY_ARROW );
-		m_sprGrayArrowGhost[i].SetRotation( SPRITE_ARROW_ROTATION[i] );
-		m_sprGrayArrowGhost[i].StopAnimating();
-		m_sprGrayArrowGhost[i].SetState( 1 );
-		m_sprGrayArrowGhost[i].SetColor( D3DXCOLOR(1,1,1,0) );
+	CMap<Step, Step, float, float> mapStepToRotation;	// arrow facing left is rotation 0
+	mapStepToRotation[STEP_PAD1_LEFT]	= 0;
+	mapStepToRotation[STEP_PAD1_UPLEFT] = D3DX_PI/4.0f;
+	mapStepToRotation[STEP_PAD1_DOWN]	= -D3DX_PI/2.0f;
+	mapStepToRotation[STEP_PAD1_UP]		= D3DX_PI/2.0f;
+	mapStepToRotation[STEP_PAD1_UPRIGHT]= D3DX_PI*3.0f/4.0f;
+	mapStepToRotation[STEP_PAD1_RIGHT]	= D3DX_PI;
+	mapStepToRotation[STEP_PAD2_LEFT]	= mapStepToRotation[STEP_PAD1_LEFT];
+	mapStepToRotation[STEP_PAD2_UPLEFT] = mapStepToRotation[STEP_PAD1_UPLEFT];
+	mapStepToRotation[STEP_PAD2_DOWN]	= mapStepToRotation[STEP_PAD1_DOWN];
+	mapStepToRotation[STEP_PAD2_UP]		= mapStepToRotation[STEP_PAD1_UP];
+	mapStepToRotation[STEP_PAD2_UPRIGHT]= mapStepToRotation[STEP_PAD1_UPRIGHT];
+	mapStepToRotation[STEP_PAD2_RIGHT]	= mapStepToRotation[STEP_PAD1_RIGHT];
+	
+
+
+	switch( GAMEINFO->m_GameMode )
+	{
+	case single4:
+	case versus4:
+		m_iNumColumns = 4;		// LEFT, DOWN, UP, RIGHT
+		m_StepToColumnNumber[STEP_PAD1_LEFT]	= 0;
+		m_StepToColumnNumber[STEP_PAD1_DOWN]	= 1;
+		m_StepToColumnNumber[STEP_PAD1_UP]		= 2;
+		m_StepToColumnNumber[STEP_PAD1_RIGHT]	= 3;
+		m_ColumnNumberToStep[0]		= STEP_PAD1_LEFT;
+		m_ColumnNumberToStep[1]		= STEP_PAD1_DOWN;
+		m_ColumnNumberToStep[2]		= STEP_PAD1_UP;
+		m_ColumnNumberToStep[3]		= STEP_PAD1_RIGHT;
+		m_ColumnToRotation[0] = mapStepToRotation[STEP_PAD1_LEFT];
+		m_ColumnToRotation[1] = mapStepToRotation[STEP_PAD1_DOWN];
+		m_ColumnToRotation[2] = mapStepToRotation[STEP_PAD1_UP];
+		m_ColumnToRotation[3] = mapStepToRotation[STEP_PAD1_RIGHT];
+		break;
+	case single6:
+		m_iNumColumns = 6;		// LEFT, UP+LEFT, DOWN, UP, UP+RIGHT, RIGHT
+		m_StepToColumnNumber[STEP_PAD1_LEFT]	= 0;
+		m_StepToColumnNumber[STEP_PAD1_UPLEFT]	= 1;
+		m_StepToColumnNumber[STEP_PAD1_DOWN]	= 2;
+		m_StepToColumnNumber[STEP_PAD1_UP]		= 3;
+		m_StepToColumnNumber[STEP_PAD1_UPRIGHT]	= 4;
+		m_StepToColumnNumber[STEP_PAD1_RIGHT]	= 5;
+		m_ColumnNumberToStep[0]		= STEP_PAD1_LEFT;
+		m_ColumnNumberToStep[1]		= STEP_PAD1_UPLEFT;
+		m_ColumnNumberToStep[2]		= STEP_PAD1_DOWN;
+		m_ColumnNumberToStep[3]		= STEP_PAD1_UP;
+		m_ColumnNumberToStep[4]		= STEP_PAD1_UPRIGHT;
+		m_ColumnNumberToStep[5]		= STEP_PAD1_RIGHT;
+		m_ColumnToRotation[0] = mapStepToRotation[STEP_PAD1_LEFT];
+		m_ColumnToRotation[1] = mapStepToRotation[STEP_PAD1_UPLEFT];
+		m_ColumnToRotation[2] = mapStepToRotation[STEP_PAD1_DOWN];
+		m_ColumnToRotation[3] = mapStepToRotation[STEP_PAD1_UP];
+		m_ColumnToRotation[4] = mapStepToRotation[STEP_PAD1_UPRIGHT];
+		m_ColumnToRotation[5] = mapStepToRotation[STEP_PAD1_RIGHT];
+		break;
+	case double4:
+		m_iNumColumns = 8;		// 1_LEFT, 1_DOWN, 1_UP, 1_RIGHT, 2_LEFT, 2_DOWN, 2_UP, 2_RIGHT
+		m_StepToColumnNumber[STEP_PAD1_LEFT]	= 0;
+		m_StepToColumnNumber[STEP_PAD1_DOWN]	= 1;
+		m_StepToColumnNumber[STEP_PAD1_UP]		= 2;
+		m_StepToColumnNumber[STEP_PAD1_RIGHT]	= 3;
+		m_StepToColumnNumber[STEP_PAD2_LEFT]	= 4;
+		m_StepToColumnNumber[STEP_PAD2_DOWN]	= 5;
+		m_StepToColumnNumber[STEP_PAD2_UP]		= 6;
+		m_StepToColumnNumber[STEP_PAD2_RIGHT]	= 7;
+		m_ColumnNumberToStep[0]		= STEP_PAD1_LEFT;
+		m_ColumnNumberToStep[1]		= STEP_PAD1_DOWN;
+		m_ColumnNumberToStep[2]		= STEP_PAD1_UP;
+		m_ColumnNumberToStep[3]		= STEP_PAD1_RIGHT;
+		m_ColumnNumberToStep[4]		= STEP_PAD2_LEFT;
+		m_ColumnNumberToStep[5]		= STEP_PAD2_DOWN;
+		m_ColumnNumberToStep[6]		= STEP_PAD2_UP;
+		m_ColumnNumberToStep[7]		= STEP_PAD2_RIGHT;
+		m_ColumnToRotation[0] = mapStepToRotation[STEP_PAD1_LEFT];
+		m_ColumnToRotation[1] = mapStepToRotation[STEP_PAD1_DOWN];
+		m_ColumnToRotation[2] = mapStepToRotation[STEP_PAD1_UP];
+		m_ColumnToRotation[3] = mapStepToRotation[STEP_PAD1_RIGHT];
+		m_ColumnToRotation[4] = mapStepToRotation[STEP_PAD2_LEFT];
+		m_ColumnToRotation[5] = mapStepToRotation[STEP_PAD2_DOWN];
+		m_ColumnToRotation[6] = mapStepToRotation[STEP_PAD2_UP];
+		m_ColumnToRotation[7] = mapStepToRotation[STEP_PAD2_RIGHT];
+		break;
+	}
+
+
+	for( int c=0; c < MAX_NUM_COLUMNS; c++ ) {
+		// gray arrows
+		m_sprGrayArrow[c].LoadFromSpriteFile( SPRITE_GRAY_ARROW );
+		m_sprGrayArrow[c].SetRotation( m_ColumnToRotation[c] );
+
+		m_sprGrayArrowGhost[c].LoadFromSpriteFile( SPRITE_GRAY_ARROW );
+		m_sprGrayArrowGhost[c].SetRotation( m_ColumnToRotation[c] );
+		m_sprGrayArrowGhost[c].StopAnimating();
+		m_sprGrayArrowGhost[c].SetState( 1 );
+		m_sprGrayArrowGhost[c].SetColor( D3DXCOLOR(1,1,1,0) );
 
 		// color arrows
-		m_sprColorArrow[i].LoadFromSpriteFile( SPRITE_COLOR_ARROW_LEFT );
-		m_sprColorArrow[i].StopAnimating();
-		m_sprColorArrow[i].SetRotation( SPRITE_ARROW_ROTATION[i] );
+		m_sprColorArrow[c].LoadFromSpriteFile( SPRITE_COLOR_ARROW );
+		m_sprColorArrow[c].StopAnimating();
+		m_sprColorArrow[c].SetRotation( m_ColumnToRotation[c] );
 	}
 
 	// judgement
@@ -207,10 +279,8 @@ void Player::HandlePlayerStep( float fSongBeat, Step player_step, float fMaxBeat
 	//RageLog( "Player::HandlePlayerStep()" );
 
 	// update gray arrows
-	if( player_step & STEP_P1_LEFT )	GrayArrowStep( 0 );
-	if( player_step & STEP_P1_DOWN )	GrayArrowStep( 1 );
-	if( player_step & STEP_P1_UP )		GrayArrowStep( 2 );
-	if( player_step & STEP_P1_RIGHT )	GrayArrowStep( 3 );
+	int iColumnNum = m_StepToColumnNumber[player_step];
+	GrayArrowStep( iColumnNum );
 
 	CheckForCompleteStep( fSongBeat, player_step, fMaxBeatDiff );
 }
@@ -269,10 +339,8 @@ void Player::OnCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDi
 	float fStepBeat = StepIndexToBeat( iIndexThatWasSteppedOn );
 
 	// show the gray arrow ghost
-	if( player_step & STEP_P1_LEFT )	GrayArrowGhostStep( 0 );
-	if( player_step & STEP_P1_DOWN )	GrayArrowGhostStep( 1 );
-	if( player_step & STEP_P1_UP )		GrayArrowGhostStep( 2 );
-	if( player_step & STEP_P1_RIGHT )	GrayArrowGhostStep( 3 );
+	int iColumnNum = m_StepToColumnNumber[player_step];
+	GrayArrowGhostStep( iColumnNum );
 
 	float fBeatsUntilStep = fStepBeat - fSongBeat;
 	float fPercentFromPerfect = (float)fabs( fBeatsUntilStep / fMaxBeatDiff );
@@ -356,11 +424,14 @@ ScoreSummary Player::GetScoreSummary()
 }
 
 
+int Player::GetArrowColumnX( int iColNum ) 
+{ 
+	return m_iArrowsCenterX + (iColNum - (m_iNumColumns-1)/2) * ARROW_SIZE;
+}
 
 void Player::UpdateGrayArrows( const float &fDeltaTime )
 {
-	// gray arrows
-	for( int i=0; i<4; i++ ) {
+	for( int i=0; i < m_iNumColumns; i++ ) {
 		m_sprGrayArrow[i].Update( fDeltaTime );
 		m_sprGrayArrowGhost[i].Update( fDeltaTime );
 	}
@@ -368,34 +439,36 @@ void Player::UpdateGrayArrows( const float &fDeltaTime )
 
 void Player::DrawGrayArrows()
 {
-	for( int i=0; i<4; i++ )
+	for( int i=0; i<m_iNumColumns; i++ )
 		m_sprGrayArrow[i].Draw();
 }
 
 void Player::SetGrayArrowsX( int iNewX )
 {
-	for( int i=0; i<4; i++ )
-		m_sprGrayArrow[i].SetXY(  iNewX + ARROW_X_OFFSET[i], GRAY_ARROW_Y );
+	for( int i=0; i<m_iNumColumns; i++ )
+		m_sprGrayArrow[i].SetXY(  GetArrowColumnX(i), GRAY_ARROW_Y );
 }
 
 void Player::SetColorArrowsX( int iNewX )
 {
+	for( int i=0; i<m_iNumColumns; i++ )
+		m_sprColorArrow[i].SetX( GetArrowColumnX(i) );
 
 }
 
 void Player::GrayArrowStep( int index )
 {
 	m_sprGrayArrow[index].SetZoom( 0.50 );
-	m_sprGrayArrow[index].SetTweening( GRAY_ARROW_POP_UP_TIME );
+	m_sprGrayArrow[index].BeginTweening( GRAY_ARROW_POP_UP_TIME );
 	m_sprGrayArrow[index].SetTweenZoom( 1.0f );
 }
 
 void Player::GrayArrowGhostStep( int index )
 {
-	m_sprGrayArrowGhost[index].SetXY( m_iArrowsCenterX + ARROW_X_OFFSET[index], GRAY_ARROW_Y );
+	m_sprGrayArrowGhost[index].SetXY( GetArrowColumnX(index), GRAY_ARROW_Y );
 	m_sprGrayArrowGhost[index].SetZoom( 1 );
 	m_sprGrayArrowGhost[index].SetColor( D3DXCOLOR(1,1,0.5f,1) );
-	m_sprGrayArrowGhost[index].SetTweening( 0.3f );
+	m_sprGrayArrowGhost[index].BeginTweening( 0.3f );
 	m_sprGrayArrowGhost[index].SetTweenZoom( 1.5 );
 	m_sprGrayArrowGhost[index].SetTweenColor( D3DXCOLOR(1,1,0.5f,0) );		
 }
@@ -417,9 +490,9 @@ void Player::DrawColorArrows( float fSongBeat )
 
 	//RageLog( "Drawing elements %d through %d", iIndexFirstArrowToDraw, iIndexLastArrowToDraw );
 
-	for( int i=iIndexFirstArrowToDraw; i<=iIndexLastArrowToDraw; i++ )
+	for( int i=iIndexFirstArrowToDraw; i<=iIndexLastArrowToDraw; i++ )	//	 for each row
 	{				
-		if( m_LeftToStepOn[i] != 0 )	// if there is a step here and it hasn't been stepped 
+		if( m_LeftToStepOn[i] != 0 )	// this step is not yet complete 
 		{		
 			int iYPos = GetColorArrowYPos( i, fSongBeat );
 
@@ -429,37 +502,19 @@ void Player::DrawColorArrows( float fSongBeat )
 				
 			//RageLog( "iYPos: %d, iFrameNo: %d, m_OriginalStep[i]: %d", iYPos, iFrameNo, m_OriginalStep[i] );
 
+			for( int c=0; c < m_iNumColumns; c++ ) {	// for each arrow column
+				if( m_OriginalStep[i] & m_ColumnNumberToStep[c] ) {	// this column is still unstepped on?
+					m_sprColorArrow[c].SetY( iYPos );
+					m_sprColorArrow[c].SetState( iFrameNo );
+					m_sprColorArrow[c].Draw();
+				}
+			}
 
-			if( m_OriginalStep[i] & STEP_P1_LEFT )
-			{
-				//RageLog( "Draw a left arrow at %d, %d", m_iArrowsCenterX + ARROW_X_OFFSET[0], iYPos );
-				m_sprColorArrow[0].SetXY( m_iArrowsCenterX + ARROW_X_OFFSET[0], iYPos );
-				m_sprColorArrow[0].SetState( iFrameNo );
-				m_sprColorArrow[0].Draw();
-			}
-			if( m_OriginalStep[i] & STEP_P1_DOWN )
-			{
-				m_sprColorArrow[1].SetXY( m_iArrowsCenterX + ARROW_X_OFFSET[1], iYPos );
-				m_sprColorArrow[1].SetState( iFrameNo );
-				m_sprColorArrow[1].Draw();
-			}
-			if( m_OriginalStep[i] & STEP_P1_UP )
-			{
-				m_sprColorArrow[2].SetXY( m_iArrowsCenterX + ARROW_X_OFFSET[2], iYPos );
-				m_sprColorArrow[2].SetState( iFrameNo );
-				m_sprColorArrow[2].Draw();
-			}
-			if( m_OriginalStep[i] & STEP_P1_RIGHT )
-			{
-				m_sprColorArrow[3].SetXY( m_iArrowsCenterX + ARROW_X_OFFSET[3], iYPos );
-				m_sprColorArrow[3].SetState( iFrameNo );
-				m_sprColorArrow[3].Draw();
-			}
+
 		}	// end if there is a step
 	}	// end foreach arrow to draw
 
-	for( i=0; i<4; i++ )
-	{
+	for( i=0; i<m_iNumColumns; i++ ) {
 		m_sprGrayArrowGhost[i].Draw();
 	}
 }
@@ -471,7 +526,7 @@ void Player::DrawColorArrows( float fSongBeat )
 int Player::GetColorArrowYPos( int iStepIndex, float fSongBeat )
 {
 	float fBeatsUntilStep = StepIndexToBeat( iStepIndex ) - fSongBeat;
-	return (int)(fBeatsUntilStep * ARROW_HEIGHT) + GRAY_ARROW_Y;
+	return (int)(fBeatsUntilStep * ARROW_GAP) + GRAY_ARROW_Y;
 }
 
 

@@ -24,6 +24,7 @@
 #include "WindowManager.h"
 
 #include "WindowIntroCovers.h"
+#include "WindowSandbox.h"
 
 #include <DXUtil.h>
 
@@ -156,7 +157,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			Render();
 			ShowFrame();
 			//if( !g_bFullscreen )
-			::Sleep(16);	// cap the frame rate to ~30 fps for now
+			::Sleep(5);	// give some time for the movie
 		}
 	}	// end  while( WM_QUIT != msg.message  )
 
@@ -294,6 +295,7 @@ HRESULT CreateObjects( HWND hWnd )
 
 	RageLogStart();
 
+	//WM->SetNewWindow( new WindowSandbox );
 	WM->SetNewWindow( new WindowIntroCovers );
 
 	srand( (unsigned)time(NULL) );

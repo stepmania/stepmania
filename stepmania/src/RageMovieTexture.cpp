@@ -249,8 +249,10 @@ LPDIRECT3DTEXTURE8 RageMovieTexture::GetD3DTexture()
 	// the video fell behind and is trying to copy several frames in a row
 	// to catch up.  So, if the TextureRenderer is busy, give it a 1ms slice of 
 	// time for it to catch up and copy all the frames it fell behind on.
-	while( m_pCTR->IsLocked() )
+	while( m_pCTR->IsLocked() ) {
 		::Sleep(1);
+		RageLog( "Sleeping waiting for unlock..." );
+	}
 
 	// restart the movie if we reach the end
 	CheckMovieStatus();

@@ -98,7 +98,8 @@ void Actor::TweenTo( FLOAT time, FLOAT x, FLOAT y, FLOAT zoom, FLOAT rot, D3DXCO
 
 }
 
-void Actor::SetTweening( FLOAT time, TweenType tt )
+
+void Actor::BeginTweening( FLOAT time, TweenType tt )
 {
 	// set our tweeen starting and ending values to the current position
 	m_start_pos			= m_end_pos			= m_pos;

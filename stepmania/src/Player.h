@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
- File: Player.cpp
+ File: Player.h
 
  Desc: Object that accepts pad input, knocks down ColorArrows that were stepped on, 
 		and keeps score for the player.
@@ -16,6 +16,9 @@
 #include "Steps.h"
 #include "Sprite.h"
 #include "BitmapText.h"
+
+
+const int MAX_NUM_COLUMNS = 8;
 
 
 class Player
@@ -48,15 +51,24 @@ protected:
 	StepScore	m_StepScore[MAX_STEP_ELEMENTS];
 	//StepTiming	m_StepTiming[MAX_STEP_ELEMENTS];
 
+
+	// common to color and gray arrows
 	int m_iArrowsCenterX;
+
+	int m_iNumColumns;	// will vary depending on the number panels (4,6,8,etc)
+	CMap<Step, Step, int, int>	m_StepToColumnNumber;
+	CMap<int, int, Step, Step>	m_ColumnNumberToStep;
+	CMap<int, int, float, float&>	m_ColumnToRotation;
+	int GetArrowColumnX( int iColNum );
 
 	// color arrows
 	void SetColorArrowsX( int iX );
 	void UpdateColorArrows( const float& fDeltaTime );
 	int	 GetColorArrowYPos( int iStepIndex, float fSongBeat );
 	void DrawColorArrows( float fSongBeat );
-	Sprite		m_sprColorArrow[4];
+	Sprite		m_sprColorArrow[MAX_NUM_COLUMNS];
 	int			m_iColorArrowFrameOffset[MAX_STEP_ELEMENTS];
+
 
 	// gray arrows
 	void SetGrayArrowsX( int iX );
@@ -64,8 +76,8 @@ protected:
 	void DrawGrayArrows();
 	void GrayArrowStep( int index );
 	void GrayArrowGhostStep( int index );
-	Sprite		m_sprGrayArrow[4];
-	Sprite		m_sprGrayArrowGhost[4];
+	Sprite		m_sprGrayArrow[MAX_NUM_COLUMNS];
+	Sprite		m_sprGrayArrowGhost[MAX_NUM_COLUMNS];
 
 	// judgement
 	void SetJudgementX( int iX );
