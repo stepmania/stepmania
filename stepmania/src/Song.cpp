@@ -1393,7 +1393,7 @@ void AppendOctal( int n, int digits, CString &out )
 	{
 		const int shift = p*3;
 		int n2 = (n >> shift) & 0x7;
-		out.push_back( (char) n2 );
+		out.insert( out.begin(), (char) n2 );
 	}
 }
 
@@ -1408,7 +1408,8 @@ void SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers )
 	vector<val> vals;
 	vals.reserve( arraySongPointers.size() );
 
-	for( unsigned i = 0; i < arraySongPointers.size(); ++i )
+	unsigned i;
+	for( i = 0; i < arraySongPointers.size(); ++i )
 	{
 		Song *pSong = arraySongPointers[i];
 
@@ -1424,7 +1425,7 @@ void SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers )
 
 	sort( vals.begin(), vals.end(), CompDescending );
 
-	for( unsigned i = 0; i < arraySongPointers.size(); ++i )
+	for( i = 0; i < arraySongPointers.size(); ++i )
 		arraySongPointers[i] = vals[i].first;
 }
 
