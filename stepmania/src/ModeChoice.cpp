@@ -197,6 +197,12 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 		
 		if( sName == "screen" )
 			m_sScreen = sValue;
+
+		if( sName == "setenv" )
+		{
+			ASSERT( asBits.size() == 2 );
+			m_SetEnv[ asBits[0] ] = asBits[1];
+		}
 	}
 
 	if( !m_bInvalid && sSteps != "" )
@@ -383,9 +389,8 @@ bool ModeChoice::IsPlayable( CString *why ) const
 
 void ModeChoice::ApplyToAllPlayers() const
 {
-	FOREACH_PlayerNumber( pn )
-		if( GAMESTATE->IsHumanPlayer(pn) )
-			Apply((PlayerNumber) pn);
+	FOREACH_HumanPlayer( pn )
+		Apply( pn);
 
 	if( m_sScreen != "" )
 		SCREENMAN->SetNewScreen( m_sScreen );
@@ -458,6 +463,8 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		GAMESTATE->ChangePreferredCourseDifficulty( pn, m_CourseDifficulty );
 	if( m_pCharacter )
 		GAMESTATE->m_pCurCharacters[pn] = m_pCharacter;
+	for( map<CString,CString>::const_iterator i = m_SetEnv.begin(); i != m_SetEnv.end(); i++ )
+		GAMESTATE->m_mapEnv[ i->first ] = i->second;
 
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.

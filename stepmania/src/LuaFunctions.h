@@ -75,6 +75,19 @@ int LuaFunc_##func( lua_State *L ) { \
 } \
 LuaFunction( func ); /* register it */
 
+#define LuaFunction_StrStr( func, call ) \
+int LuaFunc_##func( lua_State *L ) { \
+	REQ_ARGS( #func, 2 ); \
+	REQ_ARG( #func, 1, string ); \
+	REQ_ARG( #func, 2, string ); \
+	CString str1; \
+	CString str2; \
+	Lua::PopStack( L, str2 ); \
+	Lua::PopStack( L, str1 ); \
+	LUA_RETURN( call ); \
+} \
+LuaFunction( func ); /* register it */
+
 /* Functions that take a single PlayerNumber argument: */
 #define LuaFunction_PlayerNumber( func, call ) \
 int LuaFunc_##func( lua_State *L ) { \

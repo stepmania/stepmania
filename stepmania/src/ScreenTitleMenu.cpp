@@ -19,6 +19,7 @@
 #include "UnlockSystem.h"
 #include "ProductInfo.h"
 #include "LightsManager.h"
+#include "CodeDetector.h"
 
 
 #define LOGO_ON_COMMAND				THEME->GetMetric("ScreenTitleMenu","LogoOnCommand")
@@ -298,7 +299,8 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		SCREENMAN->SystemMessage( ssprintf("Game: %s",GAMESTATE->GetCurrentGameDef()->m_szName) );
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 	}
-//	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+
+	ScreenSelect::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 void ScreenTitleMenu::Update( float fDelta )

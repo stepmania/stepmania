@@ -65,19 +65,17 @@ ScreenSelect::ScreenSelect( CString sClassName ) : ScreenWithMenuElements(sClass
 	//
 	// Load codes
 	//
+	for( int c=0; c<NUM_CODES; c++ )
 	{
-		for( int c=0; c<NUM_CODES; c++ )
-		{
-			CodeItem code;
-			if( !code.Load( CODE(c) ) )
-				continue;
+		CodeItem code;
+		if( !code.Load( CODE(c) ) )
+			continue;
 
-			m_aCodes.push_back( code );
-			m_aCodeActions.push_back( CODE_ACTION(c) );
-			ModeChoice mc;
-			mc.Load( c, CODE_ACTION(c) );
-			m_aCodeChoices.push_back( mc );
-		}
+		m_aCodes.push_back( code );
+		m_aCodeActions.push_back( CODE_ACTION(c) );
+		ModeChoice mc;
+		mc.Load( c, CODE_ACTION(c) );
+		m_aCodeChoices.push_back( mc );
 	}
 
 	if( !m_aModeChoices.size() )

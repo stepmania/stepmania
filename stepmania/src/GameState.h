@@ -62,6 +62,7 @@ public:
 	bool IsCourseDifficultyShown( CourseDifficulty cd );
 	Difficulty GetEasiestNotesDifficulty() const;
 	RageTimer			m_timeGameStarted;	// from the moment the first player pressed Start
+	map<CString,CString> m_mapEnv;
 
 	/* This is set to a random number per-game/round; it can be used for a random seed. */
 	int				m_iGameSeed, m_iRoundSeed;
