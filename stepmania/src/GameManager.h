@@ -22,7 +22,7 @@ public:
 	GameManager();
 
 	GameDef*	GetGameDefForGame( Game g );
-	StyleDef*	GetStyleDefForStyle( Style s );
+	const StyleDef*	GetStyleDefForStyle( Style s );
 
 	void		GetGameplayStylesForGame( Game game, CArray<Style,Style>& aStylesAddTo );					// do not include edit-specific
 	void		GetNotesTypesForGame( Game game, CArray<NotesType,NotesType>& aNotesTypeAddTo );	// only look at edit-specific styles
