@@ -282,24 +282,28 @@ void RageLog::Flush()
 #endif
 
 static char staticlog[1024*32]="";
-static CString staticlog_buf;
+static unsigned staticlog_size = 0;
 void RageLog::AddToInfo( const CString &str )
 {
-	int old_len = staticlog_buf.size();
-	staticlog_buf += str + NEWLINE;
-
-	if( staticlog_buf.size() >= sizeof(staticlog) )
+	static bool limit_reached = false;
+	if( limit_reached )
+		return;
+	
+	unsigned len = str.size() + strlen(NEWLINE);
+	if( staticlog_size + len > sizeof(staticlog) )
 	{
-		CString txt( NEWLINE "Staticlog limit reached" NEWLINE );
-
-		unsigned size_wanted = sizeof(staticlog) - txt.size() - 1;
-		if( size_wanted < staticlog_buf.size() )
-			staticlog_buf.erase( size_wanted, CString::npos );
-		staticlog_buf += txt;
-		old_len = 0;
+		const CString txt( NEWLINE "Staticlog limit reached" NEWLINE );
+		
+		const unsigned pos = min( staticlog_size, sizeof(staticlog) - txt.size() );
+		memcpy( staticlog+pos, txt.data(), txt.size() );
+		limit_reached = true;
+		return;
 	}
 
-	strcpy(staticlog+old_len, (const char *)(staticlog_buf) + old_len);
+	memcpy( staticlog+staticlog_size, str.data(), str.size() );
+	staticlog_size += str.size();
+	memcpy( staticlog+staticlog_size, NEWLINE, strlen(NEWLINE) );
+	staticlog_size += strlen(NEWLINE);
 }
 
 const char *RageLog::GetInfo()
