@@ -358,14 +358,15 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 
 		/* If we're on an extra stage, and this song is selected, ignore #SELECTABLE. */
 		if( pSong != GAMESTATE->m_pCurSong || 
-			(!GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2()) ) {
+			(!GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2()) )
+		{
 			/* Hide songs that asked to be hidden via #SELECTABLE. */
 			if( so!=SORT_ROULETTE && !pSong->NormallyDisplayed() )
 				continue;
-			/* Don't show in roulette if #SELECTABLE:NO unless some other song in the same
-			 * roulette class has previously been unlocked. */
-			if( so==SORT_ROULETTE && !(pSong->RouletteDisplayed()
-				|| UNLOCKMAN->SongIsRoulette( pSong )) )
+			if( so!=SORT_ROULETTE && UNLOCKMAN->SongIsRouletteOnly( pSong ) )
+				continue;
+			/* Don't show in roulette if #SELECTABLE:NO. */
+			if( so==SORT_ROULETTE && !pSong->RouletteDisplayed() )
 				continue;
 		}
 

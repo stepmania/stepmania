@@ -66,7 +66,7 @@ public:
 
 	// Used on select screens:
 	bool SongIsLocked( const Song *song ) const;
-	bool SongIsRoulette( const Song *song ) const;
+	bool SongIsRouletteOnly( const Song *song ) const;
 	bool CourseIsLocked( const Course *course ) const;
 
 	// Gets number of unlocks for title screen

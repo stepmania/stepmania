@@ -79,8 +79,8 @@ bool UnlockSystem::SongIsLocked( const Song *song ) const
 	return p->IsLocked();
 }
 
-/* Return true if the song is available in roulette (overriding #SELECTABLE). */
-bool UnlockSystem::SongIsRoulette( const Song *song ) const
+/* Return true if the song is *only* available in roulette. */
+bool UnlockSystem::SongIsRouletteOnly( const Song *song ) const
 {
 	if( !PREFSMAN->m_bUseUnlockSystem )
 		return false;
@@ -90,10 +90,10 @@ bool UnlockSystem::SongIsRoulette( const Song *song ) const
 		return false;
 
 	/* If the song is locked by a code, and it's a roulette code, honor IsLocked. */
-	if( p->m_iCode != -1 && 
-		m_RouletteCodes.find( p->m_iCode ) != m_RouletteCodes.end() )
-		return p->IsLocked();
-	return true;
+	if( p->m_iCode == -1 || m_RouletteCodes.find( p->m_iCode ) == m_RouletteCodes.end() )
+		return false;
+
+	return p->IsLocked();
 }
 
 const UnlockEntry *UnlockSystem::FindLockEntry( CString songname ) const
