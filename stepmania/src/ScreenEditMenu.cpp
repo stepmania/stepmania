@@ -13,11 +13,13 @@
 #include "Steps.h"
 #include "song.h"
 #include "CommonMetrics.h"
+#include "ScreenTextEntry.h"
 
 #define PREV_SCREEN				THEME->GetMetric(m_sName,"PrevScreen")
 #define EXPLANATION_TEXT( row )	THEME->GetMetric(m_sName,"Explanation"+EditMenuRowToString(row))
 
 const ScreenMessage SM_RefreshSelector	=	(ScreenMessage)(SM_User+1);
+const ScreenMessage SM_BackFromEditDescription	=	(ScreenMessage)(SM_User+2);
 
 REGISTER_SCREEN_CLASS( ScreenEditMenu );
 ScreenEditMenu::ScreenEditMenu( CString sName ) : ScreenWithMenuElements( sName )
@@ -34,7 +36,6 @@ void ScreenEditMenu::Init()
 	ScreenWithMenuElements::Init();
 
 	m_Selector.SetXY( 0, 0 );
-//	m_Selector.AllowNewSteps();
 	this->AddChild( &m_Selector );
 
 
@@ -92,6 +93,13 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	case SM_Failure:
 		LOG->Trace( "Delete failed; not deleting steps" );
 		break;
+	case SM_BackFromEditDescription:
+		if( !ScreenTextEntry::s_bCancelledLast )
+		{
+			SOUND->StopMusic();
+			StartTransitioning( SM_GoToNextScreen );
+		}
+		break;
 	}
 }
 	
@@ -139,6 +147,17 @@ static CString GetCopyDescription( const Steps *pSourceSteps )
 	return s;
 }
 
+static void SetCurrentStepsDescription( CString s )
+{
+	GAMESTATE->m_pCurSteps[0]->SetDescription( s );
+}
+	
+static void DeleteCurrentSteps()
+{
+	GAMESTATE->m_pCurSong->RemoveSteps( GAMESTATE->m_pCurSteps[0] );
+	GAMESTATE->m_pCurSteps[0].Set( NULL );
+}
+	
 void ScreenEditMenu::MenuStart( PlayerNumber pn )
 {
 	if( IsTransitioning() )
@@ -247,12 +266,21 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	case EDIT_MENU_ACTION_COPY:
 	case EDIT_MENU_ACTION_AUTOGEN:
 	case EDIT_MENU_ACTION_BLANK:
-		// Prepare prepare for ScreenEdit
-		ASSERT( pSteps );
-		SOUND->StopMusic();
-		SCREENMAN->PlayStartSound();
-		//StartTransitioning( SM_GoToNextScreen );
-		SCREENMAN->TextEntry( SM_None, "Testing", "");
+		{
+			// Prepare prepare for ScreenEdit
+			ASSERT( pSteps );
+			bool bPromptToNameSteps = (action != EDIT_MENU_ACTION_EDIT && dc == DIFFICULTY_EDIT);
+			if( bPromptToNameSteps )
+			{
+				SCREENMAN->TextEntry( SM_BackFromEditDescription, "Name this new edit.", GAMESTATE->m_pCurSteps[0]->GetDescription(), SetCurrentStepsDescription, DeleteCurrentSteps );
+			}
+			else
+			{
+				SOUND->StopMusic();
+				SCREENMAN->PlayStartSound();
+				StartTransitioning( SM_GoToNextScreen );
+			}
+		}
 		break;
 	case EDIT_MENU_ACTION_DELETE:
 		break;
