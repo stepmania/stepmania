@@ -10,15 +10,16 @@
 #include <errno.h>
 
 #define ALSA_PCM_NEW_HW_PARAMS_API
-#include <alsa/asound.h>
+#include <alsa/asoundlib.h>
 
 #include "RageSoundDriver_Linux.h"
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "RageSound.h"
 #include "RageUtil.h"
+#include "RageException.h"
 #include "SDL.h"
-#include "SDL_Thread.h"
+#include "SDL/SDL_thread.h"
 
 /* Get the chunk size */
 #define CHUNKSIZE(x,y) y = x / 8;
@@ -36,7 +37,7 @@ void RageSound_Linux::OpenAudio() {
 	/* Set up the device parameter struct */
 	snd_pcm_hw_params_t *hw_params;
 	snd_pcm_hw_params_malloc(&hw_params);
-	snd_pcm_hw_params_any(&hw_params);
+	snd_pcm_hw_params_any(playback_handle,hw_params);
 
 	/* Non-Interleaved Access (since we hold the samples in a buffer) */
 	snd_pcm_hw_params_set_access(playback_handle,hw_params,SND_PCM_ACCESS_RW_NONINTERLEAVED);
@@ -47,19 +48,21 @@ void RageSound_Linux::OpenAudio() {
 	snd_pcm_hw_params_set_format(playback_handle,hw_params,SND_PCM_FORMAT_S16);    
 	
 	/* 44100 Hz Rate (or closest supported match) */
-	snd_pcm_hw_params_set_rate_near(playback_handle,hw_params,44100,0);
+	unsigned int rate = 44100;
+	snd_pcm_hw_params_set_rate_near(playback_handle,hw_params,&rate,0);
 	
 	/* 2 channels (stereo) */
 	snd_pcm_hw_params_set_channels(playback_handle,hw_params,2);
 
 	/* Set Sample Size (channels * 2) */
-	snd_pcm_hw_params_set_period_size_near(playback_handle,hw_params,4,NULL);
+	snd_pcm_uframes_t z = 4;
+	snd_pcm_hw_params_set_period_size_near(playback_handle,hw_params,&z,NULL);
 
 	/* Get hardware Buffer Size and allocate buffer 
 	 * It should be as big as the hardware buffer or 8K whichever 
 	 * is larger 
 	 */
-	snd_pcm_hw_params_get_buffer_size(params, &buffer_size);
+	snd_pcm_hw_params_get_buffer_size(hw_params, &buffer_size);
 	sbuffer = (Sint16 *)malloc(BUFSIZE(buffer_size)); /* snd_pcm_sframes_t = long */
 
 	/* Apply the settings to the device */
@@ -92,7 +95,7 @@ void RageSound_Linux::RecoverState(long state) {
 		case -ESTRPIPE: /* suspend */
 			if (err = snd_pcm_resume(playback_handle) == -EAGAIN) sleep(1);
 			err = snd_pcm_resume(playback_handle);
-			if (err < 0) RageException::Throw(CString("RageSound_Linux::RecoverState(): Unable To recover from suspend!"));
+			if (err < 0) RageException::Throw("RageSound_Linux::RecoverState(): Unable To recover from suspend!");
 		break;
 	};
 	
@@ -111,8 +114,9 @@ void RageSound_Linux::StartMixing(RageSound *snd) {
 void RageSound_Linux::StopMixing(RageSound *snd) {
 	LockMutex L(SOUNDMAN->lock);
 
+	int i = 0;
 	/* Find the sound. */
-	for(int i = 0; i < sounds.size(); ++i) if(sounds[i]->snd == snd) break;
+	for(i = 0; i < sounds.size(); ++i) if(sounds[i]->snd == snd) break;
 	
 	if(i == sounds.size())	{
 		LOG->Trace("RageSound_Linux::StopMixing(): not stopping a sound because it's not playing");
@@ -152,11 +156,15 @@ bool RageSound_Linux::GetData() {
 	  for (int i = 0; i<sounds.size(); i++) {
 		if (sounds[i]->stopping) continue;
 		/* Call the Callback */
-		unsigned int got = sounds[i]->snd->GetPCM((char *)buf,cs,last_pos);
+		char *d = (char *)malloc(sizeof(buf));
+		memcpy(d,buf,sizeof(buf));
+		int got = sounds[i]->snd->GetPCM((char *)d,(int)cs,(int)last_pos);
+		memmove(buf,d,sizeof(buf));
+		free(d);
 
 		mix.write(buf,got/2);
 		
-		if (got < chunksize) {
+		if (got < cs) {
 			/* sound is finishing */
 			sounds[i].stopping = true;
 			sounds[i].flush_pos = last_pos + (got / 16);
@@ -205,8 +213,11 @@ int RageSound_Linux::GetPosition(const RageSound *snd) const {
 	snd_timestamp_t *x;
 
         snd_pcm_status_alloca(&status);
-        if ((err = snd_pcm_status(handle, status)) < 0) {
-		RageException::Throw(CString(ssprintf("RageSound_Linux::GetPosition(): Stream status error: %s\n", snd_strerror(err))));
+        if ((err = snd_pcm_status(playback_handle, status)) < 0) {
+		char errstr[100];
+		memset(errstr,0,100);
+	        sprintf(errstr,"RageSound_Linux::GetPosition(): Stream status error: %s\n", snd_strerror(err));
+		RageException::Throw(errstr);
 		return 0;
         }
         snd_pcm_status_get_trigger_tstamp(status, x);	
@@ -221,22 +232,20 @@ int RageSound_Linux::GetPosition(const RageSound *snd) const {
 }	
 
 float RageSound_Linux::GetPlayLatency() const { 
-	int bufsize_frames;
-	BUFSIZE_F(bufsize_frames,buffer_size);
+	int bufsize_frames = 1;
+	BUFSIZE_F(buffer_size,bufsize_frames);
 	return (float)((1.0f / 44100) * ( bufsize_frames - (bufsize_frames / 8))); 
 }
 
 RageSound_Linux::RageSound_Linux() {
 	last_pos = 0;
-	MixerThread = SDL_CreateThread(MixerThread_start,this);
-	sound_event = CreateEvent(NULL, false, true, NULL);
+	MixerThreadPtr = SDL_CreateThread(MixerThread_start,this);
 }
 	
 RageSound_Linux::~RageSound_Linux() {
 	LOG->Trace("RageSoundDriver_Linux::~RageSoundDriver_Linux(): Shutting down mixer thread ...");
 	SDL_WaitThread(MixerThreadPtr, NULL);
 	LOG->Trace("Mixer thread shut down.");
-	CloseHandle(sound_event);
 	CloseAudio();
 }
 
