@@ -593,13 +593,9 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	// this needs to check whether valid Notes are selected!
 	bool bResult = m_MusicWheel.Select();
 
+	/* If false, we don't have a selection just yet. */
 	if( !bResult )
-	{
-	/* why do this? breaks tabs and roulette -glenn */
-//		if( pn != PLAYER_INVALID )
-//			this->SendScreenMessage( SM_MenuTimer, 1 );	// re-throw a timer message
 		return;
-	}
 
 	// a song was selected
 	switch( m_MusicWheel.GetSelectedType() )
