@@ -48,6 +48,45 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 	TrimLeft(iStep);
 	split( iStep, "\n", asRows, true );
 
+	{
+		CString sDir, sFName, sExt;
+		splitrelpath( sPath, sDir, sFName, sExt );
+		sFName.MakeLower();
+
+		out.m_sDescription = sFName;
+		if( sFName.Find("crazy")!=-1 )
+		{
+			out.m_Difficulty = DIFFICULTY_HARD;
+			if(!out.m_iMeter) out.m_iMeter = 8;
+		}
+		else if( sFName.Find("hard")!=-1 )
+		{
+			out.m_Difficulty = DIFFICULTY_MEDIUM;
+			if(!out.m_iMeter) out.m_iMeter = 5;
+		}
+		else if( sFName.Find("easy")!=-1 )
+		{
+			out.m_Difficulty = DIFFICULTY_EASY;
+			if(!out.m_iMeter) out.m_iMeter = 2;
+		}
+		else
+		{
+			out.m_Difficulty = DIFFICULTY_MEDIUM;
+			if(!out.m_iMeter) out.m_iMeter = 5;
+		}
+
+		notedata.m_iNumTracks = 5;
+		out.m_NotesType = NOTES_TYPE_PUMP_SINGLE;
+		if( sFName.Find("double") != -1 )
+		{
+			notedata.m_iNumTracks = 10;
+			out.m_NotesType = NOTES_TYPE_PUMP_DOUBLE;
+		} else if( sFName.Find("_2") != -1 ) {
+			notedata.m_iNumTracks = 10;
+			out.m_NotesType = NOTES_TYPE_PUMP_COUPLE;
+		}
+	}
+
 	int iHoldStartRow[13];
 	for( int t=0; t<13; t++ )
 		iHoldStartRow[t] = -1;
@@ -68,7 +107,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 		// the length of a note in a row depends on TICKCOUNT
 		float fBeatThisRow = r/(float)iTickCount;
 		int row = BeatToNoteRow(fBeatThisRow);
-		for( int t=0; t<13; t++ )
+		for( int t=0; t < notedata.m_iNumTracks; t++ )
 		{
 			if( sRowString[t] == '4' )
 			{
@@ -102,45 +141,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 		}
 	}
 
-	CString sDir, sFName, sExt;
-	splitrelpath( sPath, sDir, sFName, sExt );
-	sFName.MakeLower();
-	
-	out.m_sDescription = sFName;
-	if( sFName.Find("crazy")!=-1 )
-	{
-		out.m_Difficulty = DIFFICULTY_HARD;
-		if(!out.m_iMeter) out.m_iMeter = 8;
-	}
-	else if( sFName.Find("hard")!=-1 )
-	{
-		out.m_Difficulty = DIFFICULTY_MEDIUM;
-		if(!out.m_iMeter) out.m_iMeter = 5;
-	}
-	else if( sFName.Find("easy")!=-1 )
-	{
-		out.m_Difficulty = DIFFICULTY_EASY;
-		if(!out.m_iMeter) out.m_iMeter = 2;
-	}
-	else
-	{
-		out.m_Difficulty = DIFFICULTY_MEDIUM;
-		if(!out.m_iMeter) out.m_iMeter = 5;
-	}
-
-	notedata.m_iNumTracks = 5;
-	out.m_NotesType = NOTES_TYPE_PUMP_SINGLE;
-
-	if( sFName.Find("double") != -1 )
-	{
-		notedata.m_iNumTracks = 10;
-		out.m_NotesType = NOTES_TYPE_PUMP_DOUBLE;
-	} else if( sFName.Find("_2") != -1 ) {
-		notedata.m_iNumTracks = 10;
-		out.m_NotesType = NOTES_TYPE_PUMP_COUPLE;
-	}
-
-	out.m_sSMNoteData = notedata.GetSMNoteDataString();
+	out.SetNoteData(&notedata);
 
 	return true;
 }
