@@ -4,11 +4,19 @@ AC_DEFUN(SM_OPENGL,
 
     GL_LIBS=
     if test "$enable_mesa" = "yes"; then
-	AC_CHECK_LIB(MesaGL, glPushMatrix, GL_LIBS=-lMesaGL)
+	AC_CHECK_LIB(MesaGL, glPushMatrix, have_mesagl=yes)
+	AC_CHECK_LIB(MesaGLU, gluGetString, have_mesaglu=yes)
+	if test "$have_mesagl" = "yes" -a "$have_mesaglu" = "yes"; then
+	    GL_LIBS="-lMesaGL -lMesaGLU"
+	fi
     fi
 
     if test "$GL_LIBS" = ""; then
-	AC_CHECK_LIB(GL, glPushMatrix, GL_LIBS="-lGL")
+	AC_CHECK_LIB(GL, glPushMatrix, have_gl=yes)
+	AC_CHECK_LIB(GLU, gluGetString, have_glu=yes)
+	if test "$have_gl" = "yes" -a "$have_glu" = "yes"; then
+	    GL_LIBS="-lGL -lGLU"
+	fi
     fi
 
     # Some broken systems need us to link to X explicitly because
@@ -22,10 +30,23 @@ AC_DEFUN(SM_OPENGL,
 	LIBS="$LIBS $EXTRALIBS"
 
 	if test "$enable_mesa" = "yes"; then
-	    AC_CHECK_LIB(MesaGL, glPushMatrix, GL_LIBS="-lMesaGL $EXTRALIBS")
+	    AC_CHECK_LIB(MesaGL, glPushMatrix, have_mesagl=yes)
+	    AC_CHECK_LIB(MesaGLU, gluGetString, have_mesaglu=yes)
+	    if test "$have_mesagl" = "yes" -a "$have_mesaglu" = "yes"; then
+		GL_LIBS="-lMesaGL -lMesaGLU"
+	    fi
 	fi
+
 	if test "$GL_LIBS" = ""; then
-	    AC_CHECK_LIB(GL, glPushMatrix, GL_LIBS="-lGL $EXTRALIBS")
+	    AC_CHECK_LIB(GL, glPushMatrix, have_gl=yes)
+	    AC_CHECK_LIB(GLU, gluGetString, have_glu=yes)
+	    if test "$have_gl" = "yes" -a "$have_glu" = "yes"; then
+		GL_LIBS="-lGL -lGLU"
+	    fi
+	fi
+
+	if test "$GL_LIBS" != ""; then
+	    GL_LIBS="$GL_LIBS $EXTRALIBS"
 	fi
 	LIBS=$oldLIBS
 	oldLIBS=
@@ -36,7 +57,6 @@ AC_DEFUN(SM_OPENGL,
 	AC_MSG_ERROR([No OpenGL libraries could be found.  If you want
 to search for MesaGL, pass the "--enable-mesa" flag to configure.])
     fi
-    AC_CHECK_LIB(GLU, gluGetString, GL_LIBS="$GL_LIBS -lGLU",, $GL_LIBS)
     AC_SUBST(GL_LIBS)
 ])
 
