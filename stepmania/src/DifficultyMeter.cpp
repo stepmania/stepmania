@@ -119,15 +119,15 @@ void DifficultyMeter::SetFromCourse( const Course* pCourse )
 
 	const int meter = (int) roundf(pCourse->GetMeter());
 	
-	// XXX
+	// XXX metrics
 	Difficulty FakeDifficulty;
 	if( meter <= 1 )
 		FakeDifficulty = DIFFICULTY_BEGINNER;
-	else if( meter <= 2 )
+	else if( meter <= 3 )
 		FakeDifficulty = DIFFICULTY_EASY;
-	else if( meter <= 5 )
+	else if( meter <= 6 )
 		FakeDifficulty = DIFFICULTY_MEDIUM;
-	else if( meter <= 7 )
+	else if( meter <= 9 )
 		FakeDifficulty = DIFFICULTY_HARD;
 	else
 		FakeDifficulty = DIFFICULTY_CHALLENGE;
