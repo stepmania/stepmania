@@ -544,25 +544,37 @@ float RageFastSin( float x )
 		}
 	}
 
-	int i = (int)SCALE( x, 0.0f, PI*2, 0, ARRAYSIZE(table)*2 );
-	i %= ARRAYSIZE(table) * 2;
+	float fIndex = SCALE( x, 0.0f, PI*2, 0, ARRAYSIZE(table)*2 );
+
+	// lerp using samples from the table
+	int iSampleIndex[2] = { (int)floorf(fIndex), iSampleIndex[0]+1 };
+	float fRemainder = fIndex - iSampleIndex[0];
+	for( int i=0; i<ARRAYSIZE(iSampleIndex); i++ )
+        iSampleIndex[i] %= ARRAYSIZE(table) * 2;
 
 	DEBUG_ASSERT( i>=0 && i<ARRAYSIZE(table)*2 );
+	DEBUG_ASSERT( fRemainder>=0 && fRemainder<=1 );
 
-	float fRet;
-	if( i >= int(ARRAYSIZE(table)) )	// PI <= i < 2*PI
+	float fValue[ARRAYSIZE(iSampleIndex)];
+	for( int i=0; i<ARRAYSIZE(iSampleIndex); i++ )
 	{
-		// sin(x) == -sin(2*PI-x)
-		i = ARRAYSIZE(table)*2 - 1 - i;	// mirror about ARRAYSIZE(table)
-		DEBUG_ASSERT( i>=0 && i<ARRAYSIZE(table) );
-		fRet = -table[i];
-	}
-	else
-	{
-		fRet = table[i];
+		int &iSample = iSampleIndex[i];
+		float &fVal = fValue[i];
+
+		if( iSample >= int(ARRAYSIZE(table)) )	// PI <= iSample < 2*PI
+		{
+			// sin(x) == -sin(2*PI-x)
+			iSample = ARRAYSIZE(table)*2 - 1 - iSample;	// mirror about ARRAYSIZE(table)
+			DEBUG_ASSERT( iSample>=0 && iSample<ARRAYSIZE(table) );
+			fVal = -table[iSample];
+		}
+		else
+		{
+			fVal = table[iSample];
+		}
 	}
 
-	return fRet;
+	return SCALE( fRemainder, 0.0f, 1.0f, fValue[0], fValue[1] );
 }
 
 float RageFastCos( float x )
