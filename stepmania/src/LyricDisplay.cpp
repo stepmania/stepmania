@@ -6,6 +6,7 @@
 
 #define IN_COMMAND		THEME->GetMetric("LyricDisplay","InCommand")
 #define OUT_COMMAND		THEME->GetMetric("LyricDisplay","OutCommand")
+#define WIPE_DIM_FACTOR	THEME->GetMetricC("LyricDisplay","WipeDimFactor")
 
 float g_TweenInTime, g_TweenOutTime;
 
@@ -98,15 +99,9 @@ void LyricDisplay::Update( float fDeltaTime )
 
 		RageColor color = GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_Color;
 		
-		float WashOut = THEME->GetMetricF("LyricDisplay","WashOut");//DW
-		if (WashOut == 0) WashOut = 1;
-		
 		if( i==0 )
-		{
-			for( int c=0; c<4; c++ )
-				color[c] /= WashOut;
-			color.a = THEME->GetMetricF("LyricDisplay","Alpha");//DW;
-		}
+			color *= WIPE_DIM_FACTOR;
+
 		m_textLyrics[i].SetDiffuse(color);
 
 		/* Crop the bottom layer of text away as we crop the top layer on.  That
