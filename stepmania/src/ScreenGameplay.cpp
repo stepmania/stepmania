@@ -36,9 +36,9 @@
 // Defines
 //
 #define SONGSEL_SCREEN					THEME->GetMetric("ScreenGameplay","SongSelectScreen")
-#define MAXCOMBO_X						THEME->GetMetricF("ScreenGameplay","MAXCOMBOX")		// Please follow the capitalization conventions used everywhere else.  This is case sensitive.  -Chris
-#define MAXCOMBO_Y						THEME->GetMetricF("ScreenGameplay","MAXCOMBOY")
-#define MAXCOMBO_ZOOM					THEME->GetMetricF("ScreenGameplay","MAXCOMBOZoom")
+#define MAXCOMBO_X						THEME->GetMetricF("ScreenGameplay","MaxComboX")
+#define MAXCOMBO_Y						THEME->GetMetricF("ScreenGameplay","MaxComboY")
+#define MAXCOMBO_ZOOM					THEME->GetMetricF("ScreenGameplay","MaxComboZoom")
 #define BPM_X							THEME->GetMetricF("ScreenGameplay","BPMX")
 #define BPM_Y							THEME->GetMetricF("ScreenGameplay","BPMY")
 #define BPM_ZOOM						THEME->GetMetricF("ScreenGameplay","BPMZoom")
