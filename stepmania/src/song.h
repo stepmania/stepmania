@@ -111,6 +111,7 @@ public:
 
 
 	bool	m_bChangedSinceSave;
+	bool	m_bIsSymLink;
 
 	CString	m_sMainTitle, m_sSubTitle, m_sArtist;
 	CString m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit;

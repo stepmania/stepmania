@@ -13,6 +13,7 @@
 #include "SongManager.h"
 #include "IniFile.h"
 #include "RageLog.h"
+#include "MsdFile.h"
 #include "NotesLoaderDWI.h"
 #include "BannerCache.h"
 #include "arch/arch.h"
@@ -204,7 +205,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 	CStringArray arrayGroupDirs;
 	GetDirListing( sDir+"*", arrayGroupDirs, true );
 	SortCStringArray( arrayGroupDirs );
-	
+
 	for( unsigned i=0; i< arrayGroupDirs.size(); i++ )	// for each dir in /Songs/
 	{
 		CString sGroupDirName = arrayGroupDirs[i];
@@ -255,6 +256,36 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 
 		/* Cache and load the group banner. */
 		BANNERCACHE->CacheBanner( GetGroupBannerPath(sGroupDirName) );
+		
+		/* Load the group sym links (if any)*/
+		LoadGroupSymLinks(sDir, sGroupDirName);
+	}
+}
+
+void SongManager::LoadGroupSymLinks(CString sDir, CString sGroupFolder)
+{
+	// Find all symlink files in this folder
+	CStringArray arraySymLinks;
+	GetDirListing( sDir+sGroupFolder+SLASH+"*.include", arraySymLinks, false );
+	SortCStringArray( arraySymLinks );
+	for( unsigned s=0; s< arraySymLinks.size(); s++ )	// for each symlink in this dir, add it in as a song.
+	{
+		MsdFile		msdF;
+		msdF.ReadFile( sDir+sGroupFolder+SLASH+arraySymLinks[s].c_str() );
+		CString	sSymDestination = msdF.GetParam(0,1);	// Should only be 1 vale&param...period.
+		
+		Song* pNewSong = new Song;
+		if( !pNewSong->LoadFromSongDir( sSymDestination ) )
+			delete pNewSong; // The song failed to load.
+		else
+		{
+			pNewSong->m_apNotes.clear();	// No memory hogs..
+			pNewSong->m_BackgroundChanges.clear();
+
+			pNewSong->m_bIsSymLink = true;	// Very important so we don't double-parse later
+			pNewSong->m_sGroupName = sGroupFolder;
+			m_pSongs.push_back( pNewSong );
+		}
 	}
 }
 

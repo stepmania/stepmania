@@ -101,6 +101,7 @@ Song::Song()
 	m_DisplayBPMType = DISPLAY_ACTUAL;
 	m_fSpecifiedBPMMin = 0;
 	m_fSpecifiedBPMMax = 0;
+	m_bIsSymLink = false;
 }
 
 Song::~Song()

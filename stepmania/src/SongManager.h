@@ -35,6 +35,7 @@ public:
 	void InitSongsFromDisk( LoadingWindow *ld );
 	void FreeSongs();
 	void CompressSongs();
+	void LoadGroupSymLinks( CString sDir, CString sGroupFolder );
 
 	void InitCoursesFromDisk( LoadingWindow *ld );
 	void InitAutogenCourses();
