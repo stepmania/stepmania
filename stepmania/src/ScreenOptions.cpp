@@ -65,6 +65,8 @@
  * in player options menus, but it should in the options menu.
  */
 
+const float TWEEN_SECONDS = 0.3f;
+
 CString ROW_Y_NAME( size_t r )					{ return ssprintf("Row%dY",r+1); }
 CString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",p+1); }
 CString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",p+1); }
@@ -616,7 +618,10 @@ void ScreenOptions::InitOptionsText()
 		if( row.Type == OptionRow::ROW_EXIT )
 			continue;
 
-		const float fY = ROW_Y.GetValue( i );
+		unsigned pos = i;
+		CLAMP( pos, 0, NUM_ROWS_SHOWN-1 );
+
+		const float fY = ROW_Y.GetValue( pos );
 
 		BitmapText &title = row.m_textTitle;
 
@@ -676,7 +681,7 @@ void ScreenOptions::PositionUnderlines()
 				if( ul.GetDestY() != row.m_fY )
 				{
 					ul.StopTweening();
-					ul.BeginTweening( 0.3f );
+					ul.BeginTweening( TWEEN_SECONDS );
 				}
 
 				ul.SetHidden( bHidden );
@@ -711,7 +716,7 @@ void ScreenOptions::PositionIcons()
 			if( icon.GetDestY() != row.m_fY )
 			{
 				icon.StopTweening();
-				icon.BeginTweening( 0.3f );
+				icon.BeginTweening( TWEEN_SECONDS );
 			}
 
 			icon.SetY( (float)iY );
@@ -818,29 +823,28 @@ void ScreenOptions::UpdateEnabledDisabled()
 			if( GAMESTATE->IsHumanPlayer(p) && m_iCurrentRow[p] == (int) i )
 				bThisRowIsSelected = true;
 
+		const float DiffuseAlpha = row.m_bHidden? 0.0f:1.0f;
+
+		bool bNeedsUpdate = 
+			row.m_sprBullet.GetDestY() != row.m_fY  ||
+			row.m_sprBullet.DestTweenState().diffuse[0].a != DiffuseAlpha ||
+			IsFirstUpdate();
+
+		if( !bNeedsUpdate )
+			continue;
+
 		/* Don't tween selection colors at all. */
 		const RageColor color = bThisRowIsSelected? colorSelected:colorNotSelected;
 		row.m_sprBullet.SetGlobalDiffuseColor( color );
 		row.m_textTitle.SetGlobalDiffuseColor( color );
 
+		for( unsigned j=0; j<row.m_textItems.size(); j++ )
 		{
-			for( unsigned j=0; j<row.m_textItems.size(); j++ )
-				row.m_textItems[j]->SetGlobalDiffuseColor( color );
-		}
-
-		{
-			for( unsigned j=0; j<row.m_textItems.size(); j++ )
-			{
-				const float DiffuseAlpha = row.m_bHidden? 0.0f:1.0f;
-				if( row.m_textItems[j]->GetDestY() == row.m_fY &&
-					row.m_textItems[j]->DestTweenState().diffuse[0][3] == DiffuseAlpha )
-					continue;
-
-				row.m_textItems[j]->StopTweening();
-				row.m_textItems[j]->BeginTweening( 0.3f );
-				row.m_textItems[j]->SetDiffuseAlpha( DiffuseAlpha );
-				row.m_textItems[j]->SetY( row.m_fY );
-			}
+			row.m_textItems[j]->SetGlobalDiffuseColor( color );
+			row.m_textItems[j]->StopTweening();
+			row.m_textItems[j]->BeginTweening( TWEEN_SECONDS );
+			row.m_textItems[j]->SetDiffuseAlpha( DiffuseAlpha );
+			row.m_textItems[j]->SetY( row.m_fY );
 		}
 
 		if( row.Type == OptionRow::ROW_EXIT )
@@ -856,19 +860,14 @@ void ScreenOptions::UpdateEnabledDisabled()
 				row.m_textItems[0]->SetEffectNone();
 		}
 
-		if( row.m_sprBullet.GetDestY() != row.m_fY )
-		{
-			row.m_sprBullet.StopTweening();
-			row.m_textTitle.StopTweening();
-			row.m_sprBullet.BeginTweening( 0.3f );
-			row.m_textTitle.BeginTweening( 0.3f );
-
-			row.m_sprBullet.SetDiffuseAlpha( row.m_bHidden? 0.0f:1.0f );
-			row.m_textTitle.SetDiffuseAlpha( row.m_bHidden? 0.0f:1.0f );
-
-			row.m_sprBullet.SetY( row.m_fY );
-			row.m_textTitle.SetY( row.m_fY );
-		}
+		row.m_sprBullet.StopTweening();
+		row.m_textTitle.StopTweening();
+		row.m_sprBullet.BeginTweening( TWEEN_SECONDS );
+		row.m_textTitle.BeginTweening( TWEEN_SECONDS );
+		row.m_sprBullet.SetDiffuseAlpha( row.m_bHidden? 0.0f:1.0f );
+		row.m_textTitle.SetDiffuseAlpha( row.m_bHidden? 0.0f:1.0f );
+		row.m_sprBullet.SetY( row.m_fY );
+		row.m_textTitle.SetY( row.m_fY );
 	}
 }
 
@@ -1035,9 +1034,10 @@ void ScreenOptions::PositionItems()
 		OptionRow &row = *Rows[i];
 
 		row.m_fY = fY;
-		row.m_bHidden = i < first_start ||
-							(i >= first_end && i < second_start) ||
-							i >= second_end;
+		row.m_bHidden = 
+			i < first_start ||
+			(i >= first_end && i < second_start) ||
+			i >= second_end;
 	}
 
 	if( ExitRow )
