@@ -174,6 +174,26 @@ void MenuElements::TweenOffScreenToMenu( ScreenMessage smSendWhenDone )
 	m_soundSwoosh.Play();
 }
 
+void MenuElements::ImmedOffScreenToMenu()
+{
+	m_MenuTimer.StopTimer();
+	m_KeepAlive.SetClosed();
+
+	/* XXX: This is an ugly paste from TweenTopLayerOffScreen.
+	 * We need some way to use the same code for tweening and
+	 * immediates ... */
+	m_sprTopEdge.StopTweening();
+	m_sprTopEdge.SetX( TOP_EDGE_X+SCREEN_WIDTH );
+
+	m_sprStyleIcon.StopTweening();
+	m_sprStyleIcon.SetX( STYLE_ICON_X+SCREEN_WIDTH );
+
+	m_MenuTimer.StopTweening();
+	m_MenuTimer.SetX( TIMER_X+SCREEN_WIDTH );
+
+	m_textHelp.StopTweening();
+	m_textHelp.SetZoomY( 0 );
+}
 
 void MenuElements::TweenBottomLayerOnScreen()
 {

@@ -45,6 +45,7 @@ public:
 
 	void TweenOnScreenFromMenu( ScreenMessage smSendWhenDone );
 	void TweenOffScreenToMenu( ScreenMessage smSendWhenDone );
+	void ImmedOffScreenToMenu();
 
 	void TweenOnScreenFromBlack( ScreenMessage smSendWhenDone );
 	void TweenOffScreenToBlack( ScreenMessage smSendWhenDone, bool bPlayBackSound );
