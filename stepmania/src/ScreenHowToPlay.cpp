@@ -39,6 +39,43 @@
 #define USEPLAYER							THEME->GetMetricB("ScreenHowToPlay","UseNotefield")
 #define PLAYERX								THEME->GetMetricF("ScreenHowToPlay","PlayerX")
 
+enum Animation
+{
+	ANIM_DANCE_PAD,
+	ANIM_DANCE_PADS,
+	ANIM_UP,
+	ANIM_DOWN,
+	ANIM_LEFT,
+	ANIM_RIGHT,
+	ANIM_JUMPLR,
+	NUM_ANIMATIONS
+};
+
+static const char *anims[NUM_ANIMATIONS] =
+{
+	"DancePad-DDR.txt",
+	"DancePads-DDR.txt",
+	"BeginnerHelper_step-left.bones.txt",
+	"BeginnerHelper_step-down.bones.txt",
+	"BeginnerHelper_step-up.bones.txt",
+	"BeginnerHelper_step-right.bones.txt",
+	"BeginnerHelper_step-jumplr.bones.txt"
+};
+
+
+static CString GetAnimPath( Animation a )
+{
+	return ssprintf("Characters%s%s", SLASH, anims[a]);
+}
+
+static bool HaveAllCharAnimations()
+{
+	for( int i = ANIM_UP; i < NUM_ANIMATIONS; ++i )
+		if( !DoesFileExist( GetAnimPath( (Animation) i ) ) )
+			return false;
+	return true;
+}
+
 ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 {
 	m_iPerfects = 0;
@@ -58,26 +95,26 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenHowToPlay overlay") );
 	this->AddChild( &m_Overlay );
 
-	if( (USEPAD && DoesFileExist("Characters" SLASH "DancePad-DDR.txt")) )
+	if( USEPAD && DoesFileExist( GetAnimPath(ANIM_DANCE_PAD) ) )
 	{
 		m_pmDancePad = new Model;
-		m_pmDancePad->LoadMilkshapeAscii("Characters" SLASH "DancePad-DDR.txt");
+		m_pmDancePad->LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PAD) );
 		m_pmDancePad->SetRotationX( 35 );
 		m_pmDancePad->Command( PADONCOMMAND );
 	}
 	
 	// Display random character
-	if( (USECHARACTER && GAMESTATE->m_pCharacters.size()) )
+	if( USECHARACTER && GAMESTATE->m_pCharacters.size() && HaveAllCharAnimations() )
 	{
 		Character* rndchar = GAMESTATE->GetRandomCharacter();
 
 		m_pmCharacter = new Model;
 		m_pmCharacter->LoadMilkshapeAscii( rndchar->GetModelPath() );
-		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-LEFT","Characters" SLASH "BeginnerHelper_step-left.bones.txt" );
-		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-DOWN","Characters" SLASH "BeginnerHelper_step-down.bones.txt" );
-		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-UP","Characters" SLASH "BeginnerHelper_step-up.bones.txt" );
-		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-RIGHT","Characters" SLASH "BeginnerHelper_step-right.bones.txt" );
-		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-JUMPLR","Characters" SLASH "BeginnerHelper_step-jumplr.bones.txt" );
+		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-LEFT", GetAnimPath( ANIM_LEFT ) );
+		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-DOWN", GetAnimPath( ANIM_DOWN ) );
+		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-UP", GetAnimPath( ANIM_UP ) );
+		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-RIGHT", GetAnimPath( ANIM_RIGHT ) );
+		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-JUMPLR", GetAnimPath( ANIM_JUMPLR ) );
 		m_pmCharacter->LoadMilkshapeAsciiBones( "rest",rndchar->GetRestAnimationPath() );
 		m_pmCharacter->SetDefaultAnimation( "rest" );
 		m_pmCharacter->PlayAnimation( "rest" );
