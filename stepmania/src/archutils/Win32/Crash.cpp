@@ -30,7 +30,7 @@
 #include "disasm.h"
 #include "CrashList.h"
 
-#include "archutils/Win32/GotoURL.h"
+#include "GotoURL.h"
 
 static void DoSave(const EXCEPTION_POINTERS *pExc);
 
@@ -95,7 +95,7 @@ void checkfpustack(const char *file, const int line) throw() {
 
 }
 
-static void __declspec(naked) *operator new(size_t bytes) {
+void __declspec(naked) *operator new(size_t bytes) {
 	static const char fname[]="stack trace";
 
 	__asm {
@@ -354,7 +354,7 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 
 	// Attempt to read debug file.
 
-	bool bSuccess=0;
+	bool bSuccess;
 
 	if (cdw.vdc.pExtraData) {
 		bSuccess = VDDebugInfoInitFromMemory(&g_debugInfo, cdw.vdc.pExtraData);
@@ -432,11 +432,42 @@ static void SetWindowTitlef(HWND hwnd, const char *format, ...) {
 	SetWindowText(hwnd, buf);
 }
 
+static void ReportCrashData(HWND hwnd, HWND hwndReason, HANDLE hFile, const EXCEPTION_POINTERS *const pExc) {
+	const EXCEPTION_RECORD *const pRecord = (const EXCEPTION_RECORD *)pExc->ExceptionRecord;
+	const CONTEXT *const pContext = (const CONTEXT *)pExc->ContextRecord;
+	int i, tos;
+
+	Report(hwnd, hFile, "EAX = %08lx", pContext->Eax);
+	Report(hwnd, hFile, "EBX = %08lx", pContext->Ebx);
+	Report(hwnd, hFile, "ECX = %08lx", pContext->Ecx);
+	Report(hwnd, hFile, "EDX = %08lx", pContext->Edx);
+	Report(hwnd, hFile, "EBP = %08lx", pContext->Ebp);
+	Report(hwnd, hFile, "DS:ESI = %04x:%08lx", pContext->SegDs, pContext->Esi);
+	Report(hwnd, hFile, "ES:EDI = %04x:%08lx", pContext->SegEs, pContext->Edi);
+	Report(hwnd, hFile, "SS:ESP = %04x:%08lx", pContext->SegSs, pContext->Esp);
+	Report(hwnd, hFile, "CS:EIP = %04x:%08lx", pContext->SegCs, pContext->Eip);
+	Report(hwnd, hFile, "FS = %04x", pContext->SegFs);
+	Report(hwnd, hFile, "GS = %04x", pContext->SegGs);
+	Report(hwnd, hFile, "EFLAGS = %08lx", pContext->EFlags);
+	Report(hwnd, hFile, "");
+
+	// extract out MMX registers
+
+	tos = (pContext->FloatSave.StatusWord & 0x3800)>>11;
+
+	for(i=0; i<8; i++) {
+		long *pReg = (long *)(pContext->FloatSave.RegisterArea + 10*((i-tos) & 7));
+
+		Report(hwnd, hFile, "MM%c = %08lx%08lx", i+'0', pReg[1], pReg[0]);
+	}
+}
+
 static void ReportReason(HWND hwnd, HWND hwndReason, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
 {
 	const EXCEPTION_RECORD *const pRecord = (const EXCEPTION_RECORD *)pExc->ExceptionRecord;
 
 	// fill out bomb reason
+
 	const struct ExceptionLookup *pel = exceptions;
 
 	while(pel->code) {
@@ -478,45 +509,14 @@ static void ReportThreadStacks(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS
 			for(int i=0; i<CHECKPOINT_COUNT; ++i) {
 				const VirtualDubCheckpoint& cp = pState->cp[(pState->nNextCP+i) & (CHECKPOINT_COUNT-1)];
 
-				if (cp.file) {
+				if (cp.file)
 					Report(hwnd, hFile, "\t%s:%d %s", cp.file, cp.line, cp.message? cp.message:"");
-				}
 			}
 		}
 	} catch(...) {
 	}
 
 	LeaveCriticalSection(&g_csPerThreadState);
-}
-
-static void ReportCrashData(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc) {
-//	const EXCEPTION_RECORD *const pRecord = (const EXCEPTION_RECORD *)pExc->ExceptionRecord;
-	const CONTEXT *const pContext = (const CONTEXT *)pExc->ContextRecord;
-	int i, tos;
-
-	Report(hwnd, hFile, "EAX = %08lx", pContext->Eax);
-	Report(hwnd, hFile, "EBX = %08lx", pContext->Ebx);
-	Report(hwnd, hFile, "ECX = %08lx", pContext->Ecx);
-	Report(hwnd, hFile, "EDX = %08lx", pContext->Edx);
-	Report(hwnd, hFile, "EBP = %08lx", pContext->Ebp);
-	Report(hwnd, hFile, "DS:ESI = %04x:%08lx", pContext->SegDs, pContext->Esi);
-	Report(hwnd, hFile, "ES:EDI = %04x:%08lx", pContext->SegEs, pContext->Edi);
-	Report(hwnd, hFile, "SS:ESP = %04x:%08lx", pContext->SegSs, pContext->Esp);
-	Report(hwnd, hFile, "CS:EIP = %04x:%08lx", pContext->SegCs, pContext->Eip);
-	Report(hwnd, hFile, "FS = %04x", pContext->SegFs);
-	Report(hwnd, hFile, "GS = %04x", pContext->SegGs);
-	Report(hwnd, hFile, "EFLAGS = %08lx", pContext->EFlags);
-	Report(hwnd, hFile, "");
-
-	// extract out MMX registers
-
-	tos = (pContext->FloatSave.StatusWord & 0x3800)>>11;
-
-	for(i=0; i<8; i++) {
-		long *pReg = (long *)(pContext->FloatSave.RegisterArea + 10*((i-tos) & 7));
-
-		Report(hwnd, hFile, "MM%c = %08lx%08lx", i+'0', pReg[1], pReg[0]);
-	}
 }
 
 static const char *GetNameFromHeap(const char *heap, int idx) {
@@ -928,7 +928,7 @@ static const char *CrashLookupExport(HMODULE hmod, unsigned long addr, unsigned 
 
 	const char *pszName = NULL;
 	ulong bestdelta = 0xFFFFFFFF;
-	unsigned i;
+	int i;
 
 	addr -= (ulong)pBase;
 
@@ -1098,6 +1098,9 @@ bool VDDebugInfoInitFromFile(VDDebugInfoContext *pctx, const char *pszFilename) 
 			CloseHandle(h);
 			return true;
 		}
+
+		VirtualFree(pctx->pRawBlock, 0, MEM_RELEASE);
+
 	} while(false);
 
 	VDDebugInfoDeinit(pctx);
@@ -1154,10 +1157,9 @@ long VDDebugInfoLookupRVA(VDDebugInfoContext *pctx, unsigned rva, char *buf, int
 		const char *class_name = NULL;
 		const char *prefix = "";
 
-		if (*fn_name == 0)
-			return -1;
-
-		if (*fn_name < 32) {
+		if (!*fn_name) {
+			fn_name = "(special)";
+		} else if (*fn_name < 32) {
 			int class_idx;
 
 			class_idx = (((unsigned char*)fn_name)[0] - 1)*128 + (((unsigned char*)fn_name)[1] - 1);
@@ -1418,7 +1420,7 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				SendMessage(hwndList3, WM_SETFONT, SendMessage(hwndList1, WM_GETFONT, 0, 0), MAKELPARAM(TRUE, 0));
 
 				ReportReason(NULL, hwndReason, NULL, pExc);
-				ReportCrashData(hwndList2, NULL, pExc);
+				ReportCrashData(hwndList2, NULL, NULL, pExc);
 				s_bHaveCallstack = ReportCrashCallStack(hwndList3, NULL, pExc, g_pcdw->vdc.pExtraData);
 			}
 			return TRUE;
