@@ -533,25 +533,28 @@ void ScreenRanking::SetPage( PageToShow pts )
 
 									
 				if( pSteps == NULL )
-				{
-					// set alpha to 0.0 and continue
-					m_sprDiffHeaders[d].SetDiffuse( RageColor(1,1,1,0) );	
-					continue;
-				}
-
-				// set the header visible
-				m_sprDiffHeaders[d].SetDiffuse( RageColor(1,1,1,1) );	
+					m_sprDiffHeaders[d].SetHidden( true );
+				else
+					m_sprDiffHeaders[d].SetDiffuse( RageColor(1,1,1,1) );	
 
 				for( int l=0; l<NUM_RANKING_LINES; l++ )
 				{
-					Steps::MemCardData::HighScore hs;
-					if( l < (int)pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores.size() )
-						hs = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[l];
-					if( hs.sName.empty() )
-						hs.sName = EMPTY_SCORE_NAME;
+					if( pSteps == NULL )
+					{
+						m_textPercent[l][d].SetHidden( true );
+					}
+					else
+					{
+						Steps::MemCardData::HighScore hs;
+						if( l < (int)pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores.size() )
+							hs = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[l];
+						if( hs.sName.empty() )
+							hs.sName = EMPTY_SCORE_NAME;
 
-					m_textPercent[l][d].SetText( ssprintf("%s\n%0.3f%%", hs.sName.c_str(), hs.fPercentDP*100) );
-					m_textPercent[l][d].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
+						m_textPercent[l][d].SetText( ssprintf("%s\n%0.3f%%", hs.sName.c_str(), hs.fPercentDP*100) );
+						m_textPercent[l][d].SetText( ssprintf("%s\n%0.3f%%", hs.sName.c_str(), hs.fPercentDP*100) );
+						m_textPercent[l][d].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
+					}
 				}
 			}
 		}

@@ -46,6 +46,7 @@ void Actor::Reset()
 	m_effectColor1 = RageColor(1,1,1,1);
 	m_effectColor2 = RageColor(1,1,1,1);
 
+	m_bHidden = false;
 	m_bShadow = false;
 	m_fShadowLength = 4;
 	m_bIsAnimating = true;
@@ -66,6 +67,9 @@ Actor::Actor()
 
 void Actor::Draw()
 {
+	if( m_bHidden )
+		return;	// early abort
+
 	// call the most-derived versions
 	this->BeginDraw();	
 	this->DrawPrimitives();	// call the most-derived version of DrawPrimitives();

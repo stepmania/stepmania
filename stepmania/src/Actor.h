@@ -240,6 +240,7 @@ public:
 	//
 	// other properties
 	//
+	void SetHidden( bool b )	{ m_bHidden = b; }
 	void SetShadowLength( float fLength );
 	void EnableShadow( bool b )	{ m_bShadow = b; }
 
@@ -324,6 +325,7 @@ protected:
 	//
 	// other properties
 	//
+	bool	m_bHidden;
 	bool	m_bShadow;
 	float	m_fShadowLength;
 	bool	m_bIsAnimating;
