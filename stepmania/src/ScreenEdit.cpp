@@ -344,20 +344,16 @@ void ScreenEdit::Update( float fDeltaTime )
 			if( m_EditMode == MODE_RECORDING )
 			{
 				TransitionFromRecordToEdit();
-				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fEndMarker;
-				m_rectRecordBack.StopTweening();
-				m_rectRecordBack.BeginTweening( 0.5f );
-				m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 			}
 			else if( m_EditMode == MODE_PLAYING )
 			{
 				m_soundMusic.Stop();
 				m_EditMode = MODE_EDITING;
-				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fEndMarker;
-				m_rectRecordBack.StopTweening();
-				m_rectRecordBack.BeginTweening( 0.5f );
-				m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 			}
+			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fEndMarker;
+			m_rectRecordBack.StopTweening();
+			m_rectRecordBack.BeginTweening( 0.5f );
+			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 		}
 	}
 
