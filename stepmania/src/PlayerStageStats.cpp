@@ -4,10 +4,12 @@
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "Foreach.h"
+#include "LuaFunctions.h"
+#include "LuaManager.h"
 #include <float.h>
 
 #define GRADE_PERCENT_TIER(i)			THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
-#define GRADE_TIER_02_IS_ALL_PERFECTS	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllPerfects")
+#define GRADE_TIER02_IS_ALL_PERFECTS	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllPerfects")
 
 void PlayerStageStats::Init()
 {
@@ -98,6 +100,21 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	}
 }
 
+Grade PlayerStageStats::GetGradeFromPercent( float fPercent )
+{
+	Grade grade = GRADE_FAILED;
+
+	FOREACH_Grade(g)
+	{
+		if( fPercent >= GRADE_PERCENT_TIER(g) )
+		{
+			grade = g;
+			break;
+		}
+	}
+	return g;
+}
+
 Grade PlayerStageStats::GetGrade() const
 {
 	if( bFailedEarlier )
@@ -111,7 +128,7 @@ Grade PlayerStageStats::GetGrade() const
 		int iTapScoreValue;
 		switch( tns )
 		{
-		case TNS_NONE:		iTapScoreValue = 0;											break;
+		case TNS_NONE:		iTapScoreValue = 0;									break;
 		case TNS_HIT_MINE:	iTapScoreValue = PREFSMAN->m_iGradeWeightHitMine;	break;
 		case TNS_MISS:		iTapScoreValue = PREFSMAN->m_iGradeWeightMiss;		break;
 		case TNS_BOO:		iTapScoreValue = PREFSMAN->m_iGradeWeightBoo;		break;
@@ -119,7 +136,7 @@ Grade PlayerStageStats::GetGrade() const
 		case TNS_GREAT:		iTapScoreValue = PREFSMAN->m_iGradeWeightGreat;		break;
 		case TNS_PERFECT:	iTapScoreValue = PREFSMAN->m_iGradeWeightPerfect;	break;
 		case TNS_MARVELOUS:	iTapScoreValue = PREFSMAN->m_iGradeWeightMarvelous;	break;
-		default: FAIL_M( ssprintf("%i", tns) );											break;
+		default: FAIL_M( ssprintf("%i", tns) );									break;
 		}
 		Actual += iTapNoteScores[tns] * iTapScoreValue;
 		if( tns != TNS_HIT_MINE )
@@ -131,10 +148,10 @@ Grade PlayerStageStats::GetGrade() const
 		int iHoldScoreValue;
 		switch( hns )
 		{
-		case HNS_NONE:	iHoldScoreValue = 0;									break;
+		case HNS_NONE:	iHoldScoreValue = 0;							break;
 		case HNS_NG:	iHoldScoreValue = PREFSMAN->m_iGradeWeightNG;	break;
 		case HNS_OK:	iHoldScoreValue = PREFSMAN->m_iGradeWeightOK;	break;
-		default: FAIL_M( ssprintf("%i", hns) );									break;
+		default: FAIL_M( ssprintf("%i", hns) );							break;
 		}
 		Actual += iHoldNoteScores[hns] * iHoldScoreValue;
 		Possible += iHoldNoteScores[hns] * PREFSMAN->m_iGradeWeightOK;
@@ -142,21 +159,13 @@ Grade PlayerStageStats::GetGrade() const
 
 	LOG->Trace( "GetGrade: Actual: %f, Possible: %f", Actual, Possible );
 
-	Grade grade = GRADE_FAILED;
 
 	float fPercent = (Possible == 0) ? 0 : Actual / Possible;
 
-	FOREACH_Grade(g)
-	{
-		if( fPercent >= GRADE_PERCENT_TIER(g) )
-		{
-			grade = g;
-			break;
-		}
-	}
+	Grade grade = GetGradeFromPercent( fPercent );
 
-	LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), GRADE_TIER_02_IS_ALL_PERFECTS );
-	if( GRADE_TIER_02_IS_ALL_PERFECTS )
+	LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), GRADE_TIER02_IS_ALL_PERFECTS );
+	if( GRADE_TIER02_IS_ALL_PERFECTS )
 	{
 		if(	iTapNoteScores[TNS_MARVELOUS] > 0 &&
 			iTapNoteScores[TNS_PERFECT] == 0 &&
@@ -166,7 +175,7 @@ Grade PlayerStageStats::GetGrade() const
 			iTapNoteScores[TNS_MISS] == 0 &&
 			iTapNoteScores[TNS_HIT_MINE] == 0 &&
 			iHoldNoteScores[HNS_NG] == 0 )
-			return GRADE_TIER_01;
+			return GRADE_TIER01;
 
 		if( iTapNoteScores[TNS_PERFECT] > 0 &&
 			iTapNoteScores[TNS_GREAT] == 0 &&
@@ -175,9 +184,9 @@ Grade PlayerStageStats::GetGrade() const
 			iTapNoteScores[TNS_MISS] == 0 &&
 			iTapNoteScores[TNS_HIT_MINE] == 0 &&
 			iHoldNoteScores[HNS_NG] == 0 )
-			return GRADE_TIER_02;
+			return GRADE_TIER02;
 
-		return max( grade, GRADE_TIER_03 );
+		return max( grade, GRADE_TIER03 );
 	}
 
 	return grade;
@@ -379,6 +388,9 @@ float PlayerStageStats::GetPercentageOfTaps( TapNoteScore tns ) const
 	}
 	return iTapNoteScores[tns] / (float)iTotalTaps;
 }
+
+
+LuaFunction_Float( GetGradeFromPercent,	PlayerStageStats::GetGradeFromPercent(a1) )
 
 
 // lua start

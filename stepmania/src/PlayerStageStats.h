@@ -17,6 +17,7 @@ struct PlayerStageStats
 
 	void AddStats( const PlayerStageStats& other );		// accumulate
 
+	static Grade GetGradeFromPercent( float fPercent );
 	Grade GetGrade() const;
 	float GetPercentDancePoints() const;
 	vector<Steps*>  vpSteps;
