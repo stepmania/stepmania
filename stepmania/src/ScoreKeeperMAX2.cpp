@@ -89,17 +89,12 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 	//
 	NoteData noteData;
 	pNotes->GetNoteData( &noteData );
-	int N = noteData.GetNumRowsWithTaps() + noteData.GetNumHoldNotes();
-	m_iNumTapsAndHolds = N;
-
-	int sum = (N * (N + 1)) / 2;
 
 	int iMaxPossiblePoints = 0;
-	int courseMult = 0;
 	if( GAMESTATE->IsCourseMode() )
 	{
 		const int numSongsInCourse = apNotes.size();
-		courseMult = (numSongsInCourse * (numSongsInCourse + 1)) / 2;
+		int courseMult = (numSongsInCourse * (numSongsInCourse + 1)) / 2;
 
 		if ( iSongInCourseIndex == numSongsInCourse - 1 )
 			m_bIsLastSongInCourse = true;
@@ -113,6 +108,11 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 		CLAMP( iMeter, 1, 10 );
 		iMaxPossiblePoints = iMeter * 10000000;
 	}
+
+	const int N = noteData.GetNumRowsWithTaps() + noteData.GetNumHoldNotes();
+	const int sum = (N * (N + 1)) / 2;
+	m_iNumTapsAndHolds = N;
+
 	m_iScoreMultiplier = iMaxPossiblePoints / (10*sum);
 	m_iPointBonus = iMaxPossiblePoints - (sum * 10 * m_iScoreMultiplier);
 
