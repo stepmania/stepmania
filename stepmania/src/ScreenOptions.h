@@ -38,7 +38,7 @@ protected:
 	void InitOptionsText();
 	void GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut );
 	CString GetExplanationText( int row ) const;
-	CString GetExplanationTitle( int row ) const;
+	CString GetRowTitle( int row ) const;
 	BitmapText &GetTextItemForRow( PlayerNumber pn, int iRow, int iChoiceOnRow );
 	void PositionUnderlines( int row, PlayerNumber pn );
 	void PositionAllUnderlines();
@@ -141,8 +141,8 @@ protected:
 	ThemeMetric<bool>				SEPARATE_EXIT_ROW;
 	ThemeMetric<float>				SEPARATE_EXIT_ROW_Y;
 	ThemeMetric<CString>			OPTION_ROW_TYPE;
-	ThemeMetric<bool>				THEME_OPTION_TITLES;
 	ThemeMetric<bool>				SHOW_EXPLANATIONS;
+	ThemeMetric<bool>				THEME_TITLES;
 
 	float m_fLockInputSecs;
 };

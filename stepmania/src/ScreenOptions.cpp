@@ -73,17 +73,11 @@ static CString EXPLANATION_ON_COMMAND_NAME( size_t p )	{ return ssprintf("Explan
 
 static CString OPTION_TITLE( CString s )
 {
-	s.Replace("\n-","");
-	s.Replace("\n","");
-	s.Replace(" ","");
-	return THEME->GetMetric("OptionTitles",s+"Title");
+	return THEME->GetMetric("OptionTitles",s);
 }
 static CString OPTION_EXPLANATION( CString s )
 {
-	s.Replace("\n-","");
-	s.Replace("\n","");
-	s.Replace(" ","");
-	return THEME->GetMetric("OptionExplanations",s+"Help");
+	return THEME->GetMetric("OptionExplanations",s);
 }
 
 //REGISTER_SCREEN_CLASS( ScreenOptions );	// can't be instantiated
@@ -111,7 +105,7 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY"),
 	OPTION_ROW_TYPE					(m_sName,"OptionRowType"),
 	SHOW_EXPLANATIONS				(m_sName,"ShowExplanations"),
-	THEME_OPTION_TITLES				(m_sName,"ThemeOptionTitles")
+	THEME_TITLES					(m_sName,"ThemeTitles")
 {
 	m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
 	
@@ -181,7 +175,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		const float fY = ROW_Y.GetValue( pos );
 
 		row.AfterImportOptions( 
-			GetExplanationTitle( r ),
+			GetRowTitle( r ),
 			fY
 			);
 	}
@@ -280,7 +274,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	for( int r=0; r<(int)m_Rows.size(); r++ )		// foreach row
 	{
 		GetExplanationText( r );
-		GetExplanationTitle( r );
+		GetRowTitle( r );
 	}
 
 	// put focus on the first enabled row
@@ -341,12 +335,12 @@ CString ScreenOptions::GetExplanationText( int iRow ) const
 	return SHOW_EXPLANATIONS ? OPTION_EXPLANATION(sLineName) : "";
 }
 
-CString ScreenOptions::GetExplanationTitle( int iRow ) const
+CString ScreenOptions::GetRowTitle( int iRow ) const
 {
 	OptionRow &row = *m_Rows[iRow];
 	
 	CString sLineName = row.GetRowDef().name;
-	CString sTitle = THEME_OPTION_TITLES ? OPTION_TITLE(sLineName) : sLineName;
+	CString sTitle = THEME_TITLES ? OPTION_TITLE(sLineName) : sLineName;
 
 	// HACK: tack the BPM onto the name of the speed line
 	if( sLineName.CompareNoCase("speed")==0 )
