@@ -91,6 +91,8 @@ protected:
 	void DeAutogen();
 };
 
+bool CompareNotesPointersByRadarValues(const Notes* pNotes1, const Notes* pNotes2);
+bool CompareNotesPointersByMeter(const Notes *pNotes1, const Notes* pNotes2);
 bool CompareNotesPointersByDifficulty(const Notes *pNotes1, const Notes *pNotes2);
 void SortNotesArrayByDifficulty( vector<Notes*> &arrayNotess );
 

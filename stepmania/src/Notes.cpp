@@ -187,25 +187,20 @@ bool CompareNotesPointersByRadarValues(const Notes* pNotes1, const Notes* pNotes
 
 bool CompareNotesPointersByMeter(const Notes *pNotes1, const Notes* pNotes2)
 {
-	if( pNotes1->GetMeter() < pNotes2->GetMeter() )
-		return true;
-	if( pNotes1->GetMeter() > pNotes2->GetMeter() )
-		return false;
-	return CompareNotesPointersByRadarValues( pNotes1, pNotes2 );
+	return pNotes1->GetMeter() < pNotes2->GetMeter();
 }
 
 bool CompareNotesPointersByDifficulty(const Notes *pNotes1, const Notes *pNotes2)
 {
-	if( pNotes1->GetDifficulty() < pNotes2->GetDifficulty() )
-		return true;
-	if( pNotes1->GetDifficulty() > pNotes2->GetDifficulty() )
-		return false;
-	return CompareNotesPointersByMeter( pNotes1, pNotes2 );
+	return pNotes1->GetDifficulty() < pNotes2->GetDifficulty();
 }
 
 void SortNotesArrayByDifficulty( vector<Notes*> &arraySteps )
 {
-	sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByDifficulty );
+	/* Sort in reverse order of priority. */
+	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByRadarValues );
+	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByMeter );
+	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByDifficulty );
 }
 
 void Notes::Decompress() const
