@@ -163,8 +163,6 @@ private:
 	bool GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 	bool GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 
-	set<CourseDifficulty> m_vDifficultiesToHide;
-
 	typedef pair<StepsType,Difficulty> CacheEntry;
 	struct CacheData
 	{
