@@ -1041,6 +1041,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 		PRINT_LINK( "Statistics", "#Statistics" );
 		PRINT_LINK( "Popularity Lists", "#Popularity Lists" );
 		PRINT_LINK( "Difficulty Table", "#Difficulty Table" );
+		PRINT_LINK( "High Scores Table", "#High Scores Table" );
 		PRINT_LINK( "Song/Steps List", "#Song/Steps List" );
 		PRINT_LINK( "Bookkeeping", "#Bookkeeping" );
 		PRINT_DIV_END;
@@ -1171,9 +1172,77 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 	}
 
 	//
+	// Print High score tables
+	//
+	{
+		SortSongPointerArrayByGroupAndTitle( vpSongs );
+
+		PRINT_SECTION_START( "High Scores Table" );
+		for( unsigned s=0; s<vStepsTypesToShow.size(); s++ )
+		{
+			StepsType st = vStepsTypesToShow[s];
+
+			unsigned i;
+
+ 			PRINT_DIV_START( GAMEMAN->NotesTypeToString(st).c_str() );
+			f.PutLine( "<table border='1' cellpadding='2' cellspacing='0'>\n" );
+
+			// table header row
+			f.Write( "<tr><td>&nbsp;</td>" );
+			for( unsigned k=0; k<NUM_DIFFICULTIES; k++ )
+			{
+				Difficulty d = (Difficulty)k;
+				f.PutLine( ssprintf("<td>%s</td>", Capitalize(DifficultyToString(d).Left(3)).c_str()) );
+			}
+			f.PutLine( "</tr>" );
+
+			// table body rows
+			for( i=0; i<vpSongs.size(); i++ )
+			{
+				Song* pSong = vpSongs[i];
+
+				f.PutLine( "<tr>" );
+				
+				f.Write( ssprintf("<td><a href='#%u'>%s</a></td>", 
+					(unsigned)pSong,	// use pointer value as the hash
+					pSong->GetFullDisplayTitle().c_str()) );
+
+				for( Difficulty dc=(Difficulty)0; dc<NUM_DIFFICULTIES; dc=(Difficulty)(dc+1) )
+				{
+					Steps* pSteps = pSong->GetStepsByDifficulty( st, dc, false );
+					if( pSteps )
+					{
+						CString sHighScore;
+						if( !pSteps->m_MemCardDatas[mc].vHighScores.empty() )
+						{
+							sHighScore += pSteps->m_MemCardDatas[mc].vHighScores[0].sName;
+							sHighScore += "<br>";
+							sHighScore += GradeToString( pSteps->m_MemCardDatas[mc].vHighScores[0].grade );
+							sHighScore += "<br>";
+							sHighScore += ssprintf("%d",pSteps->m_MemCardDatas[mc].vHighScores[0].iScore);
+						}
+						f.PutLine( ssprintf("<td><p align='right'><a href='#%u'>%s</a></p></td>", 
+							(unsigned)pSteps,		// use pointer value as the hash
+							sHighScore.c_str()) );
+					}
+					else
+					{
+						f.PutLine( "<td>&nbsp;</td>" );
+					}
+				}
+
+				f.Write( "</tr>" );
+			}
+
+			f.PutLine( "</table>\n" );
+			PRINT_DIV_END;
+		}
+		PRINT_SECTION_END;
+	}
+
+	//
 	// Print Difficulty tables
 	//
-	LOG->Trace( "Writing difficulty tables ..." );
 	{
 		SortSongPointerArrayByGroupAndTitle( vpSongs );
 
@@ -1211,11 +1280,15 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 				{
 					Steps* pSteps = pSong->GetStepsByDifficulty( st, dc, false );
 					if( pSteps )
+					{
 						f.PutLine( ssprintf("<td><p align='right'><a href='#%u'>%d</a></p></td>", 
 						(unsigned)pSteps,		// use pointer value as the hash
 						pSteps->GetMeter()) );
+					}
 					else
+					{
 						f.PutLine( "<td>&nbsp;</td>" );
+					}
 				}
 
 				f.Write( "</tr>" );
