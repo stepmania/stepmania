@@ -89,10 +89,11 @@ public:
 	CStringArray	m_asAdditionalSongFolders;
 	CString			m_DWIPath;
 
+	CString			m_sRenderer;
 	CString			m_sSoundDrivers;
 	float			m_fSoundVolume;
 	bool			m_bSoundPreloadAll;
-	bool			m_bAllowSoftwareRenderer;
+	bool			m_bAllowUnacceleratedRenderer;
 
 	enum BannerCacheType { preload_none, preload_all, preload_group };
 	BannerCacheType	m_BannerCacheType;

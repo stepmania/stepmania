@@ -293,7 +293,18 @@ RageDisplay *CreateDisplay()
 	for(unsigned i = 0; i < Cards.size(); ++i)
 		if(Cards[i].Compare(desc)) NeedsD3D = true;
 
-	/* XXX: Handle AllowSoftwareRenderer.  Be careful not to fall back from D3D to
+	if( PREFSMAN->m_sRenderer != "" )
+	{
+		LOG->Warn("Forcing renderer: %s", PREFSMAN->m_sRenderer.c_str() );
+		if( !PREFSMAN->m_sRenderer.CompareNoCase("opengl") )
+			NeedsD3D = false;
+		else if( !PREFSMAN->m_sRenderer.CompareNoCase("d3d") )
+			NeedsD3D = true;
+		else 
+			RageException::Throw("Unknown Renderer value: %s", PREFSMAN->m_sRenderer.c_str() );
+	}
+
+	/* XXX: Handle AllowUnacceleratedRenderer.  Be careful not to fall back from D3D to
 	 * OpenGL because of it, and ending up with an accelerated but broken driver! */
 	if( NeedsD3D )
 	{
@@ -312,6 +323,9 @@ RageDisplay *CreateDisplay()
 				"your system is reporting that hardware acceleration is not available.  "
 				"You can download an updated driver from your card's manufacturer.";
 		};
+
+		if( PREFSMAN->m_sRenderer != "" )
+			error = "WARNING: Renderer was forced\n\n" + error;
 
 		RageException::Throw( error );
 	}
@@ -429,14 +443,14 @@ int main(int argc, char* argv[])
 	BoostAppPri();
 
 	ResetGame();
-	if( DISPLAY->IsSoftwareRenderer() && !PREFSMAN->m_bAllowSoftwareRenderer )
+	if( DISPLAY->IsSoftwareRenderer() && !PREFSMAN->m_bAllowUnacceleratedRenderer )
 		RageException::Throw( 
 			"OpenGL hardware acceleration is not available on your system.\n\n"  
 			"StepMania requires OpenGL hardware acceleration.\n\n"
 			"Please install the latest video driver from your graphics card vendor "
 			"to enable OpenGL hardware acceleration.\n\n"
 			"DO NOT FILE THIS ERROR AS A BUG!\n\n"
-			"(Advanced:  To allow use of the software renderer, set 'AllowSoftwareRenderer=1' "
+			"(Advanced:  To allow use of the software renderer, set 'AllowUnacceleratedRenderer=1' "
 			"in StepMania.ini)" );
 
 	/* Load the unlocks into memory */

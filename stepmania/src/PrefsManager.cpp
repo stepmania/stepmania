@@ -109,14 +109,15 @@ PrefsManager::PrefsManager()
 	 * already here than lots of people asking why songs aren't being displayed. */
 	m_bHiddenSongs = false;
 	m_bVsync = true;
-
+	
+	m_sRenderer = "";
 	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
 	m_fSoundVolume = DEFAULT_SOUND_VOLUME;
 	/* This is experimental: let's see if preloading helps people's skipping.
 	 * If it doesn't do anything useful, it'll be removed. */
 	m_bSoundPreloadAll = false;
 	
-	m_bAllowSoftwareRenderer = false;
+	m_bAllowUnacceleratedRenderer = false;
 
 	m_sDefaultNoteSkin = "default";
 
@@ -174,6 +175,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "DelayedScreenLoad",			m_bDelayedScreenLoad );
 	ini.GetValueI( "Options", "MusicWheelUsesSections",		(int&)m_MusicWheelUsesSections );
 	ini.GetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
+	ini.GetValue ( "Options", "Renderer",					m_sRenderer );
 	ini.GetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	ini.GetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.GetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
@@ -188,7 +190,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueF( "Options", "LongVerSeconds",				m_fLongVerSongSeconds );
 	ini.GetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.GetValueI( "Options", "ShowSongOptions",			(int&)m_ShowSongOptions );
-	ini.GetValueB( "Options", "AllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
+	ini.GetValueB( "Options", "AllowUnacceleratedRenderer",	m_bAllowUnacceleratedRenderer );
 	ini.GetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.GetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
 	ini.GetValueB( "Options", "ShowLyrics",					m_bShowLyrics );
@@ -275,7 +277,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueF( "Options", "LongVerSeconds",				m_fLongVerSongSeconds );
 	ini.SetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.SetValueI( "Options", "ShowSongOptions",			m_ShowSongOptions );
-	ini.SetValueB( "Options", "AllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
+	ini.SetValueB( "Options", "AllowUnacceleratedRenderer",	m_bAllowUnacceleratedRenderer );
 	ini.SetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.SetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
 	ini.SetValueB( "Options", "ShowLyrics",					m_bShowLyrics );
@@ -298,6 +300,8 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 		ini.SetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	if(m_fSoundVolume != DEFAULT_SOUND_VOLUME)
 		ini.SetValueF( "Options", "SoundVolume",			m_fSoundVolume );
+	if(m_sRenderer != "")
+		ini.SetValue ( "Options", "Renderer",				m_sRenderer );
 
 
 	ini.SetValue( "Options", "AdditionalSongFolders", join(",", m_asAdditionalSongFolders) );
