@@ -66,12 +66,12 @@ public:
 	// Lua
 	void PushSelf( lua_State *L );
 
-public:
 	//
 	// in draw order first to last
 	//
 	Actor			*m_pSharedBGA;	// BGA object that's persistent between screens
 	void	PlaySharedBackgroundOffCommand();
+	void    ZeroNextUpdate() { m_bZeroNextUpdate = true; }
 private:
 	vector<Screen*>		m_ScreenStack;	// bottommost to topmost
 	vector<Screen*>		m_OverlayScreens;

@@ -408,6 +408,10 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 
 float ScreenRanking::SetPage( PageToShow pts )
 {
+	// This is going to take a while to load.  Possibly longer than one frame.
+	// So, zero the next update so we don't skip.
+	SCREENMAN->ZeroNextUpdate();
+
 	bool bBanner = false; 
 	bool bBannerFrame = false;
 	bool bShowCategory = false; 
