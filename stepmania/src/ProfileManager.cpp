@@ -44,10 +44,10 @@ ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our
 #define NEW_MEM_CARD_NAME		"NewCard"
 #define NEW_PROFILE_NAME		"NewProfile"
 
-#define SM_300_STATISTICS_FILE	BASE_PATH "statistics.ini"
+#define SM_300_STATISTICS_FILE	"statistics.ini"
 
-#define USER_PROFILES_DIR		BASE_PATH "Data" SLASH "LocalProfiles" SLASH
-#define MACHINE_PROFILE_DIR		BASE_PATH "Data" SLASH "MachineProfile" SLASH
+#define USER_PROFILES_DIR		"Data/LocalProfiles/"
+#define MACHINE_PROFILE_DIR		"Data/MachineProfile/"
 
 const int CATEGORY_RANKING_VERSION = 5;
 const int SONG_SCORES_VERSION = 9;
@@ -472,7 +472,7 @@ void ProfileManager::ReadSongScoresFromDir( CString sDir, MemoryCard mc )
 			if( pNotes )
 				pNotes->m_MemCardDatas[mc].vHighScores.resize( iNumHighScores );
 
-			unsigned l;
+			int l;
 			for( l=0; l<iNumHighScores; l++ )
 			{
 				CString sName;
@@ -874,7 +874,7 @@ void ProfileManager::SaveSongScoresToDir( CString sDir, MemoryCard mc )
 
 			FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores.size() );
 
-			for( int l=0; l<pNotes->m_MemCardDatas[mc].vHighScores.size(); l++ )
+			for( int l=0; l<(int)pNotes->m_MemCardDatas[mc].vHighScores.size(); l++ )
 			{
 				// tricky:  wipe out "name to fill in" markers
 				if( IsRankingToFillIn(pNotes->m_MemCardDatas[mc].vHighScores[l].sName) )
