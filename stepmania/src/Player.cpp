@@ -332,44 +332,40 @@ void PlayerMinus::Update( float fDeltaTime )
 
 
 	// process transforms that are waiting to be applied
-	for( unsigned j=0; j<GAMESTATE->m_TransformsToApply[m_PlayerNumber].size(); j++ )
+	for( unsigned j=0; j<GAMESTATE->m_ModsToApply[m_PlayerNumber].size(); j++ )
 	{
-		const GameState::TransformToApply_t &tr = GAMESTATE->m_TransformsToApply[m_PlayerNumber][j];
+		const GameState::Attack &mod = GAMESTATE->m_ModsToApply[m_PlayerNumber][j];
+		PlayerOptions po;
+		/* Should this default to "" always? need it blank so we know if mod.sModifier
+		 * changes the note skin. */
+		po.m_sNoteSkin = "";
+		po.FromString( mod.sModifier );
 
 		/* Note that runtime effects like these currently must not change hold
 		 * notes.  CopyRange below converts through 4s, which means the hold note
 		 * array will be reconstructed; if hold notes end up in a different order,
 		 * they won't align with this->m_HoldNoteScores. */
-		LOG->Trace( "Applying transform from %f to %f", tr.fStartBeat, tr.fEndBeat );
-		switch( tr.trans )
-		{
-		case PlayerOptions::TRANSFORM_LITTLE:
-			NoteDataUtil::Little( *this, tr.fStartBeat, tr.fEndBeat );
-			break;
-		case PlayerOptions::TRANSFORM_WIDE:
-			NoteDataUtil::Wide( *this, tr.fStartBeat, tr.fEndBeat );
-			break;
-		case PlayerOptions::TRANSFORM_BIG:
-			NoteDataUtil::Big( *this, tr.fStartBeat, tr.fEndBeat );
-			break;
-		case PlayerOptions::TRANSFORM_QUICK:
-			NoteDataUtil::Quick( *this, tr.fStartBeat, tr.fEndBeat );
-			break;
-		case PlayerOptions::TRANSFORM_SKIPPY:
-			NoteDataUtil::Skippy( *this, tr.fStartBeat, tr.fEndBeat );
-			break;
-		case PlayerOptions::TRANSFORM_MINES:
-			NoteDataUtil::Mines( *this, tr.fStartBeat, tr.fEndBeat );
-			break;
-		case PlayerOptions::TRANSFORM_NONE:
-		default:
-			ASSERT(0);
-		}
+		if( po.m_Turn != PlayerOptions::TURN_NONE )
+			RageException::Throw("Can't use turns as battle attacks");
+		if( !po.m_bHoldNotes )
+			RageException::Throw("Can't use NoHolds as a battle attack");
 
-		m_pNoteField->CopyRange( this, BeatToNoteRow(tr.fStartBeat), BeatToNoteRow(tr.fEndBeat), BeatToNoteRow(tr.fStartBeat) );
+		float fStartBeat, fEndBeat;
+		mod.GetAttackBeats( GAMESTATE->m_pCurSong, m_PlayerNumber, fStartBeat, fEndBeat );
+
+		LOG->Trace( "Applying transform from %f to %f", fStartBeat, fEndBeat );
+		if( po.m_sNoteSkin != "" )
+			GAMESTATE->SetNoteSkinForBeatRange( m_PlayerNumber, po.m_sNoteSkin, fStartBeat, fEndBeat );
+
+		NoteDataUtil::TransformNoteData( *this, po, GAMESTATE->GetCurrentStyleDef()->m_StepsType, fStartBeat, fEndBeat );
+		m_pNoteField->CopyRange( this, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), BeatToNoteRow(fStartBeat) );
 	}
-	GAMESTATE->m_TransformsToApply[m_PlayerNumber].clear();
+	GAMESTATE->m_ModsToApply[m_PlayerNumber].clear();
 
+	/* Cache any newly-used note skins.  Normally, the only new skins cached now are
+	 * when we're adding course modifiers at the start of a song.  If this is spending
+	 * time loading skins in the middle of a song, something is wrong. */
+	m_pNoteField->CacheAllUsedNoteSkins();
 
 	ActorFrame::Update( fDeltaTime );
 }

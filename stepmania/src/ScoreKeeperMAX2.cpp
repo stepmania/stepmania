@@ -25,7 +25,7 @@
 #include "RageLog.h"
 
 
-ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Steps*>& apNotes_, const CStringArray &asModifiers, PlayerNumber pn_ ):
+ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Steps*>& apNotes_, const vector<GameState::AttackArray> &asModifiers, PlayerNumber pn_ ):
 	ScoreKeeper(pn_), apNotes(apNotes_)
 {
 	//
@@ -52,11 +52,20 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Steps*>& apNotes_, const CStringA
 		 * have eg. GAMESTATE->GetOptionsForCourse(po,so,pn) to get options based on
 		 * the last call to StoreSelectedOptions and the modifiers list, but that'd
 		 * mean moving the queues in ScreenGameplay to GameState ... */
-		PlayerOptions ModsForThisSong( GAMESTATE->m_PlayerOptions[pn_] );
-		ModsForThisSong.FromString( asModifiers[i] );
-
 		NoteData playerNoteDataPostModifiers(playerNoteData);
-		NoteDataUtil::TransformNoteData( playerNoteDataPostModifiers, ModsForThisSong, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+		NoteDataUtil::TransformNoteData( playerNoteDataPostModifiers, GAMESTATE->m_PlayerOptions[pn_], GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+
+		for( unsigned j=0; j < asModifiers[i].size(); j++ )
+		{
+			const GameState::Attack &mod = asModifiers[i][j];
+			PlayerOptions po;
+			po.FromString( mod.sModifier );
+
+			float fStartBeat, fEndBeat;
+			mod.GetAttackBeats( apSongs[i], m_PlayerNumber, fStartBeat, fEndBeat );
+
+			NoteDataUtil::TransformNoteData( playerNoteDataPostModifiers, po, GAMESTATE->GetCurrentStyleDef()->m_StepsType, fStartBeat, fEndBeat );
+		}
 		 
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( playerNoteData, playerNoteDataPostModifiers );
 	}

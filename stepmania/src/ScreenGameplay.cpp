@@ -81,6 +81,18 @@ const ScreenMessage	SM_GoToScreenAfterFail	= ScreenMessage(SM_User+31);
 const ScreenMessage	SM_StartHereWeGo		= ScreenMessage(SM_User+40);
 const ScreenMessage	SM_StopHereWeGo			= ScreenMessage(SM_User+41);
 
+void GetCourseAttackArray( const Course::Info &ci, GameState::AttackArray &out )
+{
+	GameState::Attack a;
+	a.fStartSecond = 0;
+	a.fSecsRemaining = 10000; /* whole song */
+	a.level = ATTACK_LEVEL_1;
+	a.sModifier = ci.Modifiers;
+
+	out.push_back( a );
+}
+
+
 /* XXX: Not using sName yet here until I work out jukebox/demo. */
 ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("ScreenGameplay")
 {
@@ -157,7 +169,9 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 			for( unsigned c=0; c<ci.size(); ++c )
 			{
 				m_apNotesQueue[p].push_back( ci[c].pNotes );
-				m_asModifiersQueue[p].push_back( ci[c].Modifiers );
+				GameState::AttackArray a;
+				GetCourseAttackArray( ci[c], a );
+				m_asModifiersQueue[p].push_back( a );
 			}
 		}
 		m_apSongsQueue.clear();
@@ -170,7 +184,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
 			m_apNotesQueue[p].push_back( GAMESTATE->m_pCurNotes[p] );
-			m_asModifiersQueue[p].push_back( "" );
+			m_asModifiersQueue[p].push_back( GameState::AttackArray() );
 		}
 	}
 
@@ -209,7 +223,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		{
 		case PrefsManager::SCORING_MAX2:
 		case PrefsManager::SCORING_5TH:
-			m_pPrimaryScoreKeeper[p] = new ScoreKeeperMAX2( m_apNotesQueue[p], m_asModifiersQueue[p], (PlayerNumber)p );
+			m_pPrimaryScoreKeeper[p] = new ScoreKeeperMAX2( m_apSongsQueue, m_apNotesQueue[p], m_asModifiersQueue[p], (PlayerNumber)p );
 			break;
 		default: ASSERT(0);
 		}
@@ -693,16 +707,11 @@ void ScreenGameplay::LoadNextSong()
 		GAMESTATE->m_pCurNotes[p] = m_apNotesQueue[p][iPlaySongIndex];
 
 		// Put courses options into effect.
+		for( unsigned i=0; i<m_asModifiersQueue[p][iPlaySongIndex].size(); ++i )
 		{
-			GameState::Attack a;
-			a.fSecsRemaining = 10000; /* whole song */
-			a.level = ATTACK_LEVEL_1;
-
-			a.sModifier=m_asModifiersQueue[p][iPlaySongIndex];
-			GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
+			GAMESTATE->LaunchAttack( (PlayerNumber)p, m_asModifiersQueue[p][iPlaySongIndex][i] );
+			GAMESTATE->m_SongOptions.FromString( m_asModifiersQueue[p][iPlaySongIndex][i].sModifier );
 		}
-		GAMESTATE->m_SongOptions.FromString( m_asModifiersQueue[p][iPlaySongIndex] );
-
 
 		/* Queue course attacks. */
 

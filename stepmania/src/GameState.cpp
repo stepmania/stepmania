@@ -157,7 +157,6 @@ void GameState::Update( float fDelta )
 
 			m_ActiveAttacks[p][s].fStartSecond = -1;
 
-			ActivateAttack( (PlayerNumber)p, s, true );
 			RebuildPlayerOptions = true;
 		}
 
@@ -628,60 +627,6 @@ void GameState::GetUndisplayedBeats( PlayerNumber pn, float TotalSeconds, float 
 	EndBeat = truncf(EndBeat)+1;
 }
 
-void GameState::ActivateAttack( PlayerNumber target, int slot, bool ActivingDelayedAttack )
-{
-	const Attack &a = m_ActiveAttacks[target][slot];
-
-	enum { QUEUE_FOR_LATER, ACTIVATE_QUEUED_ATTACK, START_IMMEDIATELY } type;
-	if( ActivingDelayedAttack )
-	{
-		ASSERT( a.fStartSecond < 0 );
-		type = ACTIVATE_QUEUED_ATTACK;
-	}
-	else if( a.fStartSecond >= 0 )
-		type = QUEUE_FOR_LATER;
-	else
-		type = START_IMMEDIATELY;
-
-	float StartBeat = 0, EndBeat = 0;
-	switch( type )
-	{
-	case QUEUE_FOR_LATER:
-		StartBeat = this->m_pCurSong->GetBeatFromElapsedTime( a.fStartSecond );
-		EndBeat = this->m_pCurSong->GetBeatFromElapsedTime( a.fStartSecond+a.fSecsRemaining );
-		break;
-	case START_IMMEDIATELY:
-		/* We're setting this effect on the fly.  If it's an arrow-changing effect
-		 * (transform or note skin), apply it in the future, past what's currently on
-		 * screen, so new arrows will scroll on screen with this effect. */
-		GetUndisplayedBeats( target, a.fSecsRemaining, StartBeat, EndBeat );
-		break;
-	}
-
-	//
-	// Peek at the effect being applied.
-	//
-	PlayerOptions po;
-	po.FromString( a.sModifier );
-
-	switch( type )
-	{
-	case QUEUE_FOR_LATER:
-	case START_IMMEDIATELY:
-		if( po.m_sNoteSkin != "" )
-		{
-			SetNoteSkinForBeatRange( target, po.m_sNoteSkin, StartBeat, EndBeat );
-			LOG->Trace("skin ...");
-		}
-		/* If it's a transform, add it to the list of transforms that should be applied
-		 * by the Player on its next update. */
-		if( po.m_Transform != PlayerOptions::TRANSFORM_NONE )
-		{
-			m_TransformsToApply[target].push_back( 
-				TransformToApply_t( po.m_Transform, StartBeat, EndBeat ) );
-		}
-	}
-}
 
 void GameState::SetNoteSkinForBeatRange( PlayerNumber pn, CString sNoteSkin, float StartBeat, float EndBeat )
 {
@@ -721,7 +666,7 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 		if( m_ActiveAttacks[target][s].fSecsRemaining <= 0 )
 		{
 			m_ActiveAttacks[target][s] = a;
-			ActivateAttack( target, s, false );
+			m_ModsToApply[target].push_back( a );
 			GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( target );
 			return;
 		}
@@ -729,6 +674,20 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 
 	LOG->Warn("Couldn't launch attack '%s' against p%i: no empty attack slots",
 		a.sModifier.c_str(), target );
+}
+
+void GameState::Attack::GetAttackBeats( const Song *song, PlayerNumber pn, float &fStartBeat, float &fEndBeat ) const
+{
+	if( fStartSecond >= 0 )
+	{
+		fStartBeat = song->GetBeatFromElapsedTime( fStartSecond );
+		fEndBeat = song->GetBeatFromElapsedTime( fStartSecond+fSecsRemaining );
+	} else {
+		/* We're setting this effect on the fly.  If it's an arrow-changing effect
+		 * (transform or note skin), apply it in the future, past what's currently on
+		 * screen, so new arrows will scroll on screen with this effect. */
+		GAMESTATE->GetUndisplayedBeats( pn, fSecsRemaining, fStartBeat, fEndBeat );
+	}
 }
 
 void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al )
