@@ -60,11 +60,8 @@ public:
 	Actor *operator->()				{ return m_pActor; }
 	void Unload()					{ if(m_pActor) { delete m_pActor; m_pActor=NULL; } }
 	bool IsLoaded() const			{ return m_pActor != NULL; }
-	void Load( CString sPath )
-	{
-		Unload();
-		m_pActor = MakeActor( sPath );
-	}
+	void Load( CString sPath );
+	void LoadAndSetName( CString sScreenName, CString sActorName );
 
 protected:
 	Actor* m_pActor;

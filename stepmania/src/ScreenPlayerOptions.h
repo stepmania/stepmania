@@ -29,10 +29,12 @@ private:
 
 	void UpdateDisqualified();
 
-	bool            m_bAcceptedChoices;
-	bool            m_bGoToOptions;
-	bool            m_bAskOptionsMessage;
-	Sprite          m_sprOptionsMessage;
+	bool        m_bAcceptedChoices;
+	bool        m_bGoToOptions;
+	bool        m_bAskOptionsMessage;
+	Sprite      m_sprOptionsMessage;
+	
+	AutoActor	m_sprCancelAll[NUM_PLAYERS];
 };
 
 

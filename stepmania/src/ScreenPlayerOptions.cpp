@@ -53,6 +53,13 @@ ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
 
+	FOREACH_HumanPlayer( pn )
+	{
+		m_sprCancelAll[pn].LoadAndSetName( "ScreenPlayerOptions", ssprintf("CancelAllP%d",pn+1) );
+		SET_XY_AND_ON_COMMAND( m_sprCancelAll[pn] );
+		this->AddChild( m_sprCancelAll[pn] );
+	}
+
 	UpdateDisqualified();
 }
 
@@ -122,6 +129,8 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		GAMESTATE->m_PlayerOptions[pn].Init();
 		GAMESTATE->m_PlayerOptions[pn].FromString( PREFSMAN->m_sDefaultModifiers );
 		
+		UtilCommand( m_sprCancelAll[pn], m_sName, "Show" );
+
 		this->ImportOptions();
 		this->PositionUnderlines();
 	}

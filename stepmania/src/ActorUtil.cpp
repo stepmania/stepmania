@@ -238,3 +238,14 @@ void UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
 	actor.Command( THEME->GetMetric(sClassName,actor.GetID()+sCommandName+"Command") );
 }
 
+void AutoActor::Load( CString sPath )
+{
+	Unload();
+	m_pActor = MakeActor( sPath );
+}
+
+void AutoActor::LoadAndSetName( CString sScreenName, CString sActorName )
+{
+	Load( THEME->GetPathG(sScreenName,sActorName) );
+	m_pActor->SetName( sActorName );
+}
