@@ -21,6 +21,7 @@
 #include "XmlFile.h"
 #include "Foreach.h"
 #include "CatalogXml.h"
+#include "Bookkeeper.h"
 
 //
 // Old file versions for backward compatibility
@@ -647,6 +648,8 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 		xml.AppendChild( SaveCalorieDataCreateNode() );
 		xml.AppendChild( SaveRecentSongScoresCreateNode() );
 		xml.AppendChild( SaveRecentCourseScoresCreateNode() );
+		if( IsMachine() )
+			xml.AppendChild( SaveCoinDataCreateNode() );
 
 		DISP_OPT opts = optDefault;
 		opts.stylesheet = STYLE_XSL;
@@ -1495,6 +1498,50 @@ bool Profile::IsMachine() const
 	// TODO: Think of a better way to handle this
 	return this == PROFILEMAN->GetMachineProfile();
 }
+
+
+XNode* Profile::SaveCoinDataCreateNode() const
+{
+	CHECKPOINT;
+
+	const Profile* pProfile = this;
+	ASSERT( pProfile );
+
+	XNode* pNode = new XNode;
+	pNode->name = "CoinData";
+
+	{
+		int coins[NUM_LAST_DAYS];
+		BOOKKEEPER->GetCoinsLastDays( coins );
+		XNode* p = pNode->AppendChild( "LastDays" );
+		for( int i=0; i<NUM_LAST_DAYS; i++ )
+			p->AppendChild( LastDayToString(i), coins[i] );
+	}
+	{
+		int coins[NUM_LAST_WEEKS];
+		BOOKKEEPER->GetCoinsLastWeeks( coins );
+		XNode* p = pNode->AppendChild( "LastWeeks" );
+		for( int i=0; i<NUM_LAST_WEEKS; i++ )
+			p->AppendChild( LastWeekToString(i), coins[i] );
+	}
+	{
+		int coins[DAYS_IN_WEEK];
+		BOOKKEEPER->GetCoinsByDayOfWeek( coins );
+		XNode* p = pNode->AppendChild( "DayOfWeek" );
+		for( int i=0; i<DAYS_IN_WEEK; i++ )
+			p->AppendChild( DayOfWeekToString(i), coins[i] );
+	}
+	{
+		int coins[HOURS_IN_DAY];
+		BOOKKEEPER->GetCoinsByHour( coins );
+		XNode* p = pNode->AppendChild( "Hour" );
+		for( int i=0; i<HOURS_IN_DAY; i++ )
+			p->AppendChild( HourInDayToString(i), coins[i] );
+	}
+
+	return pNode;
+}
+
 
 /*
  * (c) 2001-2004 Chris Danford

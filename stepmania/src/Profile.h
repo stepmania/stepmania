@@ -279,6 +279,8 @@ public:
 	XNode* SaveRecentSongScoresCreateNode() const;
 	XNode* SaveRecentCourseScoresCreateNode() const;
 
+	XNode* SaveCoinDataCreateNode() const;
+
 	void SaveStatsWebPageToDir( CString sDir ) const;
 	void SaveMachinePublicKeyToDir( CString sDir ) const;
 

@@ -116,12 +116,12 @@ int StringToDayInYear( CString sDayInYear )
 static const CString LAST_DAYS_NAME[NUM_LAST_DAYS] =
 {
 	"Yesterday",
-	"2 Days Ago",
-	"3 Days Ago",
-	"4 Days Ago",
-	"5 Days Ago",
-	"6 Days Ago",
-	"7 Days Ago",
+	"Day2Ago",
+	"Day3Ago",
+	"Day4Ago",
+	"Day5Ago",
+	"Day6Ago",
+	"Day7Ago",
 };
 
 CString LastDayToString( int iLastDayIndex )
@@ -147,7 +147,7 @@ CString DayOfWeekToString( int iDayOfWeekIndex )
 
 CString HourInDayToString( int iHourInDayIndex )
 {
-	return ssprintf("%02d:00", iHourInDayIndex);
+	return ssprintf("Hour%02d_00", iHourInDayIndex);
 }
 
 static const CString MONTH_TO_NAME[MONTHS_IN_YEAR] =
@@ -175,9 +175,9 @@ CString LastWeekToString( int iLastWeekIndex )
 {
 	switch( iLastWeekIndex )
 	{
-	case 0:		return "This week";	break;
-	case 1:		return "Last week";	break;
-	default:	return ssprintf("%d weeks ago",iLastWeekIndex);	break;
+	case 0:		return "ThisWeek";	break;
+	case 1:		return "LastWeek";	break;
+	default:	return ssprintf("Week%dAgo",iLastWeekIndex);	break;
 	}
 }
 
