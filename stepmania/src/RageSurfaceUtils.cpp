@@ -299,8 +299,10 @@ void RageSurfaceUtils::FixHiddenAlpha( RageSurface *img )
 	SetAlphaRGB(img, r, g, b);
 }
 
-/* Find various traits of a surface.  Do these all at once, so we only have to
- * iterate the surface once. */
+/* Scan the surface to see what level of alpha it uses.  This can be used to
+ * find the best surface format for a texture; eg. a TRAIT_BOOL_TRANSPARENCY or
+ * TRAIT_NO_TRANSPARENCY surface can use RGB5A1 instead of RGBA4 for greater
+ * color resolution; a TRAIT_NO_TRANSPARENCY could also use R5G6B5. */
 int RageSurfaceUtils::FindSurfaceTraits( const RageSurface *img )
 {
 	const int NEEDS_NO_ALPHA=0, NEEDS_BOOL_ALPHA=1, NEEDS_FULL_ALPHA=2;
