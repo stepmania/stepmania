@@ -22,6 +22,19 @@ const int num_chunks = 8;
 const int chunksize_frames = buffersize_frames / num_chunks;
 const int chunksize = buffersize / num_chunks;
 
+static CString wo_ssprintf( MMRESULT err, const char *fmt, ...)
+{
+	char buf[MAXERRORLENGTH];
+	waveOutGetErrorText(err, buf, MAXERRORLENGTH);
+
+    va_list	va;
+    va_start(va, fmt);
+    CString s = vssprintf( fmt, va );
+    va_end(va);
+
+	return s += ssprintf( "(%s)", buf );
+}
+
 int RageSound_WaveOut::MixerThread_start(void *p)
 {
 	((RageSound_WaveOut *) p)->MixerThread();
@@ -91,7 +104,7 @@ bool RageSound_WaveOut::GetPCM()
 
 	MMRESULT ret = waveOutWrite(wo, &buffers[b], sizeof(buffers[b]));
   	if(ret != MMSYSERR_NOERROR)
-		RageException::ThrowNonfatal("blah"); // XXX
+		RageException::ThrowFatal(wo_ssprintf(ret, "waveOutWrite failed"));
 
 	/* Increment last_cursor_pos to point at where the data we're about to
 	 * ask for will actually be played. */
@@ -152,6 +165,8 @@ int RageSound_WaveOut::GetPosition(const RageSound *snd) const
 	MMTIME tm;
 	tm.wType = TIME_SAMPLES;
 	MMRESULT ret = waveOutGetPosition(wo, &tm, sizeof(tm));
+  	if(ret != MMSYSERR_NOERROR)
+		RageException::ThrowFatal(wo_ssprintf(ret, "waveOutGetPosition failed"));
 
 	return tm.u.sample;
 }
@@ -177,7 +192,7 @@ RageSound_WaveOut::RageSound_WaveOut()
 		(DWORD_PTR) sound_event, NULL, CALLBACK_EVENT);
 
 	if(ret != MMSYSERR_NOERROR)
-		RageException::ThrowNonfatal("blah"); // XXX
+		RageException::ThrowNonfatal(wo_ssprintf(ret, "waveOutOpen failed"));
 
 	for(int b = 0; b < num_chunks; ++b)
 	{
@@ -186,7 +201,7 @@ RageSound_WaveOut::RageSound_WaveOut()
 		buffers[b].lpData = new char[chunksize];
 		ret = waveOutPrepareHeader(wo, &buffers[b], sizeof(buffers[b]));
 		if(ret != MMSYSERR_NOERROR)
-			RageException::ThrowNonfatal("blah"); // XXX
+			RageException::ThrowNonfatal(wo_ssprintf(ret, "waveOutPrepareHeader failed"));
 		buffers[b].dwFlags |= WHDR_DONE;
 	}
 	
