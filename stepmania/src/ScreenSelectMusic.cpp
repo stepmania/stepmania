@@ -66,7 +66,8 @@ static void FlipSpriteHorizontally(Sprite &s)
 ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
-	ASSERT( !GAMESTATE->IsCourseMode() );
+	if( GAMESTATE->IsCourseMode() )
+		RageException::Throw("Theme error: can't use ScreenSelectMusic in course modes" );
 
 	/* Cache: */
 	g_sFallbackCDTitlePath = THEME->GetPathToG("ScreenSelectMusic fallback cdtitle");
