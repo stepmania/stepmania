@@ -101,7 +101,7 @@ ScreenStage::ScreenStage()
 	// Init common graphics
 	//
 	this->AddChild( &m_sprSongBackground );	// add background first so it draws bottom-most
-	this->AddChild( &m_quadMask );	// add quad mask before stage so that it will block out the stage sprites
+	//this->AddChild( &m_quadMask );	// add quad mask before stage so that it will block out the stage sprites
 	
 	for( int i=0; i<4; i++ )
 	{
@@ -204,6 +204,8 @@ ScreenStage::ScreenStage()
 
 		const float fStageOffScreenY = CENTER_Y+fStageHeight;
 
+		/* The quadMask masks out draws via Z; it doesn't actually erase
+		 * anything, so make it transparent. */
 		m_quadMask.SetDiffuse( D3DXCOLOR(0,0,0,0) );
 		m_quadMask.StretchTo( CRect(SCREEN_LEFT, int(roundf(fStageOffScreenY-fStageHeight/2)), 
 							        SCREEN_RIGHT, int(roundf(fStageOffScreenY+fStageHeight/2))) );
@@ -228,9 +230,13 @@ ScreenStage::ScreenStage()
 		m_sprSongBackground.Load( (pSong && pSong->HasBackground()) ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background") );
 		m_sprSongBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 
+		/* Move the stage numbers downward, so they don't overlay the
+		 * center of the image. */
 		m_frameStage.SetXY( CENTER_X, CENTER_Y+160 );
 		m_frameStage.SetZoom( 0.5f );
 
+		/* Why are we adding this in three different places?  It's added at the
+		 * end of each case ... */
 		this->AddChild( &m_frameStage ); 
 	}
 
