@@ -167,17 +167,22 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 	m_uHashForCurThemeCurLanguage = GetHashForFile( GetLanguageIniPath(m_sCurThemeName,m_sCurLanguage) );
 
 	// read new metrics.  First read base metrics, then read cur theme's metrics, overriding base theme
-	m_pIniCurMetrics->Reset();
 	m_pIniBaseMetrics->Reset();
 	m_pIniBaseMetrics->ReadFile( GetMetricsIniPath(FALLBACK_THEME_NAME) );
 	m_pIniBaseMetrics->ReadFile( GetMetricsIniPath(BASE_THEME_NAME) );
-	m_pIniCurMetrics->ReadFile( GetMetricsIniPath(m_sCurThemeName) );
 	m_pIniBaseMetrics->ReadFile( GetLanguageIniPath(FALLBACK_THEME_NAME,BASE_LANGUAGE) );
 	m_pIniBaseMetrics->ReadFile( GetLanguageIniPath(BASE_THEME_NAME,BASE_LANGUAGE) );
-	m_pIniCurMetrics->ReadFile( GetLanguageIniPath(m_sCurThemeName,BASE_LANGUAGE) );
 	m_pIniBaseMetrics->ReadFile( GetLanguageIniPath(FALLBACK_THEME_NAME,m_sCurLanguage) );
 	m_pIniBaseMetrics->ReadFile( GetLanguageIniPath(BASE_THEME_NAME,m_sCurLanguage) );
-	m_pIniCurMetrics->ReadFile( GetLanguageIniPath(m_sCurThemeName,m_sCurLanguage) );
+
+	/* Don't bother loading m_pIniCurMetrics if it'll be the same data as BASE_THEME_NAME. */
+	m_pIniCurMetrics->Reset();
+	if( m_sCurThemeName.CompareNoCase(BASE_THEME_NAME) )
+	{
+		m_pIniCurMetrics->ReadFile( GetMetricsIniPath(m_sCurThemeName) );
+		m_pIniCurMetrics->ReadFile( GetLanguageIniPath(m_sCurThemeName,BASE_LANGUAGE) );
+		m_pIniCurMetrics->ReadFile( GetLanguageIniPath(m_sCurThemeName,m_sCurLanguage) );
+	}
 
 	CString sMetric;
 	for( i = 0; GetCommandlineArgument( "metric", &sMetric, i ); ++i )
