@@ -5,14 +5,18 @@
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
 #include "RageLog.h"
+
 #include <errno.h>
+#if defined(LINUX)
+#include <sys/stat.h>
+#endif
 
 RageFileManager *FILEMAN = NULL;
 
-/* Mountpoints as directories cause a problem.  If "Themes/default" is a mountpoint, and
- * doesn't exist anywhere else, then GetDirListing("Themes/*") must return "default".  The
- * driver containing "Themes/default" won't do this; its world view begins at "BGAnimations"
- * (inside "Themes/default").  We need a dummy driver that handles mountpoints. */
+// Mountpoints as directories cause a problem.  If "Themes/default" is a mountpoint, and
+// doesn't exist anywhere else, then GetDirListing("Themes/*") must return "default".  The
+// driver containing "Themes/default" won't do this; its world view begins at "BGAnimations"
+// (inside "Themes/default").  We need a dummy driver that handles mountpoints. */
 class RageFileDriverMountpoints: public RageFileDriver
 {
 public:
@@ -62,6 +66,11 @@ RageFileManager::RageFileManager()
 #if defined(XBOX)
 	RageFileManager::Mount( "dir", SYS_BASE_PATH, "" );
 #elif defined(LINUX)
+	/* Absolute paths.  This is rarely used, eg. by Alsa9Buf::GetSoundCardDebugInfo(). 
+	 * All paths that start with a slash (eg. "/proc") should use this, so put it
+	 * first. */
+	RageFileManager::Mount( "dir", "/", "/" );
+	
 	/* We can almost do this, to have machine profiles be system-global to eg. share
 	 * scores.  It would need to handle permissions properly. */
 /*	RageFileManager::Mount( "dir", "/var/lib/games/stepmania", "Data/Profiles" ); */
@@ -81,11 +90,19 @@ RageFileManager::RageFileManager()
 	/* Next, search ~/StepMania.  This is where users can put music, themes, etc. */
 	/* RageFileManager::Mount( "dir", Home + PRODUCT_NAME, "" ); */
 
-	/* Paths relative to the CWD: */
-	RageFileManager::Mount( "dir", ".", "" );
-
-	/* Absolute paths.  This is rarely used, eg. by Alsa9Buf::GetSoundCardDebugInfo(). */
-	RageFileManager::Mount( "dir", "/", "/" );
+	/* Search for a directory with "Songs" in it.  Be careful: the CWD is likely to
+	 * be ~, and it's possible that some users will have a ~/Songs/ directory that
+	 * has nothing to do with us, so check the initial directory last. */
+	CString Root = "";
+	struct stat st;
+	if( Root == "" && !stat( DirOfExecutable + "/Songs", &st ) && st.st_mode&S_IFDIR )
+		Root = DirOfExecutable;
+	if( Root == "" && !stat( InitialWorkingDirectory + "/Songs", &st ) && st.st_mode&S_IFDIR )
+		Root = InitialWorkingDirectory;
+	if( Root == "" )
+		RageException::Throw( "Couldn't find \"Songs\"" );
+			
+	RageFileManager::Mount( "dir", Root, "" );
 #elif defined(_WINDOWS)
 	/* XXX: Test to see if we can write to the program directory tree.  If we can't,
 	 * add a search path under "Documents and Settings" for writing scores, etc. Otherwise,
