@@ -189,7 +189,6 @@ bool NoteFieldPositioning::Mode::MatchesCurrentGame() const
  * doesn't exist, return "". */
 int NoteFieldPositioning::GetID(const CString &name) const
 {
-//		LOG->Trace("look for %s", name.c_str());
 	for(unsigned i = 0; i < Modes.size(); ++i)
 	{
 		if(Modes[i].name.CompareNoCase(name))
@@ -198,7 +197,6 @@ int NoteFieldPositioning::GetID(const CString &name) const
 		if(!Modes[i].MatchesCurrentGame())
 			continue;
 
-		LOG->Trace("found it");
 		return i;
 	}
 
