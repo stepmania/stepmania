@@ -244,23 +244,26 @@ FileSet *FilenameDB::GetFileSet( CString dir, bool create )
 		return i->second;
 	}
 
+	FileSet *ret;
 	if( i != dirs.end() )
 	{
-		if( ExpireSeconds == -1 || i->second->age.PeekDeltaTime() < ExpireSeconds )
+		if( ExpireSeconds != -1 && i->second->age.PeekDeltaTime() >= ExpireSeconds )
 		{
-			/* Found it, and it hasn't expired. */
+			/* The data has expired.  Clear it, but don't delete it, so w
+			 * don't break dirp pointers. */
+			ret = i->second;
+			ret->age.Touch();
+			ret->files.clear();
+		} else
 			return i->second;
-		}
-
-		delete i->second;
-		dirs.erase( i );
+	}
+	else
+	{
+		ret = new FileSet;
+		AddFileSet( dir, ret );
 	}
 
-	FileSet *ret = new FileSet;
 	PopulateFileSet( *ret, dir );
-
-	AddFileSet( dir, ret );
-
 	return ret;
 }
 
