@@ -87,6 +87,9 @@ void StartPlayingQueuedMusic( const RageTimer &when, const MusicToPlay &ToPlay, 
 
 void StartQueuedMusic( MusicToPlay &ToPlay )
 {
+	if( ToPlay.file.empty() )
+		return;
+
 	LockMutex L( *g_Mutex );
 	MusicPlaying *NewMusic = new MusicPlaying;
 	NewMusic->m_Timing = g_Playing->m_Timing;
@@ -296,10 +299,6 @@ void RageSounds::PlayMusic( const CString &file, const CString &timing_file, boo
 	}
 
 	g_Playing->m_Music.Unload();
-
-	/* If file is blank, just stop. */
-	if( file.empty() )
-		return;
 
 	MusicToPlay ToPlay;
 
