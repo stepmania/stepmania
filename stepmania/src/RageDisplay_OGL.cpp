@@ -974,7 +974,7 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 		glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 		break;
 	case BLEND_ADD:
-		glBlendFunc( GL_ONE, GL_ONE );
+		glBlendFunc( GL_SRC_ALPHA, GL_ONE );
 		break;
 	case BLEND_NO_EFFECT:
 		glBlendFunc( GL_ZERO, GL_ONE );
