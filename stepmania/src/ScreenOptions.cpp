@@ -35,7 +35,7 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 #define ITEMS_SPACING_Y					THEME->GetMetricF("ScreenOptions","ItemsSpacingY")
 #define EXPLANATION_X(p)				THEME->GetMetricF("ScreenOptions",ssprintf("ExplanationP%dX",p+1))
 #define EXPLANATION_Y(p)				THEME->GetMetricF("ScreenOptions",ssprintf("ExplanationP%dY",p+1))
-#define EXPLANATION_ON_COMMAND(p)		THEME->GetMetric ("ScreenOptions",ssprintf("ExplanationOnCommandP%dY",p+1))
+#define EXPLANATION_ON_COMMAND(p)		THEME->GetMetric ("ScreenOptions",ssprintf("ExplanationP%dOnCommand",p+1))
 #define EXPLANATION_TOGETHER_X			THEME->GetMetricF("ScreenOptions","ExplanationTogetherX")
 #define EXPLANATION_TOGETHER_Y			THEME->GetMetricF("ScreenOptions","ExplanationTogetherY")
 #define EXPLANATION_TOGETHER_ON_COMMAND	THEME->GetMetric ("ScreenOptions","ExplanationTogetherOnCommand")
@@ -258,7 +258,8 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	CHECKPOINT;
 	UpdateEnabledDisabled();
 	CHECKPOINT;
-	OnChange();
+	for( p=0; p<NUM_PLAYERS; p++ )
+		OnChange( (PlayerNumber)p );
 	CHECKPOINT;
 
 	/* It's tweening into position, but on the initial tween-in we only want to
@@ -751,8 +752,11 @@ void ScreenOptions::PositionItems()
 }
 
 
-void ScreenOptions::OnChange()
+void ScreenOptions::OnChange( PlayerNumber pn )
 {
+	if( !GAMESTATE->IsHumanPlayer(pn) )
+		return;
+
 	/* Update m_fRowY[] and m_bRowIsHidden[]. */
 	PositionItems();
 
@@ -762,43 +766,40 @@ void ScreenOptions::OnChange()
 	PositionIcons();
 	UpdateEnabledDisabled();
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	TweenCursor( pn );
+
+	int iCurRow = m_iCurrentRow[pn];
+
+	bool bIsExitRow = iCurRow == m_iNumOptionRows;
+
+	BitmapText *pText = NULL;
+	switch( m_InputMode )
 	{
-		TweenCursor( (PlayerNumber)p );
+	case INPUTMODE_INDIVIDUAL:
+		pText = &m_textExplanation[pn];
+		pText->FinishTweening();
+		pText->Command( EXPLANATION_ON_COMMAND(pn) );
+		break;
+	case INPUTMODE_TOGETHER:
+		pText = &m_textExplanation[pn];
+		pText->FinishTweening();
+		pText->Command( EXPLANATION_TOGETHER_ON_COMMAND );
+		break;
+	}
 
-		int iCurRow = m_iCurrentRow[p];
-
-		bool bIsExitRow = iCurRow == m_iNumOptionRows;
-
-		BitmapText *pText = NULL;
-		switch( m_InputMode )
-		{
-		case INPUTMODE_INDIVIDUAL:
-			pText = &m_textExplanation[p];
-			pText->FinishTweening();
-			pText->Command( EXPLANATION_ON_COMMAND(p) );
-			break;
-		case INPUTMODE_TOGETHER:
-			pText = &m_textExplanation[0];
-			pText->FinishTweening();
-			pText->Command( EXPLANATION_TOGETHER_ON_COMMAND );
-			break;
-		}
-
-		if( bIsExitRow )
-		{
-			pText->SetText( "" );
-		}
-		else
-		{
-			CString sLineName = m_OptionRow[iCurRow].name;
-			if( sLineName=="" )
-				sLineName = m_OptionRow[iCurRow].choices[0];
-			sLineName.Replace("\n-","");
-			sLineName.Replace("\n","");
-			sLineName.Replace(" ","");
-			pText->SetText( THEME->GetMetric(m_sName,sLineName) );
-		}
+	if( bIsExitRow )
+	{
+		pText->SetText( "" );
+	}
+	else
+	{
+		CString sLineName = m_OptionRow[iCurRow].name;
+		if( sLineName=="" )
+			sLineName = m_OptionRow[iCurRow].choices[0];
+		sLineName.Replace("\n-","");
+		sLineName.Replace("\n","");
+		sLineName.Replace(" ","");
+		pText->SetText( THEME->GetMetric(m_sName,sLineName) );
 	}
 }
 
@@ -888,9 +889,9 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta )
 			m_iSelectedOption[p][iCurRow] = iNewSel;
 			UpdateText( (PlayerNumber)p, iCurRow );
 		}
+		OnChange( pn );
 	}
 	m_SoundChangeCol.Play();
-	OnChange();
 }
 
 
@@ -905,9 +906,9 @@ void ScreenOptions::MenuUp( PlayerNumber pn )
 			m_iCurrentRow[p] = m_iNumOptionRows;	// on exit
 		else
 			m_iCurrentRow[p]--;
+		OnChange( pn );
 	}
 	m_SoundPrevRow.Play();
-	OnChange();
 }
 
 
@@ -922,7 +923,7 @@ void ScreenOptions::MenuDown( PlayerNumber pn )
 			m_iCurrentRow[p] = 0;	// on first row
 		else
 			m_iCurrentRow[p]++;
+		OnChange( pn );
 	}
 	m_SoundNextRow.Play();
-	OnChange();
 }

@@ -419,14 +419,16 @@ try_metric_again:
 	if( DISPLAY->IsWindowed() )
 	{
 		CString sMessage = ssprintf( "The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
-		switch( HOOKS->MessageBoxRetryCancel(sMessage) )
+		switch( HOOKS->MessageBoxAbortRetryIgnore(sMessage) )
 		{
+		case ArchHooks::abort:
+			break;	// fall through
 		case ArchHooks::retry:
 			FlushDirCache();
 			ReloadMetricsIfNecessary();
 			goto try_metric_again;
-		case ArchHooks::cancel:
-			break;	// fall through
+		case ArchHooks::ignore:
+			return "";
 		default:
 			ASSERT(0);
 		}

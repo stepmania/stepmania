@@ -74,7 +74,7 @@ protected:
 	void TweenCursor( PlayerNumber player_no );
 	void UpdateText( PlayerNumber player_no, int row );
 	void UpdateEnabledDisabled();
-	virtual void OnChange();
+	virtual void OnChange( PlayerNumber pn );
 
 	virtual void MenuBack( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn );
