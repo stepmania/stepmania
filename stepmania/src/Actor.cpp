@@ -754,6 +754,7 @@ void Actor::HandleCommand( const CStringArray &asTokens )
 	else if( sName=="diffusebottomedge" )	SetDiffuseBottomEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 	/* Add left/right/top/bottom for alpha if needed. */
 	else if( sName=="diffusealpha" )	SetDiffuseAlpha( fParam(1) );
+	else if( sName=="diffusecolor" )	SetDiffuseColor( RageColor( fParam(1),fParam(2),fParam(3),1 ) );
 	else if( sName=="glow" )			SetGlow( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 	else if( sName=="glowmode" ) {
 		if(!sParam(1).CompareNoCase("whiten"))
@@ -862,6 +863,16 @@ void Actor::SetGlobalX( float x )
 		m_TweenStates[ts].pos.x = x; 
 	m_current.pos.x = x;
 	m_start.pos.x = x;
+}
+
+void Actor::SetDiffuseColor( RageColor c )
+{
+	for(int i=0; i<4; i++)
+	{
+		DestTweenState().diffuse[i].r = c.r;
+		DestTweenState().diffuse[i].g = c.g;
+		DestTweenState().diffuse[i].b = c.b;
+	}
 }
 
 
