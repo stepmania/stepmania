@@ -130,11 +130,11 @@ bool MsdFile::ReadFile( CString sNewPath )
 		}
 	}
 
-	for( i=0; i<m_iNumValues; i++ )
+	for( unsigned x=0; x<m_iNumValues; x++ )
 	{
-		for( int j=0; j<m_iNumParams[i]; j++ )
+		for( unsigned y=0; y<m_iNumParams[x]; y++ )
 		{
-			m_sParams[i][j] = szParams[i][j];
+			m_sParams[x][y] = szParams[x][y];
 		}
 	}
 

@@ -224,7 +224,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			const unsigned iSongsToShow = GAMESTATE->m_apSongsPlayed.size();
 			ASSERT( iSongsToShow > 0 );
 
-			for( int i=0; i<iSongsToShow; i++ )
+			for( unsigned i=0; i<iSongsToShow; i++ )
 			{
 				m_BannerWithFrame[i].LoadFromSong( GAMESTATE->m_apSongsPlayed[i] );
 				float fBannerOffset = i - (iSongsToShow-1)/2.0f;

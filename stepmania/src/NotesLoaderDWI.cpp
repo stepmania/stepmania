@@ -252,7 +252,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 	if( !bResult )
 		throw RageException( "Error opening file '%s' for reading.", sPath.GetString() );
 
-	for( int i=0; i<msd.m_iNumValues; i++ )
+	for( unsigned i=0; i<msd.m_iNumValues; i++ )
 	{
 		int iNumParams = msd.m_iNumParams[i];
 		CString* sParams = msd.m_sParams[i];

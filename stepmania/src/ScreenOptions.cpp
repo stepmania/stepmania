@@ -132,7 +132,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRowData[], int iNumO
 
 		m_framePage.AddChild( &m_textOptionLineTitles[i] );		
 
-		for( int j=0; j<m_OptionRowData[i].iNumOptions; j++ )
+		for( unsigned j=0; j<m_OptionRowData[i].iNumOptions; j++ )
 			m_framePage.AddChild( &m_textOptions[i][j] );	// this array has to be big enough to hold all of the options
 	}
 
@@ -209,7 +209,7 @@ void ScreenOptions::InitOptionsText()
 
 		// init all text in this line and count the width of the line
 		float fX = ITEMS_START_X;	// indent 70 pixels
-		for( int j=0; j<optline.iNumOptions; j++ )	// for each option on this line
+		for( unsigned j=0; j<optline.iNumOptions; j++ )	// for each option on this line
 		{
 			BitmapText &option = m_textOptions[i][j];
 
@@ -260,7 +260,7 @@ void ScreenOptions::DimOption(int line, int option, bool dim)
 
 bool ScreenOptions::RowCompletelyDimmed(int line) const
 {
-	for(int i = 0; i < m_OptionRowData[line].iNumOptions; ++i)
+	for(unsigned i = 0; i < m_OptionRowData[line].iNumOptions; ++i)
 		if(!m_OptionDim[line][i]) return false;
 	return true;
 }
@@ -368,7 +368,7 @@ void ScreenOptions::UpdateEnabledDisabled()
 
 		m_textOptionLineTitles[i].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
 
-		for( int j=0; j<m_OptionRowData[i].iNumOptions; j++ )
+		for( unsigned j=0; j<m_OptionRowData[i].iNumOptions; j++ )
 			m_textOptions[i][j].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
 	}
 

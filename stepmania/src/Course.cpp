@@ -40,7 +40,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 	if( !arrayPossibleBanners.empty() )
 		m_sBannerPath = arrayPossibleBanners[0];
 
-	for( int i=0; i<msd.m_iNumValues; i++ )
+	for( unsigned i=0; i<msd.m_iNumValues; i++ )
 	{
 		CString sValueName = msd.m_sParams[i][0];
 		CString* sParams = msd.m_sParams[i];

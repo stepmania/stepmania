@@ -54,14 +54,12 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 	out.m_BPMSegments.clear();
 	out.m_StopSegments.clear();
 
-	int i;
-
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
 		throw RageException( "Error opening file '%s'.", sPath.GetString() );
 
-	for( i=0; i<msd.m_iNumValues; i++ )
+	for( unsigned i=0; i<msd.m_iNumValues; i++ )
 	{
 		int iNumParams = msd.m_iNumParams[i];
 		CString* sParams = msd.m_sParams[i];

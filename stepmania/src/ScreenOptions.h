@@ -22,14 +22,14 @@
 #include "OptionIcon.h"
 
 
-const int MAX_OPTION_LINES = 20;
-const int MAX_OPTIONS_PER_LINE = 20;
+const unsigned MAX_OPTION_LINES = 20;
+const unsigned MAX_OPTIONS_PER_LINE = 20;
 
 
 // used to pass menu info into this class
 struct OptionRowData {
 	char szTitle[30];
-	int iNumOptions;
+	unsigned iNumOptions;
 	char szOptionsText[MAX_OPTIONS_PER_LINE][60];
 	char szExplanation[2048];
 };
