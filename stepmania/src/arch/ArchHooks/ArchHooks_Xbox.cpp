@@ -37,7 +37,8 @@ ArchHooks_Xbox::ArchHooks_Xbox()
 
 ArchHooks_Xbox::~ArchHooks_Xbox()
 {
-	XReturnToLaunchingXBE();
+	// We only want to reboot the Xbox in a software manner.
+	XLaunchNewImage( NULL, NULL );
 }
 
 /*
