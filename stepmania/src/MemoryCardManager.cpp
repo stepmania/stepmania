@@ -233,20 +233,6 @@ void MemoryCardManager::UnlockCards()
 	m_pDriver->SetMountThreadState( MemoryCardDriver::detect_and_mount );
 }
 
-
-/* Used by TransferStatsFromMachine, TransferStatsToMachine, and PlayersFinalized()
- * just before reading the profile.  Should block. */
-void MemoryCardManager::TryMountAllCards()
-{
-	FOREACH_EnabledPlayer( p )
-	{
-		if( m_Device[p].IsBlank() )	// they don't have an assigned card
-			continue;
-		
-		MountCard( p );
-	}
-}
-
 /* Called in EndGame just before writing the profile.  Should block. */
 void MemoryCardManager::MountUsedCard( PlayerNumber pn )
 {

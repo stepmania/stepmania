@@ -627,13 +627,13 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 	}
 	if( m_bTransferStatsFromMachine )
 	{
-		MEMCARDMAN->TryMountAllCards();
-
 		bool bTriedToSave = false;
 		FOREACH_PlayerNumber( pn )
 		{
 			if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
 				continue;	// skip
+
+			MEMCARDMAN->MountUsedCard(pn);
 
 			bTriedToSave = true;
 
@@ -641,6 +641,9 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 			sDir += "MachineProfile/";
 
 			bool bSaved = PROFILEMAN->GetMachineProfile()->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
+
+			MEMCARDMAN->UnmountCard(pn);
+
 			if( bSaved )
 				SCREENMAN->SystemMessage( ssprintf("Machine stats saved to P%d card.",pn+1) );
 			else
@@ -655,13 +658,13 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 	}
 	if( m_bTransferStatsToMachine )
 	{
-		MEMCARDMAN->TryMountAllCards();
-
 		bool bTriedToLoad = false;
 		FOREACH_PlayerNumber( pn )
 		{
 			if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
 				continue;	// skip
+
+			MEMCARDMAN->MountUsedCard(pn);
 
 			bTriedToLoad = true;
 
@@ -681,12 +684,14 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 				*PROFILEMAN->GetMachineProfile() = backup;
 				break;
 			case Profile::failed_tampered:
-				SCREENMAN->SystemMessage( ssprintf("The profile on P%d card contains tampered data.",pn+1) );
+				SCREENMAN->SystemMessage( ssprintf("The profile on P%d card contains corrupt or tampered data.",pn+1) );
 				*PROFILEMAN->GetMachineProfile() = backup;
 				break;
 			default:
 				ASSERT(0);
 			}
+
+			MEMCARDMAN->UnmountCard(pn);
 			break;
 		}
 

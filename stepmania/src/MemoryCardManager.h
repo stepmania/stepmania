@@ -21,7 +21,6 @@ public:
 	
 	void LockCards();	// prevent removing or changing of memory cards
 	void UnlockCards();
-	void TryMountAllCards();
 	void MountUsedCard( PlayerNumber pn );
 	void MountCard( PlayerNumber pn );
 	void UnmountCard( PlayerNumber pn );
