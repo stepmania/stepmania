@@ -26,6 +26,8 @@ struct SongEntry
 								song folders are named differantly, song names tend to
 								be the same in the file.*/
 	
+	Song* ActualSong;        // pointer to actual song
+
 	float	m_fDancePointsRequired;	// Ways to unlock/lock songs.
 	float	m_fArcadePointsRequired;
 	float	m_fSongPointsRequired;

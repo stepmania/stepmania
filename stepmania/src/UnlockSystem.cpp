@@ -38,6 +38,7 @@ UnlockSystem::UnlockSystem()
 	ToastyPoints = 0;
 	StagesCleared = 0;
 	RouletteSeeds = "1";
+
 	ReadValues("Data/MemCard.ini"); // in case its ever accessed, 
 									// we want the values to be available
 	WriteValues("Data/MemCard.ini");  // create if it does not exist
@@ -173,6 +174,8 @@ SongEntry::SongEntry()
 	m_fToastysSeen = 0;
 	m_iRouletteSeed = 0;
 
+	ActualSong = NULL;
+
 	isLocked = true;
 	isCourse = false;
 }
@@ -241,7 +244,7 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 	}
 
 	int MaxRouletteSlot = 0;
-	unsigned i;
+	unsigned i, j;
 
 	for( i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -268,7 +271,7 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 		CStringArray UnlockTypes;
 		split(sParams[2], ",", UnlockTypes);
 
-		for( unsigned j=0; j<UnlockTypes.size(); ++j )
+		for( j=0; j<UnlockTypes.size(); ++j )
 		{
 			CStringArray readparam;
 
@@ -300,6 +303,9 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 			}
 		}
 		current.updateLocked();
+
+		current.ActualSong = SONGMAN->FindSong( "", current.m_sSongName );
+
 		m_SongEntries.push_back(current);
 	}
 
@@ -315,6 +321,8 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 		if (!m_SongEntries[i].isLocked) tmp = "un";
 
 		LOG->Trace( "UnlockSystem Entry %s", m_SongEntries[i].m_sSongName.c_str() );
+		if (m_SongEntries[i].ActualSong != NULL)
+			LOG->Trace( "          Translit %s", m_SongEntries[i].ActualSong->GetDisplayMainTitle().c_str() );
 		LOG->Trace( "                AP %f", m_SongEntries[i].m_fArcadePointsRequired );
 		LOG->Trace( "                DP %f", m_SongEntries[i].m_fDancePointsRequired );
 		LOG->Trace( "                SP %f", m_SongEntries[i].m_fSongPointsRequired );
