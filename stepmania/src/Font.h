@@ -132,6 +132,8 @@ public:
 	static const longchar DEFAULT_GLYPH;
 
 	static CString GetFontName(CString FileName);
+	/* Remove filenames in 'v' that aren't in the same font as "FileName". */
+	static void WeedFontNames(vector<CString> &v, const CString &FileName);
 
 private:
 	/* List of pages and fonts that we use (and are responsible for freeing). */

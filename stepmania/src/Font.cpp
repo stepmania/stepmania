@@ -343,17 +343,20 @@ CString Font::GetFontName(CString FileName)
 	splitpath( FileName, sDir, sFName, sExt );
 	FileName = sFName;
 
-	/* If it ends in an extension, remove it. */
-	if(regex("\\....", FileName))
+	/* If it ends in an extension, remove it. XXX */
+	static Regex drop_ext("\\....");
+	if(drop_ext.Compare(FileName))
 		FileName.erase(FileName.size()-4);
 
 	/* If it ends in a dimension spec, remove it. */
 	CStringArray mat;
-	if(regex("( [0-9]+x[0-9]+)$", FileName, mat))
+	static Regex DimSpec("( [0-9]+x[0-9]+)$");
+	if(DimSpec.Compare(FileName, mat))
 		FileName.erase(FileName.size()-mat[0].size());
 
 	/* If it ends in a page name, remove it. */
-	if(regex("( \\[.+\\])$", FileName, mat))
+	static Regex PageName("( \\[.+\\])$");
+	if(PageName.Compare(FileName, mat))
 		FileName.erase(FileName.size()-mat[0].size());
 
 	TrimRight(FileName);
@@ -365,6 +368,18 @@ CString Font::GetFontName(CString FileName)
 	return FileName;
 }
 
+
+void Font::WeedFontNames(vector<CString> &v, const CString &FileName)
+{
+	CString FontName = Font::GetFontName(FileName);
+	/* Weed out false matches.  (For example, this gets rid of "normal2" when
+	 * we're really looking for "normal".) */
+	for(unsigned i = 0; i < v.size(); ) {
+		if(FontName.CompareNoCase(Font::GetFontName(v[i])))
+			v.erase(v.begin()+i);
+		else i++;
+	}
+}
 
 /* Given a file in a font, find all of the files for the font.
  * 
@@ -541,7 +556,8 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 			 * range Unicode #3041-3094=0
 			 */
 			vector<CString> matches;
-			bool match = regex("^RANGE ([A-Z\\-]+)( ?#([0-9A-F]+)-([0-9A-F]+))?$" , val, matches);
+			static Regex parse("^RANGE ([A-Z\\-]+)( ?#([0-9A-F]+)-([0-9A-F]+))?$");
+			bool match = parse.Compare(val, matches);
 			
 			ASSERT(matches.size() == 4); /* 4 parens */
 

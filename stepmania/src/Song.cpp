@@ -563,17 +563,18 @@ void Song::TidyUpData()
 
 struct TitleTrans
 {
-	CString TitleFrom, SubFrom, ArtistFrom,	/* regex */
-			    TitleTo, SubTo, ArtistTo;			/* plain text */
+	Regex TitleFrom, SubFrom, ArtistFrom;
+	CString TitleTo, SubTo, ArtistTo;			/* plain text */
+
 	TitleTrans(CString tf, CString sf, CString af, CString tt, CString st, CString at):
 		TitleFrom(tf), SubFrom(sf), ArtistFrom(af),
 			TitleTo(tt), SubTo(st), ArtistTo(at) { }
 
 	bool Matches(CString title, CString sub, CString artist)
 	{
-		if(!TitleFrom.empty() && !regex(TitleFrom, title)) return false; /* no match */
-		if(!SubFrom.empty() && !regex(SubFrom, sub)) return false; /* no match */
-		if(!ArtistFrom.empty() && !regex(ArtistFrom, artist)) return false; /* no match */
+		if(!TitleFrom.Compare(title)) return false; /* no match */
+		if(!SubFrom.Compare(sub)) return false; /* no match */
+		if(!ArtistFrom.Compare(artist)) return false; /* no match */
 
 		return true;
 	}
