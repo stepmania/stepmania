@@ -279,7 +279,7 @@ int RageSoundReader_MP3::handle_first_frame()
 	{
 		mad_timer_t tm;
 
-		mad->header_bytes = min( mad->header_bytes, get_this_frame_byte(mad) );
+		mad->header_bytes = max( mad->header_bytes, get_this_frame_byte(mad) );
 
 		mad->has_xing = true;
 
