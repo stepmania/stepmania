@@ -1340,6 +1340,25 @@ SOURCE=.\CourseUtil.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Difficulty.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Difficulty.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\EnumHelper.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Debug"
