@@ -85,13 +85,16 @@ bool RageSound_ALSA9_Software::GetData()
 		 * Get the units straight,
 		 * <bytes> = GetPCM(<bytes*>, <bytes>, <frames>)
 		 */
-		unsigned got = sounds[i]->snd->GetPCM( (char *) buf, frames_to_fill*bytes_per_frame, pcm->GetPlayPos() ) / sizeof(Sint16);
-		mix.write((Sint16 *) buf, got);
+		unsigned got_bytes = sounds[i]->snd->GetPCM( (char *) buf, frames_to_fill*bytes_per_frame, pcm->GetPlayPos() );
+		unsigned got_samples = got_bytes / sizeof(Sint16);
+		unsigned got_frames = got_bytes / bytes_per_frame;
+		mix.write((Sint16 *) buf, got_samples );
 
-		if( int(got) < frames_to_fill )
+		if( got_frames < frames_to_fill )
 		{
 			/* This sound is finishing. */
 			sounds[i]->stopping = true;
+			sounds[i]->flush_pos = pcm->GetPlayPos() + got_frames;
 		}
     }
 	L.Unlock();
@@ -122,9 +125,9 @@ void RageSound_ALSA9_Software::Update(float delta)
 	vector<sound *> snds = sounds;
 	for(unsigned i = 0; i < snds.size(); ++i)
 	{
-		if(!sounds[i]->stopping) continue;
+		if(!snds[i]->stopping) continue;
 
-		if(GetPosition(snds[i]->snd) < sounds[i]->flush_pos)
+		if(GetPosition(snds[i]->snd) < snds[i]->flush_pos)
 			continue; /* stopping but still flushing */
 
 		/* This sound is done. */
