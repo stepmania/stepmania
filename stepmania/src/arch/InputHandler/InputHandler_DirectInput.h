@@ -7,6 +7,8 @@ struct DIDevice;
 class InputHandler_DInput: public InputHandler
 {
 	bool OpenDevice(DIDevice &joystick);
+	void UpdatePolled(DIDevice &device);
+	void UpdateBuffered(DIDevice &device);
 
 public:
 	InputHandler_DInput();

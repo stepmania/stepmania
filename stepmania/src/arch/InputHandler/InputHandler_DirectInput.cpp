@@ -181,7 +181,7 @@ HRESULT GetDeviceState(LPDIRECTINPUTDEVICE2 dev, int size, void *ptr)
 	return hr;
 }
 
-void UpdatePolled(DIDevice &device)
+void InputHandler_DInput::UpdatePolled(DIDevice &device)
 {
 	if( device.type == device.KEYBOARD )
 	{
@@ -200,7 +200,7 @@ void UpdatePolled(DIDevice &device)
 		for( int k = 0; k < 256; ++k )
 		{
 			const int key = device.Inputs[k].num;
-			INPUTFILTER->ButtonPressed(DeviceInput(device.dev, key), !!(keys[k] & 0x80));
+			ButtonPressed(DeviceInput(device.dev, key), !!(keys[k] & 0x80));
 		}
 		return;
 	}
@@ -222,7 +222,7 @@ void UpdatePolled(DIDevice &device)
 		case in.BUTTON:
 		{
 			DeviceInput di(dev, JOY_1 + in.num);
-			INPUTFILTER->ButtonPressed(di, !!state.rgbButtons[in.ofs - DIJOFS_BUTTON0]);
+			ButtonPressed(di, !!state.rgbButtons[in.ofs - DIJOFS_BUTTON0]);
 			break;
 		}
 
@@ -230,31 +230,31 @@ void UpdatePolled(DIDevice &device)
 		{
 			switch(in.ofs)
 			{
-			case DIJOFS_X:  INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_LEFT), state.lX < -50);
-							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_RIGHT), state.lX > 50);
+			case DIJOFS_X:  ButtonPressed(DeviceInput(dev, JOY_LEFT), state.lX < -50);
+							ButtonPressed(DeviceInput(dev, JOY_RIGHT), state.lX > 50);
 							break;
-			case DIJOFS_Y:  INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_UP), state.lY < -50);
-							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_DOWN), state.lY > 50);
+			case DIJOFS_Y:  ButtonPressed(DeviceInput(dev, JOY_UP), state.lY < -50);
+							ButtonPressed(DeviceInput(dev, JOY_DOWN), state.lY > 50);
 							break;
-			case DIJOFS_Z: INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_Z_UP), state.lZ < -50);
-							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_Z_DOWN), state.lZ > 50);
+			case DIJOFS_Z:  ButtonPressed(DeviceInput(dev, JOY_Z_UP), state.lZ < -50);
+							ButtonPressed(DeviceInput(dev, JOY_Z_DOWN), state.lZ > 50);
 							break;
-			case DIJOFS_RX: INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_ROT_LEFT), state.lRx < -50);
-							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_ROT_RIGHT), state.lRx > 50);
+			case DIJOFS_RX: ButtonPressed(DeviceInput(dev, JOY_ROT_LEFT), state.lRx < -50);
+							ButtonPressed(DeviceInput(dev, JOY_ROT_RIGHT), state.lRx > 50);
 							break;
-			case DIJOFS_RY: INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_ROT_UP), state.lRy < -50);
-							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_ROT_DOWN), state.lRy > 50);
+			case DIJOFS_RY: ButtonPressed(DeviceInput(dev, JOY_ROT_UP), state.lRy < -50);
+							ButtonPressed(DeviceInput(dev, JOY_ROT_DOWN), state.lRy > 50);
 							break;
-			case DIJOFS_RZ: INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_ROT_Z_UP), state.lRz < -50);
-							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_ROT_Z_DOWN), state.lRz > 50);
+			case DIJOFS_RZ: ButtonPressed(DeviceInput(dev, JOY_ROT_Z_UP), state.lRz < -50);
+							ButtonPressed(DeviceInput(dev, JOY_ROT_Z_DOWN), state.lRz > 50);
 							break;
 			case DIJOFS_SLIDER(0):
-							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_AUX_1), state.rglSlider[0] < -50);
-							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_AUX_2), state.rglSlider[0] > 50);
+							ButtonPressed(DeviceInput(dev, JOY_AUX_1), state.rglSlider[0] < -50);
+							ButtonPressed(DeviceInput(dev, JOY_AUX_2), state.rglSlider[0] > 50);
 							break;
 			case DIJOFS_SLIDER(1):
-							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_AUX_3), state.rglSlider[1] < -50);
-							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_AUX_4), state.rglSlider[1] > 50);
+							ButtonPressed(DeviceInput(dev, JOY_AUX_3), state.rglSlider[1] < -50);
+							ButtonPressed(DeviceInput(dev, JOY_AUX_4), state.rglSlider[1] > 50);
 							break;
 			default: LOG->MapLog("unknown input", 
 							"Controller '%s' is returning an unknown joystick offset, %i",
@@ -270,10 +270,10 @@ void UpdatePolled(DIDevice &device)
 			ASSERT( in.num == 0 ); // XXX
 
 			const int pos = TranslatePOV(state.rgdwPOV[in.ofs - DIJOFS_POV(0)]);
-			INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_HAT_UP), !!(pos & SDL_HAT_UP));
-			INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN), !!(pos & SDL_HAT_DOWN));
-			INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT), !!(pos & SDL_HAT_LEFT));
-			INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT), !!(pos & SDL_HAT_RIGHT));
+			ButtonPressed(DeviceInput(dev, JOY_HAT_UP), !!(pos & SDL_HAT_UP));
+			ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN), !!(pos & SDL_HAT_DOWN));
+			ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT), !!(pos & SDL_HAT_LEFT));
+			ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT), !!(pos & SDL_HAT_RIGHT));
 
 			break;
 		}
@@ -281,7 +281,7 @@ void UpdatePolled(DIDevice &device)
 	}
 }
 
-void UpdateBuffered(DIDevice &device)
+void InputHandler_DInput::UpdateBuffered(DIDevice &device)
 {
 	DWORD numevents;
 	DIDEVICEOBJECTDATA evtbuf[INPUT_QSIZE];
@@ -321,11 +321,11 @@ void UpdateBuffered(DIDevice &device)
 			switch(in.type)
 			{
 			case in.KEY:
-				INPUTFILTER->ButtonPressed(DeviceInput(dev, in.num), !!(evtbuf[i].dwData & 0x80));
+				ButtonPressed(DeviceInput(dev, in.num), !!(evtbuf[i].dwData & 0x80));
 				break;
 
 			case in.BUTTON:
-				INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_1 + in.num), !!evtbuf[i].dwData);
+				ButtonPressed(DeviceInput(dev, JOY_1 + in.num), !!evtbuf[i].dwData);
 				break;
 
 			case in.AXIS:
@@ -347,17 +347,17 @@ void UpdateBuffered(DIDevice &device)
 					continue;
 				}
 
-				INPUTFILTER->ButtonPressed(DeviceInput(dev, up), int(evtbuf[i].dwData) < -50);
-				INPUTFILTER->ButtonPressed(DeviceInput(dev, down), int(evtbuf[i].dwData) > 50);
+				ButtonPressed(DeviceInput(dev, up), int(evtbuf[i].dwData) < -50);
+				ButtonPressed(DeviceInput(dev, down), int(evtbuf[i].dwData) > 50);
 				break;
 			}
 			case in.HAT:
 		    {
 				const int pos = TranslatePOV(evtbuf[i].dwData);
-				INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_HAT_UP), !!(pos & SDL_HAT_UP));
-				INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN), !!(pos & SDL_HAT_DOWN));
-				INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT), !!(pos & SDL_HAT_LEFT));
-				INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT), !!(pos & SDL_HAT_RIGHT));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_UP), !!(pos & SDL_HAT_UP));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN), !!(pos & SDL_HAT_DOWN));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT), !!(pos & SDL_HAT_LEFT));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT), !!(pos & SDL_HAT_RIGHT));
 		    }
 			}
 		}
@@ -386,6 +386,8 @@ void InputHandler_DInput::Update(float fDeltaTime)
 		else
 			UpdatePolled( Devices[i] );
 	}
+
+	InputHandler::Update( fDeltaTime );
 }
 
 void InputHandler_DInput::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
