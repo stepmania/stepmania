@@ -43,7 +43,8 @@ Notes::Notes()
 	m_bAutoGen = false;
 	m_Difficulty = CLASS_INVALID;
 	m_iMeter = 0;
-	ZeroMemory(m_fRadarValues, sizeof(m_fRadarValues));
+	for(int i = 0; i < NUM_RADAR_VALUES; ++i)
+		m_fRadarValues[i] = -1; /* unknown */
 
 	m_iNumTimesPlayed = 0;
 	m_iMaxCombo = 0;
