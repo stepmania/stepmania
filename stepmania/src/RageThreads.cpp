@@ -40,6 +40,11 @@
 #include "archutils/Win32/crash.h"
 #endif
 
+#if defined(DARWIN)
+#include <mach/mach_init.h>
+#include <mach/thread_act.h>
+#endif
+
 /* XXX: char*GetLockedMutexesForThisThread? */
 #define MAX_THREADS 128
 static vector<RageMutex*> *g_MutexList = NULL; /* watch out for static initialization order problems */
@@ -64,6 +69,10 @@ struct ThreadSlot
 
 #if defined(WIN32)
 	HANDLE ThreadHandle;
+#endif
+
+#if defined(DARWIN)
+	thread_act_t ThreadHandle;
 #endif
 
 	#undef CHECKPOINT_COUNT
@@ -215,6 +224,10 @@ void ThreadSlot::SetupThisThread()
 			CurProc, GetCurrentThread() ) );
 #endif
 
+#if defined(DARWIN)
+	ThreadHandle = mach_thread_self();
+#endif
+
 	threadid = SDL_ThreadID();
 
 	sprintf(ThreadFormattedOutput, "Thread %08x (%s)", threadid, name);
@@ -319,6 +332,25 @@ int RageThread::Wait()
 	return ret;
 }
 
+/* XXX: consolidate thread ID type, etc, use ArchHooks */
+#if defined(DARWIN)
+thread_act_t GetCurrentThreadId()
+{
+	return mach_thread_self();
+}
+
+void SuspendThread( thread_act_t t )
+{
+	thread_suspend( t );
+}
+
+void ResumeThread( thread_act_t t )
+{
+	thread_resume( t );
+}
+#endif
+
+
 void RageThread::HaltAllThreads( bool Kill )
 {
 #if defined(PID_BASED_THREADS)
@@ -354,6 +386,18 @@ void RageThread::HaltAllThreads( bool Kill )
 #endif
 			SuspendThread( g_ThreadSlots[entry].ThreadHandle );
 	}
+#elif defined(DARWIN)
+	const thread_act_t ThisThreadID = GetCurrentThreadId();
+	for( int entry = 0; entry < MAX_THREADS; ++entry )
+	{
+		if( !g_ThreadSlots[entry].used )
+			continue;
+		if( g_ThreadSlots[entry].threadid == UnknownThreadID )
+			continue;
+		if( ThisThreadID == g_ThreadSlots[entry].ThreadHandle )
+			continue;
+		SuspendThread( g_ThreadSlots[entry].ThreadHandle );
+	}
 #endif
 }
 
@@ -380,6 +424,16 @@ void RageThread::ResumeAllThreads()
 		if( ThisThreadID == (int) g_ThreadSlots[entry].threadid )
 			continue;
 
+		ResumeThread( g_ThreadSlots[entry].ThreadHandle );
+	}
+#elif defined(DARWIN)
+	const thread_act_t ThisThreadID = GetCurrentThreadId();
+	for( int entry = 0; entry < MAX_THREADS; ++entry )
+	{
+		if( !g_ThreadSlots[entry].used )
+			continue;
+		if( ThisThreadID == g_ThreadSlots[entry].threadid )
+			continue;
 		ResumeThread( g_ThreadSlots[entry].ThreadHandle );
 	}
 #endif
