@@ -1520,7 +1520,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
 	// update give up timer
 	//
-	if( !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 3.5f )
+	if( !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f )
 	{
 		m_GiveUpTimer.SetZero();
 
