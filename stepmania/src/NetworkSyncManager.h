@@ -36,12 +36,9 @@ private:
 	int m_step;
 	int m_score;
 	int m_combo;
-    
-	bool FlashXMLStyle;	//Append 4 0s at end of packet.
-							//For FLASH client.
-
+     
 	bool useSMserver;
-
+ 
     EzSockets *NetPlayerClient;
 
 	int m_ServerVersion; //ServerVersion

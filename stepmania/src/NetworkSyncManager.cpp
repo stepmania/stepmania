@@ -69,10 +69,6 @@ NetworkSyncManager::NetworkSyncManager(int argc, char **argv)
 			//AND the connection works
 			//Halt until we know what server 
 			//version we're dealing with
-		if (((m_ServerVersion / 512) % 2) == 1)
-			FlashXMLStyle = true;
-		else
-			FlashXMLStyle = false;
 
 		LOG->Info("Server Version: %d",m_ServerVersion);
 	}
@@ -158,39 +154,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	SendNetPack.m_life=m_playerLife[playerID];
 
     //Send packet to server
-	if (FlashXMLStyle)
-	{
-		netHolderFlash FlashSendPack;	
-		FlashSendPack.data[72]='\0';
-		int i=0;
-		for (i=0;i<72;i++)
-			FlashSendPack.data[i] = ' ';
-		CString TID;
-		FlashSendPack.data[0]='D';
-		TID = ssprintf("%d",playerID);
-		for (i=0;i<TID.GetLength();i++)
-			FlashSendPack.data[i+1] = (TID.c_str())[i];
-		
-		TID = ssprintf("%d",combo);
-		for (i=0;i<TID.GetLength();i++)
-			FlashSendPack.data[i+17] = (TID.c_str())[i];
-
-		TID =  ssprintf("%d",score);
-		for (i=0;i<TID.GetLength();i++)
-			FlashSendPack.data[i+33] = (TID.c_str())[i];
-
-		TID = ssprintf("%d",step-1);
-		for (i=0;i<TID.GetLength();i++)
-			FlashSendPack.data[i+65] = (TID.c_str())[i];
-
-		TID = ssprintf("%d",m_playerLife[playerID]);
-		for (i=0;i<TID.GetLength();i++)
-			FlashSendPack.data[i+81] = (TID.c_str())[i];
-
-		NetPlayerClient->send((char*)&FlashSendPack,sizeof(netHolderFlash));
-
-	} else
-		NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
+	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
 
 }
 	
@@ -209,16 +173,7 @@ void NetworkSyncManager::ReportSongOver()
 	SendNetPack.m_life=0;
 	
 
-	if (FlashXMLStyle)
-	{
-		netHolderFlash FlashSendPack;	
-		FlashSendPack.data[72]='\0';
-		for ( int i=0;i<72;i++)
-			FlashSendPack.data[i] = ' ';
-		FlashSendPack.data[0] = 'E';
-		NetPlayerClient->send((char*)&FlashSendPack,sizeof(netHolderFlash));
-	} else
-		NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
+	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
 	return;
 }
 
@@ -239,16 +194,7 @@ void NetworkSyncManager::StartRequest()
 	SendNetPack.m_step=0;
 	SendNetPack.m_life=0;
 
-	if (FlashXMLStyle)
-	{
-		netHolderFlash FlashSendPack;	
-		FlashSendPack.data[72]='\0';
-		for (int i=0;i<72;i++)
-			FlashSendPack.data[i] = ' ';
-		FlashSendPack.data[0] = 'S';
-		NetPlayerClient->send((char*)&FlashSendPack,sizeof(netHolderFlash));
-	} else
-		NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
+	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
 	
 	LOG->Info("Waiting for RECV");
 
