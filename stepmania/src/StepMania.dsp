@@ -1222,23 +1222,6 @@ SOURCE=.\arch\InputHandler\InputHandler_DirectInputHelper.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\arch\InputHandler\InputHandler_SDL.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\arch\InputHandler\InputHandler_SDL.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\arch\InputHandler\InputHandler_Win32_Para.cpp
 # End Source File
 # Begin Source File
