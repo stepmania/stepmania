@@ -38,7 +38,7 @@ ScreenBookkeeping::ScreenBookkeeping( CString sClassName ) : Screen( sClassName 
 
 	for( int i=0; i<NUM_BOOKKEEPING_COLS; i++ )
 	{
-		float fX = SCALE( i, 0.f, NUM_BOOKKEEPING_COLS-1, SCREEN_LEFT+50, SCREEN_RIGHT-50 );
+		float fX = SCALE( i, 0.f, NUM_BOOKKEEPING_COLS-1, SCREEN_LEFT+50, SCREEN_RIGHT-120 );
 		float fY = CENTER_Y+16;
 		m_textCols[i].LoadFromFont( THEME->GetPathToF("Common normal") );
 		m_textCols[i].SetText( ssprintf("%d",i) );
@@ -206,19 +206,30 @@ void ScreenBookkeeping::ChangeView( View newView )
 			int coins[HOURS_PER_DAY];
 			BOOKKEEPER->GetCoinsByHour( coins );
 
-			CString sTitle, sData;
-			for( int i=0; i<HOURS_PER_DAY; i++ )
+			int i;
+
+			CString sTitle1, sData1;
+			for( i=0; i<HOURS_PER_DAY/2; i++ )
 			{
-				sTitle += HourToString(i) + "\n";
-				sData += ssprintf("%d",coins[i]) + "\n";
+				sTitle1 += HourToString(i) + "\n";
+				sData1 += ssprintf("%d",coins[i]) + "\n";
+			}
+			
+			CString sTitle2, sData2;
+			for( i=(HOURS_PER_DAY/2); i<HOURS_PER_DAY; i++ )
+			{
+				sTitle2 += HourToString(i) + "\n";
+				sData2 += ssprintf("%d",coins[i]) + "\n";
 			}
 			
 			m_textCols[0].SetHorizAlign( Actor::align_left );
-			m_textCols[0].SetText( sTitle );
-			m_textCols[1].SetText( "" );
-			m_textCols[2].SetText( "" );
+			m_textCols[0].SetText( sTitle1 );
+			m_textCols[1].SetHorizAlign( Actor::align_right );
+			m_textCols[1].SetText( sData1 );
+			m_textCols[2].SetHorizAlign( Actor::align_left );
+			m_textCols[2].SetText( sTitle2 );
 			m_textCols[3].SetHorizAlign( Actor::align_right );
-			m_textCols[3].SetText( sData );
+			m_textCols[3].SetText( sData2 );
 		}
 		break;
 	default:
