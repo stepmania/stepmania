@@ -158,11 +158,11 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"MenuDown",
 		},
 		{	// m_szSecondaryFunction
-			"(MenuLeft)",
-			"(MenuRight)",
-			"(Start)",
 			"(MenuUp)",
 			"(MenuDown)",
+			"(Start)",
+			"(MenuLeft)",
+			"(MenuRight)",
 			"(dedicated)",
 			"",
 			"(dedicated)",
@@ -179,10 +179,10 @@ GameDef g_GameDefs[NUM_GAMES] =
 			PUMP_BUTTON_BACK,		// MENU_BUTTON_BACK
 		},
 		{	// m_SecondaryMenuButton
-			PUMP_BUTTON_UPLEFT,		// MENU_BUTTON_LEFT
-			PUMP_BUTTON_UPRIGHT,	// MENU_BUTTON_RIGHT
-			PUMP_BUTTON_DOWNLEFT,	// MENU_BUTTON_UP
-			PUMP_BUTTON_DOWNRIGHT,	// MENU_BUTTON_DOWN
+			PUMP_BUTTON_DOWNLEFT,		// MENU_BUTTON_LEFT
+			PUMP_BUTTON_DOWNRIGHT,	// MENU_BUTTON_RIGHT
+			PUMP_BUTTON_UPLEFT,	// MENU_BUTTON_UP
+			PUMP_BUTTON_UPRIGHT,	// MENU_BUTTON_DOWN
 			PUMP_BUTTON_CENTER,		// MENU_BUTTON_START
 			PUMP_BUTTON_BACK,		// MENU_BUTTON_BACK
 		},

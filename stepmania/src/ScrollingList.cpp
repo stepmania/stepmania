@@ -19,7 +19,7 @@
 #include "Course.h"
 #include "SongManager.h"
 
-const int DEFAULT_VISIBLE_ELEMENTS = 3;
+const int DEFAULT_VISIBLE_ELEMENTS = 9;
 const int DEFAULT_SPACING = 300;
 
 const D3DXCOLOR COLOR_SELECTED = D3DXCOLOR(1.0f,1.0f,1.0f,1);

@@ -37,6 +37,8 @@ const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User + 2);
 #define NEXT_SCREEN				THEME->GetMetric("ScreenEz2SelectStyle","NextScreen")
 #define USE_METRIC_FOR_MENU		THEME->GetMetricI("ScreenEz2SelectStyle","UseMetricForMenu")
 #define	SCROLLING_ELEMENT_SPACING THEME->GetMetricI("ScreenEz2SelectStyle","ScrollingElementSpacing")
+#define	DISABLE_2P THEME->GetMetricI("ScreenEz2SelectStyle","Disable2p")
+#define SCROLLING_LIST_Y THEME->GetMetricF("ScreenEz2SelectStyle","ScrollingListY")
 
 const float TWEEN_TIME		= 0.35f;
 
@@ -62,10 +64,10 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 	}
 	m_BGAnim[0].SetZoom(1.0f);
 
-		m_ScrollingList.SetXY( CENTER_X, CENTER_Y );
-		m_ScrollingList.SetSpacing( SCROLLING_ELEMENT_SPACING );
-		m_ScrollingList.SetNumberVisible( 5 );
-		this->AddChild( &m_ScrollingList );
+	m_ScrollingList.SetXY( CENTER_X, SCROLLING_LIST_Y );
+	m_ScrollingList.SetSpacing( SCROLLING_ELEMENT_SPACING );
+	m_ScrollingList.SetNumberVisible( 9 );
+	this->AddChild( &m_ScrollingList );
 
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -100,18 +102,9 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 
 	if (USE_METRIC_FOR_MENU == 1) // get it from the metrics
 	{
-		int numstyles = THEME->GetMetricI("ScreenEz2SelectStyle","NumStyles"); // get the number of styles we need
-
-		CStringArray asGraphicPaths;		
-		for (i=0; i<numstyles; i++) // load in the graphics we want to use
-		{
-			asGraphicPaths.Add( THEME->GetPathTo("Graphics",ssprintf("%s",THEME->GetMetric("ScreenEz2SelectStyle",ssprintf("StyleGraphic%d",i) ) ) ) );
-		}
-
-		m_ScrollingList.Load( asGraphicPaths );
-
+		RefreshStylesAndListFromMetrics();
 	}
-	else // get it from the styles....
+	else // get it from the styles......
 	{
 		RefreshStylesAndList();
 	}
@@ -202,6 +195,35 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
+}
+
+void ScreenEz2SelectStyle::RefreshStylesAndListFromMetrics()
+{
+	int numstyles = THEME->GetMetricI("ScreenEz2SelectStyle","NumStyles"); // get the number of styles we need
+	int numstyles2p = THEME->GetMetricI("ScreenEz2SelectStyle","NumStyles2p"); // get the number of styles we need
+
+	int iNumSidesJoined = 0;
+	for( int c=0; c<2; c++ )
+		if( GAMESTATE->m_bSideIsJoined[c] )
+			iNumSidesJoined++;	// left side, and right side
+
+	CStringArray asGraphicPaths;	
+	if( iNumSidesJoined == 2 ) // we got two players
+	{		
+		for (int i=0; i<numstyles2p; i++) // load in the graphics we want to use
+		{
+			asGraphicPaths.Add( THEME->GetPathTo("Graphics",ssprintf("%s",THEME->GetMetric("ScreenEz2SelectStyle",ssprintf("StyleGraphic2p%d",i) ) ) ) );
+		}
+	}
+	else // else we got one player
+	{
+		for (int i=0; i<numstyles; i++) // load in the graphics we want to use
+		{
+			asGraphicPaths.Add( THEME->GetPathTo("Graphics",ssprintf("%s",THEME->GetMetric("ScreenEz2SelectStyle",ssprintf("StyleGraphic%d",i) ) ) ) );
+		}
+	}
+
+	m_ScrollingList.Load( asGraphicPaths );
 }
 
 void ScreenEz2SelectStyle::RefreshStylesAndList()
@@ -301,7 +323,7 @@ presses the button bound to start
 ************************************/
 void ScreenEz2SelectStyle::MenuStart( PlayerNumber pn )
 {
-	if( !GAMESTATE->m_bSideIsJoined[pn] )
+	if( !GAMESTATE->m_bSideIsJoined[pn] && !DISABLE_2P )
 	{
 		// join them
 		GAMESTATE->m_bSideIsJoined[pn] = true;
@@ -311,8 +333,15 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber pn )
 		m_sprCursors[pn].SetTweenZoomY( 0 );
 		m_sprControllers[pn].BeginTweening( 0.25f );
 		m_sprControllers[pn].SetTweenZoomY( 0 );
-		
-		RefreshStylesAndList();
+		if (USE_METRIC_FOR_MENU == 1) // get it from the metrics
+		{		
+			RefreshStylesAndListFromMetrics();
+		}
+		else
+		{
+			RefreshStylesAndList();
+		}
+
 		m_ScrollingList.SetSelection( 0 );
 
 		/********** TODO: MAKE IT WORK FOR ALL GAME TYPES! ************/
@@ -330,17 +359,40 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber pn )
 	if (USE_METRIC_FOR_MENU == 1) // get it from the metrics
 	{
 		int chosen=m_ScrollingList.GetSelection();
+		int iNumSidesJoined = 0;
+		for( int c=0; c<2; c++ )
+			if( GAMESTATE->m_bSideIsJoined[c] )
+				iNumSidesJoined++;	// left side, and right side
 
 		GAMEMAN->GetGameplayStylesForGame( GAMESTATE->m_CurGame, m_aPossibleStyles );
-		GAMESTATE->m_CurStyle = m_aPossibleStyles[ THEME->GetMetricI("ScreenEz2SelectStyle",ssprintf("UseStyle%d",chosen) ) ];
+	
+		if( iNumSidesJoined == 2 ) // load in the Style to use based upon the list for 2players
+			GAMESTATE->m_CurStyle = m_aPossibleStyles[ THEME->GetMetricI("ScreenEz2SelectStyle",ssprintf("UseStyle2p%d",chosen) ) ];
+		else	// load in the Style to use based upon the list for 1player
+			GAMESTATE->m_CurStyle = m_aPossibleStyles[ THEME->GetMetricI("ScreenEz2SelectStyle",ssprintf("UseStyle%d",chosen) ) ];
 
-		int m_diSelection = THEME->GetMetricI("ScreenEz2SelectStyle",ssprintf("UseDifficulty%d",chosen) );
+
+		int m_diSelection;
+		
+		if( iNumSidesJoined == 2 )
+			m_diSelection = THEME->GetMetricI("ScreenEz2SelectStyle",ssprintf("UseDifficulty2p%d",chosen) );
+		else
+			m_diSelection = THEME->GetMetricI("ScreenEz2SelectStyle",ssprintf("UseDifficulty%d",chosen) );
 
 		switch( m_diSelection )
 		{
-			case 0:	GAMESTATE->m_PreferredDifficultyClass[PLAYER_1] = CLASS_EASY;		break;
-			case 1:	GAMESTATE->m_PreferredDifficultyClass[PLAYER_1] = CLASS_MEDIUM;	break;
-			case 2:	GAMESTATE->m_PreferredDifficultyClass[PLAYER_1] = CLASS_HARD;		break;
+			case 0:	
+				GAMESTATE->m_PreferredDifficultyClass[PLAYER_1] = CLASS_EASY;		
+				GAMESTATE->m_PreferredDifficultyClass[PLAYER_2] = CLASS_EASY;					
+				break;
+			case 1:	
+				GAMESTATE->m_PreferredDifficultyClass[PLAYER_1] = CLASS_MEDIUM;	
+				GAMESTATE->m_PreferredDifficultyClass[PLAYER_2] = CLASS_MEDIUM;	
+				break;
+			case 2:	
+				GAMESTATE->m_PreferredDifficultyClass[PLAYER_1] = CLASS_HARD;	
+				GAMESTATE->m_PreferredDifficultyClass[PLAYER_2] = CLASS_HARD;	
+				break;
 		}		
 
 	}

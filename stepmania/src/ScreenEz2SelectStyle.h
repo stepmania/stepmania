@@ -53,6 +53,8 @@ protected:
 
 	ScrollingList m_ScrollingList;
 	void RefreshStylesAndList();
+	void RefreshStylesAndListFromMetrics();
+
 
 	Sprite	m_sprBackgrounds[NUM_STYLES];
 

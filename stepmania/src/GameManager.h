@@ -21,6 +21,7 @@ class GameManager
 {
 public:
 	GameManager();
+	~GameManager();
 
 	GameDef*	GetGameDefForGame( Game g );
 	const StyleDef*	GetStyleDefForStyle( Style s );
