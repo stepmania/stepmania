@@ -102,7 +102,6 @@ public:
 	bool AllSongsAreFixed() const;
 
 	int GetEstimatedNumStages() const { return m_entries.size(); }
-	bool HasCourseDifficulty( StepsType st, CourseDifficulty cd ) const;
 	bool IsPlayableIn( StepsType st ) const;
 	bool CourseHasBestOrWorst() const;
 	RageColor GetColor() const;

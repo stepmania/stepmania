@@ -470,25 +470,9 @@ void Course::AutogenOniFromArtist( CString sArtistName, CString sArtistNameTrans
 	}
 }
 
-/*
- * Difficult courses do the following:
- *
- * For entries with a meter range, bump it up by DIFFICULT_METER_CHANGE;
- * eg. 3..6 -> 5..8, with a minimum no higher than MAX_BOTTOM_RANGE.
- *
- * For entries with a difficulty class, use notes one class harder, if they
- * exist. This way, if a static song entry points to a difficulty, we'll always
- * play that song, even if we're on difficult and harder notes don't exist.  (The
- * exception is a static song entry with a meter range, but that's not very useful.)
- */
-bool Course::HasCourseDifficulty( StepsType st, CourseDifficulty cd ) const
-{
-	return GetTrail( st, cd ) != NULL;
-}
-
 bool Course::IsPlayableIn( StepsType st ) const
 {
-	return HasCourseDifficulty( st, COURSE_DIFFICULTY_REGULAR );
+	return GetTrail( st, COURSE_DIFFICULTY_REGULAR ) != NULL;
 }
 
 static vector<Song*> GetFilteredBestSongs( StepsType st )
@@ -834,9 +818,6 @@ void Course::GetTrails( vector<Trail*> &AddTo, StepsType st ) const
 {
 	FOREACH_CourseDifficulty( cd )
 	{
-		if( !HasCourseDifficulty(st, cd) )
-			continue;
-
 		Trail *pTrail = GetTrail( st, cd );
 		if( pTrail == NULL )
 			continue;

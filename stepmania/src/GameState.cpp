@@ -1740,7 +1740,7 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 			return false;
 		if( asDiff.find(cd) == asDiff.end() )
 			continue; /* not available */
-		if( !pCourse || pCourse->HasCourseDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, cd ) )
+		if( !pCourse || pCourse->GetTrail( GAMESTATE->GetCurrentStyleDef()->m_StepsType, cd ) )
 			break;
 	}
 

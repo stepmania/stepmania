@@ -301,9 +301,6 @@ int Profile::GetPossibleCourseDancePointsForStepsType( StepsType st ) const
 
 			FOREACH_ShownCourseDifficulty( cd )
 			{
-				if( !pCourse->HasCourseDifficulty(st,cd) )
-					continue;
-
 				Trail* pTrail = pCourse->GetTrail(st,cd);
 				if( pTrail == NULL )
 					continue;
