@@ -1,7 +1,6 @@
 #ifndef RAGE_SOUND_POS_MAP_H
 #define RAGE_SOUND_POS_MAP_H
 
-#include "RageThreads.h"
 #include <deque>
 
 struct pos_map_t
@@ -23,14 +22,12 @@ struct pos_map_t
 class pos_map_queue
 {
 	deque<pos_map_t> m_Queue;
-	mutable RageMutex m_Mutex;
 
 	void Cleanup();
 
 public:
 	pos_map_queue();
 	pos_map_queue( const pos_map_queue &cpy );
-	pos_map_queue &operator=( const pos_map_queue &cpy );
 
 	/* Insert a mapping from frameno to position, containing pos got_frames. */
 	void Insert( int64_t frameno, int position, int got_frames );

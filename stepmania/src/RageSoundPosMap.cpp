@@ -8,40 +8,18 @@
  * is mostly harmless; the data is small. */
 const int pos_map_backlog_frames = 100000;
 
-pos_map_queue::pos_map_queue(): m_Mutex("pos_map_queue")
+pos_map_queue::pos_map_queue()
 {
 }
 
 
-pos_map_queue::pos_map_queue( const pos_map_queue &cpy ): m_Mutex("pos_map_queue")
+pos_map_queue::pos_map_queue( const pos_map_queue &cpy )
 {
 	*this = cpy;
 }
 
-pos_map_queue &pos_map_queue::operator=( const pos_map_queue &cpy )
-{
-	/* Hack: to prevent deadlock, always lock the lesser pointer first. */
-	if( this < &cpy )
-	{
-		m_Mutex.Lock();
-		cpy.m_Mutex.Lock();
-	} else {
-		cpy.m_Mutex.Lock();
-		m_Mutex.Lock();
-	}
-
-	m_Queue = cpy.m_Queue;
-
-	/* Unlock order doesn't matter. */
-	m_Mutex.Unlock();
-	cpy.m_Mutex.Unlock();
-	return *this;
-}
-
 void pos_map_queue::Insert( int64_t frameno, int pos, int got_frames )
 {
-	LockMut(m_Mutex);
-
 	if( m_Queue.size() )
 	{
 		/* Optimization: If the last entry lines up with this new entry, just merge them. */
@@ -61,8 +39,6 @@ void pos_map_queue::Insert( int64_t frameno, int pos, int got_frames )
 
 void pos_map_queue::Cleanup()
 {
-	LockMut(m_Mutex);
-
 	/* Determine the number of frames of data we have. */
 	int64_t total_frames = 0;
 	for( unsigned i = 0; i < m_Queue.size(); ++i )
@@ -79,8 +55,6 @@ void pos_map_queue::Cleanup()
 
 int64_t pos_map_queue::Search( int64_t frame, bool *approximate ) const
 {
-	LockMut(m_Mutex);
-
 	if( IsEmpty() )
 	{
 		if( approximate )
@@ -142,13 +116,11 @@ int64_t pos_map_queue::Search( int64_t frame, bool *approximate ) const
 
 void pos_map_queue::Clear()
 {
-	LockMut(m_Mutex);
 	m_Queue.clear();
 }
 
 bool pos_map_queue::IsEmpty() const
 {
-	LockMut(m_Mutex);
 	return m_Queue.empty();
 }
 
