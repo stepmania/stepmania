@@ -21,7 +21,8 @@
   #include <arpa/inet.h>
 #endif
 
-EzSockets::EzSockets() {
+EzSockets::EzSockets()
+{
   MAXCON = 5;
   memset (&addr,0,sizeof(addr)); //Clear the sockaddr_in structure
 
@@ -38,23 +39,28 @@ EzSockets::EzSockets() {
   state = skDISCONNECTED;
 }
 
-EzSockets::~EzSockets() {
+EzSockets::~EzSockets()
+{
   close();
   delete scks;
   delete times;
 }
 
 //Check to see if the socket has been created
-bool EzSockets::check() {
-  return(sock>0);
+bool EzSockets::check()
+{
+  return sock > 0;
 }
 
-bool EzSockets::create() {
+bool EzSockets::create()
+{
   return create(IPPROTO_TCP, SOCK_STREAM);
 }
 
-bool EzSockets::create(int Protocol) {
-  switch(Protocol) {
+bool EzSockets::create(int Protocol)
+{
+  switch(Protocol)
+  {
     case IPPROTO_TCP:
 	  return create(IPPROTO_TCP, SOCK_STREAM);
 	case IPPROTO_UDP:
@@ -72,14 +78,16 @@ bool EzSockets::create(int Protocol) {
   }
 }
 
-bool EzSockets::create(int Protocol, int Type) {
+bool EzSockets::create(int Protocol, int Type)
+{
   state = skDISCONNECTED;
   sock = socket(AF_INET, Type, Protocol);
-  return(sock>0);
+  return sock > 0;
 }
 
 
-bool EzSockets::bind(unsigned short port) {
+bool EzSockets::bind(unsigned short port)
+{
   if(!check())
 	return false;
 
@@ -87,33 +95,31 @@ bool EzSockets::bind(unsigned short port) {
   addr.sin_addr.s_addr = htonl(INADDR_ANY);
   addr.sin_port        = htons(port);
   
-  return(::bind(sock,(struct sockaddr*)&addr, sizeof(addr))==0);
+  return !::bind(sock,(struct sockaddr*)&addr, sizeof(addr));
 }
 
-bool EzSockets::listen() {
-  if(::listen(sock,MAXCON)!=0)
+bool EzSockets::listen()
+{
+  if (::listen(sock, MAXCON))
 	return false;
 
   state = skLISTENING;
   return true;
 }
 
-/************************************************************************\
-| To whomever edited this:                                               |
-|   Please do not assume LINUX is defined if you're compiling on Linux!  |
-|   It will not compile properly.                                        |
-\************************************************************************/
-#if defined(WIN32) || defined(DARWIN) // glibc already has socklen_t defined
+#if defined(WIN32) || defined(DARWIN)// glibc already has socklen_t defined
   typedef int socklen_t;
 #endif
 
-bool EzSockets::accept(EzSockets &socket) {
+bool EzSockets::accept(EzSockets& socket)
+{
   if (!blocking && !CanRead())
     return false;
 
   int length = sizeof(socket);
 
-  socket.sock = ::accept(sock,(struct sockaddr*) &socket.addr,(socklen_t*) &length);
+  socket.sock = ::accept(sock,(struct sockaddr*) &socket.addr, 
+						 (socklen_t*) &length);
 
   if(socket.sock<=0)
 	return false;
@@ -122,7 +128,8 @@ bool EzSockets::accept(EzSockets &socket) {
   return true;
 }
 
-void EzSockets::close() {
+void EzSockets::close()
+{
   state = skDISCONNECTED;
   inBuffer = "";
   outBuffer = "";
@@ -134,12 +141,14 @@ void EzSockets::close() {
   #endif
 }
 
-long EzSockets::uAddr() {
+long EzSockets::uAddr()
+{
   return addr.sin_addr.s_addr;
 }
 
 
-bool EzSockets::connect(const std::string& host,unsigned short port) {
+bool EzSockets::connect(const std::string& host,unsigned short port)
+{
   if(!check())
 	return false;
 
@@ -152,55 +161,58 @@ bool EzSockets::connect(const std::string& host,unsigned short port) {
 	phe = gethostbyname(host.c_str());
     addr.sin_addr = *((LPIN_ADDR)* phe->h_addr_list);
   #else
-	inet_pton(AF_INET,host.c_str(),&addr.sin_addr);
+	inet_pton(AF_INET,host.c_str(), &addr.sin_addr);
   #endif 
   addr.sin_family = AF_INET;
   addr.sin_port   = htons(port);
 
-  if(::connect(sock,(struct sockaddr*)&addr,sizeof(addr))!=0)
+  if(::connect(sock, (struct sockaddr*)&addr, sizeof(addr)))
     return false;
 
   state = skCONNECTED;
   return true;
 }
 
-bool EzSockets::CanRead() {
+bool EzSockets::CanRead()
+{
   FD_ZERO(scks);
-  FD_SET((unsigned)sock,scks);
+  FD_SET((unsigned)sock, scks);
 
-  return(select(sock+1,scks,NULL,NULL,times)>0);
+  return select(sock+1,scks,NULL,NULL,times) > 0;
 }
 
 bool EzSockets::IsError() {
-  if(state==skERROR)
+  if (state == skERROR)
 	return true;
 
   FD_ZERO(scks);
-  FD_SET((unsigned)sock,scks);
+  FD_SET((unsigned)sock, scks);
 
-  if(select(sock+1, NULL, NULL, scks, times)>=0)
+  if (select(sock+1, NULL, NULL, scks, times) >=0 )
 	return false;
 
-  state=skERROR;
+  state = skERROR;
   return true;
 }
 
-bool EzSockets::CanWrite() {
+bool EzSockets::CanWrite()
+{
   FD_ZERO(scks);
-  FD_SET((unsigned)sock,scks);
+  FD_SET((unsigned)sock, scks);
 
-  return(select(sock+1,NULL,scks,NULL,times)>0);
+  return select(sock+1, NULL, scks, NULL, times) > 0;
 }
 
-void EzSockets::update() {
-  if(IsError()) //If socket is in error, don't bother.
+void EzSockets::update()
+{
+  if (IsError()) //If socket is in error, don't bother.
 	return;
 
-  while(CanRead() && !IsError()) //Check for Reading
-	if(pUpdateRead()<1)
+  while (CanRead() && !IsError()) //Check for Reading
+	if (pUpdateRead() < 1)
 	  break;
 
-  if(CanWrite() && (outBuffer.length()>0))
+  if (CanWrite() && (outBuffer.length()>0))
     pUpdateWrite();
 }
 
@@ -208,7 +220,8 @@ void EzSockets::update() {
 /*********************\
 |   Raw Data System   |
 \*********************/
-void EzSockets::SendData(string &outData) {
+void EzSockets::SendData(const string& outData)
+{
   outBuffer.append(outData);
   if(blocking)
 	while ((outBuffer.length()>0) && !IsError())
@@ -217,8 +230,9 @@ void EzSockets::SendData(string &outData) {
 	update();
 }
 
-void EzSockets::SendData(const char* data,unsigned int bytes) {
-  outBuffer.append(data,bytes);
+void EzSockets::SendData(const char *data, unsigned int bytes)
+{
+  outBuffer.append(data, bytes);
   if(blocking)
 	while ((outBuffer.length()>0) && !IsError())
 	  pUpdateWrite();
@@ -226,13 +240,15 @@ void EzSockets::SendData(const char* data,unsigned int bytes) {
 	update();
 }
 
-int EzSockets::ReadData(char* data,unsigned int bytes) {	
+int EzSockets::ReadData(char *data, unsigned int bytes)
+{	
   int bytesRead = PeekData(data,bytes);
   inBuffer = inBuffer.substr(bytesRead);
   return bytesRead;
 }
 
-int EzSockets::PeekData(char* data,unsigned int bytes) {
+int EzSockets::PeekData(char *data, unsigned int bytes)
+{
   if(blocking)
 	while ((inBuffer.length()<bytes) && !IsError())
 	  pUpdateRead();
@@ -242,9 +258,9 @@ int EzSockets::PeekData(char* data,unsigned int bytes) {
 		break;
 
   int bytesRead = bytes;
-  if(inBuffer.length()<bytes)
+  if (inBuffer.length()<bytes)
     bytesRead = inBuffer.length();
-  memcpy(data,inBuffer.c_str(),bytesRead);
+  memcpy(data,inBuffer.c_str(), bytesRead);
 
   return bytesRead;
 }
@@ -253,57 +269,60 @@ int EzSockets::PeekData(char* data,unsigned int bytes) {
 /**********************************\
 |   Packet/Structure Data System   |
 \**********************************/
-void EzSockets::SendPack(char* data,unsigned int bytes) {
+void EzSockets::SendPack(const char *data, unsigned int bytes)
+{
   unsigned int SendSize = htonl(bytes);
-  SendData((char*)&SendSize,sizeof(int));
-  SendData(data,bytes);
+  SendData((const char *)&SendSize, sizeof(int));
+  SendData(data, bytes);
 }
 
-int EzSockets::ReadPack(char* data,unsigned int max) {
-  int size = PeekPack(data,max);
+int EzSockets::ReadPack(char *data, unsigned int max)
+{
+  int size = PeekPack(data, max);
 
-  if(size!=-1)
-	inBuffer=inBuffer.substr(size+4);
+  if (size != -1)
+	inBuffer = inBuffer.substr(size+4);
 
   return size;
 }
 
-int EzSockets::PeekPack(char* data,unsigned int max) {
-  if(CanRead())
+int EzSockets::PeekPack(char *data, unsigned int max)
+{
+  if (CanRead())
 	pUpdateRead();
 
-  if(blocking) {
-	while((inBuffer.length()<4) && !IsError()) {
+  if (blocking)
+  {
+	while ((inBuffer.length()<4) && !IsError())
 	  pUpdateRead();
-	}
   
-	if(IsError())
+	if (IsError())
 	  return -1;
   }
 
-  if(inBuffer.length()<4)
+  if (inBuffer.length()<4)
 	return -1;
 
-  unsigned int size=0;
-  PeekData((char*)&size,4);
-  size=ntohl(size);
+  unsigned int size;
+  PeekData((char*)&size, 4);
+  size = ntohl(size);
 
-  if(blocking)
-    while ((inBuffer.length()<(size+4)) && !IsError())
+  if (blocking)
+    while (inBuffer.length()<(size+4) && !IsError())
   	  pUpdateRead();
   else
-    if((inBuffer.length()<(size+4)) || (inBuffer.length()<=4))
+    if (inBuffer.length()<(size+4) || inBuffer.length()<=4)
       return -1;
 
   if (IsError())
     return -1; 
 	//What if we get disconnected while waiting for data?
 
-  string tBuff(inBuffer.substr(4,size));
-  if(tBuff.length()>max)
-    tBuff.substr(0,max);
+  string tBuff(inBuffer.substr(4, size));
+  if (tBuff.length() > max)
+    tBuff.substr(0, max);
 
-  memcpy (data,tBuff.c_str(),tBuff.length());
+  memcpy (data, tBuff.c_str(),tBuff.length());
   return size;
 }
 
@@ -311,32 +330,37 @@ int EzSockets::PeekPack(char* data,unsigned int max) {
 /*****************************************\
 |   Null Terminating String Data System   |
 \*****************************************/
-void EzSockets::SendStr(string& data, char delim) {
+void EzSockets::SendStr(const string& data, char delim)
+{
   char tDr[1];
   tDr[0] = delim;
-  SendData(data.c_str(),data.length());
-  SendData(tDr,1);
+  SendData(data.c_str(), data.length());
+  SendData(tDr, 1);
 }
 
-int EzSockets::ReadStr(string& data, char delim) {
-  int t = PeekStr(data,delim);
-  if(t>=0)
+int EzSockets::ReadStr(string& data, char delim)
+{
+  int t = PeekStr(data, delim);
+  if (t >= 0)
 	inBuffer = inBuffer.substr(t+1);
   return t;
 }
 
-int EzSockets::PeekStr(string& data, char delim) {
+int EzSockets::PeekStr(string& data, char delim)
+{
   int t = inBuffer.find(delim,0);
-  if(blocking)	{
-	while ((t==-1) && !IsError()) {
+  if (blocking)
+  {
+	while (t == -1 && !IsError())
+	{
 	  pUpdateRead();
-	  t = inBuffer.find(delim,0);
+	  t = inBuffer.find(delim, 0);
 	}
-	data = inBuffer.substr(0,t);
+	data = inBuffer.substr(0, t);
   }
 
-  if(t>=0)
-    data = inBuffer.substr(0,t);
+  if(t >= 0)
+    data = inBuffer.substr(0, t);
   return t;
 }
 
@@ -344,14 +368,16 @@ int EzSockets::PeekStr(string& data, char delim) {
 /************************\
 |   Stream Data System   |
 \************************/
-istream& operator >>(istream &is,EzSockets &obj) {
+istream& operator>>(istream &is, EzSockets& obj)
+{
   string writeString;
   obj.SendStr(writeString);
   is >> writeString;
   return is;
 }
 
-ostream& operator <<(ostream &os, EzSockets &obj) {
+ostream& operator<<(ostream &os, EzSockets &obj)
+{
   string readString;
   obj.ReadStr(readString);
   os << readString;
@@ -362,13 +388,14 @@ ostream& operator <<(ostream &os, EzSockets &obj) {
 /**************************\
 |   Internal Data System   |
 \**************************/
-int EzSockets::pUpdateRead() {
+int EzSockets::pUpdateRead()
+{
   char tempData[1024];
   int bytes = pReadData(tempData);
 
-  if(bytes>0)
-	inBuffer.append(tempData,bytes);
-  else if(bytes<=0)
+  if (bytes > 0)
+	inBuffer.append(tempData, bytes);
+  else if (bytes <= 0)
 	/* To get her I think CanRead was called at least once.
 	So if length equals 0 and can read says there is data than 
 	the socket was closed.*/
@@ -376,28 +403,31 @@ int EzSockets::pUpdateRead() {
   return bytes;
 }
 
-int EzSockets::pUpdateWrite() {
-  int bytes = pWriteData(outBuffer.c_str(),outBuffer.length());
+int EzSockets::pUpdateWrite()
+{
+  int bytes = pWriteData(outBuffer.c_str(), outBuffer.length());
 
-  if (bytes>0)
+  if (bytes > 0)
 	outBuffer = outBuffer.substr(bytes);
-  else if(bytes<0)
+  else if (bytes < 0)
 	state = skERROR;
   return bytes;
 }
 
 
-int EzSockets::pReadData(char* data) {
-  if((state == skCONNECTED)||(state == skLISTENING))
-    return recv(sock,data,1024,0);
-  else {
-	fromAddr_len = sizeof(sockaddr_in);
-	return recvfrom(sock,data,1024,0,(sockaddr*)&fromAddr,(socklen_t*)&fromAddr_len);
-  }
+int EzSockets::pReadData(char* data)
+{
+  if(state == skCONNECTED || state == skLISTENING)
+    return recv(sock, data, 1024, 0);
+	
+  fromAddr_len = sizeof(sockaddr_in);
+  return recvfrom(sock, data, 1024, 0, (sockaddr*)&fromAddr,
+				  (socklen_t*)&fromAddr_len);
 }
 
-int EzSockets::pWriteData(const char* data,int dataSize) {
-  return send(sock,data,dataSize,0);
+int EzSockets::pWriteData(const char* data, int dataSize)
+{
+  return send(sock, data, dataSize, 0);
 }
 
 /* 

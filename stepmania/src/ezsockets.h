@@ -30,7 +30,8 @@
 
 using namespace std;
 
-class EzSockets {
+class EzSockets
+{
 public:
 
 	EzSockets();
@@ -51,7 +52,7 @@ public:
 	bool accept(EzSockets &socket);
 
 	//Connect
-	bool connect(const std::string& host, unsigned short port);
+	bool connect(const string& host, unsigned short port);
 
 	//Kill socket
 	void close();
@@ -68,30 +69,31 @@ public:
 	void update();
 
 	//Raw data system 
-	void SendData(string & outData);
+	void SendData(const string& outData);
 	void SendData(const char *data, unsigned int bytes);
 	int ReadData(char *data, unsigned int bytes);
 	int PeekData(char *data, unsigned int bytes);
 
 	//Packet system (for structures and classes)
-	void SendPack(char * data, unsigned int bytes); 
-	int ReadPack(char * data, unsigned int max);
-	int PeekPack(char * data, unsigned int max);
+	void SendPack(const char *data, unsigned int bytes); 
+	int ReadPack(char *data, unsigned int max);
+	int PeekPack(char *data, unsigned int max);
 
 	//String (Flash) system / Null-terminated strings
-	void SendStr(string & data, char delim = '\0');
-	int ReadStr(string & data, char delim = '\0');
-	int PeekStr(string & data, char delim = '\0');
+	void SendStr(const string& data, char delim = '\0');
+	int ReadStr(string& data, char delim = '\0');
+	int PeekStr(string& data, char delim = '\0');
 
 
 	//Operators
 	char operator[] (int i); //Access buffer
-	friend istream& operator >>(istream &is,EzSockets &obj);
-	friend ostream& operator <<(ostream &os,const EzSockets &obj);
+	friend istream& operator>>(istream& is, EzSockets& obj);
+	friend ostream& operator<<(ostream& os, const EzSockets& obj);
 
 
 	bool blocking;
-	enum SockState { 
+	enum SockState
+	{ 
 		skDISCONNECTED = 0, 
 		skUNDEF1, //Not implemented
 		skLISTENING, 
@@ -130,14 +132,14 @@ private:
 
 
 	//Used for Select() command
-	fd_set  * scks;
-	timeval * times;
+	fd_set  *scks;
+	timeval *times;
 
 	//Buffers
 };
 
-	istream& operator >>(istream &is,EzSockets &obj);
-	ostream& operator <<(ostream &os,EzSockets &obj);
+istream& operator>>(istream& is, EzSockets& obj);
+ostream& operator<<(ostream& os, EzSockets& obj);
 
 
 #endif
