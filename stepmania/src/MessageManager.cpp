@@ -15,19 +15,19 @@ MessageManager::~MessageManager()
 {
 }
 
-void MessageManager::Subscribe( Actor* pActor, const CString& sMessage )
+void MessageManager::Subscribe( IMessageSubscriber* pSubscriber, const CString& sMessage )
 {
 	SubscribersSet& subs = m_MessageToSubscribers[sMessage];
 #if _DEBUG
-	SubscribersSet::iterator iter = subs.find(pActor);
+	SubscribersSet::iterator iter = subs.find(pSubscriber);
 	ASSERT_M( iter == subs.end(), "already subscribed" );
 #endif
-	subs.insert( pActor );
+	subs.insert( pSubscriber );
 }
-void MessageManager::Unsubscribe( Actor* pActor, const CString& sMessage )
+void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, const CString& sMessage )
 {
 	SubscribersSet& subs = m_MessageToSubscribers[sMessage];
-	SubscribersSet::iterator iter = subs.find(pActor);
+	SubscribersSet::iterator iter = subs.find(pSubscriber);
 	ASSERT( iter != subs.end() );
 	subs.erase( iter );
 }
@@ -35,9 +35,9 @@ void MessageManager::Unsubscribe( Actor* pActor, const CString& sMessage )
 void MessageManager::Broadcast( const CString& sMessage )
 {
 	SubscribersSet& subs = m_MessageToSubscribers[sMessage];
-	FOREACHS_CONST( Actor*, subs, p )
+	FOREACHS_CONST( IMessageSubscriber*, subs, p )
 	{
-		(*p)->PlayCommand( sMessage );
+		(*p)->HandleMessage( sMessage );
 	}
 }
 

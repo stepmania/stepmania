@@ -14,6 +14,7 @@
 #include "ActorCommands.h"
 #include "ThemeManager.h"
 #include "LuaReference.h"
+#include "MessageManager.h"
 
 
 // lua start
@@ -64,7 +65,7 @@ void Actor::Reset()
 	m_bZWrite = false;
 	m_CullMode = CULL_NONE;
 
-	m_mapNameToCommands.clear();
+	UnsubcribeAndClearCommands();
 }
 
 Actor::Actor()
@@ -72,6 +73,35 @@ Actor::Actor()
 	m_size = RageVector2( 1, 1 );
 	Reset();
 	m_bFirstUpdate = true;
+}
+
+static bool GetMessageNameFromCommandName( const CString &sCommandName, CString &sMessageNameOut )
+{
+	if( sCommandName.Right(7) == "Message" )
+	{
+		sMessageNameOut = sCommandName.Left(sCommandName.size()-7);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void Actor::UnsubcribeAndClearCommands()
+{
+	FOREACHM_CONST( CString, apActorCommands, m_mapNameToCommands, e )
+	{
+		CString sMessage;
+		if( GetMessageNameFromCommandName(e->first, sMessage) )
+			MESSAGEMAN->Unsubscribe( this, sMessage );
+	}
+	m_mapNameToCommands.clear();
+}
+
+Actor::~Actor()
+{
+	UnsubcribeAndClearCommands();
 }
 
 void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
@@ -95,20 +125,18 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 	FOREACH_CONST_Attr( pNode, a )
 	{
 		CString sKeyName = a->m_sName; /* "OnCommand" */
-		sKeyName.MakeLower();
 
-		if( sKeyName.Right(7) != "command" )
+		if( sKeyName.Right(7).CompareNoCase("Command") != 0 )
 			continue; /* not a command */
 
 		CString sValue = a->m_sValue;
 		THEME->EvaluateString( sValue );
-		Commands cmds = ParseCommands( sValue );
-		apActorCommands apac( new ActorCommands( cmds ) );
+		apActorCommands apac( new ActorCommands( sValue ) );
 
 		CString sCmdName;
 		/* Special case: "Command=foo" -> "OnCommand=foo" */
 		if( sKeyName.size() == 7 )
-			sCmdName="on";
+			sCmdName="On";
 		else
 			sCmdName = sKeyName.Left( sKeyName.size()-7 );
 		AddCommand( sCmdName, apac );
@@ -997,18 +1025,25 @@ void Actor::QueueCommand( const CString& sCommandName )
 void Actor::AddCommand( const CString &sCmdName, apActorCommands apac )
 {
 	m_mapNameToCommands[sCmdName] = apac;
+	CString sMessage;
+	if( GetMessageNameFromCommandName(sCmdName, sMessage) )
+		MESSAGEMAN->Subscribe( this, sMessage );
 }
 
 void Actor::PlayCommand( const CString &sCommandName )
 {
 	CString sKey = sCommandName;
-	sKey.MakeLower();
 	map<CString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sKey );
 
 	if( it == m_mapNameToCommands.end() )
 		return;
 
 	RunCommands( *it->second );
+}
+
+void Actor::HandleMessage( const CString& sMessage )
+{
+	PlayCommand( sMessage + "Message" );
 }
 
 

@@ -11,6 +11,7 @@ struct XNode;
 struct lua_State;
 class LuaReference;
 #include "LuaBinding.h"
+#include "MessageManager.h"
 
 
 #define DRAW_ORDER_BEFORE_EVERYTHING	-100
@@ -18,11 +19,12 @@ class LuaReference;
 #define DRAW_ORDER_AFTER_EVERYTHING		200
 
 
-class Actor
+class Actor : public IMessageSubscriber
 {
 public:
 	Actor();
-	virtual ~Actor() {}
+	virtual ~Actor();
+	void UnsubcribeAndClearCommands();
 	virtual void Reset();
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
@@ -316,6 +318,12 @@ public:
 
 	static float GetCommandsLengthSeconds( const LuaReference& cmds );
 	static float GetCommandsLengthSeconds( const apActorCommands& cmds ) { return GetCommandsLengthSeconds( *cmds ); }	// convenience
+
+	//
+	// Messages
+	//
+	virtual void HandleMessage( const CString& sMessage );
+
 
 	//
 	// Animation

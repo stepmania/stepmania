@@ -5,8 +5,12 @@
 
 #include <set>
 #include <map>
-class Actor;
 
+class IMessageSubscriber
+{
+public:
+	virtual void HandleMessage( const CString& sMessage ) = 0;
+};
 
 class MessageManager
 {
@@ -14,12 +18,12 @@ public:
 	MessageManager();
 	~MessageManager();
 
-	void Subscribe( Actor* pActor, const CString& sMessage );
-	void Unsubscribe( Actor* pActor, const CString& sMessage );
+	void Subscribe( IMessageSubscriber* pSubscriber, const CString& sMessage );
+	void Unsubscribe( IMessageSubscriber* pSubscriber, const CString& sMessage );
 	void Broadcast( const CString& sMessage );
 
 private:
-	typedef set<Actor*> SubscribersSet;
+	typedef set<IMessageSubscriber*> SubscribersSet;
 	map<CString,SubscribersSet> m_MessageToSubscribers;
 };
 
