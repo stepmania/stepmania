@@ -340,19 +340,7 @@ void MovieTexture_DShow::CreateTexture()
 	if(m_uTexHandle)
 		return;
 
-	/* My test clip (a high-res, MPEG1 video) goes from 12 fps to 14 fps
-	 * if I use a 16-bit internalformat instead of a 32-bit one; that's a
-	 * 16% jump, which is significant.  (Simply decoding this video is probably
-	 * taking 30-40% CPU.)  It means much less bus traffic (sending textures to
-	 * the card is slow).
-	 *
-	 * So, it *might* make sense to make this separately configurable.  However,
-	 * that's getting pretty detailed; well beyond what most users will tweak.  
-	 * Some way to figure this out dynamically would be nice, but it's probably
-	 * impossible.  (For example, 24-bit textures may even be cheaper on pure
-	 * AGP cards; 16-bit requires a conversion.) */
 	PixelFormat pixfmt;
-
 	switch( TEXTUREMAN->GetMovieColorDepth() )
 	{
 	default:
