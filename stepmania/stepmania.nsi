@@ -48,21 +48,6 @@ Page instfiles
 ;
 Function .onInit
 
-; force uninstall of previous version using Vise
-IfFileExists "$INSTDIR\uninstal.log" prompt_uninstall_vise old_vise_not_installed
-prompt_uninstall_vise:
-MessageBox MB_YESNO|MB_ICONINFORMATION "The previous version of StepMania must be uninstalled before continuing.$\nDo you wish to continue?" IDYES do_uninstall_vise
-Abort
-do_uninstall_vise:
-ExecWait '$WINDIR\unvise32.exe $INSTDIR\uninstal.log' $R1	; don't use quotes here, or unvise32 will fail
-
-; unvise32.exe doesn't return a useful exit code.  See if uninstal.log still exists.
-IfFileExists "$INSTDIR\uninstal.log" vise_still_exists old_vise_not_installed
-vise_still_exists:
-MessageBox MB_YESNO|MB_DEFBUTTON2|MB_ICONINFORMATION "Uninstallation failed.  Install anyway?" IDYES old_vise_not_installed
-Abort
-
-old_vise_not_installed:
 
 ; force uninstall of previous version using NSIS
 ; We need to wait until the uninstaller finishes before continuing, since it's possible
