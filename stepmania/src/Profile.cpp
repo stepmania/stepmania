@@ -1003,7 +1003,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 	if( bThisIsMachineProfile )
 	{
 		SaveMachineHtmlToDir( sDir, this );
-		SavePlayerHtmlToDir( sDir+"temp/", this, PROFILEMAN->GetMachineProfile() );	// remove this when done debugging
+//		SavePlayerHtmlToDir( sDir+"temp/", this, PROFILEMAN->GetMachineProfile() );	// remove this when done debugging
 	}
 	else
 	{
