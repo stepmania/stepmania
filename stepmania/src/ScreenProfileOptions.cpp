@@ -139,7 +139,7 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_DoneCreating:
-		if( !ScreenTextEntry::s_bCancelledLast )
+		if( !ScreenTextEntry::s_bCancelledLast && ScreenTextEntry::s_sLastAnswer != "" )
 		{
 			CString sNewName = ScreenTextEntry::s_sLastAnswer;
 			bool bResult = PROFILEMAN->CreateLocalProfile( sNewName );
