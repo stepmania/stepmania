@@ -58,21 +58,10 @@ void RageTextureManager::Update( float fDeltaTime )
 //-----------------------------------------------------------------------------
 RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 {
-	/* Don't do this; just get case right to begin with. */
-//	ID.filename.MakeLower();
-
 	LOG->Trace( "RageTextureManager::LoadTexture(%s).", ID.filename.GetString() );
 
-
-	// Convert the path to lowercase so that we don't load duplicates.
-	// Really, this does not solve the duplicate problem.  We could have to copies
-	// of the same bitmap if there are equivalent but different paths
-	// (e.g. "Bitmaps\me.bmp" and "..\Rage PC Edition\Bitmaps\me.bmp" ).
-
-	/* This will return a texture that is equivalent to ID; here, that means it
-	 * has the same filename.  (see RageTextureID::operator<).  Once we have that,
-	 * we need to search through textures that are equivalent, looking for one
-	 * that's equal. */
+	/* We could have two copies of the same bitmap if there are equivalent but
+	 * different paths, e.g. "Bitmaps\me.bmp" and "..\Rage PC Edition\Bitmaps\me.bmp". */
 	std::map<RageTextureID, RageTexture*>::iterator p = m_mapPathToTexture.find(ID);
 	while(p != m_mapPathToTexture.end())
 	{
@@ -81,8 +70,7 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 		return p->second;
 	}
 
-	// the texture is not already loaded.  Load it.
-
+	// The texture is not already loaded.  Load it.
 	CString sDir, sFName, sExt;
 	splitpath( ID.filename, sDir, sFName, sExt );
 	sExt.MakeLower();
@@ -96,8 +84,6 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 	LOG->Trace( "RageTextureManager: Loaded '%s'.", ID.filename.GetString() );
 
 	m_mapPathToTexture[ID] = pTexture;
-
-//	LOG->Trace( "Display: %.2f KB video memory left",	DISPLAY->GetDevice()->GetAvailableTextureMem()/1000000.0f );
 
 	return pTexture;
 }
@@ -114,23 +100,24 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 	t->m_iRefCount--;
 	ASSERT( t->m_iRefCount >= 0 );
 
+	if( t->m_iRefCount )
+		continue; /* Can't unload textures that are still referenced. */
+
+	bool bDeleteThis = false;
+
 	/* Always unload movies, so we don't waste time decoding.
 	 *
 	 * Actually, multiple refs to a movie won't work; they should play independently,
 	 * but they'll actually share settings.  Not worth fixing, since we don't currently
 	 * using movies for anything except BGAs (though we could).
 	 */
-	if( t->m_iRefCount==0 )
-	{
-		bool bDeleteThis = false;
-		if( t->IsAMovie() )
-			bDeleteThis = true;
-		if( !m_bDelayedDelete || !t->m_bCacheThis )
-			bDeleteThis = true;
-		
-		if( bDeleteThis )
-			DeleteTexture( t );
-	}
+	if( t->IsAMovie() )
+		bDeleteThis = true;
+	if( !m_bDelayedDelete || !t->m_bCacheThis )
+		bDeleteThis = true;
+	
+	if( bDeleteThis )
+		DeleteTexture( t );
 }
 
 void RageTextureManager::DeleteTexture( RageTexture *t )
@@ -155,43 +142,19 @@ void RageTextureManager::GarbageCollect( GCType type )
 		CString sPath = j->first.filename;
 		RageTexture* t = j->second;
 
-		if( t->m_iRefCount==0 )
-		{
-			bool bDeleteThis = false;
-			if( type==cached_textures && !m_bDelayedDelete )
-				bDeleteThis = true;
-			if( type==delayed_delete )
-				bDeleteThis = true;
-				
-			if( bDeleteThis )
-				DeleteTexture( t );
-		}
+		if( t->m_iRefCount )
+			continue; /* Can't unload textures that are still referenced. */
+
+		bool bDeleteThis = false;
+		if( type==cached_textures && !m_bDelayedDelete )
+			bDeleteThis = true;
+		if( type==delayed_delete )
+			bDeleteThis = true;
+			
+		if( bDeleteThis )
+			DeleteTexture( t );
 	}
 }
-
-/*
-
-  Redundant.  -Chris
-
-void RageTextureManager::UnloadTexture( RageTextureID ID )
-{
-	ID.filename.MakeLower();
-
-	if( ID.filename == "" )
-	{
-		//LOG->Trace( "RageTextureManager::UnloadTexture(): tried to Unload a blank texture." );
-		return;
-	}
-	LOG->Trace( "RageTextureManager::UnloadTexture(%s).", ID.filename.GetString() );
-
-	std::map<RageTextureID, RageTexture*>::iterator p = m_mapPathToTexture.find(ID);
-	if(p == m_mapPathToTexture.end())
-		RageException::Throw( "Tried to Unload texture '%s' that wasn't loaded.", ID.filename.GetString() );
-	
-	UnloadTexture(p->second);
-	//LOG->Trace( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath.GetString(), pTexture->m_iRefCount );
-}
-*/
 
 
 void RageTextureManager::ReloadAll()
