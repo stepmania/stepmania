@@ -12,6 +12,12 @@ ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
 // of the dimensions up to meet the requested aspect ratio.
 //
 
+/* 
+ * XXX: The theme resolution isn't necessarily 4:3; a natively widescreen
+ * theme would have eg. 16:9 or 16:10.
+ *
+ * Note that "aspect ratio" here always means DAR; we don't care about the SAR.
+ */
 #define ASPECT_4_TO_3 (4/3.0f)
 
 float ScreenWidth()
