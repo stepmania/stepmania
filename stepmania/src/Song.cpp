@@ -22,6 +22,7 @@
 #include "RageException.h"
 #include "SongCacheIndex.h"
 #include "GameManager.h"
+#include "PrefsManager.h"
 
 
 const int FILE_CACHE_VERSION = 64;	// increment this when Song or Notes changes to invalidate cache
@@ -107,6 +108,7 @@ Song::Song()
 	m_fMusicLengthSeconds = 0;
 	m_fFirstBeat = -1;
 	m_fLastBeat = -1;
+	m_SelectionDisplay = SHOW_ALWAYS;
 }
 
 Song::~Song()
@@ -853,6 +855,18 @@ bool Song::LoadFromSMFile( CString sPath )
 		else if( 0==stricmp(sValueName,"OFFSET") )
 			m_fBeat0OffsetInSeconds = (float)atof( sParams[1] );
 
+		else if( 0==stricmp(sValueName,"SELECTABLE") )
+		{
+			if(!stricmp(sParams[1],"YES"))
+				m_SelectionDisplay = SHOW_ALWAYS;
+			else if(!stricmp(sParams[1],"NO"))
+				m_SelectionDisplay = SHOW_NEVER;
+			else if(!stricmp(sParams[1],"ROULETTE"))
+				m_SelectionDisplay = SHOW_ROULETTE;
+			else
+				LOG->Warn( "The song file '%s' has an unknown #SELECTABLE value, \"%s\"; ignored.", sPath, sParams[1]);
+		}
+
 		else if( 0==stricmp(sValueName,"STOPS") || 0==stricmp(sValueName,"FREEZES") )
 		{
 			CStringArray arrayFreezeExpressions;
@@ -1299,6 +1313,17 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 	fprintf( fp, "#OFFSET:%.2f;\n", m_fBeat0OffsetInSeconds );
 	fprintf( fp, "#SAMPLESTART:%.2f;\n", m_fMusicSampleStartSeconds );
 	fprintf( fp, "#SAMPLELENGTH:%.2f;\n", m_fMusicSampleLengthSeconds );
+	fprintf( fp, "#SELECTABLE:" );
+	switch(m_SelectionDisplay) {
+	default: ASSERT(0);  /* fallthrough */
+	case SHOW_ALWAYS:
+		fprintf( fp, "YES" ); break;
+	case SHOW_NEVER:
+		fprintf( fp, "NO" ); break;
+	case SHOW_ROULETTE:
+		fprintf( fp, "ROULETTE" ); break;
+	}
+	fprintf( fp, ";\n" );
 
 	fprintf( fp, "#BPMS:" );
 	for( i=0; i<m_BPMSegments.GetSize(); i++ )
@@ -1583,4 +1608,16 @@ int CompareSongPointersByMostPlayed(const void *arg1, const void *arg2)
 void SortSongPointerArrayByMostPlayed( CArray<Song*, Song*> &arraySongPointers )
 {
 	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByMostPlayed );
+}
+
+bool Song::NormallyDisplayed() const 
+{
+	if(!PREFSMAN->m_bHiddenSongs) return true;
+	return m_SelectionDisplay == SHOW_ALWAYS;
+}
+
+bool Song::RouletteDisplayed() const
+{
+	if(!PREFSMAN->m_bHiddenSongs) return true;
+	return m_SelectionDisplay != SHOW_NEVER;
 }

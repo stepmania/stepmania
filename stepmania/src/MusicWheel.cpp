@@ -436,6 +436,11 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			{
 				Song* pSong = SONGMAN->m_pSongs[i];
 
+				if( !bRoulette && !pSong->NormallyDisplayed() )
+					continue;
+				if( bRoulette && !pSong->RouletteDisplayed() )
+					continue;
+
 				CArray<Notes*, Notes*> arraySteps;
 				pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, arraySteps );
 

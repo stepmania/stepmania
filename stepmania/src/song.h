@@ -44,6 +44,11 @@ struct BackgroundChange
 
 class Song
 {
+	/* Set when this song should be displayed in the music wheel: */
+	enum { SHOW_ALWAYS,		/* all the time */
+		   SHOW_ROULETTE,	/* only when rouletting */
+		   SHOW_NEVER }		/* never (unless song hiding is turned off) */
+		m_SelectionDisplay;
 public:
 	Song();
 	~Song();
@@ -184,6 +189,8 @@ public:
 	bool IsNew() const;
 	bool IsEasy( NotesType nt ) const;
 	Grade GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc ) const;
+	bool NormallyDisplayed() const;
+	bool RouletteDisplayed() const;
 };
 
 

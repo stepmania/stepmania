@@ -36,6 +36,7 @@ public:
 	float	m_fBGBrightness;
 	int 	m_iMovieDecodeMS;
 	bool	m_bUseBGIfNoBanner;
+	bool	m_bHiddenSongs;
 
 	bool	m_bIgnoreJoyAxes;	
 	bool	m_bOnlyDedicatedMenuButtons;
