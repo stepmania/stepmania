@@ -476,6 +476,14 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 	Course* pCourse = GetSelectedCourse();
 	CourseEntry* pEntry = GetSelectedEntry();
 
+	// HACK:  I can't decide how to handle Courses with 0 entries.  For now,
+	// just add one entry to it.
+	if( pEntry == NULL )
+	{
+		pCourse->m_entries.push_back( CourseEntry() );
+		pEntry = GetSelectedEntry();
+	}
+
 	switch( row )
 	{
 	case ROW_COURSE:
