@@ -303,3 +303,23 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 		}
 	}
 }
+
+/* XXX: Should we store song options, too? */
+/* Store the player's preferred options.  This is called at the very beginning
+ * of gameplay. */
+void GameState::StoreSelectedOptions()
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		GAMESTATE->m_SelectedOptions[p] = GAMESTATE->m_PlayerOptions[p];
+}
+
+/* Restore the preferred options.  This is called after a song ends, before
+ * setting new course options, so options from one song don't carry into the
+ * next and we default back to the preferred options.  This is also called
+ * at the end of gameplay to restore options. */
+void GameState::RestoreSelectedOptions()
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		GAMESTATE->m_PlayerOptions[p] = GAMESTATE->m_SelectedOptions[p];
+	GAMESTATE->m_SongOptions.Init();
+}

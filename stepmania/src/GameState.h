@@ -80,6 +80,9 @@ public:
 	RageColor		GetStageColor();
 	int				GetCourseSongIndex();
 
+	void StoreSelectedOptions();
+	void RestoreSelectedOptions();
+
 	//
 	// State Info used during gameplay
 	//
