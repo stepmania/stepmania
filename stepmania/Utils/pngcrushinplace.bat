@@ -1,3 +1,3 @@
-pngcrush %1 new%1
+pngcrush %1 %2
 del %1
-rename new%1 %1
+rename %2 %1
