@@ -1,0 +1,1 @@
+Place Note Skin folders in the appropriate game folder.  See the readme for details.

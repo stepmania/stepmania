@@ -1,0 +1,1 @@
+Movie files in this directory will be cycled through randomly if the Background Mode is set to "Random Movies"

@@ -1,0 +1,1 @@
+Place Theme folders here.  More more information on the theme format, see the readme file.

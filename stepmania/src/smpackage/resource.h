@@ -18,7 +18,6 @@
 #define IDC_EDIT_MESSAGE1               1005
 #define IDC_EDIT_MESSAGE3               1006
 #define IDC_EDIT_MESSAGE2               1007
-#define IDC_TREE1                       1008
 
 // Next default values for new objects
 // 

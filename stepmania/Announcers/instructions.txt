@@ -1,0 +1,1 @@
+Place announcer folders in this directory.  See the readme for more details.

@@ -69,15 +69,15 @@ BOOL CSmpackageDlg::OnInitDialog()
 	//
 	{
 		CStringArray as1;
-		GetDirListing( "Announcers/*.*", as1, true, true );
-		GetDirListing( "Themes/*.*", as1, true, true );
-		GetDirListing( "BGAnimations/*.*", as1, true, true );
-		GetDirListing( "RandomMovies/*.avi", as1, false, true );
-		GetDirListing( "RandomMovies/*.mpg", as1, false, true );
-		GetDirListing( "RandomMovies/*.mpeg", as1, false, true );
-		GetDirListing( "Visualizations/*.avi", as1, false, true );
-		GetDirListing( "Visualizations/*.mpg", as1, false, true );
-		GetDirListing( "Visualizations/*.mpeg", as1, false, true );
+		GetDirListing( "Announcers\\*.*", as1, true, true );
+		GetDirListing( "Themes\\*.*", as1, true, true );
+		GetDirListing( "BGAnimations\\*.*", as1, true, true );
+		GetDirListing( "RandomMovies\\*.avi", as1, false, true );
+		GetDirListing( "RandomMovies\\*.mpg", as1, false, true );
+		GetDirListing( "RandomMovies\\*.mpeg", as1, false, true );
+		GetDirListing( "Visualizations\\*.avi", as1, false, true );
+		GetDirListing( "Visualizations\\*.mpg", as1, false, true );
+		GetDirListing( "Visualizations\\*.mpeg", as1, false, true );
 		for( int i=0; i<as1.GetSize(); i++ )
 			m_listBox.AddString( as1[i] );
 	}
@@ -89,7 +89,7 @@ BOOL CSmpackageDlg::OnInitDialog()
 	//
 	{
 		CStringArray as1;
-		GetDirListing( "NoteSkins/*.*", as1, true, true );
+		GetDirListing( "NoteSkins\\*.*", as1, true, true );
 		for( int i=0; i<as1.GetSize(); i++ )
 		{
 			CStringArray as2;
@@ -104,7 +104,7 @@ BOOL CSmpackageDlg::OnInitDialog()
 	//
 	{
 		CStringArray as1;
-		GetDirListing( "Songs/*.*", as1, true, true );
+		GetDirListing( "Songs\\*.*", as1, true, true );
 		for( int i=0; i<as1.GetSize(); i++ )
 		{
 			CStringArray as2;

@@ -390,7 +390,9 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 
 CString ThemeManager::GetPathTo( CString sAssetCategory, CString sFileName ) 
 {
+#ifdef _DEBUG
 try_element_again:
+#endif
 
 	sAssetCategory.MakeLower();
 	sFileName.MakeLower();
@@ -510,7 +512,9 @@ CString ThemeManager::GetMetricsPathFromName( CString sThemeName )
 
 CString ThemeManager::GetMetric( CString sScreenName, CString sValueName )
 {
+#ifdef _DEBUG
 try_metric_again:
+#endif
 	CString sCurMetricPath = GetMetricsPathFromName(m_sCurThemeName);
 	CString sDefaultMetricPath = GetMetricsPathFromName(BASE_THEME_NAME);
 

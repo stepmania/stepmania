@@ -1,0 +1,1 @@
+Place CRS and course banner files here.  See the readme for details.
