@@ -36,6 +36,8 @@ void ScoreDisplayCalories::LoadFromNode( const CString& sDir, const XNode* pNode
 	
 	m_sMessageOnStep = ssprintf("StepP%d",m_PlayerNumber+1);
 	
+	UpdateNumber();
+
 	MESSAGEMAN->Subscribe( this, m_sMessageOnStep );
 }
 
@@ -43,11 +45,17 @@ void ScoreDisplayCalories::PlayCommand( const CString &sCommandName )
 {
 	if( sCommandName == m_sMessageOnStep )
 	{
-		float fCals = STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].fCaloriesBurned;
-		this->SetTargetNumber( fCals );
+		UpdateNumber();
 	}
 	
 	RollingNumbers::PlayCommand( sCommandName );
+}
+
+void ScoreDisplayCalories::UpdateNumber()
+{
+	float fCals = STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].fCaloriesBurned;
+	fCals += STATSMAN->GetAccumStageStats().m_player[m_PlayerNumber].fCaloriesBurned;
+	SetTargetNumber( fCals );
 }
 
 /*

@@ -30,6 +30,8 @@ public:
 
 	void PlayCommand( const CString &sCommandName );
 
+	void UpdateNumber();
+
 	//
 	// Commands
 	//
