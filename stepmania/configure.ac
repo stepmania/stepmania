@@ -103,9 +103,21 @@ if test "$have_libavcodec" = "yes"; then
       #include <ffmpeg/avcodec.h>
       int main()
       {
-	      return ( FFMPEG_VERSION_INT < 0x000408 )? 1:0;
+	      return ( LIBAVCODEC_VERSION_INT < 0x000408 )? 1:0;
       }
       ],,have_libavcodec=no,)
+  AC_MSG_RESULT($have_libavcodec)
+fi
+
+if test "$have_libavformat" = "yes"; then
+  AC_MSG_CHECKING([for libavformat >= 0.4.8])
+  AC_TRY_RUN([
+      #include <ffmpeg/avformat.h>
+      int main()
+      {
+	      return ( LIBAVFORMAT_VERSION_INT < 0x000408 )? 1:0;
+      }
+      ],,have_libavformat=no,)
   AC_MSG_RESULT($have_libavformat)
 fi
 
@@ -127,6 +139,7 @@ if test x$enable_gtk2 = xyes; then
 fi
 
 AC_CHECK_HEADER(linux/soundcard.h, [AC_DEFINE(HAVE_OSS, 1, [OSS support available])])
+AC_ARG_ENABLE(force-oss, AC_HELP_STRING([--enable-force-oss], [Force OSS]), force_oss=$enableval, force_oss=yes)
 AC_CHECK_HEADER(stdint.h, , [AC_DEFINE(MISSING_STDINT_H, 1, [stdint.h is missing])])
 AC_CHECK_HEADERS([inttypes.h])
 
@@ -149,6 +162,10 @@ AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
 AM_CONDITIONAL(HAVE_GTK, test "$enable_gtk2" != "no" )
 AM_CONDITIONAL(HAVE_OSS, test x$ac_cv_header_linux_soundcard_h = xyes )
 AM_CONDITIONAL(USE_CRASH_HANDLER, test "$use_crash_handler" = "yes" )
+
+if test x$force_oss = xyes && test x$ac_cv_header_linux_soundcard_h = xyes; then
+	AC_DEFINE([FORCE_OSS], 1, [Force OSS Usage])
+fi
 
 AC_CHECK_DECL(powf, , AC_DEFINE([NEED_POWF],1,[Need powf]), [#include <math.h>])
 AC_CHECK_DECL(sqrtf, , AC_DEFINE([NEED_SQRTF],1,[Need sqrtf]), [#include <math.h>])

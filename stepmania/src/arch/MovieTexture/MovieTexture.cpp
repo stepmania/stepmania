@@ -99,7 +99,7 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 #ifdef _WINDOWS
 			if (!Driver.CompareNoCase("DShow")) ret = new MovieTexture_DShow(ID);
 #endif
-#ifdef SUPPORT_MOVIETEXTURE_FFMPEG
+#ifdef HAVE_FFMPEG
 			if (!Driver.CompareNoCase("FFMpeg")) ret = new MovieTexture_FFMpeg(ID);
 #endif
 			if (!Driver.CompareNoCase("Null")) ret = new MovieTexture_Null(ID);
