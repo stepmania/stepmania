@@ -46,7 +46,8 @@ protected:
 	ThemeMetric2D<float>	CURSOR_OFFSET_Y_FROM_ICON;
 	ThemeMetric<float>		PRE_SWITCH_PAGE_SECONDS;
 	ThemeMetric<float>		POST_SWITCH_PAGE_SECONDS;
-	ThemeMetric<float>		EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS;
+	ThemeMetric<bool>		OVERRIDE_SLEEP_AFTER_TWEEN_OFF_SECONDS;
+	ThemeMetric<float>		SLEEP_AFTER_TWEEN_OFF_SECONDS;
 	ThemeMetric1D<CString>	OPTION_ORDER;
 	ThemeMetric<bool>		WRAP_CURSOR;
 	ThemeMetric<bool>		SHOW_SCROLLER;

@@ -33,7 +33,8 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	CURSOR_OFFSET_Y_FROM_ICON(m_sName,CURSOR_OFFSET_Y_FROM_ICON_NAME,NUM_PLAYERS,NUM_CURSOR_PARTS),
 	PRE_SWITCH_PAGE_SECONDS(m_sName,"PreSwitchPageSeconds"),
 	POST_SWITCH_PAGE_SECONDS(m_sName,"PostSwitchPageSeconds"),
-	EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS(m_sName,"ExtraSleepAfterTweenOffSeconds"),
+	OVERRIDE_SLEEP_AFTER_TWEEN_OFF_SECONDS(m_sName,"OverrideSleepAfterTweenOffSeconds"),
+	SLEEP_AFTER_TWEEN_OFF_SECONDS(m_sName,"SleepAfterTweenOffSeconds"),
 	OPTION_ORDER(m_sName,OPTION_ORDER_NAME,NUM_MENU_DIRS),
 	WRAP_CURSOR(m_sName,"WrapCursor"),
 	SHOW_SCROLLER(m_sName,"ShowScroller"),
@@ -311,11 +312,16 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BeginFadingOut:
 		{
 			TweenOffScreen();
-			float fSecs = GetTweenTimeLeft();
+
+			float fSecs = 0;
 			/* This can be used to allow overlap between the main tween-off and the MenuElements
 			 * tweenoff. */
-			fSecs += EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS;
+			if( OVERRIDE_SLEEP_AFTER_TWEEN_OFF_SECONDS )
+				fSecs = SLEEP_AFTER_TWEEN_OFF_SECONDS;
+			else
+				fSecs = GetTweenTimeLeft();
 			fSecs = max( fSecs, 0 );
+
 			SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, fSecs );	// nofify parent that we're finished
 			StopTimer();
 		}
