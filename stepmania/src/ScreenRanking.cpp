@@ -42,7 +42,8 @@
 #define COL_SPACING_X				THEME->GetMetricF("ScreenRanking","ColSpacingX")
 #define COL_SPACING_Y				THEME->GetMetricF("ScreenRanking","ColSpacingY")
 #define STEPS_TYPE_COLOR( i )		THEME->GetMetricC("ScreenRanking",ssprintf("StepsTypeColor%d",i+1))
-#define NUM_ROW_ITEMS_TO_SHOW		THEME->GetMetricI("ScreenRanking","NumRowItemsToShow")
+#define SONG_SCORE_ROWS_TO_SHOW		THEME->GetMetricI("ScreenRanking","SongScoreRowsToShow")
+#define SONG_SCORE_SECONDS_PER_ROW	THEME->GetMetricF("ScreenRanking","SongScoreSecondsPerRow")
 
 #define BULLET_START_X				THEME->GetMetricF("ScreenRanking","BulletStartX")
 #define BULLET_START_Y				THEME->GetMetricF("ScreenRanking","BulletStartY")
@@ -475,7 +476,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 			vector<Actor*> vpActors;
 			for( unsigned i=0; i<m_vpStepsScoreRowItem.size(); i++ )
 				vpActors.push_back( m_vpStepsScoreRowItem[i] );
-			m_ListScoreRowItems.Load( vpActors, NUM_ROW_ITEMS_TO_SHOW, SCREEN_WIDTH, ROW_SPACING_Y, false, 1, 0, false );
+			m_ListScoreRowItems.Load( vpActors, SONG_SCORE_ROWS_TO_SHOW, SCREEN_WIDTH, ROW_SPACING_Y, false, SONG_SCORE_SECONDS_PER_ROW, 0, false );
 
 			for( unsigned s=0; s<num_songs; s++ )
 			{

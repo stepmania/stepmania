@@ -48,11 +48,11 @@ void ListDisplay::Load(
 	float fSecondsPauseBetweenItems,
 	bool bSlide )
 {
-	ASSERT( iNumItemsToShow > 0 );
-	ASSERT( fItemWidth > 0 );
-	ASSERT( fItemHeight > 0 );
-	ASSERT( fSecondsPerItem > 0 );
-	ASSERT( fSecondsPauseBetweenItems >= 0 );
+	CLAMP( iNumItemsToShow, 1, 10000 );
+	CLAMP( fItemWidth, 1, 10000 );
+	CLAMP( fItemHeight, 1, 10000 );
+	CLAMP( fSecondsPerItem, 0.01f, 10000 );
+	CLAMP( fSecondsPauseBetweenItems, 0, 10000 );
 
 	m_SubActors = m_vpItems;
 	m_iNumItemsToShow = iNumItemsToShow;
