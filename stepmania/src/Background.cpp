@@ -370,8 +370,28 @@ void Background::LoadFromSong( Song* pSong )
 	// sort segments
 	SortBackgroundChangesArray( m_aBGChanges );
 
+	// Look for the filename "Random", and replace the segment with LoadFromRandom.
+	unsigned i = 0;
+	for( i=0; i<m_aBGChanges.size(); i++ )
+	{
+		BackgroundChange &change = m_aBGChanges[i];
+		if( change.m_sBGName.CompareNoCase("random") )
+			continue;
+
+		const float fStartBeat = change.m_fStartBeat;
+		const float fLastBeat = (i+1 < m_aBGChanges.size())? m_aBGChanges[i+1].m_fStartBeat: 99999;
+
+		m_aBGChanges.erase( m_aBGChanges.begin()+i );
+		--i;
+
+		LoadFromRandom( fStartBeat, fLastBeat, pSong->m_Timing );
+	}
+
+	// Re-sort.
+	SortBackgroundChangesArray( m_aBGChanges );
+
 	// scale all rates by the current music rate
-	for( unsigned i=0; i<m_aBGChanges.size(); i++ )
+	for( i=0; i<m_aBGChanges.size(); i++ )
 		m_aBGChanges[i].m_fRate *= GAMESTATE->m_SongOptions.m_fMusicRate;
 
 
