@@ -12,7 +12,7 @@
 
 #include "NoteDataWithScoring.h"
 
-
+#include "RageLog.h"
 
 NoteDataWithScoring::NoteDataWithScoring()
 {
@@ -114,7 +114,7 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore(unsigned row) const
 
 /* Return the last tap score of a row: the grade of the tap that completed
  * the row.  If the row isn't complete (not all taps have been hit), return
- * TNS_NONE or TNS_MISS. */
+ * TNS_MISS. */
 TapNoteScore NoteDataWithScoring::LastTapNoteScore(unsigned row) const
 {
 	TapNoteScore score = TNS_MARVELOUS;
@@ -124,10 +124,13 @@ TapNoteScore NoteDataWithScoring::LastTapNoteScore(unsigned row) const
 		/* If there's no tap note on this row, skip it; the score will always be TNS_NONE. */
 		if(GetTapNote(t, row) == TAP_EMPTY) continue;
 
+		TapNoteScore tns = GetTapNoteScore(t, row);
+		if(tns == TNS_MISS) return TNS_MISS;
+
 		float tm = GetTapNoteOffset(t, row);
 		if(tm < scoretime) continue;
 		
-		score = GetTapNoteScore(t, row);
+		score = tns;
 		scoretime = tm;
 	}
 
