@@ -36,8 +36,8 @@ void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData* 
 
 GameInput StyleDef::StyleInputToGameInput( const StyleInput StyleI ) const
 {
-	ASSERT_M( StyleI.player < NUM_PLAYERS, ssprintf("P%i", StyleI.player) );
-	ASSERT_M( StyleI.col < MAX_COLS_PER_PLAYER, ssprintf("C%i", StyleI.col) );
+	ASSERT_M( StyleI.player < NUM_PLAYERS, ssprintf("P%i", StyleI.player).c_str() );
+	ASSERT_M( StyleI.col < MAX_COLS_PER_PLAYER, ssprintf("C%i", StyleI.col).c_str() );
 	GameController c = m_ColumnInfo[StyleI.player][StyleI.col].controller;
 	GameButton b = m_ColumnInfo[StyleI.player][StyleI.col].button;
 	return GameInput( c, b );
