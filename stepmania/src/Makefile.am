@@ -247,7 +247,7 @@ ActorScroller.cpp ActorScroller.h ActorUtil.cpp ActorUtil.h BitmapText.cpp Bitma
 ModelManager.cpp ModelManager.h ModelTypes.cpp ModelTypes.h Quad.h Sprite.cpp Sprite.h
 
 GlobalSingletons = \
-AnnouncerManager.cpp AnnouncerManager.h Bookkeeper.cpp Bookkeeper.h CryptManager.cpp CryptManager.h CryptHelpers.cpp CryptHelpers.h \
+AnnouncerManager.cpp AnnouncerManager.h Bookkeeper.cpp Bookkeeper.h CryptManager.cpp CryptManager.h \
 FontManager.cpp FontManager.h GameSoundManager.cpp GameSoundManager.h GameManager.cpp GameManager.h \
 GameState.cpp GameState.h InputFilter.cpp InputFilter.h \
 InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h LightsManager.cpp LightsManager.h \
@@ -276,7 +276,8 @@ crypto51/modes.cpp crypto51/modes.h crypto51/mqueue.cpp crypto51/mqueue.h crypto
 crypto51/oaep.cpp crypto51/oaep.h crypto51/oids.h crypto51/osrng.cpp crypto51/osrng.h crypto51/pch.h crypto51/pkcspad.cpp \
 crypto51/pkcspad.h crypto51/pubkey.cpp crypto51/pubkey.h crypto51/queue.cpp crypto51/queue.h crypto51/randpool.cpp \
 crypto51/randpool.h crypto51/rng.h crypto51/rsa.cpp crypto51/rsa.h crypto51/secblock.h crypto51/seckey.h crypto51/sha.cpp \
-crypto51/sha.h crypto51/simple.h crypto51/smartptr.h crypto51/strciphr.cpp crypto51/strciphr.h crypto51/words.h
+crypto51/sha.h crypto51/simple.h crypto51/smartptr.h crypto51/strciphr.cpp crypto51/strciphr.h crypto51/words.h \
+CryptHelpers.cpp CryptHelpers.h
 
 main_SOURCES = $(Screens) \
 		$(DataStructures) \
@@ -355,7 +356,7 @@ test_file_errors_SOURCES = \
 		tests/test_file_errors.cpp \
 		MsdFile.cpp MsdFile.h \
 		XmlFile.cpp XmlFile.h \
-		CryptManager.cpp CryptManager.h CryptHelpers.cpp CryptHelpers.h $(cryptopp) $(crypto)
+		CryptManager.cpp CryptManager.h $(cryptopp) $(crypto)
 
 TESTS += test_timing_data
 test_timing_data_SOURCES = \
