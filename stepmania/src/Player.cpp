@@ -393,6 +393,18 @@ void PlayerMinus::Update( float fDeltaTime )
 
 
 	// process transforms that are waiting to be applied
+	ApplyWaitingTransforms();
+
+	/* Cache any newly-used note skins.  Normally, the only new skins cached now are
+	 * when we're adding course modifiers at the start of a song.  If this is spending
+	 * time loading skins in the middle of a song, something is wrong. */
+	m_pNoteField->CacheAllUsedNoteSkins();
+
+	ActorFrame::Update( fDeltaTime );
+}
+
+void PlayerMinus::ApplyWaitingTransforms()
+{
 	for( unsigned j=0; j<GAMESTATE->m_ModsToApply[m_PlayerNumber].size(); j++ )
 	{
 		const Attack &mod = GAMESTATE->m_ModsToApply[m_PlayerNumber][j];
@@ -415,13 +427,6 @@ void PlayerMinus::Update( float fDeltaTime )
 		m_pNoteField->CopyRange( this, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), BeatToNoteRow(fStartBeat) );
 	}
 	GAMESTATE->m_ModsToApply[m_PlayerNumber].clear();
-
-	/* Cache any newly-used note skins.  Normally, the only new skins cached now are
-	 * when we're adding course modifiers at the start of a song.  If this is spending
-	 * time loading skins in the middle of a song, something is wrong. */
-	m_pNoteField->CacheAllUsedNoteSkins();
-
-	ActorFrame::Update( fDeltaTime );
 }
 
 void PlayerMinus::DrawPrimitives()

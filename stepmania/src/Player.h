@@ -55,6 +55,8 @@ public:
 	void FadeToFail();
 	int GetDancingCharacterState() { return m_iDCState; };
 	void SetCharacterState(int iDCState) { m_iDCState = iDCState; };
+	void ApplyWaitingTransforms();
+
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 	void OnRowCompletelyJudged( int iStepIndex );
