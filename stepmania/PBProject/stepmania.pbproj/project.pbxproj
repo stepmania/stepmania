@@ -705,10 +705,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = Style.h;
-			path = /Users/steve/stepmania/src/Style.h;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = Style.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA25200E0587225500027ACB = {
 			fileRef = AA25200D0587225500027ACB;
@@ -793,18 +792,18 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = MemoryCardManager.cpp;
-			path = /Users/steve/stepmania/src/MemoryCardManager.cpp;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/MemoryCardManager.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA28B47B058F2F5D0097C109 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = MemoryCardManager.h;
-			path = /Users/steve/stepmania/src/MemoryCardManager.h;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/MemoryCardManager.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA28B47C058F2F5E0097C109 = {
 			fileRef = AA28B47A058F2F5D0097C109;
@@ -1014,7 +1013,6 @@
 				AA29CCB80558741A00961A51,
 				AA29CCB90558741A00961A51,
 				AA29CCBA0558741A00961A51,
-				AA29CCBB0558741A00961A51,
 				AA29CCBC0558741A00961A51,
 				AA29CCBD0558741A00961A51,
 				AA29CCBE0558741A00961A51,
@@ -1119,7 +1117,6 @@
 				AA29CD230558741A00961A51,
 				AA29CD240558741A00961A51,
 				AA29CD250558741A00961A51,
-				AA29CD260558741A00961A51,
 				AA29CD270558741A00961A51,
 				AA29CD280558741A00961A51,
 				AA29CD290558741A00961A51,
@@ -1164,6 +1161,8 @@
 				AA729C530599B58D00779F33,
 				AA729C550599B58D00779F33,
 				AA729C67059A2F2400779F33,
+				AA729C6F059A2FD300779F33,
+				AABFA8CC05A4535700D3FDD1,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2038,12 +2037,6 @@
 			settings = {
 			};
 		};
-		AA29CCBB0558741A00961A51 = {
-			fileRef = AA6E0043047711F3005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA29CCBC0558741A00961A51 = {
 			fileRef = AA6E0044047711F3005F316C;
 			isa = PBXBuildFile;
@@ -2668,12 +2661,6 @@
 			settings = {
 			};
 		};
-		AA29CD260558741A00961A51 = {
-			fileRef = AAFC80450513A6EB00D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA29CD270558741A00961A51 = {
 			fileRef = AAFC80460513A6EB00D02EE9;
 			isa = PBXBuildFile;
@@ -3094,6 +3081,8 @@
 				AA729C520599B58D00779F33,
 				AA729C540599B58D00779F33,
 				AA729C66059A2F2400779F33,
+				AA729C6E059A2FD300779F33,
+				AABFA8CB05A4535700D3FDD1,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5959,6 +5948,8 @@
 		};
 		AA6E00090477103E005F316C = {
 			children = (
+				AA729C6C059A2FD300779F33,
+				AA729C6D059A2FD300779F33,
 				AA729C64059A2F2400779F33,
 				AA729C65059A2F2400779F33,
 				AA6E000A047711F3005F316C,
@@ -6015,7 +6006,6 @@
 				AA6E003C047711F3005F316C,
 				AA6E0041047711F3005F316C,
 				AA6E0042047711F3005F316C,
-				AA6E0043047711F3005F316C,
 				AA6E0044047711F3005F316C,
 				AA6E0045047711F3005F316C,
 				AA6E0046047711F3005F316C,
@@ -6628,18 +6618,6 @@
 			lastKnownFileType = sourcecode.c.h;
 			name = ScreenMapControllers.h;
 			path = ../src/ScreenMapControllers.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E0043047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = ScreenMemoryCard.h;
-			path = ../src/ScreenMemoryCard.h;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
@@ -9528,6 +9506,8 @@
 		};
 		AA6EFE6D04770D3E005F316C = {
 			children = (
+				AABFA8C905A4535700D3FDD1,
+				AABFA8CA05A4535700D3FDD1,
 				AA6EFE6E04770D61005F316C,
 				AA6EFE6F04770D61005F316C,
 				AA6EFE7604770E7C005F316C,
@@ -11276,18 +11256,18 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = TimingData.cpp;
-			path = /Users/steve/stepmania/src/TimingData.cpp;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/TimingData.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA729C430599B50D00779F33 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = TimingData.h;
-			path = /Users/steve/stepmania/src/TimingData.h;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/TimingData.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA729C440599B50D00779F33 = {
 			fileRef = AA729C420599B50D00779F33;
@@ -11306,18 +11286,18 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = MemoryCardDisplay.cpp;
-			path = /Users/steve/stepmania/src/MemoryCardDisplay.cpp;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/MemoryCardDisplay.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA729C470599B54D00779F33 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = MemoryCardDisplay.h;
-			path = /Users/steve/stepmania/src/MemoryCardDisplay.h;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/MemoryCardDisplay.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA729C480599B54D00779F33 = {
 			fileRef = AA729C460599B54D00779F33;
@@ -11336,36 +11316,36 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = ReceptorArrow.cpp;
-			path = /Users/steve/stepmania/src/ReceptorArrow.cpp;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/ReceptorArrow.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA729C4F0599B58D00779F33 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = ReceptorArrow.h;
-			path = /Users/steve/stepmania/src/ReceptorArrow.h;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/ReceptorArrow.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA729C500599B58D00779F33 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = ReceptorArrowRow.cpp;
-			path = /Users/steve/stepmania/src/ReceptorArrowRow.cpp;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/ReceptorArrowRow.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA729C510599B58D00779F33 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = ReceptorArrowRow.h;
-			path = /Users/steve/stepmania/src/ReceptorArrowRow.h;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/ReceptorArrowRow.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA729C520599B58D00779F33 = {
 			fileRef = AA729C4E0599B58D00779F33;
@@ -11396,18 +11376,18 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = ScreenBranch.cpp;
-			path = /Users/steve/stepmania/src/ScreenBranch.cpp;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/ScreenBranch.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA729C65059A2F2400779F33 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = ScreenBranch.h;
-			path = /Users/steve/stepmania/src/ScreenBranch.h;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/ScreenBranch.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA729C66059A2F2400779F33 = {
 			fileRef = AA729C64059A2F2400779F33;
@@ -11417,6 +11397,36 @@
 		};
 		AA729C67059A2F2400779F33 = {
 			fileRef = AA729C65059A2F2400779F33;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA729C6C059A2FD300779F33 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScreenRemoveMemoryCard.cpp;
+			path = ../src/ScreenRemoveMemoryCard.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA729C6D059A2FD300779F33 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScreenRemoveMemoryCard.h;
+			path = ../src/ScreenRemoveMemoryCard.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA729C6E059A2FD300779F33 = {
+			fileRef = AA729C6C059A2FD300779F33;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA729C6F059A2FD300779F33 = {
+			fileRef = AA729C6D059A2FD300779F33;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -12478,18 +12488,18 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = DualScrollBar.h;
-			path = /Users/steve/stepmania/src/DualScrollBar.h;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/DualScrollBar.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AABE788C05912B0600E8BF50 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = DualScrollBar.cpp;
-			path = /Users/steve/stepmania/src/DualScrollBar.cpp;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/DualScrollBar.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AABE788D05912B0600E8BF50 = {
 			fileRef = AABE788B05912B0600E8BF50;
@@ -12542,6 +12552,36 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
+		};
+		AABFA8C905A4535700D3FDD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ListDisplay.cpp;
+			path = ../src/ListDisplay.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AABFA8CA05A4535700D3FDD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ListDisplay.h;
+			path = ../src/ListDisplay.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AABFA8CB05A4535700D3FDD1 = {
+			fileRef = AABFA8C905A4535700D3FDD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AABFA8CC05A4535700D3FDD1 = {
+			fileRef = AABFA8CA05A4535700D3FDD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AAC23F7C0485E68D005F316C = {
 			fileEncoding = 30;
@@ -13442,7 +13482,6 @@
 		AAFC80430513A6EB00D02EE9 = {
 			children = (
 				AAFC80440513A6EB00D02EE9,
-				AAFC80450513A6EB00D02EE9,
 				AAFC80460513A6EB00D02EE9,
 			);
 			isa = PBXGroup;
@@ -13455,16 +13494,6 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			path = codec.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AAFC80450513A6EB00D02EE9 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = vorbisenc.h;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
