@@ -192,7 +192,6 @@ protected:
 
 	bool			m_bZeroDeltaOnNextUpdate;
 	bool			m_bDemonstration;
-	int				m_iRowLastCrossed;
 
 	RageSound		m_soundAssistTick;
 	RageSound		m_soundMusic;

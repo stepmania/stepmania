@@ -88,6 +88,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	m_pScore = pScore;
 	m_pInventory = pInventory;
 	m_pScoreKeeper = pScoreKeeper;
+	m_iRowLastCrossed = -1;
 
 	/* Ensure that this is up-to-date. */
 	GAMESTATE->m_pPosition->Load(pn);
@@ -286,6 +287,14 @@ void Player::Update( float fDeltaTime )
 		m_NoteField.ReloadNoteSkin();
 		m_sLastSeenNoteSkin = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin;
 	} */
+
+	const int iRowNow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+	if( iRowNow >= 0 )
+	{
+		for( ; m_iRowLastCrossed <= iRowNow; m_iRowLastCrossed++ )  // for each index we crossed since the last update
+			if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
+				CrossedRow( m_iRowLastCrossed );
+	}
 
 	ActorFrame::Update( fDeltaTime );
 }
@@ -575,6 +584,10 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 void Player::CrossedRow( int iNoteRow )
 {
+	// If we're doing random vanish, randomise notes on the fly.
+	if(GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1)
+		RandomiseNotes( iNoteRow );
+
 	// check to see if there's at the crossed row
 	for( int t=0; t<GetNumTracks(); t++ )
 		if( GetTapNote(t, iNoteRow) != TAP_EMPTY )

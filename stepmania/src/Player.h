@@ -88,7 +88,8 @@ protected:
 	Inventory*		m_pInventory;
 
 	CString			m_sLastSeenNoteSkin;
-	bool m_bShowJudgment;
+	bool			m_bShowJudgment;
+	int				m_iRowLastCrossed;
 };
 
 #endif

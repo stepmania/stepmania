@@ -591,8 +591,6 @@ bool ScreenGameplay::IsLastSong()
 
 void ScreenGameplay::LoadNextSong()
 {
-	m_iRowLastCrossed = -1;
-
 	GAMESTATE->ResetMusicStatistics();
 	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -1010,28 +1008,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;	// reset for the next comment
 		}
-	}
-
-
-
-	//
-	// Send crossed row messages to Player
-	//
-
-	// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
-	int iRowNow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-	if( iRowNow >= 0 )
-	{
-		for( ; m_iRowLastCrossed <= iRowNow; m_iRowLastCrossed++ )  // for each index we crossed since the last update
-			for( pn=0; pn<NUM_PLAYERS; pn++ )
-				if( GAMESTATE->IsPlayerEnabled(pn) )
-				{
-					if(GAMESTATE->m_CurrentPlayerOptions[pn].m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1) // if we're doing random vanish
-					{
-						m_Player[pn].RandomiseNotes( m_iRowLastCrossed ); // randomise notes on the fly
-					}
-					m_Player[pn].CrossedRow( m_iRowLastCrossed );
-				}
 	}
 
 	if( GAMESTATE->m_SongOptions.m_bAssistTick && IsTimeToPlayTicks())
