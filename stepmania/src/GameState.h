@@ -67,6 +67,7 @@ public:
 	PlayMode		m_PlayMode;			// many screen display different info depending on this value
 	bool			m_bEditing;			// NoteField does special stuff when this is true
 	bool			m_bDemonstration;	// ScreenGameplay does special stuff when this is true
+	bool			m_bJukeboxUsesModifiers;
 	int				m_iCurrentStageIndex;	// incremented on Eval screen
 
 	int				GetStageIndex();

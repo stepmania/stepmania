@@ -827,17 +827,15 @@ bool Song::IsNew() const
 
 bool Song::IsEasy( NotesType nt ) const
 {
-	for( unsigned i=0; i<m_apNotes.size(); i++ )
-	{
-		Notes* pNotes = m_apNotes[i];
-		if( pNotes->m_NotesType != nt )
-			continue;
-		if( pNotes->GetDifficulty() == DIFFICULTY_BEGINNER )
-			continue; // ignore beginner steps for marking songs easy; very bizarre to see the beginner mark by Legend of MAX
-		if( pNotes->GetMeter() <= 2 )
-			return true;
-	}
-	return false;
+	Notes* pBeginnerNotes = GetNotes( nt, DIFFICULTY_BEGINNER );
+	Notes* pEasyNotes = GetNotes( nt, DIFFICULTY_EASY );
+	Notes* pHardNotes = GetNotes( nt, DIFFICULTY_HARD );
+
+	// HACK:  Looks bizarre to see the easy mark by Legend of MAX.
+	if( pHardNotes->GetMeter() <= 9 )
+		return false;
+
+	return pBeginnerNotes->GetMeter() == 1  ||  pEasyNotes->GetMeter() == 1;
 }
 
 bool Song::HasEdits( NotesType nt ) const

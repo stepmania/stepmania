@@ -109,18 +109,7 @@ bool SetUpSongOptions()		// always return true.
 			continue;
 
 		GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
-
-		if( RandomFloat(0,1)>0.8f )
-			GAMESTATE->m_PlayerOptions[p].m_fScrollSpeed = 1.5f;
-		GAMESTATE->m_PlayerOptions[p].m_bEffects[ rand()%PlayerOptions::NUM_EFFECT_TYPES ] = true;
-		if( RandomFloat(0,1)>0.9f )
-			GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_HIDDEN;
-		if( RandomFloat(0,1)>0.9f )
-			GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_SUDDEN;
-		if( RandomFloat(0,1)>0.7f )
-			GAMESTATE->m_PlayerOptions[p].m_bReverseScroll = true;
-		if( RandomFloat(0,1)>0.8f )
-			GAMESTATE->m_PlayerOptions[p].m_bDark = true;
+		GAMESTATE->m_PlayerOptions[p].ChooseRandomMofifiers();
 	}
 
 	GAMESTATE->m_SongOptions = SongOptions();

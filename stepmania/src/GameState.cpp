@@ -70,6 +70,7 @@ void GameState::Reset()
 	m_PlayMode = PLAY_MODE_INVALID;
 	m_bEditing = false;
 	m_bDemonstration = false;
+	m_bJukeboxUsesModifiers = false;
 	m_iCurrentStageIndex = 0;
 	m_bAllow2ndExtraStage = true;
 

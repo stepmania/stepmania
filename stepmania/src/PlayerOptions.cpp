@@ -206,3 +206,24 @@ void PlayerOptions::NextTurn()
 {
 	m_TurnType = (TurnType) ((m_TurnType+1)%NUM_TURN_TYPES);
 }
+
+void PlayerOptions::ChooseRandomMofifiers()
+{
+	if( RandomFloat(0,1)>0.8f )
+		m_fScrollSpeed = 1.5f;
+	if( RandomFloat(0,1)>0.8f )
+		m_bReverseScroll = true;
+	if( RandomFloat(0,1)>0.9f )
+		m_bDark = true;
+	float f;
+	f = RandomFloat(0,1);
+	if( f>0.66f )
+		m_AccelType = (AccelType)(rand()%NUM_ACCEL_TYPES);
+	else if( f>0.33f )
+		m_bEffects[ rand()%NUM_EFFECT_TYPES ] = true;
+	f = RandomFloat(0,1);
+	if( f>0.95f )
+		m_AppearanceType = APPEARANCE_HIDDEN;
+	else if( f>0.9f )
+		m_AppearanceType = APPEARANCE_SUDDEN;
+}

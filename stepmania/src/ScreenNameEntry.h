@@ -10,11 +10,12 @@
 */
 
 #include "Screen.h"
-#include "SongSelector.h"
 #include "BitmapText.h"
 #include "TransitionFade.h"
 #include "RandomSample.h"
 #include "GrayArrowRow.h"
+#include "BGAnimation.h"
+#include "MenuTimer.h"
 
 
 class ScreenNameEntry : public Screen

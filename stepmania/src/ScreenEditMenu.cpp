@@ -146,7 +146,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 //	NotesType soureNT			= m_Selector.GetSelectedSourceNotesType();
 //	Difficulty sourceDiff		= m_Selector.GetSelectedSourceDifficulty();
 	Notes* pSourceNotes			= m_Selector.GetSelectedSourceNotes();
-	SongSelector::Action action	= m_Selector.GetSelectedAction();
+	EditMenu::Action action		= m_Selector.GetSelectedAction();
 
 	GAMESTATE->m_pCurSong = pSong;
 	GAMESTATE->m_CurStyle = GAMEMAN->GetEditorStyleForNotesType( nt );
@@ -164,7 +164,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 	switch( action )
 	{
-	case SongSelector::ACTION_EDIT:
+	case EditMenu::ACTION_EDIT:
 		// Prepare prepare for ScreenEdit
 		ASSERT( pNotes );
 		SOUNDMAN->StopMusic();
@@ -172,12 +172,12 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		m_Menu.TweenOffScreenToBlack( SM_GoToNextScreen, false  );
 		m_Fade.CloseWipingRight( SM_None );
 		break;
-	case SongSelector::ACTION_DELETE:
+	case EditMenu::ACTION_DELETE:
 		ASSERT( pNotes );
 		SCREENMAN->Prompt( SM_RefreshSelector, "These notes will be lost permanently.\nContinue with delete?", true, false, DeleteCurNotes );
 		m_Selector.Refresh();
 		return;
-	case SongSelector::ACTION_COPY:
+	case EditMenu::ACTION_COPY:
 		ASSERT( !pNotes );
 		ASSERT( pSourceNotes );
 		{
@@ -194,7 +194,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pSong->Save();
 		}
 		return;
-	case SongSelector::ACTION_AUTOGEN:
+	case EditMenu::ACTION_AUTOGEN:
 		ASSERT( !pNotes );
 		ASSERT( pSourceNotes );
 		{
@@ -212,7 +212,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pSong->Save();
 		}
 		return;
-	case SongSelector::ACTION_BLANK:
+	case EditMenu::ACTION_BLANK:
 		ASSERT( !pNotes );
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since

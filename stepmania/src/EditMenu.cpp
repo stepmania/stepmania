@@ -1,7 +1,7 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- Class: SongSelector
+ Class: EditMenu
 
  Desc: See header.
 
@@ -10,7 +10,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "SongSelector.h"
+#include "EditMenu.h"
 #include "RageLog.h"
 #include "SongManager.h"
 #include "GameState.h"
@@ -18,33 +18,31 @@
 #include "GameManager.h"
 
 //
-// Defines specific to SongSelector
+// Defines specific to EditMenu
 //
-#define ARROWS_X( i )			THEME->GetMetricF("SongSelector",ssprintf("Arrows%dX",i+1))
-#define SONG_BANNER_X			THEME->GetMetricF("SongSelector","SongBannerX")
-#define SONG_BANNER_Y			THEME->GetMetricF("SongSelector","SongBannerY")
-#define SONG_BANNER_WIDTH		THEME->GetMetricF("SongSelector","SongBannerWidth")
-#define SONG_BANNER_HEIGHT		THEME->GetMetricF("SongSelector","SongBannerHeight")
-#define SONG_TEXT_BANNER_X		THEME->GetMetricF("SongSelector","SongTextBannerX")
-#define SONG_TEXT_BANNER_Y		THEME->GetMetricF("SongSelector","SongTextBannerY")
-#define GROUP_BANNER_X			THEME->GetMetricF("SongSelector","GroupBannerX")
-#define GROUP_BANNER_Y			THEME->GetMetricF("SongSelector","GroupBannerY")
-#define GROUP_BANNER_WIDTH		THEME->GetMetricF("SongSelector","GroupBannerWidth")
-#define GROUP_BANNER_HEIGHT		THEME->GetMetricF("SongSelector","GroupBannerHeight")
-#define METER_X					THEME->GetMetricF("SongSelector","MeterX")
-#define METER_Y					THEME->GetMetricF("SongSelector","MeterY")
-#define SOURCE_METER_X			THEME->GetMetricF("SongSelector","SourceMeterX")
-#define SOURCE_METER_Y			THEME->GetMetricF("SongSelector","SourceMeterY")
-#define ROW_LABELS_X			THEME->GetMetricF("SongSelector","RowLabelsX")
-#define ROW_VALUE_X( i )		THEME->GetMetricF("SongSelector",ssprintf("RowValue%dX",i+1))
-#define ROW_Y( i )				THEME->GetMetricF("SongSelector",ssprintf("Row%dY",i+1))
+#define ARROWS_X( i )			THEME->GetMetricF("EditMenu",ssprintf("Arrows%dX",i+1))
+#define SONG_BANNER_X			THEME->GetMetricF("EditMenu","SongBannerX")
+#define SONG_BANNER_Y			THEME->GetMetricF("EditMenu","SongBannerY")
+#define SONG_BANNER_WIDTH		THEME->GetMetricF("EditMenu","SongBannerWidth")
+#define SONG_BANNER_HEIGHT		THEME->GetMetricF("EditMenu","SongBannerHeight")
+#define SONG_TEXT_BANNER_X		THEME->GetMetricF("EditMenu","SongTextBannerX")
+#define SONG_TEXT_BANNER_Y		THEME->GetMetricF("EditMenu","SongTextBannerY")
+#define GROUP_BANNER_X			THEME->GetMetricF("EditMenu","GroupBannerX")
+#define GROUP_BANNER_Y			THEME->GetMetricF("EditMenu","GroupBannerY")
+#define GROUP_BANNER_WIDTH		THEME->GetMetricF("EditMenu","GroupBannerWidth")
+#define GROUP_BANNER_HEIGHT		THEME->GetMetricF("EditMenu","GroupBannerHeight")
+#define METER_X					THEME->GetMetricF("EditMenu","MeterX")
+#define METER_Y					THEME->GetMetricF("EditMenu","MeterY")
+#define SOURCE_METER_X			THEME->GetMetricF("EditMenu","SourceMeterX")
+#define SOURCE_METER_Y			THEME->GetMetricF("EditMenu","SourceMeterY")
+#define ROW_LABELS_X			THEME->GetMetricF("EditMenu","RowLabelsX")
+#define ROW_VALUE_X( i )		THEME->GetMetricF("EditMenu",ssprintf("RowValue%dX",i+1))
+#define ROW_Y( i )				THEME->GetMetricF("EditMenu",ssprintf("Row%dY",i+1))
 
 
-SongSelector::SongSelector()
+EditMenu::EditMenu()
 {
 	LOG->Trace( "ScreenEditMenu::ScreenEditMenu()" );
-
-	m_bAllowNewNotes = true;
 
 	int i;
 
@@ -58,6 +56,13 @@ SongSelector::SongSelector()
 	m_SelectedRow = (Row)0;
 
 	ZERO( m_iSelection );
+
+	
+	// start out on easy, not beginner
+	m_iSelection[ROW_DIFFICULTY] = DIFFICULTY_EASY;
+	m_iSelection[ROW_SOURCE_DIFFICULTY] = DIFFICULTY_EASY;
+
+
 
 	for( i=0; i<NUM_ROWS; i++ )
 	{
@@ -121,38 +126,38 @@ SongSelector::SongSelector()
 	OnRowValueChanged( (Row)0 );
 }
 
-SongSelector::~SongSelector()
+EditMenu::~EditMenu()
 {
 
 }
 
-void SongSelector::Refresh()
+void EditMenu::Refresh()
 {
 	ChangeToRow( (Row)0 );
 	OnRowValueChanged( (Row)0 );
 }
 
-void SongSelector::DrawPrimitives()
+void EditMenu::DrawPrimitives()
 {
 	ActorFrame::DrawPrimitives();
 }
 
-bool SongSelector::CanGoUp()
+bool EditMenu::CanGoUp()
 {
 	return m_SelectedRow != 0;
 }
 
-bool SongSelector::CanGoDown()
+bool EditMenu::CanGoDown()
 {
 	return m_SelectedRow != NUM_ROWS-1;
 }
 
-bool SongSelector::CanGoLeft()
+bool EditMenu::CanGoLeft()
 {
 	return m_iSelection[m_SelectedRow] != 0;
 }
 
-bool SongSelector::CanGoRight()
+bool EditMenu::CanGoRight()
 {
 	int num_values[NUM_ROWS] = 
 	{
@@ -168,7 +173,7 @@ bool SongSelector::CanGoRight()
 	return m_iSelection[m_SelectedRow] != (num_values[m_SelectedRow]-1);
 }
 
-void SongSelector::Up()
+void EditMenu::Up()
 {
 	if( CanGoUp() )
 	{
@@ -180,7 +185,7 @@ void SongSelector::Up()
 	}
 }
 
-void SongSelector::Down()
+void EditMenu::Down()
 {
 	if( CanGoDown() )
 	{
@@ -192,7 +197,7 @@ void SongSelector::Down()
 	}
 }
 
-void SongSelector::Left()
+void EditMenu::Left()
 {
 	if( CanGoLeft() )
 	{
@@ -202,7 +207,7 @@ void SongSelector::Left()
 	}
 }
 
-void SongSelector::Right()
+void EditMenu::Right()
 {
 	if( CanGoRight() )
 	{
@@ -213,7 +218,7 @@ void SongSelector::Right()
 }
 
 
-void SongSelector::ChangeToRow( Row newRow )
+void EditMenu::ChangeToRow( Row newRow )
 {
 	m_SelectedRow = newRow;
 
@@ -223,7 +228,7 @@ void SongSelector::ChangeToRow( Row newRow )
 	m_sprArrows[1].SetDiffuse( CanGoRight()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
 }
 
-void SongSelector::OnRowValueChanged( Row row )
+void EditMenu::OnRowValueChanged( Row row )
 {
 	m_sprArrows[0].SetDiffuse( CanGoLeft()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
 	m_sprArrows[1].SetDiffuse( CanGoRight()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
@@ -287,12 +292,12 @@ void SongSelector::OnRowValueChanged( Row row )
 	}
 }
 
-Notes* SongSelector::GetSelectedNotes()
+Notes* EditMenu::GetSelectedNotes()
 {
 	return GetSelectedSong()->GetNotes(GetSelectedNotesType(),GetSelectedDifficulty(), false);
 }
 
-Notes* SongSelector::GetSelectedSourceNotes()
+Notes* EditMenu::GetSelectedSourceNotes()
 {
 	return GetSelectedSong()->GetNotes(GetSelectedSourceNotesType(),GetSelectedSourceDifficulty(), false);
 }

@@ -70,6 +70,7 @@ struct PlayerOptions
 	void Init();
 	CString GetString();
 	void FromString( CString sOptions );
+	void ChooseRandomMofifiers();
 };
 
 #endif

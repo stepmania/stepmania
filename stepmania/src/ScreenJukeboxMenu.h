@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
- Class: ScreenEditMenu
+ Class: ScreenJukeboxMenu
 
  Desc: See header.
 
@@ -10,18 +10,18 @@
 */
 
 #include "Screen.h"
-#include "EditMenu.h"
+#include "JukeboxMenu.h"
 #include "BitmapText.h"
 #include "TransitionFade.h"
 #include "RandomSample.h"
 #include "MenuElements.h"
 
 
-class ScreenEditMenu : public Screen
+class ScreenJukeboxMenu : public Screen
 {
 public:
-	ScreenEditMenu();
-	virtual ~ScreenEditMenu();
+	ScreenJukeboxMenu();
+	virtual ~ScreenJukeboxMenu();
 
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
@@ -36,7 +36,7 @@ private:
 	void MenuBack( PlayerNumber pn );
 	void MenuStart( PlayerNumber pn );
 
-	EditMenu m_Selector;
+	JukeboxMenu	 m_Selector;
 
 	BitmapText		m_textExplanation;
 

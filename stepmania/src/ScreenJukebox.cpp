@@ -24,48 +24,45 @@ const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+101);	// MUST be sa
 
 bool PrepareForJukebox()		// always return true.
 {
-	//
-	// Set the current song to prepare for a demonstration
-	//
-
-	switch( GAMESTATE->m_CurGame )
-	{
-	case GAME_DANCE:	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;			break; 
-	case GAME_PUMP:		GAMESTATE->m_CurStyle = STYLE_PUMP_VERSUS;			break; 
-	case GAME_EZ2:		GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	break; 
-	case GAME_PARA:		GAMESTATE->m_CurStyle = STYLE_PARA_SINGLE;			break; 
-	case GAME_DS3DDX:	GAMESTATE->m_CurStyle = STYLE_DS3DDX_SINGLE;		break;
-	case GAME_BM:		GAMESTATE->m_CurStyle = STYLE_BM_SINGLE;			break;
-	default:	ASSERT(0);
-	}
-
+	// ScreeJukeboxMenu must set this
+	ASSERT( GAMESTATE->m_CurStyle != STYLE_INVALID );
 	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 
+	vector<Song*> vSongs;
+	if( GAMESTATE->m_sPreferredGroup.CompareNoCase("all music") == 0 )
+		SONGMAN->GetSongs( vSongs );
+	else
+		SONGMAN->GetSongs( vSongs, GAMESTATE->m_sPreferredGroup );
 
 	//
-	// Search for a Song and Steps to play during the demo
+	// Search for a Song and Notes to play during the demo
 	//
-	for( int i=0; i<600; i++ )	// try 600 times
+	for( int i=0; i<600; i++ )
 	{
-		Song* pSong = SONGMAN->GetRandomSong();
-		if( pSong == NULL )	// returns NULL there are no songs
-			return true;	// we need to detect this and abort demonstration later
+		if( vSongs.size() == 0 )
+			return true;
 
-		if( pSong->m_apNotes.empty() )
-			continue;	// skip
-		
+		Song* pSong = vSongs[rand()%vSongs.size()];
+
 		if( !pSong->HasMusic() )
 			continue;	// skip
 
-		vector<Notes*> apNotes;
-		pSong->GetNotes( apNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+		Difficulty dc = GAMESTATE->m_PreferredDifficulty[PLAYER_1];
+		Notes* pNotes = NULL;
+		if( dc != DIFFICULTY_INVALID )
+			pNotes = pSong->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, GAMESTATE->m_PreferredDifficulty[PLAYER_1] );
+		else	// "all difficulties"
+		{
+			vector<Notes*> vNotes;
+			pSong->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+			if( vNotes.size() > 0 )
+				pNotes = vNotes[rand()%vNotes.size()];
+		}
 
-		if( apNotes.empty() )
+		if( pNotes == NULL )
 			continue;	// skip
 
 		// Found something we can use!
-		Notes* pNotes = apNotes[ rand()%apNotes.size() ];
-
 		GAMESTATE->m_pCurSong = pSong;
 		for( int p=0; p<NUM_PLAYERS; p++ )
 			GAMESTATE->m_pCurNotes[p] = pNotes;
@@ -106,17 +103,8 @@ bool PrepareForJukebox()		// always return true.
 
 		GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
 
-		if( RandomFloat(0,1)>0.8f )
-			GAMESTATE->m_PlayerOptions[p].m_fScrollSpeed = 1.5f;
-		GAMESTATE->m_PlayerOptions[p].m_bEffects[ rand()%PlayerOptions::NUM_EFFECT_TYPES ] = true;
-		if( RandomFloat(0,1)>0.9f )
-			GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_HIDDEN;
-		if( RandomFloat(0,1)>0.9f )
-			GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_SUDDEN;
-		if( RandomFloat(0,1)>0.7f )
-			GAMESTATE->m_PlayerOptions[p].m_bReverseScroll = true;
-		if( RandomFloat(0,1)>0.8f )
-			GAMESTATE->m_PlayerOptions[p].m_bDark = true;
+		if( GAMESTATE->m_bJukeboxUsesModifiers )
+			GAMESTATE->m_PlayerOptions[p].ChooseRandomMofifiers();
 	}
 
 	GAMESTATE->m_SongOptions = SongOptions();

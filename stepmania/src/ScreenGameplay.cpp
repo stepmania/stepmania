@@ -739,7 +739,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 	Screen::Update( fDeltaTime );
 
 
-	m_MaxCombo.SetText( ssprintf("%d", m_Player[GAMESTATE->m_MasterPlayerNumber].GetPlayersMaxCombo()) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
+	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )
+		m_MaxCombo.SetText( ssprintf("%d", m_Player[GAMESTATE->m_MasterPlayerNumber].GetPlayersMaxCombo()) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
 	
 	
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );

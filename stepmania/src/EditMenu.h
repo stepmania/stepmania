@@ -1,29 +1,30 @@
-#ifndef SONG_SELECTOR_H
-#define SONG_SELECTOR_H
+#ifndef EDITMENU_H
+#define EDITMENU_H
 /*
 -----------------------------------------------------------------------------
- Class: SongSelector
+ Class: EditMenu
 
- Desc: Choose a game, style, song and notes on one screen.
+ Desc: UI on Edit Menu screen.  Create Notes, delete Notes, or launch Notes 
+	in editor.
  
-   Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 
 #include "ActorFrame.h"
-#include "MenuElements.h"
 #include "Banner.h"
 #include "TextBanner.h"
 #include "GameConstantsAndTypes.h"
 #include "FootMeter.h"
+#include "RandomSample.h"
 
 
-class SongSelector: public ActorFrame 
+class EditMenu: public ActorFrame 
 {
 public:
-	SongSelector();
-	~SongSelector();
+	EditMenu();
+	~EditMenu();
 	virtual void DrawPrimitives();
 
 	bool CanGoUp();
@@ -97,10 +98,6 @@ public:
 
 	Notes*		GetSelectedNotes();
 	Notes*		GetSelectedSourceNotes();
-
-	/* not used yet */
-	bool m_bAllowNewNotes;
-	void AllowNewNotes(bool b) { m_bAllowNewNotes = b; }
 
 private:
 	Sprite	m_sprArrows[2];

@@ -280,6 +280,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenJukebox.h">
 			</File>
 			<File
+				RelativePath="ScreenJukeboxMenu.cpp">
+			</File>
+			<File
+				RelativePath="ScreenJukeboxMenu.h">
+			</File>
+			<File
 				RelativePath="ScreenLogo.cpp">
 			</File>
 			<File
@@ -955,6 +961,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="DifficultyRating.h">
 			</File>
 			<File
+				RelativePath="EditMenu.cpp">
+			</File>
+			<File
+				RelativePath="EditMenu.h">
+			</File>
+			<File
 				RelativePath="FadingBanner.cpp">
 			</File>
 			<File
@@ -983,6 +995,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="GroupList.h">
+			</File>
+			<File
+				RelativePath="JukeboxMenu.cpp">
+			</File>
+			<File
+				RelativePath="JukeboxMenu.h">
 			</File>
 			<File
 				RelativePath="MenuElements.cpp">
@@ -1079,12 +1097,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="SnapDisplay.h">
-			</File>
-			<File
-				RelativePath="SongSelector.cpp">
-			</File>
-			<File
-				RelativePath="SongSelector.h">
 			</File>
 			<File
 				RelativePath="StageDisplay.cpp">
