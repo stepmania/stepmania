@@ -375,7 +375,7 @@ void OptionRow::LoadExit()
 	m_textTitle.SetHidden( true );
 }
 
-void OptionRow::PositionUnderlines()
+void OptionRow::PositionUnderlines( PlayerNumber pn )
 {
 	/*
 	SHOW_UNDERLINES
@@ -384,43 +384,40 @@ void OptionRow::PositionUnderlines()
 	if( m_RowType == ROW_EXIT )
 		return;
 
-	FOREACH_HumanPlayer( p )
+	vector<OptionsCursor*> &vpUnderlines = m_Underline[pn];
+
+	PlayerNumber pnTakeSelectedFrom = m_RowDef.bOneChoiceForAllPlayers ? PLAYER_1 : pn;
+
+	const int iNumUnderlines = (m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW) ? 1 : vpUnderlines.size();
+	
+	for( int i=0; i<iNumUnderlines; i++ )
 	{
-		vector<OptionsCursor*> &vpUnderlines = m_Underline[p];
+		OptionsCursor& ul = *vpUnderlines[i];
 
-		PlayerNumber pnTakeSelectedFrom = m_RowDef.bOneChoiceForAllPlayers ? PLAYER_1 : p;
+		int iChoiceWithFocus = (m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW) ? m_iChoiceInRowWithFocus[pnTakeSelectedFrom] : i;
 
-		const int iNumUnderlines = (m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW) ? 1 : vpUnderlines.size();
-		
-		for( int i=0; i<iNumUnderlines; i++ )
+		/* Don't tween X movement and color changes. */
+		int iWidth, iX, iY;
+		GetWidthXY( pn, iChoiceWithFocus, iWidth, iX, iY );
+		ul.SetGlobalX( (float)iX );
+		ul.SetGlobalDiffuseColor( RageColor(1,1,1, 1.0f) );
+
+		ASSERT( m_vbSelected[pnTakeSelectedFrom].size() == m_RowDef.choices.size() );
+
+		bool bSelected = m_vbSelected[pnTakeSelectedFrom][ iChoiceWithFocus ];
+		bool bHidden = !bSelected || m_bHidden;
+		if( !(bool)SHOW_UNDERLINES )
+			bHidden = true;
+
+		if( ul.GetDestY() != m_fY )
 		{
-			OptionsCursor& ul = *vpUnderlines[i];
-
-			int iChoiceWithFocus = (m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW) ? m_iChoiceInRowWithFocus[pnTakeSelectedFrom] : i;
-
-			/* Don't tween X movement and color changes. */
-			int iWidth, iX, iY;
-			GetWidthXY( p, iChoiceWithFocus, iWidth, iX, iY );
-			ul.SetGlobalX( (float)iX );
-			ul.SetGlobalDiffuseColor( RageColor(1,1,1, 1.0f) );
-
-			ASSERT( m_vbSelected[pnTakeSelectedFrom].size() == m_RowDef.choices.size() );
-
-			bool bSelected = m_vbSelected[pnTakeSelectedFrom][ iChoiceWithFocus ];
-			bool bHidden = !bSelected || m_bHidden;
-			if( !(bool)SHOW_UNDERLINES )
-				bHidden = true;
-
-			if( ul.GetDestY() != m_fY )
-			{
-				ul.StopTweening();
-				ul.BeginTweening( TWEEN_SECONDS );
-			}
-
-			ul.SetHidden( bHidden );
-			ul.SetBarWidth( iWidth );
-			ul.SetY( (float)iY );
+			ul.StopTweening();
+			ul.BeginTweening( TWEEN_SECONDS );
 		}
+
+		ul.SetHidden( bHidden );
+		ul.SetBarWidth( iWidth );
+		ul.SetY( (float)iY );
 	}
 }
 
@@ -715,7 +712,8 @@ void OptionRow::Reload()
 
 			UpdateEnabledDisabled();
 			UpdateText();
-			PositionUnderlines();
+			FOREACH_HumanPlayer( p )
+				PositionUnderlines( p );
 		}
 		break;
 	case OptionRow::ROW_EXIT:

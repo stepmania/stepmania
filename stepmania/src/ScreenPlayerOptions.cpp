@@ -148,10 +148,11 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		COMMAND( m_sprCancelAll[pn], "Show" );
 
 		for( unsigned r=0; r<m_Rows.size(); r++ )
+		{
 			this->ImportOptions( r, pn );
-		this->PositionUnderlines();
-		for( unsigned r=0; r<m_Rows.size(); r++ )
+			this->PositionUnderlines( r, pn );
 			this->UpdateDisqualified( r, pn );
+		}
 	}
 
 	ScreenOptionsMaster::Input( DeviceI, type, GameI, MenuI, StyleI );

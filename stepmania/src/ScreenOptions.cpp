@@ -265,7 +265,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	CHECKPOINT;
 
 	PositionItems();
-	PositionUnderlines();
+	PositionAllUnderlines();
 	PositionIcons();
 	RefreshIcons();
 	PositionCursors();
@@ -368,18 +368,17 @@ void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int
 	row.GetWidthXY( pn, iChoiceOnRow, iWidthOut, iXOut, iYOut );
 }
 
-void ScreenOptions::PositionUnderlines()
+void ScreenOptions::PositionUnderlines( int r, PlayerNumber pn )
 {
-	// OPTIMIZATION OPPORTUNITY: There's no reason to the underlines for 
-	// all rows when something changes.  Just recalulate for the row that 
-	// changed.
+	OptionRow &row = *m_Rows[r];
+	row.PositionUnderlines( pn );
+}
 
-	// Set the position of the underscores showing the current choice for each option line.
-	for( unsigned r=0; r<m_Rows.size(); r++ )	// foreach options line
-	{
-		OptionRow &row = *m_Rows[r];
-		row.PositionUnderlines();
-	}
+void ScreenOptions::PositionAllUnderlines()
+{
+	for( unsigned r=0; r<m_Rows.size(); r++ )
+		FOREACH_HumanPlayer( p )
+			PositionUnderlines( r, p );
 }
 
 void ScreenOptions::PositionIcons()
@@ -661,11 +660,13 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 
+	const int iCurRow = m_iCurrentRow[pn];
+	
 	/* Update m_fY and m_bHidden[]. */
 	PositionItems();
 
 	/* Do positioning. */
-	PositionUnderlines();
+	PositionUnderlines( iCurRow,  pn );
 	RefreshIcons();
 	PositionIcons();
 	UpdateEnabledDisabled();
@@ -706,7 +707,6 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 		}
 	}
 
-	const int iCurRow = m_iCurrentRow[pn];
 	const CString text = GetExplanationText( iCurRow );
 
 	BitmapText *pText = NULL;
@@ -820,11 +820,13 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 		int iChoiceInRow = row.GetChoiceInRowWithFocus(pn);
 		bool bSelected = !row.GetSelected( pn, iChoiceInRow );
 		row.SetSelected( pn, iChoiceInRow, bSelected );
+
 		if( bSelected )
 			m_SoundToggleOn.Play();
 		else
 			m_SoundToggleOff.Play();
-		PositionUnderlines();
+
+		PositionUnderlines( iCurRow, pn );
 		RefreshIcons();
 
 		if( row.GetFirstItemGoesDown() )

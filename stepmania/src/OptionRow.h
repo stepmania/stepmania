@@ -88,7 +88,7 @@ public:
 		);
 	void DetachHandler();
 
-	void PositionUnderlines();
+	void PositionUnderlines( PlayerNumber pn );
 	void PositionIcons();
 	void UpdateText();
 	void SetRowFocus( bool bRowHasFocus[NUM_PLAYERS] );

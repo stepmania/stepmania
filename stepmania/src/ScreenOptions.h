@@ -40,7 +40,8 @@ protected:
 	CString GetExplanationText( int row ) const;
 	CString GetExplanationTitle( int row ) const;
 	BitmapText &GetTextItemForRow( PlayerNumber pn, int iRow, int iChoiceOnRow );
-	void PositionUnderlines();
+	void PositionUnderlines( int row, PlayerNumber pn );
+	void PositionAllUnderlines();
 	void PositionIcons();
 	virtual void RefreshIcons();
 	void PositionCursors();
