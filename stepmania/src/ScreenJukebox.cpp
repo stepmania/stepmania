@@ -109,7 +109,7 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 	return false;
 }
 
-ScreenJukebox::ScreenJukebox( CString sName ) : ScreenGameplay( "ScreenGameplay" )
+ScreenJukebox::ScreenJukebox( CString sName ) : ScreenGameplay( sName )
 {
 	LOG->Trace( "ScreenJukebox::ScreenJukebox()" );
 	m_bDemonstration = false;
