@@ -21,14 +21,18 @@ extern "C"
 #define FArg(n) ((float) luaL_checknumber(L,n))
 
 
+template <typename T>
+struct RegType
+{
+  const char *name; 
+  int (*mfunc)(T *p, lua_State *L);
+};
 
 template <typename T>
 class Luna 
 {
   typedef struct { T *pT; } userdataType;
 public:
-  typedef int (*mfp)(T *p, lua_State *L);
-  typedef struct { const char *name; mfp mfunc; } RegType;
 
   static void Register(lua_State *L) {
     lua_newtable(L);
@@ -56,8 +60,9 @@ public:
     lua_settable(L, metatable);
 
     // fill method table with methods from class T
-    for (vector<RegType>::const_iterator i = s_pvMethods->begin(); i != s_pvMethods->end(); i++) {
-		const RegType *l = &(*i);
+    for (unsigned i=0; i<s_pvMethods->size(); i++ )
+	{
+		const MyRegType *l = &(*s_pvMethods)[i];
       lua_pushstring(L, l->name);
       lua_pushlightuserdata(L, (void*)l);
       lua_pushcclosure(L, thunk, 1);
@@ -83,7 +88,7 @@ private:
     T *obj = check(L, 1);  // get 'self', or if you prefer, 'this'
     lua_remove(L, 1);  // remove self so member function args start at index 1
     // get member function from upvalue
-    RegType *l = static_cast<RegType*>(lua_touserdata(L, lua_upvalueindex(1)));
+    MyRegType *l = static_cast<MyRegType*>(lua_touserdata(L, lua_upvalueindex(1)));
     return (*(l->mfunc))(obj,L);  // call member function
   }
 
@@ -98,8 +103,15 @@ public:
     return 1;  // userdata containing pointer to T object
   }
 
-	typedef vector<RegType> RegTypeVector;
+	typedef RegType<T> MyRegType;
+	typedef vector<MyRegType> RegTypeVector;
 	static RegTypeVector *s_pvMethods;
+
+	static void CreateMethodsVector()
+	{
+		if(s_pvMethods==NULL) 
+			s_pvMethods = new RegTypeVector;
+	}
 private:
 	static const char s_className[];
 
@@ -121,7 +133,7 @@ static Luna##T<T> registera; \
 void T::PushSelf( lua_State *L ) { Luna##T<T>::Push( L, this ); }
 
 #define ADD_METHOD( method_name ) \
-	{ if(s_pvMethods==NULL) s_pvMethods = new RegTypeVector; RegType r = {#method_name,method_name}; s_pvMethods->push_back(r); }
+	{ CreateMethodsVector(); RegType<T> r = {#method_name,method_name}; s_pvMethods->push_back(r); }
 
 
 #endif
