@@ -1495,7 +1495,18 @@ void ScreenSelectMusic::AfterMusicChange()
 			const vector<Song*> best = SONGMAN->GetBestSongs( PROFILE_SLOT_MACHINE );
 			const int index = FindIndex( best.begin(), best.end(), pSong );
 			if( index != -1 )
-				m_MachineRank.SetText( ssprintf("%i", index+1) );
+			{
+				CString sSuffix;
+				int iDisplay = index+1;
+				switch( iDisplay%10 )
+				{
+				case 1:		sSuffix = "st";	break;
+				case 2:		sSuffix = "nd";	break;
+				case 3:		sSuffix = "rd";	break;
+				default:	sSuffix = "th";	break;
+				}
+				m_MachineRank.SetText( ssprintf("%i", iDisplay) + sSuffix );
+			}
 
 			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType );
 
