@@ -18,48 +18,48 @@
 #include "StepsUtil.h"
 #include "RageUtil.h"
 
-#define CHATINPUT_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","ChatInputBoxWidth")
-#define CHATINPUT_HEIGHT			THEME->GetMetricF("ScreenNetSelectMusic","ChatInputBoxHeight")
-#define CHATINPUT_COLOR				THEME->GetMetricC("ScreenNetSelectMusic","ChatInputBoxColor")
-#define CHATOUTPUT_WIDTH			THEME->GetMetricF("ScreenNetSelectMusic","ChatOutputBoxWidth")
-#define CHATOUTPUT_HEIGHT			THEME->GetMetricF("ScreenNetSelectMusic","ChatOutputBoxHeight")
-#define CHATOUTPUT_COLOR			THEME->GetMetricC("ScreenNetSelectMusic","ChatOutputBoxColor")
-#define SHOW_CHAT_LINES				THEME->GetMetricI("ScreenNetSelectMusic","ChatOutputLines")
+#define CHATINPUT_WIDTH				THEME->GetMetricF(m_sName,"ChatInputBoxWidth")
+#define CHATINPUT_HEIGHT			THEME->GetMetricF(m_sName,"ChatInputBoxHeight")
+#define CHATINPUT_COLOR				THEME->GetMetricC(m_sName,"ChatInputBoxColor")
+#define CHATOUTPUT_WIDTH			THEME->GetMetricF(m_sName,"ChatOutputBoxWidth")
+#define CHATOUTPUT_HEIGHT			THEME->GetMetricF(m_sName,"ChatOutputBoxHeight")
+#define CHATOUTPUT_COLOR			THEME->GetMetricC(m_sName,"ChatOutputBoxColor")
+#define SHOW_CHAT_LINES				THEME->GetMetricI(m_sName,"ChatOutputLines")
 
-#define GROUPSBG_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","GroupsBGWidth")
-#define GROUPSBG_HEIGHT				THEME->GetMetricF("ScreenNetSelectMusic","GroupsBGHeight")
-#define GROUPSBG_COLOR				THEME->GetMetricC("ScreenNetSelectMusic","GroupsBGColor")
+#define GROUPSBG_WIDTH				THEME->GetMetricF(m_sName,"GroupsBGWidth")
+#define GROUPSBG_HEIGHT				THEME->GetMetricF(m_sName,"GroupsBGHeight")
+#define GROUPSBG_COLOR				THEME->GetMetricC(m_sName,"GroupsBGColor")
 
-#define SONGSBG_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","SongsBGWidth")
-#define SONGSBG_HEIGHT				THEME->GetMetricF("ScreenNetSelectMusic","SongsBGHeight")
-#define SONGSBG_COLOR				THEME->GetMetricC("ScreenNetSelectMusic","SongsBGColor")
+#define SONGSBG_WIDTH				THEME->GetMetricF(m_sName,"SongsBGWidth")
+#define SONGSBG_HEIGHT				THEME->GetMetricF(m_sName,"SongsBGHeight")
+#define SONGSBG_COLOR				THEME->GetMetricC(m_sName,"SongsBGColor")
 
-#define DIFFBG_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","DiffBGWidth")
-#define DIFFBG_HEIGHT				THEME->GetMetricF("ScreenNetSelectMusic","DiffBGHeight")
-#define DIFFBG_COLOR				THEME->GetMetricC("ScreenNetSelectMusic","DiffBGColor")
+#define DIFFBG_WIDTH				THEME->GetMetricF(m_sName,"DiffBGWidth")
+#define DIFFBG_HEIGHT				THEME->GetMetricF(m_sName,"DiffBGHeight")
+#define DIFFBG_COLOR				THEME->GetMetricC(m_sName,"DiffBGColor")
 
-#define EXINFOBG_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","ExInfoBGWidth")
-#define EXINFOBG_HEIGHT				THEME->GetMetricF("ScreenNetSelectMusic","ExInfoBGHeight")
-#define EXINFOBG_COLOR				THEME->GetMetricC("ScreenNetSelectMusic","ExInfoBGColor")
+#define EXINFOBG_WIDTH				THEME->GetMetricF(m_sName,"ExInfoBGWidth")
+#define EXINFOBG_HEIGHT				THEME->GetMetricF(m_sName,"ExInfoBGHeight")
+#define EXINFOBG_COLOR				THEME->GetMetricC(m_sName,"ExInfoBGColor")
 
-#define USERSBG_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","UsersBGWidth")
-#define USERSBG_HEIGHT				THEME->GetMetricF("ScreenNetSelectMusic","UsersBGHeight")
-#define USERSBG_COLOR				THEME->GetMetricC("ScreenNetSelectMusic","UsersBGColor")
-#define USERSALT_Y					THEME->GetMetricF("ScreenNetSelectMusic","UsersAY")
-#define USERSDELT_X					THEME->GetMetricF("ScreenNetSelectMusic","UsersDX")
-#define USERS_Y						THEME->GetMetricF("ScreenNetSelectMusic","UsersY")
-#define USERS_X						THEME->GetMetricF("ScreenNetSelectMusic","UsersX")
+#define USERSBG_WIDTH				THEME->GetMetricF(m_sName,"UsersBGWidth")
+#define USERSBG_HEIGHT				THEME->GetMetricF(m_sName,"UsersBGHeight")
+#define USERSBG_COLOR				THEME->GetMetricC(m_sName,"UsersBGColor")
+#define USERSALT_Y					THEME->GetMetricF(m_sName,"UsersAY")
+#define USERSDELT_X					THEME->GetMetricF(m_sName,"UsersDX")
+#define USERS_Y						THEME->GetMetricF(m_sName,"UsersY")
+#define USERS_X						THEME->GetMetricF(m_sName,"UsersX")
 
-#define	NUM_GROUPS_SHOW				THEME->GetMetricI("ScreenNetSelectMusic","NumGroupsShow");
-#define	NUM_SONGS_SHOW				THEME->GetMetricI("ScreenNetSelectMusic","NumSongsShow");
+#define	NUM_GROUPS_SHOW				THEME->GetMetricI(m_sName,"NumGroupsShow");
+#define	NUM_SONGS_SHOW				THEME->GetMetricI(m_sName,"NumSongsShow");
 
-#define SEL_WIDTH					THEME->GetMetricF("ScreenNetSelectMusic","SelWidth")
-#define SEL_HEIGHT					THEME->GetMetricF("ScreenNetSelectMusic","SelHeight")
-#define SEL_COLOR					THEME->GetMetricC("ScreenNetSelectMusic","SelColor")
+#define SEL_WIDTH					THEME->GetMetricF(m_sName,"SelWidth")
+#define SEL_HEIGHT					THEME->GetMetricF(m_sName,"SelHeight")
+#define SEL_COLOR					THEME->GetMetricC(m_sName,"SelColor")
 
-#define SUBTITLE_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","SongsSubtitleWidth")
-#define ARTIST_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","SongsArtistWidth")
-#define GROUP_WIDTH					THEME->GetMetricF("ScreenNetSelectMusic","SongsGroupWidth")
+#define SUBTITLE_WIDTH				THEME->GetMetricF(m_sName,"SongsSubtitleWidth")
+#define ARTIST_WIDTH				THEME->GetMetricF(m_sName,"SongsArtistWidth")
+#define GROUP_WIDTH					THEME->GetMetricF(m_sName,"SongsGroupWidth")
 
 const ScreenMessage SM_NoSongs		= ScreenMessage(SM_User+3);
 const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
@@ -99,7 +99,7 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	SET_XY_AND_ON_COMMAND( m_textChatInput );
 	this->AddChild( &m_textChatInput );
 
-	m_textOutHidden.LoadFromFont( THEME->GetPathF("ScreenNetSelectMusic","chat") );
+	m_textOutHidden.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
 	m_textOutHidden.SetWrapWidthPixels( (int)(CHATOUTPUT_WIDTH * 2) );
 
 	m_textChatOutput.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
@@ -257,8 +257,8 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	UpdateSongsListPos();
 
 	//Load SFX next
-	m_soundChangeOpt.Load( THEME->GetPathToS("ScreenNetSelectMusic change opt"));
-	m_soundChangeSel.Load( THEME->GetPathToS("ScreenNetSelectMusic change sel"));
+	m_soundChangeOpt.Load( THEME->GetPathToS( m_sName + " change opt" ) );
+	m_soundChangeSel.Load( THEME->GetPathToS( m_sName + " change sel" ) );
 
 	NSMAN->ReportNSSOnOff(1);
 	NSMAN->ReportPlayerOptions();
@@ -823,6 +823,8 @@ void ScreenNetSelectMusic::UpdateUsers()
 	for( unsigned i=0; i< m_textUsers.size(); i++)
 		this->RemoveChild( &m_textUsers[i] );
 
+	int oldUsers = m_textUsers.size();
+
 	m_textUsers.clear();
 
 	m_textUsers.resize( NSMAN->m_ActivePlayer.size() );
@@ -843,10 +845,11 @@ void ScreenNetSelectMusic::UpdateUsers()
 			tY = USERS_Y;
 		m_textUsers[i].SetXY( tX, tY );
 
-		ON_COMMAND( m_textUsers[i] );
+		if ( i > oldUsers )
+			ON_COMMAND( m_textUsers[i] );
 	
 		m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_ActivePlayer[i]] );
-		m_textUsers[i].SetDiffuseColor ( THEME->GetMetricC("ScreenNetSelectMusic",
+		m_textUsers[i].SetDiffuseColor ( THEME->GetMetricC( m_sName,
 			ssprintf("Users%dColor", NSMAN->m_PlayerStatus[NSMAN->m_ActivePlayer[i]] ) ) );
 
 		this->AddChild( &m_textUsers[i] );
