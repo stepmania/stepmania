@@ -45,10 +45,12 @@ void Actor::Reset()
 
 	m_bShadow = false;
 	m_fShadowLength = 4;
-	m_bTextureWrapping = false;
 	m_bIsAnimating = true;
+
+	m_bTextureWrapping = false;
 	m_BlendMode = BLEND_NORMAL;
 	m_bUseZBuffer = false;
+	m_bUseBackfaceCull = false;
 }
 
 Actor::Actor()
