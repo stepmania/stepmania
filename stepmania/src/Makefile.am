@@ -22,7 +22,7 @@ $(srcdir)/libresample/libresample.a:
 
 Screens = \
 Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
-ScreenBookkeeping.cpp ScreenBookkeeping.h ScreenBranch.cpp ScreenBranch.h ScreenCaution.cpp ScreenCaution.h \
+ScreenBookkeeping.cpp ScreenBookkeeping.h ScreenBranch.cpp ScreenBranch.h \
 ScreenCenterImage.cpp ScreenCenterImage.h ScreenCredits.cpp ScreenCredits.h \
 ScreenDemonstration.cpp ScreenDemonstration.h ScreenDimensions.h \
 ScreenClearBookkeepingData.cpp ScreenClearBookkeepingData.h ScreenClearMachineStats.cpp ScreenClearMachineStats.h \

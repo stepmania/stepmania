@@ -188,12 +188,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenBranch.h">
 			</File>
 			<File
-				RelativePath="ScreenCaution.cpp">
-			</File>
-			<File
-				RelativePath="ScreenCaution.h">
-			</File>
-			<File
 				RelativePath="ScreenCenterImage.cpp">
 			</File>
 			<File
