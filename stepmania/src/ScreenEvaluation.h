@@ -33,6 +33,12 @@ const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extr
 const int NUM_JUDGE_LINES =	9;	// marvelous, perfect, great, good, boo, miss, ok, max_combo, error
 const int NUM_SCORE_LINES = 2;	// score, time
 
+// sound sequences for the evaluation screen
+struct EvalSoundSequence
+{
+	float fTime;
+	RageSound sSound;
+};
 
 class ScreenEvaluation : public Screen
 {
@@ -120,6 +126,13 @@ protected:
 	Sprite				m_sprTryExtraStage;
 	AutoActor			m_FullCombo[NUM_PLAYERS];
 	bool m_bFailed;
+
+	// sound effects for other gametypes
+
+	RageSound	m_sndPassFail;	// sound played if the player passes or fails
+	bool m_bPassFailTriggered; // has the pass / fail sound been played yet?
+	RageTimer m_timerSoundSequences; // timer used for triggering sounds.
+	vector<EvalSoundSequence> m_SoundSequences; // a sequence of sounds to be played (although they're stored in no particular order!)	
 };
 
 #endif

@@ -64,6 +64,11 @@ const char* JUDGE_STRING[NUM_JUDGE_LINES] =
 #define SHOW_FULL_COMBO						THEME->GetMetricB(m_sName,"ShowFullCombo")
 #define GRAPH_START_HEIGHT					THEME->GetMetricF(m_sName,"GraphStartHeight")
 #define TYPE								THEME->GetMetric (m_sName,"Type")
+#define PASSED_SOUND_TIME					THEME->GetMetricF(m_sName,"PassedSoundTime")
+#define FAILED_SOUND_TIME					THEME->GetMetricF(m_sName,"FailedSoundTime")
+#define NUM_SEQUENCE_SOUNDS					THEME->GetMetricI(m_sName,"NumSequenceSounds")
+#define SOUNDSEQ_TIME( i )					THEME->GetMetricF(m_sName,ssprintf("SoundSeqTime%d", i+1))
+#define SOUNDSEQ_NAME( i )					THEME->GetMetric(m_sName,ssprintf("SoundSeqName%d", i+1))
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
@@ -110,6 +115,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		RageException::Throw("Unknown evaluation type \"%s\"", TYPE.c_str() );
 		
 	int p;
+	
 
 	//
 	// Figure out which statistics and songs we're going to display
@@ -354,15 +360,33 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	m_Menu.Load( m_sName );
 	this->AddChild( &m_Menu );
 
+	if(m_Type==stage)
+	{
+		int snd=0;
+		for(snd=0;snd<NUM_SEQUENCE_SOUNDS;snd++) // grab in any sound sequence the user may want to throw onto this screen
+		{
+			EvalSoundSequence temp;
+			temp.fTime = SOUNDSEQ_TIME(snd);
+			temp.sSound.Load(THEME->GetPathToS(SOUNDSEQ_NAME(snd),false));
+			m_SoundSequences.push_back(temp);
+		}
+	}
+	m_timerSoundSequences.SetZero(); // zero the sound sequence timer
+	m_timerSoundSequences.Touch(); // set the timer going :]
+	m_bPassFailTriggered = false; // the sound hasn't been triggered yet
 	if(m_bFailed && m_Type==stage)
 	{
 		m_bgFailedBack.LoadFromAniDir( THEME->GetPathToB("ScreenEvaluationStage Failed Background") );
 		m_bgFailedOverlay.LoadFromAniDir( THEME->GetPathToB("ScreenEvaluationStage Failed Overlay") );
+		m_sndPassFail.Load(THEME->GetPathToS("ScreenEvaluationStage Failed",false));
+	//	m_sndPassFail.Play();
 	}
 	else if( m_Type == stage )
 	{
 		// the themer can use the regular background for passed background
 		m_bgPassedOverlay.LoadFromAniDir( THEME->GetPathToB("ScreenEvaluationStage Passed Overlay") );
+		m_sndPassFail.Load(THEME->GetPathToS("ScreenEvaluationStage Passed",false));
+	//	m_sndPassFail.Play();
 	}
 	//
 	// init banner area
@@ -853,6 +877,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 	this->SortByZ();
 
+
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenEvaluation music") );
 	m_fScreenCreateTime = RageTimer::GetTimeSinceStart();
 }
@@ -1026,11 +1051,40 @@ void ScreenEvaluation::Update( float fDeltaTime )
 
 	if(m_bFailed && m_Type == stage)
 	{
+		if(	m_timerSoundSequences.Ago() > FAILED_SOUND_TIME && !m_bPassFailTriggered )
+		{
+			if(!m_sndPassFail.IsPlaying()) m_sndPassFail.Play();
+			m_bPassFailTriggered = true;
+		}
 		m_bgFailedBack.Update( fDeltaTime );
 		m_bgFailedOverlay.Update( fDeltaTime );
 	}
-	else if (m_Type == stage)
+	else if (m_Type == stage) // STAGE eval AND passed
+	{
+		if(	m_timerSoundSequences.Ago() > PASSED_SOUND_TIME && !m_bPassFailTriggered )
+		{
+			if(!m_sndPassFail.IsPlaying()) m_sndPassFail.Play();
+			m_bPassFailTriggered = true;
+		}
+
 		m_bgPassedOverlay.Update( fDeltaTime );
+
+	}
+	if(m_Type == stage) // stage eval ... pass / fail / whatever
+	{
+		int snd = 0;
+		for(snd=0;snd<m_SoundSequences.size();snd++)
+		{
+			if(m_SoundSequences[snd].fTime != -1) // already played? skip...
+			{
+				if(m_timerSoundSequences.Ago() > m_SoundSequences[snd].fTime )
+				{
+					m_SoundSequences[snd].fTime = -1; // -1 indicates already started playing
+					m_SoundSequences[snd].sSound.Play();
+				}
+			}
+		}
+	}
 
 	for( int p=0; p<NUM_PLAYERS; p++)
 	{
@@ -1120,6 +1174,8 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SetNewScreen( FAILED_SCREEN );
 		else
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
+
+		if(	m_sndPassFail.IsPlaying() ) m_sndPassFail.Stop();
 		break;
 	case SM_GoToSelectCourse:
 		SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
