@@ -27,6 +27,8 @@ int64_t RageSound_Null::GetPosition( const RageSoundBase *snd ) const
 RageSound_Null::RageSound_Null()
 {
 	last_cursor_pos = GetPosition( NULL );
+
+	StartDecodeThread();
 }
 
 float RageSound_Null::GetPlayLatency() const

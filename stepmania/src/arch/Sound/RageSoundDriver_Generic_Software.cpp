@@ -34,7 +34,7 @@ int RageSound_Generic_Software::DecodeThread_start( void *p )
 
 void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno, int64_t current_frameno )
 {
-	RAGE_ASSERT_M( m_DecodeThread.IsCreated(), "RageSound_Generic_Software::StartMixing was never called" );
+	RAGE_ASSERT_M( m_DecodeThread.IsCreated(), "RageSound_Generic_Software::StartDecodeThread() was never called" );
 
 	static SoundMixBuffer mix;
 
