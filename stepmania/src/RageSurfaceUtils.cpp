@@ -480,8 +480,15 @@ void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
  * No general blitting rects.
  */
 
-static void blit_same_type( const RageSurface *src_surf, const RageSurface *dst_surf, int width, int height )
+static bool blit_same_type( const RageSurface *src_surf, const RageSurface *dst_surf, int width, int height )
 {
+	if( src_surf->format->BytesPerPixel != dst_surf->format->BytesPerPixel ||
+		src_surf->format->Rmask != dst_surf->format->Rmask ||
+		src_surf->format->Gmask != dst_surf->format->Gmask ||
+		src_surf->format->Bmask != dst_surf->format->Bmask ||
+		src_surf->format->Amask != dst_surf->format->Amask )
+		return false;
+
 	const uint8_t *src = src_surf->pixels;
 	uint8_t *dst = dst_surf->pixels;
 
@@ -489,7 +496,7 @@ static void blit_same_type( const RageSurface *src_surf, const RageSurface *dst_
 	if( src_surf->w == width && dst_surf->w == width && src_surf->pitch == dst_surf->pitch )
 	{
         memcpy( dst, src, height*src_surf->pitch );
-		return;
+		return true;
 	}
 
 	/* The rows don't line up, so memcpy row by row. */
@@ -499,12 +506,17 @@ static void blit_same_type( const RageSurface *src_surf, const RageSurface *dst_
         src += src_surf->pitch;
         dst += dst_surf->pitch;
 	}
+
+	return true;
 }
 
 /* Rescaling blit with no ckey.  This is used to update movies in
  * D3D, so optimization is very important. */
-static void blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *dst_surf, int width, int height )
+static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *dst_surf, int width, int height )
 {
+	if( src_surf->format->BytesPerPixel == 1 || dst_surf->format->BytesPerPixel == 1 )
+		return false;
+
 	const uint8_t *src = src_surf->pixels;
 	uint8_t *dst = dst_surf->pixels;
 
@@ -594,10 +606,15 @@ static void blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 		src += srcskip;
 		dst += dstskip;
 	}
+
+	return true;
 }
 
-static void blit_generic( const RageSurface *src_surf, const RageSurface *dst_surf, int width, int height )
+static bool blit_generic( const RageSurface *src_surf, const RageSurface *dst_surf, int width, int height )
 {
+	if( src_surf->format->BytesPerPixel != 1 || dst_surf->format->BytesPerPixel == 1 )
+		return false;
+
 	const uint8_t *src = src_surf->pixels;
 	uint8_t *dst = dst_surf->pixels;
 
@@ -631,6 +648,7 @@ static void blit_generic( const RageSurface *src_surf, const RageSurface *dst_su
 		dst += dstskip;
 	}
 
+	return true;
 }
 
 /* Blit src onto dst. */
@@ -643,36 +661,25 @@ void RageSurfaceUtils::Blit( const RageSurface *src, RageSurface *dst, int width
 	width = min(src->w, dst->w);
 	height = min(src->h, dst->h);
 
-	/*
-	 * Types of blits:
-	 * RGBA->RGBA or PAL->PAL, same format (possibly different pitch)
-	 * RGBA->RGBA different formats
-	 * PAL->RGBA
-	 */
-	if( src->format->BytesPerPixel == dst->format->BytesPerPixel &&
-		src->format->Rmask == dst->format->Rmask &&
-		src->format->Gmask == dst->format->Gmask &&
-		src->format->Bmask == dst->format->Bmask &&
-		src->format->Amask == dst->format->Amask )
+	/* Try each blit until we find one that works; run them in order of efficiency,
+	 * so we use the fastest blit possible. */
+	do
 	{
 		/* RGBA->RGBA with the same format, or PAL->PAL.  Simple copy. */
-		blit_same_type(src, dst, width, height);
-	}
+		if( blit_same_type(src, dst, width, height) )
+			break;
 
-	else if( src->format->BytesPerPixel != 1 && dst->format->BytesPerPixel != 1 )
-	{
 		/* RGBA->RGBA with different formats. */
-		blit_rgba_to_rgba(src, dst, width, height);
-	}
+		if( blit_rgba_to_rgba(src, dst, width, height) )
+			break;
 
-	else if( src->format->BytesPerPixel == 1 && dst->format->BytesPerPixel != 1 )
-	{
 		/* PAL->RGBA. */
-		blit_generic(src, dst, width, height);
-	}
-	else
+		if( blit_generic(src, dst, width, height) )
+			break;
+
 		/* We don't do RGBA->PAL. */
 		ASSERT(0);
+	} while(0);
 
 	/*
 	 * The destination surface may be larger than the source.  For example, we may be
