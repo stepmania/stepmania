@@ -968,14 +968,12 @@ int main(int argc, char* argv[])
 	PREFSMAN->ReadGlobalPrefsFromDisk();
 	ApplyLogPreferences();
 	
-	atexit(SDL_Quit);   /* Clean up on exit */
+#if defined(HAVE_SDL)
+	SetupSDL();
+#endif
 
 	/* This should be done after PREFSMAN is set up, so it can use Dialog::OK(). */
 	Dialog::Init();
-
-	/* Fire up the SDL, but don't actually start any subsystems.
-	 * We use our own error handlers. */
-	SDL_Init( SDL_INIT_NOPARACHUTE );
 
 	//
 	// Create game objects
@@ -1067,8 +1065,7 @@ int main(int argc, char* argv[])
 	SONGMAN->PreloadSongImages();
 
 	/* This initializes objects that change the SDL event mask, and has other
-	 * dependencies on the SDL video subsystem, so it must be initialized after
-	 * DISPLAY and setting the default SDL event mask. */
+	 * dependencies on the SDL video subsystem, so it must be initialized after DISPLAY. */
 	INPUTMAN	= new RageInput;
 
 	// These things depend on the TextureManager, so do them after!

@@ -335,6 +335,19 @@ void SDL_UpdateHWnd()
 #endif
 }
 
+void SetupSDL()
+{
+	static bool bDone = false;
+	if( bDone )
+		return;
+	bDone = true;
+
+	/* Start SDL (with no subsystems), to make sure we don't use SDL's error handler. */
+	SDL_Init( SDL_INIT_NOPARACHUTE );
+
+	/* Clean up on exit. */
+	atexit( SDL_Quit );
+}
 
 /*
  * (c) 2002-2004 Glenn Maynard
