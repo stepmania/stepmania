@@ -77,7 +77,7 @@
 
 const float TWEEN_TIME		= 0.5f;
 
-const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
+static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 
 
 
