@@ -194,8 +194,9 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		m_bChosen[p] = false;
 	}
 	
-	m_soundChange.Load( THEME->GetPathToS( ssprintf("%s change", m_sName.c_str())), true );
+	m_soundChange.Load( THEME->GetPathToS( ssprintf("%s change", m_sName.c_str())) );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
+	m_soundStart.Load( THEME->GetPathToS( ssprintf("%s start", m_sName.c_str())) );
 
 	// init m_Next order info
 	for( int dir = 0; dir < NUM_DIRS; ++dir )
@@ -596,7 +597,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 
 	GameCommand &mc = m_aGameCommands[m_iChoice[pn]];
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), mc.m_sName.c_str())) );
-	SCREENMAN->PlayStartSound();
+	m_soundStart.Play();
 
 	float fSecs = 0;
 	bool bAllDone = true;

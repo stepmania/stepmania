@@ -71,20 +71,12 @@ protected:
 
 	RageSound	m_soundChange;
 	RandomSample m_soundDifficult;
+	RageSound	m_soundStart;
 
 	int m_iChoice[NUM_PLAYERS];
 	bool m_bChosen[NUM_PLAYERS];
 
 	float m_fLockInputSecs;
-};
-
-//
-// Aliases
-//
-class ScreenSelectStyle5th : public ScreenSelectMaster
-{
-public:
-	ScreenSelectStyle5th( CString sName ): ScreenSelectMaster( sName ) { }
 };
 
 
