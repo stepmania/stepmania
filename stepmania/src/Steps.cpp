@@ -31,6 +31,7 @@ Steps::Steps()
 {
 	m_StepsType = STEPS_TYPE_INVALID;
 	m_LoadedFromProfile = PROFILE_SLOT_INVALID;
+	m_uHash = 0;
 	m_Difficulty = DIFFICULTY_INVALID;
 	m_iMeter = 0;
 
@@ -51,11 +52,13 @@ void Steps::SetNoteData( const NoteData* pNewNoteData )
 
 	DeAutogen();
 
-	delete notes_comp;
-	notes_comp = NULL;
-
 	delete notes;
 	notes = new NoteData(*pNewNoteData);
+	
+	delete notes_comp;
+	notes_comp = new CompressedNoteData;
+	NoteDataUtil::GetSMNoteDataString( *notes, notes_comp->notes, notes_comp->attacks );
+	m_uHash = GetHashForString( notes_comp->notes );
 }
 
 void Steps::GetNoteData( NoteData* pNoteDataOut ) const
@@ -84,6 +87,7 @@ void Steps::SetSMNoteData( const CString &notes_comp_, const CString &attacks_co
 
 	notes_comp->notes = notes_comp_;
 	notes_comp->attacks = attacks_comp_;
+	m_uHash = GetHashForString( notes_comp->notes );
 }
 
 void Steps::GetSMNoteData( CString &notes_comp_out, CString &attacks_comp_out ) const

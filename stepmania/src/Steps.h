@@ -38,6 +38,7 @@ public:
 	bool IsAnEdit() const { return m_Difficulty == DIFFICULTY_EDIT; }
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }
 	ProfileSlot GetLoadedFromProfileSlot() const { return m_LoadedFromProfile; }
+	unsigned GetHash() const { return Real()->m_uHash; }
 	CString GetDescription() const { return Real()->m_sDescription; }
 	Difficulty GetDifficulty() const { return Real()->m_Difficulty; }
 	ProfileSlot GetLoadedFromProfile() const { return m_LoadedFromProfile; }
@@ -80,6 +81,7 @@ protected:
 
 	/* These values are pulled from the autogen source first, if there is one. */
 	ProfileSlot		m_LoadedFromProfile;	// PROFILE_SLOT_INVALID if wasn't loaded from a profile
+	unsigned		m_uHash;			// only used if m_Difficulty == DIFFICULTY_EDIT
 	CString			m_sDescription;		// Step author, edit name, or something meaningful
 	Difficulty		m_Difficulty;		// difficulty classification
 	int				m_iMeter;			// difficulty rating from MIN_METER to MAX_METER

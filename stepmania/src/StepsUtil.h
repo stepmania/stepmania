@@ -37,6 +37,7 @@ class StepsID
 	StepsType st;
 	Difficulty dc;
 	CString sDescription;
+	unsigned uHash;
 
 public:
 	StepsID() { Unset(); }
@@ -45,7 +46,7 @@ public:
 	Steps *ToSteps( const Song *p, bool bAllowNull ) const;
 	bool operator<( const StepsID &other ) const
 	{
-		return st < other.st || dc < other.dc || sDescription < other.sDescription;
+		return st < other.st || dc < other.dc || sDescription < other.sDescription || uHash < other.uHash;
 	}
 
 	XNode* CreateNode() const;

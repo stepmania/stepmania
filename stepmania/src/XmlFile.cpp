@@ -886,6 +886,11 @@ LPXNode	XNode::AppendChild( const char* name /*= NULL*/, int value /*= NULL*/ )
 	return AppendChild( name, ssprintf("%d",value) );
 }
 
+LPXNode	XNode::AppendChild( const char* name /*= NULL*/, unsigned value /*= NULL*/ )
+{
+	return AppendChild( name, ssprintf("%u",value) );
+}
+
 //========================================================
 // Name   : AppendChild
 // Desc   : add node
@@ -1046,6 +1051,7 @@ LPXAttr XNode::AppendAttr( const char* name /*= NULL*/, const char* value /*= NU
 
 LPXAttr XNode::AppendAttr( const char* name, float value ){ return AppendAttr(name,ssprintf("%f",value)); }
 LPXAttr XNode::AppendAttr( const char* name, int value )	{ return AppendAttr(name,ssprintf("%d",value)); }
+LPXAttr XNode::AppendAttr( const char* name, unsigned value )	{ return AppendAttr(name,ssprintf("%u",value)); }
 
 //========================================================
 // Name   : DetachChild

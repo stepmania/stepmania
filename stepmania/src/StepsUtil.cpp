@@ -168,7 +168,10 @@ XNode* StepsID::CreateNode() const
 	pNode->AppendAttr( "StepsType", GameManager::NotesTypeToString(st) );
 	pNode->AppendAttr( "Difficulty", DifficultyToString(dc) );
 	if( dc == DIFFICULTY_EDIT )
+	{
 		pNode->AppendAttr( "Description", sDescription );
+		pNode->AppendAttr( "Hash", uHash );
+	}
 
 	return pNode;
 }
@@ -186,7 +189,10 @@ void StepsID::LoadFromNode( const XNode* pNode )
 	dc = StringToDifficulty( sTemp );
 
 	if( dc == DIFFICULTY_EDIT )
-		pNode->GetChildValue("Description", sDescription);
+	{
+		pNode->GetAttrValue("Description", sDescription);
+		pNode->GetAttrValue("Hash", uHash);
+	}
 }
 
 bool StepsID::IsValid() const

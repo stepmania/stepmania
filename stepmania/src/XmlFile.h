@@ -106,6 +106,7 @@ struct XAttr
 	void GetValue(int &out) const		{ out = atoi(value); }
 	void GetValue(float &out) const		{ out = (float) atof(value); }
 	void GetValue(bool &out) const		{ out = atoi(value) != 0; }
+	void GetValue(unsigned &out) const	{ sscanf(value,"%u",&out); }
 	
 	XNode*	parent;
 
@@ -123,6 +124,7 @@ struct XNode
 	void GetValue(int &out) const		{ out = atoi(value); }
 	void GetValue(float &out) const		{ out = (float) atof(value); }
 	void GetValue(bool &out) const		{ out = atoi(value) != 0; }
+	void GetValue(unsigned &out) const	{ out = (unsigned)atoi(value) != 0; }
 
 	// internal variables
 	LPXNode	parent;		// parent node
@@ -145,6 +147,7 @@ struct XNode
 	bool GetAttrValue(const char* name,int &out) const		{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	bool GetAttrValue(const char* name,float &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	bool GetAttrValue(const char* name,bool &out) const		{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue(const char* name,unsigned &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	XAttrs	GetAttrs( const char* name ); 
 
 	// in one level child nodes
@@ -155,6 +158,7 @@ struct XNode
 	bool GetChildValue(const char* name,int &out) const		{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	bool GetChildValue(const char* name,float &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	bool GetChildValue(const char* name,bool &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue(const char* name,unsigned &out) const{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	XNodes	GetChilds( const char* name ); 
 	XNodes	GetChilds(); 
 
@@ -169,6 +173,7 @@ struct XNode
 	LPXNode	AppendChild( const char* name = NULL, const char* value = NULL );
 	LPXNode	AppendChild( const char* name, float value );
 	LPXNode	AppendChild( const char* name, int value );
+	LPXNode	AppendChild( const char* name, unsigned value );
 	LPXNode	AppendChild( LPXNode node );
 	bool	RemoveChild( LPXNode node );
 	LPXNode DetachChild( LPXNode node );
@@ -180,6 +185,7 @@ struct XNode
 	LPXAttr AppendAttr( const char* name = NULL, const char* value = NULL );
 	LPXAttr AppendAttr( const char* name, float value );
 	LPXAttr AppendAttr( const char* name, int value );
+	LPXAttr AppendAttr( const char* name, unsigned value );
 	LPXAttr	AppendAttr( LPXAttr attr );
 	bool	RemoveAttr( LPXAttr attr );
 	LPXAttr DetachAttr( LPXAttr attr );
