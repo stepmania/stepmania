@@ -555,14 +555,16 @@ void ScreenEdit::Init()
 	m_NoteFieldEdit.SetZoom( 0.5f );
 	m_NoteDataEdit.CopyAll( noteData );
 
-	m_NoteFieldEdit.Load( &m_NoteDataEdit, GAMESTATE->m_pPlayerState[PLAYER_1], -240, 800, PLAYER_HEIGHT*2 );
+	m_NoteFieldEdit.Init( GAMESTATE->m_pPlayerState[PLAYER_1], PLAYER_HEIGHT*2 );
+	m_NoteFieldEdit.Load( &m_NoteDataEdit, -240, 800 );
 
 	m_rectRecordBack.StretchTo( RectF(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );
 
 	m_NoteFieldRecord.SetXY( EDIT_X, PLAYER_Y );
 	m_NoteDataRecord.CopyAll( noteData );
-	m_NoteFieldRecord.Load( &m_NoteDataRecord, GAMESTATE->m_pPlayerState[PLAYER_1], -150, 350, 350 );
+	m_NoteFieldRecord.Init( GAMESTATE->m_pPlayerState[PLAYER_1], 350 );
+	m_NoteFieldRecord.Load( &m_NoteDataRecord, -150, 350 );
 
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
@@ -2235,7 +2237,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				// initialize m_NoteFieldRecord
 				m_NoteDataRecord.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 				m_NoteDataRecord.CopyAll( m_NoteDataEdit );
-				m_NoteFieldRecord.Load( &m_NoteDataRecord, GAMESTATE->m_pPlayerState[PLAYER_1], -150, 350, 350 );
+				m_NoteFieldRecord.Load( &m_NoteDataRecord, -150, 350 );
 
 				m_rectRecordBack.StopTweening();
 				m_rectRecordBack.BeginTweening( 0.5f );

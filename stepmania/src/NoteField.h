@@ -22,12 +22,11 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	
+	virtual void Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels );
 	virtual void Load( 
 		const NoteData* pNoteData, 
-		const PlayerState* pPlayerState, 
 		int iStartDrawingPixel, 
-		int iEndDrawingPixel, 
-		float fYReverseOffsetPixels );
+		int iEndDrawingPixel );
 	virtual void Unload();
 
 	int	m_iBeginMarker, m_iEndMarker;	// only used with MODE_EDIT

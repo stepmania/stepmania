@@ -59,8 +59,8 @@ void NoteField::CacheNoteSkin( CString skin )
 		return;
 
 	LOG->Trace("NoteField::CacheNoteSkin: cache %s", skin.c_str() );
-	NoteDisplayCols *nd = new NoteDisplayCols( m_pNoteData->GetNumTracks() );
-	for( int c=0; c<m_pNoteData->GetNumTracks(); c++ ) 
+	NoteDisplayCols *nd = new NoteDisplayCols( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
+	for( int c=0; c<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; c++ ) 
 		nd->display[c].Load( c, m_pPlayerState, skin, m_fYReverseOffsetPixels );
 	nd->m_ReceptorArrowRow.Load( m_pPlayerState, skin, m_fYReverseOffsetPixels );
 	nd->m_GhostArrowRow.Load( m_pPlayerState, skin, m_fYReverseOffsetPixels );
@@ -78,25 +78,27 @@ void NoteField::CacheAllUsedNoteSkins()
 		CacheNoteSkin( skins[i] );
 }
 
+void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels )
+{
+	m_pPlayerState = pPlayerState;
+	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
+	CacheAllUsedNoteSkins();
+}
+
 void NoteField::Load( 
 	const NoteData *pNoteData,
-	const PlayerState* pPlayerState, 
 	int iFirstPixelToDraw, 
-	int iLastPixelToDraw, 
-	float fYReverseOffsetPixels )
+	int iLastPixelToDraw )
 {
 	m_pNoteData = pNoteData;
-	m_pPlayerState = pPlayerState;
 	m_iStartDrawingPixel = iFirstPixelToDraw;
 	m_iEndDrawingPixel = iLastPixelToDraw;
-	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 
 	m_fPercentFadeToFail = -1;
 	m_LastSeenBeatToNoteSkinRev = -1;
 
 	ASSERT( m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
 
-	CacheAllUsedNoteSkins();
 	RefreshBeatToNoteSkin();
 }
 

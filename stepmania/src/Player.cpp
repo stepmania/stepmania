@@ -158,6 +158,9 @@ void Player::Init(
 	m_Combo.SetName( "Combo" );
 	m_Combo.Load( pn );
 
+	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
+	m_pNoteField->Init( m_pPlayerState, m_fNoteFieldHeight );
+
 	ActorUtil::OnCommand( m_Combo, sType );
 }
 
@@ -234,9 +237,7 @@ void Player::Load( const NoteData& noteData )
 	
 	if( m_pNoteField )
 		m_pNoteField->SetY( fNoteFieldMiddle );
-	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
-	if( m_pNoteField )
-		m_pNoteField->Load( &m_NoteData, m_pPlayerState, iStartDrawingAtPixels, iStopDrawingAtPixels, m_fNoteFieldHeight );
+	m_pNoteField->Load( &m_NoteData, iStartDrawingAtPixels, iStopDrawingAtPixels );
 
 	const bool bReverse = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetReversePercentForColumn(0) == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==ONE_PLAYER_TWO_SIDES;
