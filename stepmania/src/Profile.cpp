@@ -242,9 +242,9 @@ int Profile::GetActualSongDancePointsForStepsType( StepsType st ) const
 	{
 		for( std::map<SongID,HighScoresForASong>::const_iterator i = m_SongHighScores.begin();
 			i != m_SongHighScores.end();
-			i++ )
+			++i )
 		{
-			SongID id = i->first;
+			const SongID &id = i->first;
 			Song* pSong = id.ToSong();
 			
 			// If the Song isn't loaded on the current machine, then we can't 
@@ -259,9 +259,9 @@ int Profile::GetActualSongDancePointsForStepsType( StepsType st ) const
 
 			for( std::map<StepsID,HighScoresForASteps>::const_iterator j = hsfas.m_StepsHighScores.begin();
 				j != hsfas.m_StepsHighScores.end();
-				j++ )
+				++j )
 			{
-				StepsID id = j->first;
+				const StepsID &id = j->first;
 				Steps* pSteps = id.ToSteps( pSong, true );
 				
 				// If the Steps isn't loaded on the current machine, then we can't 
