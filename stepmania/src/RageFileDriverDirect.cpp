@@ -261,7 +261,7 @@ bool RageFileDriverDirect::Remove( const CString &path )
 	FDB->ResolvePath( sPath );
 	switch( this->GetFileType(sPath) )
 	{
-	case TTYPE_FILE:
+	case RageFileManager::TYPE_FILE:
 		LOG->Trace("remove '%s'", (root + sPath).c_str());
 		if( DoRemove( root + sPath ) == -1 )
 		{
@@ -272,7 +272,7 @@ bool RageFileDriverDirect::Remove( const CString &path )
 		FDB->DelFile( sPath );
 		return true;
 
-	case TTYPE_DIR:
+	case RageFileManager::TYPE_DIR:
 		LOG->Trace("rmdir '%s'", (root + sPath).c_str());
 		if( DoRmdir( root + sPath ) == -1 )
 		{
@@ -283,7 +283,7 @@ bool RageFileDriverDirect::Remove( const CString &path )
 		FDB->DelFile( sPath );
 		return true;
 
-	case TTYPE_NONE: return false;
+	case RageFileManager::TYPE_NONE: return false;
 	default: ASSERT(0); return false;
 	}
 }

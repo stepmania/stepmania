@@ -4,8 +4,7 @@
 #include <set>
 #include <map>
 #include "RageTimer.h"
-
-enum FileType { TTYPE_FILE, TTYPE_DIR, TTYPE_NONE };
+#include "RageFileManager.h"
 
 struct FileSet;
 struct File
@@ -16,7 +15,7 @@ struct File
 	void SetName( const CString &fn )
 	{
 		name = fn;
-                lname = name;
+		lname = name;
 		lname.MakeLower();
 	}
 	
@@ -62,7 +61,7 @@ struct FileSet
 		vector<CString> &out, bool bOnlyDirs) const;
 	void GetFilesEqualTo(const CString &pat, vector<CString> &out, bool bOnlyDirs) const;
 
-	FileType GetFileType( const CString &path ) const;
+	RageFileManager::FileType GetFileType( const CString &path ) const;
 	int GetFileSize(const CString &path) const;
 	int GetFileHash(const CString &path) const;
 };
@@ -103,7 +102,7 @@ public:
 	 * case.  If "path" doesn't exist at all, return false and don't change it. */
 	bool ResolvePath(CString &path);
 
-	FileType GetFileType( const CString &path );
+	RageFileManager::FileType GetFileType( const CString &path );
 	int GetFileSize(const CString &path);
 	int GetFileHash( const CString &sFilePath );
 	void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );

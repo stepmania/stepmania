@@ -52,13 +52,13 @@ void FileSet::GetFilesEqualTo(const CString &str, vector<CString> &out, bool bOn
 	out.push_back( i->name );
 }
 
-FileType FileSet::GetFileType(const CString &path ) const
+RageFileManager::FileType FileSet::GetFileType(const CString &path ) const
 {
 	set<File>::const_iterator i = files.find( File(path) );
 	if(i == files.end())
-		return TTYPE_NONE;
+		return RageFileManager::TYPE_NONE;
 
-	return i->dir? TTYPE_DIR:TTYPE_FILE;
+	return i->dir? RageFileManager::TYPE_DIR:RageFileManager::TYPE_FILE;
 }
 
 int FileSet::GetFileSize(const CString &path) const
@@ -101,13 +101,13 @@ static void SplitPath( CString Path, CString &Dir, CString &Name )
 }
 
 
-FileType FilenameDB::GetFileType( const CString &sPath )
+RageFileManager::FileType FilenameDB::GetFileType( const CString &sPath )
 {
 	CString Dir, Name;
 	SplitPath( sPath, Dir, Name );
 
 	if( Name == "." )
-		return TTYPE_DIR;
+		return RageFileManager::TYPE_DIR;
 
 	FileSet *fs = GetFileSet( Dir );
 	return fs->GetFileType( Name );
