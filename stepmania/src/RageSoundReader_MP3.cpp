@@ -601,11 +601,14 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ 
 	if(mad->bitrate == -1)
 		mad->bitrate = mad->Frame.header.bitrate;
 
+	SampleRate = mad->Frame.header.samplerate;
 	mad->framelength = mad->Frame.header.duration;
+	this->Channels = 0;
 
 	/* Since we've already decoded a frame, just synth it instead of rewinding
 	 * the stream. */
 	synth_output();
+	this->Channels = MAD_NCHANNELS( &mad->Frame.header );
 
     if(mad->length == -1)
     {
@@ -615,8 +618,6 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ 
 		mad->length = (int)(secs * 1000.f);
 	}
 
-	SampleRate = mad->Frame.header.samplerate;
-	this->Channels = mad->Frame.header.mode == MAD_MODE_SINGLE_CHANNEL? 1:2;
 	return OPEN_OK;
 }
 
