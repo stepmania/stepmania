@@ -113,27 +113,16 @@ void Steps::GetSMNoteData( CString &notes_comp_out, CString &attacks_comp_out ) 
 void Steps::TidyUpData()
 {
 	if( GetDifficulty() == DIFFICULTY_INVALID )
-		SetDifficulty(StringToDifficulty(GetDescription()));
+		SetDifficulty( StringToDifficulty(GetDescription()) );
 	
 	if( GetDifficulty() == DIFFICULTY_INVALID )
 	{
-		if(		 GetMeter() == 1 )	SetDifficulty(DIFFICULTY_BEGINNER);
-		else if( GetMeter() <= 3 )	SetDifficulty(DIFFICULTY_EASY);
-		else if( GetMeter() <= 6 )	SetDifficulty(DIFFICULTY_MEDIUM);
-		else						SetDifficulty(DIFFICULTY_HARD);
+		if(		 GetMeter() == 1 )	SetDifficulty( DIFFICULTY_BEGINNER );
+		else if( GetMeter() <= 3 )	SetDifficulty( DIFFICULTY_EASY );
+		else if( GetMeter() <= 6 )	SetDifficulty( DIFFICULTY_MEDIUM );
+		else						SetDifficulty( DIFFICULTY_HARD );
 	}
-	// Meter is overflowing (invalid), but some files (especially maniac/smaniac steps) are purposefully set higher than 10.
-	// See: BMR's Gravity; we probably should keep those as difficult as we can represent.
-	/* Why? If the data file says a meter of 72, we should keep it as 72; if
-	 * individual bits of code (eg. scoring, feet) have maximums, they should
-	 * enforce it internally.  Doing it here will make us lose the difficulty
-	 * completely if the song is edited and written. -glenn */
-/*	if( GetMeter() >10 ) {
-			if( GetDifficulty() == DIFFICULTY_HARD || GetDifficulty() == DIFFICULTY_CHALLENGE)
-				SetMeter(10);
-			else
-				SetMeter(0);
-	} */
+
 	if( GetMeter() < 1) // meter is invalid
 	{
 		// guess meter from difficulty class
@@ -150,9 +139,7 @@ void Steps::TidyUpData()
 	}
 
 	if( m_sDescription.empty() )
-	{
 		m_sDescription = Capitalize( DifficultyToString(m_Difficulty) );
-	}
 }
 
 void Steps::Decompress() const
@@ -358,7 +345,7 @@ void Steps::MemCardData::AddHighScore( Steps::MemCardData::HighScore hs, int &iI
 	{
 		vHighScores.insert( vHighScores.begin()+i, hs );
 		iIndexOut = i;
-		if( vHighScores.size() > NUM_RANKING_LINES )
+		if( (int)vHighScores.size() > NUM_RANKING_LINES )
 			vHighScores.erase( vHighScores.begin()+NUM_RANKING_LINES, vHighScores.end() );
 	}
 }
