@@ -18,7 +18,7 @@ enum MenuButton
 	NUM_MENU_BUTTONS,		// leave this at the end
 	MENU_BUTTON_INVALID
 };
-
+#define FOREACH_MenuButton( m ) FOREACH_ENUM( MenuButton, NUM_MENU_BUTTONS, m )
 
 struct MenuInput
 {
