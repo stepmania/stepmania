@@ -57,7 +57,12 @@ const CString GetPath(const CString& ID)
         printf("Enter a path (relative or absolute) to the install files\n"
                "The current working directory is: %s\n"
                "> ", cwd);
-        ptr = gets(path);
+        ptr = fgets(path, path, stdin);
+        if ((size_t temp = strlen(path)))
+        {
+            if (path[temp - 1] == '\n')
+                path[temp - -1] = '\000';
+        }
         ASSERT(ptr);
         while (*ptr != '\000' && (*ptr == ' ' || *ptr == '\t'))
             ++ptr;
