@@ -1058,6 +1058,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="DifficultyIcon.h">
 			</File>
 			<File
+				RelativePath="MeterDisplay.cpp">
+			</File>
+			<File
+				RelativePath="MeterDisplay.h">
+			</File>
+			<File
 				RelativePath="Transition.cpp">
 			</File>
 			<File
@@ -1286,6 +1292,18 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="DancingCharacters.h">
+			</File>
+			<File
+				RelativePath="EnemyFace.cpp">
+			</File>
+			<File
+				RelativePath="EnemyFace.h">
+			</File>
+			<File
+				RelativePath="EnemyHealth.cpp">
+			</File>
+			<File
+				RelativePath="EnemyHealth.h">
 			</File>
 			<File
 				RelativePath=".\GhostArrow.cpp">

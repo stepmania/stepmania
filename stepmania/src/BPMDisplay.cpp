@@ -84,7 +84,7 @@ void BPMDisplay::Update( float fDeltaTime )
 	}
 
 	// update m_fCurrentBPM
-	int iLastCurBPM = (int)m_fCurrentBPM;
+//	int iLastCurBPM = (int)m_fCurrentBPM;
 	switch( m_CountingState )
 	{
 	case counting_down:	m_fCurrentBPM = m_fLowBPM + (m_fHighBPM-m_fLowBPM)*m_fTimeLeftInState;	break;
