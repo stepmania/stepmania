@@ -32,6 +32,7 @@ and Help</a> <br>
 <a href="#BGAnimations Format">BGAnimations Format</a><br>
 <a href="#The .CRS File Format">The .CRS File Format</a><br>
 <a href="#Extra Stages">Extra Stages</a><br>
+<a href="#Unlock System">Unlock System</a><br>
 <a href="#Creating an Announcer">Creating an Announcer</a><br>
 <a href="#Creating a Note Skin">Creating a Note Skin</a><br>
 <a href="#Creating a Theme">Creating a Theme</a><br>
@@ -737,6 +738,38 @@ Don't forget: extra stage CRS files belong in the song group folder (e.g.
 &quot;Songs/DDRMAX/&quot;), not in &quot;Courses&quot;.<br>
 <br>
 </font>
+
+
+<font face="Courier New" size="2"><hr>
+<a name="Unlock System">Unlock System </a>(<a href="#Table of Contents">top</a>)
+<hr>
+Stepmania now supports an unlocking system.  This means you can choose to make some songs or courses hidden from the selection interface until a certain condition has been met.  Some of the methods implemented are:<p>
+Dance points (DP)<br>
+Song stays locked until a certain number of dance points are accumulated.  A Perfect is worth 2 points, Great is 1, etc.<p>
+Arcade points (AP)<br>
+Like dance points, except you accumulate 1 point per song cleared.  (Like MAX2 arcade)  However, if you can AAA or AAAA something, you receive 10 points instead.<p>
+Song points (SP)<br>
+Like Arcade points, except points are accumulated based on dance grade.  D is worth 1 point, C is worth 2, etc.<p>
+Stages Cleared (SC)<br>
+Songs are unlocked based on how many stages are cleared.<p>
+Roulette (RO)<br>
+Songs are locked until they are landed on in roulette.<p>
+Toasties (!!)<br>
+Songs are locked until a certain number of Toasties appear on screen.<p>
+Unlocks are defined in the file unlocks.dat inside of the Data folder.  The syntax is fairly straightforward, like the course song specification.  You can specify multiple conditions, and the song becomes unlocked once one of those conditions are met.  Songs are specified by their full transliterated title.<p>
+Examples:<p>
+#UNLOCK:xenon:AP=10;<br>
+Song xenon requires 10 arcade points to unlock.<p>
+#UNLOCK:the Legend of MAX:RO=3<br>
+Song "the Legend of Max" is in roulette slot 3.<p>
+#UNLOCK:PARANOIA SURVIVOR MAX:CS=30,RO=3;<br>
+Song "Paranoia Survivor MAX" is locked either by clearing 30 stages, or by landing on it in roulette.<p>
+#UNLOCK:POP 4:CS=50;<p>
+Course Pop 4 is locked until 50 stages are cleared. (Stepmania doesn't distinguish between song and course titles yet.)<p>
+A note about roulette seeds – Each entry to be locked via roulette must have its own seed – if multiple songs have the same seed and one of them is landed on, all of them become unlocked.  A song locked by roulette does NOT need to be cleared in order to become unlocked.<p>
+</font>
+
+
 <font face="Courier New" size="2">
 <a name="Creating an Announcer"><hr>Creating an Announcer</a> (<a href="#Table of Contents">top</a>)</font><hr>
 <font face="Courier New" size="2">
