@@ -127,6 +127,9 @@ void ScreenDemonstration::FirstUpdate()
 {
 	LOG->Trace( "ScreenDemonstration::FirstUpdate()" );
 
+	if( GAMESTATE->m_pCurSong == NULL ) 
+		return;
+
 	ScreenGameplay::FirstUpdate();
 
 
@@ -150,6 +153,12 @@ void ScreenDemonstration::FirstUpdate()
 
 void ScreenDemonstration::Update( float fDeltaTime )
 {
+	if( GAMESTATE->m_pCurSong == NULL ) 
+	{
+		Screen::Update(fDeltaTime);	// handle screen messages
+		return;
+	}
+
 	ScreenGameplay::Update( fDeltaTime );
 
 	// hide status icons
