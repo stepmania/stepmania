@@ -17,13 +17,9 @@
 class Course;
 class Song;
 
-
-const int MAX_VISIBLE_WHEEL_ITEMS	=	25;
-
 const ScreenMessage	SM_SongChanged		=	ScreenMessage(SM_User+47);	// this should be unique!
 const ScreenMessage SM_SortOrderChanging=	ScreenMessage(SM_User+48);	
 const ScreenMessage SM_SortOrderChanged	=	ScreenMessage(SM_User+49);	
-
 
 struct CompareSongPointerArrayBySectionName;
 
@@ -67,7 +63,7 @@ public:
 	CString			GetSelectedSection(){ return m_CurWheelItemData[m_iSelection]->m_sSectionName; }
 
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
-	void RebuildMusicWheelItems();
+	void RebuildMusicWheelItems( int dist = -999999 );	// -999999 = refresh all
 
 	Song *GetPreferredSelectionForRandomOrPortal();
 
@@ -89,8 +85,7 @@ protected:
 
 	vector<WheelItemData> m_WheelItemDatas[NUM_SORT_ORDERS];
 	vector<WheelItemData *> m_CurWheelItemData;
-	
-	MusicWheelItem	m_MusicWheelItems[MAX_VISIBLE_WHEEL_ITEMS];
+	vector<MusicWheelItem *> m_MusicWheelItems;
 	
 	int					m_iSelection;		// index into m_CurWheelItemData
 	CString				m_sExpandedSectionName;

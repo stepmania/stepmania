@@ -75,6 +75,8 @@ vector<SortOrder> SONG_SORT_ORDERS( g_SongSortOrders, g_SongSortOrders + ARRAYSI
 	
 MusicWheel::MusicWheel() 
 {
+	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
+		m_MusicWheelItems.push_back( new MusicWheelItem );
 }
 
 SortOrder ForceAppropriateSort( PlayMode pm, SortOrder so )
@@ -249,6 +251,9 @@ void MusicWheel::Load()
 
 MusicWheel::~MusicWheel()
 {
+	FOREACH( MusicWheelItem*, m_MusicWheelItems, i )
+		SAFE_DELETE( *i );
+	m_MusicWheelItems.clear();
 }
 
 /* If a song or course is set in GAMESTATE and available, select it.  Otherwise, choose the
@@ -809,41 +814,94 @@ void MusicWheel::SetItemPosition( Actor &item, float fPosOffsetsFromMiddle )
 	item.SetRotationX( fRotationX );
 }
 
-void MusicWheel::RebuildMusicWheelItems()
+template<class T>
+void CircularShift( vector<T> &v, int dist )
+{
+	for( int i = abs( dist ); i>0; i-- )
+	{
+		if( dist > 0 )
+		{
+			T t = v[0];
+			v.erase( v.begin() );
+			v.push_back( t );
+		}
+		else
+		{
+			T t = v.back();
+			v.erase( v.end()-1 );
+			v.insert( v.begin(), t );
+		}
+	}
+}
+
+void MusicWheel::RebuildMusicWheelItems( int dist )
 {
 	// rewind to first index that will be displayed;
-	int iIndex = m_iSelection;
+	int iFirstVisibleIndex = m_iSelection;
 	if( m_iSelection > int(m_CurWheelItemData.size()-1) )
 		m_iSelection = 0;
 	
-	iIndex -= NUM_WHEEL_ITEMS/2;
+	// find the first wheel item shown
+	iFirstVisibleIndex -= NUM_WHEEL_ITEMS/2;
 
 	ASSERT(m_CurWheelItemData.size());
-	while(iIndex < 0)
-		iIndex += m_CurWheelItemData.size();
+	wrap( iFirstVisibleIndex, m_CurWheelItemData.size() );
 
 	// iIndex is now the index of the lowest WheelItem to draw
-	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
+
+	if( dist == -999999 )
 	{
-		WheelItemData     *data   = m_CurWheelItemData[iIndex];
-		MusicWheelItem& display = m_MusicWheelItems[i];
+		// Refresh all
+		for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
+		{
+			int iIndex = iFirstVisibleIndex + i;
+			wrap( iIndex, m_CurWheelItemData.size() );
 
-		display.LoadFromWheelItemData( data );
+			WheelItemData	*data   = m_CurWheelItemData[iIndex];
+			MusicWheelItem	*display = m_MusicWheelItems[i];
 
-		// increment iIndex
-		iIndex++;
-		if( iIndex > int(m_CurWheelItemData.size()-1) )
-			iIndex = 0;
+			display->LoadFromWheelItemData( data );
+		}
 	}
+	else
+	{
+		// Shift items and refresh only those that have changed.
+		CircularShift( m_MusicWheelItems, dist );
+		if( dist > 0 )
+		{
+			for( int i=NUM_WHEEL_ITEMS-dist; i<NUM_WHEEL_ITEMS; i++ )
+			{
+				int iIndex = iFirstVisibleIndex + i;
+				wrap( iIndex, m_CurWheelItemData.size() );
 
+				WheelItemData	*data   = m_CurWheelItemData[iIndex];
+				MusicWheelItem	*display = m_MusicWheelItems[i];
+
+				display->LoadFromWheelItemData( data );
+			}
+		}
+		else if( dist < 0 )
+		{
+			for( int i=0; i<-dist; i++ )
+			{
+				int iIndex = iFirstVisibleIndex + i;
+				wrap( iIndex, m_CurWheelItemData.size() );
+
+				WheelItemData	*data   = m_CurWheelItemData[iIndex];
+				MusicWheelItem	*display = m_MusicWheelItems[i];
+
+				display->LoadFromWheelItemData( data );
+			}
+		}
+	}
 }
 
 void MusicWheel::NotesOrTrailChanged( PlayerNumber pn )	// update grade graphics and top score
 {
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
-		MusicWheelItem& display = m_MusicWheelItems[i];
-		display.RefreshGrades();
+		MusicWheelItem *display = m_MusicWheelItems[i];
+		display->RefreshGrades();
 	}
 }
 
@@ -883,7 +941,7 @@ void MusicWheel::DrawPrimitives()
 
 void MusicWheel::DrawItem( int i )
 {
-	MusicWheelItem& display = m_MusicWheelItems[i];
+	MusicWheelItem *display = m_MusicWheelItems[i];
 
 	const float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 	if( fabsf(fThisBannerPositionOffsetFromSelection) > NUM_WHEEL_ITEMS_TO_DRAW/2 )
@@ -897,17 +955,17 @@ void MusicWheel::DrawItem( int i )
 	case STATE_RANDOM_SPINNING:
 	case STATE_LOCKED:
 		{
-			SetItemPosition( display, fThisBannerPositionOffsetFromSelection );
+			SetItemPosition( *display, fThisBannerPositionOffsetFromSelection );
 		}
 		break;
 	}
 
 	if( m_WheelState == STATE_LOCKED  &&  i != NUM_WHEEL_ITEMS/2 )
-		display.m_fPercentGray = 0.5f;
+		display->m_fPercentGray = 0.5f;
 	else
-		display.m_fPercentGray = 0;
+		display->m_fPercentGray = 0;
 
-	display.Draw();
+	display->Draw();
 }
 
 
@@ -946,9 +1004,9 @@ void MusicWheel::Update( float fDeltaTime )
 
 	for( unsigned i=0; i<unsigned(NUM_WHEEL_ITEMS); i++ )
 	{
-		MusicWheelItem& display = m_MusicWheelItems[i];
+		MusicWheelItem *display = m_MusicWheelItems[i];
 
-		display.Update( fDeltaTime );
+		display->Update( fDeltaTime );
 	}
 
 	UpdateScrollbar();
@@ -1159,7 +1217,7 @@ void MusicWheel::ChangeMusic(int dist)
 	m_iSelection += dist;
 	wrap( m_iSelection, m_CurWheelItemData.size() );
 
-	RebuildMusicWheelItems();
+	RebuildMusicWheelItems( dist );
 
 	m_fPositionOffsetFromSelection += dist;
 
@@ -1412,16 +1470,16 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
-		MusicWheelItem& display = m_MusicWheelItems[i];
+		MusicWheelItem *display = m_MusicWheelItems[i];
 		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
-		SetItemPosition( display, fThisBannerPositionOffsetFromSelection );
+		SetItemPosition( *display, fThisBannerPositionOffsetFromSelection );
 
 		COMMAND( display, "StartOn");
 		const float delay = fabsf(i-WHEEL_ITEM_ON_DELAY_CENTER) * WHEEL_ITEM_ON_DELAY_OFFSET;
-		display.BeginTweening( delay ); // sleep
+		display->BeginTweening( delay ); // sleep
 		COMMAND( display, "FinishOn");
 		if( changing_sort )
-			display.HurryTweening( 0.25f );
+			display->HurryTweening( 0.25f );
 	}
 
 	if( changing_sort )
@@ -1455,16 +1513,16 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
-		MusicWheelItem& display = m_MusicWheelItems[i];
+		MusicWheelItem *display = m_MusicWheelItems[i];
 		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
-		SetItemPosition( display, fThisBannerPositionOffsetFromSelection );
+		SetItemPosition( *display, fThisBannerPositionOffsetFromSelection );
 
 		COMMAND( display, "StartOff");
 		const float delay = fabsf(i-WHEEL_ITEM_OFF_DELAY_CENTER) * WHEEL_ITEM_OFF_DELAY_OFFSET;
-		display.BeginTweening( delay );	// sleep
+		display->BeginTweening( delay );	// sleep
 		COMMAND( display, "FinishOff");
 		if( changing_sort )
-			display.HurryTweening( 0.25f );
+			display->HurryTweening( 0.25f );
 	}
 
 	if( changing_sort )
