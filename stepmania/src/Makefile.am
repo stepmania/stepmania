@@ -340,7 +340,7 @@ test_audio_readers_SOURCES = \
 		$(RageSoundFileReaders) \
 		$(all_test_SOURCES) \
 		tests/test_audio_readers.cpp \
-		RageSoundMixBuffer.cpp RageSoundMixBuffer.h \
+		RageSoundUtil.cpp RageSoundUtil.h RageSoundMixBuffer.cpp RageSoundMixBuffer.h \
 		RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 		RageSoundReader_Preload.cpp RageSoundReader_Preload.h \
 		RageSoundReader_Resample.cpp  RageSoundReader_Resample.h \
