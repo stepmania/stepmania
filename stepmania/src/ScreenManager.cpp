@@ -406,22 +406,9 @@ retry:
 
 	bool bWasOnSystemMenu = GAMESTATE->m_bIsOnSystemMenu;
 
-	/* If this is a system menu, don't let the operator key touch it! 
-		However, if you add an options screen, please include it here -- Miryokuteki */
-	/* TODO: Don't have a hard-coded list of system menu names.  Make it a property
-	 * of the Screen. */
-	if(	sScreenName == "ScreenOptionsMenu" ||
-		sScreenName == "ScreenMachineOptions" || 
-		sScreenName == "ScreenInputOptions" || 
-		sScreenName == "ScreenGraphicOptions" || 
-		sScreenName == "ScreenGameplayOptions" || 
-		sScreenName == "ScreenMapControllers" || 
-		sScreenName == "ScreenAppearanceOptions" || 
-		sScreenName == "ScreenEdit" || 
-		sScreenName == "ScreenEditMenu" || 
-		sScreenName == "ScreenSoundOptions" ) 
-		GAMESTATE->m_bIsOnSystemMenu = true;
-	else 
+	if( THEME->HasMetric(sScreenName,"AllowOperatorMenuButton") )
+		GAMESTATE->m_bIsOnSystemMenu = !THEME->GetMetricB( sScreenName,"AllowOperatorMenuButton" );
+	else
 		GAMESTATE->m_bIsOnSystemMenu = false;
 	
 	// If we're exiting a system menu, persist settings in case we don't exit normally
