@@ -305,15 +305,17 @@ void PlayerMinus::Update( float fDeltaTime )
 	//
 	// update pressed flag
 	//
-	int iNumCols = GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer;
-	for( int bar=0; bar < iNumCols; bar++ )
+	const int iNumCols = GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer;
+	ASSERT_M( iNumCols < MAX_COLS_PER_PLAYER, ssprintf("%i >= %i", iNumCols, MAX_COLS_PER_PLAYER) );
+	for( int col=0; col < iNumCols; ++col )
 	{
-		const StyleInput StyleI( m_PlayerNumber, bar );
+		CHECKPOINT_M( ssprintf("%i %i", col, iNumCols) );
+		const StyleInput StyleI( m_PlayerNumber, col );
 		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 		bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && GAMESTATE->m_PlayerController[m_PlayerNumber]==PC_HUMAN )
-			m_pNoteField->SetPressed(bar);
+			m_pNoteField->SetPressed( col );
 	}
 	
 	CHECKPOINT;
