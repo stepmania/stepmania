@@ -109,7 +109,7 @@ CString NoteSkinManager::GetNoteSkinDir( CString sSkinName )
 {
 	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 
-	return NOTESKINS_DIR + ssprintf("%s/%s/", pGameDef->m_szName, sSkinName.GetString());
+	return NOTESKINS_DIR + ssprintf("%s/%s/", pGameDef->m_szName, sSkinName.c_str());
 }
 
 CString NoteSkinManager::GetMetric( PlayerNumber pn, CString sButtonName, CString sValue )	// looks in GAMESTATE for the current Style
@@ -122,7 +122,7 @@ CString NoteSkinManager::GetMetric( PlayerNumber pn, CString sButtonName, CStrin
 		return sReturn;
 	if( !data.metrics.GetValue( "NoteDisplay", sValue, sReturn ) )
 		RageException::Throw( "Could not read metric '%s - %s' or 'NoteDisplay - %s'",
-			sButtonName.GetString(), sValue.GetString(), sValue.GetString() );
+			sButtonName.c_str(), sValue.c_str(), sValue.c_str() );
 	return sReturn;
 }
 
@@ -150,7 +150,7 @@ RageColor NoteSkinManager::GetMetricC( PlayerNumber pn, CString sButtonName, CSt
 	int result = sscanf( szValue, "%f,%f,%f,%f", &r, &g, &b, &a );
 	if( result != 4 )
 	{
-		LOG->Warn( "The color value '%s' for theme metric '%s : %s' is invalid.", szValue, sButtonName.GetString(), sValueName.GetString() );
+		LOG->Warn( "The color value '%s' for theme metric '%s : %s' is invalid.", szValue, sButtonName.c_str(), sValueName.c_str() );
 		ASSERT(0);
 	}
 
@@ -186,9 +186,9 @@ CString NoteSkinManager::GetPathTo( PlayerNumber pn, CString sButtonName, CStrin
 
 	if( ret.empty() )
 		RageException::Throw( "The NoteSkin element '%s %s' could not be found in '%s' or '%s'.", 
-		sButtonName.GetString(), sFileName.GetString(), 
-		GetNoteSkinDir(sNoteSkinName).GetString(),
-		GetNoteSkinDir(BASE_NOTESKIN_NAME).GetString() );
+		sButtonName.c_str(), sFileName.c_str(), 
+		GetNoteSkinDir(sNoteSkinName).c_str(),
+		GetNoteSkinDir(BASE_NOTESKIN_NAME).c_str() );
 
 	return ret;
 }
@@ -199,12 +199,12 @@ CString NoteSkinManager::GetPathTo( CString sSkinName, CString sButtonName, CStr
 
 	CStringArray arrayPossibleFileNames;		// fill this with the possible files
 
-	GetDirListing( ssprintf("%s%s %s*.sprite", sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.png",    sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.jpg",    sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.bmp",    sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.gif",    sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*",        sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*.sprite", sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*.png",    sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*.jpg",    sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*.bmp",    sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*.gif",    sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*",        sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
 
 	if( arrayPossibleFileNames.empty() )
 		return "";

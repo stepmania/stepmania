@@ -74,7 +74,7 @@ bool Sprite::Load( RageTextureID ID )
 // BaseZoomZ=1
 bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 {
-	LOG->Trace( ssprintf("Sprite::LoadFromSpriteFile(%s)", ID.filename.GetString()) );
+	LOG->Trace( ssprintf("Sprite::LoadFromSpriteFile(%s)", ID.filename.c_str()) );
 
 	//Init();
 
@@ -90,17 +90,17 @@ bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 	IniFile ini;
 	ini.SetPath( m_sSpritePath );
 	if( !ini.ReadFile() )
-		RageException::Throw( "Error opening Sprite file '%s'.", m_sSpritePath.GetString() );
+		RageException::Throw( "Error opening Sprite file '%s'.", m_sSpritePath.c_str() );
 
 	CString sTextureFile;
 	ini.GetValue( "Sprite", "Texture", sTextureFile );
 	if( sTextureFile == ""  )
-		RageException::Throw( "Error reading value 'Texture' from %s.", m_sSpritePath.GetString() );
+		RageException::Throw( "Error reading value 'Texture' from %s.", m_sSpritePath.c_str() );
 
 	ID.filename = sFontDir + sTextureFile;	// save the path of the real texture
 
 	if( !DoesFileExist(ID.filename) )
-		RageException::Throw( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath.GetString(), ID.filename.GetString() );
+		RageException::Throw( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath.c_str(), ID.filename.c_str() );
 
 	// Load the texture
 	LoadFromTexture( ID );
@@ -117,7 +117,7 @@ bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 			break;
 		if( m_iStateToFrame[i] >= m_pTexture->GetNumFrames() )
 			RageException::Throw( "In '%s', %s is %d, but the texture %s only has %d frames.",
-				m_sSpritePath.GetString(), sFrameKey.GetString(), m_iStateToFrame[i], ID.filename.GetString(), m_pTexture->GetNumFrames() );
+				m_sSpritePath.c_str(), sFrameKey.c_str(), m_iStateToFrame[i], ID.filename.c_str(), m_pTexture->GetNumFrames() );
 		m_fDelay[i] = 0.2f;
 		if( !ini.GetValueF( "Sprite", sDelayKey, m_fDelay[i] ) )
 			break;

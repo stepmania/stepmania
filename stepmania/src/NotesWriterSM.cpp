@@ -7,18 +7,18 @@
 
 void NotesWriterSM::WriteGlobalTags(FILE *fp, const Song &out)
 {
-	fprintf( fp, "#TITLE:%s;\n", out.m_sMainTitle.GetString() );
-	fprintf( fp, "#SUBTITLE:%s;\n", out.m_sSubTitle.GetString() );
-	fprintf( fp, "#ARTIST:%s;\n", out.m_sArtist.GetString() );
-	fprintf( fp, "#TITLETRANSLIT:%s;\n", out.m_sMainTitleTranslit.GetString() );
-	fprintf( fp, "#SUBTITLETRANSLIT:%s;\n", out.m_sSubTitleTranslit.GetString() );
-	fprintf( fp, "#ARTISTTRANSLIT:%s;\n", out.m_sArtistTranslit.GetString() );
-	fprintf( fp, "#CREDIT:%s;\n", out.m_sCredit.GetString() );
-	fprintf( fp, "#BANNER:%s;\n", out.m_sBannerFile.GetString() );
-	fprintf( fp, "#BACKGROUND:%s;\n", out.m_sBackgroundFile.GetString() );
-	fprintf( fp, "#LYRICSPATH:%s;\n", out.m_sLyricsFile.GetString() );
-	fprintf( fp, "#CDTITLE:%s;\n", out.m_sCDTitleFile.GetString() );
-	fprintf( fp, "#MUSIC:%s;\n", out.m_sMusicFile.GetString() );
+	fprintf( fp, "#TITLE:%s;\n", out.m_sMainTitle.c_str() );
+	fprintf( fp, "#SUBTITLE:%s;\n", out.m_sSubTitle.c_str() );
+	fprintf( fp, "#ARTIST:%s;\n", out.m_sArtist.c_str() );
+	fprintf( fp, "#TITLETRANSLIT:%s;\n", out.m_sMainTitleTranslit.c_str() );
+	fprintf( fp, "#SUBTITLETRANSLIT:%s;\n", out.m_sSubTitleTranslit.c_str() );
+	fprintf( fp, "#ARTISTTRANSLIT:%s;\n", out.m_sArtistTranslit.c_str() );
+	fprintf( fp, "#CREDIT:%s;\n", out.m_sCredit.c_str() );
+	fprintf( fp, "#BANNER:%s;\n", out.m_sBannerFile.c_str() );
+	fprintf( fp, "#BACKGROUND:%s;\n", out.m_sBackgroundFile.c_str() );
+	fprintf( fp, "#LYRICSPATH:%s;\n", out.m_sLyricsFile.c_str() );
+	fprintf( fp, "#CDTITLE:%s;\n", out.m_sCDTitleFile.c_str() );
+	fprintf( fp, "#MUSIC:%s;\n", out.m_sMusicFile.c_str() );
 	fprintf( fp, "#MUSICBYTES:%u;\n", out.m_iMusicBytes );
 	fprintf( fp, "#MUSICLENGTH:%.3f;\n", out.m_fMusicLengthSeconds );
 	fprintf( fp, "#OFFSET:%.3f;\n", out.m_fBeat0OffsetInSeconds );
@@ -65,7 +65,7 @@ void NotesWriterSM::WriteGlobalTags(FILE *fp, const Song &out)
 	{
 		const BackgroundChange &seg = out.m_BackgroundChanges[i];
 
-		fprintf( fp, "%.3f=%s=%.3f=%d=%d=%d", seg.m_fStartBeat, seg.m_sBGName.GetString(), seg.m_fRate, seg.m_bFadeLast, seg.m_bRewindMovie, seg.m_bLoop );
+		fprintf( fp, "%.3f=%s=%.3f=%d=%d=%d", seg.m_fStartBeat, seg.m_sBGName.c_str(), seg.m_fRate, seg.m_bFadeLast, seg.m_bRewindMovie, seg.m_bLoop );
 		if( i != out.m_BackgroundChanges.size()-1 )
 			fprintf( fp, "," );
 	}
@@ -76,19 +76,19 @@ void NotesWriterSM::WriteGlobalTags(FILE *fp, const Song &out)
 void NotesWriterSM::WriteSMNotesTag( const Notes &in, FILE* fp )
 {
 	fprintf( fp, "\n//---------------%s - %s----------------\n",
-		GameManager::NotesTypeToString(in.m_NotesType).GetString(), in.GetDescription().GetString() );
+		GameManager::NotesTypeToString(in.m_NotesType).c_str(), in.GetDescription().c_str() );
 	fprintf( fp, "#NOTES:\n" );
-	fprintf( fp, "     %s:\n", GameManager::NotesTypeToString(in.m_NotesType).GetString() );
-	fprintf( fp, "     %s:\n", in.GetDescription().GetString() );
-	fprintf( fp, "     %s:\n", DifficultyToString(in.GetDifficulty()).GetString() );
+	fprintf( fp, "     %s:\n", GameManager::NotesTypeToString(in.m_NotesType).c_str() );
+	fprintf( fp, "     %s:\n", in.GetDescription().c_str() );
+	fprintf( fp, "     %s:\n", DifficultyToString(in.GetDifficulty()).c_str() );
 	fprintf( fp, "     %d:\n", in.GetMeter() );
 	
 	CStringArray asRadarValues;
 	for( int r=0; r < NUM_RADAR_CATEGORIES; r++ )
 		asRadarValues.push_back( ssprintf("%.3f", in.GetRadarValues()[r]) );
-	fprintf( fp, "     %s:\n", join(",",asRadarValues).GetString() );
+	fprintf( fp, "     %s:\n", join(",",asRadarValues).c_str() );
 
-	fprintf( fp, "%s;\n", in.GetSMNoteData().GetString() );
+	fprintf( fp, "%s;\n", in.GetSMNoteData().c_str() );
 }
 
 bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
@@ -98,7 +98,7 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 	FILE* fp = fopen( sPath, "w" );	
 	if( fp == NULL )
 	{
-		LOG->Warn( "Error opening song file '%s' for writing.", sPath.GetString() );
+		LOG->Warn( "Error opening song file '%s' for writing.", sPath.c_str() );
 		return false;
 	}
 

@@ -131,7 +131,7 @@ ScreenSelectMode::ScreenSelectMode() : Screen("ScreenSelectMode")
 		for( unsigned i=0; i<m_apPossibleModeChoices.size(); i++ )
 		{
 			CString sChoiceName = m_apPossibleModeChoices[i]->name;
-			m_Infotext[i].Load( THEME->GetPathToG(ssprintf("ScreenSelectMode infotext %s %s", sGameName.GetString(), sChoiceName.GetString())) );	
+			m_Infotext[i].Load( THEME->GetPathToG(ssprintf("ScreenSelectMode infotext %s %s", sGameName.c_str(), sChoiceName.c_str())) );	
 			m_Infotext[i].SetXY( GUIDE_X, GUIDE_Y );
 			this->AddChild( &m_Infotext[i] );
 			m_Infotext[i].SetDiffuse( RageColor(0,0,0,0));
@@ -256,7 +256,7 @@ void ScreenSelectMode::RefreshModeChoices()
 	for( unsigned j=0; j<m_apPossibleModeChoices.size(); j++ )
 	{
 		const ModeChoice* pChoice = m_apPossibleModeChoices[j];
-		asGraphicPaths.push_back( THEME->GetPathToG( ssprintf("select mode choice %s %s", sGameName.GetString(), pChoice->name) ) );
+		asGraphicPaths.push_back( THEME->GetPathToG( ssprintf("select mode choice %s %s", sGameName.c_str(), pChoice->name) ) );
 	}
 
 	m_ScrollingList.Load( asGraphicPaths );
@@ -269,7 +269,7 @@ void ScreenSelectMode::RefreshModeChoices()
 		for( unsigned i=0; i<m_apPossibleModeChoices.size(); i++ )
 		{
 			CString sChoiceName = m_apPossibleModeChoices[i]->name;
-			m_BGAnimations[i].LoadFromAniDir( THEME->GetPathToB(ssprintf("select mode %s %s", sGameName.GetString(), sChoiceName.GetString())) );	
+			m_BGAnimations[i].LoadFromAniDir( THEME->GetPathToB(ssprintf("select mode %s %s", sGameName.c_str(), sChoiceName.c_str())) );	
 		}
 	}
 }

@@ -154,7 +154,7 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
 	/* XXX: Wait, we don't want to throw for all images; in particular, we
 	 * want to tolerate corrupt/unknown background images. */
 	if(img == NULL)
-		RageException::Throw( "RageBitmapTexture: Couldn't load %s: %s", GetFilePath().GetString(), SDL_GetError() );
+		RageException::Throw( "RageBitmapTexture: Couldn't load %s: %s", GetFilePath().c_str(), SDL_GetError() );
 
 	if(m_ActualID.bHotPinkColorKey)
 	{
@@ -479,8 +479,8 @@ retry:
 	if(IsPackedPixelFormat(pixfmt)) props += "paletted ";
 	props.erase(props.size()-1);
 	LOG->Trace( "RageBitmapTexture: Loaded '%s' (%ux%u); %s, source %d,%d;  image %d,%d.", 
-		m_ActualID.filename.GetString(), GetTextureWidth(), GetTextureHeight(),
-		props.GetString(), m_iSourceWidth, m_iSourceHeight,
+		m_ActualID.filename.c_str(), GetTextureWidth(), GetTextureHeight(),
+		props.c_str(), m_iSourceWidth, m_iSourceHeight,
 		m_iImageWidth,	m_iImageHeight);
 }
 

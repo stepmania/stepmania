@@ -40,7 +40,7 @@ ScreenStyleSplash::ScreenStyleSplash() : Screen("ScreenStyleSplash")
 	CString sStyleName = GAMESTATE->GetCurrentStyleDef()->m_szName;
 	int iDifficulty = GAMESTATE->m_PreferredDifficulty[0];
 
-	m_Background.LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenStyleSplash-%s-%s-%d",sGameName.GetString(),sStyleName.GetString(),iDifficulty) ) );
+	m_Background.LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenStyleSplash-%s-%s-%d",sGameName.c_str(),sStyleName.c_str(),iDifficulty) ) );
 	this->AddChild( &m_Background );
 	
 	m_Menu.Load( "ScreenStyleSplash" );

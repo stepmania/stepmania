@@ -42,7 +42,7 @@ bool SoundReader_SDL_Sound::Open(CString filename_)
 	sound_desired.format = AUDIO_S16SYS;
 	sound_desired.rate = 0;
 
-    Sample = Sound_NewSampleFromFile(filename.GetString(),
+    Sample = Sound_NewSampleFromFile(filename.c_str(),
                     &sound_desired, read_block_size);
 	if(Sample)
 		return true;

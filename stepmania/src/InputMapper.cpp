@@ -123,7 +123,7 @@ void InputMapper::SaveMappingsToDisk()
 			GameInput GameI( (GameController)i, (GameButton)j );
 			sNameString = GameI.toString();
 			sValueString = ssprintf( "%s,%s,%s", 
-				m_GItoDI[i][j][0].toString().GetString(), m_GItoDI[i][j][1].toString().GetString(), m_GItoDI[i][j][2].toString().GetString() );
+				m_GItoDI[i][j][0].toString().c_str(), m_GItoDI[i][j][1].toString().c_str(), m_GItoDI[i][j][2].toString().c_str() );
 			
 			ini.SetValue( GAMESTATE->GetCurrentGameDef()->m_szName, sNameString, sValueString );
 		}

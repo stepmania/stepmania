@@ -38,7 +38,7 @@ RageTextureManager::~RageTextureManager()
 	{
 		RageTexture* pTexture = i->second;
 		if( pTexture->m_iRefCount )
-			LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i->first.filename.GetString(), pTexture->m_iRefCount );
+			LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i->first.filename.c_str(), pTexture->m_iRefCount );
 		SAFE_DELETE( pTexture );
 	}
 }
@@ -58,7 +58,7 @@ void RageTextureManager::Update( float fDeltaTime )
 //-----------------------------------------------------------------------------
 RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 {
-	Checkpoint( ssprintf( "RageTextureManager::LoadTexture(%s).", ID.filename.GetString() ) );
+	Checkpoint( ssprintf( "RageTextureManager::LoadTexture(%s).", ID.filename.c_str() ) );
 
 	/* We could have two copies of the same bitmap if there are equivalent but
 	 * different paths, e.g. "Bitmaps\me.bmp" and "..\Rage PC Edition\Bitmaps\me.bmp". */
@@ -127,7 +127,7 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 void RageTextureManager::DeleteTexture( RageTexture *t )
 {
 	ASSERT( t->m_iRefCount==0 );
-	LOG->Trace( "RageTextureManager: deleting '%s'.", t->GetID().filename.GetString() );
+	LOG->Trace( "RageTextureManager: deleting '%s'.", t->GetID().filename.c_str() );
 	m_mapPathToTexture.erase( t->GetID() );	// remove map entry
 	SAFE_DELETE( t );	// free the texture
 }

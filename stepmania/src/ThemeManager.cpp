@@ -159,7 +159,7 @@ try_element_again:
 		CString message = ssprintf( 
 			"There is more than one theme element element that matches "
 			"'%s/%s/%s'.  Please remove all but one of these matches.",
-			sThemeName.GetString(), sCategory.GetString(), sFileName.GetString() );
+			sThemeName.c_str(), sCategory.c_str(), sFileName.c_str() );
 							
 #if defined(WIN32) // XXX arch?
 		if( DISPLAY->IsWindowed() )
@@ -208,14 +208,14 @@ try_element_again:
 				CString message = ssprintf(
 						"The redirect '%s' points to the file '%s', which does not exist. "
 						"Verify that this redirect is correct.",
-						sPath.GetString(), sNewFileName.GetString());
+						sPath.c_str(), sNewFileName.c_str());
 
 #if defined(WIN32) // XXX arch?
 				if( DISPLAY->IsWindowed() )
 					if( MessageBox(NULL, message, "ThemeManager", MB_RETRYCANCEL ) == IDRETRY)
 						goto try_element_again;
 #endif
-				RageException::Throw( "%s", message.GetString() ); 
+				RageException::Throw( "%s", message.c_str() ); 
 			}
 		}
 	}
@@ -239,7 +239,7 @@ try_element_again:
 	CString sCategory = ELEMENT_CATEGORY_STRING[category];
 
 #if defined(DEBUG) && defined(WIN32)
-	CString sMessage = ssprintf("The theme element '%s/%s' is missing.",sCategory.GetString(),sFileName.GetString());
+	CString sMessage = ssprintf("The theme element '%s/%s' is missing.",sCategory.c_str(),sFileName.c_str());
 	switch( MessageBox(NULL, sMessage, "ThemeManager", MB_RETRYCANCEL ) )
 	{
 	case IDRETRY:
@@ -247,24 +247,24 @@ try_element_again:
 		goto try_element_again;
 	case IDCANCEL:
 		RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
-			sCategory.GetString(),
-			sFileName.GetString(), 
-			GetThemeDirFromName(m_sCurThemeName).GetString(), 
-			GetThemeDirFromName(BASE_THEME_NAME).GetString() );
+			sCategory.c_str(),
+			sFileName.c_str(), 
+			GetThemeDirFromName(m_sCurThemeName).c_str(), 
+			GetThemeDirFromName(BASE_THEME_NAME).c_str() );
 		break;
 	}
 #endif
 
 	LOG->Warn( 
 		"Theme element '%s/%s' could not be found in '%s' or '%s'.", 
-		sCategory.GetString(),
-		sFileName.GetString(), 
-		GetThemeDirFromName(m_sCurThemeName).GetString(), 
-		GetThemeDirFromName(BASE_THEME_NAME).GetString() );
+		sCategory.c_str(),
+		sFileName.c_str(), 
+		GetThemeDirFromName(m_sCurThemeName).c_str(), 
+		GetThemeDirFromName(BASE_THEME_NAME).c_str() );
 
 	/* Err? */
 	if(sFileName == "_missing")
-		RageException::Throw("_missing element missing from %s/%s", GetThemeDirFromName(BASE_THEME_NAME).GetString(), sCategory.GetString() );
+		RageException::Throw("_missing element missing from %s/%s", GetThemeDirFromName(BASE_THEME_NAME).c_str(), sCategory.c_str() );
 	return GetPathTo( category, "_missing" );
 }
 
@@ -310,15 +310,15 @@ try_metric_again:
 		return sValue;
 
 #if defined(DEBUG) && defined(WIN32)
-	if( IDRETRY == MessageBox(NULL,ssprintf("The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.GetString(),sValueName.GetString()),"ThemeManager",MB_RETRYCANCEL ) )
+	if( IDRETRY == MessageBox(NULL,ssprintf("The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str()),"ThemeManager",MB_RETRYCANCEL ) )
 		goto try_metric_again;
 #endif
 
 	RageException::Throw( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
-		sClassName.GetString(),
-		sValueName.GetString(),
-		sCurMetricPath.GetString(), 
-		sDefaultMetricPath.GetString()
+		sClassName.c_str(),
+		sValueName.c_str(),
+		sCurMetricPath.c_str(), 
+		sDefaultMetricPath.c_str()
 		);
 }
 
@@ -359,7 +359,7 @@ RageColor ThemeManager::GetMetricC( CString sClassName, CString sValueName )
 	int result = sscanf( GetMetricRaw(sClassName,sValueName), "%f,%f,%f,%f", &r, &g, &b, &a );
 	if( result != 4 )
 	{
-		LOG->Warn( "The color value '%s' for NoteSkin metric '%s : %s' is invalid.", GetMetricRaw(sClassName,sValueName).GetString(), sClassName.GetString(), sValueName.GetString() );
+		LOG->Warn( "The color value '%s' for NoteSkin metric '%s : %s' is invalid.", GetMetricRaw(sClassName,sValueName).c_str(), sClassName.c_str(), sValueName.c_str() );
 	}
 
 	return RageColor(r,g,b,a);

@@ -217,18 +217,18 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 {
 	FILE* fp = fopen( sPath, "w" );	
 	if( fp == NULL )
-		RageException::Throw( "Error opening song file '%s' for writing.", sPath.GetString() );
+		RageException::Throw( "Error opening song file '%s' for writing.", sPath.c_str() );
 
 	/* Write transliterations, if we have them, since DWI doesn't support UTF-8. */
-	fprintf( fp, "#TITLE:%s;\n", out.GetTranslitMainTitle().GetString() );
-	fprintf( fp, "#ARTIST:%s;\n", out.GetTranslitArtist().GetString() );
+	fprintf( fp, "#TITLE:%s;\n", out.GetTranslitMainTitle().c_str() );
+	fprintf( fp, "#ARTIST:%s;\n", out.GetTranslitArtist().c_str() );
 	ASSERT( out.m_BPMSegments[0].m_fStartBeat == 0 );
 	fprintf( fp, "#BPM:%.3f;\n", out.m_BPMSegments[0].m_fBPM );
 	fprintf( fp, "#GAP:%d;\n", int(-roundf( out.m_fBeat0OffsetInSeconds*1000 )) );
 	fprintf( fp, "#SAMPLESTART:%.3f;\n", out.m_fMusicSampleStartSeconds );
 	fprintf( fp, "#SAMPLELENGTH:%.3f;\n", out.m_fMusicSampleLengthSeconds );
 	if( out.m_sCDTitleFile.size() )
-		fprintf( fp, "#CDTITLE:%s;\n", out.m_sCDTitleFile.GetString() );
+		fprintf( fp, "#CDTITLE:%s;\n", out.m_sCDTitleFile.c_str() );
 
 	if( !out.m_StopSegments.empty() )
 	{

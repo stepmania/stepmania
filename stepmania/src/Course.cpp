@@ -98,7 +98,7 @@ Song *Course::FindSong(CString sGroup, CString sSong) const
 	}
 
 	LOG->Trace( "Course file '%s' contains a song '%s%s%s' that is not present",
-			m_sPath.GetString(), sGroup.GetString(), sGroup.size()? "/":"", sSong.GetString());
+			m_sPath.c_str(), sGroup.c_str(), sGroup.size()? "/":"", sSong.c_str());
 
 	return NULL;	
 }
@@ -109,7 +109,7 @@ void Course::LoadFromCRSFile( CString sPath )
 
 	MsdFile msd;
 	if( !msd.ReadFile(sPath) )
-		RageException::Throw( "Error opening CRS file '%s'.", sPath.GetString() );
+		RageException::Throw( "Error opening CRS file '%s'.", sPath.c_str() );
 
 	CString sDir, sFName, sExt;
 	splitrelpath( sPath, sDir, sFName, sExt );
@@ -179,12 +179,12 @@ void Course::LoadFromCRSFile( CString sPath )
 				else
 					LOG->Warn( "Course file '%s' contains a random_within_group entry '%s' that is invalid. "
 								"Song should be in the format '<group>/*'.",
-								m_sPath.GetString(), sSong.GetString());
+								m_sPath.c_str(), sSong.c_str());
 				if( !SONGMAN->DoesGroupExist(new_entry.group_name) )
 				{
 					LOG->Warn( "Course file '%s' random_within_group entry '%s' specifies a group that doesn't exist. "
 								"This entry will be ignored.",
-								m_sPath.GetString(), sSong.GetString());
+								m_sPath.c_str(), sSong.c_str());
 					continue;	// skip this #SONG
 				}
 			}
@@ -204,14 +204,14 @@ void Course::LoadFromCRSFile( CString sPath )
 				{
 					LOG->Warn( "Course file '%s' contains a fixed song entry '%s' that is invalid. "
 								"Song should be in the format '<group>/<song>'.",
-								m_sPath.GetString(), sSong.GetString());
+								m_sPath.c_str(), sSong.c_str());
 					continue;	// skip this #SONG
 				}
 				if( !new_entry.pSong )
 				{
 					LOG->Warn( "Course file '%s' contains a fixed song entry '%s' that does not exist. "
 								"This entry will be ignored.",
-								m_sPath.GetString(), sSong.GetString());
+								m_sPath.c_str(), sSong.c_str());
 					continue;	// skip this #SONG
 				}
 			}
@@ -233,7 +233,7 @@ void Course::LoadFromCRSFile( CString sPath )
 		}
 
 		else
-			LOG->Trace( "Unexpected value named '%s'", sValueName.GetString() );
+			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
 	}
 	static TitleSubst tsub("courses");
 
@@ -250,11 +250,11 @@ void Course::Save()
 	FILE* fp = fopen( m_sPath, "w" );
 	if( fp == NULL )
 	{
-		LOG->Warn( "Could not write course file '%s'.", m_sPath.GetString() );
+		LOG->Warn( "Could not write course file '%s'.", m_sPath.c_str() );
 		return;
 	}
 
-	fprintf( fp, "#COURSE:%s;\n", m_sName.GetString() );
+	fprintf( fp, "#COURSE:%s;\n", m_sName.c_str() );
 	fprintf( fp, "#REPEAT:%s;\n", m_bRepeat ? "YES" : "NO" );
 	fprintf( fp, "#LIVES:%i;\n", m_iLives );
 	fprintf( fp, "#EXTRA:%i;\n", m_iExtra );
@@ -266,13 +266,13 @@ void Course::Save()
 		switch( entry.type )
 		{
 		case Entry::fixed:
-			fprintf( fp, "#SONG:%s", entry.pSong->GetSongDir().GetString() );
+			fprintf( fp, "#SONG:%s", entry.pSong->GetSongDir().c_str() );
 			break;
 		case Entry::random:
 			fprintf( fp, "#SONG:*" );
 			break;
 		case Entry::random_within_group:
-			fprintf( fp, "#SONG:%s/*", entry.group_name.GetString() );
+			fprintf( fp, "#SONG:%s/*", entry.group_name.c_str() );
 			break;
 		case Entry::best:
 			fprintf( fp, "#SONG:BEST%d", entry.players_index+1 );
@@ -285,7 +285,7 @@ void Course::Save()
 		}
 
 		if( entry.difficulty != DIFFICULTY_INVALID )
-			fprintf( fp, ":%s", DifficultyToString(entry.difficulty).GetString() );
+			fprintf( fp, ":%s", DifficultyToString(entry.difficulty).c_str() );
 	
 		if( entry.low_meter != -1  &&  entry.high_meter != -1 )
 			fprintf( fp, ":%d..%d", entry.low_meter, entry.high_meter );

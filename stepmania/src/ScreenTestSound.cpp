@@ -90,14 +90,14 @@ void ScreenTestSound::UpdateText(int n)
 		"%s\n"
 		"(%s)\n"
 		"%s",
-		n+1, fn.GetString(),
+		n+1, fn.c_str(),
 		s[n].s.IsPlaying()? "Playing":"Stopped",
 		s[n].s.GetStopMode() == RageSound::M_STOP?
 			"Stop when finished":
 		s[n].s.GetStopMode() == RageSound::M_CONTINUE?
 			"Continue until stopped":
 			"Loop",
-		pos.size()? pos.GetString(): "none playing",
+		pos.size()? pos.c_str(): "none playing",
 		selected == n? "^^^^^^":""
 		));
 }

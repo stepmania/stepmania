@@ -109,7 +109,7 @@ void SongManager::SanityCheckGroupDir( CString sDir ) const
 			"This means that you have a music outside of a song folder.\n"
 			"All song folders must reside in a group folder.  For example, 'Songs/DDR 4th Mix/B4U'.\n"
 			"See the StepMania readme for more info.",
-			sDir.GetString()
+			sDir.c_str()
 		);
 	
 }
@@ -134,7 +134,7 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 	if( !arrayGroupBanners.empty() )
 	{
 		sBannerPath = sDir+sGroupDirName+"/"+arrayGroupBanners[0] ;
-		LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.GetString(), sBannerPath.GetString() );
+		LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.c_str(), sBannerPath.c_str() );
 	}
 
 	m_arrayGroupNames.push_back( sGroupDirName );
@@ -179,8 +179,8 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 			// this is a song directory.  Load a new song!
 			if( ld ) {
 				ld->SetText( ssprintf("Loading songs...\n%s\n%s",
-					Basename(sGroupDirName).GetString(),
-					Basename(sSongDirName).GetString()));
+					Basename(sGroupDirName).c_str(),
+					Basename(sSongDirName).c_str()));
 				ld->Paint();
 			}
 			Song* pNewSong = new Song;
@@ -311,7 +311,7 @@ void SongManager::InitMachineScoresFromDisk()
 
 			getline(f, line);
 			int version;
-			sscanf(line.GetString(), "%i", &version);
+			sscanf(line.c_str(), "%i", &version);
 
 			if( version == NOTES_SCORES_VERSION )
 			{			
@@ -322,7 +322,7 @@ void SongManager::InitMachineScoresFromDisk()
 
 					getline(f, line);
 					unsigned uNumNotes;
-					sscanf(line.GetString(), "%u", &uNumNotes);
+					sscanf(line.c_str(), "%u", &uNumNotes);
 
 					Song* pSong = this->GetSongFromDir( sSongDir );
 
@@ -332,7 +332,7 @@ void SongManager::InitMachineScoresFromDisk()
 						Difficulty dc;
 	
 						getline(f, line);
-						sscanf(line.GetString(), "%d %d", &nt, &dc);
+						sscanf(line.c_str(), "%d %d", &nt, &dc);
 
 						CString sDescription;
 						getline(f, sDescription);
@@ -350,7 +350,7 @@ void SongManager::InitMachineScoresFromDisk()
 						
 						if( pNotes )
 						{
-							sscanf(line.GetString(), "%d %d %f\n",
+							sscanf(line.c_str(), "%d %d %f\n",
 								&pNotes->m_MemCardScores[c].iNumTimesPlayed,
 								&pNotes->m_MemCardScores[c].grade,
 								&pNotes->m_MemCardScores[c].fScore);

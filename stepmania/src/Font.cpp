@@ -105,7 +105,7 @@ void FontPage::Load( FontPageSettings cfg )
 	SetExtraPixels(cfg.DrawExtraPixelsLeft, cfg.DrawExtraPixelsRight);
 
 //	LOG->Trace("Font %s: height %i, baseline %i ( == top %i)",
-//		   m_sTexturePath.GetString(), height, baseline, baseline-height);
+//		   m_sTexturePath.c_str(), height, baseline, baseline-height);
 }
 
 void FontPage::SetTextureCoords(const vector<int> &widths)
@@ -216,7 +216,7 @@ int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
 
 Font::Font()
 {
-	//LOG->Trace( "Font::LoadFromFontName(%s)", sASCIITexturePath.GetString() );
+	//LOG->Trace( "Font::LoadFromFontName(%s)", sASCIITexturePath.c_str() );
 
 	m_iRefCount = 1;
 	def = NULL;
@@ -296,7 +296,7 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 	if(it == m_iCharToGlyph.end()) it = m_iCharToGlyph.find(DEFAULT_GLYPH);
 
 	if(it == m_iCharToGlyph.end()) 
-		RageException::Throw( "The default glyph is missing from the font '%s'", path.GetString() );
+		RageException::Throw( "The default glyph is missing from the font '%s'", path.c_str() );
 	
 	return *it->second;
 }
@@ -305,7 +305,7 @@ bool Font::FontCompleteForString( const wstring &str ) const
 {
 	map<longchar,glyph*>::const_iterator def = m_iCharToGlyph.find(DEFAULT_GLYPH);
 	if(def == m_iCharToGlyph.end()) 
-		RageException::Throw( "The default glyph is missing from the font '%s'", path.GetString() );
+		RageException::Throw( "The default glyph is missing from the font '%s'", path.c_str() );
 
 	for(unsigned i = 0; i < str.size(); ++i)
 	{
@@ -367,7 +367,7 @@ CString Font::GetFontName(CString FileName)
 	TrimRight(FileName);
 
 	if(FileName.empty())
-		RageException::Throw("Can't parse font filename \"%s\"", orig.GetString());
+		RageException::Throw("Can't parse font filename \"%s\"", orig.c_str());
 
 	FileName.MakeLower();
 	return FileName;
@@ -426,7 +426,7 @@ void Font::GetFontPaths(const CString &sFontOrTextureFilePath,
 		if(!Files[i].Right(4).CompareNoCase(".ini")) 
 		{
 			if(!IniPath.empty())
-				RageException::Throw("More than one INI found\n%s\n%s", IniPath.GetString(), Files[i].GetString());
+				RageException::Throw("More than one INI found\n%s\n%s", IniPath.c_str(), Files[i].c_str());
 			
 			IniPath = sDir+Files[i];
 			continue;
@@ -464,7 +464,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 	ini.RenameKey("Char Widths", "main");
 
 //	LOG->Trace("Loading font page '%s' settings from page name '%s'",
-//		TexturePath.GetString(), PageName.GetString());
+//		TexturePath.c_str(), PageName.c_str());
 	
 	ini.GetValueI( PageName, "DrawExtraPixelsLeft", cfg.DrawExtraPixelsLeft );
 	ini.GetValueI( PageName, "DrawExtraPixelsRight", cfg.DrawExtraPixelsRight );
@@ -522,7 +522,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 				if(game == GAME_INVALID)
 				{
 					LOG->Warn( "Font definition '%s' uses unknown game type '%s'",
-						ini.GetPath().GetString(), gamename.GetString() );
+						ini.GetPath().c_str(), gamename.c_str() );
 					continue;
 				}
 			}
@@ -536,12 +536,12 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 				c = utf8_get_char(codepoint.c_str());
 				if(c == wchar_t(-1))
 					LOG->Warn("Font definition '%s' has an invalid value '%s'.",
-						ini.GetPath().GetString(), val.GetString() );
+						ini.GetPath().c_str(), val.c_str() );
 			}
 			else if(!FontCharAliases::GetChar(codepoint, c))
 			{
 				LOG->Warn("Font definition '%s' has an invalid value '%s'.",
-					ini.GetPath().GetString(), val.GetString() );
+					ini.GetPath().c_str(), val.c_str() );
 				continue;
 			}
 
@@ -581,7 +581,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 
 			if(!match || matches[0].empty())
 				RageException::Throw("Font definition '%s' has an invalid range '%s': parse error",
-					ini.GetPath().GetString(), val.GetString() );
+					ini.GetPath().c_str(), val.c_str() );
 			
 			/* We must have either 1 match (just the codeset) or 4 (the whole thing). */
 
@@ -589,12 +589,12 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 			int first = 0;
 			if(!matches[2].empty())
 			{
-				sscanf(matches[2].GetString(), "%x", &first);
+				sscanf(matches[2].c_str(), "%x", &first);
 				int last;
-				sscanf(matches[3].GetString(), "%x", &last);
+				sscanf(matches[3].c_str(), "%x", &last);
 				if(last < first)
 					RageException::Throw("Font definition '%s' has an invalid range '%s': %i < %i.",
-						ini.GetPath().GetString(), val.GetString(), last < first );
+						ini.GetPath().c_str(), val.c_str(), last < first );
 
 				cnt = last-first+1;
 			}
@@ -602,7 +602,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 			CString ret = cfg.MapRange(matches[0], first, atoi(data), cnt);
 			if(!ret.empty())
 				RageException::Throw("Font definition '%s' has an invalid range '%s': %s.",
-					ini.GetPath().GetString(), val.GetString(), ret.GetString() );
+					ini.GetPath().c_str(), val.c_str(), ret.c_str() );
 
 			continue;
 		}
@@ -622,14 +622,14 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 
 			if(row > NumFramesHigh)
 				RageException::Throw("The font definition \"%s\" tries to assign line %i, but the font is only %i characters high",
-					ini.GetPath().GetString(), first_frame, NumFramesHigh);
+					ini.GetPath().c_str(), first_frame, NumFramesHigh);
 
 			/* Decode the string. */
 			const wstring wdata(CStringToWstring(data));
 
 			if(int(wdata.size()) > NumFramesWide)
 				RageException::Throw("The font definition \"%s\" assigns %i characters to row %i (\"%ls\"), but the font only has %i characters wide",
-					ini.GetPath().GetString(), wdata.size(), row, wdata.c_str(), NumFramesWide);
+					ini.GetPath().c_str(), wdata.size(), row, wdata.c_str(), NumFramesWide);
 
 			for(unsigned i = 0; i < wdata.size(); ++i)
 				cfg.CharToGlyphNo[wdata[i]] = first_frame+i;
@@ -738,14 +738,14 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 			{
 				CString str = join("\n", LoadStack);
 				str += "\n" + sFontOrTextureFilePath;
-				RageException::Throw("Font import recursion detected\n%s", str.GetString());
+				RageException::Throw("Font import recursion detected\n%s", str.c_str());
 			}
 		}
 		LoadStack.push_back(sFontOrTextureFilePath);
 	}
 
 	/* The font is not already loaded.  Figure out what we have. */
-	Checkpoint( ssprintf("Font::Load(\"%s\",\"%s\").", sFontOrTextureFilePath.GetString(), Chars.GetString()) );
+	Checkpoint( ssprintf("Font::Load(\"%s\",\"%s\").", sFontOrTextureFilePath.c_str(), Chars.c_str()) );
 
 	path = sFontOrTextureFilePath;
 	Chars = sChars;
@@ -815,12 +815,12 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 		{
 			if(it->second < fp->m_pTexture->GetNumFrames()) continue; /* OK */
 			RageException::Throw( "The font '%s' maps %s to frame %i, but the font only has %i frames.",
-				TexturePaths[i].GetString(), WcharDisplayText(wchar_t(it->first)).GetString(), it->second, fp->m_pTexture->GetNumFrames() );
+				TexturePaths[i].c_str(), WcharDisplayText(wchar_t(it->first)).c_str(), it->second, fp->m_pTexture->GetNumFrames() );
 		}
 
 //		LOG->Trace("Adding page %s (%s) to %s; %i glyphs",
-//			TexturePaths[i].GetString(), pagename.GetString(),
-//			sFontOrTextureFilePath.GetString(), fp->m_iCharToGlyphNo.size());
+//			TexturePaths[i].c_str(), pagename.c_str(),
+//			sFontOrTextureFilePath.c_str(), fp->m_iCharToGlyphNo.size());
 		AddPage(fp);
 
 		/* If this is the first font loaded, or it's called "main", this page's
@@ -833,7 +833,7 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 		CapsOnly();
 
 	if(m_iCharToGlyph.empty())
-		LOG->Warn("Font %s has no characters", sFontOrTextureFilePath.GetString());
+		LOG->Warn("Font %s has no characters", sFontOrTextureFilePath.c_str());
 
 	LoadStack.pop_back();
 }

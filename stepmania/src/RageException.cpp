@@ -45,15 +45,15 @@ void RageException::Throw(const char *fmt, ...)
 				"Exception: %s\n"
 				"//////////////////////////////////////////////////////\n"
 				"",
-				error.GetString());
+				error.c_str());
 	if(LOG)
 	{
-		LOG->Trace("%s", msg.GetString());
+		LOG->Trace("%s", msg.c_str());
 		LOG->Flush();
 	}
 	else
 	{
-		printf("%s\n", msg.GetString());
+		printf("%s\n", msg.c_str());
 		fflush(stdout);
 	}
 
@@ -62,7 +62,7 @@ void RageException::Throw(const char *fmt, ...)
 	DebugBreak();
 #endif
 
-	throw RageException("%s", error.GetString());
+	throw RageException("%s", error.c_str());
 }
 
 void RageException::ThrowNonfatal(const char *fmt, ...)
@@ -72,7 +72,7 @@ void RageException::ThrowNonfatal(const char *fmt, ...)
 
 	if(LOG)
 	{
-		LOG->Trace("Nonfatal exception thrown: %s", vssprintf( fmt, va ).GetString());
+		LOG->Trace("Nonfatal exception thrown: %s", vssprintf( fmt, va ).c_str());
 		LOG->Flush();
 	}
 	

@@ -260,9 +260,9 @@ float DWILoader::ParseBrokenDWITimestamp(const CString &arg1, const CString &arg
 	{
 		/* If the value contains a period, treat it as seconds; otherwise ms. */
 		if(arg1.find_first_of(".") != arg1.npos)
-			return (float)atof(arg1.GetString());
+			return (float)atof(arg1.c_str());
 		else
-			return float(atof(arg1.GetString())) / 1000.f;
+			return float(atof(arg1.c_str())) / 1000.f;
 	}
 
 	/* 2+ args */
@@ -275,13 +275,13 @@ float DWILoader::ParseBrokenDWITimestamp(const CString &arg1, const CString &arg
 
 bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 {
-	LOG->Trace( "Song::LoadFromDWIFile(%s)", sPath.GetString() );
+	LOG->Trace( "Song::LoadFromDWIFile(%s)", sPath.c_str() );
 	
 
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
-		RageException::Throw( "Error opening file '%s' for reading.", sPath.GetString() );
+		RageException::Throw( "Error opening file '%s' for reading.", sPath.c_str() );
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -291,7 +291,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 
 		if(iNumParams < 1)
 		{
-			LOG->Warn("Got \"%s\" tag with no parameters", sValueName.GetString());
+			LOG->Warn("Got \"%s\" tag with no parameters", sValueName.c_str());
 			continue;
 		}
 
@@ -349,7 +349,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 				CStringArray arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
 				if(arrayBPMChangeValues.size() != 2) {
-					LOG->Warn( "Invalid CHANGEBPM: '%s'", arrayBPMChangeExpressions[b].GetString());
+					LOG->Warn( "Invalid CHANGEBPM: '%s'", arrayBPMChangeExpressions[b].c_str());
 					continue;
 				}
 				float fIndex = (float)atof( arrayBPMChangeValues[0] ) * ROWS_PER_BEAT / 4.0f;
@@ -398,7 +398,7 @@ bool DWILoader::LoadFromDir( CString sPath, Song &out )
 	GetApplicableFiles( sPath, aFileNames );
 
 	if( aFileNames.size() > 1 )
-		RageException::Throw( "There is more than one DWI file in '%s'.  There should be only one!", sPath.GetString() );
+		RageException::Throw( "There is more than one DWI file in '%s'.  There should be only one!", sPath.c_str() );
 
 	/* We should have exactly one; if we had none, we shouldn't have been
 	 * called to begin with. */

@@ -722,7 +722,7 @@ void Actor::Command( CString sCommandString )
 		else if( sName=="additiveblend" )	EnableAdditiveBlend( bParam(1) );
 		else
 		{
-			CString sError = ssprintf( "Unrecognized command name '%s' in command string '%s'.", sName.GetString(), sCommandString.GetString() );
+			CString sError = ssprintf( "Unrecognized command name '%s' in command string '%s'.", sName.c_str(), sCommandString.c_str() );
 			LOG->Warn( sError );
 #if defined(WIN32) // XXX arch?
 			if( DISPLAY->IsWindowed() )
@@ -733,7 +733,7 @@ void Actor::Command( CString sCommandString )
 
 		if( iMaxIndexAccessed != (int)asTokens.size()-1 )
 		{
-			CString sError = ssprintf( "Wrong number of parameters in command '%s'.  Expected %d but there are %d.", join(",",asTokens).GetString(), iMaxIndexAccessed+1, (int)asTokens.size() );
+			CString sError = ssprintf( "Wrong number of parameters in command '%s'.  Expected %d but there are %d.", join(",",asTokens).c_str(), iMaxIndexAccessed+1, (int)asTokens.size() );
 			LOG->Warn( sError );
 #if defined(WIN32) // XXX arch?
 			if( DISPLAY->IsWindowed() )

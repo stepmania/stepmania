@@ -59,7 +59,7 @@ void SMLoader::GetApplicableFiles( CString sPath, CStringArray &out )
 
 bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 {
-	LOG->Trace( "Song::LoadFromSMDir(%s)", sPath.GetString() );
+	LOG->Trace( "Song::LoadFromSMDir(%s)", sPath.c_str() );
 
 	out.m_BPMSegments.clear();
 	out.m_StopSegments.clear();
@@ -67,7 +67,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
-		RageException::Throw( "Error opening file '%s'.", sPath.GetString() );
+		RageException::Throw( "Error opening file '%s'.", sPath.c_str() );
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -159,7 +159,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			else if(!stricmp(sParams[1],"ROULETTE"))
 				out.m_SelectionDisplay = out.SHOW_ROULETTE;
 			else
-				LOG->Warn( "The song file '%s' has an unknown #SELECTABLE value, '%s'; ignored.", sPath.GetString(), sParams[1].GetString());
+				LOG->Warn( "The song file '%s' has an unknown #SELECTABLE value, '%s'; ignored.", sPath.c_str(), sParams[1].c_str());
 		}
 
 		else if( 0==stricmp(sValueName,"STOPS") || 0==stricmp(sValueName,"FREEZES") )
@@ -176,7 +176,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 				if(arrayFreezeValues.size() != 2)
 				{
 					LOG->Warn("Invalid #%s value \"%s\" (must have exactly one '='), ignored",
-						sValueName.GetString(), arrayFreezeExpressions[f].GetString());
+						sValueName.c_str(), arrayFreezeExpressions[f].c_str());
 					continue;
 				}
 
@@ -207,7 +207,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 				if(arrayBPMChangeValues.size() != 2)
 				{
 					LOG->Warn("Invalid #%s value \"%s\" (must have exactly one '='), ignored",
-						sValueName.GetString(), arrayBPMChangeExpressions[b].GetString());
+						sValueName.c_str(), arrayBPMChangeExpressions[b].c_str());
 					continue;
 				}
 				float fBeat = (float)atof( arrayBPMChangeValues[0] );
@@ -249,7 +249,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 					break;
 				default:
 					LOG->Warn("Invalid #BGCHANGES%s value \"%s\" was ignored",
-						sValueName.GetString(), aBGChangeExpressions[b].GetString());
+						sValueName.c_str(), aBGChangeExpressions[b].c_str());
 					break;
 				}
 			}
@@ -263,7 +263,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 
 			if( iNumParams != 7 )
 			{
-				LOG->Trace( "The song file '%s' is has %d fields in a #NOTES tag, but should have %d.", sPath.GetString(), iNumParams, 7 );
+				LOG->Trace( "The song file '%s' is has %d fields in a #NOTES tag, but should have %d.", sPath.c_str(), iNumParams, 7 );
 				continue;
 			}
 
@@ -272,7 +272,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 				*pNewNotes);
 		}
 		else
-			LOG->Trace( "Unexpected value named '%s'", sValueName.GetString() );
+			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
 	}
 
 	return true;
@@ -285,7 +285,7 @@ bool SMLoader::LoadFromDir( CString sPath, Song &out )
 	GetApplicableFiles( sPath, aFileNames );
 
 	if( aFileNames.size() > 1 )
-		RageException::Throw( "There is more than one SM file in '%s'.  There should be only one!", sPath.GetString() );
+		RageException::Throw( "There is more than one SM file in '%s'.  There should be only one!", sPath.c_str() );
 
 	/* We should have exactly one; if we had none, we shouldn't have been
 	 * called to begin with. */

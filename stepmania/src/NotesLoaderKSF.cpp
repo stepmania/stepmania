@@ -11,12 +11,12 @@
 
 bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 {
-	LOG->Trace( "Notes::LoadFromKSFFile( '%s' )", sPath.GetString() );
+	LOG->Trace( "Notes::LoadFromKSFFile( '%s' )", sPath.c_str() );
 
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
-		RageException::Throw( "Error opening file '%s'.", sPath.GetString() );
+		RageException::Throw( "Error opening file '%s'.", sPath.c_str() );
 
 	int iTickCount = -1;	// this is the value we read for TICKCOUNT
 	CString iStep;			// this is the value we read for STEP
@@ -39,7 +39,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 	if( iTickCount == -1 )
 	{
 		iTickCount = 2;
-		LOG->Warn( "%s:\nTICKCOUNT not found; defaulting to %i", sPath.GetString(), iTickCount );
+		LOG->Warn( "%s:\nTICKCOUNT not found; defaulting to %i", sPath.c_str(), iTickCount );
 	}
 
 	NoteData notedata;	// read it into here
@@ -105,7 +105,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 		if(sRowString.size() != 13)
 		{
 			LOG->Warn("File %s had a RowString with an improper length (\"%s\"); corrupt notes ignored",
-				sPath.GetString(), sRowString.GetString());
+				sPath.c_str(), sRowString.c_str());
 			return false;
 		}
 
@@ -158,14 +158,14 @@ void KSFLoader::GetApplicableFiles( CString sPath, CStringArray &out )
 
 bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 {
-	LOG->Trace( "Song::LoadFromKSFDir(%s)", sDir.GetString() );
+	LOG->Trace( "Song::LoadFromKSFDir(%s)", sDir.c_str() );
 
 	CStringArray arrayKSFFileNames;
 	GetDirListing( sDir + CString("*.ksf"), arrayKSFFileNames );
 
 	/* We shouldn't have been called to begin with if there were no KSFs. */
 	if( arrayKSFFileNames.empty() )
-		RageException::Throw( "Couldn't find any KSF files in '%s'", sDir.GetString() );
+		RageException::Throw( "Couldn't find any KSF files in '%s'", sDir.c_str() );
 
 	// load the Notes from the rest of the KSF files
 	unsigned i;
@@ -188,7 +188,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
-		RageException::Throw( "Error opening file '%s'.", sPath.GetString() );
+		RageException::Throw( "Error opening file '%s'.", sPath.c_str() );
 
 	for( i=0; i < msd.GetNumValues(); i++ )
 	{
@@ -259,7 +259,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 				 0==stricmp(sValueName,"DIFFICULTY"))
 			; /* Handled in LoadFromKSFFile; don't warn. */
 		else
-			LOG->Trace( "Unexpected value named '%s'", sValueName.GetString() );
+			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
 	}
 
 	// search for music with song in the file name

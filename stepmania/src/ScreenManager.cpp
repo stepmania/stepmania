@@ -224,7 +224,7 @@ void ScreenSystemLayer::UpdateTimestampAndSkips()
 				RageColor(1,0.2f,0.2f,1)  /* light red */
 			};
 			m_Skips[m_LastSkip].SetText(ssprintf("%s: %.0fms (%.0f)",
-				time.GetString(), 1000*UpdateTime, UpdateTime/ExpectedUpdate));
+				time.c_str(), 1000*UpdateTime, UpdateTime/ExpectedUpdate));
 			m_Skips[m_LastSkip].StopTweening();
 			m_Skips[m_LastSkip].SetDiffuse(RageColor(1,1,1,1));
 			m_Skips[m_LastSkip].BeginTweening(0.2f);
@@ -440,7 +440,7 @@ void ScreenManager::SetNewScreen( CString sClassName )
 	// deletes it later on.  This also convention will reduce includes because screens won't 
 	// have to include each other's headers of other screens.
 	Screen* pNewScreen = MakeNewScreen(sClassName);
-	LOG->Trace( "Loaded %s in %f", sClassName.GetString(), t.GetDeltaTime());
+	LOG->Trace( "Loaded %s in %f", sClassName.c_str(), t.GetDeltaTime());
 
 	if( pOldTopScreen!=NULL  &&  m_ScreenStack.back()!=pOldTopScreen )
 	{

@@ -151,14 +151,14 @@ void RageSound::Fail(CString reason)
 	position = 0;
 	
 	LOG->Warn("Decoding %s failed: %s",
-		GetLoadedFilePath().GetString(), reason.GetString() );
+		GetLoadedFilePath().c_str(), reason.c_str() );
 
 	error = reason;
 }
 
 bool RageSound::Load(CString sSoundFilePath, int precache)
 {
-	LOG->Trace( "RageSound::LoadSound( '%s' )", sSoundFilePath.GetString() );
+	LOG->Trace( "RageSound::LoadSound( '%s' )", sSoundFilePath.c_str() );
 
 	if(precache == 2)
 		precache = false;
@@ -172,9 +172,9 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	position = 0;
 
     SoundReader_SDL_Sound *NewSample = new SoundReader_SDL_Sound;
-	if(!NewSample->Open(sSoundFilePath.GetString()))
+	if(!NewSample->Open(sSoundFilePath.c_str()))
 		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound %s: %s",
-			sSoundFilePath.GetString(), NewSample->GetError().c_str());
+			sSoundFilePath.c_str(), NewSample->GetError().c_str());
 	Sample = NewSample;
 
 	if(SOUNDMAN->GetDriverSampleRate() != -1 &&
@@ -435,7 +435,7 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 					 * over the remainder.  If we keep doing this, we'll chew CPU rewinding,
 					 * so stop. */
 					LOG->Warn("Sound %s is busy looping.  Sound stopped (start = %i, length = %i)",
-						GetLoadedFilePath().GetString(), m_StartSample, m_LengthSamples);
+						GetLoadedFilePath().c_str(), m_StartSample, m_LengthSamples);
 
 					return 0;
 				}
@@ -449,7 +449,7 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 				if(GetData(NULL, size) == 0)
 				{
 					LOG->Warn("Can't loop data in %s; no data available at start point %i",
-						GetLoadedFilePath().GetString(), m_StartSample);
+						GetLoadedFilePath().c_str(), m_StartSample);
 
 					/* Stop here. */
 					return bytes_stored;
@@ -553,7 +553,7 @@ float RageSound::GetLengthSeconds()
 	if(len < 0)
 	{
 		LOG->Warn("GetLengthSeconds failed on %s: %s",
-			GetLoadedFilePath().GetString(), Sample->GetError().c_str() );
+			GetLoadedFilePath().c_str(), Sample->GetError().c_str() );
 		return -1;
 	}
 
@@ -695,7 +695,7 @@ bool RageSound::SetPositionSamples( int samples )
 		 * we passed EOF.  This could be a truncated file or invalid data.  Warn
 		 * about it and jump back to the beginning. */
 		LOG->Warn("SetPositionSamples: %i ms is beyond EOF in %s",
-			ms, GetLoadedFilePath().GetString());
+			ms, GetLoadedFilePath().c_str());
 
 		position = 0;
 		return false; /* failed (but recoverable) */

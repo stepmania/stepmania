@@ -76,7 +76,7 @@ void RefreshCacheItem( int iIndex )
 
 	if( asButtonNames.size() < 2 )
 	{
-		LOG->Trace( "The code '%s' is less than 2 buttons, so it will be ignored.", sCodeName.GetString() );
+		LOG->Trace( "The code '%s' is less than 2 buttons, so it will be ignored.", sCodeName.c_str() );
 		item.iNumButtons = 0;
 		return;
 	}
@@ -99,7 +99,7 @@ void RefreshCacheItem( int iIndex )
 		}
 		if( gb == -1 )	// didn't find it
 		{
-			LOG->Trace( "The code '%s' contains an unrecognized button '%s'.", sCodeName.GetString(), sButtonName.GetString() );
+			LOG->Trace( "The code '%s' contains an unrecognized button '%s'.", sCodeName.c_str(), sButtonName.c_str() );
 			item.iNumButtons = 0;
 			return;
 		}

@@ -287,9 +287,9 @@ void RageDisplay::DumpOpenGLDebugInfo()
 		if(i == Actual && skip)
 		{
 			/* We chose a bogus format. */
-			LOG->Warn("%s", str.GetString());
+			LOG->Warn("%s", str.c_str());
 		} else
-			LOG->Info("%s", str.GetString());
+			LOG->Info("%s", str.c_str());
 	}
 #endif
 }

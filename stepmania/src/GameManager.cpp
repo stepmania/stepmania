@@ -1644,7 +1644,7 @@ NotesType GameManager::StringToNotesType( CString sNotesType )
 			return NotesType(i);
 	
 	// invalid NotesType
-	LOG->Warn( "Invalid NotesType string '%s' encountered.  Assuming this is 'dance-single'.", sNotesType.GetString() );
+	LOG->Warn( "Invalid NotesType string '%s' encountered.  Assuming this is 'dance-single'.", sNotesType.c_str() );
 	return NOTES_TYPE_DANCE_SINGLE;
 }
 

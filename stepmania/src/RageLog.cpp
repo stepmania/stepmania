@@ -167,7 +167,7 @@ void RageLog::Warn( const char *fmt, ...)
     CString sBuff = vssprintf( fmt, va );
     va_end(va);
 
-	Write(WRITE_TO_INFO | WRITE_LOUD, ssprintf("WARNING: %s", sBuff.GetString()));
+	Write(WRITE_TO_INFO | WRITE_LOUD, ssprintf("WARNING: %s", sBuff.c_str()));
 }
 
 /* When */
@@ -177,7 +177,7 @@ void RageLog::Write( int where, CString str)
 		str = SecondsToTime(RageTimer::GetTimeSinceStart()) + ": " + str;
 
 	if( where&WRITE_TO_INFO && m_fileInfo )
-		fprintf(m_fileInfo, "%s\n", str.GetString() );
+		fprintf(m_fileInfo, "%s\n", str.c_str() );
 
 	HOOKS->Log(str, where & WRITE_TO_INFO);
 
@@ -190,13 +190,13 @@ void RageLog::Write( int where, CString str)
 			  "/////////////////////////////////////////\n"
 			  "%s\n"
 			  "/////////////////////////////////////////",
-			  str.GetString());
+			  str.c_str());
 	}
 
 	if( m_fileLog )
-		fprintf(m_fileLog, "%s\n", str.GetString() );
+		fprintf(m_fileLog, "%s\n", str.c_str() );
 
-	printf("%s\n", str.GetString() );
+	printf("%s\n", str.c_str() );
 
 #ifdef DEBUG
 	Flush();

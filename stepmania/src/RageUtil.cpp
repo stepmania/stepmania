@@ -496,7 +496,7 @@ static const unsigned int crc32_tab[] = {
 bool DoStat(CString sPath, struct stat *st)
 {
 	TrimRight(sPath, "/\\");
-    return stat(sPath.GetString(), st) != -1;
+    return stat(sPath.c_str(), st) != -1;
 }
 
 unsigned int GetHashForFile( CString sPath )
@@ -1148,7 +1148,7 @@ bool FilenameDB::ResolvePath(CString &path)
 
 		if(lst.size() > 1)
 			LOG->Warn("Ambiguous filenames \"%s\" and \"%s\"",
-				lst[0].GetString(), lst[1].GetString());
+				lst[0].c_str(), lst[1].c_str());
 
 		ret += lst[0];
 	}

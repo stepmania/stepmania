@@ -133,7 +133,7 @@ CString AnnouncerManager::GetPathTo( CString sAnnouncerName, CString sFolderName
 	 * its preferred name. */
 #ifdef DEBUG
 	LOG->Trace( "The announcer in \"%s\" is missing the folder '%s'.",
-		AnnouncerPath.GetString(), sFolderName.GetString() );
+		AnnouncerPath.c_str(), sFolderName.c_str() );
 //	MessageBeep( MB_OK );
 	CreateDirectories( AnnouncerPath+sFolderName );
 #endif

@@ -60,7 +60,7 @@ void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &
 
 bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 {
-	LOG->Trace( "Notes::LoadFromBMSFile( '%s' )", sPath.GetString() );
+	LOG->Trace( "Notes::LoadFromBMSFile( '%s' )", sPath.c_str() );
 
 	out.m_NotesType = NOTES_TYPE_INVALID;
 
@@ -69,7 +69,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 
 	ifstream file(sPath);
 	if( file.bad() )
-		RageException::Throw( "Failed to open %s for reading.", sPath.GetString() );
+		RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 
 	CString line;
 	while( getline(file, line) )	// foreach line
@@ -134,7 +134,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 
 			if( iPosOpenBracket != -1  &&  iPosCloseBracket != -1 )
 				value_data = value_data.substr( iPosOpenBracket+1, iPosCloseBracket-iPosOpenBracket-1 );
-			LOG->Trace( "Notes description found to be '%s'", value_data.GetString() );
+			LOG->Trace( "Notes description found to be '%s'", value_data.c_str() );
 
 			out.SetDescription(value_data);
 
@@ -164,7 +164,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 
 			const unsigned iNumNotesInThisMeasure = arrayNotes.size();
 			//LOG->Trace( "%s:%s: iMeasureNo = %d, iNoteNum = %d, iNumNotesInThisMeasure = %d", 
-			//	valuename.GetString(), sNoteData.GetString(), iMeasureNo, iNoteNum, iNumNotesInThisMeasure );
+			//	valuename.c_str(), sNoteData.c_str(), iMeasureNo, iNoteNum, iNumNotesInThisMeasure );
 			for( unsigned j=0; j<iNumNotesInThisMeasure; j++ )
 			{
 				if( arrayNotes[j] )
@@ -251,13 +251,13 @@ void BMSLoader::GetApplicableFiles( CString sPath, CStringArray &out )
 
 bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 {
-	LOG->Trace( "Song::LoadFromBMSDir(%s)", sDir.GetString() );
+	LOG->Trace( "Song::LoadFromBMSDir(%s)", sDir.c_str() );
 
 	CStringArray arrayBMSFileNames;
 	GetApplicableFiles( sDir, arrayBMSFileNames );
 
 	if( arrayBMSFileNames.empty() )
-		RageException::Throw( "Couldn't find any BMS files in '%s'", sDir.GetString() );
+		RageException::Throw( "Couldn't find any BMS files in '%s'", sDir.c_str() );
 
 	// load the Notes from the rest of the BMS files
 	unsigned i;
@@ -277,7 +277,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 	ifstream file(sPath);
 	if( file.bad() )
-		RageException::Throw( "Failed to open %s for reading.", sPath.GetString() );
+		RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 
 	CString line;
 	while( getline(file, line) )	// foreach line
@@ -367,7 +367,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 			const unsigned iNumNotesInThisMeasure = arrayNotes.size();
 			//LOG->Trace( "%s:%s: iMeasureNo = %d, iBMSTrackNo = %d, iNumNotesInThisMeasure = %d", 
-			//	valuename.GetString(), sNoteData.GetString(), iMeasureNo, iBMSTrackNo, iNumNotesInThisMeasure );
+			//	valuename.c_str(), sNoteData.c_str(), iMeasureNo, iBMSTrackNo, iNumNotesInThisMeasure );
 			for( unsigned j=0; j<iNumNotesInThisMeasure; j++ )
 			{
 				if( arrayNotes[j] == 0 )
@@ -416,7 +416,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					// open the song file again and and look for this tag's value
 					ifstream file(sPath);
 					if( file.bad() )
-						RageException::Throw( "Failed to open %s for reading.", sPath.GetString() );
+						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 
 					CString line;
 					while( getline(file, line) )	// foreach line
@@ -456,7 +456,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 					if( fBPM == -1 )	// we didn't find the line we were looking for
 					{
-						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor.GetString(), sPath.GetString() );
+						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), sPath.c_str() );
 					}
 					else
 					{
@@ -478,7 +478,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					// open the song file again and and look for this tag's value
 					ifstream file(sPath);
 					if( file.bad() )
-						RageException::Throw( "Failed to open %s for reading.", sPath.GetString() );
+						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 
 					CString line;
 					while( getline(file, line) )	// foreach line
@@ -533,7 +533,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 					if( fFreezeSecs == -1 )	// we didn't find the line we were looking for
 					{
-						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor.GetString(), sPath.GetString() );
+						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), sPath.c_str() );
 					}
 					else
 					{

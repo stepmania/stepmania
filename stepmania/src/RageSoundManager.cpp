@@ -258,7 +258,7 @@ void RageSoundManager::MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, floa
 
 void RageSoundManager::PlayMusic(CString file, bool loop, float start_sec, float length_sec, float fade_len)
 {
-//	LOG->Trace("play '%s' (current '%s')", file.GetString(), music->GetLoadedFilePath().GetString());
+//	LOG->Trace("play '%s' (current '%s')", file.c_str(), music->GetLoadedFilePath().c_str());
 	if(music->IsPlaying())
 	{
 		if( music->GetLoadedFilePath() == file )
