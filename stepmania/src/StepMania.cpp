@@ -630,24 +630,26 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		}
 	}
 #else
-  if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_q))
-  {
-    if(INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RMETA)) ||
-       INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LMETA)))
-    {
-      // pressed CMD-Q
-      ExitGame();
-      return true;
-    }
-  }
+	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_q))
+	{
+		if(INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RMETA)) ||
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LMETA)))
+		{
+			// pressed CMD-Q
+			ExitGame();
+			return true;
+		}
+	}
 #endif
 
 #ifndef DARWIN
+	/* XXX: Er, this doesn't work; Windows traps this key and takes a screenshot
+	 * into the clipboard.  I don't want to disable that, though; it's useful. */
 	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_SYSREQ))
 #else
-  if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_KP_MULTIPLY))
+	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_KP_MULTIPLY))
 #endif
-  {
+	{
 		// Save Screenshot.
 		CString sPath;
 		for( int i=0; i<10000; i++ )
