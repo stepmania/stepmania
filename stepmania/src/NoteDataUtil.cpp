@@ -805,23 +805,47 @@ void NoteDataUtil::Turn( NoteData &inout, StepsType st, TrackMapping tt, int iSt
 
 void NoteDataUtil::Backwards( NoteData &inout )
 {
-	inout.ConvertHoldNotesTo4s();
+	NoteData out;
+	out.SetNumTracks( inout.GetNumTracks() );
+
+	inout.ConvertHoldNotesTo2sAnd3s();
 	int max_row = inout.GetLastRow();
 	for( int t=0; t<inout.GetNumTracks(); t++ )
 	{
-		/* XXX: This is wrong.  Is it worth fixing?  (When is "Backwards" useful?) */
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, r, 0, max_row/2 )
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, r, 0, max_row )
 		{
 			int iRowEarlier = r;
 			int iRowLater = max_row-r;
 
-			const TapNote &tnEarlier = inout.GetTapNote(t, iRowEarlier);
-			const TapNote &tnLater = inout.GetTapNote(t, iRowLater);
-			inout.SetTapNote(t, iRowEarlier, tnLater);
-			inout.SetTapNote(t, iRowLater, tnEarlier);
+			TapNote tnEarlier = inout.GetTapNote(t, iRowEarlier);
+			out.SetTapNote(t, iRowLater, tnEarlier);
 		}
 	}
-	inout.Convert4sToHoldNotes();
+
+	/* Un-flip hold_head and hold_tail. */
+	for( int t=0; t<out.GetNumTracks(); t++ )
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( out, t, r, 0, out.GetLastRow() )
+		{
+			TapNote tn = out.GetTapNote( t, r );
+			if( tn.type != TapNote::hold_tail )
+				continue;
+
+			int iTailRow = r;
+			while( out.GetNextTapNoteRowForTrack(t,iTailRow) )
+			{
+				TapNote tn2 = out.GetTapNote( t, iTailRow );
+				if( tn2.type != TapNote::hold_head )
+					continue;
+
+				out.SetTapNote( t, r, tn2 );
+				out.SetTapNote( t, iTailRow, tn );
+			}
+		}
+	}
+
+	inout = out;
+	inout.Convert2sAnd3sToHoldNotes();
 }
 
 void NoteDataUtil::SwapSides( NoteData &inout )
