@@ -69,8 +69,13 @@ void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, C
 
 	row.bOneChoiceForAllPlayers = false;
 	const int NumCols = atoi( asParts[0] );
-	if( asParts.size() > 1 )
-		row.bOneChoiceForAllPlayers = !asParts[1].CompareNoCase("together");
+	for( int i=0; i<asParts.size(); i++ )
+	{
+		if( asParts[i].CompareNoCase("together") == 0 )
+			row.bOneChoiceForAllPlayers = true;
+		else if( asParts[i].CompareNoCase("multiselect") == 0 )
+			row.bMultiSelect = true;
+	}
 
 	for( int col = 0; col < NumCols; ++col )
 	{
