@@ -360,6 +360,9 @@ cl                                                                              
 				RelativePath="ScreenDemonstration.h">
 			</File>
 			<File
+				RelativePath="ScreenDimensions.cpp">
+			</File>
+			<File
 				RelativePath="ScreenDimensions.h">
 			</File>
 			<File
@@ -1024,6 +1027,9 @@ cl                                                                              
 				RelativePath="StyleUtil.h">
 			</File>
 			<File
+				RelativePath="ThemeMetric.h">
+			</File>
+			<File
 				RelativePath="TimingData.cpp">
 			</File>
 			<File
@@ -1187,6 +1193,12 @@ cl                                                                              
 					<File
 						RelativePath="arch\InputHandler\InputHandler_SDL.h">
 					</File>
+					<File
+						RelativePath="arch\InputHandler\InputHandler_Xbox.cpp">
+					</File>
+					<File
+						RelativePath="arch\InputHandler\InputHandler_Xbox.h">
+					</File>
 				</Filter>
 				<Filter
 					Name="MovieTexture"
@@ -1290,6 +1302,12 @@ cl                                                                              
 				</File>
 				<File
 					RelativePath="archutils\Xbox\custom_launch_params.h">
+				</File>
+				<File
+					RelativePath="archutils\Xbox\GraphicsWindow.cpp">
+				</File>
+				<File
+					RelativePath="archutils\Xbox\GraphicsWindow.h">
 				</File>
 			</Filter>
 		</Filter>
