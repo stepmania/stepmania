@@ -82,8 +82,8 @@ TapNoteScore PlayerAI::GetTapNoteScore( PlayerNumber pn )
 		GAMESTATE->m_iLastPositiveSumOfAttackLevels[pn] : 
 		0;
 
-	ASSERT( iCpuSkill>=0 && iCpuSkill<NUM_SKILL_LEVELS );
-	ASSERT( GAMESTATE->m_PlayerController[pn] == PC_CPU );
+	ASSERT_M( iCpuSkill>=0 && iCpuSkill<NUM_SKILL_LEVELS, ssprintf("%i", iCpuSkill) );
+	ASSERT_M( GAMESTATE->m_PlayerController[pn] == PC_CPU, ssprintf("%i", GAMESTATE->m_PlayerController[pn]) );
 
 	iCpuSkill -= iSumOfAttackLevels*3;
 	CLAMP( iCpuSkill, 0, NUM_SKILL_LEVELS-1 );

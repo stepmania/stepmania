@@ -933,6 +933,8 @@ void ScreenGameplay::LoadNextSong()
 			GAMESTATE->m_PlayerController[p] = PC_CPU;
 			int iMeter = GAMESTATE->m_pCurNotes[p]->GetMeter();
 			int iNewSkill = SCALE( iMeter, MIN_METER, MAX_METER, 0, NUM_SKILL_LEVELS-1 );
+			/* Watch out: songs aren't actually bound by MAX_METER. */
+			iNewSkill = clamp( iNewSkill, 0, NUM_SKILL_LEVELS-1 );
 			GAMESTATE->m_iCpuSkill[p] = iNewSkill;
 		}
 		else if( PREFSMAN->m_bAutoPlay )
