@@ -4,7 +4,6 @@
 #include "StepMania.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "SDL_utils.h"
 #include "archutils/Win32/AppInstance.h"
 #include "InputFilter.h"
 #include "PrefsManager.h"
@@ -174,21 +173,27 @@ void InputHandler_DInput::WindowReset()
 	StartThread();
 }
 
+#define HAT_UP_MASK 1
+#define HAT_DOWN_MASK 2
+#define HAT_LEFT_MASK 4
+#define HAT_RIGHT_MASK 8
+
 static int TranslatePOV(DWORD value)
 {
-	const int HAT_VALS[] = {
-	    SDL_HAT_UP,
-	    SDL_HAT_UP   | SDL_HAT_RIGHT,
-	    SDL_HAT_RIGHT,
-	    SDL_HAT_DOWN | SDL_HAT_RIGHT,
-	    SDL_HAT_DOWN,
-	    SDL_HAT_DOWN | SDL_HAT_LEFT,
-	    SDL_HAT_LEFT,
-	    SDL_HAT_UP   | SDL_HAT_LEFT
+	const int HAT_VALS[] =
+	{
+	    HAT_UP_MASK,
+	    HAT_UP_MASK   | HAT_RIGHT_MASK,
+	    HAT_RIGHT_MASK,
+	    HAT_DOWN_MASK | HAT_RIGHT_MASK,
+	    HAT_DOWN_MASK,
+	    HAT_DOWN_MASK | HAT_LEFT_MASK,
+	    HAT_LEFT_MASK,
+	    HAT_UP_MASK   | HAT_LEFT_MASK
 	};
 
 	if(LOWORD(value) == 0xFFFF)
-	    return SDL_HAT_CENTERED;
+	    return 0;
 
 	/* Round the value up: */
 	value += 4500 / 2;
@@ -196,7 +201,7 @@ static int TranslatePOV(DWORD value)
 	value /= 4500;
 
 	if(value >= 8)
-	    return SDL_HAT_CENTERED; /* shouldn't happen */
+	    return 0; /* shouldn't happen */
 	
 	return HAT_VALS[value];
 }
@@ -308,10 +313,10 @@ void InputHandler_DInput::UpdatePolled(DIDevice &device, const RageTimer &tm)
 			if( in.num == 0 )
 			{
 				const int pos = TranslatePOV(state.rgdwPOV[in.ofs - DIJOFS_POV(0)]);
-				ButtonPressed(DeviceInput(dev, JOY_HAT_UP, tm), !!(pos & SDL_HAT_UP));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN, tm), !!(pos & SDL_HAT_DOWN));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT, tm), !!(pos & SDL_HAT_LEFT));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT, tm), !!(pos & SDL_HAT_RIGHT));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_UP, tm), !!(pos & HAT_UP_MASK));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN, tm), !!(pos & HAT_DOWN_MASK));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT, tm), !!(pos & HAT_LEFT_MASK));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT, tm), !!(pos & HAT_RIGHT_MASK));
 			}
 
 			break;
@@ -387,10 +392,10 @@ void InputHandler_DInput::UpdateBuffered(DIDevice &device, const RageTimer &tm)
 			case in.HAT:
 		    {
 				const int pos = TranslatePOV(evtbuf[i].dwData);
-				ButtonPressed(DeviceInput(dev, JOY_HAT_UP, tm), !!(pos & SDL_HAT_UP));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN, tm), !!(pos & SDL_HAT_DOWN));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT, tm), !!(pos & SDL_HAT_LEFT));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT, tm), !!(pos & SDL_HAT_RIGHT));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_UP, tm), !!(pos & HAT_UP_MASK));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN, tm), !!(pos & HAT_DOWN_MASK));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT, tm), !!(pos & HAT_LEFT_MASK));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT, tm), !!(pos & HAT_RIGHT_MASK));
 		    }
 			}
 		}
