@@ -71,11 +71,6 @@ public:
 		return m_currentValue;
 	}
 	
-	T GetValue() const
-	{
-		return m_currentValue;
-	}
-
 	void operator=( const T& other )
 	{
 		m_currentValue = other;
