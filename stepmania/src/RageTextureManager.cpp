@@ -20,7 +20,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
-#include "time.h"
+#include <time.h>
 
 RageTextureManager*		TEXTUREMAN		= NULL;
 
