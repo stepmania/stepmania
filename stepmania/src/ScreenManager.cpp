@@ -529,6 +529,8 @@ void ScreenManager::SetNewScreen( Screen *pNewScreen )
 	m_ScreenStack.clear();
 
 	m_ScreenStack.push_back( pNewScreen );
+	
+	PostMessageToTopScreen( SM_GainFocus, 0 );
 }
 
 void ScreenManager::SetNewScreen( CString sClassName )
@@ -629,12 +631,13 @@ void ScreenManager::MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessa
 void ScreenManager::PopTopScreen( ScreenMessage SM )
 {
 	Screen* pScreenToPop = m_ScreenStack.back();	// top menu
-	//pScreenToPop->HandleScreenMessage( SM_LosingInputFocus );
+	pScreenToPop->HandleScreenMessage( SM_LoseFocus );
 	m_ScreenStack.erase(m_ScreenStack.end()-1, m_ScreenStack.end());
 	m_ScreensToDelete.push_back( pScreenToPop );
 
 	// post to the new top
 	PostMessageToTopScreen( SM, 0 );
+	PostMessageToTopScreen( SM_GainFocus, 0 );
 	PostMessageToTopScreen( m_MessageSendOnPop, 0 );
 	m_MessageSendOnPop = SM_None;
 }

@@ -23,6 +23,8 @@ enum ScreenMessage {
 	SM_BeginFadingOut,
 	SM_GoToNextScreen,
 	SM_GoToPrevScreen,
+	SM_GainFocus,
+	SM_LoseFocus,
 	SM_User	= 100
 };
 
