@@ -47,7 +47,7 @@ ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h ScreenSelectGroup.cpp Screen
 ScreenSelectMaster.cpp ScreenSelectMaster.h ScreenSelectMode.cpp ScreenSelectMode.h \
 ScreenSelectMusic.cpp ScreenSelectMusic.h ScreenSelectStyle.cpp ScreenSelectStyle.h \
 ScreenSystemLayer.cpp ScreenSystemLayer.h ScreenSetTime.cpp ScreenSetTime.h \
-ScreenSongOptions.cpp ScreenSongOptions.h 
+ScreenSongOptions.cpp ScreenSongOptions.h \
 ScreenSplash.cpp ScreenSplash.h \
 ScreenStage.cpp ScreenStage.h ScreenStyleSplash.cpp ScreenStyleSplash.h \
 ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h ScreenTestInput.cpp ScreenTestInput.h \
