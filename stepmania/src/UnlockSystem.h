@@ -21,6 +21,8 @@ class Song;
 
 struct SongEntry
 {
+	SongEntry();
+
 	CString m_sSongName;
 	
 	/* A cached pointer to the song or course this entry refers to.  Only one of

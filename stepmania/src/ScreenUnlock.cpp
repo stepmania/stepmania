@@ -115,7 +115,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			if (pSong && pSong->m_pSong != NULL)
 			{
 				CString title = pSong->m_pSong->GetDisplayMainTitle();
-				CString subtitle = pSong->m_pSong->GetDisplayMainTitle();
+				CString subtitle = pSong->m_pSong->GetDisplaySubTitle();
 				if( subtitle != "" )
 					title = title + "\n" + subtitle;
 				text->SetTextMaxWidth( MaxWidth, title );
@@ -128,7 +128,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 					text->SetTextMaxWidth( MaxWidth, crs->m_sName );
 					text->Command("Diffuse,0,1,0,1");
 				}
-				else
+				else   // entry isn't a song or course
 				{
 					text->SetText( "" );
 					text->Command("Diffuse,0.5,0,0,1");
