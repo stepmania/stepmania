@@ -32,6 +32,7 @@ public:
 		CString sQuestion, 
 		CString sInitialAnswer, 
 		int iMaxInputLength,
+		bool(*Validate)(CString sAnswer,CString &sErrorOut) = NULL, 
 		void(*OnOK)(CString sAnswer) = NULL, 
 		void(*OnCanel)() = NULL, 
 		bool bPassword = false );
@@ -73,6 +74,7 @@ protected:
 	AutoActor		m_sprAnswerBox;
 	wstring			m_sAnswer;
 	BitmapText		m_textAnswer;
+	bool(*m_pValidate)( CString sAnswer, CString &sErrorOut );
 	void(*m_pOnOK)( CString sAnswer );
 	void(*m_pOnCancel)();
 	
@@ -87,6 +89,7 @@ protected:
 
 	Transition		m_In;
 	Transition		m_Out;
+	Transition		m_Cancel;
 
 	RageSound	m_sndType;
 	RageSound	m_sndBackspace;

@@ -51,6 +51,7 @@ ScreenTextEntry::ScreenTextEntry(
 	CString sQuestion, 
 	CString sInitialAnswer, 
 	int iMaxInputLength,
+	bool(*Validate)(CString sAnswer,CString &sErrorOut), 
 	void(*OnOK)(CString sAnswer), 
 	void(*OnCancel)(), 
 	bool bPassword ) :
@@ -61,6 +62,7 @@ ScreenTextEntry::ScreenTextEntry(
 	m_sQuestion = sQuestion;
 	m_sAnswer = CStringToWstring( sInitialAnswer );
 	m_iMaxInputLength = iMaxInputLength;
+	m_pValidate = Validate;
 	m_pOnOK = OnOK;
 	m_pOnCancel = OnCancel;
 	m_bPassword = bPassword;
@@ -122,6 +124,9 @@ void ScreenTextEntry::Init()
 	
 	m_Out.Load( THEME->GetPathB(m_sName,"out") );
 	this->AddChild( &m_Out );
+	
+	m_Cancel.Load( THEME->GetPathB(m_sName,"cancel") );
+	this->AddChild( &m_Cancel );
 
 
 	m_sndType.Load( THEME->GetPathS(m_sName,"type"), true );
@@ -178,7 +183,7 @@ void ScreenTextEntry::DrawPrimitives()
 
 void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+	if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Cancel.IsTransitioning() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
@@ -306,7 +311,34 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 
 void ScreenTextEntry::End( bool bCancelled )
 {
-	m_Out.StartTransitioning( SM_DoneOpeningWipingRight );
+	if( bCancelled )
+	{
+		if( m_pOnCancel ) 
+			m_pOnCancel();
+		
+		m_Cancel.StartTransitioning( SM_DoneOpeningWipingRight );
+	}
+	else
+	{
+		CString sAnswer = WStringToCString(m_sAnswer);
+		CString sError;
+		bool bValidAnswer = m_pValidate( sAnswer, sError );
+		if( !bValidAnswer )
+		{
+			SCREENMAN->Prompt( SM_None, sError );
+			return;	// don't end this screen.
+		}
+
+		if( m_pOnOK )
+		{
+			CString ret = WStringToCString(m_sAnswer);
+			FontCharAliases::ReplaceMarkers(ret);
+			m_pOnOK( ret );
+		}
+
+		m_Out.StartTransitioning( SM_DoneOpeningWipingRight );
+		SCREENMAN->PlayStartSound();
+	}
 
 	m_Background->PlayCommand("Off");
 
@@ -314,23 +346,6 @@ void ScreenTextEntry::End( bool bCancelled )
 	OFF_COMMAND( m_sprAnswerBox );
 	OFF_COMMAND( m_textAnswer );
 	OFF_COMMAND( m_sprCursor );
-
-	SCREENMAN->PlayStartSound();
-
-	if( bCancelled )
-	{
-		if( m_pOnCancel ) 
-			m_pOnCancel();
-	} 
-	else 
-	{
-		if( m_pOnOK )
-		{
-			CString ret = WStringToCString(m_sAnswer);
-			FontCharAliases::ReplaceMarkers(ret);
-			m_pOnOK( ret );
-		}
-	}
 
 	s_bCancelledLast = bCancelled;
 	s_sLastAnswer = bCancelled ? CString("") : WStringToCString(m_sAnswer);

@@ -500,6 +500,7 @@ void ScreenManager::TextEntry(
 	CString sQuestion, 
 	CString sInitialAnswer, 
 	int iMaxInputLength,
+	bool(*Validate)(CString sAnswer,CString &sErrorOut), 
 	void(*OnOK)(CString sAnswer), 
 	void(*OnCancel)(),
 	bool bPassword
@@ -509,7 +510,15 @@ void ScreenManager::TextEntry(
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
 	// add the new state onto the back of the array
-	Screen *pNewScreen = new ScreenTextEntry( "ScreenTextEntry", sQuestion, sInitialAnswer, iMaxInputLength, OnOK, OnCancel, bPassword );
+	Screen *pNewScreen = new ScreenTextEntry( 
+		"ScreenTextEntry", 
+		sQuestion, 
+		sInitialAnswer, 
+		iMaxInputLength, 
+		Validate, 
+		OnOK, 
+		OnCancel, 
+		bPassword );
 	pNewScreen->Init();
 	this->ZeroNextUpdate();
 	SetFromNewScreen( pNewScreen, true );

@@ -220,7 +220,8 @@ public:
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;
 	bool IsEditAlreadyLoaded( Steps* pSteps ) const;
 
-	void MakeUniqueEditDescription( StepsType st, CString &sPreferredDescriptionInOut );
+	bool IsEditDescriptionUnique( StepsType st, CString sPreferredDescription, const Steps *pExclude ) const;
+	void MakeUniqueEditDescription( StepsType st, CString &sPreferredDescriptionInOut ) const;
 
 	// An array of keysound file names (e.g. "beep.wav").
 	// The index in this array corresponds to the index in TapNote.  If you 

@@ -62,13 +62,14 @@ public:
 		CString sQuestion, 
 		CString sInitialAnswer, 
 		int iMaxInputLength, 
+		bool(*Validate)(CString sAnswer,CString &sErrorOut) = NULL, 
 		void(*OnOK)(CString sAnswer) = NULL, 
 		void(*OnCanel)() = NULL,
 		bool bPassword = false
 		);
 	void Password( ScreenMessage SM_SendWhenDone, const CString &sQuestion, void(*OnOK)(CString sPassword) = NULL, void(*OnCanel)() = NULL )
 	{
-		TextEntry( SM_SendWhenDone, sQuestion, "", 255, OnOK, OnCanel, true );
+		TextEntry( SM_SendWhenDone, sQuestion, "", 255, NULL, OnOK, OnCanel, true );
 	}
 	void MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel = SM_None );
 	void PopTopScreen( ScreenMessage SM = SM_None );
