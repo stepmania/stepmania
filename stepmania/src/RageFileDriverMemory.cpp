@@ -2,6 +2,7 @@
 #include "RageFileDriverMemory.h"
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
+#include <errno.h>
 
 struct RageFileObjMemFile
 {
@@ -99,8 +100,8 @@ public:
 
 
 RageFileDriverMem::RageFileDriverMem():
-	m_Mutex("RageFileDriverMem"),
-	RageFileDriver( new NullFilenameDB )
+	RageFileDriver( new NullFilenameDB ),
+	m_Mutex("RageFileDriverMem")
 {
 }
 
