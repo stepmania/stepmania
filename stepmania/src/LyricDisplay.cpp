@@ -105,10 +105,16 @@ void LyricDisplay::Update( float fDeltaTime )
 		}
 		m_textLyrics[i].SetDiffuse(color);
 
+		/* Crop the bottom layer of text away as we crop the top layer on.  That
+		 * prevents overdraw, which reduces AA quality. */
+		if( i==0 )
+			m_textLyrics[i].SetCropLeft(0);
 		if( i==1 )
 			m_textLyrics[i].SetCropRight(1);
 		m_textLyrics[i].Command(IN_COMMAND);
 		m_textLyrics[i].BeginTweening( fShowLength * 0.75f ); /* sleep */
+		if( i==0 )
+			m_textLyrics[i].SetCropLeft(1);
 		if( i==1 )
 			m_textLyrics[i].SetCropRight(0);
 		m_textLyrics[i].BeginTweening( fShowLength * 0.25f ); /* sleep */
