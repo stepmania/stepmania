@@ -9,7 +9,7 @@
 /* We only actually get 1000 using SDL. */
 #define TIMESTAMP_RESOLUTION 1000000
 
-const RageZeroTimer_t RageZeroTimer;
+const RageTimer RageZeroTimer(0,0);
 
 void mySDL_GetTicks( unsigned &secs, unsigned &us )
 {
@@ -17,8 +17,13 @@ void mySDL_GetTicks( unsigned &secs, unsigned &us )
 	if( !bInitialized )
 	{
 		bInitialized = true;
-		if( !SDL_WasInit(SDL_INIT_TIMER) )
-			SDL_InitSubSystem( SDL_INIT_TIMER );
+		/* We don't want the timer system; it starts a thread, and we never use it. */
+		// if( !SDL_WasInit(SDL_INIT_TIMER) )
+		//	SDL_InitSubSystem( SDL_INIT_TIMER );
+
+		/* Calling this will still initialize the hidden "ticks" system, so we can
+		 * use SDL_GetTicks. */
+		SDL_InitSubSystem( 0 );
 	}
 
 	/* Ticks may be less than last for at least two reasons: the time may have wrapped (after

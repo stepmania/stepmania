@@ -27,6 +27,7 @@ class RageTimer
 {
 public:
 	RageTimer() { Touch(); }
+	RageTimer( int secs, int us ): m_secs(secs), m_us(us) { }
 
 	/* Time ago this RageTimer represents. */
 	float Ago() const;
@@ -62,11 +63,7 @@ private:
 	static float Difference(const RageTimer &lhs, const RageTimer &rhs);
 };
 
-struct RageZeroTimer_t: public RageTimer
-{
-	RageZeroTimer_t() { SetZero(); }
-};
-extern const RageZeroTimer_t RageZeroTimer;
+extern const RageTimer RageZeroTimer;
 
 #endif
 
