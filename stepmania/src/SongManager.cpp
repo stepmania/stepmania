@@ -41,7 +41,7 @@ const CString MACHINE_STEPS_MEM_CARD_DATA =		BASE_PATH "Data" SLASH "MachineStep
 const CString MACHINE_COURSE_MEM_CARD_DATA =	BASE_PATH "Data" SLASH "MachineCourseMemCardData.dat";
 const int CATEGORY_RANKING_VERSION = 3;
 const int STEPS_MEM_CARD_DATA_VERSION = 7;
-const int COURSE_MEM_CARD_DATA_VERSION = 4;
+const int COURSE_MEM_CARD_DATA_VERSION = 5;
 
 
 #define NUM_GROUP_COLORS	THEME->GetMetricI("SongManager","NumGroupColors")
@@ -520,8 +520,16 @@ void SongManager::ReadCourseMemCardDataFromFile( CString fn, int mc )
 		
 		// even if we don't find the Course*, we still have to read past the input
 	
-		for( int st=0; st<NUM_STEPS_TYPES; st++ )
+		int NumStepsPlayed = 0;
+		if( !FileRead(f, NumStepsPlayed) )
+			WARN_AND_RETURN;
+
+		while( NumStepsPlayed-- )
 		{
+			int st;
+			if( !FileRead(f, st) )
+				WARN_AND_RETURN;
+
 			int iNumTimesPlayed;
 			if( !FileRead(f, iNumTimesPlayed) )
 				WARN_AND_RETURN;
@@ -545,7 +553,7 @@ void SongManager::ReadCourseMemCardDataFromFile( CString fn, int mc )
 				if( !FileRead(f, fSurviveTime) )
 					WARN_AND_RETURN;
 
-				if( pCourse )
+				if( pCourse && st < NUM_STEPS_TYPES )
 				{
 					pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName = sName;
 					pCourse->m_MemCardDatas[st][mc].vHighScores[l].iScore = iScore;
@@ -682,9 +690,21 @@ void SongManager::SaveCourseMemCardDataToFile( CString fn, int mc )
 			FileWrite( f, pCourse->m_sName );
 		else
 			FileWrite( f, pCourse->m_sPath );
-		
-		for( int st=0; st<NUM_STEPS_TYPES; st++ )
+
+		int NumStepsPlayed = 0;
+		int st;
+		for( st=0; st<NUM_STEPS_TYPES; st++ )
+			if( pCourse->m_MemCardDatas[st][mc].iNumTimesPlayed )
+				++NumStepsPlayed;
+		FileWrite( f, NumStepsPlayed );
+
+		for( st=0; st<NUM_STEPS_TYPES; st++ )
 		{
+			if( !pCourse->m_MemCardDatas[st][mc].iNumTimesPlayed )
+				continue;
+			--NumStepsPlayed;
+
+			FileWrite( f, st );
 			FileWrite( f, pCourse->m_MemCardDatas[st][mc].iNumTimesPlayed );
 			pCourse->m_MemCardDatas[st][mc].vHighScores.resize(NUM_RANKING_LINES);
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
@@ -694,6 +714,7 @@ void SongManager::SaveCourseMemCardDataToFile( CString fn, int mc )
 				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].fSurviveTime );
 			}
 		}
+		ASSERT( !NumStepsPlayed );
 	}
 }
 
