@@ -168,6 +168,9 @@ SOURCE=.\RageDisplay.cpp
 # Begin Source File
 
 SOURCE=.\RageDisplay.h
+# Begin Source File
+
+SOURCE=.\RageDisplayInternal.h
 # End Source File
 # Begin Source File
 
