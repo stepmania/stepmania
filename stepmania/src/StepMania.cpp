@@ -1283,6 +1283,20 @@ CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature,
 	return sFileName;
 }
 
+void InsertCoin( int iNum )
+{
+	GAMESTATE->m_iCoins += iNum;
+	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit);
+	BOOKKEEPER->CoinInserted();
+	SCREENMAN->RefreshCreditsMessages();
+	SCREENMAN->PlayCoinSound();
+}
+
+void InsertCredit()
+{
+	GAMESTATE->m_iCoins += PREFSMAN->m_iCoinsPerCredit;
+}
+
 /* Returns true if the key has been handled and should be discarded, false if
  * the key should be sent on to screens. */
 bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput GameI, MenuInput MenuI, StyleInput StyleI )
@@ -1313,12 +1327,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 			LOG->Trace( "Ignored coin insertion (editing)" );
 			break;
 		}
-
-		GAMESTATE->m_iCoins++;
-		LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit);
-		BOOKKEEPER->CoinInserted();
-		SCREENMAN->RefreshCreditsMessages();
-		SCREENMAN->PlayCoinSound();
+		InsertCoin();
 		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
 	}
 
