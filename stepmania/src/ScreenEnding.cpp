@@ -154,7 +154,8 @@ void ScreenEnding::Update( float fDeltaTime )
 
 void ScreenEnding::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( MenuI.IsValid() )
+	bool bIsTransitioning = m_In.IsTransitioning() || m_Out.IsTransitioning();
+	if( MenuI.IsValid() && !bIsTransitioning )
 	{
 		switch( MenuI.button )
 		{
