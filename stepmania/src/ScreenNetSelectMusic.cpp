@@ -88,12 +88,16 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenNetSe
 	NSMAN->ReportPlayerOptions();
 
 	m_bInitialSelect = false;
+	m_bAllowInput = false;
 }
 
 void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType type,
 								  const GameInput& GameI, const MenuInput& MenuI,
 								  const StyleInput& StyleI )
 {	
+	if( !m_bAllowInput )
+		return;
+
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
@@ -232,6 +236,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		m_MusicWheel.Move(-1);
 		m_MusicWheel.Move(1);
 		m_MusicWheel.Select();
+		m_bAllowInput = true;
 		break;
 	case SM_BackFromOpts:
 		//XXX: HACK: This will causes ScreenSelectOptions to go back here.

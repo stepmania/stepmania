@@ -86,6 +86,7 @@ private:
 	Song *				m_cSong;
 
 	bool				m_bInitialSelect;
+	bool				m_bAllowInput;
 };
 
 #endif

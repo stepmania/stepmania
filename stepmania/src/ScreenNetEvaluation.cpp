@@ -64,6 +64,9 @@ void ScreenNetEvaluation::RedoUserTexts()
 	
 	m_iCurrentPlayer = 0;
 
+	for( int i=0; i<m_iActivePlayers; ++i )
+		this->RemoveChild( &m_textUsers[i] );
+
 	m_textUsers.resize(m_iActivePlayers);
 
 	for( int i=0; i<m_iActivePlayers; ++i )
@@ -127,6 +130,22 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		LOG->Trace("SMNETCheckpoint");
 		for( int i=0; i<m_iActivePlayers; ++i )
 		{
+			//Strange occourances because of timing
+			//cause these things not to work right
+			//and will sometimes cause a crash.
+			//We should make SURE we won't crash!
+			if ( i >= NSMAN->m_EvalPlayerData.size() )
+				break;
+
+			if ( NSMAN->m_EvalPlayerData[i].name >= NSMAN->m_PlayerNames.size() )
+				break;
+
+			if ( NSMAN->m_EvalPlayerData[i].name < 0 )
+				break;
+
+			if ( i >= m_textUsers.size() )
+				break;
+
 			m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_EvalPlayerData[i].name] );
 			if ( NSMAN->m_EvalPlayerData[i].grade < GRADE_TIER_3 )	//Yes, hardcoded (I'd like to leave it that way)
 				m_textUsers[i].TurnRainbowOn();
