@@ -86,7 +86,9 @@ static void ChangeToDirOfExecutable(const char *argv0)
 
 void ApplyGraphicOptions()
 { 
-	bool ReloadTextures = DISPLAY->SetVideoMode( 
+	bool bNeedReload = false;
+
+	bNeedReload |= DISPLAY->SetVideoMode( 
 		PREFSMAN->m_bWindowed, 
 		PREFSMAN->m_iDisplayWidth, 
 		PREFSMAN->m_iDisplayHeight, 
@@ -94,12 +96,12 @@ void ApplyGraphicOptions()
 		PREFSMAN->m_iRefreshRate,
 		PREFSMAN->m_bVsync );
 
-	bool bTexturesInvalidated = TEXTUREMAN->SetPrefs( 
+	bNeedReload |= TEXTUREMAN->SetPrefs( 
 		PREFSMAN->m_iTextureColorDepth, 
 		PREFSMAN->m_iUnloadTextureDelaySeconds, 
 		PREFSMAN->m_iMaxTextureResolution );
 
-	if( bTexturesInvalidated )
+	if( bNeedReload )
 		TEXTUREMAN->ReloadAll(); 
 }
 

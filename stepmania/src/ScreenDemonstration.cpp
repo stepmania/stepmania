@@ -153,6 +153,8 @@ ScreenDemonstration::ScreenDemonstration() : ScreenGameplay(SetUpSongOptions())	
 	m_sprDemonstrationBlink.SetEffectBlinking();
 	this->AddChild( &m_sprDemonstrationBlink );
 
+	this->MoveToTail( &m_Fade );
+
 	m_Fade.OpenWipingRight();
 
 	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that animate "ready", "here we go", etc.

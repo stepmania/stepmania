@@ -37,7 +37,7 @@ PrefsManager::PrefsManager()
 	m_iDisplayWidth = 640;
 	m_iDisplayHeight = 480;
 	m_iDisplayColorDepth = 16;
-	m_iTextureColorDepth = 32;
+	m_iTextureColorDepth = 16;		// default to 16 for better preformance on slower cards
 	m_iMaxTextureResolution = 2048;
 	m_iRefreshRate = REFRESH_DEFAULT;
 	m_bIgnoreJoyAxes = false;		// when did this get changed to ON by default?

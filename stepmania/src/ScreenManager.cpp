@@ -382,7 +382,7 @@ void ScreenManager::RefreshCreditsMessages()
 		m_textCreditInfo[p].SetXY( CREDITS_X(p), CREDITS_Y(p) );
 		m_textCreditInfo[p].SetZoom( CREDITS_ZOOM );
 		m_textCreditInfo[p].SetDiffuse( CREDITS_COLOR );
-//		m_textCreditInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
+		m_textCreditInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
 
 		switch( PREFSMAN->m_CoinMode )
 		{

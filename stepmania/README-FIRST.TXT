@@ -1055,6 +1055,38 @@ creates your home directory and is required for things to start working.
 
 * Done!  Enjoy staying on the bleeding edge of StepMania releases! 
 
+* Optional:  Create the SSH keypair for painless access to CVS server via SSH. 
+
+Open a command prompt and enter this to create a new key pair: 
+
+ssh-keygen -C <comment> -f identity 
+
+<comment> is an identifier placed in the public key. I used my email address. 
+Just press enter when it asks you for a passphrase. You don't want a 
+passphrase. BTW, without the -C option the program will fail and you won't get 
+a new key pair. I couldn't use any other ssh-keygen utility except for this 
+one. Any other (SecureCRT, or the linux server) and ssh.exe wouldn't read it. 
+
+Next, on your user account page at SourceForge, you should find a box to enter 
+your SSH public key.  Copy the entire contents of the identity.pub file 
+(located in your .ssh directory) into the text entry box on the page -- be 
+sure not to add any line breaks or it will not work.  After a 6 hour wait, you 
+should be able to use CVS with SSH without using your password.
+
+(Meanwhile) Create a new file called ssh.bat in your WinCVS directory with 
+notepad (or whatever editor) and dump these contents into it: 
+
+@echo off 
+rem echo %0 %1 %2 %3 %4 %5 %6 %7 %8 %9 > debug.txt 
+ssh.exe -C -l %3 -i c:\ssh\.ssh\identity %1 %4 
+
+Edit paths as appropriate.  Use of the .bat file is mainly for the ability to 
+manipulate the command line that ssh gets. These options aren't in WinCVS yet.
+On the Ports tab of WinCvs preferences, select 'Check for an alternate RSH 
+name' and put "ssh.bat" into the editbox. 
+
+WinCVS will create a new console window in your taskbar when running ssh.bat, 
+but you won't ever see any output as it's redirected.
 
 ************************************************************
 22. Thanks
