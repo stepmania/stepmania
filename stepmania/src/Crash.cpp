@@ -1555,33 +1555,39 @@ static void ReportCrashLog(HWND hwnd, HANDLE hFile)
 
 /* Same idea, except this is for data that we *always* want to print
  * in the crash log, even if it was printed when we started. */
-static const int STATICLOG_LINES = 100;
-static char staticlog[BACKLOG_LINES][1024];
-static int staticlog_cnt=0;
+static const int STATICLOG_SIZE = 1024*32;
+static char staticlog[STATICLOG_SIZE];
+static char *staticlog_ptr=staticlog, *staticlog_end=staticlog+STATICLOG_SIZE;
 void StaticLog(const char *str)
 {
-	if(staticlog_cnt == STATICLOG_LINES)
+	if(!staticlog_ptr)
+		return;
+
+	int len = strlen(str)+2; /* +newline +null */
+	if(staticlog_ptr+len >= staticlog_end)
 	{
-		/* Use this sparingly! */
-		strcpy(staticlog[STATICLOG_LINES-1], "Staticlog limit reached");
+		const char *txt = "\nStaticlog limit reached\n";
+		char *max_ptr = staticlog_end-strlen(txt)-1;
+		if(staticlog_ptr > max_ptr)
+			staticlog_ptr = max_ptr;
+
+		strcpy(staticlog_ptr, txt);
+		staticlog_ptr=NULL; /* stop */
 		return;
 	}
 
-	int len = strlen(str);
-	if(len > sizeof(staticlog[staticlog_cnt])-1)
-		len = sizeof(staticlog[staticlog_cnt])-1;
+	strcpy(staticlog_ptr, str);
 
-	strncpy(staticlog[staticlog_cnt], str, len);
-	staticlog[staticlog_cnt] [ len ] = 0;
-
-	staticlog_cnt++;
+	staticlog_ptr[len-2] = '\n';
+	staticlog_ptr[len-1] = 0;
+	/* Advance to sit on the NULL, so the terminator will be overwritten
+	 * on the next log. */
+	staticlog_ptr += len-1;
 }
 
 static void ReportStaticLog(HWND hwnd, HANDLE hFile)
 {
 	Report(NULL, hFile, "Static log:");
-
-	for(int i = 0; i < staticlog_cnt; ++i)
-		Report(hwnd, hFile, "%s", staticlog[i]);
+	Report(hwnd, hFile, "%s", staticlog);
 }
 
