@@ -516,19 +516,19 @@ void StepManiaLanServer::SendNetPacket(const unsigned int client, PacketFunction
 	Client[client]->clientSocket.SendPack((char*)Packet.Data, Packet.Position);
 }
 
-void StepManiaLanServer::StatsNameColumn(PacketFunctions &data, vector<LanPlayer*> &playresPtr)
+void StepManiaLanServer::StatsNameColumn(PacketFunctions &data, vector<LanPlayer*> &playersPtr)
 {
 	for (unsigned int x = 0; x < playersPtr.size(); ++x)
 		data.Write1( (uint8_t) playersPtr[x]->PlayerID );
 }
 
-void StepManiaLanServer::StatsComboColumn(PacketFunctions &data, vector<LanPlayer*> &playresPtr)
+void StepManiaLanServer::StatsComboColumn(PacketFunctions &data, vector<LanPlayer*> &playersPtr)
 {
 	for(unsigned int x = 0; x < playersPtr.size(); ++x )
 		data.Write2( (uint16_t) playersPtr[x]->combo);
 }
 
-void StepManiaLanServer::StatsProjgradeColumn(PacketFunctions& data, vector<LanPlayer*> &playresPtr)
+void StepManiaLanServer::StatsProjgradeColumn(PacketFunctions& data, vector<LanPlayer*> &playersPtr)
 {
 	for(unsigned int x = 0; x < playersPtr.size(); ++x )
 		data.Write1( (uint8_t) playersPtr[x]->projgrade );

@@ -100,10 +100,10 @@ private:
 	void SendValue(uint8_t value, const unsigned int clientNum);
 	void CheckReady();
 	void MoveClientToHost();
-	void StatsComboColumn(PacketFunctions &data, vector<LanPlayer*> &playresPtr);
+	void StatsComboColumn(PacketFunctions &data, vector<LanPlayer*> &playersPtr);
 	void SendStatsToClients();
-	void StatsProjgradeColumn(PacketFunctions& data, vector<LanPlayer*> &playresPtr);
-	void StatsNameColumn(PacketFunctions& data, vector<LanPlayer*> &playresPtr);
+	void StatsProjgradeColumn(PacketFunctions& data, vector<LanPlayer*> &playersPtr);
+	void StatsNameColumn(PacketFunctions& data, vector<LanPlayer*> &playersPtr);
 	void SendNetPacket(const unsigned int clientNum, PacketFunctions &Packet);
 	int SortStats(vector<LanPlayer*> &playresPtr);
 	void RelayChat(CString &passedmessage, const unsigned int clientNum);
