@@ -61,6 +61,7 @@ public:
 	void GetSongs( vector<Song*> &AddTo, int iMaxStages ) const { GetSongs(AddTo,"",iMaxStages); }
 	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,"",100000 /*inf*/ ); }
 	Song *FindSong( CString sGroup, CString sSong );
+	Course *FindCourse( CString sName );
 	int GetNumSongs() const;
 	int GetNumGroups() const;
 	int GetNumCourses() const;

@@ -1078,3 +1078,13 @@ Song *SongManager::FindSong( CString sGroup, CString sSong )
 	return NULL;	
 }
 
+Course *SongManager::FindCourse( CString sName )
+{
+	for( unsigned i = 0; i < m_pCourses.size(); i++ )
+	{
+		if( sName.CompareNoCase(m_pCourses[i]->m_sName) )
+			return m_pCourses[i];
+	}
+
+	return NULL;
+}

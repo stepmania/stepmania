@@ -56,14 +56,17 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			ssprintf("Unlock%dSong", i)).c_str() );
 
 		if( pSong == NULL)
+		{
+			LOG->Trace("Can't find song");
 			continue;
+		}
 
 		entry->Command(IconCommand);
 
 		Unlocks.push_back(entry);
 
 		if ( !pSong->isLocked )
-			this->AddChild(Unlocks[i-1]);
+			this->AddChild(Unlocks[Unlocks.size() - 1]);
 	}
 
 	// scrolling text
@@ -96,15 +99,24 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			if (pSong != NULL && pSong->ActualSong != NULL)
 				SongText = pSong->ActualSong->GetFullDisplayTitle();
 			else					 // song is missing
-				text->Command("Diffuse,1,0,0,1");
+			{
+				if (SONGMAN->FindCourse(SongText) != NULL)
+					text->Command("Diffuse,0,1,0,1");		
+				else
+					text->Command("Diffuse,0.5,0,0,1");
+			}
 
 			BreakLine(SongText);
 			text->SetZoom(ScrollingTextZoom);
 			text->SetTextMaxWidth(MaxWidth, SongText );
 
-			if (pSong->isLocked) {
-				text->SetText("????????");
-				text->SetZoom(ScrollingTextZoom * 1.99); }
+			if (pSong != NULL && pSong->isLocked) {
+				text->SetText("???");
+				// text->SetZoom(ScrollingTextZoom * 1.99); 
+			} else if (pSong != NULL) {
+				RageColor color = SONGMAN->GetGroupColor(pSong->ActualSong->m_sGroupName);
+				text->SetGlobalDiffuseColor(color);
+			}
 
 			text->SetXY(ScrollingTextX, ScrollingTextStartY);
 			text->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;linear,0.5;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
@@ -133,6 +145,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 				ItemIcons.push_back(IconCount);
 
 				this->AddChild(ItemIcons[i-1]);
+				LOG->Trace("Added unlock text %d", i);
 					
 			}
 		}

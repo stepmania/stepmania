@@ -14,8 +14,6 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 
-#define NUM_UNLOCKS 30
-
 class Course;
 
 class ScreenUnlock : public ScreenAttract
