@@ -61,13 +61,13 @@ public:
 	int			m_iExtra;	// extra stage number...	// not used? -Chris
 
 	int GetEstimatedNumStages() const { return m_entries.size(); }
-	bool HasDifficult() const;
+	bool HasDifficult( NotesType nt ) const;
 	bool IsPlayableIn( NotesType nt ) const;
 	void GetStageInfo(		// Derefrences course_entries and returns only the playable Songs and Notes
 		vector<Song*>& vSongsOut, 
 		vector<Notes*>& vNotesOut, 
 		vector<CString>& vsModifiersOut, 
-		NotesType nt ) const;	// like EX's Standard/Difficult option for courses
+		NotesType nt ) const;
 	bool GetFirstStageInfo(
 		Song*& pSongOut, 
 		Notes*& pNotesOut, 

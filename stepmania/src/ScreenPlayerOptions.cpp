@@ -108,7 +108,7 @@ void ScreenPlayerOptions::ImportOptions()
 	if( GAMESTATE->m_pCurCourse )   // playing a course
 	{
 		m_OptionRow[PO_STEP].choices.push_back( "REGULAR" );
-		if( GAMESTATE->m_pCurCourse->HasDifficult() )
+		if( GAMESTATE->m_pCurCourse->HasDifficult( GAMESTATE->GetCurrentStyleDef()->m_NotesType ) )
 			m_OptionRow[PO_STEP].choices.push_back( "DIFFICULT" );
 	}
 	else
@@ -216,7 +216,8 @@ void ScreenPlayerOptions::ImportOptions()
 
 		if( GAMESTATE->m_pCurCourse )   // playing a course
 		{
-			if( GAMESTATE->m_bDifficultCourses )
+			if( GAMESTATE->m_bDifficultCourses &&
+				GAMESTATE->m_pCurCourse->HasDifficult( GAMESTATE->GetCurrentStyleDef()->m_NotesType ) )
 				m_iSelectedOption[p][PO_STEP] = 1;
 			else
 				m_iSelectedOption[p][PO_STEP] = 0;

@@ -26,6 +26,11 @@
 #include "GameState.h"
 #include "BannerCache.h"
 
+/* Amount to increase meter ranges to make them difficult: */
+const int DIFFICULT_METER_CHANGE = 2;
+
+/* Maximum lower value of ranges when difficult: */
+const int MAX_BOTTOM_RANGE = 10;
 
 Course::Course()
 {
@@ -343,13 +348,62 @@ void Course::AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongs
 	SetDefaultScore();
 }
 
-
-bool Course::HasDifficult() const
+/*
+ * Difficult courses do the following:
+ *
+ * For entries with a meter range, bump it up by DIFFICULT_METER_CHANGE;
+ * eg. 3..6 -> 5..8, with a minimum no higher than MAX_BOTTOM_RANGE.
+ *
+ * For entries with a difficulty class, use notes one class harder, if they
+ * exist. This way, if a static song entry points to a difficulty, we'll always
+ * play that song, even if we're on difficult and harder notes don't exist.  (The
+ * exception is a static song entry with a meter range, but that's not very useful.)
+ */
+bool Course::HasDifficult( NotesType nt ) const
 {
-	for( unsigned i=0; i<m_entries.size(); i++ )
-		if( m_entries[i].difficulty >= DIFFICULTY_HARD )
-			return false;
-	return true;
+	if( ContainsAnyMysterySongs() )
+	{
+		for( unsigned i=0; i<m_entries.size(); i++ )
+		{
+			if( m_entries[i].type != Entry::random && m_entries[i].type != Entry::random_within_group )
+				continue;
+
+			/* CHALLENGE doesn't get any harder. */
+			if( m_entries[i].difficulty == DIFFICULTY_CHALLENGE )
+				continue;
+
+			/* 10..10 doesn't get any harder. */
+			if( m_entries[i].difficulty == DIFFICULTY_INVALID &&
+				m_entries[i].low_meter == MAX_BOTTOM_RANGE &&
+				m_entries[i].high_meter == MAX_BOTTOM_RANGE )
+				continue;
+
+			return true;
+		}
+		return false;
+	}
+
+	/* We don't have any random songs.  Check to see if any songs would change
+	 * if difficult. */
+	const bool OldDifficulty = GAMESTATE->m_bDifficultCourses;
+
+	vector<Song*> vSongs, vHardSongs;
+	vector<Notes*> vNotes, vHardNotes;
+	vector<CString> vsIgnore;
+
+	GAMESTATE->m_bDifficultCourses = false;
+	GetStageInfo( vSongs, vNotes, vsIgnore, nt );
+	GAMESTATE->m_bDifficultCourses = true;
+	GetStageInfo( vHardSongs, vHardNotes, vsIgnore, nt );
+	GAMESTATE->m_bDifficultCourses = OldDifficulty;
+
+	if( vSongs.size() != vHardSongs.size() )
+		return true; /* it changed */
+
+	for( unsigned i=0; i<vSongs.size(); i++ )
+		if( vSongs[i] != vHardSongs[i] || vNotes[i] != vHardNotes[i] )
+			return true;
+	return false;
 }
 
 bool Course::IsPlayableIn( NotesType nt ) const
@@ -390,6 +444,10 @@ void Course::GetStageInfo(
 		Song* pSong = NULL;	// fill this in
 		Notes* pNotes = NULL;	// fill this in
 
+		/* This applies difficult mode for meter ranges.  (If it's a difficulty
+		 * class, we'll do it below.) */
+		int low_meter, high_meter;
+		GetMeterRange( i, low_meter, high_meter );
 
 		switch( e.type )
 		{
@@ -398,7 +456,7 @@ void Course::GetStageInfo(
 			if( pSong )
 			{
 				if( e.difficulty == DIFFICULTY_INVALID )
-					pNotes = pSong->GetNotes( nt, e.low_meter, e.high_meter, PREFSMAN->m_bAutogenMissingTypes );
+					pNotes = pSong->GetNotes( nt, low_meter, high_meter, PREFSMAN->m_bAutogenMissingTypes );
 				else
 					pNotes = pSong->GetNotes( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
 			}
@@ -418,7 +476,7 @@ void Course::GetStageInfo(
 					   continue; /* wrong group */
 
 					if( e.difficulty == DIFFICULTY_INVALID )
-						pNotes = pSong->GetNotes( nt, e.low_meter, e.high_meter, PREFSMAN->m_bAutogenMissingTypes );
+						pNotes = pSong->GetNotes( nt, low_meter, high_meter, PREFSMAN->m_bAutogenMissingTypes );
 					else
 						pNotes = pSong->GetNotes( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
 
@@ -469,7 +527,7 @@ void Course::GetStageInfo(
 				}
 
 				if( e.difficulty == DIFFICULTY_INVALID )
-					pNotes = pSong->GetNotes( nt, e.low_meter, e.high_meter, PREFSMAN->m_bAutogenMissingTypes );
+					pNotes = pSong->GetNotes( nt, low_meter, high_meter, PREFSMAN->m_bAutogenMissingTypes );
 				else
 					pNotes = pSong->GetNotes( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
 
@@ -484,7 +542,9 @@ void Course::GetStageInfo(
 		if( !pSong || !pNotes )
 			continue;	// this song entry isn't playable.  Skip.
 
-		if(GAMESTATE->m_bDifficultCourses)
+		/* If e.difficulty == DIFFICULTY_INVALID, then we already increased difficulty
+		 * based on meter. */
+		if( GAMESTATE->m_bDifficultCourses && e.difficulty != DIFFICULTY_INVALID )
 		{
 			/* See if we can find a NoteData that's one notch more difficult than
 			 * the one we found above. */
@@ -568,6 +628,13 @@ void Course::GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut ) c
 {
 	iMeterLowOut = m_entries[stage].low_meter;
 	iMeterHighOut = m_entries[stage].high_meter;
+
+	if( m_entries[stage].difficulty == DIFFICULTY_INVALID && GAMESTATE->m_bDifficultCourses )
+	{
+		iMeterHighOut += DIFFICULT_METER_CHANGE;
+		iMeterLowOut += DIFFICULT_METER_CHANGE;
+		iMeterLowOut = min( iMeterLowOut, MAX_BOTTOM_RANGE );
+	}
 }
 
 bool Course::ContainsAnyMysterySongs() const
