@@ -102,16 +102,29 @@ void NoteSkinManager::LoadNoteSkinDataRecursive( const CString &sNoteSkinName, N
 
 void NoteSkinManager::GetNoteSkinNames( CStringArray &AddTo )
 {
-	/* If the skin data for the current game isn't already load it, load it now. */
-	if( m_pCurGame != GAMESTATE->m_pCurGame )
-		RefreshNoteSkinData( GAMESTATE->m_pCurGame );
+	GetNoteSkinNames( GAMESTATE->m_pCurGame, AddTo );
+}
 
-	/* Don't call GetNoteSkinNames below, since we don't want to call RefreshNoteSkinData; it's
-	 * slow. */
-	for( map<CString,NoteSkinData>::const_iterator iter = m_mapNameToData.begin(); 
-		iter != m_mapNameToData.end(); ++iter )
+void NoteSkinManager::GetNoteSkinNames( const Game* pGame, CStringArray &AddTo, bool bFilterDefault )
+{
+	if( pGame == m_pCurGame )
 	{
-		AddTo.push_back( iter->second.sName );
+		/* Faster: */
+		for( map<CString,NoteSkinData>::const_iterator iter = m_mapNameToData.begin();
+				iter != m_mapNameToData.end(); ++iter )
+		{
+			AddTo.push_back( iter->second.sName );
+		}
+	}
+	else
+	{
+		CString sBaseSkinFolder = NOTESKINS_DIR + pGame->m_szName + "/";
+		GetDirListing( sBaseSkinFolder + "*", AddTo, true );
+
+		// strip out "CVS"
+		for( int i=AddTo.size()-1; i>=0; i-- )
+			if( 0 == stricmp("cvs", AddTo[i]) )
+				AddTo.erase( AddTo.begin()+i, AddTo.begin()+i+1 );
 	}
 
 	/* Move "default" to the front if it exists. */
@@ -120,24 +133,10 @@ void NoteSkinManager::GetNoteSkinNames( CStringArray &AddTo )
 		if( iter != AddTo.end() )
 		{
 			AddTo.erase( iter );
-			if( !PREFSMAN->m_bHideDefaultNoteSkin )
+			if( !bFilterDefault || !PREFSMAN->m_bHideDefaultNoteSkin )
 				AddTo.insert( AddTo.begin(), "default" );
 		}
 	}
-}
-
-void NoteSkinManager::GetNoteSkinNames( const Game* game, CStringArray &AddTo )
-{
-	RefreshNoteSkinData( game );
-
-	for( map<CString,NoteSkinData>::const_iterator iter = m_mapNameToData.begin(); 
-		iter != m_mapNameToData.end(); ++iter )
-	{
-		AddTo.push_back( iter->second.sName );
-	}
-
-	/* Put the note skins back. */
-	RefreshNoteSkinData( GAMESTATE->m_pCurGame );
 }
 
 
