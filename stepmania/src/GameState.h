@@ -267,11 +267,6 @@ public:
 	PlayerState* m_pPlayerState[NUM_PLAYERS];
 
 	//
-	// Workout stuff
-	//
-	int m_iStopCourseAtSeconds;			// -1 == don't stop early
-
-	//
 	// Preference wrappers
 	//
 	// These options have weird interactions depending on m_bEventMode, 
@@ -280,7 +275,6 @@ public:
 	bool		GetEventMode();
 	CoinMode	GetCoinMode();
 	Premium		GetPremium();
-
 	
 	// Lua
 	void PushSelf( lua_State *L );

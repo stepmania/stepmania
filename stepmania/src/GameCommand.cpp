@@ -52,7 +52,6 @@ void GameCommand::Init()
 	m_bDeletePreparedScreens = false;
 	m_iWeightPounds = -1;
 	m_iGoalCalories = -1;
-	m_iStopCourseAtSeconds = -1;
 	m_GoalType = GOAL_INVALID;
 
 	m_bClearBookkeepingData = false;
@@ -129,8 +128,6 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 	if( m_iWeightPounds != -1 && PROFILEMAN->IsUsingProfile(pn) && PROFILEMAN->GetProfile(pn)->m_iWeightPounds != m_iWeightPounds )
 		return false;
 	if( m_iGoalCalories != -1 && PROFILEMAN->IsUsingProfile(pn) && PROFILEMAN->GetProfile(pn)->m_iGoalCalories != m_iGoalCalories )
-		return false;
-	if( m_iStopCourseAtSeconds != -1 && GAMESTATE->m_iStopCourseAtSeconds != m_iStopCourseAtSeconds )
 		return false;
 	if( m_GoalType != GOAL_INVALID && PROFILEMAN->IsUsingProfile(pn) && PROFILEMAN->GetProfile(pn)->m_GoalType != m_GoalType )
 		return false;
@@ -320,11 +317,6 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 		else if( sName == "goalcalories" )
 		{
 			m_iGoalCalories = atoi( sValue );
-		}
-
-		else if( sName == "stopcourseatseconds" )
-		{
-			m_iStopCourseAtSeconds = atoi( sValue );
 		}
 
 		else if( sName == "goaltype" )
@@ -682,8 +674,6 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			if( PROFILEMAN->IsUsingProfile(*pn) )
 				PROFILEMAN->GetProfile(*pn)->m_iGoalCalories = m_iGoalCalories;
-	if( m_iStopCourseAtSeconds != -1 )
-		GAMESTATE->m_iStopCourseAtSeconds = m_iStopCourseAtSeconds;
 	if( m_GoalType != GOAL_INVALID )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			if( PROFILEMAN->IsUsingProfile(*pn) )
@@ -830,7 +820,6 @@ bool GameCommand::IsZero() const
 		m_SortOrder != SORT_INVALID ||
 		m_iWeightPounds != -1 ||
 		m_iGoalCalories != -1 ||
-		m_iStopCourseAtSeconds != -1 ||
 		m_GoalType != GOAL_INVALID
 		)
 		return false;

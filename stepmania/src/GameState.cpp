@@ -30,6 +30,7 @@
 #include "Actor.h"
 #include "PlayerState.h"
 #include "Style.h"
+#include "MessageManager.h"
 
 #include <ctime>
 #include <set>
@@ -201,8 +202,6 @@ void GameState::Reset()
 			m_pCurCharacters[p] = GetDefaultCharacter();
 		ASSERT( m_pCurCharacters[p] );
 	}
-
-	m_iStopCourseAtSeconds = -1;
 
 	m_bTemporaryEventMode = false;
 
@@ -1804,15 +1803,10 @@ public:
 	static int GetCurrentSong( T* p, lua_State *L )			{ if(p->m_pCurSong) p->m_pCurSong->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetCurrentSong( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) )
-		{
-			p->m_pCurSong = NULL; 
-		}
-		else
-		{
-			Song *pS = Luna<Song>::check(L,1);
-			p->m_pCurSong = pS;
-		}
+		if( lua_isnil(L,1) ) { p->m_pCurSong = NULL; }
+		else { Song *pS = Luna<Song>::check(L,1); p->m_pCurSong = pS; }
+		MESSAGEMAN->Broadcast( "CurrentSongChanged" );
+
 		return 0;
 	}
 	static int GetCurrentSteps( T* p, lua_State *L )
@@ -1838,6 +1832,16 @@ public:
 		return 0;
 	}
 	static int SetTemporaryEventMode( T* p, lua_State *L )	{ p->m_bTemporaryEventMode = BArg(1); return 0; }
+	static int SetEnv( T* p, lua_State *L )	{ p->m_mapEnv[SArg(1)] = SArg(2); return 0; }
+	static int GetEnv( T* p, lua_State *L )
+	{
+		map<CString,CString>::const_iterator iter = p->m_mapEnv.find(SArg(1));
+		if( iter != p->m_mapEnv.end() )
+			lua_pushstring(L,iter->second);
+		else
+			lua_pushnil(L);
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
@@ -1853,13 +1857,19 @@ public:
 		ADD_METHOD( GetCurrentCourse )
 		ADD_METHOD( SetCurrentCourse )
 		ADD_METHOD( SetTemporaryEventMode )
+		ADD_METHOD( SetEnv )
+		ADD_METHOD( GetEnv )
 		Luna<T>::Register( L );
 
-		// add global singleton
-		ASSERT( GAMESTATE );
-		lua_pushstring(L, "GAMESTATE");
-		GAMESTATE->PushSelf( LUA->L );
-		lua_settable(L, LUA_GLOBALSINDEX);
+		// Add global singleton if constructed already.  If it's not constructed yet,
+		// then we'll register it later when we reinit Lua just before 
+		// initializing the display.
+		if( GAMESTATE )
+		{
+			lua_pushstring(L, "GAMESTATE");
+			GAMESTATE->PushSelf( LUA->L );
+			lua_settable(L, LUA_GLOBALSINDEX);
+		}
 	}
 };
 
