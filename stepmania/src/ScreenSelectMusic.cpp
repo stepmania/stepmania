@@ -352,6 +352,13 @@ void ScreenSelectMusic::TweenOffScreen()
 		apActorsInScore[i]->SetTweenX( SCORE_CONNECTED_TO_MUSIC_WHEEL ? apActorsInScore[i]->GetX()+400 : apActorsInScore[i]->GetX()-400 );
 	}
 
+	m_sprMarathonBalloon.StopTweening();
+	m_sprMarathonBalloon.BeginTweening( 0.2f );
+	m_sprMarathonBalloon.SetTweenZoomY( 0 );
+	m_sprLongBalloon.StopTweening();
+	m_sprLongBalloon.BeginTweening( 0.2f );
+	m_sprLongBalloon.SetTweenZoomY( 0 );
+
 	m_MusicWheel.TweenOffScreen();
 }
 
