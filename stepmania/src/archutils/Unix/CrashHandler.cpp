@@ -180,27 +180,27 @@ static int xtoi( const char *hex )
 
 static int get_readable_ranges( const void **starts, const void **ends, int size )
 {
-    char path[PATH_MAX] = "/proc/";
-    strcat( path, itoa(getpid()) );
-    strcat( path, "/maps" );
+	char path[PATH_MAX] = "/proc/";
+	strcat( path, itoa(getpid()) );
+	strcat( path, "/maps" );
 
-    int fd = open(path, O_RDONLY);
-    if( fd == -1 )
+	int fd = open(path, O_RDONLY);
+	if( fd == -1 )
 		return false;
 
-    /* Format:
-     *
-     * 402dd000-402de000 rw-p 00010000 03:03 16815669   /lib/libnsl-2.3.1.so
-     * or
-     * bfffb000-c0000000 rwxp ffffc000 00:00 0
-     *
-     * Look for the range that includes the stack pointer. */
-    char file[1024];
+	/* Format:
+	 *
+	 * 402dd000-402de000 rw-p 00010000 03:03 16815669   /lib/libnsl-2.3.1.so
+	 * or
+	 * bfffb000-c0000000 rwxp ffffc000 00:00 0
+	 *
+	 * Look for the range that includes the stack pointer. */
+	char file[1024];
 	int file_used = 0;
-    bool eof = false;
+	bool eof = false;
 	int got = 0;
-    while(!eof && got < size-1 )
-    {
+	while( !eof && got < size-1 )
+	{
 		int ret = read( fd, file+file_used, sizeof(file) - file_used);
 		if( ret < int(sizeof(file)) - file_used)
 			eof = true;
@@ -215,41 +215,38 @@ static int get_readable_ranges( const void **starts, const void **ends, int size
 				break;
 			*p++ = 0;
 
+			char line[1024];
+			strcpy( line, file );
+			memmove(file, p, file_used);
+			file_used -= p-file;
+
 			/* Search for the hyphen. */
-			char *hyphen = strchr( file, '-' );
+			char *hyphen = strchr( line, '-' );
 			if( hyphen == NULL )
-			{
-				/* Parse error. */
-				continue;
-			}
+				continue; /* Parse error. */
 
 
 			/* Search for the space. */
 			char *space = strchr( hyphen, ' ' );
 			if( space == NULL )
-			{
-				/* Parse error. */
-				continue;
-			}
+				continue; /* Parse error. */
 
 			/* " rwxp".  If space[1] isn't 'r', then the block isn't readable. */
 			if( strlen(space) < 2 || space[1] != 'r' )
 				continue;
 
-			*starts++ = (const void *) xtoi( file );
+			*starts++ = (const void *) xtoi( line );
 			*ends++ = (const void *) xtoi( hyphen+1 );
-
-			file_used -= p-file;
-			memmove(file, p, file_used);
 		}
 
 		if( file_used == sizeof(file) )
 		{
 			/* Line longer than the buffer.  Weird; bail. */
-			close(fd);
-			return false;
+			break;
 		}
 	}
+
+	close(fd);
 
 	*starts++ = NULL;
 	*ends++ = NULL;
@@ -285,7 +282,7 @@ static void initialize_do_backtrace()
 static void do_backtrace( void **buf, size_t size, bool ignore_before_sig = true )
 {
 	/* Read /proc/pid/maps to find the address range of the stack. */
-    const void *readable_begin[1024], *readable_end[1024];
+	const void *readable_begin[1024], *readable_end[1024];
 	get_readable_ranges( readable_begin, readable_end, 1024 );
 		
 	/* Find the stack memory blocks. */
