@@ -62,11 +62,15 @@ void ActorFrame::DrawPrimitives()
 	// Actor::DrawPrimitives();
 
 	// draw all sub-ActorFrames while we're in the ActorFrame's local coordinate space
-	for( unsigned i=0; i<m_SubActors.size(); i++ ) {
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->Draw();
-	}
 }
 
+void ActorFrame::RunCommandOnChildren( const CString &cmd )
+{
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+		m_SubActors[i]->Command( cmd );
+}
 
 void ActorFrame::Update( float fDeltaTime )
 {

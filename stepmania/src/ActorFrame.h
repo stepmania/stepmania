@@ -23,6 +23,8 @@ public:
 
 	virtual ~ActorFrame() { }
 
+	virtual void RunCommandOnChildren( const CString &cmd ); /* but not on self */
+
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
