@@ -39,7 +39,7 @@ void DWILoader::DWIcharToNote( char c, GameController i, DanceNote &note1Out, Da
 		case 'L':	note1Out = DANCE_NOTE_PAD1_UPRIGHT;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
 		case 'M':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
 		default:	
-			LOG->Warn( "Encountered invalid DWI note characer '%c'", c );
+			LOG->Warn( "Encountered invalid DWI note character '%c'", c );
 			note1Out = DANCE_NOTE_NONE;			note2Out = DANCE_NOTE_NONE;			break;
 	}
 
@@ -148,6 +148,8 @@ bool DWILoader::LoadFromDWITokens(
 		default:
 			ASSERT( false );
 		}
+
+		sStepData.Replace("\t", "");
 
 		double fCurrentBeat = 0;
 		double fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
