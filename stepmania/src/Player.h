@@ -58,7 +58,8 @@ protected:
 	void HandleNoteScore( TapNoteScore score, int iNumTapsInRow );
 	void HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore );
 
-	int GetClosestBeat( int col, float fSeconds, float fMaxSecondsAhead, float fMaxSecondsBehind, bool IgnoreScored );
+	int GetClosestBeatDirectional( int col, float fBeat, float fMaxBeatsAhead, int iDirection );
+	int GetClosestBeat( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind );
 
 	static float GetMaxBeatDifference();
 

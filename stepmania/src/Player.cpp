@@ -339,52 +339,44 @@ void Player::DrawPrimitives()
 		m_HoldJudgement[c].Draw();
 }
 
-int Player::GetClosestBeat( int col, float fSeconds, float fMaxSecondsAhead, float fMaxSecondsBehind, bool IgnoreScored )
+int Player::GetClosestBeatDirectional( int col, float fBeat, float fMaxSecondsDistance, int iDirection  )
 {
-	fMaxSecondsBehind; /* not yet implemented */
-	IgnoreScored; /* not yet implemented */
-
 	// look for the closest matching step
-	int iIndexStartLookingAt = BeatToNoteRow( fSeconds );
+	const int iIndexStartLookingAt = BeatToNoteRow( fBeat );
 
 	// number of elements to examine on either end of iIndexStartLookingAt
-	int iNumElementsToExamine = BeatToNoteRow( fMaxSecondsAhead );
+	const int iNumElementsToExamine = BeatToNoteRow( fMaxSecondsDistance );
 
-	int iIndexOverlappingNote = -1;
-	// Start at iIndexStartLookingAt and search outward.  The first one note 
-	// overlaps the player's hit (this is the closest match).
-	for( int delta=0; delta <= iNumElementsToExamine; delta++ )
+	// Start at iIndexStartLookingAt and search outward.
+	for( int delta=0; delta < iNumElementsToExamine; delta++ )
 	{
-		int iCurrentIndexEarlier = iIndexStartLookingAt - delta;
-		int iCurrentIndexLater   = iIndexStartLookingAt + delta;
+		int iCurrentIndex = iIndexStartLookingAt + (iDirection * delta);
 
-		////////////////////////////
-		// check the step to the left of iIndexStartLookingAt
-		////////////////////////////
-		//LOG->Trace( "Checking Notes[%d]", iCurrentIndexEarlier );
-		if( iCurrentIndexEarlier >= 0  &&
-			GetTapNote(col, iCurrentIndexEarlier) != TAP_EMPTY  &&	// there is a note here
-			GetTapNoteScore(col, iCurrentIndexEarlier) == TNS_NONE )	// this note doesn't have a score
-		{
-			iIndexOverlappingNote = iCurrentIndexEarlier;
-			break;
-		}
+		if( iCurrentIndex < 0) continue;
+		if( GetTapNote(col, iCurrentIndex) == TAP_EMPTY) continue; /* no note here */
+		if( GetTapNoteScore(col, iCurrentIndex) != TNS_NONE ) continue;	/* this note has a score already */
 
-
-		////////////////////////////
-		// check the step to the right of iIndexStartLookingAt
-		////////////////////////////
-		//LOG->Trace( "Checking Notes[%d]", iCurrentIndexLater );
-		if( iCurrentIndexLater >= 0  &&
-			GetTapNote(col, iCurrentIndexLater) != TAP_EMPTY  &&	// there is a note here
-			GetTapNoteScore(col, iCurrentIndexLater) == TNS_NONE )	// this note doesn't have a score
-		{
-			iIndexOverlappingNote = iCurrentIndexLater;
-			break;
-		}
+		return iCurrentIndex;
 	}
 
-	return iIndexOverlappingNote;
+	return -1;
+}
+
+int Player::GetClosestBeat( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind )
+{
+	int Fwd = GetClosestBeatDirectional(col, fBeat, fMaxBeatsAhead, 1);
+	int Back = GetClosestBeatDirectional(col, fBeat, fMaxBeatsBehind, -1);
+
+	if(Fwd == -1 && Back == -1) return -1;
+	if(Fwd == -1) return Back;
+	if(Back == -1) return Fwd;
+
+	/* Figure out which row is closer. */
+	const float DistToFwd = fabsf(fBeat-NoteRowToBeat(Fwd));
+	const float DistToBack = fabsf(fBeat-NoteRowToBeat(Back));
+	
+	if( DistToFwd > DistToBack ) return Back;
+	return Fwd;
 }
 
 void Player::Step( int col )
@@ -396,13 +388,9 @@ void Player::Step( int col )
 
 	ASSERT( col >= 0  &&  col <= GetNumTracks() );
 
-	const float fSongBeat = GAMESTATE->m_fSongBeat;
-
-	int iIndexOverlappingNote;
-	iIndexOverlappingNote = GetClosestBeat( col, GAMESTATE->m_fSongBeat, 
+	int iIndexOverlappingNote = GetClosestBeat( col, GAMESTATE->m_fSongBeat, 
 						   GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
-						   GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
-						   true );
+						   GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate );
 	
 	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
@@ -412,8 +400,11 @@ void Player::Step( int col )
 	{
 		// compute the score for this hit
 		const float fStepBeat = NoteRowToBeat( (float)iIndexOverlappingNote );
-		const float fBeatsUntilStep = fStepBeat - fSongBeat;
-		const float fNoteOffset = fBeatsUntilStep / GAMESTATE->m_fCurBPS; //the offset from the actual step in seconds
+		// const float fBeatsUntilStep = fStepBeat - fSongBeat;
+		const float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
+		// The offset from the actual step in seconds:
+		const float fNoteOffset = GAMESTATE->m_fMusicSeconds - fStepSeconds;
+		// const float fNoteOffset = fBeatsUntilStep / GAMESTATE->m_fCurBPS;
 		const float fSecondsFromPerfect = fabsf( fNoteOffset );
 
 
@@ -562,6 +553,10 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 	m_frameCombo.SetTweenZoom( 1 );
 }
 
+/* XXX: This should check a number of seconds back, not a number of beats.
+ * Currently, if a tap lies on a freeze, we won't show a MISS until the freeze
+ * ends.  However, looking up the time value of each row (via GetElapsedTimeFromBeat)
+ * may be expensive ... */
 
 int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 {
