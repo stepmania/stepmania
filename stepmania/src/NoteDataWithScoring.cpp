@@ -1,18 +1,6 @@
 #include "global.h"
 #include "NoteDataWithScoring.h"
-#include "GameState.h"
-#include "RageUtil.h"
 #include "StageStats.h"
-
-NoteDataWithScoring::NoteDataWithScoring()
-{
-	Init();
-}
-
-void NoteDataWithScoring::Init()
-{
-	NoteData::Init();
-}
 
 int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat, float fEndBeat ) const
 { 
@@ -275,12 +263,12 @@ void NoteDataWithScoring::GetActualRadarValues( PlayerNumber pn, float fSongSeco
 
 float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
-	int TotalSteps = GetNumTapNotes();
-	if( !TotalSteps )
-		return 1;
+	int iTotalSteps = GetNumTapNotes();
+	if( iTotalSteps == 0 )
+		return 1.0f;
 
 	const int Perfects = GetNumTapNotesWithScore(TNS_PERFECT);
-	return clamp( float(Perfects)/TotalSteps, 0.0f, 1.0f );
+	return clamp( float(Perfects)/iTotalSteps, 0.0f, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds, PlayerNumber pn ) const
@@ -297,8 +285,8 @@ float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds, Playe
 float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
 	const int iTotalDoubles = GetNumDoubles();
-	if (iTotalDoubles == 0)
-		return 1;  // no jumps in song
+	if( iTotalDoubles == 0 )
+		return 1.0f;  // no jumps in song
 
 	// number of doubles
 	const int iNumDoubles = GetNumNWithScore( TNS_PERFECT, 2 );
@@ -307,34 +295,23 @@ float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds, PlayerNum
 
 float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
-	const int PossibleDP = g_CurStageStats.m_player[pn].iPossibleDancePoints;
-	if ( PossibleDP == 0 )
+	const int iPossibleDP = g_CurStageStats.m_player[pn].iPossibleDancePoints;
+	if ( iPossibleDP == 0 )
 		return 1;
 
 	const int ActualDP = g_CurStageStats.m_player[pn].iActualDancePoints;
-	return clamp( float(ActualDP)/PossibleDP, 0.0f, 1.0f );
+	return clamp( float(ActualDP)/iPossibleDP, 0.0f, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualFreezeRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
 	// number of hold steps
-	const int TotalHolds = GetNumHoldNotes();
-	if ( TotalHolds == 0 )
+	const int iTotalHolds = GetNumHoldNotes();
+	if( iTotalHolds == 0 )
 		return 1.0f;
 
 	const int ActualHolds = GetNumHoldNotesWithScore(HNS_OK);
-	return clamp( float(ActualHolds) / TotalHolds, 0.0f, 1.0f );
-}
-
-template<class T>
-void extend(vector<T> &v, T val, unsigned pos)
-{
-	int needed = pos - v.size() + 1;
-	if(needed > 0)
-	{
-		needed += 100; /* optimization: give it a little more than it needs */
-		v.insert(v.end(), needed, val);
-	}
+	return clamp( float(ActualHolds) / iTotalHolds, 0.0f, 1.0f );
 }
 
 /*

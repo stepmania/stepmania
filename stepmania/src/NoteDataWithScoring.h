@@ -13,24 +13,21 @@ struct RadarValues;
 class NoteDataWithScoring : public NoteData
 {
 public:
-	NoteDataWithScoring();
-	void Init();
-
-	// statistics
-	int GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
-	int GetNumNWithScore( TapNoteScore tns, int MinTaps, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
-	int GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
-	int GetSuccessfulMines( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
-	int GetSuccessfulHands( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
-
-	bool IsRowCompletelyJudged(unsigned row) const;
-	TapNoteScore MinTapNoteScore(unsigned row) const;
-	TapNoteScore LastTapNoteScore(unsigned row) const;
+	bool IsRowCompletelyJudged( unsigned iRow ) const;
+	TapNoteScore MinTapNoteScore( unsigned iRow ) const;
+	TapNoteScore LastTapNoteScore( unsigned iRow ) const;
 
 	void GetActualRadarValues( PlayerNumber pn, float fSongSeconds, RadarValues& out ) const;
 
 private:
-	int LastTapNoteScoreTrack(unsigned row) const;
+	int LastTapNoteScoreTrack( unsigned iRow ) const;
+
+	// statistics
+	int GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
+	int GetNumNWithScore( TapNoteScore tns, int iMinTaps, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
+	int GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
+	int GetSuccessfulMines( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
+	int GetSuccessfulHands( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 
 	float GetActualStreamRadarValue( float fSongSeconds, PlayerNumber pn ) const;
 	float GetActualVoltageRadarValue( float fSongSeconds, PlayerNumber pn ) const;
