@@ -6,9 +6,9 @@
 
 <body>
 
-<h1><font size="2">StepMania X.X Readme</font></h1>
+<h1><font size="2">StepMania 3.9</font></h1>
 
-<p><font size="2">&copy;2001-2003, StepMania team, All rights reserved.<br>
+<p><font size="2">&copy;2001-2004, StepMania team, All rights reserved.<br>
 <a href="http://www.stepmania.com">http://www.stepmania.com</a></font></p>
 <p>
 <hr>
@@ -73,14 +73,13 @@ hand sensors.<br>
 Minimum Requirements</font></a><font size="2"> (<a href="#Table of Contents">top</a>)</font><hr>
 <font size="2">
 <br>
-* Windows 98, Windows ME, Windows 2000, or Windows XP<br>
+* Windows 98, Windows ME, Windows 2000, Windows XP, Linux, OS X<br>
 * Pentium II, Pentium III, Celeron, Athlon, or compatible processor, 266MHz
 minimum (400 MHz recommended)<br>
 * 64 MB of RAM<br>
 * Video card that supports High Color (16-bit color) and has 16MB video RAM<br>
 * Video card with OpenGL drivers<br>
-* DirectX 8.1 compatible sound card with drivers<br>
-* DivX 5 video codec for movie visualizations (www.divx.com)<br>
+* DirectX 7.0 compatible sound card with drivers<br>
 <br>
 <br>
 </font>
@@ -103,7 +102,7 @@ abort the installation.<br>
 Installation</font></a><font size="2"> (<a href="#Table of Contents">top</a>)</font><hr>
 <font size="2">
 <br>
-To install StepMania, download the file stepmania300.exe to a known location on
+To install StepMania, download the file <!--XXX-->stepmania300.exe to a known location on
 your hard drive, then double-click the file icon to begin the installation. The
 installer may prompt you to remove an older version of the program if one is
 present. The default installation directory is 'C:\Program Files\StepMania'.<br>
@@ -116,7 +115,7 @@ present. The default installation directory is 'C:\Program Files\StepMania'.<br>
 Controls</font></a><font size="2"> (<a href="#Table of Contents">top</a>)</font><hr>
 <font size="2">
 <br>
-Use the &quot;Config Key/Joy&quot; option from the Title Menu to configure your keyboard,
+Use the &quot;Config Key/Joy&quot; option from the Options Menu to configure your keyboard,
 dance pad, or other game controller. This menu allows you to map up to 2
 keyboard/joystick buttons to each function in the game. The third column is the
 default key mapping, and cannot be changed. However, you can override a
@@ -184,15 +183,13 @@ reside in a single folder. This folder must have the following path:<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Songs/&lt;group folder&gt;/&lt;song folder&gt;/<br>
 <br>
-For example, the song B4U may consist of the following files:<br>
+For example, the song Discow Moscow may consist of the following files:<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Songs/Dance Dance Revolution 4th Mix/B4U/b4u.dwi<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Songs/Dance Dance Revolution 4th Mix/B4U/b4u.mp3<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Songs/Dance Dance Revolution 4th
-Mix/B4U/b4u-banner.png<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Songs/Dance Dance Revolution 4th Mix/B4U/b4u.png<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Songs/Dance Dance Revolution 4th
-Mix/B4U/b4u-movie.avi<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Songs/TournaMix 4/Discow Moscow/Discow Moscow.sm<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Songs/TournaMix 4/Discow Moscow/Discow Moscow.ogg<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Songs/TournaMix 4/Discow Moscow/Discow Moscow-banner.png<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Songs/TournaMix 4/Discow Moscow/Discow Moscow.png<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Songs/TournaMix 4/Discow Moscow/Discow Moscow-movie.avi<br>
 <br>
 StepMania supports the SM, DWI, BMS, and KSF song file formats. If the song file
 format is BMS or KSF, simply put all the KSF or BMS files into the song folder.<br>
@@ -480,13 +477,11 @@ include the file extension in &quot;bg name&quot;. e.g. &quot;60=falling.avi,80=
 must include the file extension in &quot;bg name&quot;. e.g. &quot;60=falling.avi,80=flower.mpg&quot;.</font></li>
 <li><font size="2">Looks for a BGAnimation with file name &quot;bg name&quot; in the BGAnimations folder.</font></li>
 <li><font size="2">Looks for a Visualization with the file name &quot;bg name&quot; in the Visualizations
-folder. For example, suppose you have a song B4U and special B4U-specific
+folder. For example, if you have a song B4U and special B4U-specific
 BGAnimations called &quot;robot&quot; and &quot;electric&quot;. First, move the robot and electric
-BGAnimation folders into the B4U song folder (e.g. Songs\4th Mix\B4U\robot and
-Songs\4th Mix\B4U\electric). Then, using the editor, insert a new background
-change at each point in the song where you to switch to a new BGAnimation. When
-prompted for the name of the background change, you could type either &quot;robot&quot; or
-&quot;electric&quot;.</font></li>
+BGAnimation folders into the B4U song folder (e.g. &quot;Songs\4th Mix\B4U\robot&quot; and
+&quot;Songs\4th Mix\B4U\electric&quot;). Then, using the editor, insert a new background
+change at each point in the song where you to switch to a new BGAnimation.</font></li>
 </ol>
 <font size="2">
 <br>
@@ -1243,12 +1238,12 @@ with your username so he can add you to the project.<br>
 <br>
 * Step 4: Install WinCVS<br>
 <br>
-A CVS client is required to &quot;checkout&quot; the course from the CVS server. Download
+A CVS client is required to check out the source from the CVS server. Download the
 latest stable version (1.2) of WinCVS <a href="http://www.cvsgui.org">here</a>
 or <a href="http://sourceforge.net/project/showfiles.php?group_id=10072">here</a>.<br>
 <br>
 IMPORTANT: Now, open and close WinCVS once. This will cause WinCVS to create
-registry entries, which is required for the next step...<br>
+registry entries, which is required for the next step.<br>
 <br>
 * Step 5: Use SourceForge Setup to install SSH and configure WinCVS<br>
 <br>
