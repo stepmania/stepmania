@@ -43,8 +43,8 @@ public:
 
 //	virtual CString RealPath() const { return parent->GetPath(); }
 	
-	virtual int Seek( int offset );
-	virtual int GetFileSize();
+	virtual int Seek( int offset ) = 0;
+	virtual int GetFileSize() = 0;
 	virtual CString GetDisplayPath() const { return parent.GetRealPath(); }
 
 	/* Raw I/O: */
