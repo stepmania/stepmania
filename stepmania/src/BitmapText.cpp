@@ -138,6 +138,7 @@ void BitmapText::BuildChars()
 		m_iLineWidths.push_back(m_pFont->GetLineWidthInSourcePixels( m_wTextLines[l] ));
 		m_iWidestLineWidth = max(m_iWidestLineWidth, m_iLineWidths.back());
 	}
+	m_size.x = (float) m_iWidestLineWidth;
 
 
 	verts.clear();
@@ -145,7 +146,7 @@ void BitmapText::BuildChars()
 	
 	if(m_wTextLines.empty()) return;
 
-	int TotalHeight = m_pFont->GetHeight() * m_wTextLines.size();
+	m_size.y = float(m_pFont->GetHeight() * m_wTextLines.size());
 	unsigned i;
 	int MinSpacing = 0;
 
@@ -153,14 +154,14 @@ void BitmapText::BuildChars()
 	int Padding = max(m_pFont->GetLineSpacing(), MinSpacing) - m_pFont->GetHeight();
 
 	/* There's padding between every line: */
-	TotalHeight += Padding * (m_wTextLines.size()-1);
+	m_size.y += Padding * (m_wTextLines.size()-1);
 
 	int iY;	//	 the top position of the first row of characters
 	switch( m_VertAlign )
 	{
 	case align_top:		iY = 0;					break;
-	case align_middle:	iY = -(int)roundf(TotalHeight/2.0f);	break;
-	case align_bottom:	iY = -TotalHeight;		break;
+	case align_middle:	iY = -(int)roundf(m_size.y/2.0f);	break;
+	case align_bottom:	iY = -(int)m_size.y;	break;
 	default:			ASSERT( false );		return;
 	}
 
