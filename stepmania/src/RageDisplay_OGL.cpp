@@ -223,6 +223,15 @@ void GetGLExtensions(set<string> &ext)
 		ext.insert(lst[i]);
 }
 
+static void FlushGLErrors()
+{
+	/* Making an OpenGL call doesn't also flush the error state; if we happen
+	 * to have an error from a previous call, then the assert below will fail. 
+	 * Flush it. */
+	while( glGetError() != GL_NO_ERROR )
+		;
+}
+
 RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p )
 {
 	LOG->Trace( "RageDisplay_OGL::RageDisplay_OGL()" );
@@ -286,6 +295,7 @@ static void CheckPalettedTextures()
 	GLenum glImageFormat = GL_PIXFMT_INFO[FMT_PAL].format;
 	GLenum glImageType = GL_PIXFMT_INFO[FMT_PAL].type;
 
+	FlushGLErrors();
 	glTexImage2D(GL_PROXY_TEXTURE_2D,
 				0, glTexFormat, 
 				16, 16, 0,
@@ -870,6 +880,8 @@ const PixelFormatDesc *RageDisplay_OGL::GetPixelFormatDesc(PixelFormat pf) const
 void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
 {
 	unsigned int uTexID = uTexHandle;
+
+	FlushGLErrors();
 	glDeleteTextures(1,reinterpret_cast<GLuint*>(&uTexID));
 
 	GLenum error = glGetError();
@@ -947,11 +959,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 	GLenum glImageFormat = GL_PIXFMT_INFO[pixfmt].format;
 	GLenum glImageType = GL_PIXFMT_INFO[pixfmt].type;
 
-	/* Making an OpenGL call doesn't also flush the error state; if we happen
-	 * to have an error from a previous call, then the assert below will fail. 
-	 * Flush it. */
-	while( glGetError() != GL_NO_ERROR )
-		;
+	FlushGLErrors();
 
 	glTexImage2D(GL_TEXTURE_2D, 0, glTexFormat, 
 			img->w, img->h, 0,
