@@ -180,7 +180,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	UtilSetXYAndOnCommand( m_sprPage, "ScreenOptions" );
 	m_framePage.AddChild( m_sprPage );
 
-	// init highlights
+	// init line highlights
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
@@ -192,6 +192,15 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 			m_sprLineHighlight[p].SetX( CENTER_X );
 			m_framePage.AddChild( &m_sprLineHighlight[p] );
 			UtilOnCommand( m_sprLineHighlight[p], "ScreenOptions" );
+		}
+	}
+	
+	// init highlights
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsHumanPlayer(p) )
+				continue;	// skip
 
 			m_Highlight[p].Load( (PlayerNumber)p, false );
 			m_framePage.AddChild( &m_Highlight[p] );
