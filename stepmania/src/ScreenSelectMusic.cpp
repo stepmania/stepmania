@@ -348,17 +348,21 @@ void ScreenSelectMusic::SkipCoursePartTweens()
 
 void ScreenSelectMusic::TweenOnScreen()
 {
-	if( GAMESTATE->m_SongSortOrder == SORT_COURSES )
+	switch( GAMESTATE->m_SongSortOrder )
 	{
+	case SORT_ALL_COURSES:
+	case SORT_NONSTOP_COURSES:
+	case SORT_ONI_COURSES:
+	case SORT_ENDLESS_COURSES:
 		TweenCoursePartsOnScreen( true );
 		TweenSongPartsOffScreen();
 		SkipSongPartTweens();
-	}
-	else
-	{
+		break;
+	default:
 		TweenSongPartsOnScreen( true );
 		TweenCoursePartsOffScreen();
 		SkipCoursePartTweens();
+		break;
 	}
 
 	ON_COMMAND( m_sprBannerMask );
@@ -392,10 +396,18 @@ void ScreenSelectMusic::TweenOnScreen()
 
 void ScreenSelectMusic::TweenOffScreen()
 {
-	if( GAMESTATE->m_SongSortOrder == SORT_COURSES )
+	switch( GAMESTATE->m_SongSortOrder )
+	{
+	case SORT_ALL_COURSES:
+	case SORT_NONSTOP_COURSES:
+	case SORT_ONI_COURSES:
+	case SORT_ENDLESS_COURSES:
 		TweenCoursePartsOffScreen();
-	else
+		break;
+	default:
 		TweenSongPartsOffScreen();
+		break;
+	}
 
 	OFF_COMMAND( m_sprBannerMask );
 	OFF_COMMAND( m_Banner );
@@ -477,10 +489,19 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 		apActorsInScore[i]->SetLatestTween(original);
 	}
 
-	if( GAMESTATE->m_SongSortOrder == SORT_COURSES )
+	switch( GAMESTATE->m_SongSortOrder )
+	{
+	case SORT_ALL_COURSES:
+	case SORT_NONSTOP_COURSES:
+	case SORT_ONI_COURSES:
+	case SORT_ENDLESS_COURSES:
 		EnterCourseDisplayMode();
-	else
-		ExitCourseDisplayMode();
+		break;
+	default:
+		if( GAMESTATE->m_SongSortOrder != SORT_MENU )
+			ExitCourseDisplayMode();
+		break;
+	}
 }
 
 void ScreenSelectMusic::Update( float fDeltaTime )
@@ -590,12 +611,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
 			m_soundLocked.Play();
 		else
-			m_MusicWheel.ChangeSort( SORT_SORT );
-//			if( m_MusicWheel.NextSort() )
-//			{
-//				SOUNDMAN->StopMusic();
-//				TweenScoreOnAndOffAfterChangeSort();
-//			}
+			m_MusicWheel.ChangeSort( SORT_MENU );
 		return;
 	}
 	if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() && CodeDetector::DetectAndAdjustMusicOptions(GameI.controller) )
@@ -744,6 +760,10 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	case SM_SortOrderChanged:
 		SortOrderChanged();
 		break;
+	case SM_SortOrderChanging:
+//				m_MusicSortDisplay.FadeOff( 0, "fade", TWEEN_TIME );
+		TweenScoreOnAndOffAfterChangeSort();
+		break;
 	}
 }
 
@@ -757,14 +777,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 //			m_soundLocked.Play();
 //		else
 		{
-			if( m_MusicWheel.NextSort() )
-			{
-				SOUNDMAN->StopMusic();
-
-//				m_MusicSortDisplay.FadeOff( 0, "fade", TWEEN_TIME );
-
-				TweenScoreOnAndOffAfterChangeSort();
-			}
+			m_MusicWheel.NextSort();
 		}
 		return;
 	}
@@ -839,7 +852,6 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	case TYPE_SECTION:
 	case TYPE_ROULETTE:
 	case TYPE_SORT:
-		break;
 		break;
 	default:
 		ASSERT(0);

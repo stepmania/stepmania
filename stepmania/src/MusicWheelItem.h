@@ -17,6 +17,7 @@
 #include "WheelNotifyIcon.h"
 #include "TextBanner.h"
 #include "GameConstantsAndTypes.h"
+#include "ModeChoice.h"
 class Course;
 class Song;
 
@@ -72,6 +73,10 @@ struct WheelItemData
 	Song*			m_pSong;
 	RageColor		m_color;	// either text color or section background color
 	WheelNotifyIcon::Flags  m_Flags;
+
+	// for TYPE_SORT
+	CString			m_sLabel;
+	ModeChoice		m_Action;
 	SongSortOrder	m_SongSortOrder;
 };
 

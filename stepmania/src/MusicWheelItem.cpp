@@ -142,7 +142,7 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 					bt = &m_textCourse;
 					break;
 				case TYPE_SORT:
-					sDisplayName = SongSortOrderToString(data->m_SongSortOrder);
+					sDisplayName = data->m_sLabel;
 					bt = &m_textSort;
 					break;
 				default:
