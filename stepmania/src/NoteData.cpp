@@ -794,6 +794,7 @@ void NoteData::MoveTapNoteTrack(int dest, int src)
 void NoteData::SetTapNote(int track, int row, TapNote t)
 {
 	if(row < 0) return;
+	ASSERT(row < MAX_NOTE_TRACKS);
 
 	PadTapNotes(row);
 	m_TapNotes[track][row]=t;
