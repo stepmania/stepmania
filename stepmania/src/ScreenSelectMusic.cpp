@@ -88,6 +88,14 @@ ScreenSelectMusic::ScreenSelectMusic()
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
 
+
+	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
+		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
+
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_INVALID )
+		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before loading ScreenSelectMusic." );
+
+
 	CodeDetector::RefreshCacheItems();
 
 	GAMESTATE->m_SongOptions.m_FailType = PREFSMAN->m_DefaultFailType;
@@ -141,9 +149,6 @@ ScreenSelectMusic::ScreenSelectMusic()
 
 	m_GrooveRadar.SetXY( RADAR_X, RADAR_Y );
 	this->AddChild( &m_GrooveRadar );
-
-//	m_OptionIcons.SetXY( OPTION_ICONS_X, OPTION_ICONS_Y );
-//	this->AddChild( &m_OptionIcons );
 
 
 	m_textSongOptions.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
