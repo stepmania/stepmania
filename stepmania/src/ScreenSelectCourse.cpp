@@ -18,7 +18,6 @@
 #include "GameManager.h"
 #include "RageMusic.h"
 #include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
 #include "RageLog.h"
 #include "InputMapper.h"
 #include "InputQueue.h"
@@ -189,10 +188,25 @@ void ScreenSelectCourse::TweenOffScreen()
 }
 
 
-void ScreenSelectCourse::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	LOG->Trace( "ScreenSelectCourse::Input()" );
 	
+	if( MenuI.button == MENU_BUTTON_RIGHT || MenuI.button == MENU_BUTTON_LEFT )
+	{
+		if( !MenuI.IsValid() ) return;
+		if( !GAMESTATE->IsPlayerEnabled(MenuI.player) ) return;
+
+		int dir = 0;
+		if(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) )
+			dir++;
+		if(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) ) )
+			dir--;
+		
+		m_MusicWheel.Move(dir);
+		return;
+	}
+
 	if( type == IET_RELEASE )	return;		// don't care
 
 	if( m_Menu.IsClosing() )	return;		// ignore
@@ -252,22 +266,10 @@ void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SetNewScreen( "ScreenStage" );
 
 		break;
+	case SM_SongChanged:
+		AfterCourseChange();
+		break;
 	}
-}
-
-void ScreenSelectCourse::MenuLeft( PlayerNumber pn, const InputEventType type )
-{
-	m_MusicWheel.PrevMusic();
-	
-	AfterCourseChange();
-}
-
-
-void ScreenSelectCourse::MenuRight( PlayerNumber pn, const InputEventType type )
-{
-	m_MusicWheel.NextMusic();
-
-	AfterCourseChange();
 }
 
 void ScreenSelectCourse::MenuStart( PlayerNumber pn )
@@ -335,13 +337,13 @@ void ScreenSelectCourse::AfterCourseChange()
 				fTotalSeconds += pCourse->GetSong(i)->m_fMusicLengthSeconds;
 			m_textTime.SetText( SecondsToTime(fTotalSeconds) );
 
-			m_Banner.SetFromCourse( pCourse );
+			m_Banner.LoadFromCourse( pCourse );
 
 			m_CourseContentsFrame.SetFromCourse( pCourse );
 		}
 		break;
 	case TYPE_SECTION:	// if we get here, there are no courses
-		m_Banner.SetFromGroup( "" );
+		m_Banner.LoadFromGroup( "" );
 		break;
 	default:
 		ASSERT(0);

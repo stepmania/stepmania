@@ -382,7 +382,9 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 	if( m_fPlaySampleCountdown > 0 )
 	{
 		m_fPlaySampleCountdown -= fDeltaTime;
-		if( m_fPlaySampleCountdown <= 0 )
+		/* Make sure we don't start the sample when rouletting is
+		 * spinning down. */
+		if( m_fPlaySampleCountdown <= 0 && !m_MusicWheel.IsRouletting() )
 			this->PlayMusicSample();
 	}
 
@@ -395,10 +397,29 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 		m_sprCDTitle.SetDiffuse( RageColor(1,1,1,1) );
 }
 
-void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	LOG->Trace( "ScreenSelectMusic::Input()" );
 	
+	if( MenuI.button == MENU_BUTTON_RIGHT || MenuI.button == MENU_BUTTON_LEFT )
+	{
+		if( !MenuI.IsValid() ) return;
+		if( !GAMESTATE->IsPlayerEnabled(MenuI.player) ) return;
+
+		/* If we're rouletting, hands off. */
+		if(m_MusicWheel.IsRouletting())
+			return;
+
+		int dir = 0;
+		if(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) )
+			dir++;
+		if(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) ) )
+			dir--;
+		
+		m_MusicWheel.Move(dir);
+		return;
+	}
+
 	if( type == IET_RELEASE )	return;		// don't care
 
 	if( m_Menu.IsClosing() )	return;		// ignore
@@ -546,23 +567,6 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type )
-{
-	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_RIGHT) ) )
-			return;		// ignore
-	
-	m_MusicWheel.PrevMusic();
-}
-
-
-void ScreenSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type )
-{
-	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) ) )
-		return;		// ignore
-
-	m_MusicWheel.NextMusic();
-}
-
 void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 {
 	if( pn != PLAYER_INVALID  &&
@@ -706,6 +710,23 @@ void ScreenSelectMusic::AfterMusicChange()
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)
 		m_arrayNotes[pn].clear();
 
+	int banners_when_fast = 0;
+
+	/* If we're rouletting, and we're moving fast, don't touch the banner. */
+	bool no_banner_change = false;
+	LOG->Trace("moving %i, roulette %i", m_MusicWheel.IsMoving(), m_MusicWheel.IsRouletting());
+	if(m_MusicWheel.IsMoving()) 
+	{
+		/* We're moving fast.  Don't change banners if we're rouletting, or if
+		 * we've been told to never change banners when moving fast.
+		 *
+		 * XXX: When we're not changing banners and not rouletting, show some
+		 * kind of "moving fast" fallback banner.  (When rouletting, just keep
+		 * showing the roulette banner.) */
+		if(m_MusicWheel.IsRouletting() || !PREFSMAN->m_bChangeBannersWhenFast)
+			no_banner_change = true;
+	}
+
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_SECTION:
@@ -714,7 +735,8 @@ void ScreenSelectMusic::AfterMusicChange()
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				m_iSelection[p] = -1;
 
-			m_Banner.SetFromGroup( sGroup );	// if this isn't a group, it'll default to the fallback banner
+			if(!no_banner_change)
+				m_Banner.LoadFromGroup( sGroup );	// if this isn't a group, it'll default to the fallback banner
 			m_BPMDisplay.SetBPMRange( 0, 0 );
 			m_sprCDTitle.UnloadTexture();
 		}
@@ -729,7 +751,8 @@ void ScreenSelectMusic::AfterMusicChange()
 				SortNotesArrayByDifficulty( m_arrayNotes[pn] );
 			}
 
-			m_Banner.SetFromSong( pSong );
+			if(!no_banner_change)
+				m_Banner.LoadFromSong( pSong );
 
 			float fMinBPM, fMaxBPM;
 			pSong->GetMinMaxBPM( fMinBPM, fMaxBPM );
@@ -757,7 +780,8 @@ void ScreenSelectMusic::AfterMusicChange()
 		}
 		break;
 	case TYPE_ROULETTE:
-		m_Banner.SetRoulette();
+		if(!no_banner_change)
+			m_Banner.LoadRoulette();
 		m_BPMDisplay.SetBPMRange( 0, 0 );
 		m_sprCDTitle.UnloadTexture();
 		break;
@@ -767,6 +791,10 @@ void ScreenSelectMusic::AfterMusicChange()
 	{
 		AfterNotesChange( (PlayerNumber)p );
 	}
+
+	/* Make sure we never start the sample when moving fast. */
+	if(m_MusicWheel.IsMoving())
+		m_fPlaySampleCountdown = 0;
 }
 
 

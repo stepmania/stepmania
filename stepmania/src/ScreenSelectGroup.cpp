@@ -237,7 +237,7 @@ void ScreenSelectGroup::AfterChange()
 	const int iNumSongs = m_MusicList.GetNumSongs();
 	m_textNumber.SetText( ssprintf("%d", iNumSongs) );
 
-	m_Banner.SetFromGroup( sSelectedGroupName );
+	m_Banner.LoadFromGroup( sSelectedGroupName );
 }
 
 

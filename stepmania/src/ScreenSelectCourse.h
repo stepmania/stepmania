@@ -34,8 +34,6 @@ public:
 	void TweenOnScreen();
 	void TweenOffScreen();
 
-	void MenuLeft( PlayerNumber pn, const InputEventType type );
-	void MenuRight( PlayerNumber pn, const InputEventType type );
 	void MenuStart( PlayerNumber pn );
 	void MenuBack( PlayerNumber pn );
 
