@@ -453,7 +453,7 @@ void Player::Step( int col )
 				}
 			}
 			if( bRowDestroyed )
-				OnRowDestroyed( col, iIndexOverlappingNote );
+				OnRowDestroyed( iIndexOverlappingNote );
 		}
 	}
 
@@ -461,7 +461,7 @@ void Player::Step( int col )
 		m_GrayArrowRow.Step( col );
 }
 
-void Player::OnRowDestroyed( int col, int iIndexThatWasSteppedOn )
+void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 {
 	LOG->Trace( "Player::OnRowDestroyed" );
 	
