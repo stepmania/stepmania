@@ -50,7 +50,7 @@ enum
 Uint32 RageSoundReader_WAV::ConvertMsToBytePos(int BytesPerSample, int channels, Uint32 ms) const
 {
     const float frames_per_ms = ((float) SampleRate) / 1000.0f;
-    const Uint32 frame_offset = (Uint32) (frames_per_ms * ((float) ms));
+    const Uint32 frame_offset = (Uint32) (frames_per_ms * float(ms) + 0.5f);
     const Uint32 frame_size = (Uint32) BytesPerSample * channels;
     return frame_offset * frame_size;
 }
@@ -60,7 +60,7 @@ Uint32 RageSoundReader_WAV::ConvertBytePosToMs(int BytesPerSample, int channels,
     const Uint32 frame_size = (Uint32) BytesPerSample * channels;
     const Uint32 frame_no = pos / frame_size;
     const float frames_per_ms = ((float) SampleRate) / 1000.0f;
-    return (Uint32) (frame_no / frames_per_ms);
+    return (Uint32) ((frame_no / frames_per_ms) + 0.5f);
 }
 
 /* Better than SDL_ReadLE16, since you can detect i/o errors... */
@@ -328,40 +328,26 @@ void RageSoundReader_WAV::put_adpcm_sample_frame( Uint16 *buf, int frame )
 
 Uint32 RageSoundReader_WAV::read_sample_fmt_adpcm(char *buf, unsigned len)
 {
-    Uint32 bw = 0;
+	Uint32 bw = 0;
 
-    while (bw < len)
-    {
-        /* write ongoing sample frame before reading more data... */
-        switch (this->adpcm.samples_left_in_block)
-        {
-        case 0:  /* need to read a new block... */
-            if (!read_adpcm_block_headers(adpcm))
-                return bw;
+	while (bw < len)
+	{
+		/* Read a new block. */
+		if( adpcm.samples_left_in_block == 0 )
+			if (!read_adpcm_block_headers(adpcm))
+				return bw;
 
-            /* only write first sample frame for now. */
-            put_adpcm_sample_frame( (Uint16 *) (buf + bw), 1 );
-            adpcm.samples_left_in_block--;
-            bw += this->fmt.adpcm_sample_frame_size;
-            break;
+		const bool first_sample_in_block = ( adpcm.samples_left_in_block == adpcm.wSamplesPerBlock );
+		put_adpcm_sample_frame( (Uint16 *) (buf + bw), first_sample_in_block? 1:0 );
+		adpcm.samples_left_in_block--;
+		bw += this->fmt.adpcm_sample_frame_size;
 
-        case 1:  /* output last sample frame of block... */
-            put_adpcm_sample_frame( (Uint16 *) (buf + bw), 0 );
-            this->adpcm.samples_left_in_block--;
-            bw += this->fmt.adpcm_sample_frame_size;
-            break;
-
-        default: /* output latest sample frame and read a new one... */
-            put_adpcm_sample_frame( (Uint16 *) (buf + bw), 0 );
-            this->adpcm.samples_left_in_block--;
-            bw += this->fmt.adpcm_sample_frame_size;
-
-            if (!decode_adpcm_sample_frame())
-                return bw;
-        }
+		if( !first_sample_in_block && adpcm.samples_left_in_block )
+			if (!decode_adpcm_sample_frame())
+				return bw;
     }
 
-    return bw;
+	return bw;
 }
 
 
@@ -370,36 +356,41 @@ int RageSoundReader_WAV::seek_sample_fmt_adpcm( Uint32 ms )
 {
 	const int offset = ConvertMsToBytePos( BytesPerSample, Channels, ms );
 	const int bpb = (adpcm.wSamplesPerBlock * this->fmt.adpcm_sample_frame_size);
-	int skipsize = (offset / bpb) * this->fmt.wBlockAlign;
+	const int skipsize = (offset / bpb) * this->fmt.wBlockAlign;
 
 	const int pos = skipsize + this->fmt.data_starting_offset;
 	int rc = fseek(this->rw, pos, SEEK_SET);
 	BAIL_IF_MACRO(rc == -1, strerror(errno), -1);
 
 	/* The offset we need is in this block, so we need to decode to there. */
-	skipsize += (offset % bpb);
-	rc = (offset % bpb);  /* bytes into this block we need to decode */
+	rc = offset % bpb;  /* bytes into this block we need to decode */
+	if( rc == 0 )
+	{
+		adpcm.samples_left_in_block = 0;
+		return ms;
+	}
+
 	if (!read_adpcm_block_headers(adpcm))
 	{
-		fseek(this->rw, 0, SEEK_SET);
+		fseek(this->rw, fmt.data_starting_offset, SEEK_SET);
 		adpcm.samples_left_in_block = 0;
 		return 0;
 	}
 
-	/* first sample frame of block is a freebie. :) */
 	adpcm.samples_left_in_block--;
 	rc -= this->fmt.adpcm_sample_frame_size;
+
 	while (rc > 0)
 	{
+		adpcm.samples_left_in_block--;
+		rc -= this->fmt.adpcm_sample_frame_size;
+
 		if (!decode_adpcm_sample_frame())
 		{
-			fseek(this->rw, 0, SEEK_SET);
+			fseek(this->rw, fmt.data_starting_offset, SEEK_SET);
 			adpcm.samples_left_in_block = 0;
 			return 0;
 		}
-
-		adpcm.samples_left_in_block--;
-		rc -= this->fmt.adpcm_sample_frame_size;
 	}
 
 	return ms;
