@@ -226,9 +226,11 @@ void GameState::ReloadCharacters()
 	}
 	
 	if( !FoundDefault )
-		RageException::Throw( "Couldn't find \"Characters" SLASH "default\"" );
-	if( !m_pCharacters.size() )
-		RageException::Throw( "Couldn't find any character definitions" );
+		RageException::Throw( "'Characters" SLASH "default' is missing." );
+
+	// If FoundDefault, then we're not empty. -Chris
+//	if( m_pCharacters.empty() )
+//		RageException::Throw( "Couldn't find any character definitions" );
 }
 
 const float GameState::MUSIC_SECONDS_INVALID = -5000.0f;
