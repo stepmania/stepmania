@@ -144,7 +144,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			FOREACH_PlayerNumber( p )
 			{
 				ss.m_player[p].vpSteps.push_back( ss.vpSongs[0]->GetAllSteps()[0] );
-				GAMESTATE->m_pCurSteps[p] = ss.m_player[p].vpSteps[0];
+				GAMESTATE->m_pCurSteps.Set( p, ss.m_player[p].vpSteps[0] );
 				ss.m_player[p].iPossibleDancePoints = 1000;
 				ss.m_player[p].iActualDancePoints = 985;
 

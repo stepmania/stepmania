@@ -795,14 +795,22 @@ void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
 	if( pSteps != NULL ) { \
 		map<Steps*,StepsID>::iterator it = mapOldStepsToStepsID.find(pSteps); \
 		if( it != mapOldStepsToStepsID.end() ) \
-			pSteps = it->second.ToSteps( pSong, bAllowNotesLoss ); \
+			pSteps = it->second.ToSteps(pSong, bAllowNotesLoss); \
+	} \
+} while(false)
+
+#define CONVERT_STEPS_POINTER2( pStepsRead, pStepsWrite, p ) do { \
+	if( pStepsRead != NULL ) { \
+		map<Steps*,StepsID>::iterator it = mapOldStepsToStepsID.find(pStepsRead); \
+		if( it != mapOldStepsToStepsID.end() ) \
+			pStepsWrite.Set( p, it->second.ToSteps(pSong, bAllowNotesLoss) ); \
 	} \
 } while(false)
 
 
 	FOREACH_PlayerNumber( p )
 	{
-		CONVERT_STEPS_POINTER( GAMESTATE->m_pCurSteps[p] );
+		CONVERT_STEPS_POINTER2( GAMESTATE->m_pCurSteps[p], GAMESTATE->m_pCurSteps, p );
 
 		FOREACH( Steps*, STATSMAN->m_CurStageStats.m_player[p].vpSteps, pSteps )
 			CONVERT_STEPS_POINTER( *pSteps );

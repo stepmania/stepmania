@@ -90,7 +90,7 @@ void ScreenGameplayMultiplayer::Init()
 
 	// fill in difficulty of CPU players with that of the first human player
     FOREACH_PotentialCpuPlayer(p)
-        GAMESTATE->m_pCurSteps[p] = GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ];
+        GAMESTATE->m_pCurSteps.Set( p, GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
 
 
 
@@ -289,7 +289,7 @@ void ScreenGameplayMultiplayer::SetupSong( MultiPlayer p, int iSongIndex )
 	/* This is the first beat that can be changed without it being visible.  Until
 	 * we draw for the first time, any beat can be changed. */
 	GAMESTATE->m_pPlayerState[GAMESTATE->m_MasterPlayerNumber]->m_fLastDrawnBeat = -100;
-	GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber] = m_vpStepsQueue[iSongIndex];
+	GAMESTATE->m_pCurSteps.Set( GAMESTATE->m_MasterPlayerNumber, m_vpStepsQueue[iSongIndex] );
 
 	/* Load new NoteData into Player.  Do this before 
 	 * RebuildPlayerOptionsFromActiveAttacks or else transform mods will get

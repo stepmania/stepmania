@@ -445,7 +445,7 @@ void ScreenNetSelectMusic::StartSelectedSong()
 	{
 		GAMESTATE->m_PreferredDifficulty[pn] = m_DC[pn];
 		Steps * pSteps = pSong->GetStepsByDifficulty(st,m_DC[pn]);
-		GAMESTATE->m_pCurSteps[pn] = pSteps;
+		GAMESTATE->m_pCurSteps.Set( pn, pSteps );
 	}
 	
 	TweenOffScreen();

@@ -41,7 +41,12 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 #define CHARACTERS_DIR "Characters/"
 #define NAMES_BLACKLIST_FILE "Data/NamesBlacklist.dat"
 
-GameState::GameState()
+GameState::GameState() :
+	m_pCurSong(			MESSAGE_CURRENT_SONG_CHANGED ),
+	m_pCurSteps(		MESSAGE_CURRENT_STEPS_P1_CHANGED ),
+	m_stEdit(			MESSAGE_EDIT_STEPS_TYPE_CHANGED ),
+	m_pEditSourceSteps(	MESSAGE_EDIT_SOURCE_STEPS_CHANGED ),
+	m_stEditSource(		MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED )
 {
 	m_pCurStyle = NULL;
 
@@ -154,7 +159,7 @@ void GameState::Reset()
 	m_pCurSong.Set( NULL );
 	m_pPreferredSong = NULL;
 	FOREACH_PlayerNumber( p )
-		m_pCurSteps[p] = NULL;
+		m_pCurSteps.Set( p, NULL );
 	m_pCurCourse = NULL;
 	m_pPreferredCourse = NULL;
 	FOREACH_PlayerNumber( p )
@@ -208,9 +213,9 @@ void GameState::Reset()
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_ATTRACT );
 	
-	m_stEdit = STEPS_TYPE_INVALID;
-	m_pStepsEditSource = NULL;
-	m_stEditSource = STEPS_TYPE_INVALID;
+	m_stEdit.Set( STEPS_TYPE_INVALID );
+	m_pEditSourceSteps.Set( NULL );
+	m_stEditSource.Set( STEPS_TYPE_INVALID );
 
 	ApplyCmdline();
 }
@@ -1841,8 +1846,8 @@ public:
 	static int SetCurrentSteps( T* p, lua_State *L )
 	{ 
 		PlayerNumber pn = (PlayerNumber)IArg(1);
-		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn] = NULL; }
-		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps[pn] = pS; }
+		if( lua_isnil(L,2) )	{ p->m_pCurSteps.Set( pn, NULL ); }
+		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps.Set( pn, pS ); }
 		MESSAGEMAN->Broadcast( ssprintf("CurrentStepsP%dChanged",pn+1) );
 		return 0;
 	}
@@ -1864,6 +1869,13 @@ public:
 			lua_pushnil(L);
 		return 1;
 	}
+	static int GetEditSourceSteps( T* p, lua_State *L )
+	{
+		Steps *pSteps = p->m_pEditSourceSteps;  
+		if( pSteps ) { pSteps->PushSelf(L); }
+		else		 { lua_pushnil(L); }
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
@@ -1881,6 +1893,7 @@ public:
 		ADD_METHOD( SetTemporaryEventMode )
 		ADD_METHOD( SetEnv )
 		ADD_METHOD( GetEnv )
+		ADD_METHOD( GetEditSourceSteps )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,

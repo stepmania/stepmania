@@ -1148,7 +1148,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 
 			pSteps = *it;
-			GAMESTATE->m_pCurSteps[PLAYER_1] = m_pSteps = pSteps;
+			GAMESTATE->m_pCurSteps.Set( PLAYER_1, pSteps );
+			m_pSteps = pSteps;
 			pSteps->GetNoteData( m_NoteDataEdit );
 			SCREENMAN->SystemMessage( ssprintf(
 				"Switched to %s %s '%s'",
@@ -1592,7 +1593,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		StepsID id;
 		id.FromSteps( m_pSteps );
 
-		GAMESTATE->m_pCurSteps[PLAYER_1] = NULL; /* make RevertFromDisk not try to reset it */
+		GAMESTATE->m_pCurSteps.Set( PLAYER_1, NULL ); /* make RevertFromDisk not try to reset it */
 		SONGMAN->RevertFromDisk( GAMESTATE->m_pCurSong );
 
 		CString sMessage = "Reloaded from disk.";
@@ -1623,7 +1624,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 
 		SCREENMAN->SystemMessage( sMessage );
 
-		m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1] = pSteps;
+		m_pSteps = pSteps;
+		GAMESTATE->m_pCurSteps.Set( PLAYER_1, pSteps );
 		m_pSteps->GetNoteData( m_NoteDataEdit );
 
 		break;

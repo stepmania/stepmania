@@ -641,7 +641,7 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 	}
 	if( m_pSteps )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
-			GAMESTATE->m_pCurSteps[*pn] = m_pSteps;
+			GAMESTATE->m_pCurSteps.Set( *pn, m_pSteps );
 	if( m_pCourse )
 	{
 		GAMESTATE->m_pCurCourse = m_pCourse;

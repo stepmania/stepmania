@@ -129,10 +129,10 @@ public:
 	//
 
 	// NULL on ScreenSelectMusic if the currently selected wheel item isn't a Song.
-	BroadcastOnChangePtr<Song,MESSAGE_CURRENT_SONG_CHANGED>	m_pCurSong;
+	BroadcastOnChangePtr<Song>	m_pCurSong;
 	// The last Song that the user manually changed to.
 	Song*		m_pPreferredSong;
-	Steps*		m_pCurSteps[NUM_PLAYERS];
+	BroadcastOnChangePtr1D<Steps,NUM_PLAYERS> m_pCurSteps;
 	
 	// NULL on ScreenSelectMusic if the currently selected wheel item isn't a Course.
 	Course*		m_pCurCourse;
@@ -285,9 +285,9 @@ public:
 	//
 	// Edit stuff
 	//
-	StepsType	m_stEdit;
-	Steps		*m_pStepsEditSource;
-	StepsType	m_stEditSource;
+	BroadcastOnChange<StepsType> m_stEdit;
+	BroadcastOnChangePtr<Steps> m_pEditSourceSteps;
+	BroadcastOnChange<StepsType> m_stEditSource;
 
 	// Lua
 	void PushSelf( lua_State *L );

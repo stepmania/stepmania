@@ -175,7 +175,7 @@ void MusicWheel::Load()
 		GAMESTATE->m_pPreferredSong = pSong;
 		FOREACH_HumanPlayer( p )
 		{
-			GAMESTATE->m_pCurSteps[p] = pSteps;
+			GAMESTATE->m_pCurSteps.Set( p, pSteps );
 			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = po;
 			GAMESTATE->m_PreferredDifficulty[p] = pSteps->GetDifficulty();
 		}
