@@ -50,6 +50,8 @@ int					g_iNumVerts;
 int					g_iFPS, g_iVPF, g_iDPF;
 int					g_glVersion;
 
+int					g_CurrentHeight, g_CurrentWidth;
+
 int RageDisplay::GetFPS() const { return g_iFPS; }
 int RageDisplay::GetVPF() const { return g_iVPF; }
 int RageDisplay::GetDPF() const { return g_iDPF; }
@@ -220,6 +222,9 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	Clear();
 	Flip();
 
+	g_CurrentWidth = width;
+	g_CurrentHeight = height;
+
 	return need_reload;
 }
 
@@ -315,17 +320,25 @@ void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth
 	glEnable(GL_POINT_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
 	glHint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
-	glLineWidth(LineWidth);
+	/* Our line width is wrt the regular internal SCREEN_WIDTHxSCREEN_HEIGHT screen,
+	 * but these width functions actually want raster sizes (that is, actual pixels).
+	 * Scale the line width and point size by the average ratio of the scale. */
+	float WidthVal = float(g_CurrentWidth) / SCREEN_WIDTH;
+	float HeightVal = float(g_CurrentHeight) / SCREEN_HEIGHT;
+	float factor = (WidthVal + HeightVal) / 2;
+	glLineWidth(LineWidth * factor);
 
 	/* Draw the line loop: */
 	g_vertMode = GL_LINE_LOOP;
 	AddVerts( v, iNumVerts );
 	FlushQueue();
 
-	/* Round off the corners: */
-	glPointSize(LineWidth);
+	/* Round off the corners.  This isn't perfect; the point is sometimes a little
+	 * larger than the line, causing a small bump on the edge.  Not sure how to fix
+	 * that. */
+	glPointSize(LineWidth * factor);
 	g_vertMode = GL_POINTS;
-	AddVerts( v, iNumVerts-1 );
+	AddVerts( v, iNumVerts );
 	FlushQueue();
 
 	glDisable(GL_LINE_SMOOTH);
