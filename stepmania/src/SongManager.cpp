@@ -32,9 +32,10 @@
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
-#define SONGS_DIR BASE_PATH "Songs" SLASH
-#define COURSES_DIR BASE_PATH "Courses" SLASH
-#define STATS_PATH BASE_PATH "stats.html"
+#define SM_300_STATISTICS_FILE	BASE_PATH "statistics.ini"
+#define SONGS_DIR				BASE_PATH "Songs" SLASH
+#define COURSES_DIR				BASE_PATH "Courses" SLASH
+#define STATS_PATH				BASE_PATH "stats.html"
 const CString CATEGORY_RANKING_FILE = BASE_PATH "Data" SLASH "CategoryRanking.dat";
 const CString COURSE_RANKING_FILE = BASE_PATH "Data" SLASH "CourseRanking.dat";
 const CString NOTES_SCORES_FILE[NUM_MEMORY_CARDS] = { BASE_PATH "Data" SLASH "Player1NotesScores.dat", BASE_PATH "Data" SLASH "Player2NotesScores.dat", BASE_PATH "Data" SLASH "MachineNotesScores.dat" };
@@ -479,6 +480,10 @@ void SongManager::InitMachineScoresFromDisk()
 				}
 	}
 
+
+	// read old style notes scores
+	ReadSM300NoteScores();
+
 	// category ranking
 	ReadCategoryRankingsFromFile( CATEGORY_RANKING_FILE );
 
@@ -493,6 +498,73 @@ void SongManager::InitMachineScoresFromDisk()
 	// course scores
 	for( c=0; c<NUM_MEMORY_CARDS; c++ )
 		ReadCourseScoresFromFile( COURSE_SCORES_FILE[c], c );
+}
+
+void SongManager::ReadSM300NoteScores()
+{	
+	IniFile ini;
+	ini.SetPath( SM_300_STATISTICS_FILE );
+	if( !ini.ReadFile() ) {
+		LOG->Trace( "WARNING: Could not read SM 3.0 final statistics '%s'.", SM_300_STATISTICS_FILE );
+		return;		// load nothing
+	}
+
+	// load song statistics
+	const IniFile::key* pKey = ini.GetKey( "Statistics" );
+	if( pKey )
+	{
+		for( IniFile::key::const_iterator iter = pKey->begin();
+			iter != pKey->end();
+			iter++ )
+		{
+			CString name = iter->first;
+			CString value = iter->second;
+
+			// Each value has the format "SongName::StepsType::StepsDescription=TimesPlayed::TopGrade::TopScore::MaxCombo".
+			char szSongDir[256];
+			char szStepsType[256];
+			char szStepsDescription[256];
+			int iRetVal;
+
+			// Parse for Song name and Notes name
+			iRetVal = sscanf( name, "%[^:]::%[^:]::%[^:]", szSongDir, szStepsType, szStepsDescription );
+			if( iRetVal != 3 )
+				continue;	// this line doesn't match what is expected
+	
+			CString sSongDir = FixSlashes( szSongDir );
+			
+			// Search for the corresponding Song pointer.
+			Song* pSong = GetSongFromDir( sSongDir );
+			if( pSong == NULL )	// didn't find a match
+				continue;	// skip this entry
+
+			StepsType st = GAMEMAN->StringToNotesType( szStepsType );
+			Difficulty dc = StringToDifficulty( szStepsDescription );
+
+			// Search for the corresponding Notes pointer.
+			Steps* pNotes = pSong->GetStepsByDifficulty( st, dc );
+			if( pNotes == NULL )	// didn't find a match
+				continue;	// skip this entry
+
+
+			// Parse the Notes statistics.
+			char szGradeLetters[10];	// longest possible string is "AAA"
+			int iMaxCombo;	// throw away
+
+			iRetVal = sscanf( 
+				value, 
+				"%d::%[^:]::%d::%d", 
+				&pNotes->m_MemCardScores[MEMORY_CARD_MACHINE].iNumTimesPlayed,
+				szGradeLetters,
+				&pNotes->m_MemCardScores[MEMORY_CARD_MACHINE].iScore,
+				&iMaxCombo
+			);
+			if( iRetVal != 4 )
+				continue;
+
+			pNotes->m_MemCardScores[MEMORY_CARD_MACHINE].grade = StringToGrade( szGradeLetters );
+		}
+	}
 }
 
 
@@ -1081,8 +1153,8 @@ Song* SongManager::GetRandomSong()
 
 Song* SongManager::GetSongFromDir( CString sDir )
 {
-	if( sDir[sDir.GetLength()-1] != '/' )
-		sDir += '/';
+	if( sDir.Right(1) != SLASH )
+		sDir += SLASH;
 
 	for( unsigned int i=0; i<m_pSongs.size(); i++ )
 		if( sDir.CompareNoCase(m_pSongs[i]->GetSongDir()) == 0 )

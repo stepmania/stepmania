@@ -112,6 +112,7 @@ protected:
 	void SanityCheckGroupDir( CString sDir ) const;
 	void AddGroup( CString sDir, CString sGroupDirName );
 
+	void ReadSM300NoteScores();
 	void ReadNoteScoresFromFile( CString fn, int c );
 	void ReadCourseScoresFromFile( CString fn, int c );
 	void ReadCategoryRankingsFromFile( CString fn );
