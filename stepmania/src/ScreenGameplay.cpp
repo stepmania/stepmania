@@ -676,7 +676,7 @@ bool ScreenGameplay::PlayTicks() const
 	bool bFreeze;	
 
 	// HACK:  Play the sound a little bit early to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
-	fPositionSeconds += (SOUND->GetPlayLatency()+g_fTickEarlySecondsCache) * m_soundMusic.GetPlaybackRate();
+	fPositionSeconds += (SOUNDMAN->GetPlayLatency()+g_fTickEarlySecondsCache) * m_soundMusic.GetPlaybackRate();
 	GAMESTATE->m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
 
 	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
@@ -887,7 +887,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			&&  !m_Fade.IsClosing() )
 		{
 			m_soundMusic.StopPlaying();
-			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","insert coin") );
+			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
 			::Sleep( 1000 );	// do a little pause, like the arcade does
 			this->SendScreenMessage( SM_GoToTitleMenu, 0 );
 		}
@@ -994,7 +994,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT) )
 		{
 			m_DancingState = STATE_OUTRO;
-			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu back") );
+			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu back") );
 			/* Hmm.  There are a bunch of subtly different ways we can
 			 * tween out: 
 			 *   1. Keep rendering the song, and keep it moving.  This might
@@ -1227,7 +1227,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					else
 					{
 						this->SendScreenMessage( SM_ShowCleared, 1 );
-						SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
+						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
 					}
 				}
 			}
@@ -1472,7 +1472,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SendMessageToTopScreen( SM_GoToScreenAfterFail, 5.0f );
 		break;
 	case SM_PlayFailComment:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
+		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
 		break;
 
 	case SM_GoToScreenAfterFail:

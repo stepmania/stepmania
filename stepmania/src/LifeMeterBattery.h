@@ -15,7 +15,7 @@
 #include "LifeMeter.h"
 #include "Sprite.h"
 #include "BitmapText.h"
-#include "RageSoundSample.h"
+#include "RageSound.h"
 
 
 class LifeMeterBattery : public LifeMeter
@@ -50,8 +50,8 @@ private:
 	BitmapText	m_textNumLives;
 	BitmapText	m_textPercent;
 
-	RageSoundSample m_soundLoseLife;
-	RageSoundSample m_soundGainLife;
+	RageSound	m_soundLoseLife;
+	RageSound	m_soundGainLife;
 };
 
 

@@ -176,7 +176,7 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 	m_soundChange.Load( THEME->GetPathTo("Graphics","select style change") );
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style intro") );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style intro") );
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select style music") );
 
@@ -276,11 +276,11 @@ void ScreenSelectStyle5th::MenuStart( PlayerNumber pn )
 
 	CString sCurStyleName = GAMESTATE->GetCurrentStyleDef()->m_szName;
 	sCurStyleName.MakeLower();
-	if(	     -1!=sCurStyleName.Find("single") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment single") );
-	else if( -1!=sCurStyleName.Find("versus") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment versus") );
-	else if( -1!=sCurStyleName.Find("double") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment double") );
-	else if( -1!=sCurStyleName.Find("couple") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment couple") );
-	else if( -1!=sCurStyleName.Find("solo") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment solo") );
+	if(	     -1!=sCurStyleName.Find("single") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style comment single") );
+	else if( -1!=sCurStyleName.Find("versus") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style comment versus") );
+	else if( -1!=sCurStyleName.Find("double") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style comment double") );
+	else if( -1!=sCurStyleName.Find("couple") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style comment couple") );
+	else if( -1!=sCurStyleName.Find("solo") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style comment solo") );
 
 	this->ClearMessageQueue();
 

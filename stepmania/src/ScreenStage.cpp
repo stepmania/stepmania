@@ -80,20 +80,20 @@ ScreenStage::ScreenStage()
 			const int iStageNo = GAMESTATE->GetStageIndex()+1;
 			switch( iStageNo )
 			{
-			case 1:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage 1") );	break;
-			case 2:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage 2") );	break;
-			case 3:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage 3") );	break;
-			case 4:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage 4") );	break;
-			case 5:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage 5") );	break;
+			case 1:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage 1") );	break;
+			case 2:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage 2") );	break;
+			case 3:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage 3") );	break;
+			case 4:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage 4") );	break;
+			case 5:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage 5") );	break;
 			default:	;	break;	// play nothing
 			}
 		}
 		break;
-	case MODE_FINAL:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage final") );		break;
-	case MODE_EXTRA1:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage extra1") );		break;
-	case MODE_EXTRA2:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage extra2") );		break;
-	case MODE_ONI:		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage oni") );		break;
-	case MODE_ENDLESS:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage endless") );	break;
+	case MODE_FINAL:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage final") );		break;
+	case MODE_EXTRA1:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage extra1") );		break;
+	case MODE_EXTRA2:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage extra2") );		break;
+	case MODE_ONI:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage oni") );		break;
+	case MODE_ENDLESS:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage endless") );	break;
 	default:		ASSERT(0);
 	}
 

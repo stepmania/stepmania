@@ -231,7 +231,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","select music change options") );
 	m_soundLocked.Load( THEME->GetPathTo("Sounds","select music wheel locked") );
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select music intro") );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music intro") );
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
@@ -430,7 +430,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	{
 		m_bGoToOptions = true;
 		m_sprOptionsMessage.SetState( 1 );
-		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
+		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
 		return;
 	}
 	
@@ -625,11 +625,11 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		}
 
 		if( bIsNew )
-			SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select music comment new") );
+			SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment new") );
 		else if( bIsHard )
-			SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select music comment hard") );
+			SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment hard") );
 		else
-			SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select music comment general") );
+			SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment general") );
 
 
 		TweenOffScreen();

@@ -53,7 +53,7 @@ bool RandomSample::LoadSound( CString sSoundFilePath )
 {
 	LOG->Trace( "RandomSample::LoadSound( %s )", sSoundFilePath.GetString() );
 
-	RageSoundSample* pSS = new RageSoundSample;
+	RageSound *pSS = new RageSound;
 	pSS->Load( sSoundFilePath );
 
 

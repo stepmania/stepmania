@@ -71,7 +71,7 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 			m_Wipe.CloseWipingRight( SM_GoToNextScreen );
 		break;
 	case SM_DoneOpening:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("caution") );
+		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("caution") );
 		break;
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
@@ -87,7 +87,7 @@ void ScreenCaution::MenuStart( PlayerNumber pn )
 	if( pn != PLAYER_INVALID  &&  !GAMESTATE->m_bSideIsJoined[pn] )
 	{
 		GAMESTATE->m_bSideIsJoined[pn] = true;
-		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
+		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
 		SCREENMAN->RefreshCreditsMessages();
 		return;	// don't fall though
 	}
@@ -102,6 +102,6 @@ void ScreenCaution::MenuBack( PlayerNumber pn )
 		return;
 	this->ClearMessageQueue();
 	m_FadeWipe.CloseWipingLeft( SM_GoToPrevScreen );
-	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu back") );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu back") );
 }
 

@@ -128,7 +128,7 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 
 	if( m_bMadeChoice  &&  !m_bGoToOptions  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START )
 	{
-		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
+		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
 		m_bGoToOptions = true;
 		m_sprOptionsMessage.SetState( 1 );
 	}

@@ -61,8 +61,8 @@ private:
 	Sprite	m_sprJoinMessagehadow[NUM_PLAYERS];
 	Sprite	m_sprOK[NUM_PLAYERS];
 
-	RageSoundSample m_soundChange;
-	RageSoundSample m_soundSelect;
+	RageSound	m_soundChange;
+	RageSound	m_soundSelect;
 	RandomSample m_soundDifficult;
 
 	int m_iSelection[NUM_PLAYERS];

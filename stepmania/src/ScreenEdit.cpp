@@ -285,7 +285,7 @@ ScreenEdit::ScreenEdit()
 	m_textShortcuts.SetText( SHORTCUT_TEXT );
 
 
-	m_soundChangeLine.Load( THEME->GetPathTo("Sounds","edit change line"), 10 );
+	m_soundChangeLine.Load( THEME->GetPathTo("Sounds","edit change line") );
 	m_soundChangeSnap.Load( THEME->GetPathTo("Sounds","edit change snap") );
 	m_soundMarker.Load(		THEME->GetPathTo("Sounds","edit marker") );
 	m_soundInvalid.Load(	THEME->GetPathTo("Sounds","menu invalid") );
@@ -340,7 +340,7 @@ bool ScreenEdit::PlayTicks() const
 	bool bFreeze;	
 
 	// HACK:  Play the sound a little bit early to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
-	fPositionSeconds += (SOUND->GetPlayLatency()+0.018f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.015 seconds to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
+	fPositionSeconds += (SOUNDMAN->GetPlayLatency()+0.018f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.015 seconds to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
 	GAMESTATE->m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
 
 	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
@@ -758,7 +758,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			GAMESTATE->m_pCurSong->Save();
 
 			SCREENMAN->SystemMessage( "Saved as SM and DWI." );
-			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","edit save") );
+			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","edit save") );
 		}
 		break;
 	case SDLK_UP:
@@ -1259,7 +1259,7 @@ void ScreenEdit::InputActionMenu( const DeviceInput& DeviceI, const InputEventTy
 		MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
 		if( DeviceI.button == SDLK_RETURN )
 		{
-			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
+			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
 			int iMenuKey = ACTION_MENU_ITEM_KEY[m_iMenuSelection];
 			InputEdit( DeviceInput(DEVICE_KEYBOARD,iMenuKey), IET_FIRST_PRESS, GameInput(), MenuInput(), StyleInput() );
 		}
@@ -1271,7 +1271,7 @@ void ScreenEdit::InputActionMenu( const DeviceInput& DeviceI, const InputEventTy
 				TransitionToEdit();
 				MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
 
-				SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
+				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
 				InputEdit( DeviceI, IET_FIRST_PRESS, GameInput(), MenuInput(), StyleInput() );
 			}
 		}
@@ -1339,7 +1339,7 @@ void ScreenEdit::InputNamingMenu( const DeviceInput& DeviceI, const InputEventTy
 		MenuItemGainFocus( &m_textNamingMenu[m_iMenuSelection] );
 		break;
 	case SDLK_RETURN:
-		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
+		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
 		const std::pair<int, bool>& pairMenuKey = NAMING_MENU_ITEM_KEY[m_iMenuSelection];
 		InputNamingMenu( DeviceInput(DEVICE_KEYBOARD,pairMenuKey.first), IET_FIRST_PRESS, GameInput(), MenuInput(), StyleInput(), pairMenuKey.second );
 		break;
@@ -1451,7 +1451,7 @@ void ScreenEdit::MenuItemGainFocus( BitmapText* menuitem )
 {
 	menuitem->SetEffectCamelion( 2.5, RageColor(1,1,1,1), RageColor(0,1,0,1) );
 	menuitem->SetZoom( 0.7f );
-	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","edit menu change") );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","edit menu change") );
 }
 
 void ScreenEdit::MenuItemLoseFocus( BitmapText* menuitem )

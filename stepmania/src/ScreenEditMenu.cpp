@@ -146,7 +146,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	if( !GAMESTATE->m_pCurSong->HasMusic() )
 	{
 		SCREENMAN->SystemMessage( "This song is missing a music file and cannot be edited" );
-		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu invalid") );
+		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu invalid") );
 		return;
 	}
 

@@ -100,7 +100,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select player intro") );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select player intro") );
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select player music") );
 

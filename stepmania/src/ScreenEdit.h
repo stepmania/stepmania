@@ -77,10 +77,10 @@ protected:
 
 	NoteData			m_Clipboard;
 
-	RageSoundSample		m_soundChangeLine;
-	RageSoundSample		m_soundChangeSnap;
-	RageSoundSample		m_soundMarker;
-	RageSoundSample		m_soundInvalid;
+	RageSound			m_soundChangeLine;
+	RageSound			m_soundChangeSnap;
+	RageSound			m_soundMarker;
+	RageSound			m_soundInvalid;
 
 	TransitionFade		m_Fade;
 
@@ -104,7 +104,7 @@ protected:
 	BitmapText	    m_textNamingMenu[NUM_NAMING_MENU_ITEMS];
 
 	int				m_iRowLastCrossed;
-	RageSoundSample	m_soundAssistTick;
+	RageSound		m_soundAssistTick;
 
 };
 

@@ -165,7 +165,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_soundChange.Load( THEME->GetPathTo("Sounds","select group change") );
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select group intro") );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group intro") );
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select group music") );
 
@@ -285,9 +285,9 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 	GAMESTATE->m_sPreferredGroup = m_GroupList.GetSelectionName();
 
 	if( 0 == stricmp(GAMESTATE->m_sPreferredGroup, "All Music") )
-        SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select group comment all music") );
+        SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group comment all music") );
 	else
-        SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select group comment general") );
+        SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group comment general") );
 
 
 	TweenOffScreen();

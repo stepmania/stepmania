@@ -11,7 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "RageSoundSample.h"
+#include "RageSound.h"
 #include "RageUtil.h"
 
 class RandomSample
@@ -39,7 +39,7 @@ private:
 	bool LoadSound( CString sSoundFilePath );
 
 
-	CArray<RageSoundSample*, RageSoundSample*> m_pSamples;
+	CArray<RageSound*, RageSound*> m_pSamples;
 	int m_iIndexLastPlayed;
 };
 

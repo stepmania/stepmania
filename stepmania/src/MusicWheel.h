@@ -167,11 +167,11 @@ protected:
 
 //	bool				m_bUseRandomExtra;
 
-	RageSoundSample m_soundChangeMusic;
-	RageSoundSample m_soundChangeSort;
-	RageSoundSample m_soundExpand;
-	RageSoundSample m_soundStart;
-	RageSoundSample m_soundLocked;
+	RageSound m_soundChangeMusic;
+	RageSound m_soundChangeSort;
+	RageSound m_soundExpand;
+	RageSound m_soundStart;
+	RageSound m_soundLocked;
 
 	CString GetSectionNameFromSongAndSort( Song* pSong, SongSortOrder so );
 	bool WheelItemIsVisible(int n);

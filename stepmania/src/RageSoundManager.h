@@ -9,9 +9,6 @@
 
 class RageSound;
 
-//#define PlayOnceStreamed PlayOnce
-//#define PlayOnceStreamedFromDir PlayOnceFromDir
-
 class RageSoundManager
 {
 	/* Set of sounds that we've taken over (and are responsible for deleting

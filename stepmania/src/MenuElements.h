@@ -76,8 +76,8 @@ public:
 	TransitionKeepAlive	m_KeepAlive;	// going back and forward
 	TransitionInvisible	m_Invisible;	// for going forward to Menu
 
-	RageSoundSample m_soundSwoosh;
-	RageSoundSample m_soundBack;
+	RageSound m_soundSwoosh;
+	RageSound m_soundBack;
 };
 
 #endif

@@ -12,7 +12,7 @@
 #include "Screen.h"
 #include "Sprite.h"
 #include "BitmapText.h"
-#include "RageSoundSample.h"
+#include "RageSound.h"
 #include "GameConstantsAndTypes.h"
 #include "MusicWheel.h"
 #include "CourseContentsFrame.h"
@@ -60,8 +60,8 @@ protected:
 	bool				m_bGoToOptions;
 	Sprite				m_sprOptionsMessage;
 
-	RageSoundSample		m_soundSelect;
-	RageSoundSample		m_soundOptionsChange;
+	RageSound			m_soundSelect;
+	RageSound			m_soundOptionsChange;
 };
 
 

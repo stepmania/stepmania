@@ -124,7 +124,7 @@ ScreenSelectMode::ScreenSelectMode()
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 	m_soundChange.Load( THEME->GetPathTo("Sounds","select style change"), 10 );
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style intro") );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style intro") );
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select style music") );
 

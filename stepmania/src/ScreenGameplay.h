@@ -149,11 +149,9 @@ private:
 
 	
 	int				m_iRowLastCrossed;
-	RageSoundSample	m_soundAssistTick;
 
-	RageSoundSample	m_soundToasty;
-
-
+	RageSound		m_soundAssistTick;
+	RageSound		m_soundToasty;
 	RageSound		m_soundMusic;
 };
 

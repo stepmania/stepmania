@@ -66,6 +66,6 @@ protected:
 	BGAnimation	m_BGAnimations[MAX_MODE_CHOICES];
 	MenuElements m_Menu;
 
-	RageSoundSample m_soundSelect;	
-	RageSoundSample m_soundChange;	
+	RageSound	m_soundSelect;	
+	RageSound	m_soundChange;	
 };

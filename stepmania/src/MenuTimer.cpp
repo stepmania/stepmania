@@ -83,7 +83,7 @@ void MenuTimer::Update( float fDeltaTime )
 	float fNewSecondsLeft = fOldSecondsLeft - fDeltaTime;
 
 	if( fOldSecondsLeft > 5.5  &&  fNewSecondsLeft < 5.5 )	// transition to below 5.5
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("hurry up") );
+		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("hurry up") );
 	else if( fOldSecondsLeft > 5  &&  fNewSecondsLeft < 5 )	// transition to below 5
 	{
 		m_textDigit1.SetEffectGlowing( 10, RageColor(1,0,0,0), RageColor(1,0,0,1) );

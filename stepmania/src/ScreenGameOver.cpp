@@ -48,7 +48,7 @@ void ScreenGameOver::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_PlayAnnouncer:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("game over") );
+		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("game over") );
 		break;
 	case SM_StartFadingOut:
 		m_Fade.CloseWipingRight( SM_GoToNextScreen );

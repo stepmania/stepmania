@@ -129,7 +129,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 	m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","select music change options") );
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select course intro") );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select course intro") );
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select course music") );
 
@@ -216,7 +216,7 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 	{
 		m_bGoToOptions = true;
 		m_sprOptionsMessage.SetState( 1 );
-		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
+		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
 		return;
 	}
 	
@@ -279,7 +279,7 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_COURSE:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select course comment general") );
+		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select course comment general") );
 	
 		TweenOffScreen();
 

@@ -9,7 +9,7 @@ Andrew Livy
 
 #include "Screen.h"
 #include "Sprite.h"
-#include "RageSoundSample.h"
+#include "RageSound.h"
 #include "MenuElements.h"
 
 
@@ -37,6 +37,6 @@ private:
 
 	MenuElements m_Menu;
 
-	RageSoundSample m_soundSelect;	
+	RageSound	m_soundSelect;	
 	BGAnimation	m_Background;	
 };

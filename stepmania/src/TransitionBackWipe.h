@@ -34,7 +34,7 @@ public:
 
 protected:
 	Quad m_quad;
-	RageSoundSample m_soundBack;
+	RageSound m_soundBack;
 };
 
 

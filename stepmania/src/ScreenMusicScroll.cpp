@@ -186,7 +186,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 	this->AddChild( &m_Fade );
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("music scroll") );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("music scroll") );
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","music scroll music") );
 

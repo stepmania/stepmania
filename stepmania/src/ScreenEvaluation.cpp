@@ -565,11 +565,11 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		m_sprTryExtraStage.SetEffectGlowing( 1.0f );
 		this->AddChild( &m_sprTryExtraStage );
 
-		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","evaluation extra stage") );
+		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","evaluation extra stage") );
 	}
 	else if( bOneHasNewRecord  &&  ANNOUNCER->HasSoundsFor("evaluation new record") )
 	{
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation new record") );
+		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation new record") );
 	}
 	else
 	{
@@ -579,13 +579,13 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		case RM_ARCADE_STAGE:
 			switch( max_grade )
 			{
-			case GRADE_E:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation e") );		break;
-			case GRADE_D:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation d") );		break;
-			case GRADE_C:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation c") );		break;
-			case GRADE_B:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation b") );		break;
-			case GRADE_A:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation a") );		break;
-			case GRADE_AA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation aa") );	break;
-			case GRADE_AAA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation aaa") );	break;
+			case GRADE_E:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation e") );		break;
+			case GRADE_D:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation d") );		break;
+			case GRADE_C:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation c") );		break;
+			case GRADE_B:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation b") );		break;
+			case GRADE_A:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation a") );		break;
+			case GRADE_AA:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation aa") );	break;
+			case GRADE_AAA:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation aaa") );	break;
 			case GRADE_NO_DATA:
 			default:
 				ASSERT(0);	// invalid grade
@@ -595,13 +595,13 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		case RM_ARCADE_SUMMARY:
 			switch( max_grade )
 			{
-			case GRADE_E:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final e") );	break;
-			case GRADE_D:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final d") );	break;
-			case GRADE_C:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final c") );	break;
-			case GRADE_B:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final b") );	break;
-			case GRADE_A:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final a") );	break;
-			case GRADE_AA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final aa") );	break;
-			case GRADE_AAA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final aaa") );	break;
+			case GRADE_E:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final e") );	break;
+			case GRADE_D:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final d") );	break;
+			case GRADE_C:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final c") );	break;
+			case GRADE_B:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final b") );	break;
+			case GRADE_A:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final a") );	break;
+			case GRADE_AA:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final aa") );	break;
+			case GRADE_AAA:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final aaa") );	break;
 			case GRADE_NO_DATA:
 			default:
 				ASSERT(0);	// invalid grade
@@ -833,7 +833,7 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( "ScreenFinalEvaluation" );
 		break;
 	case SM_PlayCheer:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation cheer") );
+		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation cheer") );
 		break;
 	}
 }
@@ -883,7 +883,7 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 			/* Tween the screen out, but leave the MenuElements where they are.
 			 * Play the "swoosh" sound manually (would normally be played by the ME
 			 * tween out). */
-			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu swoosh") );
+			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu swoosh") );
 			TweenOffScreen();
 			SCREENMAN->SendMessageToTopScreen( SM_GoToFinalEvaluation, MENU_ELEMENTS_TWEEN_TIME );
 		}

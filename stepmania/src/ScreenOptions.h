@@ -106,10 +106,10 @@ protected:
 
 	BitmapText		m_textExplanation;
 
-	RageSoundSample	m_SoundChangeCol;
-	RageSoundSample	m_SoundNextRow;
-	RageSoundSample	m_SoundPrevRow;
-	RageSoundSample	m_SoundStart;
+	RageSound		m_SoundChangeCol;
+	RageSound		m_SoundNextRow;
+	RageSound		m_SoundPrevRow;
+	RageSound		m_SoundStart;
 
 	TransitionInvisible		m_Wipe;
 };

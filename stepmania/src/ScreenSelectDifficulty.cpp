@@ -171,7 +171,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 	m_soundSelect.Load( THEME->GetPathTo("Sounds", "menu start") );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select difficulty intro") );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select difficulty intro") );
 
 	m_Menu.TweenOnScreenFromMenu( SM_None );
 	TweenOnScreen();
@@ -402,11 +402,11 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 
 	switch( iSelection )
 	{
-	case 0:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select difficulty comment easy") );		break;
-	case 1:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select difficulty comment medium") );		break;
-	case 2:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select difficulty comment hard") );		break;
-	case 3:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select difficulty comment oni") );		break;
-	case 4:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select difficulty comment endless") );	break;
+	case 0:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select difficulty comment easy") );		break;
+	case 1:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select difficulty comment medium") );		break;
+	case 2:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select difficulty comment hard") );		break;
+	case 3:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select difficulty comment oni") );		break;
+	case 4:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select difficulty comment endless") );	break;
 	}
 
 	if( iSelection >= 3 )	// chose something on page 2

@@ -15,7 +15,7 @@
 #include "Song.h"
 #include "ActorFrame.h"
 #include "BitmapText.h"
-#include "RageSoundSample.h"
+#include "RageSound.h"
 
 
 class MenuTimer : public ActorFrame
@@ -41,7 +41,7 @@ protected:
 	BitmapText m_textDigit1;
 	BitmapText m_textDigit2;
 
-	RageSoundSample	m_soundBeep;
+	RageSound	m_soundBeep;
 };
 
 #endif

@@ -60,7 +60,7 @@ ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuesti
 	m_textAnswer.SetText( m_sAnswer );
 	this->AddChild( &m_textAnswer );
 
-	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu prompt") );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu prompt") );
 }
 
 void ScreenTextEntry::Update( float fDeltaTime )
@@ -182,7 +182,7 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 	m_textAnswer.BeginTweening( 0.2f );
 	m_textAnswer.SetTweenDiffuse( RageColor(1,1,1,0) );
 
-	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
 
 	if( m_bCancelled ) {
 		if( m_pOnCancel ) m_pOnCancel();

@@ -82,10 +82,10 @@ protected:
 	Sprite				m_sprOptionsMessage;
 	float				m_fPlaySampleCountdown;
 
-	RageSoundSample		m_soundSelect;
-	RageSoundSample		m_soundChangeNotes;
-	RageSoundSample		m_soundOptionsChange;
-	RageSoundSample		m_soundLocked;
+	RageSound			m_soundSelect;
+	RageSound			m_soundChangeNotes;
+	RageSound			m_soundOptionsChange;
+	RageSound			m_soundLocked;
 };
 
 

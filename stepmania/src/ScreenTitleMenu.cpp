@@ -157,7 +157,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	this->AddChild( &m_Fade );
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("title menu game name") );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("title menu game name") );
 
 
 	m_soundAttract.Load( ANNOUNCER->GetPathTo("title menu attract") );

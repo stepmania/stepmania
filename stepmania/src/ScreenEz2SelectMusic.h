@@ -58,7 +58,7 @@ protected:
 
 	int i_ErrorDetected;
 
-	RageSoundSample		m_soundSelect;
+	RageSound			m_soundSelect;
 };
 
 
