@@ -815,7 +815,7 @@ void PrefsManager::ResetToFactoryDefaults()
 
 int PrefsManager::GetCoinMode()
 {
-	if(m_bEventMode) 
+	if( m_bEventMode && m_iCoinMode == COIN_PAY )
 		return COIN_FREE; 
 	else 
 		return m_iCoinMode; 
