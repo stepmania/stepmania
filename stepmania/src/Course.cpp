@@ -550,6 +550,13 @@ struct SortTrailEntry
 	bool operator< ( const SortTrailEntry &rhs ) const { return SortMeter < rhs.SortMeter; }
 };
 
+CString Course::GetDisplayName() const
+{
+	if( !PREFSMAN->m_bShowNative )
+		return GetTranslitName();
+	return m_sName;
+}
+
 /* This is called by many simple functions, like Course::GetTotalSeconds, and may
  * be called on all songs to sort.  It can take time to execute, so we cache the
  * results. */

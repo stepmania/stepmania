@@ -98,6 +98,9 @@ public:
 
 	vector<CourseEntry> m_entries;
 
+	/* If PREFSMAN->m_bShowNative is off, this are the same as GetTranslit* below. */
+	CString GetDisplayName() const;
+	CString GetTranslitName() const { return m_sNameTranslit.size()? m_sNameTranslit: m_sName; }
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
 	Trail* GetTrail( StepsType st, CourseDifficulty cd ) const;
