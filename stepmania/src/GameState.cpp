@@ -780,8 +780,12 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 					feat.pStringToFill = &vHighScores[j].sName;
 					feat.g = vHighScores[j].grade;
 					feat.Score = vHighScores[j].fScore;
-					if( pSong->HasBanner() )
-						feat.Banner = pSong->GetBannerPath();
+
+					// XXX: temporary hack
+					if( pSong->HasBackground() )
+						feat.Banner = pSong->GetBackgroundPath();
+//					if( pSong->HasBanner() )
+//						feat.Banner = pSong->GetBannerPath();
 
 					asFeatsOut.push_back( feat );
 				}
