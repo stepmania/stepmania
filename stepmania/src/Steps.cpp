@@ -222,6 +222,10 @@ void Steps::Compress() const
 	{
 		/* We have a file on disk; clear all data in memory. */
 		SAFE_DELETE( notes );
+
+		/* Be careful; 'x = ""', notes_comp.clear() and notes_comp.reserve(0)
+		 * don't always free the alocated memory. */
+		notes_comp = CString("");
 	}
 
 	if( notes_comp.empty() )
