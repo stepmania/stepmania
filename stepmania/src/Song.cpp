@@ -1460,32 +1460,8 @@ void SortSongPointerArrayByGroupAndTitle( vector<Song*> &arraySongPointers )
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGroupAndTitle );
 }
 
-//bool CompareSongPointersByMostPlayed(const Song *pSong1, const Song *pSong2)
-//{
-//	return pSong1->GetNumTimesPlayed() < pSong2->GetNumTimesPlayed();
-/*
-Comparing titles is slow, and this makes course selection choppy.  Turning this
-off means we don't get consistent orderings of songs that have been played
-the same amount, but that shouldn't be a big problem; the songs should stay
-in the same original order during a single load of the game anyway (and will
-probably stay in the same general order even across loads).  The number of
-plays is more likely to change.
-
-This is mostly a problem with new games, where there are a large number of songs
-that have all been played 0 times.
-
-	int iNumTimesPlayed1 = pSong1->GetNumTimesPlayed();
-	int iNumTimesPlayed2 = pSong2->GetNumTimesPlayed();
-	
-	if( iNumTimesPlayed1 > iNumTimesPlayed2 )
-		return true;
-	if( iNumTimesPlayed1 < iNumTimesPlayed2 )
-		return false;
-	return CompareSongPointersByTitle( pSong1, pSong2 );
-*/
-//}
-/* Actually, just calculating GetNumTimesPlayed within the sort is pretty
- * slow, so let's precompute it.  (This could be generalized with a template.) */
+/* Just calculating GetNumTimesPlayed within the sort is pretty slow, so let's precompute
+ * it.  (This could be generalized with a template.) */
 map<const Song*, CString> song_sort_val;
 
 bool CompareSongPointersBySortVal(const Song *pSong1, const Song *pSong2)
