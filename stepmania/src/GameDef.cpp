@@ -21,7 +21,7 @@
 #include "PrefsManager.h"
 
 
-CString GameDef::ElementToGraphicSuffix( const SkinElement gbg ) 
+CString GameDef::ElementToGraphicSuffix( const SkinElement gbg ) const
 {
 	CString sAssetPath;		// fill this in below
 
@@ -41,7 +41,7 @@ CString GameDef::ElementToGraphicSuffix( const SkinElement gbg )
 	return sAssetPath;
 }
 
-CString GameDef::GetPathToGraphic( const CString sSkinName, const CString sButtonName, const SkinElement gbg ) 
+CString GameDef::GetPathToGraphic( const CString sSkinName, const CString sButtonName, const SkinElement gbg ) const
 {
 	const CString sSkinDir	= ssprintf("Skins\\%s\\%s\\", m_szName, sSkinName);
 	const CString sGraphicSuffix = ElementToGraphicSuffix( gbg );
@@ -61,7 +61,7 @@ CString GameDef::GetPathToGraphic( const CString sSkinName, const CString sButto
 	return "";
 }
 
-void GameDef::GetTapTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aTapColorsOut )
+void GameDef::GetTapTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aTapColorsOut ) const
 {
 	const CString sSkinDir	= ssprintf("Skins\\%s\\%s\\", m_szName, sSkinName);
 
@@ -94,7 +94,7 @@ void GameDef::GetTapTweenColors( const CString sSkinName, const CString sButtonN
 	return;
 }
 
-void GameDef::GetHoldTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aHoldColorsOut )
+void GameDef::GetHoldTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aHoldColorsOut ) const
 {
 	const CString sSkinDir	= ssprintf("Skins\\%s\\%s\\", m_szName, sSkinName);
 
