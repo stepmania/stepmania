@@ -161,20 +161,15 @@ void NoteField::Update( float fDeltaTime )
 
 
 	//
-	// update all NoteDisplayCols.  NoteDisplay's may contain BGAnimations 
-	// that need to be updated.
+	// update all NoteDisplays
 	//
-	for( NDMap::iterator iter = m_BeatToNoteDisplays.begin();
-		iter != m_BeatToNoteDisplays.end();
-		iter++ )
-	{
-		NoteDisplayCols *nd = iter->second;
-		for( int c=0; c<GetNumTracks(); c++ )	// for each arrow column
-			nd->display[c].Update(fDeltaTime);
-//		nd->m_ReceptorArrowRow.Update(fDeltaTime);
-//		nd->m_GhostArrowRow.Update(fDeltaTime);
-	}
 
+	/*
+	 * Update all NoteDisplays.  Hack: We need to call this once per frame, not
+	 * once per player.
+	 */
+	if( m_PlayerNumber == GAMESTATE->m_MasterPlayerNumber )
+		NoteDisplay::Update( fDeltaTime );
 }
 
 float NoteField::GetWidth()

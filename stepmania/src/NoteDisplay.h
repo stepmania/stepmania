@@ -19,7 +19,7 @@ public:
 
 	void Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fYReverseOffsetPixels );
 
-	void Update( float fDeltaTime );
+	static void Update( float fDeltaTime );
 
 	void DrawActor( Actor* pActor, int iCol, float fBeat, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, bool bUseLighting );
 	void DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels );
@@ -53,12 +53,12 @@ protected:
 	Actor*		m_pTapMine;
 	Actor*		m_pHoldHeadActive[NOTE_COLOR_IMAGES];
 	Actor*		m_pHoldHeadInactive[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldTopCapActive[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldTopCapInactive[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldBodyActive[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldBodyInactive[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldBottomCapActive[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldBottomCapInactive[NOTE_COLOR_IMAGES];
+	Sprite*		m_pHoldTopCapActive[NOTE_COLOR_IMAGES];
+	Sprite*		m_pHoldTopCapInactive[NOTE_COLOR_IMAGES];
+	Sprite*		m_pHoldBodyActive[NOTE_COLOR_IMAGES];
+	Sprite*		m_pHoldBodyInactive[NOTE_COLOR_IMAGES];
+	Sprite*		m_pHoldBottomCapActive[NOTE_COLOR_IMAGES];
+	Sprite*		m_pHoldBottomCapInactive[NOTE_COLOR_IMAGES];
 	Actor*		m_pHoldTailActive[NOTE_COLOR_IMAGES];
 	Actor*		m_pHoldTailInactive[NOTE_COLOR_IMAGES];
 	float		m_fYReverseOffsetPixels;

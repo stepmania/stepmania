@@ -92,6 +92,93 @@ void NoteMetricCache_t::Load(CString skin, const CString &name)
 	m_bFlipHeadAndTailWhenReverse =				NOTESKIN->GetMetricB(skin,name,"FlipHeadAndTailWhenReverse");
 }
 
+
+struct NoteResource
+{
+	NoteResource( CString sPath ): m_sPath(sPath)
+	{
+		m_iRefCount = 0;
+		m_pActor = NULL;
+	}
+
+	~NoteResource()
+	{
+		delete m_pActor;
+	}
+
+	const CString m_sPath; /* should be refcounted along with g_NoteResource[] */
+	int m_iRefCount;
+	Actor *m_pActor;
+};
+
+static map<CString, NoteResource *> g_NoteResource;
+
+static NoteResource *MakeNoteResource( const CString &sPath, bool bSpriteOnly )
+{
+	map<CString, NoteResource *>::iterator it = g_NoteResource.find( sPath );
+	if( it == g_NoteResource.end() )
+	{
+		NoteResource *pRes = new NoteResource( sPath );
+		if( bSpriteOnly )
+		{
+			Sprite *pSprite = new Sprite;
+			pSprite->Load( sPath );
+			pRes->m_pActor = pSprite;
+		}
+		else
+			pRes->m_pActor = MakeActor( sPath );
+
+		g_NoteResource[sPath] = pRes;
+		it = g_NoteResource.find( sPath );
+	}
+
+	NoteResource *pRet = it->second;
+	++pRet->m_iRefCount;
+	return pRet;
+}
+
+static NoteResource *FindNoteResource( const Actor *pActor )
+{
+	map<CString, NoteResource *>::iterator it;
+	for( it = g_NoteResource.begin(); it != g_NoteResource.end(); ++it )
+	{
+		NoteResource *pRes = it->second;
+		if( pRes->m_pActor == pActor )
+			return pRes;
+	}
+
+	return NULL;
+}
+
+static void DeleteNoteResource( const Actor *pActor )
+{
+	if( pActor == NULL )
+		return;
+
+	NoteResource *pRes = FindNoteResource( pActor );
+	ASSERT( pRes != NULL );
+
+	ASSERT_M( pRes->m_iRefCount > 0, ssprintf("%i", pRes->m_iRefCount) );
+	--pRes->m_iRefCount;
+	if( pRes->m_iRefCount )
+		return;
+
+	g_NoteResource.erase( pRes->m_sPath );
+	delete pRes;
+}
+
+Actor *MakeRefcountedActor( const CString &sPath )
+{
+	NoteResource *pRes = MakeNoteResource( sPath, false );
+	return pRes->m_pActor;
+}
+
+Sprite *MakeRefcountedSprite( const CString &sPath )
+{
+	NoteResource *pRes = MakeNoteResource( sPath, true );
+	return (Sprite *) pRes->m_pActor; /* XXX ick */
+}
+
 NoteDisplay::NoteDisplay()
 {
 	for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
@@ -100,6 +187,12 @@ NoteDisplay::NoteDisplay()
 		m_pTapAddition[i] = NULL;
 		m_pHoldHeadActive[i] = NULL;
 		m_pHoldHeadInactive[i] = NULL;
+		m_pHoldTopCapActive[i] = NULL;
+		m_pHoldTopCapInactive[i] = NULL;
+		m_pHoldBodyActive[i] = NULL;
+		m_pHoldBodyInactive[i] = NULL;
+		m_pHoldBottomCapActive[i] = NULL;
+		m_pHoldBottomCapInactive[i] = NULL;
 		m_pHoldTailActive[i] = NULL;
 		m_pHoldTailInactive[i] = NULL;
 	}
@@ -112,14 +205,20 @@ NoteDisplay::~NoteDisplay()
 {
 	for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 	{
-		delete m_pTapNote[i];
-		delete m_pTapAddition[i];
-		delete m_pHoldHeadActive[i];
-		delete m_pHoldHeadInactive[i];
-		delete m_pHoldTailActive[i];
-		delete m_pHoldTailInactive[i];
+		DeleteNoteResource( m_pTapNote[i] );
+		DeleteNoteResource( m_pTapAddition[i] );
+		DeleteNoteResource( m_pHoldHeadActive[i] );
+		DeleteNoteResource( m_pHoldHeadInactive[i] );
+		DeleteNoteResource( m_pHoldTopCapActive[i] );
+		DeleteNoteResource( m_pHoldTopCapInactive[i] );
+		DeleteNoteResource( m_pHoldBodyActive[i] );
+		DeleteNoteResource( m_pHoldBodyInactive[i] );
+		DeleteNoteResource( m_pHoldBottomCapActive[i] );
+		DeleteNoteResource( m_pHoldBottomCapInactive[i] );
+		DeleteNoteResource( m_pHoldTailActive[i] );
+		DeleteNoteResource( m_pHoldTailInactive[i] );
 	}
-	delete m_pTapMine;
+	DeleteNoteResource( m_pTapMine );
 
 	delete cache;
 }
@@ -146,107 +245,106 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fY
 	if( cache->m_bAnimationIsNoteColor[PART_TAP] )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-			m_pTapNote[i] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap note "+sNoteType[i]) );
+			m_pTapNote[i] = MakeRefcountedActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap note "+sNoteType[i]) );
 	}
 	else
 	{
-		m_pTapNote[0] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap note") );
+		m_pTapNote[0] = MakeRefcountedActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap note") );
 	}
 
 	if( cache->m_bAnimationIsNoteColor[PART_ADDITION] )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-			m_pTapAddition[i] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap addition "+sNoteType[i]) );
+			m_pTapAddition[i] = MakeRefcountedActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap addition "+sNoteType[i]) );
 	}
 	else
 	{
-		m_pTapAddition[0] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap addition") );
+		m_pTapAddition[0] = MakeRefcountedActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap addition") );
 	}
 
-	m_pTapMine = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap mine") );
+	m_pTapMine = MakeRefcountedActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap mine") );
 
 	if( cache->m_bAnimationIsNoteColor[PART_HOLD_HEAD] )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_pHoldHeadActive[i] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold head active "+sNoteType[i]) );
-			m_pHoldHeadInactive[i] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold head inactive "+sNoteType[i]) );
+			m_pHoldHeadActive[i] = MakeRefcountedActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold head active "+sNoteType[i]) );
+			m_pHoldHeadInactive[i] = MakeRefcountedActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold head inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_pHoldHeadActive[0] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold head active") );
-		m_pHoldHeadInactive[0] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold head inactive") );
+		m_pHoldHeadActive[0] = MakeRefcountedActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold head active") );
+		m_pHoldHeadInactive[0] = MakeRefcountedActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold head inactive") );
 	}
 
 	if( cache->m_bAnimationIsNoteColor[PART_HOLD_TOP_CAP] )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldTopCapActive[i].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold topcap active "+sNoteType[i]) );
-			m_sprHoldTopCapInactive[i].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold topcap inactive "+sNoteType[i]) );
+			m_pHoldTopCapActive[i] = MakeRefcountedSprite( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold topcap active "+sNoteType[i]) );
+			m_pHoldTopCapInactive[i] = MakeRefcountedSprite( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold topcap inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldTopCapActive[0].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold topcap active") );
-		m_sprHoldTopCapInactive[0].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold topcap inactive") );
+		m_pHoldTopCapActive[0] = MakeRefcountedSprite( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold topcap active") );
+		m_pHoldTopCapInactive[0] = MakeRefcountedSprite( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold topcap inactive") );
 	}
 
 	if( cache->m_bAnimationIsNoteColor[PART_HOLD_BODY] )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldBodyActive[i].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold body active "+sNoteType[i]) );
-			m_sprHoldBodyInactive[i].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold body inactive "+sNoteType[i]) );
+			m_pHoldBodyActive[i] = MakeRefcountedSprite( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold body active "+sNoteType[i]) );
+			m_pHoldBodyInactive[i] = MakeRefcountedSprite( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold body inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldBodyActive[0].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold body active") );
-		m_sprHoldBodyInactive[0].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold body inactive") );
+		m_pHoldBodyActive[0] = MakeRefcountedSprite( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold body active") );
+		m_pHoldBodyInactive[0] = MakeRefcountedSprite( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold body inactive") );
 	}
 
 	if( cache->m_bAnimationIsNoteColor[PART_HOLD_BOTTOM_CAP] )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldBottomCapActive[i].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold bottomcap active "+sNoteType[i]) );
-			m_sprHoldBottomCapInactive[i].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold bottomcap inactive "+sNoteType[i]) );
+			m_pHoldBottomCapActive[i] = MakeRefcountedSprite( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold bottomcap active "+sNoteType[i]) );
+			m_pHoldBottomCapInactive[i] = MakeRefcountedSprite( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold bottomcap inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldBottomCapActive[0].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold bottomcap active") );
-		m_sprHoldBottomCapInactive[0].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold bottomcap inactive") );
+		m_pHoldBottomCapActive[0] = MakeRefcountedSprite( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold bottomcap active") );
+		m_pHoldBottomCapInactive[0] = MakeRefcountedSprite( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold bottomcap inactive") );
 	}
 
 	if( cache->m_bAnimationIsNoteColor[PART_HOLD_TAIL] )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_pHoldTailActive[i] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold tail active "+sNoteType[i]) );
-			m_pHoldTailInactive[i] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold tail inactive "+sNoteType[i]) );
+			m_pHoldTailActive[i] = MakeRefcountedActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold tail active "+sNoteType[i]) );
+			m_pHoldTailInactive[i] = MakeRefcountedActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold tail inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_pHoldTailActive[0] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold tail active") );
-		m_pHoldTailInactive[0] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold tail inactive") );
+		m_pHoldTailActive[0] = MakeRefcountedActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold tail active") );
+		m_pHoldTailInactive[0] = MakeRefcountedActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold tail inactive") );
 	}
 }
 
 void NoteDisplay::Update( float fDeltaTime )
 {
-	int i;
-
-	for( i=0; i<NOTE_COLOR_IMAGES; i++ )	if(m_pTapNote[i])			m_pTapNote[i]->Update(fDeltaTime);
-	for( i=0; i<NOTE_COLOR_IMAGES; i++ )	if(m_pTapAddition[i])		m_pTapAddition[i]->Update(fDeltaTime);
-	m_pTapMine->Update(fDeltaTime);
-	for( i=0; i<NOTE_COLOR_IMAGES; i++ )	if(m_pHoldHeadActive[i])	m_pHoldHeadActive[i]->Update(fDeltaTime);
-	for( i=0; i<NOTE_COLOR_IMAGES; i++ )	if(m_pHoldHeadInactive[i])	m_pHoldHeadInactive[i]->Update(fDeltaTime);
-	for( i=0; i<NOTE_COLOR_IMAGES; i++ )	if(m_pHoldTailActive[i])	m_pHoldTailActive[i]->Update(fDeltaTime);
-	for( i=0; i<NOTE_COLOR_IMAGES; i++ )	if(m_pHoldTailInactive[i])	m_pHoldTailInactive[i]->Update(fDeltaTime);
+	/* This function is static: it's called once per game loop, not once per
+	 * NoteDisplay.  Update each cached item exactly once. */
+	map<CString, NoteResource *>::iterator it;
+	for( it = g_NoteResource.begin(); it != g_NoteResource.end(); ++it )
+	{
+		NoteResource *pRes = it->second;
+		pRes->m_pActor->Update( fDeltaTime );
+	}
 }
 
 void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor )
@@ -338,7 +436,7 @@ Sprite * NoteDisplay::GetHoldTopCapSprite( float fNoteBeat, bool bIsBeingHeld )
 		nt = NOTE_TYPE_192ND;
 	nt = min( nt, (NoteType) (NOTE_COLOR_IMAGES-1) );
 	
-	Sprite *pSpriteOut = bIsBeingHeld ? &m_sprHoldTopCapActive[nt] : &m_sprHoldTopCapInactive[nt];
+	Sprite *pSpriteOut = bIsBeingHeld ? m_pHoldTopCapActive[nt] : m_pHoldTopCapInactive[nt];
 
 	SetActiveFrame( 
 		fNoteBeat, 
@@ -360,7 +458,7 @@ Sprite * NoteDisplay::GetHoldBottomCapSprite( float fNoteBeat, bool bIsBeingHeld
 		nt = NOTE_TYPE_192ND;
 	nt = min( nt, (NoteType) (NOTE_COLOR_IMAGES-1) );
 	
-	Sprite *pSpriteOut = bIsBeingHeld ? &m_sprHoldBottomCapActive[nt] : &m_sprHoldBottomCapInactive[nt];
+	Sprite *pSpriteOut = bIsBeingHeld ? m_pHoldBottomCapActive[nt] : m_pHoldBottomCapInactive[nt];
 
 	SetActiveFrame( 
 		fNoteBeat, 
@@ -405,7 +503,7 @@ Sprite *NoteDisplay::GetHoldBodySprite( float fNoteBeat, bool bIsBeingHeld )
 		nt = NOTE_TYPE_192ND;
 	nt = min( nt, (NoteType) (NOTE_COLOR_IMAGES-1) );
 
-	Sprite *pSpriteOut = bIsBeingHeld ? &m_sprHoldBodyActive[nt] : &m_sprHoldBodyInactive[nt];
+	Sprite *pSpriteOut = bIsBeingHeld ? m_pHoldBodyActive[nt] : m_pHoldBodyInactive[nt];
 
 	SetActiveFrame( 
 		fNoteBeat, 
