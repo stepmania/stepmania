@@ -510,12 +510,12 @@ class OptionRowHandlerLua : public OptionRowHandler
 public:
 	LuaExpression *m_pLuaTable;
 
-	OptionRowHandlerLua::OptionRowHandlerLua() { m_pLuaTable = NULL; Init(); }
+	OptionRowHandlerLua() { m_pLuaTable = new LuaExpression; Init(); }
+	virtual ~OptionRowHandlerLua() { delete m_pLuaTable; }
 	void Init()
 	{
 		OptionRowHandler::Init();
-		delete m_pLuaTable;
-		m_pLuaTable = new LuaExpression;
+		m_pLuaTable->Unset();
 	}
 	virtual void Load( OptionRowDefinition &defOut, CString sLuaFunction )
 	{
