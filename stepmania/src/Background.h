@@ -16,7 +16,7 @@
 #include "Quad.h"
 #include "ActorFrame.h"
 #include "BGAnimation.h"
-#include "Song.h"
+#include "song.h"
 
 
 class Background : public ActorFrame
