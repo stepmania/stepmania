@@ -135,16 +135,16 @@ static CString end_central_sig = "\x50\x4B\x05\x06";
 /* XXX */
 static unsigned short makeword(const unsigned char *b)
 {
-    return (unsigned short)((b[1] << 8) | b[0]);
+	return (unsigned short)((b[1] << 8) | b[0]);
 }
 
 
 static unsigned long makelong(const unsigned char *sig)
 {
-    return (((unsigned long)sig[3]) << 24)
-         + (((unsigned long)sig[2]) << 16)
-         + (((unsigned long)sig[1]) << 8)
-         +  ((unsigned long)sig[0]);
+	return (((unsigned long)sig[3]) << 24)
+		+ (((unsigned long)sig[2]) << 16)
+		+ (((unsigned long)sig[1]) << 8)
+		+  ((unsigned long)sig[0]);
 }
 
 void RageFileDriverZip::ReadEndCentralRecord( RageFile &zip, end_central_dir_record &ec )
@@ -163,21 +163,21 @@ void RageFileDriverZip::ReadEndCentralRecord( RageFile &zip, end_central_dir_rec
 	const int got = zip.Read( byterec, ECREC_SIZE+4 );
 	if( got == -1 )
 		RageException::Throw( "Couldn't open %s: %s", zip.GetPath().c_str(), zip.GetError().c_str() );
-    if ( got != ECREC_SIZE+4 )
+	if ( got != ECREC_SIZE+4 )
 		RageException::Throw( "%s: unexpected EOF", zip.GetPath().c_str() );
 
-    ec.number_this_disk = makeword(&byterec[NUMBER_THIS_DISK]);
-    ec.num_disk_start_cdir = makeword(&byterec[NUM_DISK_WITH_START_CENTRAL_DIR]);
-    ec.num_entries_centrl_dir_ths_disk = makeword(&byterec[NUM_ENTRIES_CENTRL_DIR_THS_DISK]);
-    ec.total_entries_central_dir = makeword(&byterec[TOTAL_ENTRIES_CENTRAL_DIR]);
-    ec.size_central_directory = makelong(&byterec[SIZE_CENTRAL_DIRECTORY]);
-    ec.offset_start_central_directory = makelong(&byterec[OFFSET_START_CENTRAL_DIRECTORY]);
-    ec.zipfile_comment_length = makeword(&byterec[ZIPFILE_COMMENT_LENGTH]);
+	ec.number_this_disk = makeword(&byterec[NUMBER_THIS_DISK]);
+	ec.num_disk_start_cdir = makeword(&byterec[NUM_DISK_WITH_START_CENTRAL_DIR]);
+	ec.num_entries_centrl_dir_ths_disk = makeword(&byterec[NUM_ENTRIES_CENTRL_DIR_THS_DISK]);
+	ec.total_entries_central_dir = makeword(&byterec[TOTAL_ENTRIES_CENTRAL_DIR]);
+	ec.size_central_directory = makelong(&byterec[SIZE_CENTRAL_DIRECTORY]);
+	ec.offset_start_central_directory = makelong(&byterec[OFFSET_START_CENTRAL_DIRECTORY]);
+	ec.zipfile_comment_length = makeword(&byterec[ZIPFILE_COMMENT_LENGTH]);
 
-    const int expect_ecrec_offset = ec.offset_start_central_directory + ec.size_central_directory;
-    if( expect_ecrec_offset > OrigPos  )
+	const int expect_ecrec_offset = ec.offset_start_central_directory + ec.size_central_directory;
+	if( expect_ecrec_offset > OrigPos  )
 		RageException::Throw( "Couldn't open %s: missing %ld bytes in zipfile", zip.GetPath().c_str(),
-			expect_ecrec_offset - OrigPos  );
+				expect_ecrec_offset - OrigPos  );
 }
 
 void RageFileDriverZip::ParseZipfile()
@@ -248,8 +248,8 @@ void RageFileDriverZip::ParseZipfile()
 	zip.Seek( ec.offset_start_central_directory );
 
 	/* Loop through files in central directory. */
-    while(1)
-    {
+	while(1)
+	{
 		CString sig;
 		if ( zip.Read( sig, 4 ) != 4 )
 			break;
@@ -311,19 +311,19 @@ int RageFileDriverZip::ProcessCdirFileHdr( RageFile &zip, FileInfo &info )
 	 * conversions (byte ordering, structure padding compensation--do so by
 	 * copying the data from the array into which it was read (byterec) to the
 	 * usable struct. */
-    cdir_byte_hdr byterec;
+	cdir_byte_hdr byterec;
 	int got = zip.Read( (char *)byterec, CREC_SIZE );
-    if ( got == -1 )
+	if ( got == -1 )
 		RageException::Throw( "Couldn't open %s: %s", zip.GetPath().c_str(), zip.GetError().c_str() );
 	if ( got != CREC_SIZE )
 	{
 		LOG->Warn( "%s: unexpected EOF", zip.GetPath().c_str() );
-        return -1;
+		return -1;
 	}
 
-//    crec.version_made_by[0] = byterec[C_VERSION_MADE_BY_0];
-//    crec.version_made_by[1] = byterec[C_VERSION_MADE_BY_1];
-    const int version_needed_to_extract = byterec[C_VERSION_NEEDED_TO_EXTRACT_0];
+//	crec.version_made_by[0] = byterec[C_VERSION_MADE_BY_0];
+//	crec.version_made_by[1] = byterec[C_VERSION_MADE_BY_1];
+	const int version_needed_to_extract = byterec[C_VERSION_NEEDED_TO_EXTRACT_0];
 	if( version_needed_to_extract > 20 ) /* compatible with PKUNZIP 2.0 */
 	{
 		LOG->Warn( "File \"%s\" in \"%s\" uses unsupported ZIP version %i.%i",
@@ -332,7 +332,7 @@ int RageFileDriverZip::ProcessCdirFileHdr( RageFile &zip, FileInfo &info )
 		return 0;
 	}
 
-    const int general_purpose_bit_flag = makeword(&byterec[C_GENERAL_PURPOSE_BIT_FLAG]);
+	const int general_purpose_bit_flag = makeword(&byterec[C_GENERAL_PURPOSE_BIT_FLAG]);
 	if( general_purpose_bit_flag & 1 )
 	{
 		LOG->Warn( "Skipped encrypted \"%s\" in \"%s\"",
@@ -354,7 +354,7 @@ int RageFileDriverZip::ProcessCdirFileHdr( RageFile &zip, FileInfo &info )
 	info.offset = makelong(&byterec[C_RELATIVE_OFFSET_LOCAL_HEADER]);
 
 	/* Skip directories. */
-    if( external_file_attributes & 0x08 )
+	if( external_file_attributes & 0x08 )
 		return 0;
 
 	got = zip.Read( info.fn, info.filename_length );
@@ -366,7 +366,7 @@ int RageFileDriverZip::ProcessCdirFileHdr( RageFile &zip, FileInfo &info )
 		return 0;
 	}
 
-    if( info.compression_method != STORED && info.compression_method != DEFLATED )
+	if( info.compression_method != STORED && info.compression_method != DEFLATED )
 	{
 		LOG->Warn( "File \"%s\" in \"%s\" uses unsupported compression method %i",
 			info.fn.c_str(), zip.GetRealPath().c_str(), info.compression_method );
@@ -374,7 +374,7 @@ int RageFileDriverZip::ProcessCdirFileHdr( RageFile &zip, FileInfo &info )
 		return 0;
 	}
 
-    return 1;
+	return 1;
 }
 
 RageFileDriverZip::~RageFileDriverZip()
@@ -429,7 +429,7 @@ RageFileBasic *RageFileDriverZip::Open( const CString &path, int mode, int &err 
 		info->data_offset = zip.Tell() + filename_length + extra_field_length;
 	}
 
-    zip.Seek( info->data_offset );
+	zip.Seek( info->data_offset );
 
 	switch( info->compression_method )
 	{
@@ -459,13 +459,13 @@ RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFile &f, const FileInf
 {
 	decomp_buf_avail = 0;
 
-    dstrm.zalloc = Z_NULL;
-    dstrm.zfree = Z_NULL;
+	dstrm.zalloc = Z_NULL;
+	dstrm.zfree = Z_NULL;
 
-    int err = inflateInit2( &dstrm, -MAX_WBITS );
-    if( err == Z_MEM_ERROR )
+	int err = inflateInit2( &dstrm, -MAX_WBITS );
+	if( err == Z_MEM_ERROR )
 		RageException::Throw( "inflateInit2( %i ): out of memory", -MAX_WBITS );
-    if( err != Z_OK )
+	if( err != Z_OK )
 		LOG->Trace( "Huh? inflateInit2() err = %i", err );
 
 	decomp_buf_ptr = decomp_buf;
