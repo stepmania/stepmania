@@ -85,7 +85,10 @@ ScreenTitleMenu::ScreenTitleMenu() : Screen("ScreenTitleMenu")
 
 	m_textSongs.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textSongs.Command( SONGS_ON_COMMAND );
-	m_textSongs.SetText( ssprintf("%d songs in %d groups, %d courses, %d unlocks", SONGMAN->GetNumSongs(), SONGMAN->GetNumGroups(), SONGMAN->GetNumCourses(), GAMESTATE->m_pUnlockingSys->GetNumUnlocks() ));
+	CString text = ssprintf("%d songs in %d groups, %d courses", SONGMAN->GetNumSongs(), SONGMAN->GetNumGroups(), SONGMAN->GetNumCourses() );
+	if( PREFSMAN->m_bUseUnlockSystem )
+		text += ssprintf(", %d unlocks", GAMESTATE->m_pUnlockingSys->GetNumUnlocks() );
+	m_textSongs.SetText( text );
 	this->AddChild( &m_textSongs );
 
 
