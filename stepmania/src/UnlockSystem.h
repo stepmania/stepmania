@@ -2,6 +2,8 @@
 #define UNLOCK_SYSTEM_H
 
 #include "Grade.h"
+#include <set>
+
 /*
 -----------------------------------------------------------------------------
  Class: UnlockSystem
@@ -40,14 +42,11 @@ struct UnlockEntry
 	Course	*m_pCourse;
 
 	float	m_fRequired[NUM_UNLOCK_TYPES];
-	int		m_iRouletteSeed;
+	int		m_iCode;
 
-	bool	isLocked;    // cached locked tag
 	bool	IsCourse() const { return m_pCourse != NULL; }
 
-	void	UpdateLocked();  // updates isLocked
-
-	void	UpdateData();
+	bool	IsLocked() const;
 };
 
 class UnlockSystem
@@ -87,28 +86,28 @@ public:
 	void UnlockClearStage();
 	void UnlockToasty();
 
-	// unlocks given song in roulette
-	void RouletteUnlock( const Song *song );
+	void UnlockCode( int num );
 
-	// read and write unlock in values
-	bool ReadValues( CString filename);
-	bool WriteValues( CString filename);
-	
+	// unlocks the song's code
+	void UnlockSong( const Song *song );
+
 	UnlockEntry *FindLockEntry( CString lockname );
 
 	// All locked songs are stored here
 	vector<UnlockEntry>	m_SongEntries;
 
 private:
+	// read and write unlock in values
+	bool ReadValues();
+	bool WriteValues() const;
+	
 	UnlockEntry *FindSong( const Song *pSong );
 	UnlockEntry *FindCourse( const Course *pCourse );
 
-	// makes RouletteSeeds more efficient
-	void InitRouletteSeeds(int MaxRouletteSlot);  
-
 	// unlock values, cached
 	float m_fScores[NUM_UNLOCK_TYPES];
-	CString RouletteSeeds;
+	set<int> m_UnlockedCodes;
+	set<int> m_RouletteCodes; // "codes" which are available in roulette and which unlock if rouletted
 };
 
 extern UnlockSystem*	UNLOCKSYS;  // global and accessable from anywhere in program

@@ -86,7 +86,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 		entry->Command(IconCommand);
 		Unlocks.push_back(entry);
 
-		if ( !pSong->isLocked )
+		if ( !pSong->IsLocked() )
 			this->AddChild(Unlocks[Unlocks.size() - 1]);
 	}
 
@@ -156,7 +156,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 
 			if (pSong != NULL && pSong->m_pSong != NULL)
 			{
-				if( pSong->isLocked) // song is locked
+				if( pSong->IsLocked() ) // song is locked
 				{
 					text->SetText("???");
 					text->SetZoomX(1);
@@ -215,7 +215,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 					
 				if (UNLOCK_TEXT_SCROLL == 3)
 				{
-					if (!pSong->isLocked)
+					if ( !pSong->IsLocked() )
 						LastUnlocks.push_back(i);
 				}
 			}

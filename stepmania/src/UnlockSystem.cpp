@@ -25,7 +25,6 @@
 UnlockSystem*	UNLOCKSYS = NULL;	// global and accessable from anywhere in our program
 
 #define UNLOCKS_PATH "Data/Unlocks.dat"
-
 #define MEMCARD_PATH "Data/MemCard.ini"
 
 static const char *g_UnlockNames[NUM_UNLOCK_TYPES] =
@@ -41,32 +40,26 @@ static const char *g_UnlockNames[NUM_UNLOCK_TYPES] =
 
 UnlockSystem::UnlockSystem()
 {
+	UNLOCKSYS = this;
+
 	LoadFromDATFile();
 
 	memset( m_fScores, 0, sizeof(m_fScores) );
 
-	RouletteSeeds = "1";
-
-	ReadValues( MEMCARD_PATH ); // in case its ever accessed, 
+	ReadValues(); // in case its ever accessed, 
 									// we want the values to be available
-	WriteValues( MEMCARD_PATH );  // create if it does not exist
+	WriteValues();  // create if it does not exist
 }
 
-void UnlockSystem::RouletteUnlock( const Song *song )
+void UnlockSystem::UnlockSong( const Song *song )
 {
-	// if its an extra stage, don't count it
-	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-		return;
-
-	UnlockEntry *p = FindSong( song );
+	const UnlockEntry *p = FindSong( song );
 	if( !p )
 		return;  // does not exist
-	if( p->m_iRouletteSeed == 0 )
-		return;  // already unlocked
+	if( p->m_iCode == -1 )
+		return;
 
-	ASSERT( p->m_iRouletteSeed < (int) RouletteSeeds.size() );
-	RouletteSeeds[p->m_iRouletteSeed] = '1';
-	WriteValues( MEMCARD_PATH );
+	UnlockCode( p->m_iCode );
 }
 
 bool UnlockSystem::CourseIsLocked( const Course *course )
@@ -78,8 +71,7 @@ bool UnlockSystem::CourseIsLocked( const Course *course )
 	if( p == NULL )
 		return false;
 
-	p->UpdateLocked();
-	return p->isLocked;
+	return p->IsLocked();
 }
 
 bool UnlockSystem::SongIsLocked( const Song *song )
@@ -91,21 +83,24 @@ bool UnlockSystem::SongIsLocked( const Song *song )
 	if( p == NULL )
 		return false;
 
-	p->UpdateLocked();
-
-	LOG->Trace( "current status: %slocked", p->isLocked? "":"un" );
-	
-	return p->isLocked;
+	return p->IsLocked();
 }
 
+/* Return true if the song is available in roulette (overriding #SELECTABLE). */
 bool UnlockSystem::SongIsRoulette( const Song *song )
 {
 	if( !PREFSMAN->m_bUseUnlockSystem )
 		return false;
 
 	const UnlockEntry *p = FindSong( song );
+	if( !p )
+		return false;
 
-	return p && p->m_iRouletteSeed != 0;
+	/* If the song is locked by a code, and it's a roulette code, honor IsLocked. */
+	if( p->m_iCode != -1 && 
+		m_RouletteCodes.find( p->m_iCode ) != m_RouletteCodes.end() )
+		return p->IsLocked();
+	return true;
 }
 
 UnlockEntry *UnlockSystem::FindLockEntry( CString songname )
@@ -139,33 +134,23 @@ UnlockEntry *UnlockSystem::FindCourse( const Course *pCourse )
 UnlockEntry::UnlockEntry()
 {
 	memset( m_fRequired, 0, sizeof(m_fRequired) );
-	m_iRouletteSeed = 0;
+	m_iCode = -1;
 
 	m_pSong = NULL;
 	m_pCourse = NULL;
-
-	isLocked = true;
 }
 
 
-void UnlockEntry::UpdateLocked()
+bool UnlockEntry::IsLocked() const
 {
-	if( !isLocked )
-		return;
-	
-	isLocked = true;
 	for( int i = 0; i < NUM_UNLOCK_TYPES; ++i )
 		if( m_fRequired[i] && UNLOCKSYS->m_fScores[i] >= m_fRequired[i] )
-			isLocked = false;
+			return false;
 
-	if ( m_iRouletteSeed )
-	{
-		const CString &tmp = UNLOCKSYS->RouletteSeeds;
+	if( m_iCode != -1 && UNLOCKSYS->m_UnlockedCodes.find(m_iCode) != UNLOCKSYS->m_UnlockedCodes.end() )
+		return false;
 
-		LOG->Trace("Seed in question: %d Roulette seeds: %s", m_iRouletteSeed, tmp.c_str() );
-		if( tmp[m_iRouletteSeed] == '1' )
-			isLocked = false;
-	}
+	return true;
 }
 
 bool UnlockSystem::LoadFromDATFile()
@@ -179,7 +164,6 @@ bool UnlockSystem::LoadFromDATFile()
 		return false;
 	}
 
-	int MaxRouletteSlot = 0;
 	unsigned i, j;
 
 	for( i=0; i<msd.GetNumValues(); i++ )
@@ -194,6 +178,13 @@ bool UnlockSystem::LoadFromDATFile()
 			continue;
 		}
 
+		if( stricmp(sParams[0],"ROULETTE") )
+		{
+			for( unsigned j = 1; j < sParams.params.size(); ++j )
+				m_RouletteCodes.insert( atoi(sParams[j]) );
+			continue;
+		}
+		
 		if( stricmp(sParams[0],"UNLOCK") )
 		{
 			LOG->Warn("Unrecognized unlock tag \"%s\", ignored.", sValueName.c_str());
@@ -232,25 +223,24 @@ bool UnlockSystem::LoadFromDATFile()
 				current.m_fRequired[UNLOCK_TOASTY] = datavalue;
 			if( unlock_type == "CS" )
 				current.m_fRequired[UNLOCK_CLEARED] = datavalue;
+			if( unlock_type == "CODE" )
+				current.m_iCode = (int) datavalue;
 			if( unlock_type == "RO" )
 			{
-				current.m_iRouletteSeed = (int)datavalue;
-				MaxRouletteSlot = max( MaxRouletteSlot, (int) datavalue );
+				m_UnlockedCodes.insert( (int)datavalue );
+				m_RouletteCodes.insert( (int)datavalue );
 			}
 		}
-		current.UpdateLocked();
 
 		m_SongEntries.push_back(current);
 	}
-
-	InitRouletteSeeds( MaxRouletteSlot ); // resize roulette seeds for more efficient use of file
 
 	UpdateSongs();
 	
 	for(i=0; i < m_SongEntries.size(); i++)
 	{
 		CString tmp = "  ";
-		if (!m_SongEntries[i].isLocked) tmp = "un";
+		if (!m_SongEntries[i].IsLocked()) tmp = "un";
 
 		LOG->Trace( "UnlockSystem Entry %s", m_SongEntries[i].m_sSongName.c_str() );
 		if (m_SongEntries[i].m_pSong != NULL)
@@ -259,7 +249,7 @@ bool UnlockSystem::LoadFromDATFile()
 		LOG->Trace( "                DP %f", m_SongEntries[i].m_fRequired[UNLOCK_DANCE_POINTS] );
 		LOG->Trace( "                SP %f", m_SongEntries[i].m_fRequired[UNLOCK_SONG_POINTS] );
 		LOG->Trace( "                CS %f", m_SongEntries[i].m_fRequired[UNLOCK_CLEARED] );
-		LOG->Trace( "                RO %i", m_SongEntries[i].m_iRouletteSeed );
+		LOG->Trace( "              CODE %i", m_SongEntries[i].m_iCode );
 		LOG->Trace( "            Status %slocked", tmp.c_str() );
 		if (m_SongEntries[i].m_pSong)
 			LOG->Trace( "                   Found matching song entry" );
@@ -298,56 +288,57 @@ void UnlockSystem::UpdateSongs()
 		if (m_SongEntries[i].m_pSong   == NULL &&
 			m_SongEntries[i].m_pCourse == NULL)
 		{
-			LOG->Warn("UnlockSystem::UpdateSongs(): Cannot find a "
-			"matching entry for %s.\nPlease check the song title.  "
-			"Song titles should include the title and song title, e.g. "
-			"Can't Stop Fallin' In Love -Speed Mix-.",
-			m_SongEntries[i].m_sSongName.c_str() );
+			LOG->Warn("Unlock: Cannot find a matching entry for \"%s\"", m_SongEntries[i].m_sSongName.c_str() );
 			m_SongEntries.erase(m_SongEntries.begin() + i);
+			--i;
 		}
 	}
 }
 
-// This is mainly to streamline the INI for unnecessary values.
-void UnlockSystem::InitRouletteSeeds(int MaxRouletteSlot)
-{
-	MaxRouletteSlot++; // we actually need one more
-
-	// Truncate the value if we have too many seeds:
-	if ( (int)RouletteSeeds.size() > MaxRouletteSlot )
-		RouletteSeeds = RouletteSeeds.Left( MaxRouletteSlot );
-
-	// Lengthen the value if we have too few seeds:
-	while ( (int)RouletteSeeds.size() < MaxRouletteSlot )
-		RouletteSeeds += "0";
-}
-
-bool UnlockSystem::ReadValues( CString filename)
+bool UnlockSystem::ReadValues()
 {
 	IniFile data;
 
-	data.SetPath( filename );
+	data.SetPath( MEMCARD_PATH );
 
 	if( !data.ReadFile() )
 		return false;
 
 	for( int i = 0; i < NUM_UNLOCK_TYPES; ++i )
 		data.GetValue( "Unlock", g_UnlockNames[i],		m_fScores[i] );
-	data.GetValue ( "Unlock", "RouletteSeeds",				RouletteSeeds );
+
+	m_UnlockedCodes.clear();
+	CString s;
+	if( data.GetValue( "Unlock", "UnlockedCodes", s ) )
+	{
+		vector<CString> sCodes;
+		split( s, ",", sCodes, true );
+		for( unsigned c = 0; c < sCodes.size(); ++c )
+		{
+			const int n = atoi( sCodes[c] );
+			m_UnlockedCodes.insert( n );
+		}
+	}
 
 	return true;
 }
 
 
-bool UnlockSystem::WriteValues( CString filename)
+bool UnlockSystem::WriteValues() const
 {
 	IniFile data;
 
-	data.SetPath( filename );
+	data.SetPath( MEMCARD_PATH );
 
 	for( int i = 0; i < NUM_UNLOCK_TYPES; ++i )
 		data.SetValue( "Unlock", g_UnlockNames[i],		m_fScores[i] );
-	data.SetValue( "Unlock", "RouletteSeeds",				RouletteSeeds );
+
+	vector<CString> sCodes;
+	for( set<int>::const_iterator it = m_UnlockedCodes.begin(); it != m_UnlockedCodes.end(); ++it )
+		sCodes.push_back( ssprintf("%i", *it) );
+
+	const CString list = join( ",", sCodes );
+	data.SetValue( "Unlock", "UnlockedCodes", list );
 
 	data.WriteFile();
 
@@ -356,14 +347,14 @@ bool UnlockSystem::WriteValues( CString filename)
 
 void UnlockSystem::UnlockAddAP(float credit)
 {
-	ReadValues( MEMCARD_PATH );
+	ReadValues();
 	m_fScores[UNLOCK_ARCADE_POINTS] += credit;
-	WriteValues( MEMCARD_PATH );
+	WriteValues();
 }
 
 void UnlockSystem::UnlockAddAP(Grade grade)
 {
-	ReadValues( MEMCARD_PATH );
+	ReadValues();
 	switch( grade )
 	{
 	case GRADE_FAILED:
@@ -380,29 +371,29 @@ void UnlockSystem::UnlockAddAP(Grade grade)
 		m_fScores[UNLOCK_ARCADE_POINTS] += 1;
 		break;
 	}
-	WriteValues( MEMCARD_PATH );
+	WriteValues();
 }
 
 void UnlockSystem::UnlockAddDP(float credit)
 {
-	ReadValues( MEMCARD_PATH );
+	ReadValues();
 
 	// we don't want to ever take away dance points
 	if( credit > 0 )
 		m_fScores[UNLOCK_DANCE_POINTS] += credit;
-	WriteValues( MEMCARD_PATH );
+	WriteValues();
 }
 
 void UnlockSystem::UnlockAddSP(float credit)
 {
-	ReadValues( MEMCARD_PATH );
+	ReadValues();
 	m_fScores[UNLOCK_SONG_POINTS] += credit;
-	WriteValues( MEMCARD_PATH );
+	WriteValues();
 }
 
 void UnlockSystem::UnlockAddSP( Grade grade )
 {
-	ReadValues( MEMCARD_PATH );
+	ReadValues();
 
 	// TODO: move these to PREFS
 	switch( grade )
@@ -416,35 +407,42 @@ void UnlockSystem::UnlockAddSP( Grade grade )
 	case GRADE_TIER_7:/*D*/		m_fScores[UNLOCK_SONG_POINTS] += 1;	break;
 	}
 
-	WriteValues( MEMCARD_PATH );
+	WriteValues();
 }
 
 void UnlockSystem::UnlockClearExtraStage()
 {
-	ReadValues( MEMCARD_PATH );
+	ReadValues();
 	++m_fScores[UNLOCK_EXTRA_CLEARED];
-	WriteValues( MEMCARD_PATH );
+	WriteValues();
 }
 
 void UnlockSystem::UnlockFailExtraStage()
 {
-	ReadValues( MEMCARD_PATH );
+	ReadValues();
 	++m_fScores[UNLOCK_EXTRA_FAILED];
-	WriteValues( MEMCARD_PATH );
+	WriteValues();
 }
 
 void UnlockSystem::UnlockClearStage()
 {
-	ReadValues( MEMCARD_PATH );
+	ReadValues();
 	++m_fScores[UNLOCK_CLEARED];
-	WriteValues( MEMCARD_PATH );
+	WriteValues();
 }
 
 void UnlockSystem::UnlockToasty()
 {
-	ReadValues( MEMCARD_PATH );
+	ReadValues();
 	++m_fScores[UNLOCK_TOASTY];
-	WriteValues( MEMCARD_PATH );
+	WriteValues();
+}
+
+void UnlockSystem::UnlockCode( int num )
+{
+	ReadValues();
+	m_UnlockedCodes.insert( num );
+	WriteValues();
 }
 
 int UnlockSystem::GetNumUnlocks() const

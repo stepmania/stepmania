@@ -346,13 +346,14 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 	{
 		Song* pSong = apAllSongs[i];
 
-		/* If we're on an extra stage, and this song is selected, ignore
-			* #SELECTABLE. */
+		/* If we're on an extra stage, and this song is selected, ignore #SELECTABLE. */
 		if( pSong != GAMESTATE->m_pCurSong || 
 			(!GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2()) ) {
 			/* Hide songs that asked to be hidden via #SELECTABLE. */
 			if( so!=SORT_ROULETTE && !pSong->NormallyDisplayed() )
 				continue;
+			/* Don't show in roulette if #SELECTABLE:NO unless some other song in the same
+			 * roulette class has previously been unlocked. */
 			if( so==SORT_ROULETTE && !(pSong->RouletteDisplayed()
 				|| UNLOCKSYS->SongIsRoulette( pSong )) )
 				continue;
@@ -1215,9 +1216,9 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 		StartRandom();
 		return false;
 	case TYPE_SONG:
-		if (PREFSMAN->m_bUseUnlockSystem)
-			UNLOCKSYS->RouletteUnlock( m_CurWheelItemData[m_iSelection]->m_pSong );
-		// fall-through - we want to check for unlocking only if its a song
+		if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
+			UNLOCKSYS->UnlockSong( m_CurWheelItemData[m_iSelection]->m_pSong );
+		return true;
 	case TYPE_COURSE:
 		return true;
 	case TYPE_SORT:
