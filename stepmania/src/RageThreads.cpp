@@ -606,7 +606,8 @@ void RageMutexImpl::Lock()
 	}
 
 	ThreadSlot *slot = FindThread( LockedBy );
-	Crash_BacktraceThread( slot? slot->ThreadHandle:NULL );
+	ForceCrashHandlerDeadlock( ssprintf("Thread deadlock on mutex %s", m_Parent->GetName().c_str()),
+		slot? slot->ThreadHandle:NULL );
 }
 
 void RageMutexImpl::Unlock()

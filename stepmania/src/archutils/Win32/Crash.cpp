@@ -60,6 +60,16 @@ extern HINSTANCE g_hInstance;
 #define new not_allowed_here
 
 
+static void GetVDIPath( char *buf, int bufsiz )
+{
+	GetModuleFileName( NULL, buf, bufsiz );
+	buf[bufsiz-5] = 0;
+	char *p = strrchr( buf, '.' );
+	if( p )
+		strcpy( p, ".vdi" );
+	else
+		strcat( buf, ".vdi" );
+}
 
 static void SpliceProgramPath(char *buf, int bufsiz, const char *fn) {
 	char tbuf[MAX_PATH];
@@ -84,6 +94,7 @@ struct VDDebugInfoContext
 	const char *pFuncNameHeap;
 	const unsigned long (*pSegments)[2];
 	int		nSegments;
+	char	sFilename[1024];
 };
 
 
@@ -474,13 +485,12 @@ bool VDDebugInfoInitFromFile( VDDebugInfoContext *pctx )
 	if( pctx->Loaded() )
 		return true;
 
-	char pszFilename[1024];
-	SpliceProgramPath(pszFilename, sizeof(pszFilename), "StepMania.vdi");
+	GetVDIPath( pctx->sFilename, sizeof(pctx->sFilename) );
 
 	pctx->pRawBlock = NULL;
 	pctx->pRVAHeap = NULL;
 
-	HANDLE h = CreateFile(pszFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE h = CreateFile(pctx->sFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
 	if (INVALID_HANDLE_VALUE == h)
 		return false;
@@ -745,13 +755,14 @@ static bool ReportCallStack( HWND hwnd, HANDLE hFile, const void **Backtrace )
 	VDDebugInfoInitFromFile( &g_debugInfo );
 	if( !g_debugInfo.Loaded() )
 	{
-		Report(hwnd, hFile, "Could not open debug resource file (StepMania.vdi).");
+		Report( hwnd, hFile, "Could not open debug resource file (%s).", g_debugInfo.sFilename );
 		return false;
 	}
 
 	if( g_debugInfo.nBuildNumber != int(version_num) )
 	{
-		Report(hwnd, hFile, "Incorrect StepMania.vdi file (build %d, expected %d) for this version of " PRODUCT_NAME " -- call stack unavailable.", g_debugInfo.nBuildNumber, int(version_num));
+		Report(hwnd, hFile, "Incorrect %s file (build %d, expected %d) for this version of " PRODUCT_NAME " -- call stack unavailable.",
+			g_debugInfo.sFilename, g_debugInfo.nBuildNumber, int(version_num));
 		return false;
 	}
 
@@ -938,41 +949,30 @@ void NORETURN debug_crash()
 }
 
 /* Get a stack trace of the current thread and the specified thread. */
-void NORETURN Crash_BacktraceThread( HANDLE hThread )
+void ForceCrashHandlerDeadlock( const char *reason, HANDLE hThread )
 {
+	strncpy( g_CrashInfo.m_CrashReason, reason, sizeof(g_CrashInfo.m_CrashReason) );
+	g_CrashInfo.m_CrashReason[ sizeof(g_CrashInfo.m_CrashReason)-1 ] = 0;
+
 	if( hThread == NULL )
 	{
-		strcpy( g_CrashInfo.m_CrashReason, "Crash reason: Thread deadlock (with NULL?)" );
-		debug_crash();
+		strcat( g_CrashInfo.m_CrashReason, "(hThread == NULL)" );
+	} else {
+		/* Suspend the other thread we're going to backtrace.  (We need to at least suspend
+		 * hThread, for GetThreadContext to work.) */
+		RageThread::HaltAllThreads( false );
+
+		CONTEXT context;
+		context.ContextFlags = CONTEXT_FULL;
+		if( !GetThreadContext( hThread, &context ) )
+			strcat( g_CrashInfo.m_CrashReason, "(GetThreadContext failed)" );
+		else
+		{
+			static const void *BacktracePointers[BACKTRACE_MAX_SIZE];
+			do_backtrace( g_CrashInfo.m_AlternateThreadBacktrace, BACKTRACE_MAX_SIZE, GetCurrentProcess(), hThread, &context );
+		}
 	}
 
-#if 0
-	/* Ugh.  GetThreadId is XP-only or 2003 Server-only or something.  How can we do this? */
-	if( GetThreadId( hThread ) == GetCurrentThreadId() )
-	{
-		/* hThread is the current thread.  This shouldn't happen. */
-		strcpy( g_CrashInfo.m_CrashReason, "Crash reason: Thread deadlock (with the current thread?)" );
-		debug_crash();
-	}
-#endif
-
-	/* Suspend the other thread we're going to backtrace.  (We need to at least suspend
-	 * hThread, for GetThreadContext to work.) */
-	RageThread::HaltAllThreads( false );
-	// SuspendThread( hThread );
-
-	CONTEXT context;
-	context.ContextFlags = CONTEXT_FULL;
-	if( !GetThreadContext( hThread, &context ) )
-	{
-		strcpy( g_CrashInfo.m_CrashReason, "Crash reason: Thread deadlock (GetThreadContext failed)" );
-		debug_crash();
-	}
-
-	static const void *BacktracePointers[BACKTRACE_MAX_SIZE];
-	do_backtrace( g_CrashInfo.m_AlternateThreadBacktrace, BACKTRACE_MAX_SIZE, GetCurrentProcess(), hThread, &context );
-
-	strcpy( g_CrashInfo.m_CrashReason, "Crash reason: Thread deadlock" );
 	debug_crash();
 }
 
