@@ -263,7 +263,7 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 
 	for( unsigned i=0; i<out.m_apNotes.size(); i++ ) 
 	{
-		if( -1 != out.m_apNotes[i]->GetDescription().Find("autogen") )
+		if( out.m_apNotes[i]->IsAutogen() )
 			continue;	// don't save autogen notes
 
 		if(!WriteDWINotesTag( fp, *out.m_apNotes[i] ))
