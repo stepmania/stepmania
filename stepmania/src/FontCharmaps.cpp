@@ -146,6 +146,7 @@ static void Init()
 	charmaps["iso-8859-1"] = map_iso_8859_1;
 	charmaps["cp1252"] = map_cp1252;
 	charmaps["iso-8859-2"] = map_iso_8859_2;
+	charmaps["korean-jamo"] = map_korean_jamo;
 }
 
 const wchar_t *FontCharmaps::get_char_map(CString name)

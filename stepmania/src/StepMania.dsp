@@ -2174,6 +2174,10 @@ SOURCE=.\UnlockSystem.h
 # End Group
 # Begin Source File
 
+SOURCE=.\cursor1.cur
+# End Source File
+# Begin Source File
+
 SOURCE=.\error.bmp
 # End Source File
 # Begin Source File

@@ -346,35 +346,38 @@ ArtistFrom: (Nobuo Uematsu)|(Uematsu Nobuo)
 ArtistTo: 植松伸夫
 
 [Courses]
-TitleFrom: (Kidou)|(Demon Road)|(Road of Oni)|(Oni Michi)
+TitleFrom: .*(Kidou).*|(Demon Road)|(Road of Oni)|(Oni Michi)
 TitleTo: 鬼道
 *
-TitleFrom: (Kidou 2)|(Demon Road 2)|(Road of Oni 2)|(Oni Michi 2)
+TitleFrom: .*(Kidou 2).*|(Demon Road 2)|(Road of Oni 2)|(Oni Michi 2)
 TitleTo: 鬼道 弐
 *
 TitleFrom: Love
 TitleTo: Love ♡
 *
-TitleFrom: Love Love
+TitleFrom: (Love Love)|(Love)|(.*Love Heart)
 TitleTo: Love ♡
 *
-TitleFrom: (2 ?MB)|(Road of 2 ?MB)
+TitleFrom: (2 ?MB)|(.*Road of 2 ?MB)
 TitleTo: 2MB道
 *
-TitleFrom: Dancemania( Oni)?
+TitleFrom: (.*)Dancemania( Oni)?
 TitleTo: Dancemania 鬼
 *
-TitleFrom: (TaQ( Oni)?)|(Road of TaQ)
+TitleFrom: (TaQ( Oni)?)|(.*Road of TaQ)
 TitleTo: TaQ 道
 *
-TitleFrom: (Legend Road)|(Road of Legend)
+TitleFrom: (Legend Road)|(Road of Legend)|.*(Legendary Road)
 TitleTo: 伝説道
 *
-TitleFrom: (Slow Demon Road)|(Road of Slow)
+TitleFrom: (.*Slow Demon Road)|(Road of Slow)
 TitleTo: 鬼の遅道
 *
 # "Road of True"?  Maybe "Truth"?
-TitleFrom: (True Demon Road)|(Road of Tru.*)
+TitleFrom: (.*True Demon Road)|(Road of Tru.*)
 TitleTo: 真鬼道
 *
-
+#DWInsanity's Ayumi Platinum Course
+TitleFrom: Ayumi( Platinum)?
+TitleTo: あゆみ Platinum
+*
