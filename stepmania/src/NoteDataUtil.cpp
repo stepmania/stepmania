@@ -276,6 +276,8 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 	int bOffsetIncreasing = true;
 
 	int iLastRow = Original.GetLastRow();
+
+	int iLastMeasure = 0;
 	for( int r=0; r<=iLastRow; )
 	{
 		// copy notes in this measure
@@ -288,7 +290,8 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 		}
 		r++;
 
-		if( r % (ROWS_PER_MEASURE*4) == 0 )	// adjust sliding window every 4 measures
+		const int iMeasure = r / ROWS_PER_MEASURE;
+		if( iMeasure / 4 != iLastMeasure / 4 ) // adjust sliding window every 4 measures
 		{
 			// See if there is a hold crossing the beginning of this measure
 			bool bHoldCrossesThisMeasure = false;
@@ -313,6 +316,8 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 				CLAMP( iCurTrackOffset, iTrackOffsetMin, iTrackOffsetMax );
 			}
 		}
+
+		iLastMeasure = iMeasure;
 	}
 
 	out.Convert4sToHoldNotes();
@@ -894,7 +899,7 @@ void NoteDataUtil::Wide( NoteData &inout, float fStartBeat, float fEndBeat )
 			continue;	// skip
 
 		bool bSpaceAroundIsEmpty = true;	// no other notes with a 1/8th of this row
-		for( int j=i-ROWS_PER_BEAT/2+1; j<i+ROWS_PER_BEAT/2-1; j++ )
+		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, j, i-ROWS_PER_BEAT/2+1, i+ROWS_PER_BEAT/2 )
 			if( j!=i  &&  inout.GetNumTapNonEmptyTracks(j) > 0 )
 			{
 				bSpaceAroundIsEmpty = false;
@@ -994,16 +999,12 @@ void NoteDataUtil::InsertIntelligentTaps(
 		
 		// don't insert a new note if there's already one within this interval
 		bool bNoteInMiddle = false;
-		for( int j=iRowEarlier+1; j<=iRowLater-1; j++ )
-			if( !inout.IsRowEmpty(j) )
-			{
-				bNoteInMiddle = true;
-				break;
-			}
+		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, j, iRowEarlier+1, iRowLater-1 )
+			bNoteInMiddle = true;
 		if( bNoteInMiddle )
 			continue;
 
-		// add a note determinitsitcally somewhere on a track different from the two surrounding notes
+		// add a note deterministically somewhere on a track different from the two surrounding notes
 		int iTrackOfNoteEarlier = -1;
 		bool bEarlierHasNonEmptyTrack = inout.GetTapFirstNonEmptyTrack( iRowEarlier, iTrackOfNoteEarlier );
 		int iTrackOfNoteLater = -1;
@@ -1058,25 +1059,24 @@ void NoteDataUtil::AddMines( NoteData &inout, float fStartBeat, float fEndBeat )
 
 	int iRowCount = 0;
 	int iPlaceEveryRows = 6;
-	for( int r=first_row; r<=last_row; r++ )
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r, first_row, last_row )
 	{
-		if( !inout.IsRowEmpty(r) )
-		{
-			iRowCount++;
+		iRowCount++;
 
-			// place every 6 or 7 rows
-			if( iRowCount>=iPlaceEveryRows )
-			{
-				for( int t=0; t<inout.GetNumTracks(); t++ )
-					if( inout.GetTapNote(t,r).type == TapNote::tap )
-						inout.SetTapNote(t,r,TAP_ADDITION_MINE);
-				
-				iRowCount = 0;
-				if( iPlaceEveryRows == 6 )
-					iPlaceEveryRows = 7;
-				else
-					iPlaceEveryRows = 6;
-			}
+		// place every 6 or 7 rows
+		// XXX: What is "6 or 7" derived from?  Can we calculate that in a way
+		// that won't break if ROWS_PER_MEASURE changes?
+		if( iRowCount>=iPlaceEveryRows )
+		{
+			for( int t=0; t<inout.GetNumTracks(); t++ )
+				if( inout.GetTapNote(t,r).type == TapNote::tap )
+					inout.SetTapNote(t,r,TAP_ADDITION_MINE);
+			
+			iRowCount = 0;
+			if( iPlaceEveryRows == 6 )
+				iPlaceEveryRows = 7;
+			else
+				iPlaceEveryRows = 6;
 		}
 	}
 
@@ -1135,12 +1135,8 @@ void NoteDataUtil::Echo( NoteData &inout, float fStartBeat, float fEndBeat )
 
 		// don't insert a new note if there's already a tap within this interval
 		bool bTapInMiddle = false;
-		for( int r2=iRowWindowBegin+1; r2<=iRowWindowEnd-1; r2++ )
-			if( !inout.IsRowEmpty(r2) )
-			{
-				bTapInMiddle = true;
-				break;
-			}
+		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r2, iRowWindowBegin+1, iRowWindowEnd-1 )
+			bTapInMiddle = true;
 		if( bTapInMiddle )
 			continue;	// don't lay
 
