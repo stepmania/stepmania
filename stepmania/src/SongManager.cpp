@@ -30,10 +30,10 @@
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
 
-const CString CATEGORY_RANKING_FILE = "CategoryRanking.dat";
-const CString COURSE_RANKING_FILE = "CourseRanking.dat";
-const CString NOTES_SCORES_FILE[NUM_MEMORY_CARDS] = { "Player1NotesScores.dat", "Player2NotesScores.dat", "MachineNotesScores.dat" };
-const CString COURSE_SCORES_FILE[NUM_MEMORY_CARDS] = { "Player1CourseScores.dat", "Player2CourseScores.dat", "MachineCourseScores.dat" };
+const CString CATEGORY_RANKING_FILE = "data/CategoryRanking.dat";
+const CString COURSE_RANKING_FILE = "data/CourseRanking.dat";
+const CString NOTES_SCORES_FILE[NUM_MEMORY_CARDS] = { "data/Player1NotesScores.dat", "data/Player2NotesScores.dat", "data/MachineNotesScores.dat" };
+const CString COURSE_SCORES_FILE[NUM_MEMORY_CARDS] = { "data/Player1CourseScores.dat", "data/Player2CourseScores.dat", "data/MachineCourseScores.dat" };
 const int CATEGORY_RANKING_VERSION = 1;
 const int COURSE_RANKING_VERSION = 1;
 const int NOTES_SCORES_VERSION = 2;
