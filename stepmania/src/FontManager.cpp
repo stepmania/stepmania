@@ -19,8 +19,10 @@
 #include "RageException.h"
 #include "RageTimer.h"
 #include "ThemeManager.h"
+#include "GameManager.h"
 
-static map <CString, longchar, StdStringLessNoCase> CharAliases;
+FontManager::aliasmap FontManager::CharAliases;
+map<CString,CString> FontManager::CharAliasRepl;
 
 FontManager*	FONT	= NULL;
 
@@ -37,7 +39,24 @@ FontManager::~FontManager()
 		LOG->Trace( "FONT LEAK: '%s', RefCount = %d.", i->first.GetString(), pFont->m_iRefCount );
 		delete pFont;
 	}
+}
 
+/* A longchar is at least 32 bits.  If c & 0xFF000000, it's a game-custom
+ * character; game 0 is 0x01nnnnnn, game 1 is 0x02nnnnnn, and so on. */
+longchar FontManager::MakeGameGlyph(longchar c, Game g)
+{
+	ASSERT(g >= 0 && g <= 0xFF && c >= 0 && c <= 0xFFFFFF);
+	return ((g+1) << 24) + c;
+}
+
+bool FontManager::ExtractGameGlyph(longchar ch, int &c, Game &g)
+{
+	if((ch & 0xFF000000) == 0) return false; /* not a game glyph */
+	
+	g = Game((ch >> 24) - 1);
+	c = ch & 0xFFFFFF;
+
+	return true;
 }
 
 void FontManager::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CString &PageName, int NumFrames)
@@ -87,14 +106,32 @@ void FontManager::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, cons
 		/* "map XXXX=frame" maps a char to a frame. */
 		if(val.substr(0, 4) == "MAP ")
 		{
-			/* map CODEPOINT=frame. CODEPOINT can be "U+hexval" or an alias.
-			 * XXX: implement aliases 
+			/* map CODEPOINT=frame. CODEPOINT can be
+			 * 1. U+hexval
+			 * 2. an alias ("kakumei1")
+			 * 3. a game type followed by a game alias, eg "pump menuleft"
+			 *
 			 * map 1=2 is the same as
 			 * range unicode #1-1=2
 			 */
 			CString codepoint = val.substr(4); /* "XXXX" */
 		
 			longchar c;
+			Game game = GAME_INVALID;
+
+			if(codepoint.find_first_of(' ') != codepoint.npos)
+			{
+				/* There's a space; the first word should be a game type. Split it. */
+				unsigned pos = codepoint.find_first_of(' ');
+				CString gamename = codepoint.substr(0, pos);
+				codepoint = codepoint.substr(pos+1);
+
+				game = GameManager::StringToGameType(gamename);
+
+				if(game == GAME_INVALID)
+					RageException::Throw( "Font definition '%s' uses unknown game type '%s'",
+						ini.GetPath().GetString(), gamename.GetString() );
+			}
 
 			if(codepoint.substr(0, 2) == "U+" && IsHexVal(codepoint.substr(2)))
 				sscanf(codepoint.substr(2).c_str(), "%x", &c);
@@ -103,6 +140,8 @@ void FontManager::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, cons
 			else
 				RageException::Throw( "Font definition '%s' has an invalid value '%s'.",
 					ini.GetPath().GetString(), val.GetString() );
+
+			if(game != GAME_INVALID) c = MakeGameGlyph(c, game);
 
 			int frame = atoi(data);
 			if(frame >= NumFrames)
@@ -365,6 +404,25 @@ Font* FontManager::LoadFont( const CString &sFontOrTextureFilePath, CString sCha
 		CharAliases["omega"]		= 0x03a9; /* Ω */
 		CharAliases["whiteheart"]	= 0x2661; /* ♡ */
 		CharAliases["blackstar"]	= 0x2605; /* ★ */
+
+		CharAliases["up"]			= 0x100000;
+		CharAliases["down"]			= 0x100001;
+		CharAliases["left"]			= 0x100002;
+		CharAliases["right"]		= 0x100003;
+		CharAliases["menuup"]		= 0x100004;
+		CharAliases["menudown"]		= 0x100005;
+		CharAliases["menuleft"]		= 0x100006;
+		CharAliases["menuright"]	= 0x100007;
+		CharAliases["start"]		= 0x100008;
+
+		for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
+		{
+			CString from = ssprintf("&%s;", i->first.GetString());
+			CString to = LcharToUTF8(i->second);
+			from.MakeUpper();
+			CharAliasRepl[from] = to;
+			LOG->Trace("from '%s' to '%s'", from.GetString(), to.GetString());
+		}
 	}
 
 	// Convert the path to lowercase so that we don't load duplicates.

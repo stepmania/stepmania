@@ -19,6 +19,7 @@
 #include "RageLog.h"
 #include "RageException.h"
 #include "FontManager.h"
+#include "GameState.h"
 
 const longchar Font::DEFAULT_GLYPH = 0xFFFF;
 
@@ -108,7 +109,7 @@ void FontPage::SetTextureCoords(const vector<int> &widths, int LineSpacing)
 				iPixelsToChopOff--;
 				g.width++;
 			}
-			float fTexCoordsToChopOff = float(iPixelsToChopOff) / m_pTexture->GetSourceWidth();
+			float fTexCoordsToChopOff = float(iPixelsToChopOff) / m_pTexture->GetTextureWidth();
 
 			g.rect.left  += fTexCoordsToChopOff/2;
 			g.rect.right -= fTexCoordsToChopOff/2;
@@ -144,8 +145,8 @@ void FontPage::SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight)
 		float ExtraRight = min( float(DrawExtraPixelsRight), (iFrameWidth-iCharWidth)/2.0f );
 
 		/* Move left and expand right. */
-		glyphs[i].rect.left -= ExtraLeft / m_pTexture->GetSourceWidth();
-		glyphs[i].rect.right += ExtraRight / m_pTexture->GetSourceWidth();
+		glyphs[i].rect.left -= ExtraLeft / m_pTexture->GetTextureWidth();
+		glyphs[i].rect.right += ExtraRight / m_pTexture->GetTextureWidth();
 		glyphs[i].hshift -= ExtraLeft;
 		glyphs[i].width += ExtraLeft + ExtraRight;
 	}
@@ -222,30 +223,26 @@ void Font::MergeFont(Font *f)
 
 const glyph &Font::GetGlyph( longchar c ) const
 {
-	map<longchar,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
+	/* See if there's a game-specific version of this character. */
+	int gc = FontManager::MakeGameGlyph(c, GAMESTATE->m_CurGame);
+	map<longchar,glyph*>::const_iterator it = m_iCharToGlyph.find(gc);
 
-	if(it == m_iCharToGlyph.end())
-	{
-		if(c == Font::DEFAULT_GLYPH)
-			RageException::Throw( "The default glyph is missing from the font '%s'", path.GetString() );
-		return GetGlyph(DEFAULT_GLYPH);
-	}
+	/* If there isn't, try the regular character. */
+	if(it == m_iCharToGlyph.end()) it = m_iCharToGlyph.find(c);
 
+	/* If *that's* missing, use the default glyph. */
+	if(it == m_iCharToGlyph.end()) it = m_iCharToGlyph.find(DEFAULT_GLYPH);
+
+	if(it == m_iCharToGlyph.end()) 
+		RageException::Throw( "The default glyph is missing from the font '%s'", path.GetString() );
+	
 	return *it->second;
 }
 
 RageTexture *Font::GetGlyphTexture( longchar c )
 {
-	map<longchar,glyph*>::iterator it = m_iCharToGlyph.find(c);
-
-	if(it == m_iCharToGlyph.end())
-	{
-		if(c == Font::DEFAULT_GLYPH)
-			RageException::Throw( "The default glyph is missing from the font '%s'", path.GetString() );
-		return GetGlyphTexture(DEFAULT_GLYPH);
-	}
-
-	return it->second->Texture;
+	glyph &g = const_cast<glyph &> (GetGlyph(c));
+	return g.Texture;
 }
 
 void Font::CapsOnly()

@@ -12,6 +12,7 @@
 */
 
 #include "Font.h"
+#include "Game.h"
 
 #include <map>
 
@@ -28,6 +29,13 @@ public:
 	void UnloadFont( Font *fp );
 
 	static bool MatchesFont(CString FontName, CString FileName);
+
+	static longchar MakeGameGlyph(int c, Game g);
+	static bool ExtractGameGlyph(longchar ch, int &c, Game &g);
+
+	typedef map<CString, longchar, StdStringLessNoCase> aliasmap;
+	static aliasmap CharAliases;
+	static map<CString,CString> CharAliasRepl;
 
 protected:
 	// map from file name to a texture holder

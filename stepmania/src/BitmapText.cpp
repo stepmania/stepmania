@@ -199,6 +199,9 @@ void BitmapText::SetText( CString sText )
 
 	m_szText = sText;
 
+	ReplaceText(sText, FontManager::CharAliasRepl);
+	Replace_Unicode_Markers(sText);
+
 	/* Break the string into lines. */
 	m_szTextLines.clear();
 	m_iLineWidths.clear();
