@@ -886,6 +886,19 @@ void MusicWheel::UpdateScrollbar()
 	}
 }
 
+bool MusicWheel::IsSettled() const
+{
+	if( m_Moving )
+		return false;
+	if( m_WheelState != STATE_SELECTING_MUSIC && m_WheelState != STATE_LOCKED )
+		return false;
+	if( m_fPositionOffsetFromSelection != 0 )
+		return false;
+
+	return true;
+}
+
+
 void MusicWheel::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
