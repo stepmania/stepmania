@@ -69,13 +69,16 @@ Background::Background()
 	bool bOneOrMoreChars = false;
 	bool bShowingBeginnerHelper = false;
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsHumanPlayer(p) )
-		{
-			bOneOrMoreChars = true;
-			//Disable dancing characters if BH will be showing.
-			if( (PREFSMAN->m_bShowBeginnerHelper) && BeginnerHelper::CanUse() && (GAMESTATE->m_pCurNotes[p]->GetDifficulty() == DIFFICULTY_BEGINNER ) )
-				bShowingBeginnerHelper = true;
-		}
+	{
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;
+
+		bOneOrMoreChars = true;
+		// Disable dancing characters if BH will be showing.
+		if( PREFSMAN->m_bShowBeginnerHelper && BeginnerHelper::CanUse() && 
+			GAMESTATE->m_pCurNotes[p] && GAMESTATE->m_pCurNotes[p]->GetDifficulty() == DIFFICULTY_BEGINNER )
+			bShowingBeginnerHelper = true;
+	}
 
 	if( bOneOrMoreChars && !bShowingBeginnerHelper )
 	{
