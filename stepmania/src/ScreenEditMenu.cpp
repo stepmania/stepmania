@@ -43,7 +43,7 @@ ScreenEditMenu::ScreenEditMenu()
 	LOG->Trace( "ScreenEditMenu::ScreenEditMenu()" );
 
 	Selector.SetXY( 0, 0 );
-//	Selector.AllowNewNotes();
+	Selector.AllowNewNotes();
 	this->AddSubActor( &Selector );
 
 	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
@@ -79,6 +79,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_GoToPrevState:
+
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
 	case SM_GoToNextState:
