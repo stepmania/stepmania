@@ -12,7 +12,7 @@ static bool initted = false;
 static int signals[] = {
 	SIGALRM, SIGBUS, SIGFPE, SIGHUP, SIGILL, SIGINT, SIGIOT, SIGPIPE,
 	SIGQUIT, SIGSEGV, SIGTRAP, SIGTERM, SIGVTALRM, SIGXCPU, SIGXFSZ,
-#if defined(HAVE_DECL_SIGPWR)
+#if defined(HAVE_DECL_SIGPWR) && HAVE_DECL_SIGPWR
 	SIGPWR,
 #endif
 	-1
