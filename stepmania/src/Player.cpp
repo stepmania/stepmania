@@ -859,6 +859,9 @@ void Player::Step( int col, const RageTimer &tm )
 				m_pPlayerStageStats->iTotalError += ms_error;
 		}
 
+		if( m_pPlayerState->m_PlayerController == PC_HUMAN && score >= TNS_GREAT ) 
+			HandleAutosync( fNoteOffset );
+
 		if( score == TNS_MARVELOUS && !GAMESTATE->ShowMarvelous() )
 			score = TNS_PERFECT;
 
@@ -873,10 +876,6 @@ void Player::Step( int col, const RageTimer &tm )
 
 		m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
 
-
-		if( m_pPlayerState->m_PlayerController == PC_HUMAN  && 
-			score >= TNS_GREAT ) 
-			HandleAutosync(fNoteOffset);
 
 		// TODO: Remove use of PlayerNumber.
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
