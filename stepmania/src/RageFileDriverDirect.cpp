@@ -285,7 +285,7 @@ RageFileObj *RageFileDriverDirect::Open( const CString &path, RageFile::OpenMode
 	{
 		const CString dir = Dirname(sPath);
 		if( this->GetFileType(dir) != RageFileManager::TYPE_DIR )
-			CreateDirectories( dir );
+			CreateDirectories( root + dir );
 	}
 
 	return MakeFileObjDirect( root + sPath, mode, p, err );
