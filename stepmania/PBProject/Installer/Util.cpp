@@ -30,7 +30,7 @@ void split(const CString& Source, const CString& Deliminator, vector<CString>& A
     } while (startpos <= Source.size());
 }
 
-inline bool IsADirectory(const CString& path)
+bool IsADirectory(const CString& path)
 {
     struct stat s;
     if (stat(path, &s))
@@ -44,7 +44,7 @@ bool DoesFileExist(const CString& path)
     return !stat(path, &s);
 }
 
-inline CString LastPathComponent(const CString& path)
+CString LastPathComponent(const CString& path)
 {
     unsigned pos = path.rfind('/');
 
