@@ -7,6 +7,7 @@
 #include "archutils/Unix/GetSysInfo.h"
 #include "archutils/Unix/LinuxThreadHelpers.h"
 #include <unistd.h>
+#include "RageUtil.h"
 
 #if defined(CRASH_HANDLER)
 #include "archutils/Unix/CrashHandler.h"
