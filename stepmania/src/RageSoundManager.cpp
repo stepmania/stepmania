@@ -32,11 +32,14 @@ RageSoundManager::~RageSoundManager()
 
 void RageSoundManager::StartMixing(RageSound *snd)
 {
+	playing_sounds.insert(snd);
 	driver->StartMixing(snd);
 }
 
 void RageSoundManager::StopMixing(RageSound *snd)
 {
+	playing_sounds.erase(snd);
+
 	driver->StopMixing(snd);
 
 	/* The sound is finished, and should be deleted if it's in owned_sounds.
@@ -103,7 +106,7 @@ void RageSoundManager::Update(float delta)
 
 			int got = s->GetPCM(buf, bytes, now);
 			if(got < bytes)
-				s->SoundStopped();
+				s->StopPlaying();
 
 			j = next;
 		}
@@ -127,37 +130,49 @@ float RageSoundManager::GetPlayLatency() const
 	return driver->GetPlayLatency();
 }
 
-void RageSoundManager::PlayCopy( const RageSound &snd )
+RageSound *RageSoundManager::PlaySound(RageSound &snd)
 {
-	/* Make a copy of the sound and play it; this detaches the sound
-	 * from the screen.  This has a few effects:
-	 *
-	 * 1. If this is called more than once, it actually plays a new
-	 * copy of the sound, rather than rewinding the currently-playing
-	 * one.  (This is important for keyed games.)
-	 *
-	 * 2. If the screen closes, the sound plays to completion.
-	 *
-	 * I'm not sure if copying will become a performance problem.  As a
-	 * flag, we could play snd instead of a copy if snd isn't actually
-	 * playing.  This would keep property 1 and lose 2, which would be
-	 * fine for keyed games.  Copying a streamed sound reopens the sound;
-	 * copying a prebuffered sound makes a new copy of the buffer (unless
-	 * std::basic_string happens to be refcounted).  That's not too bad,
-	 * but we might do five of these in the same frame ...
-	 */
+	RageSound *sound_to_play;
+	if(!snd.IsPlaying())
+		sound_to_play = &snd;
+	else
+	{
+		sound_to_play = new RageSound(snd);
 
-	RageSound *newsnd = new RageSound(snd);
+		/* We're responsible for freeing it. */
+		owned_sounds.insert(sound_to_play);
+	}
 
-	/* PlayCopy's sounds must always stop on their own. */
-	newsnd->SetLooping(false);
-	newsnd->SetAutoStop(true);
+	// Move to the start position.
+	sound_to_play->SetPositionSeconds();
+	sound_to_play->StartPlaying();
 
-	/* We're responsible for freeing it. */
-	owned_sounds.insert(newsnd);
-
-	newsnd->Play();
+	return sound_to_play;
 }
+
+void RageSoundManager::StopPlayingSound(RageSound &snd)
+{
+	/* Stop playing all playing sounds derived from the same parent as snd. */
+	vector<RageSound *> snds;
+	GetCopies(snd, snds);
+	for(vector<RageSound *>::iterator i = snds.begin(); i != snds.end(); i++)
+	{
+		if((*i)->IsPlaying())
+			(*i)->StopPlaying();
+	}
+}
+
+void RageSoundManager::GetCopies(RageSound &snd, vector<RageSound *> &snds)
+{
+	RageSound *parent = snd.GetOriginal();
+
+	snds.clear();
+	for(set<RageSound *>::iterator i = playing_sounds.begin();
+		i != playing_sounds.end(); i++)
+		if((*i)->GetOriginal() == parent)
+			snds.push_back(*i);
+}
+
 
 void RageSoundManager::PlayOnce( CString sPath )
 {
@@ -189,7 +204,7 @@ void RageSoundManager::PlayOnceFromDir( CString sDir )
 		return;
 
 	int index = rand() % arraySoundFiles.size();
-	PlayOnce( sDir + arraySoundFiles[index] );
+	SOUNDMAN->PlayOnce( sDir + arraySoundFiles[index] );
 }
 
 /* Standalone helpers: */

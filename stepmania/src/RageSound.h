@@ -26,6 +26,10 @@ public:
 
 class RageSound
 {
+	/* If we were copied from another RageSound, this will point to it; otherwise
+	 * this is ourself. */
+	RageSound *original;
+
 	/* These are only used when big == true: */
 	struct stream_t {
 		Sound_Sample *Sample;
@@ -79,11 +83,15 @@ class RageSound
 	 * stopped, and PlayCopy can't be used.)  Default is true.  Ignored when looping. */
 	bool AutoStop;
 
+	void SetPositionSamples( int samples = -1 );
+
 public:
 	RageSound();
 	~RageSound();
 	RageSound(const RageSound &cpy);
 
+	/* Used by RageSoundManager: */
+	RageSound *GetOriginal() { return original; }
 
 	/* Called only by the sound drivers: */
 	/* This function should return the number of bytes actually put into buffer.
@@ -91,10 +99,6 @@ public:
 	 * flushed, SoundStopped will be called.  Until then, SOUNDMAN->GetPosition
 	 * can still be called (the sound is still playing). */
 	int GetPCM(char *buffer, int size, int sampleno);
-
-	/* Called by the sound driver when a sound has actually finished stopping
-	 * normally.  Not called when Stop() is called to stop the sound prematurely. */
-	void SoundStopped();
 
 	void Update(float delta);
 
@@ -110,18 +114,22 @@ public:
 	void Unload();
 
 	/* If enabled, then the sound will automatically stop when it reaches
-	 * the end; otherwise it'll feed silence until Stop() is called. */
+	 * the end; otherwise it'll feed silence until stopped manually. */
 	void SetAutoStop(bool yes=true) { AutoStop=yes; }
 	bool GetAutoStop() const { return AutoStop; }
 
 	void SetStartSeconds(float secs = 0); /* default = beginning */
 	void SetLengthSeconds(float secs = -1); /* default = no length limit */
-	void Play();
-	void Pause();
+	void StartPlaying();
+//	void Pause();
+	void StopPlaying();
+
+	RageSound *Play();
 	void Stop();
+
 	float GetLengthSeconds();
 	float GetPositionSeconds() const;
-	void SetPositionSeconds( float fSeconds );
+	void SetPositionSeconds( float fSeconds = -1);
 	void SetAccurateSync(bool yes=true) { AccurateSync = yes; }
 	void SetPlaybackRate( float fScale );
 	float GetPlaybackRate() const { return speed; }

@@ -75,6 +75,7 @@ RageSound::RageSound()
 		initialized = true;
 	}
 
+	original = this;
 	stream.Sample = NULL;
 	position = 0;
 	playing = false;
@@ -91,6 +92,11 @@ RageSound::RageSound()
 
 RageSound::~RageSound()
 {
+	/* If we're a "master" sound (not a copy), tell RageSoundManager to
+	 * stop mixing us and everything that's copied from us. */
+	if(original == this)
+		SOUNDMAN->StopPlayingSound(*this);
+
 	Unload();
 
 	/* Unregister ourselves. */
@@ -104,6 +110,7 @@ RageSound::RageSound(const RageSound &cpy)
 
 	stream.Sample = NULL;
 
+	original = cpy.original;
 	full_buf = cpy.full_buf;
 	big = cpy.big;
 	m_sFilePath = cpy.m_sFilePath;
@@ -131,7 +138,7 @@ RageSound::RageSound(const RageSound &cpy)
 void RageSound::Unload()
 {
 	if(IsPlaying())
-		Stop();
+		StopPlaying();
 
 	Sound_FreeSample(stream.Sample);
 	stream.Sample = NULL;
@@ -145,6 +152,9 @@ void RageSound::Unload()
 void RageSound::Load(CString sSoundFilePath, bool cache)
 {
 	LOG->Trace( "RageSound::LoadSound( '%s' )", sSoundFilePath.GetString() );
+
+	/* Don't load over copies. */
+//	ASSERT(original == this);
 
 	Unload();
 
@@ -231,22 +241,9 @@ void RageSound::SetLengthSeconds(float secs)
 		m_LengthSamples = int(secs*samplerate);
 }
 
-/* Start playing from the current position.  If the sound is already
- * playing, Stop is called. */
-void RageSound::Play()
-{
-	LockMut(SOUNDMAN->lock);
-
-	if(playing) Stop();
-	playing = true;
-
-	// Tell the sound manager to start mixing us
-	SOUNDMAN->StartMixing(this);
-}
-
 void RageSound::Update(float delta)
 {
-	if(playing && big)
+	if(playing && big && delta)
 		stream.FillBuf(int(delta * samplerate * samplesize));
 }
 
@@ -299,10 +296,6 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 {
 	LockMut(SOUNDMAN->lock);
 
-	/* If the sound is paused, just fill the buffer with silence. 
-	 * Hmm.  Pausing is annoying, since we'll get startup latency if
-	 * we keep our buffer playing; we should stop the stream completely
-	 * when we pause ... */
 	ASSERT(playing);
 
 	int bytes_stored = 0;
@@ -391,7 +384,7 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 			if(Loop && m_LengthSamples != 0)
 			{
 				/* Rewind and start over. */
-				SetPositionSeconds(float(m_StartSample) / samplerate);
+				SetPositionSamples(m_StartSample);
 				continue;
 			}
 			if(AutoStop)
@@ -446,35 +439,38 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 	return bytes_stored;
 }
 
-/* After we finish via the GetPCM return value, this is called by
- * RageSoundManager once the sound is actually flushed, which means
- * we're *really* stopped. */
-void RageSound::SoundStopped()
+/* Start playing from the current position.  If the sound is already
+ * playing, Stop is called. */
+void RageSound::StartPlaying()
 {
-	LOG->Trace("stop completed");
-	Stop();
+	LockMut(SOUNDMAN->lock);
+
+	ASSERT(!playing);
+
+	// Tell the sound manager to start mixing us
+	playing = true;
+	SOUNDMAN->StartMixing(this);
 }
 
-void RageSound::Pause()
+void RageSound::StopPlaying()
 {
-	if(!playing) return;
-
-	// Tell the sound manager to stop mixing this sound.
+	/* Tell the sound manager to stop mixing this sound. */
 	SOUNDMAN->StopMixing(this);
-
 	playing = false;
+
+	pos_map.clear();
+}
+
+RageSound *RageSound::Play()
+{
+	return SOUNDMAN->PlaySound(*this);
 }
 
 void RageSound::Stop()
 {
-	/* Tell the sound manager to stop mixing this sound. */
-	SOUNDMAN->StopMixing(this);
-
-	SetPositionSeconds(float(m_StartSample)/samplerate);
-
-	playing = false;
-	pos_map.clear();
+	SOUNDMAN->StopPlayingSound(*this);
 }
+
 
 float RageSound::GetLengthSeconds()
 {
@@ -564,23 +560,43 @@ float RageSound::GetPositionSeconds() const
 
 void RageSound::SetPositionSeconds( float fSeconds )
 {
+	SetPositionSamples( fSeconds == -1? -1: int(fSeconds * samplerate) );
+}
+
+void RageSound::SetPositionSamples( int samples )
+{
+	if(samples == -1)
+		samples = m_StartSample;
+
 	/* This can take a while.  Only lock the sound buffer if we're actually playing. */
 	SOUNDMAN->lock.Lock();
-	if(!playing)
-		SOUNDMAN->lock.Unlock();
 
-	position = int(fSeconds * samplerate);
-	if( fSeconds < 0 )
-		fSeconds = 0;
+	if(!playing)
+	{
+		SOUNDMAN->lock.Unlock();
+		/* If we're already there, don't do anything. */
+		if(position == samples)
+			return;
+	}
+
+	position = samples;
+	if( samples < 0 )
+		samples = 0;
 
 	if(big) {
 		ASSERT(stream.Sample);
-		if(fSeconds == 0)
+		int ms = int(float(samples) * 1000.f / samplerate);
+
+		if(ms == 0)
 			Sound_Rewind(stream.Sample);
 		else if(AccurateSync)
-			Sound_AccurateSeek(stream.Sample, int(fSeconds * 1000));
+			Sound_AccurateSeek(stream.Sample, ms);
 		else
-			Sound_FastSeek(stream.Sample, int(fSeconds * 1000));
+		{
+RageTimer tm;
+			Sound_FastSeek(stream.Sample, ms);
+LOG->Trace("%f", tm.GetDeltaTime());
+		}
 		stream.buf.clear();
 	}
 
@@ -603,11 +619,15 @@ void RageSound::LoadAndPlayIfNotAlready( CString sSoundFilePath )
 		return;		// do nothing
 
 	Load( sSoundFilePath );
-	SetPositionSeconds(0);
-	SetStartSeconds(0);
+	if(IsPlaying())
+		StopPlaying();
+
+	/* Use defaults: the beginning, the whole file. */
+	SetStartSeconds();
 	SetLengthSeconds();
+	SetPositionSamples();
 	SetLooping();
-	Play();
+	StartPlaying();
 }
 
 void CircBuf::reserve(unsigned n)

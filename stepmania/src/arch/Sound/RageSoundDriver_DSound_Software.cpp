@@ -125,7 +125,7 @@ void RageSound_DSound_Software::Update(float delta)
 			continue; /* stopping but still flushing */
 
 		/* This sound is done. */
-		snds[i]->snd->SoundStopped();
+		snds[i]->snd->StopPlaying();
 	}
 }
 

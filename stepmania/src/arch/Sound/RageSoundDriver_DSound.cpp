@@ -75,12 +75,13 @@ void RageSound_DSound::Update(float delta)
 	{
 		if(str[i]->state != str[i]->STOPPING) continue;
 
-		if(str[i]->str_ds->GetPosition() < str[i]->flush_pos)
+		int ps = str[i]->str_ds->GetPosition();
+		if(ps < str[i]->flush_pos)
 			continue; /* stopping but still flushing */
 
 		/* The sound has stopped and flushed all of its buffers. */
 		if(str[i]->snd != NULL)
-			str[i]->snd->SoundStopped();
+			str[i]->snd->StopPlaying();
 		str[i]->snd = NULL;
 
 		str[i]->str_ds->Stop();

@@ -1005,7 +1005,8 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			 * of the song while we tween out, which looks really strange.
 			 * -glenn
 			 */
-			m_soundMusic.Pause();
+			/* but with the new sound code, Stop leaves the position alone -glenn (XXX remove this comment) */
+			m_soundMusic.Stop();
 
 			this->ClearMessageQueue();
 			m_Fade.CloseWipingLeft( SM_SaveChangedBeforeGoingBack );
@@ -1414,7 +1415,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_BeginFailed:
 		m_DancingState = STATE_OUTRO;
-		m_soundMusic.Pause();
+		m_soundMusic.Stop();
 		m_StarWipe.SetTransitionTime( 1.5f );
 		m_StarWipe.CloseWipingRight( SM_None );
 		int p;

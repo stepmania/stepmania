@@ -32,6 +32,7 @@
 
 ScreenSandbox::ScreenSandbox()
 {	
+MUSIC->Stop();
 //	m_quad.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 //	m_quad.SetDiffuse( RageColor(1,1,1,1) );
 //	this->AddChild( &m_quad );
@@ -44,7 +45,7 @@ ScreenSandbox::ScreenSandbox()
 //	this->AddChild(&obj);
 
 	this->AddChild(&HEEEEEEEEELP);
-	
+
 	HEEEEEEEEELP.SetXY(450, 400);
 	HEEEEEEEEELP.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	HEEEEEEEEELP.SetZoom(.5);
@@ -52,8 +53,7 @@ ScreenSandbox::ScreenSandbox()
 		"p  Play\n"
 		"s  Stop\n"
 		"l  Toggle looping\n"
-		"a  Toggle autostop\n"
-		"f  Fire sound in the background");
+		"a  Toggle autostop\n");
 
 	for(int i = 0; i < nsounds; ++i)
 	{
@@ -65,14 +65,21 @@ ScreenSandbox::ScreenSandbox()
 	s[0].txt.SetXY(150, 100);
 	s[1].txt.SetXY(450, 100);
 	s[2].txt.SetXY(150, 250);
-	s[3].txt.SetXY(450, 250);
-	s[4].txt.SetXY(150, 400);
+//	s[3].txt.SetXY(450, 250);
+//	s[4].txt.SetXY(150, 400);
 
 	s[0].s.Load("Themes/default/Sounds/_common menu music.ogg");
 	s[1].s.Load("Themes/default/Sounds/music scroll music.ogg");
 	s[2].s.Load("Themes/default/Sounds/evaluation extra stage.mp3");
-	s[3].s.Load("Themes/default/Sounds/gameplay oni die.mp3");
-	s[4].s.Load("Themes/default/Sounds/gameplay toasty.mp3");
+//	s[3].s.Load("Themes/default/Sounds/gameplay oni die.mp3");
+//	s[4].s.Load("Themes/default/Sounds/gameplay toasty.mp3");
+
+/*s[0].s.SetPositionSeconds(3);
+s[0].s.SetStartSeconds(3);
+s[0].s.SetLengthSeconds(1);
+s[0].s.SetAutoStop(false);
+s[0].s.Play();
+*/
 	selected = 0;
 }
 
@@ -84,19 +91,30 @@ void ScreenSandbox::UpdateText(int n)
 	unsigned x = fn.find_last_of("/\\");
 	if(x != fn.npos) fn.erase(0, x+1);
 
+	vector<RageSound *> snds;
+	SOUNDMAN->GetCopies(s[n].s, snds);
+
+	CString pos;
+	for(unsigned p = 0; p < snds.size(); ++p)
+	{
+		if(p) pos += ", ";
+		pos += ssprintf("%.3f", snds[p]->GetPositionSeconds());
+	}
+
 	s[n].txt.SetText(ssprintf(
 		"%i: %s\n"
 		"%s\n"
 		"%s\n"
 		"%s\n"
-		"%.3f of %.3f\n"
+		"(%s) of %.3f\n"
 		"%s\n"
 		"%s",
 		n+1, fn.GetString(),
 		s[n].s.IsPlaying()? "Playing":"Stopped",
 		s[n].s.GetLooping()? "Looping": "Not looping",
 		s[n].s.GetAutoStop()? "Stop when finished": "Continue until stopped",
-		s[n].s.GetPositionSeconds(), s[n].s.GetLengthSeconds(),
+		pos.size()? pos.GetString(): "none playing",
+		s[n].s.GetLengthSeconds(),
 		s[n].s.IsStreaming()? "Streaming":"Preloaded",
 		selected == n? "^^^^^^":""
 		));
@@ -134,9 +152,6 @@ void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type
 			break;
 		case 'a':
 			s[selected].s.SetAutoStop(!s[selected].s.GetAutoStop());
-			break;
-		case 'f':
-			SOUNDMAN->PlayCopy(s[selected].s);
 			break;
 
 /*		case SDLK_LEFT:

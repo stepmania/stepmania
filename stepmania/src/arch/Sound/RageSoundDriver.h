@@ -24,8 +24,7 @@ protected:
 
 	/* When a sound is finished playing (GetPCM returns less than requested) and
 	 * the sound has been completely flushed (so GetPosition is no longer meaningful),
-	 * call RageSound::SoundStopped().  Do *not* call this when StopMixing is
-	 * called. */
+	 * call RageSound::StopPlaying().  Do *not* call it when StopMixing is called. */
 
 	/* Optional, if needed:  */
 	virtual void Update(float delta) { }
