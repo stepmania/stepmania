@@ -35,7 +35,7 @@ public:
 
 protected:
 	float m_fSecondsLeft;
-	float m_fStallSeconds;
+	float m_fStallSeconds, m_fStallSecondsLeft;
 	bool m_bPaused;
 
 	void SetText( int iSeconds );

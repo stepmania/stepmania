@@ -25,11 +25,13 @@
 #define WARNING_COMMAND(i)			THEME->GetMetric ("MenuTimer", ssprintf("WarningCommand%i",i))
 #define ON_COMMAND					THEME->GetMetric ("MenuTimer","OnCommand")
 
-const int TIMER_SECONDS = 99;
+static const int TIMER_SECONDS = 99;
+static const int MAX_STALL_SECONDS = 30;
 
 MenuTimer::MenuTimer()
 {
 	m_fStallSeconds = 0;
+	m_fStallSecondsLeft = MAX_STALL_SECONDS;
 	m_bPaused = false;
 
 	m_textDigit1.LoadFromNumbers( THEME->GetPathToN("MenuTimer") );
@@ -125,7 +127,14 @@ void MenuTimer::Disable()
 
 void MenuTimer::Stall()
 {
-	m_fStallSeconds = 0.5f;
+	/* Max amount of stall time we'll use: */
+	const float Amt = min( 0.5f, m_fStallSecondsLeft );
+
+	/* Amount of stall time to add: */
+	const float ToAdd = Amt - m_fStallSeconds;
+
+	m_fStallSeconds += ToAdd;
+	m_fStallSecondsLeft -= ToAdd;
 }
 
 void MenuTimer::SetSeconds( int iSeconds )
