@@ -33,13 +33,15 @@
 #include "NoteFieldPositioning.h"
 #include "NoteDataUtil.h"
 
-#define GRAY_ARROWS_Y				THEME->GetMetricF("Player","GrayArrowsY")
+CachedThemeMetricF GRAY_ARROWS_Y_STANDARD		("Player","GrayArrowsYStandard");
+CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","GrayArrowsYReverse");
 #define JUDGMENT_X( p, both_sides )	THEME->GetMetricF("Player",both_sides ? "JudgmentXOffsetBothSides" : ssprintf("JudgmentXOffsetOneSideP%d",p+1))
 #define JUDGMENT_Y					THEME->GetMetricF("Player","JudgmentY")
 #define COMBO_X( p, both_sides )	THEME->GetMetricF("Player",both_sides ? "ComboXOffsetBothSides" : ssprintf("ComboXOffsetOneSideP%d",p+1))
 #define COMBO_Y						THEME->GetMetricF("Player","ComboY")
-#define HOLD_JUDGMENT_Y				THEME->GetMetricF("Player","HoldJudgmentY")
-CachedThemeMetricI					BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
+CachedThemeMetricF HOLD_JUDGMENT_Y_STANDARD		("Player","HoldJudgmentYStandard");
+CachedThemeMetricF HOLD_JUDGMENT_Y_REVERSE		("Player","HoldJudgmentYReverse");
+CachedThemeMetricI	BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
 #define START_DRAWING_AT_PIXELS		THEME->GetMetricI("Player","StartDrawingAtPixels")
 #define STOP_DRAWING_AT_PIXELS		THEME->GetMetricI("Player","StopDrawingAtPixels")
 #define MAX_PRO_TIMING_ERROR		THEME->GetMetricI("Player","MaxProTimingError")
@@ -53,6 +55,10 @@ static const float StepSearchDistanceForwards = 1.0f;
 
 Player::Player()
 {
+	GRAY_ARROWS_Y_STANDARD.Refresh();
+	GRAY_ARROWS_Y_REVERSE.Refresh();
+	HOLD_JUDGMENT_Y_STANDARD.Refresh();
+	HOLD_JUDGMENT_Y_REVERSE.Refresh();
 	BRIGHT_GHOST_COMBO_THRESHOLD.Refresh();
 
 	m_PlayerNumber = PLAYER_INVALID;
@@ -156,22 +162,12 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, Combine
 	int c;
 	for( c=0; c<pStyleDef->m_iColsPerPlayer; c++ )
 	{
-		m_HoldJudgment[c].SetY( bReverse ? SCREEN_BOTTOM-HOLD_JUDGMENT_Y : SCREEN_TOP+HOLD_JUDGMENT_Y );
 		m_HoldJudgment[c].SetX( (float)pStyleDef->m_ColumnInfo[pn][c].fXOffset );
 		m_HoldJudgment[c].Command( g_NoteFieldMode[pn].m_HoldJudgmentCmd[c] );
 	}
 
-	m_ArrowBackdrop.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
-	m_NoteField.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
-	m_GrayArrowRow.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
-	m_GhostArrowRow.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
-
-	if( GAMESTATE->m_PlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI] == 1 )
-	{
-		m_NoteField.SetZoom( 0.5f );
-		m_GrayArrowRow.SetZoom( 0.5f );
-		m_GhostArrowRow.SetZoom( 0.5f );
-	}
+	// Need to set Y positions of all these elements in Update since
+	// they change depending on PlayerOptions.
 
 	m_sLastSeenNoteSkin = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin;
 
@@ -186,6 +182,27 @@ void Player::Update( float fDeltaTime )
 		return;
 
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
+
+
+	//
+	// Update Y positions
+	//
+	float fPercentReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fReverseScroll;
+	float fHoldJudgeYPos = SCALE( fPercentReverse, 0.f, 1.f, HOLD_JUDGMENT_Y_STANDARD, HOLD_JUDGMENT_Y_REVERSE );
+	float fGrayYPos = SCALE( fPercentReverse, 0.f, 1.f, GRAY_ARROWS_Y_STANDARD, GRAY_ARROWS_Y_REVERSE );
+	int c;
+	for( c=0; c<GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer; c++ )
+		m_HoldJudgment[c].SetY( fGrayYPos );
+	m_ArrowBackdrop.SetY( fGrayYPos );
+	m_NoteField.SetY( fGrayYPos );
+	m_GrayArrowRow.SetY( fGrayYPos );
+	m_GhostArrowRow.SetY( fGrayYPos );
+
+	float fMiniPercent = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_MINI];
+	float fZoom = 1 - fMiniPercent*0.5;
+	m_NoteField.SetZoom( fZoom );
+	m_GrayArrowRow.SetZoom( fZoom );
+	m_GhostArrowRow.SetZoom( fZoom );
 
 	//
 	// Check for TapNote misses

@@ -229,8 +229,8 @@ void NoteField::DrawPrimitives()
 	int iLastPixelToDraw = m_iLastPixelToDraw;
 	
 	float fDrawScale = 1;
-	fDrawScale *= 1 + 0.5f * fabsf( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fPerspectiveTilt );
-	fDrawScale *= 1 + fabsf( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_MINI] );
+	fDrawScale *= 1 + 0.5f * fabsf( GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fPerspectiveTilt );
+	fDrawScale *= 1 + fabsf( GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_MINI] );
 	
 	float fFirstDrawScale = g_NoteFieldMode[m_PlayerNumber].m_fFirstPixelToDrawScale;
 	float fLastDrawScale = g_NoteFieldMode[m_PlayerNumber].m_fLastPixelToDrawScale;
