@@ -100,7 +100,7 @@ CString hr_ssprintf( int hr, const char *fmt, ...)
     CString s = vssprintf( fmt, va );
     va_end(va);
 
-	return s += ssprintf( "(%s)", DXGetErrorString8(hr) );
+	return s += ssprintf( " (%s)", DXGetErrorString8(hr) );
 }
 
 CString werr_ssprintf( int err, const char *fmt, ...)
@@ -114,7 +114,7 @@ CString werr_ssprintf( int err, const char *fmt, ...)
     CString s = vssprintf( fmt, va );
     va_end(va);
 
-	return s += ssprintf( "(%s)", buf );
+	return s += ssprintf( " (%s)", buf );
 }
 
 #endif
