@@ -481,6 +481,8 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 
 void ScreenEz2SelectMusic::Update( float fDeltaTime )
 {
+	m_DifficultyRating.Update(fDeltaTime);
+
 	if(i_SkipAheadOffset > 0 && RageTimer::GetTimeSinceStart() - LastInputTime < 0.5)
 	{
 		m_MusicBannerWheel.SetScanMode(true);

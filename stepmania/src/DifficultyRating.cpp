@@ -23,7 +23,9 @@ DifficultyRating::DifficultyRating()
 		pNewSprite->Load( THEME->GetPathToG("Select Music DifficultyRatingIcon") );
 		m_apSprites.push_back( pNewSprite );
 		m_apSprites[i]->SetDiffuse( RageColor(1,1,1,0) );
+//		this->AddChild(m_apSprites[i]);
 	}
+
 } 
 
 DifficultyRating::~DifficultyRating()
@@ -54,6 +56,14 @@ void DifficultyRating::SetDifficulty(int Difficulty)
 		}
 	}
 
+}
+
+void DifficultyRating::Update(float fDeltaTime)
+{
+	for(int i=0; i<iMaxElements; i++)
+	{
+		m_apSprites[i]->Update(fDeltaTime);
+	}	
 }
 
 void DifficultyRating::SetOrientation(int Orientation)

@@ -24,6 +24,7 @@ public:
 	void SetDifficulty(int Difficulty);
 	void SetOrientation(int Orientation);
 	virtual void DrawPrimitives();
+	virtual void Update(float fDeltaTime);
 private:
 	int iMaxElements;
 	int iOrientation;
