@@ -191,6 +191,7 @@ float calc_stddev(const float *start, const float *end);
 #define chdir _chdir
 #define wchdir _wchdir
 #define alloca _alloca
+#define stat _stat
 #endif
 
 #endif
