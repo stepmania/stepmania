@@ -318,6 +318,11 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	m_bgOverlay.LoadFromAniDir( THEME->GetPathToB("ScreenSelectMusic Overlay"));
 	this->AddChild( &m_bgOverlay );
 
+	m_bgOptionsOut.Load( THEME->GetPathToB(m_sName+" options out") );
+//	this->AddChild( &m_bgOptionsOut ); // drawn on top
+	m_bgNoOptionsOut.Load( THEME->GetPathToB(m_sName+" no options out") );
+//	this->AddChild( &m_bgNoOptionsOut ); // drawn on top
+
 	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 	m_soundDifficultyEasier.Load( THEME->GetPathToS("ScreenSelectMusic difficulty easier") );
 	m_soundDifficultyHarder.Load( THEME->GetPathToS("ScreenSelectMusic difficulty harder") );
@@ -355,6 +360,8 @@ void ScreenSelectMusic::DrawPrimitives()
 	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
 	m_sprOptionsMessage.Draw();
+	m_bgOptionsOut.Draw();
+	m_bgNoOptionsOut.Draw();
 	
 	DISPLAY->CameraPopMatrix();
 }
@@ -646,6 +653,8 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 void ScreenSelectMusic::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
+	m_bgOptionsOut.Update( fDeltaTime );
+	m_bgNoOptionsOut.Update( fDeltaTime );
 	m_sprOptionsMessage.Update( fDeltaTime );
 
 
@@ -700,6 +709,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		MenuI.IsValid()  &&
 		MenuI.button == MENU_BUTTON_START  &&
 		type != IET_RELEASE  &&
+		m_Menu.IsTransitioning() &&
 		!GAMESTATE->IsExtraStage()  &&
 		!GAMESTATE->IsExtraStage2() )
 	{
@@ -978,6 +988,13 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		 * the game state, so just discard them. */
 		ClearMessageQueue();
 		break;
+	case SM_BeginFadingOut:
+		/* XXX: yuck.  Later on, maybe this can be done in one BGA with lua ... */
+		if( m_bGoToOptions )
+			m_bgOptionsOut.StartTransitioning( SM_GoToNextScreen );
+		else
+			m_bgNoOptionsOut.StartTransitioning( SM_GoToNextScreen );
+		break;
 	case SM_GoToNextScreen:
 		if( m_bGoToOptions )
 		{
@@ -1105,7 +1122,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
 		}
 
-		m_Menu.StartTransitioning( SM_GoToNextScreen );
+		m_Menu.StartTransitioning( SM_BeginFadingOut );
 	}
 
 	if( GAMESTATE->IsExtraStage() && PREFSMAN->m_bPickExtraStage )

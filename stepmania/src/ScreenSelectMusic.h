@@ -114,6 +114,8 @@ protected:
 	bool				m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;
 
 	BGAnimation			m_bgOverlay;
+	Transition			m_bgOptionsOut;
+	Transition			m_bgNoOptionsOut;
 
 	RageSound			m_soundSelect;
 	RageSound			m_soundDifficultyEasier;
