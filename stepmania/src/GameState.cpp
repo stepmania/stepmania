@@ -280,4 +280,20 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 		statsOut += GAMESTATE->m_vPassedStageStats[i];
 		vSongsOut.push_back( GAMESTATE->m_vPassedStageStats[i].pSong );
 	}
+
+	if(!vSongsOut.size()) return;
+
+	/* XXX: I have no idea if this is correct--but it's better than overflowing,
+	 * anyway. -glenn */
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !IsPlayerEnabled(p) )
+			continue;
+
+		for( int r = 0; r < NUM_RADAR_CATEGORIES; r++)
+		{
+			statsOut.fRadarPossible[p][r] /= vSongsOut.size();
+			statsOut.fRadarActual[p][r] /= vSongsOut.size();
+		}
+	}
 }
