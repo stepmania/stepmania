@@ -37,6 +37,7 @@
 #define SCROLLER_SECONDS_PER_ITEM				THEME->GetMetricF(m_sName,"ScrollerSecondsPerItem")
 #define SCROLLER_SPACING_X						THEME->GetMetricF(m_sName,"ScrollerSpacingX")
 #define SCROLLER_SPACING_Y						THEME->GetMetricF(m_sName,"ScrollerSpacingY")
+#define DEFAULT_CHOICE							THEME->GetMetricI(m_sName,"DefaultChoice")
 
 /* OptionOrderLeft=0:1,1:2,2:3,3:4 */
 const char *ScreenSelectMaster::dirs[NUM_DIRS] =
@@ -52,7 +53,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_iChoice[p] = 0;
+		m_iChoice[p] = clamp( DEFAULT_CHOICE-1, 0, (int) m_aModeChoices.size() );
 		m_bChosen[p] = false;
 	}
 
