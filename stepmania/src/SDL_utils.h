@@ -9,6 +9,8 @@
 #undef Font
 #undef Screen
 
+Uint32 mySDL_Swap24(Uint32 x);
+
 Uint32 decodepixel(const Uint8 *p, int bpp);
 void encodepixel(Uint8 *p, int bpp, Uint32 pixel);
 

@@ -180,7 +180,6 @@ struct GLPixFmtInfo_t {
 	}
 };
 
-Uint32 mySDL_Swap24(Uint32 x);
 
 static void FixLilEndian()
 {
