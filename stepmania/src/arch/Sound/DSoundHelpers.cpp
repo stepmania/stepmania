@@ -310,13 +310,13 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 		if( first_byte_filled < 0 )
 			first_byte_filled += buffersize; /* unwrap */
 
-		int current_cursor = cursorstart;
-		if( current_cursor < first_byte_filled )
-			current_cursor += buffersize;
-
 		/* The number of bytes that have been played since the last time we got here: */
-		int bytes_played = current_cursor - first_byte_filled;
+		int bytes_played = cursorstart - first_byte_filled;
+		if( bytes_played < 0 )
+			bytes_played += buffersize; /* unwrap */
+
 		buffer_bytes_filled -= bytes_played;
+		buffer_bytes_filled = max( 0, buffer_bytes_filled );
 	}
 
 	/* XXX We can figure out if we've underrun, and increase the write-ahead
@@ -360,7 +360,8 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 			/* Pretend the space between the play and write cursor is filled
 			 * with data, and continue filling from there. */
 			int no_write_zone_size = cursorend - cursorstart;
-			if(no_write_zone_size < 0) no_write_zone_size += buffersize; /* unwrap */
+			if( no_write_zone_size < 0 )
+				no_write_zone_size += buffersize; /* unwrap */
 
 			buffer_bytes_filled = no_write_zone_size;
 			write_cursor = cursorend;
