@@ -101,9 +101,14 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 	glGetFloatv(GL_POINT_SIZE_GRANULARITY, &m_oglspecs->point_granularity);
 	LOG->Info("Point size range: %f-%f +%f", m_oglspecs->point_range[0], m_oglspecs->point_range[1], m_oglspecs->point_granularity);
 
-	m_oglspecs->bAALinesCauseProblems = strncmp((const char*)glGetString(GL_RENDERER),"3Dfx/Voodoo3 (tm)/2 TMUs/16 MB SDRAM/ICD (Nov  2 2000)",sizeof("3Dfx/Voodoo3"))==0;
+	/* sizeof("string constant") is the size of the pointer (~4), not the length of the string. */
+	m_oglspecs->bAALinesCauseProblems = strncmp((const char*)glGetString(GL_RENDERER),"3Dfx/Voodoo3 (tm)/2 TMUs/16 MB SDRAM/ICD (Nov  2 2000)",strlen("3Dfx/Voodoo3"))==0;
 	if( m_oglspecs->bAALinesCauseProblems )
 		LOG->Info("Anti-aliased lines are known to cause problems with this driver.");
+	m_oglspecs->bPackedPixelsCauseProblems = 
+	    strncmp((const char*)glGetString(GL_RENDERER),"GLDirect",strlen("GLDirect"))==0;
+	if( m_oglspecs->bPackedPixelsCauseProblems )
+		LOG->Info("Packed pixel formats are known to cause problems with this driver.");
 }
 
 bool RageDisplay::IsSoftwareRenderer()

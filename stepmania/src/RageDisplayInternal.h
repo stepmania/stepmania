@@ -47,6 +47,9 @@ struct oglspecs_t {
 
 	/* Is AA known to cause problems in this driver? (Voodoo3) */
 	bool bAALinesCauseProblems;
+
+	/* Packed pixel data types don't work in GLDirect. */
+	bool bPackedPixelsCauseProblems;
 };
 
 /* Extension functions we use.  Put these in a namespace instead of in oglspecs_t,
