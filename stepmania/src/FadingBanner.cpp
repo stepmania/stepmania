@@ -94,6 +94,13 @@ void FadingBanner::LoadFromCachedBanner( const CString &path )
 	if( path != "" && m_Banner[GetBackIndex()].GetTexturePath() == path )
 		return;
 
+	if( path == "" )
+	{
+		BeforeChange();
+		m_Banner[GetBackIndex()].LoadFallback();
+		return;
+	}
+
 	/* If we're currently fading to the given banner, go through this again,
 	 * which will cause the fade-in to be further delayed. */
 
