@@ -52,6 +52,21 @@ ScreenSelectGroup::ScreenSelectGroup()
 	
 	LOG->Trace( "ScreenSelectGroup::ScreenSelectGroup()" );	
 
+	m_Menu.Load(
+		THEME->GetPathTo("BGAnimations","select group") , 
+		THEME->GetPathTo("Graphics","select group top edge"),
+		HELP_TEXT, true, true, TIMER_SECONDS
+		);
+	this->AddChild( &m_Menu );
+
+	if(!PREFSMAN->m_bShowSelectGroup)
+	{
+		GAMESTATE->m_sPreferredGroup = "ALL MUSIC";
+		m_Menu.ImmedOffScreenToMenu();
+		this->SendScreenMessage( SM_GoToNextScreen, 0.f );
+		return;
+	}
+
 
 	unsigned i;
 	int j;
@@ -115,13 +130,6 @@ ScreenSelectGroup::ScreenSelectGroup()
 	}
 
 	m_bChosen = false;
-
-	m_Menu.Load(
-		THEME->GetPathTo("BGAnimations","select group") , 
-		THEME->GetPathTo("Graphics","select group top edge"),
-		HELP_TEXT, true, true, TIMER_SECONDS
-		);
-	this->AddChild( &m_Menu );
 
 	m_sprExplanation.Load( THEME->GetPathTo("Graphics","select group explanation") );
 	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );

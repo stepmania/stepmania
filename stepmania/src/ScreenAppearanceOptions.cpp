@@ -32,6 +32,7 @@ enum {
 	AO_SKIN,
 	AO_HOWTOPLAY,
 	AO_CAUTION,
+	AO_SELECT_GROUP,
 	NUM_APPEARANCE_OPTIONS_LINES
 };
 
@@ -41,6 +42,7 @@ OptionRowData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 	{ "Note\nSkin",		0, {""} },		// fill this in on ImportOptions()
 	{ "How To\nPlay",	2, {"SKIP","SHOW"} },
 	{ "Caution",		2, {"SKIP","SHOW"} },
+	{ "Song\nGroup",	2, {"ALL MUSIC","CHOOSE"} },
 };
 
 ScreenAppearanceOptions::ScreenAppearanceOptions() :
@@ -152,6 +154,7 @@ void ScreenAppearanceOptions::ImportOptions()
 
 	m_iSelectedOption[0][AO_HOWTOPLAY]					= PREFSMAN->m_bHowToPlay? 1:0;
 	m_iSelectedOption[0][AO_CAUTION]					= PREFSMAN->m_bShowDontDie? 1:0;
+	m_iSelectedOption[0][AO_SELECT_GROUP]				= PREFSMAN->m_bShowSelectGroup? 1:0;
 }
 
 void ScreenAppearanceOptions::ExportOptions()
@@ -175,6 +178,7 @@ void ScreenAppearanceOptions::ExportOptions()
 
 	PREFSMAN->m_bHowToPlay				= !!m_iSelectedOption[0][AO_HOWTOPLAY];
 	PREFSMAN->m_bShowDontDie			= !!m_iSelectedOption[0][AO_CAUTION];
+	PREFSMAN->m_bShowSelectGroup		= !!m_iSelectedOption[0][AO_SELECT_GROUP];
 
 	PREFSMAN->SaveGamePrefsToDisk();
 	PREFSMAN->SaveGlobalPrefsToDisk();

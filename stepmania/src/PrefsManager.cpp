@@ -61,6 +61,7 @@ PrefsManager::PrefsManager()
 	m_bDelayedEscape = true;
 	m_bHowToPlay = true;
 	m_bShowDontDie = true;
+	m_bShowSelectGroup = true;
 	m_bArcadeOptionsNavigation = false;
 	m_iUnloadTextureDelaySeconds = 0; // disabled 60*30;	// 30 mins
 	m_bCoinOpMode = false;
@@ -114,6 +115,7 @@ PrefsManager::~PrefsManager()
 	ini.GetValueB( "Options", "Vsync",						m_bVsync );
 	ini.GetValueB( "Options", "HowToPlay",					m_bHowToPlay );
 	ini.GetValueB( "Options", "Caution",					m_bShowDontDie );
+	ini.GetValueB( "Options", "SelectGroup",				m_bShowSelectGroup );
 	ini.GetValueB( "Options", "ArcadeOptionsNavigation",	m_bArcadeOptionsNavigation );
 	ini.GetValue ( "Options", "DWIPath",					m_DWIPath );
 	ini.GetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
@@ -167,6 +169,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "Vsync",						m_bVsync );
 	ini.SetValueB( "Options", "HowToPlay",					m_bHowToPlay );
 	ini.SetValueB( "Options", "Caution",					m_bShowDontDie );
+	ini.SetValueB( "Options", "SelectGroup",				m_bShowSelectGroup );
 	ini.SetValueB( "Options", "ArcadeOptionsNavigation",	m_bArcadeOptionsNavigation );
 	ini.SetValue ( "Options", "DWIPath",					m_DWIPath );
 	ini.SetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
