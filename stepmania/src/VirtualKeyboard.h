@@ -15,7 +15,7 @@ public:
 	~VirtualKeyboard();
 
 	void Reset( VirtualKeyboardMode mode );
-	int Translate( const DeviceInput& DeviceI, const MenuInput &MenuI, const wstring &cur_string, bool *nextChar );
+	wchar_t Translate( const DeviceInput& DeviceI, const MenuInput &MenuI, const wstring &cur_string, bool *nextChar );
 
 protected:
 	VirtualKeyboardMode currentMode;

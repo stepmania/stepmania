@@ -101,7 +101,7 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 	{
 		bool nextChar = false;
 
-		int toAdd = VIRTUALKB.Translate(DeviceI, MenuI, m_sAnswer, &nextChar);
+		wchar_t toAdd = VIRTUALKB.Translate(DeviceI, MenuI, m_sAnswer, &nextChar);
 
 		if( toAdd != 0 && toAdd != KEY_BACK && toAdd != KEY_ESC && toAdd != KEY_ENTER )
 		{

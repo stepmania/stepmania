@@ -24,7 +24,7 @@ void VirtualKeyboard::Reset( VirtualKeyboardMode mode )
 	currentMode = mode;
 }
 
-int VirtualKeyboard::Translate( const DeviceInput& DeviceI, const MenuInput &MenuI, const wstring &cur_string, bool *nextChar )
+wchar_t VirtualKeyboard::Translate( const DeviceInput& DeviceI, const MenuInput &MenuI, const wstring &cur_string, bool *nextChar )
 {
 	*nextChar = false;
 	MenuButton button = MenuI.button;
@@ -48,7 +48,7 @@ int VirtualKeyboard::Translate( const DeviceInput& DeviceI, const MenuInput &Men
 		}
 		else
 		{
-			int c = cur_string[cur_string.size() - 1];
+			wchar_t c = cur_string[cur_string.size() - 1];
 
 			if(c == ' ')
 				c = 'a';
@@ -85,7 +85,7 @@ int VirtualKeyboard::Translate( const DeviceInput& DeviceI, const MenuInput &Men
 		}
 		else
 		{
-			int c = cur_string[cur_string.size() - 1];
+			wchar_t c = cur_string[cur_string.size() - 1];
 
 			if(c == ' ')
 				c = '~';
