@@ -252,7 +252,6 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenEditMenu.h"
 #include "ScreenEvaluation.h"
 #include "ScreenEz2SelectPlayer.h"
-#include "ScreenSelectMode.h"
 #include "ScreenGameOver.h"
 #include "ScreenGameplay.h"
 #include "ScreenGraphicOptions.h"
@@ -299,6 +298,7 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenCredits.h"
 #include "ScreenSelectCharacter.h"
 #include "ScreenRaveOptions.h"
+#include "ScreenSelectMode.h"
 
 Screen* Screen::Create( CString sClassName )
 {
@@ -316,7 +316,6 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenEvaluationBattle );
 	IF_RETURN( ScreenEvaluationRave );
 	IF_RETURN( ScreenEz2SelectPlayer );
-	IF_RETURN( ScreenSelectMode );
 	IF_RETURN( ScreenGameOver );
 	IF_RETURN( ScreenGameplay );
 	IF_RETURN( ScreenGraphicOptions );
@@ -336,6 +335,7 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenSelectMusic );
 	IF_RETURN( ScreenSelectStyle5th );
 	IF_RETURN( ScreenSelectStyle );
+	IF_RETURN( ScreenSelectMode );
 	IF_RETURN( ScreenSongOptions );
 	IF_RETURN( ScreenStage );
 	IF_RETURN( ScreenTest );

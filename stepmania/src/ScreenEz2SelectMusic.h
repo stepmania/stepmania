@@ -76,7 +76,7 @@ protected:
 	bool m_bGoToOptions;
 	bool m_bMadeChoice;
 	bool m_bTransitioning;
-
+	
 	int i_ErrorDetected;
 
 	#ifdef DEBUG

@@ -179,7 +179,16 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 				* are other screens you can join (eg ScreenCaution). -glenn */
 				
 				/* Joint premium on a DDR machine does allow two player modes with a single
-				 * credit.		-Chris */
+				 * credit.		-Chris 
+				*/
+
+				/* Indeed, I can see three different premium settings here:
+				AnyPlayersTwoCoins (2 coins for doubles and 2 coins for versus)
+				OnePlayerOneCoin (1 coin for doubles, but 2 coins for versus (like pump and ez2))
+				TwoPlayerOneCoin (1 coin for doubles / versus play)
+				perhaps we should change the joint premium system to work this way?
+				That way we can support all gametypes.
+				*/
 
 				if( PREFSMAN->m_iCoinMode == COIN_PAY )
 				{

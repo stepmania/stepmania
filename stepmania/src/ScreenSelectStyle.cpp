@@ -29,7 +29,6 @@ ScreenSelectStyle::ScreenSelectStyle() : ScreenSelect( "ScreenSelectStyle" )
 {
 	m_iSelection = 0;
 
-
 	unsigned i;
 	for( i=0; i<m_aModeChoices.size(); i++ )
 	{

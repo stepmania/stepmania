@@ -6,7 +6,7 @@ Andrew Livy
 *********************************/
 
 /* Includes */
-
+#include "ScreenSelect.h"
 #include "Background.h"
 #include "Screen.h"
 #include "Sprite.h"
@@ -16,54 +16,32 @@ Andrew Livy
 #include "GameConstantsAndTypes.h"
 #include "ModeChoice.h"
 #include "BitmapText.h"
-// #include "TransitionFade.h"
 #include "RandomSample.h"
 
 /* Class Definition */
 
-#define MAX_MODE_CHOICES2  10
+#define MAX_ELEMS 30
 
-
-class ScreenSelectMode : public Screen
+class ScreenSelectMode : public ScreenSelect
 {
 public:
 	ScreenSelectMode(); // Constructor
 	virtual ~ScreenSelectMode(); // Destructor
-	
-	/* Public Function Prototypes */
-	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
-
-	void MenuLeft( PlayerNumber pn );
-	void MenuRight( PlayerNumber pn );
-	void MenuStart( PlayerNumber pn );
-	void MenuBack( PlayerNumber pn );
-	void MenuDown( PlayerNumber pn );
-
+	virtual void MenuLeft( PlayerNumber pn );
+	virtual void MenuRight( PlayerNumber pn );
+	virtual void MenuStart( PlayerNumber pn );
+	virtual void Update( float fDelta );
 protected:
-	void AfterChange();
-
-	void TweenOffScreen();
-	void TweenOnScreen();
-	
-	Sprite	m_sprJoinMessage[NUM_PLAYERS];
-	Sprite	m_sprJoinFrame[NUM_PLAYERS];
-	Sprite  m_ChoiceListFrame;
-	Sprite  m_ChoiceListHighlight;
-	Sprite  m_Guide;
-
-	Sprite m_Infotext[MAX_MODE_CHOICES2];
-
-	vector<ModeChoice*> m_apPossibleModeChoices;
-
+	virtual int GetSelectionIndex( PlayerNumber pn );
+	virtual void UpdateSelectableChoices();
+	int m_iNumChoices;
+	int m_iSelectableChoices[MAX_ELEMS];
+	RageSound			m_soundModeChange;
+	CStringArray arrayLocations;
 	ScrollingList m_ScrollingList;
-	void RefreshModeChoices();
-
-	BGAnimation	m_BGAnimations[MAX_MODE_CHOICES2];
-	MenuElements m_Menu;
-
-	RageSound	m_soundSelect;	
-	RageSound	m_soundChange;	
+	Sprite m_ChoiceListFrame;
+	Sprite m_ChoiceListHighlight;
+	Sprite m_sprJoinMessage[NUM_PLAYERS];
+	Sprite m_sprJoinFrame[NUM_PLAYERS];
+	Sprite m_Guide;
 };
