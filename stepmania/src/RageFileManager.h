@@ -18,18 +18,18 @@ public:
 	~RageFileManager();
 	void MountInitialFilesystems();
 
-	void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
-	bool Remove( const CString &sPath );
+	void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+	bool Remove( CString sPath );
 	
 	enum FileType { TYPE_FILE, TYPE_DIR, TYPE_NONE };
-	FileType GetFileType( const CString &sPath );
+	FileType GetFileType( CString sPath );
 
 	bool IsAFile( const CString &sPath );
 	bool IsADirectory( const CString &sPath );
 	bool DoesFileExist( const CString &sPath );
 
-	int GetFileSizeInBytes( const CString &sPath );
-	int GetFileHash( const CString &sPath );
+	int GetFileSizeInBytes( CString sPath );
+	int GetFileHash( CString sPath );
 
 	void Mount( CString Type, CString RealPath, CString MountPoint );
 	void Unmount( CString Type, CString Root, CString MountPoint );
@@ -41,15 +41,15 @@ public:
 	};
 	void GetLoadedDrivers( vector<DriverLocation> &Mounts );
 
-	void FlushDirCache( const CString &sPath );
+	void FlushDirCache( CString sPath );
 
 	/* Used only by RageFile: */
-	RageFileObj *Open( const CString &sPath, int mode, RageFile &p, int &err );
+	RageFileObj *Open( CString sPath, int mode, RageFile &p, int &err );
 	void Close( RageFileObj *obj );
 	RageFileObj *CopyFileObj( const RageFileObj *cpy, RageFile &p );
 
 private:
-	RageFileObj *OpenForWriting( const CString &sPath, int mode, RageFile &p, int &err );
+	RageFileObj *OpenForWriting( CString sPath, int mode, RageFile &p, int &err );
 };
 
 extern RageFileManager *FILEMAN;

@@ -34,7 +34,7 @@ struct LoadedDriver
 	CString Type, Root, MountPoint;
 
 	LoadedDriver() { driver = NULL; }
-	CString GetPath( CString path );
+	CString GetPath( const CString &path );
 };
 
 static vector<LoadedDriver> g_Drivers;
@@ -210,15 +210,9 @@ RageFileManager::~RageFileManager()
 	g_Mutex = NULL;
 }
 
-CString LoadedDriver::GetPath( CString path )
+/* path must be normalized (FixSlashesInPlace, CollapsePath). */
+CString LoadedDriver::GetPath( const CString &path )
 {
-	/* Map all slashes to forward slash. */
-	FixSlashesInPlace( path );
-
-	/* Collapse the path, removing any leading dots.  (FilenameDB::ResolvePath requires
-	 * this.) */
-	CollapsePath( path, true );
-
 	/* Default mountpoints: */
 	if( MountPoint.size() == 0 )
 	{
@@ -234,11 +228,19 @@ CString LoadedDriver::GetPath( CString path )
 	return path.Right( path.size() - MountPoint.size() );
 }
 
+static void NormalizePath( CString &sPath )
+{
+	FixSlashesInPlace( sPath );
+	CollapsePath( sPath );
+}
+
 bool ilt( const CString &a, const CString &b ) { return a.CompareNoCase(b) < 0; }
 bool ieq( const CString &a, const CString &b ) { return a.CompareNoCase(b) == 0; }
-void RageFileManager::GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	LockMut( *g_Mutex );
+
+	NormalizePath( sPath );
 	
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
@@ -264,10 +266,12 @@ void RageFileManager::GetDirListing( const CString &sPath, CStringArray &AddTo, 
 	AddTo.erase(it, AddTo.end());
 }
 
-bool RageFileManager::Remove( const CString &sPath )
+bool RageFileManager::Remove( CString sPath )
 {
 	LockMut( *g_Mutex );
 
+	NormalizePath( sPath );
+	
 	/* Multiple drivers may have the same file. */
 	bool Deleted = false;
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
@@ -392,9 +396,11 @@ void RageFileManager::GetLoadedDrivers( vector<DriverLocation> &Mounts )
 	}
 }
 
-void RageFileManager::FlushDirCache( const CString &sPath )
+void RageFileManager::FlushDirCache( CString sPath )
 {
 	LockMut( *g_Mutex );
+
+	NormalizePath( sPath );
 
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
@@ -412,9 +418,11 @@ void RageFileManager::FlushDirCache( const CString &sPath )
 	}
 }
 
-RageFileManager::FileType RageFileManager::GetFileType( const CString &sPath )
+RageFileManager::FileType RageFileManager::GetFileType( CString sPath )
 {
 	LockMut( *g_Mutex );
+
+	NormalizePath( sPath );
 
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
@@ -430,9 +438,11 @@ RageFileManager::FileType RageFileManager::GetFileType( const CString &sPath )
 }
 
 
-int RageFileManager::GetFileSizeInBytes( const CString &sPath )
+int RageFileManager::GetFileSizeInBytes( CString sPath )
 {
 	LockMut( *g_Mutex );
+
+	NormalizePath( sPath );
 
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
@@ -447,9 +457,11 @@ int RageFileManager::GetFileSizeInBytes( const CString &sPath )
 	return -1;
 }
 
-int RageFileManager::GetFileHash( const CString &sPath )
+int RageFileManager::GetFileHash( CString sPath )
 {
 	LockMut( *g_Mutex );
+
+	NormalizePath( sPath );
 
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
@@ -515,7 +527,7 @@ static bool PathUsesSlowFlush( const CString &sPath )
 }
 
 /* Used only by RageFile: */
-RageFileObj *RageFileManager::Open( const CString &sPath, int mode, RageFile &p, int &err )
+RageFileObj *RageFileManager::Open( CString sPath, int mode, RageFile &p, int &err )
 {
 	LockMut( *g_Mutex );
 
@@ -528,6 +540,8 @@ RageFileObj *RageFileManager::Open( const CString &sPath, int mode, RageFile &p,
 	 * may be several that will work. */
 	if( mode & RageFile::WRITE )
 		return OpenForWriting( sPath, mode, p, err );
+
+	NormalizePath( sPath );
 
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
@@ -568,7 +582,7 @@ RageFileObj *RageFileManager::CopyFileObj( const RageFileObj *cpy, RageFile &p )
 	return ret;	
 }
 
-RageFileObj *RageFileManager::OpenForWriting( const CString &sPath, int mode, RageFile &p, int &err )
+RageFileObj *RageFileManager::OpenForWriting( CString sPath, int mode, RageFile &p, int &err )
 {
 	LockMut( *g_Mutex );
 
@@ -591,6 +605,8 @@ RageFileObj *RageFileManager::OpenForWriting( const CString &sPath, int mode, Ra
 	 * If the given path can not be created, return -1.  This happens if a path
 	 * that needs to be a directory is a file, or vice versa.
 	 */
+	NormalizePath( sPath );
+
 	vector< pair<int,int> > Values;
 	unsigned i;
 	for( i = 0; i < g_Drivers.size(); ++i )
