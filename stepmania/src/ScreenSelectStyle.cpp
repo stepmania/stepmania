@@ -21,9 +21,9 @@
 #include "ActorUtil.h"
 
 
-#define ICON_GAIN_FOCUS_COMMAND		THEME->GetMetric ("ScreenSelectStyle","IconGainFocusCommand")
-#define ICON_LOSE_FOCUS_COMMAND		THEME->GetMetric ("ScreenSelectStyle","IconLoseFocusCommand")
-#define DISABLED_COLOR				THEME->GetMetricC("ScreenSelectStyle","DisabledColor")
+#define ICON_GAIN_FOCUS_COMMAND		THEME->GetMetric (m_sName,"IconGainFocusCommand")
+#define ICON_LOSE_FOCUS_COMMAND		THEME->GetMetric (m_sName,"IconLoseFocusCommand")
+#define DISABLED_COLOR				THEME->GetMetricC(m_sName,"DisabledColor")
 
 
 ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClassName )
@@ -38,7 +38,7 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 		//
 		// Load icon
 		//
-		CString sIconElementName = ssprintf("ScreenSelectStyle icon%d",i+1);
+		CString sIconElementName = ssprintf("%s icon%d",m_sName.c_str(), i+1);
 		CString sIconPath = THEME->GetPathToG(sIconElementName);
 
 		m_textIcon[i].SetName( ssprintf("Icon%d",i+1) );
@@ -61,7 +61,7 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 		//
 		// Load Picture
 		//
-		CString sPictureElementName = ssprintf("ScreenSelectStyle picture%d",i+1);
+		CString sPictureElementName = ssprintf("%s picture%d",m_sName.c_str(),i+1);
 		CString sPicturePath = THEME->GetPathToG(sPictureElementName);
 		if( sPicturePath != "" )
 		{
@@ -75,7 +75,7 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 		//
 		// Load info
 		//
-		CString sInfoElementName = ssprintf("ScreenSelectStyle info%d",i+1);
+		CString sInfoElementName = ssprintf("%s info%d",m_sName.c_str(),i+1);
 		CString sInfoPath = THEME->GetPathToG(sInfoElementName);
 		if( sInfoPath != "" )
 		{
@@ -88,11 +88,11 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 
 
 	m_sprWarning.SetName( "Warning" );
-	m_sprWarning.Load( THEME->GetPathToG("ScreenSelectStyle warning") );
+	m_sprWarning.Load( THEME->GetPathToG(m_sName+" warning") );
 	this->AddChild( &m_sprWarning );
 		
 	m_sprExplanation.SetName( "Explanation" );
-	m_sprExplanation.Load( THEME->GetPathToG("ScreenSelectStyle explanation") );
+	m_sprExplanation.Load( THEME->GetPathToG(m_sName + " explanation") );
 	this->AddChild( &m_sprExplanation );
 		
 
@@ -110,12 +110,12 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 
 	if( PREFSMAN->m_bJointPremium )
 	{
-		m_sprJointPremium.Load( THEME->GetPathToG("ScreenSelectStyle joint premium") );
+		m_sprJointPremium.Load( THEME->GetPathToG(m_sName + " joint premium") );
 		this->AddChild( &m_sprJointPremium );
 	}
 
 
-	m_soundChange.Load( THEME->GetPathToS("ScreenSelectStyle change") );
+	m_soundChange.Load( THEME->GetPathToS(m_sName + " change") );
 	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 
 
@@ -182,7 +182,7 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 	SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0 );
 
 	const ModeChoice& mc = m_aModeChoices[GetSelectionIndex(pn)];
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectStyle comment %s",mc.m_sName.c_str())) );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(),mc.m_sName.c_str())) );
 
 	//
 	// TweenOffScreen
