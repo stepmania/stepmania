@@ -175,7 +175,7 @@ PCRE = pcre/chartables.c pcre/get.c pcre/internal.h pcre/maketables.c pcre/pcre.
 
 RageFile = \
 RageFile.cpp RageFile.h RageFileDriver.cpp RageFileDriver.h RageFileManager.cpp RageFileManager.h \
-RageFileDriverDirect.cpp RageFileDriverDirect.h
+RageFileDriverDirect.cpp RageFileDriverDirect.h RageFileDriverZip.cpp RageFileDriverZip.h
 
 Rage = $(Helpers) $(PCRE)\
 RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisplay_OGL.cpp RageDisplay_OGL.h \
