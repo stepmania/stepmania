@@ -265,6 +265,13 @@ public:
 	// PlayerState
 	//
 	PlayerState* m_pPlayerState[NUM_PLAYERS];
+
+	//
+	// Workout stuff
+	//
+	int m_iAddToAllCourseEntryMeters;	// 0 == no change
+	int m_iStopCourseAtSeconds;			// -1 == don't stop early
+	bool m_bAutoAdjustMeterDuringCorse;
 };
 
 

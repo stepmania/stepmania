@@ -64,6 +64,7 @@ GameState::GameState()
 		m_pPlayerState[p]->m_PlayerNumber = p;
 	}
 
+
 	/* Don't reset yet; let the first screen do it, so we can
 	 * use PREFSMAN and THEME. */
 //	Reset();
@@ -193,6 +194,10 @@ void GameState::Reset()
 			m_pCurCharacters[p] = GetDefaultCharacter();
 		ASSERT( m_pCurCharacters[p] );
 	}
+
+	m_iAddToAllCourseEntryMeters = 0;
+	m_iStopCourseAtSeconds = -1;
+	m_bAutoAdjustMeterDuringCorse = false;
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_ATTRACT );
 
