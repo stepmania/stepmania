@@ -26,6 +26,7 @@
 #include "StyleDef.h"
 #include "Notes.h"
 #include "GameState.h"
+#include "FontManager.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -599,6 +600,42 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 			m_fLastBeat = max( m_fLastBeat, fLastBeat );
 	}
 
+	/* XXX make theme metrics for these or something.  Candy makes it
+	 * a little annoying ...*/
+	if(m_sMainTitle == "Kakumei") {
+		m_sMainTitleTranslit = m_sMainTitle;
+		m_sMainTitle = "&kakumei1;&kakumei2;";
+	}
+	if(m_sMainTitle == "Candy") {
+		/* very funny ... */
+		if(m_sArtist.substr(0, 3) == "Luv")
+		{
+			m_sMainTitleTranslit = m_sMainTitle;
+			m_sMainTitle = "Candy &whitestar;";
+		} else if(m_sArtist.substr(0, 4) == "Riyu") {
+			m_sMainTitleTranslit = m_sMainTitle;
+			m_sMainTitle = "Candy &whiteheart;";
+		}
+
+	}
+	if(m_sMainTitle == "Sweet Sweet Love Magic") {
+		m_sMainTitleTranslit = m_sMainTitle;
+		m_sMainTitle = "Sweet Sweet &whiteheart; Magic";
+	}
+	if(m_sMainTitle == "Matsuri Japan") {
+		m_sMainTitleTranslit = m_sMainTitle;
+		m_sMainTitle = "&matsuri; Japan";
+	}
+	if(m_sArtist == "Omega") {
+		m_sArtistTranslit = m_sArtist;
+		m_sArtist = "&omega;";
+	}
+	/* XXX: breakdown, sana molette */
+
+	/* We can't leave placeholders in the actual text, because it'll get
+	 * written to cache, and cache entries can't contain semicolons. */
+	FontManager::ReplaceMarkers( m_sMainTitle );
+	FontManager::ReplaceMarkers( m_sArtist );
 }
 
 void Song::GetNotesThatMatch( NotesType nt, vector<Notes*>& arrayAddTo ) const
