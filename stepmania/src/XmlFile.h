@@ -101,12 +101,12 @@ struct PARSEINFO
 	char		escape_value;		// [set] escape value (default '\\')
 
 	char*		xml;				// [get] xml source
-	bool		erorr_occur;		// [get] is occurance of error?
+	bool		error_occur;		// [get] is occurance of error?
 	char*		error_pointer;		// [get] error position of xml source
 	PCODE		error_code;			// [get] error code
 	CString		error_string;		// [get] error string
 
-	PARSEINFO() { trim_value = true; entity_value = true; entitys = &entityDefault; xml = NULL; erorr_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELFORMED; escape_value = 0; }
+	PARSEINFO() { trim_value = true; entity_value = true; entitys = &entityDefault; xml = NULL; error_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELFORMED; escape_value = 0; }
 };
 extern PARSEINFO piDefault;
 

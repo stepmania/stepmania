@@ -196,9 +196,9 @@ char* XNode::LoadAttributes( const char* pszAttrs, PARSEINFO *pi /*= &piDefault*
 		if( pEnd == NULL ) 
 		{
 			// error
-			if( !pi->erorr_occur ) 
+			if( !pi->error_occur ) 
 			{
-				pi->erorr_occur = true;
+				pi->error_occur = true;
 				pi->error_pointer = xml;
 				pi->error_code = PIE_ATTR_NO_VALUE;
 				pi->error_string = ssprintf( ("<%s> attribute has error "), m_sName.c_str() );
@@ -319,9 +319,9 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 		else
 		{
 			// error: <TAG ... / >
-			if( !pi->erorr_occur ) 
+			if( !pi->error_occur ) 
 			{
-				pi->erorr_occur = true;
+				pi->error_occur = true;
 				pi->error_pointer = xml;
 				pi->error_code = PIE_ALONE_NOT_CLOSED;
 				pi->error_string = ("Element must be closed.");
@@ -342,9 +342,9 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 			char* pEnd = tcsechr( ++xml, chXMLTagOpen, chXMLEscape );
 			if( pEnd == NULL ) 
 			{
-				if( !pi->erorr_occur ) 
+				if( !pi->error_occur ) 
 				{
-					pi->erorr_occur = true;
+					pi->error_occur = true;
 					pi->error_pointer = xml;
 					pi->error_code = PIE_NOT_CLOSED;
 					pi->error_string = ssprintf( "%s must be closed with </%s>", m_sName.c_str(), m_sName.c_str() );
@@ -396,9 +396,9 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 				char* pEnd = strpbrk( xml, " >" );
 				if( pEnd == NULL ) 
 				{
-					if( !pi->erorr_occur ) 
+					if( !pi->error_occur ) 
 					{
-						pi->erorr_occur = true;
+						pi->error_occur = true;
 						pi->error_pointer = xml;
 						pi->error_code = PIE_NOT_CLOSED;
 						pi->error_string = ssprintf( "it must be closed with </%s>", m_sName.c_str() );
@@ -418,9 +418,9 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 				{
 					xml = pEnd+1;
 					// not welformed open/close
-					if( !pi->erorr_occur ) 
+					if( !pi->error_occur ) 
 					{
-						pi->erorr_occur = true;
+						pi->error_occur = true;
 						pi->error_pointer = xml;
 						pi->error_code = PIE_NOT_NESTED;
 						pi->error_string = ssprintf( "'<%s> ... </%s>' is not well-formed.", m_sName.c_str(), closename.c_str() );
@@ -441,9 +441,9 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 					if( pEnd == NULL ) 
 					{
 						// error cos not exist CloseTag </TAG>
-						if( !pi->erorr_occur )  
+						if( !pi->error_occur )  
 						{
-							pi->erorr_occur = true;
+							pi->error_occur = true;
 							pi->error_pointer = xml;
 							pi->error_code = PIE_NOT_CLOSED;
 							pi->error_string = ssprintf( "it must be closed with </%s>", m_sName.c_str() );
@@ -1020,7 +1020,7 @@ bool XNode::LoadFromFile( RageFileBasic &f, PARSEINFO *pi )
 	{
 		if( pi )
 		{
-			pi->erorr_occur = true;
+			pi->error_occur = true;
 			pi->error_pointer = NULL;
 			pi->error_code = PIE_READ_ERROR;
 			pi->error_string = f.GetError();
