@@ -99,17 +99,11 @@ RageLog::RageLog()
 	remove( INFO_PATH );
 
 	// Open log file and leave it open.
-	g_fileLog.Open( LOG_PATH, RageFile::WRITE );
+	if( !g_fileLog.Open( LOG_PATH, RageFile::WRITE ) )
+		fprintf( stderr, "Couldn't open %s: %s", LOG_PATH, g_fileLog.GetError().c_str() );
 	
-	// Failing to open shouldn't be fatal
-	//if( g_fileLog == NULL )
-	//	RageException::Throw( " Couldn't open log.txt: %s", strerror(errno) );
-
-	g_fileInfo.Open( INFO_PATH, RageFile::WRITE );
-
-	// Failing to open shouldn't be fatal
-	//if( g_fileInfo == NULL )
-	//	RageException::Throw( " Couldn't open info.txt: %s", strerror(errno) );
+	if( !g_fileInfo.Open( INFO_PATH, RageFile::WRITE ) )
+		fprintf( stderr, "Couldn't open %s: %s", INFO_PATH, g_fileInfo.GetError().c_str() );
 
 	this->Info( PRODUCT_NAME_VER );
 

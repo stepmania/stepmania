@@ -16,7 +16,7 @@ MemoryCardDriver_Linux::MemoryCardDriver_Linux()
 	m_lastModTime = 0;
 	m_fds = open(USB_DEVICE_LIST_FILE, O_RDONLY);
 	if( m_fds == -1 )
-		LOG->Warn( "Failed to open '%s'", USB_DEVICE_LIST_FILE );
+		LOG->Warn( "Failed to open \"%s\": %s", USB_DEVICE_LIST_FILE, strerror(errno) );
 }
 
 MemoryCardDriver_Linux::~MemoryCardDriver_Linux()
