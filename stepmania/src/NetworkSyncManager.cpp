@@ -151,7 +151,7 @@ void NetworkSyncManager::PostStartUp(const CString& ServerIP)
 
 	useSMserver = true;
 
-	m_startupStatus = 1;	//Connection attepmpt sucessful
+	m_startupStatus = 1;	//Connection attepmpt successful
 
 	// If network play is desired and the connection works,
 	// halt until we know what server version we're dealing with
@@ -495,7 +495,7 @@ void NetworkSyncManager::DisplayStartupStatus()
 		//Networking wasn't attepmpted
 		return;
 	case 1:
-		sMessage = "Connection to " + m_ServerName + " sucessful.";
+		sMessage = "Connection to " + m_ServerName + " successful.";
 		break;
 	case 2:
 		sMessage = "Connection failed.";

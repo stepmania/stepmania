@@ -101,7 +101,7 @@ public:
 
 	void CloseConnection();
 
-	void DisplayStartupStatus();	//Used to note user if connect attempt was sucessful or not.
+	void DisplayStartupStatus();	//Used to note user if connect attempt was successful or not.
 
 	int m_playerLife[NUM_PLAYERS];	//Life (used for sending to server)
 
@@ -159,7 +159,7 @@ private:
 	int m_score;
 	int m_combo;
     
-	int m_startupStatus;	//Used to see if attempt was sucessful or not.
+	int m_startupStatus;	//Used to see if attempt was successful or not.
 
 	bool m_scoreboardchange[NUM_NSSB_CATEGORIES];
 
