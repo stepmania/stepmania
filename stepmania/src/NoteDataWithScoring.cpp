@@ -7,6 +7,7 @@
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Glenn Maynard
 -----------------------------------------------------------------------------
 */
 
@@ -44,7 +45,7 @@ int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float 
 	{
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
-			if( this->GetTapNote(t, i) != TAP_EMPTY && GetTapNoteScore(t, i) == tns )
+			if( this->GetTapNote(t, i) != TAP_EMPTY && GetTapNoteScore(t, i) >= tns )
 				iNumSuccessfulTapNotes++;
 		}
 	}
@@ -52,29 +53,34 @@ int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float 
 	return iNumSuccessfulTapNotes;
 }
 
-int NoteDataWithScoring::GetNumDoublesWithScore( TapNoteScore tns, const float fStartBeat, float fEndBeat ) const
+int NoteDataWithScoring::GetNumNWithScore( TapNoteScore tns, int MinTaps, const float fStartBeat, float fEndBeat ) const
 {
+	if( fEndBeat == -1 )
+		fEndBeat = GetMaxBeat();
+
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+
+	iStartIndex = max( iStartIndex, 0 );
+	iEndIndex = min( iEndIndex, GetMaxRow()-1 );
+
 	int iNumSuccessfulDoubles = 0;
-
-	if(fEndBeat == -1)
-		fEndBeat = GetMaxBeat()+1;
-
-	unsigned iStartIndex = BeatToNoteRow( fStartBeat );
-	unsigned iEndIndex = BeatToNoteRow( fEndBeat );
-
-	for( unsigned i=iStartIndex; i<min(float(iEndIndex), float(m_TapNoteScores[0].size())); i++ )
+	for( int i=iStartIndex; i<=iEndIndex; i++ )
 	{
 		int iNumNotesThisIndex = 0;
 		TapNoteScore	minTapNoteScore = TNS_MARVELOUS;
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
-			if( GetTapNote(t, i) != TAP_EMPTY )
+			switch( GetTapNote(t, i) )
 			{
+			case TAP_TAP:		
+			case TAP_HOLD_HEAD: 
+			case TAP_ADDITION:	
 				iNumNotesThisIndex++;
 				minTapNoteScore = min( minTapNoteScore, GetTapNoteScore(t, i) );
 			}
 		}
-		if( iNumNotesThisIndex >= 2  &&  minTapNoteScore == tns )
+		if( iNumNotesThisIndex >= MinTaps && minTapNoteScore >= tns )
 			iNumSuccessfulDoubles++;
 	}
 	
@@ -95,6 +101,30 @@ int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const floa
 			iNumSuccessfulHolds++;
 	}
 	return iNumSuccessfulHolds;
+}
+
+int NoteDataWithScoring::GetSuccessfulMines( float fStartBeat, float fEndBeat ) const
+{
+	if( fEndBeat == -1 )
+		fEndBeat = GetMaxBeat();
+
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+
+	iStartIndex = max( iStartIndex, 0 );
+	iEndIndex = min( iEndIndex, GetMaxRow()-1 );
+
+	int iNumSuccessfulMinesNotes = 0;
+	for( int i=iStartIndex; i<=iEndIndex; i++ )
+	{
+		for( int t=0; t<GetNumTracks(); t++ )
+		{
+			if( this->GetTapNote(t, i) == TAP_MINE && GetTapNoteScore(t, i) != TNS_MISS )
+				iNumSuccessfulMinesNotes++;
+		}
+	}
+	
+	return iNumSuccessfulMinesNotes;
 }
 
 /* Return the minimum tap score of a row.  If the row isn't complete (not all
@@ -177,13 +207,13 @@ float NoteDataWithScoring::GetActualRadarValue( RadarCategory rv, PlayerNumber p
 	case RADAR_AIR:		return GetActualAirRadarValue( fSongSeconds, pn );		break;
 	case RADAR_FREEZE:	return GetActualFreezeRadarValue( fSongSeconds, pn );	break;
 	case RADAR_CHAOS:	return GetActualChaosRadarValue( fSongSeconds, pn );	break;
+	case RADAR_NUM_TAPS_AND_HOLDS: return (float) GetNumNWithScore( TNS_GOOD, 1 );
+	case RADAR_NUM_JUMPS: return (float) GetNumNWithScore( TNS_GOOD, 2 );
+	case RADAR_NUM_HOLDS: return (float) GetNumHoldNotesWithScore( HNS_OK );
+	case RADAR_NUM_MINES: return (float) GetSuccessfulMines();
 	/* XXX: TODO */
-	case RADAR_NUM_TAPS_AND_HOLDS: return 0;
-	case RADAR_NUM_JUMPS: return 0;
-	case RADAR_NUM_HOLDS: return 0;
-	case RADAR_NUM_MINES: return 0;
 	case RADAR_NUM_HANDS: return 0;
-	default:	ASSERT(0);  return 0;
+	default: ASSERT(0);   return 0;
 	}
 }
 
@@ -193,7 +223,7 @@ float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds, Player
 	if( !TotalSteps )
 		return 1;
 
-	const int Perfects = GetNumTapNotesWithScore(TNS_PERFECT) + GetNumTapNotesWithScore(TNS_MARVELOUS);
+	const int Perfects = GetNumTapNotesWithScore(TNS_PERFECT);
 	return clamp( float(Perfects)/TotalSteps, 0.0f, 1.0f );
 }
 
@@ -214,7 +244,7 @@ float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds, PlayerNum
 		return 1;  // no jumps in song
 
 	// number of doubles
-	const int iNumDoubles = GetNumDoublesWithScore(TNS_MARVELOUS) + GetNumDoublesWithScore(TNS_PERFECT);
+	const int iNumDoubles = GetNumNWithScore( TNS_PERFECT, 2 );
 	return clamp( (float)iNumDoubles / iTotalDoubles, 0.0f, 1.0f );
 }
 
