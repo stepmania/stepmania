@@ -87,7 +87,9 @@ bool StepsUtil::CompareNotesPointersByDifficulty(const Steps *pSteps1, const Ste
 
 void StepsUtil::SortNotesArrayByDifficulty( vector<Steps*> &arraySteps )
 {
-	/* Sort in reverse order of priority. */
+	/* Sort in reverse order of priority.  Sort by description first, to get
+	 * a predictable order for songs with no radar values (edits). */
+	stable_sort( arraySteps.begin(), arraySteps.end(), CompareStepsPointersByDescription );
 	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByRadarValues );
 	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByMeter );
 	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByDifficulty );
@@ -109,7 +111,7 @@ void StepsUtil::SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers 
 
 bool StepsUtil::CompareStepsPointersByDescription(const Steps *pStep1, const Steps *pStep2)
 {
-	return pStep1->GetDifficulty() < pStep2->GetDifficulty();
+	return pStep1->GetDescription().CompareNoCase( pStep2->GetDescription() ) < 0;
 }
 
 void StepsUtil::SortStepsByDescription( vector<Steps*> &arraySongPointers )
