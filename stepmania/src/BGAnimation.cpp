@@ -17,6 +17,8 @@
 #include "IniFile.h"
 #include "BGAnimationLayer.h"
 #include "RageUtil.h"
+#include "Song.h"
+#include "ThemeManager.h"
 
 
 BGAnimation::BGAnimation()
@@ -45,7 +47,7 @@ void BGAnimation::LoadFromStaticGraphic( CString sPath )
 	m_Layers.push_back( pLayer );
 }
 
-void BGAnimation::LoadFromAniDir( CString sAniDir, CString sSongBGPath )
+void BGAnimation::LoadFromAniDir( CString sAniDir )
 {
 	Unload();
 
@@ -71,7 +73,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir, CString sSongBGPath )
 			if( pKey == NULL )
 				break;
 			BGAnimationLayer* pLayer = new BGAnimationLayer;
-			pLayer->LoadFromIni( sAniDir, sLayer, sSongBGPath );
+			pLayer->LoadFromIni( sAniDir, sLayer );
 			m_Layers.push_back( pLayer );
 		}
 	}
@@ -101,7 +103,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir, CString sSongBGPath )
 			if( sFName.Left(1) == "_" )
 				continue;	// don't directly load files starting with an underscore
 			BGAnimationLayer* pLayer = new BGAnimationLayer;
-			pLayer->LoadFromAniLayerFile( asImagePaths[i], sSongBGPath );
+			pLayer->LoadFromAniLayerFile( asImagePaths[i] );
 			m_Layers.push_back( pLayer );
 		}
 	}
@@ -116,11 +118,14 @@ void BGAnimation::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind )
 	m_Layers.push_back( pLayer );
 }
 
-void BGAnimation::LoadFromVisualization( CString sVisPath, CString sSongBGPath )
+void BGAnimation::LoadFromVisualization( CString sVisPath )
 {
 	Unload();
 	BGAnimationLayer* pLayer;
 	
+	Song* pSong = GAMESTATE->m_pCurSong;
+	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","Common fallback background");
+
 	pLayer = new BGAnimationLayer;
 	pLayer->LoadFromStaticGraphic( sSongBGPath );
 	m_Layers.push_back( pLayer );

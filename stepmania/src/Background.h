@@ -54,7 +54,7 @@ public:
 
 protected:
 	bool DangerVisible();
-	BGAnimation *GetBGA(const Song *pSong, const BackgroundChange &aniseg, const CString &bgpath) const;
+	BGAnimation *GetBGA(const Song *pSong, const BackgroundChange &aniseg) const;
 		
 	BGAnimation		m_BGADanger;
 

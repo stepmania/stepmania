@@ -166,7 +166,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
 			this->AddChild( &m_BannerWithFrame[0] );
 
-			m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenEvaluation "+GAMESTATE->GetStageText()) );
+			m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenEvaluation stage "+GAMESTATE->GetStageText()) );
 			m_sprStage.SetXY( STAGE_X, STAGE_Y );
 			this->AddChild( &m_sprStage );
 

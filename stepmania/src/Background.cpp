@@ -93,7 +93,7 @@ void Background::LoadFromAniDir( CString sAniDir )
 	m_BGAnimations.push_back( pTempBGA );
 }
 
-BGAnimation *Background::GetBGA(const Song *pSong, const BackgroundChange &aniseg, const CString &bgpath) const
+BGAnimation *Background::GetBGA(const Song *pSong, const BackgroundChange &aniseg) const
 {
 	BGAnimation *pTempBGA;
 
@@ -107,7 +107,7 @@ BGAnimation *Background::GetBGA(const Song *pSong, const BackgroundChange &anise
 	if( !asFiles.empty() )
 	{
 		pTempBGA = new BGAnimation;
-		pTempBGA->LoadFromAniDir( asFiles[0], bgpath );
+		pTempBGA->LoadFromAniDir( asFiles[0] );
 		return pTempBGA;
 	}
 	// Look for BG movies in the song dir
@@ -132,7 +132,7 @@ BGAnimation *Background::GetBGA(const Song *pSong, const BackgroundChange &anise
 	if( !asFiles.empty() )
 	{
 		pTempBGA = new BGAnimation;
-		pTempBGA->LoadFromAniDir( asFiles[0], bgpath  );
+		pTempBGA->LoadFromAniDir( asFiles[0] );
 		return pTempBGA;
 	}
 
@@ -141,7 +141,7 @@ BGAnimation *Background::GetBGA(const Song *pSong, const BackgroundChange &anise
 	if( !asFiles.empty() )
 	{
 		pTempBGA = new BGAnimation;
-		pTempBGA->LoadFromVisualization( asFiles[0], bgpath );
+		pTempBGA->LoadFromVisualization( asFiles[0] );
 		return pTempBGA;
 	}
 	return NULL;
@@ -154,7 +154,7 @@ void Background::LoadFromSong( Song* pSong )
 	const float fXZoom = RECT_BACKGROUND.GetWidth() / (float)SCREEN_WIDTH;
 	const float fYZoom = RECT_BACKGROUND.GetHeight() / (float)SCREEN_HEIGHT;
 
-	const CString sSongBackgroundPath = pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","Background fallback");
+	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","Common fallback background");
 
 	//
 	// Load the static background that will before notes start and after notes end
@@ -162,7 +162,7 @@ void Background::LoadFromSong( Song* pSong )
 	
 	{
 		BGAnimation *pTempBGA = new BGAnimation;
-		pTempBGA->LoadFromStaticGraphic( sSongBackgroundPath );
+		pTempBGA->LoadFromStaticGraphic( sSongBGPath );
 		m_BGAnimations.push_back( pTempBGA );
 	}
 
@@ -178,7 +178,7 @@ void Background::LoadFromSong( Song* pSong )
 			const BackgroundChange& aniseg = pSong->m_BackgroundChanges[i];
 			bool bFade = i==0;
 
-			BGAnimation *pTempBGA = GetBGA(pSong, aniseg, sSongBackgroundPath);
+			BGAnimation *pTempBGA = GetBGA(pSong, aniseg);
 
 			if(pTempBGA != NULL)
 			{
@@ -231,12 +231,12 @@ void Background::LoadFromSong( Song* pSong )
 				{
 					unsigned index = rand() % arrayPossibleMovies.size();
 					pTempBGA = new BGAnimation;
-					pTempBGA->LoadFromVisualization( arrayPossibleMovies[index], sSongBackgroundPath );
+					pTempBGA->LoadFromVisualization( arrayPossibleMovies[index] );
 				}
 				else
 				{
 					pTempBGA = new BGAnimation;
-					pTempBGA->LoadFromStaticGraphic( sSongBackgroundPath );
+					pTempBGA->LoadFromStaticGraphic( sSongBGPath );
 				}
 				m_BGAnimations.push_back( pTempBGA );
 			}
@@ -255,7 +255,7 @@ void Background::LoadFromSong( Song* pSong )
 				{
 					unsigned index = rand() % arrayPossibleAnims.size();
 					BGAnimation *pTempBGA = new BGAnimation;
-					pTempBGA->LoadFromAniDir( arrayPossibleAnims[index], sSongBackgroundPath );
+					pTempBGA->LoadFromAniDir( arrayPossibleAnims[index] );
 					m_BGAnimations.push_back( pTempBGA );
 					arrayPossibleAnims.erase( arrayPossibleAnims.begin()+index,
 												 arrayPossibleAnims.begin()+index+1 );

@@ -27,10 +27,10 @@ public:
 	void Init();
 
 	void LoadFromStaticGraphic( CString sPath );
-	void LoadFromAniLayerFile( CString sPath, CString sSongBGPath );
+	void LoadFromAniLayerFile( CString sPath );
 	void LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind );
 	void LoadFromVisualization( CString sMoviePath );
-	void LoadFromIni( CString sDir, CString sLayer, CString sSongBGPath );
+	void LoadFromIni( CString sDir, CString sLayer );
 
 	virtual void Update( float fDeltaTime );
 	virtual void Draw();

@@ -28,9 +28,9 @@ public:
 	void Unload();
 
 	void LoadFromStaticGraphic( CString sPath );
-	void LoadFromAniDir( CString sAniDir, CString sSongBGPath="" );
+	void LoadFromAniDir( CString sAniDir );
 	void LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind );
-	void LoadFromVisualization( CString sMoviePath, CString sSongBGPath );
+	void LoadFromVisualization( CString sMoviePath );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

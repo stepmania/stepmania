@@ -20,6 +20,8 @@
 #include <math.h>
 #include "RageTimer.h"
 #include "RageLog.h"
+#include "Song.h"
+#include "ThemeManager.h"
 
 
 inline float GetOffScreenLeft(  Actor* pActor ) { return SCREEN_LEFT  - pActor->GetZoomedWidth()/2; }
@@ -145,8 +147,11 @@ void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 }
 
 
-void BGAnimationLayer::LoadFromAniLayerFile( CString sPath, CString sSongBGPath )
+void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 {
+	Song* pSong = GAMESTATE->m_pCurSong;
+	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","Common fallback background");
+
 	Init();
 	CString lcPath = sPath;
 	lcPath.MakeLower();
@@ -438,8 +443,11 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath, CString sSongBGPath 
 }
 
 
-void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer, CString sSongBGPath )
+void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 {
+	Song* pSong = GAMESTATE->m_pCurSong;
+	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","Common fallback background");
+
 	Init();
 	if( sAniDir.Right(1) != "/" )
 		sAniDir += "/";
