@@ -1016,3 +1016,27 @@ void Course::AddHighScore( StepsType st, PlayerNumber pn, MemCardData::HighScore
 		iPersonalIndexOut = -1;
 	m_MemCardDatas[st][MEMORY_CARD_MACHINE].AddHighScore( hs, iMachineIndexOut );
 }
+
+int Course::GetNumTimesPlayed( MemoryCard card ) const
+{
+	int iTotalNumTimesPlayed = 0;
+	for( unsigned i = 0; i < NUM_STEPS_TYPES; ++i )
+		iTotalNumTimesPlayed += GetNumTimesPlayed( (StepsType) i, card );
+	return iTotalNumTimesPlayed;
+}
+
+static map<const Course*, int> course_sort_val;
+
+bool CompareCoursePointersBySortVal(const Course *pSong1, const Course *pSong2)
+{
+	return course_sort_val[pSong1] < course_sort_val[pSong2];
+}
+
+void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, MemoryCard card )
+{
+	for(unsigned i = 0; i < arrayCoursePointers.size(); ++i)
+		course_sort_val[arrayCoursePointers[i]] = arrayCoursePointers[i]->GetNumTimesPlayed( card );
+	stable_sort( arrayCoursePointers.begin(), arrayCoursePointers.end(), CompareCoursePointersBySortVal );
+	reverse( arrayCoursePointers.begin(), arrayCoursePointers.end() );
+	course_sort_val.clear();
+}

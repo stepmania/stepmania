@@ -183,10 +183,12 @@ public:
 		return m_MemCardDatas[st][card].GetTopScore();
 	}
 
-	int GetNumTimesPlayed( StepsType st, MemoryCard card )
+	int GetNumTimesPlayed( StepsType st, MemoryCard card ) const
 	{
 		return m_MemCardDatas[st][card].iNumTimesPlayed;
 	}
+
+	int GetNumTimesPlayed( MemoryCard card ) const;
 
 	// sorting values
 	int		SortOrder_TotalDifficulty;
@@ -205,6 +207,7 @@ void SortCoursePointerArrayByType( vector<Course*> &apCourses );
 void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses );
 void SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses );
 void SortCoursePointerArrayByRanking( vector<Course*> &apCourses );
+void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, MemoryCard card );
 
 void MoveRandomToEnd( vector<Course*> &apCourses );
 
