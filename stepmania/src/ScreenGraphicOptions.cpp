@@ -33,6 +33,7 @@ enum {
 	GO_REFRESH_RATE,
 	GO_MOVIEDECODEMS,
 	GO_VSYNC,
+	GO_PRELOAD_BANNERS,
 	NUM_GRAPHIC_OPTIONS_LINES
 };
 OptionRow g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
@@ -45,6 +46,7 @@ OptionRow g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
 	OptionRow( "Refresh\nRate",				"DEFAULT","60","70","72","75","80","85","90","100","120","150" ),
 	OptionRow( "Movie\nDecode",				"1ms","2ms","3ms","4ms" ),
 	OptionRow( "Wait For\nVsync",			"NO", "YES" ),
+	OptionRow( "Banner\nLoading",			"ON DEMAND", "ALL", "GROUP" ),
 };
 
 static const int HorizRes[] = {
@@ -123,6 +125,7 @@ void ScreenGraphicOptions::ImportOptions()
 
 	m_iSelectedOption[0][GO_MOVIEDECODEMS]			= PREFSMAN->m_iMovieDecodeMS-1;
 	m_iSelectedOption[0][GO_VSYNC]					= PREFSMAN->m_bVsync ? 1:0;	
+	m_iSelectedOption[0][GO_PRELOAD_BANNERS]		= PREFSMAN->m_BannerCacheType;
 }
 
 void ScreenGraphicOptions::ExportOptions()
@@ -165,6 +168,7 @@ void ScreenGraphicOptions::ExportOptions()
 
 	PREFSMAN->m_iMovieDecodeMS			= m_iSelectedOption[0][GO_MOVIEDECODEMS]+1;
 	PREFSMAN->m_bVsync					= m_iSelectedOption[0][GO_VSYNC] == 1;
+	PREFSMAN->m_BannerCacheType			= (PrefsManager::BannerCacheType) m_iSelectedOption[0][GO_PRELOAD_BANNERS];
 }
 
 void ScreenGraphicOptions::GoToPrevState()
