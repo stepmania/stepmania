@@ -1223,39 +1223,43 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	/* Set g_CurStageStats.bFailed for failed players.  In, FAIL_IMMEDIATE, send
 	 * SM_BeginFailed if all players failed, and kill dead Oni players. */
-	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_OFF )
-		return;
-
-	// check for individual fail
-	FOREACH_EnabledPlayer( pn )
+	switch( GAMESTATE->m_SongOptions.m_FailType )
 	{
-		if( (m_pLifeMeter[pn] && !m_pLifeMeter[pn]->IsFailing()) || 
-			(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing(pn)) )
-			continue; /* isn't failing */
-		if( g_CurStageStats.bFailed[pn] )
-			continue; /* failed and is already dead */
-	
-		/* If recovery is enabled, only set fail if both are failing.
-		 * There's no way to recover mid-song in battery mode. */
-		if( GAMESTATE->m_SongOptions.m_LifeType != SongOptions::LIFE_BATTERY &&
-			PREFSMAN->m_bTwoPlayerRecovery && !GAMESTATE->AllAreDead() )
-			continue;
-
-		LOG->Trace("Player %d failed", (int)pn);
-		g_CurStageStats.bFailed[pn] = true;	// fail
-
-		if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY &&
-			GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_IMMEDIATE )
+	case SongOptions::FAIL_OFF:
+		break;
+	default:
+		// check for individual fail
+		FOREACH_EnabledPlayer( pn )
 		{
-			if( !g_CurStageStats.AllFailedEarlier() )	// if not the last one to fail
+			if( (m_pLifeMeter[pn] && !m_pLifeMeter[pn]->IsFailing()) || 
+				(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing(pn)) )
+				continue; /* isn't failing */
+			if( g_CurStageStats.bFailed[pn] )
+				continue; /* failed and is already dead */
+		
+			/* If recovery is enabled, only set fail if both are failing.
+			 * There's no way to recover mid-song in battery mode. */
+			if( GAMESTATE->m_SongOptions.m_LifeType != SongOptions::LIFE_BATTERY &&
+				PREFSMAN->m_bTwoPlayerRecovery && !GAMESTATE->AllAreDead() )
+				continue;
+
+			LOG->Trace("Player %d failed", (int)pn);
+			g_CurStageStats.bFailed[pn] = true;	// fail
+
+			if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY &&
+				GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_IMMEDIATE )
 			{
-				// kill them!
-				SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
-				ShowOniGameOver(pn);
-				m_Player[pn].Init();		// remove all notes and scoring
-				m_Player[pn].FadeToFail();	// tell the NoteField to fade to white
+				if( !g_CurStageStats.AllFailedEarlier() )	// if not the last one to fail
+				{
+					// kill them!
+					SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
+					ShowOniGameOver(pn);
+					m_Player[pn].Init();		// remove all notes and scoring
+					m_Player[pn].FadeToFail();	// tell the NoteField to fade to white
+				}
 			}
 		}
+		break;
 	}
 
 	/* If FAIL_IMMEDIATE and everyone is failing, start SM_BeginFailed. */
