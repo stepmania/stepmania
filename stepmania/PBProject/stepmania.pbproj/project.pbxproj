@@ -1625,17 +1625,6 @@
 			tabWidth = 4;
 			usesTabs = 1;
 		};
-		AA1DCB6004A4872700D02EE9 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			path = Game.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
 		AA1DCB6104A4872700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
 			fileEncoding = 30;
@@ -2163,7 +2152,6 @@
 				AA29CCF60558741A00961A51,
 				AA29CCF70558741A00961A51,
 				AA29CCF80558741A00961A51,
-				AA29CCF90558741A00961A51,
 				AA29CCFA0558741A00961A51,
 				AA29CCFB0558741A00961A51,
 				AA29CCFC0558741A00961A51,
@@ -3547,12 +3535,6 @@
 		};
 		AA29CCF80558741A00961A51 = {
 			fileRef = AA1DC47804A4866B00D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CCF90558741A00961A51 = {
-			fileRef = AA1DCB6004A4872700D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -5937,18 +5919,18 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = StyleUtil.cpp;
-			path = src/StyleUtil.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/StyleUtil.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA3A706106AA1645006F755E = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = StyleUtil.h;
-			path = src/StyleUtil.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/StyleUtil.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA3A706206AA1645006F755E = {
 			fileRef = AA3A706006AA1645006F755E;
@@ -11080,7 +11062,6 @@
 		AA6EFE6A04770D01005F316C = {
 			children = (
 				AAA71EA005EE154E00D2E8FF,
-				AA1DCB6004A4872700D02EE9,
 				AA6EFE6004770CF7005F316C,
 				AA272BFB04CB779F00D02EE9,
 				AA1DCB6504A4872700D02EE9,
@@ -15165,18 +15146,18 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = GameSoundManager.cpp;
-			path = src/GameSoundManager.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/GameSoundManager.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAC9F32F069E22BB00D53E2C = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = GameSoundManager.h;
-			path = src/GameSoundManager.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/GameSoundManager.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAC9F330069E22BB00D53E2C = {
 			fileRef = AAC9F32E069E22BB00D53E2C;
