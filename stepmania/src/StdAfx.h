@@ -20,6 +20,7 @@
 
 #if defined(_MSC_VER) && (_MSC_VER > 1100)
 #pragma warning (disable : 4786) // turn off broken debugger warning
+#pragma warning (disable : 4512) // assignment operator could not be generated (so?)
 /* "unreferenced formal parameter"; we *want* that in many cases */
 #pragma warning (disable : 4100)
 /* "case 'aaa' is not a valid value for switch of enum 'bbb'
