@@ -224,28 +224,30 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 				out.m_sMainTitle = sParams[1];
 			}
 
-			for( int j=0; j<out.m_sMainTitle.GetLength(); j++ )
+			/* XXX: Once we use iconv, this can be more intelligent. */
+			if(!utf8_is_valid(out.m_sMainTitle))
 			{
-				char c = out.m_sMainTitle[j];
-				if( c < 0 )	// this title has a foreign char
-				{
-					CStringArray asBits;
-					split( sDir, "\\", asBits, true);
-					CString sSongFolderName = asBits[ asBits.size()-1 ];
-					asBits.clear();
+				CString SongDir = sDir;
+				SongDir.Replace("\\", "/");
 
-					split( sSongFolderName, " - ", asBits, false );
-					if( asBits.size() == 2 )
-					{
-						out.m_sArtist = asBits[0];
-						out.m_sMainTitle = asBits[1];
-					}
-					else
-					{
-						out.m_sMainTitle = asBits[0];
-					}
-					break;
+				asBits.clear();
+				split( sDir, "/", asBits, true);
+				ASSERT(asBits.size() > 0);
+
+				CString sSongFolderName = asBits.back();
+
+				asBits.clear();
+				split( sSongFolderName, " - ", asBits, false );
+				if( asBits.size() == 2 )
+				{
+					out.m_sArtist = asBits[0];
+					out.m_sMainTitle = asBits[1];
 				}
+				else
+				{
+					out.m_sMainTitle = asBits[0];
+				}
+				break;
 			}
 		}
 
