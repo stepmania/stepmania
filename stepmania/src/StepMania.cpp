@@ -396,7 +396,7 @@ struct VideoCardDefaults
 	},
 	{
 		"Radeon 7|ArcadeVGA",	// Radeon 7xxx
-		"opengl,d3d",
+		"d3d,opengl",	// movie texture performance is terrible in OpenGL, but fine in D3D.
 		640,480,
 		16,16,16,
 		2048,
