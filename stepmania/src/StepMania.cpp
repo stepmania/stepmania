@@ -953,15 +953,6 @@ bool GetCommandlineArgument( const CString &option, CString *argument, int iInde
 	return false;
 }
 
-//Process args first, put command line options that
-//have to run before the SM window loads here
-static void ProcessArgsFirst()
-{
-	CString Argument;
-	if( GetCommandlineArgument( "test", &Argument ) )
-		LOG->Info ("Test: \"%s\"", Argument.c_str() );
-}
-
 static void ProcessArgsSecond()
 {
 	CString Argument;
@@ -1125,10 +1116,6 @@ int main(int argc, char* argv[])
 
 	delete loading_window;		// destroy this before init'ing Display
     
-	ProcessArgsFirst();
-	
-
-
 	DISPLAY = CreateDisplay();
 
 	DISPLAY->ChangeCentering(
