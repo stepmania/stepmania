@@ -1568,16 +1568,11 @@ void SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Difficulty d
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongByMeter(dc) );
 }
 
-bool Song::NormallyDisplayed() const 
+Song::SelectionDisplay Song::GetDisplayed() const
 {
-	if(!PREFSMAN->m_bHiddenSongs) return true;
-	return m_SelectionDisplay == SHOW_ALWAYS;
-}
-
-bool Song::RouletteDisplayed() const
-{
-	if(!PREFSMAN->m_bHiddenSongs) return true;
-	return m_SelectionDisplay != SHOW_NEVER;
+	if( !PREFSMAN->m_bHiddenSongs )
+		return SHOW_ALWAYS;
+	return m_SelectionDisplay;
 }
 
 bool Song::HasMusic() const 		{return m_sMusicFile != ""			&&	IsAFile(GetMusicPath()); }

@@ -54,7 +54,7 @@ class Song
 
 public:
 	/* Set when this song should be displayed in the music wheel: */
-	enum { SHOW_ALWAYS,		/* all the time */
+	enum SelectionDisplay { SHOW_ALWAYS,		/* all the time */
 		   SHOW_ROULETTE,	/* only when rouletting */
 		   SHOW_NEVER }		/* never (unless song hiding is turned off) */
 		m_SelectionDisplay;
@@ -191,8 +191,10 @@ public:
 	void GetEdits( vector<Steps*>& arrayAddTo, StepsType nt ) const;
 	bool IsEasy( StepsType nt ) const;
 	bool HasEdits( StepsType nt ) const;
-	bool NormallyDisplayed() const;
-	bool RouletteDisplayed() const;
+	SelectionDisplay GetDisplayed() const;
+	bool NormallyDisplayed() const { return GetDisplayed() == SHOW_ALWAYS; }
+	bool NeverDisplayed() const { return GetDisplayed() == SHOW_NEVER; }
+	bool RouletteDisplayed() const { return GetDisplayed() != SHOW_NEVER; }
 	int	GetNumNotesWithGrade( Grade g ) const;
 
 	void AddNotes( Steps* pNotes );		// we are responsible for deleting the memory pointed to by pNotes!

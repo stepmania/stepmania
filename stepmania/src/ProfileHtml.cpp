@@ -611,7 +611,7 @@ void PrintHighScoreListTable( RageFile &f, const HighScoreList& hsl )
 
 bool PrintHighScoresForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 {
-	if( pSong->m_SelectionDisplay == Song::SHOW_NEVER || UNLOCKMAN->SongIsLocked(pSong) )
+	if( pSong->NeverDisplayed() || UNLOCKMAN->SongIsLocked(pSong) )
 		return false;	// skip
 	int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed(pSong);
 	if( iNumTimesPlayed == 0 )
@@ -762,7 +762,7 @@ void PrintGradeTable( RageFile &f, const Profile *pProfile, CString sTitle, vect
 
 bool PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 {
-	if( pSong->m_SelectionDisplay == Song::SHOW_NEVER || UNLOCKMAN->SongIsLocked(pSong) )
+	if( pSong->NeverDisplayed() || UNLOCKMAN->SongIsLocked(pSong) )
 		return false;	// skip
 
 	vector<Steps*> vpSteps = pSong->GetAllSteps();

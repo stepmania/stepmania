@@ -46,7 +46,7 @@ bool ScreenJukebox::SetSong()
 		if( !pSong->HasMusic() )
 			continue;	// skip
 
-		if( pSong->m_SelectionDisplay == Song::SHOW_NEVER )
+		if( pSong->NeverDisplayed() )
 			continue;	// skip
 
 		Difficulty dc = GAMESTATE->m_PreferredDifficulty[PLAYER_1];
