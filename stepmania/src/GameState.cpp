@@ -1648,26 +1648,37 @@ bool GameState::ChangeDifficulty( PlayerNumber pn, int dir )
 	return ChangeDifficulty( pn, diff );
 }
 
-static set<CourseDifficulty> GetCourseDifficultiesToShow()
+static void GetCourseDifficultiesToShow( set<CourseDifficulty> &ret )
 {
+	static float fExpiration = -999;
+	static set<CourseDifficulty> cache;
+	if( RageTimer::GetTimeSinceStart() < fExpiration )
+	{
+		ret = cache;
+		return;
+	}
+
 	CStringArray asDiff;
 	split( COURSE_DIFFICULTIES_TO_SHOW, ",", asDiff );
 	ASSERT( asDiff.size() > 0 );
 
-	set<CourseDifficulty> ret;
+	cache.clear();
 	for( unsigned i = 0; i < asDiff.size(); ++i )
 	{
 		CourseDifficulty cd = StringToCourseDifficulty(asDiff[i]);
 		if( cd == NUM_COURSE_DIFFICULTIES )
 			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow", asDiff[i].c_str() );
-		ret.insert( cd );
+		cache.insert( cd );
 	}
-	return ret;
+
+	fExpiration = RageTimer::GetTimeSinceStart()+1;
+	ret = cache;
 }
 
 bool GameState::ChangeCourseDifficulty( PlayerNumber pn, int dir )
 {
-	const set<CourseDifficulty> asDiff = GetCourseDifficultiesToShow();
+	set<CourseDifficulty> asDiff;
+	GetCourseDifficultiesToShow( asDiff );
 
 	CourseDifficulty cd = m_PreferredCourseDifficulty[pn];
 	do {
@@ -1687,7 +1698,8 @@ bool GameState::ChangeCourseDifficulty( PlayerNumber pn, int dir )
 
 bool GameState::IsCourseDifficultyShown( CourseDifficulty cd )
 {
-	const set<CourseDifficulty> asDiff = GetCourseDifficultiesToShow();
+	set<CourseDifficulty> asDiff;
+	GetCourseDifficultiesToShow( asDiff );
 	return asDiff.find(cd) != asDiff.end();
 }
 
