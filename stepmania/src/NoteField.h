@@ -1,3 +1,5 @@
+/* NoteField - adds rendering to NoteDataWithScoring */
+
 #ifndef NOTEFIELD_H
 #define NOTEFIELD_H
 
