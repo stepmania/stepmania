@@ -299,42 +299,42 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 	get_readable_ranges( g_ExecutableBegin, g_ExecutableEnd, 1024, READABLE_ONLY|EXECUTABLE_ONLY );
 
 	/* Find the stack memory blocks. */
-	g_StackBlock1 = find_address( ctx->esp, g_ReadableBegin, g_ReadableEnd );
+	g_StackBlock1 = find_address( ctx->sp, g_ReadableBegin, g_ReadableEnd );
 	g_StackBlock2 = find_address( SavedStackPointer, g_ReadableBegin, g_ReadableEnd );
 
 	/* Put eip at the top of the backtrace. */
 	/* XXX: We want EIP even if it's not valid, but we can't put NULL on the
 	 * list, since it's NULL-terminated.  Hmm. */
 	unsigned i=0;
-	if( i < size-1 && ctx->eip ) // -1 for NULL
-		buf[i++] = ctx->eip;
+	if( i < size-1 && ctx->ip ) // -1 for NULL
+		buf[i++] = ctx->ip;
 
 	/* If we did a CALL to an invalid address (eg. call a NULL callback), then
 	 * we won't have a stack frame for the function that called it (since the
 	 * stack frame is set up by the called function), but if esp hasn't been
 	 * changed after the CALL, the return address will be esp[0].  Grab it. */
-	if( IsOnStack( ctx->esp ) )
+	if( IsOnStack( ctx->sp ) )
 	{
-		const void *p = ((const void **) ctx->esp)[0];
+		const void *p = ((const void **) ctx->sp)[0];
 		if( IsExecutableAddress( p ) && PointsToValidCall( p ) && i < size-1 ) // -1 for NULL
 			buf[i++] = p;
 	}
 
 #if 0
 	/* ebp is usually the frame pointer. */
-	const StackFrame *frame = (StackFrame *) ctx->ebp;
+	const StackFrame *frame = (StackFrame *) ctx->bp;
 
 	/* If ebp doesn't point to a valid stack frame, we're probably in
 	 * -fomit-frame-pointer code.  Ignore it; use esp instead.  It probably
 	 * won't point to a stack frame, but it should at least give us a starting
 	 * point in the stack. */
 	if( !IsValidFrame( frame ) )
-		frame = (StackFrame *) ctx->esp;
+		frame = (StackFrame *) ctx->sp;
 #endif
 
 	/* Actually, let's just use esp.  Even if ebp points to a valid stack frame, there might be
 	 * -fomit-frame-pointer calls in front of it, and we want to get those. */
-	const StackFrame *frame = (StackFrame *) ctx->esp;
+	const StackFrame *frame = (StackFrame *) ctx->sp;
 
 	while( i < size-1 ) // -1 for NULL
 	{
@@ -368,9 +368,9 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 
 void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 {
-	ctx->eip = (void *) uc->uc_mcontext.gregs[REG_EIP];
-	ctx->ebp = (void *) uc->uc_mcontext.gregs[REG_EBP];
-	ctx->esp = (void *) uc->uc_mcontext.gregs[REG_ESP];
+	ctx->ip = (void *) uc->uc_mcontext.gregs[REG_EIP];
+	ctx->bp = (void *) uc->uc_mcontext.gregs[REG_EBP];
+	ctx->sp = (void *) uc->uc_mcontext.gregs[REG_ESP];
 	ctx->pid = GetCurrentThreadId();
 }
 
@@ -383,9 +383,9 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	{
 		ctx = &CurrentCtx;
 
-		CurrentCtx.eip = NULL;
-		CurrentCtx.ebp = __builtin_frame_address(0);
-		CurrentCtx.esp = __builtin_frame_address(0);
+		CurrentCtx.ip = NULL;
+		CurrentCtx.bp = __builtin_frame_address(0);
+		CurrentCtx.sp = __builtin_frame_address(0);
 		CurrentCtx.pid = GetCurrentThreadId();
 	}
 

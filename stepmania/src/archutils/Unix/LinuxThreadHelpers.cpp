@@ -223,13 +223,13 @@ bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx )
 
 	ctx->pid = pid_t(ThreadID);
 #if defined(CPU_X86_64)
-	ctx->eip = (void *) regs.rip;
-	ctx->ebp = (void *) regs.rbp;
-	ctx->esp = (void *) regs.rsp;
+	ctx->ip = (void *) regs.rip;
+	ctx->bp = (void *) regs.rbp;
+	ctx->sp = (void *) regs.rsp;
 #elif defined(CPU_X86)
-	ctx->eip = (void *) regs.eip;
-	ctx->ebp = (void *) regs.ebp;
-	ctx->esp = (void *) regs.esp;
+	ctx->ip = (void *) regs.eip;
+	ctx->bp = (void *) regs.ebp;
+	ctx->sp = (void *) regs.esp;
 #else
 #error GetThreadBacktraceContext: which arch?
 #endif
