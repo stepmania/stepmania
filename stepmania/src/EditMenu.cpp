@@ -11,6 +11,7 @@
 #include "Foreach.h"
 #include "CommonMetrics.h"
 #include "BannerCache.h"
+#include "UnlockManager.h"
 
 
 static const CString EditMenuRowNames[NUM_EDIT_MENU_ROWS] = {
@@ -46,6 +47,35 @@ StringToX( EditMenuAction );
 #define ROW_VALUE_ON_COMMAND	THEME->GetMetricA("EditMenu","RowValueOnCommand")
 #define ROW_Y( i )				THEME->GetMetricF("EditMenu",ssprintf("Row%dY",i+1))
 
+
+static void GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSongsOut )
+{
+	vpSongsOut.clear();
+	SONGMAN->GetSongs( vpSongsOut, sGroup );
+	if( HOME_EDIT_MODE )
+	{
+		// strip groups that have no unlocked songs
+		for( int i=vpSongsOut.size()-1; i>=0; i-- )
+		{
+			const Song* pSong = vpSongsOut[i];
+			if( UNLOCKMAN->SongIsLocked(pSong) )
+				vpSongsOut.erase( vpSongsOut.begin()+i );
+		}
+	}
+}
+static void GetGroupsToShow( vector<CString> &vsGroupsOut )
+{
+	vsGroupsOut.clear();
+	SONGMAN->GetGroupNames( vsGroupsOut );
+	for( int i = vsGroupsOut.size()-1; i>=0; i-- )
+	{
+		const CString &sGroup = vsGroupsOut[i];
+		vector<Song*> vpSongs;
+		GetSongsToShowForGroup( sGroup, vpSongs );
+		if( vpSongs.empty() )
+			vsGroupsOut.erase( vsGroupsOut.begin()+i );
+	}
+}
 
 EditMenu::EditMenu()
 {
@@ -122,8 +152,10 @@ EditMenu::EditMenu()
 	m_soundChangeValue.Load( THEME->GetPathS("EditMenu","value") );
 
 
+	//
 	// fill in data structures
-	SONGMAN->GetGroupNames( m_sGroups );
+	//
+	GetGroupsToShow( m_sGroups );
 	m_StepsTypes = STEPS_TYPES_TO_SHOW.GetValue();
 	if( HOME_EDIT_MODE )
 	{
@@ -315,7 +347,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		m_GroupBanner.LoadFromGroup( GetSelectedGroup() );
 		m_GroupBanner.ScaleToClipped( GROUP_BANNER_WIDTH, GROUP_BANNER_HEIGHT );
 		m_pSongs.clear();
-		SONGMAN->GetSongs( m_pSongs, GetSelectedGroup() );
+		GetSongsToShowForGroup( GetSelectedGroup(), m_pSongs );
 		m_iSelection[ROW_SONG] = 0;
 		// fall through
 	case ROW_SONG:
