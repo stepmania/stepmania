@@ -207,10 +207,20 @@ float Song::GetElapsedTimeFromBeat( float fBeat ) const
 	float fBeatOut, fBPSOut;
 	bool bFreezeOut;
 
-	while( fSecondsToMove > 0.1f )
+	/* 0.001 gives higher precision and *takes about 7 more iterations than
+	 * 0.100. A 90-second song took about 9 iterations; now it takes about
+	 * 16.  -glenn */
+	while( fSecondsToMove > 0.001f )
 	{
 		GetBeatAndBPSFromElapsedTime( fElapsedTimeBestGuess, fBeatOut, fBPSOut, bFreezeOut );
-		if( fBeatOut > fBeat )
+		/* If this is an exact match, we're done.  However, if we're on a
+		 * freeze segment, keep moving backwards until we're off it, so we
+		 * return the time associated with the beginning of the freeze segment
+		 * and not some random place in its middle. */
+		if( fBeatOut == fBeat && !bFreezeOut)
+			break;
+
+		if( fBeatOut >= fBeat )
 			fElapsedTimeBestGuess -= fSecondsToMove;
 		else
 			fElapsedTimeBestGuess += fSecondsToMove;
