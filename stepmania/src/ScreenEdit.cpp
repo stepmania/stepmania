@@ -1546,7 +1546,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				default:		ASSERT(0);
 				}
 
-				float fOldClipboardEndBeat = m_NoteFieldEdit.m_fEndMarker;
+//				float fOldClipboardEndBeat = m_NoteFieldEdit.m_fEndMarker;
 				float fOldClipboardBeats = m_NoteFieldEdit.m_fEndMarker - m_NoteFieldEdit.m_fBeginMarker;
 				float fNewClipboardBeats = fOldClipboardBeats * fScale;
 				float fDeltaBeats = fNewClipboardBeats - fOldClipboardBeats;

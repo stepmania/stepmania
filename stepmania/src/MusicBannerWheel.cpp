@@ -292,7 +292,7 @@ void MusicBannerWheel::ScanToNextGroup()
 	localPos++;
 	while(localPos != startingPos)
 	{
-		if(localPos >= arraySongs.size()-1)
+		if(localPos >= (int) arraySongs.size()-1)
 		{
 			localPos = 0;
 		}

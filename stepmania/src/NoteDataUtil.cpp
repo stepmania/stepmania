@@ -997,7 +997,7 @@ void NoteDataUtil::Scale( NoteData &nd, float fScale )
 			{
 				temp.SetTapNote( t, r, TAP_EMPTY );
 
-				int new_row = r*fScale;
+				int new_row = int(r*fScale);
 				nd.SetTapNote( t, new_row, tn );
 			}
 		}
