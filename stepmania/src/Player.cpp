@@ -125,7 +125,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
 	// init scoring
-	NoteDataWithScoring::Init(pNoteData->GetLastRow()+1, pNoteData->GetNumHoldNotes());
+	NoteDataWithScoring::Init();
 
 	// copy note data
 	this->CopyAll( pNoteData );
@@ -214,8 +214,8 @@ void Player::Update( float fDeltaTime )
 	for( int i=0; i < GetNumHoldNotes(); i++ )		// for each HoldNote
 	{
 		const HoldNote &hn = GetHoldNote(i);
-		HoldNoteScore &hns = GetHoldNoteScore(i);
-		float &fLife = GetHoldNoteLife(i);
+		HoldNoteScore hns = GetHoldNoteScore(i);
+		float fLife = GetHoldNoteLife(i);
 		int iHoldStartIndex = BeatToNoteRow(hn.m_fStartBeat);
 
 		m_NoteField.m_bIsHoldingHoldNote[i] = false;	// set host flag so NoteField can do intelligent drawing
@@ -223,7 +223,6 @@ void Player::Update( float fDeltaTime )
 
 		if( hns != HNS_NONE )	// if this HoldNote already has a result
 			continue;	// we don't need to update the logic for this one
-
 		const StyleInput StyleI( m_PlayerNumber, hn.m_iTrack );
 		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 
@@ -261,30 +260,33 @@ void Player::Update( float fDeltaTime )
 					fLife = max( fLife, 0 );	// clamp
 				}
 			}
-			m_NoteField.GetHoldNoteLife(i) = fLife;	// update the NoteField display
 		}
 
 		/* check for NG.  If the head was missed completely, don't count
 		 * an NG. */
 		if( bSteppedOnTapNote && fLife == 0 )	// the player has not pressed the button for a long time!
-		{
 			hns = HNS_NG;
-			HandleHoldNoteScore( hns, tns );
-			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_NG );
-			m_NoteField.GetHoldNoteScore(i) = HNS_NG;	// update the NoteField display
-		}
 
 		// check for OK
 		if( fSongBeat >= hn.m_fEndBeat && fLife > 0 )	// if this HoldNote is in the past
 		{
 			fLife = 1;
 			hns = HNS_OK;
-			HandleHoldNoteScore( hns, tns );
 			m_GhostArrowRow.TapNote( StyleI.col, TNS_PERFECT, true );	// bright ghost flash
-			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_OK );
-			m_NoteField.GetHoldNoteLife(i) = fLife;		// update the NoteField display
-			m_NoteField.GetHoldNoteScore(i) = HNS_OK;	// update the NoteField display
 		}
+
+		if( hns != HNS_NONE )
+		{
+			/* this note's been judged */
+			HandleHoldNoteScore( hns, tns );
+			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( hns );
+		}
+
+		m_NoteField.SetHoldNoteLife(i, fLife);	// update the NoteField display
+		m_NoteField.SetHoldNoteScore(i, hns);	// update the NoteField display
+
+		SetHoldNoteLife(i, fLife);
+		SetHoldNoteScore(i, hns);
 	}
 
 
@@ -397,6 +399,7 @@ void Player::Step( int col )
 
 		TapNoteScore score;
 
+		LOG->Trace("fPercentFromPerfect %f", fPercentFromPerfect);
 		if(		 fPercentFromPerfect < PREFSMAN->m_fJudgeWindowPerfectPercent )	score = TNS_PERFECT;
 		else if( fPercentFromPerfect < PREFSMAN->m_fJudgeWindowGreatPercent )	score = TNS_GREAT;
 		else if( fPercentFromPerfect < PREFSMAN->m_fJudgeWindowGoodPercent )	score = TNS_GOOD;
@@ -404,13 +407,13 @@ void Player::Step( int col )
 		else if( fPercentFromPerfect < 1.0f )									score = TNS_BOO;
 		else																	score = TNS_NONE;
 
-		if( GAMESTATE->m_bDemonstration  ||  PREFSMAN->m_bAutoPlay )
+		if( !GAMESTATE->m_bEditing && (GAMESTATE->m_bDemonstration  ||  PREFSMAN->m_bAutoPlay) )
 			score = TNS_PERFECT;
 
 		bDestroyedNote = (score >= TNS_GOOD);
 
 		LOG->Trace("(%2d/%2d)Note offset: %f, Score: %i", m_iOffsetSample, SAMPLE_COUNT, fNoteOffset, score);
-		GetTapNoteScore(col, iIndexOverlappingNote) = score;
+		SetTapNoteScore(col, iIndexOverlappingNote, score);
 
 		if (GAMESTATE->m_SongOptions.m_AutoAdjust == SongOptions::ADJUST_ON) 
 		{
@@ -546,7 +549,7 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 		{
 			if( GetTapNote(t, r) != TAP_EMPTY  &&  GetTapNoteScore(t, r) == TNS_NONE )
 			{
-				GetTapNoteScore(t, r) = TNS_MISS;
+				SetTapNoteScore(t, r, TNS_MISS);
 				iNumMissesFound++;
 				iNumMissesThisRow++;
 			}
