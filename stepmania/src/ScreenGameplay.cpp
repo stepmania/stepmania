@@ -146,7 +146,8 @@ void ScreenGameplay::Init()
 			GAMESTATE->SaveCurrentSettingsToProfile(pn);
 	}
 
-	GAMESTATE->ResetStageStatistics();
+	/* Called once per stage (single song or single course). */
+	GAMESTATE->BeginStage();
 
 
 
@@ -191,9 +192,6 @@ void ScreenGameplay::Init()
 	if( GAMESTATE->IsCourseMode() && !GAMESTATE->m_bDemonstrationOrJukebox )
 		FOREACH_EnabledPlayer(p)
 			PROFILEMAN->IncrementCoursePlayCount( GAMESTATE->m_pCurCourse, GAMESTATE->m_pCurTrail[p], p );
-
-	/* Called once per stage (single song or single course). */
-	GAMESTATE->BeginStage();
 
 	STATSMAN->m_CurStageStats.playMode = GAMESTATE->m_PlayMode;
 	STATSMAN->m_CurStageStats.pStyle = GAMESTATE->m_pCurStyle;

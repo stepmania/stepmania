@@ -406,6 +406,8 @@ void GameState::BeginStage()
 	 * have, for some reason, gone from gameplay to evaluation straight back to gameplay.) */
 	FinishStage();
 
+	GAMESTATE->ResetStageStatistics();
+
 	m_iNumStagesOfThisSong = GetNumStagesForCurrentSong();
 	ASSERT( m_iNumStagesOfThisSong != -1 );
 }
