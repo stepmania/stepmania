@@ -106,6 +106,9 @@ public:
 	void SetLooping(bool yes=true) { Loop=yes; }
 	bool GetLooping() const { return Loop; }
 	
+	/* Query only: */
+	bool IsStreaming() const { return big; }
+
 	/* Called only by the sound drivers: */
 	/* This function should return the number of bytes actually put into buffer.
 	 * If less than size is returned, it signals the stream to stop; once it's
