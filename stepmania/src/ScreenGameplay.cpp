@@ -192,23 +192,23 @@ void ScreenGameplay::Init()
 		{
 			FOREACH_EnabledPlayer(p)
 			{
-				CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[p];
-				Trail* pTrail = pCourse->GetTrail( st, cd );
+				Trail* pTrail = GAMESTATE->m_pCurTrail[p];
 				PROFILEMAN->IncrementCoursePlayCount( pCourse, pTrail, p );
 			}
 		}
 
 		m_apSongsQueue.clear();
 		PlayerNumber pnMaster = GAMESTATE->m_MasterPlayerNumber;
-		Trail *pTrail = pCourse->GetTrail( st, GAMESTATE->m_PreferredCourseDifficulty[pnMaster] );
+		Trail *pTrail = GAMESTATE->m_pCurTrail[pnMaster];
 		FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 		{
 			m_apSongsQueue.push_back( e->pSong );
 		}
 
-        FOREACH_PlayerNumber(p)
+        FOREACH_EnabledPlayer(p)
 		{
-			Trail *pTrail = pCourse->GetTrail( st, GAMESTATE->m_PreferredCourseDifficulty[p] );
+			Trail *pTrail = GAMESTATE->m_pCurTrail[p];
+			ASSERT( pTrail );
 
 			m_vpStepsQueue[p].clear();
 			m_asModifiersQueue[p].clear();

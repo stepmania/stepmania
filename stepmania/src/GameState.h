@@ -63,9 +63,10 @@ public:
 	bool				m_bIsOnSystemMenu; // system screens will not be effected by the operator key -- Miryokuteki
 	CourseDifficulty	m_PreferredCourseDifficulty[NUM_PLAYERS]; // used in nonstop
 	bool DifficultiesLocked();
-	bool ChangeDifficulty( PlayerNumber pn, Difficulty dc );
-	bool ChangeDifficulty( PlayerNumber pn, int dir );
-	bool ChangeCourseDifficulty( PlayerNumber pn, int dir );
+	bool ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc );
+	bool ChangePreferredDifficulty( PlayerNumber pn, int dir );
+	bool ChangePreferredCourseDifficulty( PlayerNumber pn, CourseDifficulty cd );
+	bool ChangePreferredCourseDifficulty( PlayerNumber pn, int dir );
 	bool IsCourseDifficultyShown( CourseDifficulty cd );
 	Difficulty GetEasiestNotesDifficulty() const;
 	RageTimer			m_timeGameStarted;	// from the moment the first player pressed Start
@@ -150,7 +151,7 @@ public:
 	Course*		m_pCurCourse;
 	// The last Course that the user manually changed to.
 	Course*		m_pPreferredCourse;
-	Course*		m_pCurTrail[NUM_PLAYERS];
+	Trail*		m_pCurTrail[NUM_PLAYERS];
 
 
 	//

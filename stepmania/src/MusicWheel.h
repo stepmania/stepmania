@@ -62,7 +62,7 @@ public:
 	/* Return true if we're moving fast automatically. */
 	int IsMoving() const;
 
-	void NotesChanged( PlayerNumber pn );	// update grade graphics and top score
+	void NotesOrTrailChanged( PlayerNumber pn );	// update grade graphics and top score
 
 	void GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, float& fY_out, float& fZ_out, float& fRotationX_out );
 	void SetItemPosition( Actor &item, float fPosOffsetsFromMiddle );

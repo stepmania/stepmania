@@ -7,12 +7,11 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 class Steps;
+class Trail;
 
 
 class DifficultyIcon : public Sprite
 {
-	bool m_bBlank;
-
 public:
 	DifficultyIcon();
 	virtual bool EarlyAbortDraw() { return m_bBlank || Sprite::EarlyAbortDraw(); }
@@ -20,8 +19,12 @@ public:
 	bool Load( CString sFilePath );
 
 	void SetFromSteps( PlayerNumber pn, Steps* pSteps );
+	void SetFromTrail( PlayerNumber pn, Trail* pTrail );
 	void SetFromDifficulty( PlayerNumber pn, Difficulty dc );
 	void SetFromCourseDifficulty( PlayerNumber pn, CourseDifficulty cd );
+
+protected:
+	bool m_bBlank;
 };
 
 #endif

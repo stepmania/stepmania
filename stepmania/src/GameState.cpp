@@ -124,7 +124,7 @@ void GameState::Reset()
 	FOREACH_PlayerNumber( p )
 	{
 		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
-		m_PreferredCourseDifficulty[p] = COURSE_DIFFICULTY_REGULAR;
+		m_PreferredCourseDifficulty[p] = COURSE_DIFFICULTY_INVALID;
 	}
 	m_SortOrder = SORT_INVALID;
 	m_PlayMode = PLAY_MODE_INVALID;
@@ -1046,10 +1046,9 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 
 	if( GAMESTATE->IsCourseMode() )
 	{
-		return GAMESTATE->m_PlayerOptions[pn].IsEasierForCourse( 
+		return GAMESTATE->m_PlayerOptions[pn].IsEasierForCourseAndTrail( 
 			GAMESTATE->m_pCurCourse, 
-			GAMESTATE->GetCurrentStyleDef()->m_StepsType, 
-			GAMESTATE->m_PreferredCourseDifficulty[pn] );
+			GAMESTATE->m_pCurTrail[pn] );
 	}
 	else
 	{
@@ -1492,15 +1491,16 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 	case PLAY_MODE_ENDLESS:
 		{
 			CHECKPOINT;
-			StepsType st = this->GetCurrentStyleDef()->m_StepsType;
-			Course* pCourse = this->m_pCurCourse;
+			StepsType st = GetCurrentStyleDef()->m_StepsType;
+			Course* pCourse = m_pCurCourse;
 			ASSERT( pCourse );
-			CourseDifficulty cd = this->m_PreferredCourseDifficulty[pn];
+			Trail *pTrail = m_pCurTrail[pn];
+			ASSERT( pTrail );
+			CourseDifficulty cd = pTrail->m_CourseDifficulty;
 
 			// Find Machine Records
 			{
 				Profile* pProfile = PROFILEMAN->GetMachineProfile();
-				Trail *pTrail = pCourse->GetTrail( st, cd );
 				HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, pTrail );
 				for( unsigned i=0; i<hsl.vHighScores.size(); i++ )
 				{
@@ -1644,10 +1644,14 @@ bool GameState::IsTimeToPlayAttractSounds()
 
 bool GameState::DifficultiesLocked()
 {
- 	return GAMESTATE->m_PlayMode == PLAY_MODE_RAVE;
+ 	if( GAMESTATE->m_PlayMode == PLAY_MODE_RAVE )
+		return true;
+	if( IsCourseMode() )
+		return PREFSMAN->m_bLockCourseDifficulties;
+	return false;
 }
 
-bool GameState::ChangeDifficulty( PlayerNumber pn, Difficulty dc )
+bool GameState::ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc )
 {
 	this->m_PreferredDifficulty[pn] = dc;
 	if( DifficultiesLocked() )
@@ -1657,7 +1661,7 @@ bool GameState::ChangeDifficulty( PlayerNumber pn, Difficulty dc )
 	return true;
 }
 
-bool GameState::ChangeDifficulty( PlayerNumber pn, int dir )
+bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 {
 	// FIXME: This clamps to between the min and the max difficulty, but
 	// it really should round to the nearest difficulty that's in 
@@ -1681,7 +1685,7 @@ bool GameState::ChangeDifficulty( PlayerNumber pn, int dir )
 	if( diff < mind || diff > maxd )
 		return false;
 
-	return ChangeDifficulty( pn, diff );
+	return ChangePreferredDifficulty( pn, diff );
 }
 
 static void GetCourseDifficultiesToShow( set<CourseDifficulty> &ret )
@@ -1711,7 +1715,18 @@ static void GetCourseDifficultiesToShow( set<CourseDifficulty> &ret )
 	ret = cache;
 }
 
-bool GameState::ChangeCourseDifficulty( PlayerNumber pn, int dir )
+bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, CourseDifficulty cd )
+{
+	m_PreferredCourseDifficulty[pn] = cd;
+
+	if( PREFSMAN->m_bLockCourseDifficulties )
+		for( int p = 0; p < NUM_PLAYERS; ++p )
+			m_PreferredCourseDifficulty[p] = m_PreferredCourseDifficulty[pn];
+
+	return true;
+}
+
+bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 {
 	set<CourseDifficulty> asDiff;
 	GetCourseDifficultiesToShow( asDiff );
@@ -1723,13 +1738,7 @@ bool GameState::ChangeCourseDifficulty( PlayerNumber pn, int dir )
 			return false;
 	} while( asDiff.find(cd) == asDiff.end() );
 
-	this->m_PreferredCourseDifficulty[pn] = cd;
-
-	if( PREFSMAN->m_bLockCourseDifficulties )
-		for( int p = 0; p < NUM_PLAYERS; ++p )
-			m_PreferredCourseDifficulty[p] = m_PreferredCourseDifficulty[pn];
-
-	return true;
+	return ChangePreferredCourseDifficulty( pn, cd );
 }
 
 bool GameState::IsCourseDifficultyShown( CourseDifficulty cd )

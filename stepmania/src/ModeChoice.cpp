@@ -24,14 +24,15 @@ void ModeChoice::Init()
 	m_style = STYLE_INVALID;
 	m_pm = PLAY_MODE_INVALID;
 	m_dc = DIFFICULTY_INVALID;
+	m_CourseDifficulty = COURSE_DIFFICULTY_INVALID;
 	m_sModifiers = "";
 	m_sAnnouncer = "";
 	m_sScreen = "";
 	m_pSong = NULL;
 	m_pSteps = NULL;
 	m_pCourse = NULL;
+	m_pTrail = NULL;
 	m_pCharacter = NULL;
-	m_CourseDifficulty = COURSE_DIFFICULTY_INVALID;
 }
 
 bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
@@ -39,7 +40,7 @@ bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
 bool ModeChoice::DescribesCurrentModeForAllPlayers() const
 {
 	FOREACH_PlayerNumber( pn )
-		if( !DescribesCurrentMode( (PlayerNumber) pn) )
+		if( !DescribesCurrentMode(pn) )
 			return false;
 
 	return true;
@@ -87,7 +88,7 @@ bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( m_pCharacter && GAMESTATE->m_pCurCharacters[pn] != m_pCharacter )
 		return false;
-	if( m_CourseDifficulty != COURSE_DIFFICULTY_INVALID && GAMESTATE->m_PreferredCourseDifficulty[pn] != m_CourseDifficulty )
+	if( m_pTrail && GAMESTATE->m_pCurTrail[pn] != m_pTrail )
 		return false;
 
 	return true;
@@ -416,7 +417,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		}
 	}
 	if( m_dc != DIFFICULTY_INVALID  &&  pn != PLAYER_INVALID )
-		GAMESTATE->m_PreferredDifficulty[pn] = m_dc;
+		GAMESTATE->ChangePreferredDifficulty( pn, m_dc );
 	if( m_sAnnouncer != "" )
 		ANNOUNCER->SwitchAnnouncer( m_sAnnouncer );
 	if( m_sModifiers != "" )
@@ -433,15 +434,12 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		GAMESTATE->m_pCurCourse = m_pCourse;
 		GAMESTATE->m_pPreferredCourse = m_pCourse;
 	}
+	if( m_pTrail )
+		GAMESTATE->m_pCurSteps[pn] = m_pSteps;
+	if( m_CourseDifficulty != COURSE_DIFFICULTY_INVALID )
+		GAMESTATE->ChangePreferredCourseDifficulty( pn, m_CourseDifficulty );
 	if( m_pCharacter )
 		GAMESTATE->m_pCurCharacters[pn] = m_pCharacter;
-	if( m_CourseDifficulty != COURSE_DIFFICULTY_INVALID )
-	{
-		GAMESTATE->m_PreferredCourseDifficulty[pn] = m_CourseDifficulty;
-		if( PREFSMAN->m_bLockCourseDifficulties )
-			for( int p = 0; p < NUM_PLAYERS; ++p )
-				GAMESTATE->m_PreferredCourseDifficulty[p] = GAMESTATE->m_PreferredCourseDifficulty[pn];
-	}
 
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.

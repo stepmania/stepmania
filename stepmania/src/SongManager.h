@@ -35,6 +35,7 @@ public:
 	void InitSongsFromDisk( LoadingWindow *ld );
 	void FreeSongs();
 	void Cleanup();
+	void RegenRandomTrailEntries();
 
 	void LoadAllFromProfiles();	// song, edits
 	void FreeAllLoadedFromProfiles();

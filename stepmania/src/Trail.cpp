@@ -49,12 +49,17 @@ RadarValues Trail::GetRadarValues() const
 	return rv;
 }
 
-float Trail::GetAverageMeter() const
+int Trail::GetMeter() const
 {
+	if( m_iSpecifiedMeter != -1 )
+		return m_iSpecifiedMeter;
+
 	if( m_vEntries.empty() )
 		return 0;
 
-	return GetTotalMeter() / (float)m_vEntries.size();
+	float fMeter = GetTotalMeter() / (float)m_vEntries.size();
+
+	return (int)roundf( fMeter );
 }
 
 int Trail::GetTotalMeter() const

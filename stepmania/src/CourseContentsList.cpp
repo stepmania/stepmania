@@ -48,8 +48,10 @@ CourseContentsList::CourseContentsList()
 }
 
 
-void CourseContentsList::SetFromCourse( const Course* pCourse )
+void CourseContentsList::SetFromGameState()
 {
+	Course* pCourse = GAMESTATE->m_pCurCourse;
+
 	if( pCourse == NULL )
 	{
 		m_iNumContents = 0;
@@ -59,16 +61,19 @@ void CourseContentsList::SetFromCourse( const Course* pCourse )
 	Trail* pTrail[NUM_PLAYERS];
 	FOREACH_PlayerNumber(pn)
 	{
-		pTrail[pn] = pCourse->GetTrail( GAMESTATE->GetCurrentStyleDef()->m_StepsType, GAMESTATE->m_PreferredCourseDifficulty[pn] );
+		pTrail[pn] = GAMESTATE->m_pCurTrail[pn];
 	}
 
 	// FIXME: Is there a better way to handle when players don't have 
 	// the same number of TrailEntries?
 	// They have to have the same number, and of the same songs, or gameplay
 	// isn't going to line up.
+	Trail* pMasterTrail = pTrail[GAMESTATE->m_MasterPlayerNumber];
+	int iNumEntriesToShow = min((int)pMasterTrail->m_vEntries.size(), MAX_TOTAL_CONTENTS);
+
 	m_iNumContents = 0;
 	
-	for( int i=0; i<min((int)pTrail[0]->m_vEntries.size(), MAX_TOTAL_CONTENTS); i++ )
+	for( int i=0; i<iNumEntriesToShow; i++ )
 	{
 		CourseEntryDisplay& display = m_CourseContentDisplays[m_iNumContents];
 	

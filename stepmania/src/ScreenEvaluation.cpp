@@ -396,7 +396,7 @@ void ScreenEvaluation::Init()
 						m_DifficultyMeter[p].SetFromSteps( GAMESTATE->m_pCurSteps[p] );
 						break;
 					case course:
-						m_DifficultyMeter[p].SetFromCourse( GAMESTATE->m_pCurCourse, p );
+						m_DifficultyMeter[p].SetFromTrail( GAMESTATE->m_pCurTrail[p] );
 						break;
 					default:
 						ASSERT(0);
@@ -969,9 +969,8 @@ void ScreenEvaluation::CommitScores(
 				{
 					Course* pCourse = GAMESTATE->m_pCurCourse;
 					ASSERT( pCourse );
-					CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[p];
 					StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-					Trail* pTrail = pCourse->GetTrail( st, cd );
+					Trail* pTrail = GAMESTATE->m_pCurTrail[p];
 
 					// don't save scores for a failed Nonstop
 					// DO save scores for a failed Oni/Endless
@@ -1021,8 +1020,7 @@ void ScreenEvaluation::CommitScores(
 				{
 					Course* pCourse = GAMESTATE->m_pCurCourse;
 					ASSERT( pCourse );
-					CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[p];
-					Trail *pTrail = pCourse->GetTrail( st, cd );
+					Trail *pTrail = GAMESTATE->m_pCurTrail[p];
 					ASSERT( pTrail );
 					pHSL = &pProfile->GetCourseHighScoreList( pCourse, pTrail );
 				}

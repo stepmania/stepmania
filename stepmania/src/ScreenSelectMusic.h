@@ -60,14 +60,16 @@ protected:
 
 	void ChangeDifficulty( PlayerNumber pn, int dir );
 
-	void AfterNotesChange( PlayerNumber pn );
+	void AfterStepsChange( PlayerNumber pn );
+	void AfterTrailChange( PlayerNumber pn );
 	void SwitchToPreferredSongDifficulty();
 	void AfterMusicChange();
 	void SortOrderChanged();
 
 	void UpdateOptionsDisplays();
 
-	vector<Steps*> m_arrayNotes;
+	vector<Steps*>		m_vpSteps;
+	vector<Trail*>		m_vpTrails;
 	int					m_iSelection[NUM_PLAYERS];
 
 	Sprite				m_sprCharacterIcon[NUM_PLAYERS];

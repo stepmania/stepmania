@@ -23,6 +23,11 @@ class GrooveRadar : public ActorFrame
 public:
 	GrooveRadar();
 
+	void SetEmpty( PlayerNumber pn )
+	{
+		SetFromSteps( pn, NULL );
+	}
+
 	void SetFromSteps( PlayerNumber pn, Steps* pSteps )	// NULL means no Song
 	{
 		m_GrooveRadarValueMap.SetFromSteps( pn, pSteps );

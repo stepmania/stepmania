@@ -654,8 +654,7 @@ void SongManager::FreeCourses()
  * screens. */
 void SongManager::Cleanup()
 {
-	unsigned i;
-	for( i=0; i<m_pSongs.size(); i++ )
+	for( unsigned i=0; i<m_pSongs.size(); i++ )
 	{
 		Song* pSong = m_pSongs[i];
 		for( unsigned n=0; n<pSong->m_vpSteps.size(); n++ )
@@ -665,9 +664,20 @@ void SongManager::Cleanup()
 		}
 	}
 
-	/* Erase cached course info. */
-	for( i=0; i < m_pCourses.size(); i++ )
-		m_pCourses[i]->ClearCache();
+	// FIXME
+//	/* Erase cached course info. */
+//	for( unsigned i=0; i < m_pCourses.size(); i++ )
+//		m_pCourses[i]->ClearCache();
+}
+
+void SongManager::RegenRandomTrailEntries()
+{
+	/* Regenerate Trails so that any random entires get re-picked. */
+	for( unsigned i=0; i < m_pCourses.size(); i++ )
+	{
+		// FIXME: only regen entries that are random - not all entries
+		m_pCourses[i]->RegenTrails();
+	}
 }
 
 void SongManager::GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen )

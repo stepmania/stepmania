@@ -42,17 +42,22 @@ public:
 	StepsType			m_StepsType;
 	CourseDifficulty	m_CourseDifficulty;
 	vector<TrailEntry>  m_vEntries;
-	int					m_iMeter;
+	int					m_iSpecifiedMeter;	// == -1 if no meter specified
 
 	Trail()
 	{
+		Init();
+	}
+	void Init()
+	{
 		m_StepsType = STEPS_TYPE_INVALID;
 		m_CourseDifficulty = COURSE_DIFFICULTY_INVALID;
-		m_iMeter = 1;
+		m_iSpecifiedMeter = -1;
+		m_vEntries.clear();
 	}
 
 	RadarValues GetRadarValues() const;
-	float GetAverageMeter() const;
+	int GetMeter() const;
 	int GetTotalMeter() const;
 	float GetLengthSeconds() const;
 	void GetDisplayBpms( DisplayBpms &AddTo );

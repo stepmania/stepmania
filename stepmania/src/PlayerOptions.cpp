@@ -561,10 +561,10 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps )
 	return false;
 }
 
-bool PlayerOptions::IsEasierForCourse( Course* pCourse, StepsType st, CourseDifficulty cd )
+bool PlayerOptions::IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail )
 {
 	ASSERT( pCourse );
-	Trail *pTrail = pCourse->GetTrail( st, cd );
+	ASSERT( pTrail );
 
 	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 	{

@@ -96,7 +96,7 @@ public:
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
 	Trail* GetTrail( StepsType st, CourseDifficulty cd ) const;
-	void GetTrails( vector<Trail*> &out, StepsType st ) const;
+	void GetTrails( vector<Trail*> &AddTo, StepsType st ) const;
 	float GetMeter( StepsType st, CourseDifficulty cd ) const;
 	bool HasMods() const;
 	bool AllSongsAreFixed() const;
@@ -129,10 +129,11 @@ public:
 
 	void UpdateCourseStats( StepsType st );
 
-	/* Call per-screen, and if song or notes pointers change: */
-	void ClearCache();
+	/* Call to generate Trails with random entries and if song or notes pointers change. */
+	void RegenTrails();
 
 private:
+	void GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 	void GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 
 	mutable Trail m_TrailCache[NUM_STEPS_TYPES][NUM_COURSE_DIFFICULTIES];

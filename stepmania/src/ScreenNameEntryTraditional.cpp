@@ -323,8 +323,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			Steps* pSteps = ss.pSteps[p];
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-			CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[p];
-			Trail* pTrail = pCourse ? pCourse->GetTrail( st, cd ) : NULL;
+			Trail* pTrail = GAMESTATE->m_pCurTrail[p];
 
 			int iHighScoreIndex = -1;	// -1 means "out of ranking"
 			Grade grade = ss.GetGrade( p );
@@ -341,7 +340,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 			const HighScoreList& hsl = 
 				GAMESTATE->IsCourseMode() ?
-				PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse, pTrail) :
+				PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail) :
 				PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps);
 
 			for( unsigned h=0; h<hsl.vHighScores.size(); h++ )
@@ -378,7 +377,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			{
 				display.m_Grade.SetName( ssprintf("GradeP%i",p+1) );
 				display.m_Grade.Load( THEME->GetPathToG("ScreenNameEntryTraditional grades") );
-				display.m_Grade.SetGrade( (PlayerNumber)p, grade );
+				display.m_Grade.SetGrade( p, grade );
 				SET_ON( display.m_Grade );
 				this->AddChild( &display.m_Grade );
 			}
@@ -386,14 +385,14 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			display.m_Difficulty.SetName( ssprintf("DifficultyP%i",p+1) );
 			display.m_Difficulty.Load( THEME->GetPathToG("ScreenNameEntryTraditional difficulty icons") );
 			if( GAMESTATE->IsCourseMode() )
-				display.m_Difficulty.SetFromCourseDifficulty( (PlayerNumber)p, GAMESTATE->m_PreferredCourseDifficulty[p] );
+				display.m_Difficulty.SetFromTrail( p, pTrail );
 			else
-				display.m_Difficulty.SetFromSteps( (PlayerNumber)p, pSteps );
+				display.m_Difficulty.SetFromSteps( p, pSteps );
 			SET_ON( display.m_Difficulty );
 			this->AddChild( &display.m_Difficulty );
 
 			display.m_textScore.SetName( "ScreenNameEntryTraditional Percent" );
-			display.m_textScore.Load( (PlayerNumber)p, &ss, false );
+			display.m_textScore.Load( p, &ss, false );
 			display.m_textScore.SetName( ssprintf("ScoreP%i",p+1) );
 			SET_ON( display.m_textScore );
 			this->AddChild( &display.m_textScore );

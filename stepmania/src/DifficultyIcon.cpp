@@ -15,6 +15,7 @@
 #include "GameState.h"
 #include "RageDisplay.h"
 #include "arch/ArchHooks/ArchHooks.h"
+#include "Trail.h"
 
 DifficultyIcon::DifficultyIcon()
 {
@@ -47,6 +48,14 @@ void DifficultyIcon::SetFromSteps( PlayerNumber pn, Steps* pSteps )
 		SetFromDifficulty( pn, pSteps->GetDifficulty() );
 }
 
+void DifficultyIcon::SetFromTrail( PlayerNumber pn, Trail* pTrail )
+{
+	if( pTrail == NULL )
+		m_bBlank = true;
+	else
+		SetFromCourseDifficulty( pn, pTrail->m_CourseDifficulty );
+}
+
 void DifficultyIcon::SetFromDifficulty( PlayerNumber pn, Difficulty dc )
 {
 	m_bBlank = false;
@@ -58,7 +67,7 @@ void DifficultyIcon::SetFromDifficulty( PlayerNumber pn, Difficulty dc )
 	}	
 }
 
-void DifficultyIcon::SetFromCourseDifficulty( PlayerNumber pn, CourseDifficulty cd  )
+void DifficultyIcon::SetFromCourseDifficulty( PlayerNumber pn, CourseDifficulty cd )
 {
 	m_bBlank = false;
 	switch( cd )

@@ -45,21 +45,29 @@ inline unsigned long max(unsigned long a, unsigned int b) { return a > b? a:b; }
 // Do the multiply before the divide to that integer scales have more precision.
 #define SCALE(x, l1, h1, l2, h2)	(((x) - (l1)) * ((h2) - (l2)) / ((h1) - (l1)) + (l2))
 
-#define CLAMP(x, l, h)	{if (x > h) x = h; else if (x < l) x = l;}
+inline bool CLAMP(int &x, int l, int h)
+{
+	if (x > h)		{ x = h; return true; }
+	else if (x < l) { x = l; return true; }
+	return false;
+}
+inline bool CLAMP(float &x, float l, float h)
+{
+	if (x > h)		{ x = h; return true; }
+	else if (x < l) { x = l; return true; }
+	return false;
+}
 
 inline void wrap( int &x, int n)
 {
 	if (x<0)
 		x += ((-x/n)+1)*n;
-	
 	x %= n;
 }
-
 inline void wrap( float &x, float n)
 {
 	if (x<0)
 		x += truncf(((-x/n)+1))*n;
-	
 	x = fmodf(x,n);
 }
 

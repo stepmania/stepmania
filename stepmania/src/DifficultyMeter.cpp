@@ -127,46 +127,7 @@ void DifficultyMeter::SetFromTrail( const Trail* pTrail )
 	default:	ASSERT(0);
 	}
 
-
-/*
-	if( pTrail->m_iMeter <= 1 )
-		FakeDifficulty = DIFFICULTY_BEGINNER;
-	else if( pTrail->m_iMeter <= 3 )
-		FakeDifficulty = DIFFICULTY_EASY;
-	else if( pTrail->m_iMeter <= 6 )
-		FakeDifficulty = DIFFICULTY_MEDIUM;
-	else if( pTrail->m_iMeter <= 9 )
-		FakeDifficulty = DIFFICULTY_HARD;
-	else
-		FakeDifficulty = DIFFICULTY_CHALLENGE;
-*/
-	SetFromMeterAndDifficulty( pTrail->m_iMeter, FakeDifficulty );
-	SetDifficulty( DifficultyToString(FakeDifficulty) + "Course" );
-}
-
-void DifficultyMeter::SetFromCourse( const Course* pCourse, PlayerNumber pn )
-{
-	if( pCourse == NULL )
-	{
-		Unset();
-		return;
-	}
-
-	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-	CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[pn];
-	const int meter = (int) roundf( pCourse->GetMeter(st,cd) );
-	
-	// XXX metrics
-	Difficulty FakeDifficulty;
-	switch( cd )
-	{
-	case COURSE_DIFFICULTY_EASY:		FakeDifficulty = DIFFICULTY_EASY;	break;
-	case COURSE_DIFFICULTY_REGULAR:		FakeDifficulty = DIFFICULTY_MEDIUM;	break;
-	case COURSE_DIFFICULTY_DIFFICULT:	FakeDifficulty = DIFFICULTY_HARD;	break;
-	default:	ASSERT(0);
-	}
-
-	SetFromMeterAndDifficulty( meter, FakeDifficulty );
+	SetFromMeterAndDifficulty( pTrail->GetMeter(), FakeDifficulty );
 	SetDifficulty( DifficultyToString(FakeDifficulty) + "Course" );
 }
 
@@ -201,9 +162,9 @@ void DifficultyMeter::SetFromGameState( PlayerNumber pn )
 {
 	if( GAMESTATE->IsCourseMode() )
 	{
-		Course* pCourse = GAMESTATE->m_pCurCourse;
-		if( pCourse )
-			SetFromCourse( pCourse, pn );
+		Trail* pTrail = GAMESTATE->m_pCurTrail[pn];
+		if( pTrail )
+			SetFromTrail( pTrail );
 		else
 			SetFromCourseDifficulty( GAMESTATE->m_PreferredCourseDifficulty[pn] );
 	}

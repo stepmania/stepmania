@@ -559,6 +559,8 @@ CString Course::GetDisplayName() const
 /* XXX: if !HasCourseDifficulty(cd), return NULL instead of COURSE_DIFFICULTY_REGULAR */
 Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 {
+	ASSERT( cd != COURSE_DIFFICULTY_INVALID );
+
 	//
 	// Look in the Trail cache
 	//
@@ -570,6 +572,14 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 	//
 	Trail &trail = m_TrailCache[st][cd];
 	trail = Trail();
+	GetTrailSorted( st, cd, trail );
+
+	m_TrailCacheValid[st][cd] = true;
+	return &m_TrailCache[st][cd];
+}
+
+void Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const
+{
 	GetTrailUnsorted( st, cd, trail );
 
 	if( this->m_bSortByMeter )
@@ -597,13 +607,12 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 		for( unsigned i = 0; i < trail.m_vEntries.size(); ++i )
 			trail.m_vEntries[i] = entries[i].entry;
 	}
-
-	m_TrailCacheValid[st][cd] = true;
-	return &m_TrailCache[st][cd];
 }
 
 void Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const
 {
+	trail.Init();
+
 	//
 	// Construct a new Trail, add it to the cache, then return it.
 	//
@@ -802,12 +811,10 @@ void Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 	/* If we have a manually-entered meter for this difficulty, use it. */
 	if( m_iCustomMeter[cd] != -1 )
-		trail.m_iMeter = m_iCustomMeter[cd];
-	else
-		trail.m_iMeter = (int) roundf( trail.GetAverageMeter() );
+		trail.m_iSpecifiedMeter = m_iCustomMeter[cd];
 }
 
-void Course::GetTrails( vector<Trail*> &out, StepsType st ) const
+void Course::GetTrails( vector<Trail*> &AddTo, StepsType st ) const
 {
 	FOREACH_CourseDifficulty( cd )
 	{
@@ -817,7 +824,7 @@ void Course::GetTrails( vector<Trail*> &out, StepsType st ) const
 		Trail *pTrail = GetTrail( st, cd );
 		if( pTrail == NULL )
 			continue;
-		out.push_back( pTrail );
+		AddTo.push_back( pTrail );
 	}
 }
 
@@ -842,7 +849,7 @@ bool Course::AllSongsAreFixed() const
 	return true;
 }
 
-void Course::ClearCache()
+void Course::RegenTrails()
 {
 	ZERO( m_TrailCacheValid );
 }
@@ -987,15 +994,6 @@ bool Course::IsRanking() const
 			return true;
 
 	return false;
-}
-
-float Course::GetMeter( StepsType st, CourseDifficulty cd ) const
-{
-	/* If we have a manually-entered meter for this difficulty, use it. */
-	if( m_iCustomMeter[cd] != -1 )
-		return (float)m_iCustomMeter[cd];
-
-	return roundf( GetTrail(st,cd)->GetAverageMeter() );
 }
 
 /*

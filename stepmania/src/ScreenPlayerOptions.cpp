@@ -175,25 +175,22 @@ void ScreenPlayerOptions::UpdateDisqualified()
 {
 	// save current player options 
 	PlayerOptions po[2];
+
+	FOREACH_PlayerNumber( p )
 	{
-		FOREACH_PlayerNumber( p )
-		{
-			po[p] = GAMESTATE->m_PlayerOptions[p];
-		}
+		po[p] = GAMESTATE->m_PlayerOptions[p];
 	}
 	
 	// export the currently selection options, which will fill GAMESTATE->m_PlayerOptions
 	ScreenOptionsMaster::ExportOptions();
 
+	FOREACH_HumanPlayer( p )
 	{
-		FOREACH_PlayerNumber( p )
-		{
-			bool bIsHandicap = GAMESTATE->IsDisqualified((PlayerNumber)p);
-			
-			m_sprDisqualify[p]->SetHidden( !bIsHandicap );
+		bool bIsHandicap = GAMESTATE->IsDisqualified(p);
+		
+		m_sprDisqualify[p]->SetHidden( !bIsHandicap );
 
-			// restore previous player options in case the user escapes back after this
-			GAMESTATE->m_PlayerOptions[p] = po[p];
-		}
+		// restore previous player options in case the user escapes back after this
+		GAMESTATE->m_PlayerOptions[p] = po[p];
 	}
 }

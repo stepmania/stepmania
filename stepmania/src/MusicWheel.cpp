@@ -799,7 +799,7 @@ void MusicWheel::RebuildMusicWheelItems()
 
 }
 
-void MusicWheel::NotesChanged( PlayerNumber pn )	// update grade graphics and top score
+void MusicWheel::NotesOrTrailChanged( PlayerNumber pn )	// update grade graphics and top score
 {
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{

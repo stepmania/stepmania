@@ -11,6 +11,7 @@
 class Song;
 class Steps;
 class Course;
+class Trail;
 class Character;
 
 struct ModeChoice		// used in SelectMode
@@ -34,14 +35,15 @@ struct ModeChoice		// used in SelectMode
 	Style		m_style;
 	PlayMode	m_pm;
 	Difficulty	m_dc;
+	CourseDifficulty	m_CourseDifficulty;
 	CString		m_sAnnouncer;
 	CString		m_sModifiers;
 	CString		m_sScreen;
 	Song*		m_pSong;
 	Steps*		m_pSteps;
 	Course*		m_pCourse;
+	Trail*		m_pTrail;
 	Character*	m_pCharacter;
-	CourseDifficulty	m_CourseDifficulty;
 };
 
 #endif

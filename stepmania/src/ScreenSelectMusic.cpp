@@ -68,6 +68,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
+	SONGMAN->RegenRandomTrailEntries();
+
 	m_DisplayMode = GAMESTATE->IsCourseMode() ? DISPLAY_COURSES : DISPLAY_SONGS;
 
 	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. 
@@ -215,11 +217,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 		this->AddChild( &m_DifficultyList );
 	}
 
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
-
 		m_sprDifficultyFrame[p].SetName( ssprintf("DifficultyFrameP%d",p+1) );
 		m_sprDifficultyFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("difficulty frame p%d",p+1)) );
 		m_sprDifficultyFrame[p].StopAnimating();
@@ -294,14 +293,12 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );	// invisible
 	//this->AddChild( &m_sprOptionsMessage );	// we have to draw this manually over the top of transitions
 
+	FOREACH_PlayerNumber( p )
 	{
-		FOREACH_PlayerNumber( p )
-		{
-			m_sprNonPresence[p].SetName( ssprintf("NonPresenceP%d",p+1) );
-			m_sprNonPresence[p].Load( THEME->GetPathG(m_sName,ssprintf("nonpresence p%d",p+1)) );
-			SET_XY( m_sprNonPresence[p] );
-			this->AddChild( &m_sprNonPresence[p] );
-		}
+		m_sprNonPresence[p].SetName( ssprintf("NonPresenceP%d",p+1) );
+		m_sprNonPresence[p].Load( THEME->GetPathG(m_sName,ssprintf("nonpresence p%d",p+1)) );
+		SET_XY( m_sprNonPresence[p] );
+		this->AddChild( &m_sprNonPresence[p] );
 	}
 
 	m_Overlay.SetName( "Overlay");
@@ -430,7 +427,7 @@ void ScreenSelectMusic::TweenCoursePartsOnScreen( bool Initial )
 	}
 	else
 	{
-		m_CourseContentsFrame.SetFromCourse(NULL);
+		m_CourseContentsFrame.SetFromGameState();
 		COMMAND( m_CourseContentsFrame, "Show" );
 	}
 }
@@ -690,9 +687,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		if( type != IET_FIRST_PRESS ) return;
 		PREFSMAN->m_bShowNative ^= 1;
 		m_MusicWheel.RebuildMusicWheelItems();
-		Course* pCourse = m_MusicWheel.GetSelectedCourse();
-		if(pCourse)
-			m_CourseContentsFrame.SetFromCourse( pCourse );
+		m_CourseContentsFrame.SetFromGameState();
 		return;
 	}
 
@@ -882,46 +877,58 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 {
 	LOG->Trace( "ScreenSelectMusic::ChangeDifficulty( %d, %d )", pn, dir );
 
-	if( !GAMESTATE->IsHumanPlayer(pn) )
-		return;
+	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_SONG:
 	case TYPE_PORTAL:
-		if( dir > 0 && m_iSelection[pn] == int(m_arrayNotes.size()-1) )
-			return;
-		if( dir < 0 && m_iSelection[pn] == 0 )
-			return;
-
-		m_iSelection[pn] += dir;
-		
-		// the user explicity switched difficulties.  Update the preferred difficulty
-		GAMESTATE->ChangeDifficulty( pn, m_arrayNotes[ m_iSelection[pn] ]->GetDifficulty() );
-
-		if( dir < 0 )
-			m_soundDifficultyEasier.Play();
-		else
-			m_soundDifficultyHarder.Play();
-
-		FOREACH_HumanPlayer( p )
 		{
-			if( pn == p || GAMESTATE->DifficultiesLocked() )
+			m_iSelection[pn] += dir;
+			if( CLAMP(m_iSelection[pn],0,m_vpSteps.size()-1) )
+				return;
+			
+			// the user explicity switched difficulties.  Update the preferred difficulty
+			GAMESTATE->ChangePreferredDifficulty( pn, m_vpSteps[ m_iSelection[pn] ]->GetDifficulty() );
+
+			if( dir < 0 )
+				m_soundDifficultyEasier.Play();
+			else
+				m_soundDifficultyHarder.Play();
+
+			FOREACH_HumanPlayer( p )
 			{
-				m_iSelection[p] = m_iSelection[pn];
-				AfterNotesChange( p );
+				if( pn == p || GAMESTATE->DifficultiesLocked() )
+				{
+					m_iSelection[p] = m_iSelection[pn];
+					AfterStepsChange( p );
+				}
 			}
 		}
 		break;
 
 	case TYPE_COURSE:
-		if( GAMESTATE->ChangeCourseDifficulty( pn, dir ) )
 		{
+			m_iSelection[pn] += dir;
+			if( CLAMP(m_iSelection[pn],0,m_vpTrails.size()-1) )
+				return;
+
+			// the user explicity switched difficulties.  Update the preferred difficulty
+			GAMESTATE->ChangePreferredCourseDifficulty( pn, m_vpTrails[ m_iSelection[pn] ]->m_CourseDifficulty );
+
 			if( dir < 0 )
 				m_soundDifficultyEasier.Play();
 			else
 				m_soundDifficultyHarder.Play();
-			AfterMusicChange();
+
+			FOREACH_HumanPlayer( p )
+			{
+				if( pn == p || GAMESTATE->DifficultiesLocked() )
+				{
+					m_iSelection[p] = m_iSelection[pn];
+					AfterTrailChange( p );
+				}
+			}
 		}
 		break;
 
@@ -930,7 +937,7 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 		/* XXX: We could be on a music or course sort, or even one with both; we don't
 		 * really know which difficulty to change.  Maybe the two difficulties should be
 		 * linked ... */
-		if( GAMESTATE->ChangeDifficulty( pn, dir ) )
+		if( GAMESTATE->ChangePreferredDifficulty( pn, dir ) )
 		{
 			if( dir < 0 )
 				m_soundDifficultyEasier.Play();
@@ -943,7 +950,7 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 				if( pn == p || GAMESTATE->DifficultiesLocked() )
 				{
 					m_iSelection[p] = m_iSelection[pn];
-					AfterNotesChange( p );
+					AfterStepsChange( p );
 				}
 			}
 		}
@@ -1050,10 +1057,8 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		{
 			const bool bIsNew = PROFILEMAN->IsSongNew( m_MusicWheel.GetSelectedSong() );
 			bool bIsHard = false;
-			FOREACH_PlayerNumber( p )
+			FOREACH_HumanPlayer( p )
 			{
-				if( !GAMESTATE->IsHumanPlayer( (PlayerNumber)p ) )
-					continue;	// skip
 				if( GAMESTATE->m_pCurSteps[p]  &&  GAMESTATE->m_pCurSteps[p]->GetMeter() >= 10 )
 					bIsHard = true;
 			}
@@ -1166,32 +1171,27 @@ void ScreenSelectMusic::MenuBack( PlayerNumber pn )
 	Back( SM_GoToPrevScreen );
 }
 
-void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
+void ScreenSelectMusic::AfterStepsChange( PlayerNumber pn )
 {
-	if( !GAMESTATE->IsHumanPlayer(pn) )
-		return;
+	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 	
-	m_iSelection[pn] = clamp( m_iSelection[pn], 0, int(m_arrayNotes.size()-1) );	// bounds clamping
+	CLAMP( m_iSelection[pn], 0, m_vpSteps.size()-1 );
 
 	Song* pSong = GAMESTATE->m_pCurSong;
-	Steps* pSteps = m_arrayNotes.empty()? NULL: m_arrayNotes[m_iSelection[pn]];
+	Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
 
 	GAMESTATE->m_pCurSteps[pn] = pSteps;
 
+	int iScore = 0;
 	if( pSteps )
 	{
 		int iScore = 0;
-		if( PROFILEMAN->IsUsingProfile(pn) )
-			iScore = PROFILEMAN->GetProfile(pn)->GetStepsHighScoreList(pSong,pSteps).GetTopScore().iScore;
-		else
-			iScore = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().iScore;
-		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
-	}
-	else
-	{
-		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, 0) );
+		Profile* pProfile = PROFILEMAN->IsUsingProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
+		iScore = pProfile->GetStepsHighScoreList(pSong,pSteps).GetTopScore().iScore;
 	}
 
+	m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
+	
 	m_DifficultyIcon[pn].SetFromSteps( pn, pSteps );
 	if( pSteps && pSteps->IsAutogen() )
 	{
@@ -1206,7 +1206,49 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 	if( SHOW_DIFFICULTY_LIST )
 		m_DifficultyList.SetFromGameState();
 	m_GrooveRadar.SetFromSteps( pn, pSteps );
-	m_MusicWheel.NotesChanged( pn );
+	m_MusicWheel.NotesOrTrailChanged( pn );
+	if( SHOW_PANES )
+		m_PaneDisplay[pn].SetFromGameState();
+}
+
+void ScreenSelectMusic::AfterTrailChange( PlayerNumber pn )
+{
+	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
+	
+	CLAMP( m_iSelection[pn], 0, m_vpTrails.size()-1 );
+
+	Course* pCourse = GAMESTATE->m_pCurCourse;
+	Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
+
+	GAMESTATE->m_pCurTrail[pn] = pTrail;
+
+	int iScore = 0;
+	if( pTrail )
+	{
+		int iScore = 0;
+		Profile* pProfile = PROFILEMAN->IsUsingProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
+		iScore = pProfile->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().iScore;
+	}
+
+	m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
+	
+	m_DifficultyIcon[pn].SetFromTrail( pn, pTrail );
+	//if( pTrail && pTrail->IsAutogen() )
+	//{
+	//	m_AutoGenIcon[pn].SetEffectDiffuseShift();
+	//}
+	//else
+	//{
+	//	m_AutoGenIcon[pn].SetEffectNone();
+	//	m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,0) );
+	//}
+	m_CourseContentsFrame.SetFromGameState();
+	m_CourseContentsFrame.TweenInAfterChangedCourse();
+	m_DifficultyMeter[pn].SetFromGameState( pn );
+	if( SHOW_DIFFICULTY_LIST )
+		m_DifficultyList.SetFromGameState();
+	m_GrooveRadar.SetEmpty( pn );
+	m_MusicWheel.NotesOrTrailChanged( pn );
 	if( SHOW_PANES )
 		m_PaneDisplay[pn].SetFromGameState();
 }
@@ -1217,9 +1259,9 @@ void ScreenSelectMusic::SwitchToPreferredSongDifficulty()
 	{
 		/* Find the closest match to the user's preferred difficulty. */
 		int CurDifference = -1;
-		for( unsigned i=0; i<m_arrayNotes.size(); i++ )
+		for( unsigned i=0; i<m_vpSteps.size(); i++ )
 		{
-			int Diff = abs(m_arrayNotes[i]->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[p]);
+			int Diff = abs(m_vpSteps[i]->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[p]);
 
 			if( CurDifference == -1 || Diff < CurDifference )
 			{
@@ -1228,7 +1270,7 @@ void ScreenSelectMusic::SwitchToPreferredSongDifficulty()
 			}
 		}
 
-		m_iSelection[p] = clamp( m_iSelection[p], 0, int(m_arrayNotes.size()) ) ;
+		m_iSelection[p] = clamp( m_iSelection[p], 0, int(m_vpSteps.size()) ) ;
 	}
 }
 
@@ -1283,10 +1325,13 @@ void ScreenSelectMusic::AfterMusicChange()
 	if( pCourse )
 		GAMESTATE->m_pPreferredCourse = pCourse;
 
-
-	int pn;
-	for( pn = 0; pn < NUM_PLAYERS; ++pn)
-		m_arrayNotes.clear();
+	FOREACH_PlayerNumber( p )
+	{
+		GAMESTATE->m_pCurSteps[p] = NULL;
+		GAMESTATE->m_pCurTrail[p] = NULL;
+		m_vpSteps.clear();
+		m_vpTrails.clear();
+	}
 
 	m_Banner.SetMovingFast( !!m_MusicWheel.IsMoving() );
 
@@ -1354,8 +1399,8 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_textNumSongs.SetText( ssprintf("%d", SongManager::GetNumStagesForSong(pSong) ) );
 			m_textTotalTime.SetText( SecondsToMMSSMsMs(pSong->m_fMusicLengthSeconds) );
 
-			pSong->GetSteps( m_arrayNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
-			StepsUtil::SortNotesArrayByDifficulty( m_arrayNotes );
+			pSong->GetSteps( m_vpSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+			StepsUtil::SortNotesArrayByDifficulty( m_vpSteps );
 
 			if ( PREFSMAN->m_bShowBanners )
 				m_Banner.LoadFromSong( pSong );
@@ -1462,6 +1507,8 @@ void ScreenSelectMusic::AfterMusicChange()
 		StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 		Trail *pTrail = pCourse->GetTrail( st, COURSE_DIFFICULTY_REGULAR );
 
+		pCourse->GetTrails( m_vpTrails, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+
 		SampleMusicToPlay = THEME->GetPathS(m_sName,"course music");
 		m_fSampleStartSeconds = 0;
 		m_fSampleLengthSeconds = -1;
@@ -1476,8 +1523,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_Banner.LoadFromCourse( pCourse );
 		m_BPMDisplay.SetBPM( pCourse );
 
-		m_CourseContentsFrame.SetFromCourse( pCourse );
-		m_CourseContentsFrame.TweenInAfterChangedCourse();
 		m_DifficultyDisplay.UnsetDifficulties();
 
 		FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
@@ -1535,9 +1580,12 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	m_Artist.SetTips( m_Artists, m_AltArtists );
 
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{
-		AfterNotesChange( p );
+		if( GAMESTATE->m_pCurCourse )
+			AfterTrailChange( p );
+		else
+			AfterStepsChange( p );
 	}
 
 	/* Make sure we never start the sample when moving fast. */

@@ -146,7 +146,7 @@ void PaneDisplay::SetContent( PaneContents c )
 
 	if( (g_Contents[c].req&NEED_NOTES) && !GAMESTATE->m_pCurSteps[m_PlayerNumber] )
 		return;
-	if( (g_Contents[c].req&NEED_COURSE) && !GAMESTATE->m_pCurCourse )
+	if( (g_Contents[c].req&NEED_COURSE) && !GAMESTATE->m_pCurTrail[m_PlayerNumber] )
 		return;
 	if( (g_Contents[c].req&NEED_PROFILE) && !PROFILEMAN->IsUsingProfile( m_PlayerNumber ) )
 		return;
@@ -155,18 +155,14 @@ void PaneDisplay::SetContent( PaneContents c )
 	const Steps *pSteps = GAMESTATE->m_pCurSteps[m_PlayerNumber];
 	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
-	const CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[m_PlayerNumber];
-	const Trail *pTrail = pCourse ? pCourse->GetTrail(st,cd) : NULL;
+	const Trail *pTrail = GAMESTATE->m_pCurTrail[m_PlayerNumber];
 
 	RadarValues rv;
 
 	if( g_Contents[c].req&NEED_NOTES )
-		rv = GAMESTATE->m_pCurSteps[m_PlayerNumber]->GetRadarValues();
+		rv = pSteps->GetRadarValues();
 	else if( g_Contents[c].req&NEED_COURSE )
-	{
-		ASSERT( pCourse );
 		rv = pTrail->GetRadarValues();
-	}
 
 	float val = 0;
 	CString str;
