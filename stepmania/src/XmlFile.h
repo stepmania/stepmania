@@ -22,22 +22,23 @@
 #include <vector>
 #include <RageUtil.h>
 
-struct _tagXMLAttr;
-typedef _tagXMLAttr XAttr, *LPXAttr;
+struct XAttr;
+typedef XAttr* LPXAttr;
 typedef std::vector<LPXAttr> XAttrs;
-struct _tagXMLNode;
-typedef _tagXMLNode XNode, *LPXNode;
+struct XNode;
+typedef XNode* LPXNode;
 typedef std::vector<LPXNode> XNodes, *LPXNodes;
 
 // Entity Encode/Decode Support
-typedef struct _tagXmlEntity
+struct XENTITY
 {
 	TCHAR entity;					// entity ( & " ' < > )
 	TCHAR ref[10];					// entity reference ( &amp; &quot; etc )
 	int ref_len;					// entity reference length
-}XENTITY,*LPXENTITY;
+};
+typedef XENTITY* LPXENTITY;
 
-typedef struct _tagXMLEntitys : public std::vector<XENTITY>
+struct XENTITYS : public std::vector<XENTITY>
 {
 	LPXENTITY GetEntity( int entity );
 	LPXENTITY GetEntity( char* entity );	
@@ -47,24 +48,25 @@ typedef struct _tagXMLEntitys : public std::vector<XENTITY>
 	CString Ref2Entity( const char* estr );
 	CString Entity2Ref( const char* str );	
 
-	_tagXMLEntitys(){};
-	_tagXMLEntitys( LPXENTITY entities, int count );
-}XENTITYS,*LPXENTITYS;
+	XENTITYS(){};
+	XENTITYS( LPXENTITY entities, int count );
+};
+typedef XENTITYS* LPXENTITYS;
 extern XENTITYS entityDefault;
 CString XRef2Entity( const char* estr );
 CString XEntity2Ref( const char* str );	
 
-typedef enum 
+enum PCODE
 {
 	PIE_PARSE_WELFORMED	= 0,
 	PIE_ALONE_NOT_CLOSED,
 	PIE_NOT_CLOSED,
 	PIE_NOT_NESTED,
 	PIE_ATTR_NO_VALUE
-}PCODE;
+};
 
 // Parse info.
-typedef struct _tagParseInfo
+struct PARSEINFO
 {
 	bool		trim_value;			// [set] do trim when parse?
 	bool		entity_value;		// [set] do convert from reference to entity? ( &lt; -> < )
@@ -77,24 +79,26 @@ typedef struct _tagParseInfo
 	PCODE		error_code;			// [get] error code
 	CString		error_string;		// [get] error string
 
-	_tagParseInfo() { trim_value = true; entity_value = true; entitys = &entityDefault; xml = NULL; erorr_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELFORMED; escape_value = 0; }
-}PARSEINFO,*LPPARSEINFO;
+	PARSEINFO() { trim_value = true; entity_value = true; entitys = &entityDefault; xml = NULL; erorr_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELFORMED; escape_value = 0; }
+};
+typedef PARSEINFO* LPPARSEINFO;
 extern PARSEINFO piDefault;
 
 // display optional environment
-typedef struct _tagDispOption
+struct DISP_OPT
 {
 	bool newline;			// newline when new tag
 	bool reference_value;	// do convert from entity to reference ( < -> &lt; )
 	LPXENTITYS	entitys;	// entity table for entity encode
 
 	int tab_base;			// internal usage
-	_tagDispOption() { newline = true; reference_value = true; entitys = &entityDefault; tab_base = 0; }
-}DISP_OPT, *LPDISP_OPT;
+	DISP_OPT() { newline = true; reference_value = true; entitys = &entityDefault; tab_base = 0; }
+};
+typedef DISP_OPT* LPDISP_OPT;
 extern DISP_OPT optDefault;
 
 // XAttr : Attribute Implementation
-typedef struct _tagXMLAttr
+struct XAttr
 {
 	CString name;
 	CString	value;
@@ -103,13 +107,14 @@ typedef struct _tagXMLAttr
 	void GetValue(float &out) const		{ out = (float) atof(value); }
 	void GetValue(bool &out) const		{ out = atoi(value) != 0; }
 	
-	_tagXMLNode*	parent;
+	XNode*	parent;
 
 	CString GetXML( LPDISP_OPT opt = &optDefault );
-}XAttr, *LPXAttr;
+};
+typedef XAttr* LPXAttr;
 
 // XMLNode structure
-typedef struct _tagXMLNode
+struct XNode
 {
 	// name and value
 	CString name;
@@ -182,11 +187,11 @@ typedef struct _tagXMLNode
 	// operator overloads
 	LPXNode operator [] ( int i ) { return GetChild(i); }
 
-	_tagXMLNode() { parent = NULL; }
-	~_tagXMLNode();
+	XNode() { parent = NULL; }
+	~XNode();
 
 	void Close();
-}XNode, *LPXNode;
+};
 
 // Helper Funtion
 inline long XStr2Int( const char* str, long default_value = 0 )

@@ -220,12 +220,12 @@ void _SetString( char* psz, char* end, CString* ps, bool trim = false, int escap
 	}
 }
 
-_tagXMLNode::~_tagXMLNode()
+XNode::~XNode()
 {
 	Close();
 }
 
-void _tagXMLNode::Close()
+void XNode::Close()
 {
     unsigned i;
 
@@ -262,7 +262,7 @@ void _tagXMLNode::Close()
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-char* _tagXMLNode::LoadAttributes( const char* pszAttrs , LPPARSEINFO pi /*= &piDefault*/)
+char* XNode::LoadAttributes( const char* pszAttrs , LPPARSEINFO pi /*= &piDefault*/)
 {
 	char* xml = (char*)pszAttrs;
 
@@ -359,7 +359,7 @@ char* _tagXMLNode::LoadAttributes( const char* pszAttrs , LPPARSEINFO pi /*= &pi
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-char* _tagXMLNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
+char* XNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 {
 	// Close it
 	Close();
@@ -552,7 +552,7 @@ char* _tagXMLNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-CString _tagXMLAttr::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
+CString XAttr::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
 {
 	std::ostringstream os;
 	//os << (const char*)name << "='" << (const char*)value << "' ";
@@ -570,7 +570,7 @@ CString _tagXMLAttr::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-CString _tagXMLNode::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
+CString XNode::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
 {
 	std::ostringstream os;
 
@@ -651,7 +651,7 @@ CString _tagXMLNode::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-const LPXAttr	_tagXMLNode::GetAttr( const char* attrname ) const
+const LPXAttr	XNode::GetAttr( const char* attrname ) const
 {
 	for( unsigned i = 0 ; i < attrs.size(); i++ )
 	{
@@ -665,7 +665,7 @@ const LPXAttr	_tagXMLNode::GetAttr( const char* attrname ) const
 	return NULL;
 }
 
-LPXAttr	_tagXMLNode::GetAttr( const char* attrname )
+LPXAttr	XNode::GetAttr( const char* attrname )
 {
 	for( unsigned i = 0 ; i < attrs.size(); i++ )
 	{
@@ -688,7 +688,7 @@ LPXAttr	_tagXMLNode::GetAttr( const char* attrname )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-XAttrs _tagXMLNode::GetAttrs( const char* name )
+XAttrs XNode::GetAttrs( const char* name )
 {
 	XAttrs attrs;
 	for( unsigned i = 0 ; i < attrs.size(); i++ )
@@ -712,13 +712,13 @@ XAttrs _tagXMLNode::GetAttrs( const char* name )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-const char*	_tagXMLNode::GetAttrValue( const char* attrname )
+const char*	XNode::GetAttrValue( const char* attrname )
 {
 	LPXAttr attr = GetAttr( attrname );
 	return attr ? (const char*)attr->value : NULL;
 }
 
-XNodes _tagXMLNode::GetChilds()
+XNodes XNode::GetChilds()
 {
 	return childs;
 }
@@ -732,7 +732,7 @@ XNodes _tagXMLNode::GetChilds()
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-XNodes _tagXMLNode::GetChilds( const char* name )
+XNodes XNode::GetChilds( const char* name )
 {
 	XNodes nodes;
 	for( unsigned i = 0 ; i < childs.size(); i++ )
@@ -756,7 +756,7 @@ XNodes _tagXMLNode::GetChilds( const char* name )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXNode _tagXMLNode::GetChild( int i )
+LPXNode XNode::GetChild( int i )
 {
 	if( i >= 0 && i < (int)childs.size() )
 		return childs[i];
@@ -772,7 +772,7 @@ LPXNode _tagXMLNode::GetChild( int i )
 // Coder    Date                      Desc
 // bro      2002-12-26
 //========================================================
-int	_tagXMLNode::GetChildCount()
+int	XNode::GetChildCount()
 {
 	return childs.size();
 }
@@ -786,7 +786,7 @@ int	_tagXMLNode::GetChildCount()
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXNode	_tagXMLNode::GetChild( const char* name )
+LPXNode	XNode::GetChild( const char* name )
 {
 	for( unsigned i = 0 ; i < childs.size(); i++ )
 	{
@@ -800,7 +800,7 @@ LPXNode	_tagXMLNode::GetChild( const char* name )
 	return NULL;
 }
 
-const LPXNode	_tagXMLNode::GetChild( const char* name ) const
+const LPXNode	XNode::GetChild( const char* name ) const
 {
 	for( unsigned i = 0 ; i < childs.size(); i++ )
 	{
@@ -823,19 +823,19 @@ const LPXNode	_tagXMLNode::GetChild( const char* name ) const
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-const char*	_tagXMLNode::GetChildValue( const char* name )
+const char*	XNode::GetChildValue( const char* name )
 {
 	LPXNode node = GetChild( name );
 	return (node != NULL)? (const char*)node->value : NULL;
 }
 
-LPXAttr _tagXMLNode::GetChildAttr( const char* name, const char* attrname )
+LPXAttr XNode::GetChildAttr( const char* name, const char* attrname )
 {
 	LPXNode node = GetChild(name);
 	return node ? node->GetAttr(attrname) : NULL;
 }
 
-const char* _tagXMLNode::GetChildAttrValue( const char* name, const char* attrname )
+const char* XNode::GetChildAttrValue( const char* name, const char* attrname )
 {
 	LPXAttr attr = GetChildAttr( name, attrname );
 	return attr ? (const char*)attr->value : NULL;
@@ -851,7 +851,7 @@ const char* _tagXMLNode::GetChildAttrValue( const char* name, const char* attrna
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-XNodes::iterator _tagXMLNode::GetChildIterator( LPXNode node )
+XNodes::iterator XNode::GetChildIterator( LPXNode node )
 {
 	XNodes::iterator it = childs.begin();
 	for( ; it != childs.end() ; ++(it) )
@@ -871,17 +871,17 @@ XNodes::iterator _tagXMLNode::GetChildIterator( LPXNode node )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXNode	_tagXMLNode::AppendChild( const char* name /*= NULL*/, const char* value /*= NULL*/ )
+LPXNode	XNode::AppendChild( const char* name /*= NULL*/, const char* value /*= NULL*/ )
 {
 	return AppendChild( CreateNode( name, value ) );
 }
 
-LPXNode	_tagXMLNode::AppendChild( const char* name /*= NULL*/, float value /*= NULL*/ )
+LPXNode	XNode::AppendChild( const char* name /*= NULL*/, float value /*= NULL*/ )
 {
 	return AppendChild( name, ssprintf("%f",value) );
 }
 
-LPXNode	_tagXMLNode::AppendChild( const char* name /*= NULL*/, int value /*= NULL*/ )
+LPXNode	XNode::AppendChild( const char* name /*= NULL*/, int value /*= NULL*/ )
 {
 	return AppendChild( name, ssprintf("%d",value) );
 }
@@ -895,7 +895,7 @@ LPXNode	_tagXMLNode::AppendChild( const char* name /*= NULL*/, int value /*= NUL
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXNode _tagXMLNode::AppendChild( LPXNode node )
+LPXNode XNode::AppendChild( LPXNode node )
 {
 	node->parent = this;
 	childs.push_back( node );
@@ -911,7 +911,7 @@ LPXNode _tagXMLNode::AppendChild( LPXNode node )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-bool _tagXMLNode::RemoveChild( LPXNode node )
+bool XNode::RemoveChild( LPXNode node )
 {
 	XNodes::iterator it = GetChildIterator( node );
 	if( it != childs.end() )
@@ -932,7 +932,7 @@ bool _tagXMLNode::RemoveChild( LPXNode node )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXAttr _tagXMLNode::GetAttr( int i )
+LPXAttr XNode::GetAttr( int i )
 {
 	if( i >= 0 && i < (int)attrs.size() )
 		return attrs[i];
@@ -948,7 +948,7 @@ LPXAttr _tagXMLNode::GetAttr( int i )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-XAttrs::iterator _tagXMLNode::GetAttrIterator( LPXAttr attr )
+XAttrs::iterator XNode::GetAttrIterator( LPXAttr attr )
 {
 	XAttrs::iterator it = attrs.begin();
 	for( ; it != attrs.end() ; ++(it) )
@@ -968,7 +968,7 @@ XAttrs::iterator _tagXMLNode::GetAttrIterator( LPXAttr attr )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXAttr _tagXMLNode::AppendAttr( LPXAttr attr )
+LPXAttr XNode::AppendAttr( LPXAttr attr )
 {
 	attr->parent = this;
 	attrs.push_back( attr );
@@ -984,7 +984,7 @@ LPXAttr _tagXMLNode::AppendAttr( LPXAttr attr )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-bool _tagXMLNode::RemoveAttr( LPXAttr attr )
+bool XNode::RemoveAttr( LPXAttr attr )
 {
 	XAttrs::iterator it = GetAttrIterator( attr );
 	if( it != attrs.end() )
@@ -1005,7 +1005,7 @@ bool _tagXMLNode::RemoveAttr( LPXAttr attr )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXNode _tagXMLNode::CreateNode( const char* name /*= NULL*/, const char* value /*= NULL*/ )
+LPXNode XNode::CreateNode( const char* name /*= NULL*/, const char* value /*= NULL*/ )
 {
 	LPXNode node = new XNode;
 	node->name = name;
@@ -1022,7 +1022,7 @@ LPXNode _tagXMLNode::CreateNode( const char* name /*= NULL*/, const char* value 
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXAttr _tagXMLNode::CreateAttr( const char* name /*= NULL*/, const char* value /*= NULL*/ )
+LPXAttr XNode::CreateAttr( const char* name /*= NULL*/, const char* value /*= NULL*/ )
 {
 	LPXAttr attr = new XAttr;
 	attr->name = name;
@@ -1039,13 +1039,13 @@ LPXAttr _tagXMLNode::CreateAttr( const char* name /*= NULL*/, const char* value 
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXAttr _tagXMLNode::AppendAttr( const char* name /*= NULL*/, const char* value /*= NULL*/ )
+LPXAttr XNode::AppendAttr( const char* name /*= NULL*/, const char* value /*= NULL*/ )
 {
 	return AppendAttr( CreateAttr( name, value ) );
 }
 
-LPXAttr _tagXMLNode::AppendAttr( const char* name, float value ){ return AppendAttr(name,ssprintf("%f",value)); }
-LPXAttr _tagXMLNode::AppendAttr( const char* name, int value )	{ return AppendAttr(name,ssprintf("%d",value)); }
+LPXAttr XNode::AppendAttr( const char* name, float value ){ return AppendAttr(name,ssprintf("%f",value)); }
+LPXAttr XNode::AppendAttr( const char* name, int value )	{ return AppendAttr(name,ssprintf("%d",value)); }
 
 //========================================================
 // Name   : DetachChild
@@ -1056,7 +1056,7 @@ LPXAttr _tagXMLNode::AppendAttr( const char* name, int value )	{ return AppendAt
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXNode _tagXMLNode::DetachChild( LPXNode node )
+LPXNode XNode::DetachChild( LPXNode node )
 {
 	XNodes::iterator it = GetChildIterator( node );
 	if( it != childs.end() )
@@ -1076,7 +1076,7 @@ LPXNode _tagXMLNode::DetachChild( LPXNode node )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXAttr _tagXMLNode::DetachAttr( LPXAttr attr )
+LPXAttr XNode::DetachAttr( LPXAttr attr )
 {
 	XAttrs::iterator it = GetAttrIterator( attr );
 	if( it != attrs.end() )
@@ -1087,13 +1087,13 @@ LPXAttr _tagXMLNode::DetachAttr( LPXAttr attr )
 	return NULL;
 }
 
-_tagXMLEntitys::_tagXMLEntitys( LPXENTITY entities, int count )
+XENTITYS::XENTITYS( LPXENTITY entities, int count )
 {
 	for( int i = 0; i < count; i++)
 		push_back( entities[i] );
 }
 
-LPXENTITY _tagXMLEntitys::GetEntity( int entity )
+LPXENTITY XENTITYS::GetEntity( int entity )
 {
 	for( unsigned i = 0 ; i < size(); i ++ )
 	{
@@ -1103,7 +1103,7 @@ LPXENTITY _tagXMLEntitys::GetEntity( int entity )
 	return NULL;
 }
 
-LPXENTITY _tagXMLEntitys::GetEntity( char* entity )
+LPXENTITY XENTITYS::GetEntity( char* entity )
 {
 	for( unsigned i = 0 ; i < size(); i ++ )
 	{
@@ -1118,7 +1118,7 @@ LPXENTITY _tagXMLEntitys::GetEntity( char* entity )
 	return NULL;
 }
 
-int _tagXMLEntitys::GetEntityCount( const char* str )
+int XENTITYS::GetEntityCount( const char* str )
 {
 	int nCount = 0;
 	char* ps = (char*)str;
@@ -1127,7 +1127,7 @@ int _tagXMLEntitys::GetEntityCount( const char* str )
 	return nCount;
 }
 
-int _tagXMLEntitys::Ref2Entity( const char* estr, char* str, int strlen )
+int XENTITYS::Ref2Entity( const char* estr, char* str, int strlen )
 {
 	char* pes = (char*)estr;
 	char* ps = str;
@@ -1151,7 +1151,7 @@ int _tagXMLEntitys::Ref2Entity( const char* estr, char* str, int strlen )
 	return ps-str;	
 }
 
-int _tagXMLEntitys::Entity2Ref( const char* str, char* estr, int estrlen )
+int XENTITYS::Entity2Ref( const char* str, char* estr, int estrlen )
 {
 	char* ps = (char*)str;
 	char* pes = (char*)estr;
@@ -1176,7 +1176,7 @@ int _tagXMLEntitys::Entity2Ref( const char* str, char* estr, int estrlen )
 	return pes-estr;
 }
 
-CString _tagXMLEntitys::Ref2Entity( const char* estr )
+CString XENTITYS::Ref2Entity( const char* estr )
 {
 	CString es;
 	if( estr )
@@ -1191,7 +1191,7 @@ CString _tagXMLEntitys::Ref2Entity( const char* estr )
 	return es;
 }
 
-CString _tagXMLEntitys::Entity2Ref( const char* str )
+CString XENTITYS::Entity2Ref( const char* str )
 {
 	CString s;
 	if( str )
@@ -1219,7 +1219,7 @@ CString XEntity2Ref( const char* str )
 	return entityDefault.Entity2Ref( str );
 }
 
-bool _tagXMLNode::LoadFromFile( CString sFile, LPPARSEINFO pi )
+bool XNode::LoadFromFile( CString sFile, LPPARSEINFO pi )
 {
 	RageFile f;
 	if( !f.Open(sFile, RageFile::READ) )
@@ -1233,7 +1233,7 @@ bool _tagXMLNode::LoadFromFile( CString sFile, LPPARSEINFO pi )
 	return true;
 }
 
-bool _tagXMLNode::SaveToFile( CString sFile, LPDISP_OPT opt )
+bool XNode::SaveToFile( CString sFile, LPDISP_OPT opt )
 {
 	RageFile f;
 	if( !f.Open(sFile, RageFile::WRITE) )
