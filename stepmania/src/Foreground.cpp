@@ -52,9 +52,6 @@ void Foreground::LoadFromSong( const Song *pSong )
 
 void Foreground::Update( float fDeltaTime )
 {
-	if( GAMESTATE->m_fMusicSeconds == GameState::MUSIC_SECONDS_INVALID )
-		return; /* hasn't been updated yet */
-
 	/* Calls to Update() should *not* be scaled by music rate. Undo it. */
 	const float fRate = GAMESTATE->m_SongOptions.m_fMusicRate;
 

@@ -1040,6 +1040,11 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	SOUND->TakeOverSound( m_soundMusic, &GAMESTATE->m_pCurSong->m_Timing );
 	m_soundMusic = NULL; // SOUND owns it now
 
+	/* Make sure GAMESTATE->m_fMusicSeconds is set up. */
+	GAMESTATE->m_fMusicSeconds = -5000;
+	SOUND->Update(0);
+	ASSERT( GAMESTATE->m_fMusicSeconds > -4000 ); /* make sure the "fake timer" code doesn't trigger */
+
 	/* Return the amount of time until the first beat. */
 	return fFirstSecond - fStartSecond;
 }

@@ -444,8 +444,7 @@ int Background::FindBGSegmentForBeat( float fBeat ) const
 /* If the BG segment has changed, move focus to it.  Send Update() calls. */
 void Background::UpdateCurBGChange( float fCurrentTime )
 {
-	if( fCurrentTime == GameState::MUSIC_SECONDS_INVALID )
-		return; /* hasn't been updated yet */
+	ASSERT( fCurrentTime != GameState::MUSIC_SECONDS_INVALID );
 
 	if( m_aBGChanges.size() == 0 )
 		return;
