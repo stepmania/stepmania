@@ -14,16 +14,11 @@ public:
 	BeginnerHelper();
 	~BeginnerHelper();
 	
-	void FlashOnce();
 	bool Initialize( int iDancePadType );
 	bool IsInitialized() { return m_bInitialized; }
 	static bool CanUse();
 	void AddPlayer( int pn, NoteData *pSteps );
-	void SetFlash(CString sFilename, float fX, float fY);
 	void ShowStepCircle( int pn, int CSTEP );
-	void TurnFlashOff();
-	void TurnFlashOn();
-
 	bool	m_bShowBackground;
 
 	void Update( float fDeltaTime );
@@ -38,11 +33,11 @@ protected:
 	Model m_mDancePad;
 	Sprite	m_sFlash;
 	Sprite	m_sBackground;
-	Sprite	m_sStepCircle[NUM_PLAYERS*2];	// Need two for each player during jumps
+	Sprite	m_sStepCircle[NUM_PLAYERS][4];	// More memory, but much easier to manage
 
-	int  m_iLastRowChecked;
-	bool m_bInitialized;
-	bool m_bFlashEnabled;
+	int	m_iLastRowChecked;
+	int	m_iLastRowFlashed;
+	bool	m_bInitialized;
 };
 #endif
 

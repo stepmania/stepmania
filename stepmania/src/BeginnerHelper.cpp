@@ -14,12 +14,6 @@
 #define PLAYER_ANGLE		THEME->GetMetricF("BeginnerHelper","PlayerAngle")
 #define DANCEPAD_ANGLE		THEME->GetMetricF("BeginnerHelper","DancePadAngle")
 
-// STEPCIRCLE commands are relative to the HELPER position
-#define STEPCIRCLE_LEFT_COMMAND( pz )	THEME->GetMetric ("BeginnerHelper",ssprintf("StepCircleP%d_LEFT_COMMAND",pz+1))
-#define STEPCIRCLE_DOWN_COMMAND( pz )	THEME->GetMetric ("BeginnerHelper",ssprintf("StepCircleP%d_DOWN_COMMAND",pz+1))
-#define STEPCIRCLE_UP_COMMAND( pz )	THEME->GetMetric ("BeginnerHelper",ssprintf("StepCircleP%d_UP_COMMAND",pz+1))
-#define STEPCIRCLE_RIGHT_COMMAND( pz )	THEME->GetMetric ("BeginnerHelper",ssprintf("StepCircleP%d_RIGHT_COMMAND",pz+1))
-
 // "HELPER" offsets effect the pad/dancer as a whole.. Their relative Y cooridinates are hard-coded for eachother.
 #define HELPER_X			THEME->GetMetricF("BeginnerHelper","HelperX")
 #define HELPER_Y			THEME->GetMetricF("BeginnerHelper","HelperY")
@@ -54,146 +48,128 @@ static const char *anims[NUM_ANIMATIONS] =
 	"BeginnerHelper_step-jumplr.bones.txt"
 };
 
-
-static CString GetAnimPath( Animation a )
-{
-	return CString("Characters/") + anims[a];
-}
+static CString GetAnimPath(Animation a) {return CString("Characters/") + anims[a];}
 
 
 BeginnerHelper::BeginnerHelper()
 {
-	m_bFlashEnabled = false;
 	m_bShowBackground = true;
 	m_bInitialized = false;
-	m_iLastRowChecked = 0;
-	this->AddChild(&m_sBackground);
-	for( int pn=0; pn < NUM_PLAYERS; pn++ )
+	m_iLastRowChecked = m_iLastRowFlashed = 0;
+	for(int pn=0; pn<NUM_PLAYERS; pn++)
 		m_bPlayerEnabled[pn] = false;
 }
 
-BeginnerHelper::~BeginnerHelper()
-{
-	LOG->Trace("BeginnerHelper::~BeginnerHelper()");
-}
+BeginnerHelper::~BeginnerHelper() {}
 
 void BeginnerHelper::ShowStepCircle( int pn, int CSTEP )
 {
-	/*for( int ps=0; ps<NUM_PLAYERS; ps++ )
-	{
-		m_sStepCircle[ps].SetXY( (HELPER_X + PLAYER_X(ps)), (HELPER_Y + 10) );
-		switch( CSTEP )
-		{
-			case ST_LEFT: m_sStepCircle[ps].SetRotationZ(270); break;
-			case ST_DOWN: m_sStepCircle[ps].SetRotationZ(180); break;
-			case ST_UP: break;
-			case ST_RIGHT: m_sStepCircle[ps].SetRotationZ(90); break;
-			default: break;
-		}
-		
-		m_sStepCircle[ps].SetZoom(1);
-		m_sStepCircle[ps].SetEffectNone();
-		m_sStepCircle[ps].StopTweening();
-		m_sStepCircle[ps].BeginTweening((GAMESTATE->m_fCurBPS/4), TWEEN_LINEAR);
-		m_sStepCircle[ps].SetZoom(0);
-	}*/
-}
-
-void BeginnerHelper::SetFlash( CString sFilename, float fX, float fY )
-{
-	m_sFlash.Load( sFilename );
-	m_sFlash.SetX(fX);
-	m_sFlash.SetY(fY);
+	int	isc=0;	// Save OR issues within array boundries.. it's worth the extra few bytes of memory.
+	switch(CSTEP) {
+		case ST_LEFT:	isc=0;	break;
+		case ST_RIGHT:	isc=1; 	break;
+		case ST_UP:	isc=2;	break;
+		case ST_DOWN:	isc=3;	break;
+	}
+	
+	m_sStepCircle[pn][isc].SetEffectNone();
+	m_sStepCircle[pn][isc].SetZoom(2);
+	m_sStepCircle[pn][isc].StopTweening();
+	m_sStepCircle[pn][isc].BeginTweening((GAMESTATE->m_fCurBPS/4), TWEEN_LINEAR);
+	m_sStepCircle[pn][isc].SetZoom(0);
 }
 
 void BeginnerHelper::AddPlayer( int pn, NoteData *pSteps )
 {
-	ASSERT( !m_bInitialized );
-	ASSERT( pSteps != NULL );
-	ASSERT( pn >= 0 && pn < NUM_PLAYERS );
-	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
+	ASSERT(!m_bInitialized);
+	ASSERT(pSteps != NULL);
+	ASSERT((pn >= 0) && (pn < NUM_PLAYERS));
+	ASSERT(GAMESTATE->IsHumanPlayer(pn));
 
-	if( !CanUse() )
-		return;
+	if(!CanUse()) {return;}
+	
 	const Character *Character = GAMESTATE->m_pCurCharacters[pn];
 	ASSERT( Character != NULL );
-	if( !DoesFileExist( Character->GetModelPath() ) )
-		return;
+	if(!DoesFileExist(Character->GetModelPath())) {return;}
 
-	m_NoteData[pn].CopyAll( pSteps );
+	m_NoteData[pn].CopyAll(pSteps);
 	m_bPlayerEnabled[pn] = true;
 }
 
 bool BeginnerHelper::CanUse()
 {
-	for( int i = 0; i < NUM_ANIMATIONS; ++i )
-		if( !DoesFileExist( GetAnimPath( (Animation) i ) ) )
-			return false;
+	for(int i=0; i<NUM_ANIMATIONS; ++i)
+		if(!DoesFileExist(GetAnimPath((Animation)i))) {return false;}
 
-	if( GAMESTATE->m_CurGame != GAME_DANCE )
-		return false;
+	if(GAMESTATE->m_CurGame != GAME_DANCE) {return false;}
 
-	switch( GAMESTATE->m_CurStyle )
-	{
-	case STYLE_DANCE_SOLO:
-	case STYLE_DANCE_DOUBLE: return false;
+	switch( GAMESTATE->m_CurStyle ) {
+		case STYLE_DANCE_SOLO:
+		case STYLE_DANCE_DOUBLE: return false;
 	}
+
 	return true;
 }
 
 bool BeginnerHelper::Initialize( int iDancePadType )
 {
 	ASSERT( !m_bInitialized );
+	if(!CanUse()) {return false;}
 
-	/* If no players were successfully added, bail. */
+	// If no players were successfully added, bail.
 	{
 		bool bAnyLoaded = false;
-		for( int pn=0; pn < NUM_PLAYERS; pn++ )
-			if( m_bPlayerEnabled[pn] )
-				bAnyLoaded = true;
-		if( !bAnyLoaded )
-			return false;
-	}
-
-	if( !CanUse() )		// if we can't be used, bail now.
-		return false;
-
-	// Load the StepCircle, Background, and flash animation
-	if( m_bShowBackground )
-	{
-		m_sBackground.Load( THEME->GetPathToG("BeginnerHelper background") );
-		m_sBackground.SetXY( CENTER_X, CENTER_Y);
+		for(int pn=0; pn<NUM_PLAYERS; pn++)
+			if(m_bPlayerEnabled[pn]) {bAnyLoaded = true;}
+		if(!bAnyLoaded)	{return false;}
 	}
 	
-	m_sFlash.Load( THEME->GetPathToG("BeginnerHelper flash") );
-	m_sFlash.SetXY( CENTER_X, CENTER_Y );
-	m_sFlash.SetDiffuseAlpha(0);
-
-	/*for( int sc=0; sc<NUM_PLAYERS*2; sc++ )
-	{
-		m_sStepCircle[sc].Load( THEME->GetPathToG("BeginnerHelper stepcircle") );
-		m_sStepCircle[sc].SetZoom(0);	// Hide until needed.
-		this->AddChild(&m_sStepCircle[sc]);
-	}*/
+	// Load the Background and flash.. Flash only shows if the BG does.
+	if(m_bShowBackground) {
+		m_sBackground.Load( THEME->GetPathToG("BeginnerHelper background") );
+		this->AddChild(&m_sBackground);
+		m_sBackground.SetXY(CENTER_X, CENTER_Y);
+		m_sFlash.Load(THEME->GetPathToG("BeginnerHelper flash"));
+		m_sFlash.SetXY(CENTER_X, CENTER_Y);
+		m_sFlash.SetDiffuseAlpha(0);
+	}
+	
+	// Load StepCircle graphics
+	for(int lsc=0; lsc<NUM_PLAYERS; lsc++)
+		for(int lsce=0; lsce<4; lsce++) {
+			m_sStepCircle[lsc][lsce].Load(THEME->GetPathToG("BeginnerHelper stepcircle"));
+			m_sStepCircle[lsc][lsce].SetZoom(0);	// Hide until needed.
+			this->AddChild(&m_sStepCircle[lsc][lsce]);
+			
+			// Set coordinates of StepCircle
+			switch(lsce) {
+				case 0: m_sStepCircle[lsc][lsce].SetXY((HELPER_X+PLAYER_X(lsc)-80),HELPER_Y);	break;	// Left
+				case 1: m_sStepCircle[lsc][lsce].SetXY((HELPER_X+PLAYER_X(lsc)+80),HELPER_Y);	break;	// Right
+				case 2: m_sStepCircle[lsc][lsce].SetXY((HELPER_X+PLAYER_X(lsc)),(HELPER_Y-60));	break;	// Up
+				case 3: m_sStepCircle[lsc][lsce].SetXY((HELPER_X+PLAYER_X(lsc)),(HELPER_Y+60));	break;	// Down
+			}
+		}
 
 	// Load the DancePad
 	switch(iDancePadType)
 	{
 		case 0: break; // No pad
-		case 1: m_mDancePad.LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PAD) ); break;
-		case 2: m_mDancePad.LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PADS) ); break;
+		case 1: m_mDancePad.LoadMilkshapeAscii(GetAnimPath(ANIM_DANCE_PAD)); break;
+		case 2: m_mDancePad.LoadMilkshapeAscii(GetAnimPath(ANIM_DANCE_PADS)); break;
 	}
+	
 	m_mDancePad.SetHorizAlign( align_left );
 	m_mDancePad.SetRotationX( DANCEPAD_ANGLE );
 	m_mDancePad.SetX(HELPER_X);
 	m_mDancePad.SetY(HELPER_Y);
-	m_mDancePad.SetZoom( 23 );	// Pad should always be 3 units bigger in zoom than the dancer.
+	m_mDancePad.SetZoom(23);	// Pad should always be 3 units bigger in zoom than the dancer.
 
 	for( int pl=0; pl<NUM_PLAYERS; pl++ )	// Load players
 	{
-		if( !m_bPlayerEnabled[pl] )
-			continue;	// skip
+		// Skip if not enabled
+		if(!m_bPlayerEnabled[pl]) {continue;}
 
+		// Load character data
 		const Character *Character = GAMESTATE->m_pCurCharacters[pl];
 		ASSERT( Character != NULL );
 
@@ -202,20 +178,19 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 		m_mDancer[pl].LoadMilkshapeAscii( Character->GetModelPath() );
 
 		// Load needed animations
-		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-LEFT", GetAnimPath( ANIM_LEFT ) );
-		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-DOWN", GetAnimPath( ANIM_DOWN ) );
-		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-UP", GetAnimPath( ANIM_UP ) );
-		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-RIGHT", GetAnimPath( ANIM_RIGHT ) );
-		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-JUMPLR", GetAnimPath( ANIM_JUMPLR ) );
-		/*m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-JUMPUD","Characters\\BeginnerHelper_step-jumpud.bones.txt" );*/
-		m_mDancer[pl].LoadMilkshapeAsciiBones( "rest",Character->GetRestAnimationPath() );
-		m_mDancer[pl].SetDefaultAnimation( "rest" );
-		m_mDancer[pl].PlayAnimation( "rest" );
-		m_mDancer[pl].SetRotationX( PLAYER_ANGLE );
-		m_mDancer[pl].SetX( HELPER_X + PLAYER_X(pl) );
-		m_mDancer[pl].SetY( HELPER_Y + 10 );
-		m_mDancer[pl].SetZoom( 20 );
-		m_mDancer[pl].SetCullMode( CULL_NONE );	// many of the DDR PC character models have the vertex order flipped
+		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-LEFT", 	GetAnimPath(ANIM_LEFT));
+		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-DOWN", 	GetAnimPath(ANIM_DOWN));
+		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-UP", 	GetAnimPath(ANIM_UP));
+		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-RIGHT", 	GetAnimPath(ANIM_RIGHT));
+		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-JUMPLR", 	GetAnimPath(ANIM_JUMPLR));
+		m_mDancer[pl].LoadMilkshapeAsciiBones("rest",		Character->GetRestAnimationPath());
+		m_mDancer[pl].SetDefaultAnimation("rest");
+		m_mDancer[pl].PlayAnimation("rest");
+		m_mDancer[pl].SetRotationX(PLAYER_ANGLE);
+		m_mDancer[pl].SetX(HELPER_X+PLAYER_X(pl));
+		m_mDancer[pl].SetY(HELPER_Y+10);
+		m_mDancer[pl].SetZoom(20);
+		m_mDancer[pl].SetCullMode(CULL_NONE);	// many of the DDR PC character models have the vertex order flipped
 		m_mDancer[pl].m_bRevertToDefaultAnimation = true;		// Stay bouncing after a step has finished animating.
 	}
 
@@ -223,32 +198,17 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 	return true;
 }
 
-void BeginnerHelper::FlashOnce()
-{
-	m_sFlash.SetDiffuseAlpha(1);
-	m_sFlash.SetEffectNone();
-	m_sFlash.StopTweening();
-	m_sFlash.BeginTweening( 1/GAMESTATE->m_fCurBPS * 0.5f );
-	m_sFlash.SetDiffuseAlpha(0);
-}
-
 void BeginnerHelper::DrawPrimitives()
 {
-	if(!m_bInitialized)
-		return;
+	// If not initialized, don't bother with this
+	if(!m_bInitialized) {return;}
 
 	ActorFrame::DrawPrimitives();
-
 	m_sFlash.Draw();
 
 	bool DrawCelShaded = PREFSMAN->m_bCelShadeModels;
-
-	if(DrawCelShaded)
-	{
-		m_mDancePad.DrawCelShaded();
-	}
-	else
-	{
+	if(DrawCelShaded) {m_mDancePad.DrawCelShaded();}
+	else {
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
 			0, 
@@ -258,100 +218,124 @@ void BeginnerHelper::DrawPrimitives()
 			RageVector3(0, 0, 1) );
 
 		m_mDancePad.Draw();
+		DISPLAY->ClearZBuffer();	// So character doesn't step "into" the dance pad.
 	}
-
-	for( int scd=0; scd<NUM_PLAYERS*2; scd++ )
-		m_sStepCircle[scd].Draw();		// Should be drawn before the dancer, but after the pad, so it is drawn over the pad and under the dancer.
 	
-	if(DrawCelShaded)
-	{
-		FOREACH_PlayerNumber( pn )	// Draw each dancer
-			if( GAMESTATE->IsHumanPlayer(pn) )
-				m_mDancer[pn].DrawCelShaded();
+	// Draw StepCircles
+	DISPLAY->SetLighting(false);
+	for(int scd=0; scd<NUM_PLAYERS; scd++)
+		for(int scde=0; scde<4; scde++)
+			m_sStepCircle[scd][scde].Draw();
+	DISPLAY->SetLighting(true);
+	
+	if(DrawCelShaded) {
+		FOREACH_PlayerNumber(pn)	// Draw each dancer
+			if(GAMESTATE->IsHumanPlayer(pn)) {m_mDancer[pn].DrawCelShaded();}
 	}
-	else
-	{
-		FOREACH_PlayerNumber( pn )	// Draw each dancer
-			if( GAMESTATE->IsHumanPlayer(pn) )
-				m_mDancer[pn].Draw();
+	else {
+		FOREACH_PlayerNumber(pn)	// Draw each dancer
+			if(GAMESTATE->IsHumanPlayer(pn)) {m_mDancer[pn].Draw();}
 
-		DISPLAY->SetLightOff( 0 );
-		DISPLAY->SetLighting( false );
+		DISPLAY->SetLightOff(0);
+		DISPLAY->SetLighting(false);
 	}
 }
 
 void BeginnerHelper::Step( int pn, int CSTEP )
 {
-	LOG->Trace( "BeginnerHelper::Step()" );
-
-	ShowStepCircle( pn, CSTEP);
 	m_mDancer[pn].StopTweening();
 	m_mDancer[pn].SetRotationY(0);	// Make sure we're not still inside of a JUMPUD tween.
-	switch( CSTEP )
-	{
-	case ST_LEFT:	m_mDancer[pn].PlayAnimation( "Step-LEFT", 1.5f ); break;
-	case ST_RIGHT:	m_mDancer[pn].PlayAnimation( "Step-RIGHT", 1.5f ); break;
-	case ST_UP:		m_mDancer[pn].PlayAnimation( "Step-UP", 1.5f ); break;
-	case ST_DOWN:	m_mDancer[pn].PlayAnimation( "Step-DOWN", 1.5f ); break;
-	case ST_JUMPLR: m_mDancer[pn].PlayAnimation( "Step-JUMPLR", 1.5f ); break;
-	case ST_JUMPUD:
-		// Until I can get an UP+DOWN jump animation, this will have to do.
-		m_mDancer[pn].PlayAnimation( "Step-JUMPLR", 1.5f );
-		
-		m_mDancer[pn].StopTweening();
-		m_mDancer[pn].BeginTweening( GAMESTATE->m_fCurBPS /8, TWEEN_LINEAR );
-		m_mDancer[pn].SetRotationY( 90 );
-		m_mDancer[pn].BeginTweening( (1/(GAMESTATE->m_fCurBPS * 2) ) ); //sleep between jump-frames
-		m_mDancer[pn].BeginTweening( GAMESTATE->m_fCurBPS /6, TWEEN_LINEAR );
-		m_mDancer[pn].SetRotationY( 0 );
-		break;
+
+	switch(CSTEP) {
+		case ST_LEFT:
+			ShowStepCircle(pn, ST_LEFT);
+			m_mDancer[pn].PlayAnimation("Step-LEFT", 1.5f);
+			break;
+		case ST_RIGHT:
+			ShowStepCircle(pn, ST_RIGHT);
+			m_mDancer[pn].PlayAnimation("Step-RIGHT", 1.5f);
+			break;
+		case ST_UP:
+			ShowStepCircle(pn, ST_UP);
+			m_mDancer[pn].PlayAnimation("Step-UP", 1.5f);
+			break;
+		case ST_DOWN:
+			ShowStepCircle(pn, ST_DOWN);
+			m_mDancer[pn].PlayAnimation("Step-DOWN", 1.5f);
+			break;
+		case ST_JUMPLR:
+			ShowStepCircle(pn, ST_LEFT);
+			ShowStepCircle(pn, ST_RIGHT);
+			m_mDancer[pn].PlayAnimation("Step-JUMPLR", 1.5f);
+			break;
+		case ST_JUMPUD:
+			ShowStepCircle(pn, ST_UP);
+			ShowStepCircle(pn, ST_DOWN);
+			m_mDancer[pn].StopTweening();
+			m_mDancer[pn].PlayAnimation("Step-JUMPLR", 1.5f);
+			m_mDancer[pn].BeginTweening((GAMESTATE->m_fCurBPS /8), TWEEN_LINEAR);
+			m_mDancer[pn].SetRotationY(90);
+			m_mDancer[pn].BeginTweening((1/(GAMESTATE->m_fCurBPS * 2))); //sleep between jump-frames
+			m_mDancer[pn].BeginTweening(GAMESTATE->m_fCurBPS /6, TWEEN_LINEAR);
+			m_mDancer[pn].SetRotationY(0);
+			break;
 	}
+	
+	m_sFlash.SetEffectNone();
+	m_sFlash.StopTweening();
+	m_sFlash.Sleep(GAMESTATE->m_fCurBPS /16);
+	m_sFlash.SetDiffuseAlpha(1);
+	m_sFlash.BeginTweening(1/GAMESTATE->m_fCurBPS * 0.5f);
+	m_sFlash.SetDiffuseAlpha(0);
 }
 
 void BeginnerHelper::Update( float fDeltaTime )
 {
-	if(!m_bInitialized)
-		return;
+	if(!m_bInitialized) {return;}
 
 	// the row we want to check on this update
 	int iCurRow = BeatToNoteRowNotRounded(GAMESTATE->m_fSongBeat + 0.4f);
-
-	for(int pn = 0; pn < NUM_PLAYERS; pn++ )
+	int iActualRow = BeatToNoteRowNotRounded(GAMESTATE->m_fSongBeat);
+	for(int pn=0; pn<NUM_PLAYERS; pn++)
 	{
-		if( !m_bPlayerEnabled[pn] )
-			continue;	// skip
-
-		if( (m_NoteData[pn].IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.01f)) ) ) )
-			FlashOnce();
+		// Skip if not enabled
+		if(!m_bPlayerEnabled[pn]) {continue;}
+		
 		for(int iRow=m_iLastRowChecked; iRow<iCurRow; iRow++)
 		{
-			if( !m_NoteData[pn].IsThereATapAtRow( iRow ) )
-				continue;
-
+			// Check if there are any notes at all on this row.. If not, save scanning.
+			if(!m_NoteData[pn].IsThereATapAtRow(iRow)) {continue;}
+			
+			// Find all steps on this row, in order to show the correct animations
 			int iStep = 0;
 			const int iNumTracks = m_NoteData[pn].GetNumTracks(); 
-			for( int k=0; k<iNumTracks; k++ )
-				if( m_NoteData[pn].GetTapNote(k, iRow ) == TAP_TAP )
-					iStep |= 1 << k;
-			Step( pn, iStep );
+			for(int k=0; k<iNumTracks; k++)
+				if(m_NoteData[pn].GetTapNote(k, iRow) == TAP_TAP) {iStep |= 1 << k;}
+			
+			// Assign new data
+			this->Step(pn, iStep);
 		}
 	}
+	
+	// Make sure we don't accidentally scan a row 2x
 	m_iLastRowChecked = iCurRow;
+	
+	// Update animations
+	ActorFrame::Update(fDeltaTime);
+	m_mDancePad.Update(fDeltaTime);
+	m_sFlash.Update(fDeltaTime);
 
-	ActorFrame::Update( fDeltaTime );
-	m_mDancePad.Update( fDeltaTime );
-	m_sFlash.Update( fDeltaTime );
-
-	float beat = fDeltaTime * GAMESTATE->m_fCurBPS;
-
-	for( int pu=0; pu<NUM_PLAYERS; pu++ )
+	float beat = (fDeltaTime*GAMESTATE->m_fCurBPS);
+	for(int pu=0; pu<NUM_PLAYERS; pu++)
 	{
-		if(!GAMESTATE->IsHumanPlayer(pu))
-			continue;
-
-		m_mDancer[pu].Update( beat );	//Update dancers
-		for( int scu=0; scu<2; scu++ )
-			m_sStepCircle[pu+scu].Update( beat );
+		// If this is not a human player, the dancer is not shown
+		if(!GAMESTATE->IsHumanPlayer(pu)) {continue;}
+		
+		// Update dancer's animation and StepCircles
+		m_mDancer[pu].Update( beat );
+		for(int scu=0; scu<NUM_PLAYERS; scu++)
+			for(int scue=0; scue<4; scue++)
+				m_sStepCircle[scu][scue].Update(beat);
 	}
 }
 
