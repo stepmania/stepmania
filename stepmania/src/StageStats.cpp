@@ -146,7 +146,7 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 	 * is tricky since at that point the ScoreKeepers no longer exist. 
 	 *
 	 * See http://www.aaroninjapan.com/ddr2.html ("Regular play scoring") */
-	float TapScoreValues[NUM_TAP_NOTE_SCORES] = 
+	int TapScoreValues[NUM_TAP_NOTE_SCORES] = 
 	{ 
 		0,
 		PREFSMAN->m_iGradeHitMineWeight,
@@ -157,7 +157,7 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 		PREFSMAN->m_iGradePerfectWeight,
 		PREFSMAN->m_iGradeMarvelousWeight,
 	};
-	float HoldScoreValues[NUM_HOLD_NOTE_SCORES] =
+	int HoldScoreValues[NUM_HOLD_NOTE_SCORES] =
 	{
 		0,
 		PREFSMAN->m_iGradeNGWeight,

@@ -61,7 +61,7 @@ void MemoryCardManager::Update( float fDelta )
 
 		// check for disconnects
 		{
-			for( int i=0; i<vOld.size(); i++ )
+			for( unsigned i=0; i<vOld.size(); i++ )
 			{
 				const UsbStorageDevice old = vOld[i];
 				if( find(vNew.begin(),vNew.end(),old) == vNew.end() )	// didn't find
@@ -74,7 +74,7 @@ void MemoryCardManager::Update( float fDelta )
 
 		// check for connects
 		{
-			for( int i=0; i<vNew.size(); i++ )
+			for( unsigned i=0; i<vNew.size(); i++ )
 			{
 				const UsbStorageDevice newd = vNew[i];
 				if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )	// didn't find

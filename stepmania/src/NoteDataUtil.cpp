@@ -395,7 +395,7 @@ void NoteDataUtil::RemoveHands(NoteData &in, float fStartBeat, float fEndBeat)
 			}
 			else if( in.GetTapNote(t,r) == TAP_HOLD_HEAD )
 			{
-				unsigned i;
+				int i;
 				for( i=0; i<in.GetNumHoldNotes(); i++ )
 				{
 					const HoldNote& hn = in.GetHoldNote(i);
