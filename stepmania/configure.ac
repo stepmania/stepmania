@@ -37,11 +37,38 @@ SDL_LIBS="`echo $SDL_LIBS | sed 's_-L/usr/lib/\?[[ $]]__'`"
 #  exit 0;
 #fi
 
-# Since we link statically against SDL_sound, we need to link all
-# of its support libraries ourself.
-AC_SEARCH_LIBS(vorbis_comment_add, [vorbis], have_vorbis=yes,  have_vorbis=no)
-AC_SEARCH_LIBS(ogg_stream_init, [ogg], have_ogg=yes,  have_ogg=no)
-AC_SEARCH_LIBS(ov_open, [vorbisfile], have_vorbisfile=yes,  have_vorbisfile=no)
+AC_ARG_WITH(ogg, AC_HELP_STRING([--without-vorbis], [Disable Vorbis support]), with_vorbis=$enableval, with_vorbis=yes)
+
+# This is used to force the integer decoder, on systems that prefer it.
+AC_ARG_WITH(integer-vorbis, AC_HELP_STRING([--with-integer-vorbis], [Integer vorbis decoding only]), with_int_vorbis=$withval, with_int_vorbis=no)
+
+echo $with_int_vorbis
+have_vorbis=no
+if test "$with_vorbis" = "yes" -a "$with_int_vorbis" = "no"; then
+	oldlibs="$LIBS"
+	AC_SEARCH_LIBS(vorbis_comment_add, [vorbis], have_libvorbis=yes,  have_libvorbis=no)
+	AC_SEARCH_LIBS(ogg_stream_init, [ogg], have_libogg=yes,  have_libogg=no)
+	AC_SEARCH_LIBS(ov_open, [vorbisfile], have_libvorbisfile=yes,  have_libvorbisfile=no)
+	if test "$have_libvorbis" = "yes" -a "$have_libogg" = "yes" -a "$have_libvorbisfile" = "yes"; then
+		have_vorbis=yes
+	else
+		echo Not all vorbis libraries found.
+		LIBS="$oldlibs"
+	fi
+fi
+
+# Search for the integer decoder if specified, or if Vorbis is enabled and we failed
+# above.
+if test "$with_vorbis" = "yes" -a "$have_vorbis" = "no"; then
+	AC_SEARCH_LIBS(ov_open, [ivorbisfile], have_libivorbisfile=yes,  have_libivorbisfile=no)
+	if test "$have_libivorbisfile" = "yes"; then
+		have_vorbis=yes
+		AC_DEFINE(INTEGER_VORBIS, 1, [Integer Vorbis decoding])
+	fi
+fi
+
+AM_CONDITIONAL(HAVE_VORBIS, test "$have_vorbis" = "yes" )
+
 
 AC_ARG_ENABLE(mp3, AC_HELP_STRING([--disable-mp3], [Disable MP3 support]), enable_mp3=$enableval, enable_mp3=yes)
 if test "$enable_mp3" = "yes"; then
