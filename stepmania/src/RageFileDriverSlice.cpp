@@ -7,16 +7,19 @@ RageFileDriverSlice::RageFileDriverSlice( RageFileBasic *pFile, int iOffset, int
 	m_iOffset = iOffset;
 	m_iFileSize = iFileSize;
 	m_iFilePos = 0;
+	m_bFileOwned = false;
 }
 
 RageFileDriverSlice::~RageFileDriverSlice()
 {
-	delete m_pFile;
+	if( m_bFileOwned )
+		delete m_pFile;
 }
 
 RageFileBasic *RageFileDriverSlice::Copy() const
 {
 	RageFileDriverSlice *pRet = new RageFileDriverSlice( m_pFile->Copy(), m_iOffset, m_iFileSize );
+	pRet->m_bFileOwned = true;
 	pRet->m_iFilePos = m_iFilePos;
 	return pRet;
 }

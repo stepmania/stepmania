@@ -366,7 +366,9 @@ RageFileBasic *RageFileDriverZip::Open( const CString &path, int mode, int &err 
 
 	zip.Seek( info->data_offset );
 
-	RageFileBasic *pFile = new RageFileDriverSlice( zip.Copy(), info->data_offset, info->compr_size );
+	RageFileDriverSlice *pFile = new RageFileDriverSlice( zip.Copy(), info->data_offset, info->compr_size );
+	pFile->DeleteFileWhenFinished();
+	
 	switch( info->compression_method )
 	{
 	case STORED:

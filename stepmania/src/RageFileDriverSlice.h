@@ -13,6 +13,8 @@ public:
 	~RageFileDriverSlice();
 	RageFileBasic *Copy() const;
 
+	void DeleteFileWhenFinished() { m_bFileOwned = true; }
+
 	int ReadInternal( void *pBuffer, size_t iBytes );
 	int WriteInternal( const void *pBuffer, size_t iBytes ) { SetError( "Not implemented" ); return -1; }
 	int SeekInternal( int iOffset );
@@ -22,6 +24,7 @@ private:
 	RageFileBasic *m_pFile;
 	int m_iFilePos;
 	int m_iOffset, m_iFileSize;
+	bool m_bFileOwned;
 };
 
 #endif
