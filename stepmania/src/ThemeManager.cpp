@@ -155,17 +155,6 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		case GRAPHIC_SELECT_DIFFICULTY_ARROW_P1:		sAssetPrefix = "Graphics\\select difficulty arrow p1";		break;
 		case GRAPHIC_SELECT_DIFFICULTY_ARROW_P2:		sAssetPrefix = "Graphics\\select difficulty arrow p2";		break;
 		case GRAPHIC_SELECT_DIFFICULTY_OK:				sAssetPrefix = "Graphics\\select difficulty ok";				break;
-		case GRAPHIC_SELECT_MODE_BACKGROUND:			sAssetPrefix = "Graphics\\select mode background";			break;
-		case GRAPHIC_SELECT_MODE_TOP_EDGE:				sAssetPrefix = "Graphics\\select mode top edge";				break;
-		case GRAPHIC_SELECT_MODE_EXPLANATION:			sAssetPrefix = "Graphics\\select mode explanation";			break;
-		case GRAPHIC_SELECT_MODE_ARROW:					sAssetPrefix = "Graphics\\select mode arrow";					break;
-		case GRAPHIC_SELECT_MODE_OK:					sAssetPrefix = "Graphics\\select mode ok";					break;
-		case GRAPHIC_SELECT_MODE_ARCADE_HEADER:			sAssetPrefix = "Graphics\\select mode arcade header";			break;
-		case GRAPHIC_SELECT_MODE_ARCADE_PICTURE:		sAssetPrefix = "Graphics\\select mode arcade picture";		break;
-		case GRAPHIC_SELECT_MODE_FREE_PLAY_HEADER:		sAssetPrefix = "Graphics\\select mode free play header";		break;
-		case GRAPHIC_SELECT_MODE_FREE_PLAY_PICTURE:		sAssetPrefix = "Graphics\\select mode free play picture";		break;
-		case GRAPHIC_SELECT_MODE_NONSTOP_HEADER:		sAssetPrefix = "Graphics\\select mode nonstop header";		break;
-		case GRAPHIC_SELECT_MODE_NONSTOP_PICTURE:		sAssetPrefix = "Graphics\\select mode nonstop picture";		break;
 		case GRAPHIC_SELECT_MUSIC_INFO_FRAME:			sAssetPrefix = "Graphics\\select music info frame";			break;
 		case GRAPHIC_SELECT_MUSIC_RADAR_BASE:			sAssetPrefix = "Graphics\\select music radar base";			break;
 		case GRAPHIC_SELECT_MUSIC_RADAR_WORDS:			sAssetPrefix = "Graphics\\select music radar words 1x5";		break;

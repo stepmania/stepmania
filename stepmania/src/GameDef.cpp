@@ -39,20 +39,23 @@ GameDef::GameDef( CString sGameDir )
 		FatalError( "Error reading game definition file '%s'.", sGameFilePath );
 
 
-	if( ini.GetValue( "Game", "Name" )  !=  m_sName )
+	CString sGameName;
+	ini.GetValue( "Game", "Name", sGameName );
+	if( sGameName != m_sName )
 		FatalError( "Game name in '%s' doesn't match the directory name.", sGameFilePath );
 
-	m_sDescription = ini.GetValue( "Game", "Description" );
+	ini.GetValue( "Game", "Description", m_sDescription );
 
-	m_iNumInstruments = ini.GetValueI( "Game", "NumInstruments" );
+	ini.GetValueI( "Game", "NumInstruments", m_iNumInstruments );
 	if( m_iNumInstruments != 2 )
 		FatalError( "Invalid value for NumInstruments in '%s'.", sGameFilePath );
 
-	m_iButtonsPerInstrument = ini.GetValueI( "Game", "ButtonsPerInstrument" );
+	ini.GetValueI( "Game", "ButtonsPerInstrument", m_iButtonsPerInstrument );
 	if( m_iButtonsPerInstrument < 1  ||  m_iButtonsPerInstrument > MAX_INSTRUMENT_BUTTONS )
 		FatalError( "Invalid value for ButtonsPerInstrument in '%s'.", sGameFilePath );
 
-	CString sButtonsString = ini.GetValue( "Game", "ButtonNames" );
+	CString sButtonsString;
+	ini.GetValue( "Game", "ButtonNames", sButtonsString );
 	CStringArray arrayButtonNames;
 	split( sButtonsString, ",", arrayButtonNames );
 	if( arrayButtonNames.GetSize() != m_iButtonsPerInstrument )
@@ -60,7 +63,8 @@ GameDef::GameDef( CString sGameDir )
 	for( int i=0; i<m_iButtonsPerInstrument; i++ )
 		m_sButtonNames[i] = arrayButtonNames[i];
 
-	CString sMenuButtonsString = ini.GetValue( "Game", "MenuButtons" );
+	CString sMenuButtonsString;
+	ini.GetValue( "Game", "MenuButtons", sMenuButtonsString );
 	CStringArray arrayMenuButtonNames;
 	split( sMenuButtonsString, ",", arrayMenuButtonNames );
 	if( arrayMenuButtonNames.GetSize() != NUM_MENU_BUTTONS )

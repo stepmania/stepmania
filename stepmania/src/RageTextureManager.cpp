@@ -30,8 +30,8 @@ RageTextureManager::RageTextureManager( RageDisplay* pScreen )
 {
 	assert( pScreen != NULL );
 	m_pScreen = pScreen;
-	m_dwMaxTextureSize = 2048;	// infinite size
-	m_dwTextureColorDepth = 16;
+	m_iMaxTextureSize = 2048;	// infinite size
+	m_iTextureColorDepth = 16;
 }
 
 RageTextureManager::~RageTextureManager()
@@ -73,7 +73,7 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, bool bForceR
 	{
 		pTexture->m_iRefCount++;
 		if( bForceReload )
-			pTexture->Reload( m_dwMaxTextureSize, m_dwTextureColorDepth, iMipMaps, iAlphaBits, bDither );
+			pTexture->Reload( m_iMaxTextureSize, m_iTextureColorDepth, iMipMaps, iAlphaBits, bDither );
 
 		LOG->WriteLine( "RageTextureManager: '%s' now has %d references.", sTexturePath, pTexture->m_iRefCount );
 	}
@@ -83,9 +83,9 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, bool bForceR
 		splitpath( false, sTexturePath, sDrive, sDir, sFName, sExt );
 
 		if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
-			pTexture = (RageTexture*) new RageMovieTexture( m_pScreen, sTexturePath, m_dwMaxTextureSize, m_dwTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
+			pTexture = (RageTexture*) new RageMovieTexture( m_pScreen, sTexturePath, m_iMaxTextureSize, m_iTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
 		else
-			pTexture = (RageTexture*) new RageBitmapTexture( m_pScreen, sTexturePath, m_dwMaxTextureSize, m_dwTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
+			pTexture = (RageTexture*) new RageBitmapTexture( m_pScreen, sTexturePath, m_iMaxTextureSize, m_iTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
 
 
 		LOG->WriteLine( "RageTextureManager: Finished loading '%s' - %d references.", sTexturePath, pTexture->m_iRefCount );
@@ -154,6 +154,6 @@ void RageTextureManager::ReloadAll()
 
 		m_mapPathToTexture.GetNextAssoc( pos, sPath, pTexture );
 		
-		pTexture->Reload( m_dwMaxTextureSize, m_dwTextureColorDepth, 0 );	// this not entirely correct.  Hints are lost!
+		pTexture->Reload( m_iMaxTextureSize, m_iTextureColorDepth, 0 );	// this not entirely correct.  Hints are lost!
 	}
 }

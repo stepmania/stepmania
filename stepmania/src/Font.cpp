@@ -28,6 +28,10 @@ Font::Font( const CString &sFontFilePath )
 		m_iFrameNoToWidth[i] = -1;
 	}
 
+	m_bCapitalsOnly = false;
+	m_fDrawExtraPercent = 0;
+
+
 	m_iRefCount = 1;
 
 	m_sFontFilePath = sFontFilePath;	// save 
@@ -45,15 +49,16 @@ Font::Font( const CString &sFontFilePath )
 	IniFile ini;
 	ini.SetPath( m_sFontFilePath );
 	if( !ini.ReadFile() )
-		FatalError( ssprintf("Error opening Font file '%s'.", m_sFontFilePath) );
+		FatalError( "Error opening Font file '%s'.", m_sFontFilePath );
 
 
 	//
 	// load texture
 	//
-	CString sTextureFile = ini.GetValue( "Font", "Texture" );
+	CString sTextureFile;
+	ini.GetValue( "Font", "Texture", sTextureFile );
 	if( sTextureFile == "" )
-		FatalError( ssprintf("Error reading  value 'Texture' from %s.", m_sFontFilePath) );
+		FatalError( "Error reading value 'Texture' from %s.", m_sFontFilePath );
 
 	m_sTexturePath = sFontDir + sTextureFile;	// save the path of the new texture
 	m_sTexturePath.MakeLower();
@@ -66,12 +71,14 @@ Font::Font( const CString &sFontFilePath )
 	//
 	// find out what characters are in this font
 	//
-	CString sCharacters = ini.GetValue( "Font", "Characters" );
-	if( sCharacters != "" )		// the creator supplied characters
+	CString sCharacters;
+	if( ini.GetValue("Font", "Characters", sCharacters) )		// the creator supplied characters
 	{
 		// sanity check
-		if( sCharacters.GetLength() != (int)m_pTexture->GetNumFrames() )
-			FatalError( "The characters in '%s' does not match the number of frames in the texture.", m_sFontFilePath );
+		if( sCharacters.GetLength() != m_pTexture->GetNumFrames() )
+			FatalError( "The characters in '%s' does not match the number of frames in the texture."
+						"The font has %d frames, and the texture has %d frames.",
+						m_sFontFilePath, sCharacters.GetLength(), m_pTexture->GetNumFrames() );
 
 		// set the char to frame number map
 		for( int i=0; i<sCharacters.GetLength(); i++ )
@@ -94,7 +101,7 @@ Font::Font( const CString &sFontFilePath )
 			break;
 		case 128:		// ASCII 32-159
 			{
-			for( int i=32; i<160; i++ )
+			for( int i=32; i<128+32; i++ )
 				m_iCharToFrameNo[i] = i-32;
 			}
 			break;
@@ -104,27 +111,26 @@ Font::Font( const CString &sFontFilePath )
 
 	}
 
-	m_bCapitalsOnly = ("1" == ini.GetValue("Font", "CapitalsOnly"));
-	m_fDrawExtraPercent = (float)ini.GetValueF("Font", "DrawExtraPercent");
+	ini.GetValueB( "Font", "CapitalsOnly", m_bCapitalsOnly );
+	ini.GetValueF( "Font", "DrawExtraPercent", m_fDrawExtraPercent );
 
 
 	//
 	// load character widths
 	//
-	CString sWidthsValue = ini.GetValue( "Font", "Widths" );
-	if( sWidthsValue != "" )		// the creator supplied witdths
+	CString sWidthsValue;
+	if( ini.GetValue("Font", "Widths", sWidthsValue) )		// the creator supplied widths
 	{
-		CStringArray arrayCharWidths;
-		split( sWidthsValue, ",", arrayCharWidths );
+		CStringArray asCharWidths;
+		asCharWidths.SetSize( 0, 256 );
+		split( sWidthsValue, ",", asCharWidths );
 
-		if( arrayCharWidths.GetSize() != (int)m_pTexture->GetNumFrames() )
-			FatalError( ssprintf("The number of widths specified in '%s' (%d) do not match the number of frames in the texture (%u).", m_sFontFilePath, arrayCharWidths.GetSize(), m_pTexture->GetNumFrames()) );
+		if( asCharWidths.GetSize() != m_pTexture->GetNumFrames() )
+			FatalError( "The number of widths specified in '%s' (%d) do not match the number of frames in the texture (%d).", 
+				m_sFontFilePath, asCharWidths.GetSize(), m_pTexture->GetNumFrames() );
 
-		for( int i=0; i<arrayCharWidths.GetSize(); i++ )
-		{
-			m_iFrameNoToWidth[i] = atoi( arrayCharWidths[i] );
-		}
-
+		for( int i=0; i<asCharWidths.GetSize(); i++ )
+			m_iFrameNoToWidth[i] = atoi( asCharWidths[i] );
 	}
 	else	// The font file creator didn't supply widths.  Assume each character is the width of the frame.
 	{
@@ -152,7 +158,7 @@ int Font::GetLineWidthInSourcePixels( LPCTSTR szLine, int iLength )
 		const char c = szLine[i];
 		const int iFrameNo = m_iCharToFrameNo[c];
 		if( iFrameNo == -1 )	// this font doesn't impelemnt this character
-			FatalError( ssprintf("The font '%s' does not implement the character '%c'", m_sFontFilePath, c) );
+			FatalError( "The font '%s' does not implement the character '%c'", m_sFontFilePath, c );
 
 		iLineWidth += m_iFrameNoToWidth[iFrameNo];
 	}

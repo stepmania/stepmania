@@ -759,11 +759,11 @@ void ApplyGraphicOptions()
 
 	bool bWindowed			= PREFS->m_bWindowed;
 	CString sProfileName	= pGPO->m_szProfileName;
-	DWORD dwWidth			= pGPO->m_dwWidth;
-	DWORD dwHeight			= pGPO->m_dwHeight;
-	DWORD dwDisplayBPP		= pGPO->m_dwDisplayColor;
-	DWORD dwTextureBPP		= pGPO->m_dwTextureColor;
-	DWORD dwMaxTextureSize	= pGPO->m_dwMaxTextureSize;
+	DWORD dwWidth			= pGPO->m_iWidth;
+	DWORD dwHeight			= pGPO->m_iHeight;
+	DWORD dwDisplayBPP		= pGPO->m_iDisplayColor;
+	DWORD dwTextureBPP		= pGPO->m_iTextureColor;
+	DWORD dwMaxTextureSize	= pGPO->m_iMaxTextureSize;
 	DWORD dwFlags = 0;	// not used anymore
 
 	//
@@ -789,7 +789,7 @@ void ApplyGraphicOptions()
 					dwHeight = 240;
 					if( !DISPLAY->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
 					{
-						FatalError( "Tried every possible display mode, and couldn't change to any of them." );
+						FatalError( "Tried every possible display mode, and couldn't find one that works." );
 					}
 				}
 			}

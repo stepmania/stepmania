@@ -34,23 +34,24 @@ StyleDef::StyleDef( GameDef* pGameDef, CString sStyleFilePath )
 	if( !ini.ReadFile() )
 		FatalError( "Error reading style definition file '%s'.", sStyleFilePath );
 
-
-	if( ini.GetValue( "Style", "Name" )  !=  m_sName )
+	CString sStyleName;
+	ini.GetValue( "Style", "Name", sStyleName );
+	if( sStyleName !=  m_sName )
 		FatalError( "Style name in '%s' doesn't match the file name.", sStyleFilePath );
 
-	m_sDescription = ini.GetValue( "Style", "Description" );
+	ini.GetValue( "Style", "Name", m_sDescription );
 	if( m_sDescription == "" )
 		FatalError( "Invalid value for Description in '%s'.", sStyleFilePath );
 
-	m_sReadsTag = ini.GetValue( "Style", "ReadsTag" );
+	ini.GetValue( "Style", "ReadsTag", m_sReadsTag );
 	if( m_sReadsTag == "" )
 		FatalError( "Invalid value for ReadsTag in '%s'.", sStyleFilePath );
 
-	m_iNumPlayers = ini.GetValueI( "Style", "NumPlayers" );
+	ini.GetValueI( "Style", "NumPlayers", m_iNumPlayers );
 	if( m_iNumPlayers < 1  ||  m_iNumPlayers > 2 )
 		FatalError( "Invalid value for NumPlayers in '%s'.", sStyleFilePath );
 
-	m_iColsPerPlayer = ini.GetValueI( "Style", "ColsPerPlayer" );
+	ini.GetValueI( "Style", "ColsPerPlayer", m_iColsPerPlayer );
 	if( m_iColsPerPlayer < 1  ||  m_iColsPerPlayer > MAX_COLS_PER_PLAYER )
 		FatalError( "Invalid value for ColsPerPlayer in '%s'.", sStyleFilePath );
 
@@ -63,7 +64,8 @@ StyleDef::StyleDef( GameDef* pGameDef, CString sStyleFilePath )
 
 			CString sValueName = ssprintf( "P%01dCol%02d", p+1, c+1 );
 
-			CString sColumnInfo = ini.GetValue( "Style", sValueName );	// should look like "TRACK08,INSTRUMENT02,right,576"
+			CString sColumnInfo;
+			ini.GetValue( "Style", sValueName, sColumnInfo );	// should look like "TRACK08,INSTRUMENT02,right,576"
 			if( sColumnInfo == "" )
 				FatalError( "Value '%s' missing in file '%s'.", sValueName, sStyleFilePath );
 
@@ -107,13 +109,14 @@ StyleDef::StyleDef( GameDef* pGameDef, CString sStyleFilePath )
 			colInfo.iX		= atoi( arrayColumnInfo[3] );
 		}
 	}
-	m_iColsPerPlayer = ini.GetValueI( "Style", "ColsPerPlayer" );
+	ini.GetValueI( "Style", "ColsPerPlayer", m_iColsPerPlayer );
 	if( m_iColsPerPlayer < 1  ||  m_iColsPerPlayer > MAX_COLS_PER_PLAYER )
 		FatalError( "Invalid value for ColsPerPlayer in '%s'.", sStyleFilePath );
 
 
 
-	CString sColDrawOrder = ini.GetValue( "Style", "ColDrawOrder" );	// should look like "COL01,COL02,COL03,COL04"
+	CString sColDrawOrder;
+	ini.GetValue( "Style", "ColDrawOrder", sColDrawOrder );	// should look like "COL01,COL02,COL03,COL04"
 	
 	// replace the constants with their corresponding integer literals
 	sColDrawOrder.Replace( "COL01", "0" );

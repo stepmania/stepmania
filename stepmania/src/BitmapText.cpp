@@ -176,7 +176,7 @@ void BitmapText::DrawPrimitives()
 			const char c = szLine[j];
 			const int iFrameNo = m_pFont->m_iCharToFrameNo[c];
 			if( iFrameNo == -1 )	// this font doesn't impelemnt this character
-				FatalError( ssprintf("The font '%s' does not implement the character '%c'", m_sFontFilePath, c) );
+				FatalError( "The font '%s' does not implement the character '%c'", m_sFontFilePath, c );
 			const int iCharWidth = m_pFont->m_iFrameNoToWidth[iFrameNo];
 
 			// HACK:

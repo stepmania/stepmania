@@ -86,17 +86,19 @@ public:
 	//gets value of [keyname] valuename = 
 	//overloaded to return CString, int, and double,
 	//returns "", or 0 if key/value not found.  Sets error member to show problem
-	CString GetValue(CString keyname, CString valuename); 
-	int GetValueI(CString keyname, CString valuename); 
-	double GetValueF(CString keyname, CString valuename);
+	bool GetValue(CString keyname, CString valuename, CString &value_out); 
+	bool GetValueI(CString keyname, CString valuename, int &value_out); 
+	bool GetValueF(CString keyname, CString valuename, float &value_out);
+	bool GetValueB(CString keyname, CString valuename, bool &value_out);
 
 	//sets value of [keyname] valuename =.
 	//specify the optional paramter as false (0) if you do not want it to create
 	//the key if it doesn't exist. Returns true if data entered, false otherwise
 	//overloaded to accept CString, int, and double
-	BOOL SetValue(CString key, CString valuename, CString value, BOOL create = 1);
-	BOOL SetValueI(CString key, CString valuename, int value, BOOL create = 1);
-	BOOL SetValueF(CString key, CString valuename, double value, BOOL create = 1);
+	bool SetValue(CString key, CString valuename, CString value, BOOL create = 1);
+	bool SetValueI(CString key, CString valuename, int value, BOOL create = 1);
+	bool SetValueF(CString key, CString valuename, double value, BOOL create = 1);
+	bool SetValueB(CString key, CString valuename, bool value, BOOL create = 1);
 
 	//deletes specified value
 	//returns true if value existed and deleted, false otherwise

@@ -152,44 +152,54 @@ int IniFile::GetNumValues(CString keyname)
 
 //gets value of [keyname] valuename = 
 //overloaded to return CString, int, and double
-CString IniFile::GetValue(CString keyname, CString valuename)
+bool IniFile::GetValue(CString keyname, CString valuename, CString &value_out)
 {
 	int keynum = FindKey(keyname);//, valuenum = FindValue(keynum,valuename);
 	if( keynum == -1 )
-	{
-		error = "Unable to locate specified key.";
-		return "";
-	}
+		return false;
 
 	CMapStringToString &map = keys[keynum];
-	CString value;
-	if( !map.Lookup(valuename, value) )
-	{
-		error = "Unable to locate specified value.";
-		return "";
-	}
-	return value;
+	return 1 == map.Lookup(valuename, value_out);
 }
 
 //gets value of [keyname] valuename = 
 //overloaded to return CString, int, and double
-int IniFile::GetValueI(CString keyname, CString valuename)
+bool IniFile::GetValueI(CString keyname, CString valuename, int &value_out)
 {
-	return atoi( GetValue(keyname,valuename) );
+	CString sValue;
+	if( !GetValue(keyname, valuename, sValue) )
+		return false;
+	value_out = atoi(sValue);
+	return true;
 }
 
 //gets value of [keyname] valuename = 
 //overloaded to return CString, int, and double
-double IniFile::GetValueF(CString keyname, CString valuename)
+bool IniFile::GetValueF(CString keyname, CString valuename, float &value_out)
 {
-	return atof( GetValue(keyname, valuename) );
+	CString sValue;
+	if( !GetValue(keyname, valuename, sValue) )
+		return false;
+	value_out = (float)atof(sValue);
+	return true;
+}
+
+//gets value of [keyname] valuename = 
+//overloaded to return CString, int, and double
+bool IniFile::GetValueB(CString keyname, CString valuename, bool &value_out)
+{
+	CString sValue;
+	if( !GetValue(keyname, valuename, sValue) )
+		return false;
+	value_out = sValue == "1";
+	return true;
 }
 
 //sets value of [keyname] valuename =.
 //specify the optional paramter as false (0) if you do not want it to create
 //the key if it doesn't exist. Returns true if data entered, false otherwise
 //overloaded to accept CString, int, and double
-BOOL IniFile::SetValue(CString keyname, CString valuename, CString value, BOOL create)
+bool IniFile::SetValue(CString keyname, CString valuename, CString value, BOOL create)
 {
 	int keynum = FindKey(keyname);
 
@@ -216,7 +226,7 @@ BOOL IniFile::SetValue(CString keyname, CString valuename, CString value, BOOL c
 //specify the optional paramter as false (0) if you do not want it to create
 //the key if it doesn't exist. Returns true if data entered, false otherwise
 //overloaded to accept CString, int, and double
-BOOL IniFile::SetValueI(CString keyname, CString valuename, int value, BOOL create)
+bool IniFile::SetValueI(CString keyname, CString valuename, int value, BOOL create)
 {
 	CString temp;
 	temp.Format("%d",value);
@@ -227,10 +237,21 @@ BOOL IniFile::SetValueI(CString keyname, CString valuename, int value, BOOL crea
 //specify the optional paramter as false (0) if you do not want it to create
 //the key if it doesn't exist. Returns true if data entered, false otherwise
 //overloaded to accept CString, int, and double
-BOOL IniFile::SetValueF(CString keyname, CString valuename, double value, BOOL create)
+bool IniFile::SetValueF(CString keyname, CString valuename, double value, BOOL create)
 {
 	CString temp;
 	temp.Format("%e",value);
+	return SetValue(keyname, valuename, temp, create);
+}
+
+//sets value of [keyname] valuename =.
+//specify the optional paramter as false (0) if you do not want it to create
+//the key if it doesn't exist. Returns true if data entered, false otherwise
+//overloaded to accept CString, int, and double
+bool IniFile::SetValueB(CString keyname, CString valuename, bool value, BOOL create)
+{
+	CString temp;
+	temp.Format("%d",value);
 	return SetValue(keyname, valuename, temp, create);
 }
 

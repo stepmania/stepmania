@@ -76,7 +76,8 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, bool bForceReload, int iMi
 	if( !ini.ReadFile() )
 		FatalError( ssprintf("Error opening Sprite file '%s'.", m_sSpritePath) );
 
-	CString sTextureFile = ini.GetValue( "Sprite", "Texture" );
+	CString sTextureFile;
+	ini.GetValue( "Sprite", "Texture", sTextureFile );
 	if( sTextureFile == "" )
 		FatalError( ssprintf("Error reading  value 'Texture' from %s.", m_sSpritePath) );
 
@@ -97,11 +98,15 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, bool bForceReload, int iMi
 		CString sFrameKey( CString("Frame") + sStateNo );
 		CString sDelayKey( CString("Delay") + sStateNo );
 		
-		m_iStateToFrame[i] = ini.GetValueI( "Sprite", sFrameKey );
+		m_iStateToFrame[i] = 0;
+		if( !ini.GetValueI( "Sprite", sFrameKey, m_iStateToFrame[i] ) )
+			break;
 		if( m_iStateToFrame[i] >= m_pTexture->GetNumFrames() )
-			FatalError( ssprintf("In '%s', %s is %d, but the texture %s only has %d frames.",
-						m_sSpritePath, sFrameKey, m_iStateToFrame[i], sTexturePath, m_pTexture->GetNumFrames()) );
-		m_fDelay[i] = (float)ini.GetValueF( "Sprite", sDelayKey );
+			FatalError( "In '%s', %s is %d, but the texture %s only has %d frames.",
+				m_sSpritePath, sFrameKey, m_iStateToFrame[i], sTexturePath, m_pTexture->GetNumFrames() );
+		m_fDelay[i] = 0.2f;
+		if( !ini.GetValueF( "Sprite", sDelayKey, m_fDelay[i] ) )
+			break;
 
 		if( m_iStateToFrame[i] == 0  &&  m_fDelay[i] > -0.00001f  &&  m_fDelay[i] < 0.00001f )	// both values are empty
 			break;
@@ -345,8 +350,8 @@ void Sprite::DrawPrimitives()
 void Sprite::SetState( int iNewState )
 {
 	ASSERT( iNewState >= 0  &&  iNewState < m_iNumStates );
-	if( iNewState < 0 )
-		iNewState = 0;
+	if( iNewState < 0 )						iNewState = 0;
+	else if( iNewState >= m_iNumStates )	iNewState = m_iNumStates-1;
 	m_iCurState = iNewState;
 	m_fSecsIntoState = 0.0; 
 }

@@ -106,60 +106,28 @@ void PrefsManager::ReadPrefsFromDisk()
 	IniFile ini;
 	ini.SetPath( "StepMania.ini" );
 	if( !ini.ReadFile() ) {
-		return;		// load nothing
-		//FatalError( "could not read config file" );
+		return;		// could not read config file, load nothing
 	}
 
-	CMapStringToString* pKey;
-	CString name_string, value_string;
-	
+	GraphicProfileOptions* pGPO = GetCustomGraphicProfileOptions();
 
-	pKey = ini.GetKeyPointer( "GameOptions" );
-	if( pKey )
-	{
-		for( POSITION pos = pKey->GetStartPosition(); pos != NULL; )
-		{
-			pKey->GetNextAssoc( pos, name_string, value_string );
+	ini.GetValueB( "GraphicOptions", "Windowed",		m_bWindowed );
+	ini.GetValueI( "GraphicOptions", "Profile",			(int&)m_GraphicProfile );
+	ini.GetValueI( "GraphicOptions", "Width",			pGPO->m_iWidth );
+	ini.GetValueI( "GraphicOptions", "Height",			pGPO->m_iHeight );
+	ini.GetValueI( "GraphicOptions", "MaxTextureSize",	pGPO->m_iMaxTextureSize );
+	ini.GetValueI( "GraphicOptions", "DisplayColor",	pGPO->m_iDisplayColor );
+	ini.GetValueI( "GraphicOptions", "TextureColor",	pGPO->m_iTextureColor );
 
-			if( name_string == "IgnoreJoyAxes" )		m_GameOptions.m_bIgnoreJoyAxes			= ( value_string == "1" );
-			if( name_string == "ShowFPS" )				m_GameOptions.m_bShowFPS				= ( value_string == "1" );
-			if( name_string == "UseRandomVis" )			m_GameOptions.m_bUseRandomVis			= ( value_string == "1" );
-			if( name_string == "Announcer" )			m_GameOptions.m_bAnnouncer				= ( value_string == "1" );
-			if( name_string == "ShowCaution" )			m_GameOptions.m_bShowCaution			= ( value_string == "1" );
-			if( name_string == "ShowSelectDifficulty" )	m_GameOptions.m_bShowSelectDifficulty	= ( value_string == "1" );
-			if( name_string == "ShowSelectGroup" )		m_GameOptions.m_bShowSelectGroup		= ( value_string == "1" );
-			if( name_string == "NumArcadeStages" )		m_GameOptions.m_iNumArcadeStages		= atoi( value_string );
-			if( name_string == "JudgementDifficulty" )	m_GameOptions.m_JudgementDifficulty= (GameOptions::JudgementDifficulty) atoi( value_string );
-		}
-	}
-
-	pKey = ini.GetKeyPointer( "GraphicOptions" );
-	if( pKey )
-	{
-		for( POSITION pos = pKey->GetStartPosition(); pos != NULL; )
-		{
-			pKey->GetNextAssoc( pos, name_string, value_string );
-
-			if( name_string == "Windowed" )			m_bWindowed		= ( value_string == "1" );
-			if( name_string == "Profile" )
-			{
-				if( value_string == "super low" )	m_GraphicProfile = PROFILE_SUPER_LOW;
-				else if( value_string == "low" )	m_GraphicProfile = PROFILE_LOW;
-				else if( value_string == "medium" )	m_GraphicProfile = PROFILE_MEDIUM;
-				else if( value_string == "high" )	m_GraphicProfile = PROFILE_HIGH;
-				else if( value_string == "custom" )	m_GraphicProfile = PROFILE_CUSTOM;
-				else								m_GraphicProfile = PROFILE_MEDIUM;
-			}
-
-			GraphicProfileOptions* pGPO = GetCustomGraphicProfileOptions();
-			if( name_string == "Width" )			pGPO->m_dwWidth				= atoi( value_string );
-			if( name_string == "Height" )			pGPO->m_dwHeight			= atoi( value_string );
-			if( name_string == "MaxTextureSize" )	pGPO->m_dwMaxTextureSize	= atoi( value_string );
-			if( name_string == "DisplayColor" )		pGPO->m_dwDisplayColor		= atoi( value_string );
-			if( name_string == "TextureColor" )		pGPO->m_dwTextureColor		= atoi( value_string );
-		}
-	}
-
+	ini.GetValueB( "GameOptions", "IgnoreJoyAxes",		m_GameOptions.m_bIgnoreJoyAxes );
+	ini.GetValueB( "GameOptions", "ShowFPS",			m_GameOptions.m_bShowFPS );
+	ini.GetValueB( "GameOptions", "UseRandomVis",		m_GameOptions.m_bUseRandomVis );
+	ini.GetValueB( "GameOptions", "Announcer",			m_GameOptions.m_bAnnouncer );
+	ini.GetValueB( "GameOptions", "EventMode",			m_GameOptions.m_bEventMode );
+	ini.GetValueB( "GameOptions", "ShowSelectDifficulty", m_GameOptions.m_bShowSelectDifficulty );
+	ini.GetValueB( "GameOptions", "ShowSelectGroup",	m_GameOptions.m_bShowSelectGroup );
+	ini.GetValueI( "GameOptions", "NumArcadeStages",	m_GameOptions.m_iNumArcadeStages );
+	ini.GetValueI( "GameOptions", "Difficulty",			m_GameOptions.m_iDifficulty );
 }
 
 
@@ -167,40 +135,27 @@ void PrefsManager::SavePrefsToDisk()
 {
 	IniFile ini;
 	ini.SetPath( "StepMania.ini" );
-//	ini.ReadFile();		// don't read the file so that we overwrite everything there
-
-
-	// save the GameOptions
-	ini.SetValue( "GraphicOptions", "Windowed",	m_bWindowed ? "1":"0" );
-	switch( m_GraphicProfile )
-	{
-	case PROFILE_SUPER_LOW:	ini.SetValue( "GraphicOptions", "Profile",	"super low" );	break;
-	case PROFILE_LOW:		ini.SetValue( "GraphicOptions", "Profile",	"low" );		break;
-	case PROFILE_MEDIUM:	ini.SetValue( "GraphicOptions", "Profile",	"medium" );		break;
-	case PROFILE_HIGH:		ini.SetValue( "GraphicOptions", "Profile",	"high" );		break;
-	case PROFILE_CUSTOM:	ini.SetValue( "GraphicOptions", "Profile",	"custom" );		break;
-	default:	ASSERT( false );
-	}
 
 
 	GraphicProfileOptions* pGPO = GetCustomGraphicProfileOptions();
 
-	ini.SetValue( "GraphicOptions", "Width",			ssprintf("%d", pGPO->m_dwWidth) );
-	ini.SetValue( "GraphicOptions", "Height",			ssprintf("%d", pGPO->m_dwWidth) );
-	ini.SetValue( "GraphicOptions", "MaxTextureSize",	ssprintf("%d", pGPO->m_dwMaxTextureSize) );
-	ini.SetValue( "GraphicOptions", "DisplayColor",		ssprintf("%d", pGPO->m_dwDisplayColor) );
-	ini.SetValue( "GraphicOptions", "TextureColor",		ssprintf("%d", pGPO->m_dwTextureColor) );
+	ini.SetValueB( "GraphicOptions", "Windowed",		m_bWindowed );
+	ini.SetValueI( "GraphicOptions", "Profile",			m_GraphicProfile );
+	ini.SetValueI( "GraphicOptions", "Width",			pGPO->m_iWidth );
+	ini.SetValueI( "GraphicOptions", "Height",			pGPO->m_iHeight );
+	ini.SetValueI( "GraphicOptions", "MaxTextureSize",	pGPO->m_iMaxTextureSize );
+	ini.SetValueI( "GraphicOptions", "DisplayColor",	pGPO->m_iDisplayColor );
+	ini.SetValueI( "GraphicOptions", "TextureColor",	pGPO->m_iTextureColor );
 
-
-	ini.SetValue( "GameOptions", "IgnoreJoyAxes",		m_GameOptions.m_bIgnoreJoyAxes ? "1":"0" );
-	ini.SetValue( "GameOptions", "ShowFPS",				m_GameOptions.m_bShowFPS ? "1":"0" );
-	ini.SetValue( "GameOptions", "UseRandomVis",		m_GameOptions.m_bUseRandomVis ? "1":"0" );
-	ini.SetValue( "GameOptions", "Announcer",			m_GameOptions.m_bAnnouncer ? "1":"0" );
-	ini.SetValue( "GameOptions", "ShowCaution",			m_GameOptions.m_bShowCaution ? "1":"0" );
-	ini.SetValue( "GameOptions", "ShowSelectDifficulty",m_GameOptions.m_bShowSelectDifficulty ? "1":"0" );
-	ini.SetValue( "GameOptions", "ShowSelectGroup",		m_GameOptions.m_bShowSelectGroup ? "1":"0" );
-
-
+	ini.SetValueB( "GameOptions", "IgnoreJoyAxes",		m_GameOptions.m_bIgnoreJoyAxes );
+	ini.SetValueB( "GameOptions", "ShowFPS",			m_GameOptions.m_bShowFPS );
+	ini.SetValueB( "GameOptions", "UseRandomVis",		m_GameOptions.m_bUseRandomVis );
+	ini.SetValueB( "GameOptions", "Announcer",			m_GameOptions.m_bAnnouncer );
+	ini.SetValueB( "GameOptions", "EventMode",			m_GameOptions.m_bEventMode );
+	ini.SetValueB( "GameOptions", "ShowSelectDifficulty", m_GameOptions.m_bShowSelectDifficulty );
+	ini.SetValueB( "GameOptions", "ShowSelectGroup",	m_GameOptions.m_bShowSelectGroup );
+	ini.SetValueI( "GameOptions", "NumArcadeStages",	m_GameOptions.m_iNumArcadeStages );
+	ini.SetValueI( "GameOptions", "Difficulty",			m_GameOptions.m_iDifficulty );
 
 	ini.WriteFile();
 }

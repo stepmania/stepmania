@@ -1,0 +1,528 @@
+#include "stdafx.h"
+/*
+-----------------------------------------------------------------------------
+ Class: ScreenGameplay
+
+ Desc: See header.
+
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
+-----------------------------------------------------------------------------
+*/
+
+#include "ScreenGameplay.h"
+#include "SongManager.h"
+#include "ScreenManager.h"
+
+#include "ScreenSelectMusic.h"
+#include "ScreenResults.h"
+#include "GameConstantsAndTypes.h"
+#include "ThemeManager.h"
+#include "GameManager.h"
+#include "SongManager.h"
+#include "RageLog.h"
+#include "AnnouncerManager.h"
+
+//
+// Defines specific to GameScreenTitleMenu
+//
+
+const float COLUMN_LEFT_SINGLE		=	(SCREEN_WIDTH*1/4);
+const float COLUMN_RIGHT_SINGLE		=	(SCREEN_WIDTH*3/4);
+const float COLUMN_LEFT_DOUBLE		=	(COLUMN_LEFT_SINGLE+30);
+const float COLUMN_RIGHT_DOUBLE		=	(COLUMN_RIGHT_SINGLE-30);
+
+const float LIFE_X[NUM_PLAYERS] = { CENTER_X-180, CENTER_X+180 };
+const float LIFE_Y				= SCREEN_TOP+28;
+
+const float SCORE_X[NUM_PLAYERS] = { CENTER_X-214, CENTER_X+214 };
+const float SCORE_Y				 = SCREEN_BOTTOM-38;
+
+const float MAX_SECONDS_CAN_BE_OFF_BY	=	0.20f;
+
+const float TIME_BETWEEN_DANCING_COMMENTS	=	15;
+
+
+// received while STATE_DANCING
+const ScreenMessage	SM_SongEnded			= ScreenMessage(SM_User+102);
+const ScreenMessage	SM_LifeIs0				= ScreenMessage(SM_User+103);
+
+
+// received while STATE_OUTRO
+const ScreenMessage	SM_ShowCleared			= ScreenMessage(SM_User+111);
+const ScreenMessage	SM_HideCleared			= ScreenMessage(SM_User+112);
+const ScreenMessage	SM_GoToResults			= ScreenMessage(SM_User+113);
+
+const ScreenMessage	SM_BeginFailed			= ScreenMessage(SM_User+121);
+const ScreenMessage	SM_ShowFailed			= ScreenMessage(SM_User+122);
+const ScreenMessage	SM_PlayFailComment		= ScreenMessage(SM_User+123);
+const ScreenMessage	SM_HideFailed			= ScreenMessage(SM_User+124);
+const ScreenMessage	SM_GoToSelectSong		= ScreenMessage(SM_User+125);
+
+
+
+ScreenGameplay::ScreenGameplay()
+{
+	LOG->WriteLine( "ScreenGameplay::ScreenGameplay()" );
+
+	m_DancingState = STATE_INTRO;
+	m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+
+	m_bHasFailed = false;
+	m_pSong = SONGMAN->m_pCurSong;
+
+
+
+	// Get the current StyleDef definition (used below)
+	StyleDef* pStyleDef = GAME->GetCurrentStyleDef();
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAME->IsPlayerEnabled(PlayerNumber(p)) )
+			continue;
+
+		NoteData* pOriginalNoteData = SONGMAN->m_pCurNotes[p]->GetNoteData();
+		
+		NoteData newNoteData;
+		GAME->GetCurrentStyleDef()->GetTransformedNoteDataForStyle( (PlayerNumber)p, pOriginalNoteData, newNoteData );
+
+		m_Player[p].Load( 
+			(PlayerNumber)p,
+			&newNoteData, 
+			PREFS->m_PlayerOptions[p],
+			&m_LifeMeter[p],
+			&m_ScoreDisplay[p]
+		);
+
+	}
+
+
+	m_Background.LoadFromSong( SONGMAN->m_pCurSong );
+	m_Background.SetDiffuseColor( D3DXCOLOR(0.4f,0.4f,0.4f,1) );
+	this->AddActor( &m_Background );
+
+
+
+
+	// init players
+	if( GAME->m_sCurrentStyle == "single" )
+	{
+		m_Player[PLAYER_1].SetX( COLUMN_LEFT_SINGLE );
+		this->AddActor( &m_Player[PLAYER_1] );
+	}
+	else if( GAME->m_sCurrentStyle == "versus" || GAME->m_sCurrentStyle == "couple" )
+	{
+		m_Player[PLAYER_1].SetX( COLUMN_LEFT_SINGLE );
+		this->AddActor( &m_Player[PLAYER_1] );
+		m_Player[PLAYER_2].SetX( COLUMN_RIGHT_SINGLE );
+		this->AddActor( &m_Player[PLAYER_2] );
+	}
+	else if( GAME->m_sCurrentStyle == "double" || GAME->m_sCurrentStyle == "solo" )
+	{
+		m_Player[PLAYER_1].SetX( CENTER_X );
+		this->AddActor( &m_Player[PLAYER_1] );
+	}
+	else
+		ASSERT( false );	// invalid style
+
+
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAME->IsPlayerEnabled(PlayerNumber(p)) )
+			continue;
+
+		m_LifeMeter[p].SetPlayerOptions( PREFS->m_PlayerOptions[p] );
+		m_LifeMeter[p].SetXY( LIFE_X[p], LIFE_Y );
+		m_LifeMeter[p].SetZoomX( 256 );
+		m_LifeMeter[p].SetZoomY( 20 );
+		this->AddActor( &m_LifeMeter[p] );
+	}
+
+	m_sprTopFrame.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_TOP_FRAME) );
+	m_sprTopFrame.SetXY( CENTER_X, SCREEN_TOP + m_sprTopFrame.GetZoomedHeight()/2 );
+	this->AddActor( &m_sprTopFrame );
+
+	m_sprBottomFrame.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_BOTTOM_FRAME) );
+	m_sprBottomFrame.SetXY( CENTER_X, SCREEN_BOTTOM - m_sprBottomFrame.GetZoomedHeight()/2 );
+	this->AddActor( &m_sprBottomFrame );
+
+	m_textSmallStage.Load( THEME->GetPathTo(FONT_HEADER1) );
+	m_textSmallStage.TurnShadowOff();
+	m_textSmallStage.SetXY( CENTER_X, 60 );
+	m_textSmallStage.SetDiffuseColor( D3DXCOLOR(0.3f,1,1,1) );
+	m_textSmallStage.SetText( PREFS->GetStageText() );
+	this->AddActor( &m_textSmallStage );
+
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAME->IsPlayerEnabled(PlayerNumber(p)) )
+			continue;
+
+		m_ScoreDisplay[p].SetXY( SCORE_X[p], SCORE_Y );
+		m_ScoreDisplay[p].SetZoom( 0.8f );
+		this->AddActor( &m_ScoreDisplay[p] );
+	}
+
+	
+
+
+
+	m_StarWipe.SetClosed();
+	this->AddActor( &m_StarWipe );
+
+	m_sprReady.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_READY) );
+	m_sprReady.SetXY( CENTER_X, CENTER_Y );
+	m_sprReady.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	this->AddActor( &m_sprReady );
+
+	m_sprHereWeGo.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_HERE_WE_GO) );
+	m_sprHereWeGo.SetXY( CENTER_X, CENTER_Y );
+	m_sprHereWeGo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	this->AddActor( &m_sprHereWeGo );
+
+	m_sprCleared.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_CLEARED) );
+	m_sprCleared.SetXY( CENTER_X, CENTER_Y );
+	m_sprCleared.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	this->AddActor( &m_sprCleared );
+
+	m_sprFailed.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_FAILED) );
+	m_sprFailed.SetXY( CENTER_X, CENTER_Y );
+	m_sprFailed.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	this->AddActor( &m_sprFailed );
+
+
+	m_soundMusic.Load( m_pSong->GetMusicPath() );
+
+	m_soundFail.Load(			THEME->GetPathTo(SOUND_FAILED) );
+	m_announcerReady.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_READY) );
+	m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_HERE_WE_GO_NORMAL) );
+	m_announcerGood.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMMENT_GOOD) );
+	m_announcerBad.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMMENT_BAD) );
+	m_announcerCleared.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_CLEARED) );
+	m_announcerFailComment.Load(ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_FAILED) );
+
+	m_soundAssistTick.Load(		THEME->GetPathTo(SOUND_ASSIST) );
+
+
+
+	// Send some messages every have second to we can get the introduction rolling
+	for( int i=0; i<30; i++ )
+		this->SendScreenMessage( ScreenMessage(SM_User+i), i/2.0f );
+
+
+
+	m_StarWipe.SetClosed();
+}
+
+ScreenGameplay::~ScreenGameplay()
+{
+	LOG->WriteLine( "ScreenGameplay::~ScreenGameplay()" );
+	m_soundMusic.Stop();
+}
+
+
+void ScreenGameplay::Update( float fDeltaTime )
+{
+	//LOG->WriteLine( "ScreenGameplay::Update(%f)", fDeltaTime );
+	Screen::Update( fDeltaTime );
+
+
+	float fSongBeat, fBPS;
+	float fPositionSeconds = m_soundMusic.GetPositionSeconds();
+	
+	m_pSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS );
+
+	
+
+	
+	//LOG->WriteLine( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
+
+	float fMaxBeatDifference = fBPS*MAX_SECONDS_CAN_BE_OFF_BY;
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAME->IsPlayerEnabled(PlayerNumber(p)) )
+			continue;
+		m_Player[p].Update( fDeltaTime, fSongBeat, fMaxBeatDifference );
+	}
+
+	// check for fail
+	switch( PREFS->m_SongOptions.m_FailType )
+	{
+	case SongOptions::FAIL_ARCADE:
+	case SongOptions::FAIL_END_OF_SONG:
+
+		if( m_bHasFailed )
+			break;		// if they have already failed, don't bother checking again
+
+		{
+		// check for both players fail
+		bool bAllAboutToFail = true;
+		bool bAllFailed = true;
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAME->IsPlayerEnabled(PlayerNumber(p)) )
+				continue;
+
+			const float fLifePercentage = m_LifeMeter[p].GetLifePercentage();
+
+			if( fLifePercentage > 0.3f )
+			{
+				bAllAboutToFail = false;
+				bAllFailed = false;
+			}
+			else if( fLifePercentage > 0.0f )	// dead.  Let the message handler choose to fail or not
+			{
+				bAllFailed = false;
+			}
+			break;
+		}
+		if( bAllAboutToFail )	m_Background.TurnDangerOn();
+		else					m_Background.TurnDangerOff();
+
+		if( bAllFailed )
+		{
+			m_bHasFailed = true;
+			SCREENMAN->SendMessageToTopScreen( SM_LifeIs0, 0 );
+		}
+		}
+		break;
+	case SongOptions::FAIL_OFF:
+		break;
+	}
+
+
+	switch( m_DancingState )
+	{
+	case STATE_DANCING:
+		
+		// Check for end of song
+		if( m_DancingState == STATE_DANCING  &&
+			m_soundMusic.GetLengthSeconds() - m_soundMusic.GetPositionSeconds() < 2 )
+			this->SendScreenMessage( SM_SongEnded, 1 );
+	
+		// Check to see if it's time to play a gameplay comment
+		if( PREFS->m_GameOptions.m_bAnnouncer )
+		{
+			m_fTimeLeftBeforeDancingComment -= fDeltaTime;
+			if( m_fTimeLeftBeforeDancingComment <= 0 )
+			{
+				m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;	// reset for the next comment
+
+				if( m_Background.IsDangerOn() )
+					m_announcerBad.PlayRandom();
+				else
+					m_announcerGood.PlayRandom();
+			}
+		}
+	}
+
+
+
+
+	if( PREFS->m_SongOptions.m_AssistType == SongOptions::ASSIST_TICK )
+	{
+		// 
+		// play assist ticks
+		//
+		// Sound cards have a latency between when a sample is Play()ed and when the sound
+		// will start coming out the speaker.  Compensate for this by boosting
+		// fPositionSeconds ahead
+		fPositionSeconds += (SOUND->GetPlayLatency()+0.06f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.06 seconds to make them play a tiny bit earlier
+		m_pSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS );
+
+		int iIndexNow = BeatToNoteIndexNotRounded( fSongBeat );
+		static int iIndexLastCrossed = 0;
+
+		bool bAnyoneHasANote = false;	// set this to true if any player has a note at one of the indicies we crossed
+
+		for( int i=iIndexLastCrossed+1; i<=iIndexNow; i++ )  // for each index we crossed since the last update
+		{
+			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
+				if( !GAME->IsPlayerEnabled( (PlayerNumber)p ) )
+					continue;		// skip
+
+				bAnyoneHasANote |= m_Player[p].IsThereANoteAtIndex( i );
+			}
+		}
+
+		if( bAnyoneHasANote )
+			m_soundAssistTick.PlayRandom();
+
+
+		iIndexLastCrossed = iIndexNow;
+	}
+
+}
+
+
+void ScreenGameplay::DrawPrimitives()
+{
+	Screen::DrawPrimitives();
+}
+
+
+void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+{
+	//LOG->WriteLine( "ScreenGameplay::Input()" );
+
+	float fSongBeat, fBPS;
+	m_pSong->GetBeatAndBPSFromElapsedTime( m_soundMusic.GetPositionSeconds(), fSongBeat, fBPS );
+
+	
+	if( MenuI.IsValid() )
+	{
+		switch( MenuI.button )
+		{
+		case MENU_BUTTON_BACK:
+			if( m_DancingState == STATE_DANCING 
+			&& !m_bHasFailed )
+			{
+				m_bHasFailed = true;
+				SCREENMAN->SendMessageToTopScreen( SM_BeginFailed, 0 );
+			}
+			else
+				; // do not let user go back!
+			break;
+		}
+	}
+
+	float fMaxBeatsCanBeOffBy = MAX_SECONDS_CAN_BE_OFF_BY * fBPS;
+
+	if( type == IET_FIRST_PRESS )
+	{
+		if( StyleI.IsValid() )
+		{
+			m_Player[StyleI.player].HandlePlayerStep( fSongBeat, StyleI.col, fMaxBeatsCanBeOffBy ); 
+		}
+	}
+}
+
+void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
+{
+	switch( SM )
+	{
+		// received while STATE_INTRO
+	case SM_User+0:
+		m_StarWipe.OpenWipingRight(SM_None);
+		break;
+	case SM_User+1:
+		break;
+	case SM_User+2:
+		m_sprReady.StartFocusing();
+		if( PREFS->m_GameOptions.m_bAnnouncer )
+			m_announcerReady.PlayRandom();
+		break;
+	case SM_User+3:
+		break;
+	case SM_User+4:
+		m_sprReady.StartBlurring();
+		break;
+	case SM_User+5:
+		m_sprHereWeGo.StartFocusing();
+		if( PREFS->m_GameOptions.m_bAnnouncer )
+			m_announcerHereWeGo.PlayRandom();
+		m_Background.SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,0.8f,1) );
+		m_soundMusic.Play();
+		m_soundMusic.SetPlaybackRate( PREFS->m_SongOptions.m_fMusicRate );
+		break;
+	case SM_User+6:
+		break;
+	case SM_User+7:
+		break;
+	case SM_User+8:
+		m_sprHereWeGo.StartBlurring();
+		m_DancingState = STATE_DANCING;		// STATE CHANGE!  Now the user is allowed to press Back
+		break;
+	case SM_User+9:
+		break;
+
+	// received while STATE_DANCING
+	case SM_LifeIs0:
+		if( PREFS->m_SongOptions.m_FailType == SongOptions::FAIL_ARCADE )	// fail them now!
+			this->SendScreenMessage( SM_BeginFailed, 0 );
+		m_DancingState = STATE_OUTRO;
+		break;
+	case SM_SongEnded:
+		if( m_DancingState == STATE_OUTRO )	// gameplay already ended
+			return;		// ignore
+
+		if( m_bHasFailed )	// fail them
+		{
+			this->SendScreenMessage( SM_BeginFailed, 0 );
+		}
+		else	// cleared
+		{
+			m_StarWipe.CloseWipingRight( SM_ShowCleared );
+			if( PREFS->m_GameOptions.m_bAnnouncer )
+				m_announcerCleared.PlayRandom();	// crowd cheer
+		}
+		m_DancingState = STATE_OUTRO;
+		break;
+
+		// received while STATE_OUTRO
+	case SM_ShowCleared:
+		m_sprCleared.StartFocusing();
+		SCREENMAN->SendMessageToTopScreen( SM_HideCleared, 2.5 );
+		break;
+	case SM_HideCleared:
+		m_sprCleared.StartBlurring();
+		SCREENMAN->SendMessageToTopScreen( SM_GoToResults, 1 );
+		break;
+	case SM_GoToResults:
+		// send score summaries to the PREFS object so ScreenResults can grab it.
+		PREFS->m_ScoreSummary[PLAYER_1] = m_Player[PLAYER_1].GetScoreSummary();
+		PREFS->m_ScoreSummary[PLAYER_2] = m_Player[PLAYER_2].GetScoreSummary();
+		SCREENMAN->SetNewScreen( new ScreenResults );
+		break;
+
+
+	case SM_BeginFailed:
+		m_DancingState = STATE_OUTRO;
+		m_soundMusic.Pause();
+		m_StarWipe.CloseWipingRight( SM_None );
+		this->SendScreenMessage( SM_ShowFailed, 0.2f );
+		break;
+	case SM_ShowFailed:
+		if( PREFS->m_GameOptions.m_bAnnouncer )
+			m_soundFail.PlayRandom();
+
+		// make the background invisible so we don't waste mem bandwidth drawing it
+		m_Background.BeginTweening( 1 );
+		m_Background.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+
+		m_sprFailed.SetZoom( 4 );
+		m_sprFailed.BeginBlurredTweening( 0.8f, TWEEN_BIAS_END );
+		m_sprFailed.SetTweenZoom( 0.5f );			// zoom out
+		m_sprFailed.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0.7f) );	// and fade in
+		m_sprFailed.BeginTweeningQueued( 0.3f );
+		m_sprFailed.SetTweenZoom( 1.1f );			// bounce
+		m_sprFailed.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0.7f) );	// and fade in
+		m_sprFailed.BeginTweeningQueued( 0.2f );
+		m_sprFailed.SetTweenZoom( 1.0f );			// come to rest
+		m_sprFailed.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0.7f) );	// and fade in
+
+		SCREENMAN->SendMessageToTopScreen( SM_PlayFailComment, 1.5f );
+		SCREENMAN->SendMessageToTopScreen( SM_HideFailed, 3.0f );
+		break;
+	case SM_PlayFailComment:
+		if( PREFS->m_GameOptions.m_bAnnouncer )
+			m_announcerFailComment.PlayRandom();
+		break;
+	case SM_HideFailed:
+		m_sprFailed.StopTweening();
+		m_sprFailed.BeginTweening(1.0f);
+		m_sprFailed.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+
+		SCREENMAN->SendMessageToTopScreen( SM_GoToSelectSong, 1.5f );
+		break;
+	case SM_GoToSelectSong:
+		SCREENMAN->SetNewScreen( new ScreenSelectMusic );
+		break;
+	}
+
+
+}

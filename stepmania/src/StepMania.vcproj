@@ -261,12 +261,6 @@
 				RelativePath="ScreenSelectGroup.h">
 			</File>
 			<File
-				RelativePath="ScreenSelectMode.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectMode.h">
-			</File>
-			<File
 				RelativePath="ScreenSelectMusic.cpp">
 			</File>
 			<File

@@ -28,19 +28,19 @@ public:
 
 	void SetPrefs( const DWORD dwMaxSize, const DWORD dwTextureColorDepth )
 	{
-		ASSERT( m_dwMaxTextureSize >= 64 );
-		m_dwMaxTextureSize = dwMaxSize; 
-		m_dwTextureColorDepth = dwTextureColorDepth;
+		ASSERT( m_iMaxTextureSize >= 64 );
+		m_iMaxTextureSize = dwMaxSize; 
+		m_iTextureColorDepth = dwTextureColorDepth;
 		ReloadAll(); 
 	};
-	DWORD GetMaxTextureSize() { return m_dwMaxTextureSize; };
-	DWORD GetTextureColorDepth() { return m_dwTextureColorDepth; };
+	DWORD GetMaxTextureSize() { return m_iMaxTextureSize; };
+	DWORD GetTextureColorDepth() { return m_iTextureColorDepth; };
 
 protected:
 	RageDisplay* m_pScreen;
 
-	DWORD m_dwMaxTextureSize;
-	DWORD m_dwTextureColorDepth;
+	DWORD m_iMaxTextureSize;
+	DWORD m_iTextureColorDepth;
 
 	// map from file name to a texture holder
 	CTypedPtrMap<CMapStringToPtr, CString, RageTexture*> m_mapPathToTexture;

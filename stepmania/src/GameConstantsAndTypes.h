@@ -169,22 +169,23 @@ struct GameOptions
 		m_bShowFPS = true;
 		m_bUseRandomVis = false;
 		m_bAnnouncer = true;
+		m_bEventMode = false;
 		m_bShowCaution = true;
 		m_bShowSelectDifficulty = true;
 		m_bShowSelectGroup = true;
 		m_iNumArcadeStages = 3;
-		m_JudgementDifficulty = JUDGE_NORMAL;
+		m_iDifficulty = 4;
 	};
 	bool m_bIgnoreJoyAxes;
 	bool m_bShowFPS;
 	bool m_bUseRandomVis;
 	bool m_bAnnouncer;
+	bool m_bEventMode;
 	bool m_bShowCaution;
 	bool m_bShowSelectDifficulty;
 	bool m_bShowSelectGroup;
 	int	m_iNumArcadeStages;
-	enum JudgementDifficulty { JUDGE_EASY=0, JUDGE_NORMAL, JUDGE_HARD };
-	JudgementDifficulty m_JudgementDifficulty;
+	int m_iDifficulty;
 };
 
 enum GraphicProfile
@@ -200,11 +201,11 @@ enum GraphicProfile
 struct GraphicProfileOptions
 {
 	char m_szProfileName[30];
-	DWORD m_dwWidth;
-	DWORD m_dwHeight;
-	DWORD m_dwMaxTextureSize;
-	DWORD m_dwDisplayColor;
-	DWORD m_dwTextureColor;
+	int m_iWidth;
+	int m_iHeight;
+	int m_iMaxTextureSize;
+	int m_iDisplayColor;
+	int m_iTextureColor;
 	bool m_bBackgrounds;
 };
 
