@@ -118,17 +118,14 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 	// Now that we've read the data from the profile, it's ok to Reset()
 	GAMESTATE->Reset();
 
-	// TRICKY: Don't let the timer take us to the next screen until after all memory cards 
-	// have been removed.
-	this->ClearMessageQueue();
-
-	m_fTimeUntilBeginFadingOut = m_Background.GetLengthSeconds() - m_Out.GetLengthSeconds();
-	if( m_fTimeUntilBeginFadingOut < 0 )
+	float fSecsUntilBeginFadingOut = m_Background.GetLengthSeconds() - m_Out.GetLengthSeconds();
+	if( fSecsUntilBeginFadingOut < 0 )
 	{
 		LOG->Warn( "Screen '%s' Out BGAnimation (%f seconds) is longer than Background BGAnimation (%f seconds); background BGA will be truncated",
 			m_sName.c_str(), m_Out.GetLengthSeconds(), m_Background.GetLengthSeconds() );
-		m_fTimeUntilBeginFadingOut = 0;
+		fSecsUntilBeginFadingOut = 0;
 	}
+	this->PostScreenMessage( SM_BeginFadingOut, fSecsUntilBeginFadingOut );
 }
 
 ScreenEnding::~ScreenEnding()
@@ -139,30 +136,17 @@ void ScreenEnding::Update( float fDeltaTime )
 {
 	ScreenAttract::Update( fDeltaTime );
 
-	m_fTimeUntilBeginFadingOut = max( 0, m_fTimeUntilBeginFadingOut-fDeltaTime );
-
 	if( !m_In.IsTransitioning() && !m_Out.IsTransitioning() )
 	{
-		bool bAllRemoved = true;
-
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( m_bWaitingForRemoveCard[p] )
 			{
 				m_bWaitingForRemoveCard[p] = MEMCARDMAN->GetCardState((PlayerNumber)p)!=MEMORY_CARD_STATE_NO_CARD;
-				if( m_bWaitingForRemoveCard[p] )
-				{
-					bAllRemoved = false;
-				}
-				else
-				{
+				if( !m_bWaitingForRemoveCard[p] )
 					m_sprRemoveMemoryCard[p].SetHidden( true );
-				}
 			}
 		}
-
-		if( bAllRemoved )
-			this->PostScreenMessage( SM_BeginFadingOut, m_fTimeUntilBeginFadingOut );
 	}
 }	
 

@@ -30,7 +30,6 @@ private:
 
 	Sprite	m_sprRemoveMemoryCard[NUM_PLAYERS];
 	bool m_bWaitingForRemoveCard[NUM_PLAYERS];
-	float m_fTimeUntilBeginFadingOut;
 };
 
 
