@@ -33,6 +33,7 @@
 // GotoURL pulls in MFC stuff that we really shouldn't have here.
 // #include "RageUtil.h" // for GotoURL
 HINSTANCE GotoURL(const char *url);
+static void DoSave(const EXCEPTION_POINTERS *pExc);
 
 /* in StepMania.cpp */
 void CleanupForRestart();
@@ -270,8 +271,8 @@ static void DoEraseEmergencyDump()
 	DeleteFile(szEmergencyDumpName);
 }
 
-//#include "bass/bass.h"
 #include "RageSound.h"
+extern HWND g_hWndMain;
 long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 	/////////////////////////
 	//
@@ -364,6 +365,14 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 	cdw.vdc.pSymLookup = CrashSymLookup;
 
 	cdw.parse();
+
+	/* In case something goes amiss before the user can view the crash
+	 * dump, save it now. */
+	DoSave(pExc);
+
+	/* If we're fullscreen, the fullscreen d3d window will obscure
+	 * the crash dialog. */
+	ShowWindow( g_hWndMain, SW_HIDE );
 
 	int ret = DialogBoxParam(g_hInstance, MAKEINTRESOURCE(IDD_DISASM_CRASH), NULL, CrashDlgProc, (LPARAM)pExc);
 	/* Returns TRUE if we want to pop up the standard crash box;
@@ -1441,8 +1450,6 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 						"without the call stack.",
 						"StepMania warning", MB_OK|MB_ICONEXCLAMATION))
 						return TRUE;
-
-				DoSave(s_pExc);
 
 				ViewWithNotepad("crashinfo.txt");
 				return TRUE;
