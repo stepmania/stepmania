@@ -37,12 +37,14 @@ protected:
 	 * get it. */
 	virtual void VolumeChanged() { }
 
+	virtual int GetSampleRate() const { return 44100; }
+
 public:
 	virtual ~RageSoundDriver() { }
 };
 
 /*
- * Copyright (c) 2002 by the person(s) listed below.  All rights reserved.
+ * Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
  *
  * Glenn Maynard
  */
