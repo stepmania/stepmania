@@ -23,55 +23,41 @@
 #include "Steps.h"
 #include "GameState.h"
 #include "StyleDef.h"
+#include "ActorUtil.h"
 
 
-#define TEXT_BANNER_X			THEME->GetMetricF("CourseEntryDisplay","TextBannerX")
-#define TEXT_BANNER_Y			THEME->GetMetricF("CourseEntryDisplay","TextBannerY")
-#define TEXT_BANNER_ZOOM		THEME->GetMetricF("CourseEntryDisplay","TextBannerZoom")
-#define NUMBER_X				THEME->GetMetricF("CourseEntryDisplay","NumberX")
-#define NUMBER_Y				THEME->GetMetricF("CourseEntryDisplay","NumberY")
-#define NUMBER_ZOOM				THEME->GetMetricF("CourseEntryDisplay","NumberZoom")
-#define FOOT_X					THEME->GetMetricF("CourseEntryDisplay","FootX")
-#define FOOT_Y					THEME->GetMetricF("CourseEntryDisplay","FootY")
-#define FOOT_ZOOM				THEME->GetMetricF("CourseEntryDisplay","FootZoom")
-#define DIFFICULTY_X			THEME->GetMetricF("CourseEntryDisplay","DifficultyX")
-#define DIFFICULTY_Y			THEME->GetMetricF("CourseEntryDisplay","DifficultyY")
-#define DIFFICULTY_ZOOM			THEME->GetMetricF("CourseEntryDisplay","DifficultyZoom")
-#define MODIFIERS_X				THEME->GetMetricF("CourseEntryDisplay","ModifiersX")
-#define MODIFIERS_Y				THEME->GetMetricF("CourseEntryDisplay","ModifiersY")
-#define MODIFIERS_ZOOM			THEME->GetMetricF("CourseEntryDisplay","ModifiersZoom")
-#define MODIFIERS_HORIZ_ALIGN	THEME->GetMetricI("CourseEntryDisplay","ModifiersHorizAlign")
-
-
-CourseEntryDisplay::CourseEntryDisplay()
+void CourseEntryDisplay::Load()
 {
+	m_sprFrame.SetName( "Bar" );
 	m_sprFrame.Load( THEME->GetPathToG("CourseEntryDisplay bar") );
+	SET_XY_AND_ON_COMMAND( &m_sprFrame );
 	this->AddChild( &m_sprFrame );
 
+	this->m_size.x = (float) m_sprFrame.GetTexture()->GetSourceFrameWidth();
+	this->m_size.y = (float) m_sprFrame.GetTexture()->GetSourceFrameHeight();
+
+	m_textNumber.SetName( "Number" );
 	m_textNumber.LoadFromFont( THEME->GetPathToF("CourseEntryDisplay number") );
-	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
-	m_textNumber.EnableShadow( false );
+	SET_XY_AND_ON_COMMAND( &m_textNumber );
 	this->AddChild( &m_textNumber );
 
-	m_TextBanner.SetXY( TEXT_BANNER_X, TEXT_BANNER_Y );
+	m_TextBanner.SetName( "TextBanner" );
+	SET_XY_AND_ON_COMMAND( &m_TextBanner );
 	this->AddChild( &m_TextBanner );
 
+	m_textFoot.SetName( "Foot" );
 	m_textFoot.LoadFromTextureAndChars( THEME->GetPathToG("CourseEntryDisplay difficulty 2x1"),"10" );
-	m_textFoot.SetXY( FOOT_X, FOOT_Y );
-	m_textFoot.EnableShadow( false );
+	SET_XY_AND_ON_COMMAND( &m_textFoot );
 	this->AddChild( &m_textFoot );
 
+	m_textDifficultyNumber.SetName( "Difficulty" );
 	m_textDifficultyNumber.LoadFromFont( THEME->GetPathToF("Common normal") );
-	m_textDifficultyNumber.SetXY( DIFFICULTY_X, DIFFICULTY_Y );
-	m_textDifficultyNumber.SetZoom( DIFFICULTY_ZOOM );
-	m_textDifficultyNumber.EnableShadow( false );
+	SET_XY_AND_ON_COMMAND( &m_textDifficultyNumber );
 	this->AddChild( &m_textDifficultyNumber );
 
+	m_textModifiers.SetName( "Modifiers" );
 	m_textModifiers.LoadFromFont( THEME->GetPathToF("Common normal") );
-	m_textModifiers.SetXY( MODIFIERS_X, MODIFIERS_Y );
-	m_textModifiers.SetZoom( MODIFIERS_ZOOM );
-	m_textModifiers.SetHorizAlign( (Actor::HorizAlign)MODIFIERS_HORIZ_ALIGN );
-	m_textModifiers.EnableShadow( false );
+	SET_XY_AND_ON_COMMAND( &m_textModifiers );
 	this->AddChild( &m_textModifiers );
 }
 

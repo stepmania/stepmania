@@ -43,7 +43,7 @@ protected:
 
 	int						m_iNumContents;
 	CourseEntryDisplay		m_CourseContentDisplays[MAX_TOTAL_CONTENTS];
-	int ContentsBarHeight, ContentsBarWidth;
+	float ContentsBarHeight, ContentsBarWidth;
 
 	float m_fTimeUntilScroll;
 	float m_fItemAtTopOfList;	// between 0 and m_iNumContents

@@ -25,12 +25,13 @@ class Steps;
 class CourseEntryDisplay : public ActorFrame
 {
 public:
-	CourseEntryDisplay();
+	void Load();
 
 	void LoadFromSongAndNotes( int iNum, Song* pSong, Steps* pNotes, CString sModifiers );
 	void LoadFromDifficulty( int iNum, Difficulty dc, CString sModifiers );
 	void LoadFromMeterRange( int iNum, int iLow, int iHigh, CString sModifiers );
 
+private:
 	Sprite		m_sprFrame;
 	BitmapText	m_textNumber;
 	TextBanner	m_TextBanner;

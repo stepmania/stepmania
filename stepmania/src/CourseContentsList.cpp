@@ -37,11 +37,15 @@ CourseContentsList::CourseContentsList()
 
 	m_quad.SetUseZBuffer( true );
 	for( int i = 0; i < MAX_TOTAL_CONTENTS; ++i )
+	{
+		m_CourseContentDisplays[i].SetName( "CourseEntryDisplay" );
+		m_CourseContentDisplays[i].Load();
 		m_CourseContentDisplays[i].SetUseZBuffer( true );
+	}
 
 	/* These are all the same; grab the dimensions. */
-	ContentsBarHeight = m_CourseContentDisplays[0].m_sprFrame.GetTexture()->GetSourceFrameHeight();
-	ContentsBarWidth = m_CourseContentDisplays[0].m_sprFrame.GetTexture()->GetSourceFrameWidth();
+	ContentsBarHeight = m_CourseContentDisplays[0].GetUnzoomedHeight();
+	ContentsBarWidth = m_CourseContentDisplays[0].GetUnzoomedWidth();
 }
 
 
@@ -102,7 +106,7 @@ void CourseContentsList::DrawPrimitives()
 	// write to z buffer so that top and bottom are clipped
 	m_quad.SetZ( 1 );
 
-	RectI rectBarSize(-ContentsBarWidth/2, -ContentsBarHeight/2,
+	RectF rectBarSize(-ContentsBarWidth/2, -ContentsBarHeight/2,
 						ContentsBarWidth/2, ContentsBarHeight/2);
 	m_quad.StretchTo( rectBarSize );
 
