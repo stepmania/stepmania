@@ -378,6 +378,8 @@ static void do_backtrace( void **buf, size_t size, bool ignore_before_sig = true
 		do_backtrace( buf, size, false );
 }
 #elif defined(BACKTRACE_METHOD_BACKTRACE)
+#include <execinfo.h>
+
 static void initialize_do_backtrace() { }
 
 static void do_backtrace(void **buf, size_t size)
