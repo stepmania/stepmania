@@ -94,7 +94,8 @@ const ScreenMessage SM_BackFromSongOptions			= (ScreenMessage)(SM_User+8);
 const ScreenMessage SM_BackFromInsertAttack			= (ScreenMessage)(SM_User+9);
 const ScreenMessage SM_BackFromInsertAttackModifiers= (ScreenMessage)(SM_User+10);
 const ScreenMessage SM_BackFromPrefs				= (ScreenMessage)(SM_User+11);
-const ScreenMessage SM_DoReloadFromDisk				= (ScreenMessage)(SM_User+12);
+const ScreenMessage SM_BackFromCourseModeMenu		= (ScreenMessage)(SM_User+12);
+const ScreenMessage SM_DoReloadFromDisk				= (ScreenMessage)(SM_User+13);
 
 const CString HELP_TEXT = 
 	"Up/Down:\n     change beat\n"
@@ -240,6 +241,13 @@ static const MenuRow g_InsertAttackItems[] =
 };
 static Menu g_InsertAttack( "Insert Attack", g_InsertAttackItems );
 
+static const MenuRow g_CourseModeItems[] =
+{
+	{ "Play mods from course",				true, 0, { NULL } },
+	{ NULL, true, 0, { NULL } }
+};
+static Menu g_CourseMode( "Course Display", g_CourseModeItems );
+
 // HACK: need to remember the track we're inserting on so
 // that we can lay the attack note after coming back from
 // menus.
@@ -261,9 +269,8 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	SCREENMAN->RefreshCreditsMessages();
 
 	m_pSong = GAMESTATE->m_pCurSong;
-
 	m_pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
-
+	m_pAttacksFromCourse = NULL;
 
 	NoteData noteData;
 	m_pNotes->GetNoteData( &noteData );
@@ -1104,6 +1111,39 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case SDLK_b:
 		HandleMainMenuChoice( edit_bg_change, NULL );
 		break;
+	case SDLK_c:
+	{
+		g_CourseMode.rows[0].choices.clear();
+		g_CourseMode.rows[0].choices.push_back( "OFF" );
+		g_CourseMode.rows[0].defaultChoice = 0;
+
+		vector<Course*> courses;
+		SONGMAN->GetAllCourses( courses, false );
+		for( unsigned i = 0; i < courses.size(); ++i )
+		{
+			const Course *crs = courses[i];
+
+			bool bUsesThisSong = false;
+			for( unsigned e = 0; e < crs->m_entries.size(); ++e )
+			{
+				if( crs->m_entries[e].type != COURSE_ENTRY_FIXED )
+					continue;
+				if( crs->m_entries[e].pSong != m_pSong )
+					continue;
+				bUsesThisSong = true;
+			}
+
+			if( bUsesThisSong )
+			{
+				g_CourseMode.rows[0].choices.push_back( crs->m_sName );
+				if( crs == m_pAttacksFromCourse )
+					g_CourseMode.rows[0].defaultChoice = g_CourseMode.rows[0].choices.size()-1;
+			}
+		}
+
+		SCREENMAN->MiniMenu( &g_CourseMode, SM_BackFromCourseModeMenu );
+		break;
+	}
 	case SDLK_p:
 		{
 			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_LCTRL)) ||
@@ -1256,6 +1296,11 @@ void ScreenEdit::TransitionToEdit()
 	/* Playing and recording have lead-ins, which may start before beat 0;
 	 * make sure we don't stay there if we escaped out early. */
 	GAMESTATE->m_fSongBeat = max( GAMESTATE->m_fSongBeat, 0 );
+
+	/* Stop displaying course attacks, if any. */
+	GAMESTATE->RemoveAllActiveAttacks();
+	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( PLAYER_1 );
+	GAMESTATE->m_CurrentPlayerOptions[PLAYER_1] = GAMESTATE->m_PlayerOptions[PLAYER_1];
 }
 
 void ScreenEdit::TransitionFromRecordToEdit()
@@ -1309,6 +1354,18 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		PREFSMAN->m_bEditorShowBGChangesPlay = !!ScreenMiniMenu::s_iLastAnswers[pref_show_bgs_play];
 		PREFSMAN->SaveGlobalPrefsToDisk();
 		break;
+	case SM_BackFromCourseModeMenu:
+	{
+		const int num = ScreenMiniMenu::s_iLastAnswers[0];
+		m_pAttacksFromCourse = NULL;
+		if( num != 0 )
+		{
+			const CString name = g_CourseMode.rows[0].choices[num];
+			m_pAttacksFromCourse = SONGMAN->FindCourse( name );
+			ASSERT( m_pAttacksFromCourse );
+		}
+		break;
+	}
 	case SM_BackFromPlayerOptions:
 	case SM_BackFromSongOptions:
 		// coming back from PlayerOptions or SongOptions
@@ -1785,7 +1842,10 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				/* Give a 1 measure lead-in.  Set this before loading Player, so it knows
 				 * where we're starting. */
-				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;
+				float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( m_NoteFieldEdit.m_fBeginMarker - 4 );
+				GAMESTATE->UpdateSongPosition( fSeconds, m_pSong->m_Timing );
+
+				SetupCourseAttacks();
 
 				m_Player.Load( PLAYER_1, &m_NoteFieldEdit, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 				GAMESTATE->m_PlayerController[PLAYER_1] = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
@@ -2006,4 +2066,37 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, int* iAnswers )
 	// create a new BGChange
 	if( change.m_sBGName != "" )
 		m_pSong->AddBackgroundChange( change );
+}
+
+void ScreenEdit::SetupCourseAttacks()
+{
+	/* This is the first beat that can be changed without it being visible.  Until
+	 * we draw for the first time, any beat can be changed. */
+	GAMESTATE->m_fLastDrawnBeat[PLAYER_1] = -100;
+
+	// Put course options into effect.
+	GAMESTATE->m_ModsToApply[PLAYER_1].clear();
+	GAMESTATE->RemoveActiveAttacksForPlayer( PLAYER_1 );
+
+
+	if( m_pAttacksFromCourse )
+	{
+		m_pAttacksFromCourse->LoadFromCRSFile( m_pAttacksFromCourse->m_sPath );
+
+		AttackArray Attacks;
+		for( unsigned e = 0; e < m_pAttacksFromCourse->m_entries.size(); ++e )
+		{
+			if( m_pAttacksFromCourse->m_entries[e].type != COURSE_ENTRY_FIXED )
+				continue;
+			if( m_pAttacksFromCourse->m_entries[e].pSong != m_pSong )
+				continue;
+
+			Attacks = m_pAttacksFromCourse->m_entries[e].attacks;
+			break;
+		}
+
+		for( unsigned i=0; i<Attacks.size(); ++i )
+			GAMESTATE->LaunchAttack( PLAYER_1, Attacks[i] );
+	}
+	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( PLAYER_1 );
 }

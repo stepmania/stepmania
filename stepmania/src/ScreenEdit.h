@@ -19,6 +19,7 @@
 #include "SnapDisplay.h"
 #include "Background.h"
 #include "Foreground.h"
+#include "Course.h"
 
 
 const int NUM_ACTION_MENU_ITEMS = 23;
@@ -87,10 +88,11 @@ protected:
 	NoteField		m_NoteFieldRecord;
 
 // for MODE_PLAY
-
+	void SetupCourseAttacks();
 	Player			m_Player;
 	Background		m_Background;
 	Foreground		m_Foreground;
+	Course			*m_pAttacksFromCourse;
 
 // for MODE_RECORD and MODE_PLAY
 
