@@ -23,6 +23,7 @@
 #include "Steps.h"
 #include "GameState.h"
 #include "StyleDef.h"
+#include "RageTexture.h"
 
 
 CourseContentsList::CourseContentsList()
