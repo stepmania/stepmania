@@ -7,6 +7,8 @@
 #include <mmsystem.h>
 #include <dsound.h>
 
+#include <math.h>
+
 #pragma comment(lib, "dsound.lib")
 #pragma comment(lib, "dxguid.lib")
 
@@ -44,8 +46,12 @@ bool DSound::IsEmulated() const
 }
 
 DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
-			int channels_, int samplerate_, int samplebits_, int writeahead_)
+			int channels_, int samplerate_, int samplebits_, int writeahead_,
+			float vol)
 {
+	ASSERT(vol >= 0);
+	ASSERT(vol <= 1);
+
 	channels = channels_;
 	samplerate = samplerate_;
 	samplebits = samplebits_;
@@ -80,6 +86,8 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 		format.dwFlags |= DSBCAPS_LOCSOFTWARE;
 	if(hardware == HW_DONT_CARE)
 		format.dwFlags |= DSBCAPS_STATIC;
+	if(vol != 1)
+		format.dwFlags |= DSBCAPS_CTRLVOLUME;
 	format.dwBufferBytes = buffersize;
 	format.dwReserved = 0;
 	format.lpwfxFormat = &waveformat;
@@ -94,7 +102,14 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	if(buf == NULL)
 		RageException::ThrowNonfatal("foo"); // XXX
 
+	float vl2 = log10f(vol) / log10f(2); /* vol log 2 */
+
+	/* Volume is in percent; SetVolume wants attenuation in thousands of a
+	 * decibel. */
+	if(vol != 1)
+		buf->SetVolume(max(int(1000 * vl2), DSBVOLUME_MIN));
 }
+
 
 DSoundBuf::~DSoundBuf()
 {

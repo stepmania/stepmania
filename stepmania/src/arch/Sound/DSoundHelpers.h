@@ -40,7 +40,8 @@ class DSoundBuf
 public:
 	enum hw { HW_HARDWARE, HW_SOFTWARE, HW_DONT_CARE };
 	DSoundBuf(DSound &ds, hw hardware, 
-		int channels, int samplerate, int samplebits, int writeahead);
+		int channels, int samplerate, int samplebits, int writeahead,
+		float vol=1);
 
 	bool get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, int chunksize);
 	void release_output_buf(char *buffer, unsigned bufsiz);

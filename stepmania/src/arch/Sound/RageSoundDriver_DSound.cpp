@@ -161,7 +161,8 @@ RageSound_DSound::RageSound_DSound()
 		try {
 			newbuf = new DSoundBuf(ds, 
 				DSoundBuf::HW_HARDWARE,
-				channels, samplerate, 16, buffersize);
+				channels, samplerate, 16, buffersize,
+				0.50f);
 		} catch(const RageException &e) {
 			/* If we didn't get at least 8, fail. */
 			if(i >= 8) break; /* OK */
