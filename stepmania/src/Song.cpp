@@ -1484,11 +1484,15 @@ CString Song::GetMusicPath() const
 
 CString Song::GetBannerPath() const
 {
+	if( m_sBannerFile == "" )
+		return "";
 	return m_sSongDir+m_sBannerFile;
 }
 
 CString Song::GetLyricsPath() const
 {
+	if( m_sLyricsFile == "" )
+		return "";
 	return m_sSongDir+m_sLyricsFile;
 }
 
