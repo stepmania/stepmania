@@ -90,7 +90,12 @@ RageLog::RageLog()
 
 	// Open log file and leave it open.
 	m_fileLog = Ragefopen( LOG_PATH, "w" );
+	if( m_fileLog == NULL )
+		RageException::Throw( " Couldn't open log.txt: %s", strerror(errno) );
+
 	m_fileInfo = Ragefopen( INFO_PATH, "w" );
+	if( m_fileInfo == NULL )
+		RageException::Throw( " Couldn't open info.txt: %s", strerror(errno) );
 
 #if defined(_MSC_VER)
 	this->Trace( "Last compiled on %s.", __TIMESTAMP__ );
