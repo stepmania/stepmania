@@ -179,8 +179,6 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir, bool bGeneric )
 
 void BGAnimation::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
-	DEBUG_ASSERT( pNode->m_sName == "BGAnimation" );
-
 	ActorScrollerAutoDeleteChildren::LoadFromNode( sDir, pNode );
 
 	this->RunCommandsOnChildren( ActorCommands("PlayCommand,Init") );
