@@ -8,7 +8,6 @@
 #include "BannerCache.h"
 #include "Sprite.h"
 #include "PrefsManager.h"
-#include "SDL_utils.h"
 #include "SDL_dither.h"
 #include "SDL_rotozoom.h"
 #include "RageDisplay.h"
