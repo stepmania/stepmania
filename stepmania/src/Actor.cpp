@@ -211,6 +211,10 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 			for(int i=0; i<4; i++)
 				m_tempState.diffuse[i] = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
 			break;
+		case diffuse_ramp:
+			for(int i=0; i<4; i++)
+				m_tempState.diffuse[i] = m_effectColor1*fPercentThroughEffect + m_effectColor2*(1.0f-fPercentThroughEffect);
+			break;
 		case glow_blink:
 			m_tempState.glow = bBlinkOn ? m_effectColor1 : m_effectColor2;
 			m_tempState.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
@@ -621,6 +625,18 @@ void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, Rag
 	if( m_Effect != diffuse_shift )
 	{
 		m_Effect = diffuse_shift;
+		m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+		m_fSecsIntoEffect = 0;
+	}
+	m_effectColor1 = c1;
+	m_effectColor2 = c2;
+}
+
+void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+{
+	if( m_Effect != diffuse_ramp )
+	{
+		m_Effect = diffuse_ramp;
 		m_fEffectPeriodSeconds = fEffectPeriodSeconds;
 		m_fSecsIntoEffect = 0;
 	}

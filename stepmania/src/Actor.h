@@ -42,7 +42,7 @@ public:
 		TWEEN_SPRING,
 	};
 	enum Effect { no_effect,
-				diffuse_blink,	diffuse_shift,
+				diffuse_blink,	diffuse_shift,	diffuse_ramp,
 				glow_blink,		glow_shift,
 				rainbow,
 				wag,	bounce,		bob,	pulse,
@@ -253,6 +253,9 @@ public:
 		RageColor c1 = RageColor(0.5f,0.5f,0.5f,1), 
 		RageColor c2 = RageColor(1,1,1,1) );
 	void SetEffectDiffuseShift( float fEffectPeriodSeconds = 1.f,
+		RageColor c1 = RageColor(0,0,0,1), 
+		RageColor c2 = RageColor(1,1,1,1) );
+	void SetEffectDiffuseRamp( float fEffectPeriodSeconds = 1.f,
 		RageColor c1 = RageColor(0,0,0,1), 
 		RageColor c2 = RageColor(1,1,1,1) );
 	void SetEffectGlowBlink( float fEffectPeriodSeconds = 1.f,
@@ -498,6 +501,7 @@ public:
 	static int vertalign( T* p, lua_State *L )		{ p->SetVertAlignString(SArg(1)); return 0; }
 	static int diffuseblink( T* p, lua_State *L )	{ p->SetEffectDiffuseBlink(); return 0; }
 	static int diffuseshift( T* p, lua_State *L )	{ p->SetEffectDiffuseShift(); return 0; }
+	static int diffuseramp( T* p, lua_State *L )	{ p->SetEffectDiffuseRamp(); return 0; }
 	static int glowblink( T* p, lua_State *L )		{ p->SetEffectGlowBlink(); return 0; }
 	static int glowshift( T* p, lua_State *L )		{ p->SetEffectGlowShift(); return 0; }
 	static int rainbow( T* p, lua_State *L )		{ p->SetEffectRainbow(); return 0; }
@@ -596,6 +600,7 @@ public:
 		ADD_METHOD( vertalign )
 		ADD_METHOD( diffuseblink )
 		ADD_METHOD( diffuseshift )
+		ADD_METHOD( diffuseramp )
 		ADD_METHOD( glowblink )
 		ADD_METHOD( glowshift )
 		ADD_METHOD( rainbow )
