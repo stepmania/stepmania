@@ -608,9 +608,11 @@ void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 {
 	ASSERT( iNumTapsInRow >= 1 );
 
+#ifndef DEBUG
 	// don't accumulate points if AutoPlay is on.
 	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstration )
 		return;
+#endif //DEBUG
 
 	if(m_ScoreKeeper)
 		m_ScoreKeeper->HandleNoteScore(score, iNumTapsInRow);
@@ -627,9 +629,11 @@ void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 
 void Player::HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore )
 {
+#ifndef DEBUG
 	// don't accumulate points if AutoPlay is on.
 	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstration )
 		return;
+#endif //DEBUG
 
 	if(m_ScoreKeeper) {
 		m_ScoreKeeper->HandleHoldNoteScore(score, TapNoteScore);
