@@ -5,6 +5,7 @@
 #include "smpackage.h"
 #include "EditMetricsDlg.h"
 #include "IniFile.h"
+#include "RageUtil.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -45,11 +46,11 @@ void EditMetricsDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(EditMetricsDlg, CDialog)
 	//{{AFX_MSG_MAP(EditMetricsDlg)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE, OnSelchangedTree)
-	ON_EN_KILLFOCUS(IDC_EDIT_VALUE, OnKillfocusEditValue)
 	ON_BN_CLICKED(IDC_BUTTON_OVERRIDE, OnButtonOverride)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE, OnButtonRemove)
-	ON_BN_CLICKED(IDC_BUTTON_REFRESH, OnButtonRefresh)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, OnButtonSave)
+	ON_EN_CHANGE(IDC_EDIT_VALUE, OnChangeEditValue)
+	ON_BN_CLICKED(IDC_BUTTON_HELP, OnButtonHelp)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -89,20 +90,34 @@ void EditMetricsDlg::RefreshTree()
 	iniCombined.SetPath( "Themes\\"+m_sTheme+"\\metrics.ini" );
 	iniCombined.ReadFile();
 
-	for( int i=0; i<iniCombined.names.GetSize(); i++ )
+	CStringArray asKeys;
+	asKeys.Copy( iniCombined.names );
+	SortCStringArray( asKeys );
+
+	for( int i=0; i<asKeys.GetSize(); i++ )
 	{
-		CString sKey = iniCombined.names[i];
+		CString sKey = asKeys[i];
 		bool bInBase = iniBase.FindKey(sKey) != -1;
 		bool bInTheme = iniTheme.FindKey(sKey) != -1;
 
 		HTREEITEM item1 = m_tree.InsertItem( sKey );
 		SET_ITEM_STYLE( item1, bInBase, bInTheme );
 
-		IniFile::key &key = iniCombined.keys[i];
-		for( POSITION pos=key.GetStartPosition(); pos != NULL; )
+		IniFile::key* pKey = iniCombined.GetKeyPointer( sKey );
+		CStringArray asNames;
+		for( POSITION pos=pKey->GetStartPosition(); pos != NULL; )
 		{
 			CString sName, sValue;
-			key.GetNextAssoc( pos, sName, sValue );
+			pKey->GetNextAssoc( pos, sName, sValue );
+			asNames.Add( sName );
+		}
+	
+		SortCStringArray( asNames );
+
+		for( int j=0; j<asNames.GetSize(); j++ )
+		{
+			CString sName = asNames[j];
+			CString sValue = iniCombined.GetValue( sKey, sName );
 
 			CString sThrowAway;
 			bool bInBase = !!iniBase.GetValue( sKey, sName, sThrowAway );
@@ -165,17 +180,6 @@ void EditMetricsDlg::OnSelchangedTree(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void EditMetricsDlg::OnKillfocusEditValue() 
-{
-	// TODO: Add your control notification handler code here
-	CString sKey, sName;
-	GetSelectedKeyAndName( sKey, sName );
-
-	CString sText;
-	m_editValue.GetWindowText( sText );
-	iniBase.SetValue( sKey, sName, sText );
-}
-
 void EditMetricsDlg::OnButtonOverride() 
 {
 	// TODO: Add your control notification handler code here
@@ -189,6 +193,7 @@ void EditMetricsDlg::OnButtonOverride()
 	m_tree.RedrawWindow();
 
 	m_editValue.EnableWindow( true );
+	m_editValue.SetFocus();
 	m_buttonOverride.EnableWindow( false );
 	m_buttonRemove.EnableWindow( true );
 
@@ -213,6 +218,7 @@ void EditMetricsDlg::OnButtonRemove()
 		m_tree.RedrawWindow();
 		m_buttonOverride.EnableWindow( true );
 		m_buttonRemove.EnableWindow( false );
+		m_editValue.EnableWindow( false );
 	}
 	else
 		m_tree.DeleteItem( itemSel );
@@ -220,18 +226,34 @@ void EditMetricsDlg::OnButtonRemove()
 	iniTheme.DeleteValue( sKey, sName );
 }
 
-void EditMetricsDlg::OnButtonRefresh() 
-{
-	// TODO: Add your control notification handler code here
-	OnButtonSave();
-	RefreshTree();
-	m_buttonOverride.EnableWindow( false );
-	m_buttonRemove.EnableWindow( false );
-	m_editValue.EnableWindow( false );
-}
-
 void EditMetricsDlg::OnButtonSave() 
 {
 	// TODO: Add your control notification handler code here
 	iniTheme.WriteFile();
+}
+
+void EditMetricsDlg::OnChangeEditValue() 
+{
+	// TODO: If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialog::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+	
+	// TODO: Add your control notification handler code here
+	CString sKey, sName;
+	GetSelectedKeyAndName( sKey, sName );
+
+	CString sText;
+	m_editValue.GetWindowText( sText );
+	iniTheme.SetValue( sKey, sName, sText );	
+}
+
+void EditMetricsDlg::OnButtonHelp() 
+{
+	// TODO: Add your control notification handler code here
+	AfxMessageBox( 
+		"Bold = A metric that is overridden by the current theme (exists in both the base theme, and the current theme)\n\n"
+		"Not Bold = A metric that is not overridden by the current theme (exists in the base theme but not in the current theme)\n\n"
+		"Red = A metric that exists in the current theme but not in the base theme (check to see if the metric name is misspelled)"
+		 );	
 }

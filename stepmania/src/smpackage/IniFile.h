@@ -31,7 +31,7 @@ public:
 	CArray<key, key> keys; 
 
 	//corresponding list of keynames
-	CArray<CString, CString> names; 
+	CStringArray names; 
 
 
 	

@@ -44,12 +44,12 @@ protected:
 	//{{AFX_MSG(EditMetricsDlg)
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSelchangedTree(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnKillfocusEditValue();
 	afx_msg void OnButtonOverride();
 	afx_msg void OnButtonRemove();
 	afx_msg void OnButtonNew();
-	afx_msg void OnButtonRefresh();
 	afx_msg void OnButtonSave();
+	afx_msg void OnChangeEditValue();
+	afx_msg void OnButtonHelp();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

@@ -101,7 +101,7 @@ STYLE DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE |
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Stepmania Package Manager"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,255,215,69,14
     PUSHBUTTON      "Play Stepmania",IDC_BUTTON_PLAY,5,215,70,15
@@ -221,13 +221,9 @@ BEGIN
                     WS_DISABLED
     CONTROL         "Tree1",IDC_TREE,"SysTreeView32",TVS_HASBUTTONS | 
                     TVS_LINESATROOT | TVS_SHOWSELALWAYS | WS_BORDER | 
-                    WS_TABSTOP,91,44,119,165
-    LTEXT           "Help:\n\nBold = A metric that is overridden by the current theme (exists in both the base theme, and the current theme)",
-                    IDC_STATIC,7,43,79,62
-    LTEXT           "Not Bold = A metric that is not overridden by the current theme (exists in the base theme but not in the current theme)\n\nRed = A metric that exists in the current theme but not in the base theme (check to see if the metric name is misspelled)",
-                    IDC_STATIC,7,107,78,101
-    PUSHBUTTON      "Save and Refresh",IDC_BUTTON_REFRESH,116,213,69,14
+                    WS_TABSTOP,7,44,203,165
     PUSHBUTTON      "Save",IDC_BUTTON_SAVE,203,213,56,14
+    PUSHBUTTON      "Explanation",IDC_BUTTON_HELP,65,214,71,13
 END
 
 
