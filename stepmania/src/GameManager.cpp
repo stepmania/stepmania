@@ -652,7 +652,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		"double",								// m_szName
 		{ NOTES_TYPE_PUMP_DOUBLE,NOTES_TYPE_PUMP_DOUBLE }, // m_NotesTypes
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
-		{ 320, 480 },							// m_iCenterX
+		{ 320, 320 },							// m_iCenterX
 		10,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1

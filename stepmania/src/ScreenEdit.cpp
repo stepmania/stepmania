@@ -1210,7 +1210,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 			else
 			{
 				const float fHoldEndSeconds = m_soundMusic.GetPositionSeconds();
-				const float fHoldStartSeconds = m_soundMusic.GetPositionSeconds() - TIME_BEFORE_SLOW_REPEATS * m_soundMusic.GetPlaybackRate();
+				const float fHoldStartSeconds = m_soundMusic.GetPositionSeconds() - TIME_BEFORE_SLOW_REPEATS * m_soundMusic.GetPlaybackRate() * 1.2f;	// 1.2 is a fudge.  This doesn't compensate enough for the repeat delay and leaves a tap note near the head of the hold.
 
 				float fStartBeat, fEndBeat, fThrowAway;
 				bool bFreeze;
