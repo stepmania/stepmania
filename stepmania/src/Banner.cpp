@@ -20,6 +20,7 @@
 
 RageTextureID Banner::BannerTex( RageTextureID ID )
 {
+	/* Song banners often have HOT PINK color keys. */
 	ID.bHotPinkColorKey = true;
 	ID.bDither = true;
 	return ID;
@@ -30,16 +31,14 @@ Banner::Banner()
 	m_bScrolling = false;
 	m_fPercentScrolling = 0;
 
-	TEXTUREMAN->CacheTexture( THEME->GetPathToG("Banner all music") );
-	TEXTUREMAN->CacheTexture( THEME->GetPathToG("Common fallback banner") );
-	TEXTUREMAN->CacheTexture( THEME->GetPathToG("Banner roulette") );
-	TEXTUREMAN->CacheTexture( THEME->GetPathToG("Banner random") );
+	TEXTUREMAN->CacheTexture( BannerTex(THEME->GetPathToG("Banner all music")) );
+	TEXTUREMAN->CacheTexture( BannerTex(THEME->GetPathToG("Common fallback banner")) );
+	TEXTUREMAN->CacheTexture( BannerTex(THEME->GetPathToG("Banner roulette")) );
+	TEXTUREMAN->CacheTexture( BannerTex(THEME->GetPathToG("Banner random")) );
 }
-#include "RageLog.h"
 
 bool Banner::Load( RageTextureID ID )
 {
-	/* Song banners often have HOT PINK color keys. */
 	ID = BannerTex(ID);
 
 	m_fPercentScrolling = 0;
@@ -121,16 +120,12 @@ void Banner::LoadFallback()
 
 void Banner::LoadRoulette()
 {
-	RageTextureID ID(THEME->GetPathToG("Banner roulette"));
-	ID.iMipMaps = 0;
-	Load( ID );
+	Load( THEME->GetPathToG("Banner roulette") );
 	m_bScrolling = true;
 }
 
 void Banner::LoadRandom()
 {
-	RageTextureID ID(THEME->GetPathToG("Banner random"));
-	ID.iMipMaps = 0;
-	Load( ID );
+	Load( THEME->GetPathToG("Banner random") );
 	m_bScrolling = true;
 }
