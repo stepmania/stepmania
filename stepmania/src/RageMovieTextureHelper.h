@@ -8,6 +8,11 @@
 //#include "baseclasses/streams.h"
 #include "RageMovieTexture.h"
 
+/* Fix HRESULT under Linux and other non-windows OSses*/
+#if !defined(HRESULT)
+typedef long HRESULT
+#endif
+
 //-----------------------------------------------------------------------------
 // CTextureRenderer Class Declarations
 //
