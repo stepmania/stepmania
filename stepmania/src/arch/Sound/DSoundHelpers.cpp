@@ -210,7 +210,9 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, i
 		   !contained(first_byte_filled, write_cursor, cursorend))
 		{
 			LOG->Trace("underrun: %i..%i filled but cursor at %i..%i (missed it by %i)",
-				first_byte_filled, write_cursor, cursorstart, cursorend, (cursorend - first_byte_filled + buffersize) % buffersize);
+				first_byte_filled, write_cursor, cursorstart, cursorend,
+				(cursorend - write_cursor + buffersize) % buffersize);
+//				(cursorend - first_byte_filled + buffersize) % buffersize);
 
 			/* Pretend the space between the play and write cursor is filled
 			 * with data, and continue filling from there. */
