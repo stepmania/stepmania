@@ -15,15 +15,17 @@ LowLevelWindow_SDL::LowLevelWindow_SDL()
 	 * of the SDL video system--it'll be reinitialized on us if we do this first. */
 	SDL_EventState(0xFF /*SDL_ALLEVENTS*/, SDL_IGNORE);
 
-	SDL_EventState(SDL_VIDEORESIZE, SDL_ENABLE);
-	SDL_EventState(SDL_ACTIVEEVENT, SDL_ENABLE);
+	SDL_EventState( SDL_VIDEORESIZE, SDL_ENABLE );
+	SDL_EventState( SDL_ACTIVEEVENT, SDL_ENABLE );
+	SDL_EventState( SDL_QUIT, SDL_ENABLE );
 }
 
 LowLevelWindow_SDL::~LowLevelWindow_SDL()
 {
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
-	mySDL_EventState(SDL_VIDEORESIZE, SDL_IGNORE);
-	mySDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
+	mySDL_EventState( SDL_VIDEORESIZE, SDL_IGNORE );
+	mySDL_EventState( SDL_ACTIVEEVENT, SDL_IGNORE );
+	mySDL_EventState( SDL_QUIT, SDL_IGNORE );
 }
 
 void *LowLevelWindow_SDL::GetProcAddress(CString s)
@@ -197,10 +199,11 @@ void LowLevelWindow_SDL::SwapBuffers()
 
 void LowLevelWindow_SDL::Update(float fDeltaTime)
 {
-	HandleSDLEvents();
+	/* This needs to be called before anything that handles SDL events. */
+	SDL_PumpEvents();
 
 	SDL_Event event;
-	while(SDL_GetEvent(event, SDL_VIDEORESIZEMASK|SDL_ACTIVEEVENTMASK))
+	while(SDL_GetEvent(event, SDL_VIDEORESIZEMASK|SDL_ACTIVEEVENTMASK|SDL_QUITMASK))
 	{
 		switch(event.type)
 		{
@@ -232,6 +235,10 @@ void LowLevelWindow_SDL::Update(float fDeltaTime)
 				uint8_t i = SDL_GetAppState();
 				FocusChanged( i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE );
 			}
+			break;
+		case SDL_QUIT:
+			LOG->Trace("SDL_QUIT: shutting down");
+			ExitGame();
 			break;
 		}
 	}
