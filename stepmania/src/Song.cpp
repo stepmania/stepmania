@@ -51,7 +51,7 @@
 
 #define CACHE_DIR "Cache/"
 
-const int FILE_CACHE_VERSION = 137;	// increment this when Song or Steps changes to invalidate cache
+const int FILE_CACHE_VERSION = 138;	// increment this when Song or Steps changes to invalidate cache
 // also increment it on the rare occasion where we split modes
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
