@@ -251,7 +251,7 @@ char* XNode::LoadAttributes( const char* pszAttrs , LPPARSEINFO pi /*= &piDefaul
 				pi->erorr_occur = true;
 				pi->error_pointer = xml;
 				pi->error_code = PIE_ATTR_NO_VALUE;
-				pi->error_string.Format( ("<%s> attribute has error "), name.c_str() );
+				pi->error_string = ssprintf( ("<%s> attribute has error "), name.c_str() );
 			}
 			return NULL;
 		}
@@ -386,7 +386,7 @@ char* XNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 					pi->erorr_occur = true;
 					pi->error_pointer = xml;
 					pi->error_code = PIE_NOT_CLOSED;
-					pi->error_string.Format(("%s must be closed with </%s>"), name.c_str() );
+					pi->error_string = ssprintf( "%s must be closed with </%s>", name.c_str(), name.c_str() );
 				}
 				// error cos not exist CloseTag </TAG>
 				return NULL;
@@ -440,7 +440,7 @@ char* XNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 						pi->erorr_occur = true;
 						pi->error_pointer = xml;
 						pi->error_code = PIE_NOT_CLOSED;
-						pi->error_string.Format(("it must be closed with </%s>"), name.c_str() );
+						pi->error_string = ssprintf( "it must be closed with </%s>", name.c_str() );
 					}
 					// error
 					return NULL;
@@ -462,7 +462,7 @@ char* XNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 						pi->erorr_occur = true;
 						pi->error_pointer = xml;
 						pi->error_code = PIE_NOT_NESTED;
-						pi->error_string.Format(("'<%s> ... </%s>' is not well-formed."), name.c_str(), closename.c_str() );
+						pi->error_string = ssprintf( "'<%s> ... </%s>' is not well-formed.", name.c_str(), closename.c_str() );
 
 					}
 					return NULL;
@@ -485,7 +485,7 @@ char* XNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 							pi->erorr_occur = true;
 							pi->error_pointer = xml;
 							pi->error_code = PIE_NOT_CLOSED;
-							pi->error_string.Format(("it must be closed with </%s>"), name.c_str() );
+							pi->error_string = ssprintf( "it must be closed with </%s>", name.c_str() );
 						}
 						return NULL;
 					}
