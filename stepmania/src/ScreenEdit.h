@@ -106,6 +106,7 @@ public:
 		play_whole_song,
 		play_current_beat_to_end,
 		save,
+		reload,
 		player_options,
 		song_options,
 		edit_song_info,

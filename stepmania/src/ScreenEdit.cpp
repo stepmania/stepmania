@@ -94,6 +94,7 @@ const ScreenMessage SM_BackFromSongOptions			= (ScreenMessage)(SM_User+8);
 const ScreenMessage SM_BackFromInsertAttack			= (ScreenMessage)(SM_User+9);
 const ScreenMessage SM_BackFromInsertAttackModifiers= (ScreenMessage)(SM_User+10);
 const ScreenMessage SM_BackFromPrefs				= (ScreenMessage)(SM_User+11);
+const ScreenMessage SM_DoReloadFromDisk				= (ScreenMessage)(SM_User+12);
 
 const CString HELP_TEXT = 
 	"Up/Down:\n     change beat\n"
@@ -142,6 +143,7 @@ static const MenuRow g_MainMenuItems[] =
 	{ "Play Whole Song",			true, 0, { NULL } },
 	{ "Play Current Beat To End",	true, 0, { NULL } },
 	{ "Save",						true, 0, { NULL } },
+	{ "Reload from disk",			true, 0, { NULL } },
 	{ "Player Options",				true, 0, { NULL } },
 	{ "Song Options",				true, 0, { NULL } },
 	{ "Edit Song Info",				true, 0, { NULL } },
@@ -311,6 +313,8 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 		GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "note";
 	GAMESTATE->ResetNoteSkins();
 
+	/* XXX: Do we actually have to send real note data here, and to m_NoteFieldRecord? 
+	 * (We load again on play/record.) */
 	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 	GAMESTATE->m_PlayerController[PLAYER_1] = PC_HUMAN;
 	m_Player.SetX( PLAYER_X );
@@ -931,6 +935,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			vector<Steps*> vSteps;
 			GAMESTATE->m_pCurSong->GetSteps( vSteps, st );
 
+			// Sort them by difficulty.
+			SortStepsByTypeAndDifficulty( vSteps );
+
 			// Find out what index the current Steps are
 			vector<Steps*>::iterator it = find( vSteps.begin(), vSteps.end(), pNotes );
 			ASSERT( it != vSteps.end() );
@@ -957,7 +964,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 
 			pNotes = *it;
-			GAMESTATE->m_pCurNotes[PLAYER_1] = pNotes;
+			GAMESTATE->m_pCurNotes[PLAYER_1] = m_pNotes = pNotes;
 			pNotes->GetNoteData( &m_NoteFieldEdit );
 			SCREENMAN->SystemMessage( ssprintf(
 				"Switched to %s %s '%s'",
@@ -1264,6 +1271,12 @@ void ScreenEdit::TransitionFromRecordToEdit()
 	m_NoteFieldEdit.CopyRange( &m_NoteFieldRecord, iNoteIndexBegin, iNoteIndexEnd, iNoteIndexBegin );
 }
 
+/* Helper for SM_DoReloadFromDisk */
+static bool g_DoReload;
+void ReloadFromDisk( void *p )
+{
+	g_DoReload = true;
+}
 
 void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 {
@@ -1324,6 +1337,43 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			GAMESTATE->RestoreSelectedOptions();	// restore the edit and playback options
 		}
 		break;
+	case SM_DoReloadFromDisk:
+	{
+		if( !g_DoReload )
+			return;
+
+		const StepsType st = m_pNotes->m_StepsType;
+		const Difficulty dc = m_pNotes->GetDifficulty();
+
+		GAMESTATE->m_pCurNotes[PLAYER_1] = NULL; /* make RevertFromDisk not try to reset it */
+		GAMESTATE->m_pCurSong->RevertFromDisk();
+
+		CString sMessage = "Reloaded from disk.";
+		Steps *pSteps = GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, dc, false );
+
+		/* If we couldn't find the steps we were on before, warn and use the first available. */
+		if( pSteps == NULL )
+		{
+			pSteps = GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, DIFFICULTY_INVALID, false );
+
+			if( pSteps )
+				sMessage = ssprintf( "%s steps not found; changed to %s.",
+					Capitalize(DifficultyToString(dc)).c_str(),
+					DifficultyToString(pSteps->GetDifficulty()).c_str() );
+		}
+
+		/* If we still couldn't find any steps, then all steps of the current StepsType
+		 * were removed.  Don't create them; only do that in EditMenu. */
+		if( pSteps == NULL )
+			FAIL_M("!!!"); // XXX
+
+		SCREENMAN->SystemMessage( sMessage );
+
+		m_pNotes = GAMESTATE->m_pCurNotes[PLAYER_1] = pSteps;
+		m_pNotes->GetNoteData( &m_NoteFieldEdit );
+
+		break;
+	}
 	case SM_GainFocus:
 		/* We do this ourself. */
 		SOUND->HandleSongTimer( false );
@@ -1400,7 +1450,6 @@ void ChangeArtistTranslit( CString sNew )
 
 // End helper functions
 
-
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 {
 	switch( c )
@@ -1451,6 +1500,12 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				SCREENMAN->SystemMessage( "Saved as SM and DWI." );
 				SOUND->PlayOnce( THEME->GetPathToS("ScreenEdit save") );
 			}
+			break;
+		case reload:
+			g_DoReload = false;
+			SCREENMAN->Prompt( SM_DoReloadFromDisk,
+				"Do you want to reload from disk?\n\nThis will destroy all changes.",
+				true, false, ReloadFromDisk, NULL, NULL );
 			break;
 		case player_options:
 			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
