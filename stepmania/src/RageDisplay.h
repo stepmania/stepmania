@@ -116,6 +116,9 @@ public:
 		CString sIconFile;
 	};
 
+	/* This is needed or the overridden classes' dtors will not be called. */
+	virtual ~RageDisplay() { }
+
 	virtual const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const = 0;
 
 	virtual void Update(float fDeltaTime) { }

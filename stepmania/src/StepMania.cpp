@@ -647,32 +647,9 @@ int main(int argc, char* argv[])
 	catch( const RageException &e )
 	{
 		g_sErrorString = e.what();
-
-		/*
-		 * Don't do this.  We delete DISPLAY before opening the error dialog, which resets us
-		 * back to a normal windowed state.
-		 *
-		 * PREFSMAN, DISPLAY, TEXTUREMAN, SCREENMAN or INPUTMAN might not exist,
-		 * or might not be in a reasonable state to call ApplyGraphicOptions.  We
-		 * must not clear the error string, or we'll simply disappear with no explanation.
-		 */
-#if 0
-		if (!PREFSMAN->m_bWindowed)
-		{
-			try
-			{
-				/* Goto windowed if possible */
-				PREFSMAN->m_bWindowed = 1;
-				ApplyGraphicOptions();
-			}
-			catch (...)
-		    {
-				/* Couldn't goto windowed so don't display an error message */
-				g_sErrorString = "";
-			}
-		}
-#endif
-	} catch( const exception &e ) {
+	}
+	catch( const exception &e )
+	{
 		if( LOG )
 			LOG->Warn("Unhandled exception: \"%s\"", e.what() );
 
