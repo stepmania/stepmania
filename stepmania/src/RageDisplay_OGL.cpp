@@ -368,12 +368,12 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 
 	wind = MakeLowLevelWindow();
 
-	try {
-		SetVideoMode( p );
-	} catch(...) {
-		/* SetVideoMode can throw. */
+	bool bIgnore = false;
+	CString sError = SetVideoMode( p, bIgnore );
+	if( sError != "" )
+	{
 		delete wind;
-		throw;
+		RageException::ThrowNonfatal( sError );
 	}
 
 	// Log driver details

@@ -128,7 +128,9 @@ void ApplyGraphicOptions()
 { 
 	bool bNeedReload = false;
 
-	bNeedReload |= DISPLAY->SetVideoMode( GetCurVideoModeParams() );
+	CString sError = DISPLAY->SetVideoMode( GetCurVideoModeParams(), bNeedReload );
+	if( sError != "" )
+		RageException::Throw( sError );
 
 	DISPLAY->ChangeCentering(
 		PREFSMAN->m_iCenterImageTranslateX, 

@@ -75,7 +75,8 @@ static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[RageDisplay::NUM_PIX_FORMA
 RageDisplay_Null::RageDisplay_Null( VideoModeParams p )
 {
 	LOG->MapLog("renderer", "Current renderer: null");
-	SetVideoMode( p );
+	bool bIgnore = false;
+	SetVideoMode( p, bIgnore );
 }
 
 RageSurface* RageDisplay_Null::CreateScreenshot()

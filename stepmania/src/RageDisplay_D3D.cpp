@@ -268,7 +268,10 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 		 * actually initialize the window.  Do this after as many error conditions
 		 * as possible, because if we have to shut it down again we'll flash a window
 		 * briefly. */
-		SetVideoMode( p );
+		bool bIgnore = false;
+		CString sError = SetVideoMode( p, bIgnore );
+		if( sError != "" )
+			RageException::ThrowNonfatal( sError );
 	} catch(...) {
 		// Clean up; ~RageDisplay will not be called.
 		if( g_pd3d )
@@ -629,8 +632,13 @@ bool RageDisplay_D3D::BeginFrame()
 	case D3DERR_DEVICELOST:
 		return false;
 	case D3DERR_DEVICENOTRESET:
-		SetVideoMode( GraphicsWindow::GetParams() );
+	{
+		bool bIgnore = false;
+		CString sError = SetVideoMode( GraphicsWindow::GetParams(), bIgnore );
+		if( sError != "" )
+			RageException::Throw( sError );
 		break;
+	}
 	}
 #endif
 

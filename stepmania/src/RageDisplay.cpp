@@ -45,30 +45,30 @@ CString RageDisplay::PixelFormatToString( PixelFormat pixfmt )
 	return s[pixfmt];
 };
 
-// Return true if device was re-created and we need to reload textures.
-bool RageDisplay::SetVideoMode( VideoModeParams p )
+/* bNeedReloadTextures is set to true if the device was re-created and we need
+ * to reload textures.  On failure, an error message is returned. 
+ * XXX: the renderer itself should probably be the one to try fallback modes */
+CString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures )
 {
-	bool bNeedReloadTextures;
-	
 	CString err;
 	err = this->TryVideoMode(p,bNeedReloadTextures);
 	if( err == "" )
-		return bNeedReloadTextures;
+		return "";
 	LOG->Trace( "TryVideoMode failed: %s", err.c_str() );
 	
 	// fall back
 	p.windowed = false;
 	if( this->TryVideoMode(p,bNeedReloadTextures) == "" )
-		return bNeedReloadTextures;
+		return "";
 	p.bpp = 16;
 	if( this->TryVideoMode(p,bNeedReloadTextures) == "" )
-		return bNeedReloadTextures;
+		return "";
 	p.width = 640;
 	p.height = 480;
 	if( this->TryVideoMode(p,bNeedReloadTextures) == "" )
-		return bNeedReloadTextures;
+		return "";
 
-	RageException::ThrowNonfatal( "SetVideoMode failed: %s", err.c_str() );
+	return ssprintf( "SetVideoMode failed: %s", err.c_str() );
 }
 
 void RageDisplay::ProcessStatsOnFlip()
