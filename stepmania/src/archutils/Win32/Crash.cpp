@@ -8,7 +8,7 @@
 #include <windows.h>
 #include <tlhelp32.h>
 
-#include "resource.h"
+#include "archutils/win32/WindowsResources.h"
 #include "crash.h"
 #include "ProductInfo.h"
 

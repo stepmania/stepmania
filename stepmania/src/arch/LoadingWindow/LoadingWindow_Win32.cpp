@@ -3,7 +3,7 @@
 
 #include "LoadingWindow_Win32.h"
 #include "RageFileManager.h"
-#include "resource.h"
+#include "archutils/win32/WindowsResources.h"
 #include <windows.h>
 #include "SDL_utils.h"
 #include "RageSurface_Load.h"

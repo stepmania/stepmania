@@ -1214,10 +1214,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					RelativePath="archutils\Win32\RestartProgram.h">
 				</File>
 				<File
-					RelativePath=".\StepMania.ICO">
-				</File>
-				<File
-					RelativePath=".\StepMania.RC">
+					RelativePath="archutils\Win32\StepMania.ico">
 				</File>
 				<File
 					RelativePath="archutils\Win32\USB.cpp">
@@ -1232,13 +1229,16 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					RelativePath="archutils\Win32\VideoDriverInfo.h">
 				</File>
 				<File
+					RelativePath="archutils\Win32\WindowsResources.h">
+				</File>
+				<File
+					RelativePath="archutils\Win32\WindowsResources.rc">
+				</File>
+				<File
 					RelativePath="archutils\Win32\arch_setup.cpp">
 				</File>
 				<File
 					RelativePath="archutils\Win32\arch_setup.h">
-				</File>
-				<File
-					RelativePath=".\resource.h">
 				</File>
 			</Filter>
 		</Filter>
@@ -2481,18 +2481,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 		</Filter>
 		<File
 			RelativePath="StepMania.xpm">
-		</File>
-		<File
-			RelativePath=".\error.bmp">
-		</File>
-		<File
-			RelativePath="error2.bmp">
-		</File>
-		<File
-			RelativePath="loading.bmp">
-		</File>
-		<File
-			RelativePath=".\splash.bmp">
 		</File>
 	</Files>
 	<Globals>
