@@ -807,7 +807,11 @@ bool RageInput::WasBeingPressed( DeviceInput di )
 
 extern "C" {
 #include "ddk/setupapi.h"
+/* Quiet header warning: */
+#pragma warning( push )
+#pragma warning (disable : 4201)
 #include "ddk/hidsdi.h"
+#pragma warning( pop )
 }
 
 char *USB::GetUSBDevicePath (int num)
