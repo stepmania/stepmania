@@ -1072,7 +1072,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			/* If we're in event mode, we may have just played a course (putting us
 			 * in course mode).  Make sure we're in a single song mode. */
 			if( GAMESTATE->IsCourseMode() )
-				GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
+				GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 		}
 		break;
 

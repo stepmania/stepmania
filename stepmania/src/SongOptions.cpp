@@ -36,7 +36,7 @@ CString SongOptions::GetString() const
 
 	switch( m_FailType )
 	{
-	case FAIL_IMMEDIATE:											break;
+	case FAIL_IMMEDIATE:										break;
 	case FAIL_END_OF_SONG:		sReturn	+= "FailEndOfSong, ";	break;
 	case FAIL_OFF:				sReturn	+= "FailOff, ";			break;
 	}
@@ -104,7 +104,8 @@ void SongOptions::FromString( CString sOptions )
 		else if( sBit == "power-drop" )		m_DrainType = DRAIN_NO_RECOVER;
 		else if( sBit == "death" )			m_DrainType = DRAIN_SUDDEN_DEATH;
 		else if( sBit == "normal-drain" )	m_DrainType = DRAIN_NORMAL;
-		else if( sBit == "failarcade" )		m_FailType = FAIL_IMMEDIATE;
+		else if( sBit == "failarcade" || 
+				 sBit == "failimmediate" )	m_FailType = FAIL_IMMEDIATE;
 		else if( sBit == "failendofsong" )	m_FailType = FAIL_END_OF_SONG;
 		else if( sBit == "failoff" )		m_FailType = FAIL_OFF;
 		else if( sBit == "assisttick" )		m_bAssistTick = on;

@@ -1318,7 +1318,7 @@ void MusicWheel::SetOpenGroup(CString group, SortOrder so)
 			 continue;
 
 		/* Only show tutorial songs in arcade */
-		if( GAMESTATE->m_PlayMode!=PLAY_MODE_ARCADE && 
+		if( GAMESTATE->m_PlayMode!=PLAY_MODE_REGULAR && 
 			d.m_pSong &&
 			d.m_pSong->IsTutorial() )
 			continue;
@@ -1531,11 +1531,7 @@ int MusicWheel::GetPreferredSelectionForRandomOrPortal()
 		{
 			Song* pSong = m_CurWheelItemData[iSelection]->m_pSong;
 
-			// HACK: Ignore all Songs with only Beginner steps.  It's likely a training song.
-			vector<Steps*> vpSteps;
-			pSong->GetSteps( vpSteps, st );
-			bool bIsTraining = vpSteps.size()==1 && vpSteps[0]->GetDifficulty()==DIFFICULTY_BEGINNER;
-			if( bIsTraining )
+			if( pSong->IsTutorial() )
 				goto skip_song;
 
 			FOREACH( Difficulty, vDifficultiesToRequire, d )

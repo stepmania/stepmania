@@ -33,7 +33,7 @@ bool PrepareForDemonstration()		// always return true.
 	default:	ASSERT(0);
 	}
 
-	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
+	GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 
 	/* If needed, turn sound off.  We need to do this before the ScreenGameplay ctor,
 	 * since changes to sound volume aren't guaranteed to take effect if done *after*

@@ -105,7 +105,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 		// DEBUGGING STUFF
 //	GAMESTATE->m_CurGame = GAME_DANCE;
 //	GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
-//	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
+//	GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 //	GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 //	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 //	GAMESTATE->m_RankingCategory[PLAYER_1] = RANKING_A;

@@ -1187,6 +1187,7 @@ bool Song::IsEasy( StepsType st ) const
 
 bool Song::IsTutorial() const
 {
+	// A Song is a tutorial song is it has only Beginner steps.
 	FOREACH_CONST( Steps*, m_vpSteps, s )
 	{
 		if( (*s)->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )

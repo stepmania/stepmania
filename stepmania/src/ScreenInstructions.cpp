@@ -22,7 +22,7 @@ ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements
 		HandleScreenMessage( SM_GoToNextScreen );
 		return;
 	}
-	if( GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE )
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR )
 	{
 		Difficulty easiestDifficulty = (Difficulty)(NUM_DIFFICULTIES-1);
 		FOREACH_HumanPlayer(p)

@@ -389,7 +389,7 @@ void ScreenGameplay::Init()
 	//
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_REGULAR:
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ENDLESS:
@@ -450,7 +450,7 @@ void ScreenGameplay::Init()
 		//
 		switch( GAMESTATE->m_PlayMode )
 		{
-		case PLAY_MODE_ARCADE:
+		case PLAY_MODE_REGULAR:
 		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_BATTLE:
 		case PLAY_MODE_RAVE:
@@ -531,7 +531,7 @@ void ScreenGameplay::Init()
 
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_REGULAR:
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+GAMESTATE->GetStageText()) );
@@ -872,7 +872,7 @@ void ScreenGameplay::LoadNextSong()
 		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BATTERY && g_CurStageStats.bFailed[p] )	// already failed
 			ShowOniGameOver(p);
 
-		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE && !PREFSMAN->m_bEventMode && !m_bDemonstration)
+		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR && !PREFSMAN->m_bEventMode && !m_bDemonstration)
 		{
 			m_pLifeMeter[p]->UpdateNonstopLifebar(
 				GAMESTATE->GetStageIndex(), 
@@ -1372,7 +1372,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		switch( GAMESTATE->m_PlayMode )
 		{
-		case PLAY_MODE_ARCADE:
+		case PLAY_MODE_REGULAR:
 		case PLAY_MODE_BATTLE:
 		case PLAY_MODE_RAVE:
 			if( GAMESTATE->OneIsHot() )			
@@ -1810,7 +1810,7 @@ void ScreenGameplay::ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 	CString sMessage;
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_REGULAR:
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		sMessage = ssprintf( 
@@ -2236,7 +2236,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		
 		switch( GAMESTATE->m_PlayMode )
 		{
-		case PLAY_MODE_ARCADE:
+		case PLAY_MODE_REGULAR:
 		case PLAY_MODE_BATTLE:
 		case PLAY_MODE_RAVE:
 			if( PREFSMAN->m_bEventMode )

@@ -898,7 +898,7 @@ bool GameState::HasEarnedExtraStage() const
 	if( !PREFSMAN->m_bAllowExtraStage )
 		return false;
 
-	if( this->m_PlayMode != PLAY_MODE_ARCADE )
+	if( this->m_PlayMode != PLAY_MODE_REGULAR )
 		return false;
 
 	if( (this->IsFinalStage() || this->IsExtraStage()) )
@@ -1333,7 +1333,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 	CHECKPOINT_M(ssprintf("PlayMode %i",this->m_PlayMode));
 	switch( this->m_PlayMode )
 	{
-	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_REGULAR:
 		{
 			CHECKPOINT;
 			unsigned i, j;

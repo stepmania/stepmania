@@ -24,7 +24,7 @@ XToThemedString( RadarCategory );
 
 
 static const CString PlayModeNames[NUM_PLAY_MODES] = {
-	"Arcade",
+	"Regular",
 	"Nonstop",
 	"Oni",
 	"Endless",

@@ -116,7 +116,7 @@ enum StepsType
 //
 enum PlayMode
 {
-	PLAY_MODE_ARCADE,
+	PLAY_MODE_REGULAR,
 	PLAY_MODE_NONSTOP,	// DDR EX Nonstop
 	PLAY_MODE_ONI,		// DDR EX Challenge
 	PLAY_MODE_ENDLESS,	// DDR PlayStation Endless
