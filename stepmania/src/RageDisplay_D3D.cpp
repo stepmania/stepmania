@@ -673,10 +673,59 @@ bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 void RageDisplay_D3D::SaveScreenshot( CString sPath )
 {
 #ifndef _XBOX
+	/* Get the back buffer. */
 	IDirect3DSurface8* pSurface;
 	g_pd3dDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pSurface );
-	D3DXSaveSurfaceToFile( sPath, D3DXIFF_BMP, pSurface, 0, NULL );
+
+	/* Get the back buffer description. */
+	D3DSURFACE_DESC desc;
+	pSurface->GetDesc( &desc );
+
+	/* Copy the back buffer into a surface of a type we support. */
+	IDirect3DSurface8* pCopy;
+	g_pd3dDevice->CreateImageSurface( desc.Width, desc.Height, D3DFMT_A8R8G8B8, &pCopy );
+
+	D3DXLoadSurfaceFromSurface( pCopy, NULL, NULL, pSurface, NULL, NULL, D3DX_DEFAULT, 0 );
+
 	pSurface->Release();
+
+	/* Update desc from the copy. */
+	pCopy->GetDesc( &desc );
+
+	D3DLOCKED_RECT lr;
+
+	{
+		RECT rect; 
+		rect.left = 0;
+		rect.top = 0;
+		rect.right = desc.Width;
+		rect.bottom = desc.Height;
+		pCopy->LockRect( &lr, &rect, D3DLOCK_READONLY );
+	}
+
+	SDL_Surface *Texture = CreateSurfaceFromPixfmt( FMT_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
+	ASSERT( Texture );
+
+	CString buf;
+	buf.reserve( 1024*1024 );
+
+	SDL_RWops *rw = OpenRWops( buf );
+	SDL_SaveBMP_RW( Texture, rw, false );
+	SDL_FreeRW( rw );
+
+	SDL_FreeSurface( Texture );
+
+	RageFile out;
+	if( !out.Open( sPath, RageFile::WRITE ) )
+	{
+		LOG->Trace("Couldn't write %s: %s", sPath.c_str(), out.GetError().c_str() );
+		return;
+	}
+
+	out.Write( buf );
+
+	pCopy->UnlockRect();
+	pCopy->Release();
 #endif
 }
 
