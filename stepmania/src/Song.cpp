@@ -763,14 +763,14 @@ void Song::TidyUpData()
 	}
 
 
-	/* Don't allow multiple Steps of the same StepsType and Diffiuclty.
+	/* Don't allow multiple Steps of the same StepsType and Difficulty (except for edits).
 	 * This happens a lot reading BMS files because they we have to guess
 	 * the Difficulty from the meter. */
 	for( i=0; i<NUM_STEPS_TYPES; i++ )
 	{
 		StepsType st = (StepsType)i;
 
-		for( unsigned j=0; j<NUM_DIFFICULTIES; j++ )
+		for( unsigned j=0; j<=DIFFICULTY_CHALLENGE; j++ ) // not DIFFICULTY_EDIT
 		{
 			Difficulty dc = (Difficulty)j;
 
