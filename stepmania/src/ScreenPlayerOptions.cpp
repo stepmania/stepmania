@@ -24,6 +24,7 @@
 #include "GameManager.h"
 #include "GameState.h"
 #include "RageSound.h"
+#include "ScreenSelectCourse.h"
 
 
 enum {
@@ -131,7 +132,11 @@ void ScreenPlayerOptions::ExportOptions()
 
 void ScreenPlayerOptions::GoToPrevState()
 {
-	SCREENMAN->SetNewScreen( new ScreenSelectMusic );
+	if(GAMESTATE->m_PlayMode == PLAY_MODE_ONI ||
+		GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS)
+		SCREENMAN->SetNewScreen( new ScreenSelectCourse );
+	else
+		SCREENMAN->SetNewScreen( new ScreenSelectMusic );
 }
 
 void ScreenPlayerOptions::GoToNextState()

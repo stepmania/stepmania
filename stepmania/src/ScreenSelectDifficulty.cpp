@@ -295,19 +295,23 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 		case 1:
 		case 2:	// something on page 1 was chosen
 			GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
-			SCREENMAN->SetNewScreen( new ScreenSelectGroup );
 			break;
 		case 3:
 			GAMESTATE->m_PlayMode = PLAY_MODE_ONI;
-			SCREENMAN->SetNewScreen( new ScreenSelectCourse );
 			break;
 		case 4:
 			GAMESTATE->m_PlayMode = PLAY_MODE_ENDLESS;
-			SCREENMAN->SetNewScreen( new ScreenSelectCourse );
 			break;
 		default:
 			ASSERT(0);	// bad selection
 		}
+
+		if(GAMESTATE->m_PlayMode == PLAY_MODE_ONI ||
+			GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS)
+			SCREENMAN->SetNewScreen( new ScreenSelectCourse );
+		else
+			SCREENMAN->SetNewScreen( new ScreenSelectGroup );
+
 		break;
 	case SM_StartTweeningOffScreen:
 		TweenOffScreen();
