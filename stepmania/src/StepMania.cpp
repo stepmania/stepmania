@@ -716,6 +716,8 @@ static void RestoreAppPri()
 
 void ChangeCurrentGame( Game g )
 {
+	ASSERT( g >= 0 && g < NUM_GAMES );
+
 	SaveGamePrefsToDisk();
 	INPUTMAPPER->SaveMappingsToDisk();	// save mappings before switching the game
 
@@ -759,7 +761,10 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 	{
 		Game game;
 		if( ini.GetValue("Options", "Game", (int&)game) )
+		{
+			CLAMP( (int&)game, 0, NUM_GAMES-1 );
 			GAMESTATE->m_CurGame = game;
+		}
 	}
 }
 
