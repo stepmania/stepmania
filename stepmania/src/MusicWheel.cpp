@@ -44,6 +44,8 @@ CachedThemeMetricF SWITCH_SECONDS	("MusicWheel","SwitchSeconds");
 CachedThemeMetricF ITEM_CURVE_X		("MusicWheel","ItemCurveX");
 #define USE_LINEAR_WHEEL			THEME->GetMetricB("MusicWheel","NoCurving")
 CachedThemeMetricF ITEM_SPACING_Y	("MusicWheel","ItemSpacingY");
+CachedThemeMetricF WHEEL_3D_RADIUS	("MusicWheel","Wheel3DRadius");
+CachedThemeMetricF CIRCLE_PERCENT	("MusicWheel","CirclePercent");
 #define NUM_SECTION_COLORS			THEME->GetMetricI("MusicWheel","NumSectionColors")
 #define SECTION_COLORS( i )			THEME->GetMetricC("MusicWheel",ssprintf("SectionColor%d",i+1))
 #define SONG_REAL_EXTRA_COLOR		THEME->GetMetricC("MusicWheel","SongRealExtraColor")
@@ -90,6 +92,12 @@ MusicWheel::MusicWheel()
 	ITEM_SPACING_Y.Refresh();
 	USE_3D.Refresh();
 	NUM_WHEEL_ITEMS_METRIC.Refresh();
+
+	if( USE_3D )
+	{
+		WHEEL_3D_RADIUS.Refresh();
+		CIRCLE_PERCENT.Refresh();
+	}
 
 	// for debugging
 	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
@@ -692,15 +700,14 @@ void MusicWheel::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, fl
 {
 	if( USE_3D )
 	{
-		fRotationX_out = SCALE(fPosOffsetsFromMiddle,-NUM_WHEEL_ITEMS/2,+NUM_WHEEL_ITEMS/2,-PI/2.f,+PI/2.f);
+		const float curve = CIRCLE_PERCENT*2*PI;
+		fRotationX_out = SCALE(fPosOffsetsFromMiddle,-NUM_WHEEL_ITEMS/2.0f,+NUM_WHEEL_ITEMS/2.0f,-curve/2.f,+curve/2.f);
+		fX_out = 0;
+		fY_out = WHEEL_3D_RADIUS*sinf(fRotationX_out);
+		fZ_out = -100+WHEEL_3D_RADIUS*cosf(fRotationX_out);
+		fRotationX_out *= 180.f/PI;	// to degrees
 
 //		printf( "fRotationX_out = %f\n", fRotationX_out );
-
-		float radius = 200;
-
-		fX_out = 0;
-		fY_out = radius*sinf(fRotationX_out);
-		fZ_out = -100+radius*cosf(fRotationX_out);
 
 		fRotationX_out *= 180.f/PI;	// to degrees
 	}
