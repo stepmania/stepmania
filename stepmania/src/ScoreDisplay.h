@@ -12,12 +12,9 @@
 */
 
 #include "Sprite.h"
-#include "Song.h"
+#include "GameConstantsAndTypes.h"
 #include "ActorFrame.h"
 #include "BitmapText.h"
-#include "PlayerOptions.h"
-
-
 
 class ScoreDisplay : public BitmapText
 {

@@ -13,9 +13,7 @@
 
 
 #include "Transition.h"
-#include "Sprite.h"
 #include "Quad.h"
-#include "TransitionFade.h"
 #include "Banner.h"
 
 

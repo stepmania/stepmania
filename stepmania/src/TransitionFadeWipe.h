@@ -13,7 +13,6 @@
 
 
 #include "Transition.h"
-#include "Sprite.h"
 #include "Quad.h"
 
 

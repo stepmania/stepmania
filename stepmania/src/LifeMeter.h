@@ -13,7 +13,6 @@
 
 #include "GameConstantsAndTypes.h"
 #include "ActorFrame.h"
-#include "PlayerOptions.h"
 
 
 class Song;

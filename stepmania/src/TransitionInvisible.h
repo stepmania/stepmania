@@ -13,8 +13,6 @@
 
 
 #include "Transition.h"
-#include "Quad.h"
-
 
 class TransitionInvisible : public Transition
 {

@@ -13,7 +13,7 @@
 
 
 #include "Sprite.h"
-#include "TransitionFadeWipe.h"
+#include "Transition.h"
 
 
 class TransitionKeepAlive : public Transition

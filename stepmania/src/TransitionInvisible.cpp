@@ -11,12 +11,7 @@
 */
 
 
-#include "RageUtil.h"
-
 #include "TransitionInvisible.h"
-#include "GameConstantsAndTypes.h"
-
-
 
 TransitionInvisible::TransitionInvisible()
 {
