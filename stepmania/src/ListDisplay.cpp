@@ -14,12 +14,17 @@
 #include "RageTexture.h"
 
 
+//
+// TODO: Merge this with ActorScroller
+//
+
 ListDisplay::ListDisplay()
 {
 	m_iNumItemsToShow = 0;
 	m_fItemWidth = 0;
 	m_fItemHeight = 0;
-	m_fItemAtTopOfList = 0;
+	m_fCurrentItemAtTopOfList = 0;
+	m_fDestinationItemAtTopOfList = 0;
 
 	m_quadMask.SetBlendMode( BLEND_NO_EFFECT );	// don't change color values
 	m_quadMask.SetUseZBuffer( true );	// we want to write to the Zbuffer
@@ -50,7 +55,8 @@ void ListDisplay::Load(
 	m_fSecondsPerItem = fSecondsPerItem; 
 	m_fSecondsPauseBetweenItems = fSecondsPauseBetweenItems;
 	m_bSlide = bSlide;
-	m_fItemAtTopOfList = m_bLoop ? 0 : (float)-m_iNumItemsToShow;
+	m_fCurrentItemAtTopOfList = m_bLoop ? 0 : (float)-m_iNumItemsToShow;
+	m_fDestinationItemAtTopOfList = m_vpItems.size()+1;
 	m_fSecondsPauseCountdown = 0;
 
 	RectF rectBarSize(-m_fItemWidth/2, -m_fItemHeight/2,
@@ -73,40 +79,33 @@ void ListDisplay::Update( float fDeltaTime )
 	if( !m_SubActors.size() )
 		return;
 
-	while( fDeltaTime > 0 )
+	// handle pause
+	if( fDeltaTime > m_fSecondsPauseCountdown )
 	{
-		// handle pause
-		if( fDeltaTime > m_fSecondsPauseCountdown )
-		{
-			fDeltaTime -= m_fSecondsPauseCountdown;
-			m_fSecondsPauseCountdown = 0;
-		}
-		else
-		{
-			m_fSecondsPauseCountdown -= fDeltaTime;
-			fDeltaTime = 0;
-			break;
-		}
-
-		// handle scrolling
-		float fPercentUntilNextItem = (int)m_fItemAtTopOfList+1 - m_fItemAtTopOfList;
-		float fSecsUntilNextItem = fPercentUntilNextItem * m_fSecondsPerItem;
-
-		if( fDeltaTime > fSecsUntilNextItem )
-		{
-			fDeltaTime -= fSecsUntilNextItem;
-			m_fItemAtTopOfList += fPercentUntilNextItem;
-		}
-		else
-		{
-			m_fItemAtTopOfList += fDeltaTime / m_fSecondsPerItem;
-			fDeltaTime = 0;
-			break;
-		}
-
-		if( m_bLoop )
-			m_fItemAtTopOfList = fmodf( m_fItemAtTopOfList, (float) m_SubActors.size() );
+		fDeltaTime -= m_fSecondsPauseCountdown;
+		m_fSecondsPauseCountdown = 0;
 	}
+	else
+	{
+		m_fSecondsPauseCountdown -= fDeltaTime;
+		fDeltaTime = 0;
+		return;
+	}
+
+
+	if( m_fCurrentItemAtTopOfList == m_fDestinationItemAtTopOfList )
+		return;	// done scrolling
+
+
+	float fOldItemAtTop = m_fCurrentItemAtTopOfList;
+	fapproach( m_fCurrentItemAtTopOfList, m_fDestinationItemAtTopOfList, fDeltaTime/m_fSecondsPerItem );
+
+	// if items changed, then pause
+	if( (int)fOldItemAtTop != (int)m_fCurrentItemAtTopOfList )
+		m_fSecondsPauseCountdown = m_fSecondsPauseBetweenItems;
+
+	if( m_bLoop )
+		wrap( m_fCurrentItemAtTopOfList, (float) m_SubActors.size() );
 }
 
 void ListDisplay::DrawPrimitives()
@@ -125,8 +124,8 @@ void ListDisplay::DrawPrimitives()
 	m_quadMask.SetY( fIndexCompletelyOffScreenBottom * m_fItemHeight );
 	m_quadMask.Draw();
 
-	int iItemToDraw = (int)m_fItemAtTopOfList;
-	float fRemainder = m_fItemAtTopOfList - (int)m_fItemAtTopOfList;
+	int iItemToDraw = (int)m_fCurrentItemAtTopOfList;
+	float fRemainder = m_fCurrentItemAtTopOfList - (int)m_fCurrentItemAtTopOfList;
 	float fIndex = fIndexFullyOnScreenTop - fRemainder;
 	float fY = (fIndex)*m_fItemHeight;
 

@@ -69,6 +69,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 	STEPS_TYPE_COLOR			(m_sName,STEPS_TYPE_COLOR_NAME,5),
 	SONG_SCORE_ROWS_TO_SHOW		(m_sName,"SongScoreRowsToShow"),
 	SONG_SCORE_SECONDS_PER_ROW	(m_sName,"SongScoreSecondsPerRow"),
+	MANUAL_SCROLLING			(m_sName,"ManualScroling"),
 	
 	BULLET_START_X				(m_sName,"BulletStartX"),
 	BULLET_START_Y				(m_sName,"BulletStartY"),
@@ -383,6 +384,42 @@ ScreenRanking::~ScreenRanking()
 		delete m_vpCourseScoreRowItem[c];
 }
 
+void ScreenRanking::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+{
+	LOG->Trace( "ScreenRanking::Input()" );
+
+	// If manually scrolling, then pass the input to Scree::Input so it will call Menu*
+	if( (bool)MANUAL_SCROLLING )
+		Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+	else
+		ScreenAttract::Input( DeviceI, type, GameI, MenuI, StyleI );
+}
+
+void ScreenRanking::Scroll( int iDir )
+{
+	float fDest = m_ListScoreRowItems.GetDestinationItem();
+	float fOldDest = fDest;
+	fDest += iDir;
+	CLAMP( fDest, 0.0f, (float)m_vpStepsScoreRowItem.size()-SONG_SCORE_ROWS_TO_SHOW );
+	if( fOldDest != fDest )
+	{
+		// TODO: play sound
+		m_ListScoreRowItems.SetDestinationItem( fDest );
+	}
+}
+
+void ScreenRanking::MenuStart( PlayerNumber pn )
+{
+	if( !IsTransitioning() )
+		StartTransitioning( SM_GoToNextScreen );
+}
+
+void ScreenRanking::MenuBack( PlayerNumber pn )
+{
+	if( !IsTransitioning() )
+		StartTransitioning( SM_GoToNextScreen );
+}
+
 void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
@@ -393,11 +430,14 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 			float fSecsToShow = SetPage( m_vPagesToShow[0] );
 			this->SortByDrawOrder();
 			m_vPagesToShow.erase( m_vPagesToShow.begin() );
-			this->PostScreenMessage( SM_HidePage, fSecsToShow-PAGE_FADE_SECONDS );
+			
+			// If manually scrolling, don't automatically change pages.
+			if( !(bool)MANUAL_SCROLLING )
+				this->PostScreenMessage( SM_HidePage, fSecsToShow-PAGE_FADE_SECONDS );
 		}
 		else
 		{
-			m_Out.StartTransitioning(SM_GoToNextScreen);
+			StartTransitioning(SM_GoToNextScreen);
 		}
 		break;
 	case SM_HidePage:
@@ -601,6 +641,12 @@ float ScreenRanking::SetPage( PageToShow pts )
 			for( unsigned i=0; i<m_vpStepsScoreRowItem.size(); i++ )
 				vpActors.push_back( m_vpStepsScoreRowItem[i] );
 			m_ListScoreRowItems.Load( vpActors, SONG_SCORE_ROWS_TO_SHOW, SCREEN_WIDTH, ROW_SPACING_Y, false, SONG_SCORE_SECONDS_PER_ROW, 0, false );
+
+			if( (bool)MANUAL_SCROLLING )
+			{
+				m_ListScoreRowItems.SetCurrentItem( 0 );
+				m_ListScoreRowItems.SetDestinationItem( 0 );
+			}
 
 			for( unsigned s=0; s<m_vpStepsScoreRowItem.size(); s++ )
 			{

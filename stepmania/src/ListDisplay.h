@@ -22,7 +22,10 @@ public:
 		float fSecondsPauseBetweenItems,
 		bool bSlide );
 
-	float GetSecondsForCompleteScrollThrough();
+	float	GetSecondsForCompleteScrollThrough();
+	void	SetCurrentItem( float fItem )		{ m_fCurrentItemAtTopOfList = fItem; }
+	void	SetDestinationItem( float fItem )	{ m_fDestinationItemAtTopOfList = fItem; }
+	float	GetDestinationItem()				{ return m_fDestinationItemAtTopOfList; }
 
 protected:
 	int		m_iNumItemsToShow;
@@ -33,7 +36,8 @@ protected:
 	float	m_fSecondsPauseBetweenItems;
 	bool	m_bSlide;
 
-	float	m_fItemAtTopOfList;
+	float	m_fCurrentItemAtTopOfList;	// approaches destination
+	float	m_fDestinationItemAtTopOfList;
 	float	m_fSecondsPauseCountdown;
 	Quad	m_quadMask;
 };

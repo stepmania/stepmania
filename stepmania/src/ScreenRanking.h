@@ -34,6 +34,16 @@ public:
 	virtual void Init();
 	~ScreenRanking();
 
+	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	virtual void MenuLeft( PlayerNumber pn, const InputEventType type )		{ Scroll(-1); }
+	virtual void MenuRight( PlayerNumber pn, const InputEventType type )	{ Scroll(+1); }
+	virtual void MenuUp( PlayerNumber pn, const InputEventType type )		{ Scroll(-1); }
+	virtual void MenuDown( PlayerNumber pn, const InputEventType type )		{ Scroll(+1); }
+	virtual void Scroll( int iDir );
+	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuBack( PlayerNumber pn );
+
+	
 	void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
@@ -113,6 +123,7 @@ protected:
 	ThemeMetric1D<RageColor>	STEPS_TYPE_COLOR;
 	ThemeMetric<int>			SONG_SCORE_ROWS_TO_SHOW;
 	ThemeMetric<float>			SONG_SCORE_SECONDS_PER_ROW;
+	ThemeMetric<bool>			MANUAL_SCROLLING;
 
 	ThemeMetric<float>			BULLET_START_X;
 	ThemeMetric<float>			BULLET_START_Y;
