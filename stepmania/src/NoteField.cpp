@@ -250,17 +250,17 @@ void NoteField::DrawPrimitives()
 		///////////////////////////////////
 		for( i=iFirstIndexToDraw; i<=iLastIndexToDraw; i++ )	//	 for each row
 		{	
-			if( GetTapNote(c, i) == '0' )	// no note here
+			if( GetTapNote(c, i) == TAP_EMPTY )	// no note here
 				continue;	// skip
 			
-			if( GetTapNote(c, i) == '2' )	// this is a HoldNote begin marker.  Grade it, but don't draw
+			if( GetTapNote(c, i) == TAP_HOLD_HEAD )	// this is a HoldNote begin marker.  Grade it, but don't draw
 				continue;	// skip
 
 			// See if there is a hold step that begins on this index.
 			bool bHoldNoteBeginsOnThisBeat = false;
 			for( int c2=0; c2<m_iNumTracks; c2++ )
 			{
-				if( GetTapNote(c2, i) == '2' )
+				if( GetTapNote(c2, i) == TAP_HOLD_HEAD )
 				{
 					bHoldNoteBeginsOnThisBeat = true;
 					break;
