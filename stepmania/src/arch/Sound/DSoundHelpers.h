@@ -47,7 +47,7 @@ public:
 
 	~DSoundBuf();
 	int64_t GetPosition() const;
-	int64_t GetOutputPosition() const { return last_cursor_pos; }
+	int64_t GetOutputPosition() const { return write_cursor_pos; }
 
 private:
 	int buffersize_frames() const { return buffersize / bytes_per_frame(); }
@@ -63,7 +63,7 @@ private:
 	int buffersize;
 	
 	int write_cursor, buffer_bytes_filled; /* bytes */
-	int64_t last_cursor_pos; /* frames */
+	int64_t write_cursor_pos; /* frames */
 	mutable int64_t LastPosition;
 	bool playing;
 

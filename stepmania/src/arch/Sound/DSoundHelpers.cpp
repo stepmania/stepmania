@@ -178,7 +178,7 @@ DSoundBuf::DSoundBuf( DSound &ds, DSoundBuf::hw hardware,
 	writeahead = writeahead_ * bytes_per_frame();
 	volume = -1; /* unset */
 	buffer_locked = false;
-	last_cursor_pos = write_cursor = buffer_bytes_filled = 0;
+	write_cursor_pos = write_cursor = buffer_bytes_filled = 0;
 	LastPosition = 0;
 	playing = false;
 
@@ -620,10 +620,8 @@ bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
 		write_cursor -= buffersize;
 
 	buffer_bytes_filled += num_bytes_empty;
+	write_cursor_pos += num_bytes_empty / bytes_per_frame();
 
-	/* Increment last_cursor_pos to point at where the data we're about to
-	 * ask for will actually be played. */
-	last_cursor_pos += num_bytes_empty / bytes_per_frame();
 	buffer_locked = true;
 
 	return true;
@@ -651,7 +649,7 @@ int64_t DSoundBuf::GetPosition() const
 	if( frames_behind < 0 )
 		frames_behind += buffersize_frames(); /* unwrap */
 
-	int64_t ret = last_cursor_pos - frames_behind;
+	int64_t ret = write_cursor_pos - frames_behind;
 
 	/* Failsafe: never return a value smaller than we've already returned.
 	 * This can happen once in a while in underrun conditions. */
@@ -677,7 +675,7 @@ void DSoundBuf::Stop()
 	buf->Stop();
 	buf->SetCurrentPosition(0);
 
-	last_cursor_pos = write_cursor = buffer_bytes_filled = 0;
+	write_cursor_pos = write_cursor = buffer_bytes_filled = 0;
 	LastPosition = 0;
 
 	/* When stopped and rewound, the play and write cursors should both be 0. */
