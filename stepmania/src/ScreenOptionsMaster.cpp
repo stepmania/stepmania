@@ -175,6 +175,7 @@ void ScreenOptionsMaster::SetCharacter( OptionRow &row, OptionRowHandler &hand )
 ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	ScreenOptions( sClassName )
 {
+	LOG->Trace("ScreenOptionsMaster::ScreenOptionsMaster(%s)", m_sName.c_str() );
 
 	CStringArray Flags;
 	split( OPTION_MENU_FLAGS, ";", Flags, true );

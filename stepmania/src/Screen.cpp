@@ -328,6 +328,10 @@ Screen* Screen::Create( CString sClassName )
 	if( !sClassName.CompareNoCase("ScreenEvaluationRave") )
 		sClassName = "ScreenEvaluationRave@ScreenEvaluation";
 
+	/* This one will go away when all options menus are converted. */
+	if( !sClassName.CompareNoCase("ScreenOptionsMenu") )
+		sClassName = "ScreenOptionsMenu@ScreenOptionsMaster";
+
 	/* "ScreenCompany@ScreenAttract" loads ScreenAttract with the asset name
 	 * "ScreenCompany", so (if it supports it) it'll use metric, graphic, etc.
 	 * names starting with "ScreenCompany". */
