@@ -138,10 +138,8 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 }
 
 
-#define CLAMP(x, l, h)	{if (x > h) x = h; else if (x < l) x = l;}
-
 /* Return "random" numbers in [0,2]; this is for SM_SDL_ErrorDiffusionDither (rand() is too slow). */
-static inline int GetFastRand()
+/* static inline int GetFastRand()
 {
 	static int RandomNumbers[] =
 	{
@@ -158,12 +156,35 @@ static inline int GetFastRand()
 	if( iNextNumber == ARRAYSIZE(RandomNumbers) )
 		iNextNumber = 0;
 	return RandomNumbers[ iNextNumber++ ];
-}
+} */
 
+/* This is very similar to SM_SDL_OrderedDither, except instead of using a matrix
+ * containing rounding values, we truncate and then add the resulting error for
+ * each pixel to the next pixel on the same line.  (Maybe we could do both?) */
 void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 {
 	/* We can't dither to paletted surfaces. */
 	ASSERT( dst->format->BytesPerPixel > 1 );
+
+	Uint32 src_cbits[4], dst_cbits[4];
+	mySDL_GetBitsPerChannel( src->format, src_cbits );
+	mySDL_GetBitsPerChannel( dst->format, dst_cbits );
+
+	/* Calculate the ratio from the old bit depth to the new for each color channel. */
+	int conv[4];
+	for( int i = 0; i < 4; ++i )
+	{
+		int MaxInputIntensity = (1 << src_cbits[i])-1;
+		int MaxOutputIntensity = (1 << dst_cbits[i])-1;
+		/* If the source is missing the channel, avoid div/0. */
+		if( MaxInputIntensity == 0 )
+			conv[i] = 0;
+		else
+			conv[i] = MaxOutputIntensity * 65536 / MaxInputIntensity;
+	}
+
+	/* Max alpha value; used when there's no alpha source.  */
+	const Uint8 alpha_max = Uint8((1 << dst_cbits[3]) - 1);
 
 	/* For each row: */
 	for(int row = 0; row < src->h; ++row) 
@@ -176,49 +197,62 @@ void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 		/* For each pixel in row: */
 		for( int col = 0; col < src->w; ++col )
 		{
-			Uint8 originalColors[4];
-			mySDL_GetRGBAV( srcp, src, originalColors );
+			Uint8 colors[4];
+			mySDL_GetRawRGBAV( srcp, src, colors );
 
-			Uint8 colorsPlusError[4];
-			int c;
-			for( c = 0; c < 4; ++c )
+			for( int c = 0; c < 3; ++c )
 			{
-				// move some error to the new pixel (without overflowing)
-				Sint32 errorToAdd;
-				if( accumError[c] >= 0 )
-					errorToAdd = min( accumError[c], (Sint32)255 - originalColors[c] );
-				else
-					errorToAdd = max( accumError[c], (Sint32)-originalColors[c] );
+				/* Convert the number to the destination range. */
+				int out_intensity = colors[c] * conv[c];
 
-				colorsPlusError[c] = (Uint8)( originalColors[c] + errorToAdd );
-				accumError[c] -= errorToAdd;
-				
-				// make sure we didn't overflow
-				ASSERT( (Uint8)(originalColors[c] + errorToAdd) == (Sint32)(originalColors[c] + errorToAdd) );
-			}
+				/* Add e to make sure a value of 14.999998 -> 15. */
+				++out_intensity;
+	
+				/* Add bias. */
+				out_intensity += accumError[c];
 
-			mySDL_SetRGBAV( dstp, dst, colorsPlusError );
+				/* out_intensity is now what we actually want this component to be.
+				 * To store it, we have to clamp it (prevent overflow) and shift it
+				 * from fixed-point to [0,255].  The error introduced in that calculation
+				 * becomes the new accumError. */
+				int clamped_intensity = clamp( out_intensity, 0, 0xFFFFFF );
+				clamped_intensity &= 0xFF0000;
 
-			Uint8 ditheredColors[4];
-			mySDL_GetRGBAV( dstp, dst, ditheredColors );
+				/* Truncate. */
+				colors[c] = Uint8(clamped_intensity >> 16);
 
-			for(c = 0; c < 4; ++c) 
-				accumError[c] += originalColors[c] - ditheredColors[c];
+				accumError[c] = out_intensity - clamped_intensity;
 
-			/* Blank the alpha accumulated error.  
-			 * This has the effect of not dithering the alpha channel. */
-			accumError[3] = 0;
-
-			for( c = 0; c < 4; ++c )
-			{
 				// Reduce funky streaks in low-bit channels by clamping error.
-				CLAMP( accumError[c], -128, +128 );
+				CLAMP( accumError[c], -128 * 65536, +128 * 65536 );
 
 				// Keep only a fraction of the error to make the effect more subtle.
 				// This used to divide by [1,4]; shift right by [0,2] to get a similar
 				// (but much faster) effect.
-				accumError[c] >>= (GetFastRand())+1;
+				/* This resulted in banding in gradients, and doesn't work quite the
+				 * same way with this calculation; without it, gradients look correct.
+				 * Unfortunately, I don't remember any of the problem cases we had
+				 * originally; if we see problems with the dithering in the future, let's
+				 * archive them somewhere for future testing. */
+//				accumError[c] >>= (GetFastRand())+1;
 			}
+
+			/* If the source has no alpha, the conversion formula will end up
+			 * with 0; that's fine for color channels, but for alpha we need to
+			 * be opaque. */
+			if( src_cbits[3] == 0 )
+			{
+				colors[3] = alpha_max;
+			} else {
+				/* Same as DitherPixel, except it doesn't actually dither; dithering
+				 * looks bad on the alpha channel. */
+				int out_intensity = colors[3] * conv[3];
+	
+				/* Truncate, and add e to make sure a value of 14.999998 -> 15. */
+				colors[3] = Uint8((out_intensity + 1) >> 16);
+			}
+
+			mySDL_SetRawRGBAV( dstp, dst, colors );
 
 			srcp += src->format->BytesPerPixel;
 			dstp += dst->format->BytesPerPixel;
