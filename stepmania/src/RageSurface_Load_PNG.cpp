@@ -7,8 +7,8 @@
 #include "RageFile.h"
 
 #if defined(WIN32)
-#include "SDL_image-1.2/VisualC/graphics/include/png.h"
-#pragma comment(lib, "SDL_image-1.2/VisualC/graphics/lib/libpng.lib")
+#include "libpng/include/png.h"
+#pragma comment(lib, "libpng/lib/libpng.lib")
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #else
 #include <png.h>
