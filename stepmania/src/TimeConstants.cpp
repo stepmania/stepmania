@@ -101,9 +101,34 @@ CString LastWeekToString( int iLastWeekIndex )
 
 tm AddDays( tm start, int iDaysToMove )
 {
-	start.tm_mday += iDaysToMove;
+	/*
+	 * This causes problems on OS X, which doesn't correctly handle range that are below
+	 * their normal values (eg. mday = 0).  According to the manpage, it should adjust them:
+	 *
+	 * "If structure members are outside their legal interval, they will be normalized (so
+	 * that, e.g., 40 October is changed into 9 November)."
+	 *
+	 * Instead, it appears to simply fail.
+	 *
+	 * Refs:
+	 *  http://bugs.php.net/bug.php?id=10686
+	 *  http://sourceforge.net/tracker/download.php?group_id=37892&atid=421366&file_id=79179&aid=91133
+	 *
+	 * Note "Log starting 2004-03-07 03:50:42"; mday is 7, and PrintCaloriesBurned calls us
+	 * with iDaysToMove = -7, resulting in an out-of-range value 0.  This seems legal, but
+	 * OS X chokes on it.
+	 */
+/*	start.tm_mday += iDaysToMove;
 	time_t seconds = mktime( &start );
 	ASSERT( seconds != (time_t)-1 );
+	*/
+
+	/* This handles DST differently: it returns the time that was exactly n*60*60*24 seconds
+	 * ago, where the above code always returns the same time of day.  I prefer the above
+	 * behavior, but I'm not sure that it mattersmatters. */
+	time_t seconds = mktime( &start );
+	seconds += iDaysToMove*60*60*24;
+
 	tm time;
 	localtime_r( &seconds, &time );
 	return time;
