@@ -1295,7 +1295,7 @@ Style g_Styles[] =
 			{ 0, 5, 3, 2, 1, 4 },
 			{ 0, 5, 3, 2, 1, 4 }
 		},
-        {	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,1,2,3,4,5
 		},
 		false, // m_bNeedsZoomOutWith2Players
