@@ -1,0 +1,194 @@
+********************************
+Conditional BGA System.
+********************************
+
+--------------
+Description
+--------------
+The conditional bga system will search for a .ini file in a theme
+folder which will contain a series of BGA names and conditions upon
+which they may be shown.
+
+--------------
+Filenames
+--------------
+Currently the following .ini names possible are:
+
+ScreenEvaluation* ConditionalBGA.ini (will appear on the evaluation screen backgrounds)
+
+
+--------------
+Structure
+--------------
+[BGAName To Load]
+Conditiontype:Condition
+
+--------------
+Conditions
+--------------
+
+SongTitle:
+enter the name of a song title. be aware -- if you have multiples of a song with the
+same name then you may want to enter more information like the artist and even song
+foot ratings.
+
+Example-
+SongTitle:Paranoia Survivor Max
+this will show the BGA only if PSM is available.
+
+
+
+SongArtist:
+enter the name of an artist, any song which matches the artist name will display the bga.
+
+Example-
+SongArtist:Naoki
+all songs where  the artist is Naoki will show the BGA
+
+
+
+Clear:
+clear will show the bga under one of four conditions:
+* true - this will show if the song was cleared
+* false - this will show if the song was failed
+* fullcombo - this will show if the song was full comboed
+* brokencombo - this will show if the song was cleared but not fullcomboed
+
+Example-
+Clear:fullcombo
+this will only show if one of the players fullcomboed the song.
+
+
+
+ModDisallow:
+moddisallow will ensure that the bga is NOT displayed if any of the players
+have the option. At the time of writing (11/feb/2004) not all mods have been
+supported, but certainly things like little are not available (ideal if you
+want somebody to get a rewarding bga for clearing a hard song in heavy, but dont
+want them getting it via using a mod like little).
+You may specify multiple mods by seperating them with commas (,)
+
+Example-
+ModDisallow:little,nojumps,noholds 
+the bga will only show provided little, nojumps and noholds are not selected by any
+player.
+
+
+
+Grade:
+grade will compare a players grade with their current grade if they have one
+so you could have it display a BGA if a player AAA'd a track. You may seperate
+grades via commas (,) which will indicate a grade history with the latest stage
+being at the end of the list.
+
+Example-
+Grade:AAA,AAA,AAA
+the above will show the bga only if the player has passed at least 3 stages and
+one of the players got a AAA on each stage.
+
+
+
+
+SongMonth:
+the bga will only display if the current month matches. Months range from 0-11 with 
+0 being janurary and 11 being december. 
+
+Example-
+SongMonth:2
+the bga will only appear if its march.
+
+
+
+
+SongDay:
+the bga will only appear on a day in the month
+
+Example-
+SongDay:10
+the bga only appears if it is the 10th day in the month.
+
+
+
+Style:
+the bga will only appear if the specified style is available. you can specify multiple
+style by seperating them with commas (,)
+
+Example-
+Style:double,single
+this will display the BGA only if the style is in double or single.
+
+
+
+
+SongRating:
+the bga will only show if one of the players is in a difficulty matching that specified
+you may specify multiple ratings by seperating them with a comma (,)
+
+Example-
+SongRating:heavy,light
+this will show the bga only if a player played heavy or light notes.
+
+
+
+SongDifficulty:
+if a player was playing a song with a footrating specified then the bg will display
+you can seperate difficulties with commas (,) you can specify ranges like the following:
+1-3 this is the same as writing 1,2,3 also you may check for ratings and greater for 
+example: 9+ will check for all catastrophic songs.
+
+Example-
+SongDifficulty:SongDifficulty:1-3,5,9+
+this will show the bga if the songs difficulty is 1,2,3,5,9(and onwards)
+
+
+------------------
+Overriding
+------------------
+If there are several bga's listed in a file, and the conditons specified are met
+for more than one bga, the one listed nearest to the end of the file will have priority.
+
+------------------
+Mixing Conditions
+------------------
+All conditions are mixable, for instance you may check if a song is in Expert AND if its
+title is G2.
+
+-----------------
+Examples
+-----------------
+
+//AAA three tracks in a row (your 3rd evaluation screen will have this)
+[ScreenEvaluationStage AAA3]
+Grade:AAA,AAA,AAA
+
+// clear G2 in maniac
+[ScreenEvaluationStage G2]
+SongTitle:g2
+SongRating:Heavy
+Clear:true
+ModDisallow:little,nojumps,noholds
+
+// full combo sweet in heavy on the 15th march
+[ScreenEvaluationStage 1503]
+SongTitle:sweet
+SongArtist:dj evil
+SongRating:Heavy
+SongDay:15
+SongMonth:2 // months range from 0 - 11
+Clear:maxcombo
+
+-----------------
+Version History
+-----------------
+11/feb/2004
+Initial Version, Support for SongTitle,SongArtist,SongRating,
+SongDay,SongMonth,Clear,Grade,ModDisallow,Style and SongDifficulty.
+
+------------
+Contact
+------------
+This feature was initially created by:
+frieza [letters_q (at) hotmail.com]
+
+and is maintained by:
+frieza [letters_q (at) hotmail.com]
