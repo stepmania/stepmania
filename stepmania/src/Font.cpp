@@ -453,7 +453,9 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 		char c = sChars[n];
 		cfg.CharToGlyphNo[c] = n;
 	}
-	int NumFrames = RageTexture::GetFrameCountFromFileName(TexturePath);
+	int NumFramesWide, NumFramesHigh;
+	RageTexture::GetFrameDimensionsFromFileName(TexturePath, &NumFramesWide, &NumFramesHigh);
+	int NumFrames = NumFramesWide * NumFramesHigh;
 	
 	ini.RenameKey("Char Widths", "main");
 
@@ -525,7 +527,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 			if(codepoint.substr(0, 2) == "U+" && IsHexVal(codepoint.substr(2)))
 				sscanf(codepoint.substr(2).c_str(), "%x", &c);
 			else if(codepoint.size() > 0 &&
-					utf8_get_char_len(codepoint.c_str()) == codepoint.size())
+					utf8_get_char_len(codepoint.c_str()) == int(codepoint.size()))
 			{
 				c = utf8_get_char(codepoint.c_str());
 				if(c == wchar_t(-1))
@@ -599,6 +601,34 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 					ini.GetPath().GetString(), val.GetString(), ret.GetString() );
 
 			continue;
+		}
+
+		if(val.substr(0, 5) == "LINE ")
+		{
+			/* line ROW=CHAR1CHAR2CHAR3CHAR4
+			 * eg.
+			 * line 0=ABCDEFGH
+			 *
+			 * This lets us assign characters very compactly and readably. */
+
+			CString row_str = val.substr(5);
+			ASSERT(IsAnInt(row_str));
+			const int row = atoi(row_str.c_str());
+			const int first_frame = row * NumFramesWide;
+
+			if(row > NumFramesHigh)
+				RageException::Throw("The font definition \"%s\" tries to assign line %i, but the font is only %i characters high",
+					ini.GetPath().GetString(), first_frame, NumFramesHigh);
+
+			/* Decode the string. */
+			const wstring wdata(CStringToWstring(data));
+
+			if(int(wdata.size()) > NumFramesWide)
+				RageException::Throw("The font definition \"%s\" assigns %i characters to row %i (\"%ls\"), but the font only has %i characters wide",
+					ini.GetPath().GetString(), wdata.size(), row, wdata.c_str(), NumFramesWide);
+
+			for(unsigned i = 0; i < wdata.size(); ++i)
+				cfg.CharToGlyphNo[wdata[i]] = first_frame+i;
 		}
 	}
 
