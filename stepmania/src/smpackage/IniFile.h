@@ -58,6 +58,9 @@ public:
 	//writes data stored in class to ini file
 	void WriteFile(); 
 
+	void ReadBuf( const CString &buf );
+	void WriteBuf( CString &buf ) const;
+
 	//deletes all stored ini data
 	void Reset();
 

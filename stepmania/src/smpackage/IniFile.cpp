@@ -31,24 +31,15 @@ void IniFile::SetPath(CString newpath)
 	path = newpath;
 }
 
-// reads ini file specified using IniFile::SetPath()
-// returns true if successful, false otherwise
-bool IniFile::ReadFile()
+
+void IniFile::ReadBuf( const CString &buf )
 {
-	FILE *f = fopen(path, "r");
-
-	if (f == NULL)
-	{
-		error = ssprintf("Unable to open ini file: %s", strerror(errno));
-		return 0;
-	}
-
 	CString keyname;
-	char buf[10240];
-	while (fgets(buf, sizeof(buf), f))
+	CStringArray lines;
+	split(buf, "\n", lines, true);
+	for( unsigned i = 0; i < lines.size(); ++i )
 	{
-		buf[sizeof(buf)-1]=0;
-		CString line(buf);
+		CString line = lines[i];
 
 		if(line.GetLength() >= 3 &&
 			line[0] == '\xef' &&
@@ -85,31 +76,71 @@ bool IniFile::ReadFile()
 			}
 		}
 	}
-
-	fclose(f);	
-	return 1;
 }
 
-// writes data stored in class to ini file
-void IniFile::WriteFile()
+void IniFile::WriteBuf( CString &buf ) const
 {
-	FILE* fp = fopen( path, "w" );
-
-	if( fp == NULL )
-		return;
-
+	buf = "";
 	for (keymap::const_iterator k = keys.begin(); k != keys.end(); ++k)
 	{
 		if (k->second.empty())
 			continue;
 
-		fprintf( fp, "[%s]\n", (const char *) k->first );
+		buf += ssprintf( "[%s]\r\n", (const char *) k->first );
 
 		for (key::const_iterator i = k->second.begin(); i != k->second.end(); ++i)
-			fprintf( fp, "%s=%s\n", (const char *)i->first, (const char *)i->second );
+			buf += ssprintf( "%s=%s\r\n", (const char *)i->first, (const char *)i->second );
 
-		fprintf( fp, "\n" );
+		buf += ssprintf( "\r\n" );
 	}
+}
+
+
+// reads ini file specified using IniFile::SetPath()
+// returns true if successful, false otherwise
+bool IniFile::ReadFile()
+{
+	FILE *f = fopen(path, "rb");
+
+	if (f == NULL)
+	{
+		error = ssprintf("Unable to open ini file: %s", strerror(errno));
+		return 0;
+	}
+
+	int size = GetFileSizeInBytes(path);
+	char *buf = new char[size+1];
+	int ret = fread(buf, 1, size, f);
+	if ( ret != size )
+	{
+		if( ferror(f) )
+			error = ssprintf("Unable to read ini file: %s", strerror(errno));
+		else
+			error = ssprintf("Unexpected eof in INI");
+		delete[] buf;
+		fclose(f);	
+
+		return false;
+	}
+
+	ReadBuf(buf);
+
+	delete[] buf;
+	fclose(f);	
+	return true;
+}
+
+// writes data stored in class to ini file
+void IniFile::WriteFile()
+{
+	CString buf;
+	WriteBuf( buf );
+	FILE* fp = fopen( path, "wb" );
+
+	if( fp == NULL )
+		return;
+	
+	fwrite(buf.GetBuffer(), buf.GetLength(), 1, fp);
 	fclose( fp );
 }
 
