@@ -152,19 +152,24 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			return;
 		}
 
+		static int axes[] = 
+		{
+			JOY_LEFT, JOY_RIGHT, JOY_UP, JOY_DOWN,
+			JOY_Z_UP, JOY_Z_DOWN,
+			JOY_ROT_UP, JOY_ROT_DOWN, JOY_ROT_LEFT, JOY_ROT_RIGHT, JOY_ROT_Z_UP, JOY_ROT_Z_DOWN,
+			JOY_HAT_LEFT, JOY_HAT_RIGHT, JOY_HAT_UP, JOY_HAT_DOWN, 
+			JOY_AUX_1, JOY_AUX_2, JOY_AUX_3, JOY_AUX_4,
+			-1
+		};
+
+		bool IsAxis = false;
+		for( int ax = 0; axes[ax] != -1; ++ax )
+			if( DeviceI.button == axes[ax] )
+				IsAxis = true;
+
 		// ignore joystick D-Pad presses if the user has set their pref.
-		if( PREFSMAN->m_bIgnoreJoyAxes  &&
-			DEVICE_JOY1 <= DeviceI.device  &&  DeviceI.device <= DEVICE_JOY4  &&
-			( DeviceI.button == JOY_LEFT ||
-			  DeviceI.button == JOY_RIGHT || 
-			  DeviceI.button == JOY_UP || 
-			  DeviceI.button == JOY_DOWN ||
-			  DeviceI.button == JOY_ROT_UP ||
-			  DeviceI.button == JOY_ROT_DOWN ||
-			  DeviceI.button == JOY_ROT_LEFT ||
-			  DeviceI.button == JOY_ROT_RIGHT ||
-			  DeviceI.button == JOY_ROT_Z_UP ||
-			  DeviceI.button == JOY_ROT_Z_DOWN ) )
+		if( PREFSMAN->m_bIgnoreJoyAxes && IsAxis &&
+			DEVICE_JOY1 <= DeviceI.device  &&  DeviceI.device <= DEVICE_JOY4 )
 		{
 			//m_textError.SetText( "Game option is set to ignore the Joystick D-Pad." );
 			//m_fErrorDisplayCountdown = 5;	// show the error message
