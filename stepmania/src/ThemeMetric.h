@@ -4,6 +4,8 @@
 #define THEME_METRIC_H
 
 #include "ThemeManager.h"
+#include "Foreach.h"
+#include <map>
 
 class IThemeMetric
 {
@@ -151,6 +153,37 @@ public:
 	}
 };
 
+typedef CString (*MetricNameMap)(CString s);
+
+template <class T>
+class ThemeMetricMap : public IThemeMetric
+{
+	typedef ThemeMetric<T> ThemeMetricT;
+	map<CString,ThemeMetricT> m_metric;
+
+public:
+	ThemeMetricMap( const CString& sGroup = "", MetricNameMap pfn = NULL, const vector<CString> vsValueNames = vector<CString>() )
+	{
+		Load( sGroup, pfn, vsValueNames );
+	}
+	void Load( const CString& sGroup, MetricNameMap pfn, const vector<CString> vsValueNames )
+	{
+		m_metric.clear();
+		FOREACH_CONST( CString, vsValueNames, s )
+			m_metric[*s].Load( sGroup, pfn(*s) );
+	}
+	void Read()
+	{
+		FOREACHM( CString, ThemeMetricT, m_metric, m )
+			m->second.Read();
+	}
+	const T& GetValue( CString s ) const
+	{
+		map<CString,ThemeMetricT>::const_iterator iter = m_metric.find(s);
+		ASSERT( iter != m_metric.end() );
+		return iter->second.GetValue();
+	}
+};
 
 #endif
 
