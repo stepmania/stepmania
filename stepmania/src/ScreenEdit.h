@@ -138,7 +138,7 @@ public:
 protected:
 	ThemeMetric<CString> PREV_SCREEN;
 	
-	enum EditMode { MODE_EDITING, MODE_RECORDING, MODE_PLAYING };
+	enum EditMode { MODE_EDITING, MODE_RECORDING, MODE_PLAYING, NUM_EDIT_MODES, MODE_INVALID };
 	void TransitionEditMode( EditMode em );
 	void PlayTicks();
 	void PlayPreviewMusic();
