@@ -114,7 +114,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 			g_fExpandSeconds += timerExpand.GetDeltaTime();
 		else
 			timerExpand.GetDeltaTime();	// throw away
-		float fExpandMultiplier = SCALE( RageFastCos(g_fExpandSeconds*3), -1, 1, 0.5f, 1.5f );
+		float fExpandMultiplier = SCALE( RageFastCos(g_fExpandSeconds*3), -1, 1, 0.75f, 1.75f );
 		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 0.f, 1.f, 1.f, fExpandMultiplier );
 	}
 
