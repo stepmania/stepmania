@@ -561,7 +561,6 @@ reshuffle:
 		switch( st )
 		{
 		case STEPS_TYPE_DANCE_SINGLE:
-		case STEPS_TYPE_DANCE_DOUBLE:
 		case STEPS_TYPE_DANCE_COUPLE:
 			iTakeFromTrack[0] = 3;
 			iTakeFromTrack[1] = 2;
@@ -571,6 +570,16 @@ reshuffle:
 			iTakeFromTrack[5] = 6;
 			iTakeFromTrack[6] = 5;
 			iTakeFromTrack[7] = 4;
+			break;
+		case STEPS_TYPE_DANCE_DOUBLE:
+			iTakeFromTrack[0] = 1;
+			iTakeFromTrack[1] = 0;
+			iTakeFromTrack[2] = 3;
+			iTakeFromTrack[3] = 2;
+			iTakeFromTrack[4] = 5;
+			iTakeFromTrack[5] = 4;
+			iTakeFromTrack[6] = 7;
+			iTakeFromTrack[7] = 6;
 			break;
 		default: 
 			break;
