@@ -68,6 +68,8 @@ class RageSound
 
 	float speed;
 
+	bool AccurateSync;
+
 	/* If true, the sound will stop when it reaches the end; otherwise it'll
 	 * continue to move forward, feeding silence, which is useful to continue
 	 * timing longer than the actual sound.  (However, if this is false, the
@@ -99,6 +101,7 @@ public:
 	float GetLengthSeconds();
 	float GetPositionSeconds() const;
 	void SetPositionSeconds( float fSeconds );
+	void SetAccurateSync(bool yes=true) { AccurateSync = yes; }
 	void SetPlaybackRate( float fScale );
 	float GetPlaybackRate() const { return speed; }
 	bool IsPlaying() const { return playing; }

@@ -79,7 +79,7 @@ RageSound::RageSound()
 	stream.buf.reserve(internal_buffer_size);
 	m_StartSeconds = 0;
 	m_LengthSeconds = -1;
-
+	AccurateSync = false;
 	/* Register ourselves, so we receive Update()s. */
 	SOUNDMAN->all_sounds.insert(this);
 }
@@ -101,7 +101,6 @@ RageSound::RageSound(const RageSound &cpy)
 
 	full_buf = cpy.full_buf;
 	big = cpy.big;
-	AutoStop = cpy.AutoStop;
 	m_sFilePath = cpy.m_sFilePath;
 	m_StartSeconds = cpy.m_StartSeconds;
 	m_LengthSeconds = cpy.m_LengthSeconds;
@@ -109,7 +108,9 @@ RageSound::RageSound(const RageSound &cpy)
 	position = cpy.position;
 	playing = false;
 	speed = cpy.speed;
-
+	AccurateSync = cpy.AccurateSync;
+	AutoStop = cpy.AutoStop;
+	
 	if(big)
 	{
 		/* We can't copy the Sound_Sample, so load a new one. 
@@ -560,7 +561,10 @@ void RageSound::SetPositionSeconds( float fSeconds )
 
 	if(big) {
 		ASSERT(stream.Sample);
-		Sound_AccurateSeek(stream.Sample, int(fSeconds * 1000));
+		if(AccurateSync)
+			Sound_AccurateSeek(stream.Sample, int(fSeconds * 1000));
+		else
+			Sound_FastSeek(stream.Sample, int(fSeconds * 1000));
 		stream.buf.clear();
 	}
 }
@@ -580,6 +584,9 @@ void RageSound::LoadAndPlayIfNotAlready( CString sSoundFilePath )
 		return;		// do nothing
 
 	Load( sSoundFilePath );
+	SetPositionSeconds(0);
+	SetStartSeconds(0);
+	SetLengthSeconds();
 	SetLooping();
 	Play();
 }
