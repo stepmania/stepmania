@@ -398,7 +398,7 @@ struct VideoCardDefaults
 } const g_VideoCardDefaults[] = 
 {
 	{
-		"Voodoo3",
+		"Voodoo *3",
 		"d3d,opengl",
 		640,480,
 		16,16,16,
@@ -406,7 +406,7 @@ struct VideoCardDefaults
 		false	// broken, causes black screen
 	},
 	{
-		"Voodoo5",
+		"Voodoo *5",
 		"d3d,opengl",	// recevied 3 reports of open opengl crashing. -Chris
 		640,480,
 		32,32,32,
