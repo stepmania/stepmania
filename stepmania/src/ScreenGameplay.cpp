@@ -1026,12 +1026,31 @@ void ScreenGameplay::LoadNextSong()
 	// Load cabinet lights data
 	//
 	{
+		int	i;
+		vector<Steps*> vSteps;
 		m_CabinetLightsNoteData.Init();
 		ASSERT( GAMESTATE->m_pCurSong );
-				
-		Steps *pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( STEPS_TYPE_LIGHTS_CABINET, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
-		if( pSteps != NULL )
-			pSteps->GetNoteData( &m_CabinetLightsNoteData );
+		
+		// From what I understood, if there is no pre-defined step set for lights, then we fall-back
+		//   onto the specified difficulty's stepchart, flashing all cabinet lights on each tap note.
+		//   -- Miryokuteki
+		//	Steps *pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( STEPS_TYPE_LIGHTS_CABINET, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
+
+		StepsType lightsSteps = GAMESTATE->GetCurrentStyle()->m_StepsType; //STEPS_TYPE_DANCE_SINGLE;
+		GAMESTATE->m_pCurSong->GetSteps(vSteps,lightsSteps);
+		
+		if(!vSteps.empty()) {vSteps[0]->GetNoteData(&m_CabinetLightsNoteData);}
+		for (i=0;i<vSteps.size();i++) { 	 
+			Difficulty DC = StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty);
+			Difficulty DC2 = vSteps[i]->GetDifficulty();
+			if(DC == DC2) {vSteps[i]->GetNoteData( &m_CabinetLightsNoteData );}
+		}
+
+
+
+		
+		//if( pSteps != NULL )
+		//	pSteps->GetNoteData( &m_CabinetLightsNoteData );
 		
 		// Convert to 4s so that we can check if we're inside a hold with just 
 		// GetTapNote().
@@ -1443,9 +1462,12 @@ void ScreenGameplay::Update( float fDeltaTime )
 		for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
 		{
 			FOREACH_CabinetLight( cl )
-			{
+			{	
+				// Somehow, step data was getting majorly corrupted, therefor causing light
+				// signals to be sent at incorrect times where notes were not even present.
 				bool bBlink = (m_CabinetLightsNoteData.GetTapNote( cl, r ) != TAP_EMPTY);
-				bBlinkCabinetLight[cl] |= bBlink;
+				bBlinkCabinetLight[cl] |= bBlink;	// Why are we OR'ing a boolean??
+				//bBlinkCabinetLight[cl] = m_CabinetLightsNoteData.IsThereATapAtRow(iRowNow); //(m_CabinetLightsNoteData.GetTapNote(cl,r) != TAP_EMPTY);
 			}
 			FOREACH_EnabledPlayer( pn )
 			{
