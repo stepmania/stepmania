@@ -92,7 +92,6 @@ public:
 
 	bool		m_bRepeat;	// repeat after last song?  "Endless"
 	bool		m_bRandomize;	// play the songs in a random order
-//	bool		m_bDifficult; // only make something difficult once
 	int			m_iLives;	// -1 means use bar life meter
 	int			m_iMeter;	// -1 autogens
 
