@@ -4,79 +4,121 @@
  *  RageSoundDriver_CA.h
  *  stepmania
  *
- *  Created by Steve Checkoway on Tue Aug 26 2003.
- *  Copyright (c) 2003 Steve Checkoway. All rights reserved.
+ *  Sound stream pool code based on RageSoundDriver_ALSA9.h/.cpp by Glen Maynard.
+ *
+ * Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
+ *	Steve Checkoway
+ *	Charlie Reading
  *
  */
 
 #include "RageSoundDriver.h"
-#define BROKEN_DRIVER_1 1
-#define BROKEN_DRIVER_2 2
+#include "RageThreads.h"
 
-#define CURRENT_DRIVER BROKEN_DRIVER_2
+
+#define DRIVER_UNFINISHED 		0
+#define DRIVER_HAL				1
+#define DRIVER 					DRIVER_HAL
+
+#define FEEDER_DIRECT			0
+#define FEEDER_THREAD			1
+#define FEEDER					FEEDER_DIRECT
+
+#define RESYNC_NEVER			0
+#define RESYNC_INSTANTANEOUS	1
+#define RESYNC_ACCUMULATE		2
+#define RESYNC					RESYNC_ACCUMULATE
+
 
 struct AudioTimeStamp;
 struct AudioBufferList;
-#if CURRENT_DRIVER == BROKEN_DRIVER_1
-struct OpaqueAudioConverter;
-typedef struct OpaqueAudioConverter *AudioConverterRef;
-#endif
+typedef unsigned char Boolean;
 typedef long OSStatus;
 typedef unsigned long UInt32;
 typedef UInt32 AudioDeviceID;
+typedef UInt32	AudioDevicePropertyID;
 typedef UInt32 AudioUnitRenderActionFlags;
-#if CURRENT_DRIVER == BROKEN_DRIVER_2
-struct ComponentInstanceRecord;
-typedef struct ComponentInstanceRecord *AudioUnit;
+typedef double Float64;
+struct OpaqueAudioConverter;
+typedef struct OpaqueAudioConverter *AudioConverterRef;
+struct AudioStreamBasicDescription;
+#if (FEEDER == FEEDER_THREAD)
+class VirtualRingBuffer;
 #endif
 
-class RageSound_CA : public RageSoundDriver
+class RageSound_CA: public RageSoundDriver
 {
 private:
-    typedef struct sound {
-        RageSoundBase *snd;
-        bool stopping;
+	/* Sound stream */
+    struct stream
+    {
+		enum { INACTIVE, PLAYING, STOPPING } state;
+
+        RageSound *snd;
         int flush_pos;
-        sound() { snd=NULL; stopping=false; flush_pos=0; }
-    } *soundPtr;
 
-    vector<soundPtr> sounds;
-#if CURRENT_DRIVER == BROKEN_DRIVER_1
-    AudioConverterRef converter;
-#elif CURRENT_DRIVER == BROKEN_DRIVER_2
-    AudioUnit outputUnit;
-#endif
+		void clear() { snd=NULL; state=INACTIVE; flush_pos=0; }
+        stream() { clear(); }
+
+    };
+	friend struct stream;
+
+	/* Pool of available streams. */
+	vector<stream *> stream_pool;
+	int streamsInUse;
+	
     AudioDeviceID outputDevice;
-    float latency;
+	AudioStreamBasicDescription *idealFormat;
+	AudioStreamBasicDescription *actualFormat;
     UInt32 buffersize;
+	int samplesPerBuffer;
 
-    static int ConvertAudioTimeStampToPosition(const AudioTimeStamp *time);
+    AudioConverterRef converter;
+	
+	bool shutdown;
+    float latency;
+
+	Float64 startSampleTime;
+	int expected;
+#if (RESYNC != RESYNC_NEVER)
+	int packetsOff;
+	int packetsOffSamples;
+#endif
+	
+#if (FEEDER == FEEDER_THREAD)
+	size_t vrbChunkSize;
+	VirtualRingBuffer *vrb;
+	RageThread feederThread;
+	int nextSampleToWrite;
+
+	static int FeederThread_start(void *p);
+	void FeederThread();
+#endif
+
+    int ConvertSampleTimeToPosition(const Float64 sampleTime) const;
+    int ConvertAudioTimeStampToPosition(const AudioTimeStamp *time) const;
+
 protected:
-    virtual void StartMixing(RageSoundBase *snd);
-    virtual void StopMixing(RageSoundBase *snd);
-    virtual int GetPosition(const RageSoundBase *snd) const;
+    virtual void StartMixing(RageSound *snd);
     virtual void Update (float delta);
-    virtual float GetPlayLatency() const { return latency; }
+    virtual void StopMixing(RageSound *snd);
+    virtual int GetPosition(const RageSound *snd) const;
+    virtual float GetPlayLatency() const;
+	virtual int GetSampleRate() const;
+
+	size_t smSamplesToBytes(int samples);
+	int smBytesToSamples(size_t bytes);
+	size_t caSamplesToBytes(int samples);
+	int caBytesToSamples(size_t bytes);
 
 public:
     RageSound_CA();
     virtual ~RageSound_CA();
-#if CURRENT_DRIVER == BROKEN_DRIVER_1
-    static OSStatus GetData(AudioDeviceID			inDevice,
-                            const AudioTimeStamp*	inNow,
-                            const AudioBufferList*	inInputData,
-                            const AudioTimeStamp*	inInputTime,
-                            AudioBufferList*		outOutputData,
-                            const AudioTimeStamp*	inOutputTime,
-                            void*					inClientData);
-#elif CURRENT_DRIVER == BROKEN_DRIVER_2
-    static  OSStatus GetData(void						*inRecCon,
-                             AudioUnitRenderActionFlags *inActionFlags,
-                             const AudioTimeStamp		*inTimeStamp,
-                             UInt32						inBusNumber,
-                             UInt32						inNumFrames,
-                             AudioBufferList			*ioData);
-#endif
+	
+	virtual size_t FillSoundBuffer(char* buffer, size_t maxBufferSize, int position);
+	
+    static OSStatus GetData(AudioDeviceID inDevice, const AudioTimeStamp* inNow, const AudioBufferList*	inInputData, const AudioTimeStamp* inInputTime, AudioBufferList* outOutputData, const AudioTimeStamp* inOutputTime, void* inClientData);
+	static OSStatus OverloadListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput, AudioDevicePropertyID inPropertyID, void* inClientData);
 };
 
 #endif RAGE_SOUND_CA
