@@ -720,10 +720,19 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\RandomSample.h">
 			</File>
 			<File
-				RelativePath="RaveHelper.cpp">
+				RelativePath="ScoreKeeper.h">
 			</File>
 			<File
-				RelativePath="RaveHelper.h">
+				RelativePath="ScoreKeeperMAX2.cpp">
+			</File>
+			<File
+				RelativePath="ScoreKeeperMAX2.h">
+			</File>
+			<File
+				RelativePath="ScoreKeeperRave.cpp">
+			</File>
+			<File
+				RelativePath="ScoreKeeperRave.h">
 			</File>
 			<File
 				RelativePath="ScreenWarning.h">
@@ -1311,6 +1320,18 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\Background.h">
 			</File>
 			<File
+				RelativePath="CombinedLifeMeterEnemy.cpp">
+			</File>
+			<File
+				RelativePath="CombinedLifeMeterEnemy.h">
+			</File>
+			<File
+				RelativePath="CombinedLifeMeterTug.cpp">
+			</File>
+			<File
+				RelativePath="CombinedLifeMeterTug.h">
+			</File>
+			<File
 				RelativePath=".\Combo.cpp">
 			</File>
 			<File
@@ -1321,18 +1342,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="DancingCharacters.h">
-			</File>
-			<File
-				RelativePath="EnemyFace.cpp">
-			</File>
-			<File
-				RelativePath="EnemyFace.h">
-			</File>
-			<File
-				RelativePath="EnemyHealth.cpp">
-			</File>
-			<File
-				RelativePath="EnemyHealth.h">
 			</File>
 			<File
 				RelativePath=".\GhostArrow.cpp">
@@ -1381,9 +1390,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="Judgment.h">
-			</File>
-			<File
-				RelativePath="LifeMeter.cpp">
 			</File>
 			<File
 				RelativePath="LifeMeter.h">
@@ -1453,18 +1459,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScoreDisplayRave.h">
-			</File>
-			<File
-				RelativePath="ScoreKeeper.cpp">
-			</File>
-			<File
-				RelativePath="ScoreKeeper.h">
-			</File>
-			<File
-				RelativePath="ScoreKeeperMAX2.cpp">
-			</File>
-			<File
-				RelativePath="ScoreKeeperMAX2.h">
 			</File>
 			<File
 				RelativePath="TimingAssist.cpp">
