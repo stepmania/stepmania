@@ -437,6 +437,7 @@ protected:
 	// commands
 	//
 	map<CString, apActorCommands> m_mapNameToCommands;
+	vector<CString> m_vsSubscribedTo;
 };
 
 template<class T>

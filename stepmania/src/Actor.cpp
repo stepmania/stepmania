@@ -90,13 +90,9 @@ static bool GetMessageNameFromCommandName( const CString &sCommandName, CString 
 
 void Actor::UnsubcribeAndClearCommands()
 {
-	FOREACHM_CONST( CString, apActorCommands, m_mapNameToCommands, e )
-	{
-		CString sMessage;
-		if( GetMessageNameFromCommandName(e->first, sMessage) )
-			MESSAGEMAN->Unsubscribe( this, sMessage );
-	}
-	m_mapNameToCommands.clear();
+	FOREACH_CONST( CString, m_vsSubscribedTo, s )
+		MESSAGEMAN->Unsubscribe( this, *s );
+	m_vsSubscribedTo.clear();
 }
 
 Actor::~Actor()
@@ -1049,10 +1045,17 @@ void Actor::QueueMessage( const CString& sMessageName )
 
 void Actor::AddCommand( const CString &sCmdName, apActorCommands apac )
 {
-	m_mapNameToCommands[sCmdName] = apac;
 	CString sMessage;
 	if( GetMessageNameFromCommandName(sCmdName, sMessage) )
+	{
 		MESSAGEMAN->Subscribe( this, sMessage );
+		m_vsSubscribedTo.push_back( sMessage );
+		m_mapNameToCommands[sMessage] = apac;	// sCmdName w/o "Message" at the end
+	}
+	else
+	{
+		m_mapNameToCommands[sCmdName] = apac;
+	}
 }
 
 void Actor::PlayCommand( const CString &sCommandName )
@@ -1073,7 +1076,7 @@ void Actor::PlayCommand2( const CString &sCommandName, Actor *pParent )
 
 void Actor::HandleMessage( const CString& sMessage )
 {
-	PlayCommand( sMessage + "Message" );
+	PlayCommand( sMessage );
 }
 
 
