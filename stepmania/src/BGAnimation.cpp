@@ -11,8 +11,8 @@
 #include "ActorUtil.h"
 #include "LuaHelpers.h"
 #include "arch/Dialog/Dialog.h"
+#include "Foreach.h"
 
-const int MAX_LAYERS = 1000;
 
 BGAnimation::BGAnimation( bool Generic )
 {
@@ -40,6 +40,18 @@ void BGAnimation::LoadFromStaticGraphic( CString sPath )
 	AddChild( pLayer );
 }
 
+static bool CompareLayerNames( const CString& s1, const CString& s2 )
+{
+	int i1, i2;
+	int ret;
+
+	ret = sscanf( s1, "Layer%d", &i1 );
+	ASSERT( ret == 1 );
+	ret = sscanf( s2, "Layer%d", &i2 );
+	ASSERT( ret == 1 );
+	return i1 < i2;
+}
+
 void AddLayersFromAniDir( CString sAniDir, vector<Actor*> &layersAddTo, bool Generic )
 {
 	if( sAniDir.empty() )
@@ -64,37 +76,47 @@ void AddLayersFromAniDir( CString sAniDir, vector<Actor*> &layersAddTo, bool Gen
 		}
 	}
 
-	for( int i=0; i<MAX_LAYERS; i++ )
 	{
-		CString sLayer = ssprintf("Layer%d",i+1);
-		const IniFile::key* pKey = ini.GetKey( sLayer );
-		if( pKey == NULL )
-			continue;	// skip
-
-		CString sImportDir;
-		if( ini.GetValue(sLayer, "Import", sImportDir) )
+		vector<CString> vsLayerNames;
+		for( IniFile::const_iterator iter = ini.begin(); iter != ini.end(); iter++ )
 		{
-			CString expr;
-			if( ini.GetValue(sLayer,"Condition",expr) )
-			{
-				if( !Lua::RunExpressionB( expr ) )
-					continue;
-			}
-
-			// import a whole BGAnimation
-			sImportDir = sAniDir + sImportDir;
-			CollapsePath( sImportDir );
-			AddLayersFromAniDir( sImportDir, layersAddTo, Generic );
+			if( strncmp(iter->first, "Layer", 5) == 0 )
+				vsLayerNames.push_back( iter->first );
 		}
-		else
+
+		sort( vsLayerNames.begin(), vsLayerNames.end(), CompareLayerNames );
+
+
+		FOREACH_CONST( CString, vsLayerNames, s )
 		{
-			// import as a single layer
-			BGAnimationLayer* pLayer = new BGAnimationLayer( Generic );
-			pLayer->LoadFromIni( sAniDir, sLayer );
-			layersAddTo.push_back( pLayer );
+			const CString sLayer = *s;
+			const IniFile::key* pKey = ini.GetKey( sLayer );
+			ASSERT( pKey );
+
+			CString sImportDir;
+			if( ini.GetValue(sLayer, "Import", sImportDir) )
+			{
+				CString expr;
+				if( ini.GetValue(sLayer,"Condition",expr) )
+				{
+					if( !Lua::RunExpressionB( expr ) )
+						continue;
+				}
+
+				// import a whole BGAnimation
+				sImportDir = sAniDir + sImportDir;
+				CollapsePath( sImportDir );
+				AddLayersFromAniDir( sImportDir, layersAddTo, Generic );
+			}
+			else
+			{
+				// import as a single layer
+				BGAnimationLayer* pLayer = new BGAnimationLayer( Generic );
+				pLayer->LoadFromIni( sAniDir, sLayer );
+				layersAddTo.push_back( pLayer );
+			}
 		}
 	}
-
 }
 
 void BGAnimation::LoadFromAniDir( CString sAniDir )
