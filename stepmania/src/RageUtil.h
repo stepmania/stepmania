@@ -119,6 +119,9 @@ CString SecondsToTime( float fSecs );
 CString ssprintf( const char *fmt, ...);
 CString vssprintf( const char *fmt, va_list argList );
 
+#ifdef WIN32
+CString hr_ssprintf( int hr, const char *fmt, ...);
+#endif
 
 // Splits a Path into 4 parts (Directory, Drive, Filename, Extention).  Supports UNC path names.
 // param1: Whether the Supplied Path (PARAM2) contains a directory name only

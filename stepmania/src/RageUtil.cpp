@@ -65,10 +65,6 @@ CString SecondsToTime( float fSecs )
 	return sReturn;
 }
 
-//-----------------------------------------------------------------------------
-// Name: ssprintf()
-// Desc:
-//-----------------------------------------------------------------------------
 CString ssprintf( const char *fmt, ...)
 {
     va_list	va;
@@ -77,10 +73,6 @@ CString ssprintf( const char *fmt, ...)
 }
 
 
-//-----------------------------------------------------------------------------
-// Name: vssprintf()
-// Desc:
-//-----------------------------------------------------------------------------
 CString vssprintf( const char *fmt, va_list argList)
 {
 	CString str;
@@ -88,12 +80,21 @@ CString vssprintf( const char *fmt, va_list argList)
 	return str;
 }
 
+#ifdef WIN32
+#include "dxerr8.h"
+#pragma comment(lib, "DxErr8.lib")
 
+CString hr_ssprintf( int hr, const char *fmt, ...)
+{
+    va_list	va;
+    va_start(va, fmt);
+    CString s = vssprintf( fmt, va );
+    va_end(va);
 
-//-----------------------------------------------------------------------------
-// Name: join()
-// Desc:
-//-----------------------------------------------------------------------------
+	return s += ssprintf( "(%s)", DXGetErrorString8(hr) );
+}
+#endif
+
 CString join( const CString &Deliminator, const CStringArray& Source)
 {
 	if( Source.empty() )
@@ -111,10 +112,6 @@ CString join( const CString &Deliminator, const CStringArray& Source)
 }
 
 
-//-----------------------------------------------------------------------------
-// Name: split()
-// Desc:
-//-----------------------------------------------------------------------------
 void split( const CString &Source, const CString &Deliminator, CStringArray& AddIt, const bool bIgnoreEmpty )
 {
 	int startpos = 0;
@@ -199,10 +196,6 @@ void splitpath( bool UsingDirsOnly, const CString &Path, CString& Drive, CString
 	}
 }
 
-//-----------------------------------------------------------------------------
-// Name: splitpath()
-// Desc:
-//-----------------------------------------------------------------------------
 void splitrelpath( const CString &Path, CString& Dir, CString& FName, CString& Ext )
 {
 	/* Find the last slash or backslash. */
