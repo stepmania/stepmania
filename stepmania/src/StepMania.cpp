@@ -55,6 +55,8 @@
 #include "NoteData.h"
 #include "Notes.h"
 
+#include "tls.h"
+#include "crash.h"
 
 #include "dxerr8.h"
 //#include <Afxdisp.h>
@@ -133,12 +135,34 @@ void StructuredExceptionHandler(unsigned int uCode,
 	}
 	throw std::exception(msg);
 }
+void SplitCommandLine(const char *lpCmdLine, CStringArray &aCmds) {
+    const char *s = lpCmdLine;
+
+	/* Split a string on whitespace, but never between quotes. */
+    while(*s) {
+		CString cmd;
+
+		while( isspace(*s) ) s++;
+
+		bool quoted = false;
+		while( *s && (quoted || !isspace(*s)) )
+		{
+			cmd += *s;
+            if (*s == '"')
+                    quoted = !quoted;
+			s++;
+		}
+
+		if(cmd.GetLength())
+			aCmds.Add(cmd);
+	}
+}
 
 //-----------------------------------------------------------------------------
 // Name: WinMain()
 // Desc: Application entry point
 //-----------------------------------------------------------------------------
-int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
+int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR CmdLine, int nCmdShow )
 {
 	_set_se_translator( StructuredExceptionHandler );
 
@@ -146,6 +170,17 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 #ifdef _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF|_CRTDBG_LEAK_CHECK_DF);
 #endif
+	
+	SetUnhandledExceptionFilter(CrashHandler);
+	InitThreadData("Main thread");
+	VDCHECKPOINT;
+
+	CStringArray Cmds;
+	SplitCommandLine(CmdLine, Cmds);
+	for(int i = 0; i < Cmds.GetSize(); ++i)
+	{
+		if(Cmds[i] == "--fsck") { crash(); exit( 0 ); }
+	}
 
 #ifndef _DEBUG
 	try
@@ -303,14 +338,6 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 	catch( RageException e )
 	{
 		g_sErrorString = e.what();
-	}
-	catch( exception e )
-	{
-		g_sErrorString = e.what();
-	}
-	catch( ... )
-	{
-		g_sErrorString = "Unknown exception";
 	}
 
 	if( g_sErrorString != "" )
