@@ -2849,17 +2849,12 @@ void GameManager::GetNotesTypesForGame( Game game, vector<StepsType>& aNotesType
 		for( unsigned s=0; !found && s<NUM_STYLES; s++ )
 		{
 			const Style* style = &g_Styles[s];
-			if( style->m_Game != game )
+			if( style->m_Game != game || style->m_StepsType != st )
 				continue;
-			for( int pl = 0; !found && pl < NUM_PLAYERS; ++pl)
-			{
-				if( style->m_StepsType != st )	
-					continue;
 
-				found=true;
-			}
+			found = true;
 		}
-		if(found)
+		if( found )
 			aNotesTypeAddTo.push_back( st );
 	}
 }
@@ -2912,13 +2907,7 @@ bool GameManager::IsGameEnabled( Game game )
 
 int GameManager::NotesTypeToNumTracks( StepsType st )
 {
-	if( st >= NUM_STEPS_TYPES )
-	{
-		// invalid StepsType
-		ASSERT(0);
-		return -1;
-	}
-
+	ASSERT_M( st < NUM_STEPS_TYPES, ssprintf("%i", st) );
 	return NotesTypes[st].NumTracks;
 }
 
@@ -2945,13 +2934,7 @@ StepsType GameManager::StringToNotesType( CString sNotesType )
 
 CString GameManager::NotesTypeToString( StepsType st )
 {
-	if( st >= NUM_STEPS_TYPES )
-	{
-		// invalid StepsType
-		ASSERT(0);
-		return "";
-	}
-
+	ASSERT_M( st < NUM_STEPS_TYPES, ssprintf("%i", st) );
 	return NotesTypes[st].name;
 }
 
