@@ -390,42 +390,7 @@ Font *FontManager::LoadFontInt(const CString &sFontOrTextureFilePath, CString sC
  */
 Font* FontManager::LoadFont( const CString &sFontOrTextureFilePath, CString sChars )
 {
-	if(CharAliases.empty())
-	{
-		/* XXX; these should be in a data file somewhere (theme metrics?) 
-		 * (The comments here are UTF-8; they won't show up in VC6.) */
-		CharAliases["default"]		= Font::DEFAULT_GLYPH; /* ? */
-		CharAliases["kakumei1"]		= 0x9769; /* 革 */
-		CharAliases["kakumei2"]		= 0x547D; /* 命 */
-		CharAliases["matsuri"]		= 0x796D; /* 祭 */
-		CharAliases["oni"]			= 0x9B3C; /* 鬼 */
-		CharAliases["michi"]		= 0x9053; /* 道 */
-		CharAliases["futatsu"]		= 0x5F10; /* 弐 */
-		CharAliases["omega"]		= 0x03a9; /* Ω */
-		CharAliases["whiteheart"]	= 0x2661; /* ♡ */
-		CharAliases["blackstar"]	= 0x2605; /* ★ */
-
-		CharAliases["up"]			= 0x100000;
-		CharAliases["down"]			= 0x100001;
-		CharAliases["left"]			= 0x100002;
-		CharAliases["right"]		= 0x100003;
-		CharAliases["menuup"]		= 0x100004;
-		CharAliases["menudown"]		= 0x100005;
-		CharAliases["menuleft"]		= 0x100006;
-		CharAliases["menuright"]	= 0x100007;
-		CharAliases["start"]		= 0x100008;
-
-		CharAliases["invalid"]		= INVALID_CHAR; /* 0xFFFFFF */
-
-		for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
-		{
-			CString from = ssprintf("&%s;", i->first.GetString());
-			CString to = LcharToUTF8(i->second);
-			from.MakeUpper();
-			CharAliasRepl[from] = to;
-			LOG->Trace("from '%s' to '%s'", from.GetString(), to.GetString());
-		}
-	}
+	InitCharAliases();
 
 	// Convert the path to lowercase so that we don't load duplicates.
 	// Really, this does not solve the duplicate problem.  We could have to copies
@@ -481,3 +446,53 @@ CString FontManager::GetPageNameFromFileName(const CString &fn)
 	if(end == begin) return "main";
 	return fn.substr(begin, end-begin+1);
 }
+
+
+void FontManager::InitCharAliases()
+{
+	if(!CharAliases.empty())
+		return;
+	/* XXX; these should be in a data file somewhere (theme metrics?) 
+		* (The comments here are UTF-8; they won't show up in VC6.) */
+	CharAliases["default"]		= Font::DEFAULT_GLYPH; /* ? */
+	CharAliases["kakumei1"]		= 0x9769; /* 革 */
+	CharAliases["kakumei2"]		= 0x547D; /* 命 */
+	CharAliases["matsuri"]		= 0x796D; /* 祭 */
+	CharAliases["oni"]			= 0x9B3C; /* 鬼 */
+	CharAliases["michi"]		= 0x9053; /* 道 */
+	CharAliases["futatsu"]		= 0x5F10; /* 弐 */
+	CharAliases["omega"]		= 0x03a9; /* Ω */
+	CharAliases["whiteheart"]	= 0x2661; /* ♡ */
+	CharAliases["blackstar"]	= 0x2605; /* ★ */
+
+	CharAliases["up"]			= 0x100000;
+	CharAliases["down"]			= 0x100001;
+	CharAliases["left"]			= 0x100002;
+	CharAliases["right"]		= 0x100003;
+	CharAliases["menuup"]		= 0x100004;
+	CharAliases["menudown"]		= 0x100005;
+	CharAliases["menuleft"]		= 0x100006;
+	CharAliases["menuright"]	= 0x100007;
+	CharAliases["start"]		= 0x100008;
+
+	CharAliases["invalid"]		= INVALID_CHAR; /* 0xFFFFFF */
+
+	for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
+	{
+		CString from = ssprintf("&%s;", i->first.GetString());
+		CString to = LcharToUTF8(i->second);
+		from.MakeUpper();
+		CharAliasRepl[from] = to;
+		LOG->Trace("from '%s' to '%s'", from.GetString(), to.GetString());
+	}
+}
+
+/* Replace all &markers; and &#NNNN;s with UTF-8.  I'm not really
+ * sure where to put this; this is used elsewhere, too. */
+void FontManager::ReplaceMarkers( CString &sText )
+{
+	InitCharAliases();
+	ReplaceText(sText, FontManager::CharAliasRepl);
+	Replace_Unicode_Markers(sText);
+}
+

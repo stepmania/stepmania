@@ -189,7 +189,6 @@ void BitmapText::DrawChars()
 	}
 }
 
-
 /* sText is UTF-8. */
 void BitmapText::SetText( CString sText )
 {
@@ -199,8 +198,7 @@ void BitmapText::SetText( CString sText )
 
 	m_szText = sText;
 
-	ReplaceText(sText, FontManager::CharAliasRepl);
-	Replace_Unicode_Markers(sText);
+	FontManager::ReplaceMarkers(sText);
 
 	/* Break the string into lines. */
 	m_szTextLines.clear();

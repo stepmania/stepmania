@@ -37,6 +37,8 @@ public:
 	static aliasmap CharAliases;
 	static map<CString,CString> CharAliasRepl;
 
+	static void ReplaceMarkers( CString &sText );
+
 protected:
 	// map from file name to a texture holder
 	map<CString, Font*> m_mapPathToFont;
@@ -45,6 +47,7 @@ protected:
 	static void LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CString &PageName, int NumFrames);
 	static void GetFontPaths(const CString &sFontOrTextureFilePath, 
 							   CStringArray &TexturePaths, CString &IniPath);
+	static void InitCharAliases();
 };
 
 extern FontManager*	FONT;	// global and accessable from anywhere in our program
