@@ -67,7 +67,10 @@ if test "$have_sdl" = "no"; then
   echo "*** make sure that it is installed to continue the build process."
   exit 1
 fi
-AM_CONDITIONAL(HAVE_SDL, true)
+AM_CONDITIONAL(HAVE_SDL, test "$have_sdl" = "yes")
+if test "$have_sdl" = "yes"; then
+	AC_DEFINE(HAVE_SDL, 1, [SDL is available])
+fi
 
 # sdl-config puts -L/usr/lib in the library search path, which reorders things
 # in a way that breaks some configurations.
