@@ -361,28 +361,25 @@ try_element_again:
 
 	// If sFileName already has an extension, we're looking for a specific file
 	bool bLookingForSpecificFile = sElement.find_last_of('.') != sElement.npos;
-	bool bDirsOnly = category==ELEMENT_CATEGORY_BGANIMATIONS;
 
 	if( bLookingForSpecificFile )
 	{
-		GetDirListing( sThemeDir + sCategory+"/"+ClassAndElementToFileName(sClassName,sElement), asElementPaths, bDirsOnly, true );
+		GetDirListing( sThemeDir + sCategory+"/"+ClassAndElementToFileName(sClassName,sElement), asElementPaths, false, true );
 	}
 	else	// look for all files starting with sFileName that have types we can use
 	{
-		const CString wildcard = (category == ELEMENT_CATEGORY_BGANIMATIONS? "":"*");
-
 		/* First, look for redirs. */
-		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sClassName,sElement) + wildcard + ".redir",
+		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sClassName,sElement) + "*.redir",
 						asElementPaths, false, true );
 
 		CStringArray asPaths;
-		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sClassName,sElement) + wildcard,
-						asPaths, bDirsOnly, true );
+		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sClassName,sElement) + "*",
+						asPaths, false, true );
 
 		for( unsigned p = 0; p < asPaths.size(); ++p )
 		{
 			static const char *masks[NUM_ELEMENT_CATEGORIES][13] = {
-				{ "", NULL },
+				{ "", "xml", NULL },
 				{ "ini", NULL },
 				{ "xml", "actor", "sprite", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
 				{ "png", NULL },
