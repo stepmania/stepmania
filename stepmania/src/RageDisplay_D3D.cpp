@@ -884,19 +884,31 @@ void RageDisplay_D3D::SetBlendMode( BlendMode mode )
 	}
 }
 
-bool RageDisplay_D3D::IsZBufferEnabled() const
+bool RageDisplay_D3D::IsZWriteEnabled() const
 {
 	DWORD b;
-	g_pd3dDevice->GetRenderState( D3DRS_ZENABLE, &b );
+	g_pd3dDevice->GetRenderState( D3DRS_ZWRITEENABLE, &b );
 	return b!=0;
 }
 
-void RageDisplay_D3D::SetZBuffer( bool b )
+bool RageDisplay_D3D::IsZTestEnabled() const
 {
-	g_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      b ? D3DZB_TRUE : D3DZB_FALSE );
-	g_pd3dDevice->SetRenderState( D3DRS_ZFUNC,		  D3DCMP_LESSEQUAL );
+	DWORD b;
+	g_pd3dDevice->GetRenderState( D3DRS_ZFUNC, &b );
+	return b!=D3DCMP_ALWAYS;
+}
+
+void RageDisplay_D3D::SetZWrite( bool b )
+{
 	g_pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, b );
 }
+
+void RageDisplay_D3D::SetZTest( bool b )
+{
+	g_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      D3DZB_TRUE );
+	g_pd3dDevice->SetRenderState( D3DRS_ZFUNC,		  b ? D3DCMP_LESSEQUAL : D3DCMP_ALWAYS );
+}
+
 void RageDisplay_D3D::ClearZBuffer()
 {
 	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );

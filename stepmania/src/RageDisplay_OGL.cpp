@@ -683,6 +683,7 @@ int RageDisplay_OGL::GetMaxTextureSize() const
 void RageDisplay_OGL::BeginFrame()
 {
 	glClearColor( 0,0,0,1 );
+	SetZWrite( true );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
@@ -1033,6 +1034,7 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 		glBlendFunc( GL_SRC_ALPHA, GL_ONE );
 		break;
 	case BLEND_NO_EFFECT:
+		/* XXX: Would it be faster and have the same effect to say glDisable(GL_COLOR_WRITEMASK)? */
 		glBlendFunc( GL_ZERO, GL_ONE );
 
 		/* This is almost exclusively used to draw masks to the Z-buffer.  Make sure
@@ -1044,24 +1046,40 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 	}
 }
 
-bool RageDisplay_OGL::IsZBufferEnabled() const
+bool RageDisplay_OGL::IsZWriteEnabled() const
 {
 	bool a;
-	glGetBooleanv( GL_DEPTH_TEST, (unsigned char*)&a );
+	glGetBooleanv( GL_DEPTH_WRITEMASK, (unsigned char*)&a );
 	return a;
 }
 
-void RageDisplay_OGL::SetZBuffer( bool b )
+bool RageDisplay_OGL::IsZTestEnabled() const
 {
-	glDepthFunc(GL_LEQUAL);
-	if( b )
-		glEnable( GL_DEPTH_TEST );
-	else
-		glDisable( GL_DEPTH_TEST );
+	GLenum a;
+	glGetIntegerv( GL_DEPTH_FUNC, (int*)&a );
+	return a != GL_ALWAYS;
 }
+
 void RageDisplay_OGL::ClearZBuffer()
 {
+	bool write = IsZWriteEnabled();
+	SetZWrite( true );
     glClear( GL_DEPTH_BUFFER_BIT );
+	SetZWrite( write );
+}
+
+void RageDisplay_OGL::SetZWrite( bool b )
+{
+	glDepthMask( b );
+}
+
+void RageDisplay_OGL::SetZTest( bool b )
+{
+	glEnable( GL_DEPTH_TEST );
+	if( b )
+		glDepthFunc( GL_LEQUAL );
+	else
+		glDepthFunc( GL_ALWAYS );
 }
 
 void RageDisplay_OGL::SetTextureWrapping( bool b )

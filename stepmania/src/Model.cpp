@@ -27,7 +27,7 @@ Model::Model ()
 {
 	m_pBones = NULL;
 	m_bTextureWrapping = true;
-	m_bUseZBuffer = true;
+	SetUseZBuffer( true );
 	m_pCurAnimation = NULL;
 	m_bRevertToDefaultAnimation = false;
 	m_fDefaultAnimationRate = 1;

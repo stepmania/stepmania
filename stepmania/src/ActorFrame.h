@@ -28,7 +28,8 @@ public:
 
 	virtual void SetDiffuse( RageColor c );
 
-	virtual void SetUseZBuffer( bool b );
+	virtual void SetZTest( bool b );
+	virtual void SetZWrite( bool b );
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
 	

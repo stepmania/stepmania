@@ -54,7 +54,8 @@ void Actor::Reset()
 	m_bTextureWrapping = false;
 	m_BlendMode = BLEND_NORMAL;
 	m_bClearZBuffer = false;
-	m_bUseZBuffer = false;
+	m_bZTest = false;
+	m_bZWrite = false;
 	m_bUseBackfaceCull = false;
 }
 
@@ -204,7 +205,8 @@ void Actor::SetRenderStates()
 	// set Actor-defined render states
 	DISPLAY->SetTextureWrapping( m_bTextureWrapping );
 	DISPLAY->SetBlendMode( m_BlendMode );
-	DISPLAY->SetZBuffer( m_bUseZBuffer );
+	DISPLAY->SetZWrite( m_bZWrite );
+	DISPLAY->SetZTest( m_bZTest );
 	if( m_bClearZBuffer )
 		DISPLAY->ClearZBuffer();
 	DISPLAY->SetBackfaceCull( m_bUseBackfaceCull );
@@ -821,6 +823,8 @@ void Actor::HandleCommand( const CStringArray &asTokens )
 	else if( sName=="additiveblend" )	SetBlendMode( bParam(1) ? BLEND_ADD : BLEND_NORMAL );
 	else if( sName=="blend" )			SetBlendMode( sParam(1) );
 	else if( sName=="zbuffer" )			SetUseZBuffer( bParam(1) );
+	else if( sName=="ztest" )			SetZTest( bParam(1) );
+	else if( sName=="zwrite" )			SetZWrite( bParam(1) );
 	else if( sName=="clearzbuffer" )	SetClearZBuffer( bParam(1) );
 	else if( sName=="hidden" )			SetHidden( bParam(1) );
 	else if( sName=="playcommand" )		sParam(1); /* nop: only BGAnimation handles this but everyone receives it */

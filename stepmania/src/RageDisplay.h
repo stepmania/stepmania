@@ -166,9 +166,12 @@ public:
 	virtual int GetMaxTextureSize() const = 0;
 	virtual void SetTextureFiltering( bool b ) = 0;
 
-	virtual bool IsZBufferEnabled() const = 0;
-	virtual void SetZBuffer( bool b ) = 0;
+	virtual bool IsZTestEnabled() const = 0;
+	virtual bool IsZWriteEnabled() const = 0;
+	virtual void SetZWrite( bool b ) = 0;
+	virtual void SetZTest( bool b ) = 0;
 	virtual void ClearZBuffer() = 0;
+	void SetZBuffer( bool b ) { SetZWrite(b); SetZTest(b); } // shortcut
 
 	virtual void SetBackfaceCull( bool b ) = 0;
 	

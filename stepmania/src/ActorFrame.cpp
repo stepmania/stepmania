@@ -87,13 +87,22 @@ void ActorFrame::SetDiffuse( RageColor c )
 		m_SubActors[i]->SetDiffuse(c );
 }
 
-void ActorFrame::SetUseZBuffer( bool b )
+void ActorFrame::SetZTest( bool b )
 {
-	Actor::SetUseZBuffer( b );
+	Actor::SetZTest( b );
 
 	// set all sub-Actors
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->SetUseZBuffer( b );
+		m_SubActors[i]->SetZTest( b );
+}
+
+void ActorFrame::SetZWrite( bool b )
+{
+	Actor::SetZWrite( b );
+
+	// set all sub-Actors
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+		m_SubActors[i]->SetZWrite( b );
 }
 
 void ActorFrame::FinishTweening()

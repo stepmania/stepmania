@@ -31,8 +31,10 @@ public:
 	void SetTextureWrapping( bool b );
 	int GetMaxTextureSize() const;
 	void SetTextureFiltering( bool b);
-	bool IsZBufferEnabled() const;
-	void SetZBuffer( bool b );
+	bool IsZWriteEnabled() const;
+	bool IsZTestEnabled() const;
+	void SetZWrite( bool b );
+	void SetZTest( bool b );
 	void ClearZBuffer();
 	void SetBackfaceCull( bool b );
 	void SetAlphaTest( bool b );
