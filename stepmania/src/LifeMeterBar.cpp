@@ -254,6 +254,10 @@ LifeMeterBar::LifeMeterBar()
 	this->AddChild( &m_quadBlackBackground );
 	this->AddChild( m_pStream );
 
+	// set up progressive lifebar
+	m_iProgressiveLifebar = PREFSMAN->m_iProgressiveLifebar;
+	m_iMissCombo = 0;
+
 	AfterLifeChanged();
 }
 
@@ -320,6 +324,23 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		break;
 	default:
 		ASSERT(0);
+	}
+
+	// handle progressiveness here
+	switch( score )
+	{
+	case TNS_MARVELOUS:
+	case TNS_PERFECT:
+	case TNS_GREAT:
+	case TNS_GOOD:
+		m_iMissCombo = 0;
+		break;
+	case TNS_BOO:
+	case TNS_MISS:
+		fDeltaLife *= 1 + (float)m_iProgressiveLifebar/8 * m_iMissCombo;
+		// do this after; only successive boo/miss will
+		// increase the amount of life lost.
+		m_iMissCombo++;
 	}
 
 	if( fDeltaLife > 0 )

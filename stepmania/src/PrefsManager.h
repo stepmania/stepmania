@@ -83,6 +83,7 @@ public:
 	float			m_fGlobalOffsetSeconds;
 	bool			m_bDebugMode;
 	bool			m_bTenFooterInRed;
+	int				m_iProgressiveLifebar;
 
 	// course ranking
 	enum { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK } m_iCourseSortOrder;

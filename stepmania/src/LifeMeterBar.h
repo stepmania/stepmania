@@ -49,6 +49,9 @@ private:
 
 	float		m_fHotAlpha;
 	bool		m_bFailedEarlier;		// set this to true when life dips below 0
+
+	int			m_iProgressiveLifebar;	// cached from prefs
+	int			m_iMissCombo;			// current number of progressive boo/miss
 };
 
 #endif

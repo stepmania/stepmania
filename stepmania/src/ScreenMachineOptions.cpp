@@ -30,6 +30,7 @@ enum {
 	MO_NUM_ARCADE_STAGES,
 	MO_JUDGE_DIFFICULTY,
 	MO_LIFE_DIFFICULTY,
+	MO_PROGRESSIVE_LIFEBAR,
 	MO_FAIL,
 	MO_SHOWSTATS,
 	MO_COINS_PER_CREDIT,
@@ -44,6 +45,7 @@ OptionRow g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	OptionRow( "Songs Per\nPlay",		"1","2","3","4","5","6","7","UNLIMITED" ),
 	OptionRow( "Judge\nDifficulty",		"1","2","3","4","5","6","7","8" ),
 	OptionRow( "Life\nDifficulty",		"1","2","3","4","5","6","7" ),
+	OptionRow( "Progressive\nLifebar",	"OFF","1","2","3","4","5","6","7","8"),
 	OptionRow( "Default\nFail Type",	"ARCADE","END OF SONG","OFF" ),	
 	OptionRow( "Show\nStats",			"OFF","ON" ),
 	OptionRow( "Coins Per\nCredit",		"1","2","3","4","5","6","7","8" ),
@@ -101,6 +103,7 @@ void ScreenMachineOptions::ImportOptions()
 
 	SongOptions so;
 	so.FromString( PREFSMAN->m_sDefaultModifiers );
+	m_iSelectedOption[0][MO_PROGRESSIVE_LIFEBAR]	= PREFSMAN->m_iProgressiveLifebar;
 	m_iSelectedOption[0][MO_FAIL]					= so.m_FailType;
 	m_iSelectedOption[0][MO_SHOWSTATS]				= PREFSMAN->m_bShowStats ? 1:0;
 	m_iSelectedOption[0][MO_COINS_PER_CREDIT]		= PREFSMAN->m_iCoinsPerCredit - 1;
@@ -145,6 +148,8 @@ void ScreenMachineOptions::ExportOptions()
 	case 6:	PREFSMAN->m_fLifeDifficultyScale = 0.40f;	break;
 	default:	ASSERT(0);
 	}
+
+	PREFSMAN->m_iProgressiveLifebar = m_iSelectedOption[0][MO_PROGRESSIVE_LIFEBAR];
 
 	CString sModifiers = PREFSMAN->m_sDefaultModifiers;
 	PlayerOptions po;
