@@ -734,7 +734,21 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			// as "mine was hit" and everything else as "mine was avoided"
 			if( tn == TAP_MINE )
 			{
-				if( score > TNS_GOOD )
+				// The CPU hits a lot of mines.  Only consider hitting the 
+				// first mine for a row.  We know we're the first mine if 
+				// there are are no mines to the left of us.
+				for( int t=0; t<col; t++ )
+				{
+					if( TAP_MINE == GetTapNote(t,iIndexOverlappingNote) )	// there's a mine to the left of us
+						return;	// avoid
+				}
+
+				// The CPU hits a lot of mines.  Make it less likely to hit 
+				// mines that don't have a tap note on the same row.
+				bool bTapsOnRow = IsThereATapOrHoldHeadAtRow( iIndexOverlappingNote );
+				TapNoteScore get_to_avoid = bTapsOnRow ? TNS_GREAT : TNS_GOOD;
+
+				if( score >= get_to_avoid )
 				{
 					return;	// avoided
 				}
