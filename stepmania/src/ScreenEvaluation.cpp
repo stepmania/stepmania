@@ -97,7 +97,9 @@ const ScreenMessage SM_PlayCheer				=	ScreenMessage(SM_User+6);
 
 ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 {
+  LOG->Trace( "ScreenEvaluation::ScreenEvaluation" );
 	Init(); // work around horrible gcc bug 3187
+	LOG->Trace( "exiting ScreenEvaluation::ScreenEvalaution" );
 }
 
 void ScreenEvaluation::Init()
@@ -910,6 +912,8 @@ void ScreenEvaluation::CommitScores(
 	if( !GAMESTATE->m_SongOptions.m_bSaveScore )
 		return;
 
+	LOG->Trace( "saving stats and high scores" );
+
 	{
 		FOREACH_HumanPlayer( p )
 		{
@@ -995,9 +999,10 @@ void ScreenEvaluation::CommitScores(
 		}
 	}
 
+	LOG->Trace( "done saving stats and high scores" );
+
 	// If both players get a machine high score, a player whose score is added later 
 	// may bump the players who were added earlier.  Adjust for this.
-	// FIXME: Reports are that this logic is wrong.
 	{
 		FOREACH_HumanPlayer( p )
 		{
@@ -1037,9 +1042,9 @@ void ScreenEvaluation::CommitScores(
 		}
 	}
 
-	//
-	// hand out awards
-	//
+	
+	LOG->Trace( "hand out awards" );
+	
 	{
 		FOREACH_HumanPlayer( p )
 		{
@@ -1050,6 +1055,8 @@ void ScreenEvaluation::CommitScores(
 			Profile* pProfile = PROFILEMAN->GetProfile((PlayerNumber)p);
 
 			deque<PerDifficultyAward> &vPdas = GAMESTATE->m_vLastPerDifficultyAwards[p];
+
+			LOG->Trace( "per difficulty awards" );
 
 			// per-difficulty awards
 			switch( m_Type )
@@ -1082,14 +1089,17 @@ void ScreenEvaluation::CommitScores(
 			if( !vPdas.empty() )
 				pdaToShowOut[p] = vPdas.back();
 
+			LOG->Trace( "done with per difficulty awards" );
+
 			// DO give peak combo awards if using easy mods
 			int iComboAtStartOfStage = stageStats.GetComboAtStartOfStage( (PlayerNumber)p );
 			int iPeakCombo = stageStats.GetMaxCombo((PlayerNumber)p).cnt;
 
 			FOREACH_PeakComboAward( pca )
 			{
-				int iLevel = 100/*0*/ * (pca+1);
+			      int iLevel = 100/*0*/ * (pca+1);
 				bool bCrossedLevel = iComboAtStartOfStage < iLevel && iPeakCombo >= iLevel;
+				LOG->Trace( "pca = %d, iLevel = %d, bCrossedLevel = %d", pca, iLevel, bCrossedLevel );
 				if( bCrossedLevel )
 				{
 					GAMESTATE->m_vLastPeakComboAwards[p].push_back( pca );
@@ -1098,6 +1108,8 @@ void ScreenEvaluation::CommitScores(
 
 			if( !GAMESTATE->m_vLastPeakComboAwards[p].empty() )
 				pcaToShowOut[p] = GAMESTATE->m_vLastPeakComboAwards[p].back();
+
+			LOG->Trace( "done with per combo awards" );
 
 			// erase awards from the Last list that have been received so that we 
 			// won't show them again.
@@ -1112,6 +1124,9 @@ void ScreenEvaluation::CommitScores(
 						GAMESTATE->m_vLastPerDifficultyAwards[p].erase( GAMESTATE->m_vLastPerDifficultyAwards[p].begin()+i );
 				}
 			}
+
+			LOG->Trace( "done erasing dupe pdas" );
+
 			{
 				for( int i=GAMESTATE->m_vLastPeakComboAwards[p].size()-1; i>=0; i-- )
 				{
@@ -1122,8 +1137,12 @@ void ScreenEvaluation::CommitScores(
 						GAMESTATE->m_vLastPeakComboAwards[p].erase( GAMESTATE->m_vLastPeakComboAwards[p].begin()+i );
 				}
 			}
+
+			LOG->Trace( "done erasing pcas" );
 		}
 	}
+
+	LOG->Trace( "done handing out awards." );
 }
 
 
