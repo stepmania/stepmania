@@ -316,10 +316,10 @@ PeakComboAward StringToPeakComboAward( const CString& pma );
 struct DisplayBpms
 {
 	void Add( float f );
-	float GetMin();
-	float GetMax();
-	bool BpmIsConstant();
-	bool IsMystery();
+	float GetMin() const;
+	float GetMax() const;
+	bool BpmIsConstant() const;
+	bool IsMystery() const;
 	vector<float> vfBpms;
 };
 

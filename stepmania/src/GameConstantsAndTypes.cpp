@@ -179,7 +179,7 @@ void DisplayBpms::Add( float f )
 	vfBpms.push_back( f );
 }
 
-float DisplayBpms::GetMin()
+float DisplayBpms::GetMin() const
 {
 	float fMin = 99999;
 	FOREACH_CONST( float, vfBpms, f )
@@ -193,7 +193,7 @@ float DisplayBpms::GetMin()
 		return fMin;
 }
 
-float DisplayBpms::GetMax()
+float DisplayBpms::GetMax() const
 {
 	float fMax = 0;
 	FOREACH_CONST( float, vfBpms, f )
@@ -204,12 +204,12 @@ float DisplayBpms::GetMax()
 	return fMax;
 }
 
-bool DisplayBpms::BpmIsConstant()
+bool DisplayBpms::BpmIsConstant() const
 {
-	return GetMin() == GetMax();
+	return fabsf( GetMin() - GetMax() ) < 0.001f;
 }
 
-bool DisplayBpms::IsMystery()
+bool DisplayBpms::IsMystery() const
 {
 	FOREACH_CONST( float, vfBpms, f )
 	{
