@@ -17,6 +17,6 @@ public:
 };
 
 #undef ARCH_LOADING_WINDOW
-#define ARCH_LOADING_WINDOW LoadingWindow_Gtk
+/* #define ARCH_LOADING_WINDOW LoadingWindow_Gtk */
 
 #endif
