@@ -899,6 +899,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath="Trail.h">
 			</File>
+			<File
+				RelativePath="TrailUtil.cpp">
+			</File>
+			<File
+				RelativePath="TrailUtil.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="File Types"
