@@ -39,6 +39,7 @@ public:
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const;
 
+	CString						m_sFile;		// informational only
 	vector<BPMSegment>			m_BPMSegments;	// this must be sorted before gameplay
 	vector<StopSegment>			m_StopSegments;	// this must be sorted before gameplay
 	float	m_fBeat0OffsetInSeconds;
