@@ -73,8 +73,7 @@ void RageSound_DSound::Update(float delta)
 
 	for(unsigned i = 0; i < str.size(); ++i)
 	{
-		if(str[i]->state != str[i]->STOPPING) 
-			continue;
+		if(str[i]->state != str[i]->STOPPING) continue;
 
 		if(str[i]->str_ds->GetPosition() < str[i]->flush_pos)
 			continue; /* stopping but still flushing */
@@ -272,7 +271,7 @@ int RageSound_DSound::GetPosition(const RageSound *snd) const
 		if(stream_pool[i]->snd == snd) break;
 
 	if(i == stream_pool.size())
-		throw RageException("GetPosition: Sound %s is not being played", snd->GetLoadedFilePath());
+		RageException::Throw("GetPosition: Sound %s is not being played", snd->GetLoadedFilePath());
 
 	ASSERT(i != stream_pool.size());
 
