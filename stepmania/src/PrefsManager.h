@@ -99,6 +99,8 @@ public:
 	bool			m_bSoundPreloadAll;
 	bool			m_bAllowUnacceleratedRenderer;
 
+	CString			m_sIgnoredMessageWindows;
+
 	/* Game-specific prefs: */
 	CString			m_sDefaultModifiers;
 
