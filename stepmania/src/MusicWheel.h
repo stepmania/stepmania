@@ -26,6 +26,7 @@
 #include "ScoreDisplayNormal.h"
 #include "ScrollBar.h"
 #include "Course.h"
+#include "RageTimer.h"
 
 
 const int NUM_WHEEL_ITEMS_TO_DRAW	=	13;
@@ -105,6 +106,7 @@ public:
 	bool PrevSort();
 	bool NextSort();
 	void StartRoulette();
+	void StartRandom();
 	bool IsRouletting() const;
 	/* Return true if we're moving fast automatically. */
 	int IsMoving() const;
@@ -147,6 +149,7 @@ protected:
 	float				m_fLockedWheelVelocity;
 	/* 0 = none; -1 or 1 = up/down */
 	int					m_Moving;
+	RageTimer			m_MovingSoundTimer;
 	float				m_TimeBeforeMovingBegins;
 	float				m_SpinSpeed;
 	enum WheelState { 

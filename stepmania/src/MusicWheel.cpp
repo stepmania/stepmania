@@ -50,6 +50,7 @@
 #define NUM_SECTION_COLORS			THEME->GetMetricI("MusicWheel","NumSectionColors")
 #define SECTION_COLORS( i )			THEME->GetMetricC("MusicWheel",ssprintf("SectionColor%d",i+1))
 
+const float WHEEL_SOUND_DELAY = 1/16.f;
 float g_fItemSpacingY, g_fItemCurveX;	// cache
 
 inline RageColor GetNextSectionColor() {
@@ -819,23 +820,12 @@ void MusicWheel::Update( float fDeltaTime )
 		if(m_TimeBeforeMovingBegins == 0 && m_WheelState != STATE_LOCKED &&
 			fabsf(m_fPositionOffsetFromSelection) < 0.5f)
 		{
-			if(m_WheelState == STATE_RANDOM_SPINNING && !m_iSwitchesLeftInSpinDown)
-			{
-//				m_fPositionOffsetFromSelection = max(m_fPositionOffsetFromSelection, 0.3f);
-				m_Moving = 0;
-				m_WheelState = STATE_LOCKED;
-				m_soundStart.Play();
-				m_fLockedWheelVelocity = 0;
-				SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
-			}
-			else {
-				// spin as fast as possible
-				if(m_Moving == 1) NextMusic();
-				else PrevMusic();
+			// spin as fast as possible
+			if(m_Moving == 1) NextMusic();
+			else PrevMusic();
 
-				if(m_WheelState == STATE_RANDOM_SPINNING)
-					m_iSwitchesLeftInSpinDown--;
-			}
+			if(m_WheelState == STATE_RANDOM_SPINNING)
+				m_iSwitchesLeftInSpinDown--;
 		}
 	}
 
@@ -1056,7 +1046,15 @@ void MusicWheel::PrevMusic()
 
 	m_fPositionOffsetFromSelection -= 1;
 
-	m_soundChangeMusic.Play();
+	/* If we're moving fast, only play the change music occasionally.
+	 * If we play full throttle, we'll play as many as the sound driver
+	 * will do, which is slow.  This doesn't sound too great, though
+	 * it's better than the intermittent effect we had before ... */
+	if(!m_Moving || m_MovingSoundTimer.PeekDeltaTime() >= WHEEL_SOUND_DELAY)
+	{
+		m_MovingSoundTimer.GetDeltaTime();
+		m_soundChangeMusic.Play();
+	}
 
 	SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
 }
@@ -1095,7 +1093,11 @@ void MusicWheel::NextMusic()
 
 	m_fPositionOffsetFromSelection += 1;
 	
-	m_soundChangeMusic.Play();
+	if(!m_Moving || m_MovingSoundTimer.PeekDeltaTime() >= WHEEL_SOUND_DELAY)
+	{
+		m_MovingSoundTimer.GetDeltaTime();
+		m_soundChangeMusic.Play();
+	}
 
 	SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
 }
@@ -1139,6 +1141,17 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 		return false;
 	}
 
+	if( m_WheelState == STATE_RANDOM_SPINNING )
+	{
+		m_fPositionOffsetFromSelection = max(m_fPositionOffsetFromSelection, 0.3f);
+		m_WheelState = STATE_LOCKED;
+		m_Moving = 0;
+		m_soundStart.Play();
+		m_fLockedWheelVelocity = 0;
+		SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
+		return false;
+	}
+
 	switch( m_CurWheelItemData[m_iSelection]->m_WheelItemType )
 	{
 	case TYPE_SECTION:
@@ -1175,42 +1188,7 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 		StartRoulette();
 		return false;
 	case TYPE_RANDOM:
-		{
-			const RANDOM_SPINS = 5;
-
-			/* Grab all of the currently-visible data. */
-			vector<WheelItemData *> &newData = m_CurWheelItemData;
-			newData.clear();
-
-			int i;
-
-			/* Add RANDOM_SPINS * 2 worth of random items. */
-			int total =  int(m_WheelItemDatas[SORT_ROULETTE].size());
-			for(i = 0; i < total; ++i)
-				swap(m_WheelItemDatas[SORT_ROULETTE][i], m_WheelItemDatas[SORT_ROULETTE][rand() % total]);
-
-			for(i = 0; i < RANDOM_SPINS * 2; ++i)
-				newData.push_back( &m_WheelItemDatas[SORT_ROULETTE][i] );
-
-			/* The cursor is on m_WheelItemDisplays[NUM_WHEEL_ITEMS_TO_DRAW/2].
-			 * Fill from 0 to NUM_WHEEL_ITEMS_TO_DRAW, so all of the items
-			 * that were on the screen stay there.  However, skip some from
-			 * the beginning to make sure we don't actually *land* on one. */
-			int fillstart = max(NUM_WHEEL_ITEMS_TO_DRAW/2 - RANDOM_SPINS + 1, 0);
-
-			for( i=fillstart; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
-				newData.push_back(m_WheelItemDisplays[i].data);
-
-			m_iSelection = newData.size() - NUM_WHEEL_ITEMS_TO_DRAW/2 - 1;
-			
-			m_Moving = -1;
-			m_TimeBeforeMovingBegins = 0;
-			m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
-			m_iSwitchesLeftInSpinDown = RANDOM_SPINS;
-			m_WheelState = STATE_RANDOM_SPINNING;
-			RebuildWheelItemDisplays();
-		}
-
+		StartRandom();
 		return false;
 
 	case TYPE_SONG:
@@ -1227,6 +1205,23 @@ void MusicWheel::StartRoulette()
 	m_TimeBeforeMovingBegins = 0;
 	m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
 	SetOpenGroup("", SongSortOrder(SORT_ROULETTE));
+}
+
+void MusicWheel::StartRandom()
+{
+	/* Shuffle the roulette wheel. */
+	unsigned total =  m_WheelItemDatas[SORT_ROULETTE].size();
+	for(unsigned i = 0; i < total; ++i)
+		swap(m_WheelItemDatas[SORT_ROULETTE][i], m_WheelItemDatas[SORT_ROULETTE][rand() % total]);
+
+	SetOpenGroup("", SongSortOrder(SORT_ROULETTE));
+
+	m_Moving = -1;
+	m_TimeBeforeMovingBegins = 0;
+	m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
+	m_SpinSpeed *= 2.0f; /* faster! */
+	m_WheelState = STATE_RANDOM_SPINNING;
+	RebuildWheelItemDisplays();
 }
 
 void MusicWheel::SetOpenGroup(CString group, SongSortOrder so)
