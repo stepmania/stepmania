@@ -18,6 +18,7 @@
 #include "RageException.h"
 #include "RageTimer.h"
 #include "NoteDisplay.h"
+#include "Song.h"
 #include <math.h>
 
 
@@ -26,9 +27,22 @@ float		g_fExpandSeconds = 0;
 
 float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 {
-	float fSongBeat = GAMESTATE->m_fSongBeat;
-	float fBeatsUntilStep = fNoteBeat - fSongBeat;
-	float fYOffset = fBeatsUntilStep * ARROW_GAP;
+	float fYOffset;
+	if( GAMESTATE->m_PlayerOptions->m_bTimeSpacing )
+	{
+		float fSongBeat = GAMESTATE->m_fSongBeat;
+		float fBeatsUntilStep = fNoteBeat - fSongBeat;
+		fYOffset = fBeatsUntilStep * ARROW_SPACING;
+	}
+	else
+	{
+		float fSongSeconds = GAMESTATE->m_fMusicSeconds;
+		float fNoteSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fNoteBeat);
+		float fSecondsUntilStep = fNoteSeconds - fSongSeconds;
+		float fBPM = GAMESTATE->m_pCurSong->GetDominantBPM();
+		float fBPS = fBPM/60.f;
+		fYOffset = fSecondsUntilStep * fBPS * ARROW_SPACING;
+	}
 
 	// don't mess with the arrows after they've crossed 0
 	if( fYOffset < 0 )
@@ -110,7 +124,8 @@ float ArrowGetRotation( PlayerNumber pn, float fNoteBeat )
 
 float ArrowGetYPosWithoutReverse( PlayerNumber pn, float fYOffset )
 {
-	return fYOffset * GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
+	float fYPos = fYOffset * GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
+	return fYPos;
 }
 
 float ArrowGetYPos( PlayerNumber pn, float fYOffset )
