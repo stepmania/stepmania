@@ -70,7 +70,7 @@ void LightsDriver_Win32Parallel::SetLight( Light light, bool bOn )
 	LightToLptAndPin( light, lpt, pin );
 
 	BYTE &data = g_data[lpt];
-	BYTE mask = 0x01 << pin;
+	BYTE mask = (BYTE) (0x01 << pin);
 	if( bOn )
 		data |= mask;
 	else
@@ -83,6 +83,6 @@ void LightsDriver_Win32Parallel::Flush()
 	{
 		BYTE &data = g_data[i];
 		DWORD address = LPT_ADDRESS[i];
-		PortOut( address, data );
+		PortOut( (short) address, data );
 	}
 }
