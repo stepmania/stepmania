@@ -89,7 +89,7 @@ void ScreenTestSound::UpdateText(int n)
 		"%i: %s\n"
 		"%s\n"
 		"%s\n"
-		"(%s) of %.3f\n"
+		"(%s)\n"
 		"%s\n"
 		"%s",
 		n+1, fn.GetString(),
@@ -100,7 +100,6 @@ void ScreenTestSound::UpdateText(int n)
 			"Continue until stopped":
 			"Loop",
 		pos.size()? pos.GetString(): "none playing",
-		s[n].s.GetLengthSeconds(),
 		s[n].s.IsStreaming()? "Streaming":"Preloaded",
 		selected == n? "^^^^^^":""
 		));
