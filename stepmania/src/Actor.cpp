@@ -337,7 +337,7 @@ void Actor::BeginTweening( float time, TweenType tt )
 
 	time = max( time, 0 );
 
-	ASSERT( m_TweenStates.size() < 50 );	// there's no reason for the number of tweens to ever go this large
+	DEBUG_ASSERT( m_TweenStates.size() < 50 );	// there's no reason for the number of tweens to ever go this large
 
 	// add a new TweenState to the tail, and initialize it
 	m_TweenStates.resize( m_TweenStates.size()+1 );
