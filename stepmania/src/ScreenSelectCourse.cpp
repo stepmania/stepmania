@@ -257,7 +257,7 @@ void ScreenSelectCourse::AdjustOptions()
 	if(GAMESTATE->m_pCurCourse->m_iLives != -1)
 	{
 		/* oni */
-		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LifeType::LIFE_BATTERY;
+		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
 		GAMESTATE->m_SongOptions.m_iBatteryLives = GAMESTATE->m_pCurCourse->m_iLives;
 	}
 }
