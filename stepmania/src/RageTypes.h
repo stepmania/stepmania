@@ -43,10 +43,6 @@ public:
     RageVector2 operator / ( float f ) const					{ return RageVector2( x/f, y/f ); }
 
 	friend RageVector2 operator * ( float f, const RageVector2& other )	{ return other*f; }
-
-	/* unneeded; this is a POD type */
-//    bool operator == ( const RageVector2& other ) const		{ return x==other.x && y==other.y; }
-//    bool operator != ( const RageVector2& other ) const		{ return x!=other.x || y!=other.y; }
  
     float x, y;
 };
@@ -77,12 +73,9 @@ public:
 
 	friend RageVector3 operator * ( float f, const RageVector3& other )	{ return other*f; }
 
-	/* unneeded; this is a POD type */
-//    bool operator == ( const RageVector3& other ) const		{ return x==other.x && y==other.y && z==other.z; }
-//    bool operator != ( const RageVector3& other ) const		{ return x!=other.x || y!=other.y || z!=other.z; }
-
-    float x, y, z;
+	float x, y, z;
 };
+
 
 struct RageVector4
 {
