@@ -283,6 +283,7 @@ public:
 	void FadeOff( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,true); };
 
 	void Command( CString sCommandString );
+	static float GetCommandLength( CString command );
 
 
 protected:
