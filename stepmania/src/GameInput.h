@@ -78,8 +78,9 @@ const GameButton GAME_BUTTON_INVALID = MAX_GAME_BUTTONS+1;
 
 struct GameInput
 {
-	GameInput() { MakeInvalid(); };
-	GameInput( GameController c, GameButton b ) { controller = c; button = b; };
+	GameInput(): controller(GAME_CONTROLLER_INVALID), button(GAME_BUTTON_INVALID) { }
+
+	GameInput( GameController c, GameButton b ): controller(c), button(b) { }
 
 	GameController	controller;
 	GameButton		button;
