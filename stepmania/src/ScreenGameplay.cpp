@@ -1146,7 +1146,14 @@ void ScreenGameplay::Update( float fDeltaTime )
 	else
 		Screen::Update( fDeltaTime );
 
+	/* This happens if ScreenDemonstration::HandleScreenMessage sets a new screen when
+	 * PREFSMAN->m_bDelayedScreenLoad. */
 	if( GAMESTATE->m_pCurSong == NULL )
+		return;
+	/* This can happen if ScreenDemonstration::HandleScreenMessage sets a new screen when
+	 * !PREFSMAN->m_bDelayedScreenLoad.  (The new screen was loaded when we called Screen::Update,
+	 * and the ctor might set a new GAMESTATE->m_pCurSong, so the above check can fail.) */
+	if( SCREENMAN->GetTopScreen() != this )
 		return;
 
 	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )

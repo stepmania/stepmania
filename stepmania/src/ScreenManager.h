@@ -59,6 +59,8 @@ public:
 
 	void LoadDelayedScreen();
 
+	Screen *GetTopScreen();
+
 private:
 	vector<Screen*> m_ScreenStack;	// bottommost to topmost
 	ScreenMessage m_MessageSendOnPop;

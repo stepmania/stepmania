@@ -371,6 +371,13 @@ void ScreenManager::EmptyDeleteQueue()
 	TEXTUREMAN->DiagnosticOutput();
 }
 
+Screen *ScreenManager::GetTopScreen()
+{
+	if( m_ScreenStack.empty() )
+		return NULL;
+	return m_ScreenStack[m_ScreenStack.size()-1];
+}
+
 void ScreenManager::Update( float fDeltaTime )
 {
 	// Only update the topmost screen on the stack.
@@ -392,7 +399,7 @@ void ScreenManager::Update( float fDeltaTime )
 
 	if( !m_ScreenStack.empty() )
 	{
-		Screen* pScreen = m_ScreenStack[m_ScreenStack.size()-1];
+		Screen* pScreen = GetTopScreen();
 		if( pScreen->IsFirstUpdate() )
 			pScreen->Update( 0 );
 		else
