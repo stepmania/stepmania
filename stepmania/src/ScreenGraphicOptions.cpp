@@ -177,4 +177,3 @@ void ScreenGraphicOptions::GoToNextState()
 	ApplyGraphicOptions();
 	GoToPrevState();
 }
-

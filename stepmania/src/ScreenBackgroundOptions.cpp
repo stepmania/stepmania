@@ -87,4 +87,3 @@ void ScreenBackgroundOptions::GoToNextState()
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	GoToPrevState();
 }
-

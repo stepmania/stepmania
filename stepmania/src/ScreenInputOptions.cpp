@@ -102,4 +102,3 @@ void ScreenInputOptions::GoToNextState()
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	GoToPrevState();
 }
-

@@ -209,4 +209,3 @@ void ScreenMachineOptions::GoToNextState()
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	GoToPrevState();
 }
-

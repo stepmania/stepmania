@@ -797,5 +797,3 @@ void ScreenOptions::MenuDown( PlayerNumber pn )
 	m_SoundNextRow.Play();
 	OnChange();
 }
-
-

@@ -87,4 +87,3 @@ void ScreenGameplayOptions::GoToNextState()
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	GoToPrevState();
 }
-

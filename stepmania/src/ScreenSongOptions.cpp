@@ -127,7 +127,3 @@ void ScreenSongOptions::GoToNextState()
 	else
 		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 }
-
-
-
-

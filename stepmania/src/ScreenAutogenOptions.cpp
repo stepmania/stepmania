@@ -70,4 +70,3 @@ void ScreenAutogenOptions::GoToNextState()
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	GoToPrevState();
 }
-

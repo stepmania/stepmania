@@ -239,8 +239,3 @@ void ScreenAppearanceOptions::GoToNextState()
 	PREFSMAN->SaveGamePrefsToDisk();
 	GoToPrevState();
 }
-
-
-
-
-

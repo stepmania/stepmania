@@ -84,4 +84,3 @@ void ScreenRaveOptions::GoToNextState()
 {
 	SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 }
-
