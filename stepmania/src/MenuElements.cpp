@@ -113,12 +113,19 @@ void MenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 	m_sprFooter.Command( FOOTER_OFF_COMMAND );
 	m_textHelp.Command( HELP_OFF_COMMAND );
 
-	m_Out.StartTransitioning();
+	m_Out.StartTransitioning(smSendWhenDone);
 
+	/* Ack.  If the transition finishes transparent (eg. _options to options),
+	 * then we don't want to send the message until all of the *actors* are
+	 * done tweening.  However, if it finishes with something onscreen (most
+	 * of the rest), we have to send the message immediately after it finishes,
+	 * or we'll draw a frame without the transition.
+	 *
+	 * For now, I'll make the SMMAX2 option tweening faster. */
 	/* This includes all of the actors: */
-	float TimeUntilFinished = GetTweenTimeLeft();
-	TimeUntilFinished = max(TimeUntilFinished, m_Out.GetLengthSeconds());
-	SCREENMAN->PostMessageToTopScreen( smSendWhenDone, TimeUntilFinished );
+//	float TimeUntilFinished = GetTweenTimeLeft();
+//	TimeUntilFinished = max(TimeUntilFinished, m_Out.GetLengthSeconds());
+//	SCREENMAN->PostMessageToTopScreen( smSendWhenDone, TimeUntilFinished );
 }
 
 void MenuElements::Back( ScreenMessage smSendWhenDone )
