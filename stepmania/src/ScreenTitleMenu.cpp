@@ -100,7 +100,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) :
 
 ScreenTitleMenu::~ScreenTitleMenu()
 {
-	LOG->Trace( ScreenTitleMenu::~ScreenTitleMenu()" );
+	LOG->Trace( "ScreenTitleMenu::~ScreenTitleMenu()" );
 }
 
 void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
