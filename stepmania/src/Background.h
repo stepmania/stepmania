@@ -53,11 +53,9 @@ protected:
 	bool DangerVisible();
 
 	enum BackgroundMode { MODE_STATIC_BG, MODE_MOVIE_BG, MODE_ANIMATIONS, MODE_MOVIE_VIS, MODE_RANDOMMOVIES };
-	BackgroundMode	m_BackgroundMode;
+	BackgroundMode		m_BackgroundMode;
 		
-	Sprite m_sprDanger;
-	Sprite m_sprDangerBackground;
-
+	BackgroundAnimation		m_BGADanger;
 
 	// used in all BackgroundModes except OFF
 	CArray<BackgroundAnimation*,BackgroundAnimation*> m_BackgroundAnimations;

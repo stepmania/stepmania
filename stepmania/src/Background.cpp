@@ -63,14 +63,17 @@ Background::Background()
 
 	m_BackgroundMode = MODE_STATIC_BG;
 
-	m_sprDanger.SetZoom( 2 );
-	m_sprDanger.SetEffectWagging();
-	m_sprDanger.Load( THEME->GetPathTo("Graphics","gameplay danger text") );
-	m_sprDanger.SetX( (float)RECTCENTERX(RECT_BACKGROUND) );
-	m_sprDanger.SetY( (float)RECTCENTERY(RECT_BACKGROUND) );
+	CStringArray asPossibleDangerMovies;
+	GetDirListing( RANDOMMOVIES_DIR+"danger.avi", asPossibleDangerMovies, false, true );
+	GetDirListing( RANDOMMOVIES_DIR+"danger.mpg", asPossibleDangerMovies, false, true );
+	GetDirListing( RANDOMMOVIES_DIR+"danger.mpeg", asPossibleDangerMovies, false, true );
 
-	m_sprDangerBackground.Load( THEME->GetPathTo("Graphics","gameplay danger background") );
-	m_sprDangerBackground.StretchTo( RECT_BACKGROUND );
+	if( asPossibleDangerMovies.GetSize()>0 )
+		m_BGADanger.LoadFromMovie( asPossibleDangerMovies[0], true, false );
+	else if( DoesFileExist(BG_ANIMS_DIR+"danger\\") )
+		m_BGADanger.LoadFromAniDir( BG_ANIMS_DIR+"danger\\", "" );
+	else
+		PREFSMAN->m_bShowDanger = false;
 
 	m_quadBGBrightness.StretchTo( RECT_BACKGROUND );
 	m_quadBGBrightness.SetDiffuse( D3DXCOLOR(0,0,0,1-PREFSMAN->m_fBGBrightness) );
@@ -248,7 +251,7 @@ void Background::LoadFromSong( Song* pSong )
 				CStringArray arrayPossibleAnims;
 				GetDirListing( BG_ANIMS_DIR+"*.*", arrayPossibleAnims, true, true );
 				for( int i=arrayPossibleAnims.GetSize()-1; i>=0; i-- )
-					if( 0==stricmp(arrayPossibleAnims[i].Right(3),"cvs") )
+					if( 0==stricmp(arrayPossibleAnims[i].Right(3),"cvs")  ||  -1!=arrayPossibleAnims[i].Find("anger") )
 						arrayPossibleAnims.RemoveAt(i);
 				for( i=0; i<4 && arrayPossibleAnims.GetSize()>0; i++ )
 				{
@@ -266,6 +269,9 @@ void Background::LoadFromSong( Song* pSong )
 				GetDirListing( RANDOMMOVIES_DIR + "*.avi", arrayPossibleMovies, false, true );
 				GetDirListing( RANDOMMOVIES_DIR + "*.mpg", arrayPossibleMovies, false, true );
 				GetDirListing( RANDOMMOVIES_DIR + "*.mpeg", arrayPossibleMovies, false, true );
+				for( int i=arrayPossibleMovies.GetSize()-1; i>=0; i-- )
+					if( -1!=arrayPossibleMovies[i].Find("anger") )
+						arrayPossibleMovies.RemoveAt(i);
 				for( int i=0; i<4 && arrayPossibleMovies.GetSize()>0; i++ )
 				{
 					int index = rand() % arrayPossibleMovies.GetSize();
@@ -349,8 +355,7 @@ void Background::Update( float fDeltaTime )
 
 	if( DangerVisible() )
 	{
-		m_sprDangerBackground.Update( fDeltaTime );
-		m_sprDanger.Update( fDeltaTime );
+		m_BGADanger.Update( fDeltaTime );
 	}
 	else
 	{			
@@ -385,8 +390,7 @@ void Background::DrawPrimitives()
 	
 	if( DangerVisible() )
 	{
-		m_sprDangerBackground.Draw();
-		m_sprDanger.Draw();
+		m_BGADanger.Draw();
 	}
 	else
 	{			
