@@ -1230,12 +1230,7 @@ void MusicWheel::StartRoulette()
 void MusicWheel::StartRandom()
 {
 	/* Shuffle the roulette wheel. */
-	/*Linear shuffle means that we shuffle the deck from the beginning to end,
-	but never switch a song from the end with one < i.  This method gives an
-	even distribution for any number of songs less than RAND_MAX.*/
-	unsigned total =  m_WheelItemDatas[SORT_ROULETTE].size();
-	for(unsigned i = 0; i < total; ++i)
-		swap(m_WheelItemDatas[SORT_ROULETTE][i], m_WheelItemDatas[SORT_ROULETTE][(rand() % (total-i))+i]);
+	random_shuffle( m_WheelItemDatas[SORT_ROULETTE].begin(), m_WheelItemDatas[SORT_ROULETTE].end() );
 
 	SetOpenGroup("", SongSortOrder(SORT_ROULETTE));
 
