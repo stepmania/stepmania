@@ -28,7 +28,7 @@
 
 
 
-WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color, SortOrder so )
+WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color )
 {
 	m_Type = wit;
 	m_pSong = pSong;
@@ -36,7 +36,6 @@ WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionNa
 	m_pCourse = pCourse;
 	m_color = color;
 	m_Flags = WheelNotifyIcon::Flags();
-	m_SortOrder = so;
 }
 
 

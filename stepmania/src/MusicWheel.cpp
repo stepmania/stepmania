@@ -49,10 +49,9 @@ ThemeMetric<bool>	USE_3D			("MusicWheel","Use3D");
 ThemeMetric<int>	NUM_WHEEL_ITEMS_METRIC	("MusicWheel","NumWheelItems");
 #define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, (int) NUM_WHEEL_ITEMS_METRIC )
 #define MOST_PLAYED_SONGS_TO_SHOW	THEME->GetMetricI("MusicWheel","MostPlayedSongsToShow")
-#define SORT_MENU_NAMES				THEME->GetMetric ("MusicWheel","SortMenuNames")
-#define SORT_MENU_ACTIONS			THEME->GetMetric ("MusicWheel","SortMenuActions")
-#define MODE_MENU_NAMES				THEME->GetMetric ("MusicWheel","ModeMenuNames")
-#define MODE_MENU_ACTIONS			THEME->GetMetric ("MusicWheel","ModeMenuActions")
+#define SORT_MENU_CHOICE_NAMES		THEME->GetMetric ("MusicWheel","SortMenuChoiceNames")
+#define MODE_MENU_CHOICE_NAMES		THEME->GetMetric ("MusicWheel","ModeMenuChoiceNames")
+#define CHOICE( sChoiceName )		THEME->GetMetricA("MusicWheel",ssprintf("Choice%s",sChoiceName.c_str()))
 #define WHEEL_ITEM_ON_DELAY_CENTER	THEME->GetMetricF("MusicWheel","WheelItemOnDelayCenter")
 #define WHEEL_ITEM_ON_DELAY_OFFSET	THEME->GetMetricF("MusicWheel","WheelItemOnDelayOffset")
 #define WHEEL_ITEM_OFF_DELAY_CENTER	THEME->GetMetricF("MusicWheel","WheelItemOffDelayCenter")
@@ -320,7 +319,7 @@ bool MusicWheel::SelectSort( SortOrder so )
 	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SortOrder];
 	for( i=0; i<from.size(); i++ )
 	{
-		if( from[i].m_SortOrder != so )
+		if( from[i].m_Action.m_SortOrder != so )
 			continue;
 		if( !from[i].m_Action.DescribesCurrentModeForAllPlayers() )
 			continue;
@@ -335,7 +334,7 @@ bool MusicWheel::SelectSort( SortOrder so )
 
 	for( i=0; i<m_CurWheelItemData.size(); i++ )
 	{
-		if( m_CurWheelItemData[i]->m_SortOrder != so )
+		if( m_CurWheelItemData[i]->m_Action.m_SortOrder != so )
 			continue;
 		if( !m_CurWheelItemData[i]->m_Action.DescribesCurrentModeForAllPlayers() )
 			continue;
@@ -412,32 +411,15 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	case SORT_MODE_MENU:
 	{
 		arrayWheelItemDatas.clear();	// clear out the previous wheel items 
-		CString sNames = so==SORT_SORT_MENU ? SORT_MENU_NAMES : MODE_MENU_NAMES;
-		CString sActions = so==SORT_SORT_MENU ? SORT_MENU_ACTIONS : MODE_MENU_ACTIONS;
-		vector<CString> Names, Actions;
-		split( sNames, ":", Names );
-		split( sActions, ":", Actions );
-		if( Names.size() != Actions.size() )
-			RageException::Throw("MusicWheel::MenuNames and MusicWheel::MenuActions must have the same number of components");
-
-		for( unsigned i=0; i<Names.size(); ++i )
+		CString sNames = (so==SORT_SORT_MENU) ? SORT_MENU_CHOICE_NAMES : MODE_MENU_CHOICE_NAMES;
+		vector<CString> vsNames;
+		split( sNames, ",", vsNames );
+		for( unsigned i=0; i<vsNames.size(); ++i )
 		{
-			/* Look for sort names. */
-			vector<CString> parts;
-			split( Actions[i], ";", parts );
-		
-			SortOrder so = SORT_GROUP;
-			for( unsigned j = 0; j < parts.size(); ++j )
-			{
-				CStringArray asBits;
-				split( parts[j], ",", asBits );
-				if( !asBits[0].CompareNoCase("sort") )
-					so = StringToSortOrder( asBits[1] );
-			}
-
-			WheelItemData wid( TYPE_SORT, NULL, "", NULL, SORT_MENU_COLOR, so );
-			wid.m_sLabel = Names[i];
-			wid.m_Action.Load( i, ParseCommands(Actions[i]) );
+			WheelItemData wid( TYPE_SORT, NULL, "", NULL, SORT_MENU_COLOR );
+			wid.m_sLabel = vsNames[i];
+			wid.m_Action.Load( i, CHOICE(vsNames[i]) );
+			wid.m_sLabel = wid.m_Action.m_sName;
 
 			switch( so )
 			{
@@ -559,11 +541,11 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				{
 					RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS(iSectionColorIndex);
 					iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
-					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection, SORT_INVALID) );
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection) );
 					sLastSection = sThisSection;
 				}
 
-				arrayWheelItemDatas.push_back( WheelItemData( TYPE_SONG, pSong, sThisSection, NULL, SONGMAN->GetSongColor(pSong), SORT_INVALID) );
+				arrayWheelItemDatas.push_back( WheelItemData( TYPE_SONG, pSong, sThisSection, NULL, SONGMAN->GetSongColor(pSong)) );
 			}
 		}
 		else
@@ -571,16 +553,16 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			for( unsigned i=0; i<arraySongs.size(); i++ )
 			{
 				Song* pSong = arraySongs[i];
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONGMAN->GetSongColor(pSong), SORT_INVALID) );
+				arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONGMAN->GetSongColor(pSong)) );
 			}
 		}
 
 		if( so != SORT_ROULETTE )
 		{
 			if( SHOW_ROULETTE )
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
+				arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1)) );
 			if( SHOW_RANDOM )
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
+				arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1)) );
 
 			if( SHOW_PORTAL )
 			{
@@ -590,7 +572,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 					if( arrayWheelItemDatas[i].m_Type == TYPE_SONG )
 						bFoundAnySong = true;
 				if( bFoundAnySong )
-					arrayWheelItemDatas.push_back( WheelItemData(TYPE_PORTAL, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_PORTAL, NULL, "", NULL, RageColor(1,0,0,1)) );
 			}
 		}
 
@@ -681,11 +663,11 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			{
 				RageColor c = SECTION_COLORS(iSectionColorIndex);
 				iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, c, SORT_INVALID) );
+				arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, c) );
 				sLastSection = sThisSection;
 			}
 
-            arrayWheelItemDatas.push_back( WheelItemData(TYPE_COURSE, NULL, sThisSection, pCourse, pCourse->GetColor(), SORT_INVALID) );
+            arrayWheelItemDatas.push_back( WheelItemData(TYPE_COURSE, NULL, sThisSection, pCourse, pCourse->GetColor()) );
 		}
 		break;
 	}
@@ -717,7 +699,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 	if( arrayWheelItemDatas.empty() )
 	{
-		arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, "- EMPTY -", NULL, RageColor(1,0,0,1), SORT_INVALID) );
+		arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, "- EMPTY -", NULL, RageColor(1,0,0,1)) );
 	}
 }
 
@@ -1247,9 +1229,14 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 	case TYPE_COURSE:
 		return true;
 	case TYPE_SORT:
+		LOG->Trace("New sort order selected: %s - %d", 
+			m_CurWheelItemData[m_iSelection]->m_sLabel.c_str(), 
+			SortOrderToString(m_CurWheelItemData[m_iSelection]->m_Action.m_SortOrder).c_str() );
+		ChangeSort( m_CurWheelItemData[m_iSelection]->m_Action.m_SortOrder );
+		
+		// Do this after ChangeSort so that be don't mess with 
+		// GAMESTATE->m_SortOrder before ChangeSort gets a crack at it.
 		m_CurWheelItemData[m_iSelection]->m_Action.ApplyToAllPlayers();
-		LOG->Trace("New sort order selected: %s - %d", m_CurWheelItemData[m_iSelection]->m_sLabel.c_str(), m_CurWheelItemData[m_iSelection]->m_SortOrder );
-		ChangeSort( m_CurWheelItemData[m_iSelection]->m_SortOrder );
 		return false;
 	default:
 		ASSERT(0);

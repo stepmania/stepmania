@@ -66,7 +66,7 @@ enum WheelItemType
 struct WheelItemData
 {
 	WheelItemData() {}
-	WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color, SortOrder so );
+	WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color );
 
 	WheelItemType	m_Type;
 	CString			m_sSectionName;
@@ -78,7 +78,6 @@ struct WheelItemData
 	// for TYPE_SORT
 	CString			m_sLabel;
 	GameCommand		m_Action;
-	SortOrder	m_SortOrder;
 };
 
 #endif
