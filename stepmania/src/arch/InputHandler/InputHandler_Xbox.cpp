@@ -88,10 +88,7 @@ void InputHandler_Xbox::Update(float fDeltaTime)
 	for(unsigned i = 0; i < NUM_JOYSTICKS; i++)
 	{
 		if(joysticks[i] == 0)
-		{
-			LOG->Trace("Ignoring absent joystick");
 			continue;
-		}
 		
 		InputDevice inputDevice = InputDevice(DEVICE_JOY1 + i);
 		XINPUT_STATE xis;
@@ -99,7 +96,7 @@ void InputHandler_Xbox::Update(float fDeltaTime)
 		XInputGetState( joysticks[i], &xis );
 			
 		// check buttons
-		for(int j = 0; j < NUM_BUTTONS; j++)
+		for(int j = 0; j < ARRAYSIZE(buttonMasks); j++)
 		{
 			DWORD nowPressed = xis.Gamepad.wButtons & buttonMasks[j];
 			DWORD wasPressed = lastState[i].wButtons & buttonMasks[j];
@@ -119,7 +116,7 @@ void InputHandler_Xbox::Update(float fDeltaTime)
 		}
 		
 		// check analog buttons
-		for(int j = 0; j < NUM_ANALOG_BUTTONS; j++)
+		for(int j = 0; j < ARRAYSIZE(xis.Gamepad.bAnalogButtons); j++)
 		{
 			bool nowPressed = xis.Gamepad.bAnalogButtons[j] > XINPUT_GAMEPAD_MAX_CROSSTALK;
 			bool wasPressed = lastState[i].bAnalogButtons[j] > XINPUT_GAMEPAD_MAX_CROSSTALK;
@@ -141,7 +138,7 @@ void InputHandler_Xbox::Update(float fDeltaTime)
 		// check thumbsticks
 		SHORT axes[] = { xis.Gamepad.sThumbLX, xis.Gamepad.sThumbLY, xis.Gamepad.sThumbRX, xis.Gamepad.sThumbRY};
 
-		for(int j = 0; j < NUM_AXES; j++)
+		for(int j = 0; j < ARRAYSIZE(axes); j++)
 		{
 			if(axes[j] != 0)
 			{

@@ -6,10 +6,6 @@
 #include <xtl.h>
 
 #define NUM_PORTS 4
-#define NUM_JOYSTICKS 2
-#define NUM_BUTTONS 8
-#define NUM_ANALOG_BUTTONS 8
-#define NUM_AXES 4
 
 class InputHandler_Xbox: public InputHandler
 {
