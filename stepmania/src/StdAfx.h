@@ -93,7 +93,7 @@ public:
 
 #endif
 
-#if _MSC_VER < 1300 /* VC6, not VC7 */
+#if defined(_MSC_VER) && _MSC_VER  < 1300 /* VC6, not VC7 */
 
 /* VC6's <algorithm> is doesn't actually define min and max. */
 template<class T>
