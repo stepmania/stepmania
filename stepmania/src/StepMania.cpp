@@ -890,6 +890,26 @@ int main(int argc, char* argv[])
 
 	/* Whew--we should be able to crash safely now! */
 
+	//
+	// load preferences and mount any alternative trees.
+	//
+	PREFSMAN	= new PrefsManager;
+
+	/* Set up alternative filesystem trees. */
+	if( PREFSMAN->m_sAdditionalFolders != "" )
+	{
+		CStringArray dirs;
+		split( PREFSMAN->m_sAdditionalFolders, ",", dirs, true );
+		for( unsigned i=0; i < dirs.size(); i++)
+			FILEMAN->Mount( "dir", dirs[i], "" );
+	}
+	if( PREFSMAN->m_sAdditionalSongFolders != "" )
+	{
+		CStringArray dirs;
+		split( PREFSMAN->m_sAdditionalSongFolders, ",", dirs, true );
+		for( unsigned i=0; i < dirs.size(); i++)
+	        FILEMAN->Mount( "dir", dirs[i], "Songs" );
+	}
 	MountTreeOfZips( ZIPS_DIR );
 
 	atexit(SDL_Quit);   /* Clean up on exit */
@@ -902,7 +922,6 @@ int main(int argc, char* argv[])
 	// Create game objects
 	//
 	GAMESTATE	= new GameState;
-	PREFSMAN	= new PrefsManager;
 
 	LOG->ShowLogOutput( PREFSMAN->m_bShowLogOutput );
 	LOG->SetLogging( PREFSMAN->m_bLogging );
@@ -933,12 +952,6 @@ int main(int argc, char* argv[])
 	HOOKS->DumpDebugInfo();
 
 	CheckSettings();
-
-	/* Set up alternative filesystem trees. */
-	for( unsigned i=0; i<PREFSMAN->m_asAdditionalSongFolders.size(); i++ )
-        FILEMAN->Mount( "dir", PREFSMAN->m_asAdditionalSongFolders[i], "Songs" );
-	if( PREFSMAN->m_DWIPath != "" )
-		FILEMAN->Mount( "dir", PREFSMAN->m_DWIPath, "" );
 
 	GAMEMAN		= new GameManager;
 	THEME		= new ThemeManager;

@@ -209,8 +209,8 @@ public:
 	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */
 	int				m_iBoostAppPriority;
 
-	CStringArray	m_asAdditionalSongFolders;
-	CString			m_DWIPath;
+	CString			m_sAdditionalSongFolders;
+	CString			m_sAdditionalFolders;
 
 	CString			m_sLastSeenVideoDriver;
 	CString			m_sLastSeenInputDevices;

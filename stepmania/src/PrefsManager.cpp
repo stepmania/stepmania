@@ -405,7 +405,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "ShowSelectGroup",					m_bShowSelectGroup );
 	ini.GetValue( "Options", "ShowNative",						m_bShowNative );
 	ini.GetValue( "Options", "ArcadeOptionsNavigation",			m_bArcadeOptionsNavigation );
-	ini.GetValue( "Options", "DWIPath",							m_DWIPath );
 	ini.GetValue( "Options", "DelayedTextureDelete",			m_bDelayedTextureDelete );
 	ini.GetValue( "Options", "TexturePreload",					m_bTexturePreload );
 	ini.GetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
@@ -498,13 +497,10 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 
 	ini.GetValue( "Editor", "ShowBGChangesPlay",				m_bEditorShowBGChangesPlay );
 
-	CString sAdditionalSongFolders;
-	if( ini.GetValue( "Options", "AdditionalSongFolders",			sAdditionalSongFolders ) )
-	{
-		FixSlashesInPlace( sAdditionalSongFolders );
-		m_asAdditionalSongFolders.clear();
-		split( sAdditionalSongFolders, ",", m_asAdditionalSongFolders, true );
-	}
+	ini.GetValue( "Options", "AdditionalSongFolders",			m_sAdditionalSongFolders );
+	ini.GetValue( "Options", "AdditionalFolders",				m_sAdditionalFolders );
+	FixSlashesInPlace(m_sAdditionalSongFolders);
+	FixSlashesInPlace(m_sAdditionalFolders);
 
 	ini.GetValue( "Debug", "Logging",							m_bLogging );
 	ini.GetValue( "Debug", "ForceLogFlush",						m_bForceLogFlush );
@@ -629,7 +625,6 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "ShowSelectGroup",					m_bShowSelectGroup );
 	ini.SetValue( "Options", "ShowNative",						m_bShowNative );
 	ini.SetValue( "Options", "ArcadeOptionsNavigation",			m_bArcadeOptionsNavigation );
-	ini.SetValue( "Options", "DWIPath",							m_DWIPath );
 	ini.SetValue( "Options", "DelayedTextureDelete",			m_bDelayedTextureDelete );
 	ini.SetValue( "Options", "TexturePreload",					m_bTexturePreload );
 	ini.SetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
@@ -728,7 +723,8 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	if(m_sMovieDrivers != DEFAULT_MOVIE_DRIVER_LIST)
 		ini.SetValue ( "Options", "MovieDrivers",				m_sMovieDrivers );
 
-	ini.SetValue( "Options", "AdditionalSongFolders", 			join(",", m_asAdditionalSongFolders) );
+	ini.SetValue( "Options", "AdditionalSongFolders", 			m_sAdditionalSongFolders);
+	ini.SetValue( "Options", "AdditionalFolders", 				m_sAdditionalFolders);
 
 	ini.SetValue( "Debug", "Logging",							m_bLogging );
 	ini.SetValue( "Debug", "ForceLogFlush",						m_bForceLogFlush );
