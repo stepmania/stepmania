@@ -7,6 +7,7 @@
 
 #include "global.h"
 #include "VirtualKeyboard.h"
+#include "RageUtil.h"
 
 VirtualKeyboard VIRTUALKB;
 
