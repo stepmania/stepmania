@@ -1276,7 +1276,7 @@ Before you can use your account, you must run the following (substituting your
 username and projectname as appropriate) before attempting to use CVS from a new
 user account. Open a command prompt, and type:<br>
 <br>
-ssh -l username cvs.stepmania.sourceforge.net<br>
+ssh -l username cvs.sourceforge.net<br>
 <br>
 Enter your password, and you'll get a message about how you're not supposed to
 be there and the connection will drop. What they don't tell you is that this
@@ -1285,7 +1285,9 @@ creates your home directory and is required for things to start working.<br>
 * Step 7: &quot;Checkout&quot; the source code<br>
 <br>
 - Open up WinCVS again. <br>
-- In the right pane, you should see the folder &quot;stepmania&quot;.<br>
+- Click Admin-&gt;Preferences...&nbsp; In the CVSROOT edit box, change &quot;cvs.stepmania.sourceforge.net&quot; 
+to &quot;cvs.sourceforge.net&quot;.<br>
+- In the left pane, you should see the folder &quot;stepmania&quot;.<br>
 - Right click on that folder and choose &quot;Checkout module...&quot;. For the module
 name enter &quot;stepmania&quot;. <br>
 - Click OK. <br>
