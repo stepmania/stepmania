@@ -39,6 +39,7 @@ bool PrepareForDemonstration()		// always return true.
 	case GAME_DS3DDX:	GAMESTATE->m_CurStyle = STYLE_DS3DDX_SINGLE;		break;
 	case GAME_BM:		GAMESTATE->m_CurStyle = STYLE_BM_SINGLE;			break;
 	case GAME_MANIAX:	GAMESTATE->m_CurStyle = STYLE_MANIAX_SINGLE;		break;
+	case GAME_PNM:		GAMESTATE->m_CurStyle = STYLE_PNM_NINE;				break;
 	default:	ASSERT(0);
 	}
 
