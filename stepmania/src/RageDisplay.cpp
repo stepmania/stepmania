@@ -82,7 +82,6 @@ RageDisplay::RageDisplay( HWND hWnd )
 
 
 	// Enumerate possible display modes
-	/*
 	LOG->Trace( "This display adaptor supports the following modes:" );
 	for( UINT u=0; u<m_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
 	{
@@ -91,7 +90,7 @@ RageDisplay::RageDisplay( HWND hWnd )
 		{
 			LOG->Trace( "  %ux%u %uHz, format %d", mode.Width, mode.Height, mode.RefreshRate, mode.Format );
 		}
-	} */
+	}
 
 	// Save the original desktop format.
 	m_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &m_DesktopMode );
@@ -206,40 +205,34 @@ D3DFORMAT RageDisplay::FindBackBufferType(bool bWindowed, int iBPP)
 		throw RageException( ssprintf("Invalid BPP '%u' specified", iBPP) );
 
 	// Test each back buffer format until we find something that works.
-	D3DFORMAT fmtBackBuffer=D3DFMT_UNKNOWN;	// fill this in below...
-	int i;
-	for( i=0; i < arrayBackBufferFormats.GetSize(); i++ )
+	for( int i=0; i < arrayBackBufferFormats.GetSize(); i++ )
 	{
+		D3DFORMAT fmtBackBuffer = arrayBackBufferFormats[i];
+
 		D3DFORMAT fmtDisplay;
 		if( bWindowed )
-		{
 			fmtDisplay = m_DesktopMode.Format;
-			fmtBackBuffer = arrayBackBufferFormats[i];
-		}
 		else	// Fullscreen
-		{
-			fmtDisplay = fmtBackBuffer = arrayBackBufferFormats[i];
-		}
+			fmtDisplay = arrayBackBufferFormats[i];
 
-		LOG->Trace( CString(i? "That won't work.  ":"") +
-					"Testing format: display %d, back buffer %d, windowed %d...",
+		LOG->Trace( "Testing format: display %d, back buffer %d, windowed %d...",
 					fmtDisplay, fmtBackBuffer, bWindowed );
 
 		hr = m_pd3d->CheckDeviceType( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, 
 			fmtDisplay, fmtBackBuffer, bWindowed );
 
-		if( SUCCEEDED(hr) )
-			break;	// done searching
+		if( FAILED(hr) ) {
+			LOG->Trace( hr, "That won't work.  ");
+			continue;
+		}
+
+		// done searching
+		LOG->Trace( "This will work." );
+		return fmtBackBuffer;
 	}
 
-	if(fmtBackBuffer == D3DFMT_UNKNOWN) 
-		throw RageException( "Couldn't find a valid format." );
-
-	LOG->Trace( "This will work." );
-
-	if( i == arrayBackBufferFormats.GetSize() )		// we didn't find an appropriate format
-		return D3DFMT_UNKNOWN;
-	return fmtBackBuffer;
+	// we didn't find an appropriate format
+	return D3DFMT_UNKNOWN;
 }
 
 
