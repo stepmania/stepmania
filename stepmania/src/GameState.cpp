@@ -57,7 +57,7 @@ GameState::GameState()
 
 	ReloadCharacters();
 
-	m_iNumTimesThroughAttract = 0;
+	m_iNumTimesThroughAttract = -1;	// initial screen will bump this up to 0
 
 	/* Don't reset yet; let the first screen do it, so we can
 	 * use PREFSMAN and THEME. */
@@ -174,7 +174,9 @@ void GameState::BeginGame()
 
 	m_vpsNamesThatWereFilled.clear();
 
-	m_iNumTimesThroughAttract = 0;
+	// play attract on the ending screen, then in one more whole attract 
+	// sequence after the game is over (even if attract sounds are set to off)
+	m_iNumTimesThroughAttract = -2;
 }
 
 void CheckStageStats( const StageStats &ss, int p )
@@ -266,15 +268,11 @@ void GameState::EndGame()
 	pMachineProfile->m_iCurrentCombo = 0;
 
 	CHECKPOINT;
-    int p;
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_HumanPlayer( p )
 	{
-		if( !IsHumanPlayer(p) )
-			continue;
-
 		CHECKPOINT;
 
-		Profile* pPlayerProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
+		Profile* pPlayerProfile = PROFILEMAN->GetProfile( p );
 		if( pPlayerProfile )
 		{
 			pPlayerProfile->m_iTotalPlaySeconds += iPlaySeconds;
@@ -289,10 +287,10 @@ void GameState::EndGame()
 		for( unsigned i=0; i<g_vPlayedStageStats.size(); i++ )
 		{
 			const StageStats& ss = g_vPlayedStageStats[i];
-			AddPlayerStatsToProfile( pMachineProfile, ss, (PlayerNumber) p );
+			AddPlayerStatsToProfile( pMachineProfile, ss, p );
 
 			if( pPlayerProfile )
-				AddPlayerStatsToProfile( pPlayerProfile, ss, (PlayerNumber) p );
+				AddPlayerStatsToProfile( pPlayerProfile, ss, p );
 		}
 
 		CHECKPOINT;
@@ -1454,9 +1452,9 @@ bool GameState::OneIsHot() const
 
 bool GameState::IsTimeToPlayAttractSounds()
 {
-	// always play attract sounds the first time through after a game over - 
-	// even if attract sounds are set to "never".
-	if( m_iNumTimesThroughAttract==0 )
+	// if m_iNumTimesThroughAttract is negative, play attract sounds regardless
+	// of m_iAttractSoundFrequency.
+	if( m_iNumTimesThroughAttract<0 )
 		return true;
 
 	// 0 means "never play sound".  Avoid a divide by 0 below.

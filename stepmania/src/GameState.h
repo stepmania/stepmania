@@ -271,7 +271,7 @@ public:
 	//
 	// Attract stuff
 	//
-	int m_iNumTimesThroughAttract;
+	int m_iNumTimesThroughAttract;	// negative means play regardless of m_iAttractSoundFrequency setting
 	bool IsTimeToPlayAttractSounds();
 };
 
