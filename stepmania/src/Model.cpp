@@ -587,7 +587,7 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 	else
 		pNewAnimation = &m_mapNameToAnimation[sAniName];
 
-	m_fCurrFrame = 0;
+	m_fCurFrame = 0;
 	m_fCurAnimationRate = fPlayRate;
 
 	if ( m_pCurAnimation == pNewAnimation )
@@ -660,7 +660,7 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 	AdvanceFrame( 0.0f );
 }
 
-void Model::AdvanceFrame (float dt)
+void Model::AdvanceFrame( float fDeltaTime )
 {
 	if( m_pGeometry == NULL || 
 		m_pGeometry->m_Meshes.empty() || 
@@ -669,33 +669,35 @@ void Model::AdvanceFrame (float dt)
 		return;	// bail early
 	}
 
-//	LOG->Trace( "m_fCurrFrame = %f", m_fCurrFrame );
+//	LOG->Trace( "m_fCurFrame = %f", m_fCurFrame );
 
-	m_fCurrFrame += FRAMES_PER_SECOND * dt * m_fCurAnimationRate;
-	if (m_fCurrFrame >= m_pCurAnimation->nTotalFrames)
+	m_fCurFrame += FRAMES_PER_SECOND * fDeltaTime * m_fCurAnimationRate;
+	if( m_fCurFrame >= m_pCurAnimation->nTotalFrames )
 	{
 		if( m_bRevertToDefaultAnimation && m_sDefaultAnimation != "" )
 		{
 			this->PlayAnimation( m_sDefaultAnimation, m_fDefaultAnimationRate );
-			/* XXX: add to m_fCurrFrame the wrapover from the previous
-			 * m_fCurrFrame-m_pCurAnimation->nTotalFrames, so it doesn't skip */
+			/* XXX: add to m_fCurFrame the wrapover from the previous
+			 * m_fCurFrame-m_pCurAnimation->nTotalFrames, so it doesn't skip */
 		}
 		else
-		{
-			m_fCurrFrame -= m_pCurAnimation->nTotalFrames;
-		}
+			m_fCurFrame -= m_pCurAnimation->nTotalFrames;
 	}
 
-	int nBoneCount = (int)m_pCurAnimation->Bones.size();
-	int i, j;
-	for (i = 0; i < nBoneCount; i++)
+	SetBones( m_pCurAnimation, m_fCurFrame, m_vpBones );
+}
+
+void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone_t> &vpBones )
+{
+	unsigned nBoneCount = pAnimation->Bones.size();
+	for( unsigned i = 0; i < nBoneCount; i++ )
 	{
-		msBone *pBone = &m_pCurAnimation->Bones[i];
+		const msBone *pBone = &pAnimation->Bones[i];
 		int nPositionKeyCount = pBone->PositionKeys.size();
 		int nRotationKeyCount = pBone->RotationKeys.size();
-		if (nPositionKeyCount == 0 && nRotationKeyCount == 0)
+		if( nPositionKeyCount == 0 && nRotationKeyCount == 0 )
 		{
-			m_vpBones[i].mFinal = m_vpBones[i].mAbsolute;
+			vpBones[i].mFinal = vpBones[i].mAbsolute;
 		}
 		else
 		{
@@ -706,10 +708,10 @@ void Model::AdvanceFrame (float dt)
 			// search for the adjacent position keys
 			//
 			const msPositionKey *pLastPositionKey = NULL, *pThisPositionKey = NULL;
-			for (j = 0; j < nPositionKeyCount; j++)
+			for( int j = 0; j < nPositionKeyCount; j++ )
 			{
 				const msPositionKey *pPositionKey = &pBone->PositionKeys[j];
-				if (pPositionKey->fTime >= m_fCurrFrame)
+				if( pPositionKey->fTime >= fFrame )
 				{
 					pThisPositionKey = pPositionKey;
 					break;
@@ -719,29 +721,26 @@ void Model::AdvanceFrame (float dt)
 			if( pLastPositionKey != NULL && pThisPositionKey != NULL )
 			{
 				float d = pThisPositionKey->fTime - pLastPositionKey->fTime;
-				float s = (m_fCurrFrame - pLastPositionKey->fTime) / d;
+				float s = (fFrame - pLastPositionKey->fTime) / d;
 				vPos[0] = pLastPositionKey->Position[0] + (pThisPositionKey->Position[0] - pLastPositionKey->Position[0]) * s;
 				vPos[1] = pLastPositionKey->Position[1] + (pThisPositionKey->Position[1] - pLastPositionKey->Position[1]) * s;
 				vPos[2] = pLastPositionKey->Position[2] + (pThisPositionKey->Position[2] - pLastPositionKey->Position[2]) * s;
 			}
 			else if( pLastPositionKey == NULL )
-			{
 				vPos = pThisPositionKey->Position;
-			}
 			else if( pThisPositionKey == NULL )
-			{
 				vPos = pLastPositionKey->Position;
-			}
+
 			//
 			// search for the adjacent rotation keys
 			//
 			RageMatrix m;
 			RageMatrixIdentity( &m );
 			const msRotationKey *pLastRotationKey = NULL, *pThisRotationKey = NULL;
-			for (j = 0; j < nRotationKeyCount; j++)
+			for( int j = 0; j < nRotationKeyCount; j++ )
 			{
 				const msRotationKey *pRotationKey = &pBone->RotationKeys[j];
-				if (pRotationKey->fTime >= m_fCurrFrame)
+				if( pRotationKey->fTime >= fFrame )
 				{
 					pThisRotationKey = pRotationKey;
 					break;
@@ -750,7 +749,7 @@ void Model::AdvanceFrame (float dt)
 			}
 			if (pLastRotationKey != 0 && pThisRotationKey != 0)
 			{
-				const float s = SCALE( m_fCurrFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0, 1 );
+				const float s = SCALE( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0, 1 );
 
 				RageVector4 q1, q2, q;
 				RageQuatFromHPR( &q1, RageVector3(pLastRotationKey->Rotation) * (180 / PI) );
@@ -777,17 +776,13 @@ void Model::AdvanceFrame (float dt)
 			m.m[3][1] = vPos[1];
 			m.m[3][2] = vPos[2];
 
-			RageMatrixMultiply( &m_vpBones[i].mRelativeFinal, &m_vpBones[i].mRelative, &m );
+			RageMatrixMultiply( &vpBones[i].mRelativeFinal, &vpBones[i].mRelative, &m );
 
-			int nParentBone = m_pCurAnimation->FindBoneByName( pBone->szParentName );
+			int nParentBone = pAnimation->FindBoneByName( pBone->szParentName );
 			if( nParentBone == -1 )
-			{
-				m_vpBones[i].mFinal = m_vpBones[i].mRelativeFinal;
-			}
+				vpBones[i].mFinal = vpBones[i].mRelativeFinal;
 			else
-			{
-				RageMatrixMultiply( &m_vpBones[i].mFinal, &m_vpBones[nParentBone].mFinal, &m_vpBones[i].mRelativeFinal );
-			}
+				RageMatrixMultiply( &vpBones[i].mFinal, &vpBones[nParentBone].mFinal, &vpBones[i].mRelativeFinal );
 		}
 	}
 }
@@ -810,18 +805,18 @@ void Model::Update( float fDelta )
 	{
 		for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
 		{
-			msMesh &origMesh = m_pGeometry->m_Meshes[i];
+			const msMesh &origMesh = m_pGeometry->m_Meshes[i];
 			msMesh &tempMesh = m_vTempMeshes[i];
-			vector<RageModelVertex> &origVertices = origMesh.Vertices;
+			const vector<RageModelVertex> &origVertices = origMesh.Vertices;
 			vector<RageModelVertex> &tempVertices = tempMesh.Vertices;
 			for( unsigned j = 0; j < origVertices.size(); j++ )
 			{
 				RageVector3& tempPos =			tempVertices[j].p;
-				RageVector3& originalPos =		origVertices[j].p;
 				RageVector3& tempNormal =		tempVertices[j].n;
-				RageVector3& originalNormal =	origVertices[j].n;
 				RageVector2& tempTex =			tempVertices[j].t;
-				RageVector2& originalTex =		origVertices[j].t;
+				const RageVector3& originalPos =		origVertices[j].p;
+				const RageVector3& originalNormal =	origVertices[j].n;
+				const RageVector2& originalTex =		origVertices[j].t;
 				int8_t bone =					origVertices[j].bone;
 
 				tempTex = originalTex;

@@ -55,6 +55,7 @@ private:
 	map<CString,msAnimation>	m_mapNameToAnimation;
 	msAnimation*				m_pCurAnimation;
 
+	static void SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone_t> &vpBones );
 	vector<myBone_t>	m_vpBones;
 
 	// If any vertex has a bone weight, then then render from m_pTempGeometry.  
@@ -62,7 +63,7 @@ private:
 	vector<msMesh>	m_vTempMeshes;
 	RageCompiledGeometry* m_pTempGeometry;
 	
-	float		m_fCurrFrame;
+	float		m_fCurFrame;
 	CString		m_sDefaultAnimation;
 	float		m_fDefaultAnimationRate;
 	float		m_fCurAnimationRate;
