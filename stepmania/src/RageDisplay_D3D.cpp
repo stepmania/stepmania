@@ -195,97 +195,99 @@ const PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFormat pf) const
 
 
 RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
-try
 {
-	LOG->Trace( "RageDisplay_D3D::RageDisplay_D3D()" );
-	LOG->MapLog("renderer", "Current renderer: Direct3D");
+	try
+	{
+		LOG->Trace( "RageDisplay_D3D::RageDisplay_D3D()" );
+		LOG->MapLog("renderer", "Current renderer: Direct3D");
 
-	typedef IDirect3D8 * (WINAPI * Direct3DCreate8_t) (UINT SDKVersion);
-	Direct3DCreate8_t pDirect3DCreate8;
+		typedef IDirect3D8 * (WINAPI * Direct3DCreate8_t) (UINT SDKVersion);
+		Direct3DCreate8_t pDirect3DCreate8;
 #if defined(_XBOX)
-	pDirect3DCreate8 = Direct3DCreate8;
+		pDirect3DCreate8 = Direct3DCreate8;
 #else
-	g_D3D8_Module = LoadLibrary("D3D8.dll");
-	if(!g_D3D8_Module)
-		throw RageException_D3DNotInstalled();
+		g_D3D8_Module = LoadLibrary("D3D8.dll");
+		if(!g_D3D8_Module)
+			throw RageException_D3DNotInstalled();
 
-	pDirect3DCreate8 = (Direct3DCreate8_t) GetProcAddress(g_D3D8_Module, "Direct3DCreate8");
+		pDirect3DCreate8 = (Direct3DCreate8_t) GetProcAddress(g_D3D8_Module, "Direct3DCreate8");
 #endif
 
-	g_pd3d = pDirect3DCreate8( D3D_SDK_VERSION );
+		g_pd3d = pDirect3DCreate8( D3D_SDK_VERSION );
 
-	if( FAILED( g_pd3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &g_DeviceCaps) ) )
-		throw RageException_D3DNoAcceleration();
+		if( FAILED( g_pd3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &g_DeviceCaps) ) )
+			throw RageException_D3DNoAcceleration();
 
-	D3DADAPTER_IDENTIFIER8	identifier;
-	g_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &identifier );
+		D3DADAPTER_IDENTIFIER8	identifier;
+		g_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &identifier );
 
-	LOG->Trace( 
-		"Driver: %s\n"
-		"Description: %s\n"
-		"Max texture size: %d\n",
-		identifier.Driver, 
-		identifier.Description,
-		g_DeviceCaps.MaxTextureWidth
-		);
+		LOG->Trace( 
+			"Driver: %s\n"
+			"Description: %s\n"
+			"Max texture size: %d\n",
+			identifier.Driver, 
+			identifier.Description,
+			g_DeviceCaps.MaxTextureWidth
+			);
 
-	LOG->Trace( "This display adaptor supports the following modes:" );
-	D3DDISPLAYMODE mode;
-	for( UINT u=0; u<g_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
-		if( SUCCEEDED( g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, u, &mode ) ) )
-			LOG->Trace( "  %ux%u %uHz, format %d", mode.Width, mode.Height, mode.RefreshRate, mode.Format );
+		LOG->Trace( "This display adaptor supports the following modes:" );
+		D3DDISPLAYMODE mode;
+		for( UINT u=0; u<g_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
+			if( SUCCEEDED( g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, u, &mode ) ) )
+				LOG->Trace( "  %ux%u %uHz, format %d", mode.Width, mode.Height, mode.RefreshRate, mode.Format );
 
-	/* Up until now, all we've done is set up g_pd3d and do some queries.  Now,
-	 * actually initialize the window.  Do this after as many error conditions
-	 * as possible, because if we have to shut it down again we'll flash a window
-	 * briefly. */
-    if(!SDL_WasInit(SDL_INIT_VIDEO))
-	{
-		if( SDL_InitSubSystem(SDL_INIT_VIDEO) == -1 )
-			RageException::Throw( "SDL_INIT_VIDEO failed: %s", SDL_GetError() );
+		/* Up until now, all we've done is set up g_pd3d and do some queries.  Now,
+		 * actually initialize the window.  Do this after as many error conditions
+		 * as possible, because if we have to shut it down again we'll flash a window
+		 * briefly. */
+		if(!SDL_WasInit(SDL_INIT_VIDEO))
+		{
+			if( SDL_InitSubSystem(SDL_INIT_VIDEO) == -1 )
+				RageException::Throw( "SDL_INIT_VIDEO failed: %s", SDL_GetError() );
+		}
+
+		/* By default, ignore all SDL events.  We'll enable them as we need them.
+		 * We must not enable any events we don't actually want, since we won't
+		 * query for them and they'll fill up the event queue. 
+		 *
+		 * This needs to be done after we initialize video, since it's really part
+		 * of the SDL video system--it'll be reinitialized on us if we do this first. */
+		SDL_EventState(0xFF /*SDL_ALLEVENTS*/, SDL_IGNORE);
+		SDL_EventState(SDL_VIDEORESIZE, SDL_ENABLE);
+
+		g_PaletteIndex.clear();
+		for( int i = 0; i < 256; ++i )
+			g_PaletteIndex.push_back(i);
+
+		// Save the original desktop format.
+		g_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &g_DesktopMode );
+
+		// Create the SDL window
+		int flags = SDL_RESIZABLE | SDL_SWSURFACE;
+		SDL_Surface *screen = SDL_SetVideoMode(p.width, p.height, p.bpp, flags);
+		if(!screen)
+			RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
+
+		SetVideoMode( p );
+	} catch(...) {
+		// Clean up; ~RageDisplay will not be called.
+		if( SDL_WasInit(SDL_INIT_VIDEO) )
+			SDL_QuitSubSystem(SDL_INIT_VIDEO);
+
+		if( g_pd3d )
+		{
+			g_pd3d->Release();
+			g_pd3d = NULL;
+		}
+
+		if( g_D3D8_Module )
+		{
+			FreeLibrary( g_D3D8_Module );
+			g_D3D8_Module = NULL;
+		}
+		throw;
 	}
-
-	/* By default, ignore all SDL events.  We'll enable them as we need them.
-	 * We must not enable any events we don't actually want, since we won't
-	 * query for them and they'll fill up the event queue. 
-	 *
-	 * This needs to be done after we initialize video, since it's really part
-	 * of the SDL video system--it'll be reinitialized on us if we do this first. */
-	SDL_EventState(0xFF /*SDL_ALLEVENTS*/, SDL_IGNORE);
-	SDL_EventState(SDL_VIDEORESIZE, SDL_ENABLE);
-
-	g_PaletteIndex.clear();
-	for( int i = 0; i < 256; ++i )
-		g_PaletteIndex.push_back(i);
-
-	// Save the original desktop format.
-	g_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &g_DesktopMode );
-
-	// Create the SDL window
-	int flags = SDL_RESIZABLE | SDL_SWSURFACE;
-	SDL_Surface *screen = SDL_SetVideoMode(p.width, p.height, p.bpp, flags);
-	if(!screen)
-		RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
-
-	SetVideoMode( p );
-} catch(...) {
-	// Clean up; ~RageDisplay will not be called.
-	if( SDL_WasInit(SDL_INIT_VIDEO) )
-		SDL_QuitSubSystem(SDL_INIT_VIDEO);
-
-	if( g_pd3d )
-	{
-		g_pd3d->Release();
-		g_pd3d = NULL;
-	}
-
-	if( g_D3D8_Module )
-	{
-		FreeLibrary( g_D3D8_Module );
-		g_D3D8_Module = NULL;
-	}
-	throw;
-};
+}
 
 void RageDisplay_D3D::Update(float fDeltaTime)
 {
