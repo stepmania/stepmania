@@ -71,9 +71,9 @@ public:
 	float			m_fLifeDeltaGoodPercentChange;
 	float			m_fLifeDeltaBooPercentChange;
 	float			m_fLifeDeltaMissPercentChange;
+	float			m_fLifeDeltaHitMinePercentChange;
 	float			m_fLifeDeltaOKPercentChange;
 	float			m_fLifeDeltaNGPercentChange;
-	float			m_fLifeDeltaMinePercentChange;
 	int				m_iRegenComboAfterFail;
 	int				m_iRegenComboAfterMiss;
 	int				m_iMaxRegenComboAfterFail;
@@ -85,6 +85,7 @@ public:
 	int				m_iPercentScoreGoodWeight;
 	int				m_iPercentScoreBooWeight;
 	int				m_iPercentScoreMissWeight;
+	int				m_iPercentScoreHitMineWeight;
 	int				m_iPercentScoreOKWeight;
 	int				m_iPercentScoreNGWeight;
 	int				m_iGradeMarvelousWeight;
@@ -93,6 +94,7 @@ public:
 	int				m_iGradeGoodWeight;
 	int				m_iGradeBooWeight;
 	int				m_iGradeMissWeight;
+	int				m_iGradeHitMineWeight;
 	int				m_iGradeOKWeight;
 	int				m_iGradeNGWeight;
 	float			m_fGradePercentAA;

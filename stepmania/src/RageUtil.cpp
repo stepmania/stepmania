@@ -964,10 +964,9 @@ CString Capitalize( const CString &s )
 {
 	if( s.GetLength()==0 )
 		return "";
-	CString s1 = s.Left(1);
-	s1.MakeUpper();
-	CString s2 = s.Right( s.GetLength()-1 );
-	return s1+s2;
+	CString s2 = s;
+	s2[0] = toupper( s2[0] );
+	return s2;
 }
 
 char char_traits_char_nocase::uptab[256] =

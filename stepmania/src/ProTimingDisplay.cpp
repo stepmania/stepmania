@@ -8,6 +8,7 @@ static CachedThemeMetric	GREAT_COMMAND		("ProTimingDisplay","GreatCommand");
 static CachedThemeMetric	GOOD_COMMAND		("ProTimingDisplay","GoodCommand");
 static CachedThemeMetric	BOO_COMMAND			("ProTimingDisplay","BooCommand");
 static CachedThemeMetric	MISS_COMMAND		("ProTimingDisplay","MissCommand");
+static CachedThemeMetric	HIT_MINE_COMMAND	("ProTimingDisplay","HitMineCommand");
 
 
 ProTimingDisplay::ProTimingDisplay()
@@ -22,6 +23,7 @@ ProTimingDisplay::ProTimingDisplay()
 	GOOD_COMMAND.Refresh();
 	BOO_COMMAND.Refresh();
 	MISS_COMMAND.Refresh();
+	HIT_MINE_COMMAND.Refresh();
 }
 
 void ProTimingDisplay::Reset()
@@ -43,7 +45,13 @@ void ProTimingDisplay::SetJudgment( int ms, TapNoteScore score )
 	const CachedThemeMetric *Commands[NUM_TAP_NOTE_SCORES] =
 	{
 		NULL, /* no TNS_NONE */
-		&MISS_COMMAND, &BOO_COMMAND, &GOOD_COMMAND, &GREAT_COMMAND, &PERFECT_COMMAND, &MARVELOUS_COMMAND
+		&HIT_MINE_COMMAND, 
+		&MISS_COMMAND, 
+		&BOO_COMMAND, 
+		&GOOD_COMMAND, 
+		&GREAT_COMMAND, 
+		&PERFECT_COMMAND, 
+		&MARVELOUS_COMMAND
 	};
 	ASSERT( score != TNS_NONE );
 	ASSERT( score < NUM_TAP_NOTE_SCORES );

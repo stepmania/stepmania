@@ -33,12 +33,18 @@ void ScoreKeeperRave::OnNextSong( int iSongInCourseIndex, const Steps* pNotes, c
 	
 }
 
+void ScoreKeeperRave::HandleTapScore( TapNoteScore score )
+{
+	// FIXME
+}
+
 #define CROSSED( val ) (fOld < val && fNew >= val)
 #define CROSSED_ATTACK_LEVEL( level ) CROSSED(1.f/NUM_ATTACK_LEVELS*(level+1))
-void ScoreKeeperRave::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, int iNumAdditions )
+void ScoreKeeperRave::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
 {
 	AttackLevel oldAL = (AttackLevel)(int)GAMESTATE->m_fSuperMeter[m_PlayerNumber];
 
+	// TODO: Move these to prefs
 	float fPercentToMove;
 	switch( scoreOfLastTap )
 	{
@@ -66,7 +72,7 @@ void ScoreKeeperRave::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 
 void ScoreKeeperRave::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 {
-
+	// FIXME
 }
 
 void ScoreKeeperRave::Update( float fDelta )

@@ -52,7 +52,6 @@ public:
 	void SetPressed( int iCol );
 	void DidTapNote( int iCol, TapNoteScore score, bool bBright );
 	void DidHoldNote( int iCol );
-	void DidTapMine( int iCol, TapNoteScore score );
 
 
 protected:

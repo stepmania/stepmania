@@ -221,6 +221,36 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
   Let p = score multiplier (Marvelous = 10, Perfect = 9, Great = 5, other = 0)
 
+  N = total number of steps and freeze steps
+  S = The sum of all integers from 1 to N (the total number of steps/freeze steps) 
+  n = number of the current step or freeze step (varies from 1 to N)
+  B = Base value of the song (1,000,000 X the number of feet difficulty) - All edit data is rated as 5 feet
+  So, the score for one step is: 
+  one_step_score = p * (B/S) * n 
+  
+  *IMPORTANT* : Double steps (U+L, D+R, etc.) count as two steps instead of one *for your combo count only*, 
+  so if you get a double L+R on the 112th step of a song, you score is calculated for only one step, not two, 
+  as the combo counter might otherwise imply.  
+	
+  Now, through simple algebraic manipulation:
+  S = 1+...+N = (1+N)*N/2 (1 through N added together) 
+
+  Okay, time for an example.  Suppose we wanted to calculate the step score of a "Great" on the 57th step of 
+  a 441 step, 8-foot difficulty song (I'm just making this one up): 
+  
+  S = (1 + 441)*441 / 2
+  = 194,222 / 2
+  = 97,461
+  StepScore = p * (B/S) * n
+  = 5 * (8,000,000 / 97,461) * 57
+  = 5 * (82) * 57 (The 82 is rounded down from 82.08411...)
+  = 23,370
+  
+  Remember this is just the score for the step, not the cumulative score up to the 57th step. Also, please note that 
+  I am currently checking into rounding errors with the system and if there are any, how they are resolved in the system. 
+  
+  Note: if you got all Perfect on this song, you would get (p=10)*B, which is 80,000,000. In fact, the maximum possible 
+  score for any song is the number of feet difficulty X 10,000,000. 
 */
 	int p = 0;	// score multiplier 
 
@@ -286,19 +316,22 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	printf( "score: %i\n", iScore );
 }
 
-void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, int iNumAdditions )
+void ScoreKeeperMAX2::HandleTapScore( TapNoteScore score )
+{
+	if( score == TNS_HIT_MINE )
+	{
+		g_CurStageStats.iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( TNS_HIT_MINE );
+		g_CurStageStats.iTapNoteScores[m_PlayerNumber][TNS_HIT_MINE] += 1;
+	}
+}
+
+void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
 {
 	ASSERT( iNumTapsInRow >= 1 );
-	int iNumTapsToScore = iNumTapsInRow; //-iNumAdditions;
 
-	// Update dance points.  Additions don't count.
-	// (yes they do)
-	if( iNumTapsToScore > 0 )
-	{
-		g_CurStageStats.iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( scoreOfLastTap );
-	}
-
-	// Do count additions in judge totals.
+	// Update dance points.
+	g_CurStageStats.iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( scoreOfLastTap );
+	// update judged row totals
 	g_CurStageStats.iTapNoteScores[m_PlayerNumber][scoreOfLastTap] += 1;
 
 	//
@@ -332,45 +365,7 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	if( scoreOfLastTap >= MinScoreToContinueCombo )
 		g_CurStageStats.iCurCombo[m_PlayerNumber] += ComboCountIfHit;
 
-/*
-  http://www.aaroninjapan.com/ddr2.html
-
-  A single step's points are calculated as follows: 
-  
-  p = score multiplier (Perfect = 10, Great = 5, other = 0)
-  N = total number of steps and freeze steps
-  S = The sum of all integers from 1 to N (the total number of steps/freeze steps) 
-  n = number of the current step or freeze step (varies from 1 to N)
-  B = Base value of the song (1,000,000 X the number of feet difficulty) - All edit data is rated as 5 feet
-  So, the score for one step is: 
-  one_step_score = p * (B/S) * n 
-  
-  *IMPORTANT* : Double steps (U+L, D+R, etc.) count as two steps instead of one *for your combo count only*, 
-  so if you get a double L+R on the 112th step of a song, you score is calculated for only one step, not two, 
-  as the combo counter might otherwise imply.  
-	
-  Now, through simple algebraic manipulation:
-  S = 1+...+N = (1+N)*N/2 (1 through N added together) 
-
-  Okay, time for an example.  Suppose we wanted to calculate the step score of a "Great" on the 57th step of 
-  a 441 step, 8-foot difficulty song (I'm just making this one up): 
-  
-  S = (1 + 441)*441 / 2
-  = 194,222 / 2
-  = 97,461
-  StepScore = p * (B/S) * n
-  = 5 * (8,000,000 / 97,461) * 57
-  = 5 * (82) * 57 (The 82 is rounded down from 82.08411...)
-  = 23,370
-  
-  Remember this is just the score for the step, not the cumulative score up to the 57th step. Also, please note that 
-  I am currently checking into rounding errors with the system and if there are any, how they are resolved in the system. 
-  
-  Note: if you got all Perfect on this song, you would get (p=10)*B, which is 80,000,000. In fact, the maximum possible 
-  score for any song is the number of feet difficulty X 10,000,000. 
-*/
 	AddScore( scoreOfLastTap );		// only score once per row
-
 
 	//
 	// handle combo logic
@@ -452,6 +447,7 @@ int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 	int TapScoreValues[NUM_TAP_NOTE_SCORES] =
 	{
 		0,
+		PREFSMAN->m_iPercentScoreHitMineWeight,
 		PREFSMAN->m_iPercentScoreMissWeight,
 		PREFSMAN->m_iPercentScoreBooWeight,
 		PREFSMAN->m_iPercentScoreGoodWeight,

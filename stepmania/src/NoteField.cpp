@@ -656,4 +656,3 @@ void NoteField::Step( int iCol ) { SearchForSongBeat()->m_ReceptorArrowRow.Step(
 void NoteField::SetPressed( int iCol ) { SearchForSongBeat()->m_ReceptorArrowRow.SetPressed( iCol ); }
 void NoteField::DidTapNote( int iCol, TapNoteScore score, bool bBright ) { SearchForSongBeat()->m_GhostArrowRow.DidTapNote( iCol, score, bBright ); }
 void NoteField::DidHoldNote( int iCol ) { /*SearchForSongBeat()->m_GhostArrowRow.DidHoldNote( iCol );*/ }
-void NoteField::DidTapMine( int iCol, TapNoteScore score ) { SearchForSongBeat()->m_GhostArrowRow.DidTapMine( iCol, score ); }

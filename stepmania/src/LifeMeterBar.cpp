@@ -448,12 +448,12 @@ void LifeMeterBar::ChangeLifeMine()
 	switch( GAMESTATE->m_SongOptions.m_DrainType )
 	{
 	case SongOptions::DRAIN_NORMAL:
-		fDeltaLife = PREFSMAN->m_fLifeDeltaMinePercentChange;
+		fDeltaLife = PREFSMAN->m_fLifeDeltaHitMinePercentChange;
 		if( IsHot() )
 			fDeltaLife = -0.10f;		// make it take a while to get back to "doing great"
 		break;
 	case SongOptions::DRAIN_NO_RECOVER:
-		fDeltaLife = PREFSMAN->m_fLifeDeltaMinePercentChange;
+		fDeltaLife = PREFSMAN->m_fLifeDeltaHitMinePercentChange;
 		break;
 	case SongOptions::DRAIN_SUDDEN_DEATH:
 		fDeltaLife = -1.0;

@@ -154,14 +154,15 @@ CString TapNoteScoreToString( TapNoteScore tns )
 {
 	switch( tns )
 	{
-	case TNS_NONE:			return "none";
-	case TNS_MISS:			return "miss";
-	case TNS_BOO:			return "boo";
-	case TNS_GOOD:			return "good";
-	case TNS_GREAT:			return "great";
-	case TNS_PERFECT:		return "perfect";
-	case TNS_MARVELOUS:		return "marvelous";
-	default:	ASSERT(0);	return "";	// invalid Difficulty
+	case TNS_NONE:			return "None";
+	case TNS_HIT_MINE:		return "HitMine";
+	case TNS_MISS:			return "Miss";
+	case TNS_BOO:			return "Boo";
+	case TNS_GOOD:			return "Good";
+	case TNS_GREAT:			return "Great";
+	case TNS_PERFECT:		return "Perfect";
+	case TNS_MARVELOUS:		return "Marvelous";
+	default:	ASSERT(0);	return "";	// invalid
 	}
 }
 

@@ -114,7 +114,7 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, HoldNoteScore score, Tap
 
 void CombinedLifeMeterTug::ChangeLifeMine( PlayerNumber pn )
 {
-	float fPercentToMove = PREFSMAN->m_fLifeDeltaMinePercentChange;
+	float fPercentToMove = PREFSMAN->m_fLifeDeltaHitMinePercentChange;
 	switch( pn )
 	{
 	case PLAYER_1:	GAMESTATE->m_fTugLifePercentP1 += fPercentToMove;	break;

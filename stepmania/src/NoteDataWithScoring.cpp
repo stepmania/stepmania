@@ -125,7 +125,7 @@ int NoteDataWithScoring::GetSuccessfulMines( float fStartBeat, float fEndBeat ) 
 	{
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
-			if( this->GetTapNote(t, i) == TAP_MINE && GetTapNoteScore(t, i) != TNS_MISS )
+			if( this->GetTapNote(t, i) == TAP_MINE && GetTapNoteScore(t, i) != TNS_HIT_MINE )
 				iNumSuccessfulMinesNotes++;
 		}
 	}

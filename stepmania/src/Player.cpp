@@ -605,7 +605,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		TapNote tn = GetTapNote(col,iIndexOverlappingNote);
 
 		// calculate TapNoteScore
-		TapNoteScore score;
+		TapNoteScore score = TNS_NONE;
 
 		switch( GAMESTATE->m_PlayerController[m_PlayerNumber] )
 		{
@@ -644,18 +644,14 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMineSeconds )
 				{
 					m_soundMine.Play();
-					score = TNS_MISS;
-					m_pNoteField->DidTapMine( col, score );
+					score = TNS_HIT_MINE;
 
 					if( m_pLifeMeter )
 						m_pLifeMeter->ChangeLifeMine();
 					if( m_pCombinedLifeMeter )
 						m_pCombinedLifeMeter->ChangeLifeMine(m_PlayerNumber);
 					m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
-				}
-				else
-				{
-					score = TNS_NONE;
+					m_pNoteField->DidTapNote( col, score, false );
 				}
 				break;
 
@@ -744,14 +740,14 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			// Unless the computer made a very good step, they were fooled by the mine
 			if( tn == TAP_MINE  &&  score <= TNS_GOOD )
 			{
+				score = TNS_HIT_MINE;
 				m_soundMine.Play();
-				score = TNS_MISS;
-				m_pNoteField->DidTapMine( col, score );
 				if( m_pLifeMeter )
 					m_pLifeMeter->ChangeLifeMine();
 				if( m_pCombinedLifeMeter )
 					m_pCombinedLifeMeter->ChangeLifeMine(m_PlayerNumber);
 				m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
+				m_pNoteField->DidTapNote( col, score, false );
 			}
 			if( IsTapAttack(tn)  &&  score > TNS_GOOD )
 			{
@@ -842,6 +838,10 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			score >= TNS_GREAT ) 
 			HandleAutosync(fNoteOffset);
 
+		if( m_pPrimaryScoreKeeper )
+			m_pPrimaryScoreKeeper->HandleTapScore( score );
+		if( m_pSecondaryScoreKeeper )
+			m_pSecondaryScoreKeeper->HandleTapScore( score );
 
 		if( IsThereATapOrHoldHeadAtRow(iIndexOverlappingNote) ) // don't judge rows that are only mines
 		{
@@ -906,9 +906,16 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	 * slightly more harsh scoring than DDR */
 	/* I'm not sure this is right, either.  Can you really jump a boo and a perfect
 	 * and get scored for a perfect?  (That's so loose, you can gallop jumps.) -glenn */
+	/* Instead of grading individual columns, DDR sets a "was pressed recently" 
+	 * countdown every time you step on a column.  When you step on the first note of 
+	 * the jump, it sets the first "was pressed recently" timer.  Then, when you do 
+	 * the 2nd step of the jump, it sets another column's timer then AND's the jump 
+	 * columns with the "was pressed recently" columns to see whether or not you hit 
+	 * all the columns of the jump.  -Chris */
 //	TapNoteScore score = MinTapNoteScore(iIndexThatWasSteppedOn);
 	TapNoteScore score = LastTapNoteScore(iIndexThatWasSteppedOn);
 	ASSERT(score != TNS_NONE);
+	ASSERT(score != TNS_HIT_MINE);
 
 	/* If the whole row was hit with perfects or greats, remove the row
 	 * from the NoteField, so it disappears. */
@@ -1027,7 +1034,7 @@ void PlayerMinus::CrossedRow( int iNoteRow )
 	// Hold the panel while crossing a mine will cause the mine to explode
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
-		if( GetTapNote(t, iNoteRow) == TAP_MINE )
+		if( GetTapNote(t,iNoteRow) == TAP_MINE )
 		{
 			const StyleInput StyleI( m_PlayerNumber, t );
 			const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
@@ -1065,18 +1072,7 @@ void PlayerMinus::RandomiseNotes( int iNoteRow )
 void PlayerMinus::HandleTapRowScore( unsigned row )
 {
 	TapNoteScore scoreOfLastTap = LastTapNoteScore(row);
-
-	int iNumTapsInRow = 0;
-	int iNumAdditions = 0;
-	for( int t=0; t<GetNumTracks(); t++ )	// for each column
-	{
-		TapNote tn = GetTapNote(t, row);
-		if( tn != TAP_EMPTY )
-			iNumTapsInRow++;
-		if( tn == TAP_ADDITION )
-			iNumAdditions++;
-	}
-
+	int iNumTapsInRow = this->GetNumTracksWithTapOrHoldHead(row);
 	ASSERT(iNumTapsInRow > 0);
 
 	bool NoCheating = true;
@@ -1111,16 +1107,17 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 
 		iCurCombo = 0;
 		break;
+	default:
+		ASSERT( 0 );
 	}
 
 	/* The score keeper updates the hit combo.  Remember the old combo for handling announcers. */
 	const int iOldCombo = g_CurStageStats.iCurCombo[m_PlayerNumber];
 
 	if(m_pPrimaryScoreKeeper)
-		m_pPrimaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, iNumAdditions );
-
+		m_pPrimaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow );
 	if(m_pSecondaryScoreKeeper)
-		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, iNumAdditions );
+		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow );
 
 	m_Combo.SetCombo( g_CurStageStats.iCurCombo[m_PlayerNumber] );
 

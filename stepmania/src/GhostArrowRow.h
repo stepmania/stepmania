@@ -30,7 +30,6 @@ public:
 	void Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffset );
 	
 	void DidTapNote( int iCol, TapNoteScore score, bool bBright );
-	void DidTapMine( int iCol, TapNoteScore score );
 	void SetHoldIsActive( int iCol );
 	
 protected:
@@ -40,7 +39,6 @@ protected:
 
 	GhostArrow		m_GhostDim[MAX_NOTE_TRACKS];
 	GhostArrow		m_GhostBright[MAX_NOTE_TRACKS];
-	GhostArrow		m_GhostMine[MAX_NOTE_TRACKS];
 	HoldGhostArrow	m_HoldGhost[MAX_NOTE_TRACKS];
 };
 

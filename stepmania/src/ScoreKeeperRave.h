@@ -21,10 +21,11 @@ class ScoreKeeperRave : public ScoreKeeper
 public:
 	// Overrides
 	ScoreKeeperRave(PlayerNumber pn);
-	virtual void Update( float fDelta );
-	virtual void OnNextSong( int iSongInCourseIndex, const Steps* pNotes, const NoteData* pNoteData );	// before a song plays (called multiple times if course)
-	virtual void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, int iNumAdditions );
-	virtual void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
+	void Update( float fDelta );
+	void OnNextSong( int iSongInCourseIndex, const Steps* pNotes, const NoteData* pNoteData );	// before a song plays (called multiple times if course)
+	void HandleTapScore( TapNoteScore score );
+	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
+	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
 
 protected:
 	void LaunchAttack( AttackLevel al );

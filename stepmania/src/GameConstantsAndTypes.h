@@ -157,6 +157,7 @@ SongSortOrder StringToSongSortOrder( CString str );
 
 enum TapNoteScore { 
 	TNS_NONE, 
+	TNS_HIT_MINE,
 	TNS_MISS,
 	TNS_BOO,
 	TNS_GOOD,

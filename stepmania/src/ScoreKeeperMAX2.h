@@ -43,7 +43,8 @@ public:
 	// before a song plays (called multiple times if course)
 	void OnNextSong( int iSongInCourseIndex, const Steps* pNotes, const NoteData* pNoteData );
 
-	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, int iNumAdditions );
+	void HandleTapScore( TapNoteScore score );
+	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
 
 private:
