@@ -45,7 +45,7 @@ void RageSoundResampler::write(const void *data_, int bytes)
 	}
 
 #if 0
-	/* Possibly slightly higher quality, but way too slow. */
+	/* Much higher quality for 44100->48000 resampling, but way too slow. */
 	const int upsamp = 8;
 	const float div = float(InputRate*upsamp) / OutputRate;
 	for(unsigned f = 0; f < frames; ++f)
