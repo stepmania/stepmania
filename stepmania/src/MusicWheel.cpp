@@ -1292,7 +1292,7 @@ void MusicWheel::StartRandom()
 	m_SpinSpeed *= 20.0f; /* faster! */
 	m_WheelState = STATE_RANDOM_SPINNING;
 
-	m_iSelection = GetPreferredSelectionForRandomOrPortal();
+	SelectSong( GetPreferredSelectionForRandomOrPortal() );
 
 	this->Select();
 	RebuildMusicWheelItems();
@@ -1505,14 +1505,19 @@ Song* MusicWheel::GetSelectedSong()
 	switch( m_CurWheelItemData[m_iSelection]->m_Type )
 	{
 	case TYPE_PORTAL:
-		return m_CurWheelItemData[ GetPreferredSelectionForRandomOrPortal() ]->m_pSong;
-		break;
+		return GetPreferredSelectionForRandomOrPortal();
 	}
 
 	return m_CurWheelItemData[m_iSelection]->m_pSong;
 }
 
-int MusicWheel::GetPreferredSelectionForRandomOrPortal()
+/* Find a random song.  If possible, find one that has the preferred difficulties of
+ * each player.  Prefer songs in the active group, if any. 
+ *
+ * Note that if this is called, we *must* find a song.  We will only be called if
+ * the active sort has at least one song, but there may be no open group.  This means
+ * that any filters and preferences applied here must be optional. */
+Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 {
 	// probe to find a song that has the preferred 
 	// difficulties of each player
@@ -1532,30 +1537,39 @@ int MusicWheel::GetPreferredSelectionForRandomOrPortal()
 		vDifficultiesToRequire.push_back( GAMESTATE->m_PreferredDifficulty[p] );
 	}
 
+	CString sPreferredGroup = m_sExpandedSectionName;
+	vector<WheelItemData> &wid = m_WheelItemDatas[GAMESTATE->m_SortOrder];
+
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 
 #define NUM_PROBES 1000
 	for( int i=0; i<NUM_PROBES; i++ )
 	{
+		/* Maintaining difficulties is higher priority than maintaining the current
+		 * group. */
+		if( i == NUM_PROBES/4 )
+			sPreferredGroup.clear();
 		if( i == NUM_PROBES/2 )
 			vDifficultiesToRequire.clear();
-		int iSelection = rand() % m_CurWheelItemData.size();
-		if( m_CurWheelItemData[iSelection]->m_Type == TYPE_SONG )
-		{
-			Song* pSong = m_CurWheelItemData[iSelection]->m_pSong;
 
-			if( pSong->IsTutorial() )
-				goto skip_song;
+		int iSelection = rand() % wid.size();
+		if( wid[iSelection].m_Type != TYPE_SONG )
+			continue;
 
-			FOREACH( Difficulty, vDifficultiesToRequire, d )
-				if( !pSong->HasStepsTypeAndDifficulty(st,*d) )
-					goto skip_song;
-			return iSelection;
-		}
-skip_song:
-		;
+		Song* pSong = wid[iSelection].m_pSong;
+
+		if( !sPreferredGroup.empty() && wid[iSelection].m_sSectionName != sPreferredGroup )
+			continue;
+
+		if( i < 900 && pSong->IsTutorial() )
+			continue;
+
+		FOREACH( Difficulty, vDifficultiesToRequire, d )
+			if( !pSong->HasStepsTypeAndDifficulty(st,*d) )
+				continue;
+		return wid[iSelection].m_pSong;
 	}
-	return 0;
+	FAIL_M( "Couldn't find any songs" );
 }
 
 /*

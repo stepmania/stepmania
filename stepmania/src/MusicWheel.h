@@ -69,7 +69,7 @@ public:
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
 	void RebuildMusicWheelItems();
 
-	int GetPreferredSelectionForRandomOrPortal();
+	Song *GetPreferredSelectionForRandomOrPortal();
 
 protected:
 	void GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sPreferredGroup );
