@@ -497,21 +497,21 @@ public:
 	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( RageVector3(FArg(1),FArg(2),FArg(3)) ); return 0; }
 	static int scaletocover( T* p, lua_State *L )		{ p->ScaleToCover( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); return 0; }
 	static int scaletofit( T* p, lua_State *L )			{ p->ScaleToFitInside( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); return 0; }
-	static int animate( T* p, lua_State *L )			{ p->EnableAnimation(BArg(1)); return 0; }
+	static int animate( T* p, lua_State *L )			{ p->EnableAnimation(!!IArg(1)); return 0; }
 	static int play( T* p, lua_State *L )				{ p->EnableAnimation(true); return 0; }
 	static int pause( T* p, lua_State *L )				{ p->EnableAnimation(false); return 0; }
 	static int setstate( T* p, lua_State *L )			{ p->SetState(IArg(1)); return 0; }
-	static int texturewrapping( T* p, lua_State *L )	{ p->SetTextureWrapping(BArg(1)); return 0; }
-	static int additiveblend( T* p, lua_State *L )		{ p->SetBlendMode(BArg(1) ? BLEND_ADD : BLEND_NORMAL); return 0; }
+	static int texturewrapping( T* p, lua_State *L )	{ p->SetTextureWrapping(!!IArg(1)); return 0; }
+	static int additiveblend( T* p, lua_State *L )		{ p->SetBlendMode(!!IArg(1) ? BLEND_ADD : BLEND_NORMAL); return 0; }
 	static int blend( T* p, lua_State *L )				{ p->SetBlendModeString(SArg(1)); return 0; }
-	static int zbuffer( T* p, lua_State *L )			{ p->SetUseZBuffer(BArg(1)); return 0; }
-	static int ztest( T* p, lua_State *L )				{ p->SetZTestMode(BArg(1)?ZTEST_WRITE_ON_PASS:ZTEST_OFF); return 0; }
+	static int zbuffer( T* p, lua_State *L )			{ p->SetUseZBuffer(!!IArg(1)); return 0; }
+	static int ztest( T* p, lua_State *L )				{ p->SetZTestMode((!!IArg(1))?ZTEST_WRITE_ON_PASS:ZTEST_OFF); return 0; }
 	static int ztestmode( T* p, lua_State *L )			{ p->SetZTestModeString(SArg(1)); return 0; }
-	static int zwrite( T* p, lua_State *L )				{ p->SetZWrite(BArg(1)); return 0; }
-	static int clearzbuffer( T* p, lua_State *L )		{ p->SetClearZBuffer(BArg(1)); return 0; }
-	static int backfacecull( T* p, lua_State *L )		{ p->SetCullMode(BArg(1) ? CULL_BACK : CULL_NONE); return 0; }
+	static int zwrite( T* p, lua_State *L )				{ p->SetZWrite(!!IArg(1)); return 0; }
+	static int clearzbuffer( T* p, lua_State *L )		{ p->SetClearZBuffer(!!IArg(1)); return 0; }
+	static int backfacecull( T* p, lua_State *L )		{ p->SetCullMode((!!IArg(1)) ? CULL_BACK : CULL_NONE); return 0; }
 	static int cullmode( T* p, lua_State *L )			{ p->SetCullModeString(SArg(1)); return 0; }
-	static int hidden( T* p, lua_State *L )				{ p->SetHidden(BArg(1)); return 0; }
+	static int hidden( T* p, lua_State *L )				{ p->SetHidden(!!IArg(1)); return 0; }
 	static int hibernate( T* p, lua_State *L )			{ p->SetHibernate(FArg(1)); return 0; }
 	static int draworder( T* p, lua_State *L )			{ p->SetDrawOrder(IArg(1)); return 0; }
 	static int playcommand( T* p, lua_State *L )		{ p->PlayCommand(SArg(1)); return 0; }

@@ -14,10 +14,15 @@ extern "C"
 #include "LuaManager.h"
 #include <vector>
 
+inline bool MyLua_checkboolean (lua_State *L, int numArg)
+{
+	luaL_checktype(L,numArg,LUA_TBOOLEAN);
+	return !!lua_toboolean(L,numArg);
+}
 
 #define SArg(n) (luaL_checkstring(L,n))
 #define IArg(n) (luaL_checkint(L,n))
-#define BArg(n) (!!IArg(n))
+#define BArg(n) (MyLua_checkboolean(L,n))
 #define FArg(n) ((float) luaL_checknumber(L,n))
 
 

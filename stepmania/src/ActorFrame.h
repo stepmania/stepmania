@@ -11,7 +11,7 @@ class LunaActorFrame : public LunaActor<T>
 public:
 	LunaActorFrame() { LUA->Register( Register ); }
 
-	static int propagate( T* p, lua_State *L )	{ p->SetPropagateCommands( BArg(1) ); return 0; }
+	static int propagate( T* p, lua_State *L )	{ p->SetPropagateCommands( !!IArg(1) ); return 0; }
 
 	static void Register(lua_State *L) 
 	{
