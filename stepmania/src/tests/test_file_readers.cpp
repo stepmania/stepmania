@@ -5,9 +5,6 @@
 #include "RageUtil_FileDB.h"
 #include "RageFileManager.h"
 
-CString InitialWorkingDirectory = ".";
-CString DirOfExecutable = ".";
-
 void CreateBinaryTestFile( FILE *out, int size )
 {
 	char c = 0;
@@ -230,9 +227,9 @@ void TestSeek( bool relative )
 
 
 
-int main()
+int main( char *argv[], int argc )
 {
-	FILEMAN = new RageFileManager;
+	FILEMAN = new RageFileManager( argv[0] );
 
 	LOG			= new RageLog();
 	LOG->SetShowLogOutput( true );
