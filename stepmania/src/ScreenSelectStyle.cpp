@@ -108,7 +108,7 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 
 	m_sprJointPremium.SetName( "JointPremium" );
 
-	if( PREFSMAN->m_bVersusForOneCredit||PREFSMAN->m_bDoubleForOneCredit )
+	if( GAMESTATE->UsingPremiumAndPaying() )
 	{
 		m_sprJointPremium.Load( THEME->GetPathToG(m_sName + " joint premium") );
 		this->AddChild( &m_sprJointPremium );

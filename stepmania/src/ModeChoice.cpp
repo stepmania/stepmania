@@ -161,7 +161,7 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 	}
 }
 
-int GetCreditsToPlayStyle( Style style )
+int GetCreditsRequiredToPlayStyle( Style style )
 {
 	switch( GAMEMAN->GetStyleDefForStyle(style)->m_StyleType )
 	{
@@ -177,6 +177,21 @@ int GetCreditsToPlayStyle( Style style )
 	}
 }
 
+int GetSidesRequiredToPlayStyle( Style style )
+{
+	switch( GAMEMAN->GetStyleDefForStyle(style)->m_StyleType )
+	{
+	case StyleDef::ONE_PLAYER_ONE_CREDIT:
+		return 1;
+	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
+	case StyleDef::ONE_PLAYER_TWO_CREDITS:
+		return 2;
+	default:
+		ASSERT(0);
+		return 1;
+	}
+}
+
 bool ModeChoice::IsPlayable( CString *why ) const
 {
 	if( m_bInvalid )
@@ -184,19 +199,19 @@ bool ModeChoice::IsPlayable( CString *why ) const
 
 	if ( m_style != STYLE_INVALID )
 	{
-		bool bUsingPremium = PREFSMAN->m_bVersusForOneCredit || PREFSMAN->m_bDoubleForOneCredit;
 		int iNumCreditsInserted = GAMESTATE->m_iCoins/PREFSMAN->m_iCoinsPerCredit;
-		int iNumCreditsRequired = GetCreditsToPlayStyle(m_style);
+		int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_style);
 		int iNumSidesJoined = GAMESTATE->GetNumSidesJoined();
+		int iNumSidesRequired = GetSidesRequiredToPlayStyle(m_style);
 		
-		if( bUsingPremium )
+		if( GAMESTATE->UsingPremiumAndPaying() )
 		{
 			if( iNumCreditsInserted < iNumCreditsRequired )
 				return false;
 		}
 		else
 		{
-			if( iNumCreditsRequired != iNumSidesJoined )
+			if( iNumSidesRequired != iNumSidesJoined )
 				return false;
 		}
 	}
@@ -281,10 +296,9 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		}
 
 		// If using a premium setting, subtract coins only after choosing a style.
-		bool bUsingPremium = PREFSMAN->m_bVersusForOneCredit || PREFSMAN->m_bDoubleForOneCredit;
 		int iNumCoinsInserted = GAMESTATE->m_iCoins;
-		int iNumCoinsRequired = PREFSMAN->m_iCoinsPerCredit*GetCreditsToPlayStyle(m_style);
-		if( bUsingPremium )
+		int iNumCoinsRequired = PREFSMAN->m_iCoinsPerCredit*GetCreditsRequiredToPlayStyle(m_style);
+		if( GAMESTATE->UsingPremiumAndPaying() )
 		{
 			ASSERT( iNumCoinsInserted >= iNumCoinsRequired );
 			GAMESTATE->m_iCoins -= iNumCoinsRequired;

@@ -66,6 +66,7 @@ public:
 				iNumSidesJoined++;	// left side, and right side
 		return iNumSidesJoined;
 	};
+	bool UsingPremiumAndPaying();
 
 	GameDef*	GetCurrentGameDef();
 	const StyleDef*	GetCurrentStyleDef();
