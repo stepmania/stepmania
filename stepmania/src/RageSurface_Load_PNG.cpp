@@ -16,7 +16,9 @@
 #endif
 
 #if defined(_XBOX)
-#  include <Malloc.h>	// for alloca
+#  include <malloc.h>	// for alloca
+#elif !defined(WIN32)
+#  include <alloca.h>
 #endif
 
 #ifndef png_jmpbuf
