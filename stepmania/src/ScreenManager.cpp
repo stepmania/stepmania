@@ -17,6 +17,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
+#include "ActorUtil.h"
 #include "GameState.h"
 #include "RageException.h"
 #include "RageTimer.h"
@@ -35,8 +36,6 @@ ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our p
 
 #define STATS_X							THEME->GetMetricF("ScreenSystemLayer","StatsX")
 #define STATS_Y							THEME->GetMetricF("ScreenSystemLayer","StatsY")
-#define CREDITS_X( p )					THEME->GetMetricF("ScreenSystemLayer",ssprintf("CreditsP%dX",p+1))
-#define CREDITS_Y( p )					THEME->GetMetricF("ScreenSystemLayer",ssprintf("CreditsP%dY",p+1))
 #define CREDITS_COLOR					THEME->GetMetricC("ScreenSystemLayer","CreditsColor")
 #define CREDITS_SHADOW_LENGTH			THEME->GetMetricF("ScreenSystemLayer","CreditsShadowLength")
 #define CREDITS_ZOOM					THEME->GetMetricF("ScreenSystemLayer","CreditsZoom")
@@ -152,7 +151,8 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_textCreditInfo[p].LoadFromFont( THEME->GetPathToF("ScreenManager credits") );
-		m_textCreditInfo[p].SetXY( CREDITS_X(p), CREDITS_Y(p) );
+		m_textCreditInfo[p].SetName( ssprintf("CreditsP%d",p+1 ) );
+		SET_XY( &m_textCreditInfo[p] );
 		m_textCreditInfo[p].SetZoom( CREDITS_ZOOM );
 		m_textCreditInfo[p].SetDiffuse( CREDITS_COLOR );
 		m_textCreditInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
