@@ -681,6 +681,10 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		m_Back.SetZ( -2 ); // on top of everything else
 		this->AddChild( &m_Back );
 
+		m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenGameplay Overlay") );
+		m_Overlay.SetZ( -4 ); // on top of everything else
+		this->AddChild( &m_Overlay );
+
 
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )	// only load if we're going to use it
 		{
@@ -2276,6 +2280,7 @@ void ScreenGameplay::TweenOnScreen()
 		ON_COMMAND( m_textPlayerOptions[p] );
 		ON_COMMAND( m_DifficultyIcon[p] );
 	}
+	m_Overlay.PlayCommand("On");
 }
 
 void ScreenGameplay::TweenOffScreen()
@@ -2306,6 +2311,7 @@ void ScreenGameplay::TweenOffScreen()
 		OFF_COMMAND( m_textPlayerOptions[p] );
 		OFF_COMMAND( m_DifficultyIcon[p] );
 	}
+	m_Overlay.PlayCommand("Off");
 
 	m_textDebug.StopTweening();
 	m_textDebug.BeginTweening( 1/8.f );

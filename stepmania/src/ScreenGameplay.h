@@ -148,6 +148,7 @@ protected:
 	Transition	m_Draw;
 	Transition	m_In;
 	Transition	m_Back;
+	BGAnimation	m_Overlay;
 
 	BitmapText			m_textSurviveTime;	// used in extra stage
 	BitmapText			m_textSongTitle;
@@ -160,8 +161,9 @@ protected:
 	
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 
-	BGAnimation			m_bgaBH;
-	Sprite				m_sprBH;
+	// These aren't used.  Are they left-overs from BeginnerHelper work? -Chris
+//	BGAnimation			m_bgaBH;
+//	Sprite				m_sprBH;
 
 	Sprite				m_sprOniGameOver[NUM_PLAYERS];
 	void				ShowOniGameOver( PlayerNumber pn );
