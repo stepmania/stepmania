@@ -939,6 +939,7 @@ CString LcharToUTF8( longchar c )
 	return CString(buf, cnt);
 }
 
+/* ASCII-only case insensitivity. */
 struct char_traits_char_nocase: public char_traits<char>
 {
     static bool eq( char c1, char c2 )
@@ -1014,7 +1015,6 @@ void Replace_Unicode_Markers( CString &Text )
 		Text.replace(pos, p-pos, LcharToUTF8(num));
 	}
 }
-#include "RageLog.h"
 
 void ReplaceText( CString &Text, const map<CString,CString> &m )
 {
