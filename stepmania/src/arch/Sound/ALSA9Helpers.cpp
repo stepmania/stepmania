@@ -74,7 +74,7 @@ bool Alsa9Buf::SetHWParams()
 	ALSA_CHECK("dsnd_pcm_hw_params_set_buffer_size_near");
 
 	/* The period size is roughly equivalent to what we call the chunksize. */
-	int dir;
+	int dir = 0;
 	err = dsnd_pcm_hw_params_set_period_size_near( pcm, hwparams, &chunksize, &dir );
 	ALSA_CHECK("dsnd_pcm_hw_params_set_period_size_near");
 
