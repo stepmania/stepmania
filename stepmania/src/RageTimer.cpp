@@ -11,60 +11,10 @@ const RageTimer RageZeroTimer(0,0);
 
 static void GetTime( unsigned &secs, unsigned &us )
 {
-	/*
-	 * Ticks may be less than last for at least two reasons.  The underlying timer may
-	 * be 32-bit and use millisecs internally, or the system clock may have moved backwards.
-	 * If the system clock moves backwards, we can't just clamp the time; if it moved back
-	 * an hour, we'll sit around for an hour until it catches up.
-	 *
-	 * Keep track of an offset: the amount of time to add to the result of GetMicrosecondsSinceStart.
-	 * If we move back by 100ms, the offset will be increased by 100ms.  If we loop, the
-	 * offset will be increased by the duration 2^32 ticks.  This is stored in the same
-	 * notation as RageTimer: one 32-bit int for seconds and another for microseconds, so
-	 * wrapping isn't a problem.
-	 */
-
-	static uint64_t last = 0;
-	static uint32_t offset_secs = 0, offset_us = 0;
-
-	const uint64_t usecs = ArchHooks::GetMicrosecondsSinceStart( true );
-
-	/* The time has wrapped if the last time was very high and the current time is very low. */
-	const uint64_t one_day = uint64_t(24*60*60)*1000000;
-	if( last > (0-one_day) && usecs < one_day )
-	{
-		const uint32_t wraparound_secs = 4294967; /* (2^32 / 1000) */
-		const uint32_t wraparound_us = 296000;    /* (2^32 % 1000) * 1000 */
-		offset_secs += wraparound_secs;
-		offset_us += wraparound_us;
-	}
-	else if( usecs < last )
-	{
-		/* The time has moved backwards.  Increase the offset by the amount we moved. */
-		const uint64_t offset_us_diff = last - usecs;
-		offset_secs += unsigned(offset_us_diff/1000000);
-		offset_us   += unsigned(offset_us_diff%1000000);
-	}
-
-	if( offset_us >= TIMESTAMP_RESOLUTION )
-	{
-		offset_us -= TIMESTAMP_RESOLUTION;
-		++offset_secs;
-	}
-
-	last = usecs;
+	uint64_t usecs = ArchHooks::GetMicrosecondsSinceStart( true );
 
 	secs = unsigned(usecs / 1000000);
 	us =   unsigned(usecs % 1000000);
-
-	secs += offset_secs;
-	us += offset_us;
-
-	if( us >= TIMESTAMP_RESOLUTION )
-	{
-		us -= TIMESTAMP_RESOLUTION;
-		++secs;
-	}
 }
 
 float RageTimer::GetTimeSinceStart()
