@@ -272,7 +272,14 @@ static void InitCharAliases()
 		{ "rightarrow",	0x2192 }, /* → */
 		{ "downarrow",	0x2193 }, /* ↓ */
 		{ "doublezeta",	0xE009 },
-		{ "planet",	0xE00A },
+		{ "planet",		0xE00A },
+		{ "4thnote",	0x2669 }, /* ♩ */
+		{ "8thnote",	0x266A }, /* ♪ */
+		{ "b8thnote",	0x266B }, /* ♫ */
+		{ "b16thnote",	0x266C }, /* ♬ */
+		{ "flat",		0x266D }, /* ♭ */
+		{ "natural",	0x266E }, /* ♮ */
+		{ "sharp",		0x266F }, /* ♯ */
 
 		/* These are internal-use glyphs; they don't have real Unicode codepoints. */
 		{ "up",	0xE000 },
