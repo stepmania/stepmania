@@ -41,7 +41,7 @@ AC_DEFUN(SM_CHECK_CRASH_HANDLER,
     # See if we have a custom backtrace():
     case $host in
 	*86-pc-linux*)
-	    AC_DEFINE([BACKTRACE_METHOD],[X86_LINUX],[Define backtrace type])
+	    AC_DEFINE([BACKTRACE_METHOD_X86_LINUX],[1],[Define backtrace type])
 	    have_backtrace=yes
 	    ;;
     esac
@@ -52,21 +52,21 @@ AC_DEFUN(SM_CHECK_CRASH_HANDLER,
 	    SM_FUNC_BACKTRACE
 
 	    if test "$have_sys_backtrace" = "yes"; then
-		    AC_DEFINE([BACKTRACE_METHOD],[BACKTRACE],[Define backtrace type])
+		    AC_DEFINE([BACKTRACE_METHOD_BACKTRACE],[1],[Define backtrace type])
 		    have_backtrace=yes
 	    fi
     fi
 
     # Do we have a libdl with dladdr?
     AC_SEARCH_LIBS(dladdr, [dl],
-		   [AC_DEFINE([BACKTRACE_LOOKUP_METHOD],[DLADDR],[Define symbol lookup type])
+		   [AC_DEFINE([BACKTRACE_LOOKUP_METHOD_DLADDR],[1],[Define symbol lookup type])
 		   have_symbol_lookup=yes])
 
     if test "$have_symbol_lookup" != "yes"; then
 	    SM_FUNC_BACKTRACE_SYMBOLS
 
 	    if test "$have_backtrace_symbols" = "yes"; then
-		    AC_DEFINE([BACKTRACE_LOOKUP_METHOD],[BACKTRACE_SYMBOLS],[Define symbol lookup type])
+		    AC_DEFINE([BACKTRACE_LOOKUP_METHOD_BACKTRACE_SYMBOLS],[1],[Define symbol lookup type])
 		    have_symbol_lookup=yes
 	    fi
     fi
