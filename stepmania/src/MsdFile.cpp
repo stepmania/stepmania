@@ -195,6 +195,10 @@ void MsdFile::ReadBuf( char *buf, int len )
 
 		i++;
 	}
+	
+	/* Add any unterminated value at the very end. */
+	if(ReadingValue)
+		AddParam(buf+value_start, i - value_start);
 }
 
 // returns true if successful, false otherwise
