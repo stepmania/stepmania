@@ -1292,7 +1292,9 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 
 	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F2))
 	{
-		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) ) )
+		bool bShift = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) );
+		bool bCtrl = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL) );
+		if( bShift )
 		{
 			// HACK: Also save bookkeeping and profile info for debugging
 			// so we don't have to play through a whole song to get new output.
@@ -1312,7 +1314,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		
 
 			/* If we're in screen test mode, reload the screen. */
-			if( PREFSMAN->m_bScreenTestMode )
+			if( PREFSMAN->m_bScreenTestMode || bCtrl )
 				ResetGame( true );
 			else
 				SCREENMAN->SystemMessage( "Reloaded metrics and textures" );
