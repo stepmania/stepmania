@@ -89,6 +89,14 @@ void SetCheckpoint( const char *file, int line, const char *message );
 #define NORETURN
 #endif
 
+/* Define a macro to tell the compiler that a function has printf() semantics, to
+ * aid warning output. */
+#if defined(__GNUC__)
+#define PRINTF(a,b) __attribute__((format(__printf__,a,b)))
+#else
+#define PRINTF(a,b)
+#endif
+
 /* Use CStdString: */
 #include "StdString.h"
 
