@@ -1656,7 +1656,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	m_sprCDTitleFront.UnloadTexture();
 	m_sprCDTitleBack.UnloadTexture();
 
-	if( m_MusicWheel.GetSelectedType() == TYPE_ROULETTE || m_MusicWheel.GetSelectedType() == TYPE_RANDOM )
+	/* Cancel any previous, incomplete requests for song assets, since we need new ones. */
 	m_BackgroundLoader.Abort();
 
 	g_bCDTitleWaiting = false;
