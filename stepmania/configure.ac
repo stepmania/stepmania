@@ -72,6 +72,7 @@ AM_CONDITIONAL(NHAVE_SDL, test x$enable_sdl = xno )
 #  exit 0;
 #fi
 
+SM_ZLIB
 SM_AUDIO
 
 AC_SEARCH_LIBS(avcodec_init, [avcodec], have_libavcodec=yes,  have_libavcodec=no)
