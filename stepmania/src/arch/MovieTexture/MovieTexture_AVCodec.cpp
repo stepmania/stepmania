@@ -171,11 +171,11 @@ void MovieTexture_AVCodec::Create()
 	actualID.iAlphaBits = 0;
 
 	avcodec::av_register_all();
-	int ret = av_open_input_file( &m_fctx, actualID.filename, NULL, 0, NULL );
+	int ret = avcodec::av_open_input_file( &m_fctx, actualID.filename, NULL, 0, NULL );
 	if( ret < 0 )
 		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", actualID.filename.c_str()) );
 
-	ret = av_find_stream_info( m_fctx );
+	ret = avcodec::av_find_stream_info( m_fctx );
 	if ( ret < 0 )
 		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't find codec parameters") );
 	
@@ -183,11 +183,11 @@ void MovieTexture_AVCodec::Create()
 	if ( m_stream == NULL )
 		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't find video stream") );
 
-	m_codec = avcodec_find_decoder( m_stream->codec.codec_id );
+	m_codec = avcodec::avcodec_find_decoder( m_stream->codec.codec_id );
 	if( m_codec == NULL )
 		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't find decoder") );
 
-	ret = avcodec_open( &m_stream->codec, m_codec );
+	ret = avcodec::avcodec_open( &m_stream->codec, m_codec );
 	if ( ret < 0 )
 		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't open decoder (%i)") );
 
@@ -241,8 +241,8 @@ void MovieTexture_AVCodec::Destroy()
 {
 	StopThread();
 
-	avcodec_close( &m_stream->codec );
-	av_close_input_file( m_fctx ); m_fctx = NULL;
+	avcodec::avcodec_close( &m_stream->codec );
+	avcodec::av_close_input_file( m_fctx ); m_fctx = NULL;
 	if( m_img )
 	{
 		SDL_FreeSurface( m_img );
@@ -375,7 +375,7 @@ void MovieTexture_AVCodec::DecoderThread()
 			if( pkt.stream_index != m_stream->index )
 			{
 				/* It's not for the video stream; ignore it. */
-				av_free_packet( &pkt );
+				avcodec::av_free_packet( &pkt );
 				continue;
 			}
 
@@ -497,7 +497,7 @@ void MovieTexture_AVCodec::DecoderThread()
 
 			if( !SkipThisTextureUpdate )
 			{
-				img_convert(&pict, AVPixelFormats[m_AVTexfmt].pf,
+				avcodec::img_convert(&pict, AVPixelFormats[m_AVTexfmt].pf,
 						(avcodec::AVPicture *) &frame, m_stream->codec.pix_fmt, 
 						m_stream->codec.width, m_stream->codec.height);
 
@@ -516,7 +516,7 @@ void MovieTexture_AVCodec::DecoderThread()
 
 			GetNextTimestamp = true;
 		}
-		av_free_packet( &pkt );
+		avcodec::av_free_packet( &pkt );
 	}
 	CHECKPOINT;
 }
