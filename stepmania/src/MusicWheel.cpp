@@ -40,6 +40,7 @@
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
 #define SWITCH_SECONDS				THEME->GetMetricF("MusicWheel","SwitchSeconds")
 #define ROULETTE_SWITCH_SECONDS		THEME->GetMetricF("MusicWheel","RouletteSwitchSeconds")
+#define FAST_SPIN_SWITCH_SECONDS	0.05 // THEME->GetMetricF("MusicWheel","RouletteSwitchSeconds")
 #define ROULETTE_SLOW_DOWN_SWITCHES	THEME->GetMetricI("MusicWheel","RouletteSlowDownSwitches")
 #define LOCKED_INITIAL_VELOCITY		THEME->GetMetricF("MusicWheel","LockedInitialVelocity")
 #define SCROLL_BAR_X				THEME->GetMetricF("MusicWheel","ScrollBarX")
@@ -128,46 +129,41 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 	// init type specific stuff
 	switch( pWID->m_WheelItemType )
 	{
-
 	case TYPE_SECTION:
+	case TYPE_COURSE:
 		{
-			CString sDisplayName = SONGMAN->ShortenGroupName(m_sSectionName);
-			m_textSectionName.SetZoom( 1 );
-			m_textSectionName.SetText( sDisplayName );
-			m_textSectionName.SetDiffuse( m_color );
-			m_textSectionName.TurnRainbowOff();
+			CString sDisplayName;
+			BitmapText *bt;
+			if(pWID->m_WheelItemType == TYPE_SECTION)
+			{
+				sDisplayName = SONGMAN->ShortenGroupName(m_sSectionName);
+				bt = &m_textSectionName;
+			}
+			else
+			{
+				sDisplayName = m_pCourse->m_sName;
+				bt = &m_textCourse;
+			}
+			bt->SetZoom( 1 );
+			bt->SetText( sDisplayName );
+			bt->SetDiffuse( m_color );
+			bt->TurnRainbowOff();
 
-			float fSourcePixelWidth = (float)m_textSectionName.GetWidestLineWidthInSourcePixels();
+			float fSourcePixelWidth = (float)bt->GetWidestLineWidthInSourcePixels();
 			float fMaxTextWidth = 200;
 			if( fSourcePixelWidth > fMaxTextWidth  )
-				m_textSectionName.SetZoomX( fMaxTextWidth / fSourcePixelWidth );
+				bt->SetZoomX( fMaxTextWidth / fSourcePixelWidth );
 		}
 		break;
 	case TYPE_SONG:
 		{
 			m_TextBanner.LoadFromSong( m_pSong );
-			RageColor color = m_color;
-			m_TextBanner.SetDiffuse( color );
+			m_TextBanner.SetDiffuse( m_color );
 			m_MusicStatusDisplay.SetType( m_IconType );
 			RefreshGrades();
 		}
 		break;
 	case TYPE_ROULETTE:
-		{
-		}
-		break;
-	case TYPE_COURSE:
-		{
-			m_textCourse.SetZoom( 1 );
-			m_textCourse.SetText( m_pCourse->m_sName );
-			m_textCourse.SetDiffuse( m_color );
-			m_textCourse.TurnRainbowOff();
-
-			float fSourcePixelWidth = (float)m_textCourse.GetWidestLineWidthInSourcePixels();
-			float fMaxTextWidth = 200;
-			if( fSourcePixelWidth > fMaxTextWidth  )
-				m_textCourse.SetZoomX( fMaxTextWidth / fSourcePixelWidth );
-		}
 		break;
 	default:
 		ASSERT( false );	// invalid type
@@ -319,8 +315,6 @@ MusicWheel::MusicWheel()
 	CArray<Song*, Song*> arraySongs = SONGMAN->m_pSongs;
 	SortSongPointerArrayByGroup( arraySongs );
 	
-	m_sExpandedSectionName = "";
-
 	m_iSelection = 0;
 
 	m_WheelState = STATE_SELECTING_MUSIC;
@@ -328,7 +322,7 @@ MusicWheel::MusicWheel()
 	m_fPositionOffsetFromSelection = 0;
 
 	m_iSwitchesLeftInSpinDown = 0;
-
+	
 	if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
 	{
 		// make the preferred group the group of the last song played.
@@ -384,48 +378,77 @@ MusicWheel::MusicWheel()
 
 
 	// Select the the previously selected song (if any)
-	if( GAMESTATE->m_pCurSong )
-	{
-		for( unsigned i=0; i<GetCurWheelItemDatas().size(); i++ )
-		{
-			if( GetCurWheelItemDatas()[i].m_pSong == GAMESTATE->m_pCurSong )
-			{
-				m_iSelection = i;		// select it
-				m_sExpandedSectionName = GetCurWheelItemDatas()[m_iSelection].m_sSectionName;	// make its group the currently expanded group
-				break;
-			}
-		}
-	}
-
+	bool selected = SelectSong(GAMESTATE->m_pCurSong);
 	// Select the the previously selected course (if any)
-	if( GAMESTATE->m_pCurCourse != NULL )
-	{
-		for( unsigned i=0; i<GetCurWheelItemDatas().size(); i++ )
-		{
-			if( GetCurWheelItemDatas()[i].m_pCourse == GAMESTATE->m_pCurCourse )
-			{
-				m_iSelection = i;		// select it
-				m_sExpandedSectionName = GetCurWheelItemDatas()[m_iSelection].m_sSectionName;	// make its group the currently expanded group
-				break;
-			}
-		}
-	}
+	if(!selected) selected = SelectCourse(GAMESTATE->m_pCurCourse);
+	if(!selected) SetOpenGroup("");
 
 	// rebuild the WheelItems that appear on screen
 	RebuildWheelItemDisplays();
-
 }
 
 MusicWheel::~MusicWheel()
 {
 }
 
-CArray<WheelItemData, WheelItemData&>& MusicWheel::GetCurWheelItemDatas()
+bool MusicWheel::SelectSong( const Song *p )
 {
-	return m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
+	if(p == NULL)
+		return false;
+
+	unsigned i;
+	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
+	for( i=0; i<from.size(); i++ )
+	{
+		if( from[i].m_pSong == p )
+		{
+			// make its group the currently expanded group
+			SetOpenGroup(from[i].m_sSectionName);
+			break;
+		}
+	}
+
+	if(i == from.size())
+		return false;
+
+	for( i=0; i<m_CurWheelItemData.size(); i++ )
+	{
+		if( m_CurWheelItemData[i]->m_pSong == p )
+			m_iSelection = i;		// select it
+	}
+	return true;
 }
 
-void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arrayWheelItemDatas, SongSortOrder so, bool bRoulette )
+bool MusicWheel::SelectCourse( const Course *p )
+{
+	if(p == NULL)
+		return false;
+
+	unsigned i;
+	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
+	for( i=0; i<from.size(); i++ )
+	{
+		if( from[i].m_pCourse == p )
+		{
+			// make its group the currently expanded group
+			SetOpenGroup(from[i].m_sSectionName);
+			break;
+		}
+	}
+
+	if(i == from.size())
+		return false;
+
+	for( i=0; i<m_CurWheelItemData.size(); i++ )
+	{
+		if( m_CurWheelItemData[i]->m_pCourse == p )
+			m_iSelection = i;		// select it
+	}
+
+	return true;
+}
+
+void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas, SongSortOrder so, bool bRoulette )
 {
 	unsigned i;
 
@@ -641,45 +664,9 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 	}
 }
 
-void MusicWheel::SwitchSortOrder()
-{
-	
-}
-
 float MusicWheel::GetBannerY( float fPosOffsetsFromMiddle )
 {
 	return roundf( fPosOffsetsFromMiddle*g_fItemSpacingY );
-}
-
-float MusicWheel::GetBannerBrightness( float fPosOffsetsFromMiddle )
-{
-	//return 1 - fabsf(fPosOffsetsFromMiddle)*0.11f;
-	return 1;
-}
-
-float MusicWheel::GetBannerAlpha( float fPosOffsetsFromMiddle )
-{
-	/*
-	if( m_WheelState == STATE_FLYING_OFF_BEFORE_NEXT_SORT 
-	 || m_WheelState == STATE_TWEENING_OFF_SCREEN  )
-	{
-		return m_fTimeLeftInState / FADE_SECONDS;
-	}
-	else if( m_WheelState == STATE_FLYING_ON_AFTER_NEXT_SORT
-		  || m_WheelState == STATE_TWEENING_ON_SCREEN )
-	{
-		return 1 - (m_fTimeLeftInState / FADE_SECONDS);
-	}
-	else if( m_WheelState == STATE_WAITING_OFF_SCREEN )
-	{
-		return 0;
-	}
-	else
-	{
-		return 1;
-	}
-	*/
-	return 1;
 }
 
 float MusicWheel::GetBannerX( float fPosOffsetsFromMiddle )
@@ -693,37 +680,25 @@ void MusicWheel::RebuildWheelItemDisplays()
 {
 	// rewind to first index that will be displayed;
 	int iIndex = m_iSelection;
-	if( m_iSelection > int(GetCurWheelItemDatas().size()-1) )
+	if( m_iSelection > int(m_CurWheelItemData.size()-1) )
 		m_iSelection = 0;
 	
-	int i;
-	for( i=0; i<NUM_WHEEL_ITEMS_TO_DRAW/2; i++ )
-	{
-		do
-		{
-			iIndex--;
-			if( iIndex < 0 )
-				iIndex = GetCurWheelItemDatas().size()-1;
-		} 
-		while( !WheelItemIsVisible(iIndex) );
-	}
+	iIndex -= NUM_WHEEL_ITEMS_TO_DRAW/2;
+	while(iIndex < 0)
+		iIndex += m_CurWheelItemData.size();
 
 	// iIndex is now the index of the lowest WheelItem to draw
-	for( i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
+	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
 	{
-		WheelItemData&    data    = GetCurWheelItemDatas()[iIndex];
+		WheelItemData     *data   = m_CurWheelItemData[iIndex];
 		WheelItemDisplay& display = m_WheelItemDisplays[i];
 
-		display.LoadFromWheelItemData( &data );
+		display.LoadFromWheelItemData( data );
 
 		// increment iIndex
-		do
-		{
-			iIndex++;
-			if( iIndex > int(GetCurWheelItemDatas().size()-1) )
-				iIndex = 0;
-		} 
-		while( !WheelItemIsVisible(iIndex) );
+		iIndex++;
+		if( iIndex > int(m_CurWheelItemData.size()-1) )
+			iIndex = 0;
 	}
 
 }
@@ -762,7 +737,7 @@ void MusicWheel::DrawPrimitives()
 				display.SetXY( fX, fY );
 			}
 			break;
-		};
+		}
 
 		if( m_WheelState == STATE_LOCKED  &&  i != NUM_WHEEL_ITEMS_TO_DRAW/2 )
 			display.m_fPercentGray = 0.5f;
@@ -773,6 +748,22 @@ void MusicWheel::DrawPrimitives()
 	}
 
 	ActorFrame::DrawPrimitives();
+}
+
+void MusicWheel::UpdateScrollbar()
+{
+	int total_num_items = m_CurWheelItemData.size();
+	float item_at=m_iSelection - m_fPositionOffsetFromSelection;
+
+	if(NUM_WHEEL_ITEMS_TO_DRAW > total_num_items) {
+		m_ScrollBar.SetPercentage( 0, 1 );
+	} else {
+		float size = float(NUM_WHEEL_ITEMS_TO_DRAW) / total_num_items;
+		float center = item_at / total_num_items;
+		size *= 0.5f;
+
+		m_ScrollBar.SetPercentage( center - size, center + size );
+	}
 }
 
 void MusicWheel::Update( float fDeltaTime )
@@ -787,13 +778,18 @@ void MusicWheel::Update( float fDeltaTime )
 		display.Update( fDeltaTime );
 	}
 
-	float fScrollPercentage = (m_iSelection-m_fPositionOffsetFromSelection) / (float)GetCurWheelItemDatas().size();
-	float fPercentItemsShowing = NUM_WHEEL_ITEMS_TO_DRAW / (float)GetCurWheelItemDatas().size();
-	m_ScrollBar.SetPercentage( fScrollPercentage-fPercentItemsShowing/2, fScrollPercentage+fPercentItemsShowing/2 );
+	UpdateScrollbar();
 
-	if( m_WheelState == STATE_ROULETTE_SPINNING )
+	if( m_Moving )
 	{
-		NextMusic( false );	// spin as fast as possible
+		m_TimeBeforeMovingBegins -= fDeltaTime;
+		m_TimeBeforeMovingBegins = max(m_TimeBeforeMovingBegins, 0);
+		if(m_TimeBeforeMovingBegins == 0 && m_WheelState != STATE_LOCKED)
+		{
+			// spin as fast as possible
+			if(m_Moving == 1) NextMusic();
+			else PrevMusic();
+		}
 	}
 
 	// update wheel state
@@ -807,35 +803,26 @@ void MusicWheel::Update( float fDeltaTime )
 				m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
 				m_fTimeLeftInState = FADE_SECONDS;
 
-				Song* pPrevSelectedSong = GetCurWheelItemDatas()[m_iSelection].m_pSong;
-				CString sPrevSelectedSection = GetCurWheelItemDatas()[m_iSelection].m_sSectionName;
+				Song* pPrevSelectedSong = m_CurWheelItemData[m_iSelection]->m_pSong;
+				CString sPrevSelectedSection = m_CurWheelItemData[m_iSelection]->m_sSectionName;
 
 				// change the sort order
 				GAMESTATE->m_SongSortOrder = SongSortOrder( (GAMESTATE->m_SongSortOrder+1) % NUM_SORT_ORDERS );
 				SCREENMAN->SendMessageToTopScreen( SM_SortOrderChanged, 0 );
-				m_sExpandedSectionName = GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SongSortOrder );
+				SetOpenGroup(GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SongSortOrder ));
+
 				//RebuildWheelItems();
 
 				m_iSelection = 0;
 
 				if( pPrevSelectedSong != NULL )		// the previous selected item was a song
-				{
-					// find the previously selected song, and select it
-					for( i=0; i<GetCurWheelItemDatas().size(); i++ )
-					{
-						if( GetCurWheelItemDatas()[i].m_pSong == pPrevSelectedSong )
-						{
-							m_iSelection = i;
-							break;
-						}
-					}
-				}
+					SelectSong(pPrevSelectedSong);
 				else	// the previously selected item was a section
 				{
 					// find the previously selected song, and select it
-					for( i=0; i<GetCurWheelItemDatas().size(); i++ )
+					for( i=0; i<m_CurWheelItemData.size(); i++ )
 					{
-						if( GetCurWheelItemDatas()[i].m_sSectionName == sPrevSelectedSection )
+						if( m_CurWheelItemData[i]->m_sSectionName == sPrevSelectedSection )
 						{
 							m_iSelection = i;
 							break;
@@ -846,9 +833,9 @@ void MusicWheel::Update( float fDeltaTime )
 				// If changed sort to "BEST", put selection on most popular song
 				if( GAMESTATE->m_SongSortOrder == SORT_MOST_PLAYED )
 				{
-					for( i=0; i<GetCurWheelItemDatas().size(); i++ )
+					for( i=0; i<m_CurWheelItemData.size(); i++ )
 					{
-						if( GetCurWheelItemDatas()[i].m_pSong != NULL )
+						if( m_CurWheelItemData[i]->m_pSong != NULL )
 						{
 							m_iSelection = i;
 							break;
@@ -860,7 +847,7 @@ void MusicWheel::Update( float fDeltaTime )
 
 				RebuildWheelItemDisplays();
 
-				TweenOnScreen();
+				TweenOnScreen(true);
 			}
 			break;
 		case STATE_FLYING_ON_AFTER_NEXT_SORT:
@@ -913,6 +900,9 @@ void MusicWheel::Update( float fDeltaTime )
 				m_fTimeLeftInState = 0;
 				m_soundStart.Play();
 				m_fLockedWheelVelocity = 0;
+
+				/* Send this again so the screen starts sample music. */
+				SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
 			}
 			else
 			{
@@ -958,8 +948,8 @@ void MusicWheel::Update( float fDeltaTime )
 	{
 		// "rotate" wheel toward selected song
 		float fSpinSpeed;
-		if( m_WheelState == STATE_ROULETTE_SPINNING )
-			fSpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
+		if( m_Moving && m_TimeBeforeMovingBegins == 0 )
+			fSpinSpeed = m_SpinSpeed;
 		else
 			fSpinSpeed = 0.2f + fabsf(m_fPositionOffsetFromSelection)/SWITCH_SECONDS;
 
@@ -967,25 +957,19 @@ void MusicWheel::Update( float fDeltaTime )
 		{
 			m_fPositionOffsetFromSelection -= fSpinSpeed*fDeltaTime;
 			if( m_fPositionOffsetFromSelection < 0 )
-			{
 				m_fPositionOffsetFromSelection = 0;
-//				m_fTimeLeftBeforePlayMusicSample = SAMPLE_MUSIC_DELAY;
-			}
 		}
 		else if( m_fPositionOffsetFromSelection < 0 )
 		{
 			m_fPositionOffsetFromSelection += fSpinSpeed*fDeltaTime;
 			if( m_fPositionOffsetFromSelection > 0 )
-			{
 				m_fPositionOffsetFromSelection = 0;
-//				m_fTimeLeftBeforePlayMusicSample = SAMPLE_MUSIC_DELAY;
-			}
 		}
 	}
 }
 
 
-void MusicWheel::PrevMusic( bool bSendSongChangedMessage )
+void MusicWheel::PrevMusic()
 {
 	if( m_WheelState == STATE_LOCKED )
 	{
@@ -1008,13 +992,9 @@ void MusicWheel::PrevMusic( bool bSendSongChangedMessage )
 	}
 
 	// decrement m_iSelection
-	do
-	{
-		m_iSelection--;
-		if( m_iSelection < 0 )
-			m_iSelection = GetCurWheelItemDatas().size()-1;
-	} 
-	while(!WheelItemIsVisible(m_iSelection));
+	m_iSelection--;
+	if( m_iSelection < 0 )
+		m_iSelection = m_CurWheelItemData.size()-1;
 
 	RebuildWheelItemDisplays();
 
@@ -1022,11 +1002,10 @@ void MusicWheel::PrevMusic( bool bSendSongChangedMessage )
 
 	m_soundChangeMusic.Play();
 
-	if( bSendSongChangedMessage )
-		SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
+	SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
 }
 
-void MusicWheel::NextMusic( bool bSendSongChangedMessage )
+void MusicWheel::NextMusic()
 {
 	if( m_WheelState == STATE_LOCKED )
 	{
@@ -1051,21 +1030,17 @@ void MusicWheel::NextMusic( bool bSendSongChangedMessage )
 
 
 	// increment m_iSelection
-	do
-	{
-		m_iSelection++;
-		if( m_iSelection > int(GetCurWheelItemDatas().size()-1) )
-			m_iSelection = 0;
-	} 
-	while(!WheelItemIsVisible(m_iSelection));
+	m_iSelection++;
+	if( m_iSelection > int(m_CurWheelItemData.size()-1) )
+		m_iSelection = 0;
+
 	RebuildWheelItemDisplays();
 
 	m_fPositionOffsetFromSelection += 1;
-
+	
 	m_soundChangeMusic.Play();
 
-	if( bSendSongChangedMessage )
-		SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
+	SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
 }
 
 bool MusicWheel::PrevSort()
@@ -1086,10 +1061,9 @@ bool MusicWheel::NextSort()
 
 	m_soundChangeSort.Play();
 
-	TweenOffScreen();
+	TweenOffScreen(true);
 
 	m_WheelState = STATE_FLYING_OFF_BEFORE_NEXT_SORT;
-	m_fTimeLeftInState = FADE_SECONDS;
 	return true;
 }
 
@@ -1100,21 +1074,23 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 	if( m_WheelState == STATE_ROULETTE_SPINNING )
 	{
 		m_WheelState = STATE_ROULETTE_SLOWING_DOWN;
+		m_Moving = 0;
 		m_iSwitchesLeftInSpinDown = ROULETTE_SLOW_DOWN_SWITCHES/2+1 + rand()%(ROULETTE_SLOW_DOWN_SWITCHES/2);
 		m_fTimeLeftInState = 0.1f;
 		return false;
 	}
 
-	switch( GetCurWheelItemDatas()[m_iSelection].m_WheelItemType )
+	switch( m_CurWheelItemData[m_iSelection]->m_WheelItemType )
 	{
 	case TYPE_SECTION:
 		{
-		CString sThisItemSectionName = GetCurWheelItemDatas()[m_iSelection].m_sSectionName;
+		CString sThisItemSectionName = m_CurWheelItemData[m_iSelection]->m_sSectionName;
 		if( m_sExpandedSectionName == sThisItemSectionName )	// already expanded
 			m_sExpandedSectionName = "";		// collapse it
 		else				// already collapsed
 			m_sExpandedSectionName = sThisItemSectionName;	// expand it
 
+		SetOpenGroup(m_sExpandedSectionName);
 	
 		RebuildWheelItemDisplays();
 
@@ -1124,10 +1100,10 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 
 		m_iSelection = 0;	// reset in case we can't find the last selected song
 		// find the section header and select it
-		for( unsigned  i=0; i<GetCurWheelItemDatas().size(); i++ )
+		for( unsigned  i=0; i<m_CurWheelItemData.size(); i++ )
 		{
-			if( GetCurWheelItemDatas()[i].m_WheelItemType == TYPE_SECTION  
-				&&  GetCurWheelItemDatas()[i].m_sSectionName == sThisItemSectionName )
+			if( m_CurWheelItemData[i]->m_WheelItemType == TYPE_SECTION  
+				&&  m_CurWheelItemData[i]->m_sSectionName == sThisItemSectionName )
 			{
 				m_iSelection = i;
 				break;
@@ -1150,33 +1126,81 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 void MusicWheel::StartRoulette() 
 {
 	m_WheelState = STATE_ROULETTE_SPINNING;
+	m_Moving = 1;
+	m_TimeBeforeMovingBegins = 0;
+	m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
 	GAMESTATE->m_SongSortOrder = SORT_GROUP;
     BuildWheelItemDatas( m_WheelItemDatas[SORT_GROUP], SORT_GROUP, true );
+	SetOpenGroup("");
 }
 
-bool MusicWheel::IsRouletting() 
+void MusicWheel::SetOpenGroup(CString group)
 {
-	return m_WheelState == STATE_ROULETTE_SPINNING;
+	m_sExpandedSectionName = group;
+
+	WheelItemData *old = NULL;
+	if(!m_CurWheelItemData.empty())
+		old = m_CurWheelItemData[m_iSelection];
+
+	m_CurWheelItemData.clear();
+	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
+	unsigned i;
+	for(i = 0; i < from.size(); ++i)
+	{
+		if((from[i].m_WheelItemType == TYPE_SONG ||
+			from[i].m_WheelItemType == TYPE_COURSE) &&
+		     !from[i].m_sSectionName.empty() &&
+			 from[i].m_sSectionName != group)
+			 continue;
+		m_CurWheelItemData.push_back(&from[i]);
+
+	}
+
+	m_iSelection = 0;
+	for(i = 0; i < m_CurWheelItemData.size(); ++i)
+	{
+		if(m_CurWheelItemData[i] == old)
+			m_iSelection=i;
+	}
 }
 
-void MusicWheel::TweenOnScreen() 
+bool MusicWheel::IsRouletting() const
 {
+	return m_WheelState == STATE_ROULETTE_SPINNING || m_WheelState == STATE_ROULETTE_SLOWING_DOWN;
+}
+
+int MusicWheel::IsMoving() const
+{
+	if(!m_Moving) return false;
+	return m_TimeBeforeMovingBegins == 0;
+}
+
+void MusicWheel::TweenOnScreen(bool changing_sort)
+{
+	float factor = 1.0f;
+	if(changing_sort) factor = 0.25;
+
 	m_WheelState = STATE_TWEENING_ON_SCREEN;
-	m_fTimeLeftInState = FADE_SECONDS; 
 
-
-	float fX, fY;
+	float fX = GetBannerX(0), fY = GetBannerY(0);
 	
-	fX = GetBannerX(0);
-	fY = GetBannerY(0);
 	m_sprSelectionOverlay.SetXY( fX+320, fY );
-	m_sprSelectionOverlay.BeginTweening( 0.5f );	// sleep
-	m_sprSelectionOverlay.BeginTweening( 0.4f, Actor::TWEEN_BIAS_BEGIN );
+
+	if(changing_sort) {
+		m_sprSelectionOverlay.BeginTweening( 0.04f * NUM_WHEEL_ITEMS_TO_DRAW/2 * factor );	// sleep
+		m_sprSelectionOverlay.BeginTweening( 0.2f * factor, Actor::TWEEN_BIAS_BEGIN );
+	} else {
+		m_sprSelectionOverlay.BeginTweening( 0.05f * factor );	// sleep
+		m_sprSelectionOverlay.BeginTweening( 0.4f * factor, Actor::TWEEN_BIAS_BEGIN );
+	}
 	m_sprSelectionOverlay.SetTweenX( fX );
 
 	m_ScrollBar.SetX( SCROLL_BAR_X+30 );
-	m_ScrollBar.BeginTweening( 0.7f );	// sleep
-	m_ScrollBar.BeginTweening( 0.2f, Actor::TWEEN_BIAS_BEGIN );
+	if(changing_sort)
+		m_ScrollBar.BeginTweening( 0.2f * factor );	// sleep
+	else
+		m_ScrollBar.BeginTweening( 0.7f * factor );	// sleep
+	m_ScrollBar.BeginTweening( 0.2f * factor , Actor::TWEEN_BIAS_BEGIN );
 	m_ScrollBar.SetTweenX( SCROLL_BAR_X );	
 
 	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
@@ -1187,28 +1211,39 @@ void MusicWheel::TweenOnScreen()
 		float fX = GetBannerX(fThisBannerPositionOffsetFromSelection);
 		float fY = GetBannerY(fThisBannerPositionOffsetFromSelection);
 		display.SetXY( fX+320, fY );
-		display.BeginTweening( 0.04f*i );	// sleep
-		display.BeginTweening( 0.2f, Actor::TWEEN_BIAS_BEGIN );
+		display.BeginTweening( 0.04f*i * factor );	// sleep
+		display.BeginTweening( 0.2f * factor, Actor::TWEEN_BIAS_BEGIN );
 		display.SetTweenX( fX );
 	}
+
+	m_fTimeLeftInState = TweenTime() + 0.100f;
 }
 						   
-void MusicWheel::TweenOffScreen()
+void MusicWheel::TweenOffScreen(bool changing_sort)
 {
-	m_WheelState = STATE_TWEENING_OFF_SCREEN;
-	m_fTimeLeftInState = FADE_SECONDS;
+	float factor = 1.0f;
+	if(changing_sort) factor = 0.25;
 
+	m_WheelState = STATE_TWEENING_OFF_SCREEN;
 
 	float fX, fY;
 	fX = GetBannerX(0);
 	fY = GetBannerY(0);
 	m_sprSelectionOverlay.SetXY( fX, fY );
-	m_sprSelectionOverlay.BeginTweening( 0 );	// sleep
-	m_sprSelectionOverlay.BeginTweening( 0.2f, Actor::TWEEN_BIAS_END );
+
+	if(changing_sort) {
+		/* When changing sort, tween the overlay with the item in the center;
+		 * having it separate looks messy when we're moving fast. */
+		m_sprSelectionOverlay.BeginTweening( 0.04f * NUM_WHEEL_ITEMS_TO_DRAW/2 * factor );	// sleep
+		m_sprSelectionOverlay.BeginTweening( 0.2f * factor, Actor::TWEEN_BIAS_END );
+	} else {
+		m_sprSelectionOverlay.BeginTweening( 0 );	// sleep
+		m_sprSelectionOverlay.BeginTweening( 0.2f * factor, Actor::TWEEN_BIAS_END );
+	}
 	m_sprSelectionOverlay.SetTweenX( fX+320 );
 
 	m_ScrollBar.BeginTweening( 0 );
-	m_ScrollBar.BeginTweening( 0.2f, Actor::TWEEN_BIAS_BEGIN );
+	m_ScrollBar.BeginTweening( 0.2f * factor, Actor::TWEEN_BIAS_BEGIN );
 	m_ScrollBar.SetTweenX( SCROLL_BAR_X+30 );	
 
 	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
@@ -1219,13 +1254,12 @@ void MusicWheel::TweenOffScreen()
 		float fX = GetBannerX(fThisBannerPositionOffsetFromSelection);
 		float fY = GetBannerY(fThisBannerPositionOffsetFromSelection);
 		display.SetXY( fX, fY );
-		display.BeginTweening( 0.04f*i );	// sleep
-		display.BeginTweening( 0.2f, Actor::TWEEN_BIAS_END );
+		display.BeginTweening( 0.04f*i * factor );	// sleep
+		display.BeginTweening( 0.2f * factor, Actor::TWEEN_BIAS_END );
 		display.SetTweenX( fX+320 );
 	}
 
-
-
+	m_fTimeLeftInState = TweenTime() + 0.100f;
 }
 
 CString MusicWheel::GetSectionNameFromSongAndSort( Song* pSong, SongSortOrder so )
@@ -1261,17 +1295,30 @@ CString MusicWheel::GetSectionNameFromSongAndSort( Song* pSong, SongSortOrder so
 	}
 }
 
-bool MusicWheel::WheelItemIsVisible(int n)
+void MusicWheel::Move(int n)
 {
-	/* Only songs and courses get hidden. */
-	if(GetCurWheelItemDatas()[n].m_WheelItemType != TYPE_SONG &&
-	   GetCurWheelItemDatas()[n].m_WheelItemType != TYPE_COURSE)
-		return true;
+	if(n == m_Moving)
+		return;
 
-	/* If there's no section name, it's always shown. */
-	if(GetCurWheelItemDatas()[n].m_sSectionName.empty())
-		return true;
+	/* Give us one last chance to move.  This will ensure that we're at least
+	 * 0.5f from the selection, so we have a chance to spin down smoothly. */
+	Update(0);
 
-	/* Otherwise, only show it if it's in the selected section. */
-	return GetCurWheelItemDatas()[n].m_sSectionName == m_sExpandedSectionName;
+	bool Stopping = (m_Moving != 0 && n == 0 && m_TimeBeforeMovingBegins == 0);
+
+	m_TimeBeforeMovingBegins = TIME_BEFORE_SLOW_REPEATS;
+	m_SpinSpeed = 1.0f/FAST_SPIN_SWITCH_SECONDS;
+	m_Moving = n;
+
+	if(Stopping)
+	{
+		/* Make sure the user always gets an SM_SongChanged when
+		 * Moving() is 0, so the final banner, etc. always get set. */
+		SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
+	} else {
+		if(n == 1)
+			NextMusic();
+		else if(n == -1)
+			PrevMusic();
+	}
 }

@@ -98,49 +98,58 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	virtual void TweenOnScreen();		
-	virtual void TweenOffScreen();
+	virtual void TweenOnScreen(bool changing_sort);
+	virtual void TweenOffScreen(bool changing_sort);
+	virtual void TweenOnScreen() { TweenOnScreen(false); }
+	virtual void TweenOffScreen() { TweenOffScreen(false); }
 
-	void PrevMusic( bool bSendSongChangedMessage = true );
-	void NextMusic( bool bSendSongChangedMessage = true );
+	void Move(int n);
 	bool PrevSort();
 	bool NextSort();
 	void StartRoulette();
-	bool IsRouletting();
+	bool IsRouletting() const;
+	/* Return true if we're moving fast automatically. */
+	int IsMoving() const;
+
 	void NotesChanged( PlayerNumber pn );	// update grade graphics and top score
 
 	float GetBannerX( float fPosOffsetsFromMiddle );
 	float GetBannerY( float fPosOffsetsFromMiddle );
-	float GetBannerBrightness( float fPosOffsetsFromMiddle );
-	float GetBannerAlpha( float fPosOffsetsFromMiddle );
 
 	bool Select();	// return true if the selected item is a music, otherwise false
-	WheelItemType	GetSelectedType()	{ return GetCurWheelItemDatas()[m_iSelection].m_WheelItemType; };
-	Song*			GetSelectedSong()	{ return GetCurWheelItemDatas()[m_iSelection].m_pSong; };
-	Course*			GetSelectedCourse()	{ return GetCurWheelItemDatas()[m_iSelection].m_pCourse; };
-	CString			GetSelectedSection(){ return GetCurWheelItemDatas()[m_iSelection].m_sSectionName; };
+	WheelItemType	GetSelectedType()	{ return m_CurWheelItemData[m_iSelection]->m_WheelItemType; };
+	Song*			GetSelectedSong()	{ return m_CurWheelItemData[m_iSelection]->m_pSong; };
+	Course*			GetSelectedCourse()	{ return m_CurWheelItemData[m_iSelection]->m_pCourse; };
+	CString			GetSelectedSection(){ return m_CurWheelItemData[m_iSelection]->m_sSectionName; };
 
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
 
 protected:
-	void BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arrayWheelItems, SongSortOrder so, bool bRoulette = false );
+	void BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItems, SongSortOrder so, bool bRoulette = false );
 	void RebuildWheelItemDisplays();
-	void SwitchSortOrder();
+	void SetOpenGroup(CString group);
+	bool SelectSong(const Song *p);
+	bool SelectCourse(const Course *p);
+	void NextMusic();
+	void PrevMusic();
 
 	ScrollBar			m_ScrollBar;
 	Sprite				m_sprSelectionOverlay;
 
-	CArray<WheelItemData, WheelItemData&> m_WheelItemDatas[NUM_SORT_ORDERS];
-	CArray<WheelItemData, WheelItemData&> &GetCurWheelItemDatas();
+	vector<WheelItemData> m_WheelItemDatas[NUM_SORT_ORDERS];
+	vector<WheelItemData *> m_CurWheelItemData;
 	
 	WheelItemDisplay	m_WheelItemDisplays[NUM_WHEEL_ITEMS_TO_DRAW];
 	
-	int					m_iSelection;		// index into GetCurWheelItemDatas()
+	int					m_iSelection;		// index into m_CurWheelItemData
 	CString				m_sExpandedSectionName;
 
 	int					m_iSwitchesLeftInSpinDown;		
 	float				m_fLockedWheelVelocity;
-
+	/* 0 = none; -1 or 1 = up/down */
+	int					m_Moving;
+	float				m_TimeBeforeMovingBegins;
+	float				m_SpinSpeed;
 	enum WheelState { 
 		STATE_SELECTING_MUSIC,
 		STATE_FLYING_OFF_BEFORE_NEXT_SORT, 
@@ -166,6 +175,7 @@ protected:
 
 	CString GetSectionNameFromSongAndSort( Song* pSong, SongSortOrder so );
 	bool WheelItemIsVisible(int n);
+	void UpdateScrollbar();
 };
 
 #endif
