@@ -14,6 +14,8 @@ public:
 
 	CString		GetName() const;	// the command name is the first argument in all-lowercase 
 
+	void Clear() { m_vsArgs.clear(); }
+
 	struct Arg
 	{
 		CString s;

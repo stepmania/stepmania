@@ -182,7 +182,7 @@ public:
 	void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
 	void StopTweening();
 	void Sleep( float time );
-	void QueueCommand( Command command );
+	void QueueCommand( const Command& command );
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
 	// Let ActorFrame and BGAnimation override

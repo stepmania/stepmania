@@ -387,6 +387,9 @@ void Actor::BeginTweening( float time, TweenType tt )
 	{
 		// initialize the new TS from the last TS in the list
 		TS = m_TweenStates[m_TweenStates.size()-2];
+
+		// don't inherit the queued state's command
+		TS.command.Clear();
 	}
 	else
 	{
@@ -908,10 +911,10 @@ void Actor::Sleep( float time )
 	BeginTweening( 0, TWEEN_LINEAR ); 
 }
 
-void Actor::QueueCommand( Command command )
+void Actor::QueueCommand( const Command& command )
 {
 	BeginTweening( 0, TWEEN_LINEAR ); 
-	DestTweenState().command = command; 
+	DestTweenState().command = command;
 }
 
 void Actor::PlayCommand( const CString &sCommandName )
