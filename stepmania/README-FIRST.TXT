@@ -782,7 +782,7 @@ BGAnimations:  This folder contains BGAnimation elements for the different
 Fonts:  This folder contains graphics and font width data used by the font 
 	system.  Font graphics and width files are generated using the program 
 	"Bitmap Font Builder", which is available for download at 
-	http://www.lmnopc.com/bitmapfontbuilder/.  To export a font	for use in 
+	http://www.lmnopc.com/bitmapfontbuilder/.  To export a font for use in 
 	StepMania:
 		- In Bitmap Font Builder, choose Character Set->Full ASCII.  StepMania
 		  can only load 16x16 character sheets.
