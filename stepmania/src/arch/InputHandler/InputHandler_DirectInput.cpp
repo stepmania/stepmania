@@ -452,8 +452,11 @@ void InputHandler_DInput::InputThread()
 
 	/* If we have any polled devices, we need a fast loop. */
 	int Delay = UnbufferedDevices.size()? 2:50;
-	LOG->Trace( "DirectInput thread is running at %ims", Delay );
+	LOG->Info( "DirectInput thread is running at %ims", Delay );
 
+	RageTimer LoopPerformanceTimer;
+	int Counts[6];
+	memset(Counts, 0, sizeof(Counts));
 	while(!shutdown)
 	{
 		VDCHECKPOINT;
@@ -491,6 +494,14 @@ void InputHandler_DInput::InputThread()
 		if( BufferedDevices.size() == 0 )
 			SDL_Delay( 2 );
 		VDCHECKPOINT;
+
+		float time = LoopPerformanceTimer.GetDeltaTime();
+		     if(time < 0.002f) ++Counts[0];
+		else if(time < 0.005f) ++Counts[1];
+		else if(time < 0.010f) ++Counts[2];
+		else if(time < 0.025f) ++Counts[3];
+		else if(time < 0.050f) ++Counts[4];
+		else                   ++Counts[5];
 	}
 	VDCHECKPOINT;
 
@@ -499,6 +510,11 @@ void InputHandler_DInput::InputThread()
 	        IDirectInputDevice2_SetEventNotification( Devices[i].Device, NULL );
 
 	CloseHandle(Handle);
+
+	/* If we're running in "slow loop" mode--that is, all devices are buffered--it's
+	 * normal for most loops to take 50ms. */
+	LOG->Info("DirectInput thread performance: %i %i %i %i %i %i",
+		Counts[0], Counts[1], Counts[2], Counts[3], Counts[4], Counts[5]);
 }
 
 void InputHandler_DInput::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
