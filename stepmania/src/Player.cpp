@@ -48,17 +48,21 @@ const int ARROW_X_OFFSET[4] = {
 #define ARROW_HEIGHT						70
 #define NUM_FRAMES_IN_COLOR_ARROW_SPRITE	12
 
+/*
 const CString SPRITE_COLOR_ARROW[4] = {
 	"Sprites\\Color Arrow Left.sprite",
 	"Sprites\\Color Arrow Down.sprite",
 	"Sprites\\Color Arrow Up.sprite",
 	"Sprites\\Color Arrow Right.sprite"
 };
-const CString SPRITE_GRAY_ARROW[4] = {
-	"Sprites\\Gray Arrow Left.sprite",
-	"Sprites\\Gray Arrow Down.sprite",
-	"Sprites\\Gray Arrow Up.sprite",
-	"Sprites\\Gray Arrow Right.sprite"
+*/
+const CString SPRITE_COLOR_ARROW = "Sprites\\Color Arrow Left.sprite";
+const CString SPRITE_GRAY_ARROW = "Sprites\\Gray Arrow Left.sprite";
+const float SPRITE_ARROW_ROTATION[4] = {
+	0,
+	0-D3DX_PI/2.0f,
+	0+D3DX_PI/2.0f, 
+	0+D3DX_PI
 };
 
 
@@ -98,26 +102,25 @@ Player::Player()
 		m_OriginalStep[i] = 0;
 		m_LeftToStepOn[i] = 0;
 		m_StepScore[i] = none;
+		m_iColorArrowFrameOffset[i] = 0;
 	}
 
-	// gray arrows
-	for( i=0; i<4; i++ ) 
-	{
-		m_sprGrayArrow[i].LoadFromSpriteFile( SPRITE_GRAY_ARROW[i] );
-		m_sprGrayArrowGhost[i].LoadFromSpriteFile( SPRITE_GRAY_ARROW[i] );
+	for( i=0; i<4; i++ ) {
+		// gray arrows
+		m_sprGrayArrow[i].LoadFromSpriteFile( SPRITE_GRAY_ARROW );
+		m_sprGrayArrow[i].SetRotation( SPRITE_ARROW_ROTATION[i] );
+
+		m_sprGrayArrowGhost[i].LoadFromSpriteFile( SPRITE_GRAY_ARROW );
+		m_sprGrayArrowGhost[i].SetRotation( SPRITE_ARROW_ROTATION[i] );
 		m_sprGrayArrowGhost[i].StopAnimating();
 		m_sprGrayArrowGhost[i].SetState( 1 );
-		m_sprGrayArrowGhost[i].SetColor( D3DXCOLOR(1,1,1,0) );		
-	}
+		m_sprGrayArrowGhost[i].SetColor( D3DXCOLOR(1,1,1,0) );
 
-	// color arrows
-	for( i=0; i<4; i++ )
-	{
-		m_sprColorArrow[i].LoadFromSpriteFile( SPRITE_COLOR_ARROW[i] );
+		// color arrows
+		m_sprColorArrow[i].LoadFromSpriteFile( SPRITE_COLOR_ARROW_LEFT );
 		m_sprColorArrow[i].StopAnimating();
+		m_sprColorArrow[i].SetRotation( SPRITE_ARROW_ROTATION[i] );
 	}
-	for( i=0; i<MAX_STEP_ELEMENTS; i++ )
-		m_iColorArrowFrameOffset[i] = 0;
 
 	// judgement
 	m_fJudgementDisplayCountdown = 0;
@@ -201,7 +204,7 @@ void Player::Draw( float fSongBeat )
 
 void Player::HandlePlayerStep( float fSongBeat, Step player_step, float fMaxBeatDiff )
 {
-	RageLog( "Player::HandlePlayerStep()" );
+	//RageLog( "Player::HandlePlayerStep()" );
 
 	// update gray arrows
 	if( player_step & STEP_P1_LEFT )	GrayArrowStep( 0 );
@@ -215,13 +218,13 @@ void Player::HandlePlayerStep( float fSongBeat, Step player_step, float fMaxBeat
 
 void Player::CheckForCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDiff )
 {
-	RageLog( "Player::CheckForCompleteStep()" );
+	//RageLog( "Player::CheckForCompleteStep()" );
 
 	// look for the closest matching step
 	int iIndexStartLookingAt = BeatToStepIndex( fSongBeat );
 	int iNumElementsToExamine = BeatToStepIndex( fMaxBeatDiff );	// number of elements to examine on either end of iIndexStartLookingAt
 	
-	RageLog( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
+	//RageLog( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
 	// Start at iIndexStartLookingAt and search outward.  The first one that overlaps the player's step is the closest match.
 	for( int delta=0; delta <= iNumElementsToExamine; delta++ )
@@ -236,7 +239,7 @@ void Player::CheckForCompleteStep( float fSongBeat, Step player_step, float fMax
 		////////////////////////////
 		// check the step to the left of iIndexStartLookingAt
 		////////////////////////////
-		RageLog( "Checking steps[%d]", iCurrentIndexEarlier );
+		//RageLog( "Checking steps[%d]", iCurrentIndexEarlier );
 		if( m_LeftToStepOn[iCurrentIndexEarlier] & player_step )	// these steps overlap
 		{
 			m_LeftToStepOn[iCurrentIndexEarlier] &= ~player_step;	// subtract player_step
@@ -249,7 +252,7 @@ void Player::CheckForCompleteStep( float fSongBeat, Step player_step, float fMax
 		////////////////////////////
 		// check the step to the right of iIndexStartLookingAt
 		////////////////////////////
-		RageLog( "Checking steps[%d]", iCurrentIndexLater );
+		//RageLog( "Checking steps[%d]", iCurrentIndexLater );
 		if( m_LeftToStepOn[iCurrentIndexLater] & player_step )		// these steps overlap
 		{
 			m_LeftToStepOn[iCurrentIndexLater] &= ~player_step;		// subtract player_step
@@ -274,8 +277,8 @@ void Player::OnCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDi
 	float fBeatsUntilStep = fStepBeat - fSongBeat;
 	float fPercentFromPerfect = (float)fabs( fBeatsUntilStep / fMaxBeatDiff );
 
-	RageLog( "fBeatsUntilStep: %f, fPercentFromPerfect: %f", 
-			 fBeatsUntilStep, fPercentFromPerfect );
+	//RageLog( "fBeatsUntilStep: %f, fPercentFromPerfect: %f", 
+	//		 fBeatsUntilStep, fPercentFromPerfect );
 
 	// compute what the score should be for the note we stepped on
 	StepScore &score = m_StepScore[iIndexThatWasSteppedOn];
@@ -356,11 +359,11 @@ ScoreSummary Player::GetScoreSummary()
 
 void Player::UpdateGrayArrows( const float &fDeltaTime )
 {
-	for( int i=0; i<4; i++ )
+	// gray arrows
+	for( int i=0; i<4; i++ ) {
 		m_sprGrayArrow[i].Update( fDeltaTime );
-
-	for( i=0; i<4; i++ )
 		m_sprGrayArrowGhost[i].Update( fDeltaTime );
+	}
 }
 
 void Player::DrawGrayArrows()
@@ -383,10 +386,8 @@ void Player::SetColorArrowsX( int iNewX )
 void Player::GrayArrowStep( int index )
 {
 	m_sprGrayArrow[index].SetZoom( 0.50 );
-	m_sprGrayArrow[index].TweenTo( GRAY_ARROW_POP_UP_TIME,
-									m_sprGrayArrow[index].GetX(),
-									m_sprGrayArrow[index].GetY(),
-									1.0f );
+	m_sprGrayArrow[index].SetTweening( GRAY_ARROW_POP_UP_TIME );
+	m_sprGrayArrow[index].SetTweenZoom( 1.0f );
 }
 
 void Player::GrayArrowGhostStep( int index )
@@ -498,7 +499,7 @@ void Player::DrawJudgement()
 
 void Player::SetJudgement( StepScore score )
 {
-	RageLog( "Judgement::SetJudgement()" );
+	//RageLog( "Judgement::SetJudgement()" );
 
 	switch( score )
 	{
