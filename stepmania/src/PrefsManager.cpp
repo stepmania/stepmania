@@ -19,6 +19,7 @@
 #include "RageUtil.h"
 #include "AnnouncerManager.h"
 #include "ThemeManager.h"
+#include "arch/arch.h" /* for default driver specs */
 
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
@@ -68,6 +69,8 @@ PrefsManager::PrefsManager()
 	m_bHiddenSongs = false;
 	m_bVsync = true;
 
+	m_bSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
+
 	ReadGlobalPrefsFromDisk( true );
 }
 
@@ -113,6 +116,7 @@ PrefsManager::~PrefsManager()
 	ini.GetValue ( "Options", "DWIPath",					m_DWIPath );
 	ini.GetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
 	ini.GetValueB( "Options", "CoinOpMode",					m_bCoinOpMode );
+	ini.GetValue ( "Options", "SoundDrivers",				m_bSoundDrivers );
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
@@ -164,6 +168,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValue ( "Options", "DWIPath",					m_DWIPath );
 	ini.SetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
 	ini.SetValueB( "Options", "CoinOpMode",					m_bCoinOpMode );
+	ini.SetValue ( "Options", "SoundDrivers",				m_bSoundDrivers );
 
 	ini.SetValue( "Options", "AdditionalSongFolders", join(",", m_asAdditionalSongFolders) );
 
