@@ -63,6 +63,7 @@ class RageSound_DSound: public RageSoundDriver
 public:
 	RageSound_DSound();
 	~RageSound_DSound();
+	CString Init();
 };
 
 #endif

@@ -66,6 +66,10 @@ RageSound_DSound_Software::RageSound_DSound_Software()
 
 CString RageSound_DSound_Software::Init()
 {
+	CString sError = ds.Init();
+	if( sError != "" )
+		return sError;
+
 	/* If we're emulated, we're better off with the WaveOut driver; DS
 	 * emulation tends to be desynced. */
 	if( ds.IsEmulated() )
@@ -76,7 +80,10 @@ CString RageSound_DSound_Software::Init()
 		max_writeahead = PREFSMAN->m_iSoundWriteAhead;
 
 	/* Create a DirectSound stream, but don't force it into hardware. */
-	pcm = new DSoundBuf( ds, DSoundBuf::HW_DONT_CARE, channels, samplerate, 16, max_writeahead );
+	pcm = new DSoundBuf;
+	sError = pcm->Init( ds, DSoundBuf::HW_DONT_CARE, channels, samplerate, 16, max_writeahead );
+	if( sError != "" )
+		return sError;
 
 	/* Fill a buffer before we start playing, so we don't play whatever junk is
 	 * in the buffer. */

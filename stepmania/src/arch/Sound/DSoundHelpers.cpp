@@ -98,15 +98,18 @@ void DSound::SetPrimaryBufferMode()
 
 DSound::DSound()
 {
-	HRESULT hr;
-
     // Initialize COM
+	HRESULT hr;
     if( FAILED( hr = CoInitialize( NULL ) ) )
-		RageException::ThrowNonfatal(hr_ssprintf(hr, "CoInitialize"));
+		RageException::Throw(hr_ssprintf(hr, "CoInitialize"));
+}
 
+CString DSound::Init()
+{
     // Create IDirectSound using the primary sound device
+	HRESULT hr;
     if( FAILED( hr = DirectSoundCreate( NULL, &ds, NULL ) ) )
-		RageException::ThrowNonfatal(hr_ssprintf(hr, "DirectSoundCreate"));
+		return hr_ssprintf( hr, "DirectSoundCreate" );
 
 #ifndef _XBOX
 	static bool bShownInfo = false;
@@ -134,6 +137,8 @@ DSound::DSound()
 #endif
 
 	SetPrimaryBufferMode();
+
+	return "";
 }
 
 DSound::~DSound()
@@ -163,9 +168,16 @@ bool DSound::IsEmulated() const
 #endif
 }
 
-DSoundBuf::DSoundBuf( DSound &ds, DSoundBuf::hw hardware,
+DSoundBuf::DSoundBuf()
+{
+	buf = NULL;
+	temp_buffer = NULL;
+}
+
+CString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
 					  int channels_, int samplerate_, int samplebits_, int writeahead_ )
 {
+	
 	channels = channels_;
 	samplerate = samplerate_;
 	samplebits = samplebits_;
@@ -250,7 +262,7 @@ DSoundBuf::DSoundBuf( DSound &ds, DSoundBuf::hw hardware,
 
 	HRESULT hr = ds.GetDS()->CreateSoundBuffer( &format, &buf, NULL );
 	if( FAILED(hr) )
-		RageException::ThrowNonfatal( hr_ssprintf(hr, "CreateSoundBuffer failed") );
+		return hr_ssprintf( hr, "CreateSoundBuffer failed" );
 
 #ifndef _XBOX
 	/* I'm not sure this should ever be needed, but ... */
@@ -258,7 +270,7 @@ DSoundBuf::DSoundBuf( DSound &ds, DSoundBuf::hw hardware,
 	bcaps.dwSize=sizeof(bcaps);
 	hr = buf->GetCaps(&bcaps);
 	if( FAILED(hr) )
-		RageException::Throw(hr_ssprintf(hr, "buf->GetCaps"));
+		return hr_ssprintf( hr, "buf->GetCaps" );
 	if( int(bcaps.dwBufferBytes) != buffersize )
 	{
 		LOG->Warn( "bcaps.dwBufferBytes (%i) != buffersize(%i); adjusting", bcaps.dwBufferBytes, buffersize );
@@ -280,6 +292,8 @@ DSoundBuf::DSoundBuf( DSound &ds, DSoundBuf::hw hardware,
 #endif
 	
 	temp_buffer = new char[buffersize];
+
+	return "";
 }
 
 void DSoundBuf::SetSampleRate(int hz)
@@ -331,7 +345,8 @@ static bool contained( int start, int end, int pos )
 
 DSoundBuf::~DSoundBuf()
 {
-	buf->Release();
+	if( buf != NULL )
+		buf->Release();
 	delete [] temp_buffer;
 }
 

@@ -22,6 +22,7 @@ public:
 
 	DSound();
 	~DSound();
+	CString Init();
 };
 
 class DSoundBuf
@@ -33,8 +34,9 @@ public:
 	 * you use the sample. */
 	enum { DYNAMIC_SAMPLERATE = -1 };
 
-	DSoundBuf(DSound &ds, hw hardware, 
-		int channels, int samplerate, int samplebits, int writeahead);
+	DSoundBuf();
+	CString Init( DSound &ds, hw hardware, 
+		int channels, int samplerate, int samplebits, int writeahead );
 
 	bool get_output_buf(char **buffer, unsigned *bufsiz, int chunksize);
 	void release_output_buf(char *buffer, unsigned bufsiz);

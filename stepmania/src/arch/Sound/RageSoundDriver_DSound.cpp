@@ -198,34 +198,42 @@ RageSound_DSound::RageSound_DSound():
 	m_InactiveSoundMutex("InactiveSoundMutex")
 {
 	shutdown = false;
+}
+
+CString RageSound_DSound::Init()
+{
+	CString sError = ds.Init();
+	if( sError != "" )
+		return sError;
 
 	/* Don't bother wasting time trying to create buffers if we're
 	 * emulated.  This also gives us better diagnostic information. */
-	if(ds.IsEmulated())
-		RageException::ThrowNonfatal("Driver unusable (emulated device)");
+	if( ds.IsEmulated() )
+		return "Driver unusable (emulated device)";
 
 	/* Create a bunch of streams and put them into the stream pool. */
-	for(int i = 0; i < 32; ++i) {
-		DSoundBuf *newbuf;
-		try {
-			newbuf = new DSoundBuf(ds, 
-				DSoundBuf::HW_HARDWARE,
-				channels, DSoundBuf::DYNAMIC_SAMPLERATE, 16, buffersize);
-		} catch(const RageException &e) {
-			/* If we didn't get at least 8, fail. */
-			if(i >= 8) break; /* OK */
+	for( int i = 0; i < 32; ++i )
+	{
+		DSoundBuf *newbuf = new DSoundBuf;
+		CString sError = newbuf->Init( ds, DSoundBuf::HW_HARDWARE,
+			channels, DSoundBuf::DYNAMIC_SAMPLERATE, 16, buffersize );
+		if( sError != "" )
+		{
+			/* The channel failed to create.  We may be out of hardware streams, or we
+			 * may not have hardware mixing at all.  If we didn't get at least 8, fail. */
+			delete newbuf;
 
-			/* Clean up; the dtor won't be called. */
-			for(int n = 0; n < i; ++n)
-				delete stream_pool[n];
-			
-			if(i)
+			if( i >= 8 )
+				break; /* OK */
+
+			if( i )
 			{
 				/* We created at least one hardware buffer. */
-				LOG->Trace("Could only create %i buffers; need at least 8 (failed with %s).  DirectSound driver can't be used.", i, e.what());
-				RageException::ThrowNonfatal( "not enough hardware buffers available" );
+				LOG->Trace( "Could only create %i buffers; need at least 8 (failed with %s).  Hardware DirectSound driver can't be used.", i, sError.c_str() );
+				return "not enough hardware buffers available";
 			}
-			RageException::ThrowNonfatal( "no hardware buffers available" );
+
+			return "no hardware buffers available";
 		}
 
 		stream *s = new stream;
@@ -233,10 +241,12 @@ RageSound_DSound::RageSound_DSound():
 		stream_pool.push_back(s);
 	}
 
-	LOG->Trace("Got %i hardware buffers", stream_pool.size());
+	LOG->Trace( "Got %i hardware buffers", stream_pool.size() );
 
 	MixingThread.SetName("Mixer thread");
 	MixingThread.Create( MixerThread_start, this );
+
+	return "";
 }
 
 RageSound_DSound::~RageSound_DSound()
