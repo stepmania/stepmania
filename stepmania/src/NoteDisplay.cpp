@@ -25,23 +25,9 @@
 #include "RageDisplay.h"
 #include "NoteTypes.h"
 #include "NoteFieldPositioning.h"
+#include "ActorUtil.h"
 
 
-Actor* MakeModelOrSprite( CString sFile )
-{
-	if( sFile.Right(3)=="txt"||sFile.Right(5)=="model" )
-	{
-		Model* pModel = new Model;
-		pModel->Load( sFile );
-		return pModel;
-	}
-	else
-	{
-		Sprite* pSprite = new Sprite;
-		pSprite->Load( sFile );
-		return pSprite;
-	}
-}
 
 #define DRAW_HOLD_HEAD_FOR_TAPS_ON_SAME_ROW			NOTESKIN->GetMetricB(skin,name,"DrawHoldHeadForTapsOnSameRow")
 #define TAP_NOTE_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(skin,name,"TapNoteAnimationLengthInBeats")
@@ -190,29 +176,29 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fY
 	if( cache->m_bTapNoteAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-			m_pTapNote[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(NoteSkin, Button, "tap note "+sNoteType[i]) );
+			m_pTapNote[i] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "tap note "+sNoteType[i]) );
 	}
 	else
 	{
-		m_pTapNote[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(NoteSkin, Button, "tap note") );
+		m_pTapNote[0] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "tap note") );
 	}
 
-	m_pTapAddition = MakeModelOrSprite( NOTESKIN->GetPathTo(NoteSkin, Button, "tap addition") );
+	m_pTapAddition = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "tap addition") );
 
-	m_pTapMine = MakeModelOrSprite( NOTESKIN->GetPathTo(NoteSkin, Button, "tap mine") );
+	m_pTapMine = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "tap mine") );
 
 	if( cache->m_bHoldHeadAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_pHoldHeadActive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(NoteSkin, Button, "hold head active "+sNoteType[i]) );
-			m_pHoldHeadInactive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(NoteSkin, Button, "hold head inactive "+sNoteType[i]) );
+			m_pHoldHeadActive[i] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold head active "+sNoteType[i]) );
+			m_pHoldHeadInactive[i] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold head inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_pHoldHeadActive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(NoteSkin, Button, "hold head active") );
-		m_pHoldHeadInactive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(NoteSkin, Button, "hold head inactive") );
+		m_pHoldHeadActive[0] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold head active") );
+		m_pHoldHeadInactive[0] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold head inactive") );
 	}
 
 	if( cache->m_bHoldTopCapAnimationIsNoteColor )
@@ -261,14 +247,14 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fY
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_pHoldTailActive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(NoteSkin, Button, "hold tail active "+sNoteType[i]) );
-			m_pHoldTailInactive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(NoteSkin, Button, "hold tail inactive "+sNoteType[i]) );
+			m_pHoldTailActive[i] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold tail active "+sNoteType[i]) );
+			m_pHoldTailInactive[i] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold tail inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_pHoldTailActive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(NoteSkin, Button, "hold tail active") );
-		m_pHoldTailInactive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(NoteSkin, Button, "hold tail inactive") );
+		m_pHoldTailActive[0] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold tail active") );
+		m_pHoldTailInactive[0] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold tail inactive") );
 	}
 }
 

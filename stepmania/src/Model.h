@@ -40,13 +40,9 @@ public:
 	void	Load( CString sFile )
 	{
 		if( sFile == "" ) return;
-		if( sFile.Right(6) == ".model" )
-			LoadFromModelFile( sFile );
-		else 
-			LoadMilkshapeAscii( sFile );
+		LoadMilkshapeAscii( sFile );
 	};
 
-	bool	LoadFromModelFile( CString sFile );
 	bool	LoadMilkshapeAscii( CString sFile );
 	bool	LoadMilkshapeAsciiBones( CString sAniName, CString sFile );
 	void	PlayAnimation( CString sAniName, float fPlayRate = 1 );

@@ -15,6 +15,7 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "Model.h"
+#include "IniFile.h"
 
 
 Actor* MakeActor( CString sPath )
@@ -24,7 +25,35 @@ Actor* MakeActor( CString sPath )
 	sExt.MakeLower();
 	
 
-	if( sExt=="png" ||
+	if( sExt=="actor" )
+	{
+		// TODO: Check for recursive loading
+		CString sDir, sThrowAway;
+		splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
+
+		IniFile ini;
+		ini.SetPath( sPath );
+		ini.ReadFile();
+		
+		if( !ini.GetKey("Actor") )
+			RageException::Throw( "The actor file '%s' is invalid.", sPath.c_str() );
+
+		CString sFileName;
+		ini.GetValue( "Actor", "File", sFileName );
+		
+		Actor* pActor = MakeActor( sDir+sFileName );
+
+		float f;
+		if( ini.GetValueF( "Actor", "BaseRotationXDegrees", f ) )	pActor->SetBaseRotationX( f );
+		if( ini.GetValueF( "Actor", "BaseRotationYDegrees", f ) )	pActor->SetBaseRotationY( f );
+		if( ini.GetValueF( "Actor", "BaseRotationZDegrees", f ) )	pActor->SetBaseRotationZ( f );
+		if( ini.GetValueF( "Actor", "BaseZoomX", f ) )				pActor->SetBaseZoomX( f );
+		if( ini.GetValueF( "Actor", "BaseZoomY", f ) )				pActor->SetBaseZoomY( f );
+		if( ini.GetValueF( "Actor", "BaseZoomZ", f ) )				pActor->SetBaseZoomZ( f );
+			
+		return pActor;
+	}
+	else if( sExt=="png" ||
 		sExt=="jpg" || 
 		sExt=="gif" || 
 		sExt=="bmp" || 
@@ -47,12 +76,6 @@ Actor* MakeActor( CString sPath )
 	{
 		Model* pModel = new Model;
 		pModel->LoadMilkshapeAscii( sPath );
-		return pModel;
-	}
-	else if( sExt=="model" )
-	{
-		Model* pModel = new Model;
-		pModel->LoadFromModelFile( sPath );
 		return pModel;
 	}
 

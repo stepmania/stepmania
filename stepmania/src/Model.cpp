@@ -49,33 +49,6 @@ void Model::Clear ()
 	m_pCurAnimation = NULL;
 }
 
-bool Model::LoadFromModelFile( CString sPath )
-{
-	CString sDir, sThrowAway;
-	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
-
-	IniFile ini;
-	ini.SetPath( sPath );
-	ini.ReadFile();
-	
-	if( !ini.GetKey("Model") )
-		RageException::Throw( "The model file '%s' is invalid.", sPath.c_str() );
-
-	CString sFileName;
-	ini.GetValue( "Model", "File", sFileName );
-	LoadMilkshapeAscii( sDir+sFileName );
-
-	float f;
-	if( ini.GetValueF( "Model", "BaseRotationXDegrees", f ) )	Actor::SetBaseRotationX( f );
-	if( ini.GetValueF( "Model", "BaseRotationYDegrees", f ) )	Actor::SetBaseRotationY( f );
-	if( ini.GetValueF( "Model", "BaseRotationZDegrees", f ) )	Actor::SetBaseRotationZ( f );
-	if( ini.GetValueF( "Model", "BaseZoomX", f ) )				Actor::SetBaseZoomX( f );
-	if( ini.GetValueF( "Model", "BaseZoomY", f ) )				Actor::SetBaseZoomY( f );
-	if( ini.GetValueF( "Model", "BaseZoomZ", f ) )				Actor::SetBaseZoomZ( f );
-	
-	return true;
-}
-
 bool Model::LoadMilkshapeAscii( CString sPath )
 {
 	CString sDir, sThrowAway;

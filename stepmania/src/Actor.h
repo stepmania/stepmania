@@ -101,6 +101,13 @@ public:
 	virtual void  SetWidth( float width )	{ m_size.x = width; }
 	virtual void  SetHeight( float height )	{ m_size.y = height; }
 
+	void  SetBaseZoomX( float zoom )	{ m_baseScale.x = zoom;	}
+	void  SetBaseZoomY( float zoom )	{ m_baseScale.y = zoom; }
+	void  SetBaseZoomZ( float zoom )	{ m_baseScale.z = zoom; }
+	virtual void  SetBaseRotationX( float rot )	{ m_baseRotation.x = rot; }
+	virtual void  SetBaseRotationY( float rot )	{ m_baseRotation.y = rot; }
+	virtual void  SetBaseRotationZ( float rot )	{ m_baseRotation.z = rot; }
+
 	virtual float GetZoom()					{ return DestTweenState().scale.x; }	// not accurate in some cases
 	virtual float GetZoomX()				{ return DestTweenState().scale.x; }
 	virtual float GetZoomY()				{ return DestTweenState().scale.y; }
@@ -275,14 +282,6 @@ protected:
 		float		m_fTweenTime;		// seconds between Start and End positions/zooms
 	};
 
-
-	// only called by Sprite
-	void  SetBaseZoomX( float zoom )	{ m_baseScale.x = zoom;	}
-	void  SetBaseZoomY( float zoom )	{ m_baseScale.y = zoom; }
-	void  SetBaseZoomZ( float zoom )	{ m_baseScale.z = zoom; }
-	virtual void  SetBaseRotationX( float rot )	{ m_baseRotation.x = rot; }
-	virtual void  SetBaseRotationY( float rot )	{ m_baseRotation.y = rot; }
-	virtual void  SetBaseRotationZ( float rot )	{ m_baseRotation.z = rot; }
 
 	RageVector3	m_baseRotation;
 	RageVector3	m_baseScale;
