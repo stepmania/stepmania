@@ -42,13 +42,43 @@ void NoteData::SetNumTracks( int iNewNumTracks )
 /* Clear [rowBegin,rowEnd]; that is, including rowEnd. */
 void NoteData::ClearRange( int rowBegin, int rowEnd )
 {
-	this->ConvertHoldNotesTo4s();
+	/* Crop or split hold notes overlapping the range. */
+	for( int i = GetNumHoldNotes()-1; i >= 0; --i )	// for each HoldNote
+	{
+		HoldNote hn = GetHoldNote(i);
+		if( !hn.RangeOverlaps(rowBegin, rowEnd) )
+			continue;
+
+		this->RemoveHoldNote( i );
+
+		/* If the range encloses the hold note completely, just delete it. */
+		if( hn.ContainedByRange(rowBegin, rowEnd) )
+			continue;
+
+		if( hn.RangeInside(rowBegin, rowEnd) )
+		{
+			/* The hold note encloses the range, so we need to split the hold note. */
+			HoldNote hnLater(hn);
+			hn.iEndRow = rowBegin;
+			hnLater.iStartRow = rowEnd;
+			this->AddHoldNote( hn );
+			this->AddHoldNote( hnLater );
+			continue;
+		}
+
+		if( hn.iStartRow < rowBegin )
+			hn.iEndRow = min( hn.iEndRow, rowBegin );
+		else
+			hn.iStartRow = max( hn.iStartRow, rowEnd );
+		this->AddHoldNote( hn );
+	}
+
+	/* Clear other notes in the region. */
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, rowBegin, rowEnd )
-			SetTapNote(t, r, TAP_EMPTY);
+			SetTapNote( t, r, TAP_EMPTY );
 	}
-	this->Convert4sToHoldNotes();
 }
 
 void NoteData::ClearAll()
@@ -64,23 +94,82 @@ void NoteData::CopyRange( const NoteData& from, int rowFromBegin, int rowFromEnd
 {
 	ASSERT( from.GetNumTracks() == GetNumTracks() );
 
-	NoteData From, To;
-	From.To4s( from );
-	To.To4s( *this );
+	int rowToEnd = (rowFromEnd-rowFromBegin) + rowToBegin;
 
-	// copy recorded TapNotes
-	
+	/* Clear the region. */
+	ClearRange( rowToBegin, rowToEnd );
+
+	/* Copy everything except for hold notes. */
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( From, t, iFrom, rowFromBegin, rowFromEnd )
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( from, t, iFrom, rowFromBegin, rowFromEnd )
 		{
+			const TapNote &tn = from.GetTapNote( t, iFrom );
+			switch( tn.type )
+			{
+			case TapNote::empty:
+			case TapNote::hold_tail:
+			case TapNote::hold_head:
+				continue;
+			}
+
 			int iTo = rowToBegin + iFrom - rowFromBegin;
-			const TapNote &tn = From.GetTapNote( t, iFrom );
-			To.SetTapNote( t, iTo, tn );
+			this->SetTapNote( t, iTo, tn );
 		}
 	}
 
-	this->From4s( To );
+	/* Copy hold notes. */
+	for( int i=0; i<from.GetNumHoldNotes(); i++ )	// for each HoldNote
+	{
+		HoldNote hn = from.GetHoldNote(i);
+
+		if( !hn.RangeOverlaps(rowFromBegin, rowFromEnd) )
+			continue;
+
+		/* Move the hold note. */
+		int iMoveBy = rowToBegin-rowFromBegin;
+		hn.iStartRow += iMoveBy;
+		hn.iEndRow += iMoveBy;
+
+		/* Crop the hold note to the region. */
+		hn.iStartRow = max( hn.iStartRow, rowToBegin );
+		hn.iEndRow = min( hn.iEndRow, rowToEnd );
+
+		/* The beginning of the hold might match up to the end of an existing hold, the end
+		 * may match with the beginning, or both. */
+		int iEarlierHoldNote = -1, iLaterHoldNote = -1;
+		for( int j=0; j<this->GetNumHoldNotes(); ++j )	// for each HoldNote
+		{
+			const HoldNote &hn2 = this->GetHoldNote(j);
+			if( hn2.iEndRow == hn.iStartRow )
+				iEarlierHoldNote = j;
+			if( hn2.iStartRow == hn.iEndRow )
+				iLaterHoldNote = j;
+		}
+
+		if( iEarlierHoldNote != -1 && iLaterHoldNote != -1 )
+		{
+			HoldNote &hnEarlier = this->GetHoldNote( iEarlierHoldNote );
+			const HoldNote &hnLater = this->GetHoldNote( iLaterHoldNote );
+			hnEarlier.iEndRow = hnLater.iEndRow;
+
+			this->RemoveHoldNote( iLaterHoldNote );
+		}
+		else if( iEarlierHoldNote == -1 && iLaterHoldNote == -1 )
+			AddHoldNote( hn );
+		else if( iEarlierHoldNote != -1 )
+		{
+			HoldNote &hn2 = this->GetHoldNote(iEarlierHoldNote);
+			hn2.iEndRow = hn.iEndRow;
+		}
+		else if( iLaterHoldNote != -1 )
+		{
+			HoldNote &hn2 = this->GetHoldNote(iLaterHoldNote);
+			hn2.iStartRow = hn.iStartRow;
+		}
+		else
+			FAIL_M(ssprintf("%i,%i", iEarlierHoldNote, iLaterHoldNote));
+	}
 }
 
 void NoteData::Config( const NoteData& from )
