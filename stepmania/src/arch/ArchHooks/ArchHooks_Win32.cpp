@@ -185,18 +185,25 @@ void ArchHooks_Win32::SetTime( tm newtime )
 	SetLocalTime( &st ); 
 }
 
-int64_t ArchHooks_Win32::GetMicrosecondsSinceStart( bool bAccurate )
-{
-	static bool bInitialized;
-	static DWORD iStartTime;
-	if( !bInitialized )
-	{
-		timeBeginPeriod( 1 );
-		bInitialized = true;
-		iStartTime = timeGetTime();
-	}
+static bool g_bTimerInitialized;
+static DWORD g_iStartTime;
 
-	return (timeGetTime() - iStartTime) * 1000;
+static void InitTimer()
+{
+	if( g_bTimerInitialized )
+		return;
+	g_bTimerInitialized = true;
+
+	timeBeginPeriod( 1 );
+	g_iStartTime = timeGetTime();
+}
+
+int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
+{
+	if( !g_bTimerInitialized )
+		InitTimer();
+
+	return (timeGetTime() - g_iStartTime) * 1000;
 }
 
 /*

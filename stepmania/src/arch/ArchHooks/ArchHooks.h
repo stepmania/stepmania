@@ -38,8 +38,12 @@ public:
 	 *
 	 * Note that bAccurate may change the result significantly; it may use a different
 	 * timer, and may have a different concept of when the program "started".
+	 *
+	 * This is a static function, implemented in whichever ArchHooks source is used,
+	 * so it can be used at any time (such as in global constructors), before HOOKS
+	 * is initialized.
 	 */
-	virtual int64_t GetMicrosecondsSinceStart( bool bAccurate ) = 0;
+	static int64_t GetMicrosecondsSinceStart( bool bAccurate );
 };
 
 ArchHooks *MakeArchHooks();
