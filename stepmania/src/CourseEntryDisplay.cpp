@@ -18,13 +18,14 @@
 #include "PrefsManager.h"
 #include "Course.h"
 #include "SongManager.h"
-#include <math.h>
 #include "ThemeManager.h"
 #include "Steps.h"
 #include "GameState.h"
 #include "StyleDef.h"
 #include "ActorUtil.h"
+#include <math.h>
 
+#define SEPARATE_COURSE_METERS		THEME->GetMetricB(m_sName,"SeparateCouresMeters")
 
 void CourseEntryDisplay::Load()
 {
@@ -45,15 +46,24 @@ void CourseEntryDisplay::Load()
 	SET_XY_AND_ON_COMMAND( &m_TextBanner );
 	this->AddChild( &m_TextBanner );
 
-	m_textFoot.SetName( "Foot" );
-	m_textFoot.LoadFromTextureAndChars( THEME->GetPathToG("CourseEntryDisplay difficulty 2x1"),"10" );
-	SET_XY_AND_ON_COMMAND( &m_textFoot );
-	this->AddChild( &m_textFoot );
+	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+	{
+		if( !GAMESTATE->IsHumanPlayer((PlayerNumber)pn) )
+			continue;	// skip
 
-	m_textDifficultyNumber.SetName( "Difficulty" );
-	m_textDifficultyNumber.LoadFromFont( THEME->GetPathToF("Common normal") );
-	SET_XY_AND_ON_COMMAND( &m_textDifficultyNumber );
-	this->AddChild( &m_textDifficultyNumber );
+		if( !SEPARATE_COURSE_METERS && pn != GAMESTATE->m_MasterPlayerNumber )
+			continue;	// skip
+
+		m_textFoot[pn].SetName( SEPARATE_COURSE_METERS? ssprintf("FootP%i", pn+1):"Foot" );
+		m_textFoot[pn].LoadFromTextureAndChars( THEME->GetPathToG("CourseEntryDisplay difficulty 2x1"),"10" );
+		SET_XY_AND_ON_COMMAND( &m_textFoot[pn] );
+		this->AddChild( &m_textFoot[pn] );
+
+		m_textDifficultyNumber[pn].SetName( SEPARATE_COURSE_METERS? ssprintf("DifficultyP%i", pn+1):"Difficulty" );
+		m_textDifficultyNumber[pn].LoadFromFont( THEME->GetPathToF("Common normal") );
+		SET_XY_AND_ON_COMMAND( &m_textDifficultyNumber[pn] );
+		this->AddChild( &m_textDifficultyNumber[pn] );
+	}
 
 	m_textModifiers.SetName( "Modifiers" );
 	m_textModifiers.LoadFromFont( THEME->GetPathToF("Common normal") );
@@ -61,25 +71,38 @@ void CourseEntryDisplay::Load()
 	this->AddChild( &m_textModifiers );
 }
 
-void CourseEntryDisplay::LoadFromCourseInfo( int iNum, const Course *pCourse, const Course::Info &ci )
+void CourseEntryDisplay::SetDifficulty( PlayerNumber pn, const CString &text, RageColor c )
 {
-	RageColor colorNotes;
+	if( !GAMESTATE->IsHumanPlayer(pn) )
+		return;	// skip
+	if( !SEPARATE_COURSE_METERS && pn != GAMESTATE->m_MasterPlayerNumber )
+		return;
+
+	m_textDifficultyNumber[pn].SetText( text );
+	m_textDifficultyNumber[pn].SetDiffuse( c );
+
+	m_textFoot[pn].SetText( "1" );
+	m_textFoot[pn].SetDiffuse( c );
+}
+
+void CourseEntryDisplay::LoadFromCourseInfo( int iNum, const Course *pCourse, const Course::Info pci[NUM_PLAYERS] )
+{
+	const Course::Info &ci = pci[GAMESTATE->m_MasterPlayerNumber];
+
 	if( ci.Mystery )
 	{
-		Difficulty dc = pCourse->GetDifficulty( ci );
-
-		if( dc == DIFFICULTY_INVALID )
+		for( int pn = 0; pn < NUM_PLAYERS; ++pn )
 		{
-			int iLow, iHigh;
-			pCourse->GetMeterRange(ci, iLow, iHigh);
+			Difficulty dc = pCourse->GetDifficulty( pci[pn] );
+			if( dc == DIFFICULTY_INVALID )
+			{
+				int iLow, iHigh;
+				pCourse->GetMeterRange(pci[pn], iLow, iHigh);
 
-			colorNotes = RageColor(1,1,1,1);
-			m_textDifficultyNumber.SetText( ssprintf(iLow==iHigh?"%d":"%d-%d", iLow, iHigh) );
-		}
-		else
-		{
-			colorNotes = SONGMAN->GetDifficultyColor( dc );
-			m_textDifficultyNumber.SetText( "?" );
+				SetDifficulty( (PlayerNumber)pn, ssprintf(iLow==iHigh?"%d":"%d-%d", iLow, iHigh), RageColor(1,1,1,1) );
+			}
+			else
+				SetDifficulty( (PlayerNumber)pn, "?", SONGMAN->GetDifficultyColor( dc ) );
 		}
 
 		m_TextBanner.LoadFromString( "??????????", "??????????", "", "", "", "" );
@@ -87,8 +110,11 @@ void CourseEntryDisplay::LoadFromCourseInfo( int iNum, const Course *pCourse, co
 	}
 	else
 	{
-		colorNotes = SONGMAN->GetDifficultyColor( ci.pNotes->GetDifficulty() );
-		m_textDifficultyNumber.SetText( ssprintf("%d", ci.pNotes->GetMeter()) );
+		for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+		{
+			RageColor colorNotes = SONGMAN->GetDifficultyColor( pci[pn].pNotes->GetDifficulty() );
+			SetDifficulty( (PlayerNumber)pn, ssprintf("%d", pci[pn].pNotes->GetMeter()), colorNotes );
+		}
 
 		m_TextBanner.LoadFromSong( ci.pSong );
 		m_TextBanner.SetDiffuse( SONGMAN->GetSongColor( ci.pSong ) );
@@ -96,10 +122,5 @@ void CourseEntryDisplay::LoadFromCourseInfo( int iNum, const Course *pCourse, co
 
 	m_textNumber.SetText( ssprintf("%d", iNum) );
 
-	m_textFoot.SetText( "1" );
-	m_textFoot.SetDiffuse( colorNotes );
-
 	m_textModifiers.SetText( ci.Modifiers );
-
-	m_textDifficultyNumber.SetDiffuse( colorNotes );
 }

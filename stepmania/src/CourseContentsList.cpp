@@ -57,16 +57,17 @@ void CourseContentsList::SetFromCourse( const Course* pCourse )
 		return;
 	}
 
+	vector<Course::Info> ci[NUM_PLAYERS];
+	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+		pCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci[pn], GAMESTATE->m_CourseDifficulty[pn] );
+
 	m_iNumContents = 0; 
-
-	vector<Course::Info> ci;
-	pCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci, GAMESTATE->m_CourseDifficulty[GAMESTATE->m_MasterPlayerNumber] );
-
-	for( int i=0; i<min((int)ci.size(), MAX_TOTAL_CONTENTS); i++ )
+	for( int i=0; i<min((int)ci[0].size(), MAX_TOTAL_CONTENTS); i++ )
 	{
 		CourseEntryDisplay& display = m_CourseContentDisplays[m_iNumContents];
 	
-		display.LoadFromCourseInfo( m_iNumContents+1, pCourse, ci[i] );
+		const Course::Info pci[NUM_PLAYERS] = { ci[0][i], ci[1][i] };
+		display.LoadFromCourseInfo( m_iNumContents+1, pCourse, pci );
 		
 		m_iNumContents++;
 	}
