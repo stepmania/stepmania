@@ -504,7 +504,7 @@ void ProfileManager::ReadSongScoresFromDir( CString sDir, MemoryCard mc )
 			// ignore all high scores that are 0
 			for( l=0; l<iNumHighScores; l++ )
 			{
-				if( pNotes->m_MemCardDatas[mc].vHighScores[l].iScore <= 0 )
+				if( pNotes && pNotes->m_MemCardDatas[mc].vHighScores[l].iScore <= 0 )
 				{
 					pNotes->m_MemCardDatas[mc].vHighScores.resize(l);
 					break;
