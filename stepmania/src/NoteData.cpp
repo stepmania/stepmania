@@ -702,6 +702,8 @@ float NoteDataUtil::GetRadarValue( const NoteData &in, RadarCategory rv, float f
 
 float NoteDataUtil::GetStreamRadarValue( const NoteData &in, float fSongSeconds )
 {
+	if( !fSongSeconds )
+		return 0.0f;
 	// density of steps
 	int iNumNotes = in.GetNumTapNotes() + in.GetNumHoldNotes();
 	float fNotesPerSecond = iNumNotes/fSongSeconds;
@@ -711,6 +713,9 @@ float NoteDataUtil::GetStreamRadarValue( const NoteData &in, float fSongSeconds 
 
 float NoteDataUtil::GetVoltageRadarValue( const NoteData &in, float fSongSeconds )
 {
+	if( !fSongSeconds )
+		return 0.0f;
+
 	const float fLastBeat = in.GetLastBeat();
 	const float fAvgBPS = fLastBeat / fSongSeconds;
 
@@ -732,6 +737,8 @@ float NoteDataUtil::GetVoltageRadarValue( const NoteData &in, float fSongSeconds
 
 float NoteDataUtil::GetAirRadarValue( const NoteData &in, float fSongSeconds )
 {
+	if( !fSongSeconds )
+		return 0.0f;
 	// number of doubles
 	int iNumDoubles = in.GetNumDoubles();
 	float fReturn = iNumDoubles / fSongSeconds;
@@ -740,6 +747,8 @@ float NoteDataUtil::GetAirRadarValue( const NoteData &in, float fSongSeconds )
 
 float NoteDataUtil::GetFreezeRadarValue( const NoteData &in, float fSongSeconds )
 {
+	if( !fSongSeconds )
+		return 0.0f;
 	// number of hold steps
 	float fReturn = in.GetNumHoldNotes() / fSongSeconds;
 	return min( fReturn, 1.0f );
@@ -747,6 +756,8 @@ float NoteDataUtil::GetFreezeRadarValue( const NoteData &in, float fSongSeconds 
 
 float NoteDataUtil::GetChaosRadarValue( const NoteData &in, float fSongSeconds )
 {
+	if( !fSongSeconds )
+		return 0.0f;
 	// count number of triplets or 16ths
 	int iNumChaosNotes = 0;
 	int rows = in.GetLastRow();
