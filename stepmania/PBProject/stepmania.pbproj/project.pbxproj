@@ -1355,6 +1355,57 @@
 				AA1CD944060AE571003702C4,
 				AAF7435C06110E8D00B19AD1,
 				AAF7435E06110EC300B19AD1,
+				AAF7450706116B0600B19AD1,
+				AAF7450906116B0600B19AD1,
+				AAF7450C06116B0600B19AD1,
+				AAF7450E06116B0600B19AD1,
+				AAF7451006116B0600B19AD1,
+				AAF7451206116B0600B19AD1,
+				AAF7451406116B0600B19AD1,
+				AAF7451606116B0600B19AD1,
+				AAF7451706116B0600B19AD1,
+				AAF7451806116B0600B19AD1,
+				AAF7451A06116B0600B19AD1,
+				AAF7451C06116B0600B19AD1,
+				AAF7451D06116B0600B19AD1,
+				AAF7451F06116B0600B19AD1,
+				AAF7452106116B0600B19AD1,
+				AAF7452306116B0600B19AD1,
+				AAF7452506116B0600B19AD1,
+				AAF7452606116B0600B19AD1,
+				AAF7452806116B0600B19AD1,
+				AAF7452A06116B0600B19AD1,
+				AAF7452C06116B0600B19AD1,
+				AAF7452E06116B0600B19AD1,
+				AAF7452F06116B0600B19AD1,
+				AAF7453106116B0600B19AD1,
+				AAF7453306116B0600B19AD1,
+				AAF7453406116B0600B19AD1,
+				AAF7453506116B0600B19AD1,
+				AAF7453706116B0600B19AD1,
+				AAF7453906116B0600B19AD1,
+				AAF7453A06116B0600B19AD1,
+				AAF7453C06116B0600B19AD1,
+				AAF7453D06116B0600B19AD1,
+				AAF7453F06116B0600B19AD1,
+				AAF7454006116B0600B19AD1,
+				AAF7454206116B0600B19AD1,
+				AAF7454406116B0600B19AD1,
+				AAF7454606116B0600B19AD1,
+				AAF7454806116B0600B19AD1,
+				AAF7454906116B0600B19AD1,
+				AAF7454B06116B0600B19AD1,
+				AAF7454D06116B0600B19AD1,
+				AAF7454F06116B0600B19AD1,
+				AAF7455006116B0600B19AD1,
+				AAF7455106116B0600B19AD1,
+				AAF7455306116B0600B19AD1,
+				AAF7455406116B0600B19AD1,
+				AAF7455506116B0600B19AD1,
+				AAF7455606116B0600B19AD1,
+				AAF7455806116B0600B19AD1,
+				AAF7455A06116B0600B19AD1,
+				AAF74591061181F700B19AD1,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3291,6 +3342,42 @@
 				AAE7812D0608249E0034E65F,
 				AA1CD943060AE571003702C4,
 				AAF7435B06110E8D00B19AD1,
+				AAF7450606116B0600B19AD1,
+				AAF7450806116B0600B19AD1,
+				AAF7450A06116B0600B19AD1,
+				AAF7450B06116B0600B19AD1,
+				AAF7450D06116B0600B19AD1,
+				AAF7450F06116B0600B19AD1,
+				AAF7451106116B0600B19AD1,
+				AAF7451306116B0600B19AD1,
+				AAF7451506116B0600B19AD1,
+				AAF7451906116B0600B19AD1,
+				AAF7451B06116B0600B19AD1,
+				AAF7451E06116B0600B19AD1,
+				AAF7452006116B0600B19AD1,
+				AAF7452206116B0600B19AD1,
+				AAF7452406116B0600B19AD1,
+				AAF7452706116B0600B19AD1,
+				AAF7452906116B0600B19AD1,
+				AAF7452B06116B0600B19AD1,
+				AAF7452D06116B0600B19AD1,
+				AAF7453006116B0600B19AD1,
+				AAF7453206116B0600B19AD1,
+				AAF7453606116B0600B19AD1,
+				AAF7453806116B0600B19AD1,
+				AAF7453B06116B0600B19AD1,
+				AAF7453E06116B0600B19AD1,
+				AAF7454106116B0600B19AD1,
+				AAF7454306116B0600B19AD1,
+				AAF7454506116B0600B19AD1,
+				AAF7454706116B0600B19AD1,
+				AAF7454A06116B0600B19AD1,
+				AAF7454C06116B0600B19AD1,
+				AAF7454E06116B0600B19AD1,
+				AAF7455206116B0600B19AD1,
+				AAF7455706116B0600B19AD1,
+				AAF7455906116B0600B19AD1,
+				AAF74590061181F700B19AD1,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8902,6 +8989,8 @@
 		};
 		AA6EFDBB04770A83005F316C = {
 			children = (
+				AAF7458E061181F700B19AD1,
+				AAF7458F061181F700B19AD1,
 				AA96881E05DE34CD00478B95,
 				AA96881F05DE34CD00478B95,
 				AAF4206905D6400800056441,
@@ -14720,6 +14809,7 @@
 		};
 		AADB4E8E04D5263200D02EE9 = {
 			children = (
+				AAF744A306116B0500B19AD1,
 				AAD64AA10603FE7300EF8CDE,
 				AADB4F5A04D9220700D02EE9,
 				AADB4F5904D9220700D02EE9,
@@ -15343,6 +15433,1328 @@
 		};
 		AAF7435E06110EC300B19AD1 = {
 			fileRef = AAF7435D06110EC300B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF744A306116B0500B19AD1 = {
+			children = (
+				AAF744A406116B0500B19AD1,
+				AAF744AB06116B0500B19AD1,
+				AAF744AC06116B0500B19AD1,
+				AAF744AD06116B0500B19AD1,
+				AAF744AE06116B0500B19AD1,
+				AAF744AF06116B0500B19AD1,
+				AAF744B006116B0500B19AD1,
+				AAF744B106116B0500B19AD1,
+				AAF744B206116B0500B19AD1,
+				AAF744B306116B0500B19AD1,
+				AAF744B406116B0500B19AD1,
+				AAF744B506116B0500B19AD1,
+				AAF744B606116B0500B19AD1,
+				AAF744B706116B0500B19AD1,
+				AAF744B806116B0500B19AD1,
+				AAF744B906116B0500B19AD1,
+				AAF744BA06116B0500B19AD1,
+				AAF744BB06116B0500B19AD1,
+				AAF744BC06116B0500B19AD1,
+				AAF744BD06116B0500B19AD1,
+				AAF744BE06116B0500B19AD1,
+				AAF744BF06116B0500B19AD1,
+				AAF744C006116B0600B19AD1,
+				AAF744C106116B0600B19AD1,
+				AAF744C206116B0600B19AD1,
+				AAF744C306116B0600B19AD1,
+				AAF744C406116B0600B19AD1,
+				AAF744C506116B0600B19AD1,
+				AAF744C606116B0600B19AD1,
+				AAF744C706116B0600B19AD1,
+				AAF744C806116B0600B19AD1,
+				AAF744C906116B0600B19AD1,
+				AAF744CA06116B0600B19AD1,
+				AAF744CB06116B0600B19AD1,
+				AAF744CC06116B0600B19AD1,
+				AAF744CD06116B0600B19AD1,
+				AAF744CE06116B0600B19AD1,
+				AAF744CF06116B0600B19AD1,
+				AAF744D006116B0600B19AD1,
+				AAF744D106116B0600B19AD1,
+				AAF744D206116B0600B19AD1,
+				AAF744D306116B0600B19AD1,
+				AAF744D406116B0600B19AD1,
+				AAF744D506116B0600B19AD1,
+				AAF744D606116B0600B19AD1,
+				AAF744D706116B0600B19AD1,
+				AAF744D806116B0600B19AD1,
+				AAF744D906116B0600B19AD1,
+				AAF744DA06116B0600B19AD1,
+				AAF744DB06116B0600B19AD1,
+				AAF744DC06116B0600B19AD1,
+				AAF744DD06116B0600B19AD1,
+				AAF744DE06116B0600B19AD1,
+				AAF744DF06116B0600B19AD1,
+				AAF744E006116B0600B19AD1,
+				AAF744E106116B0600B19AD1,
+				AAF744E206116B0600B19AD1,
+				AAF744E306116B0600B19AD1,
+				AAF744E406116B0600B19AD1,
+				AAF744E506116B0600B19AD1,
+				AAF744E606116B0600B19AD1,
+				AAF744E706116B0600B19AD1,
+				AAF744E806116B0600B19AD1,
+				AAF744E906116B0600B19AD1,
+				AAF744EA06116B0600B19AD1,
+				AAF744EB06116B0600B19AD1,
+				AAF744EC06116B0600B19AD1,
+				AAF744ED06116B0600B19AD1,
+				AAF744EE06116B0600B19AD1,
+				AAF744EF06116B0600B19AD1,
+				AAF744F006116B0600B19AD1,
+				AAF744F106116B0600B19AD1,
+				AAF744F206116B0600B19AD1,
+				AAF744F306116B0600B19AD1,
+				AAF744F406116B0600B19AD1,
+				AAF744F506116B0600B19AD1,
+				AAF744F606116B0600B19AD1,
+				AAF744F706116B0600B19AD1,
+				AAF744F806116B0600B19AD1,
+				AAF744F906116B0600B19AD1,
+				AAF744FA06116B0600B19AD1,
+				AAF744FB06116B0600B19AD1,
+				AAF744FC06116B0600B19AD1,
+				AAF744FD06116B0600B19AD1,
+				AAF744FE06116B0600B19AD1,
+				AAF744FF06116B0600B19AD1,
+			);
+			isa = PBXGroup;
+			path = PublicUtility;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744A406116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = AudioFilePlay.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744AB06116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAAudioBufferList.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744AC06116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAAudioBufferList.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744AD06116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAAudioChannelLayout.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744AE06116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAAudioChannelLayout.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744AF06116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAAudioChannelLayoutObject.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744B006116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAAudioHardwareDevice.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744B106116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAAudioHardwareDevice.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744B206116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAAudioHardwareStream.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744B306116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAAudioHardwareStream.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744B406116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAAudioHardwareSystem.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744B506116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAAudioHardwareSystem.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744B606116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAAudioStreamBasicDesc.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744B706116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAAudioStreamBasicDesc.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744B806116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAAudioTimeStamp.cp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744B906116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAAudioTimeStamp.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744BA06116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAAudioUnit.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744BB06116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAAudioUnit.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744BC06116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAAudioValueRange.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744BD06116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAAutoDisposer.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744BE06116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CABufferList.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744BF06116B0500B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CABufferList.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744C006116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CACFArray.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744C106116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CACFArray.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744C206116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CACFData.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744C306116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CACFDictionary.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744C406116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CACFDictionary.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744C506116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CACFMachPort.cp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744C606116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CACFMachPort.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744C706116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CACFMessagePort.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744C806116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CACFMessagePort.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744C906116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CACFNumber.cp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744CA06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CACFNumber.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744CB06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CACFObject.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744CC06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CACFRunLoopTimer.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744CD06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CACFRunLoopTimer.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744CE06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CACFString.cp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744CF06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CACFString.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744D006116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAComponent.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744D106116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAComponent.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744D206116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAComponentDescription.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744D306116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAComponentDescription.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744D406116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAConditionalMacros.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744D506116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CADebugger.cp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744D606116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CADebugger.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744D706116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CADebugMacros.cp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744D806116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CADebugMacros.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744D906116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CADebugPrintf.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744DA06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAException.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744DB06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAGuard.cp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744DC06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAGuard.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744DD06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAHALIOCycleTelemetryClient.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744DE06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAHALIOCycleTelemetryClient.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744DF06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAHALTelemetry.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744E006116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAHostTimeBase.cp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744E106116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAHostTimeBase.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744E206116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAIOObject.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744E306116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CALatencyLog.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744E406116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CALatencyLog.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744E506116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CALogMacros.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744E606116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAPersistence.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744E706116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAPrefix.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744E806116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAPresetFile.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744E906116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAPresetFile.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744EA06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAProcess.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744EB06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAProcess.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744EC06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAPThread.cp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744ED06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAPThread.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744EE06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAReferenceCounted.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744EF06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CASampleTools.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744F006116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CASampleTools.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744F106116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CASharedLibrary.cp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744F206116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CASharedLibrary.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744F306116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAStreamBasicDescription.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744F406116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAStreamBasicDescription.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744F506116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CATink.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744F606116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CATokenMap.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744F706116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAVolumeCurve.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744F806116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAVolumeCurve.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744F906116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = "Debugging++.h";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744FA06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = FormatConverterClient.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744FB06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = kdebug.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744FC06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = latency.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744FD06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = latency.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744FE06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = MatrixMixerVolumes.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF744FF06116B0600B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = MatrixMixerVolumes.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF7450606116B0600B19AD1 = {
+			fileRef = AAF744AB06116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7450706116B0600B19AD1 = {
+			fileRef = AAF744AC06116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7450806116B0600B19AD1 = {
+			fileRef = AAF744AD06116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7450906116B0600B19AD1 = {
+			fileRef = AAF744AE06116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7450A06116B0600B19AD1 = {
+			fileRef = AAF744AF06116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7450B06116B0600B19AD1 = {
+			fileRef = AAF744B006116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7450C06116B0600B19AD1 = {
+			fileRef = AAF744B106116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7450D06116B0600B19AD1 = {
+			fileRef = AAF744B206116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7450E06116B0600B19AD1 = {
+			fileRef = AAF744B306116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7450F06116B0600B19AD1 = {
+			fileRef = AAF744B406116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451006116B0600B19AD1 = {
+			fileRef = AAF744B506116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451106116B0600B19AD1 = {
+			fileRef = AAF744B606116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451206116B0600B19AD1 = {
+			fileRef = AAF744B706116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451306116B0600B19AD1 = {
+			fileRef = AAF744B806116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451406116B0600B19AD1 = {
+			fileRef = AAF744B906116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451506116B0600B19AD1 = {
+			fileRef = AAF744BA06116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451606116B0600B19AD1 = {
+			fileRef = AAF744BB06116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451706116B0600B19AD1 = {
+			fileRef = AAF744BC06116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451806116B0600B19AD1 = {
+			fileRef = AAF744BD06116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451906116B0600B19AD1 = {
+			fileRef = AAF744BE06116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451A06116B0600B19AD1 = {
+			fileRef = AAF744BF06116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451B06116B0600B19AD1 = {
+			fileRef = AAF744C006116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451C06116B0600B19AD1 = {
+			fileRef = AAF744C106116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451D06116B0600B19AD1 = {
+			fileRef = AAF744C206116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451E06116B0600B19AD1 = {
+			fileRef = AAF744C306116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7451F06116B0600B19AD1 = {
+			fileRef = AAF744C406116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452006116B0600B19AD1 = {
+			fileRef = AAF744C506116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452106116B0600B19AD1 = {
+			fileRef = AAF744C606116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452206116B0600B19AD1 = {
+			fileRef = AAF744C706116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452306116B0600B19AD1 = {
+			fileRef = AAF744C806116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452406116B0600B19AD1 = {
+			fileRef = AAF744C906116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452506116B0600B19AD1 = {
+			fileRef = AAF744CA06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452606116B0600B19AD1 = {
+			fileRef = AAF744CB06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452706116B0600B19AD1 = {
+			fileRef = AAF744CC06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452806116B0600B19AD1 = {
+			fileRef = AAF744CD06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452906116B0600B19AD1 = {
+			fileRef = AAF744CE06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452A06116B0600B19AD1 = {
+			fileRef = AAF744CF06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452B06116B0600B19AD1 = {
+			fileRef = AAF744D006116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452C06116B0600B19AD1 = {
+			fileRef = AAF744D106116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452D06116B0600B19AD1 = {
+			fileRef = AAF744D206116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452E06116B0600B19AD1 = {
+			fileRef = AAF744D306116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7452F06116B0600B19AD1 = {
+			fileRef = AAF744D406116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453006116B0600B19AD1 = {
+			fileRef = AAF744D506116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453106116B0600B19AD1 = {
+			fileRef = AAF744D606116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453206116B0600B19AD1 = {
+			fileRef = AAF744D706116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453306116B0600B19AD1 = {
+			fileRef = AAF744D806116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453406116B0600B19AD1 = {
+			fileRef = AAF744D906116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453506116B0600B19AD1 = {
+			fileRef = AAF744DA06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453606116B0600B19AD1 = {
+			fileRef = AAF744DB06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453706116B0600B19AD1 = {
+			fileRef = AAF744DC06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453806116B0600B19AD1 = {
+			fileRef = AAF744DD06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453906116B0600B19AD1 = {
+			fileRef = AAF744DE06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453A06116B0600B19AD1 = {
+			fileRef = AAF744DF06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453B06116B0600B19AD1 = {
+			fileRef = AAF744E006116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453C06116B0600B19AD1 = {
+			fileRef = AAF744E106116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453D06116B0600B19AD1 = {
+			fileRef = AAF744E206116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453E06116B0600B19AD1 = {
+			fileRef = AAF744E306116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7453F06116B0600B19AD1 = {
+			fileRef = AAF744E406116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454006116B0600B19AD1 = {
+			fileRef = AAF744E506116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454106116B0600B19AD1 = {
+			fileRef = AAF744E606116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454206116B0600B19AD1 = {
+			fileRef = AAF744E706116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454306116B0600B19AD1 = {
+			fileRef = AAF744E806116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454406116B0600B19AD1 = {
+			fileRef = AAF744E906116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454506116B0600B19AD1 = {
+			fileRef = AAF744EA06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454606116B0600B19AD1 = {
+			fileRef = AAF744EB06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454706116B0600B19AD1 = {
+			fileRef = AAF744EC06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454806116B0600B19AD1 = {
+			fileRef = AAF744ED06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454906116B0600B19AD1 = {
+			fileRef = AAF744EE06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454A06116B0600B19AD1 = {
+			fileRef = AAF744EF06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454B06116B0600B19AD1 = {
+			fileRef = AAF744F006116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454C06116B0600B19AD1 = {
+			fileRef = AAF744F106116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454D06116B0600B19AD1 = {
+			fileRef = AAF744F206116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454E06116B0600B19AD1 = {
+			fileRef = AAF744F306116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7454F06116B0600B19AD1 = {
+			fileRef = AAF744F406116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7455006116B0600B19AD1 = {
+			fileRef = AAF744F506116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7455106116B0600B19AD1 = {
+			fileRef = AAF744F606116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7455206116B0600B19AD1 = {
+			fileRef = AAF744F706116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7455306116B0600B19AD1 = {
+			fileRef = AAF744F806116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7455406116B0600B19AD1 = {
+			fileRef = AAF744F906116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7455506116B0600B19AD1 = {
+			fileRef = AAF744FA06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7455606116B0600B19AD1 = {
+			fileRef = AAF744FB06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7455706116B0600B19AD1 = {
+			fileRef = AAF744FC06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7455806116B0600B19AD1 = {
+			fileRef = AAF744FD06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7455906116B0600B19AD1 = {
+			fileRef = AAF744FE06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7455A06116B0600B19AD1 = {
+			fileRef = AAF744FF06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF7458E061181F700B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = RageDisplay_Null.cpp;
+			path = ../src/RageDisplay_Null.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF7458F061181F700B19AD1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = RageDisplay_Null.h;
+			path = ../src/RageDisplay_Null.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAF74590061181F700B19AD1 = {
+			fileRef = AAF7458E061181F700B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF74591061181F700B19AD1 = {
+			fileRef = AAF7458F061181F700B19AD1;
 			isa = PBXBuildFile;
 			settings = {
 			};
