@@ -462,12 +462,14 @@ void Background::LoadFromSong( const Song* pSong )
 	{
 		m_DangerPlayer[p].SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
 		m_DangerPlayer[p].SetZoomX( fXZoom );
-		m_DangerPlayer[p].SetZoomY( fYZoom );	
+		m_DangerPlayer[p].SetZoomY( fYZoom );
+		m_DangerPlayer[p].FinishTweening();
 		m_DangerPlayer[p].PlayCommand( "On" );
 	
 		m_DeadPlayer[p].SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
 		m_DeadPlayer[p].SetZoomX( fXZoom );
 		m_DeadPlayer[p].SetZoomY( fYZoom );	
+		m_DeadPlayer[p].FinishTweening();
 		m_DeadPlayer[p].PlayCommand( "On" );
 	}
 
