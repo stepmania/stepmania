@@ -105,3 +105,11 @@ float Transition::GetLengthSeconds() const
 {
 	return m_BGAnimation.GetLengthSeconds();
 }
+
+float Transition::GetTweenTimeLeft() const
+{
+	if( m_State != transitioning )
+		return 0;
+
+	return m_BGAnimation.GetTweenTimeLeft();
+}

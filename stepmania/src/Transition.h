@@ -29,6 +29,7 @@ public:
 
 	virtual void StartTransitioning( ScreenMessage send_when_done = SM_None );
 	virtual bool EarlyAbortDraw();
+	virtual float GetTweenTimeLeft() const;
 
 	bool IsTransitioning() const	{ return m_State == transitioning; };
 	bool IsFinished() const	{ return m_State == finished; };
