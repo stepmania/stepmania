@@ -97,6 +97,8 @@ public:
 private:
 	int MaxRefresh(int iWidth, int iHeight, D3DFORMAT fmt) const;
 	int GetBPP(D3DFORMAT fmt) const;
+	HRESULT SetMode();
+	D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP);
 	D3DXMATRIX& GetTopMatrix() { return m_MatrixStack.ElementAt( m_MatrixStack.GetSize()-1 ); };
 
 	HWND m_hWnd;

@@ -150,23 +150,42 @@ RageDisplay::~RageDisplay()
 }
 
 
-
-//-----------------------------------------------------------------------------
-// Name: SwitchDisplayMode()
-// Desc:
-//-----------------------------------------------------------------------------
-bool RageDisplay::SwitchDisplayMode( 
-	const bool bWindowed, const int iWidth, const int iHeight, const int iBPP, const int iFullScreenHz )
+HRESULT RageDisplay::SetMode()
 {
-	LOG->Trace( "RageDisplay::SwitchDisplayModes( %d, %d, %d, %d, %d )", bWindowed, iWidth, iHeight, iBPP, iFullScreenHz );
+	HRESULT hr;
+	if( m_pd3dDevice == NULL )
+	{
+		// device is not yet created.  We need to create it
+		if( FAILED( hr = m_pd3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, 
+											m_hWnd,
+											D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
+											&m_d3dpp, &m_pd3dDevice) ) )
+		{
+			return hr;
+		}
+		LOG->Trace( 
+			"Video card info:\n"
+			" - available texture mem is %u\n",
+			m_pd3dDevice->GetAvailableTextureMem()
+		);
+		if( m_pVB == NULL )
+			CreateVertexBuffer();
+	}
+	else
+	{
+		// device is already created.  Just reset it.
+		if( FAILED( hr = m_pd3dDevice->Reset( &m_d3dpp ) ) )
+			return hr;
+	}
 
-	if( !bWindowed )
-		SetCursor( NULL );
+	LOG->Trace( "Mode change was successful." );
+	return S_OK;
+}
 
-
+D3DFORMAT RageDisplay::FindBackBufferType(bool bWindowed, int iBPP)
+{
 	HRESULT hr;
 
-    // Find an pixel format for the back buffer.
 	// If windowed, then dwBPP is ignored.  Use whatever works.
     CArray<D3DFORMAT,D3DFORMAT> arrayBackBufferFormats;		// throw all possibilities in here
 	
@@ -215,12 +234,34 @@ bool RageDisplay::SwitchDisplayMode(
 	LOG->Trace( "This will work." );
 
 	if( i == arrayBackBufferFormats.GetSize() )		// we didn't find an appropriate format
+		return D3DFMT_UNKNOWN;
+	return fmtBackBuffer;
+}
+
+
+//-----------------------------------------------------------------------------
+// Name: SwitchDisplayMode()
+// Desc:
+//-----------------------------------------------------------------------------
+bool RageDisplay::SwitchDisplayMode( 
+	const bool bWindowed, const int iWidth, const int iHeight, const int iBPP, const int iFullScreenHz )
+{
+	LOG->Trace( "RageDisplay::SwitchDisplayModes( %d, %d, %d, %d, %d )", bWindowed, iWidth, iHeight, iBPP, iFullScreenHz );
+
+	if( !bWindowed )
+		SetCursor( NULL );
+
+
+	HRESULT hr;
+
+    // Find a pixel format for the back buffer.
+	D3DFORMAT fmtBackBuffer=FindBackBufferType( bWindowed, iBPP );
+	if( fmtBackBuffer == D3DFMT_UNKNOWN )
 	{
-		LOG->Trace( hr, "failed to find an appropriate format for %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
+		// we didn't find an appropriate format
+		LOG->Trace( "failed to find an appropriate format for %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
 		return false;
 	}
-
-
 
     // Set up presentation parameters for the display
     ZeroMemory( &m_d3dpp, sizeof(m_d3dpp) );
@@ -252,44 +293,17 @@ bool RageDisplay::SwitchDisplayMode(
 	);
 
 
-
-	if( m_pd3dDevice == NULL )
+	if( FAILED( hr=SetMode() ) )
 	{
-		// device is not yet created.  We need to create it
-		if( FAILED( hr = m_pd3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, 
-											m_hWnd,
-											D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
-											&m_d3dpp, &m_pd3dDevice) ) )
-		{
-			LOG->Trace( hr, "failed to create device: %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
-			return false;
-		}
-		LOG->Trace( 
-			"Video card info:\n"
-			" - available texture mem is %u\n",
-			m_pd3dDevice->GetAvailableTextureMem()
-		);
-		if( m_pVB == NULL )
-			CreateVertexBuffer();
+		LOG->Trace( hr, "failed to set device: %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
+		return false;
 	}
-	else
-	{
-		// device is already created.  Just reset it.
-		if( FAILED( hr = m_pd3dDevice->Reset( &m_d3dpp ) ) )
-		{
-			LOG->Trace( hr, "failed to reset device: %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
-			return false;
-		}
-	}
-
-	LOG->Trace( "Mode change was successful." );
 
 	// Clear the back buffer and present it so we don't show the gibberish that was
 	// in video memory from the last app.
 	BeginFrame();
 	EndFrame();
 	ShowFrame();
-
 
 	return true;
 }
