@@ -76,10 +76,12 @@ int WinMoveFileInternal( const CString &sOldPath, const CString &sNewPath )
 		if( MoveFileEx( sOldPath, sNewPath, MOVEFILE_REPLACE_EXISTING ) )
 			return 1;
 
-		if( GetLastError() == ERROR_NOT_SUPPORTED || GetLastError() == ERROR_CALL_NOT_IMPLEMENTED )
+		// On Win9x, MoveFileEx is expected to fail (returns ERROR_CALL_NOT_IMPLEMENTED).
+		DWORD err = GetLastError();
+		if( err == ERROR_CALL_NOT_IMPLEMENTED )
+			Win9x = true;
+		else
 			return 0;
-
-		Win9x = true;
 	}
 
 	if( MoveFile( sOldPath, sNewPath ) )
