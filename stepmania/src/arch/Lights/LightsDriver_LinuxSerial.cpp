@@ -77,8 +77,8 @@ LightsDriver_LinuxSerial::LightsDriver_LinuxSerial()
 
 LightsDriver_LinuxSerial::~LightsDriver_LinuxSerial()
 {
-	if (fd > 0)
-		close(fd);
+	if( fd != -1 )
+		close( fd );
 }
 
 #define NUM_DATA_BYTES 2
