@@ -80,8 +80,19 @@ protected:
 	RageVector2 m_vHeadings[MAX_SPRITES];	// only used in EFFECT_PARTICLES_BOUNCE
 
 	RageVector2 m_vTexCoordVelocity;
+	float m_PosX;
+	float m_PosY;
+	float m_Zoom;
+	float m_Rot;
 	float m_fRotationalVelocity;
 	float m_fStretchScrollH_Y;
+	float m_ShowTime;
+	float m_HideTime;
+
+	float m_TweenStartTime;
+	float m_TweenX;
+	float m_TweenY;
+	float m_TweenSpeed;
 };
 
 #endif

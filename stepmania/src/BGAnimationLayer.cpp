@@ -92,6 +92,16 @@ void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 void BGAnimationLayer::LoadFromAniLayerFile( CString sPath, CString sSongBGPath )
 {
 	sPath.MakeLower();
+	m_PosX = 0;
+	m_PosY = 0;
+	m_Zoom = 0;
+	m_Rot = 0;
+	m_ShowTime = 0;
+	m_HideTime = 0;
+	m_TweenStartTime = 0;
+	m_TweenX = 0.0;
+	m_TweenY = 0.0;
+	m_TweenSpeed = 0;
 
 	if( sPath.Find("usesongbg") != -1 )
 	{
@@ -310,10 +320,41 @@ found_effect:
 	ini.SetPath( sIniPath );
 	if( ini.ReadFile() )
 	{
+		ini.GetValueF( "BGAnimationLayer", "SetXpos", m_PosX );
+		ini.GetValueF( "BGAnimationLayer", "SetYpos", m_PosY );
+		ini.GetValueF( "BGAnimationLayer", "SetZoom", m_Zoom );
+		ini.GetValueF( "BGAnimationLayer", "SetRot", m_Rot );
+		ini.GetValueF( "BGAnimationLayer", "TweenStartTime", m_TweenStartTime );
+		ini.GetValueF( "BGAnimationLayer", "TweenX", m_TweenX );
+		ini.GetValueF( "BGAnimationLayer", "TweenY", m_TweenY );
+		ini.GetValueF( "BGAnimationLayer", "TweenSpeed", m_TweenSpeed );
+		ini.GetValueF( "BGAnimationLayer", "ShowTime", m_ShowTime );
+		ini.GetValueF( "BGAnimationLayer", "HideTime", m_HideTime );
 		ini.GetValueF( "BGAnimationLayer", "TexCoordVelocityX", m_vTexCoordVelocity.x );
 		ini.GetValueF( "BGAnimationLayer", "TexCoordVelocityY", m_vTexCoordVelocity.y );
 		ini.GetValueF( "BGAnimationLayer", "RotationalVelocity", m_fRotationalVelocity );
 		ini.GetValueF( "BGAnimationLayer", "SetY", m_fStretchScrollH_Y );
+	}
+
+	if(m_ShowTime != 0) // they don't want to show until a certain point... hide it all
+	{
+		m_Sprites[0].SetDiffuse(RageColor(0,0,0,0));
+	}
+	if(m_PosX != 0)
+	{
+		m_Sprites[0].SetX(m_PosX);
+	}
+	if(m_PosY != 0)
+	{
+		m_Sprites[0].SetY(m_PosY);
+	}
+	if(m_Zoom != 0)
+	{
+		m_Sprites[0].SetZoom(m_Zoom);
+	}
+	if(m_Rot != 0)
+	{
+		m_Sprites[0].SetRotation(m_Rot);
 	}
 }
 
@@ -463,7 +504,7 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 	case EFFECT_TILE_SCROLL_LEFT:
 		for( i=0; i<m_iNumSprites; i++ )
 		{
-			m_Sprites[i].SetX( m_Sprites[i].GetX() - fDeltaTime * PARTICLE_VELOCITY );
+			m_Sprites[i].SetX( m_Sprites[i].GetX() - fDeltaTime * PARTICLE_VELOCITY * (1 + m_vTexCoordVelocity.x) ); // metricable speed :)
 			if( IsOffScreenLeft(&m_Sprites[i]) )
 				m_Sprites[i].SetX( m_Sprites[i].GetX()-GetOffScreenLeft(&m_Sprites[i]) + GetOffScreenRight(&m_Sprites[i]) );
 		}
@@ -471,7 +512,7 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 	case EFFECT_TILE_SCROLL_RIGHT:
 		for( i=0; i<m_iNumSprites; i++ )
 		{
-			m_Sprites[i].SetX( m_Sprites[i].GetX() + fDeltaTime * PARTICLE_VELOCITY );
+			m_Sprites[i].SetX( m_Sprites[i].GetX() + fDeltaTime * PARTICLE_VELOCITY * (1 + m_vTexCoordVelocity.x)  );
 			if( IsOffScreenRight(&m_Sprites[i]) )
 				m_Sprites[i].SetX( m_Sprites[i].GetX()-GetOffScreenRight(&m_Sprites[i]) + GetOffScreenLeft(&m_Sprites[i]) );
 		}
@@ -512,6 +553,41 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 		break;
 	default:
 		ASSERT(0);
+	}
+
+	if(m_TweenStartTime != 0 && !(m_TweenStartTime < 0))
+	{
+		m_TweenStartTime -= fDeltaTime;
+		if(m_TweenStartTime <= 0) // if we've gone past the magic point... show the beast....
+		{
+		//	m_Sprites[0].SetTweenXY( m_TweenX, m_TweenY);
+			
+			// WHAT WOULD BE NICE HERE:
+			// Set the Sprite Tweening To m_TweenX and m_TweenY
+			// Going as fast as m_TweenSpeed specifies.
+			// however, TWEEN falls over on its face at this point.
+			// Lovely.
+
+		}		
+	}
+
+
+	if(m_ShowTime != 0 && !(m_ShowTime < 0))
+	{
+		m_ShowTime -= fDeltaTime;
+		if(m_ShowTime <= 0) // if we've gone past the magic point... show the beast....
+		{
+			m_Sprites[0].SetDiffuse( RageColor(1,1,1,1) );
+		}		
+	}
+	if(m_HideTime != 0 && !(m_HideTime < 0)) // make sure it's not 0 or less than 0...
+	{
+		m_HideTime -= fDeltaTime;
+		if(m_HideTime <= 0) // if we've gone past the magic point... hide the beast....
+		{
+			m_Sprites[0].SetDiffuse( RageColor(0,0,0,0) );
+		}
+		
 	}
 }
 
