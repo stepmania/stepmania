@@ -7,7 +7,6 @@
 #include "RageLog.h"
 #include "RageDisplay.h"
 #include "ThemeManager.h"
-#include "RageFile.h"
 
 // "PLAYER_X" offsets are relative to the pad.. ex: Setting this to 10, and the HELPER to 300, will put the dancer at 310
 #define PLAYER_X( px )		THEME->GetMetricF("BeginnerHelper",ssprintf("Player%d_X",px+1))
@@ -93,8 +92,8 @@ void BeginnerHelper::Initialize( int iDancePadType )
 	switch(iDancePadType)
 	{
 		case 0: break; // No pad
-		case 1:m_mDancePad.LoadMilkshapeAscii(FixSlashes("Characters\\DancePad-DDR.txt")); break;
-		case 2:m_mDancePad.LoadMilkshapeAscii(FixSlashes("Characters\\DancePads-DDR.txt")); break;
+		case 1:m_mDancePad.LoadMilkshapeAscii( "Characters" SLASH "DancePad-DDR.txt" ); break;
+		case 2:m_mDancePad.LoadMilkshapeAscii( "Characters" SLASH "DancePads-DDR.txt" ); break;
 	}
 	this->AddChild( &m_mDancePad );
 
@@ -107,15 +106,15 @@ void BeginnerHelper::Initialize( int iDancePadType )
 			m_mDancer[pl].LoadMilkshapeAscii( GAMESTATE->m_pCurCharacters[pl]->GetModelPath() );
 
 			// Load needed animations
-			m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-LEFT",FixSlashes("Characters\\BeginnerHelper_step-left.bones.txt") );
-			m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-DOWN",FixSlashes("Characters\\BeginnerHelper_step-down.bones.txt") );
-			m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-UP",FixSlashes("Characters\\BeginnerHelper_step-up.bones.txt") );
-			m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-RIGHT",FixSlashes("Characters\\BeginnerHelper_step-right.bones.txt") );
-			m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-JUMPLR",FixSlashes("Characters\\BeginnerHelper_step-jumplr.bones.txt") );
+			m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-LEFT","Characters" SLASH "BeginnerHelper_step-left.bones.txt" );
+			m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-DOWN","Characters" SLASH "BeginnerHelper_step-down.bones.txt" );
+			m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-UP","Characters" SLASH "BeginnerHelper_step-up.bones.txt" );
+			m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-RIGHT","Characters" SLASH "BeginnerHelper_step-right.bones.txt" );
+			m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-JUMPLR","Characters" SLASH "BeginnerHelper_step-jumplr.bones.txt" );
 			/*m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-JUMPUD","Characters\\BeginnerHelper_step-jumpud.bones.txt" );*/
 			m_mDancer[pl].LoadMilkshapeAsciiBones( "rest",GAMESTATE->m_pCurCharacters[0]->GetRestAnimationPath() );
 			m_mDancer[pl].SetDefaultAnimation( "rest" );
-			m_mDancer[pl].PlayAnimation("rest");
+			m_mDancer[pl].PlayAnimation( "rest" );
 			m_mDancer[pl].SetRotationX( PLAYER_ANGLE );
 			m_mDancer[pl].SetX( HELPER_X + PLAYER_X(pl) );
 			m_mDancer[pl].SetY( HELPER_Y + 10 );
@@ -163,7 +162,7 @@ void BeginnerHelper::DrawPrimitives()
 
 void BeginnerHelper::Step( int CSTEP )
 {
-	LOG->Trace("BeginnerHelper::Step()");
+	LOG->Trace( "BeginnerHelper::Step()" );
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		// First make sure this player is on beginner mode and enabled... The difficulty check may be redundant, tho.

@@ -20,7 +20,6 @@
 #include "SongManager.h"
 #include "NoteFieldPositioning.h"
 #include "GameManager.h"
-#include "RageFile.h"
 
 #define SONG_BPM				THEME->GetMetricF("ScreenHowToPlay","SongBPM")
 #define SECONDS_TO_SHOW			THEME->GetMetricF("ScreenHowToPlay","SecondsToShow")
@@ -61,7 +60,7 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 		if( iRnd != 0 )
 		{
 			m_mCharacter.LoadMilkshapeAscii( GAMESTATE->m_pCharacters[iRnd]->GetModelPath() );
-			m_mDancePad.LoadMilkshapeAscii(FixSlashes("Characters\\DancePad-DDR.txt"));
+			m_mDancePad.LoadMilkshapeAscii("Characters" SLASH "DancePad-DDR.txt");
 			m_mCharacter.LoadMilkshapeAsciiBones("howtoplay", GAMESTATE->m_pCharacters[iRnd]->GetHowToPlayAnimationPath() );
 			
 			m_mCharacter.SetRotationX( 40 );
