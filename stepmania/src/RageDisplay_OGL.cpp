@@ -336,6 +336,14 @@ static void LogGLXDebugInformation()
 	LOG->Info( "Display: %s", DisplayString(g_X11Display) );
 	LOG->Info( "Screen: %i", scr );
 	LOG->Info( "Direct rendering: %s", glXIsDirect( g_X11Display, glXGetCurrentContext() )? "yes":"no" );
+
+	int XServerVersion = XVendorRelease( g_X11Display ); /* eg. 40201001 */
+	int major = XServerVersion / 10000000; XServerVersion %= 10000000;
+	int minor = XServerVersion / 100000;   XServerVersion %= 100000;
+	int revision = XServerVersion / 1000;  XServerVersion %= 1000;
+	int patch = XServerVersion;
+	LOG->Info( "X server vendor: %s, %i.%i.%i.%i", XServerVendor( g_X11Display ), major, minor, revision, patch );
+
 	LOG->Info( "Server GLX vendor: %s", glXQueryServerString( g_X11Display, scr, GLX_VENDOR ) );
 	LOG->Info( "Server GLX version: %s", glXQueryServerString( g_X11Display, scr, GLX_VERSION ) );
 	LOG->Info( "Client GLX vendor: %s", glXGetClientString( g_X11Display, GLX_VENDOR ) );
