@@ -271,6 +271,11 @@ const IniFile::key *IniFile::GetKey(const CString &keyname) const
 	return &i->second;
 }
 
+void IniFile::SetValue(const CString &keyname, const key &key)
+{
+	keys[keyname]=key;
+}
+
 void IniFile::RenameKey(const CString &from, const CString &to)
 {
 	if(keys.find(from) == keys.end())

@@ -92,6 +92,7 @@ public:
 	bool DeleteKey(const CString &keyname);
 
 	const key *GetKey(const CString &keyname) const;
+	void SetValue(const CString &keyname, const key &key);
 
 	/* Rename a key. For example, call RenameKey("foo", "main") after
 	 * reading an INI where [foo] is an alias to [main].  If to already
