@@ -253,7 +253,14 @@ void Actor::UpdateTweening( float fDeltaTime )
 		TweenInfo  &TI = m_TweenInfo[0];	// earliest tween
 
 		if( TI.m_fTimeLeftInTween == TI.m_fTweenTime )	// we are just beginning this tween
+		{
 			m_start = m_current;		// set the start position
+
+			// Execute the command in this tween (if any).
+			const ParsedCommand &command = TS.command;
+			if( !command.vTokens.empty() )
+				this->HandleCommand( command );
+		}
 
 		float fSecsToSubtract = min( TI.m_fTimeLeftInTween, fDeltaTime );
 		TI.m_fTimeLeftInTween -= fSecsToSubtract;
@@ -636,7 +643,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	const CString& sName = sParam(0);
 
 	// Commands that go in the tweening queue:
-	if     ( sName=="sleep" )			{ BeginTweening( fParam(1), TWEEN_LINEAR ); BeginTweening( 0, TWEEN_LINEAR ); }
+	if     ( sName=="sleep" )			Sleep( fParam(1) );
 	else if( sName=="linear" )			BeginTweening( fParam(1), TWEEN_LINEAR );
 	else if( sName=="accelerate" )		BeginTweening( fParam(1), TWEEN_ACCELERATE );
 	else if( sName=="decelerate" )		BeginTweening( fParam(1), TWEEN_DECELERATE );
@@ -729,6 +736,13 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	else if( sName=="hidden" )			SetHidden( bParam(1) );
 	else if( sName=="hibernate" )		SetHibernate( fParam(1) );
 	else if( sName=="playcommand" )		PlayCommand( sParam(1) );
+	else if( sName=="queuecommand" )	
+	{
+		ParsedCommand newcommand = command;
+		newcommand.vTokens.erase( newcommand.vTokens.begin() );
+		QueueCommand( newcommand );
+		return;	// don't to parameter number checking
+	}
 
 	/* These are commands intended for a Sprite commands, but they will get 
 	 * sent to all sub-actors (which aren't necessarily Sprites) on 
@@ -874,4 +888,16 @@ void Actor::CopyTweening( const Actor &from )
 	m_start = from.m_start;
 	m_TweenStates = from.m_TweenStates;
 	m_TweenInfo = from.m_TweenInfo;
+}
+
+void Actor::Sleep( float time )
+{
+	BeginTweening( time, TWEEN_LINEAR );
+	BeginTweening( 0, TWEEN_LINEAR ); 
+}
+
+void Actor::QueueCommand( ParsedCommand command )
+{
+	BeginTweening( 0, TWEEN_LINEAR ); 
+	DestTweenState().command = command; 
 }

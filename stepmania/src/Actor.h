@@ -51,6 +51,7 @@ public:
 		RageColor   diffuse[4];
 		RageColor   glow;
 		GlowMode	glowmode;
+		ParsedCommand	command;	// command to execute when this 
 
 		void Init();
 		static void MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween );
@@ -181,6 +182,8 @@ public:
 
 	void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
 	void StopTweening();
+	void Sleep( float time );
+	void QueueCommand( ParsedCommand command );
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
 	// Let ActorFrame and BGAnimation override
