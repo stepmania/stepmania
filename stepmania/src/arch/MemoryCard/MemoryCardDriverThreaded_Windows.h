@@ -4,7 +4,7 @@
 #include "MemoryCardDriver.h"
 #include <windows.h>
 
-class MemoryCardDriverThreaded_Windows : public MemoryCardDriver
+class MemoryCardDriverThreaded_Windows: public MemoryCardDriver
 {
 public:
 	MemoryCardDriverThreaded_Windows();
@@ -16,6 +16,7 @@ public:
 	virtual void Flush( UsbStorageDevice* pDevice );
     virtual void Reset();
 
+private:
 	DWORD m_dwLastLogicalDrives;
 };
 

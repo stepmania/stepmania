@@ -19,11 +19,8 @@ MemoryCardDriverThreaded_Windows::~MemoryCardDriverThreaded_Windows()
 {
 }
 
-typedef const CString& CCStringRef;
-
-static bool TestReady( CCStringRef sDrive )
+static bool TestReady( const CString &sDrive )
 {
-	// TODO: Use RageFileDirect here to detect ready state?
 	TCHAR szVolumeNameBuffer[MAX_PATH];
 	DWORD dwVolumeSerialNumber;
 	DWORD dwMaximumComponentLength;
@@ -41,10 +38,9 @@ static bool TestReady( CCStringRef sDrive )
 		sizeof(szFileSystemNameBuffer) );
 }
 
-static bool TestWrite( CCStringRef sDrive )
+static bool TestWrite( const CString &sDrive )
 {
 	// Try to write a file.
-	// TODO: Can we use RageFile for this?
 	CString sFile = sDrive + "temp";
 	FILE* fp = fopen( sFile, "w" );
 	if( fp == NULL )
