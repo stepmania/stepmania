@@ -30,6 +30,7 @@
 #include "Course.h"
 #include "LightsManager.h"
 #include "ProfileManager.h"
+#include "song.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -87,21 +88,20 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	//
 	// debugging
 	//
-	/*
-	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
+/*	
+	GAMESTATE->m_PlayMode = PLAY_MODE_RAVE;
 	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 	GAMESTATE->m_pCurSong = SONGMAN->GetAllSongs()[0];
 //	GAMESTATE->m_pCurCourse = SONGMAN->m_pCourses[0];
 	GAMESTATE->m_pCurNotes[PLAYER_1] = GAMESTATE->m_pCurSong->m_apNotes[0];
 	GAMESTATE->m_pCurNotes[PLAYER_2] = GAMESTATE->m_pCurSong->m_apNotes[0];
-	GAMESTATE->m_PlayerOptions[PLAYER_1].m_bHoldNotes = false;
-	GAMESTATE->m_PlayerOptions[PLAYER_2].m_bHoldNotes = false;
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 2;
 	GAMESTATE->m_PlayerOptions[PLAYER_2].m_fScrollSpeed = 2;
 	GAMESTATE->m_iCurrentStageIndex = 2;
+	for( float f = 0; f < 1.0f; f += .005f )
+		GAMESTATE->m_CurStageStats.SetLifeRecord( PLAYER_1, fmodf(f*4+.3f,1), f );
 */
-
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
 
 	LIGHTSMAN->SetLightMode( LIGHTMODE_MENU );
@@ -194,16 +194,46 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	}
 
 
+	if ( PREFSMAN->m_bUseUnlockSystem )
+	{
+		for( p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+				continue;	// skip
+
+			switch( m_Type )
+			{
+			case stage:
+				// update unlock data
+				UNLOCKSYS->UnlockClearStage();
+				UNLOCKSYS->UnlockAddAP( grade[p] );
+				UNLOCKSYS->UnlockAddSP( grade[p] );
+
+				// we want to save dance points here if we are in event mode.
+				// otherwise, dance points will never get saved except
+				// in nonstop mode.
+				if( PREFSMAN->m_bEventMode )
+					UNLOCKSYS->UnlockAddDP( (float)stageStats.iActualDancePoints[p] );
+				break;
+
+			case summary:
+				UNLOCKSYS->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
+				break;
+
+			case course:
+				UNLOCKSYS->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
+				UNLOCKSYS->UnlockAddAP( (float) stageStats.iSongsPassed[p] );
+				UNLOCKSYS->UnlockAddSP( (float) stageStats.iSongsPassed[p] );
+				break;
+			}
+		}
+	}
 	//
 	// update persistent statistics
 	//
-	int iPersonalHighScoreIndex[NUM_PLAYERS];
-	int iMachineHighScoreIndex[NUM_PLAYERS];
-	RankingCategory rc[NUM_PLAYERS];
-	memset( iPersonalHighScoreIndex, -1, sizeof(iPersonalHighScoreIndex) );
-	memset( iMachineHighScoreIndex, -1, sizeof(iMachineHighScoreIndex) );
-	memset( rc, -1, sizeof(rc) );
-
+	int iPersonalHighScoreIndex[NUM_PLAYERS] = { -1, -1 };
+	int iMachineHighScoreIndex[NUM_PLAYERS] = { -1, -1 };
+	RankingCategory rc[NUM_PLAYERS] = { NUM_RANKING_CATEGORIES, NUM_RANKING_CATEGORIES };
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -227,26 +257,20 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				if( m_bFailed ) continue;
 
 				ASSERT( GAMESTATE->m_pCurNotes[p] );
-				Steps::MemCardData::HighScore hs;
-				hs.grade = grade[p];
-				hs.iScore = stageStats.iScore[p] + stageStats.iBonus[p];
-				hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
-				if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
-					GAMESTATE->m_pCurNotes[p]->AddHighScore( (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
-					
-				// update unlock data if unlocks are on
-				if ( PREFSMAN->m_bUseUnlockSystem )
+
+				switch( GAMESTATE->m_PlayMode )
 				{
-					UNLOCKSYS->UnlockClearStage();
-					UNLOCKSYS->UnlockAddAP( grade[p] );
-					UNLOCKSYS->UnlockAddSP( grade[p] );
+				case PLAY_MODE_BATTLE:
+				case PLAY_MODE_RAVE:
+					break; /* don't save scores in battle */
 
-					// we want to save dance points here if we are in event mode.
-					// otherwise, dance points will never get saved except
-					// in nonstop mode.
-					if( PREFSMAN->m_bEventMode )
-						UNLOCKSYS->UnlockAddDP( (float)stageStats.iActualDancePoints[p] );
-
+				default:
+					Steps::MemCardData::HighScore hs;
+					hs.grade = grade[p];
+					hs.iScore = stageStats.iScore[p] + stageStats.iBonus[p];
+					hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
+					if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
+						GAMESTATE->m_pCurNotes[p]->AddHighScore( (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
 				}
 			}
 			break;
@@ -267,10 +291,6 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
 				if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
 					PROFILEMAN->AddHighScore( nt, rc[p], (PlayerNumber)p, hs, iMachineHighScoreIndex[p] );
-
-				// If unlocking is enabled, save the dance points
-				if( PREFSMAN->m_bUseUnlockSystem )
-					UNLOCKSYS->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
 			}
 			break;
 		case course:
@@ -291,23 +311,6 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 					if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
 						pCourse->AddHighScore( nt, (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
 				}
-
-				// If unlocking is enabled, save the dance points
-				// (for courses)
-				if( PREFSMAN->m_bUseUnlockSystem )
-				{
-					for(p=0; p < NUM_PLAYERS; p++)
-					{
-						if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-							continue;	// skip
-
-						UNLOCKSYS->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
-						UNLOCKSYS->UnlockAddAP( (float) stageStats.iSongsPassed[p] );
-						UNLOCKSYS->UnlockAddSP( (float) stageStats.iSongsPassed[p] );
-					}
-				}
-				// cannot just use score since it may be nonstop mode
-
 			}
 			break;
 		default:
