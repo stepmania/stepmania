@@ -1694,7 +1694,6 @@ void ScreenGameplay::BackOutFromGameplay()
 {
 	m_DancingState = STATE_OUTRO;
 	AbortGiveUp( false );
-	SCREENMAN->PlayCancelSound();
 	
 	m_pSoundMusic->StopPlaying();
 	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */

@@ -197,7 +197,6 @@ void ScreenWithMenuElements::Cancel( ScreenMessage smSendWhenDone )
 
 	m_MenuTimer->Stop();
 	m_Cancel.StartTransitioning( smSendWhenDone );
-	SCREENMAN->PlayCancelSound();
 }
 
 bool ScreenWithMenuElements::IsTransitioning()

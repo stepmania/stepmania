@@ -155,7 +155,6 @@ void ScreenStage::MenuBack( PlayerNumber pn )
 	
 	this->ClearMessageQueue();
 	m_Cancel.StartTransitioning( SM_GoToPrevScreen );
-	SCREENMAN->PlayCancelSound();
 
 	/* If a Back is buffered while we're prepping the screen (very common), we'll
 	 * get it right after the prep finishes.  However, the next update will contain

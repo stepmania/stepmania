@@ -69,7 +69,6 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 			return;
 
 		case MENU_BUTTON_BACK:
-			SCREENMAN->PlayCancelSound();
 			StartTransitioning( SM_GoToPrevScreen );		
 			return;
 		}

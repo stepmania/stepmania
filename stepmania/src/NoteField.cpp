@@ -25,8 +25,8 @@ NoteField::NoteField()
 
 	m_textMeasureNumber.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textMeasureNumber.SetZoom( 1.0f );
+	m_textMeasureNumber.SetShadowLength( 2 );
 
-	m_rectMarkerBar.SetShadowLength( 0 );
 	m_rectMarkerBar.SetEffectDiffuseShift( 2, RageColor(1,1,1,0.5f), RageColor(0.5f,0.5f,0.5f,0.5f) );
 
 	m_sprBars.Load( THEME->GetPathG("NoteField","bars") );

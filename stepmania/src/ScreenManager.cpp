@@ -89,10 +89,9 @@ void ScreenManager::ThemeChanged()
 
 	// reload common sounds
 	m_soundStart.Load( THEME->GetPathS("Common","start") );
-	m_soundCoin.Load( THEME->GetPathS("Common","coin") );
+	m_soundCoin.Load( THEME->GetPathS("Common","coin"), true );
 	m_soundInvalid.Load( THEME->GetPathS("Common","invalid") );
 	m_soundScreenshot.Load( THEME->GetPathS("Common","screenshot") );
-	m_soundCancel.Load( THEME->GetPathS("Common","cancel") );
 
 	// reload overlay screens
 	for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
@@ -633,13 +632,6 @@ void ScreenManager::PlayScreenshotSound()
 	RageSoundParams p;
 	p.m_Volume = PREFSMAN->m_fSoundVolume;
 	m_soundScreenshot.Play( &p );
-}
-
-void ScreenManager::PlayCancelSound()
-{
-	RageSoundParams p;
-	p.m_Volume = PREFSMAN->m_fSoundVolume;
-	m_soundCancel.Play( &p );
 }
 
 void ScreenManager::PlaySharedBackgroundOffCommand()

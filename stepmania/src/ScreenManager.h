@@ -118,14 +118,12 @@ public:
 	void PlayCoinSound();
 	void PlayInvalidSound();
 	void PlayScreenshotSound();
-	void PlayCancelSound();
 
 private:
 	RageSound	m_soundStart;
 	RageSound	m_soundCoin;
 	RageSound	m_soundInvalid;
 	RageSound	m_soundScreenshot;
-	RageSound	m_soundCancel;
 };
 
 
