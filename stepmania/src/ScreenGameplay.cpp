@@ -33,7 +33,6 @@
 #include "ThemeManager.h"
 #include "RageTimer.h"
 #include "ScoreKeeperMAX2.h"
-#include "ScoreKeeper5th.h"
 #include "ScoreKeeperRave.h"
 #include "NoteFieldPositioning.h"
 #include "LyricsLoader.h"
@@ -212,9 +211,6 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		case PrefsManager::SCORING_5TH:
 			m_pPrimaryScoreKeeper[p] = new ScoreKeeperMAX2( m_apNotesQueue[p], m_asModifiersQueue[p], (PlayerNumber)p );
 			break;
-//		case PrefsManager::SCORING_5TH:
-//			m_pPrimaryScoreKeeper[p] = new ScoreKeeper5th( m_apNotesQueue[p], m_asModifiersQueue[p], (PlayerNumber)p );
-//			break;
 		default: ASSERT(0);
 		}
 
