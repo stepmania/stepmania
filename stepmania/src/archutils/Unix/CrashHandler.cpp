@@ -36,7 +36,7 @@ static void safe_print(int fd, ...)
 }
 
 
-static void spawn_child_process(int from_parent)
+static void NORETURN spawn_child_process( int from_parent )
 {
 	/* We need to re-exec ourself, to get a clean process.  Close all
 	 * FDs except for 0-2 and to_child, and then assign to_child to 3. */
