@@ -120,6 +120,9 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 				CString sDifficulty = CourseDifficultyToString( cd );
 				sDifficulty = Capitalize( sDifficulty );
 				row.choices.push_back( ENTRY_NAME(sDifficulty+"Courses") );
+				ModeChoice mc;
+				mc.m_CourseDifficulty = cd;
+				hand.ListEntries.push_back( mc );
 			}
 		}
 	}
@@ -138,6 +141,10 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 			s += ssprintf( " (%d)", pSteps->GetMeter() );
 
 			row.choices.push_back( s );
+			ModeChoice mc;
+			mc.m_pSteps = pSteps;
+			mc.m_dc = pSteps->GetDifficulty();
+			hand.ListEntries.push_back( mc );
 		}
 	}
 	else
@@ -173,9 +180,13 @@ void ScreenOptionsMaster::SetCharacter( OptionRowData &row, OptionRowHandler &ha
 	GAMESTATE->GetCharacters( apCharacters );
 	for( unsigned i=0; i<apCharacters.size(); i++ )
 	{
-		CString s = apCharacters[i]->m_sName;
+		Character* pCharacter = apCharacters[i];
+		CString s = pCharacter->m_sName;
 		s.MakeUpper();
 		row.choices.push_back( s ); 
+		ModeChoice mc;
+		mc.m_pCharacter = pCharacter;
+		hand.ListEntries.push_back( mc );
 	}
 }
 
@@ -315,6 +326,8 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 	switch( hand.type )
 	{
 	case ROW_LIST:
+	case ROW_STEP:
+	case ROW_CHARACTER:
 		{
 			for( unsigned e = 0; e < hand.ListEntries.size(); ++e )
 			{
@@ -353,54 +366,6 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 					}
 				}
 			}
-			return;
-		}
-	case ROW_STEP:
-		if( GAMESTATE->m_bEditing )
-		{
-			SelectExactlyOne( 0, vbSelectedOut );
-			return;
-		}
-
-		if( GAMESTATE->m_pCurCourse )   // playing a course
-		{
-			Course* pCourse = GAMESTATE->m_pCurCourse;
-			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-			if( pCourse->HasCourseDifficulty( st, GAMESTATE->m_CourseDifficulty ) )
-				SelectExactlyOne( GAMESTATE->m_CourseDifficulty+(row.bMultiSelect?1:0), vbSelectedOut );
-			else
-				SelectExactlyOne( 0+(row.bMultiSelect?1:0), vbSelectedOut );
-			return;
-		}
-
-		if( GAMESTATE->m_pCurSong )	// playing a song
-		{
-			vector<Steps*> vNotes;
-			GAMESTATE->m_pCurSong->GetSteps( vNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
-			SortNotesArrayByDifficulty( vNotes );
-			for( unsigned i=0; i<vNotes.size(); i++ )
-			{
-				if( GAMESTATE->m_pCurNotes[pn] == vNotes[i] )
-				{
-					SelectExactlyOne( i+(row.bMultiSelect?1:0), vbSelectedOut );
-					return;
-				}
-			}
-		}
-		SelectExactlyOne( 0+(row.bMultiSelect?1:0), vbSelectedOut );
-		return;
-
-	case ROW_CHARACTER:
-		{
-			vector<Character*> apCharacters;
-			GAMESTATE->GetCharacters( apCharacters );
-			for( unsigned i=0; i<apCharacters.size(); i++ )
-				if( GAMESTATE->m_pCurCharacters[pn] == apCharacters[i] )
-				{
-					SelectExactlyOne( i+1+(row.bMultiSelect?1:0), vbSelectedOut );
-					return;
-				}
-			SelectExactlyOne( 0+(row.bMultiSelect?1:0), vbSelectedOut );
 			return;
 		}
 
@@ -473,6 +438,8 @@ int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRow
 	switch( hand.type )
 	{
 	case ROW_LIST:
+	case ROW_CHARACTER:
+	case ROW_STEP:
 		{
 			hand.Default.Apply( (PlayerNumber)pn );
 			for( unsigned i=0; i<vbSelected.size(); i++ )
@@ -499,47 +466,6 @@ int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRow
 				return 0;
 
 			return hand.opt->GetEffects();
-		}
-
-	case ROW_CHARACTER:
-		{
-			int sel = GetOneSelection( vbSelected );
-	
-			if( sel == 0 )
-				GAMESTATE->m_pCurCharacters[pn] = GAMESTATE->GetDefaultCharacter();
-			else
-			{
-				vector<Character*> apCharacters;
-				GAMESTATE->GetCharacters( apCharacters );
-				ASSERT( sel - 1 < (int)apCharacters.size() );
-				GAMESTATE->m_pCurCharacters[pn] = apCharacters[sel - 1];
-			}
-		}
-		break;
-
-	case ROW_STEP:
-		{
-			int sel = GetOneSelection( vbSelected );
-	
-			if( GAMESTATE->m_bEditing )
-			{
-				// do nothing
-			}
-			else if( GAMESTATE->m_pCurCourse )   // playing a course
-			{
-				GAMESTATE->m_CourseDifficulty = (CourseDifficulty)sel;			
-			}
-			else if( GAMESTATE->m_pCurSong )   // playing a song
-			{
-				vector<Steps*> vSteps;
-				GAMESTATE->m_pCurSong->GetSteps( vSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
-				SortNotesArrayByDifficulty( vSteps );
-				Steps* pSteps = vSteps[ sel ];
-				// set current notes
-				GAMESTATE->m_pCurNotes[pn] = pSteps;
-				// set preferred difficulty
-				GAMESTATE->m_PreferredDifficulty[pn] = pSteps->GetDifficulty();
-			}
 		}
 		break;
 

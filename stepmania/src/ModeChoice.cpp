@@ -77,6 +77,8 @@ bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( m_pCharacter && GAMESTATE->m_pCurCharacters[pn] != m_pCharacter )
 		return false;
+	if( m_CourseDifficulty != COURSE_DIFFICULTY_INVALID && GAMESTATE->m_CourseDifficulty != m_CourseDifficulty )
+		return false;
 
 	return true;
 }
@@ -281,6 +283,8 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		GAMESTATE->m_pCurNotes[pn] = m_pSteps;
 	if( m_pCharacter )
 		GAMESTATE->m_pCurCharacters[pn] = m_pCharacter;
+	if( m_CourseDifficulty != COURSE_DIFFICULTY_INVALID )
+		GAMESTATE->m_CourseDifficulty = m_CourseDifficulty;
 
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.

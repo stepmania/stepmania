@@ -44,6 +44,7 @@ struct ModeChoice		// used in SelectMode
 	CString		m_sScreen;
 	Steps*		m_pSteps;
 	Character*	m_pCharacter;
+	CourseDifficulty	m_CourseDifficulty;
 };
 
 #endif
