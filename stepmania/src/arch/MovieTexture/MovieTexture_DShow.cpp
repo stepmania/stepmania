@@ -218,7 +218,7 @@ void MovieTexture_DShow::Create()
         RageException::Throw( "Could not run the DirectShow graph." );
 }
 
-void MovieTexture_DShow::NewData(char *data)
+void MovieTexture_DShow::NewData(const char *data)
 {
 	LockMutex L(buffer_mutex);
 	buffer_changed = true;

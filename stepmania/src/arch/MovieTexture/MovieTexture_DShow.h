@@ -60,7 +60,7 @@ public:
 	virtual bool IsPlaying() const;
 	void SetLooping(bool looping=true) { m_bLoop = looping; }
 
-	void NewData(char *buffer);
+	void NewData(const char *buffer);
 
 protected:
 	char *buffer;
