@@ -621,6 +621,10 @@ SOURCE=.\arch\Sound\RageSoundDriver_DSound_Software.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\arch\Sound\RageSoundDriver_Null.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\arch\Sound\RageSoundDriver_WaveOut.cpp
 # End Source File
 # Begin Source File

@@ -8,8 +8,7 @@
 #include "LoadingWindow/LoadingWindow_SDL.h"
 #include "ErrorDialog/ErrorDialog_stdout.h"
 #include "ArchHooks/ArchHooks_none.h"
-
-/* no default sound driver */
+#include "Sound/RageSoundDriver_Null.h"
 
 #endif
 
