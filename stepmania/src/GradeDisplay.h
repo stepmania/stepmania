@@ -26,22 +26,21 @@ public:
 	{
 		Load( THEME->GetPathTo(GRAPHIC_GRADES) );
 		StopAnimating();
-		Grade grade;
-		grade.m_GradeType = Grade::GRADE_NO_DATA;
-		SetGrade( grade );
+		SetGrade( GRADE_NO_DATA );
 	};
 
-	void SetGrade( Grade grade )
+	void SetGrade( Grade g )
 	{
-		switch( grade.m_GradeType )
+		switch( g )
 		{
-		case Grade::GRADE_NO_DATA:	SetState(7);	break;
-		case Grade::GRADE_E:		SetState(6);	break;
-		case Grade::GRADE_D:		SetState(5);	break;
-		case Grade::GRADE_C:		SetState(4);	break;
-		case Grade::GRADE_A:		SetState(3);	break;
-		case Grade::GRADE_AA:		SetState(2);	break;
-		case Grade::GRADE_AAA:		SetState(1);	break;
+		case GRADE_AAA:		SetState(0);	break;
+		case GRADE_AA:		SetState(1);	break;
+		case GRADE_A:		SetState(2);	break;
+		case GRADE_B:		SetState(3);	break;
+		case GRADE_C:		SetState(4);	break;
+		case GRADE_D:		SetState(5);	break;
+		case GRADE_E:		SetState(6);	break;
+		case GRADE_NO_DATA:	SetState(7);	break;
 		default:			ASSERT( true );
 		}
 	};

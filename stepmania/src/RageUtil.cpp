@@ -68,11 +68,12 @@ void RageLogStart()
 {
 #if defined(DEBUG) | defined(_DEBUG)
 
-	// create a new log file, overwriting the old one
 	DeleteFile( g_sLogFileName );
+	DeleteFile( g_sErrorFileName );
+
+	// Open log file and leave it open.  Let the OS close it when the app exits
 	g_fileLog = fopen( g_sLogFileName, "w" );
 
-	// let the OS close the file when the app exits
 
 	SYSTEMTIME st;
     GetLocalTime( &st );

@@ -36,7 +36,8 @@ const int MAX_NUM_COLUMNS = 8;
 class Player : public ActorFrame
 {
 public:
-	Player( PlayerOptions po, PlayerNumber pn );
+	Player();
+	void SetPlayerOptions( PlayerOptions po, PlayerNumber pn );
 
 	virtual void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
 	virtual void RenderPrimitives();

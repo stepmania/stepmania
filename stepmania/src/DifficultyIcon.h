@@ -30,9 +30,18 @@ public:
 		SetFromDescription( "" );
 	};
 
-	void SetFromSteps( Steps &steps )
+	void SetFromSteps( Steps* pSteps )
 	{
-		SetFromDescription( steps.m_sDescription );
+		if( pSteps != NULL )
+		{
+			SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+			SetFromDescription( pSteps->m_sDescription );
+		}
+		else
+		{
+			SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+			SetFromDescription( "" );
+		}
 	};
 
 private:

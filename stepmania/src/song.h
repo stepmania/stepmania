@@ -18,9 +18,6 @@ class Steps;	// why is this needed?
 #include "GameInfo.h"	// for definition of GameMode
 enum GameMode;	// why is this needed?
 
-#include "Grade.h"
-
-
 
 
 struct BPMSegment 
@@ -83,18 +80,18 @@ public:
 		}
 	};
 	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut );
-	void GetStepsThatMatchGameMode( GameMode gm, CArray<Steps*, Steps*&>& arrayAddTo );
+	void GetStepsThatMatchGameMode( GameMode gm, CArray<Steps*, Steps*>& arrayAddTo );
 	void GetNumFeet( GameMode gm, int& iDiffEasy, int& iDiffMedium, int& iDiffHard );
-	
 
-public:
-	int m_iNumTimesPlayed;
-
-	// statistics for single-basic, single-another... double-basic... double-maniac:
-	Grade m_TopGrade[6];
-	int m_iTopScore[6];
-	int m_iMaxCombo[6];
-
+	int GetNumTimesPlayed()
+	{
+		int iTotalNumTimesPlayed = 0;
+		for( int i=0; i<arraySteps.GetSize(); i++ )
+		{
+			iTotalNumTimesPlayed += arraySteps[i].m_iNumTimesPlayed;
+		}
+		return iTotalNumTimesPlayed;
+	}
 
 private:
 	CString m_sSongFilePath;

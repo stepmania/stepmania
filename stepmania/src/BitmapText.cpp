@@ -29,7 +29,19 @@ BitmapText::BitmapText()
 	m_HorizAlign = align_center;
 	m_VertAlign = align_middle;
 
-//	m_bHasShadow = false;
+	// allocate a vertex buffer
+	HRESULT hr;
+	if( FAILED( hr = SCREEN->GetDevice()->CreateVertexBuffer( 
+									MAX_NUM_VERTICIES * sizeof(CUSTOMVERTEX),
+									D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX,
+									D3DPOOL_MANAGED, &m_pVB ) ) )
+		RageErrorHr( "Vertex Buffer Could Not Be Created", hr );
+
+}
+
+BitmapText::~BitmapText()
+{
+	SAFE_RELEASE( m_pVB );
 }
 
 bool BitmapText::Load( CString sFontFilePath )
@@ -230,16 +242,20 @@ void BitmapText::RenderPrimitives()
 		break;
 	}
 
+	pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
+	pd3dDevice->SetRenderState( D3DRS_DESTBLEND, m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
+
 
 	// make the object in logical units centered at the origin
-	LPDIRECT3DVERTEXBUFFER8 pVB = SCREEN->GetVertexBuffer();
 	CUSTOMVERTEX* v;
-	pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+	m_pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
 
 
 
-	int iVNum = 0;	// the current vertex number
+	int &iVNum = m_iNumVerticies;	// the current vertex number
+	iVNum = 0;
+
 
 	float fHeight = GetUnzoomedHeight();
 	float fY;
@@ -449,4 +465,97 @@ void BitmapText::SetText( CString sText )
 CString BitmapText::GetText() 
 { 
 	return join( "\n", m_sTextLines ); 
+}
+
+void BitmapText::RebuildVertexBuffer()
+{
+	// make the object in logical units centered at the origin
+	CUSTOMVERTEX* v;
+	m_pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+
+
+	int &iVNum = m_iNumVerticies;	// the current vertex number
+	iVNum = 0;
+
+
+	float fHeight = GetUnzoomedHeight();
+	float fY;
+	switch( m_VertAlign )
+	{
+	case align_top:		fY = -(m_sTextLines.GetSize()) * fHeight / 2;	break;										break;
+	case align_middle:	fY = 0;											break;
+	case align_bottom:	fY = (m_sTextLines.GetSize()) * fHeight / 2;	break;
+	default:		ASSERT( true );
+	}
+
+
+	for( i=0; i<m_sTextLines.GetSize(); i++ )		// foreach line
+	{
+		CString &sLine = m_sTextLines[i];
+
+		float fLineWidth = GetLineWidthInSourcePixels(i);
+		float fX;
+		switch( m_HorizAlign )
+		{
+		case align_left:	fX = 0;					break;
+		case align_center:	fX = -(fLineWidth/2);	break;
+		case align_right:	fX = -fLineWidth;		break;
+		default:		ASSERT( true );
+		}
+
+		for( int j=0; j<sLine.GetLength(); j++ )	// for each character in the line
+		{
+			char c = sLine[j];
+			int iFrameNo = m_iCharToFrameNo[c];
+			ASSERT( iFrameNo != -1 );	// this font doesn't implement this character
+			float fCharWidth = m_fFrameNoToWidth[iFrameNo];
+
+
+
+			// HACK:
+			// The right side of italic letters is being cropped.  So, we're going to draw a little bit
+			// to the right of the normal character.
+			float fPercentExtra = 0.20f;
+			
+			// don't go over the frame boundary and draw part of the adjacent character
+			float fPercentageOfFrame = fCharWidth / GetUnzoomedWidth();
+			if( fPercentExtra > 1-fPercentageOfFrame )
+				fPercentExtra = 1-fPercentageOfFrame;
+
+
+			// set vertex positions
+
+			v[iVNum++].p = D3DXVECTOR3( fX,	fY+fHeight/2,	0 );	// bottom left
+			v[iVNum++].p = D3DXVECTOR3( fX,	fY-fHeight/2,	0 );	// top left
+			
+			fX += fCharWidth;
+
+			float fExtraPixels = fPercentExtra * GetUnzoomedWidth();
+
+			v[iVNum++].p = D3DXVECTOR3( fX+fExtraPixels,	fY+fHeight/2,	0 );	// bottom right
+			v[iVNum++].p = D3DXVECTOR3( fX+fExtraPixels,	fY-fHeight/2,	0 );	// top right
+
+
+			// set texture coordinates
+			iVNum -= 4;
+
+			FRECT* pTexCoordRect = m_pTexture->GetTextureCoordRect( iFrameNo );
+
+			float fExtraTexCoords = fPercentExtra * m_pTexture->GetTextureFrameWidth() / m_pTexture->GetTextureWidth();
+
+			v[iVNum].tu = pTexCoordRect->left;						v[iVNum++].tv = pTexCoordRect->bottom;	// bottom left
+			v[iVNum].tu = pTexCoordRect->left;						v[iVNum++].tv = pTexCoordRect->top;		// top left
+			v[iVNum].tu = pTexCoordRect->right + fExtraTexCoords;	v[iVNum++].tv = pTexCoordRect->bottom;	// bottom right
+			v[iVNum].tu = pTexCoordRect->right + fExtraTexCoords;	v[iVNum++].tv = pTexCoordRect->top;		// top right
+
+
+		}
+
+		fY += fHeight;
+	}
+
+
+
+	m_pVB->Unlock();
+
 }

@@ -30,8 +30,8 @@ const int NUM_WHEEL_ITEMS_TO_DRAW	=	13;
 
 const float FADE_TIME			=	0.5f;
 
-
-const WindowMessage SM_PlayMusicSample	=	WindowMessage(SM_User+47);	// this should be unique!
+const WindowMessage	SM_SongChanged		=	WindowMessage(SM_User+47);	// this should be unique!
+const WindowMessage SM_PlaySongSample	=	WindowMessage(SM_User+48);	
 
 
 
@@ -69,8 +69,6 @@ public:
 	Song*				m_pSong;
 	MusicStatusDisplay	m_MusicStatusDisplay;
 	TextBanner			m_Banner;
-	GradeDisplay		m_GradeP1;
-	GradeDisplay		m_GradeP2;
 };
 
 

@@ -72,14 +72,6 @@ Song::Song()
 {
 	m_bChangedSinceSave = false;
 	m_fOffsetInSeconds = 0;
-
-	m_iNumTimesPlayed = 0;
-	for( int i=0; i<6; i++ )
-	{
-		m_iMaxCombo[i] = 0;
-		m_iTopScore[i] = 0;
-		m_TopGrade[i].FromString( "N" );
-	}
 }
 
 
@@ -641,7 +633,7 @@ void Song::TidyUpData()
 }
 
 
-void Song::GetStepsThatMatchGameMode( GameMode gm, CArray<Steps*, Steps*&>& arrayAddTo )
+void Song::GetStepsThatMatchGameMode( GameMode gm, CArray<Steps*, Steps*>& arrayAddTo )
 {
 	for( int i=0; i<arraySteps.GetSize(); i++ )	// for each of the Song's Steps
 	{
@@ -659,25 +651,25 @@ void Song::GetStepsThatMatchGameMode( GameMode gm, CArray<Steps*, Steps*&>& arra
 void Song::GetNumFeet( GameMode gm, int& iDiffEasyOut, int& iDiffMediumOut, int& iDiffHardOut )
 {
 	iDiffEasyOut = iDiffMediumOut = iDiffHardOut = -1;		// -1 means not found
-	CArray<Steps*, Steps*&> arrayMatchingSteps;
+	CArray<Steps*, Steps*> arrayMatchingSteps;
 	GetStepsThatMatchGameMode( gm, arrayMatchingSteps );
 
 	for( int i=0; i<arrayMatchingSteps.GetSize(); i++ )
 	{
 		int iNumFeet = arrayMatchingSteps[i]->m_iNumFeet;
 
-		switch( arrayMatchingSteps[i]->m_difficulty )
+		switch( arrayMatchingSteps[i]->m_DifficultyClass )
 		{
-		case Steps::easy:
+		case Steps::CLASS_EASY:
 			iDiffEasyOut = iNumFeet;
 			break;
-		case Steps::medium:
+		case Steps::CLASS_MEDIUM:
 			iDiffMediumOut = iNumFeet;
 			break;
-		case Steps::hard:
+		case Steps::CLASS_HARD:
 			iDiffHardOut = iNumFeet;
 			break;
-		case Steps::other:
+		case Steps::CLASS_OTHER:
 			// should do something intelligent to fill in the missing spots...
 			if( iDiffEasyOut < 0  &&  iNumFeet <= 4 )
 				iDiffEasyOut = iNumFeet;
@@ -790,8 +782,8 @@ int CompareSongPointersByMostPlayed(const void *arg1, const void *arg2)
 	Song* pSong1 = *(Song**)arg1;
 	Song* pSong2 = *(Song**)arg2;
 		
-	int iNumTimesPlayed1 = pSong1->m_iNumTimesPlayed;
-	int iNumTimesPlayed2 = pSong2->m_iNumTimesPlayed;
+	int iNumTimesPlayed1 = pSong1->GetNumTimesPlayed();
+	int iNumTimesPlayed2 = pSong2->GetNumTimesPlayed();
 
 	CString sFilePath1 = pSong1->GetSongFilePath();		// this is unique among songs
 	CString sFilePath2 = pSong2->GetSongFilePath();

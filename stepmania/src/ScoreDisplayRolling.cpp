@@ -14,34 +14,20 @@
 #include "ThemeManager.h"
 
 
-const float TIME_BETWEEN_TICKS = 0.05f;
-
 ScoreDisplayRolling::ScoreDisplayRolling()
 {
 	RageLog( "ScoreDisplayRolling::ScoreDisplayRolling()" );
 
-	for( int i=0; i<MAX_SCORE_DIGITS; i++ )
+	// init the text
+	Load( THEME->GetPathTo(FONT_SCORE_NUMBERS) );
+	TurnShadowOff();
+
+	// init the digits
+	for( int i=0; i<NUM_SCORE_DIGITS; i++ )
 	{
-		m_textDigits[i].Load( THEME->GetPathTo(FONT_SCORE_NUMBERS) );
-		m_textDigits[i].TurnShadowOff();
-
-		// get the width of the numbers
-		m_textDigits[i].SetText( "0" );
-		float fCharWidth = m_textDigits[i].GetWidestLineWidthInSourcePixels();
-
-		m_textDigits[i].SetText( " " );
-
-		float fCharOffsetsFromCenter = i - float(MAX_SCORE_DIGITS-1)/2;
-
-		m_textDigits[i].SetXY( fCharOffsetsFromCenter * fCharWidth, 0 );
-
-		iCurrentScoreDigits[i] = 0;
-		iDestinationScoreDigits[i] = 0;
-
-		this->AddActor( &m_textDigits[i] );
+		m_iCurrentScoreDigits[i] = 0;
+		m_iDestinationScoreDigits[i] = 0;
 	}
-
-	m_fTimeUntilNextTick = 0;
 
 	SetScore( 0 );
 }
@@ -50,12 +36,12 @@ ScoreDisplayRolling::ScoreDisplayRolling()
 void ScoreDisplayRolling::SetScore( float fNewScore ) 
 { 
 	// super inefficient (but isn't called very often)
-	CString sFormatString = ssprintf( "%%%d.0f", MAX_SCORE_DIGITS );
+	CString sFormatString = ssprintf( "%%%d.0f", NUM_SCORE_DIGITS );
 	CString sScore = ssprintf( sFormatString, fNewScore );
 
-	for( int i=0; i<MAX_SCORE_DIGITS; i++ )
+	for( int i=0; i<NUM_SCORE_DIGITS; i++ )
 	{
-		iDestinationScoreDigits[i] = atoi( sScore.Mid(i,1) );
+		m_iDestinationScoreDigits[i] = atoi( sScore.Mid(i,1) );
 	}
 
 }
@@ -63,26 +49,36 @@ void ScoreDisplayRolling::SetScore( float fNewScore )
 
 void ScoreDisplayRolling::Update( float fDeltaTime )
 {
-	ActorFrame::Update( fDeltaTime );
-
-	m_fTimeUntilNextTick -= fDeltaTime;
-
-	while( m_fTimeUntilNextTick <= 0 )
-	{
-		m_fTimeUntilNextTick += TIME_BETWEEN_TICKS;
-
-		// do a tick
-		for( int i=0; i<MAX_SCORE_DIGITS; i++ )
-		{
-			if( iCurrentScoreDigits[i] != iDestinationScoreDigits[i] )
-			{
-				iCurrentScoreDigits[i]++;
-				if( iCurrentScoreDigits[i] > 9 )
-					iCurrentScoreDigits[i] = 0;
-
-				m_textDigits[i].SetText( ssprintf("%d", iCurrentScoreDigits[i]) );
-			}
-		}
-	}
+	BitmapText::Update( fDeltaTime );
 }
 
+void ScoreDisplayRolling::Draw()
+{
+	// find the leftmost current digit that doesn't match the destination digit
+	for( int i=0; i<NUM_SCORE_DIGITS; i++ )
+	{
+		if( m_iCurrentScoreDigits[i] != m_iDestinationScoreDigits[i] )
+			break;
+	}
+
+	// and increment that digit and everything after
+	for( ; i<NUM_SCORE_DIGITS; i++ )
+	{
+		m_iCurrentScoreDigits[i]++;
+		if( m_iCurrentScoreDigits[i] > 9 )
+			m_iCurrentScoreDigits[i] = 0;
+	}
+
+	int iCurScore = 0;
+	int iMultiplier = 1;
+	for( int d=NUM_SCORE_DIGITS-1; d>=0; d-- )		// foreach digit
+	{
+		iCurScore += m_iCurrentScoreDigits[d] * iMultiplier;
+		iMultiplier *= 10;
+	}
+
+	CString sFormat = ssprintf( "%%%d.0d", NUM_SCORE_DIGITS );
+	SetText( ssprintf(sFormat, iCurScore) );
+
+	BitmapText::Draw();
+}

@@ -16,7 +16,7 @@
 #include "ActorFrame.h"
 
 
-const int NUM_BLUR_GHOSTS	=	4;
+const int NUM_BLUR_GHOSTS	=	1;
 
 class MotionBlurSprite : public Actor
 {

@@ -527,7 +527,6 @@ void Render()
 				LPDIRECT3DDEVICE8 pd3dDevice = SCREEN->GetDevice();
 
 				// calculate view and projection transforms
-
 				D3DXMATRIX matProj;
 				D3DXMatrixOrthoOffCenterLH( &matProj, 0, 640, 480, 0, -100, 100 );
 				pd3dDevice->SetTransform( D3DTS_PROJECTION, &matProj );
@@ -536,10 +535,7 @@ void Render()
 				D3DXMatrixIdentity( &matView );
 				pd3dDevice->SetTransform( D3DTS_VIEW, &matView );
 
-				D3DXMATRIX matWorld;
-				D3DXMatrixIdentity( &matWorld );
-				SCREEN->ResetMatrixStack( matWorld );
-
+				SCREEN->ResetMatrixStack();
 
 				// draw the game
 				WM->Draw();

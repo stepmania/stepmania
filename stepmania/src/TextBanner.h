@@ -18,7 +18,7 @@
 #include "Rectangle.h"
 
 
-const float TEXT_BANNER_WIDTH	= 192;		// from the source art of DDR
+const float TEXT_BANNER_WIDTH	= 250;
 const float TEXT_BANNER_HEIGHT	= 40;
 
 

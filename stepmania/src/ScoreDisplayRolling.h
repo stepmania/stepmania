@@ -19,23 +19,21 @@
 #include "BitmapText.h"
 
 
-const int MAX_SCORE_DIGITS	=	9;
+const int NUM_SCORE_DIGITS	=	9;
 
 
-class ScoreDisplayRolling : public ActorFrame
+class ScoreDisplayRolling : public BitmapText
 {
 public:
 	ScoreDisplayRolling();
 	void SetScore( float fNewScore );
 
 	virtual void Update( float fDeltaTime );
+	virtual void Draw();
 
 protected:
-	BitmapText m_textDigits[MAX_SCORE_DIGITS];
-	int iCurrentScoreDigits[MAX_SCORE_DIGITS];
-	int iDestinationScoreDigits[MAX_SCORE_DIGITS];
-
-	float m_fTimeUntilNextTick;
+	int m_iCurrentScoreDigits[NUM_SCORE_DIGITS];
+	int m_iDestinationScoreDigits[NUM_SCORE_DIGITS];
 };
 
 #endif

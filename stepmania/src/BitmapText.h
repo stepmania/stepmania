@@ -39,11 +39,17 @@ public:
 
 protected:
 	bool LoadCharWidths( CString sWidthFilePath );
+	// a vertex buffer for all to share
 
 	CString m_sFontFilePath;
 	int  m_iCharToFrameNo[NUM_CHARS];
 	float m_fFrameNoToWidth[NUM_CHARS];	// in soure coordinate space
 	
+	
+	LPDIRECT3DVERTEXBUFFER8 m_pVB;	// our vertex buffer only needs to be rebuilt when the text changes
+	int m_iNumVerticies;
+	RebuildVertexBuffer();	// this should be called when the 
+
 	CStringArray	m_sTextLines;
 };
 

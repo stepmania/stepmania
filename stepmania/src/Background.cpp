@@ -24,7 +24,7 @@ Background::Background()
 
 	m_sprDanger.SetZoom( 2 );
 	m_sprDanger.SetEffectWagging();
-	m_sprDanger.Load( THEME->GetPathTo(GRAPHIC_DANGER) );
+	m_sprDanger.Load( THEME->GetPathTo(GRAPHIC_DANGER_TEXT) );
 	m_sprDanger.SetXY( CENTER_X, CENTER_Y );
 
 	m_sprDangerBackground.Load( THEME->GetPathTo(GRAPHIC_DANGER_BACKGROUND) );

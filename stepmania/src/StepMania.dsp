@@ -64,7 +64,7 @@ LINK32=link.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 1
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "../Debug"
+# PROP Output_Dir "../"
 # PROP Intermediate_Dir "../Debug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
@@ -285,6 +285,10 @@ SOURCE=.\WindowMenuSelectStyle.cpp
 # Begin Source File
 
 SOURCE=.\WindowMenuSelectStyle.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowMessage.h
 # End Source File
 # Begin Source File
 
@@ -604,6 +608,14 @@ SOURCE=.\FocusingSprite.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\FootMeter.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\FootMeter.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\GhostArrow.cpp
 # End Source File
 # Begin Source File
@@ -681,14 +693,6 @@ SOURCE=.\Rectangle.cpp
 # Begin Source File
 
 SOURCE=.\Rectangle.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplayFlipping.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplayFlipping.h
 # End Source File
 # Begin Source File
 

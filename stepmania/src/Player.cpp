@@ -61,11 +61,8 @@ const float PILL_OFFSET_Y[LIEFMETER_NUM_PILLS] = {
 const float SCORE_Y					= SCREEN_HEIGHT - 40;
 
 
-Player::Player( PlayerOptions po, PlayerNumber pn )
+Player::Player()
 {
-	m_PlayerOptions = po;
-	m_PlayerNumber = pn;
-
 	m_iCurCombo = 0;
 	m_iMaxCombo = 0;
 	m_fLifePercentage = 0.50f;
@@ -229,6 +226,13 @@ Player::Player( PlayerOptions po, PlayerNumber pn )
 	// assist
 	m_soundAssistTick.Load( THEME->GetPathTo(SOUND_ASSIST) );
 
+}
+
+
+void Player::SetPlayerOptions( PlayerOptions po, PlayerNumber pn )
+{
+	m_PlayerOptions = po;
+	m_PlayerNumber = pn;
 }
 
 

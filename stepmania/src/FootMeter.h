@@ -29,9 +29,18 @@ public:
 		SetNumFeet( 0, "" );
 	};
 
-	void SetFromSteps( Steps &steps )
+	void SetFromSteps( Steps* pSteps )
 	{
-		SetNumFeet( steps.m_iNumFeet, steps.m_sDescription );
+		if( pSteps != NULL )
+		{
+			SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+			SetNumFeet( pSteps->m_iNumFeet, pSteps->m_sDescription );
+		}
+		else
+		{
+			SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+			SetNumFeet( 0, "" );
+		}
 	};
 
 private:

@@ -59,27 +59,17 @@ void WheelItem::LoadFromSong( Song &song )
 {
 	m_WheelItemType = TYPE_MUSIC;
 
-	m_MusicStatusDisplay.SetXY( -140, 0 );
+	m_MusicStatusDisplay.SetXY( -132, 0 );
 	this->AddActor( &m_MusicStatusDisplay );
 	
 	m_Banner.SetHorizAlign( align_left );
-	m_Banner.SetXY( -30, 0 );
+	m_Banner.SetXY( 15, 0 );
 	this->AddActor( &m_Banner );
-
-	m_GradeP1.SetZoom( 0.4f );
-	m_GradeP1.SetXY( 105, 0 );
-	this->AddActor( &m_GradeP1 );
-
-	m_GradeP2.SetZoom( 0.4f );
-	m_GradeP2.SetXY( 145, 0 );
-	this->AddActor( &m_GradeP2 );
 
 
 	m_pSong = &song;
 	m_Banner.LoadFromSong( song );
-	m_MusicStatusDisplay.SetNew( m_pSong->m_iNumTimesPlayed == 0 );
-	//m_GradeP1.SetGrade( song.m_TopGrade[PLAYER_1] );
-	//m_GradeP2.SetGrade( song.m_TopGrade[PLAYER_2] );
+	m_MusicStatusDisplay.SetNew( m_pSong->GetNumTimesPlayed() == 0 );
 };
 
 
@@ -440,7 +430,7 @@ void MusicWheel::Update( float fDeltaTime )
 		{
 		case STATE_SWITCHING_MUSIC:
 			m_WheelState = STATE_IDLE;	// now, wait for input
-			WM->SendMessageToTopWindow( SM_PlayMusicSample, 0 );
+			WM->SendMessageToTopWindow( SM_PlaySongSample, 0 );
 			break;
 		case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
 			{
@@ -470,11 +460,11 @@ void MusicWheel::Update( float fDeltaTime )
 			}
 			break;
 		case STATE_FLYING_ON_AFTER_NEXT_SORT:
-			WM->SendMessageToTopWindow( SM_PlayMusicSample, 0 );
+			WM->SendMessageToTopWindow( SM_PlaySongSample, 0 );
 			m_WheelState = STATE_IDLE;	// now, wait for input
 			break;
 		case STATE_TWEENING_ON_SCREEN:
-			WM->SendMessageToTopWindow( SM_PlayMusicSample, 0 );
+			WM->SendMessageToTopWindow( SM_PlaySongSample, 0 );
 			m_WheelState = STATE_IDLE;
 			m_fTimeLeftInState = 0;
 			break;

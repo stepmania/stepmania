@@ -21,7 +21,7 @@ bool Banner::LoadFromSong( Song* pSong )		// NULL means no song
 {
 	if( pSong == NULL )
 		Sprite::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
-	if( pSong->HasBanner() )
+	else if( pSong->HasBanner() )
 		Sprite::Load( pSong->GetBannerPath() );
 	else if( pSong->HasBackground() )
 		Sprite::Load( pSong->GetBackgroundPath() );
