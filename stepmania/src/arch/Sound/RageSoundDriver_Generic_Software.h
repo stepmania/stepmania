@@ -9,6 +9,54 @@
 static const int samples_per_block = 512;
 class RageSound_Generic_Software: public RageSoundDriver
 {
+public:
+	virtual void Update(float delta);
+
+	void StartMixing( RageSoundBase *snd );		/* used by RageSound */
+	void StopMixing( RageSoundBase *snd );		/* used by RageSound */
+
+	RageSound_Generic_Software();
+	virtual ~RageSound_Generic_Software();
+
+protected:
+	/* Start the decoding.  This should be called once the hardware is set up and
+	 * GetSampleRate will return the correct value. */
+	void StartDecodeThread();
+
+	/* Call this before calling StartDecodeThread to set the desired decoding buffer
+	 * size.  This is the number of frames that Mix() will try to be able to return
+	 * at once.  This should generally be slightly larger than the sound writeahead,
+	 * to allow filling the buffer after an underrun.  The default is 4096 frames. */
+	void SetDecodeBufferSize( int frames );
+	
+	/* Override this to set the priority of the decoding thread, which should be above
+	 * normal priority but not realtime. */
+	virtual void SetupDecodingThread() { }
+
+	/*
+	 * Read mixed data.
+	 *
+	 * frames: buffer to read into
+	 * nframes: number of frames (not samples) to read
+	 * frameno: frame number at which this sound will be heard
+	 * current_frameno: frame number that is currently being heard
+	 *
+	 * current_frameno is used for handling start timing.
+	 *
+	 * This function only mixes data; it will not lock any mutexes or do any file access, and
+	 * is safe to call from a realtime thread.
+	 */
+	void Mix( int16_t *frames, int nframes, int64_t frameno, int64_t current_frameno );
+
+	/* This mutex is used for serializing with the decoder thread.  Locking this mutex
+	 * can take a while. */
+	RageMutex m_Mutex;
+
+	/* This mutex locks all sounds[] which are "available".  (Other sound may safely
+	 * be accessed, and sounds may be set to available, without locking this.) */
+	RageMutex m_SoundListMutex;
+
+private:
 	/*
 	 * Thread safety and state transitions:
 	 *
@@ -86,53 +134,6 @@ class RageSound_Generic_Software: public RageSoundDriver
 	RageThread m_DecodeThread;
 
 	bool GetDataForSound( sound &s );
-
-protected:
-	/* Start the decoding.  This should be called once the hardware is set up and
-	 * GetSampleRate will return the correct value. */
-	void StartDecodeThread();
-
-	/* Call this before calling StartDecodeThread to set the desired decoding buffer
-	 * size.  This is the number of frames that Mix() will try to be able to return
-	 * at once.  This should generally be slightly larger than the sound writeahead,
-	 * to allow filling the buffer after an underrun.  The default is 4096 frames. */
-	void SetDecodeBufferSize( int frames );
-	
-	/* Override this to set the priority of the decoding thread, which should be above
-	 * normal priority but not realtime. */
-	virtual void SetupDecodingThread() { }
-
-	/*
-	 * Read mixed data.
-	 *
-	 * frames: buffer to read into
-	 * nframes: number of frames (not samples) to read
-	 * frameno: frame number at which this sound will be heard
-	 * current_frameno: frame number that is currently being heard
-	 *
-	 * current_frameno is used for handling start timing.
-	 *
-	 * This function only mixes data; it will not lock any mutexes or do any file access, and
-	 * is safe to call from a realtime thread.
-	 */
-	void Mix( int16_t *frames, int nframes, int64_t frameno, int64_t current_frameno );
-
-	/* This mutex is used for serializing with the decoder thread.  Locking this mutex
-	 * can take a while. */
-	RageMutex m_Mutex;
-
-	/* This mutex locks all sounds[] which are "available".  (Other sound may safely
-	 * be accessed, and sounds may be set to available, without locking this.) */
-	RageMutex m_SoundListMutex;
-
-public:
-	virtual void Update(float delta);
-
-	void StartMixing( RageSoundBase *snd );		/* used by RageSound */
-	void StopMixing( RageSoundBase *snd );		/* used by RageSound */
-
-	RageSound_Generic_Software();
-	virtual ~RageSound_Generic_Software();
 };
 
 #endif
