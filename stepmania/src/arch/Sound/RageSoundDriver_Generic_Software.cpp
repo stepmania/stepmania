@@ -10,8 +10,8 @@ static const int channels = 2;
 static const int bytes_per_frame = channels*2; /* 16-bit */
 static int frames_to_buffer;
 
-static const int num_chunks = 8;
-static int chunksize() { return frames_to_buffer / num_chunks; }
+/* 512 is about 10ms, which is big enough for the tolerance of most schedulers. */
+static int chunksize() { return 512; }
 
 static int underruns = 0, logged_underruns = 0;
 
@@ -22,13 +22,18 @@ RageSound_Generic_Software::sound::sound()
 	available = true;
 }
 
-void RageSound_Generic_Software::sound::Init()
+void RageSound_Generic_Software::sound::Allocate( int frames )
 {
 	/* Reserve enough blocks in the buffer to hold the buffer.  Add one, to account for
 	 * the fact that we may have a partial block due to a previous Mix() call. */
 	const int frames_per_block = samples_per_block / channels;
-	const int blocks_to_prebuffer = frames_to_buffer / frames_per_block;
+	const int blocks_to_prebuffer = frames / frames_per_block;
 	buffer.reserve( blocks_to_prebuffer + 1 );
+}
+
+void RageSound_Generic_Software::sound::Deallocate()
+{
+	buffer.reserve( 0 );
 }
 
 int RageSound_Generic_Software::DecodeThread_start( void *p )
@@ -59,8 +64,9 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 		if( s.state == sound::HALTING )
 		{
 			/* This indicates that this stream can be reused. */
+			s.Deallocate();
 			s.state = sound::STOPPED;
-			s.available = true;
+			s.available = true; /* do this last */
 
 //			LOG->Trace("set %p from HALTING to STOPPED", sounds[i].snd);
 			continue;
@@ -295,6 +301,9 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *snd )
 	s.volume = snd->GetVolume();
 	s.buffer.clear();
 
+	/* Initialize the sound buffer. */
+	s.Allocate( frames_to_buffer );
+
 //	LOG->Trace("StartMixing(%s) (%p)", s.snd->GetLoadedFilePath().c_str(), s.snd );
 
 	/* Prebuffer some frames before changing the sound to PLAYING. */
@@ -354,10 +363,6 @@ void RageSound_Generic_Software::StopMixing( RageSoundBase *snd )
 void RageSound_Generic_Software::StartDecodeThread()
 {
 	ASSERT( !m_DecodeThread.IsCreated() );
-
-	/* Initialize the sound buffers, now that frames_to_buffer is finalized. */
-	for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
-		sounds[i].Init();
 
 	m_DecodeThread.Create( DecodeThread_start, this );
 }

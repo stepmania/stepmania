@@ -121,7 +121,8 @@ private:
 		} state;
 
 	    sound();
-		void Init();
+		void Allocate( int frames );
+		void Deallocate();
 	};
 
 	/* List of currently playing sounds: XXX no vector */
