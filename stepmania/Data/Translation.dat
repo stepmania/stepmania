@@ -99,7 +99,7 @@ TitleFrom: Japan
 ArtistFrom: .*(Re-Venge)|(RevenG).*
 TitleTo: 祭 JAPAN
 *
-/* Fix up hacked titles: */
+# Fix up hacked titles:
 TitleFrom: Max 300
 ArtistFrom: %
 ArtistTo: Ω
@@ -189,7 +189,7 @@ TitleTo: ♡LOVE²シュガ→♡
 TitleFrom: (Doors? of Magic)|(Mahou no Tobira)
 TitleTo: 魔法の扉
 SubtitleTo: (スペース&planet;マコのテーマ)
-* 
+*
 TitleFrom: Mikeneko Rock
 TitleTo: 三毛猫ロック
 *
@@ -207,7 +207,7 @@ TitleTo: 花のワルツ
 TitleFrom: (Doors? of Magic)|(Mahou no Tobira)
 TitleTo: 魔法の扉
 SubtitleTo: (スペース&planet;マコのテーマ)
-* 
+*
 TitleFrom: Chotto Kiitena
 TitleTo: ちょっときいてな
 *
@@ -227,7 +227,7 @@ DontTransliterate
 TitleFrom: Senorita
 TitleTo: SEÑORITA
 DontTransliterate
-* 
+*
 TitleFrom: Senorita\(Speedy Mix\)
 TitleTo: SEÑORITA
 SubtitleTo: Speedy Mix
@@ -323,7 +323,57 @@ ArtistTo: 篠原ともえ
 ArtistFrom: Maaya Sakamoto
 ArtistTo: 坂本真綾
 *
-
+# TM4+:
+ArtistFrom: Gwashi
+ArtistTo: グワシ
+*
+TitleFrom: Kuru Kuru Mirakuru
+TitleTo: くるくるミラクル
+*
+TitleFrom: Nuh
+TitleTo: 너
+*
+# Error fix: make sure we don't change the artist like this for the wrong song.
+TitleFrom: PARTY☆NIGHT
+SubtitleFrom: \(Hyper Para Para Version\)
+ArtistFrom: 林原めぐみ＆奥井雅美
+ArtistTo: 真田アサミ＆沢城みゆき＆氷上恭子
+ArtistTransTo: Sanada Asami, Sawashiro Miyuki and Hikami Kyouko
+*
+TitleFrom: Sakura Saku Mirai Koi Yume
+TitleTo: サクラサクミライコイユメ
+*
+TitleFrom: Salariman Aboeji
+TitleTo: 샐러리맨 아버지
+*
+TitleFrom: This Is Unmei
+TitleTo: This Is 運命
+ArtistTo: メロン記念日
+*
+TitleFrom: Torinouta
+TitleTo: 鳥の歌
+*
+TitleFrom: Wonder Woman
+TitleTo: 神奇女侠
+*
+TitleFrom: Honeymoon
+TitleTo: 허니문
+*
+TitleFrom: Michyo
+TitleTo: 미쳐
+*
+TitleFrom: (Tell Me)|(Mal Hae)
+TitleTo: 마해
+*
+ArtistFrom: Melon Kinenbi
+ArtistTo: メロン記念日
+*
+ArtistFrom: (Sammi Cheng)|(Cheng Sammy)
+ArtistTo: 郑秀文
+*
+ArtistFrom: (Wong Faye)|(Faye Wong)
+ArtistTo: 王菲
+*
 # Subtitles:
 # (Title is Graduation.)
 SubtitleFrom: .*Each Tomorrow.*
@@ -688,7 +738,7 @@ ArtistFrom: (Ayumi Hamasaki)|(Hamasaki Ayumi)
 ArtistTo: 浜崎あゆみ
 *
 ArtistFrom: (Hiroko Kasahara)|(Kasahara Hiroko)
-ArtistTo: 笠原弘子 
+ArtistTo: 笠原弘子
 *
 ArtistFrom: (Mai Kuraki)|(Kuraki Mai)
 ArtistTo: 倉木麻衣
