@@ -278,7 +278,6 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenStyleSplash.h"
 #include "ScreenCredits.h"
 #include "ScreenSelectCharacter.h"
-#include "ScreenRaveOptions.h"
 #include "ScreenSelectMode.h"
 #include "ScreenSelectMaster.h"
 #include "ScreenEditCoursesMenu.h"
@@ -346,7 +345,6 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenStyleSplash );
 	IF_RETURN( ScreenCredits );
 	IF_RETURN( ScreenSelectCharacter );
-	IF_RETURN( ScreenRaveOptions );
 	IF_RETURN( ScreenSelectMaster );
 	IF_RETURN( ScreenEditCoursesMenu );
 	IF_RETURN( ScreenProfileOptions );
