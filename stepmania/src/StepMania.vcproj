@@ -821,6 +821,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			Name="StepMania"
 			Filter="">
 			<File
+				RelativePath="ProductInfo.h">
+			</File>
+			<File
 				RelativePath="StdString.h">
 			</File>
 			<File
