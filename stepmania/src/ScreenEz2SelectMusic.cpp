@@ -418,6 +418,10 @@ void ScreenEz2SelectMusic::TweenOffScreen()
 	m_ChoiceListFrame.Command(		"Linear,1;DiffuseAlpha,0" );
 	m_ChoiceListHighlight.Command(	"Linear,1;DiffuseAlpha,0" );
 	m_CurrentGroup.Command(			"Linear,1;DiffuseAlpha,0" );
+	m_CurrentTitle.Command(			"Linear,1;DiffuseAlpha,0" );
+	m_CurrentArtist.Command(		"Linear,1;DiffuseAlpha,0" );
+	//This should be fixed and changed to OFF_COMMAND
+
 	for(int i=0; i<NUM_PLAYERS; i++)
 	{
 		m_SpeedIcon[i].Command(		"Linear,1;DiffuseAlpha,0" );
