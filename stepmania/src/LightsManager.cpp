@@ -116,7 +116,8 @@ void LightsManager::Update( float fDeltaTime )
 				m_LightsState.m_bCabinetLights[cl] = false;
 
 			int iBeat = (int)(GAMESTATE->m_fSongBeat);
-			int iTopIndex = iBeat % 4;
+			int iTopIndex = iBeat;
+			wrap( iTopIndex, 4 );
 			switch( iTopIndex )
 			{
 			case 0:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT]  = true;	break;
