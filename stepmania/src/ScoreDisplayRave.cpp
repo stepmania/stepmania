@@ -58,8 +58,6 @@ void ScoreDisplayRave::Update( float fDelta )
 {
 	ScoreDisplay::Update( fDelta );
 
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
 	float fLevel = m_pPlayerState->m_fSuperMeter;
 	AttackLevel level = (AttackLevel)(int)fLevel;
 

@@ -949,9 +949,6 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			int ms_error = (int) roundf( fSecondsFromPerfect * 1000 );
 			ms_error = min( ms_error, MAX_PRO_TIMING_ERROR );
 
-			// TODO: Remove use of PlayerNumber.
-			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
 			if( m_pPlayerStageStats )
 				m_pPlayerStageStats->iTotalError += ms_error;
 			if (!m_pPlayerState->m_PlayerOptions.m_fBlind)
@@ -1100,9 +1097,6 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 		}
 		else
 		{
-			// TODO: Remove use of PlayerNumber.
-			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
 			bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
 			if( m_pNoteField )
 				m_pNoteField->DidTapNote( c, score, bBright );
@@ -1162,9 +1156,6 @@ void PlayerMinus::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 				// A normal note.  Penalize for not stepping on it.
 				MissedNoteOnThisRow = true;
 				m_NoteData.SetTapNoteScore( t, r, TNS_MISS );
-
-				// TODO: Remove use of PlayerNumber.
-				PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 				if( m_pPlayerStageStats )
 				{
