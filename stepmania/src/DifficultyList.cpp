@@ -1,7 +1,7 @@
 #include "global.h"
 #include "DifficultyList.h"
 #include "GameState.h"
-#include "Song.h"
+#include "song.h"
 #include "StyleDef.h"
 #include "DifficultyMeter.h"
 #include "RageLog.h"
