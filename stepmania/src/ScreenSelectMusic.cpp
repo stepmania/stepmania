@@ -910,6 +910,7 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_SONG:
+	case TYPE_PORTAL:
 		if( dir > 0 && m_iSelection[pn] == int(m_arrayNotes.size()-1) )
 			return;
 		if( dir < 0 && m_iSelection[pn] == 0 )
@@ -948,7 +949,6 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 
 	case TYPE_RANDOM:
 	case TYPE_ROULETTE:
-	case TYPE_LEAP:
 		/* XXX: We could be on a music or course sort, or even one with both; we don't
 		 * really know which difficulty to change.  Maybe the two difficulties should be
 		 * linked ... */
@@ -1364,6 +1364,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		}
 		break;
 	case TYPE_SONG:
+	case TYPE_PORTAL:
 		{
 			SampleMusicToPlay = pSong->GetMusicPath();
 			SampleMusicTimingData = pSong->GetCacheFilePath();
@@ -1439,12 +1440,10 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
-	case TYPE_LEAP:
 		switch(m_MusicWheel.GetSelectedType())
 		{
 		case TYPE_ROULETTE:	m_Banner.LoadRoulette();	break;
 		case TYPE_RANDOM: 	m_Banner.LoadRandom();		break;
-		case TYPE_LEAP: 	m_Banner.LoadLeap();		break;
 		default: ASSERT(0);
 		}
 
@@ -1466,9 +1465,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			break;
 		case TYPE_RANDOM:
 			SampleMusicToPlay = THEME->GetPathS(m_sName,"random music");
-			break;
-		case TYPE_LEAP:
-			SampleMusicToPlay = THEME->GetPathS(m_sName,"leap music");
 			break;
 		default:
 			ASSERT(0);

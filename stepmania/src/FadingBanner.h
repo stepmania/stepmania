@@ -31,7 +31,6 @@ public:
 	void LoadFromCourse( Course* pCourse );
 	void LoadRoulette();
 	void LoadRandom();
-	void LoadLeap();
 	void LoadFallback();
 
 	void SetMovingFast( bool fast ) { m_bMovingFast=fast; }

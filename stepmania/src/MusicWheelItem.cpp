@@ -182,8 +182,8 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 		m_textRoulette.SetText( THEME->GetMetric("MusicWheel","Random") );
 		break;
 
-	case TYPE_LEAP:
-		m_textRoulette.SetText( THEME->GetMetric("MusicWheel","Leap") );
+	case TYPE_PORTAL:
+		m_textRoulette.SetText( THEME->GetMetric("MusicWheel","Portal") );
 		break;
 
 	default:
@@ -232,7 +232,7 @@ void MusicWheelItem::Update( float fDeltaTime )
 		break;
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
-	case TYPE_LEAP:
+	case TYPE_PORTAL:
 		m_sprSectionBar.Update( fDeltaTime );
 		m_textRoulette.Update( fDeltaTime );
 		break;
@@ -266,7 +266,7 @@ void MusicWheelItem::DrawPrimitives()
 	case TYPE_SECTION: 
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
-	case TYPE_LEAP:
+	case TYPE_PORTAL:
 	case TYPE_SORT:
 		bar = &m_sprSectionBar; 
 		break;
@@ -286,7 +286,7 @@ void MusicWheelItem::DrawPrimitives()
 		break;
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
-	case TYPE_LEAP:
+	case TYPE_PORTAL:
 		m_textRoulette.Draw();
 		break;
 	case TYPE_SONG:		
@@ -330,49 +330,4 @@ void MusicWheelItem::SetZWrite( bool b )
 
 	// set all sub-Actors
 	m_All.SetZWrite( b );
-}
-
-bool WheelItemData::HasBanner() const
-{
-	switch( m_Type )
-	{
-	case TYPE_SONG:
-		return m_pSong->HasBanner();
-	case TYPE_COURSE:
-		return m_pCourse->HasBanner();
-	case TYPE_SECTION:
-		return SONGMAN->GetGroupBannerPath( m_sSectionName ).size() != 0;
-	/* XXX: These are special cases. */
-	case TYPE_ROULETTE:
-	case TYPE_RANDOM:
-	case TYPE_LEAP:
-	case TYPE_SORT:
-		return false;
-		
-	default: ASSERT(0); return false; // "";
-	}
-}
-
-CString WheelItemData::GetBanner() const
-{
-	switch( m_Type )
-	{
-	case TYPE_SONG:
-		return m_pSong->GetBannerPath();
-	case TYPE_COURSE:
-		return m_pCourse->m_sBannerPath;
-	case TYPE_SECTION:
-		return SONGMAN->GetGroupBannerPath( m_sSectionName );
-
-	case TYPE_ROULETTE:
-		return THEME->GetPathToG("Banner random");
-
-	case TYPE_RANDOM:
-		return THEME->GetPathToG("Banner roulette");
-		
-	case TYPE_LEAP:
-		return THEME->GetPathToG("Banner leap");
-		
-	default: ASSERT(0); return "";
-	}
 }

@@ -54,7 +54,7 @@ CachedThemeMetricF CIRCLE_PERCENT	("MusicWheel","CirclePercent");
 #define SORT_MENU_COLOR				THEME->GetMetricC("MusicWheel","SortMenuColor")
 #define SHOW_ROULETTE				THEME->GetMetricB("MusicWheel","ShowRoulette")
 #define SHOW_RANDOM					THEME->GetMetricB("MusicWheel","ShowRandom")
-#define SHOW_LEAP					THEME->GetMetricB("MusicWheel","ShowLeap")
+#define SHOW_PORTAL					THEME->GetMetricB("MusicWheel","ShowPortal")
 CachedThemeMetricB	USE_3D			("MusicWheel","Use3D");
 CachedThemeMetricI  NUM_WHEEL_ITEMS_METRIC	("MusicWheel","NumWheelItems");
 #define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, (int) NUM_WHEEL_ITEMS_METRIC )
@@ -587,8 +587,8 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
 			if( SHOW_RANDOM )
 				arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
-			if( SHOW_LEAP )
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_LEAP, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
+			if( SHOW_PORTAL )
+				arrayWheelItemDatas.push_back( WheelItemData(TYPE_PORTAL, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
 		}
 
 		// HACK:  Add extra stage item if it isn't already present on the music wheel
@@ -1137,10 +1137,7 @@ void MusicWheel::Update( float fDeltaTime )
 void MusicWheel::ChangeMusic(int dist)
 {
 	m_iSelection += dist;
-	if( m_iSelection < 0 )
-		m_iSelection = m_CurWheelItemData.size()-1;
-	else if( m_iSelection > int(m_CurWheelItemData.size()-1) )
-		m_iSelection = 0;
+	wrap( m_iSelection, m_CurWheelItemData.size() );
 
 	RebuildMusicWheelItems();
 
@@ -1264,10 +1261,8 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 	case TYPE_RANDOM:
 		StartRandom();
 		return false;
-	case TYPE_LEAP:
-		StartLeap();
-		return false;
 	case TYPE_SONG:
+	case TYPE_PORTAL:
 		if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
 			UNLOCKMAN->UnlockSong( m_CurWheelItemData[m_iSelection]->m_pSong );
 		return true;
@@ -1308,32 +1303,6 @@ void MusicWheel::StartRandom()
 	m_WheelState = STATE_RANDOM_SPINNING;
 
 	this->Select();
-	RebuildMusicWheelItems();
-}
-
-void MusicWheel::StartLeap()
-{
-	/* If we're in SORT_SORT_MENU or SORT_MODE_MENU, then the timer probably ran
-	 * out.  Make sure we're in a sort with actual selections. */
-	switch( GAMESTATE->m_SortOrder )
-	{
-	case SORT_SORT_MENU:
-	case SORT_MODE_MENU:
-		SetOpenGroup("", SortOrder(m_LastSortOrder));
-	}
-
-	// probe to find a song
-	for( int i=0; i<20; i++ )
-	{
-		m_iSelection = rand() % m_CurWheelItemData.size();
-		if( m_CurWheelItemData[m_iSelection]->m_Type == TYPE_SONG )
-			break;	// done searching
-	}
-
-	m_fPositionOffsetFromSelection = 0;
-	m_WheelState = STATE_SELECTING_MUSIC;
-	SCREENMAN->PlayStartSound();
-	SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 	RebuildMusicWheelItems();
 }
 
@@ -1531,4 +1500,22 @@ void MusicWheel::Move(int n)
 	
 	if(m_Moving)
 		ChangeMusic(m_Moving);
+}
+
+Song* MusicWheel::GetSelectedSong()
+{
+	switch( m_CurWheelItemData[m_iSelection]->m_Type )
+	{
+	case TYPE_PORTAL:
+		// probe to find a song
+		for( int i=0; i<1000; i++ )
+		{
+			int iSelection = rand() % m_CurWheelItemData.size();
+			if( m_CurWheelItemData[iSelection]->m_Type == TYPE_SONG )
+				return m_CurWheelItemData[iSelection]->m_pSong;
+		}
+		return NULL;
+	}
+
+	return m_CurWheelItemData[m_iSelection]->m_pSong;
 }

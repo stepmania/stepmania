@@ -58,7 +58,6 @@ public:
 	bool NextSort();		// return true if change successful
 	void StartRoulette();
 	void StartRandom();
-	void StartLeap();
 	bool IsRouletting() const;
 	/* Return true if we're moving fast automatically. */
 	int IsMoving() const;
@@ -69,10 +68,10 @@ public:
 	void SetItemPosition( Actor &item, float fPosOffsetsFromMiddle );
 
 	bool Select();	// return true if this selection ends the screen
-	WheelItemType	GetSelectedType()	{ return m_CurWheelItemData[m_iSelection]->m_Type; };
-	Song*			GetSelectedSong()	{ return m_CurWheelItemData[m_iSelection]->m_pSong; };
-	Course*			GetSelectedCourse()	{ return m_CurWheelItemData[m_iSelection]->m_pCourse; };
-	CString			GetSelectedSection(){ return m_CurWheelItemData[m_iSelection]->m_sSectionName; };
+	WheelItemType	GetSelectedType()	{ return m_CurWheelItemData[m_iSelection]->m_Type; }
+	Song*			GetSelectedSong();
+	Course*			GetSelectedCourse()	{ return m_CurWheelItemData[m_iSelection]->m_pCourse; }
+	CString			GetSelectedSection(){ return m_CurWheelItemData[m_iSelection]->m_sSectionName; }
 
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
 	void RebuildMusicWheelItems();

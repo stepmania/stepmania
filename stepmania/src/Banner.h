@@ -30,7 +30,6 @@ public:
 	void LoadTABreakFromCharacter( Character* pCharacter );
 	void LoadRoulette();
 	void LoadRandom();
-	void LoadLeap();
 	void LoadFallback();
 
 	void SetScrolling( bool bScroll, float Percent = 0);

@@ -60,15 +60,21 @@ public:
 	ActorFrame m_All;
 };
 
-enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_RANDOM, TYPE_LEAP, TYPE_COURSE, TYPE_SORT };
+enum WheelItemType 
+{
+	TYPE_SECTION, 
+	TYPE_SONG, 
+	TYPE_ROULETTE, 
+	TYPE_RANDOM, 
+	TYPE_PORTAL, 
+	TYPE_COURSE, 
+	TYPE_SORT 
+};
 
 struct WheelItemData
 {
 	WheelItemData() {}
 	WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color, SortOrder so );
-
-	bool HasBanner() const;
-	CString GetBanner() const;
 
 	WheelItemType	m_Type;
 	CString			m_sSectionName;
