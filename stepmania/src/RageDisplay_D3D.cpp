@@ -706,10 +706,19 @@ SDL_Surface* RageDisplay_D3D::CreateScreenshot()
 	SDL_Surface *surface = CreateSurfaceFromPixfmt( FMT_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
 	ASSERT( surface );
 
+	/* We need to make a copy, since lr.pBits will go away when we call UnlockRect(). */
+	SDL_Surface *SurfaceCopy = 
+		SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, surface->w, surface->h,
+			surface->format->BitsPerPixel,
+			surface->format->Rmask, surface->format->Gmask,
+			surface->format->Bmask, surface->format->Amask );
+	CopySDLSurface( surface, SurfaceCopy );
+	SDL_FreeSurface( surface );
+
 	pCopy->UnlockRect();
 	pCopy->Release();
 
-	return surface;
+	return SurfaceCopy;
 #endif
 }
 
