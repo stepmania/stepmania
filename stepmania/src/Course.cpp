@@ -113,12 +113,13 @@ void Course::LoadFromCRSFile( CString sPath )
 
 	CString sDir, sFName, sExt;
 	splitrelpath( sPath, sDir, sFName, sExt );
+	sFName = sDir + sFName;
 
 	CStringArray arrayPossibleBanners;
-	GetDirListing( "Courses/" + sFName + ".png", arrayPossibleBanners, false, true );
-	GetDirListing( "Courses/" + sFName + ".jpg", arrayPossibleBanners, false, true );
-	GetDirListing( "Courses/" + sFName + ".bmp", arrayPossibleBanners, false, true );
-	GetDirListing( "Courses/" + sFName + ".gif", arrayPossibleBanners, false, true );
+	GetDirListing( sFName + ".png", arrayPossibleBanners, false, true );
+	GetDirListing( sFName + ".jpg", arrayPossibleBanners, false, true );
+	GetDirListing( sFName + ".bmp", arrayPossibleBanners, false, true );
+	GetDirListing( sFName + ".gif", arrayPossibleBanners, false, true );
 	if( !arrayPossibleBanners.empty() )
 		m_sBannerPath = arrayPossibleBanners[0];
 
