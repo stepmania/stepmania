@@ -207,6 +207,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_sprMarathonBalloon.StopAnimating();
 	m_sprMarathonBalloon.SetXY( BALLOON_X, BALLOON_Y );
 	m_sprMarathonBalloon.SetZoom( 1 );
+	m_sprMarathonBalloon.SetZoomY( 0 );
 	m_sprMarathonBalloon.SetDiffuse( RageColor(1,1,1,1) );
 	m_sprMarathonBalloon.SetEffectBobbing( RageVector3(0,10,0), 2 );
 	this->AddChild( &m_sprMarathonBalloon );
@@ -215,6 +216,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_sprLongBalloon.StopAnimating();
 	m_sprLongBalloon.SetXY( BALLOON_X, BALLOON_Y );
 	m_sprLongBalloon.SetZoom( 1 );
+	m_sprLongBalloon.SetZoomY( 0 );
 	m_sprLongBalloon.SetDiffuse( RageColor(1,1,1,1) );
 	m_sprLongBalloon.SetEffectBobbing( RageVector3(0,10,0), 2 );
 	this->AddChild( &m_sprLongBalloon );
