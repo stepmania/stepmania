@@ -422,9 +422,6 @@ void ScreenNameEntry::MenuStart( PlayerNumber pn )
 	TrimRight( m_sSelectedName[pn], " " );
 	TrimLeft( m_sSelectedName[pn], " " );
 
-	if( m_sSelectedName[pn] == "" )
-		m_sSelectedName[pn] = DEFAULT_RANKING_NAME;
-
 	GAMESTATE->StoreRankingName( pn, m_sSelectedName[pn] );
 
 	// save last used ranking name

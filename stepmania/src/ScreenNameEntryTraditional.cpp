@@ -415,9 +415,6 @@ void ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 	TrimRight( selection, " " );
 	TrimLeft( selection, " " );
 
-	if( selection == "" )
-		selection = DEFAULT_RANKING_NAME;
-
 	GAMESTATE->StoreRankingName( pn, selection );
 
 	// save last used ranking name

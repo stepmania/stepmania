@@ -1324,8 +1324,9 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 			line.MakeUpper();
 			if( !line.empty() && name.Find(line) != -1 )	// name contains a bad word
 			{
-				LOG->Trace( "name '%s' contains bad word and will be blanked", name.c_str() );
+				LOG->Trace( "entered '%s' matches blacklisted item '%s'", name.c_str(), line.c_str() );
 				name = "";
+				break;
 			}
 		}
 	}
