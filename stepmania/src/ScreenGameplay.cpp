@@ -1289,7 +1289,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	if( SCREENMAN->GetTopScreen() != this )
 		return;
 
-	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )
+	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID && !m_MaxCombo.GetHidden() )
 		m_MaxCombo.SetText( ssprintf("%d", STATSMAN->m_CurStageStats.m_player[GAMESTATE->m_MasterPlayerNumber].iMaxCombo) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
 	
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
@@ -1521,7 +1521,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
 	// update bpm display
 	//
-	if ( m_fLastBPS != GAMESTATE->m_fCurBPS )
+	if( m_fLastBPS != GAMESTATE->m_fCurBPS && !m_BPMDisplay.GetHidden() )
 	{
 		m_fLastBPS = GAMESTATE->m_fCurBPS;
 		m_BPMDisplay.SetBPM( GAMESTATE->m_fCurBPS * 60.0f );
