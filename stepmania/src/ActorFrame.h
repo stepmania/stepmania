@@ -24,6 +24,9 @@ public:
 
 	virtual void SetDiffuse( RageColor c );
 
+	/* Amount of time until all tweens (and all children's tweens) have stopped: */
+	virtual float TweenTime() const;
+
 protected:
 	CArray<Actor*,Actor*>	m_SubActors;
 };

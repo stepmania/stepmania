@@ -49,3 +49,15 @@ void ActorFrame::SetDiffuse( RageColor c )
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->SetDiffuse(c );
 }
+
+float ActorFrame::TweenTime() const
+{
+	float m = Actor::TweenTime();
+
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+		m = max(m, m_SubActors[i]->TweenTime());
+
+	return m;
+
+}
+

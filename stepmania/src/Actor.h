@@ -104,9 +104,9 @@ public:
 
 
 	virtual void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
-	//  Tweening is now queued by default
-	//	virtual void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
 	virtual void StopTweening();
+	/* Amount of time until all tweens have stopped: */
+	virtual float TweenTime() const;
 	virtual void SetTweenX( float x );
 	virtual void SetTweenY( float y );
 	virtual void SetTweenZ( float z );
@@ -236,7 +236,6 @@ protected:
 	TweenInfo	m_TweenInfo[MAX_TWEEN_STATES];
 	int			m_iNumTweenStates;
 	TweenState& LatestTween() { ASSERT(m_iNumTweenStates>0 && m_iNumTweenStates<MAX_TWEEN_STATES);	return m_TweenStates[m_iNumTweenStates-1]; };
-
 
 	//
 	// Temporary variables that are filled just before drawing

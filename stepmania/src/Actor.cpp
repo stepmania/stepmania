@@ -48,7 +48,6 @@ Actor::Actor()
 
 }
 
-
 void Actor::Draw()
 {
 	// call the most-derived versions
@@ -522,3 +521,12 @@ void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, 
 	LatestTween() = bOnToScreenOrOffOfScreen ? mod : original;
 }
 
+float Actor::TweenTime() const
+{
+	float tot = 0;
+
+	for(int i = 0; i < m_iNumTweenStates; ++i)
+		tot += m_TweenInfo[i].m_fTimeLeftInTween;
+
+	return tot;
+}
