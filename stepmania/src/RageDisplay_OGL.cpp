@@ -93,7 +93,7 @@ set<string> g_glExts;
 const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
 
 /* If we support texture matrix scaling, a handle to the vertex program: */
-static GLhandleARB g_bTextureMatrixShader = NULL;
+static GLhandleARB g_bTextureMatrixShader = 0;
 
 LowLevelWindow *wind;
 
@@ -379,7 +379,7 @@ GLhandleARB CompileShader( GLenum ShaderType, CString sBuffer )
 	if( !bCompileStatus )
 	{
 		LOG->Trace( "Compile failure: %s", GetInfoLog( VertexShader ).c_str() );
-		return NULL;
+		return 0;
 	}
 
 	return VertexShader;
@@ -409,7 +409,7 @@ void main( void ) \
 
 void InitScalingScript()
 {
-	g_bTextureMatrixShader = NULL;
+	g_bTextureMatrixShader = 0;
 
 	if( !GLExt.m_bGL_ARB_shader_objects ||
 		!GLExt.m_bGL_ARB_vertex_shader ||
@@ -417,7 +417,7 @@ void InitScalingScript()
 		return;
 
 	GLhandleARB VertexShader = CompileShader( GL_VERTEX_SHADER_ARB, g_TextureMatrixScaleShader );
-	if( VertexShader == NULL )
+	if( VertexShader == 0 )
 		return;
 
 	g_bTextureMatrixShader = GLExt.glCreateProgramObjectARB();
@@ -1193,7 +1193,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 		glDisableClientState(GL_NORMAL_ARRAY);
 	}
 
-	if( m_bNeedsTextureMatrixScale && g_bTextureMatrixShader != NULL )
+	if( m_bNeedsTextureMatrixScale && g_bTextureMatrixShader != 0 )
 	{
 		/* If we're using texture matrix scales, set up that buffer, too, and enable the
 		 * vertex shader.  This shader doesn't support all OpenGL state, so only enable it
@@ -1224,10 +1224,10 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 		BUFFER_OFFSET(meshInfo.iTriangleStart*sizeof(msTriangle)) );
 	AssertNoGLError();
 
-	if( m_bNeedsTextureMatrixScale && g_bTextureMatrixShader != NULL )
+	if( m_bNeedsTextureMatrixScale && g_bTextureMatrixShader != 0 )
 	{
 		GLExt.glDisableVertexAttribArrayARB( ATTRIB_TEXTURE_MATRIX_SCALE );
-		GLExt.glUseProgramObjectARB( NULL );
+		GLExt.glUseProgramObjectARB( 0 );
 	}
 }
 
