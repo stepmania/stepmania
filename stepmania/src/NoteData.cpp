@@ -39,6 +39,7 @@ NoteData &NoteData::operator= (const NoteData &cpy)
 	Init();
 	for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
 		memmove( m_TapNotes[t], cpy.m_TapNotes[t], sizeof(TapNote) * MAX_TAP_NOTE_ROWS );
+	memmove(m_HoldNotes, cpy.m_HoldNotes, sizeof(m_HoldNotes));
 
 	m_iNumTracks = cpy.m_iNumTracks;
 	m_iNumHoldNotes = cpy.m_iNumHoldNotes;
@@ -65,7 +66,7 @@ NoteData::~NoteData()
 void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
 {
 	int iNumTracks = m_iNumTracks;
-	NoteData::Init();
+	Init();
 	m_iNumTracks = iNumTracks;
 
 	// strip comments out of sSMNoteData
@@ -876,7 +877,7 @@ void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const in
 		ASSERT( iOriginalTrack < pOriginal->m_iNumTracks );
 		if( iOriginalTrack == -1 )
 			continue;
-		memcpy( m_TapNotes[t], pOriginal->m_TapNotes[iOriginalTrack], MAX_TAP_NOTE_ROWS*sizeof(m_TapNotes[0][0]) );
+		memcpy( m_TapNotes[t], pOriginal->m_TapNotes[iOriginalTrack], MAX_TAP_NOTE_ROWS*sizeof(TapNote) );
 	}
 
 	pOriginal->Convert4sToHoldNotes();
