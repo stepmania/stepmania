@@ -1066,8 +1066,8 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		CString sPath;
 		
 		FlushDirCache();
-		if (!CreateDirectories("Screenshots"))
-			return true;
+
+		/* XXX slow? */
 		for( int i=0; i<10000; i++ )
 		{
 			sPath = ssprintf("Screenshots" SLASH "screen%04d.bmp",i);
