@@ -780,10 +780,11 @@ void ScreenGameplay::LoadNextSong()
 	/* Set up song-specific graphics. */
 	
 	
-	
+	/* TODO: fall back on m_Background if nobody is on beginner. */
 	if( PREFSMAN->m_bShowBeginnerHelper )
 	{
 		// Beginner steps are always the same on both players.. Just get the # of 1 player that's using the Beginner steps, and go on.
+		m_iPOB = 0;
 		for( int pb=0; pb<NUM_PLAYERS; pb++ )
 			if( GAMESTATE->IsPlayerEnabled(pb) && GAMESTATE->m_PreferredDifficulty[pb] == DIFFICULTY_BEGINNER )
 					m_iPOB = pb;
@@ -986,12 +987,16 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
 	int pn;
+	/* Why *GAMESTATE->m_fCurBPS?  Update() functions are usually seconds; this will
+	 * make time units within BeginnerHelper actors odd. */
 	m_BeginnerHelper.Update(fDeltaTime*GAMESTATE->m_fCurBPS);
 	
 	switch( m_DancingState )
 	{
 	case STATE_DANCING:
 			// Check to see what we animate on this one
+		/* tip: Store a NoteData inside BeginnerHelper, Load it above and handle all of this
+		 * within BeginnerHelper::Update. */
 		if( PREFSMAN->m_bShowBeginnerHelper )
 		{
 			int iStep = 0;
