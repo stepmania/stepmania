@@ -39,6 +39,16 @@ public:
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }
 	CString GetDescription() const { return Real()->m_sDescription; }
 	Difficulty GetDifficulty() const { return Real()->m_Difficulty; }
+	CString GetID() const /* used for Song::GetStepsByID */
+	{
+		Difficulty dc = GetDifficulty();
+		ASSERT( dc != DIFFICULTY_INVALID );
+
+		if( dc == DIFFICULTY_EDIT )
+			return GetDescription();
+		else
+			return DifficultyToString(dc);
+	}
 	int GetMeter() const { return Real()->m_iMeter; }
 	const RadarValues& GetRadarValues() const { return Real()->m_RadarValues; }
 
