@@ -210,24 +210,21 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	}
 
 	// add explanation here so it appears on top
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_textExplanation[p].LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
+		m_textExplanation[p].SetZoom( EXPLANATION_ZOOM );
+		m_textExplanation[p].SetShadowLength( 0 );
+		m_framePage.AddChild( &m_textExplanation[p] );
+	}
 	switch( m_InputMode )
 	{
 	case INPUTMODE_INDIVIDUAL:
 		for( p=0; p<NUM_PLAYERS; p++ )
-		{
-			m_textExplanation[p].LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
 			m_textExplanation[p].SetXY( EXPLANATION_X(p), EXPLANATION_Y(p) );
-			m_textExplanation[p].SetZoom( EXPLANATION_ZOOM );
-			m_textExplanation[p].SetShadowLength( 0 );
-			m_framePage.AddChild( &m_textExplanation[p] );
-		}
 		break;
 	case INPUTMODE_TOGETHER:
-		m_textExplanation[0].LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
 		m_textExplanation[0].SetXY( EXPLANATION_TOGETHER_X, EXPLANATION_TOGETHER_Y );
-		m_textExplanation[0].SetZoom( EXPLANATION_ZOOM );
-		m_textExplanation[0].SetShadowLength( 0 );
-		m_framePage.AddChild( &m_textExplanation[0] );
 		break;
 	default:
 		ASSERT(0);
@@ -891,7 +888,7 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta )
 			m_iSelectedOption[p][iCurRow] = iNewSel;
 			UpdateText( (PlayerNumber)p, iCurRow );
 		}
-		OnChange( pn );
+		OnChange( (PlayerNumber)p );
 	}
 	m_SoundChangeCol.Play();
 }
@@ -908,7 +905,7 @@ void ScreenOptions::MenuUp( PlayerNumber pn )
 			m_iCurrentRow[p] = m_iNumOptionRows;	// on exit
 		else
 			m_iCurrentRow[p]--;
-		OnChange( pn );
+		OnChange( (PlayerNumber)p );
 	}
 	m_SoundPrevRow.Play();
 }
@@ -925,7 +922,7 @@ void ScreenOptions::MenuDown( PlayerNumber pn )
 			m_iCurrentRow[p] = 0;	// on first row
 		else
 			m_iCurrentRow[p]++;
-		OnChange( pn );
+		OnChange( (PlayerNumber)p );
 	}
 	m_SoundNextRow.Play();
 }

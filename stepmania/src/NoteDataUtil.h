@@ -47,8 +47,11 @@ namespace NoteDataUtil
 	void Big( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Quick( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Skippy( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void Mines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset, bool bSkippy, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Mines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Echo( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Planted( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Stomp( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void SuperShuffleTaps( NoteData &in );
 
 	// change all TAP_ADDITIONs to TAP_TAPs

@@ -154,6 +154,9 @@ CString PlayerOptions::GetString() const
 	case TRANSFORM_QUICK:	sReturn += "Quick, ";	break;
 	case TRANSFORM_SKIPPY:	sReturn += "Skippy, ";	break;
 	case TRANSFORM_MINES:	sReturn += "Mines, ";	break;
+	case TRANSFORM_ECHO:	sReturn += "Echo, ";	break;
+	case TRANSFORM_PLANTED:	sReturn += "Planted, ";	break;
+	case TRANSFORM_STOMP:	sReturn += "Stomp, ";	break;
 	default:	ASSERT(0);	// invalid
 	}
 
@@ -280,6 +283,9 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "quick" )		m_Transform = TRANSFORM_QUICK;
 		else if( sBit == "skippy" )		m_Transform = TRANSFORM_SKIPPY;
 		else if( sBit == "mines" )		m_Transform = TRANSFORM_MINES;
+		else if( sBit == "echo" )		m_Transform = TRANSFORM_ECHO;
+		else if( sBit == "planted" )	m_Transform = TRANSFORM_PLANTED;
+		else if( sBit == "stomp" )		m_Transform = TRANSFORM_STOMP;
 		else if( sBit == "reverse" )	SET_FLOAT( fScrolls[SCROLL_REVERSE] )
 		else if( sBit == "split" )		SET_FLOAT( fScrolls[SCROLL_SPLIT] )
 		else if( sBit == "alternate" )	SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )

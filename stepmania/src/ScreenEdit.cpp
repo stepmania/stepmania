@@ -156,7 +156,7 @@ Menu g_AreaMenu
 	MenuRow( "Clear",						true ),
 	MenuRow( "Quantize",					true, 0, "4TH","8TH","12TH","16TH","24TH","32ND","48TH","64TH" ),
 	MenuRow( "Turn",						true, 0, "Left","Right","Mirror","Shuffle","Super Shuffle" ),
-	MenuRow( "Transform",					true, 0, "Little","Wide","Big","Quick","Skippy" ),
+	MenuRow( "Transform",					true, 0, "Little","Wide","Big","Quick","Skippy","Mines","Echo","Planted","Stomp" ),
 	MenuRow( "Alter",						true, 0, "Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Shift Left","Shift Right" ),
 	MenuRow( "Tempo",						true, 0, "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" ),
 	MenuRow( "Play selection",				true ),
@@ -1538,6 +1538,10 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				case big:		NoteDataUtil::Big( m_NoteFieldEdit, fBeginBeat, fEndBeat );		break;
 				case quick:		NoteDataUtil::Quick( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
 				case skippy:	NoteDataUtil::Skippy( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
+				case mines:		NoteDataUtil::Mines( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
+				case echo:		NoteDataUtil::Echo( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
+				case planted:	NoteDataUtil::Planted( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
+				case stomp:		NoteDataUtil::Stomp( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
 				default:		ASSERT(0);
 				}
 

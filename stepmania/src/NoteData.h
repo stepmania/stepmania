@@ -98,6 +98,11 @@ public:
 				return t;
 		return -1;
 	}
+	inline bool IsThereATapAtRow( int index ) const
+	{
+		return GetFirstTrackWithTap( index ) != -1;
+	}
+	int GetNumTracksHeldAtRow( int row );
 
 	// used in edit/record
 	void AddHoldNote( HoldNote newNote );	// add note hold note merging overlapping HoldNotes and destroying TapNotes underneath
@@ -106,7 +111,6 @@ public:
 	const HoldNote &GetHoldNote( int index ) const { return m_HoldNotes[index]; }
 
 	// statistics
-	bool IsThereATapAtRow( int iRow ) const;
 
 	/* Return the highest beat/row that might contain notes.  (Use GetLastBeat if you need
 	 * accuracy.) */

@@ -689,6 +689,148 @@ void NoteDataUtil::Mines( NoteData &in, float fStartBeat, float fEndBeat )
 	}
 }
 
+void NoteDataUtil::Echo( NoteData &in, float fStartBeat, float fEndBeat )
+{
+	// add 8th note tap "echos" after all taps
+	int iEchoTrack = -1;
+
+	fStartBeat = froundf( fStartBeat, 0.5 );
+
+	const int first_row = BeatToNoteRow( fStartBeat );
+	const int last_row = min( BeatToNoteRow(fEndBeat), in.GetLastRow() );
+	const int rows_per_interval = BeatToNoteRow( 0.5 );
+
+	// window is one beat wide and slides 1/2 a beat at a time
+	for( int r=first_row; r<last_row; r+=rows_per_interval ) 
+	{
+		int iRowWindowBegin = r;
+		int iRowWindowEnd = r + rows_per_interval*2;
+		float fBeatWindowBegin = NoteRowToBeat(iRowWindowBegin);
+		float fBeatWindowEnd = NoteRowToBeat(iRowWindowEnd);
+		int iRowEcho = r + rows_per_interval;
+
+		int iFirstTapInRow = in.GetFirstTrackWithTap(iRowWindowBegin);
+		if( iFirstTapInRow != -1 )
+		{
+			iEchoTrack = iFirstTapInRow;
+		}
+
+		// don't insert a new note if there's already a tap within this interval
+		bool bTapInMiddle = false;
+		for( int r2=iRowWindowBegin+1; r2<=iRowWindowEnd-1; r2++ )
+			if( in.IsThereATapAtRow(r2) )
+			{
+				bTapInMiddle = true;
+				break;
+			}
+		if( bTapInMiddle )
+			continue;
+
+		// don't insert a new note if there's already a hold headwithin this interval
+		// TODO:  Why is this necessary?  Isn't there a TAP_TAP at the HoldNote head spot?
+		for( int i=0; i<in.GetNumHoldNotes(); i++ )
+		{
+			int iHoldHeadRow = BeatToNoteRow(in.GetHoldNote(i).fStartBeat);
+			if( iHoldHeadRow >= iRowWindowBegin+1 && iHoldHeadRow <= iRowWindowEnd-1 )
+			{
+				bTapInMiddle = true;
+				break;
+			}
+		}
+		if( bTapInMiddle )
+			continue;
+
+		if( iEchoTrack==-1 )
+			continue;
+
+		int iNumTracksHeld = in.GetNumTracksHeldAtRow(iRowEcho);
+		if( iNumTracksHeld >= 2 )
+			continue;
+
+		in.SetTapNote( iEchoTrack, iRowEcho, TAP_ADDITION );
+	}
+}
+
+void NoteDataUtil::Planted( NoteData &in, float fStartBeat, float fEndBeat )
+{
+	// Convert all taps to freezes.
+	const int first_row = BeatToNoteRow( fStartBeat );
+	const int last_row = min( BeatToNoteRow(fEndBeat), in.GetLastRow() );
+	for( int r=first_row; r<=last_row; r++ )
+	{
+		for( int t=0; t<in.GetNumTracks(); t++ )
+		{
+			if( in.GetTapNote(t,r) == TAP_TAP )
+			{
+				// search for row of next TAP_TAP
+				for( int r2=r+1; r2<=last_row; r2++ )
+				{
+					if( in.IsThereATapAtRow(r2) )
+					{
+						// If there are two taps in a row on the same track, 
+						// don't convert the earlier one to a hold.
+						if( in.GetFirstTrackWithTap(r2) == t )
+							goto dont_add_hold;
+						break;	// stop searching
+					}
+				}
+				float fStartBeat = NoteRowToBeat(r);
+				float fEndBeat = NoteRowToBeat(r2);
+				// If the steps end in a tap, convert that tap
+				// to a hold that lasts for at least one beat.
+				if( r2==r+1 )
+					fEndBeat = fStartBeat+1;
+				in.AddHoldNote( HoldNote(t,fStartBeat,fEndBeat) );
+			}
+dont_add_hold:
+			int blah = 0;	// shut compiler up
+		}
+	}
+}
+
+void NoteDataUtil::Stomp( NoteData &in, float fStartBeat, float fEndBeat )
+{
+	// Make all non jumps with ample space around them into jumps.
+
+	const int first_row = BeatToNoteRow( fStartBeat );
+	const int last_row = min( BeatToNoteRow(fEndBeat), in.GetLastRow() );
+
+	for( int r=first_row; r<last_row; r++ ) 
+	{
+		if( in.GetNumTracksWithTap(r) != 1 )
+			continue;	// skip
+
+		for( int t=0; t<in.GetNumTracks(); t++ )
+		{
+			if( in.GetTapNote(t, r) == TAP_TAP )	// there is a tap here
+			{
+				// Look to see if there is enough empty space on either side of the note
+				// to turn this into a jump.
+				int iRowWindowBegin = r - BeatToNoteRow(0.5);
+				int iRowWindowEnd = r + BeatToNoteRow(0.5);
+
+				bool bTapInMiddle = false;
+				for( int r2=iRowWindowBegin+1; r2<=iRowWindowEnd-1; r2++ )
+					if( in.IsThereATapAtRow(r2) && r2 != r )	// don't count the note we're looking around
+					{
+						bTapInMiddle = true;
+						break;
+					}
+				if( bTapInMiddle )
+					continue;
+
+				// don't convert to jump if there's a hold here
+				int iNumTracksHeld = in.GetNumTracksHeldAtRow(r);
+				if( iNumTracksHeld >= 1 )
+					continue;
+
+				// TODO: Make this accurate for StepsTypes other than 4 panel cross.
+				int iOppositeTrack = in.GetNumTracks()-1-t;
+				in.SetTapNote( iOppositeTrack, r, TAP_ADDITION );
+			}
+		}
+	}		
+}
 
 void NoteDataUtil::SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat )
 {
@@ -984,6 +1126,9 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	case PlayerOptions::TRANSFORM_QUICK:		NoteDataUtil::Quick(nd, fStartBeat, fEndBeat);		break;
 	case PlayerOptions::TRANSFORM_SKIPPY:		NoteDataUtil::Skippy(nd, fStartBeat, fEndBeat);		break;
 	case PlayerOptions::TRANSFORM_MINES:		NoteDataUtil::Mines(nd, fStartBeat, fEndBeat);		break;
+	case PlayerOptions::TRANSFORM_ECHO:			NoteDataUtil::Echo(nd, fStartBeat, fEndBeat);		break;
+	case PlayerOptions::TRANSFORM_PLANTED:		NoteDataUtil::Planted(nd, fStartBeat, fEndBeat);	break;
+	case PlayerOptions::TRANSFORM_STOMP:		NoteDataUtil::Stomp(nd, fStartBeat, fEndBeat);		break;
 	default:		ASSERT(0);
 	}
 }

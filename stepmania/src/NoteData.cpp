@@ -174,15 +174,6 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 	m_HoldNotes.erase(m_HoldNotes.begin()+iHoldIndex, m_HoldNotes.begin()+iHoldIndex+1);
 }
 
-bool NoteData::IsThereATapAtRow( int iRow ) const
-{
-	for( int t=0; t<m_iNumTracks; t++ )
-		if( GetTapNote(t, iRow) != TAP_EMPTY )
-			return true;
-
-	return false;
-}
-
 int NoteData::GetFirstRow() const
 { 
 	return BeatToNoteRow( GetFirstBeat() );
@@ -605,4 +596,19 @@ void NoteData::EliminateAllButOneTap(int row)
 		if( m_TapNotes[track][row] == TAP_TAP )
 			m_TapNotes[track][row] = TAP_EMPTY;
 	}
+}
+
+int NoteData::GetNumTracksHeldAtRow( int row )
+{
+	// Optimization opportunity: 
+	// Search more efficiently knowing that m_HoldNotes is sorted.
+	int iNumTracksHeld = 0;
+	float fBeat = NoteRowToBeat(row);
+	for( unsigned i=0; i<m_HoldNotes.size(); i++ )
+	{
+		const HoldNote& hn = m_HoldNotes[i];
+		if( fBeat >= hn.fStartBeat && fBeat <= hn.fEndBeat )
+			iNumTracksHeld++;
+	}
+	return iNumTracksHeld;
 }
