@@ -18,6 +18,10 @@
 !define PRODUCT_ID "StepMania CVS"
 !define PRODUCT_NAME_VER "${PRODUCT_NAME} ${VERSION}"
 
+!system "echo This may take a moment ..." ignore
+!system "utils\upx StepMania.exe" ignore
+!system "utils\upx smpackage.exe" ignore
+
 Name "${PRODUCT_NAME}"
 OutFile "StepMania-CVS-20030422.exe"
 ;OutFile "StepMania301.exe"
