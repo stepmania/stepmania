@@ -66,7 +66,7 @@ void ScreenPlayerOptions::Init()
 		this->AddChild( m_sprCancelAll[p] );
 	}
 
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{
 		m_bRowCausesDisqualified[p].resize( m_Rows.size(), false );
 		for( unsigned r=0; r<m_Rows.size(); r++ )
@@ -196,6 +196,8 @@ void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 {
+	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
+
 	// save original player options 
 	PlayerOptions poOrig = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
 
