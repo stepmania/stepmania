@@ -418,6 +418,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenStage.h">
 			</File>
 			<File
+				RelativePath="ScreenStyleSplash.cpp">
+			</File>
+			<File
+				RelativePath="ScreenStyleSplash.h">
+			</File>
+			<File
 				RelativePath="ScreenTest.cpp">
 			</File>
 			<File
