@@ -19,7 +19,6 @@
 #include "GameInput.h"	// for GameController
 #include "InputMapper.h"
 
-#include "windows.h"
 
 LightsManager*	LIGHTSMAN = NULL;	// global and accessable from anywhere in our program
 
