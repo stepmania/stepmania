@@ -565,13 +565,11 @@ void Sprite::DrawPrimitives()
 			FadeSize.bottom = (1.0f-TopPercent) * VertRemaining;
 		}
 
-		const RageColor &FadeColor = m_pTempState->fadecolor;
-
 		/* Alpha value of the un-faded side of each fade rect: */
-		const RageColor RightColor  = scale( FadeSize.right,  FadeDist.right,  0, RageColor(1,1,1,1), FadeColor );
-		const RageColor LeftColor   = scale( FadeSize.left,   FadeDist.left,   0, RageColor(1,1,1,1), FadeColor );
-		const RageColor TopColor    = scale( FadeSize.top,    FadeDist.top,    0, RageColor(1,1,1,1), FadeColor );
-		const RageColor BottomColor = scale( FadeSize.bottom, FadeDist.bottom, 0, RageColor(1,1,1,1), FadeColor );
+		const float RightAlpha  = SCALE( FadeSize.right,  FadeDist.right,  0, 1, 0 );
+		const float LeftAlpha   = SCALE( FadeSize.left,   FadeDist.left,   0, 1, 0 );
+		const float TopAlpha    = SCALE( FadeSize.top,    FadeDist.top,    0, 1, 0 );
+		const float BottomAlpha = SCALE( FadeSize.bottom, FadeDist.bottom, 0, 1, 0 );
 
 		/* Draw the inside: */
 		TweenState ts = *m_pTempState;
@@ -590,10 +588,8 @@ void Sprite::DrawPrimitives()
 			ts.crop.right = 1 - (ts.crop.left + FadeSize.left);
 			ts.crop.top += FadeDist.top;		// lop off the corner if fading both x and y
 			ts.crop.bottom += FadeDist.bottom;
-			ts.diffuse[0] *= FadeColor;			// top left
-			ts.diffuse[2] *= FadeColor;			// bottom left
-			ts.diffuse[3] *= LeftColor;			// bottom right
-			ts.diffuse[1] *= LeftColor;			// top right
+			ts.diffuse[3].a *= LeftAlpha;			// bottom right
+			ts.diffuse[1].a *= LeftAlpha;			// top right
 			DrawTexture( &ts );
 		}
 
@@ -606,10 +602,8 @@ void Sprite::DrawPrimitives()
 			ts.crop.left = 1 - (ts.crop.right + FadeSize.right);
 			ts.crop.top += FadeDist.top;
 			ts.crop.bottom += FadeDist.bottom;
-			ts.diffuse[0] *= RightColor;		// top left
-			ts.diffuse[2] *= RightColor;		// bottom left
-			ts.diffuse[3] *= FadeColor;			// bottom right
-			ts.diffuse[1] *= FadeColor;			// top right
+			ts.diffuse[0] *= RightAlpha;		// top left
+			ts.diffuse[2] *= RightAlpha;		// bottom left
 			DrawTexture( &ts );
 		}
 
@@ -622,10 +616,8 @@ void Sprite::DrawPrimitives()
 			ts.crop.bottom = 1 - (ts.crop.top + FadeSize.top);
 			ts.crop.left += FadeDist.left;
 			ts.crop.right += FadeDist.right;
-			ts.diffuse[0] *= FadeColor;			// top left
-			ts.diffuse[2] *= TopColor;			// bottom left
-			ts.diffuse[3] *= TopColor;			// bottom right
-			ts.diffuse[1] *= FadeColor;			// top right
+			ts.diffuse[2] *= TopAlpha;			// bottom left
+			ts.diffuse[3] *= TopAlpha;			// bottom right
 			DrawTexture( &ts );
 		}
 
@@ -638,10 +630,8 @@ void Sprite::DrawPrimitives()
 			ts.crop.top = 1 - (ts.crop.bottom + FadeSize.bottom);
 			ts.crop.left += FadeDist.left;
 			ts.crop.right += FadeDist.right;
-			ts.diffuse[0] *= BottomColor;		// top left
-			ts.diffuse[2] *= FadeColor;			// bottom left
-			ts.diffuse[3] *= FadeColor;			// bottom right
-			ts.diffuse[1] *= BottomColor;		// top right
+			ts.diffuse[0] *= BottomAlpha;		// top left
+			ts.diffuse[1] *= BottomAlpha;		// top right
 			DrawTexture( &ts );
 		}
 	}

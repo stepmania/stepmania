@@ -222,12 +222,10 @@ void BitmapText::DrawChars()
 			FadeSize.right = (1.0f-LeftPercent) * HorizRemaining;
 		}
 
-		const RageColor &FadeColor = m_pTempState->fadecolor;
-
 		/* We fade from 0 to LeftColor, then from RightColor to 0.  (We won't fade all the way to
 		 * 0 if the crop is beyond the outer edge.) */
-		const RageColor RightColor  = scale( FadeSize.right,  FadeDist.right,  0, RageColor(1,1,1,1), FadeColor );
-		const RageColor LeftColor   = scale( FadeSize.left,   FadeDist.left,   0, RageColor(1,1,1,1), FadeColor );
+		const RageColor RightColor  = scale( FadeSize.right,  FadeDist.right,  0, RageColor(1,1,1,1), RageColor(1,1,1,0) );
+		const RageColor LeftColor   = scale( FadeSize.left,   FadeDist.left,   0, RageColor(1,1,1,1), RageColor(1,1,1,0) );
 
 		const float StartFadeLeftPercent = m_pTempState->crop.left;
 		const float StopFadeLeftPercent = m_pTempState->crop.left + FadeSize.left;
