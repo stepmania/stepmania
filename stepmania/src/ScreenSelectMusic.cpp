@@ -874,12 +874,17 @@ void ScreenSelectMusic::AfterMusicChange()
 			{
 				if( !GAMESTATE->IsPlayerEnabled( PlayerNumber(p) ) )
 					continue;
+
+				/* Find the closest match to the user's preferred difficulty. */
+				int CurDifference = -1;
 				for( unsigned i=0; i<m_arrayNotes[p].size(); i++ )
 				{
-					if( m_arrayNotes[p][i]->GetDifficulty() == GAMESTATE->m_PreferredDifficulty[p] )
+					int Diff = abs(m_arrayNotes[p][i]->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[p]);
+
+					if( CurDifference == -1 || Diff < CurDifference )
 					{
 						m_iSelection[p] = i;
-						break;
+						CurDifference = Diff;
 					}
 				}
 
