@@ -320,9 +320,9 @@ float FindLastDisplayedBeat( PlayerNumber pn, int iLastPixelToDraw )
 	//
 	float fSearchDistance = 20;
 	float fLastBeatToDraw = GAMESTATE->m_fSongBeat+fSearchDistance;	
-	/* With a song that starts with little zero padding at the top of the
-	 * note data, the first LastBeat was -28.  Putting the start at 20 means
-	 * -28 is out of range (0, -10, -15, -17). */
+
+	/* With a song that starts with a negative offset, fSearchDistance here can put
+	 * the result out of range.  XXX: 0 does, too; try setting an #OFFSET to -100. */
 	if( GAMESTATE->m_fSongBeat < 0 )
 		fLastBeatToDraw = 0; //fSearchDistance;
 
