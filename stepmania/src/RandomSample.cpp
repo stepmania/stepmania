@@ -31,13 +31,10 @@ RandomSample::~RandomSample()
 
 bool RandomSample::Load( CString sFilePath, int iMaxToLoad )
 {
-	CString sDir, sFName, sExt;
-	splitrelpath( sFilePath, sDir, sFName, sExt );
-
-	sExt.MakeLower();
-
-	if( sExt == "" )        return LoadSoundDir( sFilePath, iMaxToLoad );
-	else                            return LoadSound( sFilePath );
+	if( GetExtension(sFilePath) == "" )
+		return LoadSoundDir( sFilePath, iMaxToLoad );
+	else
+		return LoadSound( sFilePath );
 }
 
 void RandomSample::UnloadAll()
