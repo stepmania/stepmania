@@ -109,6 +109,8 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 				case '1': t = TAP_TAP; break;
 				case '2': t = TAP_HOLD_HEAD; break;
 				case '3': t = TAP_HOLD_TAIL; break;
+				case 'm':
+				case 'M': t = TAP_MINE; break;
 				
 				default: 
 					/* Invalid data.  We don't want to assert, since there might
@@ -157,6 +159,7 @@ CString NoteDataUtil::GetSMNoteDataString(NoteData &in)
 				case TAP_TAP:   c = '1'; break;
 				case TAP_HOLD_HEAD: c = '2'; break;
 				case TAP_HOLD_TAIL: c = '3'; break;
+				case TAP_MINE:	c = 'M'; break;
 				default: ASSERT(0); c = '0'; break;
 				}
 				sRet.append(1, c);
