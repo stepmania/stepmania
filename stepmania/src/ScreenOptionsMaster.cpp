@@ -108,7 +108,7 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 	}
 	else if( GAMESTATE->m_pCurCourse )   // playing a course
 	{
-		row.bOneChoiceForAllPlayers = true;
+		row.bOneChoiceForAllPlayers = PREFSMAN->m_bLockCourseDifficulties;
 
 		Course* pCourse = GAMESTATE->m_pCurCourse;
 		StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
