@@ -37,7 +37,7 @@ private:
 
 		int64_t flush_pos; /* state == STOPPING only */
 
-		bool GetData( bool init, bool &bEOF );
+		bool GetData( bool &bEOF );
 
 		stream() { pcm = NULL; snd = NULL; state=INACTIVE; }
 		~stream();

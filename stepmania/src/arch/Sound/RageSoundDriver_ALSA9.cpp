@@ -46,7 +46,7 @@ void RageSound_ALSA9::MixerThread()
 				continue; /* inactive */
 
 			bool bEOF = false;
-			while( !shutdown && stream_pool[i]->GetData(false, bEOF) && !bEOF )
+			while( !shutdown && stream_pool[i]->GetData(bEOF) && !bEOF )
 				;
 
 			if( bEOF )
@@ -68,8 +68,6 @@ void RageSound_ALSA9::MixerThread()
 				continue;
 
 			int ps = stream_pool[i]->pcm->GetPosition();
-			LOG->Trace("fl #%i: pos %i to %i", 
-					i, ps, (int) stream_pool[i]->flush_pos);
 			if( ps < stream_pool[i]->flush_pos )
 				continue; /* stopping but still flushing */
 
@@ -86,11 +84,11 @@ RageSound_ALSA9::stream::~stream()
 }
 
 /* Returns the number of frames processed */
-bool RageSound_ALSA9::stream::GetData( bool init, bool &bEOF )
+bool RageSound_ALSA9::stream::GetData( bool &bEOF )
 {
 	bEOF = false;
 
-	int frames_to_fill = pcm->GetNumFramesToFill( max_writeahead, init? max_writeahead:chunksize );
+	int frames_to_fill = pcm->GetNumFramesToFill();
 	if( frames_to_fill < chunksize )
 		return false;
 
@@ -181,11 +179,15 @@ void RageSound_ALSA9::StartMixing(RageSoundBase *snd)
 	/* Give the stream to the playing sound and remove it from the pool. */
 	stream_pool[i]->snd = snd;
 	stream_pool[i]->pcm->SetSampleRate( snd->GetSampleRate() );
+	stream_pool[i]->pcm->SetChunksize( chunksize );
+	stream_pool[i]->pcm->SetWriteahead( max_writeahead );
 	stream_pool[i]->start_time = snd->GetStartTime();
 
 	/* Pre-buffer the stream, and start it immediately. */
 	bool bEOF;
-	stream_pool[i]->GetData( true, bEOF );
+	while( stream_pool[i]->GetData(bEOF) && !bEOF )
+		;
+
 	stream_pool[i]->pcm->Play();
 
 	/* If bEOF is true, we actually finished the whole file in the prebuffering

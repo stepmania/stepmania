@@ -68,9 +68,17 @@ bool Alsa9Buf::SetHWParams()
 	if( samplerate_set_explicitly && (int) rate != samplerate )
 		LOG->Warn("Alsa9Buf::SetHWParams: Couldn't get %ihz (got %ihz instead)", samplerate, rate);
 
-	snd_pcm_uframes_t buffersize = 1024*32;
-	err = dsnd_pcm_hw_params_set_buffer_size_near( pcm, hwparams, &buffersize );
+	/* Set the buffersize to the writeahead, and then copy back the actual value
+	 * we got. */
+	err = dsnd_pcm_hw_params_set_buffer_size_near( pcm, hwparams, &writeahead );
 	ALSA_CHECK("dsnd_pcm_hw_params_set_buffer_size_near");
+
+	/* The period size is roughly equivalent to what we call the chunksize. */
+	int dir;
+	err = dsnd_pcm_hw_params_set_period_size_near( pcm, hwparams, &chunksize, &dir );
+	ALSA_CHECK("dsnd_pcm_hw_params_set_period_size_near");
+
+//	LOG->Info("asked for %i period, got %i", chunksize, period_size);
 
 	/* write the hardware parameters to the device */
 	err = dsnd_pcm_hw_params( pcm, hwparams );
@@ -85,20 +93,17 @@ bool Alsa9Buf::SetSWParams()
 	dsnd_pcm_sw_params_alloca( &swparams );
 	dsnd_pcm_sw_params_current( pcm, swparams );
 
-	int err = dsnd_pcm_sw_params_get_xfer_align( swparams, &xfer_align );
-	ALSA_ASSERT("dsnd_pcm_sw_params_get_xfer_align");
+	int err = dsnd_pcm_sw_params_set_xfer_align( pcm, swparams, 1 );
+	ALSA_ASSERT("dsnd_pcm_sw_params_set_xfer_align");
 
-	snd_pcm_uframes_t avail_min;
-	err = dsnd_pcm_sw_params_get_avail_min( swparams, &avail_min );
-	ALSA_ASSERT("dsnd_pcm_sw_params_get_avail_min");
+	/* chunksize has been set to the period size.  Set avail_min to the period
+	 * size, too, so poll() wakes up once per chunk. */
+	err = dsnd_pcm_sw_params_set_avail_min( pcm, swparams, chunksize );
+	ALSA_ASSERT("dsnd_pcm_sw_params_set_avail_min");
 
-	/* So far, I havn't seen a case where avail_min > xfer_align.  If that happens,
-	 * the GetNumFramesToFill will need updating. */
-	ASSERT( avail_min <= xfer_align );
-
-	/* If this fails, we might have bound dsnd_pcm_sw_params_get_xfer_align to
+	/* If this fails, we might have bound dsnd_pcm_sw_params_set_avail_min to
 	 * the old SW API. */
-	ASSERT( err <= 0 );
+//	ASSERT( err <= 0 );
 	
 	/* Disable SND_PCM_STATE_XRUN. */
 	snd_pcm_uframes_t boundary = 0;
@@ -220,6 +225,8 @@ Alsa9Buf::Alsa9Buf( hw hardware, int channels_ )
 	samplebits = 16;
 	last_cursor_pos = 0;
 	samplerate_set_explicitly = false;
+	writeahead = 8192;
+	chunksize = 1024;
 
 	/* Open the device. */
 	int err;
@@ -237,7 +244,6 @@ Alsa9Buf::Alsa9Buf( hw hardware, int channels_ )
 	}
 
 	SetSWParams();
-	total_frames = dsnd_pcm_avail_update(pcm);
 }
 
 Alsa9Buf::~Alsa9Buf()
@@ -249,17 +255,15 @@ Alsa9Buf::~Alsa9Buf()
 /* Don't fill the buffer any more than than "writeahead" frames.  Prefer to
  * write "chunksize" frames at a time.  (These numbers are hints; if the
  * hardware parameters require it, they can be ignored.) */
-int Alsa9Buf::GetNumFramesToFill( snd_pcm_sframes_t writeahead, snd_pcm_sframes_t chunksize )
+int Alsa9Buf::GetNumFramesToFill()
 {
-	/* We have to write at least xfer_align bytes. */
-	chunksize = max( chunksize, xfer_align );
-
 	/* Make sure we can write ahead at least two chunks.  Otherwise, we'll only
 	 * fill one chunk ahead, and underrun. */
-	writeahead = max( writeahead, chunksize*2 );
+	int ActualWriteahead = max( writeahead, chunksize*2 );
 
 	snd_pcm_sframes_t avail_frames = dsnd_pcm_avail_update(pcm);
 	
+	int total_frames = writeahead;
 	if( avail_frames > total_frames )
 	{
 		/* underrun */
@@ -292,20 +296,26 @@ int Alsa9Buf::GetNumFramesToFill( snd_pcm_sframes_t writeahead, snd_pcm_sframes_
 	const snd_pcm_sframes_t filled_frames = max( 0l, total_frames - avail_frames );
 
 	/* Number of frames that don't have data, that are within the writeahead: */
-	snd_pcm_sframes_t unfilled_frames = clamp( writeahead - filled_frames, 0l, (snd_pcm_sframes_t)writeahead );
+	snd_pcm_sframes_t unfilled_frames = clamp( ActualWriteahead - filled_frames, 0l, (snd_pcm_sframes_t)ActualWriteahead );
 
 	/* If we have less than a chunk empty, don't fill at all.  Otherwise, we'll
 	 * spend a lot of CPU filling in partial chunks, instead of waiting for some
 	 * sound to play and then filling a whole chunk at once. */
-	if( unfilled_frames < chunksize )
+	if( unfilled_frames < (int) chunksize )
 		return 0;
 
-	/* We must always return a multiple of xfer_align.  This might cause less than chunksize
-	 * to be returned; that's OK. */
-	snd_pcm_sframes_t frames_to_fill = chunksize;
-	frames_to_fill -= frames_to_fill % xfer_align;
+	return chunksize;
+}
 
-	return frames_to_fill;
+bool Alsa9Buf::WaitUntilFramesCanBeFilled( int timeout_ms )
+{
+	int err = snd_pcm_wait( pcm, timeout_ms );
+	/* EINTR is normal; don't warn. */
+	if( err == -EINTR )
+		return false;
+	ALSA_ASSERT("snd_pcm_wait");
+
+	return err == 1;
 }
 
 void Alsa9Buf::Write( const Sint16 *buffer, int frames )
@@ -430,3 +440,19 @@ CString Alsa9Buf::GetHardwareID( CString name )
 
 	return ret;
 }
+
+void Alsa9Buf::SetWriteahead( snd_pcm_sframes_t frames )
+{
+	writeahead = frames;
+	SetHWParams();
+	SetSWParams();
+}
+
+void Alsa9Buf::SetChunksize( snd_pcm_sframes_t frames )
+{
+	chunksize = frames;
+
+	SetHWParams();
+	SetSWParams();
+}
+

@@ -29,6 +29,7 @@ FUNC(int, snd_pcm_hw_params_set_channels, (snd_pcm_t *pcm, snd_pcm_hw_params_t *
 FUNC(int, snd_pcm_hw_params_set_format, (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_format_t val));
 FUNC(int, snd_pcm_hw_params_set_rate_near, (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir));
 FUNC(int, snd_pcm_hw_params_set_buffer_size_near, (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val));
+FUNC(int, snd_pcm_hw_params_set_period_size_near, (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val, int *dir));
 FUNC(int, snd_pcm_status, (snd_pcm_t *pcm, snd_pcm_status_t *status));
 FUNC(snd_pcm_uframes_t, snd_pcm_status_get_avail, (const snd_pcm_status_t *obj));
 FUNC(size_t, snd_pcm_status_sizeof, (void));
@@ -45,10 +46,12 @@ FUNC(snd_pcm_sframes_t, snd_pcm_mmap_writei, (snd_pcm_t *pcm, const void *buffer
 FUNC(int, snd_pcm_open, (snd_pcm_t **pcm, const char *name, snd_pcm_stream_t stream, int mode));
 FUNC(int, snd_pcm_prepare, (snd_pcm_t *pcm));
 FUNC(int, snd_pcm_resume, (snd_pcm_t *pcm));
+FUNC(int, snd_pcm_wait, (snd_pcm_t *pcm, int timeout));
 FUNC(int, snd_pcm_sw_params, (snd_pcm_t *pcm, snd_pcm_sw_params_t *params));
 FUNC(int, snd_pcm_sw_params_current, (snd_pcm_t *pcm, snd_pcm_sw_params_t *params));
 FUNC(int, snd_pcm_sw_params_get_boundary, (const snd_pcm_sw_params_t *params, snd_pcm_uframes_t *val));
-FUNC(int, snd_pcm_sw_params_get_xfer_align, (const snd_pcm_sw_params_t *params, snd_pcm_uframes_t *val));
+FUNC(int, snd_pcm_sw_params_set_xfer_align, (snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_uframes_t val));
 FUNC(int, snd_pcm_sw_params_set_stop_threshold, (snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_uframes_t val));
 FUNC(int, snd_pcm_sw_params_get_avail_min, (snd_pcm_sw_params_t *params, snd_pcm_uframes_t *val));
+FUNC(int, snd_pcm_sw_params_set_avail_min, (snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_uframes_t val));
 

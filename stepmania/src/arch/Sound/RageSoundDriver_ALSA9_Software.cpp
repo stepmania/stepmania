@@ -41,28 +41,19 @@ void RageSound_ALSA9_Software::MixerThread()
 
 	setpriority( PRIO_PROCESS, 0, -15 );
 
-//	RageTimer UnderrunTest;
 	while(!shutdown)
 	{
 		while( !shutdown && GetData() )
 			;
-		const float delay_ms = 1000 * float(max_writeahead) / samplerate;
-		SDL_Delay( int(delay_ms) / 4 );
 
-//		if( UnderrunTest.PeekDeltaTime() > 10 )
-//		{
-//			UnderrunTest.GetDeltaTime();
-//			SDL_Delay( 250 );
-//		}
+		pcm->WaitUntilFramesCanBeFilled( 100 );
 	}
 }
 
 /* Returns the number of frames processed */
 bool RageSound_ALSA9_Software::GetData()
 {
-	const int chunksize = max_writeahead / num_chunks;
-	
-	const int frames_to_fill = pcm->GetNumFramesToFill( max_writeahead, chunksize );
+	const int frames_to_fill = pcm->GetNumFramesToFill();
 	if( frames_to_fill <= 0 )
 		return false;
 
@@ -115,6 +106,9 @@ try {
 	samplerate = pcm->FindSampleRate( samplerate );
 	pcm->SetSampleRate( samplerate );
 	LOG->Info( "ALSA: Software mixing at %ihz", samplerate );
+	
+	pcm->SetWriteahead( max_writeahead );
+	pcm->SetChunksize( max_writeahead / num_chunks );
 	
 	StartDecodeThread();
 	

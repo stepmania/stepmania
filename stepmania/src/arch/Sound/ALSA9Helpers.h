@@ -15,8 +15,7 @@ private:
 	int64_t last_cursor_pos;
 	bool samplerate_set_explicitly;
 
-	snd_pcm_sframes_t total_frames;
-	snd_pcm_uframes_t xfer_align;
+	snd_pcm_uframes_t writeahead, chunksize;
 
 	snd_pcm_t *pcm;
 
@@ -37,7 +36,8 @@ public:
 	Alsa9Buf( hw hardware, int channels );
 	~Alsa9Buf();
 
-	int GetNumFramesToFill( snd_pcm_sframes_t writeahead, snd_pcm_sframes_t chunksize );
+	int GetNumFramesToFill();
+	bool WaitUntilFramesCanBeFilled( int timeout_ms );
 	void Write( const Sint16 *buffer, int frames );
 	unsigned FindSampleRate( unsigned rate );
 	
@@ -46,6 +46,9 @@ public:
 	void SetVolume(float vol);
 	void SetSampleRate(int hz);
 	int GetSampleRate() const { return samplerate; }
+
+	void SetWriteahead( snd_pcm_sframes_t frames );
+	void SetChunksize( snd_pcm_sframes_t frames );
 
 	int64_t GetPosition() const;
 	int64_t GetPlayPos() const { return last_cursor_pos; }
