@@ -16,13 +16,12 @@ void Transition::Load( CString sBGAniDir )
 	if( IsADirectory(sBGAniDir) && sBGAniDir.Right(1) != "/" )
 		sBGAniDir += "/";
 
-	bool bWasLoaded = m_sprTransition.IsLoaded();
+	this->RemoveAllChildren();
+
 	m_sprTransition.Load( sBGAniDir );
 	m_sprTransition->PlayCommand( "On" );
+	this->AddChild( m_sprTransition );
 	m_fLengthSeconds = m_sprTransition->GetTweenTimeLeft();
-
-	if( !bWasLoaded )
-		this->AddChild( m_sprTransition );
 
 	m_State = waiting;
 
