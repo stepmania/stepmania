@@ -594,30 +594,6 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 #endif
 
 
-// -----------------------------------------------------------------------------
-// Functional objects for changing case.  They also let you pass locales
-// -----------------------------------------------------------------------------
-
-#ifdef SS_ANSI
-	template<typename CT>
-	struct SSToUpper : public std::binary_function<CT, std::locale, CT>
-	{
-		inline CT operator()(const CT& t, const std::locale& loc) const
-		{
-			return sstoupper<CT>(t, loc);
-		}
-	};
-	template<typename CT>
-	struct SSToLower : public std::binary_function<CT, std::locale, CT>
-	{
-		inline CT operator()(const CT& t, const std::locale& loc) const
-		{
-			return sstolower<CT>(t, loc);
-		}
-	};
-#endif
-
-
 //			Now we can define the template (finally!)
 // =============================================================================
 // TEMPLATE: CStdStr
