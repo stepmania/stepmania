@@ -225,6 +225,7 @@ public:
 	// course ranking
 	enum CourseSortOrders { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK } m_iCourseSortOrder;
 	bool			m_bMoveRandomToEnd;
+	bool			m_bSubSortByNumSteps;	
 	enum GetRankingName { RANKING_OFF, RANKING_ON, RANKING_LIST } m_iGetRankingName;
 
 	// scoring type; SCORING_MAX2 should always be first

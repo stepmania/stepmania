@@ -203,6 +203,7 @@ void PrefsManager::Init()
 	// default to old sort order
 	m_iCourseSortOrder = COURSE_SORT_SONGS;
 	m_bMoveRandomToEnd = false;
+	m_bSubSortByNumSteps = false;
 	m_iScoringType = SCORING_MAX2;
 
 	m_iGetRankingName = RANKING_ON;
@@ -487,6 +488,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 
 	ini.GetValue( "Options", "CourseSortOrder",					(int&)m_iCourseSortOrder );
 	ini.GetValue( "Options", "MoveRandomToEnd",					m_bMoveRandomToEnd );
+	ini.GetValue( "Options", "SubSortByNumSteps",				m_bSubSortByNumSteps );
 
 	ini.GetValue( "Options", "ScoringType",						(int&)m_iScoringType );
 
@@ -506,7 +508,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 #endif
 	ini.GetValue( "Options", "CoursesToShowRanking",			m_sCoursesToShowRanking );
 	ini.GetValue( "Options", "GetRankingName",					(int&)m_iGetRankingName);
-	ini.GetValue( "Options", "SmoothLines",					m_bSmoothLines );
+	ini.GetValue( "Options", "SmoothLines",						m_bSmoothLines );
 	ini.GetValue( "Options", "GlobalOffsetSeconds",				m_fGlobalOffsetSeconds );
 	ini.GetValue( "Options", "ShowBeginnerHelper",				m_bShowBeginnerHelper );
 	ini.GetValue( "Options", "Language",						m_sLanguage );
@@ -726,11 +728,12 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 #endif
 	ini.SetValue( "Options", "CoursesToShowRanking",			m_sCoursesToShowRanking );
 	ini.SetValue( "Options", "GetRankingName",					m_iGetRankingName);
-	ini.SetValue( "Options", "SmoothLines",					m_bSmoothLines );
+	ini.SetValue( "Options", "SmoothLines",						m_bSmoothLines );
 	ini.SetValue( "Options", "GlobalOffsetSeconds",				m_fGlobalOffsetSeconds );
 
 	ini.SetValue( "Options", "CourseSortOrder",					m_iCourseSortOrder );
 	ini.SetValue( "Options", "MoveRandomToEnd",					m_bMoveRandomToEnd );
+	ini.SetValue( "Options", "SubSortByNumSteps",				m_bSubSortByNumSteps );
 
 	ini.SetValue( "Options", "ScoringType",						m_iScoringType );
 

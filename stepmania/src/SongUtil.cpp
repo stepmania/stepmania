@@ -8,6 +8,7 @@
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "XmlFile.h"
+#include "PrefsManager.h"
 
 
 /////////////////////////////////////
@@ -350,7 +351,10 @@ void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Di
 	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
 	{
 		Steps* pSteps = arraySongPointers[i]->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, dc );
-		song_sort_val[arraySongPointers[i]] = ssprintf("%i", pSteps ? pSteps->GetMeter() : 0);
+		CString &s = song_sort_val[arraySongPointers[i]];
+		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
+		if( PREFSMAN->m_bSubSortByNumSteps )
+			s += ssprintf("%06.0f",pSteps ? pSteps->GetRadarValues().value[RADAR_NUM_TAPS_AND_HOLDS] : 0);
 	}
 	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueAscending );
 }
