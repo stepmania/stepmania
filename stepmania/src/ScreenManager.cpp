@@ -641,6 +641,37 @@ void ScreenManager::PlaySharedBackgroundOffCommand()
 	m_pSharedBGA->PlayCommand("Off");
 }
 
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaScreenManager: public Luna<T>
+{
+public:
+	LunaScreenManager() { LUA->Register( Register ); }
+
+	static int SetNewScreen( T* p, lua_State *L )		{ p->SetNewScreen( SArg(1) ); return 0; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( SetNewScreen )
+		Luna<T>::Register( L );
+
+		// Add global singleton if constructed already.  If it's not constructed yet,
+		// then we'll register it later when we reinit Lua just before 
+		// initializing the display.
+		if( SCREENMAN )
+		{
+			lua_pushstring(L, "SCREENMAN");
+			SCREENMAN->PushSelf( LUA->L );
+			lua_settable(L, LUA_GLOBALSINDEX);
+		}
+	}
+};
+
+LUA_REGISTER_CLASS( ScreenManager )
+// lua end
+
 /*
  * (c) 2001-2003 Chris Danford, Glenn Maynard
  * All rights reserved.

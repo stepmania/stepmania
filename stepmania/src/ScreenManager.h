@@ -15,6 +15,7 @@
 class Screen;
 struct Menu;
 class BGAnimation;
+struct lua_State;
 
 
 typedef Screen* (*CreateScreenFn)(const CString& sClassName);
@@ -61,6 +62,9 @@ public:
 	void ReleaseInputFocus( const Screen *pScreen );
 
 	Screen *GetTopScreen();
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 public:
 	//
