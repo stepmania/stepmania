@@ -26,16 +26,7 @@ struct SongOptions
 	bool m_bAssistTick, m_bAutoSync;
 
 	SongOptions() { Init(); };
-	void Init() 
-	{
-		m_LifeType = LIFE_BAR;
-		m_DrainType = DRAIN_NORMAL;
-		m_iBatteryLives = 4;
-		m_FailType = FAIL_ARCADE;
-		m_bAssistTick = false;
-		m_fMusicRate = 1.0f;
-		m_bAutoSync = false;
-	};
+	void Init();
 	CString GetString();
 	void FromString( CString sOptions );
 };

@@ -13,6 +13,16 @@
 #include "SongOptions.h"
 #include "RageUtil.h"
 
+void SongOptions::Init() 
+{
+	m_LifeType = LIFE_BAR;
+	m_DrainType = DRAIN_NORMAL;
+	m_iBatteryLives = 4;
+	m_FailType = FAIL_ARCADE;
+	m_bAssistTick = false;
+	m_fMusicRate = 1.0f;
+	m_bAutoSync = false;
+}
 
 CString SongOptions::GetString()
 {
