@@ -27,4 +27,7 @@ private:
 
 	void GoToNextState();
 	void GoToPrevState();
+
+	void MenuLeft( PlayerNumber pn ) { MenuUp(pn); }
+	void MenuRight( PlayerNumber pn ) { MenuDown(pn); }
 };
