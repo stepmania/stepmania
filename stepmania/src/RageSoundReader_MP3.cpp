@@ -535,8 +535,7 @@ int RageSoundReader_MP3::FindOffsetFix()
 
 void RageSoundReader_MP3::synth_output()
 {
-	if(this->Channels != 0 &&
-		MAD_NCHANNELS(&mad->Frame.header) != this->Channels)
+	if( MAD_NCHANNELS(&mad->Frame.header) != this->Channels )
 	{
 		/* This frame contains a different number of channels than the first.
 		 * I've never actually seen this--it's just to prevent exploding if
