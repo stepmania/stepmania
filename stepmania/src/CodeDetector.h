@@ -80,7 +80,7 @@ public:
 		NUM_CODES	// leave this at the end
 	};
 
-	static void RefreshCacheItems();	// call this before checking codes, but call infrequently
+	static void RefreshCacheItems( CString sClass="" );	// call this before checking codes, but call infrequently
 	static bool EnteredEasierDifficulty( GameController controller );
 	static bool EnteredHarderDifficulty( GameController controller );
 	static bool EnteredNextSort( GameController controller );

@@ -176,13 +176,15 @@ bool CodeDetector::EnteredCode( GameController controller, Code code )
 }
 
 
-void CodeDetector::RefreshCacheItems()
+void CodeDetector::RefreshCacheItems( CString sClass )
 {
+	if( sClass == "" )
+		sClass = "CodeDetector";
 	for( int i=0; i<NUM_CODES; i++ )
 	{
 		CodeItem& item = g_CodeItems[i];
 		const CString sCodeName = g_sCodeNames[i];
-		const CString sButtonsNames = THEME->GetMetric("CodeDetector",sCodeName);
+		const CString sButtonsNames = THEME->GetMetric(sClass,sCodeName);
 
 		item.Load( sButtonsNames );
 	}
