@@ -832,11 +832,38 @@ class LunaPrefsManager : public Luna<T>
 public:
 	LunaPrefsManager() { LUA->Register( Register ); }
 
-//	static int GetEventMode( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bEventMode ); return 1; }
+	static int GetPreference( T* p, lua_State *L )
+	{
+		CString sName = SArg(1);
+		IPreference *pPref = PREFSMAN->GetPreferenceByName( sName );
+		if( pPref == NULL )
+		{
+			LOG->Warn( "GetPreference: unknown preference \"%s\"", sName.c_str() );
+			lua_pushnil( L );
+		}
+		else
+			pPref->PushValue( L );
+	}
+	static int SetPreference( T* p, lua_State *L )
+	{
+		CString sName = SArg(1);
+
+		IPreference *pPref = PREFSMAN->GetPreferenceByName( sName );
+		if( pPref == NULL )
+			LOG->Warn( "GetPreference: unknown preference \"%s\"", sName.c_str() );
+		else
+		{
+			lua_pushvalue( L, 2 );
+			pPref->SetFromStack( L );
+		}
+
+		return 0;
+	}
 
 	static void Register(lua_State *L)
 	{
-//		ADD_METHOD( GetEventMode )
+		ADD_METHOD( GetPreference )
+		ADD_METHOD( SetPreference )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
