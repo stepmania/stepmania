@@ -222,19 +222,23 @@ PrefsManager::PrefsManager()
 #ifdef _XBOX
 	m_bInterlaced = true;
 	m_bPAL = false;
-	m_fScreenPosX = 0 ;
-	m_fScreenPosY = 0 ;
-	m_fScreenWidth = 640 ;
-	m_fScreenHeight = 480 ;
+	m_fScreenPosX = 0;
+	m_fScreenPosY = 0;
+	m_fScreenWidth = 640;
+	m_fScreenHeight = 480;
 #else
 	m_bInterlaced = false;
 #endif
+
 	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
 	/* Number of frames to write ahead; usually 44100 frames per second.
 	 * (Number of millisec would be more flexible, but it's more useful to
 	 * specify numbers directly.) This is purely a troubleshooting option
 	 * and is not honored by all sound drivers. */
 	m_iSoundWriteAhead = 0;
+	m_fSoundVolume = DEFAULT_SOUND_VOLUME;
+	m_iSoundResampleQuality = RageSoundReader_Resample::RESAMP_NORMAL;
+
 	m_sMovieDrivers = DEFAULT_MOVIE_DRIVER_LIST;
 
 	// StepMania.cpp sets these on first run:
@@ -243,12 +247,7 @@ PrefsManager::PrefsManager()
 	m_iLastSeenMemory = 0;
 #endif
 
-	m_fSoundVolume = DEFAULT_SOUND_VOLUME;
 	m_sLightsDriver = DEFAULT_LIGHTS_DRIVER;
-	/* This is experimental: let's see if preloading helps people's skipping.
-	 * If it doesn't do anything useful, it'll be removed. */
-	m_bSoundPreloadAll = false;
-	m_iSoundResampleQuality = RageSoundReader_Resample::RESAMP_NORMAL;
 
 	m_bAllowUnacceleratedRenderer = false;
 	m_bThreadedInput = true;
@@ -419,7 +418,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "MarvelousTiming",					(int&)m_iMarvelousTiming );
 	ini.GetValue( "Options", "SoundVolume",						m_fSoundVolume );
 	ini.GetValue( "Options", "LightsDriver",					m_sLightsDriver );
-	ini.GetValue( "Options", "SoundPreloadAll",					m_bSoundPreloadAll );
 	ini.GetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
 	ini.GetValue( "Options", "CoinMode",						m_iCoinMode );
 	ini.GetValue( "Options", "CoinsPerCredit",					m_iCoinsPerCredit );
@@ -634,7 +632,6 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "MusicWheelSwitchSpeed",			m_iMusicWheelSwitchSpeed );
 	ini.SetValue( "Options", "EasterEggs",						m_bEasterEggs );
 	ini.SetValue( "Options", "MarvelousTiming",					m_iMarvelousTiming );
-	ini.SetValue( "Options", "SoundPreloadAll",					m_bSoundPreloadAll );
 	ini.SetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
 	ini.SetValue( "Options", "CoinMode",						m_iCoinMode );
 	ini.SetValue( "Options", "CoinsPerCredit",					m_iCoinsPerCredit );

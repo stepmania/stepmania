@@ -390,7 +390,6 @@ static void RefreshRate( int &sel, bool ToSel, const CStringArray &choices )
 }
 
 /* Sound options */
-MOVE( PreloadSounds,		PREFSMAN->m_bSoundPreloadAll );
 MOVE( ResamplingQuality,	PREFSMAN->m_iSoundResampleQuality );
 MOVE( AttractSoundFrequency,PREFSMAN->m_iAttractSoundFrequency );
 

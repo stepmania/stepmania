@@ -220,12 +220,11 @@ public:
 	CString			m_sVideoRenderers;
 	bool			m_bSmoothLines;
 	CString			m_sSoundDrivers;
-	int			m_iSoundWriteAhead;
+	int				m_iSoundWriteAhead;
+	float			m_fSoundVolume;
+	int				m_iSoundResampleQuality;
 	CString			m_sMovieDrivers;
 	CString			m_sLightsDriver;
-	float			m_fSoundVolume;
-	bool			m_bSoundPreloadAll;
-	int				m_iSoundResampleQuality;
 	bool			m_bAllowUnacceleratedRenderer;
 	bool			m_bThreadedInput;
 	bool			m_bScreenTestMode;
