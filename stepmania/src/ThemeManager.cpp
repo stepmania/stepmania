@@ -133,10 +133,10 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 	///////////////////////////////////////
 	if( sAssetDir == "Graphics\\" )
 	{
-		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + ".sprite", arrayPossibleElementFileNames );
-		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + ".png", arrayPossibleElementFileNames );
-		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + ".jpg", arrayPossibleElementFileNames );
-		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + ".bmp", arrayPossibleElementFileNames );
+		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + "*.sprite", arrayPossibleElementFileNames );
+		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + "*.png", arrayPossibleElementFileNames );
+		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + "*.jpg", arrayPossibleElementFileNames );
+		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + "*.bmp", arrayPossibleElementFileNames );
 	}
 	else if( sAssetDir == "Sounds\\" )
 	{
@@ -168,10 +168,10 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 	///////////////////////////////////////
 	if( sAssetDir == "Graphics\\" )
 	{
-		GetDirListing( DEFAULT_THEME_DIR + sAssetDir + sAssetFileName + ".sprite", arrayPossibleElementFileNames );
-		GetDirListing( DEFAULT_THEME_DIR + sAssetDir + sAssetFileName + ".png", arrayPossibleElementFileNames );
-		GetDirListing( DEFAULT_THEME_DIR + sAssetDir + sAssetFileName + ".jpg", arrayPossibleElementFileNames );
-		GetDirListing( DEFAULT_THEME_DIR + sAssetDir + sAssetFileName + ".bmp", arrayPossibleElementFileNames );
+		GetDirListing( DEFAULT_THEME_DIR + sAssetDir + sAssetFileName + "*.sprite", arrayPossibleElementFileNames );
+		GetDirListing( DEFAULT_THEME_DIR + sAssetDir + sAssetFileName + "*.png", arrayPossibleElementFileNames );
+		GetDirListing( DEFAULT_THEME_DIR + sAssetDir + sAssetFileName + "*.jpg", arrayPossibleElementFileNames );
+		GetDirListing( DEFAULT_THEME_DIR + sAssetDir + sAssetFileName + "*.bmp", arrayPossibleElementFileNames );
 	}
 	else if( sAssetDir == "Sounds\\" )
 	{

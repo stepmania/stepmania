@@ -1,0 +1,380 @@
+<!-- The Code Project article submission template (HTML version)
+
+ Using this template will help us post your article sooner. We are using MS 
+ IIS and ASP pages on the server, allowing us to simplify the templates used 
+ to create the articles.
+
+ To fill in this template, just follow the 3 easy steps below:
+
+   1. Fill in the article description details
+   2. Add links to your images and downloads
+   3. Include the main article text
+
+ That's all there is to it! All formatting will be done by the ASP script 
+ engine.
+-->
+<html>
+
+<head>
+<title>The Code Project</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style>
+BODY { FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE: 10pt }
+H2 { COLOR: #0066ff; FONT-SIZE: 13pt; FONT-WEIGHT: bold; }
+H3 { COLOR: #0066ff; FONT-SIZE: 12pt; FONT-WEIGHT: bold; font-style: italic; }
+H3 { COLOR: #0066ff; FONT-SIZE: 11pt; FONT-WEIGHT: bold; }
+PRE { BACKGROUND-COLOR: #FBEDBB; FONT-FAMILY: "Courier New", Courier, mono; WHITE-SPACE: pre; }
+CODE { COLOR: #990000; FONT-FAMILY: "Courier New", Courier, mono; }
+</style>
+</head>
+
+<body bgcolor="#FFFFFF" color="#000000">
+<!-- STEP 1. Fill in the details (CodeProject will reformat this section for you) -->
+
+<pre>
+Title:       Zip and Unzip in the MFC way
+Author:      Tadeusz Dracz 
+Email:       tdracz@artpol.com.pl
+Environment: VC++ 6.0, MFC, Windows 95/98/NT/2000/Me
+Keywords:    Zip, Unzip, MFC
+Level:       Intermediate
+Description: The library to create, modify and extract zip archives
+Section      Miscellaneous
+SubSection   General
+</pre>
+
+<hr width="100%" noshade>
+<!-- STEP 2. Include download and sample image information -->
+
+<ul>
+  <li class="download"><a href="zip_src.zip">Download source - 110 Kb</a></li>
+  <li class="download"><a href="zip_demo.zip">Download demo project - 40 Kb</a></li>
+<h2>Overview</h2>
+<p>This library allows creating, modifying and extracting zip archives in the
+compatible way with PKZIP (2.5 and higher) and WinZip. Supported are all
+possible operations on the zip archive: creating, extracting, adding, deleting
+files from the archive, modifications of the existing archive. There is also the
+support for creating and extracting multiple disk archives (on non-removable
+devices as well) and for password encryption and decryption. This module uses
+compression and decompression functions from zlib library by Jean-loup Gailly
+and Mark Adler.</p>
+<h2>How to integrate with the project</h2>
+<p>Zip is a static library and statically links to compiled zlib.lib (version
+1.13 nowadays). The zlib library can be replaced with a newer version providing
+you also replace the files: &quot;zlib.h&quot; and &quot;zconf.h&quot; in the
+Zip project. The Zip library uses MFC in a shared library as a Release and Debug
+Configuration. Your project must use MFC in the same way in the appropriate
+project configuration. You may need to adapt this to your needs. To add Zip
+library functionality to your project you need to link the library to the
+project. You can do this in at least two ways (in both cases you need to include
+ZipArchive.h header in your sources like this: #include &quot;ZipArchive.h&quot;):</p>
+<h4>Method 1</h4>
+<p>Add &quot;..\Zip\debug(release)\Zip.lib&quot; to <em>Project
+Settings-&gt;Link-&gt;Input-&gt;Object/library modules</em> and add Zip
+directory to the preprocessor searches (<em>Project Settings -&gt; C++ -&gt;
+Preprocessor -&gt; Additional include directories</em>).</p>
+<h4>Method 2 (simpler)</h4>
+<p>Insert Zip project into workspace and set project dependencies (your project
+dependent on Zip project).</p>
+<h2>How to use</h2>
+<p>The details about using this library are in the sources. The example
+available for download at the bottom of the page is an almost complete
+compression\decompression program. There are only main issues mentioned below
+about using this library. If you have a question about using the library and you
+can't find the answer here, don't hesitate to ask.</p>
+<h3>Compression and decompression</h3>
+<p>There are some functions defined for fast operations on archive; among
+others: AddNewFile(), ExtractFile(), DeleteFile(). You only need to call
+functions Open() - before and Close() - after using them.<br>
+Remember to call Close() function when you finish working with CZipArchive
+class.</p>
+<h3>Multi-disk archives</h3>
+<p>This library supports two kinds of multi-disk archives:<br>
+1. Disk spanning performed in the compatible way with all other main zip
+programs. It means that the archive can only be created on a removable device,
+the size of the volume is auto-detected and the label is written to the disk. To
+use this kind of disk spanning you need to define a static callback function for
+changing disks and set it with SetSpanCallback() function.<br>
+2. Disk spanning performed in the internal mode, called in the sources TD span
+mode. This allows creating multi disk archives also on non-removable devices and
+with user-defined volume size. There is no need to set callback function in this
+mode.</p>
+<p>This two disk spanning modes create volumes with compatible internal
+structure. It means that you can easily convert the volumes created in one mode
+to the other one by renaming the files (in TD mode each volume but last has a
+number as an extension). To convert the archive from TD to PKZIP compatible
+archive, copy each file to the removable media, giving them the extension
+&quot;.zip&quot;. You should also label each disk with the appropriate label
+starting from &quot;pkback# 001&quot;.</p>
+<p>There is a limited functions set available during work with multi-disk
+archives. Only adding is allowed when creating an archive and only extracting
+and testing when opening an existing one. Deleting files from these archives
+isn't allowed in any of these cases.</p>
+<p>Class CZipArchive uses write buffer to make write operations extremely fast.
+You can change its size with SetAdvanced() function. While creating a multi-disk
+archive, set the size of the buffer to the maximum size of the volume&nbsp; for
+the best performance.</p>
+<p>The popular archivers such as PKZIP and WinZip cannot operate on archive in
+TD span mode. You need to convert them to PKZIP span mode (have a look above).
+Remember about copying the files to the removable media (it does not comply with
+Winzip, which can extract a multi-disk archive from any media but only from the
+fixed location on the drive).</p>
+<h3>Password encryption and decryption</h3>
+<p>&nbsp;&nbsp;&nbsp; This library supports creating and extracting of the
+password protected archives. There are several issues you should be aware of
+when using this feature. To set the password for the file to be added or
+extracted call the function SetPassword() with the password as the argument. To
+clear the password call this function without arguments or with an empty string
+argument. The function has no effect on a closed archive and on the currently
+opened file (whether new or existing) inside archive. During opening an archive
+the password is cleared and it is not changed if the file inside archive is
+opened. You can set different passwords for different files inside the same
+archive, but remember to set it BEFORE opening the file. You cannot use ASCII
+characters with codes above 127 in a password, if you do so, the function
+SetPassword() returns false and the password is cleared. If the password is
+cleared, no encryption or decryption take place.<br>
+&nbsp;&nbsp;&nbsp; You can find out what files are password encrypted by calling
+CZipArchive::GetFileInfo() which fills the structrure CZipFileHeader with data,
+and then the method IsEncrypted() of this structure. If it returns true, the
+file needs a password to extract.<br>
+&nbsp;&nbsp; The successful extraction of the encrypted file doesn't always mean
+that the password is correct. CZipArchive doesn't check for a crc if
+m_info.m_uUncomprLeft is not zero in the function CZipArchive::CloseFile(). In
+some cases bad password causes that this value is not zero, so you have to check
+also for the return value of this function (it returns -1 in this case). You can
+also check the size of the extracted file since it is smaller than it should be.</p>
+<h3>Self extract support</h3>
+<p>The library automatically detects self-extracting archives. This is the
+simplest self-extract code :</p>
+<!-- start a block of source code -->
+<pre>
+int APIENTRY WinMain(HINSTANCE hInstance,
+HINSTANCE hPrevInstance,
+LPSTR lpCmdLine,
+int nCmdShow)
+{
+	CZipArchive zip;
+
+	// get path of executable
+	TCHAR szBuff[_MAX_PATH];
+	if (!::GetModuleFileName(hInstance, szBuff, _MAX_PATH))
+		return -1;
+
+	CString szDest;
+	// ...
+	// add the code here to get the destination directory from the user 
+	// for example:
+	/* CBrowseForFolder bf;
+	   bf.strTitle = _T(&quot;Select directory to extract files&quot;);
+	   if (!bf.GetFolder(szDest))
+	       return -1;
+	*/
+	// class CBrowseForFolder is included in the example project
+	// remember about including the header!
+
+	zip.Open(szBuff, CZipArchive::openReadOnly); 
+	// openReadOnly mode is necessary for self extract archives
+	for (WORD i = 0; i &lt; zip.GetNoEntries(); i++)
+		zip.ExtractFile(i, szDest);
+
+	zip.Close();
+	return 0;
+	// this code will not work for the encrypted archives since it is needed
+	// to get the password from the user ( a small addition to the 
+	// existing code I suppose )
+}
+<!-- end the block of source code -->
+
+</pre>
+<p>After compiling it and appending a zip archive to it (e.g. with the DOS
+command: <em>copy /b SelfExtract.exe + ZipFile.zip FinalFile.exe</em>) we have a
+self extracting archive.</p>
+<h3>Testing the integrity of the archive</h3>
+<p>The new functions has been provided to allow the testing of the integrity of
+the archive. The first one is <em>CZipArchive::TestFile </em>which is a
+comprehensive testing function, but if you need a different functionality, you
+can make your own by taking advantage of the second function provided: <em>CZipArchive::CloseFileAfterTestFailed.
+</em>The detailed description and the example of use are provided in the sources
+and in the example project.</p>
+<h3>Exceptions</h3>
+<p>The library throws the following exceptions: CMemoryException, CFileExeption
+and CZipException. The first two don't need an explanation. The last is thrown
+when some internal error occurs. Handling them may be done in the following way:</p>
+<pre>
+try
+{
+	// ...
+	// some operations on Zip library
+}
+catch (CException* e)
+{
+	if (e-&gt;IsKindOf( RUNTIME_CLASS( CZipException )))
+	{
+		CZipException* p = (CZipException*) e;
+		//... and so on 
+	}
+	else if (e-&gt;IsKindOf( RUNTIME_CLASS( CFileException )))
+	{
+		CFileException* p = (CFileException*) e;
+		//... and so on 
+	} 
+	else
+	{
+		// the only possibility is a memory exception I suppose
+		//... and so on 
+	}
+	e-&gt;Delete();
+}
+</pre>
+<h3>Handling the extra field</h3>
+<p>The extra field of the file can be different in the local and central
+headers. To set the extra filed in the local header set it in <em>header</em>
+parameter of <font size="3"><em>CZipArchive::OpenNewFile </em>function<em>. </em>After
+that the extra field is written to the local header and cleared. You should call
+<em>CZipArchive::SetExtraField </em>function anytime after opening the new file
+(but before closing it) to set the file extra field in the central directory.</font></p>
+<h3>Sample application</h3>
+<p>To run the example, integrate first Zip library into it (Zip library is not
+included in the example, you must download it separately); you should be asked
+at the beginning about the location of the Zip project, if not, use one of the
+integration methods described above. If you don't put Zip library project at the
+same directory level what the sample application is, you also have to change the path pointing
+to ZipArchive.h in the file testzipdlgdlg.h.</p>
+  <h3>Linking errors</h3>
+  <p>When you experience linking errors (mostly <em>LNK2005)</em> you need to
+  make sure that the library and your program are both using
+  single-threaded or both multithreaded library. The option <em>&quot;Project-&gt;Settings-&gt;
+  c/c++ -&gt;Code Generation-&gt;Use run-time library&quot; </em>should be set
+  to the same value in the ZipArchive library and the program project options.
+  <p>If it doesn't help, try recompiling the zlib library ( <em>zlib.lib</em>
+  provided with the project is compiled from a release configuration and using <font SIZE="2">Multithreaded</font> 
+  DLL run-time library ). You can download the zlib library
+  sources from <a href="http://software.artpol.com.pl/d_zip.html.">http://software.artpol.com.pl/d_zip.html.</a>
+  Use <em>zlibstat</em> project. Set <em>&quot;Use run-time library&quot;</em>
+  option to the same value as you set it in ZipArchve library and your program
+  configurations. Compile the Release configuration of the zlib library and
+  replace with it the file <em>zlib.lib</em> in the ZipArchive folder. You may
+  however experience linking warnings or errors while compiling the Debug
+  configuration. To eliminate them do as follows:
+  <ul>
+    <li>compile Debug and Release configuraions of the zlib library
+    <li>copy <em>zlib_d.lib</em> from Debug and <em>zlib.lib</em> from Release
+      directories to the ZipArchive directory
+    <li>add these files to the ZipArchive project <em>(Project -&gt; Add To
+      Project -&gt; Files...)</em>
+    <li>go to the project setting dialog <em>(Project -&gt; Settings)</em>
+    <li>select debug configurations <em>(Setting For -&gt; Multiple
+      Configurations)</em> such as Debug and Unicode Debug
+    <li>select <em>zlib.lib</em> file, then the General tab, and check the box <em>&quot;Exclude
+      file from build&quot;</em>
+    <li>select release configurations
+    <li>select <em>zlib_.lib</em> and exclude it from these builds</li>
+  </ul>
+<p>&nbsp;</p>
+<h2>To Do and updates</h2>
+<p>I currently work on the non-MFC version of the library and a multi-platform
+support. Make sure to check out the site <a href="http://software.artpol.com.pl">http://software.artpol.com.pl</a>
+which is more likely to have an updated version.&nbsp;</p>
+<h2>Downloads</h2>
+<!-- demo and source files -->
+<a HREF="file:///E:/b/ZipArchive/zip_src.zip">
+<p>Download source - 110 KB</a><br>
+<a href="file:///E:/b/ZipArchive/zip_demo.zip">Download example - 40 KB</a></p>
+<h2>History</h2>
+<p><b>03.2001</b></p>
+<ul>
+  <li>when the central directory was not located, the library throws
+    CZipException::cdirNotFound,<br>
+    which allows distinguish from other exceptions (useful when we want to keep
+    prompting<br>
+    the user to insert the last disk in a multi-disk spanning archive).</li>
+</ul>
+</ul>
+<p>&nbsp;</p>
+
+<ul>
+<b>02.2001</b>
+<dl compact>
+  <dt><b>Features added:</b>
+  <dd>
+    <ul>
+      <li>ability to reuse the archive after an exception thrown during
+        extraction
+      <li>added progress control possibilities to CZipArchive::AddNewFile,
+        CZipArchive::ExtractFile, CZipArchive::TestFile</li>
+    </ul>
+  </dd>
+</dl>
+<dl compact>
+  <dt><b>Changes:</b>
+  <dd>
+    <ul>
+      <li>CZipArchive::FindFile operation boosted ( thanks to Darin Warling for
+        the idea)
+      <li>library name changed to ZipArchive</li>
+    </ul>
+  </dd>
+</dl>
+<dl compact>
+  <dt><b>Bugs fixed:</b>
+  <dd>
+    <ul>
+      <li>removed bug during extracting an encrypted file with 0 size
+      <li>fixed bug when extracting a file with an extra field in a local file
+        header (CZipFileHeader::ReadLocal)</li>
+    </ul>
+  </dd>
+</dl>
+<b>01.2001</b>
+<ul>
+  <li>Disk numbering in a disk spanning archive begins now from PKBACK# 001 not
+    PKBACK# 000
+  <li>Adding and extracting without a full path possible in
+    CZipArchive::AddNewFile and CZipArchive::ExtractFile.
+  <li>Several minor changes and enhancements
+  <li>Changed names for several classes.</li>
+</ul>
+<b>11.2000</b>
+<ul>
+  <li>Added support for password encryption and decryption. The encryption used
+    in PKZIP was generously supplied by Roger Schlafly.
+  <li>Testing the archive made easier
+  <li>Unicode support added</li>
+</ul>
+<b>08.2000</b>
+<ul>
+  <li>Bugs fixed</li>
+</ul>
+<b>06.2000</b>
+<p>the code has been completely rewritten since the very beginning; the main
+improvements are:
+<ul>
+  <li>multi-disk archive support
+  <li>creation of the disk spanning archives with the user-defined volume size
+  <li>ability to modify existing archives (add, delete files)
+  <li>modification self-extracting archives
+  <li>write buffer used for faster disk write operations
+  <li>one class for zip and unzip functions
+  <li>fast adding, deleting and extracting files with a single function call</li>
+</ul>
+<b>03.2000</b>
+<ul>
+  <li>international characters in filenames inside archive are now converted in
+    a compatible way with other archiving programs (they are stored converted to
+    OEM inside archive).</li>
+</ul>
+<b>01.2000</b>
+<p>first version; it is just modified code from zip.c and unzip.c files written
+by Gilles Vollant and distributed with zlib library; the modifications are as
+follows:
+<ul>
+  <li>added class' wrappers
+  <li>several bugs fixed
+  <li>several enhancements added
+  <li>MFC support added
+  <li>memory leaks eliminated when write error occurred
+  <li>automatically free used memory on destruction or exception
+  <li>modern error notification using exceptions</li>
+</ul>
+</body>
+</html>

@@ -75,35 +75,32 @@ void RageTexture::CreateFrameRects()
 #include "string.h"
 void RageTexture::GetFrameDimensionsFromFileName( CString sPath, UINT* puFramesWide, UINT* puFramesHigh ) const
 {
-	*puFramesWide = *puFramesHigh = 1;	// initialize in case we don't find dimensions in the file name
+	*puFramesWide = *puFramesHigh = 1;	// set default values in case we don't find the dimension in the file name
 
 	sPath.MakeLower();
 
 	CString sDir, sFName, sExt;
 	splitrelpath( sPath, sDir, sFName, sExt);
 
-	CStringArray sFileNameBits;
-	split( sFName, " ", sFileNameBits, false );
+	CStringArray arrayBits;
+	split( sFName, " ", arrayBits, false );
 
-	if( sFileNameBits.GetSize() < 2 )
-		return;		// there can't be dimensions in the file name if there's no space
-
-	CString sDimensionsPart = sFileNameBits[ sFileNameBits.GetSize()-1 ];	// looks like "10x5"
-
-	CStringArray sDimensionsBits;
-	split( sDimensionsPart, "x", sDimensionsBits, false );
-
-	if( sDimensionsBits.GetSize() != 2 )
+	for( int i=0; i<arrayBits.GetSize(); i++ )
 	{
-		return;
-	}
-	else
-	{
-		if( !IsAnInt(sDimensionsBits[0]) || !IsAnInt(sDimensionsBits[1]) )
-			return;
+		CString &sBit = arrayBits[ i ];	
+		
+		// Test to see if it looks like "%ux%u" (e.g. 16x8)
 
-		*puFramesWide = atoi(sDimensionsBits[0]);
-		*puFramesHigh = atoi(sDimensionsBits[1]);
+		CStringArray arrayDimensionsBits;
+		split( sBit, "x", arrayDimensionsBits, false );
+
+		if( arrayDimensionsBits.GetSize() != 2 )
+			continue;
+		else if( !IsAnInt(arrayDimensionsBits[0]) || !IsAnInt(arrayDimensionsBits[1]) )
+			continue;
+
+		*puFramesWide = atoi(arrayDimensionsBits[0]);
+		*puFramesHigh = atoi(arrayDimensionsBits[1]);
 		return;
 	}
 

@@ -62,38 +62,49 @@ void RageBitmapTexture::Create()
 {
 	HRESULT hr;
 
+	///////////////////////
+	// Figure out which texture format to use
+	///////////////////////
 	D3DFORMAT fmtTexture;
-	if( !GAMEINFO )
+
+	// look in the file name for a hint
+	m_sFilePath.MakeLower();
+	if( -1 != m_sFilePath.Find("(no alpha)") )
+	{
+		fmtTexture = D3DFMT_R5G6B5;
+	}
+	else if( -1 != m_sFilePath.Find("(1 alpha)") )
+	{
+		fmtTexture = D3DFMT_A1R5G5B5;
+	}
+	else	// no hint, assume full alpha
 	{
 		fmtTexture = D3DFMT_A4R4G4B4;
 	}
-	else if( GAMEINFO->m_GameOptions.m_iDisplayColor == 16 )
+
+	// if the user has requested high color textures, use the higher color
+	if( GAMEINFO != NULL
+	 && GAMEINFO->m_GameOptions.m_iDisplayColor == 32 
+	 && GAMEINFO->m_GameOptions.m_iTextureColor == 32 )
 	{
-		fmtTexture = D3DFMT_A4R4G4B4;		
-	}
-	else
-	{
-		switch(	GAMEINFO->m_GameOptions.m_iTextureColor )
-		{
-		case 16:	fmtTexture = D3DFMT_A4R4G4B4;	break;
-		case 32:	fmtTexture = D3DFMT_A8R8G8B8;	break;
-		default:	ASSERT( true );		// invalid iTextureColor value
-		}
+		fmtTexture = D3DFMT_A8R8G8B8;
 	}
 
+
+	
+	// load texture and get image info
 	D3DXIMAGE_INFO ddii;
 
-	// load texture
 	if( FAILED( hr = D3DXCreateTextureFromFileEx( 
 		m_pd3dDevice,				// device
 		m_sFilePath,				// soure file
 		D3DX_DEFAULT, D3DX_DEFAULT,	// width, height 
-		3,				// mip map levels
+		4,							// mip map levels
 		0,							// usage (is a render target?)
-		fmtTexture,			// our preferred texture format
+		fmtTexture,					// our preferred texture format
 		D3DPOOL_MANAGED,			// which memory pool
-		D3DX_FILTER_BOX | D3DX_FILTER_DITHER,			// filter
-		D3DX_FILTER_BOX | D3DX_FILTER_DITHER,			// mip filter
+		D3DX_FILTER_BOX,			// filter
+		D3DX_FILTER_BOX,			// mip filter
 		0,							// no color key
 		&ddii,						// struct to fill with source image info
 		NULL,						// no palette
