@@ -18,7 +18,7 @@ static RageKeySym XSymToKeySym( int key )
 		KEY_INV       , KEY_INV     , KEY_INV      , KEY_ENTER   , KEY_INV      , /* 10 - 14 */
 		KEY_INV       , KEY_INV     , KEY_INV      , KEY_INV     , KEY_PAUSE    , /* 15 - 19 */
 		KEY_INV       , KEY_INV     , KEY_INV      , KEY_INV     , KEY_INV      , /* 20 - 24 */
-		KEY_INV       , KEY_INV     , KEY_INV      , KEY_ESC     , KEY_INV      , /* 25 - 29 */
+		KEY_INV       , KEY_INV     , KEY_ESC      , KEY_INV     , KEY_INV      , /* 25 - 29 */
 		KEY_INV       , KEY_INV     , KEY_SPACE    , KEY_EXCL    , KEY_QUOTE    , /* 30 - 34 */
 		KEY_HASH      , KEY_DOLLAR  , KEY_PERCENT  , KEY_AMPER   , KEY_SQUOTE   , /* 35 - 39 */
 		KEY_LPAREN    , KEY_RPAREN  , KEY_ASTERISK , KEY_PLUS    , KEY_COMMA    , /* 40 - 44 */
@@ -103,7 +103,7 @@ static RageKeySym XSymToKeySym( int key )
 	}
 
 	/* 0...31: */
-	if( key - 0xFF00 < 0x0D)
+	if( key - 0xFF00 < 0x20)
 		return ASCIIKeySyms[key - 0xFF00];
 
 	return KEY_INVALID;
