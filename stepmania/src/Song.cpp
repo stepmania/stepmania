@@ -289,7 +289,7 @@ bool Song::LoadWithoutCache( CString sDir )
 
 bool Song::LoadFromSongDir( CString sDir )
 {
-	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.GetString() );
+//	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.GetString() );
 
 	sDir.Replace("\\", "/");
 	// make sure there is a trailing '\\' at the end of sDir
@@ -311,7 +311,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	if( GetHashForDirectory(m_sSongDir) == uDirHash && // this cache is up to date 
 		DoesFileExist(GetCacheFilePath()))	
 	{
-		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.GetString(), GetCacheFilePath().GetString() );
+//		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.GetString(), GetCacheFilePath().GetString() );
 		SMLoader ld;
 		ld.LoadFromSMFile( GetCacheFilePath(), *this );
 	}
