@@ -844,9 +844,6 @@ void MusicWheel::Update( float fDeltaTime )
 
 void MusicWheel::ChangeMusic(int dist)
 {
-	if(GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP)
-		GetSelectedCourse()->MakeNormal();
-
 	m_iSelection += dist;
 	if( m_iSelection < 0 )
 		m_iSelection = m_CurWheelItemData.size()-1;
@@ -856,9 +853,6 @@ void MusicWheel::ChangeMusic(int dist)
 	RebuildWheelItemDisplays();
 
 	m_fPositionOffsetFromSelection += dist;
-
-	if(GAMESTATE->m_bDifficultCourses && GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP)
-		GetSelectedCourse()->MakeDifficult();
 
 	SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 

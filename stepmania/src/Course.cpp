@@ -22,6 +22,8 @@
 #include "SongOptions.h"
 #include "RageUtil.h"
 #include "TitleSubstitution.h"
+#include "Notes.h"
+#include "GameState.h"
 
 
 Course::Course()
@@ -431,10 +433,26 @@ void Course::GetStageInfo(
 		if( !pSong || !pNotes )
 			continue;	// this song entry isn't playable.  Skip.
 
+		if(GAMESTATE->m_bDifficultCourses)
+		{
+			/* See if we can find a NoteData that's one notch more difficult than
+			 * the one we found above. */
+			Difficulty dc = pNotes->GetDifficulty();
+			if(dc < DIFFICULTY_CHALLENGE)
+			{
+				dc  = Difficulty(dc + 1);
+				Notes* pNewNotes = pSong->GetNotes( nt, dc );
+				if(pNewNotes)
+					pNotes = pNewNotes;
+			}
+		}
+
 		vSongsOut.push_back( pSong ); 
 		vNotesOut.push_back( pNotes ); 
 		vsModifiersOut.push_back( e.modifiers );
 	}
+
+
 }
 
 bool Course::GetFirstStageInfo(
@@ -607,41 +625,6 @@ void Course::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDan
 			}
 		}
 	}
-}
-
-bool Course::MakeNormal()
-{
-	if( !m_bRepeat && m_iLives == -1 ) // nonstop only, not oni or endless
-		if(m_bDifficult) //only make it easy if it's already difficult
-		{
-			unsigned c;
-			for( c = 0; c < m_entries.size(); c++)
-			{
-				if( m_entries[c].difficulty == DIFFICULTY_BEGINNER || m_entries[c].difficulty == DIFFICULTY_INVALID ) // don't suddenly make things invalid or worse
-					continue;
-
-				m_entries[c].difficulty = Difficulty(m_entries[c].difficulty - 1);
-			}
-			m_bDifficult = false;
-			return true;
-		}
-	return false;
-}
-bool Course::MakeDifficult()
-{
-	if( !m_bRepeat && m_iLives == -1 ) // nonstop only, not oni or endless
-		if(!m_bDifficult) //only make it difficult once
-		{
-			unsigned c;
-			for( c = 0; c < m_entries.size(); c++)
-			{
-				if( m_entries[c].difficulty < DIFFICULTY_CHALLENGE ) // don't suddenly make things invalid or worse
-					m_entries[c].difficulty = Difficulty(m_entries[c].difficulty + 1);
-			}
-			m_bDifficult = true;
-			return true;
-		}
-	return false;
 }
 
 

@@ -76,8 +76,6 @@ public:
 	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut ) const;
 	bool ContainsAnyMysterySongs() const;
 	bool GetTotalSeconds( float& fSecondsOut ) const;
-	bool MakeDifficult();
-	bool MakeNormal();
 
 
 	void LoadFromCRSFile( CString sPath );
