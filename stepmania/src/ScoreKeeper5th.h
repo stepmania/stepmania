@@ -24,6 +24,7 @@ class ScoreKeeper5th: public ScoreKeeper
 
 	int				m_iNumTapsAndHolds;
 	int			    m_iMaxScoreSoFar; // for nonstop scoring
+	int				m_iComboBonus;  // 5th-mix combo bonus at end
 	int				m_iPointBonus; // the difference to award at the end
  	int				m_iCurToastyCombo;
 	bool			m_bIsLastSongInCourse;

@@ -35,6 +35,7 @@ struct StageStats
 	int		iCurCombo[NUM_PLAYERS];
 	int		iMaxCombo[NUM_PLAYERS];
 	int		iScore[NUM_PLAYERS];
+	int		iBonus[NUM_PLAYERS];  // bonus to be added on screeneval
 	float	fRadarPossible[NUM_PLAYERS][NUM_RADAR_CATEGORIES];	// filled in by ScreenGameplay on start of notes
 	float	fRadarActual[NUM_PLAYERS][NUM_RADAR_CATEGORIES];	// filled in by ScreenGameplay on start of notes
 	float	fSecondsBeforeFail[NUM_PLAYERS];				// -1 means didn't/hasn't failed

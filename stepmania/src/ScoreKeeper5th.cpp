@@ -59,6 +59,7 @@ ScoreKeeper5th::ScoreKeeper5th( const vector<Steps*>& apNotes_, PlayerNumber pn_
 	m_iCurToastyCombo = 0; 
 	m_iMaxScoreSoFar = 0;
 	m_iPointBonus = 0;
+	m_iComboBonus = 0;
 	m_iNumTapsAndHolds = 0;
 	m_bIsLastSongInCourse = false;
 }
@@ -203,7 +204,28 @@ void ScoreKeeper5th::AddScore( TapNoteScore score )
 			case TNS_GREAT:		m_iScore += 5;		break;
 		}
 	else
+	{
 		m_iScore += GetScore(p, B, sum, m_iTapNotesHit);
+
+		if (!GAMESTATE->IsCourseMode())
+		{
+			// handle combo bonus
+
+			// combo hasn't been updated yet, its one bigger than it really is
+			int m_iCurrentCombo = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] + 1; 
+
+			switch( score )
+			{
+			case TNS_MARVELOUS:
+			case TNS_PERFECT:
+				m_iComboBonus += 55 * m_iCurrentCombo;
+				break;
+			case TNS_GREAT:
+				m_iComboBonus += 33 * m_iCurrentCombo;
+			}
+			GAMESTATE->m_CurStageStats.iBonus[m_PlayerNumber] = m_iComboBonus;
+		}
+	}
 
 	/* Subtract the maximum this step could have been worth from the bonus. */
 	m_iPointBonus -= GetScore(10, B, sum, m_iTapNotesHit);

@@ -131,6 +131,12 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			grade[p] = stageStats.GetGrade( (PlayerNumber)p );
 		else
 			grade[p] = GRADE_E;
+
+		if (PREFSMAN->m_iScoringType == PrefsManager::SCORING_5TH)
+		{
+			int ScoreBonuses[9] = {0, 0, 100, 1000, 10000, 100000, 1000000, 10000000, 10000000};
+			GAMESTATE->m_CurStageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
+		}
 	}
 
 	Grade max_grade = GRADE_NO_DATA;
@@ -813,6 +819,27 @@ void ScreenEvaluation::TweenOffScreen()
 void ScreenEvaluation::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
+
+	for( int p=0; p<NUM_PLAYERS; p++)
+	{
+		if (GAMESTATE->m_CurStageStats.iBonus[p] == 0)
+			continue;
+
+		// wait a few seconds before adding bonus
+		if ( RageTimer::GetTimeSinceStart() - m_fScreenCreateTime  < 3.0f)
+			continue;
+
+		int increment = GAMESTATE->m_CurStageStats.iBonus[p]/10;
+
+		if (increment < 1) increment = min(1024, GAMESTATE->m_CurStageStats.iBonus[p]);
+//		if (GAMESTATE->m_CurStageStats.iBonus[p] > 5000000) increment = 499999;
+
+		GAMESTATE->m_CurStageStats.iBonus[p] -= increment;
+
+		GAMESTATE->m_CurStageStats.iScore[p] += increment;
+
+		m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, GAMESTATE->m_CurStageStats.iScore[p]) );
+	}
 
 /*	for( int l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
