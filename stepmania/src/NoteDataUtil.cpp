@@ -14,6 +14,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "PlayerOptions.h"
+#include "Song.h"
 
 NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex )
 {
@@ -1234,6 +1235,31 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_PLANTED] )	NoteDataUtil::Planted(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_STOMP] )		NoteDataUtil::Stomp(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_TWISTER] )	NoteDataUtil::Twister(nd, fStartBeat, fEndBeat);
+}
+
+void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
+{
+	// throw an attack in every 30 seconds
+
+	const char* szAttacks[3] =
+	{
+		"2x",
+		"drunk",
+		"dizzy",
+	};
+
+	for( float sec=15; sec<pSong->m_fMusicLengthSeconds; sec+=30 )
+	{
+		float fBeat = pSong->GetBeatFromElapsedTime( sec );
+		int iBeat = (int)fBeat;
+		int iTrack = iBeat % nd.GetNumTracks();	// deterministically calculates track
+		Attack attack;
+		attack.fStartSecond = -1;
+		attack.fSecsRemaining = 15;
+		attack.sModifier = szAttacks[rand()%ARRAYSIZE(szAttacks)];
+		attack.level = ATTACK_LEVEL_1;
+		nd.SetTapAttackNote( iTrack, BeatToNoteRow(iBeat), attack );
+	}
 }
 
 void NoteDataUtil::Scale( NoteData &nd, float fScale )

@@ -530,14 +530,14 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	ZERO( m_pInventory );
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_BATTLE:
-			m_pInventory[p] = new Inventory;
-			m_pInventory[p]->Load( (PlayerNumber)p );
-			this->AddChild( m_pInventory[p] );
-			break;
-		}
+//		switch( GAMESTATE->m_PlayMode )
+//		{
+//		case PLAY_MODE_BATTLE:
+//			m_pInventory[p] = new Inventory;
+//			m_pInventory[p]->Load( (PlayerNumber)p );
+//			this->AddChild( m_pInventory[p] );
+//			break;
+//		}
 	}
 
 	
@@ -644,9 +644,9 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 			m_announcerBattleTrickLevel1.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level1") );
 			m_announcerBattleTrickLevel2.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level2") );
 			m_announcerBattleTrickLevel3.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level3") );
-			m_soundBattleTrickLevel1.Load(	THEME->GetPathToS("ScreenGameplay battle trick level1") );
-			m_soundBattleTrickLevel2.Load(	THEME->GetPathToS("ScreenGameplay battle trick level2") );
-			m_soundBattleTrickLevel3.Load(	THEME->GetPathToS("ScreenGameplay battle trick level3") );
+			m_soundBattleTrickLevel1.Load(	THEME->GetPathToS("ScreenGameplay battle trick level1"), true );
+			m_soundBattleTrickLevel2.Load(	THEME->GetPathToS("ScreenGameplay battle trick level2"), true );
+			m_soundBattleTrickLevel3.Load(	THEME->GetPathToS("ScreenGameplay battle trick level3"), true );
 			m_announcerBattleDamageLevel1.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level1") );
 			m_announcerBattleDamageLevel2.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level2") );
 			m_announcerBattleDamageLevel3.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level3") );
@@ -1504,24 +1504,24 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	{
 		m_Player[StyleI.player].Step( StyleI.col, DeviceI.ts ); 
 	}
-	else if( type==IET_FIRST_PRESS && 
-		!PREFSMAN->m_bAutoPlay && 
-		MenuI.IsValid() &&
-		GAMESTATE->IsPlayerEnabled( MenuI.player ) &&
-		GAMESTATE->IsBattleMode() )
-	{
-		int iItemSlot;
-		switch( MenuI.button )
-		{
-		case MENU_BUTTON_LEFT:	iItemSlot = 0;	break;
-		case MENU_BUTTON_START:	iItemSlot = 1;	break;
-		case MENU_BUTTON_RIGHT:	iItemSlot = 2;	break;
-		default:				iItemSlot = -1;	break;
-		}
-		
-		if( iItemSlot != -1 )
-			m_pInventory[MenuI.player]->UseItem( iItemSlot );
-	}
+//	else if( type==IET_FIRST_PRESS && 
+//		!PREFSMAN->m_bAutoPlay && 
+//		MenuI.IsValifd() &&
+//		GAMESTATE->IsPlayerEnabled( MenuI.player ) &&
+//		GAMESTATE->IsBattleMode() )
+//	{
+//		int iItemSlot;
+//		switch( MenuI.button )
+//		{
+//		case MENU_BUTTON_LEFT:	iItemSlot = 0;	break;
+//		case MENU_BUTTON_START:	iItemSlot = 1;	break;
+//		case MENU_BUTTON_RIGHT:	iItemSlot = 2;	break;
+//		default:				iItemSlot = -1;	break;
+//		}
+//		
+//		if( iItemSlot != -1 )
+//			m_pInventory[MenuI.player]->UseItem( iItemSlot );
+//	}
 }
 
 void ScreenGameplay::UpdateAutoPlayText()
@@ -1878,7 +1878,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_announcerBattleTrickLevel1.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
-		m_soundBattleTrickLevel1.PlayRandom();
+		m_soundBattleTrickLevel1.Play();
 		break;
 	case SM_BattleTrickLevel2:
 		if( SECS_SINCE_LAST_COMMENT > 3 )
@@ -1886,7 +1886,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_announcerBattleTrickLevel2.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
-		m_soundBattleTrickLevel2.PlayRandom();
+		m_soundBattleTrickLevel2.Play();
 		break;
 	case SM_BattleTrickLevel3:
 		if( SECS_SINCE_LAST_COMMENT > 3 )
@@ -1894,7 +1894,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_announcerBattleTrickLevel3.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
-		m_soundBattleTrickLevel3.PlayRandom();
+		m_soundBattleTrickLevel3.Play();
 		break;
 	
 	case SM_BattleDamageLevel1:

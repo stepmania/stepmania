@@ -181,9 +181,9 @@ protected:
 	RandomSample	m_announcerBattleTrickLevel1;
 	RandomSample	m_announcerBattleTrickLevel2;
 	RandomSample	m_announcerBattleTrickLevel3;
-	RandomSample	m_soundBattleTrickLevel1;
-	RandomSample	m_soundBattleTrickLevel2;
-	RandomSample	m_soundBattleTrickLevel3;
+	RageSound		m_soundBattleTrickLevel1;
+	RageSound		m_soundBattleTrickLevel2;
+	RageSound		m_soundBattleTrickLevel3;
 	RandomSample	m_announcerBattleDamageLevel1;
 	RandomSample	m_announcerBattleDamageLevel2;
 	RandomSample	m_announcerBattleDamageLevel3;

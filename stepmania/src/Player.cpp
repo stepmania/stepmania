@@ -137,6 +137,38 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 
 	/* Apply transforms. */
 	NoteDataUtil::TransformNoteData( *this, GAMESTATE->m_PlayerOptions[pn], GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+	
+	switch( GAMESTATE->m_PlayMode )
+	{
+		case PLAY_MODE_BATTLE:
+			{
+				// ugly, ugly, ugly.  Works only w/ dance.
+				NoteDataUtil::TransformNoteData( *this, GAMESTATE->m_PlayerOptions[pn], GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+				
+				// shuffle either p1 or p2
+				static int count = 0;
+				switch( count )
+				{
+				case 0:
+				case 3:
+					// do shuffle
+					NoteDataUtil::Turn( *this, STEPS_TYPE_DANCE_SINGLE, NoteDataUtil::mirror);
+					break;
+				case 1:
+				case 2:
+					// don't shuffle
+					break;
+				default:
+					ASSERT(0);
+				}
+				count++;
+				count %= 4;
+
+				// HACK: Autogen in attacks for battle
+				NoteDataUtil::AddTapAttacks( *this, GAMESTATE->m_pCurSong );
+			}
+			break;
+	}
 
 	int iStartDrawingAtPixels = GAMESTATE->m_bEditing ? -100 : START_DRAWING_AT_PIXELS;
 	int iStopDrawingAtPixels = GAMESTATE->m_bEditing ? 400 : STOP_DRAWING_AT_PIXELS;
@@ -176,8 +208,9 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	// Need to set Y positions of all these elements in Update since
 	// they change depending on PlayerOptions.
 
-	m_soundMine.Load( THEME->GetPathToS(ssprintf("Player mine p%d",pn+1)) );
-	m_soundAttack.Load( THEME->GetPathToS(ssprintf("Player attack p%d",pn+1)) );
+	m_soundMine.Load( THEME->GetPathToS(ssprintf("Player mine p%d",pn+1)), true );
+	m_soundAttackLaunch.Load( THEME->GetPathToS(ssprintf("Player attack launch p%d",pn+1)), true );
+	m_soundAttackEnding.Load( THEME->GetPathToS(ssprintf("Player attack ending p%d",pn+1)), true );
 }
 
 void PlayerMinus::Update( float fDeltaTime )
@@ -186,6 +219,10 @@ void PlayerMinus::Update( float fDeltaTime )
 
 	if( GAMESTATE->m_pCurSong==NULL )
 		return;
+
+	if( GAMESTATE->m_bActiveAttackEndedThisUpdate[m_PlayerNumber] )
+		m_soundAttackEnding.Play();
+
 
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
 
@@ -591,7 +628,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 					score = TNS_NONE;	// don't score this as anything
 					if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowAttackSeconds )
 					{
-						m_soundAttack.Play();
+						m_soundAttackLaunch.Play();
 						// put attack in effect
 						Attack attack = this->GetAttackAt( col, iIndexOverlappingNote );
 						GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[m_PlayerNumber], attack );
@@ -681,7 +718,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			}
 			if( IsTapAttack(tn)  &&  score > TNS_GOOD )
 			{
-				m_soundAttack.Play();
+				m_soundAttackLaunch.Play();
 				score = TNS_NONE;	// don't score this as anything
 				
 				// put attack in effect
@@ -716,7 +753,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 			if( IsTapAttack(tn) )
 			{
-				m_soundAttack.Play();
+				m_soundAttackLaunch.Play();
 				score = TNS_NONE;	// don't score this as anything
 				
 				// put attack in effect

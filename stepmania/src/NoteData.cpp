@@ -242,6 +242,7 @@ const Attack& NoteData::GetAttackAt( int track, int row )
 {
 	TapNote tn = GetTapNote(track, row);
 	ASSERT( IsTapAttack(tn) );
+	ASSERT( m_AttackMap.find(tn) != m_AttackMap.end() );
 	return m_AttackMap[tn];
 }
 

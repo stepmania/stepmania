@@ -80,6 +80,7 @@ namespace NoteDataUtil
 	bool RowPassesValidMask( NoteData &in, int row, const bool bValidMask[] );
 
 	void TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, float fStartBeat = 0, float fEndBeat = 99999 );
+	void AddTapAttacks( NoteData &nd, Song* pSong );
 
 	void Scale( NoteData &nd, float fScale );
 
