@@ -158,8 +158,8 @@ stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transi
 # dealing with its build and libjpeg, png, etc--not worth it.
 stepmania_LDADD = \
 		  $(GL_LIBS) \
-		  SDL-1.2.5/src/.libs/libSDL.a \
-		  SDL_sound-1.0.0/.libs/libSDL_sound.a \
+		  $(VPATH)/SDL-1.2.5/src/.libs/libSDL.a \
+		  $(VPATH)/SDL_sound-1.0.0/.libs/libSDL_sound.a \
 		  $(SDL_LIBS)
 
 INCLUDES = $(SDL_CFLAGS)
