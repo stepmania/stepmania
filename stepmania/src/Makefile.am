@@ -70,10 +70,10 @@ DifficultyIcon.cpp DifficultyIcon.h DifficultyRating.cpp DifficultyRating.h Edit
 FadingBanner.cpp FadingBanner.h DifficultyMeter.cpp DifficultyMeter.h GradeDisplay.cpp GradeDisplay.h GrooveRadar.cpp \
 GrooveRadar.h GroupList.cpp GroupList.h JukeboxMenu.cpp JukeboxMenu.h MenuElements.cpp MenuElements.h \
 MenuTimer.cpp MenuTimer.h MusicBannerWheel.cpp MusicBannerWheel.h MusicList.cpp MusicList.h MusicSortDisplay.cpp \
-MusicSortDisplay.h MusicStatusDisplay.cpp MusicStatusDisplay.h MusicWheel.cpp MusicWheel.h MusicWheelItem.cpp \
-MusicWheelItem.h OptionIcon.cpp OptionIcon.h OptionIconRow.cpp OptionIconRow.h OptionsCursor.cpp OptionsCursor.h \
-ScrollBar.cpp ScrollBar.h ScrollingList.cpp ScrollingList.h SmallGradeDisplay.cpp SmallGradeDisplay.h \
-SnapDisplay.cpp SnapDisplay.h StageDisplay.cpp StageDisplay.h TextBanner.cpp TextBanner.h TipDisplay.cpp TipDisplay.h
+MusicSortDisplay.h MusicWheel.cpp MusicWheel.h MusicWheelItem.cpp MusicWheelItem.h OptionIcon.cpp OptionIcon.h \
+OptionIconRow.cpp OptionIconRow.h OptionsCursor.cpp OptionsCursor.h ScrollBar.cpp ScrollBar.h ScrollingList.cpp \
+ScrollingList.h SmallGradeDisplay.cpp SmallGradeDisplay.h SnapDisplay.cpp SnapDisplay.h TextBanner.cpp TextBanner.h \
+TipDisplay.cpp TipDisplay.h WheelNotifyIcon.cpp WheelNotifyIcon.h
 
 ActorsInGameplay = \
 ArrowEffects.cpp ArrowEffects.h Background.cpp Background.h BGAnimation.cpp BGAnimation.h BGAnimationLayer.cpp \
@@ -100,15 +100,14 @@ ScreenManager.h ScreenMapControllers.cpp ScreenMapControllers.h ScreenMemoryCard
 ScreenMusicScroll.cpp ScreenMusicScroll.h ScreenNameEntry.cpp ScreenNameEntry.h ScreenOptions.cpp ScreenOptions.h \
 ScreenOptionsMenu.cpp ScreenOptionsMenu.h ScreenPlayerOptions.cpp ScreenPlayerOptions.h ScreenPrompt.cpp \
 ScreenPrompt.h ScreenRanking.cpp ScreenRanking.h ScreenSandbox.cpp ScreenSandbox.h ScreenSelectCourse.cpp \
-ScreenSelect.cpp ScreenSelect.h ScreenSelectCourse.h ScreenSelectGame.cpp \
+ScreenSelect.cpp ScreenSelect.h ScreenSelectCourse.h ScreenSelectDifficulty.cpp \
+ScreenSelectDifficulty.h ScreenSelectDifficultyEX.cpp ScreenSelectDifficultyEX.h ScreenSelectGame.cpp \
 ScreenSelectGame.h ScreenSelectGroup.cpp ScreenSelectGroup.h ScreenSelectMode.cpp ScreenSelectMode.h \
-ScreenSelectMusic.cpp ScreenSelectMusic.h ScreenSelectStyle5th.cpp \
+ScreenSelectMusic.cpp ScreenSelectMusic.h ScreenSelectStyle.cpp ScreenSelectStyle.h ScreenSelectStyle5th.cpp \
 ScreenSelectStyle5th.h ScreenSongOptions.cpp ScreenSongOptions.h ScreenStage.cpp ScreenStage.h \
 ScreenStyleSplash.cpp ScreenStyleSplash.h ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h \
 ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h \
-ScreenUnlock.h ScreenWarning.h ScreenMiniMenu.cpp ScreenMiniMenu.h ScreenSoundOptions.cpp ScreenSoundOptions.h \
-ScreenSelectMaxType1.cpp ScreenSelectMaxType1.h ScreenSelectMaxType2.cpp ScreenSelectMaxType2.h \
-ScreenSelectDifficultyEX.cpp ScreenSelectDifficultyEX.h
+ScreenUnlock.h ScreenWarning.h ScreenMiniMenu.cpp ScreenMiniMenu.h ScreenSoundOptions.cpp ScreenSoundOptions.h
 
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
