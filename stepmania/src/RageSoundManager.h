@@ -66,7 +66,7 @@ class SoundMixBuffer
 	int vol; /* vol * 256 */
 
 public:
-	void write(const Sint16 *buf, unsigned size);
+	void write( const Sint16 *buf, unsigned size, float volume = -1 );
 	void read(Sint16 *buf);
 	void read( float *buf );
 	unsigned size() const { return used; }
