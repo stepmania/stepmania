@@ -644,14 +644,6 @@ SOURCE=.\HoldGhostArrow.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\MiniBackground.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\MiniBackground.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\MotionBlurSprite.cpp
 # End Source File
 # Begin Source File
@@ -681,14 +673,6 @@ SOURCE=.\MusicWheel.cpp
 # Begin Source File
 
 SOURCE=.\MusicWheel.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\PreviewGraphic.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\previewgraphic.h
 # End Source File
 # Begin Source File
 
