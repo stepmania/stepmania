@@ -77,6 +77,7 @@ protected:
 	virtual void Register();
 
 	CString m_sSerializedData;
+	bool m_bWasSet;
 };
 
 #endif

@@ -185,11 +185,18 @@ void LuaData::LoadFromString( const CString &s )
 
 void LuaData::BeforeReset()
 {
-	m_sSerializedData = Serialize();
+	/* If we're unset, Register() should leave us unset, not set us to LUA_REFNIL. */
+	m_bWasSet = IsSet();
+
+	if( m_bWasSet )
+		m_sSerializedData = Serialize();
 }
 
 void LuaData::Register()
 {
+	if( !m_bWasSet )
+		return;
+
 	LoadFromString( m_sSerializedData );
 	m_sSerializedData.erase( m_sSerializedData.begin(), m_sSerializedData.end() );
 }
