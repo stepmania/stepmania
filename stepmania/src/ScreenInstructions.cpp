@@ -41,12 +41,9 @@ ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements
 	if( GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE )
 	{
 		Difficulty easiestDifficulty = (Difficulty)(NUM_DIFFICULTIES-1);
-		for( int p=0; p<NUM_PLAYERS; p++ )
-		{
-			if( !GAMESTATE->IsHumanPlayer(p) )
-				continue;
+		FOREACH_HumanPlayer(p)
 			easiestDifficulty = min( easiestDifficulty, GAMESTATE->m_PreferredDifficulty[p] );
-		}
+
 		if( easiestDifficulty > DIFFICULTY_EASY )
 		{
 			HandleScreenMessage( SM_GoToNextScreen );
@@ -68,6 +65,8 @@ ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements
 	m_sprHowToPlay.BeginTweening( 0.4f );		// sleep
 	m_sprHowToPlay.BeginTweening( 0.6f, Actor::TWEEN_DECELERATE );
 	m_sprHowToPlay.SetX( CENTER_X );
+
+	this->SortByDrawOrder();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenInstructions music") );
 }
