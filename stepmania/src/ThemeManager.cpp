@@ -187,7 +187,7 @@ try_element_again:
 			file.Open( sRedirFilePath, CFile::modeRead );
 			CString sNewFileName;
 			file.ReadString( sNewFileName );
-//			CString sNewFilePath = sDir+"\\"+sNewFileName; // This is what it used to be, FONTS were getting extra slashes
+//			CString sNewFilePath = sDir+"\\"+sNewFileName; // This is what it used to be, FONT redirs were getting extra slashes
 			// at the start of their file names, so I took out this extra slash - Andy.
 			CString sNewFilePath = sDir+sNewFileName;
 			if( sNewFileName == ""  ||  !DoesFileExist(sNewFilePath) )
