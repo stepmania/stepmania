@@ -87,12 +87,12 @@ protected:
 	virtual void GoToNextState() = 0;
 	virtual void GoToPrevState() = 0;
 
-	void MenuLeft( PlayerNumber pn, const InputEventType type ) { ChangeValue(pn,-1,type != IET_FIRST_PRESS); }
-	void MenuRight( PlayerNumber pn, const InputEventType type ) { ChangeValue(pn,+1,type != IET_FIRST_PRESS); }
-	void ChangeValue( PlayerNumber pn, int iDelta, bool Repeat );
-	void MenuUp( PlayerNumber pn, const InputEventType type ) { Move( pn, -1, type != IET_FIRST_PRESS ); }
-	void MenuDown( PlayerNumber pn, const InputEventType type ) { Move( pn, +1, type != IET_FIRST_PRESS ); }
-	void Move( PlayerNumber pn, int dir, bool Repeat );
+	void MenuLeft( PlayerNumber pn, const InputEventType type ) { ChangeValueInRow(pn,-1,type != IET_FIRST_PRESS); }
+	void MenuRight( PlayerNumber pn, const InputEventType type ) { ChangeValueInRow(pn,+1,type != IET_FIRST_PRESS); }
+	void ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat );
+	void MenuUp( PlayerNumber pn, const InputEventType type ) { MoveRow( pn, -1, type != IET_FIRST_PRESS ); }
+	void MenuDown( PlayerNumber pn, const InputEventType type ) { MoveRow( pn, +1, type != IET_FIRST_PRESS ); }
+	void MoveRow( PlayerNumber pn, int dir, bool Repeat );
 
 	/* Returns -1 if on a row with no OptionRowData (eg. EXIT). */
 	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const;

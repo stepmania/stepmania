@@ -860,7 +860,7 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 
 	if( type != IET_RELEASE && bHoldingLeftOrRight )
 	{
-		Move( MenuI.player, -1, type != IET_FIRST_PRESS );
+		MoveRow( MenuI.player, -1, type != IET_FIRST_PRESS );
 		return;
 	}
 
@@ -1097,8 +1097,6 @@ void ScreenOptions::StartGoToNextState()
 
 void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 {
-	if( m_Menu.IsTransitioning() )
-		return;
 	if( type == IET_RELEASE )
 		return;
 	
@@ -1110,13 +1108,24 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	if( data.bMultiSelect )
 	{
 		int iChoiceInRow = row.m_iChoiceWithFocus[pn];
-		row.m_vbSelected[pn][iChoiceInRow] = !row.m_vbSelected[pn][iChoiceInRow];
-		if( row.m_vbSelected[pn][iChoiceInRow] )
-			m_SoundToggleOn.Play();
+
+		if( iChoiceInRow == 0 )
+		{
+			MenuDown( pn, type );	// can't go down any more		
+		}
 		else
-			m_SoundToggleOff.Play();
-		PositionUnderlines();
-		RefreshIcons();
+		{
+			row.m_vbSelected[pn][iChoiceInRow] = !row.m_vbSelected[pn][iChoiceInRow];
+			if( row.m_vbSelected[pn][iChoiceInRow] )
+				m_SoundToggleOn.Play();
+			else
+				m_SoundToggleOff.Play();
+			PositionUnderlines();
+			RefreshIcons();
+			
+			// move to the first choice
+			ChangeValueInRow( pn, -row.m_iChoiceWithFocus[pn], type != IET_FIRST_PRESS );
+		}
 	}
 	else
 	{
@@ -1145,7 +1154,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 }
 
 /* Left/right */
-void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
+void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 {
 	const int iCurRow = m_iCurrentRow[pn];
 	Row &row = *m_Rows[iCurRow];
@@ -1153,8 +1162,8 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 
 	/* If START is being pressed, and in NAV_THREE_KEY, then we're holding left/right
 	 * and start to move backwards.  Don't move left and right, too. */
-	if( m_OptionsNavigation == NAV_THREE_KEY && INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_START) ) )
-		return;
+//	if( m_OptionsNavigation == NAV_THREE_KEY && INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_START) ) )
+//		return;
 
 	const int iNumOptions = (row.Type == Row::ROW_EXIT)? 1: optrow.choices.size();
 	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && iNumOptions <= 1 )	// 1 or 0
@@ -1164,7 +1173,7 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 		 *
 		 * XXX: Only allow repeats if the opposite key isn't pressed; otherwise, holding both
 		 * directions will repeat in place continuously, which is weird. */
-		Move( pn, iDelta, Repeat );
+		MoveRow( pn, iDelta, Repeat );
 		return;
 	}
 
@@ -1218,7 +1227,7 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 
 
 /* Up/down */
-void ScreenOptions::Move( PlayerNumber pn, int dir, bool Repeat ) 
+void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat ) 
 {
 	LOG->Trace("move pn %i, dir %i, rep %i", pn, dir, Repeat);
 	bool changed = false;
