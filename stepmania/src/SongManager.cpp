@@ -671,10 +671,14 @@ void SongManager::Cleanup()
  * pointers, which are updated explicitly in Song::RevertFromDisk. */
 void SongManager::Invalidate( Song *pStaleSong )
 {
-	/* Erase cached course info. */
-	FOREACH_CONST( Course*, m_pCourses, c )
-		(*c)->Invalidate( pStaleSong );
+	// It's a real pain to selectively invalidate only those Courses with 
+	// dependencies on the stale Song.  So, instead, just reload all Courses.
+	// It doesn't take very long.
+	FreeCourses();
+	InitCoursesFromDisk( NULL );
+	InitAutogenCourses();
 
+	// invalidate cache
 	StepsID::Invalidate( pStaleSong );
 }
 

@@ -1337,9 +1337,11 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToNextScreen:
 		// Reload song from disk to discard changes.
 		SONGMAN->RevertFromDisk( GAMESTATE->m_pCurSong, true );
+		
 		/* We might do something with m_pSteps (eg. UpdateTextInfo) before we end up
 		 * in ScreenEditMenu, and m_pSteps might be invalid due to RevertFromDisk. */
 		m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+
 		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
 		break;
 	case SM_BackFromMainMenu:

@@ -31,7 +31,7 @@ public:
 	StepsID() { Unset(); }
 	void Unset() { FromSteps(NULL); }
 	void FromSteps( const Steps *p );
-	Steps *ToSteps( const Song *p, bool bAllowNull ) const;
+	Steps *ToSteps( const Song *p, bool bAllowNull, bool bUseCache = true ) const;
 	bool operator<( const StepsID &rhs ) const;
 	bool MatchesStepsType( StepsType s ) const { return st == s; }
 

@@ -8,7 +8,6 @@
 #include "RageSoundReader_FileReader.h"
 #include "RageSurface_Load.h"
 #include "RageException.h"
-#include "SongManager.h"
 #include "SongCacheIndex.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
@@ -78,29 +77,28 @@ Song::Song()
 
 Song::~Song()
 {
-	for( unsigned i=0; i<m_vpSteps.size(); i++ )
-		SAFE_DELETE( m_vpSteps[i] );
-
+	FOREACH( Steps*, m_vpSteps, s )
+		SAFE_DELETE( *s );
 	m_vpSteps.clear();
-
-	/* We deleted some Steps*; clear stuff that used it. */
-	/* TODO: Don't make Song depend on SongManager.  This is breaking 
-	 * encapsulation and placing confusing limitation on what can be done in 
-	 * SONGMAN->Invalidate(). -Chris */
-	SONGMAN->Invalidate( this );
+	
+	// It's the responsibility of the owner of this Song to make sure
+	// that all pointers to this Song and its Steps are invalidated.
 }
 
 /* Reset to an empty song. */
 void Song::Reset()
 {
-	for( unsigned i=0; i<m_vpSteps.size(); i++ )
-		SAFE_DELETE( m_vpSteps[i] );
+	FOREACH( Steps*, m_vpSteps, s )
+		SAFE_DELETE( *s );
 	m_vpSteps.clear();
 	FOREACH_StepsType( st )
 		m_vpStepsByType[st].clear();
 
 	Song empty;
 	*this = empty;
+
+	// It's the responsibility of the owner of this Song to make sure
+	// that all pointers to this Song and its Steps are invalidated.
 }
 
 

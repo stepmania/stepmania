@@ -198,7 +198,7 @@ void Steps::Decompress() const
 		StepsID ID;
 		ID.FromSteps( this );
 
-		Steps *pSteps = ID.ToSteps( &s, true );
+		Steps *pSteps = ID.ToSteps( &s, true, false );	// don't use cache
 		if( pSteps == NULL )
 		{
 			LOG->Warn( "Couldn't find %s in \"%s\"", ID.ToString().c_str(), m_sFilename.c_str() );

@@ -142,14 +142,17 @@ void StepsID::FromSteps( const Steps *p )
  * to have access to Song::m_LoadedFromProfile. */
 
 static map<StepsID,Steps *> g_StepsIDCache;
-Steps *StepsID::ToSteps( const Song *p, bool bAllowNull ) const
+Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
 {
 	if( st == STEPS_TYPE_INVALID || dc == DIFFICULTY_INVALID )
 		return NULL;
 
-	map<StepsID,Steps *>::iterator it = g_StepsIDCache.find( *this );
-	if( it != g_StepsIDCache.end() )
-		return it->second;
+	if( bUseCache )
+	{
+		map<StepsID,Steps *>::iterator it = g_StepsIDCache.find( *this );
+		if( it != g_StepsIDCache.end() )
+			return it->second;
+	}
 
 	vector<Steps*> vNotes;
 	if( dc == DIFFICULTY_EDIT )
@@ -163,7 +166,9 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull ) const
 	else if( !bAllowNull )
 		RageException::Throw( "%i, %i, \"%s\"", st, dc, sDescription.c_str() );	
 
-	g_StepsIDCache[*this] = ret;
+	if( bUseCache )
+		g_StepsIDCache[*this] = ret;
+	
 	return ret;
 }
 

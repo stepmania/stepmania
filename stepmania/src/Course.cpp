@@ -258,6 +258,9 @@ void Course::LoadFromCRSFile( CString sPath )
 
 void Course::RevertFromDisk()
 {
+	// trying to catch invalid an Course
+	ASSERT( !m_sPath.empty() );
+
 	LoadFromCRSFile( m_sPath );
 }
 
@@ -268,6 +271,7 @@ void Course::Init()
 	m_bRandomize = false;
 	m_iLives = -1;
 	m_bSortByMeter = false;
+	m_entries.clear();
 	FOREACH_Difficulty(dc)
 		m_iCustomMeter[dc] = -1;
 	m_entries.clear();
