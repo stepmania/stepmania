@@ -256,9 +256,12 @@ bool MemoryCardDriver_Linux::MountAndTestWrite( UsbStorageDevice* pDevice, CStri
 	fclose( fp );
 	remove( sFile );
 
+	/* Unmount any previous mounts for this mountpoint. */
+	vector<RageFileManager::DriverLocation> Mounts;
+	FILEMAN->GetLoadedDrivers( Mounts );
+	for( unsigned i = 0; i < Mounts.size(); ++i )
+		FILEMAN->Unmount( Mounts[i].Type, Mounts[i].Root, Mounts[i].MountPoint );
 
-	// XXX: Remounting a different OS directory to the same mount point 
-	// seems to be broken.  Investigate this later...
 	FILEMAN->Mount( "dir", pDevice->sOsMountDir, sMountPoint.c_str() );
 	LOG->Trace( "FILEMAN->Mount %s %s", pDevice->sOsMountDir.c_str(), sMountPoint.c_str() );
 
@@ -272,6 +275,10 @@ void MemoryCardDriver_Linux::Flush( UsbStorageDevice* pDevice )
 
 	// unmount and mount again.  Is there a better way to flush?
 	// "sync" will only flush all file systems at the same time.  -Chris
+	// I don't think so.  Also, sync() merely queues a flush; it doesn't guarantee
+	// that the flush is completed on return.  However, we can mount the filesystem
+	// with the flag "-o sync", which forces synchronous access (but that's probably
+	// very slow.) -glenn
 	CString sCommand = "umount " + pDevice->sOsMountDir;
 	LOG->Trace( "executing '%s'", sCommand.c_str() );
 	system( sCommand );
