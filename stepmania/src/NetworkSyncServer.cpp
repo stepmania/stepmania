@@ -160,7 +160,7 @@ void StepManiaLanServer::ParseData(PacketFunctions& Packet, const unsigned int c
 	case NSCGSR:
 		// Start Request
 		Client[clientNum]->StartRequest(Packet);
-		CheckReady();
+		CheckReady();  //This is what ACTUALLY starts the games
 		break;
 	case NSCGON:
 		// GameOver 
@@ -273,9 +273,17 @@ void StepManiaLanServer::CheckReady()
 
 	//Only check clients that are starting (after ScreenNetMusicSelect before InGame).
 	for (x = 0; (x < Client.size())&& canStart; ++x)
+	{
 			if (Client[x]->isStarting)
 				if (!Client[x]->GotStartRequest)
 					canStart = false;
+
+			//For Start for courses
+			if (Client[x]->inNetMusicSelect == false)
+				if (Client[x]->hasSong == false)
+					if (Client[x]->GotStartRequest)
+						canStart = true;
+	}
 			
 	if (canStart)
 	{
@@ -290,18 +298,37 @@ void StepManiaLanServer::CheckReady()
 		//during the actual loop that starts the clients. This is in an atempt
 		//to start all the clients as close together as possible.
 		for (x = 0; x < Client.size(); ++x)
+		{
 			if (Client[x]->isStarting)
 			{
 				Client[x]->clientSocket.blocking = true;
 				Client[x]->GotStartRequest = false;
 			}
+
+			//For Start for courses
+			if (Client[x]->inNetMusicSelect == false)
+				if (Client[x]->hasSong == false)
+					if (Client[x]->GotStartRequest)
+					{
+						Client[x]->clientSocket.blocking = true;
+						Client[x]->GotStartRequest = false;
+					}
+		}
 		
 		//Start clients waiting for a start between ScreenNetMusicSelect and the game.
 		for (x = 0; x < Client.size(); ++x)
+		{
 			if (Client[x]->isStarting)
 				SendValue(NSCGSR + NSServerOffset, x);
 
+			//For Start for courses
+			if (Client[x]->inNetMusicSelect == false)
+				if (Client[x]->hasSong == false)
+						SendValue(NSCGSR + NSServerOffset, x);	
+		}
+
 		for (x = 0; x < Client.size(); ++x)
+		{
 			if (Client[x]->isStarting)
 			{
 				if (Client[x]->startPosition == 1)
@@ -314,6 +341,22 @@ void StepManiaLanServer::CheckReady()
 				}
 				Client[x]->clientSocket.blocking = false;
 			}
+
+			//For Start for courses
+			if (Client[x]->inNetMusicSelect == false)
+				if (Client[x]->hasSong == false)
+				{
+					if (Client[x]->startPosition == 1)
+					{
+						Client[x]->isStarting = false;
+						Client[x]->InGame = true;
+						Client[x]->lowerJudge = false;
+						//After we start the clients, clear each client's hasSong.
+						Client[x]->hasSong = false;
+					}
+					Client[x]->clientSocket.blocking = false;
+				}
+		}
 	}
 }
 
