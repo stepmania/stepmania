@@ -1,4 +1,8 @@
 ------------------------CVS after 3.00 beta 6----------------
+CHANGE:  Name changed to "beta 7" to avoid confusion with the numerous beta 6
+	release candidates
+
+------------------------CVS after 3.00 beta 6----------------
 CHANGE:  Judge difficulty strictness increased slightly.
 CHANGE:  Initial sort order now sorts by meter of Easy notes, ala MAX.
 BUG FIX:  DWI music sample info now read correctly - again.
@@ -11,10 +15,11 @@ NEW FEATURE: PPP and PUMP use Ez2SelectStyle Menus to become more
 	arcade-accurate.
 NEW FEATURE: Ez2SelectStyle Menu Background Animations Metric Configurable
 NEW FEATURE: ParaParaParadise Support
-NEW FEATURE:  Added transliteration support for song titles, subtitles & artist names.
+NEW FEATURE:  Added transliteration support for song titles, subtitles & artist
+	names.
 	Tags are #TITLETRANSLIT, #SUBTITLETRANSLIT & #ARTISTTRANSLIT
-	respectively.  The transliterations of the title and subtitle are used when sorting
-	and grouping songs, so non-latin songs can be placed correctly
+	respectively.  The transliterations of the title and subtitle are used when 
+	sorting	and grouping songs, so non-latin songs can be placed correctly
 NEW FEATURE:  DWI tree loading via "DWIPath".
 NEW FEATURE:  Pump couples support.
 BUG FIX:  Editor no longer crashes if you try to drag a hold note up
