@@ -544,15 +544,13 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		}
 
 		if(!MissedNoteOnThisRow) continue;
-
+		iNumMissesFound++;
 		HandleTapRowScore( r );
 		m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
 	}
 
 	if( iNumMissesFound > 0 )
-	{
 		m_Judgment.SetJudgment( TNS_MISS );
-	}
 }
 
 
