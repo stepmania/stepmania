@@ -340,7 +340,7 @@ RageDisplay *CreateDisplay()
 		IniFile ini;
 		ini.SetPath( VIDEOCARDS_INI_PATH );
 		if(!ini.ReadFile())
-			RageException::Throw( "Couldn't read '%s'.", VIDEOCARDS_INI_PATH );
+			RageException::Throw( "Couldn't read \"%s\": %s.", VIDEOCARDS_INI_PATH, ini.error.c_str() );
 
 		IniFile::const_iterator i;
 		for( i = ini.begin(); i != ini.end(); ++i )
