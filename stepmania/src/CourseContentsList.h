@@ -34,7 +34,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	void SetFromCourse( Course* pCourse );
+	void SetFromCourse( const Course* pCourse );
 	void TweenInAfterChangedCourse();
 
 protected:

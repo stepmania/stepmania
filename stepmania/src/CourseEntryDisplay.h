@@ -17,6 +17,7 @@
 #include "Sprite.h"
 #include "Quad.h"
 #include "GameConstantsAndTypes.h"
+#include "Course.h"
 class Course;
 class Song;
 class Steps;
@@ -27,9 +28,7 @@ class CourseEntryDisplay : public ActorFrame
 public:
 	void Load();
 
-	void LoadFromSongAndNotes( int iNum, Song* pSong, Steps* pNotes, CString sModifiers );
-	void LoadFromDifficulty( int iNum, Difficulty dc, CString sModifiers );
-	void LoadFromMeterRange( int iNum, int iLow, int iHigh, CString sModifiers );
+	void LoadFromCourseInfo( int iNum, const Course *pCourse, const Course::Info &ci );
 
 private:
 	Sprite		m_sprFrame;

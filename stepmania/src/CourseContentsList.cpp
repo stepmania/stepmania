@@ -49,7 +49,7 @@ CourseContentsList::CourseContentsList()
 }
 
 
-void CourseContentsList::SetFromCourse( Course* pCourse )
+void CourseContentsList::SetFromCourse( const Course* pCourse )
 {
 	if( pCourse == NULL )
 	{
@@ -66,23 +66,9 @@ void CourseContentsList::SetFromCourse( Course* pCourse )
 	{
 		CourseEntryDisplay& display = m_CourseContentDisplays[m_iNumContents];
 	
-		if( ci[i].Mystery )
-		{
-			Difficulty dc = pCourse->GetDifficulty( ci[i] );
-			int iMeterLow, iMeterHigh;
-			pCourse->GetMeterRange(ci[i], iMeterLow, iMeterHigh);
-
-			if( dc == DIFFICULTY_INVALID )
-				display.LoadFromMeterRange( m_iNumContents+1, iMeterLow, iMeterHigh, ci[i].Modifiers );
-			else
-				display.LoadFromDifficulty( m_iNumContents+1, dc, ci[i].Modifiers );
-		}
-		else
-		{
-			display.LoadFromSongAndNotes( m_iNumContents+1, ci[i].pSong, ci[i].pNotes, ci[i].Modifiers );
-		}
+		display.LoadFromCourseInfo( m_iNumContents+1, pCourse, ci[i] );
 		
-		m_iNumContents ++;
+		m_iNumContents++;
 	}
 }
 

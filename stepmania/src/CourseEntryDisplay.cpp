@@ -61,61 +61,45 @@ void CourseEntryDisplay::Load()
 	this->AddChild( &m_textModifiers );
 }
 
-
-void CourseEntryDisplay::LoadFromSongAndNotes( int iNum, Song* pSong, Steps* pNotes, CString sModifiers )
+void CourseEntryDisplay::LoadFromCourseInfo( int iNum, const Course *pCourse, const Course::Info &ci )
 {
+	RageColor colorNotes;
+	if( ci.Mystery )
+	{
+		Difficulty dc = pCourse->GetDifficulty( ci );
+
+		if( dc == DIFFICULTY_INVALID )
+		{
+			int iLow, iHigh;
+			pCourse->GetMeterRange(ci, iLow, iHigh);
+
+			colorNotes = RageColor(1,1,1,1);
+			m_textDifficultyNumber.SetText( ssprintf(iLow==iHigh?"%d":"%d-%d", iLow, iHigh) );
+		}
+		else
+		{
+			colorNotes = SONGMAN->GetDifficultyColor( dc );
+			m_textDifficultyNumber.SetText( "?" );
+		}
+
+		m_TextBanner.LoadFromString( "??????????", "??????????", "", "", "", "" );
+		m_TextBanner.SetDiffuse( RageColor(1,1,1,1) ); // TODO: What should this be?
+	}
+	else
+	{
+		colorNotes = SONGMAN->GetDifficultyColor( ci.pNotes->GetDifficulty() );
+		m_textDifficultyNumber.SetText( ssprintf("%d", ci.pNotes->GetMeter()) );
+
+		m_TextBanner.LoadFromSong( ci.pSong );
+		m_TextBanner.SetDiffuse( SONGMAN->GetSongColor( ci.pSong ) );
+	}
+
 	m_textNumber.SetText( ssprintf("%d", iNum) );
-
-	RageColor colorGroup = SONGMAN->GetSongColor( pSong );
-	RageColor colorNotes = SONGMAN->GetDifficultyColor( pNotes->GetDifficulty() );
-
-	m_TextBanner.LoadFromSong( pSong );
-	m_TextBanner.SetDiffuse( colorGroup );
 
 	m_textFoot.SetText( "1" );
 	m_textFoot.SetDiffuse( colorNotes );
 
-	m_textDifficultyNumber.SetText( ssprintf("%d", pNotes->GetMeter()) );
+	m_textModifiers.SetText( ci.Modifiers );
+
 	m_textDifficultyNumber.SetDiffuse( colorNotes );
-
-	m_textModifiers.SetText( sModifiers );
 }
-
-void CourseEntryDisplay::LoadFromDifficulty( int iNum, Difficulty dc, CString sModifiers )
-{
-	m_textNumber.SetText( ssprintf("%d", iNum) );
-
-	RageColor colorGroup = RageColor(1,1,1,1);	// TODO: What should this be?
-	RageColor colorNotes = SONGMAN->GetDifficultyColor( dc );
-
-	m_TextBanner.LoadFromString( "??????????", "??????????", "", "", "", "" );
-	m_TextBanner.SetDiffuse( colorGroup );
-
-	m_textFoot.SetText( "1" );
-	m_textFoot.SetDiffuse( colorNotes );
-
-	m_textDifficultyNumber.SetText( "?" );
-	m_textDifficultyNumber.SetDiffuse( colorNotes );
-
-	m_textModifiers.SetText( sModifiers );
-}
-
-void CourseEntryDisplay::LoadFromMeterRange( int iNum, int iLow, int iHigh, CString sModifiers )
-{
-	m_textNumber.SetText( ssprintf("%d", iNum) );
-
-	RageColor colorGroup = RageColor(1,1,1,1);	// TODO: What should this be?
-	RageColor colorNotes = RageColor(1,1,1,1);
-
-	m_TextBanner.LoadFromString( "??????????", "??????????", "", "", "", "" );
-	m_TextBanner.SetDiffuse( colorGroup );
-
-	m_textFoot.SetText( "1" );
-	m_textFoot.SetDiffuse( colorNotes );
-
-	m_textDifficultyNumber.SetText( ssprintf(iLow==iHigh?"%d":"%d-%d", iLow, iHigh) );
-	m_textDifficultyNumber.SetDiffuse( colorNotes );
-
-	m_textModifiers.SetText( sModifiers );
-}
-
