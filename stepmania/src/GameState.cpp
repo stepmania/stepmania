@@ -327,48 +327,26 @@ void GameState::EndGame()
 	/* Finish the final stage. */
 	FinishStage();
 
-	// Update profile stats
+
+	// Update totalPlaySeconds stat
 	int iPlaySeconds = max( 0, (int) m_timeGameStarted.PeekDeltaTime() );
 
 	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
-
-	int iGameplaySeconds = 0;
-	for( unsigned i=0; i<g_vPlayedStageStats.size(); i++ )
-		iGameplaySeconds += (int) roundf(g_vPlayedStageStats[i].fGameplaySeconds);
-
 	pMachineProfile->m_iTotalPlaySeconds += iPlaySeconds;
-	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 	pMachineProfile->m_iTotalPlays++;
-	pMachineProfile->m_iCurrentCombo = 0;
 
-	CHECKPOINT;
 	FOREACH_HumanPlayer( p )
 	{
-		CHECKPOINT;
-
 		Profile* pPlayerProfile = PROFILEMAN->GetProfile( p );
 		if( pPlayerProfile )
 		{
 			pPlayerProfile->m_iTotalPlaySeconds += iPlaySeconds;
-			pPlayerProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 			pPlayerProfile->m_iTotalPlays++;
-			pPlayerProfile->m_iCurrentCombo = 
-				PREFSMAN->m_bComboContinuesBetweenSongs ? 
-				g_CurStageStats.iCurCombo[p] : 
-				0;
 		}
-
-		for( unsigned i=0; i<g_vPlayedStageStats.size(); i++ )
-		{
-			const StageStats& ss = g_vPlayedStageStats[i];
-			AddPlayerStatsToProfile( pMachineProfile, ss, p );
-
-			if( pPlayerProfile )
-				AddPlayerStatsToProfile( pPlayerProfile, ss, p );
-		}
-
-		CHECKPOINT;
 	}
+
+
+
 	BOOKKEEPER->WriteToDisk();
 	PROFILEMAN->SaveAllProfiles();
 
@@ -386,6 +364,9 @@ void GameState::EndGame()
 	CHECKPOINT;
 
 	SONGMAN->FreeAllLoadedFromProfiles();
+
+	// make sure we don't execute EndGame twice.
+	m_timeGameStarted.SetZero();
 }
 
 void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
@@ -629,7 +610,7 @@ void GameState::FinishStage()
 {
 	/* If m_iNumStagesOfThisSong is 0, we've been called more than once before calling
 	 * BeginStage.  This can happen when backing out of the player options screen. */
-	if( !m_iNumStagesOfThisSong )
+	if( m_iNumStagesOfThisSong == 0 )
 		return;
 
 	// Increment the stage counter.
@@ -656,6 +637,41 @@ void GameState::FinishStage()
 		int iNumHands			= (int) g_CurStageStats.radarActual[pn][RADAR_NUM_HANDS];
 		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands );
 	}
+
+
+	// Update profile stats
+	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
+
+	int iGameplaySeconds = g_CurStageStats.fGameplaySeconds;
+
+	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
+	pMachineProfile->m_iCurrentCombo = 0;
+
+	CHECKPOINT;
+	FOREACH_HumanPlayer( p )
+	{
+		CHECKPOINT;
+
+		Profile* pPlayerProfile = PROFILEMAN->GetProfile( p );
+		if( pPlayerProfile )
+		{
+			pPlayerProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
+			pPlayerProfile->m_iCurrentCombo = 
+				PREFSMAN->m_bComboContinuesBetweenSongs ? 
+				g_CurStageStats.iCurCombo[p] : 
+				0;
+		}
+
+		const StageStats& ss = g_CurStageStats;
+		AddPlayerStatsToProfile( pMachineProfile, ss, p );
+
+		if( pPlayerProfile )
+			AddPlayerStatsToProfile( pPlayerProfile, ss, p );
+
+		CHECKPOINT;
+	}
+
+
 
 	if( PREFSMAN->m_bEventMode )
 	{
