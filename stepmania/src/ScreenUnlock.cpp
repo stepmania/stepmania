@@ -168,6 +168,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 				if( pSong->isLocked)
 				{
 					text->SetText("???");
+					text->SetZoomX(1);
 				} else {
 					RageColor color = SONGMAN->GetGroupColor(pSong->m_pSong->m_sGroupName);
 					text->SetGlobalDiffuseColor(color);
@@ -269,8 +270,17 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			/* Reset zoom before using SetTextMaxWidth. */
 			NewText->SetZoom(UNLOCK_TEXT_SCROLL_ZOOM);
 
-			CString title = pSong->m_pSong->GetDisplayMainTitle();
-			CString subtitle = pSong->m_pSong->GetDisplaySubTitle();
+			CString title;
+			CString subtitle;
+
+			if (pSong->m_pSong == NULL)
+				continue;
+			else
+			{
+				title = pSong->m_pSong->GetDisplayMainTitle();
+				subtitle = pSong->m_pSong->GetDisplaySubTitle();
+			}
+
 			if( subtitle != "" )
 				title = title + "\n" + subtitle;
 			NewText->SetTextMaxWidth( MaxWidth, title );
