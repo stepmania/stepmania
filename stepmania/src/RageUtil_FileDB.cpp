@@ -72,7 +72,11 @@ void FileSet::LoadFromDir(const CString &dir)
 	} while( FindNextFile( hFind, &fd ) );
 	FindClose(hFind);
 #else
-	DIR *d = opendir(dir+"/.");
+	char buf[PATH_MAX];
+	bool ret = getcwd(buf, PATH_MAX) != NULL;
+	ASSERT(ret);
+	chdir(dir.c_str());
+	DIR *d = opendir(".");
 
 	while(struct dirent *ent = readdir(d))
 	{
@@ -102,6 +106,7 @@ void FileSet::LoadFromDir(const CString &dir)
 	}
 	       
 	closedir(d);
+	chdir(buf);
 #endif
 }
 
