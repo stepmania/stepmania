@@ -2,10 +2,32 @@
 #include "RageFileManager.h"
 #include "RageFileDriver.h"
 #include "RageUtil.h"
+#include "RageUtil_FileDB.h"
 #include "RageLog.h"
 #include <errno.h>
 
 RageFileManager *FILEMAN = NULL;
+
+/* Mountpoints as directories cause a problem.  If "Themes/default" is a mountpoint, and
+ * doesn't exist anywhere else, then GetDirListing("Themes/*") must return "default".  The
+ * driver containing "Themes/default" won't do this; its world view begins at "BGAnimations"
+ * (inside "Themes/default").  We need a dummy driver that handles mountpoints. */
+class RageFileDriverMountpoints: public RageFileDriver
+{
+public:
+	RageFileDriverMountpoints(): RageFileDriver( new FilenameDB ) { }
+	RageFileObj *Open( const CString &path, RageFile::OpenMode mode, RageFile &p, int &err )
+	{
+		err = EINVAL;
+		return NULL;
+	}
+	void FlushDirCache( const CString &sPath ) { }
+	void Add( const CString &MountPoint )
+	{
+		FDB->AddFile( MountPoint, 0, 0 );
+	}
+};
+static RageFileDriverMountpoints *g_Mountpoints = NULL;
 
 struct LoadedDriver
 {
@@ -25,6 +47,12 @@ static vector<LoadedDriver> g_Drivers;
 
 RageFileManager::RageFileManager()
 {
+	g_Mountpoints = new RageFileDriverMountpoints;
+	LoadedDriver ld;
+	ld.driver = g_Mountpoints;
+	ld.MountPoint = "";
+	g_Drivers.push_back( ld );
+
 	/* Add file search paths, higher priority first. */
 #if defined(XBOX)
 	RageFileManager::Mount( "dir", SYS_BASE_PATH, "" );
@@ -77,6 +105,10 @@ RageFileManager::~RageFileManager()
 	 * from the FS.  Unload drivers in reverse order. */
 	for( int i = g_Drivers.size()-1; i >= 0; --i )
 		delete g_Drivers[i].driver;
+	g_Drivers.clear();
+
+//	delete g_Mountpoints; // g_Mountpoints was g_Drivers
+	g_Mountpoints = NULL;
 }
 
 CString LoadedDriver::GetPath( CString path )
@@ -148,6 +180,8 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 	ld.driver = driver;
 	ld.MountPoint = MountPoint;
 	g_Drivers.push_back( ld );
+
+	g_Mountpoints->Add( MountPoint );
 }
 
 bool RageFileManager::IsMounted( CString MountPoint )
