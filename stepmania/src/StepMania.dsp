@@ -348,6 +348,10 @@ SOURCE=.\GameInfo.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\GameTypes.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Grade.cpp
 # End Source File
 # Begin Source File
@@ -406,14 +410,6 @@ SOURCE=.\ThemeManager.h
 # Begin Group "File Types"
 
 # PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\BmsFile.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\BmsFile.h
-# End Source File
 # Begin Source File
 
 SOURCE=.\IniFile.cpp
@@ -589,6 +585,14 @@ SOURCE=.\ColorArrow.cpp
 # Begin Source File
 
 SOURCE=.\ColorArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DifficultyIcon.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\DifficultyIcon.h
 # End Source File
 # Begin Source File
 
