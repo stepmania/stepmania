@@ -2,6 +2,8 @@
 Fix
 /////////////////////////
 
+Wow!  pngcrush takes off 50% on some of these paletted pngs.  I'll look into making a script that we can check into CVS and run periodically.
+
 disable modifiers in extra stage
 
 the only other thing is to encorporate `...'   to replace <...>, and instead turn the <...> as triple jumps or more than 2 arrow jumps. its the new DWI format.
