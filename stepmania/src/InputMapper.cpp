@@ -198,6 +198,30 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{-1, NULL,			NULL },
 		}
 	},
+        {
+	        GAME_DANCE,
+	        "0b43:0003", // The EMS USB2 doesn't provide a model string, so Linux 
+	        "EMS USB2",  // just gives us the VendorID and ModelID in hex.
+	        {
+		        // Player 1.
+	                { 0, JOY_13, DANCE_BUTTON_UP },
+	                { 0, JOY_16, DANCE_BUTTON_LEFT },
+	                { 0, JOY_14, DANCE_BUTTON_RIGHT },
+	                { 0, JOY_15, DANCE_BUTTON_DOWN },
+	                { 0, JOY_3,  DANCE_BUTTON_UPLEFT },
+	                { 0, JOY_2,  DANCE_BUTTON_UPRIGHT },
+	                { 0, JOY_10, DANCE_BUTTON_START },
+	                // Player 2.
+		        { 0, JOY_29, DANCE_BUTTON_UP,      true },
+	                { 0, JOY_30, DANCE_BUTTON_RIGHT,   true },
+	                { 0, JOY_31, DANCE_BUTTON_DOWN,    true },
+	                { 0, JOY_32, DANCE_BUTTON_LEFT,    true },
+	                { 0, JOY_18, DANCE_BUTTON_UPRIGHT, true },
+	                { 0, JOY_19, DANCE_BUTTON_UPLEFT,  true },
+	                { 0, JOY_26, DANCE_BUTTON_START,   true },
+	                {-1, NULL,   NULL },
+		}
+	},
 	{
 		GAME_PUMP,
 		"Pump USB",
