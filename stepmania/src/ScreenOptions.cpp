@@ -23,22 +23,25 @@
 
 const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 
-#define ICONS_X( p )		THEME->GetMetricF("ScreenOptions",ssprintf("IconsP%dX",p+1))
-#define ARROWS_X			THEME->GetMetricF("ScreenOptions","ArrowsX")
-#define LABELS_X			THEME->GetMetricF("ScreenOptions","LabelsX")
-#define LABELS_ZOOM			THEME->GetMetricF("ScreenOptions","LabelsZoom")
-#define LABELS_H_ALIGN		THEME->GetMetricI("ScreenOptions","LabelsHAlign")
-#define ITEMS_ZOOM			THEME->GetMetricF("ScreenOptions","ItemsZoom")
-#define ITEMS_START_X		THEME->GetMetricF("ScreenOptions","ItemsStartX")
-#define ITEMS_GAP_X			THEME->GetMetricF("ScreenOptions","ItemsGapX")
-#define ITEMS_START_Y		THEME->GetMetricF("ScreenOptions","ItemsStartY")
-#define ITEMS_SPACING_Y		THEME->GetMetricF("ScreenOptions","ItemsSpacingY")
-#define EXPLANATION_X		THEME->GetMetricF("ScreenOptions","ExplanationX")
-#define EXPLANATION_Y		THEME->GetMetricF("ScreenOptions","ExplanationY")
-#define EXPLANATION_ZOOM	THEME->GetMetricF("ScreenOptions","ExplanationZoom")
-#define COLOR_SELECTED		THEME->GetMetricC("ScreenOptions","ColorSelected")
-#define COLOR_NOT_SELECTED	THEME->GetMetricC("ScreenOptions","ColorNotSelected")
-#define NUM_SHOWN_ITEMS		THEME->GetMetricI("ScreenOptions","NumShownItems")
+#define ICONS_X( p )			THEME->GetMetricF("ScreenOptions",ssprintf("IconsP%dX",p+1))
+#define ARROWS_X				THEME->GetMetricF("ScreenOptions","ArrowsX")
+#define LABELS_X				THEME->GetMetricF("ScreenOptions","LabelsX")
+#define LABELS_ZOOM				THEME->GetMetricF("ScreenOptions","LabelsZoom")
+#define LABELS_H_ALIGN			THEME->GetMetricI("ScreenOptions","LabelsHAlign")
+#define ITEMS_ZOOM				THEME->GetMetricF("ScreenOptions","ItemsZoom")
+#define ITEMS_START_X			THEME->GetMetricF("ScreenOptions","ItemsStartX")
+#define ITEMS_GAP_X				THEME->GetMetricF("ScreenOptions","ItemsGapX")
+#define ITEMS_START_Y			THEME->GetMetricF("ScreenOptions","ItemsStartY")
+#define ITEMS_SPACING_Y			THEME->GetMetricF("ScreenOptions","ItemsSpacingY")
+#define EXPLANATION_X(p)		THEME->GetMetricF("ScreenOptions",ssprintf("ExplanationP%dX",p+1))
+#define EXPLANATION_Y(p)		THEME->GetMetricF("ScreenOptions",ssprintf("ExplanationP%dY",p+1))
+#define EXPLANATION_TOGETHER_X	THEME->GetMetricF("ScreenOptions","ExplanationTogetherX")
+#define EXPLANATION_TOGETHER_Y	THEME->GetMetricF("ScreenOptions","ExplanationTogetherY")
+#define ITEMS_SPACING_Y			THEME->GetMetricF("ScreenOptions","ItemsSpacingY")
+#define EXPLANATION_ZOOM		THEME->GetMetricF("ScreenOptions","ExplanationZoom")
+#define COLOR_SELECTED			THEME->GetMetricC("ScreenOptions","ColorSelected")
+#define COLOR_NOT_SELECTED		THEME->GetMetricC("ScreenOptions","ColorNotSelected")
+#define NUM_SHOWN_ITEMS			THEME->GetMetricI("ScreenOptions","NumShownItems")
 
 ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 {
@@ -73,14 +76,13 @@ ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 	memset(&m_bRowIsLong, 0, sizeof(m_bRowIsLong));
 }
 
-void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLines, bool bLoadExplanations )
+void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLines )
 {
 	LOG->Trace( "ScreenOptions::Set()" );
 
 	m_InputMode = im;
 	m_OptionRow = OptionRows;
 	m_iNumOptionRows = iNumOptionLines;
-	m_bLoadExplanations = bLoadExplanations;
 
 	this->ImportOptions();
 
@@ -206,11 +208,41 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	}
 
 	// add explanation here so it appears on top
-	m_textExplanation.LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
-	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
-	m_textExplanation.SetZoom( EXPLANATION_ZOOM );
-	m_textExplanation.SetShadowLength( 0 );
-	m_framePage.AddChild( &m_textExplanation );
+	switch( m_InputMode )
+	{
+	case INPUTMODE_INDIVIDUAL:
+		for( p=0; p<NUM_PLAYERS; p++ )
+		{
+			m_textExplanation[p].LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
+			m_textExplanation[p].SetXY( EXPLANATION_X(p), EXPLANATION_Y(p) );
+			m_textExplanation[p].SetZoom( EXPLANATION_ZOOM );
+			m_textExplanation[p].SetShadowLength( 0 );
+			m_framePage.AddChild( &m_textExplanation[p] );
+		}
+		break;
+	case INPUTMODE_TOGETHER:
+		m_textExplanation[0].LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
+		m_textExplanation[0].SetXY( EXPLANATION_TOGETHER_X, EXPLANATION_TOGETHER_Y );
+		m_textExplanation[0].SetZoom( EXPLANATION_ZOOM );
+		m_textExplanation[0].SetShadowLength( 0 );
+		m_framePage.AddChild( &m_textExplanation[0] );
+		break;
+	default:
+		ASSERT(0);
+	}
+
+	// poke once at all the explanation metrics so that we catch missing ones early
+	for( r=0; r<m_iNumOptionRows; r++ )		// foreach line
+	{
+		CString sLineName = m_OptionRow[r].name;
+		if( sLineName=="" )
+			sLineName = m_OptionRow[r].choices[0];
+		sLineName.Replace("\n-","");
+		sLineName.Replace("\n","");
+		sLineName.Replace(" ","");
+		CString sExplanation = THEME->GetMetric(m_sName,sLineName);
+	}
+	
 
 	CHECKPOINT;
 
@@ -728,24 +760,40 @@ void ScreenOptions::OnChange()
 	PositionIcons();
 	UpdateEnabledDisabled();
 
-	for( int pn=0; pn<NUM_PLAYERS; pn++ )
-		TweenCursor( (PlayerNumber)pn );
-
-	int iCurRow = m_iCurrentRow[PLAYER_1];
-
-	bool bIsExitRow = iCurRow == m_iNumOptionRows;
-
-	if( !bIsExitRow  &&  m_bLoadExplanations )
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		CString sLineName = m_OptionRow[iCurRow].name;
-		if( sLineName=="" )
-			sLineName = m_OptionRow[iCurRow].choices[0];
-		sLineName.Replace("\n","");
-		sLineName.Replace(" ","");
-		m_textExplanation.SetText( THEME->GetMetric(m_sName,sLineName) );	
+		TweenCursor( (PlayerNumber)p );
+
+		int iCurRow = m_iCurrentRow[p];
+
+		bool bIsExitRow = iCurRow == m_iNumOptionRows;
+
+		BitmapText *pText = NULL;
+		switch( m_InputMode )
+		{
+		case INPUTMODE_INDIVIDUAL:
+			pText = &m_textExplanation[p];
+			break;
+		case INPUTMODE_TOGETHER:
+			pText = &m_textExplanation[0];
+			break;
+		}
+
+		if( bIsExitRow )
+		{
+			pText->SetText( "" );
+		}
+		else
+		{
+			CString sLineName = m_OptionRow[iCurRow].name;
+			if( sLineName=="" )
+				sLineName = m_OptionRow[iCurRow].choices[0];
+			sLineName.Replace("\n-","");
+			sLineName.Replace("\n","");
+			sLineName.Replace(" ","");
+			pText->SetText( THEME->GetMetric(m_sName,sLineName) );
+		}
 	}
-	else
-		m_textExplanation.SetText( "" );
 }
 
 

@@ -243,11 +243,9 @@ try_element_again:
 			"'%s/%s/%s'.  Please remove all but one of these matches.",
 			sThemeName.c_str(), sCategory.c_str(), sFileName.c_str() );
 
-#if defined(WIND32)
 		if( DISPLAY->IsWindowed() )
-			if( ArchHooks::retry == HOOKS->MessageBoxAbortRetryIgnore(message) )
+			if( ArchHooks::retry == HOOKS->MessageBoxRetryCancel(message) )
 				goto try_element_again;
-#endif
 
 		RageException::Throw( message ); 
 	}
@@ -399,8 +397,8 @@ void ThemeManager::ReloadMetricsIfNecessary()
 	if( m_uHashForCurThemeMetrics != GetHashForFile(sCurMetricPath)  ||
 		m_uHashForBaseThemeMetrics != GetHashForFile(sDefaultMetricPath) )
 	{
-		SCREENMAN->SystemMessage( "Reloading metrics" );
 		SwitchThemeAndLanguage(m_sCurThemeName, m_sCurLanguage);	// force a reload of the metrics cache
+		SCREENMAN->SystemMessage( "Reloaded metrics" );
 	}
 
 	//
@@ -428,6 +426,7 @@ try_metric_again:
 		switch( HOOKS->MessageBoxRetryCancel(sMessage) )
 		{
 		case ArchHooks::retry:
+			FlushDirCache();
 			ReloadMetricsIfNecessary();
 			goto try_metric_again;
 		case ArchHooks::cancel:

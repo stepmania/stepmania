@@ -68,20 +68,19 @@ ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions
 	PROFILEMAN->GetMachineProfileNames( g_ProfileOptionsLines[PO_RENAME_].choices );
 
 	if( PREFSMAN->m_sMemoryCardDir[PLAYER_1].empty() )
-		g_ProfileOptionsLines[PO_CARD_DIR_1].choices[0] = "-NONE. SPECIFY IN INI-";
+		g_ProfileOptionsLines[PO_CARD_DIR_1].choices[0] = "-NOT SET IN INI-";
 	else
 		g_ProfileOptionsLines[PO_CARD_DIR_1].choices[0] = PREFSMAN->m_sMemoryCardDir[PLAYER_1];
 
 	if( PREFSMAN->m_sMemoryCardDir[PLAYER_2].empty() )
-		g_ProfileOptionsLines[PO_CARD_DIR_2].choices[0] = "-NONE. SPECIFY IN INI-";
+		g_ProfileOptionsLines[PO_CARD_DIR_2].choices[0] = "-NOT SET IN INI-";
 	else
 		g_ProfileOptionsLines[PO_CARD_DIR_2].choices[0] = PREFSMAN->m_sMemoryCardDir[PLAYER_2];
 
 	Init( 
 		INPUTMODE_TOGETHER, 
 		g_ProfileOptionsLines, 
-		NUM_PROFILE_OPTIONS_LINES,
-		true );
+		NUM_PROFILE_OPTIONS_LINES );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenMachineOptions music") );

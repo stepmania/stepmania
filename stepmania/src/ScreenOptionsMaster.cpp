@@ -275,7 +275,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 
 	ASSERT( (int) OptionRowHandlers.size() == NumRows );
 
-	Init( im, m_OptionRowAlloc, NumRows, Explanations );
+	Init( im, m_OptionRowAlloc, NumRows );
 }
 
 ScreenOptionsMaster::~ScreenOptionsMaster()

@@ -43,8 +43,7 @@ ScreenRaveOptions::ScreenRaveOptions( CString sClassName ): ScreenOptions( sClas
 	Init( 
 		INPUTMODE_TOGETHER, 
 		g_RaveOptionsLines, 
-		GAMESTATE->AnyPlayersAreCpu()? 2 : 1,
-		false );
+		GAMESTATE->AnyPlayersAreCpu()? 2 : 1 );
 }
 
 void ScreenRaveOptions::ImportOptions()

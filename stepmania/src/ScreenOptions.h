@@ -53,7 +53,7 @@ class ScreenOptions : public Screen
 {
 public:
 	ScreenOptions( CString sClassName );
-	void Init( InputMode im, OptionRow OptionRow[], int iNumOptionLines, bool bLoadExplanations );
+	void Init( InputMode im, OptionRow OptionRow[], int iNumOptionLines );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -101,7 +101,6 @@ protected:	// derived classes need access to these
 
 private:
 	InputMode		m_InputMode;
-	bool			m_bLoadExplanations;
 
 	int				m_iNumOptionRows;
 
@@ -122,7 +121,7 @@ private:
 	OptionIcon		m_OptionIcons[NUM_PLAYERS][MAX_OPTION_LINES];
 	OptionsCursor	m_Highlight[NUM_PLAYERS];
 
-	BitmapText		m_textExplanation;
+	BitmapText		m_textExplanation[NUM_PLAYERS];
 
 	RageSound		m_SoundChangeCol;
 	RageSound		m_SoundNextRow;
