@@ -429,9 +429,13 @@ static void HandleInputEvents(float fDeltaTime)
 					*/
 					if( !GAMESTATE->m_bIsOnSystemMenu )
 					{
-						SCREENMAN->SystemMessage("OPERATOR");
-						SCREENMAN->SetNewScreen("ScreenOptionsMenu");
+						SCREENMAN->SystemMessage( "OPERATOR" );
+						SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 						//continue;
+						return;
+					}
+					else
+					{
 						return;
 					}
 
@@ -449,7 +453,7 @@ static void HandleInputEvents(float fDeltaTime)
 							SCREENMAN->RefreshCreditsMessages();
 							SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
 							//continue;
-							break;
+							return;
 						default:
 							ASSERT(0);
 					}

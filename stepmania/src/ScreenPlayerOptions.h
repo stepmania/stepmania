@@ -12,6 +12,7 @@
 
 
 #include "ScreenOptions.h"
+#include "PrefsManager.h"
 
 
 class ScreenPlayerOptions : public ScreenOptions

@@ -32,6 +32,7 @@ enum {
 	MO_COIN_MODE,
 	MO_COINS_PER_CREDIT,
 	MO_JOINT_PREMIUM,
+	MO_SONG_OPTIONS,
 	NUM_MACHINE_OPTIONS_LINES
 };
 /* Hmm.  Ignore JoyAxes and Back Delayed probably belong in "input options",
@@ -45,6 +46,7 @@ OptionRowData g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	{ "Coin\nMode",			3, {"HOME","PAY","FREE PLAY"} },
 	{ "Coins Per\nCredit",	8, {"1","2","3","4","5","6","7","8"} },
 	{ "Joint\nPremium",		2, {"OFF","ON"} },
+	{ "Song\nOptions",		2, {"OFF","ON"} },
 };
 
 ScreenMachineOptions::ScreenMachineOptions() :

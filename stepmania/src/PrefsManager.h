@@ -66,6 +66,7 @@ public:
 	bool			m_bPickExtraStage;
 	float			m_fLongVerSongSeconds;
 	float			m_fMarathonVerSongSeconds;
+	bool			m_bShowSongOptions;
 
 
 	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */

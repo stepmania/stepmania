@@ -34,7 +34,7 @@ enum {
 	NUM_PLAYER_OPTIONS_LINES
 };
 OptionRowData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
-	{ "Speed",			10, {"x0.25","x0.5","x0.75","x1","x1.5","x2","x3","x4","x5","x8"} },	
+	{ "Speed",			11, {"x0.25","x0.5","x0.75","x1","x1.5","x2","x3","x4","x5","x8", "x12"} },	
 	{ "Acceler\n-ation",6, {"OFF","BOOST","LAND","WAVE","EXPAND","BOOMERANG"} },	
 	{ "Effect",			7, {"OFF","DRUNK","DIZZY","SPACE","MINI","FLIP","TORNADO"} },	
 	{ "Appear\n-ance",	5, {"VISIBLE","HIDDEN","SUDDEN","STEALTH","BLINK"} },	
@@ -82,6 +82,7 @@ void ScreenPlayerOptions::ImportOptions()
 		else if( po.m_fScrollSpeed == 4.0f )	m_iSelectedOption[p][PO_SPEED] = 7;
 		else if( po.m_fScrollSpeed == 5.0f )	m_iSelectedOption[p][PO_SPEED] = 8;
 		else if( po.m_fScrollSpeed == 8.0f )	m_iSelectedOption[p][PO_SPEED] = 9;
+		else if( po.m_fScrollSpeed == 12.0f)	m_iSelectedOption[p][PO_SPEED] = 10;
 		else										m_iSelectedOption[p][PO_SPEED] = 3;
 
 		m_iSelectedOption[p][PO_ACCEL]		= po.m_AccelType;
@@ -120,6 +121,7 @@ void ScreenPlayerOptions::ExportOptions()
 		case 7:	po.m_fScrollSpeed = 4.0f;	break;
 		case 8:	po.m_fScrollSpeed = 5.0f;	break;
 		case 9:	po.m_fScrollSpeed = 8.0f;	break;
+		case 10: po.m_fScrollSpeed = 12.0f;	break;
 		}
 
 		po.m_AccelType	= (PlayerOptions::AccelType)m_iSelectedOption[p][PO_ACCEL];
@@ -150,7 +152,10 @@ void ScreenPlayerOptions::GoToPrevState()
 
 void ScreenPlayerOptions::GoToNextState()
 {
-	SCREENMAN->SetNewScreen( "ScreenSongOptions" );
+	if( PREFSMAN->m_bShowSongOptions == true )
+		SCREENMAN->SetNewScreen( "ScreenSongOptions" );
+	else
+		SCREENMAN->SetNewScreen( "ScreenStage" );
 }
 
 
