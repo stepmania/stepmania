@@ -26,16 +26,11 @@ ScoreDisplayBattle::ScoreDisplayBattle()
 {
 	LOG->Trace( "ScoreDisplayBattle::ScoreDisplayBattle()" );
 
+	m_sprFrame.Load( THEME->GetPathToG("ScoreDisplayBattle frame") );
+	this->AddChild( &m_sprFrame );
+
 	for( int i=0; i<NUM_INVENTORY_SLOTS; i++ )
 	{
-		float fX = (float)SCALE(i,0.f,2.f,-60.f,60.f);
-
-		m_ItemFrame[i].Load( THEME->GetPathToG("ScoreDisplayBattle frames") );
-		m_ItemFrame[i].SetXY( ITEM_X(i), ITEM_Y(i) );
-		m_ItemFrame[i].StopAnimating();
-		m_ItemFrame[i].SetState( i );
-		this->AddChild( &m_ItemFrame[i] );
-
 		m_ItemIcon[i].SetXY( ITEM_X(i), ITEM_Y(i) );
 		m_ItemIcon[i].StopAnimating();
 		this->AddChild( &m_ItemIcon[i] );

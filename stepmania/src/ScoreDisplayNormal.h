@@ -29,7 +29,8 @@ public:
 	virtual void SetText( CString s );
 
 protected:
-	BitmapText m_text;
+	Sprite		m_sprFrame;
+	BitmapText	m_text;
 
 	float m_fScore;			// the actual score
 	float m_fTrailingScore;	// what is displayed temporarily

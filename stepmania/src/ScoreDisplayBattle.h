@@ -25,8 +25,8 @@ public:
 	virtual void Update( float fDelta );
 
 protected:
-	Sprite m_ItemFrame[NUM_INVENTORY_SLOTS];
-	Sprite m_ItemIcon[NUM_INVENTORY_SLOTS];
+	Sprite	m_sprFrame;
+	Sprite	m_ItemIcon[NUM_INVENTORY_SLOTS];
 
 	CString m_iLastSeenInventory[NUM_INVENTORY_SLOTS];
 };

@@ -290,6 +290,12 @@ void Player::Update( float fDeltaTime )
 
 void Player::DrawPrimitives()
 {
+	// don't draw CPU player in doubles.
+	if( GAMESTATE->GetCurrentStyleDef()->m_StyleType == StyleDef::ONE_PLAYER_TWO_CREDITS  &&
+		GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_CPU )
+		return;
+
+
 	// Draw these below everything else.
 	m_ArrowBackdrop.Draw();
 	m_Combo.Draw();

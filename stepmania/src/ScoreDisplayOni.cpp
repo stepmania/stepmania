@@ -23,6 +23,9 @@ ScoreDisplayOni::ScoreDisplayOni()
 {
 	LOG->Trace( "ScoreDisplayOni::ScoreDisplayOni()" );
 
+	m_sprFrame.Load( THEME->GetPathToG("ScoreDisplayOni frame") );
+	this->AddChild( &m_sprFrame );
+
 	// init the text
 	m_text.LoadFromNumbers( THEME->GetPathToN("ScoreDisplayOni") );
 	m_text.EnableShadow( false );

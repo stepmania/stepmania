@@ -25,7 +25,8 @@ public:
 	virtual void Update( float fDelta );
 
 protected:
-	BitmapText m_textCurrentAttack;
+	Sprite		m_sprFrame;
+	BitmapText	m_textCurrentAttack;
 
 	CString m_sLastSeenAttack;
 };

@@ -22,6 +22,9 @@ ScoreDisplayRave::ScoreDisplayRave()
 {
 	LOG->Trace( "ScoreDisplayRave::ScoreDisplayRave()" );
 
+	m_sprFrame.Load( THEME->GetPathToG("ScoreDisplayRave frame") );
+	this->AddChild( &m_sprFrame );
+
 	m_textCurrentAttack.LoadFromFont( THEME->GetPathToF("Common normal") );
 	this->AddChild( &m_textCurrentAttack );
 }
