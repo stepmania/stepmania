@@ -340,11 +340,12 @@ void MovieTexture_FFMpeg::CreateTexture()
 void MovieTexture_FFMpeg::DecoderThread()
 {
 	bool GetNextTimestamp = true;
-	float CurrentTimestamp = 0, LastGoodTimestamp = 0, Last_IP_Timestamp=0;
+	float CurrentTimestamp = 0, Last_IP_Timestamp = 0;
 
 	bool FrameSkipMode = false;
 	unsigned Frame = 0;
-	
+	float LastFrameDelay = 0;
+
 	CHECKPOINT;
 	while( m_State != DECODER_QUIT )
 	{
@@ -394,12 +395,15 @@ void MovieTexture_FFMpeg::DecoderThread()
 		{
 			if ( GetNextTimestamp )
 			{
-				if (pkt.pts == AV_NOPTS_VALUE)
-					CurrentTimestamp = 0;
-				else
+				if (pkt.pts != AV_NOPTS_VALUE)
 					CurrentTimestamp = (float)pkt.pts * m_fctx->pts_num / m_fctx->pts_den;
-				if( CurrentTimestamp != 0 )
-					LastGoodTimestamp = CurrentTimestamp;
+				else
+				{
+					/* If the timestamp is zero, this frame is to be played at the
+					 * time of the last frame plus the length of the last frame. */
+					CurrentTimestamp += LastFrameDelay;
+				}
+
 				GetNextTimestamp = false;
 			}
 
@@ -424,6 +428,10 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 			++Frame;
 
+			/* Length of this frame: */
+			LastFrameDelay = (float)m_stream->codec.frame_rate_base / m_stream->codec.frame_rate;
+			LastFrameDelay += frame.repeat_pict * (LastFrameDelay * 0.5f);
+
 			/* We got a frame.  Convert it. */
 			avcodec::AVPicture pict;
 			pict.data[0] = (unsigned char *)m_img->pixels;
@@ -432,19 +440,6 @@ void MovieTexture_FFMpeg::DecoderThread()
 			if ( m_stream->codec.has_b_frames &&
 				 frame.pict_type != FF_B_TYPE )
 				swap( CurrentTimestamp, Last_IP_Timestamp );
-
-			if( CurrentTimestamp != 0 )
-				LastGoodTimestamp = CurrentTimestamp;
-			else {
-				/* If the timestamp is zero, guess what the timestamp
-				 * would be. */
-				CurrentTimestamp = LastGoodTimestamp;
-				const float frame_delay = (float)m_stream->codec.frame_rate_base /
-					(float)m_stream->codec.frame_rate;
-
-				CurrentTimestamp += frame_delay;
-				CurrentTimestamp += frame.repeat_pict * (frame_delay * 0.5f);
-			}
 
 			m_Position = CurrentTimestamp;
 
