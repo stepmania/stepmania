@@ -1033,7 +1033,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 				{
 					if( (m_pLifeMeter[pn] && m_pLifeMeter[pn]->IsFailing() && !GAMESTATE->m_CurStageStats.bFailed[pn])  ||
 						(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn) && !GAMESTATE->m_CurStageStats.bFailed[pn]) )
+					{
+						LOG->Trace("Player %d failed", (int)pn);
 						GAMESTATE->m_CurStageStats.bFailed[pn] = true;	// fail
+					}
 				}
 						
 				break;
@@ -1068,7 +1071,17 @@ void ScreenGameplay::Update( float fDeltaTime )
 			break;
 		case SongOptions::FAIL_END_OF_SONG:
 		case SongOptions::FAIL_OFF:
-			break;	// don't check for fail
+			// we still need to check for fail for scoring purposes
+			for ( pn=0; pn<NUM_PLAYERS; pn++ )
+			{
+				if( (m_pLifeMeter[pn] && m_pLifeMeter[pn]->IsFailing() && !GAMESTATE->m_CurStageStats.bFailed[pn])  ||
+					(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn) && !GAMESTATE->m_CurStageStats.bFailed[pn]) )
+				{
+					LOG->Trace("Player %d failed", (int)pn);
+					GAMESTATE->m_CurStageStats.bFailed[pn] = true;	// fail
+				}
+			}
+			break;
 		default:
 			ASSERT(0);
 		}
