@@ -79,6 +79,11 @@ LoadingWindow = arch/LoadingWindow/LoadingWindow_Null.h \
 		arch/LoadingWindow/LoadingWindow_SDL.cpp arch/LoadingWindow/LoadingWindow_SDL.h
 
 if HAVE_GTK
+bin_PROGRAMS += GtkModule.so
+GtkModule_so_LDFLAGS = -rdynamic -shared
+GtkModule_so_CPPFLAGS = $(GTK_CFLAGS)
+GtkModule_so_LDADD = $(GTK_LIBS)
+GtkModule_so_SOURCES = arch/LoadingWindow/LoadingWindow_GtkModule.cpp
 LoadingWindow += arch/LoadingWindow/LoadingWindow_Gtk.cpp arch/LoadingWindow/LoadingWindow_Gtk.h
 endif
 
@@ -192,8 +197,7 @@ stepmania_LDADD = \
 		  $(GL_LIBS) \
 		  $(srcdir)/SDL-1.2.5/src/.libs/libSDL.a \
 		  $(srcdir)/SDL_sound-1.0.0/.libs/libSDL_sound.a \
-		  $(SDL_LIBS) -lSDL_image \
-		  $(GTK_LIBS)
+		  $(SDL_LIBS) -lSDL_image
 
 INCLUDES = $(SDL_CFLAGS)
 # -O0 -g
