@@ -46,7 +46,7 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 				LOG->Warn("Unknown sound driver name: %s", DriversToTry[i].GetString());
 		}
 		catch(const RageException &e) {
-			LOG->Trace("Couldn't load driver %s: %s", DriversToTry[i].GetString(), e.what());
+			LOG->Info("Couldn't load driver %s: %s", DriversToTry[i].GetString(), e.what());
 		}
 	}
 
