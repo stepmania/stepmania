@@ -572,96 +572,96 @@ void ScreenPackages::EnterURL( const CString & sURL )
 }
 void ScreenPackages::HTTPUpdate()
 {
-	if ( m_bIsDownloading )
+	if( !m_bIsDownloading )
+		return;
+
+	int BytesGot=0;
+	//Keep this as a code block
+	//as there may be need to "if" it out some time.
+	/* If you need a conditional for a large block of code, stick it in
+	 * a function and return. */
+	int Size = 1; 
+	while ( Size > 0 )
 	{
-		int BytesGot=0;
-		//Keep this as a code block
-		//as there may be need to "if" it out some time.
+		char Buffer[1024];
+		Size = m_wSocket.ReadData( Buffer, 1024 );
+		m_sBUFFER.append( Buffer, Size );
+		BytesGot += Size;
+	}
+	if (!m_bGotHeader)
+	{
+		m_sStatus = "Waiting for header.";
+		//We don't know if we are using unix-style or dos-style
+		int HeaderEnd = m_sBUFFER.find("\n\n");
+		if ( HeaderEnd < 0 )
+			HeaderEnd = m_sBUFFER.find("\r\n\r\n");
+		if ( HeaderEnd >= 0 )
 		{
-			int Size = 1; 
-			while ( Size > 0 )
+			int i = m_sBUFFER.find(" ");
+			int j = m_sBUFFER.find(" ",i+1);
+			int k = m_sBUFFER.Find("\n",j+1);
+			if ( (i<0) || (j<0) || (k<0) )
 			{
-				char Buffer[1024];
-				Size = m_wSocket.ReadData( Buffer, 1024 );
-				m_sBUFFER.append( Buffer, Size );
-				BytesGot += Size;
+				m_iResponceCode = -100;
+				m_iResponceName = "Malformed responce.";
 			}
-			if (!m_bGotHeader)
+			m_iResponceCode = atoi(m_sBUFFER.substr(i+1,j-i).c_str());
+			m_iResponceName = m_sBUFFER.substr( j+1, k-j).c_str();
+
+			i = m_sBUFFER.find("Content-Length:");
+			j = m_sBUFFER.find("\n", i+1 );
+
+			if ( i > 0 )
+				m_iTotalBytes = atoi(m_sBUFFER.substr(i+16,j-i).c_str());
+			else
+				m_iTotalBytes = -1;	//We don't know, so go until disconnect
+
+			m_bGotHeader = true;
+			m_sBUFFER = m_sBUFFER.substr( HeaderEnd + 4 );
+		}
+	}
+	else
+	{
+		if ( m_bIsPackage )
+		{
+			m_iDownloaded += m_sBUFFER.length();
+			m_fOutputFile.Write( m_sBUFFER );
+			m_sBUFFER = "";
+		}
+		else
+		{
+			m_iDownloaded = m_sBUFFER.length();
+		}
+		if ( ( ( m_iTotalBytes <= m_iDownloaded ) && ( m_iTotalBytes != -1 ) ) ||
+						//We have the full doc. (And we knew how big it was)
+			( ( m_iTotalBytes == -1 ) && 
+				( ( m_wSocket.state == 8 ) || 
+					( m_wSocket.state == 0 ) ) ) )
+					//XXX: Work around;  these should use enumerated types.
+					//We didn't know how big it was, and were disconnected
+					//So that means we have it all.
+		{
+			m_wSocket.close();
+			m_bIsDownloading = false;
+			m_bGotHeader=false;
+			m_sStatus = ssprintf( "Done;%dB", int(m_iDownloaded) );
+
+			if ( ( m_iResponceCode < 200 ) || ( m_iResponceCode >= 400 ) )
 			{
-				m_sStatus = "Waiting for header.";
-				//We don't know if we are using unix-style or dos-style
-				int HeaderEnd = m_sBUFFER.find("\n\n");
-				if ( HeaderEnd < 0 )
-					HeaderEnd = m_sBUFFER.find("\r\n\r\n");
-				if ( HeaderEnd >= 0 )
-				{
-					int i = m_sBUFFER.find(" ");
-					int j = m_sBUFFER.find(" ",i+1);
-					int k = m_sBUFFER.Find("\n",j+1);
-					if ( (i<0) || (j<0) || (k<0) )
-					{
-						m_iResponceCode = -100;
-						m_iResponceName = "Malformed responce.";
-					}
-					m_iResponceCode = atoi(m_sBUFFER.substr(i+1,j-i).c_str());
-					m_iResponceName = m_sBUFFER.substr( j+1, k-j).c_str();
-
-					i = m_sBUFFER.find("Content-Length:");
-					j = m_sBUFFER.find("\n", i+1 );
-
-					if ( i > 0 )
-						m_iTotalBytes = atoi(m_sBUFFER.substr(i+16,j-i).c_str());
-					else
-						m_iTotalBytes = -1;	//We don't know, so go until disconnect
-
-					m_bGotHeader = true;
-					m_sBUFFER = m_sBUFFER.substr( HeaderEnd + 4 );
-				}
+				m_sStatus = ssprintf( "%d", m_iResponceCode ) + m_iResponceName;
 			}
 			else
 			{
-				if ( m_bIsPackage )
+				if ( m_bIsPackage && ( m_iResponceCode < 300 ) )
 				{
-					m_iDownloaded += m_sBUFFER.length();
-					m_fOutputFile.Write( m_sBUFFER );
-					m_sBUFFER = "";
+					m_fOutputFile.Flush( );
+					m_fOutputFile.Close( );
+					FlushDirCache( );
+					RefreshPackages( );
+					m_iDownloaded = 0;
 				}
 				else
-				{
-					m_iDownloaded = m_sBUFFER.length();
-				}
-				if ( ( ( m_iTotalBytes <= m_iDownloaded ) && ( m_iTotalBytes != -1 ) ) ||
-								//We have the full doc. (And we knew how big it was)
-				   ( ( m_iTotalBytes == -1 ) && 
-						( ( m_wSocket.state == 8 ) || 
-						  ( m_wSocket.state == 0 ) ) ) )
-							//XXX: Work around;  these should use enumerated types.
-							//We didn't know how big it was, and were disconnected
-							//So that means we have it all.
-				{
-					m_wSocket.close();
-					m_bIsDownloading = false;
-					m_bGotHeader=false;
-					m_sStatus = ssprintf( "Done;%dB", int(m_iDownloaded) );
-
-					if ( ( m_iResponceCode < 200 ) || ( m_iResponceCode >= 400 ) )
-					{
-						m_sStatus = ssprintf( "%d", m_iResponceCode ) + m_iResponceName;
-					}
-					else
-					{
-						if ( m_bIsPackage && ( m_iResponceCode < 300 ) )
-						{
-							m_fOutputFile.Flush( );
-							m_fOutputFile.Close( );
-							FlushDirCache( );
-							RefreshPackages( );
-							m_iDownloaded = 0;
-						}
-						else
-							HTMLParse();
-					}
-				}
+					HTMLParse();
 			}
 		}
 	}
