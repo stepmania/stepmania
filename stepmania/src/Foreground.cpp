@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "IniFile.h"
 #include "GameState.h"
+#include "RageTextureManager.h"
 
 Foreground::~Foreground()
 {
@@ -22,6 +23,10 @@ void Foreground::Unload()
 
 void Foreground::LoadFromSong( const Song *pSong )
 {
+        /* Song graphics can get very big; never keep them in memory. */
+	RageTextureID::TexPolicy OldPolicy = TEXTUREMAN->GetDefaultTexturePolicy();
+	TEXTUREMAN->SetDefaultTexturePolicy( RageTextureID::TEX_VOLATILE );
+
 	m_pSong = pSong;
 	for( unsigned i=0; i<pSong->m_ForegroundChanges.size(); i++ )
 	{
@@ -46,6 +51,8 @@ void Foreground::LoadFromSong( const Song *pSong )
 		this->AddChild( bga.m_bga );
 		m_BGAnimations.push_back( bga );
 	}
+
+	TEXTUREMAN->SetDefaultTexturePolicy( OldPolicy );
 
 	this->SortByZ();
 }
