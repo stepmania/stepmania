@@ -1,4 +1,5 @@
 #include "global.h"
+#include "RageUtil.h"
 #include "RageSoundDriver_CA.h"
 #include "CAHelpers.h"
 #include "RageLog.h"
@@ -14,6 +15,22 @@
 #include <mach/mach_error.h>
 
 static AudioConverter *gConverter;
+
+static CString FormatToString( int fmt )
+{
+	char c[4];
+	c[0] = (fmt >> 24) & 0xFF;
+	c[1] = (fmt >> 16) & 0xFF;
+	c[2] = (fmt >>  8) & 0xFF;
+	c[3] = (fmt)       & 0xFF;
+    
+	/* Sanitize: */
+	for( int i = 0; i < 4; ++i )
+		if( c[i] < 32 || c[i] >= 127 )
+			return ssprintf( "0x%X", fmt );
+    
+	return ssprintf( "%c%c%c%c", c[0], c[1], c[2], c[3] );
+}
 
 static Desc FindClosestFormat(const vector<Desc>& formats)
 {
@@ -90,6 +107,14 @@ RageSound_CA::RageSound_CA()
         RageException::ThrowNonfatal("Couldn't create default output device.");
     }
     
+    try
+    {
+        mOutputDevice->SetNominalSampleRate(44100.0);
+    }
+    catch (const CAException& e)
+    {
+        RageException::ThrowNonfatal("Couldn't set the nominal sample rate.");
+    }
     AudioStreamID sID = mOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
     CAAudioHardwareStream stream( sID );
 
@@ -114,8 +139,8 @@ RageSound_CA::RageSound_CA()
     {
         const Desc& f = physicalFormats[i];
         
-        LOG->Info("Format %u:  Rate: %i  ID: %lu  Flags 0x%lx  bpp %lu  fpp %lu  bpf %lu  channels %lu  bits %lu",
-                  i, (int) f.mSampleRate, f.mFormatID, f.mFormatFlags,
+        LOG->Info("Format %u:  Rate: %i  ID: %s  Flags 0x%lx  bpp %lu  fpp %lu  bpf %lu  channels %lu  bits %lu",
+                  i, (int) f.mSampleRate, FormatToString(f.mFormatID).c_str(), f.mFormatFlags,
                   f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
                   f.mChannelsPerFrame, f.mBitsPerChannel);
     }
@@ -129,8 +154,8 @@ RageSound_CA::RageSound_CA()
     {
         const Desc& f = procFormats[i];
         
-        LOG->Info("Format %u:  Rate: %i  ID: %lu  Flags 0x%lx  bpp %lu  fpp %lu  bpf %lu  channels %lu  bits %lu",
-                  i, (int) f.mSampleRate, f.mFormatID, f.mFormatFlags,
+        LOG->Info("Format %u:  Rate: %i  ID: %s  Flags 0x%lx  bpp %lu  fpp %lu  bpf %lu  channels %lu  bits %lu",
+                  i, (int) f.mSampleRate, FormatToString(f.mFormatID).c_str(), f.mFormatFlags,
                   f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
                   f.mChannelsPerFrame, f.mBitsPerChannel);
     }
