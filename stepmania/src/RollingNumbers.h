@@ -1,25 +1,38 @@
-/* ScoreDisplayNormal - Shows point score during gameplay and some menus. */
+/* RollingNumbers - animates from one number to another by scrolling its digits. */
 
-#ifndef SCORE_DISPLAY_NORMAL_H
-#define SCORE_DISPLAY_NORMAL_H
+#ifndef RollingNumbers_H
+#define RollingNumbers_H
 
-#include "ScoreDisplay.h"
-#include "RollingNumbers.h"
-#include "Sprite.h"
+#include "BitmapText.h"
 
-class ScoreDisplayNormal : public ScoreDisplay
+
+class RollingNumbers : public BitmapText
 {
 public:
-	ScoreDisplayNormal();
+	RollingNumbers();
 
-	virtual void Init( const PlayerState* pPlayerState );
+	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
-	virtual void SetScore( int iNewScore );
-	virtual void SetText( CString s ) { m_text.SetText(s); }
+	virtual void Update( float fDeltaTime );
 
-protected:
-	Sprite		m_sprFrame;
-	RollingNumbers	m_text;
+	void SetTargetNumber( float fTargetNumber );
+
+	void UpdateText();
+
+private:
+	// Loaded attributes
+	//
+	// Time between the call to SetTargetNumber and m_fCurrentNumber == 
+	// m_fTargetNumber.  Used to calculate m_fScoreVelocity.
+	float	m_fApproachSeconds;
+	CString m_sFormat;
+
+	//
+	// Calculated
+	//
+	float	m_fCurrentNumber;	// currently showing this
+	float	m_fTargetNumber;	// approach this
+	float	m_fScoreVelocity;	// approach target at this speed
 };
 
 #endif

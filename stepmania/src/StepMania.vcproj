@@ -2286,6 +2286,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Quad.h">
 			</File>
 			<File
+				RelativePath="RollingNumbers.cpp">
+			</File>
+			<File
+				RelativePath="RollingNumbers.h">
+			</File>
+			<File
 				RelativePath=".\Sprite.cpp">
 			</File>
 			<File

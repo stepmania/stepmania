@@ -24,16 +24,7 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 	// init the text
 	m_text.LoadFromFont( THEME->GetPathF("ScoreDisplayNormal","numbers") );
 	m_text.SetShadowLength( 0 );
-
-	m_iScore = 0;
-
-	m_iTrailingScore = 0;
-	m_iScoreVelocity = 0;
-
-	CString s;
-	for( int i=0; i<NUM_SCORE_DIGITS; i++ )
-		s += ' ';
-	m_text.SetText( s );
+	m_text.UpdateText();
 	this->AddChild( &m_text );
 }
 
@@ -49,63 +40,38 @@ void ScoreDisplayNormal::Init( const PlayerState* pPlayerState )
 
 void ScoreDisplayNormal::SetScore( int iNewScore ) 
 {
-	m_iScore = iNewScore;
-
-	// play some games to display the correct score -- the actual internal score does not change at all
-	// but the displayed one can (ie: displayed score for subtracrive is MaxScore - score)
-
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
+	// Play some games to display the correct score -- the actual internal 
+	// score does not change at all but the displayed one can (ie: displayed 
+	// score for subtracrive is MaxScore - score).
 
-	if( m_pPlayerState->m_CurrentPlayerOptions.m_ScoreDisplay == PlayerOptions::SCORING_SUBTRACT )
+	
+	int iMaxScore = g_CurStageStats.m_player[pn].iMaxScore;
+	int iCurMaxScore = g_CurStageStats.m_player[pn].iCurMaxScore;
+
+	switch( m_pPlayerState->m_CurrentPlayerOptions.m_ScoreDisplay )
 	{
-		m_iScore = g_CurStageStats.m_player[pn].iMaxScore - ( g_CurStageStats.m_player[pn].iCurMaxScore - iNewScore );
-	}
-	else if( m_pPlayerState->m_CurrentPlayerOptions.m_ScoreDisplay == PlayerOptions::SCORING_AVERAGE )
-	{
-		if( g_CurStageStats.m_player[pn].iCurMaxScore == 0 ) // don't divide by zero fats
-			m_iScore = 0;
+	case PlayerOptions::SCORING_ADD:
+		// nothing to do
+		break;
+	case PlayerOptions::SCORING_SUBTRACT:
+		iNewScore = iMaxScore - ( iCurMaxScore - iNewScore );
+		break;
+	case PlayerOptions::SCORING_AVERAGE:
+		if( iCurMaxScore == 0 ) // don't divide by zero fats
+		{
+			iNewScore = 0;
+		}
 		else
 		{
-			float scoreRatio = (float) iNewScore / (float) g_CurStageStats.m_player[pn].iCurMaxScore;
-			m_iScore = (int) ( scoreRatio * g_CurStageStats.m_player[pn].iMaxScore );
+			float fScoreRatio = iNewScore / (float)iCurMaxScore;
+			iNewScore = fScoreRatio * iMaxScore;
 		}
 	}
-	
-	int iDelta = m_iScore - m_iTrailingScore;
 
-	m_iScoreVelocity = int(float(iDelta) / SCORE_TWEEN_TIME);	// in score units per second
-}
-
-void ScoreDisplayNormal::SetText( CString s ) 
-{ 
-	m_text.SetText( s );
-}
-
-void ScoreDisplayNormal::Update( float fDeltaTime )
-{
-	ScoreDisplay::Update( fDeltaTime );
-
-	if( m_iTrailingScore != m_iScore )
-	{
-		// adjust for when player fails
-		int increment = int(m_iScoreVelocity * fDeltaTime);
-		if (m_iScoreVelocity != 0 && increment == 0) increment = 1;
-
-		int iDeltaBefore = m_iScore - m_iTrailingScore;
-		m_iTrailingScore += increment;
-		int iDeltaAfter = m_iScore - m_iTrailingScore;
-
-		if( (iDeltaBefore < 0 && iDeltaAfter > 0) ||
-			(iDeltaBefore > 0 && iDeltaAfter < 0) )	// the sign changed
-		{
-			m_iTrailingScore = m_iScore;
-			m_iScoreVelocity = 0;
-		}
-
-		m_text.SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, m_iTrailingScore) );
-	}
+	m_text.SetTargetNumber( iNewScore );
 }
 
 /*

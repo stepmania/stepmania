@@ -1766,6 +1766,14 @@ SOURCE=.\Quad.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RollingNumbers.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RollingNumbers.h
+# End Source File
+# End Group
+
 SOURCE=.\Sprite.cpp
 # End Source File
 # Begin Source File

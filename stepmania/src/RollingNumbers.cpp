@@ -1,28 +1,50 @@
-/* ScoreDisplayNormal - Shows point score during gameplay and some menus. */
-
-#ifndef SCORE_DISPLAY_NORMAL_H
-#define SCORE_DISPLAY_NORMAL_H
-
-#include "ScoreDisplay.h"
+#include "global.h"
 #include "RollingNumbers.h"
-#include "Sprite.h"
+#include "RageUtil.h"
+#include "XmlFile.h"
 
-class ScoreDisplayNormal : public ScoreDisplay
+RollingNumbers::RollingNumbers()
 {
-public:
-	ScoreDisplayNormal();
+	m_sFormat = "%9.0f";
+	m_fApproachSeconds = 0.2f;
 
-	virtual void Init( const PlayerState* pPlayerState );
+	m_fCurrentNumber = 0;
+	m_fTargetNumber = 0;
+	m_fScoreVelocity = 0;
+}
 
-	virtual void SetScore( int iNewScore );
-	virtual void SetText( CString s ) { m_text.SetText(s); }
+void RollingNumbers::LoadFromNode( const CString& sDir, const XNode* pNode )
+{
+	BitmapText::LoadFromNode( sDir, pNode );
 
-protected:
-	Sprite		m_sprFrame;
-	RollingNumbers	m_text;
-};
+	pNode->GetAttrValue( "Format", m_sFormat );
+	pNode->GetAttrValue( "ApproachSeconds", m_fApproachSeconds );
 
-#endif
+	UpdateText();
+}
+
+void RollingNumbers::Update( float fDeltaTime )
+{
+	if( m_fCurrentNumber != m_fTargetNumber )
+	{
+		fapproach( m_fCurrentNumber, m_fTargetNumber, m_fScoreVelocity * fDeltaTime );
+		UpdateText();
+	}
+
+	BitmapText::Update( fDeltaTime );
+}
+
+void RollingNumbers::SetTargetNumber( float fTargetNumber )
+{
+	m_fTargetNumber = fTargetNumber;
+	m_fScoreVelocity = (m_fTargetNumber-m_fCurrentNumber) / m_fApproachSeconds;
+}
+
+void RollingNumbers::UpdateText()
+{
+	SetText( ssprintf(m_sFormat, m_fCurrentNumber) );
+}
+
 
 /*
  * (c) 2001-2004 Chris Danford
