@@ -122,29 +122,17 @@ void ScreenOptionsMaster::Update( float fDelta )
 	ScreenOptions::Update( fDelta );
 }
 
-void ScreenOptionsMaster::ImportOptions( int r )
+void ScreenOptionsMaster::ImportOptions( int r, PlayerNumber pn )
 {
+	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 	OptionRow &row = *m_Rows[r];
-	row.ImportOptions();
+	row.ImportOptions( pn );
 }
 
-/* Import only settings specific to the given player. */
-void ScreenOptionsMaster::ImportOptionsForPlayer( PlayerNumber pn )
-{
-	if( !GAMESTATE->IsHumanPlayer(pn) )
-		return;
-
-	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
-	{
-		OptionRow &row = *m_Rows[i];
-		row.ImportOptions( pn );
-	}
-}
-
-void ScreenOptionsMaster::ExportOptions( int r )
+void ScreenOptionsMaster::ExportOptions( int r, PlayerNumber pn )
 {
 	OptionRow &row = *m_Rows[r];
-	m_iChangeMask |= row.ExportOptions();
+	m_iChangeMask |= row.ExportOptions( pn );
 }
 
 void ScreenOptionsMaster::BeginFadingOut()
@@ -251,8 +239,9 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 			for( unsigned r = 0; r < OptionRowHandlers.size(); ++r )
 			{
 				CHECKPOINT_M( ssprintf("%i/%i", r, int(OptionRowHandlers.size())) );
-			
-				ExportOptions( r );
+
+				FOREACH_HumanPlayer( p )
+					ExportOptions( r, p );
 			}
 
 			if( m_iChangeMask & OPT_APPLY_ASPECT_RATIO )

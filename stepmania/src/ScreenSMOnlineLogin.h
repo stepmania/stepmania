@@ -13,8 +13,8 @@ public:
 	void SendLogin(CString sPassword);
 
 private:
-	void ImportOptions( int row );
-	void ExportOptions( int row );
+	void ImportOptions( int row, PlayerNumber pn );
+	void ExportOptions( int row, PlayerNumber pn );
 	void GoToNextScreen();
 	void GoToPrevScreen();
 	CString GetSelectedProfileID();

@@ -23,9 +23,8 @@ protected:
 protected:
 	void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void ImportOptions( int row );
-	virtual void ExportOptions( int row );
-	virtual void ImportOptionsForPlayer( PlayerNumber pn ); // used by ScreenPlayerOptions
+	virtual void ImportOptions( int row, PlayerNumber pn );
+	virtual void ExportOptions( int row, PlayerNumber pn );
 
 	virtual void BeginFadingOut();
 	virtual void GoToNextScreen();

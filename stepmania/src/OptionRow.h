@@ -80,9 +80,7 @@ public:
 	void LoadOptionIcon( PlayerNumber pn, const CString &sText );
 
 	void ImportOptions( PlayerNumber pn );
-	void ImportOptions();
 	int ExportOptions( PlayerNumber pn );
-	int ExportOptions();
 
 	void AfterImportOptions( 
 		const CString &sTitle,

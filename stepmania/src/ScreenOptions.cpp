@@ -151,7 +151,8 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		row.LoadMetrics( OPTION_ROW_TYPE );
 		row.LoadNormal( vDefs[r], vHands[r], bFirstRowGoesDown );
 
-		this->ImportOptions( r );
+		FOREACH_HumanPlayer( p )
+			this->ImportOptions( r, p );
 	
 		CHECKPOINT_M( ssprintf("row %i: %s", r, row.GetRowDef().name.c_str()) );
 
@@ -524,7 +525,8 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToNextScreen:
 		for( unsigned r=0; r<m_Rows.size(); r++ )		// foreach row
-			this->ExportOptions(r);
+			FOREACH_HumanPlayer( p )
+				this->ExportOptions( r, p );
 		this->GoToNextScreen();
 		break;
 	case SM_BeginFadingOut:
@@ -983,7 +985,8 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		m_SoundChangeCol.Play();
 
 	if( row.GetRowDef().m_bExportOnChange )
-		ExportOptions( iCurRow );
+		FOREACH_HumanPlayer( p )
+			ExportOptions( iCurRow, p );
 }
 
 

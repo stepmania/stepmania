@@ -18,7 +18,7 @@ private:
 	void GoToNextScreen();
 	void GoToPrevScreen();
 
-	void UpdateDisqualified();
+	void UpdateDisqualified( PlayerNumber pn );
 
 	bool        m_bAcceptedChoices;
 	bool        m_bGoToOptions;

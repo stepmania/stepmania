@@ -683,7 +683,8 @@ void OptionRow::Reload()
 				return;
 
 			if( m_RowDef.m_bExportOnChange )
-				ExportOptions();
+				FOREACH_OptionsPlayer( p )
+					ExportOptions( p );
 
 			m_pHand->Reload( m_RowDef );
 			ASSERT( !m_RowDef.choices.empty() );
@@ -691,7 +692,8 @@ void OptionRow::Reload()
 			FOREACH_PlayerNumber( p )
 				m_vbSelected[p].resize( m_RowDef.choices.size(), false );
 
-			ImportOptions();
+			FOREACH_OptionsPlayer( p )
+				ImportOptions( p );
 
 			switch( m_RowDef.selectType )
 			{
@@ -708,7 +710,8 @@ void OptionRow::Reload()
 			}
 
 			if( m_RowDef.m_bExportOnChange )
-				ExportOptions();
+				FOREACH_OptionsPlayer( p )
+					ExportOptions( p );
 
 			UpdateEnabledDisabled();
 			UpdateText();
@@ -767,12 +770,6 @@ void OptionRow::ImportOptions( PlayerNumber pn )
 	VerifySelected( m_RowDef.selectType, m_vbSelected[pn], m_RowDef.name );
 }
 
-void OptionRow::ImportOptions()
-{
-	FOREACH_OptionsPlayer( p )
-		ImportOptions( p );
-}
-
 int OptionRow::ExportOptions( PlayerNumber pn )
 {
 	if( m_pHand == NULL )
@@ -788,16 +785,6 @@ int OptionRow::ExportOptions( PlayerNumber pn )
 	iChangeMask |= m_pHand->ExportOption( m_RowDef, pn, m_vbSelected[pn] );
 	INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[pn] );
 	
-	return iChangeMask;
-}
-
-int OptionRow::ExportOptions()
-{
-	int iChangeMask = 0;
-
-	FOREACH_OptionsPlayer( p )
-		iChangeMask |= ExportOptions( p );
-
 	return iChangeMask;
 }
 

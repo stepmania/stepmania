@@ -9,6 +9,7 @@
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
 #include "VirtualKeyboard.h"
+#include "GameState.h"
 
 
 enum {
@@ -84,8 +85,12 @@ void ScreenProfileOptions::Init()
 	SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions","music") );
 }
 
-void ScreenProfileOptions::ImportOptions( int row )
+void ScreenProfileOptions::ImportOptions( int row, PlayerNumber pn )
 {
+	// Only take action for the master player
+	if( pn != GAMESTATE->m_MasterPlayerNumber )
+		return;
+
 	switch( row )
 	{
 	case PO_PLAYER1:
@@ -106,8 +111,12 @@ void ScreenProfileOptions::ImportOptions( int row )
 	}
 }
 
-void ScreenProfileOptions::ExportOptions( int row )
+void ScreenProfileOptions::ExportOptions( int row, PlayerNumber pn )
 {
+	// Only take action for the master player
+	if( pn != GAMESTATE->m_MasterPlayerNumber )
+		return;
+
 	switch( row )
 	{
 	case PO_PLAYER1:

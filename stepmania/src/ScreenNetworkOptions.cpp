@@ -156,8 +156,8 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 #endif
 }
 
-void ScreenNetworkOptions::ImportOptions( int row ) { }
-void ScreenNetworkOptions::ExportOptions( int row ) { }
+void ScreenNetworkOptions::ImportOptions( int row, PlayerNumber pn ) { }
+void ScreenNetworkOptions::ExportOptions( int row, PlayerNumber pn ) { }
 
 void ScreenNetworkOptions::UpdateConnectStatus( )
 {

@@ -58,14 +58,15 @@ void ScreenPlayerOptions::Init()
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
 
-	FOREACH_HumanPlayer( pn )
+	FOREACH_HumanPlayer( p )
 	{
-		m_sprCancelAll[pn].LoadAndSetName( "ScreenPlayerOptions", ssprintf("CancelAllP%d",pn+1) );
-		SET_XY_AND_ON_COMMAND( m_sprCancelAll[pn] );
-		this->AddChild( m_sprCancelAll[pn] );
+		m_sprCancelAll[p].LoadAndSetName( "ScreenPlayerOptions", ssprintf("CancelAllP%d",p+1) );
+		SET_XY_AND_ON_COMMAND( m_sprCancelAll[p] );
+		this->AddChild( m_sprCancelAll[p] );
 	}
 
-	UpdateDisqualified();
+	FOREACH_HumanPlayer( p )
+		UpdateDisqualified( p );
 }
 
 
@@ -141,16 +142,18 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		
 		COMMAND( m_sprCancelAll[pn], "Show" );
 
-		this->ImportOptionsForPlayer( pn );
+		for( unsigned r=0; r<m_Rows.size(); r++ )
+			this->ImportOptions( r, pn );
 		this->PositionUnderlines();
-		this->UpdateDisqualified();
+		this->UpdateDisqualified( pn );
 	}
 
 	ScreenOptionsMaster::Input( DeviceI, type, GameI, MenuI, StyleI );
 
 	// UGLY: Update m_Disqualified whenever Start is pressed
 	if( MenuI.IsValid() && MenuI.button == MENU_BUTTON_START )
-		UpdateDisqualified();
+		FOREACH_HumanPlayer( p )
+			UpdateDisqualified( p );
 }
 
 void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
@@ -182,17 +185,14 @@ void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 	ScreenOptionsMaster::HandleScreenMessage( SM );
 }
 
-void ScreenPlayerOptions::UpdateDisqualified()
+void ScreenPlayerOptions::UpdateDisqualified( PlayerNumber pn )
 {
 	// save current player options 
-	PlayerOptions po[NUM_PLAYERS];
-
-	FOREACH_PlayerNumber( p )
-		po[p] = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions;
+	PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
 	
 	// export the currently selection options, which will fill GAMESTATE->m_PlayerOptions
 	for( unsigned r=0; r<OptionRowHandlers.size(); r++ )
-		ScreenOptionsMaster::ExportOptions( r );
+		ScreenOptionsMaster::ExportOptions( r, pn );
 
 	FOREACH_HumanPlayer( p )
 	{
@@ -201,7 +201,7 @@ void ScreenPlayerOptions::UpdateDisqualified()
 		m_sprDisqualify[p]->SetHidden( !bIsHandicap );
 
 		// restore previous player options in case the user escapes back after this
-		GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = po[p];
+		GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = po;
 	}
 }
 
