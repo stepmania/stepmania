@@ -56,7 +56,7 @@ Steps::~Steps()
 	delete notes_comp;
 }
 
-void Steps::SetNoteData( NoteData* pNewNoteData )
+void Steps::SetNoteData( const NoteData* pNewNoteData )
 {
 	ASSERT( pNewNoteData->GetNumTracks() == GameManager::NotesTypeToNumTracks(m_StepsType) );
 
