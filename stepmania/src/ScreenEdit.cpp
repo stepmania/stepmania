@@ -1533,8 +1533,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				const float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
 				LOG->Trace( "Starting playback at %f", fStartSeconds );
 			
-				// reload the music to fix sync problems
-				// m_soundMusic.Load(m_pSong->GetMusicPath());
 				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 				m_soundMusic.SetPositionSeconds( fStartSeconds );
 				m_soundMusic.StartPlaying();
@@ -1549,10 +1547,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				m_EditMode = MODE_RECORDING;
 
 				// initialize m_NoteFieldRecord
-				m_NoteFieldRecord.ClearAll();
+				m_NoteFieldRecord.Load( &m_NoteFieldEdit, PLAYER_1, -150, 350, 350 );
 				m_NoteFieldRecord.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
-				m_NoteFieldRecord.m_fBeginMarker = m_NoteFieldEdit.m_fBeginMarker;
-				m_NoteFieldRecord.m_fEndMarker = m_NoteFieldEdit.m_fEndMarker;
 
 				m_rectRecordBack.StopTweening();
 				m_rectRecordBack.BeginTweening( 0.5f );
@@ -1562,8 +1558,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat);
 				LOG->Trace( "Starting playback at %f", fStartSeconds );
 
-				// reload the music to fix sync problems
-				// m_soundMusic.Load(m_pSong->GetMusicPath());
 				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 				m_soundMusic.SetPositionSeconds( fStartSeconds );
 				m_soundMusic.StartPlaying();
