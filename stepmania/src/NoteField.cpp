@@ -70,6 +70,13 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDra
 	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
 }
 
+void NoteField::ReloadNoteSkin()
+{
+	// init note displays
+	for( int c=0; c<GetNumTracks(); c++ ) 
+		m_NoteDisplay[c].Load( c, m_PlayerNumber );
+}
+
 void NoteField::Update( float fDeltaTime )
 {
 	m_rectMarkerBar.Update( fDeltaTime );

@@ -85,13 +85,11 @@ void GameState::Reset()
 		m_StoredPlayerOptions[p].Init();
 	}
 	m_SongOptions.Init();
-	for( p=0; p<NUM_PLAYERS; p++ )
-		m_sPositioning[p] = "";
 	SAFE_DELETE( m_pPosition );
 	m_pPosition = new NoteFieldPositioning("Positioning.ini");
 	
-	// apply defaults
-	this->ApplyModifiers( PREFSMAN->m_sDefaultModifiers );
+	for( p=0; p<NUM_PLAYERS; p++ )
+		ApplyModifiers( (PlayerNumber)p, PREFSMAN->m_sDefaultModifiers );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -416,43 +414,10 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 }
 
 
-void GameState::ApplyModifiers( CString sModifiers )
+void GameState::ApplyModifiers( PlayerNumber pn, CString sModifiers )
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		m_PlayerOptions[p].FromString( sModifiers );
+	m_PlayerOptions[pn].FromString( sModifiers );
 	m_SongOptions.FromString( sModifiers );
-	
-
-	sModifiers.MakeLower();
-	CStringArray asBits;
-	split( sModifiers, ",", asBits, true );
-
-	for( unsigned i=0; i<asBits.size(); i++ )
-	{
-		CString& sBit = asBits[i];
-		TrimLeft(sBit);
-		TrimRight(sBit);
-
-		// change NoteSkin
-		if( NOTESKIN->DoesNoteSkinExist(sBit) )
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				NOTESKIN->SwitchNoteSkin( (PlayerNumber)p, sBit );
-		if( m_pPosition->IsValidModeForCurrentGame(sBit) )
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				m_sPositioning[p] = sBit;
-	}
-}
-
-CString GameState::GetModifiers()
-{
-	// This is really PLAYER_1's modifiers string!
-	CStringArray as;
-#define PUSH_IF_NOT_EMPTY( s )	if( !s.empty() ) as.push_back( s );
-
-	PUSH_IF_NOT_EMPTY( m_PlayerOptions[PLAYER_1].GetString() );
-	PUSH_IF_NOT_EMPTY( m_SongOptions.GetString() );
-	PUSH_IF_NOT_EMPTY( m_sPositioning[PLAYER_1] );
-	return join( ",", as );
 }
 
 /* Store the player's preferred options.  This is called at the very beginning
@@ -510,12 +475,10 @@ void GameState::RemoveAllInventory()
 void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
 {
 	// rebuild player options
-	PlayerOptions po = GAMESTATE->m_StoredPlayerOptions[pn];
+	PlayerOptions po = m_StoredPlayerOptions[pn];
 	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
-	{
 		po.FromString( m_ActiveAttacks[pn][s].sModifier );
-	}
-	GAMESTATE->m_PlayerOptions[pn] = po;
+	m_PlayerOptions[pn] = po;
 }
 
 int GameState::GetSumOfActiveAttackLevels( PlayerNumber pn )

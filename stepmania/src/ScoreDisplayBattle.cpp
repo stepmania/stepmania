@@ -17,6 +17,7 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "ThemeManager.h"
+#include "RageTextureManager.h"
 
 ScoreDisplayBattle::ScoreDisplayBattle()
 {
@@ -36,6 +37,11 @@ ScoreDisplayBattle::ScoreDisplayBattle()
 		m_ItemIcon[i].StopAnimating();
 		this->AddChild( &m_ItemIcon[i] );
 	}
+
+	CStringArray asIconPaths;
+	GetDirListing( THEME->GetCurThemeDir()+"Graphic/ScoreDisplayBattle icon*.*", asIconPaths );
+	for( unsigned j=0; j<asIconPaths.size(); j++ )
+		TEXTUREMAN->CacheTexture( asIconPaths[j] );
 }
 
 void ScoreDisplayBattle::Init( PlayerNumber pn )

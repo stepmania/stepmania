@@ -241,7 +241,7 @@ ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 1;
 	GAMESTATE->m_SongOptions.m_fMusicRate = 1;
-	NOTESKIN->SwitchNoteSkin( PLAYER_1, "note" );	// change noteskin before loading all of the edit Actors
+	GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "note";	// change noteskin before loading all of the edit Actors
 
 	m_BGAnimation.LoadFromAniDir( THEME->GetPathToB("ScreenEdit background") );
 
@@ -272,7 +272,7 @@ ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 	m_Clipboard.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
 
 
-	NOTESKIN->SwitchNoteSkin( PLAYER_1, "default" );	// change noteskin back to default before loading player
+	GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "default";	// change noteskin back to default before loading player
 
 	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL, NULL );
 	GAMESTATE->m_PlayerController[PLAYER_1] = PC_HUMAN;

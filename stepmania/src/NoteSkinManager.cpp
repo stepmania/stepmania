@@ -15,7 +15,6 @@
 #include "RageException.h"
 #include "GameState.h"
 #include "GameDef.h"
-#include "IniFile.h"
 #include "StyleInput.h"
 #include "StyleDef.h"
 #include "RageUtil.h"
@@ -30,64 +29,41 @@ const CString NOTESKINS_DIR  = "NoteSkins/";
 
 NoteSkinManager::NoteSkinManager()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		m_pIniMetrics[p] = new IniFile;
-		SwitchNoteSkin( (PlayerNumber)p, BASE_NOTESKIN_NAME );
-	}
 }
 
 NoteSkinManager::~NoteSkinManager()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		delete m_pIniMetrics[p];
 }
 
-void NoteSkinManager::GetNoteSkinNames( Game game, CStringArray &AddTo ) const
+void NoteSkinManager::RefreshNoteSkinData( Game game )
 {
-	GameDef* pGameDef = GAMEMAN->GetGameDefForGame( game );
+	GameDef* pGameDef = GAMEMAN->GetGameDefForGame( GAMESTATE->m_CurGame );
 
 	CString sBaseSkinFolder = NOTESKINS_DIR + pGameDef->m_szName + "/";
-	GetDirListing( sBaseSkinFolder + "*", AddTo, true );
+	CStringArray asNoteSkinNames;
+	GetDirListing( sBaseSkinFolder + "*", asNoteSkinNames, true );
+
+	int i;
 
 	// strip out "CVS"
-	for( int i=AddTo.size()-1; i>=0; i-- )
-		if( 0 == stricmp("cvs", AddTo[i]) )
-			AddTo.erase( AddTo.begin()+i, AddTo.begin()+i+1 );
-}
+	for( i=asNoteSkinNames.size()-1; i>=0; i-- )
+		if( 0 == stricmp("cvs", asNoteSkinNames[i]) )
+			asNoteSkinNames.erase( asNoteSkinNames.begin()+i, asNoteSkinNames.begin()+i+1 );
 
-void NoteSkinManager::GetNoteSkinNames( CStringArray &AddTo ) const
-{
-	GetNoteSkinNames( GAMESTATE->m_CurGame, AddTo );
-}
-
-bool NoteSkinManager::DoesNoteSkinExist( CString sSkinName ) const
-{
-	CStringArray asSkinNames;	
-	GetNoteSkinNames( asSkinNames );
-	for( unsigned i=0; i<asSkinNames.size(); i++ )
-		if( 0==stricmp(sSkinName, asSkinNames[i]) )
-			return true;
-	return false;
-}
-
-void NoteSkinManager::SwitchNoteSkin( PlayerNumber pn, CString sNewNoteSkin )
-{
-	if( sNewNoteSkin == ""  ||  !DoesNoteSkinExist(sNewNoteSkin) )
+	m_mapNameToData.clear();
+	for( i=0; i<asNoteSkinNames.size(); i++ )
 	{
-		CStringArray as;
-		GetNoteSkinNames( as );
-		ASSERT( !as.empty() );
-
-		/* Prefer "default" if it exists. */
-		sNewNoteSkin = as[0];
-		for(unsigned i = 0; i < as.size(); ++i)
-			if(!as[i].CompareNoCase("default")) sNewNoteSkin = "default";
+		CString sName = asNoteSkinNames[i];
+		sName.MakeLower();
+		m_mapNameToData[sName] = NoteSkinData();
+		LoadNoteSkinData( sName, m_mapNameToData[sName] );
 	}
+}
 
-	m_sCurNoteSkinName[pn] = sNewNoteSkin;
-
-	m_pIniMetrics[pn]->Reset();
+void NoteSkinManager::LoadNoteSkinData( CString sNoteSkinName, NoteSkinData& data_out )
+{
+	data_out.sName = sNoteSkinName;
+	data_out.metrics.Reset();
 
 	/* Read only the default keys from the default noteskin. */
 	IniFile defaults;
@@ -95,11 +71,40 @@ void NoteSkinManager::SwitchNoteSkin( PlayerNumber pn, CString sNewNoteSkin )
 	defaults.ReadFile();
 	const IniFile::key *def = defaults.GetKey("NoteDisplay");
 	if(def)
-		m_pIniMetrics[pn]->SetValue("NoteDisplay", *def);
+		data_out.metrics.SetValue("NoteDisplay", *def);
 
 	/* Read the active theme. */
-	m_pIniMetrics[pn]->SetPath( GetNoteSkinDir(sNewNoteSkin)+"metrics.ini" );
-	m_pIniMetrics[pn]->ReadFile();
+	data_out.metrics.SetPath( GetNoteSkinDir(sNoteSkinName)+"metrics.ini" );
+	data_out.metrics.ReadFile();	
+}
+
+
+void NoteSkinManager::GetNoteSkinNames( CStringArray &AddTo )
+{
+	GetNoteSkinNames( GAMESTATE->m_CurGame, AddTo );
+}
+
+void NoteSkinManager::GetNoteSkinNames( Game game, CStringArray &AddTo )
+{
+	RefreshNoteSkinData( game );	// now is a good time for this
+
+	for( map<CString,NoteSkinData>::const_iterator iter = m_mapNameToData.begin(); 
+		iter != m_mapNameToData.end();
+		++iter )
+	{
+		AddTo.push_back( iter->second.sName );
+	}
+}
+
+
+bool NoteSkinManager::DoesNoteSkinExist( CString sSkinName )
+{
+	CStringArray asSkinNames;	
+	GetNoteSkinNames( asSkinNames );
+	for( unsigned i=0; i<asSkinNames.size(); i++ )
+		if( 0==stricmp(sSkinName, asSkinNames[i]) )
+			return true;
+	return false;
 }
 
 CString NoteSkinManager::GetNoteSkinDir( CString sSkinName )
@@ -112,9 +117,12 @@ CString NoteSkinManager::GetNoteSkinDir( CString sSkinName )
 CString NoteSkinManager::GetMetric( PlayerNumber pn, CString sButtonName, CString sValue )	// looks in GAMESTATE for the current Style
 {
 	CString sReturn;
-	if( m_pIniMetrics[pn]->GetValue( sButtonName, sValue, sReturn ) )
+	CString sNoteSkinName = GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin;
+	sNoteSkinName.MakeLower();
+	NoteSkinData& data = m_mapNameToData[sNoteSkinName];
+	if( data.metrics.GetValue( sButtonName, sValue, sReturn ) )
 		return sReturn;
-	if( !m_pIniMetrics[pn]->GetValue( "NoteDisplay", sValue, sReturn ) )
+	if( !data.metrics.GetValue( "NoteDisplay", sValue, sReturn ) )
 		RageException::Throw( "Could not read metric '%s - %s' or 'NoteDisplay - %s'",
 			sButtonName.GetString(), sValue.GetString(), sValue.GetString() );
 	return sReturn;
@@ -170,9 +178,10 @@ CString NoteSkinManager::GetPathTo( PlayerNumber pn, int col, CString sFileName 
 
 CString NoteSkinManager::GetPathTo( PlayerNumber pn, CString sButtonName, CString sFileName )	// looks in GAMESTATE for the current Style
 {
-	CString sCurNoteSkinName = m_sCurNoteSkinName[pn];
+	CString sNoteSkinName = GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin;
+	sNoteSkinName.MakeLower();
 
-	CString ret = GetPathTo( sCurNoteSkinName, sButtonName, sFileName );
+	CString ret = GetPathTo( sNoteSkinName, sButtonName, sFileName );
 	if( !ret.empty() )	// we found something
 		return ret;
 	ret = GetPathTo( BASE_NOTESKIN_NAME, sButtonName, sFileName);
@@ -180,7 +189,7 @@ CString NoteSkinManager::GetPathTo( PlayerNumber pn, CString sButtonName, CStrin
 	if( ret.empty() )
 		RageException::Throw( "The NoteSkin element '%s %s' could not be found in '%s' or '%s'.", 
 		sButtonName.GetString(), sFileName.GetString(), 
-		GetNoteSkinDir(sCurNoteSkinName).GetString(),
+		GetNoteSkinDir(sNoteSkinName).GetString(),
 		GetNoteSkinDir(BASE_NOTESKIN_NAME).GetString() );
 
 	return ret;

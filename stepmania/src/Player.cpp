@@ -180,6 +180,8 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 		m_GrayArrowRow.SetZoom( 0.5f );
 		m_GhostArrowRow.SetZoom( 0.5f );
 	}
+
+	m_sLastSeenNoteSkin = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin;
 }
 
 void Player::Update( float fDeltaTime )
@@ -274,6 +276,12 @@ void Player::Update( float fDeltaTime )
 
 		SetHoldNoteLife(i, fLife);
 		SetHoldNoteScore(i, hns);
+	}
+
+	if( m_sLastSeenNoteSkin != GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin )
+	{
+		m_NoteField.ReloadNoteSkin();
+		m_sLastSeenNoteSkin = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin;
 	}
 
 	ActorFrame::Update( fDeltaTime );
@@ -416,7 +424,8 @@ void Player::Step( int col )
 			break;
 		default:
 			ASSERT(0);
-			score=TNS_NONE;
+			score = TNS_NONE;
+			break;
 		}
 
 		if( score==TNS_MARVELOUS  &&  !PREFSMAN->m_bMarvelousTiming )
@@ -576,14 +585,14 @@ void Player::HandleTapRowScore( unsigned row )
 	ASSERT(iNumTapsInRow > 0);
 
 	bool NoCheating = true;
-/*#ifdef DEBUG
-	bool NoCheating = false;
-#endif //DEBUG*/
+#ifdef DEBUG
+	NoCheating = false;
+#endif
 
 	if(GAMESTATE->m_bDemonstrationOrJukebox)
 		NoCheating = false;
 	// don't accumulate points if AutoPlay is on.
-	if( NoCheating && GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_CPU )
+	if( NoCheating && GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_AUTOPLAY )
 		return;
 
 	if(m_pScoreKeeper)

@@ -73,7 +73,7 @@ ScreenSelectGroup::ScreenSelectGroup() : Screen("ScreenSelectGroup")
 	}
 
 	// Add all group names to a map.
-	std::map<CString, CString> mapGroupNames;
+	map<CString, CString> mapGroupNames;
 	for( i=0; i<aAllSongs.size(); i++ )
 	{
 		const CString& sGroupName = aAllSongs[i]->m_sGroupName;
@@ -81,9 +81,9 @@ ScreenSelectGroup::ScreenSelectGroup() : Screen("ScreenSelectGroup")
 	}
 
 	// copy group names into a vector
-	std::vector<CString> asGroupNames;
+	vector<CString> asGroupNames;
 	asGroupNames.push_back( "ALL MUSIC" );	// special group
-	for( std::map<CString, CString>::const_iterator iter = mapGroupNames.begin(); iter != mapGroupNames.end(); ++iter )
+	for( map<CString, CString>::const_iterator iter = mapGroupNames.begin(); iter != mapGroupNames.end(); ++iter )
 		asGroupNames.push_back( iter->first );
 
 	// Add songs to the MusicList.

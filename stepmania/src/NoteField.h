@@ -32,8 +32,9 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	
-	void	Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw );
-	void	RemoveTapNoteRow( int iIndex );
+	void Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw );
+	void ReloadNoteSkin();
+	void RemoveTapNoteRow( int iIndex );
 
 	vector<bool> m_bIsHoldingHoldNote;	// hack:  Need this to know when to "light up" the center of hold notes
 

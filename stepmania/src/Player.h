@@ -85,6 +85,8 @@ protected:
 	ScoreDisplay*	m_pScore;
 	ScoreKeeper*	m_pScoreKeeper;
 	Inventory*		m_pInventory;
+
+	CString			m_sLastSeenNoteSkin;
 };
 
 #endif

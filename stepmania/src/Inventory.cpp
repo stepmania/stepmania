@@ -24,9 +24,11 @@
 #define ITEM_COMBO( i )			THEME->GetMetricI("Inventory",ssprintf("Item%dCombo",i+1))
 #define ITEM_EFFECT( i )		THEME->GetMetric ("Inventory",ssprintf("Item%dEffect",i+1))
 #define ITEM_LEVEL( i )			THEME->GetMetricI("Inventory",ssprintf("Item%dLevel",i+1))
+CachedThemeMetricF ITEM_USE_RATE_SECONDS("Inventory","ItemUseRateSeconds");
 
 const PlayerNumber	OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
 
+#define ITEM_USE_PROBABILITY (1.f/ITEM_USE_RATE_SECONDS)
 
 struct Item
 {
@@ -52,6 +54,7 @@ void ReloadItems()
 
 Inventory::Inventory()
 {
+	ITEM_USE_RATE_SECONDS.Refresh();
 }
 
 void Inventory::Load( PlayerNumber pn )
@@ -114,18 +117,15 @@ void Inventory::Update( float fDelta )
 	if( GAMESTATE->m_PlayerController[m_PlayerNumber] != PC_HUMAN &&
 		GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
 	{
-		// every one second, consider using an item
+		// every 1 seconds, try to use an item
 		int iLastSecond = (int)(RageTimer::GetTimeSinceStart() - fDelta);
 		int iThisSecond = (int)RageTimer::GetTimeSinceStart();
 		if( iLastSecond != iThisSecond )
 		{
-			int iSlotToConsider = rand()%NUM_INVENTORY_SLOTS;
-			bool bTimeToUse = (rand()%6)==0;
-			if( !GAMESTATE->m_Inventory[m_PlayerNumber][iSlotToConsider].IsBlank()  &&
-				bTimeToUse )
-			{
-				UseItem( iSlotToConsider );
-			}
+			for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
+				if( !GAMESTATE->m_Inventory[m_PlayerNumber][s].IsBlank() )
+					if( randomf(0,1) < ITEM_USE_PROBABILITY )
+						UseItem( s );
 		}
 	}
 }

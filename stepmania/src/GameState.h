@@ -150,8 +150,7 @@ public:
 	SongOptions		m_SongOptions;
 	SongOptions		m_StoredSongOptions;
 
-	void ApplyModifiers( CString sModifiers );
-	CString GetModifiers();
+	void ApplyModifiers( PlayerNumber pn, CString sModifiers );
 	void StoreSelectedOptions();
 	void RestoreSelectedOptions();
 
@@ -175,7 +174,7 @@ public:
 	// used in PLAY_MODE_BATTLE
 	Attack	m_Inventory[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
 	
-	bool	m_bActiveAttackEndedThisUpdate[NUM_PLAYERS];	// flag so we can play sounds
+	bool	m_bActiveAttackEndedThisUpdate[NUM_PLAYERS];	// flag for other objects to watch (play sounds)
 	void LaunchAttack( PlayerNumber target, Attack aa );
 	void RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn );
 	void RemoveAllActiveAttacks();	// called on end of song
@@ -202,7 +201,6 @@ public:
 	//
 	// Arrow positioning
 	//
-	CString				m_sPositioning[NUM_PLAYERS];	/* The current positioning mode, or empty to use the normal positions. */
 	NoteFieldPositioning *m_pPosition;
 };
 

@@ -35,6 +35,8 @@
 #include "NoteFieldPositioning.h"
 #include "LyricsLoader.h"
 #include "ActorUtil.h"
+#include "NoteSkinManager.h"
+#include "RageTextureManager.h"
 
 
 //
@@ -103,6 +105,30 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 
 	GAMESTATE->m_CurStageStats = StageStats();	// clear values
+
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_RAVE:
+		{
+			// cache NoteSkin graphics
+			CStringArray asNames;
+			NOTESKIN->GetNoteSkinNames( asNames );
+			for( unsigned i=0; i<asNames.size(); i++ )
+			{
+				CString sDir = NOTESKIN->GetNoteSkinDir( asNames[i] );
+				CStringArray asGraphicPaths;
+				GetDirListing( sDir+"*.png", asGraphicPaths, false, true ); 
+				GetDirListing( sDir+"*.jpg", asGraphicPaths, false, true ); 
+				GetDirListing( sDir+"*.gif", asGraphicPaths, false, true ); 
+				GetDirListing( sDir+"*.bmp", asGraphicPaths, false, true ); 
+				for( unsigned j=0; j<asGraphicPaths.size(); j++ )
+					TEXTUREMAN->CacheTexture( asGraphicPaths[j] );
+			}
+		}
+		break;
+	}
+
 
 
 	//
@@ -563,8 +589,7 @@ void ScreenGameplay::LoadNextSong()
 		m_pScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurNotes[p] );
 
 		// Put courses options into effect.
-		GAMESTATE->m_PlayerOptions[p].FromString( m_asModifiersQueue[p][iPlaySongIndex] );
-		GAMESTATE->m_SongOptions.FromString( m_asModifiersQueue[p][iPlaySongIndex] );
+		GAMESTATE->ApplyModifiers( (PlayerNumber)p, m_asModifiersQueue[p][iPlaySongIndex] );
 
 		m_textPlayerOptions[p].SetText( GAMESTATE->m_PlayerOptions[p].GetString() );
 

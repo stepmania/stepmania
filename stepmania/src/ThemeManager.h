@@ -28,6 +28,7 @@ public:
 	bool DoesThemeExist( CString sThemeName );
 	void SwitchTheme( CString sThemeName );
 	CString GetCurThemeName() { return m_sCurThemeName; };
+	CString GetCurThemeDir() { return GetThemeDirFromName(m_sCurThemeName); };
 	void NextTheme();
 
 	CString GetPathTo( ElementCategory category, CString sFileName, bool bOptional=false );

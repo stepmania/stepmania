@@ -20,15 +20,19 @@
 
 struct TapScoreDistribution
 {
-	float fCumulativeProbability[NUM_TAP_NOTE_SCORES];
+	float fPercent[NUM_TAP_NOTE_SCORES];
 
 	TapNoteScore GetTapNoteScore()
 	{
 		float fRand = randomf(0,1);
-		for( int i=TNS_MISS; i<=TNS_MARVELOUS; i++ )
-			if( fRand <= fCumulativeProbability[i] )
+		float fCumulativePercent = 0;
+		for( int i=0; i<=TNS_MARVELOUS; i++ )
+		{
+			fCumulativePercent += fPercent[i];
+			if( fRand <= fCumulativePercent )
 				return (TapNoteScore)i;
-		ASSERT(0);	// the last probability must be 1.0, so we should never get here!
+		}
+		ASSERT(0);	// the fCumulativePercents must sum to 1.0, so we should never get here!
 		return TNS_MARVELOUS;
 	}
 
@@ -50,13 +54,20 @@ void PlayerAI::InitFromDisk()
 			RageException::Throw( "AI.ini: '%s' doesn't exist.", sKey.GetString() );
 
 		TapScoreDistribution& dist = g_Distributions[i];
-		dist.fCumulativeProbability[TNS_NONE] = 0;
-		ini.GetValueF( sKey, "MissCum", dist.fCumulativeProbability[TNS_MISS] );
-		ini.GetValueF( sKey, "BooCum", dist.fCumulativeProbability[TNS_BOO] );
-		ini.GetValueF( sKey, "GoodCum", dist.fCumulativeProbability[TNS_GOOD] );
-		ini.GetValueF( sKey, "GreatCum", dist.fCumulativeProbability[TNS_GREAT] );
-		ini.GetValueF( sKey, "PerfectCum", dist.fCumulativeProbability[TNS_PERFECT] );
-		dist.fCumulativeProbability[TNS_MARVELOUS] = 1;
+		dist.fPercent[TNS_NONE] = 0;
+		ini.GetValueF( sKey, "MissWeight", dist.fPercent[TNS_MISS] );
+		ini.GetValueF( sKey, "BooWeight", dist.fPercent[TNS_BOO] );
+		ini.GetValueF( sKey, "GoodWeight", dist.fPercent[TNS_GOOD] );
+		ini.GetValueF( sKey, "GreatWeight", dist.fPercent[TNS_GREAT] );
+		ini.GetValueF( sKey, "PerfectWeight", dist.fPercent[TNS_PERFECT] );
+		ini.GetValueF( sKey, "MarvelousWeight", dist.fPercent[TNS_MARVELOUS] );
+		
+		float fSum = 0;
+		int j;
+		for( j=0; j<NUM_TAP_NOTE_SCORES; j++ )
+			fSum += dist.fPercent[j];
+		for( j=0; j<NUM_TAP_NOTE_SCORES; j++ )
+			dist.fPercent[j] /= fSum;
 	}
 }
 

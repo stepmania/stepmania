@@ -15,8 +15,9 @@
 #include "RageTypes.h"
 #include "Game.h"
 #include "PlayerNumber.h"
+#include "IniFile.h"
+#include <map>
 
-class IniFile;
 
 class NoteSkinManager
 {
@@ -24,11 +25,10 @@ public:
 	NoteSkinManager();
 	~NoteSkinManager();
 
-	void GetNoteSkinNames( Game game, CStringArray &AddTo ) const;
-	void GetNoteSkinNames( CStringArray &AddTo ) const;	// looks up current Game in GAMESTATE
-	bool DoesNoteSkinExist( CString sSkinName ) const;	// looks up current Game in GAMESTATE
-	void SwitchNoteSkin( PlayerNumber pn, CString sNewNoteSkin );	// looks up current Game in GAMESTATE
-	CString GetCurNoteSkinName( PlayerNumber pn ) const { return m_sCurNoteSkinName[pn]; };
+	void RefreshNoteSkinData( Game game );
+	void GetNoteSkinNames( Game game, CStringArray &AddTo );
+	void GetNoteSkinNames( CStringArray &AddTo );	// looks up current Game in GAMESTATE
+	bool DoesNoteSkinExist( CString sSkinName );	// looks up current Game in GAMESTATE
 
 	CString GetPathTo( PlayerNumber pn, int col, CString sFileName );
 	CString GetPathTo( PlayerNumber pn, CString sButtonName, CString sFileName );
@@ -42,13 +42,17 @@ public:
 
 	static CString NoteSkinManager::ColToButtonName(int col);
 
-protected:
 	CString GetNoteSkinDir( CString sSkinName );
 
-	CString m_sCurNoteSkinName[NUM_PLAYERS];	
-	IniFile* m_pIniMetrics[NUM_PLAYERS];
-	unsigned m_uHashForCurThemeMetrics[NUM_PLAYERS];
-	unsigned m_uHashForBaseThemeMetrics[NUM_PLAYERS];
+protected:
+
+	struct NoteSkinData
+	{
+		CString sName;	
+		IniFile metrics;
+	};
+	void LoadNoteSkinData( CString sNoteSkinName, NoteSkinData& data_out );
+	map<CString,NoteSkinData> m_mapNameToData;
 };
 
 

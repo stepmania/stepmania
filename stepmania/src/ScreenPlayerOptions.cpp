@@ -148,7 +148,7 @@ void ScreenPlayerOptions::ImportOptions()
 		m_iSelectedOption[p][PO_NOTE_SKIN] = -1;
 		for( unsigned j=0; j<m_OptionRow[PO_NOTE_SKIN].choices.size(); j++ )
 		{
-			if( 0==stricmp(m_OptionRow[PO_NOTE_SKIN].choices[j], NOTESKIN->GetCurNoteSkinName((PlayerNumber)p)) )
+			if( 0==stricmp(m_OptionRow[PO_NOTE_SKIN].choices[j], po.m_sNoteSkin) )
 			{
 				m_iSelectedOption[p][PO_NOTE_SKIN] = j;
 				break;
@@ -177,7 +177,7 @@ void ScreenPlayerOptions::ImportOptions()
 		{
 			vector<CString> &choices = m_OptionRow[PO_PERSPECTIVE].choices;
 			for(unsigned n = 3; n < choices.size(); ++n)
-				if(!choices[n].CompareNoCase(GAMESTATE->m_sPositioning[p]))
+				if(!choices[n].CompareNoCase(GAMESTATE->m_PlayerOptions[p].m_sPositioning))
 					m_iSelectedOption[p][PO_PERSPECTIVE] = n;
 		}
 
@@ -225,7 +225,7 @@ void ScreenPlayerOptions::ExportOptions()
 
 		int iSelectedSkin = m_iSelectedOption[p][PO_NOTE_SKIN];
 		CString sNewSkin = m_OptionRow[PO_NOTE_SKIN].choices[iSelectedSkin];
-		NOTESKIN->SwitchNoteSkin( (PlayerNumber)p, sNewSkin );
+		po.m_sNoteSkin = sNewSkin;
 
 
 		po.m_bHoldNotes			= (m_iSelectedOption[p][PO_HOLD_NOTES] == 1);
@@ -241,7 +241,7 @@ void ScreenPlayerOptions::ExportOptions()
 		if(m_iSelectedOption[p][PO_PERSPECTIVE] > 2)
 		{
 			const int choice = m_iSelectedOption[p][PO_PERSPECTIVE];
-			GAMESTATE->m_sPositioning[p] = m_OptionRow[PO_PERSPECTIVE].choices[choice];
+			GAMESTATE->m_PlayerOptions[p].m_sPositioning = m_OptionRow[PO_PERSPECTIVE].choices[choice];
 		}
 	}
 }

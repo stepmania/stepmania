@@ -16,6 +16,7 @@
 
 #include "GameState.h"
 #include "NoteFieldPositioning.h"
+#include "NoteSkinManager.h"
 
 void PlayerOptions::Init()
 {
@@ -33,6 +34,9 @@ void PlayerOptions::Init()
 	m_bTimingAssist = false;
 	m_fPerspectiveTilt = 0;
 	m_bTimeSpacing = false;
+	m_sPositioning = "";	// "null"
+	m_sNoteSkin = "default";
+
 }
 
 void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
@@ -132,6 +136,11 @@ CString PlayerOptions::GetString()
 	case +1:	sReturn += "Space, ";		break;
 	}
 
+	if( !m_sPositioning.empty() )
+		sReturn += m_sPositioning + ", ";
+	if( !m_sNoteSkin.empty()  &&  m_sNoteSkin.CompareNoCase("default")!=0 )
+		sReturn += m_sNoteSkin + ", ";
+
 	if( sReturn.GetLength() > 2 )
 		sReturn.erase( sReturn.GetLength()-2 );	// delete the trailing ", "
 	return sReturn;
@@ -196,6 +205,10 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "timingassist")m_bTimingAssist = true;
 		else if( sBit == "incoming" )	m_fPerspectiveTilt = -1;
 		else if( sBit == "space" )		m_fPerspectiveTilt = +1;
+		else if( GAMESTATE->m_pPosition->IsValidModeForCurrentGame(sBit) )
+			m_sPositioning = sBit;
+		else if( NOTESKIN->DoesNoteSkinExist(sBit) )
+			m_sNoteSkin = sBit;
 	}
 }
 

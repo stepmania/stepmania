@@ -53,8 +53,6 @@ ScreenRaveOptions::ScreenRaveOptions() :
 		g_RaveOptionsLines, 
 		bComputerPlayersPresent ? 3 : 1,
 		false, false );
-
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenMachineOptions music") );
 }
 
 void ScreenRaveOptions::ImportOptions()
