@@ -11,7 +11,7 @@
 
 #include "Screen.h"
 #include "BitmapText.h"
-#include "TransitionFade.h"
+#include "TransitionBGAnimation.h"
 #include "RandomSample.h"
 #include "GrayArrowRow.h"
 #include "BGAnimation.h"
@@ -41,7 +41,8 @@ private:
 	BitmapText		m_textCategory[NUM_PLAYERS];
 	MenuTimer		m_Timer;
 
-	TransitionFade	m_Fade;
+	TransitionBGAnimation	m_In;
+	TransitionBGAnimation	m_Out;
 
 	RageSound		m_soundStep;
 

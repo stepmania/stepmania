@@ -238,8 +238,12 @@ ScreenNameEntry::ScreenNameEntry() : Screen("ScreenNameEntry")
 	m_Timer.SetXY( TIMER_X, TIMER_Y );
 	this->AddChild( &m_Timer );
 
-	m_Fade.OpenWipingRight();
-//	this->AddChild( &m_Fade );	// draw and update this manually too
+	m_In.Load( THEME->GetPathToB("ScreenNameEntry in") );
+	m_In.StartTransitioning();
+//	this->AddChild( &m_In );	// draw and update this manually too
+
+	m_Out.Load( THEME->GetPathToB("ScreenNameEntry out") );
+//	this->AddChild( &m_Out );	// draw and update this manually too
 
 	m_soundStep.Load( THEME->GetPathToS("ScreenNameEntry step") );
 
@@ -260,7 +264,8 @@ void ScreenNameEntry::Update( float fDelta )
 	GAMESTATE->m_fSongBeat = m_fFakeBeat;
 	Screen::Update(fDelta);
 
-	m_Fade.Update( fDelta );
+	m_In.Update( fDelta );
+	m_Out.Update( fDelta );
 }
 
 void ScreenNameEntry::DrawPrimitives()
@@ -315,18 +320,19 @@ void ScreenNameEntry::DrawPrimitives()
 	}
 
 
-	m_Fade.Draw();
+	m_In.Draw();
+	m_Out.Draw();
 }
 
 void ScreenNameEntry::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	LOG->Trace( "ScreenNameEntry::Input()" );
 
+	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+		return;	
+
 	if( type != IET_FIRST_PRESS )
 		return;		// ignore
-
-	if( m_Fade.IsClosing() )
-		return;
 
 	if( StyleI.IsValid() && m_bStillEnteringName[StyleI.player])
 	{
@@ -349,11 +355,11 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		if( !m_Fade.IsClosing() )
+		if( !m_Out.IsTransitioning() )
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				this->MenuStart( (PlayerNumber)p );
-			m_Fade.CloseWipingRight( SM_GoToNextScreen );
+			m_Out.StartTransitioning( SM_GoToNextScreen );
 		}
 		break;
 	case SM_GoToNextScreen:
@@ -408,6 +414,6 @@ void ScreenNameEntry::MenuStart( PlayerNumber pn )
 	bool bAnyStillEntering = false;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		bAnyStillEntering |= m_bStillEnteringName[p];
-	if( !bAnyStillEntering && !m_Fade.IsClosing() )
-		m_Fade.CloseWipingRight( SM_GoToNextScreen );
+	if( !bAnyStillEntering && !m_Out.IsTransitioning() )
+		m_Out.StartTransitioning( SM_GoToNextScreen );
 }
