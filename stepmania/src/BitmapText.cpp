@@ -22,6 +22,8 @@ BitmapText::BitmapText()
 
 	for( int i=0; i<NUM_CHARS; i++ )
 		m_fCharWidthsInSourcePixels[i] = 16;
+
+//	m_bHasShadow = false;
 }
 
 bool BitmapText::LoadFromFontName( CString sFontName )
@@ -55,7 +57,7 @@ bool BitmapText::LoadCharWidths( CString sWidthFilePath )
 
 // get a rectangle for the text, considering a possible text scaling.
 // useful to know if some text is visible or not
-float BitmapText::GetTextWidthInSourcePixels()
+float BitmapText::GetWidthInSourcePixels()
 {
 	float fTextWidth = 0;
 	
@@ -70,10 +72,55 @@ float BitmapText::GetTextWidthInSourcePixels()
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
 void BitmapText::Draw()
 {
-	float fCenterX = GetX();
-	float fTextWidthInSourcePixels = GetTextWidthInSourcePixels();
+	// some basic properties of the text
+	float fTextWidthInSourcePixels = GetWidthInSourcePixels();
 	float fTextWidth = fTextWidthInSourcePixels* GetZoom();
 	float fFrameWidth = GetZoomedWidth();
+
+
+/*	
+	if( m_bHasShadow )
+	{
+		// do a pass for the shadow
+
+		float fOriginalX = GetX();
+		float fOriginalY = GetY();
+		D3DXCOLOR colorOriginalDiffuse[4];
+		for( int i=0; i<4; i++ )
+			colorOriginalDiffuse[i] = GetDiffuseColors(i);
+		D3DXCOLOR colorOriginalAdd = GetAddColor();
+
+		float fX = fOriginalX - (fTextWidth/2) + 10;
+		float fY = fOriginalY + 10;
+
+		SetY( fY );
+		SetDiffuseColor( D3DXCOLOR(0,0,0,0) );	// transparent
+		SetAddColor( D3DXCOLOR(0,0,0,0.5f) );	// semi-transparent black
+
+
+		for( i=0; i<m_sText.GetLength(); i++ ) {
+			char c = m_sText[i];
+			float fCharWidthZoomed = m_fCharWidthsInSourcePixels[c] * GetZoom();
+			SetState( c );
+			fX += fCharWidthZoomed/2;
+			SetX( fX );
+			Sprite::Draw();
+			fX += fCharWidthZoomed/2;
+		}
+
+		// set properties back to original
+		SetX( fOriginalX );
+		SetY( fOriginalY );
+		for( i=0; i<4; i++ )
+			SetDiffuseColors( i, colorOriginalDiffuse[i] );
+		SetAddColor( colorOriginalAdd );
+	}
+*/
+
+
+	// draw the text
+
+	float fCenterX = GetX();
 	float fX = fCenterX - (fTextWidth/2);
 
 
@@ -82,7 +129,7 @@ void BitmapText::Draw()
 		float fCharWidthZoomed = m_fCharWidthsInSourcePixels[c] * GetZoom();
 		SetState( c );
 		fX += fCharWidthZoomed/2;
-		SetX( roundf(fX) );		// set X acording to offset and round to help blurring
+		SetX( fX );
 		Sprite::Draw();
 		fX += fCharWidthZoomed/2;
 	}

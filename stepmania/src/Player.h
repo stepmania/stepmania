@@ -20,6 +20,8 @@
 #include "ColorArrow.h"
 #include "GrayArrow.h"
 #include "GhostArrow.h"
+#include "HoldGhostArrow.h"
+#include "Player.h"
 
 
 
@@ -30,7 +32,7 @@ const int MAX_NUM_COLUMNS = 8;
 class Player
 {
 public:
-	Player();
+	Player( PlayerOptions po );
 
 	void SetSteps( const Steps& newSteps, bool bLoadOnlyLeftSide = false, bool bLoadOnlyRightSide = false );
 	void SetX( float fX );
@@ -46,6 +48,8 @@ protected:
 	void CheckForCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDiff );
 	void OnCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDiff, int iStepIndex );
 
+	PlayerOptions m_PlayerOptions;
+
 	int		m_iCurCombo;
 	int		m_iMaxCombo;
 	float	m_fSongBeat;
@@ -54,8 +58,9 @@ protected:
 	Step		m_OriginalStep[MAX_STEP_ELEMENTS];
 	Step		m_LeftToStepOn[MAX_STEP_ELEMENTS];
 	StepScore	m_StepScore[MAX_STEP_ELEMENTS];
+	CArray<HoldStep, HoldStep&>		m_HoldSteps;
 	//StepTiming	m_StepTiming[MAX_STEP_ELEMENTS];
-
+	CArray<HoldStepScore, HoldStepScore>		m_HoldStepScores;
 
 	// common to color and gray arrows
 	float m_fArrowsCenterX;
@@ -77,16 +82,18 @@ protected:
 	// gray arrows
 	void SetGrayArrowsX( int iX );
 	void UpdateGrayArrows( float fDeltaTime );
+	float GetGrayArrowYPos();
 	void DrawGrayArrows();
-	void GrayArrowStep( int index, StepScore score );
+	void GrayArrowStep( int iCol, StepScore score );
 	GrayArrow	m_GrayArrow[MAX_NUM_COLUMNS];
 
 	// ghost arrows
 	void SetGhostArrowsX( int iX );
 	void UpdateGhostArrows( float fDeltaTime );
 	void DrawGhostArrows();
-	void GhostArrowStep( int index, StepScore score );
+	void GhostArrowStep( int iCol, StepScore score );
 	GhostArrow	m_GhostArrow[MAX_NUM_COLUMNS];
+	HoldGhostArrow	m_HoldGhostArrow[MAX_NUM_COLUMNS];
 
 
 	// judgement
@@ -96,6 +103,10 @@ protected:
 	void SetJudgement( StepScore score );
 	float		m_fJudgementDisplayCountdown;
 	Sprite		m_sprJudgement;
+
+	void SetHoldJudgement( int iCol, HoldStepScore score );
+	float		m_fHoldJudgementDisplayCountdown[MAX_NUM_COLUMNS];
+	Sprite		m_sprHoldJudgement[MAX_NUM_COLUMNS];
 
 	// combo
 	void SetComboX( int iX );

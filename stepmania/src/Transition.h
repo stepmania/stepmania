@@ -40,8 +40,10 @@ public:
 	virtual void CloseWipingRight(WindowMessage send_when_done = SM_None );
 	virtual void CloseWipingLeft( WindowMessage send_when_done = SM_None );
 
-	bool IsClosed() { return m_TransitionState == closed; };
-	bool IsClosing() { return m_TransitionState == closing_right  ||  m_TransitionState == closing_left; };
+	bool IsOpened()		{ return m_TransitionState == opened; };
+	bool IsOpening()	{ return m_TransitionState == opening_right  ||  m_TransitionState == opening_left; };
+	bool IsClosed()		{ return m_TransitionState == closed; };
+	bool IsClosing()	{ return m_TransitionState == closing_right  ||  m_TransitionState == closing_left; };
 
 	void SetTransitionTime( FLOAT fNewTransitionTime ) { m_fTransitionTime = fNewTransitionTime; };
 

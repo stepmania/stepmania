@@ -45,6 +45,8 @@ public:
 
 	void SetCustomSrcRect( FRECT new_texcoord_frect );	// for cropping
 
+	void TurnShadowOn()		{ m_bHasShadow = true; };
+	void TurnShadowOff()	{ m_bHasShadow = false; };
 
 
 protected:
@@ -65,6 +67,8 @@ protected:
 
 	bool m_bUsingCustomTexCoordRect;
 	FRECT m_CustomTexCoordRect;
+
+	bool	m_bHasShadow;
 };
 
 

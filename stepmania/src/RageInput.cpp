@@ -444,6 +444,7 @@ VOID RageInput::Release()
 }
 
 
+
 HRESULT RageInput::GetDeviceInputs( DeviceInputArray &listDeviceInputs )
 {
 // macros for reading DI state structures
@@ -606,3 +607,36 @@ HRESULT RageInput::GetDeviceInputs( DeviceInputArray &listDeviceInputs )
 }
 
 
+BOOL RageInput::IsBeingPressed( DeviceInput di )
+{
+	switch( di.device )
+	{
+	case DEVICE_KEYBOARD:
+		return m_keys[ di.button ];
+	case DEVICE_JOYSTICK1:
+	case DEVICE_JOYSTICK2:
+	case DEVICE_JOYSTICK3:
+	case DEVICE_JOYSTICK4:
+		int joy_index;
+		joy_index = di.device - DEVICE_JOYSTICK1;
+
+		switch( di.button )
+		{
+		case JOY_LEFT:
+			return IS_LEFT( m_joyState[joy_index].lX );
+		case JOY_RIGHT:
+			return IS_RIGHT( m_joyState[joy_index].lX );
+		case JOY_UP:
+			return IS_UP( m_joyState[joy_index].lX );
+		case JOY_DOWN:
+			return IS_DOWN( m_joyState[joy_index].lX );
+		default:	// a joystick button
+			int button_index = di.button - JOY_1;
+			return IS_PRESSED( m_joyState[joy_index].rgbButtons[button_index] );
+		}
+	default:
+		RageError( "Invalid device" );
+	}
+
+	return false;	// how did we get here?!?
+}

@@ -54,9 +54,8 @@ void TransitionFade::Draw()
 		break;
 	}
 
-	m_Color.a = fPercentageOpaque;
-	int alpha = (int)( fPercentageOpaque * 255 );
-	SCREEN->DrawRect( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), m_Color );
+	D3DXCOLOR colorTemp = m_Color * fPercentageOpaque;
+	SCREEN->DrawRect( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), colorTemp );
 }
 
 

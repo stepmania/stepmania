@@ -19,6 +19,11 @@ class Steps;	// why is this needed?
 enum GameMode;	// why is this needed?
 
 
+struct BPMSegment{
+	BPMSegment() { m_fStartBeat = m_fBPM = m_fFreezeSeconds = 0; };
+	float m_fStartBeat, m_fBPM, m_fFreezeSeconds;
+};
+
 
 class Song
 {
@@ -37,7 +42,7 @@ public:
 
 private:
 	bool LoadSongInfoFromBMSFile( CString sPath );
-	bool LoadSongInfoFromMSDFile( CString sPath );
+	bool LoadSongInfoFromDWIFile( CString sPath );
 
 	void TidyUpData();
 
@@ -65,31 +70,11 @@ public:
 				iMinBPM = (int)m_BPMSegments[i].m_fBPM;
 		}
 	};
-	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut )
-	{
-		fElapsedTime += m_fOffsetInSeconds;
-
-		for( int i=0; i<m_BPMSegments.GetSize(); i++ ) {
-			int iStartBeatThisSegment = m_BPMSegments[i].m_iStartBeat;
-			bool bIsLastBPMSegment = i==m_BPMSegments.GetSize()-1;
-			int iStartBeatNextSegment = bIsLastBPMSegment ? 40000/*inf*/ : m_BPMSegments[i+1].m_iStartBeat; 
-			int iBeatsInThisSegment = iStartBeatNextSegment - iStartBeatThisSegment;
-			float fBPM = m_BPMSegments[i].m_fBPM;
-			float fBPS = fBPM / 60.0f;
-			float fSecondsInThisSegment =  iBeatsInThisSegment / fBPS;
-			if( fElapsedTime > fSecondsInThisSegment )
-				fElapsedTime -= fSecondsInThisSegment;
-			else {
-				fBeatOut = iStartBeatThisSegment + fElapsedTime*fBPS;
-				fBPSOut = fBPS;
-				return;
-			}
-		}
-	};
+	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut );
 	float GetBPMAtBeat( float fSongBeat )
 	{
 		for( int i=0; i<m_BPMSegments.GetSize(); i++ ) {
-			if( m_BPMSegments[i].m_iStartBeat > fSongBeat || i==m_BPMSegments.GetSize()-1 )
+			if( m_BPMSegments[i].m_fStartBeat > fSongBeat || i==m_BPMSegments.GetSize()-1 )
 				break;
 		}
 		return m_BPMSegments[i].m_fBPM;
@@ -97,7 +82,7 @@ public:
 	void SetBPM( float fNewBPM, float fSongBeat )
 	{
 		for( int i=0; i<m_BPMSegments.GetSize(); i++ ) {
-			if( m_BPMSegments[i].m_iStartBeat > fSongBeat || i==m_BPMSegments.GetSize()-1 )
+			if( m_BPMSegments[i].m_fStartBeat > fSongBeat || i==m_BPMSegments.GetSize()-1 )
 				break;
 		}
 		m_BPMSegments[i].m_fBPM = fNewBPM;
@@ -125,8 +110,7 @@ private:
 	CString	m_sBanner;
 	CString	m_sBackground;
 
-	struct BPMSegment{ int m_iStartBeat; float m_fBPM; };
-	CArray<BPMSegment, BPMSegment&> m_BPMSegments;
+	CArray<BPMSegment, BPMSegment&> m_BPMSegments;	// this must be sorted before dancing
 
 public:
 	CArray<Steps, Steps&> arraySteps;

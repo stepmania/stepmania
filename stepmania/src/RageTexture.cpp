@@ -38,7 +38,7 @@ RageTexture::RageTexture( LPRageScreen pScreen, CString sFilePath ) :
 
 	// save the file path
 	m_sFilePath = sFilePath;
-	m_pd3dTexture = NULL;
+//	m_pd3dTexture = NULL;
 	m_iRefCount = 1;
 
 

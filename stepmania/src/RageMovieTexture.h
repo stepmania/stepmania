@@ -26,6 +26,7 @@
 //-----------------------------------------------------------------------------
 struct __declspec(uuid("{71771540-2017-11cf-ae26-0020afd79767}")) CLSID_TextureRenderer;
 
+class RageMovieTexture;
 
 //-----------------------------------------------------------------------------
 // CTextureRenderer Class Declarations
@@ -51,7 +52,7 @@ public:
 	// new methods
 	LONG GetVidWidth() {return m_lVidWidth;};
 	LONG GetVidHeight(){return m_lVidHeight;};
-	HRESULT SetRenderTarget(LPDIRECT3DTEXTURE8 pTexture);
+	HRESULT SetRenderTarget( RageMovieTexture* pTexture );
 	BOOL IsLocked() { return m_bLocked; };
 
 protected:
@@ -59,7 +60,7 @@ protected:
 	LONG m_lVidHeight;	// Video Height
 	LONG m_lVidPitch;	// Video Pitch
 
-	LPDIRECT3DTEXTURE8	m_pTexture;	// the video surface we will copy new frames to
+	RageMovieTexture*	m_pTexture;	// the video surface we will copy new frames to
 	D3DFORMAT			m_TextureFormat; // Texture format
 	BOOL				m_bLocked;	// Is the texture currently locked while we 
 									// copy the movie frame to it?
@@ -76,6 +77,9 @@ public:
 	virtual ~RageMovieTexture();
 
 	LPDIRECT3DTEXTURE8 GetD3DTexture();
+
+	LPDIRECT3DTEXTURE8  m_pd3dTexture[2];	// double buffered
+	int m_iIndexActiveTexture;	// either 0 or 1
 
 protected:
 	virtual VOID Create();
@@ -94,6 +98,7 @@ protected:
 	CComPtr<IMediaPosition> m_pMP;          // Media Postion
 	CComPtr<IMediaEvent>    m_pME;          // Media Event
     CTextureRenderer        *m_pCTR;        // DShow Texture renderer
+
 };
 
 typedef RageMovieTexture* LPRageMovieTexture;

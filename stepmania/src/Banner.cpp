@@ -18,6 +18,7 @@
 bool Banner::LoadFromSong( Song &song )
 {
 	Sprite::LoadFromTexture( song.GetBannerPath() );
+	//Sprite::TurnShadowOff();
 
 	float fSourceWidth		= (float)m_pTexture->GetSourceWidth();
 	float fSourceHeight		= (float)m_pTexture->GetSourceHeight();

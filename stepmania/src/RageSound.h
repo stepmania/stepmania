@@ -29,6 +29,8 @@ public:
 	void	UnloadSample( HSAMPLE hSample );
 	void	PlaySample( HSAMPLE hSample );
 	void	StopSample( HSAMPLE hSample );
+	float GetSampleLength( HSAMPLE hSample );
+	float GetSamplePosition( HSAMPLE hSample );
 
 	HSTREAM LoadStream( const CString sFileName );
 	void	UnloadStream( HSTREAM hStream);
@@ -38,6 +40,8 @@ public:
 	float GetStreamLength( HSTREAM hStream);
 	float GetStreamPosition( HSTREAM hStream);
 	BOOL	IsPlaying(DWORD handle);
+
+
 
 private:
 	HWND		m_hWndApp;	// this is set on GRAPHICS_Create()

@@ -214,11 +214,11 @@ void Actor::SetTweenX( float x )			{ m_end_pos.x = x; }
 void Actor::SetTweenY( float y )			{ m_end_pos.y = y; }
 void Actor::SetTweenXY( float x, float y )	{ SetTweenX(x); SetTweenY(y); }
 void Actor::SetTweenZoom( float zoom )		{ m_end_scale.x = zoom;  m_end_scale.y = zoom; }
+void Actor::SetTweenZoomX( float zoom )		{ m_end_scale.x = zoom; }
+void Actor::SetTweenZoomY( float zoom )		{ m_end_scale.y = zoom; }
 void Actor::SetTweenRotationX( float r )	{ m_end_rotation.x = r; }
 void Actor::SetTweenRotationY( float r )	{ m_end_rotation.y = r; }
 void Actor::SetTweenRotationZ( float r )	{ m_end_rotation.z = r; }
-void Actor::SetTweenDiffuseColor( D3DXCOLOR c )	{ for(int i=0; i<4; i++) m_end_colorDiffuse[i] = c; }
-void Actor::SetTweenAddColor( D3DXCOLOR c )	{ m_end_colorAdd = c; }
 
 
 void Actor::ScaleTo( LPRECT pRect, StretchType st )

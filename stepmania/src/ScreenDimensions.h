@@ -8,6 +8,9 @@
 -----------------------------------------------------------------------------
 */
 
+#ifndef _SCREENDIMENSIONS_H_
+#define _SCREENDIMENSIONS_H_
+
 
 const int SCREEN_WIDTH	=	640;
 const int SCREEN_HEIGHT	=	480;
@@ -20,3 +23,5 @@ const float BOTTOM_EDGE	=	SCREEN_HEIGHT;
 const float CENTER_X		=	LEFT_EDGE + (RIGHT_EDGE - LEFT_EDGE)/2.0f;
 const float CENTER_Y		=	TOP_EDGE + (BOTTOM_EDGE - TOP_EDGE)/2.0f;
 
+
+#endif

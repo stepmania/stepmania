@@ -75,6 +75,8 @@ HRESULT		InvalidateObjects();		// invalidate game objects before a display mode 
 HRESULT		RestoreObjects();			// restore game objects after a display mode change
 VOID		DestroyObjects();			// deallocate game objects when we're done with them
 
+BOOL WeAreAlone( LPSTR szName );
+
 
 //-----------------------------------------------------------------------------
 // Name: WinMain()
@@ -82,6 +84,11 @@ VOID		DestroyObjects();			// deallocate game objects when we're done with them
 //-----------------------------------------------------------------------------
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 {
+	if( !WeAreAlone("StepMania") )
+	{
+		RageError( "StepMania is already running!" );
+	}
+
 	if( !DoesFileExist("Songs") )
 	{
 		// change dir to path of the execuctable
@@ -420,15 +427,18 @@ void Update()
 	diArray.RemoveAll();
 	INPUT->GetDeviceInputs( diArray );
 
-	DeviceInput di;
-	PadInput pi;
+	DeviceInput DeviceI;
+	PadInput PadI;
+	PlayerInput PlayerI;
+
 	for( int i=0; i<diArray.GetSize(); i++ )
 	{
-		di = diArray[i];
-		if( GAMEINFO->DeviceToPad( di, pi ) )
-			WM->Input( di, &pi );		// this di maps to a pi
-		else
-			WM->Input( di, NULL );		// this di doesn't map to a pi, so pass NULL
+		DeviceI = diArray[i];
+
+		GAMEINFO->DeviceToPad( DeviceI, PadI );
+		GAMEINFO->PadToPlayer( PadI, PlayerI );
+
+		WM->Input( DeviceI, PadI, PlayerI );
 	}
 
 }
@@ -520,10 +530,20 @@ void SetFullscreen( BOOL bFullscreen )
 
 
 //-----------------------------------------------------------------------------
-// Name: TestForDirectX()
+// Name: WeAreAlone()
 // Desc:	check for DirectX 8
 //-----------------------------------------------------------------------------
-#include "getdxver.h"
+BOOL WeAreAlone (LPSTR szName)
+{
+   HANDLE hMutex = CreateMutex (NULL, TRUE, szName);
+   if (GetLastError() == ERROR_ALREADY_EXISTS)
+   {
+      CloseHandle(hMutex);
+      return FALSE;
+   }
+   return TRUE;
+}
+
 
 
 

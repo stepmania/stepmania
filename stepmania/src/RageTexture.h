@@ -68,7 +68,7 @@ protected:
 
 	CString				m_sFilePath;
 	LPDIRECT3DDEVICE8   m_pd3dDevice;
-	LPDIRECT3DTEXTURE8  m_pd3dTexture;
+//	LPDIRECT3DTEXTURE8  m_pd3dTexture;
 
 	UINT				m_uSourceWidth,		m_uSourceHeight;	// dimensions of the original image
 	UINT				m_uTextureWidth,	m_uTextureHeight;	// dimensions of the texture holding the image

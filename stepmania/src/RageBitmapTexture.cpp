@@ -35,6 +35,8 @@ RageBitmapTexture::RageBitmapTexture( LPRageScreen pScreen, CString sFilePath ) 
 {
 //	RageLog( "RageBitmapTexture::RageBitmapTexture()" );
 
+	m_pd3dTexture = NULL;
+
 	Create();
 	
 	CreateFrameRects();

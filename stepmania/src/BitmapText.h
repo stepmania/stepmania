@@ -39,9 +39,10 @@ public:
 
 	void Draw();
 
+	float GetWidthInSourcePixels();	// in logical, pre-scaled units
+
 protected:
 	bool LoadCharWidths( CString sWidthFilePath );
-	float GetTextWidthInSourcePixels();	// in logical, pre-scaled units
 
 	CString m_sFontName;
 	float m_fCharWidthsInSourcePixels[NUM_CHARS];	// in soure coordinate space
@@ -49,6 +50,7 @@ protected:
 	CString	m_sText;	// the string that the font is displaying
 //	D3DXCOLOR	m_colorTop;
 //	D3DXCOLOR	m_colorBottom;
+//	bool	m_bHasShadow;
 };
 
 

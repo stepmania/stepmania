@@ -79,6 +79,19 @@ void RageSound::StopSample( HSAMPLE hSample )
 		RageError( "There was an error stopping a sound sample.  Are you sure this is a valid HSAMPLE?" );
 }
 
+float RageSound::GetSampleLength( HSAMPLE hSample )
+{
+	return 90;
+}
+
+float RageSound::GetSamplePosition( HSAMPLE hSample )
+{
+	DWORD dwPosition = BASS_ChannelGetPosition( hSample );
+	float fSeconds = BASS_ChannelBytes2Seconds( hSample, dwPosition );
+//	fSeconds += 0.05f;		// fudge number.  Should use a BASS_SYNC to sync the music.
+	return fSeconds;
+}
+
 
 // Stream stuff
 
@@ -127,6 +140,7 @@ float RageSound::GetStreamPosition( HSTREAM hStream )
 {
 	DWORD dwPosition = BASS_ChannelGetPosition( hStream );
 	float fSeconds = BASS_ChannelBytes2Seconds( hStream, dwPosition );
+	//fSeconds += 0.05f;		// fudge number.  Should use a BASS_SYNC to sync the music.
 	return fSeconds;
 }
 

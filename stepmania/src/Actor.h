@@ -40,9 +40,9 @@ public:
 
 	virtual float GetX()					{ return m_pos.x; };
 	virtual float GetY()					{ return m_pos.y; };
-	virtual void  SetX( float x )			{ m_pos.x = x;					m_TweenType = no_tween; };
-	virtual void  SetY( float y )			{				m_pos.y = y;	m_TweenType = no_tween; };
-	virtual void  SetXY( float x, float y )	{ m_pos.x = x;	m_pos.y = y;	m_TweenType = no_tween; };
+	virtual void  SetX( float x )			{ m_pos.x = x; };
+	virtual void  SetY( float y )			{				m_pos.y = y; };
+	virtual void  SetXY( float x, float y )	{ m_pos.x = x;	m_pos.y = y; };
 
 	// height and width vary depending on zoom
 	virtual float GetZoomedWidth()			{ return m_size.x * m_scale.x; }
@@ -51,7 +51,11 @@ public:
 	virtual void  SetHeight( float height ){ m_size.y = height; }
 
 	virtual float GetZoom()				{ return m_scale.x; }
+	virtual float GetZoomX()			{ return m_scale.x; }
+	virtual float GetZoomY()			{ return m_scale.y; }
 	virtual void  SetZoom( float zoom )	{ m_scale.x = zoom;	m_scale.y = zoom; }
+	virtual void  SetZoomX( float zoom ){ m_scale.x = zoom;	}
+	virtual void  SetZoomY( float zoom ){ m_scale.y = zoom; }
 
 	virtual float GetRotation()				{ return m_rotation.z; }
 	virtual void  SetRotation( float rot )	{ m_rotation.z = rot; }
@@ -61,6 +65,7 @@ public:
 	virtual void  SetRotationY( float rot )	{ m_rotation.y = rot; }
 
 	virtual void SetDiffuseColor( D3DXCOLOR colorDiffuse ) { for(int i=0; i<4; i++) m_colorDiffuse[i] = colorDiffuse; };
+	virtual void SetDiffuseColors( int i, D3DXCOLOR colorDiffuse ) { m_colorDiffuse[i] = colorDiffuse; };
 	virtual void SetDiffuseColorUpperLeft( D3DXCOLOR colorDiffuse ) { m_colorDiffuse[0] = colorDiffuse; };
 	virtual void SetDiffuseColorUpperRight( D3DXCOLOR colorDiffuse ) { m_colorDiffuse[1] = colorDiffuse; };
 	virtual void SetDiffuseColorLowerLeft( D3DXCOLOR colorDiffuse ) { m_colorDiffuse[2] = colorDiffuse; };
@@ -70,6 +75,7 @@ public:
 	virtual void SetDiffuseColorBottomEdge( D3DXCOLOR colorDiffuse ) { m_colorDiffuse[2] = m_colorDiffuse[3] = colorDiffuse; };
 	virtual void SetDiffuseColorLeftEdge( D3DXCOLOR colorDiffuse ) { m_colorDiffuse[0] = m_colorDiffuse[2] = colorDiffuse; };
 	virtual D3DXCOLOR GetDiffuseColor()				{ return m_colorDiffuse[0]; };
+	virtual D3DXCOLOR GetDiffuseColors( int i )		{ return m_colorDiffuse[i]; };
 	virtual void SetAddColor( D3DXCOLOR colorAdd ) { m_colorAdd = colorAdd; };
 	virtual D3DXCOLOR GetAddColor()				{ return m_colorAdd; };
 
@@ -81,15 +87,26 @@ public:
 						  TweenType tt = tween_linear );
 
 	virtual void BeginTweening( float time, TweenType tt = tween_linear );
+	virtual void StopTweening( float time, TweenType tt = tween_linear ) { m_TweenType = no_tween; };
 	virtual void SetTweenX( float x );
 	virtual void SetTweenY( float y );
 	virtual void SetTweenXY( float x, float y );
 	virtual void SetTweenZoom( float zoom );
+	virtual void SetTweenZoomX( float zoom );
+	virtual void SetTweenZoomY( float zoom );
 	virtual void SetTweenRotationX( float r );
 	virtual void SetTweenRotationY( float r );
 	virtual void SetTweenRotationZ( float r );
-	virtual void SetTweenDiffuseColor( D3DXCOLOR c );
-	virtual void SetTweenAddColor( D3DXCOLOR c );
+	virtual void SetTweenDiffuseColor( D3DXCOLOR colorDiffuse ) { for(int i=0; i<4; i++) m_end_colorDiffuse[i] = colorDiffuse; };
+	virtual void SetTweenDiffuseColorUpperLeft( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[0] = colorDiffuse; };
+	virtual void SetTweenDiffuseColorUpperRight( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[1] = colorDiffuse; };
+	virtual void SetTweenDiffuseColorLowerLeft( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[2] = colorDiffuse; };
+	virtual void SetTweenDiffuseColorLowerRight( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[3] = colorDiffuse; };
+	virtual void SetTweenDiffuseColorTopEdge( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[0] = m_end_colorDiffuse[1] = colorDiffuse; };
+	virtual void SetTweenDiffuseColorRightEdge( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[1] = m_end_colorDiffuse[3] = colorDiffuse; };
+	virtual void SetTweenDiffuseColorBottomEdge( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[2] = m_end_colorDiffuse[3] = colorDiffuse; };
+	virtual void SetTweenDiffuseColorLeftEdge( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[0] = m_end_colorDiffuse[2] = colorDiffuse; };
+	virtual void SetTweenAddColor( D3DXCOLOR c )	{ m_end_colorAdd = c; }
 
 
 	// NOTE: GetEdge functions don't consider rotation

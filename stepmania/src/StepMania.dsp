@@ -216,6 +216,22 @@ SOURCE=.\WindowManager.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\WindowPlayerOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowPlayerOptions.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowPrompt.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowPrompt.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\WindowResults.cpp
 # End Source File
 # Begin Source File
@@ -348,6 +364,14 @@ SOURCE=.\GrayArrow.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\HoldGhostArrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\HoldGhostArrow.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\PadInput.h
 # End Source File
 # Begin Source File
@@ -360,11 +384,23 @@ SOURCE=.\Player.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\PlayerInput.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\PreviewGraphic.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\previewgraphic.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Rectangle.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Rectangle.h
 # End Source File
 # Begin Source File
 

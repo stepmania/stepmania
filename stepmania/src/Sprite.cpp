@@ -42,6 +42,8 @@ void Sprite::Init()
 	m_fSpinSpeed =  2.0f ;
 	m_fVibrationDistance =  5.0f ;
 	m_bVisibleThisFrame =  FALSE;
+
+	m_bHasShadow = true;
 }
 
 Sprite::~Sprite()
@@ -63,7 +65,7 @@ bool Sprite::LoadFromTexture( CString sTexturePath )
 // Sprite file has the format:
 //
 // [Sprite]
-// Texture=Textures\Logo 1x1.bmp
+// Texture=Textures\Logo.bmp
 // Frame0000=0
 // Delay0000=1.0
 // Frame0001=3
@@ -301,28 +303,12 @@ void Sprite::Draw()
 		v[2].tu = pTexCoordRect->right;		v[2].tv = pTexCoordRect->bottom;	// bottom right
 		v[3].tu = pTexCoordRect->right;		v[3].tv = pTexCoordRect->top;		// top right
 
-		v[0].color = colorDiffuse[2];	// bottom left
-		v[1].color = colorDiffuse[0];	// top left
-		v[2].color = colorDiffuse[3];	// bottom right
-		v[3].color = colorDiffuse[1];	// top right
-		
 		pVB->Unlock();
 
 
-		//////////////////////
-		// render the diffuse pass
-		//////////////////////
-
-		// set texture and alpha properties
-	//	LPDIRECT3DDEVICE8 pd3dDevice = SCREEN->GetDevice();
+		// Set the stage...
 		pd3dDevice->SetTexture( 0, m_pTexture->GetD3DTexture() );
 
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );//bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );//bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_MINFILTER, D3DTEXF_LINEAR );
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR );
 		//pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
@@ -330,17 +316,76 @@ void Sprite::Draw()
 		pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
 		pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
 
-
-		// finally!  Pump those triangles!	
 		pd3dDevice->SetVertexShader( D3DFVF_CUSTOMVERTEX );
 		pd3dDevice->SetStreamSource( 0, pVB, sizeof(CUSTOMVERTEX) );
-		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
+
+
+
+		//////////////////////
+		// render the shadow
+		//////////////////////
+		if( m_bHasShadow )
+		{
+			D3DXMATRIX matOriginalWorld, matNewWorld, matTemp;
+		    pd3dDevice->GetTransform( D3DTS_WORLD, &matOriginalWorld );	// save the original world matrix
+			matNewWorld = matOriginalWorld;
+
+			D3DXMatrixTranslation( &matTemp, 5, 5, 0 );	// shift by 5 units
+			matNewWorld = matTemp * matNewWorld;
+			pd3dDevice->SetTransform( D3DTS_WORLD, &matNewWorld );	// transform to local coordinates
+
+			pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+
+			v[0].color = v[1].color = v[2].color = v[3].color = D3DXCOLOR(0,0,0,0.5f*colorDiffuse[0].a);	// semi-transparent black
+			
+			pVB->Unlock();
+
+			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
+			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+			
+			pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
+
+			pd3dDevice->SetTransform( D3DTS_WORLD, &matOriginalWorld );	// restore the original world matrix
+
+		}
+
+
+		//////////////////////
+		// render the diffuse pass
+		//////////////////////
+		if( colorDiffuse[0].a != 0 )
+		{
+			pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+
+			v[0].color = colorDiffuse[2];	// bottom left
+			v[1].color = colorDiffuse[0];	// top left
+			v[2].color = colorDiffuse[3];	// bottom right
+			v[3].color = colorDiffuse[1];	// top right
+			
+			pVB->Unlock();
+
+			
+			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );//bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
+			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );//bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
+
+
+			// finally!  Pump those triangles!	
+			pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
+		}
 
 
 		//////////////////////
 		// render the add pass
 		//////////////////////
-		if( colorAdd.a != 0 )	// no need to render an add pass
+		if( colorAdd.a != 0 )
 		{
 			pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
@@ -357,6 +402,7 @@ void Sprite::Draw()
 			
 			pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
 		}
+
 	}
 	
 	

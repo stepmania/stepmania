@@ -65,6 +65,11 @@ public:
 	DeviceInput() { device=DEVICE_NONE; };
 	DeviceInput( InputDevice d, int b ) { device=d; button=b; };
 
+	bool operator==( const DeviceInput &other ) 
+	{ 
+		return device == other.device  &&  button == other.button;
+	};
+
 	CString GetDescription();
 	
 	CString toString();
@@ -123,6 +128,7 @@ public:
 	VOID Release();
 	// Get our Devices State
 	HRESULT GetDeviceInputs( DeviceInputArray &listDeviceInputs );
+	BOOL IsBeingPressed( DeviceInput di );
 
 	LPDIRECTINPUT8		 GetDirectInput() { return m_pDI; }
 	LPDIRECTINPUTDEVICE8 GetMouseDevice() { return m_pMouse; }

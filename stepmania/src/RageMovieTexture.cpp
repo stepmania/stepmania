@@ -111,11 +111,13 @@ HRESULT CTextureRenderer::SetMediaType(const CMediaType *pmt)
 //-----------------------------------------------------------------------------
 // SetRenderTarget: Save all the information we'll need to render to a D3D texture.
 //-----------------------------------------------------------------------------
-HRESULT CTextureRenderer::SetRenderTarget(LPDIRECT3DTEXTURE8 pTexture)
+HRESULT CTextureRenderer::SetRenderTarget( RageMovieTexture* pTexture )
 {
 	HRESULT hr;
 
-	if (pTexture == NULL) {
+	LPDIRECT3DTEXTURE8 pD3DTexture = pTexture->GetD3DTexture();
+
+	if (pD3DTexture == NULL) {
         DXTRACE_ERR(TEXT("SetRenderTarget called with a NULL texture!"), 0);
 		return E_FAIL;
 	}
@@ -124,7 +126,7 @@ HRESULT CTextureRenderer::SetRenderTarget(LPDIRECT3DTEXTURE8 pTexture)
 
 	// get the format of the texture
     D3DSURFACE_DESC ddsd;
-    if ( FAILED( hr = m_pTexture->GetLevelDesc( 0, &ddsd ) ) ) {
+    if ( FAILED( hr = pD3DTexture->GetLevelDesc( 0, &ddsd ) ) ) {
         DXTRACE_ERR(TEXT("Could not get level Description of D3DX texture! hr = 0x%x"), hr);
         return hr;
     }
@@ -151,9 +153,19 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
     // Get the video bitmap buffer
     pSample->GetPointer( &pBmpBuffer );
 
+
+	// Find which texture we should render to.
+	LPDIRECT3DTEXTURE8 pD3DTexture;
+
+	switch( m_pTexture->m_iIndexActiveTexture )
+	{
+	case 0:	pD3DTexture = m_pTexture->m_pd3dTexture[1];	break;		// 0 is active, so render to 1
+	case 1:	pD3DTexture = m_pTexture->m_pd3dTexture[0];	break;		// 1 is active, so render to 0
+	}
+
     // Lock the Texture
     D3DLOCKED_RECT d3dlr;
-    if (FAILED(m_pTexture->LockRect(0, &d3dlr, 0, 0))) {
+    if (FAILED(pD3DTexture->LockRect(0, &d3dlr, 0, 0))) {
         DXTRACE_ERR_NOMSGBOX(TEXT("Failed to lock the texture!"), E_FAIL);
         return E_FAIL;
 	}
@@ -205,13 +217,22 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 
         
     // Unlock the Texture
-    if (FAILED(m_pTexture->UnlockRect(0))) {
+    if (FAILED(pD3DTexture->UnlockRect(0))) {
         DXTRACE_ERR_NOMSGBOX(TEXT("Failed to unlock the texture!"), E_FAIL);
         return E_FAIL;
 	}
 
 	m_bLocked = FALSE;
     
+
+	// flip active texture
+	switch( m_pTexture->m_iIndexActiveTexture )
+	{
+	case 0:	m_pTexture->m_iIndexActiveTexture = 1;	break;
+	case 1:	m_pTexture->m_iIndexActiveTexture = 0;	break;
+	}
+
+
     return S_OK;
 }
 
@@ -224,6 +245,9 @@ RageMovieTexture::RageMovieTexture( LPRageScreen pScreen, CString sFilePath ) :
 {
 	RageLog( "RageBitmapTexture::RageBitmapTexture()" );
 
+	m_pd3dTexture[0] = m_pd3dTexture[1] = NULL;
+	m_iIndexActiveTexture = 0;
+
 	Create();
 
 	CreateFrameRects();
@@ -233,7 +257,8 @@ RageMovieTexture::~RageMovieTexture()
 {
 	CleanupDShow();
 
-	SAFE_RELEASE(m_pd3dTexture);
+	SAFE_RELEASE(m_pd3dTexture[0]);
+	SAFE_RELEASE(m_pd3dTexture[1]);
 }
 
 //-----------------------------------------------------------------------------
@@ -249,15 +274,15 @@ LPDIRECT3DTEXTURE8 RageMovieTexture::GetD3DTexture()
 	// the video fell behind and is trying to copy several frames in a row
 	// to catch up.  So, if the TextureRenderer is busy, give it a 1ms slice of 
 	// time for it to catch up and copy all the frames it fell behind on.
-	while( m_pCTR->IsLocked() ) {
-		::Sleep(1);
-		RageLog( "Sleeping waiting for unlock..." );
-	}
+//	while( m_pCTR->IsLocked() ) {
+//		::Sleep(1);
+//		RageLog( "Sleeping waiting for unlock..." );
+//	}
 
 	// restart the movie if we reach the end
 	CheckMovieStatus();
 	
-	return m_pd3dTexture; 
+	return m_pd3dTexture[m_iIndexActiveTexture]; 
 }
 
 
@@ -278,7 +303,7 @@ VOID RageMovieTexture::Create()
 
 	// Pass the D3D texture to our TextureRenderer so it knows 
 	// where to render new movie frames to.
-	if( FAILED( hr = m_pCTR->SetRenderTarget(GetD3DTexture()) ) )
+	if( FAILED( hr = m_pCTR->SetRenderTarget( this ) ) )
         RageErrorHr( "RageMovieTexture: SetRenderTarget failed.", hr );
 
 	// Start the graph running
@@ -409,12 +434,18 @@ HRESULT RageMovieTexture::CreateD3DTexture()
     if( FAILED( hr = D3DXCreateTexture(m_pd3dDevice,
                     m_uSourceHeight, m_uSourceHeight,
                     1, 0, 
-                    D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_pd3dTexture ) ) )
+                    D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_pd3dTexture[0] ) ) )
+        RageErrorHr( "Could not create the D3DX texture!", hr );
+
+    if( FAILED( hr = D3DXCreateTexture(m_pd3dDevice,
+                    m_uSourceHeight, m_uSourceHeight,
+                    1, 0, 
+                    D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_pd3dTexture[1] ) ) )
         RageErrorHr( "Could not create the D3DX texture!", hr );
 
     // D3DXCreateTexture can silently change the parameters on us
     D3DSURFACE_DESC ddsd;
-    if ( FAILED( hr = m_pd3dTexture->GetLevelDesc( 0, &ddsd ) ) )
+    if ( FAILED( hr = m_pd3dTexture[0]->GetLevelDesc( 0, &ddsd ) ) )
         RageErrorHr( "Could not get level Description of D3DX texture!", hr );
 
 	m_uTextureWidth = ddsd.Width;

@@ -20,6 +20,30 @@
 #include <assert.h>
 
 
+
+int CompareBPMSegments(const void *arg1, const void *arg2)
+{
+	// arg1 and arg2 are of type Step**
+	BPMSegment* seg1 = (BPMSegment*)arg1;
+	BPMSegment* seg2 = (BPMSegment*)arg2;
+
+	float score1 = seg1->m_fStartBeat;
+	float score2 = seg2->m_fStartBeat;
+
+	if( score1 == score2 )
+		return 0;
+	else if( score1 < score2 )
+		return -1;
+	else
+		return 1;
+}
+
+void SortBPMSegmentsArray( CArray<BPMSegment,BPMSegment&> &arrayBPMSegments )
+{
+	qsort( arrayBPMSegments.GetData(), arrayBPMSegments.GetSize(), sizeof(BPMSegment), CompareBPMSegments );
+}
+
+
 //////////////////////////////
 // Song
 //////////////////////////////
@@ -29,6 +53,33 @@ Song::Song()
 //	m_fBPM = 0;
 	m_fOffsetInSeconds = 0;
 }
+
+
+void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut )
+{
+	fElapsedTime += m_fOffsetInSeconds;
+
+	for( int i=0; i<m_BPMSegments.GetSize(); i++ ) {
+		float fStartBeatThisSegment = m_BPMSegments[i].m_fStartBeat;
+		bool bIsLastBPMSegment = i==m_BPMSegments.GetSize()-1;
+		float fStartBeatNextSegment = bIsLastBPMSegment ? 40000/*inf*/ : m_BPMSegments[i+1].m_fStartBeat; 
+		float fBeatsInThisSegment = fStartBeatNextSegment - fStartBeatThisSegment;
+		float fBPM = m_BPMSegments[i].m_fBPM;
+		float fBPS = fBPM / 60.0f;
+		float fSecondsInThisSegment =  fBeatsInThisSegment / fBPS;
+		fElapsedTime -= m_BPMSegments[i].m_fFreezeSeconds;
+		if( fElapsedTime < 0 )	fElapsedTime = 0;
+
+		if( fElapsedTime > fSecondsInThisSegment )
+			fElapsedTime -= fSecondsInThisSegment;
+		else {
+			fBeatOut = fStartBeatThisSegment + fElapsedTime*fBPS;
+			fBPSOut = fBPS;
+			return;
+		}
+	}
+}
+
 
 bool Song::LoadFromSongDir( CString sDir )
 {
@@ -48,9 +99,9 @@ bool Song::LoadFromSongDir( CString sDir )
 	GetDirListing( sDir + CString("*.bms"), arrayBMSFileNames );
 	int iNumBMSFiles = arrayBMSFileNames.GetSize();
 
-	CStringArray arrayMSDFileNames;
-	GetDirListing( sDir + CString("*.msd"), arrayMSDFileNames );
-	int iNumMSDFiles = arrayMSDFileNames.GetSize();
+	CStringArray arrayDWIFileNames;
+	GetDirListing( sDir + CString("*.dwi"), arrayDWIFileNames );
+	int iNumDWIFiles = arrayDWIFileNames.GetSize();
 
 	/*
 	int j;
@@ -75,14 +126,14 @@ bool Song::LoadFromSongDir( CString sDir )
 			new_steps.LoadStepsFromBMSFile( sDir + arrayBMSFileNames.GetAt(i) );
 		}
 	}
-	else if( iNumMSDFiles == 1 )
+	else if( iNumDWIFiles == 1 )
 	{
-		//m_sSongFile = arrayMSDFileNames.GetAt( 0 );
-		//RageLog( "Found '%s'.  Let's use it...", m_sSongFile );
-		//LoadFromMSDFile( sDir + m_sSongFile );
+		m_sSongFile = arrayDWIFileNames[0];
+		RageLog( "Found '%s'.  Let's use it...", m_sSongFile );
+		LoadSongInfoFromDWIFile( sDir + m_sSongFile );
 	}
-	else if( iNumMSDFiles > 0 )
-		RageError( ssprintf("Found more than one MSD file in '%s'.  Which should I use?", sDir) );
+	else if( iNumDWIFiles > 0 )
+		RageError( ssprintf("Found more than one DWI file in '%s'.  Which should I use?", sDir) );
 	else 
 		RageError( ssprintf("Couldn't find any BMS or MSD files in '%s'", sDir) );
 
@@ -94,6 +145,9 @@ bool Song::LoadFromSongDir( CString sDir )
 bool Song::LoadSongInfoFromBMSFile( CString sPath )
 {
 	RageLog( "Song::LoadFromBMSFile(%s)", sPath );
+
+	if( sPath == "Songs\\saints\\saint_4basic.bms" )
+		int kdgjf = 0;
 
 	BmsFile bms( sPath );
 	bms.ReadFile();
@@ -123,14 +177,11 @@ bool Song::LoadSongInfoFromBMSFile( CString sPath )
 			m_sArtist = data_array[0];
 		else if( value_name == "#BPM" ) {
 			BPMSegment new_seg;
-			new_seg.m_iStartBeat = 0;
+			new_seg.m_fStartBeat = 0;
 			new_seg.m_fBPM = (float)atof( data_array[0] );
 			// find insertion point
-			for( int i=0; i<m_BPMSegments.GetSize(); i++ )
-				if( m_BPMSegments[i].m_iStartBeat > new_seg.m_iStartBeat )
-					break;
-			m_BPMSegments.InsertAt( i, new_seg );
-			RageLog( "Inserting new BPM change at beat %d, BPM %f, index %d", new_seg.m_iStartBeat, new_seg.m_fBPM, i );
+			m_BPMSegments.Add( new_seg );
+			RageLog( "Inserting new BPM change at beat %f, BPM %f", new_seg.m_fStartBeat, new_seg.m_fBPM );
 		}
 		else if( value_name == "#BackBMP"  ||  value_name == "#backBMP")
 			m_sBackground = data_array[0];
@@ -141,35 +192,15 @@ bool Song::LoadSongInfoFromBMSFile( CString sPath )
 			int iMeasureNo	= atoi( value_name.Mid(1,3) );
 			int iTrackNum	= atoi( value_name.Mid(4,2) );
 
-			if( m_sTitle.Find("era") > 0 )
-				m_sTitle = m_sTitle;
-			switch( iTrackNum )
-			{
-			case 03:	// bpm
-				{
-				int iNewBPM;
-				sscanf( data_array[0], "%x", &iNewBPM );	// data is in hexadecimal
-				BPMSegment new_seg;
-				new_seg.m_iStartBeat = iMeasureNo * 4;
-				new_seg.m_fBPM = (float)iNewBPM;
-				// find insertion point
-				for( int i=0; i<m_BPMSegments.GetSize(); i++ )
-					if( m_BPMSegments[i].m_iStartBeat > new_seg.m_iStartBeat )
-						break;
-				m_BPMSegments.InsertAt( i, new_seg );
-				RageLog( "Inserting new BPM change at beat %d, BPM %f, index %d", new_seg.m_iStartBeat, new_seg.m_fBPM, i );
-				}
-				break;
-			}
-
 			CString sNoteData = data_array[0];
-			CArray<BOOL, BOOL&> arrayNotes;
+			CArray<int, int> arrayNotes;
 
 			for( int i=0; i<sNoteData.GetLength(); i+=2 )
 			{
-				BOOL bThisIsANote = sNoteData.Mid(i,2) == "01"  // step
-								 || sNoteData.Mid(i,2) == "99"; // offset
-				arrayNotes.Add( bThisIsANote );
+				CString sNote = sNoteData.Mid(i,2);
+				int iNote;
+				sscanf( sNote, "%x", &iNote );	// data is in hexadecimal
+				arrayNotes.Add( iNote );
 			}
 
 			const int iNumNotesInThisMeasure = arrayNotes.GetSize();
@@ -177,7 +208,7 @@ bool Song::LoadSongInfoFromBMSFile( CString sPath )
 			//	valuename, sNoteData, iMeasureNo, iTrackNum, iNumNotesInThisMeasure );
 			for( int j=0; j<iNumNotesInThisMeasure; j++ )
 			{
-				if( arrayNotes.GetAt(j) == TRUE )
+				if( arrayNotes[j] != 0 )
 				{
 					float fPercentThroughMeasure = (float)j/(float)iNumNotesInThisMeasure;
 
@@ -187,24 +218,22 @@ bool Song::LoadSongInfoFromBMSFile( CString sPath )
 
 					switch( iTrackNum )
 					{
-					case 01:	// offset
-						{
-						float fBeatOffset = StepIndexToBeat(iStepIndex);
-						float fBPS = m_BPMSegments[0].m_fBPM/60.0f;
+					case 01:	// background music track
+						float fBeatOffset;
+						fBeatOffset = StepIndexToBeat(iStepIndex);
+						float fBPS;
+						fBPS = m_BPMSegments[0].m_fBPM/60.0f;
 						m_fOffsetInSeconds = fBeatOffset / fBPS;
 						//RageLog( "Found offset to be index %d, beat %f", iStepIndex, StepIndexToBeat(iStepIndex) );
-						}
 						break;
 					case 03:	// bpm
-						{
-						int iNewBPM;
-						sscanf( data_array[0], "%x", &iNewBPM );	// data is in hexadecimal
-						BPMSegment seg;
-						seg.m_iStartBeat = iMeasureNo * 4;
-						seg.m_fBPM = (float)iNewBPM;
-						m_BPMSegments.Add(seg);
-						RageLog( "Found new BPM change at beat %d, BPM %f", seg.m_iStartBeat, seg.m_fBPM );
-						}
+						BPMSegment new_seg;
+						new_seg.m_fStartBeat = StepIndexToBeat( iStepIndex );
+						new_seg.m_fBPM = (float)arrayNotes[j];
+						m_BPMSegments.Add( new_seg );	// add to back for now (we'll sort later)
+						
+						// sort the BPM segments so that they are always in order
+						SortBPMSegmentsArray( m_BPMSegments );
 						break;
 					}
 				}
@@ -212,19 +241,23 @@ bool Song::LoadSongInfoFromBMSFile( CString sPath )
 		}
 	}
 
+	for( int i=0; i<m_BPMSegments.GetSize(); i++ )
+		RageLog( "There is a BPM change at beat fd, BPM %f, index %d", 
+					m_BPMSegments[i].m_fStartBeat, m_BPMSegments[i].m_fBPM, i );
+
+
+
 	TidyUpData();
 
 	return TRUE;
 }
 
 
-bool Song::LoadSongInfoFromMSDFile( CString sPath )
+bool Song::LoadSongInfoFromDWIFile( CString sPath )
 {
-	RageLog( "Song::LoadFromMSDFile(%s)", sPath );
+	RageLog( "Song::LoadFromDWIFile(%s)", sPath );
 
 	
-	// BROKEN
-	/*
 	CStdioFile file;	
 	if( !file.Open( GetSongFilePath(), CFile::modeRead ) )
 		RageError( ssprintf("Error opening Song file '%s'.", GetSongFilePath()) );
@@ -251,78 +284,95 @@ bool Song::LoadSongInfoFromMSDFile( CString sPath )
 		split( sValueString, ":", arrayValueTokens );
 
 		CString sValueName = arrayValueTokens.GetAt( 0 );
-			
+
 		// handle the data
-		if( sValueName == "#TITLE" )
+		if( sValueName == "#FILE" )
+			m_sMusic = arrayValueTokens[1];
+
+		else if( sValueName == "#TITLE" )
 			m_sTitle = arrayValueTokens[1];
 
 		else if( sValueName == "#ARTIST" )
 			m_sArtist = arrayValueTokens[1];
 
-		else if( sValueName == "#REMIXER" || sValueName == "#MSD")
-			m_sCreator = arrayValueTokens[1];
-
 		else if( sValueName == "#BPM" )
-			m_fBPM = (FLOAT)atof( arrayValueTokens[1] );
-
-		else if( sValueName == "#OFFSET" )
-			m_fBeatOffset = (FLOAT)atoi( arrayValueTokens[1] );
-
+		{
+			BPMSegment new_seg;
+			new_seg.m_fStartBeat = 0;
+			new_seg.m_fBPM = atof( arrayValueTokens[1] );
+			m_BPMSegments.Add( new_seg );	// add to back for now (we'll sort later)
+		}
 		else if( sValueName == "#GAP" )
-			// the units of GAP is 1/10 second
-			m_fBeatOffset = (FLOAT)atof( arrayValueTokens[1] ) / 10.0f;
+			// the units of GAP is 1/1000 second
+			m_fOffsetInSeconds = -atoi( arrayValueTokens[1] ) / 1000.0f;
 
-		else if( sValueName == "#MUSIC" )
-			m_sMusic = arrayValueTokens[1];
+		else if( sValueName == "#FREEZE" )
+		{
+			CStringArray arrayFreezeExpressions;
+			split( arrayValueTokens[1], ",", arrayFreezeExpressions );
 
-		else if( sValueName == "#SAMPLE" )
-			m_sSample = arrayValueTokens[1];
+			for( int f=0; f<arrayFreezeExpressions.GetSize(); f++ )
+			{
+				CStringArray arrayFreezeValues;
+				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
+				int fIndex = atoi( arrayFreezeValues[0] ) * 2;
+				float fFreezeBeat = StepIndexToBeat( fIndex );
+				float fFreezeSeconds = atof( arrayFreezeValues[1] ) / 1000.0f;
+				
+				// find the BPM segment corresponding to this freeze
+				for( int b=0; b<m_BPMSegments.GetSize(); b++ )
+				{
+					if( m_BPMSegments[b].m_fStartBeat == fFreezeBeat )
+					{
+						m_BPMSegments[b].m_fFreezeSeconds = fFreezeSeconds*0.8;
+						break;
+					}
+				}
 
+			}
+		}
+
+		else if( sValueName == "#CHANGEBPM"  || sValueName == "#BPMCHANGE" )
+		{
+			CStringArray arrayBPMChangeExpressions;
+			split( arrayValueTokens[1], ",", arrayBPMChangeExpressions );
+
+			for( int b=0; b<arrayBPMChangeExpressions.GetSize(); b++ )
+			{
+				CStringArray arrayBPMChangeValues;
+				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
+				int fIndex = atoi( arrayBPMChangeValues[0] ) * 2;
+				float fBeat = StepIndexToBeat( fIndex );
+				float fNewBPM = atoi( arrayBPMChangeValues[1] );
+				
+				BPMSegment new_seg;
+				new_seg.m_fStartBeat = fBeat;
+				new_seg.m_fBPM = fNewBPM;
+				m_BPMSegments.Add( new_seg );	// add to back for now (we'll sort later)
+				
+				// sort the BPM segments so that they are always in order
+				SortBPMSegmentsArray( m_BPMSegments );
+			}
+		}
 		else if( sValueName == "#BANNER" )
 			m_sBanner = arrayValueTokens[1];
 
 		else if( sValueName == "#BACKGROUND" )
 			m_sBackground = arrayValueTokens[1];
 
-		// handle STEPS defined in the file for backwards compatibility with MSD files
 		else if( sValueName == "#SINGLE" || sValueName == "#DOUBLE" || sValueName == "#COUPLE" )
 		{
-			Steps s;
-			if( sValueName == "#SINGLE" )
-				s.type = st_single;
-			else if( sValueName == "#DOUBLE" )
-				s.type = st_double;
-			else if( sValueName == "#COUPLE" )
-				s.type = st_couple;
-			else
-				RageError( ssprintf("Unknown game type '%s' in '%s'", sValueName, GetSongFilePath()) );
-
-			s.sDescription = arrayValueTokens[1];
-			s.iDifficulty = atoi( arrayValueTokens[2] );
-			s.sPadDataLeft = arrayValueTokens[3];
-			if( sValueName == "#DOUBLE" || sValueName == "#COUPLE" )
-				s.sPadDataRight = arrayValueTokens[4];
-			
-			switch( s.type)
-			{
-			case st_single:
-				arraySingleSteps.Add( s );
-				break;
-			case st_double:
-				arrayDoubleSteps.Add( s );
-				break;
-			case st_couple:
-				arrayCoupleSteps.Add( s );
-				break;
-			}
+			arraySteps.SetSize( arraySteps.GetSize()+1 );
+			Steps &new_steps = arraySteps[ arraySteps.GetSize()-1 ];
+			new_steps.LoadFromDWIValueTokens( arrayValueTokens );
 		}
 		else
 			// do nothing.  We don't care about this value name
 			;
 	}
 
-	FillEmptyValuesWithDefaults();
-	*/
+	TidyUpData();
+
 
 	return TRUE;
 }

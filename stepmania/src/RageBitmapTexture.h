@@ -38,6 +38,8 @@ public:
 
 protected:
 	virtual VOID Create();
+
+	LPDIRECT3DTEXTURE8  m_pd3dTexture;
 };
 
 
