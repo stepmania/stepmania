@@ -114,9 +114,9 @@ void NoteSkinManager::GetNoteSkinNames( CStringArray &AddTo )
 		AddTo.push_back( iter->second.sName );
 	}
 
-	//
-	// Move "default" to the front if it exists
-	//
+	/*
+	   Move "default" to the front if it exists
+	*/
 	{
 		CStringArray::iterator iter = find( AddTo.begin(), AddTo.end(), "default" );
 		if( iter != AddTo.end() )
