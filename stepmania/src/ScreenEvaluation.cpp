@@ -90,8 +90,6 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
-const ScreenMessage SM_GoToSelectCourse			=	ScreenMessage(SM_User+3);
-const ScreenMessage SM_GoToEndScreen			=	ScreenMessage(SM_User+5);
 const ScreenMessage SM_PlayCheer				=	ScreenMessage(SM_User+6);
 
 
@@ -1474,22 +1472,42 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		EndScreen();
 		break;
 	case SM_GoToNextScreen:
-		if(m_bFailed && !PREFSMAN->m_bEventMode && !(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2()) && GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE) // if failed and not in event mode go to gameover screen
-			SCREENMAN->SetNewScreen( FAILED_SCREEN );
-		else
+	{
+		if( PREFSMAN->m_bEventMode )
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
-
-		if(	m_sndPassFail.IsPlaying() ) m_sndPassFail.Stop();
-		break;
-	case SM_GoToSelectCourse:
-		SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
-		break;
-	case SM_GoToEndScreen:
-		if(m_bFailed && !PREFSMAN->m_bEventMode && !(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2()) && GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE) // if failed and not in event mode go to gameover screen
-			SCREENMAN->SetNewScreen( FAILED_SCREEN );
 		else
-			SCREENMAN->SetNewScreen( END_SCREEN );
+		{
+			/* Go to FAILED_SCREEN if we failed a non-extra stage. */
+			bool bReallyFailed = m_bFailed && !(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2());
+
+			// If failed and not in event mode, go to the game over screen.
+			if( bReallyFailed )
+			{
+				SCREENMAN->SetNewScreen( FAILED_SCREEN );
+				break;
+			}
+
+			/* We passed.  If we have another stage to play, go to NEXT_SCREEN. */
+			switch( m_Type )
+			{
+			case stage:
+				if( m_bTryExtraStage || !(GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() ) )
+				{
+					SCREENMAN->SetNewScreen( NEXT_SCREEN );
+					break;
+				}
+
+			case summary:
+			case course:
+				SCREENMAN->SetNewScreen( END_SCREEN );
+				break;
+			}
+		}
+
+		if(	m_sndPassFail.IsPlaying() )
+			m_sndPassFail.Stop();
 		break;
+	}
 	case SM_PlayCheer:
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation cheer") );
 		break;
@@ -1534,42 +1552,21 @@ void ScreenEvaluation::EndScreen()
 
 	GAMESTATE->m_iRoundSeed = rand();
 
-	if( PREFSMAN->m_bEventMode )
-	{
-		if( GAMESTATE->IsCourseMode() )
-			m_Menu.StartTransitioning( SM_GoToSelectCourse );
-		else
-			m_Menu.StartTransitioning( SM_GoToNextScreen );
-	}
-	else	// not event mode
+	if( !PREFSMAN->m_bEventMode )
 	{
 		switch( m_Type )
 		{
 		case stage:
-			if( m_bTryExtraStage )
-			{
-				m_Menu.StartTransitioning( SM_GoToNextScreen );
-			}
-			else if( GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+			if( !m_bTryExtraStage && (GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2()) )
 			{
 				/* Tween the screen out, but leave the MenuElements where they are.
-					* Play the "swoosh" sound manually (would normally be played by the ME
-					* tween out). */
+				 * Play the "swoosh" sound manually (would normally be played by the ME
+				 * tween out). */
 				TweenOffScreen();
-				m_Menu.StartTransitioning( SM_GoToEndScreen );
 			}
-			else
-			{
-				m_Menu.StartTransitioning( SM_GoToNextScreen );
-			}
-			break;
-		case summary:
-			m_Menu.StartTransitioning( SM_GoToEndScreen );
-			break;
-		case course:
-			m_Menu.StartTransitioning( SM_GoToEndScreen );
 			break;
 		}
 	}
+	m_Menu.StartTransitioning( SM_GoToNextScreen );
 }
 
