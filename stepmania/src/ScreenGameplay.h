@@ -22,7 +22,6 @@ class Inventory;
 #include "LyricDisplay.h"
 #include "Character.h"
 #include "Attack.h"
-#include "MeterDisplay.h"
 #include "ActiveAttackList.h"
 #include "NetworkSyncManager.h"
 #include "AutoKeysounds.h"
@@ -134,7 +133,6 @@ protected:
 
 	BitmapText			m_textSurviveTime;	// used in extra stage
 	BitmapText			m_textSongTitle;
-	SongMeterDisplay		m_meterSongPosition;
 
 	Player				m_Player[NUM_PLAYERS];
 

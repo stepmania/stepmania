@@ -422,12 +422,6 @@ void ScreenGameplay::Init()
 	this->AddChild( &m_textSongTitle );
 
 
-	m_meterSongPosition.Load( THEME->GetPathG(m_sName,"song position meter"), SONG_POSITION_METER_WIDTH, THEME->GetPathG(m_sName,"song position tip") );
-	m_meterSongPosition.SetName( "SongPositionMeter" );
-	SET_XY( m_meterSongPosition );
-	this->AddChild( &m_meterSongPosition );
-
-
 	m_MaxCombo.LoadFromFont( THEME->GetPathF(m_sName,"max combo") );
 	m_MaxCombo.SetName( "MaxCombo" );
 	SET_XY( m_MaxCombo );
@@ -2392,7 +2386,6 @@ void ScreenGameplay::TweenOnScreen()
 	ON_COMMAND( m_textSongOptions );
 	ON_COMMAND( m_sprScoreFrame );
 	ON_COMMAND( m_textSongTitle );
-	ON_COMMAND( m_meterSongPosition );
 	ON_COMMAND( m_BPMDisplay );
 	ON_COMMAND( m_MaxCombo );
 
@@ -2420,7 +2413,8 @@ void ScreenGameplay::TweenOnScreen()
 		FOREACH_NSScoreBoardColumn( sc )
 			ON_COMMAND( m_Scoreboard[sc] );
 
-	m_Overlay->PlayCommand("On");
+	if( m_Overlay.IsLoaded() )
+		m_Overlay->PlayCommand("On");
 }
 
 void ScreenGameplay::TweenOffScreen()
@@ -2432,7 +2426,6 @@ void ScreenGameplay::TweenOffScreen()
 	OFF_COMMAND( m_textSongOptions );
 	OFF_COMMAND( m_sprScoreFrame );
 	OFF_COMMAND( m_textSongTitle );
-	OFF_COMMAND( m_meterSongPosition );
 	OFF_COMMAND( m_BPMDisplay );
 	OFF_COMMAND( m_MaxCombo );
 
