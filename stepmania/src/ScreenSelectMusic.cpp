@@ -312,7 +312,7 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 		}
 	}
 
-	float fNewRotation = m_sprCDTitle.GetRotationY()+180*fDeltaTime;
+	float fNewRotation = m_sprCDTitle.GetRotationY()+90*fDeltaTime;
 	fNewRotation = fmodf( fNewRotation, 360 );
 	m_sprCDTitle.SetRotationY( fNewRotation );
 	if( fNewRotation > 90  &&  fNewRotation <= 270 )
