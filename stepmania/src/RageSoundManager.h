@@ -14,7 +14,7 @@ class RageSoundManager
 {
 	/* Set of sounds that we've taken over (and are responsible for deleting
 	 * when they're finished playing): */
-	set<RageSound *> owned_sounds;
+	set<RageSoundBase *> owned_sounds;
 
 	/* Set of sounds that are finished and should be deleted. */
 	set<RageSoundBase *> sounds_to_delete;
@@ -34,9 +34,9 @@ public:
 	void SetPrefs(float MixVol);
 
 	void Update(float delta);
-	void StartMixing(RageSound *snd);	/* used by RageSound */
-	void StopMixing(RageSound *snd);	/* used by RageSound */
-	int GetPosition(const RageSound *snd) const;	/* used by RageSound */
+	void StartMixing( RageSoundBase *snd );	/* used by RageSoundBase */
+	void StopMixing( RageSoundBase *snd );	/* used by RageSoundBase */
+	int GetPosition( const RageSoundBase *snd ) const;	/* used by RageSoundBase */
 	float GetPlayLatency() const;
 	int GetDriverSampleRate( int rate ) const;
 	const set<RageSound *> &GetPlayingSounds() const { return playing_sounds; }

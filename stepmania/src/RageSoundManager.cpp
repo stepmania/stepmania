@@ -37,19 +37,19 @@ RageSoundManager::RageSoundManager(CString drivers)
 RageSoundManager::~RageSoundManager()
 {
 	/* Clear any sounds that we own and havn't freed yet. */
-	set<RageSound *>::iterator j = owned_sounds.begin();
+	set<RageSoundBase *>::iterator j = owned_sounds.begin();
 	while(j != owned_sounds.end())
 		delete *(j++);
 
 	delete driver;
 }
 
-void RageSoundManager::StartMixing(RageSound *snd)
+void RageSoundManager::StartMixing( RageSoundBase *snd )
 {
 	driver->StartMixing(snd);
 }
 
-void RageSoundManager::StopMixing(RageSound *snd)
+void RageSoundManager::StopMixing( RageSoundBase *snd )
 {
 	driver->StopMixing(snd);
 
@@ -63,7 +63,7 @@ void RageSoundManager::StopMixing(RageSound *snd)
 	}
 }
 
-int RageSoundManager::GetPosition(const RageSound *snd) const
+int RageSoundManager::GetPosition( const RageSoundBase *snd ) const
 {
 	return driver->GetPosition(snd);
 }
