@@ -35,6 +35,7 @@ protected:
 		RankingCategory	category;
 		Course*			pCourse;
 		Song*			pSong;
+		PageToShow(): pCourse(NULL), pSong(NULL) { }
 	};
 
 	void SetPage( PageToShow pts );
