@@ -65,9 +65,9 @@
 			isa = PBXFrameworkReference;
 			lastKnownFileType = wrapper.framework;
 			name = Cocoa.framework;
-			path = /System/Library/Frameworks/Cocoa.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../../System/Library/Frameworks/Cocoa.framework;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		1058C7A2FEA54F0111CA2CBB = {
 			children = (
@@ -280,9 +280,9 @@
 			isa = PBXFrameworkReference;
 			lastKnownFileType = wrapper.framework;
 			name = AudioUnit.framework;
-			path = /System/Library/Frameworks/AudioUnit.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../../System/Library/Frameworks/AudioUnit.framework;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AA0E393304DA8EE700D02EE9 = {
 			fileEncoding = 30;
@@ -4747,40 +4747,40 @@
 			lastKnownFileType = wrapper.framework;
 			name = jpeg62.framework;
 			path = Frameworks/jpeg62.framework;
-			refType = 4;
-			sourceTree = "<group>";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AA4B425805733D71005FB5DB = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
 			name = mad.framework;
 			path = Frameworks/mad.framework;
-			refType = 4;
-			sourceTree = "<group>";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AA4B425905733D71005FB5DB = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
 			name = Ogg.framework;
 			path = Frameworks/Ogg.framework;
-			refType = 4;
-			sourceTree = "<group>";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AA4B425A05733D71005FB5DB = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
 			name = png.framework;
 			path = Frameworks/png.framework;
-			refType = 4;
-			sourceTree = "<group>";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AA4B425B05733D71005FB5DB = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
 			name = Vorbis.framework;
 			path = Frameworks/Vorbis.framework;
-			refType = 4;
-			sourceTree = "<group>";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AA4B425C05733D71005FB5DB = {
 			fileRef = AA4B425705733D71005FB5DB;
@@ -4844,8 +4844,8 @@
 			lastKnownFileType = wrapper.framework;
 			name = ffmpeg.framework;
 			path = Frameworks/ffmpeg.framework;
-			refType = 4;
-			sourceTree = "<group>";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AA4B4738057396D3005FB5DB = {
 			fileRef = AA4B4737057396D3005FB5DB;
@@ -4858,16 +4858,16 @@
 			lastKnownFileType = wrapper.framework;
 			name = SDL_image.framework;
 			path = Frameworks/SDL_image.framework;
-			refType = 4;
-			sourceTree = "<group>";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AA4B4784057396F8005FB5DB = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
 			name = SDL.framework;
 			path = Frameworks/SDL.framework;
-			refType = 4;
-			sourceTree = "<group>";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AA4B4785057396F8005FB5DB = {
 			fileRef = AA4B4783057396F8005FB5DB;
@@ -5853,9 +5853,9 @@
 			isa = PBXFrameworkReference;
 			lastKnownFileType = wrapper.framework;
 			name = CoreAudio.framework;
-			path = /System/Library/Frameworks/CoreAudio.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../../System/Library/Frameworks/CoreAudio.framework;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AA67BFA00558751600EF34A6 = {
 			buildPhases = (
@@ -11907,9 +11907,9 @@
 			isa = PBXFrameworkReference;
 			lastKnownFileType = wrapper.framework;
 			name = AudioToolbox.framework;
-			path = /System/Library/Frameworks/AudioToolbox.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../../System/Library/Frameworks/AudioToolbox.framework;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AA8B6C7804AFD82B00D02EE9 = {
 			children = (
@@ -12008,9 +12008,9 @@
 			isa = PBXFrameworkReference;
 			lastKnownFileType = wrapper.framework;
 			name = OpenGL.framework;
-			path = /System/Library/Frameworks/OpenGL.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../../System/Library/Frameworks/OpenGL.framework;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AA8F118204A04F9B00D02EE9 = {
 			fileEncoding = 30;
@@ -12221,27 +12221,27 @@
 			isa = PBXFrameworkReference;
 			lastKnownFileType = wrapper.framework;
 			name = Carbon.framework;
-			path = /System/Library/Frameworks/Carbon.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../../System/Library/Frameworks/Carbon.framework;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AAA0F7D0047AC7EA005F316C = {
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			lastKnownFileType = wrapper.framework;
 			name = IOKit.framework;
-			path = /System/Library/Frameworks/IOKit.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../../System/Library/Frameworks/IOKit.framework;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AAA0F7D2047ACBC9005F316C = {
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			lastKnownFileType = wrapper.framework;
 			name = QuickTime.framework;
-			path = /System/Library/Frameworks/QuickTime.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../../System/Library/Frameworks/QuickTime.framework;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AAA983CA04B9060A00D02EE9 = {
 			fileEncoding = 30;
@@ -12843,8 +12843,8 @@
 			lastKnownFileType = wrapper.framework;
 			name = lua.framework;
 			path = Frameworks/lua.framework;
-			refType = 4;
-			sourceTree = "<group>";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AABD0B2A05DF12FA004F7929 = {
 			fileRef = AABD0B2905DF12FA004F7929;
@@ -14809,9 +14809,9 @@
 			isa = PBXFrameworkReference;
 			lastKnownFileType = wrapper.framework;
 			name = Security.framework;
-			path = /System/Library/Frameworks/Security.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../../System/Library/Frameworks/Security.framework;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AAECF8BF05265DB600D02EE9 = {
 			fileEncoding = 30;
@@ -14872,9 +14872,9 @@
 			isa = PBXFrameworkReference;
 			lastKnownFileType = wrapper.framework;
 			name = CoreFoundation.framework;
-			path = /System/Library/Frameworks/CoreFoundation.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../../System/Library/Frameworks/CoreFoundation.framework;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		AAF4206505D63FA700056441 = {
 			fileEncoding = 30;
