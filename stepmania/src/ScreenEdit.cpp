@@ -1192,7 +1192,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 		{
 		case DIK_ESCAPE:
 			TransitionFromRecordToEdit();
-			break;
+			return;
 		}
 	}
 	switch( StyleI.player )
@@ -1203,6 +1203,8 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 		
 			int iNoteIndex;
 			iNoteIndex = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+			if(iNoteIndex < 0) 
+				break;
 
 			if( type == IET_FIRST_PRESS )
 			{
