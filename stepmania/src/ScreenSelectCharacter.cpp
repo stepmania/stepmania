@@ -36,9 +36,12 @@
 #define ICONS_START_Y( p )					THEME->GetMetricF("ScreenSelectCharacter",ssprintf("IconsP%dStartY",p+1))
 #define ICONS_SPACING_X						THEME->GetMetricF("ScreenSelectCharacter","IconsSpacingX")
 #define ICONS_SPACING_Y						THEME->GetMetricF("ScreenSelectCharacter","IconsSpacingY")
+#define ICONS_ON_COMMAND( p )				THEME->GetMetric ("ScreenSelectCharacter",ssprintf("IconsP%dOnCommand",p+1))
+#define ICONS_OFF_COMMAND( p )				THEME->GetMetric ("ScreenSelectCharacter",ssprintf("IconsP%dOffCommand",p+1))
 #define HELP_TEXT							THEME->GetMetric ("ScreenSelectCharacter","HelpText")
 #define TIMER_SECONDS						THEME->GetMetricI("ScreenSelectCharacter","TimerSeconds")
 #define NEXT_SCREEN							THEME->GetMetric ("ScreenSelectCharacter","NextScreen")
+#define SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF("ScreenSelectCharacter","SleepAfterTweenOffSeconds")
 
 #define LEVEL_CURSOR_X( p, l )	( ICONS_START_X(p)+ICONS_SPACING_X*((NUM_ATTACKS_PER_LEVEL-1)/2.f) )
 #define LEVEL_CURSOR_Y( p, l )	( ICONS_START_Y(p)+ICONS_SPACING_Y*l )
@@ -74,6 +77,9 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;
+
 		m_sprTitle[p].Load( THEME->GetPathToG("ScreenSelectCharacter title 2x2") );
 		m_sprTitle[p].SetState( GAMESTATE->IsHumanPlayer(p) ? p : 2+p );
 		m_sprTitle[p].StopAnimating();
@@ -88,20 +94,24 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 		m_sprCharacterArrows[p].Command( CHARACTER_ARROWS_ON_COMMAND(p) );
 		this->AddChild( &m_sprCharacterArrows[p] );
 
-		m_sprAttackFrame[p].Load( THEME->GetPathToG("ScreenSelectCharacter attack frame 1x2") );
-		m_sprAttackFrame[p].StopAnimating();
-		m_sprAttackFrame[p].SetState( p );
-		m_sprAttackFrame[p].Command( ATTACK_FRAME_ON_COMMAND(p) );
-		this->AddChild( &m_sprAttackFrame[p] );
+		if(GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE || GAMESTATE->m_PlayMode == PLAY_MODE_RAVE)
+		{
+			m_sprAttackFrame[p].Load( THEME->GetPathToG("ScreenSelectCharacter attack frame 1x2") );
+			m_sprAttackFrame[p].StopAnimating();
+			m_sprAttackFrame[p].SetState( p );
+			m_sprAttackFrame[p].Command( ATTACK_FRAME_ON_COMMAND(p) );
+			this->AddChild( &m_sprAttackFrame[p] );
 
-		for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
-			for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
-			{
-				float fX = ICONS_START_X(p) + ICONS_SPACING_X*j; 
-				float fY = ICONS_START_Y(p) + ICONS_SPACING_Y*i; 
-				m_AttackIcons[p][i][j].SetXY( fX, fY );
-				this->AddChild( &m_AttackIcons[p][i][j] );
-			}
+			for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
+				for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
+				{
+					float fX = ICONS_START_X(p) + ICONS_SPACING_X*j; 
+					float fY = ICONS_START_Y(p) + ICONS_SPACING_Y*i; 
+					m_AttackIcons[p][i][j].SetXY( fX, fY );
+					m_AttackIcons[p][i][j].Command( ICONS_ON_COMMAND(p) );
+					this->AddChild( &m_AttackIcons[p][i][j] );
+				}
+		}
 	}
 
 	m_sprExplanation.Load( THEME->GetPathToG("ScreenSelectCharacter explanation") );
@@ -224,9 +234,10 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 			m_sprCharacter[pnAffected].UnloadTexture();
 			m_sprCharacter[pnAffected].Load( pChar->GetCardPath() );
 
-			for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
-				for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
-					m_AttackIcons[pnAffected][i][j].Load( pnAffected, pChar->m_sAttacks[i][j] );
+			if(GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE || GAMESTATE->m_PlayMode == PLAY_MODE_RAVE)
+				for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
+					for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
+						m_AttackIcons[pnAffected][i][j].Load( pnAffected, pChar->m_sAttacks[i][j] );
 		}
 		break;
 	case FINISHED_CHOOSING:
@@ -310,7 +321,7 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 
 		m_Menu.m_MenuTimer.Stop();
 		TweenOffScreen();
-		this->PostScreenMessage( SM_BeginFadingOut, 0 );
+		this->PostScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_TWEEN_OFF_SECONDS );
 	}
 }
 
@@ -324,6 +335,15 @@ void ScreenSelectCharacter::TweenOffScreen()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_sprCharacter[p].Command( CHARACTER_OFF_COMMAND(p) );
+		m_sprTitle[p].Command( TITLE_OFF_COMMAND(p) );
+		m_sprCharacterArrows[p].Command( CHARACTER_ARROWS_OFF_COMMAND(p) );
+		if(GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE || GAMESTATE->m_PlayMode == PLAY_MODE_RAVE)
+		{
+			m_sprAttackFrame[p].Command( ATTACK_FRAME_OFF_COMMAND(p) );
+			for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
+				for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
+					m_AttackIcons[p][i][j].Command( ICONS_OFF_COMMAND(p) );
+		}
 	}
 	m_sprExplanation.Command( EXPLANATION_OFF_COMMAND );
 }
