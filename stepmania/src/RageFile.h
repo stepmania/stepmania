@@ -86,7 +86,7 @@ private:
 	bool	m_EOF;
 	int		m_FilePos;
 
-	enum { BSIZE = 1024*16 };
+	enum { BSIZE = 1024 };
 	char	m_Buffer[BSIZE];
 	char	*m_pBuf;
 	int		m_BufAvail;
