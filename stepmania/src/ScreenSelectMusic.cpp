@@ -868,7 +868,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			const CString CDTitlePath = pSong->HasCDTitle()? pSong->GetCDTitlePath():g_sFallbackCDTitlePath;
 			m_sprCDTitleFront.Load( CDTitlePath );
 			m_sprCDTitleBack.Load( CDTitlePath );
-			FlipSpriteHorizontally(m_sprCDTitleBack);
 
 			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 
