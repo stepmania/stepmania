@@ -12,7 +12,6 @@ public:
 	void Paint() { }
 };
 
-#undef ARCH_LOADING_WINDOW
-#define ARCH_LOADING_WINDOW LoadingWindow_Gtk
+#define HAVE_LOADING_WINDOW_GTK
 
 #endif
