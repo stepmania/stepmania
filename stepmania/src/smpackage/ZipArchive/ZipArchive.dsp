@@ -208,70 +208,6 @@ LIB32=link.exe -lib
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
-# Begin Group "zlib_c"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\zlib\adler32.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\compress.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\crc32.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\deflate.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\gvmat32c.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\infblock.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\infcodes.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\inffast.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\inflate.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\inftrees.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\infutil.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\maketree.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\trees.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\uncompr.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\zutil.c
-# End Source File
-# End Group
 # Begin Source File
 
 SOURCE=.\stdafx.cpp
@@ -333,54 +269,6 @@ SOURCE=.\ZipString.cpp
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
-# Begin Group "zlib_h"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\zlib\deflate.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\infblock.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\infcodes.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\inffast.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\inffixed.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\inftrees.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\infutil.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\trees.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\zconf.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\zlib.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\zutil.h
-# End Source File
-# End Group
 # Begin Source File
 
 SOURCE=.\stdafx.h
