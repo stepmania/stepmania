@@ -650,8 +650,7 @@ void ScreenPackages::HTTPUpdate()
 	if ( ( m_iTotalBytes <= m_iDownloaded && m_iTotalBytes != -1 ) ||
 					//We have the full doc. (And we knew how big it was)
 		( m_iTotalBytes == -1 && 
-			( m_wSocket.state == 8 || m_wSocket.state == 0 ) ) )
-				//XXX: Work around;  these should use enumerated types.
+			( m_wSocket.state == EzSockets::skERROR || m_wSocket.state == EzSockets::skDISCONNECTED ) ) )
 				//We didn't know how big it was, and were disconnected
 				//So that means we have it all.
 	{
