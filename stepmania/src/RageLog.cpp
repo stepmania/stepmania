@@ -206,7 +206,8 @@ void RageLog::Write( int where, CString str)
 	if( where&WRITE_TO_INFO && m_fileInfo )
 		fprintf(m_fileInfo, "%s\n", str.c_str() );
 
-	HOOKS->Log(str, where & WRITE_TO_INFO);
+	if( HOOKS )
+		HOOKS->Log( str, where & WRITE_TO_INFO );
 
 	if( where & WRITE_TO_INFO )
 		AddToInfo( str );
@@ -330,9 +331,6 @@ void RageLog::UpdateMappedLog()
 	g_AdditionalLogSize = min( sizeof(g_AdditionalLogStr), str.size()+1 );
 	memcpy( g_AdditionalLogStr, str.c_str(), g_AdditionalLogSize );
 	g_AdditionalLogStr[ sizeof(g_AdditionalLogStr)-1 ] = 0;
-
-	/* XXX: deprecated */
-	HOOKS->AdditionalLog(str);
 }
 
 const char *RageLog::GetAdditionalLog()
