@@ -1,6 +1,5 @@
 #include "global.h"
 
-#include <execinfo.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -46,7 +45,7 @@ static void spawn_child_process(int from_parent)
        
 	if(from_parent != 3)
 	{
-		int ret = dup2(from_parent, 3);
+		dup2(from_parent, 3);
 		close(from_parent);
 	}
 
@@ -60,7 +59,7 @@ static void spawn_child_process(int from_parent)
 
 static void parent_write(int to_child, const void *p, size_t size)
 {
-	int ret = write(to_child, p, size);
+	size_t ret = write(to_child, p, size);
 	if(ret != size)
 	{
 		safe_print(fileno(stderr), "Unexpected write() result (", strerror(errno), ")\n", NULL);
@@ -124,7 +123,7 @@ static void parent_process( int to_child, void **BacktracePointers, int SignalRe
  * XXX: make sure the parent dying doesn't take out the child
  */
 
-#if BACKTRACE_METHOD == X86_LINUX
+#if defined(BACKTRACE_METHOD_X86_LINUX)
 /* The x86 backtrace() in glibc doesn't make any effort at all to decode
  * signal trampolines.  The result is that it doesn't properly show the
  * function that actually caused the signal--which is the most important
@@ -345,7 +344,7 @@ static void do_backtrace( void **buf, size_t size, bool ignore_before_sig = true
 
 	buf[i] = NULL;
 }
-#elif BACKTRACE_METHOD == BACKTRACE
+#elif defined(BACKTRACE_METHOD_BACKTRACE)
 static void do_backtrace(void **buf, size_t size)
 {
 	int retsize = backtrace( buf, size-1 );
@@ -361,8 +360,24 @@ static void do_backtrace(void **buf, size_t size)
 
 	buf[retsize] = NULL;
 }
+#elif defined(BACKTRACE_METHOD_POWERPC_DARWIN)
+#include "archutils/Darwin/Crash.h"
+typedef struct Frame {
+    Frame *stackPointer;
+    long conditionReg;
+    void *linkReg;
+} *FramePtr;
+
+static void do_backtrace(void **buf, size_t size)
+{
+    FramePtr frame = FramePtr(GetCrashedFramePtr());
+    unsigned i;
+    for (i=0; frame && frame->linkReg && i<size; ++i, frame=frame->stackPointer)
+        buf[i] = frame->linkReg;
+    buf[i] = NULL;
+}
 #else
-#error BACKTRACE_METHOD required
+#error BACKTRACE_METHOD_* required
 #endif
 
 
@@ -393,7 +408,7 @@ void CrashSignalHandler( int signal )
 	
 	/* We need to be very careful, since we're under crash conditions.  Let's fork
 	 * a process and exec ourself to get a clean environment to work in. */
-	const char *my_fn = g_argv[0];
+	//const char *my_fn = g_argv[0];
 
 	int fds[2];
 	if(pipe(fds) != 0)
