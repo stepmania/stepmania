@@ -739,6 +739,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 {
 	if( m_bFirstUpdate )
 	{
+		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay intro") );	// crowd cheer
+
 		//
 		// Get the transitions rolling
 		//
