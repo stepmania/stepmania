@@ -244,7 +244,7 @@ void UnlockManager::Load()
 		{
 			const Command &cmd = vCommands.v[j];
 			if( cmd.GetName() == "song" )
-				current.m_sSongName = cmd.GetArg(1);
+				current.m_sSongName = (CString) cmd.GetArg(1);
 			else if( cmd.GetName() == "code" )
 			{
 				// Hack: Lua only has a floating point type, and codes may be big enough
