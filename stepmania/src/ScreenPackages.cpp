@@ -112,8 +112,7 @@ ScreenPackages::ScreenPackages( CString sClassName ) : ScreenWithMenuElements( s
 
 	//It's always some strange number of bytes at the end of the
 	//file when it corrupts.
-	m_fOutputFile.Open( "Packages/dummy.txt", 0x02 );
-	m_fOutputFile.Flush( );
+	m_fOutputFile.Open( "Packages/dummy.txt", RageFile::WRITE );
 	m_fOutputFile.Close();
 }
 
@@ -527,7 +526,7 @@ void ScreenPackages::EnterURL( const CString & sURL )
 			return;
 		}
 
-		if( !m_fOutputFile.Open( "Packages/"+m_sEndName, RageFile::WRITE ) )
+		if( !m_fOutputFile.Open( "Packages/"+m_sEndName, RageFile::WRITE | RageFile::STREAMED ) )
 		{
 			m_sStatus = m_fOutputFile.GetError();
 			UpdateProgress();
@@ -601,6 +600,7 @@ void ScreenPackages::HTTPUpdate()
 		if( HeaderEnd == m_sBUFFER.npos )
 			return;
 
+		// "HTTP/1.1 200 OK"
 		size_t i = m_sBUFFER.find(" ");
 		size_t j = m_sBUFFER.find(" ",i+1);
 		size_t k = m_sBUFFER.find("\n",j+1);
@@ -657,7 +657,6 @@ void ScreenPackages::HTTPUpdate()
 			{
 				if( m_bIsPackage && m_iResponseCode < 300 )
 				{
-					m_fOutputFile.Flush();
 					m_fOutputFile.Close();
 					FlushDirCache();
 					RefreshPackages();
