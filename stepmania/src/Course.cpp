@@ -458,8 +458,16 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 {
 	vector<Entry> entries = m_entries;
 
+	/* Different seed for each course, but the same for the whole round: */
+	RandomGen rnd( GAMESTATE->m_iRoundSeed + GetHashForString(m_sName) );
+
 	if( m_bRandomize )
-		random_shuffle( entries.begin(), entries.end() );
+	{
+		/* Always randomize the same way per round.  Otherwise, the displayed course
+		 * will change every time it's viewed, and the displayed order will have no
+		 * bearing on what you'll actually play. */
+		random_shuffle( entries.begin(), entries.end(), rnd );
+	}
 
 	vector<Song*> vSongsByMostPlayed = SONGMAN->GetBestSongs();
 	// filter out songs that don't have both medium and hard steps and long ver sons
@@ -474,9 +482,6 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 	}
 
 	
-	/* Different seed for each course, but the same for the whole round: */
-	RandomGen rnd( GAMESTATE->m_iRoundSeed + GetHashForString(m_sName) );
-
 	vector<Song*> AllSongsShuffled = SONGMAN->GetAllSongs();
 	random_shuffle( AllSongsShuffled.begin(), AllSongsShuffled.end(), rnd );
 	int CurSong = 0; /* Current offset into AllSongsShuffled */
