@@ -1034,7 +1034,6 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 				m_soundDifficultyEasier.Play();
 			else
 				m_soundDifficultyHarder.Play();
-			AfterMusicChange();
 
 			vector<PlayerNumber> vpns;
 			FOREACH_HumanPlayer( p )
