@@ -280,6 +280,38 @@ void MusicBannerWheel::LoadSongData()
 }
 
 
+void MusicBannerWheel::ScanToNextGroup()
+{
+	if(arraySongs.size() < 2)
+		return; // forget it -- no point groupscanning
+	int localPos = currentPos;
+	int startingPos = localPos;
+	Song* pSong;
+	pSong = arraySongs[currentPos];
+	CString currentGroupName = pSong->m_sGroupName;
+	localPos++;
+	while(localPos != startingPos)
+	{
+		if(localPos >= arraySongs.size()-1)
+		{
+			localPos = 0;
+		}
+		pSong = arraySongs[localPos];
+		if(currentGroupName != pSong->m_sGroupName)
+		{
+			break;
+		}
+		localPos++;
+	}
+	int iCount = 5;
+	currentPos = localPos-iCount;
+	while(iCount > 0)
+	{
+		BannersRight();
+		iCount--;
+	}
+}
+
 Song* MusicBannerWheel::GetSelectedSong()
 {
 	Song* pSong;

@@ -248,6 +248,14 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	{
 		UpdateOptions(pn,1);
 	}
+
+	if( CodeDetector::EnteredNextBannerGroup(GameI.controller))
+	{
+		m_MusicBannerWheel.ScanToNextGroup();
+		MusicChanged();
+		return;
+	}
+
 	if( type != IET_FIRST_PRESS )
 	{
 		m_bScanning = true;

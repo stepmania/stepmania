@@ -43,6 +43,8 @@ public:
 		CODE_CANCEL_ALL,
 		CODE_NEXT_THEME,
 		CODE_NEXT_ANNOUNCER,
+		CODE_BW_NEXT_GROUP,
+		CODE_BW_NEXT_GROUP2,
 		NUM_CODES	// leave this at the end
 	};
 
@@ -52,6 +54,8 @@ public:
 	static bool EnteredNextSort( GameController controller );
 	static bool DetectAndAdjustMusicOptions( GameController controller );
 	static bool EnteredCode( GameController controller, Code code );
+	static bool EnteredNextBannerGroup( GameController controller );
+
 };
 
 

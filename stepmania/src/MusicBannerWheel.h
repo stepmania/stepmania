@@ -35,6 +35,7 @@ public:
 	void StartBouncing();
 	void StopBouncing();
 	void SetScanMode(bool Scanmode);
+	void ScanToNextGroup();
 
 private:
 	void SetNewPos(int NewPos);

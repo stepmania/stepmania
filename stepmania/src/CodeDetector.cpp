@@ -47,7 +47,9 @@ const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"RandomVanish",
 	"CancelAll",
 	"NextTheme",
-	"NextAnnouncer"
+	"NextAnnouncer",
+	"NextBannerGroup",
+	"NextBannerGroup2"
 };
 
 const unsigned MAX_CODE_LENGTH = 10;
@@ -118,6 +120,11 @@ void CodeDetector::RefreshCacheItems()
 {
 	for( int i=0; i<NUM_CODES; i++ )
 		RefreshCacheItem( i );
+}
+
+bool CodeDetector::EnteredNextBannerGroup( GameController controller )
+{
+	return EnteredCode(controller,CODE_BW_NEXT_GROUP) || EnteredCode(controller,CODE_BW_NEXT_GROUP2);
 }
 
 bool CodeDetector::EnteredEasierDifficulty( GameController controller )
