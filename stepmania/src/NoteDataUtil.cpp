@@ -228,9 +228,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out 
 				case TapNote::attack:		c = 'A'; break;
 				case TapNote::autoKeysound:	c = 'K'; break;
 				default: 
-					ASSERT(0);	// invalid enum value
-					c = '0'; 
-					break;
+					FAIL_M( ssprintf("tn %i", tn.type) );	// invalid enum value
 				}
 				sRet.append(1, c);
 
