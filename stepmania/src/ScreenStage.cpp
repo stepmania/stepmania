@@ -129,27 +129,31 @@ ScreenStage::ScreenStage()
 			// Set frame of numbers
 			int i;
 			for( i=0; i<sStageNo.GetLength(); i++ )
-				m_sprNumbers[i].SetState( atoi(CString(sStageNo[i])) );
+				m_sprNumbers[i].SetState( sStageNo[i]-'0' );
 
 			// Set frame of suffix
-			int iIndexOfSuffix = sStageNo.GetLength();
-			if( ( (iStageNo/10) % 10 ) == 1 )	// in the teens (e.g. 19, 213)
-				m_sprNumbers[iIndexOfSuffix].SetState( 13 );	// th
-			else	// not in the teens
 			{
-				const int iLastDigit = iStageNo%10;
-				switch( iLastDigit )
+				int iSuffix;
+				if( ( (iStageNo/10) % 10 ) == 1 )	// in the teens (e.g. 19, 213)
+					iSuffix = 13;	// th
+				else	// not in the teens
 				{
-				case 1:		m_sprNumbers[iIndexOfSuffix].SetState( 10 );	break;	// st
-				case 2:		m_sprNumbers[iIndexOfSuffix].SetState( 11 );	break;	// nd
-				case 3:		m_sprNumbers[iIndexOfSuffix].SetState( 12 );	break;	// rd
-				default:	m_sprNumbers[iIndexOfSuffix].SetState( 13 );	break;	// th
+					switch( iStageNo%10 )
+					{
+					case 1:		iSuffix = 10;	break;	// st
+					case 2:		iSuffix = 11;	break;	// nd
+					case 3:		iSuffix = 12;	break;	// rd
+					default:	iSuffix = 13;	break;	// th
+					}
 				}
+
+				int iIndexOfSuffix = sStageNo.GetLength();
+				m_sprNumbers[iIndexOfSuffix].SetState( iSuffix );
 			}
 			
 			// Set X positions
 			const float fFrameWidth = m_sprNumbers[0].GetUnzoomedWidth();
-			const int iNumChars = iIndexOfSuffix+1;
+			const int iNumChars = sStageNo.GetLength()+1;
 			const float fTotalCharsWidth = m_sprNumbers[0].GetUnzoomedWidth();
 			const float fSpaceBetweenNumsAndStage = fFrameWidth;
 			const float fStageWidth = m_sprStage.GetUnzoomedWidth();
@@ -159,7 +163,9 @@ ScreenStage::ScreenStage()
 
 			for( i=0; i<iNumChars; i++ )
 			{
-				float fOffsetX = SCALE((float)i, 0, iNumChars-1, -(iNumChars-1)/2.0f*fFrameWidth, (iNumChars-1)/2.0f*fFrameWidth);
+				float fOffsetX = SCALE((float)i, 0,
+						iNumChars-1, -(iNumChars-1)/2.0f*fFrameWidth,
+						(iNumChars-1)/2.0f*fFrameWidth);
 				m_sprNumbers[i].SetX( fCharsCenterX + fOffsetX );
 			}
 			m_sprStage.SetX( fStageCenterX );
