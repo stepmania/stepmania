@@ -52,6 +52,7 @@ public:
 	bool IsClosing()	{ return m_TransitionState == closing_right  ||  m_TransitionState == closing_left; };
 
 	void SetTransitionTime( float fNewTransitionTime ) { m_fTransitionTime = fNewTransitionTime; };
+	float GetTransitionTime() { return m_fTransitionTime; };
 
 protected:
 

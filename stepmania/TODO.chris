@@ -2,6 +2,16 @@
 Fix
 /////////////////////////
 
+Ready, here we go closer to start of notes
+
+off center backgrounds
+
+"How to Play" explanation with the freeze arrows nearly takes up the entire screen.
+
+KeepAlive doesn't fold during how to play
+
+"try extra stage" swoop instead of cleared
+
 Wow!  pngcrush takes off 50% on some of these paletted pngs.  I'll look into making a script that we can check into CVS and run periodically.
 
 disable modifiers in extra stage

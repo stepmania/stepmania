@@ -48,7 +48,7 @@ ScreenHowToPlay::ScreenHowToPlay()
 		return;
 	}
 
-	m_Menu.TweenOnScreenFromMenu( SM_None );
+	m_Menu.TweenOnScreenFromMenu( SM_None, true );
 
 	CString sHowToPlayPath;
 	switch( GAMESTATE->m_PlayMode )
@@ -93,8 +93,8 @@ void ScreenHowToPlay::Update( float fDeltaTime )
 void ScreenHowToPlay::DrawPrimitives()
 {
 	m_Menu.DrawBottomLayer();
-	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
+	Screen::DrawPrimitives();	// draw How To Play graphic on top of all the others!
 }
 
 void ScreenHowToPlay::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )

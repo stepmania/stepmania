@@ -56,10 +56,10 @@ LINK32=link.exe
 # ADD LINK32 $(intdir)\verstub.obj /nologo /subsystem:windows /map /debug /machine:I386
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\temp\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc        	cl         /Zl         /nologo         /c         verstub.cpp         /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc         	cl          /Zl          /nologo          /c          verstub.cpp          /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -77,8 +77,7 @@ PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /YX"stdafx.h" /FD /GZ /c
-# SUBTRACT CPP /Fr
+# ADD CPP /nologo /MTd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /Fr /YX"stdafx.h" /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -92,10 +91,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /profile /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\temp\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc        	cl         /Zl         /nologo         /c         verstub.cpp         /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc         	cl          /Zl          /nologo          /c          verstub.cpp          /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -351,15 +350,15 @@ SOURCE=.\NotesLoaderSM.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\NotesLoaderSM.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\NotesWriterDWI.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\NotesWriterDWI.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\NotesLoaderSM.h
 # End Source File
 # Begin Source File
 

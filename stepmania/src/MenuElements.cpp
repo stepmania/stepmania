@@ -120,10 +120,13 @@ void MenuElements::TweenTopLayerOnScreen()
 	m_textHelp.SetTweenZoomY( fOriginalZoom );
 }
 
-void MenuElements::TweenOnScreenFromMenu( ScreenMessage smSendWhenDone )
+void MenuElements::TweenOnScreenFromMenu( ScreenMessage smSendWhenDone, bool bLeaveKeepAliveOn )
 {
 	TweenTopLayerOnScreen();
-	m_KeepAlive.OpenWipingRight( smSendWhenDone );
+	if( !bLeaveKeepAliveOn )
+		m_KeepAlive.OpenWipingRight( smSendWhenDone );
+	else
+		m_KeepAlive.SetClosed();
 	m_soundSwoosh.Play();
 }
 
@@ -170,7 +173,10 @@ void MenuElements::TweenOffScreenToMenu( ScreenMessage smSendWhenDone )
 {
 	m_MenuTimer.StopTimer();
 	TweenTopLayerOffScreen();
-	m_KeepAlive.CloseWipingRight( smSendWhenDone );
+	if( !m_KeepAlive.IsClosed() )
+		m_KeepAlive.CloseWipingRight( smSendWhenDone );
+	else
+		SCREENMAN->SendMessageToTopScreen( smSendWhenDone, m_KeepAlive.GetTransitionTime() );
 	m_soundSwoosh.Play();
 }
 

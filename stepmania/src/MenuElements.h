@@ -43,7 +43,7 @@ public:
 	void DrawTopLayer();
 	void DrawBottomLayer();
 
-	void TweenOnScreenFromMenu( ScreenMessage smSendWhenDone );
+	void TweenOnScreenFromMenu( ScreenMessage smSendWhenDone, bool bLeaveKeepAliveOn = false );
 	void TweenOffScreenToMenu( ScreenMessage smSendWhenDone );
 	void ImmedOffScreenToMenu();
 
