@@ -9,23 +9,30 @@
 #include "ThemeManager.h"
 #include "SongManager.h"
 
-CachedThemeMetricF FADE_SECONDS			("FadingBanner","FadeSeconds");
+static CachedThemeMetricF FADE_SECONDS			("FadingBanner","FadeSeconds");
 
-
+/*
+ * Allow fading from one banner to another.  We can handle two fades at once;
+ * this is used to fade from an old banner to a low-quality banner to a high-
+ * quality banner smoothly.
+ *
+ * m_iIndexLatest is the latest banner loaded, and the one that we'll end up
+ * displaying when the fades stop.
+ */
 FadingBanner::FadingBanner()
 {
 	FADE_SECONDS.Refresh();
 
 	m_bMovingFast = false;
 	m_bSkipNextBannerUpdate = false;
-	m_iIndexFront = 0;
-	for( int i=0; i<2; i++ )
+	m_iIndexLatest = 0;
+	for( int i=0; i<3; i++ )
 		this->AddChild( &m_Banner[i] );
 }
 
 void FadingBanner::ScaleToClipped( float fWidth, float fHeight )
 {
-	for( int i=0; i<2; i++ )
+	for( int i=0; i<3; i++ )
 		m_Banner[i].ScaleToClipped( fWidth, fHeight );
 }
 
@@ -39,6 +46,7 @@ void FadingBanner::Update( float fDeltaTime )
 	{
 		m_Banner[0].Update( fDeltaTime );
 		m_Banner[1].Update( fDeltaTime );
+		m_Banner[2].Update( fDeltaTime );
 	}
 
 	m_bSkipNextBannerUpdate = false;
@@ -48,27 +56,34 @@ void FadingBanner::DrawPrimitives()
 {
 	// draw manually
 //	ActorFrame::DrawPrimitives();
-	m_Banner[GetBackIndex()].Draw();
-	m_Banner[m_iIndexFront].Draw();
+
+	/* Render the latest banner first. */
+	for( int i = 0; i < 3; ++i )
+	{
+		int index = m_iIndexLatest - i;
+		wrap( index, 3 );
+		m_Banner[index].Draw();
+	}
 }
 
 bool FadingBanner::Load( RageTextureID ID )
 {
 	BeforeChange();
-	bool bRet = m_Banner[GetBackIndex()].Load(ID);
+	bool bRet = m_Banner[m_iIndexLatest].Load(ID);
 	return bRet;
 }
 
 void FadingBanner::BeforeChange()
 {
-	m_Banner[m_iIndexFront].SetDiffuse( RageColor(1,1,1,1) );
+	m_Banner[m_iIndexLatest].SetDiffuse( RageColor(1,1,1,1) );
+	m_Banner[m_iIndexLatest].StopTweening();
+	m_Banner[m_iIndexLatest].BeginTweening( FADE_SECONDS );		// fade out
+	m_Banner[m_iIndexLatest].SetDiffuse( RageColor(1,1,1,0) );
 
-	m_iIndexFront = GetBackIndex();
+	++m_iIndexLatest;
+	wrap( m_iIndexLatest, 3 );
 
-	m_Banner[m_iIndexFront].SetDiffuse( RageColor(1,1,1,1) );
-	m_Banner[m_iIndexFront].StopTweening();
-	m_Banner[m_iIndexFront].BeginTweening( FADE_SECONDS );		// fade out
-	m_Banner[m_iIndexFront].SetDiffuse( RageColor(1,1,1,0) );
+	m_Banner[m_iIndexLatest].SetDiffuse( RageColor(1,1,1,1) );
 
 	/* We're about to load a banner.  It'll probably cause a frame skip or
 	 * two.  Skip an update, so the fade-in doesn't skip. */
@@ -80,7 +95,7 @@ void FadingBanner::BeforeChange()
 bool FadingBanner::LoadFromCachedBanner( const CString &path )
 {
 	/* If we're already on the given banner, don't fade again. */
-	if( path != "" && m_Banner[GetBackIndex()].GetTexturePath() == path )
+	if( path != "" && m_Banner[m_iIndexLatest].GetTexturePath() == path )
 		return false;
 
 	if( path == "" )
@@ -120,7 +135,7 @@ bool FadingBanner::LoadFromCachedBanner( const CString &path )
 	}
 
 	BeforeChange();
-	m_Banner[GetBackIndex()].Load( ID );
+	m_Banner[m_iIndexLatest].Load( ID );
 
 	return bLowRes;
 }
@@ -135,19 +150,19 @@ void FadingBanner::LoadFromSong( const Song* pSong )
 void FadingBanner::LoadAllMusic()
 {
 	BeforeChange();
-	m_Banner[GetBackIndex()].LoadAllMusic();
+	m_Banner[m_iIndexLatest].LoadAllMusic();
 }
 
 void FadingBanner::LoadSort()
 {
 	BeforeChange();
-	m_Banner[GetBackIndex()].LoadSort();
+	m_Banner[m_iIndexLatest].LoadSort();
 }
 
 void FadingBanner::LoadMode()
 {
 	BeforeChange();
-	m_Banner[GetBackIndex()].LoadMode();
+	m_Banner[m_iIndexLatest].LoadMode();
 }
 
 void FadingBanner::LoadFromGroup( CString sGroupName )
@@ -164,19 +179,19 @@ void FadingBanner::LoadFromCourse( const Course* pCourse )
 void FadingBanner::LoadRoulette()
 {
 	BeforeChange();
-	m_Banner[GetBackIndex()].LoadRoulette();
+	m_Banner[m_iIndexLatest].LoadRoulette();
 }
 
 void FadingBanner::LoadRandom()
 {
 	BeforeChange();
-	m_Banner[GetBackIndex()].LoadRandom();
+	m_Banner[m_iIndexLatest].LoadRandom();
 }
 
 void FadingBanner::LoadFallback()
 {
 	BeforeChange();
-	m_Banner[GetBackIndex()].LoadFallback();
+	m_Banner[m_iIndexLatest].LoadFallback();
 }
 
 /*

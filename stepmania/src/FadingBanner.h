@@ -34,10 +34,8 @@ public:
 protected:
 	void BeforeChange();
 
-
-	Banner		m_Banner[2];
-	int			m_iIndexFront;
-	int			GetBackIndex() { return m_iIndexFront==0 ? 1 : 0; }
+	Banner		m_Banner[3];
+	int		m_iIndexLatest;
 
 	bool		m_bMovingFast;
 	bool		m_bSkipNextBannerUpdate;
