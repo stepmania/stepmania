@@ -425,7 +425,7 @@ Actor* NoteDisplay::GetHoldTailActor( float fNoteBeat, bool bActive )
 		nt = BeatToNoteType( fNoteBeat );
 	if( nt == NOTE_TYPE_INVALID )
 		nt = NOTE_TYPE_32ND;
-	nt = min( nt, (NoteType) NOTE_COLOR_IMAGES-1 );
+	nt = min( nt, (NoteType) (NOTE_COLOR_IMAGES-1) );
 
 	Actor *pActorOut = bActive ? m_pHoldTailActive[nt] : m_pHoldTailInactive[nt];
 
