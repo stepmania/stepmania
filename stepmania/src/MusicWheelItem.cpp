@@ -63,6 +63,7 @@ MusicWheelItem::MusicWheelItem()
 	m_fPercentGray = 0;
 	m_WheelNotifyIcon.SetXY( ICON_X, 0 );
 	
+	m_TextBanner.SetName( "TextBanner" );
 	m_TextBanner.SetHorizAlign( align_left );
 	m_TextBanner.SetXY( SONG_NAME_X, 0 );
 	m_All.AddChild( &m_TextBanner );

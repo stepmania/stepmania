@@ -88,6 +88,7 @@ EditMenu::EditMenu()
 	m_SongBanner.SetXY( SONG_BANNER_X, SONG_BANNER_Y );
 	this->AddChild( &m_SongBanner );
 
+	m_SongTextBanner.SetName( "TextBanner" );
 	m_SongTextBanner.SetXY( SONG_TEXT_BANNER_X, SONG_TEXT_BANNER_Y );
 	this->AddChild( &m_SongTextBanner );
 	

@@ -140,6 +140,7 @@ EditCoursesMenu::EditCoursesMenu()
 	m_EntryBanner.SetXY( ENTRY_BANNER_X, ENTRY_BANNER_Y );
 	this->AddChild( &m_EntryBanner );
 
+	m_EntryTextBanner.SetName( "TextBanner" );
 	m_EntryTextBanner.SetXY( ENTRY_TEXT_BANNER_X, ENTRY_TEXT_BANNER_Y );
 	this->AddChild( &m_EntryTextBanner );
 	
