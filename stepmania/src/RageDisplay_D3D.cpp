@@ -774,7 +774,7 @@ public:
 			{
 				for( unsigned j=0; j<Triangles.size(); j++ )
 					for( unsigned k=0; k<3; k++ )
-						m_vTriangles[meshInfo.iTriangleStart+j].nVertexIndices[k] = (word)meshInfo.iVertexStart + Triangles[j].nVertexIndices[k];
+						m_vTriangles[meshInfo.iTriangleStart+j].nVertexIndices[k] = (uint16_t) meshInfo.iVertexStart + Triangles[j].nVertexIndices[k];
 			}
 		}
 	}

@@ -938,7 +938,7 @@ public:
 					for( unsigned k=0; k<3; k++ )
 					{
 						int iVertexIndexInVBO = meshInfo.iVertexStart + Triangles[j].nVertexIndices[k];
-						m_vTriangles[meshInfo.iTriangleStart+j].nVertexIndices[k] = (word) iVertexIndexInVBO;
+						m_vTriangles[meshInfo.iTriangleStart+j].nVertexIndices[k] = (uint16_t) iVertexIndexInVBO;
 					}
 			}
 		}
