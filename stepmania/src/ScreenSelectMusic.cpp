@@ -1211,7 +1211,8 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_sprCDTitleBack.UnloadTexture();
 			m_DifficultyDisplay.UnsetDifficulties();
 
-			m_fSampleStartSeconds = m_fSampleLengthSeconds = -1;
+			m_fSampleStartSeconds = 0;
+			m_fSampleLengthSeconds = -1;
 			switch( m_MusicWheel.GetSelectedType() )
 			{
 			case TYPE_SECTION:
@@ -1308,7 +1309,8 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_sprCDTitleBack.UnloadTexture();
 		m_DifficultyDisplay.UnsetDifficulties();
 
-		m_fSampleStartSeconds = m_fSampleLengthSeconds = -1;
+		m_fSampleStartSeconds = 0;
+		m_fSampleLengthSeconds = -1;
 		switch( m_MusicWheel.GetSelectedType() )
 		{
 		case TYPE_ROULETTE:

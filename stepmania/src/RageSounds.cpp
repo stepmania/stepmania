@@ -34,7 +34,6 @@ struct MusicToPlay
 	CString file;
 	TimingData timing;
 	bool HasTiming;
-	CString timing_file;
 	bool force_loop;
 	float start_sec, length_sec, fade_len;
 };
@@ -69,10 +68,7 @@ void StartQueuedMusic( const RageTimer &when )
 	if( g_MusicToPlay.force_loop )
 		g_Music->SetStopMode( RageSound::M_LOOP );
 
-	if( g_MusicToPlay.start_sec == -1 )
-		g_Music->SetStartSeconds();
-	else
-		g_Music->SetStartSeconds( g_MusicToPlay.start_sec );
+	g_Music->SetStartSeconds( g_MusicToPlay.start_sec );
 
 	if( g_MusicToPlay.length_sec == -1 )
 		g_Music->SetLengthSeconds();
@@ -149,7 +145,6 @@ void RageSounds::PlayMusic( const CString &file, const CString &timing_file, boo
 	g_Music->Unload();
 
 	g_MusicToPlay.file = file;
-	g_MusicToPlay.timing_file = timing_file;
 	g_MusicToPlay.force_loop = force_loop;
 	g_MusicToPlay.start_sec = start_sec;
 	g_MusicToPlay.length_sec = length_sec;
@@ -182,7 +177,7 @@ void RageSounds::PlayMusic( const CString &file, const CString &timing_file, boo
 		}
 	}
 
-	if( g_MusicToPlay.HasTiming && force_loop )
+	if( g_MusicToPlay.HasTiming && force_loop && length_sec != -1 )
 	{
 		float fStartBeat = g_MusicToPlay.timing.GetBeatFromElapsedTime( g_MusicToPlay.start_sec );
 		float fEndSec = start_sec + length_sec;

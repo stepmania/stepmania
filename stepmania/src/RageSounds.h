@@ -10,7 +10,7 @@ public:
 	~RageSounds();
 	void Update( float fDeltaTime );
 
-	void PlayMusic( const CString &file, bool force_loop = false, float start_sec = -1, float length_sec = -1, float fade_len = 0 ) { PlayMusic( file, "", force_loop, start_sec, length_sec, fade_len ); }
+	void PlayMusic( const CString &file, bool force_loop = false, float start_sec = 0, float length_sec = -1, float fade_len = 0 ) { PlayMusic( file, "", force_loop, start_sec, length_sec, fade_len ); }
 	void PlayMusic( const CString &file, const CString &timing_file, bool force_loop = false, float start_sec = -1, float length_sec = -1, float fade_len = 0 );
 	void StopMusic() { PlayMusic(""); }
 	CString GetMusicPath() const;
