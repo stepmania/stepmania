@@ -28,6 +28,11 @@ public:
 	 * and we can safely log and throw. */
 	virtual void DumpDebugInfo() { }
 
+	/* Message box stuff.  Not supported on all archs. */
+	enum MessageBoxResult { abort, retry, ignore };
+	virtual void MessageBoxOK( CString sMessage ) {}
+	virtual MessageBoxResult MessageBoxAbortRetryIgnore( CString sMessage ) { return ignore; } 
+
 	virtual ~ArchHooks() { }
 };
 

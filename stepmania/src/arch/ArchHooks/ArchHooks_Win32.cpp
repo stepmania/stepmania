@@ -34,6 +34,22 @@ void ArchHooks_Win32::DumpDebugInfo()
 	SearchForDebugInfo();
 }
 
+void ArchHooks_Win32::MessageBoxOK( CString sMessage )
+{
+	MessageBox(NULL, sMessage, "StepMania", MB_OK );
+}
+
+ArchHooks::MessageBoxResult ArchHooks_Win32::MessageBoxAbortRetryIgnore( CString sMessage )
+{
+	switch( MessageBox(NULL, sMessage, "StepMania", MB_ABORTRETRYIGNORE ) )
+	{
+	case IDABORT:	return abort;
+	case IDRETRY:	return retry;
+	default:	ASSERT(0);
+	case IDIGNORE:	return ignore;
+	}
+} 
+
 /*
  * Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
  *

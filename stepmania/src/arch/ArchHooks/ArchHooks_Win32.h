@@ -9,6 +9,8 @@ public:
 	void Log(CString str, bool important);
 	void DumpDebugInfo();
 	void AdditionalLog(CString str);
+	void MessageBoxOK( CString sMessage );
+	MessageBoxResult MessageBoxAbortRetryIgnore( CString sMessage );
 };
 
 #undef ARCH_HOOKS
