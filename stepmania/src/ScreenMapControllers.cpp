@@ -290,6 +290,8 @@ void ScreenMapControllers::Refresh()
 		{
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
+				bool bSelected = p == m_iCurController  &&  b == m_iCurButton  &&  s == m_iCurSlot; 
+
 				GameInput cur_gi( (GameController)p, (GameButton)b );
 				DeviceInput di;
 				if( INPUTMAPPER->GameToDevice( cur_gi, s, di ) )
@@ -299,16 +301,30 @@ void ScreenMapControllers::Refresh()
 				
 				// highlight the currently selected pad button
 				RageColor color;
-				if( p == m_iCurController  &&  b == m_iCurButton  &&  s == m_iCurSlot ) 
+				bool bPulse;
+				if( bSelected ) 
 				{
 					if( m_bWaitingForPress )
+					{
 						color = RageColor(1,0.5,0.5,1);	// red
+						bPulse = true;
+					}
 					else
+					{
 						color = RageColor(1,1,1,1);		// white
+						bPulse = false;
+					}
 				} 
 				else 
+				{
 					color = RageColor(0.5,0.5,0.5,1);	// gray
+					bPulse = false;
+				}
 				m_textMappedTo[p][b][s].SetDiffuse( color );
+				if( bPulse )
+					m_textMappedTo[p][b][s].SetEffectPulse( .5f, .5f, .6f );
+				else
+					m_textMappedTo[p][b][s].SetEffectNone();
 			}
 		}
 	}
