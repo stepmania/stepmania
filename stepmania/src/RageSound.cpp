@@ -37,8 +37,9 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
-
 #include "PrefsManager.h"
+
+#include <math.h>
 
 #if defined(OGG_ONLY)
 #include "RageSoundReader_Vorbisfile.h"
@@ -221,6 +222,8 @@ void RageSound::SetLengthSeconds(float secs)
 		m_LengthSamples = int(secs*samplerate());
 }
 
+/* Read data at the rate we're playing it.  We only do this to smooth out the rate
+ * we read data; the sound thread will always read more if it's needed. */
 void RageSound::Update(float delta)
 {
 	if(playing && delta)
@@ -233,7 +236,6 @@ int RageSound::Bytes_Available() const
 	return databuf.size();
 }
 
-#include <math.h>
 
 void RageSound::RateChange(char *buf, int &cnt,
 				int speed_input_samples, int speed_output_samples, int channels)
