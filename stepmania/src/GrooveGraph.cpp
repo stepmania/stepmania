@@ -35,6 +35,7 @@ CachedThemeMetricF MOUNTAIN_WIDTH	("GrooveGraph","MountainWidth");
 CachedThemeMetricF MOUNTAIN_HEIGHT	("GrooveGraph","MountainHeight");
 
 RageColor	g_DifficultyColorsCache[NUM_DIFFICULTIES];
+static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
 GrooveGraph::GrooveGraph()
 {
@@ -46,7 +47,7 @@ GrooveGraph::GrooveGraph()
 	m_sprBase.Load( THEME->GetPathToG("GrooveGraph base") );
 	this->AddChild( &m_sprBase );
 
-	for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
+	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
 		if( !SHOW_CATEGORY((RadarCategory)c) )
 			continue;
@@ -58,7 +59,7 @@ GrooveGraph::GrooveGraph()
 
 void GrooveGraph::SetFromSong( Song* pSong )
 {
-	float fValues[NUM_RADAR_CATEGORIES][NUM_DIFFICULTIES];
+	float fValues[NUM_SHOWN_RADAR_CATEGORIES][NUM_DIFFICULTIES];
 	ZERO( fValues );
 
 	if( pSong )
@@ -67,12 +68,12 @@ void GrooveGraph::SetFromSong( Song* pSong )
 		{
 			Steps* pNotes = pSong->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, (Difficulty)i );
 			const float* fRadarValues = pNotes ? pNotes->GetRadarValues() : NULL;
-			for( int j=0; j<NUM_RADAR_CATEGORIES; j++ )
+			for( int j=0; j<NUM_SHOWN_RADAR_CATEGORIES; j++ )
 				fValues[j][i] = fRadarValues ? fRadarValues[j] : 0;
 		}
 	}
 
-	for( int j=0; j<NUM_RADAR_CATEGORIES; j++ )
+	for( int j=0; j<NUM_SHOWN_RADAR_CATEGORIES; j++ )
 	{
 		m_Mountains[j].SetValues( fValues[j] );	
 	}
