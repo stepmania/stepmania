@@ -664,20 +664,6 @@ RageDisplay *CreateDisplay()
 	RageException::Throw( error );
 }
 
-static void CheckSDLVersion( int major, int minor, int patch )
-{
-	const SDL_version *ver = SDL_Linked_Version();
-	if( ver->major > major ||
-	   (ver->major == major && ver->minor > minor) ||
-	   (ver->major == major && ver->minor == minor && ver->patch >= patch))
-		return;
-
-	RageException::Throw( "SDL %i.%i.%i is required, but you only appear to "
-		"have SDL %i.%i.%i installed.  Please upgrade your installation of SDL or download "
-		"it from:\n\n\thttp://www.libsdl.org/",
-		major, minor, patch, ver->major, ver->minor, ver->patch );
-}
-
 static void RestoreAppPri()
 {
 	if(!ChangeAppPri())
@@ -1004,8 +990,6 @@ int main(int argc, char* argv[])
 	loading_window->Paint();
 
 	srand( time(NULL) );	// seed number generator	
-	
-	CheckSDLVersion( 1,2,6 );
 	
 	if( PREFSMAN->m_bFirstRun )
 		OnFirstRun();
