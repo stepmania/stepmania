@@ -124,8 +124,9 @@ int Profile::GetTotalNumSongsPlayed()
 
 CString Profile::GetProfileDisplayNameFromDir( CString sDir )
 {
-	// FIXME!
-	return "";
+	Profile profile;
+	profile.LoadEditableDataFromDir( sDir );
+	return profile.GetDisplayName();
 }
 
 int Profile::GetSongNumTimesPlayed( const Song* pSong ) const

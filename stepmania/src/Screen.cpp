@@ -195,8 +195,7 @@ bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, c
 		if( GAMESTATE->m_MasterPlayerNumber == PLAYER_INVALID )
 			GAMESTATE->m_MasterPlayerNumber = MenuI.player;
 
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			PROFILEMAN->LoadProfileFromMemoryCard( (PlayerNumber)p );
+		PROFILEMAN->LoadFirstAvailableProfile( MenuI.player );
 		SCREENMAN->RefreshCreditsMessages();
 
 		SOUND->PlayOnce( THEME->GetPathToS("Common start") );

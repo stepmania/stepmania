@@ -191,16 +191,16 @@ bool ProfileManager::CreateMemoryCardProfile( PlayerNumber pn )
 	return CreateProfile( sDir, NEW_MEM_CARD_NAME );
 }
 
-//bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
-//{
-//	if( LoadProfileFromMemoryCard(pn) )
-//		return true;
-//
-//	if( LoadDefaultProfileFromMachine(pn) )
-//		return true;
-//	
-//	return false;
-//}
+bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
+{
+	if( LoadProfileFromMemoryCard(pn) )
+		return true;
+
+	if( LoadDefaultProfileFromMachine(pn) )
+		return true;
+	
+	return false;
+}
 
 bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 {

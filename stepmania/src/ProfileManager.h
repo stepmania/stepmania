@@ -33,8 +33,8 @@ public:
 	void GetLocalProfileIDs( vector<CString> &asProfileIDsOut ) const;
 	void GetLocalProfileNames( vector<CString> &asNamesOut ) const;
 
+	bool LoadFirstAvailableProfile( PlayerNumber pn );	// memory card or local profile
 	bool LoadProfileFromMemoryCard( PlayerNumber pn );
-//	bool LoadFirstAvailableProfile( PlayerNumber pn );	// memory card or local profile
 	bool SaveProfile( PlayerNumber pn ) const;
 	void UnloadProfile( PlayerNumber pn );
 
