@@ -146,8 +146,7 @@ void SongManager::SanityCheckGroupDir( CString sDir ) const
 			"This means that you have a music outside of a song folder.\n"
 			"All song folders must reside in a group folder.  For example, 'Songs/DDR 4th Mix/B4U'.\n"
 			"See the StepMania readme for more info.",
-			sDir.c_str()
-		);
+			sDir.c_str());
 	
 }
 
@@ -212,10 +211,11 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 		GetDirListing( sDir+sGroupDirName + "/*", arraySongDirs, true, true );
 		SortCStringArray( arraySongDirs );
 
-		LOG->Trace("Attempting to load %i songs from \"%s\"", arraySongDirs.size(), (sDir+sGroupDirName).c_str() );
+		LOG->Trace( "Attempting to load %i songs from \"%s\"", int(arraySongDirs.size()),
+					(sDir+sGroupDirName).c_str() );
 		int loaded = 0;
 
-		for( unsigned j=0; j< arraySongDirs.size(); j++ )	// for each song dir
+		for( unsigned j=0; j< arraySongDirs.size(); ++j )	// for each song dir
 		{
 			CString sSongDirName = arraySongDirs[j];
 
@@ -223,14 +223,16 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 				continue;		// ignore it
 
 			// this is a song directory.  Load a new song!
-			if( ld ) {
+			if( ld )
+			{
 				ld->SetText( ssprintf("Loading songs...\n%s\n%s",
-					Basename(sGroupDirName).c_str(),
-					Basename(sSongDirName).c_str()));
+									  Basename(sGroupDirName).c_str(),
+									  Basename(sSongDirName).c_str()));
 				ld->Paint();
 			}
 			Song* pNewSong = new Song;
-			if( !pNewSong->LoadFromSongDir( sSongDirName ) ) {
+			if( !pNewSong->LoadFromSongDir( sSongDirName ) )
+			{
 				/* The song failed to load. */
 				delete pNewSong;
 				continue;
@@ -798,13 +800,13 @@ void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
 
 
 
-#define CONVERT_STEPS_POINTER( pSteps ) { \
+#define CONVERT_STEPS_POINTER( pSteps ) do { \
 	if( pSteps != NULL ) { \
 		map<Steps*,StepsID>::iterator it = mapOldStepsToStepsID.find(pSteps); \
 		if( it != mapOldStepsToStepsID.end() ) \
 			pSteps = it->second.ToSteps( pSong, bAllowNotesLoss ); \
 	} \
-}
+} while (false)
 
 
 	FOREACH_PlayerNumber( p )
