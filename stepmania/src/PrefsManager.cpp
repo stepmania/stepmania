@@ -174,7 +174,12 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValue ( "Options", "DWIPath",					m_DWIPath );
 	ini.SetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
 	ini.SetValueB( "Options", "CoinOpMode",					m_bCoinOpMode );
-	ini.SetValue ( "Options", "SoundDrivers",				m_bSoundDrivers );
+
+	/* Only write this if it's been changed.  This ensures that we can change
+	 * the default and have it take effect for everyone (except people who
+	 * tweaked this value). */
+	if(m_bSoundDrivers != DEFAULT_SOUND_DRIVER_LIST)
+		ini.SetValue ( "Options", "SoundDrivers",				m_bSoundDrivers );
 
 	ini.SetValue( "Options", "AdditionalSongFolders", join(",", m_asAdditionalSongFolders) );
 
