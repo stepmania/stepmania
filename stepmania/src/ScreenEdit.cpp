@@ -964,7 +964,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 					continue;	// skip
 
 #if !defined(XBOX)
-				const DeviceInput di(DEVICE_KEYBOARD, KEY_C1+n);
+				int b = n < 9? KEY_C1+n: KEY_C0;
+				const DeviceInput di(DEVICE_KEYBOARD, b);
 
 				if( !INPUTFILTER->IsBeingPressed(di) )
 #else
