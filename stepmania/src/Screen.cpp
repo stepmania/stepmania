@@ -295,27 +295,10 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 
 Screen* Screen::Create( CString sClassName )
 {
-	/* "ScreenCompany@ScreenAttract" loads ScreenAttract with the asset name
-	 * "ScreenCompany", so (if it supports it) it'll use metric, graphic, etc.
-	 * names starting with "ScreenCompany". */
-	CStringArray parts;
-	split( sClassName, "@", parts );
-	if( parts.size() != 1 &&  parts.size() != 2 )
-		RageException::Throw("Bad Screen name \"%s\"", sClassName.c_str() );
-
 	CString sName = sClassName;
-	if( parts.size() == 2 )
-	{
-		sName = parts[0];
-		sClassName = parts[1];
-	}
-	// This is the new, preferred method for specifying the screen class.
 	// Look up the class in the metrics group sName
-	else
-	{
-		if( THEME->HasMetric(sClassName,"Class") )
-			sClassName = THEME->GetMetric(sClassName,"Class");
-	}
+	if( THEME->HasMetric(sClassName,"Class") )
+		sClassName = THEME->GetMetric(sClassName,"Class");
 
 #define IF_RETURN(X)	if(sClassName.CompareNoCase(#X)==0)	return new X(sName);
 
