@@ -28,7 +28,7 @@ void HandleFile(const CString& file, const CString& dir, const CString& archiveP
 {
     static bool archiveMade = false;
     char path[] = "/usr/bin/tar";
-    char arg1[] = "-rvf";
+    char arg1[] = "-rf";
     char arg2[archivePath.length() + 1];
     char arg3[] = "-C";
     char arg4[dir.length() + 1];
