@@ -50,6 +50,7 @@ const int NUM_SCORE_DIGITS	=	9;
 #define SAMPLE_MUSIC_DELAY					THEME->GetMetricF("ScreenSelectMusic","SampleMusicDelay")
 #define SHOW_RADAR							THEME->GetMetricB("ScreenSelectMusic","ShowRadar")
 #define SHOW_GRAPH							THEME->GetMetricB("ScreenSelectMusic","ShowGraph")
+#define SHOW_DIFFICULTY_LIST				THEME->GetMetricB("ScreenSelectMusic","ShowDifficultyList")
 #define CDTITLE_SPIN_SECONDS				THEME->GetMetricF("ScreenSelectMusic","CDTitleSpinSeconds")
 #define PREV_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectMusic","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
 #define NEXT_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectMusic","NextScreen"+Capitalize(PlayModeToString(play_mode)))
@@ -232,6 +233,14 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 		SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
 		this->AddChild( &m_DifficultyMeter[p] );
 
+		if( SHOW_DIFFICULTY_LIST )
+		{
+			m_DifficultyList.SetName( "DifficultyList" );
+			m_DifficultyList.Load();
+			SET_XY_AND_ON_COMMAND( m_DifficultyList );
+			this->AddChild( &m_DifficultyList );
+		}
+
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
 		m_sprHighScoreFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic score frame p%d",p+1)) );
 		SET_XY( m_sprHighScoreFrame[p] );
@@ -357,6 +366,8 @@ void ScreenSelectMusic::SkipSongPartTweens()
 {
 	m_GrooveRadar.FinishTweening();
 	m_GrooveGraph.FinishTweening();
+	if( SHOW_DIFFICULTY_LIST )
+		m_DifficultyList.FinishTweening();
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{		
@@ -951,6 +962,8 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 		m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,0) );
 	}
 	m_DifficultyMeter[pn].SetFromGameState( pn );
+	if( SHOW_DIFFICULTY_LIST )
+		m_DifficultyList.SetFromGameState();
 	m_GrooveRadar.SetFromNotes( pn, pNotes );
 	m_MusicWheel.NotesChanged( pn );
 }

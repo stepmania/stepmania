@@ -24,6 +24,7 @@
 #include "DifficultyMeter.h"
 #include "OptionIconRow.h"
 #include "DifficultyDisplay.h"
+#include "DifficultyList.h"
 #include "CourseContentsList.h"
 #include "HelpDisplay.h"
 
@@ -93,6 +94,7 @@ protected:
 	MusicWheel			m_MusicWheel;
 	Sprite				m_sprBalloon;
 	DifficultyDisplay   m_DifficultyDisplay;
+	DifficultyList		m_DifficultyList;
 	CourseContentsList	m_CourseContentsFrame;
 	HelpDisplay			m_Artist;
 	BitmapText			m_MachineRank;
