@@ -60,7 +60,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )
 	{
 		Style style = m_aPossibleStyles[i];
-		m_sprIcon[i].Load( THEME->GetPathTo("Graphics","select style icons") );
+		m_sprIcon[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style icons game %d",GAMESTATE->m_CurGame) ) );
 		m_sprIcon[i].StopAnimating();
 		m_sprIcon[i].SetState( i );
 		m_sprIcon[i].SetXY( ICONS_START_X + i*ICONS_SPACING_X, ICONS_START_Y + i*ICONS_SPACING_Y );

@@ -32,7 +32,11 @@ PrefsManager::PrefsManager()
 	m_iRefreshRate = 0;
 	m_bIgnoreJoyAxes = false;
 	m_bOnlyDedicatedMenuButtons = false;
+#ifdef _DEBUG
+	m_bShowStats = true;
+#else
 	m_bShowStats = false;
+#endif
 	m_BackgroundMode = BGMODE_ANIMATIONS;
 	m_bShowDanger = true;
 	m_fBGBrightness = 0.8f;
@@ -130,16 +134,16 @@ void PrefsManager::ReadGamePrefsFromDisk()
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	IniFile ini;
 	ini.SetPath( sGameName + "Prefs.ini" );
-	if( !ini.ReadFile() )
-		return;		// could not read config file, load nothing
+	ini.ReadFile();	// it's OK if this fails
 
-	CString sAnnouncer, sTheme, sNoteSkin;
+	CString sAnnouncer = sGameName, sTheme = sGameName, sNoteSkin = sGameName;
 
-	ini.GetValue( "Options", "Announcer",			sAnnouncer );
-	ini.GetValue( "Options", "Theme",				sTheme );
-	ini.GetValue( "Options", "NoteSkin",			sNoteSkin );
+	// if these calls fail, the three strings will keep the initial values set above.
+	ini.GetValue( "Options", "Announcer",		sAnnouncer );
+	ini.GetValue( "Options", "Theme",			sTheme );
+	ini.GetValue( "Options", "NoteSkin",		sNoteSkin );
 
-
+	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
 	THEME->SwitchTheme( sTheme );
 	GAMEMAN->SwitchNoteSkin( sNoteSkin );
@@ -154,9 +158,9 @@ void PrefsManager::SaveGamePrefsToDisk()
 	IniFile ini;
 	ini.SetPath( sGameName + "Prefs.ini" );
 
-	ini.SetValue( "Options", "Announcer",			ANNOUNCER->GetCurAnnouncerName() );
-	ini.SetValue( "Options", "Theme",				THEME->GetCurThemeName() );
-	ini.SetValue( "Options", "NoteSkin",			GAMEMAN->GetCurNoteSkin() );
+	ini.SetValue( "Options", "Announcer",		ANNOUNCER->GetCurAnnouncerName() );
+	ini.SetValue( "Options", "Theme",			THEME->GetCurThemeName() );
+	ini.SetValue( "Options", "NoteSkin",		GAMEMAN->GetCurNoteSkin() );
 
 	ini.WriteFile();
 }
