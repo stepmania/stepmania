@@ -865,7 +865,7 @@ int main(int argc, char* argv[])
 	 * there, and gets picked up by the crash handler.  (If we don't catch it, we'll
 	 * get a generic, useless "abnormal terminaiton" dialog.)  In Linux, if we do this
 	 * we'll only get main() on the stack, but if we don't catch the exception, it'll
-	 * just work.  So, only catch exception& in Windows. */
+	 * just work.  So, only catch generic exceptions in Windows. */
 #if defined(_WINDOWS)
 	try { /* exception */
 #endif
