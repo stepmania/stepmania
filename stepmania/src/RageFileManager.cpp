@@ -510,7 +510,7 @@ void RageFileManager::Remount( CString sMountpoint, CString sPath )
 	}
 
 	if( !pDriver->Remount(sPath) )
-		LOG->Warn( "Remount(%s,%s): remount failed (does the driver support remounting?)" );
+		LOG->Warn( "Remount(%s,%s): remount failed (does the driver support remounting?)", sMountpoint.c_str(), sPath.c_str() );
 	else
 		pDriver->FlushDirCache( "" );
 
