@@ -1,17 +1,19 @@
-#ifndef INPUT_HANDLER_WIN32_PUMP_H
-#define INPUT_HANDLER_WIN32_PUMP_H 1
+#ifndef WIN32_USB_H
+#define WIN32_USB_H
 
-#include "InputHandler.h"
-
-class USBDevice;
-class InputHandler_Win32_Pump: public InputHandler
+class USBDevice
 {
-	USBDevice *dev;
-
 public:
-	void Update(float fDeltaTime);
-	InputHandler_Win32_Pump();
-	~InputHandler_Win32_Pump();
+	USBDevice();
+	~USBDevice();
+	int GetPadEvent();
+	bool Open(int VID, int PID, int num);
+
+private:
+	HANDLE h;
+	OVERLAPPED ov;
+	long buf;
+	bool pending;
 };
 
 #endif
