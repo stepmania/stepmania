@@ -20,7 +20,7 @@
 #include "RageTimer.h"
 #include "ThemeManager.h"
 
-static map <CString, wchar_t, StdStringLessNoCase> CharAliases;
+static map <CString, longchar, StdStringLessNoCase> CharAliases;
 
 FontManager*	FONT	= NULL;
 
@@ -54,7 +54,7 @@ void FontManager::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, cons
 		else if(NumFrames == 256)
 			cfg.MapRange("ISO-8859-1", 0, 255, 0);
 		*/
-		for( wchar_t i=0; i<NumFrames; i++ )
+		for( longchar i=0; i<NumFrames; i++ )
 			cfg.CharToGlyphNo[i] = i;
 	}
 	ini.RenameKey("Char Widths", "main");
@@ -94,7 +94,7 @@ void FontManager::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, cons
 			 */
 			CString codepoint = val.substr(4); /* "XXXX" */
 		
-			wchar_t c;
+			longchar c;
 
 			if(codepoint.substr(0, 2) == "U+" && IsHexVal(codepoint.substr(2)))
 				sscanf(codepoint.substr(2).c_str(), "%x", &c);

@@ -20,7 +20,7 @@
 #include "RageException.h"
 #include "FontManager.h"
 
-const wchar_t Font::DEFAULT_GLYPH = 0xFFFF;
+const longchar Font::DEFAULT_GLYPH = 0xFFFF;
 
 FontPage::FontPage()
 {
@@ -158,7 +158,7 @@ FontPage::~FontPage()
 }
 
 
-int Font::GetLineWidthInSourcePixels( const wstring &szLine ) const
+int Font::GetLineWidthInSourcePixels( const lstring &szLine ) const
 {
 	int LineWidth = 0;
 	
@@ -168,7 +168,7 @@ int Font::GetLineWidthInSourcePixels( const wstring &szLine ) const
 	return LineWidth;
 }
 
-int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
+int Font::GetLineHeightInSourcePixels( const lstring &szLine ) const
 {
 	int iLineSpacing = 0;
 
@@ -201,7 +201,7 @@ void Font::AddPage(FontPage *fp)
 {
 	pages.push_back(fp);
 
-	for(map<wchar_t,int>::const_iterator it = fp->m_iCharToGlyphNo.begin();
+	for(map<longchar,int>::const_iterator it = fp->m_iCharToGlyphNo.begin();
 		it != fp->m_iCharToGlyphNo.end(); ++it)
 	{
 		m_iCharToGlyph[it->first] = &fp->glyphs[it->second];
@@ -210,7 +210,7 @@ void Font::AddPage(FontPage *fp)
 
 void Font::MergeFont(Font *f)
 {
-	for(map<wchar_t,glyph*>::iterator it = f->m_iCharToGlyph.begin();
+	for(map<longchar,glyph*>::iterator it = f->m_iCharToGlyph.begin();
 		it != f->m_iCharToGlyph.end(); ++it)
 	{
 		m_iCharToGlyph[it->first] = it->second;
@@ -220,9 +220,9 @@ void Font::MergeFont(Font *f)
 	merged_fonts.push_back(f);
 }
 
-const glyph &Font::GetGlyph( wchar_t c ) const
+const glyph &Font::GetGlyph( longchar c ) const
 {
-	map<wchar_t,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
+	map<longchar,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
 
 	if(it == m_iCharToGlyph.end())
 	{
@@ -234,9 +234,9 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 	return *it->second;
 }
 
-RageTexture *Font::GetGlyphTexture( wchar_t c )
+RageTexture *Font::GetGlyphTexture( longchar c )
 {
-	map<wchar_t,glyph*>::iterator it = m_iCharToGlyph.find(c);
+	map<longchar,glyph*>::iterator it = m_iCharToGlyph.find(c);
 
 	if(it == m_iCharToGlyph.end())
 	{
@@ -254,7 +254,7 @@ void Font::CapsOnly()
      * a lowercase one. */
 	for(char c = 'A'; c <= 'Z'; ++c)
 	{
-		map<wchar_t,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
+		map<longchar,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
 
 		if(it == m_iCharToGlyph.end())
 			continue;

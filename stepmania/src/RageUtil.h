@@ -148,6 +148,13 @@ void splitrelpath(
 	CString& Ext 
 );
 
+/* This is our version of wchar_t. We work in UCS4, and wchar_t may only 
+ * be 16-bit.  This is mostly used within the font and text system. */
+typedef int longchar;
+typedef basic_string<longchar> lstring;
+
+lstring CStringToLstring(const CString &str);
+
 // Splits a CString into an CStringArray according the Deliminator.
 void split(
 	const CString &Source, 
@@ -155,7 +162,7 @@ void split(
 	CStringArray& AddIt, 
 	const bool bIgnoreEmpty = true 
 );
-void split( const wstring &Source, const wstring &Deliminator, vector<wstring> &AddIt, const bool bIgnoreEmpty = true );
+void split( const lstring &Source, const lstring &Deliminator, vector<lstring> &AddIt, const bool bIgnoreEmpty = true );
 
 // Joins a CStringArray to create a CString according the Deliminator.
 CString join(
@@ -196,8 +203,6 @@ CString DerefRedir(const CString &path);
 bool regex(CString str, CString pattern, vector<CString> &matches);
 bool regex(CString str, CString pattern);
 void regex_flags(int flags);
-
-wstring CStringToWstring(const CString &str);
 
 #ifndef WIN32
 #include <unistd.h> /* correct place with correct definitions */

@@ -177,7 +177,7 @@ void split( const CString &Source, const CString &Deliminator, CStringArray &Add
 	do_split(Source, Deliminator, AddIt, bIgnoreEmpty );
 }
 
-void split( const wstring &Source, const wstring &Deliminator, vector<wstring> &AddIt, const bool bIgnoreEmpty )
+void split( const lstring &Source, const lstring &Deliminator, vector<lstring> &AddIt, const bool bIgnoreEmpty )
 {
 	do_split(Source, Deliminator, AddIt, bIgnoreEmpty );
 }
@@ -871,10 +871,10 @@ char *utf8_find_next_char (const char *p, const char *end)
 
 #define UTF8_GET                             \
 
-wchar_t utf8_get_char (const char *p)
+longchar utf8_get_char (const char *p)
 {
   int i, mask = 0, len;
-  wchar_t result;
+  longchar result;
   unsigned char c = (unsigned char) *p;
 
   if (c < 128) {
@@ -896,12 +896,12 @@ wchar_t utf8_get_char (const char *p)
       len = 6;
       mask = 0x01;
   } else
-    return (wchar_t)-1;
+    return (longchar)-1;
 
-  result = wchar_t(p[0] & mask);
+  result = longchar(p[0] & mask);
   for (i = 1; i < len; ++i) {
       if ((p[i] & 0xc0) != 0x80)
-          return (wchar_t) -1;
+          return (longchar) -1;
 
 	  result <<= 6;
       result |= p[i] & 0x3f;
@@ -910,20 +910,19 @@ wchar_t utf8_get_char (const char *p)
   return result;
 }
 
-wstring CStringToWstring(const CString &str)
+lstring CStringToLstring(const CString &str)
 {
 	const char *ptr = str.c_str(), *end = str.c_str()+str.size();
 
-	wstring ret;
+	lstring ret;
 
 	while(ptr)
 	{
-		wchar_t c = utf8_get_char (ptr);
-		if(c != wchar_t(-1))
+		longchar c = utf8_get_char (ptr);
+		if(c != longchar(-1))
 			ret.push_back(c);
 
 		ptr = utf8_find_next_char (ptr, end);
-
 	}
 
 	return ret;
