@@ -1420,10 +1420,10 @@ void ScreenSelectMusic::UpdateOptionsDisplays()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_OptionIconRow[p].Refresh();
-
 		if( GAMESTATE->IsHumanPlayer(p) )
 		{
+			m_OptionIconRow[p].Refresh();
+
 			CString s = GAMESTATE->m_PlayerOptions[p].GetString();
 			s.Replace( ", ", "\n" );
 //			m_textPlayerOptions[p].SetText( s );
