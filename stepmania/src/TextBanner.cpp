@@ -10,19 +10,20 @@
 #include "ThemeMetric.h"
 #include "Command.h"
 
-ThemeMetric<CString>		ARTIST_PREPEND_STRING			("TextBanner","ArtistPrependString");
-ThemeMetric<apActorCommands> TWO_LINES_TITLE_COMMAND		("TextBanner","TwoLinesTitleCommand");
-ThemeMetric<apActorCommands> TWO_LINES_SUBTITLE_COMMAND		("TextBanner","TwoLinesSubtitleCommand");
-ThemeMetric<apActorCommands> TWO_LINES_ARTIST_COMMAND		("TextBanner","TwoLinesArtistCommand");
-ThemeMetric<apActorCommands> THREE_LINES_TITLE_COMMAND		("TextBanner","ThreeLinesTitleCommand");
-ThemeMetric<apActorCommands> THREE_LINES_SUBTITLE_COMMAND	("TextBanner","ThreeLinesSubtitleCommand");
-ThemeMetric<apActorCommands> THREE_LINES_ARTIST_COMMAND		("TextBanner","ThreeLinesArtistCommand");
 
 void TextBanner::Init()
 {
 	if( m_bInitted )
 		return;
 	m_bInitted = true;
+
+	ARTIST_PREPEND_STRING			.Load(m_sName,"ArtistPrependString");
+	TWO_LINES_TITLE_COMMAND			.Load(m_sName,"TwoLinesTitleCommand");
+	TWO_LINES_SUBTITLE_COMMAND		.Load(m_sName,"TwoLinesSubtitleCommand");
+	TWO_LINES_ARTIST_COMMAND		.Load(m_sName,"TwoLinesArtistCommand");
+	THREE_LINES_TITLE_COMMAND		.Load(m_sName,"ThreeLinesTitleCommand");
+	THREE_LINES_SUBTITLE_COMMAND	.Load(m_sName,"ThreeLinesSubtitleCommand");
+	THREE_LINES_ARTIST_COMMAND		.Load(m_sName,"ThreeLinesArtistCommand");
 
 	ASSERT( m_sName != "" );
 
@@ -34,15 +35,15 @@ void TextBanner::Init()
 TextBanner::TextBanner()
 {
 	m_textTitle.SetName( "Title" );
-	m_textTitle.LoadFromFont( THEME->GetPathF("TextBanner","text") );
+	m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"text") );
 	this->AddChild( &m_textTitle );
 
 	m_textSubTitle.SetName( "Subtitle" );
-	m_textSubTitle.LoadFromFont( THEME->GetPathF("TextBanner","text") );
+	m_textSubTitle.LoadFromFont( THEME->GetPathF(m_sName,"text") );
 	this->AddChild( &m_textSubTitle );
 
 	m_textArtist.SetName( "Artist" );
-	m_textArtist.LoadFromFont( THEME->GetPathF("TextBanner","text") );
+	m_textArtist.LoadFromFont( THEME->GetPathF(m_sName,"text") );
 	this->AddChild( &m_textArtist );
 
 	m_bInitted = false;
@@ -80,12 +81,12 @@ void TextBanner::LoadFromSong( const Song* pSong )
 {
 	Init();
 
-	CString sDisplayTitle = pSong ? pSong->GetDisplayMainTitle() : CString("");
-	CString sTranslitTitle = pSong ? pSong->GetTranslitMainTitle() : CString("");
-	CString sDisplaySubTitle = pSong ? pSong->GetDisplaySubTitle() : CString("");
-	CString sTranslitSubTitle = pSong ? pSong->GetTranslitSubTitle() : CString("");
-	CString sDisplayArtist = pSong ? (CString)ARTIST_PREPEND_STRING + pSong->GetDisplayArtist() : CString("");
-	CString sTranslitArtist = pSong ? (CString)ARTIST_PREPEND_STRING + pSong->GetTranslitArtist() : CString("");
+	CString sDisplayTitle		= pSong ? pSong->GetDisplayMainTitle() : CString("");
+	CString sTranslitTitle		= pSong ? pSong->GetTranslitMainTitle() : CString("");
+	CString sDisplaySubTitle	= pSong ? pSong->GetDisplaySubTitle() : CString("");
+	CString sTranslitSubTitle	= pSong ? pSong->GetTranslitSubTitle() : CString("");
+	CString sDisplayArtist		= pSong ? (CString)ARTIST_PREPEND_STRING + pSong->GetDisplayArtist() : CString("");
+	CString sTranslitArtist		= pSong ? (CString)ARTIST_PREPEND_STRING + pSong->GetTranslitArtist() : CString("");
 
 	LoadFromString( 
 		sDisplayTitle, sTranslitTitle, 

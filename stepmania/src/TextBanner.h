@@ -5,6 +5,7 @@
 
 #include "ActorFrame.h"
 #include "BitmapText.h"
+#include "ThemeMetric.h"
 class Song;
 
 class TextBanner : public ActorFrame
@@ -22,6 +23,14 @@ private:
 	void Init();
 
 	BitmapText	m_textTitle, m_textSubTitle, m_textArtist;
+
+	ThemeMetric<CString>		ARTIST_PREPEND_STRING;
+	ThemeMetric<apActorCommands> TWO_LINES_TITLE_COMMAND;
+	ThemeMetric<apActorCommands> TWO_LINES_SUBTITLE_COMMAND;
+	ThemeMetric<apActorCommands> TWO_LINES_ARTIST_COMMAND;
+	ThemeMetric<apActorCommands> THREE_LINES_TITLE_COMMAND;
+	ThemeMetric<apActorCommands> THREE_LINES_SUBTITLE_COMMAND;
+	ThemeMetric<apActorCommands> THREE_LINES_ARTIST_COMMAND;
 };
 
 #endif
