@@ -196,11 +196,6 @@ void MovieTexture_FFMpeg::Create()
 	if ( ret < 0 )
 		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't open decoder (%i)") );
 
-	/* I think avcodec wants a special case for this (no decoding); I don't
-	 * want to bother.  XXX: test and see if this is really needed */
-	if (m_stream->codec.codec_id == avcodec::CODEC_ID_RAWVIDEO)
-		RageException::Throw("AVCodec: Can't handle raw video" );
-
 	/* Cap the max texture size to the hardware max. */
 	actualID.iMaxSize = min( actualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
 
