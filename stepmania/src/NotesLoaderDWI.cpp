@@ -300,7 +300,8 @@ bool DWILoader::LoadFromDWITokens(
 				continue;
 
 			int iTailRow = iHeadRow;
-			while( newNoteData.GetNextTapNoteRowForTrack(t, iTailRow) )
+			bool bFound = false;
+			while( !bFound && newNoteData.GetNextTapNoteRowForTrack(t, iTailRow) )
 			{
 				const TapNote &TailTap = newNoteData.GetTapNote( t, iTailRow );
 				if( TailTap.type == TapNote::empty )
@@ -309,7 +310,18 @@ bool DWILoader::LoadFromDWITokens(
 				newNoteData.SetTapNote( t, iTailRow, TAP_EMPTY );
 				tn.iDuration = iTailRow - iHeadRow;
 				newNoteData.SetTapNote( t, iHeadRow, tn );
-				break;
+				bFound = true;
+			}
+
+			if( !bFound )
+			{
+				/* The hold was never closed.  */
+				LOG->Warn( "File \"%s\":\"%s\" failed to close a hold note on track %i", 
+					m_sLoadingFile.c_str(),
+					sDescription.c_str(),
+					t );
+
+				newNoteData.SetTapNote( t, iHeadRow, TAP_EMPTY );
 			}
 		}
 	}
