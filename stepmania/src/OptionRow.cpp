@@ -471,7 +471,13 @@ void OptionRow::UpdateText()
 			CString sText = m_RowDef.choices[iChoiceWithFocus];
 			if( CAPITALIZE_ALL_OPTION_NAMES )
 				sText.MakeUpper();
-			m_textItems[pn]->SetText( sText );
+
+			// If player_no is 2 and there is no player 1:
+			int index = min( pn, m_textItems.size()-1 );
+
+			// TODO: Always have one textItem for each player
+
+			m_textItems[index]->SetText( sText );
 		}
 		break;
 	}
