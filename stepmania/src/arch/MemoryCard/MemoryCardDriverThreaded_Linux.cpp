@@ -128,9 +128,10 @@ MemoryCardDriverThreaded_Linux::MemoryCardDriverThreaded_Linux()
 {
 	m_fd = open(USB_DEVICE_LIST_FILE, O_RDONLY);
 	if( m_fd == -1 )
-    {
 		LOG->Warn( "Failed to open \"%s\": %s", USB_DEVICE_LIST_FILE, strerror(errno) );
-    }
+
+	m_bForceRedetect = false;
+
 	this->StartThread();
 }
 
@@ -155,7 +156,8 @@ void MemoryCardDriverThreaded_Linux::MountThreadReset()
 	ExecuteCommand( "rmmod usb-storage" );
 	ExecuteCommand( "modprobe usb-storage" );
 	
-	m_vDevicesLastSeen.clear();	// redetect all devices
+	m_vDevicesLastSeen.clear();
+	m_bForceRedetect = true;
 }
 
 void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
@@ -163,19 +165,26 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 	if( m_fd == -1 )
 		return;
 	
-	pollfd pfd = { m_fd, POLLIN, 0 };
-	int ret = poll( &pfd, 1, 100 );
-	switch( ret )
+	if( m_bForceRedetect )
 	{
-	case 1:
-		// file changed.  Fall through.
-		break;
-	case 0: // no change.  Poll again.
-		return;
-	case -1:
-		if( errno != EINTR )
-			LOG->Warn( "Error polling: %s", strerror(errno) );
-		return;
+		// fall through
+	}
+	else
+	{
+		pollfd pfd = { m_fd, POLLIN, 0 };
+		int ret = poll( &pfd, 1, 100 );
+		switch( ret )
+		{
+		case 1:
+			// file changed.  Fall through.
+			break;
+		case 0: // no change.  Poll again.
+			return;
+		case -1:
+			if( errno != EINTR )
+				LOG->Warn( "Error polling: %s", strerror(errno) );
+			return;
+		}
 	}
 	
 	// TRICKY: We're waiting for a change in the USB device list, but 
