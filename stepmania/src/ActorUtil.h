@@ -34,6 +34,7 @@ namespace ActorUtil
 	inline void SetXY( Actor* pActor, const CString &sType ) { SetXY( *pActor, sType ); }
 
 	void RunCommand( Actor& actor, const CString &sType, const CString &sCommandName );
+	void LoadCommand( Actor& actor, const CString &sType, const CString &sCommandName );
 
 	inline void OnCommand( Actor& actor, const CString &sType ) { RunCommand( actor, sType, "On" ); }
 	inline void OffCommand( Actor& actor, const CString &sType ) { RunCommand( actor, sType, "Off" ); }

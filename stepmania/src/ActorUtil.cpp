@@ -353,6 +353,11 @@ void ActorUtil::RunCommand( Actor& actor, const CString &sType, const CString &s
 	actor.RunCommands( THEME->GetMetricA(sType,actor.GetID()+sCommandName+"Command") );
 }
 
+void ActorUtil::LoadCommand( Actor& actor, const CString &sType, const CString &sCommandName )
+{
+	actor.AddCommand( sCommandName, THEME->GetMetricA(sType,actor.GetID()+sCommandName+"Command") );
+}
+
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.

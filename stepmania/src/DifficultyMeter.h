@@ -62,12 +62,11 @@ private:
 	void SetFromDifficulty( Difficulty dc );
 	void SetFromCourseDifficulty( CourseDifficulty cd );
 
-	CString			m_sType;
+	void PlayDifficultyCommand( CString diff );
 
-	void SetDifficulty( CString diff );
 	BitmapText		m_textFeet;
 
-	CString			m_CurDifficulty;
+	CString			m_sCurDifficultyCommand;
 	AutoActor		m_Difficulty;
 
 	BitmapText		m_textMeter;
