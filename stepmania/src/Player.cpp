@@ -1146,8 +1146,12 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	float life = -1;
 	if( m_pLifeMeter )
 		life = m_pLifeMeter->GetLife();
-//	else if( m_pCombinedLifeMeter )
-//		life = m_pCombinedLifeMeter->GetLife(); // TODO 
+	else if( m_pCombinedLifeMeter )
+	{
+		life = GAMESTATE->m_fTugLifePercentP1;
+		if( m_PlayerNumber == PLAYER_2 )
+			life = 1.0f - life;
+	}
 	if( life != -1 )
 		GAMESTATE->m_CurStageStats.SetLifeRecord( m_PlayerNumber, life, GAMESTATE->GetSongPercent(beat) );
 
