@@ -3,11 +3,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "VideoDriverInfo.h"
-#include "../../archutils/Win32/GotoURL.h"
 #include "arch/ArchHooks/ArchHooks.h"
-
-#include "RageThreads.h"
-
 
 
 void LogVideoDriverInfo( VideoDriverInfo info )
