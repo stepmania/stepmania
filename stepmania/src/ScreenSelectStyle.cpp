@@ -277,6 +277,7 @@ void ScreenSelectStyle::MenuStart( const PlayerNumber p )
 		case STYLE_DANCE_VERSUS:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_VERSUS;		break;		
 		case STYLE_PUMP_DOUBLE:
 		case STYLE_DANCE_DOUBLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_DOUBLE;		break;
+		case STYLE_PUMP_COUPLE:
 		case STYLE_DANCE_COUPLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_COUPLE;		break;
 		case STYLE_DANCE_SOLO:			ae = ANNOUNCER_SELECT_STYLE_COMMENT_SOLO;		break;
 		default:	ASSERT(0);	break;	// invalid Style
