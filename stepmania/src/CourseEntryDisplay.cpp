@@ -14,7 +14,7 @@
 #include "ActorUtil.h"
 
 #define SEPARATE_COURSE_METERS		THEME->GetMetricB(m_sName,"SeparateCourseMeters")
-#define TEXT_BANNER_NAME			THEME->GetMetric (m_sName,"TextBannerName")
+#define TEXT_BANNER_TYPE			THEME->GetMetric (m_sName,"TextBannerType")
 
 void CourseEntryDisplay::Load()
 {
@@ -31,7 +31,8 @@ void CourseEntryDisplay::Load()
 	SET_XY_AND_ON_COMMAND( &m_textNumber );
 	this->AddChild( &m_textNumber );
 
-	m_TextBanner.SetName( TEXT_BANNER_NAME, "TextBanner" );
+	m_TextBanner.SetName( "TextBanner" );
+	m_TextBanner.Load( TEXT_BANNER_TYPE );
 	SET_XY_AND_ON_COMMAND( &m_TextBanner );
 	/* Load the m_TextBanner now, so any actor commands sent to us will propagate correctly. */
 	m_TextBanner.LoadFromString( "", "", "", "", "", "" );

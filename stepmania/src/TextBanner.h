@@ -12,7 +12,7 @@ class TextBanner : public ActorFrame
 {
 public:
 	TextBanner();
-	void Init();	// load metrics
+	void Load( CString sType );	// load metrics
 	void LoadFromSong( const Song* pSong );
 	void LoadFromString( 
 		CString sDisplayTitle, CString sTranslitTitle, 
