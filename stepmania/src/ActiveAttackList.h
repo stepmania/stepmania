@@ -15,6 +15,7 @@ public:
 	virtual void Update( float fDelta );
 
 protected:
+	void Refresh();
 
 	PlayerNumber m_PlayerNumber;
 };

@@ -17,47 +17,51 @@ void ActiveAttackList::Init( PlayerNumber pn )
 }
 
 void ActiveAttackList::Update( float fDelta ) 
-{ 
-	BitmapText::Update( fDelta ); 
-
-	bool bTimeToUpdate = 
+{
+	bool bTimeToRefresh = 
+		IsFirstUpdate() || // check this before running Actor::Update()
 		GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] ||
 		GAMESTATE->m_bAttackEndedThisUpdate[m_PlayerNumber];
 
-	if( bTimeToUpdate )
+	BitmapText::Update( fDelta ); 
+
+	if( bTimeToRefresh )
+		Refresh();
+}
+
+void ActiveAttackList::Refresh()
+{
+	CString s;
+
+	const AttackArray& attacks = GAMESTATE->m_ActiveAttacks[m_PlayerNumber];	// NUM_INVENTORY_SLOTS
+	
+	// clear all lines, then add all active attacks
+	for( unsigned i=0; i<attacks.size(); i++ )
 	{
-		CString s;
+		const Attack& attack = attacks[i];
 
-		const AttackArray& attacks = GAMESTATE->m_ActiveAttacks[m_PlayerNumber];	// NUM_INVENTORY_SLOTS
-		
-		// clear all lines, then add all active attacks
-		for( unsigned i=0; i<attacks.size(); i++ )
+		if( !attack.bOn )
+			continue; /* hasn't started yet */
+
+		CString sMods = attack.sModifier;
+		CStringArray asMods;
+		split( sMods, ",", asMods );
+		for( unsigned j=0; j<asMods.size(); j++ )
 		{
-			const Attack& attack = attacks[i];
+			CString& sMod = asMods[j];
+			TrimLeft( sMod );
+			TrimRight( sMod );
 
-			if( !attack.bOn )
-				continue; /* hasn't started yet */
+			sMod = PlayerOptions::ThemeMod( sMod );
 
-			CString sMods = attack.sModifier;
-			CStringArray asMods;
-			split( sMods, ",", asMods );
-			for( unsigned j=0; j<asMods.size(); j++ )
-			{
-				CString& sMod = asMods[j];
-				TrimLeft( sMod );
-				TrimRight( sMod );
-
-				sMod = PlayerOptions::ThemeMod( sMod );
-
-				if( s.empty() )
-					s = sMod;
-				else
-					s = sMod + "\n" + s;
-			}
+			if( s.empty() )
+				s = sMod;
+			else
+				s = sMod + "\n" + s;
 		}
-
-		this->SetText( s );	// BitmapText will not rebuild vertices if these strings are the same.
 	}
+
+	this->SetText( s );	// BitmapText will not rebuild vertices if these strings are the same.
 }
 
 /*
