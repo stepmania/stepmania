@@ -48,7 +48,7 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 	{
 		try {
 			Driver = DriversToTry[i];
-			LOG->Trace("Initializing driver: %s", DriversToTry[i].GetString());
+			LOG->Trace("Initializing driver: %s", DriversToTry[i].c_str());
 
 #ifdef WIN32
 			if(!DriversToTry[i].CompareNoCase("DirectSound")) ret = new RageSound_DSound;
@@ -60,15 +60,15 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 #endif		
 			if(!DriversToTry[i].CompareNoCase("Null")) ret = new RageSound_Null;
 			if( !ret )
-				LOG->Warn("Unknown sound driver name: %s", DriversToTry[i].GetString());
+				LOG->Warn("Unknown sound driver name: %s", DriversToTry[i].c_str());
 		}
 		catch(const RageException &e) {
-			LOG->Info("Couldn't load driver %s: %s", DriversToTry[i].GetString(), e.what());
+			LOG->Info("Couldn't load driver %s: %s", DriversToTry[i].c_str(), e.what());
 		}
 	}
 
 	if(ret)
-		LOG->Info("Sound driver: %s", Driver.GetString());
+		LOG->Info("Sound driver: %s", Driver.c_str());
 	
 	return ret;
 }

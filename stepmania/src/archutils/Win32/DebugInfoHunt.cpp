@@ -18,11 +18,11 @@ struct VideoDriverInfo
 void LogVideoDriverInfo( VideoDriverInfo info )
 {
 	LOG->Info("Video Driver Information:");
-	LOG->Info("%-15s:\t%s", "Provider", info.sProvider.GetString());
-	LOG->Info("%-15s:\t%s", "Description", info.sDescription.GetString());
-	LOG->Info("%-15s:\t%s", "Version", info.sVersion.GetString());
-	LOG->Info("%-15s:\t%s", "Date", info.sDate.GetString());
-	LOG->Info("%-15s:\t%s", "DeviceID", info.sDeviceID.GetString());
+	LOG->Info("%-15s:\t%s", "Provider", info.sProvider.c_str());
+	LOG->Info("%-15s:\t%s", "Description", info.sDescription.c_str());
+	LOG->Info("%-15s:\t%s", "Version", info.sVersion.c_str());
+	LOG->Info("%-15s:\t%s", "Date", info.sDate.c_str());
+	LOG->Info("%-15s:\t%s", "DeviceID", info.sDeviceID.c_str());
 }
 
 CString GetRegValue( HKEY hKey, CString sName )
@@ -119,7 +119,7 @@ static void GetDisplayDriverDebugInfo()
 	if( sPrimaryDeviceName == "" )
 		LOG->Info( "Primary display driver could not be determined." );
 	else
-		LOG->Info( "Primary display driver: %s", sPrimaryDeviceName.GetString() );
+		LOG->Info( "Primary display driver: %s", sPrimaryDeviceName.c_str() );
 
 	OSVERSIONINFO version;
 	version.dwOSVersionInfoSize=sizeof(version);
@@ -213,7 +213,7 @@ void SearchForDebugInfo()
 		} else Ver += "???";
 
 		Ver += ssprintf(") build %i [%s]", ovi.dwBuildNumber & 0xffff, ovi.szCSDVersion);
-		LOG->Info("%s", Ver.GetString());
+		LOG->Info("%s", Ver.c_str());
 	}
 }
 
