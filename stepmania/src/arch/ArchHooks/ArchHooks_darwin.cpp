@@ -24,6 +24,7 @@ enum {
 };
 
 OSStatus HandleException(ExceptionInformation *theException);
+void HandleQTMovieError(OSErr err, long refcon);
 
 ArchHooks_darwin::ArchHooks_darwin()
 {
@@ -44,6 +45,8 @@ ArchHooks_darwin::ArchHooks_darwin()
         exit(0);
     }
     InstallExceptionHandler(HandleException);
+    ASSERT(GetMoviesError() == noErr);
+    SetMoviesErrorProc(HandleQTMovieError, 0);
     err = EnterMovies();
     ASSERT(err == noErr);
 }
@@ -310,4 +313,12 @@ inline void ArchHooks_darwin::Update(float delta)
     OSErr err = GetMoviesError();
     if (__builtin_expect(err, noErr))
         RageException::Throw("MoviesTask failed with error: %d", err);
+}
+
+void HandleQTMovieError(OSErr err, long refcon)
+{
+    LOG->Warn("A movie error occured. Error number %d.", err);
+#if defined(DEBUG)
+    ASSERT(0);
+#endif
 }
