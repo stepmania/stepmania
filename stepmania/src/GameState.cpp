@@ -215,9 +215,9 @@ void GameState::BeginGame()
 
 	m_vpsNamesThatWereFilled.clear();
 
-	// play attract on the ending screen, then in one more whole attract 
-	// sequence after the game is over (even if attract sounds are set to off)
-	m_iNumTimesThroughAttract = -2;
+	// Play attract on the ending screen, then on the ranking screen
+	// even if attract sounds are set to off.
+	m_iNumTimesThroughAttract = -1;
 
 	MEMCARDMAN->LockCards( false );
 }
