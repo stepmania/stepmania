@@ -1,2 +1,2 @@
 SET PATH=%PATH%;c:\stepmania\stepmania\utils
-forfiles -p.. -s -m*.png -c"pngcrushinplace.bat 0x22@FILE0x22 0x22@FILEtemp0x22"
+forfiles -p.. -s -m*.png -c"pngcrushinplace.bat 0x22@FILE0x22"
