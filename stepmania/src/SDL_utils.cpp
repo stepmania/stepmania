@@ -232,8 +232,7 @@ SDL_Surface *SDL_CreateRGBSurfaceSane
 	return SDL_CreateRGBSurface(flags, width, height, depth,
 		Rmask, Gmask, Bmask, Amask);
 }
-
-static void FindAlphaRGB(SDL_Surface *img, Uint8 &r, Uint8 &g, Uint8 &b, bool reverse)
+static void FindAlphaRGB(const SDL_Surface *img, Uint8 &r, Uint8 &g, Uint8 &b, bool reverse)
 {
 	/* If we have no alpha or no color key, there's no alpha color. */
 	if(img->format->BitsPerPixel == 8 && !(img->flags & SDL_SRCCOLORKEY))
@@ -247,25 +246,17 @@ static void FindAlphaRGB(SDL_Surface *img, Uint8 &r, Uint8 &g, Uint8 &b, bool re
 	{
 		Uint8 *row = (Uint8 *)img->pixels + img->pitch*y;
 		if(reverse)
-			row += img->format->BytesPerPixel * img->w;
+			row += img->format->BytesPerPixel * (img->w-1);
 
 		for(int x = 0; x < img->w; ++x)
 		{
-			if(img->format->BitsPerPixel == 8 && img->format->colorkey != *row)
+			Uint32 val = decodepixel(row, img->format->BytesPerPixel);
+			if((img->format->BitsPerPixel == 8 && val != img->format->colorkey) ||
+			   (img->format->BitsPerPixel != 8 && val & img->format->Amask))
 			{
-				/* This color isn't the color key, so grab it. */
-				r = img->format->palette->colors[*row].r;
-				g = img->format->palette->colors[*row].g;
-				b = img->format->palette->colors[*row].b;
+				/* This color isn't fully transparent, so grab it. */
+				SDL_GetRGB(val, img->format, &r, &g, &b);
 				return;
-			} else {
-				Uint32 val = decodepixel(row, img->format->BytesPerPixel);
-				if(val & img->format->Amask)
-				{
-					/* This color isn't fully transparent, so grab it. */
-					SDL_GetRGB(val, img->format, &r, &g, &b);
-					return;
-				}
 			}
 
 			if(reverse)
@@ -281,7 +272,7 @@ static void FindAlphaRGB(SDL_Surface *img, Uint8 &r, Uint8 &g, Uint8 &b, bool re
 
 /* Set the underlying RGB values of all pixels in 'img' that are
  * completely transparent. */
-static void SetAlphaRGB(SDL_Surface *img, Uint8 r, Uint8 g, Uint8 b)
+static void SetAlphaRGB(const SDL_Surface *img, Uint8 r, Uint8 g, Uint8 b)
 {
 	/* If it's a paletted surface, all we have to do is change the
 	 * colorkey, if any. */
