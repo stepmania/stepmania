@@ -9,11 +9,11 @@
 #include "DateTime.h"
 
 
-static const TCHAR chXMLTagOpen		= '<';
-static const TCHAR chXMLTagClose	= '>';
-static const TCHAR chXMLTagQuestion	= '?';	// used in checking for meta tags: "<?TAG ... ?/>"
-static const TCHAR chXMLTagPre	= '/';
-static const TCHAR chXMLEscape = '\\';	// for value field escape
+static const char chXMLTagOpen		= '<';
+static const char chXMLTagClose	= '>';
+static const char chXMLTagQuestion	= '?';	// used in checking for meta tags: "<?TAG ... ?/>"
+static const char chXMLTagPre	= '/';
+static const char chXMLEscape = '\\';	// for value field escape
 
 
 static const XENTITY x_EntityTable[] = {
@@ -205,7 +205,7 @@ char* XNode::LoadAttributes( const char* pszAttrs , PARSEINFO *pi /*= &piDefault
 			return xml;
 
 		// XML Attr Name
-		TCHAR* pEnd = strpbrk( xml, " =" );
+		char* pEnd = strpbrk( xml, " =" );
 		if( pEnd == NULL ) 
 		{
 			// error
@@ -254,7 +254,7 @@ char* XNode::LoadAttributes( const char* pszAttrs , PARSEINFO *pi /*= &piDefault
 			}
 
 			bool trim = pi->trim_value;
-			TCHAR escape = pi->escape_value;
+			char escape = pi->escape_value;
 			//SetString( xml, pEnd, &attr->value, trim, chXMLEscape );	
 			SetString( xml, pEnd, &attr->value, trim, escape );
 			xml = pEnd;
@@ -303,7 +303,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 
 	// XML Node Tag Name Open
 	xml++;
-	TCHAR* pTagEnd = strpbrk( xml, " />" );
+	char* pTagEnd = strpbrk( xml, " />" );
 	SetString( xml, pTagEnd, &name );
 	xml = pTagEnd;
 	// Generate XML Attributte List
@@ -351,7 +351,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 		if( XIsEmptyString( value ) )
 		{
 			// Text Value 
-			TCHAR* pEnd = tcsechr( ++xml, chXMLTagOpen, chXMLEscape );
+			char* pEnd = tcsechr( ++xml, chXMLTagOpen, chXMLEscape );
 			if( pEnd == NULL ) 
 			{
 				if( pi->erorr_occur == false ) 
@@ -366,7 +366,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 			}
 			
 			bool trim = pi->trim_value;
-			TCHAR escape = pi->escape_value;
+			char escape = pi->escape_value;
 			//SetString( xml, pEnd, &value, trim, chXMLEscape );
 			SetString( xml, pEnd, &value, trim, escape );
 
@@ -405,7 +405,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 					return NULL;
 
 				CString closename;
-				TCHAR* pEnd = strpbrk( xml, " >" );
+				char* pEnd = strpbrk( xml, " >" );
 				if( pEnd == NULL ) 
 				{
 					if( pi->erorr_occur == false ) 
@@ -449,7 +449,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 				if( xml && XIsEmptyString( value ) && *xml !=chXMLTagOpen )
 				{
 					// Text Value 
-					TCHAR* pEnd = tcsechr( xml, chXMLTagOpen, chXMLEscape );
+					char* pEnd = tcsechr( xml, chXMLTagOpen, chXMLEscape );
 					if( pEnd == NULL ) 
 					{
 						// error cos not exist CloseTag </TAG>
@@ -464,7 +464,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 					}
 					
 					bool trim = pi->trim_value;
-					TCHAR escape = pi->escape_value;
+					char escape = pi->escape_value;
 					//SetString( xml, pEnd, &value, trim, chXMLEscape );
 					SetString( xml, pEnd, &value, trim, escape );
 

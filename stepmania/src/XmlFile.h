@@ -31,8 +31,8 @@ typedef std::vector<XNode*> XNodes;
 // Entity Encode/Decode Support
 struct XENTITY
 {
-	TCHAR entity;					// entity ( & " ' < > )
-	TCHAR ref[10];					// entity reference ( &amp; &quot; etc )
+	char entity;					// entity ( & " ' < > )
+	char ref[10];					// entity reference ( &amp; &quot; etc )
 	int ref_len;					// entity reference length
 };
 
@@ -69,7 +69,7 @@ struct PARSEINFO
 	bool		trim_value;			// [set] do trim when parse?
 	bool		entity_value;		// [set] do convert from reference to entity? ( &lt; -> < )
 	XENTITYS	*entitys;			// [set] entity table for entity decode
-	TCHAR		escape_value;		// [set] escape value (default '\\')
+	char		escape_value;		// [set] escape value (default '\\')
 
 	char*		xml;				// [get] xml source
 	bool		erorr_occur;		// [get] is occurance of error?
