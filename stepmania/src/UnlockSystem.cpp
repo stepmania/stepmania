@@ -32,7 +32,7 @@ bool UnlockSystem::SongIsLocked( CString sSongName )
 {
 	sSongName.MakeUpper();	//Avoid case-sensitive problems
 	
-	for(int i = 0; i < m_SongEntries.size(); i++)
+	for(unsigned i = 0; i < m_SongEntries.size(); i++)
 		if (m_SongEntries[i].m_sSongName == sSongName)
 			return m_SongEntries[i].isLocked;
 	
@@ -43,7 +43,7 @@ bool UnlockSystem::SongIsRoulette( CString sSongName )
 {
 	sSongName.MakeUpper();	//Avoid case-sensitive problems
 	
-	for(int i = 0; i < m_SongEntries.size(); i++)
+	for(unsigned i = 0; i < m_SongEntries.size(); i++)
 		if (m_SongEntries[i].m_sSongName == sSongName)
 			return (m_SongEntries[i].m_iRouletteSeed != 0);
 	
@@ -120,12 +120,16 @@ bool UnlockSystem::ParseRow(CString text, CString &type, float &qty,
 		}
 	}
 
+	/* XXX: "local variable 'end' may be used without having been initialized";
+	 * I havn't looked at this code to see if it's a problem, but I don't want
+	 * to simply silence the warning without being sure.  (Can this just be
+	 * a standard INI--does it actually need to be another file format?) -glenn */
 	songname = text.Right(text.GetLength() - 1 - end);
 	
 	sscanf(text, "%s %s|", unlock_type, qty_text);
 
 	type = unlock_type;
-	qty = atof(qty_text);
+	qty = (float) atof(qty_text);
 
 	LOG->Trace( "UnlockSystem Entry %s", text.c_str() );
 	LOG->Trace( "             Title %s", songname.c_str() );
@@ -246,7 +250,7 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 	// sort list so we can make use of binary searching
 	sort( m_SongEntries.begin(), m_SongEntries.end(), CompareSongEntries );
 	
-	for(int i=0; i < m_SongEntries.size(); i++)
+	for(unsigned i=0; i < m_SongEntries.size(); i++)
 		LOG->Trace( "UnlockSystem entry: %s", m_SongEntries[i].m_sSongName.c_str() );
 	
 	
@@ -284,8 +288,6 @@ float UnlockSystem::NumPointsUntilNextUnlock()
 	
 	float fResults = (fSmallestPoints - PREFSMAN->m_fDancePointsAccumulated);
 	return fResults;
-	
-	return 0;
 }
 
 
