@@ -82,7 +82,7 @@ protected:
 public:
 	FilenameDB::FilenameDB():
 		ExpireSeconds( -1 ) { }
-	FilenameDB::~FilenameDB() { FlushDirCache(); }
+	virtual FilenameDB::~FilenameDB() { FlushDirCache(); }
 
 	void AddFileSet( CString sPath, FileSet *fs );
 
