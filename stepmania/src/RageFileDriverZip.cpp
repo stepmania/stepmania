@@ -249,10 +249,11 @@ void RageFileDriverZip::ParseZipfile()
 
 	char tmp[INBUFSIZE];
 	int tmp_used = 0;
-	while( real_ecrec_offset == -1 && realpos >= Size-searchlen )
+	while( real_ecrec_offset == -1 && realpos > 0 && realpos >= Size-searchlen )
 	{
 		realpos -= INBUFSIZE;
-		zip.Seek( max( 0, realpos ) );
+		realpos = max( 0, realpos );
+		zip.Seek( realpos );
 		int got = zip.Read( tmp+tmp_used, sizeof(tmp)-tmp_used );
 		if( got == -1 )
 			RageException::Throw( "Couldn't open %s: %s", zip.GetPath().c_str(), zip.GetError().c_str() );
