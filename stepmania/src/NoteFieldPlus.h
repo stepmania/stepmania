@@ -31,7 +31,8 @@ public:
 	void TapNote( int iCol, TapNoteScore score, bool bBright );
 	void TapMine( int iCol, TapNoteScore score );
 	void HoldNote( int iCol );
-
+	void UpdateBars( int iCol );
+	int GetNumCols() { return m_iNumCols; };
 protected:
 	int m_iNumCols;
 

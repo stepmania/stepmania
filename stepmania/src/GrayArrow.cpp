@@ -29,7 +29,7 @@ GrayArrow::GrayArrow()
 {
 	GR_STEP_SECONDS.Refresh();
 	GR_STEP_ZOOM.Refresh();
-
+	m_bIsPressed = false;
 	StopAnimating();
 }
 
@@ -47,7 +47,10 @@ bool GrayArrow::Load( CString NoteSkin, PlayerNumber pn, int iColNo )
 		GetNumStates() != 3 )
 		RageException::Throw( "'%s' must have 2 or 3 frames", sPath.c_str() );
 
-	return ret;
+	sPath = NOTESKIN->GetPathTo( NoteSkin, Button, "KeypressBlock" );
+	bool ret2 = m_sprPressBlock.Load( sPath );
+	m_sprPressBlock.SetXY(0, THEME->GetMetricI ("ScreenGameplay","PressBlockY"));
+	return ret&ret2; // return both loaded or fail
 }
 
 void GrayArrow::Update( float fDeltaTime )
@@ -85,6 +88,17 @@ void GrayArrow::Update( float fDeltaTime )
 	cur_beat -= flash_offset;
 	float fPercentIntoBeat = fmodf(cur_beat, 1);
 	SetState( (fPercentIntoBeat<flash_length)? OnState : OffState );
+	m_sprPressBlock.Update(fDeltaTime);
+}
+
+void GrayArrow::Draw()
+{
+	Sprite::Draw();
+	if(m_bIsPressed)
+	{
+		m_sprPressBlock.Draw();
+		m_bIsPressed = false;
+	}
 }
 
 void GrayArrow::Step()

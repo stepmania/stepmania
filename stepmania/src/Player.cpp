@@ -230,6 +230,15 @@ void PlayerMinus::Update( float fDeltaTime )
 	//
 	UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
 
+	for(int bar=0; bar < m_pNoteField->GetNumCols(); bar++)
+	{
+		const StyleInput StyleI( m_PlayerNumber, bar );
+		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
+		bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
+		if(bIsHoldingButton)
+			m_pNoteField->UpdateBars(bar);
+	}
+
 	//
 	// update HoldNotes logic
 	//
@@ -651,6 +660,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 	if( bGrayArrowStep )
 		m_pNoteField->Step( col );
+
 }
 
 void PlayerMinus::HandleAutosync(float fNoteOffset)

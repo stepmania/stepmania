@@ -146,6 +146,12 @@ void NoteFieldPlus::Step( int iCol )
 	m_GrayArrow[iCol].Step();
 }
 
+void NoteFieldPlus::UpdateBars( int iCol )
+{
+	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
+	m_GrayArrow[iCol].UpdateBars();
+}
+
 void NoteFieldPlus::TapNote( int iCol, TapNoteScore score, bool bBright )
 {
 	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );

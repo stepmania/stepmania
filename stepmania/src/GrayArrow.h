@@ -22,8 +22,13 @@ public:
 	GrayArrow();
 	bool Load( CString NoteSkin, PlayerNumber pn, int iColNo );
 
+	virtual void Draw();
 	virtual void  Update( float fDeltaTime );
 	void Step();
+	void UpdateBars() { m_bIsPressed = true; };
+private:
+	Sprite m_sprPressBlock;
+	bool m_bIsPressed;
 };
 
 #endif 
