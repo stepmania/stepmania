@@ -33,6 +33,7 @@ class Background : public ActorFrame
 public:
 	Background();
 	~Background();
+	void Init();
 
 	virtual void LoadFromSong( const Song *pSong );
 	virtual void Unload();
@@ -55,6 +56,7 @@ protected:
 	bool IsDeadPlayerVisible( PlayerNumber pn );
 	void UpdateCurBGChange( float fCurrentTime );
 	
+	bool m_bInitted;
 	DancingCharacters*	m_pDancingCharacters;
 
 	BGAnimation		m_DangerPlayer[NUM_PLAYERS];

@@ -40,6 +40,15 @@ Background::Background()
 	m_pCurrentBGA = NULL;
 	m_pFadingBGA = NULL;
 	m_fSecsLeftInFade = 0;
+	m_pDancingCharacters = NULL;
+	m_bInitted = false;
+}
+
+void Background::Init()
+{
+	if( m_bInitted )
+		return;
+	m_bInitted = true;
 
 	m_DangerAll.LoadFromAniDir( THEME->GetPathToB("ScreenGameplay danger all") );
 	FOREACH_PlayerNumber( p )
@@ -63,8 +72,6 @@ Background::Background()
 
 	if( bOneOrMoreChars && !bShowingBeginnerHelper )
 		m_pDancingCharacters = new DancingCharacters;
-	else
-		m_pDancingCharacters = NULL;
 
 	m_quadBorder[0].StretchTo( RectF(SCREEN_LEFT,SCREEN_TOP,LEFT_EDGE,SCREEN_BOTTOM) );
 	m_quadBorder[0].SetDiffuse( RageColor(0,0,0,1) );
@@ -284,6 +291,8 @@ void Background::LoadFromRandom( float fFirstBeat, float fLastBeat, const Timing
 
 void Background::LoadFromSong( const Song* pSong )
 {
+	Init();
+
 	Unload();
 
 	m_pSong = pSong;
