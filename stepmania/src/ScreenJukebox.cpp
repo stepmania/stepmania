@@ -16,6 +16,8 @@
 #include "ThemeManager.h"
 #include "Style.h"
 #include "PlayerState.h"
+#include "ProfileManager.h"
+#include "StatsManager.h"
 
 // HACK: This belongs in ScreenDemonstration
 #define DIFFICULTIES_TO_SHOW		THEME->GetMetric ("ScreenDemonstration","DifficultiesToShow")
@@ -151,6 +153,11 @@ void ScreenJukebox::Init()
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
+
+		/* Reset the combo, in case ComboContinuesBetweenSongs is enabled. */
+		Profile* pProfile = PROFILEMAN->GetProfile(p);
+		if( pProfile )
+			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 0;
 
 		if( GAMESTATE->m_bJukeboxUsesModifiers )
 		{
