@@ -27,7 +27,11 @@ public:
 		WRITE			= 0x2,
 
 		/* Always write directly to the destination file; don't do a safe write. (for logs) */
-		STREAMED		= 0x4
+		STREAMED		= 0x4,
+
+		/* Flush the file to disk on close.  Combined with not streaming, this results
+		 * in very safe writes, but is slow. */
+		SLOW_FLUSH		= 0x8
 	};
 
     RageFile();

@@ -186,7 +186,7 @@ RageFileObjDirect::~RageFileObjDirect()
 		/* Flush the output buffer. */
 		Flush();
 
- 		if( !(parent.GetOpenMode() & RageFile::STREAMED) )
+ 		if( parent.GetOpenMode() & RageFile::SLOW_FLUSH )
 		{
 			/* Force a kernel buffer flush. */
 			if( fsync( fd ) == -1 )
