@@ -53,6 +53,11 @@ bool MemoryCardDriver_Linux::StorageDevicesChanged()
 
 void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
+	UsbStorageDevice usbd;
+	usbd.sOsMountDir = "/mnt";
+	vDevicesOut.push_back( usbd );
+	return;
+
   usleep(1000);
 
 	/* If we couldn't open it before, we probably can't open it now; don't
@@ -260,7 +265,13 @@ bool MemoryCardDriver_Linux::MountAndTestWrite( UsbStorageDevice* pDevice, CStri
 	vector<RageFileManager::DriverLocation> Mounts;
 	FILEMAN->GetLoadedDrivers( Mounts );
 	for( unsigned i = 0; i < Mounts.size(); ++i )
+	{
+		if( Mounts[i].Type.CompareNoCase( "dir" ) )
+			continue; // wrong type
+		if( Mounts[i].Root.CompareNoCase( pDevice->sOsMountDir ) )
+			continue; // wrong root
 		FILEMAN->Unmount( Mounts[i].Type, Mounts[i].Root, Mounts[i].MountPoint );
+	}
 
 	FILEMAN->Mount( "dir", pDevice->sOsMountDir, sMountPoint.c_str() );
 	LOG->Trace( "FILEMAN->Mount %s %s", pDevice->sOsMountDir.c_str(), sMountPoint.c_str() );

@@ -87,7 +87,13 @@ bool MemoryCardDriver_Windows::MountAndTestWrite( UsbStorageDevice* pDevice, CSt
 	vector<RageFileManager::DriverLocation> Mounts;
 	FILEMAN->GetLoadedDrivers( Mounts );
 	for( unsigned i = 0; i < Mounts.size(); ++i )
+	{
+		if( Mounts[i].Type.CompareNoCase( "dir" ) )
+				continue; // wrong type
+		if( Mounts[i].Root.CompareNoCase( pDevice->sOsMountDir ) )
+				continue; // wrong root
 		FILEMAN->Unmount( Mounts[i].Type, Mounts[i].Root, Mounts[i].MountPoint );
+	}
 
 	FILEMAN->Mount( "dir", pDevice->sOsMountDir, sMountPoint.c_str() );
 	LOG->Trace( "FILEMAN->Mount %s %s", pDevice->sOsMountDir.c_str(), sMountPoint.c_str() );
