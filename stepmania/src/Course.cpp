@@ -515,7 +515,9 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 				for( unsigned j=0; j<AllSongsShuffled.size(); j++ )
 				{
 					/* See if the first song matches what we want. */
+					ASSERT( CurSong < AllSongsShuffled.size() );
 					pSong = AllSongsShuffled[CurSong];
+					ASSERT( pSong );
 					CurSong = (CurSong+1) % AllSongsShuffled.size();
 
 					if(e.type == Entry::random_within_group &&
