@@ -488,13 +488,22 @@ static void GameLoop()
 				DISPLAY->ResolutionChanged(event.resize.w, event.resize.h);
 				break;
 			case SDL_ACTIVEEVENT:
-				g_bHasFocus = !!event.active.gain;
-				LOG->Trace("App %s focus", g_bHasFocus? "has":"doesn't have");
+			{
+				/* We don't care about mouse focus. */
+				if(event.active.state == SDL_APPMOUSEFOCUS)
+					break;
 
-				if(event.active.gain)
+				Uint8 i = SDL_GetAppState();
+				
+				g_bHasFocus = i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE;
+				LOG->Trace("App %s focus (%i%i)", g_bHasFocus? "has":"doesn't have",
+					i&SDL_APPINPUTFOCUS, i&SDL_APPACTIVE);
+
+				if(g_bHasFocus)
 					BoostAppPri();
 				else
 					RestoreAppPri();
+			}
 			}
 		}
 
