@@ -23,7 +23,7 @@ bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 	if( !bResult )
 		RageException::Throw( "Error opening file '%s' for reading.", sPath.GetString() );
 	
-	unsigned iLineCount = 0;
+	// unsigned iLineCount = 0; // hush "variable not referenced"
 	for( unsigned i=0; i<lrc.GetNumValues(); i++ )
 	{
 		int iNumParams = lrc.GetNumParams(i);
@@ -57,7 +57,7 @@ bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 				sTempTime.Replace( ".", "" );
 				sTempTime.Replace( ":", "." );
 
-				float	m_fStartTime = (float)atof(sTempTime);
+				// float	m_fStartTime = (float)atof(sTempTime);	// hush "variable not referenced"
 				CString m_sLyric = sValueData;
 				CString	m_sStartTime = sValueName;
 			//--

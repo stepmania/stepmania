@@ -566,6 +566,18 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="Inventory.h">
 			</File>
 			<File
+				RelativePath="LRCFile.cpp">
+			</File>
+			<File
+				RelativePath="LRCFile.h">
+			</File>
+			<File
+				RelativePath="LyricsLoader.cpp">
+			</File>
+			<File
+				RelativePath="LyricsLoader.h">
+			</File>
+			<File
 				RelativePath="MenuInput.h">
 			</File>
 			<File
@@ -1047,6 +1059,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="DifficultyIcon.h">
 			</File>
 			<File
+				RelativePath="DifficultyMeter.cpp">
+			</File>
+			<File
+				RelativePath="DifficultyMeter.h">
+			</File>
+			<File
 				RelativePath="DifficultyRating.cpp">
 			</File>
 			<File
@@ -1063,12 +1081,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="FadingBanner.h">
-			</File>
-			<File
-				RelativePath=".\FootMeter.cpp">
-			</File>
-			<File
-				RelativePath=".\FootMeter.h">
 			</File>
 			<File
 				RelativePath=".\GradeDisplay.cpp">
@@ -1123,12 +1135,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\MusicSortDisplay.h">
-			</File>
-			<File
-				RelativePath=".\MusicStatusDisplay.cpp">
-			</File>
-			<File
-				RelativePath=".\MusicStatusDisplay.h">
 			</File>
 			<File
 				RelativePath=".\MusicWheel.cpp">
@@ -1207,6 +1213,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\TipDisplay.h">
+			</File>
+			<File
+				RelativePath="WheelNotifyIcon.cpp">
+			</File>
+			<File
+				RelativePath="WheelNotifyIcon.h">
 			</File>
 		</Filter>
 		<Filter
