@@ -166,24 +166,61 @@ int RageSound_OSS::GetPosition(const RageSound *snd) const
 	return last_cursor_pos - (delay / samplesize);
 }
 
+void CheckOSSVersion( int fd )
+{
+	int version;
+	if( ioctl(fd, OSS_GETVERSION, &version) != 0 )
+	{
+		LOG->Warn( "OSS_GETVERSION failed: %s", strerror(errno) );
+		version = 0;
+	}
+	/*
+	 * Find out if /dev/dsp is really ALSA emulating it.  ALSA's OSS emulation has
+	 * been buggy.  If we got here, we probably failed to init ALSA.  The only case
+	 * I've seen of this so far was not having access to /dev/snd devices.
+	 */
+	/* Reliable but only too recently available:
+	if (ioctl(fd, OSS_ALSAEMULVER, &ver) == 0 && ver ) */
+
+	/*
+	 * Ack.  We can't just check for /proc/asound, since a few systems have ALSA
+	 * loaded but actually use OSS.  ALSA returns a specific version; check that,
+	 * too.  It looks like that version is potentially a valid OSS version, so
+	 * check both.
+	 */
+
+#define ALSA_SNDRV_OSS_VERSION         ((3<<16)|(8<<8)|(1<<4)|(0))
+	if( version == ALSA_SNDRV_OSS_VERSION && IsADirectory("/proc/asound") )
+	{
+		close( fd );
+		RageException::ThrowNonfatal( "RageSound_OSS: ALSA detected.  ALSA OSS emulation is buggy; use ALSA natively.");
+	}
+
+	int major, minor, rev;
+	if( version < 361 )
+	{
+		major = (version/100)%10;
+		minor = (version/10) %10;
+		rev =   (version/1)  %10;
+	} else {
+		major = (version/0x10000) % 0x100;
+		minor = (version/0x00100) % 0x100;
+		rev =   (version/0x00001) % 0x100;
+	}
+
+	LOG->Info("OSS: %i.%i.%i", major, minor, rev );
+}
 
 RageSound_OSS::RageSound_OSS()
 {
-	/* If /proc/asound exists, then we're running ALSA.  If we got here, we
-	 * probably failed to init ALSA.  The only case I've seen of this so far
-	 * was not having access to /dev/snd devices.
-	 *
-	 * Don't run OSS under ALSA; we'll get emulation, and ALSA's OSS emulation
-	 * is buggy. */
-	if( IsADirectory("/proc/asound") )
-		RageException::ThrowNonfatal( "RageSound_OSS: ALSA detected.  ALSA OSS emulation is buggy; use ALSA natively.");
-
-	shutdown = false;
-	last_cursor_pos = 0;
-
 	fd = open("/dev/dsp", O_WRONLY|O_NONBLOCK);
 	if(fd == -1)
 		RageException::ThrowNonfatal("RageSound_OSS: Couldn't open /dev/dsp: %s", strerror(errno));
+
+	CheckOSSVersion( fd );
+
+	shutdown = false;
+	last_cursor_pos = 0;
 
 	int i = AFMT_S16_LE;
 	if(ioctl(fd, SNDCTL_DSP_SETFMT, &i) == -1)
