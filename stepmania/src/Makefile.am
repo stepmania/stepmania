@@ -20,7 +20,7 @@ AM_CFLAGS   += -O2
 SDL-1.2.5/src/.libs/libSDL.a:
 	cd SDL-1.2.5 && ./configure \
 		--disable-nasm --disable-arts --disable-esd --enable-static --disable-shared \
-		--disable-debug --disable-alsa --disable-oss 
+		--disable-debug --disable-alsa --disable-oss --disable-video-directfb
 	make -C SDL-1.2.5
 
 Screens = \
