@@ -33,7 +33,7 @@ enum {
 	MO_COIN_MODE,
 	MO_COINS_PER_CREDIT,
 	MO_JOINT_PREMIUM,
-	MO_SONG_OPTIONS,
+	MO_SHOW_SONG_OPTIONS,
 	NUM_MACHINE_OPTIONS_LINES
 };
 /* Hmm.  Ignore JoyAxes and Back Delayed probably belong in "input options",
@@ -154,6 +154,7 @@ void ScreenMachineOptions::ExportOptions()
 	(int&)PREFSMAN->m_CoinMode			= m_iSelectedOption[0][MO_COIN_MODE];
 	PREFSMAN->m_iCoinsPerCredit			= m_iSelectedOption[0][MO_COINS_PER_CREDIT] + 1;
 	PREFSMAN->m_bJointPremium			= m_iSelectedOption[0][MO_JOINT_PREMIUM] == 1;
+	PREFSMAN->m_bShowSongOptions		= (bool&)m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS];
 }
 
 void ScreenMachineOptions::GoToPrevState()
