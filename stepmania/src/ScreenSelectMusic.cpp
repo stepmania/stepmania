@@ -71,15 +71,6 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. 
 	 * Do this before anything that might look at GAMESTATE->m_iCurrentStageIndex. */
 	GAMESTATE->FinishStage();
-
-	/* If we have a preferred song, let it override the active song.  That way, you
-	 * can set PreferredSong at any time (eg. during initial menus or evaluation) to
-	 * select the default song for the next play, without interfering with things
-	 * that still need pCurSong. */
-	if( GAMESTATE->m_pPreferredSong )
-		GAMESTATE->m_pCurSong.Set( GAMESTATE->m_pPreferredSong );
-	if( GAMESTATE->m_pPreferredCourse )
-		GAMESTATE->m_pCurCourse = GAMESTATE->m_pPreferredCourse;
 }
 
 

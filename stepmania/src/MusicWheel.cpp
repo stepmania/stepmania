@@ -251,12 +251,16 @@ MusicWheel::~MusicWheel()
 {
 }
 
-/* If a song or course is set in GAMESTATE and avaialble, select it.  Otherwise, choose the
+/* If a song or course is set in GAMESTATE and available, select it.  Otherwise, choose the
  * first available song or course.  Return true if an item was set, false if no items are
  * available. */
 bool MusicWheel::SelectSongOrCourse()
 {
+	if( GAMESTATE->m_pPreferredSong && SelectSong( GAMESTATE->m_pPreferredSong ) )
+		return true;
 	if( GAMESTATE->m_pCurSong && SelectSong( GAMESTATE->m_pCurSong ) )
+		return true;
+	if( GAMESTATE->m_pPreferredCourse && SelectCourse( GAMESTATE->m_pPreferredCourse ) )
 		return true;
 	if( GAMESTATE->m_pCurCourse && SelectCourse( GAMESTATE->m_pCurCourse ) )
 		return true;
