@@ -297,6 +297,15 @@ void SongManager::FreeSongs()
 	m_sGroupBannerPaths.clear();
 }
 
+static CString ReadLine( FILE *fp )
+{
+	char buf[1024];
+	fgets( buf, sizeof(buf), fp );
+
+	CString ret( buf );
+	TrimRight( ret );
+	return ret;
+}
 
 
 void SongManager::ReadNoteScoresFromFile( CString fn, int c )
@@ -376,11 +385,11 @@ void SongManager::ReadCourseScoresFromFile( CString fn, int c )
 	{			
 		while( fp && !feof(fp) )
 		{
-			char szPath[256];
-			fscanf(fp, "%[^\n]\n", szPath);
-			Course* pCourse = GetCourseFromPath( szPath );
+			CString path=ReadLine( fp );
+
+			Course* pCourse = GetCourseFromPath( path );
 			if( pCourse == NULL )
-				pCourse = GetCourseFromName( szPath );
+				pCourse = GetCourseFromName( path );
 		
 			for( int i=0; i<NUM_STEPS_TYPES; i++ )
 				if( !feof(fp) )
@@ -437,13 +446,13 @@ void SongManager::ReadCourseRankingsFromFile( CString fn )
 	{			
 		while( fp && !feof(fp) )
 		{
-			char szPath[256];
-			fscanf(fp, "%[^\n]\n", szPath);
-			Course* pCourse = GetCourseFromPath( szPath );
+			CString path=ReadLine( fp );
+
+			Course* pCourse = GetCourseFromPath( path );
 			if( pCourse == NULL )
-				pCourse = GetCourseFromName( szPath );
+				pCourse = GetCourseFromName( path );
 		
-				for( int i=0; i<NUM_STEPS_TYPES; i++ )
+			for( int i=0; i<NUM_STEPS_TYPES; i++ )
 				for( int j=0; j<NUM_RANKING_LINES; j++ )
 					if( !feof(fp) )
 					{
