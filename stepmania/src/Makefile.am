@@ -144,7 +144,8 @@ endif
 
 ActorsInGameplayAndMenus = \
 BGAnimation.cpp BGAnimation.h BGAnimationLayer.cpp BGAnimationLayer.h Banner.cpp Banner.h \
-DifficultyIcon.cpp DifficultyIcon.h MeterDisplay.cpp MeterDisplay.h Transition.cpp Transition.h
+DifficultyIcon.cpp DifficultyIcon.h MeterDisplay.cpp MeterDisplay.h Transition.cpp Transition.h \
+ConditionalBGA.cpp ConditionalBGA.h
 
 ActorsInMenus = \
 BPMDisplay.cpp BPMDisplay.h ComboGraph.cpp ComboGraph.h CourseContentsList.cpp CourseContentsList.h \
