@@ -85,19 +85,10 @@ class RageInput
 
 	enum State { CURRENT = 0, LAST, NUM_STATES };
 
-	struct {
-		// Keyboard state data
-		bool m_keys[NUM_KEYBOARD_BUTTONS];
-		
-		// Joystick state data
-		struct {
-			bool button[NUM_JOYSTICK_BUTTONS];
-		} m_joyState[NUM_JOYSTICKS];
-
-		// Pump state data
-		struct {
-			bool button[NUM_PUMP_PAD_BUTTONS];
-		} m_pumpState[NUM_PUMPS];
+	struct state_t {
+		struct device_t {
+			bool button[NUM_DEVICE_BUTTONS];
+		} m_Devices[NUM_INPUT_DEVICES];
 	} state[NUM_STATES];
 
 	/* Structure for reading Pump pads: */

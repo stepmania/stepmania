@@ -43,7 +43,6 @@ struct RageInput::pump_t
 
 	pump_t();
 	~pump_t();
-	bool Active() const { return h != INVALID_HANDLE_VALUE; }
 	void Update();
 	bool init(int devno);
 	int GetPadEvent();
@@ -181,25 +180,6 @@ bool DeviceInput::fromString( const CString &s )
 	return true;
 }
 
-#if 0
-
-/* FIXME: The main font doesn't have '`' (0x29), so that's disabled. */
-static const char SDLK_charmap[] = {
-	    /*   0   1   2   3   4   5   6   7   8    9    A   B   C   D   E  F */ 
-/* 0x0x */    0,  0,'1','2','3','4','5','6','7', '8','9', '0','-','=',  0,  0,
-/* 0x1x */	'q','w','e','r','t','y','u','i','o', 'p','[', ']',  0,  0,'a','s',
-/* 0x2x */	'd','f','g','h','j','k','l',';','\'',  0,  0,'\\','z','x','c','v',
-/* 0x3x */	'b','n','m',',','.','/',  0,'*',  0, ' ',  0,   0,  0,  0,  0,  0,
-/* 0x4x */	  0,  0,  0,  0,  0,  0,  0,'7','8', '9','-', '4','5','6','+','1',
-/* 0x5x */	'2','3','0','.',  0,  0,  0,  0,  0,   0,  0,   0,  0,  0,  0,  0,
-/* 0x6x */	  0,  0,  0,  0,  0,  0,  0,  0,  0,   0,  0,   0,  0,  0,  0,  0,
-/* 0x7x */	  0,  0,  0,  0,  0,  0,  0,  0,  0,   0,  0,   0,  0,  0,'.',  0,
-/* 0x8x */	  0,  0,  0,  0,  0,  0,  0,  0,  0,   0,  0,   0,  0,'=',  0,  0,
-/* 0x9x */	  0,'@',':','_',  0,  0,  0,  0,  0,   0,  0,   0,  0,  0,  0,  0,
-/* 0xAx */	  0,  0,  0,  0,  0,  0,  0,  0,  0,   0,  0,   0,  0,  0,  0,  0,
-/* 0xBx */	  0,  0,  0,',',  0,'/',  0,  0,  0,   0,  0,   0,  0,  0,  0,  0,
- };
-#endif
 
 char DeviceInput::ToChar() const
 {
@@ -218,7 +198,6 @@ char DeviceInput::ToChar() const
 }
 
 
-
 RageInput::RageInput()
 {
 	LOG->Trace( "RageInput::RageInput()" );
@@ -233,6 +212,7 @@ RageInput::RageInput()
 	// Init keyboard
 	//
 	SDL_EnableKeyRepeat( 0, 0 );
+
 	/* If we use key events, we can do this to get Unicode values
 	 * in the key struct, which (with a little more work) will make
 	 * us work on international keyboards: */
@@ -309,17 +289,18 @@ void RageInput::Update( float fDeltaTime )
 	//
 	SDL_PumpEvents();
 	Uint8* keystate = SDL_GetKeyState(NULL);
-	memcpy( state[CURRENT].m_keys, keystate, sizeof(state[CURRENT].m_keys) );
+	memcpy( state[CURRENT].m_Devices[DEVICE_KEYBOARD].button, keystate, NUM_KEYBOARD_BUTTONS );
 
 	//
 	// Update Joystick
 	//
 	SDL_JoystickUpdate();
 
-	memset( state[CURRENT].m_joyState, 0, sizeof(state[CURRENT].m_joyState) );	// clear current state
 
 	for( int joy=0; joy<NUM_JOYSTICKS; joy++ )	// foreach joystick
 	{
+		state_t::device_t *dev = &state[CURRENT].m_Devices[DEVICE_JOY1+joy];
+		memset( dev->button, 0, sizeof(dev->button) );	// clear current state
 		SDL_Joystick* pJoy = m_pJoystick[joy];
 		if( !pJoy )
 			continue;
@@ -332,12 +313,12 @@ void RageInput::Update( float fDeltaTime )
  			if( val < -16000 )
 			{
 				JoystickButton b = (JoystickButton)(JOY_LEFT+2*axis);
-				state[CURRENT].m_joyState[joy].button[b] = true;
+				dev->button[b] = true;
 			}
 			else if( val > +16000 )
 			{
 				JoystickButton b = (JoystickButton)(JOY_RIGHT+2*axis);
-				state[CURRENT].m_joyState[joy].button[b] = true;
+				dev->button[b] = true;
 			}
 		}
 
@@ -345,17 +326,17 @@ void RageInput::Update( float fDeltaTime )
 		for( int hat=0; hat<iNumJoyHats; hat++ )
 		{
 			Uint8 val = SDL_JoystickGetHat(pJoy,hat);
-			state[CURRENT].m_joyState[joy].button[JOY_HAT_UP] = (val & SDL_HAT_UP) != 0;
-			state[CURRENT].m_joyState[joy].button[JOY_HAT_RIGHT] = (val & SDL_HAT_RIGHT) != 0;
-			state[CURRENT].m_joyState[joy].button[JOY_HAT_DOWN] = (val & SDL_HAT_DOWN) != 0;
-			state[CURRENT].m_joyState[joy].button[JOY_HAT_LEFT] = (val & SDL_HAT_LEFT) != 0;
+			dev->button[JOY_HAT_UP] = (val & SDL_HAT_UP) != 0;
+			dev->button[JOY_HAT_RIGHT] = (val & SDL_HAT_RIGHT) != 0;
+			dev->button[JOY_HAT_DOWN] = (val & SDL_HAT_DOWN) != 0;
+			dev->button[JOY_HAT_LEFT] = (val & SDL_HAT_LEFT) != 0;
 		}
 
 		int iNumJoyButtons = MIN(NUM_JOYSTICK_BUTTONS,SDL_JoystickNumButtons(pJoy));
 		for( int button=0; button<iNumJoyButtons; button++ )
 		{
 			JoystickButton b = (JoystickButton)(JOY_1 + button);
-			state[CURRENT].m_joyState[joy].button[b] = SDL_JoystickGetButton(pJoy,button) != 0;
+			dev->button[b] = SDL_JoystickGetButton(pJoy,button) != 0;
 		}
 	}
 
@@ -364,45 +345,20 @@ void RageInput::Update( float fDeltaTime )
 	// Update Pump
 	//
 	for( int i=0; i<NUM_PUMPS; i++ )
-	{
-		if(!m_Pumps[i].Active()) continue;
-
 		m_Pumps[i].Update();
 
-		memcpy(state[CURRENT].m_pumpState[i].button, m_Pumps[i].current_state, sizeof(m_Pumps[i].current_state));
-	}
-
+	memcpy(state[CURRENT].m_Devices[DEVICE_PUMP1].button, m_Pumps[0].current_state, sizeof(m_Pumps[0].current_state));
+	memcpy(state[CURRENT].m_Devices[DEVICE_PUMP2].button, m_Pumps[1].current_state, sizeof(m_Pumps[0].current_state));
 }
 
 bool RageInput::BeingPressed( DeviceInput di, bool bPrevState )
 {
+	ASSERT(di.button < NUM_DEVICE_BUTTONS);
+	ASSERT(di.device < NUM_INPUT_DEVICES);
+
 	State s = bPrevState? LAST:CURRENT;
 
-	switch( di.device )
-	{
-	case DEVICE_KEYBOARD:
-		{
-			ASSERT(di.button < NUM_KEYBOARD_BUTTONS);
-			return state[s].m_keys[di.button];
-		}
-	case DEVICE_JOY1:
-	case DEVICE_JOY2:
-	case DEVICE_JOY3:
-	case DEVICE_JOY4:
-		{
-			ASSERT(di.button < NUM_JOYSTICK_BUTTONS);
-			return state[s].m_joyState[di.device - DEVICE_JOY1].button[ di.button ];
-		}
-	case DEVICE_PUMP1:
-	case DEVICE_PUMP2:
-		{
-			ASSERT(di.button < NUM_PUMP_PAD_BUTTONS);
-			return state[s].m_pumpState[di.device - DEVICE_PUMP1].button[di.button];
-		}
-	default:
-		ASSERT( 0 ); // bad device
-		return false;	// hush compiler
-	}
+	return state[s].m_Devices[di.device].button[ di.button ];
 }
 
 extern "C" {
@@ -546,6 +502,8 @@ int RageInput::pump_t::GetPadEvent()
 
 void RageInput::pump_t::Update()
 {
+	if(h == INVALID_HANDLE_VALUE) return;
+
 	int ret = GetPadEvent();
 
 	if(ret == -1) 
