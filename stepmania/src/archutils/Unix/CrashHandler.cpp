@@ -334,7 +334,8 @@ static void RunCrashHandler( const CrashData *crash )
 	}
 	received = getpid();
 
-	/* Stop other threads. */
+	/* Stop other threads.  XXX: This prints a spurious ptrace error if any threads
+	 * are already suspended, which happens in ForceCrashHandlerDeadlock(). */
 	RageThread::HaltAllThreads();
 	
 	/* We need to be very careful, since we're under crash conditions.  Let's fork
