@@ -72,17 +72,16 @@ void RageSoundManager::Update(float delta)
 	FlushPosMapQueue();
 
 	/* Scan the owned_sounds list for sounds that are no longer playing, and delete them. */
-	set<RageSound *>::iterator it = owned_sounds.begin(), next = it;
-	++next;
-	while( it != owned_sounds.end() )
-	{
+	set<RageSound *>::iterator it;
+	set<RageSound *> ToDelete;
+	for( it = owned_sounds.begin(); it != owned_sounds.end(); ++it )
 		if( !(*it)->IsPlaying() )
-		{
-			delete *it;
-			owned_sounds.erase( it );
-		}
-		it = next;
-		++next;
+			ToDelete.insert( *it );
+
+	for( it = ToDelete.begin(); it != ToDelete.end(); ++it )
+	{
+		delete *it;
+		owned_sounds.erase( it );
 	}
 
 	for(set<RageSound *>::iterator i = all_sounds.begin();
