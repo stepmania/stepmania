@@ -110,17 +110,16 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 	{
 		row.bOneChoiceForAllPlayers = PREFSMAN->m_bLockCourseDifficulties;
 
-		Course* pCourse = GAMESTATE->m_pCurCourse;
-		StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-		FOREACH_ShownCourseDifficulty(cd)
+		vector<Trail*> vTrails;
+		GAMESTATE->m_pCurCourse->GetTrails( vTrails, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+		for( unsigned i=0; i<vTrails.size(); i++ )
 		{
-			if( !pCourse->HasCourseDifficulty(st,cd) )
-				continue;	// skip
+			Trail* pTrail = vTrails[i];
 
-			CString s = CourseDifficultyToThemedString( cd );
+			CString s = CourseDifficultyToThemedString( pTrail->m_CourseDifficulty );
 			row.choices.push_back( s );
 			ModeChoice mc;
-			mc.m_CourseDifficulty = cd;
+			mc.m_pTrail = pTrail;
 			hand.ListEntries.push_back( mc );
 		}
 	}
