@@ -77,7 +77,8 @@ void FileSet::LoadFromDir(const CString &dir)
 	if( chdir(dir.c_str()) == -1 )
 	{
 		/* Only log once per dir. */
-		LOG->MapLog("chdir " + dir, "Couldn't chdir(%s): %s", dir.c_str(), strerror(errno) );
+		if( LOG )
+			LOG->MapLog("chdir " + dir, "Couldn't chdir(%s): %s", dir.c_str(), strerror(errno) );
 		return;
 	}
 	DIR *d = opendir(".");
@@ -278,7 +279,7 @@ bool FilenameDB::ResolvePath(CString &path)
 		/* If there were no matches, the path isn't found. */
 		if(lst.empty()) return false;
 
-		if(lst.size() > 1)
+		if( lst.size() > 1 && LOG )
 			LOG->Warn("Ambiguous filenames '%s' and '%s'",
 				lst[0].c_str(), lst[1].c_str());
 
