@@ -509,6 +509,35 @@ bool SDL_GetEvent(SDL_Event &event, int mask)
 	}
 }
 
+/* For some bizarre reason, SDL_EventState flushes all events.  This is a pain, so
+ * avoid it. */
+Uint8 mySDL_EventState(Uint8 type, int state)
+{
+	if(state == SDL_QUERY)
+		return SDL_EventState(type, state);
+
+	vector<SDL_Event> events;
+	while(1)
+	{
+		SDL_Event ev;
+		if(SDL_PollEvent(&ev) <= 0)
+			break;
+
+		/* Don't bother readding it if we're turning this event type off. */
+		if(state == SDL_IGNORE && ev.type == type)
+			continue;
+
+		events.push_back(ev);
+	}
+
+	Uint8 ret = SDL_EventState(type, state);
+
+	/* Put them back. */
+	for(unsigned i = 0; i < events.size(); ++i)
+		SDL_PushEvent(&events[i]);
+
+	return ret;
+}
 
 #include "SDL_image.h"	// for setting icon
 #include "SDL_rotozoom.h"	// for setting icon

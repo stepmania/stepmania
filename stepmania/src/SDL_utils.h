@@ -35,6 +35,9 @@ void FixHiddenAlpha(SDL_Surface *img);
 /* Check for an event; return true if one was waiting. */
 bool SDL_GetEvent(SDL_Event &event, int mask);
 
+/* Change the event state without dropping extra events. */
+Uint8 mySDL_EventState(Uint8 type, int state);
+
 /* The surface contains no transparent pixels and/or never uses its color
  * key, so it doesn't need any alpha bits at all. */
 #define TRAIT_NO_TRANSPARENCY   0x0001 /* 0alpha */
