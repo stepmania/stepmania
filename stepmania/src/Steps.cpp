@@ -87,8 +87,7 @@ void Steps::SetSMNoteData( const CString &notes_comp_ )
 	m_uHash = GetHashForString( notes_comp );
 }
 
-/* XXX: this function should pull data from cache, like Decompress(); but maybe
- * we can just get rid of this ... */
+/* XXX: this function should pull data from cache, like Decompress() */
 void Steps::GetSMNoteData( CString &notes_comp_out ) const
 {
 	if( notes_comp.empty() )
