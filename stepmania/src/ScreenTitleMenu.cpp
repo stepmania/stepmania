@@ -75,6 +75,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	PREFSMAN->ReadGamePrefsFromDisk();
 	INPUTMAPPER->ReadMappingsFromDisk();
 
+
 	int i;
 
 	m_sprBG.Load( THEME->GetPathTo(GRAPHIC_TITLE_MENU_BACKGROUND) );

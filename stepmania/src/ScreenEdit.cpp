@@ -65,6 +65,7 @@ const CString HELP_TEXT =
 	"      4th / 8th / 12th / 16th / 12th or 16th\n"
 	"P: Play selected area\n"
 	"R: Record in selected area\n"
+	"T: Toggle Play/Record rate\n"
 	"X: Cut selected area\n"
 	"C: Copy selected area\n"
 	"V: Paste at current beat\n"
@@ -124,6 +125,8 @@ ScreenEdit::ScreenEdit()
 
 	m_fBeat = 0.0f;
 	GAMESTATE->m_fSongBeat = m_fBeat;
+
+	m_fMusicRate = 1;
 	
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fArrowScrollSpeed = 1;
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_ColorType = PlayerOptions::COLOR_NOTE;
@@ -309,6 +312,7 @@ void ScreenEdit::Update( float fDeltaTime )
 		"Snap = %s\n"
 		"Beat = %.2f\n"
 		"Selection = begin: %.2f, end: %.2f\n"
+		"Play/Record rate: %.1f\n"
 		"Difficulty = %s\n"
 		"Description = %s\n"
 		"Num notes tap: %d, hold: %d\n"
@@ -317,6 +321,7 @@ void ScreenEdit::Update( float fDeltaTime )
 		sNoteType,
 		m_fBeat,
 		m_NoteFieldEdit.m_fBeginMarker,	m_NoteFieldEdit.m_fEndMarker,
+		m_fMusicRate,
 		DifficultyClassToString( m_pNotes->m_DifficultyClass ),
 		GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->m_sDescription : "no description",
 		iNumTapNotes, iNumHoldNotes,
@@ -580,7 +585,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				float fElapsedSeconds = max( 0, m_pSong->GetElapsedTimeFromBeat(m_fBeat) );
 				m_soundMusic.SetPositionSeconds( fElapsedSeconds );
 				m_soundMusic.Play();
-				m_soundMusic.SetPlaybackRate( 1.0f );
+				m_soundMusic.SetPlaybackRate( m_fMusicRate );
 			}
 			break;
 		case DIK_R:
@@ -607,8 +612,19 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				float fElapsedSeconds = max( 0, m_pSong->GetElapsedTimeFromBeat(m_fBeat) );
 				m_soundMusic.SetPositionSeconds( fElapsedSeconds );
 				m_soundMusic.Play();
-				m_soundMusic.SetPlaybackRate( 0.5f );
+				m_soundMusic.SetPlaybackRate( m_fMusicRate );
 			}
+			break;
+		case DIK_T:
+			if(     m_fMusicRate == 1.0f )		m_fMusicRate = 0.9f;
+			else if( m_fMusicRate == 0.9f )		m_fMusicRate = 0.8f;
+			else if( m_fMusicRate == 0.8f )		m_fMusicRate = 0.7f;
+			else if( m_fMusicRate == 0.7f )		m_fMusicRate = 1.5f;
+			else if( m_fMusicRate == 1.5f )		m_fMusicRate = 1.4f;
+			else if( m_fMusicRate == 1.4f )		m_fMusicRate = 1.3f;
+			else if( m_fMusicRate == 1.3f )		m_fMusicRate = 1.2f;
+			else if( m_fMusicRate == 1.2f )		m_fMusicRate = 1.1f;
+			else if( m_fMusicRate == 1.1f )		m_fMusicRate = 1.0f;
 			break;
 		case DIK_INSERT:
 		case DIK_DELETE:

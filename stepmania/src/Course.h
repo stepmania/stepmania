@@ -41,10 +41,10 @@ public:
 	Song*		m_apSongs[MAX_COURSE_STAGES];
 	CString		m_asDescriptions[MAX_COURSE_STAGES];
 	Notes*		GetNotesForStage( int iStage );
+	CString		m_asModifiers[MAX_COURSE_STAGES];	// set player and song options from these
 	bool		m_bRepeat;	// repeat after last song?
 	bool		m_bRandomize;	// play the songs in a random order
 	int			m_iLives;	// -1 means use bar life meter
-	CString		m_sModifiers;	// contains player options and song options
 	int			m_iExtra;	// extra stage number...
 
 	void GetPlayerOptions( PlayerOptions* pPO_out );
@@ -53,15 +53,16 @@ public:
 	void LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs );
 	void CreateEndlessCourseFromGroupAndDifficultyClass( CString sGroupName, DifficultyClass dc, CArray<Song*,Song*> &apSongsInGroup );
 
-	void AddStage( Song* pSong, CString sDescription )
+	void AddStage( Song* pSong, CString sDescription, CString sModifiers )
 	{
 		ASSERT( m_iStages <= MAX_COURSE_STAGES - 1 );
 		m_apSongs[m_iStages] = pSong;
 		m_asDescriptions[m_iStages] = sDescription;
+		m_asModifiers[m_iStages] = sModifiers;
 		m_iStages++;
 	}
 
-	void GetSongAndNotesForCurrentStyle( CArray<Song*,Song*>& apSongsOut, CArray<Notes*,Notes*> apNotesOut[NUM_PLAYERS] );
+	void GetSongAndNotesForCurrentStyle( CArray<Song*,Song*>& apSongsOut, CArray<Notes*,Notes*>& apNotesOut, CStringArray& asModifiersOut );
 	D3DXCOLOR	GetColor();
 };
 

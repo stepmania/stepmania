@@ -45,6 +45,13 @@ float TimeToSeconds( CString sHMS )
 	return fSeconds;
 }
 
+CString SecondsToTime( float fSecs )
+{
+	int iMinsDisplay = (int)fSecs/60;
+	int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
+	int iLeftoverDisplay = int( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100 );
+	return ssprintf( "%02d:%02d:%02d", iMinsDisplay, iSecsDisplay, iLeftoverDisplay );
+}
 
 //-----------------------------------------------------------------------------
 // Name: ssprintf()

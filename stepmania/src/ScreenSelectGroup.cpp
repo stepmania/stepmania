@@ -1,7 +1,7 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: ScreenSelectGroup.cpp
+ Class: ScreenSelectGroup
 
  Desc: See header.
 
@@ -447,7 +447,7 @@ void ScreenSelectGroup::MenuUp( const PlayerNumber p )
 
 	m_iSelection = m_iSelection-1 % m_arrayGroupNames.GetSize();
 	if( m_iSelection < 0 )
-		m_iSelection += m_arrayGroupNames.GetSize();
+		m_iSelection += min( m_arrayGroupNames.GetSize(), MAX_GROUPS );
 
 	AfterChange();
 
@@ -462,7 +462,7 @@ void ScreenSelectGroup::MenuDown( const PlayerNumber p )
 
 	BeforeChange();
 
-	m_iSelection = (m_iSelection+1) % m_arrayGroupNames.GetSize();
+	m_iSelection = (m_iSelection+1) % min( m_arrayGroupNames.GetSize(), MAX_GROUPS );
 	
 	AfterChange();
 

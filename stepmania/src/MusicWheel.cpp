@@ -376,41 +376,53 @@ MusicWheel::MusicWheel()
 	for( int so=0; so<NUM_SORT_ORDERS; so++ )
 		BuildWheelItemDatas( m_WheelItemDatas[so], SongSortOrder(so) );
 
-	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+	if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
 	{
-		m_bUseRandomExtra = true;
-		Course cCourse;
-		for( int i=0; i< SONGMAN->m_aExtraCourses.GetSize(); i++ )
+		// make the preferred group the group of the last song played.
+		if( GAMESTATE->m_sPreferredGroup == "ALL MUSIC" )
+			GAMESTATE->m_sPreferredGroup = GAMESTATE->m_pCurSong->m_sGroupName;
+
+		Song* pSong;
+		Notes* pNotes;
+		PlayerOptions po;
+		SongOptions so;
+		SONGMAN->GetExtraStageInfo(
+			GAMESTATE->IsExtraStage2(),
+			GAMESTATE->m_sPreferredGroup,
+			GAMESTATE->GetCurrentStyleDef()->m_NotesType,
+			pSong,
+			pNotes,
+			po,
+			so );
+		GAMESTATE->m_pCurSong = pSong;
+		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			cCourse	= SONGMAN->m_aExtraCourses[i];	
-			if(	cCourse.m_sName	== GAMESTATE->m_sPreferredGroup	)
+			if( GAMESTATE->IsPlayerEnabled(p) )
 			{
-				if(	( GAMESTATE->IsExtraStage()	&& cCourse.m_iExtra	== 1 ) ||
-					( GAMESTATE->IsExtraStage2() &&	cCourse.m_iExtra ==	2 )	|| 1 ) // force	extra whatever
-				{
-					GAMESTATE->m_pCurSong =	SONGMAN->m_aExtraCourses[i].m_apSongs[0];
-					m_bUseRandomExtra = false;
-					break;
-				}
+				GAMESTATE->m_pCurNotes[p] = pNotes;
+				GAMESTATE->m_PlayerOptions[p] = po;
 			}
 		}
+		GAMESTATE->m_SongOptions = so;
 	}
 
-	// Select a song in case we can't find the last selected song below.
-	if( GAMESTATE->m_pCurSong == NULL && 	// if there is no currently selected song
-		SONGMAN->m_pSongs.GetSize() > 0 )		// and there is at least one song
+	// If there is no currently selected song, select one.
+	if( GAMESTATE->m_pCurSong == NULL )
 	{
-		CArray<Song*, Song*> arraySongs;
-		SONGMAN->GetSongsInGroup( GAMESTATE->m_sPreferredGroup, arraySongs );
-		// even tho separating these loops makes more code, in the end it'll be executed faster...
-	    //else 
-		if( arraySongs.GetSize() > 0 && GAMESTATE->m_pCurSong == NULL) // still nothing selected
-			GAMESTATE->m_pCurSong = arraySongs[0];	// select the first song
+		CStringArray asGroupNames;
+		SONGMAN->GetGroupNames( asGroupNames );
+		if( asGroupNames.GetSize() > 0 )
+		{
+			CArray<Song*, Song*> arraySongs;
+			SONGMAN->GetSongsInGroup( asGroupNames[0], arraySongs );
+			if( arraySongs.GetSize() > 0 ) // still nothing selected
+				GAMESTATE->m_pCurSong = arraySongs[0];	// select the first song
+		}
 	}
 
 
 	// Select the the previously selected song (if any)
-	if( GAMESTATE->m_pCurSong != NULL )
+	if( GAMESTATE->m_pCurSong )
 	{
 		for( int i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
 		{
@@ -854,17 +866,17 @@ void MusicWheel::Update( float fDeltaTime )
 			m_fTimeLeftInState = 0;
 			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			{
-				if ( m_bUseRandomExtra )
-				{
-					MUSIC->Stop();
-					m_soundExpand.Play();
-					m_WheelState = STATE_ROULETTE_SPINNING;
-					m_SortOrder = SORT_GROUP;
-					m_MusicSortDisplay.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-					m_MusicSortDisplay.SetEffectNone();
-					BuildWheelItemDatas( m_WheelItemDatas[SORT_GROUP], SORT_GROUP, true );
-				}
-				else
+//				if ( m_bUseRandomExtra )
+//				{
+//					MUSIC->Stop();
+//					m_soundExpand.Play();
+//					m_WheelState = STATE_ROULETTE_SPINNING;
+//					m_SortOrder = SORT_GROUP;
+//					m_MusicSortDisplay.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+//					m_MusicSortDisplay.SetEffectNone();
+//					BuildWheelItemDatas( m_WheelItemDatas[SORT_GROUP], SORT_GROUP, true );
+//				}
+//				else
 				{
 					m_WheelState = STATE_LOCKED;
 					m_soundStart.Play();

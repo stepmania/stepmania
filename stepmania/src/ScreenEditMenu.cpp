@@ -237,7 +237,7 @@ void ScreenEditMenu::OnNotesTypeChange()
 
 	m_pNotess.RemoveAll();
 	GetSelectedSong()->GetNotesThatMatch( GetSelectedNotesType(), m_pNotess );
-	SortNotesArrayByDifficultyClass( m_pNotess );
+	SortNotesArrayByDifficulty( m_pNotess );
 	m_pNotess.Add( NULL );		// marker for "(NEW)"
 	m_iSelectedNotes = 0;
 

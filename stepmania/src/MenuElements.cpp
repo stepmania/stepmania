@@ -250,5 +250,7 @@ void MenuElements::StopTimer()
 	m_MenuTimer.StopTimer();
 }
 
-
-
+void MenuElements::OverrideCreditsMessage( PlayerNumber p, CString sNewString )
+{
+	m_textCreditInfo[p].SetText( sNewString );
+}

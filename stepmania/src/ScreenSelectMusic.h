@@ -50,6 +50,8 @@ protected:
 	void AfterMusicChange();
 	void PlayMusicSample();
 
+	void UpdateOptionsDisplays();
+
 	CArray<Notes*, Notes*> m_arrayNotes;
 	int				m_iSelection[NUM_PLAYERS];
 
@@ -59,6 +61,7 @@ protected:
 	Sprite			m_sprDifficultyFrame;
 	DifficultyIcon	m_DifficultyIcon[NUM_PLAYERS];
 	GrooveRadar		m_GrooveRadar;
+	BitmapText		m_textSongOptions;
 	Sprite			m_sprMeterFrame;
 	FootMeter		m_FootMeter[NUM_PLAYERS];
 	MusicWheel		m_MusicWheel;
@@ -67,8 +70,9 @@ protected:
 	bool			m_bGoToOptions;
 	BitmapText		m_textHoldForOptions;
 
-	RandomSample m_soundSelect;
-	RandomSample m_soundChangeNotes;
+	RageSoundSample m_soundSelect;
+	RageSoundSample m_soundChangeNotes;
+	RageSoundSample m_soundLocked;
 };
 
 

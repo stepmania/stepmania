@@ -1286,7 +1286,7 @@ Grade Song::GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc )
 {
 	CArray<Notes*, Notes*> aNotes;
 	this->GetNotesThatMatch( nt, aNotes );
-	SortNotesArrayByDifficultyClass( aNotes );
+	SortNotesArrayByDifficulty( aNotes );
 
 	for( int i=0; i<aNotes.GetSize(); i++ )
 	{

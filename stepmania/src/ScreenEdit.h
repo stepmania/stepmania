@@ -61,6 +61,8 @@ protected:
 
 	NoteData			m_Clipboard;
 
+	float				m_fMusicRate;
+
 	RageSoundSample		m_soundChangeLine;
 	RageSoundSample		m_soundChangeSnap;
 	RageSoundSample		m_soundMarker;

@@ -167,9 +167,9 @@ protected:
 	float				m_fTimeLeftInState;
 	float				m_fPositionOffsetFromSelection;
 
-	bool				m_bUseRandomExtra;
+//	bool				m_bUseRandomExtra;
 
-	// having sounds here causes a crash in Bass.  What the heck!?!?!
+	// having sounds here causes a crash in BASS.  What the heck!?!?!
 	RageSoundSample m_soundChangeMusic;
 	RageSoundSample m_soundChangeSort;
 	RageSoundSample m_soundExpand;

@@ -32,6 +32,7 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 	m_fTrailingScore = 0;
 
 	SetScore( 0 );
+	Update(0);
 }
 
 

@@ -107,7 +107,7 @@ inline float froundf( const float f, const float fRoundInterval )
 
 bool IsAnInt( LPCTSTR s );
 float TimeToSeconds( CString sHMS );
-
+CString SecondsToTime( float fSecs );
 
 CString ssprintf( LPCTSTR fmt, ...);
 CString vssprintf( LPCTSTR fmt, va_list argList );

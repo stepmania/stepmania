@@ -103,6 +103,9 @@ private:
 	FocusingSprite		m_sprCleared;
 	MotionBlurSprite	m_sprFailed;
 
+	BitmapText			m_textSurviveTime;	// only shown in extra stage
+
+
 	Player				m_Player[NUM_PLAYERS];
 
 	DifficultyBanner	m_DifficultyBanner[NUM_PLAYERS];

@@ -27,11 +27,11 @@ const CString g_sStatisticsFileName = "statistics.ini";
 
 D3DXCOLOR GROUP_COLORS[] = { 
 //	D3DXCOLOR( 0.9f, 0.0f, 0.2f, 1 ),	// red
-	D3DXCOLOR( 0.7f, 0.0f, 0.5f, 1 ),	// pink
-	D3DXCOLOR( 0.4f, 0.2f, 0.6f, 1 ),	// purple
+	D3DXCOLOR( 0.8f, 0.1f, 0.6f, 1 ),	// pink
+	D3DXCOLOR( 0.5f, 0.3f, 0.7f, 1 ),	// purple
 	D3DXCOLOR( 0.0f, 0.4f, 0.8f, 1 ),	// sky blue
 	D3DXCOLOR( 0.0f, 0.6f, 0.6f, 1 ),	// sea green
-	D3DXCOLOR( 0.0f, 0.6f, 0.2f, 1 ),	// green
+	D3DXCOLOR( 0.1f, 0.7f, 0.3f, 1 ),	// green
 	D3DXCOLOR( 0.8f, 0.6f, 0.0f, 1 ),	// orange
 };
 const int NUM_GROUP_COLORS = sizeof(GROUP_COLORS) / sizeof(D3DXCOLOR);
@@ -445,4 +445,96 @@ void SongManager::InitCoursesFromDisk()
 void SongManager::ReloadCourses()
 {
 
+}
+
+
+void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, NotesType nt, 
+								   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
+{
+	{
+		CString sCoursePath = "Songs\\" + sPreferredGroup + "\\" + (bExtra2 ? "extra2" : "extra1") + ".crs";
+		if( !DoesFileExist(sCoursePath) )
+			goto load_from_course_failed;
+		Course course;
+		course.LoadFromCRSFile( sCoursePath, m_pSongs );
+		if( course.m_iStages <= 0 )
+			goto load_from_course_failed;
+		pSongOut = course.m_apSongs[0];
+		pNotesOut = course.GetNotesForStage( 0 );
+		if( pNotesOut == NULL )
+			goto load_from_course_failed;
+		po_out.FromString( course.m_asModifiers[0] );
+		so_out.FromString( course.m_asModifiers[0] );
+		return;
+	}
+load_from_course_failed:
+	
+	// Choose a hard song for the extra stage
+	Song*	pExtra1Song = NULL;		// the absolute hardest Song and Notes.  Use this for extra stage 1.
+	Notes*	pExtra1Notes = NULL;
+	Song*	pExtra2Song = NULL;		// a medium-hard Song and Notes.  Use this for extra stage 2.
+	Notes*	pExtra2Notes = NULL;
+	
+	CArray<Song*,Song*> apSongs;
+	SONGMAN->GetSongsInGroup( GAMESTATE->m_sPreferredGroup, apSongs );
+	for( int s=0; s<apSongs.GetSize(); s++ )	// foreach song
+	{
+		Song* pSong = apSongs[s];
+
+		CArray<Notes*,Notes*> apNotes;
+		pSong->GetNotesThatMatch( nt, apNotes );
+		for( int n=0; n<apNotes.GetSize(); n++ )	// foreach Notes
+		{
+			Notes* pNotes = apNotes[n];
+
+			if( pExtra1Notes == NULL  ||  CompareNotesPointersByDifficulty(pExtra1Notes,pNotes) == -1 )	// pNotes is harder than pHardestNotes
+			{
+				pExtra1Song = pSong;
+				pExtra1Notes = pNotes;
+			}
+
+			// for extra 2, we don't want to choose the hardest notes possible.  So, we'll disgard Notes with meter > 8
+			if(	bExtra2  &&  pNotes->m_iMeter > 8 )	
+				continue;	// skip
+			if( pExtra2Notes == NULL  ||  CompareNotesPointersByDifficulty(pExtra2Notes,pNotes) == -1 )	// pNotes is harder than pHardestNotes
+			{
+				pExtra2Song = pSong;
+				pExtra2Notes = pNotes;
+			}
+		}
+	}
+
+	if( pExtra2Song == NULL  &&  pExtra1Song != NULL )
+	{
+		pExtra2Song = pExtra1Song;
+		pExtra2Notes = pExtra1Notes;
+	}
+
+	// If there are any notes at all that match this NotesType, everything should be filled out.
+	// Also, it's guaranteed that there is at least one Notes that matches the NotesType because the player
+	// had to play something before reaching the extra stage!
+	ASSERT( pExtra2Song && pExtra1Song && pExtra2Notes && pExtra1Notes );
+
+	pSongOut = (bExtra2 ? pExtra2Song : pExtra1Song);
+	pNotesOut = (bExtra2 ? pExtra2Notes : pExtra1Notes);
+
+
+	po_out.Init();
+	so_out.Init();
+	po_out.m_bReverseScroll = true;
+	po_out.m_fArrowScrollSpeed = 1.5f;
+	so_out.m_DrainType = (bExtra2 ? SongOptions::DRAIN_SUDDEN_DEATH : SongOptions::DRAIN_NO_RECOVER);
+
+	// should we do something fancy here, like turn on different effects?
+	int iSongHash = GetHashForString( pSongOut->m_sSongDir );
+	switch( iSongHash % 6 )
+	{
+	case 0:	po_out.m_EffectType = PlayerOptions::EFFECT_DIZZY;	break;
+	case 1:	po_out.m_bDark = true;								break;
+	case 2:	po_out.m_EffectType = PlayerOptions::EFFECT_DRUNK;	break;
+	case 3:	po_out.m_EffectType = PlayerOptions::EFFECT_MINI;	break;
+	case 4:	po_out.m_EffectType = PlayerOptions::EFFECT_SPACE;	break;
+	case 5:	po_out.m_EffectType = PlayerOptions::EFFECT_WAVE;	break;
+	default:	ASSERT(0);
+	}
 }

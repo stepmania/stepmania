@@ -26,7 +26,8 @@ struct PlayerOptions
 	bool m_bHoldNotes;
 	bool m_bDark;
 
-	PlayerOptions() 
+	PlayerOptions() { Init(); };
+	void Init()
 	{
 		m_fArrowScrollSpeed = 1.0f;
 		m_EffectType = EFFECT_NONE;

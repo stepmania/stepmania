@@ -70,6 +70,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 		{
 			CString sSongDir = "Songs\\" + sParams[1] + "\\";
 			CString sNotesDescription = sParams[2];
+			CString sModifiers = sParams[3];
 
 			int i;
 
@@ -83,7 +84,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 			if( pSong == NULL )	// we didn't find the Song
 				continue;	// skip this song
 			
-			AddStage( pSong, sNotesDescription );
+			AddStage( pSong, sNotesDescription, sModifiers );
 		}
 
 		else
@@ -110,7 +111,7 @@ void Course::CreateEndlessCourseFromGroupAndDifficultyClass( CString sGroupName,
 	for( int s=0; s<apSongsInGroup.GetSize(); s++ )
 	{
 		Song* pSong = apSongsInGroup[s];
-		AddStage( pSong, DifficultyClassToString(dc) );
+		AddStage( pSong, DifficultyClassToString(dc), "" );
 	}
 }
 
@@ -144,19 +145,20 @@ Notes* Course::GetNotesForStage( int iStage )
 }
 
 
-void Course::GetSongAndNotesForCurrentStyle( CArray<Song*,Song*>& apSongsOut, CArray<Notes*,Notes*> apNotesOut[NUM_PLAYERS] )
+void Course::GetSongAndNotesForCurrentStyle( CArray<Song*,Song*>& apSongsOut, CArray<Notes*,Notes*>& apNotesOut, CStringArray& asModifiersOut )
 {
 	for( int i=0; i<m_iStages; i++ )
 	{
 		Song* pSong = m_apSongs[i];
 		Notes* pNotes = GetNotesForStage( i );
+		CString sModifiers = m_asModifiers[i];
 
 		if( pNotes == NULL )
 			continue;	// skip
 
 		apSongsOut.Add( pSong );
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			apNotesOut[p].Add( pNotes );
+		apNotesOut.Add( pNotes );
+		asModifiersOut.Add( sModifiers );
 	}
 }
 

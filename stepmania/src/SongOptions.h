@@ -25,7 +25,9 @@ struct SongOptions
 	AssistType m_AssistType;
 	float m_fMusicRate;
 
-	SongOptions() {
+	SongOptions() { Init(); };
+	void Init() 
+	{
 		m_LifeType = LIFE_BAR;
 		m_DrainType = DRAIN_NORMAL;
 		m_iBatteryLives = 4;
@@ -33,6 +35,6 @@ struct SongOptions
 		m_AssistType = ASSIST_NONE;
 		m_fMusicRate = 1.0f;
 	};
-	CString GetString() { return ""; };
-	void FromString( CString sOptions ) {};
+	CString GetString();
+	void FromString( CString sOptions );
 };

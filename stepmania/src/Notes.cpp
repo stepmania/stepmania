@@ -791,24 +791,29 @@ int CompareNotesPointersByMeter(const void *arg1, const void *arg2)
 		return 1;
 }
 
-int CompareNotesPointersByDifficultyClass(const void *arg1, const void *arg2)
+int CompareNotesPointersByDifficulty(Notes* pNotes1, Notes* pNotes2)
 {
-	Notes* pNotes1 = *(Notes**)arg1;
-	Notes* pNotes2 = *(Notes**)arg2;
-
 	DifficultyClass class1 = pNotes1->m_DifficultyClass;
 	DifficultyClass class2 = pNotes2->m_DifficultyClass;
 
 	if( class1 < class2 )
 		return -1;
 	else if( class1 == class2 )
-		return CompareNotesPointersByMeter( arg1, arg2 );
+		return CompareNotesPointersByMeter( &pNotes1, &pNotes2 );
 	else
 		return 1;
 }
 
-void SortNotesArrayByDifficultyClass( CArray<Notes*,Notes*> &arraySteps )
+int CompareNotesPointersByDifficulty2(const void *arg1, const void *arg2)
 {
-	qsort( arraySteps.GetData(), arraySteps.GetSize(), sizeof(Notes*), CompareNotesPointersByDifficultyClass );
+	Notes* pNotes1 = *(Notes**)arg1;
+	Notes* pNotes2 = *(Notes**)arg2;
+
+	return CompareNotesPointersByDifficulty( pNotes1, pNotes2 );
+}
+
+void SortNotesArrayByDifficulty( CArray<Notes*,Notes*> &arraySteps )
+{
+	qsort( arraySteps.GetData(), arraySteps.GetSize(), sizeof(Notes*), CompareNotesPointersByDifficulty2 );
 }
 

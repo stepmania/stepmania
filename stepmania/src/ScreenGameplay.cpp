@@ -61,6 +61,9 @@ const float DIFFICULTY_Y[NUM_PLAYERS]	= { SCREEN_BOTTOM-70, SCREEN_BOTTOM-70 };
 const float DEBUG_X	= CENTER_X;
 const float DEBUG_Y	= CENTER_Y-70;
 
+const float SURVIVE_TIME_X	= CENTER_X;
+const float SURVIVE_TIME_Y	= CENTER_Y+100;
+
 const float TIME_BETWEEN_DANCING_COMMENTS	=	13;
 
 
@@ -111,12 +114,13 @@ ScreenGameplay::ScreenGameplay()
 
 				Course* pCourse = GAMESTATE->m_pCurCourse;
 				CArray<Song*,Song*> apSongs;
-				CArray<Notes*,Notes*> apNotes[NUM_PLAYERS];
-				pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes );
+				CArray<Notes*,Notes*> apNotes;
+				CStringArray asModifiers;
+				pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers );
 
-				for( int i=0; i<apNotes[p].GetSize(); i++ )
+				for( int i=0; i<apNotes.GetSize(); i++ )
 				{
-					apNotes[p][i]->GetNoteData( &notedata );
+					apNotes[i]->GetNoteData( &notedata );
 					int iPossibleDancePoints = notedata.GetPossibleDancePoints();
 					GAMESTATE->m_iPossibleDancePoints[p] += iPossibleDancePoints;
 				}
@@ -228,7 +232,8 @@ ScreenGameplay::ScreenGameplay()
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		for( int p=0; p<NUM_PLAYERS; p++ )
-			m_frameTop.AddSubActor( &m_textCourseSongNumber[p] );
+			if( GAMESTATE->IsPlayerEnabled(p) )
+				m_frameTop.AddSubActor( &m_textCourseSongNumber[p] );
 		break;
 	default:
 		ASSERT(0);	// invalid GameMode
@@ -313,7 +318,7 @@ ScreenGameplay::ScreenGameplay()
 
 		float fDifficultyY = DIFFICULTY_Y[p];
 		if( GAMESTATE->m_PlayerOptions[p].m_bReverseScroll )
-			fDifficultyY = SCREEN_HEIGHT - DIFFICULTY_Y[p];
+			fDifficultyY = SCREEN_HEIGHT - DIFFICULTY_Y[p] -10;	// HACK: move difficulty banner up 10 if reverse
 		m_DifficultyBanner[p].SetXY( DIFFICULTY_X[p], fDifficultyY );
 		this->AddSubActor( &m_DifficultyBanner[p] );
 
@@ -361,6 +366,14 @@ ScreenGameplay::ScreenGameplay()
 	m_Fade.SetClosed();
 	m_Fade.SetOpened();
 	this->AddSubActor( &m_Fade );
+
+
+	m_textSurviveTime.Load( THEME->GetPathTo(FONT_HEADER1) );
+	m_textSurviveTime.TurnShadowOff();
+	m_textSurviveTime.SetXY( SURVIVE_TIME_X, SURVIVE_TIME_Y );
+	m_textSurviveTime.SetText( "" );
+	m_textSurviveTime.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	this->AddSubActor( &m_textSurviveTime );
 
 
 
@@ -429,8 +442,9 @@ bool ScreenGameplay::IsLastSong()
 				return false;
 
 			CArray<Song*,Song*> apSongs;
-			CArray<Notes*,Notes*> apNotes[NUM_PLAYERS];
-			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes );
+			CArray<Notes*,Notes*> apNotes;
+			CStringArray asModifiers;
+			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers );
 
 			return GAMESTATE->m_iSongsIntoCourse >= apSongs.GetSize();	// there are no more songs left
 		}
@@ -457,8 +471,9 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			CArray<Song*,Song*> apSongs;
-			CArray<Notes*,Notes*> apNotes[NUM_PLAYERS];
-			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes );
+			CArray<Notes*,Notes*> apNotes;
+			CStringArray asModifiers;
+			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers );
 
 			int iPlaySongIndex = -1;
 			if( pCourse->m_bRandomize )
@@ -468,7 +483,11 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 
 			GAMESTATE->m_pCurSong = apSongs[iPlaySongIndex];
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				GAMESTATE->m_pCurNotes[p] = apNotes[p][iPlaySongIndex];
+			{
+				GAMESTATE->m_pCurNotes[p] = apNotes[iPlaySongIndex];
+				if( asModifiers[iPlaySongIndex] != "" )		// some modifiers specified
+					GAMESTATE->m_PlayerOptions[p].FromString( asModifiers[iPlaySongIndex] );	// put them into effect
+			}
 		}
 		break;
 	default:
@@ -777,14 +796,18 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 	if( MenuI.IsValid()  &&  
 		MenuI.button == MENU_BUTTON_BACK  &&  
-		type == IET_SLOW_REPEAT  &&  
 		m_DancingState != STATE_OUTRO  &&
 		!m_Fade.IsClosing() )
 	{
-		SOUND->PlayOnceStreamed( THEME->GetPathTo(SOUND_MENU_BACK) );
-		m_soundMusic.Stop();
-		this->ClearMessageQueue();
-		m_Fade.CloseWipingLeft( SM_SaveChangedBeforeGoingBack );
+		if( (DeviceI.device==DEVICE_KEYBOARD && type==IET_SLOW_REPEAT)  ||
+			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT) )
+		{
+			m_DancingState = STATE_OUTRO;
+			SOUND->PlayOnceStreamed( THEME->GetPathTo(SOUND_MENU_BACK) );
+			m_soundMusic.Stop();
+			this->ClearMessageQueue();
+			m_Fade.CloseWipingLeft( SM_SaveChangedBeforeGoingBack );
+		}
 	}
 
 	//
@@ -1079,8 +1102,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		{
 			m_bChangedOffsetOrBPM = false;
 			ShowSavePrompt( SM_GoToScreenAfterBack );
-			break;
 		}
+		else
+			this->SendScreenMessage( SM_GoToScreenAfterBack, 0 );
+
 		break;
 	case SM_GoToScreenAfterBack:
 		switch( GAMESTATE->m_PlayMode )
@@ -1110,6 +1135,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_DancingState = STATE_OUTRO;
 		m_soundMusic.Pause();
 		m_StarWipe.CloseWipingRight( SM_None );
+
 		this->SendScreenMessage( SM_ShowFailed, 0.2f );
 		break;
 	case SM_ShowFailed:
@@ -1130,6 +1156,20 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_sprFailed.SetTweenZoom( 1.0f );			// come to rest
 		m_sprFailed.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0.7f) );	// and fade in
 
+		// show the survive time if extra stage
+		if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
+		{
+			float fMaxSurviveSeconds = -1;
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsPlayerEnabled(p) )
+					fMaxSurviveSeconds = max( fMaxSurviveSeconds, GAMESTATE->GetPlayerSurviveTime((PlayerNumber)p) );
+			ASSERT( fMaxSurviveSeconds != -1 );
+			m_textSurviveTime.SetText( "TIME  " + SecondsToTime(fMaxSurviveSeconds) );
+			m_textSurviveTime.BeginTweening( 0.3f );	// sleep
+			m_textSurviveTime.BeginTweeningQueued( 0.3f );	// fade in
+			m_textSurviveTime.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		}
+
 		SCREENMAN->SendMessageToTopScreen( SM_PlayFailComment, 1.5f );
 		SCREENMAN->SendMessageToTopScreen( SM_HideFailed, 3.0f );
 		break;
@@ -1140,6 +1180,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_sprFailed.StopTweening();
 		m_sprFailed.BeginTweening(1.0f);
 		m_sprFailed.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+
+		m_textSurviveTime.BeginTweening( 0.5f );	// sleep
+		m_textSurviveTime.BeginTweeningQueued( 0.5f );	// fade out
+		m_textSurviveTime.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 
 		SCREENMAN->SendMessageToTopScreen( SM_GoToScreenAfterFail, 1.5f );
 		break;
@@ -1152,6 +1196,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		}
 		if( PREFSMAN->m_bEventMode )
 			this->SendScreenMessage( SM_GoToScreenAfterBack, 0 );
+		else if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
+			SCREENMAN->SetNewScreen( new ScreenEvaluation(true) );
 		else
 			SCREENMAN->SetNewScreen( new ScreenGameOver );
 		break;

@@ -291,7 +291,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 //Less - D
 //Fail - E
 			float fPercentDancePoints = iActualDancePoints[p] / (float)iPossibleDancePoints[p];
-			fPercentDancePoints = min( fPercentDancePoints, 0 );
+			fPercentDancePoints = max( fPercentDancePoints, 0 );
 
 			if     ( fPercentDancePoints >= 1.00 )	grade[p] = GRADE_AAA;
 			else if( fPercentDancePoints >= 0.93 )	grade[p] = GRADE_AA;
@@ -767,8 +767,10 @@ void ScreenEvaluation::MenuStart( const PlayerNumber p )
 	{
 		if( m_bTryExtraStage )
 			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
-		else if( m_ResultMode == RM_ARCADE_STAGE  &&  GAMESTATE->m_iCurrentStageIndex >= PREFSMAN->m_iNumArcadeStages-1  )
+		else if( m_ResultMode == RM_ARCADE_STAGE  &&  GAMESTATE->m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages-1  )
 			m_Menu.TweenOffScreenToMenu( SM_GoToFinalEvaluation );
+		else if( m_ResultMode == RM_ARCADE_STAGE  &&  GAMESTATE->m_iCurrentStageIndex != PREFSMAN->m_iNumArcadeStages-1  )
+			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
 		else
 			m_Menu.TweenOffScreenToBlack( SM_GoToMusicScroll, false );
 	}

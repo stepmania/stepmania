@@ -55,6 +55,8 @@ public:
 	void InitCoursesFromDisk();
 	void ReloadCourses();
 
+	void GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, NotesType nt, 
+		Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );
 
 protected:
 	void LoadStepManiaSongDir( CString sDir, void(*callback)() );

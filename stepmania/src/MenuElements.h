@@ -39,6 +39,8 @@ public:
 	void SetTimer( int iTimerSeconds );
 	void StopTimer();
 
+	void OverrideCreditsMessage( PlayerNumber p, CString sNewString );
+
 	void DrawTopLayer();
 	void DrawBottomLayer();
 

@@ -47,12 +47,13 @@ void ScoreDisplayOni::Update( float fDeltaTime )
 
 void ScoreDisplayOni::Draw()
 {
-	float fSecsIntoPlay = GAMESTATE->GetPlayerSurviveTime(m_PlayerNumber);
+	float fSecsIntoPlay;
+	if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
+		fSecsIntoPlay = GAMESTATE->GetPlayerSurviveTime(m_PlayerNumber);
+	else
+		fSecsIntoPlay = 0;
 
-	int iMinsDisplay = (int)fSecsIntoPlay/60;
-	int iSecsDisplay = (int)fSecsIntoPlay - iMinsDisplay*60;
-	int iLeftoverDisplay = int( (fSecsIntoPlay - iMinsDisplay*60 - iSecsDisplay) * 100 );
-	SetText( ssprintf( "%02d:%02d:%02d", iMinsDisplay, iSecsDisplay, iLeftoverDisplay ) );
+	SetText( SecondsToTime(fSecsIntoPlay) );
 
 	BitmapText::Draw();
 }

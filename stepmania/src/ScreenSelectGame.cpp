@@ -58,6 +58,12 @@ ScreenSelectGame::ScreenSelectGame() :
 	g_SelectGameLines[0].iNumOptions = arrayGameNames.GetSize();
 
 
+	// HACK:  Chris: Temporarily disable EZ2Dancer.  The EZ2 menus aren't working correctly, 
+	// and I have to leave for California in 4 hours - not enough time to fix this and do a 
+	// release.
+	g_SelectGameLines[0].iNumOptions = 2;
+
+
 	Init( 
 		INPUTMODE_P1_ONLY, 
 		g_SelectGameLines, 

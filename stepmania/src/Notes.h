@@ -84,4 +84,5 @@ protected:
 };
 
 
-void SortNotesArrayByDifficultyClass( CArray<Notes*,Notes*> &arrayNotess );
+int CompareNotesPointersByDifficulty(Notes* pNotes1, Notes* pNotes2);
+void SortNotesArrayByDifficulty( CArray<Notes*,Notes*> &arrayNotess );
