@@ -244,7 +244,7 @@ try {
 
 			/* We created at least one hardware buffer. */
 			LOG->Trace("Could only create %i buffers; need at least 8 (failed with %s).  Hardware ALSA driver can't be used.", i, e.what());
-			RageException::ThrowNonfatal("Driver unusable (not enough mixing streams)");
+			RageException::ThrowNonfatal("Not enough substreams for hardware mixing, using software mixing");
 		}
 
 		stream *s = new stream;
