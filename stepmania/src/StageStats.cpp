@@ -56,9 +56,7 @@ Grade StageStats::GetGrade( PlayerNumber pn )
 {
 	ASSERT( GAMESTATE->IsPlayerEnabled(pn) );	// should be calling this is player isn't joined!
 
-	// HACK: if dance points is less than 0, chances are they failed.
-	// I'm not sure if arcade does the same.
-	if( bFailed[pn] || iPossibleDancePoints[pn] <= 0 )
+	if( bFailed[pn] )
 		return GRADE_E;
 
 	/* Based on the percentage of your total "Dance Points" to the maximum
@@ -93,5 +91,6 @@ Grade StageStats::GetGrade( PlayerNumber pn )
 	else if( fPercentDancePoints >= 0.80 )		return GRADE_A;
 	else if( fPercentDancePoints >= 0.65 )		return GRADE_B;
 	else if( fPercentDancePoints >= 0.45 )		return GRADE_C;
-	else										return GRADE_D;
+	else if( fPercentDancePoints >= 0    )		return GRADE_D;
+	else										return GRADE_E;
 }
