@@ -19,6 +19,7 @@
 #include "RageDisplay.h"
 #include "RageTypes.h"
 #include "arch/ArchHooks/ArchHooks.h"
+#include "PrefsManager.h"
 
 #include "SDL.h"
 #include "SDL_endian.h"
@@ -177,6 +178,9 @@ apply_color_key:
 	/* image size cannot exceed max size */
 	m_iImageWidth = min( m_iSourceWidth, actualID.iMaxSize );
 	m_iImageHeight = min( m_iSourceHeight, actualID.iMaxSize );
+
+	if( PREFSMAN->m_bHalveTextureHeight )
+		m_iImageHeight /= 2;
 
 	/* Texture dimensions need to be a power of two; jump to the next. */
 	m_iTextureWidth = power_of_two(m_iImageWidth);

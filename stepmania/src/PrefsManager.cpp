@@ -218,6 +218,7 @@ PrefsManager::PrefsManager()
 	m_bHideDefaultNoteSkin = false;
 	m_iMaxHighScoresPerList = 10;
 	m_fPadStickSeconds = 0;
+	m_bHalveTextureHeight = false;
 	g_bAutoRestart = false;
 	m_bSignProfileData = false;
 
@@ -506,6 +507,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
 	ini.GetValue( "Options", "MaxHighScoresPerList",			m_iMaxHighScoresPerList );
 	ini.GetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
+	ini.GetValue( "Options", "HalveTextureHeight",				m_bHalveTextureHeight );
 	ini.GetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.GetValue( "Options", "SignProfileData",					m_bSignProfileData );
 
@@ -725,6 +727,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
 	ini.SetValue( "Options", "MaxHighScoresPerList",			m_iMaxHighScoresPerList );
 	ini.SetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
+	ini.SetValue( "Options", "HalveTextureHeight",				m_bHalveTextureHeight );
 	ini.SetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.SetValue( "Options", "SignProfileData",					m_bSignProfileData );
 
