@@ -892,12 +892,29 @@ static void ProcessArgsFirst()
 	CString Argument;
 	if( GetCommandlineArgument( "test", &Argument ) )
 		LOG->Info ("Test: \"%s\"", Argument.c_str() );
+
+		//--LogSongs
+	if( GetCommandlineArgument( "sendsongs" ) )
+		NSMAN->SendSongs();
 }
 
 static void ProcessArgsSecond()
 {
+	CString Argument;
 	if( GetCommandlineArgument( "test2" ) )
-		LOG->Info ("Test2" );
+		LOG->Info ("Test2");
+
+
+		//--Course=[coursename]
+	
+		//Will start the given course when StepMania 
+		//starts, disallows player options.
+
+		//"ArgStartCourse", is in the NSManager
+		//bacause Networked StepMania will
+		//use it a lot.
+	if( GetCommandlineArgument( "course", & Argument ) )
+		ArgStartCourse(Argument);
 }
 
 int main(int argc, char* argv[])

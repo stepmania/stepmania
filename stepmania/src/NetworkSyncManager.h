@@ -14,7 +14,10 @@
 */
 
 #include "PlayerNumber.h"
- 
+
+void NSSendSongs();
+void ArgStartCourse(CString CourseName);
+
 class EzSockets;
 
 class NetworkSyncManager 
@@ -28,6 +31,7 @@ public:
 	void ReportSongOver();	//Report to server that song is over
 	void StartRequest();	//Request a start.  Block until granted.
 	bool Connect(const CString& addy, unsigned short port); // Connect to SM Server
+	void SendSongs();  //Send song list to server (And exit) 
 
 	int m_playerLife[NUM_PLAYERS];	//Life
 
