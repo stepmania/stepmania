@@ -231,8 +231,8 @@ found_effect:
 	case EFFECT_TILE_PULSE:
 		{
 			m_Sprites[0].Load( sPath );
-			int iNumTilesWide = SCREEN_WIDTH /(int)m_Sprites[0].GetUnzoomedWidth()  + 2;
-			int iNumTilesHigh = SCREEN_HEIGHT/(int)m_Sprites[0].GetUnzoomedHeight() + 2;
+			int iNumTilesWide = int(ceil(SCREEN_WIDTH /m_Sprites[0].GetUnzoomedWidth()));
+			int iNumTilesHigh = int(ceil(SCREEN_HEIGHT/m_Sprites[0].GetUnzoomedHeight()));
 
 			iNumTilesWide = min( iNumTilesWide, MAX_TILES_WIDE );
 			iNumTilesHigh = min( iNumTilesHigh, MAX_TILES_HIGH );
