@@ -1422,12 +1422,14 @@ public:
 		CreateTableFromArray<Steps*>( v, L );
 		return 1;
 	}
+	static int GetSongDir( T* p, lua_State *L )	{ lua_pushstring(L, p->GetSongDir() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetFullDisplayTitle )
 		ADD_METHOD( GetFullTranslitTitle )
 		ADD_METHOD( GetAllSteps )
+		ADD_METHOD( GetSongDir )
 		Luna<T>::Register( L );
 	}
 };
