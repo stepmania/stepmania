@@ -153,6 +153,7 @@ void PlayerOptions::FromString( CString sOptions )
 		
 		if(	     sBit == "0.25x" )		{ /*m_bUseScrollBPM=false;*/	m_fScrollSpeed = 0.25f;	}
 		else if( sBit == "0.5x" )		{ /*m_bUseScrollBPM=false;*/	m_fScrollSpeed = 0.50f;	}
+		else if( sBit == "0.75x" )		{ /*m_bUseScrollBPM=false;*/	m_fScrollSpeed = 0.75f;	}
 		else if( sBit == "1.5x" )		{ /*m_bUseScrollBPM=false;*/	m_fScrollSpeed = 1.00f;	}
 		else if( sBit == "2.0x" )		{ /*m_bUseScrollBPM=false;*/	m_fScrollSpeed = 2.00f;	}
 		else if( sBit == "3.0x" )		{ /*m_bUseScrollBPM=false;*/	m_fScrollSpeed = 3.00f;	}
@@ -201,7 +202,8 @@ void PlayerOptions::FromString( CString sOptions )
 void NextFloat( float fValues[], int size )
 {
 	int index = -1;
-	for( int i=0; i<size; i++ )
+	int i;
+	for( i=0; i<size; i++ )
 	{
 		if( fValues[i] == 1 )
 		{
@@ -210,13 +212,14 @@ void NextFloat( float fValues[], int size )
 		}
 	}
 
-	memset( fValues, 0, size );
+	for( i=0; i<size; i++ )
+		fValues[i] = 0;
 
-	index++;
-	if( index == size )	// if true, then the last float in the list was selected
+	index;
+	if( index == size-1 )	// if true, then the last float in the list was selected
 		;	// leave all off
 	else
-		fValues[index] = 1;
+		fValues[index+1] = 1;
 }
 
 void PlayerOptions::NextAccel()

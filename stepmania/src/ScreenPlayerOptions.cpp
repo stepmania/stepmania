@@ -46,7 +46,7 @@ OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	OptionRow( "Scroll",			"STANDARD","REVERSE" ),	
 	OptionRow( "Note\nSkin",		"" ),	
 	OptionRow( "Holds",				"OFF","ON" ),	
-	OptionRow( "Other",				"DARK","TIME SPACING" ),	
+	OptionRow( "Other",				"OFF","DARK","TIME SPACING" ),	
 	OptionRow( "Perspec\n-tive",	"INCOMING","OVERHEAD","SPACE" ),	
 };
 

@@ -138,11 +138,14 @@ const float fCenterLine = 160;	// from fYPos == 0
 const float fFadeDist = 100;
 
 // used by ArrowGetAlpha and ArrowGetGlow below
-float ArrowGetPercentVisible( PlayerNumber pn, float fYPosWithoutReverse )
+float ArrowGetPercentVisible( PlayerNumber pn, float fYPos )
 {
-	const float fDistFromCenterLine = fYPosWithoutReverse - fCenterLine;
+	if( GAMESTATE->m_CurrentPlayerOptions[pn].m_fReverseScroll > 0.5f )
+		fYPos *= -1;
 
-	if( fYPosWithoutReverse < 0 )	// past Gray Arrows
+	const float fDistFromCenterLine = fYPos - fCenterLine;
+
+	if( fYPos < 0 )	// past Gray Arrows
 		return 1;	// totally visible
 
 
