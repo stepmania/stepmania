@@ -161,7 +161,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	{
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NoSongsScreen") );
 	}
-	else if( SM_ChangeSong )
+	else if( SM == SM_ChangeSong )
 	{
 		//First check to see if this song is already selected.
 		//This is so that if you multiple copies of the "same" song
