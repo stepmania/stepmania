@@ -135,6 +135,7 @@ void FontManager::InitCharAliases()
 	CharAliases["whiteheart"]	= 0x2661; /* ♡ */
 	CharAliases["blackstar"]	= 0x2605; /* ★ */
 	CharAliases["whitestar"]	= 0x2606; /* ☆ */
+	CharAliases["flipped-a"]	= 0x2200; /* ∀ */
 
 	/* These are internal-use glyphs; they don't have real Unicode codepoints. */
 	CharAliases["up"]			= 0xE000;
