@@ -1077,7 +1077,7 @@ void Profile::SaveScreenshotDataToDir( CString sDir ) const
 	XNode xml;
 	xml.name = "ScreenshotData";
 
-	for( int i=0; i<m_vScreenshots.size(); i++ )
+	for( unsigned i=0; i<m_vScreenshots.size(); i++ )
 	{
 		const Screenshot &ss = m_vScreenshots[i];
 
