@@ -55,7 +55,7 @@ public:
 	PlayerNumber	m_MasterPlayerNumber;	// used in Styles where one player controls both sides
 	bool			m_bIsOnSystemMenu; // system screens will not be effected by the operator key -- Miryokuteki
 	bool			m_bDifficultCourses; // used in nonstop
-	time_t			m_timeGameStated;	// from the moment the first player pressed Start
+	time_t			m_timeGameStarted;	// from the moment the first player pressed Start
 
 	/* This is set to a random number per-game/round; it can be used for a random seed. */
 	int				m_iGameSeed, m_iRoundSeed;
@@ -164,6 +164,8 @@ public:
 	// Nonstop/Oni/Endless:	 for current course (which usually contains multiple songs)
 	//
 	StageStats	m_CurStageStats;				// current stage (not necessarily passed if Extra Stage)
+	vector<StageStats>	m_vPlayedStageStats;
+
 	enum HealthState { HOT, ALIVE, DANGER, DEAD };
 	HealthState	m_HealthState[NUM_PLAYERS];
 	bool AllAreInDangerOrWorse() const;
@@ -202,13 +204,7 @@ public:
 	StageResult GetStageResult( PlayerNumber pn );
 
 	void ResetStageStatistics();	// Call this when it's time to play a new stage.
-	
-
-	vector<StageStats>	m_vPlayedStageStats;	// Only useful in Arcade for final evaluation
-												// A song is only inserted here if at least one player passed.
-												// StageStats are added by the Evaluation screen
-
-	void	GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut );	// shown on arcade final evaluation
+	void GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut );	// shown on arcade final evaluation
 
 
 	//
