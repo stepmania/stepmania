@@ -208,9 +208,20 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			{
 				m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p], JUDGE_EZ2_COOL_Y + 120);
 			}
-			else if ((l == 1 || l == 3 || l == 5) && GAMEMAN->m_CurGame == GAME_EZ2)
+			else if ((l == 1 || l == 3 ) && GAMEMAN->m_CurGame == GAME_EZ2)
 			{
 				m_textJudgeNumbers[l][p].SetZoomX(0); // Hide These Ones
+			}
+			else if (l == 5) // sneakily use this one for the max combo.
+			{
+				if (p == PLAYER_1)
+				{
+					m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p]-40, JUDGE_EZ2_COOL_Y + 180);
+				}
+				else
+				{
+					m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p]+40, JUDGE_EZ2_COOL_Y + 180);
+				}
 			}
 
 			this->AddActor( &m_textJudgeNumbers[l][p] );
@@ -312,6 +323,13 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		m_textJudgeNumbers[3][p].SetText( ssprintf("%4d", GS[p].boo) );
 		m_textJudgeNumbers[4][p].SetText( ssprintf("%4d", GS[p].miss) );
 		m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", GS[p].ok) );
+
+		// SNEAKY! We take the max combo, and put it into element 5, because Ez2dancer 
+		// doesn't care for OK's and plus this text element is already nicely aligned =)
+		if (GAMEMAN->m_CurGame == GAME_EZ2)
+		{
+			m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", GS[p].max_combo) );
+		}
 
 		m_ScoreDisplay[p].SetScore( (float)GS[p].max_combo * 1000 );
 		m_ScoreDisplay[p].SetScore( (float)GS[p].score );
