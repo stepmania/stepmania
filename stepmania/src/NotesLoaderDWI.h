@@ -9,7 +9,12 @@
 #include "Song.h"
 #include "Notes.h"
 
-class DWILoader {
+/* Return NA if no files in the directory can be loaded by
+ * this loader, OK on success, ERROR if an applicable file was found
+ * but there was a fatal error loading.  (ERROR not used yet--we
+ * always throw.)
+ */
+class DWILoader: public NotesLoader {
 	void DWIcharToNote( char c, GameController i, DanceNote &note1Out, DanceNote &note2Out );
 
 	bool LoadFromDWITokens( 
@@ -17,8 +22,12 @@ class DWILoader {
 		CString sStepData2,
 		Notes &out, Notes &out2);
 
-public:
 	bool LoadFromDWIFile( CString sPath, Song &out );
+
+public:
+	void GetApplicableFiles( CString sPath, CStringArray &out );
+	bool Loadable( CString sPath );
+	bool LoadFromDir( CString sPath, Song &out );
 };
 
 #endif

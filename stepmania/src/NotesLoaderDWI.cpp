@@ -382,3 +382,24 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 
 	return true;
 }
+
+void DWILoader::GetApplicableFiles( CString sPath, CStringArray &out )
+{
+	GetDirListing( sPath + CString("*.dwi"), out );
+}
+
+bool DWILoader::LoadFromDir( CString sPath, Song &out )
+{
+	CStringArray aFileNames;
+	GetApplicableFiles( sPath, aFileNames );
+
+	if( aFileNames.GetSize() > 1 )
+		throw RageException( "There is more than one DWI file in '%s'.  There should be only one!", sPath );
+
+	/* We should have exactly one; if we had none, we shouldn't have been
+	 * called to begin with. */
+	ASSERT( aFileNames.GetSize() == 1 );
+
+	return LoadFromDWIFile( sPath + aFileNames[0], out );
+}
+

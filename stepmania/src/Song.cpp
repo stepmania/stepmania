@@ -292,59 +292,51 @@ const CString &Song::GetSongFilePath() const
 	return m_sSongFileName;
 }
 
+NotesLoader *Song::MakeLoader( CString sDir ) const
+{
+	NotesLoader *ret;
+
+	/* Actually, none of these have any persistant data, so we 
+	 * could optimize this, but since they don't have any data,
+	 * there's no real point ... */
+	ret = new SMLoader;
+	if(ret->Loadable( sDir )) return ret;
+	delete ret;
+
+	ret = new DWILoader;
+	if(ret->Loadable( sDir )) return ret;
+	delete ret;
+
+	ret = new BMSLoader;
+	if(ret->Loadable( sDir )) return ret;
+	delete ret;
+
+	ret = new KSFLoader;
+	if(ret->Loadable( sDir )) return ret;
+	delete ret;
+
+	return NULL;
+}
+
 bool Song::LoadWithoutCache( CString sDir )
 {
 	//
 	// There was no entry in the cache for this song.
 	// Let's load it from a file, then write a cache entry.
 	//
-	CStringArray arrayBMSFileNames;
-	GetDirListing( sDir + CString("*.bms"), arrayBMSFileNames );
-	int iNumBMSFiles = arrayBMSFileNames.GetSize();
-
-	CStringArray arrayKSFFileNames;
-	GetDirListing( sDir + CString("*.ksf"), arrayKSFFileNames );
-	int iNumKSFFiles = arrayKSFFileNames.GetSize();
-
-	CStringArray arrayDWIFileNames;
-	GetDirListing( sDir + CString("*.dwi"), arrayDWIFileNames );
-	int iNumDWIFiles = arrayDWIFileNames.GetSize();
-
-	CStringArray arraySMFileNames;
-	GetDirListing( sDir + CString("*.sm"), arraySMFileNames );
-	int iNumSMFiles = arraySMFileNames.GetSize();
-
-
-	if( iNumSMFiles > 1 )
-		throw RageException( "There is more than one SM file in '%s'.  There should be only one!", sDir );
-	if( iNumDWIFiles > 1 )
-		throw RageException( "There is more than one DWI file in '%s'.  There should be only one!", sDir );
 	
-	if( iNumSMFiles == 1 )
-	{
-		SMLoader ld;
-		ld.LoadFromSMFile( sDir + arraySMFileNames[0], *this );
-	}
-	else if( iNumDWIFiles == 1 )
-	{
-		DWILoader ld;
-		ld.LoadFromDWIFile( sDir + arrayDWIFileNames[0], *this );
-	}
-	else if( iNumBMSFiles > 0 )
-	{
-		BMSLoader ld;
-		ld.LoadFromBMSDir( sDir, *this );
-	}
-	else if( iNumKSFFiles > 0 )
-	{
-		KSFLoader ld;
-		ld.LoadFromKSFDir( sDir, *this );
-	}
-	else 
+	NotesLoader *ld = MakeLoader( sDir );
+	if(!ld)
 	{
 		LOG->Warn( "Couldn't find any SM, DWI, BMS, or KSF files in '%s'.  This is not a valid song directory.", sDir );
 		return false;
 	}
+
+	bool success = ld->LoadFromDir( sDir, *this );
+	delete ld;
+
+	if(!success)
+		return false;
 
 	AddAutoGenNotes();
 

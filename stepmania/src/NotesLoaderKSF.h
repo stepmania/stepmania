@@ -3,12 +3,14 @@
 
 #include "Song.h"
 #include "Notes.h"
+#include "NotesLoader.h"
 
-class KSFLoader {
+class KSFLoader: public NotesLoader {
 	bool LoadFromKSFFile( const CString &sPath, Notes &out );
 
 public:
-	bool LoadFromKSFDir( CString sDir, Song &out );
+	void GetApplicableFiles( CString sPath, CStringArray &out );
+	bool LoadFromDir( CString sDir, Song &out );
 
 };
 

@@ -318,6 +318,10 @@ SOURCE=.\Notes.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\NotesLoader.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\NotesLoader.h
 # End Source File
 # Begin Source File

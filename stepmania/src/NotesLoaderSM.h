@@ -3,8 +3,9 @@
 
 #include "Song.h"
 #include "Notes.h"
+#include "NotesLoader.h"
 
-class SMLoader {
+class SMLoader: public NotesLoader  {
 	void LoadFromSMTokens( 
 		CString sNotesType, 
 		CString sDescription,
@@ -17,6 +18,8 @@ class SMLoader {
 public:
 	bool LoadFromSMFile( CString sPath, Song &out );
 
+	void GetApplicableFiles( CString sPath, CStringArray &out );
+	bool LoadFromDir( CString sPath, Song &out );
 };
 
 #endif

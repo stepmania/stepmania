@@ -143,8 +143,12 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 	return true;
 }
 
+void KSFLoader::GetApplicableFiles( CString sPath, CStringArray &out )
+{
+	GetDirListing( sPath + CString("*.ksf"), out );
+}
 
-bool KSFLoader::LoadFromKSFDir( CString sDir, Song &out )
+bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 {
 	LOG->Trace( "Song::LoadFromKSFDir(%s)", sDir );
 

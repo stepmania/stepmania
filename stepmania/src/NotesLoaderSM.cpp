@@ -42,6 +42,10 @@ void SMLoader::LoadFromSMTokens(
 	out.TidyUpData();
 }
 
+void SMLoader::GetApplicableFiles( CString sPath, CStringArray &out )
+{
+	GetDirListing( sPath + CString("*.sm"), out );
+}
 
 bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 {
@@ -208,3 +212,20 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 
 	return true;
 }
+
+
+bool SMLoader::LoadFromDir( CString sPath, Song &out )
+{
+	CStringArray aFileNames;
+	GetApplicableFiles( sPath, aFileNames );
+
+	if( aFileNames.GetSize() > 1 )
+		throw RageException( "There is more than one SM file in '%s'.  There should be only one!", sPath );
+
+	/* We should have exactly one; if we had none, we shouldn't have been
+	 * called to begin with. */
+	ASSERT( aFileNames.GetSize() == 1 );
+
+	return LoadFromSMFile( sPath + aFileNames[0], out );
+}
+

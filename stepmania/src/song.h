@@ -15,6 +15,7 @@
 
 struct Notes;
 class StyleDef;
+class NotesLoader;
 
 extern const int FILE_CACHE_VERSION;
 
@@ -56,6 +57,7 @@ public:
 	~Song();
 	
 	bool LoadWithoutCache( CString sDir );
+	NotesLoader *MakeLoader( CString sDir ) const;
 
 	bool LoadFromSongDir( CString sDir );
 

@@ -272,12 +272,17 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out, Notes &out2 )
 	return true;
 }
 
-bool BMSLoader::LoadFromBMSDir( CString sDir, Song &out )
+void BMSLoader::GetApplicableFiles( CString sPath, CStringArray &out )
+{
+	GetDirListing( sPath + CString("*.bms"), out );
+}
+
+bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 {
 	LOG->Trace( "Song::LoadFromBMSDir(%s)", sDir );
 
 	CStringArray arrayBMSFileNames;
-	GetDirListing( sDir + CString("*.bms"), arrayBMSFileNames );
+	GetApplicableFiles( sDir, arrayBMSFileNames );
 
 	if( arrayBMSFileNames.GetSize() == 0 )
 		throw RageException( "Couldn't find any BMS files in '%s'", sDir );
