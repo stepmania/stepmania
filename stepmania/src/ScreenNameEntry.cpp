@@ -367,6 +367,13 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 			vector<Song*> vSongs;
 			StageStats stats;
 			GAMESTATE->GetFinalEvalStatsAndSongs( stats, vSongs );
+			/* Hack: go back to the select course screen in event mode. */
+			if( PREFSMAN->m_bEventMode && GAMESTATE->IsCourseMode() )
+			{
+				SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
+				break;
+			}
+
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsHumanPlayer(p) )
 					max_grade = max( max_grade, stats.GetGrade((PlayerNumber)p) );
