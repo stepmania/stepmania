@@ -254,7 +254,7 @@ File "Docs\stats.html"
 SetOverwrite on
 
 SetOutPath "$INSTDIR"
-File "COPYING.txt"
+File "Docs\Copying.txt"
 File "README-FIRST.html"
 File "NEWS"
 
