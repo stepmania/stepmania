@@ -21,7 +21,7 @@
 
 #include "Lights/LightsDriver_LinuxSerial.h"
 
-#include "Lights/MemoryCardEnumerator_Linux.h"
+#include "MemoryCard/MemoryCardDriver_Linux.h"
 
 #endif
 /*
