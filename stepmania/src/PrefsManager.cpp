@@ -24,31 +24,22 @@ const CString DEFAULT_LIGHTS_DRIVER = "Null";
 //
 // For self-registering prefs
 //
-static vector<IPreference*> *g_pvpSubscribers = NULL;
+#include "SubscriptionManager.h"
+set<IPreference*>* SubscriptionManager<IPreference>::s_pSubscribers = NULL;
 
 void PrefsManager::Subscribe( IPreference *p )
 {
-	// TRICKY: If we make this a global vector instead of a global pointer,
-	// then we'd have to be careful that the static constructors of all
-	// Preferences are called before the vector constructor.  It's
-	// too tricky to enfore that, so we'll allocate the vector ourself
-	// so that the compiler can't possibly call the vector constructor
-	// after we've already added to the vector.
-	if( g_pvpSubscribers == NULL )
-		g_pvpSubscribers = new vector<IPreference*>;
-	g_pvpSubscribers->push_back( p );
+	SubscriptionManager<IPreference>::Subscribe( p );
 }
 
 void PrefsManager::Unsubscribe( IPreference *p )
 {
-	vector<IPreference*>::iterator iter = find( g_pvpSubscribers->begin(), g_pvpSubscribers->end(), p );
-	ASSERT( iter != g_pvpSubscribers->end() );	// tried to unregister when not registered
-	g_pvpSubscribers->erase( iter );
+	SubscriptionManager<IPreference>::Unsubscribe( p );
 }
 
 IPreference *PrefsManager::GetPreferenceByName( const CString &sName )
 {
-	FOREACH( IPreference*, *g_pvpSubscribers, p )
+	FOREACHS( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
 	{
 		if( !(*p)->GetName().CompareNoCase( sName ) )
 			return *p;
@@ -350,7 +341,8 @@ void PrefsManager::Init()
 	m_bLogVirtualMemory = false;
 #endif
 
-	FOREACH_CONST( IPreference*, *g_pvpSubscribers, p ) (*p)->LoadDefault();
+	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
+		(*p)->LoadDefault();
 }
 
 PrefsManager::~PrefsManager()
@@ -575,7 +567,8 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Debug", "LogCheckpoints",					m_bLogCheckpoints );
 	ini.GetValue( "Debug", "ShowLoadingWindow",					m_bShowLoadingWindow );
 
-	FOREACH( IPreference*, *g_pvpSubscribers, p ) (*p)->ReadFrom( ini );
+	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
+		(*p)->ReadFrom( ini );
 }
 
 void PrefsManager::SaveGlobalPrefsToDisk() const
@@ -819,7 +812,8 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Debug", "LogVirtualMemory",					m_bLogVirtualMemory );
 #endif
 
-	FOREACH_CONST( IPreference*, *g_pvpSubscribers, p ) (*p)->WriteTo( ini );
+	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
+		(*p)->WriteTo( ini );
 
 	ini.WriteFile( STEPMANIA_INI_PATH );
 }

@@ -50,25 +50,15 @@ struct Theme
 deque<Theme> g_vThemes;
 
 
-
-
 //
 // For self-registering metrics
 //
-static vector<IThemeMetric*> *g_pvpSubscribers = NULL;
+#include "SubscriptionManager.h"
+set<IThemeMetric*>* SubscriptionManager<IThemeMetric>::s_pSubscribers = NULL;
 
 void ThemeManager::Subscribe( IThemeMetric *p )
 {
-	// TRICKY: If we make this a global vector instead of a global pointer,
-	// then we'd have to be careful that the static constructors of all
-	// Preferences are called before the vector constructor.  It's
-	// too tricky to enfore that, so we'll allocate the vector ourself
-	// so that the compiler can't possibly call the vector constructor
-	// after we've already added to the vector.
-	if( g_pvpSubscribers == NULL )
-		g_pvpSubscribers = new vector<IThemeMetric*>;
-	g_pvpSubscribers->push_back( p );
-
+	SubscriptionManager<IThemeMetric>::Subscribe( p );
 
 	// It's ThemeManager's responsibility to make sure all of it's subscribers
 	// are updated with current data.  If a metric is created after 
@@ -80,11 +70,8 @@ void ThemeManager::Subscribe( IThemeMetric *p )
 
 void ThemeManager::Unsubscribe( IThemeMetric *p )
 {
-	vector<IThemeMetric*>::iterator iter = find( g_pvpSubscribers->begin(), g_pvpSubscribers->end(), p );
-	ASSERT( iter != g_pvpSubscribers->end() );	// tried to unregister when not registered
-	g_pvpSubscribers->erase( iter );
+	SubscriptionManager<IThemeMetric>::Unsubscribe( p );
 }
-
 
 
 /* We spend a lot of time doing redundant theme path lookups.  Cache results. */
@@ -272,7 +259,8 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName, const CStr
 	UpdateLuaGlobals();
 
 	// reload subscribers
-	FOREACH( IThemeMetric*, *g_pvpSubscribers, p ) (*p)->Read();
+	FOREACHS_CONST( IThemeMetric*, *SubscriptionManager<IThemeMetric>::s_pSubscribers, p )
+		(*p)->Read();
 }
 
 void ThemeManager::UpdateLuaGlobals()

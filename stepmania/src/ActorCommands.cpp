@@ -7,21 +7,9 @@
 #include "LuaManager.h"
 #include "LuaBinding.h"
 
-static vector<ActorCommands*>* g_pActorCommands;
+#include "SubscriptionManager.h"
+set<ActorCommands*>* SubscriptionManager<ActorCommands>::s_pSubscribers = NULL;
 
-static void Subscribe( ActorCommands* p )
-{
-	if( g_pActorCommands == NULL )
-		g_pActorCommands = new vector<ActorCommands*>;
-	g_pActorCommands->push_back( p );
-}
-
-static void Unsubscribe( ActorCommands* p )
-{
-	vector<ActorCommands*>::iterator iter = find( g_pActorCommands->begin(), g_pActorCommands->end(), p );
-	ASSERT( iter != g_pActorCommands->end() );
-	g_pActorCommands->erase( iter );
-}
 
 static CString GetNextFunctionName()
 {
@@ -32,7 +20,7 @@ static CString GetNextFunctionName()
 
 ActorCommands::ActorCommands( const Commands& cmds )
 {
-	Subscribe( this );
+	SubscriptionManager<ActorCommands>::Subscribe( this );
 	
 	m_cmds = cmds;
 
@@ -41,7 +29,7 @@ ActorCommands::ActorCommands( const Commands& cmds )
 
 ActorCommands::~ActorCommands()
 {
-	Unsubscribe( this );
+	SubscriptionManager<ActorCommands>::Unsubscribe( this );
 
 	if( m_sLuaFunctionName.size() )
 		Unregister();
@@ -49,7 +37,7 @@ ActorCommands::~ActorCommands()
 
 ActorCommands::ActorCommands( const ActorCommands& cpy )
 {
-	Subscribe( this );
+	SubscriptionManager<ActorCommands>::Subscribe( this );
 
 	m_sLuaFunctionName = GetNextFunctionName();
 
@@ -172,9 +160,9 @@ void ActorCommands::Unregister()
 
 void ActorCommands::ReRegisterAll()
 {
-	if( g_pActorCommands == NULL )
+	if( SubscriptionManager<ActorCommands>::s_pSubscribers == NULL )
 		return;
-	FOREACH( ActorCommands*, *g_pActorCommands, p )
+	FOREACHS( ActorCommands*, *SubscriptionManager<ActorCommands>::s_pSubscribers, p )
 		(*p)->Register();
 }
 

@@ -1,0 +1,59 @@
+/* SubscriptionManager - Object that accepts subscriptions. */
+
+#ifndef SubscriptionManager_H
+#define SubscriptionManager_H
+
+#include <set>
+template<class T>
+class SubscriptionManager
+{
+public:
+	// TRICKY: If we make this a global instead of a global pointer,
+	// then we'd have to be careful that the static constructors of all
+	// subscribers are called before the collection constructor.  It's
+	// impossible to enfore that in C++.  Instead, we'll allocate the 
+	// collection ourself on first use.
+	static set<T*>* s_pSubscribers;
+
+	static void Subscribe( T* p )
+	{
+		if( s_pSubscribers == NULL )
+			s_pSubscribers = new set<T*>;
+		s_pSubscribers->insert( p );
+	}
+
+	static void Unsubscribe( T* p )
+	{
+		set<T*>::iterator iter = s_pSubscribers->find( p );
+		ASSERT( iter != s_pSubscribers->end() );
+		s_pSubscribers->erase( iter );
+	}
+	
+};
+
+#endif
+
+/*
+ * (c) 2001-2004 Chris Danford, Chris Gomez
+ * All rights reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
