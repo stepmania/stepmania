@@ -85,7 +85,7 @@ Song::Song()
 	m_bChangedSinceSave = false;
 	m_fBeat0OffsetInSeconds = 0;
 	m_fMusicSampleStartSeconds = 0;
-	m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
+	m_fMusicSampleLengthSeconds = 0;
 	m_iMusicBytes = 0;
 	m_fMusicLengthSeconds = 0;
 	m_fFirstBeat = -1;
@@ -462,17 +462,32 @@ void Song::TidyUpData()
 		AddBPMSegment( BPMSegment(0, 60) );
 	}
 
+	/* Only automatically set the sample time if there was no sample length
+	 * (m_fMusicSampleLengthSeconds == 0).  We don't want to test 
+	 * if m_fMusicSampleStartSeconds == 0, since some people really do want
+	 * the sample to start at the very beginning of the song.  (Of course,
+	 * this assumes nobody wants to have a song with no sample, but I can't
+	 * think of any reason to do that ...) */
+
 	// We're going to try and do something intelligent here...
 	// The MusicSampleStart always seems to be about 100-120 beats into 
 	// the song regardless of BPM.  Let's take a shot-in-the dark guess.
-	if( m_fMusicSampleStartSeconds == 0  ||  m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
+	if( m_fMusicSampleLengthSeconds == 0 ||
+		m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 	{
 		m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( 100 );
+		m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
+
 		if( m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 		{
+			// fix for BAG and other slow songs
 			int iBeat = (int)(m_fLastBeat/2);
+			/* Er.  I see that this truncates the beat down to a multiple
+			 * of 10, but what's the logic behind doing that?  (It'd make
+			 * sense to use a multiple of 4, so we try to line up to a
+			 * measure ...) -glenn */
 			iBeat = iBeat - iBeat%10;
-			m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( (float)iBeat );	// fix for BAG and other slow songs
+			m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( (float)iBeat );
 		}
 	}
 
