@@ -31,6 +31,7 @@
 
 #include "SDL_utils.h"
 
+#include "Screen.h"
 #include "CodeDetector.h"
 
 //
@@ -1273,6 +1274,13 @@ static void HandleInputEvents(float fDeltaTime)
 {
 	INPUTFILTER->Update( fDeltaTime );
 	
+	/* Hack: If the topmost screen hasn't been updated yet, don't process input, since
+	 * we must not send inputs to a screen that hasn't at least had one update yet. (The
+	 * first Update should be the very first thing a screen gets.)  We'll process it next
+	 * time.  Do call Update above, so the inputs are read and timestamped. */
+	if( SCREENMAN->GetTopScreen()->IsFirstUpdate() )
+		return;
+
 	static InputEventArray ieArray;
 	ieArray.clear();	// empty the array
 	INPUTFILTER->GetInputEvents( ieArray );
