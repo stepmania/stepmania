@@ -28,9 +28,11 @@ void GrayArrow::Update( float fDeltaTime )
 {
 	Sprite::Update( fDeltaTime );
 
-	int iNewState = (int)( fmod(GAMESTATE->m_fSongBeat,1) * Sprite::GetNumStates() );
-	if( iNewState < 0 )
-		iNewState += Sprite::GetNumStates();
+	float fPercentIntoBeat = fmodf(GAMESTATE->m_fSongBeat,1);
+	if( fPercentIntoBeat < 0 )
+		fPercentIntoBeat += 1;
+	int iNewState = fPercentIntoBeat<0.25f ? 0 : 1;
+	CLAMP( iNewState, 0, Sprite::GetNumStates() );
 	SetState( iNewState );
 }
 

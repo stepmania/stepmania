@@ -43,8 +43,11 @@ public:
 	void GetSongsInGroup( const CString sGroupName, CArray<Song*,Song*> &AddTo );
 
 
-	// for Courses
-	CArray<Course, Course>	m_aCourses;
+	// for Oni
+	CArray<Course, Course>	m_aOniCourses;
+	
+	// for Endless
+	CArray<Course, Course>	m_aEndlessCourses;
 
 	void InitCoursesFromDisk();
 	void ReloadCourses();

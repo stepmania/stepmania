@@ -55,6 +55,12 @@ void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const
 	if( !GAMESTATE->IsPlayerEnabled(MenuI.player) )
 		return;
 
+	if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == DIK_ESCAPE )	// don't make user hold back button if they're pressing escape
+	{
+		this->MenuBack( MenuI.player );
+		return;
+	}
+
 	switch( MenuI.button )
 	{
 	case MENU_BUTTON_UP:	this->MenuUp( MenuI.player, type );		return;

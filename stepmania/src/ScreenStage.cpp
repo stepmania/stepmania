@@ -43,9 +43,15 @@ ScreenStage::ScreenStage()
 
 	if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI )
 	{
-		m_textStage.SetText( "Challenge Mode" );
+		m_textStage.SetText( "Nonstop Challenge" );
 		m_textStage.SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,1,1) );	// light blue
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_CHALLENGE) );
+		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_ONI) );
+	}
+	else if( GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS )
+	{
+		m_textStage.SetText( "Endless Challenge" );
+		m_textStage.SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,1,1) );	// light blue
+		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_ENDLESS) );
 	}
 	else if( GAMESTATE->IsExtraStage() )
 	{

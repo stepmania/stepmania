@@ -92,7 +92,7 @@ public:
 	// Statistics for: Arcade: for the current stage.  Oni/Endless: for current course 
 	//
 	int		m_iPossibleDancePoints[NUM_PLAYERS];
-	int		m_iActualDancePoints[NUM_PLAYERS];	// In Endless, possible dance points is -1.
+	int		m_iActualDancePoints[NUM_PLAYERS];
 	int		m_TapNoteScores[NUM_PLAYERS][NUM_TAP_NOTE_SCORES];
 	int		m_HoldNoteScores[NUM_PLAYERS][NUM_HOLD_NOTE_SCORES];
 	int		m_iMaxCombo[NUM_PLAYERS];
@@ -106,7 +106,7 @@ public:
 	// Only used in final evaluation screen in play mode Arcade.
 	// Before being displayed, these values should be normalized by dividing by number of stages
 	int		m_iAccumPossibleDancePoints[NUM_PLAYERS];
-	int		m_iAccumActualDancePoints[NUM_PLAYERS];	// In Endless, possible dance points is -1.
+	int		m_iAccumActualDancePoints[NUM_PLAYERS];
 	int		m_AccumTapNoteScores[NUM_PLAYERS][NUM_TAP_NOTE_SCORES];
 	int		m_AccumHoldNoteScores[NUM_PLAYERS][NUM_HOLD_NOTE_SCORES];
 	int		m_iAccumMaxCombo[NUM_PLAYERS];

@@ -19,11 +19,12 @@
 #include "RageTimer.h"
 
 
-float ArrowGetYOffset( const PlayerOptions& po, float fStepIndex, float fSongBeat )
+float ArrowGetYOffset( const PlayerNumber pn, float fStepIndex )
 {
+	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fBeatsUntilStep = NoteRowToBeat( fStepIndex ) - fSongBeat;
 	float fYOffset = fBeatsUntilStep * ARROW_GAP;
-	switch( po.m_EffectType )
+	switch( GAMESTATE->m_PlayerOptions[pn].m_EffectType )
 	{
 	case PlayerOptions::EFFECT_BOOST:
 		fYOffset *= 1.4f / ((fYOffset+SCREEN_HEIGHT/1.6f)/SCREEN_HEIGHT); 
@@ -35,8 +36,9 @@ float ArrowGetYOffset( const PlayerOptions& po, float fStepIndex, float fSongBea
 	return fYOffset;
 }
 
-float ArrowGetXPos( const PlayerOptions& po, int iColNum, float fYOffset, float fSongBeat ) 
+float ArrowGetXPos( const PlayerNumber pn, int iColNum, float fYOffset ) 
 {
+	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fPixelOffsetFromCenter = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[PLAYER_1][iColNum].fXOffset;
 	
 	// BUG OR FEATURE??? THIS IS WHERE THE REAL COLUMN PLACEMENT HAPPENS!!!
@@ -68,7 +70,7 @@ float ArrowGetXPos( const PlayerOptions& po, int iColNum, float fYOffset, float 
 	}
 	*/
 	
-	switch( po.m_EffectType )
+	switch( GAMESTATE->m_PlayerOptions[pn].m_EffectType )
 	{
 	case PlayerOptions::EFFECT_DRUNK:
 		fPixelOffsetFromCenter += cosf( TIMER->GetTimeSinceStart()/4 + iColNum*0.4f + fYOffset/SCREEN_HEIGHT*4) * ARROW_SIZE/3; 
@@ -77,11 +79,11 @@ float ArrowGetXPos( const PlayerOptions& po, int iColNum, float fYOffset, float 
 	return fPixelOffsetFromCenter;
 }
 
-float ArrowGetRotation( const PlayerOptions& po, int iColNum, float fYOffset ) 
+float ArrowGetRotation( const PlayerNumber pn, int iColNum, float fYOffset ) 
 {
 	float fRotation = 0; //StyleDef.m_ColumnToRotation[iColNum];
 
-	switch( po.m_EffectType )
+	switch( GAMESTATE->m_PlayerOptions[pn].m_EffectType )
 	{
 	case PlayerOptions::EFFECT_DIZZY:
 		fRotation += fYOffset/SCREEN_HEIGHT*6; 
@@ -91,12 +93,12 @@ float ArrowGetRotation( const PlayerOptions& po, int iColNum, float fYOffset )
 	return fRotation;
 }
 
-float ArrowGetYPos( const PlayerOptions& po, float fYOffset )
+float ArrowGetYPos( const PlayerNumber pn, float fYOffset )
 {
-	return fYOffset * po.m_fArrowScrollSpeed * (po.m_bReverseScroll ? -1 : 1 );
+	return fYOffset * GAMESTATE->m_PlayerOptions[pn].m_fArrowScrollSpeed * (GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ? -1 : 1 );
 }
 
-float ArrowGetAlpha( const PlayerOptions& po, float fYPos )
+float ArrowGetAlpha( const PlayerNumber pn, float fYPos )
 {
 	float fAlpha;
 	static	float blinktimer=0;
@@ -104,7 +106,7 @@ float ArrowGetAlpha( const PlayerOptions& po, float fYPos )
 		blinktimer = TIMER->GetTimeSinceStart();
 	
 	static int blinkstate=2;
-	switch( po.m_AppearanceType )
+	switch( GAMESTATE->m_PlayerOptions[pn].m_AppearanceType )
 	{ 
 	case PlayerOptions::APPEARANCE_VISIBLE:
 		fAlpha = 1;

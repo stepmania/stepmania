@@ -26,6 +26,7 @@ public:
 	{
 		m_iStages = 0;
 		m_bRepeat = false;
+		m_bRandomize = false;
 		m_iLives = 4;
 		for( int i=0; i<MAX_COURSE_STAGES; i++ )
 			m_apSongs[i] = NULL;
@@ -39,6 +40,7 @@ public:
 	CString		m_asDescriptions[MAX_COURSE_STAGES];
 	Notes*		GetNotesForStage( int iStage );
 	bool		m_bRepeat;	// repeat after last song?
+	bool		m_bRandomize;	// play the songs in a random order
 	int			m_iLives;	// -1 means use bar life meter
 	CString		m_sModifiers;	// contains player options and song options
 
@@ -46,7 +48,7 @@ public:
 	void GetSongOptions( SongOptions* pSO_out);
 
 	void LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs );
-	void CreateFromGroupAndDifficultyClass( CString sGroupName, DifficultyClass dc, CArray<Song*,Song*> &apSongsInGroup );
+	void CreateEndlessCourseFromGroupAndDifficultyClass( CString sGroupName, DifficultyClass dc, CArray<Song*,Song*> &apSongsInGroup );
 
 	void AddStage( Song* pSong, CString sDescription )
 	{

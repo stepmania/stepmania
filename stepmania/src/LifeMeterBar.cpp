@@ -30,13 +30,18 @@ const float FAIL_THRESHOLD = 0;
 
 LifeMeterBar::LifeMeterBar()
 {
-	m_fLifePercentage = 0.5f;
+	switch( GAMESTATE->m_SongOptions.m_DrainType )
+	{
+	case SongOptions::DRAIN_NORMAL:			m_fLifePercentage = 0.5f;	break;
+	case SongOptions::DRAIN_NO_RECOVER:		m_fLifePercentage = 1.0f;	break;
+	case SongOptions::DRAIN_SUDDEN_DEATH:	m_fLifePercentage = 1.0f;	break;
+	default:	ASSERT(0);
+	}
+
 	m_fTrailingLifePercentage = 0;
 	m_fLifeVelocity = 0;
 	m_fHotAlpha = 0;
 	m_bFailedEarlier = false;
-
-	m_frame;
 
 	m_quadBlackBackground.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
 	m_quadBlackBackground.SetZoomX( METER_WIDTH );
@@ -95,8 +100,17 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		}
 		break;
 	case SongOptions::DRAIN_SUDDEN_DEATH:
-		fDeltaLife = -1;
+		switch( score )
+		{
+		case TNS_PERFECT:	fDeltaLife = +0;	break;
+		case TNS_GREAT:		fDeltaLife = +0;	break;
+		case TNS_GOOD:		fDeltaLife = -1;	break;
+		case TNS_BOO:		fDeltaLife = -1;	break;
+		case TNS_MISS:		fDeltaLife = -1;	break;
+		}
 		break;
+	default:
+		ASSERT(0);
 	}
 
 

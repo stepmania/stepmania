@@ -109,8 +109,8 @@ void CourseContentsFrame::SetFromCourse( Course* pCourse )
 		printf( "Adding song '%s'\n", pSong->m_sMainTitle );
 		m_CourseContentDisplays[m_iNumContents].Load( m_iNumContents+1, pSong, pNotes );
 		m_CourseContentDisplays[m_iNumContents].SetXY( 0, -((MAX_VISIBLE_CONTENTS-1)/2) * CONTENTS_BAR_HEIGHT );
-		m_CourseContentDisplays[m_iNumContents].BeginTweening( i*0.1f );
-		m_CourseContentDisplays[m_iNumContents].SetTweenY( (-(MAX_VISIBLE_CONTENTS-1)/2 + i) * CONTENTS_BAR_HEIGHT );
+		m_CourseContentDisplays[m_iNumContents].BeginTweening( m_iNumContents*0.1f );
+		m_CourseContentDisplays[m_iNumContents].SetTweenY( (-(MAX_VISIBLE_CONTENTS-1)/2 + m_iNumContents) * CONTENTS_BAR_HEIGHT );
 		
 		m_iNumContents ++;
 	}
@@ -162,9 +162,7 @@ void CourseContentsFrame::DrawPrimitives()
 		if( m_fTimeUntilScroll <= 0 )
 			m_CourseContentDisplays[iItemToDraw].SetY( fY );
 		m_CourseContentDisplays[iItemToDraw].Draw();
-		iItemToDraw++;
-		if( iItemToDraw >= m_iNumContents )
-			iItemToDraw -= m_iNumContents;
+		iItemToDraw = (iItemToDraw+1) % m_iNumContents;
 		fY += CONTENTS_BAR_HEIGHT;
 	}
 

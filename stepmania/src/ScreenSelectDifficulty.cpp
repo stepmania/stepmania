@@ -253,7 +253,7 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 			break;
 		case 4:
 			GAMESTATE->m_PlayMode = PLAY_MODE_ENDLESS;
-			SCREENMAN->SetNewScreen( new ScreenSelectGroup );
+			SCREENMAN->SetNewScreen( new ScreenSelectCourse );
 			break;
 		default:
 			ASSERT(0);	// bad selection
@@ -379,6 +379,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	case 1:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_COMMENT_MEDIUM) );	break;
 	case 2:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_COMMENT_HARD) );	break;
 	case 3:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_COMMENT_ONI) );	break;
+	case 4:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_COMMENT_ENDLESS) );	break;
 	}
 
 	if( iSelection >= 3 )	// chose something on page 2

@@ -98,10 +98,8 @@ ScreenGameplay::ScreenGameplay()
 			GAMESTATE->m_pCurNotes[p]->GetNoteData( &notedata );
 			GAMESTATE->m_iPossibleDancePoints[p] = notedata.GetPossibleDancePoints();
 			break;
-		case PLAY_MODE_ENDLESS:
-			GAMESTATE->m_iPossibleDancePoints[p] = -1;
-			break;
 		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
 			{
 				GAMESTATE->m_iPossibleDancePoints[p] = 0;
 
@@ -229,10 +227,10 @@ ScreenGameplay::ScreenGameplay()
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
-		case PLAY_MODE_ENDLESS:
 			m_pScoreDisplay[p] = new ScoreDisplayNormal;
 			break;
 		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
 			m_pScoreDisplay[p] = new ScoreDisplayOni;
 			break;
 		default:
@@ -390,6 +388,10 @@ bool ScreenGameplay::IsLastSong()
 	case PLAY_MODE_ENDLESS:
 		{
 			Course* pCourse = GAMESTATE->m_pCurCourse;
+
+			if( pCourse->m_bRepeat )
+				return false;
+
 			CArray<Song*,Song*> apSongs;
 			CArray<Notes*,Notes*> apNotes[NUM_PLAYERS];
 			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes );
@@ -419,9 +421,15 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 			CArray<Notes*,Notes*> apNotes[NUM_PLAYERS];
 			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes );
 
-			GAMESTATE->m_pCurSong = apSongs[GAMESTATE->m_iCurrentStageIndex];
+			int iPlaySongIndex = -1;
+			if( pCourse->m_bRandomize )
+				iPlaySongIndex = rand() % apSongs.GetSize();
+			else
+				iPlaySongIndex = GAMESTATE->m_iCurrentStageIndex;
+
+			GAMESTATE->m_pCurSong = apSongs[iPlaySongIndex];
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				GAMESTATE->m_pCurNotes[p] = apNotes[p][GAMESTATE->m_iCurrentStageIndex];
+				GAMESTATE->m_pCurNotes[p] = apNotes[p][iPlaySongIndex];
 		}
 		break;
 	default:
@@ -1020,8 +1028,13 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToScreenAfterBack:
 		switch( GAMESTATE->m_PlayMode )
 		{
-		case PLAY_MODE_ARCADE:	SCREENMAN->SetNewScreen( new ScreenSelectMusic );	break;
-		case PLAY_MODE_ONI:		SCREENMAN->SetNewScreen( new ScreenSelectCourse );	break;
+		case PLAY_MODE_ARCADE:	
+			SCREENMAN->SetNewScreen( new ScreenSelectMusic );
+			break;
+		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
+			SCREENMAN->SetNewScreen( new ScreenSelectCourse );
+			break;
 		default:	ASSERT(0);
 		}
 		break;

@@ -87,8 +87,11 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 }
 
 
-void Course::CreateFromGroupAndDifficultyClass( CString sGroupName, DifficultyClass dc, CArray<Song*,Song*> &apSongsInGroup )
+void Course::CreateEndlessCourseFromGroupAndDifficultyClass( CString sGroupName, DifficultyClass dc, CArray<Song*,Song*> &apSongsInGroup )
 {
+	m_bRepeat = true;
+	m_bRandomize = true;
+	m_iLives = -1;
 	CString sShortGroupName = SONGMAN->ShortenGroupName( sGroupName );	
 
 	m_sName = sShortGroupName + " ";

@@ -396,14 +396,12 @@ void SongManager::InitCoursesFromDisk()
 		Course course;
 		course.LoadFromCRSFile( "Courses\\" + saCourseFiles[i], m_pSongs );
 		if( course.m_iStages > 0 )
-			m_aCourses.Add( course );
+			m_aOniCourses.Add( course );
 	}
 
-/*
-	Chris: Default courses were a bad idea.  Get rid of them.
 
 	//
-	// Create default courses
+	// Create endless courses
 	//
 	CStringArray saGroupNames;
 	this->GetGroupNames( saGroupNames );
@@ -416,13 +414,12 @@ void SongManager::InitCoursesFromDisk()
 		for( DifficultyClass dc=CLASS_EASY; dc<=CLASS_HARD; dc=DifficultyClass(dc+1) )	// foreach DifficultyClass
 		{
 			Course course;
-			course.CreateFromGroupAndDifficultyClass( sGroupName, dc, apGroupSongs );
+			course.CreateEndlessCourseFromGroupAndDifficultyClass( sGroupName, dc, apGroupSongs );
 
 			if( course.m_iStages > 0 )
-				m_aCourses.Add( course );
+				m_aEndlessCourses.Add( course );
 		}
 	}
-	*/
 }
 
 void SongManager::ReloadCourses()

@@ -73,9 +73,7 @@ CString AnnouncerManager::GetAnnouncerDirFromName( CString sAnnouncerName )
 
 void AnnouncerManager::SwitchAnnouncer( CString sNewAnnouncerName )
 {
-	if( sNewAnnouncerName == "" )
-		m_sCurAnnouncerName = "";
-	else if( !DoesAnnouncerExist(sNewAnnouncerName) )
+	if( !DoesAnnouncerExist(sNewAnnouncerName) )
 		m_sCurAnnouncerName = "";
 	else
 		m_sCurAnnouncerName = sNewAnnouncerName;
@@ -138,6 +136,7 @@ CString AnnouncerManager::GetPathTo( AnnouncerElement ae, CString sAnnouncerName
 		case ANNOUNCER_SELECT_DIFFICULTY_COMMENT_HARD:	sAssetDir = "select difficulty comment hard";	break;
 		case ANNOUNCER_SELECT_DIFFICULTY_COMMENT_MEDIUM:sAssetDir = "select difficulty comment medium";	break;
 		case ANNOUNCER_SELECT_DIFFICULTY_COMMENT_ONI:	sAssetDir = "select difficulty comment oni";	break;
+		case ANNOUNCER_SELECT_DIFFICULTY_COMMENT_ENDLESS:sAssetDir = "select difficulty comment endless";	break;
 		case ANNOUNCER_SELECT_DIFFICULTY_CHALLENGE:		sAssetDir = "select difficulty challenge";		break;
 		case ANNOUNCER_SELECT_DIFFICULTY_INTRO:			sAssetDir = "select difficulty intro";			break;
 		case ANNOUNCER_SELECT_GROUP_COMMENT_ALL_MUSIC:	sAssetDir = "select group comment all music";	break;
@@ -161,7 +160,8 @@ CString AnnouncerManager::GetPathTo( AnnouncerElement ae, CString sAnnouncerName
 		case ANNOUNCER_STAGE_FINAL:						sAssetDir = "stage final";						break;
 		case ANNOUNCER_STAGE_EXTRA:						sAssetDir = "stage extra";						break;
 		case ANNOUNCER_STAGE_ANOTHER_EXTRA:				sAssetDir = "stage another extra";				break;
-		case ANNOUNCER_STAGE_CHALLENGE:					sAssetDir = "stage challenge";					break;
+		case ANNOUNCER_STAGE_ONI:						sAssetDir = "stage oni";						break;
+		case ANNOUNCER_STAGE_ENDLESS:					sAssetDir = "stage endless";					break;
 		case ANNOUNCER_TITLE_MENU_ATTRACT:				sAssetDir = "title menu attract";				break;
 		case ANNOUNCER_TITLE_MENU_GAME_NAME:			sAssetDir = "title menu game name";				break;
 

@@ -520,10 +520,23 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 	case PLAY_MODE_ONI:
 		{
 			CArray<Course*,Course*> apCourses;
-			for( int i=0; i<SONGMAN->m_aCourses.GetSize(); i++ )
-				apCourses.Add( &SONGMAN->m_aCourses[i] );
+			for( int i=0; i<SONGMAN->m_aOniCourses.GetSize(); i++ )
+				apCourses.Add( &SONGMAN->m_aOniCourses[i] );
 
 			SortCoursePointerArrayByDifficulty( apCourses );
+
+			for( int c=0; c<apCourses.GetSize(); c++ )	// foreach course
+			{
+				Course* pCourse = apCourses[c];
+				arrayWheelItemDatas.Add( WheelItemData(TYPE_COURSE, NULL, "", pCourse, pCourse->GetColor()) );
+			}
+		}
+		break;
+	case PLAY_MODE_ENDLESS:
+		{
+			CArray<Course*,Course*> apCourses;
+			for( int i=0; i<SONGMAN->m_aEndlessCourses.GetSize(); i++ )
+				apCourses.Add( &SONGMAN->m_aEndlessCourses[i] );
 
 			for( int c=0; c<apCourses.GetSize(); c++ )	// foreach course
 			{

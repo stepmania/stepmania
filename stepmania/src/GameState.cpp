@@ -15,6 +15,7 @@
 #include "GameManager.h"
 #include "PrefsManager.h"
 #include "InputMapper.h"
+#include "Song.h"
 
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
@@ -22,6 +23,7 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 
 GameState::GameState()
 {
+	m_CurGame = GAME_DANCE;
 	m_sLoadingMessage = "Initializing hardware...";
 	m_CurGame = GAME_DANCE;
 	Reset();
@@ -35,28 +37,135 @@ void GameState::Reset()
 {
 	int p;
 
+	m_CurStyle = STYLE_NONE;
+	m_MasterPlayerNumber = PLAYER_INVALID;
+	m_sPreferredGroup	= "";
+	for( p=0; p<NUM_PLAYERS; p++ )
+		m_PreferredDifficultyClass[p] = CLASS_INVALID;
+	m_SongSortOrder = SORT_GROUP;
+	m_PlayMode = PLAY_MODE_INVALID;
+	m_bEditing = false;
+	m_iCurrentStageIndex = 0;
+
+
 	m_pCurSong = NULL;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_pCurNotes[p] = NULL;
 	m_pCurCourse = NULL;
-	m_sPreferredGroup = "";
 
-	m_aGameplayStatistics.RemoveAll();
 
-	// We can simply reset it cause it would override the selection the user just did
-	// Moved to the constructor for now
-	//m_CurGame = GAME_DANCE;
+	m_fMusicSeconds = 0;
+	m_fSongBeat = 0;
+	m_fCurBPS = 0;
+	m_bFreeze = 0;
+	
 
-	m_CurStyle = STYLE_NONE;
-	m_MasterPlayerNumber = PLAYER_INVALID;
+	m_apSongsPlayed.RemoveAll();
+	
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_fSecondsBeforeFail[p] = -1;
+		m_iStagesIntoCourse[p] = 0;
+	}
+	m_bUsedAutoPlayer = false;
 
 
 	for( p=0; p<NUM_PLAYERS; p++ )
-		m_PreferredDifficultyClass[p] = CLASS_EASY;
-	m_SongSortOrder = SORT_GROUP;
-	m_PlayMode = PLAY_MODE_INVALID;
-	m_iCurrentStageIndex = 0;
+	{
+		int s;
+
+		m_iPossibleDancePoints[p] = 0;
+		m_iActualDancePoints[p] = 0;
+		for( s=0; s<NUM_TAP_NOTE_SCORES; s++ )
+			m_TapNoteScores[p][s] = 0;
+		for( s=0; s<NUM_HOLD_NOTE_SCORES; s++ )
+			m_HoldNoteScores[p][s] = 0;
+		m_iMaxCombo[p] = 0;
+		m_fScore[p] = 0;
+		for( int r=0; r<NUM_RADAR_VALUES; r++ )
+		{
+			m_fRadarPossible[p][r] = 0;
+			m_fRadarActual[p][r] = 0;
+		}
+	}
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		int s;
+
+		m_iAccumPossibleDancePoints[p] = 0;
+		m_iAccumActualDancePoints[p] = 0;
+		for( s=0; s<NUM_TAP_NOTE_SCORES; s++ )
+			m_AccumTapNoteScores[p][s] = 0;
+		for( s=0; s<NUM_HOLD_NOTE_SCORES; s++ )
+			m_AccumHoldNoteScores[p][s] = 0;
+		m_iAccumMaxCombo[p] = 0;
+		m_fAccumScore[p] = 0;
+		for( int r=0; r<NUM_RADAR_VALUES; r++ )
+		{
+			m_fAccumRadarPossible[p][r] = 0;
+			m_fAccumRadarActual[p][r] = 0;
+		}
+	}
+
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+		m_PlayerOptions[p] = PlayerOptions();
+	m_SongOptions = SongOptions();
 }
+
+void GameState::ResetMusicStatistics()
+{	
+	m_fMusicSeconds = 0;
+	m_fSongBeat = 0;
+	m_fCurBPS = 10;
+	m_bFreeze = false;
+}
+
+void GameState::AccumulateStageStatistics()
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		int s;
+
+		m_iAccumPossibleDancePoints[p] += m_iPossibleDancePoints[p];
+		m_iAccumActualDancePoints[p] += m_iActualDancePoints[p];
+		for( s=0; s<NUM_TAP_NOTE_SCORES; s++ )
+			m_AccumTapNoteScores[p][s] += m_TapNoteScores[p][s];
+		for( s=0; s<NUM_HOLD_NOTE_SCORES; s++ )
+			m_AccumHoldNoteScores[p][s] += m_HoldNoteScores[p][s];
+		m_iAccumMaxCombo[p] += m_iMaxCombo[p];
+		m_fAccumScore[p] += m_fScore[p];
+		for( int r=0; r<NUM_RADAR_VALUES; r++ )
+		{
+			m_fAccumRadarPossible[p][r] = m_fRadarPossible[p][r];
+			m_fAccumRadarActual[p][r] = m_fRadarActual[p][r];
+		}
+	}
+}
+
+void GameState::ResetStageStatistics()
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		int s;
+
+		m_iPossibleDancePoints[p] = 0;
+		m_iActualDancePoints[p] = 0;
+		for( s=0; s<NUM_TAP_NOTE_SCORES; s++ )
+			m_TapNoteScores[p][s] = 0;
+		for( s=0; s<NUM_HOLD_NOTE_SCORES; s++ )
+			m_HoldNoteScores[p][s] = 0;
+		m_iMaxCombo[p] = 0;
+		m_fScore[p] = 0;
+		for( int r=0; r<NUM_RADAR_VALUES; r++ )
+		{
+			m_fRadarPossible[p][r] = 0;
+			m_fRadarActual[p][r] = 0;
+		}
+	}
+}
+
 
 int GameState::GetStageIndex()
 {
@@ -86,6 +195,29 @@ bool GameState::IsExtraStage2()
 
 CString GameState::GetStageText()
 {
+	switch( m_PlayMode )
+	{
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		{
+			CString sText;
+			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
+				if( this->IsPlayerEnabled(p) )
+					sText += ssprintf("%d   ", m_iStagesIntoCourse[p]);
+				else
+					sText += "a     ";
+			}
+			sText.TrimRight();
+			sText.Replace('a',' ');
+			return sText;
+		}
+		break;
+	default:
+		;	// fall through
+	}
+
+
 	if( IsFinalStage() )
 		return "Final";
 	else if( IsExtraStage() )
@@ -125,12 +257,6 @@ D3DXCOLOR GameState::GetStageColor()
 		return D3DXCOLOR(0.3f,1,0.3f,1);	// green
 }
 
-GameplayStatistics& GameState::GetLatestGameplayStatistics()
-{
-	ASSERT( m_aGameplayStatistics.GetSize() > 0 );
-	return m_aGameplayStatistics[ m_aGameplayStatistics.GetSize()-1 ];
-}
-
 GameDef* GameState::GetCurrentGameDef()
 {
 	return GAMEMAN->GetGameDefForGame( m_CurGame );
@@ -148,4 +274,33 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn )
 
 	return ( pn == m_MasterPlayerNumber ) ||  
 		( GetCurrentStyleDef()->m_StyleType == StyleDef::TWO_PLAYERS_USE_TWO_SIDES );
-};
+}
+
+float GameState::GetElapsedSeconds()
+{
+	switch( m_PlayMode )
+	{
+	case PLAY_MODE_ARCADE:
+		return max( 0, m_fMusicSeconds );
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		{
+			float fSecondsTotal = 0;
+			for( int i=0; i<m_apSongsPlayed.GetSize(); i++ )
+				fSecondsTotal += m_apSongsPlayed[i]->m_fMusicLengthSeconds;
+			fSecondsTotal += max( 0, m_fMusicSeconds );
+			return fSecondsTotal;
+		}
+	default:
+		ASSERT(0);
+		return 0;
+	}
+}
+
+float GameState::GetPlayerSurviveTime( PlayerNumber p )
+{
+	if( m_fSecondsBeforeFail[p] != -1 )
+		return m_fSecondsBeforeFail[p];
+	else
+		return GetElapsedSeconds();
+}

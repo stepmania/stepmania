@@ -38,8 +38,6 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 void ScoreDisplayNormal::Init( PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
-
-	SetScore( GAMESTATE->m_fScore[pn] );
 }
 
 void ScoreDisplayNormal::SetScore( float fNewScore ) 

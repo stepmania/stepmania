@@ -125,8 +125,6 @@ void LifeMeterBattery::OnDancePointsChange()
 	CString sNumToDisplay = ssprintf("%03.1f", fNumToDisplay);
 	if( sNumToDisplay.GetLength() == 3 )
 		sNumToDisplay = "0" + sNumToDisplay;
-	if( iPossibleDancePoints == -1 )
-		sNumToDisplay = "??.?";
 	m_textPercent.SetText( sNumToDisplay );
 }
 

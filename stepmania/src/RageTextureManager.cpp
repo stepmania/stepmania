@@ -95,7 +95,7 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, bool bForceR
 		m_mapPathToTexture.SetAt( sTexturePath, pTexture );
 	}
 
-	LOG->WriteLine( "Display: %u MB video memory left",	DISPLAY->GetDevice()->GetAvailableTextureMem() );
+	LOG->WriteLine( "Display: %u KB video memory left",	DISPLAY->GetDevice()->GetAvailableTextureMem() );
 
 	return pTexture;
 }
