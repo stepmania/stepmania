@@ -19,6 +19,10 @@
 Name "${PRODUCT_NAME_VER}"
 OutFile "${PRODUCT_NAME_VER}.exe"
 
+; Don't say "StepMania 3.9 Setup"; just say "StepMania 3.9".
+Caption "${PRODUCT_NAME_VER}"
+UninstallCaption "${PRODUCT_NAME_VER}"
+
 ; Some default compiler settings (uncomment and change at will):
 SetCompress auto ; (can be off or force)
 SetDatablockOptimize on ; (can be off)
@@ -30,6 +34,13 @@ InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
 InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}" ""
 ; DirShow show ; (make this hide to not let the user change it)
 DirText "${PRODUCT_NAME_VER}"
+InstallColors /windows
+InstProgressFlags smooth
+
+PageEx directory
+	Caption " "
+PageExEnd
+Page instfiles
 
 
 ;
