@@ -318,6 +318,7 @@ int NoteData::GetPossibleDancePoints()
 //
 //Your "Dance Points" are calculated as follows: 
 //
+//A "Marvelous" is worth 3 points, but oniy when in oni mode
 //A "Perfect" is worth 2 points
 //A "Great" is worth 1 points
 //A "Good" is worth 0 points
@@ -326,8 +327,14 @@ int NoteData::GetPossibleDancePoints()
 //An "OK" (Successful Freeze step) will add 6 points
 //A "NG" (Unsuccessful Freeze step) is worth 0 points
 
-	return GetNumTapNotes()*TapNoteScoreToDancePoints(TNS_PERFECT) +	// not Marvelous
+	if(PREFSMAN->m_bMarvelousTiming && GAMESTATE->m_PlayMode == PLAY_MODE_ONI) // score out of marvelous for oni mode only
+	{
+		return GetNumTapNotes()*TapNoteScoreToDancePoints(TNS_MARVELOUS) +	// Marvelous for oni
 		   GetNumHoldNotes()*HoldNoteScoreToDancePoints(HNS_OK);
+	}
+
+	return GetNumTapNotes()*TapNoteScoreToDancePoints(TNS_PERFECT) +	// not Marvelous
+	   GetNumHoldNotes()*HoldNoteScoreToDancePoints(HNS_OK);
 }
 
 /* ConvertHoldNotesTo2sAnd3s also clears m_iHoldNotes;
