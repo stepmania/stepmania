@@ -742,7 +742,7 @@ void ScreenNetSelectMusic::UpdateSongsListPos()
 		else
 		{
 			int i;
-			Difficulty Target;
+			Difficulty Target = DIFFICULTY_EASY;
 
 			bool dcs[NUM_DIFFICULTIES];
 
@@ -823,7 +823,7 @@ void ScreenNetSelectMusic::UpdateUsers()
 	for( unsigned i=0; i< m_textUsers.size(); i++)
 		this->RemoveChild( &m_textUsers[i] );
 
-	int oldUsers = m_textUsers.size();
+	unsigned oldUsers = m_textUsers.size();
 
 	m_textUsers.clear();
 

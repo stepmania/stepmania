@@ -30,7 +30,7 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 	//then we pick a song from this course.
 	Course * tCourse = SONGMAN->GetCourseFromName( THEME->GetCurThemeName() );
 	if( tCourse != NULL )
-		for ( int i = 0; i < tCourse->m_entries.size(); i++ )
+		for ( unsigned i = 0; i < tCourse->m_entries.size(); i++ )
 			vSongs.push_back( tCourse->m_entries[i].pSong );
 
 	if ( vSongs.size() == 0 )

@@ -602,7 +602,7 @@ int PlayerMinus::GetClosestNoteDirectional( int col, int iStartRow, int iMaxRows
 	while( abs(iStartRow-iRow) <= iMaxRowsAhead )
 	{
 		/* Is iRow the row we want? */
-		do 
+		for(;;) 
 		{
 			if( m_NoteData.GetTapNote(col, iRow).type == TapNote::empty )
 				break;
@@ -610,7 +610,6 @@ int PlayerMinus::GetClosestNoteDirectional( int col, int iStartRow, int iMaxRows
 				break;
 			return iRow;
 		}
-		while(0);
 
 		if( bForward && !m_NoteData.GetNextTapNoteRowForTrack( col, iRow ) )
 			return -1;

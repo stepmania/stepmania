@@ -302,11 +302,6 @@ static int DelimitorLength( const S &Delimitor )
 	return Delimitor.size();
 }
 
-static int DelimitorLength( char Delimitor )
-{
-	return 1;
-}
-
 template <class S, class C>
 void do_split( const S &Source, const C Delimitor, vector<S> &AddIt, const bool bIgnoreEmpty )
 {

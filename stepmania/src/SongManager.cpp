@@ -41,16 +41,16 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 #define MAX_EDITS_PER_PROFILE	200
 #define MAX_EDIT_SIZE_BYTES		30*1024		// 30KB
 
-#define NUM_GROUP_COLORS	THEME->GetMetricI("SongManager","NumGroupColors")
+static const ThemeMetric<int>		NUM_GROUP_COLORS	("SongManager","NumGroupColors");
 #define GROUP_COLOR( i )	THEME->GetMetricC("SongManager",ssprintf("GroupColor%d",i+1))
-ThemeMetric<RageColor> BEGINNER_COLOR		("SongManager","BeginnerColor");
-ThemeMetric<RageColor> EASY_COLOR			("SongManager","EasyColor");
-ThemeMetric<RageColor> MEDIUM_COLOR			("SongManager","MediumColor");
-ThemeMetric<RageColor> HARD_COLOR			("SongManager","HardColor");
-ThemeMetric<RageColor> CHALLENGE_COLOR		("SongManager","ChallengeColor");
-ThemeMetric<RageColor> EDIT_COLOR			("SongManager","EditColor");
-ThemeMetric<RageColor> EXTRA_COLOR			("SongManager","ExtraColor");
-ThemeMetric<int> EXTRA_COLOR_METER	("SongManager","ExtraColorMeter");
+static const ThemeMetric<RageColor> BEGINNER_COLOR		("SongManager","BeginnerColor");
+static const ThemeMetric<RageColor> EASY_COLOR			("SongManager","EasyColor");
+static const ThemeMetric<RageColor> MEDIUM_COLOR			("SongManager","MediumColor");
+static const ThemeMetric<RageColor> HARD_COLOR			("SongManager","HardColor");
+static const ThemeMetric<RageColor> CHALLENGE_COLOR		("SongManager","ChallengeColor");
+static const ThemeMetric<RageColor> EDIT_COLOR			("SongManager","EditColor");
+static const ThemeMetric<RageColor> EXTRA_COLOR			("SongManager","ExtraColor");
+static const ThemeMetric<int>		EXTRA_COLOR_METER	("SongManager","ExtraColorMeter");
 
 vector<RageColor> g_vGroupColors;
 RageTimer g_LastMetricUpdate; /* can't use RageTimer globally */
@@ -399,7 +399,7 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 //			continue;
 
 		if( pSteps->GetMeter() >= EXTRA_COLOR_METER )
-			return EXTRA_COLOR;
+			return (RageColor)EXTRA_COLOR;
 	}
 
 	return GetGroupColor( pSong->m_sGroupName );
@@ -409,13 +409,13 @@ RageColor SongManager::GetDifficultyColor( Difficulty dc ) const
 {
 	switch( dc )
 	{
-	case DIFFICULTY_BEGINNER:	return BEGINNER_COLOR;
-	case DIFFICULTY_EASY:		return EASY_COLOR;
-	case DIFFICULTY_MEDIUM:		return MEDIUM_COLOR;
-	case DIFFICULTY_HARD:		return HARD_COLOR;
-	case DIFFICULTY_CHALLENGE:	return CHALLENGE_COLOR;
-	case DIFFICULTY_EDIT:		return EDIT_COLOR;
-	default:	ASSERT(0);		return EDIT_COLOR;
+	case DIFFICULTY_BEGINNER:	return (RageColor)BEGINNER_COLOR;
+	case DIFFICULTY_EASY:		return (RageColor)EASY_COLOR;
+	case DIFFICULTY_MEDIUM:		return (RageColor)MEDIUM_COLOR;
+	case DIFFICULTY_HARD:		return (RageColor)HARD_COLOR;
+	case DIFFICULTY_CHALLENGE:	return (RageColor)CHALLENGE_COLOR;
+	case DIFFICULTY_EDIT:		return (RageColor)EDIT_COLOR;
+	default:	ASSERT(0);		return (RageColor)EDIT_COLOR;
 	}
 }
 
