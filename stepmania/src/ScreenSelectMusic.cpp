@@ -109,7 +109,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	m_sprBannerMask.Load( THEME->GetPathToG("ScreenSelectMusic banner mask") );
 	m_sprBannerMask.SetBlendMode( BLEND_NO_EFFECT );	// don't draw to color buffer
 	m_sprBannerMask.SetUseZBuffer( true );	// do draw to the zbuffer
-	m_sprBannerMask.SetZ( m_sprBannerMask.GetZ()+0.05f );	// closer to camera
+	m_sprBannerMask.SetZ( m_sprBannerMask.GetZ()+5.0f );	// closer to camera
 	SET_XY( m_sprBannerMask );
 	this->AddChild( &m_sprBannerMask );
 
