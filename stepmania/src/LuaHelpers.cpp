@@ -99,15 +99,20 @@ bool Lua::GetStack( lua_State *L, int pos, int &out )
 
 void LoadFromString( lua_State *L, const CString &str )
 {
+	// HACK: Many metrics have "//" comments that Lua fails to parse.
+	// Replace them with Lua-style comments.
+	CString str2 = str;
+	str2.Replace( "//", "--" );
+
 	ChunkReaderData data;
-	data.buf = &str;
+	data.buf = &str2;
 	int ret = lua_load( L, ChunkReaderString, &data, "in" );
 
 	if( ret )
 	{
 		CString err;
 		Lua::PopStack( L, err );
-		RageException::Throw( "Error loading script \"%s\": %s", str.c_str(), err.c_str() );
+		RageException::Throw( "Error loading script \"%s\": %s", str2.c_str(), err.c_str() );
 	}
 }
 
