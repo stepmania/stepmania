@@ -288,14 +288,10 @@ static void Premium( int &sel, bool ToSel, const CStringArray &choices )
 
 static void SongsPerPlay( int &sel, bool ToSel, const CStringArray &choices )
 {
-	const int mapping[] = { 1,2,3,4,5,6,7,8 };
+	const int mapping[] = { 1,2,3,4,5,6,7 };
 	MoveMap( sel, PREFSMAN->m_iNumArcadeStages, ToSel, mapping, ARRAYSIZE(mapping) );
-
-	if( ToSel && PREFSMAN->m_bEventMode )
-		sel = 7;
-	if( !ToSel )
-		PREFSMAN->m_bEventMode = (sel == 7);
 }
+MOVE( EventMode,			PREFSMAN->m_bEventMode );
 
 /* Machine options */
 MOVE( MenuTimer,			PREFSMAN->m_bMenuTimer );
@@ -466,7 +462,8 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Menu\nTimer",			MenuTimer,			"OFF","ON" ),
 	ConfOption( "CoinMode",				CoinMode,			"HOME","PAY","FREE PLAY" ),
 	ConfOption( "CoinModeNoHome",		CoinModeNoHome,		"PAY","FREE PLAY" ),
-	ConfOption( "Songs Per\nPlay",		SongsPerPlay,		"1","2","3","4","5","6","7","EVENT MODE" ),
+	ConfOption( "Songs Per\nPlay",		SongsPerPlay,		"1","2","3","4","5","6","7" ),
+	ConfOption( "Event\nMode",			EventMode,			"OFF","ON" ),
 	ConfOption( "Scoring\nType",		ScoringType,		"MAX2","5TH" ),
 	ConfOption( "Judge\nDifficulty",	JudgeDifficulty,	"1","2","3","4","5","6","7","8","JUSTICE" ),
 	ConfOption( "Life\nDifficulty",		LifeDifficulty,		"1","2","3","4","5","6","7" ),
