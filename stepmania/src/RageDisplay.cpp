@@ -633,25 +633,25 @@ bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
 	CString buf;
 	buf.reserve( 1024*1024 );
 
-	SDL_RWops *rw = OpenRWops( buf );
+	SDL_RWops rw;
+	OpenRWops( &rw, &buf );
 
 	switch( format )
 	{
 	case SAVE_LOSSLESS:
-		SDL_SaveBMP_RW( surface, rw, false );
+		SDL_SaveBMP_RW( surface, &rw, false );
 		break;
 	case SAVE_LOSSY_LOW_QUAL:
-		IMG_SaveJPG_RW( surface, rw, false );
+		IMG_SaveJPG_RW( surface, &rw, false );
 	case SAVE_LOSSY_HIGH_QUAL:
-		IMG_SaveJPG_RW( surface, rw, true );
+		IMG_SaveJPG_RW( surface, &rw, true );
 		break;
 	default:
 		ASSERT(0);
 		return false;
 	}
 
-	SDL_RWclose( rw );
-	SDL_FreeRW( rw );
+	SDL_RWclose( &rw );
 
 	SDL_FreeSurface( surface );
 	surface = NULL;

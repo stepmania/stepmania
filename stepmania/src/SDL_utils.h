@@ -86,7 +86,7 @@ void ApplyHotPinkColorKey( SDL_Surface *&img );
 
 class RageFile;
 void OpenRWops( SDL_RWops *rw, RageFile *f );
-SDL_RWops *OpenRWops( CString &sBuf );
+void OpenRWops( SDL_RWops *rw, CString *sBuf );
 SDL_Surface *mySDL_MakeDummySurface( int height, int width );
 
 CString mySDL_GetError();

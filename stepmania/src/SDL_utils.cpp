@@ -1086,15 +1086,13 @@ int RWString_Close(struct SDL_RWops *context)
 	return 0;
 }
 
-SDL_RWops *OpenRWops( CString &sBuf )
+void OpenRWops( SDL_RWops *rw, CString *sBuf )
 {
-	SDL_RWops *rw = SDL_AllocRW();
-	rw->hidden.unknown.data1 = new RWString( &sBuf );
+	rw->hidden.unknown.data1 = new RWString( sBuf );
 	rw->seek = RWString_Seek;
 	rw->read = RWString_Read;
 	rw->write = RWString_Write;
 	rw->close = RWString_Close;
-	return rw;
 }
 
 SDL_Surface *mySDL_MakeDummySurface( int height, int width )
