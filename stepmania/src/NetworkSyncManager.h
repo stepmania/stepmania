@@ -70,8 +70,9 @@ public:
 
 	bool useSMserver;
 
-	int m_ActivePlayers;
 	vector <int> m_PlayerStatus;
+	int m_ActivePlayers;
+	vector <int> m_ActivePlayer;
 	vector <CString> m_PlayerNames;
 
 	//Used togeather for 

@@ -568,7 +568,10 @@ void NetworkSyncManager::ProcessInput()
 				{
 					int PStatus = m_packet.Read1();
 					if ( PStatus > 0 )
+					{
 						m_ActivePlayers++;
+						m_ActivePlayer.push_back( i );
+					}
 					m_PlayerStatus.push_back( PStatus );
 					m_PlayerNames.push_back( m_packet.ReadNT() );
 				}
