@@ -320,6 +320,7 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 			buf[i++] = p;
 	}
 
+#if 0
 	/* ebp is usually the frame pointer. */
 	const StackFrame *frame = (StackFrame *) ctx->ebp;
 
@@ -329,6 +330,11 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 	 * point in the stack. */
 	if( !IsValidFrame( frame ) )
 		frame = (StackFrame *) ctx->esp;
+#endif
+
+	/* Actually, let's just use esp.  Even if ebp points to a valid stack frame, there might be
+	 * -fomit-frame-pointer calls in front of it, and we want to get those. */
+	const StackFrame *frame = (StackFrame *) ctx->esp;
 
 	while( i < size-1 ) // -1 for NULL
 	{
@@ -338,6 +344,15 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 
 		if( !IsValidFrame( frame ) )
 		{
+			/* We've lost the frame.  We might have crashed while in a call in -fomit-frame-pointer
+			 * code.  Iterate through the stack word by word.  If a word is possibly a valid return
+			 * address, record it.  This is important; if we don't do this, we'll lose too many
+			 * stack frames at the top of the trace.  This can have false positives, and introduce
+			 * garbage into the trace, but we should eventually find a real stack frame. */
+			void **p = (void **) frame;
+			if( IsExecutableAddress( *p ) && PointsToValidCall( *p ) )
+				buf[i++] = *p;
+
 			/* The frame pointer is invalid.  Just move forward one word. */
 			frame = (StackFrame *) (((char *)frame)+4);
 			continue;
