@@ -496,6 +496,13 @@ Actor* NoteDisplay::GetHoldTailActor( float fNoteBeat, bool bIsBeingHeld )
 	return pActorOut;
 }
 
+static float ArrowGetAlphaOrGlow( bool bGlow, PlayerNumber pn, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels )
+{
+	if( bGlow )
+		return ArrowGetGlow( pn, iCol, fYOffset, fPercentFadeToFail, fYReverseOffsetPixels );
+	else
+		return ArrowGetAlpha( pn, iCol, fYOffset, fPercentFadeToFail, fYReverseOffsetPixels );
+}
 
 void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
 {
@@ -521,6 +528,10 @@ void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, f
 	const float fYCapTop	 = fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead-fFrameHeight;
 	const float fYCapBottom  = fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead;
 
+	if( bGlow )
+		fColorScale = 1;
+
+	bool bAllAreTransparent = true;
 	bool bLast = false;
 	for( float fY=fYCapTop; !bLast; fY+=fYStep )
 	{
@@ -539,18 +550,20 @@ void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, f
 		const float fTexCoordTop			= SCALE( fTopDistFromHeadTop,    0, fFrameHeight, pRect->top, pRect->bottom );
 		const float fTexCoordLeft			= pRect->left;
 		const float fTexCoordRight			= pRect->right;
-		const float	fAlpha					= ArrowGetAlpha( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const float	fGlow					= ArrowGetGlow( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const RageColor colorDiffuse		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
-		const RageColor colorGlow			= RageColor(1,1,1,fGlow);
+		const float	fAlpha					= ArrowGetAlphaOrGlow( bGlow, m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const RageColor color				= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 
-		v[0].p = RageVector3(fXLeft,  fY, fZ); v[0].c = bGlow? colorGlow:colorDiffuse; v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
-		v[1].p = RageVector3(fXRight, fY, fZ); v[1].c = bGlow? colorGlow:colorDiffuse; v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		if( fAlpha > 0 )
+			bAllAreTransparent = false;
+
+		v[0].p = RageVector3(fXLeft,  fY, fZ); v[0].c = color; v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
+		v[1].p = RageVector3(fXRight, fY, fZ); v[1].c = color; v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
 		v+=2;
 		if( v-queue >= size )
 			break;
 	}
-	DISPLAY->DrawQuadStrip( queue, v-queue );
+	if( !bAllAreTransparent )
+		DISPLAY->DrawQuadStrip( queue, v-queue );
 }
 
 void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
@@ -582,7 +595,11 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, flo
 	const bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(iCol) > 0.5;
 	bool bAnchorToBottom = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
 
+	if( bGlow )
+		fColorScale = 1;
+
 	// top to bottom
+	bool bAllAreTransparent = true;
 	bool bLast = false;
 	for( float fY = fYBodyTop; !bLast; fY += fYStep )
 	{
@@ -602,19 +619,21 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, flo
 		const float fTexCoordTop		= SCALE( bAnchorToBottom ? fDistFromBodyTop : fDistFromBodyBottom,    0, fFrameHeight, pRect->bottom, pRect->top );
 		const float fTexCoordLeft		= pRect->left;
 		const float fTexCoordRight		= pRect->right;
-		const float	fAlpha				= ArrowGetAlpha( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const float	fGlow				= ArrowGetGlow( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const RageColor colorDiffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
-		const RageColor colorGlow		= RageColor(1,1,1,fGlow);
+		const float	fAlpha				= ArrowGetAlphaOrGlow( bGlow, m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const RageColor color			= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 
-		v[0].p = RageVector3(fXLeft,  fY, fZ);	v[0].c = bGlow? colorGlow: colorDiffuse; v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
-		v[1].p = RageVector3(fXRight, fY, fZ);	v[1].c = bGlow? colorGlow: colorDiffuse; v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		if( fAlpha > 0 )
+			bAllAreTransparent = false;
+
+		v[0].p = RageVector3(fXLeft,  fY, fZ);	v[0].c = color; v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
+		v[1].p = RageVector3(fXRight, fY, fZ);	v[1].c = color; v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
 		v+=2;
 		if( v-queue >= size )
 			break;
 	}
 
-	DISPLAY->DrawQuadStrip( queue, v-queue );
+	if( !bAllAreTransparent )
+		DISPLAY->DrawQuadStrip( queue, v-queue );
 }
 
 void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
@@ -642,7 +661,11 @@ void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld
 	const float fYCapTop		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail;
 	const float fYCapBottom		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail+fFrameHeight;
 
+	if( bGlow )
+		fColorScale = 1;
+
 	// don't draw any part of the tail that is before the middle of the head
+	bool bAllAreTransparent = true;
 	bool bLast = false;
 	float fY=max( fYCapTop, fYHead );
 	for( ; !bLast; fY += fYStep )
@@ -662,18 +685,20 @@ void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld
 		const float fTexCoordTop			= SCALE( fTopDistFromTail,    0, fFrameHeight, pRect->top, pRect->bottom );
 		const float fTexCoordLeft			= pRect->left;
 		const float fTexCoordRight			= pRect->right;
-		const float	fAlpha					= ArrowGetAlpha( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const float	fGlow					= ArrowGetGlow( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const RageColor colorDiffuse		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
-		const RageColor colorGlow			= RageColor(1,1,1,fGlow);
+		const float	fAlpha					= ArrowGetAlphaOrGlow( bGlow, m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const RageColor color				= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 
-		v[0].p = RageVector3(fXLeft,  fY, fZ);	v[0].c = bGlow ? colorGlow:colorDiffuse; v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
-		v[1].p = RageVector3(fXRight, fY, fZ);	v[1].c = bGlow ? colorGlow:colorDiffuse; v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		if( fAlpha > 0 )
+			bAllAreTransparent = false;
+
+		v[0].p = RageVector3(fXLeft,  fY, fZ);	v[0].c = color; v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
+		v[1].p = RageVector3(fXRight, fY, fZ);	v[1].c = color; v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
 		v+=2;
 		if( v-queue >= size )
 			break;
 	}
-	DISPLAY->DrawQuadStrip( queue, v-queue );
+	if( !bAllAreTransparent )
+		DISPLAY->DrawQuadStrip( queue, v-queue );
 }
 
 void NoteDisplay::DrawHoldTail( const HoldNote& hn, bool bIsBeingHeld, float fYTail, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
