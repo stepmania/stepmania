@@ -171,32 +171,27 @@ ScreenStage::ScreenStage()
 
 			for( i=0; i<iNumChars; i++ )
 				m_frameStage.AddChild( &m_sprNumbers[i] );
-			m_frameStage.AddChild( &m_sprStage );
 		}
 		break;
 	case MODE_FINAL:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage final") );
-		m_frameStage.AddChild( &m_sprStage );
 		break;
 	case MODE_EXTRA1:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage extra1") );
-		m_frameStage.AddChild( &m_sprStage );
 		break;
 	case MODE_EXTRA2:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage extra2") );
-		m_frameStage.AddChild( &m_sprStage );
 		break;
 	case MODE_ONI:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage oni") );
-		m_frameStage.AddChild( &m_sprStage );
 		break;
 	case MODE_ENDLESS:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage endless") );
-		m_frameStage.AddChild( &m_sprStage );
 		break;
 	default:
 		ASSERT(0);
 	}
+	m_frameStage.AddChild( &m_sprStage );
 
 	this->AddChild( &m_Fade );	// fade should draw last, on top of everything else
 	m_Fade.SetOpened();
@@ -507,12 +502,8 @@ ScreenStage::ScreenStage()
 			case 5: m_stagename.SetText( "THE FIFTH STAGE" ); break;
 			case 6: m_stagename.SetText( "THE SIXTH STAGE" ); break;
 			case 7: m_stagename.SetText( "THE SEVENTH STAGE" ); break;
-			default: m_stagename.SetText("THE NEXT STAGE"); break;
-		}
-
-		if (iStageNo > 9) // if we're in two digits or more
-		{
-			m_stagename.SetText( "" ); // make this text disappear.
+			case 8: case 9: m_stagename.SetText("THE NEXT STAGE"); break;
+			default: m_stagename.SetText( "" ); break; // make this text disappear.
 		}
 
 		m_stagename.SetDiffuse( D3DXCOLOR(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) ); // orangey colour
