@@ -341,6 +341,7 @@ void ScreenOptionsMaster::SetStyles( OptionRowDefinition &row, OptionRowHandler 
 	hand.type = ROW_LIST;
 	row.bOneChoiceForAllPlayers = true;
 	row.name = "Style";
+	row.bOneChoiceForAllPlayers = true;
 
 	vector<const Style*> vStyles;
 	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
