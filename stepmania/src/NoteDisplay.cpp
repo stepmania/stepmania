@@ -73,8 +73,6 @@ int NoteDisplay::GetTapFrameNo( const float fNoteBeat )
 	fBeatFraction = froundf( fBeatFraction, 0.25f );
 	int iBeatFractionContrib = fBeatFraction * iNumFrames;
 
-	g_bAllowVivid = GAMEMAN->GetMetricB( "NoteDisplay", "AllowVivid" );
-
 	int iFrameNo;
 	if( g_bAllowVivid  &&  GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_ColorType == PlayerOptions::COLOR_VIVID )
 		iFrameNo = (iSongBeatFrameContrib + iBeatFractionContrib) % iNumFrames;
