@@ -333,13 +333,25 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 
 		Course* pCourse = m_MusicWheel.GetSelectedCourse();
 		GAMESTATE->m_pCurCourse = pCourse;
-		Song* pSong;
-		Notes* pNotes;
-		CString sModifiers;
-		pCourse->GetFirstStageInfo( pSong, pNotes, sModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			GAMESTATE->m_PlayerOptions[p].FromString( sModifiers );
-		GAMESTATE->m_SongOptions.FromString( sModifiers );
+		// apply #LIVES
+		if( pCourse->m_iLives != -1 )
+		{
+			GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
+			GAMESTATE->m_SongOptions.m_iBatteryLives = pCourse->m_iLives;
+		}
+
+		//
+		// Do NOT apply the first song's modifiers before going to the options screen.
+		// The user should not be able to override modifiers specifically designated
+		// by the course.
+		//
+		//Song* pSong;
+		//Notes* pNotes;
+		//CString sModifiers;
+		//pCourse->GetFirstStageInfo( pSong, pNotes, sModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+		//for( int p=0; p<NUM_PLAYERS; p++ )
+		//	GAMESTATE->m_PlayerOptions[p].FromString( sModifiers );
+		//GAMESTATE->m_SongOptions.FromString( sModifiers );
 
 		m_Menu.StopTimer();
 		AdjustOptions();

@@ -538,6 +538,7 @@ void ScreenGameplay::LoadNextSong()
 				GAMESTATE->m_PlayerOptions[p] = GAMESTATE->m_SelectedOptions[p];
 				// Put courses options into effect.
 				GAMESTATE->m_PlayerOptions[p].FromString( m_asCourseModifiers[iPlaySongIndex] );
+				GAMESTATE->m_SongOptions.FromString( m_asCourseModifiers[iPlaySongIndex] );
 			}
 		}
 		break;
@@ -548,7 +549,7 @@ void ScreenGameplay::LoadNextSong()
 
 	m_textStageNumber.SetText( GAMESTATE->GetStageText() );
 
-
+	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -556,7 +557,6 @@ void ScreenGameplay::LoadNextSong()
 			continue;
 
 		m_textPlayerOptions[p].SetText( GAMESTATE->m_PlayerOptions[p].GetString() );
-
 
 		// reset oni game over graphic
 		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );

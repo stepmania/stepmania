@@ -310,11 +310,14 @@ void Course::GetStageInfo(
 	vector<Song*> vSongsByMostPlayed = SONGMAN->GetAllSongs();
 	SortSongPointerArrayByMostPlayed( vSongsByMostPlayed );
 	
-	// filter out songs that don't have both medium and hard steps
+	// filter out songs that don't have both medium and hard steps and long ver sons
 	for( int j=vSongsByMostPlayed.size()-1; j>=0; j-- )
 	{
 		Song* pSong = vSongsByMostPlayed[j];
-		if( !pSong->GetNotes(nt, DIFFICULTY_MEDIUM) || !pSong->GetNotes(nt, DIFFICULTY_HARD) )
+		if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds  ||
+			pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds  || 
+			!pSong->GetNotes(nt, DIFFICULTY_MEDIUM)  ||
+			!pSong->GetNotes(nt, DIFFICULTY_HARD) )
 			vSongsByMostPlayed.erase( vSongsByMostPlayed.begin()+j );
 	}
 

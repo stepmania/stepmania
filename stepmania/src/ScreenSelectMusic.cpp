@@ -87,6 +87,8 @@ ScreenSelectMusic::ScreenSelectMusic()
 
 	CodeDetector::RefreshCacheItems();
 
+	GAMESTATE->m_SongOptions.m_FailType = PREFSMAN->m_DefaultFailType;
+
 	int p;
 
 	m_Menu.Load(
