@@ -269,6 +269,9 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 	CString sDir, sThrowAway;
 	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
 
+	/* XXX: We should use Find* to get a file list only, and handle
+	 * wildcard matching ourself.  Windows matching is braindead.  For
+	 * example, *.dwi matches "foo.dwi~". */
 	WIN32_FIND_DATA fd;
 	HANDLE hFind = ::FindFirstFile( sPath, &fd );
 
