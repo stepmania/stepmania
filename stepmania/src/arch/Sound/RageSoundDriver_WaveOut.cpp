@@ -135,6 +135,9 @@ RageSound_WaveOut::RageSound_WaveOut()
 		buffers[b].dwFlags |= WHDR_DONE;
 	}
 
+	/* We have a very large writeahead; make sure we have a large enough decode
+	 * buffer to recover cleanly from underruns. */
+	SetDecodeBufferSize( buffersize_frames * 3/2 );
 	StartDecodeThread();
 
 	MixingThread.SetName("Mixer thread");

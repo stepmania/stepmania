@@ -72,6 +72,7 @@ class RageSound_Generic_Software: public RageSoundDriver
 		} state;
 
 	    sound();
+		void Init();
 	};
 
 	/* List of currently playing sounds: XXX no vector */
@@ -89,6 +90,12 @@ protected:
 	/* Start the decoding.  This should be called once the hardware is set up and
 	 * GetSampleRate will return the correct value. */
 	void StartDecodeThread();
+
+	/* Call this before calling StartDecodeThread to set the desired decoding buffer
+	 * size.  This is the number of frames that Mix() will try to be able to return
+	 * at once.  This should generally be slightly larger than the sound writeahead,
+	 * to allow filling the buffer after an underrun.  The default is 4096 frames. */
+	void SetDecodeBufferSize( int frames );
 	
 	/* Override this to set the priority of the decoding thread, which should be above
 	 * normal priority but not realtime. */

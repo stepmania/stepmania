@@ -8,8 +8,7 @@
 
 static const int channels = 2;
 static const int bytes_per_frame = channels*2; /* 16-bit */
-
-static const int frames_to_buffer = 4096;
+static int frames_to_buffer;
 
 static const int num_chunks = 8;
 static int chunksize() { return frames_to_buffer / num_chunks; }
@@ -18,7 +17,10 @@ RageSound_Generic_Software::sound::sound()
 {
 	snd = NULL;
 	state = STOPPED;
+}
 
+void RageSound_Generic_Software::sound::Init()
+{
 	/* Reserve enough blocks in the buffer to hold the buffer; plus some extra, since blocks
 	 * are partially read by Mix(); plus some more extra, since we can buffer one block
 	 * over frames_to_buffer (we buffer until filled >= frames_to_buffer). */
@@ -294,13 +296,26 @@ void RageSound_Generic_Software::StopMixing( RageSoundBase *snd )
 void RageSound_Generic_Software::StartDecodeThread()
 {
 	ASSERT( !m_DecodeThread.IsCreated() );
+
+	/* Initialize the sound buffers, now that frames_to_buffer is finalized. */
+	for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
+		sounds[i].Init();
+
 	m_DecodeThread.Create( DecodeThread_start, this );
+}
+
+void RageSound_Generic_Software::SetDecodeBufferSize( int frames )
+{
+	ASSERT( !m_DecodeThread.IsCreated() );
+
+	frames_to_buffer = frames;
 }
 
 RageSound_Generic_Software::RageSound_Generic_Software()
 {
 	shutdown_decode_thread = false;
-
+	SetDecodeBufferSize( 4096 );
+	
 	m_DecodeThread.SetName("Decode thread");
 }
 
