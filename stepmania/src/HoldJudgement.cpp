@@ -29,7 +29,7 @@ HoldJudgement::HoldJudgement()
 	m_sprJudgement.Load( THEME->GetPathTo("Graphics","gameplay hold judgement") );
 	m_sprJudgement.StopAnimating();
 	m_sprJudgement.TurnShadowOn();
-	this->AddSubActor( &m_sprJudgement );
+	this->AddChild( &m_sprJudgement );
 }
 
 void HoldJudgement::Update( float fDeltaTime )

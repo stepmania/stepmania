@@ -40,7 +40,7 @@ ScreenHowToPlay::ScreenHowToPlay()
 		HELP_TEXT, true, TIMER_SECONDS
 		);
 	m_Menu.TweenOnScreenFromMenu( SM_None );
-	this->AddSubActor( &m_Menu );
+	this->AddChild( &m_Menu );
 
 	CString sHowToPlayPath;
 	switch( GAMESTATE->m_PlayMode )
@@ -58,11 +58,11 @@ ScreenHowToPlay::ScreenHowToPlay()
 
 	m_sprHowToPlay.Load( sHowToPlayPath );
 	m_sprHowToPlay.SetXY( CENTER_X, CENTER_Y );
-	this->AddSubActor( &m_sprHowToPlay );
+	this->AddChild( &m_sprHowToPlay );
 
 	m_sprHowToPlay.SetX( SCREEN_LEFT-SCREEN_WIDTH );
-	m_sprHowToPlay.BeginTweeningQueued( 0.4f );		// sleep
-	m_sprHowToPlay.BeginTweeningQueued( 0.6f, Actor::TWEEN_BIAS_BEGIN );
+	m_sprHowToPlay.BeginTweening( 0.4f );		// sleep
+	m_sprHowToPlay.BeginTweening( 0.6f, Actor::TWEEN_BIAS_BEGIN );
 	m_sprHowToPlay.SetTweenX( CENTER_X );
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","how to play music") );

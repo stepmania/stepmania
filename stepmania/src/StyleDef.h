@@ -65,6 +65,8 @@ public:
 	GameInput StyleInputToGameInput( const StyleInput StyleI ) const;
 	StyleInput GameInputToStyleInput( const GameInput &GameI ) const;
 
+	PlayerNumber ControllerToPlayerNumber( GameController controller ) const;
+
 	void GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOriginal, NoteData* pNoteDataOut ) const;
 };
 

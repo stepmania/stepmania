@@ -25,7 +25,7 @@ HoldGhostArrow::HoldGhostArrow()
 	m_fHeatLevel = 0;
 
 //	LoadFromSpriteFile( THEME->GetPathTo(GRAPHIC_HOLD_GHOST_ARROW) );
-	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	SetDiffuse( D3DXCOLOR(1,1,1,1) );
 //	SetZoom( 1.1f );
 }
 
@@ -53,7 +53,7 @@ void HoldGhostArrow::Update( float fDeltaTime )
 	else
 		SetZoom( 1 );
 	
-	SetDiffuseColor( D3DXCOLOR(1,1,1,m_fHeatLevel*3) );
+	SetDiffuse( D3DXCOLOR(1,1,1,m_fHeatLevel*3) );
 
 	m_bWasSteppedOnLastFrame = false;	// reset for next frame
 }

@@ -84,6 +84,7 @@ protected:
 
 	RageSoundSample		m_soundSelect;
 	RageSoundSample		m_soundChangeNotes;
+	RageSoundSample		m_soundOptionsChange;
 	RageSoundSample		m_soundLocked;
 };
 

@@ -33,20 +33,20 @@ ScreenGameOver::ScreenGameOver()
 
 	m_sprGameOver.Load( THEME->GetPathTo("Graphics","game over") );
 	m_sprGameOver.SetXY( CENTER_X, CENTER_Y );
-	this->AddSubActor( &m_sprGameOver );
+	this->AddChild( &m_sprGameOver );
 
 	// tween game over
-	m_sprGameOver.SetGlowColor( D3DXCOLOR(1,1,1,0) );
-	m_sprGameOver.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	m_sprGameOver.SetGlow( D3DXCOLOR(1,1,1,0) );
+	m_sprGameOver.SetDiffuse( D3DXCOLOR(1,1,1,0) );
 
-	m_sprGameOver.BeginTweeningQueued( 0.5f );		// fade to white
-	m_sprGameOver.SetTweenAddColor( D3DXCOLOR(1,1,1,1) );
+	m_sprGameOver.BeginTweening( 0.5f );		// fade to white
+	m_sprGameOver.SetTweenGlow( D3DXCOLOR(1,1,1,1) );
 
-	m_sprGameOver.BeginTweeningQueued( 0.01f );		// turn color on
-	m_sprGameOver.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	m_sprGameOver.BeginTweening( 0.01f );		// turn color on
+	m_sprGameOver.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
 
-	m_sprGameOver.BeginTweeningQueued( 0.5f );		// fade to color
-	m_sprGameOver.SetTweenAddColor( D3DXCOLOR(1,1,1,0) );
+	m_sprGameOver.BeginTweening( 0.5f );		// fade to color
+	m_sprGameOver.SetTweenGlow( D3DXCOLOR(1,1,1,0) );
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","game over music") );
 
@@ -65,7 +65,7 @@ void ScreenGameOver::HandleScreenMessage( const ScreenMessage SM )
 	case SM_StartFadingOut:
 		m_bClosing = true;
 		m_sprGameOver.BeginTweening( 0.8f );
-		m_sprGameOver.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+		m_sprGameOver.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 		this->SendScreenMessage( SM_GoToNextScreen, 0.8f );
 		break;
 	case SM_GoToNextScreen:

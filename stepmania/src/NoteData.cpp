@@ -531,18 +531,25 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 		}
 		break;
 	case PlayerOptions::TURN_SHUFFLE:
-		CArray<int,int> aiTracksLeftToMap;
-		for( t=0; t<m_iNumTracks; t++ )
-			aiTracksLeftToMap.Add( t );
-		
-		for( t=0; t<m_iNumTracks; t++ )
 		{
-			int iRandTrackIndex = rand()%aiTracksLeftToMap.GetSize();
-			int iRandTrack = aiTracksLeftToMap[iRandTrackIndex];
-			aiTracksLeftToMap.RemoveAt( iRandTrackIndex );
-			iTakeFromTrack[t] = iRandTrack;
+			CArray<int,int> aiTracksLeftToMap;
+			for( t=0; t<m_iNumTracks; t++ )
+				aiTracksLeftToMap.Add( t );
+			
+			for( t=0; t<m_iNumTracks; t++ )
+			{
+				int iRandTrackIndex = rand()%aiTracksLeftToMap.GetSize();
+				int iRandTrack = aiTracksLeftToMap[iRandTrackIndex];
+				aiTracksLeftToMap.RemoveAt( iRandTrackIndex );
+				iTakeFromTrack[t] = iRandTrack;
+			}
 		}
 		break;
+	case PlayerOptions::TURN_SUPER_SHUFFLE:
+		// handle this below
+		break;
+	default:
+		ASSERT(0);
 	}
 
 	NoteData tempNoteData;	// write into here as we tranform
@@ -554,6 +561,40 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 	for( t=0; t<m_iNumTracks; t++ )
 		for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ ) 			
 			tempNoteData.m_TapNotes[t][r] = m_TapNotes[iTakeFromTrack[t]][r];
+
+
+	if( tt == PlayerOptions::TURN_SUPER_SHUFFLE )
+	{
+		this->Convert2sAnd3sToHoldNotes();		// so we don't super-shuffle HoldNotes
+		for( int r=0; r<this->GetLastRow(); r++ )	// foreach row
+		{
+			if( !this->IsRowEmpty(r) )
+			{
+				// shuffle this row
+				CArray<int,int> aiTracksLeftToMap;
+				for( t=0; t<m_iNumTracks; t++ )
+					aiTracksLeftToMap.Add( t );
+				
+				for( t=0; t<m_iNumTracks; t++ )
+				{
+					int iRandTrackIndex = rand()%aiTracksLeftToMap.GetSize();
+					int iRandTrack = aiTracksLeftToMap[iRandTrackIndex];
+					aiTracksLeftToMap.RemoveAt( iRandTrackIndex );
+					iTakeFromTrack[t] = iRandTrack;
+				}
+
+				for( t=0; t<m_iNumTracks; t++ )
+					tempNoteData.m_TapNotes[t][r] = m_TapNotes[iTakeFromTrack[t]][r];
+			}
+		}
+		for( int i=0; i<this->m_iNumHoldNotes; i++ )
+		{
+			HoldNote& hn = this->m_HoldNotes[i];
+			HoldNote newHN = hn;
+			hn.m_iTrack = rand() % m_iNumTracks;
+			tempNoteData.AddHoldNote( newHN );
+		}
+	}
 
 	this->CopyAll( &tempNoteData );		// copy note data from newData back into this
 	this->Convert2sAnd3sToHoldNotes();

@@ -100,9 +100,9 @@ ScreenStage::ScreenStage()
 	//
 	// Init common graphics
 	//
-	this->AddSubActor( &m_sprSongBackground );	// add background first so it draws bottom-most
-	this->AddSubActor( &m_quadMask );	// add quad mask before stage so that it will block out the stage sprites
-	this->AddSubActor( &m_frameStage ); 
+	this->AddChild( &m_sprSongBackground );	// add background first so it draws bottom-most
+	this->AddChild( &m_quadMask );	// add quad mask before stage so that it will block out the stage sprites
+	this->AddChild( &m_frameStage ); 
 	
 	for( int i=0; i<4; i++ )
 	{
@@ -162,36 +162,36 @@ ScreenStage::ScreenStage()
 			if ( g_StageType != STAGE_TYPE_EZ2 ) // Ez2dancer MUST have this graphic on-top
 			{
 				for( i=0; i<iNumChars; i++ )
-					m_frameStage.AddSubActor( &m_sprNumbers[i] );
-				m_frameStage.AddSubActor( &m_sprStage );
+					m_frameStage.AddChild( &m_sprNumbers[i] );
+				m_frameStage.AddChild( &m_sprStage );
 			}
 		}
 		break;
 	case MODE_FINAL:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage final") );
-		m_frameStage.AddSubActor( &m_sprStage );
+		m_frameStage.AddChild( &m_sprStage );
 		break;
 	case MODE_EXTRA1:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage extra1") );
-		m_frameStage.AddSubActor( &m_sprStage );
+		m_frameStage.AddChild( &m_sprStage );
 		break;
 	case MODE_EXTRA2:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage extra2") );
-		m_frameStage.AddSubActor( &m_sprStage );
+		m_frameStage.AddChild( &m_sprStage );
 		break;
 	case MODE_ONI:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage oni") );
-		m_frameStage.AddSubActor( &m_sprStage );
+		m_frameStage.AddChild( &m_sprStage );
 		break;
 	case MODE_ENDLESS:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage endless") );
-		m_frameStage.AddSubActor( &m_sprStage );
+		m_frameStage.AddChild( &m_sprStage );
 		break;
 	default:
 		ASSERT(0);
 	}
 
-	this->AddSubActor( &m_Fade );	// fade should draw last, on top of everything else
+	this->AddChild( &m_Fade );	// fade should draw last, on top of everything else
 	m_Fade.SetOpened();
 
 
@@ -204,7 +204,7 @@ ScreenStage::ScreenStage()
 
 		const float fStageOffScreenY = CENTER_Y+fStageHeight;
 
-		m_quadMask.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
+		m_quadMask.SetDiffuse( D3DXCOLOR(0,0,0,0) );
 		m_quadMask.StretchTo( CRect(SCREEN_LEFT, roundf(fStageOffScreenY-fStageHeight/2), SCREEN_RIGHT, roundf(fStageOffScreenY+fStageHeight/2)) );
 		m_quadMask.SetZ( -1 );		// important: fill Z buffer with values that will cause subsequent draws to fail the Z test
 
@@ -267,8 +267,8 @@ ScreenStage::ScreenStage()
 
 			for( i=0; i<4; i++ ) // redefine the size of the numbers
 			{
-				m_sprNumbers[i].SetWidth( 200.0f ); // make the numbers that appear really big
-				m_sprNumbers[i].SetHeight( 200.0f); // so they can 'shrink' onto the screen
+				m_sprNumbers[i].ZoomToWidth( 200.0f ); // make the numbers that appear really big
+				m_sprNumbers[i].ZoomToHeight( 200.0f); // so they can 'shrink' onto the screen
 			}
 		
 		//	m_frameStage.SetXY( CENTER_X, CENTER_Y );
@@ -316,8 +316,8 @@ ScreenStage::ScreenStage()
 				m_sprbgxtra.StopAnimating(); 
 				m_sprbgxtra.SetState( bg_modeoffset ); // use the first element of the offset for this graphic
 				m_sprbgxtra.SetXY( CENTER_X-30, CENTER_Y+180); // set it's initial XY coordinates
-				m_sprbgxtra.SetHeight( 30 ); // set it's height and width. As we're only dealing with solid color
-				m_sprbgxtra.SetWidth( SCREEN_WIDTH + 50 ); // stretching shouldn't be a concern.
+				m_sprbgxtra.ZoomToHeight( 30 ); // set it's height and width. As we're only dealing with solid color
+				m_sprbgxtra.ZoomToWidth( SCREEN_WIDTH + 50 ); // stretching shouldn't be a concern.
 				m_sprbgxtra.SetRotation( -20 ); // rotate this graphic
 				m_sprbgxtra.BeginTweening(0.3f); // start tweening
 				m_sprbgxtra.SetTweenRotationZ( 0 ); // set the rotation we want it to finally appear as
@@ -327,24 +327,24 @@ ScreenStage::ScreenStage()
 			m_sprbg[0].SetXY( CENTER_X, CENTER_Y+150); // this is where we want the red bar graphic....
 			if (ez2Final == 1) // however in final...
 				m_sprbg[0].SetXY( CENTER_X-30, CENTER_Y-160); // we want it somewhere else
-			m_sprbg[0].SetHeight( 100 ); // it's fairly high in normal
+			m_sprbg[0].ZoomToHeight( 100 ); // it's fairly high in normal
 			if (ez2Final == 1) // but in final...
-				m_sprbg[0].SetHeight( 30 ); // it needs to be a bit more squashed
-			m_sprbg[0].SetWidth( SCREEN_WIDTH + 50 ); // no matter what... it's this wide
+				m_sprbg[0].ZoomToHeight( 30 ); // it needs to be a bit more squashed
+			m_sprbg[0].ZoomToWidth( SCREEN_WIDTH + 50 ); // no matter what... it's this wide
 			m_sprbg[0].SetRotation( -20 ); // and is initially this rotation
 			m_sprbg[0].BeginTweening(0.3f); // start tweening
 			m_sprbg[0].SetTweenRotationZ( 0 ); // and set the rotation to where we want it to end up
 			
 			m_sprbg[1].SetXY( CENTER_X-(SCREEN_WIDTH/2)-20, CENTER_Y+element_y_offsets);
-			m_sprbg[1].SetHeight( SCREEN_HEIGHT - 140 );
-			m_sprbg[1].SetWidth( 130 );
+			m_sprbg[1].ZoomToHeight( SCREEN_HEIGHT - 140 );
+			m_sprbg[1].ZoomToWidth( 130 );
 			m_sprbg[1].SetRotation( -20 );
 			m_sprbg[1].BeginTweening(0.3f);
 			m_sprbg[1].SetTweenRotationZ( 0 );
 
 			m_sprbg[2].SetXY( CENTER_X+430, CENTER_Y+element_y_offsets);
-			m_sprbg[2].SetHeight( SCREEN_HEIGHT - 140 );
-			m_sprbg[2].SetWidth( SCREEN_WIDTH + 50 );
+			m_sprbg[2].ZoomToHeight( SCREEN_HEIGHT - 140 );
+			m_sprbg[2].ZoomToWidth( SCREEN_WIDTH + 50 );
 			m_sprbg[2].SetRotation( -20 );
 			m_sprbg[2].BeginTweening(0.3f);
 			m_sprbg[2].SetTweenX( CENTER_X );
@@ -352,12 +352,12 @@ ScreenStage::ScreenStage()
 
 			for (i=3; i>=0; i--) // work backwards as we wanna add em in reverse 
 			{
-				m_frameStage.AddSubActor( &m_sprbg[i] ); 
+				m_frameStage.AddChild( &m_sprbg[i] ); 
 			}
 
 			if (ez2Final == 1) // if we're in FINAL add that extra background element mentioned earlier.
 			{
-				m_frameStage.AddSubActor( &m_sprbgxtra );
+				m_frameStage.AddChild( &m_sprbgxtra );
 			}
 
 
@@ -396,17 +396,17 @@ ScreenStage::ScreenStage()
 			for (i=0; i<2; i++) // initialize the UK MOVE text and positions
 			{
 				m_ez2ukm[i].SetText( "STEPMANIA EZ2 MOVE" ); // choose something better if you like ;)
-				m_ez2ukm[i].SetDiffuseColor( D3DXCOLOR(1,1,1,1) ); // it's white
+				m_ez2ukm[i].SetDiffuse( D3DXCOLOR(1,1,1,1) ); // it's white
 				m_ez2ukm[i].BeginTweening(0.5f); // start it tweening
 				if (ez2Final == 1)
 				{
 					m_stagedesc[i].SetText( "FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL" ); // this is the desc text for final stage
-					m_stagedesc[i].SetDiffuseColor( D3DXCOLOR(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) ); // it's blueish
+					m_stagedesc[i].SetDiffuse( D3DXCOLOR(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) ); // it's blueish
 				}
 				else
 				{
 					m_stagedesc[i].SetText( "NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT" ); // normal stages use this text
-					m_stagedesc[i].SetDiffuseColor( D3DXCOLOR(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) ); // it's orangey
+					m_stagedesc[i].SetDiffuse( D3DXCOLOR(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) ); // it's orangey
 				}
 				m_stagedesc[i].BeginTweening(0.5f); // start tweening the descriptions
 
@@ -419,8 +419,8 @@ ScreenStage::ScreenStage()
 
 			for (i=0; i<2; i++) // add the actors
 			{
-				m_frameStage.AddSubActor( &m_ez2ukm[i] );
-				m_frameStage.AddSubActor( &m_stagedesc[i] );
+				m_frameStage.AddChild( &m_ez2ukm[i] );
+				m_frameStage.AddChild( &m_stagedesc[i] );
 			}
 			
 			//////////////////////////////
@@ -484,7 +484,7 @@ ScreenStage::ScreenStage()
 					else // set 2
 						m_sprScrollingBlobs[j][i].SetTweenX(CENTER_X+(SCREEN_WIDTH/2)+30-70-(i*30.0f)); 
 		
-					m_frameStage.AddSubActor( &m_sprScrollingBlobs[j][i] ); // add the actor
+					m_frameStage.AddChild( &m_sprScrollingBlobs[j][i] ); // add the actor
 				}
 			}
 
@@ -527,11 +527,11 @@ ScreenStage::ScreenStage()
 				m_stagename.SetText( "" ); // make this text disappear.
 			}
 
-			m_stagename.SetDiffuseColor( D3DXCOLOR(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) ); // orangey colour
+			m_stagename.SetDiffuse( D3DXCOLOR(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) ); // orangey colour
 
 			if (ez2Final == 1) // if we're final stage 
 			{
-				m_stagename.SetDiffuseColor( D3DXCOLOR(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) ); // blueish colour
+				m_stagename.SetDiffuse( D3DXCOLOR(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) ); // blueish colour
 				m_stagename.SetText( "THE FINAL STAGE" );
 				stage_mode = MODE_FINAL; // set back to final again.
 				ez2Final = 0;
@@ -540,7 +540,7 @@ ScreenStage::ScreenStage()
 			m_stagename.BeginTweening(0.5f); // start tweening them to their new home
 			
 			m_stagename.SetTweenX(CENTER_X+70); // set their new locations
-			m_frameStage.AddSubActor( &m_stagename ); //add the actor
+			m_frameStage.AddChild( &m_stagename ); //add the actor
 			//////////////////////////////
 			// END stage name         //
 			//////////////////////////////
@@ -549,8 +549,8 @@ ScreenStage::ScreenStage()
 				CString sStageNo = ssprintf("%d", iStageNo);
 				const int iNumChars = sStageNo.GetLength()+1;
 				for( i=0; i<iNumChars; i++ )
-					m_frameStage.AddSubActor( &m_sprNumbers[i] );
-				m_frameStage.AddSubActor( &m_sprStage );
+					m_frameStage.AddChild( &m_sprNumbers[i] );
+				m_frameStage.AddChild( &m_sprStage );
 				m_sprStage.SetZoom( 0 ); // hide this element for Ez2 :)
 	}
 

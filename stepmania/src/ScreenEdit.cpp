@@ -223,7 +223,7 @@ ScreenEdit::ScreenEdit()
 	m_NoteFieldEdit.Load( &noteData, PLAYER_1, 200, 800 );
 
 	m_rectRecordBack.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
-	m_rectRecordBack.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
+	m_rectRecordBack.SetDiffuse( D3DXCOLOR(0,0,0,0) );
 
 	m_GrayArrowRowRecord.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_GrayArrowRowRecord.Load( PLAYER_1 );
@@ -257,7 +257,7 @@ ScreenEdit::ScreenEdit()
 	m_textHelp.SetText( HELP_TEXT );
 
 	m_rectShortcutsBack.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
-	m_rectShortcutsBack.SetDiffuseColor( D3DXCOLOR(0,0,0,0.8f) );
+	m_rectShortcutsBack.SetDiffuse( D3DXCOLOR(0,0,0,0.8f) );
 
 	m_textShortcuts.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textShortcuts.SetXY( SHORTCUTS_X, SHORTCUTS_Y );
@@ -325,7 +325,7 @@ void ScreenEdit::Update( float fDeltaTime )
 				TransitionFromRecordToEdit();
 				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fEndMarker;
 				m_rectRecordBack.BeginTweening( 0.5f );
-				m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0) );
+				m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 			}
 			else if( m_EditMode == MODE_PLAYING )
 			{
@@ -333,7 +333,7 @@ void ScreenEdit::Update( float fDeltaTime )
 				m_EditMode = MODE_EDITING;
 				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fEndMarker;
 				m_rectRecordBack.BeginTweening( 0.5f );
-				m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0) );
+				m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 			}
 		}
 	}
@@ -839,7 +839,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			MenuItemGainFocus( m_iMenuSelection );
 
 			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.8f) );
+			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0.8f) );
 		}
 		break;
 	case DIK_P:
@@ -855,7 +855,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL );
 
 			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.8f) );
+			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0.8f) );
 
 			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
 			float fElapsedSeconds = max( 0, m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
@@ -881,7 +881,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			m_EditMode = MODE_RECORDING;
 			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.8f) );
+			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0.8f) );
 
 			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
 			float fElapsedSeconds = max( 0, m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
@@ -1138,7 +1138,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 			TransitionFromRecordToEdit();
 			
 			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0) );
+			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 
 			break;
 		}
@@ -1205,7 +1205,7 @@ void ScreenEdit::InputMenu( const DeviceInput& DeviceI, const InputEventType typ
 	case DIK_ESCAPE:
 		m_EditMode = MODE_EDITING;
 		m_rectRecordBack.BeginTweening( 0.5f );
-		m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0) );
+		m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 		MenuItemLoseFocus( m_iMenuSelection );
 		if( DeviceI.button == DIK_RETURN )
 		{
@@ -1230,7 +1230,7 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 			m_EditMode = MODE_EDITING;
 			m_soundMusic.Stop();
 			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0) );
+			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 
 			GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetSnapMode()) );
 			break;

@@ -148,7 +148,7 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 			CString sDisplayName = SONGMAN->ShortenGroupName(m_sSectionName);
 			m_textSectionName.SetZoom( 1 );
 			m_textSectionName.SetText( sDisplayName );
-			m_textSectionName.SetDiffuseColor( m_color );
+			m_textSectionName.SetDiffuse( m_color );
 			m_textSectionName.TurnRainbowOff();
 
 			float fSourcePixelWidth = (float)m_textSectionName.GetWidestLineWidthInSourcePixels();
@@ -161,7 +161,7 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 		{
 			m_TextBanner.LoadFromSong( m_pSong );
 			D3DXCOLOR color = m_color;
-			m_TextBanner.SetDiffuseColor( color );
+			m_TextBanner.SetDiffuse( color );
 			m_MusicStatusDisplay.SetType( m_IconType );
 			RefreshGrades();
 		}
@@ -174,7 +174,7 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 		{
 			m_textCourse.SetZoom( 1 );
 			m_textCourse.SetText( m_pCourse->m_sName );
-			m_textCourse.SetDiffuseColor( m_color );
+			m_textCourse.SetDiffuse( m_color );
 			m_textCourse.TurnRainbowOff();
 
 			float fSourcePixelWidth = (float)m_textCourse.GetWidestLineWidthInSourcePixels();
@@ -195,7 +195,7 @@ void WheelItemDisplay::RefreshGrades()
 	{
 		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 		{
-			m_GradeDisplay[p].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+			m_GradeDisplay[p].SetDiffuse( D3DXCOLOR(1,1,1,0) );
 			continue;
 		}
 
@@ -204,7 +204,7 @@ void WheelItemDisplay::RefreshGrades()
 			const DifficultyClass dc = GAMESTATE->m_PreferredDifficultyClass[p];
 			const Grade grade = m_pSong->GetGradeForDifficultyClass( GAMESTATE->GetCurrentStyleDef()->m_NotesType, dc );
 			m_GradeDisplay[p].SetGrade( (PlayerNumber)p, grade );
-			//m_GradeDisplay[p].SetDiffuseColor( PlayerToColor((PlayerNumber)p) );
+			//m_GradeDisplay[p].SetDiffuse( PlayerToColor((PlayerNumber)p) );
 		}
 		else	// this is a section display
 		{
@@ -268,11 +268,11 @@ void WheelItemDisplay::DrawPrimitives()
 			m_GradeDisplay[p].Draw();
 		if( m_fPercentGray > 0 )
 		{
-			m_sprSongBar.SetGlowColor( D3DXCOLOR(0,0,0,m_fPercentGray) );
-			m_sprSongBar.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
+			m_sprSongBar.SetGlow( D3DXCOLOR(0,0,0,m_fPercentGray) );
+			m_sprSongBar.SetDiffuse( D3DXCOLOR(0,0,0,0) );
 			m_sprSongBar.Draw();
-			m_sprSongBar.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
-			m_sprSongBar.SetGlowColor( D3DXCOLOR(0,0,0,0) );
+			m_sprSongBar.SetDiffuse( D3DXCOLOR(0,0,0,1) );
+			m_sprSongBar.SetGlow( D3DXCOLOR(0,0,0,0) );
 		}
 		break;
 	case TYPE_COURSE:
@@ -294,13 +294,13 @@ MusicWheel::MusicWheel()
 
 	m_sprSelectionOverlay.Load( THEME->GetPathTo("Graphics","select music song highlight") );
 	m_sprSelectionOverlay.SetXY( 0, 0 );
-	m_sprSelectionOverlay.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	m_sprSelectionOverlay.SetDiffuse( D3DXCOLOR(1,1,1,1) );
 	m_sprSelectionOverlay.SetEffectGlowing( 1.0f, D3DXCOLOR(1,1,1,0.4f), D3DXCOLOR(1,1,1,1) );
-	AddSubActor( &m_sprSelectionOverlay );
+	AddChild( &m_sprSelectionOverlay );
 
 	m_ScrollBar.SetX( SCROLL_BAR_X ); 
 	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT ); 
-	this->AddSubActor( &m_ScrollBar );
+	this->AddChild( &m_ScrollBar );
 	
 	m_soundChangeMusic.Load(	THEME->GetPathTo("Sounds","select music change music"), 16 );
 	m_soundChangeSort.Load(		THEME->GetPathTo("Sounds","select music change sort") );
@@ -477,6 +477,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 		//		break;
 			case SORT_MOST_PLAYED:
 				SortSongPointerArrayByMostPlayed( arraySongs );
+				arraySongs.SetSize( 30 );
 				break;
 			default:
 				ASSERT(0);	// unhandled SortOrder
@@ -862,7 +863,7 @@ void MusicWheel::Update( float fDeltaTime )
 //					m_soundExpand.Play();
 //					m_WheelState = STATE_ROULETTE_SPINNING;
 //					m_SortOrder = SORT_GROUP;
-//					m_MusicSortDisplay.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+//					m_MusicSortDisplay.SetDiffuse( D3DXCOLOR(1,1,1,0) );
 //					m_MusicSortDisplay.SetEffectNone();
 //					BuildWheelItemDatas( m_WheelItemDatas[SORT_GROUP], SORT_GROUP, true );
 //				}
@@ -1172,16 +1173,14 @@ void MusicWheel::TweenOnScreen()
 	fX = GetBannerX(0);
 	fY = GetBannerY(0);
 	m_sprSelectionOverlay.SetXY( fX+320, fY );
-	m_sprSelectionOverlay.BeginTweeningQueued( 0.5f );	// sleep
-	m_sprSelectionOverlay.BeginTweeningQueued( 0.4f, Actor::TWEEN_BIAS_BEGIN );
+	m_sprSelectionOverlay.BeginTweening( 0.5f );	// sleep
+	m_sprSelectionOverlay.BeginTweening( 0.4f, Actor::TWEEN_BIAS_BEGIN );
 	m_sprSelectionOverlay.SetTweenX( fX );
 
-
 	m_ScrollBar.SetX( SCROLL_BAR_X+30 );
-	m_ScrollBar.BeginTweeningQueued( 0.7f );	// sleep
-	m_ScrollBar.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_BEGIN );
+	m_ScrollBar.BeginTweening( 0.7f );	// sleep
+	m_ScrollBar.BeginTweening( 0.2f, Actor::TWEEN_BIAS_BEGIN );
 	m_ScrollBar.SetTweenX( SCROLL_BAR_X );	
-
 
 	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
 	{
@@ -1191,8 +1190,8 @@ void MusicWheel::TweenOnScreen()
 		float fX = GetBannerX(fThisBannerPositionOffsetFromSelection);
 		float fY = GetBannerY(fThisBannerPositionOffsetFromSelection);
 		display.SetXY( fX+320, fY );
-		display.BeginTweeningQueued( 0.04f*i );	// sleep
-		display.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_BEGIN );
+		display.BeginTweening( 0.04f*i );	// sleep
+		display.BeginTweening( 0.2f, Actor::TWEEN_BIAS_BEGIN );
 		display.SetTweenX( fX );
 	}
 }
@@ -1207,15 +1206,13 @@ void MusicWheel::TweenOffScreen()
 	fX = GetBannerX(0);
 	fY = GetBannerY(0);
 	m_sprSelectionOverlay.SetXY( fX, fY );
-	m_sprSelectionOverlay.BeginTweeningQueued( 0 );	// sleep
-	m_sprSelectionOverlay.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_END );
+	m_sprSelectionOverlay.BeginTweening( 0 );	// sleep
+	m_sprSelectionOverlay.BeginTweening( 0.2f, Actor::TWEEN_BIAS_END );
 	m_sprSelectionOverlay.SetTweenX( fX+320 );
 
-
-	m_ScrollBar.BeginTweeningQueued( 0 );
-	m_ScrollBar.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_BEGIN );
+	m_ScrollBar.BeginTweening( 0 );
+	m_ScrollBar.BeginTweening( 0.2f, Actor::TWEEN_BIAS_BEGIN );
 	m_ScrollBar.SetTweenX( SCROLL_BAR_X+30 );	
-
 
 	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
 	{
@@ -1225,8 +1222,8 @@ void MusicWheel::TweenOffScreen()
 		float fX = GetBannerX(fThisBannerPositionOffsetFromSelection);
 		float fY = GetBannerY(fThisBannerPositionOffsetFromSelection);
 		display.SetXY( fX, fY );
-		display.BeginTweeningQueued( 0.04f*i );	// sleep
-		display.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_END );
+		display.BeginTweening( 0.04f*i );	// sleep
+		display.BeginTweening( 0.2f, Actor::TWEEN_BIAS_END );
 		display.SetTweenX( fX+320 );
 	}
 

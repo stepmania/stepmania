@@ -25,6 +25,7 @@
 #include "AnnouncerManager.h"
 #include "InputMapper.h"
 #include "GameState.h"
+#include "CodeDetector.h"
 
 
 #define BANNER_FRAME_X		THEME->GetMetricF("ScreenSelectMusic","BannerFrameX")
@@ -59,6 +60,8 @@
 #define PLAYER_OPTIONS_Y( i )THEME->GetMetricF("ScreenSelectMusic",ssprintf("PlayerOptionsP%dY",i+1))
 #define SONG_OPTIONS_X		THEME->GetMetricF("ScreenSelectMusic","SongOptionsX")
 #define SONG_OPTIONS_Y		THEME->GetMetricF("ScreenSelectMusic","SongOptionsY")
+#define OPTION_ICONS_X		THEME->GetMetricF("ScreenSelectMusic","OptionIconsX")
+#define OPTION_ICONS_Y		THEME->GetMetricF("ScreenSelectMusic","OptionIconsY")
 #define HELP_TEXT			THEME->GetMetric("ScreenSelectMusic","HelpText")
 #define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectMusic","TimerSeconds")
 #define SCORE_CONNECTED_TO_MUSIC_WHEEL	THEME->GetMetricB("ScreenSelectMusic","ScoreConnectedToMusicWheel")
@@ -75,9 +78,9 @@ ScreenSelectMusic::ScreenSelectMusic()
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
 
-	// for debugging
-	if( GAMESTATE->m_CurStyle == STYLE_NONE )
-		GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
+
+	CodeDetector::RefreshCacheItems();
+
 
 	int p;
 
@@ -86,55 +89,60 @@ ScreenSelectMusic::ScreenSelectMusic()
 		THEME->GetPathTo("Graphics","select music top edge"),
 		HELP_TEXT, true, TIMER_SECONDS 
 		);
-	this->AddSubActor( &m_Menu );
+	this->AddChild( &m_Menu );
 
 	// these guys get loaded SetSong and TweenToSong
 	m_Banner.SetXY( BANNER_X, BANNER_Y );
 	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
-	this->AddSubActor( &m_Banner );
+	this->AddChild( &m_Banner );
 
 	m_sprBannerFrame.Load( THEME->GetPathTo("Graphics","select music info frame") );
 	m_sprBannerFrame.SetXY( BANNER_FRAME_X, BANNER_FRAME_Y );
-	this->AddSubActor( &m_sprBannerFrame );
+	this->AddChild( &m_sprBannerFrame );
 
 	m_BPMDisplay.SetXY( BPM_X, BPM_Y );
 	m_BPMDisplay.SetZoomX( 1.0f );
-	this->AddSubActor( &m_BPMDisplay );
+	this->AddChild( &m_BPMDisplay );
 
 	m_textStage.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
 	m_textStage.TurnShadowOff();
 	m_textStage.SetZoomX( 1.0f );
 	m_textStage.SetXY( STAGE_X, STAGE_Y );
 	m_textStage.SetText( GAMESTATE->GetStageText() );
-	m_textStage.SetDiffuseColor( GAMESTATE->GetStageColor() );
-	this->AddSubActor( &m_textStage );
+	m_textStage.SetDiffuse( GAMESTATE->GetStageColor() );
+	this->AddChild( &m_textStage );
 
 	m_sprCDTitle.Load( THEME->GetPathTo("Graphics","fallback cd title") );
 	m_sprCDTitle.TurnShadowOff();
 	m_sprCDTitle.SetXY( CD_TITLE_X, CD_TITLE_Y );
-	this->AddSubActor( &m_sprCDTitle );
+	this->AddChild( &m_sprCDTitle );
 
 	m_sprDifficultyFrame.Load( THEME->GetPathTo("Graphics","select music difficulty frame") );
 	m_sprDifficultyFrame.SetXY( DIFFICULTY_X, DIFFICULTY_Y );
-	this->AddSubActor( &m_sprDifficultyFrame );
+	this->AddChild( &m_sprDifficultyFrame );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_DifficultyIcon[p].SetXY( ICON_X(p), ICON_Y(p) );
-		this->AddSubActor( &m_DifficultyIcon[p] );
+		this->AddChild( &m_DifficultyIcon[p] );
 	}
 
 	m_GrooveRadar.SetXY( RADAR_X, RADAR_Y );
-	this->AddSubActor( &m_GrooveRadar );
+	this->AddChild( &m_GrooveRadar );
+
+//	m_OptionIcons.SetXY( OPTION_ICONS_X, OPTION_ICONS_Y );
+//	this->AddChild( &m_OptionIcons );
+
 
 	m_textSongOptions.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textSongOptions.SetXY( SONG_OPTIONS_X, SONG_OPTIONS_Y );
 	m_textSongOptions.SetZoom( 0.5f );
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 		m_textSongOptions.SetEffectCamelion( 2.5f, D3DXCOLOR(1,0,0,1), D3DXCOLOR(1,1,1,1) );	// blink red
-	m_textSongOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// white
-	this->AddSubActor( &m_textSongOptions );
+	m_textSongOptions.SetDiffuse( D3DXCOLOR(1,1,1,1) );	// white
+	this->AddChild( &m_textSongOptions );
 
+	
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
@@ -147,24 +155,25 @@ ScreenSelectMusic::ScreenSelectMusic()
 		m_textPlayerOptions[p].SetVertAlign( Actor::align_middle );
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			m_textPlayerOptions[p].SetEffectCamelion( 2.5f, D3DXCOLOR(1,0,0,1), D3DXCOLOR(1,1,1,1) );	// blink red
-		m_textPlayerOptions[p].SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// white
-		this->AddSubActor( &m_textPlayerOptions[p] );
+		m_textPlayerOptions[p].SetDiffuse( D3DXCOLOR(1,1,1,1) );	// white
+		this->AddChild( &m_textPlayerOptions[p] );
 	}
+	
 
 	m_sprMeterFrame.Load( THEME->GetPathTo("Graphics","select music meter frame") );
 	m_sprMeterFrame.SetXY( METER_FRAME_X, METER_FRAME_Y );
-	this->AddSubActor( &m_sprMeterFrame );
+	this->AddChild( &m_sprMeterFrame );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_FootMeter[p].LoadFromFont( THEME->GetPathTo("Fonts","meter") );
 		m_FootMeter[p].SetXY( METER_X(p), METER_Y(p) );
 		m_FootMeter[p].SetShadowLength( 2 );
-		this->AddSubActor( &m_FootMeter[p] );
+		this->AddChild( &m_FootMeter[p] );
 	}
 
 	m_MusicWheel.SetXY( WHEEL_X, WHEEL_Y );
-	this->AddSubActor( &m_MusicWheel );
+	this->AddChild( &m_MusicWheel );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -175,18 +184,18 @@ ScreenSelectMusic::ScreenSelectMusic()
 		m_sprHighScoreFrame[p].StopAnimating();
 		m_sprHighScoreFrame[p].SetState( p );
 		m_sprHighScoreFrame[p].SetXY( SCORE_X(p), SCORE_Y(p) );
-		this->AddSubActor( &m_sprHighScoreFrame[p] );
+		this->AddChild( &m_sprHighScoreFrame[p] );
 
 		m_HighScore[p].SetXY( SCORE_X(p), SCORE_Y(p) );
 		m_HighScore[p].SetZoom( 0.6f );
-		m_HighScore[p].SetDiffuseColor( PlayerToColor(p) );
-		this->AddSubActor( &m_HighScore[p] );
+		m_HighScore[p].SetDiffuse( PlayerToColor(p) );
+		this->AddChild( &m_HighScore[p] );
 	}	
 
 	m_MusicSortDisplay.SetXY( SORT_ICON_X, SORT_ICON_Y );
 	//m_MusicSortDisplay.SetEffectGlowing( 1.0f );
 	m_MusicSortDisplay.Set( GAMESTATE->m_SongSortOrder );
-	this->AddSubActor( &m_MusicSortDisplay );
+	this->AddChild( &m_MusicSortDisplay );
 
 
 	m_textHoldForOptions.LoadFromFont( THEME->GetPathTo("Fonts","stage") );
@@ -194,13 +203,14 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_textHoldForOptions.SetText( "press START again for options" );
 	m_textHoldForOptions.SetZoom( 1 );
 	m_textHoldForOptions.SetZoomY( 0 );
-	m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	m_textHoldForOptions.SetDiffuse( D3DXCOLOR(1,1,1,0) );
 	m_textHoldForOptions.SetZ( -2 );
-	this->AddSubActor( &m_textHoldForOptions );
+	this->AddChild( &m_textHoldForOptions );
 
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 	m_soundChangeNotes.Load( THEME->GetPathTo("Sounds","select music change notes") );
+	m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","select music change options") );
 	m_soundLocked.Load( THEME->GetPathTo("Sounds","select music wheel locked") );
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select music intro") );
@@ -258,12 +268,16 @@ void ScreenSelectMusic::TweenOnScreen()
 
 	m_GrooveRadar.TweenOnScreen();
 
+//	fOriginalZoomY = m_OptionIcons.GetZoomY();
+//	m_OptionIcons.BeginTweening( TWEEN_TIME );
+//	m_OptionIcons.SetTweenZoomY( fOriginalZoomY );
+	
 	fOriginalZoomY = m_textSongOptions.GetZoomY();
 	m_textSongOptions.BeginTweening( TWEEN_TIME );
 	m_textSongOptions.SetTweenZoomY( fOriginalZoomY );
-
+	
 	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
+	{		
 		fOriginalZoomY = m_textPlayerOptions[p].GetZoomY();
 		m_textPlayerOptions[p].BeginTweening( TWEEN_TIME );
 		m_textPlayerOptions[p].SetTweenZoomY( fOriginalZoomY );
@@ -277,9 +291,9 @@ void ScreenSelectMusic::TweenOnScreen()
 		m_FootMeter[p].SetTweenZoomY( fOriginalZoomY );
 	}
 
-	m_MusicSortDisplay.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	m_MusicSortDisplay.SetDiffuse( D3DXCOLOR(1,1,1,0) );
 	m_MusicSortDisplay.BeginTweening( TWEEN_TIME );
-	m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	m_MusicSortDisplay.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
 
 	CArray<Actor*,Actor*> apActorsInScore;
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -310,7 +324,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	apActorsInGroupInfoFrame.Add( &m_sprCDTitle );
 	for( i=0; i<apActorsInGroupInfoFrame.GetSize(); i++ )
 	{
-		apActorsInGroupInfoFrame[i]->BeginTweeningQueued( TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
+		apActorsInGroupInfoFrame[i]->BeginTweening( TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
 		apActorsInGroupInfoFrame[i]->SetTweenX( apActorsInGroupInfoFrame[i]->GetX()-400 );
 	}
 
@@ -321,6 +335,9 @@ void ScreenSelectMusic::TweenOffScreen()
 	m_sprMeterFrame.SetTweenZoomY( 0 );
 
 	m_GrooveRadar.TweenOffScreen();
+
+//	m_OptionIcons.BeginTweening( TWEEN_TIME );
+//	m_OptionIcons.SetTweenZoomY( 0 );
 
 	m_textSongOptions.BeginTweening( TWEEN_TIME );
 	m_textSongOptions.SetTweenZoomY( 0 );
@@ -339,7 +356,7 @@ void ScreenSelectMusic::TweenOffScreen()
 
 	m_MusicSortDisplay.SetEffectNone();
 	m_MusicSortDisplay.BeginTweening( TWEEN_TIME );
-	m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	m_MusicSortDisplay.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 
 	CArray<Actor*,Actor*> apActorsInScore;
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -373,9 +390,10 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 		apActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_END );		// tween off screen
 		apActorsInScore[i]->SetTweenX( fOriginalX+400 );
 		
-		apActorsInScore[i]->BeginTweeningQueued( 0.5f );		// sleep
+		apActorsInScore[i]->StopTweening();
+		apActorsInScore[i]->BeginTweening( 0.5f );		// sleep
 
-		apActorsInScore[i]->BeginTweeningQueued( 1, TWEEN_BIAS_BEGIN );		// tween back on screen
+		apActorsInScore[i]->BeginTweening( 1, TWEEN_BIAS_BEGIN );		// tween back on screen
 		apActorsInScore[i]->SetTweenX( fOriginalX );
 	}
 }
@@ -388,38 +406,22 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 	fNewRotation = fmodf( fNewRotation, D3DX_PI*2 );
 	m_sprCDTitle.SetRotationY( fNewRotation );
 	if( fNewRotation > D3DX_PI/2  &&  fNewRotation <= D3DX_PI*3.0f/2 )
-		m_sprCDTitle.SetDiffuseColor( D3DXCOLOR(0.2f,0.2f,0.2f,1) );
+		m_sprCDTitle.SetDiffuse( D3DXCOLOR(0.2f,0.2f,0.2f,1) );
 	else
-		m_sprCDTitle.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		m_sprCDTitle.SetDiffuse( D3DXCOLOR(1,1,1,1) );
 }
-
-const GameButton DANCE_EASIER_DIFFICULTY_PATTERN[] = { DANCE_BUTTON_UP, DANCE_BUTTON_UP };
-const int DANCE_EASIER_DIFFICULTY_PATTERN_SIZE = sizeof(DANCE_EASIER_DIFFICULTY_PATTERN) / sizeof(GameButton);
-
-const GameButton DANCE_HARDER_DIFFICULTY_PATTERN[] = { DANCE_BUTTON_DOWN, DANCE_BUTTON_DOWN };
-const int DANCE_HARDER_DIFFICULTY_PATTERN_SIZE = sizeof(DANCE_HARDER_DIFFICULTY_PATTERN) / sizeof(GameButton);
-
-const MenuButton MENU_EASIER_DIFFICULTY_PATTERN[] = { MENU_BUTTON_UP, MENU_BUTTON_UP };
-const int MENU_EASIER_DIFFICULTY_PATTERN_SIZE = sizeof(MENU_EASIER_DIFFICULTY_PATTERN) / sizeof(MenuButton);
-
-const MenuButton MENU_HARDER_DIFFICULTY_PATTERN[] = { MENU_BUTTON_DOWN, MENU_BUTTON_DOWN };
-const int MENU_HARDER_DIFFICULTY_PATTERN_SIZE = sizeof(MENU_HARDER_DIFFICULTY_PATTERN) / sizeof(MenuButton);
-
-const MenuButton MENU_NEXT_SORT_PATTERN[] = { MENU_BUTTON_UP, MENU_BUTTON_DOWN, MENU_BUTTON_UP, MENU_BUTTON_DOWN };
-const int MENU_NEXT_SORT_PATTERN_SIZE = sizeof(MENU_NEXT_SORT_PATTERN) / sizeof(MenuButton);
 
 void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	LOG->Trace( "ScreenSelectMusic::Input()" );
-	if(type == IET_RELEASE) return; // don't care
+	
+	if( type == IET_RELEASE )	return;		// don't care
 
-	if( MenuI.player == PLAYER_INVALID )
-		return;
+	if( m_Menu.IsClosing() )	return;		// ignore
 
-	if( m_Menu.IsClosing() )
-		return;		// ignore
+	if( !GameI.IsValid() )		return;		// don't care
 
-	if( m_bMadeChoice  &&  !m_bGoToOptions  &&  MenuI.button == MENU_BUTTON_START  &&  !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
+	if( m_bMadeChoice  &&  !m_bGoToOptions  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START  &&  !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
 	{
 		m_bGoToOptions = true;
 		m_textHoldForOptions.SetText( "Entering Options..." );
@@ -430,45 +432,25 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType 
 	if( m_bMadeChoice )
 		return;
 
-	switch( GAMESTATE->m_CurGame )
-	{
-	case GAME_DANCE:
-		if( INPUTQUEUE->MatchesPattern(GameI.controller, DANCE_EASIER_DIFFICULTY_PATTERN, DANCE_EASIER_DIFFICULTY_PATTERN_SIZE) )
-		{
-			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-				m_soundLocked.Play();
-			else
-				EasierDifficulty( MenuI.player );
-			return;
-		}
-		if( INPUTQUEUE->MatchesPattern(GameI.controller, DANCE_HARDER_DIFFICULTY_PATTERN, DANCE_HARDER_DIFFICULTY_PATTERN_SIZE) )
-		{
-			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-				m_soundLocked.Play();
-			else
-				HarderDifficulty( MenuI.player );
-			return;
-		}
-		break;
-	}
+	PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
 
-	if( INPUTQUEUE->MatchesPattern(GameI.controller, MENU_EASIER_DIFFICULTY_PATTERN, MENU_EASIER_DIFFICULTY_PATTERN_SIZE) )
+	if( CodeDetector::EnteredEasierDifficulty(GameI.controller) )
 	{
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			m_soundLocked.Play();
 		else
-			EasierDifficulty( MenuI.player );
+			EasierDifficulty( pn );
 		return;
 	}
-	if( INPUTQUEUE->MatchesPattern(GameI.controller, MENU_HARDER_DIFFICULTY_PATTERN, MENU_HARDER_DIFFICULTY_PATTERN_SIZE) )
+	if( CodeDetector::EnteredHarderDifficulty(GameI.controller) )
 	{
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			m_soundLocked.Play();
 		else
-			HarderDifficulty( MenuI.player );
+			HarderDifficulty( pn );
 		return;
 	}
-	if( INPUTQUEUE->MatchesPattern(GameI.controller, MENU_NEXT_SORT_PATTERN, MENU_NEXT_SORT_PATTERN_SIZE) )
+	if( CodeDetector::EnteredNextSort(GameI.controller) )
 	{
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			m_soundLocked.Play();
@@ -478,10 +460,16 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType 
 				MUSIC->Stop();
 
 				m_MusicSortDisplay.BeginTweening( 0.3f );
-				m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+				m_MusicSortDisplay.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 
 				TweenScoreOnAndOffAfterChangeSort();
 			}
+		return;
+	}
+	if( CodeDetector::DetectAndAdjustOptions(GameI.controller) )
+	{
+		m_soundOptionsChange.Play();
+		UpdateOptionsDisplays();
 		return;
 	}
 
@@ -616,7 +604,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber p )
 				MUSIC->Stop();
 
 				m_MusicSortDisplay.BeginTweening( 0.3f );
-				m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+				m_MusicSortDisplay.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 
 				TweenScoreOnAndOffAfterChangeSort();
 			}
@@ -677,13 +665,13 @@ void ScreenSelectMusic::MenuStart( PlayerNumber p )
 				if( !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
 				{
 					// show "hold START for options"
-					m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-					m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade in
+					m_textHoldForOptions.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+					m_textHoldForOptions.BeginTweening( 0.25f );	// fade in
 					m_textHoldForOptions.SetTweenZoomY( 1 );
-					m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
-					m_textHoldForOptions.BeginTweeningQueued( 2.0f );	// sleep
-					m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade out
-					m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+					m_textHoldForOptions.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+					m_textHoldForOptions.BeginTweening( 2.0f );	// sleep
+					m_textHoldForOptions.BeginTweening( 0.25f );	// fade out
+					m_textHoldForOptions.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 					m_textHoldForOptions.SetTweenZoomY( 0 );
 				}
 
@@ -823,6 +811,8 @@ void ScreenSelectMusic::PlayMusicSample()
 
 void ScreenSelectMusic::UpdateOptionsDisplays()
 {
+//	m_OptionIcons.Load( GAMESTATE->m_PlayerOptions, &GAMESTATE->m_SongOptions );
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( GAMESTATE->IsPlayerEnabled(p) )
@@ -845,6 +835,6 @@ void ScreenSelectMusic::SortOrderChanged()
 	// tween music sort on screen
 //	m_MusicSortDisplay.SetEffectGlowing();
 	m_MusicSortDisplay.BeginTweening( 0.3f );
-	m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );		
+	m_MusicSortDisplay.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );		
 }
 

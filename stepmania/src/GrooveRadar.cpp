@@ -24,7 +24,7 @@ const float RADAR_EDGE_WIDTH	= 3;
 
 GrooveRadar::GrooveRadar()
 {
-	this->AddSubActor( &m_GrooveRadarValueMap );
+	this->AddChild( &m_GrooveRadarValueMap );
 
 	for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
 	{
@@ -50,7 +50,7 @@ GrooveRadar::GrooveRadar()
 		m_sprRadarLabels[c].StopAnimating();
 		m_sprRadarLabels[c].SetState( c );
 		m_sprRadarLabels[c].SetXY( fX, fY );
-		this->AddSubActor( &m_sprRadarLabels[c] );
+		this->AddChild( &m_sprRadarLabels[c] );
 	}
 }
 
@@ -61,18 +61,18 @@ void GrooveRadar::TweenOnScreen()
 		float fOriginalX = m_sprRadarLabels[c].GetX();
 		m_sprRadarLabels[c].SetX( fOriginalX - 100 );
 		m_sprRadarLabels[c].SetZoom( 1.5f );
-		m_sprRadarLabels[c].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+		m_sprRadarLabels[c].SetDiffuse( D3DXCOLOR(1,1,1,0) );
 
-		m_sprRadarLabels[c].BeginTweeningQueued( 0.6f+0.2f*c );	// sleep
+		m_sprRadarLabels[c].BeginTweening( 0.6f+0.2f*c );	// sleep
 
-		m_sprRadarLabels[c].BeginTweeningQueued( 0.1f );	// begin fading on screen
-		m_sprRadarLabels[c].SetTweenAddColor( D3DXCOLOR(1,1,1,1) );
+		m_sprRadarLabels[c].BeginTweening( 0.1f );	// begin fading on screen
+		m_sprRadarLabels[c].SetTweenGlow( D3DXCOLOR(1,1,1,1) );
 		
-		m_sprRadarLabels[c].BeginTweeningQueued( 0.3f, Actor::TWEEN_BIAS_BEGIN );	// fly to the right
+		m_sprRadarLabels[c].BeginTweening( 0.3f, Actor::TWEEN_BIAS_BEGIN );	// fly to the right
 		m_sprRadarLabels[c].SetTweenX( fOriginalX );
 		m_sprRadarLabels[c].SetTweenZoom( 1 );
-		m_sprRadarLabels[c].SetTweenAddColor( D3DXCOLOR(1,1,1,0) );
-		m_sprRadarLabels[c].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		m_sprRadarLabels[c].SetTweenGlow( D3DXCOLOR(1,1,1,0) );
+		m_sprRadarLabels[c].SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
 	}
 	m_GrooveRadarValueMap.TweenOnScreen();
 }
@@ -83,7 +83,7 @@ void GrooveRadar::TweenOffScreen()
 	{
 		m_sprRadarLabels[c].StopTweening();
 		m_sprRadarLabels[c].BeginTweening( 0.2f );
-		m_sprRadarLabels[c].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+		m_sprRadarLabels[c].SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 	}
 	m_GrooveRadarValueMap.TweenOffScreen();
 }
@@ -91,7 +91,7 @@ void GrooveRadar::TweenOffScreen()
 GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 {
 	m_sprRadarBase.Load( THEME->GetPathTo("Graphics","select music radar base") );
-	this->AddSubActor( &m_sprRadarBase );
+	this->AddChild( &m_sprRadarBase );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{

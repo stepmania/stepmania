@@ -188,14 +188,14 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	case RM_ARCADE_STAGE:
 		m_BannerWithFrame[0].LoadFromSongAndNotes( GAMESTATE->m_pCurSong, GAMESTATE->m_pCurNotes );
 		m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
-		this->AddSubActor( &m_BannerWithFrame[0] );
+		this->AddChild( &m_BannerWithFrame[0] );
 
 		m_textStage.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 		m_textStage.TurnShadowOff();
 		m_textStage.SetXY( STAGE_X, STAGE_Y );
 		m_textStage.SetZoom( 0.5f );
 		m_textStage.SetText( GAMESTATE->GetStageText() + " Stage" );
-		this->AddSubActor( &m_textStage );
+		this->AddChild( &m_textStage );
 
 		break;
 	case RM_ARCADE_SUMMARY:
@@ -216,14 +216,14 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				float fBannerOffset = i - (iSongsToShow-1)/2.0f;
 				m_BannerWithFrame[i].SetXY( BANNER_X + fBannerOffset*32, BANNER_Y + fBannerOffset*16 );
 				m_BannerWithFrame[i].SetZoom( 0.70f );
-				this->AddSubActor( &m_BannerWithFrame[i] );
+				this->AddChild( &m_BannerWithFrame[i] );
 			}
 		}
 		break;
 	case RM_ONI:
 		m_BannerWithFrame[0].LoadFromCourse( GAMESTATE->m_pCurCourse );
 		m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
-		this->AddSubActor( &m_BannerWithFrame[0] );
+		this->AddChild( &m_BannerWithFrame[0] );
 		break;
 	}
 
@@ -236,7 +236,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		THEME->GetPathTo("Graphics",m_ResultMode==RM_ARCADE_SUMMARY?"evaluation summary top edge":"evaluation top edge"),
 		HELP_TEXT, true, TIMER_SECONDS 
 		);
-	this->AddSubActor( &m_Menu );
+	this->AddChild( &m_Menu );
 
 
 	for( p=0; p<NUM_PLAYERS; p++ ) 
@@ -246,8 +246,8 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 		m_ScoreDisplay[p].SetXY( SCORE_NUMBERS_X(p), SCORE_Y );
 		m_ScoreDisplay[p].SetZoomY( 0.9f );
-		m_ScoreDisplay[p].SetDiffuseColor( PlayerToColor(p) );
-		this->AddSubActor( &m_ScoreDisplay[p] );
+		m_ScoreDisplay[p].SetDiffuse( PlayerToColor(p) );
+		this->AddChild( &m_ScoreDisplay[p] );
 	}
 
 
@@ -357,7 +357,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		m_sprJudgeLabels[l].SetState( l );
 		m_sprJudgeLabels[l].SetXY( JUDGE_LABELS_X, JUDGE_Y(l) );
 		m_sprJudgeLabels[l].SetZoom( 1.0f );
-		this->AddSubActor( &m_sprJudgeLabels[l] );
+		this->AddChild( &m_sprJudgeLabels[l] );
 	}
 
 	m_sprScoreLabel.Load( THEME->GetPathTo("Graphics","evaluation score labels") );
@@ -365,7 +365,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	m_sprScoreLabel.StopAnimating();
 	m_sprScoreLabel.SetXY( SCORE_LABELS_X, SCORE_Y );
 	m_sprScoreLabel.SetZoom( 1.0f );
-	this->AddSubActor( &m_sprScoreLabel );
+	this->AddChild( &m_sprScoreLabel );
 
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -379,8 +379,8 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			m_textJudgeNumbers[l][p].TurnShadowOff();
 			m_textJudgeNumbers[l][p].SetXY( JUDGE_X(p,l), JUDGE_Y(l) );
 			m_textJudgeNumbers[l][p].SetZoom( 0.7f );
-			m_textJudgeNumbers[l][p].SetDiffuseColor( PlayerToColor(p) );
-			this->AddSubActor( &m_textJudgeNumbers[l][p] );
+			m_textJudgeNumbers[l][p].SetDiffuse( PlayerToColor(p) );
+			this->AddChild( &m_textJudgeNumbers[l][p] );
 		}
 
 		m_textJudgeNumbers[0][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_PERFECT]) );
@@ -417,7 +417,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_sprPercentFrame[p].StopAnimating();
 				m_sprPercentFrame[p].SetState( p );
 				m_sprPercentFrame[p].SetXY( GRADE_X(p), GRADE_Y );
-				this->AddSubActor( &m_sprPercentFrame[p] );
+				this->AddChild( &m_sprPercentFrame[p] );
 
 				m_textOniPercentLarge[p].LoadFromFont( THEME->GetPathTo("Fonts","oni percent numbers") );
 				m_textOniPercentLarge[p].TurnShadowOff();
@@ -425,7 +425,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_textOniPercentLarge[p].SetHorizAlign( Actor::align_right );
 				m_textOniPercentLarge[p].SetVertAlign( Actor::align_bottom );
 				m_textOniPercentLarge[p].SetEffectGlowing( 1.0f );
-				this->AddSubActor( &m_textOniPercentLarge[p] );
+				this->AddChild( &m_textOniPercentLarge[p] );
 
 				m_textOniPercentSmall[p].LoadFromFont( THEME->GetPathTo("Fonts","oni percent numbers") );
 				m_textOniPercentSmall[p].TurnShadowOff();
@@ -434,7 +434,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_textOniPercentSmall[p].SetHorizAlign( Actor::align_left );
 				m_textOniPercentSmall[p].SetVertAlign( Actor::align_bottom );
 				m_textOniPercentSmall[p].SetEffectGlowing( 1.0f );
-				this->AddSubActor( &m_textOniPercentSmall[p] );
+				this->AddChild( &m_textOniPercentSmall[p] );
 
 				iPossibleDancePoints[p] = max( 1, iPossibleDancePoints[p] );
 				float fPercentDancePoints =  iActualDancePoints[p] / (float)iPossibleDancePoints[p] + 0.0001f;	// correct for rounding errors
@@ -448,13 +448,13 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_sprCourseFrame[p].StopAnimating();
 				m_sprCourseFrame[p].SetState( p );
 				m_sprCourseFrame[p].SetXY( BONUS_X(p), BONUS_Y );
-				this->AddSubActor( &m_sprCourseFrame[p] );
+				this->AddChild( &m_sprCourseFrame[p] );
 		
 				m_textSongsSurvived[p].LoadFromFont( THEME->GetPathTo("Fonts","oni stage numbers") );
 				m_textSongsSurvived[p].TurnShadowOff();
 				m_textSongsSurvived[p].SetXY( SONGS_SURVIVED_X(p), SONGS_SURVIVED_Y );
 				m_textSongsSurvived[p].SetText( ssprintf("%02d", GAMESTATE->m_iSongsBeforeFail[p]) );
-				this->AddSubActor( &m_textSongsSurvived[p] );
+				this->AddChild( &m_textSongsSurvived[p] );
 			}
 			break;
 		case RM_ARCADE_STAGE:
@@ -464,7 +464,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_sprGradeFrame[p].StopAnimating();
 				m_sprGradeFrame[p].SetState( p );
 				m_sprGradeFrame[p].SetXY( GRADE_X(p), GRADE_Y );
-				this->AddSubActor( &m_sprGradeFrame[p] );
+				this->AddChild( &m_sprGradeFrame[p] );
 
 				// Ez2dancer should control the grade tween using theme metrics
 				m_Grades[p].SetXY( GRADE_X(p), GRADE_Y );
@@ -475,47 +475,43 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 					m_Grades[p].SpinAndSettleOn( grade[p] );
 				else
 					m_Grades[p].SetGrade( (PlayerNumber)p, grade[p] );
-				this->AddSubActor( &m_Grades[p] );
+				this->AddChild( &m_Grades[p] );
 
 				// Bonus info frame
 				m_sprBonusFrame[p].Load( THEME->GetPathTo("Graphics","evaluation bonus frame 2x1") );
 				m_sprBonusFrame[p].StopAnimating();
 				m_sprBonusFrame[p].SetState( p );
 				m_sprBonusFrame[p].SetXY( BONUS_X(p), BONUS_Y );
-				this->AddSubActor( &m_sprBonusFrame[p] );
+				this->AddChild( &m_sprBonusFrame[p] );
 	
 				for( int l=0; l<NUM_RADAR_VALUES; l++ )	// foreach line
 				{
 					m_sprPossibleBar[p][l].Load( THEME->GetPathTo("Graphics","evaluation bars possible 1x2") );
 					m_sprPossibleBar[p][l].SetState( p );
-					m_sprPossibleBar[p][l].SetWidth( 1 );
-					m_sprPossibleBar[p][l].SetHeight( 1 );
 					m_sprPossibleBar[p][l].SetHorizAlign( Actor::align_left );
 					m_sprPossibleBar[p][l].SetX( BAR_BASE_X(p) );
 					m_sprPossibleBar[p][l].SetY( BAR_START_Y + BAR_SPACING_Y*l );
 					m_sprPossibleBar[p][l].SetRotation( BAR_ROTATION(p) );
 					m_sprPossibleBar[p][l].SetZoomX( 0 );
-					m_sprPossibleBar[p][l].SetZoomY( BAR_HEIGHT );
+					m_sprPossibleBar[p][l].ZoomToHeight( BAR_HEIGHT );
 					m_sprPossibleBar[p][l].BeginTweening( 0.5f );
-					m_sprPossibleBar[p][l].SetTweenZoomX( BAR_WIDTH*fPossibleRadarValues[p][l] );
-					this->AddSubActor( &m_sprPossibleBar[p][l] );
+					m_sprPossibleBar[p][l].SetTweenZoomToWidth( BAR_WIDTH*fPossibleRadarValues[p][l] );
+					this->AddChild( &m_sprPossibleBar[p][l] );
 
 					m_sprActualBar[p][l].Load( THEME->GetPathTo("Graphics","evaluation bars actual 1x2") );
 					m_sprActualBar[p][l].SetState( p );
 					m_sprActualBar[p][l].StopAnimating();
-					m_sprActualBar[p][l].SetWidth( 1 );
-					m_sprActualBar[p][l].SetHeight( 1 );
 					m_sprActualBar[p][l].SetHorizAlign( Actor::align_left );
 					m_sprActualBar[p][l].SetX( BAR_BASE_X(p) );
 					m_sprActualBar[p][l].SetY( BAR_START_Y + BAR_SPACING_Y*l );
 					m_sprActualBar[p][l].SetRotation( BAR_ROTATION(p) );
 					m_sprActualBar[p][l].SetZoomX( 0 );
-					m_sprActualBar[p][l].SetZoomY( BAR_HEIGHT );
+					m_sprActualBar[p][l].ZoomToHeight( BAR_HEIGHT );
 					m_sprActualBar[p][l].BeginTweening( 0.5f );
-					m_sprActualBar[p][l].SetTweenZoomX( BAR_WIDTH*fActualRadarValues[p][l] );
+					m_sprActualBar[p][l].SetTweenZoomToWidth( BAR_WIDTH*fActualRadarValues[p][l] );
 					if( fActualRadarValues[p][l] == fPossibleRadarValues[p][l] )
 						m_sprActualBar[p][l].SetEffectGlowing();
-					this->AddSubActor( &m_sprActualBar[p][l] );
+					this->AddChild( &m_sprActualBar[p][l] );
 				}
 				break;
 			}
@@ -530,7 +526,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			m_textNewRecord[p].SetText( "IT'S A NEW RECORD!" );
 			m_textNewRecord[p].SetZoom( 0.5f );
 			m_textNewRecord[p].SetEffectGlowing( 1.0f );
-			this->AddSubActor( &m_textNewRecord[p] );
+			this->AddChild( &m_textNewRecord[p] );
 		}
 	}
 		
@@ -545,7 +541,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			m_textTryExtraStage.SetText( "Try ExtraStage!!!" );
 		m_textTryExtraStage.SetZoom( 1 );
 		m_textTryExtraStage.SetEffectGlowing( 1.0f );
-		this->AddSubActor( &m_textTryExtraStage );
+		this->AddChild( &m_textTryExtraStage );
 
 		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","evaluation extra stage") );
 	}
@@ -608,29 +604,29 @@ void ScreenEvaluation::TweenOnScreen()
 	{
 		fOriginalY = m_BannerWithFrame[i].GetY();
 		m_BannerWithFrame[i].SetY( fOriginalY + SCREEN_HEIGHT );
-		m_BannerWithFrame[i].BeginTweeningQueued( 0.0f );
-		m_BannerWithFrame[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+		m_BannerWithFrame[i].BeginTweening( 0.0f );
+		m_BannerWithFrame[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
 		m_BannerWithFrame[i].SetTweenY( fOriginalY );
 	}
 	
 	fOriginalY = m_textStage.GetY();
-	m_textStage.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+	m_textStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
 	m_textStage.SetTweenY( fOriginalY );
 
 	for( i=0; i<NUM_JUDGE_LINES; i++ ) 
 	{
 		fOriginalY = m_sprJudgeLabels[i].GetY();
 		m_sprJudgeLabels[i].SetY( fOriginalY + SCREEN_HEIGHT );
-		m_sprJudgeLabels[i].BeginTweeningQueued( 0.2f + 0.1f*i );
-		m_sprJudgeLabels[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+		m_sprJudgeLabels[i].BeginTweening( 0.2f + 0.1f*i );
+		m_sprJudgeLabels[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
 		m_sprJudgeLabels[i].SetTweenY( fOriginalY );
 
 		for( int p=0; p<NUM_PLAYERS; p++ ) 
 		{
 			fOriginalX = m_textJudgeNumbers[i][p].GetX();
 			m_textJudgeNumbers[i][p].SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
-			m_textJudgeNumbers[i][p].BeginTweeningQueued( 0.2f + 0.1f*i );
-			m_textJudgeNumbers[i][p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+			m_textJudgeNumbers[i][p].BeginTweening( 0.2f + 0.1f*i );
+			m_textJudgeNumbers[i][p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
 			m_textJudgeNumbers[i][p].SetTweenX( fOriginalX );
 		}
 	}
@@ -639,16 +635,16 @@ void ScreenEvaluation::TweenOnScreen()
 
 	fOriginalY = m_sprScoreLabel.GetY();
 	m_sprScoreLabel.SetY( fOriginalY + SCREEN_HEIGHT );
-	m_sprScoreLabel.BeginTweeningQueued( 0.8f + 0.1f*i );
-	m_sprScoreLabel.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+	m_sprScoreLabel.BeginTweening( 0.8f + 0.1f*i );
+	m_sprScoreLabel.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
 	m_sprScoreLabel.SetTweenY( fOriginalY );
 	
 	for( p=0; p<NUM_PLAYERS; p++ ) 
 	{
 		fOriginalX = m_ScoreDisplay[p].GetX();
 		m_ScoreDisplay[p].SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
-		m_ScoreDisplay[p].BeginTweeningQueued( 0.8f + 0.1f*i );
-		m_ScoreDisplay[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+		m_ScoreDisplay[p].BeginTweening( 0.8f + 0.1f*i );
+		m_ScoreDisplay[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
 		m_ScoreDisplay[p].SetTweenX( fOriginalX );
 	}
 
@@ -670,8 +666,8 @@ void ScreenEvaluation::TweenOnScreen()
 		{
 			fOriginalX = apActorsInBonusOrStageInfo[i]->GetX();
 			apActorsInBonusOrStageInfo[i]->SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
-			apActorsInBonusOrStageInfo[i]->BeginTweeningQueued( 0.2f );
-			apActorsInBonusOrStageInfo[i]->BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+			apActorsInBonusOrStageInfo[i]->BeginTweening( 0.2f );
+			apActorsInBonusOrStageInfo[i]->BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
 			apActorsInBonusOrStageInfo[i]->SetTweenX( fOriginalX );
 		}
 
@@ -704,32 +700,32 @@ void ScreenEvaluation::TweenOffScreen()
 
 	for( i=0; i<STAGES_TO_SHOW_IN_SUMMARY; i++ )
 	{
-		m_BannerWithFrame[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
+		m_BannerWithFrame[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
 		m_BannerWithFrame[i].SetTweenZoomY( 0 );
 	}
 
-	m_textStage.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
+	m_textStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
 	m_textStage.SetTweenZoomY( 0 );
 
 	for( i=0; i<NUM_JUDGE_LINES; i++ ) 
 	{
-		m_sprJudgeLabels[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
+		m_sprJudgeLabels[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
 		m_sprJudgeLabels[i].SetTweenZoomY( 0 );
 
 		for( int p=0; p<NUM_PLAYERS; p++ ) 
 		{
-			m_textJudgeNumbers[i][p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
+			m_textJudgeNumbers[i][p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
 			m_textJudgeNumbers[i][p].SetTweenZoomY( 0 );
 		}
 	}
 	
-	m_sprScoreLabel.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
+	m_sprScoreLabel.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
 	m_sprScoreLabel.SetTweenZoomY( 0 );
 
 
 	for( p=0; p<NUM_PLAYERS; p++ ) 
 	{
-		m_ScoreDisplay[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
+		m_ScoreDisplay[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
 		m_ScoreDisplay[p].SetTweenZoomY( 0 );
 	}
 
@@ -751,7 +747,7 @@ void ScreenEvaluation::TweenOffScreen()
 		apActorsInBonusOrStageInfo.Add( &m_textSongsSurvived[p] );
 		for( i=0; i<apActorsInBonusOrStageInfo.GetSize(); i++ )
 		{
-			apActorsInBonusOrStageInfo[i]->BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
+			apActorsInBonusOrStageInfo[i]->BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
 			apActorsInBonusOrStageInfo[i]->SetTweenZoomY( 0 );
 		}
 

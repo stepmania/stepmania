@@ -23,6 +23,15 @@ Screen::~Screen()
 
 }
 
+void Screen::AddChild( Actor* pActor )
+{
+	// add only if the actor is on screen
+	float fX = pActor->GetX();
+	float fY = pActor->GetY();
+//	if( SCREEN_LEFT>=fX && fX<=SCREEN_RIGHT && SCREEN_TOP>=fY && fY<=SCREEN_BOTTOM )
+		ActorFrame::AddChild( pActor );
+}
+
 void Screen::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );

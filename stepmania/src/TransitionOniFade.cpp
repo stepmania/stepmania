@@ -20,7 +20,7 @@
 
 TransitionOniFade::TransitionOniFade()
 {
-	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// white
+	SetDiffuse( D3DXCOLOR(1,1,1,1) );	// white
 
 	m_quadBackground.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 
@@ -47,15 +47,15 @@ void TransitionOniFade::DrawPrimitives()
 		UpdateSongText();
 	}
 
-	m_quadBackground.SetDiffuseColor( D3DXCOLOR(1,1,1,SCALE(GetPercentageClosed(),0,1,-1,1)) );
+	m_quadBackground.SetDiffuse( D3DXCOLOR(1,1,1,SCALE(GetPercentageClosed(),0,1,-1,1)) );
 	m_quadBackground.Draw();
 
 	if( m_TransitionState == closed  ||  m_TransitionState == opening_right )
 	{
-		m_quadStrip.SetDiffuseColor( D3DXCOLOR(0,0,0,SCALE(GetPercentageClosed(),0,1,0,2)) );
+		m_quadStrip.SetDiffuse( D3DXCOLOR(0,0,0,SCALE(GetPercentageClosed(),0,1,0,2)) );
 		m_quadStrip.Draw();
 
-		m_textSongInfo.SetDiffuseColor( D3DXCOLOR(1,1,1,SCALE(GetPercentageClosed(),0,1,0,2)) );
+		m_textSongInfo.SetDiffuse( D3DXCOLOR(1,1,1,SCALE(GetPercentageClosed(),0,1,0,2)) );
 		m_textSongInfo.Draw();
 	}
 }

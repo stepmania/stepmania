@@ -26,7 +26,7 @@ TipDisplay::TipDisplay()
 	m_textTip.LoadFromFont( THEME->GetPathTo("Fonts","help") );
 	m_textTip.SetEffectBlinking();
 	m_textTip.TurnShadowOff();
-	this->AddSubActor( &m_textTip );
+	this->AddChild( &m_textTip );
 
 	m_iCurTipIndex = 0;
 	m_fSecsUntilSwitch = TIP_SHOW_TIME;

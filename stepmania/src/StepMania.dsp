@@ -59,7 +59,7 @@ IntDir=.\../Release
 TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc   	cl    /Zl    /nologo    /c    verstub.cpp    /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc    	cl     /Zl     /nologo     /c     verstub.cpp     /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -95,7 +95,7 @@ IntDir=.\../Debug
 TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc   	cl    /Zl    /nologo    /c    verstub.cpp    /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc    	cl     /Zl     /nologo     /c     verstub.cpp     /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -233,6 +233,14 @@ SOURCE=.\RageUtil.h
 # Begin Group "Data Structures"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\CodeDetector.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CodeDetector.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\Course.cpp
@@ -716,11 +724,27 @@ SOURCE=.\MusicWheel.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\OptionIcon.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\OptionIcon.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\OptionsCursor.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\OptionsCursor.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PlayerOptionIcons.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\PlayerOptionIcons.h
 # End Source File
 # Begin Source File
 

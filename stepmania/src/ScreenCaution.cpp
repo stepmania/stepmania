@@ -33,13 +33,13 @@ ScreenCaution::ScreenCaution()
 
 	m_sprCaution.Load( THEME->GetPathTo("Graphics","caution") );
 	m_sprCaution.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-	this->AddSubActor( &m_sprCaution );
+	this->AddChild( &m_sprCaution );
 	
 	m_Wipe.OpenWipingRight( SM_DoneOpening );
-	this->AddSubActor( &m_Wipe );
+	this->AddChild( &m_Wipe );
 
 	m_FadeWipe.SetOpened();
-	this->AddSubActor( &m_FadeWipe );
+	this->AddChild( &m_FadeWipe );
 
 	this->SendScreenMessage( SM_StartClosing, 3 );
 

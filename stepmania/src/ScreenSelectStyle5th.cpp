@@ -124,7 +124,7 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 		m_sprPad[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style pad game %d style %d",GAMESTATE->m_CurGame,i)) );
 //		m_sprPad[i].SetXY( PAD_X[i], PAD_Y[i] );
 //		m_sprPad[i].SetZoom( 1 );
-		this->AddSubActor( &m_sprPad[i] );
+		this->AddChild( &m_sprPad[i] );
 	}
 
 
@@ -135,7 +135,7 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 //		m_sprDancer[i].SetXY( DANCER_X[i], DANCER_Y[i] );
 //		m_sprDancer[i].SetZoom( 2 );
 		m_sprDancer[i].StopAnimating();
-		this->AddSubActor( &m_sprDancer[i] );
+		this->AddChild( &m_sprDancer[i] );
 	}
 
 
@@ -143,33 +143,33 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 	m_sprStyleIcon.TurnShadowOff();
 	m_sprStyleIcon.StopAnimating();
 	m_sprStyleIcon.SetXY( ICON_X, ICON_Y );
-	this->AddSubActor( &m_sprStyleIcon );
+	this->AddChild( &m_sprStyleIcon );
 
 
 	m_textExplanation1.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-	m_textExplanation1.SetDiffuseColor( D3DXCOLOR(0,0.7f,0,1) );
+	m_textExplanation1.SetDiffuse( D3DXCOLOR(0,0.7f,0,1) );
 	m_textExplanation1.SetXY( EXPLANATION1_X, EXPLANATION1_Y );
 	m_textExplanation1.SetZ( -1 );
 	m_textExplanation1.SetZoomX( EXPLANATION1_ZOOM_X );
 	m_textExplanation1.SetZoomY( EXPLANATION1_ZOOM_Y );
 	m_textExplanation1.SetHorizAlign( BitmapText::align_left );
-	this->AddSubActor( &m_textExplanation1 );
+	this->AddChild( &m_textExplanation1 );
 
 	m_textExplanation2.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-	m_textExplanation2.SetDiffuseColor( D3DXCOLOR(0,0.7f,0,1) );
+	m_textExplanation2.SetDiffuse( D3DXCOLOR(0,0.7f,0,1) );
 	m_textExplanation2.SetXY( EXPLANATION2_X, EXPLANATION2_Y );
 	m_textExplanation2.SetZ( -1 );
 	m_textExplanation2.SetZoomX( EXPLANATION2_ZOOM_X );
 	m_textExplanation2.SetZoomY( EXPLANATION2_ZOOM_Y );
 	m_textExplanation2.SetHorizAlign( BitmapText::align_left );
-	this->AddSubActor( &m_textExplanation2 );
+	this->AddChild( &m_textExplanation2 );
 	
 	m_Menu.Load( 	
 		THEME->GetPathTo("Graphics","select style background"), 
 		THEME->GetPathTo("Graphics","select style top edge"),
 		HELP_TEXT, true, TIMER_SECONDS
 		);
-	this->AddSubActor( &m_Menu );
+	this->AddChild( &m_Menu );
 
 	m_soundChange.Load( THEME->GetPathTo("Graphics","select style change") );
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
@@ -300,27 +300,27 @@ void ScreenSelectStyle5th::BeforeChange()
 	{
 	case 0:
 		m_sprDancer[0].BeginTweening( TWEEN_TIME );
-		m_sprDancer[0].SetTweenDiffuseColor( COLOR_P1_NOT_SELECTED );
+		m_sprDancer[0].SetTweenDiffuse( COLOR_P1_NOT_SELECTED );
 		break;
 	case 1:
 		m_sprDancer[1].BeginTweening( TWEEN_TIME );
-		m_sprDancer[1].SetTweenDiffuseColor( COLOR_P1_NOT_SELECTED );
+		m_sprDancer[1].SetTweenDiffuse( COLOR_P1_NOT_SELECTED );
 		m_sprDancer[2].BeginTweening( TWEEN_TIME );
-		m_sprDancer[2].SetTweenDiffuseColor( COLOR_P2_NOT_SELECTED );
+		m_sprDancer[2].SetTweenDiffuse( COLOR_P2_NOT_SELECTED );
 		break;
 	case 2:
 		m_sprDancer[3].BeginTweening( TWEEN_TIME );
-		m_sprDancer[3].SetTweenDiffuseColor( COLOR_P1_NOT_SELECTED );
+		m_sprDancer[3].SetTweenDiffuse( COLOR_P1_NOT_SELECTED );
 		break;
 	case 3:
 		m_sprDancer[4].BeginTweening( TWEEN_TIME );
-		m_sprDancer[4].SetTweenDiffuseColor( COLOR_P1_NOT_SELECTED );
+		m_sprDancer[4].SetTweenDiffuse( COLOR_P1_NOT_SELECTED );
 		m_sprDancer[5].BeginTweening( TWEEN_TIME );
-		m_sprDancer[5].SetTweenDiffuseColor( COLOR_P2_NOT_SELECTED );
+		m_sprDancer[5].SetTweenDiffuse( COLOR_P2_NOT_SELECTED );
 		break;
 	case 4:
 		m_sprDancer[6].BeginTweening( TWEEN_TIME );
-		m_sprDancer[6].SetTweenDiffuseColor( COLOR_P1_NOT_SELECTED );
+		m_sprDancer[6].SetTweenDiffuse( COLOR_P1_NOT_SELECTED );
 		break;
 	}
 
@@ -344,47 +344,47 @@ void ScreenSelectStyle5th::AfterChange()
 	{
 	case 0:
 		m_sprPad[0].BeginTweening( TWEEN_TIME );
-		m_sprPad[0].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		m_sprPad[0].SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
 		m_sprDancer[0].BeginTweening( TWEEN_TIME );
-		m_sprDancer[0].SetTweenDiffuseColor( COLOR_P1_SELECTED );
+		m_sprDancer[0].SetTweenDiffuse( COLOR_P1_SELECTED );
 		m_sprDancer[0].StartAnimating();
 		m_sprStyleIcon.SetState( 0 );
 		break;
 	case 1:
 		m_sprPad[1].BeginTweening( TWEEN_TIME );
-		m_sprPad[1].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		m_sprPad[1].SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
 		m_sprDancer[1].BeginTweening( TWEEN_TIME );
-		m_sprDancer[1].SetTweenDiffuseColor( COLOR_P1_SELECTED );
+		m_sprDancer[1].SetTweenDiffuse( COLOR_P1_SELECTED );
 		m_sprDancer[1].StartAnimating();
 		m_sprDancer[2].BeginTweening( TWEEN_TIME );
-		m_sprDancer[2].SetTweenDiffuseColor( COLOR_P2_SELECTED );
+		m_sprDancer[2].SetTweenDiffuse( COLOR_P2_SELECTED );
 		m_sprDancer[2].StartAnimating();
 		m_sprStyleIcon.SetState( 1 );
 		break;
 	case 2:
 		m_sprPad[2].BeginTweening( TWEEN_TIME );
-		m_sprPad[2].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		m_sprPad[2].SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
 		m_sprDancer[3].BeginTweening( TWEEN_TIME );
-		m_sprDancer[3].SetTweenDiffuseColor( COLOR_P1_SELECTED );
+		m_sprDancer[3].SetTweenDiffuse( COLOR_P1_SELECTED );
 		m_sprDancer[3].StartAnimating();
 		m_sprStyleIcon.SetState( 2 );
 		break;
 	case 3:
 		m_sprPad[3].BeginTweening( TWEEN_TIME );
-		m_sprPad[3].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		m_sprPad[3].SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
 		m_sprDancer[4].BeginTweening( TWEEN_TIME );
-		m_sprDancer[4].SetTweenDiffuseColor( COLOR_P1_SELECTED );
+		m_sprDancer[4].SetTweenDiffuse( COLOR_P1_SELECTED );
 		m_sprDancer[4].StartAnimating();
 		m_sprDancer[5].BeginTweening( TWEEN_TIME );
-		m_sprDancer[5].SetTweenDiffuseColor( COLOR_P2_SELECTED );
+		m_sprDancer[5].SetTweenDiffuse( COLOR_P2_SELECTED );
 		m_sprDancer[5].StartAnimating();
 		m_sprStyleIcon.SetState( 3 );
 		break;
 	case 4:
 		m_sprPad[4].BeginTweening( TWEEN_TIME );
-		m_sprPad[4].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		m_sprPad[4].SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
 		m_sprDancer[6].BeginTweening( TWEEN_TIME );
-		m_sprDancer[6].SetTweenDiffuseColor( COLOR_P1_SELECTED );
+		m_sprDancer[6].SetTweenDiffuse( COLOR_P1_SELECTED );
 		m_sprDancer[6].StartAnimating();
 		m_sprStyleIcon.SetState( 4 );
 		break;

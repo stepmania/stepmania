@@ -31,13 +31,13 @@ void MusicStatusDisplay::SetType( IconType type )
 {
 	m_type = type;
 
-	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	SetDiffuse( D3DXCOLOR(1,1,1,1) );
 
 	switch( type )
 	{
 	case none:
 		SetEffectNone();
-		SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+		SetDiffuse( D3DXCOLOR(1,1,1,0) );
 		break;
 	case easy:
 		SetEffectNone();

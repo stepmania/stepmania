@@ -56,7 +56,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 	m_ScrollingList.SetXY( CENTER_X, CENTER_Y );
 	m_ScrollingList.SetSpacing( 400 );
 	m_ScrollingList.SetNumberVisible( 5 );
-	this->AddSubActor( &m_ScrollingList );
+	this->AddChild( &m_ScrollingList );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -65,12 +65,12 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 
 		m_sprControllers[p].Load( THEME->GetPathTo("Graphics","select player controller") );
 		m_sprControllers[p].SetXY( CONTROLLER_X(p), CONTROLLER_Y(p) );
-		this->AddSubActor( &m_sprControllers[p] );
+		this->AddChild( &m_sprControllers[p] );
 
 		m_sprCursors[p].Load( THEME->GetPathTo("Graphics",ssprintf("select player cursor p%d",p+1)) );
 		m_sprCursors[p].SetXY( CURSOR_X(p), CURSOR_Y(p) );
 		m_sprCursors[p].SetEffectBouncing( D3DXVECTOR3(0,10,0), 0.5f );
-		this->AddSubActor( &m_sprCursors[p] );
+		this->AddChild( &m_sprCursors[p] );
 	}
 	
 
@@ -79,7 +79,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 		THEME->GetPathTo("Graphics","select style top edge"),
 		HELP_TEXT, true, TIMER_SECONDS
 		);
-	this->AddSubActor( &m_Menu );
+	this->AddChild( &m_Menu );
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 	m_soundChange.Load( THEME->GetPathTo("Sounds","select style change") );
@@ -208,7 +208,7 @@ void ScreenEz2SelectStyle::RefreshStylesAndList()
 	}
 
 	CStringArray asGraphicPaths;
-	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )
+	for( i=0; i<m_aPossibleStyles.GetSize(); i++ )
 	{
 		Style style = m_aPossibleStyles[i];
 		CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;

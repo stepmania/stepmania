@@ -25,6 +25,7 @@
 
 enum {
 	PO_SPEED = 0,
+	PO_BOOST,
 	PO_EFFECT,
 	PO_APPEAR,
 	PO_TURN,
@@ -37,7 +38,8 @@ enum {
 };
 OptionLineData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	{ "Speed",	9, {"x0.5","x0.75","x1","x1.5","x2","x3","x4","x5","x8"} },	
-	{ "Effect", 7, {"OFF","BOOST","WAVE", "DRUNK", "DIZZY","SPACE","MINI"} },	
+	{ "Boost",  2, {"OFF","ON"} },	
+	{ "Effect", 8, {"OFF","WAVE", "DRUNK", "DIZZY","SPACE","MINI","FLIP","TORNADO"} },	
 	{ "Appear", 4, {"VISIBLE","HIDDEN","SUDDEN","STEALTH"} },	
 	{ "Turn",	5, {"OFF","MIRROR","LEFT","RIGHT","SHUFFLE"} },	
 	{ "Little", 2, {"OFF","ON"} },	

@@ -39,8 +39,8 @@ public:
 	virtual float GetUnzoomedHeight()		{ return m_sprites[0].GetUnzoomedHeight(); }
 	virtual float GetZoomedWidth()			{ return m_sprites[0].GetZoomedWidth(); }
 	virtual float GetZoomedHeight()			{ return m_sprites[0].GetZoomedHeight(); }
-	virtual void  SetWidth( float width )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetWidth(width); }
-	virtual void  SetHeight( float height )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetHeight(height); }
+	virtual void  ZoomToWidth( float width )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].ZoomToWidth(width); }
+	virtual void  ZoomToHeight( float height )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].ZoomToHeight(height); }
 
 	virtual float GetZoom()				{ return m_sprites[0].GetZoom(); }
 	virtual float GetZoomX()			{ return m_sprites[0].GetZoomX(); }
@@ -56,33 +56,26 @@ public:
 	virtual void  SetRotationX( float rot )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetRotationX(rot); }
 	virtual void  SetRotationY( float rot )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetRotationY(rot); }
 
-	virtual void SetDiffuseColor( D3DXCOLOR c )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetDiffuseColor(c); };
-	virtual D3DXCOLOR GetDiffuseColor()			{ return m_sprites[0].GetDiffuseColor(); };
-	virtual void SetGlowColor( D3DXCOLOR c )		{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetGlowColor(c); };
-	virtual D3DXCOLOR GetGlowColor()				{ return m_sprites[0].GetGlowColor(); };
+	virtual void SetDiffuse( D3DXCOLOR c )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetDiffuse(c); };
+	virtual D3DXCOLOR GetDiffuse()			{ return m_sprites[0].GetDiffuse(); };
+	virtual void SetGlow( D3DXCOLOR c )		{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetGlow(c); };
+	virtual D3DXCOLOR GetGlow()				{ return m_sprites[0].GetGlow(); };
 
 
-	// THE BLUR IS MADE BY DELAYING THE TWEENS
+	// The blur is made by delaying the tweens
 	virtual void BeginBlurredTweening( float time, TweenType tt = TWEEN_LINEAR )
 	{
 		for(int i=0; i<NUM_BLUR_GHOSTS; i++) 
 		{
-			m_sprites[i].BeginTweeningQueued( i*0.1f+0.01f, tt );	// sleep
-			m_sprites[i].BeginTweeningQueued( time, tt );	// original tween
+			m_sprites[i].BeginTweening( i*0.1f+0.01f, tt );	// sleep
+			m_sprites[i].BeginTweening( time, tt );	// original tween
 		}
 	};
 	virtual void BeginTweening( float time, TweenType tt = TWEEN_LINEAR )
 	{
 		for(int i=0; i<NUM_BLUR_GHOSTS; i++) 
 		{
-			m_sprites[i].BeginTweeningQueued( time, tt );	// original tween
-		}
-	};
-	virtual void BeginTweeningQueued( float time, TweenType tt = TWEEN_LINEAR )	
-	{ 
-		for(int i=0; i<NUM_BLUR_GHOSTS; i++) 
-		{
-			m_sprites[i].BeginTweeningQueued( time, tt );	// original tween
+			m_sprites[i].BeginTweening( time, tt );	// original tween
 		}
 	};
 	virtual void StopTweening()						{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].StopTweening(); };
@@ -96,8 +89,8 @@ public:
 	virtual void SetTweenRotationX( float r )		{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetTweenRotationX(r); };
 	virtual void SetTweenRotationY( float r )		{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetTweenRotationY(r); };
 	virtual void SetTweenRotationZ( float r )		{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetTweenRotationZ(r); };
-	virtual void SetTweenDiffuseColor( D3DXCOLOR c ){ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetTweenDiffuseColor(c); };
-	virtual void SetTweenAddColor( D3DXCOLOR c )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetTweenAddColor(c); };
+	virtual void SetTweenDiffuse( D3DXCOLOR c ){ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetTweenDiffuse(c); };
+	virtual void SetTweenGlow( D3DXCOLOR c )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetTweenGlow(c); };
 
 
 	void ScaleToCover( LPRECT rect )			{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].ScaleToCover(rect); };

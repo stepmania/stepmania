@@ -90,6 +90,8 @@ void BitmapText::SetText( CString sText )
 {
 	//LOG->Trace( "BitmapText::SetText()" );
 
+	ASSERT( m_pFont );
+
 	if( m_pFont->m_bCapitalsOnly )
 		sText.MakeUpper();
 
@@ -270,7 +272,7 @@ void BitmapText::DrawPrimitives()
 		DISPLAY->SetBlendModeNormal();
 
 
-	if( m_temp_colorDiffuse[0].a != 0 )
+	if( m_temp.diffuse[0].a != 0 )
 	{
 		//////////////////////
 		// render the shadow
@@ -280,7 +282,7 @@ void BitmapText::DrawPrimitives()
 			DISPLAY->PushMatrix();
 			DISPLAY->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
 
-			DWORD dwColor = D3DXCOLOR(0,0,0,0.5f*m_temp_colorDiffuse[0].a);	// semi-transparent black
+			DWORD dwColor = D3DXCOLOR(0,0,0,0.5f*m_temp.diffuse[0].a);	// semi-transparent black
 
 			int i;
 			for( i=0; i<iNumV; i++ )
@@ -310,10 +312,10 @@ void BitmapText::DrawPrimitives()
 		{
 			for( int i=0; i<iNumV; i+=4 )
 			{
-				v[i+0].color = m_temp_colorDiffuse[0];	// top left
-				v[i+1].color = m_temp_colorDiffuse[1];	// top right
-				v[i+2].color = m_temp_colorDiffuse[2];	// bottom left
-				v[i+3].color = m_temp_colorDiffuse[3];	// bottom right
+				v[i+0].color = m_temp.diffuse[0];	// top left
+				v[i+1].color = m_temp.diffuse[1];	// top right
+				v[i+2].color = m_temp.diffuse[2];	// bottom left
+				v[i+3].color = m_temp.diffuse[3];	// bottom right
 			}
 		}
 
@@ -324,13 +326,13 @@ void BitmapText::DrawPrimitives()
 	//////////////////////
 	// render the glow pass
 	//////////////////////
-	if( m_temp_colorGlow.a != 0 )
+	if( m_temp.glow.a != 0 )
 	{
 		DISPLAY->SetColorDiffuse();
 
 		int i;
 		for( i=0; i<iNumV; i++ )
-			v[i].color = m_temp_colorGlow;
+			v[i].color = m_temp.glow;
 		for( i=0; i<iNumV; i+=4 )
 			DISPLAY->AddQuad( &v[i] );
 	}

@@ -47,38 +47,38 @@ SongSelector::SongSelector()
 
 	m_textGroup.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textGroup.SetXY( GROUP_X, GROUP_Y );
-	m_textGroup.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
+	m_textGroup.SetDiffuse( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
 	m_textGroup.SetText( "blah" );
-	this->AddSubActor( &m_textGroup );
+	this->AddChild( &m_textGroup );
 
 	m_Banner.SetXY( SONG_BANNER_X, SONG_BANNER_Y );
 	m_Banner.SetCroppedSize( SONG_BANNER_WIDTH, SONG_BANNER_HEIGHT );
-	this->AddSubActor( &m_Banner );
+	this->AddChild( &m_Banner );
 
 	m_TextBanner.SetXY( SONG_TEXT_BANNER_X, SONG_TEXT_BANNER_Y );
-	this->AddSubActor( &m_TextBanner );
+	this->AddChild( &m_TextBanner );
 	
 	m_sprArrowLeft.Load( THEME->GetPathTo("Graphics","edit menu left") );
 	m_sprArrowLeft.SetXY( ARROWS_X[0], ARROWS_Y[0] );
-	m_sprArrowLeft.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-	this->AddSubActor( &m_sprArrowLeft );
+	m_sprArrowLeft.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	this->AddChild( &m_sprArrowLeft );
 
 	m_sprArrowRight.Load( THEME->GetPathTo("Graphics","edit menu right") );
 	m_sprArrowRight.SetXY( ARROWS_X[1], ARROWS_Y[1] );
-	m_sprArrowRight.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-	this->AddSubActor( &m_sprArrowRight );
+	m_sprArrowRight.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	this->AddChild( &m_sprArrowRight );
 
 	m_textNotesType.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textNotesType.SetXY( GAME_STYLE_X, GAME_STYLE_Y );
-	m_textNotesType.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
+	m_textNotesType.SetDiffuse( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
 	m_textNotesType.SetText( "blah" );
-	this->AddSubActor( &m_textNotesType );
+	this->AddChild( &m_textNotesType );
 
 	m_textNotes.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textNotes.SetXY( STEPS_X, STEPS_Y );
-	m_textNotes.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
+	m_textNotes.SetDiffuse( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
 	m_textNotes.SetText( "blah" );
-	this->AddSubActor( &m_textNotes );
+	this->AddChild( &m_textNotes );
 
 	// data structures
 	ChangeSelectedRow(ROW_GROUP);
@@ -214,8 +214,8 @@ void SongSelector::Right()
 void SongSelector::ChangeSelectedRow( SelectedRow row )
 {
 	m_textGroup.SetEffectNone();
-	m_sprArrowLeft.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-	m_sprArrowRight.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	m_sprArrowLeft.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_sprArrowRight.SetDiffuse( D3DXCOLOR(1,1,1,0) );
 	m_textNotesType.SetEffectNone();
 	m_textNotes.SetEffectNone();
 
@@ -225,8 +225,8 @@ void SongSelector::ChangeSelectedRow( SelectedRow row )
 	{
 	case ROW_GROUP:			m_textGroup.SetEffectGlowing();			break;
 	case ROW_SONG:
-		m_sprArrowLeft.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-		m_sprArrowRight.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		m_sprArrowLeft.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_sprArrowRight.SetDiffuse( D3DXCOLOR(1,1,1,1) );
 		break;
 	case ROW_NOTES_TYPE:	m_textNotesType.SetEffectGlowing();		break;
 	case ROW_STEPS:			m_textNotes.SetEffectGlowing();			break;

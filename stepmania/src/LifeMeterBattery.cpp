@@ -46,26 +46,26 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 	bool bPlayerEnabled = GAMESTATE->IsPlayerEnabled(pn);
 
 	m_sprFrame.Load( THEME->GetPathTo("Graphics","gameplay lifemeter oni") );
-	this->AddSubActor( &m_sprFrame );
+	this->AddChild( &m_sprFrame );
 
 	m_sprBattery.Load( THEME->GetPathTo("Graphics","gameplay lifemeter battery") );
 	m_sprBattery.StopAnimating();
 	if( bPlayerEnabled )
-		this->AddSubActor( &m_sprBattery );
+		this->AddChild( &m_sprBattery );
 
 	m_textNumLives.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-	m_textNumLives.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );		// pink
+	m_textNumLives.SetDiffuse( D3DXCOLOR(1,1,1,1) );		// pink
 	m_textNumLives.SetZoom( 1.1f );
 	m_textNumLives.TurnShadowOff();
 	if( bPlayerEnabled )
-		this->AddSubActor( &m_textNumLives );
+		this->AddChild( &m_textNumLives );
 
 	m_textPercent.LoadFromFont( THEME->GetPathTo("Fonts","score numbers") );
 	m_textPercent.TurnShadowOff();
 	m_textPercent.SetZoom( 0.7f );
 	m_textPercent.SetText( "00.0" );
 	if( bPlayerEnabled )
-		this->AddSubActor( &m_textPercent );
+		this->AddChild( &m_textPercent );
 
 
 
@@ -77,7 +77,7 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 	m_textPercent.SetX( PERCENT_X[pn] );
 	m_textPercent.SetY( PERCENT_Y );
 
-	m_textPercent.SetDiffuseColor( PlayerToColor(pn) );	// light blue
+	m_textPercent.SetDiffuse( PlayerToColor(pn) );	// light blue
 
 	Refresh();
 }

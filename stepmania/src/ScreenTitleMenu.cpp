@@ -95,17 +95,18 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	m_sprBG.Load( THEME->GetPathTo("Graphics","title menu background") );
 	m_sprBG.StretchTo( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT) );
-	this->AddSubActor( &m_sprBG );
+	this->AddChild( &m_sprBG );
 
 	m_sprLogo.Load( THEME->GetPathTo("Graphics",ssprintf("title menu logo game %d",GAMESTATE->m_CurGame)) );
 	m_sprLogo.SetXY( LOGO_X, LOGO_Y );
-	m_sprLogo.SetGlowColor( D3DXCOLOR(1,1,1,1) );
+	m_sprLogo.SetGlow( D3DXCOLOR(1,1,1,1) );
 	m_sprLogo.SetZoomY( 0 );
-	m_sprLogo.BeginTweeningQueued( 0.5f );	// sleep
-	m_sprLogo.BeginTweeningQueued( 0.5f, Actor::TWEEN_BOUNCE_END );
+	m_sprLogo.StopTweening();
+	m_sprLogo.BeginTweening( 0.5f );	// sleep
+	m_sprLogo.BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
 	m_sprLogo.SetEffectGlowing(1, D3DXCOLOR(1,1,1,0.1f), D3DXCOLOR(1,1,1,0.3f) );
 	m_sprLogo.SetTweenZoom( 1 );
-	this->AddSubActor( &m_sprLogo );
+	this->AddChild( &m_sprLogo );
 
 	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","help") );
 	m_textHelp.SetText( HELP_TEXT );
@@ -113,26 +114,26 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetEffectBlinking();
 	m_textHelp.SetShadowLength( 2 );
-	this->AddSubActor( &m_textHelp );
+	this->AddChild( &m_textHelp );
 
 	
 	m_textVersion.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textVersion.SetText( "v3.0 beta 6" );
-	m_textVersion.SetDiffuseColor( D3DXCOLOR(0.6f,0.6f,0.6f,1) );	// light gray
+	m_textVersion.SetDiffuse( D3DXCOLOR(0.6f,0.6f,0.6f,1) );	// light gray
 	m_textVersion.SetXY( VERSION_X, VERSION_Y );
 	m_textVersion.SetZoom( 0.5f );
 	m_textVersion.SetShadowLength( 2 );
-	this->AddSubActor( &m_textVersion );
+	this->AddChild( &m_textVersion );
 
 
 	m_textSongs.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textSongs.SetHorizAlign( Actor::align_left );
 	m_textSongs.SetText( ssprintf("Found %d Songs", SONGMAN->m_pSongs.GetSize()) );
-	m_textSongs.SetDiffuseColor( D3DXCOLOR(0.6f,0.6f,0.6f,1) );	// light gray
+	m_textSongs.SetDiffuse( D3DXCOLOR(0.6f,0.6f,0.6f,1) );	// light gray
 	m_textSongs.SetXY( SONGS_X, SONGS_Y );
 	m_textSongs.SetZoom( 0.5f );
 	m_textSongs.SetShadowLength( 2 );
-	this->AddSubActor( &m_textSongs );
+	this->AddChild( &m_textSongs );
 
 
 	for( int i=0; i< NUM_TITLE_MENU_CHOICES; i++ )
@@ -141,13 +142,13 @@ ScreenTitleMenu::ScreenTitleMenu()
 		m_textChoice[i].SetText( CHOICE_TEXT[i] );
 		m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
 		m_textChoice[i].SetShadowLength( 5 );
-		this->AddSubActor( &m_textChoice[i] );
+		this->AddChild( &m_textChoice[i] );
 	}	
 	
 	m_Fade.SetClosed();
 	m_Fade.OpenWipingRight( SM_None );
 
-	this->AddSubActor( &m_Fade );
+	this->AddChild( &m_Fade );
 
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("title menu game name") );
@@ -253,6 +254,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 
 				if( RandomFloat(0,1)>0.8f )
 					GAMESTATE->m_PlayerOptions[p].m_fArrowScrollSpeed = 1.5f;
+
 				/* This is a bitfield; choose a bit. 1<<0 chooses the first
 				 * option, 1<<1 the second, and so on.  NUM_EFFECT_TYPES is one
 				 * greater than the number of options (since it includes NONE);
@@ -261,15 +263,16 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 				 * do anything.
 				 * 
 				 * It's simple, but it's a hack.  FIXME -glenn */
+
 				GAMESTATE->m_PlayerOptions[p].m_EffectType = 
-						1 << (rand()%PlayerOptions::NUM_EFFECT_TYPES) ;
+						1 << (rand()%NUM_EFFECT_TYPES) ;
 				if( RandomFloat(0,1)>0.9f )
 					GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_HIDDEN;
 				if( RandomFloat(0,1)>0.9f )
 					GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_SUDDEN;
 				if( RandomFloat(0,1)>0.7f )
 					GAMESTATE->m_PlayerOptions[p].m_bReverseScroll = true;
-				if( RandomFloat(0,1)>0.9f )
+				if( RandomFloat(0,1)>0.8f )
 					GAMESTATE->m_PlayerOptions[p].m_bDark = true;
 			}
 			GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LifeType(rand()%SongOptions::NUM_LIFE_TYPES);
@@ -294,6 +297,7 @@ void ScreenTitleMenu::LoseFocus( int iChoiceIndex )
 	m_soundChange.PlayRandom();
 
 	m_textChoice[iChoiceIndex].SetEffectNone();
+	m_textChoice[iChoiceIndex].StopTweening();
 	m_textChoice[iChoiceIndex].BeginTweening( 0.3f );
 	m_textChoice[iChoiceIndex].SetTweenZoom( 0.9f );
 
@@ -301,6 +305,7 @@ void ScreenTitleMenu::LoseFocus( int iChoiceIndex )
 
 void ScreenTitleMenu::GainFocus( int iChoiceIndex )
 {
+	m_textChoice[iChoiceIndex].StopTweening();
 	m_textChoice[iChoiceIndex].BeginTweening( 0.3f );
 	m_textChoice[iChoiceIndex].SetTweenZoom( 1.2f );
 	D3DXCOLOR color1, color2;

@@ -12,7 +12,7 @@
 #include "Screen.h"
 #include "Sprite.h"
 #include "BitmapText.h"
-#include "RandomStream.h"
+#include "RageSoundSample.h"
 #include "GameConstantsAndTypes.h"
 #include "MusicWheel.h"
 #include "CourseContentsFrame.h"
@@ -42,6 +42,8 @@ public:
 protected:
 	void AfterCourseChange();
 
+	void UpdateOptionsDisplays();
+
 	MenuElements		m_Menu;
 
 	Sprite				m_sprBannerFrame;
@@ -51,14 +53,16 @@ protected:
 	CourseContentsFrame	m_CourseContentsFrame;
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
 	ScoreDisplayNormal	m_HighScore[NUM_PLAYERS];
+	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
+	BitmapText			m_textSongOptions;
 	MusicWheel			m_MusicWheel;
 
 	bool				m_bMadeChoice;
 	bool				m_bGoToOptions;
 	BitmapText			m_textHoldForOptions;
 
-	RandomSample		m_soundSelect;
-	RandomSample		m_soundChangeNotes;
+	RageSoundSample		m_soundSelect;
+	RageSoundSample		m_soundOptionsChange;
 };
 
 

@@ -126,37 +126,37 @@ ScreenSelectGroup::ScreenSelectGroup()
 		THEME->GetPathTo("Graphics","select group top edge"),
 		HELP_TEXT, true, TIMER_SECONDS
 		);
-	this->AddSubActor( &m_Menu );
+	this->AddChild( &m_Menu );
 
 	m_sprExplanation.Load( THEME->GetPathTo("Graphics","select group explanation") );
 	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
-	this->AddSubActor( &m_sprExplanation );
+	this->AddChild( &m_sprExplanation );
 
 	// these guys get loaded SetSong and TweenToSong
 	m_Banner.SetXY( BANNER_X, BANNER_Y );
 	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
-	this->AddSubActor( &m_Banner );
+	this->AddChild( &m_Banner );
 
 	m_sprFrame.Load( THEME->GetPathTo("Graphics","select group info frame") );
 	m_sprFrame.SetXY( FRAME_X, FRAME_Y );
-	this->AddSubActor( &m_sprFrame );
+	this->AddChild( &m_sprFrame );
 
 	m_textNumber.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
 	m_textNumber.SetHorizAlign( Actor::align_right );
 	m_textNumber.TurnShadowOff();
-	this->AddSubActor( &m_textNumber );
+	this->AddChild( &m_textNumber );
 	
 	m_sprContents.Load( THEME->GetPathTo("Graphics","select group contents header") );
 	m_sprContents.SetXY( CONTENTS_X, CONTENTS_Y );
-	this->AddSubActor( &m_sprContents );
+	this->AddChild( &m_sprContents );
 
-	this->AddSubActor( &m_MusicList );
+	this->AddChild( &m_MusicList );
 	
 	for( i=0; i < asGroupNames.GetSize(); ++i )
 		m_GroupList.AddGroup( asGroupNames[i] );
 	m_GroupList.DoneAddingGroups();
-	this->AddSubActor( &m_GroupList );
+	this->AddChild( &m_GroupList );
 
 
 	m_soundChange.Load( THEME->GetPathTo("Sounds","select group change") );
@@ -300,21 +300,21 @@ void ScreenSelectGroup::MenuBack( PlayerNumber p )
 
 void ScreenSelectGroup::TweenOffScreen()
 {
-	m_sprExplanation.BeginTweeningQueued( 0.8f );
-	m_sprExplanation.BeginTweeningQueued( 0.5f, TWEEN_BOUNCE_BEGIN );
+	m_sprExplanation.BeginTweening( 0.8f );
+	m_sprExplanation.BeginTweening( 0.5f, TWEEN_BOUNCE_BEGIN );
 	m_sprExplanation.SetTweenX( EXPLANATION_X-400 );
 
 	Actor* pActorsInGroupInfoFrame[] = { &m_sprFrame, &m_Banner, &m_textNumber };
 	const int iNumActorsInGroupInfoFrame = sizeof(pActorsInGroupInfoFrame) / sizeof(Actor*);
 	for( int i=0; i<iNumActorsInGroupInfoFrame; i++ )
 	{
-		pActorsInGroupInfoFrame[i]->BeginTweeningQueued( 0.9f );
-		pActorsInGroupInfoFrame[i]->BeginTweeningQueued( 0.5f, TWEEN_BOUNCE_BEGIN );
+		pActorsInGroupInfoFrame[i]->BeginTweening( 0.9f );
+		pActorsInGroupInfoFrame[i]->BeginTweening( 0.5f, TWEEN_BOUNCE_BEGIN );
 		pActorsInGroupInfoFrame[i]->SetTweenX( pActorsInGroupInfoFrame[i]->GetX()-400 );
 	}
 
-	m_sprContents.BeginTweeningQueued( 0.7f );
-	m_sprContents.BeginTweeningQueued( 0.5f, TWEEN_BIAS_END );
+	m_sprContents.BeginTweening( 0.7f );
+	m_sprContents.BeginTweening( 0.5f, TWEEN_BIAS_END );
 	m_sprContents.SetTweenY( CONTENTS_Y+400 );
 	
 	m_MusicList.TweenOffScreen();
@@ -338,8 +338,8 @@ void ScreenSelectGroup::TweenOnScreen()
 	}
 
 	m_sprContents.SetY( CONTENTS_Y+400 );
-	m_sprContents.BeginTweeningQueued( 0.5f, TWEEN_BIAS_END );	// sleep
-	m_sprContents.BeginTweeningQueued( 0.5f, TWEEN_BIAS_END );
+	m_sprContents.BeginTweening( 0.5f, TWEEN_BIAS_END );	// sleep
+	m_sprContents.BeginTweening( 0.5f, TWEEN_BIAS_END );
 	m_sprContents.SetTweenY( CONTENTS_Y );
 
 	m_MusicList.TweenOnScreen();

@@ -44,7 +44,7 @@ void SmallGradeDisplay::SetGrade( PlayerNumber p, Grade g )
 {
 	m_Grade = g;
 
-	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	SetDiffuse( D3DXCOLOR(1,1,1,1) );
 
 	int iNumCols = 2;
 	switch( g )

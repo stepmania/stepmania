@@ -31,7 +31,7 @@ BPMDisplay::BPMDisplay()
 	m_fTimeLeftInState = 0;
 	m_bExtraStage = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 
-	m_rectFrame.SetDiffuseColor( D3DXCOLOR(0,0,0,0.3f) );
+	m_rectFrame.SetDiffuse( D3DXCOLOR(0,0,0,0.3f) );
 	m_rectFrame.SetZoomX( 120 );
 	m_rectFrame.SetZoomY( 40 );
 
@@ -41,8 +41,8 @@ BPMDisplay::BPMDisplay()
 	//m_textBPM.SetSequence( ssprintf("999") );
 	m_textBPM.SetXY( -23, 0 );
 	m_textBPM.SetZoom( 1.0f );
-	m_textBPM.SetDiffuseColorTopEdge( NORMAL_COLOR_TOP );	// yellow
-	m_textBPM.SetDiffuseColorBottomEdge( NORMAL_COLOR_BOTTOM );	// orange
+	m_textBPM.SetDiffuseTopEdge( NORMAL_COLOR_TOP );	// yellow
+	m_textBPM.SetDiffuseBottomEdge( NORMAL_COLOR_BOTTOM );	// orange
 
 	m_textLabel.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textLabel.TurnShadowOff();
@@ -50,12 +50,12 @@ BPMDisplay::BPMDisplay()
 	m_textLabel.SetText( "BPM" );
 	m_textLabel.SetZoom( 0.7f );
 	m_textLabel.SetZoomX( 0.5f );
-	m_textLabel.SetDiffuseColorTopEdge( NORMAL_COLOR_TOP );	// yellow
-	m_textLabel.SetDiffuseColorBottomEdge( NORMAL_COLOR_BOTTOM );	// orange
+	m_textLabel.SetDiffuseTopEdge( NORMAL_COLOR_TOP );	// yellow
+	m_textLabel.SetDiffuseBottomEdge( NORMAL_COLOR_BOTTOM );	// orange
 
-	//this->AddSubActor( &m_rectFrame );
-	this->AddSubActor( &m_textBPM );
-	this->AddSubActor( &m_textLabel );
+	//this->AddChild( &m_rectFrame );
+	this->AddChild( &m_textBPM );
+	this->AddChild( &m_textLabel );
 }
 
 
@@ -110,29 +110,31 @@ void BPMDisplay::SetBPMRange( float fLowBPM, float fHighBPM )
 		m_CountingState = counting_up;
 	m_fTimeLeftInState = 1;
 
+	m_textBPM.StopTweening();
+	m_textLabel.StopTweening();
 	m_textBPM.BeginTweening(0.5f);
 	m_textLabel.BeginTweening(0.5f);
 
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 	{
-		m_textBPM.SetTweenDiffuseColorTopEdge( EXTRA_COLOR_TOP );
-		m_textBPM.SetTweenDiffuseColorBottomEdge( EXTRA_COLOR_BOTTOM );
-		m_textLabel.SetTweenDiffuseColorTopEdge( EXTRA_COLOR_TOP );
-		m_textLabel.SetTweenDiffuseColorBottomEdge( EXTRA_COLOR_BOTTOM );		
+		m_textBPM.SetTweenDiffuseTopEdge( EXTRA_COLOR_TOP );
+		m_textBPM.SetTweenDiffuseBottomEdge( EXTRA_COLOR_BOTTOM );
+		m_textLabel.SetTweenDiffuseTopEdge( EXTRA_COLOR_TOP );
+		m_textLabel.SetTweenDiffuseBottomEdge( EXTRA_COLOR_BOTTOM );		
 	}
 	else if( m_fLowBPM != m_fHighBPM )
 	{
-		m_textBPM.SetTweenDiffuseColorTopEdge( CHANGE_COLOR_TOP );
-		m_textBPM.SetTweenDiffuseColorBottomEdge( CHANGE_COLOR_BOTTOM );
-		m_textLabel.SetTweenDiffuseColorTopEdge( CHANGE_COLOR_TOP );
-		m_textLabel.SetTweenDiffuseColorBottomEdge( CHANGE_COLOR_BOTTOM );
+		m_textBPM.SetTweenDiffuseTopEdge( CHANGE_COLOR_TOP );
+		m_textBPM.SetTweenDiffuseBottomEdge( CHANGE_COLOR_BOTTOM );
+		m_textLabel.SetTweenDiffuseTopEdge( CHANGE_COLOR_TOP );
+		m_textLabel.SetTweenDiffuseBottomEdge( CHANGE_COLOR_BOTTOM );
 	}
 	else
 	{
-		m_textBPM.SetTweenDiffuseColorTopEdge( NORMAL_COLOR_TOP );
-		m_textBPM.SetTweenDiffuseColorBottomEdge( NORMAL_COLOR_BOTTOM );
-		m_textLabel.SetTweenDiffuseColorTopEdge( NORMAL_COLOR_TOP );
-		m_textLabel.SetTweenDiffuseColorBottomEdge( NORMAL_COLOR_BOTTOM );
+		m_textBPM.SetTweenDiffuseTopEdge( NORMAL_COLOR_TOP );
+		m_textBPM.SetTweenDiffuseBottomEdge( NORMAL_COLOR_BOTTOM );
+		m_textLabel.SetTweenDiffuseTopEdge( NORMAL_COLOR_TOP );
+		m_textLabel.SetTweenDiffuseBottomEdge( NORMAL_COLOR_BOTTOM );
 	}
 
 }

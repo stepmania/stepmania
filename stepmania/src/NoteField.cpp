@@ -124,13 +124,13 @@ void NoteField::DrawMeasureBar( int iMeasureIndex )
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
 	m_rectMeasureBar.SetXY( 0, fYPos );
-	m_rectMeasureBar.SetWidth( (float)(m_iNumTracks+1) * ARROW_SIZE );
-	m_rectMeasureBar.SetHeight( 20 );
-	m_rectMeasureBar.SetDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
+	m_rectMeasureBar.SetZoomX( (float)(m_iNumTracks+1) * ARROW_SIZE );
+	m_rectMeasureBar.SetZoomY( 20 );
+	m_rectMeasureBar.SetDiffuse( D3DXCOLOR(0,0,0,0.5f) );
 	m_rectMeasureBar.Draw();
 
-	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-	m_textMeasureNumber.SetGlowColor( D3DXCOLOR(1,1,1,0) );
+	m_textMeasureNumber.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+	m_textMeasureNumber.SetGlow( D3DXCOLOR(1,1,1,0) );
 	m_textMeasureNumber.SetText( ssprintf("%d", iMeasureNoDisplay) );
 	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 + 10, fYPos );
 	m_textMeasureNumber.Draw();
@@ -142,9 +142,9 @@ void NoteField::DrawMarkerBar( const float fBeat )
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
 	m_rectMarkerBar.SetXY( 0, fYPos );
-	m_rectMarkerBar.SetWidth( (float)(m_iNumTracks+1) * ARROW_SIZE );
-	m_rectMarkerBar.SetHeight( 20 );
-	m_rectMarkerBar.SetDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
+	m_rectMarkerBar.SetZoomX( (float)(m_iNumTracks+1) * ARROW_SIZE );
+	m_rectMarkerBar.SetZoomY( 20 );
+	m_rectMarkerBar.SetDiffuse( D3DXCOLOR(0,0,0,0.5f) );
 	m_rectMarkerBar.Draw();
 }
 
@@ -153,8 +153,8 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, fBeat );
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
-	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(1,0,0,1) );
-	m_textMeasureNumber.SetGlowColor( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
+	m_textMeasureNumber.SetDiffuse( D3DXCOLOR(1,0,0,1) );
+	m_textMeasureNumber.SetGlow( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.2f", fBPM) );
 	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 - 60, fYPos );
 	m_textMeasureNumber.Draw();
@@ -165,8 +165,8 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, fBeat );
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
-	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,0,1) );
-	m_textMeasureNumber.SetGlowColor( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
+	m_textMeasureNumber.SetDiffuse( D3DXCOLOR(0.8f,0.8f,0,1) );
+	m_textMeasureNumber.SetGlow( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.2f", fSecs) );
 	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 - 10, fYPos );
 	m_textMeasureNumber.Draw();
@@ -177,8 +177,8 @@ void NoteField::DrawBGChangeText( const float fBeat, const CString sNewBGName )
 	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, fBeat );
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
-	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(0,1,0,1) );
-	m_textMeasureNumber.SetGlowColor( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
+	m_textMeasureNumber.SetDiffuse( D3DXCOLOR(0,1,0,1) );
+	m_textMeasureNumber.SetGlow( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( sNewBGName );
 	m_textMeasureNumber.SetXY( +m_rectMeasureBar.GetZoomedWidth()/2 + 10, fYPos );
 	m_textMeasureNumber.Draw();

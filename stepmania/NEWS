@@ -1,4 +1,14 @@
 ﻿------------------------CVS after 3.00 beta 6----------------
+NEW FEATURE:  Best sort now shows only top 30 songs.
+NEW FEATURE:  Option codes on the Select Music and Select Course screens
+	Codes are defined in the metrics.ini file and thus can be edited and
+	changed per-theme.  The "Dedicated Menu Buttons" option does not 
+	have to be enabled to use codes. 
+NEW FEATURE:  SuperShuffle shuffles each individual note row.  This 
+	makes for a completely different note pattern every time.
+CHANGE:  Boost is now a separate option and can be combined with other 
+	effects.
+NEW FEATURE:  New Effects: Backwards and Tornado.
 NEW FEATURE:  More informative crash dialog.
 BUG FIX:  Fix editor saving files with an extra space at the end
 	of the filename.

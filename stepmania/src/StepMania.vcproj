@@ -353,6 +353,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			Name="Data Structures"
 			Filter="">
 			<File
+				RelativePath="CodeDetector.cpp">
+			</File>
+			<File
+				RelativePath="CodeDetector.h">
+			</File>
+			<File
 				RelativePath="Course.cpp">
 			</File>
 			<File
@@ -687,10 +693,22 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\MusicWheel.h">
 			</File>
 			<File
+				RelativePath="OptionIcon.cpp">
+			</File>
+			<File
+				RelativePath="OptionIcon.h">
+			</File>
+			<File
 				RelativePath="OptionsCursor.cpp">
 			</File>
 			<File
 				RelativePath="OptionsCursor.h">
+			</File>
+			<File
+				RelativePath="PlayerOptionIcons.cpp">
+			</File>
+			<File
+				RelativePath="PlayerOptionIcons.h">
 			</File>
 			<File
 				RelativePath="ScrollBar.cpp">

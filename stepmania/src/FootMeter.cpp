@@ -28,14 +28,14 @@ void FootMeter::SetFromNotes( Notes* pNotes )
 {
 	if( pNotes != NULL )
 	{
-		SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		SetDiffuse( D3DXCOLOR(1,1,1,1) );
 		SetNumFeet( pNotes->m_iMeter );
 		if( pNotes->m_iMeter >= 10 )
 			this->SetEffectGlowing();
 		else
 			this->SetEffectNone();
 
-		SetDiffuseColor( pNotes->GetColor() );
+		SetDiffuse( pNotes->GetColor() );
 		this->StopTweening();
 		this->SetZoom( 1.1f );
 		this->BeginTweening( 0.3f, TWEEN_BOUNCE_BEGIN );
@@ -44,7 +44,7 @@ void FootMeter::SetFromNotes( Notes* pNotes )
 	else
 	{
 		this->SetEffectNone();
-		SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,0.8f,1) );
+		SetDiffuse( D3DXCOLOR(0.8f,0.8f,0.8f,1) );
 		SetNumFeet( 0 );
 	}
 }

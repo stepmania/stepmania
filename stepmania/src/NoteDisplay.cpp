@@ -309,39 +309,19 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		m_sprHoldParts.SetXY( fX, fY );
 		if( bDrawGlowOnly )
 		{
-			m_sprHoldParts.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-			m_sprHoldParts.SetGlowColor( colorGlow );
+			m_sprHoldParts.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+			m_sprHoldParts.SetGlow( colorGlow );
 		}
 		else
 		{
-			m_sprHoldParts.SetDiffuseColor( colorDiffuse );
-			m_sprHoldParts.SetGlowColor( D3DXCOLOR(0,0,0,0) );
+			m_sprHoldParts.SetDiffuse( colorDiffuse );
+			m_sprHoldParts.SetGlow( D3DXCOLOR(0,0,0,0) );
 		}
 		m_sprHoldParts.Draw();
 	}
 
-	//
-	// We've drawn the diffuse pass, now draw the glow pass if necessary
-	//
-	bool bDrawGlow = false;
-	if( fPercentFadeToFail > 0 )
-		bDrawGlow = true;
+	// now, draw the glow pass
 	if( !bDrawGlowOnly )
-	{
-		switch( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_AppearanceType )
-		{ 
-		case PlayerOptions::APPEARANCE_VISIBLE:
-		case PlayerOptions::APPEARANCE_STEALTH:
-			break;	// don't need to draw glow
-		case PlayerOptions::APPEARANCE_HIDDEN:
-		case PlayerOptions::APPEARANCE_SUDDEN:
-			bDrawGlow = true;
-			break;
-		default:
-			ASSERT(0);
-		}
-	}
-	if( bDrawGlow )
 		DrawHold( hn, bActive, fLife, fPercentFadeToFail, true );
 }
 
@@ -369,20 +349,20 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bUseHol
 
 	m_sprTapParts.SetXY( fXPos, fYPos );
 	m_sprTapParts.SetRotation( fRotation );
-	m_sprTapParts.SetGlowColor( D3DXCOLOR(1,1,1,fGlow) );
+	m_sprTapParts.SetGlow( D3DXCOLOR(1,1,1,fGlow) );
 
 	//
 	// draw gray part
 	//
 	m_sprTapParts.SetState( iGrayPartFrameNo );
-	m_sprTapParts.SetDiffuseColor( colorGrayPart );
+	m_sprTapParts.SetDiffuse( colorGrayPart );
 	m_sprTapParts.Draw();
 
 	//
 	// draw color part
 	//
 	m_sprTapParts.SetState( iColorPartFrameNo );
-	m_sprTapParts.SetDiffuseColorTopEdge( colorLeadingEdge );
-	m_sprTapParts.SetDiffuseColorBottomEdge( colorTrailingEdge );
+	m_sprTapParts.SetDiffuseTopEdge( colorLeadingEdge );
+	m_sprTapParts.SetDiffuseBottomEdge( colorTrailingEdge );
 	m_sprTapParts.Draw();
 }

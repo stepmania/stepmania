@@ -21,7 +21,7 @@
 TransitionFade::TransitionFade()
 {
 	m_rect.StretchTo( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT) );
-	SetDiffuseColor( D3DXCOLOR(0,0,0,1) );	// black
+	SetDiffuse( D3DXCOLOR(0,0,0,1) );	// black
 }
 
 TransitionFade::~TransitionFade()
@@ -35,8 +35,8 @@ void TransitionFade::DrawPrimitives()
 	if( fPercentageOpaque == 0 )
 		return;	// draw nothing
 
-	D3DXCOLOR colorTemp = m_colorDiffuse[0] * fPercentageOpaque;
-	m_rect.SetDiffuseColor( colorTemp );
+	D3DXCOLOR colorTemp = GetDiffuse() * fPercentageOpaque;
+	m_rect.SetDiffuse( colorTemp );
 	m_rect.Draw();
 }
 

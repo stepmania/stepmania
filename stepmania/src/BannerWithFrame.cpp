@@ -23,15 +23,15 @@ BannerWithFrame::BannerWithFrame()
 	m_sprBannerFrame.Load( THEME->GetPathTo("Graphics","evaluation banner frame") );
 	m_Banner.SetCroppedSize( m_sprBannerFrame.GetUnzoomedWidth()-6, m_sprBannerFrame.GetUnzoomedHeight()-6 );
 
-	this->AddSubActor( &m_Banner );
-	this->AddSubActor( &m_sprBannerFrame );
+	this->AddChild( &m_Banner );
+	this->AddChild( &m_sprBannerFrame );
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		float fX = (m_sprBannerFrame.GetUnzoomedWidth()/2-26) * (p==PLAYER_1 ? -1 : 1 );
 		float fY = m_sprBannerFrame.GetUnzoomedHeight()/2-26;
 		m_Icon[p].SetX( fX );
 		m_Icon[p].SetY( fY );
-		this->AddSubActor( &m_Icon[p] );
+		this->AddChild( &m_Icon[p] );
 	}
 }
 

@@ -21,8 +21,8 @@ void Combo::Reset()
 {
 	m_iCurCombo = m_iMaxCombo = m_iCurComboOfPerfects = 0; 
 
-	m_textComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
-	m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
+	m_textComboNumber.SetDiffuse( D3DXCOLOR(1,1,1,0) );	// invisible
+	m_sprCombo.SetDiffuse( D3DXCOLOR(1,1,1,0) );	// invisible
 }
 
 Combo::Combo()
@@ -40,8 +40,8 @@ Combo::Combo()
 	m_textComboNumber.SetHorizAlign( Actor::align_right );
 	m_textComboNumber.SetX( 0 );
 
-	this->AddSubActor( &m_textComboNumber );
-	this->AddSubActor( &m_sprCombo );
+	this->AddChild( &m_textComboNumber );
+	this->AddChild( &m_sprCombo );
 }
 
 
@@ -89,13 +89,13 @@ void Combo::UpdateScore( TapNoteScore score )
 
 		if( m_iCurCombo <= 4 )
 		{
-			m_textComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
-			m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
+			m_textComboNumber.SetDiffuse( D3DXCOLOR(1,1,1,0) );	// invisible
+			m_sprCombo.SetDiffuse( D3DXCOLOR(1,1,1,0) );	// invisible
 		}
 		else
 		{
-			m_textComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
-			m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
+			m_textComboNumber.SetDiffuse( D3DXCOLOR(1,1,1,1) );	// visible
+			m_sprCombo.SetDiffuse( D3DXCOLOR(1,1,1,1) );	// visible
 
 			m_textComboNumber.SetText( ssprintf("%d", m_iCurCombo) );
 			float fNewZoom = min( 0.5f + m_iCurCombo/800.0f, 1.0f );
@@ -115,8 +115,8 @@ void Combo::UpdateScore( TapNoteScore score )
 
 		m_iCurCombo = 0;
 
-		m_textComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
-		m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
+		m_textComboNumber.SetDiffuse( D3DXCOLOR(1,1,1,0) );	// invisible
+		m_sprCombo.SetDiffuse( D3DXCOLOR(1,1,1,0) );	// invisible
 		break;
 	default:
 		ASSERT(0);

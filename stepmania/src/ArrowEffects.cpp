@@ -47,10 +47,28 @@ float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos ) 
 {
 	float fSongBeat = GAMESTATE->m_fSongBeat;
-	float fPixelOffsetFromCenter = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[PLAYER_1][iColNum].fXOffset;
+	float fPixelOffsetFromCenter = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[pn][iColNum].fXOffset;
 	
 	if( GAMESTATE->m_PlayerOptions[pn].m_EffectType & PlayerOptions::EFFECT_DRUNK )
 		fPixelOffsetFromCenter += cosf( TIMER->GetTimeSinceStart() + iColNum*0.2f + fYPos*6/SCREEN_HEIGHT) * ARROW_SIZE*0.5f; 
+	if( GAMESTATE->m_PlayerOptions[pn].m_EffectType & PlayerOptions::EFFECT_FLIP )
+		fPixelOffsetFromCenter = -fPixelOffsetFromCenter; 
+	if( GAMESTATE->m_PlayerOptions[pn].m_EffectType & PlayerOptions::EFFECT_TORNADO )
+	{
+		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+		float fMaxX = -100000, fMinX = +100000;
+		for( int i=0; i<pStyleDef->m_iColsPerPlayer; i++ )
+		{
+			fMaxX = max( fMaxX, pStyleDef->m_ColumnInfo[pn][i].fXOffset );
+			fMinX = min( fMinX, pStyleDef->m_ColumnInfo[pn][i].fXOffset );
+		}
+
+		float fPositionBetween = SCALE( fPixelOffsetFromCenter, fMinX, fMaxX, -1, 1 );
+		float fRads = acosf( fPositionBetween );
+		fRads += fYPos * 6 / SCREEN_HEIGHT;
+		
+		fPixelOffsetFromCenter = SCALE( cosf(fRads), -1, 1, fMinX, fMaxX );
+	}
 
 	return fPixelOffsetFromCenter;
 }
@@ -97,7 +115,7 @@ float ArrowGetPercentVisible( PlayerNumber pn, float fYPos )
 		fAlpha = 0;
 		break;
 	case PlayerOptions::APPEARANCE_BLINK: // this is an Ez2dancer Appearance Mode
-		fAlpha = sinf( TIMER->GetTimeSinceStart() );
+		fAlpha = sinf( TIMER->GetTimeSinceStart()*3 );
 		fAlpha = froundf( fAlpha, 0.3333f );
 		break;
 	default:
@@ -119,5 +137,5 @@ float ArrowGetAlpha( PlayerNumber pn, float fYPos )
 float ArrowGetGlow( PlayerNumber pn, float fYPos )
 {
 	const float fDistFromHalf = fabsf( ArrowGetPercentVisible(pn,fYPos) - 0.5f );
-	return SCALE( fDistFromHalf, 0, 0.5f, 1, 0 );
+	return SCALE( fDistFromHalf, 0, 0.5f, 1.3f, 0 );
 }

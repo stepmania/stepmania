@@ -50,7 +50,7 @@ GhostArrow::GhostArrow()
 	g_colorBooEnd		= COLOR_BOO_END;
 
 
-	SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	SetDiffuse( D3DXCOLOR(1,1,1,0) );
 }
 
 void GhostArrow::Update( float fDeltaTime )
@@ -78,14 +78,14 @@ void GhostArrow::Step( TapNoteScore score )
 	}
 
 	StopTweening();
-	SetDiffuseColor( colorStart );
+	SetDiffuse( colorStart );
 	SetState( 0 );
 	SetZoom( g_fZoomStart );
 	
-	BeginTweeningQueued( g_fShowSeconds );
+	BeginTweening( g_fShowSeconds );
 	SetTweenZoom( g_fZoomEnd );
-	SetTweenDiffuseColor( colorEnd );
+	SetTweenDiffuse( colorEnd );
 
-	BeginTweeningQueued( 0.0001f );		// snap to invisible
-	SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	BeginTweening( 0.0001f );		// snap to invisible
+	SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 }

@@ -178,13 +178,13 @@ void ScrollingList::DrawPrimitives()
 
 		if( i==0 )	// so we don't draw 0 twice
 		{
-			m_apSprites[iIndexToDraw1]->SetDiffuseColor( COLOR_SELECTED );
+			m_apSprites[iIndexToDraw1]->SetDiffuse( COLOR_SELECTED );
 			m_apSprites[iIndexToDraw1]->Draw();
 		}
 		else
 		{
-			m_apSprites[iIndexToDraw1]->SetDiffuseColor( COLOR_NOT_SELECTED );
-			m_apSprites[iIndexToDraw2]->SetDiffuseColor( COLOR_NOT_SELECTED );
+			m_apSprites[iIndexToDraw1]->SetDiffuse( COLOR_NOT_SELECTED );
+			m_apSprites[iIndexToDraw2]->SetDiffuse( COLOR_NOT_SELECTED );
 			m_apSprites[iIndexToDraw1]->Draw();
 			m_apSprites[iIndexToDraw2]->Draw();
 		}

@@ -81,18 +81,18 @@ Player::Player()
 	m_pLifeMeter = NULL;
 	m_pScore = NULL;
 
-	this->AddSubActor( &m_GrayArrowRow );
-	this->AddSubActor( &m_NoteField );
-	this->AddSubActor( &m_GhostArrowRow );
+	this->AddChild( &m_GrayArrowRow );
+	this->AddChild( &m_NoteField );
+	this->AddChild( &m_GhostArrowRow );
 
-	m_frameJudgement.AddSubActor( &m_Judgement );
-	this->AddSubActor( &m_frameJudgement );
+	m_frameJudgement.AddChild( &m_Judgement );
+	this->AddChild( &m_frameJudgement );
 
-	m_frameCombo.AddSubActor( &m_Combo );
-	this->AddSubActor( &m_frameCombo );
+	m_frameCombo.AddChild( &m_Combo );
+	this->AddChild( &m_frameCombo );
 	
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
-		this->AddSubActor( &m_HoldJudgement[c] );
+		this->AddChild( &m_HoldJudgement[c] );
 }
 
 

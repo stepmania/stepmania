@@ -25,6 +25,7 @@
 #include "AnnouncerManager.h"
 #include "GameState.h"
 #include "RageMusic.h"
+#include "CodeDetector.h"
 
 
 #define BANNER_FRAME_X		THEME->GetMetricF("ScreenSelectCourse","BannerFrameX")
@@ -68,31 +69,31 @@ ScreenSelectCourse::ScreenSelectCourse()
 		THEME->GetPathTo("Graphics","select course top edge"),
 		HELP_TEXT, true, TIMER_SECONDS 
 		);
-	this->AddSubActor( &m_Menu );
+	this->AddChild( &m_Menu );
 
 	m_Banner.SetXY( BANNER_X, BANNER_Y );
 	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
-	this->AddSubActor( &m_Banner );
+	this->AddChild( &m_Banner );
 
 	m_sprBannerFrame.Load( THEME->GetPathTo("Graphics","select course info frame") );
 	m_sprBannerFrame.SetXY( BANNER_FRAME_X, BANNER_FRAME_Y );
-	this->AddSubActor( &m_sprBannerFrame );
+	this->AddChild( &m_sprBannerFrame );
 
 	m_textNumStages.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textNumStages.SetXY( STAGES_X, STAGES_Y );
 	m_textNumStages.TurnShadowOff();
-	this->AddSubActor( &m_textNumStages );
+	this->AddChild( &m_textNumStages );
 
 	m_textTime.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textTime.SetXY( TIME_X, TIME_Y );
 	m_textTime.TurnShadowOff();
-	this->AddSubActor( &m_textTime );
+	this->AddChild( &m_textTime );
 
 	m_CourseContentsFrame.SetXY( CONTENTS_X, CONTENTS_Y );
-	this->AddSubActor( &m_CourseContentsFrame );
+	this->AddChild( &m_CourseContentsFrame );
 
 	m_MusicWheel.SetXY( WHEEL_X, WHEEL_Y );
-	this->AddSubActor( &m_MusicWheel );
+	this->AddChild( &m_MusicWheel );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -103,12 +104,12 @@ ScreenSelectCourse::ScreenSelectCourse()
 		m_sprHighScoreFrame[p].StopAnimating();
 		m_sprHighScoreFrame[p].SetState( p );
 		m_sprHighScoreFrame[p].SetXY( SCORE_X(p), SCORE_Y(p) );
-		this->AddSubActor( &m_sprHighScoreFrame[p] );
+		this->AddChild( &m_sprHighScoreFrame[p] );
 
 		m_HighScore[p].SetXY( SCORE_X(p), SCORE_Y(p) );
 		m_HighScore[p].SetZoom( 0.6f );
-		m_HighScore[p].SetDiffuseColor( PlayerToColor(p) );
-		this->AddSubActor( &m_HighScore[p] );
+		m_HighScore[p].SetDiffuse( PlayerToColor(p) );
+		this->AddChild( &m_HighScore[p] );
 	}	
 
 	m_textHoldForOptions.LoadFromFont( THEME->GetPathTo("Fonts","Stage") );
@@ -116,16 +117,18 @@ ScreenSelectCourse::ScreenSelectCourse()
 	m_textHoldForOptions.SetText( "press START again for options" );
 	m_textHoldForOptions.SetZoom( 1 );
 	m_textHoldForOptions.SetZoomY( 0 );
-	m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-	this->AddSubActor( &m_textHoldForOptions );
+	m_textHoldForOptions.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	this->AddChild( &m_textHoldForOptions );
 
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
-	m_soundChangeNotes.Load( THEME->GetPathTo("Sounds","select music change notes") );
+	m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","select music change options") );
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select course intro") );
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select course music") );
+
+	UpdateOptionsDisplays();
 
 	AfterCourseChange();
 	TweenOnScreen();
@@ -160,7 +163,7 @@ void ScreenSelectCourse::TweenOnScreen()
 	}
 
 	m_CourseContentsFrame.SetXY( CONTENTS_X - 400, CONTENTS_Y );
-	m_CourseContentsFrame.BeginTweeningQueued( TWEEN_TIME, Actor::TWEEN_BIAS_END );
+	m_CourseContentsFrame.BeginTweening( TWEEN_TIME, Actor::TWEEN_BIAS_END );
 	m_CourseContentsFrame.SetTweenXY( CONTENTS_X, CONTENTS_Y );
 
 	Actor* pActorsInScore[] = { &m_sprHighScoreFrame[0], &m_sprHighScoreFrame[1], &m_HighScore[0], &m_HighScore[1] };
@@ -183,11 +186,11 @@ void ScreenSelectCourse::TweenOffScreen()
 	int i;
 	for( i=0; i<iNumActorsInGroupInfoFrame; i++ )
 	{
-		pActorsInCourseInfoFrame[i]->BeginTweeningQueued( TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
+		pActorsInCourseInfoFrame[i]->BeginTweening( TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
 		pActorsInCourseInfoFrame[i]->SetTweenX( pActorsInCourseInfoFrame[i]->GetX()-400 );
 	}
 
-	m_CourseContentsFrame.BeginTweeningQueued( TWEEN_TIME, Actor::TWEEN_BOUNCE_BEGIN );
+	m_CourseContentsFrame.BeginTweening( TWEEN_TIME, Actor::TWEEN_BOUNCE_BEGIN );
 	m_CourseContentsFrame.SetTweenXY( CONTENTS_X - 400, CONTENTS_Y );
 
 	Actor* pActorsInScore[] = { &m_sprHighScoreFrame[0], &m_sprHighScoreFrame[1], &m_HighScore[0], &m_HighScore[1] };
@@ -205,24 +208,33 @@ void ScreenSelectCourse::TweenOffScreen()
 void ScreenSelectCourse::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	LOG->Trace( "ScreenSelectCourse::Input()" );
-	if(type == IET_RELEASE) return; // don't care
+	
+	if( type == IET_RELEASE )	return;		// don't care
 
-	if( m_Menu.IsClosing() )
-		return;		// ignore
+	if( m_Menu.IsClosing() )	return;		// ignore
 
-	if( MenuI.player == PLAYER_INVALID )
-		return;
+	if( !GameI.IsValid() )		return;		// don't care
 
-	if( m_bMadeChoice && !m_bGoToOptions && MenuI.button == MENU_BUTTON_START )
+	if( m_bMadeChoice  &&  !m_bGoToOptions  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START  &&  !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
 	{
 		m_bGoToOptions = true;
 		m_textHoldForOptions.SetText( "Entering Options..." );
 		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
 		return;
 	}
-
+	
 	if( m_bMadeChoice )
 		return;
+
+	PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
+
+
+	if( CodeDetector::DetectAndAdjustOptions(GameI.controller) )
+	{
+		m_soundOptionsChange.Play();
+		UpdateOptionsDisplays();
+		return;
+	}
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
 }
@@ -289,18 +301,18 @@ void ScreenSelectCourse::MenuStart( PlayerNumber p )
 	
 		TweenOffScreen();
 
-		m_soundSelect.PlayRandom();
+		m_soundSelect.Play();
 
 		m_bMadeChoice = true;
 
 		// show "hold START for options"
-		m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-		m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade in
+		m_textHoldForOptions.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+		m_textHoldForOptions.BeginTweening( 0.25f );	// fade in
 		m_textHoldForOptions.SetTweenZoomY( 1 );
-		m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
-		m_textHoldForOptions.BeginTweeningQueued( 2.0f );	// sleep
-		m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade out
-		m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+		m_textHoldForOptions.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_textHoldForOptions.BeginTweening( 2.0f );	// sleep
+		m_textHoldForOptions.BeginTweening( 0.25f );	// fade out
+		m_textHoldForOptions.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 		m_textHoldForOptions.SetTweenZoomY( 0 );
 
 		m_Menu.TweenOffScreenToBlack( SM_None, false );
@@ -354,3 +366,19 @@ void ScreenSelectCourse::AfterCourseChange()
 	}
 }
 
+void ScreenSelectCourse::UpdateOptionsDisplays()
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( GAMESTATE->IsPlayerEnabled(p) )
+		{
+			CString s = GAMESTATE->m_PlayerOptions[p].GetString();
+			s.Replace( ", ", "\n" );
+//			m_textPlayerOptions[p].SetText( s );
+		}
+	}
+
+	CString s = GAMESTATE->m_SongOptions.GetString();
+	s.Replace( ", ", "\n" );
+//	m_textSongOptions.SetText( s );
+}

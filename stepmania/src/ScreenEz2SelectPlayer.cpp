@@ -58,12 +58,12 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 	{
 		m_sprControllers[p].Load( THEME->GetPathTo("Graphics","select player controller") );
 		m_sprControllers[p].SetXY( CONTROLLER_X(p), CONTROLLER_Y(p) );
-		this->AddSubActor( &m_sprControllers[p] );
+		this->AddChild( &m_sprControllers[p] );
 
 		m_sprCursors[p].Load( THEME->GetPathTo("Graphics",ssprintf("select player cursor p%d",p+1)) );
 		m_sprCursors[p].SetXY( CURSOR_X(p), CURSOR_Y(p) );
 		m_sprCursors[p].SetEffectBouncing( D3DXVECTOR3(0,10,0), 0.5f );
-		this->AddSubActor( &m_sprCursors[p] );
+		this->AddChild( &m_sprCursors[p] );
 	}
 
 	m_Menu.Load( 	
@@ -71,7 +71,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 		THEME->GetPathTo("Graphics","select player top edge"),
 		HELP_TEXT, true, TIMER_SECONDS
 		);
-	this->AddSubActor( &m_Menu );
+	this->AddChild( &m_Menu );
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 

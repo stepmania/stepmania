@@ -72,7 +72,7 @@ void TransitionBackWipe::DrawPrimitives()
 			m_quad.SetXY( (float)iRectX, CENTER_Y );
 			m_quad.SetZoomX( (float)iRectWidth );
 			m_quad.SetZoomY( SCREEN_HEIGHT );
-			m_quad.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
+			m_quad.SetDiffuse( D3DXCOLOR(0,0,0,1) );
 			m_quad.Draw();
 		}
 	}	// end foreach rect

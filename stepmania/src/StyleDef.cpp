@@ -66,3 +66,17 @@ StyleInput StyleDef::GameInputToStyleInput( const GameInput &GameI ) const
 }
 
 
+PlayerNumber StyleDef::ControllerToPlayerNumber( GameController controller ) const
+{
+	switch( m_StyleType )
+	{
+	case ONE_PLAYER_ONE_CREDIT:
+	case TWO_PLAYERS_TWO_CREDITS:
+		return (PlayerNumber)controller;
+	case ONE_PLAYER_TWO_CREDITS:
+		return GAMESTATE->m_MasterPlayerNumber;
+	default:
+		ASSERT(0);
+		return PLAYER_INVALID;
+	}
+}

@@ -27,6 +27,8 @@ public:
 	Screen();
 	virtual ~Screen();
 
+	virtual void AddChild( Actor* pActor );
+
 	// let subclass override if they want
 	virtual void Restore() {};
 	virtual void Invalidate() {};

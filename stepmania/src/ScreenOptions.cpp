@@ -52,14 +52,14 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sPagePath, CStrin
 		sTopEdgePath, 
 		HELP_TEXT, true, TIMER_SECONDS
 		);
-	this->AddSubActor( &m_Menu );
+	this->AddChild( &m_Menu );
 
 	// add everything to m_framePage so we can animate everything at once
-	this->AddSubActor( &m_framePage );
+	this->AddChild( &m_framePage );
 
 	m_sprPage.Load( sPagePath );
 	m_sprPage.SetXY( CENTER_X, CENTER_Y );
-	m_framePage.AddSubActor( &m_sprPage );
+	m_framePage.AddChild( &m_sprPage );
 
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -72,7 +72,7 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sPagePath, CStrin
 
 	m_Menu.TweenOnScreenFromBlack( SM_None );
 	m_Wipe.OpenWipingRight(SM_None);
-	this->AddSubActor( &m_Wipe );
+	this->AddChild( &m_Wipe );
 
 	m_framePage.SetX( SCREEN_LEFT-SCREEN_WIDTH );
 	m_framePage.BeginTweening( 0.3f, Actor::TWEEN_BIAS_BEGIN );
@@ -106,23 +106,23 @@ void ScreenOptions::Init( InputMode im, OptionLineData optionLineData[], int iNu
 		for( int l=0; l<m_iNumOptionLines; l++ )
 		{	
 			m_Underline[p][l].Load( (PlayerNumber)p, true );
-			m_framePage.AddSubActor( &m_Underline[p][l] );
+			m_framePage.AddChild( &m_Underline[p][l] );
 		}
 
 		m_Highlight[p].Load( (PlayerNumber)p, false );
-		m_framePage.AddSubActor( &m_Highlight[p] );
+		m_framePage.AddChild( &m_Highlight[p] );
 
 	}
 
 	// init text
 	for( int i=0; i<m_iNumOptionLines; i++ )		// foreach line
 	{
-		m_framePage.AddSubActor( &m_textOptionLineTitles[i] );
+		m_framePage.AddChild( &m_textOptionLineTitles[i] );
 
 		for( int j=0; j<m_OptionLineData[i].iNumOptions; j++ )
 		{
 			m_textOptions[i][j].SetZ( -1 );
-			m_framePage.AddSubActor( &m_textOptions[i][j] );	// this array has to be big enough to hold all of the options
+			m_framePage.AddChild( &m_textOptions[i][j] );	// this array has to be big enough to hold all of the options
 		}
 	}
 
@@ -177,7 +177,7 @@ void ScreenOptions::InitOptionsText()
 			BitmapText &option = m_textOptions[i][j];
 
 			option.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-			option.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+			option.SetDiffuse( D3DXCOLOR(1,1,1,1) );
 			option.SetText( optline.szOptionsText[j] );
 			option.SetZoom( 0.5f );
 			option.SetShadowLength( 2 );
@@ -196,9 +196,9 @@ void ScreenOptions::DimOption(int line, int option, bool dim)
 	m_OptionDim[line][option] = dim;
 	m_textOptions[line][option].BeginTweening(.250);
 	if(m_OptionDim[line][option])
-		m_textOptions[line][option].SetTweenDiffuseColor( D3DXCOLOR(.5,.5,.5,1) );
+		m_textOptions[line][option].SetTweenDiffuse( D3DXCOLOR(.5,.5,.5,1) );
 	else
-		m_textOptions[line][option].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		m_textOptions[line][option].SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
 
 	/* Don't know if I like this ...-glenn
 	m_textOptionLineTitles[line].BeginTweening(.250);
@@ -262,6 +262,7 @@ void ScreenOptions::TweenHighlight( PlayerNumber player_no )
 
 	int iWidth, iX, iY;
 	GetWidthXY( player_no, iCurRow, iWidth, iX, iY );
+	highlight.StopTweening();
 	highlight.BeginTweening( 0.2f );
 	highlight.TweenBarWidth( iWidth );
 	highlight.SetTweenXY( (float)iX, (float)iY );

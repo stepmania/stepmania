@@ -63,7 +63,7 @@ void TransitionKeepAlive::DrawPrimitives()
 			const float fPercentColor = fPercentClosed;
 			const float fPercentAlpha = min( fPercentClosed * 2, 1 );
 
-			m_sprLogo.SetDiffuseColor( D3DXCOLOR(fPercentColor,fPercentColor,fPercentColor,fPercentAlpha) );
+			m_sprLogo.SetDiffuse( D3DXCOLOR(fPercentColor,fPercentColor,fPercentColor,fPercentAlpha) );
 			m_sprLogo.SetZoomY( fPercentClosed );
 			if( fPercentClosed > 0 )
 				m_sprLogo.Draw();
@@ -72,7 +72,7 @@ void TransitionKeepAlive::DrawPrimitives()
 	case KEEP_ALIVE_TYPE_5TH:
 		{
 			float fPercentClosed = 1 - this->GetPercentageOpen();
-			m_sprLogo.SetDiffuseColor( D3DXCOLOR(1,1,1,fPercentClosed) );
+			m_sprLogo.SetDiffuse( D3DXCOLOR(1,1,1,fPercentClosed) );
 			m_sprLogo.Draw();
 		}
 		break;

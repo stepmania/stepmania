@@ -22,7 +22,10 @@ ScreenSandbox::ScreenSandbox()
 {	
 	m_spr.Load( THEME->GetPathTo("Graphics","title menu logo game 0") );
 	m_spr.SetXY( CENTER_X, CENTER_Y );
-	this->AddSubActor( &m_spr );
+	m_spr.SetZoomY( 0 );
+	m_spr.BeginTweening( 0.5f );
+	m_spr.SetTweenZoomY( 1 );
+	this->AddChild( &m_spr );
 
 //	m_Menu.Load( 	
 //		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
@@ -30,10 +33,10 @@ ScreenSandbox::ScreenSandbox()
 //		ssprintf("Use %c %c to select, then press START", char(1), char(2) ),
 //		false, true, 40 
 //		);
-//	this->AddSubActor( &m_Menu );
+//	this->AddChild( &m_Menu );
 //	m_Menu.TweenOnScreenFromBlack( SM_None );
 
-	//this->AddSubActor( &m_spr );
+	//this->AddChild( &m_spr );
 }
 
 

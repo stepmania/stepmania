@@ -143,8 +143,8 @@ bool Sprite::LoadTexture( CString sTexturePath, bool bForceReload, int iMipMaps,
 	assert( m_pTexture != NULL );
 
 	// the size of the sprite is the size of the image before it was scaled
-	SetWidth( (float)m_pTexture->GetSourceFrameWidth() );
-	SetHeight( (float)m_pTexture->GetSourceFrameHeight() );		
+	Sprite::m_size.x = (float)m_pTexture->GetSourceFrameWidth();
+	Sprite::m_size.y = (float)m_pTexture->GetSourceFrameHeight();		
 
 	// Assume the frames of this animation play in sequential order with 0.2 second delay.
 	for( int i=0; i<m_pTexture->GetNumFrames(); i++ )
@@ -263,7 +263,7 @@ void Sprite::DrawPrimitives()
 
 
 
-	if( m_temp_colorDiffuse[0].a != 0 )
+	if( m_temp.diffuse[0].a != 0 )
 	{
 		//////////////////////
 		// render the shadow
@@ -272,7 +272,7 @@ void Sprite::DrawPrimitives()
 		{
 			DISPLAY->PushMatrix();
 			DISPLAY->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
-			v[0].color = v[1].color = v[2].color = v[3].color = D3DXCOLOR(0,0,0,0.5f*m_temp_colorDiffuse[0].a);	// semi-transparent black
+			v[0].color = v[1].color = v[2].color = v[3].color = D3DXCOLOR(0,0,0,0.5f*m_temp.diffuse[0].a);	// semi-transparent black
 			DISPLAY->AddQuad( v );
 			DISPLAY->PopMatrix();
 		}
@@ -280,20 +280,20 @@ void Sprite::DrawPrimitives()
 		//////////////////////
 		// render the diffuse pass
 		//////////////////////
-		v[0].color = m_temp_colorDiffuse[2];	// bottom left
-		v[1].color = m_temp_colorDiffuse[0];	// top left
-		v[2].color = m_temp_colorDiffuse[3];	// bottom right
-		v[3].color = m_temp_colorDiffuse[1];	// top right
+		v[0].color = m_temp.diffuse[2];	// bottom left
+		v[1].color = m_temp.diffuse[0];	// top left
+		v[2].color = m_temp.diffuse[3];	// bottom right
+		v[3].color = m_temp.diffuse[1];	// top right
 		DISPLAY->AddQuad( v );
 	}
 
 	//////////////////////
 	// render the glow pass
 	//////////////////////
-	if( m_temp_colorGlow.a != 0 )
+	if( m_temp.glow.a != 0 )
 	{
 		DISPLAY->SetColorDiffuse();
-		v[0].color = v[1].color = v[2].color = v[3].color = m_temp_colorGlow;
+		v[0].color = v[1].color = v[2].color = v[3].color = m_temp.glow;
 		DISPLAY->AddQuad( v );
 	}
 }

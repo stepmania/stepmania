@@ -45,21 +45,21 @@ LifeMeterBar::LifeMeterBar()
 	m_iMeterHeight = METER_HEIGHT;
 	m_fDangerThreshold = DANGER_THRESHOLD;
 
-	m_quadBlackBackground.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
+	m_quadBlackBackground.SetDiffuse( D3DXCOLOR(0,0,0,1) );
 	m_quadBlackBackground.SetZoomX( (float)m_iMeterWidth );
 	m_quadBlackBackground.SetZoomY( (float)m_iMeterHeight );
-	m_frame.AddSubActor( &m_quadBlackBackground );
+	m_frame.AddChild( &m_quadBlackBackground );
 
 	m_sprStreamNormal.Load( THEME->GetPathTo("Graphics",(GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2())?"gameplay extra lifemeter stream normal":"gameplay lifemeter stream normal") );
-	m_frame.AddSubActor( &m_sprStreamNormal );
+	m_frame.AddChild( &m_sprStreamNormal );
 
 	m_sprStreamHot.Load( THEME->GetPathTo("Graphics",(GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2())?"gameplay extra lifemeter stream hot":"gameplay lifemeter stream hot") );
-	m_frame.AddSubActor( &m_sprStreamHot );
+	m_frame.AddChild( &m_sprStreamHot );
 
 	m_sprFrame.Load( THEME->GetPathTo("Graphics","gameplay lifemeter bar") );
-	m_frame.AddSubActor( &m_sprFrame );
+	m_frame.AddChild( &m_sprFrame );
 
-	this->AddSubActor( &m_frame );
+	this->AddChild( &m_frame );
 
 	ResetBarVelocity();
 }
@@ -204,18 +204,18 @@ void LifeMeterBar::DrawPrimitives()
 	m_sprStreamHot.StretchTo( &rectSize );
 	m_sprStreamHot.SetCustomTextureRect( frectCustomTexCoords );
 
-	m_sprStreamHot.SetDiffuseColor(    D3DXCOLOR(1,1,1,m_fHotAlpha) );
+	m_sprStreamHot.SetDiffuse(    D3DXCOLOR(1,1,1,m_fHotAlpha) );
 
 
 
 
 	float fPercentRed = (m_fTrailingLifePercentage<m_fDangerThreshold) ? sinf( TIMER->GetTimeSinceStart()*D3DX_PI*4 )/2+0.5f : 0;
-	m_quadBlackBackground.SetDiffuseColor( D3DXCOLOR(fPercentRed*0.8f,0,0,1) );
+	m_quadBlackBackground.SetDiffuse( D3DXCOLOR(fPercentRed*0.8f,0,0,1) );
 
 	if( !GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
 	{
-		m_sprStreamNormal.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-		m_sprStreamHot.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+		m_sprStreamNormal.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+		m_sprStreamHot.SetDiffuse( D3DXCOLOR(1,1,1,0) );
 	}
 
 	ActorFrame::DrawPrimitives();

@@ -12,7 +12,7 @@
 
 #include "ActorFrame.h"
 
-void ActorFrame::AddSubActor( Actor* pActor)
+void ActorFrame::AddChild( Actor* pActor)
 {
 	ASSERT( pActor );
 	ASSERT( (void*)pActor != (void*)0xC0000005 );
@@ -41,11 +41,11 @@ void ActorFrame::Update( float fDeltaTime )
 }
 
 
-void ActorFrame::SetDiffuseColor( D3DXCOLOR c )
+void ActorFrame::SetDiffuse( D3DXCOLOR c )
 {
-	Actor::SetDiffuseColor( c );
+	Actor::SetDiffuse( c );
 
 	// set all sub-Actors
 	for( int i=0; i<m_SubActors.GetSize(); i++ )
-		m_SubActors[i]->SetDiffuseColor(c );
+		m_SubActors[i]->SetDiffuse(c );
 }

@@ -34,29 +34,29 @@ ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuesti
 	m_sAnswer = sInitialAnswer;
 
 	m_Fade.SetTransitionTime( 0.5f );
-	m_Fade.SetDiffuseColor( D3DXCOLOR(0,0,0,0.7f) );
+	m_Fade.SetDiffuse( D3DXCOLOR(0,0,0,0.7f) );
 	m_Fade.SetOpened();
 	m_Fade.CloseWipingRight();
-	this->AddSubActor( &m_Fade );
+	this->AddChild( &m_Fade );
 
 	m_textQuestion.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textQuestion.SetText( sQuestion );
 	m_textQuestion.SetXY( QUESTION_X, QUESTION_Y );
-	this->AddSubActor( &m_textQuestion );
+	this->AddChild( &m_textQuestion );
 
-	m_rectAnswerBox.SetDiffuseColor( D3DXCOLOR(0.5f,0.5f,1.0f,0.7f) );
-	this->AddSubActor( &m_rectAnswerBox );
+	m_rectAnswerBox.SetDiffuse( D3DXCOLOR(0.5f,0.5f,1.0f,0.7f) );
+	this->AddChild( &m_rectAnswerBox );
 
 	m_rectAnswerBox.SetXY( ANSWER_X, ANSWER_Y );
 	m_rectAnswerBox.SetZoomX( ANSWER_WIDTH );
 	m_rectAnswerBox.SetZoomY( ANSWER_HEIGHT );
-	this->AddSubActor( &m_rectAnswerBox );
+	this->AddChild( &m_rectAnswerBox );
 
 	m_textAnswer.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textAnswer.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textAnswer.SetXY( ANSWER_X, ANSWER_Y );
 	m_textAnswer.SetText( m_sAnswer );
-	this->AddSubActor( &m_textAnswer );
+	this->AddChild( &m_textAnswer );
 
 	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu prompt") );
 }
@@ -131,15 +131,15 @@ void ScreenTextEntry::MenuStart( PlayerNumber p )
 	m_Fade.OpenWipingRight( SM_DoneOpeningWipingRight );
 
 	m_textQuestion.BeginTweening( 0.2f );
-	m_textQuestion.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	m_textQuestion.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 
 	m_rectAnswerBox.BeginTweening( 0.2f );
-	m_rectAnswerBox.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	m_rectAnswerBox.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 
 	m_textAnswer.SetEffectNone();
 
 	m_textAnswer.BeginTweening( 0.2f );
-	m_textAnswer.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	m_textAnswer.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 
 	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
 

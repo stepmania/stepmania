@@ -60,7 +60,7 @@ ScreenManager::ScreenManager()
 		m_textCreditInfo[p].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 		m_textCreditInfo[p].SetXY( CREDITS_X(p), CREDITS_Y(p) );
 		m_textCreditInfo[p].SetZoom( 0.5f );
-		m_textCreditInfo[p].SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		m_textCreditInfo[p].SetDiffuse( D3DXCOLOR(1,1,1,1) );
 		m_textCreditInfo[p].SetShadowLength( 2 );
 	}
 
@@ -70,7 +70,7 @@ ScreenManager::ScreenManager()
 	m_textSystemMessage.SetXY( 4.0f, 4.0f );
 	m_textSystemMessage.SetZoom( 0.5f );
 	m_textSystemMessage.SetShadowLength( 2 );
-	m_textSystemMessage.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	m_textSystemMessage.SetDiffuse( D3DXCOLOR(1,1,1,0) );
 }
 
 
@@ -129,7 +129,7 @@ void ScreenManager::Draw()
 	for( int i=0; i<m_ScreenStack.GetSize(); i++ )
 		m_ScreenStack[i]->Draw();
 	
-	if( m_textSystemMessage.GetDiffuseColor().a != 0 )
+	if( m_textSystemMessage.GetDiffuse().a != 0 )
 		m_textSystemMessage.Draw();
 
 	if( PREFSMAN  &&  PREFSMAN->m_bShowStats )
@@ -266,10 +266,10 @@ void ScreenManager::SystemMessage( CString sMessage )
 	// Look for an open spot
 	m_textSystemMessage.StopTweening();
 	m_textSystemMessage.SetText( sMessage );
-	m_textSystemMessage.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-	m_textSystemMessage.BeginTweeningQueued( 5 );
-	m_textSystemMessage.BeginTweeningQueued( 1 );
-	m_textSystemMessage.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	m_textSystemMessage.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+	m_textSystemMessage.BeginTweening( 5 );
+	m_textSystemMessage.BeginTweening( 1 );
+	m_textSystemMessage.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 
 	LOG->Trace( "WARNING:  Didn't find an empty system messages slot." );
 }

@@ -19,16 +19,15 @@
 
 class ActorFrame : public Actor
 {
-protected:
-	CArray<Actor*,Actor*>	m_SubActors;
-
 public:
-	void AddSubActor( Actor* pActor);
+	virtual void AddChild( Actor* pActor);
 	virtual ~ActorFrame() { }
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	virtual void SetDiffuseColor( D3DXCOLOR c );
+	virtual void SetDiffuse( D3DXCOLOR c );
 
+protected:
+	CArray<Actor*,Actor*>	m_SubActors;
 };

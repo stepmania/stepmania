@@ -38,9 +38,9 @@ TextBanner::TextBanner()
 	m_textSubTitle.TurnShadowOff();
 	m_textArtist.TurnShadowOff();
 
-	this->AddSubActor( &m_textTitle );
-	this->AddSubActor( &m_textSubTitle );
-	this->AddSubActor( &m_textArtist );
+	this->AddChild( &m_textTitle );
+	this->AddChild( &m_textSubTitle );
+	this->AddChild( &m_textArtist );
 }
 
 

@@ -130,7 +130,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 	m_sprBackground.Load( THEME->GetPathTo("Graphics","music scroll background") );
 	m_sprBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-	this->AddSubActor( &m_sprBackground );
+	this->AddChild( &m_sprBackground );
 
 
 	CArray<Song*, Song*> arraySongs;
@@ -144,7 +144,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 		Song* pSong = arraySongs[i];
 		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 		m_textLines[m_iNumLines].SetText( pSong->GetFullTitle() );
-		m_textLines[m_iNumLines].SetDiffuseColor( SONGMAN->GetSongColor(pSong) );
+		m_textLines[m_iNumLines].SetDiffuse( SONGMAN->GetSongColor(pSong) );
 
 		m_iNumLines++;
 	}
@@ -153,7 +153,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 	{
 		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 		m_textLines[m_iNumLines].SetText( CREDIT_LINES[i] );
-//		this->AddSubActor( &m_textLines[m_iNumLines] );
+//		this->AddChild( &m_textLines[m_iNumLines] );
 
 		m_iNumLines++;
 	}
@@ -162,14 +162,14 @@ ScreenMusicScroll::ScreenMusicScroll()
 	{
 		m_textLines[i].SetZoom( 0.7f );
 		m_textLines[i].SetXY( CENTER_X, SCREEN_BOTTOM + 40 );
-		m_textLines[i].BeginTweeningQueued( 0.20f * i );
-		m_textLines[i].BeginTweeningQueued( 2.0f );
+		m_textLines[i].BeginTweening( 0.20f * i );
+		m_textLines[i].BeginTweening( 2.0f );
 		m_textLines[i].SetTweenXY( CENTER_X, SCREEN_TOP - 40 );	
 	}
 	
 	this->SendScreenMessage( SM_StartFadingOut, 0.2f * i + 3.0f );
 
-	this->AddSubActor( &m_Fade );
+	this->AddChild( &m_Fade );
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("music scroll") );
 

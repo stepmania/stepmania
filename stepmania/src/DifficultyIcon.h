@@ -31,7 +31,7 @@ public:
 	{
 		if( pNotes != NULL )
 		{
-			SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+			SetDiffuse( D3DXCOLOR(1,1,1,1) );
 			switch( pNotes->m_DifficultyClass )
 			{
 			case CLASS_EASY:	SetState( 0 );	break;
@@ -41,7 +41,7 @@ public:
 		}
 		else
 		{
-			SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+			SetDiffuse( D3DXCOLOR(1,1,1,0) );
 			SetState( 0 );
 		}
 	};

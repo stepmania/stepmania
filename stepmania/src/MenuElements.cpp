@@ -37,20 +37,20 @@
 
 MenuElements::MenuElements()
 {
-	this->AddSubActor( &m_sprTopEdge );
-	this->AddSubActor( &m_sprStyleIcon );
-	this->AddSubActor( &m_MenuTimer );
-	this->AddSubActor( &m_sprBottomEdge );
-	this->AddSubActor( &m_sprBG );
-	this->AddSubActor( &m_textHelp );
+	this->AddChild( &m_sprTopEdge );
+	this->AddChild( &m_sprStyleIcon );
+	this->AddChild( &m_MenuTimer );
+	this->AddChild( &m_sprBottomEdge );
+	this->AddChild( &m_sprBG );
+	this->AddChild( &m_textHelp );
 
 	m_KeepAlive.SetOpened();
-	this->AddSubActor( &m_KeepAlive );
+	this->AddChild( &m_KeepAlive );
 
 	m_Wipe.SetOpened();
-	this->AddSubActor( &m_Wipe );
+	this->AddChild( &m_Wipe );
 
-	this->AddSubActor( &m_Invisible );
+	this->AddChild( &m_Invisible );
 }
 
 void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText, bool bTimerEnabled, int iTimerSeconds )
@@ -69,7 +69,7 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_sprStyleIcon.StopAnimating();
 	m_sprStyleIcon.SetXY( STYLE_ICON_X, STYLE_ICON_Y );
 	if( GAMESTATE->m_CurStyle == STYLE_NONE )
-		m_sprStyleIcon.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+		m_sprStyleIcon.SetDiffuse( D3DXCOLOR(1,1,1,0) );
 	else
 	{
 		int iRowNum = GetStyleIndexRelativeToGame( GAMESTATE->m_CurGame, GAMESTATE->m_CurStyle );
@@ -160,9 +160,9 @@ void MenuElements::TweenBottomLayerOnScreen()
 	m_sprBottomEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
 	m_sprBottomEdge.SetTweenY( fOriginalY );
 
-	m_sprBG.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
+	m_sprBG.SetDiffuse( D3DXCOLOR(0,0,0,1) );
 	m_sprBG.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
-	m_sprBG.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	m_sprBG.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
 }
 
 void MenuElements::TweenBottomLayerOffScreen()
@@ -171,11 +171,11 @@ void MenuElements::TweenBottomLayerOffScreen()
 	m_sprBottomEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
 	m_sprBottomEdge.SetTweenY( fOriginalY + 100 );
 
-	m_sprBG.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	m_sprBG.SetDiffuse( D3DXCOLOR(1,1,1,1) );
 	m_sprBG.StopTweening();
-	m_sprBG.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME*3/2.0f );	// sleep
-	m_sprBG.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME/2 );	// fade
-	m_sprBG.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,1) );
+	m_sprBG.BeginTweening( MENU_ELEMENTS_TWEEN_TIME*3/2.0f );	// sleep
+	m_sprBG.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );	// fade
+	m_sprBG.SetTweenDiffuse( D3DXCOLOR(0,0,0,1) );
 }
 
 void MenuElements::TweenOnScreenFromBlack( ScreenMessage smSendWhenDone )

@@ -24,14 +24,14 @@ SnapDisplay::SnapDisplay()
 	for( int i=0; i<2; i++ )
 	{
 		m_sprIndicators[i].Load( THEME->GetPathTo("Graphics","edit snap indicator") );
-		this->AddSubActor( &m_sprIndicators[i] );
+		this->AddChild( &m_sprIndicators[i] );
 	}
 
 	m_NoteType = NOTE_TYPE_4TH;
 	D3DXCOLOR color = NoteTypeToColor( m_NoteType );
 	
 	for( i=0; i<2; i++ )
-		m_sprIndicators[i].SetDiffuseColor( color );
+		m_sprIndicators[i].SetDiffuse( color );
 
 	m_iNumCols = 0;
 }
@@ -74,6 +74,6 @@ void SnapDisplay::SnapModeChanged()
 	for( int i=0; i<2; i++ )
 	{
 		m_sprIndicators[i].BeginTweening( 0.3f );
-		m_sprIndicators[i].SetTweenDiffuseColor( color );
+		m_sprIndicators[i].SetTweenDiffuse( color );
 	}
 }

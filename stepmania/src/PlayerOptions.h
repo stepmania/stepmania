@@ -10,6 +10,8 @@
 -----------------------------------------------------------------------------
 */
 
+const int NUM_EFFECT_TYPES = 9;
+
 struct PlayerOptions
 {
 	float m_fArrowScrollSpeed;
@@ -21,11 +23,13 @@ struct PlayerOptions
 		EFFECT_DIZZY	=1<<3,
 		EFFECT_SPACE	=1<<4,
 		EFFECT_MINI		=1<<5,
-		NUM_EFFECT_TYPES };
+		EFFECT_FLIP		=1<<6,
+		EFFECT_TORNADO  =1<<7
+	};
 	int m_EffectType;
 	enum AppearanceType	{ APPEARANCE_VISIBLE=0, APPEARANCE_HIDDEN, APPEARANCE_SUDDEN, APPEARANCE_STEALTH, APPEARANCE_BLINK, NUM_APPEARANCE_TYPES };
 	AppearanceType m_AppearanceType;
-	enum TurnType { TURN_NONE=0, TURN_MIRROR, TURN_LEFT, TURN_RIGHT, TURN_SHUFFLE };
+	enum TurnType { TURN_NONE=0, TURN_MIRROR, TURN_LEFT, TURN_RIGHT, TURN_SHUFFLE, TURN_SUPER_SHUFFLE, NUM_TURN_TYPES };
 	TurnType m_TurnType;
 	bool m_bLittle;
 	bool m_bReverseScroll;

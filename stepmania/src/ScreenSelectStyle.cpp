@@ -61,20 +61,20 @@ ScreenSelectStyle::ScreenSelectStyle()
 		m_sprIcon[i].StopAnimating();
 		m_sprIcon[i].SetState( i );
 		m_sprIcon[i].SetXY( ICONS_START_X + i*ICONS_SPACING_X, ICONS_START_Y + i*ICONS_SPACING_Y );
-		this->AddSubActor( &m_sprIcon[i] );
+		this->AddChild( &m_sprIcon[i] );
 	}
 
 	UpdateEnabledDisabled();
 
 	m_sprExplanation.Load( THEME->GetPathTo("Graphics","select style explanation") );
 	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
-	this->AddSubActor( &m_sprExplanation );
+	this->AddChild( &m_sprExplanation );
 	
 	m_sprPreview.SetXY( PREVIEW_X, PREVIEW_Y );
-	this->AddSubActor( &m_sprPreview );
+	this->AddChild( &m_sprPreview );
 	
 	m_sprInfo.SetXY( INFO_X, INFO_Y );
-	this->AddSubActor( &m_sprInfo );
+	this->AddChild( &m_sprInfo );
 	
 
 	// Load dummy Sprites
@@ -90,7 +90,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 		THEME->GetPathTo("Graphics","select style top edge"),
 		HELP_TEXT, true, TIMER_SECONDS
 		);
-	this->AddSubActor( &m_Menu );
+	this->AddChild( &m_Menu );
 
 	m_soundChange.Load( THEME->GetPathTo("Sounds","select style change") );
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
@@ -160,28 +160,28 @@ void ScreenSelectStyle::AfterChange()
 	m_sprPreview.Load( THEME->GetPathTo("Graphics",ssprintf("select style preview game %d style %d",GAMESTATE->m_CurGame,m_iSelection)) );
 
 	m_sprPreview.StopTweening();
-	m_sprPreview.SetGlowColor( D3DXCOLOR(1,1,1,0) );
-	m_sprPreview.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	m_sprPreview.SetGlow( D3DXCOLOR(1,1,1,0) );
+	m_sprPreview.SetDiffuse( D3DXCOLOR(1,1,1,0) );
 
-	m_sprPreview.BeginTweeningQueued( 0.25f );			// sleep
+	m_sprPreview.BeginTweening( 0.25f );			// sleep
 
-	m_sprPreview.BeginTweeningQueued( 0.2f );			// fade to white
-	m_sprPreview.SetTweenAddColor( D3DXCOLOR(1,1,1,1) );
-	m_sprPreview.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	m_sprPreview.BeginTweening( 0.2f );			// fade to white
+	m_sprPreview.SetTweenGlow( D3DXCOLOR(1,1,1,1) );
+	m_sprPreview.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 
-	m_sprPreview.BeginTweeningQueued( 0.01f );			// turn color on
-	m_sprPreview.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	m_sprPreview.BeginTweening( 0.01f );			// turn color on
+	m_sprPreview.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
 
-	m_sprPreview.BeginTweeningQueued( 0.2f );			// fade to color
-	m_sprPreview.SetTweenAddColor( D3DXCOLOR(1,1,1,0) );
-	m_sprPreview.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	m_sprPreview.BeginTweening( 0.2f );			// fade to color
+	m_sprPreview.SetTweenGlow( D3DXCOLOR(1,1,1,0) );
+	m_sprPreview.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
 
 
 	// Tween Info
 	m_sprInfo.Load( THEME->GetPathTo("Graphics",ssprintf("select style info game %d style %d",GAMESTATE->m_CurGame,m_iSelection)) );
 	m_sprInfo.StopTweening();
 	m_sprInfo.SetZoomY( 0 );
-	m_sprInfo.BeginTweeningQueued( 0.5f, Actor::TWEEN_BOUNCE_END );
+	m_sprInfo.BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
 	m_sprInfo.SetTweenZoomY( 1 );
 }
 
@@ -272,56 +272,28 @@ void ScreenSelectStyle::MenuBack( PlayerNumber p )
 }
 
 
-void ScreenSelectStyle::TweenOffScreen()
-{
-	for( int i=0; i<NUM_STYLES; i++ )
-	{
-		m_sprIcon[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_sprIcon[i].SetTweenZoomY( 0 );
-	}
-
-	m_sprExplanation.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_sprExplanation.SetTweenZoomY( 0 );
-
-	m_sprPreview.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_sprPreview.SetTweenZoomY( 0 );
-
-	m_sprInfo.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_sprInfo.SetTweenZoomX( 0 );
-}
-  
-
 void ScreenSelectStyle::TweenOnScreen() 
 {
-	float fOriginalZoom;
+	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )
+		m_sprIcon[i].FadeOntoScreen( (m_aPossibleStyles.GetSize()-i)*0.1f, "Left Accelerate", MENU_ELEMENTS_TWEEN_TIME );
 
-	for( int i=0; i<NUM_STYLES; i++ )
-	{
-		fOriginalZoom = m_sprIcon[i].GetZoomY();
-		m_sprIcon[i].SetZoomY( 0 );
-		m_sprIcon[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_sprIcon[i].SetTweenZoomY( fOriginalZoom );
-	}
-
-	fOriginalZoom = m_sprExplanation.GetZoomY();
-	m_sprExplanation.SetZoomY( 0 );
-	m_sprExplanation.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_sprExplanation.SetTweenZoomY( fOriginalZoom );
-
+	m_sprExplanation.FadeOntoScreen( 0, "Right Accelerate", MENU_ELEMENTS_TWEEN_TIME );
 
 	// let AfterChange tween Preview and Info
-	/*	
-	fOriginalZoom = m_sprPreview.GetZoomY();
-	m_sprPreview.SetZoomY( 0 );
-	m_sprPreview.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_sprPreview.SetTweenZoomY( fOriginalZoom );
-
-	fOriginalZoom = m_sprInfo.GetZoomY();
-	m_sprInfo.SetZoomY( 0 );
-	m_sprInfo.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_sprInfo.SetTweenZoomY( fOriginalZoom );
-	*/
 }
+
+void ScreenSelectStyle::TweenOffScreen()
+{
+	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )
+		m_sprIcon[i].FadeOffScreen( (m_aPossibleStyles.GetSize()-i)*0.1f, "Left Accelerate", MENU_ELEMENTS_TWEEN_TIME );
+
+	m_sprExplanation.FadeOffScreen( 0, "Right Accelerate", MENU_ELEMENTS_TWEEN_TIME );
+
+	m_sprPreview.FadeOffScreen( 0, "Fade", MENU_ELEMENTS_TWEEN_TIME );
+
+	m_sprInfo.FadeOffScreen( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
+}
+
 
 bool ScreenSelectStyle::IsEnabled( int iStyleIndex )
 {
@@ -347,9 +319,9 @@ void ScreenSelectStyle::UpdateEnabledDisabled()
 	for( i=0; i<m_aPossibleStyles.GetSize(); i++ )
 	{
 		if( IsEnabled(i) )
-			m_sprIcon[i].SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+			m_sprIcon[i].SetDiffuse( D3DXCOLOR(1,1,1,1) );
 		else
-			m_sprIcon[i].SetDiffuseColor( D3DXCOLOR(0.5f,0.5f,0.5f,1) );
+			m_sprIcon[i].SetDiffuse( D3DXCOLOR(0.5f,0.5f,0.5f,1) );
 	}
 
 	// Select first enabled style

@@ -24,7 +24,7 @@ FocusingSprite::FocusingSprite()
 {
 	for( int i=0; i<3; i++ )
 	{
-		this->AddSubActor( &m_sprites[i] );
+		this->AddChild( &m_sprites[i] );
 	}
 	
 	m_fPercentBlurred = 1.0f;
@@ -64,7 +64,7 @@ void FocusingSprite::DrawPrimitives()
 {
 	if( m_BlurState != invisible )
 	{
-		SetDiffuseColor( D3DXCOLOR(1,1,1,0.5f-m_fPercentBlurred/2) );
+		SetDiffuse( D3DXCOLOR(1,1,1,0.5f-m_fPercentBlurred/2) );
 
 		m_sprites[0].SetXY( m_fPercentBlurred*BLUR_DISTANCE*2, m_fPercentBlurred*BLUR_DISTANCE );
 		m_sprites[1].SetXY( -m_fPercentBlurred*BLUR_DISTANCE*2, -m_fPercentBlurred*BLUR_DISTANCE );

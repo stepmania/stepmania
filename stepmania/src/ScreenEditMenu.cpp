@@ -43,7 +43,7 @@ ScreenEditMenu::ScreenEditMenu()
 
 	Selector.SetXY( 0, 0 );
 //	Selector.AllowNewNotes();
-	this->AddSubActor( &Selector );
+	this->AddChild( &Selector );
 
 	m_Menu.Load( 
 		THEME->GetPathTo("Graphics","edit menu background"), 
@@ -51,17 +51,17 @@ ScreenEditMenu::ScreenEditMenu()
 		ssprintf("%c %c change line    %c %c change value    START to continue", char(3), char(4), char(1), char(2) ),
 		false, 99 
 		);
-	this->AddSubActor( &m_Menu );
+	this->AddChild( &m_Menu );
 
 
 	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	m_textExplanation.SetText( EXPLANATION_TEXT );
 	m_textExplanation.SetZoom( 0.7f );
-	this->AddSubActor( &m_textExplanation );
+	this->AddChild( &m_textExplanation );
 
 	m_Fade.SetOpened();
-	this->AddSubActor( &m_Fade);
+	this->AddChild( &m_Fade);
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","edit menu music") );
 

@@ -39,26 +39,26 @@ const float CONTENTS_BAR_HEIGHT = 44;
 CourseContentDisplay::CourseContentDisplay()
 {
 	m_sprFrame.Load( THEME->GetPathTo("Graphics","select course content bar") );
-	this->AddSubActor( &m_sprFrame );
+	this->AddChild( &m_sprFrame );
 	
 	m_textNumber.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
 	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
 	m_textNumber.TurnShadowOff();
-	this->AddSubActor( &m_textNumber );
+	this->AddChild( &m_textNumber );
 
 	m_TextBanner.SetXY( TEXT_BANNER_X, TEXT_BANNER_Y );
-	this->AddSubActor( &m_TextBanner );
+	this->AddChild( &m_TextBanner );
 
 	m_textFoot.LoadFromFont( THEME->GetPathTo("Fonts","meter") );
 	m_textFoot.SetXY( FOOT_X, FOOT_Y );
 	m_textFoot.TurnShadowOff();
-	this->AddSubActor( &m_textFoot );
+	this->AddChild( &m_textFoot );
 
 	m_textDifficultyNumber.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textDifficultyNumber.SetXY( DIFFICULTY_X, DIFFICULTY_Y );
 	m_textDifficultyNumber.SetZoom( 0.8f );
 	m_textDifficultyNumber.TurnShadowOff();
-	this->AddSubActor( &m_textDifficultyNumber );
+	this->AddChild( &m_textDifficultyNumber );
 }
 
 void CourseContentDisplay::Load( int iNum, Song* pSong, Notes* pNotes )
@@ -69,13 +69,13 @@ void CourseContentDisplay::Load( int iNum, Song* pSong, Notes* pNotes )
 	D3DXCOLOR colorDifficulty = DifficultyClassToColor( pNotes->m_DifficultyClass );
 
 	m_TextBanner.LoadFromSong( pSong );
-	m_TextBanner.SetDiffuseColor( colorGroup );
+	m_TextBanner.SetDiffuse( colorGroup );
 
 	m_textFoot.SetText( "1" );
-	m_textFoot.SetDiffuseColor( colorDifficulty );
+	m_textFoot.SetDiffuse( colorDifficulty );
 
 	m_textDifficultyNumber.SetText( ssprintf("%d", pNotes->m_iMeter) );
-	m_textDifficultyNumber.SetDiffuseColor( colorDifficulty );
+	m_textDifficultyNumber.SetDiffuse( colorDifficulty );
 }
 
 
@@ -83,7 +83,7 @@ void CourseContentDisplay::Load( int iNum, Song* pSong, Notes* pNotes )
 CourseContentsFrame::CourseContentsFrame()
 {
 	m_iNumContents = 0;
-	m_quad.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );	// invisible, since we want to write only to the Zbuffer
+	m_quad.SetDiffuse( D3DXCOLOR(0,0,0,0) );	// invisible, since we want to write only to the Zbuffer
 
 	m_fTimeUntilScroll = 0;
 	m_fItemAtTopOfList = 0;

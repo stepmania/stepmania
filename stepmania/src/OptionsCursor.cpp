@@ -19,9 +19,9 @@
 
 OptionsCursor::OptionsCursor()
 {
-	this->AddSubActor( &m_sprMiddle );
-	this->AddSubActor( &m_sprLeft );
-	this->AddSubActor( &m_sprRight );
+	this->AddChild( &m_sprMiddle );
+	this->AddChild( &m_sprLeft );
+	this->AddChild( &m_sprRight );
 }
 
 void OptionsCursor::Load( PlayerNumber pn, bool bUnderline )
@@ -64,6 +64,10 @@ void OptionsCursor::TweenBarWidth( int iNewWidth, float fTweenTime )
 	if( iNewWidth%2 == 1 )
 		iNewWidth++;	// round up to nearest even number
 	float fFrameWidth = m_sprLeft.GetUnzoomedWidth();
+
+	m_sprLeft.StopTweening();
+	m_sprMiddle.StopTweening();
+	m_sprRight.StopTweening();
 
 	m_sprLeft.BeginTweening( fTweenTime );
 	m_sprMiddle.BeginTweening( fTweenTime );
