@@ -388,12 +388,6 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	return GetGroupColor( pSong->m_sGroupName );
 }
 
-#define BEGINNER_DESCRIPTION	THEME->GetMetric ("Common","Beginner")
-#define EASY_DESCRIPTION		THEME->GetMetric ("Common","Easy")
-#define MEDIUM_DESCRIPTION		THEME->GetMetric ("Common","Medium")
-#define HARD_DESCRIPTION		THEME->GetMetric ("Common","Hard")
-#define CHALLENGE_DESCRIPTION	THEME->GetMetric ("Common","Challenge")
-
 RageColor SongManager::GetDifficultyColor( Difficulty dc ) const
 {
 	switch( dc )
@@ -403,21 +397,14 @@ RageColor SongManager::GetDifficultyColor( Difficulty dc ) const
 	case DIFFICULTY_MEDIUM:		return MEDIUM_COLOR;
 	case DIFFICULTY_HARD:		return HARD_COLOR;
 	case DIFFICULTY_CHALLENGE:	return CHALLENGE_COLOR;
-	default:	ASSERT(0);	return CHALLENGE_COLOR;
+	default:	ASSERT(0);		return CHALLENGE_COLOR;
 	}
 }
 
 CString SongManager::GetDifficultyThemeName( Difficulty dc ) const
 {
-	switch( dc )
-	{
-	case DIFFICULTY_BEGINNER:	return BEGINNER_DESCRIPTION;
-	case DIFFICULTY_EASY:		return EASY_DESCRIPTION;
-	case DIFFICULTY_MEDIUM:		return MEDIUM_DESCRIPTION;
-	case DIFFICULTY_HARD:		return HARD_DESCRIPTION;
-	case DIFFICULTY_CHALLENGE:	return CHALLENGE_DESCRIPTION;
-	default:	ASSERT(0);		return "";  // something else
-	}
+	CString sMetricName = "Difficulty" + Capitalize( DifficultyToString(dc) );
+	return THEME->GetMetric( "Common", sMetricName );
 }
 
 void SongManager::GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages ) const
