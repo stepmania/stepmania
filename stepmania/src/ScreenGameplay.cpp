@@ -54,15 +54,15 @@
 //
 // Defines
 //
-#define PREV_SCREEN								THEME->GetMetric ("ScreenGameplay","PrevScreen")
-#define NEXT_SCREEN								THEME->GetMetric ("ScreenGameplay","NextScreen")
-#define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB("ScreenGameplay","ShowLifeMeterForDisabledPlayers")
-#define EVAL_ON_FAIL							THEME->GetMetricB("ScreenGameplay","ShowEvaluationOnFail")
-#define SHOW_SCORE_IN_RAVE						THEME->GetMetricB("ScreenGameplay","ShowScoreInRave")
-#define SONG_POSITION_METER_WIDTH				THEME->GetMetricF("ScreenGameplay","SongPositionMeterWidth")
+#define PREV_SCREEN								THEME->GetMetric (m_sName,"PrevScreen")
+#define NEXT_SCREEN								THEME->GetMetric (m_sName,"NextScreen")
+#define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB(m_sName,"ShowLifeMeterForDisabledPlayers")
+#define EVAL_ON_FAIL							THEME->GetMetricB(m_sName,"ShowEvaluationOnFail")
+#define SHOW_SCORE_IN_RAVE						THEME->GetMetricB(m_sName,"ShowScoreInRave")
+#define SONG_POSITION_METER_WIDTH				THEME->GetMetricF(m_sName,"SongPositionMeterWidth")
 /* XXX: This is ugly; most people don't need to override this per-mode.  This will
  * go away eventually, once metrics can redirect to Lua calls. */
-#define INITIAL_BACKGROUND_BRIGHTNESS( play_mode )	THEME->GetMetricF("ScreenGameplay","InitialBackgroundBrightness"+Capitalize(PlayModeToString(play_mode)))
+#define INITIAL_BACKGROUND_BRIGHTNESS( play_mode )	THEME->GetMetricF(m_sName,"InitialBackgroundBrightness"+Capitalize(PlayModeToString(play_mode)))
 
 static CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 static CachedThemeMetricF TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
@@ -288,7 +288,6 @@ void ScreenGameplay::Init()
 	
 	m_bZeroDeltaOnNextUpdate = false;
 	
-	 const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 	// init old offset in case offset changes in song
 	if( GAMESTATE->IsCourseMode() )
 		g_fOldOffset = -1000;
@@ -305,14 +304,14 @@ void ScreenGameplay::Init()
 
 	
 	m_sprStaticBackground.SetName( "StaticBG" );
-	m_sprStaticBackground.Load( THEME->GetPathToG("ScreenGameplay Static Background"));
+	m_sprStaticBackground.Load( THEME->GetPathG(m_sName,"Static Background") );
 	SET_XY( m_sprStaticBackground );
 	m_sprStaticBackground.SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );	// behind everything else
 	this->AddChild(&m_sprStaticBackground);
 
 	if( !m_bDemonstration )	// only load if we're going to use it
 	{
-		m_Toasty.Load( THEME->GetPathToB("ScreenGameplay toasty") );
+		m_Toasty.Load( THEME->GetPathB(m_sName,"toasty") );
 		this->AddChild( &m_Toasty );
 	}
 
@@ -333,7 +332,7 @@ void ScreenGameplay::Init()
 		m_Player[p].SetX( fPlayerX );
 		this->AddChild( &m_Player[p] );
 	
-		m_sprOniGameOver[p].Load( THEME->GetPathToG("ScreenGameplay oni gameover") );
+		m_sprOniGameOver[p].Load( THEME->GetPathG(m_sName,"oni gameover") );
 		m_sprOniGameOver[p].SetX( fPlayerX );
 		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
 		m_sprOniGameOver[p].SetDiffuse( RageColor(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
@@ -353,14 +352,12 @@ void ScreenGameplay::Init()
 	// Add LifeFrame
 	//
 	CString sLifeFrameName;
-	if( bExtra )
-		sLifeFrameName = "ScreenGameplay extra life frame";
-	else if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
-		sLifeFrameName = "ScreenGameplay oni life frame";
+	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
+		sLifeFrameName = m_sName+" oni life frame";
 	else 
-		sLifeFrameName = "ScreenGameplay life frame";
+		sLifeFrameName = m_sName+" life frame";
 	m_sprLifeFrame.Load( THEME->GetPathToG(sLifeFrameName) );
-	m_sprLifeFrame.SetName( bExtra?"LifeFrameExtra":"LifeFrame" );
+	m_sprLifeFrame.SetName( "LifeFrame" );
 	SET_XY( m_sprLifeFrame );
 	this->AddChild( &m_sprLifeFrame );
 
@@ -368,14 +365,12 @@ void ScreenGameplay::Init()
 	// Add score frame
 	//
 	CString sScoreFrameName;
-	if( bExtra )
-		sScoreFrameName = "ScreenGameplay extra score frame";
-	else if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
-		sScoreFrameName = "ScreenGameplay oni score frame";
+	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
+		sScoreFrameName = m_sName+" oni score frame";
 	else 
-		sScoreFrameName = "ScreenGameplay score frame";
+		sScoreFrameName = m_sName+" score frame";
 	m_sprScoreFrame.Load( THEME->GetPathToG(sScoreFrameName) );
-	m_sprScoreFrame.SetName( ssprintf("ScoreFrame%s",bExtra?"Extra":"") );
+	m_sprScoreFrame.SetName( "ScoreFrame" );
 	SET_XY( m_sprScoreFrame );
 	this->AddChild( &m_sprScoreFrame );
 
@@ -388,7 +383,7 @@ void ScreenGameplay::Init()
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		m_pCombinedLifeMeter = new CombinedLifeMeterTug;
-		m_pCombinedLifeMeter->SetName( ssprintf("CombinedLife%s",bExtra?"Extra":"") );
+		m_pCombinedLifeMeter->SetName( "CombinedLife" );
 		SET_XY( *m_pCombinedLifeMeter );
 		this->AddChild( m_pCombinedLifeMeter );		
 		break;
@@ -431,7 +426,7 @@ void ScreenGameplay::Init()
 			}
 
 			m_pLifeMeter[p]->Load( (PlayerNumber)p );
-			m_pLifeMeter[p]->SetName( ssprintf("LifeP%d%s",p+1,bExtra?"Extra":"") );
+			m_pLifeMeter[p]->SetName( ssprintf("LifeP%d",p+1) );
 			SET_XY( *m_pLifeMeter[p] );
 			this->AddChild( m_pLifeMeter[p] );		
 		}
@@ -444,20 +439,20 @@ void ScreenGameplay::Init()
 
 
 
-	m_textSongTitle.LoadFromFont( THEME->GetPathToF("ScreenGameplay song title") );
+	m_textSongTitle.LoadFromFont( THEME->GetPathF(m_sName,"song title") );
 	m_textSongTitle.SetShadowLength( 0 );
 	m_textSongTitle.SetName( "SongTitle" );
 	SET_XY( m_textSongTitle );
 	this->AddChild( &m_textSongTitle );
 
 
-	m_meterSongPosition.Load( THEME->GetPathToG("ScreenGameplay song position meter"), SONG_POSITION_METER_WIDTH, THEME->GetPathToG("ScreenGameplay song position tip") );
+	m_meterSongPosition.Load( THEME->GetPathG(m_sName,"song position meter"), SONG_POSITION_METER_WIDTH, THEME->GetPathG(m_sName,"song position tip") );
 	m_meterSongPosition.SetName( "SongPositionMeter" );
 	SET_XY( m_meterSongPosition );
 	this->AddChild( &m_meterSongPosition );
 
 
-	m_MaxCombo.LoadFromFont( THEME->GetPathToN("ScreenGameplay max combo") );
+	m_MaxCombo.LoadFromFont( THEME->GetPathN(m_sName,"max combo") );
 	m_MaxCombo.SetName( "MaxCombo" );
 	SET_XY( m_MaxCombo );
 	m_MaxCombo.SetText( ssprintf("%d", g_CurStageStats.iMaxCombo[GAMESTATE->m_MasterPlayerNumber]) ); // TODO: Make this work for both players
@@ -488,7 +483,7 @@ void ScreenGameplay::Init()
 		}
 
 		m_pPrimaryScoreDisplay[p]->Init( (PlayerNumber)p );
-		m_pPrimaryScoreDisplay[p]->SetName( ssprintf("ScoreP%d%s",p+1,bExtra?"Extra":"") );
+		m_pPrimaryScoreDisplay[p]->SetName( ssprintf("ScoreP%d",p+1) );
 		SET_XY( *m_pPrimaryScoreDisplay[p] );
 		if( GAMESTATE->m_PlayMode != PLAY_MODE_RAVE || SHOW_SCORE_IN_RAVE ) /* XXX: ugly */
 			this->AddChild( m_pPrimaryScoreDisplay[p] );
@@ -507,7 +502,7 @@ void ScreenGameplay::Init()
 		if( m_pSecondaryScoreDisplay[p] )
 		{
 			m_pSecondaryScoreDisplay[p]->Init( (PlayerNumber)p );
-			m_pSecondaryScoreDisplay[p]->SetName( ssprintf("SecondaryScoreP%d%s",p+1,bExtra?"Extra":"") );
+			m_pSecondaryScoreDisplay[p]->SetName( ssprintf("SecondaryScoreP%d",p+1) );
 			SET_XY( *m_pSecondaryScoreDisplay[p] );
 			this->AddChild( m_pSecondaryScoreDisplay[p] );
 		}
@@ -516,7 +511,7 @@ void ScreenGameplay::Init()
 	//
 	// Add stage / SongNumber
 	//
-	m_sprStage.SetName( ssprintf("Stage%s",bExtra?"Extra":"") );
+	m_sprStage.SetName( "Stage" );
 	SET_XY( m_sprStage );
 
 	m_sprCourseSongNumber.SetName( "CourseSongNumber" );
@@ -524,18 +519,18 @@ void ScreenGameplay::Init()
 	
 	FOREACH_EnabledPlayer(p)
 	{
-		m_textCourseSongNumber[p].LoadFromFont( THEME->GetPathToN("ScreenGameplay song num") );
+		m_textCourseSongNumber[p].LoadFromFont( THEME->GetPathN(m_sName,"song num") );
 		m_textCourseSongNumber[p].SetShadowLength( 0 );
-		m_textCourseSongNumber[p].SetName( ssprintf("SongNumberP%d%s",p+1,bExtra?"Extra":"") );
+		m_textCourseSongNumber[p].SetName( ssprintf("SongNumberP%d",p+1) );
 		SET_XY( m_textCourseSongNumber[p] );
 		m_textCourseSongNumber[p].SetText( "" );
 		m_textCourseSongNumber[p].SetDiffuse( RageColor(0,0.5f,1,1) );	// light blue
 
 		if( GAMESTATE->m_PlayMode == PLAY_MODE_RAVE )
 		{
-			m_textPlayerName[p].LoadFromFont( THEME->GetPathToF("ScreenGameplay player") );
+			m_textPlayerName[p].LoadFromFont( THEME->GetPathF(m_sName,"player") );
 			m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
-			m_textPlayerName[p].SetText( GAMESTATE->GetPlayerDisplayName((PlayerNumber)p) );
+			m_textPlayerName[p].SetText( GAMESTATE->GetPlayerDisplayName(p) );
 			SET_XY( m_textPlayerName[p] );
 			this->AddChild( &m_textPlayerName[p] );
 		}
@@ -543,7 +538,7 @@ void ScreenGameplay::Init()
 
 	FOREACH_EnabledPlayer(p)
 	{
-		m_textStepsDescription[p].LoadFromFont( THEME->GetPathToF("ScreenGameplay StepsDescription") );
+		m_textStepsDescription[p].LoadFromFont( THEME->GetPathF(m_sName,"StepsDescription") );
 		m_textStepsDescription[p].SetName( ssprintf("StepsDescriptionP%i",p+1) );
 		SET_XY( m_textStepsDescription[p] );
 		this->AddChild( &m_textStepsDescription[p] );
@@ -554,7 +549,7 @@ void ScreenGameplay::Init()
 	case PLAY_MODE_ARCADE:
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
-		m_sprStage.Load( THEME->GetPathToG("ScreenGameplay stage "+GAMESTATE->GetStageText()) );
+		m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+GAMESTATE->GetStageText()) );
 		this->AddChild( &m_sprStage );
 		break;
 	case PLAY_MODE_NONSTOP:
@@ -562,18 +557,15 @@ void ScreenGameplay::Init()
 	case PLAY_MODE_ENDLESS:
 		this->AddChild( &m_sprCourseSongNumber );
 
-        FOREACH_PlayerNumber( p )
-			if( GAMESTATE->IsPlayerEnabled(p) )
-			{
-				this->AddChild( &m_textCourseSongNumber[p] );
-			}
+        FOREACH_EnabledPlayer( p )
+			this->AddChild( &m_textCourseSongNumber[p] );
 		break;
 	default:
 		ASSERT(0);	// invalid GameMode
 	}
 
 
-	m_sprStageFrame.Load( THEME->GetPathToG("ScreenGameplay stage frame") );
+	m_sprStageFrame.Load( THEME->GetPathG(m_sName,"stage frame") );
 	m_sprStageFrame->SetName( "StageFrame" );
 	SET_XY( m_sprStageFrame );
 	this->AddChild( m_sprStageFrame );
@@ -581,21 +573,18 @@ void ScreenGameplay::Init()
 	//
 	// Player/Song options
 	//
-    FOREACH_PlayerNumber(p)
+    FOREACH_EnabledPlayer(p)
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-
-		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathToF("ScreenGameplay player options") );
+		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathF(m_sName,"player options") );
 		m_textPlayerOptions[p].SetShadowLength( 0 );
-		m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d%s",p+1,bExtra?"Extra":"") );
+		m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d",p+1) );
 		SET_XY( m_textPlayerOptions[p] );
 		this->AddChild( &m_textPlayerOptions[p] );
 	}
 
-	m_textSongOptions.LoadFromFont( THEME->GetPathToF("ScreenGameplay song options") );
+	m_textSongOptions.LoadFromFont( THEME->GetPathF(m_sName,"song options") );
 	m_textSongOptions.SetShadowLength( 0 );
-	m_textSongOptions.SetName( ssprintf("SongOptions%s",bExtra?"Extra":"") );
+	m_textSongOptions.SetName( "SongOptions" );
 	SET_XY( m_textSongOptions );
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
 	this->AddChild( &m_textSongOptions );
@@ -615,11 +604,11 @@ void ScreenGameplay::Init()
 
     FOREACH_EnabledPlayer(p)
 	{
-		m_DifficultyIcon[p].Load( THEME->GetPathToG(ssprintf("ScreenGameplay difficulty icons 2x%d",NUM_DIFFICULTIES)) );
+		m_DifficultyIcon[p].Load( THEME->GetPathG(m_sName,ssprintf("difficulty icons %dx%d",NUM_PLAYERS,NUM_DIFFICULTIES)) );
 		/* Position it in LoadNextSong. */
 		this->AddChild( &m_DifficultyIcon[p] );
 
-		m_DifficultyMeter[p].SetName( ssprintf("ScreenGameplay DifficultyMeterP%d",p+1) );
+		m_DifficultyMeter[p].SetName( m_sName + ssprintf(" DifficultyMeterP%d",p+1) );
 		m_DifficultyMeter[p].Load();
 		/* Position it in LoadNextSong. */
 		this->AddChild( &m_DifficultyMeter[p] );
@@ -630,7 +619,7 @@ void ScreenGameplay::Init()
 		this->AddChild(&m_LyricDisplay);
 	
 
-	m_textAutoPlay.LoadFromFont( THEME->GetPathToF("ScreenGameplay autoplay") );
+	m_textAutoPlay.LoadFromFont( THEME->GetPathF(m_sName,"autoplay") );
 	m_textAutoPlay.SetName( "AutoPlay" );
 	SET_XY( m_textAutoPlay );
 	if( !m_bDemonstration )	// only load if we're not in demonstration of jukebox
@@ -659,24 +648,24 @@ void ScreenGameplay::Init()
 	
 	if( !m_bDemonstration )	// only load if we're going to use it
 	{
-		m_Ready.Load( THEME->GetPathToB("ScreenGameplay ready") );
+		m_Ready.Load( THEME->GetPathB(m_sName,"ready") );
 		this->AddChild( &m_Ready );
 
-		m_Go.Load( THEME->GetPathToB("ScreenGameplay go") );
+		m_Go.Load( THEME->GetPathB(m_sName,"go") );
 		this->AddChild( &m_Go );
 
-		m_Cleared.Load( THEME->GetPathToB("ScreenGameplay cleared") );
+		m_Cleared.Load( THEME->GetPathB(m_sName,"cleared") );
 		m_Cleared.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 ); // on top of everything else
 		this->AddChild( &m_Cleared );
 
-		m_Failed.Load( THEME->GetPathToB("ScreenGameplay failed") );
+		m_Failed.Load( THEME->GetPathB(m_sName,"failed") );
 		m_Failed.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 ); // on top of everything else
 		this->AddChild( &m_Failed );
 
 		if( PREFSMAN->m_bAllowExtraStage && GAMESTATE->IsFinalStage() )	// only load if we're going to use it
-			m_Extra.Load( THEME->GetPathToB("ScreenGameplay extra1") );
+			m_Extra.Load( THEME->GetPathB(m_sName,"extra1") );
 		if( PREFSMAN->m_bAllowExtraStage && GAMESTATE->IsExtraStage() )	// only load if we're going to use it
-			m_Extra.Load( THEME->GetPathToB("ScreenGameplay extra2") );
+			m_Extra.Load( THEME->GetPathB(m_sName,"extra2") );
 		this->AddChild( &m_Extra );
 
 		// only load if we're going to use it
@@ -686,35 +675,35 @@ void ScreenGameplay::Init()
 		case PLAY_MODE_RAVE:
             FOREACH_PlayerNumber(p)
 			{
-				m_Win[p].Load( THEME->GetPathToB(ssprintf("ScreenGameplay win p%d",p+1)) );
+				m_Win[p].Load( THEME->GetPathB(m_sName,ssprintf("win p%d",p+1)) );
 				this->AddChild( &m_Win[p] );
 			}
-			m_Draw.Load( THEME->GetPathToB("ScreenGameplay draw") );
+			m_Draw.Load( THEME->GetPathB(m_sName,"draw") );
 			this->AddChild( &m_Draw );
 			break;
 		}
 
-		m_textDebug.LoadFromFont( THEME->GetPathToF("Common normal") );
+		m_textDebug.LoadFromFont( THEME->GetPathF("Common","normal") );
 		m_textDebug.SetName( "Debug" );
 		SET_XY( m_textDebug );
 		this->AddChild( &m_textDebug );
 
-		m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenGameplay Overlay") );
+		m_Overlay.LoadFromAniDir( THEME->GetPathB(m_sName,"Overlay") );
 		m_Overlay.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
 		this->AddChild( &m_Overlay );
 
-		m_In.Load( THEME->GetPathToB("ScreenGameplay in") );
+		m_In.Load( THEME->GetPathB(m_sName,"in") );
 		m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 		this->AddChild( &m_In );
 
-		m_Back.Load( THEME->GetPathToB("Common back") );
+		m_Back.Load( THEME->GetPathB("Common","back") );
 		m_Back.SetDrawOrder( DRAW_ORDER_TRANSITIONS ); // on top of everything else
 		this->AddChild( &m_Back );
 
 
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )	// only load if we're going to use it
 		{
-			m_textSurviveTime.LoadFromFont( THEME->GetPathToF("ScreenGameplay survive time") );
+			m_textSurviveTime.LoadFromFont( THEME->GetPathF(m_sName,"survive time") );
 			m_textSurviveTime.SetShadowLength( 0 );
 			m_textSurviveTime.SetName( "SurviveTime" );
 			SET_XY( m_textSurviveTime );
@@ -735,14 +724,14 @@ void ScreenGameplay::Init()
 
 	if( !m_bDemonstration )	// only load if we're going to use it
 	{
-		m_soundAssistTick.Load(			THEME->GetPathToS("ScreenGameplay assist tick"), true );
+		m_soundAssistTick.Load(	THEME->GetPathS(m_sName,"assist tick"), true );
 
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_BATTLE:
-			m_soundBattleTrickLevel1.Load(	THEME->GetPathToS("ScreenGameplay battle trick level1"), true );
-			m_soundBattleTrickLevel2.Load(	THEME->GetPathToS("ScreenGameplay battle trick level2"), true );
-			m_soundBattleTrickLevel3.Load(	THEME->GetPathToS("ScreenGameplay battle trick level3"), true );
+			m_soundBattleTrickLevel1.Load(	THEME->GetPathS(m_sName,"battle trick level1"), true );
+			m_soundBattleTrickLevel2.Load(	THEME->GetPathS(m_sName,"battle trick level2"), true );
+			m_soundBattleTrickLevel3.Load(	THEME->GetPathS(m_sName,"battle trick level3"), true );
 			break;
 		}
 	}
@@ -839,7 +828,7 @@ void ScreenGameplay::LoadCourseSongNumber( int SongNumber )
 	if( !GAMESTATE->IsCourseMode() )
 		return;
 
-	const CString path = THEME->GetPathToG( ssprintf("ScreenGameplay course song %i", SongNumber), true );
+	const CString path = THEME->GetPathG( m_sName, ssprintf(" course song %i",SongNumber), true );
 	if( path != "" )
 		m_sprCourseSongNumber.Load( path );
 	else
@@ -957,7 +946,6 @@ void ScreenGameplay::LoadNextSong()
 	 */
 	m_BPMDisplay.SetBPM( GAMESTATE->m_pCurSong );
 
-	const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 	const bool bReverse[NUM_PLAYERS] = { 
 		GAMESTATE->m_PlayerOptions[0].m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1,
 		GAMESTATE->m_PlayerOptions[1].m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1
@@ -966,10 +954,10 @@ void ScreenGameplay::LoadNextSong()
 	{
 		FOREACH_EnabledPlayer( p )
 		{
-			m_DifficultyIcon[p].SetName( ssprintf("DifficultyP%d%s%s",p+1,bExtra?"Extra":"",bReverse[p]?"Reverse":"") );
+			m_DifficultyIcon[p].SetName( ssprintf("DifficultyP%d%s",p+1,bReverse[p]?"Reverse":"") );
 			SET_XY( m_DifficultyIcon[p] );
 
-			m_DifficultyMeter[p].SetName( ssprintf("DifficultyMeterP%d%s%s",p+1,bExtra?"Extra":"",bReverse[p]?"Reverse":"") );
+			m_DifficultyMeter[p].SetName( ssprintf("DifficultyMeterP%d%s",p+1,bReverse[p]?"Reverse":"") );
 			SET_XY( m_DifficultyMeter[p] );
 		}
 	}
@@ -983,11 +971,11 @@ void ScreenGameplay::LoadNextSong()
 	SET_XY( m_LyricDisplay );
 
 	/* Load the Oni transitions */
-	m_NextSongIn.Load( THEME->GetPathToB("ScreenGameplay next song in") );
+	m_NextSongIn.Load( THEME->GetPathB(m_sName,"next song in") );
 	// Instead, load this right before it's used
-//	m_NextSongOut.Load( THEME->GetPathToB("ScreenGameplay next song out") );
+//	m_NextSongOut.Load( THEME->GetPathB(m_sName,"next song out") );
 
-	m_SongFinished.Load( THEME->GetPathToB("ScreenGameplay song finished") );
+	m_SongFinished.Load( THEME->GetPathB(m_sName,"song finished") );
 
 	// Load lyrics
 	// XXX: don't load this here
@@ -1335,7 +1323,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
                 FOREACH_CpuPlayer(p)
 				{
-					SOUND->PlayOnceFromDir( THEME->GetPathToS("ScreenGameplay oni die") );
+					SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
                     ShowOniGameOver((PlayerNumber)p);
                     m_Player[p].Init();		// remove all notes and scoring
                     m_Player[p].FadeToFail();	// tell the NoteField to fade to white
@@ -1516,10 +1504,8 @@ void ScreenGameplay::UpdateCheckFail()
 		return;
 
 	// check for individual fail
-	for ( int pn=0; pn<NUM_PLAYERS; pn++ )
+	FOREACH_EnabledPlayer( pn )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(pn) )
-			continue;
 		if( (m_pLifeMeter[pn] && !m_pLifeMeter[pn]->IsFailing()) || 
 			(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn)) )
 			continue; /* isn't failing */
@@ -1541,7 +1527,7 @@ void ScreenGameplay::UpdateCheckFail()
 			if( !g_CurStageStats.AllFailedEarlier() )	// if not the last one to fail
 			{
 				// kill them!
-				SOUND->PlayOnceFromDir( THEME->GetPathToS("ScreenGameplay oni die") );
+				SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
 				ShowOniGameOver((PlayerNumber)pn);
 				m_Player[pn].Init();		// remove all notes and scoring
 				m_Player[pn].FadeToFail();	// tell the NoteField to fade to white
@@ -2017,7 +2003,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				iPlaySongIndex %= m_apSongsQueue.size();
 				GAMESTATE->m_pCurSong = m_apSongsQueue[iPlaySongIndex];
 
-				m_NextSongOut.Load( THEME->GetPathToB("ScreenGameplay next song out") );
+				m_NextSongOut.Load( THEME->GetPathB(m_sName,"next song out") );
 				GAMESTATE->m_pCurSong = pCurSong;
 
 				m_NextSongOut.StartTransitioning( SM_LoadNextSong );
