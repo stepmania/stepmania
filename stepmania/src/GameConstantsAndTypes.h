@@ -195,6 +195,18 @@ enum MemoryCard
 	NUM_MEMORY_CARDS
 };
 
+enum MemoryCardState
+{ 
+	MEMORY_CARD_STATE_READY, 
+	MEMORY_CARD_STATE_TOO_LATE, 
+	MEMORY_CARD_STATE_WRITE_ERROR, 
+	MEMORY_CARD_STATE_NO_CARD,
+	NUM_MEMORY_CARD_STATES,
+	MEMORY_CARD_STATE_INVALID,
+};
+
+CString MemoryCardStateToString( MemoryCardState mcs );
+
 
 //
 // Ranking stuff

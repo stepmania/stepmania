@@ -51,7 +51,7 @@ void MemoryCardDriver_Windows::GetStorageDevices( vector<UsbStorageDevice>& vDev
 
 bool MemoryCardDriver_Windows::MountAndTestWrite( UsbStorageDevice* pDevice )
 {
-	if( !pDevice->sOsMountDir.empty() )
+	if( pDevice->sOsMountDir.empty() )
 		return false;
 
 	// TODO: Use RageFileDirect here to detect ready state?
@@ -74,12 +74,11 @@ bool MemoryCardDriver_Windows::MountAndTestWrite( UsbStorageDevice* pDevice )
 
 	// Try to write a file.
 	// TODO: Can we use RageFile for this?
-	CString sFile = pDevice->sOsMountDir;
-	sFile += "temp";
-	int fd = open( sFile, _O_WRONLY|_O_CREAT|_O_TRUNC );
-	if( fd == -1 )
+	CString sFile = pDevice->sOsMountDir + "temp";
+	FILE* fp = fopen( sFile, "w" );
+	if( fp == NULL )
 		return false;
-	close( fd );
+	fclose( fp );
 	remove( sFile );
 
 	return true;

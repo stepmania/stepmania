@@ -25,6 +25,7 @@
 
 #define TIMER_SECONDS			THEME->GetMetricI(m_sName,"TimerSeconds")
 #define STYLE_ICON				THEME->GetMetricB(m_sName,"StyleIcon")
+#define MEMORY_CARD_ICONS		THEME->GetMetricB(m_sName,"MemoryCardIcons")
 
 
 MenuElements::MenuElements()
@@ -52,6 +53,7 @@ void MenuElements::Load( CString sClassName )
 
 	m_autoHeader.Load( THEME->GetPathToG(m_sName+" header") );
 	m_autoHeader->SetName("Header");
+	UtilSetXY( m_autoHeader, "MenuElements" );
 	UtilOnCommand( m_autoHeader, "MenuElements" );
 	this->AddChild( m_autoHeader );
 
@@ -61,14 +63,28 @@ void MenuElements::Load( CString sClassName )
 		m_sprStyleIcon.SetName( "StyleIcon" );
 		m_sprStyleIcon.Load( THEME->GetPathToG(sIconFileName) );
 		m_sprStyleIcon.StopAnimating();
+		UtilSetXY( m_sprStyleIcon, "MenuElements" );
 		UtilOnCommand( m_sprStyleIcon, "MenuElements" );
 		this->AddChild( &m_sprStyleIcon );
 	}
 	
+	if( MEMORY_CARD_ICONS )
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			m_MemoryCardDisplay[p].Load( (PlayerNumber)p );
+			m_MemoryCardDisplay[p].SetName( ssprintf("MemoryCardDisplayP%d",p+1) );
+			UtilSetXY( m_MemoryCardDisplay[p], "MenuElements" );
+			UtilOnCommand( m_MemoryCardDisplay[p], "MenuElements" );
+			this->AddChild( &m_MemoryCardDisplay[p] );
+		}
+	}
+
 	m_bTimerEnabled = (TIMER_SECONDS != -1);
 	if( m_bTimerEnabled )
 	{
 		m_MenuTimer->SetName( "Timer" );
+		UtilSetXY( m_MenuTimer, "MenuElements" );
 		UtilOnCommand( m_MenuTimer, "MenuElements" );
 		if( TIMER_SECONDS > 0 && PREFSMAN->m_bMenuTimer  &&  !GAMESTATE->m_bEditing )
 			m_MenuTimer->SetSeconds( TIMER_SECONDS );
@@ -79,11 +95,13 @@ void MenuElements::Load( CString sClassName )
 
 	m_autoFooter.Load( THEME->GetPathToG(m_sName+" footer") );
 	m_autoFooter->SetName("Footer");
+	UtilSetXY( m_autoFooter, "MenuElements" );
 	UtilOnCommand( m_autoFooter, "MenuElements" );
 	this->AddChild( m_autoFooter );
 
 	m_textHelp->SetName( "HelpDisplay", "Help" );
 	m_textHelp->Load();
+	UtilSetXY( m_textHelp, "MenuElements" );
 	UtilOnCommand( m_textHelp, "MenuElements" );
 	CStringArray asHelpTips;
 	split( THEME->GetMetric(m_sName,"HelpText"), "\n", asHelpTips );
@@ -122,6 +140,8 @@ void MenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 
 	UtilOffCommand( m_autoHeader, "MenuElements" );
 	UtilOffCommand( m_sprStyleIcon, "MenuElements" );
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		UtilOffCommand( m_MemoryCardDisplay[p], "MenuElements" );
 	UtilOffCommand( m_autoFooter, "MenuElements" );
 	UtilOffCommand( m_textHelp, "MenuElements" );
 
@@ -164,6 +184,8 @@ void MenuElements::DrawTopLayer()
 
 	m_autoHeader->Draw();
 	m_sprStyleIcon.Draw();
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		m_MemoryCardDisplay[p].Draw();
 	if( m_bTimerEnabled )
 		m_MenuTimer->Draw();
 	m_autoFooter->Draw();

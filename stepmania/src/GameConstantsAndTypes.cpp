@@ -164,3 +164,16 @@ CString TapNoteScoreToString( TapNoteScore tns )
 	default:	ASSERT(0);	return "";	// invalid Difficulty
 	}
 }
+
+CString MemoryCardStateToString( MemoryCardState mcs )
+{
+	switch( mcs )
+	{
+	case MEMORY_CARD_STATE_READY:		return "ready";
+	case MEMORY_CARD_STATE_TOO_LATE:	return "late";
+	case MEMORY_CARD_STATE_WRITE_ERROR:	return "error";
+	case MEMORY_CARD_STATE_NO_CARD:		return "none";
+	default:		ASSERT(0);			return "";
+	}
+}
+

@@ -28,14 +28,17 @@ MemoryCardManager::MemoryCardManager()
 	m_bCardsLocked = false;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_bTooLate[NUM_PLAYERS] = false;
-		m_bWriteError[NUM_PLAYERS] = false;
+		m_bTooLate[p] = false;
+		m_bWriteError[p] = false;
 	}
 	m_pDriver->GetStorageDevices( m_vStorageDevices );
-	ReassignCards();
 
-	m_soundConnect.Load( THEME->GetPathToS("MemoryCardManager connect") );
+	m_soundReady.Load( THEME->GetPathToS("MemoryCardManager ready") );
+	m_soundError.Load( THEME->GetPathToS("MemoryCardManager error") );
+	m_soundTooLate.Load( THEME->GetPathToS("MemoryCardManager too late") );
 	m_soundDisconnect.Load( THEME->GetPathToS("MemoryCardManager disconnect") );
+
+	AssignUnassignedCards();
 }
 
 MemoryCardManager::~MemoryCardManager()
@@ -77,47 +80,33 @@ void MemoryCardManager::Update( float fDelta )
 			}
 		}
 
-		if( m_bCardsLocked )	// Cards are locked and play has begun.
+		// unassign cards that were disconnected
+		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			// Don't re-assign devices
+			if( m_Device[p].IsBlank() )	// not assigned a card
+				continue;
 			
-			// play disconnect sound if locked card was removed
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			if( find(vDisconnects.begin(),vDisconnects.end(),m_Device[p]) != vDisconnects.end() )	// assigned card was disconnected
 			{
-				if( !m_Device[p].IsBlank() )	// card is in use
-				{
-					if( find(vOld.begin(),vOld.end(),m_Device[p]) != vOld.end() )	// match
-					{
-						m_Device[p].MakeBlank();
-						m_soundDisconnect.Play();
-					}
-				}
+				m_Device[p].MakeBlank();
+				m_soundDisconnect.Play();
 			}
 		}
-		else	// cards aren't locked.  
-		{
-			// play sound for connects or disconnects
-			if( !vConnects.empty() )
-				m_soundConnect.Play();
 
-			if( !vDisconnects.empty() )
-				m_soundDisconnect.Play();
-
-			ReassignCards();
-		}
+		AssignUnassignedCards();
 	}
 }
 
-MemoryCardManager::CardState MemoryCardManager::GetCardState( PlayerNumber pn )
+MemoryCardState MemoryCardManager::GetCardState( PlayerNumber pn )
 {
 	if( m_Device[pn].IsBlank() )
-		return no_card;
+		return MEMORY_CARD_STATE_NO_CARD;
 	else if( m_bTooLate[pn] )
-		return too_late;
+		return MEMORY_CARD_STATE_TOO_LATE;
 	else if( m_bWriteError[pn] )
-		return write_error;
+		return MEMORY_CARD_STATE_WRITE_ERROR;
 	else
-		return ready;
+		return MEMORY_CARD_STATE_READY;
 }
 
 CString MemoryCardManager::GetOsMountDir( PlayerNumber pn )
@@ -130,74 +119,91 @@ CString MemoryCardManager::GetOsMountDir( PlayerNumber pn )
 
 void MemoryCardManager::LockCards( bool bLock )
 {
-	if( bLock == m_bCardsLocked )
-		return;	// redundant
-	
 	m_bCardsLocked = bLock;
 
-	if( bLock )
+	if( !bLock )
 	{
-		// try mounting
+		// clear too late flag
 		for( int p=0; p<NUM_PLAYERS; p++ )
-		{
-			if( !m_Device[p].IsBlank() )
-				m_bWriteError[p] = m_pDriver->MountAndTestWrite( &m_Device[p] );
-		}
-	}
-	else
-	{
-		// clear error flags
-		for( int p=0; p<NUM_PLAYERS; p++ )
-		{
 			m_bTooLate[p] = false;
-			m_bWriteError[p] = false;
-		}
 
-		ReassignCards();
+		AssignUnassignedCards();
 	}
 }
 
-void MemoryCardManager::ReassignCards()
+void MemoryCardManager::AssignUnassignedCards()
 {
-	// Do re-assigning: choose a storage device for each player
-	vector<UsbStorageDevice> vDevices = m_vStorageDevices;	// copy
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	// make a list of unassigned
+	vector<UsbStorageDevice> vUnassignedDevices = m_vStorageDevices;	// copy
+
+	// remove cards that are already assigned
 	{
-		m_Device[p].MakeBlank();
-
-		unsigned i;
-
-		// search for card dir match
-		if( !PREFSMAN->m_sMemoryCardDir[p].empty() )
+		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			for( i=0; i<vDevices.size(); i++ )
+			if( m_Device[p].IsBlank() )	// card not assigned to this player
+				continue;
+
+			vector<UsbStorageDevice>::iterator it = find(vUnassignedDevices.begin(),vUnassignedDevices.end(),m_Device[p]);
+			ASSERT( it != vUnassignedDevices.end() )	// the assigned card better be connected!
+			vUnassignedDevices.erase( it );
+		}
+	}
+
+	// try to assign each device to a player
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !m_Device[p].IsBlank() )	// they already have an assigned card
+				continue;	// skip
+
+			unsigned i;
+
+			// search for card dir match
+			if( !PREFSMAN->m_sMemoryCardDir[p].empty() )
 			{
-				UsbStorageDevice &usd = vDevices[i];
-				if( usd.sOsMountDir.CompareNoCase(PREFSMAN->m_sMemoryCardDir[p]) == 0 )	// match
-					goto match;
+				for( i=0; i<vUnassignedDevices.size(); i++ )
+				{
+					UsbStorageDevice &usd = vUnassignedDevices[i];
+					if( usd.sOsMountDir.CompareNoCase(PREFSMAN->m_sMemoryCardDir[p]) == 0 )	// match
+						goto match;
+				}
 			}
-		}
 
-		// search for USB bus match
-		for( i=0; i<vDevices.size(); i++ )
-		{
-			UsbStorageDevice &usd = vDevices[i];
-			if( PREFSMAN->m_iMemoryCardUsbBus[p] != -1 && 
-				PREFSMAN->m_iMemoryCardUsbBus[p] != usd.iBus )
-				continue;	// not a match
+			// search for USB bus match
+			for( i=0; i<vUnassignedDevices.size(); i++ )
+			{
+				UsbStorageDevice &usd = vUnassignedDevices[i];
 
-			if( PREFSMAN->m_iMemoryCardUsbPort[p] != -1 && 
-				PREFSMAN->m_iMemoryCardUsbPort[p] != usd.iPortOnHub )
-				continue;	// not a match
+				if( PREFSMAN->m_iMemoryCardUsbBus[p] != -1 && 
+					PREFSMAN->m_iMemoryCardUsbBus[p] != usd.iBus )
+					continue;	// not a match
 
-			goto match;
-		}
-		
-		LOG->Trace( "Player %d memory card: none", p+1 );
-		continue;	// no matches
+				if( PREFSMAN->m_iMemoryCardUsbPort[p] != -1 && 
+					PREFSMAN->m_iMemoryCardUsbPort[p] != usd.iPortOnHub )
+					continue;	// not a match
+
+				goto match;
+			}
+			
+			LOG->Trace( "Player %d memory card: none", p+1 );
+			continue;	// no matches
 match:
-		m_Device[p] = vDevices[i];	// save a copy
-		LOG->Trace( "Player %d memory card: '%s'", p+1, m_Device[p].sOsMountDir.c_str() );
-		vDevices.erase( vDevices.begin()+i );	// remove the device so we don't match it for another player
+			m_Device[p] = vUnassignedDevices[i];	// save a copy
+			LOG->Trace( "Player %d memory card: '%s'", p+1, m_Device[p].sOsMountDir.c_str() );
+			vUnassignedDevices.erase( vUnassignedDevices.begin()+i );	// remove the device so we don't match it for another player
+			m_bTooLate[p] = m_bCardsLocked;
+			m_bWriteError[p] = false;
+			if( !m_bCardsLocked )
+				if( !m_pDriver->MountAndTestWrite(&m_Device[p]) )
+					m_bWriteError[p] = true;
+
+			// play sound
+			if( m_bWriteError[p] )
+				m_soundError.Play();
+			else if( m_bTooLate[p] )
+				m_soundTooLate.Play();
+			else
+				m_soundReady.Play();
+		}
 	}
 }

@@ -1232,6 +1232,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="JukeboxMenu.h">
 			</File>
 			<File
+				RelativePath="MemoryCardDisplay.cpp">
+			</File>
+			<File
+				RelativePath="MemoryCardDisplay.h">
+			</File>
+			<File
 				RelativePath="MenuElements.cpp">
 			</File>
 			<File

@@ -12,6 +12,7 @@
 #include "SongManager.h"
 #include "PrefsManager.h"
 #include "arch/ArchHooks/ArchHooks.h"
+#include "MemoryCardManager.h"
 
 void ModeChoice::Init()
 {
@@ -288,6 +289,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 	if( m_style != STYLE_INVALID )
 	{
 		PROFILEMAN->LoadFirstAvailableProfile( pn );
+		MEMCARDMAN->LockCards( true );
 	}
 }
 

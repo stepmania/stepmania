@@ -18,6 +18,7 @@
 #include "BGAnimation.h"
 #include "ActorUtil.h"
 #include "RageSound.h"
+#include "MemoryCardDisplay.h"
 
 class MenuTimer;
 class HelpDisplay;
@@ -47,6 +48,7 @@ public:	// let owner tinker with these objects
 
 	AutoActor			m_autoHeader;
 	Sprite				m_sprStyleIcon;
+	MemoryCardDisplay	m_MemoryCardDisplay[NUM_PLAYERS];
 	MenuTimer			*m_MenuTimer;
 	AutoActor			m_autoFooter;
 	HelpDisplay			*m_textHelp;

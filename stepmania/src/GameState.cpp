@@ -35,6 +35,7 @@
 #include "RageFile.h"
 #include "Bookkeeper.h"
 #include <time.h>
+#include "MemoryCardManager.h"
 
 #define DEFAULT_MODIFIERS THEME->GetMetric( "Common","DefaultModifiers" )
 
@@ -148,6 +149,7 @@ void GameState::Reset()
 		PROFILEMAN->SaveProfile( (PlayerNumber)p );
 		PROFILEMAN->UnloadProfile( (PlayerNumber)p );
 	}
+	MEMCARDMAN->LockCards( false );
 
 	LIGHTSMAN->SetLightMode( LIGHTMODE_ATTRACT );
 

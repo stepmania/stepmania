@@ -12,6 +12,8 @@ struct UsbStorageDevice
 		iDeviceOnBus = -1;
 		iPortOnHub = -1;
 		iUsbStorageIndex = -1;
+		sSerial = "";
+		sOsMountDir = "";
 	};
 	int iBus;
 	int iDeviceOnBus;
