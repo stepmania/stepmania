@@ -842,6 +842,13 @@ void ScreenSelectMusic::AfterMusicChange()
 			no_banner_change = true;
 	}
 
+	m_sprMarathonBalloon.StopTweening();
+	m_sprMarathonBalloon.BeginTweening( 0.2f );
+	m_sprMarathonBalloon.SetTweenZoomY( 0 );
+	m_sprLongBalloon.StopTweening();
+	m_sprLongBalloon.BeginTweening( 0.2f );
+	m_sprLongBalloon.SetTweenZoomY( 0 );
+
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_SECTION:
@@ -897,13 +904,6 @@ void ScreenSelectMusic::AfterMusicChange()
 
 				m_iSelection[p] = clamp( m_iSelection[p], 0, int(m_arrayNotes[p].size()) ) ;
 			}
-
-			m_sprMarathonBalloon.StopTweening();
-			m_sprMarathonBalloon.BeginTweening( 0.2f );
-			m_sprMarathonBalloon.SetTweenZoomY( 0 );
-			m_sprLongBalloon.StopTweening();
-			m_sprLongBalloon.BeginTweening( 0.2f );
-			m_sprLongBalloon.SetTweenZoomY( 0 );
 
 			/* Short delay before actually showing these, so they don't show
 			 * up when scrolling fast.  It'll still show up in "slow" scrolling,
