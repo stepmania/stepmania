@@ -1536,6 +1536,24 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageFile.cpp">
 			</File>
 			<File
+				RelativePath="RageFileDriver.cpp">
+			</File>
+			<File
+				RelativePath="RageFileDriver.h">
+			</File>
+			<File
+				RelativePath="RageFileDriverDirect.cpp">
+			</File>
+			<File
+				RelativePath="RageFileDriverDirect.h">
+			</File>
+			<File
+				RelativePath="RageFileManager.cpp">
+			</File>
+			<File
+				RelativePath="RageFileManager.h">
+			</File>
+			<File
 				RelativePath=".\RageInput.cpp">
 			</File>
 			<File

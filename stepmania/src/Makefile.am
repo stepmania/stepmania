@@ -1,4 +1,4 @@
-bin_PROGRAMS = stepmania test_audio_readers
+bin_PROGRAMS = stepmania test_audio_readers test_file_readers
 
 AM_LDFLAGS =
 AM_CXXFLAGS = 
@@ -173,9 +173,13 @@ Helpers = SDL_dither.cpp SDL_dither.h SDL_rotozoom.cpp SDL_rotozoom.h SDL_utils.
 
 PCRE = pcre/chartables.c pcre/get.c pcre/internal.h pcre/maketables.c pcre/pcre.c pcre/pcre.h pcre/study.c
 
+RageFile = \
+RageFile.cpp RageFile.h RageFileDriver.cpp RageFileDriver.h RageFileManager.cpp RageFileManager.h \
+RageFileDriverDirect.cpp RageFileDriverDirect.h
+
 Rage = $(Helpers) $(PCRE)\
 RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisplay_OGL.cpp RageDisplay_OGL.h \
-RageException.cpp RageException.h RageFile.cpp RageFile.h RageInput.cpp RageInput.h \
+RageException.cpp RageException.h RageInput.cpp RageInput.h \
 RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMath.h RageSound.cpp RageSound.h \
 RageSoundManager.cpp RageSoundManager.h RageSoundReader.h RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 RageSoundReader_Preload.cpp RageSoundReader_Preload.h RageSoundReader_Resample.cpp RageSoundReader_Resample.h \
@@ -183,7 +187,8 @@ RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h RageSoundReade
 RageSoundResampler.cpp RageSoundResampler.h RageSounds.cpp RageSounds.h RageTexture.cpp RageTexture.h RageTextureID.cpp RageTextureID.h \
 RageTextureManager.cpp RageTextureManager.h RageThreads.cpp RageThreads.h RageTimer.cpp RageTimer.h RageTypes.h \
 RageUtil.cpp RageUtil.h RageUtil_CharConversions.cpp RageUtil_CharConversions.h RageUtil_FileDB.cpp RageUtil_FileDB.h \
-$(RageSoundFileReaders)
+$(RageSoundFileReaders) \
+$(RageFile)
 
 Actors = \
 Actor.cpp Actor.h ActorCollision.h ActorFrame.cpp ActorFrame.h ActorScroller.cpp ActorScroller.h \
@@ -207,6 +212,7 @@ stepmania_LDADD = \
 		  $(AUDIO_LIBS) \
 		  $(srcdir)/libresample/libresample.a
 
+# XXX: Make ArchHooks not depend on Display
 # A hack for now:
 test_audio_readers_SOURCES = tests/test_audio_readers.cpp \
 		RageDisplay.cpp RageDisplay.h \
@@ -214,7 +220,7 @@ test_audio_readers_SOURCES = tests/test_audio_readers.cpp \
 		RageUtil.cpp RageLog.cpp RageThreads.cpp RageException.cpp \
 		RageUtil_FileDB.cpp RageUtil_FileDB.h \
 		RageTimer.cpp RageTimer.h \
-		RageFile.cpp RageFile.h \
+		$(RageFile) \
 		RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 		PrefsManager.cpp PrefsManager.h \
 		arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
@@ -225,6 +231,21 @@ test_audio_readers_SOURCES = tests/test_audio_readers.cpp \
 test_audio_readers_LDADD = \
 	      $(USE_SDL_LIBS) \
 	      $(AUDIO_LIBS)
+
+test_file_readers_SOURCES = tests/test_file_readers.cpp \
+		RageDisplay.cpp RageDisplay.h \
+		RageMath.cpp RageMath.h \
+		RageUtil.cpp RageLog.cpp RageThreads.cpp RageException.cpp \
+		RageUtil_FileDB.cpp RageUtil_FileDB.h \
+		RageTimer.cpp RageTimer.h \
+		$(RageFile) \
+		PrefsManager.cpp PrefsManager.h \
+		arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
+		IniFile.cpp IniFile.h \
+		$(PCRE)
+
+test_file_readers_LDADD = \
+	      $(USE_SDL_LIBS)
 
 INCLUDES = $(SDL_CFLAGS)
 
