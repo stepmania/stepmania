@@ -12,6 +12,7 @@
 -----------------------------------------------------------------------------
 */
 
+#include <map>
 
 //-----------------------------------------------------------------------------
 // SAFE_ Macros
@@ -204,6 +205,9 @@ CString DerefRedir(const CString &path);
 bool regex(CString str, CString pattern, vector<CString> &matches);
 bool regex(CString str, CString pattern);
 void regex_flags(int flags);
+
+void Replace_Unicode_Markers( CString &Text );
+void ReplaceText( CString &Text, const map<CString,CString> &m );
 
 #ifndef WIN32
 #include <unistd.h> /* correct place with correct definitions */

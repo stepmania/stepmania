@@ -20,6 +20,7 @@
 #include <sys/types.h>
 #include <fstream>
 #include "regex.h"
+#include <map>
 
 unsigned long randseed = time(NULL);
 
@@ -961,4 +962,68 @@ CString LcharToUTF8( longchar c )
 	char buf[6];
 	int cnt = unichar_to_utf8(c, buf);
 	return CString(buf, cnt);
+}
+
+
+/* Replace &#nnnn; (decimal) &xnnnn; (hex) with corresponding UTF-8 characters. */
+void Replace_Unicode_Markers( CString &Text )
+{
+	unsigned start = 0;
+	while(start < Text.size())
+	{
+		/* Look for &#digits; */
+		bool hex = false;
+		unsigned pos = Text.find("&#", start);
+		if(pos == Text.npos) {
+			hex = true;
+			pos = Text.find("&x", start);
+		}
+
+		if(pos == Text.npos) break;
+		start = pos+1;
+
+		unsigned p = pos;
+		p += 2;
+
+		/* Found &# or &x.  Is it followed by digits and a semicolon? */
+		if(p >= Text.size()) continue;
+
+		int numdigits = 0;
+		while(p < Text.size() &&
+			(hex && isxdigit(Text[p])) || (!hex && isdigit(Text[p])))
+		{
+		   p++;
+		   numdigits++;
+		}
+		if(!numdigits) continue; /* must have at least one digit */
+		if(p >= Text.size() || Text[p] != ';') continue;
+		p++;
+
+		int num;
+		if(hex) sscanf(Text.c_str()+pos, "&x%x;", &num);
+		else sscanf(Text.c_str()+pos, "&#%i;", &num);
+		
+		Text.replace(pos, p-pos, LcharToUTF8(num));
+	}
+}
+
+void ReplaceText( CString &Text, const map<CString,CString> &m )
+{
+	for(map<CString,CString>::const_iterator it = m.begin(); it != m.end(); ++it)
+	{
+		unsigned start = 0;
+		while(1)
+		{
+			/* This is stupidly inefficient.  If it becomes a bottleneck, write
+			 * a case-insensitive char_traits and just do the copy twice. */
+			CString txt = Text;
+			txt.MakeUpper();
+
+			unsigned pos = txt.find(it->first, start);
+			if(pos == txt.npos)
+				break;
+			Text.replace(pos, it->first.size(), it->second);
+			start = pos+it->second.size();
+		}
+	}
 }
