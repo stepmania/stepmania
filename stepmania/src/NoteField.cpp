@@ -68,7 +68,7 @@ void NoteField::CacheNoteSkin( CString skin )
 	m_NoteDisplays[ skin ] = nd;
 }
 
-void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw, float fYReverseOffsetPixels )
+void NoteField::Load( const NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw, float fYReverseOffsetPixels )
 {
 	Unload();
 

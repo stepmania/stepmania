@@ -21,7 +21,7 @@ NoteFieldPlus::NoteFieldPlus()
 {
 }
 
-void NoteFieldPlus::Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw, float fYReverseOffset )
+void NoteFieldPlus::Load( const NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw, float fYReverseOffset )
 {
 	NoteField::Load( pNoteData, pn, iFirstPixelToDraw, iLastPixelToDraw, fYReverseOffset );
 	
