@@ -223,7 +223,16 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	// Need to set Y positions of all these elements in Update since
 	// they change depending on PlayerOptions.
 
-	m_soundMine.Load( THEME->GetPathToS(ssprintf("Player mine p%d",pn+1)), true );
+	m_soundMine.Load( THEME->GetPathToS("Player mine"), true );
+
+	if( GAMESTATE->GetNumPlayersEnabled() == 2 )
+	{
+		/* Two players are active.  Play mines on the player's side. */
+		RageSoundParams p;
+		p.m_Balance = (m_PlayerNumber == PLAYER_1)? -1.0f:1.0f;
+		m_soundMine.SetParams( p );
+	}
+
 	m_soundAttackLaunch.Load( THEME->GetPathToS(ssprintf("Player attack launch p%d",pn+1)), true );
 	m_soundAttackEnding.Load( THEME->GetPathToS(ssprintf("Player attack ending p%d",pn+1)), true );
 }
