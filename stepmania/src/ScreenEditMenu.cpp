@@ -34,7 +34,7 @@ void ScreenEditMenu::Init()
 	ScreenWithMenuElements::Init();
 
 	m_Selector.SetXY( 0, 0 );
-//	m_Selector.AllowNewNotes();
+//	m_Selector.AllowNewSteps();
 	this->AddChild( &m_Selector );
 
 
@@ -54,7 +54,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_RefreshSelector:
-		m_Selector.RefreshNotes();
+		m_Selector.RefreshSteps();
 		break;
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
@@ -87,7 +87,7 @@ void ScreenEditMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 
 
 // helpers for MenuStart() below
-void DeleteCurNotes( void* pThrowAway )
+void DeleteCurSteps( void* pThrowAway )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
@@ -104,10 +104,10 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	Song* pSong					= m_Selector.GetSelectedSong();
 	StepsType st				= m_Selector.GetSelectedStepsType();
 	Difficulty dc				= m_Selector.GetSelectedDifficulty();
-	Steps* pSteps				= m_Selector.GetSelectedNotes();
+	Steps* pSteps				= m_Selector.GetSelectedSteps();
 //	StepsType soureNT			= m_Selector.GetSelectedSourceStepsType();
 //	Difficulty sourceDiff		= m_Selector.GetSelectedSourceDifficulty();
-	Steps* pSourceNotes			= m_Selector.GetSelectedSourceNotes();
+	Steps* pSourceSteps			= m_Selector.GetSelectedSourceSteps();
 	EditMenu::Action action		= m_Selector.GetSelectedAction();
 
 	GAMESTATE->m_pCurSong.Set( pSong );
@@ -135,41 +135,41 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		break;
 	case EditMenu::ACTION_DELETE:
 		ASSERT( pSteps );
-		SCREENMAN->Prompt( SM_RefreshSelector, "These notes will be lost permanently.\n\nContinue with delete?", true, false, DeleteCurNotes );
-		m_Selector.RefreshNotes();
+		SCREENMAN->Prompt( SM_RefreshSelector, "These steps will be lost permanently.\n\nContinue with delete?", true, false, DeleteCurSteps );
+		m_Selector.RefreshSteps();
 		return;
 	case EditMenu::ACTION_COPY:
 		ASSERT( !pSteps );
-		ASSERT( pSourceNotes );
+		ASSERT( pSourceSteps );
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since
 			// Song allocates all of the other Steps.
-			Steps* pNewNotes = new Steps;
-			pNewNotes->CopyFrom( pSourceNotes, st );
-			pNewNotes->SetDifficulty( dc );
-			pSong->AddSteps( pNewNotes );
+			Steps* pNewSteps = new Steps;
+			pNewSteps->CopyFrom( pSourceSteps, st );
+			pNewSteps->SetDifficulty( dc );
+			pSong->AddSteps( pNewSteps );
 		
 			SCREENMAN->SystemMessage( "Steps created from copy." );
 			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
-			m_Selector.RefreshNotes();
+			m_Selector.RefreshSteps();
 			pSong->Save();
 		}
 		return;
 	case EditMenu::ACTION_AUTOGEN:
 		ASSERT( !pSteps );
-		ASSERT( pSourceNotes );
+		ASSERT( pSourceSteps );
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since
 			// Song allocates all of the other Steps.
-			Steps* pNewNotes = new Steps;
-			pNewNotes->AutogenFrom( pSourceNotes, st );
-			pNewNotes->DeAutogen();
-			pNewNotes->SetDifficulty( dc );	// override difficulty with the user's choice
-			pSong->AddSteps( pNewNotes );
+			Steps* pNewSteps = new Steps;
+			pNewSteps->AutogenFrom( pSourceSteps, st );
+			pNewSteps->DeAutogen();
+			pNewSteps->SetDifficulty( dc );	// override difficulty with the user's choice
+			pSong->AddSteps( pNewSteps );
 		
 			SCREENMAN->SystemMessage( "Steps created from AutoGen." );
 			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
-			m_Selector.RefreshNotes();
+			m_Selector.RefreshSteps();
 			pSong->Save();
 		}
 		return;
@@ -178,15 +178,15 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since
 			// Song allocates all of the other Steps.
-			Steps* pNewNotes = new Steps;
-			pNewNotes->CreateBlank( st );
-			pNewNotes->SetDifficulty( dc );
-			pNewNotes->SetMeter( 1 );
-			pSong->AddSteps( pNewNotes );
+			Steps* pNewSteps = new Steps;
+			pNewSteps->CreateBlank( st );
+			pNewSteps->SetDifficulty( dc );
+			pNewSteps->SetMeter( 1 );
+			pSong->AddSteps( pNewSteps );
 		
 			SCREENMAN->SystemMessage( "Blank Steps created." );
 			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
-			m_Selector.RefreshNotes();
+			m_Selector.RefreshSteps();
 			pSong->Save();
 		}
 		return;

@@ -7,10 +7,8 @@
 #include "GameManager.h"
 #include "Steps.h"
 #include "song.h"
+#include "StepsUtil.h"
 
-//
-// Defines specific to EditMenu
-//
 #define ARROWS_X( i )			THEME->GetMetricF("EditMenu",ssprintf("Arrows%dX",i+1))
 #define SONG_BANNER_X			THEME->GetMetricF("EditMenu","SongBannerX")
 #define SONG_BANNER_Y			THEME->GetMetricF("EditMenu","SongBannerY")
@@ -48,8 +46,8 @@ EditMenu::EditMenu()
 
 	
 	// start out on easy, not beginner
-	m_iSelection[ROW_DIFFICULTY] = DIFFICULTY_EASY;
-	m_iSelection[ROW_SOURCE_DIFFICULTY] = DIFFICULTY_EASY;
+	m_iSelection[ROW_STEPS] = DIFFICULTY_EASY;
+	m_iSelection[ROW_SOURCE_STEPS] = DIFFICULTY_EASY;
 
 
 
@@ -123,10 +121,14 @@ EditMenu::EditMenu()
 				{
 					m_iSelection[ROW_STEPS_TYPE] = i;
 					OnRowValueChanged( ROW_STEPS_TYPE );
-					m_iSelection[ROW_DIFFICULTY] = GAMESTATE->m_pCurSteps[PLAYER_1]->GetDifficulty();
-					OnRowValueChanged( ROW_DIFFICULTY );
-					break;
 				}
+			}
+
+			vector<Steps*>::const_iterator iter = find( m_vpSteps.begin(), m_vpSteps.end(), GAMESTATE->m_pCurSteps[PLAYER_1] );
+			if( iter != m_vpSteps.end() )
+			{
+				m_iSelection[ROW_STEPS] = m_vpSteps.begin() - iter;
+				OnRowValueChanged( ROW_STEPS );
 			}
 		}
 	}
@@ -137,7 +139,7 @@ EditMenu::~EditMenu()
 
 }
 
-void EditMenu::RefreshNotes()
+void EditMenu::RefreshSteps()
 {
 	OnRowValueChanged( ROW_SONG );
 }
@@ -169,9 +171,9 @@ bool EditMenu::CanGoRight()
 		m_sGroups.size(),
 		m_pSongs.size(),
 		m_StepsTypes.size(),
-		NUM_DIFFICULTIES,
+		m_vpSteps.size(),
 		m_StepsTypes.size(),
-		NUM_DIFFICULTIES,
+		m_vpSourceSteps.size(),
 		m_Actions.size()
 	};
 
@@ -182,8 +184,8 @@ void EditMenu::Up()
 {
 	if( CanGoUp() )
 	{
-		if( GetSelectedNotes() && m_SelectedRow==ROW_ACTION )
-			ChangeToRow( ROW_DIFFICULTY );
+		if( GetSelectedSteps() && m_SelectedRow==ROW_ACTION )
+			ChangeToRow( ROW_STEPS );
 		else
 			ChangeToRow( Row(m_SelectedRow-1) );
 		m_soundChangeRow.PlayRandom();
@@ -194,7 +196,7 @@ void EditMenu::Down()
 {
 	if( CanGoDown() )
 	{
-		if( GetSelectedNotes() && m_SelectedRow==ROW_DIFFICULTY )
+		if( GetSelectedSteps() && m_SelectedRow==ROW_STEPS )
 			ChangeToRow( ROW_ACTION );
 		else
 			ChangeToRow( Row(m_SelectedRow+1) );
@@ -259,31 +261,63 @@ void EditMenu::OnRowValueChanged( Row row )
 		m_SongTextBanner.LoadFromSong( GetSelectedSong() );
 		// fall through
 	case ROW_STEPS_TYPE:
-		m_textValue[ROW_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToString(GetSelectedStepsType()) );
+		m_textValue[ROW_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToThemedString(GetSelectedStepsType()) );
+		CLAMP( m_iSelection[ROW_STEPS], 0, NUM_DIFFICULTIES-1 );	// jump back to the slot for DIFFICULTY_EDIT
+		m_vpSteps.clear();
+		GetSelectedSong()->GetSteps( m_vpSteps, GetSelectedStepsType() );
+		StepsUtil::SortStepsByDescription( m_vpSteps );
+		StepsUtil::SortStepsByTypeAndDifficulty( m_vpSteps );
+		FOREACH_Difficulty( dc )
+		{
+			Steps *pSteps = dc < m_vpSteps.size() ? m_vpSteps[dc] : NULL;
+			if( pSteps == NULL || pSteps->GetDifficulty() != dc )
+				m_vpSteps.insert( m_vpSteps.begin()+dc, NULL );
+		}
+		if( GetSelectedSong()->HasEdits(GetSelectedStepsType()) )
+			m_vpSteps.push_back( NULL );	// for "New Edit"
 		// fall through
-	case ROW_DIFFICULTY:
-		m_textValue[ROW_DIFFICULTY].SetText( DifficultyToString(GetSelectedDifficulty()) );
-		m_Meter.SetFromSteps( GetSelectedNotes() );
+	case ROW_STEPS:
+		{
+			CString s = DifficultyToThemedString(GetSelectedDifficulty());
+			Steps *pSteps = GetSelectedSteps();
+			if( GetSelectedDifficulty() == DIFFICULTY_EDIT )
+				s += " - " + (pSteps ? pSteps->GetDescription() : "New" );
+			m_textValue[ROW_STEPS].SetText( s );
+			m_Meter.SetFromSteps( GetSelectedSteps() );
+		}
 		// fall through
 	case ROW_SOURCE_STEPS_TYPE:
-		m_textLabel[ROW_SOURCE_STEPS_TYPE].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
-		m_textValue[ROW_SOURCE_STEPS_TYPE].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
-		m_textValue[ROW_SOURCE_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToString(GetSelectedSourceStepsType()) );
+		m_textLabel[ROW_SOURCE_STEPS_TYPE].SetHidden( GetSelectedSteps() ? true : false );
+		m_textValue[ROW_SOURCE_STEPS_TYPE].SetHidden( GetSelectedSteps() ? true : false );
+		m_textValue[ROW_SOURCE_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToThemedString(GetSelectedSourceStepsType()) );
+
+		CLAMP( m_iSelection[ROW_SOURCE_STEPS], 0, NUM_DIFFICULTIES-1 );	// jump back to the slot for DIFFICULTY_EDIT
+		m_vpSourceSteps.clear();
+		GetSelectedSong()->GetSteps( m_vpSourceSteps, GetSelectedSourceStepsType() );
+		StepsUtil::SortStepsByDescription( m_vpSourceSteps );
+		StepsUtil::SortStepsByTypeAndDifficulty( m_vpSourceSteps );
+		FOREACH_Difficulty( dc )
+		{
+			Steps *pSteps = dc < m_vpSourceSteps.size() ? m_vpSourceSteps[dc] : NULL;
+			if( pSteps == NULL || pSteps->GetDifficulty() != dc )
+				m_vpSourceSteps.insert( m_vpSourceSteps.begin()+dc, NULL );
+		}
+
 		// fall through
-	case ROW_SOURCE_DIFFICULTY:
-		m_textLabel[ROW_SOURCE_DIFFICULTY].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
-		m_textValue[ROW_SOURCE_DIFFICULTY].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
-		m_textValue[ROW_SOURCE_DIFFICULTY].SetText( DifficultyToString(GetSelectedSourceDifficulty()) );
-		m_SourceMeter.SetFromSteps( GetSelectedSourceNotes() );
-		m_SourceMeter.SetZoomY( GetSelectedNotes()?0.f:1.f );
+	case ROW_SOURCE_STEPS:
+		m_textLabel[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
+		m_textValue[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
+		m_textValue[ROW_SOURCE_STEPS].SetText( DifficultyToThemedString(GetSelectedSourceDifficulty()) );
+		m_SourceMeter.SetFromSteps( GetSelectedSourceSteps() );
+		m_SourceMeter.SetHidden( GetSelectedSteps() ? true : false );
 
 		m_Actions.clear();
-		if( GetSelectedNotes() )
+		if( GetSelectedSteps() )
 		{
 			m_Actions.push_back( ACTION_EDIT );
 			m_Actions.push_back( ACTION_DELETE );
 		}
-		else if( GetSelectedSourceNotes() )
+		else if( GetSelectedSourceSteps() )
 		{
 			m_Actions.push_back( ACTION_COPY );
 			m_Actions.push_back( ACTION_AUTOGEN );
@@ -303,15 +337,6 @@ void EditMenu::OnRowValueChanged( Row row )
 	}
 }
 
-Steps* EditMenu::GetSelectedNotes()
-{
-	return GetSelectedSong()->GetStepsByDifficulty(GetSelectedStepsType(),GetSelectedDifficulty(), false);
-}
-
-Steps* EditMenu::GetSelectedSourceNotes()
-{
-	return GetSelectedSong()->GetStepsByDifficulty(GetSelectedSourceStepsType(),GetSelectedSourceDifficulty(), false);
-}
 
 /*
  * (c) 2001-2004 Chris Danford
