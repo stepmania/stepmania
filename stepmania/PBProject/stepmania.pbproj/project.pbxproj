@@ -3084,9 +3084,8 @@
 				AAC6DDE00569C71000B5D56F,
 				AAC6DDE80569C80900B5D56F,
 				AAB691F405704FA50078BED4,
-				AA4B59CB0573A7FC005FB5DB,
 				AA4B59EF0573AA5B005FB5DB,
-				AA4B5CC50573AD81005FB5DB,
+				AA4B5DD1057421F4005FB5DB,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4585,8 +4584,6 @@
 				AA29CE420558741A00961A51,
 				AA29CE430558741A00961A51,
 				AA29CE440558741A00961A51,
-				AA29CE490558741A00961A51,
-				AA29CE4A0558741A00961A51,
 				AA67C0A60558B19B00EF34A6,
 				AA4B425C05733D71005FB5DB,
 				AA4B425D05733D71005FB5DB,
@@ -4655,18 +4652,6 @@
 		};
 		AA29CE440558741A00961A51 = {
 			fileRef = AA0DF1B00503C262003DE00C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CE490558741A00961A51 = {
-			fileRef = AAE443F804B1032300D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CE4A0558741A00961A51 = {
-			fileRef = AAE443F704B1032300D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -4911,20 +4896,6 @@
 			settings = {
 			};
 		};
-		AA4B59CA0573A7FC005FB5DB = {
-			expectedFileType = sourcecode.cpp.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = StepmaniaTemplates.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA4B59CB0573A7FC005FB5DB = {
-			fileRef = AA4B59CA0573A7FC005FB5DB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA4B59EE0573AA5B005FB5DB = {
 			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
@@ -4948,7 +4919,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		AA4B5CC50573AD81005FB5DB = {
+		AA4B5DD1057421F4005FB5DB = {
 			fileRef = AA4B5CC40573AD81005FB5DB;
 			isa = PBXBuildFile;
 			settings = {
@@ -9570,7 +9541,6 @@
 				AA6EFE6304770CF7005F316C,
 				AA6EFE6404770CF7005F316C,
 				AA6EFE6004770CF7005F316C,
-				AA4B59CA0573A7FC005FB5DB,
 				AA4B59EE0573AA5B005FB5DB,
 			);
 			isa = PBXGroup;
@@ -12909,24 +12879,6 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
-		};
-		AAE443F704B1032300D02EE9 = {
-			expectedFileType = wrapper.framework;
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
-			name = SDL_image.framework;
-			path = /System/Library/Frameworks/SDL_image.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		AAE443F804B1032300D02EE9 = {
-			expectedFileType = wrapper.framework;
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
-			name = SDL.framework;
-			path = /System/Library/Frameworks/SDL.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
 		};
 		AAECB3730512794D001B792B = {
 			expectedFileType = wrapper.framework;
