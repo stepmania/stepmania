@@ -79,6 +79,10 @@ RageFileObj *MakeFileObjDirect( CString sPath, int mode, RageFile &p, int &err )
 	if( mode & RageFile::READ )
 	{
 		fd = DoOpen( sPath, O_BINARY|O_RDONLY, 0644 );
+
+		/* XXX: Windows returns EACCES if we try to open a file on a CDROM that isn't
+		 * ready, instead of something like ENODEV.  We want to return that case as
+		 * ENOENT, but we can't distinguish it from file permission errors. */
 	}
 	else
 	{
