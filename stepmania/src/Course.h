@@ -26,6 +26,7 @@ class Course
 	CString		m_asDescriptions[MAX_COURSE_STAGES];
 	CString		m_asModifiers[MAX_COURSE_STAGES];	// set player and song options from these
 	Song*		m_apSongs[MAX_COURSE_STAGES];
+	int			m_iStages;
 
 public:
 	Course();
@@ -33,7 +34,6 @@ public:
 	CString		m_sName;
 	CString		m_sBannerPath;
 	CString		m_sCDTitlePath;
-	int			m_iStages;
 
 	bool		m_bRepeat;	// repeat after last song?
 	bool		m_bRandomize;	// play the songs in a random order
