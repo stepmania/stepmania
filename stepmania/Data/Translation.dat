@@ -365,16 +365,19 @@ TitleFrom: Dancemania( Oni)?
 TitleTo: Dancemania 鬼
 *
 TitleFrom: (TaQ( Oni)?)|(Road of TaQ)
-TitleTo: TaQ 道
+TitleTo: TaQ道
 *
 TitleFrom: (Legend Road)|(Road of Legend)
 TitleTo: 伝説道
 *
-TitleFrom: (Slow Demon Road)|(Road of Slow)
+TitleFrom: (Slow Demon Road)|(Road of Slow)|(Demon's Slow Road)
 TitleTo: 鬼の遅道
 *
 # "Road of True"?  Maybe "Truth"?
 TitleFrom: (True Demon Road)|(Road of Tru.*)
 TitleTo: 真鬼道
+*
+TitleFrom: (DDR HOME VERSION)
+TitleTo: 家庭用DDRコース
 *
 
