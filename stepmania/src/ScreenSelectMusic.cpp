@@ -618,7 +618,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		{
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
-			if( GAMESTATE->m_pCurNotes[p]  &&  GAMESTATE->m_pCurNotes[p]->m_iMeter >= 9 )
+			if( GAMESTATE->m_pCurNotes[p]  &&  GAMESTATE->m_pCurNotes[p]->m_iMeter >= 10 )
 				bIsHard = true;
 		}
 

@@ -28,8 +28,6 @@ kitsappt photos
 
 slower eval bar tween
 
-max style judge tween
-
 add turns to editor
 
 sample pop
@@ -38,26 +36,17 @@ fix screwed up scroll bar
 
 ready, here we go between each stage of a course
 
-team seattle link
-
 send disc to Penny Arcade
-
-different top bar frame for oni
-
-get rid of demonstration box.
-
-rename "gameplay top frame", "bototm frame" to "life frame", score frame"
 
 long ver, marathon balloons
 
-flag for use hold head
-
 warning screen
-
-explanation text in options
 
 lyrics
 
+team seattle link
+
+flag for use hold head
 
 //////////////////////
 Animachanic suggestions:
@@ -160,15 +149,7 @@ texture cache
 
 groove radar smoothing and texture effects
 
-couple changes
-
 options tabs on Select Music. 
-
-Actor::TweenOffScreen/TweenOnScreen
-
-merge noteskins and themes
-
-couple data format
 
 way to select edits
 

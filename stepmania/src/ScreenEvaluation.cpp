@@ -486,7 +486,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
 		// EZ2 should hide these things by placing them off screen with theme metrics
-		m_sprJudgeLabels[l].Load( THEME->GetPathTo("Graphics","evaluation judge labels") );
+		m_sprJudgeLabels[l].Load( THEME->GetPathTo("Graphics","evaluation judge labels 1x7") );
 		m_sprJudgeLabels[l].StopAnimating();
 		m_sprJudgeLabels[l].SetState( l );
 		m_sprJudgeLabels[l].SetXY( JUDGE_LABELS_X, JUDGE_Y(l) );
