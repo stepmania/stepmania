@@ -94,14 +94,14 @@ ScreenSelectGroup::ScreenSelectGroup()
 	asGroupNames.insert(asGroupNames.begin(), "ALL MUSIC" );
 
 	// Add songs to the MusicList.
-	for( unsigned j=0; j < asGroupNames.size(); j++ ) /* for each group */
+	for( unsigned g=0; g < asGroupNames.size(); g++ ) /* for each group */
 	{
 		CArray<Song*,Song*> aSongsInGroup;
 		/* find all songs */
 		for( i=0; i<aAllSongs.size(); i++ )		// foreach Song
 		{
 			/* group 0 gets all songs */
-			if( j != 0 && aAllSongs[i]->m_sGroupName != asGroupNames[j] )
+			if( g != 0 && aAllSongs[i]->m_sGroupName != asGroupNames[g] )
 				continue;
 
 			aSongsInGroup.push_back( aAllSongs[i] );
