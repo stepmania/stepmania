@@ -20,6 +20,10 @@ class ArchHooks
 public:
 	/* This receives all logs.  'important' is set for Warn and Info. */
 	virtual void Log(CString str, bool important) { }
+
+	/* This is called when DISPLAY is constructed. */
+	virtual void PreDisplayInit() { }
+
 	virtual ~ArchHooks() { }
 };
 

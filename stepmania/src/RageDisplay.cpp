@@ -22,6 +22,7 @@
 #include "RageMath.h"
 #include "RageTypes.h"
 #include "GameConstantsAndTypes.h"
+#include "StepMania.h"
 
 RageDisplay*		DISPLAY	= NULL;
 
@@ -70,6 +71,10 @@ void GetGLExtensions(set<string> &ext)
 RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync )
 {
 	LOG->Trace( "RageDisplay::RageDisplay()" );
+
+	/* Give hooks a chance to do some debug init before we try to fire up OpenGL. */
+	HOOKS->PreDisplayInit();
+
 	m_oglspecs = new oglspecs_t;
 	
 	SDL_InitSubSystem(SDL_INIT_VIDEO);

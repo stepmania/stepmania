@@ -768,6 +768,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					RelativePath="archutils\Win32\AppInstance.h">
 				</File>
 				<File
+					RelativePath="archutils\Win32\DebugInfoHunt.cpp">
+				</File>
+				<File
+					RelativePath="archutils\Win32\DebugInfoHunt.h">
+				</File>
+				<File
 					RelativePath="archutils\Win32\GotoURL.cpp">
 				</File>
 				<File

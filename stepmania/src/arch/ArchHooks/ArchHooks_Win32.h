@@ -7,6 +7,7 @@ class ArchHooks_Win32: public ArchHooks
 public:
 	ArchHooks_Win32();
 	void Log(CString str, bool important);
+	void PreDisplayInit();
 };
 
 #undef ARCH_HOOKS

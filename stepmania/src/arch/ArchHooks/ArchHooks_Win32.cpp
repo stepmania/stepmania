@@ -3,6 +3,7 @@
 
 #include "archutils/win32/tls.h"
 #include "archutils/win32/crash.h"
+#include "archutils/win32/DebugInfoHunt.h"
 
 ArchHooks_Win32::ArchHooks_Win32()
 {
@@ -19,6 +20,13 @@ void ArchHooks_Win32::Log(CString str, bool important)
 		StaticLog(str);
 
 	CrashLog(str);
+}
+
+void ArchHooks_Win32::PreDisplayInit()
+{
+	/* This is a good time to do the debug search: before we actually
+	 * start OpenGL (in case something goes wrong). */
+	SearchForDebugInfo();
 }
 
 /*
