@@ -287,20 +287,24 @@ void ScreenOptions::PositionUnderlines()
 		{
 			OptionsCursor &underline = m_Underline[p][i];
 
-			underline.StopTweening();
-
-			/* Don't tween X movement. */
+			/* Don't tween X movement and color changes. */
 			int iWidth, iX, iY;
 			GetWidthXY( (PlayerNumber)p, i, iWidth, iX, iY );
-			underline.SetX( (float)iX );
+			underline.SetGlobalX( (float)iX );
+			underline.SetGlobalDiffuseColor( RageColor(1,1,1, 1.0f) );
 
 			// If there's only one choice (ScreenOptionsMenu), don't show underlines.  
 			// It looks silly.
 			bool bOnlyOneChoice = m_OptionRow[i].choices.size() == 1;
 			bool hidden = bOnlyOneChoice || m_bRowIsHidden[i];
 
-			/* XXX: this doesn't work since underline is an ActorFrame */
-			underline.BeginTweening( 0.3f );
+			if( underline.GetDestY() != m_fRowY[i] )
+			{
+				underline.StopTweening();
+				underline.BeginTweening( 0.3f );
+			}
+
+			/* XXX: diffuse doesn't work since underline is an ActorFrame */
 			underline.SetDiffuse( RageColor(1,1,1,hidden? 0.0f:1.0f) );
 			underline.SetBarWidth( iWidth );
 			underline.SetY( (float)iY );
@@ -319,10 +323,15 @@ void ScreenOptions::PositionIcons()
 			int iWidth, iX, iY;			// We only use iY
 			GetWidthXY( (PlayerNumber)p, i, iWidth, iX, iY );
 			icon.SetX( ICONS_X(p) );
-			icon.StopTweening();
-			/* XXX: this doesn't work since icon is an ActorFrame */
-			icon.BeginTweening( 0.3f );
+
+			if( icon.GetDestY() != m_fRowY[i] )
+			{
+				icon.StopTweening();
+				icon.BeginTweening( 0.3f );
+			}
+
 			icon.SetY( (float)iY );
+			/* XXX: this doesn't work since icon is an ActorFrame */
 			icon.SetDiffuse( RageColor(1,1,1, m_bRowIsHidden[i]? 0.0f:1.0f) );
 		}
 	}
@@ -406,44 +415,58 @@ void ScreenOptions::UpdateEnabledDisabled()
 			if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] == i )
 				bThisRowIsSelected = true;
 
-		m_sprBullets[i].StopTweening();
-		m_textTitles[i].StopTweening();
-		m_sprBullets[i].BeginTweening( 0.3f );
-		m_textTitles[i].BeginTweening( 0.3f );
-		for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
-		{
-			m_textItems[i][j].StopTweening();
-			m_textItems[i][j].BeginTweening( 0.3f );
-		}
-
+		/* Don't tween selection colors at all. */
 		RageColor color = bThisRowIsSelected ? colorSelected : colorNotSelected;
-		if( m_bRowIsHidden[i] )
-			color.a = 0.0f;
-		m_sprBullets[i].SetDiffuse( color );
-		m_textTitles[i].SetDiffuse( color );
-
-		m_sprBullets[i].SetY( m_fRowY[i] );
-		m_textTitles[i].SetY( m_fRowY[i] );
+		m_sprBullets[i].SetGlobalDiffuseColor( color );
+		m_textTitles[i].SetGlobalDiffuseColor( color );
 
 		if( m_bRowIsLong[i] )
 			for( unsigned j=0; j<NUM_PLAYERS; j++ )
-			{
-				m_textItems[i][j].SetDiffuse( color );
-				m_textItems[i][j].SetY( m_fRowY[i] );
-
-				/* Hide the text of all but the first player, so we don't overdraw. */
-				if( m_InputMode == INPUTMODE_BOTH && j != 0 )
-				{
-					m_textItems[i][j].StopTweening();
-					m_textItems[i][j].SetDiffuse( RageColor(1,1,1,0) );
-				}
-			}
+				m_textItems[i][j].SetGlobalDiffuseColor( color );
 		else
 			for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
+				m_textItems[i][j].SetGlobalDiffuseColor( color );
+
+		if( m_sprBullets[i].GetDestY() != m_fRowY[i] )
+		{
+			m_sprBullets[i].StopTweening();
+			m_textTitles[i].StopTweening();
+			m_sprBullets[i].BeginTweening( 0.3f );
+			m_textTitles[i].BeginTweening( 0.3f );
+
+			m_sprBullets[i].SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
+			m_textTitles[i].SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
+
+			m_sprBullets[i].SetY( m_fRowY[i] );
+			m_textTitles[i].SetY( m_fRowY[i] );
+
+			if( m_bRowIsLong[i] )
+				for( unsigned j=0; j<NUM_PLAYERS; j++ )
+				{
+					m_textItems[i][j].StopTweening();
+					m_textItems[i][j].BeginTweening( 0.3f );
+					m_textItems[i][j].SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
+					m_textItems[i][j].SetY( m_fRowY[i] );
+				}
+			else
+				for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
+				{
+					m_textItems[i][j].StopTweening();
+					m_textItems[i][j].BeginTweening( 0.3f );
+					m_textItems[i][j].SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
+					m_textItems[i][j].SetY( m_fRowY[i] );
+				}
+		}
+
+		/* Hide the text of all but the first player, so we don't overdraw. */
+		if( m_InputMode == INPUTMODE_BOTH && m_bRowIsLong[i] )
+		{
+			for( unsigned j=1; j<NUM_PLAYERS; j++ )
 			{
-				m_textItems[i][j].SetDiffuse( color );
-				m_textItems[i][j].SetY( m_fRowY[i] );
+				m_textItems[i][j].StopTweening();
+				m_textItems[i][j].SetDiffuse( RageColor(1,1,1,0) );
 			}
+		}
 	}
 
 	bool bExitRowIsSelectedByBoth = true;
@@ -451,14 +474,17 @@ void ScreenOptions::UpdateEnabledDisabled()
 		if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] != m_iNumOptionRows )
 			bExitRowIsSelectedByBoth = false;
 
-	m_textItems[m_iNumOptionRows][0].StopTweening();
-	m_textItems[m_iNumOptionRows][0].BeginTweening( 0.3f );
-
 	RageColor color = bExitRowIsSelectedByBoth ? colorSelected : colorNotSelected;
-	if( m_bRowIsHidden[i] )
-		color.a = 0.0f;
-	m_textItems[m_iNumOptionRows][0].SetDiffuse( color );
-	m_textItems[m_iNumOptionRows][0].SetY( m_fRowY[m_iNumOptionRows] );
+	m_textItems[m_iNumOptionRows][0].SetGlobalDiffuseColor( color );
+
+	if( m_textItems[m_iNumOptionRows][0].GetDestY() != m_fRowY[m_iNumOptionRows] )
+	{
+		m_textItems[m_iNumOptionRows][0].StopTweening();
+		m_textItems[m_iNumOptionRows][0].BeginTweening( 0.3f );
+		m_textItems[m_iNumOptionRows][0].SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
+		m_textItems[m_iNumOptionRows][0].SetY( m_fRowY[m_iNumOptionRows] );
+	}
+
 	if( bExitRowIsSelectedByBoth )
 		m_textItems[m_iNumOptionRows][0].SetEffectDiffuseShift( 1.0f, colorSelected, colorNotSelected );
 	else
@@ -586,17 +612,6 @@ void ScreenOptions::OnChange()
 	RefreshIcons();
 	PositionIcons();
 	UpdateEnabledDisabled();
-
-	for( int i=0; i<m_iNumOptionRows; i++ )		// foreach line
-	{
-		m_sprBullets[i].StopTweening();
-		m_sprBullets[i].BeginTweening( 0.3f );
-		m_sprBullets[i].SetY( m_fRowY[i] );
-
-		RageColor color = m_sprBullets[i].GetDiffuse();
-		color.a = m_bRowIsHidden[i]? 0.0f:1.0f;
-		m_sprBullets[i].SetDiffuse( color );
-	}
 
 	for( int pn=0; pn<NUM_PLAYERS; pn++ )
 		TweenCursor( (PlayerNumber)pn );
