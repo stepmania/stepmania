@@ -134,7 +134,13 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 		if( sName.empty() )
 			continue;
 		
-		CString sValue = join( ",", command->m_vsArgs.begin()+1, command->m_vsArgs.end() );
+		CString sValue;
+		for( unsigned i = 1; i < command->m_vsArgs.size(); ++i )
+		{
+			if( i > 1 )
+				sValue += ",";
+			sValue += command->GetArg(i);
+		}
 
 		if( sName == "game" )
 		{
