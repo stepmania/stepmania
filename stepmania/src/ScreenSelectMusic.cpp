@@ -373,7 +373,8 @@ void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 			m_DifficultyList.Show();
 	}
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{		
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
@@ -383,12 +384,13 @@ void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 		ON_COMMAND( m_DifficultyIcon[p] );
 		ON_COMMAND( m_AutoGenIcon[p] );
 	}
+
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled( p ))
-		{
-			ON_COMMAND( m_sprNonPresence[p] );
-		}
+		if( GAMESTATE->IsPlayerEnabled(p) )
+			continue;	// skip
+
+		ON_COMMAND( m_sprNonPresence[p] );
 	}
 }
 
@@ -407,7 +409,8 @@ void ScreenSelectMusic::TweenSongPartsOffScreen( bool Final )
 			m_DifficultyList.Hide();
 	}
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{		
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
@@ -417,12 +420,13 @@ void ScreenSelectMusic::TweenSongPartsOffScreen( bool Final )
 		OFF_COMMAND( m_DifficultyIcon[p] );
 		OFF_COMMAND( m_AutoGenIcon[p] );
 	}
+
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled( p ))
-		{
-			OFF_COMMAND( m_sprNonPresence[p] );
-		}
+		if( GAMESTATE->IsPlayerEnabled( p ))
+			continue;	// skip
+
+		OFF_COMMAND( m_sprNonPresence[p] );
 	}
 }
 
