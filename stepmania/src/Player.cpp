@@ -36,6 +36,7 @@
 #include "Style.h"
 #include "MessageManager.h"
 #include "ProfileManager.h"
+#include "StatsManager.h"
 
 CString JUDGMENT_X_NAME( size_t p, size_t both_sides )		{ return "JudgmentXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
 CString COMBO_X_NAME( size_t p, size_t both_sides )			{ return "ComboXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
@@ -1306,11 +1307,16 @@ void Player::HandleTapRowScore( unsigned row )
 	if( m_pPlayerStageStats )
 		m_pPlayerStageStats->iMaxCombo = max(m_pPlayerStageStats->iMaxCombo, iCurCombo);
 
-	/* Use the real current beat, not the beat we've been passed.  That's because we
+	/*
+	 * Use the real current beat, not the beat we've been passed.  That's because we
 	 * want to record the current life/combo to the current time; eg. if it's a MISS,
-	 * the beat we're registering is in the past, but the life is changing now. */
+	 * the beat we're registering is in the past, but the life is changing now.
+	 *
+	 * We need to include time from previous songs in a course, so we can't use
+	 * GAMESTATE->m_fMusicSeconds.  Use fGameplaySeconds instead.
+	 */
 	if( m_pPlayerStageStats )
-		m_pPlayerStageStats->UpdateComboList( m_pPlayerStageStats->fAliveSeconds, false );
+		m_pPlayerStageStats->UpdateComboList( STATSMAN->m_CurStageStats.fGameplaySeconds, false );
 
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
@@ -1328,7 +1334,7 @@ void Player::HandleTapRowScore( unsigned row )
 	}
 	if( life != -1 )
 		if( m_pPlayerStageStats )
-			m_pPlayerStageStats->SetLifeRecordAt( life, m_pPlayerStageStats->fAliveSeconds );
+			m_pPlayerStageStats->SetLifeRecordAt( life, STATSMAN->m_CurStageStats.fGameplaySeconds );
 
 	if (m_pScoreDisplay)
 		if( m_pPlayerStageStats )
