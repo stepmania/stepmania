@@ -228,7 +228,8 @@ void Player::Update( float fDeltaTime )
 		const TapNoteScore tns = GetTapNoteScore(hn.iTrack, iHoldStartIndex);
 		const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this hold?
 
-		if( hn.fStartBeat < fSongBeat && fSongBeat < hn.fEndBeat )	// if the song beat is in the range of this hold
+		// If the song beat is in the range of this hold:
+		if( hn.fStartBeat <= fSongBeat && fSongBeat <= hn.fEndBeat )
 		{
 			bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
 			
@@ -251,12 +252,16 @@ void Player::Update( float fDeltaTime )
 			}
 			else
 			{
-				if( fSongBeat-hn.fStartBeat > GAMESTATE->m_fCurBPS * GetMaxStepDistanceSeconds() )
-				{
+				/* What is this conditional for?  It causes a problem: if a hold note
+				 * begins on a freeze, you can tap it and then release it for the
+				 * duration of the freeze; life doesn't count down until we're
+				 * past the first beat. */
+//				if( fSongBeat-hn.fStartBeat > GAMESTATE->m_fCurBPS * GetMaxStepDistanceSeconds() )
+//				{
 					// Decrease life
 					fLife -= fDeltaTime/PREFSMAN->m_fJudgeWindowOKSeconds;
 					fLife = max( fLife, 0 );	// clamp
-				}
+//				}
 			}
 		}
 
