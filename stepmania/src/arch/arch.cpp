@@ -81,7 +81,7 @@ void MakeInputHandlers(CString drivers, vector<InputHandler *> &Add)
 		if(!DriversToTry[i].CompareNoCase("DirectInput"))	Add.push_back(new InputHandler_DInput);
 		if(!DriversToTry[i].CompareNoCase("Pump"))			Add.push_back(new InputHandler_Win32_Pump);
 	//	if(!DriversToTry[i].CompareNoCase("Para"))			Add.push_back(new InputHandler_Win32_Para);
-#elif defined(_XBOX)
+#elif defined(XBOX)
 		if(!DriversToTry[i].CompareNoCase("Xbox"))			Add.push_back(new InputHandler_Xbox);
 #endif
 
@@ -89,7 +89,9 @@ void MakeInputHandlers(CString drivers, vector<InputHandler *> &Add)
 		if(!DriversToTry[i].CompareNoCase("SDL"))			Add.push_back(new InputHandler_SDL);
 #endif
 
+#if !defined(XBOX)
 		if(!DriversToTry[i].CompareNoCase("MonkeyKeyboard"))Add.push_back(new InputHandler_MonkeyKeyboard);
+#endif
 	}
 }
 
