@@ -575,6 +575,10 @@ int64_t DSoundBuf::GetPosition() const
 	DWORD cursor, junk;
 	HRESULT hr = buf->GetCurrentPosition( &cursor, &junk );
 	ASSERT_M( SUCCEEDED(hr), hr_ssprintf(hr, "GetCurrentPosition") );
+
+	/* This happens occasionally on "Realtek AC97 Audio". */
+	if( (int) cursor == buffersize )
+		cursor = 0;
 	ASSERT_M( (int) cursor < buffersize, ssprintf("%i, %i", cursor, buffersize) );
 
 	int cursor_frames = int(cursor) / bytes_per_frame();
