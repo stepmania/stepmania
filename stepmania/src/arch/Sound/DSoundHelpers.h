@@ -29,7 +29,8 @@ class DSoundBuf
 	int buffersize_frames() const { return buffersize / samplesize(); }
 	int samplesize() const { return channels*samplebits/8; }
 
-	int write_cursor, last_cursor_pos; /* frames */
+	int write_cursor, buffer_bytes_filled; /* bytes */
+	int last_cursor_pos; /* frames */
 	mutable int LastPosition;
 
 	bool buffer_locked;

@@ -53,7 +53,7 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	samplebits = samplebits_;
 	writeahead = writeahead_;
 	buffer_locked = false;
-	last_cursor_pos = write_cursor = LastPosition = 0;
+	last_cursor_pos = write_cursor = LastPosition = buffer_bytes_filled = 0;
 
 	/* The size of the actual DSound buffer.  This can be large; we generally
 	 * won't fill it completely. */
@@ -123,6 +123,15 @@ void DSoundBuf::SetVolume(float vol)
 		buf->SetVolume(max(int(1000 * vl2), DSBVOLUME_MIN));
 }
 
+/* Determine if "pos" is between "start" and "end", for a circular buffer. */
+bool contained(int start, int end, int pos)
+{
+	if(end >= start) /* start ... pos ... end */
+		return start <= pos && pos <= end;
+	else
+		return pos >= start || pos <= end;
+}
+
 DSoundBuf::~DSoundBuf()
 {
 	buf->Release();
@@ -132,22 +141,22 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, i
 {
 	ASSERT(!buffer_locked);
 
-	DWORD cursor, junk, write;
+	DWORD cursorstart, junk, cursorend;
 
 	HRESULT result;
 
-	result = buf->GetCurrentPosition(&cursor, &write);
+	/* It's easiest to think of the cursor as a block, starting and ending at
+	 * the two values returned by GetCurrentPosition, that we can't write to. */
+	result = buf->GetCurrentPosition(&cursorstart, &cursorend);
 	if ( result == DSERR_BUFFERLOST ) {
 		buf->Restore();
-		result = buf->GetCurrentPosition(&cursor, &write);
+		result = buf->GetCurrentPosition(&cursorstart, &cursorend);
 	}
 	if ( result != DS_OK ) {
 		LOG->Warn(hr_ssprintf(result, "DirectSound::GetCurrentPosition failed"));
 		return false;
 	}
 
-	int num_bytes_empty = cursor - write_cursor;
-	if(num_bytes_empty <= 0) num_bytes_empty += buffersize; /* unwrap */
 
 	/* XXX We can figure out if we've underrun, and increase the write-ahead
 	 * when it happens.  Two problems:
@@ -156,45 +165,59 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, i
 	 * 2. We don't want a random underrun (eg. virus scanner starts) to
 	 *    permanently increase our write-ahead.  We want the smallest possible
 	 *    that will give us reliable audio in normal conditions.  I'm not sure
-	 *    of a robust way to do this.  We could decrease the buffer size if
-	 *    we seem to be consistently ahead, but that's getting a little messy ...
+	 *    of a robust way to do this.
 	 *
 	 * Also, writeahead should be a static (all buffers write ahead the same
 	 * amount); writeahead in the ctor should be a hint only (initial value),
 	 * and the sound driver should query a sound to get the current writeahead
 	 * in GetLatencySeconds().
 	 */
-#if 0
+
 	{
-	    /* Figure out the amount of space we're not supposed to write to: */
-	    int unwritable = write-cursor;
-	    if(unwritable < 0) unwritable += buffersize; /* unwrap */
+		int first_byte_filled = write_cursor-buffer_bytes_filled;
+		if(first_byte_filled < 0) first_byte_filled += buffersize; /* unwrap */
 
-	    if(writeahead < unwritable)
-	    {
-			writeahead = unwritable*2;
-			LOG->Trace("boosted buffersize to %i", writeahead);
-	    }
+		int current_cursor = cursorstart;
+		if(current_cursor < first_byte_filled) current_cursor += buffersize;
 
-	    /* */
-	    if(num_bytes_empty > buffersize - unwritable)
-	    {
-//			writeahead += 512;
-//			LOG->Trace("underflow; bs now %i", writeahead);
-	    }
+		/* The number of bytes that have been played since the last time we got here: */
+		int bytes_played = current_cursor - first_byte_filled;
+		buffer_bytes_filled -= bytes_played;
+
+		/* Data between the play cursor and the write cursor is committed to be
+		 * played.  If we don't actually have data there, we've underrun. */
+		if(!contained(first_byte_filled, write_cursor, cursorstart) ||
+		   !contained(first_byte_filled, write_cursor, cursorend))
+		{
+			LOG->Trace("underrun: %i..%i filled but cursor at %i..%i (missed it by %i)",
+				first_byte_filled, write_cursor, cursorstart, cursorend, (cursorend - first_byte_filled + buffersize) % buffersize);
+
+			/* Pretend the space between the play and write cursor is filled
+			 * with data, and continue filling from there. */
+			int no_write_zone_size = cursorend - cursorstart;
+			if(no_write_zone_size < 0) no_write_zone_size += buffersize; /* unwrap */
+
+			buffer_bytes_filled = no_write_zone_size;
+			write_cursor = cursorend;
+
+			/* Don't register another buffer underrun until the play cursor
+			 * passes the new write cursor. */
+		}
 	}
-#endif
 
-	int num_bytes_filled = buffersize - num_bytes_empty;
-	if(num_bytes_filled > writeahead)
+
+	/* If we already have enough bytes written ahead, stop. */
+	if(buffer_bytes_filled > writeahead)
 		return false;
 
-	/* num_bytes_empty is now the actual amount of free buffer space.  If it's
+	int num_bytes_empty = buffersize-buffer_bytes_filled;
+
+	/* num_bytes_empty is the amount of free buffer space.  If it's
 	 * too small, come back later. */
 	if(num_bytes_empty < chunksize)
 		return false;
 
-	/* I don't want to deal with DSound's split-circular-buffer locking stuff, so cap
+	/* I don't want to deal with DSound's split-circular-buffer locking stuff, so clamp
 	 * the writing space at the end of the physical buffer. */
 	num_bytes_empty = min(num_bytes_empty, buffersize - write_cursor);
 
@@ -203,7 +226,7 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, i
 	 * we'll give some data soon instead of lots of data later. */
 	num_bytes_empty = min(num_bytes_empty, chunksize);
 
-//	LOG->Trace("gave %i at %i (%i, %i) %i filled", num_bytes_empty, write_cursor, cursor, write, num_bytes_filled );
+//	LOG->Trace("gave %i at %i (%i, %i) %i filled", num_bytes_empty, write_cursor, cursor, write, buffer_bytes_filled);
 
 	/* Lock the audio buffer. */
 	result = buf->Lock(write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, &junk, 0);
@@ -218,6 +241,8 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, i
 
 	write_cursor += num_bytes_empty;
 	if(write_cursor >= buffersize) write_cursor -= buffersize;
+
+	buffer_bytes_filled += num_bytes_empty;
 
 	*play_pos = last_cursor_pos;
 	
@@ -266,7 +291,7 @@ void DSoundBuf::Stop()
 {
 	buf->Stop();
 	buf->SetCurrentPosition(0);
-	last_cursor_pos = LastPosition = write_cursor = 0;
+	last_cursor_pos = LastPosition = write_cursor = buffer_bytes_filled = 0;
 }
 
 
