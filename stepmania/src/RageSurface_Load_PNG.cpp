@@ -25,7 +25,19 @@
 #define png_jmpbuf(png) ((png)->jmpbuf)
 #endif
 
-static void RageFile_png_read( png_struct *png, png_byte *p, png_size_t size )
+/*
+ * I prefer static over anonymous namespaces for functions; it's clearer and seems
+ * to have no language drawbacks over anonymous namespaces, which are only really
+ * needed when declaring things more complicated than functions.
+ *
+ * There's an implementation advantage, though: functions declared in anonymous
+ * namespaces are still exported by gcc -rdynamic, which means the crash handler can
+ * still resolve them.  static functions aren't, so we end up getting a wrong match.
+ */
+
+namespace
+{
+void RageFile_png_read( png_struct *png, png_byte *p, png_size_t size )
 {
 	RageFile *f = (RageFile *) png->io_ptr;
 
@@ -42,7 +54,7 @@ struct error_info
 	const char *fn;
 };
 
-static void PNG_Error( png_struct *png, const char *error )
+void PNG_Error( png_struct *png, const char *error )
 {
 	error_info *info = (error_info *) png->error_ptr;
 	strncpy( info->err, error, 1024 );
@@ -51,7 +63,7 @@ static void PNG_Error( png_struct *png, const char *error )
 	longjmp( png_jmpbuf(png), 1 );
 }
 
-static void PNG_Warning( png_struct *png, const char *warning )
+void PNG_Warning( png_struct *png, const char *warning )
 {
 	error_info *info = (error_info *) png->error_ptr;
 	LOG->Trace( "loading \"%s\": warning: %s", info->fn, warning );
@@ -241,6 +253,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	return img;
 }
 
+};
 
 RageSurfaceUtils::OpenResult RageSurface_Load_PNG( const CString &sPath, RageSurface *&ret, bool bHeaderOnly, CString &error )
 {
