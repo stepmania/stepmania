@@ -156,6 +156,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 	default:
 		ASSERT(0);
 	}
+	LOG->Trace( "total error %i", stageStats.iTotalError[0], stageStats.iTotalError[1] );
 
 /*
 	//
