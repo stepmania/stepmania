@@ -26,7 +26,7 @@
 #define OPTION_ORDER( dir )						THEME->GetMetric (m_sName,"OptionOrder"+CString(dir))
 #define SHOW_SCROLLER							THEME->GetMetricB(m_sName,"ShowScroller")
 #define SCROLLER_SECONDS_PER_ITEM				THEME->GetMetricF(m_sName,"ScrollerSecondsPerItem")
-#define SCROLLER_NUM_ITEMS_TO_DRAW				THEME->GetMetricF(m_sName,"ScrollerNumItemsToDraw")
+#define SCROLLER_NUM_ITEMS_TO_DRAW				THEME->GetMetricI(m_sName,"ScrollerNumItemsToDraw")
 #define SCROLLER_SPACING_X						THEME->GetMetricF(m_sName,"ScrollerSpacingX")
 #define SCROLLER_SPACING_Y						THEME->GetMetricF(m_sName,"ScrollerSpacingY")
 #define DEFAULT_CHOICE							THEME->GetMetric (m_sName,"DefaultChoice")
