@@ -16,12 +16,6 @@
 #include "ScreenDimensions.h"
 #include "Command.h"
 
-#define ITEMS_LONG_ROW_SHARED_X			THEME->GetMetricF(m_sName,"ItemsLongRowSharedX")
-#define ITEMS_LONG_ROW_X( p )			THEME->GetMetricF(m_sName,ssprintf("ItemsLongRowP%dX",p+1))
-#define ICONS_X( p )					THEME->GetMetricF(m_sName,ssprintf("IconsP%dX",p+1))
-#define EXPLANATION_X(p)				THEME->GetMetricF(m_sName,ssprintf("ExplanationP%dX",p+1))
-#define EXPLANATION_Y(p)				THEME->GetMetricF(m_sName,ssprintf("ExplanationP%dY",p+1))
-#define EXPLANATION_ON_COMMAND(p)		THEME->GetMetricA(m_sName,ssprintf("ExplanationP%dOnCommand",p+1))
 
 /*
  * These navigation types are provided:
@@ -69,47 +63,58 @@
  * in player options menus, but it should in the options menu.
  */
 
+CString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",p+1); }
+CString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",p+1); }
+CString EXPLANATION_X_NAME( size_t p )			{ return ssprintf("ExplanationP%dX",p+1); }
+CString EXPLANATION_Y_NAME( size_t p )			{ return ssprintf("ExplanationP%dX",p+1); }
+CString EXPLANATION_ON_COMMAND_NAME( size_t p )	{ return ssprintf("ExplanationP%dOnCommand",p+1); }
+
+
 //REGISTER_SCREEN_CLASS( ScreenOptions );	// can't be instantiated
-ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName)
+ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName),
+	ARROWS_X   						(m_sName,"ArrowsX"),
+	LABELS_X						(m_sName,"LabelsX"),
+	LABELS_ZOOM						(m_sName,"LabelsZoom"),
+	LABELS_H_ALIGN					(m_sName,"LabelsHAlign"),
+	ITEMS_ZOOM						(m_sName,"ItemsZoom"),
+	ITEMS_START_X					(m_sName,"ItemsStartX"),
+	ITEMS_END_X						(m_sName,"ItemsEndX"),
+	ITEMS_GAP_X						(m_sName,"ItemsGapX"),
+	ITEMS_LONG_ROW_X				(m_sName,ITEMS_LONG_ROW_X_NAME,NUM_PLAYERS),
+	ITEMS_LONG_ROW_SHARED_X			(m_sName,"ItemsLongRowSharedX"),
+	ITEMS_START_Y					(m_sName,"ItemsStartY"),
+	ITEMS_SPACING_Y					(m_sName,"ItemsSpacingY"),
+	ICONS_X							(m_sName,ICONS_X_NAME,NUM_PLAYERS),
+	EXPLANATION_X					(m_sName,EXPLANATION_X_NAME,NUM_PLAYERS),
+	EXPLANATION_Y					(m_sName,EXPLANATION_Y_NAME,NUM_PLAYERS),
+	EXPLANATION_ON_COMMAND			(m_sName,EXPLANATION_ON_COMMAND_NAME,NUM_PLAYERS),
+	EXPLANATION_TOGETHER_X			(m_sName,"ExplanationTogetherX"),
+	EXPLANATION_TOGETHER_Y			(m_sName,"ExplanationTogetherY"),
+	EXPLANATION_TOGETHER_ON_COMMAND	(m_sName,"ExplanationTogetherOnCommand"),
+	SHOW_SCROLL_BAR					(m_sName,"ShowScrollBar"),
+	SCROLL_BAR_HEIGHT				(m_sName,"ScrollBarHeight"),
+	SCROLL_BAR_TIME					(m_sName,"ScrollBarTime"),
+	EXPLANATION_ZOOM				(m_sName,"ExplanationZoom"),
+	COLOR_SELECTED					(m_sName,"ColorSelected"),
+	COLOR_NOT_SELECTED				(m_sName,"ColorNotSelected"),
+	NUM_SHOWN_ITEMS					(m_sName,"NumShownItems"),
+	SHOW_BPM_IN_SPEED_TITLE			(m_sName,"ShowBpmInSpeedTitle"),
+	FRAME_ON_COMMAND				(m_sName,"FrameOnCommand"),
+	FRAME_OFF_COMMAND				(m_sName,"FrameOffCommand"),
+	SEPARATE_EXIT_ROW				(m_sName,"SeparateExitRow"),
+	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY"),
+	CAPITALIZE_ALL_OPTION_NAMES		(m_sName,"CapitalizeAllOptionNames")
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
 
 
-	ARROWS_X.Load   					(m_sName,"ArrowsX");
-	LABELS_X.Load						(m_sName,"LabelsX");
-	LABELS_ZOOM.Load					(m_sName,"LabelsZoom");
-	LABELS_H_ALIGN.Load					(m_sName,"LabelsHAlign");
-	ITEMS_ZOOM.Load						(m_sName,"ItemsZoom");
-	ITEMS_START_X.Load					(m_sName,"ItemsStartX");
-	ITEMS_END_X.Load					(m_sName,"ItemsEndX");
-	ITEMS_GAP_X.Load					(m_sName,"ItemsGapX");
-	ITEMS_START_Y.Load					(m_sName,"ItemsStartY");
-	ITEMS_SPACING_Y.Load				(m_sName,"ItemsSpacingY");
-	EXPLANATION_TOGETHER_X.Load			(m_sName,"ExplanationTogetherX");
-	EXPLANATION_TOGETHER_Y.Load			(m_sName,"ExplanationTogetherY");
-	EXPLANATION_TOGETHER_ON_COMMAND.Load(m_sName,"ExplanationTogetherOnCommand");
-	SHOW_SCROLL_BAR.Load				(m_sName,"ShowScrollBar");
-	SCROLL_BAR_HEIGHT.Load				(m_sName,"ScrollBarHeight");
-	SCROLL_BAR_TIME.Load				(m_sName,"ScrollBarTime");
-	EXPLANATION_ZOOM.Load				(m_sName,"ExplanationZoom");
-	COLOR_SELECTED.Load					(m_sName,"ColorSelected");
-	COLOR_NOT_SELECTED.Load				(m_sName,"ColorNotSelected");
-	NUM_SHOWN_ITEMS.Load				(m_sName,"NumShownItems");
-	SHOW_BPM_IN_SPEED_TITLE.Load		(m_sName,"ShowBpmInSpeedTitle");
-	FRAME_ON_COMMAND.Load				(m_sName,"FrameOnCommand");
-	FRAME_OFF_COMMAND.Load				(m_sName,"FrameOffCommand");
-	SEPARATE_EXIT_ROW.Load				(m_sName,"SeparateExitRow");
-	SEPARATE_EXIT_ROW_Y.Load			(m_sName,"SeparateExitRowY");
-	CAPITALIZE_ALL_OPTION_NAMES.Load	(m_sName,"CapitalizeAllOptionNames");
-
-
 	m_OptionsNavigation = PREFSMAN->m_bArcadeOptionsNavigation? NAV_THREE_KEY:NAV_FIVE_KEY;
 
-	m_SoundChangeCol.Load( THEME->GetPathS("ScreenOptions","change"), true );
-	m_SoundNextRow.Load( THEME->GetPathS("ScreenOptions","next"), true );
-	m_SoundPrevRow.Load( THEME->GetPathS("ScreenOptions","prev"), true );
-	m_SoundToggleOn.Load( THEME->GetPathS("ScreenOptions","toggle on") );
-	m_SoundToggleOff.Load( THEME->GetPathS("ScreenOptions","toggle off") );
+	m_SoundChangeCol.Load( THEME->GetPathS(m_sName,"change"), true );
+	m_SoundNextRow.Load( THEME->GetPathS(m_sName,"next"), true );
+	m_SoundPrevRow.Load( THEME->GetPathS(m_sName,"prev"), true );
+	m_SoundToggleOn.Load( THEME->GetPathS(m_sName,"toggle on") );
+	m_SoundToggleOff.Load( THEME->GetPathS(m_sName,"toggle off") );
 
 	// add everything to m_framePage so we can animate everything at once
 	this->AddChild( &m_framePage );
@@ -222,7 +227,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	// init line highlights
 	FOREACH_HumanPlayer( p )
 	{
-		m_sprLineHighlight[p].Load( THEME->GetPathG("ScreenOptions","line highlight") );
+		m_sprLineHighlight[p].Load( THEME->GetPathG(m_sName,"line highlight") );
 		m_sprLineHighlight[p].SetName( "LineHighlight" );
 		m_sprLineHighlight[p].SetX( SCREEN_CENTER_X );
 		m_framePage.AddChild( &m_sprLineHighlight[p] );
@@ -265,7 +270,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 			// init text
 			BitmapText *bt = new BitmapText;
 			textItems.push_back( bt );
-			bt->LoadFromFont( THEME->GetPathF("ScreenOptions","item") );
+			bt->LoadFromFont( THEME->GetPathF(m_sName,"item") );
 			CString sText = optline.choices[c];
 			if( CAPITALIZE_ALL_OPTION_NAMES )
 				sText.MakeUpper();
@@ -317,7 +322,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 
 				const int iChoiceInRowWithFocus = row.m_iChoiceInRowWithFocus[p];
 
-				bt->LoadFromFont( THEME->GetPathF("ScreenOptions","item") );
+				bt->LoadFromFont( THEME->GetPathF(m_sName,"item") );
 				bt->SetText( optline.choices[iChoiceInRowWithFocus] );
 				bt->SetZoom( ITEMS_ZOOM );
 				bt->SetShadowLength( 0 );
@@ -329,7 +334,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 				}
 				else
 				{
-					bt->SetX( ITEMS_LONG_ROW_X(p) );
+					bt->SetX( ITEMS_LONG_ROW_X.GetValue(p) );
 				}
 			}
 
@@ -365,7 +370,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	BitmapText *bt = new BitmapText;
 	row.m_textItems.push_back( bt );
 
-	bt->LoadFromFont( THEME->GetPathF("ScreenOptions","item") );
+	bt->LoadFromFont( THEME->GetPathF(m_sName,"item") );
 	bt->SetText( THEME->GetMetric("OptionNames","Exit") );
 	bt->SetZoom( ITEMS_ZOOM );
 	bt->SetShadowLength( 0 );
@@ -378,7 +383,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	// add explanation here so it appears on top
 	FOREACH_PlayerNumber( p )
 	{
-		m_textExplanation[p].LoadFromFont( THEME->GetPathF("ScreenOptions","explanation") );
+		m_textExplanation[p].LoadFromFont( THEME->GetPathF(m_sName,"explanation") );
 		m_textExplanation[p].SetZoom( EXPLANATION_ZOOM );
 		m_textExplanation[p].SetShadowLength( 0 );
 		m_framePage.AddChild( &m_textExplanation[p] );
@@ -390,7 +395,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	{
 		FOREACH_HumanPlayer( p )
 		{
-			m_textPlayerName[p].LoadFromFont( THEME->GetPathF("ScreenOptions","player") );
+			m_textPlayerName[p].LoadFromFont( THEME->GetPathF(m_sName,"player") );
 			m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
 			m_textPlayerName[p].SetText( GAMESTATE->GetPlayerDisplayName(p) );
 			SET_XY_AND_ON_COMMAND( m_textPlayerName[p] );
@@ -410,8 +415,8 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 		m_framePage.AddChild( &m_ScrollBar );
 	}
 
-	m_sprMore.Load( THEME->GetPathG( "ScreenOptions","more") );
-	m_sprMore->SetName( "ScreenOptions", "More" );
+	m_sprMore.Load( THEME->GetPathG( m_sName,"more") );
+	m_sprMore->SetName( m_sName, "More" );
 	SET_XY_AND_ON_COMMAND( m_sprMore );
 	COMMAND( m_sprMore, m_bMoreShown? "ShowMore":"HideMore" );
 	m_framePage.AddChild( m_sprMore );
@@ -421,7 +426,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	case INPUTMODE_INDIVIDUAL:
 		{
 			FOREACH_PlayerNumber( p )
-				m_textExplanation[p].SetXY( EXPLANATION_X(p), EXPLANATION_Y(p) );
+				m_textExplanation[p].SetXY( EXPLANATION_X.GetValue(p), EXPLANATION_Y.GetValue(p) );
 		}
 		break;
 	case INPUTMODE_SHARE_CURSOR:
@@ -434,7 +439,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	FOREACH_PlayerNumber( p )
 	{
 		m_sprDisqualify[p].Load( THEME->GetPathG(m_sName,"disqualify") );
-		m_sprDisqualify[p]->SetName( "ScreenOptions", ssprintf("DisqualifyP%i",p+1) );
+		m_sprDisqualify[p]->SetName( m_sName, ssprintf("DisqualifyP%i",p+1) );
 		SET_XY_AND_ON_COMMAND( m_sprDisqualify[p] );
 		m_sprDisqualify[p]->SetHidden( true );	// unhide later if handicapping options are discovered
 		m_framePage.AddChild( m_sprDisqualify[p] );
@@ -687,7 +692,7 @@ void ScreenOptions::PositionIcons()
 
 			int iWidth, iX, iY;			// We only use iY
 			GetWidthXY( p, i, iChoiceWithFocus, iWidth, iX, iY );
-			icon.SetX( ICONS_X(p) );
+			icon.SetX( ICONS_X.GetValue(p) );
 
 			if( icon.GetDestY() != row.m_fY )
 			{
@@ -1089,7 +1094,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 		if( pText->GetText() != text )
 		{
 			pText->FinishTweening();
-			pText->RunCommands( EXPLANATION_ON_COMMAND(pn) );
+			pText->RunCommands( EXPLANATION_ON_COMMAND.GetValue(pn) );
 			pText->SetText( text );
 		}
 		break;
