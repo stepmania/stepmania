@@ -223,7 +223,6 @@ void ScreenRanking::Init()
 
 		m_ListScoreRowItems.SetName( "ListScoreRowItems" );
 		this->AddChild( &m_ListScoreRowItems );
-		m_ListScoreRowItems.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	}
 
 	{
