@@ -59,6 +59,7 @@ public:
 	void Stop();
 	void SetVolume(float vol);
 	void SetSampleRate(int hz);
+	int GetSampleRate() { return samplerate; }
 
 	~DSoundBuf();
 	int GetPosition() const;
