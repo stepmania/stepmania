@@ -42,6 +42,10 @@
 #define SPEEDICON_Y( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("SpeedIconP%dY",p+1))
 #define MIRRORICON_X( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("MirrorIconP%dX",p+1))
 #define MIRRORICON_Y( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("MirrorIconP%dY",p+1))
+#define HIDDENICON_X( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("HiddenIconP%dX",p+1))
+#define HIDDENICON_Y( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("HiddenIconP%dY",p+1))
+#define VANISHICON_X( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("VanishIconP%dX",p+1))
+#define VANISHICON_Y( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("VanishIconP%dY",p+1))
 #define SHUFFLEICON_X( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("ShuffleIconP%dX",p+1))
 #define SHUFFLEICON_Y( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("ShuffleIconP%dY",p+1))
 #define PREVIEWMUSICMODE		THEME->GetMetricI("ScreenEz2SelectMusic","PreviewMusicMode")
@@ -123,6 +127,16 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 			m_ShuffleIcon[p].SetXY( SHUFFLEICON_X(p), SHUFFLEICON_Y(p) );
 			m_ShuffleIcon[p].SetDiffuse( RageColor(0,0,0,0) );
 			this->AddChild(&m_ShuffleIcon[p] );
+
+			m_HiddenIcon[p].Load( THEME->GetPathToG("ScreenEz2SelectMusic hiddenicon"));
+			m_HiddenIcon[p].SetXY( HIDDENICON_X(p), HIDDENICON_Y(p) );
+			m_HiddenIcon[p].SetDiffuse( RageColor(0,0,0,0) );
+			this->AddChild(&m_HiddenIcon[p] );
+
+			m_VanishIcon[p].Load( THEME->GetPathToG("ScreenEz2SelectMusic vanishicon"));
+			m_VanishIcon[p].SetXY( VANISHICON_X(p), VANISHICON_Y(p) );
+			m_VanishIcon[p].SetDiffuse( RageColor(0,0,0,0) );
+			this->AddChild(&m_VanishIcon[p] );
 
 			UpdateOptions((PlayerNumber) p,0);
 
@@ -250,6 +264,14 @@ void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn, int nosound)
 			{
 				m_ShuffleIcon[pn].SetDiffuse( RageColor(1,1,1,1) );
 			}
+			else if(asOptions[i] == "Hidden")
+			{
+				m_HiddenIcon[pn].SetDiffuse( RageColor(1,1,1,1) );
+			}
+			else if(asOptions[i] == "RandomVanish")
+			{
+				m_VanishIcon[pn].SetDiffuse( RageColor(1,1,1,1) );
+			}
 		}
 	}
 	else
@@ -257,6 +279,8 @@ void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn, int nosound)
 		m_SpeedIcon[pn].SetDiffuse( RageColor(0,0,0,0) );
 		m_MirrorIcon[pn].SetDiffuse( RageColor(0,0,0,0) );
 		m_ShuffleIcon[pn].SetDiffuse( RageColor(0,0,0,0) );
+		m_HiddenIcon[pn].SetDiffuse( RageColor(0,0,0,0) );
+		m_VanishIcon[pn].SetDiffuse( RageColor(0,0,0,0) );
 	}
 	if(nosound !=0)
 		m_soundOptionsChange.Play();

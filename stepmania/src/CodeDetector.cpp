@@ -11,6 +11,7 @@
 */
 
 #include "CodeDetector.h"
+#include "PlayerOptions.h"
 #include "GameState.h"
 #include "InputQueue.h"
 #include "ThemeManager.h"
@@ -41,6 +42,8 @@ const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"Reverse",
 	"HoldNotes",
 	"Dark",
+	"Hidden",
+	"RandomVanish",
 	"CancelAll",
 	"NextTheme",
 	"NextAnnouncer"
@@ -136,6 +139,9 @@ bool CodeDetector::EnteredNextSort( GameController controller )
 #define  INCREMENT_SCROLL_SPEED(s)	(s==0.5f) ? s=0.75f : (s==0.75f) ? s=1.0f : (s==1.0f) ? s=1.5f : (s==1.5f) ? s=2.0f : (s==2.0f) ? s=3.0f : (s==3.0f) ? s=4.0f : (s==4.0f) ? s=5.0f : (s==5.0f) ? s=8.0f : s=0.5f;
 #define  DECREMENT_SCROLL_SPEED(s)	(s==0.75f) ? s=0.5f : (s==1.0f) ? s=0.75f : (s==1.5f) ? s=1.0f : (s==2.0f) ? s=1.5f : (s==3.0f) ? s=2.0f : (s==4.0f) ? s=3.0f : (s==5.0f) ? s=4.0f : (s==8.0f) ? s=4.0f : s=8.0f;
 
+#define  TOGGLE_HIDDEN ZERO(GAMESTATE->m_PlayerOptions[pn].m_fAppearances); GAMESTATE->m_PlayerOptions[pn].m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN] = 1; 
+#define  TOGGLE_RANDOMVANISH ZERO(GAMESTATE->m_PlayerOptions[pn].m_fAppearances); GAMESTATE->m_PlayerOptions[pn].m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] = 1;
+
 bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 {
 	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
@@ -159,12 +165,16 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 			case CODE_PREVIOUS_SCROLL_SPEED:DECREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fScrollSpeed );	break;
 			case CODE_NEXT_ACCEL:		GAMESTATE->m_PlayerOptions[pn].NextAccel();										break;
 			case CODE_NEXT_EFFECT:		GAMESTATE->m_PlayerOptions[pn].NextEffect();									break;
-			case CODE_NEXT_APPEARANCE:	GAMESTATE->m_PlayerOptions[pn].NextAppearance();;								break;
+			case CODE_NEXT_APPEARANCE:	GAMESTATE->m_PlayerOptions[pn].NextAppearance();								break;
 			case CODE_NEXT_TURN:		GAMESTATE->m_PlayerOptions[pn].NextTurn();										break;
 			case CODE_REVERSE:			FLOAT_TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_fReverseScroll );				break;
 			case CODE_HOLDS:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bHoldNotes, true, false );				break;
 			case CODE_DARK:				FLOAT_TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_fDark );							break;
 			case CODE_CANCEL_ALL:		GAMESTATE->m_PlayerOptions[pn].Init();								break;
+			case CODE_HIDDEN:			TOGGLE_HIDDEN break;
+			case CODE_RANDOMVANISH:		TOGGLE_RANDOMVANISH break;
+				
+				// GAMESTATE->m_PlayerOptions[pn].SetOneAppearance(GAMESTATE->m_PlayerOptions[pn].GetFirstAppearance()); break;
 			}
 			return true;	// don't check any more
 		}

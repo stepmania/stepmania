@@ -983,7 +983,13 @@ void ScreenGameplay::Update( float fDeltaTime )
 		for( ; m_iRowLastCrossed <= iRowNow; m_iRowLastCrossed++ )  // for each index we crossed since the last update
 			for( pn=0; pn<NUM_PLAYERS; pn++ )
 				if( GAMESTATE->IsPlayerEnabled(pn) )
+				{
+					if(GAMESTATE->m_CurrentPlayerOptions[pn].m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1) // if we're doing random vanish
+					{
+						m_Player[pn].RandomiseNotes( m_iRowLastCrossed ); // randomise notes on the fly
+					}
 					m_Player[pn].CrossedRow( m_iRowLastCrossed );
+				}
 	}
 
 	if( GAMESTATE->m_SongOptions.m_bAssistTick && IsTimeToPlayTicks())

@@ -53,6 +53,7 @@ const OptionColumnEntry g_OptionColumnEntries[] =
 	{"Sudden",		2},
 	{"Stealth",		2},
 	{"Blink",		2},
+	{"RandomVanish", 2},
 	{"Mirror",		3},
 	{"Left",		3},
 	{"Right",		3},

@@ -144,6 +144,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	CString BackdropName = g_NoteFieldMode[pn].m_Backdrop;
 	if( !BackdropName.empty() )
 		m_ArrowBackdrop.LoadFromAniDir( THEME->GetPathToB( BackdropName ) );
+
 	m_NoteField.Load( (NoteData*)this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels );
 	
 	m_ArrowBackdrop.SetPlayer( pn );
@@ -572,6 +573,35 @@ void Player::CrossedRow( int iNoteRow )
 				 Step( t );
 }
 
+void Player::RandomiseNotes( int iNoteRow )
+{
+	int NewNoteRow = iNoteRow + 50 / GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fScrollSpeed; // change the row to look ahead from based upon their speed mod
+	// check to see if they're at the crossed row
+	int EmptyNoteCol = -1;
+	int WaitingForEmptyColumn = -1;
+
+	bool b_updatenotedata = false;
+	int iNumOfTracks = GetNumTracks();
+	for(int t=0; t<iNumOfTracks; t++)
+	{
+		if(t+1 < iNumOfTracks)
+		{
+			int iRandomTrackToSwapWith = RandomInt(0, iNumOfTracks-1);
+			TapNote t1 = GetTapNote(t, NewNoteRow);
+			TapNote t2 = GetTapNote(iRandomTrackToSwapWith, NewNoteRow);
+			if((t1 == TAP_TAP || t1 == TAP_EMPTY) && (t2 == TAP_TAP || t2 == TAP_EMPTY) && (!(t1 == TAP_EMPTY && t2 == TAP_EMPTY) && !(t1 == TAP_TAP && t2 == TAP_TAP)))
+			{
+				SetTapNote(t, NewNoteRow, t2);
+				SetTapNote(iRandomTrackToSwapWith, NewNoteRow, t1);
+				b_updatenotedata = true;
+			}
+		}
+	}
+	if(b_updatenotedata)
+	{
+		m_NoteField.CopyAll((NoteData*)this);
+	}
+}
 
 void Player::HandleTapRowScore( unsigned row )
 {

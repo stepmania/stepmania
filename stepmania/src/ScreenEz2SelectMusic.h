@@ -60,6 +60,8 @@ protected:
 	Sprite	m_SpeedIcon[NUM_PLAYERS];
 	Sprite	m_MirrorIcon[NUM_PLAYERS];
 	Sprite	m_ShuffleIcon[NUM_PLAYERS];
+	Sprite	m_HiddenIcon[NUM_PLAYERS];
+	Sprite	m_VanishIcon[NUM_PLAYERS];
 	BitmapText	m_PumpDifficultyRating;
 
 	RageSound			m_soundOptionsChange;

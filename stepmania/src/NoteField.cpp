@@ -420,7 +420,6 @@ void NoteField::DrawPrimitives()
 				float fBeat = NoteRowToBeat(i);
 				bIsInSelectionRange = m_fBeginMarker<=fBeat && fBeat<=m_fEndMarker;
 			}
-
 			m_NoteDisplay[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail );
 		}
 
@@ -428,7 +427,6 @@ void NoteField::DrawPrimitives()
 	}
 
 }
-
 
 void NoteField::RemoveTapNoteRow( int iIndex )
 {

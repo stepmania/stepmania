@@ -97,6 +97,7 @@ CString PlayerOptions::GetString()
 	if( m_fAppearances[APPEARANCE_SUDDEN]==1 )	sReturn += "Sudden, ";
 	if( m_fAppearances[APPEARANCE_STEALTH]==1 )	sReturn += "Stealth, ";
 	if( m_fAppearances[APPEARANCE_BLINK]==1 )	sReturn += "Blink, ";
+	if( m_fAppearances[APPEARANCE_RANDOMVANISH]==1) sReturn += "RandomVanish, ";
 
 	if( m_fReverseScroll == 1 )		sReturn += "Reverse, ";
 
@@ -184,6 +185,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "sudden" )		m_fAppearances[APPEARANCE_SUDDEN] = 1;
 		else if( sBit == "stealth" )	m_fAppearances[APPEARANCE_STEALTH] = 1;
 		else if( sBit == "blink" )		m_fAppearances[APPEARANCE_BLINK] = 1;
+		else if( sBit == "randomvanish" ) m_fAppearances[APPEARANCE_RANDOMVANISH] = 1;
 		else if( sBit == "mirror" )		m_Turn = TURN_MIRROR;
 		else if( sBit == "left" )		m_Turn = TURN_LEFT;
 		else if( sBit == "right" )		m_Turn = TURN_RIGHT;

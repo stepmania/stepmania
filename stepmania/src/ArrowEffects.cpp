@@ -165,6 +165,30 @@ float ArrowGetPercentVisible( PlayerNumber pn, float fYPos )
         f = froundf( f, 0.3333f );
 		fVisibleAdjust += SCALE( f, 0, 1, -1, 0 );
 	}
+	if( fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] > 0)
+	{
+		
+		float adjustment = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
+		if(adjustment == 0)
+			adjustment = 1;
+
+		float fRealCenterLine = fCenterLine / adjustment;
+		const float fDistFromRealCenterLine = fYPos - fRealCenterLine;
+		float fRealFadeDist = (fFadeDist - 20) / adjustment;
+		
+		if(fYPos >= fRealCenterLine + (fRealFadeDist))
+		{
+			fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] * (SCALE( fDistFromRealCenterLine-fRealFadeDist, 0, (fRealFadeDist), -1, 0 )); // go hidden
+		}
+		else if(fYPos <= fRealCenterLine - (fRealFadeDist))
+		{
+			fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] * (SCALE( fDistFromRealCenterLine+fRealFadeDist, 0, -((fRealFadeDist)), -1, 0 )); // suddenly appear
+		}
+		else
+		{
+			fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] * -1; // be invisible
+		}
+	}
 
 	return clamp( 1+fVisibleAdjust, 0, 1 );
 }
