@@ -14,23 +14,6 @@
 
 #include <errno.h>
 
-/* Pull in all of our SDL libraries here. */
-#ifdef _XBOX
-	#ifdef DEBUG
-	#pragma comment(lib, "SDLx-0.02/SDLxd.lib")
-	#else
-	#pragma comment(lib, "SDLx-0.02/SDLx.lib")
-	#endif
-#elif defined _WINDOWS
-	#ifdef DEBUG
-	#pragma comment(lib, "SDL-1.2.6/lib/SDLd.lib")
-	#else
-	#pragma comment(lib, "SDL-1.2.6/lib/SDL.lib")
-	#endif
-#endif
-
-
-
 bool SDL_GetEvent( SDL_Event &event, int mask )
 {
 	/* SDL_PeepEvents returns error if video isn't initialized. */
@@ -220,19 +203,6 @@ RageSurface *RageSurfaceFromSDLSurface( SDL_Surface *surf )
 	}
 
 	return ret;
-}
-
-void SDL_UpdateHWnd()
-{
-#ifdef _WINDOWS
-	/* Grab the window manager specific information */
-	SDL_SysWMinfo info;
-	SDL_VERSION(&info.version);
-	if ( SDL_GetWMInfo(&info) < 0 ) 
-		RageException::Throw( "SDL_GetWMInfo failed" );
-
-	g_hWndMain = info.window;
-#endif
 }
 
 #if defined(UNIX)
