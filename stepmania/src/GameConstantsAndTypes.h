@@ -168,7 +168,7 @@ enum RankingCategory
 	NUM_RANKING_CATEGORIES
 };
 
-extern const CString DEFAULT_RANKING_NAME;
+#define DEFAULT_RANKING_NAME CString("STEP")
 
 RankingCategory AverageMeterToRankingCategory( float fAverageMeter );
 
@@ -179,7 +179,7 @@ const int MAX_RANKING_NAME_LENGTH	= 4;
 //
 // Group stuff
 //
-extern const CString GROUP_ALL_MUSIC;
+#define GROUP_ALL_MUSIC	CString("")
 
 
 //
@@ -221,9 +221,10 @@ enum BattleResult
 
 
 
-extern const CString BG_ANIMS_DIR;
-extern const CString VISUALIZATIONS_DIR;
-extern const CString RANDOMMOVIES_DIR;
+#define BG_ANIMS_DIR		CString("BGAnimations/")
+#define VISUALIZATIONS_DIR	CString("Visualizations/")
+#define RANDOMMOVIES_DIR	CString("RandomMovies/")
+
 
 
 

@@ -7,6 +7,7 @@
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+    Glenn Maynard
 -----------------------------------------------------------------------------
 */
 
@@ -466,6 +467,14 @@ void RageDisplay::DrawStrip( const RageVertex v[], int iNumVerts )
 	ASSERT( iNumVerts >= 3 );
 	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
 	glDrawArrays( GL_TRIANGLE_STRIP, 0, iNumVerts );
+	g_iVertsRenderedSinceLastCheck += iNumVerts;
+}
+
+void RageDisplay::DrawTriangles( const RageVertex v[], int iNumVerts )
+{
+	ASSERT( iNumVerts >= 3 );
+	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
+	glDrawArrays( GL_TRIANGLES, 0, iNumVerts );
 	g_iVertsRenderedSinceLastCheck += iNumVerts;
 }
 

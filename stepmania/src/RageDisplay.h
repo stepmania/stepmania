@@ -72,6 +72,7 @@ public:
 	void DrawQuads( const RageVertex v[], int iNumVerts );
 	void DrawFan( const RageVertex v[], int iNumVerts );
 	void DrawStrip( const RageVertex v[], int iNumVerts );
+	void DrawTriangles( const RageVertex v[], int iNumVerts );
 	void DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth );
 	void DrawLoop_LinesAndPoints( const RageVertex v[], int iNumVerts, float LineWidth );
 	void DrawLoop_Polys( const RageVertex v[], int iNumVerts, float LineWidth );

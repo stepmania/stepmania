@@ -12,7 +12,7 @@
 */
 
 #include "Screen.h"
-#include "Sample3dObject.h"
+#include "Model.h"
 #include "Quad.h"
 #include "Transition.h"
 
@@ -28,7 +28,7 @@ public:
 	void MenuRight( PlayerNumber pn );
 
 	void Update(float f);
-	Sample3dObject obj;
+	Model m_model;
 	Quad m_quad;
 	Transition	m_In;
 	Transition	m_Out;

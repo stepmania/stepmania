@@ -13,12 +13,6 @@
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
 
-const CString BG_ANIMS_DIR = "BGAnimations/";
-const CString VISUALIZATIONS_DIR = "Visualizations/";
-const CString RANDOMMOVIES_DIR = "RandomMovies/";
-
-const CString DEFAULT_RANKING_NAME = "STEP";
-const CString GROUP_ALL_MUSIC = "";
 
 CString CategoryToString( RadarCategory cat )
 {
