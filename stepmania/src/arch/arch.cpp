@@ -7,11 +7,11 @@
 #include "arch.h"
 
 /* Load default drivers. */
-#include "default/arch.h"
+#include "arch_default.h"
 
 /* Override them with arch-specific drivers, as available. */
 #if defined(WIN32)
-#include "Win32/arch.h"
+#include "arch_Win32.h"
 #endif
 
 LoadingWindow *MakeLoadingWindow() { return new ARCH_LOADING_WINDOW; }

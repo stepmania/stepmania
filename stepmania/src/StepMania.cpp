@@ -22,7 +22,7 @@
 #include "RageDisplay.h"
 #include "RageTextureManager.h"
 #include "RageSound.h"
-//#include "RageSoundManager.h"
+// #include "RageSoundManager.h"
 #include "RageMusic.h"
 #include "RageInput.h"
 #include "RageTimer.h"
@@ -31,7 +31,7 @@
 #include "RageMath.h"
 
 #include "arch/arch.h"
-#include "arch/LoadingWindow.h"
+#include "arch/LoadingWindow/LoadingWindow.h"
 
 #include "SDL.h"
 #include "SDL_syswm.h"		// for SDL_SysWMinfo

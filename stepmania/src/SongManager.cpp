@@ -19,7 +19,7 @@
 #include "PrefsManager.h"
 #include "RageException.h"
 #include "RageTimer.h"
-#include "arch/LoadingWindow.h"
+#include "arch/LoadingWindow/LoadingWindow.h"
 
 #include "AnnouncerManager.h"
 #include "ThemeManager.h"
