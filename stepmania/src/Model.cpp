@@ -488,6 +488,8 @@ void Model::DrawPrimitives()
 					DISPLAY->SetSphereEnironmentMapping( mat.alpha.bSphereMapped );
 					// UGLY:  This overrides the Actor's BlendMode
 					DISPLAY->SetTextureModeAdd();
+					//DISPLAY->SetTextureModeModulate();
+					DISPLAY->SetTextureFiltering( true );
 				}
 			}
 			else
