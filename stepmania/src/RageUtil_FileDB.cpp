@@ -260,21 +260,16 @@ FileSet *FilenameDB::GetFileSet( CString dir, bool create )
 	else
 	{
 		ret = new FileSet;
-		AddFileSet( dir, ret );
+
+		map<CString, FileSet *>::iterator it = dirs.find( lower );
+		if( it != dirs.end() )
+			delete it->second;
+
+		dirs[lower] = ret;
 	}
 
 	PopulateFileSet( *ret, dir );
 	return ret;
-}
-
-void FilenameDB::AddFileSet( CString sPath, FileSet *fs )
-{
-	sPath.MakeLower();
-	map<CString, FileSet *>::iterator it = dirs.find( sPath );
-	if( it != dirs.end() )
-		delete it->second;
-
-	dirs[sPath] = fs;
 }
 
 /* Add the file or directory "sPath".  sPath is a directory if it ends with

@@ -80,7 +80,6 @@ protected:
 	void GetFilesMatching(const CString &dir, 
 		const CString &beginning, const CString &containing, const CString &ending, 
 		vector<CString> &out, bool bOnlyDirs);
-	void AddFileSet( CString sPath, FileSet *fs );
 	void DelFileSet( map<CString, FileSet *>::iterator dir );
 
 	/* The given path wasn't cached.  Cache it. */
