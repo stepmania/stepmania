@@ -30,14 +30,12 @@ AnimatedTexture::~AnimatedTexture()
 
 void AnimatedTexture::Load( CString sTexOrIniPath )
 {
-LOG->Trace("AnimatedTexture::Load(%s)", sTexOrIniPath.c_str());
 	ASSERT( vFrames.empty() );	// don't load more than once
 
 	CString sDir, sFName, sExt;
 	splitrelpath( sTexOrIniPath, sDir, sFName, sExt );
 
 	bool bIsIni = sTexOrIniPath.Right(3).CompareNoCase("ini")== 0;
-LOG->Trace("sTexOrIniPath: is ini: %i", bIsIni);
 	if( bIsIni )
 	{
 		IniFile ini;
