@@ -14,8 +14,10 @@
 #include "ActorFrame.h"
 #include "Sprite.h"
 #include "Banner.h"
+#include "PlayerNumber.h"
 class Song;
 class Course;
+class Notes;
 
 class BannerWithFrame : public ActorFrame
 {
