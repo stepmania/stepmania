@@ -140,6 +140,7 @@ public:
 	avcodec::AVStream *m_stream;
 	bool GetNextTimestamp;
 	float CurrentTimestamp, Last_IP_Timestamp;
+	int FrameNumber;
 
 	float LastFrameDelay;
 
@@ -154,6 +155,7 @@ public:
 	~FFMpeg_Helper();
 	int GetFrame();
 	void Init();
+	float GetTimestamp() const;
 
 private:
 	/* 0 = no EOF
@@ -163,6 +165,7 @@ private:
 
 	int ReadPacket();
 	int DecodePacket();
+	float TimestampOffset;
 };
 
 FFMpeg_Helper::FFMpeg_Helper()
@@ -189,6 +192,8 @@ void FFMpeg_Helper::Init()
 	CurrentTimestamp = 0, Last_IP_Timestamp = 0;
 	LastFrameDelay = 0;
 	pts = last_IP_pts = -1;
+	FrameNumber = -1; /* decode one frame and you're on the 0th */
+	TimestampOffset = 0;
 
 	if( current_packet_offset != -1 )
 	{
@@ -204,7 +209,7 @@ int FFMpeg_Helper::GetFrame()
 	{
 		int ret = DecodePacket();
 		if( ret == 1 )
-			return 1;
+			break;
 		if( ret == -1 )
 			return -1;
 		if( ret == 0 && eof > 0 )
@@ -215,6 +220,37 @@ int FFMpeg_Helper::GetFrame()
 		if( ret < 0 )
 			return ret; /* error */
 	}
+
+	++FrameNumber;
+
+	if( FrameNumber == 1 )
+	{
+		/* Some videos start with a timestamp other than 0.  I think this is used
+		 * when audio starts before the video.  We don't want to honor that, since
+		 * the DShow renderer doesn't and we don't want to break sync compatibility.
+		 *
+		 * Look at the second frame.  (If we have B-frames, the first frame will be an
+		 * I-frame with the timestamp of the next P-frame, not its own timestamp, and we
+		 * want to ignore that and look at the next B-frame.) */
+		const float expect = LastFrameDelay;
+		const float actual = CurrentTimestamp;
+		if( actual - expect > 0 )
+		{
+			LOG->Trace("Expect %f, got %f -> %f", expect, actual, actual - expect );
+			TimestampOffset = actual - expect;
+		}
+	}
+
+	return 1;
+}
+
+float FFMpeg_Helper::GetTimestamp() const
+{
+	/* The first frame always has a timestamp of 0. */
+	if( FrameNumber == 0 )
+		return 0;
+
+	return CurrentTimestamp - TimestampOffset;
 }
 
 /* Read a packet.  Return -1 on error, 0 on EOF, 1 on OK. */
@@ -652,7 +688,6 @@ void MovieTexture_FFMpeg::DecoderThread()
 {
 	RageTimer Timer;
 	float Clock = 0;
-	float ClockOffset = 0;
 	bool FrameSkipMode = false;
 
 #if defined(_WINDOWS)
@@ -669,7 +704,6 @@ void MovieTexture_FFMpeg::DecoderThread()
 #endif
 
 	CHECKPOINT;
-	bool FirstDecodedFrame = true;
 
 	while( m_State != DECODER_QUIT )
 	{
@@ -692,29 +726,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 		if( ret == -1 )
 			return;
 
-		if( FirstDecodedFrame )
-		{
-			/* Some videos start with a timestamp other than 0.  I think this is used
-			 * when audio starts before the video.  We don't want to honor that, since
-			 * the DShow renderer doesn't and we don't want to break sync compatibility.
-			 *
-			 * Subtlety: this isn't actually the first frame (unless it's a rewind)--we
-			 * did that when we loaded.  That's important: if we have B-frames, the first
-			 * frame will be an I-frame with the timestamp of the next P-frame, not its
-			 * own timestamp, and we want to ignore that and look at the next B-frame.
-			 */
-			const float expect = decoder->LastFrameDelay;
-			const float actual = decoder->CurrentTimestamp;
-			if( actual - expect > 0 )
-			{
-				LOG->Trace("Expect %f, got %f -> %f", expect, actual, actual - expect );
-				ClockOffset = actual - expect;
-				Clock += ClockOffset;
-			}
-			FirstDecodedFrame = false;
-		}
-
-		if( m_bWantRewind && decoder->CurrentTimestamp == 0 )
+		if( m_bWantRewind && decoder->GetTimestamp() == 0 )
 			m_bWantRewind = false; /* ignore */
 
 		if( ret == 0 )
@@ -736,12 +748,12 @@ void MovieTexture_FFMpeg::DecoderThread()
 			CreateDecoder();
 
 			decoder->Init();
-			Clock = ClockOffset;
+			Clock = 0;
 			continue;
 		}
 
 		/* We got a frame. */
-		const float Offset = decoder->CurrentTimestamp - Clock;
+		const float Offset = decoder->GetTimestamp() - Clock;
 	
 		/* If we're ahead, we're decoding too fast; delay. */
 		if( Offset > 0 )
@@ -784,7 +796,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 			if( -Offset >= FrameSkipThreshold && !FrameSkipMode )
 			{
 				LOG->Trace( "(%s) Time is %f, and the movie is at %f.  Entering frame skip mode.",
-					GetID().filename.c_str(), Clock, decoder->CurrentTimestamp);
+					GetID().filename.c_str(), Clock, decoder->GetTimestamp());
 				FrameSkipMode = true;
 			}
 		}
