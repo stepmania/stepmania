@@ -1,6 +1,8 @@
 #ifndef ARCH_DEFAULT_H
 #define ARCH_DEFAULT_H
 
+#include "arch/arch_platform.h"
+
 /* Define the default driver sets. It's okay to have in the sets drivers that
  * might not be available, just as long as you don't mind if they're used when
  * they are available. (For example, if we're using X11, we don't want
