@@ -5,7 +5,7 @@ AC_DEFUN(SM_OPENGL,
     GL_LIBS=
     if test "$enable_mesa" = "yes"; then
 	AC_CHECK_LIB(MesaGL, glPushMatrix, have_mesagl=yes)
-	AC_CHECK_LIB(MesaGLU, gluGetString, have_mesaglu=yes)
+	AC_CHECK_LIB(MesaGLU, gluGetString, have_mesaglu=yes,, -lMesaGL)
 	if test "$have_mesagl" = "yes" -a "$have_mesaglu" = "yes"; then
 	    GL_LIBS="-lMesaGL -lMesaGLU"
 	fi
@@ -13,7 +13,7 @@ AC_DEFUN(SM_OPENGL,
 
     if test "$GL_LIBS" = ""; then
 	AC_CHECK_LIB(GL, glPushMatrix, have_gl=yes)
-	AC_CHECK_LIB(GLU, gluGetString, have_glu=yes)
+	AC_CHECK_LIB(GLU, gluGetString, have_glu=yes,, -lGL)
 	if test "$have_gl" = "yes" -a "$have_glu" = "yes"; then
 	    GL_LIBS="-lGL -lGLU"
 	fi
@@ -31,7 +31,7 @@ AC_DEFUN(SM_OPENGL,
 
 	if test "$enable_mesa" = "yes"; then
 	    AC_CHECK_LIB(MesaGL, glPushMatrix, have_mesagl=yes)
-	    AC_CHECK_LIB(MesaGLU, gluGetString, have_mesaglu=yes)
+	    AC_CHECK_LIB(MesaGLU, gluGetString, have_mesaglu=yes,, -lMesaGL)
 	    if test "$have_mesagl" = "yes" -a "$have_mesaglu" = "yes"; then
 		GL_LIBS="-lMesaGL -lMesaGLU"
 	    fi
@@ -39,7 +39,7 @@ AC_DEFUN(SM_OPENGL,
 
 	if test "$GL_LIBS" = ""; then
 	    AC_CHECK_LIB(GL, glPushMatrix, have_gl=yes)
-	    AC_CHECK_LIB(GLU, gluGetString, have_glu=yes)
+	    AC_CHECK_LIB(GLU, gluGetString, have_glu=yes,, -lGL)
 	    if test "$have_gl" = "yes" -a "$have_glu" = "yes"; then
 		GL_LIBS="-lGL -lGLU"
 	    fi
