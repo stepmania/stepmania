@@ -1303,6 +1303,8 @@ void MusicWheel::StartRandom()
 	m_SpinSpeed *= 20.0f; /* faster! */
 	m_WheelState = STATE_RANDOM_SPINNING;
 
+	m_iSelection = GetPreferredSelectionForRandomOrPortal();
+
 	this->Select();
 	RebuildMusicWheelItems();
 }
@@ -1508,35 +1510,48 @@ Song* MusicWheel::GetSelectedSong()
 	switch( m_CurWheelItemData[m_iSelection]->m_Type )
 	{
 	case TYPE_PORTAL:
-		{
-			// probe to find a song that has the preferred 
-			// difficulties of each player
-			vector<Difficulty> vDifficultiesToRequire;
-			FOREACH_HumanPlayer(p)
-				if( GAMESTATE->m_PreferredDifficulty[p] != DIFFICULTY_INVALID )
-					vDifficultiesToRequire.push_back( GAMESTATE->m_PreferredDifficulty[p] );
-
-			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-#define NUM_PROBES 1000
-			for( int i=0; i<NUM_PROBES; i++ )
-			{
-				if( i == NUM_PROBES/2 )
-					vDifficultiesToRequire.clear();
-				int iSelection = rand() % m_CurWheelItemData.size();
-				if( m_CurWheelItemData[iSelection]->m_Type == TYPE_SONG )
-				{
-					Song* pSong = m_CurWheelItemData[iSelection]->m_pSong;
-					FOREACH( Difficulty, vDifficultiesToRequire, d )
-						if( !pSong->HasStepsTypeAndDifficulty(st,*d) )
-							goto skip_song;
-					return pSong;
-				}
-skip_song:
-				;
-			}
-		}
-		return NULL;
+		return m_CurWheelItemData[ GetPreferredSelectionForRandomOrPortal() ]->m_pSong;
+		break;
 	}
 
 	return m_CurWheelItemData[m_iSelection]->m_pSong;
+}
+
+int MusicWheel::GetPreferredSelectionForRandomOrPortal()
+{
+	// probe to find a song that has the preferred 
+	// difficulties of each player
+	vector<Difficulty> vDifficultiesToRequire;
+	FOREACH_HumanPlayer(p)
+		if( GAMESTATE->m_PreferredDifficulty[p] != DIFFICULTY_INVALID )
+			vDifficultiesToRequire.push_back( GAMESTATE->m_PreferredDifficulty[p] );
+
+	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+
+#define NUM_PROBES 1000
+	for( int i=0; i<NUM_PROBES; i++ )
+	{
+		if( i == NUM_PROBES/2 )
+			vDifficultiesToRequire.clear();
+		int iSelection = rand() % m_CurWheelItemData.size();
+		if( m_CurWheelItemData[iSelection]->m_Type == TYPE_SONG )
+		{
+			Song* pSong = m_CurWheelItemData[iSelection]->m_pSong;
+
+			// HACK: Ignore all Songs with only Beginner steps.  It's likely a training song.
+			vector<Steps*> vpSteps;
+			pSong->GetSteps( vpSteps, st );
+			bool bIsTraining = vpSteps.size()==1 && vpSteps[0]->GetDifficulty()==DIFFICULTY_BEGINNER;
+			if( bIsTraining )
+				goto skip_song;
+
+			FOREACH( Difficulty, vDifficultiesToRequire, d )
+				if( !pSong->HasStepsTypeAndDifficulty(st,*d) )
+					goto skip_song;
+			return iSelection;
+		}
+skip_song:
+		;
+	}
+	return 0;
 }
