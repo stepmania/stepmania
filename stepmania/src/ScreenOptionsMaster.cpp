@@ -298,8 +298,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 			{
 				const ModeChoice &mc = hand.ListEntries[e];
 
-				bool &bSelected = vbSelectedOut[e];
-				bSelected = false;
+				vbSelectedOut[e] = false;
 
 				if( mc.IsZero() )
 				{
@@ -318,7 +317,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 						if( !row.bMultiSelect )
 							SelectExactlyOne( e, vbSelectedOut );
 						else
-							bSelected = true;
+							vbSelectedOut[e] = true;
 					}
 				}
 				else
@@ -328,7 +327,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 						if( !row.bMultiSelect )
 							SelectExactlyOne( e, vbSelectedOut );
 						else
-							bSelected = true;
+							vbSelectedOut[e] = true;
 					}
 				}
 			}

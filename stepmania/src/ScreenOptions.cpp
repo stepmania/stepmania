@@ -1108,7 +1108,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	if( data.bMultiSelect )
 	{
 		int iChoiceInRow = row.m_iChoiceWithFocus[pn];
-		row.m_vbSelected[pn][iChoiceInRow] ^= true;
+		row.m_vbSelected[pn][iChoiceInRow] = !row.m_vbSelected[pn][iChoiceInRow];
 		if( row.m_vbSelected[pn][iChoiceInRow] )
 			m_SoundToggleOn.Play();
 		else
