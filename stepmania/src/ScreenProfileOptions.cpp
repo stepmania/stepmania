@@ -72,6 +72,11 @@ void ScreenProfileOptions::Init()
 	else
 		g_ProfileOptionsLines[PO_OS_MOUNT_2].choices[0] = PREFSMAN->m_sMemoryCardOsMountPoint[PLAYER_2];
 
+	//Enable all lines for all players
+	for ( unsigned int i = 0; i < NUM_PROFILE_OPTIONS_LINES; i++ )
+		FOREACH_PlayerNumber( pn )
+			g_ProfileOptionsLines[i].m_vEnabledForPlayers.insert( pn );
+
 	vector<OptionRowDefinition> vDefs( &g_ProfileOptionsLines[0], &g_ProfileOptionsLines[ARRAYSIZE(g_ProfileOptionsLines)] );
 	vector<OptionRowHandler*> vHands( vDefs.size(), NULL );
 	InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
