@@ -894,11 +894,6 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		if( score != TNS_NONE )
 			m_NoteData.SetTapNoteOffset(col, iIndexOverlappingNote, -fNoteOffset);
 
-		if( tn.bKeysound )
-		{
-			m_vKeysounds[tn.iKeysoundIndex].Play();
-		}
-
 		if( GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_HUMAN  && 
 			score >= TNS_GREAT ) 
 			HandleAutosync(fNoteOffset);
@@ -941,6 +936,19 @@ void PlayerMinus::Step( int col, RageTimer tm )
 	else
 	{
 		m_pNoteField->Step( col, TNS_NONE );
+	}
+
+	/* Search for keyed sounds separately.  If we can't find a nearby note, search
+	 * backwards indefinitely, and ignore grading. */
+	iIndexOverlappingNote = GetClosestNote( col, fSongBeat, 
+						   999999.f,
+						   StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
+						   true );
+	if( iIndexOverlappingNote != -1 )
+	{
+		TapNote tn = m_NoteData.GetTapNote( col, iIndexOverlappingNote );
+		if( tn.bKeysound )
+			m_vKeysounds[tn.iKeysoundIndex].Play();
 	}
 }
 
