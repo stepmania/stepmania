@@ -159,7 +159,7 @@ void StepManiaLanServer::ParseData(PacketFunctions& Packet, const unsigned int c
 	case NSCGSU:
 		// StatsUpdate
 		Client[clientNum]->UpdateStats(Packet);
-		if (Client[clientNum]->lowerJudge)
+		if (!Client[clientNum]->lowerJudge)
 			CheckLowerJudge(clientNum);
 		break;
 	case NSCSU:
@@ -390,32 +390,23 @@ void StepManiaLanServer::PopulatePlayersPtr(vector<LanPlayer*> &playersPtr) {
 int StepManiaLanServer::SortStats(vector<LanPlayer*> &playersPtr)
 {
 	LanPlayer *tmp;
-	StatsNameChange = false;	//Set it to no name so stats will not send if there is not a change
-	bool allZero = true;
+	bool isChanged;
 
 	PopulatePlayersPtr(playersPtr);
 
-	for (unsigned int x = 0; x < playersPtr.size(); ++x)
-	{
-		 //See if all the players have zero. Used to send names if everyone is 0
-		if ((playersPtr[x]->score > 0) && allZero)
-			allZero = false;
 
-		if ((x+1) < playersPtr.size())
+	do
+	{
+		isChanged = false;
+		for (int x = 0; x < int(playersPtr.size())-1; ++x)
 			if ((playersPtr[x]->score) < (playersPtr[x+1]->score))
 			{
 				tmp = playersPtr[x];
 				playersPtr[x] = playersPtr[x+1];
 				playersPtr[x+1] = tmp;
-				x = 0;
-				StatsNameChange = true;
+				isChanged = true;
 			}
-
-	}
-	//If there are players all at 0, the name lsit won't be updated
-	//this make sure it is sent to the server eventually
-	if (!StatsNameChange && allZero)
-		StatsNameChange = true;
+	} while (isChanged);
 
 	return playersPtr.size();
 }
@@ -426,24 +417,18 @@ void StepManiaLanServer::SendStatsToClients()
 
 	SortStats(playersPtr); //Return number of players
 
-	//If there was a change in the name data, send it to the clients.
-	//Used to save bandwidth and some processing time.
-	//Disabled this. FUTURE: Figure out why it dosn't work correctly and fix.
-//	if (StatsNameChange)
-//	{
-		/* Write and Send name packet */
-		Reply.ClearPacket();
-		Reply.Write1(NSCGSU + NSServerOffset);
-		Reply.Write1(0);
-		Reply.Write1( (uint8_t) playersPtr.size());
-		StatsNameColumn(Reply, playersPtr);
+	/* Write and Send name packet */
+	Reply.ClearPacket();
+	Reply.Write1(NSCGSU + NSServerOffset);
+	Reply.Write1(0);
+	Reply.Write1( (uint8_t) playersPtr.size());
+	StatsNameColumn(Reply, playersPtr);
 
-		//Send to in game clients only.
-		for (x = 0; x < Client.size(); ++x)
-			if (Client[x]->InGame)
-				SendNetPacket(x, Reply);
+	//Send to in game clients only.
+	for (x = 0; x < Client.size(); ++x)
+		if (Client[x]->InGame)
+			SendNetPacket(x, Reply);
 
-//	}
 
 	/* Write and send Combo packet */
 	Reply.ClearPacket();

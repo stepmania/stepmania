@@ -90,7 +90,6 @@ private:
 	time_t statsTime;
 	GameInfo CurrentSongInfo;
 	GameInfo LastSongInfo;
-	bool StatsNameChange;
 	bool SecondSameSelect;
 	vector<CString> bannedIPs;
 
