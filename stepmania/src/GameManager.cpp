@@ -37,7 +37,7 @@ struct {
 	{ "dance-couple", 8 },
 	{ "dance-solo", 6 },
 	{ "pump-single", 5 },
-	{ "pump-double", 5 },
+	{ "pump-double", 10 },
 	{ "ez2-single", 5 },		// Single: TL,LHH,D,RHH,TR
 	{ "ez2-single-hard", 5 },	// Single: TL,LHH,D,RHH,TR
 	{ "ez2-double", 10 },		// Double: Single x2
