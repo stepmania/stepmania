@@ -671,7 +671,7 @@ bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
 	/* Unless we're in lossless, resize the image to 640x480.  If we're saving lossy,
 	 * there's no sense in saving 1280x960 screenshots, and we don't want to output
 	 * screenshots in a strange (non-1) sample aspect ratio. */
-	if( format != SAVE_LOSSLESS && (surface->h != 640 || surface->w != 480) )
+	if( format != SAVE_LOSSLESS )
 	{
 		/* Maintain the DAR. */
 		int iWidth = lrintf( 640 / GetVideoModeParams().fDisplayAspectRatio );
