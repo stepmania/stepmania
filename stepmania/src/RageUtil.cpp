@@ -18,6 +18,7 @@ unsigned long randseed = time(NULL);
 #include <numeric>
 #include <math.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 bool IsAnInt( const char *s )
 {
@@ -599,6 +600,12 @@ static const unsigned int crc32_tab[] = {
 //}
 }
 
+bool DoStat(CString sPath, struct stat *st)
+{
+	TrimRight(sPath, "/\\");
+    return stat(sPath.GetString(), st) != -1;
+}
+
 unsigned int GetHashForFile( CString sPath )
 {
 	unsigned int hash = 0;
@@ -608,7 +615,7 @@ unsigned int GetHashForFile( CString sPath )
 	hash += GetFileSizeInBytes( sPath ); 
 
 	struct stat st;
-	if( stat(sPath.GetString(), &st) != -1)
+	if( DoStat(sPath, &st))
 		hash += st.st_mtime;
 
 	return hash;
@@ -634,15 +641,16 @@ unsigned int GetHashForDirectory( CString sDir )
 unsigned GetFileSizeInBytes( const CString &sFilePath )
 {
 	struct stat st;
-	stat(sFilePath.GetString(), &st);
-
+	if(!DoStat(sFilePath, &st))
+		return 0;
+	
 	return st.st_size;
 }
 
 bool DoesFileExist( const CString &sPath )
 {
-    DWORD dwAttr = GetFileAttributes( sPath );
-    return bool(dwAttr != (DWORD)-1);
+	struct stat st;
+    return DoStat(sPath, &st);
 }
 
 bool IsAFile( const CString &sPath )
@@ -652,8 +660,11 @@ bool IsAFile( const CString &sPath )
 
 bool IsADirectory( const CString &sPath )
 {
-    DWORD dwAttr = GetFileAttributes( sPath );
-    return (dwAttr & FILE_ATTRIBUTE_DIRECTORY) != 0;
+	struct stat st;
+    if (!DoStat(sPath, &st))
+		return false;
+
+	return !!(st.st_mode & S_IFDIR);
 }
 
 bool CompareCStringsAsc(const CString &str1, const CString &str2)
