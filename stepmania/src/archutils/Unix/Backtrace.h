@@ -7,7 +7,7 @@
 struct BacktraceContext
 {
 #if defined(LINUX)
-	long eip, esp, ebp;
+	long eip, ebp;
 	pid_t pid;
 #endif
 

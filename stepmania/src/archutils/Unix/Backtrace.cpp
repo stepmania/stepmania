@@ -160,8 +160,7 @@ void InitializeBacktrace()
 
 	/* We might have a different stack in the signal handler.  Record a pointer
 	 * that lies in the real stack, so we can look it up later. */
-	register void *esp __asm__ ("esp");
-	SavedStackPointer = esp;
+	SavedStackPointer = __builtin_frame_address(0);
 }
 
 /* backtrace() for x86 Linux, tested with kernel 2.4.18, glibc 2.3.1. */
@@ -172,7 +171,7 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 	get_readable_ranges( readable_begin, readable_end, 1024 );
 		
 	/* Find the stack memory blocks. */
-	const int stack_block1 = find_address( (void *) ctx->esp, readable_begin, readable_end );
+	const int stack_block1 = find_address( (void *) ctx->ebp, readable_begin, readable_end );
 	const int stack_block2 = find_address( SavedStackPointer, readable_begin, readable_end );
 
 	/* This matches the layout of the stack.  The frame pointer makes the
@@ -214,7 +213,6 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 
 void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 {
-	ctx->esp = (long) uc->uc_mcontext.gregs[REG_ESP];
 	ctx->eip = (long) uc->uc_mcontext.gregs[REG_EIP];
 	ctx->ebp = (long) uc->uc_mcontext.gregs[REG_EBP];
 	ctx->pid = GetCurrentThreadId();
@@ -229,10 +227,9 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	{
 		ctx = &CurrentCtx;
 
-		register void *esp __asm__ ("esp");
-		CurrentCtx.esp = (long) esp;
 		CurrentCtx.eip = 0;
 		CurrentCtx.ebp = (long) __builtin_frame_address(0);
+		CurrentCtx.pid = GetCurrentThreadId();
 	}
 
 
