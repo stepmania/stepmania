@@ -55,24 +55,24 @@ void TextBanner::LoadFromString(
 {
 	Init();
 
+	m_textTitle.SetText( sDisplayTitle, sTranslitTitle );
+	m_textSubTitle.SetText( sDisplaySubTitle, sTranslitSubTitle );
+	m_textArtist.SetText( sDisplayArtist, sTranslitArtist );
+
 	bool bTwoLines = sDisplaySubTitle.size() == 0;
 
 	if( bTwoLines )
 	{
-		m_textTitle.RunCommands( TWO_LINES_TITLE_COMMAND );
-		m_textSubTitle.RunCommands( TWO_LINES_SUBTITLE_COMMAND );
-		m_textArtist.RunCommands( TWO_LINES_ARTIST_COMMAND );
+		m_textTitle.RunCommands2( TWO_LINES_TITLE_COMMAND, this );
+		m_textSubTitle.RunCommands2( TWO_LINES_SUBTITLE_COMMAND, this );
+		m_textArtist.RunCommands2( TWO_LINES_ARTIST_COMMAND, this );
 	}
 	else
 	{
-		m_textTitle.RunCommands( THREE_LINES_TITLE_COMMAND );
-		m_textSubTitle.RunCommands( THREE_LINES_SUBTITLE_COMMAND );
-		m_textArtist.RunCommands( THREE_LINES_ARTIST_COMMAND );
+		m_textTitle.RunCommands2( THREE_LINES_TITLE_COMMAND, this );
+		m_textSubTitle.RunCommands2( THREE_LINES_SUBTITLE_COMMAND, this );
+		m_textArtist.RunCommands2( THREE_LINES_ARTIST_COMMAND, this );
 	}
-
-	m_textTitle.SetText( sDisplayTitle, sTranslitTitle );
-	m_textSubTitle.SetText( sDisplaySubTitle, sTranslitSubTitle );
-	m_textArtist.SetText( sDisplayArtist, sTranslitArtist );
 }
 
 void TextBanner::LoadFromSong( const Song* pSong )
