@@ -254,20 +254,6 @@ RageDisplay *CreateDisplay() { return CreateDisplay_OGL(); }
 #include "archutils/Win32/VideoDriverInfo.h"
 #include "Regex.h"
 
-static bool CardRequiresD3D()
-{
-	vector<Regex> Cards;
-	Cards.push_back(Regex("Voodoo"));
-	Cards.push_back(Regex("3dfx"));
-//	Cards.push_back(Regex("nVidia")); // testing
-
-	const CString desc = GetPrimaryVideoDriverName();
-	for(unsigned i = 0; i < Cards.size(); ++i)
-		if(Cards[i].Compare(desc)) return true;
-
-	return false;
-}
-
 static const CString D3DURL = "http://search.microsoft.com/gomsuri.asp?n=1&c=rp_BestBets&siteid=us&target=http://www.microsoft.com/downloads/details.aspx?FamilyID=a19bed22-0b25-4e5d-a584-6389d8a3dad0&displaylang=en";
 
 RageDisplay *CreateDisplay()
@@ -297,15 +283,19 @@ RageDisplay *CreateDisplay()
 
 	// Video card changed since last run
 	CString sVideoDriver = GetPrimaryVideoDriverName();
-	if( PREFSMAN->m_sLastSeenVideoDriver != sVideoDriver )
+	if( PREFSMAN->m_sVideoRenderers == "" || 
+		PREFSMAN->m_sLastSeenVideoDriver != sVideoDriver )
 	{
 		// Apply default graphic settings for this card
 		IniFile ini;
 		ini.SetPath( "Data/VideoCards.ini" );
-		ini.ReadFile();
+		if(!ini.ReadFile())
+			RageException::Throw( "Couldn't read VideoCards.ini." );
 
 		int iNumEntries = 0;
-		ini.GetValueI( "VideoCards", "NumEntries", iNumEntries );
+		if(!ini.GetValueI( "VideoCards", "NumEntries", iNumEntries ))
+			RageException::Throw( "Couldn't read NumEntries in VideoCards.ini." );
+
 		for( int i=0; i<iNumEntries; i++ )
 		{
 			CString sKey = ssprintf("%04d",i);
@@ -337,7 +327,7 @@ RageDisplay *CreateDisplay()
 
 	CStringArray asRenderers;
 	split( PREFSMAN->m_sVideoRenderers, ",", asRenderers, true );
-	for( int i=0; i<asRenderers.size(); i++ )
+	for( unsigned i=0; i<asRenderers.size(); i++ )
 	{
 		CString sRenderer = asRenderers[i];
 
