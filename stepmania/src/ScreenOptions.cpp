@@ -376,7 +376,10 @@ void ScreenOptions::PositionCursors()
 	FOREACH_HumanPlayer( pn )
 	{
 		const int iRow = m_iCurrentRow[pn];
-		ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
+		if( iRow == -1 )
+			continue;
+
+		ASSERT_M( iRow >= 0 && iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
 		OptionRow &OptionRow = *m_Rows[iRow];
 		OptionsCursor &cursor = m_Cursor[pn];
 
@@ -639,6 +642,9 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 		return;
 
 	const int iCurRow = m_iCurrentRow[pn];
+
+	if( iCurRow == -1 )
+		return;
 	
 	/* Update m_fY and m_bHidden[]. */
 	PositionItems();
