@@ -382,6 +382,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			{
 			case 3:
 				StartSelectedSong();
+				break;
 			case 2: //We need to do cmd 1 as well here
 				if (haveSong)
 				{
