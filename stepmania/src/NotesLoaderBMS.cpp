@@ -236,7 +236,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 
 			// MD 10/26/03 - fix for Pop N' and such, including "if there are six panels, then we have Solo" - check here,
 			//    then put the correct step type later
-			BMS_PushTrackNumForMagic(iTrackNum);
+                        PushTrackNumForMagic(iTrackNum);
 			// end MD 10/26/03
 
 			CString &sNoteData = value_data;
