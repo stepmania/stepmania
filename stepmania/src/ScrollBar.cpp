@@ -61,8 +61,8 @@ void ScrollBar::SetPercentage( float fStartPercent, float fEndPercent )
 	{
 		iPart1TopY		= (int)SCALE( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
 		iPart1BottomY	= (int)SCALE( fEndPercent,  0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		iPart2TopY		= -1; 
-		iPart2BottomY	= -1; 
+		iPart2TopY		= 0; 
+		iPart2BottomY	= 0; 
 	}
 	else	// we need two thumb parts
 	{
@@ -82,19 +82,12 @@ void ScrollBar::SetPercentage( float fStartPercent, float fEndPercent )
 		) );
 
 	CHECKPOINT;
-	if( iPart2TopY != -1 )
-	{
-		m_sprScrollThumbPart2.StretchTo( RectI(
-			(int)-m_sprScrollThumbPart2.GetUnzoomedWidth()/2,
-			iPart2TopY,
-			(int)+m_sprScrollThumbPart2.GetUnzoomedWidth()/2,
-			iPart2BottomY
-			) );
-	}
-	else
-	{
-		m_sprScrollThumbPart2.SetZoomY( 0 );
-	}
+	m_sprScrollThumbPart2.StretchTo( RectI(
+		(int)-m_sprScrollThumbPart2.GetUnzoomedWidth()/2,
+		iPart2TopY,
+		(int)+m_sprScrollThumbPart2.GetUnzoomedWidth()/2,
+		iPart2BottomY
+		) );
 	CHECKPOINT;
 }
 
