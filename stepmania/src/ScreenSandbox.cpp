@@ -17,6 +17,7 @@
 
 #include "ScreenSandbox.h"
 #include "GameConstantsAndTypes.h"
+#include "ThemeManager.h"
 
 
 ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
@@ -32,6 +33,10 @@ ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
 	obj.SetXY(CENTER_X, CENTER_Y);
 //	obj.SetZoom(50);
 	this->AddChild(&obj);
+
+	this->AddChild( &m_In );
+
+	this->AddChild( &m_Out );
 }
 
 void ScreenSandbox::HandleScreenMessage( const ScreenMessage SM )
@@ -40,9 +45,22 @@ void ScreenSandbox::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
+	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 void ScreenSandbox::Update( float fDeltaTime )
 {
 	Screen::Update(fDeltaTime);
+}
+
+void ScreenSandbox::MenuLeft( PlayerNumber pn )
+{
+	m_In.Load( THEME->GetPathToB("_menu in") );
+	m_In.StartTransitioning();
+}
+
+void ScreenSandbox::MenuRight( PlayerNumber pn )
+{
+	m_Out.Load( THEME->GetPathToB("_menu out") );
+	m_Out.StartTransitioning();
 }

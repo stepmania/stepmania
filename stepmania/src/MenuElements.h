@@ -54,8 +54,6 @@ public:	// let owner tinker with these objects
 	Transition	m_Back;
 
 	RageSound m_soundBack;
-
-	bool m_bStartedTransitionIn;
 };
 
 #endif

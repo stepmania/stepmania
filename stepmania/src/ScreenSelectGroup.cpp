@@ -32,8 +32,6 @@
 #define BANNER_WIDTH					THEME->GetMetricF("ScreenSelectGroup","BannerWidth")
 #define BANNER_HEIGHT					THEME->GetMetricF("ScreenSelectGroup","BannerHeight")
 #define SLEEP_AFTER_TWEEN_OFF_SECONDS	THEME->GetMetricF("ScreenSelectGroup","SleepAfterTweenOffSeconds")
-#define HELP_TEXT						THEME->GetMetric ("ScreenSelectGroup","HelpText")
-#define TIMER_SECONDS					THEME->GetMetricI("ScreenSelectGroup","TimerSeconds")
 #define NEXT_SCREEN						THEME->GetMetric ("ScreenSelectGroup","NextScreen")
 
 

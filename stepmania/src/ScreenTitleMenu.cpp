@@ -55,6 +55,7 @@ ScreenTitleMenu::ScreenTitleMenu() : Screen("ScreenTitleMenu")
 {
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
 
+	GAMESTATE->Reset();
 	GAMESTATE->m_bPlayersCanJoin = true;
 
 	CodeDetector::RefreshCacheItems();

@@ -138,7 +138,7 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 	PlayerNumber pn = pStyleDef->ControllerToPlayerNumber( controller );
 
-	for( int c=0; c<CodeDetector::NUM_CODES; c++ )
+	for( int c=CODE_MIRROR; c<=CODE_CANCEL_ALL; c++ )
 	{
 		Code code = (Code)c;
 		
@@ -162,8 +162,6 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 			case CODE_HOLDS:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bHoldNotes, true, false );				break;
 			case CODE_DARK:				FLOAT_TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_fDark );							break;
 			case CODE_CANCEL_ALL:		GAMESTATE->m_PlayerOptions[pn].Init();								break;
-			default:
-				ASSERT(0);	// unhandled code
 			}
 			return true;	// don't check any more
 		}

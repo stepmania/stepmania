@@ -332,6 +332,8 @@ void ScreenManager::Update( float fDeltaTime )
 	else
 		pScreen->Update( fDeltaTime );
 
+	// TODO:  If a new Screen is set during this Update, that new screen is Drawn
+	// before it's first Update.
 	m_SystemLayer->Update( fDeltaTime );
 
 	EmptyDeleteQueue();

@@ -52,7 +52,7 @@ ScreenDemonstration::ScreenDemonstration() : ScreenJukebox( PrepareForDemonstrat
 
 	if( GAMESTATE->m_pCurSong == NULL )	// we didn't find a song.
 	{
-		this->PostScreenMessage( SM_GoToNextScreen, 0 );	// Abort demonstration.
+		HandleScreenMessage( SM_GoToNextScreen );	// Abort demonstration.
 		return;
 	}
 
