@@ -14,8 +14,7 @@
 const int channels = 2;
 const int bytes_per_frame = channels*2; /* 16-bit */
 const int samplerate = 44100;
-const int buffersize_frames = 1024*4;	/* in frames */
-const int buffersize = buffersize_frames * bytes_per_frame; /* in bytes */
+const int buffersize = 1024*4;	/* in frames */
 
 /* We'll fill the buffer in chunks this big.  This should evenly divide the
  * buffer size. */
@@ -71,7 +70,7 @@ bool RageSound_DSound_Software::GetData()
 	memset(locked_buf, 0, len);
 
 	static Sint16 *buf = NULL;
-	int bufsize = buffersize_frames * channels;
+	int bufsize = buffersize * channels;
 	if(!buf)
 	{
 		buf = new Sint16[bufsize];
@@ -217,7 +216,7 @@ RageSound_DSound_Software::~RageSound_DSound_Software()
 
 float RageSound_DSound_Software::GetPlayLatency() const
 {
-	return (1.0f / samplerate) * buffersize_frames;
+	return (1.0f / samplerate) * buffersize;
 }
 
 int RageSound_DSound_Software::GetSampleRate( int rate ) const

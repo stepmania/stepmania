@@ -134,7 +134,7 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	channels = channels_;
 	samplerate = samplerate_;
 	samplebits = samplebits_;
-	writeahead = writeahead_;
+	writeahead = writeahead_ * bytes_per_frame();
 	volume = 0;
 	buffer_locked = false;
 	last_cursor_pos = write_cursor = buffer_bytes_filled = 0;
@@ -284,6 +284,8 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 {
 	ASSERT(!buffer_locked);
 
+	chunksize *= bytes_per_frame();
+
 	DWORD cursorstart, cursorend;
 
 	HRESULT result;
@@ -340,7 +342,11 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 		/* Data between the play cursor and the write cursor is committed to be
 		 * played.  If we don't actually have data there, we've underrun. 
 		 * (If buffer_bytes_filled == buffersize, then it's full, and can't be
-		 * an underrun.) */
+		 * an underrun.) 
+		 */
+
+		/* We're already underrunning, which means the play cursor has passed valid
+		 * data.  Let's move the cursor forward. */
 		if( buffer_bytes_filled < writeahead &&
 		   (!contained(first_byte_filled, write_cursor, cursorstart) ||
 		    !contained(first_byte_filled, write_cursor, cursorend)) )

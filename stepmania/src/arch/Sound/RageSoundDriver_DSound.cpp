@@ -22,8 +22,7 @@ const int samplerate = 44100;
 /* The total write-ahead.  Don't make this *too* high; we fill the entire
  * buffer when we start playing, so it can cause frame skips.  This should be
  * high enough that sound cards won't skip. */
-const int buffersize_frames = 1024*8;	/* in frames */
-const int buffersize = buffersize_frames * bytes_per_frame; /* in bytes */
+const int buffersize = 1024*8;	/* in frames */
 
 const int num_chunks = 8;
 const int chunksize = buffersize / num_chunks;
@@ -47,19 +46,33 @@ void RageSound_DSound::MixerThread()
 		CHECKPOINT;
 
 		/* Sleep for the size of one chunk. */
-		const int chunksize_frames = buffersize_frames / num_chunks;
+		const int chunksize_frames = buffersize / num_chunks;
 		float sleep_secs = (float(chunksize_frames) / samplerate);
 		Sleep(int(1000 * sleep_secs));
 
 		CHECKPOINT;
 		LockMutex L(SOUNDMAN->lock);
- 		for(unsigned i = 0; i < stream_pool.size(); ++i)
-		{
-			if(stream_pool[i]->state == stream_pool[i]->INACTIVE)
-				continue; /* inactive */
 
-			while(stream_pool[i]->GetData(false))
-				;
+		/* GetData() will return false if the buffer is sufficiently full.  Interleave
+		 * reads: call GetData for each file before calling it on the same file twice.
+		 * That way, if we're behind, we'll catch up each file a little, instead of bursting
+		 * to catch up one file while the others fall further behind. 
+		 *
+		 * A better approach would be to sort the files by how many chunks they need,
+		 * and to fill sounds that need the most first. */
+		while( 1 )
+		{
+			bool bMoreData = false;
+ 			for(unsigned i = 0; i < stream_pool.size(); ++i)
+			{
+				if(stream_pool[i]->state == stream_pool[i]->INACTIVE)
+					continue; /* inactive */
+
+				if( stream_pool[i]->GetData(false) )
+					bMoreData = true;
+			}
+			if( !bMoreData )
+				break;
 		}
 	}
 
