@@ -36,10 +36,11 @@ static void ZoomSurface( RageSurface * src, RageSurface * dst )
 	{
 		float sax = sx*x + sx/2;
 
-		// Pixel alignment is off in the magnify case.
-		// This is an ugly hack to correct for it.
-		if( sx < 1 ) // magnifying
-			sax += SCALE(sx,0.5f,1.f,sx/2.f,0.f);
+		// HACK to improve pixel alignment in the 2x magnify case.
+		// I can't figure out a general solution that works with larger and 
+		// scale factors, so this remains a special case.
+		if( sx == 0.5f ) // 2x magnify
+			sax += 0.5f;
 
 		/* sx/2 is the distance from the start of the sample to the center;
 		 * sx/4 is the distance from the center of the sample to the center of
@@ -72,10 +73,11 @@ static void ZoomSurface( RageSurface * src, RageSurface * dst )
 	{
 		float say = sy*y + sy/2;
 
-		// Pixel alignment is off in the magnify case.
-		// This is an ugly hack to correct for it.
-		if( sy < 1 ) // magnifying
-			say += SCALE(sy,0.5f,1.f,sy/2.f,0.f);
+		// HACK to improve pixel alignment in the 2x magnify case.
+		// I can't figure out a general solution that works with larger and 
+		// scale factors, so this remains a special case.
+		if( sy == 0.5f ) // 2x magnify
+			say += 0.5f;
 
 		float ystep = sy/4;
 
