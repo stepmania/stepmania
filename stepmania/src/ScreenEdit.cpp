@@ -70,6 +70,9 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 #define PLAYER_HEIGHT		(360)
 #define PLAYER_Y_STANDARD	(PLAYER_Y-PLAYER_HEIGHT/2)
 #define PLAYER_Y_REVERSE	(PLAYER_Y+PLAYER_HEIGHT/2)
+#define PLAYER_Y_STD_RECORD (PLAYER_Y_STANDARD+30)//DW
+#define PLAYER_Y_RECORD     (PLAYER_Y+30)//DW
+
 
 #define ACTION_MENU_ITEM_X			(CENTER_X-200)
 #define ACTION_MENU_ITEM_START_Y	(SCREEN_TOP + 24)
@@ -266,11 +269,12 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	m_rectRecordBack.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );
 
-	m_GrayArrowRowRecord.SetXY( EDIT_X, PLAYER_Y );
+	//David Wilson
+	m_GrayArrowRowRecord.SetXY( EDIT_X, PLAYER_Y_STD_RECORD );
 	m_GrayArrowRowRecord.Load( PLAYER_1 );
 	m_GrayArrowRowRecord.SetZoom( 1.0f );
 
-	m_NoteFieldRecord.SetXY( EDIT_X, PLAYER_Y );
+	m_NoteFieldRecord.SetXY( EDIT_X, PLAYER_Y_RECORD );
 	m_NoteFieldRecord.SetZoom( 1.0f );
 	m_NoteFieldRecord.Load( &noteData, PLAYER_1, -150, 350, 350 );
 
