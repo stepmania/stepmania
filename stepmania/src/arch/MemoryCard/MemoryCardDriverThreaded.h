@@ -12,7 +12,7 @@ public:
 
 	virtual bool StorageDevicesChanged();
 	virtual void GetStorageDevices( vector<UsbStorageDevice>& vStorageDevicesOut );
-	virtual bool MountAndTestWrite( UsbStorageDevice* pDevice, CString sMountPoint );
+	virtual bool MountAndTestWrite( UsbStorageDevice* pDevice );
 	virtual void SetMountThreadState( MountThreadState mts );
 
 private:
@@ -34,7 +34,7 @@ protected:
 	void StopThread(); // call this in the derived desstructor to stop the mounting thread
 	virtual void MountThreadDoOneUpdate() = 0;	// this will get called as fast as possible
 	virtual bool MountThreadWaitForUpdate();
-	virtual void Mount( UsbStorageDevice* pDevice, CString sMountPoint ) = 0;
+	virtual void Mount( UsbStorageDevice* pDevice ) = 0;
 	bool ShouldDoOsMount() { return m_MountThreadState==detect_and_mount; }
 
 	vector<UsbStorageDevice> m_vStorageDevices;

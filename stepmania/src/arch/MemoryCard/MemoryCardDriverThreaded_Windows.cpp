@@ -106,7 +106,7 @@ void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
 			usbd.bWriteTestSucceeded = TestWrite( sDrive );
 
 			// read name
-			this->Mount( &usbd, TEMP_MOUNT_POINT );
+			this->Mount( &usbd );
 			FILEMAN->Mount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
 			FILEMAN->Mount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
 
@@ -134,19 +134,14 @@ void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
 	}
 }
 
-void MemoryCardDriverThreaded_Windows::Mount( UsbStorageDevice* pDevice, CString sMountPoint )
+void MemoryCardDriverThreaded_Windows::Mount( UsbStorageDevice* pDevice )
 {
-	ASSERT( !pDevice->sOsMountDir.empty() );
-
-	LOG->Trace( "FILEMAN->Mount %s %s", pDevice->sOsMountDir.c_str(), sMountPoint.c_str() );
-
 	// nothing to do here...
 }
 
-void MemoryCardDriverThreaded_Windows::Unmount( UsbStorageDevice* pDevice, CString sMountPoint )
+void MemoryCardDriverThreaded_Windows::Unmount( UsbStorageDevice* pDevice )
 {
-
-		// nothing to do here...
+	// nothing to do here...
 }
 
 void MemoryCardDriverThreaded_Windows::Flush( UsbStorageDevice* pDevice )

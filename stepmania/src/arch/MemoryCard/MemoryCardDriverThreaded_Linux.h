@@ -9,10 +9,10 @@ public:
 	MemoryCardDriverThreaded_Linux();
 	virtual ~MemoryCardDriverThreaded_Linux();
 
-	virtual void Unmount( UsbStorageDevice* pDevice, CString sMountPoint );
+	virtual void Unmount( UsbStorageDevice* pDevice );
 	virtual void Flush( UsbStorageDevice* pDevice );
 protected:
-	virtual void Mount( UsbStorageDevice* pDevice, CString sMountPoint );
+	virtual void Mount( UsbStorageDevice* pDevice );
 	virtual void ResetUsbStorage();
 	virtual void MountThreadDoOneUpdate();
 	virtual bool MountThreadWaitForUpdate();

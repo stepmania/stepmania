@@ -518,13 +518,10 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 }
 
 
-void MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice, CString sMountPoint )
+void MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice )
 {
 	ASSERT( !pDevice->sOsMountDir.empty() );
 	
-	FILEMAN->Mount( "dir", pDevice->sOsMountDir, sMountPoint.c_str() );
-	LOG->Trace( "FILEMAN->Mount %s %s", pDevice->sOsMountDir.c_str(), sMountPoint.c_str() );
-
         // HACK: Do OS mount for m_bMemoryCardsMountOnlyWhenNecessary
         CString sCommand = "mount " + pDevice->sOsMountDir;
         LOG->Trace( "hack mount (%s)", sCommand.c_str() );
@@ -535,7 +532,7 @@ void MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice, CString s
 	LOG->Trace( "WriteTest: %s, Name: %s", pDevice->bWriteTestSucceeded ? "succeeded" : "failed", pDevice->sName.c_str() );
 }
 
-void MemoryCardDriverThreaded_Linux::Unmount( UsbStorageDevice* pDevice, CString sMountPoint )
+void MemoryCardDriverThreaded_Linux::Unmount( UsbStorageDevice* pDevice )
 {
 	if( pDevice->sOsMountDir.empty() )
 		return;

@@ -7,12 +7,7 @@
 #include "arch/MemoryCard/MemoryCardDriver.h"
 
 
-const CString MEM_CARD_MOUNT_POINT[NUM_PLAYERS] =
-{
-	/* @ is importast; see RageFileManager LoadedDriver::GetPath */
-	"@mc1/",
-	"@mc2/",
-};
+extern const CString MEM_CARD_MOUNT_POINT[NUM_PLAYERS];
 
 class MemoryCardManager
 {

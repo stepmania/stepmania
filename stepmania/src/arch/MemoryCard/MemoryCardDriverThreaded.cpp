@@ -119,7 +119,7 @@ void MemoryCardDriverThreaded::GetStorageDevices( vector<UsbStorageDevice>& vDev
 		vDevicesOut.push_back( m_vStorageDevices[i] );
 }
 
-bool MemoryCardDriverThreaded::MountAndTestWrite( UsbStorageDevice* pDevice, CString sMountPoint )
+bool MemoryCardDriverThreaded::MountAndTestWrite( UsbStorageDevice* pDevice )
 {
 	LockMut( m_mutexStorageDevices );
 	vector<UsbStorageDevice>::const_iterator iter = find( m_vStorageDevices.begin(), m_vStorageDevices.end(), *pDevice );
@@ -132,10 +132,7 @@ bool MemoryCardDriverThreaded::MountAndTestWrite( UsbStorageDevice* pDevice, CSt
 	if( !iter->bWriteTestSucceeded )
 		return false;
 
-	/* Move the VFS mount to the destination.  This is safe to do in the main thread. */
-	FILEMAN->Remount( sMountPoint, pDevice->sOsMountDir );
-
-	this->Mount( pDevice, sMountPoint );
+	this->Mount( pDevice );
 
 	return pDevice->bWriteTestSucceeded;
 }

@@ -5,6 +5,8 @@
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
+#include "RageFileManager.h"
+#include "RageFileDriver.h"
 #include "ScreenManager.h"
 #include "ProfileManager.h"
 #include "Foreach.h"
@@ -12,6 +14,19 @@
 
 MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in our program
 
+const CString MEM_CARD_MOUNT_POINT[NUM_PLAYERS] =
+{
+	/* @ is importast; see RageFileManager LoadedDriver::GetPath */
+	"@mc1/",
+	"@mc2/",
+};
+
+static const CString MEM_CARD_MOUNT_POINT_INTERNAL[NUM_PLAYERS] =
+{
+	/* @ is importast; see RageFileManager LoadedDriver::GetPath */
+	"@mc1int/",
+	"@mc2int/",
+};
 
 MemoryCardManager::MemoryCardManager()
 {
@@ -32,6 +47,12 @@ MemoryCardManager::MemoryCardManager()
 MemoryCardManager::~MemoryCardManager()
 {
 	delete m_pDriver;
+
+	FOREACH_PlayerNumber( pn )
+	{
+		FILEMAN->Unmount( "", "", MEM_CARD_MOUNT_POINT[pn] );
+		FILEMAN->Unmount( "", "", MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
+	}
 }
 
 void MemoryCardManager::Update( float fDelta )
@@ -265,13 +286,35 @@ void MemoryCardManager::UnmountAllUsedCards()
 void MemoryCardManager::MountCard( PlayerNumber pn )
 {
 	ASSERT( !m_Device[pn].IsBlank() );
-	m_pDriver->MountAndTestWrite(&m_Device[pn], MEM_CARD_MOUNT_POINT[pn]);
+
+	if( !m_pDriver->MountAndTestWrite(&m_Device[pn]) )
+		return;
+
+	/* If this is the first time we're mounting the device, mount the VFS drivers.
+	 * Simply mounting our VFS on a directory doesn't actually touch the directory,
+	 * so this isn't a timeout risk.  (This is important for other reasons; for example,
+	 * if we mount a CDROM, we should not spin up the disc simply by mounting it.) */
+	RageFileDriver *pDriver = FILEMAN->GetFileDriver( MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
+	if( pDriver == NULL )
+	{
+		FILEMAN->Mount( "dir", m_Device[pn].sOsMountDir, MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
+		FILEMAN->Mount( "timeout", MEM_CARD_MOUNT_POINT_INTERNAL[pn], MEM_CARD_MOUNT_POINT[pn] );
+	}
+	else
+	{
+		/* It's already mounted.  We don't want to unmount the timeout FS.  Instead, just
+		 * move the target. */
+		pDriver->Remount( m_Device[pn].sOsMountDir );
+		FILEMAN->ReleaseFileDriver( pDriver );
+	}
 }
 
 void MemoryCardManager::UnmountCard( PlayerNumber pn )
 {
 	ASSERT( !m_Device[pn].IsBlank() );
-	m_pDriver->Unmount(&m_Device[pn], MEM_CARD_MOUNT_POINT[pn]);
+
+	/* Leave our own filesystem drivers mounted. */
+	m_pDriver->Unmount( &m_Device[pn] );
 }
 
 void MemoryCardManager::FlushAndReset()
