@@ -252,6 +252,14 @@ SOURCE=.\RageFileDriver.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RageFileDriverDeflate.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageFileDriverDeflate.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RageFileDriverDirect.cpp
 # End Source File
 # Begin Source File
@@ -273,6 +281,14 @@ SOURCE=.\RageFileDriverMemory.cpp
 # Begin Source File
 
 SOURCE=.\RageFileDriverMemory.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageFileDriverSlice.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageFileDriverSlice.h
 # End Source File
 # Begin Source File
 
