@@ -59,13 +59,13 @@ const int		kOffPacketReset = (int) (kOffPacketLimit / 100);			// Reset when with
 const int		kBuffersInRing = 3;
 
 // VRB Chunk Header
-struct VRBChunkHeader
+typedef struct VRBChunkHeader
 {
 	int sample;			// Sample-number for chunk
 	size_t offset;		// Offset into the chunk for live data (normally 0)
 	size_t length;		// Length of live data within the chunk
-};
-typedef struct VRBChunkHeader	VRBChunkHeader;
+} VBRChunkHeader;
+
 
 #define FEEDER_THREAD_IMPORTANCE 6
 // Additional priority to use for the feeder thread, on top of this task's ordinary priority.
@@ -188,14 +188,8 @@ void RageSound_CA::FeederThread()
 // ----------------------------------------------------------------------
 
 
-RageSound_CA::RageSound_CA()
-: idealFormat(NULL)
-, actualFormat(NULL)
-, converter(NULL)
+RageSound_CA::RageSound_CA() : idealFormat(NULL), actualFormat(NULL), converter(NULL)
 {
-#if (DRIVER == DRIVER_UNFINISHED)
-    RageException::ThrowNonfatal("Class not finished");
-#endif
 
 	shutdown = false;
 
@@ -800,14 +794,7 @@ OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice, UInt32 inChannel
 	return 0;
 }
 
-
-/*int64_t RageSound_CA::ConvertSampleTimeToPosition(const Float64 sampleTime) const
-{
-	return  int64_t(sampleTime - startSampleTime);
-}*/
-
 int64_t RageSound_CA::ConvertAudioTimeStampToPosition(const AudioTimeStamp *time) const
 {
-	//return this->ConvertSampleTimeToPosition(time->mSampleTime);
     return int64_t(time->mSampleTime - startSampleTime);
 }

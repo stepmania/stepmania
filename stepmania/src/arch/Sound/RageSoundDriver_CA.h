@@ -15,11 +15,6 @@
 #include "RageSoundDriver.h"
 #include "RageThreads.h"
 
-
-#define DRIVER_UNFINISHED 		0
-#define DRIVER_HAL				1
-#define DRIVER 					DRIVER_HAL
-
 #define FEEDER_DIRECT			0
 #define FEEDER_THREAD			1
 #define FEEDER					FEEDER_DIRECT
@@ -95,7 +90,6 @@ private:
 	void FeederThread();
 #endif
 
-    //int64_t ConvertSampleTimeToPosition(const Float64 sampleTime) const;
     int64_t ConvertAudioTimeStampToPosition(const AudioTimeStamp *time) const;
 
 protected:
