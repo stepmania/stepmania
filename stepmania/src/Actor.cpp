@@ -397,18 +397,18 @@ void Actor::ScaleTo( const RectI &rect, StretchType st )
 void Actor::SetHorizAlign( CString s )
 {
 	s.MakeLower();
-	if     (s=="left")		m_HorizAlign = align_left;
-	else if(s=="center")	m_HorizAlign = align_center;
-	else if(s=="right")		m_HorizAlign = align_right;
+	if     (s=="left")		SetHorizAlign( align_left ); /* call derived */
+	else if(s=="center")	SetHorizAlign( align_center );
+	else if(s=="right")		SetHorizAlign( align_right );
 	else	ASSERT(0);
 }
 
 void Actor::SetVertAlign( CString s )
 {
 	s.MakeLower();
-	if     (s=="top")		m_VertAlign = align_top;
-	else if(s=="middle")	m_VertAlign = align_middle;
-	else if(s=="bottom")	m_VertAlign = align_bottom;
+	if     (s=="top")		SetVertAlign( align_top ); /* call derived */
+	else if(s=="middle")	SetVertAlign( align_middle );
+	else if(s=="bottom")	SetVertAlign( align_bottom );
 	else	ASSERT(0);
 }
 
