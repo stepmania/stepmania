@@ -136,7 +136,8 @@ void NoteData::AddHoldNote( HoldNote add )
 			add.fEndBeat   = max(add.fEndBeat, other.fEndBeat);
 
 			// delete this HoldNote
-			m_HoldNotes.erase(m_HoldNotes.begin()+i, m_HoldNotes.begin()+i+1);
+			RemoveHoldNote( i );
+			--i;
 		}
 	}
 
