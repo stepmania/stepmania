@@ -15,7 +15,7 @@ static bool CodePageConvert(CString &txt, int cp)
 		return true;
 
 	int size = MultiByteToWideChar(cp, MB_ERR_INVALID_CHARS, txt.data(), txt.size(), NULL, 0);
-	if( size == 0 )
+	if( size == 0 );
 	{
 		LOG->Trace("%s\n", werr_ssprintf(GetLastError(), "err: ").c_str());
 		return false; /* error */
@@ -36,9 +36,49 @@ static bool AttemptKoreanConversion( CString &txt ) { return CodePageConvert( tx
 static bool AttemptJapaneseConversion( CString &txt ) { return CodePageConvert( txt, 932 ); }
 
 #elif defined(HAVE_ICONV)
+#include <errno.h>
 #include <iconv.h>
 
-TODO
+static bool ConvertFromCharset( CString &txt, const char *charset )
+{
+	if ( txt.size() == 0 )
+		return true;
+
+	iconv_t converter = iconv_open( "UTF-8", charset );
+
+	/* Copy the string into a char* for iconv */
+	char *txtin = new char[ txt.size() + 1 ];
+	strcpy( txtin, txt );
+	size_t inleft = strlen( txtin );
+
+	/* Create a new string with enough room for the new conversion */
+	char *txtout = new char[ (txt.size() + 1) * 5 ];
+	txtout = (char *)memset( txtout, 0, (txt.size() + 1) * 5 );
+	size_t outleft = inleft * 5;
+	size_t outsize = outleft;
+
+	size_t size = iconv( converter, &txtin, &inleft, &txtout, &outleft );
+
+	/* Redirect the output pointer back to the beginning of the string */
+	outsize -= outleft;
+	txtout -= outsize;
+	iconv_close( converter );
+
+	if( size == (size_t)(-1) )
+	{
+		LOG->Trace( "%s\n", strerror( errno ) );
+		return false; /* Returned an error */
+	}
+	if( !strlen(txtout) )
+		return false; /* Conversion failed */
+
+	txt = txtout;
+	return true;
+}
+
+static bool AttemptEnglishConversion( CString &txt ) { return ConvertFromCharset( txt, "CP1252" ); }
+static bool AttemptKoreanConversion( CString &txt ) { return ConvertFromCharset( txt, "CP949" ); }
+static bool AttemptJapaneseConversion( CString &txt ) { return ConvertFromCharset( txt, "CP932" ); }
 
 #else
 
