@@ -136,9 +136,6 @@ void ScreenProfileOptions::GoToNextState()
 
 void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 {
-	CString sProfileID = GetSelectedProfileID();
-	CString sName = GetSelectedProfileName();
-
 	switch( SM )
 	{
 	case SM_DoneCreating:
@@ -155,6 +152,8 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 	case SM_DoneRenaming:
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
+			CString sProfileID = GetSelectedProfileID();
+			CString sName = GetSelectedProfileName();
 			CString sNewName = ScreenTextEntry::s_sLastAnswer;
 			bool bResult = PROFILEMAN->RenameLocalProfile( sProfileID, sNewName );
 			if( bResult )
@@ -166,6 +165,8 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 	case SM_DoneDeleting:
 		if( ScreenPrompt::s_bLastAnswer )
 		{
+			CString sProfileID = GetSelectedProfileID();
+			CString sName = GetSelectedProfileName();
 			bool bResult = PROFILEMAN->DeleteLocalProfile( sProfileID );
 			if( bResult )
 				SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	// reload
