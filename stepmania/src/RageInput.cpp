@@ -271,6 +271,8 @@ bool DeviceInput::fromString( const CString &s )
 	return true;
 }
 
+#if 0
+
 /* FIXME: The main font doesn't have '`' (0x29), so that's disabled. */
 static const char SDLK_charmap[] = {
 	    /*   0   1   2   3   4   5   6   7   8    9    A   B   C   D   E  F */ 
@@ -287,14 +289,18 @@ static const char SDLK_charmap[] = {
 /* 0xAx */	  0,  0,  0,  0,  0,  0,  0,  0,  0,   0,  0,   0,  0,  0,  0,  0,
 /* 0xBx */	  0,  0,  0,',',  0,'/',  0,  0,  0,   0,  0,   0,  0,  0,  0,  0,
  };
+#endif
 
 char DeviceInput::ToChar() const
 {
 	switch( device )
 	{
 	case DEVICE_KEYBOARD:
-		if( button < sizeof(SDLK_charmap) )
-			return SDLK_charmap[button];
+		if( button < 128 )
+			return (char) button;
+		/* XXX: SDLK_WORLD_* are for international keyboards; we can handle those,
+		 * now, by mapping it to Unicode.  However, I can't find any documentation
+		 * on those keysyms. */
 		return '\0';
 	default:
 		return '\0';
