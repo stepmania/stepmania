@@ -306,6 +306,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	split( OPTION_MENU_FLAGS, ";", Flags, true );
 	InputMode im = INPUTMODE_INDIVIDUAL;
 	bool Explanations = false;
+	bool bShowUnderlines = true;
 	
 	for( unsigned i = 0; i < Flags.size(); ++i )
 	{
@@ -325,6 +326,8 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			SetNavigation( NAV_THREE_KEY_MENU );
 		if( Flags[i] == "toggle" || Flags[i] == "firstchoicegoesdown" )
 			SetNavigation( PREFSMAN->m_bArcadeOptionsNavigation? NAV_TOGGLE_THREE_KEY:NAV_TOGGLE_FIVE_KEY );
+		if( Flags[i] == "hideunderlines" )
+			bShowUnderlines = false;
 	}
 
 	m_OptionRowAlloc = new OptionRowData[asLineNames.size()];
@@ -376,7 +379,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 
 	ASSERT( OptionRowHandlers.size() == asLineNames.size() );
 
-	InitMenu( im, m_OptionRowAlloc, asLineNames.size() );
+	InitMenu( im, m_OptionRowAlloc, asLineNames.size(), bShowUnderlines );
 }
 
 ScreenOptionsMaster::~ScreenOptionsMaster()

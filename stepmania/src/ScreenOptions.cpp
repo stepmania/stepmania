@@ -122,6 +122,8 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 		m_bGotAtLeastOneStartPressed[p] = false;
 	}
 
+	m_bShowUnderlines = true;
+
 	m_framePage.RunCommands( FRAME_ON_COMMAND );
 }
 
@@ -130,11 +132,13 @@ void ScreenOptions::LoadOptionIcon( PlayerNumber pn, int iRow, CString sText )
 	m_Rows[iRow]->m_OptionIcons[pn].Load( pn, sText, false );
 }
 
-void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNumOptionLines )
+void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNumOptionLines, bool bShowUnderlines )
 {
 	LOG->Trace( "ScreenOptions::Set()" );
 
 	m_InputMode = im;
+
+	m_bShowUnderlines = bShowUnderlines;
 
 	for( int r=0; r<iNumOptionLines; r++ )		// foreach row
 	{
@@ -646,6 +650,8 @@ void ScreenOptions::PositionUnderlines()
 
 				bool bSelected = row.m_vbSelected[p][ iChoiceWithFocus ];
 				bool bHidden = !bSelected || row.m_bHidden;
+				if( !m_bShowUnderlines )
+					bHidden = true;
 
 				if( ul.GetDestY() != row.m_fY )
 				{

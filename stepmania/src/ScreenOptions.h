@@ -42,7 +42,7 @@ class ScreenOptions : public ScreenWithMenuElements
 {
 public:
 	ScreenOptions( CString sClassName );
-	void InitMenu( InputMode im, OptionRowData OptionRowData[], int iNumOptionLines );
+	void InitMenu( InputMode im, OptionRowData OptionRowData[], int iNumOptionLines, bool bShowUnderlines = true );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -162,6 +162,8 @@ protected:
 
 	// show if the current selections will disqualify a high score
 	AutoActor		m_sprDisqualify[NUM_PLAYERS];
+
+	bool			m_bShowUnderlines;
 	
 	// TRICKY: People hold Start to get to PlayerOptions, then 
 	// the repeat events cause them to zip to the bottom.  So, ignore
