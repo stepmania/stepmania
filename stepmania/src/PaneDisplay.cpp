@@ -63,7 +63,6 @@ static const PaneModes PaneMode[NUM_PANES] =
 	PANEMODE_SONG,
 	PANEMODE_SONG,
 //	PANEMODE_SONG,
-	PANEMODE_BATTLE,
 	PANEMODE_COURSE,
 	PANEMODE_COURSE
 //	PANEMODE_COURSE
@@ -89,7 +88,6 @@ void PaneDisplay::Load( PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 	m_PreferredPaneForMode[PANEMODE_SONG] = PANE_SONG_DIFFICULTY;
-	m_PreferredPaneForMode[PANEMODE_BATTLE] = PANE_BATTLE_DIFFICULTY;
 	m_PreferredPaneForMode[PANEMODE_COURSE] = PANE_COURSE_MACHINE_SCORES;
 
 	m_sprPaneUnder.Load( THEME->GetPathToG( ssprintf("PaneDisplay under p%i", pn+1)) );
