@@ -44,6 +44,8 @@ public:
 		RageVector4 quat;
 		RageVector3 scale;
 		RectF		crop;	// 0 = no cropping, 1 = fully cropped
+		RectF		fade;	// 0 = no fade
+		RageColor	fadecolor;
 		RageColor   diffuse[4];
 		RageColor   glow;
 		GlowMode	glowmode;
@@ -136,6 +138,11 @@ public:
 	virtual void  SetCropRight( float percent )	{ DestTweenState().crop.right = percent;}
 	virtual void  SetCropBottom( float percent ){ DestTweenState().crop.bottom = percent;}
 
+	virtual void  SetFadeLeft( float percent )	{ DestTweenState().fade.left = percent; }
+	virtual void  SetFadeTop( float percent )	{ DestTweenState().fade.top = percent;	}
+	virtual void  SetFadeRight( float percent )	{ DestTweenState().fade.right = percent;}
+	virtual void  SetFadeBottom( float percent ){ DestTweenState().fade.bottom = percent;}
+	virtual void  SetFadeDiffuseColor( const RageColor &c ) { DestTweenState().fadecolor = c; }
 
 	virtual void SetGlobalDiffuseColor( RageColor c );
 	virtual void SetGlobalX( float x );

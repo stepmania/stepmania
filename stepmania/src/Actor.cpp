@@ -741,6 +741,11 @@ void Actor::HandleCommand( const CStringArray &asTokens )
 	else if( sName=="croptop" )			SetCropTop( fParam(1) );
 	else if( sName=="cropright" )		SetCropRight( fParam(1) );
 	else if( sName=="cropbottom" )		SetCropBottom( fParam(1) );
+	else if( sName=="fadeleft" )		SetFadeLeft( fParam(1) );
+	else if( sName=="fadetop" )			SetFadeTop( fParam(1) );
+	else if( sName=="faderight" )		SetFadeRight( fParam(1) );
+	else if( sName=="fadebottom" )		SetFadeBottom( fParam(1) );
+	else if( sName=="fadecolor" )		SetFadeDiffuseColor( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 	else if( sName=="diffuse" )			SetDiffuse( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 	else if( sName=="diffuseleftedge" )		SetDiffuseLeftEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 	else if( sName=="diffuserightedge" )	SetDiffuseRightEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
@@ -867,6 +872,8 @@ void Actor::TweenState::Init()
 	quat = RageVector4( 0, 0, 0, 1 );
 	scale = RageVector3( 1, 1, 1 );
 	crop = RectF( 0,0,0,0 );
+	fade = RectF( 0,0,0,0 );
+	fadecolor = RageColor( 1, 1, 1, 0 );
 	for(int i=0; i<4; i++) 
 		diffuse[i] = RageColor( 1, 1, 1, 1 );
 	glow = RageColor( 1, 1, 1, 0 );
@@ -884,6 +891,12 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 	average_out.crop.top	= ts1.crop.top   + (ts2.crop.top	- ts1.crop.top   )*fPercentBetween;
 	average_out.crop.right	= ts1.crop.right + (ts2.crop.right	- ts1.crop.right )*fPercentBetween;
 	average_out.crop.bottom	= ts1.crop.bottom+ (ts2.crop.bottom	- ts1.crop.bottom)*fPercentBetween;
+
+	average_out.fade.left	= ts1.fade.left  + (ts2.fade.left	- ts1.fade.left  )*fPercentBetween;
+	average_out.fade.top	= ts1.fade.top   + (ts2.fade.top	- ts1.fade.top   )*fPercentBetween;
+	average_out.fade.right	= ts1.fade.right + (ts2.fade.right	- ts1.fade.right )*fPercentBetween;
+	average_out.fade.bottom	= ts1.fade.bottom+ (ts2.fade.bottom	- ts1.fade.bottom)*fPercentBetween;
+	average_out.fadecolor	= ts1.fadecolor  + (ts2.fadecolor	- ts1.fadecolor  )*fPercentBetween;
 
 	for(int i=0; i<4; i++) 
 		average_out.diffuse[i]	= ts1.diffuse[i]+ (ts2.diffuse[i]	- ts1.diffuse[i])*fPercentBetween;
