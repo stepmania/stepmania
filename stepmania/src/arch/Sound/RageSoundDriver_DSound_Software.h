@@ -28,7 +28,7 @@ class RageSound_DSound_Software: public RageSoundDriver
 	DSound ds;
 	DSoundBuf *str_ds;
 
-	bool GetPCM();
+	bool GetData();
 	void Update(float delta);
 
 	static int MixerThread_start(void *p);

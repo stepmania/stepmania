@@ -26,7 +26,7 @@ class RageSound_DSound: public RageSoundDriver
 
 		int flush_pos; /* state == STOPPING only */
 
-		bool GetPCM(bool init);
+		bool GetData(bool init);
 
 	    stream() { str_ds = NULL; snd = NULL; state=INACTIVE; }
 		~stream();

@@ -61,7 +61,7 @@ void RageSound_DSound::MixerThread()
 			if(stream_pool[i]->state == stream_pool[i]->INACTIVE)
 				continue; /* inactive */
 
-			while(stream_pool[i]->GetPCM(false))
+			while(stream_pool[i]->GetData(false))
 				;
 		}
 	}
@@ -95,7 +95,7 @@ void RageSound_DSound::Update(float delta)
 /* If init is true, we're filling the buffer while it's stopped, so put
  * data in the current buffer (where the play cursor is); otherwise put
  * it in the opposite buffer. */
-bool RageSound_DSound::stream::GetPCM(bool init)
+bool RageSound_DSound::stream::GetData(bool init)
 {
 	VDCHECKPOINT;
 
@@ -221,13 +221,13 @@ void RageSound_DSound::StartMixing(RageSound *snd)
 	/* Pre-buffer the stream. */
 	/* There are two buffers of data; fill them both ahead of time so the
 	 * sound can start almost immediately. */
-	stream_pool[i]->GetPCM(true);
+	stream_pool[i]->GetData(true);
 	stream_pool[i]->str_ds->Play();
 
 	/* Normally, at this point we should still be INACTIVE, in which case,
 	 * tell the mixer thread to start mixing this channel.  However, if it's
 	 * been changed to STOPPING, then we actually finished the whole file
-	 * in the prebuffering GetPCM calls above, so leave it alone and let it
+	 * in the prebuffering GetData calls above, so leave it alone and let it
 	 * finish on its own. */
 	if(stream_pool[i]->state == stream_pool[i]->INACTIVE)
 		stream_pool[i]->state = stream_pool[i]->PLAYING;

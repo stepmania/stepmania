@@ -30,7 +30,7 @@ class RageSound_WaveOut: public RageSoundDriver
 	void MixerThread();
 	SDL_Thread *MixerThreadPtr;
 
-	bool GetPCM();
+	bool GetData();
 	void Update(float delta);
 
 	/* virtuals: */

@@ -44,12 +44,12 @@ void RageSound_DSound_Software::MixerThread()
 	while(!shutdown) {
 		Sleep(10);
 
-		while(GetPCM())
+		while(GetData())
 			;
 	}
 }
 
-bool RageSound_DSound_Software::GetPCM()
+bool RageSound_DSound_Software::GetData()
 {
 	LockMut(SOUNDMAN->lock);
 

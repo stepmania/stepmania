@@ -54,14 +54,14 @@ void RageSound_WaveOut::MixerThread()
 		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set sound thread priority"));
 
 	while(!shutdown) {
-		while(GetPCM())
+		while(GetData())
 			;
 
 		WaitForSingleObject(sound_event, 10);
 	}
 }
 
-bool RageSound_WaveOut::GetPCM()
+bool RageSound_WaveOut::GetData()
 {
 	LockMutex L(SOUNDMAN->lock);
 
