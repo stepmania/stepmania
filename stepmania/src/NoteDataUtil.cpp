@@ -158,15 +158,28 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &out )
 
 		for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
 		{
-			for( int t=0; t<in.GetNumTracks(); t++ ) {
+			for( int t=0; t<in.GetNumTracks(); t++ )
+			{
+				TapNote tn = in.GetTapNote(t, r);
 				char c;
-				switch(in.GetTapNote(t, r)) {
-				case TAP_EMPTY: c = '0'; break;
-				case TAP_TAP:   c = '1'; break;
+				switch( tn )
+				{
+				case TAP_EMPTY:		c = '0'; break;
+				case TAP_TAP:		c = '1'; break;
 				case TAP_HOLD_HEAD: c = '2'; break;
 				case TAP_HOLD_TAIL: c = '3'; break;
-				case TAP_MINE:	c = 'M'; break;
-				default: ASSERT(0); c = '0'; break;
+				case TAP_MINE:		c = 'M'; break;
+				default: 
+					if( tn >= TAP_ATTACK_BEGIN && tn <= TAP_ATTACK_END )
+					{
+						c = tn - TAP_ATTACK_BEGIN + 'a';	// TODO: overflow check?
+					}
+					else
+					{
+						ASSERT(0); 
+						c = '0'; 
+					}
+					break;
 				}
 				sRet.append(1, c);
 			}
@@ -682,7 +695,7 @@ void NoteDataUtil::AddMines( NoteData &in, float fStartBeat, float fEndBeat )
 		}
 	}
 
-	// Place mines right after hold so players must lift their foot.
+	// Place mines right after hold so player must lift their foot.
 	for( int i=0; i<in.GetNumHoldNotes(); i++ )
 	{
 		HoldNote &hn = in.GetHoldNote(i);

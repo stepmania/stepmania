@@ -39,11 +39,11 @@ public:
 	void LoadPreppedScreen();
 	void DeletePreppedScreen();
 	void SetNewScreen( CString sClassName );
-	void AddNewScreenToTop( CString sClassName );
+	void AddNewScreenToTop( CString sClassName, ScreenMessage messageSendOnPop );
 	void Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo = false, bool bDefaultAnswer = false, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
 	void TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL );
 	void MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel = SM_None );
-	void PopTopScreen( ScreenMessage SM = SM_RegainingFocus );
+	void PopTopScreen( ScreenMessage SM = SM_None );
 	void SystemMessage( CString sMessage );
 
 	void PostMessageToTopScreen( ScreenMessage SM, float fDelay );
@@ -57,6 +57,7 @@ public:
 
 private:
 	vector<Screen*> m_ScreenStack;	// bottommost to topmost
+	ScreenMessage m_MessageSendOnPop;
 	vector<Screen*> m_ScreensToDelete;
 	Screen *m_ScreenBuffered;
 	ScreenSystemLayer *m_SystemLayer;

@@ -89,6 +89,10 @@ const ScreenMessage SM_BackFromEditNotesStatistics	= (ScreenMessage)(SM_User+3);
 const ScreenMessage SM_BackFromEditOptions			= (ScreenMessage)(SM_User+4);
 const ScreenMessage SM_BackFromEditSongInfo			= (ScreenMessage)(SM_User+5);
 const ScreenMessage SM_BackFromBGChange				= (ScreenMessage)(SM_User+6);
+const ScreenMessage SM_BackFromPlayerOptions		= (ScreenMessage)(SM_User+7);
+const ScreenMessage SM_BackFromSongOptions			= (ScreenMessage)(SM_User+8);
+const ScreenMessage SM_BackFromInsertAttack			= (ScreenMessage)(SM_User+9);
+const ScreenMessage SM_BackFromInsertAttackModifiers= (ScreenMessage)(SM_User+10);
 
 
 const CString HELP_TEXT = 
@@ -216,6 +220,19 @@ static const MenuRow g_BGChangeItems[] =
 	{ NULL, true, 0, { NULL } }
 };
 static Menu g_BGChange( "Background Change", g_BGChangeItems );
+
+static const MenuRow g_InsertAttackItems[] =
+{
+	{ "Duration",							true, 2, { "0:10","0:20","0:30","0:40","0:50","1:00","1:10","1:20","1:30","1:40","1:50","2:00" } },
+	{ "Set modifiers",						true, 0, { "PRESS START" } },
+	{ NULL, true, 0, { NULL } }
+};
+static Menu g_InsertAttack( "Insert Attack", g_InsertAttackItems );
+
+// HACK: need to remember the track we're inserting on so
+// that we can lay the attack note after coming back from
+// menus.
+int g_iLastInsertAttackTrack = -1;
 
 ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 {
@@ -661,22 +678,23 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			if( !bRemovedAHoldNote )
 			{
-				// Hold Shift to lay mine
-				bool bLayMine = 
-					INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT)) ||
-					INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT));
-
-				// We didn't remove a HoldNote, so the user wants to add or delete a TapNote
-				if( m_NoteFieldEdit.GetTapNote(iCol, iSongIndex) == TAP_EMPTY )
+				// Delete the tap note here if one already exists
+				if( m_NoteFieldEdit.GetTapNote(iCol, iSongIndex) != TAP_EMPTY )
 				{
-					if( bLayMine )
-						m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_MINE );
-					else
-						m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_TAP );
+					m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_EMPTY );
 				}
 				else
 				{
-					m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_EMPTY );
+					// Hold LShift to lay mine, hold RShift to lay an attack
+					if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT)) )
+						m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_MINE );
+					else if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT)) )
+					{
+						g_iLastInsertAttackTrack = iCol;
+						SCREENMAN->MiniMenu( &g_InsertAttack, SM_BackFromInsertAttack );
+					}
+					else
+						m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_TAP );
 				}
 			}
 		}
@@ -1240,9 +1258,23 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BackFromBGChange:
 		HandleBGChangeChoice( (BGChangeChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
 		break;
-	case SM_RegainingFocus:
+	case SM_BackFromPlayerOptions:
+	case SM_BackFromSongOptions:
 		// coming back from PlayerOptions or SongOptions
 		m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
+		break;
+	case SM_BackFromInsertAttack:
+		GAMESTATE->StoreSelectedOptions();	// save so that we don't lose the options chosen for edit and playback
+		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertAttackModifiers );
+		break;
+	case SM_BackFromInsertAttackModifiers:
+		{
+			PlayerOptions poChosen = GAMESTATE->m_PlayerOptions[PLAYER_1];
+			CString sMods = poChosen.GetString();
+			int row = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+			m_NoteFieldEdit.SetTapNote( g_iLastInsertAttackTrack, row, TAP_TAP );
+			GAMESTATE->RestoreSelectedOptions();	// restore the edit and playback options
+		}
 		break;
 	}
 }
@@ -1368,10 +1400,10 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			}
 			break;
 		case player_options:
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions" );
+			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
 			break;
 		case song_options:
-			SCREENMAN->AddNewScreenToTop( "ScreenSongOptions" );
+			SCREENMAN->AddNewScreenToTop( "ScreenSongOptions", SM_BackFromSongOptions );
 			break;
 		case edit_song_info:
 			{

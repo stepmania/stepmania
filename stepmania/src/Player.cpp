@@ -633,7 +633,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				return;
 
 			// Unless the computer made a very good step, they were fooled by the mine
-			if( tn == TAP_MINE  &&  score <= TNS_GREAT )
+			if( tn == TAP_MINE  &&  score <= TNS_GOOD )
 			{
 				m_soundMine.Play();
 				score = TNS_MISS;

@@ -37,6 +37,11 @@ static const TapNote TAP_ADDITION	= '5';
 // mine note - don't step!
 static const TapNote TAP_MINE		= '6';
 
+// attack note start.  Use lowercase letters a-z.
+// Don't use uppercase letters - 'M' it taken for mine.
+static const TapNote TAP_ATTACK_BEGIN	= 'a';
+static const TapNote TAP_ATTACK_END		= 'z';
+
 enum 
 {
 	TRACK_1 = 0,

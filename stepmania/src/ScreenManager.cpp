@@ -321,6 +321,8 @@ ScreenManager::ScreenManager()
 	m_SystemLayer = new ScreenSystemLayer;
 
 	m_ScreenBuffered = NULL;
+
+	m_MessageSendOnPop = SM_None;
 }
 
 
@@ -583,10 +585,11 @@ retry:
 		GAMESTATE->m_bIsOnSystemMenu = false;
 }
 
-void ScreenManager::AddNewScreenToTop( CString sClassName )
+void ScreenManager::AddNewScreenToTop( CString sClassName, ScreenMessage messageSendOnPop )
 {	
 	Screen* pNewScreen = MakeNewScreen(sClassName);
 	m_ScreenStack.push_back( pNewScreen );
+	m_MessageSendOnPop = messageSendOnPop;
 }
 
 #include "ScreenPrompt.h"
@@ -617,9 +620,11 @@ void ScreenManager::PopTopScreen( ScreenMessage SM )
 	//pScreenToPop->HandleScreenMessage( SM_LosingInputFocus );
 	m_ScreenStack.erase(m_ScreenStack.end()-1, m_ScreenStack.end());
 	m_ScreensToDelete.push_back( pScreenToPop );
-	
-	Screen* pNewTopScreen = m_ScreenStack[m_ScreenStack.size()-1];
-	pNewTopScreen->HandleScreenMessage( SM );
+
+	// post to the new top
+	PostMessageToTopScreen( SM, 0 );
+	PostMessageToTopScreen( m_MessageSendOnPop, 0 );
+	m_MessageSendOnPop = SM_None;
 }
 
 void ScreenManager::PostMessageToTopScreen( ScreenMessage SM, float fDelay )

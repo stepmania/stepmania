@@ -44,6 +44,8 @@
 
 const ScreenMessage SM_BackFromCourseOptionsMenu		= (ScreenMessage)(SM_User+1);
 const ScreenMessage SM_BackFromCourseEntryOptionsMenu	= (ScreenMessage)(SM_User+2);
+const ScreenMessage SM_BackFromPlayerOptions			= (ScreenMessage)(SM_User+3);
+const ScreenMessage SM_BackFromSongOptions				= (ScreenMessage)(SM_User+4);
 							  
 enum CourseEntryMenuRow
 {
@@ -393,7 +395,7 @@ void EditCoursesMenu::Start()
 		GAMESTATE->m_PlayerOptions[PLAYER_1] = PlayerOptions();
 		GAMESTATE->m_PlayerOptions[PLAYER_1].FromString( pEntry->modifiers );
 
-		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions" );
+		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
 		break;
 	case ROW_ENTRY_SONG_OPTIONS:	
 		m_soundStart.Play();
@@ -401,7 +403,7 @@ void EditCoursesMenu::Start()
 		GAMESTATE->m_SongOptions = SongOptions();
 		GAMESTATE->m_SongOptions.FromString( pEntry->modifiers );
 
-		SCREENMAN->AddNewScreenToTop( "ScreenSongOptions" );
+		SCREENMAN->AddNewScreenToTop( "ScreenSongOptions", SM_BackFromSongOptions );
 		break;
 	default:
 		m_soundInvalid.Play();
@@ -448,7 +450,8 @@ void EditCoursesMenu::HandleScreenMessage( const ScreenMessage SM )
 			OnRowValueChanged( ROW_ENTRY_OPTIONS );
 		}
 		break;
-	case SM_RegainingFocus:
+	case SM_BackFromPlayerOptions:
+	case SM_BackFromSongOptions:
 		// coming back from PlayerOptions or SongOptions
 		pEntry->modifiers = GAMESTATE->m_PlayerOptions[PLAYER_1].GetString() + "," + GAMESTATE->m_SongOptions.GetString();
 		OnRowValueChanged( ROW_ENTRY_PLAYER_OPTIONS );

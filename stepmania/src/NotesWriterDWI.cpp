@@ -14,8 +14,17 @@ CString NotesWriterDWI::NotesToDWIString( const TapNote cNoteCols[6] )
 	CString taps, holds, ret;
 	for( int col = 0; col < 6; ++col )
 	{
-		if( cNoteCols[col] == TAP_EMPTY || cNoteCols[col] == TAP_MINE )
+		switch( cNoteCols[col] )
+		{
+		case TAP_EMPTY:
+		case TAP_MINE:
 			continue;
+		default:
+			if( cNoteCols[col] >= TAP_ATTACK_BEGIN && cNoteCols[col] <= TAP_ATTACK_END )
+				continue;
+			else
+				ASSERT(0); 
+		}
 
 		if( cNoteCols[col] == TAP_HOLD_HEAD )
 			holds += dirs[col];
