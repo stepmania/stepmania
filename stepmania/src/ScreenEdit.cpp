@@ -71,7 +71,8 @@ const ScreenMessage SM_DoRevertToLastSave				= (ScreenMessage)(SM_User+13);
 const ScreenMessage SM_DoUpdateTextInfo				= (ScreenMessage)(SM_User+14);
 const ScreenMessage SM_BackFromBPMChange			= (ScreenMessage)(SM_User+15);
 const ScreenMessage SM_BackFromStopChange			= (ScreenMessage)(SM_User+16);
-const ScreenMessage SM_DoExit						= (ScreenMessage)(SM_User+17);
+const ScreenMessage SM_DoSaveAndExit				= (ScreenMessage)(SM_User+17);
+const ScreenMessage SM_DoExit						= (ScreenMessage)(SM_User+18);
 
 const CString HELP_TEXT = 
 #if !defined(XBOX)
@@ -513,6 +514,7 @@ void ScreenEdit::Init()
 	// save the originals for reverting later
 	CopyToLastSave();
 
+	m_CurrentAction = MAIN_MENU_CHOICE_INVALID;
 
 	// set both players to joined so the credit message doesn't show
 	FOREACH_PlayerNumber( p )
@@ -1601,12 +1603,47 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		UpdateTextInfo();
 		break;
 
+	case SM_DoSaveAndExit: // just asked "save before exiting? yes, no, cancel"
+		switch( ScreenPrompt::s_LastAnswer )
+		{
+		case ANSWER_YES:
+			// This will send SM_Success or SM_Failure.
+			HandleMainMenuChoice( ScreenEdit::save_on_exit, NULL );
+			return;
+		case ANSWER_NO:
+			/* Don't save; just exit. */
+			SCREENMAN->SendMessageToTopScreen( SM_DoExit );
+			return;
+		case ANSWER_CANCEL:
+			break; // do nothing
+		}
+
+		break;
+
+	case SM_Success:
+		LOG->Trace( "Save successful." );
+		m_pSteps->SetSavedToDisk( true );
+		CopyToLastSave();
+
+		if( m_CurrentAction == save_on_exit )
+			HandleScreenMessage( SM_DoExit );
+
+		break;
+
+	case SM_Failure: // save failed; stay in the editor
+		/* We committed the steps to SongManager.  Revert to the last save, and
+		 * recommit the reversion to SongManager. */
+		LOG->Trace( "Save failed.  Changes uncommitted from memory." );
+		CopyFromLastSave();
+		m_pSteps->SetNoteData( m_NoteDataEdit );
+
+		break;
+
 	case SM_DoExit:
-		if( ScreenPrompt::s_LastAnswer != ANSWER_CANCEL )
 		{
 			// IMPORTANT: CopyFromLastSave before deleteing the Steps below
 			CopyFromLastSave();
-			
+
 			// If these steps have never been saved, then we should delete them.
 			// If the user created them in the edit menu and never bothered
 			// to save them, then they aren't wanted.
@@ -1618,9 +1655,9 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 				m_pSteps = NULL;
 				GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
 			}
-
-			m_Out.StartTransitioning( SM_GoToNextScreen );
 		}
+
+		m_Out.StartTransitioning( SM_GoToNextScreen );
 		break;
 
 	case SM_GainFocus:
@@ -1704,12 +1741,6 @@ void ChangeArtistTranslit( CString sNew )
 	pSong->m_sArtistTranslit = sNew;
 }
 
-ScreenEdit *g_pScreenEdit = NULL;
-static void DoSaveOnExit( void* )
-{
-	g_pScreenEdit->HandleMainMenuChoice( ScreenEdit::save_on_exit, NULL );
-}
-
 // End helper functions
 
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
@@ -1755,16 +1786,13 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 		case save:
 		case save_on_exit:
 			{
+				m_CurrentAction = c;
+
 				// copy edit into current Steps
 				Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 				ASSERT( pSteps );
 
 				pSteps->SetNoteData( m_NoteDataEdit );
-				pSteps->SetSavedToDisk( true );
-
-
-				CopyToLastSave();
-
 
 				if( HOME_EDIT_MODE )
 				{
@@ -1779,6 +1807,9 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				}
 				else
 				{
+					pSteps->SetSavedToDisk( true );
+					CopyToLastSave();
+
 					GAMESTATE->m_pCurSong->Save();
 					SCREENMAN->ZeroNextUpdate();
 
@@ -1789,6 +1820,8 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 						SCREENMAN->SystemMessage( "Saved as SM and DWI." );
 					else
 						SCREENMAN->SystemMessage( "Saved as SM." );
+
+					HandleScreenMessage( SM_Success );
 				}
 
 				SOUND->PlayOnce( THEME->GetPathS("ScreenEdit","save") );
@@ -1922,11 +1955,10 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			PlayPreviewMusic();
 			break;
 		case exit:
-			g_pScreenEdit = this;
 			SCREENMAN->Prompt(
-				SM_DoExit,
+				SM_DoSaveAndExit,
 				"Do you want to save changes before exiting?",
-				PROMPT_YES_NO_CANCEL, ANSWER_NO, DoSaveOnExit );
+				PROMPT_YES_NO_CANCEL, ANSWER_NO );
 			break;
 		default:
 			ASSERT(0);
