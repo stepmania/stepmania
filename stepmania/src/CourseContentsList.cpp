@@ -77,10 +77,10 @@ void CourseContentsList::SetFromGameState()
 	{
 		CourseEntryDisplay& display = m_CourseContentDisplays[m_iNumContents];
 	
-		TrailEntry* pte[NUM_PLAYERS];
+		const TrailEntry* pte[NUM_PLAYERS];
 		FOREACH_EnabledPlayer(pn)
-			pte[pn] = &pTrail[0]->m_vEntries[i];
-		display.LoadFromTrailEntry( m_iNumContents+1, pCourse, pte );
+			pte[pn] = &pTrail[pn]->m_vEntries[i];
+		display.LoadFromTrailEntry( m_iNumContents+1, pte );
 		
 		m_iNumContents++;
 	}
