@@ -566,6 +566,9 @@ void MovieTexture_FFMpeg::CreateDecoder()
 	if ( decoder->m_stream == NULL )
 		RageException::Throw( "AVCodec (%s): Couldn't find any video streams", GetID().filename.c_str() );
 
+	if( decoder->m_stream->codec.codec_id == avcodec::CODEC_ID_NONE )
+		RageException::ThrowNonfatal( "AVCodec (%s): Unsupported codec %08x", GetID().filename.c_str(), decoder->m_stream->codec.codec_tag );
+
 	avcodec::AVCodec *codec = avcodec::avcodec_find_decoder( decoder->m_stream->codec.codec_id );
 	if( codec == NULL )
 		RageException::Throw( "AVCodec (%s): Couldn't find decoder %i", GetID().filename.c_str(), decoder->m_stream->codec.codec_id );
