@@ -805,7 +805,10 @@ void ScreenOptions::UpdateText( int iRow )
 		/* If player_no is 2 and there is no player 1: */
 		item_no = min( item_no, row.m_textItems.size()-1 );
 
-		row.m_textItems[item_no]->SetText( data.choices[iChoiceWithFocus] );
+		CString sText = data.choices[iChoiceWithFocus];
+		if( CAPITALIZE_ALL_OPTION_NAMES )
+			sText.MakeUpper();
+		row.m_textItems[item_no]->SetText( sText );
 	}
 }
 
