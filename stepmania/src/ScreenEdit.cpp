@@ -905,6 +905,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0.8f) );
 		}
 		break;
+	case DIK_R:
 	case DIK_P:
 		{
 			if( m_NoteFieldEdit.m_fBeginMarker == -1 )
@@ -912,37 +913,21 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			if( m_NoteFieldEdit.m_fEndMarker == -1 )
 				m_NoteFieldEdit.m_fEndMarker = m_pSong->m_fLastBeat;
 
-			m_EditMode = MODE_PLAYING;
+			if(DeviceI.button == DIK_R) {
+				m_EditMode = MODE_RECORDING;
 
-			m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL );
+				// initialize m_NoteFieldRecord
+				m_NoteFieldRecord.ClearAll();
+				m_NoteFieldRecord.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
+				m_NoteFieldRecord.m_fBeginMarker = m_NoteFieldEdit.m_fBeginMarker;
+				m_NoteFieldRecord.m_fEndMarker = m_NoteFieldEdit.m_fEndMarker;
 
-			m_rectRecordBack.StopTweening();
-			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0.8f) );
+			} else {
+				m_EditMode = MODE_PLAYING;
 
-			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
-			const float fStartSeconds = m_pSong->GetElapsedTimeFromBeat( GAMESTATE->m_fSongBeat );
-			m_soundMusic.SetPositionSeconds( fStartSeconds );
-			m_soundMusic.Play();
-			m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
-		}
-		break;
-	case DIK_R:
-		{
-			if( m_NoteFieldEdit.m_fBeginMarker == -1 )
-				m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
-			if( m_NoteFieldEdit.m_fEndMarker == -1 )
-				m_NoteFieldEdit.m_fEndMarker = m_pSong->m_fLastBeat;
+				m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL );
+			}
 
-
-			// initialize m_NoteFieldRecord
-			m_NoteFieldRecord.ClearAll();
-			m_NoteFieldRecord.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
-			m_NoteFieldRecord.m_fBeginMarker = m_NoteFieldEdit.m_fBeginMarker;
-			m_NoteFieldRecord.m_fEndMarker = m_NoteFieldEdit.m_fEndMarker;
-
-
-			m_EditMode = MODE_RECORDING;
 			m_rectRecordBack.StopTweening();
 			m_rectRecordBack.BeginTweening( 0.5f );
 			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0.8f) );
