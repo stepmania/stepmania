@@ -35,6 +35,8 @@ class MovieTexture_DShow : public RageMovieTexture
 public:
 	MovieTexture_DShow( RageTextureID ID );
 	virtual ~MovieTexture_DShow();
+	CString Init();
+
 	/* only called by RageTextureManager::InvalidateTextures */
 	void Invalidate() { m_uTexHandle = 0; }
 	void Update(float fDeltaTime);
@@ -45,7 +47,6 @@ public:
 	virtual void Pause();
 	virtual void SetPosition( float fSeconds );
 	virtual void SetPlaybackRate( float fRate );
-	virtual bool IsPlaying() const { return m_bPlaying; }
 
 	void SetLooping(bool looping=true) { m_bLoop = looping; }
 
@@ -55,7 +56,7 @@ private:
 	const char *buffer;
 	RageSemaphore buffer_lock, buffer_finished;
 
-	void Create();
+	CString Create();
 
 	void CreateTexture();
 	void SkipUpdates();

@@ -399,7 +399,6 @@ MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
 	RageMovieTexture( ID ),
 	m_BufferFinished( "BufferFinished", 0 )
 {
-try {
 	LOG->Trace( "MovieTexture_FFMpeg::MovieTexture_FFMpeg(%s)", ID.filename.c_str() );
 
 	FixLilEndian();
@@ -416,27 +415,34 @@ try {
 	m_Clock = 0;
 	m_FrameSkipMode = false;
 	m_bThreaded = PREFSMAN->m_bThreadedMovieDecode;
+}
 
-	CreateDecoder();
+CString MovieTexture_FFMpeg::Init()
+{
+	CString sError = CreateDecoder();
+	if( sError != "" )
+		return sError;
+
 	LOG->Trace("Bitrate: %i", decoder->m_stream->codec.bit_rate );
 	LOG->Trace("Codec pixel format: %s", avcodec::avcodec_get_pix_fmt_name(decoder->m_stream->codec.pix_fmt) );
 
 	/* Decode one frame, to guarantee that the texture is drawn when this function returns. */
 	int ret = decoder->GetFrame();
 	if( ret == -1 )
-		RageException::ThrowNonfatal( "%s: error getting first frame", GetID().filename.c_str() );
+		return ssprintf( "%s: error getting first frame", GetID().filename.c_str() );
 	if( ret == 0 )
 	{
 		/* There's nothing there. */
-		RageException::ThrowNonfatal( "%s: EOF getting first frame", GetID().filename.c_str() );
+		return ssprintf( "%s: EOF getting first frame", GetID().filename.c_str() );
 	}
+
 	m_ImageWaiting = FRAME_DECODED;
 
 	CreateTexture();
-	LOG->Trace("Resolution: %ix%i (%ix%i, %ix%i)",
+	LOG->Trace( "Resolution: %ix%i (%ix%i, %ix%i)",
 			m_iSourceWidth, m_iSourceHeight,
-			m_iImageWidth, m_iImageHeight, m_iTextureWidth, m_iTextureHeight);
-	LOG->Trace("Texture pixel format: %i", m_AVTexfmt );
+			m_iImageWidth, m_iImageHeight, m_iTextureWidth, m_iTextureHeight );
+	LOG->Trace( "Texture pixel format: %i", m_AVTexfmt );
 
 	CreateFrameRects();
 
@@ -446,17 +452,8 @@ try {
 	CHECKPOINT;
 
 	StartThread();
-}
-catch(...)
-{
-	StopThread();
-	DestroyDecoder();
-	DestroyTexture();
 
-	delete decoder;
-
-	throw;
-};
+	return "";
 }
 
 MovieTexture_FFMpeg::~MovieTexture_FFMpeg()
@@ -570,37 +567,39 @@ void MovieTexture_FFMpeg::RegisterProtocols()
 	avcodec::register_protocol( &RageProtocol );
 }
 
-void MovieTexture_FFMpeg::CreateDecoder()
+CString MovieTexture_FFMpeg::CreateDecoder()
 {
 	RegisterProtocols();
 
 	int ret = avcodec::av_open_input_file( &decoder->m_fctx, "rage://" + GetID().filename, NULL, 0, NULL );
 	if( ret < 0 )
-		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", GetID().filename.c_str()) );
+		return ssprintf( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", GetID().filename.c_str()) );
 
 	ret = avcodec::av_find_stream_info( decoder->m_fctx );
 	if ( ret < 0 )
-		RageException::Throw( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", GetID().filename.c_str()) );
+		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", GetID().filename.c_str()) );
 
 	avcodec::AVStream *stream = FindVideoStream( decoder->m_fctx );
 	if ( stream == NULL )
-		RageException::Throw( "AVCodec (%s): Couldn't find any video streams", GetID().filename.c_str() );
+		return ssprintf( "AVCodec (%s): Couldn't find any video streams", GetID().filename.c_str() );
 
 	if( stream->codec.codec_id == avcodec::CODEC_ID_NONE )
-		RageException::ThrowNonfatal( "AVCodec (%s): Unsupported codec %08x", GetID().filename.c_str(), stream->codec.codec_tag );
+		return ssprintf( "AVCodec (%s): Unsupported codec %08x", GetID().filename.c_str(), stream->codec.codec_tag );
 
 	avcodec::AVCodec *codec = avcodec::avcodec_find_decoder( stream->codec.codec_id );
 	if( codec == NULL )
-		RageException::Throw( "AVCodec (%s): Couldn't find decoder %i", GetID().filename.c_str(), stream->codec.codec_id );
+		return ssprintf( "AVCodec (%s): Couldn't find decoder %i", GetID().filename.c_str(), stream->codec.codec_id );
 
 	LOG->Trace("Opening codec %s", codec->name );
 	ret = avcodec::avcodec_open( &stream->codec, codec );
 	if ( ret < 0 )
-		RageException::Throw( averr_ssprintf(ret, "AVCodec (%s): Couldn't open codec \"%s\"", GetID().filename.c_str(), codec->name) );
+		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't open codec \"%s\"", GetID().filename.c_str(), codec->name) );
 
 	/* Don't set this until we successfully open stream->codec, so we don't try to close it
 	 * on an exception unless it was really opened. */
 	decoder->m_stream = stream;
+
+	return "";
 }
 
 
@@ -754,7 +753,9 @@ bool MovieTexture_FFMpeg::DecodeFrame()
 
 		/* Restart. */
 		DestroyDecoder();
-		CreateDecoder();
+		CString sError = CreateDecoder();
+		if( sError != "" )
+			RageException::Throw( "Error rewinding stream %s: %s", GetID().filename.c_str(), sError.c_str() );
 
 		decoder->Init();
 		m_Clock = -fDelay;

@@ -140,13 +140,20 @@ MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
 
 	m_uTexHandle = 0;
 	buffer = NULL;
+}
 
-	Create();
+CString MovieTexture_DShow::Init()
+{
+	CString sError = Create();
+	if( sError != "" )
+		return sError;
+
 	CreateFrameRects();
 
 	// flip all frame rects because movies are upside down
 	for( unsigned i=0; i<m_TextureCoordRects.size(); i++ )
 		swap(m_TextureCoordRects[i].top, m_TextureCoordRects[i].bottom);
+	return "";
 }
 
 /* Hold buffer_lock.  If it's held, then the decoding thread is waiting
@@ -270,21 +277,20 @@ void MovieTexture_DShow::Update(float fDeltaTime)
 	CheckFrame();
 }
 
-void PrintCodecError(HRESULT hr, CString s)
+CString PrintCodecError( HRESULT hr, CString s )
 {
 	/* Actually, we might need XviD; we might want to look
 	 * at the file and try to figure out if it's something
 	 * common: DIV3, DIV4, DIV5, XVID, or maybe even MPEG2. */
 	CString err = hr_ssprintf(hr, "%s", s.c_str());
-	LOG->Warn( 
+	return 
 		ssprintf(
 		"There was an error initializing a movie: %s.\n"
 		"Could not locate the DivX video codec.\n"
 		"DivX is required to movie textures and must\n"
 		"be installed before running the application.\n\n"
 		"Please visit http://www.divx.com to download the latest version.",
-		err.c_str())
-		);
+		err.c_str() );
 }
 
 CString MovieTexture_DShow::GetActiveFilterList()
@@ -314,7 +320,7 @@ CString MovieTexture_DShow::GetActiveFilterList()
 	return ret;
 }
 
-void MovieTexture_DShow::Create()
+CString MovieTexture_DShow::Create()
 {
 	RageTextureID actualID = GetID();
 
@@ -347,26 +353,20 @@ void MovieTexture_DShow::Create()
 	 * if another program has it open and locked.  Missing codecs probably won't
 	 * show up until Connect(). */
     if( FAILED( hr = m_pGB->AddSourceFilter( wFileName.c_str(), wFileName.c_str(), &pFSrc ) ) )
-	{
-		PrintCodecError(hr, "Could not create source filter to graph!");
-		return;	// survive and don't Run the graph.
-	}
+		return PrintCodecError( hr, "Could not create source filter to graph!" );
     
     // Find the source's output and the renderer's input
     CComPtr<IPin>           pFTRPinIn;      // Texture Renderer Input Pin
     if( FAILED( hr = pFTR->FindPin( L"In", &pFTRPinIn ) ) )
-        RageException::Throw( hr_ssprintf(hr, "Could not find input pin!") );
+        return hr_ssprintf(hr, "Could not find input pin" );
 
     CComPtr<IPin>           pFSrcPinOut;    // Source Filter Output Pin   
     if( FAILED( hr = pFSrc->FindPin( L"Output", &pFSrcPinOut ) ) )
-        RageException::Throw( hr_ssprintf(hr, "Could not find output pin!") );
+        return hr_ssprintf( hr, "Could not find output pin" );
 
     // Connect these two filters
     if( FAILED( hr = m_pGB->Connect( pFSrcPinOut, pFTRPinIn ) ) )
-	{
- 		PrintCodecError(hr, "Could not connect pins!");
-		return;	// survive and don't Run the graph.
-	}
+ 		return PrintCodecError( hr, "Could not connect pins" );
 
 	LOG->Trace( "Filters: %s", GetActiveFilterList().c_str() );
 
@@ -406,6 +406,8 @@ void MovieTexture_DShow::Create()
 
 	// Start the graph running
     Play();
+
+	return "";
 }
 
 

@@ -20,6 +20,8 @@ class MovieTexture_FFMpeg: public RageMovieTexture
 public:
 	MovieTexture_FFMpeg( RageTextureID ID );
 	virtual ~MovieTexture_FFMpeg();
+	CString Init();
+
 	/* only called by RageTextureManager::InvalidateTextures */
 	void Invalidate() { m_uTexHandle = 0; }
 	void Update(float fDeltaTime);
@@ -79,7 +81,7 @@ private:
 	void ConvertFrame();
 	void UpdateFrame();
 
-	void CreateDecoder();
+	CString CreateDecoder();
 	void CreateTexture();
 	void DestroyDecoder();
 	void DestroyTexture();

@@ -99,8 +99,18 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 			if (!Driver.CompareNoCase("FFMpeg")) ret = new MovieTexture_FFMpeg(ID);
 #endif
 			if (!Driver.CompareNoCase("Null")) ret = new MovieTexture_Null(ID);
-			if (!ret)
-				LOG->Warn("Unknown movie driver name: %s", Driver.c_str());
+			if( ret == NULL )
+			{
+				LOG->Warn( "Unknown movie driver name: %s", Driver.c_str() );
+				continue;
+			}
+
+			CString sError = ret->Init();
+			if( sError != "" )
+			{
+				LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
+				SAFE_DELETE( ret );
+			}
 		} catch (const RageException &e) {
 			LOG->Info("Couldn't load driver %s: %s", Driver.c_str(), e.what());
 		}
