@@ -1167,7 +1167,6 @@ void ScreenSelectMusic::AfterStepsChange( PlayerNumber pn )
 	int iScore = 0;
 	if( pSteps )
 	{
-		int iScore = 0;
 		Profile* pProfile = PROFILEMAN->IsUsingProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
 		iScore = pProfile->GetStepsHighScoreList(pSong,pSteps).GetTopScore().iScore;
 	}
@@ -1207,7 +1206,6 @@ void ScreenSelectMusic::AfterTrailChange( PlayerNumber pn )
 	int iScore = 0;
 	if( pTrail )
 	{
-		int iScore = 0;
 		Profile* pProfile = PROFILEMAN->IsUsingProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
 		iScore = pProfile->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().iScore;
 	}
