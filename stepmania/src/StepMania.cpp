@@ -93,7 +93,6 @@ static void ChangeToDirOfExecutable(const char *argv0)
 	if( DirOfExecutable.size() == 0 || (DirOfExecutable[0] != '/' && DirOfExecutable[0] != '\\') )
 		DirOfExecutable = GetCwd() + "/" + DirOfExecutable;
 
-	printf("doe = '%s'\n", DirOfExecutable.c_str());
 #ifndef _XBOX
 	/* Make sure the current directory is the root program directory
 	 * We probably shouldn't do this; rather, we should know where things
