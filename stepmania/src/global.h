@@ -106,9 +106,6 @@ void NORETURN sm_crash( const char *reason = "Internal error" );
 #define ASSERT_M(COND, MESSAGE) { if(!(COND)) { FAIL_M(MESSAGE); } }
 #define ASSERT(COND) ASSERT_M((COND), "Assertion '" #COND "' failed")
 
-#define RAGE_ASSERT ASSERT /* compat */
-#define RAGE_ASSERT_M ASSERT_M /* compat */
-
 #ifdef DEBUG
 #define DEBUG_ASSERT(x)	ASSERT(x)
 #else
