@@ -37,12 +37,12 @@ static const Content_t g_Contents[NUM_PANE_CONTENTS] =
 	{ "DifficultyAir",			NUM_PANES,					NEED_NOTES },
 	{ "DifficultyVoltage",		NUM_PANES,					NEED_NOTES },
 	{ "MachineHighScore",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "MachineNumPlays",		PANE_SONG_MACHINE_SCORES,	NEED_NOTES },
-	{ "MachineRank",			PANE_SONG_MACHINE_SCORES,	NEED_NOTES },
+	{ "MachineNumPlays",		NUM_PANES,					NEED_NOTES },
+	{ "MachineRank",			NUM_PANES,					NEED_NOTES },
 	{ "MachineHighName",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
 	{ "ProfileHighScore",		PANE_SONG_DIFFICULTY,		NEED_NOTES|NEED_PROFILE },
-	{ "ProfileNumPlays",		PANE_SONG_PROFILE_SCORES,	NEED_NOTES|NEED_PROFILE },
-	{ "ProfileRank",			PANE_SONG_PROFILE_SCORES,	NEED_NOTES|NEED_PROFILE },
+	{ "ProfileNumPlays",		NUM_PANES,					NEED_NOTES|NEED_PROFILE },
+	{ "ProfileRank",			NUM_PANES,					NEED_NOTES|NEED_PROFILE },
 	{ "CourseMachineHighScore",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
 	{ "CourseMachineNumPlays",	NUM_PANES,					NEED_COURSE },
 	{ "CourseMachineRank",		NUM_PANES,					NEED_COURSE },
@@ -55,17 +55,6 @@ static const Content_t g_Contents[NUM_PANE_CONTENTS] =
 	{ "CourseHolds",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
 	{ "CourseMines",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
 	{ "CourseHands",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE }
-};
-
-static const PaneModes PaneMode[NUM_PANES] =
-{
-	PANEMODE_SONG,
-	PANEMODE_SONG,
-	PANEMODE_SONG,
-//	PANEMODE_SONG,
-	PANEMODE_COURSE,
-	PANEMODE_COURSE
-//	PANEMODE_COURSE
 };
 
 static ProfileSlot PlayerMemCard( PlayerNumber pn )
@@ -81,22 +70,46 @@ static ProfileSlot PlayerMemCard( PlayerNumber pn )
 PaneDisplay::PaneDisplay()
 {
 	m_CurPane = PANE_INVALID;
-	m_CurMode = PANEMODE_SONG;
 }
 
 void PaneDisplay::Load( PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
-	m_PreferredPaneForMode[PANEMODE_SONG] = PANE_SONG_DIFFICULTY;
-	m_PreferredPaneForMode[PANEMODE_COURSE] = PANE_COURSE_MACHINE_SCORES;
 
 	m_sprPaneUnder.Load( THEME->GetPathToG( ssprintf("PaneDisplay under p%i", pn+1)) );
 	m_sprPaneUnder->SetName( "Under" );
 	ON_COMMAND( m_sprPaneUnder );
 	this->AddChild( m_sprPaneUnder );
 
-	int p;
-	for( p = 0; p < NUM_PANE_CONTENTS; ++p )
+	FOREACH_PaneContents(p)
+	{
+		ArrayLevels &levels = m_Levels[p];
+		levels.clear();
+
+		if( g_Contents[p].type == NUM_PANES )
+			continue;
+
+		const int num = NUM_ITEM_COLORS( g_Contents[p].name );
+		for( int c = 0; c < num; ++c )
+		{
+			levels.push_back( Level() );
+			Level &level = levels.back();
+
+			const CString metric = ITEM_COLOR(g_Contents[p].name, c);
+
+			Commands cmds;
+			ParseCommands( metric, cmds );
+			if( cmds.v.size() < 2 )
+				RageException::Throw( "Metric '%s' malformed", metric.c_str() );
+
+			level.m_fIfLessThan = cmds.v[0].GetArg(0);
+			cmds.v.erase( cmds.v.begin(), cmds.v.begin()+1 );
+			level.m_Command = apActorCommands(new ActorCommands( cmds ));
+		}
+	}
+
+
+	for( int p = 0; p < NUM_PANE_CONTENTS; ++p )
 	{
 		if( g_Contents[p].type == NUM_PANES )
 			continue; /* skip, disabled */
@@ -130,8 +143,8 @@ void PaneDisplay::Load( PlayerNumber pn )
 		m_Labels[i]->FinishTweening();
 	}
 
-	m_CurMode = GetMode();
-	SetFocus( GetNext( m_PreferredPaneForMode[m_CurMode], 0 ) );
+	m_CurPane = PANE_INVALID;
+	SetFocus( GetPane() );
 }
 
 void PaneDisplay::Update( float fDeltaTime )
@@ -307,31 +320,20 @@ void PaneDisplay::SetContent( PaneContents c )
 done:
 	m_textContents[c].SetText( str );
 
-	const int num = NUM_ITEM_COLORS( g_Contents[c].name );
-	for( int p = 0; p < num; ++p )
-	{
-		const CString metric = ITEM_COLOR(g_Contents[c].name, p);
-		CStringArray spec;
-		split( metric, ";", spec );
-		if( spec.size() < 2 )
-			RageException::Throw( "Metric '%s' malformed", metric.c_str() );
+	const ArrayLevels &levels = m_Levels[c];
+	unsigned p;
+	for( p = 0; p+1 < levels.size(); ++p )
+		if( val < levels[p].m_fIfLessThan )
+			break;
 
-		const float n = strtof( spec[0], NULL );
-		if( val >= n )
-			continue;
-		spec.erase( spec.begin(), spec.begin()+1 );
-
-		m_textContents[c].RunCommands( ActorCommands( ParseCommands(join(";", spec)) ) );
-		break;
-	}
+	if( p < levels.size() )
+		m_textContents[c].RunCommands( levels[p].m_Command );
 }
 
 void PaneDisplay::SetFromGameState( SortOrder so )
 {
 	m_SortOrder = so;
-	m_CurMode = GetMode();
-	if( PaneMode[m_CurPane] != m_CurMode )
-		SetFocus( GetNext( m_PreferredPaneForMode[m_CurMode], 0 ) );
+	SetFocus( GetPane() );
 
 	/* Don't update text that doesn't apply to the current mode.  It's still tweening off. */
 	for( unsigned i = 0; i < NUM_PANE_CONTENTS; ++i )
@@ -342,7 +344,7 @@ void PaneDisplay::SetFromGameState( SortOrder so )
 	}
 }
 
-PaneModes PaneDisplay::GetMode() const
+PaneTypes PaneDisplay::GetPane() const
 {
 	switch( m_SortOrder )
 	{
@@ -350,11 +352,11 @@ PaneModes PaneDisplay::GetMode() const
 	case SORT_NONSTOP_COURSES:
 	case SORT_ONI_COURSES:
 	case SORT_ENDLESS_COURSES:
-		return PANEMODE_COURSE;
+		return PANE_COURSE_MACHINE_SCORES;
 	case SORT_MODE_MENU:
-		return m_CurMode; // leave it
+		return m_CurPane; // leave it
 	default:
-		return PANEMODE_SONG;
+		return PANE_SONG_DIFFICULTY;
 	}
 }
 
@@ -382,51 +384,8 @@ void PaneDisplay::SetFocus( PaneTypes NewPane )
 	}
 
 	m_CurPane = NewPane;
-	m_PreferredPaneForMode[m_CurMode] = NewPane;
 
 	SetFromGameState( m_SortOrder );
-}
-
-bool PaneDisplay::PaneIsValid( PaneTypes p ) const
-{
-	if( PaneMode[p] != m_CurMode )
-		return false;
-
-	switch( p )
-	{
-	case PANE_SONG_PROFILE_SCORES:
-	case PANE_COURSE_PROFILE_SCORES:
-		if( !PROFILEMAN->IsUsingProfile( m_PlayerNumber ) )
-			return false;
-	}
-
-	return true;
-}
-
-PaneTypes PaneDisplay::GetNext( PaneTypes current, int dir ) const
-{
-	if( dir == 0 )
-	{
-		/* Only move the selection if the current selection is invalid. */
-		if( PaneIsValid( current ) )
-			return current;
-
-		dir = 1;
-	}
-
-	PaneTypes ret = current;
-	while( 1 )
-	{
-		ret = (PaneTypes) (ret + dir);
-		wrap( (int&) ret, NUM_PANES );
-
-		if( PaneIsValid( ret ) )
-			break;
-	}
-
-	LOG->Trace("pane %i", ret);
-
-	return ret;
 }
 
 /*

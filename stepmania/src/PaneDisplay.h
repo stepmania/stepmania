@@ -2,6 +2,7 @@
 #define PANE_DISPLAY_H
 
 #include "ActorFrame.h"
+#include "ActorCommands.h"
 #include "Sprite.h"
 #include "PlayerNumber.h"
 #include "BitmapText.h"
@@ -11,22 +12,9 @@
 enum PaneTypes
 {
 	PANE_SONG_DIFFICULTY,
-	PANE_SONG_PROFILE_SCORES,
-	PANE_SONG_MACHINE_SCORES,
-//	PANE_SONG_STATISTICS,
 	PANE_COURSE_MACHINE_SCORES,
-	PANE_COURSE_PROFILE_SCORES,
-//	PANE_COURSE_DIFFICULTY,
 	NUM_PANES,
 	PANE_INVALID
-};
-
-enum PaneModes
-{
-	PANEMODE_SONG,
-	PANEMODE_BATTLE,
-	PANEMODE_COURSE,
-	NUM_PANE_MODES
 };
 
 /* If the same piece of data is in multiple panes, use separate contents entries,
@@ -64,6 +52,7 @@ enum PaneContents
 	COURSE_HANDS,
 	NUM_PANE_CONTENTS
 };
+#define FOREACH_PaneContents( p ) FOREACH_ENUM( PaneContents, NUM_PANE_CONTENTS, p )
 
 class PaneDisplay: public ActorFrame
 {
@@ -76,11 +65,8 @@ public:
 	void Update( float fDeltaTime );
 
 private:
-	bool PaneIsValid( PaneTypes p ) const;
-	PaneTypes GetNext( PaneTypes current, int dir ) const;
 	void SetFocus( PaneTypes NewPane );
-//	void SetMode();
-	PaneModes GetMode() const;
+	PaneTypes GetPane() const;
 	void SetContent( PaneContents c );
 
 	SortOrder		m_SortOrder;
@@ -92,10 +78,15 @@ private:
 	ActorFrame		m_ContentsFrame;
 
 	PaneTypes		m_CurPane;
-	PaneModes		m_CurMode;
 	PlayerNumber	m_PlayerNumber;
 
-	PaneTypes		m_PreferredPaneForMode[NUM_PANE_MODES];
+	struct Level
+	{
+		apActorCommands m_Command;
+		float m_fIfLessThan;
+	};
+	typedef vector<Level> ArrayLevels;
+	ArrayLevels m_Levels[NUM_PANE_CONTENTS];
 };
 
 #endif
