@@ -246,7 +246,11 @@ bool ModeChoice::IsPlayable( CString *why ) const
 		int iNumSidesRequired = GetSidesRequiredToPlayStyle(m_style);
 		
 		if( iNumSidesRequired != iNumSidesJoined )
+		{
+			if( why )
+				*why = ssprintf( "need %i sides, have %i", iNumSidesRequired, iNumSidesJoined );
 			return false;
+		}
 	}
 
 	/* Don't allow a PlayMode that's incompatible with our current Style (if set),
@@ -256,7 +260,13 @@ bool ModeChoice::IsPlayable( CString *why ) const
 		const PlayMode pm = (m_pm != PLAY_MODE_INVALID) ? m_pm : GAMESTATE->m_PlayMode;
 		const Style style = (m_style != STYLE_INVALID)? m_style: GAMESTATE->m_CurStyle;
 		if( !AreStyleAndPlayModeCompatible( style, pm ) )
+		{
+			if( why )
+				*why = ssprintf("mode %s is incompatible with style %s",
+					PlayModeToString(pm).c_str(), GAMEMAN->GetStyleDefForStyle(style)->m_szName );
+
 			return false;
+		}
 	}
 
 	if( !m_sScreen.CompareNoCase("ScreenEditCoursesMenu") )
