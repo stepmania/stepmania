@@ -58,7 +58,21 @@ void SMLoader::GetApplicableFiles( CString sPath, CStringArray &out )
 	GetDirListing( sPath + CString("*.sm"), out );
 }
 
-void SMLoader::LoadTimingFromSMFile( MsdFile &msd, TimingData &out )
+bool SMLoader::LoadTimingFromFile( const CString &fn, TimingData &out )
+{
+	MsdFile msd;
+	if( !msd.ReadFile( fn ) )
+	{
+		LOG->Warn( "Couldn't load %s, \"%s\"", fn.c_str(), msd.GetError().c_str() );
+		return false;
+	}
+
+	out.m_sFile = fn;
+	LoadTimingFromSMFile( msd, out );
+	return true;
+}
+
+void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 {
 	out.m_fBeat0OffsetInSeconds = 0;
 	out.m_BPMSegments.clear();
@@ -165,6 +179,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 	if( !bResult )
 		RageException::Throw( "Error opening file '%s'.", sPath.c_str() );
 
+	out.m_Timing.m_sFile = sPath;
 	LoadTimingFromSMFile( msd, out.m_Timing );
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )

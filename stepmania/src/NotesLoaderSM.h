@@ -31,7 +31,8 @@ public:
 
 	void GetApplicableFiles( CString sPath, CStringArray &out );
 	bool LoadFromDir( CString sPath, Song &out );
-	static void LoadTimingFromSMFile( MsdFile &msd, TimingData &out );
+	static bool LoadTimingFromFile( const CString &fn, TimingData &out );
+	static void LoadTimingFromSMFile( const MsdFile &msd, TimingData &out );
 };
 
 #endif
