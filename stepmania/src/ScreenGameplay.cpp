@@ -850,7 +850,63 @@ void ScreenGameplay::DrawPrimitives()
 void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	//LOG->Trace( "ScreenGameplay::Input()" );
-	if(type == IET_RELEASE) return; // don't care
+
+	if( MenuI.IsValid()  &&  
+		MenuI.button == MENU_BUTTON_BACK  &&  
+		m_DancingState != STATE_OUTRO  &&
+		!m_Fade.IsClosing() )
+	{
+		if( PREFSMAN->m_bDelayedEscape && type==IET_FIRST_PRESS)
+		{
+			m_textDebug.SetText( "Continue holding BACK to quit" );
+			m_textDebug.StopTweening();
+			m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
+			m_textDebug.BeginTweening( 1/8.f );
+			m_textDebug.SetTweenDiffuse( RageColor(1,1,1,1) );
+			return;
+		}
+		
+		if( PREFSMAN->m_bDelayedEscape && type==IET_RELEASE )
+		{
+			m_textDebug.StopTweening();
+			m_textDebug.BeginTweening( 1/8.f );
+			m_textDebug.SetTweenDiffuse( RageColor(1,1,1,0) );
+			return;
+		}
+		
+		if( (!PREFSMAN->m_bDelayedEscape && type==IET_FIRST_PRESS) ||
+			(DeviceI.device==DEVICE_KEYBOARD && type==IET_SLOW_REPEAT)  ||
+			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT) )
+		{
+			m_DancingState = STATE_OUTRO;
+			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu back") );
+			/* Hmm.  There are a bunch of subtly different ways we can
+			 * tween out: 
+			 *   1. Keep rendering the song, and keep it moving.  This might
+			 *      cause problems if the cancel and the end of the song overlap.
+			 *   2. Stop the song completely, so all song motion under the tween
+			 *      ceases.
+			 *   3. Stop the song, but keep effects (eg. Drunk) running.
+			 *   4. Don't display the song at all.
+			 *
+			 * We're doing #3.  I'm not sure which is best.
+			 *
+			 * We have to pause the music, not stop it.  If we stop it,
+			 * its position will be 0, and we'll render the *start*
+			 * of the song while we tween out, which looks really strange.
+			 * -glenn
+			 */
+			/* but with the new sound code, Stop leaves the position alone -glenn (XXX remove this comment) */
+			m_soundMusic.StopPlaying();
+
+			this->ClearMessageQueue();
+			m_Fade.CloseWipingLeft( SM_SaveChangedBeforeGoingBack );
+			return;
+		}
+	}
+
+	/* Nothing else cares about releases. */
+	if(type == IET_RELEASE) return;
 
 	// Handle special keys to adjust the offset
 	if( DeviceI.device == DEVICE_KEYBOARD )
@@ -930,41 +986,6 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				m_textDebug.SetTweenDiffuse( RageColor(1,1,1,0) );
 			}
 			break;
-		}
-	}
-
-	if( MenuI.IsValid()  &&  
-		MenuI.button == MENU_BUTTON_BACK  &&  
-		m_DancingState != STATE_OUTRO  &&
-		!m_Fade.IsClosing() )
-	{
-		if( !PREFSMAN->m_bDelayedEscape ||
-			(DeviceI.device==DEVICE_KEYBOARD && type==IET_SLOW_REPEAT)  ||
-			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT) )
-		{
-			m_DancingState = STATE_OUTRO;
-			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu back") );
-			/* Hmm.  There are a bunch of subtly different ways we can
-			 * tween out: 
-			 *   1. Keep rendering the song, and keep it moving.  This might
-			 *      cause problems if the cancel and the end of the song overlap.
-			 *   2. Stop the song completely, so all song motion under the tween
-			 *      ceases.
-			 *   3. Stop the song, but keep effects (eg. Drunk) running.
-			 *   4. Don't display the song at all.
-			 *
-			 * We're doing #3.  I'm not sure which is best.
-			 *
-			 * We have to pause the music, not stop it.  If we stop it,
-			 * its position will be 0, and we'll render the *start*
-			 * of the song while we tween out, which looks really strange.
-			 * -glenn
-			 */
-			/* but with the new sound code, Stop leaves the position alone -glenn (XXX remove this comment) */
-			m_soundMusic.StopPlaying();
-
-			this->ClearMessageQueue();
-			m_Fade.CloseWipingLeft( SM_SaveChangedBeforeGoingBack );
 		}
 	}
 
