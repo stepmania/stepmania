@@ -38,7 +38,7 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 					hdcSrc,
 					0, 0,
 					SRCCOPY );
-				DWORD dwLastError = GetLastError();
+//				DWORD dwLastError = GetLastError();
 				ASSERT( bSuccess );
 				EndPaint( hWnd, &ps );
 			}
