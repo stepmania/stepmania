@@ -406,6 +406,9 @@ void Actor::Update( float fDeltaTime )
 //	LOG->Trace( "Actor::Update( %f )", fDeltaTime );
 	ASSERT_M( fDeltaTime >= 0, ssprintf("%f",fDeltaTime) );
 
+	if( m_bFirstUpdate )
+		m_bFirstUpdate = false;
+
 	{
 		float fHibernate = m_fHibernateSecondsLeft;
 		m_fHibernateSecondsLeft -= fDeltaTime;
@@ -464,10 +467,6 @@ void Actor::Update( float fDeltaTime )
 	}
 
 	UpdateTweening( fDeltaTime );
-
-	if( m_bFirstUpdate )
-		m_bFirstUpdate = false;
-
 }
 
 void Actor::BeginTweening( float time, TweenType tt )
