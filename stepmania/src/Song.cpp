@@ -20,6 +20,7 @@
 #include "MsdFile.h"
 #include "RageSoundStream.h"
 #include "RageException.h"
+#include "SongCacheIndex.h"
 
 
 const int FILE_CACHE_VERSION = 61;	// increment this when Song or Notes changes to invalidate cache
@@ -292,25 +293,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	//
 	// First look in the cache for this song (without loading NoteData)
 	//
-	IniFile ini;
-	ini.SetPath( "Cache\\index.cache" );
-	if( !ini.ReadFile() )
-		goto load_without_cache;
-
-	int iCacheVersion;
-	ini.GetValueI( "Cache", "CacheVersion", iCacheVersion );
-	if( iCacheVersion != FILE_CACHE_VERSION )
-	{
-		LOG->Trace( "Cache format is out of date.  Deleting all cache files." );
-		CStringArray asCacheFileNames;
-		GetDirListing( "Cache\\*.*", asCacheFileNames );
-		for( int i=0; i<asCacheFileNames.GetSize(); i++ )
-			DeleteFile( "Cache\\" + asCacheFileNames[i] );
-		goto load_without_cache;
-	}
-
-	int iDirHash;
-	ini.GetValueI( "Cache", m_sSongDir, iDirHash );
+	int iDirHash = SONGINDEX->GetCacheHash(m_sSongDir);
 	if( GetHashForDirectory(m_sSongDir) == iDirHash )	// this cache is up to date
 	{
 		if( !DoesFileExist(GetCacheFilePath()) )
@@ -1237,16 +1220,7 @@ void Song::SaveToCacheFile()
 {
 	LOG->Trace( "Song::SaveToCacheFile()" );
 
-	//
-	// First look in the cache for this song (without loading NoteData)
-	//
-	IniFile ini;
-	ini.SetPath( "Cache\\index.cache" );
-	ini.ReadFile();	// don't care if this fails
-
-	ini.SetValueI( "Cache", "CacheVersion", FILE_CACHE_VERSION );
-	ini.SetValueI( "Cache", m_sSongDir, GetHashForDirectory(m_sSongDir) );
-	ini.WriteFile();
+	SONGINDEX->AddCacheIndex(m_sSongDir, GetHashForDirectory(m_sSongDir));
 	SaveToSMFile( GetCacheFilePath() );
 }
 

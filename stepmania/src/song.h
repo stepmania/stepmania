@@ -15,6 +15,7 @@
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
 
+extern const int FILE_CACHE_VERSION;
 
 struct BPMSegment 
 {

@@ -41,6 +41,7 @@
 #include "InputFilter.h"
 #include "InputMapper.h"
 #include "InputQueue.h"
+#include "SongCacheIndex.h"
 
 //
 // StepMania common classes
@@ -666,6 +667,8 @@ HRESULT CreateObjects( HWND hWnd )
 	INPUTFILTER	= new InputFilter();
 	INPUTMAPPER	= new InputMapper();
 	INPUTQUEUE	= new InputQueue();
+	SONGINDEX	= new SongCacheIndex();
+	/* depends on SONGINDEX: */
 	SONGMAN		= new SongManager( PaintLoadingWindow );		// this takes a long time to load
 	DISPLAY		= new RageDisplay( hWnd );
 
@@ -714,6 +717,7 @@ void DestroyObjects()
 	SAFE_DELETE( INPUTMAPPER );
 	SAFE_DELETE( INPUTFILTER );
 	SAFE_DELETE( SONGMAN );
+	SAFE_DELETE( SONGINDEX );
 	SAFE_DELETE( PREFSMAN );
 	SAFE_DELETE( GAMESTATE );
 	SAFE_DELETE( GAMEMAN );

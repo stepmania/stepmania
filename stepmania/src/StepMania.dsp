@@ -344,6 +344,14 @@ SOURCE=.\song.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\SongCacheIndex.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SongCacheIndex.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\SongOptions.cpp
 # End Source File
 # Begin Source File
