@@ -364,18 +364,13 @@ void ForceCrashHandler( const char *reason )
 
 void ForceCrashHandlerDeadlock( CString reason, uint64_t iID )
 {
-	if ( iID == GetInvalidThreadId() )
-	{
-		ForceCrashHandler( reason );
-		_exit(1);
-	}
-
-	BacktraceContext ctx;
-	
 	/* How can this possibly work without suspending the thread first? What
 	 * stops the thread from returning from the function it was in when
 	 * GetThreadBacktraceContext was called and then changing the stack?
 	 */
+	/* There's just no good way to pause other threads, that doesn't result in us
+	 * being paused, weird stuff happening to the TTY, or kernel hung processes.
+	 * We just hope that we backtrace in time (which we almost always do). */
 #if defined(DARWIN)
 	SuspendThread(iCrashHandle);
 #endif
@@ -386,13 +381,37 @@ void ForceCrashHandlerDeadlock( CString reason, uint64_t iID )
 
 	GetBacktrace( crash.BacktracePointers[0], BACKTRACE_MAX_SIZE, NULL );
 
-	if( !GetThreadBacktraceContext( iID, &ctx ) )
-		reason += "; GetThreadBacktraceContext failed";
+	if( iID == GetInvalidThreadId() )
+	{
+		/* Backtrace all threads. */
+		int iCnt = 1;
+		for( int i = 0; RageThread::EnumThreadIDs(i, iID); ++i )
+		{
+			if( iID == GetInvalidThreadId() || iID == RageThread::GetCurrentThreadID() )
+				continue;
+
+			BacktraceContext ctx;
+			if( GetThreadBacktraceContext( iID, &ctx ) )
+				GetBacktrace( crash.BacktracePointers[iCnt], BACKTRACE_MAX_SIZE, &ctx );
+			strncpy( crash.m_ThreadName[iCnt], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
+
+			++iCnt;
+
+			if( iCnt == CrashData::MAX_BACKTRACE_THREADS )
+				break;
+		}
+	}
 	else
-		GetBacktrace( crash.BacktracePointers[1], BACKTRACE_MAX_SIZE, &ctx );
+	{
+		BacktraceContext ctx;
+		if( !GetThreadBacktraceContext( iID, &ctx ) )
+			reason += "; GetThreadBacktraceContext failed";
+		else
+			GetBacktrace( crash.BacktracePointers[1], BACKTRACE_MAX_SIZE, &ctx );
+		strncpy( crash.m_ThreadName[1], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
+	}
 
 	strncpy( crash.m_ThreadName[0], RageThread::GetCurThreadName(), sizeof(crash.m_ThreadName[0])-1 );
-	strncpy( crash.m_ThreadName[1], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
 
 	strncpy( crash.reason, reason, min(sizeof(crash.reason) - 1, reason.length()) );
 	crash.reason[ sizeof(crash.reason)-1 ] = 0;
