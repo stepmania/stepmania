@@ -142,7 +142,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		{
 			CString sFName = ssprintf("%s Icon Part%d Choice%s", m_sName.c_str(),i+1,mc.m_sName.c_str());
 			m_sprIcon[i][c].Load( THEME->GetPathToG(sFName) );
-			m_sprIcon[i][c]->SetName( ssprintf("IconPart%dChoice%d",i+1,c+1) );
+			m_sprIcon[i][c]->SetName( ssprintf("IconPart%dChoice%s",i+1,mc.m_sName.c_str()) );
 			this->AddChild( m_sprIcon[i][c] );
 		}
 
