@@ -128,9 +128,11 @@ void ScreenAppearanceOptions::ImportOptions()
 	}
 
 	// highlight currently selected skin
+	PlayerOptions po;
+	po.FromString( PREFSMAN->m_sDefaultModifiers );
 	m_iSelectedOption[0][AO_SKIN] = 0;
 	for( i=0; i<m_OptionRow[AO_SKIN].choices.size(); i++ )
-		if( 0==stricmp(m_OptionRow[AO_SKIN].choices[i], PREFSMAN->m_sDefaultNoteSkin) )
+		if( 0==stricmp(m_OptionRow[AO_SKIN].choices[i], po.m_sNoteSkin) )
 			m_iSelectedOption[0][AO_SKIN] = i;
 
 
@@ -166,7 +168,19 @@ void ScreenAppearanceOptions::ExportOptions()
     int iSelectedSkin = m_iSelectedOption[0][AO_SKIN];
     CString sNewSkin = m_OptionRow[AO_SKIN].choices[iSelectedSkin];
 
-	PREFSMAN->m_sDefaultNoteSkin				= sNewSkin;
+	CString sModifiers = PREFSMAN->m_sDefaultModifiers;
+	PlayerOptions po;
+	po.FromString( sModifiers );
+	SongOptions so;
+	so.FromString( sModifiers );
+	po.m_sNoteSkin = sNewSkin;
+	CStringArray as;
+	if( po.GetString() != "" )
+		as.push_back( po.GetString() );
+	if( so.GetString() != "" )
+		as.push_back( so.GetString() );
+	PREFSMAN->m_sDefaultModifiers				= join(", ",as);
+
 	PREFSMAN->m_bInstructions					= !!m_iSelectedOption[0][AO_INSTRUCTIONS];
 	PREFSMAN->m_bShowDontDie					= !!m_iSelectedOption[0][AO_CAUTION];
 	PREFSMAN->m_bShowSelectGroup				= !!m_iSelectedOption[0][AO_SELECT_GROUP];
