@@ -59,7 +59,7 @@ AutoScreenMessage( SM_BackFromInsertAttackModifiers )
 AutoScreenMessage( SM_BackFromPrefs ) 
 AutoScreenMessage( SM_BackFromCourseModeMenu )
 AutoScreenMessage( SM_DoRevertToLastSave )
-AutoScreenMessage( SM_DoUpdateTextInfo )
+
 AutoScreenMessage( SM_BackFromBPMChange )
 AutoScreenMessage( SM_BackFromStopChange )
 AutoScreenMessage( SM_DoSaveAndExit )
@@ -595,8 +595,6 @@ void ScreenEdit::Init()
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
 
 	m_soundAssistTick.Load( THEME->GetPathS("ScreenEdit","assist tick"), true );
-
-	this->HandleScreenMessage( SM_DoUpdateTextInfo );
 }
 
 ScreenEdit::~ScreenEdit()
@@ -786,15 +784,20 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 	DeviceToEdit( di, EditB );
 	switch( m_EditMode )
 	{
-	case MODE_EDITING:		InputEdit( di, type, GameI, MenuI, StyleI, EditB );	break;
-	case MODE_RECORDING:	InputRecord( di, type, GameI, MenuI, StyleI, EditB );	break;
-	case MODE_PLAYING:		InputPlay( di, type, GameI, MenuI, StyleI, EditB );	break;
+	case MODE_EDITING:
+		InputEdit( di, type, GameI, MenuI, StyleI, EditB );
+		/* Make sure the displayed time is up-to-date after possibly changing something,
+		* so it doesn't feel lagged. */
+		UpdateTextInfo();
+		break;
+	case MODE_RECORDING:
+		InputRecord( di, type, GameI, MenuI, StyleI, EditB );
+		break;
+	case MODE_PLAYING:
+		InputPlay( di, type, GameI, MenuI, StyleI, EditB );
+		break;
 	default:	ASSERT(0);
 	}
-
-	/* Make sure the displayed time is up-to-date after possibly changing something,
-	 * so it doesn't feel lagged. */
-	UpdateTextInfo();
 }
 
 static void ShiftToRightSide( int &iCol, int iNumTracks )
@@ -1496,6 +1499,11 @@ void ScreenEdit::TransitionEditMode( EditMode em )
 
 void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 {
+	// There are lots of different messages that signal information changed.
+	// Rather than picking out those specific messages, just UpdateTextInfo
+	// on all messages.
+	UpdateTextInfo();
+
 	if( SM == SM_GoToNextScreen )
 	{
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
@@ -1596,11 +1604,6 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			m_bHasUndo = false;
 			m_Undo.ClearAll();
 		}
-	}
-	else if( SM == SM_DoUpdateTextInfo )
-	{
-		this->PostScreenMessage( SM_DoUpdateTextInfo, 0.5f );
-		UpdateTextInfo();
 	}
 	else if( SM == SM_DoSaveAndExit ) // just asked "save before exiting? yes, no, cancel"
 	{
