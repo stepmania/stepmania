@@ -121,7 +121,7 @@ void split( const CString &Source, const CString &Deliminator, CStringArray& Add
 		else
 			AddIt.Add(AddCString);
 
-		startpos=pos+1;
+		startpos=pos+Deliminator.GetLength();
 	} while ( startpos <= Source.GetLength() );
 }
 
