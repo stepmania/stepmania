@@ -57,7 +57,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
-		throw RageException( "Error opening file '%s'.", sPath.GetString() );
+		RageException::Throw( "Error opening file '%s'.", sPath.GetString() );
 
 	for( unsigned i=0; i<msd.m_iNumValues; i++ )
 	{
@@ -221,7 +221,7 @@ bool SMLoader::LoadFromDir( CString sPath, Song &out )
 	GetApplicableFiles( sPath, aFileNames );
 
 	if( aFileNames.size() > 1 )
-		throw RageException( "There is more than one SM file in '%s'.  There should be only one!", sPath.GetString() );
+		RageException::Throw( "There is more than one SM file in '%s'.  There should be only one!", sPath.GetString() );
 
 	/* We should have exactly one; if we had none, we shouldn't have been
 	 * called to begin with. */

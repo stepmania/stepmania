@@ -35,7 +35,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 {
 	MsdFile msd;
 	if( !msd.ReadFile(sPath) )
-		throw RageException( "Error opening CRS file '%s'.", sPath.GetString() );
+		RageException::Throw( "Error opening CRS file '%s'.", sPath.GetString() );
 
 	CString sDir, sFName, sExt;
 	splitrelpath( sPath, sDir, sFName, sExt );

@@ -16,7 +16,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
-		throw RageException( "Error opening file '%s'.", sPath.GetString() );
+		RageException::Throw( "Error opening file '%s'.", sPath.GetString() );
 
 	int iTickCount = -1;	// this is the value we read for TICKCOUNT
 	CString iStep;			// this is the value we read for STEP
@@ -159,7 +159,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	GetDirListing( sDir + CString("*.ksf"), arrayKSFFileNames );
 
 	if( arrayKSFFileNames.empty() )
-		throw RageException( "Couldn't find any KSF files in '%s'", sDir.GetString() );
+		RageException::Throw( "Couldn't find any KSF files in '%s'", sDir.GetString() );
 
 	// load the Notes from the rest of the KSF files
 	unsigned i;
@@ -175,7 +175,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
-		throw RageException( "Error opening file '%s'.", sPath.GetString() );
+		RageException::Throw( "Error opening file '%s'.", sPath.GetString() );
 
 	for( i=0; i < msd.m_iNumValues; i++ )
 	{

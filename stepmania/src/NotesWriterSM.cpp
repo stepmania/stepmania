@@ -95,7 +95,7 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 
 	FILE* fp = fopen( sPath, "w" );	
 	if( fp == NULL )
-		throw RageException( "Error opening song file '%s' for writing.", sPath.GetString() );
+		RageException::Throw( "Error opening song file '%s' for writing.", sPath.GetString() );
 
 	WriteGlobalTags(fp, out);
 	if(bSavingCache) {

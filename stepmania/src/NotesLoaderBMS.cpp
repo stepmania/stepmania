@@ -69,7 +69,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 
 	ifstream file(sPath);
 	if( file.bad() )
-		throw RageException( "Failed to open %s for reading.", sPath.GetString() );
+		RageException::Throw( "Failed to open %s for reading.", sPath.GetString() );
 
 	CString line;
 	while( getline(file, line) )	// foreach line
@@ -116,7 +116,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 				out.m_NotesType = NOTES_TYPE_DANCE_DOUBLE;
 				break;
 			default:
-				throw RageException( "Invalid value '%d' for '#player'", atoi(value_data) );
+				RageException::Throw( "Invalid value '%d' for '#player'", atoi(value_data) );
 			}
 		}
 		if( -1 != value_name.Find("#title") )
@@ -226,7 +226,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 		iTransformNewToOld[5] = DANCE_NOTE_PAD1_RIGHT;
 		break;
 	default:
-		throw RageException( "Invalid NotesType." );
+		RageException::Throw( "Invalid NotesType." );
 	}
 
 	NoteData* pNoteData2 = new NoteData;
@@ -256,7 +256,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	GetApplicableFiles( sDir, arrayBMSFileNames );
 
 	if( arrayBMSFileNames.empty() )
-		throw RageException( "Couldn't find any BMS files in '%s'", sDir.GetString() );
+		RageException::Throw( "Couldn't find any BMS files in '%s'", sDir.GetString() );
 
 	// load the Notes from the rest of the BMS files
 	unsigned i;
@@ -276,7 +276,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 	ifstream file(sPath);
 	if( file.bad() )
-		throw RageException( "Failed to open %s for reading.", sPath.GetString() );
+		RageException::Throw( "Failed to open %s for reading.", sPath.GetString() );
 
 	CString line;
 	while( getline(file, line) )	// foreach line
@@ -413,7 +413,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					// open the song file again and and look for this tag's value
 					ifstream file(sPath);
 					if( file.bad() )
-						throw RageException( "Failed to open %s for reading.", sPath.GetString() );
+						RageException::Throw( "Failed to open %s for reading.", sPath.GetString() );
 
 					CString line;
 					while( getline(file, line) )	// foreach line
@@ -474,7 +474,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					// open the song file again and and look for this tag's value
 					ifstream file(sPath);
 					if( file.bad() )
-						throw RageException( "Failed to open %s for reading.", sPath.GetString() );
+						RageException::Throw( "Failed to open %s for reading.", sPath.GetString() );
 
 					CString line;
 					while( getline(file, line) )	// foreach line

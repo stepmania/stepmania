@@ -222,7 +222,7 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 {
 	FILE* fp = fopen( sPath, "w" );	
 	if( fp == NULL )
-		throw RageException( "Error opening song file '%s' for writing.", sPath.GetString() );
+		RageException::Throw( "Error opening song file '%s' for writing.", sPath.GetString() );
 
 	if(out.GetFullTitle().GetLength() != 0)
 		fprintf( fp, "#TITLE:%s;\n", out.GetFullTitle().GetString() );
