@@ -157,8 +157,6 @@ public:
 
 	virtual void Update(float fDeltaTime) { }
 
-	virtual bool IsSoftwareRenderer() = 0;
-
 	// Don't override this.  Override TryVideoMode() instead.
 	// This will set the video mode to be as close as possible to params.
 	// Return true if device was re-created and we need to reload textures.

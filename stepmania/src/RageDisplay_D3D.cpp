@@ -337,11 +337,6 @@ void RageDisplay_D3D::Update(float fDeltaTime)
 #endif
 }
 
-bool RageDisplay_D3D::IsSoftwareRenderer()
-{
-	return false;
-}
-
 RageDisplay_D3D::~RageDisplay_D3D()
 {
 	LOG->Trace( "RageDisplay_D3D::~RageDisplay()" );

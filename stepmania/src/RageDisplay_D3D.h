@@ -23,7 +23,6 @@ public:
 	~RageDisplay_D3D();
 	void Update(float fDeltaTime);
 
-	bool IsSoftwareRenderer();
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 

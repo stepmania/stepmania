@@ -11,7 +11,6 @@ public:
 	RageDisplay_Null( VideoModeParams p );
 	void Update( float fDeltaTime ) { }
 
-	bool IsSoftwareRenderer() { return false; }
 	void ResolutionChanged() { }
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
