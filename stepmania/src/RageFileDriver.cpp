@@ -141,9 +141,6 @@ FileDriverEntry::~FileDriverEntry()
 
 RageFileDriver *MakeFileDriver( CString Type, CString Root )
 {
-	if( Root.Right(1) != "/" )
-		Root += '/';
-
 	for( const FileDriverEntry *p = g_FileDriverList; p; p = p->m_Link )
 		if( !p->m_Type.CompareNoCase(Type) )
 			return p->Create( Root );
