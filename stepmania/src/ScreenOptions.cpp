@@ -22,6 +22,7 @@
 #include "InputMapper.h"
 #include "ActorUtil.h"
 #include "ProfileManager.h"
+#include "song.h"
 
 const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 
@@ -50,6 +51,7 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 #define COLOR_SELECTED					THEME->GetMetricC("ScreenOptions","ColorSelected")
 #define COLOR_NOT_SELECTED				THEME->GetMetricC("ScreenOptions","ColorNotSelected")
 #define NUM_SHOWN_ITEMS					THEME->GetMetricI("ScreenOptions","NumShownItems")
+#define SHOW_BPM_IN_SPEED_TITLE			THEME->GetMetricB("ScreenOptions","ShowBpmInSpeedTitle")
 
 ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 {
@@ -341,7 +343,23 @@ CString ScreenOptions::GetExplanationTitle( int row ) const
 	sLineName.Replace("\n-","");
 	sLineName.Replace("\n","");
 	sLineName.Replace(" ","");
-	return THEME->GetMetric( "OptionExplanations", sLineName+"Title" );
+	CString sTitle = THEME->GetMetric( "OptionExplanations", sLineName+"Title" );
+
+	// HACK: tack the BPM onto the name of the speed line
+	if( sLineName.CompareNoCase("speed")==0 )
+	{
+		if( SHOW_BPM_IN_SPEED_TITLE && GAMESTATE->m_pCurSong )
+		{
+			float fMinBpm, fMaxBpm;
+			GAMESTATE->m_pCurSong->GetDisplayBPM( fMinBpm, fMaxBpm );
+			if( fMinBpm == fMaxBpm )
+				sTitle += ssprintf( " (%.0f)", fMinBpm );
+			else
+				sTitle += ssprintf( " (%.0f-%.0f)", fMinBpm, fMaxBpm );
+		}
+	}
+
+	return sTitle;
 }
 
 BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow )
