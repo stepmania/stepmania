@@ -84,6 +84,7 @@ GameClient::GameClient() {
 	hasSong = false;
 	inNetMusicSelect = false;
 	isStarting = false;  //Used for after ScreenNetMusicSelect but before InGame
+	wasIngame = false;
 }
 
 int GameClient::GetData(PacketFunctions &Packet) {
@@ -251,12 +252,12 @@ void StepManiaLanServer::CheckReady() {
 
 void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
 	bool allOver = true;
-	int x = 0;
+	int x;
 
 	Client[clientNum].GotStartRequest = false;
 	Client[clientNum].InGame = false;
+	Client[clientNum].wasIngame = true;
 
-	//Only check clients in game
 	for (x = 0; (x < NUMBERCLIENTS)&&(allOver == true); x++)
 		if (Client[x].Used == true)
 			if ((Client[x].InGame == true))
@@ -284,14 +285,13 @@ void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
 		for (x = 0; x < numPlayers; x++) 
 			Reply.Write2( (uint16_t) playersPtr[x]->maxCombo );
 		for (x = 0; x < numPlayers; x++)
-            Reply.WriteNT( playersPtr[x]->options );
+			Reply.WriteNT( playersPtr[x]->options );
 
-		//Only send stats to clients that were in game
 		for (x = 0; x < NUMBERCLIENTS; x++)
-			if (Client[x].InGame) {
+			if(Client[x].wasIngame)
 				SendNetPacket(x, Reply);
-				Client[x].InGame = false;
-			}
+
+//		SendToAllClients(Reply);
 	}
 }
 
@@ -312,7 +312,7 @@ int StepManiaLanServer::SortStats(LanPlayer *playersPtr[]) {
 	//Populate with in game players only
 	for (int x = 0; x < NUMBERCLIENTS; x++)
 		if (Client[x].Used == true)
-			if (Client[x].InGame)
+			if (Client[x].InGame||Client[x].wasIngame)
 				for (int y = 0; y < 2; y++)
 					if (Client[x].IsPlaying(y))
 						playersPtr[counter++] = &Client[x].Player[y];

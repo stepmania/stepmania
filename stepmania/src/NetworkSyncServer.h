@@ -65,6 +65,7 @@ class GameClient {
 		bool inNetMusicSelect;
 		int startPosition;
 		bool isStarting;
+		bool wasIngame;
 
 	private:
 		string build;
