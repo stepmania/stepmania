@@ -7,7 +7,10 @@
 
 #if defined(LINUX)
 
+extern "C"
+{
 #include <asm/byteorder.h>
+};
 
 inline uint32_t ArchSwap32( uint32_t n )
 {
