@@ -48,6 +48,9 @@ void RageTextureID::Init()
 	/* If true, enable HOT PINK color keying. (deprecated but needed for
 	 * banners) */
 	bHotPinkColorKey = false;
+
+	/* These hints will be used in addition to any in the filename. */
+	AdditionalTextureHints = "";
 }
 
 bool RageTextureID::operator<(const RageTextureID &rhs) const
@@ -62,6 +65,7 @@ bool RageTextureID::operator<(const RageTextureID &rhs) const
 	COMP(bDither);
 	COMP(bStretch);
 	COMP(bHotPinkColorKey);
+	COMP(AdditionalTextureHints);
 #undef COMP
 	return false;
 }
@@ -78,7 +82,8 @@ bool RageTextureID::operator==(const RageTextureID &rhs) const
 		EQUAL(iColorDepth) &&
 		EQUAL(bDither) &&
 		EQUAL(bStretch) &&
-		EQUAL(bHotPinkColorKey);
+		EQUAL(bHotPinkColorKey) &&
+		EQUAL(AdditionalTextureHints);
 }
 
 

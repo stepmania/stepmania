@@ -30,6 +30,7 @@ struct RageTextureID
 	bool bDither;
 	bool bStretch;
 	bool bHotPinkColorKey; /* #FF00FF */
+	CString AdditionalTextureHints;
 
 	bool operator< (const RageTextureID &rhs) const;
 	bool operator== (const RageTextureID &rhs) const;
