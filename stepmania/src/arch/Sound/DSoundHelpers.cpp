@@ -57,18 +57,26 @@ void DSound::SetPrimaryBufferMode()
 	}
 
     WAVEFORMATEX waveformat;
+	memset( &waveformat, 0, sizeof(waveformat) );
     waveformat.cbSize = 0;
     waveformat.wFormatTag = WAVE_FORMAT_PCM;
-	waveformat.wBitsPerSample = WORD(16);
-	waveformat.nChannels = WORD(2);
-	waveformat.nSamplesPerSec = DWORD(44100);
-	waveformat.nBlockAlign = WORD(4);
-	waveformat.nAvgBytesPerSec = 44100 * waveformat.nBlockAlign;
+	waveformat.wBitsPerSample = 16;
+	waveformat.nChannels = 2;
+	waveformat.nSamplesPerSec = 44100;
+	waveformat.nBlockAlign = 4;
+	waveformat.nAvgBytesPerSec = waveformat.nSamplesPerSec * waveformat.nBlockAlign;
 
 	// Set the primary buffer's format
     hr = IDirectSoundBuffer_SetFormat( buf, &waveformat );
 	if( FAILED(hr) )
 		LOG->Warn( hr_ssprintf(hr, "SetFormat on primary buffer") );
+
+	DWORD got;
+	hr = buf->GetFormat( &waveformat, sizeof(waveformat), &got );
+	if( FAILED(hr) )
+		LOG->Warn( hr_ssprintf(hr, "GetFormat on primary buffer") );
+	else if( waveformat.nSamplesPerSec != 44100 )
+		LOG->Warn( hr_ssprintf(hr, "Primary buffer set to %i instead of 44100", waveformat.nSamplesPerSec) );
 
 	/* MS docs:
 	 *
@@ -181,7 +189,7 @@ DSoundBuf::DSoundBuf( DSound &ds, DSoundBuf::hw hardware,
 
 	WAVEFORMATEX waveformat;
 	memset( &waveformat, 0, sizeof(waveformat) );
-	waveformat.cbSize = sizeof(waveformat);
+	waveformat.cbSize = 0;
 	waveformat.wFormatTag = WAVE_FORMAT_PCM;
 
 	bool NeedCtrlFrequency = false;
