@@ -68,6 +68,10 @@ private:
 
 RageFileBasic *GunzipFile( RageFileBasic &file, CString &sError, uint32_t *iCRC32 );
 
+/* Quick helpers: */
+void GzipString( const CString &sIn, CString &sOut );
+bool GunzipString( const CString &sIn, CString &sOut ); // returns false on CRC, etc. error
+
 #endif
 
 /*

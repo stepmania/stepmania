@@ -487,6 +487,44 @@ int RageFileObjGzip::Finish()
 	return this->Flush();
 }
 
+#include "RageFileDriverMemory.h"
+
+void GzipString( const CString &sIn, CString &sOut )
+{
+	/* Gzip it. */
+	RageFileObjMem mem;
+	RageFileObjGzip gzip( &mem );
+	gzip.Start();
+	gzip.Write( sIn );
+	gzip.Finish();
+
+	sOut = mem.GetString();
+}
+
+bool GunzipString( const CString &sIn, CString &sOut )
+{
+	RageFileObjMem mem;
+	mem.PutString( sIn );
+
+	CString sError;
+	uint32_t iCRC32;
+	RageFileBasic *pFile = GunzipFile( mem, sError, &iCRC32 );
+	if( pFile == NULL )
+		return false;
+
+	pFile->Read( sOut );
+
+	/* Check the CRC. */
+	unsigned iRet;
+	ASSERT( pFile->GetCRC32( &iRet ) );
+	SAFE_DELETE( pFile );
+
+	if( iRet != iCRC32 )
+		return false;
+
+	return true;
+}
+
 /*
  * Copyright (c) 2003-2004 Glenn Maynard
  * All rights reserved.
