@@ -38,6 +38,7 @@ void GameCommand::Init()
 	m_pCourse = NULL;
 	m_pTrail = NULL;
 	m_pCharacter = NULL;
+	m_SortOrder = SORT_INVALID;
 }
 
 bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
@@ -94,6 +95,8 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 	if( m_pCharacter && GAMESTATE->m_pCurCharacters[pn] != m_pCharacter )
 		return false;
 	if( m_pTrail && GAMESTATE->m_pCurTrail[pn] != m_pTrail )
+		return false;
+	if( m_SortOrder && GAMESTATE->m_SortOrder != m_SortOrder )
 		return false;
 
 	return true;
@@ -209,6 +212,16 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 		else if( sName == "songgroup" )
 		{
 			m_sSongGroup = sValue;
+		}
+
+		else if( sName == "sort" )
+		{
+			m_SortOrder = StringToSortOrder( sValue );
+			if( m_SortOrder == SORT_INVALID )
+			{
+				m_sInvalidReason = ssprintf( "SortOrder \"%s\" is not valid.", sValue.c_str() );
+				m_bInvalid |= true;
+			}
 		}
 
 		else
@@ -486,6 +499,8 @@ void GameCommand::Apply( PlayerNumber pn ) const
 		GAMESTATE->m_mapEnv[ i->first ] = i->second;
 	if( !m_sSongGroup.empty() )
 		GAMESTATE->m_sPreferredSongGroup = m_sSongGroup;
+	if( m_SortOrder != SORT_INVALID )
+		GAMESTATE->m_SortOrder = m_SortOrder;
 
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.
@@ -506,7 +521,9 @@ bool GameCommand::IsZero() const
 		m_pCourse != NULL || 
 		m_pTrail != NULL || 
 		m_pCharacter != NULL || 
-		m_CourseDifficulty != DIFFICULTY_INVALID )
+		m_CourseDifficulty != DIFFICULTY_INVALID ||
+		m_SortOrder != SORT_INVALID
+		)
 		return false;
 
 	return true;

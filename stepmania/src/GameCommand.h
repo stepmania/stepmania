@@ -48,6 +48,7 @@ struct GameCommand		// used in SelectMode
 	Character*	m_pCharacter;
 	std::map<CString,CString> m_SetEnv;
 	CString		m_sSongGroup;
+	SortOrder	m_SortOrder;
 };
 
 #endif
