@@ -779,8 +779,6 @@ ScreenGameplay::~ScreenGameplay()
 		m_pSoundMusic->StopPlaying();
 
 	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
-
-	NSMAN->ReportSongOver();
 }
 
 bool ScreenGameplay::IsLastSong()
@@ -2469,6 +2467,9 @@ void ScreenGameplay::TweenOffScreen()
 	m_textDebug.StopTweening();
 	m_textDebug.BeginTweening( 1/8.f );
 	m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
+
+	
+	NSMAN->ReportSongOver();
 }
 
 void ScreenGameplay::ShowOniGameOver( PlayerNumber pn )
