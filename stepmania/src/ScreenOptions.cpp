@@ -1376,7 +1376,12 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 		changed = true;
 	}
 	if( changed )
-		m_SoundNextRow.Play();
+	{
+		if( dir < 0 )
+			m_SoundPrevRow.Play();
+		else
+			m_SoundNextRow.Play();
+	}
 }
 
 int ScreenOptions::GetCurrentRow( PlayerNumber pn ) const
