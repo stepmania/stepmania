@@ -1303,8 +1303,6 @@ int LuaFunc_##func( lua_State *L ) { \
 } \
 LuaFunction( func ); /* register it */
 
-LuaFunction_Str( Song, SONGMAN->FindSong( str ) );
-
 LuaFunction_Song( SongFullDisplayTitle, p->GetFullDisplayTitle() );
 
 static bool CheckPointer( const Steps *p )
