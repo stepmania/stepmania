@@ -122,6 +122,7 @@ void ScreenMapControllers::Update( float fDeltaTime )
 	
 	if( m_bWaitingForPress  &&  m_DeviceIToMap.IsValid() )	// we're going to map an input
 	{	
+		LOG->Trace("K");
 		GameInput curGameI( (GameController)m_iCurController,
 							(GameButton)m_iCurButton );
 
@@ -131,6 +132,7 @@ void ScreenMapControllers::Update( float fDeltaTime )
 		INPUTMAPPER->SaveMappingsToDisk();
 
 		m_bWaitingForPress = false;
+		Refresh();
 	}
 }
 
@@ -179,6 +181,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 		}
 		else
 		{
+			LOG->Trace("set");
 			m_DeviceIToMap = DeviceI;
 		}
 	}
