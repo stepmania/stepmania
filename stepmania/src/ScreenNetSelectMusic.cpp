@@ -160,25 +160,20 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( CString sName ) : ScreenWithMenuElem
 	//XXX:  what if someone has a group named [All Songs]?
 	//Must be last
 	m_vGroups.push_back( AllGroups );
-
-
 	m_iShowGroups = NUM_GROUPS_SHOW;
 	m_iShowSongs = NUM_SONGS_SHOW;
 	m_iGroupNum=m_vGroups.size()-1;	//Alphabetical
-	
-	int i = 0;
-
-	if (GAMESTATE->m_pCurSong == NULL)
-		i=0;
-	else
-		for ( int i=0;i<(int)m_vSongs.size(); i++ )
-			if (m_vSongs[i] == GAMESTATE->m_pCurSong)
-				break;
-
-	m_iSongNum=i;
 
 	UpdateGroupsListPos();
 	UpdateSongsList();
+	
+	int i = 0;
+	if (GAMESTATE->m_pCurSong != NULL)
+		for ( i = 0 ; i<m_vSongs.size() ; i++ )
+			if (m_vSongs[i]->GetFullDisplayTitle() == GAMESTATE->m_pCurSong->GetFullDisplayTitle())
+
+	m_iSongNum = i;
+
 	UpdateSongsListPos();
 	return;
 }
