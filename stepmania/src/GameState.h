@@ -126,6 +126,7 @@ public:
 	bool			IsExtraStage();
 	bool			IsExtraStage2();
 	CString			GetStageText();
+	void			GetAllStageTexts( CStringArray &out );
 	int				GetCourseSongIndex();
 
 

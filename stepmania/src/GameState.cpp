@@ -294,6 +294,21 @@ CString GameState::GetStageText()
 	else										return ssprintf("%d",m_iCurrentStageIndex+1);
 }
 
+void GameState::GetAllStageTexts( CStringArray &out )
+{
+	out.clear();
+	out.push_back( "demo" );
+	out.push_back( "oni" );
+	out.push_back( "nonstop" );
+	out.push_back( "endless" );
+	out.push_back( "event" );
+	out.push_back( "final" );
+	out.push_back( "extra1" );
+	out.push_back( "extra2" );
+	for( int stage = 0; stage < PREFSMAN->m_iNumArcadeStages; ++stage )
+		out.push_back( ssprintf("%d",stage+1) );
+}
+
 int GameState::GetCourseSongIndex()
 {
 	int iSongIndex = 0;
