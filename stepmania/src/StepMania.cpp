@@ -247,12 +247,11 @@ void SetIcon()
 	 * this is here just in case it changes.) */
 	ConvertSDLSurface(srf, srf->w, srf->h,
 		32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
-	SDL_Surface *dst = zoomSurface(srf, 32, 32);
+	zoomSurface(srf, 32, 32);
 
-	SDL_SetAlpha( dst, SDL_SRCALPHA, SDL_ALPHA_OPAQUE );
-	SDL_WM_SetIcon(dst, NULL /* derive from alpha */);
+	SDL_SetAlpha( srf, SDL_SRCALPHA, SDL_ALPHA_OPAQUE );
+	SDL_WM_SetIcon(srf, NULL /* derive from alpha */);
 	SDL_FreeSurface(srf);
-	SDL_FreeSurface(dst);
 }
 
 //-----------------------------------------------------------------------------
@@ -308,7 +307,6 @@ int main(int argc, char* argv[])
 	SetIcon();
 
 	CreateLoadingWindow();
-	loading_window->Paint();
 
 	//
 	// Create game objects
@@ -356,7 +354,7 @@ int main(int argc, char* argv[])
 	HWND hwnd = info.window;
 
 	INPUTMAN	= new RageInput( hwnd );
-//	SOUNDMAN	= new RageSoundManager( hwnd );
+//	SOUNDMAN	= new RageSoundManager();
 
 	// These things depend on the TextureManager, so do them after!
 	FONT		= new FontManager;
@@ -475,10 +473,6 @@ void GameLoop()
 			}
 		}
 
-		DISPLAY->Clear();
-		DISPLAY->ResetMatrixStack();
-
-
 		/*
 		 * Update
 		 */
@@ -500,7 +494,6 @@ void GameLoop()
 		MUSIC->Update( fDeltaTime );
 		SCREENMAN->Update( fDeltaTime );
 		NETWORK->Update( fDeltaTime );
-
 
 		static InputEventArray ieArray;
 		ieArray.clear();	// empty the array
@@ -579,10 +572,10 @@ void GameLoop()
 			SCREENMAN->Input( DeviceI, type, GameI, MenuI, StyleI );
 		}
 
-
 		/*
 		 * Render
 		 */
+		DISPLAY->Clear();
 		DISPLAY->ResetMatrixStack();
 
 		RageMatrix mat;

@@ -212,30 +212,9 @@ void RageBitmapTexture::Create()
 		ConvertSDLSurface(img, img->w, img->h, PixFmtMasks[mask][4],
 			PixFmtMasks[mask][0], PixFmtMasks[mask][1], PixFmtMasks[mask][2], PixFmtMasks[mask][3]);
 
-		SDL_Surface *dst = zoomSurface(img, m_iImageWidth, m_iImageHeight );
-		SDL_FreeSurface(img);
-		img = dst;
-
-// Commented out to see how things look without iterative filtering. -Chris
-//		while (m_iImageWidth != m_iTextureWidth || m_iImageHeight != m_iTextureHeight) {
-//			float xscale = float(m_iTextureWidth)/m_iImageWidth;
-//			float yscale = float(m_iTextureHeight)/m_iImageHeight;
-//
-//			/* Our filter is a simple linear filter, so it can't scale to 
-//			 * less than .5 very well.  If we need to go lower than .5, do
-//			 * it iteratively. */
-//			xscale = max(xscale, .5f);
-//			yscale = max(yscale, .5f);
-//
-//			SDL_Surface *dst = zoomSurface(img, xscale, yscale);
-//
-//			SDL_FreeSurface(img);
-//			img = dst;
-//
-//			/* The new image size is the full texture size. */
-//			m_iImageWidth	= int(m_iImageWidth * xscale + .0001);
-//			m_iImageHeight	= int(m_iImageHeight * yscale + .0001);
-//		}
+		zoomSurface(img, m_iTextureWidth, m_iTextureHeight );
+		m_iImageWidth = m_iTextureWidth;
+		m_iImageHeight = m_iTextureHeight;
 	}
 
 	if( m_prefs.bDither )

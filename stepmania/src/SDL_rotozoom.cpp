@@ -142,13 +142,11 @@ void zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst)
 */
 
 
-SDL_Surface *zoomSurface(SDL_Surface * src, int dstwidth, int dstheight)
+SDL_Surface *zoomSurface_ll(SDL_Surface *src, int dstwidth, int dstheight)
 {
     SDL_Surface *rz_dst;
 
-    /* Sanity check */
-    if (src == NULL)
-		return (NULL);
+    if (src == NULL) return NULL;
 
     /* Alloc space to completely contain the zoomed surface */
     /* Target surface is 32bit with source RGBA/ABGR ordering */
@@ -157,18 +155,38 @@ SDL_Surface *zoomSurface(SDL_Surface * src, int dstwidth, int dstheight)
 			    src->format->Rmask, src->format->Gmask,
 			    src->format->Bmask, src->format->Amask);
 
-    /*
-     * Lock source surface 
-     */
     SDL_LockSurface(src);
 
     /* Call the 32bit transformation routine to do the zooming (using alpha) */
     zoomSurfaceRGBA(src, rz_dst);
-    /* Turn on source-alpha support */
-    SDL_SetAlpha(rz_dst, SDL_SRCALPHA, 255);
-    /* Unlock source surface */
+
     SDL_UnlockSurface(src);
 
-    /* Return destination surface  */
-    return (rz_dst);
+    return rz_dst;
+}
+
+
+void zoomSurface(SDL_Surface *&src, int dstwidth, int dstheight)
+{
+    if (src == NULL) return;
+
+	while (src->w != dstwidth || src->h != dstheight) {
+		float xscale = float(dstwidth)/src->w;
+		float yscale = float(dstheight)/src->h;
+
+		/* Our filter is a simple linear filter, so it can't scale to 
+		 * less than .5 very well.  If we need to go lower than .5, do
+		 * it iteratively. */
+		xscale = max(xscale, .5f);
+		yscale = max(yscale, .5f);
+
+		int target_width = int(src->w*xscale + .5);
+		int target_height = int(src->h*yscale + .5);
+
+		SDL_Surface	*dst = zoomSurface_ll(src, target_width, target_height);
+
+		SDL_FreeSurface(src);
+
+		src = dst;
+	}
 }

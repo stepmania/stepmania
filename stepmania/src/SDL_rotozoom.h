@@ -22,7 +22,7 @@
 
 */
 
-SDL_Surface *zoomSurface(SDL_Surface * src, int dstwidth, int dstheight);
+void zoomSurface(SDL_Surface *&src, int dstwidth, int dstheight);
 
 
 #endif
