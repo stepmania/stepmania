@@ -22,6 +22,8 @@ class CourseContentsList : public ActorFrame
 {
 public:
 	CourseContentsList();
+	
+	void Load();
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

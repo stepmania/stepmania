@@ -23,6 +23,12 @@ CourseContentsList::CourseContentsList()
 	m_fTimeUntilScroll = 0;
 	m_fItemAtTopOfList = 0;
 
+	ContentsBarHeight = 1;
+	ContentsBarWidth = 1;
+}
+
+void CourseContentsList::Load()
+{
 	m_quad.SetUseZBuffer( true );
 	for( int i = 0; i < MAX_TOTAL_CONTENTS; ++i )
 	{
@@ -35,7 +41,6 @@ CourseContentsList::CourseContentsList()
 	ContentsBarHeight = m_CourseContentDisplays[0].GetUnzoomedHeight();
 	ContentsBarWidth = m_CourseContentDisplays[0].GetUnzoomedWidth();
 }
-
 
 void CourseContentsList::SetFromGameState()
 {
