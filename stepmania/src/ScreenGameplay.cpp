@@ -85,7 +85,6 @@ const ScreenMessage	SM_PlayGo				= ScreenMessage(SM_User+1);
 // received while STATE_DANCING
 const ScreenMessage	SM_NotesEnded			= ScreenMessage(SM_User+10);
 const ScreenMessage	SM_BeginLoadingNextSong	= ScreenMessage(SM_User+11);
-const ScreenMessage SM_PlayToastySound		= ScreenMessage(SM_User+12);
 
 // received while STATE_OUTRO
 const ScreenMessage	SM_SaveChangedBeforeGoingBack	= ScreenMessage(SM_User+20);
@@ -1312,11 +1311,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_OniFade.OpenWipingRight( SM_None );
 		break;
 
-	case SM_BeginToasty:
+	case SM_PlayToasty:
 		if( PREFSMAN->m_bEasterEggs )
-		{
-			m_Toasty.StartTransitioning();
-		}
+			if( !m_Toasty.IsTransitioning()  &&  !m_Toasty.IsFinished() )	// don't play if we've already played it once
+				m_Toasty.StartTransitioning();
 		break;
 
 	case SM_100Combo:

@@ -32,7 +32,7 @@
 
 
 // messages sent by Combo
-const ScreenMessage SM_BeginToasty			= ScreenMessage(SM_User+104);
+const ScreenMessage SM_PlayToasty			= ScreenMessage(SM_User+104);
 
 const ScreenMessage	SM_100Combo					= ScreenMessage(SM_User+200);
 const ScreenMessage	SM_200Combo					= ScreenMessage(SM_User+201);
