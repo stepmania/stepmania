@@ -37,6 +37,12 @@ public:
 	HoldNote	m_HoldNotes[MAX_HOLD_NOTES];
 	int			m_iNumHoldNotes;
 
+	TapNote GetTapNote(int track, int row) const
+	{
+		if(row < 0 || row >= MAX_TAP_NOTE_ROWS) return TapNote('0');
+		return m_TapNotes[track][row];
+	}
+
 	void LoadFromSMNoteDataString( CString sSMNoteData );
 	CString GetSMNoteDataString();
 
