@@ -140,16 +140,16 @@ inline float froundf( const float f, const float fRoundInterval )
 template<typename T>
 static inline void enum_add( T &val, int iAmt )
 {
-        union conv
-        {
-                T value;
-                int i;
-                conv( T v ):value(v) { }
-        };
+	union conv
+	{
+		T value;
+		int i;
+	};
 
-        conv c( val );
-        c.i += iAmt;
-        val = c.value;
+	conv c;
+	c.value = val;
+	c.i += iAmt;
+	val = c.value;
 }
 
 // Move val toward other_val by to_move.
