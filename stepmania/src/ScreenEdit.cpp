@@ -241,7 +241,7 @@ ScreenEdit::ScreenEdit()
 
 	m_NoteFieldRecord.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_NoteFieldRecord.SetZoom( 1.0f );
-	m_NoteFieldRecord.Load( &noteData, PLAYER_1, 60, 300 );
+	m_NoteFieldRecord.Load( &noteData, PLAYER_1, 200, 300 );
 
 	m_Clipboard.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
 
@@ -715,25 +715,13 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case DIK_S:
 		{
 			// copy edit into current Notes
-//			Song* pSong = GAMESTATE->m_pCurSong;
 			Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
+			ASSERT( pNotes );
 			
 			// strip out the autogen marker if any.  The autogen marker would have caused these Notes not to be saved to disk.
 			pNotes->m_sDescription.Replace( " (autogen)", "" );
 
-			ASSERT( pNotes );
-/*
-			if( pNotes == NULL )
-			{
-				// allocate a new Notes
-				pNotes = new Notes;
-				pSong->m_apNotes.Add( pNotes );
-				pNotes->m_NotesType = GAMEMAN->GetStyleDefForStyle( GAMESTATE->m_CurStyle )->m_NotesType;
-				pNotes->m_sDescription = "Untitled";
-				pNotes->m_iMeter = 1;
-			}
-*/
-			pNotes->SetNoteData( (NoteData*)&m_NoteFieldEdit );
+			pNotes->SetNoteData( &m_NoteFieldEdit );
 			GAMESTATE->m_pCurSong->Save();
 			SCREENMAN->SystemMessage( "Saved as SM and DWI." );
 
