@@ -24,6 +24,7 @@
 #include "NoteSkinManager.h"
 #include "GameState.h"
 #include "ThemeManager.h"
+#include "SongManager.h"
 
 
 enum {
@@ -168,6 +169,8 @@ void ScreenAppearanceOptions::ExportOptions()
 	{
 		THEME->SwitchTheme( sNewTheme );
 		ApplyGraphicOptions();	// reset graphics to apply new window title and icon
+
+		SONGMAN->UpdateRankingCourses(); // update ranking courses
 	}
 	TEXTUREMAN->DoDelayedDelete();	// delete all textures that don't have references
 

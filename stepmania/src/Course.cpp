@@ -904,7 +904,7 @@ void Course::UpdateCourseStats()
 	LOG->Trace("Updating course stats for %s", this->m_sName.c_str() );
 
 	SortOrder_AvgDifficulty = 0;
-	SortOrder_Ranking = 2;
+//	SortOrder_Ranking = 2;      // handled in SongManager::UpdateRankingCourses
 	SortOrder_TotalDifficulty = 0;
 
 	unsigned i;
@@ -918,7 +918,7 @@ void Course::UpdateCourseStats()
 		if (m_entries[ ci[i].CourseIndex ].type != Entry::fixed)
 		{
 			SortOrder_AvgDifficulty = 9999999; // large number
-			SortOrder_Ranking = 3;
+			if (SortOrder_Ranking == 2) SortOrder_Ranking++;
 			SortOrder_TotalDifficulty = 999999;     // large number
 			return;
 		}
@@ -926,20 +926,10 @@ void Course::UpdateCourseStats()
 	}
 
 	SortOrder_AvgDifficulty = (float)SortOrder_TotalDifficulty/GetEstimatedNumStages();
-	if (GetEstimatedNumStages() > 7) SortOrder_Ranking = 3;
+	if (GetEstimatedNumStages() > 7 && SortOrder_Ranking != 1) SortOrder_Ranking = 3;
 
-	// HACK: this function takes a while to execute because of
-	// the ranking portion at the end.  Do so only if it is
-	// absolutely necessary.
-	if (PREFSMAN->m_iCourseSortOrder == PrefsManager::COURSE_SORT_RANK)
-	{
-		CStringArray RankingCourses;
-
-		split( THEME->GetMetric("ScreenRanking","CoursesToShow"),",", RankingCourses);
-
-		for(i = 0; i < RankingCourses.size(); i++)
-			if (!RankingCourses[i].CompareNoCase(this->m_sPath))
-				SortOrder_Ranking = 1;
-	}
+	// OPTIMIZATION: Ranking info isn't dependant on style, so
+	// call it sparingly.  Its handled on startup and when
+	// themes change..
 
 }

@@ -108,6 +108,7 @@ public:
 	void AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], RankingCategory hsc[NUM_PLAYERS], int iScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] );	// set iNewRecordIndex = -1 if not a new record
 	void UpdateBest();
 
+	void UpdateRankingCourses();
 protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );
 	void LoadDWISongDir( CString sDir );

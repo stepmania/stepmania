@@ -552,6 +552,9 @@ int main(int argc, char* argv[])
 	/* Load the unlocks into memory */
 	GAMESTATE->m_pUnlockingSys->LoadFromDATFile( UNLOCKS_PATH );
 
+	/* Initialize which courses are ranking courses here. */
+	SONGMAN->UpdateRankingCourses();
+
 	/* Run the main loop. */
 	GameLoop();
 
