@@ -371,7 +371,6 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "ForceLogFlush",				m_bForceLogFlush );
 	ini.SetValueB( "Options", "Logging",					m_bLogging );
 	ini.SetValueB( "Options", "ShowLogWindow",				m_bShowLogWindow );
-	ini.SetValueB( "Options", "ShowBeginnnerHelper",		m_bShowBeginnerHelper );
 
 	ini.SetValueB( "Options", "TenFooterInRed",				m_bTenFooterInRed );
 	ini.SetValueI( "Options", "CourseSortOrder",			m_iCourseSortOrder );
