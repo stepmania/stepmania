@@ -38,8 +38,8 @@ static uint8_t DitherPixel(int x, int y, int intensity,  int conv)
 	 * bits directly gives 6.25.  A matrix value of 0 means the pixel is not
 	 * biased at all, which would cause it to be truncated to 6.  A value
 	 * of 5/16 means that the value is biased to 6.5625, which is also truncated
-	 * to 6.  A value of 15/16 biases to 6.1875, which causes it to be rounded
-	 * up to 6.  So, a proportion  of pixels gets rounded up based on how close
+	 * to 6.  A value of 15/16 biases to 7.1875, which causes it to be rounded
+	 * up to 7.  So, a proportion  of pixels gets rounded up based on how close
 	 * the number is to the next value. */
 
 	/* Convert the number to the destination range. */
@@ -97,8 +97,8 @@ void RageSurfaceUtils::OrderedDither( const RageSurface *src, RageSurface *dst )
 	/* For each row: */
 	for( int row = 0; row < src->h; ++row )
 	{
-		const uint8_t *srcp = (const uint8_t *) src->pixels + row * src->pitch;
-		uint8_t *dstp = (uint8_t *) dst->pixels + row * dst->pitch;
+		const uint8_t *srcp = src->pixels + row * src->pitch;
+		uint8_t *dstp = dst->pixels + row * dst->pitch;
 
 		/* For each pixel: */
 		for( int col = 0; col < src->w; ++col )
@@ -124,13 +124,7 @@ void RageSurfaceUtils::OrderedDither( const RageSurface *src, RageSurface *dst )
 				 * looks bad on the alpha channel. */
 				int out_intensity = colors[3] * conv[3];
 	
-				/* Truncate, and add e to make sure a value of 14.999998 -> 15. */
-//				colors[3] = uint8_t((out_intensity + 1) >> 16);
-
-				/* I don't remember why this used to truncate.  Doing that causes
-				 * dithering to an image with 1-bit alpha to be transparent on all
-				 * source alpha values except for full-opaque, which is wrong. 
-				 * Add .5, so we round. */
+				/* Round: */
 				colors[3] = uint8_t((out_intensity + 32767) >> 16);
 			}
 
@@ -144,25 +138,34 @@ void RageSurfaceUtils::OrderedDither( const RageSurface *src, RageSurface *dst )
 }
 
 
-/* Return "random" numbers in [0,2]; this is for SM_SDL_ErrorDiffusionDither (rand() is too slow). */
-/* static inline int GetFastRand()
+static uint8_t EDDitherPixel( int x, int y, int intensity, int conv, int32_t &accumError )
 {
-	static int RandomNumbers[] =
-	{
-		2, 1, 0, 2, 0, 2, 2, 1, 0, 1, 1, 2, 2, 0, 1, 1, 2, 2, 1, 0, 1, 0, 1, 2, 1, 0, 2, 1, 0, 1, 1, 0,
-		2, 1, 1, 2, 1, 0, 0, 1, 1, 2, 0, 2, 0, 1, 0, 1, 2, 0, 0, 1, 1, 2, 0, 2, 1, 2, 2, 2, 2, 1, 1, 1,
-		1, 0, 2, 1, 2, 1, 1, 1, 2, 1, 0, 0, 1, 0, 0, 2, 0, 1, 0, 1, 2, 2, 0, 0, 0, 2, 2, 1, 2, 2, 2, 2,
-		1, 2, 1, 0, 2, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 1, 2, 0, 0, 2, 2, 2, 1, 0, 0, 1, 2, 1, 2, 0, 0, 2,
-		2, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 2, 2, 2, 0, 0, 0, 1, 2, 0, 1, 1, 0, 0, 0, 2, 1, 2, 0, 0, 1,
-		1, 2, 0, 1, 1, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1, 2, 0, 0, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 2,
-		0, 1, 2, 0, 2, 2, 0, 2, 1, 0, 0, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 0, 1, 0, 1, 2, 1, 2, 1, 0, 0,
-		1, 0, 0, 0, 2, 2, 2, 2, 1, 2, 1, 0, 0, 2, 1, 0, 1, 2, 0, 2, 2, 0, 0, 0, 2, 2, 0, 0, 2, 0, 1, 1
-	};
-	static int iNextNumber = 0;
-	if( iNextNumber == ARRAYSIZE(RandomNumbers) )
-		iNextNumber = 0;
-	return RandomNumbers[ iNextNumber++ ];
-} */
+	/* Convert the number to the destination range. */
+	int out_intensity = intensity * conv;
+
+	/* Add e to make sure a value of 14.999998 -> 15. */
+	++out_intensity;
+	
+	/* Add bias. */
+	out_intensity += accumError;
+
+	/* out_intensity is now what we actually want this component to be.
+	 * To store it, we have to clamp it (prevent overflow) and shift it
+	 * from fixed-point to [0,255].  The error introduced in that calculation
+	 * becomes the new accumError. */
+	int clamped_intensity = clamp( out_intensity, 0, 0xFFFFFF );
+	clamped_intensity &= 0xFF0000;
+
+	/* Truncate. */
+	uint8_t ret = uint8_t(clamped_intensity >> 16);
+
+	accumError = out_intensity - clamped_intensity;
+
+	// Reduce funky streaks in low-bit channels by clamping error.
+	CLAMP( accumError, -128 * 65536, +128 * 65536 );
+
+	return ret;
+}
 
 /* This is very similar to SM_SDL_OrderedDither, except instead of using a matrix
  * containing rounding values, we truncate and then add the resulting error for
@@ -197,8 +200,8 @@ void RageSurfaceUtils::ErrorDiffusionDither( const RageSurface *src, RageSurface
 	{
 		int32_t accumError[4] = { 0, 0, 0, 0 }; // accum error values are reset every row
 
-		const uint8_t *srcp = (const uint8_t *)src->pixels + row * src->pitch;
-		uint8_t *dstp = (uint8_t *)dst->pixels + row * dst->pitch;
+		const uint8_t *srcp = src->pixels + row * src->pitch;
+		uint8_t *dstp = dst->pixels + row * dst->pitch;
 
 		/* For each pixel in row: */
 		for( int col = 0; col < src->w; ++col )
@@ -208,39 +211,7 @@ void RageSurfaceUtils::ErrorDiffusionDither( const RageSurface *src, RageSurface
 
 			for( int c = 0; c < 3; ++c )
 			{
-				/* Convert the number to the destination range. */
-				int out_intensity = colors[c] * conv[c];
-
-				/* Add e to make sure a value of 14.999998 -> 15. */
-				++out_intensity;
-	
-				/* Add bias. */
-				out_intensity += accumError[c];
-
-				/* out_intensity is now what we actually want this component to be.
-				 * To store it, we have to clamp it (prevent overflow) and shift it
-				 * from fixed-point to [0,255].  The error introduced in that calculation
-				 * becomes the new accumError. */
-				int clamped_intensity = clamp( out_intensity, 0, 0xFFFFFF );
-				clamped_intensity &= 0xFF0000;
-
-				/* Truncate. */
-				colors[c] = uint8_t(clamped_intensity >> 16);
-
-				accumError[c] = out_intensity - clamped_intensity;
-
-				// Reduce funky streaks in low-bit channels by clamping error.
-				CLAMP( accumError[c], -128 * 65536, +128 * 65536 );
-
-				// Keep only a fraction of the error to make the effect more subtle.
-				// This used to divide by [1,4]; shift right by [0,2] to get a similar
-				// (but much faster) effect.
-				/* This resulted in banding in gradients, and doesn't work quite the
-				 * same way with this calculation; without it, gradients look correct.
-				 * Unfortunately, I don't remember any of the problem cases we had
-				 * originally; if we see problems with the dithering in the future, let's
-				 * archive them somewhere for future testing. */
-//				accumError[c] >>= (GetFastRand())+1;
+				colors[c] = EDDitherPixel( col, row, colors[c], conv[c], accumError[c] );
 			}
 
 			/* If the source has no alpha, the conversion formula will end up
@@ -254,13 +225,7 @@ void RageSurfaceUtils::ErrorDiffusionDither( const RageSurface *src, RageSurface
 				 * looks bad on the alpha channel. */
 				int out_intensity = colors[3] * conv[3];
 	
-				/* Truncate, and add e to make sure a value of 14.999998 -> 15. */
-//				colors[3] = uint8_t((out_intensity + 1) >> 16);
-
-				/* I don't remember why this used to truncate.  Doing that causes
-				 * dithering to an image with 1-bit alpha to be transparent on all
-				 * source alpha values except for full-opaque, which is wrong. 
-				 * Add .5, so we round. */
+				/* Round: */
 				colors[3] = uint8_t((out_intensity + 32767) >> 16);
 			}
 
