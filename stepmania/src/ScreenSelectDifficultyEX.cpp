@@ -38,6 +38,7 @@
 ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSelectDifficultyEX" )
 {
 	m_CurrentPage = PAGE_1;
+	int p;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_iChoice[p] = 0;
@@ -279,7 +280,8 @@ void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
 	const ModeChoice& mc = m_ModeChoices[m_iChoice[pn]];
 	bool AnotherPlayerSelected = false;
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if(p != pn && m_bChosen[p]) { AnotherPlayerSelected = true; }
 	}
