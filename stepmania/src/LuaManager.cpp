@@ -395,7 +395,7 @@ float LuaManager::RunAtExpressionF( const CString &_sStr )
 
 	CString sOut;
 	RunExpressionS( sStr, sOut );
-	return atof( sOut );
+	return strtof( sOut, NULL );
 }
 
 void LuaManager::Fail( const CString &err )
