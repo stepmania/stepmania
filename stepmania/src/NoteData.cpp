@@ -190,7 +190,7 @@ void NoteData::CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEn
 	while( f<=iFromIndexEnd && f < MAX_TAP_NOTE_ROWS && t < MAX_TAP_NOTE_ROWS )
 	{
 		for( int c=0; c<m_iNumTracks; c++ )
-			m_TapNotes[c][t] = pFrom->m_TapNotes[c][f];
+			SetTapNote(c, t, pFrom->GetTapNote(c, f));
 		f++;
 		t++;
 	}
@@ -206,6 +206,7 @@ void NoteData::AddHoldNote( HoldNote add )
 	int i;
 
 	// look for other hold notes that overlap and merge them
+	// XXX: this is done implicitly with 4s
 	for( i=0; i<m_iNumHoldNotes; i++ )	// for each HoldNote
 	{
 		HoldNote &other = m_HoldNotes[i];
@@ -698,10 +699,14 @@ void NoteData::ConvertHoldNotesTo2sAnd3s()
 	for( int i=0; i<m_iNumHoldNotes; i++ ) 
 	{
 		HoldNote &hn = m_HoldNotes[i];
-		int iHoldStartIndex = BeatToNoteRow(hn.m_fStartBeat);
-		int iHoldEndIndex   = BeatToNoteRow(hn.m_fEndBeat);
-		m_TapNotes[hn.m_iTrack][iHoldStartIndex] = '2';
-		m_TapNotes[hn.m_iTrack][iHoldEndIndex]   = '3';
+		int iHoldStartIndex = clamp(BeatToNoteRow(hn.m_fStartBeat), 0, MAX_TAP_NOTE_ROWS-1);
+		int iHoldEndIndex   = clamp(BeatToNoteRow(hn.m_fEndBeat), 0, MAX_TAP_NOTE_ROWS-1);
+		
+		/* If they're the same, then they got clamped together, so just ignore it. */
+		if(iHoldStartIndex != iHoldEndIndex) {
+			m_TapNotes[hn.m_iTrack][iHoldStartIndex] = '2';
+			m_TapNotes[hn.m_iTrack][iHoldEndIndex]   = '3';
+		}
 	}
 	m_iNumHoldNotes = 0;
 }
@@ -724,10 +729,10 @@ void NoteData::Convert4sToHoldNotes()
 			HoldNote hn = { col, NoteRowToBeat(i), 0 };
 			// search for end of HoldNote
 			do {
-				m_TapNotes[col][i] = '0';
+				SetTapNote(col, i, '0');
 				i++;
-			} while( i<MAX_TAP_NOTE_ROWS && m_TapNotes[col][i] == '4');
-			m_TapNotes[col][i] = '0';
+			} while( GetTapNote(col, i) == '4');
+			SetTapNote(col, i, '0');
 
 			hn.m_fEndBeat = NoteRowToBeat(i);
 			AddHoldNote( hn );
@@ -741,8 +746,9 @@ void NoteData::ConvertHoldNotesTo4s()
 	for( int i=0; i<m_iNumHoldNotes; i++ ) 
 	{
 		HoldNote &hn = m_HoldNotes[i];
-		int iHoldStartIndex = BeatToNoteRow(hn.m_fStartBeat);
-		int iHoldEndIndex   = BeatToNoteRow(hn.m_fEndBeat);
+		int iHoldStartIndex = clamp(BeatToNoteRow(hn.m_fStartBeat), 0, MAX_TAP_NOTE_ROWS);
+		int iHoldEndIndex   = clamp(BeatToNoteRow(hn.m_fEndBeat), 0, MAX_TAP_NOTE_ROWS);
+
 		for( int j = iHoldStartIndex; j < iHoldEndIndex; ++j)
 			m_TapNotes[hn.m_iTrack][j] = '4';
 	}
