@@ -848,8 +848,9 @@ void NoteDataUtil::CollapseToOne( NoteData &in )
 		for( int t=0; t<in.GetNumTracks(); t++ )
 			if( in.GetTapNote(t,r) != TAP_EMPTY )
 			{
-				in.SetTapNote(0, r, in.GetTapNote(t,r));
+				TapNote tn = in.GetTapNote(t,r);
 				in.SetTapNote(t, r, TAP_EMPTY);
+				in.SetTapNote(0, r, tn);
 			}
 	in.Convert2sAnd3sToHoldNotes();
 }
