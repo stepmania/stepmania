@@ -1440,9 +1440,13 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
 			break;
 		case PLAY_MODE_NONSTOP:
+			SCREENMAN->SetNewScreen( "ScreenEvaluationNonstop" );
+			break;
 		case PLAY_MODE_ONI:
+			SCREENMAN->SetNewScreen( "ScreenEvaluationOni" );
+			break;
 		case PLAY_MODE_ENDLESS:
-			SCREENMAN->SetNewScreen( "ScreenEvaluationCourse" );
+			SCREENMAN->SetNewScreen( "ScreenEvaluationEndless" );
 			break;
 		default:
 			ASSERT(0);
@@ -1502,9 +1506,13 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				SCREENMAN->SetNewScreen( "ScreenGameOver" );
 			break;
 		case PLAY_MODE_NONSTOP:
+			SCREENMAN->SetNewScreen( "ScreenEvaluationNonstop" );
+			break;
 		case PLAY_MODE_ONI:
+			SCREENMAN->SetNewScreen( "ScreenEvaluationOni" );
+			break;
 		case PLAY_MODE_ENDLESS:
-			SCREENMAN->SetNewScreen( "ScreenEvaluationCourse" );
+			SCREENMAN->SetNewScreen( "ScreenEvaluationEndless" );
 			break;
 		default:
 			ASSERT(0);

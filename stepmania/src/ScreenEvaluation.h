@@ -49,43 +49,47 @@ protected:
 
 	MenuElements		m_Menu;
 
-	//
 	// banner area
-	//
-	Banner				m_Banner[MAX_SONGS_TO_SHOW];
-	Sprite				m_sprBannerFrame[MAX_SONGS_TO_SHOW];
+	Banner				m_LargeBanner;
+	Sprite				m_sprLargeBannerFrame;
 	Sprite				m_sprStage;
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
+	Banner				m_SmallBanner[MAX_SONGS_TO_SHOW];
+	Sprite				m_sprSmallBannerFrame[MAX_SONGS_TO_SHOW];
 
-	//
 	// grade area
-	//
 	Sprite				m_sprGradeFrame[NUM_PLAYERS];
 	GradeDisplay		m_Grades[NUM_PLAYERS];
+
+	// points area
+	Sprite				m_sprPercentFrame[NUM_PLAYERS];
 	BitmapText			m_textPercentWhole[NUM_PLAYERS];
 	BitmapText			m_textPercentRemainder[NUM_PLAYERS];
 	BitmapText			m_textDancePoints[NUM_PLAYERS];
 
-	//
 	// bonus area
-	//
 	Sprite				m_sprBonusFrame[NUM_PLAYERS];
 	Sprite				m_sprPossibleBar[NUM_PLAYERS][NUM_RADAR_CATEGORIES];
 	Sprite				m_sprActualBar[NUM_PLAYERS][NUM_RADAR_CATEGORIES];
-	BitmapText			m_textSongsSurvived[NUM_PLAYERS];
 
-	//
-	// judgement area
-	//
+	// survived area
+	Sprite				m_sprSurvivedFrame[NUM_PLAYERS];
+	BitmapText			m_textSurvivedNumber[NUM_PLAYERS];
+
+	// judgment area
 	Sprite				m_sprJudgeLabels[NUM_JUDGE_LINES];
 	BitmapText			m_textJudgeNumbers[NUM_JUDGE_LINES][NUM_PLAYERS];
 
-	//
 	// score area
-	//
-	Sprite				m_sprScoreLabel[NUM_SCORE_LINES];
-	ScoreDisplayNormal	m_ScoreDisplay[NUM_SCORE_LINES][NUM_PLAYERS];
+	Sprite				m_sprScoreLabel;
+	ScoreDisplayNormal	m_ScoreDisplay[NUM_PLAYERS];
+
+	// time area
+	Sprite				m_sprTimeLabel;
+	ScoreDisplayNormal	m_TimeDisplay[NUM_PLAYERS];
+
+	// extra area
 	Sprite				m_sprNewRecord[NUM_PLAYERS];
 	bool				m_bTryExtraStage;
 	Sprite				m_sprTryExtraStage;
@@ -103,10 +107,22 @@ public:
 	ScreenEvaluationSummary() : ScreenEvaluation("ScreenEvaluationSummary",ScreenEvaluation::summary) {};
 };
 
-class ScreenEvaluationCourse : public ScreenEvaluation
+class ScreenEvaluationNonstop : public ScreenEvaluation
 {
 public:
-	ScreenEvaluationCourse() : ScreenEvaluation("ScreenEvaluationCourse",ScreenEvaluation::course) {};
+	ScreenEvaluationNonstop() : ScreenEvaluation("ScreenEvaluationNonstop",ScreenEvaluation::course) {};
+};
+
+class ScreenEvaluationOni : public ScreenEvaluation
+{
+public:
+	ScreenEvaluationOni() : ScreenEvaluation("ScreenEvaluationOni",ScreenEvaluation::course) {};
+};
+
+class ScreenEvaluationEndless : public ScreenEvaluation
+{
+public:
+	ScreenEvaluationEndless() : ScreenEvaluation("ScreenEvaluationEndless",ScreenEvaluation::course) {};
 };
 
 
