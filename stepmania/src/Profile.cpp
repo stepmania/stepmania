@@ -605,7 +605,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 			continue;
 
 		LPXNode pSongNode = pNode->AppendChild( "Song" );
-		pSongNode->AppendChild( "SongDir", pSong->GetSongDir() );
+		pSongNode->AppendAttr( "Dir", pSong->GetSongDir() );
 
 		const vector<Steps*> vSteps = pSong->GetAllSteps();
 
@@ -644,9 +644,10 @@ void Profile::LoadSongScoresFromNode( const XNode* pNode )
 		if( (*song)->name != "Song" )
 			continue;
 
-		CString sSongDir;
-		if( !(*song)->GetChildValue("SongDir", sSongDir) )
+		const LPXAttr TypeAttr = (*song)->GetAttr( "Dir" );
+		if( TypeAttr == NULL )
 			WARN_AND_CONTINUE;
+		const CString sSongDir = TypeAttr->value;
 
 		Song* pSong = SONGMAN->GetSongFromDir( sSongDir );
 		if( pSong == NULL )
