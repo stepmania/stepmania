@@ -141,25 +141,25 @@ void SongEntry::UpdateLocked()
 	const UnlockSystem *UNLOCKS = GAMESTATE->m_pUnlockingSys;
 
 	isLocked = true;
-	if ( m_fArcadePointsRequired && UNLOCKS->ArcadePoints < m_fArcadePointsRequired )
+	if ( m_fArcadePointsRequired && UNLOCKS->ArcadePoints >= m_fArcadePointsRequired )
 		isLocked = false;
 
-	if ( m_fDancePointsRequired && UNLOCKS->DancePoints < m_fDancePointsRequired )
+	if ( m_fDancePointsRequired && UNLOCKS->DancePoints >= m_fDancePointsRequired )
 		isLocked = false;
 
-	if ( m_fSongPointsRequired && UNLOCKS->SongPoints < m_fSongPointsRequired )
+	if ( m_fSongPointsRequired && UNLOCKS->SongPoints >= m_fSongPointsRequired )
 		isLocked = false;
 
-	if ( m_fExtraStagesCleared && UNLOCKS->ExtraClearPoints < m_fExtraStagesCleared )
+	if ( m_fExtraStagesCleared && UNLOCKS->ExtraClearPoints >= m_fExtraStagesCleared )
 		isLocked = false;
 
-	if ( m_fExtraStagesFailed && UNLOCKS->ExtraFailPoints < m_fExtraStagesFailed )
+	if ( m_fExtraStagesFailed && UNLOCKS->ExtraFailPoints >= m_fExtraStagesFailed )
 		isLocked = false;
 
-	if ( m_fStagesCleared && UNLOCKS->StagesCleared < m_fStagesCleared )
+	if ( m_fStagesCleared && UNLOCKS->StagesCleared >= m_fStagesCleared )
 		isLocked = false;
 
-	if ( m_fToastysSeen && UNLOCKS->ToastyPoints < m_fToastysSeen )
+	if ( m_fToastysSeen && UNLOCKS->ToastyPoints >= m_fToastysSeen )
 		isLocked = false;
 
 	if ( m_iRouletteSeed )
@@ -167,7 +167,7 @@ void SongEntry::UpdateLocked()
 		const CString &tmp = UNLOCKS->RouletteSeeds;
 
 		LOG->Trace("Seed in question: %d Roulette seeds: %s", m_iRouletteSeed, tmp.c_str() );
-		if( tmp[m_iRouletteSeed] != '1' )
+		if( tmp[m_iRouletteSeed] == '1' )
 			isLocked = false;
 	}
 }
