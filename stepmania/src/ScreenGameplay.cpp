@@ -704,15 +704,18 @@ void ScreenGameplay::LoadNextSong()
 		SET_XY( m_DifficultyIcon[p] );
 	}
 
+	const bool bBothReverse = bReverse[PLAYER_1] && bReverse[PLAYER_2];
+	const bool bOneReverse = !bBothReverse && (bReverse[PLAYER_1] || bReverse[PLAYER_2]);
+
+	/* XXX: We want to put the lyrics out of the way, but it's likely that one
+	 * player is in reverse and the other isn't.  What to do? */
+	m_LyricDisplay.SetName( ssprintf( "Lyrics%s", bBothReverse? "Reverse": bOneReverse? "OneReverse": "") );
+	SET_XY( m_LyricDisplay );
+
 	/* Load the Oni transitions */
 	m_NextSongIn.Load( THEME->GetPathToB("ScreenGameplay next song in") );
 	// Instead, load this right before it's used
 //	m_NextSongOut.Load( THEME->GetPathToB("ScreenGameplay next song out") );
-
-	/* XXX: We want to put the lyrics out of the way, but it's likely that one
-	 * player is in reverse and the other isn't.  What to do? */
-	m_LyricDisplay.SetName( "Lyrics" );
-	SET_XY( m_LyricDisplay );
 
 	// Load lyrics
 	// XXX: don't load this here
