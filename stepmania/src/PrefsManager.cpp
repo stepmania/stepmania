@@ -90,7 +90,7 @@ PrefsManager::PrefsManager()
 	m_bAutogenMissingTypes = true;
 	m_bAutogenGroupCourses = true;
 	m_bBreakComboToGetItem = false;
-	m_BannerCacheType = preload_group;
+	m_BannerCacheType = preload_none;
 	
 	/* DDR Extreme-style extra stage support.
 	 * Default off so people used to the current behavior (or those with extra
