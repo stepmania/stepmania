@@ -167,6 +167,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 					Row.m_vbSelected[p] = m_Rows[r]->m_vbSelected[0];
 			}
 
+			CHECKPOINT_M( ssprintf("row %i: %s", r, Row.m_RowDef.name.c_str()) );
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN )
 					Row.m_iChoiceWithFocus[p] = 0;	// focus on the first row, which is "go down"
