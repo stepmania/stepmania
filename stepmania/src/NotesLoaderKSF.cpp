@@ -359,7 +359,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 			continue;
 		}
 
-		out.m_vpSteps.push_back( pNewNotes );
+		out.AddSteps( pNewNotes );
 	}
 
 	return true;

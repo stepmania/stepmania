@@ -336,7 +336,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		{
 			Steps* pNewNotes = new Steps;
 			ASSERT( pNewNotes );
-			out.m_vpSteps.push_back( pNewNotes );
+			out.AddSteps( pNewNotes );
 
 			if( iNumParams < 7 )
 			{
@@ -456,7 +456,7 @@ bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 				return false;
 			}
 
-			pSong->m_vpSteps.push_back( pNewNotes );
+			pSong->AddSteps( pNewNotes );
 			return true;	// Only allow one Steps per edit file!
 		}
 		else

@@ -277,7 +277,10 @@ void SongManager::LoadGroupSymLinks(CString sDir, CString sGroupFolder)
 			delete pNewSong; // The song failed to load.
 		else
 		{
-			pNewSong->m_vpSteps.clear();	// No memory hogs..
+			const vector<Steps*>& vpSteps = pNewSong->GetAllSteps();
+			while( vpSteps.size() )
+				pNewSong->RemoveSteps( vpSteps[0] );
+
 			pNewSong->m_BackgroundChanges.clear();
 
 			pNewSong->m_bIsSymLink = true;	// Very important so we don't double-parse later

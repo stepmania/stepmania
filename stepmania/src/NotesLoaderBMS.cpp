@@ -454,7 +454,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		const bool ok = LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i], 
 			*pNewNotes );
 		if( ok )
-			out.m_vpSteps.push_back( pNewNotes );
+			out.AddSteps( pNewNotes );
 		else
 			delete pNewNotes;
 	}
