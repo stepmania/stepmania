@@ -344,12 +344,8 @@ void PlayerMinus::Update( float fDeltaTime )
 	{
 		// Start beat needs to be far enough ahead to be off screen so that
 		// addition arrows don't suddenly pop on.
-		float fStartBeat = GAMESTATE->m_fSongBeat + BEATS_PER_MEASURE*2;
-		fStartBeat = truncf(fStartBeat)+1;
-		float fStartSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( fStartBeat );
-		float fEndSeconds = fStartSeconds+10;
-		float fEndBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fEndSeconds );
-		fEndBeat = truncf(fEndBeat)+1;
+		float fStartBeat, fEndBeat;
+		GAMESTATE->GetUndisplayedBeats( m_PlayerNumber, 10 /*XXX*/, fStartBeat, fEndBeat );
 
 		LOG->Trace( "Applying transform from %f to %f", fStartBeat, fEndBeat );
 
