@@ -491,6 +491,33 @@ static void GetImageDirListing( CString sPath, CStringArray &AddTo, bool bReturn
 	GetDirListing( sPath + ".gif", AddTo, false, bReturnPathToo ); 
 }
 
+static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
+{
+	/* vSteps have the same StepsType and Difficulty.  Delete them if they have the
+	 * same m_sDescription, m_iMeter and SMNoteData. */
+	for( unsigned i=0; i<vSteps.size(); i++ )
+	{
+		const Steps *s1 = vSteps[i];
+		for( unsigned j=i+1; j<vSteps.size(); j++ )
+		{
+			const Steps *s2 = vSteps[j];
+			if( s1->GetDescription() != s2->GetDescription() )
+				continue;
+			if( s1->GetMeter() != s2->GetMeter() )
+				continue;
+			if( s1->GetSMNoteData() != s2->GetSMNoteData() )
+				continue;
+
+			LOG->Trace("Removed duplicate steps in song \"%s\" with description \"%s\" and meter \"%i\"",
+				song->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetMeter() );
+				
+			song->RemoveNotes(s2);
+			--j;
+		}
+	}
+}
+
+
 /* Songs in BlacklistImages will never be autodetected as song images. */
 void Song::TidyUpData()
 {
@@ -790,6 +817,11 @@ void Song::TidyUpData()
 
 			vector<Steps*> vSteps;
 			this->GetSteps( vSteps, st, dc );
+
+			/* Delete steps that are completely identical.  This happened due to a
+			 * bug in an earlier version. */
+			DeleteDuplicateSteps( this, vSteps );
+
 			SortNotesArrayByDifficulty( vSteps );
 			for( unsigned k=1; k<vSteps.size(); k++ )
 			{
