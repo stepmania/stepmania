@@ -14,6 +14,7 @@ struct SongOptions;
 class Song;
 class Steps;
 class Profile;
+struct lua_State;
 
 enum CourseEntryType
 {
@@ -152,6 +153,9 @@ public:
 	void GetAllCachedTrails( vector<Trail *> &out );
 
 	const CourseEntry *FindFixedSong( const Song *pSong ) const;
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	bool GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;

@@ -1129,6 +1129,33 @@ void Course::GetAllCachedTrails( vector<Trail *> &out )
 	}
 }
 
+
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaCourse : public Luna<T>
+{
+public:
+	LunaCourse() { LUA->Register( Register ); }
+
+	static int GetPlayMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetPlayMode() ); return 1; }
+	static int GetFullDisplayTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetFullDisplayTitle() ); return 1; }
+	static int GetFullTranslitTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetFullTranslitTitle() ); return 1; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( GetPlayMode )
+		ADD_METHOD( GetFullDisplayTitle )
+		ADD_METHOD( GetFullTranslitTitle )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( Course )
+// lua end
+
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
