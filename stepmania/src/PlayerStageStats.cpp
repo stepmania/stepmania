@@ -7,6 +7,8 @@
 #include "LuaFunctions.h"
 #include "LuaManager.h"
 #include <float.h>
+#include "GameState.h"
+#include "Course.h"
 
 #define GRADE_PERCENT_TIER(i)			THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
 #define GRADE_TIER02_IS_ALL_PERFECTS	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllPerfects")
@@ -210,6 +212,10 @@ float PlayerStageStats::GetPercentDancePoints() const
 
 void PlayerStageStats::SetLifeRecordAt( float fLife, float fSecond )
 {
+	// Don't save life stats in endless courses, or could run OOM in a few hours.
+	if( GAMESTATE->m_pCurCourse && GAMESTATE->m_pCurCourse->IsEndless() )
+		return;
+	
 	if( fSecond < 0 )
 		return;
 
@@ -272,6 +278,10 @@ void PlayerStageStats::GetLifeRecord( float *fLifeOut, int iNumSamples ) const
  * the amount of the first combo that comes from the previous song. */
 void PlayerStageStats::UpdateComboList( float fSecond, bool rollover )
 {
+	// Don't save combo stats in endless courses, or could run OOM in a few hours.
+	if( GAMESTATE->m_pCurCourse && GAMESTATE->m_pCurCourse->IsEndless() )
+		return;
+	
 	if( fSecond < 0 )
 		return;
 
