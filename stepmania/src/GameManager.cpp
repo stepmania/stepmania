@@ -1117,6 +1117,38 @@ ModeChoice g_ModeChoices[] =
 		"real",
 		2
 	},
+	{
+		GAME_PARA,
+		PLAY_MODE_ARCADE,
+		STYLE_PARA_SINGLE,
+		DIFFICULTY_EASY,
+		"para",
+		1
+	},
+	{
+		GAME_PARA,
+		PLAY_MODE_ARCADE,
+		STYLE_PARA_SINGLE,
+		DIFFICULTY_EASY,
+		"easy",
+		1
+	},
+	{
+		GAME_PARA,
+		PLAY_MODE_ARCADE,
+		STYLE_PARA_SINGLE,
+		DIFFICULTY_MEDIUM,
+		"hard",
+		1
+	},
+	{
+		GAME_PARA,
+		PLAY_MODE_ARCADE,
+		STYLE_PARA_SINGLE,
+		DIFFICULTY_HARD,
+		"expert",
+		1
+	},
 };
 const int NUM_MODE_CHOICES = sizeof(g_ModeChoices) / sizeof(g_ModeChoices[0]);
 

@@ -205,6 +205,7 @@ void ScreenSelectMode::RefreshModeChoices()
 	int iNumSidesJoined = GAMESTATE->GetNumSidesJoined();
 
 	GAMEMAN->GetModesChoicesForGame( GAMESTATE->m_CurGame, m_aPossibleModeChoices );
+	ASSERT( m_aPossibleModeChoices.GetSize() > 0 );
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 
