@@ -213,15 +213,8 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	// Need to set Y positions of all these elements in Update since
 	// they change depending on PlayerOptions.
 
+	RageSoundParams p;
 	m_soundMine.Load( THEME->GetPathToS("Player mine"), true );
-
-	if( GAMESTATE->GetNumPlayersEnabled() == 2 )
-	{
-		/* Two players are active.  Play mines on the player's side. */
-		RageSoundParams p;
-		p.m_Balance = (m_PlayerNumber == PLAYER_1)? -1.0f:1.0f;
-		m_soundMine.SetParams( p );
-	}
 
 	/* Attacks can be launched in course modes and in battle modes.  They both come
 	 * here to play, but allow loading a different sound for different modes. */
@@ -229,14 +222,23 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	{
 	case PLAY_MODE_RAVE:
 	case PLAY_MODE_BATTLE:
-		m_soundAttackLaunch.Load( THEME->GetPathToS(ssprintf("Player battle attack launch p%d",pn+1)), true );
-		m_soundAttackEnding.Load( THEME->GetPathToS(ssprintf("Player battle attack ending p%d",pn+1)), true );
+		m_soundAttackLaunch.Load( THEME->GetPathToS("Player battle attack launch"), true );
+		m_soundAttackEnding.Load( THEME->GetPathToS("Player battle attack ending"), true );
 		break;
 	default:
-		m_soundAttackLaunch.Load( THEME->GetPathToS(ssprintf("Player course attack launch p%d",pn+1)), true );
-		m_soundAttackEnding.Load( THEME->GetPathToS(ssprintf("Player course attack ending p%d",pn+1)), true );
+		m_soundAttackLaunch.Load( THEME->GetPathToS("Player course attack launch"), true );
+		m_soundAttackEnding.Load( THEME->GetPathToS("Player course attack ending"), true );
 		break;
 	}
+
+	if( GAMESTATE->GetNumPlayersEnabled() == 2 )
+	{
+		/* Two players are active.  Play sounds on this player's side. */
+		p.m_Balance = (m_PlayerNumber == PLAYER_1)? -1.0f:1.0f;
+	}
+	m_soundMine.SetParams( p );
+	m_soundAttackLaunch.SetParams( p );
+	m_soundAttackEnding.SetParams( p );
 }
 
 void PlayerMinus::Update( float fDeltaTime )
