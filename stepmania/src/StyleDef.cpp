@@ -19,7 +19,7 @@
 #include "NoteData.h"
 
 
-void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber pn, NoteData* pOriginal, NoteData* pNoteDataOut ) const
+void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData* pOriginal, NoteData* pNoteDataOut ) const
 {
 	int iNewToOriginalTrack[MAX_COLS_PER_PLAYER];
 	for( int col=0; col<m_iColsPerPlayer; col++ )
