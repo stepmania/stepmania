@@ -7,17 +7,10 @@ class MemoryCardDriver_Null : public MemoryCardDriver
 {
 public:
 	MemoryCardDriver_Null() {}
-	virtual bool StorageDevicesChanged() { return false; }
-	virtual void GetStorageDevices( vector<UsbStorageDevice>& vStorageDevicesOut ) {}
-	virtual bool MountAndTestWrite( UsbStorageDevice* pDevice ) { return false; }
+	virtual bool DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut ) { return false; }
+	virtual bool Mount( UsbStorageDevice* pDevice ) { return false; }
 	virtual void Unmount( UsbStorageDevice* pDevice ) {}
 	virtual void Flush( UsbStorageDevice* pDevice ) {}
-	virtual void ResetUsbStorage() {}
-	virtual void PauseMountingThread() {}
-	virtual void UnPauseMountingThread() {}
-	virtual void DoOsMount() {}
-	virtual void DontDoOsMount() {}
-	virtual void SetMountThreadState( MountThreadState mts ) {}
 };
 
 #endif

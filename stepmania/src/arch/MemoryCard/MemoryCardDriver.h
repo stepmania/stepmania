@@ -51,19 +51,14 @@ class MemoryCardDriver
 public:
 	MemoryCardDriver() {};
 	virtual ~MemoryCardDriver() {};
-	virtual bool StorageDevicesChanged() = 0;
-	virtual void GetStorageDevices( vector<UsbStorageDevice>& vStorageDevicesOut ) = 0;
-	virtual bool MountAndTestWrite( UsbStorageDevice* pDevice ) = 0;	// return false if mount or write fails
+	virtual bool Mount( UsbStorageDevice* pDevice ) = 0;	// return false if mount or write fails
 	virtual void Unmount( UsbStorageDevice* pDevice ) = 0;
 	virtual void Flush( UsbStorageDevice* pDevice ) = 0;
-	virtual void ResetUsbStorage() = 0;
-	enum MountThreadState 
-	{
-		detect_and_mount,
-		detect_and_dont_mount,
-		paused
-	};
-	virtual void SetMountThreadState( MountThreadState mts ) = 0;
+	virtual void Reset() { }
+
+	/* Poll for memory card changes.  If anything has changed, fill in vStorageDevicesOut
+	 * and return true. */
+	virtual bool DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut ) = 0;
 };
 
 MemoryCardDriver *MakeMemoryCardDriver();

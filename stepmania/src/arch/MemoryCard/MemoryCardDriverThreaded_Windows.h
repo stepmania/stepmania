@@ -1,22 +1,20 @@
 #ifndef MemoryCardDriverThreaded_Windows_H
-#define MemoryCardDriverThreaded_Windows_H 1
+#define MemoryCardDriverThreaded_Windows_H
 
-#include "MemoryCardDriverThreaded.h"
+#include "MemoryCardDriver.h"
 #include <windows.h>
 
-class MemoryCardDriverThreaded_Windows : public MemoryCardDriverThreaded
+class MemoryCardDriverThreaded_Windows : public MemoryCardDriver
 {
 public:
 	MemoryCardDriverThreaded_Windows();
 	virtual ~MemoryCardDriverThreaded_Windows();
 
+	virtual bool DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut );
+	virtual bool Mount( UsbStorageDevice* pDevice );
 	virtual void Unmount( UsbStorageDevice* pDevice );
 	virtual void Flush( UsbStorageDevice* pDevice );
-protected:
-	virtual void Mount( UsbStorageDevice* pDevice );
-    virtual void ResetUsbStorage();
-	virtual void MountThreadDoOneUpdate();
-	virtual bool MountThreadWaitForUpdate();
+    virtual void Reset();
 
 	DWORD m_dwLastLogicalDrives;
 };

@@ -13,13 +13,10 @@ const CString TEMP_MOUNT_POINT = "@mctemptimeout/";
 MemoryCardDriverThreaded_Windows::MemoryCardDriverThreaded_Windows()
 {
 	m_dwLastLogicalDrives = 0;
-
-	StartThread();
 }
 
 MemoryCardDriverThreaded_Windows::~MemoryCardDriverThreaded_Windows()
 {
-	StopThread();
 }
 
 typedef const CString& CCStringRef;
@@ -58,28 +55,21 @@ static bool TestWrite( CCStringRef sDrive )
 	return true;
 }
 
-void MemoryCardDriverThreaded_Windows::ResetUsbStorage()
+void MemoryCardDriverThreaded_Windows::Reset()
 {
 	m_dwLastLogicalDrives = 0;
 }
 
-bool MemoryCardDriverThreaded_Windows::MountThreadWaitForUpdate()
+bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut )
 {
 	DWORD dwNewLogicalDrives = ::GetLogicalDrives();
 	if( dwNewLogicalDrives == m_dwLastLogicalDrives )
 	{
 		// no change from last update
-		usleep( 50000 );
 		return false;
 	}
 
 	m_dwLastLogicalDrives = dwNewLogicalDrives;
-	return true;
-}
-
-void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
-{
-	DWORD dwNewLogicalDrives = ::GetLogicalDrives();
 
 	{
 		vector<UsbStorageDevice> vNewStorageDevices;
@@ -124,19 +114,17 @@ void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
 
 		CHECKPOINT;
 
-		{
-			LockMut( m_mutexStorageDevices );
-			m_bStorageDevicesChanged = true;
-			m_vStorageDevices = vNewStorageDevices;
-		}
+		vStorageDevicesOut = vNewStorageDevices;
 
 		CHECKPOINT;
 	}
+	return true;
 }
 
-void MemoryCardDriverThreaded_Windows::Mount( UsbStorageDevice* pDevice )
+bool MemoryCardDriverThreaded_Windows::Mount( UsbStorageDevice* pDevice )
 {
 	// nothing to do here...
+	return true;
 }
 
 void MemoryCardDriverThreaded_Windows::Unmount( UsbStorageDevice* pDevice )
