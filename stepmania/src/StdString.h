@@ -282,6 +282,8 @@ typedef char			TCHAR;
 // First define the conversion helper functions.  We define these regardless of
 // any preprocessor macro settings since their names won't collide. 
 
+#include <cstdarg>
+
 #ifdef SS_ANSI // Are we doing things the standard, non-Win32 way?...
 	// Not sure if we need all these headers.   I believe ANSI says we do.
 
@@ -292,9 +294,6 @@ typedef char			TCHAR;
 		#include <varargs.h>
 	#endif
 #endif // #ifndef SS_ANSI
-
-#include <cstdarg>
-
 
 // a very shorthand way of applying the fix for KB problem Q172398
 // (basic_string assignment bug)
