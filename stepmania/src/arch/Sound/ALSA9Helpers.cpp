@@ -307,6 +307,9 @@ int Alsa9Buf::GetNumFramesToFill()
 	/* Number of frames that don't have data, that are within the writeahead: */
 	snd_pcm_sframes_t unfilled_frames = clamp( ActualWriteahead - filled_frames, 0l, (snd_pcm_sframes_t)ActualWriteahead );
 
+	LOG->Trace( "total_fr: %i; avail_fr: %i; filled_fr: %i; ActualWr %i; chunksize %i; unfilled_frames %i ",
+			total_frames, avail_frames, filled_frames, ActualWriteahead, chunksize, unfilled_frames );
+
 	/* If we have less than a chunk empty, don't fill at all.  Otherwise, we'll
 	 * spend a lot of CPU filling in partial chunks, instead of waiting for some
 	 * sound to play and then filling a whole chunk at once. */
