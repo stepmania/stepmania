@@ -52,6 +52,7 @@ AC_SEARCH_LIBS(mad_synth_init, [mad], have_mad=yes,  have_mad=no)
 #  exit 0;
 #fi
 
+SM_CHECK_CRASH_HANDLER
 
 AM_PATH_ALSA(0.9.0,AC_DEFINE([HAVE_ALSA],1,[Define presence of ALSA]),alsa=false)
 
@@ -65,6 +66,7 @@ AC_CHECK_HEADER(linux/soundcard.h, [AC_DEFINE(HAVE_OSS, 1, [OSS support availabl
 AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
 AM_CONDITIONAL(HAVE_GTK, test "$enable_gtk2" != "no" )
 AM_CONDITIONAL(HAVE_OSS, test x$ac_cv_header_linux_soundcard_h = xyes )
+AM_CONDITIONAL(USE_CRASH_HANDLER, test "$use_crash_handler" = "yes" )
 
 # We could do this more cleanly with an AC_CHECK_FUNCS wrapper.
 AC_CHECK_FUNCS([powf sqrtf sinf tanf cosf acosf roundf truncf])
