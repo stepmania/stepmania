@@ -10,7 +10,6 @@
 #include "PrefsManager.h"
 
 #include "SDL.h"
-#include "SDL_endian.h"
 #include "SDL_rotozoom.h"
 #include "SDL_utils.h"
 #include "SDL_dither.h"

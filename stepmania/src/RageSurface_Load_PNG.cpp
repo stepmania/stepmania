@@ -3,7 +3,6 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "SDL_utils.h"
-#include "SDL_endian.h"
 #include "RageFile.h"
 
 #if defined(WIN32)
@@ -209,10 +208,10 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	case RGBX:
 	case RGBA:
 		img = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, width, height, 32,
-				SDL_SwapBE32( 0xFF000000 ),
-				SDL_SwapBE32( 0x00FF0000 ),
-				SDL_SwapBE32( 0x0000FF00 ),
-				SDL_SwapBE32( type == RGBA? 0x000000FF:0x00000000 ) );
+				Swap32BE( 0xFF000000 ),
+				Swap32BE( 0x00FF0000 ),
+				Swap32BE( 0x0000FF00 ),
+				Swap32BE( type == RGBA? 0x000000FF:0x00000000 ) );
 		break;
 	default:
 		FAIL_M(ssprintf( "%i", type) );

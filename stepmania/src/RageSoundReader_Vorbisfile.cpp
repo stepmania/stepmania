@@ -2,7 +2,6 @@
 
 #include "RageUtil.h"
 #include "SDL_utils.h"
-#include "SDL_endian.h"
 #include "RageSoundReader_Vorbisfile.h"
 #include "RageLog.h"
 
@@ -58,7 +57,6 @@ static long OggRageFile_tell_func( void *datasource )
 
 const int channels = 2;
 
-/* The amount of data to read from SDL_sound at once. */
 const int read_block_size = 1024;
 
 
@@ -223,7 +221,7 @@ bool RageSoundReader_Vorbisfile::FillBuf()
 #if defined(INTEGER_VORBIS)
 		ret = ov_read( vf, tmpbuf, sizeof(tmpbuf), &bstream );
 #else // float vorbis decoder
-		ret = ov_read( vf, tmpbuf, sizeof(tmpbuf), (SDL_BYTEORDER == SDL_BIG_ENDIAN)?1:0, 2, 1, &bstream );
+		ret = ov_read( vf, tmpbuf, sizeof(tmpbuf), (BYTE_ORDER == BIG_ENDIAN)?1:0, 2, 1, &bstream );
 #endif
 
 		if( ret == OV_HOLE )

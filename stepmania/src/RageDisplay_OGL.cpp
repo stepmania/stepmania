@@ -67,7 +67,6 @@ static struct GLExt_t
 #include "GameConstantsAndTypes.h"
 #include "StepMania.h"
 #include "RageUtil.h"
-#include "SDL_endian.h"
 
 #include "arch/arch.h"
 #include "arch/LowLevelWindow/LowLevelWindow.h"
@@ -254,7 +253,7 @@ struct GLPixFmtInfo_t {
 
 static void FixLilEndian()
 {
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+#if defined(ENDIAN_LITTLE)
 	static bool Initialized = false;
 	if( Initialized )
 		return;

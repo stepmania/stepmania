@@ -3,8 +3,6 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 
-#include <SDL_endian.h>
-
 #define BAIL_IF_MACRO(c, e, r) if (c) { SetError(e); return r; }
 #define RETURN_IF_MACRO(c, r) if (c) return r;
 
@@ -53,7 +51,7 @@ bool RageSoundReader_WAV::read_le16( RageFile &f, int16_t *si16 ) const
 		SetError( ret >= 0? "end of file": f.GetError().c_str() );
 		return false;
 	}
-    *si16 = SDL_SwapLE16( *si16 );
+    *si16 = Swap16LE( *si16 );
     return true;
 }
 
@@ -65,7 +63,7 @@ bool RageSoundReader_WAV::read_le16( RageFile &f, uint16_t *ui16 ) const
 		SetError( ret >= 0? "end of file": f.GetError().c_str() );
 		return false;
 	}
-    *ui16 = SDL_SwapLE16(*ui16);
+    *ui16 = Swap16LE(*ui16);
     return true;
 }
 
@@ -79,7 +77,7 @@ bool RageSoundReader_WAV::read_le32( RageFile &f, int32_t *si32 ) const
 		SetError( ret >= 0? "end of file": f.GetError().c_str() );
 		return false;
 	}
-    *si32 = SDL_SwapLE32( *si32 );
+    *si32 = Swap32LE( *si32 );
     return true;
 }
 
@@ -91,7 +89,7 @@ bool RageSoundReader_WAV::read_le32( RageFile &f, uint32_t *ui32 ) const
 		SetError( ret >= 0? "end of file": f.GetError().c_str() );
 		return false;
 	}
-    *ui32 = SDL_SwapLE32( *ui32 );
+    *ui32 = Swap32LE( *ui32 );
     return true;
 }
 
@@ -552,7 +550,7 @@ int RageSoundReader_WAV::Read(char *buf, unsigned len)
 		const int cnt = len / sizeof(int16_t);
 		int16_t *tbuf = (int16_t *) buf;
 		for( int i = 0; i < cnt; ++i )
-			tbuf[i] = SDL_Swap16( tbuf[i] );
+			tbuf[i] = Swap16( tbuf[i] );
 #endif
 	}
 

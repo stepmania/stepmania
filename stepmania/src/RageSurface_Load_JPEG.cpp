@@ -3,7 +3,6 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "SDL_utils.h"
-#include "SDL_endian.h"
 #include "RageFile.h"
 
 #include <setjmp.h>
