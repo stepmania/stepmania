@@ -345,6 +345,19 @@ void UnlockSystem::UpdateSongs()
 		m_SongEntries[i].m_pSong = SONGMAN->FindSong( m_SongEntries[i].m_sSongName );
 		if( m_SongEntries[i].m_pSong == NULL )
 			m_SongEntries[i].m_pCourse = SONGMAN->FindCourse( m_SongEntries[i].m_sSongName );
+
+		// display warning on invalid song entry
+		if (m_SongEntries[i].m_pSong   == NULL &&
+			m_SongEntries[i].m_pCourse == NULL)
+		{
+			LOG->Warn("UnlockSystem::UpdateSongs(): Cannot find a "
+			"matching entry for %s.\nPlease check the song title.  "
+			"Song titles should include the title and song title, e.g. "
+			"Can't Stop Fallin' In Love -Speed Mix-.",
+			m_SongEntries[i].m_sSongName.c_str() );
+			m_SongEntries.erase(m_SongEntries.begin() + i);
+		}
+
 	}
 }
 
