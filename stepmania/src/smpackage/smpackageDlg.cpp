@@ -325,6 +325,8 @@ try_another_name:
 
 	if( ExportPackage( sPackageName, asPathsToExport ) )
 		AfxMessageBox( ssprintf("Successfully exported package '%s' to your Desktop.",sPackageName) );
+
+	m_listBox.SetSel( -1, FALSE );
 }
 
 void CSmpackageDlg::OnButtonExportAsIndividual() 
@@ -364,6 +366,8 @@ void CSmpackageDlg::OnButtonExportAsIndividual()
 	if( asFailedPackages.GetSize() > 0 )
 		sMessage += ssprintf("  The packages %s failed to export.", join(", ",asFailedPackages) );
 	AfxMessageBox( sMessage );
+
+	m_listBox.SetSel( -1, FALSE );
 }
 
 

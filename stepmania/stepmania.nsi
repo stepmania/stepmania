@@ -8,8 +8,8 @@
 ; NOTE: this .NSI script is designed for NSIS v1.8+
 
 Name "StepMania"
-OutFile "stepmania300beta6rc.exe"
-!define PRODUCT_NAME "StepMania 3.0 beta 6 Release Candidate"
+OutFile "stepmania300beta7rc.exe"
+!define PRODUCT_NAME "StepMania 3.0 beta 7 release candidate"
 
 
 ; Some default compiler settings (uncomment and change at will):
@@ -100,7 +100,6 @@ File "Announcers\instructions.txt"
 CreateDirectory "$INSTDIR\BGAnimations"
 SetOutPath "$INSTDIR\BGAnimations"
 File "BGAnimations\instructions.txt"
-File /r "BGAnimations\danger"
 
 CreateDirectory "$INSTDIR\Cache"
 SetOutPath "$INSTDIR\Cache"
