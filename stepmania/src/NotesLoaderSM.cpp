@@ -170,7 +170,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		const CString &sValueName = sParams[0];
+		const CString sValueName = sParams[0];
 
 		// handle the data
 		if( 0==stricmp(sValueName,"TITLE") )
