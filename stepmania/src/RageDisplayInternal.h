@@ -45,7 +45,7 @@ struct oglspecs_t {
 /* Extension functions we use.  Put these in a namespace instead of in oglspecs_t,
  * so they can be called like regular functions. */
 namespace GLExt {
-	PWSWAPINTERVALEXTPROC wglSwapIntervalEXT;
+	extern PWSWAPINTERVALEXTPROC wglSwapIntervalEXT;
 };
 using namespace GLExt;
 

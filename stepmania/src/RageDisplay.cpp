@@ -51,6 +51,7 @@ int RageDisplay::GetDPF() const { return g_iDPF; }
 static int			g_iFramesRenderedSinceLastCheck,
 					g_iVertsRenderedSinceLastCheck,
 					g_iDrawsSinceLastCheck;
+PWSWAPINTERVALEXTPROC GLExt::wglSwapIntervalEXT;
 
 void GetGLExtensions(set<string> &ext)
 {
