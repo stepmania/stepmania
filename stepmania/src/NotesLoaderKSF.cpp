@@ -20,7 +20,6 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 
 	for( int i=0; i<msd.m_iNumValues; i++ )
 	{
-		int iNumParams = msd.m_iNumParams[i];
 		CString* sParams = msd.m_sValuesAndParams[i];
 		CString sValueName = sParams[0];
 
@@ -164,7 +163,6 @@ bool KSFLoader::LoadFromKSFDir( CString sDir, Song &out )
 
 	for( i=0; i<msd.m_iNumValues; i++ )
 	{
-		int iNumParams = msd.m_iNumParams[i];
 		CString* sParams = msd.m_sValuesAndParams[i];
 		CString sValueName = sParams[0];
 
