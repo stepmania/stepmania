@@ -148,4 +148,6 @@ case $host in
 		;;
 esac
 
-AC_OUTPUT([Makefile src/Makefile])
+AC_CONFIG_FILES(Makefile)
+AC_CONFIG_FILES(src/Makefile)
+AC_OUTPUT
