@@ -1632,7 +1632,7 @@ void ScreenGameplay::UpdateLights()
 		FOREACH_CabinetLight( cl )
 		{	
 			// for each index we crossed since the last update:
-			FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_CabinetLightsNoteData, cl, r, iRowLastCrossed+1, iRowNow )
+			FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_CabinetLightsNoteData, cl, r, iRowLastCrossed, iRowNow )
 			{
 				bool bBlink = (m_CabinetLightsNoteData.GetTapNote( cl, r ).type != TapNote::empty );
 				bBlinkCabinetLight[cl] |= bBlink;
