@@ -782,12 +782,14 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 	const float fColorScale		= 1*fLife + (1-fLife)*cache->m_fHoldNGGrayPercent;
 
+	bool bFlipHeadAndTail = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
+
 	/* The body and caps should have no overlap, so their order doesn't matter.
 	 * Draw the head last, so it appears on top. */
 	if( !cache->m_bHoldHeadIsAboveWavyParts )
-		DrawHoldHead( hn, bActive, cache->m_bFlipHeadAndTailWhenReverse ? fYTail : fYHead, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldHead( hn, bActive, bFlipHeadAndTail ? fYTail : fYHead, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 	if( !cache->m_bHoldTailIsAboveWavyParts )
-		DrawHoldTail( hn, bActive, cache->m_bFlipHeadAndTailWhenReverse ? fYHead : fYTail, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldTail( hn, bActive, bFlipHeadAndTail ? fYHead : fYTail, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 
 	if( bDrawGlowOnly )
 		DISPLAY->SetTextureModeGlow();
@@ -800,9 +802,9 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 	/* These set the texture mode themselves. */
 	if( cache->m_bHoldTailIsAboveWavyParts )
-		DrawHoldTail( hn, bActive, cache->m_bFlipHeadAndTailWhenReverse ? fYHead : fYTail, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldTail( hn, bActive, bFlipHeadAndTail ? fYHead : fYTail, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 	if( cache->m_bHoldHeadIsAboveWavyParts )
-		DrawHoldHead( hn, bActive, cache->m_bFlipHeadAndTailWhenReverse ? fYTail : fYHead, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldHead( hn, bActive, bFlipHeadAndTail ? fYTail : fYHead, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 
 	// now, draw the glow pass
 	if( !bDrawGlowOnly )
