@@ -119,11 +119,14 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		switch (m_Rows[GetCurrentRow()]->GetOneSharedSelection())
 		{
 		case NO_START_SERVER:
-			SCREENMAN->TextEntry( SM_ServerNameEnter, "Enter a server name...", "", NULL );
+			if (NSMAN->isLanServer == false)
+				SCREENMAN->TextEntry( SM_ServerNameEnter, "Enter a server name...", "", NULL );
 			break;
 		case NO_STOP_SERVER:
 			if ( NSMAN->LANserver != NULL )
 				NSMAN->LANserver->ServerStop();
+			SCREENMAN->SystemMessage( "Server Stopped." );
+			NSMAN->isLanServer = false;
 			break;
 		}
 		break;
