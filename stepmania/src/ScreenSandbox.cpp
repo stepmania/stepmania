@@ -6,10 +6,21 @@
  Desc: Area for testing.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
+	Glenn Maynard (OpenGL Code)
+	Lance Gilbert (OpenGL/Usability Modifications)
 -----------------------------------------------------------------------------
 */
 
+#include "stdafx.h"
 
+#include "ScreenSandbox.h"
+
+#include "RageDisplay.h"
+#include <math.h>
+
+#include "SDL.h"
+#include "SDL_opengl.h"
 #include "ScreenSandbox.h"
 #include "ScreenManager.h"
 #include "RageMusic.h"
@@ -22,33 +33,82 @@
 
 ScreenSandbox::ScreenSandbox()
 {	
-//	m_Menu.Load( 	
-//		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
-//		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_TOP_EDGE),
-//		ssprintf("Use %c %c to select, then press START", char(1), char(2) ),
-//		false, true, 40 
-//		);
-//	this->AddChild( &m_Menu );
-//	m_Menu.TweenOnScreenFromBlack( SM_None );
-
-	m_sprite.Load( THEME->GetPathTo("Graphics","title menu logo dance") );
-	m_sprite.SetXY( CENTER_X, CENTER_Y );
-	m_sprite.SetEffectGlowing();
-	this->AddChild( &m_sprite );
+	rot = 0;
+	tX = 0;
+	tY = 0;
+	tZ = 0;
 }
 
 
 void ScreenSandbox::Update( float fDeltaTime )
 {
-	Screen::Update( fDeltaTime );
-
-	CArray<Packet,Packet> aPackets;
-	NETWORK->Recv( aPackets );
+	rot += fDeltaTime * 360.f;
+	rot = float(fmod(rot, 360.f));
 }
 
 void ScreenSandbox::DrawPrimitives()
 {
-	Screen::DrawPrimitives();
+	DISPLAY->FlushQueue(); /* do this before rendering directly */
+
+	/* If this is a sub-object (3d object within a 3d object), this won't
+	 * actually do anything: */
+	DISPLAY->EnterPerspective(60);
+
+	DISPLAY->SetTexture(NULL);
+	DISPLAY->EnableZBuffer();
+
+	glColor4f(1,1,1,1);
+	glPushMatrix();
+	SetX(CENTER_X);
+	SetY(CENTER_Y);
+
+	/* By default, 0,0,0 is the center of the object, at the location the actor
+	 * is set to.  We have to translate away from the viewpoint (negative Z)
+	 * to get away from the viewer (and in front of the near clip plane). */
+	glTranslatef (0,0,-5);
+
+	{ /* Standard ugly OpenGL lighting stuff. */
+		GLfloat mat_ambient[] = { 1.0, 1.0, 1.0, 1.0 };
+		GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+		GLfloat light_position[] = { 0.0, 0.0, 0.0, 1.0 };
+		GLfloat lm_ambient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+
+		glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+		glMaterialf(GL_FRONT, GL_SHININESS, 100.0);
+		glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lm_ambient);
+
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+ 	}
+	
+	GLfloat sphere_diffuse[] = { 0.7f, 0.0f, 0.7f, 1.0f };
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, sphere_diffuse);
+	GLUquadricObj *quadObj = gluNewQuadric();
+	gluQuadricDrawStyle(quadObj, GLU_FILL);
+	gluQuadricNormals(quadObj, GLU_SMOOTH);
+
+	glRotatef (rot, 0.0, 1.0, 0.0);
+
+	glPushMatrix();
+	glTranslatef (1,0,0);
+	gluSphere(quadObj, (tX+.25), (tY+8), (tZ+16));
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef (-1,0,0);
+	gluSphere(quadObj, (tX+.35), (tY+8), (tZ+16));
+	glPopMatrix();
+
+	gluDeleteQuadric(quadObj);
+	glPopMatrix();
+
+	DISPLAY->ExitPerspective();
+	DISPLAY->DisableZBuffer();
+
+	glDisable(GL_LIGHTING);
+	glDisable(GL_LIGHT0);
 }
 
 void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -62,17 +122,33 @@ void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type
 		switch( DeviceI.button )
 		{
 		case DIK_LEFT:
+			glTranslatef ((tX-.1),0,0);
 			break;
 		case DIK_RIGHT:
+			glTranslatef ((tX+.1),0,0);
 			break;
-		case DIK_T:
+		case DIK_UP:
+			glTranslatef (0,(tY-.1),0);
 			break;
+		case DIK_DOWN:
+			glTranslatef (0,(tY+.1),0);
+			break;
+		case DIK_T: 
+			{
+				SDL_Event *event;
+				event = (SDL_Event *) malloc(sizeof(event));
+				event->type = SDL_QUIT;
+				SDL_PushEvent(event);
+			}
+		case DIK_ESCAPE: 
+			{
+			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+			}
 		}
+
 	}
 
-//	m_sprBG.SetEffectCamelion( 5, D3DXCOLOR(1,0.8f,0.8f,1), D3DXCOLOR(1,0.2f,0.2f,1) );
 }
-
 void ScreenSandbox::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )

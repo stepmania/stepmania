@@ -65,6 +65,7 @@
 #include "SDL.h"
 #include "SDL_opengl.h"
 
+
 #ifdef _DEBUG
 #pragma comment(lib, "SDL-1.2.5/lib/SDLmaind.lib")
 #else
@@ -384,13 +385,13 @@ int main(int argc, char* argv[])
 		NETWORK->Init( true );
 		if( !NETWORK->Listen( SM_PORT ) )
 			throw RageException( "Could not connect to server '%s'", g_sServerIP.GetString() );
-		SCREENMAN->SetNewScreen( "ScreenSandbox" );
+	//	SCREENMAN->SetNewScreen( "ScreenSandbox" );
 	}
 	else
 	{
 		// normal game
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-//		SCREENMAN->SetNewScreen( "ScreenSandbox" );
+	//	SCREENMAN->SetNewScreen( "ScreenSandbox" );
 	}
 
 	/* Run the main loop. */

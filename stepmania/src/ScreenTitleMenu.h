@@ -37,6 +37,9 @@ public:
 		CHOICE_GRAPHIC_OPTIONS,
 		CHOICE_APPEARANCE_OPTIONS,
 		CHOICE_EDIT,
+		#ifdef _DEBUG
+		CHOICE_SANDBOX,
+		#endif
 		CHOICE_EXIT,
 		NUM_TITLE_MENU_CHOICES	// leave this at the end!
 	};

@@ -18,9 +18,12 @@
 Sample3dObject::Sample3dObject()
 {
 	rot = 0;
+	Sample3dObject::Update();
+	DrawPrimitives();
+
 }
 
-void Sample3dObject::Update( float fDeltaTime )
+void Sample3dObject::Update()
 {
 	rot += fDeltaTime * 360.f;
 	rot = float(fmod(rot, 360.f));
@@ -101,3 +104,4 @@ void Sample3dObject::DrawPrimitives()
  *
  * Glenn Maynard
  */
+

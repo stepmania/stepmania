@@ -23,6 +23,10 @@
 
 class ScreenSandbox : public Screen
 {
+	float rot;
+	float tX;
+	float tY;
+	float tZ;
 public:
 	ScreenSandbox();
 

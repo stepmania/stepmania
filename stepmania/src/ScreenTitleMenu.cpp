@@ -34,6 +34,9 @@ const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"GRAPHIC OPTIONS",
 	"APPEARANCE OPTIONS",
 	"EDIT/RECORD/SYNCH",
+	#ifdef _DEBUG
+	"SANDBOX",
+	#endif
 	"EXIT",
 };
 
@@ -221,6 +224,11 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		case CHOICE_APPEARANCE_OPTIONS:
 			SCREENMAN->SetNewScreen( "ScreenAppearanceOptions" );
 			break;
+		#ifdef _DEBUG
+		case CHOICE_SANDBOX:
+			SCREENMAN->SetNewScreen( "ScreenSandbox" );
+			break;
+		#endif
 		case CHOICE_EDIT:
 			SCREENMAN->SetNewScreen( "ScreenEditMenu" );
 			break;
@@ -357,6 +365,9 @@ void ScreenTitleMenu::MenuStart( PlayerNumber pn )
 	case CHOICE_MACHINE_OPTIONS:
 	case CHOICE_GRAPHIC_OPTIONS:
 	case CHOICE_APPEARANCE_OPTIONS:
+	#ifdef _DEBUG
+	case CHOICE_SANDBOX:
+	#endif
 		m_soundSelect.PlayRandom();
 		m_Fade.CloseWipingRight( SM_GoToNextScreen );
 		break;
