@@ -192,6 +192,8 @@ CString vssprintf( const char *fmt, va_list argList );
 #ifdef WIN32
 CString hr_ssprintf( int hr, const char *fmt, ...);
 CString werr_ssprintf( int err, const char *fmt, ...);
+CString ConvertWstringToACP( wstring s );
+CString ConvertUTF8ToACP( CString s );
 #endif
 
 // Splits a Path into 4 parts (Directory, Drive, Filename, Extention).  Supports UNC path names.

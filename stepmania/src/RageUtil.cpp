@@ -170,11 +170,11 @@ CString vssprintf( const char *fmt, va_list argList)
 
 #ifdef WIN32
 #ifdef _XBOX
-#include "D3DX8Core.h"
+#include <D3DX8Core.h>
 #else
-#include "windows.h"
-#include "Dxerr8.h"
-#pragma comment(lib, "Dxerr8.lib")
+#include <windows.h>
+#include <dxerr8.h>
+#pragma comment(lib, "dxerr8.lib")
 #endif
 
 CString hr_ssprintf( int hr, const char *fmt, ...)
@@ -214,6 +214,28 @@ CString werr_ssprintf( int err, const char *fmt, ...)
     va_end(va);
 
 	return s += ssprintf( " (%s)", text.c_str() );
+}
+
+CString ConvertWstringToACP( wstring s )
+{
+	if( s.empty() )
+		return "";
+
+	int iBytes = WideCharToMultiByte( CP_ACP, 0, s.data(), s.size(), 
+					NULL, 0, NULL, FALSE );
+	ASSERT_M( iBytes > 0, werr_ssprintf( GetLastError(), "WideCharToMultiByte" ).c_str() );
+
+	CString ret;
+	WideCharToMultiByte( CP_ACP, 0, s.data(), s.size(), 
+					ret.GetBuf( iBytes ), iBytes, NULL, FALSE );
+	ret.RelBuf( iBytes );
+
+	return ret;
+}
+
+CString ConvertUTF8ToACP( CString s )
+{
+	return ConvertWstringToACP( CStringToWstring(s) );
 }
 
 #endif
