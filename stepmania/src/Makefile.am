@@ -129,7 +129,11 @@ Sound_Null = \
 	arch/Sound/RageSoundDriver_Null.cpp \
 	arch/Sound/RageSoundDriver_Null.h
 
-Sound = $(Sound_Null) $(Sound_ALSA9)
+if DARWIN
+Sound = $(Sound_Null)
+else
+Sound = $(Sound_null) $(Sound_ALSA9)
+endif
 
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
 		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \
