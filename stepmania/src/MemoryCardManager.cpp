@@ -108,7 +108,7 @@ bool UpdateAttachedUsbStorageDevices()
 			{
 				usbd.iBus = iBus;
 				usbd.iDeviceOnBus = iDevice;
-				usbd.iPort = iPort;
+				usbd.iPortOnHub = iPort;
 				continue;	// stop processing this line
 			}
 
