@@ -31,6 +31,8 @@ public:
 	void SetHorizAlign( HorizAlign ha );
 	void SetVertAlign( VertAlign va );
 
+	void GetLines( vector<wstring> &wTextLines ) { wTextLines = m_wTextLines; }
+
 	CString GetText() const { return m_sText; }
 	/* Return true if the string 's' will use an alternate string, if available. */
 	bool StringWillUseAlternate(CString sText, CString sAlternateText) const;
