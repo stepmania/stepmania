@@ -26,7 +26,6 @@ Model::Model ()
 	m_bRevertToDefaultAnimation = false;
 	m_fDefaultAnimationRate = 1;
 	m_fCurAnimationRate = 1;
-//	m_iRefCount = 1;
 	m_pTempGeometry = NULL;
 }
 
