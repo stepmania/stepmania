@@ -1425,6 +1425,11 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		CString sMessage = "Reloaded from disk.";
 		Steps *pSteps = id.ToSteps( GAMESTATE->m_pCurSong, false );
 
+		// Don't allow an autogen match.  This can't be what they chose to 
+		// edit originally because autogen steps are hidden.
+		if( pSteps->IsAutogen() )
+			pSteps = NULL;
+
 		/* If we couldn't find the steps we were on before, warn and use the first available. */
 		if( pSteps == NULL )
 		{
