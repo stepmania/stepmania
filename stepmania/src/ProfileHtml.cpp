@@ -39,13 +39,20 @@ const CString STYLE_CSS		= "Style.css";
 #define SHOW_PLAY_MODE(pm)		THEME->GetMetric("ProfileHtml","ShowPlayMode"+PlayModeToString(pm))
 #define SHOW_RADAR_CATEGORY(rc)	THEME->GetMetricB("ProfileHtml","ShowRadarCategory"+RadarCategoryToString(rc))
 
+#define NEWLINE "\r\n"
+
+void TranslatedWrite( RageFile &f, CString s )
+{
+	s.Replace("\n",NEWLINE);
+	f.Write( s );
+}
 
 static int g_Level = 1;
 
 inline CString MakeUniqueId()												{ CString s="id"+ssprintf("%d%d%d",rand(),rand(),rand()); return s; }
-inline void PRINT_OPEN(RageFile &f,CString sName,bool bExpanded,CString sID){ g_Level++; ASSERT(g_Level>0 && g_Level<6); f.Write( ssprintf("<div class='section%d'>\n" "<h%d onClick='expandIt(%s); return false' CLASS='outline'>%s</h%d>\n" "<DIV ID='%s' CLASS='%s'>\n", g_Level, g_Level, sID.c_str(), sName.c_str(), g_Level, sID.c_str(), bExpanded?"visibletext":"hiddentext") ); }
+inline void PRINT_OPEN(RageFile &f,CString sName,bool bExpanded,CString sID){ g_Level++; ASSERT(g_Level>0 && g_Level<6); TranslatedWrite(f,ssprintf("<div class='section%d'>\n" "<h%d onClick='expandIt(%s); return false' CLASS='outline'>%s</h%d>\n" "<DIV ID='%s' CLASS='%s'>\n", g_Level, g_Level, sID.c_str(), sName.c_str(), g_Level, sID.c_str(), bExpanded?"visibletext":"hiddentext") ); }
 inline void PRINT_OPEN(RageFile &f,CString sName,bool bExpanded=false)		{ PRINT_OPEN(f,sName,bExpanded,MakeUniqueId()); }
-inline void PRINT_CLOSE(RageFile &f)										{ f.Write( "</div>\n" "</div>\n" ); g_Level--; ASSERT(g_Level>=0); }
+inline void PRINT_CLOSE(RageFile &f)										{ TranslatedWrite(f, "</div>\n" "</div>\n" ); g_Level--; ASSERT(g_Level>=0); }
 
 
 struct Table
@@ -100,83 +107,83 @@ inline void PrintTable(RageFile &f,Table &table)
 
 	int iMaxItemsPerCol = (vLines.size()+iNumCols-1) / iNumCols;
 	iNumCols = (vLines.size()+iMaxItemsPerCol-1) / iMaxItemsPerCol;	// round up
-	f.Write(ssprintf("<table class='%s'><tr>\n",bPrintInstructions?"instructions":"group"));
+	TranslatedWrite(f,ssprintf("<table class='%s'><tr>\n",bPrintInstructions?"instructions":"group"));
 	if( iNumCols == 0 )
 	{
-		f.Write("<td>empty</td>\n");
+		TranslatedWrite(f,"<td>empty</td>\n");
 	}
 	for( int col=0; col<iNumCols; col++ )
 	{
-		f.Write("<td>\n");
+		TranslatedWrite(f,"<td>\n");
 
 		int iStartItem = col*iMaxItemsPerCol;
 
-		f.Write("<table class='column'>\n");
+		TranslatedWrite(f,"<table class='column'>\n");
 		for( int i=iStartItem; i<iStartItem+iMaxItemsPerCol; i++ )
 		{
-			f.Write("<tr>");
+			TranslatedWrite(f,"<tr>");
 
 			const Table::Line& line = (i<(int)vLines.size()) ? vLines[i] : Table::Line();
 			if( bPrintRank )
 			{
-				f.Write("<td class='rank'>");
-				f.Write( line.sRank );
-				f.Write("</td>");
-				f.Write("<td>&nbsp;</td>");
+				TranslatedWrite(f,"<td class='rank'>");
+				TranslatedWrite(f, line.sRank );
+				TranslatedWrite(f,"</td>");
+				TranslatedWrite(f,"<td>&nbsp;</td>");
 			}
 			if( bPrintRank )
 			{
-				f.Write("<td>");
-				f.Write("<p class='songtitle'>");
-				f.Write( line.sName );
-				f.Write("</p>");
+				TranslatedWrite(f,"<td>");
+				TranslatedWrite(f,"<p class='songtitle'>");
+				TranslatedWrite(f, line.sName );
+				TranslatedWrite(f,"</p>");
 				if( !line.sSubName.empty() )
 				{
-					f.Write("<p class='songsubtitle'>");
-					f.Write( line.sSubName );
-					f.Write("</p>");
+					TranslatedWrite(f,"<p class='songsubtitle'>");
+					TranslatedWrite(f, line.sSubName );
+					TranslatedWrite(f,"</p>");
 				}
-				f.Write("</td>");
+				TranslatedWrite(f,"</td>");
 			}
 			else if( line.sValue.empty() )
 			{
-				f.Write("<td>");
-				f.Write( line.sName );
-				f.Write("</td>");
+				TranslatedWrite(f,"<td>");
+				TranslatedWrite(f, line.sName );
+				TranslatedWrite(f,"</td>");
 			}
 			else
 			{
-				f.Write("<td class='name'>");
-				f.Write( line.sName );
-				f.Write("</td>");
+				TranslatedWrite(f,"<td class='name'>");
+				TranslatedWrite(f, line.sName );
+				TranslatedWrite(f,"</td>");
 			}
 
 			if( !line.sSubSubName.empty() )
 			{
-				f.Write("<td>&nbsp;</td>");
-				f.Write("<td>");
-				f.Write("<p class='stepsdescription'>");
-				f.Write( line.sSubSubName );
-				f.Write("</p>");
-				f.Write("</td>");
+				TranslatedWrite(f,"<td>&nbsp;</td>");
+				TranslatedWrite(f,"<td>");
+				TranslatedWrite(f,"<p class='stepsdescription'>");
+				TranslatedWrite(f, line.sSubSubName );
+				TranslatedWrite(f,"</p>");
+				TranslatedWrite(f,"</td>");
 			}
 
 			if( !line.sValue.empty() )
 			{
-				f.Write("<td>&nbsp;</td>");
-				f.Write("<td class='value'>");
-				f.Write( line.sValue );
-				f.Write("</td>");
+				TranslatedWrite(f,"<td>&nbsp;</td>");
+				TranslatedWrite(f,"<td class='value'>");
+				TranslatedWrite(f, line.sValue );
+				TranslatedWrite(f,"</td>");
 			}
-			f.Write( "\n" );
+			TranslatedWrite(f, "\n" );
 
-			f.Write("</tr>");
+			TranslatedWrite(f,"</tr>\n");
 		}
-		f.Write("</table>\n");
+		TranslatedWrite(f,"</table>\n");
 
-		f.Write("</td>\n");
+		TranslatedWrite(f,"</td>\n");
 	}
-	f.Write("</tr></table>\n");
+	TranslatedWrite(f,"</tr>\n</table>\n");
 } 
 
 #define STRING_AS_LINK(s) CString("<a href='"+s+"'>"+s+"</a>")
@@ -716,29 +723,29 @@ bool PrintGradeTableForStepsType( RageFile &f, const Profile *pProfile, StepsTyp
 
  	PRINT_OPEN(f, GAMEMAN->NotesTypeToThemedString(st).c_str() );
 	{
-		f.PutLine( "<table class='difficulty'>\n" );
+		TranslatedWrite(f, "<table class='difficulty'>\n" );
 
 		// table header row
-		f.Write( "<tr><td>&nbsp;</td>" );
+		TranslatedWrite(f, "<tr><td>&nbsp;</td>" );
 		FOREACH_Difficulty( dc )
 		{
 			if( dc == DIFFICULTY_EDIT )
 				continue;	// skip
-			f.PutLine( ssprintf("<td>%s</td>", Capitalize(DifficultyToThemedString(dc)).c_str()) );
+			TranslatedWrite(f, ssprintf("<td>%s</td>", Capitalize(DifficultyToThemedString(dc)).c_str()) );
 		}
-		f.PutLine( "</tr>" );
+		TranslatedWrite(f, "</tr>\n" );
 
 		// table body rows
 		for( i=0; i<vpSongs.size(); i++ )
 		{
 			Song* pSong = vpSongs[i];
 
-			f.PutLine( "<tr>" );
+			TranslatedWrite(f, "<tr>" );
 			
-			f.Write( "<td>" );
-			f.Write( ssprintf("<p class='songtitle'>%s</p>", pSong->GetDisplayMainTitle().c_str()) );
-			f.Write( ssprintf("<p class='songsubtitle'>%s</p>", pSong->GetDisplaySubTitle().c_str()) );
-			f.Write( "</td>" );
+			TranslatedWrite(f, "<td>" );
+			TranslatedWrite(f, ssprintf("<p class='songtitle'>%s</p>", pSong->GetDisplayMainTitle().c_str()) );
+			TranslatedWrite(f, ssprintf("<p class='songsubtitle'>%s</p>", pSong->GetDisplaySubTitle().c_str()) );
+			TranslatedWrite(f, "</td>" );
 
 			FOREACH_Difficulty( dc )
 			{
@@ -748,24 +755,24 @@ bool PrintGradeTableForStepsType( RageFile &f, const Profile *pProfile, StepsTyp
 				Steps* pSteps = pSong->GetStepsByDifficulty( st, dc, false );
 				if( pSteps && !pSteps->IsAutogen() )
 				{
-					f.PutLine("<td>");
-					f.PutLine( ssprintf("<font class='meter'>%d</font>",pSteps->GetMeter()) );
+					TranslatedWrite(f,"<td>");
+					TranslatedWrite(f, ssprintf("<font class='meter'>%d</font>",pSteps->GetMeter()) );
 					HighScore hs = pProfile->GetStepsHighScoreList( pSong,pSteps ).GetTopScore();
 					Grade grade = hs.grade;
 					if( grade != GRADE_NO_DATA )
-						f.PutLine( ssprintf("<font class='grade'>%s</font>",GradeToThemedString(grade).c_str()) );
-					f.PutLine("</td>");
+						TranslatedWrite(f, ssprintf("<font class='grade'>%s</font>",GradeToThemedString(grade).c_str()) );
+					TranslatedWrite(f,"</td>");
 				}
 				else
 				{
-					f.PutLine( "<td>&nbsp;</td>" );
+					TranslatedWrite(f, "<td>&nbsp;</td>" );
 				}
 			}
 
-			f.Write( "</tr>" );
+			TranslatedWrite(f, "</tr>\n" );
 		}
 
-		f.PutLine( "</table>\n" );
+		TranslatedWrite(f, "</table>\n" );
 	}
 	PRINT_CLOSE(f);
 
@@ -940,10 +947,10 @@ void PrintScreenshot( RageFile &f, const Profile::Screenshot &ss )
 	CString sImgHtml = ssprintf("<a href='%s' target='_new'><img class='screenshot' src='%s' width='160' height='120'></a>", sImagePath.c_str(), sImagePath.c_str() );
 	
 	
-	f.Write("<table>\n");
-	f.Write("<tr>\n");
-	f.Write("<td>"+sImgHtml+"</td>\n");
-	f.Write("<td>\n");
+	TranslatedWrite(f,"<table>\n");
+	TranslatedWrite(f,"<tr>\n");
+	TranslatedWrite(f,"<td>"+sImgHtml+"</td>\n");
+	TranslatedWrite(f,"<td>\n");
 
 	BEGIN_TABLE(1);
 
@@ -954,9 +961,9 @@ void PrintScreenshot( RageFile &f, const Profile::Screenshot &ss )
 
 	END_TABLE;
 
-	f.Write("</td>\n");
+	TranslatedWrite(f,"</td>\n");
 
-	f.Write("</table>\n");
+	TranslatedWrite(f,"</table>\n");
 }
 
 void PrintScreenshots( RageFile &f, const Profile *pProfile, CString sTitle, CString sProfileDir )
@@ -1005,17 +1012,17 @@ void PrintCaloriesBurned( RageFile &f, const Profile *pProfile, CString sTitle, 
 {
 	PRINT_OPEN(f, sTitle );
 	{
-		f.Write("<table class='calories'>\n");
+		TranslatedWrite(f,"<table class='calories'>\n");
 
 		// header row
-		f.Write("<tr>");
-		f.Write("<td></td>");
+		TranslatedWrite(f,"<tr>");
+		TranslatedWrite(f,"<td></td>");
 		{
 			for( int i=0; i<DAYS_IN_WEEK; i++ )
-				f.Write("<td>"+DayOfWeekToShortString(i)+"</td>");
+				TranslatedWrite(f,"<td>"+DayOfWeekToShortString(i)+"</td>");
 		}
-		f.Write("<td>Total</td>");
-		f.Write("</tr>");
+		TranslatedWrite(f,"<td>Total</td>");
+		TranslatedWrite(f,"</tr>\n");
 		
 		// row for each week
 		tm when = GetLocalTime();
@@ -1025,8 +1032,8 @@ void PrintCaloriesBurned( RageFile &f, const Profile *pProfile, CString sTitle, 
 			for( int i=0; i<NUM_LAST_WEEKS; i++ )
 			{
 				float fWeekCals = 0;
-				f.Write("<tr>");
-				f.Write("<td>"+LastWeekToString(i)+"</td>");
+				TranslatedWrite(f,"<tr>");
+				TranslatedWrite(f,"<td>"+LastWeekToString(i)+"</td>");
 				for( int i=0; i<DAYS_IN_WEEK; i++ )
 				{
 					Profile::Day day = { when.tm_yday, when.tm_year+1900 };
@@ -1035,15 +1042,15 @@ void PrintCaloriesBurned( RageFile &f, const Profile *pProfile, CString sTitle, 
 					CString sCalories;
 					if( fDayCals )
 						sCalories = Commify( (int)fDayCals );
-					f.Write("<td class='daycalories'><font class='daycalories'>"+sCalories+"</font></td>");
+					TranslatedWrite(f,"<td class='daycalories'><font class='daycalories'>"+sCalories+"</font></td>");
 					when = AddDays( when, +1 );
 				}
-				f.Write("<td class='weekcalories'><font class='weekcalories'>"+Commify((int)fWeekCals)+"</font></td>");
-				f.Write("</tr>");
+				TranslatedWrite(f,"<td class='weekcalories'><font class='weekcalories'>"+Commify((int)fWeekCals)+"</font></td>");
+				TranslatedWrite(f,"</tr>\n");
 				when = AddDays( when, -DAYS_IN_WEEK*2 );
 			}
 		}
-		f.Write("</table>\n");
+		TranslatedWrite(f,"</table>\n");
 	}
 	PRINT_CLOSE(f);
 }
@@ -1124,7 +1131,7 @@ void SaveStatsWebPage(
 	// Print HTML headers
 	//
 	{
-		f.PutLine( ssprintf("\
+		TranslatedWrite(f, ssprintf("\
 <html>\n\
 <head>\n\
 <META HTTP-EQUIV=\"Content-Type\" Content=\"text/html; charset=UTF-8\">\n\
@@ -1187,8 +1194,8 @@ TITLE.c_str(), STYLE_CSS.c_str() ) );
 		ASSERT(0);
 	}
 
-	f.Write( ssprintf(
-		"<table border='0' cellpadding='0' cellspacing='0' width='100%%' cellspacing='5'><tr><td><h1>%s</h1></td><td>%s</td></tr></table>\n",
+	TranslatedWrite(f, ssprintf(
+		"<table border='0' cellpadding='0' cellspacing='0' width='100%%' cellspacing='5'><tr><td><h1>%s</h1></td><td>%s</td></tr>\n</table>\n",
 		TITLE.c_str(), sNameCell.c_str() ) );
 
 	switch( htmlType )
@@ -1221,13 +1228,14 @@ TITLE.c_str(), STYLE_CSS.c_str() ) );
 		ASSERT(0);
 	}
 
-	f.PutLine( ssprintf("<p class='footer'>%s</p>\n", FOOTER.c_str()) );
+	TranslatedWrite(f, ssprintf("<p class='footer'>%s</p>\n", FOOTER.c_str()) );
 
-	f.PutLine( "</body>\n" );
-	f.PutLine( "</html>\n" );
+	TranslatedWrite(f, "</body>\n" );
+	TranslatedWrite(f, "</html>\n" );
 	f.Close();
 
-	// don't sign Stats.html.  It's redundant and very slow.
+	// Don't sign Stats.html.  The html data is redundant to the xml data, and 
+	// signing is slow.
 	//if( PREFSMAN->m_bSignProfileData )
 	//	CryptManager::SignFileToFile(fn);
 	
