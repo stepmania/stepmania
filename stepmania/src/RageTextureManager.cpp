@@ -125,7 +125,8 @@ RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 	}
 
 	// The texture is not already loaded.  Load it.
-	const CString sExt = GetExtension(ID.filename);
+	CString sExt = GetExtension(ID.filename);
+	sExt.MakeLower();
 
 	RageTexture* pTexture;
 	if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
