@@ -125,7 +125,7 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 		bool bShowCreditsMessage;
 		if( GAMESTATE->m_bIsOnSystemMenu )
 			bShowCreditsMessage = true;
-		else if( MEMCARDMAN->GetPlayersFinalized() )
+		else if( MEMCARDMAN->GetCardsLocked() )
 			bShowCreditsMessage = !GAMESTATE->IsPlayerEnabled( p );	
 		else 
 			bShowCreditsMessage = !GAMESTATE->m_bSideIsJoined[p];
