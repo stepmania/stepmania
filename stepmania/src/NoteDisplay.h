@@ -4,7 +4,7 @@
 #define NOTEDISPLAY_H
 
 #include "Sprite.h"
-#include "Model.h"
+class Model;
 #include "NoteTypes.h"
 #include "PlayerNumber.h"
 
