@@ -20,6 +20,7 @@
 #include "AnnouncerManager.h"
 #include "ModeChoice.h"
 #include "ActorUtil.h"
+#include "RageLog.h"
 
 #define NUM_ICON_PARTS							THEME->GetMetricI(m_sName,"NumIconParts")
 #define NUM_PREVIEW_PARTS						THEME->GetMetricI(m_sName,"NumPreviewParts")
@@ -36,13 +37,6 @@ const ScreenMessage SM_PlayPostSwitchPage = (ScreenMessage)(SM_User+1);
 
 ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sClassName )
 {
-	/* ScreenSelect::ScreenSelect will have set m_bPlayersCanJoin if the style is being
-	 * set.  We should either have a style or be setting the style, or GameState::IsHumanPlayer
-	 * will always return true.  Nothing does this right now, and it's an easy mistake,
-	 * so don't allow it. */
-	if( GAMESTATE->m_CurStyle == STYLE_INVALID && !GAMESTATE->m_bPlayersCanJoin )
-		RageException::Throw("Screen %s doesn't set the style and the style isn't already set", m_sName.c_str() );
-
 	int p, i;
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -359,6 +353,8 @@ void ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 		}
 
 		{
+			/* XXX: If !SharedPreviewAndCursor, this is incorrect.  (Nothing uses
+			 * both icon focus and !SharedPreviewAndCursor right now.) */
 			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 			{
 				COMMAND( m_sprIcon[i][iOldChoice], "LoseFocus" );
@@ -443,15 +439,33 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 	for( int i=0; i<NUM_CURSOR_PARTS; i++ )
 		fSecs = max( fSecs, COMMAND( m_sprCursor[i][pn], "Choose") );
 
-	// check to see if everyone has chosen
 	bool bAllDone = true;
-	for( p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsHumanPlayer((PlayerNumber)p) )
-			bAllDone &= m_bChosen[p];
+
+	/* If SHARED_PREVIEW_AND_CURSOR, only one player has to pick. */
+	if( !SHARED_PREVIEW_AND_CURSOR )
+	{
+		// check to see if everyone has chosen
+		for( p=0; p<NUM_PLAYERS; p++ )
+			if( GAMESTATE->IsHumanPlayer((PlayerNumber)p) )
+				bAllDone &= m_bChosen[p];
+	}
+
 	if( bAllDone )
 		this->PostScreenMessage( SM_BeginFadingOut, fSecs );// tell our owner it's time to move on
 }
 
+/*
+ * We want all items to always run OnCommand and either GainFocus or LoseFocus on
+ * tween-in.  If we only run OnCommand, then it has to contain a copy of either
+ * GainFocus or LoseFocus, which implies that the default setting is hard-coded in
+ * the theme.  Always run both.
+ *
+ * However, the actual tween-in is OnCommand; we don't always want to actually run
+ * through the Gain/LoseFocus tweens during initial tween-in.  So, we run the focus
+ * command first, do a FinishTweening to pop it in place, and then run OnCommand.
+ * This means that the focus command should be position neutral; eg. only use "addx",
+ * not "x".
+ */
 float ScreenSelectMaster::TweenOnScreen() 
 {
 	float fSecs = 0;
@@ -460,15 +474,9 @@ float ScreenSelectMaster::TweenOnScreen()
 	{
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
 		{
+			COMMAND( m_sprIcon[i][c], (int(c) == m_iChoice[0])? "GainFocus":"LoseFocus" );
+			m_sprIcon[i][c]->FinishTweening();
 			fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_sprIcon[i][c] ) );
-			for( int c=0; c<(int) m_aModeChoices.size(); c++ )
-			{
-				const bool GainingFocus = (c == m_iChoice[0]);
-				fSecs = max( fSecs, COMMAND( m_sprIcon[i][c], GainingFocus? "GainFocus":"LoseFocus" ) );
-				if( !GainingFocus )
-					m_sprIcon[i][c]->FinishTweening();
-			}
-
 		}
 
 		if( SHARED_PREVIEW_AND_CURSOR )
@@ -476,12 +484,9 @@ float ScreenSelectMaster::TweenOnScreen()
 			int p=0;
 			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 			{
-				// SET_XY( m_sprPreview[i][c][p] );
+				COMMAND( m_sprPreview[i][c][p], (int(c) == m_iChoice[p])? "GainFocus":"LoseFocus" );
+				m_sprPreview[i][c][p]->FinishTweening();
 				fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_sprPreview[i][c][p] ) );
-				const bool GainingFocus = (int(c) == m_iChoice[p]);
-				fSecs = max( fSecs, COMMAND( m_sprPreview[i][c][p], GainingFocus? "GainFocus":"LoseFocus" ) );
-				if( !GainingFocus )
-					m_sprPreview[i][c][p]->FinishTweening();
 			}
 		}
 		else
@@ -490,36 +495,12 @@ float ScreenSelectMaster::TweenOnScreen()
 				if( GAMESTATE->IsPlayerEnabled(p) )
 					for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 					{
-						// SET_XY( m_sprPreview[i][c][p] );
+						COMMAND( m_sprPreview[i][c][p], int(c) == m_iChoice[p]? "GainFocus":"LoseFocus" );
+						m_sprPreview[i][c][p]->FinishTweening();
 						fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_sprPreview[i][c][p] ) );
-						const bool GainingFocus = (int(c) == m_iChoice[p]);
-						fSecs = max( fSecs, COMMAND( m_sprPreview[i][c][p], GainingFocus? "GainFocus":"LoseFocus" ) );
-						if( !GainingFocus )
-							m_sprPreview[i][c][p]->FinishTweening();
 					}
 		}
 	}
-
-	if( SHARED_PREVIEW_AND_CURSOR )
-	{
-		for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
-			fSecs = max( fSecs, COMMAND( m_sprPreview[i][m_iChoice[0]][0], "GainFocus" ) );
-	}
-	else
-	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
-		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;
-			for( int c=0; c<(int) m_aModeChoices.size(); c++ )
-				for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
-				{
-					const char *cmd = (c == m_iChoice[p])? "GainFocus":"LoseFocus";
-					fSecs = max( fSecs, COMMAND( m_sprPreview[i][c][p], cmd ) );
-				}
-		}
-	}
-
 
 	// Need to SetXY of Cursor after Icons since it depends on the Icons' positions.
 	if( SHARED_PREVIEW_AND_CURSOR )
@@ -573,7 +554,19 @@ float ScreenSelectMaster::TweenOffScreen()
 			continue;	// skip
 
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
+		{
 			fSecs = max( fSecs, OFF_COMMAND( m_sprIcon[i][c] ) );
+			bool SelectedByEitherPlayer = false;
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsPlayerEnabled(p) && m_iChoice[p] == (int)c )
+					SelectedByEitherPlayer = true;
+
+			if( SelectedByEitherPlayer )
+				fSecs = max( fSecs, COMMAND( m_sprIcon[i][c], "OffFocused" ) );
+			else
+				fSecs = max( fSecs, COMMAND( m_sprIcon[i][c], "OffUnfocused" ) );
+		}
+
 
 		if( SHARED_PREVIEW_AND_CURSOR )
 		{

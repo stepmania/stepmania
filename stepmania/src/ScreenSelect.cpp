@@ -39,9 +39,8 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 
 	m_sName = sClassName;
 
-	GAMESTATE->m_bPlayersCanJoin = false;	
-	// Set this true later if we discover a choice that chooses the Style
-
+	/* If we don't have a style set yet, players can still join. */
+	GAMESTATE->m_bPlayersCanJoin = ( GAMESTATE->m_CurStyle == STYLE_INVALID );
 
 	for( int c=0; c<NUM_CHOICES; c++ )
 	{
@@ -140,7 +139,10 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 					m_aModeChoices[this->GetSelectionIndex((PlayerNumber)p)].Apply( (PlayerNumber)p );
 
 			int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
-			SCREENMAN->SetNewScreen( NEXT_SCREEN(iSelectionIndex) );
+			if( m_aModeChoices[iSelectionIndex ].m_sScreen != "" )
+				SCREENMAN->SetNewScreen( m_aModeChoices[iSelectionIndex ].m_sScreen );
+			else
+				SCREENMAN->SetNewScreen( NEXT_SCREEN(iSelectionIndex) );
 		}
 		break;
 	}
