@@ -148,6 +148,8 @@ CString PlayerOptions::GetString()
  * you don't want this. */
 void PlayerOptions::FromString( CString sOptions )
 {
+	ASSERT( GAMESTATE->m_pPosition );
+	ASSERT( NOTESKIN );
 //	Init();
 	sOptions.MakeLower();
 	CStringArray asBits;

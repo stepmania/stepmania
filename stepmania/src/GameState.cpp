@@ -76,6 +76,9 @@ void GameState::Reset()
 		m_pCurNotes[p] = NULL;
 	m_pCurCourse = NULL;
 
+	SAFE_DELETE( m_pPosition );
+	m_pPosition = new NoteFieldPositioning("Positioning.ini");
+
 	ResetMusicStatistics();
 
 	m_CurStageStats = StageStats();
@@ -112,9 +115,6 @@ void GameState::Reset()
 		m_fSuperMeter[p] = 0;
 		m_fSuperMeterGrowthScale[p] = 1;
 	}
-
-	SAFE_DELETE( m_pPosition );
-	m_pPosition = new NoteFieldPositioning("Positioning.ini");
 }
 
 void GameState::Update( float fDelta )
