@@ -268,6 +268,9 @@ void ScreenNetRoom::UpdateRoomsList()
 		case 2:
 			m_RoomList[i].SetDiffuseColor (THEME->GetMetricC( m_sName, "InGameRoomColor"));
 			break;
+		default:
+			m_RoomList[i].SetDiffuseColor (THEME->GetMetricC( m_sName, "OpenRoomColor"));
+			break;
 		}
 		this->AddChild( &m_RoomList[i] );
 		if (cy > ROOMLOWERBOUND)
