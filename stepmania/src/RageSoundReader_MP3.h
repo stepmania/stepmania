@@ -18,7 +18,7 @@ public:
 
 
 	bool MADLIB_rewind();
-	int SetPosition_toc( int ms, int Xing );
+	int SetPosition_toc( int ms, bool Xing );
 	int SetPosition_hard( int ms );
 	int SetPosition_estimate( int ms );
 

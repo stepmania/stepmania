@@ -3,6 +3,7 @@
 #include "global.h"
 #include "RageSoundReader_MP3.h"
 #include "RageLog.h"
+#include "RageUtil.h"
 #include "SDL_utils.h"
 
 #include <stdio.h>
@@ -404,10 +405,7 @@ int RageSoundReader_MP3::do_mad_frame_decode()
 			if( bytes_read > 25000 )
 			{
 				/* We've read this much without actually getting a frame; error. */
-				if(mad_timer_compare(mad->Timer, mad_timer_zero) == 0)
-					SetError( "Not an MP3 stream" );
-				else
-					SetError( "Lost sync" );
+				SetError( "Can't find data" );
 				return -1;
 			}
 
@@ -593,8 +591,7 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ 
 	}
 	if( ret == -1 )
 	{
-		/* XXX: an error is already set */
-		SetError( "Not an MP3 stream?" );
+		SetError( ssprintf("%s (not an MP3 stream?)", GetError().c_str()) );
 		return OPEN_NO_MATCH;
 	}
 
@@ -738,11 +735,11 @@ bool RageSoundReader_MP3::MADLIB_rewind()
 
 /* Returns 1 on success, 0 on error, -1 if we couldn't it (don't have
  * a Xing tag or a length). */
-int RageSoundReader_MP3::SetPosition_toc( int ms, int Xing )
+int RageSoundReader_MP3::SetPosition_toc( int ms, bool Xing )
 {
     int percent;
     
-    ASSERT( !Xing && mad->has_xing );
+    ASSERT( !Xing || mad->has_xing );
     ASSERT( mad->length != -1 );
 
     /* This leaves our timer accurate if we're using our own TOC, and inaccurate
@@ -863,7 +860,7 @@ int RageSoundReader_MP3::SetPosition_estimate( int ms )
 int RageSoundReader_MP3::SetPosition_Accurate( int ms )
 {
 	/* Seek using our own internal (accurate) TOC. */
-	if( SetPosition_toc( ms, 0 ) == -1 )
+	if( SetPosition_toc( ms, false ) == -1 )
 		return -1; /* error */
 
 	/* Align exactly. */
@@ -874,7 +871,7 @@ int RageSoundReader_MP3::SetPosition_Fast( int ms )
 {
 	/* We can do a fast jump in VBR with Xing with more accuracy than without Xing. */
 	if( mad->has_xing )
-		return SetPosition_toc( ms, 1 );
+		return SetPosition_toc( ms, true );
 
 	/* Guess.  This is only remotely accurate when we're not VBR, but also
 	 * do it if we have no Xing tag. */
