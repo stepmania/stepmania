@@ -133,6 +133,10 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir )
 		if( pBGAnimation == NULL )
 			pBGAnimation = &dummy;
 		LoadFromNode( sAniDir, *pBGAnimation );
+
+		const XNode* pScrollerNode = ini.GetChild( "Scroller" );
+		if( pScrollerNode != NULL )
+			ActorScroller::LoadFromNode( ini.GetPath(), pScrollerNode );
 	}
 	else
 	{
@@ -188,12 +192,6 @@ void BGAnimation::LoadFromNode( const CString &sDir, const XNode& node )
 		}
 	}
 
-	{
-		const XNode* pScrollerNode = node.GetChild( "Scroller" );
-		if( pScrollerNode != NULL )
-			ActorScroller::LoadFromNode( sDir, pScrollerNode );
-	}
-	
 	Command cmd;
 	cmd.Load( "PlayCommand,Init" );
 	this->RunCommandOnChildren( cmd );
