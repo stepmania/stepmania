@@ -25,11 +25,12 @@
 
 /* for TEXTUREMAN->GetTextureColorDepth() */
 #include "RageTextureManager.h"
-
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
 #include "RageDisplayInternal.h"
+
+#include "archutils/win32/tls.h"
 
 #include <stdio.h>
 
@@ -112,6 +113,8 @@ void MovieTexture_DShow::Reload()
 
 void MovieTexture_DShow::Update(float fDeltaTime)
 {
+	VDCHECKPOINT;
+
 	// restart the movie if we reach the end
 	if(m_bLoop)
 	{
@@ -141,6 +144,8 @@ void MovieTexture_DShow::Update(float fDeltaTime)
 	 * find any codec that don't force the width to a multiple of at least
 	 * 4 anyway, so I can't test it, so I'll leave it like this for now. */
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, m_iSourceWidth);
+
+	VDCHECKPOINT;
 
 	glTexSubImage2D(GL_TEXTURE_2D, 0,
 		0, 0,
