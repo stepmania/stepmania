@@ -3,7 +3,12 @@
 
 #include "Game.h"
 
+#ifdef _XBOX
+#include "Xbox Compilance\stdafx.h"
+void __cdecl main(char* argv[]);
+#else
 int SMmain(int argc, char* argv[]);
+#endif
 void ApplyGraphicOptions();
 void HandleException( CString error );
 void ExitGame();
