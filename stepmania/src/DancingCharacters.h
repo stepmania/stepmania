@@ -25,16 +25,16 @@ public:
 	virtual void DrawPrimitives();
 	
 protected:
-	void StartCameraSweep();
 
 	Model	m_Character[NUM_PLAYERS];
 
-	RageVector3		m_CameraEyeStart;
-	RageVector3		m_CameraEyeEnd;
-	RageVector3		m_CameraEyeCurrent;
-	RageVector3		m_CameraAt;
-	float			m_fSweepSecs;
-	float			m_fSecsIntoSweep;
+	float	m_CameraDistance;
+	float	m_CameraPanYStart;
+	float	m_CameraPanYEnd;
+	float	m_fCameraHeightStart;
+	float	m_fCameraHeightEnd;
+	float	m_fThisCameraStartBeat;
+	float	m_fThisCameraEndBeat;
 };
 
 #endif

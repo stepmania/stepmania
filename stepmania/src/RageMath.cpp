@@ -171,6 +171,26 @@ void RageMatrixRotationZ( RageMatrix* pOut, float theta )
 	pOut->m[1][0] = -pOut->m[0][1];
 }
 
+RageMatrix RageMatrixRotationX( float theta )
+{
+	RageMatrix m;
+	RageMatrixRotationX( &m, theta );
+	return m;
+}
+RageMatrix RageMatrixRotationY( float theta )
+{
+	RageMatrix m;
+	RageMatrixRotationY( &m, theta );
+	return m;
+}
+RageMatrix RageMatrixRotationZ( float theta )
+{
+	RageMatrix m;
+	RageMatrixRotationZ( &m, theta );
+	return m;
+}
+
+
 /* This is similar in style to Actor::Command.  However, Actors don't store
  * matrix stacks; they only store offsets and scales, and compound them into
  * a single transformations at once.  This makes some things easy, but it's not
