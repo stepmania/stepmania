@@ -7,7 +7,6 @@
 #include "RageTimer.h"
 #include "RageFile.h"
 #include "SDL_utils.h"
-#include "SDL_endian.h"
 #include "PrefsManager.h"
 
 #include <cerrno>
@@ -81,7 +80,7 @@ struct AVPixelFormat_t
 
 static void FixLilEndian()
 {
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+#if defined(ENDIAN_LITTLE)
 	static bool Initialized = false;
 	if( Initialized )
 		return; 
@@ -99,8 +98,8 @@ static void FixLilEndian()
 			int m = pf.masks[mask];
 			switch( pf.bpp )
 			{
-				case 24: m = mySDL_Swap24(m); break;
-				case 32: m = SDL_Swap32(m); break;
+				case 24: m = Swap24(m); break;
+				case 32: m = Swap32(m); break;
 				default: ASSERT(0);
 			}
 			pf.masks[mask] = m;
