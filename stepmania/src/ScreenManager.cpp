@@ -528,6 +528,8 @@ void ScreenManager::MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessa
 
 void ScreenManager::PopTopScreen( ScreenMessage SM )
 {
+	ASSERT( m_ScreenStack.size() > 0 );
+
 	Screen* pScreenToPop = m_ScreenStack.back();	// top menu
 	pScreenToPop->HandleScreenMessage( SM_LoseFocus );
 	m_ScreenStack.erase(m_ScreenStack.end()-1, m_ScreenStack.end());
@@ -547,14 +549,20 @@ void ScreenManager::PopTopScreen( ScreenMessage SM )
 
 void ScreenManager::PostMessageToTopScreen( ScreenMessage SM, float fDelay )
 {
-	Screen* pTopScreen = m_ScreenStack.back();
-	pTopScreen->PostScreenMessage( SM, fDelay );
+	if( m_ScreenStack.size() )
+	{
+		Screen* pTopScreen = m_ScreenStack.back();
+		pTopScreen->PostScreenMessage( SM, fDelay );
+	}
 }
 
 void ScreenManager::SendMessageToTopScreen( ScreenMessage SM )
 {
-	Screen* pTopScreen = m_ScreenStack.back();
-	pTopScreen->HandleScreenMessage( SM );
+	if( m_ScreenStack.size() )
+	{
+		Screen* pTopScreen = m_ScreenStack.back();
+		pTopScreen->HandleScreenMessage( SM );
+	}
 }
 
 
