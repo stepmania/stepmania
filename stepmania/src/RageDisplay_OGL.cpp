@@ -1688,14 +1688,13 @@ unsigned RageDisplay_OGL::CreateTexture(
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 
 
-	if(pixfmt == FMT_PAL)
+	if( pixfmt == FMT_PAL )
 	{
-		/* The image is paletted.  Let's try to set up a paletted texture. */
+		/* The texture is paletted; set the texture palette. */
 		GLubyte palette[256*4];
 		memset(palette, 0, sizeof(palette));
 		int p = 0;
-		/* Copy the palette to the simple, unpacked data OGL expects. If
-		 * we're color keyed, change it over as we go. */
+		/* Copy the palette to the format OpenGL expects. */
 		for(int i = 0; i < img->format->palette->ncolors; ++i)
 		{
 			palette[p++] = img->format->palette->colors[i].r;
