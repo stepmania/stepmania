@@ -39,9 +39,6 @@ ScreenStyleSplash::ScreenStyleSplash( CString sName ) : ScreenWithMenuElements( 
 		iDifficulty = GAMESTATE->m_PreferredDifficulty[PLAYER_2];
 	}
 
-	m_Background.LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenStyleSplash-%s-%s-%d",sGameName.c_str(),sStyleName.c_str(),iDifficulty) ) );
-	this->AddChild( &m_Background );
-	
 	this->PostScreenMessage( SM_StartClosing, 2 );
 }
 

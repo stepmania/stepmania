@@ -31,11 +31,6 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_STAGE );
 
-
-	m_Background.LoadFromAniDir( THEME->GetPathToB(m_sName + " "+GAMESTATE->GetStageText()) );
-	m_Background.SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );
-	this->AddChild( &m_Background );
-
 	m_Overlay.SetName( "Overlay" );
 	m_Overlay.LoadFromAniDir( THEME->GetPathToB(m_sName + " overlay"));
 	ON_COMMAND( m_Overlay );
@@ -53,9 +48,6 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 	m_Back.Load( THEME->GetPathToB("Common back") );
 	m_Back.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Back );
-
-	/* Prep the new screen once m_In is complete. */
-	this->PostScreenMessage( SM_PrepScreen, m_Background.GetLengthSeconds() );
 
 	FOREACH_PlayerNumber(p)
 	{
@@ -123,7 +115,8 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 		OFF_COMMAND( m_SongTitle );
 		OFF_COMMAND( m_Artist );
 		OFF_COMMAND( m_Banner );
-		OFF_COMMAND( m_Background );
+		SCREENMAN->PlaySharedBackgroundOffCommand();
+
 
 		this->PostScreenMessage( SM_GoToNextScreen, this->GetTweenTimeLeft() );
 		
@@ -140,6 +133,11 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenStage::Update( float fDeltaTime )
 {
+	// The shared BGA isn't loaded until after the screen is showing.  It is ready
+	// to access by the time of the first update.
+	if( IsFirstUpdate() )
+		this->PostScreenMessage( SM_PrepScreen, SCREENMAN->m_pSharedBGA->GetLengthSeconds() );
+
 	if( m_bZeroDeltaOnNextUpdate )
 	{
 		m_bZeroDeltaOnNextUpdate = false;

@@ -51,8 +51,6 @@ protected:
 	Song*			m_pSong;
 	Steps*			m_pSteps;
 
-	BGAnimation		m_BGAnimation;
-
 	NoteField		m_NoteFieldEdit;
 	SnapDisplay		m_SnapDisplay;
 

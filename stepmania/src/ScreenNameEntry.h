@@ -29,8 +29,6 @@ public:
 private:
 	bool AnyStillEntering() const;
 
-	BGAnimation		m_Background;
-
 	ReceptorArrowRow	m_ReceptorArrowRow[NUM_PLAYERS];
 	BitmapText		m_textSelectedChars[NUM_PLAYERS][ABS_MAX_RANKING_NAME_LENGTH];
 	BitmapText		m_textScrollingChars[NUM_PLAYERS][ABS_MAX_RANKING_NAME_LENGTH];

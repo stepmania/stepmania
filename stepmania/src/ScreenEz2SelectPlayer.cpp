@@ -45,9 +45,6 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : ScreenWithMenuEl
 
 	LOG->Trace( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
 
-	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenEz2SelectPlayer background") );
-	this->AddChild( &m_Background ); // animated background =)
-
 	FOREACH_PlayerNumber( p )
 	{
 		m_sprJoinFrame[p].Load( THEME->GetPathToG("ScreenEz2SelectPlayer join frame 1x2") );

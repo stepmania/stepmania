@@ -29,6 +29,7 @@
 #include "RageTextureManager.h"
 #include "ThemeManager.h"
 #include "ScreenSystemLayer.h"
+#include "BGAnimation.h"
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -50,6 +51,7 @@ void ScreenManager::Register( const CString& sClassName, CreateScreenFn pfn )
 
 ScreenManager::ScreenManager()
 {
+	m_pSharedBGA = new BGAnimation;
 	m_SystemLayer = NULL;
 
 	/* By the time this is constructed, THEME has already been set up and set to
@@ -60,7 +62,6 @@ ScreenManager::ScreenManager()
 	this->ThemeChanged();
 
 	m_ScreenBuffered = NULL;
-
 	m_MessageSendOnPop = SM_None;
 }
 
@@ -71,7 +72,7 @@ ScreenManager::~ScreenManager()
 
 	EmptyDeleteQueue();
 
-	// delete current Screens
+	SAFE_DELETE( m_pSharedBGA );
 	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
 		delete m_ScreenStack[i];
 	delete m_ScreenBuffered;
@@ -139,6 +140,8 @@ void ScreenManager::Update( float fDeltaTime )
 	 */
 	ASSERT( !m_ScreenStack.empty() || m_DelayedScreen != "" );	// Why play the game if there is nothing showing?
 
+	m_pSharedBGA->Update( fDeltaTime );
+
 	if( !m_ScreenStack.empty() )
 	{
 		Screen* pScreen = GetTopScreen();
@@ -149,7 +152,7 @@ void ScreenManager::Update( float fDeltaTime )
 	}
 
 	m_SystemLayer->Update( fDeltaTime );
-
+	
 	EmptyDeleteQueue();
 
 	if(m_DelayedScreen.size() != 0)
@@ -180,12 +183,20 @@ void ScreenManager::Draw()
 	if( !DISPLAY->BeginFrame() )
 		return;
 
+	m_pSharedBGA->Draw();
+
 	if( !m_ScreenStack.empty() && !m_ScreenStack.back()->IsTransparent() )	// top screen isn't transparent
+	{
 		m_ScreenStack.back()->Draw();
+	}
 	else
+	{
 		for( unsigned i=0; i<m_ScreenStack.size(); i++ )	// Draw all screens bottom to top
 			m_ScreenStack[i]->Draw();
+	}
+
 	m_SystemLayer->Draw();
+
 
 	DISPLAY->EndFrame();
 }
@@ -202,7 +213,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 }
 
 
-Screen* ScreenManager::MakeNewScreen( const CString &sName )
+Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 {
 	/* By default, RageSounds handles the song timer.  When we change screens, reset this;
 	 * screens turn this off in SM_GainFocus if they handle timers themselves (edit). 
@@ -214,20 +225,20 @@ Screen* ScreenManager::MakeNewScreen( const CString &sName )
 	SONGMAN->Cleanup();
 
 	RageTimer t;
-	LOG->Trace( "Loading screen name '%s'", sName.c_str() );
+	LOG->Trace( "Loading screen name '%s'", sScreenName.c_str() );
 
-	CString sClassName = sName;
+	CString sClassName = sScreenName;
 	// Look up the class in the metrics group sName
 	if( THEME->HasMetric(sClassName,"Class") )
 		sClassName = THEME->GetMetric(sClassName,"Class");
 	
 	map<CString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
-	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Screen '%s' has an invalid class '%s'",sName.c_str(),sClassName.c_str()) )
+	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Screen '%s' has an invalid class '%s'",sScreenName.c_str(),sClassName.c_str()) )
 
 	CreateScreenFn pfn = iter->second;
-	Screen* ret = pfn( sName );
+	Screen* ret = pfn( sScreenName );
 
-	LOG->Trace( "Loaded '%s' ('%s') in %f", sName.c_str(), sClassName.c_str(), t.GetDeltaTime());
+	LOG->Trace( "Loaded '%s' ('%s') in %f", sScreenName.c_str(), sClassName.c_str(), t.GetDeltaTime());
 
 	/* Loading probably took a little while.  Let's reset stats.  This prevents us
 	 * from displaying an unnaturally low FPS value, and the next FPS value we
@@ -238,10 +249,10 @@ Screen* ScreenManager::MakeNewScreen( const CString &sName )
 	return ret;
 }
 
-void ScreenManager::PrepNewScreen( const CString &sClassName )
+void ScreenManager::PrepNewScreen( const CString &sScreenName )
 {
 	ASSERT(m_ScreenBuffered == NULL);
-	m_ScreenBuffered = MakeNewScreen(sClassName);
+	m_ScreenBuffered = MakeNewScreen(sScreenName);
 }
 
 void ScreenManager::LoadPreppedScreen()
@@ -255,6 +266,7 @@ void ScreenManager::LoadPreppedScreen()
 void ScreenManager::DeletePreppedScreen()
 {
 	SAFE_DELETE( m_ScreenBuffered );
+
 	TEXTUREMAN->DeleteCachedTextures();
 }
 
@@ -285,9 +297,9 @@ void ScreenManager::SetFromNewScreen( Screen *pNewScreen, bool Stack )
 	PostMessageToTopScreen( SM_GainFocus, 0 );
 }
 
-void ScreenManager::SetNewScreen( const CString &sClassName )
+void ScreenManager::SetNewScreen( const CString &sScreenName )
 {
-	m_DelayedScreen = sClassName;
+	m_DelayedScreen = sScreenName;
 
 	/* If we're not delaying screen loads, load it now.  Otherwise, we'll load
 	 * it on the next iteration.  Only delay if we already have a screen
@@ -299,7 +311,7 @@ void ScreenManager::SetNewScreen( const CString &sClassName )
 void ScreenManager::LoadDelayedScreen()
 {
 retry:
-	CString sClassName = m_DelayedScreen;
+	CString sScreenName = m_DelayedScreen;
 	m_DelayedScreen = "";
 
 	/* If we prepped a screen but didn't use it, nuke it. */
@@ -307,10 +319,13 @@ retry:
 
 	Screen* pOldTopScreen = m_ScreenStack.empty() ? NULL : m_ScreenStack.back();
 
+
 	// It makes sense that ScreenManager should allocate memory for a new screen since it 
 	// deletes it later on.  This also convention will reduce includes because screens won't 
 	// have to include each other's headers of other screens.
-	Screen* pNewScreen = MakeNewScreen(sClassName);
+	Screen* pNewScreen = MakeNewScreen(sScreenName);
+
+	
 
 	if( pOldTopScreen!=NULL  &&  m_ScreenStack.back()!=pOldTopScreen )
 	{
@@ -333,16 +348,16 @@ retry:
 
 	/* If this is a system menu, don't let the operator key touch it! 
 		However, if you add an options screen, please include it here -- Miryokuteki */
-	if(	sClassName == "ScreenOptionsMenu" ||
-		sClassName == "ScreenMachineOptions" || 
-		sClassName == "ScreenInputOptions" || 
-		sClassName == "ScreenGraphicOptions" || 
-		sClassName == "ScreenGameplayOptions" || 
-		sClassName == "ScreenMapControllers" || 
-		sClassName == "ScreenAppearanceOptions" || 
-		sClassName == "ScreenEdit" || 
-		sClassName == "ScreenEditMenu" || 
-		sClassName == "ScreenSoundOptions" ) 
+	if(	sScreenName == "ScreenOptionsMenu" ||
+		sScreenName == "ScreenMachineOptions" || 
+		sScreenName == "ScreenInputOptions" || 
+		sScreenName == "ScreenGraphicOptions" || 
+		sScreenName == "ScreenGameplayOptions" || 
+		sScreenName == "ScreenMapControllers" || 
+		sScreenName == "ScreenAppearanceOptions" || 
+		sScreenName == "ScreenEdit" || 
+		sScreenName == "ScreenEditMenu" || 
+		sScreenName == "ScreenSoundOptions" ) 
 		GAMESTATE->m_bIsOnSystemMenu = true;
 	else 
 		GAMESTATE->m_bIsOnSystemMenu = false;
@@ -355,14 +370,14 @@ retry:
 	SetFromNewScreen( pNewScreen, false );
 }
 
-void ScreenManager::AddNewScreenToTop( const CString &sClassName, ScreenMessage messageSendOnPop )
+void ScreenManager::AddNewScreenToTop( const CString &sScreenName, ScreenMessage messageSendOnPop )
 {	
 	/* Send this before making the new screen, since it might set things that will be re-set
 	 * in the new screen's ctor. */
 	if( m_ScreenStack.size() )
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
-	Screen* pNewScreen = MakeNewScreen(sClassName);
+	Screen* pNewScreen = MakeNewScreen(sScreenName);
 	SetFromNewScreen( pNewScreen, true );
 	m_MessageSendOnPop = messageSendOnPop;
 }
@@ -510,6 +525,11 @@ void ScreenManager::PlayBackSound()
 	RageSoundParams p;
 	p.m_Volume = PREFSMAN->m_fSoundVolume;
 	m_soundBack.Play( &p );
+}
+
+void ScreenManager::PlaySharedBackgroundOffCommand()
+{
+	m_pSharedBGA->PlayCommand("Off");
 }
 
 /*

@@ -28,8 +28,6 @@ private:
 	
 	Sprite	m_sprJoinMessage[NUM_PLAYERS];
 	Sprite	m_sprJoinFrame[NUM_PLAYERS];
-
-	BGAnimation	m_Background;	
 };
 
 #endif

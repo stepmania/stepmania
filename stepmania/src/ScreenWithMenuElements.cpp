@@ -29,9 +29,6 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 
 	this->SetName( sClassName );
 
-	m_Background.LoadFromAniDir( THEME->GetPathToB(m_sName+" background") );
-	this->AddChild( &m_Background );
-
 	m_autoHeader.Load( THEME->GetPathToG(m_sName+" header") );
 	m_autoHeader->SetName("Header");
 	UtilSetXY( m_autoHeader, m_sName );
@@ -140,7 +137,7 @@ void ScreenWithMenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 	UtilOffCommand( m_autoFooter, m_sName );
 	UtilOffCommand( m_textHelp, m_sName );
 
-	m_Background.PlayCommand("Off");
+	SCREENMAN->PlaySharedBackgroundOffCommand();
 
 	m_Out.StartTransitioning(smSendWhenDone);
 

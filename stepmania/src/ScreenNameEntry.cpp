@@ -157,9 +157,6 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 
 	GAMESTATE->m_bPastHereWeGo = true;	// enable the gray arrows
 
-	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenNameEntry background") );
-	this->AddChild( &m_Background );
-
 	FOREACH_PlayerNumber( p )
 	{
 		// load last used ranking name if any

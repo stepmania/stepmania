@@ -27,8 +27,6 @@ public:
 	void ResetTimer();
 
 protected:
-	BGAnimation			m_Background;
-
 	AutoActor			m_autoHeader;
 	Sprite				m_sprStyleIcon;
 	MemoryCardDisplay	m_MemoryCardDisplay[NUM_PLAYERS];

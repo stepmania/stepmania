@@ -33,9 +33,6 @@ ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : Screen( sN
 
 	// We have to do initialization in the first update because this->GetElementName() won't
 	// work until the object has been fully constructed.
-	m_Background.LoadFromAniDir( THEME->GetPathToB(m_sName+" background") );
-	this->AddChild( &m_Background );
-
 	m_In.Load( THEME->GetPathToB(m_sName+" in") );
 	m_In.StartTransitioning();
 	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
@@ -46,16 +43,6 @@ ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : Screen( sN
 	this->AddChild( &m_Out );
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName) );
-
-	float fTimeUntilBeginFadingOut = m_Background.GetLengthSeconds() - m_Out.GetLengthSeconds();
-	if( fTimeUntilBeginFadingOut < 0 )
-	{
-		LOG->Warn( "Screen '%s' Out BGAnimation (%f seconds) is longer than Background BGAnimation (%f seconds); background BGA will be truncated",
-			m_sName.c_str(), m_Out.GetLengthSeconds(), m_Background.GetLengthSeconds() );
-		fTimeUntilBeginFadingOut = 0;
-	}
-
-	this->PostScreenMessage( SM_BeginFadingOut, fTimeUntilBeginFadingOut );
 }
 
 
@@ -132,6 +119,19 @@ void ScreenAttract::Update( float fDelta )
 {
 	if( IsFirstUpdate() )
 	{
+		// The shared background isn't loaded until the screen is actually 
+		// showing.  The background is loaded by the time of the first update.
+		BGAnimation &background = *SCREENMAN->m_pSharedBGA;
+		float fTimeUntilBeginFadingOut = background.GetLengthSeconds() - m_Out.GetLengthSeconds();
+		if( fTimeUntilBeginFadingOut < 0 )
+		{
+			LOG->Warn( "Screen '%s' Out BGAnimation (%f seconds) is longer than Background BGAnimation (%f seconds); background BGA will be truncated",
+				m_sName.c_str(), m_Out.GetLengthSeconds(), background.GetLengthSeconds() );
+			fTimeUntilBeginFadingOut = 0;
+		}
+		this->PostScreenMessage( SM_BeginFadingOut, fTimeUntilBeginFadingOut );
+
+		
 		if( GAMESTATE->IsTimeToPlayAttractSounds() )
 			SOUND->PlayMusic( THEME->GetPathToS(m_sName + " music") );
 		else

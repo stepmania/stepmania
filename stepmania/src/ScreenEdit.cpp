@@ -412,8 +412,6 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	GAMESTATE->ResetNoteSkins();
 	GAMESTATE->StoreSelectedOptions();
 
-	m_BGAnimation.LoadFromAniDir( THEME->GetPathToB("ScreenEdit background") );
-
 	shiftAnchor = -1;
 
 
@@ -605,7 +603,6 @@ void ScreenEdit::Update( float fDeltaTime )
 		}
 	}
 
-	m_BGAnimation.Update( fDeltaTime );
 	m_SnapDisplay.Update( fDeltaTime );
 	m_NoteFieldEdit.Update( fDeltaTime );
 	m_In.Update( fDeltaTime );
@@ -713,7 +710,6 @@ void ScreenEdit::DrawPrimitives()
 	{
 	case MODE_EDITING:
 		{
-			m_BGAnimation.Draw();
 			m_sprHelp.Draw();
 			m_textHelp.Draw();
 			m_sprInfo.Draw();
@@ -733,8 +729,6 @@ void ScreenEdit::DrawPrimitives()
 	case MODE_RECORDING:
 		if( PREFSMAN->m_bEditorShowBGChangesPlay )
 			m_Background.Draw();
-		else
-			m_BGAnimation.Draw();
 
 		m_NoteFieldRecord.Draw();
 		if( PREFSMAN->m_bEditorShowBGChangesPlay )
@@ -743,8 +737,6 @@ void ScreenEdit::DrawPrimitives()
 	case MODE_PLAYING:
 		if( PREFSMAN->m_bEditorShowBGChangesPlay )
 			m_Background.Draw();
-		else
-			m_BGAnimation.Draw();
 
 		m_Player.Draw();
 		if( PREFSMAN->m_bEditorShowBGChangesPlay )

@@ -15,6 +15,7 @@
 class Screen;
 struct Menu;
 class ScreenSystemLayer;
+class BGAnimation;
 
 
 typedef Screen* (*CreateScreenFn)(const CString&);
@@ -37,6 +38,7 @@ public:
 	void PrepNewScreen( const CString &sName );
 	void LoadPreppedScreen();
 	void DeletePreppedScreen();
+	
 	void SetNewScreen( const CString &sName );
 	void AddNewScreenToTop( const CString &sName, ScreenMessage messageSendOnPop );
 	void Prompt( ScreenMessage SM_SendWhenDone, const CString &sText, bool bYesNo = false, bool bDefaultAnswer = false, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
@@ -59,6 +61,12 @@ public:
 
 	Screen *GetTopScreen();
 
+public:
+	//
+	// in draw order first to last
+	//
+	BGAnimation			*m_pSharedBGA;	// BGA object that's persistent between screens
+	void PlaySharedBackgroundOffCommand();
 private:
 	vector<Screen*>		m_ScreenStack;	// bottommost to topmost
 	ScreenMessage		m_MessageSendOnPop;

@@ -18,8 +18,6 @@ public:
 protected:
 	void MenuStart( PlayerNumber pn );
 	void MenuBack(	PlayerNumber pn );
-
-	BGAnimation m_Background;
 };
 
 #endif

@@ -20,7 +20,6 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-	BGAnimation		m_Background;
 	Transition		m_In;
 	Transition		m_Out;
 };

@@ -60,8 +60,6 @@ private:
 	void ChangeDisplayedFeat();
 	void SelectChar( PlayerNumber pn, int c );
 
-	BGAnimation		m_Background;
-
 	ActorFrame		m_Keyboard[NUM_PLAYERS];
 	Sprite			m_sprCursor[NUM_PLAYERS];
 	vector<BitmapText*>	m_textAlphabet[NUM_PLAYERS];
