@@ -1761,6 +1761,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 	if( MenuI.IsValid()  &&  
 		m_DancingState != STATE_OUTRO  &&
+		GAMESTATE->IsHumanPlayer(MenuI.player) &&
 		!m_Back.IsTransitioning() )
 	{
 		/* Allow bailing out by holding the START button of all active players.  This
