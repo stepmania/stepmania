@@ -11,11 +11,14 @@ public:
 	PercentageDisplay();
 	void Load( PlayerNumber pn );
 	void Update( float fDeltaTime );
+	void TweenOffScreen();
 
 private:
+	void Refresh();
 	PlayerNumber m_PlayerNumber;
 	int m_Last;
 	BitmapText	m_textPercent;
+	BitmapText	m_textPercentRemainder;
 };
 
 #endif
