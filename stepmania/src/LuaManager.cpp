@@ -304,10 +304,7 @@ bool LuaManager::RunScript( const CString &sScript, const CString &sName, CStrin
 		int ret = lua_pcall( L, 0, iReturnValues, 0 );
 		if( ret )
 		{
-			CString err;
-			LuaManager::PopStack( err );
-			CString sError = ssprintf( "Lua runtime error evaluating \"%s\": %s", sScript.c_str(), err.c_str() );
-			Dialog::OK( sError, "LUA_ERROR" );
+			LuaManager::PopStack( sError );
 			return false;
 		}
 	}
