@@ -8,25 +8,6 @@
 
 LowLevelWindow_SDL::LowLevelWindow_SDL()
 {
-	Windowed = false;
-}
-
-LowLevelWindow_SDL::~LowLevelWindow_SDL()
-{
-	SDL_QuitSubSystem(SDL_INIT_VIDEO);
-	SDL_EventState(SDL_VIDEORESIZE, SDL_IGNORE);
-	SDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
-}
-
-void *LowLevelWindow_SDL::GetProcAddress(CString s)
-{
-	return SDL_GL_GetProcAddress(s);
-}
-
-bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
-{
-	SDL_QuitSubSystem(SDL_INIT_VIDEO);
-
 	/* By default, ignore all SDL events.  We'll enable them as we need them.
 	 * We must not enable any events we don't actually want, since we won't
 	 * query for them and they'll fill up the event queue. 
@@ -38,7 +19,58 @@ bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int
 	SDL_EventState(SDL_VIDEORESIZE, SDL_ENABLE);
 	SDL_EventState(SDL_ACTIVEEVENT, SDL_ENABLE);
 
+	Windowed = false;
+}
+
+LowLevelWindow_SDL::~LowLevelWindow_SDL()
+{
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	mySDL_EventState(SDL_VIDEORESIZE, SDL_IGNORE);
+	mySDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
+}
+
+void *LowLevelWindow_SDL::GetProcAddress(CString s)
+{
+	return SDL_GL_GetProcAddress(s);
+}
+
+bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
+{
+	/* We need to preserve the event mask and all events, since they're lost by
+	 * SDL_QuitSubSystem(SDL_INIT_VIDEO). */
+	vector<SDL_Event> events;
+	mySDL_GetAllEvents(events);
+	Uint8 EventEnabled[SDL_NUMEVENTS];
+
+	/* Queue up key-up events for all keys that are currently down (eg. alt-enter).
+	 * This is normally done by SDL, but since we're shutting down the video system
+	 * we're also shutting down the event system. */
+	{
+		const Uint8 *KeyState = SDL_GetKeyState(NULL);
+		for ( SDLKey key=SDLK_FIRST; key<SDLK_LAST; key = (SDLKey)(key+1) )
+		{
+			if ( KeyState[key] != SDL_PRESSED )
+				continue;
+			SDL_Event e;
+			memset(&e, 0, sizeof(e));
+			e.key.type = SDL_KEYUP;
+			e.key.keysym.sym = key;
+			events.push_back(e);
+			LOG->Trace("up %i", key);
+		}
+	}
+
+	int i;
+	for( i = 0; i < SDL_NUMEVENTS; ++i)
+		EventEnabled[i] = mySDL_EventState( (Uint8) i, SDL_QUERY );
+
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 	SDL_InitSubSystem(SDL_INIT_VIDEO);
+
+	/* Put them back. */
+	for( int i = 0; i < SDL_NUMEVENTS; ++i)
+		mySDL_EventState((Uint8) i, EventEnabled[i]);
+	mySDL_PushEvents(events);
 
 	/* Set SDL window title and icon -before- creating the window */
 	SDL_WM_SetCaption(sWindowTitle, "");
@@ -79,7 +111,7 @@ bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int
 #endif
 
 #if defined(WIN32)
-//	SDL_EventState(SDL_OPENGLRESET, SDL_ENABLE);
+//	mySDL_EventState(SDL_OPENGLRESET, SDL_ENABLE);
 #endif
 
 	SDL_Surface *screen = SDL_SetVideoMode(width, height, bpp, flags);
@@ -102,7 +134,7 @@ bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int
 
 	SDL_WM_SetCaption("StepMania", "StepMania");
 	
-//	SDL_EventState(SDL_OPENGLRESET, SDL_IGNORE);
+//	mySDL_EventState(SDL_OPENGLRESET, SDL_IGNORE);
 #endif
 
 	{
