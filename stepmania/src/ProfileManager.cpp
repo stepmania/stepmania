@@ -113,8 +113,6 @@ bool ProfileManager::CreateProfile( CString sProfileDir, CString sName )
 {
 	bool bResult;
 
-	CreateDirectories( sProfileDir );
-	
 	Profile pro;
 	pro.m_sName = sName;
 	bResult = pro.SaveToIni( sProfileDir + PROFILE_FILE );
@@ -272,13 +270,10 @@ bool ProfileManager::CreateMachineProfile( CString sName )
 		return false;
 	sProfileDir += SLASH;
 
-	bool bResult;
-	bResult = CreateDirectories( sProfileDir );
-	if( !bResult )
-		return false;
-
 	Profile pro;
 	pro.m_sName = sName;
+
+	bool bResult;
 	bResult = pro.SaveToIni( sProfileDir + PROFILE_FILE );
 	if( !bResult )
 		return false;

@@ -12,6 +12,7 @@
 
 #include "AnnouncerManager.h"
 #include "RageLog.h"
+#include "RageFile.h"
 #include "arch/arch.h"
 
 
@@ -136,7 +137,8 @@ CString AnnouncerManager::GetPathTo( CString sAnnouncerName, CString sFolderName
 	LOG->Trace( "The announcer in '%s' is missing the folder '%s'.",
 		AnnouncerPath.c_str(), sFolderName.c_str() );
 //	MessageBeep( MB_OK );
-	CreateDirectories( AnnouncerPath+sFolderName );
+	RageFile temp;
+	temp.Open( AnnouncerPath+sFolderName + "/announcer files go here.txt", RageFile::WRITE );
 #endif
 	
 	return "";

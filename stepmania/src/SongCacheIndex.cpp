@@ -15,7 +15,6 @@ SongCacheIndex *SONGINDEX;
 
 SongCacheIndex::SongCacheIndex()
 {
-	CreateDirectories( CACHE_DIR "Songs" );
 	CacheIndex.SetPath( CACHE_DIR "index.cache" );
 	ReadCacheIndex();
 }
@@ -33,6 +32,7 @@ static void EmptyDir( CString dir )
 	ASSERT(dir[dir.size()-1] == '/');
 #endif
 
+	/* XXX RageFile */
 	CStringArray asCacheFileNames;
 	GetDirListing( dir, asCacheFileNames );
 	for( unsigned i=0; i<asCacheFileNames.size(); i++ )

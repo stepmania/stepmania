@@ -118,7 +118,6 @@ void BannerCache::UnloadAllBanners()
 
 BannerCache::BannerCache()
 {
-	CreateDirectories( CACHE_DIR "Banners" SLASH );
 	BannerData.SetPath( CACHE_DIR "banners.cache" );
 	BannerData.ReadFile();	// don't care if this fails
 }

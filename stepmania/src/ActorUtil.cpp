@@ -18,10 +18,10 @@
 #include "BGAnimation.h"
 #include "IniFile.h"
 #include "ThemeManager.h"
-#include "RageUtil_FileDB.h"
 #include "RageDisplay.h"
 #include "RageLog.h"
 #include "arch/ArchHooks/ArchHooks.h"
+#include "RageFileManager.h"
 
 
 static Actor* LoadActor( CString sPath )
