@@ -32,12 +32,45 @@
 
 #include <string.h>
 #include <errno.h>
+#include "RageFile.h"
+static size_t OggRageFile_read_func( void *ptr, size_t size, size_t nmemb, void *datasource )
+{
+	RageFile *f = (RageFile *) datasource;
+	ASSERT( size == 1 );
+	return f->Read( ptr, nmemb );
+/* XXX */
+}
 
+static int OggRageFile_seek_func( void *datasource, ogg_int64_t offset, int whence )
+{
+	RageFile *f = (RageFile *) datasource;
+	switch( whence )
+	{
+	case SEEK_CUR:
+		return f->SeekCur( (int) offset );
+	case SEEK_END:
+		offset += f->GetFileSize();
+	}
+	return f->Seek( (int) offset );
+}
+
+static int OggRageFile_close_func( void *datasource )
+{
+	delete datasource;
+	return 0;
+}
+
+static long OggRageFile_tell_func( void *datasource )
+{
+	RageFile *f = (RageFile *) datasource;
+	return f->Tell();
+}
 
 const int channels = 2;
 
 /* The amount of data to read from SDL_sound at once. */
 const int read_block_size = 1024;
+
 
 static CString ov_ssprintf( int err, const char *fmt, ...)
 {
@@ -72,18 +105,28 @@ SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(CString file
 	filename=filename_;
 
 	vf = new OggVorbis_File;
-	FILE *f = fopen(filename, "rb");
-	if(f == NULL)
+	RageFile *f = new RageFile;
+	
+	if( !f->Open( filename ) )
 	{
-		SetError(ssprintf("ogg fopen(%s) failed: %s", filename.c_str(), strerror(errno)));
+		SetError( ssprintf("ogg: opening \"%s\" failed: %s", filename.c_str(), f->GetError().c_str()) );
+		delete f;
+		delete vf;
+		vf = NULL;
 		return OPEN_NO_MATCH;
 	}
 
-	int ret = ov_open(f, vf, NULL, 0);
+	ov_callbacks callbacks;
+	callbacks.read_func  = OggRageFile_read_func;
+	callbacks.seek_func  = OggRageFile_seek_func;
+	callbacks.close_func = OggRageFile_close_func;
+	callbacks.tell_func  = OggRageFile_tell_func;
+
+	int ret = ov_open_callbacks( f, vf, NULL, 0, callbacks );
 	if(ret < 0)
 	{
 		SetError( ov_ssprintf(ret, "ov_open failed") );
-		fclose(f);
+		delete f;
 		switch( ret )
 		{
 		case OV_ENOTVORBIS:
