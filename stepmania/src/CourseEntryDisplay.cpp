@@ -90,6 +90,8 @@ void CourseEntryDisplay::SetDifficulty( PlayerNumber pn, const CString &text, Ra
 void CourseEntryDisplay::LoadFromTrailEntry( int iNum, const TrailEntry *tes[NUM_PLAYERS] )
 {
 	const TrailEntry *te = tes[GAMESTATE->m_MasterPlayerNumber];
+	if( te == NULL )
+		return;
 	bool bMystery = te->bMystery;
 	if( bMystery )
 	{
@@ -115,6 +117,8 @@ void CourseEntryDisplay::LoadFromTrailEntry( int iNum, const TrailEntry *tes[NUM
 		FOREACH_EnabledPlayer(pn)
 		{
 			const TrailEntry *te = tes[pn];
+			if( te == NULL )
+				continue;
 			RageColor colorNotes = SONGMAN->GetDifficultyColor( te->pSteps->GetDifficulty() );
 			SetDifficulty( pn, ssprintf("%d", te->pSteps->GetMeter()), colorNotes );
 		}
