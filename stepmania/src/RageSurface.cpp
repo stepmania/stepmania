@@ -72,7 +72,6 @@ void RageSurfaceFormat::GetRGB( uint32_t val, uint8_t *r, uint8_t *g, uint8_t *b
 		*r = int8_t( (val & Mask[0]) >> Shift[0] << Loss[0] );
 		*g = int8_t( (val & Mask[1]) >> Shift[1] << Loss[1] );
 		*b = int8_t( (val & Mask[2]) >> Shift[2] << Loss[2] );
-//		*a = int8_t( (val & Amask) >> Ashift << Loss[3] );
 	}
 }
 
