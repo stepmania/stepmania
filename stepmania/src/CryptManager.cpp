@@ -3,11 +3,27 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "PrefsManager.h"
-#include "RageFile.h"
 
-#include "crypto/CryptRSA.h"
-#include "crypto/CryptRand.h"
-#include "crypto/CryptMD5.h"
+// crypt headers
+#include "CryptHelpers.h"
+#include "crypto51/sha.h"
+#include "crypto51/channels.h"
+#include "crypto51/hex.h"
+#include "crypto51/rsa.h"
+#include "crypto51/md5.h"
+#include "crypto51/osrng.h"
+#include <memory>
+
+using namespace CryptoPP;
+using namespace std;
+
+#ifdef WIN32
+	#ifdef DEBUG
+		#pragma comment(lib, "crypto51\\Release\\cryptlib.lib")
+	#else
+		#pragma comment(lib, "crypto51\\Debug\\cryptlib.lib")
+	#endif
+#endif
 
 static const CString PRIVATE_KEY_PATH = "Data/private.key.rsa";
 static const CString PUBLIC_KEY_PATH = "Data/public.key.rsa";
@@ -17,17 +33,19 @@ CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our pro
 
 CryptManager::CryptManager()
 {
-	if( !PREFSMAN->m_bSignProfileData )
-		return;
-
 	//
 	// generate keys if none are available
 	//
-	if( !DoesFileExist(PRIVATE_KEY_PATH) || !DoesFileExist(PUBLIC_KEY_PATH) )
+	/* This is crashing in crypto51/integer.cpp CryptoPP::RecursiveInverseModPower2
+	 * in Linux. -glenn */
+	if( PREFSMAN->m_bSignProfileData )
 	{
-		LOG->Warn( "Keys missing.  Generating new keys" );
-		GenerateRSAKey( KEY_LENGTH, PRIVATE_KEY_PATH, PUBLIC_KEY_PATH, "aoksdjaksd" );
-		FlushDirCache();
+		if( !DoesFileExist(PRIVATE_KEY_PATH) || !DoesFileExist(PUBLIC_KEY_PATH) )
+		{
+			LOG->Warn( "Keys missing.  Generating new keys" );
+			GenerateRSAKey( KEY_LENGTH, PRIVATE_KEY_PATH, PUBLIC_KEY_PATH, "aoksdjaksd" );
+			FlushDirCache();
+		}
 	}
 }
 
@@ -40,119 +58,80 @@ void CryptManager::GenerateRSAKey( unsigned int keyLength, CString privFilename,
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
-	// Does the RNG need to be inited and seeded every time?
-	random_init();
-	random_add_noise( seed );
+	AutoSeededRandomPool rng;
 
-	RSAKey key;
-	key.Generate( keyLength );
+	RSAES_OAEP_SHA_Decryptor priv(rng, keyLength);
+	RageFileSink privFile(privFilename);
+	priv.DEREncode(privFile);
+	privFile.MessageEnd();
 
-	RageFile out;
-
-	CString sPublic;
-	key.PublicBlob( sPublic );
-	if( !out.Open( pubFilename, RageFile::WRITE ) )
-		RageException::Throw( "Error opening %s: %s", pubFilename.c_str(), out.GetError().c_str() );
-	out.Write( sPublic );
-	out.Close();
-
-	CString sPrivate;
-	key.PrivateBlob( sPrivate );
-	if( !out.Open( privFilename, RageFile::WRITE ) )
-		RageException::Throw( "Error opening %s: %s", privFilename.c_str(), out.GetError().c_str() );
-	out.Write( sPrivate );
-	out.Close();
+	RSAES_OAEP_SHA_Encryptor pub(priv);
+	RageFileSink pubFile(pubFilename);
+	pub.DEREncode(pubFile);
+	pubFile.MessageEnd();
 }
 
-void CryptManager::SignFileToFile( CString sPath, CString sSignatureFilename )
+void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile )
 {
-	if( sSignatureFilename == "" )
-		sSignatureFilename = sPath + SIGNATURE_APPEND;
-
-	LOG->Trace("SignFile(%s)", sPath.c_str());
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
-	if( !IsAFile(PRIVATE_KEY_PATH) )
+	CString sPrivFilename = PRIVATE_KEY_PATH;
+	CString sMessageFilename = sPath;;
+	if( sSignatureFile.empty() )
+		sSignatureFile = sPath + SIGNATURE_APPEND;
+
+	if( !IsAFile(sPrivFilename) )
 		return;
 
-	if( !IsAFile(sPath) )
+	if( !IsAFile(sMessageFilename) )
 		return;
 
-	const CString sig = Sign( sPath );
+	// CAREFUL: These classes can throw all kinds of exceptions.  Should this
+	// be wrapped in a try catch?
 
-	RageFile out;
-	if( !out.Open( sSignatureFilename, RageFile::WRITE ) )
-		RageException::Throw( "Error opening %s: %s", sSignatureFilename.c_str(), out.GetError().c_str() );
-	out.Write( sig );
+	RageFileSource privFile(sPrivFilename, true);
+	RSASSA_PKCS1v15_SHA_Signer priv(privFile);
+	AutoSeededRandomPool rng;
+	RageFileSource f(sMessageFilename, true, new SignerFilter(rng, priv, new RageFileSink(sSignatureFile)));
 }
 
-bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFilename )
-{
-	if( !IsAFile(sPath) )
-		return false;
-
-	if( sSignatureFilename == "" )
-		sSignatureFilename = sPath + SIGNATURE_APPEND;
-
-	LOG->Trace("VerifyFile(%s)", sPath.c_str());
-	ASSERT( PREFSMAN->m_bSignProfileData );
-
-	if( !IsAFile(PUBLIC_KEY_PATH) )
-		return false;
-
-	if( !IsAFile(sSignatureFilename) )
-		return false;
-
-	CString sig;
-	{
-		RageFile in;
-		if( !in.Open( sSignatureFilename, RageFile::READ ) )
-			RageException::Throw( "Error opening %s: %s", sSignatureFilename.c_str(), in.GetError().c_str() );
-		in.Read( sig );
-	}
-
-	return Verify( sPath, sig );
-}
-
-CString CryptManager::Sign( CString sPath )
+bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
-	if( !IsAFile(PRIVATE_KEY_PATH) )
-		return "";
+	CString sPubFilename = PUBLIC_KEY_PATH;
+	CString sMessageFilename = sPath;;
+	if( sSignatureFile.empty() )
+		sSignatureFile = sPath + SIGNATURE_APPEND;
 
-	if( !IsAFile(sPath) )
-		return "";
+	if( !IsAFile(sPubFilename) )
+		return false;
 
-	CString data;
-	{
-		RageFile in;
-		if( !in.Open( sPath, RageFile::READ ) )
-			RageException::Throw( "Error opening %s: %s", sPath.c_str(), in.GetError().c_str() );
-		in.Read( data );
-	}
+	if( !IsAFile(sSignatureFile) )
+		return false;
 
-	RSAKey key;
-	{
-		RageFile keyfile;
-		if( !keyfile.Open( PRIVATE_KEY_PATH ) )
-			RageException::Throw( "Error opening %s: %s", PRIVATE_KEY_PATH.c_str(), keyfile.GetError().c_str() );
-		CString private_blob;
-		keyfile.Read( private_blob );
-		key.LoadFromPrivateBlob( private_blob );
-	}
+	// CAREFUL: These classes can throw all kinds of exceptions.  Should this
+	// be wrapped in a try catch?
 
-	CString sig;
-	key.Sign( data, sig );
+	/* XXX: This is opening sPubFilename for RageFile::WRITE instead of READ. */
+	RageFileSource pubFile(sPubFilename, true);
+	RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
 
-	return sig;
+	RageFileSource signatureFile(sSignatureFile, true);
+	if (signatureFile.MaxRetrievable() != pub.SignatureLength())
+		return false;
+	SecByteBlock signature(pub.SignatureLength());
+	signatureFile.Get(signature, signature.size());
+
+	VerifierFilter *verifierFilter = new VerifierFilter(pub);
+	verifierFilter->Put(signature, pub.SignatureLength());
+	RageFileSource f(sMessageFilename, true, verifierFilter);
+
+	return verifierFilter->GetLastResult();
 }
 
 bool CryptManager::Verify( CString sPath, CString sSignature )
 {
-	if( !IsAFile(sPath) )
-		return false;
-
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
 	CString sPubFilename = PUBLIC_KEY_PATH;
@@ -161,61 +140,43 @@ bool CryptManager::Verify( CString sPath, CString sSignature )
 	if( !IsAFile(sPubFilename) )
 		return false;
 
-	CString data;
-	{
-		RageFile in;
-		if( !in.Open( sPath, RageFile::READ ) )
-			RageException::Throw( "Error opening %s: %s", sPath.c_str(), in.GetError().c_str() );
-		in.Read( data );
-	}
+	// CAREFUL: These classes can throw all kinds of exceptions.  Should this
+	// be wrapped in a try catch?
 
-	RSAKey key;
-	{
-		RageFile keyfile;
-		if( !keyfile.Open( PRIVATE_KEY_PATH ) )
-			RageException::Throw( "Error opening %s: %s", PRIVATE_KEY_PATH.c_str(), keyfile.GetError().c_str() );
-		CString private_blob;
-		keyfile.Read( private_blob );
-		key.LoadFromPrivateBlob( private_blob );
-	}
+	RageFileSource pubFile(sPubFilename, true);
+	RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
 
-	return key.Verify( data, sSignature );
+	StringSource signatureFile(sSignature, true);
+	if (signatureFile.MaxRetrievable() != pub.SignatureLength())
+		return false;
+	SecByteBlock signature(pub.SignatureLength());
+	signatureFile.Get(signature, signature.size());
+
+	VerifierFilter *verifierFilter = new VerifierFilter(pub);
+	verifierFilter->Put(signature, pub.SignatureLength());
+	RageFileSource f(sMessageFilename, true, verifierFilter);
+
+	return verifierFilter->GetLastResult();
 }
 
-CString BinaryToHex( const unsigned char *string, int iNumBytes )
-{
-	CString s;
-	for( int i=0; i<iNumBytes; i++ )
-	{
-		unsigned val = string[i];
-		s += ssprintf( "%x", val );
-	}
-	return s;
-}
 
 CString CryptManager::GetMD5( CString fn )
 {
-	struct MD5Context md5c;
-	unsigned char digest[16];
-	int iBytesRead;
-	unsigned char buffer[1024];
+	ASSERT( PREFSMAN->m_bSignProfileData );
 
-	RageFile file;
-	if( !file.Open( fn, RageFile::READ ) )
-	{
-		LOG->Warn( "GetMD5: Failed to open file '%s'", fn.c_str() );
-		return "";
-	}
+	MD5 md5;
+	HashFilter md5Filter(md5);
 
-	MD5Init(&md5c);
-	while( !file.AtEOF() && file.GetError().empty() )
-	{
-		iBytesRead = file.Read( buffer, sizeof(buffer) );
-		MD5Update(&md5c, buffer, iBytesRead);
-	}
-	MD5Final(digest, &md5c);
+	auto_ptr<ChannelSwitch> channelSwitch(new ChannelSwitch);
+	channelSwitch->AddDefaultRoute(md5Filter);
+	RageFileSource(fn, true, channelSwitch.release());
 
-	return BinaryToHex( digest, sizeof(digest) );
+	HexEncoder encoder(new RageFileSink("temp.txt"), false);
+	cout << "\nMD5: ";
+	md5Filter.TransferTo(encoder);
+
+	ASSERT(0);
+	return "";
 }
 
 CString CryptManager::GetPublicKeyFileName()
