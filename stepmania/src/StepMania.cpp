@@ -235,6 +235,7 @@ int main(int argc, char* argv[])
 	/* Set this up second.  Do this early, since it's needed for RageException::Throw. 
 	 * Do it after ChangeToDirOfExecutable, so the log ends up in the right place. */
 	LOG			= new RageLog();
+
 #ifdef DEBUG
 	LOG->ShowConsole();
 #endif
@@ -243,12 +244,9 @@ int main(int argc, char* argv[])
 
 	atexit(SDL_Quit);   /* Clean up on exit */
 
-	/* Fire up the SDL, but don't actually start any subsystems. */
-	int SDL_flags = 0;
-#ifdef WIN32
-	/* We use our own error handler in Windows. */
-	SDL_flags |= SDL_INIT_NOPARACHUTE;
-#endif
+	/* Fire up the SDL, but don't actually start any subsystems.
+	 * We use our own error handlers. */
+	int SDL_flags = SDL_INIT_NOPARACHUTE;
 	SDL_Init(SDL_flags);
 
 	CString  g_sErrorString = "";
@@ -328,7 +326,7 @@ int main(int argc, char* argv[])
 	/* This initializes objects that change the SDL event mask, and has other
 	 * dependencies on the SDL video subsystem, so it must be initialized after
 	 * DISPLAY and setting the default SDL event mask. */
-	INPUTMAN	= new RageInput();
+	INPUTMAN	= new RageInput;
 
 	// These things depend on the TextureManager, so do them after!
 	FONT		= new FontManager;
