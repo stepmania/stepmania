@@ -601,7 +601,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			if( type != IET_FIRST_PRESS )
 				break;	// We only care about first presses
 
-			int iCol = DeviceI.button - SDLK_1;
+			const int iCol = DeviceI.button == SDLK_0? 9: DeviceI.button - SDLK_1;
+
 			const float fSongBeat = GAMESTATE->m_fSongBeat;
 			const int iSongIndex = BeatToNoteRow( fSongBeat );
 
