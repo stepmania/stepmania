@@ -150,7 +150,7 @@ void ScreenGameplay::Init()
 
 
 	// fill in difficulty of CPU players with that of the first human player
-    FOREACH_CpuPlayer(p)
+    FOREACH_PotentialCpuPlayer(p)
         GAMESTATE->m_pCurNotes[p] = GAMESTATE->m_pCurNotes[ GAMESTATE->GetFirstHumanPlayer() ];
 
 	switch( GAMESTATE->m_PlayMode )
