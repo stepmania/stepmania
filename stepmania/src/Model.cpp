@@ -346,7 +346,9 @@ void Model::DrawPrimitives()
 				if( mat.diffuse.m_fTexVelocityX != 0  ||  mat.diffuse.m_fTexVelocityY != 0 )
 				{
 					float fScrollX = mat.diffuse.m_fTexVelocityX * mat.diffuse.GetSecondsIntoAnimation() / mat.diffuse.GetAnimationLengthSeconds();
+					fScrollX += mat.diffuse.m_fTexOffsetX;
 					float fScrollY = mat.diffuse.m_fTexVelocityY * mat.diffuse.GetSecondsIntoAnimation() / mat.diffuse.GetAnimationLengthSeconds();
+					fScrollY += mat.diffuse.m_fTexOffsetY;
 					DISPLAY->SetTextureWrapping( true );
 					DISPLAY->TextureTranslate( fScrollX, fScrollY, 0 );
 				}
