@@ -1525,6 +1525,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			 * We're doing #3.  I'm not sure which is best.
 			 */
 			SOUND->StopMusic();
+			SOUND->HandleSongTimer( false );
 			m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 
 			this->ClearMessageQueue();
@@ -2174,9 +2175,15 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 		break;
 
+	case SM_LoseFocus:
+		/* We might have turned the song timer off.  Be sure to turn it back on. */
+		SOUND->HandleSongTimer( true );
+		break;
+
 	case SM_BeginFailed:
 		m_DancingState = STATE_OUTRO;
 		SOUND->StopMusic();
+		SOUND->HandleSongTimer( false );
 		m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 		TweenOffScreen();
 		m_Failed.StartTransitioning( SM_GoToScreenAfterFail );
