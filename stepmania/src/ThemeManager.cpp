@@ -127,60 +127,18 @@ try_element_again:
 
 	const CString sThemeDir = GetThemeDirFromName( sThemeName );
 
-	CStringArray asPossibleElementFilePaths;
+	CStringArray asElementPaths;
 
 	/* First, look for redirs. */
 	GetDirListing( sThemeDir + sAssetCategory+"/"+sFileName + ".redir",
-					asPossibleElementFilePaths, false, true );
-
-	if( !asPossibleElementFilePaths.empty() )	// this is a redirect file
-	{
-		CString sNewFilePath = DerefRedir(asPossibleElementFilePaths[0]);
-		
-		if( sAssetCategory == "fonts" )
-		{
-			/* backwards-compatibility hack */
-			if( sAssetCategory == "fonts" )
-				sNewFilePath.Replace(" 16x16.png", "");
-		}
-		else if( !DoesFileExist(sNewFilePath) ) 
-		{
-			CString message = ssprintf(
-						"The redirect '%s' points to the file '%s', which does not exist."
-						"Verify that this redirect is correct.",
-						asPossibleElementFilePaths[0].GetString(), sNewFilePath.GetString());
-
-#if defined(WIN32) // XXX arch?
-			if( DISPLAY->IsWindowed() )
-				if( MessageBox(NULL, message, "ThemeManager", MB_RETRYCANCEL ) == IDRETRY)
-					goto try_element_again;
-#endif
-			RageException::Throw( "%s", message.GetString() ); 
-		}
-
-		/* Search again.  For example, themes/default/Fonts/foo might redir
-		 * to "Hello"; but "Hello" might be overridden in themes/hot pink/Fonts/Hello. */
-
-		/* Strip off the path. */
-		unsigned pos = sNewFilePath.find_last_of("/\\");
-		if(pos != sNewFilePath.npos) sNewFilePath = sNewFilePath.substr(pos+1);
-		sFileName = sNewFilePath;
-
-		/* XXX check for loops */
-		/* Important: We need to do a full search.  For example, BG redirs in
-		 * the default theme point to "_shared background", and themes override
-		 * just "_shared background"; the redirs in the default theme should end
-		 * up resolving to the overridden background. */
-		return GetPathTo(sAssetCategory, sFileName);
-//		goto try_element_again;
-	}
+					asElementPaths, false, true );
 
 	static const char *graphic_masks[] = {
 		"*.sprite", "*.png", "*.jpg", "*.bmp", "*.gif",
 		"*.avi", "*.mpg", "*.mpeg", NULL
 	};
 	static const char *sound_masks[] = { ".set", ".mp3", ".ogg", ".wav", NULL };
-	static const char *font_masks[] = { "*.ini", "*.png", "*.jpg", "*.bmp", "*.gif",  NULL };
+	static const char *font_masks[] = { "*.ini", NULL };//, "*.png", "*.jpg", "*.bmp", "*.gif",  NULL };
 	static const char *numbers_masks[] = { "*.png", NULL };
 	static const char *bganimations_masks[] = { "", NULL };
 	static const char *blank_mask[] = { "", NULL };
@@ -203,15 +161,76 @@ try_element_again:
 
 	for(int i = 0; asset_masks[i]; ++i)
 		GetDirListing( sThemeDir + sAssetCategory+"/" + sFileName + asset_masks[i],
-						asPossibleElementFilePaths, DirsOnly, true );
+						asElementPaths, DirsOnly, true );
 
 	if( sAssetCategory == "fonts" )
-		Font::WeedFontNames(asPossibleElementFilePaths, sFileName);
-		
-	if(asPossibleElementFilePaths.empty())
-		return "";
-	else
-		return asPossibleElementFilePaths[0];
+		Font::WeedFontNames(asElementPaths, sFileName);
+	
+
+	if( asElementPaths.size() > 1 )
+	{
+		CString message = ssprintf( 
+			"There is more than one theme element element that matches "
+			"'%s/%s/%s'.  Please remove all but one of these matches.",
+			sThemeName.GetString(), sAssetCategory.GetString(), sFileName.GetString() );
+							
+#if defined(WIN32) // XXX arch?
+		if( DISPLAY->IsWindowed() )
+			if( MessageBox(NULL, message, "ThemeManager", MB_RETRYCANCEL ) == IDRETRY)
+				goto try_element_again;
+#endif
+		RageException::Throw( message ); 
+	}
+	else if( asElementPaths.size() == 0 )
+	{
+		return "";	// This isn't fatal.
+	}
+	else	// asElementPaths.size() == 1
+	{
+		ASSERT( asElementPaths.size() == 1 );
+
+		CString sPath = asElementPaths[0];
+		bool bIsARedirect = sPath.length()>6  &&  sPath.Right(6).CompareNoCase(".redir")==0;
+
+		if( !bIsARedirect )
+		{
+			return sPath;
+		}
+		else	// bIsARedirect
+		{
+			CString sNewFileName = GetRedirContents(sPath);
+			
+			/* backwards-compatibility hack */
+			if( sAssetCategory == "fonts" )
+				if( sAssetCategory == "fonts" )
+					sNewFileName.Replace(" 16x16.png", "");
+
+			/* Search again.  For example, themes/default/Fonts/foo might redir
+			* to "Hello"; but "Hello" might be overridden in themes/hot pink/Fonts/Hello. */
+			/* Important: We need to do a full search.  For example, BG redirs in
+			* the default theme point to "_shared background", and themes override
+			* just "_shared background"; the redirs in the default theme should end
+			* up resolving to the overridden background. */
+			CString sPath = GetPathTo(sAssetCategory, sNewFileName);
+
+			if( !sPath.empty() )
+				return sPath;
+			else
+			{
+				CString message = ssprintf(
+						"The redirect '%s' points to the file '%s', which does not exist. "
+						"Verify that this redirect is correct.",
+						sPath.GetString(), sNewFileName.GetString());
+
+#if defined(WIN32) // XXX arch?
+				if( DISPLAY->IsWindowed() )
+					if( MessageBox(NULL, message, "ThemeManager", MB_RETRYCANCEL ) == IDRETRY)
+						goto try_element_again;
+#endif
+				RageException::Throw( "%s", message.GetString() ); 
+			}
+		}
+	}
 }
 
 CString ThemeManager::GetPathToOptional( CString sAssetCategory, CString sFileName ) 

@@ -634,6 +634,24 @@ CString DerefRedir(const CString &path)
 	return sDir+sNewFileName;
 }
 
+CString GetRedirContents(const CString &path)
+{
+	CString sDir, sFName, sExt;
+	splitrelpath( path, sDir, sFName, sExt );
+
+	ASSERT( sExt == "redir");	// don't ever call this on a non-redirect
+
+	CString sNewFileName;
+	{
+		ifstream file(path);
+		getline(file, sNewFileName);
+	}
+
+	StripCrnl(sNewFileName);
+
+	return sNewFileName;
+}
+
 void Regex::Compile()
 {
     reg = new regex_t;

@@ -200,6 +200,7 @@ void TrimRight(CString &str, const char *s = "\r\n\t ");
 void StripCrnl(CString &s);
 
 CString DerefRedir(const CString &path);
+CString GetRedirContents(const CString &path);
 
 class Regex {
 	void *reg;
