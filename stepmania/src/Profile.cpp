@@ -51,6 +51,13 @@ const int SM_390A12_COURSE_SCORES_VERSION = 8;
 
 #define MAX_RECENT_SCORES_TO_SAVE 100
 
+#define MAX_EDITABLE_INI_SIZE_BYTES			2*1024		// 2KB
+#define MAX_PLAYER_STATS_XML_SIZE_BYTES	\
+	100 /* Songs */						\
+	* 3 /* Steps per Song */			\
+	* 10 /* HighScores per Steps */		\
+	* 1024 /* size in bytes of a HighScores XNode */
+
 #if defined(WIN32)
 #pragma warning (disable : 4706) // assignment within conditional expression
 #endif
@@ -732,10 +739,11 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	XNode* pGeneralDataNode = new XNode;
 	pGeneralDataNode->name = "GeneralData";
 
-	// TRICKY: DisplayName is only written and is not read on load.  The reason
-	// for this is so that other apps that read this XML can get the player 
-	// name without having to read Editable.ini.
+	// TRICKY: These are write-only elements that are never read again.  This 
+	// data is required by other apps (like internet ranking), but is 
+	// redundant to the game app.
 	pGeneralDataNode->AppendChild( "DisplayName",					GetDisplayName() );
+	pGeneralDataNode->AppendChild( "IsMachine",						IsMachine() );
 
 	pGeneralDataNode->AppendChild( "Guid",							m_sGuid );
 	pGeneralDataNode->AppendChild( "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
