@@ -102,6 +102,79 @@ void ScreenOptionsMaster::SetList( OptionRowDefinition &row, OptionRowHandler &h
 	}
 }
 
+void ScreenOptionsMaster::SetLua( OptionRowDefinition &row, OptionRowHandler &hand, const CString &sLuaFunction )
+{
+	hand.type = ROW_LUA;
+	hand.m_bUseModNameForIcon = true;
+
+	/* Run the Lua expression.  It should return a table. */
+	hand.m_LuaTable.SetFromExpression( sLuaFunction );
+
+	if( hand.m_LuaTable.GetLuaType() != LUA_TTABLE )
+		RageException::Throw( "Result of \"%s\" is not a table", sLuaFunction.c_str() );
+
+	{
+		hand.m_LuaTable.PushSelf( LUA->L );
+
+		lua_pushstring( LUA->L, "Name" );
+		lua_gettable( LUA->L, -2 );
+		const char *pStr = lua_tostring( LUA->L, -1 );
+		if( pStr == NULL )
+			RageException::Throw( "\"%s\" \"Name\" entry is not a string", sLuaFunction.c_str() );
+		row.name = pStr;
+		lua_pop( LUA->L, 1 );
+
+
+		lua_pushstring( LUA->L, "OneChoiceForAllPlayers" );
+		lua_gettable( LUA->L, -2 );
+		row.bOneChoiceForAllPlayers = !!lua_toboolean( LUA->L, -1 );
+		lua_pop( LUA->L, 1 );
+
+
+		lua_pushstring( LUA->L, "LayoutType" );
+		lua_gettable( LUA->L, -2 );
+		pStr = lua_tostring( LUA->L, -1 );
+		if( pStr == NULL )
+			RageException::Throw( "\"%s\" \"LayoutType\" entry is not a string", sLuaFunction.c_str() );
+		row.layoutType = StringToLayoutType( pStr );
+		lua_pop( LUA->L, 1 );
+
+		lua_pushstring( LUA->L, "SelectType" );
+		lua_gettable( LUA->L, -2 );
+		pStr = lua_tostring( LUA->L, -1 );
+		if( pStr == NULL )
+			RageException::Throw( "\"%s\" \"SelectType\" entry is not a string", sLuaFunction.c_str() );
+		row.selectType = StringToSelectType( pStr );
+		lua_pop( LUA->L, 1 );
+
+		/* Iterate over the "Choices" table. */
+		lua_pushstring( LUA->L, "Choices" );
+		lua_gettable( LUA->L, -2 );
+		if( !lua_istable( LUA->L, -1 ) )
+			RageException::Throw( "\"%s\" \"Choices\" is not a table", sLuaFunction.c_str() );
+
+		lua_pushnil( LUA->L );
+		while( lua_next(LUA->L, -2) != 0 )
+		{
+			/* `key' is at index -2 and `value' at index -1 */
+			const char *pValue = lua_tostring( LUA->L, -1 );
+			if( pValue == NULL )
+				RageException::Throw( "\"%s\" Column entry is not a string", sLuaFunction.c_str() );
+			LOG->Trace( "'%s'", pValue);
+
+			row.choices.push_back( pValue );
+
+			lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
+		}
+
+		lua_pop( LUA->L, 1 ); /* pop choices table */
+
+		lua_pop( LUA->L, 1 ); /* pop main table */
+		ASSERT( lua_gettop(LUA->L) == 0 );
+	}
+}
+
+
 /* Add a list of difficulties/edits to the given row/handler. */
 void ScreenOptionsMaster::SetSteps( OptionRowDefinition &row, OptionRowHandler &hand )
 {
@@ -357,6 +430,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			const CString &name = command.GetName();
 
 			if( !name.CompareNoCase("list") )				SetList( row, hand, sArg(1) );
+			else if( !name.CompareNoCase("lua") )			SetLua( row, hand, sArg(1) );
 			else if( !name.CompareNoCase("steps") )			SetSteps( row, hand );
 			else if( !name.CompareNoCase("conf") )			SetConf( row, hand, sArg(1) );
 			else if( !name.CompareNoCase("characters") )	SetCharacters( row, hand );
@@ -455,6 +529,54 @@ void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const Op
 			return;
 		}
 
+	case ROW_LUA:
+		{
+			ASSERT( lua_gettop(LUA->L) == 0 );
+
+			/* Evaluate the GetValue(self,array,pn) function, where array is a table
+			 * representing vbSelectedOut. */
+
+			/* Hack: the NextRow entry is never set, and should be transparent.  Remove
+			 * it, and readd it below. */
+			if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
+				vbSelectedOut.erase( vbSelectedOut.begin() );
+
+			/* Create the vbSelectedOut table. */
+			LUA->CreateTableFromArray( vbSelectedOut );
+			ASSERT( lua_gettop(LUA->L) == 1 ); /* vbSelectedOut table */
+
+			/* Get the function to call from m_LuaTable. */
+			hand.m_LuaTable.PushSelf( LUA->L );
+			ASSERT( lua_istable( LUA->L, -1 ) );
+
+			lua_pushstring( LUA->L, "GetSelections" );
+			lua_gettable( LUA->L, -2 );
+			if( !lua_isfunction( LUA->L, -1 ) )
+				RageException::Throw( "\"%s\" \"GetSelections\" entry is not a function", row.name.c_str() );
+
+			/* Argument 1 (vbSelectedOut): */
+			lua_pushvalue( LUA->L, 1 );
+
+			/* Argument 2 (pn): */
+			LUA->PushStack( (int) pn );
+
+			ASSERT( lua_gettop(LUA->L) == 5 ); /* vbSelectedOut, m_iLuaTable, function, arg, arg */
+
+			lua_call( LUA->L, 2, 0 ); // call function with 2 arguments and 0 results
+			ASSERT( lua_gettop(LUA->L) == 2 );
+
+			lua_pop( LUA->L, 1 ); /* pop option table */
+
+			LUA->ReadArrayFromTable( vbSelectedOut );
+			if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
+				vbSelectedOut.insert( vbSelectedOut.begin(), false );
+			
+			lua_pop( LUA->L, 1 ); /* pop vbSelectedOut table */
+
+			ASSERT( lua_gettop(LUA->L) == 0 );
+			return;
+		}
+
 	case ROW_CONFIG:
 		{
 			int iSelection = hand.opt->Get();
@@ -543,6 +665,53 @@ int ScreenOptionsMaster::ExportOption( const OptionRowDefinition &row, const Opt
 					hand.ListEntries[i].Apply( pn );
 		}
 		break;
+	case ROW_LUA:
+		{
+			ASSERT( lua_gettop(LUA->L) == 0 );
+
+			/* Evaluate the GetValue(self,array,pn) function, where array is a table
+			 * representing vbSelectedOut. */
+
+			/* Hack: the NextRow entry is never set, and should be transparent.  Remove it. */
+			vector<bool> vbSelectedCopy = vbSelected;
+			if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
+				vbSelectedCopy.erase( vbSelectedCopy.begin() );
+
+			/* Create the vbSelectedOut table. */
+			LUA->CreateTableFromArray( vbSelectedCopy );
+			ASSERT( lua_gettop(LUA->L) == 1 ); /* vbSelectedOut table */
+
+			/* Get the function to call. */
+			hand.m_LuaTable.PushSelf( LUA->L );
+			ASSERT( lua_istable( LUA->L, -1 ) );
+
+			lua_pushstring( LUA->L, "SetSelections" );
+			lua_gettable( LUA->L, -2 );
+			if( !lua_isfunction( LUA->L, -1 ) )
+				RageException::Throw( "\"%s\" \"SetSelections\" entry is not a function", row.name.c_str() );
+
+			/* Push self. */
+			hand.m_LuaTable.PushSelf( LUA->L );
+
+			/* Argument 1 (vbSelectedOut): */
+			lua_pushvalue( LUA->L, 1 );
+
+			/* Argument 2 (pn): */
+			LUA->PushStack( (int) pn );
+
+			ASSERT( lua_gettop(LUA->L) == 5 ); /* vbSelectedOut, m_iLuaTable, function, arg, arg */
+
+			lua_call( LUA->L, 2, 0 ); // call function with 3 arguments and 0 results
+			ASSERT( lua_gettop(LUA->L) == 2 );
+
+			lua_pop( LUA->L, 1 ); /* pop option table */
+			lua_pop( LUA->L, 1 ); /* pop vbSelected table */
+
+			ASSERT( lua_gettop(LUA->L) == 0 );
+
+			// XXX: allow specifying the mask
+			return 0;
+		}
 
 	case ROW_CONFIG:
 		{

@@ -3,6 +3,7 @@
 
 #include "ScreenOptions.h"
 #include "GameCommand.h"
+#include "LuaReference.h"
 
 struct ConfOption;
 
@@ -17,6 +18,7 @@ private:
 	enum OptionRowType
 	{
 		ROW_LIST, /* list of custom settings */
+		ROW_LUA, /* lua tells us what to do */
 		ROW_CONFIG,	/* global pref */
 		NUM_OPTION_ROW_TYPES
 	};
@@ -32,6 +34,9 @@ private:
 		GameCommand Default;
 		bool m_bUseModNameForIcon;
 
+		/* ROW_LUA: */
+		LuaExpression m_LuaTable;
+
 		/* ROW_CONFIG: */
 		const ConfOption *opt;
 	};
@@ -46,6 +51,7 @@ private:
 	int ExportOptionForAllPlayers( int iRow );
 	
 	static void SetList( OptionRowDefinition &row, OptionRowHandler &hand, CString param );
+	static void SetLua( OptionRowDefinition &row, OptionRowHandler &hand, const CString &sLuaFunction );
 	static void SetSteps( OptionRowDefinition &row, OptionRowHandler &hand );
 	static void SetConf( OptionRowDefinition &row, OptionRowHandler &hand, CString param );
 	static void SetCharacters( OptionRowDefinition &row, OptionRowHandler &hand );
