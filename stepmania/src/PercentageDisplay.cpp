@@ -68,12 +68,7 @@ void PercentageDisplay::Refresh()
 	CString sNumToDisplay;
 	if( !PREFSMAN->m_bDancePointsForOni )
 	{
-		int iPossibleDancePoints = GAMESTATE->m_CurStageStats.iPossibleDancePoints[m_PlayerNumber];
-		float fPercentDancePoints =  iActualDancePoints / (float)iPossibleDancePoints;
-		if( iActualDancePoints == iPossibleDancePoints )
-			fPercentDancePoints = 1;	// correct for rounding error
-		fPercentDancePoints = clamp( fPercentDancePoints, 0, 1 );
-
+		float fPercentDancePoints = GAMESTATE->m_CurStageStats.GetPercentDancePoints( m_PlayerNumber );
 		if( PERCENT_USE_REMAINDER )
 		{
 			int iPercentWhole = int(fPercentDancePoints*100);
