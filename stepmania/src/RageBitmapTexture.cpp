@@ -119,40 +119,55 @@ void RageBitmapTexture::Create( DWORD dwHints )
 	bScaleImageToTextureSize = ddii.Width > caps.MaxTextureWidth 
 						    || ddii.Height > caps.MaxTextureHeight;
 	
-
-	if( FAILED( hr = D3DXCreateTextureFromFileEx( 
-		m_pd3dDevice,				// device
-		m_sFilePath,				// soure file
-		D3DX_DEFAULT, D3DX_DEFAULT,	// width, height 
-		bCreateMipMaps ? 4 : 0,		// mip map levels
-		0,							// usage (is a render target?)
-		fmtTexture,					// our preferred texture format
-		D3DPOOL_MANAGED,			// which memory pool
-		(bScaleImageToTextureSize ? D3DX_FILTER_BOX : D3DX_FILTER_NONE) | (bDither ? D3DX_FILTER_DITHER : 0),		// filter
-		D3DX_DEFAULT | (bDither ? D3DX_FILTER_DITHER : 0),				// mip filter
-		0,							// no color key
-		&ddii,						// struct to fill with source image info
-		NULL,						// no palette
-		&m_pd3dTexture ) ) )
+	// HACK:  The stupid Savage card will report that it can hold the entire texture, 
+	//   then allocate something smaller than the dimensions we need!
+	//   after allocating the texture, make sure it's the size we expect.  If not,
+	//   load it again with scaling turned on.
+	DWORD dwExpectedWidth = ddii.Width;
+	DWORD dwExpectedHeight = ddii.Height;
+	while( 1 )
 	{
-        RageErrorHr( ssprintf("D3DXCreateTextureFromFileEx() failed for file '%s'.", m_sFilePath), hr );
+		if( FAILED( hr = D3DXCreateTextureFromFileEx( 
+			m_pd3dDevice,				// device
+			m_sFilePath,				// soure file
+			D3DX_DEFAULT, D3DX_DEFAULT,	// width, height 
+			bCreateMipMaps ? 4 : 0,		// mip map levels
+			0,							// usage (is a render target?)
+			fmtTexture,					// our preferred texture format
+			D3DPOOL_MANAGED,			// which memory pool
+			(bScaleImageToTextureSize ? D3DX_FILTER_BOX : D3DX_FILTER_NONE) | (bDither ? D3DX_FILTER_DITHER : 0),		// filter
+			D3DX_DEFAULT | (bDither ? D3DX_FILTER_DITHER : 0),				// mip filter
+			0,							// no color key
+			&ddii,						// struct to fill with source image info
+			NULL,						// no palette
+			&m_pd3dTexture ) ) )
+		{
+			RageErrorHr( ssprintf("D3DXCreateTextureFromFileEx() failed for file '%s'.", m_sFilePath), hr );
+		}
+
+		/////////////////////
+		// Save information about the texture
+		/////////////////////
+		m_uSourceWidth = ddii.Width;
+		m_uSourceHeight= ddii.Height;
+
+		D3DSURFACE_DESC ddsd;
+		if ( FAILED( hr = m_pd3dTexture->GetLevelDesc( 0, &ddsd ) ) ) 
+			RageErrorHr( "Could not get level Description of D3DX texture!", hr );
+
+		// save information about the texture
+		m_uTextureWidth		= ddsd.Width;
+		m_uTextureHeight	= ddsd.Height;
+		m_TextureFormat		= ddsd.Format;	
+
+		if( dwExpectedWidth == ddsd.Width  &&
+			dwExpectedHeight == ddsd.Height )
+			break;	// done trying to load
 	}
 
 
-	/////////////////////
-	// Save information about the texture
-	/////////////////////
-	m_uSourceWidth = ddii.Width;
-	m_uSourceHeight= ddii.Height;
 
-    D3DSURFACE_DESC ddsd;
-    if ( FAILED( hr = m_pd3dTexture->GetLevelDesc( 0, &ddsd ) ) ) 
-        RageErrorHr( "Could not get level Description of D3DX texture!", hr );
 
-    // save information about the texture
-	m_uTextureWidth		= ddsd.Width;
-	m_uTextureHeight	= ddsd.Height;
-    m_TextureFormat		= ddsd.Format;	
 
 	if( bScaleImageToTextureSize )
 	{
