@@ -596,15 +596,15 @@ void MusicWheel::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, fl
 {
 	if( USE_3D )
 	{
-		fRotationX_out = SCALE(fPosOffsetsFromMiddle,-7,+7,+PI/2.f,-PI/2.f);
+		fRotationX_out = SCALE(fPosOffsetsFromMiddle,-7,+7,-PI/2.f,+PI/2.f);
 
 //		printf( "fRotationX_out = %f\n", fRotationX_out );
 
 		float radius = 200;
 
 		fX_out = 0;
-		fY_out = -radius*sinf(fRotationX_out);
-		fZ_out = -100+radius*cosf(fRotationX_out);	// getting werid results with acosf()
+		fY_out = radius*sinf(fRotationX_out);
+		fZ_out = -100+radius*cosf(fRotationX_out);
 
 		fRotationX_out *= 180.f/PI;	// to degrees
 	}
