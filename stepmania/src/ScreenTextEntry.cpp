@@ -28,6 +28,11 @@ const float ANSWER_Y	=	CENTER_Y + 120;
 const float ANSWER_WIDTH	=	440;
 const float ANSWER_HEIGHT	=	30;
 
+
+CString ScreenTextEntry::s_sLastAnswer = "";
+bool ScreenTextEntry::s_bCancelledLast = false;
+
+
 /* XXX: Don't let the user use internal-use codepoints (those
  * that resolve to Unicode codepoints above 0xFFFF); those are
  * subject to change and shouldn't be written to .SMs.
@@ -204,9 +209,14 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 
 	SOUND->PlayOnce( THEME->GetPathToS("Common start") );
 
-	if( m_bCancelled ) {
-		if( m_pOnCancel ) m_pOnCancel();
-	} else {
+	if( m_bCancelled )
+	{
+		if( m_pOnCancel ) 
+			m_pOnCancel();
+
+	} 
+	else 
+	{
 		if( m_pOnOK )
 		{
 			CString ret = WStringToCString(m_sAnswer);
@@ -214,6 +224,9 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 			m_pOnOK( ret );
 		}
 	}
+
+	s_bCancelledLast = m_bCancelled;
+	s_sLastAnswer = m_bCancelled ? "" : WStringToCString(m_sAnswer);
 }
 
 void ScreenTextEntry::MenuBack( PlayerNumber pn )

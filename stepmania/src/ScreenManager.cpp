@@ -183,8 +183,10 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 			ASSERT(0);
 		}
 		
-		if( PROFILEMAN->IsUsingProfile((PlayerNumber)p) )
-			sText += "  " + PROFILEMAN->GetDisplayName((PlayerNumber)p);
+		Profile* pProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
+		if( pProfile )
+			sText += "  " + pProfile->m_sName;
+
 		m_textCreditInfo[p].SetText( sText );
 	}
 }

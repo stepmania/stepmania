@@ -25,6 +25,7 @@ const float QUESTION_Y	=	CENTER_Y - 60;
 const float PROMPT_X	=	CENTER_X;
 const float PROMPT_Y	=	CENTER_Y + 120;
 
+bool ScreenPrompt::s_bLastAnswer = false;
 
 ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNoPrompt, bool bDefaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData ) :
   Screen("ScreenPrompt")
@@ -180,10 +181,14 @@ void ScreenPrompt::MenuStart( PlayerNumber pn )
 	{
 		if( m_pOnYes )
 			m_pOnYes(m_pCallbackData);
-	} else {
+	}
+	else
+	{
 		if( m_pOnNo )
 			m_pOnNo(m_pCallbackData);
 	}
+
+	s_bLastAnswer = m_bAnswer;
 }
 
 void ScreenPrompt::MenuBack( PlayerNumber pn )

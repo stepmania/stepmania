@@ -18,6 +18,8 @@
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
+#include "ScreenTextEntry.h"
+#include "ScreenPrompt.h"
 
 
 enum {
@@ -37,25 +39,29 @@ OptionRow g_ProfileOptionsLines[NUM_PROFILE_OPTIONS_LINES] = {
 	OptionRow( "Rename",			true ),
 };
 
+const ScreenMessage	SM_DoneCreating		= ScreenMessage(SM_User+1);
+const ScreenMessage	SM_DoneRenaming		= ScreenMessage(SM_User+2);
+const ScreenMessage	SM_DoneDeleting		= ScreenMessage(SM_User+3);
+
 ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions( sClassName )
 {
 	LOG->Trace( "ScreenProfileOptions::ScreenProfileOptions()" );
 
 	g_ProfileOptionsLines[PO_PLAYER1].choices.clear();
 	g_ProfileOptionsLines[PO_PLAYER1].choices.push_back( "-NONE-" );
-	PROFILEMAN->GetProfileDisplayNames( g_ProfileOptionsLines[PO_PLAYER1].choices );
+	PROFILEMAN->GetMachineProfileNames( g_ProfileOptionsLines[PO_PLAYER1].choices );
 
 	g_ProfileOptionsLines[PO_PLAYER2].choices.clear();
 	g_ProfileOptionsLines[PO_PLAYER2].choices.push_back( "-NONE-" );
-	PROFILEMAN->GetProfileDisplayNames( g_ProfileOptionsLines[PO_PLAYER2].choices );
+	PROFILEMAN->GetMachineProfileNames( g_ProfileOptionsLines[PO_PLAYER2].choices );
 
 	g_ProfileOptionsLines[PO_DELETE_].choices.clear();
 	g_ProfileOptionsLines[PO_DELETE_].choices.push_back( "-NONE-" );
-	PROFILEMAN->GetProfileDisplayNames( g_ProfileOptionsLines[PO_DELETE_].choices );
+	PROFILEMAN->GetMachineProfileNames( g_ProfileOptionsLines[PO_DELETE_].choices );
 
 	g_ProfileOptionsLines[PO_RENAME_].choices.clear();
 	g_ProfileOptionsLines[PO_RENAME_].choices.push_back( "-NONE-" );
-	PROFILEMAN->GetProfileDisplayNames( g_ProfileOptionsLines[PO_RENAME_].choices );
+	PROFILEMAN->GetMachineProfileNames( g_ProfileOptionsLines[PO_RENAME_].choices );
 
 	Init( 
 		INPUTMODE_TOGETHER, 
@@ -70,7 +76,7 @@ ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions
 void ScreenProfileOptions::ImportOptions()
 {
 	vector<CString> vsProfiles;
-	PROFILEMAN->GetProfiles( vsProfiles );
+	PROFILEMAN->GetMachineProfileIDs( vsProfiles );
 
 	CStringArray::iterator iter;
 
@@ -84,7 +90,7 @@ void ScreenProfileOptions::ImportOptions()
 	iter = find( 
 		vsProfiles.begin(),
 		vsProfiles.end(),
-		PREFSMAN->m_sDefaultProfile[PO_PLAYER2] );
+		PREFSMAN->m_sDefaultProfile[PLAYER_2] );
 	if( iter != vsProfiles.end() )
 		m_iSelectedOption[0][PO_PLAYER2] = iter - vsProfiles.begin() + 1;
 }
@@ -92,7 +98,7 @@ void ScreenProfileOptions::ImportOptions()
 void ScreenProfileOptions::ExportOptions()
 {
 	vector<CString> vsProfiles;
-	PROFILEMAN->GetProfiles( vsProfiles );
+	PROFILEMAN->GetMachineProfileIDs( vsProfiles );
 
 	if( m_iSelectedOption[0][PO_PLAYER1] > 0 )
 		PREFSMAN->m_sDefaultProfile[PLAYER_1] = vsProfiles[m_iSelectedOption[0][PO_PLAYER1]-1];
@@ -110,49 +116,100 @@ void ScreenProfileOptions::GoToPrevState()
 	SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 }
 
-void CreateProfile( CString sDisplayName )
-{
-	PROFILEMAN->CreateProfile( sDisplayName );
-	SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	
-}
-
 void ScreenProfileOptions::GoToNextState()
 {
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	GoToPrevState();
 }
 
+void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
+{
+	CString sProfileID = GetSelectedProfileID();
+	CString sName = GetSelectedProfileName();
+
+	switch( SM )
+	{
+	case SM_DoneCreating:
+		if( !ScreenTextEntry::s_bCancelledLast )
+		{
+			CString sNewProfileID = ScreenTextEntry::s_sLastAnswer;
+			bool bResult = PROFILEMAN->CreateMachineProfile( sNewProfileID );
+			if( bResult )
+				SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	// reload
+			else
+				SCREENMAN->Prompt( SM_None, ssprintf("Error creating profile '%s'.", sNewProfileID.c_str()) );
+		}
+		break;
+	case SM_DoneRenaming:
+		if( !ScreenTextEntry::s_bCancelledLast )
+		{
+			CString sNewName = ScreenTextEntry::s_sLastAnswer;
+			bool bResult = PROFILEMAN->RenameMachineProfile( sProfileID, sNewName );
+			if( bResult )
+				SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	// reload
+			else
+				SCREENMAN->Prompt( SM_None, ssprintf("Error renaming profile %s '%s'\nto '%s'.", sProfileID.c_str(), sName.c_str(), sNewName.c_str()) );
+		}
+		break;
+	case SM_DoneDeleting:
+		if( ScreenPrompt::s_bLastAnswer )
+		{
+			bool bResult = PROFILEMAN->DeleteMachineProfile( sProfileID );
+			if( bResult )
+				SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	// reload
+			else
+				SCREENMAN->Prompt( SM_None, ssprintf("Error deleting profile %s '%s'.", sName.c_str(), sProfileID.c_str()) );
+		}
+		break;
+	}
+
+	ScreenOptions::HandleScreenMessage( SM );
+}
+
+
 void ScreenProfileOptions::MenuStart( PlayerNumber pn )
 {
-	vector<CString> vsProfiles;
-	PROFILEMAN->GetProfiles( vsProfiles );
+	CString sProfileID = GetSelectedProfileID();
+	CString sName = GetSelectedProfileName();
 
 	switch( GetCurrentRow() )
 	{
 	case PO_CREATE_NEW:
-		SCREENMAN->TextEntry( SM_None, "Enter a profile name", "", CreateProfile );
-		return;
+		SCREENMAN->TextEntry( SM_DoneCreating, "Enter a profile name", "", NULL );
+		break;
 	case PO_DELETE_:
-		{
-			CString sProfile;
-			if( m_iSelectedOption[0][PO_DELETE_] > 0 )
-				sProfile = vsProfiles[m_iSelectedOption[0][PO_DELETE_]-1];
-			else
-				sProfile = "";
-		}
+		if( sProfileID=="" )
+			SOUND->PlayOnce( THEME->GetPathToS("common invalid") );
+		else
+			SCREENMAN->Prompt( SM_DoneDeleting, ssprintf("Delete profile %s '%s'?",sProfileID.c_str(),sName.c_str()), true );
 		break;
 	case PO_RENAME_:
-		{
-			CString sProfile;
-			if( m_iSelectedOption[0][PO_RENAME_] > 0 )
-				sProfile = vsProfiles[m_iSelectedOption[0][PO_RENAME_]-1];
-			else
-				sProfile = "";
-
-//			SCREENMAN->TextEntry( SM_None, "Enter a profile name", "NewProfile", SetProfile );
-		}
+		if( sProfileID=="" )
+			SOUND->PlayOnce( THEME->GetPathToS("common invalid") );
+		else
+			SCREENMAN->TextEntry( SM_DoneRenaming, ssprintf("Rename profile %s '%s'",sProfileID.c_str(),sName.c_str()), sName, NULL );
 		break;
 	default:
 		ScreenOptions::MenuStart( pn );
 	}
 }
+
+CString ScreenProfileOptions::GetSelectedProfileID()
+{
+	vector<CString> vsProfiles;
+	PROFILEMAN->GetMachineProfileIDs( vsProfiles );
+
+	if( m_iSelectedOption[0][m_iCurrentRow[0]]==0 )
+		return "";
+	else
+		return vsProfiles[m_iSelectedOption[0][m_iCurrentRow[0]]-1];
+}
+
+CString ScreenProfileOptions::GetSelectedProfileName()
+{
+	if( m_iSelectedOption[0][m_iCurrentRow[0]]==0 )
+		return "";
+	else
+		return g_ProfileOptionsLines[PO_PLAYER1].choices[ m_iSelectedOption[0][m_iCurrentRow[0]] ];
+}
+

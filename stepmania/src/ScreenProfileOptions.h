@@ -16,6 +16,8 @@ class ScreenProfileOptions : public ScreenOptions
 public:
 	ScreenProfileOptions( CString sName );
 
+	virtual void HandleScreenMessage( const ScreenMessage SM );
+
 	virtual void MenuStart( PlayerNumber pn );
 
 private:
@@ -24,5 +26,8 @@ private:
 
 	void GoToNextState();
 	void GoToPrevState();
+
+	CString GetSelectedProfileID();
+	CString GetSelectedProfileName();
 };
 

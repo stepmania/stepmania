@@ -28,6 +28,8 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
+	static bool s_bLastAnswer;
+
 protected:
 	void MenuLeft( PlayerNumber pn );
 	void MenuRight( PlayerNumber pn );

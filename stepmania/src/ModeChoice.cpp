@@ -251,7 +251,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 	//
 	if( m_style != STYLE_INVALID )
 	{
-		PROFILEMAN->TryLoadProfile( pn );
+		PROFILEMAN->LoadDefaultProfileFromMachine( pn );
 	}
 }
 

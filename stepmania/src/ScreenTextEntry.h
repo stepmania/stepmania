@@ -29,6 +29,9 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
+	static CString s_sLastAnswer;
+	static bool s_bCancelledLast;
+
 protected:
 	virtual void MenuLeft( PlayerNumber pn );
 	virtual void MenuRight( PlayerNumber pn );
@@ -37,7 +40,7 @@ protected:
 
 	void UpdateText();
 
-	BGAnimation					m_Background;
+	BGAnimation		m_Background;
 	BitmapText		m_textQuestion;
 	Quad			m_rectAnswerBox;
 	wstring			m_sAnswer;

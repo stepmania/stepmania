@@ -95,7 +95,9 @@ protected:
 	MenuElements	m_Menu;
 	OptionRow*		m_OptionRow;
 
+protected:	// derived classes need access to these
 	int m_iSelectedOption[NUM_PLAYERS][MAX_OPTION_LINES];
+	int m_iCurrentRow[NUM_PLAYERS];
 
 private:
 	InputMode		m_InputMode;
@@ -115,7 +117,6 @@ private:
 	bool m_bRowIsHidden[MAX_OPTION_LINES];
 	float m_fRowY[MAX_OPTION_LINES];
 
-	int m_iCurrentRow[NUM_PLAYERS];
 
 	OptionsCursor	m_Underline[NUM_PLAYERS][MAX_OPTION_LINES];
 	OptionIcon		m_OptionIcons[NUM_PLAYERS][MAX_OPTION_LINES];
