@@ -18,7 +18,7 @@
 #include "RageException.h"
 #include "RageTimer.h"
 #include "NoteDisplay.h"
-#include "Song.h"
+#include "song.h"
 #include <math.h>
 
 

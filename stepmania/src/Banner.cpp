@@ -15,7 +15,7 @@
 #include "RageBitmapTexture.h"
 #include "ThemeManager.h"
 #include "RageUtil.h"
-#include "Song.h"
+#include "song.h"
 #include "RageTextureManager.h"
 
 RageTextureID Banner::BannerTex( RageTextureID ID )

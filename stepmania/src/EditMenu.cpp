@@ -17,7 +17,7 @@
 #include "ThemeManager.h"
 #include "GameManager.h"
 #include "Notes.h"
-#include "Song.h"
+#include "song.h"
 
 //
 // Defines specific to EditMenu

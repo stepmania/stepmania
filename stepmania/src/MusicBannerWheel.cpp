@@ -18,7 +18,7 @@
 #include "ThemeManager.h"
 #include "RageSoundManager.h"
 #include "StyleDef.h"
-#include "Song.h"
+#include "song.h"
 
 #define BANNERSPACING 200
 #define MAXSONGSINBUFFER 5
