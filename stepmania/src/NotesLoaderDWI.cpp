@@ -104,7 +104,7 @@ bool DWILoader::LoadFromDWITokens(
 	CString sStepData2,
 	Steps &out)
 {
-	LOG->Trace( "Steps::LoadFromDWITokens()" );
+	CHECKPOINT_M( "DWILoader::LoadFromDWITokens()" );
 
 	out.m_StepsType = STEPS_TYPE_INVALID;
 
