@@ -1092,10 +1092,6 @@ int main(int argc, char* argv[])
 	MESSAGEMAN	= new MessageManager;
 	STATSMAN	= new StatsManager;
 
-	// UGLY: Now that all global singletons are constructed so that they, let them
-	// all register with Lua.
-	LUA->RegisterTypes();
-
 	SAFE_DELETE( loading_window );		// destroy this before init'ing Display
     
 	DISPLAY = CreateDisplay();
@@ -1135,6 +1131,10 @@ int main(int argc, char* argv[])
 	// These things depend on the TextureManager, so do them after!
 	FONT		= new FontManager;
 	SCREENMAN	= new ScreenManager;
+
+	// UGLY: Now that all global singletons are constructed so that they, let them
+	// all register with Lua.
+	LUA->RegisterTypes();
 
 	/* People may want to do something else while songs are loading, so do
 	 * this after loading songs. */
