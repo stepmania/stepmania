@@ -245,6 +245,7 @@ public:
 	bool SaveScreenshot( CString sPath, GraphicsFileFormat format );
 
 	virtual CString GetTextureDiagnostics( unsigned id ) const { return ""; }
+	virtual RageSurface* CreateScreenshot() = 0;	// allocates a surface.  Caller must delete it.
 
 protected:
 	virtual void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
@@ -260,7 +261,6 @@ protected:
 	// bNewDeviceOut is set true if a new device was created and textures
 	// need to be reloaded.
 	virtual CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut ) = 0;
-	virtual RageSurface* CreateScreenshot() = 0;	// allocates a surface.  Caller must delete it.
 
 	virtual void SetViewport(int shift_left, int shift_down) = 0;
 
