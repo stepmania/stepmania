@@ -5,6 +5,12 @@
 <xsl:import href="Common.xsl"/>
 	
 
+	<!-- Global Variables -->
+	<xsl:variable name="Stats" select="/Stats" />
+
+
+
+
 	<!-- Main Template -->
 
 	<xsl:template match="/Stats">
@@ -344,12 +350,10 @@
 					<xsl:with-param name="text">
 						<xsl:call-template name="PrintVerticalDataTable">
 							<xsl:with-param name="text">
-
 								<xsl:for-each select="$Catalog/*/*[name(.)=$Type]">
-								<xsl:sort select="sum(*/HighScoreList/NumTimesPlayed)" data-type="number" order="descending"/>
 									<xsl:variable name="Dir" select="@Dir" />
 									<xsl:variable name="Path" select="@Path" />
-									<xsl:variable name="NumPlays" select="sum(/Stats/*/*[@Dir=$Dir or @Path=$Path]/*/HighScoreList/NumTimesPlayed)" />
+									<xsl:variable name="NumPlays" select="sum($Stats/*/*[@Dir=$Dir or @Path=$Path]/*/HighScoreList/NumTimesPlayed)" />
 									<xsl:if test="$NumPlays = 0">
 										<xsl:call-template name="PrintVerticalDataRow">
 											<xsl:with-param name="name">
@@ -558,25 +562,25 @@
 						<xsl:with-param name="text">
 
 
-							<xsl:variable name="ActualO" select="sum(/Stats/*/*[name()=$ScoresName]/*/*[@StepsType=$StepsType]/HighScoreList/HighScore[1]/PercentDP)" />
+							<xsl:variable name="ActualO" select="sum($Stats/*[name()=$ScoresName]/*/*[@StepsType=$StepsType]/HighScoreList/HighScore[1]/PercentDP)" />
 							<xsl:variable name="PossibleO" select="count($Catalog/*/*[name()=$Type]/*[@StepsType=$StepsType])" />
 							
 
 							<xsl:element name="table" use-attribute-sets="EntityTableAttr">
 								<tr>
 									<td>
-										<xsl:if test="$PossibleO = 0">
-											<xsl:call-template name="PrintPercentage">
-												<xsl:with-param name="cals" select="0" />
-											</xsl:call-template>
-										</xsl:if>
-										<xsl:if test="$PossibleO != 0">
-											<font size="+2">
+										<font size="+2">
+											<xsl:if test="$PossibleO = 0">
+												<xsl:call-template name="PrintPercentage">
+													<xsl:with-param name="cals" select="0" />
+												</xsl:call-template>
+											</xsl:if>
+											<xsl:if test="$PossibleO != 0">
 												<xsl:call-template name="PrintPercentage">
 													<xsl:with-param name="cals" select="$ActualO div $PossibleO" />
 												</xsl:call-template>
-											</font>
-										</xsl:if>
+											</xsl:if>
+										</font>
 									</td>
 								</tr>
 							</xsl:element>
@@ -604,7 +608,7 @@
 									<td>Actual</td>
 									<xsl:for-each select="$Catalog/Types/*[name()=$DifficultyName]">
 										<xsl:variable name="Difficulty" select="." />
-										<xsl:variable name="Actual" select="sum(/Stats/*[name()=$ScoresName]/*/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]/HighScoreList/HighScore[1]/PercentDP)" />
+										<xsl:variable name="Actual" select="sum($Stats/*[name()=$ScoresName]/*/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]/HighScoreList/HighScore[1]/PercentDP)" />
 										<xsl:variable name="Possible" select="count($Catalog/*/*[name()=$Type]/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType])" />
 										
 										<td>
@@ -622,7 +626,7 @@
 									<td>Possible</td>
 									<xsl:for-each select="$Catalog/Types/*[name()=$DifficultyName]">
 										<xsl:variable name="Difficulty" select="." />
-										<xsl:variable name="Actual" select="sum(/Stats/*[name()=$ScoresName]/*/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]/HighScoreList/HighScore[1]/PercentDP)" />
+										<xsl:variable name="Actual" select="sum($Stats/*[name()=$ScoresName]/*/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]/HighScoreList/HighScore[1]/PercentDP)" />
 										<xsl:variable name="Possible" select="count($Catalog/*/*[name()=$Type]/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType])" />
 										
 										<td>
@@ -640,7 +644,7 @@
 									<td>Percentage</td>
 									<xsl:for-each select="$Catalog/Types/*[name()=$DifficultyName]">
 										<xsl:variable name="Difficulty" select="." />
-										<xsl:variable name="Actual" select="sum(/Stats/*[name()=$ScoresName]/*/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]/HighScoreList/HighScore[1]/PercentDP)" />
+										<xsl:variable name="Actual" select="sum($Stats/*[name()=$ScoresName]/*/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]/HighScoreList/HighScore[1]/PercentDP)" />
 										<xsl:variable name="Possible" select="count($Catalog/*/*[name()=$Type]/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType])" />
 										
 										<td>
@@ -691,7 +695,7 @@
 										<td><xsl:apply-templates select="@Dir | @Path"/></td>
 										<xsl:for-each select="$Catalog/Types/*[name()=$DifficultyName]">
 											<xsl:variable name="Difficulty" select="." />
-											<xsl:variable name="StatsSong" select="/Stats/*/*[@Dir=$Dir or @Path=$Path]/Steps[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]" />
+											<xsl:variable name="StatsSong" select="$Stats/*/*[@Dir=$Dir or @Path=$Path]/Steps[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]" />
 											<xsl:variable name="CatalogSong" select="$Catalog/*/*[@Dir=$Dir or @Path=$Path]/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]" />
 											<td>
 												<xsl:if test="count($CatalogSong) &gt; 0">
