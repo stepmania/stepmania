@@ -214,12 +214,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenEz2SelectPlayer.h">
 			</File>
 			<File
-				RelativePath="ScreenEz2SelectStyle.cpp">
-			</File>
-			<File
-				RelativePath="ScreenEz2SelectStyle.h">
-			</File>
-			<File
 				RelativePath="ScreenGameOver.cpp">
 			</File>
 			<File
@@ -323,6 +317,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenSelectGroup.h">
+			</File>
+			<File
+				RelativePath="ScreenSelectMode.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSelectMode.h">
 			</File>
 			<File
 				RelativePath="ScreenSelectMusic.cpp">

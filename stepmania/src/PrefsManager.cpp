@@ -169,15 +169,15 @@ void PrefsManager::ReadGamePrefsFromDisk()
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	IniFile ini;
-	ini.SetPath( sGameName + "Prefs.ini" );
+	ini.SetPath( "StepMania.ini" );
 	ini.ReadFile();	// it's OK if this fails
 
 	CString sAnnouncer = sGameName, sTheme = sGameName, sNoteSkin = sGameName;
 
 	// if these calls fail, the three strings will keep the initial values set above.
-	ini.GetValue( "Options", "Announcer",		sAnnouncer );
-	ini.GetValue( "Options", "Theme",			sTheme );
-	ini.GetValue( "Options", "NoteSkin",		sNoteSkin );
+	ini.GetValue( sGameName, "Announcer",		sAnnouncer );
+	ini.GetValue( sGameName, "Theme",			sTheme );
+	ini.GetValue( sGameName, "NoteSkin",		sNoteSkin );
 
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
@@ -192,11 +192,12 @@ void PrefsManager::SaveGamePrefsToDisk()
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	IniFile ini;
-	ini.SetPath( sGameName + "Prefs.ini" );
+	ini.SetPath( "StepMania.ini" );
+	ini.ReadFile();	// it's OK if this fails
 
-	ini.SetValue( "Options", "Announcer",		ANNOUNCER->GetCurAnnouncerName() );
-	ini.SetValue( "Options", "Theme",			THEME->GetCurThemeName() );
-	ini.SetValue( "Options", "NoteSkin",		GAMEMAN->GetCurNoteSkin() );
+	ini.SetValue( sGameName, "Announcer",		ANNOUNCER->GetCurAnnouncerName() );
+	ini.SetValue( sGameName, "Theme",			THEME->GetCurThemeName() );
+	ini.SetValue( sGameName, "NoteSkin",		GAMEMAN->GetCurNoteSkin() );
 
 	ini.WriteFile();
 }

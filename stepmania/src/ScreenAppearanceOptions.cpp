@@ -153,6 +153,9 @@ void ScreenAppearanceOptions::ImportOptions()
 
 void ScreenAppearanceOptions::ExportOptions()
 {
+	PREFSMAN->SaveGamePrefsToDisk();
+	PREFSMAN->SaveGlobalPrefsToDisk();
+
 	int iSelectedAnnouncer = m_iSelectedOption[0][AO_ANNOUNCER];
 	CString sNewAnnouncer = m_OptionRowData[AO_ANNOUNCER].szOptionsText[iSelectedAnnouncer];
 	if( iSelectedAnnouncer == 0 )

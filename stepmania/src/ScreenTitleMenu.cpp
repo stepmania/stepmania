@@ -84,15 +84,9 @@ ScreenTitleMenu::ScreenTitleMenu()
 	{
 		CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 		if( THEME->DoesThemeExist( sGameName ) )
-		{
 			THEME->SwitchTheme( sGameName );
-		}
 		else
-		{
-			CStringArray asThemeNames;
-			THEME->GetThemeNamesForCurGame( asThemeNames );
-			THEME->SwitchTheme( asThemeNames[0] );
-		}
+			THEME->SwitchTheme( "default" );
 	}
 
 

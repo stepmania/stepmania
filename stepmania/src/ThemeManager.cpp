@@ -86,9 +86,7 @@ bool ThemeManager::DoesThemeExist( CString sThemeName )
 
 void ThemeManager::SwitchTheme( CString sThemeName )
 {
-	if( 0==stricmp(BASE_THEME_NAME, sThemeName) )
-		m_sCurThemeName = "";	// can't select the base theme
-	else if( !DoesThemeExist(sThemeName) )
+	if( !DoesThemeExist(sThemeName) )
 		m_sCurThemeName = BASE_THEME_NAME;
 	else
 		m_sCurThemeName = sThemeName;

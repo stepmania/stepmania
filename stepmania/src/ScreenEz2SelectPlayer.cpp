@@ -91,7 +91,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 }
 
 /************************************
-~ScreenEz2SelectStyle (Destructor)
+~ScreenSelectMode (Destructor)
 Desc: Writes line to log when screen
 is terminated.
 ************************************/

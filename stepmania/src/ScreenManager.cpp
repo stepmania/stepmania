@@ -160,7 +160,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenEditMenu.h"
 #include "ScreenEvaluation.h"
 #include "ScreenEz2SelectPlayer.h"
-#include "ScreenEz2SelectStyle.h"
+#include "ScreenSelectMode.h"
 #include "ScreenGameOver.h"
 #include "ScreenGameplay.h"
 #include "ScreenGraphicOptions.h"
@@ -197,7 +197,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenEvaluation") )		return new ScreenEvaluation;
 	else if( 0==stricmp(sClassName, "ScreenFinalEvaluation") )	return new ScreenFinalEvaluation;
 	else if( 0==stricmp(sClassName, "ScreenEz2SelectPlayer") )	return new ScreenEz2SelectPlayer;
-	else if( 0==stricmp(sClassName, "ScreenEz2SelectStyle") )	return new ScreenEz2SelectStyle;
+	else if( 0==stricmp(sClassName, "ScreenSelectMode") )	return new ScreenSelectMode;
 	else if( 0==stricmp(sClassName, "ScreenGameOver") )			return new ScreenGameOver;
 	else if( 0==stricmp(sClassName, "ScreenGameplay") )			return new ScreenGameplay;
 	else if( 0==stricmp(sClassName, "ScreenGraphicOptions") )	return new ScreenGraphicOptions;
