@@ -46,7 +46,6 @@ public:
 //	virtual CString RealPath() const { return parent->GetPath(); }
 	
 	virtual int Seek( int offset );
-	virtual int SeekCur( int offset );
 	virtual int GetFileSize();
 	virtual CString GetDisplayPath() const { return parent.GetRealPath(); }
 

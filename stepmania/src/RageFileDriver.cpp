@@ -37,11 +37,6 @@ int RageFileObj::Seek( int offset )
 	return parent.Tell();
 }
 
-int RageFileObj::SeekCur( int offset )
-{
-	return Seek( parent.Tell() + offset );
-}
-
 int RageFileObj::GetFileSize()
 {
 	int OldPos = parent.Tell();
