@@ -275,11 +275,15 @@ void RageTextureManager::GarbageCollect( GCType type )
 
 void RageTextureManager::ReloadAll()
 {
+	TEXTUREMAN->DisableOddDimensionWarning();
+
 	for( std::map<RageTextureID, RageTexture*>::iterator i = m_mapPathToTexture.begin();
 		i != m_mapPathToTexture.end(); ++i)
 	{
 		i->second->Reload();
 	}
+
+	TEXTUREMAN->EnableOddDimensionWarning();
 }
 
 /* In some cases, changing the display mode will reset the rendering context,
