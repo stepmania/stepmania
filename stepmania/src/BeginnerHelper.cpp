@@ -28,6 +28,7 @@ BeginnerHelper::BeginnerHelper()
 {
 	LOG->Trace("BeginnerHelper::BeginnerHelper()");
 	m_bFlashEnabled = false;
+	m_bInitialized = false;
 	this->AddChild(&m_sBackground);
 	this->AddChild(&m_sFlash);
 }
@@ -66,8 +67,11 @@ void BeginnerHelper::SetFlash( CString sFilename, float fX, float fY )
 	m_sFlash.SetY(fY);
 }
 
-void BeginnerHelper::Initialize( int iDancePadType )
+void BeginnerHelper::Initialize( int iDancePadType, NoteData *pNotes )
 {
+	// Copy the note data from our caller.
+	m_NoteData.CopyAll(pNotes);
+
 	// Load the StepCircle, Background, and flash animation
 	m_sBackground.Load( THEME->GetPathToG("BeginnerHelper background") );
 	m_sBackground.SetXY( CENTER_X, CENTER_Y);
@@ -130,6 +134,8 @@ void BeginnerHelper::Initialize( int iDancePadType )
 			this->AddChild( &m_mDancer[pl] );
 		}
 	}
+
+	m_bInitialized = true;
 }
 
 void BeginnerHelper::FlashOnce()
@@ -143,6 +149,9 @@ void BeginnerHelper::FlashOnce()
 
 void BeginnerHelper::DrawPrimitives()
 {
+	if(!m_bInitialized)
+		return;
+
 	m_sBackground.Draw();
 	m_sFlash.Draw();
 
@@ -202,10 +211,34 @@ void BeginnerHelper::Step( int CSTEP )
 
 void BeginnerHelper::Update( float fDeltaTime )
 {
-	m_sFlash.Update(fDeltaTime);
+	if(!m_bInitialized)
+		return;
+
+	float beat = fDeltaTime * GAMESTATE->m_fCurBPS;
+
+	m_sFlash.Update( beat );
 	for( int scu=0; scu<NUM_PLAYERS*2; scu++ )
-		m_sStepCircle[scu].Update(fDeltaTime);
+		m_sStepCircle[scu].Update( beat );
 
 	for( int pu=0; pu<NUM_PLAYERS; pu++ )
-		m_mDancer[pu].Update( fDeltaTime );	//Update dancers
+		m_mDancer[pu].Update( beat );	//Update dancers
+
+	int iStep = 0;
+	if( (m_NoteData.IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.1f)) ) ) )
+		FlashOnce();
+	if((m_NoteData.IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.45f)))))
+	{
+		for( int k=0; k<m_NoteData.GetNumTracks(); k++ )
+			if( m_NoteData.GetTapNote(k, BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.45f)) ) == TAP_TAP )
+			{
+				switch(k)
+				{
+				case 0: iStep += 6; break;
+				case 1: iStep += 3; break;
+				case 2: iStep += 8; break;
+				case 3: iStep += 4; break;
+				};
+			}
+		Step( iStep );
+	}
 }

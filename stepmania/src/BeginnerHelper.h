@@ -6,6 +6,7 @@
 #include "Character.h"
 #include "Sprite.h"
 #include "PlayerNumber.h"
+#include "NoteData.h"
 
 class BeginnerHelper : public ActorFrame
 {
@@ -26,7 +27,7 @@ public:
 	ActorFrame	m_afDancerSuite;	// So we can easily rotate or whatever without disturbing the Background.
 
 	void FlashOnce();
-	void Initialize( int iDancePadType );
+	void Initialize( int iDancePadType, NoteData *pNotes );
 	void SetFlash(CString sFilename, float fX, float fY);
 	void ShowStepCircle( int CSTEP );
 	void Step( int CSTEP );
@@ -37,6 +38,7 @@ public:
 	virtual void DrawPrimitives();
 
 protected:
+	NoteData m_NoteData;
 	Model m_mDancer[NUM_PLAYERS];
 	Model m_mDancePad;
 	Sprite	m_sFlash;
@@ -44,6 +46,7 @@ protected:
 	Sprite	m_sStepCircle[NUM_PLAYERS*2];	// Need two for each player during jumps
 
 	int	iDancePadType;  // 0=none, 1=single, 2=double || This entire class only uses 1 pad.
+	bool m_bInitialized;
 	bool m_bFlashEnabled;
 };
 #endif

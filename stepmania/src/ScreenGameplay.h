@@ -187,7 +187,6 @@ protected:
 	RageSound		m_soundMusic;
 
 	BeginnerHelper	m_BeginnerHelper;
-	int				m_iPOB;	// Number of any player on Beginner.. Used for step-sensing
 };
 
 

@@ -777,19 +777,19 @@ void ScreenGameplay::LoadNextSong()
 	
 	
 	// Beginner steps are always the same on both players.. Just get the # of 1 player that's using the Beginner steps, and go on.
-	m_iPOB = -1;
+	int pn = -1;
 	for( int pb=0; pb<NUM_PLAYERS; pb++ )
 		if( GAMESTATE->IsPlayerEnabled(pb) && GAMESTATE->m_PreferredDifficulty[pb] == DIFFICULTY_BEGINNER )
-			m_iPOB = pb;
+			pn = pb;
 
 	/* TODO: fall back on m_Background if nobody is on beginner. */
-	if( PREFSMAN->m_bShowBeginnerHelper && m_iPOB != -1)
+	if( PREFSMAN->m_bShowBeginnerHelper && pn != -1)
 	{
 		m_Background.Unload();	// BeginnerHelper has it's own BG control.
 		m_Background.StopAnimating();
 		
 		//m_BeginnerHelper.m_bEnabled = true;	// Not yet implemented
-		m_BeginnerHelper.Initialize( 2 );	// Init for doubles
+		m_BeginnerHelper.Initialize( 2, &m_Player[pn] );	// Init for doubles
 		m_BeginnerHelper.SetX( CENTER_X );
 		m_BeginnerHelper.SetY( CENTER_Y );
 	}
@@ -983,37 +983,12 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
 	int pn;
-	/* Why *GAMESTATE->m_fCurBPS?  Update() functions are usually seconds; this will
-	 * make time units within BeginnerHelper actors odd. */
-	m_BeginnerHelper.Update(fDeltaTime*GAMESTATE->m_fCurBPS);
+	m_BeginnerHelper.Update(fDeltaTime);
 	
 	switch( m_DancingState )
 	{
 	case STATE_DANCING:
-			// Check to see what we animate on this one
-		/* tip: Store a NoteData inside BeginnerHelper, Load it above and handle all of this
-		 * within BeginnerHelper::Update. */
-		if( PREFSMAN->m_bShowBeginnerHelper && m_iPOB != -1)
-		{
-			int iStep = 0;
-			if( (m_Player[m_iPOB].IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.1f)) ) ) )
-				m_BeginnerHelper.FlashOnce();
-			if((m_Player[m_iPOB].IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.45f)))))
-			{
-				for( int k=0; k<m_Player[m_iPOB].GetNumTracks(); k++ )
-					if( m_Player[m_iPOB].GetTapNote(k, BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.45f)) ) == TAP_TAP )
-					{
-						switch(k)
-						{
-						case 0: iStep += 6; break;
-						case 1: iStep += 3; break;
-						case 2: iStep += 8; break;
-						case 3: iStep += 4; break;
-						};
-					}
-				m_BeginnerHelper.Step( iStep );
-			}
-		}
+		// Check to see what we animate on this one
 		// -------------------------------------------
 
 
