@@ -178,7 +178,7 @@ void ScreenAppearanceOptions::ImportOptions()
 
 void ScreenAppearanceOptions::ExportOptions()
 {
-	PREFSMAN->SaveGamePrefsToDisk();
+	SaveGamePrefsToDisk();
 	PREFSMAN->SaveGlobalPrefsToDisk();
 
 	int iSelectedAnnouncer = m_iSelectedOption[0][AO_ANNOUNCER];
@@ -225,7 +225,7 @@ void ScreenAppearanceOptions::ExportOptions()
 	(int&)PREFSMAN->m_iCourseSortOrder			=   m_iSelectedOption[0][AO_COURSE_SORT];
 	PREFSMAN->m_bMoveRandomToEnd				= !!m_iSelectedOption[0][AO_COURSE_MOVE_RANDOM];
 
-	PREFSMAN->SaveGamePrefsToDisk();
+	SaveGamePrefsToDisk();
 	PREFSMAN->SaveGlobalPrefsToDisk();
 }
 
@@ -236,6 +236,6 @@ void ScreenAppearanceOptions::GoToPrevState()
 
 void ScreenAppearanceOptions::GoToNextState()
 {
-	PREFSMAN->SaveGamePrefsToDisk();
+	SaveGamePrefsToDisk();
 	GoToPrevState();
 }

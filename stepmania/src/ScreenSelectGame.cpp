@@ -80,7 +80,7 @@ void ScreenSelectGame::ExportOptions()
 	LOG->Trace("ScreenSelectGame::ExportOptions()");
 
 	INPUTMAPPER->SaveMappingsToDisk();	// save mappings before switching the game
-	PREFSMAN->SaveGamePrefsToDisk();
+	SaveGamePrefsToDisk();
 
 	// Switch the current style to the frist style of the selected game
 	int iSelection = m_iSelectedOption[0][SG_GAME];
@@ -90,7 +90,7 @@ void ScreenSelectGame::ExportOptions()
 	Game game = aGames[iSelection];
 
 	GAMESTATE->m_CurGame = game;
-	PREFSMAN->ReadGamePrefsFromDisk();
+	ReadGamePrefsFromDisk();
 	INPUTMAPPER->ReadMappingsFromDisk();
 }
 
