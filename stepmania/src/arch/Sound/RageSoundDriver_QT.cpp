@@ -24,7 +24,7 @@ const unsigned samples = 4096;
 const unsigned freq = 44100;
 const unsigned buffersize = samples*samplesize/8;
 const unsigned SndCommand_qLength = 2;
-const unsigned initialQTSoundChannels = 8;
+const unsigned initialQTSoundChannels = 1;
 
 #pragma options align=power
 struct channelInfo {
@@ -73,7 +73,7 @@ RageSound_QT::RageSound_QT() {
 		info->buffer[0] = new Uint8[buffersize];
 		info->buffer[1] = new Uint8[buffersize];
 		info->channel = new SndChannel;
-		info->channel->userInfo = reinterpret_cast<long>(this);
+		info->channel->userInfo = reinterpret_cast<long>(info);
 		info->channel->qLength = SndCommand_qLength;
 		info->header.numChannels = channels;
 		info->header.sampleSize = samplesize / channels;
@@ -151,6 +151,7 @@ void RageSound_QT::GetData(SndChannelPtr chan, SndCommand *cmd_passed) {
 		cmd.cmd = bufferCmd;
 		cmd.param1 = 0;
 		cmd.param2 = reinterpret_cast<long>(&info->header);
+		LOG->Trace("bufferCmd");
 		err = SndDoCommand(chan, &cmd, false);
 		if (err != noErr)
 			goto bail;
@@ -179,6 +180,7 @@ void RageSound_QT::GetData(SndChannelPtr chan, SndCommand *cmd_passed) {
 	if (cmd_passed) {
 		cmd.cmd = callBackCmd;
 		cmd.param2 = play_me;
+		LOG->Trace("callBackCmd");
 		err = SndDoCommand(chan, &cmd, false);
 		if (err != noErr)
 			goto bail;
@@ -232,7 +234,9 @@ void RageSound_QT::StartMixing(RageSound *snd) {
 	cmd.cmd = callBackCmd;
 	cmd.param1 = 0;
 	cmd.param2 = !info->fill_me;
-	SndDoCommand(info->channel, &cmd, 0); /* command queue is empty */
+	OSErr err = SndDoCommand(info->channel, &cmd, 0); /* command queue is empty */
+	if (err != noErr)
+        RageException::Throw("Couldn't start the callback");
 }
 
 void RageSound_QT::StopMixing(RageSound *snd) {
