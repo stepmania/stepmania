@@ -88,8 +88,6 @@ void Banner::SetScrolling( bool bScroll, float Percent)
 
 void Banner::LoadFromSong( Song* pSong )		// NULL means no song
 {
-	Sprite::EnableShadow( false );
-
 	if( pSong == NULL )					LoadFallback();
 	else if( pSong->HasBanner() )		Load( pSong->GetBannerPath() );
 	else								LoadFallback();

@@ -38,9 +38,7 @@ public:
 
 	CString	m_sAttacks[NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
 
-	CString GetNormalHeadPath();
-	CString GetHappyHeadPath();
-	CString GetAngryHeadPath();
+	CString GetHeadPath();
 };
 
 

@@ -14,17 +14,35 @@
 #include "GameState.h"
 
 
+const float METER_WIDTH = 550;
+
+const float FACE_X[NUM_PLAYERS] = { -300, +300 };
+const float FACE_Y[NUM_PLAYERS] = { 0, 0 };
+
+
 CombinedLifeMeterTug::CombinedLifeMeterTug() 
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_Stream[p].Load( THEME->GetPathToG(ssprintf("CombinedLifeMeterTug stream p%d",p+1)), 550 );
+		m_Stream[p].Load( THEME->GetPathToG(ssprintf("CombinedLifeMeterTug stream p%d",p+1)), METER_WIDTH );
 		this->AddChild( &m_Stream[p] );
 	}
 	m_Stream[PLAYER_2].SetZoomX( -1 );
 
 	m_sprFrame.Load( THEME->GetPathToG(ssprintf("CombinedLifeMeterTug frame")) );
 	this->AddChild( &m_sprFrame );
+	
+	
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		Character* pCharacter = GAMESTATE->m_pCurCharacters[p];
+		ASSERT( pCharacter );
+
+		m_Head[p].LoadFromCharacter( pCharacter );
+		m_Head[p].SetXY( FACE_X[p], FACE_Y[p] );
+		this->AddChild( &m_Head[p] );
+	}
 }
 
 void CombinedLifeMeterTug::Update( float fDelta )

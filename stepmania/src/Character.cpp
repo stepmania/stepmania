@@ -100,4 +100,16 @@ CString Character::GetIconPath()
 	else
 		return as[0];
 }
+CString Character::GetHeadPath()
+{
+	CStringArray as;
+	GetDirListing( m_sCharDir+"head*.png", as, false, true );
+	GetDirListing( m_sCharDir+"head*.jpg", as, false, true );
+	GetDirListing( m_sCharDir+"head*.gif", as, false, true );
+	GetDirListing( m_sCharDir+"head*.bmp", as, false, true );
+	if( as.empty() )
+		return "";
+	else
+		return as[0];
+}
 
