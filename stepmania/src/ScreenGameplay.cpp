@@ -1510,77 +1510,77 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 #define SECS_SINCE_LAST_COMMENT (SECONDS_BETWEEN_COMMENTS-m_fTimeLeftBeforeDancingComment)
 	case SM_100Combo:
-		if( SECS_SINCE_LAST_COMMENT > 10 )
+		if( SECS_SINCE_LAST_COMMENT > 2 )
 		{
 			m_announcer100Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_200Combo:
-		if( SECS_SINCE_LAST_COMMENT > 10 )
+		if( SECS_SINCE_LAST_COMMENT > 2 )
 		{
 			m_announcer200Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_300Combo:
-		if( SECS_SINCE_LAST_COMMENT > 10 )
+		if( SECS_SINCE_LAST_COMMENT > 2 )
 		{
 			m_announcer300Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_400Combo:
-		if( SECS_SINCE_LAST_COMMENT > 10 )
+		if( SECS_SINCE_LAST_COMMENT > 2 )
 		{
 			m_announcer400Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_500Combo:
-		if( SECS_SINCE_LAST_COMMENT > 10 )
+		if( SECS_SINCE_LAST_COMMENT > 2 )
 		{
 			m_announcer500Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_600Combo:
-		if( SECS_SINCE_LAST_COMMENT > 10 )
+		if( SECS_SINCE_LAST_COMMENT > 2 )
 		{
 			m_announcer600Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_700Combo:
-		if( SECS_SINCE_LAST_COMMENT > 10 )
+		if( SECS_SINCE_LAST_COMMENT > 2 )
 		{
 			m_announcer700Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_800Combo:
-		if( SECS_SINCE_LAST_COMMENT > 10 )
+		if( SECS_SINCE_LAST_COMMENT > 2 )
 		{
 			m_announcer800Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_900Combo:
-		if( SECS_SINCE_LAST_COMMENT > 10 )
+		if( SECS_SINCE_LAST_COMMENT > 2 )
 		{
 			m_announcer900Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_1000Combo:
-		if( SECS_SINCE_LAST_COMMENT > 10 )
+		if( SECS_SINCE_LAST_COMMENT > 2 )
 		{
 			m_announcer1000Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_ComboStopped:
-		if( SECS_SINCE_LAST_COMMENT > 10 )
+		if( SECS_SINCE_LAST_COMMENT > 2 )
 		{
 			m_announcerComboStopped.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
