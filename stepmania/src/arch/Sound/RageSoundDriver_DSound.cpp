@@ -246,7 +246,7 @@ void RageSound_DSound::VolumeChanged()
 	}
 }
 
-void RageSound_DSound::StartMixing(RageSound *snd)
+void RageSound_DSound::StartMixing( RageSoundBase *snd )
 {
 	LockMutex L(SOUNDMAN->lock);
 
@@ -294,7 +294,7 @@ void RageSound_DSound::StartMixing(RageSound *snd)
  * call completes, snd->GetPCM (which runs in a separate thread) will
  * not be running and will not be called unless StartMixing is called
  * again. */
-void RageSound_DSound::StopMixing(RageSound *snd)
+void RageSound_DSound::StopMixing( RageSoundBase *snd )
 {
 	ASSERT(snd != NULL);
 	LockMutex L(SOUNDMAN->lock);
@@ -321,7 +321,7 @@ void RageSound_DSound::StopMixing(RageSound *snd)
 	stream_pool[i]->snd = NULL;
 }
 
-int RageSound_DSound::GetPosition(const RageSound *snd) const
+int RageSound_DSound::GetPosition( const RageSoundBase *snd ) const
 {
 	LockMutex L(SOUNDMAN->lock);
 

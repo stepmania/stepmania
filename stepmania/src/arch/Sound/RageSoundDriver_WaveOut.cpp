@@ -134,7 +134,7 @@ bool RageSound_WaveOut::GetData()
 	return true;
 }
 
-void RageSound_WaveOut::StartMixing(RageSound *snd)
+void RageSound_WaveOut::StartMixing( RageSoundBase *snd )
 {
 	sound *s = new sound;
 	s->snd = snd;
@@ -163,7 +163,7 @@ void RageSound_WaveOut::Update(float delta)
 	}
 }
 
-void RageSound_WaveOut::StopMixing(RageSound *snd)
+void RageSound_WaveOut::StopMixing( RageSoundBase *snd )
 {
 	LockMutex L(SOUNDMAN->lock);
 
@@ -181,7 +181,7 @@ void RageSound_WaveOut::StopMixing(RageSound *snd)
 	sounds.erase(sounds.begin()+i, sounds.begin()+i+1);
 }
 
-int RageSound_WaveOut::GetPosition(const RageSound *snd) const
+int RageSound_WaveOut::GetPosition( const RageSoundBase *snd ) const
 {
 	LockMutex L(SOUNDMAN->lock);
 

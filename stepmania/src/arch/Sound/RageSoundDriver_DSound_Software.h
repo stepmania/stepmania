@@ -12,7 +12,7 @@ struct IDirectSoundBuffer;
 class RageSound_DSound_Software: public RageSoundDriver
 {
 	struct sound {
-	    RageSound *snd;
+	    RageSoundBase *snd;
 		RageTimer start_time;
 
 		bool stopping;
@@ -38,9 +38,9 @@ class RageSound_DSound_Software: public RageSoundDriver
 	RageThread MixingThread;
 
 	/* virtuals: */
-	void StartMixing(RageSound *snd);	/* used by RageSound */
-	void StopMixing(RageSound *snd);		/* used by RageSound */
-	int GetPosition(const RageSound *snd) const;
+	void StartMixing( RageSoundBase *snd );	/* used by RageSound */
+	void StopMixing( RageSoundBase *snd );		/* used by RageSound */
+	int GetPosition( const RageSoundBase *snd ) const;
 	float GetPlayLatency() const;
 	int GetSampleRate( int rate ) const;
 

@@ -1,30 +1,29 @@
 #ifndef RAGE_SOUND_DRIVER
 #define RAGE_SOUND_DRIVER
 
+class RageSoundBase;
 class RageSoundDriver
 {
-	friend class RageSound;
-
-protected:
+public:
 	friend class RageSoundManager;
 	/* A RageSound calls this to request to be played.
 	 * XXX: define what we should do when it can't be played (eg. out of
 	 * channels) */
-	virtual void StartMixing(RageSound *snd) = 0;
+	virtual void StartMixing( RageSoundBase *snd ) = 0;
 
 	/* A RageSound calls this to request it not be played.  When this function
 	 * returns, snd is no longer valid; ensure no running threads are still
 	 * accessing it before returning.  This must handle gracefully the case where 
 	 * snd was not actually being played, though it may print a warning. */
-	virtual void StopMixing(RageSound *snd) = 0;
+	virtual void StopMixing( RageSoundBase *snd ) = 0;
 
 	/* Get the current position of a given buffer, in the same units and time base
 	 * as passed to RageSound::GetPCM. */
-	virtual int GetPosition(const RageSound *snd) const = 0;
+	virtual int GetPosition( const RageSoundBase *snd ) const = 0;
 
 	/* When a sound is finished playing (GetPCM returns less than requested) and
 	 * the sound has been completely flushed (so GetPosition is no longer meaningful),
-	 * call RageSound::StopPlaying().  Do *not* call it when StopMixing is called. */
+	 * call RageSoundBase::StopPlaying().  Do *not* call it when StopMixing is called. */
 
 	/* Optional, if needed:  */
 	virtual void Update(float delta) { }
@@ -39,7 +38,6 @@ protected:
 
 	virtual int GetSampleRate( int rate ) const { return 44100; }
 
-public:
 	virtual ~RageSoundDriver() { }
 };
 

@@ -131,7 +131,7 @@ bool RageSound_DSound_Software::GetData()
 }
 
 
-void RageSound_DSound_Software::StartMixing(RageSound *snd)
+void RageSound_DSound_Software::StartMixing( RageSoundBase *snd )
 {
 	sound *s = new sound;
 	s->snd = snd;
@@ -146,7 +146,7 @@ void RageSound_DSound_Software::Update(float delta)
 	ASSERT(SOUNDMAN);
 	LockMut(SOUNDMAN->lock);
 
-	/* SoundStopped might erase sounds out from under us, so make a copy
+	/* StopPlaying might erase sounds out from under us, so make a copy
 	 * of the sound list. */
 	vector<sound *> snds = sounds;
 	for(unsigned i = 0; i < snds.size(); ++i)
@@ -161,7 +161,7 @@ void RageSound_DSound_Software::Update(float delta)
 	}
 }
 
-void RageSound_DSound_Software::StopMixing(RageSound *snd)
+void RageSound_DSound_Software::StopMixing( RageSoundBase *snd )
 {
 	LockMut(SOUNDMAN->lock);
 
@@ -184,7 +184,7 @@ void RageSound_DSound_Software::StopMixing(RageSound *snd)
 		pcm->Reset();
 }
 
-int RageSound_DSound_Software::GetPosition(const RageSound *snd) const
+int RageSound_DSound_Software::GetPosition( const RageSoundBase *snd ) const
 {
 	LockMut(SOUNDMAN->lock);
 	return pcm->GetPosition();

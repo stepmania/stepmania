@@ -17,7 +17,7 @@ class RageSound_DSound: public RageSoundDriver
 
 	    /* Sound object that's playing on this stream, or NULL if this
 	     * channel is available: */
-	    RageSound *snd;
+	    RageSoundBase *snd;
 
 		enum {
 			INACTIVE,
@@ -47,9 +47,9 @@ class RageSound_DSound: public RageSoundDriver
 	RageThread MixingThread;
 
 	/* virtuals: */
-	void StartMixing(RageSound *snd);	/* used by RageSound */
-	void StopMixing(RageSound *snd);		/* used by RageSound */
-	int GetPosition(const RageSound *snd) const;
+	void StartMixing( RageSoundBase *snd );	/* used by RageSound */
+	void StopMixing( RageSoundBase *snd );		/* used by RageSound */
+	int GetPosition( const RageSoundBase *snd ) const;
 	void Update(float delta);
 	void VolumeChanged();
 
