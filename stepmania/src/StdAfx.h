@@ -29,7 +29,14 @@
 #pragma warning (disable : 4127)
 #endif
 
+#undef min
+#undef max
+#define NOMINMAX /* make sure Windows doesn't try to define this */
+
 #include <afxwin.h>         // MFC core and standard components
+#include <algorithm>
+
+using namespace std;
 
 #include <d3d8.h>
 #include <d3dx8math.h>
@@ -64,6 +71,21 @@ public:
 };
 #define CString CStringTemp
 #define CStringArray CArray<CStringTemp,CStringTemp>
+
+/* VC6's <algorithm> is doesn't actually define min and max. */
+template<class T>
+inline const T& max(const T &a, const T &b)
+{ return a < b? b:a; }
+template<class T, class P>
+inline const T& max(const T &a, const T &b, P Pr)
+{ return Pr(a, b)? b:a; }
+template<class T>
+inline const T& min(const T &a, const T &b)
+{ return b < a? b:a; }
+template<class T, class P>
+inline const T& min(const T &a, const T &b, P Pr)
+{ return Pr(b, a)? b:a; }
+
 #endif
 
 #endif

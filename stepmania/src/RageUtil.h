@@ -28,16 +28,6 @@
 inline int RECTCENTERX(RECT rect) { return rect.left + (rect.right-rect.left)/2; }
 inline int RECTCENTERY(RECT rect) { return rect.top + (rect.bottom-rect.top)/2; }
 
-#undef min
-#undef max
-#define NOMINMAX /* make sure Windows doesn't try to define this */
-
-template <class T> 
-inline const T & max(const T &a, const T &b) { return a > b? a:b; }
-
-template <class T> 
-inline const T & min(const T &a, const T &b) { return a < b? a:b; }
-
 /* Common harmless mismatches. */
 inline float min(float a, int b) { return a < b? a:b; }
 inline float max(float a, int b) { return a > b? a:b; }
@@ -56,10 +46,7 @@ inline float max(int a, float b) { return a > b? a:b; }
 
 #define clamp(val,low,high)		( max( (low), min((val),(high)) ) )
 
-template <class T>
-void swap(T &a, T &b) { T c = a; a = b; b = c; }
-
-#define PI		D3DX_PI
+#define PI		3.1415926535897932384626433832795
 #define DEG		(PI / 180.0f)
 #define RAD		(180.0f / PI)
 // Scales x so that l1 corresponds to l2 and h1 corresponds to h2.  Does not modify x, MUST assign the result to something!
@@ -202,8 +189,12 @@ void ReadFloatFromFile( FILE* file, float& f );
 void WriteUlongToFile( FILE* file, ULONG u );
 void ReadUlongFromFile( FILE* file, ULONG& u );
 
+/* Find the mean and standard deviation of all numbers in [start,end). */
+float calc_mean(const float *start, const float *end);
+float calc_stddev(const float *start, const float *end);
+
 /* Fix Windows breakage ... */
-#ifdef WINDOWS
+#ifdef WIN32
 #define getcwd _getcwd
 #define wgetcwd _wgetcwd
 #define chdir _chdir
