@@ -1178,6 +1178,8 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	FlushGLErrors();
 
 	const MeshInfo& meshInfo = m_vMeshInfo[iMeshIndex];
+	if( !meshInfo.iVertexCount || !meshInfo.iTriangleCount )
+		return;
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
