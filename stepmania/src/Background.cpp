@@ -110,7 +110,7 @@ void Background::LoadFromAniDir( CString sAniDir )
 {
 	Unload();
 
-	if( PREFSMAN->m_fBGBrightness == 0 )
+	if( PREFSMAN->m_fBGBrightness == 0.0f )
 		return;
 
 	BGAnimation* pTempBGA;
@@ -184,11 +184,11 @@ BGAnimation *Background::CreateSongBGA( CString sBGName ) const
 
 CString Background::CreateRandomBGA()
 {
-	if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_OFF )
+	if( PREFSMAN->m_iBackgroundMode == PrefsManager::BGMODE_OFF )
 		return "";
 
 	/* If we already have enough random BGAs loaded, use them round-robin. */
-	if( (int) m_RandomBGAnimations.size() >= PREFSMAN->m_iNumBackgrounds )
+	if( (int)m_RandomBGAnimations.size() >= PREFSMAN->m_iNumBackgrounds )
 	{
 		/* XXX: every time we fully loop, shuffle, so we don't play the same sequence
 		 * over and over; and nudge the shuffle so the next one won't be a repeat */
@@ -199,10 +199,10 @@ CString Background::CreateRandomBGA()
 	}
 
 	CStringArray arrayPaths;
-	switch( PREFSMAN->m_BackgroundMode )
+	switch( PREFSMAN->m_iBackgroundMode )
 	{
 	default:
-		FAIL_M( ssprintf("Invalid BackgroundMode: %i", PREFSMAN->m_BackgroundMode) );
+		FAIL_M( ssprintf("Invalid BackgroundMode: %i", PREFSMAN->m_iBackgroundMode) );
 		break;
 
 	case PrefsManager::BGMODE_ANIMATIONS:
@@ -250,7 +250,7 @@ CString Background::CreateRandomBGA()
 	}
 
 	BGAnimation *ret = new BGAnimation;
-	switch( PREFSMAN->m_BackgroundMode )
+	switch( PREFSMAN->m_iBackgroundMode )
 	{
 	case PrefsManager::BGMODE_ANIMATIONS:	ret->LoadFromAniDir( file ); break;
 	case PrefsManager::BGMODE_MOVIEVIS:		ret->LoadFromVisualization( file ); break;
@@ -301,7 +301,7 @@ void Background::LoadFromSong( const Song* pSong )
 
 	m_pSong = pSong;
 
-	if( PREFSMAN->m_fBGBrightness == 0 )
+	if( PREFSMAN->m_fBGBrightness == 0.0f )
 		return;
 
 	/* Song backgrounds (even just background stills) can get very big; never keep them
@@ -570,7 +570,7 @@ void Background::Update( float fDeltaTime )
 
 void Background::DrawPrimitives()
 {
-	if( PREFSMAN->m_fBGBrightness == 0 )
+	if( PREFSMAN->m_fBGBrightness == 0.0f )
 		return;
 
 	if( IsDangerAllVisible() )

@@ -215,7 +215,7 @@ MOVE( AutogenGroupCourses,	(bool&)PREFSMAN->m_bAutogenGroupCourses );
 MOVE( FastLoad,				(bool&)PREFSMAN->m_bFastLoad );
 
 /* Background options */
-MOVE( BackgroundMode,		, PREFSMAN->m_BackgroundMode );
+MOVE( BackgroundMode,		(int&)PREFSMAN->m_iBackgroundMode );
 MOVE( ShowDanger,			(bool&)PREFSMAN->m_bShowDanger );
 MOVE( DancingCharacters,	PREFSMAN->m_ShowDancingCharacters );
 MOVE( BeginnerHelper,		(bool&)PREFSMAN->m_bShowBeginnerHelper );

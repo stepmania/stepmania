@@ -72,7 +72,49 @@ PrefsManager::PrefsManager() :
 	false
 #endif
 	),
-	m_bShowBanners			( Options, "ShowBanners",			true )
+	m_bShowBanners			( Options, "ShowBanners",			true ),
+
+	m_iBackgroundMode		( Options, "m_iBackgroundMode",			BGMODE_ANIMATIONS ),
+	m_iNumBackgrounds		( Options, "m_iNumBackgrounds",			8 ),
+	m_fBGBrightness			( Options, "m_fBGBrightness",			0.8f ),
+	m_bHiddenSongs			( Options, "m_bHiddenSongs",			false ),	/* I'd rather get occasional people asking for support for this even though it's already here than lots of people asking why songs aren't being displayed. */
+	m_bVsync				( Options, "m_bVsync",					true ),
+	m_bInterlaced			( Options, "m_bInterlaced",				false ),
+	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
+	m_bPAL					( Options, "m_bPAL",					false ),
+	m_bDelayedTextureDelete	( Options, "m_bDelayedTextureDelete",	true ),
+	m_bTexturePreload		( Options, "m_bTexturePreload",			false ),
+	m_bDelayedScreenLoad	( Options, "m_bDelayedScreenLoad",		false ),
+	m_bDelayedModelDelete	( Options, "m_bDelayedModelDelete",		false ),
+	m_iBannerCache			( Options, "m_iBannerCache",			BNCACHE_LOW_RES ),
+	m_bPalettedBannerCache	( Options, "m_bPalettedBannerCache",	false ),
+	m_bFastLoad				( Options, "m_bFastLoad",				true ),
+
+	m_bOnlyDedicatedMenuButtons	( Options, "m_bOnlyDedicatedMenuButtons",	false ),
+	m_bMenuTimer				( Options, "m_bMenuTimer",					true ),
+	m_bShowDanger				( Options, "m_bShowDanger",					true ),
+
+	m_fJudgeWindowScale				( Options, "m_fJudgeWindowScale",				1.0f ),
+	m_fJudgeWindowAdd				( Options, "m_fJudgeWindowAdd",					0 ),
+	m_fJudgeWindowSecondsMarvelous	( Options, "m_fJudgeWindowSecondsMarvelous",	0.0225f ),
+	m_fJudgeWindowSecondsPerfect	( Options, "m_fJudgeWindowSecondsPerfect",		0.045f ),
+	m_fJudgeWindowSecondsGreat		( Options, "m_fJudgeWindowSecondsGreat",		0.090f ),
+	m_fJudgeWindowSecondsGood		( Options, "m_fJudgeWindowSecondsGood",			0.135f ),
+	m_fJudgeWindowSecondsBoo		( Options, "m_fJudgeWindowSecondsBoo",			0.180f ),
+	m_fJudgeWindowSecondsOK			( Options, "m_fJudgeWindowSecondsOK",			0.250f ),	// allow enough time to take foot off and put back on
+	m_fJudgeWindowSecondsMine		( Options, "m_fJudgeWindowSecondsMine",			0.090f ),	// same as great
+	m_fJudgeWindowSecondsAttack		( Options, "m_fJudgeWindowSecondsAttack",		0.135f ),
+
+	m_fLifeDifficultyScale				( Options, "m_fLifeDifficultyScale",				1.0f ),
+	m_fLifeDeltaPercentChangeMarvelous	( Options, "m_fLifeDeltaPercentChangeMarvelous",	+0.008f ),
+	m_fLifeDeltaPercentChangePerfect	( Options, "m_fLifeDeltaPercentChangePerfect",		+0.008f ),
+	m_fLifeDeltaPercentChangeGreat		( Options, "m_fLifeDeltaPercentChangeGreat",		+0.004f ),
+	m_fLifeDeltaPercentChangeGood		( Options, "m_fLifeDeltaPercentChangeGood",			+0.000f ),
+	m_fLifeDeltaPercentChangeBoo		( Options, "m_fLifeDeltaPercentChangeBoo",			-0.040f ),
+	m_fLifeDeltaPercentChangeMiss		( Options, "m_fLifeDeltaPercentChangeMiss",			-0.080f ),
+	m_fLifeDeltaPercentChangeHitMine	( Options, "m_fLifeDeltaPercentChangeHitMine",		-0.160f ),
+	m_fLifeDeltaPercentChangeOK			( Options, "m_fLifeDeltaPercentChangeOK",			+0.008f ),
+	m_fLifeDeltaPercentChangeNG			( Options, "m_fLifeDeltaPercentChangeNG",			-0.080f )
 {
 	Init();
 	ReadGlobalPrefsFromDisk();
@@ -80,37 +122,13 @@ PrefsManager::PrefsManager() :
 
 void PrefsManager::Init()
 {
-	m_bOnlyDedicatedMenuButtons = false;
 	m_bCelShadeModels = false;		// Work-In-Progress.. disable by default.
 	m_fConstantUpdateDeltaSeconds = 0;
-	m_BackgroundMode = BGMODE_ANIMATIONS;
-	m_iNumBackgrounds = 8;
 	m_bShowDanger = true;
-	m_fBGBrightness = 0.8f;
 	m_bMenuTimer = true;
 	m_iNumArcadeStages = 3;
 	m_bEventMode = false;
 	m_bAutoPlay = false;
-	m_fJudgeWindowScale = 1.0f;
-	m_fJudgeWindowAdd = 0;
-	m_fLifeDifficultyScale = 1.0f;
-	m_fJudgeWindowSecondsMarvelous =	0.0225f;
-	m_fJudgeWindowSecondsPerfect =		0.045f;
-	m_fJudgeWindowSecondsGreat =		0.090f;
-	m_fJudgeWindowSecondsGood =			0.135f;
-	m_fJudgeWindowSecondsBoo =			0.180f;
-	m_fJudgeWindowSecondsOK =			0.250f;	// allow enough time to take foot off and put back on
-	m_fJudgeWindowSecondsMine =			0.090f;	// same as great
-	m_fJudgeWindowSecondsAttack =		0.135f;
-	m_fLifeDeltaPercentChangeMarvelous =	+0.008f;
-	m_fLifeDeltaPercentChangePerfect =		+0.008f;
-	m_fLifeDeltaPercentChangeGreat =		+0.004f;
-	m_fLifeDeltaPercentChangeGood =			+0.000f;
-	m_fLifeDeltaPercentChangeBoo =			-0.040f;
-	m_fLifeDeltaPercentChangeMiss =			-0.080f;
-	m_fLifeDeltaPercentChangeHitMine =		-0.160f;
-	m_fLifeDeltaPercentChangeOK =			+0.008f;
-	m_fLifeDeltaPercentChangeNG =			-0.080f;
 
 	m_fTugMeterPercentChangeMarvelous =		+0.010f;
 	m_fTugMeterPercentChangePerfect =		+0.008f;
@@ -178,13 +196,6 @@ void PrefsManager::Init()
 	m_bShowNativeLanguage = true;
 	m_bArcadeOptionsNavigation = false;
 	m_bSoloSingle = false;
-	m_bDelayedTextureDelete = true;
-	m_bTexturePreload = false;
-	m_bDelayedScreenLoad = false;
-	m_bDelayedModelDelete = false;
-	m_BannerCache = BNCACHE_LOW_RES;
-	m_bPalettedBannerCache = false;
-	m_bFastLoad = true;
 	m_MusicWheelUsesSections = ALWAYS;
 	m_iMusicWheelSwitchSpeed = 10;
 	m_bEasterEggs = true;
@@ -240,10 +251,7 @@ void PrefsManager::Init()
 	m_fLongVerSongSeconds = 60*2.5f;	// Dynamite Rave is 2:55
 	m_fMarathonVerSongSeconds = 60*5.f;
 
-	/* I'd rather get occasional people asking for support for this even though it's
-	 * already here than lots of people asking why songs aren't being displayed. */
-	m_bHiddenSongs = false;
-	m_bVsync = true;
+
 	m_sLanguage = "";	// ThemeManager will deal with this invalid language
 
 	m_iCenterImageTranslateX = 0;
@@ -264,12 +272,6 @@ void PrefsManager::Init()
 	m_bSignProfileData = false;
 
 	m_bEditorShowBGChangesPlay = false;
-
-	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
-	m_bPAL = false;
-#ifndef _XBOX
-	m_bInterlaced = false;
-#endif
 
 	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
 	/* Number of frames to write ahead; usually 44100 frames per second.
@@ -369,39 +371,11 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	if( !ini.ReadFile(sIni) )
 		return;
 
-	ini.GetValue( "Options", "Interlaced",						m_bInterlaced );
-	ini.GetValue( "Options", "PAL",								m_bPAL );
 	ini.GetValue( "Options", "CelShadeModels",					m_bCelShadeModels );
 	ini.GetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
-	ini.GetValue( "Options", "UseDedicatedMenuButtons",			m_bOnlyDedicatedMenuButtons );
-	ini.GetValue( "Options", "BackgroundMode",					(int&)m_BackgroundMode );
-	ini.GetValue( "Options", "NumBackgrounds",					m_iNumBackgrounds);
-	ini.GetValue( "Options", "ShowDanger",						m_bShowDanger );
-	ini.GetValue( "Options", "BGBrightness",					m_fBGBrightness );
-	ini.GetValue( "Options", "MenuTimer",						m_bMenuTimer );
 	ini.GetValue( "Options", "NumArcadeStages",					m_iNumArcadeStages );
 	ini.GetValue( "Options", "EventMode",						m_bEventMode );
 	ini.GetValue( "Options", "AutoPlay",						m_bAutoPlay );
-	ini.GetValue( "Options", "JudgeWindowScale",				m_fJudgeWindowScale );
-	ini.GetValue( "Options", "JudgeWindowAdd",					m_fJudgeWindowAdd );
-	ini.GetValue( "Options", "JudgeWindowSecondsMarvelous",		m_fJudgeWindowSecondsMarvelous );
-	ini.GetValue( "Options", "JudgeWindowSecondsPerfect",		m_fJudgeWindowSecondsPerfect );
-	ini.GetValue( "Options", "JudgeWindowSecondsGreat",			m_fJudgeWindowSecondsGreat );
-	ini.GetValue( "Options", "JudgeWindowSecondsGood",			m_fJudgeWindowSecondsGood );
-	ini.GetValue( "Options", "JudgeWindowSecondsBoo",			m_fJudgeWindowSecondsBoo );
-	ini.GetValue( "Options", "JudgeWindowSecondsOK",			m_fJudgeWindowSecondsOK );
-	ini.GetValue( "Options", "JudgeWindowSecondsMine",			m_fJudgeWindowSecondsMine );
-	ini.GetValue( "Options", "JudgeWindowSecondsAttack",		m_fJudgeWindowSecondsAttack );
-	ini.GetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
-	ini.GetValue( "Options", "LifeDeltaPercentChangeMarvelous",	m_fLifeDeltaPercentChangeMarvelous );
-	ini.GetValue( "Options", "LifeDeltaPercentChangePerfect",	m_fLifeDeltaPercentChangePerfect );
-	ini.GetValue( "Options", "LifeDeltaPercentChangeGreat",		m_fLifeDeltaPercentChangeGreat );
-	ini.GetValue( "Options", "LifeDeltaPercentChangeGood",		m_fLifeDeltaPercentChangeGood );
-	ini.GetValue( "Options", "LifeDeltaPercentChangeBoo",		m_fLifeDeltaPercentChangeBoo );
-	ini.GetValue( "Options", "LifeDeltaPercentChangeMiss",		m_fLifeDeltaPercentChangeMiss );
-	ini.GetValue( "Options", "LifeDeltaPercentChangeHitMine",	m_fLifeDeltaPercentChangeHitMine );
-	ini.GetValue( "Options", "LifeDeltaPercentChangeOK",		m_fLifeDeltaPercentChangeOK );
-	ini.GetValue( "Options", "LifeDeltaPercentChangeNG",		m_fLifeDeltaPercentChangeNG );
 	ini.GetValue( "Options", "TugMeterPercentChangeMarvelous",	m_fTugMeterPercentChangeMarvelous );
 	ini.GetValue( "Options", "TugMeterPercentChangePerfect",	m_fTugMeterPercentChangePerfect );
 	ini.GetValue( "Options", "TugMeterPercentChangeGreat",		m_fTugMeterPercentChangeGreat );
@@ -459,20 +433,11 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "MercifulSuperMeter",				m_bMercifulSuperMeter );
 
 	ini.GetValue( "Options", "DelayedEscape",					m_bDelayedBack );
-	ini.GetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
-	ini.GetValue( "Options", "Vsync",							m_bVsync );
 	ini.GetValue( "Options", "ShowInstructions",				m_bShowInstructions );
 	ini.GetValue( "Options", "ShowCaution",						m_bShowCaution );
 	ini.GetValue( "Options", "ShowSelectGroup",					m_bShowSelectGroup );
 	ini.GetValue( "Options", "ShowNativeLanguage",				m_bShowNativeLanguage );
 	ini.GetValue( "Options", "ArcadeOptionsNavigation",			m_bArcadeOptionsNavigation );
-	ini.GetValue( "Options", "DelayedTextureDelete",			m_bDelayedTextureDelete );
-	ini.GetValue( "Options", "TexturePreload",					m_bTexturePreload );
-	ini.GetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
-	ini.GetValue( "Options", "DelayedModelDelete",				m_bDelayedModelDelete );
-	ini.GetValue( "Options", "BannerCache",						(int&)m_BannerCache );
-	ini.GetValue( "Options", "PalettedBannerCache",				m_bPalettedBannerCache );
-	ini.GetValue( "Options", "FastLoad",						m_bFastLoad );
 	ini.GetValue( "Options", "MusicWheelUsesSections",			(int&)m_MusicWheelUsesSections );
 	ini.GetValue( "Options", "MusicWheelSwitchSpeed",			m_iMusicWheelSwitchSpeed );
 	ini.GetValue( "Options", "SoundDrivers",					m_sSoundDrivers );
@@ -621,7 +586,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "CelShadeModels",					m_bCelShadeModels );
 	ini.SetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
 	ini.SetValue( "Options", "UseDedicatedMenuButtons",			m_bOnlyDedicatedMenuButtons );
-	ini.SetValue( "Options", "BackgroundMode",					m_BackgroundMode);
+	ini.SetValue( "Options", "BackgroundMode",					m_iBackgroundMode);
 	ini.SetValue( "Options", "NumBackgrounds",					m_iNumBackgrounds);
 	ini.SetValue( "Options", "ShowDanger",						m_bShowDanger );
 	ini.SetValue( "Options", "BGBrightness",					m_fBGBrightness );
@@ -719,7 +684,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "TexturePreload",					m_bTexturePreload );
 	ini.SetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
 	ini.SetValue( "Options", "DelayedModelDelete",				m_bDelayedModelDelete );
-	ini.SetValue( "Options", "BannerCache",						m_BannerCache );
+	ini.SetValue( "Options", "BannerCache",						m_iBannerCache );
 	ini.SetValue( "Options", "PalettedBannerCache",				m_bPalettedBannerCache );
 	ini.SetValue( "Options", "FastLoad",						m_bFastLoad );
 	ini.SetValue( "Options", "MusicWheelUsesSections",			m_MusicWheelUsesSections );

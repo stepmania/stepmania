@@ -56,7 +56,7 @@ CString BannerCache::GetBannerCachePath( CString BannerPath )
 
 void BannerCache::LoadBanner( CString BannerPath )
 {
-	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_LOW_RES || BannerPath == "" )
+	if( PREFSMAN->m_iBannerCache != PrefsManager::BNCACHE_LOW_RES || BannerPath == "" )
 		return;
 
 	/* Load it. */
@@ -276,7 +276,7 @@ static inline int closest( int num, int n1, int n2 )
  * if the memory or settings change. */
 void BannerCache::CacheBanner( CString BannerPath )
 {
-	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_LOW_RES )
+	if( PREFSMAN->m_iBannerCache != PrefsManager::BNCACHE_LOW_RES )
 		return;
 
 	CHECKPOINT_M( BannerPath );
@@ -413,7 +413,7 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 	const CString CachePath = GetBannerCachePath(BannerPath);
 	RageSurfaceUtils::SaveSurface( img, CachePath );
 
-	if( PREFSMAN->m_BannerCache == PrefsManager::BNCACHE_LOW_RES )
+	if( PREFSMAN->m_iBannerCache == PrefsManager::BNCACHE_LOW_RES )
 	{
 		/* If an old image is loaded, free it. */
 		if( g_BannerPathToImage.find(BannerPath) != g_BannerPathToImage.end() )

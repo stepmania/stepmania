@@ -32,20 +32,22 @@ template <class T>
 class Preference : public IPreference
 {
 private:
+	// Make currentValue first in the list so that we can pass this object
+	// as an argument in a var_arg function as in printf.
+	T			m_currentValue;
 	PrefsGroup	m_PrefsGroup;
 	CString		m_sName;
 	T			m_defaultValue;
-	T			m_currentValue;
 	
 	CString ToString();
 	void FromString( const CString &s );
 
 public:
 	Preference( PrefsGroup PrefsGroup, const CString& sName, const T& defaultValue ):
+		m_currentValue( defaultValue ),
 		m_PrefsGroup( PrefsGroup ),
 		m_sName( sName ),
-		m_defaultValue( defaultValue ),
-		m_currentValue( defaultValue )
+		m_defaultValue( defaultValue )
 	{
 		SubscribePreference( this );
 		LoadDefault();
@@ -64,26 +66,15 @@ public:
 	void ReadFrom( const IniFile &ini );
 	void WriteTo( IniFile &ini ) const;
 
-	operator T& ()
+	operator T () const
 	{
 		return m_currentValue;
 	}
 
-	operator const T& () const
+	void operator=( const T& other )
 	{
-		return m_currentValue;
+		m_currentValue = other;
 	}
-
-	T& operator=( const T& other )
-	{
-		return m_currentValue = other;
-	}
-
-	T operator!()
-	{
-		return !m_currentValue;
-	}
-
 };
 
 #endif

@@ -110,13 +110,15 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 
 void ScreenWithMenuElements::ResetTimer()
 {
-	if( TIMER_SECONDS > 0 && PREFSMAN->m_bMenuTimer  &&  !GAMESTATE->m_bEditing )
+	if( TIMER_SECONDS > 0.0f  &&  PREFSMAN->m_bMenuTimer  &&  !GAMESTATE->m_bEditing )
 	{
 		m_MenuTimer->SetSeconds( TIMER_SECONDS );
 		m_MenuTimer->Start();
 	}
 	else
+	{
 		m_MenuTimer->Disable();
+	}
 }
 
 void ScreenWithMenuElements::StartTransitioning( ScreenMessage smSendWhenDone )

@@ -27,47 +27,49 @@ public:
 	Preference<int>		m_iRefreshRate;
 	Preference<bool>	m_bShowStats;
 	Preference<bool>	m_bShowBanners;
-	enum BackgroundModes { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS, BGMODE_RANDOMMOVIES } m_BackgroundMode;
-	int				m_iNumBackgrounds;
-	float			m_fBGBrightness;
-	bool			m_bHiddenSongs;
-	bool			m_bVsync;
-	bool			m_bInterlaced;
-	bool			m_bPAL;
-	bool			m_bDelayedTextureDelete;
-	bool			m_bTexturePreload;
-	bool			m_bDelayedScreenLoad;
-	bool			m_bDelayedModelDelete;
-	enum BannerCacheMode { BNCACHE_OFF, BNCACHE_LOW_RES, BNCACHE_FULL };
-	BannerCacheMode	m_BannerCache;
-	bool			m_bPalettedBannerCache;
-	bool			m_bFastLoad;
 
-	bool			m_bOnlyDedicatedMenuButtons;
-	bool			m_bMenuTimer;
-	bool			m_bShowDanger;
+	enum { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS, BGMODE_RANDOMMOVIES };
+	Preference<int>		m_iBackgroundMode;
+	Preference<int>		m_iNumBackgrounds;
+	Preference<float>	m_fBGBrightness;
+	Preference<bool>	m_bHiddenSongs;
+	Preference<bool>	m_bVsync;
+	Preference<bool>	m_bInterlaced;
+	Preference<bool>	m_bPAL;
+	Preference<bool>	m_bDelayedTextureDelete;
+	Preference<bool>	m_bTexturePreload;
+	Preference<bool>	m_bDelayedScreenLoad;
+	Preference<bool>	m_bDelayedModelDelete;
+	enum { BNCACHE_OFF, BNCACHE_LOW_RES, BNCACHE_FULL };
+	Preference<int>		m_iBannerCache;
+	Preference<bool>	m_bPalettedBannerCache;
+	Preference<bool>	m_bFastLoad;
 
-	float			m_fJudgeWindowScale;
-	float			m_fJudgeWindowAdd;		// this is useful for compensating for changes in sampling rate between devices
-	float			m_fJudgeWindowSecondsMarvelous;
-	float			m_fJudgeWindowSecondsPerfect;
-	float			m_fJudgeWindowSecondsGreat;
-	float			m_fJudgeWindowSecondsGood;
-	float			m_fJudgeWindowSecondsBoo;
-	float			m_fJudgeWindowSecondsOK;
-	float			m_fJudgeWindowSecondsMine;
-	float			m_fJudgeWindowSecondsAttack;
+	Preference<bool>	m_bOnlyDedicatedMenuButtons;
+	Preference<bool>	m_bMenuTimer;
+	Preference<bool>	m_bShowDanger;
 
-	float			m_fLifeDifficultyScale;
-	float			m_fLifeDeltaPercentChangeMarvelous;
-	float			m_fLifeDeltaPercentChangePerfect;
-	float			m_fLifeDeltaPercentChangeGreat;
-	float			m_fLifeDeltaPercentChangeGood;
-	float			m_fLifeDeltaPercentChangeBoo;
-	float			m_fLifeDeltaPercentChangeMiss;
-	float			m_fLifeDeltaPercentChangeHitMine;
-	float			m_fLifeDeltaPercentChangeOK;
-	float			m_fLifeDeltaPercentChangeNG;
+	Preference<float>	m_fJudgeWindowScale;
+	Preference<float>	m_fJudgeWindowAdd;		// this is useful for compensating for changes in sampling rate between devices
+	Preference<float>	m_fJudgeWindowSecondsMarvelous;
+	Preference<float>	m_fJudgeWindowSecondsPerfect;
+	Preference<float>	m_fJudgeWindowSecondsGreat;
+	Preference<float>	m_fJudgeWindowSecondsGood;
+	Preference<float>	m_fJudgeWindowSecondsBoo;
+	Preference<float>	m_fJudgeWindowSecondsOK;
+	Preference<float>	m_fJudgeWindowSecondsMine;
+	Preference<float>	m_fJudgeWindowSecondsAttack;
+
+	Preference<float>	m_fLifeDifficultyScale;
+	Preference<float>	m_fLifeDeltaPercentChangeMarvelous;
+	Preference<float>	m_fLifeDeltaPercentChangePerfect;
+	Preference<float>	m_fLifeDeltaPercentChangeGreat;
+	Preference<float>	m_fLifeDeltaPercentChangeGood;
+	Preference<float>	m_fLifeDeltaPercentChangeBoo;
+	Preference<float>	m_fLifeDeltaPercentChangeMiss;
+	Preference<float>	m_fLifeDeltaPercentChangeHitMine;
+	Preference<float>	m_fLifeDeltaPercentChangeOK;
+	Preference<float>	m_fLifeDeltaPercentChangeNG;
 
 	// tug meter used in rave
 	float			m_fTugMeterPercentChangeMarvelous;

@@ -17,7 +17,7 @@ Banner::Banner()
 	m_bScrolling = false;
 	m_fPercentScrolling = 0;
 
-	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_OFF )
+	if( PREFSMAN->m_iBannerCache != PrefsManager::BNCACHE_OFF )
 	{
 		TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","all music")) );
 		TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Common","fallback banner")) );
