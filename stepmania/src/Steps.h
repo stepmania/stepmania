@@ -45,12 +45,12 @@ public:
 	bool IsAutogen() const;	// Was created by autogen?
 
 
-	StepsType		m_StepsType;
+	StepsType	m_StepsType;
 
-	void			GetNoteData( NoteData* pNoteDataOut ) const;
-	void			SetNoteData( const NoteData* pNewNoteData );
-	void			SetSMNoteData( const CString &out );
-	CString 		GetSMNoteData() const;
+	void		GetNoteData( NoteData* pNoteDataOut ) const;
+	void		SetNoteData( const NoteData* pNewNoteData );
+	void		SetSMNoteData( const CString &notes_comp, const CString &attacks_comp );
+	void		GetSMNoteData( CString &notes_comp_out, CString &attacks_comp_out ) const;
 
 
 	struct MemCardData
@@ -115,7 +115,11 @@ protected:
 	 * Call Compress() to force us to only have notes_comp; otherwise, creation of 
 	 * these is transparent. */
 	mutable NoteData *notes;
-	mutable CString *notes_comp;
+	struct CompressedNoteData
+	{
+		CString notes, attacks;
+	};
+	mutable CompressedNoteData *notes_comp;
 
 	const Steps *Real() const;
 

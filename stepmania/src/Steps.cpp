@@ -79,27 +79,35 @@ void Steps::GetNoteData( NoteData* pNoteDataOut ) const
 	}
 }
 
-void Steps::SetSMNoteData( const CString &out )
+void Steps::SetSMNoteData( const CString &notes_comp_, const CString &attacks_comp_ )
 {
 	delete notes;
 	notes = NULL;
 
 	if(!notes_comp)
-		notes_comp = new CString;
+		notes_comp = new CompressedNoteData;
 
-	*notes_comp = out;
+	notes_comp->notes = notes_comp_;
+	notes_comp->attacks = attacks_comp_;
 }
 
-CString Steps::GetSMNoteData() const
+void Steps::GetSMNoteData( CString &notes_comp_out, CString &attacks_comp_out ) const
 {
 	if(!notes_comp)
 	{
-		if(!notes) return ""; /* no data is no data */
-		notes_comp = new CString;
-		NoteDataUtil::GetSMNoteDataString( *notes, *notes_comp );
+		if(!notes) 
+		{
+			/* no data is no data */
+			notes_comp_out = attacks_comp_out = "";
+			return;
+		}
+
+		notes_comp = new CompressedNoteData;
+		NoteDataUtil::GetSMNoteDataString( *notes, notes_comp->notes, notes_comp->attacks );
 	}
 
-	return *notes_comp;
+	notes_comp_out = notes_comp->notes;
+	attacks_comp_out = notes_comp->attacks;
 }
 
 void Steps::TidyUpData()
@@ -177,7 +185,7 @@ void Steps::Decompress() const
 		notes = new NoteData;
 		notes->SetNumTracks( GameManager::NotesTypeToNumTracks(m_StepsType) );
 
-		NoteDataUtil::LoadFromSMNoteDataString(*notes, *notes_comp);
+		NoteDataUtil::LoadFromSMNoteDataString(*notes, notes_comp->notes, notes_comp->attacks );
 	}
 }
 
@@ -186,8 +194,8 @@ void Steps::Compress() const
 	if(!notes_comp)
 	{
 		if(!notes) return; /* no data is no data */
-		notes_comp = new CString;
-		NoteDataUtil::GetSMNoteDataString( *notes, *notes_comp );
+		notes_comp = new CompressedNoteData;
+		NoteDataUtil::GetSMNoteDataString( *notes, notes_comp->notes, notes_comp->attacks );
 	}
 
 	delete notes;

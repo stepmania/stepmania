@@ -14,6 +14,7 @@ void SMLoader::LoadFromSMTokens(
 	CString sMeter,
 	CString sRadarValues,
 	CString sNoteData,
+	CString sAttackData,
 	Steps &out
 )
 {
@@ -47,7 +48,7 @@ void SMLoader::LoadFromSMTokens(
 		for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
 			out.SetRadarValue(r, (float)atof(saValues[r]));
     
-	out.SetSMNoteData(sNoteData);
+	out.SetSMNoteData(sNoteData, sAttackData);
 
 	out.TidyUpData();
 }
@@ -277,14 +278,14 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			ASSERT( pNewNotes );
 			out.m_apNotes.push_back( pNewNotes );
 
-			if( iNumParams != 7 )
+			if( iNumParams < 7 )
 			{
-				LOG->Trace( "The song file '%s' is has %d fields in a #NOTES tag, but should have %d.", sPath.c_str(), iNumParams, 7 );
+				LOG->Trace( "The song file '%s' is has %d fields in a #NOTES tag, but should have at least %d.", sPath.c_str(), iNumParams, 7 );
 				continue;
 			}
 
 			LoadFromSMTokens( 
-				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
+				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:"",
 				*pNewNotes);
 		}
 		else

@@ -1282,7 +1282,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			attack.fSecsRemaining = g_fLastInsertAttackDurationSeconds;
 			attack.sModifier = sMods;
 			
-			m_NoteFieldEdit.AddAttackNote( g_iLastInsertAttackTrack, iSongIndex, attack );
+			m_NoteFieldEdit.SetTapAttackNote( g_iLastInsertAttackTrack, iSongIndex, attack );
 			GAMESTATE->RestoreSelectedOptions();	// restore the edit and playback options
 		}
 		break;

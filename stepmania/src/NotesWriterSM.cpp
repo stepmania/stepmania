@@ -109,7 +109,16 @@ void NotesWriterSM::WriteSMNotesTag( const Steps &in, FILE* fp )
 	 * newline and they'll accumulate. */
 	fprintf( fp, "     %s:", join(",",asRadarValues).c_str() );
 
-	fprintf( fp, "%s;\n", in.GetSMNoteData().c_str() );
+	CString sNoteData;
+	CString sAttackData;
+	in.GetSMNoteData( sNoteData, sAttackData );
+
+	fprintf( fp, "%s", sNoteData.c_str() );
+
+	if( sAttackData.empty() )
+		fprintf( fp, ";\n" );
+	else
+		fprintf( fp, ":\n%s;\n", sAttackData.c_str() );	
 }
 
 bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)

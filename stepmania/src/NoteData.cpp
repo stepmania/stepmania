@@ -92,7 +92,18 @@ void NoteData::CopyRange( const NoteData* pFrom, int iFromIndexBegin, int iFromI
 	while( f<=iFromIndexEnd )
 	{
 		for( int c=0; c<m_iNumTracks; c++ )
-			To.SetTapNote(c, t, From.GetTapNote(c, f));
+		{
+			TapNote tn = From.GetTapNote(c, f);
+			if( IsTapAttack(tn) )
+			{
+				Attack attack = From.GetAttackAt(c,f);
+				To.SetTapAttackNote( c, t, attack );
+			}
+			else
+			{
+				To.SetTapNote(c, t, tn);
+			}
+		}
 		f++;
 		t++;
 	}
@@ -113,6 +124,7 @@ void NoteData::CopyAll( const NoteData* pFrom )
 	for( int c=0; c<m_iNumTracks; c++ )
 		m_TapNotes[c] = pFrom->m_TapNotes[c];
 	m_HoldNotes = pFrom->m_HoldNotes;
+	m_AttackMap = pFrom->m_AttackMap;
 }
 
 void NoteData::AddHoldNote( HoldNote add )
@@ -174,7 +186,7 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 	m_HoldNotes.erase(m_HoldNotes.begin()+iHoldIndex, m_HoldNotes.begin()+iHoldIndex+1);
 }
 
-void NoteData::AddAttackNote( int track, int row, Attack attack )
+void NoteData::SetTapAttackNote( int track, int row, Attack attack )
 {
 	PruneUnusedAttacksFromMap();
 

@@ -52,132 +52,218 @@ NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMe
 		return nt;
 }
 
-void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData )
+void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData, CString sSMAttackData )
 {
-	/* Clear notes, but keep the same number of tracks. */
-	int iNumTracks = out.GetNumTracks();
-	out.Init();
-	out.SetNumTracks( iNumTracks );
-
-	// strip comments out of sSMNoteData
-	while( sSMNoteData.Find("//") != -1 )
 	{
-		int iIndexCommentStart = sSMNoteData.Find("//");
-		int iIndexCommentEnd = sSMNoteData.Find("\n", iIndexCommentStart);
-		if( iIndexCommentEnd == -1 )	// comment doesn't have an end?
-			sSMNoteData.erase( iIndexCommentStart, 2 );
-		else
-			sSMNoteData.erase( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
-	}
+		//
+		// Load note data
+		//
 
-	CStringArray asMeasures;
-	split( sSMNoteData, ",", asMeasures, true );	// ignore empty is important
-	for( unsigned m=0; m<asMeasures.size(); m++ )	// foreach measure
-	{
-		CString &sMeasureString = asMeasures[m];
-		TrimLeft(sMeasureString);
-		TrimRight(sMeasureString);
+		/* Clear notes, but keep the same number of tracks. */
+		int iNumTracks = out.GetNumTracks();
+		out.Init();
+		out.SetNumTracks( iNumTracks );
 
-		CStringArray asMeasureLines;
-		split( sMeasureString, "\n", asMeasureLines, true );	// ignore empty is important
-
-		//ASSERT( asMeasureLines.size() == 4  ||
-		//	    asMeasureLines.size() == 8  ||
-		//	    asMeasureLines.size() == 12  ||
-		//	    asMeasureLines.size() == 16 );
-
-
-		for( unsigned l=0; l<asMeasureLines.size(); l++ )
+		// strip comments out of sSMNoteData
+		while( sSMNoteData.Find("//") != -1 )
 		{
-			CString &sMeasureLine = asMeasureLines[l];
-			TrimLeft(sMeasureLine);
-			TrimRight(sMeasureLine);
+			int iIndexCommentStart = sSMNoteData.Find("//");
+			int iIndexCommentEnd = sSMNoteData.Find("\n", iIndexCommentStart);
+			if( iIndexCommentEnd == -1 )	// comment doesn't have an end?
+				sSMNoteData.erase( iIndexCommentStart, 2 );
+			else
+				sSMNoteData.erase( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
+		}
 
-			const float fPercentIntoMeasure = l/(float)asMeasureLines.size();
-			const float fBeat = (m + fPercentIntoMeasure) * BEATS_PER_MEASURE;
-			const int iIndex = BeatToNoteRow( fBeat );
+		CStringArray asMeasures;
+		split( sSMNoteData, ",", asMeasures, true );	// ignore empty is important
+		for( unsigned m=0; m<asMeasures.size(); m++ )	// foreach measure
+		{
+			CString &sMeasureString = asMeasures[m];
+			TrimLeft(sMeasureString);
+			TrimRight(sMeasureString);
 
-//			if( m_iNumTracks != sMeasureLine.GetLength() )
-//				RageException::Throw( "Actual number of note columns (%d) is different from the StepsType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
+			CStringArray asMeasureLines;
+			split( sMeasureString, "\n", asMeasureLines, true );	// ignore empty is important
 
-			for( int c=0; c<min(sMeasureLine.GetLength(),out.GetNumTracks()); c++ )
+			//ASSERT( asMeasureLines.size() == 4  ||
+			//	    asMeasureLines.size() == 8  ||
+			//	    asMeasureLines.size() == 12  ||
+			//	    asMeasureLines.size() == 16 );
+
+
+			for( unsigned l=0; l<asMeasureLines.size(); l++ )
 			{
-				TapNote t;
-				switch(sMeasureLine[c])
+				CString &sMeasureLine = asMeasureLines[l];
+				TrimLeft(sMeasureLine);
+				TrimRight(sMeasureLine);
+
+				const float fPercentIntoMeasure = l/(float)asMeasureLines.size();
+				const float fBeat = (m + fPercentIntoMeasure) * BEATS_PER_MEASURE;
+				const int iIndex = BeatToNoteRow( fBeat );
+
+	//			if( m_iNumTracks != sMeasureLine.GetLength() )
+	//				RageException::Throw( "Actual number of note columns (%d) is different from the StepsType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
+
+				for( int c=0; c<min(sMeasureLine.GetLength(),out.GetNumTracks()); c++ )
 				{
-				case '0': t = TAP_EMPTY; break;
-				case '1': t = TAP_TAP; break;
-				case '2': t = TAP_HOLD_HEAD; break;
-				case '3': t = TAP_HOLD_TAIL; break;
-//				case 'm':
-				// Don't be loose with the definition.  Use only 'M' since
-				// that's what we've been writing to disk.  -Chris
-				case 'M': t = TAP_MINE; break;
-				
-				default: 
-					/* Invalid data.  We don't want to assert, since there might
-					 * simply be invalid data in an .SM, and we don't want to die
-					 * due to invalid data.  We should probably check for this when
-					 * we load SM data for the first time ... */
-					// ASSERT(0); 
-					t = TAP_EMPTY; break;
+					TapNote t;
+					switch(sMeasureLine[c])
+					{
+					case '0': t = TAP_EMPTY; break;
+					case '1': t = TAP_TAP; break;
+					case '2': t = TAP_HOLD_HEAD; break;
+					case '3': t = TAP_HOLD_TAIL; break;
+	//				case 'm':
+					// Don't be loose with the definition.  Use only 'M' since
+					// that's what we've been writing to disk.  -Chris
+					case 'M': t = TAP_MINE; break;
+					
+					default: 
+						if( sMeasureLine[c] >= 'a' && sMeasureLine[c] <= 'z' )
+						{
+							t = sMeasureLine[c];
+						}
+						else
+						{
+							/* Invalid data.  We don't want to assert, since there might
+							 * simply be invalid data in an .SM, and we don't want to die
+							 * due to invalid data.  We should probably check for this when
+							 * we load SM data for the first time ... */
+							// ASSERT(0); 
+							t = TAP_EMPTY; 
+						}
+						break;
+					}
+					out.SetTapNote(c, iIndex, t);
 				}
-				out.SetTapNote(c, iIndex, t);
 			}
 		}
+		out.Convert2sAnd3sToHoldNotes();
 	}
-	out.Convert2sAnd3sToHoldNotes();
+
+	{
+		//
+		// Load attack data
+		//
+		CStringArray asLines;
+		split( sSMAttackData, ",", asLines, true );
+
+		for( int i=0; i<asLines.size(); i++ )
+		{
+			CString& sLine = asLines[i];
+			TrimLeft( sLine );
+			TrimRight( sLine );
+
+			if( sLine.empty() )
+				continue;	// skip
+
+			CStringArray asBits;
+			split( sLine, "=", asBits, true );
+
+			if( asBits.size() < 3 )
+				continue;
+
+			if( asBits[0].empty() )
+				continue;
+
+			TapNote tn = asBits[0][0];
+			
+			Attack attack;
+			attack.level = ATTACK_LEVEL_1;
+			attack.sModifier = asBits[1];
+			attack.sModifier.Replace( '.', ',' );	// we couldn't use comma here because the map item separator is a comma
+			attack.fSecsRemaining = atof( asBits[2] );
+			
+			out.GetAttackMap()[tn] = attack;
+		}
+	}
 }
 
-void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &out )
+void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out, CString &attacks_out )
 {
-	NoteData in;
-	in.To2sAnd3s( in_ );
-
-	float fLastBeat = in.GetLastBeat();
-	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
-
-	CString &sRet = out;
-
-	sRet = "\n"; /* data begins on a new line when written to disk */
-	sRet.reserve( 1024*32 );
-	
-	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
 	{
-		NoteType nt = GetSmallestNoteTypeForMeasure( in, m );
-		int iRowSpacing;
-		if( nt == NOTE_TYPE_INVALID )
-			iRowSpacing = 1;
-		else
-			iRowSpacing = int(roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT ));
+		//
+		// Get note data
+		//
+		NoteData in;
+		in.To2sAnd3s( in_ );
 
-		sRet += ssprintf("  // measure %d\n", m+1);
+		float fLastBeat = in.GetLastBeat();
+		int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
 
-		const int iMeasureStartRow = m * ROWS_PER_MEASURE;
-		const int iMeasureLastRow = (m+1) * ROWS_PER_MEASURE - 1;
+		CString &sRet = notes_out;
 
-		for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
+		sRet = "\n"; /* data begins on a new line when written to disk */
+		sRet.reserve( 1024*32 );
+		
+		for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
 		{
-			for( int t=0; t<in.GetNumTracks(); t++ )
+			NoteType nt = GetSmallestNoteTypeForMeasure( in, m );
+			int iRowSpacing;
+			if( nt == NOTE_TYPE_INVALID )
+				iRowSpacing = 1;
+			else
+				iRowSpacing = int(roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT ));
+
+			sRet += ssprintf("  // measure %d\n", m+1);
+
+			const int iMeasureStartRow = m * ROWS_PER_MEASURE;
+			const int iMeasureLastRow = (m+1) * ROWS_PER_MEASURE - 1;
+
+			for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
 			{
-				TapNote tn = in.GetTapNote(t, r);
-				char c;
-				switch( tn )
+				for( int t=0; t<in.GetNumTracks(); t++ )
 				{
-				case TAP_EMPTY:		c = '0'; break;
-				case TAP_TAP:		c = '1'; break;
-				case TAP_HOLD_HEAD: c = '2'; break;
-				case TAP_HOLD_TAIL: c = '3'; break;
-				case TAP_MINE:		c = 'M'; break;
-				default: ASSERT(0);	c = '0'; break;
+					TapNote tn = in.GetTapNote(t, r);
+					char c;
+					switch( tn )
+					{
+					case TAP_EMPTY:		c = '0'; break;
+					case TAP_TAP:		c = '1'; break;
+					case TAP_HOLD_HEAD: c = '2'; break;
+					case TAP_HOLD_TAIL: c = '3'; break;
+					case TAP_MINE:		c = 'M'; break;
+					default: 
+						if( IsTapAttack(tn) )
+						{
+							c = tn;
+						}
+						else
+						{
+							ASSERT(0);
+							c = '0'; 
+						}
+						break;
+					}
+					sRet.append(1, c);
 				}
-				sRet.append(1, c);
+				
+				sRet.append(1, '\n');
 			}
-			
-			sRet.append(1, '\n');
+
+			sRet.append(1, ',');
+		}
+	}
+
+	{
+		//
+		// Get attack data
+		// 
+		CStringArray asLines;
+
+		for( map<TapNote,Attack>::const_iterator iter = in_.GetAttackMap().begin();
+			iter != in_.GetAttackMap().end();
+			iter++ )
+		{
+			TapNote tn = iter->first;
+			Attack attack = iter->second;
+			attack.sModifier.Replace( ',', '.' );	// comma is the map item separator
+
+			asLines.push_back( ssprintf("%c=%s=%f,\n", tn, attack.sModifier.c_str(), attack.fSecsRemaining) );
 		}
 
-		sRet.append(1, ',');
+		attacks_out = join( ",", asLines );
 	}
 }
 

@@ -550,7 +550,11 @@ static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 			if( s1->GetMeter() != s2->GetMeter() )
 				continue;
 			/* Compare, ignoring whitespace. */
-			if( RemoveInitialWhitespace(s1->GetSMNoteData()) != RemoveInitialWhitespace(s2->GetSMNoteData()) )
+			CString sSMNoteData1, sSMAttackData1;
+			s1->GetSMNoteData( sSMNoteData1, sSMAttackData1 );
+			CString sSMNoteData2, sSMAttackData2;
+			s2->GetSMNoteData( sSMNoteData2, sSMAttackData2 );
+			if( RemoveInitialWhitespace(sSMNoteData1) != RemoveInitialWhitespace(sSMNoteData2) )
 				continue;
 
 			LOG->Trace("Removed %p duplicate steps in song \"%s\" with description \"%s\" and meter \"%i\"",

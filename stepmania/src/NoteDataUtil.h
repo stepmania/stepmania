@@ -27,8 +27,8 @@ struct PlayerOptions;
 namespace NoteDataUtil
 {
 	NoteType GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex );
-	void LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData );
-	void GetSMNoteDataString( const NoteData &in, CString &out );
+	void LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData, CString sSMAttackData );
+	void GetSMNoteDataString( const NoteData &in, CString &notes_out, CString &attacks_out );
 
 	float GetStreamRadarValue( const NoteData &in, float fSongSeconds );
 	float GetVoltageRadarValue( const NoteData &in, float fSongSeconds );

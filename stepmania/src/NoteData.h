@@ -35,6 +35,7 @@ class NoteData
 	void LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks );
 
 public:
+
 	/* Set up to hold the data in From; same number of tracks, same
 	 * divisor.  Doesn't allocate or copy anything. */
 	void Config( const NoteData &From );
@@ -45,6 +46,10 @@ public:
 	
 	int GetNumTracks() const;
 	void SetNumTracks( int iNewNumTracks );
+
+	// TODO: Think of better accessors
+	const map<TapNote,Attack>& GetAttackMap() const { return m_AttackMap; }
+	map<TapNote,Attack>& GetAttackMap() { return m_AttackMap; }
 
 	/* Return the note at the given track and row.  Row may be out of
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
@@ -144,7 +149,7 @@ public:
 	HoldNote &GetHoldNote( int index ) { return m_HoldNotes[index]; }
 	const HoldNote &GetHoldNote( int index ) const { return m_HoldNotes[index]; }
 
-	void AddAttackNote( int track, int row, Attack attack );
+	void SetTapAttackNote( int track, int row, Attack attack );
 	void PruneUnusedAttacksFromMap();	// slow
 	const Attack& GetAttackAt( int track, int row );
 	// remove Attacks with SetTapNote(TAP_EMPTY)
