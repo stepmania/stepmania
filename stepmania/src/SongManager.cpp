@@ -522,7 +522,7 @@ void SongManager::SaveCourseRankingsToFile( CString fn )
 void SongManager::SaveNoteScoresToFile( CString fn, int c )
 {
 	// notes scores
-	LOG->Trace("Writing note scores");
+	LOG->Trace("Writing note scores to %s", fn.c_str());
 	{
 		FILE* fp = fopen( fn, "w" );
 		if( fp )
@@ -576,7 +576,7 @@ void SongManager::SaveNoteScoresToFile( CString fn, int c )
 void SongManager::SaveCourseScoresToFile( CString fn, int c )
 {
 	// course scores
-	LOG->Trace("Writing course scores");
+	LOG->Trace("Writing course scores to %s", fn.c_str());
 	{
 		FILE* fp = fopen( fn, "w" );
 		if( fp )
