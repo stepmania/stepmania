@@ -271,6 +271,11 @@ void ScreenPlayerOptions::ExportOptions()
 		 * erase everything. */
 		// po.Init();
 
+		// if player isn't enabled, don't bother parsing options
+		// **very important for nonstop difficulties**
+		if (!GAMESTATE->IsPlayerEnabled(p))
+			continue;
+
 		switch( m_iSelectedOption[p][PO_SPEED] )
 		{
 		case 0:	po.m_bTimeSpacing = false;	po.m_fScrollSpeed = 0.25f;	break;
@@ -335,9 +340,15 @@ void ScreenPlayerOptions::ExportOptions()
 		if( GAMESTATE->m_pCurCourse )   // playing a course
 		{
 			if( m_iSelectedOption[p][PO_STEP] == 1 )
+			{
 				GAMESTATE->m_bDifficultCourses = true;
+				LOG->Trace("ScreenPlayerOptions: Using difficult course");
+			}
 			else
+			{
 				GAMESTATE->m_bDifficultCourses = false;
+				LOG->Trace("ScreenPlayerOptions: Using normal course");
+			}
 		}
 		else
 		{

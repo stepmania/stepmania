@@ -75,6 +75,10 @@ void ScreenSongOptions::ImportOptions()
 
 	m_iSelectedOption[0][SO_LIFE] = so.m_LifeType;
 	m_iSelectedOption[0][SO_BAT_LIVES] = so.m_iBatteryLives-1;
+
+	if ( m_iSelectedOption[0][SO_BAT_LIVES] < 0 )
+		m_iSelectedOption[0][SO_BAT_LIVES] = 3;  // default in case value is invalid
+
 	m_iSelectedOption[0][SO_FAIL] = so.m_FailType;
 	m_iSelectedOption[0][SO_ASSIST] = so.m_bAssistTick;
 	m_iSelectedOption[0][SO_AUTOSYNC] = so.m_bAutoSync;
