@@ -140,7 +140,7 @@ int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
 #if defined(INTEGER_OGG)
 			int ret = ov_read(vf, tmpbuf, sizeof(tmpbuf), &bstream);
 #else // float vorbis decoder
-			int ret = ov_read(vf, tmpbuf, sizeof(tmpbuf), 0, 2, 1, &bstream);
+			int ret = ov_read(vf, tmpbuf, sizeof(tmpbuf), (SDL_BYTEORDER == SDL_BIG_ENDIAN)?1:0, 2, 1, &bstream);
 #endif
 
 //int ret = 4096;
@@ -154,7 +154,7 @@ int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
 			}
 		
 			if(ret == 0)
-				return bytes_read; /* EOF */
+				return bytes_read;
 
 			/* If we have a different number of channels, we need to convert. */
 			ASSERT(vi->channels == 1 || vi->channels == 2);
@@ -184,13 +184,6 @@ int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
 		bytes_read += size;
 	}
 
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	/* I can't imagine why, but Vorbisfile returns data in little endian, not system-endian. */
-	Sint16 *sbuf = (Sint16 *) buf;
-	for( int i = 0; i < bytes_read/2; ++i )
-		sbuf[i] = SDL_Swap16(sbuf[i]);
-#endif
-	
 	return bytes_read;
 }
 
