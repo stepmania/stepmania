@@ -819,8 +819,8 @@ next_notes_type:
 			pNewNotes->m_sDescription	= pOriginalNotes->m_sDescription + " (autogen)";
 			pNewNotes->m_NotesType		= ntMissing;
 
-			static NoteData originalNoteData;
-			static NoteData newNoteData;
+			NoteData originalNoteData;
+			NoteData newNoteData;
 			pOriginalNotes->GetNoteData( &originalNoteData );
 			newNoteData.LoadTransformedSlidingWindow( &originalNoteData, iNumTracksOfMissing );
 			pNewNotes->SetNoteData( &newNoteData );
