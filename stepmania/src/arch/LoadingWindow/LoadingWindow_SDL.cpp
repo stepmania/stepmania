@@ -1,7 +1,7 @@
 #include "global.h"
 
 #include "SDL_utils.h"
-#include "SDL_image.h"
+#include "RageSurface_Load_XPM.h"
 #include "SDL_video.h"
 #include "SDL_rotozoom.h"
 #include "LoadingWindow_SDL.h"
@@ -26,7 +26,9 @@ LoadingWindow_SDL::LoadingWindow_SDL()
 	/* Set window title and icon */
 	SDL_WM_SetCaption("Loading StepMania", "");
 
-	SDL_Surface *srf = IMG_ReadXPMFromArray(icon);
+	CString error;
+	SDL_Surface *srf = RageSurface_Load_XPM( icon, error );
+
 	Uint32 color;
 	if( mySDL_MapRGBExact( srf->format, 0xFF, 0, 0xFF, color ) )
 		mySDL_AddColorKey( srf, color );
@@ -45,8 +47,8 @@ LoadingWindow_SDL::LoadingWindow_SDL()
 #endif
 
 
-	/* Load the BMP - we need it's dimensions */
-    SDL_Surface *image = IMG_ReadXPMFromArray(loading);
+	/* Load the BMP - we need its dimensions */
+    SDL_Surface *image = RageSurface_Load_XPM( loading, error );
     if( image == NULL )
         RageException::Throw("Couldn't load loading.bmp: %s",SDL_GetError());
 
