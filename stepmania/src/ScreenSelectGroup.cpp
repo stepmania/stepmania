@@ -79,21 +79,18 @@ ScreenSelectGroup::ScreenSelectGroup()
 		aAllSongs.RemoveAt( i );
 	}
 
-	// Get group names by thowing them into a hash
-	CMapStringToString mapGroupToNothing;
-	for( i=0; i<aAllSongs.GetSize(); i++ )		// foreach Song
-		mapGroupToNothing[ aAllSongs[i]->m_sGroupName ] = "";			
-
 	CStringArray asGroupNames;
-	
-	// Read group names back out into asGroupNames
-	for( POSITION pos = mapGroupToNothing.GetStartPosition(); pos != NULL; )
-	{
-		CString sGroupName, sValue;
-		mapGroupToNothing.GetNextAssoc( pos, sGroupName, sValue );
-		asGroupNames.Add( sGroupName );
+	for( i=0; i<aAllSongs.GetSize(); i++ ) {
+		asGroupNames.Add( aAllSongs[i]->m_sGroupName );
 	}
-	SortCStringArray( asGroupNames, true );
+
+	/* Remove duplicate groups. */
+	SortCStringArray(asGroupNames, true);
+	for( i=asGroupNames.GetSize()-1; i > 0; --i ) {
+		if( asGroupNames[i] == asGroupNames[i-1] )
+			asGroupNames.RemoveAt( i );
+	}
+
 	asGroupNames.InsertAt(0, "ALL MUSIC" );
 
 	// Add songs to the MusicList.
