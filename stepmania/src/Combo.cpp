@@ -24,6 +24,7 @@ CachedThemeMetricF	FULL_COMBO_GREATS_COMMAND		("Combo","FullComboGreatsCommand")
 CachedThemeMetricF	FULL_COMBO_PERFECTS_COMMAND		("Combo","FullComboPerfectsCommand");
 CachedThemeMetricF	FULL_COMBO_MARVELOUSES_COMMAND	("Combo","FullComboMarvelousesCommand");
 CachedThemeMetricF	FULL_COMBO_BROKEN_COMMAND		("Combo","FullComboBrokenCommand");
+CachedThemeMetricB	SHOW_MISS_COMBO		("Combo","ShowMissCombo");
 
 
 Combo::Combo()
@@ -46,87 +47,103 @@ Combo::Combo()
 	FULL_COMBO_PERFECTS_COMMAND.Refresh();
 	FULL_COMBO_MARVELOUSES_COMMAND.Refresh();
 	FULL_COMBO_BROKEN_COMMAND.Refresh();
+	SHOW_MISS_COMBO.Refresh();
 
-	m_sprCombo.Load( THEME->GetPathToG( "Combo label") );
-	m_sprCombo.SetShadowLength( 4 );
-	m_sprCombo.StopAnimating();
-	m_sprCombo.SetXY( LABEL_X, LABEL_Y );
-	m_sprCombo.SetHorizAlign( (Actor::HorizAlign)(int)LABEL_HORIZ_ALIGN );
-	m_sprCombo.SetVertAlign( (Actor::VertAlign)(int)LABEL_VERT_ALIGN );
-	m_sprCombo.SetDiffuse( RageColor(1,1,1,0) );	// invisible
-	this->AddChild( &m_sprCombo );
+	m_sprComboLabel.Load( THEME->GetPathToG( "Combo label") );
+	m_sprComboLabel.SetShadowLength( 4 );
+	m_sprComboLabel.StopAnimating();
+	m_sprComboLabel.SetXY( LABEL_X, LABEL_Y );
+	m_sprComboLabel.SetHorizAlign( (Actor::HorizAlign)(int)LABEL_HORIZ_ALIGN );
+	m_sprComboLabel.SetVertAlign( (Actor::VertAlign)(int)LABEL_VERT_ALIGN );
+	m_sprComboLabel.SetHidden( true );
+	this->AddChild( &m_sprComboLabel );
 
-	m_textComboNumber.LoadFromFont( THEME->GetPathToF("Combo") );
-	m_textComboNumber.SetShadowLength( 4 );
-	m_textComboNumber.SetXY( NUMBER_X, NUMBER_Y );
-	m_textComboNumber.SetHorizAlign( (Actor::HorizAlign)(int)NUMBER_HORIZ_ALIGN );
-	m_textComboNumber.SetVertAlign( (Actor::VertAlign)(int)NUMBER_VERT_ALIGN );
-	m_textComboNumber.SetDiffuse( RageColor(1,1,1,0) );	// invisible
-	this->AddChild( &m_textComboNumber );
+	m_sprMissesLabel.Load( THEME->GetPathToG( "Combo misses") );
+	m_sprMissesLabel.SetShadowLength( 4 );
+	m_sprMissesLabel.StopAnimating();
+	m_sprMissesLabel.SetXY( LABEL_X, LABEL_Y );
+	m_sprMissesLabel.SetHorizAlign( (Actor::HorizAlign)(int)LABEL_HORIZ_ALIGN );
+	m_sprMissesLabel.SetVertAlign( (Actor::VertAlign)(int)LABEL_VERT_ALIGN );
+	m_sprMissesLabel.SetHidden( true );
+	this->AddChild( &m_sprMissesLabel );
+
+	m_textNumber.LoadFromFont( THEME->GetPathToF("Combo") );
+	m_textNumber.SetShadowLength( 4 );
+	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
+	m_textNumber.SetHorizAlign( (Actor::HorizAlign)(int)NUMBER_HORIZ_ALIGN );
+	m_textNumber.SetVertAlign( (Actor::VertAlign)(int)NUMBER_VERT_ALIGN );
+	m_textNumber.SetHidden( true );
+	this->AddChild( &m_textNumber );
 }
 
-void Combo::SetCombo( int iCombo )
+void Combo::SetCombo( int iCombo, int iMisses )
 {
-	if( iCombo >= (int)SHOW_COMBO_AT )
+	bool bMisses = iMisses > 0;
+	int iNum = bMisses ? iMisses : iCombo;
+
+	if( (iNum < (int)SHOW_COMBO_AT)  || 
+		(bMisses && !(bool)SHOW_MISS_COMBO) )
 	{
-		m_textComboNumber.SetDiffuse( RageColor(1,1,1,1) );	// visible
-		m_sprCombo.SetDiffuse( RageColor(1,1,1,1) );	// visible
+		m_sprComboLabel.SetHidden( true );
+		m_sprMissesLabel.SetHidden( true );
+		m_textNumber.SetHidden( true );
+		return;
+	}
 
-		CString txt = ssprintf("%d", iCombo);
-		/* Don't do anything if it's not changing. */
-		if(m_textComboNumber.GetText() == txt) return;
+	m_sprComboLabel.SetHidden( bMisses );
+	m_sprMissesLabel.SetHidden( !bMisses );
+	m_textNumber.SetHidden( false );
 
-		m_textComboNumber.SetText( txt );
-		float fNumberZoom = SCALE(iCombo,0.f,(float)NUMBER_MAX_ZOOM_AT,(float)NUMBER_MIN_ZOOM,(float)NUMBER_MAX_ZOOM);
-		CLAMP( fNumberZoom, (float)NUMBER_MIN_ZOOM, (float)NUMBER_MAX_ZOOM );
-		m_textComboNumber.StopTweening();
-		m_textComboNumber.SetZoom( fNumberZoom * (float)PULSE_ZOOM ); 
-		m_textComboNumber.BeginTweening( C_TWEEN_SECONDS );
-		m_textComboNumber.SetZoom( fNumberZoom );
+	CString txt = ssprintf("%d", iNum);
+	/* Don't do anything if it's not changing. */
+	if(m_textNumber.GetText() == txt) return;
 
-		m_sprCombo.StopTweening();
-		m_sprCombo.SetZoom( PULSE_ZOOM ); 
-		m_sprCombo.BeginTweening( C_TWEEN_SECONDS );
-		m_sprCombo.SetZoom( 1 );
+	m_textNumber.SetText( txt );
+	float fNumberZoom = SCALE(iNum,0.f,(float)NUMBER_MAX_ZOOM_AT,(float)NUMBER_MIN_ZOOM,(float)NUMBER_MAX_ZOOM);
+	CLAMP( fNumberZoom, (float)NUMBER_MIN_ZOOM, (float)NUMBER_MAX_ZOOM );
+	m_textNumber.StopTweening();
+	m_textNumber.SetZoom( fNumberZoom * (float)PULSE_ZOOM ); 
+	m_textNumber.BeginTweening( C_TWEEN_SECONDS );
+	m_textNumber.SetZoom( fNumberZoom );
 
+	Sprite &sprLabel = bMisses ? m_sprMissesLabel : m_sprComboLabel;
 
-		// don't show a colored combo until 1/4 of the way through the song
-		bool bPastMidpoint = GAMESTATE->GetCourseSongIndex()>0 ||
-			GAMESTATE->m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds/4;
+	sprLabel.StopTweening();
+	sprLabel.SetZoom( PULSE_ZOOM ); 
+	sprLabel.BeginTweening( C_TWEEN_SECONDS );
+	sprLabel.SetZoom( 1 );
 
-		if( bPastMidpoint )
+	// don't show a colored combo until 1/4 of the way through the song
+	bool bPastMidpoint = GAMESTATE->GetCourseSongIndex()>0 ||
+		GAMESTATE->m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds/4;
+
+	if( bPastMidpoint )
+	{
+		if( g_CurStageStats.FullComboOfScore(m_PlayerNumber,TNS_MARVELOUS) )
 		{
-			if( g_CurStageStats.FullComboOfScore(m_PlayerNumber,TNS_MARVELOUS) )
-			{
-				m_sprCombo.Command( FULL_COMBO_MARVELOUSES_COMMAND );
-				m_textComboNumber.Command( FULL_COMBO_MARVELOUSES_COMMAND );
-			}
-			else if( bPastMidpoint && g_CurStageStats.FullComboOfScore(m_PlayerNumber,TNS_PERFECT) )
-			{
-				m_sprCombo.Command( FULL_COMBO_PERFECTS_COMMAND );
-				m_textComboNumber.Command( FULL_COMBO_PERFECTS_COMMAND );
-			}
-			else if( bPastMidpoint && g_CurStageStats.FullComboOfScore(m_PlayerNumber,TNS_GREAT) )
-			{
-				m_sprCombo.Command( FULL_COMBO_GREATS_COMMAND );
-				m_textComboNumber.Command( FULL_COMBO_GREATS_COMMAND );
-			}
-			else
-			{
-				m_sprCombo.Command( FULL_COMBO_BROKEN_COMMAND );
-				m_textComboNumber.Command( FULL_COMBO_BROKEN_COMMAND );
-			}
+			sprLabel.Command( FULL_COMBO_MARVELOUSES_COMMAND );
+			m_textNumber.Command( FULL_COMBO_MARVELOUSES_COMMAND );
+		}
+		else if( bPastMidpoint && g_CurStageStats.FullComboOfScore(m_PlayerNumber,TNS_PERFECT) )
+		{
+			sprLabel.Command( FULL_COMBO_PERFECTS_COMMAND );
+			m_textNumber.Command( FULL_COMBO_PERFECTS_COMMAND );
+		}
+		else if( bPastMidpoint && g_CurStageStats.FullComboOfScore(m_PlayerNumber,TNS_GREAT) )
+		{
+			sprLabel.Command( FULL_COMBO_GREATS_COMMAND );
+			m_textNumber.Command( FULL_COMBO_GREATS_COMMAND );
 		}
 		else
 		{
-			m_sprCombo.Command( FULL_COMBO_BROKEN_COMMAND );
-			m_textComboNumber.Command( FULL_COMBO_BROKEN_COMMAND );
+			sprLabel.Command( FULL_COMBO_BROKEN_COMMAND );
+			m_textNumber.Command( FULL_COMBO_BROKEN_COMMAND );
 		}
 	}
 	else
 	{
-		m_textComboNumber.SetDiffuse( RageColor(1,1,1,0) );	// invisible
-		m_sprCombo.SetDiffuse( RageColor(1,1,1,0) );	// invisible
+		sprLabel.Command( FULL_COMBO_BROKEN_COMMAND );
+		m_textNumber.Command( FULL_COMBO_BROKEN_COMMAND );
 	}
 }
 

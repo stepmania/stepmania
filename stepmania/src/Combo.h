@@ -17,13 +17,15 @@ public:
 
 	void Init( PlayerNumber pn ) { m_PlayerNumber = pn; }
 
-	void SetCombo( int iCombo );
+	void SetCombo( int iCombo, int iMisses );
 
 protected:
+
 	PlayerNumber m_PlayerNumber;
 
-	Sprite		m_sprCombo;
-	BitmapText	m_textComboNumber;
+	Sprite		m_sprComboLabel;
+	Sprite		m_sprMissesLabel;
+	BitmapText	m_textNumber;
 };
 
 #endif

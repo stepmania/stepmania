@@ -131,7 +131,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	m_Judgment.StopTweening();
 //	m_Combo.Reset();				// don't reset combos between songs in a course!
 	m_Combo.Init( pn );
-	m_Combo.SetCombo( g_CurStageStats.iCurCombo[m_PlayerNumber] );	// combo can persist between songs and games
+	m_Combo.SetCombo( g_CurStageStats.iCurCombo[m_PlayerNumber], g_CurStageStats.iCurMissCombo[m_PlayerNumber]  );	// combo can persist between songs and games
 	m_AttackDisplay.Init( pn );
 	m_Judgment.Reset();
 
@@ -1147,7 +1147,7 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	if(m_pSecondaryScoreKeeper)
 		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow );
 
-	m_Combo.SetCombo( g_CurStageStats.iCurCombo[m_PlayerNumber] );
+	m_Combo.SetCombo( g_CurStageStats.iCurCombo[m_PlayerNumber], g_CurStageStats.iCurMissCombo[m_PlayerNumber] );
 
 #define CROSSED( x ) (iOldCombo<x && iCurCombo>=x)
 	if ( CROSSED(100) )	
