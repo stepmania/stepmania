@@ -12,6 +12,7 @@
 */
 
 #include "RageDisplay.h"
+#include "RageDisplay_D3D.h"
 #include "D3D8.h"
 #include "RageUtil.h"
 #include "RageLog.h"
@@ -42,7 +43,6 @@
 #include <math.h>
 #include <list>
 
-RageDisplay*		DISPLAY	= NULL;
 
 //
 // Globals
@@ -165,7 +165,7 @@ static const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 	}
 };
 
-const PixelFormatDesc *RageDisplay::GetPixelFormatDesc(PixelFormat pf) const
+const PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFormat pf) const
 {
 	ASSERT( pf < NUM_PIX_FORMATS );
 	return &PIXEL_FORMAT_DESC[pf];
@@ -173,9 +173,9 @@ const PixelFormatDesc *RageDisplay::GetPixelFormatDesc(PixelFormat pf) const
 
 
 
-RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
+RageDisplay_D3D::RageDisplay_D3D( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
 {
-	LOG->Trace( "RageDisplay::RageDisplay()" );
+	LOG->Trace( "RageDisplay_D3D::RageDisplay()" );
 
     if(!SDL_WasInit(SDL_INIT_VIDEO))
 		SDL_InitSubSystem(SDL_INIT_VIDEO);
@@ -252,7 +252,7 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 	SetVideoMode( windowed, width, height, bpp, rate, vsync, sWindowTitle, sIconFile );
 }
 
-void RageDisplay::Update(float fDeltaTime)
+void RageDisplay_D3D::Update(float fDeltaTime)
 {
 	SDL_Event event;
 	while(SDL_GetEvent(event, SDL_VIDEORESIZEMASK))
@@ -270,14 +270,14 @@ void RageDisplay::Update(float fDeltaTime)
 	}
 }
 
-bool RageDisplay::IsSoftwareRenderer()
+bool RageDisplay_D3D::IsSoftwareRenderer()
 {
 	return false;
 }
 
-RageDisplay::~RageDisplay()
+RageDisplay_D3D::~RageDisplay_D3D()
 {
-	LOG->Trace( "RageDisplay::~RageDisplay()" );
+	LOG->Trace( "RageDisplay_D3D::~RageDisplay()" );
 
 	SDL_EventState(SDL_VIDEORESIZE, SDL_IGNORE);
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
@@ -359,7 +359,7 @@ HWND GetHwnd()
 
 
 /* Set the video mode. */
-bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
+bool RageDisplay_D3D::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
 {
 	/* Set SDL window title and icon -before- creating the window */
 	SDL_WM_SetCaption(sWindowTitle, "");
@@ -462,7 +462,7 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	return bCreateNewDevice;
 }
 
-void RageDisplay::ResolutionChanged()
+void RageDisplay_D3D::ResolutionChanged()
 {
 	// no need to clear because D3D uses an overlay
 //	SetViewport(0,0);
@@ -472,7 +472,7 @@ void RageDisplay::ResolutionChanged()
 //	Flip();
 }
 
-void RageDisplay::SetViewport(int shift_left, int shift_down)
+void RageDisplay_D3D::SetViewport(int shift_left, int shift_down)
 {
 	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
 	 * Scale them to the actual viewport range. */
@@ -483,12 +483,12 @@ void RageDisplay::SetViewport(int shift_left, int shift_down)
 	g_pd3dDevice->SetViewport( &viewData );
 }
 
-int RageDisplay::GetMaxTextureSize() const
+int RageDisplay_D3D::GetMaxTextureSize() const
 {
 	return g_DeviceCaps.MaxTextureWidth;
 }
 
-void RageDisplay::BeginFrame()
+void RageDisplay_D3D::BeginFrame()
 {
 	if( g_pd3dDevice->TestCooperativeLevel() == D3DERR_DEVICENOTRESET )
 		SetVideoMode( g_Windowed, g_CurrentWidth, g_CurrentHeight, g_CurrentBPP, 0, 0, "", "" );	// FIXME: preserve prefs
@@ -498,7 +498,7 @@ void RageDisplay::BeginFrame()
 	g_pd3dDevice->BeginScene();
 }
 
-void RageDisplay::EndFrame()
+void RageDisplay_D3D::EndFrame()
 {
 	g_pd3dDevice->EndScene();
 	g_pd3dDevice->Present( 0, 0, 0, 0 );
@@ -519,7 +519,7 @@ D3DFORMAT D3DFORMATS[NUM_PIX_FORMATS] =
 	D3DFMT_P8
 };
 
-bool RageDisplay::SupportsTextureFormat( PixelFormat pixfmt )
+bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt )
 {
 	D3DFORMAT d3dfmt = D3DFORMATS[pixfmt];
 	HRESULT hr = g_pd3d->CheckDeviceFormat( 
@@ -532,7 +532,7 @@ bool RageDisplay::SupportsTextureFormat( PixelFormat pixfmt )
     return SUCCEEDED( hr );
 }
 
-void RageDisplay::SaveScreenshot( CString sPath )
+void RageDisplay_D3D::SaveScreenshot( CString sPath )
 {
 #ifndef _XBOX
 	IDirect3DSurface8* pSurface;
@@ -543,10 +543,10 @@ void RageDisplay::SaveScreenshot( CString sPath )
 }
 
 
-bool RageDisplay::IsWindowed() const { return g_Windowed; }
-int RageDisplay::GetWidth() const { return g_CurrentWidth; }
-int RageDisplay::GetHeight() const { return g_CurrentHeight; }
-int RageDisplay::GetBPP() const { return g_CurrentBPP; }
+bool RageDisplay_D3D::IsWindowed() const { return g_Windowed; }
+int RageDisplay_D3D::GetWidth() const { return g_CurrentWidth; }
+int RageDisplay_D3D::GetHeight() const { return g_CurrentHeight; }
+int RageDisplay_D3D::GetBPP() const { return g_CurrentBPP; }
 
 #define SEND_CURRENT_MATRICES \
 	g_pd3dDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)GetProjection() ); \
@@ -557,7 +557,7 @@ int RageDisplay::GetBPP() const { return g_CurrentBPP; }
 	g_pd3dDevice->SetTransform( D3DTS_WORLD, (D3DMATRIX*)&m );
 
 
-void RageDisplay::DrawQuads( const RageVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawQuads( const RageVertex v[], int iNumVerts )
 {
 	ASSERT( (iNumVerts%4) == 0 );
 
@@ -599,7 +599,7 @@ void RageDisplay::DrawQuads( const RageVertex v[], int iNumVerts )
 
 	StatsAddVerts( iNumVerts );
 }
-void RageDisplay::DrawFan( const RageVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawFan( const RageVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );
 	g_pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
@@ -613,7 +613,7 @@ void RageDisplay::DrawFan( const RageVertex v[], int iNumVerts )
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay::DrawStrip( const RageVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawStrip( const RageVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );
 	g_pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
@@ -627,7 +627,7 @@ void RageDisplay::DrawStrip( const RageVertex v[], int iNumVerts )
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay::DrawTriangles( const RageVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawTriangles( const RageVertex v[], int iNumVerts )
 {
 	if( iNumVerts == 0 )
 		return;
@@ -643,7 +643,7 @@ void RageDisplay::DrawTriangles( const RageVertex v[], int iNumVerts )
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay::DrawIndexedTriangles( const RageVertex v[], const Uint16 pIndices[], int iNumIndices )
+void RageDisplay_D3D::DrawIndexedTriangles( const RageVertex v[], const Uint16 pIndices[], int iNumIndices )
 {
 	if( iNumIndices == 0 )
 		return;
@@ -662,7 +662,7 @@ void RageDisplay::DrawIndexedTriangles( const RageVertex v[], const Uint16 pIndi
 	StatsAddVerts( iNumIndices );
 }
 
-void RageDisplay::DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth )
+void RageDisplay_D3D::DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth )
 {
 	ASSERT( iNumVerts >= 2 );
 	g_pd3dDevice->SetRenderState( D3DRS_POINTSIZE, *((DWORD*)&LineWidth) );	// funky cast.  See D3DRENDERSTATETYPE doc
@@ -677,7 +677,7 @@ void RageDisplay::DrawLineStrip( const RageVertex v[], int iNumVerts, float Line
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay::SetTexture( RageTexture* pTexture )
+void RageDisplay_D3D::SetTexture( RageTexture* pTexture )
 {
 	if( pTexture == NULL )
 	{
@@ -692,7 +692,7 @@ void RageDisplay::SetTexture( RageTexture* pTexture )
 	// Set palette (if any)
 	SetPalette(uTexHandle);
 }
-void RageDisplay::SetTextureModeModulate()
+void RageDisplay_D3D::SetTextureModeModulate()
 {
 	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
 	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
@@ -702,7 +702,7 @@ void RageDisplay::SetTextureModeModulate()
 	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 }
 
-void RageDisplay::SetTextureModeGlow(GlowMode m)
+void RageDisplay_D3D::SetTextureModeGlow(GlowMode m)
 {
 	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
 	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
@@ -713,13 +713,13 @@ void RageDisplay::SetTextureModeGlow(GlowMode m)
 
 }
 
-void RageDisplay::SetTextureFiltering( bool b )
+void RageDisplay_D3D::SetTextureFiltering( bool b )
 {
 	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_MINFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
 	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_MAGFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
 }
 
-void RageDisplay::SetBlendMode( BlendMode mode )
+void RageDisplay_D3D::SetBlendMode( BlendMode mode )
 {
 	g_pd3dDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
 	switch( mode )
@@ -741,32 +741,32 @@ void RageDisplay::SetBlendMode( BlendMode mode )
 	}
 }
 
-bool RageDisplay::IsZBufferEnabled() const
+bool RageDisplay_D3D::IsZBufferEnabled() const
 {
 	DWORD b;
 	g_pd3dDevice->GetRenderState( D3DRS_ZENABLE, &b );
 	return b!=0;
 }
 
-void RageDisplay::SetZBuffer( bool b )
+void RageDisplay_D3D::SetZBuffer( bool b )
 {
 	g_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      b ? D3DZB_TRUE : D3DZB_FALSE );
 	g_pd3dDevice->SetRenderState( D3DRS_ZFUNC,		  D3DCMP_LESSEQUAL );
 	g_pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, b );
 }
-void RageDisplay::ClearZBuffer()
+void RageDisplay_D3D::ClearZBuffer()
 {
 	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
 }
 
-void RageDisplay::SetTextureWrapping( bool b )
+void RageDisplay_D3D::SetTextureWrapping( bool b )
 {
 	int mode = b ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP;
     g_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSU, mode );
     g_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, mode );
 }
 
-void RageDisplay::SetMaterial( 
+void RageDisplay_D3D::SetMaterial( 
 	float emissive[4],
 	float ambient[4],
 	float diffuse[4],
@@ -783,16 +783,16 @@ void RageDisplay::SetMaterial(
 	g_pd3dDevice->SetMaterial( &mat );
 }
 
-void RageDisplay::SetLighting( bool b )
+void RageDisplay_D3D::SetLighting( bool b )
 {
 	g_pd3dDevice->SetRenderState( D3DRS_LIGHTING, b );
 }
 
-void RageDisplay::SetLightOff( int index )
+void RageDisplay_D3D::SetLightOff( int index )
 {
 	g_pd3dDevice->LightEnable( index, false );
 }
-void RageDisplay::SetLightDirectional( 
+void RageDisplay_D3D::SetLightDirectional( 
 	int index, 
 	RageColor ambient, 
 	RageColor diffuse, 
@@ -812,12 +812,12 @@ void RageDisplay::SetLightDirectional(
 	g_pd3dDevice->SetLight( index, &light );
 }
 
-void RageDisplay::SetBackfaceCull( bool b )
+void RageDisplay_D3D::SetBackfaceCull( bool b )
 {
 	g_pd3dDevice->SetRenderState( D3DRS_CULLMODE, b ? D3DCULL_CW : D3DCULL_NONE );
 }
 
-void RageDisplay::DeleteTexture( unsigned uTexHandle )
+void RageDisplay_D3D::DeleteTexture( unsigned uTexHandle )
 {
 	IDirect3DTexture8* pTex = (IDirect3DTexture8*) uTexHandle;
 	pTex->Release();
@@ -830,7 +830,7 @@ void RageDisplay::DeleteTexture( unsigned uTexHandle )
 }
 
 
-unsigned RageDisplay::CreateTexture( 
+unsigned RageDisplay_D3D::CreateTexture( 
 	PixelFormat pixfmt,
 	SDL_Surface*& img )
 {
@@ -869,7 +869,7 @@ unsigned RageDisplay::CreateTexture(
 	return uTexHandle;
 }
 
-void RageDisplay::UpdateTexture( 
+void RageDisplay_D3D::UpdateTexture( 
 	unsigned uTexHandle, 
 	PixelFormat pixfmt,
 	SDL_Surface*& img,
@@ -905,14 +905,14 @@ void RageDisplay::UpdateTexture(
 //		NULL );
 }
 
-void RageDisplay::SetAlphaTest( bool b )
+void RageDisplay_D3D::SetAlphaTest( bool b )
 {
 	g_pd3dDevice->SetRenderState( D3DRS_ALPHATESTENABLE,  b );
 	g_pd3dDevice->SetRenderState( D3DRS_ALPHAREF,         0 );
 	g_pd3dDevice->SetRenderState( D3DRS_ALPHAFUNC, D3DCMP_GREATER );
 }
 
-RageMatrix RageDisplay::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
+RageMatrix RageDisplay_D3D::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
 {
 	// D3DXMatrixOrthoOffCenterRH
 	RageMatrix m(

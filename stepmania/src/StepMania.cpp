@@ -16,7 +16,6 @@
 // Rage global classes
 //
 #include "RageLog.h"
-#include "RageDisplay.h"
 #include "RageTextureManager.h"
 #include "RageSoundManager.h"
 #include "RageInput.h"
@@ -24,6 +23,13 @@
 #include "RageException.h"
 #include "RageMath.h"
 #include "RageDisplay.h"
+#if defined(WIN32)
+#include "RageDisplay_D3D.h"
+#endif
+
+#if !defined(_XBOX)
+#include "RageDisplay_OGL.h"
+#endif
 
 #include "arch/arch.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
@@ -206,6 +212,44 @@ static void BoostAppPri()
 #endif
 }
 
+RageDisplay *CreateDisplay()
+{
+	/* XXX: Passing all of the SetVideoMode arguments to the ctor is cumbersome. */
+#if defined(_XBOX)
+	RageDisplay *ret = new RageDisplay_D3D(
+		PREFSMAN->m_bWindowed, 
+		PREFSMAN->m_iDisplayWidth, 
+		PREFSMAN->m_iDisplayHeight, 
+		PREFSMAN->m_iDisplayColorDepth, 
+		PREFSMAN->m_iRefreshRate,
+		PREFSMAN->m_bVsync,
+		THEME->GetMetric("Common","WindowTitle"),
+		THEME->GetPathToG("Common window icon") );
+#elif !defined(WIN32)
+	RageDisplay *ret = new RageDisplay_OGL(
+		PREFSMAN->m_bWindowed, 
+		PREFSMAN->m_iDisplayWidth, 
+		PREFSMAN->m_iDisplayHeight, 
+		PREFSMAN->m_iDisplayColorDepth, 
+		PREFSMAN->m_iRefreshRate,
+		PREFSMAN->m_bVsync,
+		THEME->GetMetric("Common","WindowTitle"),
+		THEME->GetPathToG("Common window icon") );
+#else
+	/* Windows; we have both D3D and OGL available.  XXX: do something smart. */
+	RageDisplay *ret = new RageDisplay_OGL(
+		PREFSMAN->m_bWindowed, 
+		PREFSMAN->m_iDisplayWidth, 
+		PREFSMAN->m_iDisplayHeight, 
+		PREFSMAN->m_iDisplayColorDepth, 
+		PREFSMAN->m_iRefreshRate,
+		PREFSMAN->m_bVsync,
+		THEME->GetMetric("Common","WindowTitle"),
+		THEME->GetPathToG("Common window icon") );
+	return ret;
+#endif
+}
+
 static void RestoreAppPri()
 {
 	if(!ChangeAppPri())
@@ -279,15 +323,7 @@ int main(int argc, char* argv[])
 	PREFSMAN->ReadGlobalPrefsFromDisk( true );
 	PREFSMAN->ReadGamePrefsFromDisk();
 
-	DISPLAY		= new RageDisplay(
-		PREFSMAN->m_bWindowed, 
-		PREFSMAN->m_iDisplayWidth, 
-		PREFSMAN->m_iDisplayHeight, 
-		PREFSMAN->m_iDisplayColorDepth, 
-		PREFSMAN->m_iRefreshRate,
-		PREFSMAN->m_bVsync,
-		THEME->GetMetric("Common","WindowTitle"),
-		THEME->GetPathToG("Common window icon") );
+	DISPLAY = CreateDisplay();
 	TEXTUREMAN	= new RageTextureManager();
 	TEXTUREMAN->SetPrefs( 
 		PREFSMAN->m_iTextureColorDepth, 

@@ -59,86 +59,86 @@ class RageDisplay
 	friend class RageTexture;
 
 public:
-	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
-	RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile );
-	~RageDisplay();
-	void Update(float fDeltaTime);
+	virtual const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const = 0;
+//	RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile );
+	virtual ~RageDisplay() { };
+	virtual void Update(float fDeltaTime) { }
 
-	bool IsSoftwareRenderer();
+	virtual bool IsSoftwareRenderer() = 0;
 
-	bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile );
+	virtual bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile ) = 0;
 
 	/* Call this when the resolution has been changed externally: */
-	void ResolutionChanged();
+	virtual void ResolutionChanged() { }
 
-	void BeginFrame();	
-	void EndFrame();
-	bool IsWindowed() const;
-	int GetWidth() const;
-	int GetHeight() const;
-	int GetBPP() const;
+	virtual void BeginFrame() = 0;	
+	virtual void EndFrame() = 0;
+	virtual bool IsWindowed() const = 0;
+	virtual int GetWidth() const = 0;
+	virtual int GetHeight() const = 0;
+	virtual int GetBPP() const = 0;
 	
-	void SetBlendMode( BlendMode mode );
+	virtual void SetBlendMode( BlendMode mode ) = 0;
 
-	bool SupportsTextureFormat( PixelFormat pixfmt );
+	virtual bool SupportsTextureFormat( PixelFormat pixfmt ) = 0;
 	/* return 0 if failed or internal texture resource handle 
 	 * (unsigned in OpenGL, texture pointer in D3D) */
-	unsigned CreateTexture( 
+	virtual unsigned CreateTexture( 
 		PixelFormat pixfmt,			// format of img and of texture in video mem
 		SDL_Surface*& img 		// must be in pixfmt
-		);
-	void UpdateTexture( 
+		) = 0;
+	virtual void UpdateTexture( 
 		unsigned uTexHandle, 
 		PixelFormat pixfmt,	// this must be the same as what was passed to CreateTexture
 		SDL_Surface*& img,
 		int xoffset, int yoffset, int width, int height 
-		);
-	void DeleteTexture( unsigned uTexHandle );
-	void SetTexture( RageTexture* pTexture );
-	void SetTextureModeModulate();
-	void SetTextureModeGlow( GlowMode m=GLOW_WHITEN );
-	void SetTextureWrapping( bool b );
-	int GetMaxTextureSize() const;
-	void SetTextureFiltering( bool b);
+		) = 0;
+	virtual void DeleteTexture( unsigned uTexHandle ) = 0;
+	virtual void SetTexture( RageTexture* pTexture ) = 0;
+	virtual void SetTextureModeModulate() = 0;
+	virtual void SetTextureModeGlow( GlowMode m=GLOW_WHITEN ) = 0;
+	virtual void SetTextureWrapping( bool b ) = 0;
+	virtual int GetMaxTextureSize() const = 0;
+	virtual void SetTextureFiltering( bool b ) = 0;
 
-	bool IsZBufferEnabled() const;
-	void SetZBuffer( bool b );
-	void ClearZBuffer();
+	virtual bool IsZBufferEnabled() const = 0;
+	virtual void SetZBuffer( bool b ) = 0;
+	virtual void ClearZBuffer() = 0;
 
-	void SetBackfaceCull( bool b );
+	virtual void SetBackfaceCull( bool b ) = 0;
 	
-	void SetAlphaTest( bool b );
+	virtual void SetAlphaTest( bool b ) = 0;
 	
-	void SetMaterial( 
+	virtual void SetMaterial( 
 		float emissive[4],
 		float ambient[4],
 		float diffuse[4],
 		float specular[4],
 		float shininess
-		);
+		) = 0;
 
-	void SetLighting( bool b );
-	void SetLightOff( int index );
-	void SetLightDirectional( 
+	virtual void SetLighting( bool b ) = 0;
+	virtual void SetLightOff( int index ) = 0;
+	virtual void SetLightDirectional( 
 		int index, 
 		RageColor ambient, 
 		RageColor diffuse, 
 		RageColor specular, 
-		RageVector3 dir );
+		RageVector3 dir ) = 0;
 
 
 	void DrawQuad( const RageVertex v[] ) { DrawQuads(v,4); } /* alias. upper-left, upper-right, lower-left, lower-right */
-	void DrawQuads( const RageVertex v[], int iNumVerts );
-	void DrawFan( const RageVertex v[], int iNumVerts );
-	void DrawStrip( const RageVertex v[], int iNumVerts );
-	void DrawTriangles( const RageVertex v[], int iNumVerts );
-	void DrawIndexedTriangles( const RageVertex v[], const Uint16* pIndices, int iNumIndices );
-	void DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth );
+	virtual void DrawQuads( const RageVertex v[], int iNumVerts ) = 0;
+	virtual void DrawFan( const RageVertex v[], int iNumVerts ) = 0;
+	virtual void DrawStrip( const RageVertex v[], int iNumVerts ) = 0;
+	virtual void DrawTriangles( const RageVertex v[], int iNumVerts ) = 0;
+	virtual void DrawIndexedTriangles( const RageVertex v[], const Uint16* pIndices, int iNumIndices ) = 0;
+	virtual void DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth ) = 0;
 
-	void SaveScreenshot( CString sPath );
+	virtual void SaveScreenshot( CString sPath ) = 0;
 
 protected:
-	void SetViewport(int shift_left, int shift_down);
+	virtual void SetViewport(int shift_left, int shift_down) = 0;
 
 	// Stuff in RageDisplay.cpp
 	void SetDefaultRenderStates();
@@ -152,9 +152,6 @@ public:
 	void ProcessStatsOnFlip();
 	void StatsAddVerts( int iNumVertsRendered );
 
-	/* Statistics */
-
-	/* Statistics */
 	void PushMatrix();
 	void PopMatrix();
 	void Translate( float x, float y, float z );
@@ -172,7 +169,7 @@ public:
 	void ExitPerspective();
 	void LookAt(const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up);
 
-	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
+	virtual RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ) = 0; 
 	RageMatrix GetFrustrumMatrix(
 		float left,    
 		float right,   

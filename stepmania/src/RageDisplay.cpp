@@ -34,6 +34,8 @@ static int			g_iFramesRenderedSinceLastCheck,
 					g_iVertsRenderedSinceLastCheck,
 					g_iNumChecksSinceLastReset;
 
+RageDisplay*		DISPLAY	= NULL;
+
 CString PixelFormatToString( PixelFormat pixfmt )
 {
 	const CString s[NUM_PIX_FORMATS] = {

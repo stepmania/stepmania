@@ -45,6 +45,7 @@ namespace GLExt {
 };
 
 #include "RageDisplay.h"
+#include "RageDisplay_OGL.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageTimer.h"
@@ -61,8 +62,6 @@ namespace GLExt {
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
 #include <math.h>
-
-RageDisplay*		DISPLAY	= NULL;
 
 
 //
@@ -106,9 +105,9 @@ void GetGLExtensions(set<string> &ext)
 		ext.insert(lst[i]);
 }
 
-RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
+RageDisplay_OGL::RageDisplay_OGL( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
 {
-	LOG->Trace( "RageDisplay::RageDisplay()" );
+	LOG->Trace( "RageDisplay_OGL::RageDisplay()" );
 
 	wind = MakeLowLevelWindow();
 
@@ -134,19 +133,19 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 	LOG->Info("Point size range: %.3f-%.3f +%.3f", g_point_range[0], g_point_range[1], g_point_granularity);
 }
 
-void RageDisplay::Update(float fDeltaTime)
+void RageDisplay_OGL::Update(float fDeltaTime)
 {
 	wind->Update(fDeltaTime);
 }
 
-bool RageDisplay::IsSoftwareRenderer()
+bool RageDisplay_OGL::IsSoftwareRenderer()
 {
 	return 
 		( strcmp((const char*)glGetString(GL_VENDOR),"Microsoft Corporation")==0 ) &&
 		( strcmp((const char*)glGetString(GL_RENDERER),"GDI Generic")==0 );
 }
 
-RageDisplay::~RageDisplay()
+RageDisplay_OGL::~RageDisplay_OGL()
 {
 	delete wind;
 }
@@ -247,7 +246,7 @@ void DumpOpenGLDebugInfo()
 #endif
 }
 
-void RageDisplay::ResolutionChanged()
+void RageDisplay_OGL::ResolutionChanged()
 {
 	SetViewport(0,0);
 
@@ -258,9 +257,9 @@ void RageDisplay::ResolutionChanged()
 
 /* Set the video mode.  In some cases, changing the video mode will reset
  * the rendering context; returns true if we need to reload textures. */
-bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
+bool RageDisplay_OGL::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
 {
-//	LOG->Trace( "RageDisplay::SetVideoMode( %d, %d, %d, %d, %d, %d )", windowed, width, height, bpp, rate, vsync );
+//	LOG->Trace( "RageDisplay_OGL::SetVideoMode( %d, %d, %d, %d, %d, %d )", windowed, width, height, bpp, rate, vsync );
 	bool NewOpenGLContext = wind->SetVideoMode( windowed, width, height, bpp, rate, vsync, sWindowTitle, sIconFile );
 
 	if(NewOpenGLContext)
@@ -288,7 +287,7 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	return NewOpenGLContext;
 }
 
-void RageDisplay::SetViewport(int shift_left, int shift_down)
+void RageDisplay_OGL::SetViewport(int shift_left, int shift_down)
 {
 	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
 	 * Scale them to the actual viewport range. */
@@ -298,26 +297,26 @@ void RageDisplay::SetViewport(int shift_left, int shift_down)
 	glViewport(shift_left, -shift_down, wind->GetWidth(), wind->GetHeight());
 }
 
-int RageDisplay::GetMaxTextureSize() const
+int RageDisplay_OGL::GetMaxTextureSize() const
 {
 	GLint size;
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size);
 	return size;
 }
 
-void RageDisplay::BeginFrame()
+void RageDisplay_OGL::BeginFrame()
 {
 	glClearColor( 0,0,0,1 );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
-void RageDisplay::EndFrame()
+void RageDisplay_OGL::EndFrame()
 {
 	wind->SwapBuffers();
 	ProcessStatsOnFlip();
 }
 
-bool RageDisplay::SupportsTextureFormat( PixelFormat pixfmt )
+bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt )
 {
 	switch( pixfmt )
 	{
@@ -328,7 +327,7 @@ bool RageDisplay::SupportsTextureFormat( PixelFormat pixfmt )
 	}
 }
 
-void RageDisplay::SaveScreenshot( CString sPath )
+void RageDisplay_OGL::SaveScreenshot( CString sPath )
 {
 	ASSERT( sPath.Right(3).CompareNoCase("bmp") == 0 );	// we can only save bitmaps
 
@@ -357,13 +356,58 @@ void RageDisplay::SaveScreenshot( CString sPath )
 }
 
 
-bool RageDisplay::IsWindowed() const { return wind->IsWindowed(); }
-int RageDisplay::GetWidth() const { return wind->GetWidth(); }
-int RageDisplay::GetHeight() const { return wind->GetHeight(); }
-int RageDisplay::GetBPP() const { return wind->GetBPP(); }
+bool RageDisplay_OGL::IsWindowed() const { return wind->IsWindowed(); }
+int RageDisplay_OGL::GetWidth() const { return wind->GetWidth(); }
+int RageDisplay_OGL::GetHeight() const { return wind->GetHeight(); }
+int RageDisplay_OGL::GetBPP() const { return wind->GetBPP(); }
 
+static void SetupVertices( const RageVertex v[], int iNumVerts )
+{
+	static float *Vertex, *Texture, *Normal;	
+	static GLubyte *Color;
+	static int Size = 0;
+	if(iNumVerts > Size)
+	{
+		Size = iNumVerts;
+		delete [] Vertex;
+		delete [] Color;
+		delete [] Texture;
+		delete [] Normal;
+		Vertex = new float[Size*3];
+		Color = new GLubyte[Size*4];
+		Texture = new float[Size*2];
+		Normal = new float[Size*3];
+	}
 
-void RageDisplay::DrawQuads( const RageVertex v[], int iNumVerts )
+	for(unsigned i = 0; i < unsigned(iNumVerts); ++i)
+	{
+		Vertex[i*3+0]  = v[i].p[0];
+		Vertex[i*3+1]  = v[i].p[1];
+		Vertex[i*3+2]  = v[i].p[2];
+		Color[i*4+0]   = v[i].c.r;
+		Color[i*4+1]   = v[i].c.g;
+		Color[i*4+2]   = v[i].c.b;
+		Color[i*4+3]   = v[i].c.a;
+		Texture[i*2+0] = v[i].t[0];
+		Texture[i*2+1] = v[i].t[1];
+		Normal[i*2+0] = v[i].n[0];
+		Normal[i*2+1] = v[i].n[1];
+		Normal[i*2+2] = v[i].n[2];
+	}
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, Vertex);
+
+	glEnableClientState(GL_COLOR_ARRAY);
+	glColorPointer(4, GL_UNSIGNED_BYTE, 0, Color);
+
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, 0, Texture);
+
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glNormalPointer(GL_FLOAT, 0, Texture);
+}
+
+void RageDisplay_OGL::DrawQuads( const RageVertex v[], int iNumVerts )
 {
 	ASSERT( (iNumVerts%4) == 0 );
 
@@ -375,75 +419,37 @@ void RageDisplay::DrawQuads( const RageVertex v[], int iNumVerts )
 	glMatrixMode( GL_MODELVIEW );
 	glLoadMatrixf( (const float*)GetModelViewTop() );
 
-#if 1
-	static float *Vertex, *Color, *Texture;	
-	static int Size = 0;
-	if(iNumVerts > Size)
-	{
-		Size = iNumVerts;
-		delete [] Vertex;
-		delete [] Color;
-		delete [] Texture;
-		Vertex = new float[Size*3];
-		Color = new float[Size*4];
-		Texture = new float[Size*2];
-	}
-
-	for(unsigned i = 0; i < unsigned(iNumVerts); ++i)
-	{
-		Vertex[i*3+0]  = v[i].p[0];
-		Vertex[i*3+1]  = v[i].p[1];
-		Vertex[i*3+2]  = v[i].p[2];
-		Color[i*4+0]   = v[i].c[0];
-		Color[i*4+1]   = v[i].c[1];
-		Color[i*4+2]   = v[i].c[2];
-		Color[i*4+3]   = v[i].c[3];
-		Texture[i*2+0] = v[i].t[0];
-		Texture[i*2+1] = v[i].t[1];
-	}
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, Vertex);
-
-	glEnableClientState(GL_COLOR_ARRAY);
-	glColorPointer(4, GL_FLOAT, 0, Color);
-
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glTexCoordPointer(2, GL_FLOAT, 0, Texture);
-
-	glDisableClientState(GL_NORMAL_ARRAY);
-#else
-	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
-#endif
-
+	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_QUADS, 0, iNumVerts );
 
 	StatsAddVerts( iNumVerts );
 }
-void RageDisplay::DrawFan( const RageVertex v[], int iNumVerts )
+
+void RageDisplay_OGL::DrawFan( const RageVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );
 	glMatrixMode( GL_PROJECTION );
 	glLoadMatrixf( (const float*)GetProjection() );
 	glMatrixMode( GL_MODELVIEW );
 	glLoadMatrixf( (const float*)GetModelViewTop() );
-	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
+	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_TRIANGLE_FAN, 0, iNumVerts );
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay::DrawStrip( const RageVertex v[], int iNumVerts )
+void RageDisplay_OGL::DrawStrip( const RageVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );
 	glMatrixMode( GL_PROJECTION );
 	glLoadMatrixf( (const float*)GetProjection() );
 	glMatrixMode( GL_MODELVIEW );
 	glLoadMatrixf( (const float*)GetModelViewTop() );
-	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
+	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_TRIANGLE_STRIP, 0, iNumVerts );
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay::DrawTriangles( const RageVertex v[], int iNumVerts )
+void RageDisplay_OGL::DrawTriangles( const RageVertex v[], int iNumVerts )
 {
 	if( iNumVerts == 0 )
 		return;
@@ -453,12 +459,12 @@ void RageDisplay::DrawTriangles( const RageVertex v[], int iNumVerts )
 	glLoadMatrixf( (const float*)GetProjection() );
 	glMatrixMode( GL_MODELVIEW );
 	glLoadMatrixf( (const float*)GetModelViewTop() );
-	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
+	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_TRIANGLES, 0, iNumVerts );
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay::DrawIndexedTriangles( const RageVertex v[], const Uint16 pIndices[], int iNumIndices )
+void RageDisplay_OGL::DrawIndexedTriangles( const RageVertex v[], const Uint16 pIndices[], int iNumIndices )
 {
 	if( iNumIndices == 0 )
 		return;
@@ -468,7 +474,13 @@ void RageDisplay::DrawIndexedTriangles( const RageVertex v[], const Uint16 pIndi
 	glLoadMatrixf( (const float*)GetProjection() );
 	glMatrixMode( GL_MODELVIEW );
 	glLoadMatrixf( (const float*)GetModelViewTop() );
-	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
+
+	/* XXX: This is ugly. */
+	int iNumVerts = 0;
+	for(int i = 0; i < iNumIndices; ++i)
+		iNumVerts = max(iNumVerts, (int) pIndices[i]);
+	SetupVertices( v, iNumVerts );
+//	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
 	glDrawElements( GL_TRIANGLES, iNumIndices, GL_UNSIGNED_SHORT, pIndices );
 	StatsAddVerts( iNumIndices );
 }
@@ -506,7 +518,7 @@ void DrawPolyLine(const RageVertex &p1, const RageVertex &p2, float LineWidth )
 	DISPLAY->DrawQuad(v);
 }
 
-void RageDisplay::DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth )
+void RageDisplay_OGL::DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth )
 {
 	ASSERT( iNumVerts >= 2 );
 	
@@ -529,7 +541,7 @@ void RageDisplay::DrawLineStrip( const RageVertex v[], int iNumVerts, float Line
 		for(i = 0; i < iNumVerts; ++i)
 		{
 			glPushMatrix();
-			glColor4fv(v[i].c);
+			glColor4ub(v[i].c.r, v[i].c.g, v[i].c.b, v[i].c.a);
 			glTexCoord3fv(v[i].t);
 			glTranslatef(v[i].p.x, v[i].p.y, v[i].p.z);
 
@@ -564,7 +576,7 @@ void RageDisplay::DrawLineStrip( const RageVertex v[], int iNumVerts, float Line
 		glLineWidth(LineWidth);
 
 		/* Draw the line loop: */
-		glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
+		SetupVertices( v, iNumVerts );
 		glDrawArrays( GL_LINE_STRIP, 0, iNumVerts );
 
 		glDisable(GL_LINE_SMOOTH);
@@ -589,25 +601,25 @@ void RageDisplay::DrawLineStrip( const RageVertex v[], int iNumVerts, float Line
 
 		glEnable(GL_POINT_SMOOTH);
 
-		glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
+		SetupVertices( v, iNumVerts );
 		glDrawArrays( GL_POINTS, 0, iNumVerts );
 
 		glDisable(GL_POINT_SMOOTH);
 	}
 }
 
-void RageDisplay::SetTexture( RageTexture* pTexture )
+void RageDisplay_OGL::SetTexture( RageTexture* pTexture )
 {
 	glEnable( GL_TEXTURE_2D );
 	unsigned id = pTexture ? pTexture->GetTexHandle() : 0; 
 	glBindTexture( GL_TEXTURE_2D, id );
 }
-void RageDisplay::SetTextureModeModulate()
+void RageDisplay_OGL::SetTextureModeModulate()
 {
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 }
 
-void RageDisplay::SetTextureModeGlow(GlowMode m)
+void RageDisplay_OGL::SetTextureModeGlow(GlowMode m)
 {
 	if(m == GLOW_WHITEN && !g_bEXT_texture_env_combine)
 		m = GLOW_BRIGHTEN; /* we can't do GLOW_WHITEN */
@@ -633,12 +645,12 @@ void RageDisplay::SetTextureModeGlow(GlowMode m)
 		return;
 	}
 }
-void RageDisplay::SetTextureFiltering( bool b )
+void RageDisplay_OGL::SetTextureFiltering( bool b )
 {
 
 }
 
-void RageDisplay::SetBlendMode( BlendMode mode )
+void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 {
 	glEnable(GL_BLEND);
 
@@ -658,14 +670,14 @@ void RageDisplay::SetBlendMode( BlendMode mode )
 	}
 }
 
-bool RageDisplay::IsZBufferEnabled() const
+bool RageDisplay_OGL::IsZBufferEnabled() const
 {
 	bool a;
 	glGetBooleanv( GL_DEPTH_TEST, (unsigned char*)&a );
 	return a;
 }
 
-void RageDisplay::SetZBuffer( bool b )
+void RageDisplay_OGL::SetZBuffer( bool b )
 {
 	glDepthFunc(GL_LEQUAL);
 	if( b )
@@ -673,19 +685,19 @@ void RageDisplay::SetZBuffer( bool b )
 	else
 		glDisable( GL_DEPTH_TEST );
 }
-void RageDisplay::ClearZBuffer()
+void RageDisplay_OGL::ClearZBuffer()
 {
     glClear( GL_DEPTH_BUFFER_BIT );
 }
 
-void RageDisplay::SetTextureWrapping( bool b )
+void RageDisplay_OGL::SetTextureWrapping( bool b )
 {
 	GLenum mode = b ? GL_REPEAT : GL_CLAMP;
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode );
 }
 
-void RageDisplay::SetMaterial( 
+void RageDisplay_OGL::SetMaterial( 
 	float emissive[4],
 	float ambient[4],
 	float diffuse[4],
@@ -700,17 +712,17 @@ void RageDisplay::SetMaterial(
 	glMaterialf( GL_FRONT, GL_SHININESS, shininess );
 }
 
-void RageDisplay::SetLighting( bool b )
+void RageDisplay_OGL::SetLighting( bool b )
 {
 	if( b )	glEnable( GL_LIGHTING );
 	else	glDisable( GL_LIGHTING );
 }
 
-void RageDisplay::SetLightOff( int index )
+void RageDisplay_OGL::SetLightOff( int index )
 {
 	glDisable( GL_LIGHT0+index );
 }
-void RageDisplay::SetLightDirectional( 
+void RageDisplay_OGL::SetLightDirectional( 
 	int index, 
 	RageColor ambient, 
 	RageColor diffuse, 
@@ -732,7 +744,7 @@ void RageDisplay::SetLightDirectional(
 	glPopMatrix();
 }
 
-void RageDisplay::SetBackfaceCull( bool b )
+void RageDisplay_OGL::SetBackfaceCull( bool b )
 {
 	if( b )
 		glEnable( GL_CULL_FACE );
@@ -783,7 +795,7 @@ static const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 	}
 };
 
-const PixelFormatDesc *RageDisplay::GetPixelFormatDesc(PixelFormat pf) const
+const PixelFormatDesc *RageDisplay_OGL::GetPixelFormatDesc(PixelFormat pf) const
 {
 	ASSERT( pf < NUM_PIX_FORMATS );
 	return &PIXEL_FORMAT_DESC[pf];
@@ -832,7 +844,7 @@ struct GLPixFmtInfo_t {
 };
 
 
-void RageDisplay::DeleteTexture( unsigned uTexHandle )
+void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
 {
 	unsigned int uTexID = uTexHandle;
 	glDeleteTextures(1,reinterpret_cast<GLuint*>(&uTexID));
@@ -842,7 +854,7 @@ void RageDisplay::DeleteTexture( unsigned uTexHandle )
 }
 
 
-unsigned RageDisplay::CreateTexture( 
+unsigned RageDisplay_OGL::CreateTexture( 
 	PixelFormat pixfmt,
 	SDL_Surface*& img )
 {
@@ -966,7 +978,7 @@ unsigned RageDisplay::CreateTexture(
 }
 
 
-void RageDisplay::UpdateTexture( 
+void RageDisplay_OGL::UpdateTexture( 
 	unsigned uTexHandle, 
 	PixelFormat pixfmt,
 	SDL_Surface*& img,
@@ -997,7 +1009,7 @@ void RageDisplay::UpdateTexture(
 	glFlush();
 }
 
-void RageDisplay::SetAlphaTest( bool b )
+void RageDisplay_OGL::SetAlphaTest( bool b )
 {
 	glAlphaFunc( GL_GREATER, 0.01f );
 	if( b )
@@ -1006,7 +1018,7 @@ void RageDisplay::SetAlphaTest( bool b )
 		glDisable( GL_ALPHA_TEST );
 }
 
-RageMatrix RageDisplay::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
+RageMatrix RageDisplay_OGL::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
 {
 	RageMatrix m(
 		2/(r-l),      0,            0,           0,

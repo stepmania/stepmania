@@ -188,18 +188,10 @@ typedef Rect<float> RectF;
 // A structure for our custom vertex type.  Note that these data structes have the same layout that D3D expects.
 struct RageVertex
 {
-// Temporary hack.  A better solution is coming. -Chris
-#ifdef D3D
     RageVector3		p;	// position
     RageVector3		n;	// normal
     RageVColor		c;	// diffuse color
 	RageVector2		t;	// texture coordinates
-#else
-	RageVector2		t;	// texture coordinates
-    RageColor		c;	// diffuse color
-    RageVector3		n;	// normal
-    RageVector3		p;	// position
-#endif
 };
 
 /* nonstandard extension used : nameless struct/union
