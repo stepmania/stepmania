@@ -109,6 +109,8 @@ void Dialog::Error( CString sMessage, CString ID )
 {
 	Dialog::Init();
 
+	LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), ID.c_str() );
+
 	if( ID != "" && MessageIsIgnored( ID ) )
 		return;
 
@@ -128,6 +130,8 @@ void Dialog::OK( CString sMessage, CString ID )
 {
 	Dialog::Init();
 
+	LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), ID.c_str() );
+
 	if( ID != "" && MessageIsIgnored( ID ) )
 		return;
 
@@ -145,6 +149,8 @@ void Dialog::OK( CString sMessage, CString ID )
 Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString ID )
 {
 	Dialog::Init();
+
+	LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), ID.c_str() );
 
 	if( ID != "" && MessageIsIgnored( ID ) )
 		return g_NullDriver.AbortRetryIgnore( sMessage, ID );
@@ -166,6 +172,8 @@ Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString ID )
 Dialog::Result Dialog::RetryCancel( CString sMessage, CString ID )
 {
 	Dialog::Init();
+
+	LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), ID.c_str() );
 
 	if( ID != "" && MessageIsIgnored( ID ) )
 		return g_NullDriver.RetryCancel( sMessage, ID );
