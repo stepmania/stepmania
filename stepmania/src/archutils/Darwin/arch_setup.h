@@ -25,6 +25,7 @@ typedef unsigned long long UInt64;
 #define CRASH_HANDLER
 #define _BSD_WCHAR_T_DEFINED_
 #define ENDIAN_BIG
+#define CRYPTOPP_UNIX_AVAILABLE
 #ifndef __MACOSX__
 # define __MACOSX__
 #endif
