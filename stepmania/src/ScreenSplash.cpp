@@ -8,6 +8,7 @@ const ScreenMessage	SM_PrepScreen		= (ScreenMessage)(SM_User+0);
 
 REGISTER_SCREEN_CLASS( ScreenSplash );
 ScreenSplash::ScreenSplash( CString sClassName ) : ScreenWithMenuElements( sClassName ),
+	PREPARE_SCREEN				(m_sName,"PrepareScreen"),
 	ALLOW_START_TO_SKIP			(m_sName,"AllowStartToSkip"),
 	NEXT_SCREEN					(m_sName,"NextScreen"),
 	PREV_SCREEN					(m_sName,"PrevScreen"),
@@ -30,7 +31,8 @@ void ScreenSplash::HandleScreenMessage( const ScreenMessage SM )
 	case SM_PrepScreen:
 		{
 			RageTimer length;
-			SCREENMAN->PrepareScreen( NEXT_SCREEN );
+			if( PREPARE_SCREEN )
+				SCREENMAN->PrepareScreen( NEXT_SCREEN );
 			float fScreenLoadSeconds = length.GetDeltaTime();
 
 			/* The screen load took fScreenLoadSeconds.  Move on to the next screen after
@@ -42,7 +44,10 @@ void ScreenSplash::HandleScreenMessage( const ScreenMessage SM )
 		StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
+		if( SCREENMAN->IsStackedScreen(SCREENMAN->GetTopScreen()) )
+			SCREENMAN->PopTopScreen();
+		else
+			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	case SM_GoToPrevScreen:
 		SCREENMAN->DeletePreparedScreens();

@@ -21,6 +21,8 @@ void SMLoader::LoadFromSMTokens(
 	Steps &out
 )
 {
+	out.SetSavedToDisk( true );	// we're loading from disk, so this is by definintion already saved
+
 	TrimLeft(sStepsType); 	TrimRight(sStepsType); 
 	TrimLeft(sDescription);	TrimRight(sDescription); 
 	TrimLeft(sDifficulty); 	TrimRight(sDifficulty); 

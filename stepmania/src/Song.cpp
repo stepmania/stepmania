@@ -265,13 +265,13 @@ bool Song::LoadFromSongDir( CString sDir )
 
 
 	
-	for( unsigned i=0; i<m_vpSteps.size(); i++ )
+	FOREACH( Steps*, m_vpSteps, s )
 	{
-		m_vpSteps[i]->SetFile( GetCacheFilePath() );
+		(*s)->SetFile( GetCacheFilePath() );
 
 		/* Compress all Steps.  During initial caching, this will remove cached NoteData;
 		 * during cached loads, this will just remove cached SMData. */
-		m_vpSteps[i]->Compress();
+		(*s)->Compress();
 	}
 
 	/* Load the cached banners, if it's not loaded already. */

@@ -21,6 +21,7 @@ protected:
 	ThemeMetric<CString> NEXT_SCREEN;
 	ThemeMetric<CString> PREV_SCREEN;
 	ThemeMetric<float> MINIMUM_LOAD_DELAY_SECONDS;
+	ThemeMetric<bool> PREPARE_SCREEN;
 };
 
 #endif

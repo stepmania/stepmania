@@ -41,6 +41,8 @@ public:
 	const RadarValues& GetRadarValues() const { return Real()->m_RadarValues; }
 
 	void SetFile( CString fn );
+	void SetSavedToDisk( bool b ) { m_bSavedToDisk = b; }
+	bool GetSavedToDisk() { return m_bSavedToDisk; }
 	void SetDescription(CString desc);
 	static bool MakeValidDescription( CString &sPreferredDescription );	// return true if was modified
 
@@ -77,6 +79,7 @@ protected:
 	const Steps *Real() const;
 
 	CString			m_sFilename;
+	bool				m_bSavedToDisk;	// true if this was loaded from disk or has been saved to disk.
 
 	/* These values are pulled from the autogen source first, if there is one. */
 	ProfileSlot		m_LoadedFromProfile;	// PROFILE_SLOT_INVALID if wasn't loaded from a profile

@@ -105,6 +105,7 @@ void ScreenEditMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 	}
 }
 
+ScreenEditMenu *g_pScreenEditMenu = NULL;
 
 // helpers for MenuStart() below
 void DeleteCurSteps( void* pThrowAway )
@@ -112,7 +113,16 @@ void DeleteCurSteps( void* pThrowAway )
 	Song* pSong = GAMESTATE->m_pCurSong;
 	Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
 	pSong->RemoveSteps( pStepsToDelete );
-	pSong->Save();
+	if( HOME_EDIT_MODE )
+	{
+		SCREENMAN->AddNewScreenToTop( "ScreenMemcardSaveEditsAfterDeleteSteps", SM_None );
+	}
+	else
+	{
+		pSong->Save();
+		SCREENMAN->ZeroNextUpdate();
+	}
+	g_pScreenEditMenu->m_Selector.RefreshAll();
 }
 
 
@@ -157,24 +167,19 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 	if( !pSong->HasMusic() )
 	{
-		SCREENMAN->Prompt( SM_None, "This song is missing a music file\nand cannot be edited" );
+		SCREENMAN->Prompt( SM_None, "This song is missing a music file and cannot be edited" );
 		return;
 	}
 
 	switch( action )
 	{
 	case EDIT_MENU_ACTION_EDIT:
-		// Prepare prepare for ScreenEdit
-		ASSERT( pSteps );
-		SOUND->StopMusic();
-		SCREENMAN->PlayStartSound();
-		StartTransitioning( SM_GoToNextScreen );
 		break;
 	case EDIT_MENU_ACTION_DELETE:
 		ASSERT( pSteps );
 		SCREENMAN->Prompt( SM_RefreshSelector, "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO, DeleteCurSteps );
-		m_Selector.RefreshAll();
-		return;
+		g_pScreenEditMenu = this;
+		break;
 	case EDIT_MENU_ACTION_COPY:
 	case EDIT_MENU_ACTION_AUTOGEN:
 		ASSERT( !pSteps );
@@ -203,14 +208,13 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 				
 			SCREENMAN->SystemMessage( "Steps created from AutoGen." );
 			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
-			pSong->Save();
 
 			GAMESTATE->m_pCurSong.Set( pSong );
 			GAMESTATE->m_pCurSteps[0].Set( pNewSteps );
 
 			m_Selector.RefreshAll();
 		}
-		return;
+		break;
 	case EDIT_MENU_ACTION_BLANK:
 		ASSERT( !pSteps );
 		{
@@ -228,14 +232,34 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			SCREENMAN->SystemMessage( "Blank Steps created." );
 			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
 			m_Selector.RefreshAll();
-			pSong->Save();
 
 			GAMESTATE->m_pCurSong.Set( pSong );
 			GAMESTATE->m_pCurSteps[0].Set( pNewSteps );
 
 			m_Selector.RefreshAll();
 		}
-		return;
+		break;
+	default:
+		ASSERT(0);
+	}
+
+	
+	pSteps = m_Selector.GetSelectedSteps();
+
+	switch( action )
+	{
+	case EDIT_MENU_ACTION_EDIT:
+	case EDIT_MENU_ACTION_COPY:
+	case EDIT_MENU_ACTION_AUTOGEN:
+	case EDIT_MENU_ACTION_BLANK:
+		// Prepare prepare for ScreenEdit
+		ASSERT( pSteps );
+		SOUND->StopMusic();
+		SCREENMAN->PlayStartSound();
+		StartTransitioning( SM_GoToNextScreen );
+		break;
+	case EDIT_MENU_ACTION_DELETE:
+		break;
 	default:
 		ASSERT(0);
 	}
@@ -257,7 +281,7 @@ void ScreenEditMenu::RefreshExplanationText()
 
 void ScreenEditMenu::RefreshNumStepsLoadedFromProfile()
 {
-	CString s = ssprintf( "edits loaded: %d", SONGMAN->GetNumStepsLoadedFromProfile() );
+	CString s = ssprintf( "edits used: %d", SONGMAN->GetNumStepsLoadedFromProfile() );
 	int iMaxStepsLoadedFromProfile = MAX_STEPS_LOADED_FROM_PROFILE;
 	if( iMaxStepsLoadedFromProfile != -1 )
 		s += ssprintf( " / %d", iMaxStepsLoadedFromProfile );

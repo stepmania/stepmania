@@ -30,6 +30,7 @@
 #include "Style.h"
 #include "ActorUtil.h"
 #include "ScreenPrompt.h"
+#include "CommonMetrics.h"
 
 const float RECORD_HOLD_SECONDS = 0.3f;
 
@@ -1643,7 +1644,19 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_DoExit:
 		if( ScreenPrompt::s_LastAnswer != ANSWER_CANCEL )
+		{
+			// If these steps have never been saved, then we should delete them.
+			// If the user created them in the edit menu and never bothered
+			// to save them, then they aren't wanted.
+			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+			if( !pSteps->GetSavedToDisk() )
+			{
+				Song* pSong = GAMESTATE->m_pCurSong;
+				pSong->RemoveSteps( pSteps );
+			}
+
 			m_Out.StartTransitioning( SM_GoToNextScreen );
+		}
 		break;
 
 	case SM_GainFocus:
@@ -1782,7 +1795,17 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				ASSERT( pSteps );
 
 				pSteps->SetNoteData( m_NoteDataEdit );
-				GAMESTATE->m_pCurSong->Save();
+				pSteps->SetSavedToDisk( true );
+
+				if( HOME_EDIT_MODE )
+				{
+					SCREENMAN->AddNewScreenToTop( "ScreenMemcardSaveEditsInEditor", SM_None );
+				}
+				else
+				{
+					GAMESTATE->m_pCurSong->Save();
+					SCREENMAN->ZeroNextUpdate();
+				}
 
 				// we shouldn't say we're saving a DWI if we're on any game besides
 				// dance, it just looks tacky and people may be wondering where the
