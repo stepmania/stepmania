@@ -130,14 +130,23 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 	GetDirListing( sDir+sGroupDirName+"/*.jpg", arrayGroupBanners );
 	GetDirListing( sDir+sGroupDirName+"/*.gif", arrayGroupBanners );
 	GetDirListing( sDir+sGroupDirName+"/*.bmp", arrayGroupBanners );
-	CString sBannerPath;
 
+	CString sBannerPath;
 	if( !arrayGroupBanners.empty() )
-	{
 		sBannerPath = sDir+sGroupDirName+"/"+arrayGroupBanners[0] ;
-		LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.c_str(), sBannerPath.c_str() );
+	else
+	{
+		// Look for a group banner in the parent folder
+		GetDirListing( sDir+sGroupDirName+".png", arrayGroupBanners );
+		GetDirListing( sDir+sGroupDirName+".jpg", arrayGroupBanners );
+		GetDirListing( sDir+sGroupDirName+".gif", arrayGroupBanners );
+		GetDirListing( sDir+sGroupDirName+".bmp", arrayGroupBanners );
+		if( !arrayGroupBanners.empty() )
+			sBannerPath = sDir+arrayGroupBanners[0];
 	}
 
+	if( sBannerPath != "" )
+		LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.c_str(), sBannerPath.c_str() );
 	m_arrayGroupNames.push_back( sGroupDirName );
 	m_GroupBannerPaths.push_back(sBannerPath);
 }
