@@ -4,7 +4,7 @@
 #define ActorCommands_H
 
 #include "RageUtil_AutoPtr.h"
-class Commands;
+#include "Command.h"
 
 struct lua_State;
 
@@ -18,10 +18,13 @@ public:
 
 	void PushSelf( lua_State *L ) const;
 
+	static void ReRegisterAll();	// call this after resetting Lua
+
 private:
-	void Register( const Commands& cmds );
+	void Register();
 	void Unregister();
 
+	Commands m_cmds;
 	CString m_sLuaFunctionName;
 };
 

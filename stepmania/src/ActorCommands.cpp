@@ -7,6 +7,22 @@
 #include "LuaManager.h"
 #include "LuaBinding.h"
 
+static vector<ActorCommands*>* g_pActorCommands;
+
+static void Subscribe( ActorCommands* p )
+{
+	if( g_pActorCommands == NULL )
+		g_pActorCommands = new vector<ActorCommands*>;
+	g_pActorCommands->push_back( p );
+}
+
+static void Unsubscribe( ActorCommands* p )
+{
+	vector<ActorCommands*>::iterator iter = find( g_pActorCommands->begin(), g_pActorCommands->end(), p );
+	ASSERT( iter != g_pActorCommands->end() );
+	g_pActorCommands->erase( iter );
+}
+
 static CString GetNextFunctionName()
 {
 	static int id = 0;
@@ -16,17 +32,25 @@ static CString GetNextFunctionName()
 
 ActorCommands::ActorCommands( const Commands& cmds )
 {
-	Register( cmds );
+	Subscribe( this );
+	
+	m_cmds = cmds;
+
+	Register();
 }
 
 ActorCommands::~ActorCommands()
 {
+	Unsubscribe( this );
+
 	if( m_sLuaFunctionName.size() )
 		Unregister();
 }
 
 ActorCommands::ActorCommands( const ActorCommands& cpy )
 {
+	Subscribe( this );
+
 	m_sLuaFunctionName = GetNextFunctionName();
 
 	/* We need to make a new function, since we'll be unregistered separately.  Set
@@ -56,9 +80,9 @@ void ActorCommands::PushSelf( lua_State *L ) const
 	ASSERT_M( !lua_isnil(L, -1), m_sLuaFunctionName.c_str() )
 }
 
-void ActorCommands::Register( const Commands& cmds )
+void ActorCommands::Register()
 {
-	if( cmds.v.size() == 0 )
+	if( m_cmds.v.size() == 0 )
 	{
 		m_sLuaFunctionName = "nop";
 		return;
@@ -76,7 +100,7 @@ void ActorCommands::Register( const Commands& cmds )
 	
 	s << m_sLuaFunctionName << " = function(self)\n";
 
-	FOREACH_CONST( Command, cmds.v, c )
+	FOREACH_CONST( Command, m_cmds.v, c )
 	{
 		const Command& cmd = (*c);
 		CString sName = cmd.GetName();
@@ -145,6 +169,15 @@ void ActorCommands::Unregister()
 
 	m_sLuaFunctionName = "";
 }
+
+void ActorCommands::ReRegisterAll()
+{
+	if( g_pActorCommands == NULL )
+		return;
+	FOREACH( ActorCommands*, *g_pActorCommands, p )
+		(*p)->Register();
+}
+
 
 /*
  * (c) 2004 Chris Danford

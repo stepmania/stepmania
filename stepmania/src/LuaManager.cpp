@@ -6,6 +6,7 @@
 #include "RageFile.h"
 #include "arch/Dialog/Dialog.h"
 #include "Foreach.h"
+#include "ActorCommands.h"
 
 #include <csetjmp>
 #include <cassert>
@@ -141,14 +142,14 @@ static int LuaPanic( lua_State *L )
 
 
 // Actor registration
-static vector<RegisterActorFn>	*g_vRegisterActors = NULL;
+static vector<RegisterActorFn>	*g_vRegisterActorTypes = NULL;
 
 void LuaManager::Register( RegisterActorFn pfn )
 {
-	if( g_vRegisterActors == NULL )
-		g_vRegisterActors = new vector<RegisterActorFn>;
+	if( g_vRegisterActorTypes == NULL )
+		g_vRegisterActorTypes = new vector<RegisterActorFn>;
 
-	g_vRegisterActors->push_back( pfn );
+	g_vRegisterActorTypes->push_back( pfn );
 }
 
 
@@ -189,14 +190,16 @@ void LuaManager::ResetState()
 	for( const LuaFunctionList *p = g_LuaFunctions; p; p=p->next )
 		lua_register( L, p->name, p->func );
 
-	if( g_vRegisterActors )
+	if( g_vRegisterActorTypes )
 	{
-		for( unsigned i=0; i<g_vRegisterActors->size(); i++ )
+		for( unsigned i=0; i<g_vRegisterActorTypes->size(); i++ )
 		{
-			RegisterActorFn fn = (*g_vRegisterActors)[i];
+			RegisterActorFn fn = (*g_vRegisterActorTypes)[i];
 			fn( L );
 		}
 	}
+
+	ActorCommands::ReRegisterAll();
 }
 
 void LuaManager::PrepareExpression( CString &sInOut )
