@@ -293,22 +293,22 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 				{
 				case EFFECT_PARTICLES_FLOAT_UP:
 				case EFFECT_PARTICLES_SPIRAL_OUT:
-					m_vParticleVelocity[i] = RageVector3( 0, -PARTICLE_SPEED*pSprite->GetZoom(), 0 );
+					m_vParticleVelocity.push_back( RageVector3( 0, -PARTICLE_SPEED*pSprite->GetZoom(), 0 ) );
 					break;
 				case EFFECT_PARTICLES_FLOAT_DOWN:
 				case EFFECT_PARTICLES_SPIRAL_IN:
-					m_vParticleVelocity[i] = RageVector3( 0, PARTICLE_SPEED*pSprite->GetZoom(), 0 );
+					m_vParticleVelocity.push_back( RageVector3( 0, PARTICLE_SPEED*pSprite->GetZoom(), 0 ) );
 					break;
 				case EFFECT_PARTICLES_FLOAT_LEFT:
-					m_vParticleVelocity[i] = RageVector3( -PARTICLE_SPEED*pSprite->GetZoom(), 0, 0 );
+					m_vParticleVelocity.push_back( RageVector3( -PARTICLE_SPEED*pSprite->GetZoom(), 0, 0 ) );
 					break;
 				case EFFECT_PARTICLES_FLOAT_RIGHT:
-					m_vParticleVelocity[i] = RageVector3( +PARTICLE_SPEED*pSprite->GetZoom(), 0, 0 );
+					m_vParticleVelocity.push_back( RageVector3( +PARTICLE_SPEED*pSprite->GetZoom(), 0, 0 ) );
 					break;
 				case EFFECT_PARTICLES_BOUNCE:
 					m_bParticlesBounce = true;
 					pSprite->SetZoom( 1 );
-					m_vParticleVelocity[i] = RageVector3( randomf(), randomf(), 0 );
+					m_vParticleVelocity.push_back( RageVector3( randomf(), randomf(), 0 ) );
 					RageVec3Normalize( &m_vParticleVelocity[i], &m_vParticleVelocity[i] );
 					break;
 				default:
