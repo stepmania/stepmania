@@ -49,7 +49,7 @@ Desc: Sets up the screen display
 ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : Screen( sName )
 {
 	// Unjoin the players, then let them join back in on this screen
-	GAMESTATE->m_bPlayersCanJoin = true;
+//	GAMESTATE->m_bPlayersCanJoin = true;
 	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		GAMESTATE->m_bSideIsJoined[p] = false;

@@ -29,8 +29,6 @@ const ScreenMessage SM_StartClosing		= ScreenMessage(SM_User-8);
 
 ScreenCaution::ScreenCaution( CString sName ) : Screen( sName )
 {
-	GAMESTATE->m_bPlayersCanJoin = true;
-
 	if(!PREFSMAN->m_bShowDontDie)
 	{
 		this->PostScreenMessage( SM_GoToNextScreen, 0.f );

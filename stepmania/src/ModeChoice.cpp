@@ -116,11 +116,7 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 		{
 			Style style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_CurGame, sValue );
 			if( style != STYLE_INVALID )
-			{
 				m_style = style;
-				// There is a choices that allows players to choose a style.  Allow joining.
-				GAMESTATE->m_bPlayersCanJoin = true;
-			}
 			else
 				m_bInvalid |= true;
 		}

@@ -208,13 +208,13 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 				sPlayerInfo = "";
 			else if( PREFSMAN->m_sMemoryCardDir[p]!="" )
 			{
-				if( GAMESTATE->m_bPlayersCanJoin )
+				if( GAMESTATE->PlayersCanJoin() )
 					sPlayerInfo = PLAYER_INFO_INSERT_CARD;
 				else
 					sPlayerInfo = PLAYER_INFO_NO_CARD;
 			}
 		}
-		else if( GAMESTATE->m_bPlayersCanJoin )
+		else if( GAMESTATE->PlayersCanJoin() )
 		{
 			if( PREFSMAN->m_iCoinMode==COIN_PAY  && 
 				PREFSMAN->m_Premium!=PrefsManager::JOINT_PREMIUM  &&

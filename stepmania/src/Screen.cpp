@@ -175,7 +175,7 @@ bool Screen::ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventTy
 
 bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( !GAMESTATE->m_bPlayersCanJoin )
+	if( !GAMESTATE->PlayersCanJoin() )
 		return false;
 
 	if( MenuI.IsValid()  &&  MenuI.button==MENU_BUTTON_START )

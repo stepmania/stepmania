@@ -77,7 +77,6 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	 * options.  Having special cases in attract screens and the title menu to reset
 	 * things stinks ... */
 	GAMESTATE->Reset();
-	GAMESTATE->m_bPlayersCanJoin = true;
 
 	CodeDetector::RefreshCacheItems();
 

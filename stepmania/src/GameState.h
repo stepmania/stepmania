@@ -47,7 +47,6 @@ public:
 	UnlockSystem	*m_pUnlockingSys;
 	Game			m_CurGame;
 	Style			m_CurStyle;
-	bool			m_bPlayersCanJoin;	// true if it's not too late for a player to join - this only has an effect on the credits message
 	bool			m_bSideIsJoined[NUM_PLAYERS];	// left side, right side
 	PlayMode		m_PlayMode;			// many screens display different info depending on this value
 	int				m_iCoins;			// not "credits"
@@ -58,14 +57,8 @@ public:
 	/* This is set to a random number per-game/round; it can be used for a random seed. */
 	int				m_iGameSeed, m_iRoundSeed;
 
-	int				GetNumSidesJoined()
-	{ 
-		int iNumSidesJoined = 0;
-		for( int c=0; c<NUM_PLAYERS; c++ )
-			if( m_bSideIsJoined[c] )
-				iNumSidesJoined++;	// left side, and right side
-		return iNumSidesJoined;
-	};
+	bool			PlayersCanJoin() const;	// true if it's not too late for a player to join
+	int				GetNumSidesJoined() const;
 
 	GameDef*	GetCurrentGameDef();
 	const StyleDef*	GetCurrentStyleDef();

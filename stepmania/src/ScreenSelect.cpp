@@ -39,9 +39,6 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 
 	m_sName = sClassName;
 
-	/* If we don't have a style set yet, players can still join. */
-	GAMESTATE->m_bPlayersCanJoin = ( GAMESTATE->m_CurStyle == STYLE_INVALID );
-
 	for( int c=0; c<NUM_CHOICES; c++ )
 	{
 		CString sChoice = CHOICE(c);
@@ -105,22 +102,39 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
 }
 
+void ScreenSelect::FinalizeChoices()
+{
+	/* At this point, we're tweening out; we can't change the selection.
+	 * We don't want to allow players to join if the style will be set,
+	 * since that can change the available selection and is likely to
+	 * invalidate the choice we've already made.  Hack: apply the style.
+	 * (Applying the style may have other side-effects, so it'll be re-applied
+	 * in SM_GoToNextScreen.) */
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( GAMESTATE->IsHumanPlayer(p) )
+		{
+			const int sel = GetSelectionIndex( (PlayerNumber)p );
+			
+			if( m_aModeChoices[sel].m_style != STYLE_INVALID )
+				GAMESTATE->m_CurStyle = m_aModeChoices[sel].m_style;
+		}
+	SCREENMAN->RefreshCreditsMessages();
+}
+
 void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
+	/* Screen is starting to tween out. */
+	case SM_BeginFadingOut:
+		FinalizeChoices();
+		break;
+
+	/* It's our turn to tween out. */
 	case SM_AllDoneChoosing:		
-		{
-			GAMESTATE->m_bPlayersCanJoin = ( GAMESTATE->m_CurStyle == STYLE_INVALID );
-			const int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
-			if( m_aModeChoices[iSelectionIndex].m_style != STYLE_INVALID )
-				GAMESTATE->m_bPlayersCanJoin = false;
-
-			SCREENMAN->RefreshCreditsMessages();
-
-			if( !m_Menu.IsTransitioning() )
-				m_Menu.StartTransitioning( SM_GoToNextScreen );
-		}
+		FinalizeChoices();
+		if( !m_Menu.IsTransitioning() )
+			m_Menu.StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_MenuTimer:
 		{

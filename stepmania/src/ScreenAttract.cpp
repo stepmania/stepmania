@@ -56,9 +56,6 @@ ScreenAttract::ScreenAttract( CString sClassName ) : Screen( sClassName )
 	else
 		SOUND->PlayMusic( "" );	// stop music
 
-	GAMESTATE->m_bPlayersCanJoin = true;
-
-
 	float fTimeUntilBeginFadingOut = m_Background.GetLengthSeconds() - m_Out.GetLengthSeconds();
 	if( fTimeUntilBeginFadingOut < 0 )
 	{

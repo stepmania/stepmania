@@ -66,7 +66,6 @@ void GameState::Reset()
 	int p;
 
 	m_CurStyle = STYLE_INVALID;
-	m_bPlayersCanJoin = false;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_bSideIsJoined[p] = false;
 //	m_iCoins = 0;	// don't reset coin count!
@@ -354,6 +353,20 @@ int GameState::GetCourseSongIndex()
 	return iSongIndex;
 }
 
+bool GameState::PlayersCanJoin() const
+{
+	return GAMESTATE->m_CurStyle == STYLE_INVALID;
+}
+
+int GameState::GetNumSidesJoined() const
+{ 
+	int iNumSidesJoined = 0;
+	for( int c=0; c<NUM_PLAYERS; c++ )
+		if( m_bSideIsJoined[c] )
+			iNumSidesJoined++;	// left side, and right side
+	return iNumSidesJoined;
+}
+
 GameDef* GameState::GetCurrentGameDef()
 {
 	ASSERT( m_CurGame != GAME_INVALID );	// the game must be set before calling this
@@ -384,7 +397,7 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn )
 bool GameState::IsHumanPlayer( PlayerNumber pn )
 {
 	if( m_CurStyle == STYLE_INVALID )	// no style chosen
-		if( this->m_bPlayersCanJoin )	
+		if( this->PlayersCanJoin() )	
 			return m_bSideIsJoined[pn];	// only allow input from sides that have already joined
 		else
 			return true;	// if we can't join, then we're on a screen like MusicScroll or GameOver

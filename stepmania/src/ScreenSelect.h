@@ -38,6 +38,7 @@ public:
 protected:
 	virtual int GetSelectionIndex( PlayerNumber pn ) = 0;
 	virtual void UpdateSelectableChoices() = 0;		// derived screens must handle this
+	void FinalizeChoices();
 	
 	CString m_sName;
 
