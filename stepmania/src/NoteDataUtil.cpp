@@ -1110,6 +1110,25 @@ void NoteDataUtil::CollapseToOne( NoteData &in )
 	in.Convert2sAnd3sToHoldNotes();
 }
 
+void NoteDataUtil::CollapseLeft( NoteData &in )
+{
+	in.ConvertHoldNotesTo2sAnd3s();
+	int max_row = in.GetLastRow();
+	for( int r=0; r<=max_row; r++ )
+	{
+		int iNumTracksFilled = 0;
+		for( int t=0; t<in.GetNumTracks(); t++ )
+			if( in.GetTapNote(t,r) != TAP_EMPTY )
+			{
+				TapNote tn = in.GetTapNote(t,r);
+				in.SetTapNote(t, r, TAP_EMPTY);
+				in.SetTapNote(iNumTracksFilled, r, tn);
+				iNumTracksFilled++;
+			}
+	}
+	in.Convert2sAnd3sToHoldNotes();
+}
+
 void NoteDataUtil::ShiftLeft( NoteData &in )
 {
 	in.ConvertHoldNotesTo4s();

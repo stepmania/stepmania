@@ -66,6 +66,7 @@ namespace NoteDataUtil
 	void ClearLeft( NoteData &in );
 	void ClearRight( NoteData &in );
 	void CollapseToOne( NoteData &in );
+	void CollapseLeft( NoteData &in );
 	void ShiftLeft( NoteData &in );
 	void ShiftRight( NoteData &in );
 

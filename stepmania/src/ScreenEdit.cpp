@@ -162,7 +162,7 @@ static const MenuRow g_AreaMenuItems[] =
 	{ "Quantize",					true, 0, { "4TH","8TH","12TH","16TH","24TH","32ND","48TH","64TH" } },
 	{ "Turn",						true, 0, { "Left","Right","Mirror","Shuffle","Super Shuffle" } },
 	{ "Transform",					true, 0, { "NoHolds","NoMines","Little","Wide","Big","Quick","Skippy","Mines","Echo","Planted","Stomp","Twister" } },
-	{ "Alter",						true, 0, { "Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Shift Left","Shift Right" } },
+	{ "Alter",						true, 0, { "Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Collapse Left","Shift Left","Shift Right" } },
 	{ "Tempo",						true, 0, { "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" } },
 	{ "Play selection",				true, 0, { NULL } },
 	{ "Record in selection",		true, 0, { NULL } },
@@ -1608,6 +1608,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				case clear_left:			NoteDataUtil::ClearLeft( m_Clipboard );			break;
 				case clear_right:			NoteDataUtil::ClearRight( m_Clipboard );		break;
 				case collapse_to_one:		NoteDataUtil::CollapseToOne( m_Clipboard );		break;
+				case collapse_left:			NoteDataUtil::CollapseLeft( m_Clipboard );		break;
 				case shift_left:			NoteDataUtil::ShiftLeft( m_Clipboard );			break;
 				case shift_right:			NoteDataUtil::ShiftRight( m_Clipboard );		break;
 				default:		ASSERT(0);

@@ -134,7 +134,7 @@ public:
 	void HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers );
 	enum TurnType { left, right, mirror, shuffle, super_shuffle, NUM_TURN_TYPES };
 	enum TransformType { noholds, nomines, little, wide, big, quick, skippy, mines, echo, planted, stomp, twister, NUM_TRANSFORM_TYPES };
-	enum AlterType { backwards, swap_sides, copy_left_to_right, copy_right_to_left, clear_left, clear_right, collapse_to_one, shift_left, shift_right, NUM_ALTER_TYPES };
+	enum AlterType { backwards, swap_sides, copy_left_to_right, copy_right_to_left, clear_left, clear_right, collapse_to_one, collapse_left, shift_left, shift_right, NUM_ALTER_TYPES };
 	// MD 11/02/03 - added additional tempo adjusts which make "sense"
 	enum TempoType { compress_2x, compress_3_2, compress_4_3, expand_4_3, expand_3_2, expand_2x, NUM_TEMPO_TYPES };
 
