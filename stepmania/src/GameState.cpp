@@ -770,7 +770,9 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 			for( i=0; i<(int)m_vPlayedStageStats.size(); i++ )
 			{
 				Song* pSong = m_vPlayedStageStats[i].pSong;
+				ASSERT( pSong );
 				Steps* pSteps = m_vPlayedStageStats[i].pSteps[pn];
+				ASSERT( pSteps );
 				vector<Steps::MemCardData::HighScore> &vHighScores = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores;
 				for( unsigned j=0; j<vHighScores.size(); j++ )
 				{
