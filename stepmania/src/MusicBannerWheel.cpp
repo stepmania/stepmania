@@ -139,7 +139,6 @@ void MusicBannerWheel::InsertNewBanner(int direction)
 
 		if( pSong == NULL ) sGraphicPath = (THEME->GetPathToG("Common fallback banner"));
 		else if (pSong->HasBanner()) sGraphicPath = (pSong->GetBannerPath());
-		else if (PREFSMAN->m_bUseBGIfNoBanner && pSong->HasBackground() ) sGraphicPath = (pSong->GetBackgroundPath());
 		else sGraphicPath = (THEME->GetPathToG("Common fallback banner"));
 
 		elementtoreplace = scrlistPos - 2;
@@ -166,7 +165,6 @@ void MusicBannerWheel::InsertNewBanner(int direction)
 
 		if( pSong == NULL ) sGraphicPath = (THEME->GetPathToG("Common fallback banner"));
 		else if (pSong->HasBanner()) sGraphicPath = (pSong->GetBannerPath());
-		else if (PREFSMAN->m_bUseBGIfNoBanner && pSong->HasBackground() ) sGraphicPath = (pSong->GetBackgroundPath());
 		else sGraphicPath = (THEME->GetPathToG("Common fallback banner"));
 
 		elementtoreplace = scrlistPos + 2;
@@ -218,7 +216,6 @@ void MusicBannerWheel::LoadSongData()
 
 				if( pSong == NULL ) asGraphicPaths.push_back(THEME->GetPathToG("Common fallback banner"));
 				else if (pSong->HasBanner()) asGraphicPaths.push_back(pSong->GetBannerPath());
-				else if (PREFSMAN->m_bUseBGIfNoBanner && pSong->HasBackground() ) asGraphicPaths.push_back(pSong->GetBackgroundPath());
 				else asGraphicPaths.push_back(THEME->GetPathToG("Common fallback banner"));	
 			}
 		}
@@ -270,7 +267,6 @@ void MusicBannerWheel::LoadSongData()
 
 			if( pSong == NULL ) asGraphicPaths.push_back(THEME->GetPathToG("Common fallback banner"));
 			else if (pSong->HasBanner()) asGraphicPaths.push_back(pSong->GetBannerPath());
-			else if (PREFSMAN->m_bUseBGIfNoBanner && pSong->HasBackground() ) asGraphicPaths.push_back(pSong->GetBackgroundPath());
 			else asGraphicPaths.push_back(THEME->GetPathToG("Common fallback banner"));
 		}
 	}

@@ -66,7 +66,6 @@ PrefsManager::PrefsManager()
 	m_fJudgeWindowOKSeconds = 0.250f;	// allow enough time to take foot off and put back on
 	m_fLifeDifficultyScale = 1.0f;
 	m_iMovieDecodeMS = 2;
-	m_bUseBGIfNoBanner = false;
 	m_bDelayedEscape = true;
 	m_bInstructions = true;
 	m_bShowDontDie = true;
@@ -94,7 +93,6 @@ PrefsManager::PrefsManager()
 	m_bAutogenGroupCourses = true;
 	m_bBreakComboToGetItem = false;
 	m_bShowDancingCharacters = false;
-	m_BannerCacheType = preload_none;
 	m_fDancePointsAccumulated = 0;
 	m_bUseUnlockSystem = false;
 	m_bFirstRun = true;
@@ -170,7 +168,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueF( "Options", "JudgeWindowOKSeconds",		m_fJudgeWindowOKSeconds );
 	ini.GetValueF( "Options", "LifeDifficultyScale",		m_fLifeDifficultyScale );
 	ini.GetValueI( "Options", "MovieDecodeMS",				m_iMovieDecodeMS );
-	ini.GetValueB( "Options", "UseBGIfNoBanner",			m_bUseBGIfNoBanner );
 	ini.GetValueB( "Options", "DelayedEscape",				m_bDelayedEscape );
 	ini.GetValueB( "Options", "HiddenSongs",				m_bHiddenSongs );
 	ini.GetValueB( "Options", "Vsync",						m_bVsync );
@@ -208,7 +205,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValue ( "Options", "DefaultModifiers",			m_sDefaultModifiers );
 	ini.GetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
 	ini.GetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
-//	ini.GetValueI( "Options", "BannerCacheType",			(int&)m_BannerCacheType );
 	/* XXX: This belongs in the memcard code, not prefs. */
 	ini.GetValueF( "Options", "DancePointsAccumulated",		m_fDancePointsAccumulated );
 	ini.GetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
@@ -267,7 +263,6 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueF( "Options", "JudgeWindowOKSeconds",		m_fJudgeWindowOKSeconds );
 	ini.SetValueF( "Options", "LifeDifficultyScale",		m_fLifeDifficultyScale );
 	ini.SetValueI( "Options", "MovieDecodeMS",				m_iMovieDecodeMS );
-	ini.SetValueB( "Options", "UseBGIfNoBanner",			m_bUseBGIfNoBanner );
 	ini.SetValueB( "Options", "DelayedEscape",				m_bDelayedEscape );
 	ini.SetValueB( "Options", "HiddenSongs",				m_bHiddenSongs );
 	ini.SetValueB( "Options", "Vsync",						m_bVsync );
@@ -303,7 +298,6 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValue ( "Options", "DefaultModifiers",			m_sDefaultModifiers );
 	ini.SetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
 	ini.SetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
-//	ini.SetValueI( "Options", "BannerCacheType",			m_BannerCacheType );
 	ini.SetValueF( "Options", "DancePointsAccumulated",		m_fDancePointsAccumulated );
 	ini.SetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
 	ini.SetValueB( "Options", "FirstRun",					m_bFirstRun );

@@ -531,16 +531,6 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		ASSERT(0);	// invalid PlayMode
 	}
 
-	if(PREFSMAN->m_BannerCacheType == PREFSMAN->preload_all)
-	{
-		for( i=0; i<arrayWheelItemDatas.size(); i++ )
-		{
-			WheelItemData& WID = arrayWheelItemDatas[i];
-			if(WID.HasBanner())
-				TEXTUREMAN->CacheTexture( Banner::BannerTex(WID.GetBanner()) );
-		}
-	}
-
 	// init music status icons
 	for( i=0; i<arrayWheelItemDatas.size(); i++ )
 	{
@@ -1114,12 +1104,6 @@ void MusicWheel::SetOpenGroup(CString group, SongSortOrder so)
 			 from[i].m_sSectionName != group)
 			 continue;
 		m_CurWheelItemData.push_back(&from[i]);
-
-		//
-		// cache banners
-		//
-//		if(from[i].HasBanner() && PREFSMAN->m_BannerCacheType == PREFSMAN->preload_group)
-//			TEXTUREMAN->CacheTexture( Banner::BannerTex(from[i].GetBanner()) );
 	}
 
 

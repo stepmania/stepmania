@@ -31,7 +31,6 @@ public:
 	int				m_iNumBackgrounds;
 	float			m_fBGBrightness;
 	int 			m_iMovieDecodeMS;
-	bool			m_bUseBGIfNoBanner;
 	bool			m_bHiddenSongs;
 	bool			m_bVsync;
 	bool			m_bDelayedTextureDelete;
@@ -99,9 +98,6 @@ public:
 	float			m_fSoundVolume;
 	bool			m_bSoundPreloadAll;
 	bool			m_bAllowUnacceleratedRenderer;
-
-	enum BannerCacheType { preload_none, preload_all, preload_group };
-	BannerCacheType	m_BannerCacheType;
 
 	/* Game-specific prefs: */
 	CString			m_sDefaultNoteSkin;

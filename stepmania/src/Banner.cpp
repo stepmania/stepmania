@@ -85,7 +85,6 @@ void Banner::LoadFromSong( Song* pSong )		// NULL means no song
 
 	if( pSong == NULL )					LoadFallback();
 	else if( pSong->HasBanner() )		Load( pSong->GetBannerPath() );
-	else if( PREFSMAN->m_bUseBGIfNoBanner  &&  pSong->HasBackground() )	Load( pSong->GetBackgroundPath() );
 	else								LoadFallback();
 
 	m_bScrolling = false;
