@@ -6,7 +6,6 @@
 #include "RageTimer.h"
 #include "RageUtil_CircularBuffer.h"
 
-class SoundMixBuffer;
 static const int samples_per_block = 512;
 class RageSound_Generic_Software: public RageSoundDriver
 {
