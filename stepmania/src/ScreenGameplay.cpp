@@ -356,14 +356,14 @@ ScreenGameplay::ScreenGameplay()
 
 	if( GAMESTATE->m_bDemonstration )
 	{
-		m_quadDemonstrationBox.SetDiffuse( D3DXCOLOR(0,0,0,0.7f) );
-		m_quadDemonstrationBox.StretchTo( CRect(SCREEN_LEFT, int(CENTER_Y-60), SCREEN_RIGHT, int(CENTER_Y+60)) );
-		this->AddChild( &m_quadDemonstrationBox );
+		m_sprDemonstrationOverlay.Load( THEME->GetPathTo("Graphics","gameplay demonstration overlay") );
+		m_sprDemonstrationOverlay.SetXY( CENTER_X, CENTER_Y );
+		this->AddChild( &m_sprDemonstrationOverlay );
 
-		m_sprDemonstration.Load( THEME->GetPathTo("Graphics","gameplay demonstration") );
-		m_sprDemonstration.SetXY( CENTER_X, CENTER_Y );
-		m_sprDemonstration.SetEffectBlinking();
-		this->AddChild( &m_sprDemonstration );
+		m_sprDemonstrationBlink.Load( THEME->GetPathTo("Graphics","gameplay demonstration blink") );
+		m_sprDemonstrationBlink.SetXY( CENTER_X, CENTER_Y );
+		m_sprDemonstrationBlink.SetEffectBlinking();
+		this->AddChild( &m_sprDemonstrationBlink );
 
 		m_Fade.OpenWipingRight();
 	}

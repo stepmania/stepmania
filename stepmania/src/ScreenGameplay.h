@@ -120,8 +120,8 @@ private:
 
 	Sprite				m_sprToasty;	// easter egg
 
-	Quad				m_quadDemonstrationBox;
-	Sprite				m_sprDemonstration;
+	Sprite				m_sprDemonstrationOverlay;
+	Sprite				m_sprDemonstrationBlink;
 
 	RandomSample	m_soundFail;
 	RandomSample	m_soundOniDie;
