@@ -33,7 +33,11 @@ ThemeMetric<CString> DEFAULT_SORT				("ScreenSelectMusic","DefaultSort");
 
 static CString SECTION_COLORS_NAME( size_t i )	{ return ssprintf("SectionColor%d",i+1); }
 static CString CHOICE_NAME( CString s )			{ return ssprintf("Choice%s",s.c_str()); }
-			
+
+const AutoScreenMessage SM_SongChanged;          // TODO: Replace this with a Message and MESSAGEMAN
+const AutoScreenMessage SM_SortOrderChanging;
+const AutoScreenMessage SM_SortOrderChanged;
+
 const int MAX_WHEEL_SOUND_SPEED = 15;
 
 static const SortOrder g_SongSortOrders[] =

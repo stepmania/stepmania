@@ -18,9 +18,9 @@
 class Course;
 class Song;
 
-const AutoScreenMessage	SM_SongChanged;		// TODO: Replace this with a Message and MESSAGEMAN
-const AutoScreenMessage SM_SortOrderChanging;
-const AutoScreenMessage SM_SortOrderChanged;
+extern const AutoScreenMessage SM_SongChanged;		// TODO: Replace this with a Message and MESSAGEMAN
+extern const AutoScreenMessage SM_SortOrderChanging;
+extern const AutoScreenMessage SM_SortOrderChanged;
 
 struct CompareSongPointerArrayBySectionName;
 
