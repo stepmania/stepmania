@@ -12,10 +12,9 @@
 */
 
 #include "ActorFrame.h"
-#include "StyleDef.h"
-#include "GameConstantsAndTypes.h"
+#include "NoteTypes.h"
 #include "Sprite.h"
-#include "StyleDef.h"
+#include "PlayerNumber.h"
 
 
 
@@ -29,7 +28,7 @@ public:
 	bool PrevSnapMode();
 	bool NextSnapMode();
 
-	NoteType GetNoteType() { return m_NoteType; };
+	NoteType GetNoteType() const { return m_NoteType; };
 
 protected:
 	int m_iNumCols;

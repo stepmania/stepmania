@@ -11,9 +11,6 @@
 */
 
 #include "SnapDisplay.h"
-#include "RageUtil.h"
-#include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
 #include "GameManager.h"
 #include "GameState.h"
 #include "ThemeManager.h"
