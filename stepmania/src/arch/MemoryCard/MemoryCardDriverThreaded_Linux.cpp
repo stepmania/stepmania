@@ -223,29 +223,15 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 	vector<UsbStorageDevice> vDisconnects;
 	FOREACH( UsbStorageDevice, vOld, old )
 	{
-		bool bMatch = false;
-		FOREACH( UsbStorageDevice, vNew, newd )
-		{
-			if( old->IdsMatch(*newd) )
-			{
-				bMatch = true;
-				break;
-			}
-		}
-		
-		if( !bMatch )    // didn't find
+		vector<UsbStorageDevice>::iterator iter = find( vNew.begin(), vNew.end(), *old );
+		if( iter == vNew.end() )    // didn't find
 		{
 			LOG->Trace( "Disconnected bus %d port %d level %d path %s", old->iBus, old->iPort, old->iLevel, old->sOsMountDir.c_str() );
 			vDisconnects.push_back( *old );
 			
-			FOREACH( UsbStorageDevice, m_vDevicesLastSeen, d )
-			{
-				if( old->IdsMatch(*d) )
-				{
-					m_vDevicesLastSeen.erase( d );
-					break;
-				}
-			}
+			vector<UsbStorageDevice>::iterator iter = find( m_vDevicesLastSeen.begin(), m_vDevicesLastSeen.end(), *old );
+			ASSERT( iter != m_vDevicesLastSeen.end() );
+			m_vDevicesLastSeen.erase( iter );
 		}
 	}
 	
@@ -254,17 +240,8 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 	vector<UsbStorageDevice> vConnects;
 	FOREACH( UsbStorageDevice, vNew, newd )
 	{
-		bool bMatch = false;
-		FOREACH( UsbStorageDevice, vOld, old )
-		{
-			if( old->IdsMatch(*newd) )
-			{
-				bMatch = true;
-				break;
-			}
-		}
-		
-		if( !bMatch )    // didn't find
+		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), *newd );
+		if( iter == vOld.end() )    // didn't find
 		{
 			LOG->Trace( "Connected bus %d port %d level %d path %s", newd->iBus, newd->iPort, newd->iLevel, newd->sOsMountDir.c_str() );
 			vConnects.push_back( *newd );

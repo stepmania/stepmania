@@ -47,16 +47,8 @@ void MemoryCardManager::Update( float fDelta )
 		// check for disconnects
 		FOREACH( UsbStorageDevice, vOld, old )
 		{
-			bool bFoundMatch = false;
-			FOREACH( UsbStorageDevice, vNew, newd )
-			{
-				if( old->IdsMatch(*newd) )
-				{
-					bFoundMatch = true;
-					break;
-				}
-			}
-			if( !bFoundMatch )
+			vector<UsbStorageDevice>::iterator iter = find( vNew.begin(), vNew.end(), *old );
+			if( iter == vNew.end() )	// card no longer present
 			{
 				LOG->Trace( "Disconnected bus %d port %d device %d path %s", old->iBus, old->iPort, old->iLevel, old->sOsMountDir.c_str() );
 				vDisconnects.push_back( *old );
@@ -66,16 +58,8 @@ void MemoryCardManager::Update( float fDelta )
 		// check for connects
 		FOREACH( UsbStorageDevice, vNew, newd )
 		{
-			bool bFoundMatch = false;
-			FOREACH( UsbStorageDevice, vOld, old )
-			{
-				if( old->IdsMatch(*newd) )
-				{
-					bFoundMatch = true;
-					break;
-				}
-			}
-			if( !bFoundMatch )
+			vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), *newd );
+			if( iter == vOld.end() )	// card wasn't present last update
 			{
 				LOG->Trace( "Connected bus %d port %d device %d path %s", newd->iBus, newd->iPort, newd->iLevel, newd->sOsMountDir.c_str() );
 				vDisconnects.push_back( *newd );
@@ -89,18 +73,16 @@ void MemoryCardManager::Update( float fDelta )
 			if( assigned_device.IsBlank() )	// not assigned a card
 				continue;
 			
-			FOREACH( UsbStorageDevice, vDisconnects, disconnect )
+			vector<UsbStorageDevice>::iterator iter = find( vDisconnects.begin(), vDisconnects.end(), assigned_device );
+			if( iter != vDisconnects.end() )
 			{
-				if( disconnect->IdsMatch(assigned_device) )
-				{
-					m_pDriver->Unmount(&assigned_device, MEM_CARD_MOUNT_POINT[p]);
-					
-					assigned_device.MakeBlank();
-					m_soundDisconnect.Play();
-					
-					if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(p) )
-						PROFILEMAN->UnloadProfile( p );
-				}
+				m_pDriver->Unmount(&assigned_device, MEM_CARD_MOUNT_POINT[p]);
+				
+				assigned_device.MakeBlank();
+				m_soundDisconnect.Play();
+				
+				if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(p) )
+					PROFILEMAN->UnloadProfile( p );
 			}
 		}
 		
@@ -112,15 +94,13 @@ void MemoryCardManager::Update( float fDelta )
 			if( assigned_device.IsBlank() )     // no card assigned to this player
 				continue;
 			
-			FOREACH( UsbStorageDevice, m_vStorageDevices, d )
+			vector<UsbStorageDevice>::iterator iter = find( m_vStorageDevices.begin(), m_vStorageDevices.end(), assigned_device );
+			if( iter != m_vStorageDevices.end() )
 			{
-				if( d->IdsMatch(assigned_device) )
-				{
-					// play write test error sound if write test failed since we last checked
-					if( assigned_device.bNeedsWriteTest && !d->bNeedsWriteTest && !d->bWriteTestSucceeded )
-						m_soundError.Play();
-					assigned_device = *d;
-				}
+				// play write test error sound if write test failed since we last checked
+				if( assigned_device.bNeedsWriteTest && !iter->bNeedsWriteTest && !iter->bWriteTestSucceeded )
+					m_soundError.Play();
+				assigned_device = *iter;
 			}
 		}
 		
@@ -136,7 +116,7 @@ void MemoryCardManager::Update( float fDelta )
 			
 			FOREACH( UsbStorageDevice, vUnassignedDevices, d )
 			{
-				if( d->IdsMatch(assigned_device) )
+				if( *d == assigned_device )
 				{
 					vUnassignedDevices.erase( d );
 					break;
@@ -297,26 +277,26 @@ bool IsAnyPlayerUsingMemoryCard()
 LuaFunction_NoArgs( IsAnyPlayerUsingMemoryCard,		IsAnyPlayerUsingMemoryCard() )
 
 /*
-* (c) 2003-2004 Chris Danford
-* All rights reserved.
-* 
-* Permission is hereby granted, free of charge, to any person obtaining a
-* copy of this software and associated documentation files (the
-* "Software"), to deal in the Software without restriction, including
-* without limitation the rights to use, copy, modify, merge, publish,
-* distribute, and/or sell copies of the Software, and to permit persons to
-* whom the Software is furnished to do so, provided that the above
-* copyright notice(s) and this permission notice appear in all copies of
-* the Software and that both the above copyright notice(s) and this
-* permission notice appear in supporting documentation.
-* 
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-* OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
-* THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
-* INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
-* OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
-* OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-* OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-* PERFORMANCE OF THIS SOFTWARE.
-*/
+ * (c) 2003-2004 Chris Danford
+ * All rights reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */

@@ -32,24 +32,7 @@ struct UsbStorageDevice
 
 	bool IsBlank() { return sOsMountDir.empty(); }
 
-  bool operator==(const UsbStorageDevice& other) const
-  {
-#define COMPARE(x) if( x != other.x ) return false;
-    COMPARE( iBus );
-    COMPARE( iPort );
-    COMPARE( iLevel );
-    COMPARE( sSerial );
-    COMPARE( iScsiIndex );
-    COMPARE( sScsiDevice );
-    COMPARE( sOsMountDir );
-    COMPARE( sName );
-    COMPARE( bNeedsWriteTest );
-    COMPARE( bWriteTestSucceeded );
-    COMPARE( sOsMountDir );
-#undef COMPARE
-    return true;
-  }
-        bool IdsMatch(const UsbStorageDevice& other) const;
+  bool operator==(const UsbStorageDevice& other) const;
 };
 
 class MemoryCardDriver
