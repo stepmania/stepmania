@@ -66,6 +66,15 @@ freely, subject to the following restrictions:
 #if defined(_WINDOWS) || defined(_XBOX)
 	#include "zlib/zlib.h"
 	#pragma comment(lib, "zlib/zdll.lib")
+#elif defined(DARWIN)
+    /* Since crypto++ was added to the repository, <zlib.h> includes the zlib.h
+     * in there rather than the correct system one. I don't know why it would do
+     * this since crypto51 is not being listed as one of the include directories.
+     * I've never run into this problem before and looking at the command line
+     * used to compile RageFileDriverZip.o, I have no idea how it's happening.
+     * --Steve
+     */
+    #include "/usr/include/zlib.h"
 #else
 	#include <zlib.h>
 #endif
