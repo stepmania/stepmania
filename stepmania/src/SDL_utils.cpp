@@ -11,6 +11,7 @@
 #include "SDL_utils.h"
 #include "SDL_endian.h"
 #include "SDL_image.h"
+#include "RageSurface_Load.h"
 #include "RageFile.h"
 #include "RageLog.h"
 
@@ -91,18 +92,12 @@ void mySDL_GetRawRGBAV(Uint32 pixel, const SDL_Surface *src, Uint8 *v)
 		v[0] = fmt->palette->colors[pixel].r;
 		v[1] = fmt->palette->colors[pixel].g;
 		v[2] = fmt->palette->colors[pixel].b;
-		v[3] = 0xFF;
+		v[3] = fmt->palette->colors[pixel].unused;
 	} else {
 		v[0] = Uint8((pixel & fmt->Rmask) >> fmt->Rshift);
 		v[1] = Uint8((pixel & fmt->Gmask) >> fmt->Gshift);
 		v[2] = Uint8((pixel & fmt->Bmask) >> fmt->Bshift);
 		v[3] = Uint8((pixel & fmt->Amask) >> fmt->Ashift);
-	}
-
-	if( src->flags & SDL_SRCCOLORKEY )
-	{
-		if((fmt->colorkey & ~fmt->Amask) == (pixel & ~fmt->Amask))
-			v[3] = 0;
 	}
 }
 
@@ -132,7 +127,6 @@ void mySDL_GetRGBAV(const Uint8 *p, const SDL_Surface *src, Uint8 *v)
 	if( src->format->BytesPerPixel == 1 ) // paletted
 	{
 		memcpy( v, &src->format->palette->colors[pixel], sizeof(SDL_Color));
-		v[3] = 0xFF;	// full alpha
 	}
 	else	// RGBA
 		mySDL_GetRGBAV(pixel, src, v);	
@@ -202,12 +196,6 @@ void mySDL_SetPalette(SDL_Surface *dst, SDL_Color *colors, int start, int cnt)
 
 void CopySDLSurface( SDL_Surface *src, SDL_Surface *dest )
 {
-	/* We don't want to actually blend the alpha channel over the destination converted
-	 * surface; we want to simply blit it, so make sure SDL_SRCALPHA is not on. */
-	const Uint8 OldAlpha = src->format->alpha;
-	const Uint32 OldFlags = src->flags;
-	SDL_SetAlpha( src, 0, SDL_ALPHA_OPAQUE );
-
 	/* Copy the palette, if we have one. */
 	if( src->format->BitsPerPixel == 8 && dest->format->BitsPerPixel == 8 )
 	{
@@ -216,32 +204,7 @@ void CopySDLSurface( SDL_Surface *src, SDL_Surface *dest )
 			0, src->format->palette->ncolors);
 	}
 
-	if(src->format->BitsPerPixel == 8 && dest->format->BitsPerPixel == 8 &&
-	   src->flags & SDL_SRCCOLORKEY)
-	{
-		/* The source and dest are both paletted, and we have a color key. 
-		 * First, make sure that the image we're blitting to has a default
-		 * color of the color key, so any places we don't blit to will
-		 * be transparent.  (The default color in the image is 0, so we're
-		 * all set if the color key is 0.) */
-		if( src->format->colorkey != 0 )
-			SDL_FillRect( dest, NULL, src->format->colorkey );
-
-		/* Copy over the color key mode, and then turn off color keying in the
-		 * source so the color key index gets copied like any other color. */
-		SDL_SetColorKey( dest, SDL_SRCCOLORKEY, src->format->colorkey);
-		SDL_SetColorKey( src, 0, 0 );
-	}
-
-	SDL_Rect area;
-	area.x = area.y = 0;
-	area.w = short(src->w);
-	area.h = short(src->h);
-
-	SDL_BlitSurface( src, &area, dest, &area );
-
-	/* Restore alpha flags. */
-	SDL_SetAlpha( src, OldFlags, OldAlpha );
+	mySDL_BlitSurface( src, dest, -1, -1, false );
 }
 
 bool CompareSDLFormats( const SDL_PixelFormat *pf1, const SDL_PixelFormat *pf2 )
@@ -264,14 +227,9 @@ bool ConvertSDLSurface( SDL_Surface *src, SDL_Surface *&dst,
 	/* If the formats are the same, no conversion is needed. */
 	if( width == src->w && height == src->h && CompareSDLFormats( src->format, dst->format ) )
 	{
-		/* One exception: if we have a color key and we're not paletted (8-bit). 
-		 * In this case, we need to do the blit to get rid of the color key. */
-		if(!( src->flags & SDL_SRCCOLORKEY && src->format->BitsPerPixel != 8) )
-		{
-			SDL_FreeSurface( dst );
-			dst = NULL;
-			return false;
-		}
+		SDL_FreeSurface( dst );
+		dst = NULL;
+		return false;
 	}
 
 	CopySDLSurface( src, dst );
@@ -308,9 +266,7 @@ static void FindAlphaRGB(const SDL_Surface *img, Uint8 &r, Uint8 &g, Uint8 &b, b
 {
 	r = g = b = 0;
 	
-	/* If we have no alpha or no color key, there's no alpha color. */
-	if( img->format->BitsPerPixel == 8 && !(img->flags & SDL_SRCCOLORKEY) )
-		return;
+	/* If we have no alpha, there's no alpha color. */
 	if( img->format->BitsPerPixel > 8 && !img->format->Amask )
 		return;
 
@@ -348,22 +304,23 @@ static void FindAlphaRGB(const SDL_Surface *img, Uint8 &r, Uint8 &g, Uint8 &b, b
  * completely transparent. */
 static void SetAlphaRGB(const SDL_Surface *img, Uint8 r, Uint8 g, Uint8 b)
 {
-	/* If it's a paletted surface, all we have to do is change the
-	 * colorkey, if any. */
+	/* If it's a paletted surface, all we have to do is change the palette. */
 	if( img->format->BitsPerPixel == 8 )
 	{
-		if( img->flags & SDL_SRCCOLORKEY )
+		for( int c = 0; c < img->format->palette->ncolors; ++c )
 		{
-			img->format->palette->colors[img->format->colorkey].r = r;
-			img->format->palette->colors[img->format->colorkey].g = g;
-			img->format->palette->colors[img->format->colorkey].b = b;
+			if( img->format->palette->colors[c].unused )
+				continue;
+			img->format->palette->colors[c].r = r;
+			img->format->palette->colors[c].g = g;
+			img->format->palette->colors[c].b = b;
 		}
-
 		return;
 	}
 
-	/* It's RGBA.  If there's no alpha channel, we have nothing to do. */
-	if( !img->format->Amask )
+
+	/* If it's RGBA and there's no alpha channel, we have nothing to do. */
+	if( img->format->BitsPerPixel > 8 && !img->format->Amask )
 		return;
 
 	Uint32 trans = SDL_MapRGBA(img->format, r, g, b, 0);
@@ -430,12 +387,6 @@ int FindSurfaceTraits( const SDL_Surface *img )
 	const int NEEDS_NO_ALPHA=0, NEEDS_BOOL_ALPHA=1, NEEDS_FULL_ALPHA=2;
 	int alpha_type = NEEDS_NO_ALPHA;
 
-	/* If 8bpp and neither SDL_SRCCOLORKEY nor ALPHA_PALETTE, there is no transparency
-	 * to search for. */
-	if( img->format->BitsPerPixel == 8 &&
-		!(img->flags & SDL_SRCCOLORKEY) && !(img->unused1 & ALPHA_PALETTE) )
-		return TRAIT_NO_TRANSPARENCY;
-
 	Uint32 max_alpha;
 	if( img->format->BitsPerPixel == 8 )
 		max_alpha = 0xFF;
@@ -451,9 +402,7 @@ int FindSurfaceTraits( const SDL_Surface *img )
 			Uint32 val = decodepixel(row, img->format->BytesPerPixel);
 
 			Uint32 alpha;
-			if( img->flags & SDL_SRCCOLORKEY )
-				alpha = (val == img->format->colorkey)? 0x00:0xFF;
-			if( img->unused1 & ALPHA_PALETTE )
+			if( img->format->BitsPerPixel == 8 )
 				alpha = img->format->palette->colors[val].unused;
 			else
 				alpha = (val & img->format->Amask);
@@ -557,10 +506,6 @@ void mySDL_WM_SetIcon( CString sIconFile )
 	if( srf == NULL )
 		return;
 
-	// Why is this needed?  It's goofing up paletted images 
-	// that use a color key other than pink. -Chris
-	//	SDL_SetColorKey( srf, SDL_SRCCOLORKEY, SDL_MapRGB(srf->format, 0xFF, 0, 0xFF));
-
 	/* Windows icons are 32x32 and SDL can't resize them for us, which
 	 * causes mask corruption.  (Actually, the above icon *is* 32x32;
 	 * this is here just in case it changes.) */
@@ -580,10 +525,6 @@ struct SurfaceHeader
 	int width, height, pitch;
 	int Rmask, Gmask, Bmask, Amask;
 	int bpp;
-
-	/* Relevant only if bpp = 8: */
-	Uint8 colorkey; 
-	bool colorkeyed;
 };
 
 /* Save and load SDL_Surfaces to disk.  This avoids problems with bitmaps. */
@@ -604,17 +545,6 @@ bool mySDL_SaveSurface( SDL_Surface *img, CString file )
 	h.Bmask = img->format->Bmask;
 	h.Amask = img->format->Amask;
 	h.bpp = img->format->BitsPerPixel;
-	/* We lose data in the conversion, which makes matching the color key after loading
-	 * tricky.  Just store it. */
-	if( img->flags & SDL_SRCCOLORKEY )
-	{
-		h.colorkeyed = true;
-		ASSERT( img->format->colorkey < 256 );
-		h.colorkey = (Uint8) img->format->colorkey;
-	} else {
-		h.colorkeyed = false;
-		h.colorkey = 0;
-	}
 
 	f.Write( &h, sizeof(h) );
 
@@ -656,11 +586,7 @@ SDL_Surface *mySDL_LoadSurface( CString file )
 
 	/* Set the palette. */
 	if( h.bpp == 8 )
-	{
-		SDL_SetColors( img, palette, 0, 256 );
-		if( h.colorkeyed )
-			SDL_SetColorKey( img, SDL_SRCCOLORKEY, h.colorkey );
-	}
+		mySDL_SetPalette( img, palette, 0, 256 );
 
 	return img;
 }
@@ -668,18 +594,18 @@ SDL_Surface *mySDL_LoadSurface( CString file )
 
 /* Annoying: SDL_MapRGB will do a nearest-match if the specified color isn't found.
  * This breaks color keyed images that don't actually use the color key. */
-int mySDL_MapRGBExact( SDL_PixelFormat *fmt, Uint8 R, Uint8 G, Uint8 B )
+bool mySDL_MapRGBExact( SDL_PixelFormat *fmt, Uint8 R, Uint8 G, Uint8 B, Uint32 &color )
 {
-	Uint32 color = SDL_MapRGB(fmt, R, G, B);
+	color = SDL_MapRGB(fmt, R, G, B);
 
 	if( fmt->BitsPerPixel == 8 ) {
 		if(fmt->palette->colors[color].r != R ||
 		   fmt->palette->colors[color].g != G ||
 		   fmt->palette->colors[color].b != B )
-			return -1;
+			return false;
 	}
 
-	return color;
+	return true;
 }
 
 inline static float scale( float x, float l1, float h1, float l2, float h2 )
@@ -810,11 +736,11 @@ struct blit_traits_rescale { enum { convert = DIFFERENT_RGBA }; };
 /* PAL->RGBA; convert. */
 struct blit_traits_depallete { enum { convert = PAL_TO_RGBA }; };
 
-template<class ckey,class blit_traits>
+template<class blit_traits>
 static void blit( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height );
 
 template<>
-static void blit<blit_traits_false,blit_traits_identity>( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
+static void blit<blit_traits_identity>( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
 {
 	const char *src = (const char *) src_surf->pixels;
 	const char *dst = (const char *) dst_surf->pixels;
@@ -850,10 +776,10 @@ static void blit<blit_traits_false,blit_traits_identity>( SDL_Surface *src_surf,
 	}
 }
 
-/* Rescaling blit with no ckey.  This is what gets used to update moveis in
+/* Rescaling blit with no ckey.  This is used to update movies in
  * D3D, so optimization is very important. */
 template<>
-static void blit<blit_traits_false,blit_traits_rescale>( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
+static void blit<blit_traits_rescale>( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
 {
 	const char *src = (const char *) src_surf->pixels;
 	const char *dst = (const char *) dst_surf->pixels;
@@ -919,7 +845,7 @@ static void blit<blit_traits_false,blit_traits_rescale>( SDL_Surface *src_surf, 
 	}
 }
 
-template<class ckey,class blit_traits>
+template<class blit_traits>
 static void blit( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
 {
 	const char *src = (const char *) src_surf->pixels;
@@ -936,21 +862,6 @@ static void blit( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width,
 		{
 			unsigned int pixel = decodepixel((Uint8 *) src, src_surf->format->BytesPerPixel);
 
-			if( ckey::val == true )
-			{
-				/* dst_surf->format->BytesPerPixel is not 1 (not paletted). 
-				 * We don't check this, for efficiency. */
-				// ASSERT(dst_surf->format->BytesPerPixel != 1);
-
-				if( pixel == src_surf->format->colorkey )
-				{
-					pixel = 0;
-
-					/* Skip the conversion. */
-					goto skip_convert;
-				}
-			}
-
 			if( blit_traits::convert )
 			{
 				Uint8 colors[4];
@@ -963,11 +874,10 @@ static void blit( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width,
 					colors[0] = src_surf->format->palette->colors[pixel].r;
 					colors[1] = src_surf->format->palette->colors[pixel].g;
 					colors[2] = src_surf->format->palette->colors[pixel].b;
-					colors[3] = 0xFF;
+					colors[3] = src_surf->format->palette->colors[pixel].unused;
 				}
 				pixel = mySDL_SetRGBAV(dst_surf->format, colors);
 			}
-skip_convert:
 
 			/* Store it. */
 			encodepixel((Uint8 *) dst, dst_surf->format->BytesPerPixel, pixel);
@@ -1008,28 +918,19 @@ void mySDL_BlitSurface(
 		src->format->Amask == dst->format->Amask )
 	{
 		/* RGBA->RGBA with the same format, or PAL->PAL.  Simple copy. */
-		if(src->format->BitsPerPixel != 8 && ckey)
-			blit<blit_traits_true,blit_traits_identity>(src, dst, width, height);
-		else
-			blit<blit_traits_false,blit_traits_identity>(src, dst, width, height);
+		blit<blit_traits_identity>(src, dst, width, height);
 	}
 
 	else if( src->format->BytesPerPixel != 1 && dst->format->BytesPerPixel != 1 )
 	{
 		/* RGBA->RGBA with different formats. */
-		if(ckey)
-			blit<blit_traits_true,blit_traits_rescale>(src, dst, width, height);
-		else
-			blit<blit_traits_false,blit_traits_rescale>(src, dst, width, height);
+		blit<blit_traits_rescale>(src, dst, width, height);
 	}
 
 	else if( src->format->BytesPerPixel == 1 && dst->format->BytesPerPixel != 1 )
 	{
-		/* RGBA->PAL. */
-		if(ckey)
-			blit<blit_traits_true,blit_traits_depallete>(src, dst, width, height);
-		else
-			blit<blit_traits_false,blit_traits_depallete>(src, dst, width, height);
+		/* PAL->RGBA. */
+		blit<blit_traits_depallete>(src, dst, width, height);
 	}
 	else
 		/* We don't do RGBA->PAL. */
@@ -1194,15 +1095,7 @@ SDL_RWops *OpenRWops( const CString &sPath, bool Write )
 
 SDL_Surface *SDL_LoadImage( const CString &sPath )
 {
-	SDL_RWops *rw = OpenRWops( sPath );
-	if( rw == NULL )
-		return NULL;
-
-	SDL_Surface *ret = IMG_LoadTyped_RW( rw, false, (char *) GetExtension(sPath).c_str() );
-	SDL_RWclose( rw );
-	SDL_FreeRW( rw );
-
-	return ret;
+	return LoadSurface( sPath );
 }
 
 struct RWString
@@ -1279,7 +1172,7 @@ SDL_Surface *mySDL_MakeDummySurface( int height, int width )
 	ASSERT( ret_image != NULL );
 
 	SDL_Color pink = { 0xFF, 0x10, 0xFF, 0xFF };
-	SDL_SetPalette( ret_image, SDL_LOGPAL, &pink, 0, 1 );
+	mySDL_SetPalette( ret_image, &pink, 0, 1 );
 
 	memset( ret_image->pixels, 0, ret_image->h*ret_image->pitch );
 
@@ -1297,3 +1190,120 @@ CString mySDL_GetError()
 	return error;
 }
 
+/* When we receive surfaces from other libraries, the "unused" palette entry is
+ * undefined.  We use it for alpha, so set it to 255. */
+void mySDL_FixupPalettedAlpha( SDL_Surface *img )
+{
+	if( img->format->BitsPerPixel != 8 )
+		return;
+
+	for( int index = 0; index < img->format->palette->ncolors; ++index )
+		img->format->palette->colors[index].unused = 0xFF;
+
+	/* If the surface had a color key set, transfer it. */
+	if( img->flags & SDL_SRCCOLORKEY )
+	{
+		img->flags &= ~SDL_SRCCOLORKEY;
+		img->format->palette->colors[ img->format->colorkey ].unused = 0;
+	}
+}
+
+void mySDL_AddColorKey( SDL_Surface *img, Uint32 color )
+{
+	ASSERT_M( img->format->BitsPerPixel == 8, ssprintf( "%i", img->format->BitsPerPixel) );
+	ASSERT_M( (int) color < img->format->palette->ncolors, ssprintf("%i < %i", color, img->format->palette->ncolors ) );
+	img->format->palette->colors[ color ].unused = 0;
+}
+
+/* HACK:  Some banners and textures have #F800F8 as the color key. Search the edge
+ * it; if we find it, use that as the color key. */
+static bool ImageUsesOffHotPink( const SDL_Surface *img )
+{
+	Uint32 OffHotPink;
+	if( !mySDL_MapRGBExact( img->format, 0xF8, 0, 0xF8, OffHotPink ) )
+		return false;
+
+	const uint8_t *p = (uint8_t*) img->pixels;
+	for( int x = 0; x < img->w; ++x )
+	{
+		Uint32 val = decodepixel( p, img->format->BytesPerPixel );
+		if( val == OffHotPink )
+			return true;
+		p += img->format->BytesPerPixel;
+	}
+
+	p = (uint8_t*)img->pixels;
+	p += img->pitch * (img->h-1);
+	for( int i=0; i < img->w; i++ )
+	{
+		Uint32 val = decodepixel( p, img->format->BytesPerPixel );
+		if( val == OffHotPink )
+			return true;
+		p += img->format->BytesPerPixel;
+	}
+	return false;
+}
+
+/* Set #FF00FF and #F800F8 to transparent.  img may be reallocated if it has no alpha
+ * bits. */
+void ApplyHotPinkColorKey( SDL_Surface *&img )
+{
+	if( img->format->BitsPerPixel == 8 )
+	{
+		Uint32 color;
+		if( mySDL_MapRGBExact( img->format, 0xF8, 0, 0xF8, color ) )
+			mySDL_AddColorKey( img, color );
+		if( mySDL_MapRGBExact( img->format, 0xFF, 0, 0xFF,  color ) )
+			mySDL_AddColorKey( img, color );
+		return;
+	}
+
+	/* RGBA. */
+	/* Make sure we have alpha. */
+	if( !img->format->Amask )
+	{
+		/* We don't have any alpha.  Try to enable it without copying. */
+		int usable_bits = (1<<img->format->BitsPerPixel)-1;
+		usable_bits &= ~img->format->Rmask;
+		usable_bits &= ~img->format->Gmask;
+		usable_bits &= ~img->format->Bmask;
+		
+		for( int i = 0; img->format->Amask == 0 && i < 32; ++i )
+		{
+			if( usable_bits & (1<<i) )
+			{
+				img->format->Amask = 1<<i;
+				img->format->Aloss = 7;
+				img->format->Ashift = (Uint8) i;
+			}
+		}
+
+		if( img->format->Amask == 0  )
+			ConvertSDLSurface( img, img->w, img->h,
+				32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF );
+	}
+
+	Uint32 HotPink;
+
+	bool bHaveColorKey;
+	if( ImageUsesOffHotPink(img) )
+		bHaveColorKey = mySDL_MapRGBExact( img->format, 0xF8, 0, 0xF8, HotPink );
+	else
+		bHaveColorKey = mySDL_MapRGBExact( img->format, 0xFF, 0, 0xFF, HotPink );
+	if( !bHaveColorKey )
+		return;
+
+	for( int y = 0; y < img->h; ++y )
+	{
+		Uint8 *row = (Uint8 *)img->pixels + img->pitch*y;
+
+		for( int x = 0; x < img->w; ++x )
+		{
+			Uint32 val = decodepixel( row, img->format->BytesPerPixel );
+			if( val == HotPink )
+				encodepixel( row, img->format->BytesPerPixel, 0 );
+
+			row += img->format->BytesPerPixel;
+		}
+	}
+}

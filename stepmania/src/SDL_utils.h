@@ -69,7 +69,7 @@ void mySDL_WM_SetIcon( CString sIconFile );
 bool mySDL_SaveSurface( SDL_Surface *img, CString file );
 SDL_Surface *mySDL_LoadSurface( CString file );
 
-int mySDL_MapRGBExact(SDL_PixelFormat *fmt, Uint8 R, Uint8 G, Uint8 B);
+bool mySDL_MapRGBExact( SDL_PixelFormat *fmt, Uint8 R, Uint8 G, Uint8 B, Uint32 &color );
 
 void mySDL_BlitTransform( const SDL_Surface *src, SDL_Surface *dst, 
 					const float fCoords[8] /* TL, BR, BL, TR */ );
@@ -81,6 +81,10 @@ void mySDL_BlitSurface(
 enum { ALPHA_PALETTE = 0x1 };
 
 SDL_Surface *mySDL_Palettize( SDL_Surface *src_surf, int GrayBits, int AlphaBits );
+
+void mySDL_FixupPalettedAlpha( SDL_Surface *img );
+void mySDL_AddColorKey( SDL_Surface *img, Uint32 color );
+void ApplyHotPinkColorKey( SDL_Surface *&img );
 
 SDL_Surface *SDL_LoadImage( const CString &sPath );
 
