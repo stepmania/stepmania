@@ -139,11 +139,6 @@ public:
 	void ConvertHoldNotesTo2sAnd3s();
 	void To2sAnd3s( const NoteData& from );
 	void From2sAnd3s( const NoteData& from );
-
-	void Convert4sToHoldNotes();
-	void ConvertHoldNotesTo4s();
-	void To4s( const NoteData& from );
-	void From4s( const NoteData& from );
 };
 
 

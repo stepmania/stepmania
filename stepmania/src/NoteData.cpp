@@ -408,9 +408,6 @@ bool NoteData::IsHoldNoteAtBeat( int iTrack, int iRow, int *pHeadRow, int *pTail
 			case TapNote::autoKeysound:
 				/* ignore */
 				continue;
-			case TapNote::hold:
-				/* Don't call this function when in 4s mode! */
-				FAIL_M("hold");
 			default:
 				FAIL_M( ssprintf("%i", tn.type) );
 			}
@@ -456,9 +453,6 @@ bool NoteData::IsHoldNoteAtBeat( int iTrack, int iRow, int *pHeadRow, int *pTail
 			case TapNote::autoKeysound:
 				/* ignore */
 				continue;
-			case TapNote::hold:
-				/* Don't call this function when in 4s mode! */
-				FAIL_M("hold");
 			default:
 				FAIL_M( ssprintf("%i", tn.type) );
 			}
@@ -723,59 +717,6 @@ void NoteData::From2sAnd3s( const NoteData& from )
 {
 	CopyAll( from );
 	Convert2sAnd3sToHoldNotes();
-}
-
-void NoteData::To4s( const NoteData& from )
-{
-	CopyAll( from );
-	ConvertHoldNotesTo4s();
-}
-
-void NoteData::From4s( const NoteData& from )
-{
-	CopyAll( from );
-	Convert4sToHoldNotes();
-}
-
-/* "104444001" ==
- * "102000301"
- *
- * "4441" basically means "hold for three rows then hold for another tap";
- * since taps don't really have a length, it's equivalent to "4440".
- * So, make sure the character after a 4 is always a 0. */
-void NoteData::Convert4sToHoldNotes()
-{
-	for( int t=0; t<GetNumTracks(); t++ )	// foreach column
-	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK( *this, t, r )
-		{
-			if( GetTapNote(t, r).type == TapNote::hold )	// this is a HoldNote body
-			{
-				HoldNote hn( t, r, 0 );
-				// search for end of HoldNote
-				do {
-					SetTapNote( t, r, TAP_EMPTY );
-					r++;
-				} while( GetTapNote(t, r).type == TapNote::hold );
-				SetTapNote( t, r, TAP_EMPTY );
-
-				hn.iEndRow = r;
-				AddHoldNote( hn );
-			}
-		}
-	}
-}
-
-void NoteData::ConvertHoldNotesTo4s()
-{
-	// copy HoldNotes into the new structure, but expand them into 4s
-	for( int i=0; i<GetNumHoldNotes(); i++ ) 
-	{
-		const HoldNote &hn = GetHoldNote(i);
-		for( int j = hn.iStartRow; j < hn.iEndRow; ++j)
-			SetTapNote(hn.iTrack, j, TAP_ORIGINAL_HOLD);
-	}
-	m_HoldNotes.clear();
 }
 
 // -1 for iOriginalTracksToTakeFrom means no track
