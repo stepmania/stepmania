@@ -127,7 +127,8 @@ static const MenuRow g_KeyboardShortcutsItems[] =
 	{ "Insert: Insert beat and shift down",				false, 0, { NULL } },
 	{ "Delete: Delete beat and shift up",				false, 0, { NULL } },
 	{ "Shift + number: Lay mine",						false, 0, { NULL } },
-	{ "Alt + number: Add to/remove from right half",	false, 0, { NULL } }
+	{ "Alt + number: Add to/remove from right half",	false, 0, { NULL } },
+	{ NULL, true, 0, { NULL } }
 };
 static Menu g_KeyboardShortcuts( "Keyboard Shortcuts", g_KeyboardShortcutsItems );
 
@@ -142,7 +143,8 @@ static const MenuRow g_MainMenuItems[] =
 	{ "Edit Song Info",				true, 0, { NULL } },
 	{ "Add/Edit BG Change",			true, 0, { NULL } },
 	{ "Play preview music",			true, 0, { NULL } },
-	{ "Exit (discards changes since last save)",true, 0, { NULL } }
+	{ "Exit (discards changes since last save)",true, 0, { NULL } },
+	{ NULL, true, 0, { NULL } }
 };
 static Menu g_MainMenu( "Main Menu", g_MainMenuItems );
 
@@ -153,24 +155,25 @@ static const MenuRow g_AreaMenuItems[] =
 	{ "Paste at current beat",		true, 0, { NULL } },
 	{ "Paste at begin marker",		true, 0, { NULL } },
 	{ "Clear",						true, 0, { NULL } },
-	{ "Quantize",					true, 0, { "4TH","8TH","12TH","16TH","24TH","32ND","48TH","64TH", NULL } },
-	{ "Turn",						true, 0, { "Left","Right","Mirror","Shuffle","Super Shuffle", NULL } },
-	{ "Transform",					true, 0, { "NoHolds","NoMines","Little","Wide","Big","Quick","Skippy","Mines","Echo","Planted","Stomp","Twister", NULL } },
-	{ "Alter",						true, 0, { "Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Shift Left","Shift Right", NULL } },
-	{ "Tempo",						true, 0, { "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x", NULL } },
+	{ "Quantize",					true, 0, { "4TH","8TH","12TH","16TH","24TH","32ND","48TH","64TH" } },
+	{ "Turn",						true, 0, { "Left","Right","Mirror","Shuffle","Super Shuffle" } },
+	{ "Transform",					true, 0, { "NoHolds","NoMines","Little","Wide","Big","Quick","Skippy","Mines","Echo","Planted","Stomp","Twister" } },
+	{ "Alter",						true, 0, { "Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Shift Left","Shift Right" } },
+	{ "Tempo",						true, 0, { "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" } },
 	{ "Play selection",				true, 0, { NULL } },
 	{ "Record in selection",		true, 0, { NULL } },
 	{ "Insert beat and shift down",	true, 0, { NULL } },
 	{ "Delete beat and shift up",	true, 0, { NULL } },
 	{ "Convert beats to pause",		true, 0, { NULL } },
-	{ "Convert pause to beats",		true, 0, { NULL } }
+	{ "Convert pause to beats",		true, 0, { NULL } },
+	{ NULL, true, 0, { NULL } }
 };
 static Menu g_AreaMenu( "Area Menu", g_AreaMenuItems );
 
 static const MenuRow g_EditNotesStatisticsItems[] =
 {
-	{ "Difficulty",					true, 0, { "BEGINNER","EASY","MEDIUM","HARD","CHALLENGE", 0 } },
-	{ "Meter",						true, 0, { "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15", 0 } },
+	{ "Difficulty",					true, 0, { "BEGINNER","EASY","MEDIUM","HARD","CHALLENGE" } },
+	{ "Meter",						true, 0, { "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15" } },
 	{ "Description",				true, 0, { NULL } },
 	{ "Tap Steps",					false, 0, { NULL } },
 	{ "Hold Steps",					false, 0, { NULL } },
@@ -178,7 +181,8 @@ static const MenuRow g_EditNotesStatisticsItems[] =
 	{ "Voltage",					false, 0, { NULL } },
 	{ "Air",						false, 0, { NULL } },
 	{ "Freeze",						false, 0, { NULL } },
-	{ "Chaos",						false, 0, { NULL } }
+	{ "Chaos",						false, 0, { NULL } },
+	{ NULL, true, 0, { NULL } }
 };
 static Menu g_EditNotesStatistics( "Statistics", g_EditNotesStatisticsItems );
 
@@ -190,16 +194,17 @@ static const MenuRow g_EditSongInfoItems[] =
 	{ "Credit",						true, 0, { NULL } },
 	{ "Main title transliteration",	true, 0, { NULL } },
 	{ "Sub title transliteration",	true, 0, { NULL } },
-	{ "Artist transliteration",		true, 0, { NULL } }
+	{ "Artist transliteration",		true, 0, { NULL } },
+	{ NULL, true, 0, { NULL } }
 };
 static Menu g_EditSongInfo( "Edit Song Info", g_EditSongInfoItems );
 
 static const MenuRow g_BGChangeItems[] =
 {
-	{ "Rate (applies to new adds)",			true, 15, { "-100%","-80%","-60%","-40%","-20%","0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%", NULL } },
-	{ "Fade Last (applies to new adds)",	true, 0, { "NO","YES", NULL } },
-	{ "Rewind Movie (applies to new adds)",	true, 0, { "NO","YES", NULL } },
-	{ "Loop (applies to new adds)",			true, 1, { "NO","YES", NULL } },
+	{ "Rate (applies to new adds)",			true, 15, { "-100%","-80%","-60%","-40%","-20%","0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%" } },
+	{ "Fade Last (applies to new adds)",	true, 0, { "NO","YES" } },
+	{ "Rewind Movie (applies to new adds)",	true, 0, { "NO","YES" } },
+	{ "Loop (applies to new adds)",			true, 1, { "NO","YES" } },
 	{ "Add Change to random",				true, 0, { NULL } },
 	{ "Add Change to song BGAnimation",		true, 0, { NULL } },
 	{ "Add Change to song Movie",			true, 0, { NULL } },
@@ -207,7 +212,8 @@ static const MenuRow g_BGChangeItems[] =
 	{ "Add Change to global Random Movie",	true, 0, { NULL } },
 	{ "Add Change to global BGAnimation",	true, 0, { NULL } },
 	{ "Add Change to global Visualization",	true, 0, { NULL } },
-	{ "Remove Change",						true, 0, { NULL } }
+	{ "Remove Change",						true, 0, { NULL } },
+	{ NULL, true, 0, { NULL } }
 };
 static Menu g_BGChange( "Background Change", g_BGChangeItems );
 
