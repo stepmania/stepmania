@@ -261,17 +261,16 @@ void RageBitmapTexture::Create(
 		}
 
 		while (m_iImageWidth != m_iTextureWidth || m_iImageHeight != m_iTextureHeight) {
-			SDL_Surface *dst;
-
 			float xscale = float(m_iTextureWidth)/m_iImageWidth;
 			float yscale = float(m_iTextureHeight)/m_iImageHeight;
-			/* Our simple filter is a simple linear filter, so it can't
-			 * scale to less than .5 very well.  If we need to go lower
-			 * than .5, do it iteratively. */
+
+			/* Our filter is a simple linear filter, so it can't scale to 
+			 * less than .5 very well.  If we need to go lower than .5, do
+			 * it iteratively. */
 			xscale = max(xscale, .5f);
 			yscale = max(yscale, .5f);
 
-			dst = zoomSurface(img, xscale, yscale);
+			SDL_Surface *dst = zoomSurface(img, xscale, yscale);
 
 			SDL_FreeSurface(img);
 			img = dst;
