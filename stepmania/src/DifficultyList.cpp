@@ -33,50 +33,57 @@ void DifficultyList::Load()
 	m_Meters = new DifficultyMeter[MAX_METERS];
 	m_CurSong = NULL;
 
-	int pn, m;
-	for( pn = 0; pn < NUM_PLAYERS; ++pn )
-	{
-		if( !GAMESTATE->IsHumanPlayer(pn) )
-			continue;
+	{	
+		for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+		{
+			if( !GAMESTATE->IsHumanPlayer(pn) )
+				continue;
 
-		m_Cursors[pn].Load( THEME->GetPathToG(ssprintf("%s cursor p%i",m_sName.c_str(), pn+1)) );
-		m_Cursors[pn]->SetName( ssprintf("CursorP%i",pn+1) );
+			m_Cursors[pn].Load( THEME->GetPathToG(ssprintf("%s cursor p%i",m_sName.c_str(), pn+1)) );
+			m_Cursors[pn]->SetName( ssprintf("CursorP%i",pn+1) );
 
-		/* Hack: we need to tween cursors both up to down (cursor motion) and visible to
-		 * invisible (fading).  Cursor motion needs to stoptweening, so multiple motions
-		 * don't queue and look unresponsive.  However, that stpotweening interrupts fading,
-		 * resulting in the cursor remaining invisible or partially invisible.  So, do them
-		 * in separate tweening stacks.  This means the Cursor command can't change diffuse
-		 * colors; I think we do need a diffuse color stack ... */
-		m_CursorFrames[pn].SetName( ssprintf("CursorP%i",pn+1) );
-		m_CursorFrames[pn].AddChild( m_Cursors[pn] );
-		this->AddChild( &m_CursorFrames[pn] );
+			/* Hack: we need to tween cursors both up to down (cursor motion) and visible to
+			 * invisible (fading).  Cursor motion needs to stoptweening, so multiple motions
+			 * don't queue and look unresponsive.  However, that stpotweening interrupts fading,
+			 * resulting in the cursor remaining invisible or partially invisible.  So, do them
+			 * in separate tweening stacks.  This means the Cursor command can't change diffuse
+			 * colors; I think we do need a diffuse color stack ... */
+			m_CursorFrames[pn].SetName( ssprintf("CursorP%i",pn+1) );
+			m_CursorFrames[pn].AddChild( m_Cursors[pn] );
+			this->AddChild( &m_CursorFrames[pn] );
+		}
 	}
 
-	for( m = 0; m < MAX_METERS; ++m )
 	{
-		m_Meters[m].SetName( "DifficultySummaryRow", "Row" );
-		m_Meters[m].Load();
-		this->AddChild( &m_Meters[m] );
+		for( int m = 0; m < MAX_METERS; ++m )
+		{
+			m_Meters[m].SetName( "DifficultySummaryRow", "Row" );
+			m_Meters[m].Load();
+			this->AddChild( &m_Meters[m] );
 
-		m_Descriptions[m].SetName( "Description" );
-		m_Descriptions[m].LoadFromFont( THEME->GetPathToF(ssprintf("%s description",m_sName.c_str())) );
-		this->AddChild( &m_Descriptions[m] );
+			m_Descriptions[m].SetName( "Description" );
+			m_Descriptions[m].LoadFromFont( THEME->GetPathToF(ssprintf("%s description",m_sName.c_str())) );
+			this->AddChild( &m_Descriptions[m] );
 
-		m_Number[m].SetName( "Number" );
-		m_Number[m].LoadFromFont( THEME->GetPathToF(ssprintf("%s number",m_sName.c_str())) );
-		this->AddChild( &m_Number[m] );
+			m_Number[m].SetName( "Number" );
+			m_Number[m].LoadFromFont( THEME->GetPathToF(ssprintf("%s number",m_sName.c_str())) );
+			this->AddChild( &m_Number[m] );
+		}
 	}
 
-	for( pn = 0; pn < NUM_PLAYERS; ++pn )
-		if( GAMESTATE->IsHumanPlayer(pn) )
-			ON_COMMAND( m_Cursors[pn] );
-
-	for( int m = 0; m < MAX_METERS; ++m )
 	{
-		ON_COMMAND( m_Meters[m] );
-		ON_COMMAND( m_Descriptions[m] );
-		ON_COMMAND( m_Number[m] );
+		for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+			if( GAMESTATE->IsHumanPlayer(pn) )
+				ON_COMMAND( m_Cursors[pn] );
+	}
+
+	{
+		for( int m = 0; m < MAX_METERS; ++m )
+		{
+			ON_COMMAND( m_Meters[m] );
+			ON_COMMAND( m_Descriptions[m] );
+			ON_COMMAND( m_Number[m] );
+		}
 	}
 
 	UpdatePositions();
