@@ -53,12 +53,15 @@ Difficulty StringToDifficulty( CString sDC )
 	else if( sDC == "another" )		return DIFFICULTY_MEDIUM;
 	else if( sDC == "trick" )		return DIFFICULTY_MEDIUM;
 	else if( sDC == "standard" )	return DIFFICULTY_MEDIUM;
+	else if( sDC == "difficult")	return DIFFICULTY_MEDIUM;
 	else if( sDC == "hard" )		return DIFFICULTY_HARD;
 	else if( sDC == "ssr" )			return DIFFICULTY_HARD;
 	else if( sDC == "maniac" )		return DIFFICULTY_HARD;
 	else if( sDC == "heavy" )		return DIFFICULTY_HARD;
 	else if( sDC == "smaniac" )		return DIFFICULTY_CHALLENGE;
 	else if( sDC == "challenge" )	return DIFFICULTY_CHALLENGE;
+	else if( sDC == "expert" )		return DIFFICULTY_CHALLENGE;
+	else if( sDC == "oni" )			return DIFFICULTY_CHALLENGE;
 	else							return DIFFICULTY_INVALID;
 }
 
