@@ -289,7 +289,10 @@ void WheelItemDisplay::DrawPrimitives()
 MusicWheel::MusicWheel() 
 { 
 	LOG->Trace( "MusicWheel::MusicWheel()" );
-
+	if (GAMESTATE->m_pCurSong != NULL)
+		LOG->Trace( "Current Song: %s", GAMESTATE->m_pCurSong->GetSongDir() );
+	else
+		LOG->Trace( "Current Song: NULL" );
 
 	if(DEFAULT_SCROLL_DIRECTION && GAMESTATE->m_pCurSong == NULL) /* check the song is null... incase they have just come back from a song and changed their PlayerOptions */
 	{
@@ -376,18 +379,26 @@ MusicWheel::MusicWheel()
 	// If there is no currently selected song, select one.
 	if( GAMESTATE->m_pCurSong == NULL )
 	{
-		CStringArray asGroupNames;
-		SONGMAN->GetGroupNames( asGroupNames );
-		if( !asGroupNames.empty() )
+		//Select the first selectable song based on the sort order...
+		vector<WheelItemData> &wiWheelItems = m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
+		for( unsigned i = 0; i < wiWheelItems.size(); i++ )
 		{
-			/* XXX: Do groups get added if they're empty?
-			 * This will select songs we can't use; we want the first song
-			 * that's actually visible.  Should we select out of wheel data? 
-			 * -glenn */
-			vector<Song*> arraySongs;
-			SONGMAN->GetSongsInGroup( asGroupNames[0], arraySongs );
-			if( !arraySongs.empty() ) // still nothing selected
-				GAMESTATE->m_pCurSong = arraySongs[0];	// select the first song
+			if( wiWheelItems[i].m_pSong != NULL )
+			{
+				GAMESTATE->m_pCurSong = wiWheelItems[i].m_pSong;
+				break;
+			}
+		}
+	
+		if( GAMESTATE->m_pCurSong == NULL )
+		{
+			//XXX What to do here?
+			//No selectable songs from the wheel data... 
+			//Cursor will be on Random/Roulette, but GAMESTATE->m_pCurSong will be NULL
+			//Should we error out? The user won't have an enjoyable game experience at this point... 
+			//Should we find the pointer to the roulette entry? (the old way did that - maybe not intentional though)
+			//For now, write out to the debug log...
+			LOG->Trace("MusicWheel::MusicWheel() - No selectable songs found in WheelData!");
 		}
 	}
 
