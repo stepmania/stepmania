@@ -717,7 +717,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 			 * the one we found above. */
 			Difficulty dc = pNotes->GetDifficulty();
 			Difficulty new_dc = Difficulty( dc + entry_difficulty );
-			if( new_dc < NUM_DIFFICULTIES )
+			if( new_dc <= DIFFICULTY_CHALLENGE )
 			{
 				Steps* pNewNotes = pSong->GetStepsByDifficulty( nt, new_dc );
 				if( pNewNotes )
@@ -834,7 +834,7 @@ Difficulty Course::GetDifficulty( const Info &stage ) const
 {
 	Difficulty dc = m_entries[stage.CourseIndex].difficulty;
 	Difficulty new_dc = Difficulty( dc + stage.Difficulty );
-	return (new_dc < NUM_DIFFICULTIES) ? new_dc : dc;
+	return (new_dc <= DIFFICULTY_CHALLENGE) ? new_dc : dc;
 }
 
 void Course::GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, CourseDifficulty cd ) const
