@@ -302,7 +302,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	this->AddChild( &m_bgOverlay );
 
 	m_soundSelect.Load( THEME->GetPathToS("Common start") );
-	m_soundChangeNotes.Load( THEME->GetPathToS("ScreenSelectMusic difficulty") );
+	m_soundDifficultyEasier.Load( THEME->GetPathToS("ScreenSelectMusic difficulty easier") );
+	m_soundDifficultyHarder.Load( THEME->GetPathToS("ScreenSelectMusic difficulty harder") );
 	m_soundOptionsChange.Load( THEME->GetPathToS("ScreenSelectMusic options") );
 	m_soundLocked.Load( THEME->GetPathToS("ScreenSelectMusic locked") );
 
@@ -743,7 +744,7 @@ void ScreenSelectMusic::EasierDifficulty( PlayerNumber pn )
 
 	if( m_MusicWheel.GetSelectedType() == TYPE_COURSE && GAMESTATE->m_bDifficultCourses )
 	{
-		m_soundChangeNotes.Play();
+		m_soundDifficultyEasier.Play();
 		GAMESTATE->m_bDifficultCourses = false;
 		AfterMusicChange();
 		return;
@@ -761,7 +762,7 @@ void ScreenSelectMusic::EasierDifficulty( PlayerNumber pn )
 	// the user explicity switched difficulties.  Update the preferred difficulty
 	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[ m_iSelection[pn] ]->GetDifficulty();
 
-	m_soundChangeNotes.Play();
+	m_soundDifficultyEasier.Play();
 
 	AfterNotesChange( pn );
 }
@@ -775,7 +776,7 @@ void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
 
 	if( m_MusicWheel.GetSelectedType() == TYPE_COURSE && !GAMESTATE->m_bDifficultCourses )
 	{
-		m_soundChangeNotes.Play();
+		m_soundDifficultyHarder.Play();
 		GAMESTATE->m_bDifficultCourses = true;
 		AfterMusicChange();
 		return;
@@ -791,7 +792,7 @@ void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
 	// the user explicity switched difficulties.  Update the preferred difficulty
 	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[ m_iSelection[pn] ]->GetDifficulty();
 
-	m_soundChangeNotes.Play();
+	m_soundDifficultyHarder.Play();
 
 	AfterNotesChange( pn );
 }

@@ -115,7 +115,8 @@ protected:
 	BGAnimation			m_bgOverlay;
 
 	RageSound			m_soundSelect;
-	RageSound			m_soundChangeNotes;
+	RageSound			m_soundDifficultyEasier;
+	RageSound			m_soundDifficultyHarder;
 	RageSound			m_soundOptionsChange;
 	RageSound			m_soundLocked;
 };
