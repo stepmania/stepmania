@@ -6521,9 +6521,9 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = Preference.h;
-			path = src/Preference.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/Preference.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA54709206F559DF008EB9B2 = {
 			fileRef = AA54709106F559DF008EB9B2;
