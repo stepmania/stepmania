@@ -24,7 +24,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
-				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis,libjpeg,crypto51,lua-5.0"
+				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis,libjpeg,lua-5.0"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,DEBUG"
 				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="3"
@@ -99,7 +99,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				FavorSizeOrSpeed="2"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis,libjpeg,crypto51,lua-5.0"
+				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis,libjpeg,lua-5.0"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,RELEASE"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
@@ -553,12 +553,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="Course.h">
-			</File>
-			<File
-				RelativePath="CryptHelpers.cpp">
-			</File>
-			<File
-				RelativePath="CryptHelpers.h">
 			</File>
 			<File
 				RelativePath=".\Font.cpp">
@@ -2091,88 +2085,52 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 		</Filter>
 		<Filter
-			Name="cryptlib"
+			Name="Crypto"
 			Filter="">
 			<File
-				RelativePath="crypto51\algparam.cpp">
+				RelativePath="crypto\CryptBn.cpp">
 			</File>
 			<File
-				RelativePath="crypto51\asn.cpp">
+				RelativePath="crypto\CryptBn.h">
 			</File>
 			<File
-				RelativePath="crypto51\basecode.cpp">
+				RelativePath="crypto\CryptMD5.cpp">
 			</File>
 			<File
-				RelativePath="crypto51\channels.cpp">
+				RelativePath="crypto\CryptMD5.h">
 			</File>
 			<File
-				RelativePath="crypto51\cryptlib.cpp">
+				RelativePath="crypto\CryptNoise.cpp">
 			</File>
 			<File
-				RelativePath="crypto51\des.cpp">
+				RelativePath="crypto\CryptPrime.cpp">
 			</File>
 			<File
-				RelativePath="crypto51\dessp.cpp">
+				RelativePath="crypto\CryptPrime.h">
 			</File>
 			<File
-				RelativePath="crypto51\files.cpp">
+				RelativePath="crypto\CryptRSA.cpp">
 			</File>
 			<File
-				RelativePath="crypto51\filters.cpp">
+				RelativePath="crypto\CryptRSA.h">
 			</File>
 			<File
-				RelativePath="crypto51\fips140.cpp">
+				RelativePath="crypto\CryptRand.cpp">
 			</File>
 			<File
-				RelativePath="crypto51\hex.cpp">
+				RelativePath="crypto\CryptRand.h">
 			</File>
 			<File
-				RelativePath="crypto51\integer.cpp">
+				RelativePath="crypto\CryptSH512.cpp">
 			</File>
 			<File
-				RelativePath="crypto51\iterhash.cpp">
+				RelativePath="crypto\CryptSH512.h">
 			</File>
 			<File
-				RelativePath="crypto51\md5.cpp">
+				RelativePath="crypto\CryptSHA.cpp">
 			</File>
 			<File
-				RelativePath="crypto51\misc.cpp">
-			</File>
-			<File
-				RelativePath="crypto51\modes.cpp">
-			</File>
-			<File
-				RelativePath="crypto51\mqueue.cpp">
-			</File>
-			<File
-				RelativePath="crypto51\nbtheory.cpp">
-			</File>
-			<File
-				RelativePath="crypto51\osrng.cpp">
-			</File>
-			<File
-				RelativePath="crypto51\pkcspad.cpp">
-			</File>
-			<File
-				RelativePath="crypto51\pssr.cpp">
-			</File>
-			<File
-				RelativePath="crypto51\pubkey.cpp">
-			</File>
-			<File
-				RelativePath="crypto51\queue.cpp">
-			</File>
-			<File
-				RelativePath="crypto51\randpool.cpp">
-			</File>
-			<File
-				RelativePath="crypto51\rsa.cpp">
-			</File>
-			<File
-				RelativePath="crypto51\sha.cpp">
-			</File>
-			<File
-				RelativePath="crypto51\strciphr.cpp">
+				RelativePath="crypto\CryptSHA.h">
 			</File>
 		</Filter>
 		<File
