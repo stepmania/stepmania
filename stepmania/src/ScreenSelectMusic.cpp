@@ -66,6 +66,9 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	m_Menu.Load( "ScreenSelectMusic" );
 	this->AddChild( &m_Menu );
 
+	m_MusicWheel.SetName( "Wheel" );
+	this->AddChild( &m_MusicWheel );
+
 	// this is loaded SetSong and TweenToSong
 	m_Banner.SetName( "Banner" );
 	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
@@ -97,9 +100,6 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	m_textSongOptions.SetName( "SongOptions" );
 	m_textSongOptions.LoadFromFont( THEME->GetPathToF("Common normal") );
 	this->AddChild( &m_textSongOptions );
-
-	m_MusicWheel.SetName( "Wheel" );
-	this->AddChild( &m_MusicWheel );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
