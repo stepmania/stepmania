@@ -33,7 +33,7 @@ public:
 	bool			m_bUseBGIfNoBanner;
 	bool			m_bHiddenSongs;
 	bool			m_bVsync;
-	int				m_iUnloadTextureDelaySeconds;
+	bool			m_bDelayedTextureDelete;
 
 	bool			m_bIgnoreJoyAxes;	
 	bool			m_bOnlyDedicatedMenuButtons;

@@ -157,6 +157,7 @@ void ScreenAppearanceOptions::ExportOptions()
 	int iSelectedTheme = m_iSelectedOption[0][AO_THEME];
 	CString sNewTheme = m_OptionRow[AO_THEME].choices[iSelectedTheme];
 	THEME->SwitchTheme( sNewTheme );
+	TEXTUREMAN->DoDelayedDelete();	// delete all textures that don't have references
 
     int iSelectedSkin = m_iSelectedOption[0][AO_SKIN];
     CString sNewSkin = m_OptionRow[AO_SKIN].choices[iSelectedSkin];

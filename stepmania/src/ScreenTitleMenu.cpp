@@ -27,6 +27,7 @@
 #include "SDL_utils.h"
 #include "RageSoundManager.h"
 #include "CodeDetector.h"
+#include "RageTextureManager.h"
 
 
 #define LOGO_ON_COMMAND				THEME->GetMetric("ScreenTitleMenu","LogoOnCommand")
@@ -240,6 +241,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		THEME->NextTheme();
 		SCREENMAN->SystemMessage( "Theme: "+THEME->GetCurThemeName() );
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+		TEXTUREMAN->DoDelayedDelete();
 	}
 	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_ANNOUNCER) )
 	{

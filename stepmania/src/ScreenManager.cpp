@@ -24,9 +24,9 @@
 #include "RageDisplay.h"
 #include "Screen.h"
 #include "SongManager.h"
-
 #include "BitmapText.h"
 #include "Quad.h"
+#include "RageTextureManager.h"
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -370,6 +370,8 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 
 Screen* ScreenManager::MakeNewScreen( CString sClassName )
 {
+	TEXTUREMAN->DeleteCachedTextures();
+
 	Screen *ret = Screen::Create( sClassName );
 
 	/* Loading probably took a little while.  Let's reset stats.  This prevents us

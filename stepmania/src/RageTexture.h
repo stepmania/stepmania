@@ -86,7 +86,7 @@ public:
 	const CString &GetFilePath() const { return GetID().filename; }
 
 	int		m_iRefCount;
-	int		m_iTimeOfLastUnload;
+	bool	m_bCacheThis;
 
 	/* The ID that we were asked to load: */
 	const RageTextureID &GetID() const { return m_ID; }

@@ -71,8 +71,8 @@ PrefsManager::PrefsManager()
 	m_bShowSelectGroup = true;
 	m_bShowTranslations = true;
 	m_bArcadeOptionsNavigation = false;
-	m_bSoloSingle = false;	// OFF!!!!
-	m_iUnloadTextureDelaySeconds = 0; // disabled 60*30;	// 30 mins
+	m_bSoloSingle = false;
+	m_bDelayedTextureDelete = true;
 	m_MusicWheelUsesSections = ALWAYS;
 	m_iMusicWheelSwitchSpeed = 10;
 	m_bChangeBannersWhenFast = false;
@@ -163,7 +163,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "ShowTranslations",			m_bShowTranslations );
 	ini.GetValueB( "Options", "ArcadeOptionsNavigation",	m_bArcadeOptionsNavigation );
 	ini.GetValue ( "Options", "DWIPath",					m_DWIPath );
-	ini.GetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
+	ini.GetValueB( "Options", "DelayedTextureDelete",		m_bDelayedTextureDelete );
 	ini.GetValueI( "Options", "MusicWheelUsesSections",		(int&)m_MusicWheelUsesSections );
 	ini.GetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
 	ini.GetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );
@@ -245,7 +245,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "ShowTranslations",			m_bShowTranslations );
 	ini.SetValueB( "Options", "ArcadeOptionsNavigation",	m_bArcadeOptionsNavigation );
 	ini.SetValue ( "Options", "DWIPath",					m_DWIPath );
-	ini.SetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
+	ini.SetValueB( "Options", "DelayedTextureDelete",		m_bDelayedTextureDelete );
 	ini.SetValueI( "Options", "MusicWheelUsesSections",		m_MusicWheelUsesSections );
 	ini.SetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
 	ini.SetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );

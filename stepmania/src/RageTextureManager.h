@@ -21,27 +21,35 @@
 class RageTextureManager
 {
 public:
-	RageTextureManager( int iTextureColorDepth, int iSecsBeforeUnload, int iMaxTextureResolution );
+	RageTextureManager();
 	void Update( float fDeltaTime );
 	~RageTextureManager();
 
 	RageTexture* LoadTexture( RageTextureID ID );
-	void UnloadTexture( RageTextureID ID );
+	void CacheTexture( RageTextureID ID );
 	void UnloadTexture( RageTexture *t );
 	void ReloadAll();
 
-	bool SetPrefs( int iTextureColorDepth, int iSecsBeforeUnload, int iMaxTextureResolution );
+	bool SetPrefs( int iTextureColorDepth, bool bDelayedDelete, int iMaxTextureResolution );
 	int GetTextureColorDepth() { return m_iTextureColorDepth; };
+	bool GetDelayedDelete() { return m_bDelayedDelete; };
 	int GetMaxTextureResolution() { return m_iMaxTextureResolution; };
-	int GetSecsBeforeUnload() { return m_iSecondsBeforeUnload; };
 
+	// call this between Screens
+	void DeleteCachedTextures()	{ GarbageCollect(cached_textures); }
+	
+	// call this on switch theme
+	void DoDelayedDelete()	{ GarbageCollect(delayed_delete); }
+	
 	void InvalidateTextures();
 
 protected:
-	void GCTextures();
+	void DeleteTexture( RageTexture *t );
+	enum GCType { cached_textures, delayed_delete };
+	void GarbageCollect( GCType type );
 
 	int m_iTextureColorDepth;
-	int m_iSecondsBeforeUnload;
+	bool m_bDelayedDelete;
 	int m_iMaxTextureResolution;
 
 	std::map<RageTextureID, RageTexture*> m_mapPathToTexture;

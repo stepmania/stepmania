@@ -6,7 +6,7 @@
 
 <body>
 
-<p><font face="Courier New" size="2">StepMania 3.0 final<br>
+<p><font face="Courier New" size="2">StepMania X.X<br>
 &copy;2001-2003, StepMania team, All rights reserved.<br>
 <a href="http://www.stepmania.com">http://www.stepmania.com</a></font></p>
 <p>
@@ -35,11 +35,14 @@ and Help</a> <br>
 <a href="#Creating an Announcer">Creating an Announcer</a><br>
 <a href="#Creating a Note Skin">Creating a Note Skin</a><br>
 <a href="#Creating a Theme">Creating a Theme</a><br>
+<a href="#Actor Commands">Actor Commands</a><br>
+<a href="#ScreenSelect">ScreenSelect</a><br>
 <a href="#How StepMania Loads Textures">How StepMania Loads Textures</a><br>
 <a href="#Building StepMania from CVS source">Building StepMania from CVS Source</a><br>
 <a href="#Thanks">Thanks</a><br>
 <br>
 See the file <a href="NEWS">NEWS</a> for version history.<br>
+See the file <a href="COPYING.txt">COPYING.txt</a> for license information.<br>
 <br>
 </font>
 <hr>
@@ -922,6 +925,125 @@ Graphics folder &quot;Themes\MySuperTheme\Graphics&quot;. <br>
 - Start StepMania, go to Appearance Options, and change your theme to &quot;MySuperTheme&quot;.<br>
 <br>
 </font>
+<hr>
+<p><font face="Courier New" size="2"><a name="Actor Commands">Actor Commands</a> (<a href="#Table of Contents">top</a>)</font></p>
+<hr>
+<p>
+<font face="Courier New" size="2">
+<br>
+In the old paradigm, you would define the position of an Actor with two 
+different metrics - one for the X position, and one for the Y. For example:<br>
+ObjectX=100<br>
+ObjectY=220<br>
+<br>
+This system is being replaced by more powerful &quot;commands strings&quot;. A command 
+string can set positions, colors, effects, and also script animations over time. 
+Positioning an Actor with command string would look like this:<br>
+ObjectOnCommand=x,100;y,220<br>
+<br>
+A command string contains one or more commands separated by semicolons. This 
+command string contains two commands: &quot;x,100&quot; and &quot;y,220&quot;. A command is made up 
+of a command name and a list of parameters. The command name and any parameters 
+are separated by commas. In the example above, both the commands &quot;x&quot; and &quot;y&quot; 
+both take exactly one parameter. Other commands like &quot;diffuse&quot; take 4 parameters 
+(R, G, B, and A). For example, the command &quot;diffuse,1,0,1,1&quot; would turn an 
+Actor's color to opaque purple.<br>
+<br>
+Typically, the metrics file will have two commands per Actor - the &quot;OnCommand&quot; 
+(which is where you command an Actor to tween onto the screen), and the &quot;OffCommand&quot; 
+(for tweening the Actor off the screen).<br>
+<br>
+Below is a list of actor commands and their equivalent C++ equivalents. I'll 
+have an explanation of animations and more examples in the full documentation.<br>
+<br>
+<br>
+sleep BeginTweening( fParam(0), TWEEN_LINEAR );<br>
+linear BeginTweening( fParam(0), TWEEN_LINEAR );<br>
+accelerate BeginTweening( fParam(0), TWEEN_ACCELERATE );<br>
+decelerate BeginTweening( fParam(0), TWEEN_DECELERATE );<br>
+bouncebegin BeginTweening( fParam(0), TWEEN_BOUNCE_BEGIN );<br>
+bounceend BeginTweening( fParam(0), TWEEN_BOUNCE_END );<br>
+spring BeginTweening( fParam(0), TWEEN_SPRING );<br>
+stoptweening { StopTweening(); BeginTweening( 0.0001f, TWEEN_LINEAR ); }<br>
+x SetX( fParam(0) );<br>
+y SetY( fParam(0) );<br>
+xoffset SetX( GetX()+fParam(0) );<br>
+yoffset SetY( GetY()+fParam(0) );<br>
+zoom SetZoom( fParam(0) );<br>
+zoomx SetZoomY( fParam(0) );<br>
+zoomy SetZoomY( fParam(0) );<br>
+diffuse SetDiffuse( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );<br>
+glow SetGlow( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );<br>
+rotationx SetRotationX( fParam(0) );<br>
+rotationy SetRotationY( fParam(0) );<br>
+rotationz SetRotationZ( fParam(0) );<br>
+shadowlength SetShadowLength( fParam(0) );<br>
+horizalign SetHorizAlign( sParam(0) );<br>
+vertalign SetVertAlign( sParam(0) );<br>
+diffuseblink SetEffectDiffuseBlink();<br>
+diffuseshift SetEffectDiffuseShift();<br>
+glowblink SetEffectGlowBlink();<br>
+glowshift SetEffectGlowShift();<br>
+wag SetEffectWag();<br>
+bounce SetEffectBounce();<br>
+bob SetEffectBob();<br>
+spin SetEffectSpin();<br>
+vibrate SetEffectVibrate();<br>
+stopeffect SetEffectNone();<br>
+effectcolor1 SetEffectColor1( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) 
+);<br>
+effectcolor2 SetEffectColor2( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) 
+);<br>
+effectperiod SetEffectPeriod( fParam(0) );<br>
+effectmagnitude SetEffectMagnitude( RageVector3(fParam(0),fParam(1),fParam(2)) 
+);<br>
+additiveblend EnableAdditiveBlend( iParam(0)!=0 );<br>
+<br>
+<br>
+&nbsp;</font></p>
+<hr>
+<p><font face="Courier New" size="2"><a name="ScreenSelect">ScreenSelect</a> (<a href="#Table of Contents">top</a>)</font></p>
+<hr>
+<p>
+<font face="Courier New" size="2">
+<br>
+ScreenSelect is a type of screen that presents the user with a list of choices. 
+The choices shown on these screens can be Styles, Difficulties, PlayModes, or 
+any combination thereof. Each ScreenSelect screen has two metrics that define 
+what choices are shown (examples below). Currently, there are only two different 
+screens that support the ScreenSelect framework.<br>
+- ScreenSelectMaxType1<br>
+- ScreenSelectMaxType2<br>
+- (more will be converted over in the next couple days)<br>
+<br>
+<br>
+// Example 1: Show all Styles for the current game type the DDR MAX Select Style 
+template<br>
+<br>
+[ScreenSelectMaxType1]<br>
+ChoicesType=0 // 0=styles, 1=difficulties, 2=modes, 3=games<br>
+Choices=<br>
+<br>
+<br>
+// Example 2: Show specific Difficulty and PlayMode choices using a DDR MAX 
+Select Difficulty template<br>
+<br>
+[ScreenSelectMaxType2]<br>
+ChoicesType=1 // 0=styles, 1=difficulties, 2=modes, 3=games<br>
+Choices=Beginner,Easy,Medium,Hard,Nonstop,Oni,Endless<br>
+<br>
+<br>
+// Example 3: Show specific Style-PlayMode-Difficulty combinations using a DDR 
+MAX Select Style template<br>
+<br>
+ChoicesType=2 // 0=styles, 1=difficulties, 2=modes, 3=games<br>
+Choices=versus-arcade-medium,couple-arcade-medium,double-arcade-medium,single-arcade-medium,single-battle-medium,double-battle-medium,couple-battle-medium,versus-battle-medium<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+&nbsp;</font></p>
 <hr>
 <font face="Courier New" size="2">
 <a name="How StepMania Loads Textures">How StepMania Loads Textures</a> (<a href="#Table of Contents">top</a>)</font><hr>

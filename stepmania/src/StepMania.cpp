@@ -98,7 +98,7 @@ void ApplyGraphicOptions()
 
 	bNeedReload |= TEXTUREMAN->SetPrefs( 
 		PREFSMAN->m_iTextureColorDepth, 
-		PREFSMAN->m_iUnloadTextureDelaySeconds, 
+		PREFSMAN->m_bDelayedTextureDelete, 
 		PREFSMAN->m_iMaxTextureResolution );
 
 	if( bNeedReload )
@@ -133,6 +133,7 @@ void ResetGame()
 			THEME->SwitchTheme( sGameName );
 		else
 			THEME->SwitchTheme( "default" );
+		TEXTUREMAN->DoDelayedDelete();
 	}
 	PREFSMAN->SaveGamePrefsToDisk();
 
@@ -297,7 +298,11 @@ int main(int argc, char* argv[])
 		PREFSMAN->m_iDisplayColorDepth, 
 		PREFSMAN->m_iRefreshRate,
 		PREFSMAN->m_bVsync );
-	TEXTUREMAN	= new RageTextureManager( PREFSMAN->m_iTextureColorDepth, PREFSMAN->m_iUnloadTextureDelaySeconds, PREFSMAN->m_iMaxTextureResolution );
+	TEXTUREMAN	= new RageTextureManager();
+	TEXTUREMAN->SetPrefs( 
+		PREFSMAN->m_iTextureColorDepth, 
+		PREFSMAN->m_bDelayedTextureDelete, 
+		PREFSMAN->m_iMaxTextureResolution );
 
 	/* Now that we've started DISPLAY, we can set up event masks. */
 	SDL_EventState(SDL_QUIT, SDL_ENABLE);

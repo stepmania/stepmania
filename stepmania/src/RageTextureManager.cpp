@@ -27,9 +27,8 @@ RageTextureManager*		TEXTUREMAN		= NULL;
 //-----------------------------------------------------------------------------
 // constructor/destructor
 //-----------------------------------------------------------------------------
-RageTextureManager::RageTextureManager( int iTextureColorDepth, int iSecondsBeforeUnload, int iMaxTextureResolution )
+RageTextureManager::RageTextureManager()
 {
-	SetPrefs( iTextureColorDepth, iSecondsBeforeUnload, iMaxTextureResolution );
 }
 
 RageTextureManager::~RageTextureManager()
@@ -103,21 +102,49 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 	return pTexture;
 }
 
-
-void RageTextureManager::GCTextures()
+void RageTextureManager::CacheTexture( RageTextureID ID )
 {
-	/* If m_iSecondsBeforeUnload is 0, then we'll unload textures immediately when
-	 * they're no longer needed, to use as little extra memory as possible, so don't
-	 * bother checking for expired textures here. */
-	if(!m_iSecondsBeforeUnload) return;
+	RageTexture* pTexture = LoadTexture( ID );
+	pTexture->m_bCacheThis |= true;
+	UnloadTexture( pTexture );
+}
 
-	static int timeLastGarbageCollect = time(NULL);
-	if( timeLastGarbageCollect+m_iSecondsBeforeUnload/2 > time(NULL) )
-		return;
+void RageTextureManager::UnloadTexture( RageTexture *t )
+{
+	t->m_iRefCount--;
+	ASSERT( t->m_iRefCount >= 0 );
 
+	/* Always unload movies, so we don't waste time decoding.
+	 *
+	 * Actually, multiple refs to a movie won't work; they should play independently,
+	 * but they'll actually share settings.  Not worth fixing, since we don't currently
+	 * using movies for anything except BGAs (though we could).
+	 */
+	if( t->m_iRefCount==0 )
+	{
+		bool bDeleteThis = false;
+		if( t->IsAMovie() )
+			bDeleteThis = true;
+		if( !m_bDelayedDelete || !t->m_bCacheThis )
+			bDeleteThis = true;
+		
+		if( bDeleteThis )
+			DeleteTexture( t );
+	}
+}
+
+void RageTextureManager::DeleteTexture( RageTexture *t )
+{
+	ASSERT( t->m_iRefCount==0 );
+	LOG->Trace( "RageTextureManager: deleting '%s'.", t->GetID().filename.GetString() );
+	m_mapPathToTexture.erase( t->GetID() );	// remove map entry
+	SAFE_DELETE( t );	// free the texture
+}
+
+void RageTextureManager::GarbageCollect( GCType type )
+{
 	// Search for old textures with refcount==0 to unload
-	LOG->Trace("Performing texture garbage collection");
-	timeLastGarbageCollect = time(NULL);
+	LOG->Trace("Performing texture garbage collection.");
 
 	for( std::map<RageTextureID, RageTexture*>::iterator i = m_mapPathToTexture.begin();
 		i != m_mapPathToTexture.end(); )
@@ -126,16 +153,25 @@ void RageTextureManager::GCTextures()
 		i++;
 
 		CString sPath = j->first.filename;
-		RageTexture* pTexture = j->second;
-		if( pTexture->m_iRefCount==0  &&
-			pTexture->m_iTimeOfLastUnload+m_iSecondsBeforeUnload < time(NULL) )
+		RageTexture* t = j->second;
+
+		if( t->m_iRefCount==0 )
 		{
-			SAFE_DELETE( pTexture );		// free the texture
-			m_mapPathToTexture.erase(j);	// and remove the key in the map
+			bool bDeleteThis = false;
+			if( type==cached_textures && !m_bDelayedDelete )
+				bDeleteThis = true;
+			if( type==delayed_delete )
+				bDeleteThis = true;
+				
+			if( bDeleteThis )
+				DeleteTexture( t );
 		}
 	}
 }
 
+/*
+
+  Redundant.  -Chris
 
 void RageTextureManager::UnloadTexture( RageTextureID ID )
 {
@@ -155,31 +191,8 @@ void RageTextureManager::UnloadTexture( RageTextureID ID )
 	UnloadTexture(p->second);
 	//LOG->Trace( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath.GetString(), pTexture->m_iRefCount );
 }
+*/
 
-void RageTextureManager::UnloadTexture( RageTexture *t )
-{
-	t->m_iRefCount--;
-	t->m_iTimeOfLastUnload = time(NULL);
-	ASSERT( t->m_iRefCount >= 0 );
-
-	/* Always unload movies, so we don't waste time decoding.
-	 *
-	 * Actually, multiple refs to a movie won't work; they should play independently,
-	 * but they'll actually share settings.  Not worth fixing, since we don't currently
-	 * using movies for anything except BGAs (though we could).
-	 * 
-	 * Also, if texture caching is off, just remove it now instead of doing
-	 * garbage collection. */
-	if( t->m_iRefCount == 0  && 
-		(t->IsAMovie() || !m_iSecondsBeforeUnload ))
-	{
-		//	LOG->Trace( "RageTextureManager: '%s' will be deleted.  It has %d references.", sTexturePath.GetString(), pTexture->m_iRefCount );
-		m_mapPathToTexture.erase(t->GetID());	// and remove the key in the map
-		SAFE_DELETE( t );		// free the texture
-	}
-
-	GCTextures();
-}
 
 void RageTextureManager::ReloadAll()
 {
@@ -228,15 +241,15 @@ void RageTextureManager::InvalidateTextures()
 	}
 }
 
-bool RageTextureManager::SetPrefs( int iTextureColorDepth, int iSecondsBeforeUnload, int iMaxTextureResolution )
+bool RageTextureManager::SetPrefs( int iTextureColorDepth, bool bDelayedDelete, int iMaxTextureResolution )
 {
 	bool need_reload = false;
-	if(m_iSecondsBeforeUnload != iSecondsBeforeUnload ||
+	if( m_bDelayedDelete != bDelayedDelete ||
 		m_iTextureColorDepth != iTextureColorDepth ||
 		m_iMaxTextureResolution != iMaxTextureResolution )
 		need_reload = true;
 
-	m_iSecondsBeforeUnload = iSecondsBeforeUnload;
+	m_bDelayedDelete = bDelayedDelete;
 	m_iTextureColorDepth = iTextureColorDepth;
 	m_iMaxTextureResolution = iMaxTextureResolution;
 	

@@ -109,7 +109,7 @@ void ScreenGraphicOptions::ImportOptions()
 	case 32:	m_iSelectedOption[0][GO_TEXTURE_COLOR_DEPTH] = 1;	break;
 	}
 
-	m_iSelectedOption[0][GO_KEEP_TEXTURES_IN_MEM]			= PREFSMAN->m_iUnloadTextureDelaySeconds>0 ? 1:0;
+	m_iSelectedOption[0][GO_KEEP_TEXTURES_IN_MEM]			= PREFSMAN->m_bDelayedTextureDelete ? 1:0;
 
 	switch(PREFSMAN->m_iRefreshRate)
 	{
@@ -153,7 +153,7 @@ void ScreenGraphicOptions::ExportOptions()
 	default:	ASSERT(0);	PREFSMAN->m_iTextureColorDepth = 16;	break;
 	}
 	
-	PREFSMAN->m_iUnloadTextureDelaySeconds		= (m_iSelectedOption[0][GO_KEEP_TEXTURES_IN_MEM] == 1) ? 1200 : 0;	// 20 mins
+	PREFSMAN->m_bDelayedTextureDelete		= (m_iSelectedOption[0][GO_KEEP_TEXTURES_IN_MEM] == 1);
 
 	if(m_iSelectedOption[0][GO_REFRESH_RATE] == 0)
 		PREFSMAN->m_iRefreshRate = REFRESH_DEFAULT;
