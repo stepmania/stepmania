@@ -326,8 +326,6 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 			#else
 				typedef char		TCHAR;
 			#endif
-			typedef wchar_t			OLECHAR;
-
 		#else
 
 			#include <TCHAR.H>
@@ -416,16 +414,6 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 #if !defined(PCTSTR) && !defined(PCTSTR_DEFINED)
 	typedef const TCHAR*			PCTSTR;
 	#define PCTSTR_DEFINED
-#endif
-
-#if !defined(PCOLESTR) && !defined(PCOLESTR_DEFINED)
-	typedef const OLECHAR*			PCOLESTR;
-	#define PCOLESTR_DEFINED
-#endif
-
-#if !defined(POLESTR) && !defined(POLESTR_DEFINED)
-	typedef OLECHAR*				POLESTR;
-	#define POLESTR_DEFINED
 #endif
 
 #if !defined(PCUSTR) && !defined(PCUSTR_DEFINED)
@@ -1145,119 +1133,6 @@ inline void	ssadd(std::wstring& sDst, PCWSTR pW)
 #endif
 
 
-// -----------------------------------------------------------------------------
-// sscoll/ssicoll: Collation wrappers
-//		Note -- with MSVC I have reversed the arguments order here because the
-//		functions appear to return the opposite of what they should
-// -----------------------------------------------------------------------------
-#ifdef SS_ANSI
-	#ifdef SS_NOLOCALE
-		inline int sscoll(PCSTR sz1, int /*nLen1*/, PCSTR sz2, int /*nLen2*/)
-		{
-			return strcoll(sz2, sz1);
-		}
-		inline int sscoll(PCWSTR sz1, int /*nLen1*/, PCWSTR sz2, int /*nLen2*/)
-		{
-			return wcscoll(sz2, sz1);
-		}
-		template<typename CT>
-		inline int ssicoll(const CT* sz1, int nLen1, const CT* sz2, int nLen2)
-		{
-			std::basic_string<CT> str1(sz1, nLen1);
-			std::basic_string<CT> str2(sz2, nLen2);
-
-			// JMO: Note this is a complete hack. But so is SS_NOLOCALE
-
-			sslwr((CT*)str1.data(), nLen1);
-			sslwr((CT*)str2.data(), nLen2);
-			
-			return sscoll(str2.c_str(), str2.size(), str1.c_str(), str1.size());
-		}
-	#else
-		template <typename CT>
-		inline int sscoll(const CT* sz1, int nLen1, const CT* sz2, int nLen2)
-		{
-			const std::collate<CT>& coll =
-				SS_USE_FACET(std::locale(), std::collate<CT>);
-
-			return coll.compare(sz2, sz2+nLen2, sz1, sz1+nLen1);
-		}
-		template <typename CT>
-		inline int ssicoll(const CT* sz1, int nLen1, const CT* sz2, int nLen2)
-		{
-			const std::locale loc;
-			const std::collate<CT>& coll = SS_USE_FACET(loc, std::collate<CT>);
-
-			// Some implementations seem to have trouble using the collate<>
-			// facet typedefs so we'll just default to basic_string and hope
-			// that's what the collate facet uses (which it generally should)
-
-//			std::collate<CT>::string_type s1(sz1);
-//			std::collate<CT>::string_type s2(sz2);
-			std::basic_string<CT> s1(sz1);
-			std::basic_string<CT> s2(sz2);
-
-			sslwr(const_cast<CT*>(s1.c_str()), nLen1);
-			sslwr(const_cast<CT*>(s2.c_str()), nLen2);
-			return coll.compare(s2.c_str(), s2.c_str()+nLen2,
-								s1.c_str(), s1.c_str()+nLen1);
-	}
-	#endif
-#else
-	#ifdef _MBCS
-		inline int sscoll(PCSTR sz1, int /*nLen1*/, PCSTR sz2, int /*nLen2*/)
-		{
-			return _mbscoll((PCUSTR)sz1, (PCUSTR)sz2);
-		}
-		inline int ssicoll(PCSTR sz1, int /*nLen1*/, PCSTR sz2, int /*nLen2*/)
-		{
-			return _mbsicoll((PCUSTR)sz1, (PCUSTR)sz2);
-		}
-	#else
-		inline int sscoll(PCSTR sz1, int /*nLen1*/, PCSTR sz2, int /*nLen2*/)
-		{
-			return strcoll(sz1, sz2);
-		}
-		inline int ssicoll(PCSTR sz1, int /*nLen1*/, PCSTR sz2, int /*nLen2*/)
-		{
-			return _stricoll(sz1, sz2);
-		}
-	#endif
-	inline int sscoll(PCWSTR sz1, int /*nLen1*/, PCWSTR sz2, int /*nLen2*/)
-	{
-		return wcscoll(sz1, sz2);
-	}
-	inline int ssicoll(PCWSTR sz1, int /*nLen1*/, PCWSTR sz2, int /*nLen2*/)
-	{
-		return _wcsicoll(sz1, sz2);
-	}
-#endif
-
-
-// -----------------------------------------------------------------------------
-// ssfmtmsg: FormatMessage equivalents.  Needed because I added a CString facade
-// Again -- no equivalent of these on non-Win32 builds but their might one day
-// be one if the message facet gets implemented
-// -----------------------------------------------------------------------------
-#ifdef SS_ANSI
-#else
-	inline DWORD ssfmtmsg(DWORD dwFlags, LPCVOID pSrc, DWORD dwMsgId,
-						  DWORD dwLangId, PSTR pBuf, DWORD nSize,
-						  va_list* vlArgs)
-	{ 
-		return FormatMessageA(dwFlags, pSrc, dwMsgId, dwLangId,
-							  pBuf, nSize,vlArgs);
-	}
-	inline DWORD ssfmtmsg(DWORD dwFlags, LPCVOID pSrc, DWORD dwMsgId,
-						  DWORD dwLangId, PWSTR pBuf, DWORD nSize,
-						  va_list* vlArgs)
-	{
-		return FormatMessageW(dwFlags, pSrc, dwMsgId, dwLangId,
-							  pBuf, nSize,vlArgs);
-	}
-#endif
- 
-
 
 // FUNCTION: sscpy.  Copies up to 'nMax' characters from pSrc to pDst.
 // -----------------------------------------------------------------------------
@@ -1751,15 +1626,6 @@ public:
 		this->resize(static_cast<MYSIZE>(nNewLen > -1 ? nNewLen : sslen(this->c_str())));
 	}
 
-	void BufferRel()		 { RelBuf(); }			// backwards compatability
-	CT*  Buffer()			 { return GetBuf(); }	// backwards compatability
-	CT*  BufferSet(int nLen) { return SetBuf(nLen);}// backwards compatability
-
-	bool Equals(const CT* pT, bool bUseCase=false) const
-	{	// get copy, THEN compare (thread safe)
-		return  bUseCase ? this->compare(pT) == 0 : ssicmp(MYTYPE(*this).c_str(), pT) == 0;
-	} 
-	
 	// -------------------------------------------------------------------------
 	// FUNCTION:  CStdStr::Format
 	//		void _cdecl Formst(CStdStringA& PCSTR szFormat, ...)
@@ -1892,21 +1758,6 @@ public:
 		}
 	#endif
 
-	int Collate(PCMYSTR szThat) const
-	{
-		return sscoll(this->c_str(), this->length(), szThat, sslen(szThat));
-	}
-
-	int CollateNoCase(PCMYSTR szThat) const
-	{
-		return ssicoll(this->c_str(), this->length(), szThat, sslen(szThat));
-	}
-
-	int Compare(PCMYSTR szThat) const
-	{
-		return this->compare(szThat);	
-	}
-
 	int CompareNoCase(PCMYSTR szThat)	const
 	{
 		return ssicmp(this->c_str(), szThat);
@@ -1966,44 +1817,6 @@ public:
 		return static_cast<int>(MYBASE::npos == nIdx ? -1 : nIdx);
 	}
 
-#ifndef SS_ANSI
-	void FormatMessage(PCMYSTR szFormat, ...) throw(std::exception)
-	{
-		va_list argList;
-		va_start(argList, szFormat);
-		PMYSTR szTemp;
-		if ( ssfmtmsg(FORMAT_MESSAGE_FROM_STRING|FORMAT_MESSAGE_ALLOCATE_BUFFER,
-					   szFormat, 0, 0,
-					   reinterpret_cast<PMYSTR>(&szTemp), 0, &argList) == 0 ||
-			 szTemp == 0 )
-		{
-			throw std::runtime_error("out of memory");
-		}
-		*this = szTemp;
-		LocalFree(szTemp);
-		va_end(argList);
-	}
-
-	void FormatMessage(UINT nFormatId, ...) throw(std::exception)
-	{
-		MYTYPE sFormat;
-		VERIFY(sFormat.LoadString(nFormatId) != 0);
-		va_list argList;
-		va_start(argList, nFormatId);
-		PMYSTR szTemp;
-		if ( ssfmtmsg(FORMAT_MESSAGE_FROM_STRING|FORMAT_MESSAGE_ALLOCATE_BUFFER,
-					   sFormat, 0, 0,
-					   reinterpret_cast<PMYSTR>(&szTemp), 0, &argList) == 0 ||
-			szTemp == 0)
-		{
-			throw std::runtime_error("out of memory");
-		}
-		*this = szTemp;
-		LocalFree(szTemp);
-		va_end(argList);
-	}
-#endif
-
 
 	// -------------------------------------------------------------------------
 	// GetXXXX -- Direct access to character buffer
@@ -2016,11 +1829,6 @@ public:
 	CT* GetBuffer(int nMinLen=-1)
 	{
 		return GetBuf(nMinLen);
-	}
-
-	CT* GetBufferSetLength(int nLen)
-	{
-		return BufferSet(nLen);
 	}
 
 	// GetLength() -- MFC docs say this is the # of BYTES but
@@ -2164,13 +1972,6 @@ public:
 		return static_cast<int>(MYBASE::npos == nIdx ? -1 : nIdx);
 	}
 
-	// ReverseFind overload that's not in CString but might be useful
-	int ReverseFind(PCMYSTR szFind, MYSIZE pos=MYBASE::npos) const
-	{
-		MYSIZE nIdx	= this->rfind(0 == szFind ? MYTYPE() : szFind, pos);
-		return static_cast<int>(MYBASE::npos == nIdx ? -1 : nIdx);
-	}
-
 	MYTYPE Right(int nCount) const
 	{
         // Range check the count.
@@ -2183,73 +1984,6 @@ public:
 	{
 		ASSERT(this->size() > static_cast<MYSIZE>(nIndex));
 		this->at(static_cast<MYSIZE>(nIndex))		= ch;
-	}
-
-	#ifndef SS_ANSI
-		BSTR SetSysString(BSTR* pbstr) const
-		{
-			ostring os;
-			ssasn(os, *this);
-			if ( !::SysReAllocStringLen(pbstr, os.c_str(), os.length()) )
-				throw std::runtime_error("out of memory");
-
-			ASSERT(*pbstr != 0);
-			return *pbstr;
-		}
-	#endif
-
-	MYTYPE SpanExcluding(PCMYSTR szCharSet) const
-	{
-		return Left(this->find_first_of(szCharSet));
-	}
-
-	MYTYPE SpanIncluding(PCMYSTR szCharSet) const
-	{
-		return Left(this->find_first_not_of(szCharSet));
-	}
-
-	#if !defined(UNICODE) && !defined(SS_ANSI)
-
-		// CString's OemToAnsi and AnsiToOem functions are available only in
-		// Unicode builds.  However since we're a template we also need a
-		// runtime check of CT and a reinterpret_cast to account for the fact
-		// that CStdStringW gets instantiated even in non-Unicode builds.
-
-		void AnsiToOem()
-		{
-			if ( sizeof(CT) == sizeof(char) && !empty() )
-			{
-				::CharToOem(reinterpret_cast<PCSTR>(this->c_str()),
-							reinterpret_cast<PSTR>(GetBuf()));
-			}
-			else
-			{
-				ASSERT(false);
-			}
-		}
-
-		void OemToAnsi()
-		{
-			if ( sizeof(CT) == sizeof(char) && !empty() )
-			{
-				::OemToChar(reinterpret_cast<PCSTR>(this->c_str()),
-							reinterpret_cast<PSTR>(GetBuf()));
-			}
-			else
-			{
-				ASSERT(false);
-			}
-		}
-
-	#endif
-	
-
-	void			FreeExtra()
-	{
-		MYTYPE mt;
-		this->swap(mt);
-		if ( !mt.empty() )
-			this->assign(mt.c_str(), mt.size());
 	}
 
 	// I have intentionally not implemented the following CString
@@ -2288,37 +2022,6 @@ public:
 	{
 		return this->c_str();
 	}
-#endif
-
-#ifndef SS_ANSI
-
-	// SetResourceHandle/GetResourceHandle.  In MFC builds, these map directly
-	// to AfxSetResourceHandle and AfxGetResourceHandle.  In non-MFC builds they
-	// point to a single static HINST so that those who call the member
-	// functions that take resource IDs can provide an alternate HINST of a DLL
-	// to search.  This is not exactly the list of HMODULES that MFC provides
-	// but it's better than nothing.
-
-	#ifdef _MFC_VER
-		static void SetResourceHandle(HMODULE hNew)
-		{
-			AfxSetResourceHandle(hNew);
-		}
-		static HMODULE GetResourceHandle()
-		{
-			return AfxGetResourceHandle();
-		}
-	#else
-		static void SetResourceHandle(HMODULE hNew)
-		{
-			SSResourceHandle() = hNew;
-		}
-		static HMODULE GetResourceHandle()
-		{
-			return SSResourceHandle();
-		}
-	#endif
-
 #endif
 };
 
@@ -2499,7 +2202,6 @@ CStdStr<char> operator+(PCWSTR pW, const CStdStr<char>& str)
 
 typedef CStdStr<char>		CStdStringA;	// a better std::string
 typedef CStdStr<wchar_t>	CStdStringW;	// a better std::wstring
-typedef CStdStr<OLECHAR>	CStdStringO;	// almost always CStdStringW
 
 
 #ifndef SS_ANSI
