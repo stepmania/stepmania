@@ -3,9 +3,12 @@
 #include "GameState.h"
 #include "RageUtil.h"
 #include "song.h"
+#include "Foreach.h"
 
 void Attack::GetAttackBeats( const Song *song, PlayerNumber pn, float &fStartBeat, float &fEndBeat ) const
 {
+	ASSERT( song );
+
 	if( fStartSecond >= 0 )
 	{
 		CHECKPOINT;
@@ -19,7 +22,7 @@ void Attack::GetAttackBeats( const Song *song, PlayerNumber pn, float &fStartBea
 		ASSERT( GAMESTATE->m_pCurSong );
 		
 		/* We're setting this effect on the fly.  If it's an arrow-changing effect
-		 * (transform or note skin), apply it in the future, past what's currently on
+		 * (transform or note skin), apply it in the future, after what's currently on
 		 * screen, so new arrows will scroll on screen with this effect. */
 		GAMESTATE->GetUndisplayedBeats( pn, fSecsRemaining, fStartBeat, fEndBeat );
 	}
@@ -37,6 +40,23 @@ bool Attack::operator== ( const Attack &rhs ) const
 		EQUAL(sModifier) &&
 		EQUAL(bOn) &&
 		EQUAL(bGlobal);
+}
+
+bool Attack::ContainsTransformOrTurn() const
+{
+	PlayerOptions po;
+	po.FromString( sModifier );
+	return po.ContainsTransformOrTurn();
+}
+
+bool AttackArray::ContainsTransformOrTurn() const
+{
+	FOREACH_CONST( Attack, *this, a )
+	{
+		if( a->ContainsTransformOrTurn() )
+			return true;
+	}
+	return false;
 }
 
 /*

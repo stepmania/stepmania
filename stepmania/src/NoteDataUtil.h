@@ -84,6 +84,7 @@ namespace NoteDataUtil
 	// True if no notes in row that aren't true in the mask
 	bool RowPassesValidMask( NoteData &in, int row, const bool bValidMask[] );
 
+	void TransformNoteData( NoteData &nd, const AttackArray &aa, StepsType st, Song* pSong );
 	void TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, float fStartBeat = 0, float fEndBeat = 99999 );
 	void AddTapAttacks( NoteData &nd, Song* pSong );
 

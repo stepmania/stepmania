@@ -6,6 +6,7 @@
 #include "song.h"
 #include "GameState.h"
 #include "RadarValues.h"
+#include "Foreach.h"
 
 NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex )
 {
@@ -1549,6 +1550,22 @@ void NoteDataUtil::ConvertAdditionsToRegular( NoteData &in )
 		for( int t=0; t<in.GetNumTracks(); t++ )
 			if( in.GetTapNote(t,r) == TAP_ADDITION )
 				in.SetTapNote(t,r,TAP_TAP);
+}
+
+void NoteDataUtil::TransformNoteData( NoteData &nd, const AttackArray &aa, StepsType st, Song* pSong )
+{
+	FOREACH_CONST( Attack, aa, a )
+	{
+		PlayerOptions po;
+		po.FromString( a->sModifier );
+		if( po.ContainsTransformOrTurn() )
+		{
+			float fStartBeat, fEndBeat;
+			a->GetAttackBeats( pSong, PLAYER_INVALID, fStartBeat, fEndBeat );
+
+			NoteDataUtil::TransformNoteData( nd, po, st, fStartBeat, fEndBeat );
+		}
+	}
 }
 
 void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, float fStartBeat, float fEndBeat )

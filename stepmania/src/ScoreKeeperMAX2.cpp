@@ -28,42 +28,37 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Ste
 	{
 		Song* pSong = apSongs[i];
 		Steps* pSteps = apSteps[i];
-		NoteData notedata;
-		pSteps->GetNoteData( &notedata );
+		const AttackArray &aa = asModifiers[i];
+		NoteData ndTemp;
+		pSteps->GetNoteData( &ndTemp );
 
 		/* We might have been given lots of songs; don't keep them in memory uncompressed. */
 		pSteps->Compress();
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
-		NoteData playerNoteData;
-		pStyle->GetTransformedNoteDataForStyle( pn_, &notedata, &playerNoteData );
+		NoteData nd;
+		pStyle->GetTransformedNoteDataForStyle( pn_, &ndTemp, &nd );
 
-		/* Apply transforms to find out how the notes will really look. 
+		/* Compute RadarValues before applying any user-selected mods.  Apply
+		 * Course mods and count them in the "pre" RadarValues because they're
+		 * forced and not chosen by the user.
+		 */
+		NoteDataUtil::TransformNoteData( nd, aa, pSteps->m_StepsType, pSong );
+		RadarValues rvPre;
+		NoteDataUtil::GetRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPre );
+
+		/* Apply user transforms to find out how the notes will really look. 
 		 *
 		 * XXX: This is brittle: if we end up combining mods for a song differently
 		 * than ScreenGameplay, we'll end up with the wrong data.  We should probably
 		 * have eg. GAMESTATE->GetOptionsForCourse(po,so,pn) to get options based on
 		 * the last call to StoreSelectedOptions and the modifiers list, but that'd
 		 * mean moving the queues in ScreenGameplay to GameState ... */
-		NoteData playerNoteDataPostModifiers(playerNoteData);
-		NoteDataUtil::TransformNoteData( playerNoteDataPostModifiers, GAMESTATE->m_PlayerOptions[pn_], GAMESTATE->GetCurrentStyle()->m_StepsType );
-
-		for( unsigned j=0; j < asModifiers[i].size(); j++ )
-		{
-			const Attack &mod = asModifiers[i][j];
-			PlayerOptions po;
-			po.FromString( mod.sModifier );
-
-			float fStartBeat, fEndBeat;
-			mod.GetAttackBeats( pSong, m_PlayerNumber, fStartBeat, fEndBeat );
-
-			NoteDataUtil::TransformNoteData( playerNoteDataPostModifiers, po, GAMESTATE->GetCurrentStyle()->m_StepsType, fStartBeat, fEndBeat );
-		}
-
-		RadarValues radarValuesPostModifiers;
-		NoteDataUtil::GetRadarValues( playerNoteDataPostModifiers, pSong->m_fMusicLengthSeconds, radarValuesPostModifiers );
+		NoteDataUtil::TransformNoteData( nd, GAMESTATE->m_PlayerOptions[pn_], pSteps->m_StepsType );
+		RadarValues rvPost;
+		NoteDataUtil::GetRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPost );
 		 
-		iTotalPossibleDancePoints += this->GetPossibleDancePoints( pSteps->GetRadarValues(), radarValuesPostModifiers );
+		iTotalPossibleDancePoints += this->GetPossibleDancePoints( rvPre, rvPost );
 	}
 	g_CurStageStats.iPossibleDancePoints[pn_] = iTotalPossibleDancePoints;
 

@@ -3,6 +3,9 @@
 #include "Foreach.h"
 #include "Steps.h"
 #include "song.h"
+#include "PlayerOptions.h"
+#include "NoteData.h"
+#include "NoteDataUtil.h"
 
 void TrailEntry::GetAttackArray( AttackArray &out ) const
 {
@@ -35,6 +38,17 @@ bool TrailEntry::operator== ( const TrailEntry &rhs ) const
 		EQUAL(dc);
 }
 
+bool TrailEntry::ContainsTransformOrTurn() const
+{
+	PlayerOptions po;
+	po.FromString( Modifiers );
+	if( po.ContainsTransformOrTurn() )
+		return true;
+	if( Attacks.ContainsTransformOrTurn() )
+		return true;
+	return false;
+}
+
 RadarValues Trail::GetRadarValues() const
 {
 	RadarValues rv;
@@ -43,7 +57,25 @@ RadarValues Trail::GetRadarValues() const
 	{
 		const Steps *pSteps = e->pSteps;
 		ASSERT( pSteps );
-		rv += pSteps->GetRadarValues();
+		if( e->ContainsTransformOrTurn() )
+		{
+			NoteData nd;
+			pSteps->GetNoteData( &nd );
+			RadarValues rv_orig;
+			NoteDataUtil::GetRadarValues( nd, e->pSong->m_fMusicLengthSeconds, rv_orig );
+			PlayerOptions po;
+			po.FromString( e->Modifiers );
+			if( po.ContainsTransformOrTurn() )
+				NoteDataUtil::TransformNoteData( nd, po, pSteps->m_StepsType );
+			NoteDataUtil::TransformNoteData( nd, e->Attacks, pSteps->m_StepsType, e->pSong );
+			RadarValues rv2;
+			NoteDataUtil::GetRadarValues( nd, e->pSong->m_fMusicLengthSeconds, rv2 );
+			rv += rv2;
+		}
+		else
+		{
+			rv += pSteps->GetRadarValues();			
+		}
 	}
 
 	return rv;

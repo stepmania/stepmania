@@ -179,7 +179,6 @@ CString PlayerOptions::GetString() const
  * you don't want this. */
 void PlayerOptions::FromString( CString sOptions )
 {
-	ASSERT( GAMESTATE->m_pPosition );
 	ASSERT( NOTESKIN );
 //	Init();
 	sOptions.MakeLower();
@@ -299,11 +298,13 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "space" )		{ m_fSkew = level; m_fPerspectiveTilt = +level;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 		else if( sBit == "hallway" )	{ m_fSkew = 0; m_fPerspectiveTilt = -level;			m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 		else if( sBit == "distant" )	{ m_fSkew = 0; m_fPerspectiveTilt = +level;			m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( GAMESTATE->m_pPosition->IsValidModeForAnyStyle(sBit) )
+		else if( GAMESTATE->m_pPosition && GAMESTATE->m_pPosition->IsValidModeForAnyStyle(sBit) )
+			// The only time we'll be in this function and NOTESKIN isn't created is 
+			// when calculating RadarValues for courses with transform mods.
 			m_sPositioning = sBit;
 		else if( sBit == "nopositioning" )
 			m_sPositioning = "";
-		else if( NOTESKIN->DoesNoteSkinExist(sBit) )
+		else if( NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit) )
 			m_sNoteSkin = sBit;
 		else if( sBit == "noteskin" && !on ) /* "no noteskin" */
 			m_sNoteSkin = "default";
@@ -618,6 +619,21 @@ CString PlayerOptions::GetThemedString() const
 		asThemedMods.push_back( ThemeMod(sMod) );
 	}
 	return join( ", ", asThemedMods );
+}
+
+bool PlayerOptions::ContainsTransformOrTurn() const
+{
+	for( int i=0; i<NUM_TRANSFORMS; i++ )
+	{
+		if( m_bTransforms[i] )
+			return true;
+	}
+	for( int i=0; i<NUM_TURNS; i++ )
+	{
+		if( m_bTurns[i] )
+			return true;
+	}
+	return false;
 }
 
 /*

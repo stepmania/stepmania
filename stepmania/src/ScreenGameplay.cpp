@@ -231,7 +231,7 @@ void ScreenGameplay::Init()
 		g_CurStageStats.iMeter[p] = m_vpStepsQueue[p][0]->GetMeter();
 
 		/* Record combo rollover. */
-		g_CurStageStats.UpdateComboList( (PlayerNumber)p, 0, true );
+		g_CurStageStats.UpdateComboList( p, 0, true );
 	}
 
 	if( GAMESTATE->IsExtraStage() )
@@ -251,7 +251,7 @@ void ScreenGameplay::Init()
 		{
 		case PrefsManager::SCORING_MAX2:
 		case PrefsManager::SCORING_5TH:
-			m_pPrimaryScoreKeeper[p] = new ScoreKeeperMAX2( m_apSongsQueue, m_vpStepsQueue[p], m_asModifiersQueue[p], (PlayerNumber)p );
+			m_pPrimaryScoreKeeper[p] = new ScoreKeeperMAX2( m_apSongsQueue, m_vpStepsQueue[p], m_asModifiersQueue[p], p );
 			break;
 		default: ASSERT(0);
 		}
@@ -259,7 +259,7 @@ void ScreenGameplay::Init()
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_RAVE:
-			m_pSecondaryScoreKeeper[p] = new ScoreKeeperRave( (PlayerNumber)p );
+			m_pSecondaryScoreKeeper[p] = new ScoreKeeperRave( p );
 			break;
 		}
 	}
@@ -412,7 +412,7 @@ void ScreenGameplay::Init()
 				ASSERT(0);
 			}
 
-			m_pLifeMeter[p]->Load( (PlayerNumber)p );
+			m_pLifeMeter[p]->Load( p );
 			m_pLifeMeter[p]->SetName( ssprintf("LifeP%d",p+1) );
 			SET_XY( *m_pLifeMeter[p] );
 			this->AddChild( m_pLifeMeter[p] );		
@@ -469,7 +469,7 @@ void ScreenGameplay::Init()
 			ASSERT(0);
 		}
 
-		m_pPrimaryScoreDisplay[p]->Init( (PlayerNumber)p );
+		m_pPrimaryScoreDisplay[p]->Init( p );
 		m_pPrimaryScoreDisplay[p]->SetName( ssprintf("ScoreP%d",p+1) );
 		SET_XY( *m_pPrimaryScoreDisplay[p] );
 		if( GAMESTATE->m_PlayMode != PLAY_MODE_RAVE || SHOW_SCORE_IN_RAVE ) /* XXX: ugly */
@@ -488,7 +488,7 @@ void ScreenGameplay::Init()
 
 		if( m_pSecondaryScoreDisplay[p] )
 		{
-			m_pSecondaryScoreDisplay[p]->Init( (PlayerNumber)p );
+			m_pSecondaryScoreDisplay[p]->Init( p );
 			m_pSecondaryScoreDisplay[p]->SetName( ssprintf("SecondaryScoreP%d",p+1) );
 			SET_XY( *m_pSecondaryScoreDisplay[p] );
 			this->AddChild( m_pSecondaryScoreDisplay[p] );
@@ -576,15 +576,13 @@ void ScreenGameplay::Init()
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
 	this->AddChild( &m_textSongOptions );
 
+	FOREACH_EnabledPlayer( pn )
 	{
-		FOREACH_EnabledPlayer( pn )
-		{
-			m_ActiveAttackList[pn].LoadFromFont( THEME->GetPathF(m_sName,"ActiveAttackList") );
-			m_ActiveAttackList[pn].Init( pn );
-			m_ActiveAttackList[pn].SetName( ssprintf("ActiveAttackListP%d",pn+1) );
-			SET_XY( m_ActiveAttackList[pn] );
-			this->AddChild( &m_ActiveAttackList[pn] );
-		}
+		m_ActiveAttackList[pn].LoadFromFont( THEME->GetPathF(m_sName,"ActiveAttackList") );
+		m_ActiveAttackList[pn].Init( pn );
+		m_ActiveAttackList[pn].SetName( ssprintf("ActiveAttackListP%d",pn+1) );
+		SET_XY( m_ActiveAttackList[pn] );
+		this->AddChild( &m_ActiveAttackList[pn] );
 	}
 
 
@@ -629,7 +627,7 @@ void ScreenGameplay::Init()
 //		{
 //		case PLAY_MODE_BATTLE:
 //			m_pInventory[p] = new Inventory;
-//			m_pInventory[p]->Load( (PlayerNumber)p );
+//			m_pInventory[p]->Load( p );
 //			this->AddChild( m_pInventory[p] );
 //			break;
 //		}
@@ -770,14 +768,31 @@ bool ScreenGameplay::IsLastSong()
 	return GAMESTATE->GetCourseSongIndex()+1 == (int)m_apSongsQueue.size(); // GetCourseSongIndex() is 0-based but size() is not
 }
 
-void ScreenGameplay::SetupSong( int p, int iSongIndex )
+void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 {
 	/* This is the first beat that can be changed without it being visible.  Until
 	 * we draw for the first time, any beat can be changed. */
 	GAMESTATE->m_fLastDrawnBeat[p] = -100;
 	GAMESTATE->m_pCurSteps[p] = m_vpStepsQueue[p][iSongIndex];
 
-	// Put course options into effect.
+	/* Load new NoteData into Player.  Do this before 
+	 * RebuildPlayerOptionsFromActiveAttacks or else transform mods will get
+	 * propogated to GAMESTATE->m_PlayerOptions too early and be double-applied
+	 * to the NoteData:
+	 * once in Player::Load, then again in Player::ApplyActiveAttacks.  This 
+	 * is very bad for transforms like AddMines.
+	 */
+	NoteData pOriginalNoteData;
+	GAMESTATE->m_pCurSteps[p]->GetNoteData( &pOriginalNoteData );
+	
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
+	NoteData pNewNoteData;
+	pStyle->GetTransformedNoteDataForStyle( p, &pOriginalNoteData, &pNewNoteData );
+	m_Player[p].Load( p, &pNewNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pPrimaryScoreDisplay[p], m_pSecondaryScoreDisplay[p], m_pInventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
+
+
+	// Put course options into effect.  Do this after Player::Load so
+	// that mods aren't double-applied.
 	GAMESTATE->m_ModsToApply[p].clear();
 	for( unsigned i=0; i<m_asModifiersQueue[p][iSongIndex].size(); ++i )
 	{
@@ -785,24 +800,16 @@ void ScreenGameplay::SetupSong( int p, int iSongIndex )
 		if( a.fStartSecond == 0 )
 			a.fStartSecond = -1;	// now
 		
-		GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
+		GAMESTATE->LaunchAttack( p, a );
 		GAMESTATE->m_SongOptions.FromString( a.sModifier );
 	}
 
 	/* Update attack bOn flags. */
 	GAMESTATE->Update(0);
-	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
+	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( p );
 
 	/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
 	GAMESTATE->m_CurrentPlayerOptions[p] = GAMESTATE->m_PlayerOptions[p];
-
-	NoteData pOriginalNoteData;
-	GAMESTATE->m_pCurSteps[p]->GetNoteData( &pOriginalNoteData );
-	
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
-	NoteData pNewNoteData;
-	pStyle->GetTransformedNoteDataForStyle( (PlayerNumber)p, &pOriginalNoteData, &pNewNoteData );
-	m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pPrimaryScoreDisplay[p], m_pSecondaryScoreDisplay[p], m_pInventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
 }
 
 static int GetMaxSongsPlayed()
@@ -1371,7 +1378,7 @@ void ScreenGameplay::Update( float fDeltaTime )
                 FOREACH_CpuPlayer(p)
 				{
 					SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
-                    ShowOniGameOver((PlayerNumber)p);
+                    ShowOniGameOver( p );
                     m_Player[p].Init();		// remove all notes and scoring
                     m_Player[p].FadeToFail();	// tell the NoteField to fade to white
 				}
@@ -1980,7 +1987,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				/* Mark failure.  This hasn't been done yet if m_bTwoPlayerRecovery is set. */
 				if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_OFF &&
 					(m_pLifeMeter[p] && m_pLifeMeter[p]->IsFailing()) || 
-					(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing((PlayerNumber)p)) )
+					(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing(p)) )
 					g_CurStageStats.bFailed[p] = true;
 
 				if( !g_CurStageStats.bFailed[p] )

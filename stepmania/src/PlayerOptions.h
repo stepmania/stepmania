@@ -20,6 +20,7 @@ struct PlayerOptions
 	CString GetThemedString() const;
 	void FromString( CString sOptions );
 	void ChooseRandomMofifiers();
+	bool ContainsTransformOrTurn() const;
 
 	bool operator==( const PlayerOptions &other ) const;
 	bool operator!=( const PlayerOptions &other ) const { return !operator==(other); }

@@ -68,7 +68,7 @@ protected:
 	void TweenOffScreen();
 
 	bool IsLastSong();
-	void SetupSong( int p, int iSongIndex );
+	void SetupSong( PlayerNumber p, int iSongIndex );
 	void LoadNextSong();
 	void LoadCourseSongNumber( int SongNumber );
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);

@@ -19,8 +19,13 @@ struct Attack
 	void MakeBlank() { sModifier=""; }
 	Attack() { fStartSecond = -1; bOn = false; bGlobal = false; }
 	bool operator== ( const Attack &rhs ) const;
+	bool ContainsTransformOrTurn() const;
 };
-typedef vector<Attack> AttackArray;
+
+struct AttackArray : public vector<Attack>
+{
+	bool ContainsTransformOrTurn() const;
+};
 
 #endif
 
