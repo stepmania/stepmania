@@ -88,7 +88,7 @@ CString GetPrimaryVideoName9xAnd2k()
 	return sPrimaryDeviceName;
 }
 
-CString GetPrimaryVideoDriverInfo()
+CString GetPrimaryVideoDriverName()
 {
 	const CString sPrimaryDeviceName = GetPrimaryVideoName9xAnd2k();
 	if( sPrimaryDeviceName != "" )
