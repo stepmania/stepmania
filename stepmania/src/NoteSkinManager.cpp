@@ -7,11 +7,11 @@
 #include "StyleInput.h"
 #include "Style.h"
 #include "RageUtil.h"
-#include "GameManager.h"
 #include "arch/arch.h"
 #include "RageDisplay.h"
 #include "arch/Dialog/Dialog.h"
 #include "PrefsManager.h"
+#include "Foreach.h"
 
 
 NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in the program
@@ -61,19 +61,44 @@ void NoteSkinManager::RefreshNoteSkinData( const Game* game )
 	}
 }
 
-void NoteSkinManager::LoadNoteSkinData( CString sNoteSkinName, NoteSkinData& data_out )
+void NoteSkinManager::LoadNoteSkinData( const CString &sNoteSkinName, NoteSkinData& data_out )
 {
 	data_out.sName = sNoteSkinName;
 	data_out.metrics.Reset();
+	data_out.vsDirSearchOrder.clear();
 
 	/* Load global NoteSkin defaults */
 	data_out.metrics.ReadFile( GLOBAL_BASE_NOTESKIN_DIR+"metrics.ini" );
+	data_out.vsDirSearchOrder.push_front( GLOBAL_BASE_NOTESKIN_DIR );
 
 	/* Load game NoteSkin defaults */
 	data_out.metrics.ReadFile( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME)+"metrics.ini" );
+	data_out.vsDirSearchOrder.push_front( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME) );
 
-	/* Read the active NoteSkin */
-	data_out.metrics.ReadFile( GetNoteSkinDir(sNoteSkinName)+"metrics.ini" );	
+	/* Read the current NoteSkin and all of its fallbacks */
+	LoadNoteSkinDataRecursive( sNoteSkinName, data_out );
+}
+
+void NoteSkinManager::LoadNoteSkinDataRecursive( const CString &sNoteSkinName, NoteSkinData& data_out )
+{
+	static int depth = 0;
+	depth++;
+	ASSERT_M( depth < 20, "Circular NoteSkin fallback references detected." );
+
+	CString sDir = GetNoteSkinDir(sNoteSkinName);
+
+	// read global fallback the current NoteSkin (if any)
+	CString sFallback;
+	IniFile ini;
+	ini.ReadFile( sDir+"metrics.ini" );
+
+	if( ini.GetValue("Global","FallbackNoteSkin",sFallback) )
+		LoadNoteSkinDataRecursive( sFallback, data_out );
+
+	data_out.metrics.ReadFile( sDir+"metrics.ini" );
+	data_out.vsDirSearchOrder.push_front( sDir );
+
+	depth--;
 }
 
 
@@ -128,7 +153,7 @@ bool NoteSkinManager::DoesNoteSkinExist( CString sSkinName )
 	return false;
 }
 
-CString NoteSkinManager::GetNoteSkinDir( CString sSkinName )
+CString NoteSkinManager::GetNoteSkinDir( const CString &sSkinName )
 {
 	CString sGame = GAMESTATE->GetCurrentGame()->m_szName;
 
@@ -193,39 +218,29 @@ CString NoteSkinManager::ColToButtonName(int col)
 	return pGame->m_szButtonNames[GI.button];
 }
 
-CString NoteSkinManager::GetPathToFromPlayerAndCol( PlayerNumber pn, int col, CString sFileName, bool bOptional )
-{
-	CString sButtonName = ColToButtonName(col);
-
-	return GetPathToFromPlayerAndButton( pn, sButtonName, sFileName, bOptional );
-}
-
-
-CString NoteSkinManager::GetPathToFromPlayerAndButton( PlayerNumber pn, CString sButtonName, CString sElement, bool bOptional )	// looks in GAMESTATE for the current Style
-{
-	// search active NoteSkin
-	CString sNoteSkinName = GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin;
-	sNoteSkinName.MakeLower();
-	return GetPathToFromNoteSkinAndButton( sNoteSkinName, sButtonName, sElement, bOptional );
-}
-
-
 CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CString sButtonName, CString sElement, bool bOptional )
 {
+try_again:
+
 	const CString CacheString = NoteSkin + "/" + sButtonName + "/" + sElement;
 	map<CString,CString>::iterator it = g_PathCache.find( CacheString );
 	if( it != g_PathCache.end() )
 		return it->second;
 
-	CString sPath;
-	if( sPath.empty() )
-		sPath = GetPathToFromDir( GetNoteSkinDir(NoteSkin), sButtonName+" "+sElement );
-	if( sPath.empty() ) // Search game default NoteSkin
-		sPath = GetPathToFromDir( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), sButtonName+" "+sElement );
-	if( sPath.empty() ) // Search global default NoteSkin
-		sPath = GetPathToFromDir( GLOBAL_BASE_NOTESKIN_DIR, "Fallback "+sElement );
+	const NoteSkinData &data = m_mapNameToData[NoteSkin];
 
-	if( sPath.empty() ) // Search global default NoteSkin
+	CString sPath;
+	FOREACHD_CONST( CString, data.vsDirSearchOrder, iter )
+	{
+		 if( *iter == GLOBAL_BASE_NOTESKIN_DIR )
+			 sPath = GetPathToFromDir( *iter, "Fallback "+sElement );
+		 else
+			 sPath = GetPathToFromDir( *iter, sButtonName+" "+sElement );
+		 if( !sPath.empty() )
+			 break;	// done searching
+	}
+
+	if( sPath.empty() )
 	{
 		if( bOptional )
 		{
@@ -233,23 +248,34 @@ CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CStri
 			return sPath;
 		}
 
-		RageException::Throw( "The NoteSkin element '%s %s' could not be found in '%s', '%s', or '%s'.", 
+		CString message = ssprintf(
+			"The NoteSkin element '%s %s' could not be found in '%s', '%s', or '%s'.", 
 			sButtonName.c_str(), sElement.c_str(), 
 			GetNoteSkinDir(NoteSkin).c_str(),
 			GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME).c_str(),
 			GLOBAL_BASE_NOTESKIN_DIR.c_str() );
+
+		if( Dialog::AbortRetryIgnore(message) == Dialog::retry )
+		{
+			FlushDirCache();
+			g_PathCache.clear();
+			goto try_again;
+		}
+		
+		RageException::Throw( message ); 
 	}
 
 	while( GetExtension(sPath) == "redir" )
 	{
 		CString sNewFileName = GetRedirContents(sPath);
 		CString sRealPath;
-		if( sRealPath == "" )
-			sRealPath = GetPathToFromDir( GetNoteSkinDir(NoteSkin), sNewFileName );
-		if( sRealPath == "" )
-			sRealPath = GetPathToFromDir( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), sNewFileName );
-		if( sRealPath == "" )
-			sRealPath = GetPathToFromDir( GLOBAL_BASE_NOTESKIN_DIR, sNewFileName );
+
+		FOREACHD_CONST( CString, data.vsDirSearchOrder, iter )
+		{
+			 sRealPath = GetPathToFromDir( *iter, sNewFileName );
+			 if( !sRealPath.empty() )
+				 break;	// done searching
+		}
 
 		if( sRealPath == "" )
 		{
@@ -262,11 +288,10 @@ CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CStri
 			{
 				FlushDirCache();
 				g_PathCache.clear();
-
-				continue;
+				goto try_again;
 			}
 
-			RageException::Throw( "%s", message.c_str() ); 
+			RageException::Throw( message ); 
 		}
 		
 		sPath = sRealPath;
@@ -276,7 +301,7 @@ CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CStri
 	return sPath;
 }
 
-CString NoteSkinManager::GetPathToFromDir( CString sDir, CString sFileName )
+CString NoteSkinManager::GetPathToFromDir( const CString &sDir, const CString &sFileName )
 {
 	CStringArray matches;		// fill this with the possible files
 

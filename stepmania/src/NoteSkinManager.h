@@ -5,6 +5,7 @@
 #include "PlayerNumber.h"
 #include "IniFile.h"
 #include <map>
+#include <deque>
 
 class Game;
 
@@ -19,9 +20,7 @@ public:
 	void GetNoteSkinNames( CStringArray &AddTo );	// looks up current const Game* in GAMESTATE
 	bool DoesNoteSkinExist( CString sSkinName );	// looks up current const Game* in GAMESTATE
 
-	CString GetPathToFromPlayerAndCol( PlayerNumber pn, int col, CString sElement, bool bOptional=false );
 	CString GetPathToFromNoteSkinAndButton( CString NoteSkin, CString sButtonName, CString sElement, bool bOptional=false );
-	CString GetPathToFromPlayerAndButton( PlayerNumber pn, CString sButtonName, CString sElement, bool bOptional=false );
 
 	CString		GetMetric( CString sNoteSkinName, CString sButtonName, CString sValue );
 	int			GetMetricI( CString sNoteSkinName, CString sButtonName, CString sValueName );
@@ -31,17 +30,21 @@ public:
 
 	static CString ColToButtonName(int col);
 
-	CString GetNoteSkinDir( CString sSkinName );
+	CString GetNoteSkinDir( const CString &sSkinName );
 
 protected:
-	CString GetPathToFromDir( CString sDir, CString sFileName );
+	CString GetPathToFromDir( const CString &sDir, const CString &sFileName );
 
 	struct NoteSkinData
 	{
 		CString sName;	
 		IniFile metrics;
+
+		// When looking for an element, search these dirs from head to tail.
+		deque<CString> vsDirSearchOrder;
 	};
-	void LoadNoteSkinData( CString sNoteSkinName, NoteSkinData& data_out );
+	void LoadNoteSkinData( const CString &sNoteSkinName, NoteSkinData& data_out );
+	void LoadNoteSkinDataRecursive( const CString &sNoteSkinName, NoteSkinData& data_out );
 	map<CString,NoteSkinData> m_mapNameToData;
 	const Game* m_pCurGame;
 };
