@@ -12,6 +12,7 @@
 
 #include "NoteDataWithScoring.h"
 #include "GameState.h"
+#include "RageUtil.h"
 
 NoteDataWithScoring::NoteDataWithScoring()
 {
@@ -249,7 +250,7 @@ float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds, PlayerN
 
 	float fResult = float(ActualDP)/PossibleDP;
 
-	return min( fResult, 1.0f );
+	return clamp( fResult, 0.0f, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualFreezeRadarValue( float fSongSeconds, PlayerNumber pn ) const
