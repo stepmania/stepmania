@@ -16,6 +16,7 @@
  */
 class DWILoader: public NotesLoader {
 	void DWIcharToNote( char c, GameController i, DanceNote &note1Out, DanceNote &note2Out );
+	void DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2Out );
 
 	bool LoadFromDWITokens( 
 		CString sMode, CString sDescription, CString sNumFeet, CString sStepData1, 
@@ -25,6 +26,8 @@ class DWILoader: public NotesLoader {
 	bool LoadFromDWIFile( CString sPath, Song &out );
 
 	static float ParseBrokenDWITimestamp(const CString &arg1, const CString &arg2, const CString &arg3);
+	static bool Is192( CString &str, int pos );
+
 public:
 	void GetApplicableFiles( CString sPath, CStringArray &out );
 	bool Loadable( CString sPath );

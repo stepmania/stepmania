@@ -12,6 +12,8 @@
 #include <map>
 using namespace std;
 
+static std::map<int,int> g_mapDanceNoteToNoteDataColumn;
+
 void DWILoader::DWIcharToNote( char c, GameController i, DanceNote &note1Out, DanceNote &note2Out )
 {
 	switch( c )
@@ -59,7 +61,40 @@ void DWILoader::DWIcharToNote( char c, GameController i, DanceNote &note1Out, Da
 	}
 }
 
+void DWILoader::DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2Out )
+{
+	DanceNote note1, note2;
+	DWIcharToNote( c, i, note1, note2 );
 
+	if( note1 != DANCE_NOTE_NONE )
+		col1Out = g_mapDanceNoteToNoteDataColumn[note1];
+	else
+		col1Out = -1;
+
+	if( note2 != DANCE_NOTE_NONE )
+		col2Out = g_mapDanceNoteToNoteDataColumn[note2];
+	else
+		col2Out = -1;
+}
+
+/* Ack.  DWI used to use <...> to indicate 1/192nd notes; at some
+ * point, <...> was changed to indicate jumps, and `' was used for
+ * 1/192nds.  So, we have to do a check to figure out what it really
+ * means.  If it contains 0s, it's most likely 192nds; otherwise,
+ * it's most likely a jump.  Search for a 0 before the next >: */
+bool DWILoader::Is192( CString &sStepData, int pos )
+{
+	while( pos < (int) sStepData.size() )
+	{
+		if( sStepData[pos] == '>' )
+			return false;
+		if( sStepData[pos] == '0' )
+			return true;
+		++pos;
+	}
+	
+	return false;
+}
 
 bool DWILoader::LoadFromDWITokens( 
 	CString sMode, 
@@ -91,33 +126,33 @@ bool DWILoader::LoadFromDWITokens(
 	}
 
 
-	std::map<int,int> mapDanceNoteToNoteDataColumn;
+	g_mapDanceNoteToNoteDataColumn.clear();
 	switch( out.m_NotesType )
 	{
 	case NOTES_TYPE_DANCE_SINGLE:
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
 		break;
 	case NOTES_TYPE_DANCE_DOUBLE:
 	case NOTES_TYPE_DANCE_COUPLE:
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_LEFT] = 4;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_DOWN] = 5;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_UP] = 6;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_RIGHT] = 7;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_LEFT] = 4;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_DOWN] = 5;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_UP] = 6;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_RIGHT] = 7;
 		break;
 	case NOTES_TYPE_DANCE_SOLO:
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPLEFT] = 1;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 2;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 3;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPRIGHT] = 4;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 5;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPLEFT] = 1;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 2;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 3;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPRIGHT] = 4;
+		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 5;
 		break;
 	default:
 		ASSERT(0);
@@ -133,7 +168,7 @@ bool DWILoader::LoadFromDWITokens(
 
 	NoteData* pNoteData = new NoteData;
 	ASSERT( pNoteData );
-	pNoteData->SetNumTracks( mapDanceNoteToNoteDataColumn.size() );
+	pNoteData->SetNumTracks( g_mapDanceNoteToNoteDataColumn.size() );
 
 	for( int pad=0; pad<2; pad++ )		// foreach pad
 	{
@@ -153,6 +188,7 @@ bool DWILoader::LoadFromDWITokens(
 		}
 
 		sStepData.Replace("\t", "");
+		sStepData.Replace(" ", "");
 
 		double fCurrentBeat = 0;
 		double fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
@@ -160,7 +196,6 @@ bool DWILoader::LoadFromDWITokens(
 		for( int i=0; i<sStepData.GetLength(); )
 		{
 			char c = sStepData[i++];
-
 			switch( c )
 			{
 			// begins a series
@@ -173,7 +208,7 @@ bool DWILoader::LoadFromDWITokens(
 			case '{':
 				fCurrentIncrementer = 1.0/64 * BEATS_PER_MEASURE;
 				break;
-			case '<':
+			case '`':
 				fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
 				break;
 
@@ -181,58 +216,69 @@ bool DWILoader::LoadFromDWITokens(
 			case ')':
 			case ']':
 			case '}':
+			case '\'':
 			case '>':
 				fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
 				break;
 
-			case ' ':
-				break;	// do nothing!
-			
-			case '!':		// hold start
-				{
-					// rewind and get the last step we inserted
-					double fLastStepBeat = fCurrentBeat - fCurrentIncrementer;
-					int iIndex = BeatToNoteRow( (float)fLastStepBeat );
-
-					char holdChar = sStepData[i++];
-					
-					DanceNote note1, note2;
-					DWIcharToNote( holdChar, (GameController)pad, note1, note2 );
-
-					if( note1 != DANCE_NOTE_NONE )
-					{
-						int iCol1 = mapDanceNoteToNoteDataColumn[note1];
-						pNoteData->SetTapNote(iCol1, iIndex, TAP_HOLD_HEAD);
-					}
-					if( note2 != DANCE_NOTE_NONE )
-					{
-						int iCol2 = mapDanceNoteToNoteDataColumn[note2];
-						pNoteData->SetTapNote(iCol2, iIndex, TAP_HOLD_HEAD);
-					}
-				}
-				break;
 			default:	// this is a note character
+			{
+				if( c == '!' )
 				{
-					int iIndex = BeatToNoteRow( (float)fCurrentBeat );
-
-					DanceNote note1, note2;
-					DWIcharToNote( c, (GameController)pad, note1, note2 );
-
-					if( note1 != DANCE_NOTE_NONE )
-					{
-						int iCol1 = mapDanceNoteToNoteDataColumn[note1];
-						pNoteData->SetTapNote(iCol1, iIndex, TAP_TAP);
-					}
-					if( note2 != DANCE_NOTE_NONE )
-					{
-						int iCol2 = mapDanceNoteToNoteDataColumn[note2];
-						pNoteData->SetTapNote(iCol2, iIndex, TAP_TAP);
-					}
-
-					fCurrentBeat += fCurrentIncrementer;
+					LOG->Warn("Unexpected character in DWI: '!'");
+					continue;
 				}
-				break;
+
+				bool jump = false;
+				if( c == '<' )
+				{
+					/* Arr.  Is this a jump or a 1/192 marker? */
+					if( Is192( sStepData, i ) )
+					{
+						fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
+						break;
+					}
+					
+					/* It's a jump.  We need to keep reading notes until we hit a >. */
+					jump = true;
+					i++;
+				}
+				
+				const int iIndex = BeatToNoteRow( (float)fCurrentBeat );
+				i--;
+				do {
+					c = sStepData[i++];
+
+					if( jump && c == '>' )
+						break;
+
+					int iCol1, iCol2;
+					DWIcharToNoteCol( c, (GameController)pad, iCol1, iCol2 );
+
+					if( iCol1 != -1 )
+						pNoteData->SetTapNote(iCol1, iIndex, TAP_TAP);
+					if( iCol2 != -1 )
+						pNoteData->SetTapNote(iCol2, iIndex, TAP_TAP);
+
+					if( sStepData[i] == '!' )
+					{
+						i++;
+						const char holdChar = sStepData[i++];
+						
+						DWIcharToNoteCol( holdChar, (GameController)pad, iCol1, iCol2 );
+
+						if( iCol1 != -1 )
+							pNoteData->SetTapNote(iCol1, iIndex, TAP_HOLD_HEAD);
+						if( iCol2 != -1 )
+							pNoteData->SetTapNote(iCol2, iIndex, TAP_HOLD_HEAD);
+
+					}
+				}
+				while( jump );
+				fCurrentBeat += fCurrentIncrementer;
 			}
+			break;
+		}
 		}
 	}
 
