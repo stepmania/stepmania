@@ -1119,6 +1119,12 @@ void FileWrite(RageFile& f, float fWrite)
 
 bool FileCopy( CString sSrcFile, CString sDstFile )
 {
+	if( !sSrcFile.CompareNoCase(sDstFile) )
+	{
+		LOG->Warn( "Tried to copy \"%s\" over itself", sSrcFile.c_str() );
+		return false;
+	}
+
 	RageFile in;
 	if( !in.Open(sSrcFile, RageFile::READ) )
 		return false;
