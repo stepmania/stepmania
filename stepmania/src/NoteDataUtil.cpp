@@ -1008,6 +1008,7 @@ void NoteDataUtil::InsertIntelligentTaps(
 		int iTrackOfNoteEarlier = -1;
 		bool bEarlierHasNonEmptyTrack = inout.GetTapFirstNonEmptyTrack( iRowEarlier, iTrackOfNoteEarlier );
 		int iTrackOfNoteLater = -1;
+		inout.GetTapFirstNonEmptyTrack( iRowLater, iTrackOfNoteLater );
 		int iTrackOfNoteToAdd = 0;
 		if( bSkippy  &&
 			iTrackOfNoteEarlier != iTrackOfNoteLater )	// Don't make skips on the same note
