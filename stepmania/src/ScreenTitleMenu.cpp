@@ -53,7 +53,7 @@
 #define MENU_ITEM_CREATE			THEME->GetMetric("ScreenTitleMenu","MenuCommandOnCreate")
 #define MENU_ITEM_SELECT_DELAY		THEME->GetMetricF("ScreenTitleMenu","MenuCommandSelectDelay")
 
-#define NAME( choice )				THEME->GetMetric (m_sName,ssprintf("Name%d",choice+1))
+#define NAME( sChoiceName )			THEME->GetMetric (m_sName,ssprintf("Name%s",sChoiceName.c_str()))
 
 const ScreenMessage SM_PlayComment			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToAttractLoop		=	ScreenMessage(SM_User+13);
@@ -133,9 +133,11 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 		{
 			for( unsigned i=0; i<m_aModeChoices.size(); i++ )
 			{
+				ModeChoice &mc = m_aModeChoices[i];
+
 				m_textChoice[i].LoadFromFont( THEME->GetPathToF("ScreenTitleMenu choices") );
 				m_textChoice[i].SetHorizAlign( (enum Actor::HorizAlign)MENU_TEXT_ALIGN );
-				m_textChoice[i].SetText( NAME(i) );
+				m_textChoice[i].SetText( NAME(mc.m_sName) );
 				m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
 				m_textChoice[i].SetShadowLength( CHOICES_SHADOW_LENGTH );
 				m_textChoice[i].EnableShadow( true );
