@@ -710,7 +710,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			switch( GAMESTATE->m_PlayerController[m_PlayerNumber] )
 			{
 			case PC_CPU:
-				score = PlayerAI::GetTapNoteScore( GAMESTATE->m_iCpuSkill[m_PlayerNumber], GAMESTATE->GetSumOfActiveAttackLevels(m_PlayerNumber) );
+				score = PlayerAI::GetTapNoteScore( m_PlayerNumber );
 				break;
 			case PC_AUTOPLAY:
 				score = TNS_MARVELOUS;

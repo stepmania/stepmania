@@ -92,11 +92,15 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 		default:	ASSERT(0);
 		}
 		if( fUnscaledPercentChange > 0 )
-			fUnscaledPercentChange *= SCALE( fLifePercentage, 0.f, 1.f, 1.8f, 0.2f);
+			fUnscaledPercentChange *= SCALE( fLifePercentage, 0.f, 1.f, 1.7f, 0.3f);
 		else	// fUnscaledPercentChange <= 0
-			fUnscaledPercentChange *= SCALE( fLifePercentage, 0.f, 1.f, 1.8f, 0.2f);
+			fUnscaledPercentChange /= SCALE( fLifePercentage, 0.f, 1.f, 1.7f, 0.3f);
 	}
 
+
+	// mercy: drop super meter faster if at a higher level
+	if( fUnscaledPercentChange < 0 )
+		fUnscaledPercentChange *= SCALE( GAMESTATE->m_fSuperMeter[m_PlayerNumber], 0.f, 1.f, 0.01f, 1.f );
 
 	AttackLevel oldAL = (AttackLevel)(int)GAMESTATE->m_fSuperMeter[m_PlayerNumber];
 
@@ -113,7 +117,7 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 			GAMESTATE->m_fSuperMeter[m_PlayerNumber] -= 1.f;
 	}
 
-	// mercy
+	// mercy: remove attacks on life drain
 	if( fUnscaledPercentChange < 0 )
 		GAMESTATE->RemoveActiveAttacksForPlayer( m_PlayerNumber );
 }

@@ -420,6 +420,11 @@ void NoteDataUtil::RemoveHands( NoteData &in, float fStartBeat, float fEndBeat )
 	RemoveSimultaneousNotes(in,2);
 }
 
+void NoteDataUtil::RemoveQuads( NoteData &in, float fStartBeat, float fEndBeat )
+{
+	RemoveSimultaneousNotes(in,3);
+}
+
 void NoteDataUtil::RemoveMines(NoteData &in, float fStartBeat, float fEndBeat )
 {
 	int iRowStart = BeatToNoteRow(fStartBeat);
@@ -1353,6 +1358,7 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_TWISTER] )	NoteDataUtil::Twister(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOJUMPS] )	NoteDataUtil::RemoveJumps(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHANDS] )	NoteDataUtil::RemoveHands(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOQUADS] )	NoteDataUtil::RemoveQuads(nd, fStartBeat, fEndBeat);
 }
 
 void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )

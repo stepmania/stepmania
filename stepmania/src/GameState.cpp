@@ -259,7 +259,7 @@ void GameState::Update( float fDelta )
 
 		m_CurrentPlayerOptions[p].Approach( m_PlayerOptions[p], fDelta );
 
-		bool RebuildPlayerOptions = false;
+		bool bRebuildPlayerOptions = false;
 
 		/* See if any delayed attacks are starting. */
 		for( s=0; s<m_ActiveAttacks[p].size(); s++ )
@@ -271,7 +271,7 @@ void GameState::Update( float fDelta )
 
 			m_ActiveAttacks[p][s].fStartSecond = -1;
 
-			RebuildPlayerOptions = true;
+			bRebuildPlayerOptions = true;
 		}
 
 		/* See if any attacks are ending. */
@@ -293,11 +293,14 @@ void GameState::Update( float fDelta )
 			/* ending */
 			m_ActiveAttacks[p].erase( m_ActiveAttacks[p].begin()+s, m_ActiveAttacks[p].begin()+s+1 );
 			m_bAttackEndedThisUpdate[p] = true;
-			RebuildPlayerOptions = true;
+			bRebuildPlayerOptions = true;
 		}
 
-		if( RebuildPlayerOptions )
+		if( bRebuildPlayerOptions )
 			RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
+
+		if( m_fSecondsUntilAttacksPhasedOut[p] > 0 )
+			m_fSecondsUntilAttacksPhasedOut[p] = max( 0, m_fSecondsUntilAttacksPhasedOut[p] - fDelta );
 	}
 }
 
@@ -382,6 +385,9 @@ void GameState::ResetStageStatistics()
 	{
 		m_fSuperMeter[p] = 0;
 		m_HealthState[p] = ALIVE;
+
+		m_iLastPositiveSumOfAttackLevels[p] = 0;
+		m_fSecondsUntilAttacksPhasedOut[p] = 0;	// PlayerAI not affected
 	}
 }
 
@@ -862,6 +868,19 @@ void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
 		po.FromString( m_ActiveAttacks[pn][s].sModifier );
 	}
 	m_PlayerOptions[pn] = po;
+
+
+	int iSumOfAttackLevels = GetSumOfActiveAttackLevels( pn );
+	if( iSumOfAttackLevels > 0 )
+	{
+		m_iLastPositiveSumOfAttackLevels[pn] = iSumOfAttackLevels;
+		m_fSecondsUntilAttacksPhasedOut[pn] = 10000;	// any positive number that won't run out before the attacks
+	}
+	else
+	{
+		// don't change!  m_iLastPositiveSumOfAttackLevels[p] = iSumOfAttackLevels;
+		m_fSecondsUntilAttacksPhasedOut[pn] = 2;	// 2 seconds to phase out
+	}
 }
 
 int GameState::GetSumOfActiveAttackLevels( PlayerNumber pn )

@@ -13,14 +13,14 @@
 
 #include "GameConstantsAndTypes.h"
 
-const int NUM_SKILL_LEVELS = 11;	// 0-10
+const int NUM_SKILL_LEVELS = 6;	// 0-5
 
 class PlayerAI
 {
 public:
 
 	static void InitFromDisk();
-	static TapNoteScore GetTapNoteScore( int iCpuSkill, int iSumOfAttackLevels );
+	static TapNoteScore GetTapNoteScore( PlayerNumber pn );
 
 };
 

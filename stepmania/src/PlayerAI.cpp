@@ -74,12 +74,19 @@ void PlayerAI::InitFromDisk()
 }
 
 
-TapNoteScore PlayerAI::GetTapNoteScore( int iCpuSkill, int iSumOfAttackLevels )
+TapNoteScore PlayerAI::GetTapNoteScore( PlayerNumber pn )
 {
-	// shouldn't call this unless we're CPU controlled
-	ASSERT( iCpuSkill>=0 && iCpuSkill<NUM_SKILL_LEVELS );
 
-	iCpuSkill -= iSumOfAttackLevels;
+	int iCpuSkill = GAMESTATE->m_iCpuSkill[pn];
+	int iSumOfAttackLevels = 
+		GAMESTATE->m_fSecondsUntilAttacksPhasedOut[pn] > 0 ? 
+		GAMESTATE->m_iLastPositiveSumOfAttackLevels[pn] : 
+		0;
+
+	ASSERT( iCpuSkill>=0 && iCpuSkill<NUM_SKILL_LEVELS );
+	ASSERT( GAMESTATE->m_PlayerController[pn] == PC_CPU );
+
+	iCpuSkill -= iSumOfAttackLevels*3;
 	CLAMP( iCpuSkill, 0, NUM_SKILL_LEVELS-1 );
 
 	TapScoreDistribution& distribution = g_Distributions[iCpuSkill];

@@ -158,6 +158,7 @@ CString PlayerOptions::GetString() const
 	if( m_bTransforms[TRANSFORM_TWISTER] )	sReturn += "Twister, ";
 	if( m_bTransforms[TRANSFORM_NOJUMPS] )	sReturn += "NoJumps, ";
 	if( m_bTransforms[TRANSFORM_NOHANDS] )	sReturn += "NoHands, ";
+	if( m_bTransforms[TRANSFORM_NOQUADS] )	sReturn += "NoQuads, ";
 
 	if( m_bTimingAssist )	sReturn += "TimingAssist, ";
 	if( m_bProTiming )		sReturn += "ProTiming, ";
@@ -285,6 +286,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "twister" )	m_bTransforms[TRANSFORM_TWISTER] = on;
 		else if( sBit == "nojumps" )	m_bTransforms[TRANSFORM_NOJUMPS] = on;
 		else if( sBit == "nohands" )	m_bTransforms[TRANSFORM_NOHANDS] = on;
+		else if( sBit == "noquads" )	m_bTransforms[TRANSFORM_NOQUADS] = on;
 		else if( sBit == "reverse" )	SET_FLOAT( fScrolls[SCROLL_REVERSE] )
 		else if( sBit == "split" )		SET_FLOAT( fScrolls[SCROLL_SPLIT] )
 		else if( sBit == "alternate" )	SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )

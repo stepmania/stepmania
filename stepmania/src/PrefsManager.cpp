@@ -121,14 +121,14 @@ PrefsManager::PrefsManager()
 	m_fGradePercentC = 0.45f;
 	m_fGradePercentD = 0;
 	
-	m_fSuperMeterMarvelousPercentChange =	+0.10f;
-	m_fSuperMeterPerfectPercentChange =		+0.08f;
-	m_fSuperMeterGreatPercentChange =		+0.04f;
+	m_fSuperMeterMarvelousPercentChange =	+0.05f;
+	m_fSuperMeterPerfectPercentChange =		+0.04f;
+	m_fSuperMeterGreatPercentChange =		+0.02f;
 	m_fSuperMeterGoodPercentChange =		+0.00f;
 	m_fSuperMeterBooPercentChange =			-0.00f;
 	m_fSuperMeterMissPercentChange =		-0.20f;
 	m_fSuperMeterHitMinePercentChange =		-0.40f;
-	m_fSuperMeterOKPercentChange =			+0.08f;
+	m_fSuperMeterOKPercentChange =			+0.04f;
 	m_fSuperMeterNGPercentChange =			-0.20f;
 	m_bMercifulSuperMeter = true;
 

@@ -169,6 +169,11 @@ public:
 
 	// used in PLAY_MODE_BATTLE and PLAY_MODE_RAVE
 	AttackArray	m_ActiveAttacks[NUM_PLAYERS];
+	
+	// Attacks take a while to transition out of use.  Account for this in PlayerAI
+	// by still penalizing it for 1 second after the player options are rebuilt.
+	int		m_iLastPositiveSumOfAttackLevels[NUM_PLAYERS];
+	float	m_fSecondsUntilAttacksPhasedOut[NUM_PLAYERS];	// positive means PlayerAI is still affected
 
 	vector<Attack>	m_ModsToApply[NUM_PLAYERS];
 

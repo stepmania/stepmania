@@ -43,6 +43,7 @@ namespace NoteDataUtil
 	void RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, float fStartBeat = 0, float fEndBeat = 99999 );
 	void RemoveJumps( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void RemoveHands( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void RemoveQuads( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void RemoveMines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	enum TrackMapping { left, right, mirror, shuffle, super_shuffle, stomp, NUM_TRACK_MAPPINGS };
 	void Turn( NoteData &in, StepsType st, TrackMapping tt, float fStartBeat = 0, float fEndBeat = -1 );
