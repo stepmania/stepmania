@@ -49,16 +49,44 @@
 		18/19 marks bm-single7, 28/29 marks bm-double7
 		bm-double uses 21-26. */
 
-int iTracks[MAX_NOTE_TRACKS];
+static int iTracks[MAX_NOTE_TRACKS];
 
-void BMSLoader::ResetTracksMagic( void ) {
-	for (int ix = 0; ix<MAX_NOTE_TRACKS; ix++) iTracks[ix] = 0;
+enum
+{
+	BMS_NULL_COLUMN = 0,
+	BMS_P1_KEY1,
+	BMS_P1_KEY2,
+	BMS_P1_KEY3,
+	BMS_P1_KEY4,
+	BMS_P1_KEY5,
+	BMS_P1_TURN,
+	BMS_P1_KEY6,
+	BMS_P1_KEY7,
+	BMS_P2_KEY1,
+	BMS_P2_KEY2,
+	BMS_P2_KEY3,
+	BMS_P2_KEY4,
+	BMS_P2_KEY5,
+	BMS_P2_TURN,
+	BMS_P2_KEY6,
+	BMS_P2_KEY7,
+};
+
+
+void BMSLoader::ResetTracksMagic()
+{
+	for( int i = 0; i<MAX_NOTE_TRACKS; i++ )
+		iTracks[i] = 0;
 }
-void BMSLoader::PushTrackNumForMagic( int iTrackNum ) {
+
+void BMSLoader::PushTrackNumForMagic( int iTrackNum )
+{
 	int ix = (iTrackNum < 20) ? (iTrackNum - 11) : (iTrackNum - 12);
 	iTracks[ix]++;
 }
-StepsType BMSLoader::CheckTracksMagic( void ) {
+
+StepsType BMSLoader::CheckTracksMagic()
+{
 	int iTrackCount = 0;
 	for (int ix = 0; ix<MAX_NOTE_TRACKS; ix++) {
 		if(iTracks[ix] != 0) iTrackCount++;
@@ -100,8 +128,7 @@ StepsType BMSLoader::CheckTracksMagic( void ) {
 	}
 }
 
-void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, 
-char &cNoteCharOut )
+void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &cNoteCharOut )
 {
 	if( iBMSTrack > 40 )
 	{

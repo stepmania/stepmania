@@ -11,7 +11,7 @@ class Steps;
 
 class DWILoader: public NotesLoader
 {
-	void DWIcharToNote( char c, GameController i, DanceNote &note1Out, DanceNote &note2Out );
+	void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Out );
 	void DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2Out );
 
 	bool LoadFromDWITokens( 

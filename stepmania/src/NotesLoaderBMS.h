@@ -2,6 +2,7 @@
 #define NOTES_LOADER_BMS_H
 
 #include "NotesLoader.h"
+#include "GameConstantsAndTypes.h"
 
 class Song;
 class Steps;
@@ -11,8 +12,8 @@ class BMSLoader: public NotesLoader
 	bool LoadFromBMSFile( const CString &sPath, Steps &out1 );
 	void mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &cNoteCharOut );
 	void PushTrackNumForMagic( int iTrackNum );
-	StepsType CheckTracksMagic( void );
-	void ResetTracksMagic( void );
+	StepsType CheckTracksMagic();
+	void ResetTracksMagic();
 
 	void SlideDuplicateDifficulties( Song &p );
 

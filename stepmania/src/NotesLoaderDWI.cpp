@@ -15,7 +15,24 @@ using namespace std;
 
 static std::map<int,int> g_mapDanceNoteToNoteDataColumn;
 
-void DWILoader::DWIcharToNote( char c, GameController i, DanceNote &note1Out, DanceNote &note2Out )
+enum
+{
+	DANCE_NOTE_NONE = 0,
+	DANCE_NOTE_PAD1_LEFT,
+	DANCE_NOTE_PAD1_UPLEFT,
+	DANCE_NOTE_PAD1_DOWN,
+	DANCE_NOTE_PAD1_UP,
+	DANCE_NOTE_PAD1_UPRIGHT,
+	DANCE_NOTE_PAD1_RIGHT,
+	DANCE_NOTE_PAD2_LEFT,
+	DANCE_NOTE_PAD2_UPLEFT,
+	DANCE_NOTE_PAD2_DOWN,
+	DANCE_NOTE_PAD2_UP,
+	DANCE_NOTE_PAD2_UPRIGHT,
+	DANCE_NOTE_PAD2_RIGHT
+};
+
+void DWILoader::DWIcharToNote( char c, GameController i, int &note1Out, int &note2Out )
 {
 	switch( c )
 		{
@@ -64,7 +81,7 @@ void DWILoader::DWIcharToNote( char c, GameController i, DanceNote &note1Out, Da
 
 void DWILoader::DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2Out )
 {
-	DanceNote note1, note2;
+	int note1, note2;
 	DWIcharToNote( c, i, note1, note2 );
 
 	if( note1 != DANCE_NOTE_NONE )
