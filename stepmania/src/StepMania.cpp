@@ -517,10 +517,10 @@ static void HandleInputEvents(float fDeltaTime)
 void GameLoop()
 {
 	bool do_exit = false;
-	SDL_Event	event;
 	while(!do_exit)
 	{
 		// process all queued events
+		SDL_Event event;
 		while(SDL_PollEvent(&event))
 		{
 			switch(event.type)
