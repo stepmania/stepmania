@@ -2335,6 +2335,8 @@
 				AA35CBC8067C5BFE00BEBC56,
 				AA91587E067D2C2C00078E36,
 				AA915880067D2C2C00078E36,
+				AA9091A2067ED43000C1FCFF,
+				AA9091A6067ED46400C1FCFF,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4273,6 +4275,8 @@
 				AA35CBC7067C5BFE00BEBC56,
 				AA91587D067D2C2C00078E36,
 				AA91587F067D2C2C00078E36,
+				AA9091A1067ED43000C1FCFF,
+				AA9091A5067ED46400C1FCFF,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9882,6 +9886,10 @@
 		};
 		AA6EFDBB04770A83005F316C = {
 			children = (
+				AA9091A3067ED46400C1FCFF,
+				AA9091A4067ED46400C1FCFF,
+				AA90919F067ED43000C1FCFF,
+				AA9091A0067ED43000C1FCFF,
 				AA915879067D2C2C00078E36,
 				AA91587A067D2C2C00078E36,
 				AA91587B067D2C2C00078E36,
@@ -13246,6 +13254,66 @@
 		};
 		AA8F13710624BAB200C6A467 = {
 			fileRef = AA8F136F0624BAB200C6A467;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90919F067ED43000C1FCFF = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = RageSurface_Load_BMP.cpp;
+			path = ../src/RageSurface_Load_BMP.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA9091A0067ED43000C1FCFF = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = RageSurface_Load_BMP.h;
+			path = ../src/RageSurface_Load_BMP.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA9091A1067ED43000C1FCFF = {
+			fileRef = AA90919F067ED43000C1FCFF;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA9091A2067ED43000C1FCFF = {
+			fileRef = AA9091A0067ED43000C1FCFF;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA9091A3067ED46400C1FCFF = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = RageSurface_Save_BMP.cpp;
+			path = ../src/RageSurface_Save_BMP.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA9091A4067ED46400C1FCFF = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = RageSurface_Save_BMP.h;
+			path = ../src/RageSurface_Save_BMP.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA9091A5067ED46400C1FCFF = {
+			fileRef = AA9091A3067ED46400C1FCFF;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA9091A6067ED46400C1FCFF = {
+			fileRef = AA9091A4067ED46400C1FCFF;
 			isa = PBXBuildFile;
 			settings = {
 			};
