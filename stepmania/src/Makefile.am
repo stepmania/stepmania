@@ -128,7 +128,7 @@ ArchUtils += archutils/Unix/CrashHandler.cpp archutils/Unix/CrashHandler.h \
 	     archutils/Unix/CrashHandlerChild.cpp archutils/Unix/CrashHandlerInternal.h
 endif
 
-Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) $(Lights) $(LowLevelWindow) $(ArchUtils) \
+Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) $(Lights) $(MemoryCard) $(LowLevelWindow) $(ArchUtils) \
        arch/arch.cpp arch/arch.h arch/arch_default.h arch/arch_linux.h
 
 RageSoundFileReaders = \
