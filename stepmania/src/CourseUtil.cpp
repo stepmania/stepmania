@@ -150,6 +150,7 @@ void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCours
 	for(unsigned i = 0; i < apCourses.size(); ++i)
 	{
 		Trail* pTrail = apCourses[i]->GetTrail( GAMESTATE->GetCurrentStyleDef()->m_StepsType, COURSE_DIFFICULTY_REGULAR );
+		ASSERT( pTrail ); /* don't give unplayable courses! */
 		course_sort_val[apCourses[i]] = (float) pTrail->GetMeter();
 	}
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTitle );
