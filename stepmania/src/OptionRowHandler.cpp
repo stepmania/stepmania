@@ -291,6 +291,7 @@ public:
 				Trail* pTrail = vTrails[i];
 
 				CString s = CourseDifficultyToThemedString( pTrail->m_CourseDifficulty );
+				s += ssprintf( " %d", pTrail->GetMeter() );
 				defOut.choices.push_back( s );
 				GameCommand mc;
 				mc.m_pTrail = pTrail;
@@ -311,6 +312,7 @@ public:
 					s = pSteps->GetDescription();
 				else
 					s = DifficultyToThemedString( pSteps->GetDifficulty() );
+				s += ssprintf( " %d", pSteps->GetMeter() );
 				defOut.choices.push_back( s );
 				GameCommand mc;
 				mc.m_pSteps = pSteps;
