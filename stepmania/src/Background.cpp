@@ -94,11 +94,15 @@ void Background::Unload()
 {
     for( int i=0; i<m_BackgroundAnimations.GetSize(); i++ )
 		delete m_BackgroundAnimations[i];
+	m_BackgroundAnimations.RemoveAll();
 }
 
 void Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 {
-	ASSERT( m_BackgroundAnimations.GetSize() == 0 );	// forgot to call Unload() after song end
+	/* Endless was crashing due to this; is there any reason not to
+	 * fix it this way? -glenn */
+	Unload();
+//	ASSERT( m_BackgroundAnimations.GetSize() == 0 );	// forgot to call Unload() after song end
 
 	//
 	// figure out what BackgroundMode to use
