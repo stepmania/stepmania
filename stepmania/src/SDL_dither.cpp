@@ -1,5 +1,6 @@
 #include "global.h"
 
+#include "RageUtil.h"
 #include "SDL.h"
 #include "SDL_dither.h"
 #include "SDL_utils.h"
@@ -139,6 +140,26 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 
 #define CLAMP(x, l, h)	{if (x > h) x = h; else if (x < l) x = l;}
 
+/* Return "random" numbers in [0,2]; this is for SM_SDL_ErrorDiffusionDither (rand() is too slow). */
+static inline int GetFastRand()
+{
+	static int RandomNumbers[] =
+	{
+		2, 1, 0, 2, 0, 2, 2, 1, 0, 1, 1, 2, 2, 0, 1, 1, 2, 2, 1, 0, 1, 0, 1, 2, 1, 0, 2, 1, 0, 1, 1, 0,
+		2, 1, 1, 2, 1, 0, 0, 1, 1, 2, 0, 2, 0, 1, 0, 1, 2, 0, 0, 1, 1, 2, 0, 2, 1, 2, 2, 2, 2, 1, 1, 1,
+		1, 0, 2, 1, 2, 1, 1, 1, 2, 1, 0, 0, 1, 0, 0, 2, 0, 1, 0, 1, 2, 2, 0, 0, 0, 2, 2, 1, 2, 2, 2, 2,
+		1, 2, 1, 0, 2, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 1, 2, 0, 0, 2, 2, 2, 1, 0, 0, 1, 2, 1, 2, 0, 0, 2,
+		2, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 2, 2, 2, 0, 0, 0, 1, 2, 0, 1, 1, 0, 0, 0, 2, 1, 2, 0, 0, 1,
+		1, 2, 0, 1, 1, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1, 2, 0, 0, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 2,
+		0, 1, 2, 0, 2, 2, 0, 2, 1, 0, 0, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 0, 1, 0, 1, 2, 1, 2, 1, 0, 0,
+		1, 0, 0, 0, 2, 2, 2, 2, 1, 2, 1, 0, 0, 2, 1, 0, 1, 2, 0, 2, 2, 0, 0, 0, 2, 2, 0, 0, 2, 0, 1, 1
+	};
+	static int iNextNumber = 0;
+	if( iNextNumber == ARRAYSIZE(RandomNumbers) )
+		iNextNumber = 0;
+	return RandomNumbers[ iNextNumber++ ];
+}
+
 void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 {
 	/* We can't dither to paletted surfaces. */
@@ -194,7 +215,9 @@ void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 				CLAMP( accumError[c], -128, +128 );
 
 				// Keep only a fraction of the error to make the effect more subtle.
-				accumError[c] /= (rand()%4)+1;
+				// This used to divide by [1,4]; shift right by [0,2] to get a similar
+				// (but much faster) effect.
+				accumError[c] >>= (GetFastRand())+1;
 			}
 
 			srcp += src->format->BytesPerPixel;
