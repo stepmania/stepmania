@@ -72,6 +72,7 @@ private:
 	Screen* MakeNewScreen( CString sClassName );
 	void SetFromNewScreen( Screen *pNewScreen, bool Stack );
 	CString m_DelayedScreen;
+	void ClearScreenStack();
 
 	// Keep these sounds always loaded, because they could be 
 	// played at any time.  We want to eliminate SOUND->PlayOnce

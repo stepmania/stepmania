@@ -11,6 +11,25 @@
 -----------------------------------------------------------------------------
 */
 
+/*
+ * SM_GainFocus/SM_LoseFocus: These are sent to screens when they become the
+ * topmost screen, or stop being the topmost screen.
+ *
+ * A few subtleties:
+ *
+ * With delayed screens (eg. ScreenGameplay being pre-loaded by ScreenStage), SM_GainFocus
+ * isn't sent until the loaded screen actually is activated (put on the stack).
+ *
+ * With normal screen loads, the new screen is loaded before the old screen is destroyed.
+ * This means that the old dtor is called *after* the new ctor.  If some global properties
+ * (eg. GAMESTATE) are being unset by the old screen's destructor, and set by the new
+ * screen's constructor, they'll happen in the wrong order.  Use SM_GainFocus and
+ * SM_LoseFocus, instead.
+ *
+ * SM_LoseFocus is always sent after SM_GainFocus, and vice-versa: you can't gain focus
+ * if you already have it, and you can't lose focus if you don't have it.
+ */
+
 #include "ScreenManager.h"
 #include "IniFile.h"
 #include "GameConstantsAndTypes.h"
@@ -423,8 +442,7 @@ void ScreenManager::Update( float fDeltaTime )
 	if(m_DelayedScreen.size() != 0)
 	{
 		/* We have a screen to display.  Delete the current screens and load it. */
-		m_ScreensToDelete.insert(m_ScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());
-		m_ScreenStack.clear();
+		ClearScreenStack();
 		EmptyDeleteQueue();
 
 		/* This is the purpose of delayed screen loads: clear out the texture cache
@@ -511,6 +529,19 @@ void ScreenManager::DeletePreppedScreen()
 	TEXTUREMAN->DeleteCachedTextures();
 }
 
+/* Remove all screens from the stack, sending a SM_LoseFocus message to the top. 
+ * (There's no need to send them to any lower screens; they don't have focus anyway,
+ * and received the message when they actually lost it. */
+void ScreenManager::ClearScreenStack()
+{
+	if( m_ScreenStack.size() )
+		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
+
+	// move current screen(s) to ScreenToDelete
+	m_ScreensToDelete.insert(m_ScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());
+	m_ScreenStack.clear();
+}
+
 /* Add a screen to m_ScreenStack.  If Stack is true, it's added to the stack; otherwise any
  * current screens are removed.  This is the only function that adds to m_ScreenStack. */
 void ScreenManager::SetFromNewScreen( Screen *pNewScreen, bool Stack )
@@ -519,11 +550,7 @@ void ScreenManager::SetFromNewScreen( Screen *pNewScreen, bool Stack )
 	THEME->ReloadMetricsIfNecessary();
 
 	if( !Stack )
-	{
-		// move current screen(s) to ScreenToDelete
-		m_ScreensToDelete.insert(m_ScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());
-		m_ScreenStack.clear();
-	}
+		ClearScreenStack();
 
 	m_ScreenStack.push_back( pNewScreen );
 	
