@@ -57,7 +57,7 @@ public:
 	// Only one will true at a time if m_RowDef.bMultiSelect
 	vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size()
 
-	int GetOneSelection( PlayerNumber pn ) const;
+	int GetOneSelection( PlayerNumber pn, bool bAllowFail=false ) const;
 	int GetOneSharedSelection() const;
 	void SetOneSelection( PlayerNumber pn, int iChoice );
 	void SetOneSharedSelection( int iChoice );

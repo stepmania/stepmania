@@ -32,12 +32,13 @@ OptionRow::~OptionRow()
 }
 
 
-int OptionRow::GetOneSelection( PlayerNumber pn ) const
+int OptionRow::GetOneSelection( PlayerNumber pn, bool bAllowFail ) const
 {
 	for( unsigned i=0; i<(unsigned)m_vbSelected[pn].size(); i++ )
 		if( m_vbSelected[pn][i] )
 			return i;
-	ASSERT(0);	// shouldn't call this if not expecting one to be selected
+
+	ASSERT( bAllowFail );	// shouldn't call this if not expecting one to be selected
 	return -1;
 }
 
