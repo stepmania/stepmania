@@ -61,8 +61,64 @@ static MusicToPlay g_MusicToPlay;
 static MusicPlaying *g_Playing;
 static RageThread MusicThread;
 
+static vector<CString> g_SoundsToPlayOnce, g_SoundsToPlayOnceFromDir;
+void StartQueuedSounds()
+{
+	/* Don't hold the mutex if we don't have to. */
+	while( 1 )
+	{
+		CString sPath;
 
-void StartPlayingQueuedMusic( const RageTimer &when, const MusicToPlay &ToPlay, MusicPlaying &Playing )
+		g_Mutex->Lock();
+		if( g_SoundsToPlayOnce.size() )
+		{
+			sPath = g_SoundsToPlayOnce.back();
+			g_SoundsToPlayOnce.erase( g_SoundsToPlayOnce.begin()+g_SoundsToPlayOnce.size()-1, g_SoundsToPlayOnce.end() );
+		}
+		g_Mutex->Unlock();
+
+		if( sPath != "" )
+			SOUNDMAN->PlayOnce( sPath );
+		else
+			break;
+	}
+
+	while( 1 )
+	{
+		CString sPath;
+
+		g_Mutex->Lock();
+		if( g_SoundsToPlayOnceFromDir.size() )
+		{
+			sPath = g_SoundsToPlayOnceFromDir.back();
+			g_SoundsToPlayOnceFromDir.erase( g_SoundsToPlayOnceFromDir.begin()+g_SoundsToPlayOnceFromDir.size()-1, g_SoundsToPlayOnceFromDir.end() );
+		}
+		g_Mutex->Unlock();
+
+		if( sPath != "" )
+		{
+			// make sure there's a slash at the end of this path
+			if( sPath.Right(1) != "/" )
+				sPath += "/";
+
+			CStringArray arraySoundFiles;
+			GetDirListing( sPath + "*.mp3", arraySoundFiles );
+			GetDirListing( sPath + "*.wav", arraySoundFiles );
+			GetDirListing( sPath + "*.ogg", arraySoundFiles );
+
+			if( arraySoundFiles.empty() )
+				return;
+
+			int index = rand() % arraySoundFiles.size();
+			SOUNDMAN->PlayOnce( sPath + arraySoundFiles[index] );
+		}
+		else
+			break;
+	}
+
+}
+
+void StartPlayingMusic( const RageTimer &when, const MusicToPlay &ToPlay, MusicPlaying &Playing )
 {
 	Playing.m_HasTiming = ToPlay.HasTiming;
 	Playing.m_TimingDelayed = true;
@@ -85,7 +141,7 @@ void StartPlayingQueuedMusic( const RageTimer &when, const MusicToPlay &ToPlay, 
 	Playing.m_Music.StartPlaying();
 }
 
-void StartQueuedMusic( MusicToPlay &ToPlay )
+void StartMusic( MusicToPlay &ToPlay )
 {
 	if( ToPlay.file.empty() )
 		return;
@@ -175,7 +231,7 @@ void StartQueuedMusic( MusicToPlay &ToPlay )
 	/* Important: don't hold the mutex while we load the actual sound. */
 	L.Unlock();
 
-	StartPlayingQueuedMusic( when, ToPlay, *NewMusic );
+	StartPlayingMusic( when, ToPlay, *NewMusic );
 
 	LockMut( *g_Mutex );
 	delete g_Playing;
@@ -188,6 +244,8 @@ int MusicThread_start( void *p )
 	{
 		SDL_Delay( 10 );
 
+		StartQueuedSounds();
+
 		LockMutex L( *g_Mutex );
 		if( !g_MusicToPlay.file.size() )
 			continue;
@@ -198,7 +256,8 @@ int MusicThread_start( void *p )
 		g_MusicToPlay.file = "";
 
 		L.Unlock();
-		StartQueuedMusic( ToPlay );
+
+		StartMusic( ToPlay );
 	}
 
 	return 0;
@@ -319,7 +378,7 @@ void RageSounds::PlayMusic( const CString &file, const CString &timing_file, boo
 		/* XXX: kick the music start thread */
 	}
 	else
-		StartQueuedMusic( ToPlay );
+		StartMusic( ToPlay );
 }
 
 void RageSounds::HandleSongTimer( bool on )
@@ -330,12 +389,22 @@ void RageSounds::HandleSongTimer( bool on )
 
 void RageSounds::PlayOnce( CString sPath )
 {
-	SOUNDMAN->PlayOnce( sPath );
+	g_Mutex->Lock();
+	g_SoundsToPlayOnce.push_back( sPath );
+	g_Mutex->Unlock();
+
+	if( !g_ThreadedMusicStart )
+		StartQueuedSounds();
 }
 
 void RageSounds::PlayOnceFromDir( CString PlayOnceFromDir )
 {
-	SOUNDMAN->PlayOnceFromDir( PlayOnceFromDir );
+	g_Mutex->Lock();
+	g_SoundsToPlayOnceFromDir.push_back( PlayOnceFromDir );
+	g_Mutex->Unlock();
+
+	if( !g_ThreadedMusicStart )
+		StartQueuedSounds();
 }
 
 float RageSounds::GetPlayLatency() const
