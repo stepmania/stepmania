@@ -23,11 +23,6 @@ CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature,
 void InsertCoin( int iNum = 1 );
 void InsertCredit();
 
-#if defined(_WINDOWS)
-#include "windows.h"
-extern HWND g_hWndMain;
-#endif
-
 extern int g_argc;
 extern char **g_argv;
 bool GetCommandlineArgument( const CString &option, CString *argument=NULL, int iIndex=0 );

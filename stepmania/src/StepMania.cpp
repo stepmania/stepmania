@@ -69,11 +69,6 @@
 
 #define ZIPS_DIR "Packages/"
 
-#ifdef _WINDOWS
-/* The renderer is responsible for setting this, and updating it when it changes. */
-HWND g_hWndMain = NULL;
-#endif
-
 int g_argc = 0;
 char **g_argv = NULL;
 
