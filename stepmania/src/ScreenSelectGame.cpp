@@ -28,7 +28,7 @@ enum {
 
 OptionRowData g_SelectGameLines[NUM_SELECT_GAME_LINES] = 
 {
-	"Game",	0, { "" }
+	{	"Game",	0, { "" } }
 };
 
 
@@ -44,7 +44,8 @@ ScreenSelectGame::ScreenSelectGame() :
 	/* populate g_SelectGameLines */
 	CArray<Game,Game> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
-	for( unsigned i=0; i<aGames.size(); i++ )
+	unsigned i;
+	for( i=0; i<aGames.size(); i++ )
 	{
 		Game game = aGames[i];
 		CString sGameName = GAMEMAN->GetGameDefForGame(game)->m_szName;

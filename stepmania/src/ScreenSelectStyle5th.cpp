@@ -120,8 +120,8 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 
 	m_iSelection = 0;	// single
 
-
-	for( int i=0; i<NUM_STYLE_PADS; i++ )
+	int i;
+	for( i=0; i<NUM_STYLE_PADS; i++ )
 	{
 		m_sprPad[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style pad game %d style %d",GAMESTATE->m_CurGame,i)) );
 //		m_sprPad[i].SetXY( PAD_X[i], PAD_Y[i] );
@@ -398,7 +398,8 @@ void ScreenSelectStyle5th::AfterChange()
 
 void ScreenSelectStyle5th::TweenOffScreen()
 {
-	for( int i=0; i<NUM_STYLE_DANCERS; i++ )
+	int i;
+	for( i=0; i<NUM_STYLE_DANCERS; i++ )
 	{
 		m_sprDancer[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 		m_sprDancer[i].SetTweenZoomY( 0 );
@@ -423,7 +424,8 @@ void ScreenSelectStyle5th::TweenOffScreen()
 
 void ScreenSelectStyle5th::TweenOnScreen() 
 {
-	for(int i=0; i<NUM_STYLE_DANCERS; i++ )
+	int i;
+	for(i=0; i<NUM_STYLE_DANCERS; i++ )
 	{
 		float fOrigDancerZoomY = m_sprDancer[i].GetZoomY();
 		m_sprDancer[i].SetZoomY( 0 );

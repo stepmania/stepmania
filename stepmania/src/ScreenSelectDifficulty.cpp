@@ -86,7 +86,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 	GAMESTATE->m_PlayMode = PLAY_MODE_INVALID;
 
 
-	int p;
+	unsigned p;
 	
 	m_Menu.Load(
 		THEME->GetPathTo("BGAnimations","select difficulty"), 
@@ -96,7 +96,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 	this->AddChild( &m_Menu );
 
 
-	for( int d=0; d<NUM_DIFFICULTY_ITEMS; d++ )
+	for( unsigned d=0; d<NUM_DIFFICULTY_ITEMS; d++ )
 	{
 		CString sHeaderFile;
 		CString sPictureFile;
@@ -303,9 +303,9 @@ void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 
 bool ScreenSelectDifficulty::IsItemOnPage2( int iItemIndex )
 {
-	ASSERT( iItemIndex >= 0  &&  iItemIndex < NUM_DIFFICULTY_ITEMS );
+	ASSERT( iItemIndex >= 0  &&  iItemIndex < unsigned(NUM_DIFFICULTY_ITEMS) );
 
-	return iItemIndex >= NUM_ITEMS_ON_PAGE_1;
+	return iItemIndex >= unsigned(NUM_ITEMS_ON_PAGE_1);
 }
 
 bool ScreenSelectDifficulty::SelectedSomethingOnPage2()
@@ -327,7 +327,8 @@ void ScreenSelectDifficulty::ChangeTo( PlayerNumber pn, int iSelectionWas, int i
 	bool bSelectedSomethingOnPage2 = iSelectionIs >= 3;
 
 	bool bSomeoneMadeAChoice = false;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(p) && m_bChosen[p] )
 			bSomeoneMadeAChoice = true;
 
@@ -392,7 +393,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 		return;
 	m_bChosen[pn] = true;
 
-	for( int page=0; page<NUM_PAGES; page++ )
+	for( unsigned page=0; page<NUM_PAGES; page++ )
 		m_sprMoreArrows[page].FadeOff( 0, "fade", 0.5f );
 
 
@@ -489,7 +490,7 @@ void ScreenSelectDifficulty::TweenOffScreen()
 		m_sprJoinMessagehadow[p].SetTweenDiffuse( RageColor(0,0,0,0) );
 	}
 
-	for( int d=0; d<NUM_DIFFICULTY_ITEMS; d++ )
+	for( unsigned d=0; d<NUM_DIFFICULTY_ITEMS; d++ )
 	{
 		if( SelectedSomethingOnPage2() != IsItemOnPage2(d) )	// item isn't on selected page
 			continue;	// don't tween
@@ -518,7 +519,7 @@ void ScreenSelectDifficulty::TweenOffScreen()
 
 void ScreenSelectDifficulty::TweenOnScreen() 
 {
-	int p;
+	unsigned p;
 
 	for( p=0; p<NUM_PAGES; p++ )
 	{
@@ -557,7 +558,7 @@ void ScreenSelectDifficulty::TweenOnScreen()
 		m_sprJoinMessagehadow[p].SetTweenDiffuse( colorOriginal );
 	}
 
-	for( int d=0; d<NUM_DIFFICULTY_ITEMS; d++ )
+	for( unsigned d=0; d<NUM_DIFFICULTY_ITEMS; d++ )
 	{
 		const float fPauseTime = d*0.2f;
 

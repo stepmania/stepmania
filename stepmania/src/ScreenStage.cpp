@@ -104,7 +104,8 @@ ScreenStage::ScreenStage()
 	this->AddChild( &m_sprSongBackground );	// add background first so it draws bottom-most
 	//this->AddChild( &m_quadMask );	// add quad mask before stage so that it will block out the stage sprites
 	
-	for( int i=0; i<4; i++ )
+	int i;
+	for( i=0; i<4; i++ )
 	{
 		m_sprNumbers[i].Load( THEME->GetPathTo("Graphics","stage parts 5x3") );
 

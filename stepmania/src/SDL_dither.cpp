@@ -9,10 +9,10 @@
 /* Fractions, 0/16 to 15/16:  */
 static const int DitherMat[DitherMatDim][DitherMatDim] =
 {
-     0,  8,  2, 10,
-    12,  4, 14,  6,
-     3, 11,  1,  9,
-    15,  7, 13,  5
+	{  0,  8,  2, 10 },
+	{ 12,  4, 14,  6 },
+	{  3, 11,  1,  9 },
+	{ 15,  7, 13,  5 }
 };
 
 static int DitherMatCalc[DitherMatDim][DitherMatDim];

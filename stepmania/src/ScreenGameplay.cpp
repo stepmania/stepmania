@@ -101,7 +101,8 @@ ScreenGameplay::ScreenGameplay()
 {
 	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_pLifeMeter[p] = NULL;
 		m_pScoreDisplay[p] = NULL;
@@ -527,7 +528,8 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			int p;
+			for( p=0; p<NUM_PLAYERS; p++ )
 			{
 				m_textCourseSongNumber[p].SetText( ssprintf("%d", GAMESTATE->m_iSongsBeforeFail[p]+1) );
 				// If it's the first song, record the options the player selected for later.
@@ -1143,7 +1145,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			}
 			
 			// save any statistics
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			int p;
+			for( p=0; p<NUM_PLAYERS; p++ )
 			{
 				if( GAMESTATE->IsPlayerEnabled(p) )
 				{

@@ -74,7 +74,7 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sPagePath, CStrin
 	{
 		m_iCurrentRow[p] = 0;
 
-		for( int l=0; l<MAX_OPTION_LINES; l++ )
+		for( unsigned l=0; l<MAX_OPTION_LINES; l++ )
 			m_iSelectedOption[p][l] = 0;
 	}
 
@@ -102,7 +102,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRowData[], int iNumO
 	this->ImportOptions();
 	if( m_InputMode == INPUTMODE_BOTH )
 	{
-		for( int l=0; l<MAX_OPTION_LINES; l++ )
+		for( unsigned l=0; l<MAX_OPTION_LINES; l++ )
 			m_iSelectedOption[PLAYER_2][l] = m_iSelectedOption[PLAYER_1][l];
 	}
 
@@ -127,6 +127,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRowData[], int iNumO
 	}
 
 	// init text
+	int i;
 	for( int i=0; i<m_iNumOptionRows; i++ )		// foreach line
 	{
 		m_framePage.AddChild( &m_sprLineArrows[i] );
@@ -178,7 +179,8 @@ void ScreenOptions::InitOptionsText()
 	const float fLineGap = ITEMS_SPACING_Y - max(0, (m_iNumOptionRows-10)*2);
 
 	// init m_textOptions from optionLines
-	for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
+	int i;
+	for( i=0; i<m_iNumOptionRows; i++ )	// foreach options line
 	{
 		OptionRowData &optline = m_OptionRowData[i];
 
@@ -358,7 +360,8 @@ void ScreenOptions::UpdateEnabledDisabled()
 	RageColor colorNotSelected = COLOR_NOT_SELECTED;
 
 	// init text
-	for( int i=0; i<m_iNumOptionRows; i++ )		// foreach line
+	int i;
+	for( i=0; i<m_iNumOptionRows; i++ )		// foreach line
 	{
 		bool bThisRowIsSelected = false;
 		for( int p=0; p<NUM_PLAYERS; p++ )
