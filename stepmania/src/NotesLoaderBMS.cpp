@@ -603,6 +603,28 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		else if( value_name.size() == 6 && value_name.Left(4) == "#wav" )	// this is keysound file name.  Looks like "#WAV1A"
 		{
 			CString sWavID = value_name.Right(2);
+
+			/* Due to bugs in some programs, many BMS files have a "WAV" extension
+			 * on files in the BMS for files that actually have some other extension.
+			 * Do a search.  Don't do a wildcard search; if value_data is "song.wav",
+			 * we might also have "song.png", which we shouldn't match. */
+			if( !IsAFile(out.GetSongDir()+value_data) )
+			{
+				const char *exts[] = { "ogg", "wav", "mp3", NULL }; // XXX: stop duplicating these everywhere
+				for( unsigned i = 0; exts[i] != NULL; ++i )
+				{
+					CString fn = SetExtension( value_data, exts[i] );
+					if( IsAFile(out.GetSongDir()+fn) )
+					{
+						value_data = fn;
+						break;
+					}
+				}
+			}
+			if( !IsAFile(out.GetSongDir()+value_data) )
+				LOG->Trace( "File \"%s\" references key \"%s\" that can't be found",
+					sPath.c_str(), value_data.c_str() );
+
 			sWavID.MakeUpper();		// HACK: undo the MakeLower()
 			out.m_vsKeysoundFile.push_back( value_data );
 			mapWavIdToKeysoundIndex[ sWavID ] = out.m_vsKeysoundFile.size()-1;
