@@ -1040,11 +1040,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		float fSecondsToStop = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat ) + 1;
 		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop  &&  !m_NextSongOut.IsTransitioning() )
-		{
-			/* XXX: Why is this here?  I think this is causing slight graphics glitches as the beat shifts. */
-			GAMESTATE->m_fSongBeat = 0;
 			this->PostScreenMessage( SM_NotesEnded, 0 );
-		}
 
 		//
 		// check for fail
