@@ -415,9 +415,8 @@ void ScreenEdit::PlayTicks()
 		float fSecondsUntil = fTickSecond - GAMESTATE->m_fMusicSeconds;
 		fSecondsUntil /= m_soundMusic.GetPlaybackRate(); /* 2x music rate means the time until the tick is halved */
 
-		RageTimer when = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)TICK_EARLY_SECONDS);
 		RageSoundParams p;
-		p.StartTime = when;
+		p.StartTime = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)TICK_EARLY_SECONDS);
 		m_soundAssistTick.Play( &p );
 	}
 }

@@ -1104,9 +1104,8 @@ void ScreenGameplay::PlayTicks()
 		float fSecondsUntil = fTickSecond - GAMESTATE->m_fMusicSeconds;
 		fSecondsUntil /= GAMESTATE->m_SongOptions.m_fMusicRate; /* 2x music rate means the time until the tick is halved */
 
-		RageTimer when = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)TICK_EARLY_SECONDS);
 		RageSoundParams p;
-		p.StartTime = when;
+		p.StartTime = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)TICK_EARLY_SECONDS);
 		m_soundAssistTick.Play( &p );
 	}
 }
