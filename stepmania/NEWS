@@ -26,6 +26,8 @@ BUG FIX:  Fixed song seeking in editor at non 1x music rates
 NEW FEATURE:  More complete controls for BackgroundChanges in editor
 NEW FEATURE:  Shift+P in editor for "play current beat until end"
 CHANGE:  Nonstop and Oni scoring and combo counter behave exactly like DDREX
+CHANGE:  HoldNote life snaps to full when button is pressed (instead of 
+	refilling slowly) ala DDR
 
 ----------------------- Version 3.01 ---------------------------
 CHANGE:  Simplified NoteSkin tap graphic format.  Old NoteSkins will need to 

@@ -216,8 +216,9 @@ void Player::Update( float fDeltaTime )
 			if( bSteppedOnTapNote && bIsHoldingButton )
 			{
 				// Increase life
-				fLife += fDeltaTime/PREFSMAN->m_fJudgeWindowOKSeconds;
-				fLife = min( fLife, 1 );	// clamp
+//				fLife += fDeltaTime/PREFSMAN->m_fJudgeWindowOKSeconds;
+//				fLife = min( fLife, 1 );	// clamp
+				fLife = 1;
 
 				m_GhostArrowRow.HoldNote( hn.iTrack );		// update the "electric ghost" effect
 			}
