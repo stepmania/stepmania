@@ -513,7 +513,7 @@ void Background::UpdateCurBGChange( float fCurrentTime )
 		float fDeltaTime = fCurrentTime - fStartSecond;
 		fDeltaTime /= fRate;
 		if( m_pCurrentBGA )
-			m_pCurrentBGA->Update( fDeltaTime );
+			m_pCurrentBGA->Update( max( fDeltaTime, 0 ) );
 	}
 	else	// we're not changing backgrounds
 	{
@@ -521,13 +521,13 @@ void Background::UpdateCurBGChange( float fCurrentTime )
 		float fDeltaTime = fCurrentTime - m_fLastMusicSeconds;
 		fDeltaTime /= fRate;
 		if( m_pCurrentBGA )
-			m_pCurrentBGA->Update( fDeltaTime );
+			m_pCurrentBGA->Update( max( fDeltaTime, 0 ) );
 	}
 
 	float fDeltaTime = fCurrentTime - m_fLastMusicSeconds;
 	fDeltaTime /= fRate;
 	if( m_pFadingBGA )
-		m_pFadingBGA->Update( fCurrentTime - m_fLastMusicSeconds );
+		m_pFadingBGA->Update( max( fCurrentTime - m_fLastMusicSeconds, 0 ) );
 	m_fLastMusicSeconds = fCurrentTime;
 }
 
