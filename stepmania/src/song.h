@@ -64,7 +64,7 @@ public:
 
 	NotesLoader *MakeLoader( CString sDir ) const;
 
-	bool LoadFromSongDir( CString sDir, bool bAllowCache = true );
+	bool LoadFromSongDir( CString sDir );
 	void RevertFromDisk();
 
 	void TidyUpData();	// call after loading to clean up invalid data

@@ -98,10 +98,16 @@ void SongManager::Reload()
 	m_sGroupNames.clear();
 	m_sGroupBannerPaths.clear();
 
+	/* Always do m_bCheckSongCacheOnLoad. */
+	const bool OldVal = PREFSMAN->m_bCheckSongCacheOnLoad;
+	PREFSMAN->m_bCheckSongCacheOnLoad = true;
+
 	InitSongsFromDisk(NULL);
 	InitCoursesFromDisk(NULL);
 	InitAutogenCourses();
 	PROFILEMAN->InitMachineScoresFromDisk();
+
+	PREFSMAN->m_bCheckSongCacheOnLoad = OldVal;
 }
 
 void SongManager::InitSongsFromDisk( LoadingWindow *ld )

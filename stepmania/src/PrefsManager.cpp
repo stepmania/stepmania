@@ -95,6 +95,7 @@ PrefsManager::PrefsManager()
 	m_bTexturePreload = false;
 	m_bDelayedScreenLoad = false;
 	m_BannerCache = BNCACHE_LOW_RES;
+	m_bCheckSongCacheOnLoad = true;
 	m_MusicWheelUsesSections = ALWAYS;
 	m_iMusicWheelSwitchSpeed = 10;
 	m_bEasterEggs = true;
@@ -298,6 +299,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "TexturePreload",					m_bTexturePreload );
 	ini.GetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
 	ini.GetValue( "Options", "BannerCache",						(int&)m_BannerCache );
+	ini.GetValue( "Options", "CheckSongCacheOnLoad",			m_bCheckSongCacheOnLoad );
 	ini.GetValue( "Options", "MusicWheelUsesSections",			(int&)m_MusicWheelUsesSections );
 	ini.GetValue( "Options", "MusicWheelSwitchSpeed",			m_iMusicWheelSwitchSpeed );
 	ini.GetValue( "Options", "SoundDrivers",					m_sSoundDrivers );
@@ -463,6 +465,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "TexturePreload",					m_bTexturePreload );
 	ini.SetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
 	ini.SetValue( "Options", "BannerCache",						m_BannerCache );
+	ini.SetValue( "Options", "CheckSongCacheOnLoad",			m_bCheckSongCacheOnLoad );
 	ini.SetValue( "Options", "MusicWheelUsesSections",			m_MusicWheelUsesSections );
 	ini.SetValue( "Options", "MusicWheelSwitchSpeed",			m_iMusicWheelSwitchSpeed );
 	ini.SetValue( "Options", "EasterEggs",						m_bEasterEggs );

@@ -189,7 +189,14 @@ NotesLoader *Song::MakeLoader( CString sDir ) const
  * pull in <set> into Song.h, which is heavily used. */
 static set<istring> BlacklistedImages;
 
-bool Song::LoadFromSongDir( CString sDir, bool bAllowCache )
+/*
+ * If PREFSMAN->m_bCheckSongCacheOnLoad is false, always load from cache if possible.
+ * Don't load the contents of sDir if we can avoid it.  That means we can't call HasMusic(),
+ * HasBanner() or GetHashForDirectory().
+ *
+ * If true, check the directory hash and reload the song from scratch if it's changed.
+ */
+bool Song::LoadFromSongDir( CString sDir )
 {
 //	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.c_str() );
 	ASSERT( sDir != "" );
@@ -212,9 +219,13 @@ bool Song::LoadFromSongDir( CString sDir, bool bAllowCache )
 	// First look in the cache for this song (without loading NoteData)
 	//
 	unsigned uDirHash = SONGINDEX->GetCacheHash(m_sSongDir);
-	if( bAllowCache &&
-		GetHashForDirectory(m_sSongDir) == uDirHash && // this cache is up to date 
-		DoesFileExist(GetCacheFilePath()))	
+	bool bUseCache = true;
+	if( !DoesFileExist(GetCacheFilePath()) )
+		bUseCache = false;
+	if( PREFSMAN->m_bCheckSongCacheOnLoad && GetHashForDirectory(m_sSongDir) != uDirHash )
+		bUseCache = false; // this cache is out of date 
+
+	if( bUseCache )
 	{
 //		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.c_str(), GetCacheFilePath().c_str() );
 		SMLoader ld;

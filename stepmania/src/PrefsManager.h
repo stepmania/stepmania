@@ -48,6 +48,7 @@ public:
 	bool			m_bDelayedScreenLoad;
 	enum BannerCacheMode { BNCACHE_OFF, BNCACHE_LOW_RES, BNCACHE_FULL };
 	BannerCacheMode	m_BannerCache;
+	bool			m_bCheckSongCacheOnLoad;
 
 	bool			m_bOnlyDedicatedMenuButtons;
 	bool			m_bMenuTimer;
