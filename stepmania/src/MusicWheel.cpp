@@ -1022,17 +1022,39 @@ bool MusicWheel::ChangeSort( SongSortOrder new_so )	// return true if change suc
 	return true;
 }
 
+static const SongSortOrder SortOrder[] =
+{
+	SORT_GROUP, 
+	SORT_TITLE, 
+	SORT_BPM, 
+	SORT_MOST_PLAYED, 
+	SORT_ARTIST,
+	SORT_INVALID
+};
+
 bool MusicWheel::NextSort()		// return true if change successful
 {
-	SongSortOrder so = SongSortOrder( GAMESTATE->m_SongSortOrder+1 );
-	if(so > MAX_SELECTABLE_SORT)
-		so = SongSortOrder(0);
+	/* Is the current sort in the default sort order? */
+	int cur = 0;
+	while( SortOrder[cur] != SORT_INVALID && SortOrder[cur] != GAMESTATE->m_SongSortOrder )
+		++cur;
 
-	/* Disable SORT_PREFERRED for now, until it's implemented; right now it's not
-	 * very different than SORT_GROUP.  Once it's implemented, enable it only
-	 * when no group is selected. */
-	if(so == SORT_PREFERRED)
-		so = SORT_GROUP;
+	SongSortOrder so;
+	if( SortOrder[cur] == SORT_INVALID )
+	{
+		/* It isn't, which means we're either in the sort menu or in a sort selected
+		 * from the sort menu.  If we're in the sort menu, return to the first sort. 
+		 * Otherwise, return to the sort menu. */
+		if( GAMESTATE->m_SongSortOrder == SORT_SORT )
+			so = SortOrder[0];
+		else
+			so = SORT_SORT;
+	} else {
+		++cur;
+		if( SortOrder[cur] == SORT_INVALID )
+			cur = 0;
+		so = SortOrder[cur];
+	}
 
 	return ChangeSort( so );
 }
