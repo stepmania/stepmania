@@ -53,7 +53,6 @@ LightsDriver *MakeLightsDriver(CString driver);
 #else
 	#define SYS_BASE_PATH ""
 #endif
-#define BASE_PATH "" /* XXX remove */
 
 #endif
 
