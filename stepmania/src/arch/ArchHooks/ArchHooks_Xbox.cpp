@@ -2,6 +2,7 @@
 #include "ArchHooks_Xbox.h"
 #include "dsound.h"	// for timeGetTime
 #include "archutils/Xbox/custom_launch_params.h" // for XGetCustomLaunchData
+#include "archutils/Xbox/VirtualMemory.h"
 
 #include <xtl.h> // for XNetStartup
 
@@ -111,6 +112,10 @@ void EnableExtraRAM()
 
 ArchHooks_Xbox::ArchHooks_Xbox()
 {
+	_set_new_handler(NoMemory);
+	_set_new_mode(1);
+	SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER) CheckPageFault);
+
 	XGetCustomLaunchData();
 
 	// mount A to DVD, C, E, F, G, X, and Y to the harddisk

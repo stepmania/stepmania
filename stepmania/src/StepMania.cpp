@@ -981,10 +981,6 @@ int main(int argc, char* argv[])
 #if defined(XBOX)
 	int argc = 1;
 	char *argv[] = {"default.xbe"};
-
-	_set_new_handler(NoMemory);
-	_set_new_mode(1);
-	SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER) CheckPageFault);
 #endif
 	
 	g_argc = argc;
