@@ -1303,6 +1303,10 @@ static void GameLoop()
 		}
 
 		DISPLAY->Update( fDeltaTime );
+
+		/* Update song beat information -before- calling update on all the classes that
+		 * depend on it.  If you don't do this first, the classes are all acting on old 
+		 * information and will lag.  (but no longer fatally, due to timestamping -glenn) */
 		SOUND->Update( fDeltaTime );
 		TEXTUREMAN->Update( fDeltaTime );
 		GAMESTATE->Update( fDeltaTime );

@@ -101,8 +101,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	else
 		LIGHTSMAN->SetLightMode( LIGHTMODE_GAMEPLAY );
 
-	/* We do this ourself. */
-	SOUND->HandleSongTimer( false );
+	m_soundMusic = NULL;
 
 	SECONDS_BETWEEN_COMMENTS.Refresh();
 	TICK_EARLY_SECONDS.Refresh();
@@ -752,7 +751,7 @@ ScreenGameplay::~ScreenGameplay()
 	}
 	SAFE_DELETE( m_pCombinedLifeMeter );
 
-	m_soundMusic.StopPlaying();
+	SOUND->StopMusic();
 	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 }
 
@@ -950,8 +949,9 @@ void ScreenGameplay::LoadNextSong()
 		LL.LoadFromLRCFile(GAMESTATE->m_pCurSong->GetLyricsPath(), *GAMESTATE->m_pCurSong);
 
 	
-	m_soundMusic.SetAccurateSync();
-	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath() );
+	m_soundMusic = new RageSound;
+	m_soundMusic->SetAccurateSync();
+	m_soundMusic->Load( GAMESTATE->m_pCurSong->GetMusicPath() );
 	
 	/* Set up song-specific graphics. */
 	
@@ -1005,12 +1005,16 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 
 	fStartSecond = min(fStartSecond, -MinTimeToMusic);
 	
-	m_soundMusic.SetPositionSeconds( fStartSecond );
-	m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
+	ASSERT( m_soundMusic );
+	m_soundMusic->SetPositionSeconds( fStartSecond );
+	m_soundMusic->SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 
 	/* Keep the music playing after it's finished; we'll stop it. */
-	m_soundMusic.SetStopMode(RageSound::M_CONTINUE);
-	m_soundMusic.StartPlaying();
+	m_soundMusic->SetStopMode(RageSound::M_CONTINUE);
+	m_soundMusic->StartPlaying();
+
+	SOUND->TakeOverSound( m_soundMusic, &GAMESTATE->m_pCurSong->m_Timing );
+	m_soundMusic = NULL; // SOUND owns it now
 
 	/* Return the amount of time until the first beat. */
 	return fFirstSecond - fStartSecond;
@@ -1097,23 +1101,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 		}
 	}
 
-
-
-	/* Very important:  Update GAMESTATE's song beat information
-	 * -before- calling update on all the classes that depend on it.
-	 * If you don't do this first, the classes are all acting on old 
-	 * information and will lag.  -Chris */
-
-	/* If ScreenJukebox is changing screens, it'll stop m_soundMusic to tell
-	 * us not to update the time here.  (In that case, we've already created
-	 * a new ScreenJukebox and reset music statistics, and if we do this then
-	 * we'll un-reset them.) */
-	if( m_soundMusic.IsPlaying() )
-	{
-		RageTimer tm;
-		const float fSeconds = m_soundMusic.GetPositionSeconds( NULL, &tm );
-		GAMESTATE->UpdateSongPosition( fSeconds, GAMESTATE->m_pCurSong->m_Timing, tm );
-	}
 
 	if( m_bZeroDeltaOnNextUpdate )
 	{
@@ -1507,7 +1494,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			 *
 			 * We're doing #3.  I'm not sure which is best.
 			 */
-			m_soundMusic.StopPlaying();
+			SOUND->StopMusic();
 			m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 
 			this->ClearMessageQueue();
@@ -2145,7 +2132,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_BeginFailed:
 		m_DancingState = STATE_OUTRO;
-		m_soundMusic.StopPlaying();
+		SOUND->StopMusic();
 		m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 		TweenOffScreen();
 		m_Failed.StartTransitioning( SM_GoToScreenAfterFail );

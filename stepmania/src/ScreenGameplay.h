@@ -199,7 +199,7 @@ protected:
 	bool			m_bDemonstration;
 
 	RageSound		m_soundAssistTick;
-	RageSound		m_soundMusic;
+	RageSound		*m_soundMusic;
 
 	BeginnerHelper	m_BeginnerHelper;
 };

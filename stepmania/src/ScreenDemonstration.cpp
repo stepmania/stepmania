@@ -19,6 +19,7 @@
 #include "ScreenAttract.h"	// for AttractInput()
 #include "ScreenManager.h"
 #include "RageSoundManager.h"
+#include "RageSounds.h"
 
 
 #define SHOW_RANDOM_MODIFIERS	THEME->GetMetricF("ScreenDemonstration","SecondsToShow")
@@ -102,7 +103,7 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
 					break;	// don't fall through
 
-			m_soundMusic.Stop();
+			SOUND->StopMusic();
 			if( !GAMESTATE->IsTimeToPlayAttractSounds() )
 				SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
 
@@ -123,7 +124,7 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 			m_Out.StartTransitioning( SM_GoToNextScreen );
 		return;
 	case SM_GoToNextScreen:
-		m_soundMusic.Stop();
+		SOUND->StopMusic();
 		if( !GAMESTATE->IsTimeToPlayAttractSounds() )
 			SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
 
