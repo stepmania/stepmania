@@ -210,22 +210,14 @@ void StageStats::AssertValid( PlayerNumber pn ) const
 int StageStats::GetAverageMeter( PlayerNumber pn ) const
 {
 	int iTotalMeter = 0;
-	int iTotalCount = 0;
 	ASSERT( vpSongs.size() == m_player[pn].vpSteps.size() );
 
 	for( unsigned i=0; i<vpSongs.size(); i++ )
 	{
-		Song* pSong = vpSongs[i];
-		Steps* pSteps = m_player[pn].vpSteps[i];
-
-		// weight long and marathon songs
-		int iWeight = SongManager::GetNumStagesForSong( pSong );
-		int iMeter = pSteps->GetMeter();
-		
-		iTotalMeter += iMeter;
-		iTotalCount += iWeight;
+		const Steps* pSteps = m_player[pn].vpSteps[i];
+		iTotalMeter += pSteps->GetMeter();
 	}
-	return iTotalMeter / iTotalCount;	// round down
+	return iTotalMeter / vpSongs.size();	// round down
 }
 
 void StageStats::AddStats( const StageStats& other )
