@@ -60,10 +60,12 @@ DancingCharacters::DancingCharacters()
 		m_Character[p].LoadMilkshapeAsciiBones( "warmup", pChar->GetWarmUpAnimationPath() );
 		m_Character[p].LoadMilkshapeAsciiBones( "dance", pChar->GetDanceAnimationPath() );
 		m_Character[p].LoadMilkshapeAsciiBones( "howtoplay", pChar->GetHowToPlayAnimationPath() );
-		m_Character[p].PlayAnimation( "rest" );
 		this->AddChild( &m_Character[p] );
 	}
+}
 
+void DancingCharacters::LoadNextSong()
+{
 	// initial camera sweep is still
 	m_CameraDistance = CAMERA_REST_DISTANCE;
 	m_CameraPanYStart = 0;
@@ -77,8 +79,12 @@ DancingCharacters::DancingCharacters()
 	 * in course mode.  Init in first update? */
 	if( GAMESTATE->m_pCurSong )
 		m_fThisCameraEndBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
-
+	
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( GAMESTATE->IsPlayerEnabled(p) )
+			m_Character[p].PlayAnimation( "rest" );
 }
+
 
 int Neg1OrPos1() { return rand()%2 ? -1 : +1; }
 

@@ -69,7 +69,10 @@ Background::Background()
 		if( GAMESTATE->IsPlayerEnabled(p) )
 			bOneOrMoreChars = true;
 	if( bOneOrMoreChars )
+	{
 		m_pDancingCharacters = new DancingCharacters;
+		m_pDancingCharacters->LoadNextSong();
+	}
 	else
 		m_pDancingCharacters = NULL;
 
@@ -375,6 +378,8 @@ void Background::LoadFromSong( Song* pSong )
 	m_BGADanger.SetZoomY( fYZoom );	
 
 	TEXTUREMAN->EnableOddDimensionWarning();
+
+	m_pDancingCharacters->LoadNextSong();
 }
 
 

@@ -21,6 +21,8 @@ class DancingCharacters : public ActorFrame
 public:
 	DancingCharacters();
 
+	virtual void LoadNextSong();
+
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives();
 	
