@@ -13,7 +13,6 @@
 #define _Transition_H_
 
 
-#include "RageDisplay.h"
 #include "Screen.h"
 #include "ScreenManager.h"
 #include "Actor.h"
