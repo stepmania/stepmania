@@ -218,7 +218,8 @@ void RageSound_Generic_Software::Update(float delta)
 		LOG->Trace("finishing sound %i", i);
 
 		/* This sound is done. */
-		sounds[i].snd->StopPlaying();
+		sounds[i].state = sound::STOPPED;
+		sounds[i].snd->SoundIsFinishedPlaying();
 	}
 }
 
@@ -269,23 +270,15 @@ void RageSound_Generic_Software::StopMixing( RageSoundBase *snd )
 		return;
 	}
 
-	/* If we're already in STOPPED or HALTING, there's nothing to do. */
+	/* If we're already in STOPPED, there's nothing to do. */
 	if( sounds[i].state == sound::STOPPED )
 	{
-		LOG->Trace( "not stopping a sound because it's in STOPPED or HALTING" );
+		LOG->Trace( "not stopping a sound because it's already in STOPPED" );
 		return;
 	}
 
-	if( sounds[i].state == sound::STOPPING && sounds[i].buffer.num_readable() == 0 )
-	{
-		/* The sound is finished and already flushed. */
-		sounds[i].state = sound::STOPPED;
-	}
-	else
-	{
-		/* Tell the mixing thread to flush the buffer. */
-		sounds[i].state = sound::HALTING;
-	}
+	/* Tell the mixing thread to flush the buffer. */
+	sounds[i].state = sound::HALTING;
 
 	/* Invalidate the snd pointer to guarantee we don't make any further references to
 	 * it.  Once this call returns, the sound may no longer exist. */
