@@ -765,11 +765,18 @@ bool PrintPercentCompleteForStepsType( RageFile &f, const Profile *pProfile, Ste
  	PRINT_OPEN(f, GAMEMAN->NotesTypeToThemedString(st) );
 	{
 		BEGIN_TABLE(1);
-		TABLE_LINE2( "Percent Complete", ssprintf("%06.3f%%",pProfile->GetPercentCompleteForStepsType(st)*100) );
-		TABLE_LINE2( "Actual Song Points", pProfile->GetActualSongDancePointsForStepsType(st) );
-		TABLE_LINE2( "Actual Course Points", pProfile->GetActualCourseDancePointsForStepsType(st) );
-		TABLE_LINE2( "Possible Song Points", pProfile->GetPossibleSongDancePointsForStepsType(st) );
-		TABLE_LINE2( "Possible Course Points", pProfile->GetPossibleCourseDancePointsForStepsType(st) );
+		{
+			const int iActualSong = pProfile->GetActualSongDancePointsForStepsType(st);
+			const int iActualCourse = pProfile->GetActualCourseDancePointsForStepsType(st);
+			const int iPossibleSong = pProfile->GetPossibleSongDancePointsForStepsType(st);
+			const int iPossibleCourse = pProfile->GetPossibleCourseDancePointsForStepsType(st);
+			const float fPercent = float(iActualSong+iActualCourse) / (iPossibleSong+iPossibleCourse);
+			TABLE_LINE2( "Percent Complete", ssprintf("%06.3f%%", fPercent*100) );
+			TABLE_LINE2( "Actual Song Points", iActualSong );
+			TABLE_LINE2( "Actual Course Points", iActualCourse );
+			TABLE_LINE2( "Possible Song Points", iPossibleSong );
+			TABLE_LINE2( "Possible Course Points", iPossibleCourse );
+		}
 		END_TABLE;
 	
 		PRINT_OPEN(f, "Songs" );
