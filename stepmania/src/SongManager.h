@@ -122,6 +122,8 @@ protected:
 	void SaveCategoryRankingsToFile( CString fn );
 	void SaveCourseRankingsToFile( CString fn );
 
+	void WriteStatsWebPage();
+
 	vector<Song*>		m_pSongs;	// all songs that can be played
 	vector<Song*>		m_pBestSongs;
 	CStringArray		m_sGroupNames;

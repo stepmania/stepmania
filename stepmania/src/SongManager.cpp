@@ -26,13 +26,14 @@
 #include "AnnouncerManager.h"
 #include "ThemeManager.h"
 #include "GameManager.h"
-
 #include "RageFile.h"
+#include "ProductInfo.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
 #define SONGS_DIR BASE_PATH "Songs" SLASH
 #define COURSES_DIR BASE_PATH "Courses" SLASH
+#define STATS_PATH BASE_PATH "stats.html"
 const CString CATEGORY_RANKING_FILE = BASE_PATH "Data" SLASH "CategoryRanking.dat";
 const CString COURSE_RANKING_FILE = BASE_PATH "Data" SLASH "CourseRanking.dat";
 const CString NOTES_SCORES_FILE[NUM_MEMORY_CARDS] = { BASE_PATH "Data" SLASH "Player1NotesScores.dat", BASE_PATH "Data" SLASH "Player2NotesScores.dat", BASE_PATH "Data" SLASH "MachineNotesScores.dat" };
@@ -90,6 +91,8 @@ SongManager::SongManager( LoadingWindow *ld )
 SongManager::~SongManager()
 {
 	SaveMachineScoresToDisk();
+
+	WriteStatsWebPage();
 
 	FreeSongs();
 }
@@ -1222,4 +1225,118 @@ void SongManager::UpdateRankingCourses()
 			if (!RankingCourses[j].CompareNoCase(m_pCourses[i]->m_sPath))
 				m_pCourses[i]->SortOrder_Ranking = 1;
 	}
+}
+
+// TODO: Move this to a different file.  No need to clutter SongManager.
+void SongManager::WriteStatsWebPage()
+{
+	FILE* fp = fopen( STATS_PATH, "w" );
+	if( fp == NULL )
+		return;
+
+	fprintf( fp, 
+		"<html>\n"
+		"<head>\n"
+		"<title>%s</title>\n"
+		"</head>\n"
+		"<body>\n",
+		PRODUCT_NAME_VER );
+
+	vector<Song*> vSongs = m_pSongs;
+	SortSongPointerArrayByGroupAndTitle( vSongs );
+
+	//
+	// Print song list
+	//
+	fprintf( fp, "<table border='1'>\n" );
+	fprintf( fp, "<tr>&nbsp;<td>image</td><td>title</td></tr>" );
+	for( unsigned i=0; i<vSongs.size(); i++ )
+	{
+		Song* pSong = m_pSongs[i];
+		fprintf( fp, "<tr>" );
+		CString sImagePath = pSong->HasBanner() ? pSong->GetBannerPath() : (pSong->HasBackground() ? pSong->GetBackgroundPath() : "" );
+		if( sImagePath.empty() )
+			fprintf( fp, "<td> </td>" );
+		else
+			fprintf( fp, "<td><img src='%s' width='120'></td>", sImagePath.c_str() );
+		
+		fprintf( fp, "<td>%s<br>", pSong->GetTranslitMainTitle().c_str() );
+		fprintf( fp, "<font size='-1'>%s</font><br>", pSong->GetTranslitSubTitle().c_str() );
+		fprintf( fp, "<font size='-1'><i>%s</i></font></td>", pSong->GetTranslitArtist().c_str() );
+		fprintf( fp, "</tr>\n" );
+
+	}
+	fprintf( fp, "</table>\n<br>\n" );
+
+
+	//
+	// Print steps tables
+	//
+	for( int g=0; g<NUM_GAMES; g++ )
+	{
+		Game game = (Game)g;
+		const GameDef* pGameDef = GAMEMAN->GetGameDefForGame(game);
+		
+		vector<StepsType> aStepsTypes;
+		GAMEMAN->GetNotesTypesForGame( game, aStepsTypes );
+
+
+		fprintf( fp, "<h1>%s</h1>\n", pGameDef->m_szName );
+
+
+		fprintf( fp, "<table border='1'>\n" );
+		fprintf( fp, "<tr><td>title</td>" );
+		unsigned j;
+		for( j=0; j<aStepsTypes.size(); j++ )
+		{
+			StepsType st = aStepsTypes[j];
+
+			fprintf( fp, "<td colspan='%d'>%s</td>\n", NUM_DIFFICULTIES, GAMEMAN->NotesTypeToString(st).c_str() );
+		}
+		fprintf( fp, "</tr>\n" );
+
+		fprintf( fp, "<tr><td>&nbsp;</td>" );
+		for( j=0; j<aStepsTypes.size(); j++ )
+		{
+			StepsType st = aStepsTypes[j];
+
+			for( unsigned k=0; k<NUM_DIFFICULTIES; k++ )
+			{
+				Difficulty d = (Difficulty)k;
+				fprintf( fp, "<td>%s</td>\n", Capitalize(DifficultyToString(d).Left(3)).c_str() );
+			}
+		}
+		fprintf( fp, "</tr>\n" );
+		for( unsigned i=0; i<vSongs.size(); i++ )
+		{
+			Song* pSong = m_pSongs[i];
+			fprintf( fp, "<tr>\n" );
+			
+			fprintf( fp, "<td>%s</td>", pSong->GetTranslitMainTitle().c_str() );
+
+			for( unsigned j=0; j<aStepsTypes.size(); j++ )
+			{
+				StepsType st = aStepsTypes[j];
+
+				for( unsigned k=0; k<NUM_DIFFICULTIES; k++ )
+				{
+					Difficulty d = (Difficulty)k;
+					Steps* pSteps = pSong->GetStepsByDifficulty( st, d, false );
+					if( pSteps )
+						fprintf( fp, "<td>%d</td>\n", pSteps->GetMeter() );
+					else
+						fprintf( fp, "<td>&nbsp;</td>\n" );
+				}
+			}
+
+			fprintf( fp, "</tr>" );
+
+		}
+		fprintf( fp, "</table>\n<br>\n" );
+	}
+
+	fprintf( fp, 
+		"</body>\n"
+		"</html>\n"
+		);
 }
