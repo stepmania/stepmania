@@ -18,14 +18,11 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
-
-#include <stdio.h>
-
+#include "arch/Dialog/Dialog.h"
 #include "SDL_utils.h"
 
 #include <vfw.h> /* for GetVideoCodecDebugInfo */
 #pragma comment(lib, "vfw32.lib")
-#include "arch/ArchHooks/ArchHooks.h"
 
 static CString FourCCToString(int fcc)
 {
@@ -60,7 +57,7 @@ static void CheckCodecVersion( CString codec, CString desc )
 		/* 5.0.0 through 5.0.4 are old and cause crashes. Warn. */
 		if( major == 5 && minor == 0 && rev < 5 )
 		{
-			HOOKS->MessageBoxOK(
+			Dialog::OK(
 				ssprintf("The version of DivX installed, %i.%i.%i, is out of date and may\n"
 				"cause instability.  Please upgrade to DivX 5.0.5 or newer, available at:\n"
 				"\n"
