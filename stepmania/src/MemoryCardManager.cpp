@@ -294,3 +294,15 @@ CString MemoryCardManager::GetName( PlayerNumber pn ) const
 {
 	return m_Device[pn].sName;
 }
+
+
+bool IsAnyPlayerUsingMemoryCard()
+{
+	FOREACH_HumanPlayer( pn )
+		if( MEMCARDMAN->GetCardState(pn) == MEMORY_CARD_STATE_READY )
+			return true;
+	return false;
+}
+
+#include "LuaFunctions.h"
+LuaFunction_NoArgs( IsAnyPlayerUsingMemoryCard,		IsAnyPlayerUsingMemoryCard() )
