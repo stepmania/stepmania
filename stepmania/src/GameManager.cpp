@@ -33,7 +33,8 @@ const int PUMP_COL_SPACING = 50;
 const int EZ2_COL_SPACING = 46; 
 const int EZ2_REAL_COL_SPACING = 40;
 const int PARA_COL_SPACING = 54;
-const int DS3DDX_COL_SPACING = 54;
+const int DS3DDX_COL_SPACING = 46;
+const int BM_COL_SPACING=34;
 
 struct {
 	char *name;
@@ -50,7 +51,8 @@ struct {
 	{ "ez2-double", 10 },		// Double: Single x2
 	{ "ez2-real", 7 },			// Real: TL,LHH,LHL,D,RHL,RHH,TR
 	{ "para-single", 5 },
-	{ "ds3ddx-single", 8 }
+	{ "ds3ddx-single", 8 },
+	{ "bm-single", 6 }
 };
 
 //
@@ -459,6 +461,86 @@ GameDef g_GameDefs[NUM_GAMES] =
 				-1, //no default key	// DS3DDX_BUTTON_MENURIGHT
 				-1,					// DS3DDX_BUTTON_MENUUP
 				-1,				// DS3DDX_BUTTON_MENUDOWN
+			},
+		}
+	},
+	{	// GAME_BM
+		"bm",				// m_szName
+		"BeatMania",		// m_szDescription
+		2,					// m_iNumControllers
+		NUM_BM_BUTTONS,	// m_iButtonsPerController
+		{	// m_szButtonNames
+			"LeftWhiteKey",
+			"LeftBlackKey",
+			"CenterWhiteKey",
+			"RightBlackKey",
+			"RightWhiteKey",
+			"Scratch",
+			"Start",
+			"Back",
+			"MenuLeft",
+			"MenuRight",
+			"MenuUp",
+			"MenuDown",
+		},
+		{	// m_szSecondaryFunction
+			"(MenuUp)",
+			"(MenuLeft)",
+			"(Start)",
+			"(MenuRight)",
+			"(MenuDown)",
+			"",
+			"(dedicated)",
+			"(dedicated)",
+			"(dedicated)",
+			"(dedicated)",
+			"(dedicated)",
+			"(dedicated)",
+		},
+		{	// m_DedicatedMenuButton
+			BM_BUTTON_MENULEFT,	// MENU_BUTTON_LEFT
+			BM_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
+			BM_BUTTON_MENUUP,		// MENU_BUTTON_UP
+			BM_BUTTON_MENUDOWN,	// MENU_BUTTON_DOWN
+			BM_BUTTON_START,		// MENU_BUTTON_START
+			BM_BUTTON_BACK,		// MENU_BUTTON_BACK
+		},
+		{	// m_SecondaryMenuButton
+			BM_BUTTON_LEFTBLACK,		// MENU_BUTTON_LEFT
+			BM_BUTTON_RIGHTBLACK,	// MENU_BUTTON_RIGHT
+			BM_BUTTON_LEFTWHITE,	// MENU_BUTTON_UP
+			BM_BUTTON_RIGHTWHITE,	// MENU_BUTTON_DOWN
+			BM_BUTTON_CENTERWHITE,		// MENU_BUTTON_START
+			BM_BUTTON_BACK,		// MENU_BUTTON_BACK
+		},
+		{	// m_iDefaultKeyboardKey
+			{	// PLAYER_1
+				SDLK_z,					// BM_BUTTON_LEFTWHITE,
+				SDLK_s,					// BM_BUTTON_LEFTBLACK,
+				SDLK_x,					// BM_BUTTON_CENTERWHITE,
+				SDLK_d,					// BM_BUTTON_RIGHTBLACK,
+				SDLK_c,  				// BM_BUTTON_RIGHTWHITE,
+				SDLK_b,					// BM_BUTTON_SCRATCH,
+				SDLK_RETURN,			// BM_BUTTON_START,
+				SDLK_ESCAPE,			// BM_BUTTON_BACK,
+				SDLK_LEFT,				// BM_BUTTON_MENULEFT
+				SDLK_RIGHT,				// BM_BUTTON_MENURIGHT
+				SDLK_UP,				// BM_BUTTON_MENUUP
+				SDLK_DOWN,				// BM_BUTTON_MENUDOWN
+			},
+			{	// PLAYER_2
+				-1,					// BM_BUTTON_LEFTWHITE,
+				-1,					// BM_BUTTON_LEFTBLACK,
+				-1,					// BM_BUTTON_CENTERWHITE,
+				-1,					// BM_BUTTON_RIGHTBLACK,
+				-1,  				// BM_BUTTON_RIGHTWHITE,
+				-1,					// BM_BUTTON_SCRATCH,
+				-1,					// BM_BUTTON_START,
+				-1,					// BM_BUTTON_BACK,
+				-1,					// BM_BUTTON_MENULEFT
+				-1,					// BM_BUTTON_MENURIGHT
+				-1,					// BM_BUTTON_MENUUP
+				-1,					// BM_BUTTON_MENUDOWN
 			},
 		}
 	},
@@ -1035,7 +1117,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		"single",								// m_szName
 		NOTES_TYPE_DS3DDX_SINGLE,						// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
-		{ 320, 320 },							// m_iCenterX
+		{ 160, 480 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
@@ -1061,6 +1143,37 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,1,2,3,4,5,6,7
+		},
+	},
+	{
+		GAME_BM,								// m_Game
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
+		"BM-single",						// m_szName
+		NOTES_TYPE_BM_SINGLE,					// m_NotesType
+		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		{ 160, 480 },							// m_iCenterX
+		6,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	GAME_CONTROLLER_1,	BM_BUTTON_LEFTWHITE,	-BM_COL_SPACING*2.5f },
+				{ TRACK_2,	GAME_CONTROLLER_1,	BM_BUTTON_LEFTBLACK,		-BM_COL_SPACING*1.5f },
+				{ TRACK_3,	GAME_CONTROLLER_1,	BM_BUTTON_CENTERWHITE,		-BM_COL_SPACING*0.5f },
+				{ TRACK_4,	GAME_CONTROLLER_1,	BM_BUTTON_RIGHTBLACK,	+BM_COL_SPACING*0.5f },
+				{ TRACK_5,	GAME_CONTROLLER_1,	BM_BUTTON_RIGHTWHITE,	+BM_COL_SPACING*1.5f },
+				{ TRACK_6,	GAME_CONTROLLER_1,	BM_BUTTON_SCRATCH,	+BM_COL_SPACING*3.0f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	GAME_CONTROLLER_2,	BM_BUTTON_LEFTWHITE,	-BM_COL_SPACING*2.5f },
+				{ TRACK_2,	GAME_CONTROLLER_2,	BM_BUTTON_LEFTBLACK,		-BM_COL_SPACING*1.5f },
+				{ TRACK_3,	GAME_CONTROLLER_2,	BM_BUTTON_CENTERWHITE,		-BM_COL_SPACING*0.5f },
+				{ TRACK_4,	GAME_CONTROLLER_2,	BM_BUTTON_RIGHTBLACK,	+BM_COL_SPACING*0.5f },
+				{ TRACK_5,	GAME_CONTROLLER_2,	BM_BUTTON_RIGHTWHITE,	+BM_COL_SPACING*1.5f },
+				{ TRACK_6,	GAME_CONTROLLER_2,	BM_BUTTON_SCRATCH,	+BM_COL_SPACING*3.0f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0,1,2,3,4,5
 		},
 	}
 };
@@ -1298,6 +1411,30 @@ ModeChoice g_ModeChoices[] =
 		STYLE_DS3DDX_SINGLE,
 		DIFFICULTY_HARD,
 		"power2",
+		1
+	},
+	{
+		GAME_BM,
+		PLAY_MODE_ARCADE,
+		STYLE_BM_SINGLE,
+		DIFFICULTY_EASY,
+		"beginner",
+		1
+	},
+	{
+		GAME_BM,
+		PLAY_MODE_ARCADE,
+		STYLE_BM_SINGLE,
+		DIFFICULTY_MEDIUM,
+		"normal",
+		1
+	},
+	{
+		GAME_BM,
+		PLAY_MODE_ARCADE,
+		STYLE_BM_SINGLE,
+		DIFFICULTY_HARD,
+		"expert",
 		1
 	},
 };

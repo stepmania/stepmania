@@ -50,6 +50,8 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 {	
 	i_ErrorDetected=0;
 	CodeDetector::RefreshCacheItems();
+
+
 	m_Menu.Load(
 		THEME->GetPathTo("BGAnimations","select music"), 
 		THEME->GetPathTo("Graphics","select music top edge"),

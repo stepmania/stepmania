@@ -104,6 +104,8 @@ const CString CREDIT_LINES[] =
 	"BeMaNiRuler",
 	"DDRLlama",
 	"DDRManiaX",
+	"NMR",
+	"Random Hajile",
 	"Lagged",
 	"The Melting Pot",
 	"DDRJamz Global BBS",

@@ -34,7 +34,7 @@
 #define COURSE_X		THEME->GetMetricF("WheelItemDisplay","CourseX")
 #define COURSE_ZOOM		THEME->GetMetricF("WheelItemDisplay","CourseZoom")
 #define GRADE_X( p )	THEME->GetMetricF("WheelItemDisplay",ssprintf("GradeP%dX",p+1))
-
+#define DEFAULT_SCROLL_DIRECTION		THEME->GetMetricI("Notes","DefaultScrollDirection")
 
 // MusicWheel stuff
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
@@ -280,6 +280,13 @@ void WheelItemDisplay::DrawPrimitives()
 MusicWheel::MusicWheel() 
 { 
 	LOG->Trace( "MusicWheel::MusicWheel()" );
+
+
+	if(DEFAULT_SCROLL_DIRECTION && GAMESTATE->m_pCurSong == NULL) /* check the song is null... incase they have just come back from a song and changed their PlayerOptions */
+	{
+		for(int i=0; i<NUM_PLAYERS; i++)
+			GAMESTATE->m_PlayerOptions[i].m_bReverseScroll = true;
+	}
 
 
 	// update theme metric cache

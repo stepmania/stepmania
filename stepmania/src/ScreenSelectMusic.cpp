@@ -90,7 +90,6 @@ ScreenSelectMusic::ScreenSelectMusic()
 
 	CodeDetector::RefreshCacheItems();
 
-
 	int p;
 
 	m_Menu.Load(
