@@ -987,6 +987,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 				ASSERT( sas.pSteps );
 				vSongAndSteps.push_back( sas );
 			}
+			CHECKPOINT;
 
 			sort( vSongAndSteps.begin(), vSongAndSteps.end() );
 
