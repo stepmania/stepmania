@@ -162,35 +162,38 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 	 * is tricky since at that point the ScoreKeepers no longer exist. 
 	 *
 	 * See http://www.aaroninjapan.com/ddr2.html ("Regular play scoring") */
-	int TapScoreValues[NUM_TAP_NOTE_SCORES] = 
-	{ 
-		0,
-		PREFSMAN->m_iGradeWeightHitMine,
-		PREFSMAN->m_iGradeWeightMiss,
-		PREFSMAN->m_iGradeWeightBoo,
-		PREFSMAN->m_iGradeWeightGood,
-		PREFSMAN->m_iGradeWeightGreat,
-		PREFSMAN->m_iGradeWeightPerfect,
-		PREFSMAN->m_iGradeWeightMarvelous,
-	};
-	int HoldScoreValues[NUM_HOLD_NOTE_SCORES] =
-	{
-		0,
-		PREFSMAN->m_iGradeWeightOK,
-		PREFSMAN->m_iGradeWeightNG
-	};
-
 	float Possible = 0, Actual = 0;
-	FOREACH_TapNoteScore( i )
+	FOREACH_TapNoteScore( tns )
 	{
-		Actual += iTapNoteScores[pn][i] * TapScoreValues[i];
-		Possible += iTapNoteScores[pn][i] * TapScoreValues[TNS_MARVELOUS];
+		int iTapScoreValue;
+		switch( tns )
+		{
+		case TNS_NONE:		iTapScoreValue = 0;											break;
+		case TNS_HIT_MINE:	iTapScoreValue = PREFSMAN->m_iPercentScoreWeightHitMine;	break;
+		case TNS_MISS:		iTapScoreValue = PREFSMAN->m_iPercentScoreWeightMiss;		break;
+		case TNS_BOO:		iTapScoreValue = PREFSMAN->m_iPercentScoreWeightBoo;		break;
+		case TNS_GOOD:		iTapScoreValue = PREFSMAN->m_iPercentScoreWeightGood;		break;
+		case TNS_GREAT:		iTapScoreValue = PREFSMAN->m_iPercentScoreWeightGreat;		break;
+		case TNS_PERFECT:	iTapScoreValue = PREFSMAN->m_iPercentScoreWeightPerfect;	break;
+		case TNS_MARVELOUS:	iTapScoreValue = PREFSMAN->m_iPercentScoreWeightMarvelous;	break;
+		default: FAIL_M( ssprintf("%i", tns) );											break;
+		}
+		Actual += iTapNoteScores[pn][tns] * iTapScoreValue;
+		Possible += iTapNoteScores[pn][tns] * PREFSMAN->m_iPercentScoreWeightMarvelous;
 	}
 
-	FOREACH_HoldNoteScore( i )
+	FOREACH_HoldNoteScore( hns )
 	{
-		Actual += iHoldNoteScores[pn][i] * HoldScoreValues[i];
-		Possible += iHoldNoteScores[pn][i] * HoldScoreValues[HNS_OK];
+		int iHoldScoreValue;
+		switch( hns )
+		{
+		case HNS_NONE:	iHoldScoreValue = 0;									break;
+		case HNS_NG:	iHoldScoreValue = PREFSMAN->m_iPercentScoreWeightNG;	break;
+		case HNS_OK:	iHoldScoreValue = PREFSMAN->m_iPercentScoreWeightOK;	break;
+		default: FAIL_M( ssprintf("%i", hns) );									break;
+		}
+		Actual += iHoldNoteScores[pn][hns] * iHoldScoreValue;
+		Possible += iHoldNoteScores[pn][hns] * PREFSMAN->m_iPercentScoreWeightOK;
 	}
 
 	LOG->Trace( "GetGrade: Actual: %f, Possible: %f", Actual, Possible );
