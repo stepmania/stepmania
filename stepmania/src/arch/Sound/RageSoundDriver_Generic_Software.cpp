@@ -5,6 +5,7 @@
 #include "RageSound.h"
 #include "RageUtil.h"
 #include "RageSoundManager.h"
+#include "RageSoundMixBuffer.h"
 
 static const int channels = 2;
 static const int bytes_per_frame = channels*2; /* 16-bit */
@@ -60,7 +61,7 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 		++g_TotalAheadCount;
 	}
 
-	static SoundMixBuffer mix;
+	static RageSoundMixBuffer mix;
 
 	for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
 	{
