@@ -163,9 +163,25 @@ bool ProfileManager::IsMemoryCardInserted( PlayerNumber pn )
 			sizeof(szFileSystemNameBuffer) );
 		return !!bResult;
 	}
-#endif
+#else
 
-	return true;
+	// Try to create directory before writing a temp file.
+	CreateDirectories( sDir );
+	
+	// Test whether a memory card is usable by trying to write a file.
+	CString sFile = sDir + "temp";
+	FILE* fp = fopen( sFile, "w" );
+	if( fp )
+	{
+		fclose( fp );
+		remove( sFile );
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+#endif
 }
 
 bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
@@ -182,6 +198,10 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 
 bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
 {
+	// mount card
+	if( !PREFSMAN->m_sMemoryCardMountCommand[pn].empty() )
+		system( PREFSMAN->m_sMemoryCardMountCommand[pn] );
+
 	if( IsMemoryCardInserted(pn) )
 	{
 		if( LoadProfileFromMemoryCard(pn) )

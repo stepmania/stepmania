@@ -108,6 +108,7 @@ public:
 	CString			m_sLanguage;
 	CString			m_sDefaultMachineProfileID[NUM_PLAYERS];
 	CString			m_sMemoryCardDir[NUM_PLAYERS];
+	CString			m_sMemoryCardMountCommand[NUM_PLAYERS];
 	int				m_iCenterImageTranslateX;
 	int				m_iCenterImageTranslateY;
 	float			m_fCenterImageScaleX;
