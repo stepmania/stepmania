@@ -518,17 +518,14 @@ BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iCh
 	if( row.Type == Row::ROW_EXIT )
 		return *row.m_textItems[0];
 
-	if( !row.m_bRowIsLong )
-		return *row.m_textItems[iChoiceOnRow];
-
-	const bool bOneChoice = m_Rows[iRow]->m_RowDef.bOneChoiceForAllPlayers;
-
-	CHECKPOINT;
-
-	if( bOneChoice )
-		return *row.m_textItems[0];
+	bool bOneChoice = m_Rows[iRow]->m_RowDef.bOneChoiceForAllPlayers;
+	int index = -1;
+	if( row.m_bRowIsLong )
+		index = bOneChoice ? 0 : pn;
 	else
-		return *row.m_textItems[iChoiceOnRow];
+		index = iChoiceOnRow;
+
+	return *row.m_textItems[index];
 }
 
 void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut )
