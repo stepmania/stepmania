@@ -1199,7 +1199,8 @@ void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNu
 {
 	if( !GetVideoModeParams().bSmoothLines )
 	{
-		RageDisplay::DrawLineStrip(v, iNumVerts, LineWidth );
+		/* Fall back on the generic polygon-based line strip. */
+		RageDisplay::DrawLineStripInternal(v, iNumVerts, LineWidth );
 		return;
 	}
 
