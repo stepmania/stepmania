@@ -87,6 +87,9 @@ protected:
 
 	Transition		m_In;
 	Transition		m_Out;
+
+	RageSound	m_sndType;
+	RageSound	m_sndBackspace;
 };
 
 

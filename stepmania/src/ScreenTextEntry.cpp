@@ -150,6 +150,10 @@ void ScreenTextEntry::Init()
 	
 	m_Out.Load( THEME->GetPathB(m_sName,"out") );
 	this->AddChild( &m_Out );
+
+
+	m_sndType.Load( THEME->GetPathS(m_sName,"type"), true );
+	m_sndBackspace.Load( THEME->GetPathS(m_sName,"backspace"), true );
 }
 
 ScreenTextEntry::~ScreenTextEntry()
@@ -327,10 +331,12 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 			break;
 		case SPACEBAR:
 			m_sAnswer += CStringToWstring( " " );
+			m_sndType.Play();
 			UpdateAnswerText();
 			break;
 		case BACKSPACE:
 			m_sAnswer.erase( m_sAnswer.end()-1 );
+			m_sndBackspace.Play();
 			UpdateAnswerText();
 			break;
 		case DONE:
@@ -343,6 +349,7 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 	else
 	{
 		m_sAnswer += CStringToWstring( m_Keys[LOWERCASE][m_iFocusY][m_iFocusX] );
+		m_sndType.Play();
 		UpdateAnswerText();
 	}
 }
