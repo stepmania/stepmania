@@ -136,6 +136,5 @@ SongSortOrder StringToSongSortOrder( CString str )
 		if( !str.CompareNoCase(SongSortOrderNames[i]) )
 			return (SongSortOrder)i;
 
-	ASSERT(0);
-	return SORT_PREFERRED;
+	return SORT_INVALID;
 }
