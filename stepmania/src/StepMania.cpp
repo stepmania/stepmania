@@ -27,6 +27,8 @@
 #include "RageTimer.h"
 #include "RageException.h"
 
+#include "SDL.h"
+
 //
 // StepMania global classes
 //
@@ -654,6 +656,8 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 //-----------------------------------------------------------------------------
 HRESULT CreateObjects( HWND hWnd )
 {
+	/* Fire up the SDL, but don't actually start any subsystems. */
+	SDL_Init(0);
 
 	/*
 	//
