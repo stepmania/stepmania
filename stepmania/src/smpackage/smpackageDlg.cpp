@@ -245,12 +245,12 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 		{
 			CString sFilePath = asFilePaths[j];
 			
-			// don't export "thumbs.db" files or "CVS folders
+			// don't export "thumbs.db" files or "CVS" folders
 			CString sDir, sFName, sExt;
 			splitrelpath( sFilePath, sDir, sFName, sExt );
 			if( 0==stricmp(sFName,"thumbs.db") )
 				continue;	// skip
-			if( 0==stricmp(sFName,"thumbs.db") )
+			if( 0==stricmp(sFName,"CVS") )
 				continue;	// skip
 
 			try
