@@ -44,7 +44,7 @@ void GraphDisplay::LoadFromStageStats( const StageStats &s, PlayerNumber pn )
 	memcpy( m_LastValues, m_CurValues, sizeof(m_CurValues) );
 	m_Position = 0;
 	s.GetLifeRecord( pn, m_DestValues, VALUE_RESOLUTION );
-	for( int i=0; i<ARRAYSIZE(m_DestValues); i++ )
+	for( unsigned i=0; i<ARRAYSIZE(m_DestValues); i++ )
 		CLAMP( m_DestValues[i], 0.f, 1.f );
 	UpdateVerts();
 }
