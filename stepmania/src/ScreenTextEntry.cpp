@@ -57,7 +57,6 @@ ScreenTextEntry::ScreenTextEntry(
 	Screen( sClassName )
 {
 	m_bIsTransparent = true;	// draw screens below us
-	m_bCancelled = false;
 
 	m_sQuestion = sQuestion;
 	m_sAnswer = CStringToWstring( sInitialAnswer );
