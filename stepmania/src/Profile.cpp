@@ -1685,8 +1685,11 @@ public:
 	static int GetWeightPounds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iWeightPounds ); return 1; }
 	static int SetWeightPounds( T* p, lua_State *L )		{ p->m_iWeightPounds = FArg(1); return 0; }
 	static int GetGoalType( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_GoalType ); return 1; }
+	static int SetGoalType( T* p, lua_State *L )			{ p->m_GoalType = (GoalType)IArg(1); return 0; }
 	static int GetGoalCalories( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iGoalCalories ); return 1; }
+	static int SetGoalCalories( T* p, lua_State *L )		{ p->m_iGoalCalories = IArg(1); return 0; }
 	static int GetGoalSeconds( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_iGoalSeconds ); return 1; }
+	static int SetGoalSeconds( T* p, lua_State *L )			{ p->m_iGoalSeconds = IArg(1); return 0; }
 	static int GetCaloriesBurnedToday( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCaloriesBurnedToday() ); return 1; }
 	static int GetSaved( T* p, lua_State *L )				{ p->m_SavedLuaData.PushSelf(L); return 1; }
 
@@ -1695,8 +1698,11 @@ public:
 		ADD_METHOD( GetWeightPounds )
 		ADD_METHOD( SetWeightPounds )
 		ADD_METHOD( GetGoalType )
+		ADD_METHOD( SetGoalType )
 		ADD_METHOD( GetGoalCalories )
+		ADD_METHOD( SetGoalCalories )
 		ADD_METHOD( GetGoalSeconds )
+		ADD_METHOD( SetGoalSeconds )
 		ADD_METHOD( GetCaloriesBurnedToday )
 		ADD_METHOD( GetSaved )
 		Luna<T>::Register( L );

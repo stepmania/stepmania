@@ -355,6 +355,19 @@ enum MenuDir
 const CString& MenuDirToString( MenuDir md );
 
 
+enum GoalType 
+{
+	GOAL_CALORIES, 
+	GOAL_TIME, 
+	GOAL_NONE,
+	NUM_GOAL_TYPES,
+	GOAL_INVALID,
+};
+#define FOREACH_GoalType( md ) FOREACH_ENUM( GoalType, NUM_GOAL_TYPES, gt )
+const CString& GoalTypeToString( GoalType gt );
+GoalType StringToGoalType( const CString& s );
+
+
 #endif
 
 /*

@@ -52,6 +52,7 @@ void GameCommand::Init()
 	m_iWeightPounds = -1;
 	m_iGoalCalories = -1;
 	m_iStopCourseAtSeconds = -1;
+	m_GoalType = GOAL_INVALID;
 
 	m_bClearBookkeepingData = false;
 	m_bClearMachineStats = false;
@@ -129,6 +130,8 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 	if( m_iGoalCalories != -1 && PROFILEMAN->IsUsingProfile(pn) && PROFILEMAN->GetProfile(pn)->m_iGoalCalories != m_iGoalCalories )
 		return false;
 	if( m_iStopCourseAtSeconds != -1 && GAMESTATE->m_iStopCourseAtSeconds != m_iStopCourseAtSeconds )
+		return false;
+	if( m_GoalType != GOAL_INVALID && PROFILEMAN->IsUsingProfile(pn) && PROFILEMAN->GetProfile(pn)->m_GoalType != m_GoalType )
 		return false;
 
 	return true;
@@ -315,6 +318,11 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 		else if( sName == "stopcourseatseconds" )
 		{
 			m_iStopCourseAtSeconds = atoi( sValue );
+		}
+
+		else if( sName == "goaltype" )
+		{
+			m_GoalType = StringToGoalType( sValue );
 		}
 
 		else if( sName == "unlock" )
@@ -658,6 +666,10 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 				PROFILEMAN->GetProfile(*pn)->m_iGoalCalories = m_iGoalCalories;
 	if( m_iStopCourseAtSeconds != -1 )
 		GAMESTATE->m_iStopCourseAtSeconds = m_iStopCourseAtSeconds;
+	if( m_GoalType != GOAL_INVALID )
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+			if( PROFILEMAN->IsUsingProfile(*pn) )
+				PROFILEMAN->GetProfile(*pn)->m_GoalType = m_GoalType;
 
 	/* If we're going to stop music, do so before preparing new screens, so we don't
 	 * stop music between preparing screens and loading screens. */
@@ -800,7 +812,8 @@ bool GameCommand::IsZero() const
 		m_SortOrder != SORT_INVALID ||
 		m_iWeightPounds != -1 ||
 		m_iGoalCalories != -1 ||
-		m_iStopCourseAtSeconds != -1
+		m_iStopCourseAtSeconds != -1 ||
+		m_GoalType != GOAL_INVALID
 		)
 		return false;
 

@@ -62,6 +62,7 @@ public:
 	int			m_iWeightPounds;	// -1 == none specified
 	int			m_iGoalCalories;	// -1 == none specified
 	int			m_iStopCourseAtSeconds; // -1 == none specified
+	GoalType	m_GoalType;
 
 	bool m_bClearBookkeepingData;
 	bool m_bClearMachineStats;

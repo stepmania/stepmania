@@ -106,7 +106,7 @@ public:
 	int m_iTotalGameplaySeconds;
 	int m_iCurrentCombo;
 	float m_fTotalCaloriesBurned;
-	enum GoalType { GOAL_CALORIES, GOAL_TIME, GOAL_NONE } m_GoalType;
+	GoalType m_GoalType;
 	int m_iGoalCalories;
 	int m_iGoalSeconds;
 	int m_iTotalDancePoints;

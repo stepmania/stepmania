@@ -246,7 +246,15 @@ static const CString MenuDirNames[NUM_MENU_DIRS] = {
 	"Auto",
 };
 XToString( MenuDir );
-StringToX( MenuDir );
+
+
+static const CString GoalTypeNames[NUM_GOAL_TYPES] = {
+	"Calories",
+	"Time",
+	"None",
+};
+XToString( GoalType );
+StringToX( GoalType );
 
 
 #include "LuaFunctions.h"
