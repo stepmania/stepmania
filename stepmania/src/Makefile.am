@@ -25,10 +25,7 @@ SDL-1.2.5/src/.libs/libSDL.a:
 
 SDL_sound-1.0.0/.libs/libSDL_sound.a:
 	cd SDL_sound-1.0.0 && ./configure \
-		--enable-wav --enable-madlib --enable-ogg --disable-aiff --disable-au \
-		--disable-voc --disable-raw --disable-shn --disable-midi --disable-flac \
-		--disable-smpeg --disable-mpglib --disable-mikmod --disable-modplug \
-		--enable-static --disable-shared
+		--enable-wav --enable-madlib --enable-ogg --enable-static --disable-shared
 	make -C SDL_sound-1.0.0
 
 #--enable-debug
