@@ -226,6 +226,8 @@ float Profile::GetSongsPossible( StepsType st, Difficulty dc ) const
 
 float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 {
+	CHECKPOINT_M( ssprintf("Profile::GetSongsActual(%d,%d)",st,dc) );
+	
 	float fTotalPercents = 0;
 	
 	// add steps high scores
@@ -236,39 +238,48 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 		const SongID &id = i->first;
 		Song* pSong = id.ToSong();
 		
+		CHECKPOINT_M( ssprintf("Profile::GetSongsActual: %p", pSong) );
+		
 		// If the Song isn't loaded on the current machine, then we can't 
 		// get radar values to compute dance points.
 		if( pSong == NULL )
 			continue;
-
+		
 		if( pSong->m_SelectionDisplay == Song::SHOW_NEVER )
 			continue;	// skip
-
+		
 		const HighScoresForASong &hsfas = i->second;
-
+		CHECKPOINT_M( ssprintf("Profile::GetSongsActual: %p", &hsfas) );
+		
 		for( std::map<StepsID,HighScoresForASteps>::const_iterator j = hsfas.m_StepsHighScores.begin();
 			j != hsfas.m_StepsHighScores.end();
 			++j )
 		{
 			const StepsID &id = j->first;
+			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: n %s", id.ToString().c_str()) );
 			Steps* pSteps = id.ToSteps( pSong, true );
+			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: steps %p", pSteps) );
 			
 			// If the Steps isn't loaded on the current machine, then we can't 
 			// get radar values to compute dance points.
 			if( pSteps == NULL )
 				continue;
-
+			
 			if( pSteps->m_StepsType != st )
 				continue;
-
+			
 			if( pSteps->GetDifficulty() != dc )
 				continue;	// skip
-
+			
 			const HighScoresForASteps& h = j->second;
+			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: h %p", &h) );
 			const HighScoreList& hs = h.hs;
-
+			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: hs %p", &hs) );
+			
 			fTotalPercents += hs.GetTopScore().fPercentDP;
+			CHECKPOINT;
 		}
+		CHECKPOINT;
 	}
 
 	return fTotalPercents;

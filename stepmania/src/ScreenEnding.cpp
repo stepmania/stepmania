@@ -63,6 +63,8 @@ CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 
 CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 {
+	CHECKPOINT_M( ssprintf("GetStatsLineValue(%d,%d)",pn,line) );
+
 	Profile* pProfile = PROFILEMAN->GetProfile( pn );
 	ASSERT( pProfile );
 
