@@ -29,9 +29,6 @@
 
 const int NUM_SCORE_DIGITS	=	9;
 
-/* These commands should be evaluated when they're used, so any Lua expressions
- * in them are evaluated after we're finished selecting, not when we first load
- * the screen. */
 #define NEXT_SCREEN							THEME->GetMetric (m_sName,"NextScreen")
 #define PREV_SCREEN							THEME->GetMetric (m_sName,"PrevScreen")
 #define NEXT_OPTIONS_SCREEN					THEME->GetMetric (m_sName,"NextOptionsScreen")
