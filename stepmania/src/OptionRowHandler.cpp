@@ -71,7 +71,6 @@ public:
 
 		if(		 sParam.CompareNoCase("NoteSkins")==0 )		{ FillNoteSkins( defOut, sParam );		return; }
 		else if( sParam.CompareNoCase("Steps")==0 )			{ FillSteps( defOut, sParam );			return; }
-		else if( sParam.CompareNoCase("EditsAndNull")==0 )	{ FillEditsAndNull( defOut, sParam );	return; }
 		else if( sParam.CompareNoCase("Characters")==0 )	{ FillCharacters( defOut, sParam );		return; }
 		else if( sParam.CompareNoCase("Styles")==0 )		{ FillStyles( defOut, sParam );			return; }
 		else if( sParam.CompareNoCase("Groups")==0 )		{ FillGroups( defOut, sParam );			return; }
@@ -141,7 +140,7 @@ public:
 			ListEntries.push_back( mc );
 
 			CString sName = mc.m_sName;
-			CString sChoice = ENTRY_NAME(mc.m_sName);
+			CString sChoice = mc.m_sName;
 			defOut.choices.push_back( sChoice );
 		}
 	}
@@ -322,44 +321,6 @@ public:
 		}
 	}
 
-	void FillEditsAndNull( OptionRowDefinition &defOut, CString sParam )
-	{
-		Init();
-		defOut.Init();
-
-		ASSERT( sParam.size() );
-		m_sName = sParam;
-
-		defOut.name = "EditsAndNull";
-		defOut.bOneChoiceForAllPlayers = true;
-		defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-		defOut.m_bExportOnChange = true;
-		m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_CURRENT_SONG_CHANGED) );
-		m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_EDIT_STEPS_TYPE_CHANGED) );
-
-		if( GAMESTATE->m_pCurSong != NULL )
-		{
-			vector<Steps*> vSteps;
-			GAMESTATE->m_pCurSong->GetSteps( vSteps, GAMESTATE->m_stEdit, DIFFICULTY_EDIT );
-			StepsUtil::SortNotesArrayByDifficulty( vSteps );
-			FOREACH_CONST( Steps*, vSteps, p )
-			{
-				CString s = (*p)->GetDescription();
-				defOut.choices.push_back( s );
-				GameCommand mc;
-				mc.m_pSteps = *p;
-				ListEntries.push_back( mc );
-			}
-		}
-
-		// Add NULL entry for a new edit
-		{
-			defOut.choices.push_back( ENTRY_NAME("NewEdit") );
-			GameCommand mc;
-			ListEntries.push_back( mc );
-		}
-	}
-
 	void FillCharacters( OptionRowDefinition &defOut, CString sParam )
 	{
 		Init();
@@ -373,7 +334,7 @@ public:
 		Default.m_pCharacter = GAMESTATE->GetDefaultCharacter();
 
 		{
-			defOut.choices.push_back( ENTRY_NAME("Off") );
+			defOut.choices.push_back( "Off" );
 			GameCommand mc;
 			mc.m_pCharacter = NULL;
 			ListEntries.push_back( mc );
@@ -437,7 +398,7 @@ public:
 		ASSERT( vGroups.size() );
 
 		{
-			defOut.choices.push_back( ENTRY_NAME("AllGroups") );
+			defOut.choices.push_back( "AllGroups" );
 			GameCommand mc;
 			mc.m_sSongGroup = GROUP_ALL_MUSIC;
 			ListEntries.push_back( mc );
@@ -467,7 +428,7 @@ public:
 		Default.m_dc = DIFFICULTY_INVALID;
 
 		{
-			defOut.choices.push_back( ENTRY_NAME("AllDifficulties") );
+			defOut.choices.push_back( "AllDifficulties" );
 			GameCommand mc;
 			mc.m_dc = DIFFICULTY_INVALID;
 			ListEntries.push_back( mc );
@@ -1025,7 +986,7 @@ public:
 					if( pSteps )
 						s = pSteps->GetDescription();
 					else
-						s = ENTRY_NAME("NewEdit");
+						s = "NewEdit";
 				}
 				else
 				{

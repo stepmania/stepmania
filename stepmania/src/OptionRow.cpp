@@ -7,6 +7,7 @@
 #include "OptionRowHandler.h"
 #include "FontManager.h"
 #include "Font.h"
+#include "CommonMetrics.h"
 
 static const CString SelectTypeNames[NUM_SELECT_TYPES] = {
 	"SelectOne",
@@ -25,6 +26,8 @@ StringToX( LayoutType );
 
 #define FOREACH_OptionsPlayer( pn ) \
 	for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID && (!m_RowDef.bOneChoiceForAllPlayers || pn==0); pn=GetNextHumanPlayer(pn) )
+
+#define PREPARE_ITEM_TEXT( s )	if( s!= "" ) { if( THEME_ITEMS ) s = THEME_OPTION_ITEM( s, false ); if( CAPITALIZE_ALL_OPTION_NAMES ) s.MakeUpper(); }
 
 
 const CString NEXT_ROW_NAME = "NextRow";
@@ -102,6 +105,7 @@ void OptionRow::LoadMetrics( const CString &sType )
 	CAPITALIZE_ALL_OPTION_NAMES		.Load(m_sType,"CapitalizeAllOptionNames");
 	SHOW_UNDERLINES					.Load(m_sType,"ShowUnderlines");
 	TWEEN_SECONDS					.Load(m_sType,"TweenSeconds");
+	THEME_ITEMS						.Load(m_sType,"ThemeItems");
 
 	FOREACH_PlayerNumber( p )
 		m_OptionIcons[p].Load( m_sType );
@@ -134,7 +138,7 @@ void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pH
 	// TRICKY:  Insert a down arrow as the first choice in the row.
 	if( m_bFirstItemGoesDown )
 	{
-		m_RowDef.choices.insert( m_RowDef.choices.begin(), ENTRY_NAME(NEXT_ROW_NAME) );
+		m_RowDef.choices.insert( m_RowDef.choices.begin(), NEXT_ROW_NAME );
 		FOREACH_PlayerNumber( p )
 			m_vbSelected[p].insert( m_vbSelected[p].begin(), false );
 	}
@@ -197,8 +201,7 @@ void OptionRow::AfterImportOptions(
 		for( unsigned c=0; c<m_RowDef.choices.size(); c++ )
 		{
 			CString sText = m_RowDef.choices[c];
-			if( CAPITALIZE_ALL_OPTION_NAMES )
-				sText.MakeUpper();
+			PREPARE_ITEM_TEXT( sText );
 			fX += ITEMS_ZOOM * pFont->GetLineWidthInSourcePixels( CStringToWstring(sText) );
 			
 			if( c != m_RowDef.choices.size()-1 )
@@ -231,8 +234,7 @@ void OptionRow::AfterImportOptions(
 
 			bt->LoadFromFont( THEME->GetPathF(m_sType,"item") );
 			CString sText = (iChoiceInRowWithFocus==-1) ? "" : m_RowDef.choices[iChoiceInRowWithFocus];
-			if( CAPITALIZE_ALL_OPTION_NAMES )
-				sText.MakeUpper();
+			PREPARE_ITEM_TEXT( sText );
 			bt->SetText( sText );
 			bt->SetZoom( ITEMS_ZOOM );
 			bt->SetShadowLength( 0 );
@@ -272,8 +274,7 @@ void OptionRow::AfterImportOptions(
 				m_textItems.push_back( bt );
 				bt->LoadFromFont( THEME->GetPathF(m_sType,"item") );
 				CString sText = m_RowDef.choices[c];
-				if( CAPITALIZE_ALL_OPTION_NAMES )
-					sText.MakeUpper();
+				PREPARE_ITEM_TEXT( sText );
 				bt->SetText( sText );
 				bt->SetZoom( ITEMS_ZOOM );
 				bt->SetShadowLength( 0 );
@@ -340,7 +341,9 @@ void OptionRow::LoadExit()
 	m_textItems.push_back( bt );
 
 	bt->LoadFromFont( THEME->GetPathF(m_sType,"item") );
-	bt->SetText( THEME->GetMetric("OptionNames","Exit") );
+	CString sText = "Exit";
+	PREPARE_ITEM_TEXT( sText );
+	bt->SetText( sText );
 	bt->SetZoom( ITEMS_ZOOM );
 	bt->SetShadowLength( 0 );
 	bt->SetX( ITEMS_LONG_ROW_SHARED_X );
@@ -427,9 +430,6 @@ void OptionRow::PositionIcons()
 
 void OptionRow::UpdateText()
 {
-	/*
-	CAPITALIZE_ALL_OPTION_NAMES
-	*/
 	switch( m_RowDef.layoutType )
 	{
 	case LAYOUT_SHOW_ONE_IN_ROW:
@@ -439,8 +439,7 @@ void OptionRow::UpdateText()
 			int iChoiceWithFocus = m_iChoiceInRowWithFocus[pn];
 
 			CString sText = m_RowDef.choices[iChoiceWithFocus];
-			if( CAPITALIZE_ALL_OPTION_NAMES )
-				sText.MakeUpper();
+			PREPARE_ITEM_TEXT( sText );
 
 			// If player_no is 2 and there is no player 1:
 			int index = min( pn, m_textItems.size()-1 );

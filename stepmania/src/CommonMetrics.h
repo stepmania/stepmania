@@ -19,6 +19,8 @@ extern ThemeMetric<int>			MAX_STEPS_LOADED_FROM_PROFILE;
 extern ThemeMetric<int>			MAX_COURSE_ENTRIES_BEFORE_VARIOUS;
 extern ThemeMetric<float>		TICK_EARLY_SECONDS;
 
+CString THEME_OPTION_ITEM( CString s, bool bOptional );
+
 namespace CommonMetrics
 {
 	const set<Difficulty>& GetDifficultiesToShow();

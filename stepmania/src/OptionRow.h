@@ -200,6 +200,7 @@ protected:
 	ThemeMetric<bool>				CAPITALIZE_ALL_OPTION_NAMES;
 	ThemeMetric<bool>				SHOW_UNDERLINES;
 	ThemeMetric<float>				TWEEN_SECONDS;
+	ThemeMetric<bool>				THEME_ITEMS;
 };
 
 #endif

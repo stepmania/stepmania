@@ -11,6 +11,7 @@
 #include "ThemeManager.h"
 #include "Foreach.h"
 #include "Style.h"
+#include "CommonMetrics.h"
 
 #define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYSIZE(arr); ++Z ) arr[Z]=1.0f; }
 
@@ -590,8 +591,7 @@ CString PlayerOptions::ThemeMod( CString sOneMod )
 
 	/* Theme the mod name (the last string).  Allow this to not exist, since
 	 * characters might use modifiers that don't exist in the theme. */
-	if( THEME->HasMetric( "OptionNames", asTokens.back() ) )
-		asTokens.back() = THEME->GetMetric( "OptionNames", asTokens.back() );
+	asTokens.back() = THEME_OPTION_ITEM( asTokens.back(), true );
 
 	return join( " ", asTokens );
 }

@@ -76,6 +76,12 @@ public:
 ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW;
 const set<CourseDifficulty>& CommonMetrics::GetCourseDifficultiesToShow() { return COURSE_DIFFICULTIES_TO_SHOW.m_v; }
 
+CString THEME_OPTION_ITEM( CString s, bool bOptional )
+{
+	if( bOptional && !THEME->HasMetric("OptionNames",s) )
+		return s;
+	return THEME->GetMetric( "OptionNames", s );
+}
 
 
 /*
