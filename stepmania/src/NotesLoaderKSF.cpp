@@ -276,6 +276,9 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	if( arrayKSFFileNames.empty() )
 		RageException::Throw( "Couldn't find any KSF files in '%s'", sDir.c_str() );
 
+	if(!LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[0], out))
+		return false;
+
 	// load the Notes from the rest of the KSF files
 	unsigned i;
 	for( i=0; i<arrayKSFFileNames.size(); i++ ) 
@@ -289,9 +292,6 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 
 		out.m_apNotes.push_back( pNewNotes );
 	}
-
-	if(!LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[0], out))
-		return false;
 
 	return true;
 }
