@@ -38,6 +38,10 @@ ScreenEditCoursesMenu::ScreenEditCoursesMenu( CString sName ) : Screen( sName )
 {
 	LOG->Trace( "ScreenEditCoursesMenu::ScreenEditCoursesMenu()" );
 
+	/* Enable all players. */
+	for( int pn=0; pn<NUM_PLAYERS; pn++ )
+		GAMESTATE->m_bSideIsJoined[pn] = true;
+
 	GAMESTATE->m_CurStyle = STYLE_INVALID;
 
 	m_Selector.SetXY( 0, 0 );
