@@ -364,9 +364,6 @@ void ForceCrashHandler( const char *reason )
 
 void ForceCrashHandlerDeadlock( CString reason, uint64_t iID )
 {
-#if defined(DARWIN)
-	SuspendThread(iID);
-#endif
 	CrashData crash;
 	memset( &crash, 0, sizeof(crash) );
 

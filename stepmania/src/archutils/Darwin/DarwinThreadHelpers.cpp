@@ -23,6 +23,8 @@ bool GetThreadBacktraceContext(uint64_t iID, BacktraceContext *ctx)
 	/* Can't GetThreadBacktraceContext the current thread. */
 	ASSERT(iID != GetCurrentThreadId());
 
+	SuspendThread( iID );
+
 	thread_act_t thread = thread_act_t(iID);
 	ppc_thread_state state;
 	mach_msg_type_number_t count = PPC_THREAD_STATE_COUNT;
