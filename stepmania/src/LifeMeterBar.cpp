@@ -16,7 +16,7 @@ static ThemeMetric<float> METER_WIDTH		("LifeMeterBar","MeterWidth");
 static ThemeMetric<float> METER_HEIGHT		("LifeMeterBar","MeterHeight");
 static ThemeMetric<float> DANGER_THRESHOLD	("LifeMeterBar","DangerThreshold");
 static ThemeMetric<int> NUM_CHAMBERS		("LifeMeterBar","NumChambers");
-static ThemeMetric<int> NUM_STRIPS		("LifeMeterBar","NumStrips");
+static ThemeMetric<int> NUM_STRIPS			("LifeMeterBar","NumStrips");
 static ThemeMetric<float> INITIAL_VALUE		("LifeMeterBar","InitialValue");
 
 
@@ -479,23 +479,31 @@ void LifeMeterBar::Update( float fDeltaTime )
 
 	for( int i=0; i<10; i++ )
 	{
-
 		const float fDelta = m_fLifePercentage - m_fTrailingLifePercentage;
 
-		const float fSpringForce = fDelta * 2.0f;
-		m_fLifeVelocity += fSpringForce * fDeltaTime;
+		// Don't apply spring and viscous forces if we're full or empty.
+		// Just move straight to either full or empty.
+		if( IsFailing() || IsHot() )
+		{
+			m_fLifeVelocity = (fDelta / fabsf(fDelta)) * 4;
+		}
+		else
+		{
+			const float fSpringForce = fDelta * 2.0f;
+			m_fLifeVelocity += fSpringForce * fDeltaTime;
 
-		const float fViscousForce = -m_fLifeVelocity * 0.2f;
-		m_fLifeVelocity += fViscousForce * fDeltaTime;
+			const float fViscousForce = -m_fLifeVelocity * 0.2f;
+			m_fLifeVelocity += fViscousForce * fDeltaTime;
+		}
 
 		CLAMP( m_fLifeVelocity, -.06f, +.02f );
 
 		m_fTrailingLifePercentage += m_fLifeVelocity * fDeltaTime;
 	}
 
-	//It doesn't make sense to have a heavily negetive
-	//or heavily overloaded lifebar.
-	CLAMP( m_fTrailingLifePercentage, -0.1f, 2.0f );
+	// Don't clamp life percentage a little outside the visible range so
+	// that the clamp doesn't dampen the "jiggle" of the meter.
+	CLAMP( m_fTrailingLifePercentage, -0.1f, 1.1f );
 	
 	m_fPassingAlpha += IsPastPassmark() ? +fDeltaTime*2 : -fDeltaTime*2;
 	CLAMP( m_fPassingAlpha, 0, 1 );
@@ -514,7 +522,11 @@ void LifeMeterBar::DrawPrimitives()
 	m_pStream->m_fPassingAlpha = m_fPassingAlpha;
 	m_pStream->m_fHotAlpha = m_fHotAlpha;
 
-	float fPercentRed = (m_fTrailingLifePercentage<DANGER_THRESHOLD) ? RageFastSin( RageTimer::GetTimeSinceStartFast()*PI*4 )/2+0.5f : 0;
+	float fPercentRed = 0;
+	if( IsFailing() ) 
+		fPercentRed = 0;
+	else if( m_fTrailingLifePercentage<DANGER_THRESHOLD ) 
+		fPercentRed = RageFastSin( RageTimer::GetTimeSinceStartFast()*PI*4 )/2+0.5f;
 	m_quadBlackBackground.SetDiffuse( RageColor(fPercentRed*0.8f,0,0,1) );
 
 	ActorFrame::DrawPrimitives();
