@@ -99,31 +99,13 @@ float ActorFrame::GetTweenTimeLeft() const
 
 }
 
+bool CompareActorsByZDesc(const Actor *p1, const Actor *p2)
+{
+	return p1->GetZ() > p2->GetZ();
+}
+
 void ActorFrame::SortByZ()
 {
-	// Sort to have descending Z values so we draw back to front.
-	// STL sort()s typically use qsort, which won't preserve 
-	// ordering of Actors with equal Z values.
-	// Sort it ourselves.  -Chris
-	vector<Actor*> v;
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-	{
-		Actor* pToInsert = m_SubActors[i];
-
-	        unsigned j;
-		for( j=0; j<v.size(); j++ )
-			if( pToInsert->GetZ() > v[j]->GetZ() )
-			{
-				v.insert( v.begin()+j, pToInsert );
-				break;
-			}
-
-		if( j == v.size() )
-			v.push_back( pToInsert );
-	}
-
-	for( unsigned j=0; j<v.size(); j++ )
-		printf( "%.0f ", v[j]->GetZ() );
-
-	m_SubActors = v;
+	// Preserve ordering of Actors with equal Z values.
+	stable_sort( m_SubActors.begin(), m_SubActors.end(), CompareActorsByZDesc );
 }
