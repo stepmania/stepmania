@@ -47,7 +47,7 @@ static void LuaDifficulty(lua_State* L)
 {
 	FOREACH_Difficulty( d )
 	{
-		CString s = DifficultyNames[d];
+		CString s = DifficultyToString(d);
 		s.MakeUpper();
 		LUA->SetGlobal( "DIFFICULTY_"+s, d );
 	}
@@ -79,6 +79,18 @@ CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 	}
 	return DIFFICULTY_INVALID;
 }
+
+static void LuaCourseDifficulty(lua_State* L)
+{
+	FOREACH_CourseDifficulty( d )
+	{
+		CString s = CourseDifficultyToString(d);
+		s.MakeUpper();
+		LUA->SetGlobal( "COURSE_DIFFICULTY_"+s, d );
+	}
+	LUA->SetGlobal( "NUM_COURSE_DIFFICULTIES", NUM_COURSE_DIFFICULTIES );
+}
+REGISTER_WITH_LUA_FUNCTION( LuaCourseDifficulty );
 
 /*
  * (c) 2001-2004 Chris Danford
