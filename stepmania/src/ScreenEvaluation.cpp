@@ -361,7 +361,6 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_textSongsSurvived[p].TurnShadowOff();
 				m_textSongsSurvived[p].SetXY( SONGS_SURVIVED_X(p), SONGS_SURVIVED_Y );
 
-				/* XXX: untested (courses not working at the moment) */
 				int StagesPlayed = stageStats.iSongsPassed[p];
 				/* If the last song was failed, count it anyway: */
 				if(stageStats.bFailed[p]) StagesPlayed++;
