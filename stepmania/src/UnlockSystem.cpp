@@ -178,7 +178,7 @@ bool UnlockSystem::LoadFromDATFile()
 			continue;
 		}
 
-		if( stricmp(sParams[0],"ROULETTE") )
+		if( !stricmp(sParams[0],"ROULETTE") )
 		{
 			for( unsigned j = 1; j < sParams.params.size(); ++j )
 				m_RouletteCodes.insert( atoi(sParams[j]) );
