@@ -53,7 +53,7 @@ protected:
 	int UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 	void OnRowDestroyed( int col, int iStepIndex );
 	void HandleNoteScore( TapNoteScore score, int iNumTapsInRow );
-	void HandleNoteScore( HoldNoteScore score );
+	void HandleNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore );
 
 	static float GetMaxBeatDifference();
 

@@ -214,10 +214,10 @@ void Player::Update( float fDeltaTime )
 
 		// if they got a bad score or haven't stepped on the corresponding tap yet
 		const TapNoteScore tns = m_TapNoteScores[hn.m_iTrack][iHoldStartIndex];
+		const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this hold?
 
 		if( hn.m_fStartBeat < fSongBeat && fSongBeat < hn.m_fEndBeat )	// if the song beat is in the range of this hold
 		{
-			const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this hold?
 			const bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI )  ||  PREFSMAN->m_bAutoPlay  ||  GAMESTATE->m_bDemonstration;
 
 			m_NoteField.m_bIsHoldingHoldNote[i] = bIsHoldingButton && bSteppedOnTapNote;	// set host flag so NoteField can do intelligent drawing
@@ -247,8 +247,9 @@ void Player::Update( float fDeltaTime )
 			m_NoteField.m_fHoldNoteLife[i] = fLife;	// update the NoteField display
 		}
 
-		// check for NG
-		if( fLife == 0 )	// the player has not pressed the button for a long time!
+		/* check for NG.  If the head was missed completely, don't count
+		 * an NG. */
+		if( bSteppedOnTapNote && fLife == 0 )	// the player has not pressed the button for a long time!
 		{
 			hns = HNS_NG;
 			HandleNoteScore( hns, tns );
@@ -257,9 +258,8 @@ void Player::Update( float fDeltaTime )
 		}
 
 		// check for OK
-		if( fSongBeat >= hn.m_fEndBeat )	// if this HoldNote is in the past
+		if( fSongBeat >= hn.m_fEndBeat && fLife > 0 )	// if this HoldNote is in the past
 		{
-			// At this point fLife > 0, or else we would have marked it NG above
 			fLife = 1;
 			hns = HNS_OK;
 			HandleNoteScore( hns, tns );
