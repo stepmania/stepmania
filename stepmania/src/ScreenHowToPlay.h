@@ -28,19 +28,16 @@ public:
 
 protected:
 	virtual void Step( float fDelta );
-	LifeMeterBar	m_LifeMeterBar;
+	LifeMeterBar*	m_pLifeMeterBar;
 	BGAnimation		m_Overlay;
-	Player			m_Player;
-	Model			m_mCharacter;
-	Model			m_mDancePad;
-	bool			m_bUsingCharacter;
-	bool			m_bUsingPad;
-	bool			m_bUsingLifeBar;
-	bool			m_bUsingPlayer;
+	Player*			m_pPlayer;
+	Model*			m_pmCharacter;
+	Model*			m_pmDancePad;
 	int				m_iPerfects;
 	int				m_iNumPerfects;
 
-	Song*			m_pSong;
+	Song			m_Song;
+	NoteData		m_NoteData;
 	float			m_fFakeSecondsIntoSong;
 };
 
