@@ -166,7 +166,7 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString I
 	}
 } 
 
-Dialog::Result DialogDriver_Win32::RetryCancel( CString sMessage, CString ID )
+Dialog::Result DialogDriver_Win32::AbortRetry( CString sMessage, CString ID )
 {
 #if defined(HAVE_SDL)
 	SDL_PumpEvents();
@@ -176,7 +176,7 @@ Dialog::Result DialogDriver_Win32::RetryCancel( CString sMessage, CString ID )
 	{
 	case IDRETRY:	return Dialog::retry;
 	default:	ASSERT(0);
-	case IDCANCEL:	return Dialog::cancel;
+	case IDCANCEL:	return Dialog::abort;
 	}
 } 
 

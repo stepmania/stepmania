@@ -11,11 +11,11 @@ namespace Dialog
 	void SetWindowed( bool bWindowed );
 	bool IsShowingDialog();
 
-	enum Result { abort, retry, ignore, cancel };
+	enum Result { abort, retry, ignore };
 	void Error( CString error, CString ID = "" );
 	void OK( CString sMessage, CString ID = "" );
 	Result AbortRetryIgnore( CString sMessage, CString ID = "" );
-	Result RetryCancel( CString sMessage, CString ID = "" );
+	Result AbortRetry( CString sMessage, CString ID = "" );
 
 	/* for DialogDrivers */
 	void IgnoreMessage( CString ID );

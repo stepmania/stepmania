@@ -9,7 +9,7 @@ public:
 	virtual void Error( CString sMessage, CString ID ) { printf("Error: %s\n", sMessage.c_str()); }
 	virtual void OK( CString sMessage, CString ID ) {}
 	virtual Dialog::Result AbortRetryIgnore( CString sMessage, CString ID ) { return Dialog::ignore; } 
-	virtual Dialog::Result RetryCancel( CString sMessage, CString ID ) { return Dialog::cancel; } 
+	virtual Dialog::Result AbortRetry( CString sMessage, CString ID ) { return Dialog::abort; } 
 
 	virtual CString Init() { return ""; }
 	virtual ~DialogDriver() { }

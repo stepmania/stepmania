@@ -9,7 +9,7 @@ public:
 	void Error( CString sMessage, CString ID );
 	void OK( CString sMessage, CString ID );
 	Dialog::Result AbortRetryIgnore( CString sMessage, CString ID );
-	Dialog::Result RetryCancel( CString sMessage, CString ID );
+	Dialog::Result AbortRetry( CString sMessage, CString ID );
 };
 
 #define HAVE_DIALOG_WIN32

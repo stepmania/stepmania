@@ -541,7 +541,7 @@ try_element_again:
 	if( category != Other )
 		res = Dialog::AbortRetryIgnore(sMessage, "MissingThemeElement");
 	else
-		res = Dialog::RetryCancel(sMessage, "MissingThemeElement");
+		res = Dialog::AbortRetry(sMessage, "MissingThemeElement");
 	switch( res )
 	{
 	case Dialog::retry:
@@ -562,9 +562,7 @@ try_element_again:
 
 		Cache[sFileName] = GetPath( category, "", "_missing" );
 		return Cache[sFileName];
-	/* XXX: "abort" and "cancel" are synonyms; merge */
 	case Dialog::abort:
-	case Dialog::cancel:
 		RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
 			sCategory.c_str(),
 			sFileName.c_str(), 

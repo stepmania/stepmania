@@ -169,23 +169,23 @@ Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString ID )
 	return ret;
 }
 
-Dialog::Result Dialog::RetryCancel( CString sMessage, CString ID )
+Dialog::Result Dialog::AbortRetry( CString sMessage, CString ID )
 {
 	Dialog::Init();
 
 	LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), ID.c_str() );
 
 	if( ID != "" && MessageIsIgnored( ID ) )
-		return g_NullDriver.RetryCancel( sMessage, ID );
+		return g_NullDriver.AbortRetry( sMessage, ID );
 
 	g_bIsShowingDialog = true;
 
 	// only show Dialog if windowed
 	Dialog::Result ret;
 	if( !g_bWindowed )
-		ret = g_NullDriver.RetryCancel( sMessage, ID );
+		ret = g_NullDriver.AbortRetry( sMessage, ID );
 	else
-		ret = g_pImpl->RetryCancel( sMessage, ID );	// call derived version
+		ret = g_pImpl->AbortRetry( sMessage, ID );	// call derived version
 	
 	g_bIsShowingDialog = false;
 

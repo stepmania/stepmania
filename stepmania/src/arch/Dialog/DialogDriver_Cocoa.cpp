@@ -39,6 +39,7 @@ void DialogDriver_Cocoa::Error( CString sError, CString ID )
 	CFRelease(error);
 }
 
+// XXX: should show three options, not two
 Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( CString sMessage, CString ID )
 {
 	CFStringRef error = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingASCII );
