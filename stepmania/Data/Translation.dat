@@ -335,8 +335,8 @@ ArtistTo: Pokémon Jhoto
 TitleFrom: Watashi No Tamagoyaki
 TitleTo: 私の卵焼き
 *
-TitleFrom: soramimi keeki
-TitleTo: そらみみけーき
+TitleFrom: sora *mimi keek[ei]
+TitleTo: 空耳ケーキ
 *
 TitleFrom: The Peace!
 TitleTo: The☆Peace!
@@ -670,9 +670,6 @@ TitleFrom: Sabishii Kute Loneliness
 ArtistFrom: wandasu
 TitleTo: 淋しくてLoneliness
 ArtistTo: ワンダース
-*
-TitleFrom: Sora Mimi Keeke
-TitleTo: 空耳ケーキ
 *
 # Foonmix:
 # "Yubikiri" has the artist translit in the subtitle translit; move it.
