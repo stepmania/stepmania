@@ -131,7 +131,7 @@ void GameState::Reset()
 		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
 		m_PreferredCourseDifficulty[p] = DIFFICULTY_MEDIUM;
 	}
-	m_SortOrder = SORT_INVALID;
+	m_PreferredSortOrder = SORT_INVALID;
 	m_PlayMode = PLAY_MODE_INVALID;
 	m_bEditing = false;
 	m_bDemonstrationOrJukebox = false;
@@ -255,8 +255,8 @@ void GameState::PlayersFinalized()
 			GAMESTATE->ApplyModifiers( pn, sModifiers );
 		}
 		// Only set the sort order if it wasn't already set by a GameCommand (or by an earlier profile)
-		if( m_SortOrder == SORT_INVALID && pProfile->m_SortOrder != SORT_INVALID )
-			m_SortOrder = pProfile->m_SortOrder;
+		if( m_PreferredSortOrder == SORT_INVALID && pProfile->m_SortOrder != SORT_INVALID )
+			m_PreferredSortOrder = pProfile->m_SortOrder;
 		if( pProfile->m_LastDifficulty != DIFFICULTY_INVALID )
 			m_PreferredDifficulty[pn] = pProfile->m_LastDifficulty;
 		if( pProfile->m_LastCourseDifficulty != DIFFICULTY_INVALID )
@@ -388,8 +388,8 @@ void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
 
 	pProfile->SetDefaultModifiers( this->m_pCurGame, m_pPlayerState[pn]->m_PlayerOptions.GetSavedPrefsString() );
-	if( IsSongSort(m_SortOrder) )
-		pProfile->m_SortOrder = m_SortOrder;
+	if( IsSongSort(m_PreferredSortOrder) )
+		pProfile->m_SortOrder = m_PreferredSortOrder;
 	if( m_PreferredDifficulty[pn] != DIFFICULTY_INVALID )
 		pProfile->m_LastDifficulty = m_PreferredDifficulty[pn];
 	if( m_PreferredCourseDifficulty[pn] != DIFFICULTY_INVALID )

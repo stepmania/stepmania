@@ -328,8 +328,9 @@ done:
 	}
 }
 
-void PaneDisplay::SetFromGameState()
+void PaneDisplay::SetFromGameState( SortOrder so )
 {
+	m_SortOrder = so;
 	m_CurMode = GetMode();
 	if( PaneMode[m_CurPane] != m_CurMode )
 		SetFocus( GetNext( m_PreferredPaneForMode[m_CurMode], 0 ) );
@@ -345,14 +346,13 @@ void PaneDisplay::SetFromGameState()
 
 PaneModes PaneDisplay::GetMode() const
 {
-	switch( GAMESTATE->m_SortOrder )
+	switch( m_SortOrder )
 	{
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
 	case SORT_ONI_COURSES:
 	case SORT_ENDLESS_COURSES:
 		return PANEMODE_COURSE;
-	case SORT_SORT_MENU:
 	case SORT_MODE_MENU:
 		return m_CurMode; // leave it
 	default:
@@ -386,7 +386,7 @@ void PaneDisplay::SetFocus( PaneTypes NewPane )
 	m_CurPane = NewPane;
 	m_PreferredPaneForMode[m_CurMode] = NewPane;
 
-	SetFromGameState();
+	SetFromGameState( m_SortOrder );
 }
 
 bool PaneDisplay::PaneIsValid( PaneTypes p ) const

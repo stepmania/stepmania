@@ -158,12 +158,6 @@ void FadingBanner::LoadAllMusic()
 	m_Banner[m_iIndexLatest].LoadAllMusic();
 }
 
-void FadingBanner::LoadSort()
-{
-	BeforeChange();
-	m_Banner[m_iIndexLatest].LoadSort();
-}
-
 void FadingBanner::LoadMode()
 {
 	BeforeChange();

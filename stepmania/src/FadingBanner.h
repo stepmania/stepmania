@@ -17,7 +17,6 @@ public:
 	bool Load( RageTextureID ID );
 	void LoadFromSong( const Song* pSong );		// NULL means no song
 	void LoadAllMusic();
-	void LoadSort();
 	void LoadMode();
 	void LoadFromGroup( CString sGroupName );
 	void LoadFromCourse( const Course* pCourse );

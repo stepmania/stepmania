@@ -279,7 +279,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	}	
 
 	m_MusicSortDisplay.SetName( "SortIcon" );
-	m_MusicSortDisplay.Set( GAMESTATE->m_SortOrder );
+	m_MusicSortDisplay.Set( m_MusicWheel.GetSortOrder() );
 	SET_XY( m_MusicSortDisplay );
 	this->AddChild( &m_MusicSortDisplay );
 
@@ -470,7 +470,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	TweenSongPartsOnScreen( true );
 	TweenCoursePartsOnScreen( true );
 
-	switch( GAMESTATE->m_SortOrder )
+	switch( m_MusicWheel.GetSortOrder() )
 	{
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
@@ -526,7 +526,7 @@ void ScreenSelectMusic::TweenOnScreen()
 
 void ScreenSelectMusic::TweenOffScreen()
 {
-	switch( GAMESTATE->m_SortOrder )
+	switch( m_MusicWheel.GetSortOrder() )
 	{
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
@@ -619,7 +619,7 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 		m_sprHighScoreFrame[p].RunCommands( SCORE_FRAME_SORT_CHANGE_COMMAND(p) );
 	}
 
-	switch( GAMESTATE->m_SortOrder )
+	switch( m_MusicWheel.GetSortOrder() )
 	{
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
@@ -627,7 +627,6 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 	case SORT_ENDLESS_COURSES:
 		SwitchDisplayMode( DISPLAY_COURSES );
 		break;
-	case SORT_SORT_MENU:
 	case SORT_MODE_MENU:
 		SwitchDisplayMode( DISPLAY_MODES );
 		break;
@@ -871,19 +870,6 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 				m_soundLocked.Play();
 			else
 				ChangeDifficulty( pn, +1 );
-			return;
-		}
-		if( CodeDetector::EnteredSortMenu(GameI.controller) )
-		{
-			/* Ignore the SortMenu when in course mode.  However, still check for the code, so
-			 * if people try pressing left+right+start in course mode, we don't pick the selected
-			 * course on them. */
-			if( GAMESTATE->IsCourseMode() )
-				; /* nothing */
-			else if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
-				m_soundLocked.Play();
-			else
-				m_MusicWheel.ChangeSort( SORT_SORT_MENU );
 			return;
 		}
 		if( CodeDetector::EnteredModeMenu(GameI.controller) )
@@ -1259,7 +1245,7 @@ void ScreenSelectMusic::AfterStepsChange( PlayerNumber pn )
 	m_GrooveRadar.SetFromSteps( pn, pSteps );
 	m_MusicWheel.NotesOrTrailChanged( pn );
 	if( SHOW_PANES )
-		m_PaneDisplay[pn].SetFromGameState();
+		m_PaneDisplay[pn].SetFromGameState( m_MusicWheel.GetSortOrder() );
 }
 
 void ScreenSelectMusic::AfterTrailChange( PlayerNumber pn )
@@ -1304,7 +1290,7 @@ void ScreenSelectMusic::AfterTrailChange( PlayerNumber pn )
 	m_GrooveRadar.SetEmpty( pn );
 	m_MusicWheel.NotesOrTrailChanged( pn );
 	if( SHOW_PANES )
-		m_PaneDisplay[pn].SetFromGameState();
+		m_PaneDisplay[pn].SetFromGameState( m_MusicWheel.GetSortOrder() );
 }
 
 void ScreenSelectMusic::SwitchToPreferredDifficulty()
@@ -1451,11 +1437,8 @@ void ScreenSelectMusic::AfterMusicChange()
 				break;
 			case TYPE_SORT:
 				bWantBanner = false; /* we load it ourself */
-				switch( GAMESTATE->m_SortOrder )
+				switch( m_MusicWheel.GetSortOrder() )
 				{
-				case SORT_SORT_MENU:
-					m_Banner.LoadSort();
-					break;
 				case SORT_MODE_MENU:
 					m_Banner.LoadMode();
 					break;
@@ -1729,15 +1712,17 @@ void ScreenSelectMusic::UpdateOptionsDisplays()
 
 void ScreenSelectMusic::SortOrderChanged()
 {
-	m_MusicSortDisplay.Set( GAMESTATE->m_SortOrder );
+	m_MusicSortDisplay.Set( m_MusicWheel.GetSortOrder() );
+	if( SHOW_PANES )
+		FOREACH_HumanPlayer(pn)
+			m_PaneDisplay[pn].SetFromGameState( m_MusicWheel.GetSortOrder() );
 
-	switch( GAMESTATE->m_SortOrder )
+	switch( m_MusicWheel.GetSortOrder() )
 	{
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
 	case SORT_ONI_COURSES:
 	case SORT_ENDLESS_COURSES:
-	case SORT_SORT_MENU:
 	case SORT_MODE_MENU:
 		// do nothing
 		break;

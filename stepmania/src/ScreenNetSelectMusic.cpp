@@ -125,12 +125,12 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 
 	if ( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 	{
-		SortOrder so = GAMESTATE->m_SortOrder;
+		SortOrder so = GAMESTATE->m_PreferredSortOrder;
 		
 		if ( ( so != SORT_TITLE ) && ( so != SORT_ARTIST ) )
 			so = SORT_TITLE;
 
-		GAMESTATE->m_SortOrder = so;
+		GAMESTATE->m_PreferredSortOrder = so;
 		m_MusicWheel.SetOpenGroup( ssprintf("%c", c ), so );
 		m_MusicWheel.SelectSection( ssprintf("%c", c ) );
 		m_MusicWheel.Move( +1 );
@@ -280,7 +280,7 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 
 	if ( type == IET_FIRST_PRESS )
 		if ( bLeftAndRightPressed )
-			m_MusicWheel.ChangeSort( SORT_SORT_MENU );		
+			m_MusicWheel.ChangeSort( SORT_MODE_MENU );		
 		else
 			m_MusicWheel.Move( -1 );
 }
@@ -293,7 +293,7 @@ void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 
 	if ( type == IET_FIRST_PRESS )
 		if ( bLeftAndRightPressed )
-			m_MusicWheel.ChangeSort( SORT_SORT_MENU );		
+			m_MusicWheel.ChangeSort( SORT_MODE_MENU );		
 		else
 			m_MusicWheel.Move( +1 );
 }

@@ -27,7 +27,6 @@ void Banner::CacheGlobalBanners()
 	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Common","fallback banner")) );
 	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","roulette")) );
 	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","random")) );
-	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","Sort")) );
 	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","Mode")) );
 }
 
@@ -92,12 +91,6 @@ void Banner::LoadFromSong( Song* pSong )		// NULL means no song
 void Banner::LoadAllMusic()
 {
 	Load( THEME->GetPathG("Banner","All") );
-	m_bScrolling = false;
-}
-
-void Banner::LoadSort()
-{
-	Load( THEME->GetPathG("Banner","Sort") );
 	m_bScrolling = false;
 }
 

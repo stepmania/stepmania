@@ -74,13 +74,14 @@ public:
 	bool SelectSong( Song *p );
 	bool SelectSection( const CString & SectionName );
 	void SetOpenGroup(CString group, SortOrder so = SORT_INVALID);
+	SortOrder GetSortOrder() const { return m_SortOrder; }
 
 protected:
 	void GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sPreferredGroup );
 	void BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItems, SortOrder so );
 	bool SelectSongOrCourse();
 	bool SelectCourse( Course *p );
-	bool SelectSort( SortOrder so );
+	bool SelectModeMenuItem();
 	void ChangeMusic(int dist); /* +1 or -1 */
 
 	ScrollBar			m_ScrollBar;
@@ -93,7 +94,8 @@ protected:
 	
 	int					m_iSelection;		// index into m_CurWheelItemData
 	CString				m_sExpandedSectionName;
- 	SortOrder		m_LastSortOrder;
+	CString				m_sLastModeMenuItem;
+	SortOrder			m_SortOrder;
 
 	int					m_iSwitchesLeftInSpinDown;		
 	float				m_fLockedWheelVelocity;

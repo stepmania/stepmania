@@ -72,7 +72,7 @@ public:
 	PaneDisplay();
 
 	void Load( PlayerNumber pn );
-	void SetFromGameState();
+	void SetFromGameState( SortOrder so );
 	void Move( int dir );
 
 	void Update( float fDeltaTime );
@@ -85,6 +85,7 @@ private:
 	PaneModes GetMode() const;
 	void SetContent( PaneContents c );
 
+	SortOrder		m_SortOrder;
 	AutoActor		m_sprPaneUnder;
 	AutoActor		m_sprPaneOver;
 

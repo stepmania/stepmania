@@ -84,7 +84,6 @@ static const CString SortOrderNames[NUM_SORT_ORDERS] = {
 	"MediumMeter",
 	"HardMeter",
 	"ChallengeMeter",
-	"Sort",
 	"Mode",
 	"Courses",
 	"Nonstop",

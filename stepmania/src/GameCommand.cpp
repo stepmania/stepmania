@@ -114,7 +114,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( m_pTrail && GAMESTATE->m_pCurTrail[pn] != m_pTrail )
 		return false;
-	if( m_SortOrder != SORT_INVALID && GAMESTATE->m_SortOrder != m_SortOrder )
+	if( m_SortOrder != SORT_INVALID && GAMESTATE->m_PreferredSortOrder != m_SortOrder )
 		return false;
 
 	return true;
@@ -593,7 +593,7 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 	if( !m_sSongGroup.empty() )
 		GAMESTATE->m_sPreferredSongGroup = m_sSongGroup;
 	if( m_SortOrder != SORT_INVALID )
-		GAMESTATE->m_SortOrder = m_SortOrder;
+		GAMESTATE->m_PreferredSortOrder = m_SortOrder;
 	if( m_iUnlockIndex != -1 )
 		UNLOCKMAN->UnlockCode( m_iUnlockIndex );
 	if( m_sSoundPath != "" )

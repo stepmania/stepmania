@@ -282,7 +282,6 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return "N/A";
 		}
-	case SORT_SORT_MENU:
 	case SORT_MODE_MENU:
 		return "";
 	case SORT_ALL_COURSES:
