@@ -22,6 +22,13 @@
 /* mkdir is missing the mode arg */
 #define mkdir(p,m) mkdir(p)
 
+typedef time_t time_t;
+struct tm;
+struct tm *my_localtime_r( const time_t *timep, struct tm *result );
+#define localtime_r my_localtime_r
+struct tm *my_gmtime_r( const time_t *timep, struct tm *result );
+#define gmtime_r my_gmtime_r
+
 /* Missing stdint types: */
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
