@@ -29,6 +29,7 @@
 #include "CodeDetector.h"
 #include "RageTextureManager.h"
 #include "UnlockSystem.h"
+#include "ProductInfo.h"
 
 
 #define LOGO_ON_COMMAND				THEME->GetMetric("ScreenTitleMenu","LogoOnCommand")
@@ -79,7 +80,7 @@ ScreenTitleMenu::ScreenTitleMenu() : Screen("ScreenTitleMenu")
 
 	m_textVersion.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textVersion.Command( VERSION_ON_COMMAND );
-	m_textVersion.SetText( "CVS" );
+	m_textVersion.SetText( PRODUCT_VER );
 	this->AddChild( &m_textVersion );
 
 

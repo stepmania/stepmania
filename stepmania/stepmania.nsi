@@ -4,19 +4,14 @@
 ; I use the following command to create the installer:
 ; D:\Program Files\NSIS>makensis.exe /v3 /cd "m:\Dev Projects\CVS\stepmania\stepmania.nsi"
 ;
-; NOTE: this .NSI script is designed for NSIS v1.8+
+; NOTE: this .NSI script is designed for NSIS v2.0+
 
-; Don't change this.
-!define PRODUCT_NAME "StepMania"
 
-!define VERSION "CVS"
-; !define VERSION "3.01"
-
-; If this is changed, different versions of SM can be installed
-; in parallel.  Normal releases should be StepMania; CVS releases
-; should be StepMania CVS.
-!define PRODUCT_ID "StepMania CVS"
-!define PRODUCT_NAME_VER "${PRODUCT_NAME} ${VERSION}"
+; Product info is in a separate file so that people will change
+; the version info for the installer and the program at the same time.
+; It's confusing when the installer and shortcut text doesn't match the 
+; title screen version text.
+!include "src\ProductInfo.inc"
 
 !system "echo This may take a moment ..." ignore
 !system "utils\upx StepMania.exe" ignore
@@ -27,9 +22,8 @@
 !system "utils\upx SDL.dll" ignore
 !system "utils\upx SDL_image.dll" ignore
 
-Name "${PRODUCT_NAME}"
-OutFile "StepMania-CVS-20030715a.exe"
-;OutFile "StepMania301.exe"
+Name "${PRODUCT_NAME_VER}"
+OutFile "${PRODUCT_NAME_VER}.exe"
 
 ; Some default compiler settings (uncomment and change at will):
 SetCompress auto ; (can be off or force)
