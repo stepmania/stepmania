@@ -473,23 +473,6 @@ void RageDisplay::LoadMenuPerspective( float fovDegrees, float fVanishPointX, fl
 				-fVanishPointX+SCREEN_CENTER_X, -fVanishPointY+SCREEN_CENTER_Y, 0,
 				0.0f, 1.0f, 0.0f) );
 	}
-
-	const float fDAR = GetVideoModeParams().fDisplayAspectRatio;
-	const float fOutputDAR = GetVideoModeParams().fOutputDisplayAspectRatio;
-
-	if( fOutputDAR != -1 && fabsf(fDAR-fOutputDAR) > 0.001f )
-	{
-		if( fOutputDAR > fDAR )
-		{
-			/* Letterboxed horizontally (showing widescreen on a regular monitor). */
-			float fYAdjust = fDAR / fOutputDAR;
-			g_ProjectionStack.Scale( 1, fYAdjust, 1 );
-		} else {
-			/* Letterboxed vertically (showing 4:3 on a widescreen monitor). */
-			float fXAdjust = fOutputDAR / fDAR;
-			g_ProjectionStack.Scale( fXAdjust, 1, 1 );
-		}
-	}
 }
 
 
@@ -745,6 +728,7 @@ void RageCompiledGeometry::Set( const vector<msMesh> &vMeshes, bool bNeedsNormal
 {
 	m_bNeedsNormals = bNeedsNormals;
 
+	m_bNeedsTextureMatrixScale = false;
 	size_t totalVerts = 0;
 	size_t totalTriangles = 0;
 
@@ -764,6 +748,10 @@ void RageCompiledGeometry::Set( const vector<msMesh> &vMeshes, bool bNeedsNormal
 
 		totalVerts += Vertices.size();
 		totalTriangles += Triangles.size();
+
+		for( unsigned j = 0; j < Vertices.size(); ++j )
+			if( Vertices[j].TextureMatrixScale.x != 1.0f || Vertices[j].TextureMatrixScale.y != 1.0f )
+				m_bNeedsTextureMatrixScale = true;
 	}
 
 	this->Allocate( vMeshes );

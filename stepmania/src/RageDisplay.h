@@ -38,6 +38,7 @@ protected:
 	};
 	vector<MeshInfo>	m_vMeshInfo;
 	bool m_bNeedsNormals;
+	bool m_bNeedsTextureMatrixScale;
 };
 
 class RageDisplay
