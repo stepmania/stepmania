@@ -522,6 +522,7 @@ void ScreenEdit::Init()
 
 	g_iShiftAnchor = -1;
 
+	m_EditMode = MODE_INVALID;
 	TransitionEditMode( MODE_EDITING );
 	
 	this->AddChild( &m_Background );
