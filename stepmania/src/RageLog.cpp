@@ -169,78 +169,6 @@ void RageLog::Warn( const char *fmt, ...)
 	Write(WRITE_TO_INFO | WRITE_LOUD, ssprintf("WARNING: %s", sBuff.c_str()));
 }
 
-static const int STATICLOG_SIZE = 1024*32;
-static char staticlog[STATICLOG_SIZE]="";
-static char *staticlog_ptr=staticlog, *staticlog_end=staticlog+STATICLOG_SIZE;
-void RageLog::AddToInfo( CString str )
-{
-	int len = str.size()+3; /* +\r +\n +null */
-	if(staticlog_ptr+len >= staticlog_end)
-	{
-		const char *txt = "\nStaticlog limit reached\n";
-		char *max_ptr = staticlog_end-strlen(txt)-1;
-		if(staticlog_ptr > max_ptr)
-			staticlog_ptr = max_ptr;
-
-		strcpy(staticlog_ptr, txt);
-		staticlog_ptr=NULL; /* stop */
-		return;
-	}
-
-	strcpy(staticlog_ptr, str);
-
-	staticlog_ptr[len-3] = '\r';
-	staticlog_ptr[len-2] = '\n';
-	staticlog_ptr[len-1] = 0;
-	/* Advance to sit on the NULL, so the terminator will be overwritten
-	 * on the next log. */
-	staticlog_ptr += len-1;
-}
-
-const char *RageLog::GetInfo()
-{
-	if( staticlog == NULL )
-		staticlog[ sizeof(staticlog)-1 ] = 0;
-	else
-	{
-		int len = min( staticlog_ptr-staticlog, (int) sizeof(staticlog)-1 );
-		staticlog[ len ] = 0;
-	}
-	return staticlog;
-}
-
-/* Since this is a static, preallocated region, even if it gets trampled by
- * a crash we'll just print garbage, not crash due to an invalid pointer. */
-static const int BACKLOG_LINES = 10;
-static char backlog[BACKLOG_LINES][1024];
-static int backlog_start=0, backlog_cnt=0;
-void RageLog::AddToRecentLogs( CString str )
-{
-	int len = str.size();
-	if(len > sizeof(backlog[backlog_start])-1)
-		len = sizeof(backlog[backlog_start])-1;
-
-	strncpy(backlog[backlog_start], str, len);
-	backlog[backlog_start] [ len ] = 0;
-
-	backlog_start++;
-	if(backlog_start > backlog_cnt)
-		backlog_cnt=backlog_start;
-	backlog_start %= BACKLOG_LINES;
-}
-
-const char *RageLog::GetRecentLog( int n )
-{
-	if( n >= BACKLOG_LINES || n >= backlog_cnt )
-		return false;
-	n += backlog_start;
-	n %= BACKLOG_LINES;
-	/* Make sure it's terminated: */
-	backlog[n][ sizeof(backlog[n])-1 ] = 0;
-
-	return backlog[n];
-}
-
 void RageLog::Write( int where, CString str)
 {
 	if( PREFSMAN && PREFSMAN->m_bTimestamping )
@@ -284,6 +212,79 @@ void RageLog::Flush()
 }
 
 
+/* These Get* functions are designed to be called from crash conditions.  We
+ * store the text in a static buffer, which we can always access, and we double-
+ * check that it's null terminated when we return them.  Finally, multi-line
+ * outputs can specify the string used to delineate lines (\n, \r or \r\n).  That
+ * way, crash handlers can simply write() the buffer to a file without having
+ * to convert line endings, which is tedious when you can't malloc(). */
+
+#if defined(_WIN32)
+#define NEWLINE "\r\n"
+#elif defined(DARWIN)
+#define NEWLINE "\r"
+#else
+#define NEWLINE "\n"
+#endif
+
+static char staticlog[1024*32]="";
+static CString staticlog_buf;
+void RageLog::AddToInfo( CString str )
+{
+	int old_len = staticlog_buf.size();
+	staticlog_buf += str + NEWLINE;
+
+	if( staticlog_buf.size() >= sizeof(staticlog) )
+	{
+		CString txt( NEWLINE "Staticlog limit reached" NEWLINE );
+
+		unsigned size_wanted = sizeof(staticlog) - txt.size() - 1;
+		if( size_wanted < staticlog_buf.size() )
+			staticlog_buf.erase( size_wanted, CString::npos );
+		staticlog_buf += txt;
+		old_len = 0;
+	}
+
+	strcpy(staticlog+old_len, staticlog_buf + old_len);
+}
+
+const char *RageLog::GetInfo()
+{
+	staticlog[ sizeof(staticlog)-1 ] = 0;
+	return staticlog;
+}
+
+static const int BACKLOG_LINES = 10;
+static char backlog[BACKLOG_LINES][1024];
+static int backlog_start=0, backlog_cnt=0;
+void RageLog::AddToRecentLogs( CString str )
+{
+	int len = str.size();
+	if(len > sizeof(backlog[backlog_start])-1)
+		len = sizeof(backlog[backlog_start])-1;
+
+	strncpy(backlog[backlog_start], str, len);
+	backlog[backlog_start] [ len ] = 0;
+
+	backlog_start++;
+	if(backlog_start > backlog_cnt)
+		backlog_cnt=backlog_start;
+	backlog_start %= BACKLOG_LINES;
+}
+
+const char *RageLog::GetRecentLog( int n )
+{
+	if( n >= BACKLOG_LINES || n >= backlog_cnt )
+		return false;
+	n += backlog_start;
+	n %= BACKLOG_LINES;
+	/* Make sure it's terminated: */
+	backlog[n][ sizeof(backlog[n])-1 ] = 0;
+
+	return backlog[n];
+}
+
+
 static char g_AdditionalLogStr[10240] = "";
 static int g_AdditionalLogSize = 0;
 
@@ -291,7 +292,7 @@ void RageLog::UpdateMappedLog()
 {
 	CString str;
 	for(map<CString, CString>::const_iterator i = LogMaps.begin(); i != LogMaps.end(); ++i)
-		str += ssprintf("%s\n", i->second.c_str());
+		str += ssprintf("%s" NEWLINE, i->second.c_str());
 
 	g_AdditionalLogSize = min( sizeof(g_AdditionalLogStr), str.size()+1 );
 	memcpy( g_AdditionalLogStr, str.c_str(), g_AdditionalLogSize );
