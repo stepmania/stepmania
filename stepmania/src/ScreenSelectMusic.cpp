@@ -66,6 +66,7 @@ static void FlipSpriteHorizontally(Sprite &s)
 ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
+	ASSERT( !GAMESTATE->IsCourseMode() );
 
 	/* Cache: */
 	g_sFallbackCDTitlePath = THEME->GetPathToG("ScreenSelectMusic fallback cdtitle");
