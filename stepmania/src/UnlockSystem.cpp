@@ -10,7 +10,7 @@
 #include "MsdFile.h"
 #include "ProfileManager.h"
 
-UnlockSystem*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program
+UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program
 
 #define UNLOCKS_PATH "Data/Unlocks.dat"
 
@@ -25,14 +25,14 @@ static const char *g_UnlockNames[NUM_UNLOCK_TYPES] =
 	"TotalStagesCleared"
 };
 
-UnlockSystem::UnlockSystem()
+UnlockManager::UnlockManager()
 {
 	UNLOCKMAN = this;
 
 	Load();
 }
 
-void UnlockSystem::UnlockSong( const Song *song )
+void UnlockManager::UnlockSong( const Song *song )
 {
 	const UnlockEntry *p = FindSong( song );
 	if( !p )
@@ -43,7 +43,7 @@ void UnlockSystem::UnlockSong( const Song *song )
 	UnlockCode( p->m_iCode );
 }
 
-bool UnlockSystem::CourseIsLocked( const Course *course ) const
+bool UnlockManager::CourseIsLocked( const Course *course ) const
 {
 	if( !PREFSMAN->m_bUseUnlockSystem )
 		return false;
@@ -55,7 +55,7 @@ bool UnlockSystem::CourseIsLocked( const Course *course ) const
 	return p->IsLocked();
 }
 
-bool UnlockSystem::SongIsLocked( const Song *song ) const
+bool UnlockManager::SongIsLocked( const Song *song ) const
 {
 	if( !PREFSMAN->m_bUseUnlockSystem )
 		return false;
@@ -68,7 +68,7 @@ bool UnlockSystem::SongIsLocked( const Song *song ) const
 }
 
 /* Return true if the song is *only* available in roulette. */
-bool UnlockSystem::SongIsRouletteOnly( const Song *song ) const
+bool UnlockManager::SongIsRouletteOnly( const Song *song ) const
 {
 	if( !PREFSMAN->m_bUseUnlockSystem )
 		return false;
@@ -84,7 +84,7 @@ bool UnlockSystem::SongIsRouletteOnly( const Song *song ) const
 	return p->IsLocked();
 }
 
-const UnlockEntry *UnlockSystem::FindLockEntry( CString songname ) const
+const UnlockEntry *UnlockManager::FindLockEntry( CString songname ) const
 {
 	for( unsigned i = 0; i < m_SongEntries.size(); i++ )
 		if( !songname.CompareNoCase(m_SongEntries[i].m_sSongName) )
@@ -93,7 +93,7 @@ const UnlockEntry *UnlockSystem::FindLockEntry( CString songname ) const
 	return NULL;
 }
 
-const UnlockEntry *UnlockSystem::FindSong( const Song *pSong ) const
+const UnlockEntry *UnlockManager::FindSong( const Song *pSong ) const
 {
 	for( unsigned i = 0; i < m_SongEntries.size(); i++ )
 		if( m_SongEntries[i].m_pSong == pSong )
@@ -102,7 +102,7 @@ const UnlockEntry *UnlockSystem::FindSong( const Song *pSong ) const
 	return NULL;
 }
 
-const UnlockEntry *UnlockSystem::FindCourse( const Course *pCourse ) const
+const UnlockEntry *UnlockManager::FindCourse( const Course *pCourse ) const
 {
 	for(unsigned i = 0; i < m_SongEntries.size(); i++)
 		if (m_SongEntries[i].m_pCourse== pCourse )
@@ -194,7 +194,7 @@ static float GetSongPoints( const Profile *pProfile )
 	return fSP;
 }
 
-void UnlockSystem::GetPoints( const Profile *pProfile, float fScores[NUM_UNLOCK_TYPES] ) const
+void UnlockManager::GetPoints( const Profile *pProfile, float fScores[NUM_UNLOCK_TYPES] ) const
 {
 	fScores[UNLOCK_ARCADE_POINTS] = GetArcadePoints( pProfile );
 	fScores[UNLOCK_SONG_POINTS] = GetSongPoints( pProfile );
@@ -236,9 +236,9 @@ static UnlockType StringToUnlockType( const CString &s )
 	return UNLOCK_INVALID;
 }
 
-bool UnlockSystem::Load()
+bool UnlockManager::Load()
 {
-	LOG->Trace( "UnlockSystem::Load()" );
+	LOG->Trace( "UnlockManager::Load()" );
 	
 	if( !IsAFile(UNLOCKS_PATH) )
 		return false;
@@ -330,7 +330,7 @@ bool UnlockSystem::Load()
 	return true;
 }
 
-float UnlockSystem::PointsUntilNextUnlock( UnlockType t ) const
+float UnlockManager::PointsUntilNextUnlock( UnlockType t ) const
 {
 	float fScores[NUM_UNLOCK_TYPES];
 	UNLOCKMAN->GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
@@ -347,7 +347,7 @@ float UnlockSystem::PointsUntilNextUnlock( UnlockType t ) const
 
 /* Update the song pointer.  Only call this when it's likely to have changed,
  * such as on load, or when a song title changes in the editor. */
-void UnlockSystem::UpdateSongs()
+void UnlockManager::UpdateSongs()
 {
 	for( unsigned i = 0; i < m_SongEntries.size(); ++i )
 	{
@@ -370,7 +370,7 @@ void UnlockSystem::UpdateSongs()
 
 
 
-void UnlockSystem::UnlockCode( int num )
+void UnlockManager::UnlockCode( int num )
 {
 	FOREACH_PlayerNumber( pn )
 		if( PROFILEMAN->IsUsingProfile(pn) )
@@ -379,7 +379,7 @@ void UnlockSystem::UnlockCode( int num )
 	PROFILEMAN->GetMachineProfile()->m_UnlockedSongs.insert( num );
 }
 
-int UnlockSystem::GetNumUnlocks() const
+int UnlockManager::GetNumUnlocks() const
 {
 	return m_SongEntries.size();
 }

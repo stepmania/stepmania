@@ -1,4 +1,4 @@
-/* UnlockSystem - Unlocks handling. */
+/* UnlockManager - Unlocks handling. */
 
 #ifndef UNLOCK_SYSTEM_H
 #define UNLOCK_SYSTEM_H
@@ -41,12 +41,12 @@ struct UnlockEntry
 	bool	IsLocked() const;
 };
 
-class UnlockSystem
+class UnlockManager
 {
 	friend struct UnlockEntry;
 
 public:
-	UnlockSystem();
+	UnlockManager();
 
 	// returns # of points till next unlock - used for ScreenUnlock
 	float PointsUntilNextUnlock( UnlockType t ) const;
@@ -87,7 +87,7 @@ private:
 	set<int> m_RouletteCodes; // "codes" which are available in roulette and which unlock if rouletted
 };
 
-extern UnlockSystem*	UNLOCKMAN;  // global and accessable from anywhere in program
+extern UnlockManager*	UNLOCKMAN;  // global and accessable from anywhere in program
 
 #endif
 
