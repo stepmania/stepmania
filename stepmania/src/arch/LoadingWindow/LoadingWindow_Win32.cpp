@@ -2,9 +2,9 @@
 #include "../../RageUtil.h"
 
 #include "LoadingWindow_Win32.h"
-#include "../../resource.h"
+#include "RageFileManager.h"
+#include "resource.h"
 #include <windows.h>
-#include "StepMania.h"
 
 HBITMAP g_hBitmap = NULL;
 
