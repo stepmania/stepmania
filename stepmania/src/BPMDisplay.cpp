@@ -43,7 +43,7 @@ void BPMDisplay::Load()
 	m_textBPM.SetDiffuse( NORMAL_COLOR );
 	this->AddChild( &m_textBPM );
 
-	m_sprLabel.Load( THEME->GetPathToG("BPMDisplay label") );
+	m_sprLabel.Load( THEME->GetPathToG(ssprintf("%s label", m_sName.c_str())) );
 	m_sprLabel->SetName( "Label" );
 	SET_XY_AND_ON_COMMAND( m_sprLabel );
 	m_sprLabel->SetDiffuse( NORMAL_COLOR );
