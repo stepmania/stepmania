@@ -633,10 +633,10 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 		/* GAMESTATE->m_fMusicSeconds is the music time as of GAMESTATE->m_LastBeatUpdate. Figure
 		 * out what the music time is as of now. */
-		const float fCurrentMusicSeconds = GAMESTATE->m_fMusicSeconds + (GAMESTATE->m_LastBeatUpdate.Ago()/GAMESTATE->m_SongOptions.m_fMusicRate);
+		const float fCurrentMusicSeconds = GAMESTATE->m_fMusicSeconds + (GAMESTATE->m_LastBeatUpdate.Ago()*GAMESTATE->m_SongOptions.m_fMusicRate);
 
 		/* ... which means it happened at this point in the music: */
-		const float fMusicSeconds = fCurrentMusicSeconds - fTimeSinceStep / GAMESTATE->m_SongOptions.m_fMusicRate;
+		const float fMusicSeconds = fCurrentMusicSeconds - fTimeSinceStep * GAMESTATE->m_SongOptions.m_fMusicRate;
 
 		// The offset from the actual step in seconds:
 		const float fNoteOffset = (fStepSeconds - fMusicSeconds) / GAMESTATE->m_SongOptions.m_fMusicRate;	// account for music rate
