@@ -78,6 +78,9 @@ typedef struct {
     int write_flag;  /* true if open for writing */
     int is_streamed;
     int max_packet_size;
+    unsigned long checksum;
+    unsigned char *checksum_ptr;
+    unsigned long (*update_checksum)(unsigned long checksum, const uint8_t *buf, unsigned int size);
 } ByteIOContext;
 
 int init_put_byte(ByteIOContext *s,
@@ -110,7 +113,7 @@ int url_feof(ByteIOContext *s);
 #define URL_EOF (-1)
 int url_fgetc(ByteIOContext *s);
 #ifdef __GNUC__
-int url_fprintf(ByteIOContext *s, const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
+int url_fprintf(ByteIOContext *s, const char *fmt, ...) __attribute__ ((__format__ (__printf__, 2, 3)));
 #else
 int url_fprintf(ByteIOContext *s, const char *fmt, ...);
 #endif
@@ -119,6 +122,7 @@ char *url_fgets(ByteIOContext *s, char *buf, int buf_size);
 void put_flush_packet(ByteIOContext *s);
 
 int get_buffer(ByteIOContext *s, unsigned char *buf, int size);
+int get_partial_buffer(ByteIOContext *s, unsigned char *buf, int size);
 int get_byte(ByteIOContext *s);
 unsigned int get_le32(ByteIOContext *s);
 uint64_t get_le64(ByteIOContext *s);
@@ -148,6 +152,10 @@ int url_close_buf(ByteIOContext *s);
 int url_open_dyn_buf(ByteIOContext *s);
 int url_open_dyn_packet_buf(ByteIOContext *s, int max_packet_size);
 int url_close_dyn_buf(ByteIOContext *s, uint8_t **pbuffer);
+
+unsigned long get_checksum(ByteIOContext *s);
+void init_checksum(ByteIOContext *s, unsigned long (*update_checksum)(unsigned long c, const uint8_t *p, unsigned int len), unsigned long checksum);
+unsigned long update_adler32(unsigned long adler, const uint8_t *buf, unsigned int len);
 
 /* file.c */
 extern URLProtocol file_protocol;

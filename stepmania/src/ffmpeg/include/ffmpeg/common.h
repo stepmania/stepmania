@@ -8,6 +8,7 @@
 
 #if defined(WIN32) && !defined(__MINGW32__) && !defined(__CYGWIN__)
 #    define CONFIG_WIN32
+#    define EMULATE_INTTYPES
 #endif
 
 //#define ALT_BITSTREAM_WRITER
@@ -18,6 +19,10 @@
 //#define A32_BITSTREAM_READER
 #define LIBMPEG2_BITSTREAM_READER_HACK //add BERO
 
+#ifndef M_PI
+#define M_PI    3.14159265358979323846
+#endif
+
 #ifdef HAVE_AV_CONFIG_H
 /* only include the following when compiling package */
 #    include "config.h"
@@ -26,6 +31,7 @@
 #    include <stdio.h>
 #    include <string.h>
 #    include <ctype.h>
+#    include <limits.h>
 #    ifndef __BEOS__
 #        include <errno.h>
 #    else
@@ -36,10 +42,6 @@
 #    ifndef ENODATA
 #        define ENODATA  61
 #    endif
-
-#ifndef M_PI
-#define M_PI    3.14159265358979323846
-#endif
 
 #include <stddef.h>
 #ifndef offsetof
@@ -76,50 +78,102 @@ extern const struct AVOption avoptions_workaround_bug[11];
 #    define restrict
 #endif
 
+#ifndef always_inline
 #if defined(__GNUC__) && (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ > 0)
 #    define always_inline __attribute__((always_inline)) inline
 #else
 #    define always_inline inline
+#endif
+#endif
+
+#ifndef attribute_used
+#if defined(__GNUC__) && (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ > 0)
+#    define attribute_used __attribute__((used))
+#else
+#    define attribute_used
+#endif
+#endif
+
+#ifndef EMULATE_INTTYPES
+#   include <inttypes.h>
+#else
+    typedef signed char  int8_t;
+    typedef signed short int16_t;
+    typedef signed int   int32_t;
+    typedef unsigned char  uint8_t;
+    typedef unsigned short uint16_t;
+    typedef unsigned int   uint32_t;
+
+#   ifdef CONFIG_WIN32
+        typedef signed __int64   int64_t;
+        typedef unsigned __int64 uint64_t;
+#   else /* other OS */
+        typedef signed long long   int64_t;
+        typedef unsigned long long uint64_t;
+#   endif /* other OS */
+#endif /* HAVE_INTTYPES_H */
+
+#ifndef INT64_MAX
+#define INT64_MAX int64_t_C(9223372036854775807)
+#endif
+
+#ifndef UINT64_MAX
+#define UINT64_MAX uint64_t_C(0xFFFFFFFFFFFFFFFF)
+#endif
+
+#ifdef EMULATE_FAST_INT
+/* note that we don't emulate 64bit ints */
+typedef signed char int_fast8_t;
+typedef signed int  int_fast16_t;
+typedef signed int  int_fast32_t;
+typedef unsigned char uint_fast8_t;
+typedef unsigned int  uint_fast16_t;
+typedef unsigned int  uint_fast32_t;
+#endif
+
+#ifndef INT_BIT
+#    if INT_MAX != 2147483647
+#        define INT_BIT 64
+#    else
+#        define INT_BIT 32
+#    endif
+#endif
+
+#if defined(CONFIG_OS2) || defined(CONFIG_SUNOS)
+static inline float floorf(float f) { 
+    return floor(f); 
+}
 #endif
 
 #ifdef CONFIG_WIN32
 
 /* windows */
 
-typedef unsigned short uint16_t;
-typedef signed short int16_t;
-typedef unsigned char uint8_t;
-typedef unsigned int uint32_t;
-typedef unsigned __int64 uint64_t;
-typedef signed char int8_t;
-typedef signed int int32_t;
-typedef signed __int64 int64_t;
-
-#    ifndef __MINGW32__
+#    if !defined(__MINGW32__) && !defined(__CYGWIN__)
 #        define int64_t_C(c)     (c ## i64)
 #        define uint64_t_C(c)    (c ## i64)
 
-#        define inline __inline
+#    ifdef HAVE_AV_CONFIG_H
+#            define inline __inline
+#    endif
 
 #    else
 #        define int64_t_C(c)     (c ## LL)
 #        define uint64_t_C(c)    (c ## ULL)
 #    endif /* __MINGW32__ */
 
-#    ifdef _DEBUG
-#		ifndef DEBUG
-#			define DEBUG
-#		endif
-#    endif
+#    ifdef HAVE_AV_CONFIG_H
+#        ifdef _DEBUG
+#            define DEBUG
+#        endif
 
-#    define snprintf _snprintf
-#    define vsnprintf _vsnprintf
+#        define snprintf _snprintf
+#        define vsnprintf _vsnprintf
+#    endif
 
 /* CONFIG_WIN32 end */
 #elif defined (CONFIG_OS2)
 /* OS/2 EMX */
-
-#include <inttypes.h>
 
 #ifndef int64_t_C
 #define int64_t_C(c)     (c ## LL)
@@ -140,8 +194,6 @@ typedef signed __int64 int64_t;
 #else
 
 /* unix */
-
-#include <inttypes.h>
 
 #ifndef int64_t_C
 #define int64_t_C(c)     (c ## LL)
@@ -176,24 +228,24 @@ typedef signed __int64 int64_t;
 #    include <assert.h>
 
 /* dprintf macros */
-#    if defined(CONFIG_WIN32) && !defined(__MINGW32__)
+#    if defined(CONFIG_WIN32) && !defined(__MINGW32__) && !defined(__CYGWIN__)
 
 inline void dprintf(const char* fmt,...) {}
 
 #    else
 
 #        ifdef DEBUG
-#            define dprintf(fmt,args...) printf(fmt, ## args)
+#            define dprintf(fmt,...) av_log(NULL, AV_LOG_DEBUG, fmt, __VA_ARGS__)
 #        else
-#            define dprintf(fmt,args...)
+#            define dprintf(fmt,...)
 #        endif
 
 #    endif /* !CONFIG_WIN32 */
 
-#    define av_abort()      do { fprintf(stderr, "Abort at %s:%d\n", __FILE__, __LINE__); abort(); } while (0)
+#    define av_abort()      do { av_log(NULL, AV_LOG_ERROR, "Abort at %s:%d\n", __FILE__, __LINE__); abort(); } while (0)
 
 //rounded divison & shift
-#define RSHIFT(a,b) ((a) > 0 ? ((a) + (1<<((b)-1)))>>(b) : ((a) + (1<<((b)-1))-1)>>(b))
+#define RSHIFT(a,b) ((a) > 0 ? ((a) + ((1<<(b))>>1))>>(b) : ((a) + ((1<<(b))>>1)-1)>>(b))
 /* assume b>0 */
 #define ROUNDED_DIV(a,b) (((a)>0 ? (a) + ((b)>>1) : (a) - ((b)>>1))/(b))
 #define ABS(a) ((a) >= 0 ? (a) : (-(a)))
@@ -243,10 +295,7 @@ static inline uint32_t NEG_USR32(uint32_t a, int8_t s){
 
 /* bit output */
 
-struct PutBitContext;
-
-typedef void (*WriteDataFunc)(void *, uint8_t *, int);
-
+/* buf and buf_end must be present and used by every alternative writer. */
 typedef struct PutBitContext {
 #ifdef ALT_BITSTREAM_WRITER
     uint8_t *buf, *buf_end;
@@ -256,21 +305,56 @@ typedef struct PutBitContext {
     int bit_left;
     uint8_t *buf, *buf_ptr, *buf_end;
 #endif
-    int64_t data_out_size; /* in bytes */
 } PutBitContext;
 
-void init_put_bits(PutBitContext *s, 
-                   uint8_t *buffer, int buffer_size,
-                   void *opaque,
-                   void (*write_data)(void *, uint8_t *, int));
+static inline void init_put_bits(PutBitContext *s, uint8_t *buffer, int buffer_size)
+{
+    s->buf = buffer;
+    s->buf_end = s->buf + buffer_size;
+#ifdef ALT_BITSTREAM_WRITER
+    s->index=0;
+    ((uint32_t*)(s->buf))[0]=0;
+//    memset(buffer, 0, buffer_size);
+#else
+    s->buf_ptr = s->buf;
+    s->bit_left=32;
+    s->bit_buf=0;
+#endif
+}
 
-int64_t get_bit_count(PutBitContext *s); /* XXX: change function name */
+/* return the number of bits output */
+static inline int put_bits_count(PutBitContext *s)
+{
+#ifdef ALT_BITSTREAM_WRITER
+    return s->index;
+#else
+    return (s->buf_ptr - s->buf) * 8 + 32 - s->bit_left;
+#endif
+}
+
+/* pad the end of the output stream with zeros */
+static inline void flush_put_bits(PutBitContext *s)
+{
+#ifdef ALT_BITSTREAM_WRITER
+    align_put_bits(s);
+#else
+    s->bit_buf<<= s->bit_left;
+    while (s->bit_left < 32) {
+        /* XXX: should test end of buffer */
+        *s->buf_ptr++=s->bit_buf >> 24;
+        s->bit_buf<<=8;
+        s->bit_left+=8;
+    }
+    s->bit_left=32;
+    s->bit_buf=0;
+#endif
+}
+
 void align_put_bits(PutBitContext *s);
-void flush_put_bits(PutBitContext *s);
-void put_string(PutBitContext * pbc, char *s);
+void put_string(PutBitContext * pbc, char *s, int put_zero);
 
 /* bit input */
-
+/* buffer, buffer_end and size_in_bits must be present and used by every reader */
 typedef struct GetBitContext {
     const uint8_t *buffer, *buffer_end;
 #ifdef ALT_BITSTREAM_READER
@@ -288,8 +372,6 @@ typedef struct GetBitContext {
     int size_in_bits;
 } GetBitContext;
 
-static inline int get_bits_count(GetBitContext *s);
-
 #define VLC_TYPE int16_t
 
 typedef struct VLC {
@@ -304,7 +386,7 @@ typedef struct RL_VLC_ELEM {
     uint8_t run;
 } RL_VLC_ELEM;
 
-#ifdef ARCH_SPARC64
+#ifdef ARCH_SPARC
 #define UNALIGNED_STORES_ARE_BAD
 #endif
 
@@ -355,7 +437,7 @@ static inline void put_bits(PutBitContext *s, int n, unsigned int value)
 	bit_buf<<=bit_left;
         bit_buf |= value >> (n - bit_left);
 #ifdef UNALIGNED_STORES_ARE_BAD
-        if (3 & (int) s->buf_ptr) {
+        if (3 & (intptr_t) s->buf_ptr) {
             s->buf_ptr[0] = bit_buf >> 24;
             s->buf_ptr[1] = bit_buf >> 16;
             s->buf_ptr[2] = bit_buf >>  8;
@@ -449,6 +531,28 @@ static inline uint8_t* pbBufPtr(PutBitContext *s)
 #else
 	return s->buf_ptr;
 #endif
+}
+
+/**
+ *
+ * PutBitContext must be flushed & aligned to a byte boundary before calling this.
+ */
+static inline void skip_put_bytes(PutBitContext *s, int n){
+        assert((put_bits_count(s)&7)==0);
+#ifdef ALT_BITSTREAM_WRITER
+        FIXME may need some cleaning of the buffer
+	s->index += n<<3;
+#else
+        assert(s->bit_left==32);
+	s->buf_ptr += n;
+#endif    
+}
+
+/**
+ * Changes the end of the buffer.
+ */
+static inline void set_put_bits_buffer_size(PutBitContext *s, int size){
+    s->buf_end= s->buf + size;
 }
 
 /* Bitstream reader API docs:
@@ -773,8 +877,52 @@ static inline void skip_bits1(GetBitContext *s){
     skip_bits(s, 1);
 }
 
-void init_get_bits(GetBitContext *s,
-                   const uint8_t *buffer, int buffer_size);
+/**
+ * init GetBitContext.
+ * @param buffer bitstream buffer, must be FF_INPUT_BUFFER_PADDING_SIZE bytes larger then the actual read bits
+ * because some optimized bitstream readers read 32 or 64 bit at once and could read over the end
+ * @param bit_size the size of the buffer in bits
+ */
+static inline void init_get_bits(GetBitContext *s,
+                   const uint8_t *buffer, int bit_size)
+{
+    const int buffer_size= (bit_size+7)>>3;
+
+    s->buffer= buffer;
+    s->size_in_bits= bit_size;
+    s->buffer_end= buffer + buffer_size;
+#ifdef ALT_BITSTREAM_READER
+    s->index=0;
+#elif defined LIBMPEG2_BITSTREAM_READER
+#ifdef LIBMPEG2_BITSTREAM_READER_HACK
+  if ((int)buffer&1) {
+     /* word alignment */
+    s->cache = (*buffer++)<<24;
+    s->buffer_ptr = buffer;
+    s->bit_count = 16-8;
+  } else
+#endif
+  {
+    s->buffer_ptr = buffer;
+    s->bit_count = 16;
+    s->cache = 0;
+  }
+#elif defined A32_BITSTREAM_READER
+    s->buffer_ptr = (uint32_t*)buffer;
+    s->bit_count = 32;
+    s->cache0 = 0;
+    s->cache1 = 0;
+#endif
+    {
+        OPEN_READER(re, s)
+        UPDATE_CACHE(re, s)
+        UPDATE_CACHE(re, s)
+        CLOSE_READER(re, s)
+    }
+#ifdef A32_BITSTREAM_READER
+    s->cache1 = 0;
+#endif
+}
 
 int check_marker(GetBitContext *s, const char *msg);
 void align_get_bits(GetBitContext *s);
@@ -927,10 +1075,10 @@ static inline int get_xbits_trace(GetBitContext *s, int n, char *file, char *fun
 #define get_vlc(s, vlc)            get_vlc_trace(s, (vlc)->table, (vlc)->bits, 3, __FILE__, __PRETTY_FUNCTION__, __LINE__)
 #define get_vlc2(s, tab, bits, max) get_vlc_trace(s, tab, bits, max, __FILE__, __PRETTY_FUNCTION__, __LINE__)
 
-#define tprintf printf
+#define tprintf(...) av_log(NULL, AV_LOG_DEBUG, __VA_ARGS__)
 
 #else //TRACE
-#define tprintf(_arg...) {}
+#define tprintf(...) {}
 #endif
 
 /* define it to include statistics code (useful only for optimizing
@@ -992,23 +1140,31 @@ static inline int av_log2_16bit(unsigned int v)
     return n;
 }
 
-
 /* median of 3 */
 static inline int mid_pred(int a, int b, int c)
 {
-    int vmin, vmax;
-    vmax = vmin = a;
-    if (b < vmin)
-        vmin = b;
-    else
-	vmax = b;
+#if 0
+    int t= (a-b)&((a-b)>>31);
+    a-=t;
+    b+=t;
+    b-= (b-c)&((b-c)>>31);
+    b+= (a-b)&((a-b)>>31);
 
-    if (c < vmin)
-        vmin = c;
-    else if (c > vmax)
-        vmax = c;
-
-    return a + b + c - vmin - vmax;
+    return b;
+#else
+    if(a>b){
+        if(c>b){
+            if(c>a) b=a;
+            else    b=c;
+        }
+    }else{
+        if(b>c){
+            if(c>a) b=c;
+            else    b=a;
+        }
+    }
+    return b;
+#endif
 }
 
 static inline int clip(int a, int amin, int amax)
@@ -1019,6 +1175,12 @@ static inline int clip(int a, int amin, int amax)
         return amax;
     else
         return a;
+}
+
+static inline int clip_uint8(int a)
+{
+    if (a&(~255)) return (-a)>>31;
+    else          return a;
 }
 
 /* math */
@@ -1055,9 +1217,6 @@ static inline int ff_get_fourcc(const char *s){
 
 #define MKTAG(a,b,c,d) (a | (b << 8) | (c << 16) | (d << 24))
 #define MKBETAG(a,b,c,d) (d | (c << 8) | (b << 16) | (a << 24))
-
-
-void ff_float2fraction(int *nom_arg, int *denom_arg, double f, int max);
 
 
 #ifdef ARCH_X86
@@ -1105,21 +1264,23 @@ static inline long long rdtsc()
 }
 
 #define START_TIMER \
-static uint64_t tsum=0;\
-static int tcount=0;\
-static int tskip_count=0;\
 uint64_t tend;\
 uint64_t tstart= rdtsc();\
 
 #define STOP_TIMER(id) \
 tend= rdtsc();\
-if(tcount<2 || tend - tstart < 4*tsum/tcount){\
-    tsum+= tend - tstart;\
-    tcount++;\
-}else\
-    tskip_count++;\
-if(256*256*256*64%(tcount+tskip_count)==0){\
-    fprintf(stderr, "%Ld dezicycles in %s, %d runs, %d skips\n", tsum*10/tcount, id, tcount, tskip_count);\
+{\
+  static uint64_t tsum=0;\
+  static int tcount=0;\
+  static int tskip_count=0;\
+  if(tcount<2 || tend - tstart < 8*tsum/tcount){\
+      tsum+= tend - tstart;\
+      tcount++;\
+  }else\
+      tskip_count++;\
+  if(256*256*256*64%(tcount+tskip_count)==0){\
+      av_log(NULL, AV_LOG_DEBUG, "%Ld dezicycles in %s, %d runs, %d skips\n", tsum*10/tcount, id, tcount, tskip_count);\
+  }\
 }
 #endif
 
@@ -1129,6 +1290,13 @@ if(256*256*256*64%(tcount+tskip_count)==0){\
 #define malloc please_use_av_malloc
 #define free please_use_av_free
 #define realloc please_use_av_realloc
+#define time time_is_forbidden_due_to_security_issues
+#define rand rand_is_forbidden_due_to_state_trashing
+#define srand srand_is_forbidden_due_to_state_trashing
+#if !(defined(LIBAVFORMAT_BUILD) || defined(_FRAMEHOOK_H))
+#define printf please_use_av_log
+#define fprintf please_use_av_log
+#endif
 
 #define CHECKED_ALLOCZ(p, size)\
 {\
