@@ -166,7 +166,9 @@ void ScreenPackages::MenuStart( PlayerNumber pn )
 			SCREENMAN->TextEntry( SM_BackFromURL, "Enter URL:", "http://" );
 		}
 		else
+		{
 			EnterURL( m_Links[m_iLinksPos] );
+		}
 	}
 	ScreenWithMenuElements::MenuStart( pn );
 }
@@ -184,11 +186,13 @@ void ScreenPackages::MenuUp( PlayerNumber pn, const InputEventType type )
 		}
 	}
 	else
+	{
 		if ( m_iLinksPos > 0 )
 		{
 			m_iLinksPos--;
 			UpdateLinksList();
 		}
+	}
 	ScreenWithMenuElements::MenuUp( pn, type );
 }
 
@@ -206,11 +210,13 @@ void ScreenPackages::MenuDown( PlayerNumber pn, const InputEventType type )
 		}
 	}
 	else
+	{
 		if ( m_iLinksPos < m_LinkTitles.size() - 1 )
 		{
 			m_iLinksPos++;
 			UpdateLinksList();
 		}
+	}
 	ScreenWithMenuElements::MenuDown( pn, type );
 }
 
@@ -229,7 +235,8 @@ void ScreenPackages::MenuLeft( PlayerNumber pn, const InputEventType type )
 		m_iDLorLST = 1;
 		COMMAND( m_sprExistingBG, "Away" );
 		COMMAND( m_sprWebBG, "Back" );
-	} else 
+	}
+	else 
 	{	
 		m_iDLorLST = 0;
 		COMMAND( m_sprExistingBG, "Back" );
@@ -392,7 +399,9 @@ CString ScreenPackages::URLEncode( const CString &URL )
 	{
 		char t = Input.at( k );
 		if ( ( t >= '!' ) && ( t <= 'z' ) )
+		{
 			Output+=t;
+		}
 		else
 		{
 			char out[2];
@@ -636,8 +645,11 @@ void ScreenPackages::HTTPUpdate()
 					m_sStatus = ssprintf( "Done;%dB", int(m_iDownloaded) );
 
 					if ( ( m_iResponceCode < 200 ) || ( m_iResponceCode >= 400 ) )
+					{
 						m_sStatus = ssprintf( "%d", m_iResponceCode ) + m_iResponceName;
+					}
 					else
+					{
 						if ( m_bIsPackage && ( m_iResponceCode < 300 ) )
 						{
 							m_fOutputFile.Flush( );
@@ -648,6 +660,7 @@ void ScreenPackages::HTTPUpdate()
 						}
 						else
 							HTMLParse();
+					}
 				}
 			}
 		}
