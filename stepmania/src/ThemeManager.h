@@ -22,10 +22,10 @@ public:
 	~ThemeManager();
 
 	void GetThemeNames( CStringArray& AddTo );
-	bool DoesThemeExist( CString sThemeName );
+	bool DoesThemeExist( const CString &sThemeName );
 	void GetLanguages( CStringArray& AddTo );
-	bool DoesLanguageExist( CString sLanguage );
-	void SwitchThemeAndLanguage( CString sThemeName, CString sLanguage );
+	bool DoesLanguageExist( const CString &sLanguage );
+	void SwitchThemeAndLanguage( const CString &sThemeName, const CString &sLanguage );
 	CString GetCurThemeName() { return m_sCurThemeName; };
 	CString GetCurLanguage() { return m_sCurLanguage; };
 	CString GetCurThemeDir() { return GetThemeDirFromName(m_sCurThemeName); };
@@ -36,33 +36,33 @@ public:
 	/* I renamed these for two reasons.  The overload conflicts with the ones below:
 	 * GetPathToB( str, str ) was matching the ones below instead of these.  It's also
 	 * easier to search for uses of obsolete functions if they have a different name. */
-	CString GetPath( ElementCategory category, CString sClassName, CString sElement, bool bOptional=false );
-	CString GetPathB( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(BGAnimations,sClassName,sElement,bOptional); };
-	CString GetPathF( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(Fonts,sClassName,sElement,bOptional); };
-	CString GetPathG( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(Graphics,sClassName,sElement,bOptional); };
-	CString GetPathS( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(Sounds,sClassName,sElement,bOptional); };
-	CString GetPathO( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(Other,sClassName,sElement,bOptional); };
+	CString GetPath( ElementCategory category, const CString &sClassName, const CString &sElement, bool bOptional=false );
+	CString GetPathB( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(BGAnimations,sClassName,sElement,bOptional); };
+	CString GetPathF( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(Fonts,sClassName,sElement,bOptional); };
+	CString GetPathG( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(Graphics,sClassName,sElement,bOptional); };
+	CString GetPathS( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(Sounds,sClassName,sElement,bOptional); };
+	CString GetPathO( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(Other,sClassName,sElement,bOptional); };
 
 	// TODO: remove these and update the places that use them
-	CString GetPathToB( CString sFileName, bool bOptional=false );
-	CString GetPathToF( CString sFileName, bool bOptional=false );
-	CString GetPathToG( CString sFileName, bool bOptional=false );
-	CString GetPathToS( CString sFileName, bool bOptional=false );
-	CString GetPathToO( CString sFileName, bool bOptional=false );
+	CString GetPathToB( const CString &sFileName, bool bOptional=false );
+	CString GetPathToF( const CString &sFileName, bool bOptional=false );
+	CString GetPathToG( const CString &sFileName, bool bOptional=false );
+	CString GetPathToS( const CString &sFileName, bool bOptional=false );
+	CString GetPathToO( const CString &sFileName, bool bOptional=false );
 
 
-	bool		HasMetric( CString sClassName, CString sValueName );
-	CString		GetMetricRaw( CString sClassName, CString sValueName );
-	CString		GetMetric( CString sClassName, CString sValueName );
-	int			GetMetricI( CString sClassName, CString sValueName );
-	float		GetMetricF( CString sClassName, CString sValueName );
-	bool		GetMetricB( CString sClassName, CString sValueName );
-	RageColor	GetMetricC( CString sClassName, CString sValueName );
-	void	GetMetric( CString sClassName, CString sValueName, CString &valueOut )	{ valueOut = GetMetric( sClassName, sValueName ); }
-	void	GetMetric( CString sClassName, CString sValueName, int &valueOut )		{ valueOut = GetMetricI( sClassName, sValueName ); }
-	void	GetMetric( CString sClassName, CString sValueName, float &valueOut )	{ valueOut = GetMetricF( sClassName, sValueName ); }
-	void	GetMetric( CString sClassName, CString sValueName, bool &valueOut )		{ valueOut = GetMetricB( sClassName, sValueName ); }
-	void	GetMetric( CString sClassName, CString sValueName, RageColor &valueOut ){ valueOut = GetMetricC( sClassName, sValueName ); }
+	bool		HasMetric( const CString &sClassName, const CString &sValueName );
+	CString		GetMetricRaw( const CString &sClassName, const CString &sValueName );
+	CString		GetMetric( const CString &sClassName, const CString &sValueName );
+	int			GetMetricI( const CString &sClassName, const CString &sValueName );
+	float		GetMetricF( const CString &sClassName, const CString &sValueName );
+	bool		GetMetricB( const CString &sClassName, const CString &sValueName );
+	RageColor	GetMetricC( const CString &sClassName, const CString &sValueName );
+	void	GetMetric( const CString &sClassName, const CString &sValueName, CString &valueOut )	{ valueOut = GetMetric( sClassName, sValueName ); }
+	void	GetMetric( const CString &sClassName, const CString &sValueName, int &valueOut )		{ valueOut = GetMetricI( sClassName, sValueName ); }
+	void	GetMetric( const CString &sClassName, const CString &sValueName, float &valueOut )	{ valueOut = GetMetricF( sClassName, sValueName ); }
+	void	GetMetric( const CString &sClassName, const CString &sValueName, bool &valueOut )		{ valueOut = GetMetricB( sClassName, sValueName ); }
+	void	GetMetric( const CString &sClassName, const CString &sValueName, RageColor &valueOut ){ valueOut = GetMetricC( sClassName, sValueName ); }
 
 	//
 	// For self-registering metrics
@@ -71,15 +71,15 @@ public:
 
 
 protected:
-	void LoadThemeRecursive( deque<Theme> &theme, CString sThemeName );
-	bool GetMetricRaw( CString sClassName, CString sValueName, CString &ret, int level=0 );
-	CString GetPathToAndFallback( CString sThemeName, ElementCategory category, CString sClassName, CString sFile );
-	CString GetPathToRaw( CString sThemeName, ElementCategory category, CString sClassName, CString sFile );
+	void LoadThemeRecursive( deque<Theme> &theme, const CString &sThemeName );
+	bool GetMetricRaw( const CString &sClassName, const CString &sValueName, CString &ret, int level=0 );
+	CString GetPathToAndFallback( const CString &sThemeName, ElementCategory category, const CString &sClassName, const CString &sFile );
+	CString GetPathToRaw( const CString &sThemeName, ElementCategory category, const CString &sClassName, const CString &sFile );
 	static CString GetThemeDirFromName( const CString &sThemeName );
-	CString GetElementDir( CString sThemeName );
-	static CString GetMetricsIniPath( CString sThemeName );
-	static void GetLanguagesForTheme( CString sThemeName, CStringArray& asLanguagesOut );
-	static CString GetLanguageIniPath( CString sThemeName, CString sLanguage );
+	CString GetElementDir( const CString &sThemeName );
+	static CString GetMetricsIniPath( const CString &sThemeName );
+	static void GetLanguagesForTheme( const CString &sThemeName, CStringArray& asLanguagesOut );
+	static CString GetLanguageIniPath( const CString &sThemeName, const CString &sLanguage );
 
 	CString m_sCurThemeName;
 	CString m_sCurLanguage;
@@ -99,7 +99,7 @@ protected:
 	virtual void Update() { }
 
 public:
-	CachedThemeMetric( CString sClassName, CString sValueName ):
+	CachedThemeMetric( const CString &sClassName, const CString &sValueName ):
 		m_sClassName( sClassName ),
 		m_sValueName( sValueName ),
 		m_bInited( false )
@@ -107,7 +107,7 @@ public:
 	}
 	virtual ~CachedThemeMetric() { }
 
-	void Refresh( CString sClassName = "" )
+	void Refresh( const CString &sClassName = "" )
 	{
 		m_sValue = THEME->GetMetric(sClassName==""? m_sClassName:sClassName,m_sValueName);
 		Update();
@@ -122,7 +122,7 @@ class CachedThemeMetricF : public CachedThemeMetric
 	float		m_fValue;
 public:
 	void Update() { m_fValue = (float)atof( m_sValue ); }
-	CachedThemeMetricF( CString sClassName, CString sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
+	CachedThemeMetricF( const CString &sClassName, const CString &sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
     operator const float () const		{ ASSERT(m_bInited);	return m_fValue; };
 };
 
@@ -131,7 +131,7 @@ class CachedThemeMetricI : public CachedThemeMetric
 	int			m_iValue;
 public:
 	void Update() { m_iValue = atoi( m_sValue ); }
-	CachedThemeMetricI( CString sClassName, CString sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
+	CachedThemeMetricI( const CString &sClassName, const CString &sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
 	operator const int () const			{ ASSERT(m_bInited);	return m_iValue; };
 };
 
@@ -140,7 +140,7 @@ class CachedThemeMetricB : public CachedThemeMetric
 	bool		m_bValue;
 public:
 	void Update() { m_bValue = atoi( m_sValue ) != 0; }
-	CachedThemeMetricB( CString sClassName, CString sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
+	CachedThemeMetricB( const CString &sClassName, const CString &sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
     operator const bool () const		{ ASSERT(m_bInited);	return m_bValue; };
 };
 
@@ -155,7 +155,7 @@ public:
 		m_cValue = RageColor(1,1,1,1);
 		sscanf( m_sValue, "%f,%f,%f,%f", &m_cValue.r, &m_cValue.g, &m_cValue.b, &m_cValue.a );
 	}
-	CachedThemeMetricC( CString sClassName, CString sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
+	CachedThemeMetricC( const CString &sClassName, const CString &sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
     operator const RageColor () const	{ ASSERT(m_bInited);	return m_cValue; };
 };
 
