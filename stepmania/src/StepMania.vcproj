@@ -1173,6 +1173,25 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 						RelativePath="arch\MemoryCard\MemoryCardDriver_Null.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="Dialog"
+					Filter="">
+					<File
+						RelativePath="arch\Dialog\Dialog.cpp">
+					</File>
+					<File
+						RelativePath="arch\Dialog\Dialog.h">
+					</File>
+					<File
+						RelativePath="arch\Dialog\DialogDriver.h">
+					</File>
+					<File
+						RelativePath="arch\Dialog\DialogDriver_Win32.cpp">
+					</File>
+					<File
+						RelativePath="arch\Dialog\DialogDriver_Win32.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="system"
