@@ -244,11 +244,14 @@ void RageSoundManager::MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, floa
 
 void RageSoundManager::PlayMusic(CString file, bool loop, float start_sec, float length_sec)
 {
-	if( music->GetLoadedFilePath() == file && music->IsPlaying() )
-		return;		// do nothing
-
+//	LOG->Trace("play '%s' (current '%s')", file.GetString(), music->GetLoadedFilePath().GetString());
 	if(music->IsPlaying())
+	{
+		if( music->GetLoadedFilePath() == file )
+			return;		// do nothing
+
 		music->StopPlaying();
+	}
 
 	/* If file is blank, just stop. */
 	if(file.empty())
