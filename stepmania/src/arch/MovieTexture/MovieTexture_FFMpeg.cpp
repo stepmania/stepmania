@@ -771,7 +771,7 @@ float MovieTexture_FFMpeg::CheckFrameTime()
 	const float Offset = (decoder->GetTimestamp() - m_Clock) / m_Rate;
 
 	/* If we're ahead, we're decoding too fast; delay. */
-	if( Offset > 0 )
+	if( Offset > 0.00001f )
 	{
 		if( m_FrameSkipMode )
 		{
