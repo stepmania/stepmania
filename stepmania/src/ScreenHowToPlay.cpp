@@ -154,8 +154,17 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 
 	SMLoader smfile;		
 	smfile.LoadFromSMFile( THEME->GetPathToO(STEPFILE), m_Song, false );
-	ASSERT( m_Song.m_apNotes.size() == 1 );
-	m_Song.m_apNotes[0]->GetNoteData(&m_NoteData);
+	m_Song.AddAutoGenNotes();
+
+	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	
+	vector<Steps *> notes;
+	m_Song.GetSteps( notes, pStyleDef->m_StepsType );
+	ASSERT( notes.size() >= 1 );
+
+	NoteData TempNoteData;
+	notes[0]->GetNoteData( &TempNoteData );
+	pStyleDef->GetTransformedNoteDataForStyle( PLAYER_1, &TempNoteData, &m_NoteData );
 
 	GAMESTATE->m_pCurSong = &m_Song;
 	GAMESTATE->m_bPastHereWeGo = true;
