@@ -788,6 +788,24 @@ bool NoteData::GetNextTapNoteRowForTrack( int track, int &rowInOut ) const
 	return true;
 }
 
+bool NoteData::GetPrevTapNoteRowForTrack( int track, int &rowInOut ) const
+{
+	const TrackMap &mapTrack = m_TapNotes[track];
+
+	/* Find the first note >= rowInOut. */
+	TrackMap::const_iterator iter = mapTrack.lower_bound( rowInOut );
+
+	/* If we're at the beginning, we can't move back any more. */
+	if( iter == mapTrack.begin() )
+		return false;
+
+	/* Move back by one. */
+	--iter;	
+	ASSERT( iter->first < rowInOut );
+	rowInOut = iter->first;
+	return true;
+}
+
 bool NoteData::GetNextTapNoteRowForAllTracks( int &rowInOut ) const
 {
 	int iClosestNextRow = 999999;
