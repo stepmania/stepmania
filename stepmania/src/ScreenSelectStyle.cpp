@@ -186,11 +186,6 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 	// TweenOffScreen
 	//
 
-	/* Stop all tweens where they are, since we might have selected before
-	 * we finished tweening in. */
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->StopTweening();
-
 	for( unsigned i=0; i<m_aModeChoices.size(); i++ )
 	{
 		OFF_COMMAND( m_sprIcon[i] );
