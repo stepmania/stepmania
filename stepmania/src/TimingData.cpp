@@ -75,16 +75,16 @@ void TimingData::SetBPMAtBeat( float fBeat, float fBPM )
 		if( m_BPMSegments[i].m_iStartIndex >= iNoteRow )
 			break;
 
-	if( i == m_BPMSegments.size() || m_BPMSegments[i].m_iStartIndex == iNoteRow )
+	if( i == m_BPMSegments.size() || m_BPMSegments[i].m_iStartIndex != iNoteRow )
 	{
 		// There is no BPMSegment at the specified beat.  If the BPM being set differs
 		// from the last BPMSegment's BPM, create a new BPMSegment.
-		if( i == 0 || fabsf(m_BPMSegments[i-1].m_fBPS - fBPS) > 0.003f )
-			AddBPMSegment( BPMSegment(iNoteRow, fBPS) );
+		if( i == 0 || fabsf(m_BPMSegments[i-1].m_fBPS - fBPS) > 1e-5f )
+			AddBPMSegment( BPMSegment(iNoteRow, fBPM) );
 	}
 	else	// BPMSegment being modified is m_BPMSegments[i]
 	{
-		if( i > 0  &&  fabsf(m_BPMSegments[i-1].m_fBPS - fBPS) < 0.003f )
+		if( i > 0  &&  fabsf(m_BPMSegments[i-1].m_fBPS - fBPS) < 1e-5f )
 			m_BPMSegments.erase( m_BPMSegments.begin()+i,
 										  m_BPMSegments.begin()+i+1);
 		else
