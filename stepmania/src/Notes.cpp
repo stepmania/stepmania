@@ -250,6 +250,20 @@ void Notes::GetNoteData( NoteData* pNoteDataOut ) const
 	pNoteDataOut->LoadFromSMNoteDataString( m_sSMNoteData );
 }
 
+// Color is a function of DifficultyClass and Intended Style
+D3DXCOLOR Notes::GetColor() const
+{
+	CString sDescription = m_sDescription;
+	sDescription.MakeLower();
+
+	if( -1 != sDescription.Find("battle") )
+		return D3DXCOLOR(1,0.5f,0,1);	// orange
+	else if( -1 != m_sDescription.Find("couple") )
+		return D3DXCOLOR(0,0,1,1);		// blue
+	else 
+		return DifficultyClassToColor( m_DifficultyClass ); 
+}
+
 void Notes::TidyUpData()
 {
 	if( m_DifficultyClass == CLASS_INVALID )

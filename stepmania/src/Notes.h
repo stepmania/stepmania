@@ -38,22 +38,7 @@ public:
 	CString			m_sSMNoteData;
 	void			GetNoteData( NoteData* pNoteDataOut ) const;
 	void			SetNoteData( NoteData* pNewNoteData );
-
-
-	// Color is a function of DifficultyClass and Intended Style
-	D3DXCOLOR GetColor()
-	{
-		CString sDescription = m_sDescription;
-		sDescription.MakeLower();
-
-		if( -1 != sDescription.Find("battle") )
-			return D3DXCOLOR(1,0.5f,0,1);	// orange
-		else if( -1 != m_sDescription.Find("couple") )
-			return D3DXCOLOR(0,0,1,1);		// blue
-		else 
-			return DifficultyClassToColor( m_DifficultyClass ); 
-	}
-
+	D3DXCOLOR GetColor() const;
 	
 	// Statistics
 	Grade m_TopGrade;
@@ -68,7 +53,6 @@ public:
 protected:
 
 };
-
 
 int CompareNotesPointersByDifficulty(Notes* pNotes1, Notes* pNotes2);
 void SortNotesArrayByDifficulty( CArray<Notes*,Notes*> &arrayNotess );
