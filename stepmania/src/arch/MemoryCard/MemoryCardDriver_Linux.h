@@ -1,6 +1,8 @@
 #ifndef MEMORY_CARD_DRIVER_LINUX_H
 #define MEMORY_CARD_DRIVER_LINUX_H 1
 
+#include "MemoryCardDriver.h"
+
 class MemoryCardDriver_Linux : public MemoryCardDriver
 {
 public:

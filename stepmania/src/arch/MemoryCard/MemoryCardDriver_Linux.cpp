@@ -31,11 +31,11 @@ MemoryCardDriver_Linux::~MemoryCardDriver_Linux()
 bool MemoryCardDriver_Linux::StorageDevicesChanged()
 {
 	// has USB_DEVICE_LIST_FILE changed?
-	if( g_fds == -1 )	// file not opened
+	if( m_fds == -1 )	// file not opened
 		return false;	// we'll never know...
 
 	struct stat st;
-	if( fstat(g_fds, &st) == -1 )
+	if( fstat(m_fds, &st) == -1 )
 	{
 		LOG->Warn( "stat of '%s' failed.", USB_DEVICE_LIST_FILE );
 		return false;
@@ -210,7 +210,7 @@ bool MemoryCardDriver_Linux::MountAndTestWrite( UsbStorageDevice* pDevice )
 {
 	if( !pDevice->sOsMountDir.empty() )
 		return false;
-	CString sCommand = "mount " + usbd.sOsMountDir;
+	CString sCommand = "mount " + pDevice->sOsMountDir;
 	system( sCommand );
 
 	// Try to write a file.
@@ -229,7 +229,7 @@ void MemoryCardDriver_Linux::Unmount( UsbStorageDevice* pDevice )
 {
 	if( !pDevice->sOsMountDir.empty() )
 		return;
-	CString sCommand = "umount " + usbd.sOsMountDir;
+	CString sCommand = "umount " + pDevice->sOsMountDir;
 	system( sCommand );
 }
 
