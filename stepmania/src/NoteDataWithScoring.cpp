@@ -286,7 +286,8 @@ float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds, Playe
 	 * keeper.  Instead, let's use the length of the longest recorded combo.  This is
 	 * only subtly different: it's the percent of the song the longest combo took to get. */
 	const StageStats::Combo_t MaxCombo = g_CurStageStats.GetMaxCombo( pn );
-	return clamp( MaxCombo.size, 0.0f, 1.0f );
+	float fComboPercent = SCALE( MaxCombo.size, 0, g_CurStageStats.fLastPos[pn]-g_CurStageStats.fFirstPos[pn], 0.0f, 1.0f );
+	return clamp( fComboPercent, 0.0f, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds, PlayerNumber pn ) const
