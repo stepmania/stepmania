@@ -341,7 +341,7 @@ RageInput::RageInput()
 	for( int i=0; i<iNumJoySticks; i++ )
 	{
 		m_pJoystick[i] = SDL_JoystickOpen( i );
-		LOG->Trace( "Found joystick %d: %s", i, SDL_JoystickName(i) );
+		LOG->Info( "Found joystick %d: %s", i, SDL_JoystickName(i) );
 	}
 	SDL_JoystickEventState( SDL_IGNORE );
 
@@ -354,7 +354,7 @@ RageInput::RageInput()
 	for(int pumpNo = 0; pumpNo < NUM_PUMPS; ++pumpNo)
 	{
 		if(m_Pumps[pumpNo].init(pumpNo))
-			LOG->Trace("Found Pump pad %i\n", pumpNo);
+			LOG->Info("Found Pump pad %i\n", pumpNo);
 	}
 }
 
@@ -645,7 +645,7 @@ int RageInput::pump_t::GetPadEvent()
 		return -1;
 
     if(ret == 0) {
-		LOG->Trace(werr_ssprintf(GetLastError(), "Error reading Pump pad"));
+		LOG->Warn(werr_ssprintf(GetLastError(), "Error reading Pump pad"));
 	    return -1;
     }
 
