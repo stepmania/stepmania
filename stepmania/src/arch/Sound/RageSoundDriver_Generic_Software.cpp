@@ -326,7 +326,11 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *snd )
 	int BufferSize = frames_to_buffer;
 
 	/* If a sound is streaming from disk, use a bigger buffer, so we don't underrun
-	 * if a drive seek takes too long. */
+	 * the BGM if a drive seek takes too long.  Note that in this case, we'll still
+	 * underrun any other sounds that are playing, even if they're preloaded.  This
+	 * is less of a problem, since the music position isn't based on those.  It could
+	 * be fixed by having two decoding threads; one for streaming sounds and one for
+	 * non-streaming sounds. */
 	if( s.snd->IsStreamingFromDisk() )
 		BufferSize = max( BufferSize, min_streaming_buffer_size );
 	s.Allocate( BufferSize );
