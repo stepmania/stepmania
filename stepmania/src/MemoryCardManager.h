@@ -12,9 +12,7 @@
 */
 #include "PlayerNumber.h"
 #include "RageSound.h"
-
-struct UsbStorageDevice;
-class MemoryCardDriver;
+#include "arch/MemoryCard/MemoryCardDriver.h"
 
 class MemoryCardManager
 {
@@ -33,12 +31,16 @@ public:
 	void LockCards( bool bLock );	// prevent removing or changing of memory cards
 
 protected:
+	void ReassignCards();	// do our best to assign a Device to each player
+
 	MemoryCardDriver *m_pDriver;
+
+	vector<UsbStorageDevice> m_vStorageDevices;	// all currently connected
 
 	bool	m_bCardsLocked;
 	bool	m_bTooLate[NUM_PLAYERS];	// card was inserted after lock
 	bool	m_bWriteError[NUM_PLAYERS];	// couldn't write to the card
-	UsbStorageDevice* m_pDevice[NUM_PLAYERS];	// device in the memory card slot, NULL if none
+	UsbStorageDevice m_Device[NUM_PLAYERS];	// device in the memory card slot, NULL if none
 
 	RageSound m_soundConnect;
 	RageSound m_soundDisconnect;
