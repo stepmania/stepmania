@@ -139,7 +139,10 @@ public:
 				RageException::Throw( "List \"%s\", col %i has no name", sParam.c_str(), col );
 
 			if( !mc.IsPlayable() )
+			{
+				LOG->Trace( "\"%s\" is not playable.", sParam.c_str() );
 				continue;
+			}
 
 			ListEntries.push_back( mc );
 
