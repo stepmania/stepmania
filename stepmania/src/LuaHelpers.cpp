@@ -133,7 +133,7 @@ bool Lua::RunExpression( const CString &str )
 {
 try {
 	if( setjmp(jbuf) )
-		throw jbuf_error;
+		RageException::Throw("%s", jbuf_error.c_str());
 	lua_State *L = lua_open();
 	ASSERT( L );
 
