@@ -141,3 +141,9 @@ TitleSubst::~TitleSubst()
 	for(unsigned i = 0; i < ttab.size(); ++i)
 		delete ttab[i];
 }
+
+/*
+ * Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
+ *
+ * Glenn Maynard
+ */
