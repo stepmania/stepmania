@@ -1,3 +1,29 @@
+* Alpha 22
+Fixed menu timer running song roulette on course selection.
+Fixed OnCommand being played twice when song BGA layers first gain focus.
+Fixed options screen not always importing course difficulty.
+Fixed secondary Pump controller auto-mapping.
+Fixed negative DP scores (good attacks) being graded E instead of D.
+Fixed ScreenSelectStyle tween-out.
+Fixed course sort crashes.
+Fixed missing graphics on rankings screen.
+Fixed error reason not being displayed on failure opening SM/DWI/BMS files.
+Fixed editor crash in "Show Steps Statistics" on 16-foot and higher songs.
+Fixed scrollbar flickering.
+FFMpeg 0.4.9 is now required (previously 0.4.8).
+Linux: Fixed libjpeg searching.
+Linux: ALSA device can be changed via the SoundDevice option in StepMania.ini.
+Stats are now rendered with XSL.
+Title menu accepts MenuLeft and MenuRight.
+NoteSkin step metrics are now controllable per-judgement.
+When no profile is loaded in event mode, save scores with name "EVNT".
+Added translits: tsuyoizo hoshi no senshi, Guri Guri, Miyagawa Akira.
+Added "Yuujou" kanji.
+Adjusted "hoshi no umi kaze no yume" translit.
+When in "SM options navigation", pressing start in the options menus only moves
+  to the "exit" row, instead of going directly to the next screen.  This ensures
+  that both players have a chance to set options.
+
 * Alpha 21
 Fixed edits causing malformed DWI tags to be written.
 Fixed course selection music in SMMAX2.
