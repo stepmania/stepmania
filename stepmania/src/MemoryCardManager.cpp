@@ -108,7 +108,7 @@ void MemoryCardManager::Update( float fDelta )
 		if( !m_bCardsLocked )
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				PROFILEMAN->LoadProfileFromMemoryCard( (PlayerNumber)p );
+				PROFILEMAN->LoadFirstAvailableProfile( (PlayerNumber)p );
 		}
 		SCREENMAN->RefreshCreditsMessages();
 	}
