@@ -2,5 +2,5 @@
 // Don't forget to also change ProductInfo.nsinc!
 
 #define PRODUCT_NAME "StepMania"
-#define PRODUCT_VER "3.9 alpha 4"
+#define PRODUCT_VER "3.9 alpha 4a"
 #define PRODUCT_NAME_VER PRODUCT_NAME " " PRODUCT_VER
