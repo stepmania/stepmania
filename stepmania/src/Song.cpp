@@ -43,7 +43,7 @@
 #include "SDL_image.h"
 
 
-const int FILE_CACHE_VERSION = 125;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 126;	// increment this when Song or Notes changes to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
