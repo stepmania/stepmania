@@ -91,15 +91,7 @@ void FadingBanner::LoadFromCachedBanner( const CString &path )
 	/* No matter what we load, ensure we don't fade to a stale path. */
 	m_sPendingBanner = "";
 
-	if( TEXTUREMAN->IsTextureRegistered( Banner::BannerTex( path ) ) )
-	{
-		/* The actual file is already cached.  Use it. */
-		BeforeChange();
-		m_Banner[GetBackIndex()].Load( Banner::BannerTex(path) );
-		return;
-	}
-
-	/* It's not loaded.  Try to load the low quality version. */
+	/* Try to load the low quality version. */
 	RageTextureID ID = BANNERCACHE->LoadCachedBanner( path );
 	if( !TEXTUREMAN->IsTextureRegistered(ID) )
 	{
