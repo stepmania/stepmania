@@ -406,11 +406,18 @@ void Actor::Update( float fDeltaTime )
 //	LOG->Trace( "Actor::Update( %f )", fDeltaTime );
 	ASSERT_M( fDeltaTime >= 0, ssprintf("%f",fDeltaTime) );
 
-	m_fHibernateSecondsLeft -= fDeltaTime;
-	m_fHibernateSecondsLeft = max( 0, m_fHibernateSecondsLeft );
+	{
+		float fHibernate = m_fHibernateSecondsLeft;
+		m_fHibernateSecondsLeft -= fDeltaTime;
+		m_fHibernateSecondsLeft = max( 0, m_fHibernateSecondsLeft );
 
-	if( m_fHibernateSecondsLeft > 0 )
-		return;
+		/* If we're hibernating for 8 seconds, and fDeltaTime is 10 seconds, then
+		 * set fDeltaTime to 2. */
+		fDeltaTime = max( fDeltaTime - fHibernate, 0 );
+		
+		if( fDeltaTime == 0 )
+			return;
+	}
 
 	switch( m_EffectClock )
 	{
