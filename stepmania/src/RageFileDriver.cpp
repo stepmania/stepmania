@@ -21,7 +21,7 @@ int RageFileObj::Seek( int offset )
 	else
 		offset -= OldPos;
 
-	char buf[256];
+	char buf[1024*4];
 	while( offset )
 	{
 		/* Must call parent.Read: */
