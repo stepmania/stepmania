@@ -49,8 +49,8 @@ protected:
 	CString			m_szText;
 	vector<lstring>	m_szTextLines;
 	vector<int>		m_iLineWidths;			// in source pixels
-	vector<int>		m_iLineHeights;			// in source pixels
 	int				m_iWidestLineWidth;		// in source pixels
+
 
 	bool m_bRainbow;
 

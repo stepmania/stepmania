@@ -135,7 +135,7 @@ void BitmapText::BuildChars()
 	switch( m_VertAlign )
 	{
 	case align_top:		iY = 0;					break;
-	case align_middle:	iY = -roundf(TotalHeight/2.0f);	break;
+	case align_middle:	iY = -(int)roundf(TotalHeight/2.0f);	break;
 	case align_bottom:	iY = -TotalHeight;		break;
 	default:			ASSERT( false );		return;
 	}
@@ -150,7 +150,7 @@ void BitmapText::BuildChars()
 		switch( m_HorizAlign )
 		{
 		case align_left:	iX = 0;				break;
-		case align_center:	iX = -roundf(iLineWidth/2.0f);	break;
+		case align_center:	iX = -(int)roundf(iLineWidth/2.0f);	break;
 		case align_right:	iX = -iLineWidth;	break;
 		default:			ASSERT( false );	return;
 		}
@@ -221,7 +221,6 @@ void BitmapText::SetText( CString sText, bool DoSubst )
 	/* Break the string into lines. */
 	m_szTextLines.clear();
 	m_iLineWidths.clear();
-	m_iLineHeights.clear();
 
 	lstring s; s+='\n';
 	split(CStringToLstring(sText), s, m_szTextLines, false);
@@ -232,7 +231,6 @@ void BitmapText::SetText( CString sText, bool DoSubst )
 	for( unsigned l=0; l<m_szTextLines.size(); l++ )	// for each line
 	{
 		m_iLineWidths.push_back(m_pFont->GetLineWidthInSourcePixels( m_szTextLines[l] ));
-		m_iLineHeights.push_back(m_pFont->GetLineHeightInSourcePixels( m_szTextLines[l] ));
 		m_iWidestLineWidth = max(m_iWidestLineWidth, m_iLineWidths.back());
 	}
 
