@@ -123,9 +123,12 @@ void GraphDisplay::Update( float fDeltaTime )
 
 void GraphDisplay::DrawPrimitives()
 {
+	Actor::SetGlobalRenderStates();	// set Actor-specified render states
+
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetTexture( 0, m_pTexture );
-	Actor::SetRenderStates();	// set Actor-specified render states
+	// don't bother setting texture render states for a null texture
+	//Actor::SetTextureRenderStates();
 
 	DISPLAY->DrawQuads( Slices, ARRAYSIZE(Slices) );
 	DISPLAY->SetTexture( 0, NULL );

@@ -317,11 +317,11 @@ void Model::DrawCelShaded()
 
 void Model::DrawPrimitives()
 {
+	Actor::SetGlobalRenderStates();	// set Actor-specified render states
+
 	/* Don't if we're fully transparent */
 	if( m_pTempState->diffuse[0].a < 0.001f && m_pTempState->glow.a < 0.001f )
 		return;
-
-	Actor::SetRenderStates();	// set Actor-specified render states
 
 	DISPLAY->Scale( 1, -1, 1 );	// flip Y so positive is up
 
@@ -359,7 +359,6 @@ void Model::DrawPrimitives()
 					fScrollX += mat.diffuse.m_fTexOffsetX;
 					float fScrollY = mat.diffuse.m_fTexVelocityY * mat.diffuse.GetSecondsIntoAnimation() / mat.diffuse.GetAnimationLengthSeconds();
 					fScrollY += mat.diffuse.m_fTexOffsetY;
-					DISPLAY->SetTextureWrapping( true );
 					DISPLAY->TextureTranslate( fScrollX, fScrollY, 0 );
 				}
 
@@ -369,6 +368,7 @@ void Model::DrawPrimitives()
 				{
 					// render the diffuse texture
 					DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
+					Actor::SetTextureRenderStates();	// set Actor-specified render states
 					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
 					DrawMesh( i );
 				
@@ -376,6 +376,8 @@ void Model::DrawPrimitives()
 					if( mat.alpha.GetCurrentTexture() )
 					{
 						DISPLAY->SetTexture( 0, mat.alpha.GetCurrentTexture() );
+						Actor::SetTextureRenderStates();	// set Actor-specified render states
+
 						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
 						// UGLY:  This overrides the Actor's BlendMode
 						DISPLAY->SetBlendMode( BLEND_ADD );
@@ -387,12 +389,14 @@ void Model::DrawPrimitives()
 				{
 					// render the diffuse texture with texture unit 1
 					DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
+					Actor::SetTextureRenderStates();	// set Actor-specified render states
 					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
 					
 					// render the additive texture with texture unit 2
 					if( mat.alpha.GetCurrentTexture() )
 					{
 						DISPLAY->SetTexture( 1, mat.alpha.GetCurrentTexture() );
+						Actor::SetTextureRenderStates();	// set Actor-specified render states
 						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
 						DISPLAY->SetTextureModeAdd();
 						DISPLAY->SetTextureFiltering( true );
@@ -450,6 +454,7 @@ void Model::DrawPrimitives()
 			{
 				msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
 				DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
+				Actor::SetTextureRenderStates();	// set Actor-specified render states
 			}
 			else
 			{

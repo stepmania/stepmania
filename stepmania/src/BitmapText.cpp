@@ -328,6 +328,8 @@ void BitmapText::DrawChars()
 			end++;
 		DISPLAY->ClearAllTextures();
 		DISPLAY->SetTexture( 0, tex[start] );
+		// don't bother setting texture render states for text.  We never go outside of 0..1.
+		//Actor::SetTextureRenderStates();
 		RageSpriteVertex &start_vertex = verts[start*4];
 		int iNumVertsToDraw = (end-start)*4;
 		DISPLAY->DrawQuads( &start_vertex, iNumVertsToDraw );
@@ -487,7 +489,7 @@ bool BitmapText::EarlyAbortDraw()
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
 void BitmapText::DrawPrimitives()
 {
-	Actor::SetRenderStates();	// set Actor-specified render states
+	Actor::SetGlobalRenderStates();	// set Actor-specified render states
 	DISPLAY->SetTextureModeModulate();
 
 	/* Draw if we're not fully transparent or the zbuffer is enabled */

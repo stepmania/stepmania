@@ -320,16 +320,20 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	}
 }
 
-void Actor::SetRenderStates()
+void Actor::SetGlobalRenderStates()
 {
 	// set Actor-defined render states
-	DISPLAY->SetTextureWrapping( m_bTextureWrapping );
 	DISPLAY->SetBlendMode( m_BlendMode );
 	DISPLAY->SetZWrite( m_bZWrite );
 	DISPLAY->SetZTestMode( m_ZTestMode );
 	if( m_bClearZBuffer )
 		DISPLAY->ClearZBuffer();
 	DISPLAY->SetCullMode( m_CullMode );
+}
+
+void Actor::SetTextureRenderStates()
+{
+	DISPLAY->SetTextureWrapping( m_bTextureWrapping );
 }
 
 void Actor::EndDraw()

@@ -400,6 +400,8 @@ void TexCoordArrayFromRect(float fImageCoords[8], const RectF &rect)
 
 void Sprite::DrawTexture( const TweenState *state )
 {
+	Actor::SetGlobalRenderStates();	// set Actor-specified render states
+
 	// bail if cropped all the way 
     if( state->crop.left + state->crop.right >= 1  || 
 		state->crop.top + state->crop.bottom >= 1 ) 
@@ -456,7 +458,7 @@ void Sprite::DrawTexture( const TweenState *state )
 
 	// Must call this after setting the texture or else texture 
 	// parameters have no effect.
-	Actor::SetRenderStates();	// set Actor-specified render states
+	Actor::SetTextureRenderStates();	// set Actor-specified render states
 
 	if( m_pTexture )
 	{
