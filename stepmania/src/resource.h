@@ -8,7 +8,6 @@
 #define BITMAP_LOADING                  117
 #define BITMAP_CRASH                    121
 #define BITMAP_ERROR                    129
-#define IDD_DISASM                      138
 #define IDD_DISASM_CRASH                199
 #define IDC_SHOCKWAVEFLASH1             1000
 #define IDR_MAIN_ACCEL                  1001

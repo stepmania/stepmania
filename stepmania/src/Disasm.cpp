@@ -641,7 +641,7 @@ void CodeDisassemblyWindow::parse() {
 
 	num_ents = ipd-lbents;
 }
-
+/*
 BOOL CodeDisassemblyWindow::post(HWND hWnd) {
 	if (!lbents) return FALSE;
 
@@ -649,7 +649,7 @@ BOOL CodeDisassemblyWindow::post(HWND hWnd) {
 
 	return TRUE;
 }
-
+*/
 long CodeDisassemblyWindow::getInstruction(char *buf, long val) {
 	lbent *ipd;
 	unsigned char *ip;
