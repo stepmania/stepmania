@@ -350,10 +350,10 @@ ArtistFrom: (Nobuo Uematsu)|(Uematsu Nobuo)
 ArtistTo: 植松伸夫
 
 [Courses]
-TitleFrom: (Kidou)|(Demon Road)|(Road of Oni)
+TitleFrom: (Kidou)|(Demon Road)|(Road of Oni)|(Oni Michi)
 TitleTo: 鬼道
 *
-TitleFrom: (Kidou 2)|(Demon Road 2)|(Road of Oni 2)
+TitleFrom: (Kidou 2)|(Demon Road 2)|(Road of Oni 2)|(Oni Michi 2)
 TitleTo: 鬼道 弐
 *
 TitleFrom: Love
@@ -362,7 +362,7 @@ TitleTo: Love ♡
 TitleFrom: Love Love
 TitleTo: Love ♡
 *
-TitleFrom: 2 ?MB
+TitleFrom: (2 ?MB)|(Road of 2 ?MB)
 TitleTo: 2MB道
 *
 TitleFrom: Dancemania( Oni)?
