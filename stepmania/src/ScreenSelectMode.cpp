@@ -174,15 +174,17 @@ void ScreenSelectMode::UpdateSelectableChoices()
 			(!PREFSMAN->m_bJointPremium)
 		)*/
 
+		const int SidesJoinedToPlay = mc.style == STYLE_INVALID? 1:
+			GAMEMAN->GetStyleDefForStyle(mc.style)->NumSidesJoinedToPlay();
 		if( (!PREFSMAN->m_bJointPremium ) ||
 			(
 				PREFSMAN->m_bJointPremium && 
 				( 
-					(INCLUDE_DOUBLE_IN_JP == 1 && (GAMESTATE->GetNumSidesJoined() == mc.numSidesJoinedToPlay)) || 
+					(INCLUDE_DOUBLE_IN_JP == 1 && (GAMESTATE->GetNumSidesJoined() == SidesJoinedToPlay)) || 
 					(
 						INCLUDE_DOUBLE_IN_JP == 0 && 
 						(
-							GAMESTATE->GetNumSidesJoined() == mc.numSidesJoinedToPlay || 
+							GAMESTATE->GetNumSidesJoined() == SidesJoinedToPlay || 
 							(modename.substr(0, 6) == "DOUBLE" || modename.substr(0, 13) == "ARCADE-DOUBLE" ||
 							modename.substr(0, 10) == "HALFDOUBLE" || modename.substr(0, 17) == "ARCADE-HALFDOUBLE") &&
 							GAMESTATE->GetNumSidesJoined() != 2

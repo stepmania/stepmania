@@ -309,12 +309,13 @@ bool GameState::IsPlayable( const ModeChoice& mc )
 	// value from the current game state
 	//
 	const PlayMode &rPlayMode = mc.pm != PLAY_MODE_INVALID? mc.pm:m_PlayMode;
-	const Style &rStyle = mc.style != STYLE_INVALID? mc.style: m_CurStyle;
-	// ModeChoice code sets numSidesJoinedToPlay properly iff style is set
-	const int numSidesJoined = mc.style != STYLE_INVALID? mc.numSidesJoinedToPlay:GAMESTATE->GetNumSidesJoined();
 
-	if ( numSidesJoined != GAMESTATE->GetNumSidesJoined() )
-		return false;
+	if ( mc.style != STYLE_INVALID )
+	{
+		const int SidesJoinedToPlay = GAMEMAN->GetStyleDefForStyle(mc.style)->NumSidesJoinedToPlay();
+		if( SidesJoinedToPlay != GAMESTATE->GetNumSidesJoined() )
+			return false;
+	}
 
 	if( rPlayMode == PLAY_MODE_RAVE || rPlayMode == PLAY_MODE_BATTLE )
 	{
@@ -324,6 +325,7 @@ bool GameState::IsPlayable( const ModeChoice& mc )
 
 		// If there is no current style ... well, we have no reasonable
 		// grounds to disallow
+		const Style &rStyle = mc.style != STYLE_INVALID? mc.style: m_CurStyle;
 		if (rStyle == STYLE_INVALID)
 			return true;
 
