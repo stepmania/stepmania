@@ -548,6 +548,7 @@ public:
 	{
 		ADD_METHOD( IsUsingProfile )
 		ADD_METHOD( GetProfile )
+		ADD_METHOD( GetMachineProfile )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
