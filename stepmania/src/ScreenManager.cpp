@@ -304,7 +304,6 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 			break;
 		}
 	}
-	m_vPreparedScreens.clear();
 
 	m_vPreparedScreens.push_back( MakeNewScreen(sScreenName) );
 }
