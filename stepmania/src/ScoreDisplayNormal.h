@@ -12,9 +12,8 @@
 */
 
 #include "ScoreDisplay.h"
+#include "BitmapText.h"
 
-
-const int NUM_SCORE_DIGITS	=	9;
 
 
 class ScoreDisplayNormal : public ScoreDisplay
@@ -25,11 +24,13 @@ public:
 	virtual void Init( PlayerNumber pn );
 
 	virtual void Update( float fDeltaTime );
-	virtual void Draw();
 
 	virtual void SetScore( float fNewScore );
+	virtual void SetText( CString s );
 
 protected:
+	BitmapText m_text;
+
 	float m_fScore;			// the actual score
 	float m_fTrailingScore;	// what is displayed temporarily
 	float m_fScoreVelocity;	// how fast trailing approaches real score

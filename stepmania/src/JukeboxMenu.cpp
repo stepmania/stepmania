@@ -66,7 +66,7 @@ JukeboxMenu::JukeboxMenu()
 	// fill in data structures
 	GAMEMAN->GetStylesForGame( GAMESTATE->m_CurGame, m_Styles );
 	SONGMAN->GetGroupNames( m_sGroups );
-	m_sGroups.insert( m_sGroups.begin(), "All Music" );
+	m_sGroups.insert( m_sGroups.begin(), "ALL MUSIC" );
 	m_sDifficulties.push_back( "all difficulties" );
 	for( int d=0; d<NUM_DIFFICULTIES; d++ )
 		m_sDifficulties.push_back( DifficultyToString( (Difficulty)d ) );

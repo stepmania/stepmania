@@ -11,20 +11,15 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Sprite.h"
 #include "GameConstantsAndTypes.h"
 #include "ActorFrame.h"
-#include "BitmapText.h"
 
-class ScoreDisplay : public BitmapText
+class ScoreDisplay : public ActorFrame
 {
 public:
 	virtual void Init( PlayerNumber pn ) { m_PlayerNumber = pn; };
 
-	virtual void Update( float fDeltaTime ) = 0;
-	virtual void Draw() = 0;
-
-	virtual void SetScore( float fNewScore ) = 0;
+	virtual void SetScore( float fNewScore ) {};
 
 protected:
 	PlayerNumber m_PlayerNumber;	// needed to look up statistics in GAMESTATE

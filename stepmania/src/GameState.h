@@ -18,6 +18,7 @@
 #include "Style.h"
 #include "Grade.h"
 #include "StageStats.h"
+#include "Inventory.h"
 
 
 class Song;
@@ -62,7 +63,7 @@ public:
 	bool IsPlayerEnabled( int p ) { return IsPlayerEnabled( (PlayerNumber)p ); };	// for those too lasy to cast all those p's to a PlayerNumber
 
 	CString			m_sLoadingMessage;	// used in loading screen
-	CString			m_sPreferredGroup;	// "ALL MUSIC" denotes no preferred group
+	CString			m_sPreferredGroup;	// GROUP_ALL_MUSIC denotes no preferred group
 	Difficulty		m_PreferredDifficulty[NUM_PLAYERS];
 	SongSortOrder	m_SongSortOrder;			// used by MusicWheel
 	PlayMode		m_PlayMode;			// many screen display different info depending on this value
@@ -123,6 +124,7 @@ public:
 													 // courses separately from the active options.
 	SongOptions		m_SongOptions;
 
+	Inventory		m_Inventory[NUM_PLAYERS];
 
 	bool HasEarnedExtraStage();
 	bool m_bAllow2ndExtraStage; //only used when "Allow Selection of Extra Stage is on"

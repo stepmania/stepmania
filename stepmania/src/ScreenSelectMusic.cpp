@@ -206,7 +206,6 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_sprMarathonBalloon.Load( THEME->GetPathTo("Graphics","select music marathon balloon") );
 	m_sprMarathonBalloon.StopAnimating();
 	m_sprMarathonBalloon.SetXY( BALLOON_X, BALLOON_Y );
-	m_sprMarathonBalloon.SetZoom( 1 );
 	m_sprMarathonBalloon.SetZoomY( 0 );
 	m_sprMarathonBalloon.SetDiffuse( RageColor(1,1,1,1) );
 	m_sprMarathonBalloon.SetEffectBobbing( RageVector3(0,10,0), 2 );
@@ -215,7 +214,6 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_sprLongBalloon.Load( THEME->GetPathTo("Graphics","select music long balloon") );
 	m_sprLongBalloon.StopAnimating();
 	m_sprLongBalloon.SetXY( BALLOON_X, BALLOON_Y );
-	m_sprLongBalloon.SetZoom( 1 );
 	m_sprLongBalloon.SetZoomY( 0 );
 	m_sprLongBalloon.SetDiffuse( RageColor(1,1,1,1) );
 	m_sprLongBalloon.SetEffectBobbing( RageVector3(0,10,0), 2 );
@@ -309,11 +307,11 @@ void ScreenSelectMusic::TweenOnScreen()
 
 void ScreenSelectMusic::TweenOffScreen()
 {
-	m_sprBannerFrame.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
-	m_Banner.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
-	m_BPMDisplay.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
-	m_StageDisplay.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
-	m_sprCDTitle.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
+	m_sprBannerFrame.FadeOff( 0, "bounce left", TWEEN_TIME );
+	m_Banner.FadeOff( 0, "bounce left", TWEEN_TIME );
+	m_BPMDisplay.FadeOff( 0, "bounce left", TWEEN_TIME );
+	m_StageDisplay.FadeOff( 0, "bounce left", TWEEN_TIME );
+	m_sprCDTitle.FadeOff( 0, "bounce left", TWEEN_TIME );
 
 	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -420,7 +418,7 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 
 void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->Trace( "ScreenSelectMusic::Input()" );
+//	LOG->Trace( "ScreenSelectMusic::Input()" );
 	
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F9 )
 	{

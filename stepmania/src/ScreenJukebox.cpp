@@ -30,7 +30,7 @@ bool PrepareForJukebox()		// always return true.
 	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 
 	vector<Song*> vSongs;
-	if( GAMESTATE->m_sPreferredGroup.CompareNoCase("all music") == 0 )
+	if( GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC )
 		SONGMAN->GetSongs( vSongs );
 	else
 		SONGMAN->GetSongs( vSongs, GAMESTATE->m_sPreferredGroup );

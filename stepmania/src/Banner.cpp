@@ -80,7 +80,7 @@ void Banner::LoadFromGroup( CString sGroupName )
 {
 	CString sGroupBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
 
-	if( sGroupName == "ALL MUSIC" )
+	if( sGroupName == GROUP_ALL_MUSIC )
 		Load( THEME->GetPathTo("Graphics","all music banner") );
 	else if( sGroupBannerPath != "" )
 		Load( sGroupBannerPath );

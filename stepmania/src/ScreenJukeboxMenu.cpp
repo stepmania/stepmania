@@ -130,7 +130,7 @@ void ScreenJukeboxMenu::MenuStart( PlayerNumber pn )
 	bool bModifiers	= m_Selector.GetSelectedModifiers();
 
 	GAMESTATE->m_CurStyle = style;
-	GAMESTATE->m_sPreferredGroup = sGroup;
+	GAMESTATE->m_sPreferredGroup = (sGroup=="ALL MUSIC") ? GROUP_ALL_MUSIC : sGroup;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		GAMESTATE->m_PreferredDifficulty[p] = dc;
 	GAMESTATE->m_bJukeboxUsesModifiers = bModifiers;

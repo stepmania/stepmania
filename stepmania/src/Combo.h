@@ -23,6 +23,8 @@ class Combo : public ActorFrame
 public:
 	Combo();
 
+	void Init( PlayerNumber pn ) { m_PlayerNumber = pn; }
+
 	void SetScore( TapNoteScore score, int iNumNotesInThisRow );
 
 	int GetCurrentCombo() const { return m_iCurCombo; }
@@ -30,6 +32,8 @@ public:
 	void Reset();
 
 protected:
+	PlayerNumber m_PlayerNumber;
+
 	int			m_iCurCombo;
 	int			m_iMaxCombo;
 	int			m_iCurComboOfPerfects;

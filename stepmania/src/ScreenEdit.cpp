@@ -527,7 +527,7 @@ void ScreenEdit::DrawPrimitives()
 
 void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->Trace( "ScreenEdit::Input()" );
+//	LOG->Trace( "ScreenEdit::Input()" );
 
 	switch( m_EditMode )
 	{
@@ -1320,8 +1320,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
 				float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
-				m_soundMusic.SetPositionSeconds( fStartSeconds );
+				LOG->Trace( "Starting playback at %f", fStartSeconds );
 				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
+				m_soundMusic.SetPositionSeconds( fStartSeconds );
 				m_soundMusic.StartPlaying();
 			}
 			break;
@@ -1342,9 +1343,10 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0.8f) );
 
 				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
-				float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
-				m_soundMusic.SetPositionSeconds( fStartSeconds );
+				float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat);
+				LOG->Trace( "Starting playback at %f", fStartSeconds );
 				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
+				m_soundMusic.SetPositionSeconds( fStartSeconds );
 				m_soundMusic.StartPlaying();
 			}
 			break;

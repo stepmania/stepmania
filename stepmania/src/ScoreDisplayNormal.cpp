@@ -20,6 +20,7 @@
 
 
 const float SCORE_TWEEN_TIME = 0.2f;
+const int NUM_SCORE_DIGITS	=	9;
 
 
 ScoreDisplayNormal::ScoreDisplayNormal()
@@ -27,8 +28,8 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 	LOG->Trace( "ScoreDisplayNormal::ScoreDisplayNormal()" );
 
 	// init the text
-	BitmapText::LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay score numbers") );
-	TurnShadowOff();
+	m_text.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay score numbers") );
+	m_text.TurnShadowOff();
 
 	m_fScore = 0;
 	m_fTrailingScore = 0;
@@ -37,13 +38,14 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 	CString s;
 	for( int i=0; i<NUM_SCORE_DIGITS; i++ )
 		s += ' ';
-	SetText( s );
+	m_text.SetText( s );
+	this->AddChild( &m_text );
 }
 
-
-void ScoreDisplayNormal::Init( PlayerNumber pn )
+void ScoreDisplayNormal::Init( PlayerNumber pn ) 
 {
-	m_PlayerNumber = pn;
+	ScoreDisplay::Init( pn );
+	m_text.SetDiffuse( PlayerToColor(pn) );
 }
 
 void ScoreDisplayNormal::SetScore( float fNewScore ) 
@@ -55,9 +57,14 @@ void ScoreDisplayNormal::SetScore( float fNewScore )
 	m_fScoreVelocity = fDelta / SCORE_TWEEN_TIME;	// in score units per second
 }
 
+void ScoreDisplayNormal::SetText( CString s ) 
+{ 
+	m_text.SetText( s );
+}
+
 void ScoreDisplayNormal::Update( float fDeltaTime )
 {
-	BitmapText::Update( fDeltaTime );
+	ScoreDisplay::Update( fDeltaTime );
 
 	if( m_fTrailingScore != m_fScore )
 	{
@@ -71,11 +78,7 @@ void ScoreDisplayNormal::Update( float fDeltaTime )
 			m_fScoreVelocity = 0;
 		}
 
-		SetText( ssprintf("%*.0f", NUM_SCORE_DIGITS, m_fTrailingScore) );
+		m_text.SetText( ssprintf("%*.0f", NUM_SCORE_DIGITS, m_fTrailingScore) );
 	}
 }
 
-void ScoreDisplayNormal::Draw()
-{
-	BitmapText::Draw();
-}

@@ -211,4 +211,11 @@ RankingCategory AverageMeterToRankingCategory( float fAverageMeter );
 const int NUM_RANKING_LINES	= 5;
 const int MAX_RANKING_NAME_LENGTH	= 4;
 
+
+//
+// Group stuff
+//
+const CString GROUP_ALL_MUSIC = "";
+
+
 #endif

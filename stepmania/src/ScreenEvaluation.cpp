@@ -122,6 +122,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_BATTLE:
 		m_ResultMode = bSummary ? RM_ARCADE_SUMMARY : RM_ARCADE_STAGE;
 		break;
 	case PLAY_MODE_NONSTOP:
@@ -219,10 +220,9 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )	// If EZ2 wants to hide this graphic, place it somewhere off screen using theme metrics
 			continue;	// skip
 
-		m_ScoreDisplay[p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation score numbers") );
 		m_ScoreDisplay[p].SetXY( SCORE_NUMBERS_X(p), SCORE_Y );
+		m_ScoreDisplay[p].Init( (PlayerNumber)p );
 		m_ScoreDisplay[p].SetZoomY( 1.0 );
-		m_ScoreDisplay[p].SetDiffuse( PlayerToColor(p) );
 		this->AddChild( &m_ScoreDisplay[p] );
 	}
 

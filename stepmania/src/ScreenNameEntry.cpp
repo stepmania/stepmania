@@ -193,6 +193,7 @@ ScreenNameEntry::ScreenNameEntry()
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
+		case PLAY_MODE_BATTLE:
 			{
 				StageStats SS;
 				vector<Song*> vSongs;
@@ -382,6 +383,7 @@ void ScreenNameEntry::MenuStart( PlayerNumber pn )
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_BATTLE:
 		SONGMAN->m_MachineScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_RankingCategory[pn]][GAMESTATE->m_iRankingIndex[pn]].sName = m_sSelectedName[pn];
 		break;
 	case PLAY_MODE_NONSTOP:

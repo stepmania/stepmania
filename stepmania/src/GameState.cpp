@@ -67,7 +67,7 @@ void GameState::Reset()
 		m_bSideIsJoined[p] = false;
 //	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
-	m_sPreferredGroup	= "";
+	m_sPreferredGroup	= GROUP_ALL_MUSIC;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
 	m_SongSortOrder = SORT_GROUP;
@@ -113,6 +113,9 @@ void GameState::ResetMusicStatistics()
 	m_fCurBPS = 10;
 	m_bFreeze = false;
 	m_bPastHereWeGo = false;
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		m_Inventory[p].Reset();
 }
 
 void GameState::UpdateSongPosition(float fPositionSeconds)

@@ -91,6 +91,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	 * then we could just this->StopTweening()? -glenn */
 	m_Judgment.StopTweening();
 //	m_Combo.Reset();		// don't reset combos between songs in a course!
+	m_Combo.Init( pn );
 	m_Judgment.Reset();
 
 	if(m_ScoreKeeper) delete m_ScoreKeeper;

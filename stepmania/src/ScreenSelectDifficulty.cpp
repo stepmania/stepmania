@@ -141,7 +141,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 	}
 
 
-	m_iCurrentPage = PAGE_1;
+	m_CurrentPage = PAGE_1;
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -240,7 +240,9 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToNextScreen:
 		for( p=0; p<NUM_PLAYERS; p++ )
 		{
-			const ModeChoice& mc = m_ModeChoices[m_iCurrentPage][m_iChoiceOnPage[p]];
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;		// skip
+			const ModeChoice& mc = m_ModeChoices[m_CurrentPage][m_iChoiceOnPage[p]];
 			GAMESTATE->m_PlayMode = mc.pm;
 			GAMESTATE->m_PreferredDifficulty[p] = mc.dc;
 		}
@@ -271,8 +273,8 @@ void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
 		return;
 	if( m_iChoiceOnPage[pn] == 0 )	// can't go left any more
 	{
-		if( m_iCurrentPage > 0 )
-			ChangePage( m_iCurrentPage-1 );
+		if( m_CurrentPage > 0 )
+			ChangePage( (Page)(m_CurrentPage-1) );
 	}
 	else
 		ChangeWithinPage( pn, m_iChoiceOnPage[pn]-1, false );
@@ -283,16 +285,16 @@ void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 {
 	if( m_bChosen[pn] )
 		return;
-	if( m_iChoiceOnPage[pn] == (int)m_ModeChoices[m_iCurrentPage].size()-1 )	// can't go left any more
+	if( m_iChoiceOnPage[pn] == (int)m_ModeChoices[m_CurrentPage].size()-1 )	// can't go left any more
 	{
-		if( m_iCurrentPage < NUM_PAGES-1 )
-			ChangePage( m_iCurrentPage+1 );
+		if( m_CurrentPage < NUM_PAGES-1 )
+			ChangePage( (Page)(m_CurrentPage+1) );
 	}
 	else
 		ChangeWithinPage( pn, m_iChoiceOnPage[pn]+1, false );
 }
 
-void ScreenSelectDifficulty::ChangePage( int iNewPage )
+void ScreenSelectDifficulty::ChangePage( Page newPage )
 {
 	int p;
 
@@ -301,42 +303,51 @@ void ScreenSelectDifficulty::ChangePage( int iNewPage )
 		if( GAMESTATE->IsPlayerEnabled(p) && m_bChosen[p] )
 			return;
 
-	bool bPageIncreasing = iNewPage > m_iCurrentPage;
-	m_iCurrentPage = iNewPage;
+	bool bPageIncreasing = newPage > m_CurrentPage;
+	m_CurrentPage = newPage;
 
-	if( iNewPage == PAGE_2 )
+	if( newPage == PAGE_2 )
 	{
 		m_soundDifficult.Stop();
 		m_soundDifficult.PlayRandom();
 	}
 
 	// change both players
-	int iNewChoice = bPageIncreasing ? 0 : m_ModeChoices[m_iCurrentPage].size()-1;
+	int iNewChoice = bPageIncreasing ? 0 : m_ModeChoices[m_CurrentPage].size()-1;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		ChangeWithinPage( (PlayerNumber)p, iNewChoice, true );
 
 	// move frame with choices
 	m_framePages.StopTweening();
 	m_framePages.BeginTweening( 0.2f );
-	m_framePages.SetTweenX( (float)iNewPage*-SCREEN_WIDTH );
+	m_framePages.SetTweenX( (float)newPage*-SCREEN_WIDTH );
 }
 
 void ScreenSelectDifficulty::ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages )
 {
-	m_iChoiceOnPage[pn] = iNewChoice;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;	// skip
 
-	float fCursorX = CURSOR_X(m_iCurrentPage,m_iChoiceOnPage[pn],pn);
-	float fCursorY = CURSOR_Y(m_iCurrentPage,m_iChoiceOnPage[pn],pn);
+		if( p!=pn && m_CurrentPage==PAGE_1 )
+			continue;	// skip
 
-	m_sprCursor[pn].StopTweening();
-	m_sprCursor[pn].BeginTweening( 0.2f, bChangingPages ? TWEEN_LINEAR : TWEEN_BIAS_BEGIN );
-	m_sprCursor[pn].SetTweenX( fCursorX - CURSOR_SHADOW_LENGTH_X );
-	m_sprCursor[pn].SetTweenY( fCursorY - CURSOR_SHADOW_LENGTH_Y );
+		m_iChoiceOnPage[p] = iNewChoice;
 
-	m_sprJoinMessagehadow[pn].StopTweening();
-	m_sprJoinMessagehadow[pn].BeginTweening( 0.2f, bChangingPages ? TWEEN_LINEAR : TWEEN_BIAS_BEGIN );
-	m_sprJoinMessagehadow[pn].SetTweenX( fCursorX );
-	m_sprJoinMessagehadow[pn].SetTweenY( fCursorY );
+		float fCursorX = CURSOR_X(m_CurrentPage,m_iChoiceOnPage[p],p);
+		float fCursorY = CURSOR_Y(m_CurrentPage,m_iChoiceOnPage[p],p);
+
+		m_sprCursor[p].StopTweening();
+		m_sprCursor[p].BeginTweening( 0.2f, bChangingPages ? TWEEN_LINEAR : TWEEN_BIAS_BEGIN );
+		m_sprCursor[p].SetTweenX( fCursorX - CURSOR_SHADOW_LENGTH_X );
+		m_sprCursor[p].SetTweenY( fCursorY - CURSOR_SHADOW_LENGTH_Y );
+
+		m_sprJoinMessagehadow[p].StopTweening();
+		m_sprJoinMessagehadow[p].BeginTweening( 0.2f, bChangingPages ? TWEEN_LINEAR : TWEEN_BIAS_BEGIN );
+		m_sprJoinMessagehadow[p].SetTweenX( fCursorX );
+		m_sprJoinMessagehadow[p].SetTweenY( fCursorY );
+	}
 
 	m_soundChange.Play();
 }
@@ -350,12 +361,12 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	for( unsigned page=0; page<NUM_PAGES; page++ )
 		m_sprMoreArrows[page].FadeOff( 0, "fade", 0.5f );
 
-	const ModeChoice& mc = m_ModeChoices[m_iCurrentPage][m_iChoiceOnPage[pn]];
+	const ModeChoice& mc = m_ModeChoices[m_CurrentPage][m_iChoiceOnPage[pn]];
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("select difficulty comment %s",mc.name)) );
 
 	/* XXX: This will play the same announcer twice at the same time; that'll probably
 	 * result in an echo effect. */
-	if( m_iCurrentPage == PAGE_2 )
+	if( m_CurrentPage == PAGE_2 )
 	{
 		// choose this for all the other players too
 		for( int p=0; p<NUM_PLAYERS; p++ )
@@ -367,8 +378,8 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 		}
 	}
 
-	float fCursorX = CURSOR_X(m_iCurrentPage,m_iChoiceOnPage[pn],pn);
-	float fCursorY = CURSOR_Y(m_iCurrentPage,m_iChoiceOnPage[pn],pn);
+	float fCursorX = CURSOR_X(m_CurrentPage,m_iChoiceOnPage[pn],pn);
+	float fCursorY = CURSOR_Y(m_CurrentPage,m_iChoiceOnPage[pn],pn);
 
 	m_sprCursor[pn].BeginTweening( 0.2f );
 	m_sprCursor[pn].BeginTweening( 0.2f );
@@ -413,7 +424,7 @@ void ScreenSelectDifficulty::TweenOffScreen()
 		m_SubActors[p]->StopTweening();
 	
 
-	const int page = m_iCurrentPage;
+	const int page = m_CurrentPage;
 
 	m_sprExplanation[page].SetXY( EXPLANATION_X(page), EXPLANATION_Y(page) );
 	m_sprExplanation[page].BeginTweening( 0.5, Actor::TWEEN_BOUNCE_BEGIN );
@@ -467,8 +478,8 @@ void ScreenSelectDifficulty::TweenOnScreen()
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
-		float fCursorX = CURSOR_X(m_iCurrentPage,m_iChoiceOnPage[p],p);
-		float fCursorY = CURSOR_Y(m_iCurrentPage,m_iChoiceOnPage[p],p);
+		float fCursorX = CURSOR_X(m_CurrentPage,m_iChoiceOnPage[p],p);
+		float fCursorY = CURSOR_Y(m_CurrentPage,m_iChoiceOnPage[p],p);
 
 
 		m_sprCursor[p].SetXY( fCursorX, fCursorY );
@@ -482,8 +493,8 @@ void ScreenSelectDifficulty::TweenOnScreen()
 	}
 
 	{
-		const int p = m_iCurrentPage;
-		for( unsigned c=0; c<m_ModeChoices[m_iCurrentPage].size(); c++ )
+		const int p = m_CurrentPage;
+		for( unsigned c=0; c<m_ModeChoices[m_CurrentPage].size(); c++ )
 		{
 			const float fPause = c*0.2f;
 

@@ -112,7 +112,7 @@ MusicWheel::MusicWheel()
 	if( GAMESTATE->IsExtraStage() ||  GAMESTATE->IsExtraStage2() )
 	{
 		// make the preferred group the group of the last song played.
-		if( GAMESTATE->m_sPreferredGroup == "ALL MUSIC" && !PREFSMAN->m_bPickExtraStage )
+		if( GAMESTATE->m_sPreferredGroup==GROUP_ALL_MUSIC && !PREFSMAN->m_bPickExtraStage )
 			GAMESTATE->m_sPreferredGroup = GAMESTATE->m_pCurSong->m_sGroupName;
 
 		Song* pSong;
@@ -294,12 +294,23 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 {
 	unsigned i;
 
-	if(so == SongSortOrder(SORT_ROULETTE) && GAMESTATE->m_PlayMode != PLAY_MODE_ARCADE)
-		return; /* only used in arcade */
+	// Roulette is used only in arcade and battle
+	if( so == SongSortOrder(SORT_ROULETTE) )
+	{
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_ARCADE:
+		case PLAY_MODE_BATTLE:
+			break;
+		default:
+            return;
+		}
+	}
 
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_BATTLE:
 		{
 			///////////////////////////////////
 			// Make an array of Song*, then sort them
@@ -345,7 +356,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			{
 			case SORT_MOST_PLAYED:	bUseSections = false;	break;
 			case SORT_BPM:			bUseSections = false;	break;
-			case SORT_GROUP:		bUseSections = GAMESTATE->m_sPreferredGroup == "ALL MUSIC";	break;
+			case SORT_GROUP:		bUseSections = GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC;	break;
 			case SORT_TITLE:		bUseSections = true;	break;
 			case SORT_ROULETTE:		bUseSections = false;	break;
 			default:		ASSERT( false );
@@ -370,7 +381,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 					CString sThisSection = GetSectionNameFromSongAndSort( pSong, so );
 					int iSectionColorIndex = 0;
 
-					if( GAMESTATE->m_sPreferredGroup != "ALL MUSIC"  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
+					if( GAMESTATE->m_sPreferredGroup != GROUP_ALL_MUSIC  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
 							continue;
 
 					if( sThisSection != sLastSection)	// new section, make a section item
@@ -389,46 +400,44 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				for( unsigned i=0; i<arraySongs.size(); i++ )
 				{
 					Song* pSong = arraySongs[i];
-					if( GAMESTATE->m_sPreferredGroup != "ALL MUSIC"  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
+					if( GAMESTATE->m_sPreferredGroup != GROUP_ALL_MUSIC  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
 						continue;	// skip
 					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONGMAN->GetSongColor(pSong)) );
 				}
 			}
-		}
 
-
-		if( so != SORT_ROULETTE )
-		{
-			arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1)) );
-			arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1)) );
-		}
-
-		// HACK:  Add extra stage item if it isn't already present on the music wheel
-		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-		{
-			Song* pSong;
-			Notes* pNotes;
-			PlayerOptions po;
-			SongOptions so;
-			SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->m_pCurSong->m_sGroupName, GAMESTATE->GetCurrentStyleDef(), pSong, pNotes, po, so );
-			
-			bool bFoundExtraSong = false;
-
-			for( unsigned i=0; i<arrayWheelItemDatas.size(); i++ )
+			if( so != SORT_ROULETTE )
 			{
-				if( arrayWheelItemDatas[i].m_pSong == pSong )
-				{
-					/* Change the song color. */
-					arrayWheelItemDatas[i].m_color = SONG_REAL_EXTRA_COLOR;
-					bFoundExtraSong = true;
-					break;
-				}
+				arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1)) );
+				arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1)) );
 			}
 
-			if( !bFoundExtraSong )
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONG_REAL_EXTRA_COLOR) );
-		}
+			// HACK:  Add extra stage item if it isn't already present on the music wheel
+			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+			{
+				Song* pSong;
+				Notes* pNotes;
+				PlayerOptions po;
+				SongOptions so;
+				SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->m_pCurSong->m_sGroupName, GAMESTATE->GetCurrentStyleDef(), pSong, pNotes, po, so );
+				
+				bool bFoundExtraSong = false;
 
+				for( unsigned i=0; i<arrayWheelItemDatas.size(); i++ )
+				{
+					if( arrayWheelItemDatas[i].m_pSong == pSong )
+					{
+						/* Change the song color. */
+						arrayWheelItemDatas[i].m_color = SONG_REAL_EXTRA_COLOR;
+						bFoundExtraSong = true;
+						break;
+					}
+				}
+
+				if( !bFoundExtraSong )
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONG_REAL_EXTRA_COLOR) );
+			}
+		}
 		break;
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:

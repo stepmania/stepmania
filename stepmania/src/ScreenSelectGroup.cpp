@@ -59,7 +59,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 
 	if(!PREFSMAN->m_bShowSelectGroup)
 	{
-		GAMESTATE->m_sPreferredGroup = "ALL MUSIC";
+		GAMESTATE->m_sPreferredGroup = GROUP_ALL_MUSIC;
 		m_Menu.ImmedOffScreenToMenu();
 		m_bChosen = true;
 		this->SendScreenMessage( SM_GoToNextScreen, 0.f );
@@ -105,7 +105,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 
 	// copy group names into a vector
 	std::vector<CString> asGroupNames;
-	asGroupNames.push_back( "ALL MUSIC" );	// "ALL MUSIC" is a special group
+	asGroupNames.push_back( "ALL MUSIC" );	// special group
 	for( std::map<CString, CString>::const_iterator iter = mapGroupNames.begin(); iter != mapGroupNames.end(); ++iter )
 		asGroupNames.push_back( iter->first );
 
@@ -227,7 +227,7 @@ void ScreenSelectGroup::AfterChange()
 	CString sSelectedGroupName = m_GroupList.GetSelectionName();
 
 	CString sGroupBannerPath;
-	if( 0 == stricmp(sSelectedGroupName, "ALL MUSIC") )
+	if( sSelectedGroupName == GROUP_ALL_MUSIC )
 		sGroupBannerPath = THEME->GetPathTo("Graphics","all music banner");
 	else if( SONGMAN->GetGroupBannerPath(sSelectedGroupName) != "" )
 		sGroupBannerPath = SONGMAN->GetGroupBannerPath(sSelectedGroupName);
@@ -282,9 +282,9 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 	m_bChosen = true;
 
 	GAMESTATE->m_pCurSong = NULL;
-	GAMESTATE->m_sPreferredGroup = m_GroupList.GetSelectionName();
+	GAMESTATE->m_sPreferredGroup = (m_GroupList.GetSelectionName()=="ALL MUSIC" ? GROUP_ALL_MUSIC : m_GroupList.GetSelectionName() );
 
-	if( 0 == stricmp(GAMESTATE->m_sPreferredGroup, "All Music") )
+	if( GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC )
         SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group comment all music") );
 	else
         SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group comment general") );

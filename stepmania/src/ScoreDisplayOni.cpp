@@ -19,42 +19,32 @@
 #include "ThemeManager.h"
 
 
-const float SCORE_TWEEN_TIME = 0.5f;
-
-
 ScoreDisplayOni::ScoreDisplayOni()
 {
 	LOG->Trace( "ScoreDisplayOni::ScoreDisplayOni()" );
 
 	// init the text
-	BitmapText::LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay score numbers") );
-	TurnShadowOff();
+	m_text.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay score numbers") );
+	m_text.TurnShadowOff();
+	this->AddChild( &m_text );
 }
 
-
-void ScoreDisplayOni::Init( PlayerNumber pn )
+void ScoreDisplayOni::Init( PlayerNumber pn ) 
 {
-	m_PlayerNumber = pn;
+	ScoreDisplay::Init( pn );
+	m_text.SetDiffuse( PlayerToColor(pn) );
 }
 
-void ScoreDisplayOni::SetScore( float fNewScore ) 
-{ 
-}
 
-void ScoreDisplayOni::Update( float fDeltaTime )
+void ScoreDisplayOni::Update( float fDelta )
 {
-	BitmapText::Update( fDeltaTime );
-}
+	ScoreDisplay::Update( fDelta );
 
-void ScoreDisplayOni::Draw()
-{
 	float fSecsIntoPlay;
 	if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
 		fSecsIntoPlay = GAMESTATE->m_CurStageStats.fAliveSeconds[m_PlayerNumber];
 	else
 		fSecsIntoPlay = 0;
 
-	SetText( SecondsToTime(fSecsIntoPlay) );
-
-	BitmapText::Draw();
+	m_text.SetText( SecondsToTime(fSecsIntoPlay) );
 }

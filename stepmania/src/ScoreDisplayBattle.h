@@ -1,10 +1,10 @@
-#ifndef SCOREDISPLAYONI_H
-#define SCOREDISPLAYONI_H
+#ifndef ScoreDisplayBattle_H
+#define ScoreDisplayBattle_H
 /*
 -----------------------------------------------------------------------------
- Class: ScoreDisplayOni
+ Class: ScoreDisplayBattle
 
- Desc: Shows time into course.
+ Desc: Shows point score during gameplay and used in some menus.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -12,20 +12,21 @@
 */
 
 #include "ScoreDisplay.h"
-#include "BitmapText.h"
+#include "Sprite.h"
+#include "Inventory.h"
 
 
-class ScoreDisplayOni : public ScoreDisplay
+
+class ScoreDisplayBattle : public ScoreDisplay
 {
 public:
-	ScoreDisplayOni();
-
-	virtual void Init( PlayerNumber pn );
+	ScoreDisplayBattle();
 
 	virtual void Update( float fDelta );
 
 protected:
-	BitmapText m_text;
+	Sprite m_sprFrames[NUM_ITEM_SLOTS];
+	Sprite m_sprItems[NUM_ITEM_SLOTS];
 };
 
 #endif

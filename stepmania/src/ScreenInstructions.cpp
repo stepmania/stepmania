@@ -26,7 +26,7 @@
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenInstructions","TimerSeconds")
 #define NEXT_SCREEN_ARCADE		THEME->GetMetric("ScreenInstructions","NextScreenArcade")
 #define NEXT_SCREEN_ONI			THEME->GetMetric("ScreenInstructions","NextScreenOni")
-
+#define NEXT_SCREEN_BATTLE		THEME->GetMetric("ScreenInstructions","NextScreenBattle")
 
 
 ScreenInstructions::ScreenInstructions()
@@ -52,18 +52,22 @@ ScreenInstructions::ScreenInstructions()
 	//
 	// Skip this screen unless someone chose easy or beginner
 	//
-	Difficulty easiestDifficulty = DIFFICULTY_HARD;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-		easiestDifficulty = min( easiestDifficulty, GAMESTATE->m_PreferredDifficulty[p] );
-	}
-	if( easiestDifficulty > DIFFICULTY_EASY )
-	{
-		this->SendScreenMessage( SM_GoToNextScreen, 0 );
-		m_Menu.ImmedOffScreenToMenu();
-		return;
+		Difficulty easiestDifficulty = (Difficulty)(NUM_DIFFICULTIES-1);
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;
+			easiestDifficulty = min( easiestDifficulty, GAMESTATE->m_PreferredDifficulty[p] );
+		}
+		if( easiestDifficulty > DIFFICULTY_EASY )
+		{
+			// skip this screen
+			this->SendScreenMessage( SM_GoToNextScreen, 0 );
+			m_Menu.ImmedOffScreenToMenu();
+			return;
+		}
 	}
 
 
@@ -83,6 +87,9 @@ ScreenInstructions::ScreenInstructions()
 		break;
 	case PLAY_MODE_ENDLESS:
 		sHowToPlayPath = THEME->GetPathTo("Graphics","instructions endless");
+		break;
+	case PLAY_MODE_BATTLE:
+		sHowToPlayPath = THEME->GetPathTo("Graphics","instructions battle");
 		break;
 	default:
 		ASSERT(0);
@@ -148,6 +155,9 @@ void ScreenInstructions::HandleScreenMessage( const ScreenMessage SM )
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
 			SCREENMAN->SetNewScreen( NEXT_SCREEN_ONI );
+			break;
+		case PLAY_MODE_BATTLE:
+			SCREENMAN->SetNewScreen( NEXT_SCREEN_BATTLE );
 			break;
 		default:
 			ASSERT(0);

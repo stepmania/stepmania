@@ -44,7 +44,7 @@ public:
 
 private:
 	void ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages );
-	void ChangePage( int iNewPage );
+	void ChangePage( Page newPage );
 
 	MenuElements m_Menu;
 
@@ -65,7 +65,7 @@ private:
 
 	vector<ModeChoice> m_ModeChoices[NUM_PAGES];
 
-	int m_iCurrentPage;
+	Page m_CurrentPage;
 	int m_iChoiceOnPage[NUM_PLAYERS];
 	bool m_bChosen[NUM_PLAYERS];
 

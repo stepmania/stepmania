@@ -24,6 +24,7 @@
 #include "GameState.h"
 #include "ScoreDisplayNormal.h"
 #include "ScoreDisplayOni.h"
+#include "ScoreDisplayBattle.h"
 #include "ScreenPrompt.h"
 #include "GrooveRadar.h"
 #include "NotesLoaderSM.h"
@@ -127,6 +128,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_BATTLE:
 		{
 			GAMESTATE->m_CurStageStats.pSong = GAMESTATE->m_pCurSong;
 			for( int p=0; p<NUM_PLAYERS; p++ )
@@ -265,6 +267,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_BATTLE:
 		this->AddChild( &m_textStageNumber );
 		break;
 	case PLAY_MODE_NONSTOP:
@@ -320,14 +323,18 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		case PLAY_MODE_ENDLESS:
 			m_pScoreDisplay[p] = new ScoreDisplayOni;
 			break;
+		case PLAY_MODE_BATTLE:
+			m_pScoreDisplay[p] = new ScoreDisplayBattle;
+			break;
 		default:
 			ASSERT(0);
 		}
 
+		GAMESTATE->m_Inventory[p].RefreshPossibleItems();
+
 		m_pScoreDisplay[p]->Init( (PlayerNumber)p );
 		m_pScoreDisplay[p]->SetXY( SCORE_X(p), SCORE_Y(p,bExtra) );
 		m_pScoreDisplay[p]->SetZoom( SCORE_ZOOM );
-		m_pScoreDisplay[p]->SetDiffuse( PlayerToColor(p) );
 		this->AddChild( m_pScoreDisplay[p] );
 		
 		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
@@ -492,6 +499,7 @@ bool ScreenGameplay::IsLastSong()
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_BATTLE:
 		return true;
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
@@ -521,6 +529,7 @@ void ScreenGameplay::LoadNextSong()
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_BATTLE:
 		break;
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
@@ -807,6 +816,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			switch( GAMESTATE->m_PlayMode )
 			{
 			case PLAY_MODE_ARCADE:
+			case PLAY_MODE_BATTLE:
 				if( OneIsHot() )			m_announcerHot.PlayRandom();
 				else if( AllAreInDanger() )	m_announcerDanger.PlayRandom();
 				else						m_announcerGood.PlayRandom();
@@ -995,13 +1005,31 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	}
 
 	//
-	// handle a step
+	// handle a step or battle item activate
 	//
 	if( type==IET_FIRST_PRESS && 
 		!PREFSMAN->m_bAutoPlay && 
 		StyleI.IsValid() &&
 		GAMESTATE->IsPlayerEnabled( StyleI.player ) )
 		m_Player[StyleI.player].Step( StyleI.col ); 
+	else if( type==IET_FIRST_PRESS && 
+		!PREFSMAN->m_bAutoPlay && 
+		MenuI.IsValid() &&
+		GAMESTATE->IsPlayerEnabled( MenuI.player ) )
+	{
+		int iItemSlot;
+		switch( MenuI.button )
+		{
+		case MENU_BUTTON_LEFT:	iItemSlot = 0;	break;
+		case MENU_BUTTON_START:	iItemSlot = 1;	break;
+		case MENU_BUTTON_RIGHT:	iItemSlot = 2;	break;
+		default:				iItemSlot = -1;	break;
+		}
+		
+		if( iItemSlot != -1 )
+			GAMESTATE->m_Inventory[MenuI.player].UseItem( MenuI.player, iItemSlot );
+	}
+
 }
 
 void ScreenGameplay::PositionStatusIcons()
@@ -1045,6 +1073,7 @@ void SaveChanges()
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_BATTLE:
 		GAMESTATE->m_pCurSong->Save();
 		break;
 	case PLAY_MODE_NONSTOP:
@@ -1067,6 +1096,7 @@ void DontSaveChanges()
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_BATTLE:
 		ld.LoadFromSMFile(GAMESTATE->m_pCurSong->GetCacheFilePath(),
 			*GAMESTATE->m_pCurSong);
 		break;
@@ -1075,10 +1105,10 @@ void DontSaveChanges()
 	case PLAY_MODE_ENDLESS:
 		{
 			// FIXME
-//			for( int i=0; i<GAMESTATE->m_pCurCourse->GetNumStages(); i++ )
+//			for( unsigned i=0; i<m_apCourseSongs.size(); i++ )
 //			{
-//				Song* pSong = GAMESTATE->m_pCurCourse->GetSong(i);
-//				ld.LoadFromSMFile( GAMESTATE->m_pCurSong->GetCacheFilePath(), *pSong );
+//				Song* pSong = m_apCourseSongs[i];
+//				ld.LoadFromSMFile( pSong->GetCacheFilePath(), *pSong );
 //			}
 		}
 		break;
@@ -1093,6 +1123,7 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_BATTLE:
 		sMessage = ssprintf( 
 			"You have changed the offset or BPM of\n"
 			"%s.\n"
@@ -1436,6 +1467,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:	
+		case PLAY_MODE_BATTLE:	
 			// SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
 			SCREENMAN->SetNewScreen( SONGSEL_SCREEN );
 			break;

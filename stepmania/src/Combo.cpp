@@ -162,6 +162,8 @@ void Combo::SetScore( TapNoteScore score, int iNumNotesInThisRow )
 		if( m_iCurCombo > 50 )
 			SCREENMAN->SendMessageToTopScreen( SM_ComboStopped, 0 );
 
+		GAMESTATE->m_Inventory[m_PlayerNumber].OnComboBroken( m_iCurCombo );
+
 		m_iCurCombo = 0;
 
 		m_textComboNumber.SetDiffuse( RageColor(1,1,1,0) );	// invisible
