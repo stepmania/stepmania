@@ -76,8 +76,7 @@ protected:
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
 	BitmapText			m_textHighScore[NUM_PLAYERS];
 	MusicWheel			m_MusicWheel;
-	Sprite				m_sprMarathonBalloon;
-	Sprite				m_sprLongBalloon;
+	Sprite				m_sprBalloon;
 
 	bool				m_bMadeChoice;
 	bool				m_bGoToOptions;

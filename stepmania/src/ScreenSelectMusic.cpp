@@ -143,15 +143,10 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	m_MusicSortDisplay.Set( GAMESTATE->m_SongSortOrder );
 	this->AddChild( &m_MusicSortDisplay );
 
-	m_sprMarathonBalloon.SetName( "Balloon" );
-	m_sprMarathonBalloon.Load( THEME->GetPathToG("ScreenSelectMusic marathon") );
-	m_sprMarathonBalloon.SetDiffuse( RageColor(1,1,1,0) );
-	this->AddChild( &m_sprMarathonBalloon );
-
-	m_sprLongBalloon.SetName( "Balloon" );
-	m_sprLongBalloon.Load( THEME->GetPathToG("ScreenSelectMusic long") );
-	m_sprLongBalloon.SetDiffuse( RageColor(1,1,1,0) );
-	this->AddChild( &m_sprLongBalloon );
+	m_sprBalloon.SetName( "Balloon" );
+	TEXTUREMAN->CacheTexture( THEME->GetPathToG("ScreenSelectMusic balloon long") );
+	TEXTUREMAN->CacheTexture( THEME->GetPathToG("ScreenSelectMusic balloon marathon") );
+	this->AddChild( &m_sprBalloon );
 
 	m_sprOptionsMessage.SetName( "OptionsMessage" );
 	m_sprOptionsMessage.Load( THEME->GetPathToG("ScreenSelectMusic options message 1x2") );
@@ -739,11 +734,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		no_banner_change = true;
 	}
 
-	m_sprMarathonBalloon.StopTweening();
-	OFF_COMMAND( m_sprMarathonBalloon );
-	m_sprLongBalloon.StopTweening();
-	OFF_COMMAND( m_sprLongBalloon );
-
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_SECTION:
@@ -756,6 +746,9 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_Banner.LoadFromGroup( sGroup );	// if this isn't a group, it'll default to the fallback banner
 			m_BPMDisplay.NoBPM();
 			m_sprCDTitle.UnloadTexture();
+
+			m_sprBalloon.StopTweening();
+			OFF_COMMAND( m_sprBalloon );
 		}
 		break;
 	case TYPE_SONG:
@@ -817,13 +810,20 @@ void ScreenSelectMusic::AfterMusicChange()
 			 * like the effect with a lot of delay. */
 			if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
 			{
-				m_sprMarathonBalloon.StopTweening();
-				SET_XY_AND_ON_COMMAND( m_sprMarathonBalloon );
+				m_sprBalloon.StopTweening();
+				m_sprBalloon.Load( THEME->GetPathToG("ScreenSelectMusic balloon marathon") );
+				SET_XY_AND_ON_COMMAND( m_sprBalloon );
 			}
 			else if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds )
 			{
-				m_sprLongBalloon.StopTweening();
-				SET_XY_AND_ON_COMMAND( m_sprLongBalloon );
+				m_sprBalloon.StopTweening();
+				m_sprBalloon.Load( THEME->GetPathToG("ScreenSelectMusic balloon long") );
+				SET_XY_AND_ON_COMMAND( m_sprBalloon );
+			}
+			else
+			{
+				m_sprBalloon.StopTweening();
+				OFF_COMMAND( m_sprBalloon );
 			}
 		}
 		break;
@@ -839,6 +839,8 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_fSampleStartSeconds = -1;
 		m_fSampleLengthSeconds = -1;
 
+		m_sprBalloon.StopTweening();
+		OFF_COMMAND( m_sprBalloon );
 		break;
 	case TYPE_RANDOM:
 		if(!no_banner_change)
@@ -851,6 +853,9 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_sSampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic random music");
 		m_fSampleStartSeconds = -1;
 		m_fSampleLengthSeconds = -1;
+
+		m_sprBalloon.StopTweening();
+		OFF_COMMAND( m_sprBalloon );
 		break;
 	default:
 		ASSERT(0);

@@ -479,10 +479,13 @@ void Actor::SetEffectBounce( float fPeriod, RageVector3 vect )
 
 void Actor::SetEffectBob( float fPeriod, RageVector3 vect )
 {
-	m_Effect = bob;
-	m_fEffectPeriodSeconds = fPeriod;
+	if( m_Effect!=bob || m_fEffectPeriodSeconds!=fPeriod )
+	{
+		m_Effect = bob;
+		m_fEffectPeriodSeconds = fPeriod;
+		m_fSecsIntoEffect = 0;
+	}
 	m_vEffectMagnitude = vect;
-	m_fSecsIntoEffect = 0;
 }
 
 void Actor::SetEffectSpin( RageVector3 vect )
