@@ -54,9 +54,6 @@ void Combo::UpdateScore( TapNoteScore score )
 		return;
 	}
 
-	/* If needed, make this a theme metric. */
-	const bool HighComboAlert_OnceOnly = true;
-
 	switch( score )
 	{
 	case TNS_PERFECT:
@@ -72,7 +69,6 @@ void Combo::UpdateScore( TapNoteScore score )
 			SCREENMAN->SendMessageToTopScreen( SM_BeginToasty, 0 );
 
 
-		if(!HighComboAlert_OnceOnly || m_iCurCombo > m_iMaxCombo)
 		switch( m_iCurCombo )
 		{
 		case 100: 		SCREENMAN->SendMessageToTopScreen( SM_100Combo, 0 );	break;
