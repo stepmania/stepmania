@@ -23,6 +23,7 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 GameState::GameState()
 {
 	m_sLoadingMessage = "Initializing hardware...";
+	m_CurGame = GAME_DANCE;
 	Reset();
 }
 
@@ -42,8 +43,10 @@ void GameState::Reset()
 
 	m_aGameplayStatistics.RemoveAll();
 
-	// But we just changed to our brand new style !! (ez2 or smth)
-	// m_CurGame = GAME_DANCE;
+	// We can simply reset it cause it would override the selection the user just did
+	// Moved to the constructor for now
+	//m_CurGame = GAME_DANCE;
+
 	m_CurStyle = STYLE_NONE;
 	m_MasterPlayerNumber = PLAYER_INVALID;
 
