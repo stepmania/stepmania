@@ -35,7 +35,7 @@ ActorCommands::ActorCommands( const ActorCommands& cpy )
 	 * the function by reference, so we don't make a new function unless we're actually
 	 * changed. */
 	ostringstream s;
-	s << m_sLuaFunctionName << " = " << cpy.GetFunctionName();
+	s << m_sLuaFunctionName << " = " << cpy.m_sLuaFunctionName;
 
 	CString s2 = s.str();
 	LUA->RunScript( s2 );
@@ -50,9 +50,12 @@ ActorCommands &ActorCommands::operator=( const ActorCommands& cpy )
 	return *this;
 }
 
-CString ActorCommands::GetFunctionName() const
+void ActorCommands::PushSelf( lua_State *L ) const
 {
-	return m_sLuaFunctionName;
+	lua_pushstring( L, m_sLuaFunctionName ); // function name
+	lua_gettable( L, LUA_GLOBALSINDEX ); // function to be called
+
+	ASSERT_M( !lua_isnil(L, -1), m_sLuaFunctionName.c_str() )
 }
 
 void ActorCommands::Register( const Commands& cmds )

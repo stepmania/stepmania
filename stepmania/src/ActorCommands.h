@@ -6,6 +6,8 @@
 #include "RageUtil_AutoPtr.h"
 class Commands;
 
+struct lua_State;
+
 class ActorCommands
 {
 public:
@@ -14,8 +16,7 @@ public:
 	ActorCommands( const ActorCommands& cpy );
 	ActorCommands &operator=( const ActorCommands& cpy );
 
-
-	CString GetFunctionName() const;
+	void PushSelf( lua_State *L ) const;
 
 private:
 	void Register( const Commands& cmds );

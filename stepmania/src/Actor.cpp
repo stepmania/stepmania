@@ -677,8 +677,7 @@ void Actor::AddRotationR( float rot )
 
 void Actor::RunCommands( const ActorCommands& cmds )
 {
-	lua_pushstring(LUA->L, cmds.GetFunctionName()); // function name
-	lua_gettable(LUA->L, LUA_GLOBALSINDEX); // function to be called
+	cmds.PushSelf( LUA->L );
 	this->PushSelf( LUA->L ); // 1st parameter
 	lua_call(LUA->L, 1, 0); // call function with 1 argument and 0 results
 }
