@@ -44,6 +44,8 @@ class InputFilter
 
 public:
 	void ButtonPressed( DeviceInput di, bool Down );
+	void ResetDevice( InputDevice dev );
+
 	InputFilter();
 	void Update(float fDeltaTime);
 

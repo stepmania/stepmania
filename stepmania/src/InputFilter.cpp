@@ -40,6 +40,13 @@ void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 	queue.push_back( InputEvent(di,iet) );
 }
 
+/* Release all buttons on the given device. */
+void InputFilter::ResetDevice( InputDevice dev )
+{
+	for( int button = 0; button < NUM_DEVICE_BUTTONS; ++button )
+		ButtonPressed( DeviceInput(dev, button), false );
+}
+
 void InputFilter::Update(float fDeltaTime)
 {
 	INPUTMAN->Update( fDeltaTime );
