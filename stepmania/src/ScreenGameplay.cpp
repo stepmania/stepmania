@@ -910,6 +910,7 @@ void ScreenGameplay::LoadNextSong()
 			PROFILEMAN->IncrementStepsPlayCount( pSong, pSteps, p );
 
 		m_textPlayerOptions[p].SetText( GAMESTATE->m_PlayerOptions[p].GetString() );
+		m_ActiveAttackList[p].Refresh();
 
 		// reset oni game over graphic
 		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
