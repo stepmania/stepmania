@@ -37,12 +37,12 @@ static inline void enum_add( T &val, int iAmt )
 
 static const CString EMPTY_STRING;
 
-#define XToString(X)	\
+#define XToString(X, CNT)	\
 	const CString& X##ToString( X x ) \
 	{	\
 		if( x == ARRAYSIZE(X##Names)+1 ) 	\
 			return EMPTY_STRING;	\
-		ASSERT(unsigned(x) < ARRAYSIZE(X##Names));	\
+		ASSERT(unsigned(x) < CNT);	\
 		return X##Names[x];	\
 	}
 

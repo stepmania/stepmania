@@ -32,7 +32,7 @@ static const CString ElementCategoryNames[NUM_ELEMENT_CATEGORIES] = {
 	"Sounds",
 	"Other"
 };
-XToString( ElementCategory );
+XToString( ElementCategory, NUM_ELEMENT_CATEGORIES );
 StringToX( ElementCategory );
 static void LuaElementCategory(lua_State* L)
 {

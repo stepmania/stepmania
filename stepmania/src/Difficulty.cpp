@@ -13,7 +13,7 @@ static const CString DifficultyNames[NUM_DIFFICULTIES] = {
 	"Challenge",
 	"Edit",
 };
-XToString( Difficulty );
+XToString( Difficulty, NUM_DIFFICULTIES );
 XToThemedString( Difficulty, NUM_DIFFICULTIES );
 
 /* We prefer the above names; recognize a number of others, too.  (They'l
@@ -66,7 +66,7 @@ static const CString CourseDifficultyNames[NUM_DIFFICULTIES] =
 	"Challenge",
 	"Edit",
 };
-XToString( CourseDifficulty );
+XToString( CourseDifficulty, NUM_DIFFICULTIES );
 XToThemedString( CourseDifficulty, NUM_DIFFICULTIES );
 StringToX( CourseDifficulty );
 

@@ -13,14 +13,14 @@ static const CString SelectTypeNames[NUM_SELECT_TYPES] = {
 	"SelectMultiple",
 	"SelectNone",
 };
-XToString( SelectType );
+XToString( SelectType, NUM_SELECT_TYPES );
 StringToX( SelectType );
 
 static const CString LayoutTypeNames[NUM_LAYOUT_TYPES] = {
 	"ShowAllInRow",
 	"ShowOneInRow",
 };
-XToString( LayoutType );
+XToString( LayoutType, NUM_LAYOUT_TYPES );
 StringToX( LayoutType );
 
 #define FOREACH_OptionsPlayer( pn ) \

@@ -20,7 +20,7 @@ static const CString PageTypeNames[NUM_PAGE_TYPES] = {
 	"AllSteps",
 	"AllCourses",
 };
-XToString( PageType );
+XToString( PageType, NUM_PAGE_TYPES );
 
 
 #define COURSES_TO_SHOW				PREFSMAN->m_sCoursesToShowRanking

@@ -25,8 +25,8 @@ static CString UnlockTypeNames[NUM_UNLOCK_TYPES] =
 	"Toasties",
 	"StagesCleared"
 };
-XToString(UnlockType);
-StringToX(UnlockType);
+XToString( UnlockType, NUM_UNLOCK_TYPES );
+StringToX( UnlockType );
 
 UnlockManager::UnlockManager()
 {

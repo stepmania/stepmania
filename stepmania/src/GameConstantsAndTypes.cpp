@@ -22,7 +22,7 @@ static const CString RadarCategoryNames[NUM_RADAR_CATEGORIES] = {
 	"Mines",
 	"Hands",
 };
-XToString( RadarCategory );
+XToString( RadarCategory, NUM_RADAR_CATEGORIES );
 XToThemedString( RadarCategory, NUM_RADAR_CATEGORIES );
 
 
@@ -47,7 +47,7 @@ static const CString PlayModeNames[NUM_PLAY_MODES] = {
 	"Battle",
 	"Rave",
 };
-XToString( PlayMode );
+XToString( PlayMode, NUM_PLAY_MODES );
 XToThemedString( PlayMode, NUM_PLAY_MODES );
 StringToX( PlayMode );
 static void LuaPlayMode(lua_State* L)
@@ -78,7 +78,7 @@ static const CString RankingCategoryNames[NUM_RANKING_CATEGORIES] = {
 	"c",
 	"d",
 };
-XToString( RankingCategory );
+XToString( RankingCategory, NUM_RANKING_CATEGORIES );
 StringToX( RankingCategory );
 
 
@@ -87,7 +87,7 @@ static const CString CoinModeNames[NUM_COIN_MODES] = {
 	"pay",
 	"free",
 };
-XToString( CoinMode );
+XToString( CoinMode, NUM_COIN_MODES );
 
 
 static const CString PremiumNames[NUM_PREMIUMS] = {
@@ -95,7 +95,7 @@ static const CString PremiumNames[NUM_PREMIUMS] = {
 	"doubles",
 	"joint",
 };
-XToString( Premium );
+XToString( Premium, NUM_PREMIUMS );
 
 
 static const CString SortOrderNames[NUM_SORT_ORDERS] = {
@@ -118,7 +118,7 @@ static const CString SortOrderNames[NUM_SORT_ORDERS] = {
 	"Endless",
 	"Roulette",
 };
-XToString( SortOrder );
+XToString( SortOrder, NUM_SORT_ORDERS );
 StringToX( SortOrder );
 
 
@@ -132,7 +132,7 @@ static const CString TapNoteScoreNames[NUM_TAP_NOTE_SCORES] = {
 	"Perfect",
 	"Marvelous",
 };
-XToString( TapNoteScore );
+XToString( TapNoteScore, NUM_TAP_NOTE_SCORES );
 StringToX( TapNoteScore );
 XToThemedString( TapNoteScore, NUM_TAP_NOTE_SCORES );
 
@@ -142,7 +142,7 @@ static const CString HoldNoteScoreNames[NUM_HOLD_NOTE_SCORES] = {
 	"NG",
 	"OK",
 };
-XToString( HoldNoteScore );
+XToString( HoldNoteScore, NUM_HOLD_NOTE_SCORES );
 StringToX( HoldNoteScore );
 XToThemedString( HoldNoteScore, NUM_HOLD_NOTE_SCORES );
 
@@ -155,7 +155,7 @@ static const CString MemoryCardStateNames[NUM_MEMORY_CARD_STATES] = {
 	"removed",
 	"none",
 };
-XToString( MemoryCardState );
+XToString( MemoryCardState, NUM_MEMORY_CARD_STATES );
 
 
 static const CString PerDifficultyAwardNames[NUM_PER_DIFFICULTY_AWARDS] = {
@@ -170,7 +170,7 @@ static const CString PerDifficultyAwardNames[NUM_PER_DIFFICULTY_AWARDS] = {
 	"Greats90Percent",
 	"Greats100Percent",
 };
-XToString( PerDifficultyAward );
+XToString( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS );
 XToThemedString( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS );
 StringToX( PerDifficultyAward );
 
@@ -191,7 +191,7 @@ static const CString PeakComboAwardNames[NUM_PEAK_COMBO_AWARDS] = {
 	"Peak9000Combo",
 	"Peak10000Combo",
 };
-XToString( PeakComboAward );
+XToString( PeakComboAward, NUM_PEAK_COMBO_AWARDS );
 XToThemedString( PeakComboAward, NUM_PEAK_COMBO_AWARDS );
 StringToX( PeakComboAward );
 
@@ -261,7 +261,7 @@ static const CString StyleTypeNames[NUM_STYLE_TYPES] = {
 	"TwoPlayersTwoSides",
 	"OnePlayerTwoSides",
 };
-XToString( StyleType );
+XToString( StyleType, NUM_STYLE_TYPES );
 StringToX( StyleType );
 
 
@@ -272,7 +272,7 @@ static const CString MenuDirNames[NUM_MENU_DIRS] = {
 	"Right",
 	"Auto",
 };
-XToString( MenuDir );
+XToString( MenuDir, NUM_MENU_DIRS );
 
 
 static const CString GoalTypeNames[NUM_GOAL_TYPES] = {
@@ -280,7 +280,7 @@ static const CString GoalTypeNames[NUM_GOAL_TYPES] = {
 	"Time",
 	"None",
 };
-XToString( GoalType );
+XToString( GoalType, NUM_GOAL_TYPES );
 StringToX( GoalType );
 static void LuaGoalType(lua_State* L)
 {
@@ -301,7 +301,7 @@ static const CString EditMenuActionNames[NUM_EDIT_MENU_ACTIONS] = {
 	"Autogen",
 	"Blank"
 };
-XToString( EditMenuAction );
+XToString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
 XToThemedString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
 StringToX( EditMenuAction );
 static void LuaEditMenuAction(lua_State* L)

@@ -11,7 +11,7 @@ static const CString PrefsGroupNames[NUM_PREFS_GROUPS] = {
 	"Editor",
 	"Options",
 };
-XToString( PrefsGroup );
+XToString( PrefsGroup, NUM_PREFS_GROUPS );
 
 IPreference::IPreference( PrefsGroup PrefsGroup, const CString& sName ):
 	m_PrefsGroup( PrefsGroup ),

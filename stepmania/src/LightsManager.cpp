@@ -20,7 +20,7 @@ static const CString CabinetLightNames[NUM_CABINET_LIGHTS] = {
 	"BassLeft",
 	"BassRight",
 };
-XToString( CabinetLight );
+XToString( CabinetLight, NUM_CABINET_LIGHTS );
 
 static const CString LightsModeNames[NUM_LIGHTS_MODES] = {
 	"Attract",
@@ -32,7 +32,7 @@ static const CString LightsModeNames[NUM_LIGHTS_MODES] = {
 	"Cleared",
 	"Test",
 };
-XToString( LightsMode );
+XToString( LightsMode, NUM_LIGHTS_MODES );
 
 
 LightsManager*	LIGHTSMAN = NULL;	// global and accessable from anywhere in our program

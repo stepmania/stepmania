@@ -16,7 +16,7 @@ static const CString MessageNames[NUM_MESSAGES] = {
 	"EditSourceStepsChanged",
 	"EditSourceStepsTypeChanged",
 };
-XToString( Message );
+XToString( Message, NUM_MESSAGES );
 
 
 MessageManager::MessageManager()
