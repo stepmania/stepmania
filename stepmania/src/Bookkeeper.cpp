@@ -24,10 +24,9 @@
 
 Bookkeeper*	BOOKKEEPER = NULL;	// global and accessable from anywhere in our program
 
-static const CString BOOKKEEPING_INI = BASE_PATH "Data" SLASH "Bookkeeping.ini";
 static const CString COINS_DAT = BASE_PATH "Data" SLASH "Coins.dat";
 
-
+const int COINS_DAT_VERSION = 1;
 
 tm GetDaysAgo( tm start, int iDaysAgo )
 {
@@ -60,10 +59,6 @@ Bookkeeper::Bookkeeper()
 	int i, j;
 
 	m_iLastSeenTime = time(NULL);
-	m_iTotalCoins = 0;
-	m_iTotalUptimeSeconds = 0;
-	m_iTotalPlaySeconds = 0;
-	m_iTotalPlays = 0;
 	for( i=0; i<DAYS_PER_YEAR; i++ )
 		for( j=0; j<HOURS_PER_DAY; j++ )
 			m_iCoinsByHourForYear[i][j] = 0;
@@ -78,68 +73,56 @@ Bookkeeper::~Bookkeeper()
 	WriteToDisk();
 }
 
+#define WARN_AND_RETURN { LOG->Warn("Error parsing at %s:%d",__FILE__,__LINE__); return; }
+
 void Bookkeeper::ReadFromDisk()
 {
-	// read ini
-	IniFile ini;
-	ini.SetPath( BOOKKEEPING_INI );
-	ini.ReadFile();
+    RageFile f;
+	if( !f.Open(COINS_DAT, RageFile::READ) )
+	{
+		LOG->Warn( "Couldn't open file '%s'", COINS_DAT.c_str() );
+		return;
+	}
 
-	ini.GetValue( "MachineStatistics", "LastSeenTime",			m_iLastSeenTime ); 
-	ini.GetValue( "MachineStatistics", "TotalCoins",			m_iTotalCoins ); 
-	ini.GetValue( "MachineStatistics", "TotalUptimeSeconds",	m_iTotalUptimeSeconds ); 
-	ini.GetValue( "MachineStatistics", "TotalPlaySeconds",		m_iTotalPlaySeconds ); 
-	ini.GetValue( "MachineStatistics", "TotalPlays",			m_iTotalPlays ); 
+	int iVer;
+	if( !FileRead(f, iVer) )
+		WARN_AND_RETURN;
+	if( iVer != COINS_DAT_VERSION )
+		WARN_AND_RETURN;
 
-	// read dat
-    RageFile file( COINS_DAT );
-    if (file.IsOpen())
-    {
-		const CString line = file.GetLine();
+	if( !FileRead(f, m_iLastSeenTime) )
+		WARN_AND_RETURN;
 
-		vector<CString> parts;
-		split( line, " ", parts, true );
+    for (int i=0; i<DAYS_PER_YEAR; ++i)
+	{
+        for (int j=0; j<HOURS_PER_DAY; ++j)
+		{
+			int iCoins;
+			if( !FileRead(f, iCoins) )
+				WARN_AND_RETURN;
 
-		unsigned p = 0;
-        for (int i=0; i<DAYS_PER_YEAR; ++i)
-            for (int j=0; j<HOURS_PER_DAY; ++j)
-			{
-				if( p >= parts.size() )
-				{
-					LOG->Warn( "Parse error in %s", COINS_DAT.c_str() );
-					return;
-				}
-
-                m_iCoinsByHourForYear[i][j] = atoi( parts[p++] );
-			}
-    }
+            m_iCoinsByHourForYear[i][j] = iCoins;
+		}
+	}
 }
 
 void Bookkeeper::WriteToDisk()
 {
-	// write ini
-	IniFile ini;
-	ini.SetPath( BOOKKEEPING_INI );
-	
-	ini.SetValue( "MachineStatistics", "LastSeenTime",			m_iLastSeenTime ); 
-	ini.SetValue( "MachineStatistics", "TotalCoins",			m_iTotalCoins ); 
-	ini.SetValue( "MachineStatistics", "TotalUptimeSeconds",	m_iTotalUptimeSeconds ); 
-	ini.SetValue( "MachineStatistics", "TotalPlaySeconds",		m_iTotalPlaySeconds ); 
-	ini.SetValue( "MachineStatistics", "TotalPlays",			m_iTotalPlays ); 
-
-	ini.WriteFile();
-
 	// write dat
-    RageFile file( COINS_DAT, RageFile::WRITE );
+    RageFile f;
+	if( !f.Open(COINS_DAT, RageFile::WRITE) )
+	{
+		LOG->Warn( "Couldn't open file '%s'", COINS_DAT.c_str() );
+		return;
+	}
     
-    if (file.IsOpen())
-    {
-		CString line;
-        for (int i=0; i<DAYS_PER_YEAR; ++i)
-            for (int j=0; j<HOURS_PER_DAY; ++j)
-                line += ssprintf( "%d ", m_iCoinsByHourForYear[i][j] );
-		file.PutLine( line );
-    }
+	FileWrite(f, COINS_DAT_VERSION );
+	
+	FileWrite(f, m_iLastSeenTime);
+
+	for (int i=0; i<DAYS_PER_YEAR; ++i)
+        for (int j=0; j<HOURS_PER_DAY; ++j)
+            FileWrite( f, m_iCoinsByHourForYear[i][j] );
 }
 
 void Bookkeeper::UpdateLastSeenTime()

@@ -37,6 +37,8 @@ public:
 	GameState();
 	~GameState();
 	void Reset();
+	void BeginGame();	// called when first player joins
+	void EndGame();	// called on ScreenGameOver, ScreenMusicScroll, ScreenCredits
 
 	void Update( float fDelta );
 
@@ -52,7 +54,8 @@ public:
 	int				m_iCoins;			// not "credits"
 	PlayerNumber	m_MasterPlayerNumber;	// used in Styles where one player controls both sides
 	bool			m_bIsOnSystemMenu; // system screens will not be effected by the operator key -- Miryokuteki
-	bool			m_bDifficultCourses; //used in nonstop
+	bool			m_bDifficultCourses; // used in nonstop
+	time_t			m_timeGameStated;	// from the moment the first player pressed Start
 
 	/* This is set to a random number per-game/round; it can be used for a random seed. */
 	int				m_iGameSeed, m_iRoundSeed;

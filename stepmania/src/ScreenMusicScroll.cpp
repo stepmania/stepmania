@@ -97,8 +97,3 @@ void ScreenMusicScroll::Update( float fDeltaTime )
 	}
 }	
 
-
-void ScreenMusicScroll::HandleScreenMessage( const ScreenMessage SM )
-{
-	ScreenAttract::HandleScreenMessage( SM );
-}

@@ -40,10 +40,6 @@ private:
 	int GetCoinsForDay( int iDayOfYear );
 
 	int m_iLastSeenTime;
-	int m_iTotalCoins;
-	int m_iTotalUptimeSeconds;
-	int m_iTotalPlaySeconds;
-	int m_iTotalPlays;
 	int m_iCoinsByHourForYear[DAYS_PER_YEAR][HOURS_PER_DAY];
 };
 

@@ -198,6 +198,10 @@ bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, c
 
 		SOUND->PlayOnce( THEME->GetPathToS("Common start") );
 
+		// if first player to join, set start time
+		if( GAMESTATE->GetNumSidesJoined() == 1 )
+			GAMESTATE->BeginGame();
+
 		return true;
 	}
 

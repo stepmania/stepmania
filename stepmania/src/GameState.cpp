@@ -34,6 +34,7 @@
 #include "LightsManager.h"
 #include "RageFile.h"
 #include "Bookkeeper.h"
+#include <time.h>
 
 #define DEFAULT_MODIFIERS THEME->GetMetric( "Common","DefaultModifiers" )
 
@@ -63,10 +64,15 @@ GameState::~GameState()
 
 void GameState::Reset()
 {
+	if( m_timeGameStated != 0 && m_vPlayedStageStats.size() )	// we were in the middle of a game and played at least one song
+		EndGame();
+	
+	
 	ASSERT( THEME );
 
 	int p;
 
+	m_timeGameStated = 0;
 	m_CurStyle = STYLE_INVALID;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_bSideIsJoined[p] = false;
@@ -145,7 +151,38 @@ void GameState::Reset()
 
 	LIGHTSMAN->SetLightMode( LIGHTMODE_ATTRACT );
 
-	// HACK: save stats intermitently in case of crash
+}
+
+void GameState::BeginGame()
+{
+	m_timeGameStated = time(NULL);
+}
+
+void GameState::EndGame()
+{
+	// Update profile stats
+
+	time_t now = time(NULL);
+	int iPlaySeconds = now - m_timeGameStated;
+	if( iPlaySeconds < 0 )
+		iPlaySeconds = 0;
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		int iGameplaySeconds = 0;
+		for( int i=0; i<m_vPlayedStageStats.size(); i++ )
+			iGameplaySeconds += m_vPlayedStageStats[i].fAliveSeconds[p];
+
+
+		Profile* pProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
+		if( pProfile==NULL )
+			continue;
+
+		pProfile->m_iTotalPlaySeconds += iPlaySeconds;
+		pProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
+		pProfile->m_iTotalPlays++;
+	}
+
 	BOOKKEEPER->WriteToDisk();
 	PROFILEMAN->SaveMachineScoresToDisk();
 }

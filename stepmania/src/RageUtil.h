@@ -13,6 +13,7 @@
 */
 
 #include <map>
+#include "RageFile.h"
 
 //-----------------------------------------------------------------------------
 // SAFE_ Macros
@@ -284,5 +285,17 @@ unsigned GetFileSizeInBytes( const CString &sFilePath );
 int GetFileModTime( const CString &sPath );
 void FlushDirCache();
 
+// helper file functions used by Bookkeeper and ProfileManager
+//
+// Helper function for reading/writing scores
+//
+bool FileRead(RageFile& f, CString& sOut);
+bool FileRead(RageFile& f, int& iOut);
+bool FileRead(RageFile& f, unsigned& uOut);
+bool FileRead(RageFile& f, float& fOut);
+void FileWrite(RageFile& f, const CString& sWrite);
+void FileWrite(RageFile& f, int iWrite);
+void FileWrite(RageFile& f, size_t uWrite);
+void FileWrite(RageFile& f, float fWrite);
 
 #endif

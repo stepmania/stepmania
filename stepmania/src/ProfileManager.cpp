@@ -245,20 +245,26 @@ bool Profile::LoadFromIni( CString sIniPath )
 	if( !ini.ReadFile() )
 		return false;
 
-	ini.GetValue( "Profile", "DisplayName", m_sName );
-	ini.GetValue( "Profile", "LastUsedHighScoreName", m_sLastUsedHighScoreName );
-	ini.GetValue( "Profile", "UsingProfileDefaultModifiers", m_bUsingProfileDefaultModifiers );
-	ini.GetValue( "Profile", "DefaultModifiers", m_sDefaultModifiers );
+	ini.GetValue( "Profile", "DisplayName",						m_sName );
+	ini.GetValue( "Profile", "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
+	ini.GetValue( "Profile", "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
+	ini.GetValue( "Profile", "DefaultModifiers",				m_sDefaultModifiers );
+	ini.GetValue( "Profile", "TotalPlays",						m_iTotalPlays );
+	ini.GetValue( "Profile", "TotalPlaySeconds",				m_iTotalPlaySeconds );
+	ini.GetValue( "Profile", "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
 	return true;
 }
 
 bool Profile::SaveToIni( CString sIniPath )
 {
 	IniFile ini( sIniPath );
-	ini.SetValue( "Profile", "DisplayName", m_sName );
-	ini.SetValue( "Profile", "LastUsedHighScoreName", m_sLastUsedHighScoreName );
-	ini.SetValue( "Profile", "UsingProfileDefaultModifiers", m_bUsingProfileDefaultModifiers );
-	ini.SetValue( "Profile", "DefaultModifiers", m_sDefaultModifiers );
+	ini.SetValue( "Profile", "DisplayName",						m_sName );
+	ini.SetValue( "Profile", "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
+	ini.SetValue( "Profile", "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
+	ini.SetValue( "Profile", "DefaultModifiers",				m_sDefaultModifiers );
+	ini.SetValue( "Profile", "TotalPlays",						m_iTotalPlays );
+	ini.SetValue( "Profile", "TotalPlaySeconds",				m_iTotalPlaySeconds );
+	ini.SetValue( "Profile", "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
 	ini.WriteFile();
 	return true;
 }
@@ -360,63 +366,6 @@ void ProfileManager::CategoryData::AddHighScore( HighScore hs, int &iIndexOut )
 	}
 }
 
-//
-// Helper function for reading/writing scores
-//
-bool FileRead(RageFile& f, CString& sOut)
-{
-	if (f.AtEOF())
-		return false;
-	sOut = f.GetLine();
-	return true;
-}
-
-bool FileRead(RageFile& f, int& iOut)
-{
-	CString s;
-	if (!FileRead(f, s))
-		return false;
-	iOut = atoi(s);
-	return true;
-}
-
-bool FileRead(RageFile& f, unsigned& uOut)
-{
-	CString s;
-	if (!FileRead(f, s))
-		return false;
-	uOut = atoi(s);
-	return true;
-}
-
-bool FileRead(RageFile& f, float& fOut)
-{
-	CString s;
-	if (!FileRead(f, s))
-		return false;
-	fOut = (float)atof(s);
-	return true;
-}
-
-void FileWrite(RageFile& f, const CString& sWrite)
-{
-	f.PutLine( sWrite );
-}
-
-void FileWrite(RageFile& f, int iWrite)
-{
-	f.PutLine( ssprintf("%d", iWrite) );
-}
-
-void FileWrite(RageFile& f, size_t uWrite)
-{
-	f.PutLine( ssprintf("%lu", uWrite) );
-}
-
-void FileWrite(RageFile& f, float fWrite)
-{
-	f.PutLine( ssprintf("%f", fWrite) );
-}
 
 #define WARN_AND_RETURN { LOG->Warn("Error parsing file '%s' at %s:%d",fn.c_str(),__FILE__,__LINE__); return; }
 

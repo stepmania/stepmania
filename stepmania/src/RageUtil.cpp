@@ -964,3 +964,62 @@ char char_traits_char_nocase::uptab[256] =
 	'\xE0','\xE1','\xE2','\xE3','\xE4','\xE5','\xE6','\xE7','\xE8','\xE9','\xEA','\xEB','\xEC','\xED','\xEE','\xEF',
 	'\xF0','\xF1','\xF2','\xF3','\xF4','\xF5','\xF6','\xF7','\xF8','\xF9','\xFA','\xFB','\xFC','\xFD','\xFE','\xFF',
 };
+
+
+//
+// Helper function for reading/writing scores
+//
+bool FileRead(RageFile& f, CString& sOut)
+{
+	if (f.AtEOF())
+		return false;
+	sOut = f.GetLine();
+	return true;
+}
+
+bool FileRead(RageFile& f, int& iOut)
+{
+	CString s;
+	if (!FileRead(f, s))
+		return false;
+	iOut = atoi(s);
+	return true;
+}
+
+bool FileRead(RageFile& f, unsigned& uOut)
+{
+	CString s;
+	if (!FileRead(f, s))
+		return false;
+	uOut = atoi(s);
+	return true;
+}
+
+bool FileRead(RageFile& f, float& fOut)
+{
+	CString s;
+	if (!FileRead(f, s))
+		return false;
+	fOut = (float)atof(s);
+	return true;
+}
+
+void FileWrite(RageFile& f, const CString& sWrite)
+{
+	f.PutLine( sWrite );
+}
+
+void FileWrite(RageFile& f, int iWrite)
+{
+	f.PutLine( ssprintf("%d", iWrite) );
+}
+
+void FileWrite(RageFile& f, size_t uWrite)
+{
+	f.PutLine( ssprintf("%lu", uWrite) );
+}
+
+void FileWrite(RageFile& f, float fWrite)
+{
+	f.PutLine( ssprintf("%f", fWrite) );
+}

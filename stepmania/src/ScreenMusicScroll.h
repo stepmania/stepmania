@@ -21,8 +21,6 @@ public:
 
 	virtual void Update( float fDeltaTime );
 
-	virtual void HandleScreenMessage( const ScreenMessage SM );
-
 private:
 	vector<BitmapText *> m_textLines;
 };

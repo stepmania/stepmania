@@ -25,6 +25,9 @@ struct Profile
 		m_sLastUsedHighScoreName = "";
 		m_bUsingProfileDefaultModifiers = false;
 		m_sDefaultModifiers = "";
+		m_iTotalPlays = 0;
+		m_iTotalPlaySeconds = 0;
+		m_iTotalGameplaySeconds = 0;
 	}
 
 	bool LoadFromIni( CString sIniPath );
@@ -33,6 +36,9 @@ struct Profile
 	CString m_sLastUsedHighScoreName;
 	bool m_bUsingProfileDefaultModifiers;
 	CString m_sDefaultModifiers;
+	int m_iTotalPlays;
+	int m_iTotalPlaySeconds;
+	int m_iTotalGameplaySeconds;
 };
 
 class ProfileManager
