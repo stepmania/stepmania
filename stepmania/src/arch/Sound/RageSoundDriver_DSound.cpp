@@ -235,9 +235,6 @@ RageSound_DSound::RageSound_DSound():
 
 	LOG->Trace("Got %i hardware buffers", stream_pool.size());
 
-	/* Set channel volumes. */
-	VolumeChanged();
-
 	MixingThread.SetName("Mixer thread");
 	MixingThread.Create( MixerThread_start, this );
 }
