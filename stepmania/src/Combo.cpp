@@ -14,7 +14,7 @@
 #include "ThemeManager.h"
 #include "StageStats.h"
 #include "GameState.h"
-#include "Song.h"
+#include "song.h"
 
 
 CachedThemeMetricF	LABEL_X				("Combo","LabelX");
