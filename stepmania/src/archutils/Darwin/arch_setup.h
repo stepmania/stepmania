@@ -6,4 +6,3 @@
 #define NEED_COSF
 #define NEED_TANF
 #define NEED_ACOSF
-#define VERSION "3.001"
