@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SONG_H
+#define SONG_H
 /*
 -----------------------------------------------------------------------------
  Class: Song
@@ -218,3 +219,5 @@ void SortSongPointerArrayByGroup( CArray<Song*, Song*> &arraySongPointers );
 void SortSongPointerArrayByMostPlayed( CArray<Song*, Song*> &arraySongPointers );
 
 
+
+#endif

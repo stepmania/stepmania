@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GAMEMANAGER_H
+#define GAMEMANAGER_H
 /*
 -----------------------------------------------------------------------------
  Class: GameManager
@@ -64,3 +65,5 @@ protected:
 };
 
 extern GameManager*	GAMEMAN;	// global and accessable from anywhere in our program
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GHOSTARROWBRIGHT_H
+#define GHOSTARROWBRIGHT_H
 /*
 -----------------------------------------------------------------------------
  Class: GhostArrowBright
@@ -25,3 +26,5 @@ public:
 
 protected:
 };
+
+#endif

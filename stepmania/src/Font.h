@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FONT_H
+#define FONT_H
 /*
 -----------------------------------------------------------------------------
  File: Font
@@ -41,3 +42,5 @@ public:
 protected:
 
 };
+
+#endif

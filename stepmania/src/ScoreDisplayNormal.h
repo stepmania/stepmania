@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SCOREDISPLAYNORMAL_H
+#define SCOREDISPLAYNORMAL_H
 /*
 -----------------------------------------------------------------------------
  Class: ScoreDisplayNormal
@@ -33,3 +34,5 @@ protected:
 	float m_fTrailingScore;	// what is displayed temporarily
 	float m_fScoreVelocity;	// how fast trailing approaches real score
 };
+
+#endif

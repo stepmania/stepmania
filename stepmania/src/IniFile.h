@@ -1,4 +1,5 @@
-#pragma once
+#ifndef INIFILE_H
+#define INIFILE_H
 /*
 -----------------------------------------------------------------------------
  Class: IniFile
@@ -91,3 +92,5 @@ public:
 
 	const_iterator GetKey(const CString &keyname) const;
 };
+
+#endif

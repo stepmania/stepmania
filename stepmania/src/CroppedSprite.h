@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CROPPEDSPRITE_H
+#define CROPPEDSPRITE_H
 /*
 -----------------------------------------------------------------------------
  Class: CroppedSprite
@@ -29,3 +30,5 @@ protected:
 	float m_fCropWidth, m_fCropHeight;
 };
 
+
+#endif

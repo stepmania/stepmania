@@ -1,4 +1,5 @@
-#pragma once
+#ifndef COURSECONTENTSFRAME_H
+#define COURSECONTENTSFRAME_H
 /*
 -----------------------------------------------------------------------------
  Class: CourseContentsFrame
@@ -60,3 +61,5 @@ protected:
 	float m_fTimeUntilScroll;
 	float m_fItemAtTopOfList;	// between 0 and m_iNumContents
 };
+
+#endif

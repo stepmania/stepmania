@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MUSICSTATUSDISPLAY_H
+#define MUSICSTATUSDISPLAY_H
 /*
 -----------------------------------------------------------------------------
  Class: MusicStatusDisplay
@@ -29,3 +30,5 @@ public:
 protected:
 	IconType m_type;
 };
+
+#endif

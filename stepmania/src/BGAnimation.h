@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BGANIMATION_H
+#define BGANIMATION_H
 /*
 -----------------------------------------------------------------------------
  Class: BGAnimation
@@ -45,3 +46,5 @@ protected:
 	float	m_fFadeSeconds;
 };
 
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HOLDGHOSTARROW_H
+#define HOLDGHOSTARROW_H
 /*
 -----------------------------------------------------------------------------
  Class: HoldGhostArrow
@@ -27,3 +28,5 @@ public:
 	float m_fHeatLevel;	// brightness - between 0 and 1
 };
 
+
+#endif

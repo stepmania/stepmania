@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LIFEMETER_H
+#define LIFEMETER_H
 /*
 -----------------------------------------------------------------------------
  Class: LifeMeterBar
@@ -43,3 +44,5 @@ public:
 protected:
 	PlayerNumber	m_PlayerNumber;
 };
+
+#endif

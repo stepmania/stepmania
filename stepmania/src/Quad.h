@@ -1,4 +1,5 @@
-#pragma once
+#ifndef QUAD_H
+#define QUAD_H
 /*
 -----------------------------------------------------------------------------
  Class: Quad
@@ -21,3 +22,5 @@ public:
 		m_bDrawIfTextureNull = true; 
 	}	
 };
+
+#endif

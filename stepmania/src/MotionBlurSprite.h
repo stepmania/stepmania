@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MOTIONBLURSPRITE_H
+#define MOTIONBLURSPRITE_H
 /*
 -----------------------------------------------------------------------------
  Class: MotionBlurSprite
@@ -107,3 +108,5 @@ protected:
 };
 
 
+
+#endif

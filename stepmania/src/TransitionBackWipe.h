@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TRANSITIONBACKWIPE_H
+#define TRANSITIONBACKWIPE_H
 /*
 -----------------------------------------------------------------------------
  Class: TransitionBackWipe
@@ -37,3 +38,5 @@ protected:
 	RageSoundSample m_soundBack;
 };
 
+
+#endif

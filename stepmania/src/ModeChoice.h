@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MODECHOICE_H
+#define MODECHOICE_H
 /*
 -----------------------------------------------------------------------------
  Class: ModeChoice
@@ -22,3 +23,5 @@ struct ModeChoice		// used in SelectMode
 	char		name[64];
 	int			numSidesJoinedToPlay;
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SONGOPTIONS_H
+#define SONGOPTIONS_H
 /*
 -----------------------------------------------------------------------------
  Class: SongOptions
@@ -41,3 +42,5 @@ struct SongOptions
 	CString GetString();
 	void FromString( CString sOptions );
 };
+
+#endif

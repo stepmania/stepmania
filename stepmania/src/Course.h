@@ -1,4 +1,5 @@
-#pragma once
+#ifndef COURSE_H
+#define COURSE_H
 /*
 -----------------------------------------------------------------------------
  Class: Course
@@ -75,3 +76,5 @@ private:
 
 void SortCoursePointerArrayByDifficulty( CArray<Course*,Course*> &apCourses );
 
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GROOVERADAR_H
+#define GROOVERADAR_H
 /*
 -----------------------------------------------------------------------------
  Class: GrooveRadar
@@ -57,3 +58,5 @@ protected:
 	GrooveRadarValueMap m_GrooveRadarValueMap;
 	Sprite m_sprRadarLabels[NUM_RADAR_CATEGORIES];
 };
+
+#endif

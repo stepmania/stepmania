@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPTIONSCURSOR_H
+#define OPTIONSCURSOR_H
 /*
 -----------------------------------------------------------------------------
  Class: OptionsCursor
@@ -31,3 +32,5 @@ protected:
 	Sprite m_sprMiddle;
 	Sprite m_sprRight;
 };
+
+#endif

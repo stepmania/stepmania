@@ -1,4 +1,5 @@
-#pragma once 
+#ifndef SONGMANAGER_H
+#define SONGMANAGER_H
 /*
 -----------------------------------------------------------------------------
  Class: SongManager
@@ -78,3 +79,5 @@ protected:
 
 
 extern SongManager*	SONGMAN;	// global and accessable from anywhere in our program
+
+#endif

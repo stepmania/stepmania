@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TRANSITIONONIFADE_H
+#define TRANSITIONONIFADE_H
 /*
 -----------------------------------------------------------------------------
  Class: TransitionOniFade
@@ -44,3 +45,5 @@ protected:
 };
 
 
+
+#endif

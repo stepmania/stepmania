@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MUSICSORTDISPLAY_H
+#define MUSICSORTDISPLAY_H
 /*
 -----------------------------------------------------------------------------
  Class: MusicSortDisplay
@@ -27,3 +28,5 @@ public:
 protected:
 
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BACKGROUND_H
+#define BACKGROUND_H
 /*
 -----------------------------------------------------------------------------
  Class: Background
@@ -72,3 +73,5 @@ protected:
 	bool m_bInDanger;
 };
 
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BANNER_H
+#define BANNER_H
 /*
 -----------------------------------------------------------------------------
  File: Banner.h
@@ -37,3 +38,5 @@ protected:
 	bool m_bScrolling;
 	float m_fPercentScrolling;
 };
+
+#endif

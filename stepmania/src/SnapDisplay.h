@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SNAPDISPLAY_H
+#define SNAPDISPLAY_H
 /*
 -----------------------------------------------------------------------------
  Class: SnapDisplay
@@ -40,3 +41,5 @@ protected:
 	Sprite		m_sprIndicators[2];	// left and right side
 };
 
+
+#endif

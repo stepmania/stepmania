@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SCREENLOADING_H
+#define SCREENLOADING_H
 /*
 -----------------------------------------------------------------------------
  Class: ScreenLoading
@@ -27,3 +28,5 @@ protected:
 
 };
 
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SCOREDISPLAYROLLING_H
+#define SCOREDISPLAYROLLING_H
 /*
 -----------------------------------------------------------------------------
  Class: ScoreDisplayRolling
@@ -44,3 +45,5 @@ protected:
 	float m_fTrailingScore;
 	float m_fScoreVelocity;
 };
+
+#endif

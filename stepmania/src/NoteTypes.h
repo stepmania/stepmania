@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NOTETYPES_H
+#define NOTETYPES_H
 /*
 -----------------------------------------------------------------------------
  File: NoteTypes.h
@@ -93,3 +94,5 @@ inline float NoteRowToBeat( int iNoteIndex )			{ return NoteRowToBeat( (float)iN
 
 
 
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TEXTBANNER_H
+#define TEXTBANNER_H
 /*
 -----------------------------------------------------------------------------
  Class: TextBanner
@@ -23,3 +24,5 @@ public:
 private:
 	BitmapText	m_textTitle, m_textSubTitle, m_textArtist;
 };
+
+#endif

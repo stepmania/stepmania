@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PLAYEROPTIONS_H
+#define PLAYEROPTIONS_H
 /*
 -----------------------------------------------------------------------------
  Class: PlayerOptions
@@ -42,3 +43,5 @@ struct PlayerOptions
 	CString GetString();
 	void FromString( CString sOptions );
 };
+
+#endif

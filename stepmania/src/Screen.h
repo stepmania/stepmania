@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SCREEN_H
+#define SCREEN_H
 /*
 -----------------------------------------------------------------------------
  Class: Screen
@@ -72,3 +73,5 @@ public:
 private:
 	bool m_FirstUpdate;
 };
+
+#endif

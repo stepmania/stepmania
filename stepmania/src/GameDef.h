@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GAMEDEF_H
+#define GAMEDEF_H
 /*
 -----------------------------------------------------------------------------
  Class: GameDef
@@ -66,3 +67,5 @@ public:
 	MenuInput GameInputToMenuInput( GameInput GameI ) const;
 	void MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const;
 };
+
+#endif

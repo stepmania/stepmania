@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TRANSITIONFADE_H
+#define TRANSITIONFADE_H
 /*
 -----------------------------------------------------------------------------
  Class: TransitionFade
@@ -29,3 +30,5 @@ protected:
 	Quad m_rect;
 };
 
+
+#endif

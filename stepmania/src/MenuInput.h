@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MENUINPUT_H
+#define MENUINPUT_H
 /*
 -----------------------------------------------------------------------------
  Class: MenuInput
@@ -42,3 +43,5 @@ struct MenuInput
 
 
 
+
+#endif

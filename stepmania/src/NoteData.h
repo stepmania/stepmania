@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NOTEDATA_H
+#define NOTEDATA_H
 /*
 -----------------------------------------------------------------------------
  File: NoteData.h
@@ -127,3 +128,5 @@ public:
 	void Convert4sToHoldNotes();
 	void ConvertHoldNotesTo4s();
 };
+
+#endif

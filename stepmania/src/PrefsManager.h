@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PREFSMANAGER_H
+#define PREFSMANAGER_H
 /*
 -----------------------------------------------------------------------------
  Class: PrefsManager
@@ -65,3 +66,5 @@ public:
 
 
 extern PrefsManager*	PREFSMAN;	// global and accessable from anywhere in our program
+
+#endif

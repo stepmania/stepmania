@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STAGEBOX_H
+#define STAGEBOX_H
 /*
 -----------------------------------------------------------------------------
  Class: StageBox
@@ -31,3 +32,5 @@ protected:
 	BitmapText		m_textNumber;
 	BitmapText		m_textST;
 };
+
+#endif

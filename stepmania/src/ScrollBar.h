@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SCROLLBAR_H
+#define SCROLLBAR_H
 /*
 -----------------------------------------------------------------------------
  Class: ScrollBar
@@ -32,3 +33,5 @@ protected:
 	Sprite	m_sprScrollThumbPart1;
 	Sprite	m_sprScrollThumbPart2;
 };
+
+#endif

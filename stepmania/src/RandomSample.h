@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RANDOMSAMPLE_H
+#define RANDOMSAMPLE_H
 /*
 -----------------------------------------------------------------------------
  Class: RandomSample
@@ -44,3 +45,5 @@ private:
 	int m_iIndexLastPlayed;
 };
 
+
+#endif

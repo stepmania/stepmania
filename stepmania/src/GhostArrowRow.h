@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GHOSTARROWROW_H
+#define GHOSTARROWROW_H
 /*
 -----------------------------------------------------------------------------
  File: GhostArrowRow.h
@@ -40,3 +41,5 @@ protected:
 	HoldGhostArrow		m_HoldGhostArrowRow[MAX_NOTE_TRACKS];
 };
 
+
+#endif

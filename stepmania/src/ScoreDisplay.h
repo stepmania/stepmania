@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SCOREDISPLAY_H
+#define SCOREDISPLAY_H
 /*
 -----------------------------------------------------------------------------
  Class: ScoreDisplay
@@ -31,3 +32,5 @@ public:
 protected:
 	PlayerNumber m_PlayerNumber;	// needed to look up statistics in GAMESTATE
 };
+
+#endif

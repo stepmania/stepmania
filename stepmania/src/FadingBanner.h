@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FADINGBANNER_H
+#define FADINGBANNER_H
 /*
 -----------------------------------------------------------------------------
  Class: FadingBanner
@@ -34,3 +35,5 @@ protected:
 
 	Banner		m_Banner[2];	// front and back
 };
+
+#endif

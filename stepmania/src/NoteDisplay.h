@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NOTEDISPLAY_H
+#define NOTEDISPLAY_H
 /*
 -----------------------------------------------------------------------------
  Class: NoteDisplay
@@ -38,3 +39,5 @@ protected:
 
 	CArray<RageColor,RageColor> m_colorTapTweens;
 };
+
+#endif

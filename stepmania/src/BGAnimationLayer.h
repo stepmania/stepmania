@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BGANIMATIONLAYER_H
+#define BGANIMATIONLAYER_H
 /*
 -----------------------------------------------------------------------------
  Class: BGAnimation
@@ -80,3 +81,5 @@ protected:
 	RageVector2 m_vTexCoordVelocity;
 	float m_fRotationalVelocity;
 };
+
+#endif

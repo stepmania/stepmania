@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MSDFILE_H
+#define MSDFILE_H
 /*
 -----------------------------------------------------------------------------
  Class: MsdFile
@@ -31,3 +32,5 @@ public:
 	unsigned m_iNumValues;	// tells how many values are valid
 	unsigned m_iNumParams[MAX_VALUES];	// tells how many params this value has
 };
+
+#endif

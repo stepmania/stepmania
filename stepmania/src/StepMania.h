@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STEPMANIA_H
+#define STEPMANIA_H
 /*
 -----------------------------------------------------------------------------
  File: StepMania.h
@@ -15,3 +16,5 @@ void ApplyGraphicOptions();
 
 
 
+
+#endif

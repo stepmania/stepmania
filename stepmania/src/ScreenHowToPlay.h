@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SCREENHOWTOPLAY_H
+#define SCREENHOWTOPLAY_H
 /*
 -----------------------------------------------------------------------------
  Class: ScreenHowToPlay
@@ -37,3 +38,5 @@ protected:
 	MenuElements	m_Menu;
 };
 
+
+#endif

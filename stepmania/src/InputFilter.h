@@ -1,4 +1,5 @@
-#pragma once
+#ifndef INPUTFILTER_H
+#define INPUTFILTER_H
 /*
 -----------------------------------------------------------------------------
  Class: InputFilter
@@ -54,3 +55,5 @@ public:
 extern InputFilter*	INPUTFILTER;	// global and accessable from anywhere in our program
 
 
+
+#endif

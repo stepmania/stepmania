@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MENUTIMER_H
+#define MENUTIMER_H
 /*
 -----------------------------------------------------------------------------
  Class: MenuTimer
@@ -42,3 +43,5 @@ protected:
 
 	RageSoundSample	m_soundBeep;
 };
+
+#endif

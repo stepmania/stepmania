@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SCOREDISPLAYONI_H
+#define SCOREDISPLAYONI_H
 /*
 -----------------------------------------------------------------------------
  Class: ScoreDisplayOni
@@ -29,3 +30,5 @@ public:
 
 protected:
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef COMBO_H
+#define COMBO_H
 /*
 -----------------------------------------------------------------------------
  Class: Combo
@@ -37,3 +38,5 @@ protected:
 	Sprite		m_sprCombo;
 	BitmapText	m_textComboNumber;
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NETWORKINPUT_H
+#define NETWORKINPUT_H
 /*
 -----------------------------------------------------------------------------
  Class: NetworkInput
@@ -28,3 +29,5 @@ struct NetworkInput
 
 
 
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CODEDETECTOR_H
+#define CODEDETECTOR_H
 /*
 -----------------------------------------------------------------------------
  Class: CodeDetector
@@ -24,3 +25,5 @@ public:
 
 
 
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SCREENMESSAGE_H
+#define SCREENMESSAGE_H
 /*
 -----------------------------------------------------------------------------
  File: ScreenMessage
@@ -21,3 +22,5 @@ enum ScreenMessage {
 	SM_MenuTimer,
 	SM_User	= 100
 };
+
+#endif

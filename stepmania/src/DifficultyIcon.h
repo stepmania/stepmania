@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DIFFICULTYICON_H
+#define DIFFICULTYICON_H
 /*
 -----------------------------------------------------------------------------
  Class: DifficultyIcon
@@ -21,3 +22,5 @@ public:
 
 	void SetFromNotes( PlayerNumber pn, Notes* pNotes );
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RAGEMOVIETEXTURE_H
+#define RAGEMOVIETEXTURE_H
 /*
 -----------------------------------------------------------------------------
  Class: RageMovieTexture
@@ -75,3 +76,5 @@ protected:
 	bool					m_bLoop;
 	bool					m_bPlaying;
 };
+
+#endif

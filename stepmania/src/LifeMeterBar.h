@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LIFEMETERBAR_H
+#define LIFEMETERBAR_H
 /*
 -----------------------------------------------------------------------------
  Class: LifeMeterBar
@@ -49,3 +50,5 @@ private:
 	float		m_fHotAlpha;
 	bool		m_bFailedEarlier;		// set this to true when life dips below 0
 };
+
+#endif

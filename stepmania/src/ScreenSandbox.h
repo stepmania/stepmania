@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SCREENSANDBOX_H
+#define SCREENSANDBOX_H
 /*
 -----------------------------------------------------------------------------
  Class: ScreenSandbox
@@ -33,3 +34,5 @@ public:
 	Sprite m_sprite;
 };
 
+
+#endif

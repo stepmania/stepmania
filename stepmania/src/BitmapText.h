@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BITMAPTEXT_H
+#define BITMAPTEXT_H
 /*
 -----------------------------------------------------------------------------
  File: BitmapText
@@ -57,3 +58,5 @@ protected:
 	bool m_bRainbow;
 };
 
+
+#endif

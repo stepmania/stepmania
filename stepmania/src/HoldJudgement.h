@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HOLDJUDGEMENT_H
+#define HOLDJUDGEMENT_H
 /*
 -----------------------------------------------------------------------------
  Class: HoldJudgement
@@ -30,3 +31,5 @@ protected:
 	float		m_fDisplayTime;
 	float		m_fDisplayCountdown;
 };
+
+#endif

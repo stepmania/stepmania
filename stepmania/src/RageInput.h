@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RAGEINPUT_H
+#define RAGEINPUT_H
 /*
 -----------------------------------------------------------------------------
  File: RageInput.h
@@ -160,3 +161,5 @@ namespace USB {
 
 extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program
 
+
+#endif

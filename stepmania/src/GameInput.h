@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GAMEINPUT_H
+#define GAMEINPUT_H
 /*
 -----------------------------------------------------------------------------
  Class: GameInput
@@ -111,3 +112,5 @@ struct GameInput
 };
 
 
+
+#endif

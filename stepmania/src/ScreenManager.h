@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SCREENMANAGER_H
+#define SCREENMANAGER_H
 /*
 -----------------------------------------------------------------------------
  Class: ScreenManager
@@ -60,3 +61,5 @@ private:
 
 
 extern ScreenManager*	SCREENMAN;	// global and accessable from anywhere in our program
+
+#endif

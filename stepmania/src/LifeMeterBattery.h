@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LIFEMETERBATTERY_H
+#define LIFEMETERBATTERY_H
 /*
 -----------------------------------------------------------------------------
  Class: LifeMeterBattery
@@ -53,3 +54,5 @@ private:
 	RageSoundSample m_soundGainLife;
 };
 
+
+#endif

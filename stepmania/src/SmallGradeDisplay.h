@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SMALLGRADEDISPLAY_H
+#define SMALLGRADEDISPLAY_H
 /*
 -----------------------------------------------------------------------------
  Class: SmallGradeDisplay
@@ -32,3 +33,5 @@ protected:
 	
 	Grade m_Grade;
 };
+
+#endif

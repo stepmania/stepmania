@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NOTES_H
+#define NOTES_H
 /*
 -----------------------------------------------------------------------------
  Class: Notes
@@ -66,3 +67,5 @@ protected:
 
 bool CompareNotesPointersByDifficulty(const Notes *pNotes1, const Notes *pNotes2);
 void SortNotesArrayByDifficulty( CArray<Notes*,Notes*> &arrayNotess );
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FOOTMETER_H
+#define FOOTMETER_H
 /*
 -----------------------------------------------------------------------------
  Class: FootMeter
@@ -26,3 +27,5 @@ public:
 private:
 	void SetNumFeet( int iNumFeet );
 };
+
+#endif

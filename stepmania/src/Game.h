@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GAME_H
+#define GAME_H
 /*
 -----------------------------------------------------------------------------
  File: Game
@@ -19,3 +20,5 @@ enum Game
 	NUM_GAMES,	// leave this at the end
 	GAME_INVALID,
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STYLE_H
+#define STYLE_H
 /*
 -----------------------------------------------------------------------------
  File: Style
@@ -53,3 +54,4 @@ inline int GetStyleIndexRelativeToGame( int iGameIndex, Style style )
 	}
 	return iStyleIndex;
 }
+#endif

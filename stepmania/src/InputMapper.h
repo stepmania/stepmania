@@ -1,4 +1,5 @@
-#pragma once
+#ifndef INPUTMAPPER_H
+#define INPUTMAPPER_H
 /*
 -----------------------------------------------------------------------------
  Class: InputMapper
@@ -73,3 +74,5 @@ protected:
 
 extern InputMapper*	INPUTMAPPER;	// global and accessable from anywhere in our program
 
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SPRITE_H
+#define SPRITE_H
 /*
 -----------------------------------------------------------------------------
  File: Sprite.h
@@ -79,3 +80,5 @@ protected:
 	//FRECT m_CustomTexCoordRect;
 	float m_CustomTexCoords[8];	// (x,y) * 4
 };
+
+#endif

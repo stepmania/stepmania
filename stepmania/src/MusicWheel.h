@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MUSICWHEEL_H
+#define MUSICWHEEL_H
 /*
 -----------------------------------------------------------------------------
  Class: MusicWheel
@@ -200,3 +201,5 @@ protected:
 	};
 
 };
+
+#endif

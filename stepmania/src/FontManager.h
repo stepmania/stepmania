@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FONTMANAGER_H
+#define FONTMANAGER_H
 /*
 -----------------------------------------------------------------------------
  Class: FontManager
@@ -34,3 +35,5 @@ protected:
 
 extern FontManager*	FONT;	// global and accessable from anywhere in our program
 
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TRANSITIONINVISIBLE_H
+#define TRANSITIONINVISIBLE_H
 /*
 -----------------------------------------------------------------------------
  Class: TransitionInvisible
@@ -26,3 +27,5 @@ public:
 
 protected:
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef THEMEMANAGER_H
+#define THEMEMANAGER_H
 /*
 -----------------------------------------------------------------------------
  Class: ThemeManager
@@ -53,3 +54,5 @@ protected:
 
 
 extern ThemeManager*	THEME;	// global and accessable from anywhere in our program
+
+#endif

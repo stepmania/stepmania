@@ -1,4 +1,5 @@
-#pragma once
+#ifndef INPUTQUEUE_H
+#define INPUTQUEUE_H
 /*
 -----------------------------------------------------------------------------
  Class: InputQueue
@@ -38,3 +39,5 @@ protected:
 
 
 extern InputQueue*	INPUTQUEUE;	// global and accessable from anywhere in our program
+
+#endif

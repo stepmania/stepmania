@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GAMESTATE_H
+#define GAMESTATE_H
 /*
 -----------------------------------------------------------------------------
  Class: GameState
@@ -151,3 +152,5 @@ public:
 
 
 extern GameState*	GAMESTATE;	// global and accessable from anywhere in our program
+
+#endif

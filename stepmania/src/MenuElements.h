@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MENUELEMENTS_H
+#define MENUELEMENTS_H
 /*
 -----------------------------------------------------------------------------
  File: MenuElements.h
@@ -77,3 +78,5 @@ public:
 	RageSoundSample m_soundSwoosh;
 	RageSoundSample m_soundBack;
 };
+
+#endif

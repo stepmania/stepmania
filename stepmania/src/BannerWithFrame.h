@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BANNERWITHFRAME_H
+#define BANNERWITHFRAME_H
 /*
 -----------------------------------------------------------------------------
  Class: BannerWithFrame
@@ -31,3 +32,5 @@ protected:
 	Sprite		m_sprBannerFrame;
 	Banner		m_Banner;
 };
+
+#endif

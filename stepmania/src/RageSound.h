@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RAGESOUND_H
+#define RAGESOUND_H
 /*
 -----------------------------------------------------------------------------
  File: RageSound.h
@@ -35,3 +36,5 @@ private:
 
 
 extern RageSound*		SOUND;	// global and accessable from anywhere in our program
+
+#endif

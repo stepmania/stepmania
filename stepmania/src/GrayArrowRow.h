@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GRAYARROWROW_H
+#define GRAYARROWROW_H
 /*
 -----------------------------------------------------------------------------
  Class: GrayArrowRow
@@ -34,3 +35,5 @@ protected:
 
 	GrayArrow	m_GrayArrow[MAX_NOTE_TRACKS];
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TIPDISPLAY_H
+#define TIPDISPLAY_H
 /*
 -----------------------------------------------------------------------------
  Class: TipDisplay
@@ -32,3 +33,5 @@ protected:
 	
 	float m_fSecsUntilSwitch;
 };
+
+#endif

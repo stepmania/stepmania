@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STYLEINPUT_H
+#define STYLEINPUT_H
 /*
 -----------------------------------------------------------------------------
  Class: StyleInput
@@ -23,3 +24,4 @@ struct StyleInput
 	inline bool IsValid() const { return player != PLAYER_INVALID; };
 	inline void MakeInvalid() { player = PLAYER_INVALID; col = -1; };
 };
+#endif

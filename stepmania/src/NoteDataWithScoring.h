@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NOTEDATAWITHSCORING_H
+#define NOTEDATAWITHSCORING_H
 /*
 -----------------------------------------------------------------------------
  Class: NoteDataWithScoring
@@ -59,3 +60,5 @@ struct NoteDataWithScoring : public NoteData
 	float GetActualChaosRadarValue( float fSongSeconds );
 };
 
+
+#endif

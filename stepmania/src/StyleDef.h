@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STYLEDEF_H
+#define STYLEDEF_H
 /*
 -----------------------------------------------------------------------------
  Class: StyleDef
@@ -75,3 +76,5 @@ public:
 	bool MatchesNotesType( NotesType type ) const;
 };
 
+
+#endif

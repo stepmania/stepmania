@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GRADEDISPLAY_H
+#define GRADEDISPLAY_H
 /*
 -----------------------------------------------------------------------------
  Class: GradeDisplay
@@ -38,3 +39,5 @@ protected:
 	RectF m_frectDestTexCoords;
 	float m_fTimeLeftInScroll;
 };
+
+#endif

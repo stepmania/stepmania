@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PLAYER_H
+#define PLAYER_H
 /*
 -----------------------------------------------------------------------------
  Class: Player
@@ -80,3 +81,5 @@ protected:
 	ScoreDisplay*	m_pScore;
 	ScoreKeeper*	m_ScoreKeeper;
 };
+
+#endif

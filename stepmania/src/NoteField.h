@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NOTEFIELD_H
+#define NOTEFIELD_H
 /*
 -----------------------------------------------------------------------------
  Class: NoteField
@@ -61,3 +62,5 @@ protected:
 	BitmapText		m_textMeasureNumber;
 	Quad			m_rectMarkerBar;
 };
+
+#endif

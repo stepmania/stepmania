@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SCREENOPTIONS_H
+#define SCREENOPTIONS_H
 /*
 -----------------------------------------------------------------------------
  File: ScreenOptions.h
@@ -113,3 +114,5 @@ protected:
 	TransitionInvisible		m_Wipe;
 };
 
+
+#endif
