@@ -462,13 +462,7 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 			--PassedRegularSongsLeft;
 		}
 
-		// weight long and marathon songs
-		int iLengthMultiplier = SongManager::GetNumStagesForSong( s.pSong );
-
 		statsOut.AddStats( s );
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( IsPlayerEnabled(p) )
-				statsOut.iMeter[p] += s.iMeter[p] * (iLengthMultiplier-1);
 
 		vSongsOut.insert( vSongsOut.begin(), s.pSong );
 	}

@@ -14,7 +14,7 @@
 #include "StageStats.h"
 #include "GameState.h"
 #include "RageLog.h"
-
+#include "SongManager.h"
 
 StageStats::StageStats()
 {
@@ -27,9 +27,13 @@ void StageStats::AddStats( const StageStats& other )
 	StageType = STAGE_INVALID; // meaningless
 	memset( fAliveSeconds, 0, sizeof(fAliveSeconds) );
 	
+	// weight long and marathon songs
+	ASSERT( other.pSong );
+	const int iLengthMultiplier = SongManager::GetNumStagesForSong( other.pSong );
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		iMeter[p] += other.iMeter[p];
+		iMeter[p] += other.iMeter[p] * iLengthMultiplier;
 		fAliveSeconds[p] += other.fAliveSeconds[p];
 		bFailed[p] |= other.bFailed[p];
 		iPossibleDancePoints[p] += other.iPossibleDancePoints[p];
