@@ -547,7 +547,10 @@ float RageFastSin( float x )
 	float fIndex = SCALE( x, 0.0f, PI*2, 0, ARRAYSIZE(table)*2 );
 
 	// lerp using samples from the table
-	int iSampleIndex[2] = { (int)floorf(fIndex), iSampleIndex[0]+1 };
+	int iSampleIndex[2];
+	iSampleIndex[0] = (int)floorf(fIndex);
+	iSampleIndex[1] = iSampleIndex[0]+1;
+
 	float fRemainder = fIndex - iSampleIndex[0];
 	for( int i=0; i<ARRAYSIZE(iSampleIndex); i++ )
         iSampleIndex[i] %= ARRAYSIZE(table) * 2;
