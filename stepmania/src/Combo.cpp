@@ -12,6 +12,9 @@
 
 #include "Combo.h"
 #include "ThemeManager.h"
+#include "StageStats.h"
+#include "GameState.h"
+#include "Song.h"
 
 
 CachedThemeMetricF	LABEL_X				("Combo","LabelX");
@@ -28,6 +31,10 @@ CachedThemeMetricF	NUMBER_MAX_ZOOM		("Combo","NumberMaxZoom");
 CachedThemeMetricF	NUMBER_MAX_ZOOM_AT	("Combo","NumberMaxZoomAt");
 CachedThemeMetricF	PULSE_ZOOM			("Combo","PulseZoom");
 CachedThemeMetricF	C_TWEEN_SECONDS		("Combo","TweenSeconds");
+CachedThemeMetricF	FULL_COMBO_GREATS_COMMAND		("Combo","FullComboGreatsCommand");
+CachedThemeMetricF	FULL_COMBO_PERFECTS_COMMAND		("Combo","FullComboPerfectsCommand");
+CachedThemeMetricF	FULL_COMBO_MARVELOUSES_COMMAND	("Combo","FullComboMarvelousesCommand");
+CachedThemeMetricF	FULL_COMBO_BROKEN_COMMAND		("Combo","FullComboBrokenCommand");
 
 
 Combo::Combo()
@@ -46,6 +53,10 @@ Combo::Combo()
 	NUMBER_MAX_ZOOM_AT.Refresh();
 	PULSE_ZOOM.Refresh();
 	C_TWEEN_SECONDS.Refresh();
+	FULL_COMBO_GREATS_COMMAND.Refresh();
+	FULL_COMBO_PERFECTS_COMMAND.Refresh();
+	FULL_COMBO_MARVELOUSES_COMMAND.Refresh();
+	FULL_COMBO_BROKEN_COMMAND.Refresh();
 
 	m_sprCombo.Load( THEME->GetPathToG( "Combo label") );
 	m_sprCombo.EnableShadow( true );
@@ -88,6 +99,39 @@ void Combo::SetCombo( int iCombo )
 		m_sprCombo.SetZoom( PULSE_ZOOM ); 
 		m_sprCombo.BeginTweening( C_TWEEN_SECONDS );
 		m_sprCombo.SetZoom( 1 );
+
+
+		bool bPastMidpoint = GAMESTATE->GetCourseSongIndex()>0 ||
+			GAMESTATE->m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds/2;
+
+		if( bPastMidpoint )
+		{
+			if( g_CurStageStats.FullComboOfScore(m_PlayerNumber,TNS_MARVELOUS) )
+			{
+				m_sprCombo.Command( FULL_COMBO_MARVELOUSES_COMMAND );
+				m_textComboNumber.Command( FULL_COMBO_MARVELOUSES_COMMAND );
+			}
+			else if( bPastMidpoint && g_CurStageStats.FullComboOfScore(m_PlayerNumber,TNS_PERFECT) )
+			{
+				m_sprCombo.Command( FULL_COMBO_PERFECTS_COMMAND );
+				m_textComboNumber.Command( FULL_COMBO_PERFECTS_COMMAND );
+			}
+			else if( bPastMidpoint && g_CurStageStats.FullComboOfScore(m_PlayerNumber,TNS_GREAT) )
+			{
+				m_sprCombo.Command( FULL_COMBO_GREATS_COMMAND );
+				m_textComboNumber.Command( FULL_COMBO_GREATS_COMMAND );
+			}
+			else
+			{
+				m_sprCombo.Command( FULL_COMBO_BROKEN_COMMAND );
+				m_textComboNumber.Command( FULL_COMBO_BROKEN_COMMAND );
+			}
+		}
+		else
+		{
+			m_sprCombo.Command( FULL_COMBO_BROKEN_COMMAND );
+			m_textComboNumber.Command( FULL_COMBO_BROKEN_COMMAND );
+		}
 	}
 	else
 	{
