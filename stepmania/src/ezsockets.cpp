@@ -51,6 +51,8 @@ EzSockets::EzSockets()
 EzSockets::~EzSockets()
 {
 	close();
+	delete scks;
+	delete times;
 }
 
 bool EzSockets::check()
@@ -152,18 +154,18 @@ bool EzSockets::connect( const std::string& host, unsigned short port )
 	addr.sin_addr = *( (LPIN_ADDR)*phe->h_addr_list );
 
 	int desc = ::connect( sock, (struct sockaddr *)&addr, sizeof(addr) );
-	if (desc >=0)
+	if (!desc)
 		state = skCONNECTED;
-	return desc >= 0;
+	return !desc;
 #else
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons( port );
 	inet_pton( AF_INET, host.c_str(), &addr.sin_addr );
 
 	int desc = ::connect( sock, (struct sockaddr *)&addr, sizeof(addr) );
-	if (desc >=0)
+	if (!desc)
 		state = skCONNECTED;
-	return desc >= 0;
+	return !desc;
 #endif
 }
 
@@ -174,9 +176,7 @@ bool EzSockets::CanRead()
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock,scks);
 
-	if (select (0,scks,NULL,NULL,times)==0)
-		return false;
-	return true;
+	return select(sock+1, scks, NULL, NULL, times) > 0;
 }
 bool EzSockets::IsError()
 {
@@ -186,18 +186,14 @@ bool EzSockets::IsError()
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock,scks);
 
-	if (select (0,NULL,NULL,scks,times)==0)
-		return false;
-	return true;
+	return select(sock+1, NULL, NULL, scks, times);
 }
 bool EzSockets::CanWrite()
 {
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock,scks);
 
-	if (select (0,NULL,scks,NULL,times)==0)
-		return false;
-	return true;
+	return select(0, NULL, scks, NULL, times) > 0;
 }
 
 void EzSockets::update()
@@ -297,9 +293,7 @@ int EzSockets::PeekPack(char * data, unsigned int max)
 	if (blocking)
 	{
 		while ((inBuffer.length()<4)&& !IsError())
-		{
 			pUpdateRead();
-		}
 
 		if (IsError())
 			return (-1);
@@ -310,9 +304,7 @@ int EzSockets::PeekPack(char * data, unsigned int max)
 		size = ntohl(size);
 //		LOG->Info("TXA:%d",size);
 		while ((inBuffer.length()<(size+4)) && !IsError())
-		{
 			pUpdateRead();
-		}
 
 		string tBuff(inBuffer.substr(4,size));
 
@@ -323,27 +315,24 @@ int EzSockets::PeekPack(char * data, unsigned int max)
 
 		return (size);
 	}	
-	else
-		if (inBuffer.length()>3)
-		{
-			unsigned int size=0;
-			PeekData((char*)&size,4);
-			size = ntohl(size);
-			if ((inBuffer.length()<(size+4)) || (inBuffer.length()<=4))
-				return (-1);
+	else if (inBuffer.length()>3)
+	{
+		unsigned int size=0;
+		PeekData((char*)&size,4);
+		size = ntohl(size);
+		if ((inBuffer.length()<(size+4)) || (inBuffer.length()<=4))
+			return -1;
 
-			string tBuff(inBuffer.substr(4,size));
+		string tBuff(inBuffer.substr(4,size));
 
-			if (tBuff.length()>max)
-				tBuff.substr(0,max);
+		if (tBuff.length()>max)
+			tBuff.substr(0,max);
 
-			memcpy (data,tBuff.c_str(),tBuff.length());
+		memcpy (data,tBuff.c_str(),tBuff.length());
 
-			return (size);
-		} else
-			return (-1);
-	
-			
+		return size;
+	}
+	return -1;
 }
 
 
@@ -375,7 +364,9 @@ int EzSockets::PeekStr(string & data, char delim)
 			t = inBuffer.find(delim,0);
 		}
 		data = inBuffer.substr(0,t);
-	}else{
+	}
+	else
+	{
 		if (t == -1)
 			return -1;
 		data = inBuffer.substr(0,t);
