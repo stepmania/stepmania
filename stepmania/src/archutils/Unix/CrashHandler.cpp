@@ -24,6 +24,7 @@
 # include "../Darwin/DarwinThreadHelpers.h"
 #endif
 
+extern uint64_t GetInvalidThreadId();
 extern const char *g_pCrashHandlerArgv0;
 
 static void safe_print(int fd, ...)
@@ -420,6 +421,12 @@ void ForceCrashHandlerDeadlock( const CString& reason, const BacktraceContext *c
 /* iCrashHandle comes from ThreadImpl_Pthreads::GetThreadId. */
 void ForceCrashHandlerDeadlock( CString reason, uint64_t iCrashHandle )
 {
+	if ( iCrashHandle == GetInvalidThreadId() )
+	{
+		ForceCrashHandler( reason );
+		_exit(1);
+	}
+
 	BacktraceContext ctx;
 	
 	/* How can this possibly work without suspending the thread first? What
