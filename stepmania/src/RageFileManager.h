@@ -10,6 +10,8 @@ public:
 	RageFileManager();
 	~RageFileManager();
 
+	void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+	
 	enum FileType { TYPE_FILE, TYPE_DIR, TYPE_NONE };
 	FileType GetFileType( const CString &sPath );
 
@@ -26,6 +28,9 @@ public:
 
 	/* Used only by RageFile: */
 	RageFileObj *Open( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err );
+
+private:
+	RageFileObj *OpenForWriting( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err );
 };
 
 extern RageFileManager *FILEMAN;

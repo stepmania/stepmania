@@ -70,6 +70,26 @@ CString LoadedDriver::GetPath( CString path )
 	return path.Right( path.size() - MountPoint.size() );
 }
 
+void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+{
+	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+	{
+		LoadedDriver &ld = g_Drivers[i];
+		const CString p = ld.GetPath( sPath );
+		if( p.size() == 0 )
+			continue;
+
+		const unsigned OldStart = AddTo.size();
+		
+		g_Drivers[i].driver->GetDirListing( p, AddTo, bOnlyDirs, bReturnPathToo );
+
+		/* If returning the path, prepend the mountpoint name to the files this driver returned. */
+		if( bReturnPathToo )
+			for( unsigned j = OldStart; j < AddTo.size(); ++j )
+				AddTo[j] = ld.MountPoint + AddTo[j];
+	}
+
+}
 
 #include "RageFileDriverDirect.h"
 void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
@@ -165,10 +185,20 @@ int RageFileManager::GetFileModTime( const CString &sPath )
 
 }
 
+static bool SortBySecond( const pair<int,int> &a, const pair<int,int> &b )
+{
+	return a.second < b.second;
+}
+
 /* Used only by RageFile: */
 RageFileObj *RageFileManager::Open( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err )
 {
 	err = ENOENT;
+
+	/* If writing, we need to do a heuristic to figure out which driver to write with--there
+	 * may be several that will work. */
+	if( mode == RageFile::WRITE )
+		return OpenForWriting( sPath, mode, p, err );
 
 	/* XXX: WRITE logic */
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
@@ -187,6 +217,67 @@ RageFileObj *RageFileManager::Open( const CString &sPath, RageFile::OpenMode mod
 			err = error;
 	}
 
+	return NULL;
+}
+
+RageFileObj *RageFileManager::OpenForWriting( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err )
+{
+	/*
+	 * The value for a driver to open a file is the number of directories and/or files
+	 * that would have to be created in order to write it, or 0 if the file already exists.
+	 * For example, if we're opening "foo/bar/baz.txt", and only "foo/" exists in a
+	 * driver, we'd have to create the "bar" directory and the "baz.txt" file, so the
+	 * value is 2.  If "foo/bar/" exists, we'd only have to create the file, so the
+	 * value is 1.  Create the file with the driver that returns the lowest value;
+	 * in case of a tie, earliest-loaded driver wins.
+	 *
+	 * The purpose of this is to create files in the expected place.  For example, if we
+	 * have both C:/games/StepMania and C:/games/DWI loaded, and we're writing
+	 * "Songs/Music/Waltz/waltz.sm", and the song was loaded out of
+	 * "C:/games/DWI/Songs/Music/Waltz/waltz.dwi", we want to write the new SM into the
+	 * same directory (if possible).  Don't split up files in the same directory any
+	 * more than we have to.
+	 *
+	 * If the given path can not be created, return -1.  This happens if a path
+	 * that needs to be a directory is a file, or vice versa.
+	 */
+	vector< pair<int,int> > Values;
+	unsigned i;
+	for( i = 0; i < g_Drivers.size(); ++i )
+	{
+		LoadedDriver &ld = g_Drivers[i];
+		const CString path = ld.GetPath( sPath );
+		if( path.size() == 0 )
+			continue;
+
+		const int value = ld.driver->GetPathValue( path );
+		if( value == -1 )
+			continue;
+
+		Values.push_back( pair<int,int>( i, value ) );
+	}
+
+	if( !Values.size() )
+	{
+		err = EEXIST;
+		return NULL;
+	}
+
+	stable_sort( Values.begin(), Values.end(), SortBySecond );
+
+	int error = 0;
+	for( i = 0; i < Values.size(); ++i )
+	{
+		const int driver = Values[i].first;
+		LoadedDriver &ld = g_Drivers[driver];
+		const CString path = ld.GetPath( sPath );
+		ASSERT( path.size() );
+
+		RageFileObj *ret = ld.driver->Open( path, mode, p, error );
+		if( ret )
+			return ret;
+	}
+	err = error;
 	return NULL;
 }
 

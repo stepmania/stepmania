@@ -9,9 +9,11 @@ class RageFileDriver
 {
 public:
 	virtual RageFileObj *Open( CString path, RageFile::OpenMode mode, RageFile &p, int &err ) = 0;
+	virtual void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo ) = 0;
 	virtual RageFileManager::FileType GetFileType( CString sPath ) = 0;
 	virtual int GetFileSizeInBytes( CString sFilePath ) = 0;
 	virtual int GetFileModTime( CString sPath ) = 0;
+	virtual int GetPathValue( CString path );
 	virtual bool Ready() { return true; } /* see RageFileManager::MountpointIsReady */
 };
 

@@ -42,8 +42,24 @@ RageFileDriverDirect::RageFileDriverDirect( CString root_ ):
 {
 }
 
+void FDB_GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+
+void RageFileDriverDirect::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+{
+	const unsigned OldStart = AddTo.size();
+	FDB_GetDirListing( root+sPath, AddTo, bOnlyDirs, bReturnPathToo );
+
+	if( bReturnPathToo )
+	{
+		/* Remove the root path. */
+		for( unsigned j = OldStart; j < AddTo.size(); ++j )
+			AddTo[j].erase( 0, root.size() );
+	}
+}
+
 RageFileObj *RageFileDriverDirect::Open( CString sPath, RageFile::OpenMode mode, RageFile &p, int &err )
 {
+	sPath = root + sPath;
 	ResolvePath( sPath );
 	int flags = O_BINARY;
 	if( mode == RageFile::READ )
@@ -51,7 +67,7 @@ RageFileObj *RageFileDriverDirect::Open( CString sPath, RageFile::OpenMode mode,
 	else
 		flags |= O_WRONLY|O_CREAT|O_TRUNC;
 
-	int fd = open( root + sPath, flags, 0644 );
+	int fd = open( sPath, flags, 0644 );
 	if( fd == -1 )
 	{
 		err = errno;
@@ -69,6 +85,8 @@ static bool DoStat(CString sPath, struct stat *st)
 
 RageFileManager::FileType RageFileDriverDirect::GetFileType( CString sPath )
 {
+	sPath = root + sPath;
+
 	ResolvePath( sPath );
 
 	struct stat st;
@@ -83,15 +101,19 @@ RageFileManager::FileType RageFileDriverDirect::GetFileType( CString sPath )
 
 int RageFileDriverDirect::GetFileSizeInBytes( CString sPath )
 {
+	sPath = root + sPath;
+
 	struct stat st;
 	if( !DoStat(sPath, &st) )
-		return 0;
+		return -1;
 
 	return st.st_size;
 }
 
 int RageFileDriverDirect::GetFileModTime( CString sPath )
 {
+	sPath = root + sPath;
+
 	struct stat st;
 	if( !DoStat(sPath, &st) )
 		return -1;

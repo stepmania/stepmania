@@ -10,6 +10,7 @@ public:
 	virtual ~RageFileDriverDirect() { }
 
 	RageFileObj *Open( CString path, RageFile::OpenMode mode, RageFile &p, int &err );
+	void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
 	RageFileManager::FileType GetFileType( CString sPath );
 	int GetFileSizeInBytes( CString sFilePath );
 	int GetFileModTime( CString sPath );

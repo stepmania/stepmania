@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageFileDriver.h"
+#include "RageUtil.h"
 
 void RageFileObj::SetError( const CString &err )
 {
@@ -56,6 +57,40 @@ int RageFileObj::GetFileSize()
 	}
 	Seek( OldPos );
 	return ret;
+}
+
+int RageFileDriver::GetPathValue( CString path )
+{
+	vector<CString> parts;
+	split( path, SLASH, parts, true );
+
+	CString PartialPath;
+
+	for( unsigned i = 0; i < parts.size(); ++i )
+	{
+		PartialPath += parts[i];
+		if( i+1 < parts.size() )
+			PartialPath += SLASH;
+
+		const RageFileManager::FileType Type = GetFileType( PartialPath );
+		switch( Type )
+		{
+		case RageFileManager::TYPE_NONE:
+			return parts.size()-i;
+
+		/* If this is the last part (the whole path), it needs to be a file; otherwise a directory. */
+		case RageFileManager::TYPE_FILE:
+			if( i != parts.size()-1 )
+				return -1;
+			break;
+		case RageFileManager::TYPE_DIR:
+			if( i == parts.size()-1 )
+				return -1;
+			break;
+		}
+	}
+
+	return 0;
 }
 
 /*
