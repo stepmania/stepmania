@@ -240,9 +240,6 @@ void RageLog::Write( int where, const CString &line )
 		if( where&WRITE_TO_INFO && g_fileInfo.IsOpen() )
 			g_fileInfo.PutLine( str );
 
-		if( HOOKS )
-			HOOKS->Log( str, where & WRITE_TO_INFO );
-
 		if( where & WRITE_TO_INFO )
 			AddToInfo( str );
 		AddToRecentLogs( str );
