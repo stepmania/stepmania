@@ -29,23 +29,17 @@ DISP_OPT optDefault;
 XENTITYS entityDefault((LPXENTITY)x_EntityTable, sizeof(x_EntityTable)/sizeof(x_EntityTable[0]) );
 
 // skip spaces
-char* _tcsskip( const char* psz )
+char* tcsskip( const char* psz )
 {
 	while( psz && *psz == ' ' ) psz++;
 		
 	return (char*)psz;
 }
 
-//========================================================
-// Name   : _tcsechr
+// Name   : tcsechr
 // Desc   : similar with strchr with escape process
 // Param  : escape - will be escape character
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
-char* _tcsechr( const char* psz, int ch, int escape )
+char* tcsechr( const char* psz, int ch, int escape )
 {
 	char* pch = (char*)psz;
 	char* prev_escape = NULL;
@@ -63,16 +57,9 @@ char* _tcsechr( const char* psz, int ch, int escape )
 	return pch;
 }
 
-//========================================================
-// Name   : _tcselen
 // Desc   : similar with strlen with escape process
 // Param  : escape - will be escape character
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
-int _tcselen( int escape, const char *start, const char *end )
+int tcselen( int escape, const char *start, const char *end )
 {
 	int len = 0;
 	if( end == NULL )
@@ -92,15 +79,8 @@ int _tcselen( int escape, const char *start, const char *end )
 	return len;
 }
 
-//========================================================
-// Name   : strlen
 // Desc   : similar with _tcscpy with escape process
 // Param  : escape - will be escape character
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
 void unescape( char *psz, int escape, char* srt, char* end = NULL )
 {
 	const char* pch = srt;
@@ -122,16 +102,9 @@ void unescape( char *psz, int escape, char* srt, char* end = NULL )
 	*psz = '\0';
 }
 
-//========================================================
-// Name   : _tcsepbrk
 // Desc   : similar with strpbrk with escape process
 // Param  : escape - will be escape character
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
-char* _tcsepbrk( const char* psz, const char* chset, int escape )
+char* tcsepbrk( const char* psz, const char* chset, int escape )
 {
 	char* pch = (char*)psz;
 	char* prev_escape = NULL;
@@ -150,16 +123,8 @@ char* _tcsepbrk( const char* psz, const char* chset, int escape )
 	return pch;
 }
 
-//========================================================
-// Name   : _SetString
 // Desc   : put string of (psz~end) on ps string
-// Param  : trim - will be trim?
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
-void _SetString( char* psz, char* end, CString* ps, bool trim = false, int escape = 0 )
+void SetString( char* psz, char* end, CString* ps, bool trim = false, int escape = 0 )
 {
 	if( trim )
 	{
@@ -170,7 +135,7 @@ void _SetString( char* psz, char* end, CString* ps, bool trim = false, int escap
 	if( len <= 0 ) return;
 	if( escape )
 	{
-		len = _tcselen( escape, psz, end );
+		len = tcselen( escape, psz, end );
 		char* szTemp = new char[len];
 		unescape( szTemp, escape, psz, end );
 		*ps = szTemp;
@@ -230,7 +195,7 @@ char* XNode::LoadAttributes( const char* pszAttrs , LPPARSEINFO pi /*= &piDefaul
 
 	while( xml && *xml )
 	{
-		xml = _tcsskip( xml );
+		xml = tcsskip( xml );
 		if( !xml )
 			continue;
 
@@ -258,40 +223,40 @@ char* XNode::LoadAttributes( const char* pszAttrs , LPPARSEINFO pi /*= &piDefaul
 		attr->parent = this;
 
 		// XML Attr Name
-		_SetString( xml, pEnd, &attr->name );
+		SetString( xml, pEnd, &attr->name );
 		
 		// add new attribute
 		attrs.push_back( attr );
 		xml = pEnd;
 		
 		// XML Attr Value
-		xml = _tcsskip( xml );
+		xml = tcsskip( xml );
 		if( !xml )
 			continue;
 
 		//if( xml = strchr( xml, '=' ) )
 		if( *xml == '=' )
 		{
-			xml = _tcsskip( ++xml );
+			xml = tcsskip( ++xml );
 			if( !xml )
 				continue;
 			// if " or '
 			// or none quote
 			int quote = *xml;
 			if( quote == '"' || quote == '\'' )
-				pEnd = _tcsechr( ++xml, quote, chXMLEscape );
+				pEnd = tcsechr( ++xml, quote, chXMLEscape );
 			else
 			{
 				//attr= value> 
 				// none quote mode
-				//pEnd = _tcsechr( xml, ' ', '\\' );
-				pEnd = _tcsepbrk( xml, (" >"), chXMLEscape );
+				//pEnd = tcsechr( xml, ' ', '\\' );
+				pEnd = tcsepbrk( xml, (" >"), chXMLEscape );
 			}
 
 			bool trim = pi->trim_value;
 			TCHAR escape = pi->escape_value;
-			//_SetString( xml, pEnd, &attr->value, trim, chXMLEscape );	
-			_SetString( xml, pEnd, &attr->value, trim, escape );
+			//SetString( xml, pEnd, &attr->value, trim, chXMLEscape );	
+			SetString( xml, pEnd, &attr->value, trim, escape );
 			xml = pEnd;
 			// ATTRVALUE 
 			if( pi->entity_value && pi->entitys )
@@ -339,7 +304,7 @@ char* XNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 	// XML Node Tag Name Open
 	xml++;
 	TCHAR* pTagEnd = strpbrk( xml, " />" );
-	_SetString( xml, pTagEnd, &name );
+	SetString( xml, pTagEnd, &name );
 	xml = pTagEnd;
 	// Generate XML Attributte List
 	xml = LoadAttributes( xml, pi );
@@ -386,7 +351,7 @@ char* XNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 		if( XIsEmptyString( value ) )
 		{
 			// Text Value 
-			TCHAR* pEnd = _tcsechr( ++xml, chXMLTagOpen, chXMLEscape );
+			TCHAR* pEnd = tcsechr( ++xml, chXMLTagOpen, chXMLEscape );
 			if( pEnd == NULL ) 
 			{
 				if( pi->erorr_occur == false ) 
@@ -402,8 +367,8 @@ char* XNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 			
 			bool trim = pi->trim_value;
 			TCHAR escape = pi->escape_value;
-			//_SetString( xml, pEnd, &value, trim, chXMLEscape );
-			_SetString( xml, pEnd, &value, trim, escape );
+			//SetString( xml, pEnd, &value, trim, chXMLEscape );
+			SetString( xml, pEnd, &value, trim, escape );
 
 			xml = pEnd;
 			// TEXTVALUE reference
@@ -435,7 +400,7 @@ char* XNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 				// </Close>
 				xml+=2; // C
 				
-				xml = _tcsskip( xml );
+				xml = tcsskip( xml );
 				if( xml == NULL )
 					return NULL;
 
@@ -453,7 +418,7 @@ char* XNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 					// error
 					return NULL;
 				}
-				_SetString( xml, pEnd, &closename );
+				SetString( xml, pEnd, &closename );
 				if( closename == this->name )
 				{
 					// wel-formed open/close
@@ -484,7 +449,7 @@ char* XNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 				if( xml && XIsEmptyString( value ) && *xml !=chXMLTagOpen )
 				{
 					// Text Value 
-					TCHAR* pEnd = _tcsechr( xml, chXMLTagOpen, chXMLEscape );
+					TCHAR* pEnd = tcsechr( xml, chXMLTagOpen, chXMLEscape );
 					if( pEnd == NULL ) 
 					{
 						// error cos not exist CloseTag </TAG>
@@ -500,8 +465,8 @@ char* XNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 					
 					bool trim = pi->trim_value;
 					TCHAR escape = pi->escape_value;
-					//_SetString( xml, pEnd, &value, trim, chXMLEscape );
-					_SetString( xml, pEnd, &value, trim, escape );
+					//SetString( xml, pEnd, &value, trim, chXMLEscape );
+					SetString( xml, pEnd, &value, trim, escape );
 
 					xml = pEnd;
 					//TEXTVALUE
