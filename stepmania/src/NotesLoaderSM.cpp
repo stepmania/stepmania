@@ -351,8 +351,6 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			}
 
 			Steps* pNewNotes = new Steps;
-			ASSERT( pNewNotes );
-
 			LoadFromSMTokens( 
 				sParams[1], 
 				sParams[2], 
@@ -454,8 +452,6 @@ bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 			}
 
 			Steps* pNewNotes = new Steps;
-			ASSERT( pNewNotes );
-
 			LoadFromSMTokens( 
 				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
 				*pNewNotes);
