@@ -27,8 +27,24 @@
 #include "archutils/Unix/arch_setup.h"
 #endif
 
+/* Set one of these in arch_setup.h.  (Don't bother trying to fall back on BYTE_ORDER
+ * if it was already set; too many systems are missing endian.h.) */
 #if !defined(ENDIAN_LITTLE) && !defined(ENDIAN_BIG)
 #error Neither ENDIAN_LITTLE nor ENDIAN_BIG defined
+#endif
+
+/* Define standard endianness macros, if they're missing. */
+#if defined(HAVE_ENDIAN_H)
+#include <endian.h>
+#else
+#define LITTLE_ENDIAN 1234
+#define BIG_ENDIAN 4321
+#if defined(ENDIAN_LITTLE)
+#define BYTE_ORDER LITTLE_ENDIAN
+#elif defined(ENDIAN_BIG)
+#define BYTE_ORDER BIG_ENDIAN
+#endif
+
 #endif
 
 /* Make sure everyone has min and max: */
