@@ -399,7 +399,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 
 	m_textAutoPlay.LoadFromFont( THEME->GetPathTo("Fonts","header2") );
 	m_textAutoPlay.SetXY( AUTOPLAY_X, AUTOPLAY_Y );
-	this->AddChild( &m_textAutoPlay );
+	if( !bDemonstration )	// only load if we're not in demonstration of jukebox
+		this->AddChild( &m_textAutoPlay );
 	UpdateAutoPlayText();
 	
 

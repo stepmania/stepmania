@@ -1324,6 +1324,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				LOG->Trace( "Starting playback at %f", fStartSeconds );
 				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 				m_soundMusic.SetPositionSeconds( fStartSeconds );
+				m_soundMusic.StartPlaying();
 			}
 			break;
 		case record:
