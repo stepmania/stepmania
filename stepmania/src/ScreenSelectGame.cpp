@@ -10,20 +10,11 @@
 */
 
 #include "ScreenSelectGame.h"
-#include <assert.h>
-#include "RageTextureManager.h"
-#include "RageUtil.h"
 #include "RageMusic.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
-#include "ScreenOptions.h"
-#include "ScreenTitleMenu.h"
-#include "GameConstantsAndTypes.h"
-#include "StepMania.h"
-#include "PrefsManager.h"
 #include "RageLog.h"
 #include "GameManager.h"
-#include <string.h>
 #include "GameState.h"
 #include "InputMapper.h"
 
@@ -49,12 +40,7 @@ ScreenSelectGame::ScreenSelectGame() :
 {
 	LOG->Trace( "ScreenSelectGame::ScreenSelectGame()" );
 
-
-	//
-	// populate g_SelectGameLines
-	//
-//	CStringArray arrayGameNames;
-//	GAMEMAN->GetGameNames( arrayGameNames );
+	/* populate g_SelectGameLines */
 	CArray<Game,Game> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
 	for( int i=0; i<aGames.GetSize(); i++ )
@@ -79,7 +65,16 @@ ScreenSelectGame::ScreenSelectGame() :
 
 void ScreenSelectGame::ImportOptions()
 {
-	m_iSelectedOption[0][SG_GAME] = GAMESTATE->m_CurGame;
+	/* Search the list of games for the currently active game.  If it's
+	 * not there, we might have set a game and then the user removed its
+	 * note skins; reset it to the first available. */
+	CArray<Game,Game> aGames;
+	GAMEMAN->GetEnabledGames( aGames );
+	ASSERT(aGames.GetSize());
+
+	m_iSelectedOption[0][SG_GAME] = 0;
+	for(int sel = 0; sel < aGames.GetSize(); ++sel)
+		if(aGames[sel] == GAMESTATE->m_CurGame) m_iSelectedOption[0][SG_GAME] = sel;
 }
 
 void ScreenSelectGame::ExportOptions()
