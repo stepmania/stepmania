@@ -140,7 +140,6 @@ void mySDL_GetBitsPerChannel(const SDL_PixelFormat *fmt, Uint32 bits[4])
 	bits[2] = 8 - fmt->Bloss;
 	bits[3] = 8 - fmt->Aloss;
 }
-#include "RageLog.h"
 
 void ConvertSDLSurface(SDL_Surface *&image,
 		int width, int height, int bpp,
@@ -150,21 +149,47 @@ void ConvertSDLSurface(SDL_Surface *&image,
             SDL_SWSURFACE, width, height, bpp, R, G, B, A);
 	ASSERT(ret_image != NULL);
 
-	/* If the formats are the same, no conversion is needed.  One exception:
-	 * if we have a color key and we're not paletted (8-bit).  (If we have
-	 * a color key but we're paletted, we'll handle this on texture load.) xxx unimplemented */
-	if(!(image->flags & SDL_SRCCOLORKEY) &&
-		width == image->w && height == image->h &&
-	   !memcmp(image->format, ret_image->format, sizeof(SDL_PixelFormat)))
+	/* If the formats are the same, no conversion is needed. */
+	if(width == image->w && height == image->h && bpp == image->format->BitsPerPixel &&
+	   image->format->Rmask == ret_image->format->Rmask &&
+	   image->format->Gmask == ret_image->format->Gmask &&
+	   image->format->Bmask == ret_image->format->Bmask &&
+	   image->format->Amask == ret_image->format->Amask)
 	{
-		LOG->Trace("noconv");
-		SDL_FreeSurface(ret_image);
-		return;
+		/* One exception: if we have a color key and we're not paletted (8-bit). 
+		 * In this case, we need to do the blit to get rid of the color key. */
+		if(!( image->flags & SDL_SRCCOLORKEY && image->format->BitsPerPixel != 8) )
+		{
+			SDL_FreeSurface(ret_image);
+			return;
+		}
 	}
 
 	/* We don't want to actually blend the alpha channel over the destination converted
 	 * surface; we want to simply blit it, so make sure SDL_SRCALPHA is not on. */
 	SDL_SetAlpha( image, 0, SDL_ALPHA_OPAQUE );
+
+	/* Copy the palette, if we have one. */
+	if(image->format->palette)
+		SDL_SetPalette(ret_image, SDL_LOGPAL, image->format->palette->colors,
+			0, image->format->palette->ncolors);
+
+	if(image->format->BitsPerPixel == 8 && ret_image->format->BitsPerPixel == 8 &&
+	   image->flags & SDL_SRCCOLORKEY)
+	{
+		/* The source and dest are both paletted, and we have a color key. 
+		 * First, make sure that the image we're blitting to has a default
+		 * color of the color key, so any places we don't blit to will
+		 * be transparent.  (The default color in the image is 0, so we're
+		 * all set if the color key is 0.) */
+		if(image->format->colorkey != 0)
+			SDL_FillRect(ret_image, NULL, image->format->colorkey);
+
+		/* Copy over the color key mode, and then turn off color keying in the
+		 * source so the color key index gets copied like any other color. */
+		SDL_SetColorKey( ret_image, SDL_SRCCOLORKEY, image->format->colorkey);
+		SDL_SetColorKey( image, 0, 0 );
+	}
 
 	SDL_Rect area;
 	area.x = area.y = 0;
@@ -206,4 +231,44 @@ SDL_Surface *SDL_CreateRGBSurfaceSane
 
 	return SDL_CreateRGBSurface(flags, width, height, depth,
 		Rmask, Gmask, Bmask, Amask);
+}
+
+/* Set the underlying RGB values of all pixels in 'img' that are
+ * completely transparent. */
+void SetAlphaRGB(SDL_Surface *img, Uint8 r, Uint8 g, Uint8 b)
+{
+	/* If it's a paletted surface, all we have to do is change the
+	 * colorkey, if any. */
+	if(img->format->BitsPerPixel == 8)
+	{
+		if(img->flags & SDL_SRCCOLORKEY)
+		{
+			img->format->palette->colors[img->format->colorkey].r = r;
+			img->format->palette->colors[img->format->colorkey].g = g;
+			img->format->palette->colors[img->format->colorkey].b = b;
+		}
+
+		return;
+	}
+
+	/* It's RGBA.  If there's no alpha channel, we have nothing to do. */
+	if(!img->format->Amask)
+		return;
+
+	Uint32 trans = SDL_MapRGBA(img->format, r, g, b, 0);
+	for(int y = 0; y < img->h; ++y)
+	{
+		Uint8 *row = (Uint8 *)img->pixels + img->pitch*y;
+
+		for(int x = 0; x < img->w; ++x)
+		{
+			Uint32 val = decodepixel(row, img->format->BytesPerPixel);
+			if(val != trans && !(val&img->format->Amask))
+			{
+				encodepixel(row, img->format->BytesPerPixel, trans);
+			}
+
+			row += img->format->BytesPerPixel;
+		}
+	}
 }

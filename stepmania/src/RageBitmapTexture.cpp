@@ -16,6 +16,7 @@
 #include "RageLog.h"
 #include "RageException.h"
 #include "RageDisplay.h"
+#include "RageDisplayInternal.h"
 
 #include "SDL.h"
 #include "SDL_image.h"
@@ -26,23 +27,33 @@
 
 #include "RageTimer.h"
 
+enum pixfmts {
+	FMT_RGBA8,
+	FMT_RGBA4,
+	FMT_RGB5A1,
+	FMT_PAL,
+	NUM_PIX_FORMATS
+};
+
 /* Definitions for various texture formats.  We'll probably want RGBA
  * in OpenGL, not ARGB ... All of these are in local (little) endian;
  * this may or may not need adjustment for OpenGL. */
 struct PixFmt_t {
 	int bpp;
-	GLenum type; /* data format */
 	GLenum internalfmt; /* target format */
+	GLenum format; /* target format */
+	GLenum type; /* data format */
 	unsigned int masks[4];
-} PixFmtMasks[] = {
+} PixFmtMasks[NUM_PIX_FORMATS] = {
 	/* XXX: GL_UNSIGNED_SHORT_4_4_4_4 is affected by endianness; GL_UNSIGNED_BYTE
 	 * is not, but all SDL masks are affected by endianness, so GL_UNSIGNED_BYTE
 	 * is reversed.  This isn't endian-safe. */
 	{
 		/* B8G8R8A8 */
 		32,
-		GL_UNSIGNED_BYTE,
 		GL_RGBA8,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
 		{ 0x000000FF,
 		  0x0000FF00,
 		  0x00FF0000,
@@ -50,8 +61,9 @@ struct PixFmt_t {
 	}, {
 		/* B4G4R4A4 */
 		16,
-		GL_UNSIGNED_SHORT_4_4_4_4,
 		GL_RGBA4,
+		GL_RGBA,
+		GL_UNSIGNED_SHORT_4_4_4_4,
 		{ 0xF000,
 		  0x0F00,
 		  0x00F0,
@@ -59,22 +71,30 @@ struct PixFmt_t {
 	}, {
 		/* B5G5R5A1 */
 		16,
-		GL_UNSIGNED_SHORT_5_5_5_1,
 		GL_RGB5_A1,
+		GL_RGBA,
+		GL_UNSIGNED_SHORT_5_5_5_1,
 		{ 0xF800,
 		  0x07C0,
 		  0x003E,
 		  0x0001 },
+	}, {
+		/* Paletted */
+		8,
+		GL_COLOR_INDEX8_EXT,
+		GL_COLOR_INDEX,
+		GL_UNSIGNED_BYTE,
+		{ 0,0,0,0 } /* N/A */
 	}
 };
 
 int PixFmtMaskNo(GLenum fmt)
 {
 	switch(fmt) {
-	case GL_RGBA8: return 0;
-	case GL_RGBA4: return 1;
-	case GL_RGB5_A1: return 2;
-	default: ASSERT(0);	  return 0;
+	case GL_RGBA8: return FMT_RGBA8;
+	case GL_RGBA4: return FMT_RGBA4;
+	case GL_RGB5_A1: return FMT_RGB5A1;
+	default: ASSERT(0);	  return FMT_RGBA8;
 	}
 }
 
@@ -133,6 +153,7 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
 
 	/* Load the image into an SDL surface. */
 	SDL_Surface *img = IMG_Load(GetFilePath());
+
 	/* XXX: Wait, we don't want to throw for all images; in particular, we
 	 * want to tolerate corrupt/unknown background images. */
 	if(img == NULL)
@@ -225,10 +246,6 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
 
 	pixfmt = PixFmtMaskNo(fmtTexture);
 
-	/* Dither only when the target is 16bpp, not when it's 32bpp. */
-	if( PixFmtMasks[pixfmt].bpp == 32)
-		m_ActualID.bDither = false;
-
 	if( m_ActualID.bStretch ) 
 	{
 		/* resize currently only does RGBA8888 */
@@ -238,32 +255,6 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
 			PixFmtMasks[mask].masks[2], PixFmtMasks[mask].masks[3]);
 		zoomSurface(img, m_iImageWidth, m_iImageHeight );
 	}
-
-	if( m_ActualID.bDither )
-	{
-		/* Dither down to the destination format. */
-		SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h, PixFmtMasks[pixfmt].bpp,
-			PixFmtMasks[pixfmt].masks[0], PixFmtMasks[pixfmt].masks[1],
-			PixFmtMasks[pixfmt].masks[2], PixFmtMasks[pixfmt].masks[3]);
-
-		SM_SDL_OrderedDither(img, dst);
-		SDL_FreeSurface(img);
-		img = dst;
-	}
-
-	/* Convert the data to the destination format.  Hmm.  We could just
-	 * convert the format, leaving the resolution alone (simplifying
-	 * ConvertSDLSurface), and then load the texture a little more
-	 * intelligently.  If we do that with OpenGL, is the rest
-	 * of the texture (that we didn't fill) guaranteed to be black?
-	 * We don't want anything else to be linearly filtered in on the
-	 * edge of the texture ...
-	 */
-	/* We could check to see if we happen to simply be in a reversed
-	 * pixel order, and tell OpenGL to do the switch for us. */
-	ConvertSDLSurface(img, img->w, img->h, PixFmtMasks[pixfmt].bpp,
-			PixFmtMasks[pixfmt].masks[0], PixFmtMasks[pixfmt].masks[1],
-			PixFmtMasks[pixfmt].masks[2], PixFmtMasks[pixfmt].masks[3]);
 
 	return img;
 }
@@ -278,28 +269,114 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
  * Dither forces dithering when loading 16-bit textures.
  * Stretch forces the loaded image to fill the texture completely.
  */
-
 void RageBitmapTexture::Create()
 {
-	int pixfmt;
-
-	SDL_Surface *img = CreateImg(pixfmt);
+	/* This will be set to the pixfmt we should use if we use an RGBA texture. */
+	int desired_rgba_pixfmt;
+	SDL_Surface *img = CreateImg(desired_rgba_pixfmt);
 
 	if(!m_uGLTextureID)
 		glGenTextures(1, &m_uGLTextureID);
 
 	DISPLAY->SetTexture(this);
 
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
-	/* Here's a trick for loading a texture that doesn't necessarily have power-of-two
-	 * dimensions into a texture, without wasting time converting it: */
-	glTexImage2D(GL_TEXTURE_2D, 0, PixFmtMasks[pixfmt].internalfmt, power_of_two(img->w), power_of_two(img->h), 0,
-			GL_RGBA, PixFmtMasks[pixfmt].type, NULL);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 
-                    img->w, img->h, GL_RGBA, PixFmtMasks[pixfmt].type, img->pixels); 
+	int pixfmt = desired_rgba_pixfmt;
+
+	/* XXX this needs to be a hint */
+	Uint8 AlphaR=0, AlphaG=0, AlphaB=0;
+	SetAlphaRGB(img, AlphaR, AlphaG, AlphaB);
+
+	if(img->format->BitsPerPixel == 8 && DISPLAY->GetSpecs().EXT_paletted_texture)
+	{
+		/* The image is currently paletted.  Let's try to set up a paletted texture. */
+		GLubyte palette[256*4];
+		memset(palette, 0, sizeof(palette));
+		int p = 0;
+		/* Copy the palette to the simple, unpacked data OGL expects. If
+		 * we're color keyed, change it over as we go. */
+		for(int i = 0; i < img->format->palette->ncolors; ++i)
+		{
+			palette[p++] = img->format->palette->colors[i].r;
+			palette[p++] = img->format->palette->colors[i].g;
+			palette[p++] = img->format->palette->colors[i].b;
+
+			if(img->flags & SDL_SRCCOLORKEY && i == int(img->format->colorkey))
+				palette[p++] = 0;
+			else
+				palette[p++] = 0xFF; /* opaque */
+		}
+
+		/* Set the palette. */
+		glColorTableEXT(GL_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
+
+		int RealFormat = 0;
+		glGetColorTableParameterivEXT(GL_TEXTURE_2D, GL_COLOR_TABLE_FORMAT_EXT, &RealFormat);
+		if(RealFormat == GL_RGBA8)
+		{
+			/* Good, the color table is what we asked for.  Use a paletted texture format. */
+			pixfmt = FMT_PAL;
+		} else {
+			/* This is another case I don't expect to happen; if it does, log,
+			 * turn off PT's permanently and continue as an RGBA texture. */
+			LOG->Info("Expected an RGBA8 palette, got %i instead; disabling paletted textures", RealFormat);
+			DISPLAY->DisablePalettedTexture();
+		}
+	}
+	
+retry:
+	if(pixfmt != FMT_PAL)
+	{
+		/* It's either not a paletted image, or we can't handle paletted images.
+		 * Convert to the desired RGBA format, dithering if appropriate. */
+
+		/* Never dither when the target is 32bpp; there's no point. */
+		if( PixFmtMasks[pixfmt].bpp == 32)
+			m_ActualID.bDither = false;
+
+		if( m_ActualID.bDither )
+		{
+			/* Dither down to the destination format. */
+			SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h, PixFmtMasks[pixfmt].bpp,
+				PixFmtMasks[pixfmt].masks[0], PixFmtMasks[pixfmt].masks[1],
+				PixFmtMasks[pixfmt].masks[2], PixFmtMasks[pixfmt].masks[3]);
+
+			SM_SDL_OrderedDither(img, dst);
+			SDL_FreeSurface(img);
+			img = dst;
+		}
+	}
+
+	/* Convert the data to the destination format if it's not in it already.  */
+	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight, PixFmtMasks[pixfmt].bpp,
+		PixFmtMasks[pixfmt].masks[0], PixFmtMasks[pixfmt].masks[1],
+		PixFmtMasks[pixfmt].masks[2], PixFmtMasks[pixfmt].masks[3]);
+
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
+	glTexImage2D(GL_TEXTURE_2D, 0, PixFmtMasks[pixfmt].internalfmt, 
+			m_iTextureWidth, m_iTextureHeight, 0,
+			PixFmtMasks[pixfmt].format, PixFmtMasks[pixfmt].type, img->pixels);
+
+	/* If we're paletted, and didn't get the 8-bit palette we asked for ...*/
+	if(img->format->BitsPerPixel == 8)
+	{
+		int size;
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INDEX_SIZE_EXT, &size);
+		if(size != 8)
+		{
+			/* I don't know any reason this should actually fail (paletted textures
+			 * but no support for 8-bit palettes?), so let's just disable paletted
+			 * textures the first time this happens. */
+			LOG->Info("Expected an 8-bit palette, got a %i-bit one instead; disabling paletted textures", size);
+			DISPLAY->DisablePalettedTexture();
+			pixfmt = desired_rgba_pixfmt;
+			goto retry;
+		}
+	}
 
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glFlush();
