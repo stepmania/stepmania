@@ -27,7 +27,7 @@ public:
 	NoteDisplay();
 	~NoteDisplay();
 
-	void Load( int iColNum, PlayerNumber pn, float fYReverseOffsetPixels  );
+	void Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fYReverseOffsetPixels );
 
 	void DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels );
 	void DrawHold( const HoldNote& hn, bool bActive, float fLife, float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels );

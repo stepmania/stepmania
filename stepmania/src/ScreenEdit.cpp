@@ -243,6 +243,7 @@ ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 	/* Not all games have a noteskin named "note" ... */
 	if( NOTESKIN->DoesNoteSkinExist("note") )
 		GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "note";	// change noteskin before loading all of the edit Actors
+	GAMESTATE->ResetNoteSkins();
 
 	m_BGAnimation.LoadFromAniDir( THEME->GetPathToB("ScreenEdit background") );
 
@@ -274,6 +275,7 @@ ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 
 
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "default";	// change noteskin back to default before loading player
+	GAMESTATE->ResetNoteSkins();
 
 	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL, NULL, NULL, NULL );
 	GAMESTATE->m_PlayerController[PLAYER_1] = PC_HUMAN;
@@ -1571,6 +1573,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				m_EditMode = MODE_PLAYING;
 
+				/* Reset the note skin, in case preferences have changed. */
+				GAMESTATE->ResetNoteSkins();
+
 				/* Give a 1 measure lead-in.  Set this before loading Player, so it knows
 				 * where we're starting. */
 				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;
@@ -1596,6 +1601,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				SOUND->PlayMusic("");
 
 				m_EditMode = MODE_RECORDING;
+
+				/* Reset the note skin, in case preferences have changed. */
+				GAMESTATE->ResetNoteSkins();
 
 				// initialize m_NoteFieldRecord
 				m_NoteFieldRecord.Load( &m_NoteFieldEdit, PLAYER_1, -150, 350, 350 );

@@ -29,10 +29,12 @@ class NoteField : public NoteDataWithScoring, public ActorFrame
 {
 public:
 	NoteField();
+	~NoteField();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	
 	virtual void Load( NoteData* pNoteData, PlayerNumber pn, int iStartDrawingPixel, int iEndDrawingPixel, float fYReverseOffsetPixels );
+	virtual void Unload();
 	void RemoveTapNoteRow( int iIndex );
 
 	vector<bool> m_bIsHoldingHoldNote;	// hack:  Need this to know when to "light up" the center of hold notes
@@ -40,7 +42,7 @@ public:
 	float	m_fBeginMarker, m_fEndMarker;	// only used with MODE_EDIT
 
 	void FadeToFail();
-	void ReloadNoteSkin();
+	void CacheNoteSkin( CString skin );
 
 
 protected:
@@ -52,6 +54,8 @@ protected:
 	void DrawBGChangeText( const float fBeat, const CString sNewBGName );
 	float GetWidth();
 
+	void RefreshBeatToNoteSkin();
+
 	float	m_fPercentFadeToFail;	// -1 of not fading to fail
 
 	PlayerNumber	m_PlayerNumber;
@@ -60,8 +64,20 @@ protected:
 	float			m_fYReverseOffsetPixels;
 
 	// color arrows
-	NoteDisplay		m_NoteDisplay[MAX_NOTE_TRACKS];
-	
+	struct NoteDisplayCols
+	{
+		NoteDisplay		display[MAX_NOTE_TRACKS];
+	};
+	/* All loaded note displays, mapped by their name. */
+	map<CString, NoteDisplayCols *> m_NoteDisplays;
+
+	int m_LastSeenBeatToNoteSkinRev;
+
+	/* Map of beat->NoteDisplayCols.  This is updated whenever GAMESTATE-> changes. */
+	typedef map<float, NoteDisplayCols *> NDMap;
+	void SearchForBeat( NDMap::iterator &cur, NDMap::iterator &next, float Beat );
+	NDMap m_BeatToNoteDisplays;
+
 	// used in MODE_EDIT
 	Sprite			m_sprBars;	// 4 frames: Measure, 4th, 8th, 16th
 	BitmapText		m_textMeasureNumber;

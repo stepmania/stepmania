@@ -90,6 +90,8 @@ PlayerMinus::~PlayerMinus()
 
 void PlayerMinus::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper, NoteFieldPlus* pNoteField )
 {
+	GAMESTATE->ResetNoteSkins();
+
 	//LOG->Trace( "PlayerMinus::Load()", );
 
 	m_PlayerNumber = pn;
@@ -142,6 +144,25 @@ void PlayerMinus::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, Co
 	m_pNoteField->Load( (NoteData*)this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels, GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD );
 	m_ArrowBackdrop.SetPlayer( pn );
 
+	/* Cache note skins that are used as attacks. */
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_RAVE:
+		for( int al=0; al<NUM_ATTACK_LEVELS; al++ )
+		{
+			Character *ch = GAMESTATE->m_pCurCharacters[m_PlayerNumber];
+			CString* asAttacks = ch->m_sAttacks[al];
+			for( int att = 0; att < NUM_ATTACKS_PER_LEVEL; ++att )
+			{
+				PlayerOptions po;
+				po.FromString( asAttacks[att] );
+				if( po.m_sNoteSkin != "" )
+					m_pNoteField->CacheNoteSkin( po.m_sNoteSkin );
+			}
+		}
+	}	
+
 	const bool bReverse = GAMESTATE->m_PlayerOptions[pn].GetReversePercentForColumn(0) == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyleDef()->m_StyleType==StyleDef::ONE_PLAYER_TWO_CREDITS;
 	m_Combo.SetX( COMBO_X(m_PlayerNumber,bPlayerUsingBothSides) );
@@ -166,7 +187,6 @@ void PlayerMinus::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, Co
 	// Need to set Y positions of all these elements in Update since
 	// they change depending on PlayerOptions.
 
-	m_sLastSeenNoteSkin = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin;
 	m_soundMineExplosion.Load( THEME->GetPathToS("Player explosion") );
 }
 
@@ -314,14 +334,6 @@ void PlayerMinus::Update( float fDeltaTime )
 		for( ; m_iRowLastCrossed <= iRowNow; m_iRowLastCrossed++ )  // for each index we crossed since the last update
 			if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
 				CrossedRow( m_iRowLastCrossed );
-	}
-
-
-	// reload noteskin if it has changed
-	if( m_sLastSeenNoteSkin != GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin )
-	{
-		m_pNoteField->ReloadNoteSkin();
-		m_sLastSeenNoteSkin = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin;
 	}
 
 

@@ -43,15 +43,42 @@ NoteField::NoteField()
 	m_fPercentFadeToFail = -1;
 }
 
+NoteField::~NoteField()
+{
+	Unload();
+}
+
+void NoteField::Unload()
+{
+	for( map<CString, NoteDisplayCols *>::iterator it = m_NoteDisplays.begin();
+		it != m_NoteDisplays.end(); ++it )
+		delete it->second;
+	m_NoteDisplays.clear();
+}
+
+void NoteField::CacheNoteSkin( CString skin )
+{
+	if( m_NoteDisplays.find(skin) != m_NoteDisplays.end() )
+		return;
+
+	LOG->Trace("NoteField::CacheNoteSkin: cache %s", skin.c_str() );
+	NoteDisplayCols *nd = new NoteDisplayCols;
+	for( int c=0; c<GetNumTracks(); c++ ) 
+		nd->display[c].Load( c, m_PlayerNumber, skin, m_fYReverseOffsetPixels );
+	m_NoteDisplays[ skin ] = nd;
+}
 
 void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw, float fYReverseOffsetPixels )
 {
+	Unload();
+
 	m_PlayerNumber = pn;
 	m_iStartDrawingPixel = iFirstPixelToDraw;
 	m_iEndDrawingPixel = iLastPixelToDraw;
 	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 
 	m_fPercentFadeToFail = -1;
+	m_LastSeenBeatToNoteSkinRev = -1;
 
 	NoteDataWithScoring::Init();
 
@@ -59,19 +86,46 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDra
 	m_bIsHoldingHoldNote.insert(m_bIsHoldingHoldNote.end(), pNoteData->GetNumTapNotes(), false);
 
 	this->CopyAll( pNoteData );
-
-	// init note displays
-	for( int c=0; c<GetNumTracks(); c++ ) 
-		m_NoteDisplay[c].Load( c, pn, m_fYReverseOffsetPixels );
-	
 	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
+
+	/* Cache the default note skin.  It's up to other code to cache any other skins
+	 * that might be used, such as ones assigned as attacks in battle modes. */
+	LOG->Trace("cache '%s'", GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin.c_str());
+	CacheNoteSkin( GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin );
+
+	RefreshBeatToNoteSkin();
 }
 
-void NoteField::ReloadNoteSkin()
+
+void NoteField::RefreshBeatToNoteSkin()
 {
-	// init note displays
-	for( int c=0; c<GetNumTracks(); c++ ) 
-		m_NoteDisplay[c].Load( c, m_PlayerNumber, m_fYReverseOffsetPixels );
+	if( GAMESTATE->m_BeatToNoteSkinRev == m_LastSeenBeatToNoteSkinRev )
+		return;
+	m_LastSeenBeatToNoteSkinRev = GAMESTATE->m_BeatToNoteSkinRev;
+
+	/* Set by GameState::ResetNoteSkins(): */
+	ASSERT( !GAMESTATE->m_BeatToNoteSkin[m_PlayerNumber].empty() );
+
+	m_BeatToNoteDisplays.clear();
+
+	/* GAMESTATE->m_BeatToNoteSkin[pn] maps from song beats to note skins.  Maintain
+	 * m_BeatToNoteDisplays, to map from song beats to NoteDisplay*s, so we don't
+	 * have to do it while rendering. */
+	map<float,CString>::iterator it;
+	for( it = GAMESTATE->m_BeatToNoteSkin[m_PlayerNumber].begin(); 
+		 it != GAMESTATE->m_BeatToNoteSkin[m_PlayerNumber].end(); ++it )
+	{
+		const float Beat = it->first;
+		const CString &Skin = it->second;
+
+		map<CString, NoteDisplayCols *>::iterator display = m_NoteDisplays.find( Skin );
+
+		/* If this happens, we tried to use a note skin that wasn't pre-cached. */
+		RAGE_ASSERT_M( display != m_NoteDisplays.end(), ssprintf("Couldn't find %s", Skin.c_str()) );
+
+		NoteDisplayCols *cols = display->second;
+		m_BeatToNoteDisplays[Beat] = cols;
+	}
 }
 
 void NoteField::Update( float fDeltaTime )
@@ -82,6 +136,8 @@ void NoteField::Update( float fDeltaTime )
 
 	if( m_fPercentFadeToFail >= 0 )
 		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/1.5f, 1 );	// take 1.5 seconds to totally fade
+
+	RefreshBeatToNoteSkin();
 }
 
 float NoteField::GetWidth()
@@ -215,11 +271,62 @@ void NoteField::DrawBGChangeText( const float fBeat, const CString sNewBGName )
 	m_textMeasureNumber.Draw();
 }
 
+/* cur is an iterator within m_NoteDisplays.  next is ++cur.  Advance cur to point to the
+ * block that contains beat. */
+void NoteField::SearchForBeat( NDMap::iterator &cur, NDMap::iterator &next, float Beat )
+{
+	while( next != m_BeatToNoteDisplays.end() && next->first < Beat )
+	{
+		cur = next;
+		++next;
+	}
+}
+
+
+// CPU OPTIMIZATION OPPORTUNITY:
+// change this probing to binary search
+float FindFirstDisplayedBeat( PlayerNumber pn, int iFirstPixelToDraw )
+{
+	float fFirstBeatToDraw = GAMESTATE->m_fSongBeat-4;	// Adjust to balance off performance and showing enough notes.
+
+	while( fFirstBeatToDraw < GAMESTATE->m_fSongBeat )
+	{
+		float fYOffset = ArrowGetYOffset(pn, 0, fFirstBeatToDraw);
+		float fYPosWOReverse = ArrowGetYPosWithoutReverse(pn, 0, fYOffset );
+		if( fYPosWOReverse < iFirstPixelToDraw )	// off screen
+			fFirstBeatToDraw += 0.1f;	// move toward fSongBeat
+		else	// on screen
+			break;	// stop probing
+	}
+	fFirstBeatToDraw -= 0.1f;	// rewind if we intentionally overshot
+	return fFirstBeatToDraw;
+}
+
+float FindLastDisplayedBeat( PlayerNumber pn, int iLastPixelToDraw )
+{
+	// probe for last note to draw
+	float fLastBeatToDraw = GAMESTATE->m_fSongBeat+20;	// worst case is 0.25x + boost.  Adjust to balance of performance and showing enough notes.
+	while( fLastBeatToDraw > GAMESTATE->m_fSongBeat )
+	{
+		float fYOffset = ArrowGetYOffset( pn, 0, fLastBeatToDraw );
+		float fYPosWOReverse = ArrowGetYPosWithoutReverse( pn, 0, fYOffset );
+		if( fYPosWOReverse > iLastPixelToDraw )	// off screen
+			fLastBeatToDraw -= 0.1f;	// move toward fSongBeat
+		else	// on screen
+			break;	// stop probing
+	}
+	fLastBeatToDraw += 0.1f;	// fast forward since we intentionally overshot
+	return fLastBeatToDraw;
+}
+
+float g_fNoteFieldLastBeatToDraw = -1;
+
 void NoteField::DrawPrimitives()
 {
 	//LOG->Trace( "NoteField::DrawPrimitives()" );
 
-	const float fSongBeat = GAMESTATE->m_fSongBeat;
+	/* This should be filled in on the first update. */
+	ASSERT( !m_BeatToNoteDisplays.empty() );
 
 	//
 	// Adjust draw range depending on some effects
@@ -238,35 +345,12 @@ void NoteField::DrawPrimitives()
 	iLastPixelToDraw = (int)(iLastPixelToDraw * fLastDrawScale * fDrawScale);
 
 
-	// CPU OPTIMIZATION OPPORTUNITY:
-	// change this probing to binary search
+	// probe for first and last notes on the screen
+	float fFirstBeatToDraw = FindFirstDisplayedBeat( m_PlayerNumber, iFirstPixelToDraw );
+	float fLastBeatToDraw = FindLastDisplayedBeat( m_PlayerNumber, iLastPixelToDraw );
 
-	// probe for first note on the screen
-	float fFirstBeatToDraw = fSongBeat-4;	// Adjust to balance of performance and showing enough notes.
-	while( fFirstBeatToDraw<fSongBeat )
-	{
-		float fYOffset = ArrowGetYOffset(m_PlayerNumber, 0, fFirstBeatToDraw);
-		float fYPosWOReverse = ArrowGetYPosWithoutReverse(m_PlayerNumber, 0, fYOffset );
-		if( fYPosWOReverse < iFirstPixelToDraw )	// off screen
-			fFirstBeatToDraw += 0.1f;	// move toward fSongBeat
-		else	// on screen
-			break;	// stop probing
-	}
-	fFirstBeatToDraw -= 0.1f;	// rewind if we intentionally overshot
-
-	// probe for last note to draw
-	float fLastBeatToDraw = fSongBeat+20;	// worst case is 0.25x + boost.  Adjust to balance of performance and showing enough notes.
-	while( fLastBeatToDraw>fSongBeat )
-	{
-		float fYOffset = ArrowGetYOffset(m_PlayerNumber, 0, fLastBeatToDraw);
-		float fYPosWOReverse = ArrowGetYPosWithoutReverse(m_PlayerNumber, 0, fYOffset );
-		if( fYPosWOReverse > iLastPixelToDraw )	// off screen
-			fLastBeatToDraw -= 0.1f;	// move toward fSongBeat
-		else	// on screen
-			break;	// stop probing
-	}
-	fLastBeatToDraw += 0.1f;	// fast forward since we intentionally overshot
-
+	/* Hack: */
+	g_fNoteFieldLastBeatToDraw = fLastBeatToDraw;
 
 	const int iFirstIndexToDraw  = BeatToNoteRow(fFirstBeatToDraw);
 	const int iLastIndexToDraw   = BeatToNoteRow(fLastBeatToDraw);
@@ -365,6 +449,10 @@ void NoteField::DrawPrimitives()
 		// Draw all HoldNotes in this column (so that they appear under the tap notes)
 		/////////////////////////////////
 		int i;
+
+		NDMap::iterator CurDisplay = m_BeatToNoteDisplays.begin();
+		ASSERT( CurDisplay != m_BeatToNoteDisplays.end() );
+		NDMap::iterator NextDisplay = CurDisplay; ++NextDisplay;
 		for( i=0; i < GetNumHoldNotes(); i++ )
 		{
 			const HoldNote &hn = GetHoldNote(i);
@@ -387,11 +475,15 @@ void NoteField::DrawPrimitives()
 				continue;	// skip
 			}
 
+			SearchForBeat( CurDisplay, NextDisplay, hn.fStartBeat );
+
 			bool bIsInSelectionRange = false;
 			if( m_fBeginMarker!=-1 && m_fEndMarker!=-1 )
 				bIsInSelectionRange = m_fBeginMarker<=hn.fStartBeat && hn.fStartBeat<=m_fEndMarker && m_fBeginMarker<=hn.fEndBeat && hn.fEndBeat<=m_fEndMarker;
 
-			m_NoteDisplay[c].DrawHold( hn, bIsHoldingNote, fLife, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels );
+			NoteDisplayCols *nd = CurDisplay->second;
+
+			nd->display[c].DrawHold( hn, bIsHoldingNote, fLife, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels );
 		}
 		
 
@@ -409,6 +501,8 @@ void NoteField::DrawPrimitives()
 			increment = -1;
 		}
 */		
+		CurDisplay = m_BeatToNoteDisplays.begin();
+		NextDisplay = CurDisplay; ++NextDisplay;
 		for( i=first; i <= last; i+=increment )	//	 for each row
 		{	
 			TapNote tn = GetTapNote(c, i);
@@ -439,7 +533,10 @@ void NoteField::DrawPrimitives()
 			bool bIsAddition = (tn == TAP_ADDITION);
 			bool bIsMine = (tn == TAP_MINE);
 
-			m_NoteDisplay[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
+			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(i) );
+
+			NoteDisplayCols *nd = CurDisplay->second;
+			nd->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
 		}
 
 		g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(c);

@@ -521,6 +521,19 @@ void GameState::RestoreSelectedOptions()
 	m_SongOptions = m_StoredSongOptions;
 }
 
+void GameState::ResetNoteSkins()
+{
+	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+	{
+		m_BeatToNoteSkin[pn].clear();
+		m_BeatToNoteSkin[pn][-1000] = GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin;
+	}
+
+	m_BeatToNoteSkinRev = 0;
+}
+
+/* From NoteField: */
+extern float g_fNoteFieldLastBeatToDraw;
 
 void GameState::LaunchAttack( PlayerNumber target, Attack a )
 {
@@ -536,6 +549,44 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 	if( po.m_Transform != PlayerOptions::TRANSFORM_NONE )
 	{
 		m_TransformsToApply[target].push_back( po.m_Transform );
+	}
+
+	if( po.m_sNoteSkin != "" )
+	{
+		map<float,CString> &BeatToNoteSkin = m_BeatToNoteSkin[target];
+		/* Add it in the future, past what's currently on screen, so new arrows will scroll
+		 * on screen with this skin. */
+		const float CurBeat = this->m_fSongBeat;
+		/* If reasonable, push the attack forward so notes on screen don't change suddenly. */
+		const float AddBeat = min( CurBeat+16, g_fNoteFieldLastBeatToDraw );
+
+		const float AddSecond = this->m_pCurSong->GetElapsedTimeFromBeat( CurBeat );
+		const float EndSecond = AddSecond + a.fSecsRemaining;
+		const float EndBeat = this->m_pCurSong->GetBeatFromElapsedTime( EndSecond );
+
+		/* If there are any note skins after the point we're adding, remove them.  We probably
+		 * have overlapping note skin attacks. */
+		map<float,CString>::iterator it = BeatToNoteSkin.begin();
+		while( it != BeatToNoteSkin.end() )
+		{
+			map<float,CString>::iterator next = it;
+			++next;
+			if( it->first >= AddBeat )
+			{
+				LOG->Trace( "erase old %f", it->first );
+				BeatToNoteSkin.erase( it );
+			}
+			it = next;
+		}
+
+		/* Add the skin to m_BeatToNoteSkin.  */
+		BeatToNoteSkin[AddBeat] = po.m_sNoteSkin;
+
+		/* Return to the default note skin after the duration. */
+		BeatToNoteSkin[EndBeat] = GAMESTATE->m_PlayerOptions[target].m_sNoteSkin;
+
+		++m_BeatToNoteSkinRev;
+		po.m_sNoteSkin = "";
 	}
 
 	// search for an open slot

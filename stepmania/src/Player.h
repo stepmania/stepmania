@@ -86,7 +86,6 @@ protected:
 	ScoreKeeper*	m_pSecondaryScoreKeeper;
 	Inventory*		m_pInventory;
 
-	CString			m_sLastSeenNoteSkin;
 	int				m_iRowLastCrossed;
 
 	RageSound		m_soundMineExplosion;

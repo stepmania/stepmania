@@ -19,6 +19,8 @@
 #include "Grade.h"
 #include "StageStats.h"
 
+#include <map>
+
 class Song;
 class Steps;
 class Course;
@@ -152,6 +154,11 @@ public:
 	float		m_fCurBPS;
 	bool		m_bFreeze;	// in the middle of a freeze
 	bool		m_bPastHereWeGo;
+
+	map<float,CString> m_BeatToNoteSkin[NUM_PLAYERS];
+	int			m_BeatToNoteSkinRev; /* hack: incremented whenever m_BeatToNoteSkin changes */
+	void ResetNoteSkins();
+
 	static const float MUSIC_SECONDS_INVALID;
 
 	void ResetMusicStatistics();	// Call this when it's time to play a new song.  Clears the values above.
