@@ -7,18 +7,25 @@
 #include "RageLog.h"
 #include "StepMania.h"
 
+/* This screen used to wait for sounds to stop.  However, implementing GetPlayingSounds()
+ * is annoying, because sounds might be deleted at any time; they aren't ours to have
+ * references to.  Also, it's better to quit on command instead of waiting several seconds
+ * for a sound to stop. */
 ScreenExit::ScreenExit( CString sName ): Screen( sName )
 {
 	m_Exited = false;
 
+	ExitGame();
+
 	/* It'd be better for any previous screen playing music to fade it out as it fades
 	 * out the screen.  XXX: Check to see if it's fading out; if it'll stop playing in
 	 * reasonable time, let it. */
-	SOUND->StopMusic();
+//	SOUND->StopMusic();
 }
 
 void ScreenExit::Update( float fDelta )
 {
+#if 0
 	if( m_Exited )
 		return;
 
@@ -48,6 +55,7 @@ void ScreenExit::Update( float fDelta )
 		LOG->Trace("ScreenExit: shutting down");
 		ExitGame();
 	}
+#endif
 }
 
 /*
