@@ -416,18 +416,47 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 	LOG->Info("Point size range: %.3f-%.3f +%.3f", g_point_range[0], g_point_range[1], g_point_granularity);
 }
 
+#if defined(unix) && defined(HAVE_LIBXTST)
+#include <X11/extensions/XTest.h>
+#endif
+
 void RageDisplay_OGL::Update(float fDeltaTime)
 {
 	wind->Update(fDeltaTime);
 
-#if defined(unix)
 	if( PREFSMAN->m_bDisableScreenSaver )
 	{
 		/* Disable the screensaver. */
+#if defined(unix) && defined(HAVE_LIBXTST)
 		ASSERT( g_X11Display );
-		XForceScreenSaver( g_X11Display, ScreenSaverReset );
-	}
+
+		/* This causes flicker. */
+		// XForceScreenSaver( g_X11Display, ScreenSaverReset );
+		
+		/*
+		 * Instead, send a null relative mouse motion, to trick X into thinking there has been
+		 * user activity. 
+		 *
+		 * This also handles XScreenSaver; XForceScreenSaver only handles the internal X11
+		 * screen blanker.
+		 *
+		 * This will delay the X blanker, DPMS and XScreenSaver from activating, and will
+		 * disable the blanker and XScreenSaver if they're already active (unless XSS is
+		 * locked).  For some reason, it doesn't un-blank DPMS if it's already active.
+		 */
+
+		XLockDisplay( g_X11Display );
+
+		int event_base, error_base, major, minor;
+		if( XTestQueryExtension( g_X11Display, &event_base, &error_base, &major, &minor ) )
+		{
+			XTestFakeRelativeMotionEvent( g_X11Display, 0, 0, 0 );
+			XSync( g_X11Display, False );
+		}
+
+		XUnlockDisplay( g_X11Display );
 #endif
+	}
 }
 
 bool RageDisplay_OGL::IsSoftwareRenderer()
