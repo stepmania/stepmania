@@ -113,7 +113,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				AssemblerListingLocation=".\../Release/"
 				ObjectFile=".\../Release/"
 				ProgramDataBaseFileName=".\../Release/"
-				BrowseInformation="1"
+				BrowseInformation="0"
 				WarningLevel="4"
 				SuppressStartupBanner="TRUE"
 				DebugInformationFormat="3"/>
@@ -1883,6 +1883,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ProfileManager.h">
+			</File>
+			<File
+				RelativePath="RageFile.h">
 			</File>
 			<File
 				RelativePath="ScreenManager.cpp">
