@@ -10,12 +10,9 @@
 #include "archutils/Win32/AppInstance.h"
 #include "InputFilter.h"
 #include "PrefsManager.h"
+#include "archutils/win32/tls.h"
 
 #include "InputHandler_DirectInputHelper.h"
-
-/*extern "C" {
-extern HINSTANCE __declspec(dllimport) SDL_Instance;
-};*/
 
 static vector<DIDevice> Devices;
 
@@ -432,6 +429,8 @@ void InputHandler_DInput::Update(float fDeltaTime)
 
 void InputHandler_DInput::InputThread()
 {
+	InitThreadData("DirectInput thread");
+	VDCHECKPOINT;
 	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST))
 		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set DirectInput thread priority"));
 

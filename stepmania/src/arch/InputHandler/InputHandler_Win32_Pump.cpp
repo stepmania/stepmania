@@ -5,6 +5,7 @@
 #include "RageLog.h"
 #include "RageInputDevice.h"
 #include "archutils/Win32/USB.h"
+#include "archutils/win32/tls.h"
 
 InputHandler_Win32_Pump::InputHandler_Win32_Pump()
 {
@@ -85,6 +86,9 @@ int InputHandler_Win32_Pump::InputThread_Start( void *p )
 
 void InputHandler_Win32_Pump::InputThread()
 {
+	InitThreadData("Pump thread");
+	VDCHECKPOINT;
+
 	vector<WindowsFileIO *> sources;
 	int i;
 	for(i = 0; i < NUM_PUMPS; ++i)
@@ -95,15 +99,18 @@ void InputHandler_Win32_Pump::InputThread()
 
 	while(!shutdown)
 	{
+		VDCHECKPOINT;
 		int actual = 0, val = 0;
 		int ret = WindowsFileIO::read_several(sources, &val, actual, 0.100f);
 
+		VDCHECKPOINT;
 		if(ret <= 0) 
 			continue; /* no event */
 
 		HandleInput( actual, val );
 		InputHandler::UpdateTimer();
 	}
+	VDCHECKPOINT;
 }
 
 void InputHandler_Win32_Pump::Update(float fDeltaTime)
