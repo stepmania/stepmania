@@ -1023,6 +1023,7 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 {
 	glEnable(GL_BLEND);
 
+	glDepthRange( 0.05, 1.0 );
 	switch( mode )
 	{
 	case BLEND_NORMAL:
@@ -1033,6 +1034,10 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 		break;
 	case BLEND_NO_EFFECT:
 		glBlendFunc( GL_ZERO, GL_ONE );
+
+		/* This is almost exclusively used to draw masks to the Z-buffer.  Make sure
+		 * masks always win the depth test when drawn at the same position. */
+		glDepthRange( 0.0, 0.95 );
 		break;
 	default:
 		ASSERT(0);
