@@ -1592,10 +1592,18 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
 	// update song position meter
 	//
-	float fMusicLengthSeconds = GAMESTATE->m_pCurSong->m_fMusicLengthSeconds;
-	// HACK: most songs have a lead out, so the meter never makes 
-	// it all the way to the right.  Fudge by guessing that there's 5 seconds of lead out
-	fMusicLengthSeconds -= 5;
+	// Because most songs have a leadout, consider the last beat to be the
+	// end of the song as far as the meter is concerned. So, get the time of
+	// the last beat of the song.
+	//
+	// XXX My hunch tells me doing this every update will slow things down,
+	//     but at least it's somewhat accurate. We probably should do this
+	//     when the meter inits, shove it in a variable somewhere, and go by
+	//     that. At least it's better than blind fudging...
+	float fMusicLengthSeconds =
+		    GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat(
+			GAMESTATE->m_pCurSong->m_fLastBeat );
+
 	float fPercentPositionSong = GAMESTATE->m_fMusicSeconds / fMusicLengthSeconds;
 	CLAMP( fPercentPositionSong, 0, 1 );
 	m_meterSongPosition.SetPercent( fPercentPositionSong );
