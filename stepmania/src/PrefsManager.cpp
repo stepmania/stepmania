@@ -14,7 +14,6 @@
 #include "PrefsManager.h"
 #include "IniFile.h"
 #include "GameState.h"
-#include "RageException.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "arch/arch.h" /* for default driver specs */
@@ -288,13 +287,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	CString sAdditionalSongFolders;
 	ini.GetValue( "Options", "AdditionalSongFolders",			sAdditionalSongFolders );
 	split( sAdditionalSongFolders, ",", m_asAdditionalSongFolders, true );
-
-	if( bSwitchToLastPlayedGame )
-	{
-		Game game;
-		if( ini.GetValue("Options", "Game", (int&)game) )
-			GAMESTATE->m_CurGame = game;
-	}
 }
 
 
@@ -418,8 +410,6 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 
 
 	ini.SetValue ( "Options", "AdditionalSongFolders", 			join(",", m_asAdditionalSongFolders) );
-
-	ini.SetValue( "Options", "Game",							GAMESTATE->m_CurGame );
 
 	ini.WriteFile();
 }

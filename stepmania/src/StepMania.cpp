@@ -512,8 +512,21 @@ static void RestoreAppPri()
 
 #define GAMEPREFS_INI_PATH BASE_PATH "Data" SLASH "GamePrefs.ini"
 
+void ChangeCurrentGame( Game g )
+{
+	SaveGamePrefsToDisk();
+	INPUTMAPPER->SaveMappingsToDisk();	// save mappings before switching the game
 
-void ReadGamePrefsFromDisk()
+	GAMESTATE->m_CurGame = g;
+
+	ReadGamePrefsFromDisk( false );
+	INPUTMAPPER->ReadMappingsFromDisk();
+
+	/* Save the newly-selected game. */
+	SaveGamePrefsToDisk();
+}
+
+void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 {
 	if( !GAMESTATE )
 		return;
@@ -535,7 +548,15 @@ void ReadGamePrefsFromDisk()
 	THEME->SwitchThemeAndLanguage( sTheme, PREFSMAN->m_sLanguage );
 
 //	NOTESKIN->SwitchNoteSkin( sNoteSkin );
+
+	if( bSwitchToLastPlayedGame )
+	{
+		Game game;
+		if( ini.GetValue("Options", "Game", (int&)game) )
+			GAMESTATE->m_CurGame = game;
+	}
 }
+
 
 void SaveGamePrefsToDisk()
 {
@@ -550,6 +571,7 @@ void SaveGamePrefsToDisk()
 	ini.SetValue( sGameName, "Announcer",			ANNOUNCER->GetCurAnnouncerName() );
 	ini.SetValue( sGameName, "Theme",				THEME->GetCurThemeName() );
 	ini.SetValue( sGameName, "DefaultModifiers",	PREFSMAN->m_sDefaultModifiers );
+	ini.SetValue( "Options", "Game",				GAMESTATE->m_CurGame );
 
 	ini.WriteFile();
 }

@@ -11,12 +11,15 @@
 -----------------------------------------------------------------------------
 */
 
+#include "Game.h"
+
 int SMmain(int argc, char* argv[]);
 void ApplyGraphicOptions();
 void ExitGame();
 void ResetGame( bool ReturnToFirstScreen=true );
-void ReadGamePrefsFromDisk();
+void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame=true );
 void SaveGamePrefsToDisk();
+void ChangeCurrentGame( Game g );
 
 #if defined(WIN32)
 extern HWND g_hWndMain;

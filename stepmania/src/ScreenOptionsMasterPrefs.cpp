@@ -105,15 +105,9 @@ static void GameSel( int &sel, bool ToSel, const CStringArray &choices )
 			if( !stricmp(choices[i], sCurGameName) )
 				sel = i;
 	} else {
-		SaveGamePrefsToDisk();
-		INPUTMAPPER->SaveMappingsToDisk();	// save mappings before switching the game
-
 		vector<Game> aGames;
 		GAMEMAN->GetEnabledGames( aGames );
-		GAMESTATE->m_CurGame = aGames[sel];
-
-		ReadGamePrefsFromDisk();
-		INPUTMAPPER->ReadMappingsFromDisk();
+		ChangeCurrentGame( aGames[sel] );
 	}
 }
 
