@@ -388,10 +388,7 @@ RageDisplay *CreateDisplay()
 
 		if( sRenderer.CompareNoCase("opengl")==0 )
 		{
-#if !defined(_XBOX)
-			/* Try to create an OpenGL renderer.  This should always succeed.  (Actually,
-			 * SDL may throw, but that only happens with broken driver installations, and
-			 * we probably don't want to fall back on D3D in that case anyway.) */
+#if defined(SUPPORT_OPENGL)
 			error += "Initializing OpenGL...\n";
 			try {
 				return new RageDisplay_OGL( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
@@ -403,7 +400,7 @@ RageDisplay *CreateDisplay()
 		}
 		else if( sRenderer.CompareNoCase("d3d")==0 )
 		{
-#if defined(WIN32)
+#if defined(SUPPORT_D3D)
 			error += "Initializing Direct3D...\n";
 			try {
 				return new RageDisplay_D3D( params );
