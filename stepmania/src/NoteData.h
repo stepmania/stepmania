@@ -144,7 +144,6 @@ public:
 
 	/* hold_tail is only used to make SM parsing easier. */
 	void InsertHoldTails();
-	void RemoveHoldTails(); /* adjusts iDuration */
 };
 
 

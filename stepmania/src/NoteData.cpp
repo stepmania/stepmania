@@ -816,8 +816,7 @@ void NoteData::InsertHoldTails()
 {
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
-		iterator begin, end;
-		GetTapNoteRange( t, 0, MAX_NOTE_ROW, begin, end );
+		iterator begin = this->begin(t), end = this->end(t);
 
 		for( ; begin != end; ++begin )
 		{
@@ -828,48 +827,12 @@ void NoteData::InsertHoldTails()
 
 			TapNote tail = tn;
 			tail.type = TapNote::hold_tail;
+
+			/* If iDuration is 0, we'd end up overwriting the head with the tail
+			 * (and invalidating our iterator).  Empty hold notes aren't valid. */
+			ASSERT( tn.iDuration != 0 );
+
 			SetTapNote( t, iRow + tn.iDuration, tail );
-		}
-	}
-}
-
-void NoteData::RemoveHoldTails()
-{
-	for( int t=0; t<GetNumTracks(); t++ )
-	{
-		iterator begin, end;
-		GetTapNoteRange( t, 0, MAX_NOTE_ROW, begin, end );
-
-		iterator next;
-		for( ; begin != end; begin = next )
-		{
-			next = begin; ++next;
-
-			int iStartRow = begin->first;
-			const TapNote &tn = begin->second;
-			if( tn.type != TapNote::hold_head )
-				continue;
-
-			/* Search forward until we find a hold_tail. */
-			iterator tail = begin;
-
-			while( tail != end && tail->second.type != TapNote::hold_tail )
-				++tail;
-
-			if( tail == end )
-			{
-				/* If we didn't find one, the hold is invalid; delete it. */
-				RemoveTapNote( t, begin );
-			}
-			else
-			{
-				/* Delete the tail, and update iDuration of the head. */
-				if( next == tail )
-					++next;
-				int iEndRow = tail->first;
-				begin->second.iDuration = iEndRow - iStartRow;
-				RemoveTapNote( t, tail );
-			}
 		}
 	}
 }
