@@ -36,7 +36,7 @@ void InputQueue::RememberInput( const GameInput GameI )
 	m_aQueue[c].push_back( GameButtonAndTime(GameI.button,RageTimer::GetTimeSinceStart()) );
 }
 
-bool InputQueue::MatchesPattern( const GameController c, const MenuButton* button_sequence, const int iNumButtons, float fMaxSecondsBack )
+bool InputQueue::MatchesSequence( GameController c, const MenuButton* button_sequence, const int iNumButtons, float fMaxSecondsBack )
 {
 	if( fMaxSecondsBack == -1 )
 		fMaxSecondsBack = 0.4f + iNumButtons*0.15f;
@@ -65,7 +65,7 @@ bool InputQueue::MatchesPattern( const GameController c, const MenuButton* butto
 	return false;
 }
 
-bool InputQueue::MatchesPattern( const GameController c, const GameButton* button_sequence, const int iNumButtons, float fMaxSecondsBack )
+bool InputQueue::MatchesSequence( GameController c, const GameButton* button_sequence, const int iNumButtons, float fMaxSecondsBack )
 {
 	float fOldestTimeAllowed = RageTimer::GetTimeSinceStart() - fMaxSecondsBack;
 
@@ -86,4 +86,30 @@ bool InputQueue::MatchesPattern( const GameController c, const GameButton* butto
 		sequence_index--;
 	}
 	return false;
+}
+
+bool InputQueue::AllWerePressedRecently( GameController c, const GameButton* buttons, int iNumButtons, float fMaxSecondsBack )
+{
+	float fOldestTimeAllowed = RageTimer::GetTimeSinceStart() - fMaxSecondsBack;
+
+	for( int b=0; b<iNumButtons; b++ )
+	{
+		GameButton button = buttons[b];
+
+		for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
+		{
+			GameButtonAndTime BandT = m_aQueue[c][queue_index];
+			if( BandT.fTime < fOldestTimeAllowed )	// buttons are too old.  Stop searching because we're not going to find a match
+				return false;
+
+			if( BandT.button == button )
+				goto found_button;
+		}
+		return false;	// didn't find the button
+found_button:
+		;	// hush VC6
+	}
+
+	m_aQueue[c].clear();	// empty the queue so we don't match on it again
+	return true;
 }

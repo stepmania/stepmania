@@ -14,6 +14,7 @@
 #include "PlayerOptions.h"
 #include "GameState.h"
 #include "InputQueue.h"
+#include "InputMapper.h"
 #include "ThemeManager.h"
 #include "RageLog.h"
 #include "GameDef.h"
@@ -28,6 +29,8 @@ const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"Harder2",
 	"NextSort1",
 	"NextSort2",
+	"AllSorts1",
+	"AllSorts2",
 	"Mirror",
 	"Left",
 	"Right",
@@ -62,6 +65,12 @@ const unsigned MAX_CODE_LENGTH = 10;
 struct CodeCacheItem {
 	int iNumButtons;
 	GameButton buttons[MAX_CODE_LENGTH];
+	enum Type { 
+		sequence,		// press the buttons in sequence
+		hold_and_press,	// hold the first iNumButtons-1 buttons, then press the last
+		tap				// press all buttons simultaneously
+	};
+	Type m_Type;
 	float fMaxSecondsBack;
 };	
 CodeCacheItem g_CodeCacheItems[CodeDetector::NUM_CODES];
@@ -73,7 +82,29 @@ bool CodeDetector::EnteredCode( GameController controller, Code code )
 		return false;
 
 	const CodeCacheItem& item = g_CodeCacheItems[code];
-	return INPUTQUEUE->MatchesPattern(controller, item.buttons, item.iNumButtons, item.fMaxSecondsBack);
+	switch( item.m_Type )
+	{
+	case CodeCacheItem::sequence:
+		return INPUTQUEUE->MatchesSequence(controller, item.buttons, item.iNumButtons, item.fMaxSecondsBack);
+	case CodeCacheItem::hold_and_press:
+		{
+			// check that all but the last are being held
+			for( int i=0; i<item.iNumButtons-1; i++ )
+			{
+				GameInput gi(controller, item.buttons[i]);
+				if( !INPUTMAPPER->IsButtonDown(gi) )
+					return false;
+			}
+			// just pressed the last button
+			return INPUTQUEUE->MatchesSequence(controller, &item.buttons[item.iNumButtons-1], 1, 0.05f);
+		}
+		break;
+	case CodeCacheItem::tap:
+		return INPUTQUEUE->AllWerePressedRecently(controller, item.buttons, item.iNumButtons, item.fMaxSecondsBack);
+	default:
+		ASSERT(0);
+		return false;
+	}
 }
 
 void RefreshCacheItem( int iIndex )
@@ -83,7 +114,25 @@ void RefreshCacheItem( int iIndex )
 	CString sCodeName = g_sCodeNames[iIndex];
 	CString sButtonsNames = THEME->GetMetric("CodeDetector",sCodeName);
 	CStringArray asButtonNames;
-	split( sButtonsNames, ",", asButtonNames, false );
+
+	bool bHasAPlus = sButtonsNames.Find( '+' ) != -1;
+	bool bHasADash = sButtonsNames.Find( '-' ) != -1;
+
+	if( bHasAPlus )
+	{
+		item.m_Type = CodeCacheItem::tap;
+		split( sButtonsNames, "+", asButtonNames, false );
+	}
+	else if( bHasADash )
+	{
+		item.m_Type = CodeCacheItem::hold_and_press;
+		split( sButtonsNames, "-", asButtonNames, false );
+	}
+	else
+	{
+		item.m_Type = CodeCacheItem::sequence;
+		split( sButtonsNames, ",", asButtonNames, false );
+	}
 
 	if( asButtonNames.size() < 2 )
 	{
@@ -116,7 +165,20 @@ void RefreshCacheItem( int iIndex )
 		}
 	}
 
-	item.fMaxSecondsBack = item.iNumButtons*0.4f;
+	switch( item.m_Type )
+	{
+	case CodeCacheItem::sequence:
+		item.fMaxSecondsBack = item.iNumButtons*0.4f;
+		break;
+	case CodeCacheItem::hold_and_press:
+		item.fMaxSecondsBack = -1.f;	// not applicable
+		break;
+	case CodeCacheItem::tap:
+		item.fMaxSecondsBack = 0.03f;	// simultaneous
+		break;
+	default:
+		ASSERT(0);
+	}
 
 	// if we make it here, we found all the buttons in the code
 }
@@ -145,6 +207,11 @@ bool CodeDetector::EnteredHarderDifficulty( GameController controller )
 bool CodeDetector::EnteredNextSort( GameController controller )
 {
 	return EnteredCode(controller,CODE_NEXT_SORT1) || EnteredCode(controller,CODE_NEXT_SORT2);
+}
+
+bool CodeDetector::EnteredAllSorts( GameController controller )
+{
+	return EnteredCode(controller,CODE_ALL_SORTS1) || EnteredCode(controller,CODE_ALL_SORTS2);
 }
 
 #define  TOGGLE(v,a,b)	if(v!=a) v=a; else v=b;

@@ -653,7 +653,6 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 			dir--;
 		
 		m_MusicWheel.Move(dir);
-		return;
 	}
 
 	if( type == IET_RELEASE )	return;		// don't care
@@ -682,35 +681,46 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 
 	PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
 
-	if( CodeDetector::EnteredEasierDifficulty(GameI.controller) )
+	if( type == IET_FIRST_PRESS )
 	{
-		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-			m_soundLocked.Play();
-		else
-			EasierDifficulty( pn );
-		return;
-	}
-	if( CodeDetector::EnteredHarderDifficulty(GameI.controller) )
-	{
-		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-			m_soundLocked.Play();
-		else
-			HarderDifficulty( pn );
-		return;
-	}
-	if( CodeDetector::EnteredNextSort(GameI.controller) )
-	{
-		if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
-			m_soundLocked.Play();
-		else
-			m_MusicWheel.ChangeSort( SORT_MENU );
-		return;
-	}
-	if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() && CodeDetector::DetectAndAdjustMusicOptions(GameI.controller) )
-	{
-		m_soundOptionsChange.Play();
-		UpdateOptionsDisplays();
-		return;
+		if( CodeDetector::EnteredEasierDifficulty(GameI.controller) )
+		{
+			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+				m_soundLocked.Play();
+			else
+				EasierDifficulty( pn );
+			return;
+		}
+		if( CodeDetector::EnteredHarderDifficulty(GameI.controller) )
+		{
+			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+				m_soundLocked.Play();
+			else
+				HarderDifficulty( pn );
+			return;
+		}
+		if( CodeDetector::EnteredAllSorts(GameI.controller) )
+		{
+			if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
+				m_soundLocked.Play();
+			else
+				m_MusicWheel.ChangeSort( SORT_MENU );
+			return;
+		}
+		if( CodeDetector::EnteredNextSort(GameI.controller) )
+		{
+			if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
+				m_soundLocked.Play();
+			else
+				m_MusicWheel.NextSort();
+			return;
+		}
+		if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() && CodeDetector::DetectAndAdjustMusicOptions(GameI.controller) )
+		{
+			m_soundOptionsChange.Play();
+			UpdateOptionsDisplays();
+			return;
+		}
 	}
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
@@ -839,18 +849,18 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 {
-	if( pn != PLAYER_INVALID  &&
-		INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) )  &&
-		INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_RIGHT) ) )
-	{
+//	if( pn != PLAYER_INVALID  &&
+//		INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) )  &&
+//		INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_RIGHT) ) )
+//	{
 //		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 //			m_soundLocked.Play();
 //		else
-		{
-			m_MusicWheel.NextSort();
-		}
-		return;
-	}
+//		{
+//			m_MusicWheel.NextSort();
+//		}
+//		return;
+//	}
 
 
 	// this needs to check whether valid Steps are selected!
