@@ -280,14 +280,17 @@ bool Profile::LoadAllFromDir( CString sDir )
 {
 	InitAll();
 	bool bResult = LoadGeneralDataFromDir( sDir );
-	if( PREFSMAN->m_bAllowReadOldScoreFormats )
+	
+	// Only try to load old score formats if we're allowing unsigned data.
+	if( !PREFSMAN->m_bSignProfileData )
+	{
 		LoadSongScoresFromDirSM390a12( sDir );
-	LoadSongScoresFromDir( sDir );
-	if( PREFSMAN->m_bAllowReadOldScoreFormats )
 		LoadCourseScoresFromDirSM390a12( sDir );
-	LoadCourseScoresFromDir( sDir );
-	if( PREFSMAN->m_bAllowReadOldScoreFormats )
 		LoadCategoryScoresFromDirSM390a12( sDir );
+	}
+	
+	LoadSongScoresFromDir( sDir );
+	LoadCourseScoresFromDir( sDir );
 	LoadCategoryScoresFromDir( sDir );
 	return bResult;
 }
@@ -313,12 +316,12 @@ bool Profile::SaveAllToDir( CString sDir ) const
 #define WARN_AND_RETURN { WARN; return; }
 #define WARN_AND_CONTINUE { WARN; continue; }
 #define CRYPT_VERIFY_FILE	\
-	if( !CryptManager::VerifyFile(fn) )	{	\
+	if( PREFSMAN->m_bSignProfileData && !CryptManager::VerifyFile(fn) )	{	\
 		LOG->Warn("Signature check failed for '%s' at %s:%d",fn.c_str(),__FILE__,__LINE__); return; }
 #define CRYPT_VERIFY_FILE_BOOL	\
-	if( !CryptManager::VerifyFile(fn) )	{	\
+	if( PREFSMAN->m_bSignProfileData && !CryptManager::VerifyFile(fn) )	{	\
 		LOG->Warn("Signature check failed for '%s' at %s:%d",fn.c_str(),__FILE__,__LINE__); return false; }
-#define CRYPT_WRITE_SIG		CryptManager::SignFile(fn);
+#define CRYPT_WRITE_SIG		if( PREFSMAN->m_bSignProfileData ) { CryptManager::SignFile(fn); }
 
 bool Profile::LoadGeneralDataFromDir( CString sDir )
 {

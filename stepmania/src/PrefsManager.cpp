@@ -212,7 +212,7 @@ PrefsManager::PrefsManager()
 	m_iAttractSoundFrequency = 1;
 	m_bAllowExtraStage = true;
 	g_bAutoRestart = false;
-	m_bAllowReadOldScoreFormats = true;
+	m_bSignProfileData = false;
 
 	m_bEditorShowBGChangesPlay = false;
 
@@ -487,7 +487,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
 	ini.GetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.GetValue( "Options", "AutoRestart",						g_bAutoRestart );
-	ini.GetValue( "Options", "AllowReadOldScoreFormats",		m_bAllowReadOldScoreFormats );
+	ini.GetValue( "Options", "SignProfileData",					m_bSignProfileData );
 
 	ini.GetValue( "Editor", "ShowBGChangesPlay",				m_bEditorShowBGChangesPlay );
 
@@ -699,7 +699,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
 	ini.SetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.SetValue( "Options", "AutoRestart",						g_bAutoRestart );
-	ini.SetValue( "Options", "AllowReadOldScoreFormats",		m_bAllowReadOldScoreFormats );
+	ini.SetValue( "Options", "SignProfileData",					m_bSignProfileData );
 
 	ini.SetValue( "Options", "SoundWriteAhead",					m_iSoundWriteAhead );
 

@@ -187,9 +187,11 @@ public:
 	int				m_iAttractSoundFrequency;	// 0 = never, 1 = every time
 	bool			m_bAllowExtraStage;
 	
-	// This should be false for arcade machines since the old score format wasn't signed.
-	// People can cheat easily using the old score formats
-	bool			m_bAllowReadOldScoreFormats;	
+	// If true, then signatures created when writing profile data 
+	// and verified when reading profile data.  Leave this false if 
+	// you want to use a profile on different machines that don't 
+	// have the same key, or else the profile's data will be discarded.
+	bool			m_bSignProfileData;	
 
 	/* Editor prefs: */
 	bool			m_bEditorShowBGChangesPlay;
