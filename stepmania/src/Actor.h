@@ -113,9 +113,11 @@ public:
 	virtual float GetZoom()					{ return DestTweenState().scale.x; }	// not accurate in some cases
 	virtual float GetZoomX()				{ return DestTweenState().scale.x; }
 	virtual float GetZoomY()				{ return DestTweenState().scale.y; }
+	virtual float GetZoomZ()				{ return DestTweenState().scale.z; }
 	virtual void  SetZoom( float zoom )		{ DestTweenState().scale.x = zoom;	DestTweenState().scale.y = zoom; }
 	virtual void  SetZoomX( float zoom )	{ DestTweenState().scale.x = zoom;	}
 	virtual void  SetZoomY( float zoom )	{ DestTweenState().scale.y = zoom; }
+	virtual void  SetZoomZ( float zoom )	{ DestTweenState().scale.z = zoom; }
 	virtual void  ZoomToWidth( float zoom )	{ SetZoomX( zoom / GetUnzoomedWidth() ); }
 	virtual void  ZoomToHeight( float zoom ){ SetZoomY( zoom / GetUnzoomedHeight() ); }
 

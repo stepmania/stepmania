@@ -734,7 +734,7 @@ void Actor::HandleCommand( const CStringArray &asTokens )
 	else if( sName=="zoom" )			SetZoom( fParam(1) );
 	else if( sName=="zoomx" )			SetZoomX( fParam(1) );
 	else if( sName=="zoomy" )			SetZoomY( fParam(1) );
-//		else if( sName=="zoomz" )			SetZoomZ( fParam(1) );
+	else if( sName=="zoomz" )			SetZoomZ( fParam(1) );
 	else if( sName=="zoomtowidth" )		ZoomToWidth( fParam(1) );
 	else if( sName=="zoomtoheight" )	ZoomToHeight( fParam(1) );
 	else if( sName=="stretchto" )		StretchTo( RectF( fParam(1), fParam(2), fParam(3), fParam(4) ) );
