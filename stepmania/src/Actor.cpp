@@ -823,7 +823,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	else if( sName=="customtexturerect" || sName=="texcoordvelocity" || sName=="scaletoclipped" ||
 			 sName=="stretchtexcoords" || sName=="position" || sName=="loop" || sName=="play" ||
 			 sName=="pause" || sName=="rate" )
-			 ; /* sprite commands */
+		return; /* sprite commands; don't run CheckHandledParams */
 	else
 	{
 		CString sError = ssprintf( "Actor::HandleCommand: Unrecognized command name '%s'.", sName.c_str() );
