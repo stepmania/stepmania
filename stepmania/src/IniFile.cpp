@@ -5,6 +5,11 @@
 #include "RageFile.h"
 #include "Foreach.h"
 
+IniFile::IniFile()
+{
+	m_sName = "IniFile";
+}
+
 bool IniFile::ReadFile( const CString &sPath )
 {
 	m_sPath = sPath;

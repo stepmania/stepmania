@@ -16,6 +16,8 @@ private:
 	mutable CString m_sError;
 
 public:
+	IniFile();
+
 	/* Retrieve the filename of the last file loaded. */
 	CString GetPath() const { return m_sPath; }
 	const CString &GetError() const { return m_sError; }
