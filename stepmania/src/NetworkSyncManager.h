@@ -50,7 +50,7 @@ public:
 	void Write1(uint8_t Data);
 	void Write2(uint16_t Data);
 	void Write4(uint32_t Data);
-	void WriteNT(CString Data);
+	void WriteNT(const CString& Data);
 
 	void ClearPacket();
 };
@@ -70,7 +70,7 @@ public:
 	void StartRequest(short position);	//Request a start.  Block until granted.
 	bool Connect(const CString& addy, unsigned short port); // Connect to SM Server
 
-	void PostStartUp(CString ServerIP);
+	void PostStartUp(const CString& ServerIP);
 
 	void CloseConnection();
 
@@ -95,7 +95,7 @@ public:
 	CString m_Scoreboard[NUM_NSSB_CATEGORIES];
 
 	//Used for chatting
-	void SendChat( CString message );
+	void SendChat(const CString& message);
 	CString m_WaitingChat;
 
 	//Used for options

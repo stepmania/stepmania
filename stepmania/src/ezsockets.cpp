@@ -186,7 +186,8 @@ bool EzSockets::CanRead()
 	return select(sock+1,scks,NULL,NULL,times) > 0;
 }
 
-bool EzSockets::IsError() {
+bool EzSockets::IsError()
+{
 	if (state == skERROR)
 		return true;
 	
