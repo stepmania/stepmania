@@ -21,6 +21,7 @@ enum UnlockType
 	NUM_UNLOCK_TYPES,
 	UNLOCK_INVALID,
 };
+#define FOREACH_UnlockType( u ) FOREACH_ENUM( UnlockType, NUM_UNLOCK_TYPES, u )
 
 struct UnlockEntry
 {

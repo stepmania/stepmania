@@ -14,7 +14,7 @@ UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our p
 
 #define UNLOCKS_PATH "Data/Unlocks.dat"
 
-static const char *g_UnlockNames[NUM_UNLOCK_TYPES] =
+static CString UnlockTypeNames[NUM_UNLOCK_TYPES] =
 {
 	"ArcadePointsAccumulated",
 	"DancePointsAccumulated",
@@ -24,6 +24,7 @@ static const char *g_UnlockNames[NUM_UNLOCK_TYPES] =
 	"TotalToastysSeen",
 	"TotalStagesCleared"
 };
+XToString(UnlockType);
 
 UnlockManager::UnlockManager()
 {
@@ -314,9 +315,9 @@ bool UnlockManager::Load()
 	for(unsigned i=0; i < m_SongEntries.size(); i++)
 	{
 		CString str = ssprintf( "Unlock: %s; ", m_SongEntries[i].m_sSongName.c_str() );
-		for( int j = 0; j < NUM_UNLOCK_TYPES; ++j )
+		FOREACH_UnlockType(j)
 			if( m_SongEntries[i].m_fRequired[j] )
-				str += ssprintf( "%s = %f; ", g_UnlockNames[j], m_SongEntries[i].m_fRequired[j] );
+				str += ssprintf( "%s = %f; ", UnlockTypeToString(j).c_str(), m_SongEntries[i].m_fRequired[j] );
 
 		str += ssprintf( "code = %i ", m_SongEntries[i].m_iCode );
 		str += m_SongEntries[i].IsLocked()? "locked":"unlocked";
