@@ -81,7 +81,7 @@ void RageSoundManager::Update(float delta)
 	for( it = ToDelete.begin(); it != ToDelete.end(); ++it )
 	{
 		delete *it;
-		owned_sounds.erase( it );
+		owned_sounds.erase( *it );
 	}
 
 	for(set<RageSound *>::iterator i = all_sounds.begin();
