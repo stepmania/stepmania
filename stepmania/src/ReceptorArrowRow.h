@@ -20,7 +20,7 @@ public:
 	virtual void DrawPrimitives();
 	virtual void CopyTweening( const ReceptorArrowRow &from );
 
-	void Step( int iCol );
+	void Step( int iCol, TapNoteScore score );
 	void SetPressed( int iCol );
 	
 protected:

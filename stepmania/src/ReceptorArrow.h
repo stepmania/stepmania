@@ -6,6 +6,7 @@
 #include "ActorFrame.h"
 #include "ActorUtil.h"
 #include "PlayerNumber.h"
+#include "GameConstantsAndTypes.h"
 
 class ReceptorArrow : public ActorFrame
 {
@@ -15,7 +16,7 @@ public:
 
 	virtual void DrawPrimitives();
 	virtual void Update( float fDeltaTime );
-	void Step();
+	void Step( TapNoteScore score );
 	void SetPressed() { m_bIsPressed = true; };
 private:
 
@@ -24,7 +25,7 @@ private:
 
 	AutoActor m_pReceptorWaiting;
 	AutoActor m_pReceptorGo;
-	CString m_sStepCommand;
+	CString m_sScoreCommand[NUM_TAP_NOTE_SCORES];
 	
 	AutoActor m_pPressBlock;
 	bool m_bIsPressed;

@@ -37,7 +37,7 @@ public:
 	void CacheAllUsedNoteSkins();
 	void CacheNoteSkin( CString skin );
 
-	void Step( int iCol );
+	void Step( int iCol, TapNoteScore score );
 	void SetPressed( int iCol );
 	void DidTapNote( int iCol, TapNoteScore score, bool bBright );
 	void DidHoldNote( int iCol );

@@ -44,7 +44,6 @@ CachedThemeMetricB	HOLD_JUDGMENTS_UNDER_FIELD	("Player","HoldJudgmentsUnderField
 #define START_DRAWING_AT_PIXELS					THEME->GetMetricI("Player","StartDrawingAtPixels")
 #define STOP_DRAWING_AT_PIXELS					THEME->GetMetricI("Player","StopDrawingAtPixels")
 #define MAX_PRO_TIMING_ERROR					THEME->GetMetricI("Player","MaxProTimingError")
-CachedThemeMetricI RECEPTOR_CUTOFF				("Player","ReceptorNoSinkScoreCutoff");
 
 /* Distance to search for a note in Step(). */
 /* Units? */
@@ -63,7 +62,6 @@ PlayerMinus::PlayerMinus()
 	BRIGHT_GHOST_COMBO_THRESHOLD.Refresh();
 	TAP_JUDGMENTS_UNDER_FIELD.Refresh();
 	HOLD_JUDGMENTS_UNDER_FIELD.Refresh();
-	RECEPTOR_CUTOFF.Refresh();
 
 	m_PlayerNumber = PLAYER_INVALID;
 	m_fNoteFieldHeight = 0;
@@ -886,12 +884,10 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				m_iDCState = AS2D_FEVER; // super celebrate time :)
 			}
 		}
+		m_pNoteField->Step( col, score );
 	}
-
-	//Don't blink arrows if the score is higher than what the theme
-	//says should not blink
-	if (RECEPTOR_CUTOFF>=score)
-		m_pNoteField->Step( col );
+	else
+		m_pNoteField->Step( col, TNS_NONE );
 }
 
 void PlayerMinus::HandleAutosync(float fNoteOffset)

@@ -24,7 +24,10 @@ void ReceptorArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseO
 	m_iNumCols = pStyle->m_iColsPerPlayer;
 
 	for( int c=0; c<m_iNumCols; c++ ) 
+	{
+		m_ReceptorArrow[c].SetName( "ReceptorArrow" );
 		m_ReceptorArrow[c].Load( NoteSkin, m_PlayerNumber, c );
+	}
 }
 
 void ReceptorArrowRow::Update( float fDeltaTime )
@@ -57,10 +60,10 @@ void ReceptorArrowRow::DrawPrimitives()
 	}
 }
 
-void ReceptorArrowRow::Step( int iCol )
+void ReceptorArrowRow::Step( int iCol, TapNoteScore score )
 {
 	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
-	m_ReceptorArrow[iCol].Step();
+	m_ReceptorArrow[iCol].Step( score );
 }
 
 void ReceptorArrowRow::SetPressed( int iCol )

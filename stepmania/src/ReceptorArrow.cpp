@@ -28,7 +28,12 @@ bool ReceptorArrow::Load( CString NoteSkin, PlayerNumber pn, int iColNo )
 	CString sPath;
 	m_pReceptorWaiting.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"receptor waiting") );
 	m_pReceptorGo.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"receptor go") );
-	m_sStepCommand = NOTESKIN->GetMetric(GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin,"ReceptorArrow","StepCommand");
+	for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
+	{
+		CString sJudge = TapNoteScoreToString( (TapNoteScore)i );
+		CString sCommand = Capitalize(sJudge)+"Command";
+		m_sScoreCommand[i] = NOTESKIN->GetMetric( NoteSkin, m_sName, sCommand );
+	}
 
 	m_pPressBlock.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"KeypressBlock") );
 
@@ -67,12 +72,12 @@ void ReceptorArrow::DrawPrimitives()
 	ActorFrame::DrawPrimitives();
 }
 
-void ReceptorArrow::Step()
+void ReceptorArrow::Step( TapNoteScore score )
 {
 	m_pReceptorGo->FinishTweening();
 	m_pReceptorWaiting->FinishTweening();
-	m_pReceptorGo->Command( m_sStepCommand );
-	m_pReceptorWaiting->Command( m_sStepCommand );
+	m_pReceptorGo->Command( m_sScoreCommand[score] );
+	m_pReceptorWaiting->Command( m_sScoreCommand[score] );
 }
 
 /*
