@@ -84,8 +84,8 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void RenderPrimitives();
 
-	virtual void TweenOnScreen()		{ m_WheelState = STATE_TWEENING_ON_SCREEN;		m_fTimeLeftInState = FADE_TIME; };
-	virtual void TweenOffScreen()		{ m_WheelState = STATE_TWEENING_OFF_SCREEN; 	m_fTimeLeftInState = FADE_TIME; };
+	virtual void TweenOnScreen();		
+	virtual void TweenOffScreen();
 
 	void PrevMusic();
 	void NextMusic();

@@ -113,7 +113,6 @@ void WheelItem::SetDiffuseColor( D3DXCOLOR c )
 	m_Banner.SetDiffuseColor( colorTempTint );
 	m_sprSectionBackground.SetDiffuseColor( colorTempTint );
 
-
 	D3DXCOLOR colorTempLetter = COLOR_SECTION_LETTER;
 	colorTempLetter.a = c.a;
 	colorTempLetter.r *= c.r;
@@ -121,6 +120,11 @@ void WheelItem::SetDiffuseColor( D3DXCOLOR c )
 	colorTempLetter.b *= c.b;
 
 	m_textSectionName.SetDiffuseColor( colorTempLetter );
+
+	D3DXCOLOR colorTempDisplay = D3DXCOLOR( 1, 1 ,1, c.a);
+
+	m_MusicStatusDisplay.SetDiffuseColor( colorTempDisplay );
+
 
 };
 
@@ -682,3 +686,28 @@ bool MusicWheel::Select()
 	}
 }
 
+void MusicWheel::TweenOnScreen() {
+	m_WheelState = STATE_TWEENING_ON_SCREEN;
+	m_fTimeLeftInState = FADE_TIME; 
+
+	float fOriginalZoomY = m_sprSelectionBackground.GetZoomY();
+	m_sprSelectionBackground.SetZoomY( 0 );
+	m_sprSelectionBackground.BeginTweening( FADE_TIME );
+	m_sprSelectionBackground.SetTweenZoomY( fOriginalZoomY );
+
+	m_sprSelectionOverlay.SetZoomY( 0 );
+	m_sprSelectionOverlay.BeginTweening( FADE_TIME );
+	m_sprSelectionOverlay.SetTweenZoomY( fOriginalZoomY );
+
+}
+						   
+						   
+void MusicWheel::TweenOffScreen(){
+	m_WheelState = STATE_TWEENING_OFF_SCREEN;
+	m_fTimeLeftInState = FADE_TIME;
+
+	m_sprSelectionBackground.BeginTweening( FADE_TIME );
+	m_sprSelectionBackground.SetTweenZoomY( 0 );
+	m_sprSelectionOverlay.BeginTweening( FADE_TIME );
+	m_sprSelectionOverlay.SetTweenZoomY( 0 );
+}
