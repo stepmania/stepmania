@@ -29,10 +29,15 @@
 CourseContentsList::CourseContentsList()
 {
 	m_iNumContents = 0;
-	m_quad.SetDiffuse( RageColor(0,0,0,0) );	// invisible, since we want to write only to the Zbuffer
+	m_quad.SetDiffuse( RageColor(0,0,0,1) );
+	m_quad.SetBlendMode( BLEND_NO_EFFECT );		// invisible, since we want to write only to the Zbuffer
 
 	m_fTimeUntilScroll = 0;
 	m_fItemAtTopOfList = 0;
+
+	m_quad.SetUseZBuffer( true );
+	for( int i = 0; i < MAX_TOTAL_CONTENTS; ++i )
+		m_CourseContentDisplays[i].SetUseZBuffer( true );
 
 	/* These are all the same; grab the dimensions. */
 	ContentsBarHeight = m_CourseContentDisplays[0].m_sprFrame.GetTexture()->GetSourceFrameHeight();
@@ -95,9 +100,6 @@ void CourseContentsList::Update( float fDeltaTime )
 
 void CourseContentsList::DrawPrimitives()
 {
-	// turn on Z buffer to clip items
-	DISPLAY->SetZBuffer( true );
-
 	// write to z buffer so that top and bottom are clipped
 	m_quad.SetZ( 1 );
 
@@ -126,9 +128,6 @@ void CourseContentsList::DrawPrimitives()
 		m_CourseContentDisplays[iItemToDraw].Draw();
 		iItemToDraw = (iItemToDraw+1) % m_iNumContents;
 	}
-
-	// turn off Z buffer
-	DISPLAY->SetZBuffer( false );
 }
 
 void CourseContentsList::TweenInAfterChangedCourse()
