@@ -130,6 +130,8 @@ void ArchHooks_Unix::SetTime( tm newtime )
 
 	LOG->Trace( "executing '%s'", sCommand.c_str() ); 
 	system( sCommand );
+
+	system( "hwclock --systohc" );
 }
 
 /*
