@@ -27,15 +27,17 @@
 #include "D3dx8math.h"
 #include "SDL_video.h"	// for SDL_Surface
 #include "SDL_utils.h"
+#include "Dxerr8.h"
 
 #include "arch/arch.h"
 
+// Static libraries
 #ifdef _XBOX
 #pragma comment(lib, "D3d8.lib")
 #endif
-
-/* This is a static library. */
+// load Windows D3D8 dynamically
 #pragma comment(lib, "D3dx8.lib")
+#pragma comment(lib, "Dxerr8.lib")
 
 #include <math.h>
 #include <list>
@@ -257,8 +259,10 @@ bool RageDisplay::IsSoftwareRenderer()
 
 RageDisplay::~RageDisplay()
 {
-	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	LOG->Trace( "RageDisplay::~RageDisplay()" );
+
 	SDL_EventState(SDL_VIDEORESIZE, SDL_IGNORE);
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 
 	g_pd3dDevice->Release();
     g_pd3d->Release();
@@ -287,7 +291,10 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 		vBackBufferFormats.push_back( D3DFMT_A8R8G8B8 );
 	}
 	if( !bWindowed && iBPP != 16 && iBPP != 32 )
+	{
+		SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
 		throw RageException( ssprintf("Invalid BPP '%u' specified", iBPP) );
+	}
 
 	// Test each back buffer format until we find something that works.
 	for( unsigned i=0; i < vBackBufferFormats.size(); i++ )
@@ -314,6 +321,7 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 		return fmtBackBuffer;
 	}
 
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
 	RageException::Throw( "Couldn't find an appropriate back buffer format." );
 }
 
@@ -323,27 +331,54 @@ HWND GetHwnd()
 	SDL_SysWMinfo info;
 	SDL_VERSION(&info.version);
 	if( SDL_GetWMInfo(&info) < 0 ) 
+	{
+		SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
 		RageException::Throw( "SDL_GetWMInfo failed" );
+	}
 	return info.window;
 }
 #endif
 
+bool IsWin98()
+{
+	OSVERSIONINFO version;
+	version.dwOSVersionInfoSize=sizeof(version);
+	GetVersionEx(&version);
+	return version.dwMajorVersion == 4;
+}
+
 /* Set the video mode. */
 bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync )
 {
-	int flags = SDL_RESIZABLE;
-	if( !windowed )
-		flags |= SDL_FULLSCREEN;
+	// HACK: On Windows 98, we can't call SDL_SetVideoMode while D3D is full screen.
+	// It will result in "SDL_SetVideoMode  failed: DirectDraw2::CreateSurface(PRIMARY): 
+	// Not in exclusive access mode".  Release and recreate in this condition.
+	if( IsWin98() && g_pd3dDevice && !this->IsWindowed() )
+	{
+		SAFE_RELEASE( g_pd3dDevice );
+		SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
+		SDL_InitSubSystem(SDL_INIT_VIDEO);
+	}
+
+	int flags = SDL_RESIZABLE | SDL_SWSURFACE;
+	
+	// Don't use SDL to change the video mode.  This will cause a 
+	// D3DERR_DRIVERINTERNALERROR on TNTs, V3s, and probably more.
+//	if( !windowed )
+//		flags |= SDL_FULLSCREEN;
 
 	g_Windowed = windowed;
 	SDL_ShowCursor( g_Windowed );
 
 	SDL_Surface *screen = SDL_SetVideoMode(width, height, bpp, flags);
 	if(!screen)
+	{
+		SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
 		RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
+	}
 
-	g_CurrentWidth = screen->w;
-	g_CurrentHeight = screen->h;
+	g_CurrentWidth = width;
+	g_CurrentHeight = height;
 	g_CurrentBPP = bpp;
 
 
@@ -354,9 +389,7 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
     g_d3dpp.BackBufferCount			=	1;
     g_d3dpp.MultiSampleType			=	D3DMULTISAMPLE_NONE;
 	g_d3dpp.SwapEffect				=	D3DSWAPEFFECT_DISCARD;
-#ifndef _XBOX
-	g_d3dpp.hDeviceWindow			=	GetHwnd();
-#endif
+	g_d3dpp.hDeviceWindow			=	NULL;
     g_d3dpp.Windowed				=	windowed;
     g_d3dpp.EnableAutoDepthStencil	=	TRUE;
     g_d3dpp.AutoDepthStencilFormat	=	D3DFMT_D16;
@@ -367,9 +400,21 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	g_d3dpp.FullScreen_PresentationInterval = 
 		(windowed || vsync) ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
 
-	if( g_pd3dDevice == NULL )		// device is not yet created.  We need to create it
+	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
+		g_d3dpp.BackBufferWidth, g_d3dpp.BackBufferHeight, g_d3dpp.BackBufferFormat,
+		g_d3dpp.BackBufferCount,
+		g_d3dpp.MultiSampleType, g_d3dpp.SwapEffect, g_d3dpp.hDeviceWindow,
+		g_d3dpp.Windowed, g_d3dpp.EnableAutoDepthStencil, g_d3dpp.AutoDepthStencilFormat,
+		g_d3dpp.Flags, g_d3dpp.FullScreen_RefreshRateInHz,
+		g_d3dpp.FullScreen_PresentationInterval
+	);
+
+	bool bCreateNewDevice = g_pd3dDevice == NULL;
+
+	if( bCreateNewDevice )		// device is not yet created.  We need to create it
 	{
-		g_pd3d->CreateDevice(
+		HRESULT hr;
+		hr = g_pd3d->CreateDevice(
 			D3DADAPTER_DEFAULT, 
 			D3DDEVTYPE_HAL, 
 #ifndef _XBOX
@@ -381,7 +426,11 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 #endif
 			&g_d3dpp, 
 			&g_pd3dDevice );
-		ASSERT( g_pd3dDevice );
+		if( FAILED(hr) )
+		{
+			SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
+			RageException::Throw( "CreateDevice failed: '%s'", DXGetErrorString8(hr) );
+		}
 	}
 	else
 	{
@@ -395,9 +444,7 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	/* Palettes were lost by Reset(), so mark them unloaded. */
 	g_TexResourceToPaletteIndex.clear();
 
-	return false;
-	/* Err, all of our textures are managed.  With the palette loading, we don't
-	 * appear to have to reload textures anymore. */
+	return bCreateNewDevice;
 }
 
 void RageDisplay::ResolutionChanged()
