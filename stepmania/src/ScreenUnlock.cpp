@@ -72,7 +72,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	// scrolling text
 	if (THEME->GetMetricI("ScreenUnlock", "UnlockTextScroll") != 0)
 	{
-		int NumberUnlocks = THEME->GetMetricF("ScreenUnlock", "NumUnlocks");
+		int NumberUnlocks = THEME->GetMetricI("ScreenUnlock", "NumUnlocks");
 		float ScrollingTextX = THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollX");
 		float ScrollingTextStartY = THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollStartY");
 		float ScrollingTextEndY = THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollEndY");
@@ -176,12 +176,15 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 void ScreenUnlock::BreakLine(CString& line)
 {
-	for(unsigned i = 1; i < line.GetLength(); i++)
+	for(unsigned i = 1; i < line.size(); i++)
+	{
 		if (line[i] == '~' || line[i] == '(')
+		{
 			if (line[i-1] == ' ')
 			{
 				line[i-1] = '\n';
 				return;
 			}
-
+		}
+	}
 }
