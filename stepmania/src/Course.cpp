@@ -1041,13 +1041,16 @@ void Course::UpdateCourseStats()
 
 void Course::Info::GetAttackArray( AttackArray &out ) const
 {
-	Attack a;
-	a.fStartSecond = 0;
-	a.fSecsRemaining = 10000; /* whole song */
-	a.level = ATTACK_LEVEL_1;
-	a.sModifier = Modifiers;
+	if( !Modifiers.empty() )
+	{
+		Attack a;
+		a.fStartSecond = 0;
+		a.fSecsRemaining = 10000; /* whole song */
+		a.level = ATTACK_LEVEL_1;
+		a.sModifier = Modifiers;
 
-	out.push_back( a );
+		out.push_back( a );
+	}
 
 	out.insert( out.end(), Attacks.begin(), Attacks.end() );
 }
