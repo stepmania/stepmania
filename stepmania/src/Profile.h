@@ -123,33 +123,8 @@ public:
 	//
 	// Loading and saving
 	//
-	bool LoadAllFromDir( CString sDir )
-	{
-		InitAll();
-		bool bResult = LoadGeneralDataFromDir( sDir );
-		LoadSongScoresFromDirSM390a12( sDir );
-		LoadSongScoresFromDir( sDir );
-		LoadCourseScoresFromDirSM390a12( sDir );
-		LoadCourseScoresFromDir( sDir );
-		LoadCategoryScoresFromDirSM390a12( sDir );
-		LoadCategoryScoresFromDir( sDir );
-		return bResult;
-	}
-	bool SaveAllToDir( CString sDir ) const
-	{
-		// Delete old files after saving new ones so we don't try to load old
-		// and make duplicate records. 
-		// If the save fails, the delete will fail too... probably :-)
-		bool bResult = SaveGeneralDataToDir( sDir );
-		SaveSongScoresToDir( sDir );
-		DeleteSongScoresFromDirSM390a12( sDir );
-		SaveCourseScoresToDir( sDir );
-		DeleteCourseScoresFromDirSM390a12( sDir );
-		SaveCategoryScoresToDir( sDir );
-		DeleteCategoryScoresFromDirSM390a12( sDir );
-		SaveStatsWebPageToDir( sDir );
-		return bResult;
-	}
+	bool LoadAllFromDir( CString sDir );
+	bool SaveAllToDir( CString sDir ) const;
 
 	bool LoadGeneralDataFromDir( CString sDir );
 	bool SaveGeneralDataToDir( CString sDir ) const;

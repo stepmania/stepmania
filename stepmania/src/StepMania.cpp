@@ -32,7 +32,7 @@
 #include "SDL_utils.h"
 
 #include "CodeDetector.h"
-#include "CryptHelpers.h"
+#include "CryptManager.h"
 
 //
 // StepMania global classes
@@ -1131,14 +1131,8 @@ bool SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature )
 		return false;
 	}
 
-	//
-	// Write a signature
-	//
 	if( bMakeSignature )
-	{
-		CString sSignaturePath = sScreenshotPath + ".sig.rsa";
-		RSASignFile( "private.rsa", sScreenshotPath, sSignaturePath);
-	}
+		CryptManager::SignFile( sScreenshotPath );
 
 	return bResult;
 }

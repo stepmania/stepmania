@@ -186,6 +186,10 @@ public:
 	float			m_fCenterImageScaleY;
 	int				m_iAttractSoundFrequency;	// 0 = never, 1 = every time
 	bool			m_bAllowExtraStage;
+	
+	// This should be false for arcade machines since the old score format wasn't signed.
+	// People can cheat easily using the old score formats
+	bool			m_bAllowReadOldScoreFormats;	
 
 	/* Editor prefs: */
 	bool			m_bEditorShowBGChangesPlay;

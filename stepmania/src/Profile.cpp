@@ -25,6 +25,8 @@
 #include <time.h>
 #include "ThemeManager.h"
 #include "Bookkeeper.h"
+#include "CryptManager.h"
+#include "PrefsManager.h"
 
 //
 // Old file versions for backward compatibility
@@ -49,9 +51,9 @@ const int SM_390A12_COURSE_SCORES_VERSION = 8;
 #define STYLE_CSS			"style.css"
 
 
-#define DEFAULT_PROFILE_NAME		""
+#define DEFAULT_PROFILE_NAME	""
 
-#define STATS_TITLE									THEME->GetMetric("ProfileManager","StatsTitle")
+#define STATS_TITLE				THEME->GetMetric("ProfileManager","StatsTitle")
 
 
 void Profile::InitGeneralData()
@@ -274,23 +276,61 @@ void Profile::IncrementCategoryPlayCount( StepsType st, RankingCategory rc )
 // Loading and saving
 //
 
+bool Profile::LoadAllFromDir( CString sDir )
+{
+	InitAll();
+	bool bResult = LoadGeneralDataFromDir( sDir );
+	if( PREFSMAN->m_bAllowReadOldScoreFormats )
+		LoadSongScoresFromDirSM390a12( sDir );
+	LoadSongScoresFromDir( sDir );
+	if( PREFSMAN->m_bAllowReadOldScoreFormats )
+		LoadCourseScoresFromDirSM390a12( sDir );
+	LoadCourseScoresFromDir( sDir );
+	if( PREFSMAN->m_bAllowReadOldScoreFormats )
+		LoadCategoryScoresFromDirSM390a12( sDir );
+	LoadCategoryScoresFromDir( sDir );
+	return bResult;
+}
+
+bool Profile::SaveAllToDir( CString sDir ) const
+{
+	// Delete old files after saving new ones so we don't try to load old
+	// and make duplicate records. 
+	// If the save fails, the delete will fail too... probably :-)
+	bool bResult = SaveGeneralDataToDir( sDir );
+	SaveSongScoresToDir( sDir );
+	DeleteSongScoresFromDirSM390a12( sDir );
+	SaveCourseScoresToDir( sDir );
+	DeleteCourseScoresFromDirSM390a12( sDir );
+	SaveCategoryScoresToDir( sDir );
+	DeleteCategoryScoresFromDirSM390a12( sDir );
+	SaveStatsWebPageToDir( sDir );
+	return bResult;
+}
+
+
 #define WARN	LOG->Warn("Error parsing file '%s' at %s:%d",fn.c_str(),__FILE__,__LINE__);
 #define WARN_AND_RETURN { WARN; return; }
 #define WARN_AND_CONTINUE { WARN; continue; }
+#define CRYPT_VERIFY_FILE	\
+	if( !CryptManager::VerifyFile(fn) )	{	\
+		LOG->Warn("Signature check failed for '%s' at %s:%d",fn.c_str(),__FILE__,__LINE__); return; }
+#define CRYPT_VERIFY_FILE_BOOL	\
+	if( !CryptManager::VerifyFile(fn) )	{	\
+		LOG->Warn("Signature check failed for '%s' at %s:%d",fn.c_str(),__FILE__,__LINE__); return false; }
+#define CRYPT_WRITE_SIG		CryptManager::SignFile(fn);
 
 bool Profile::LoadGeneralDataFromDir( CString sDir )
 {
-	CString sIniPath = sDir + PROFILE_INI;
+	CString fn = sDir + PROFILE_INI;
 	InitGeneralData();
 
-	CStringArray asBits;
-	split( Dirname(sIniPath), "/", asBits, true );
-	CString sLastDir = asBits.back();	// this is a number name, e.g. "0000001"
+	CRYPT_VERIFY_FILE_BOOL;
 
 	//
 	// read ini
 	//
-	IniFile ini( sIniPath );
+	IniFile ini( fn );
 	if( !ini.ReadFile() )
 		return false;
 
@@ -318,9 +358,9 @@ bool Profile::LoadGeneralDataFromDir( CString sDir )
 
 bool Profile::SaveGeneralDataToDir( CString sDir ) const
 {
-	CString sIniPath = sDir + PROFILE_INI;
+	CString fn = sDir + PROFILE_INI;
 
-	IniFile ini( sIniPath );
+	IniFile ini( fn );
 	ini.SetValue( "Profile", "DisplayName",						m_sName );
 	ini.SetValue( "Profile", "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
 	ini.SetValue( "Profile", "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
@@ -340,7 +380,9 @@ bool Profile::SaveGeneralDataToDir( CString sDir ) const
 	for( i=0; i<MAX_METER+1; i++ )
 		ini.SetValue( "Profile", "NumSongsPlayedByMeter"+ssprintf("%d",i), m_iNumSongsPlayedByMeter[i] );
 	
-	return ini.WriteFile();
+	bool bResult = ini.WriteFile();
+	CRYPT_WRITE_SIG;
+	return bResult;
 }
 
 void Profile::SaveSongScoresToDir( CString sDir ) const
@@ -351,7 +393,6 @@ void Profile::SaveSongScoresToDir( CString sDir ) const
 	ASSERT( pProfile );
 
 	CString fn = sDir + SONG_SCORES_XML;
-
 
 	XNode xml;
 	xml.name = "SongScores";
@@ -393,6 +434,7 @@ void Profile::SaveSongScoresToDir( CString sDir ) const
 	}
 	
 	xml.SaveToFile( fn );
+	CRYPT_WRITE_SIG;
 }
 
 void Profile::LoadSongScoresFromDir( CString sDir )
@@ -400,6 +442,8 @@ void Profile::LoadSongScoresFromDir( CString sDir )
 	CHECKPOINT;
 
 	CString fn = sDir + SONG_SCORES_XML;
+
+	CRYPT_VERIFY_FILE;
 
 	XNode xml;
 	if( !xml.LoadFromFile( fn ) )
@@ -782,6 +826,7 @@ void Profile::SaveCourseScoresToDir( CString sDir ) const
 	}
 	
 	xml.SaveToFile( fn );
+	CRYPT_WRITE_SIG;
 }
 
 void Profile::LoadCourseScoresFromDir( CString sDir )
@@ -789,6 +834,8 @@ void Profile::LoadCourseScoresFromDir( CString sDir )
 	CHECKPOINT;
 
 	CString fn = sDir + COURSE_SCORES_XML;
+
+	CRYPT_VERIFY_FILE;
 
 	XNode xml;
 	if( !xml.LoadFromFile( fn ) )
@@ -831,8 +878,6 @@ void Profile::LoadCourseScoresFromDir( CString sDir )
 			hsl.LoadFromNode( pHighScoreListNode );
 		}
 	}
-
-	xml.SaveToFile( fn );
 }
 
 void Profile::SaveCategoryScoresToDir( CString sDir ) const
@@ -870,6 +915,7 @@ void Profile::SaveCategoryScoresToDir( CString sDir ) const
 	}
 
 	xml.SaveToFile( fn );
+	CRYPT_WRITE_SIG;
 }
 
 void Profile::LoadCategoryScoresFromDir( CString sDir )
@@ -877,6 +923,8 @@ void Profile::LoadCategoryScoresFromDir( CString sDir )
 	CHECKPOINT;
 
 	CString fn = sDir + CATEGORY_SCORES_XML;
+
+	CRYPT_VERIFY_FILE;
 
 	XNode xml;
 	if( !xml.LoadFromFile( fn ) )

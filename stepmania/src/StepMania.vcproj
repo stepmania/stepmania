@@ -1988,6 +1988,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="CombinedLifeMeter.h">
 			</File>
 			<File
+				RelativePath="CryptManager.h">
+			</File>
+			<File
+				RelativePath="CryptManager.cpp">
+			</File>
+			<File
 				RelativePath=".\FontManager.cpp">
 			</File>
 			<File
