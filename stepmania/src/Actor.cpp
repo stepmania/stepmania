@@ -790,6 +790,7 @@ void Actor::HandleCommand( const CStringArray &asTokens )
 	else if( sName=="scaletocover" )	{ RectI R(iParam(1), iParam(2), iParam(3), iParam(4));  ScaleToCover(R); }
 	// Commands that take effect immediately (ignoring the tweening queue):
 	else if( sName=="animate" )			EnableAnimation( bParam(1) );
+	else if( sName=="setstate" )		SetState( iParam(1) );
 	else if( sName=="texturewrapping" )	SetTextureWrapping( bParam(1) );
 	else if( sName=="additiveblend" )	SetBlendMode( bParam(1) ? BLEND_ADD : BLEND_NORMAL );
 	else if( sName=="blend" )			SetBlendMode( sParam(1) );
