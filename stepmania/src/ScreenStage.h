@@ -8,6 +8,7 @@
 #include "Sprite.h"
 #include "Character.h"
 #include "BitmapText.h"
+#include "BGAnimation.h"
 
 class ScreenStage : public Screen
 {

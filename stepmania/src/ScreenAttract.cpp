@@ -15,6 +15,7 @@
 #include "ThemeManager.h"
 #include "GameSoundManager.h"
 #include "CommonMetrics.h"
+#include "BGAnimation.h"
 
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
 

@@ -11,6 +11,7 @@
 #include "HighScore.h"
 #include "DifficultyIcon.h"
 #include "PercentageDisplay.h"
+#include "BGAnimation.h"
 
 
 class HighScoreWheelItem : public ActorFrame

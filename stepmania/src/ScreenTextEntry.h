@@ -8,6 +8,7 @@
 #include "Transition.h"
 #include "Quad.h"
 #include "RandomSample.h"
+#include "BGAnimation.h"
 
 class ScreenTextEntry : public Screen
 {

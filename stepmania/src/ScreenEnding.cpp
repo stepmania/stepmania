@@ -17,6 +17,7 @@
 #include "PrefsManager.h"
 #include "StageStats.h"
 #include "PlayerState.h"
+#include "BGAnimation.h"
 
 
 #define SCROLL_DELAY		THEME->GetMetricF("ScreenEnding","ScrollDelay")
