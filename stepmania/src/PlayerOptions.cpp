@@ -664,6 +664,7 @@ CString PlayerOptions::GetSavedPrefsString() const
 	SAVE( m_bTransforms[TRANSFORM_NOJUMPS] );
 	SAVE( m_bTransforms[TRANSFORM_NOHANDS] );
 	SAVE( m_bTransforms[TRANSFORM_NOQUADS] );
+	SAVE( m_ScoreDisplay );
 	SAVE( m_sNoteSkin );
 #undef SAVE
 	return po_prefs.GetString();
