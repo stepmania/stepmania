@@ -96,7 +96,7 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
  * in player options menus, but it should in the options menu.
  */
 
-//REGISTER_SCREEN_CLASS( ScreenOptions );
+//REGISTER_SCREEN_CLASS( ScreenOptions );	// can't be instantiated
 ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName)
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
@@ -434,17 +434,11 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 		m_framePage.AddChild( m_sprDisqualify[p] );
 	}
 
-	m_sprFrame.Load( THEME->GetPathToG( "ScreenOptions frame") );
-	m_sprFrame->SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
-	m_framePage.AddChild( m_sprFrame );
-
 	// poke once at all the explanation metrics so that we catch missing ones early
+	for( int r=0; r<(int)m_Rows.size(); r++ )		// foreach row
 	{
-		for( int r=0; r<(int)m_Rows.size(); r++ )		// foreach row
-		{
-			GetExplanationText( r );
-			GetExplanationTitle( r );
-		}
+		GetExplanationText( r );
+		GetExplanationTitle( r );
 	}
 
 	CHECKPOINT;

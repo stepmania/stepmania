@@ -149,7 +149,6 @@ protected:
 
 	ActorFrame		m_framePage;
 	AutoActor		m_sprPage;
-	AutoActor		m_sprFrame;
 
 	OptionsCursor	m_Highlight[NUM_PLAYERS];
 	Sprite			m_sprLineHighlight[NUM_PLAYERS];
