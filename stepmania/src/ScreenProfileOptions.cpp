@@ -2,7 +2,7 @@
 #include "ScreenProfileOptions.h"
 #include "RageLog.h"
 #include "ProfileManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"

@@ -4,7 +4,7 @@
 #include "ScreenTestSound.h"
 #include "ScreenTestFonts.h"
 #include "ScreenManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 
 
 ScreenTest::~ScreenTest()

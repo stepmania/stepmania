@@ -10,7 +10,7 @@
 #include "Sprite.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "LightsManager.h"
 #include "song.h"

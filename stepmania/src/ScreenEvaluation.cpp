@@ -12,7 +12,7 @@
 #include "GameState.h"
 #include "GrooveRadar.h"
 #include "ThemeManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "ActorUtil.h"
 #include "RageTimer.h"
 #include "UnlockSystem.h"

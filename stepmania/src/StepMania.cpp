@@ -8,7 +8,7 @@
 #include "RageLog.h"
 #include "RageTextureManager.h"
 #include "RageSoundManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "RageInput.h"
 #include "RageTimer.h"
 #include "RageException.h"

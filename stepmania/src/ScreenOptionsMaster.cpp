@@ -16,7 +16,7 @@
 #include "Character.h"
 #include "PrefsManager.h"
 #include "ScreenOptionsMasterPrefs.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "StepMania.h"
 #include "RageSoundManager.h"
 #include "ProfileManager.h"

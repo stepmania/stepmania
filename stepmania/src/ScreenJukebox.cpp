@@ -7,7 +7,7 @@
 #include "SongManager.h"
 #include "StepMania.h"
 #include "ScreenManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "Steps.h"
 #include "ScreenAttract.h"
 #include "RageUtil.h"

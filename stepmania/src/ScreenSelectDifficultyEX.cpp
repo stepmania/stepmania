@@ -5,7 +5,7 @@
 #include "ModeChoice.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "ScreenManager.h"
 #include "ScreenSelectDifficultyEX.h"
 #include "ThemeManager.h"

@@ -2,7 +2,7 @@
 #include "NetworkSyncManager.h"
 #include "ScreenNetworkOptions.h"
 #include "RageLog.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"

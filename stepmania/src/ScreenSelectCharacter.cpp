@@ -1,7 +1,7 @@
 #include "global.h"
 #include "ScreenSelectCharacter.h"
 #include "ScreenManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "ThemeManager.h"

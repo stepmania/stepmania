@@ -4,7 +4,7 @@
 #include "PrefsManager.h"
 #include "GameManager.h"
 #include "ThemeManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "GameState.h"
 #include "AnnouncerManager.h"
 #include "ModeChoice.h"

@@ -27,7 +27,7 @@
 #include "GameState.h"
 #include "RageException.h"
 #include "RageTimer.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
 #include "Screen.h"

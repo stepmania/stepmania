@@ -2,7 +2,7 @@
 #include "ScreenTextEntry.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "ScreenTitleMenu.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"

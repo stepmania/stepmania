@@ -2,7 +2,7 @@
 #include "ScreenEz2SelectPlayer.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "GameManager.h"

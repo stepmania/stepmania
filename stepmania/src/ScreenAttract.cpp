@@ -13,7 +13,7 @@
 #include "GameManager.h"
 #include "InputMapper.h"
 #include "ThemeManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
 #define INITIAL_SCREEN			THEME->GetMetric ("Common","InitialScreen")

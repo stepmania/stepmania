@@ -27,7 +27,7 @@
 #include "ActorUtil.h"
 #include "NoteSkinManager.h"
 #include "RageTextureManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "CombinedLifeMeterTug.h"
 #include "Inventory.h"
 #include "Course.h"

@@ -15,7 +15,7 @@ TODO:
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "ThemeManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "Style.h"
 #include "song.h"
 #include "ActorUtil.h"

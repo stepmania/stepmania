@@ -7,7 +7,7 @@
 #include "AnnouncerManager.h"
 #include "ThemeManager.h"
 #include "Font.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 
 #define WARNING_START				THEME->GetMetricI("MenuTimer","WarningStart")
 #define WARNING_BEEP_START			THEME->GetMetricI("MenuTimer","WarningBeepStart")

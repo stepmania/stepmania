@@ -13,7 +13,7 @@
 #include "GameManager.h"
 #include "InputMapper.h"
 #include "ThemeManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "CodeDetector.h"
 #include "RageTextureManager.h"
 #include "UnlockSystem.h"

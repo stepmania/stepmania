@@ -2,7 +2,7 @@
 #include "ScreenStyleSplash.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "ScreenManager.h"
 #include "ThemeManager.h"
 #include "GameState.h"

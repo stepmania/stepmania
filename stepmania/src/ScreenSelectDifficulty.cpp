@@ -2,7 +2,7 @@
 #include "ScreenSelectDifficulty.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "GameManager.h"
 #include "ThemeManager.h"
 #include "GameState.h"

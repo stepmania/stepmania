@@ -1,7 +1,7 @@
 #include "global.h"
 #include "ScreenEz2SelectMusic.h"
 #include "ScreenManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"

@@ -6,7 +6,7 @@
 #include "RageSound.h"
 #include "ThemeManager.h"
 #include "ScreenManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "ProfileManager.h"
 
 #define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")

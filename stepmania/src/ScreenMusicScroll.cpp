@@ -1,7 +1,7 @@
 #include "global.h"
 #include "ScreenMusicScroll.h"
 #include "SongManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
 #include "song.h"

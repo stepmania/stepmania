@@ -1,6 +1,6 @@
 #include "global.h"
 #include "ScreenCredits.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "RageLog.h"
 #include "SongManager.h"
 #include "ThemeManager.h"

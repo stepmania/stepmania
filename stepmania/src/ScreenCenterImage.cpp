@@ -7,7 +7,7 @@
 #include "RageLog.h"
 #include "InputMapper.h"
 #include "GameManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
 

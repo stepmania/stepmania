@@ -8,7 +8,7 @@
 #include "ScreenAttract.h"	// for AttractInput()
 #include "ScreenManager.h"
 #include "RageSoundManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "GameManager.h"
 
 

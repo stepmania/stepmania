@@ -5,7 +5,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
-#include "RageSounds.h"
+#include "GameSoundManager.h"
 #include "ScreenSongOptions.h"
 #include "PrefsManager.h"
 #include "CodeDetector.h"
