@@ -5,6 +5,7 @@
 #include "PlayerOptions.h"
 #include "song.h"
 #include "GameState.h"
+#include "RadarValues.h"
 
 NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex )
 {
@@ -287,21 +288,26 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 	out.Convert4sToHoldNotes();
 }
 
-float NoteDataUtil::GetRadarValue( const NoteData &in, RadarCategory rv, float fSongSeconds )
+void NoteDataUtil::GetRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out )
 {
-	switch( rv )
+	// The for loop and the assert are used to ensure that all fields of 
+	// RadarValue get set in here.
+	FOREACH_RadarCategory( rc )
 	{
-	case RADAR_STREAM:	return GetStreamRadarValue( in, fSongSeconds );
-	case RADAR_VOLTAGE:	return GetVoltageRadarValue( in, fSongSeconds );
-	case RADAR_AIR:		return GetAirRadarValue( in, fSongSeconds );
-	case RADAR_FREEZE:	return GetFreezeRadarValue( in, fSongSeconds );
-	case RADAR_CHAOS:	return GetChaosRadarValue( in, fSongSeconds );
-	case RADAR_NUM_TAPS_AND_HOLDS: return (float) in.GetNumRowsWithTapOrHoldHead();
-	case RADAR_NUM_JUMPS: return (float) in.GetNumDoubles(); // should hands also count as a jump?
-	case RADAR_NUM_HOLDS: return (float) in.GetNumHoldNotes();
-	case RADAR_NUM_MINES: return (float) in.GetNumMines();
-	case RADAR_NUM_HANDS: return (float) in.GetNumHands();
-	default:	ASSERT(0);  return 0;
+		switch( rc )
+		{
+		case RADAR_STREAM:				out[rc] = GetStreamRadarValue( in, fSongSeconds );	break;	
+		case RADAR_VOLTAGE:				out[rc] = GetVoltageRadarValue( in, fSongSeconds );	break;
+		case RADAR_AIR:					out[rc] = GetAirRadarValue( in, fSongSeconds );		break;
+		case RADAR_FREEZE:				out[rc] = GetFreezeRadarValue( in, fSongSeconds );	break;
+		case RADAR_CHAOS:				out[rc] = GetChaosRadarValue( in, fSongSeconds );	break;
+		case RADAR_NUM_TAPS_AND_HOLDS:	out[rc] = (float) in.GetNumRowsWithTapOrHoldHead();	break;
+		case RADAR_NUM_JUMPS:			out[rc] = (float) in.GetNumDoubles();				break;
+		case RADAR_NUM_HOLDS:			out[rc] = (float) in.GetNumHoldNotes();				break;
+		case RADAR_NUM_MINES:			out[rc] = (float) in.GetNumMines();					break;
+		case RADAR_NUM_HANDS:			out[rc] = (float) in.GetNumHands();					break;
+		default:	ASSERT(0);
+		}
 	}
 }
 

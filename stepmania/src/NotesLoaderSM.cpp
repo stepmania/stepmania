@@ -48,8 +48,12 @@ void SMLoader::LoadFromSMTokens(
 	CStringArray saValues;
 	split( sRadarValues, ",", saValues, true );
 	if( saValues.size() == NUM_RADAR_CATEGORIES )
-		for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
-			out.SetRadarValue(r, (float)atof(saValues[r]));
+	{
+		RadarValues v;
+		FOREACH_RadarCategory(rc)
+			v[rc] = (float)atof(saValues[rc]);
+		out.SetRadarValues( v ); 
+	}
     
 	out.SetSMNoteData(sNoteData, sAttackData);
 

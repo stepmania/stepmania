@@ -249,21 +249,26 @@ TapNoteScore NoteDataWithScoring::LastTapNoteScore(unsigned row) const
  * No idea what it actually could be, though.
  */
 
-float NoteDataWithScoring::GetActualRadarValue( RadarCategory rv, PlayerNumber pn, float fSongSeconds ) const
+void NoteDataWithScoring::GetActualRadarValues( PlayerNumber pn, float fSongSeconds, RadarValues& out ) const
 {
-	switch( rv )
+	// The for loop and the assert are used to ensure that all fields of 
+	// RadarValue get set in here.
+	FOREACH_RadarCategory( rc )
 	{
-	case RADAR_STREAM:	return GetActualStreamRadarValue( fSongSeconds, pn );	break;
-	case RADAR_VOLTAGE:	return GetActualVoltageRadarValue( fSongSeconds, pn );	break;
-	case RADAR_AIR:		return GetActualAirRadarValue( fSongSeconds, pn );		break;
-	case RADAR_FREEZE:	return GetActualFreezeRadarValue( fSongSeconds, pn );	break;
-	case RADAR_CHAOS:	return GetActualChaosRadarValue( fSongSeconds, pn );	break;
-	case RADAR_NUM_TAPS_AND_HOLDS: return (float) GetNumNWithScore( TNS_GOOD, 1 );
-	case RADAR_NUM_JUMPS: return (float) GetNumNWithScore( TNS_GOOD, 2 );
-	case RADAR_NUM_HOLDS: return (float) GetNumHoldNotesWithScore( HNS_OK );
-	case RADAR_NUM_MINES: return (float) GetSuccessfulMines();
-	case RADAR_NUM_HANDS: return (float) GetSuccessfulHands();
-	default: ASSERT(0);   return 0;
+		switch( rc )
+		{
+		case RADAR_STREAM:				out[rc] = GetActualStreamRadarValue( fSongSeconds, pn );	break;
+		case RADAR_VOLTAGE:				out[rc] = GetActualVoltageRadarValue( fSongSeconds, pn );	break;
+		case RADAR_AIR:					out[rc] = GetActualAirRadarValue( fSongSeconds, pn );		break;
+		case RADAR_FREEZE:				out[rc] = GetActualFreezeRadarValue( fSongSeconds, pn );	break;
+		case RADAR_CHAOS:				out[rc] = GetActualChaosRadarValue( fSongSeconds, pn );		break;
+		case RADAR_NUM_TAPS_AND_HOLDS:	out[rc] = (float) GetNumNWithScore( TNS_GOOD, 1 );			break;
+		case RADAR_NUM_JUMPS:			out[rc] = (float) GetNumNWithScore( TNS_GOOD, 2 );			break;
+		case RADAR_NUM_HOLDS:			out[rc] = (float) GetNumHoldNotesWithScore( HNS_OK );		break;
+		case RADAR_NUM_MINES:			out[rc] = (float) GetSuccessfulMines();						break;
+		case RADAR_NUM_HANDS:			out[rc] = (float) GetSuccessfulHands();						break;
+		default:	ASSERT(0);
+		}
 	}
 }
 

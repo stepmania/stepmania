@@ -1879,14 +1879,15 @@ void ScreenGameplay::SongFinished()
 	// save any statistics
     FOREACH_EnabledPlayer(p)
 	{
-		for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
-		{
-			/* Note that adding stats is only meaningful for the counters (eg. RADAR_NUM_JUMPS),
-			 * not for the percentages (RADAR_AIR). */
-			RadarCategory rc = (RadarCategory)r;
-			g_CurStageStats.fRadarPossible[p][r] += NoteDataUtil::GetRadarValue( m_Player[p], rc, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
-			g_CurStageStats.fRadarActual[p][r] += m_Player[p].GetActualRadarValue( rc, (PlayerNumber)p, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
-		}
+		/* Note that adding stats is only meaningful for the counters (eg. RADAR_NUM_JUMPS),
+		 * not for the percentages (RADAR_AIR). */
+		RadarValues v;
+		
+		NoteDataUtil::GetRadarValues( m_Player[p], GAMESTATE->m_pCurSong->m_fMusicLengthSeconds, v );
+		g_CurStageStats.radarPossible[p] += v;
+
+		m_Player[p].GetActualRadarValues( p, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds, v );
+		g_CurStageStats.radarActual[p] += v;
 	}
 
 	/* Extremely important: if we don't remove attacks before moving on to the next

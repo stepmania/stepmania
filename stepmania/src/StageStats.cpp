@@ -32,8 +32,8 @@ void StageStats::Init()
 
 		memset( iTapNoteScores[p], 0, sizeof(iTapNoteScores[p]) );
 		memset( iHoldNoteScores[p], 0, sizeof(iHoldNoteScores[p]) );
-		memset( fRadarPossible[p], 0, sizeof(fRadarPossible[p]) );
-		memset( fRadarActual[p], 0, sizeof(fRadarActual[p]) );
+		radarPossible[p].Init();
+		radarActual[p].Init();
 
 		fFirstPos[p] = 999999;
 		fLastPos[p] = 0;
@@ -70,11 +70,8 @@ void StageStats::AddStats( const StageStats& other )
 		iMaxCombo[p] += other.iMaxCombo[p];
 		iCurMissCombo[p] += other.iCurMissCombo[p];
 		iScore[p] += other.iScore[p];
-		for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
-		{
-			fRadarPossible[p][r] += other.fRadarPossible[p][r];
-			fRadarActual[p][r] += other.fRadarActual[p][r];
-		}
+		radarPossible[p] += other.radarPossible[p];
+		radarActual[p] += other.radarActual[p];
 		fSecondsBeforeFail[p] += other.fSecondsBeforeFail[p];
 		iSongsPassed[p] += other.iSongsPassed[p];
 		iSongsPlayed[p] += other.iSongsPlayed[p];

@@ -8,6 +8,8 @@
 #include "PlayerNumber.h"
 #include <map>
 
+struct RadarValues;
+
 struct RowTrack: public pair<int,int>
 {
 	RowTrack( const HoldNote &hn ): pair<int,int>( hn.iEndRow, hn.iTrack ) { }
@@ -78,7 +80,7 @@ public:
 	int LastTapNoteScoreTrack(unsigned row) const;
 	TapNoteScore LastTapNoteScore(unsigned row) const;
 
-	float GetActualRadarValue( RadarCategory rv, PlayerNumber pn, float fSongSeconds ) const;
+	void GetActualRadarValues( PlayerNumber pn, float fSongSeconds, RadarValues& out ) const;
 
 private:
 	float GetActualStreamRadarValue( float fSongSeconds, PlayerNumber pn ) const;

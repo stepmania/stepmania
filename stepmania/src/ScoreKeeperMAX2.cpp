@@ -61,8 +61,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Ste
 		}
 
 		RadarValues radarValuesPostModifiers;
-		FOREACH_RadarCategory( rc )
-			radarValuesPostModifiers[rc] += NoteDataUtil::GetRadarValue( playerNoteDataPostModifiers, rc, pSong->m_fMusicLengthSeconds );
+		NoteDataUtil::GetRadarValues( playerNoteDataPostModifiers, pSong->m_fMusicLengthSeconds, radarValuesPostModifiers );
 		 
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( pSteps->GetRadarValues(), radarValuesPostModifiers );
 	}
@@ -420,13 +419,13 @@ void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tap
 }
 
 
-int ScoreKeeperMAX2::GetPossibleDancePoints( const RadarValues& fRadars )
+int ScoreKeeperMAX2::GetPossibleDancePoints( const RadarValues& radars )
 {
 	/* Note that, if Marvelous timing is disabled or not active (not course mode),
 	 * PERFECT will be used instead. */
 
-	int NumTaps = int(fRadars[RADAR_NUM_TAPS_AND_HOLDS]);
-	int NumHolds = int(fRadars[RADAR_NUM_HOLDS]); 
+	int NumTaps = int(radars[RADAR_NUM_TAPS_AND_HOLDS]);
+	int NumHolds = int(radars[RADAR_NUM_HOLDS]); 
 	return NumTaps*TapNoteScoreToDancePoints(TNS_MARVELOUS)+
 	   NumHolds*HoldNoteScoreToDancePoints(HNS_OK);
 }

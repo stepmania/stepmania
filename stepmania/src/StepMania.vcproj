@@ -795,6 +795,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Profile.h">
 			</File>
 			<File
+				RelativePath="RadarValues.cpp">
+			</File>
+			<File
+				RelativePath="RadarValues.h">
+			</File>
+			<File
 				RelativePath=".\RandomSample.cpp">
 			</File>
 			<File

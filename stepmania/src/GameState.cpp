@@ -633,17 +633,17 @@ void GameState::FinishStage()
 	GAMESTATE->m_iRoundSeed = rand();
 
 	//
-	// Add step totals.  Use fRadarActual, since the player might have failed partway
+	// Add step totals.  Use radarActual, since the player might have failed part way
 	// through the song, in which case we don't want to give credit for the rest of the
 	// song.
 	//
 	FOREACH_HumanPlayer( pn )
 	{
-		int iNumTapsAndHolds	= (int) g_CurStageStats.fRadarActual[pn][RADAR_NUM_TAPS_AND_HOLDS];
-		int iNumJumps			= (int) g_CurStageStats.fRadarActual[pn][RADAR_NUM_JUMPS];
-		int iNumHolds			= (int) g_CurStageStats.fRadarActual[pn][RADAR_NUM_HOLDS];
-		int iNumMines			= (int) g_CurStageStats.fRadarActual[pn][RADAR_NUM_MINES];
-		int iNumHands			= (int) g_CurStageStats.fRadarActual[pn][RADAR_NUM_HANDS];
+		int iNumTapsAndHolds	= (int) g_CurStageStats.radarActual[pn][RADAR_NUM_TAPS_AND_HOLDS];
+		int iNumJumps			= (int) g_CurStageStats.radarActual[pn][RADAR_NUM_JUMPS];
+		int iNumHolds			= (int) g_CurStageStats.radarActual[pn][RADAR_NUM_HOLDS];
+		int iNumMines			= (int) g_CurStageStats.radarActual[pn][RADAR_NUM_MINES];
+		int iNumHands			= (int) g_CurStageStats.radarActual[pn][RADAR_NUM_HANDS];
 		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands );
 	}
 }
@@ -1011,8 +1011,8 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 	{
 		for( int r = 0; r < RADAR_NUM_TAPS_AND_HOLDS; r++)
 		{
-			statsOut.fRadarPossible[p][r] /= vSongsOut.size();
-			statsOut.fRadarActual[p][r] /= vSongsOut.size();
+			statsOut.radarPossible[p][r] /= vSongsOut.size();
+			statsOut.radarActual[p][r] /= vSongsOut.size();
 		}
 	}
 }

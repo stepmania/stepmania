@@ -123,7 +123,6 @@ float Steps::PredictMeter() const
 	return pMeter;
 }
 
-
 void Steps::TidyUpData()
 {
 	if( GetDifficulty() == DIFFICULTY_INVALID )
@@ -247,10 +246,7 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo )	// pSource does not have 
 	this->SetDescription( "Copied from "+pSource->GetDescription() );
 	this->SetDifficulty( pSource->GetDifficulty() );
 	this->SetMeter( pSource->GetMeter() );
-
-	const float* radarValues = pSource->GetRadarValues();
-	for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
-		this->SetRadarValue( (RadarCategory)r, radarValues[r] );
+	this->SetRadarValues( pSource->GetRadarValues() );
 }
 
 void Steps::CreateBlank( StepsType ntTo )
@@ -292,11 +288,10 @@ void Steps::SetMeter(int meter)
 	m_iMeter = meter;
 }
 
-void Steps::SetRadarValue(int r, float val)
+void Steps::SetRadarValues( const RadarValues& v )
 {
 	DeAutogen();
-	ASSERT(r < NUM_RADAR_CATEGORIES);
-	m_RadarValues[r] = val;
+	m_RadarValues = v;
 }
 
 /*

@@ -354,7 +354,7 @@ void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Di
 		CString &s = song_sort_val[arraySongPointers[i]];
 		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
 		if( PREFSMAN->m_bSubSortByNumSteps )
-			s += ssprintf("%06.0f",pSteps ? pSteps->GetRadarValues().value[RADAR_NUM_TAPS_AND_HOLDS] : 0);
+			s += ssprintf("%06.0f",pSteps ? pSteps->GetRadarValues()[RADAR_NUM_TAPS_AND_HOLDS] : 0);
 	}
 	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueAscending );
 }

@@ -6,6 +6,7 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"
+#include "RadarValues.h"
 #include <map>
 class Song;
 class Steps;
@@ -48,8 +49,8 @@ struct StageStats
 	int		iCurMissCombo[NUM_PLAYERS];
 	int		iScore[NUM_PLAYERS];
 	int		iBonus[NUM_PLAYERS];  // bonus to be added on screeneval
-	float	fRadarPossible[NUM_PLAYERS][NUM_RADAR_CATEGORIES];	// filled in by ScreenGameplay on start of notes
-	float	fRadarActual[NUM_PLAYERS][NUM_RADAR_CATEGORIES];	// filled in by ScreenGameplay on start of notes
+	RadarValues	radarPossible[NUM_PLAYERS];	// filled in by ScreenGameplay on start of notes
+	RadarValues radarActual[NUM_PLAYERS];
 	float	fSecondsBeforeFail[NUM_PLAYERS];				// -1 means didn't/hasn't failed
 	/* The number of songs played and passed, respectively. */
 	int		iSongsPassed[NUM_PLAYERS];

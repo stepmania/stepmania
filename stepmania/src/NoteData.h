@@ -117,6 +117,7 @@ public:
 	int GetNumRowsWithTap( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	int GetNumRowsWithTapOrHoldHead( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	int GetNumN( int MinTaps, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
+	// should hands also count as a jump?
 	int GetNumDoubles( const float fStartBeat = 0, const float fEndBeat = -1 ) const { return GetNumN( 2, fStartBeat, fEndBeat ); }
 	/* optimization: for the default of start to end, use the second (faster) */
 	int GetNumHoldNotes( const float fStartBeat, const float fEndBeat = -1 ) const;

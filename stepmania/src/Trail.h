@@ -4,6 +4,7 @@
 #define TRAIL_H
 
 #include "Attack.h"
+#include "RadarValues.h"
 
 class Song;
 class Steps;

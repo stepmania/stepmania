@@ -855,11 +855,9 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		NoteData tempNoteData;
 		pSteps->GetNoteData( &tempNoteData );
 
-		for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
-		{
-			float fVal = NoteDataUtil::GetRadarValue( tempNoteData, (RadarCategory)r, m_fMusicLengthSeconds );
-			pSteps->SetRadarValue(r, fVal);
-		}
+		RadarValues v;
+		NoteDataUtil::GetRadarValues( tempNoteData, m_fMusicLengthSeconds, v );
+		pSteps->SetRadarValues( v );
 
 
 		/* Calculate first/last beat.

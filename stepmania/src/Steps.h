@@ -6,6 +6,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 #include "Grade.h"
+#include "RadarValues.h"
 class NoteData;
 class Profile;
 
@@ -39,7 +40,7 @@ public:
 	void SetDifficulty(Difficulty d);
 	void SetLoadedFromProfile( ProfileSlot slot ) { m_LoadedFromProfile = slot; }
 	void SetMeter(int meter);
-	void SetRadarValue(int r, float val);
+	void SetRadarValues( const RadarValues& v );
 	bool IsAutogen() const;	// Was created by autogen?
 	float PredictMeter() const;
 	

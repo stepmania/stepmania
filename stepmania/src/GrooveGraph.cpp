@@ -64,7 +64,7 @@ void GrooveGraph::SetFromSong( Song* pSong )
 		FOREACH_Difficulty( dc )
 		{
 			fValues[dc] = rvs[j][dc];
-		}		
+		}
 		m_Mountains[j].SetValues( fValues );	
 	}
 }

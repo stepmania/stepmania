@@ -33,6 +33,7 @@
 const int MAX_METER = 12;
 const int MIN_METER = 1;
 
+
 /* This is just cached song data.  Not all of it may actually be displayed
  * in the radar. */
 enum RadarCategory
@@ -52,27 +53,6 @@ enum RadarCategory
 #define FOREACH_RadarCategory( rc ) FOREACH_ENUM( RadarCategory, NUM_RADAR_CATEGORIES, rc )
 const CString& RadarCategoryToString( RadarCategory cat );
 CString RadarCategoryToThemedString( RadarCategory cat );
-
-struct RadarValues
-{
-	float value[NUM_RADAR_CATEGORIES];
-
-	RadarValues()
-	{
-		FOREACH_RadarCategory( rc )
-			value[rc] = 0;
-	}
-
-    operator const float* () const	{ return value; };
-    operator float* ()				{ return value; };
-
-	RadarValues& operator+=( const RadarValues& other )
-	{
-		FOREACH_RadarCategory( rc )
-			value[rc] += other.value[rc];
-		return *this;
-	}
-};
 
 
 

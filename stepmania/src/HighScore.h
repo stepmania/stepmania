@@ -5,8 +5,10 @@
 
 #include "Grade.h"
 #include "GameConstantsAndTypes.h"
+#include "RadarValues.h"
 
 struct XNode;
+
 struct HighScore
 {
 	CString	sName;	// name that shows in the machine's ranking screen
@@ -21,7 +23,7 @@ struct HighScore
 	int	iProductID;
 	int		iTapNoteScores[NUM_TAP_NOTE_SCORES];
 	int		iHoldNoteScores[NUM_HOLD_NOTE_SCORES];
-	float	fRadarActual[NUM_RADAR_CATEGORIES];
+	RadarValues radarValues;
 
 	HighScore() { Unset(); }
 	void Unset()
@@ -38,7 +40,7 @@ struct HighScore
 		iProductID = 0;
 		ZERO( iTapNoteScores );
 		ZERO( iHoldNoteScores );
-		ZERO( fRadarActual );
+		radarValues.Init();
 	}
 
 	bool operator>=( const HighScore& other ) const;
@@ -59,8 +61,7 @@ struct HighScore
 			COMPARE( iTapNoteScores[tns] );
 		FOREACH_HoldNoteScore( hns )
 			COMPARE( iHoldNoteScores[hns] );
-		FOREACH_RadarCategory( rc )
-			COMPARE( fRadarActual[rc] );
+		COMPARE( radarValues );
 #undef COMPARE
 		return true;
 	}

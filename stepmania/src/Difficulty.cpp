@@ -4,7 +4,7 @@
 #include "ThemeManager.h"
 
 
-static const CString DifficultyNames[NUM_RADAR_CATEGORIES] = {
+static const CString DifficultyNames[NUM_DIFFICULTIES] = {
 	"Beginner",
 	"Easy",
 	"Medium",

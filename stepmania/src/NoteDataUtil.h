@@ -8,6 +8,7 @@
 #include "NoteData.h"
 
 struct PlayerOptions;
+struct RadarValues;
 
 /* Utils for NoteData.  Things should go in here if they can be (cleanly and
  * efficiently) implemented using only NoteData's primitives; this improves
@@ -20,14 +21,14 @@ namespace NoteDataUtil
 	void GetSMNoteDataString( const NoteData &in, CString &notes_out, CString &attacks_out );
 	void LoadTransformedLights( const NoteData &in, NoteData &out, int iNewNumTracks );
 
+	// radar values - return between 0.0 and 1.2
 	float GetStreamRadarValue( const NoteData &in, float fSongSeconds );
 	float GetVoltageRadarValue( const NoteData &in, float fSongSeconds );
 	float GetAirRadarValue( const NoteData &in, float fSongSeconds );
 	float GetFreezeRadarValue( const NoteData &in, float fSongSeconds );
 	float GetChaosRadarValue( const NoteData &in, float fSongSeconds );
 
-	// radar values - return between 0.0 and 1.2
-	float GetRadarValue( const NoteData &in, RadarCategory rv, float fSongSeconds );
+	void GetRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out );
 
 	void RemoveHoldNotes( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, float fStartBeat = 0, float fEndBeat = 99999 );

@@ -69,11 +69,8 @@ bool StepsUtil::CompareNotesPointersByRadarValues(const Steps* pSteps1, const St
 	float fScore1 = 0;
 	float fScore2 = 0;
 	
-	for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
-	{
-		fScore1 += pSteps1->GetRadarValues()[r];
-		fScore2 += pSteps2->GetRadarValues()[r];
-	}
+	fScore1 += pSteps1->GetRadarValues()[RADAR_NUM_TAPS_AND_HOLDS];
+	fScore2 += pSteps2->GetRadarValues()[RADAR_NUM_TAPS_AND_HOLDS];
 
 	return fScore1 < fScore2;
 }

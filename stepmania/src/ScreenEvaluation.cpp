@@ -214,8 +214,8 @@ void ScreenEvaluation::Init()
 		FOREACH_PlayerNumber( p )	// foreach line
 			for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )	// foreach line
 			{
-				stageStats.fRadarPossible[p][r] = 0.5f + r/10.0f;
-				stageStats.fRadarActual[p][r] = 0.5f + r/10.0f;
+				stageStats.radarPossible[p][r] = 0.5f + r/10.0f;
+				stageStats.radarActual[p][r] = 0.5f + r/10.0f;
 			}
 	}
 */
@@ -538,14 +538,14 @@ void ScreenEvaluation::Init()
 			for( int r=0; r<NUM_SHOWN_RADAR_CATEGORIES; r++ )	// foreach line
 			{
 				m_sprPossibleBar[p][r].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation bar possible p%d",p+1)) );
-				m_sprPossibleBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * stageStats.fRadarPossible[p][r] );
+				m_sprPossibleBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * stageStats.radarPossible[p][r] );
 				m_sprPossibleBar[p][r].SetName( ssprintf("BarPossible%dP%d",r+1,p+1) );
 				SET_XY_AND_ON_COMMAND( m_sprPossibleBar[p][r] );
 				this->AddChild( &m_sprPossibleBar[p][r] );
 
 				m_sprActualBar[p][r].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation bar actual p%d",p+1)) );
 				// should be out of the possible bar, not actual (whatever value that is at)
-				m_sprActualBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * stageStats.fRadarActual[p][r] );
+				m_sprActualBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * stageStats.radarActual[p][r] );
 				
 				float value = (float)100 * m_sprActualBar[p][r].GetUnzoomedWidth() / m_sprPossibleBar[p][r].GetUnzoomedWidth();
 				LOG->Trace("Radar bar %d of 5 - %f percent", r,  value);
@@ -554,7 +554,7 @@ void ScreenEvaluation::Init()
 				SET_XY_AND_ON_COMMAND( m_sprActualBar[p][r] );
 				
 				// .99999 is fairly close to 1.00, so we use that 
-				if( stageStats.fRadarActual[p][r] > 0.99999f )
+				if( stageStats.radarActual[p][r] > 0.99999f )
 					m_sprActualBar[p][r].Command( BAR_ACTUAL_MAX_COMMAND );
 				this->AddChild( &m_sprActualBar[p][r] );
 			}
@@ -679,8 +679,8 @@ void ScreenEvaluation::Init()
 				RADAR_NUM_JUMPS, RADAR_NUM_HOLDS, RADAR_NUM_MINES, RADAR_NUM_HANDS
 			};
 			const int ind = indeces[l];
-			const int iActual = (int) roundf(stageStats.fRadarActual[p][ind]);
-			const int iPossible = (int) roundf(stageStats.fRadarPossible[p][ind]);
+			const int iActual = (int) roundf(stageStats.radarActual[p][ind]);
+			const int iPossible = (int) roundf(stageStats.radarPossible[p][ind]);
 
 			m_textStatsText[l][p].SetText( ssprintf("%3d/%3d",iActual,iPossible) );
 		}
@@ -940,7 +940,7 @@ void ScreenEvaluation::CommitScores(
 			hs.iProductID = PREFSMAN->m_iProductID;
 			memcpy( hs.iTapNoteScores, stageStats.iTapNoteScores[p], sizeof(hs.iTapNoteScores) );
 			memcpy( hs.iHoldNoteScores, stageStats.iHoldNoteScores[p], sizeof(hs.iHoldNoteScores) );
-			memcpy( hs.fRadarActual, stageStats.fRadarActual[p], sizeof(hs.fRadarActual) );
+			hs.radarValues = stageStats.radarActual[p];
 
 			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 

@@ -55,8 +55,7 @@ XNode* HighScore::CreateNode() const
 	FOREACH_HoldNoteScore( hns )
 		pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
 	XNode* pRadarCategories = pNode->AppendChild( "RadarActuals" );
-	FOREACH_RadarCategory( rc )
-		pRadarCategories->AppendChild( RadarCategoryToString(rc), fRadarActual[rc] );
+	pRadarCategories->AppendChild( radarValues.CreateNode() );
 
 	return pNode;
 }
@@ -90,10 +89,9 @@ void HighScore::LoadFromNode( const XNode* pNode )
 	if( pHoldNoteScores )
 		FOREACH_HoldNoteScore( hns )
 			pHoldNoteScores->GetChildValue( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
-	XNode* pRadarCategories = pNode->GetChild( "RadarActuals" );
-	if( pRadarCategories )
-		FOREACH_RadarCategory( rc )
-			pRadarCategories->GetChildValue( RadarCategoryToString(rc), fRadarActual[rc] );
+	XNode* pRadarValues = pNode->GetChild( "RadarValues" );
+	if( pRadarValues )
+		radarValues.LoadFromNode( pRadarValues );
 
 	/* Validate input. */
 	grade = clamp( grade, GRADE_TIER_1, GRADE_FAILED );
