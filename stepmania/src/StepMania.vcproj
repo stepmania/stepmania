@@ -678,6 +678,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="GameInput.h">
 			</File>
 			<File
+				RelativePath="GameplayMessages.h">
+			</File>
+			<File
 				RelativePath=".\Grade.cpp">
 			</File>
 			<File
