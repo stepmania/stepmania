@@ -28,7 +28,6 @@ GameSoundManager *SOUND = NULL;
 /* Lock this before touching g_UpdatingTimer or g_Playing. */
 static RageEvent *g_Mutex;
 static bool g_UpdatingTimer;
-static bool g_ThreadedMusicStart = true;
 static bool g_Shutdown;
 static bool g_bFlushing = false;
 
@@ -369,24 +368,18 @@ GameSoundManager::GameSoundManager()
 
 	g_UpdatingTimer = false;
 
-	if( g_ThreadedMusicStart )
-	{
-		g_Shutdown = false;
-		MusicThread.SetName( "MusicThread" );
-		MusicThread.Create( MusicThread_start, this );
-	}
+	g_Shutdown = false;
+	MusicThread.SetName( "MusicThread" );
+	MusicThread.Create( MusicThread_start, this );
 }
 
 GameSoundManager::~GameSoundManager()
 {
-	if( g_ThreadedMusicStart )
-	{
-		/* Signal the mixing thread to quit. */
-		g_Shutdown = true;
-		LOG->Trace("Shutting down music start thread ...");
-		MusicThread.Wait();
-		LOG->Trace("Music start thread shut down.");
-	}
+	/* Signal the mixing thread to quit. */
+	g_Shutdown = true;
+	LOG->Trace("Shutting down music start thread ...");
+	MusicThread.Wait();
+	LOG->Trace("Music start thread shut down.");
 
 	delete g_Playing;
 	delete g_Mutex;
@@ -511,7 +504,7 @@ CString GameSoundManager::GetMusicPath() const
 	return g_Playing->m_Music->GetLoadedFilePath();
 }
 
-/* If g_ThreadedMusicStart, this function should not touch the disk at all. */
+/* This function should not touch the disk at all. */
 void GameSoundManager::PlayMusic( const CString &file, const CString &timing_file, bool force_loop, float start_sec, float length_sec, float fade_len, bool align_beat )
 {
 //	LOG->Trace("play '%s' (current '%s')", file.c_str(), g_Playing->m_Music->GetLoadedFilePath().c_str());
@@ -533,9 +526,6 @@ void GameSoundManager::PlayMusic( const CString &file, const CString &timing_fil
 	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
 	if( !g_MusicsToPlay.write( &ToPlay, 1 ) )
 		delete ToPlay;
-
-	if( !g_ThreadedMusicStart )
-		StartQueuedSounds();
 }
 
 void GameSoundManager::PlayMusic( const CString &file, TimingData *pTiming, bool force_loop, float start_sec, float length_sec, float fade_len, bool align_beat )
@@ -561,9 +551,6 @@ void GameSoundManager::PlayMusic( const CString &file, TimingData *pTiming, bool
 	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
 	if( !g_MusicsToPlay.write( &ToPlay, 1 ) )
 		delete ToPlay;
-
-	if( !g_ThreadedMusicStart )
-		StartQueuedSounds();
 }
 
 void GameSoundManager::HandleSongTimer( bool on )
@@ -578,9 +565,6 @@ void GameSoundManager::PlayOnce( CString sPath )
 	CString *p = new CString( sPath );
 	if( !g_SoundsToPlayOnce.write( &p, 1 ) )
 		delete p;
-
-	if( !g_ThreadedMusicStart )
-		StartQueuedSounds();
 }
 
 void GameSoundManager::PlayOnceFromDir( CString PlayOnceFromDir )
@@ -589,9 +573,6 @@ void GameSoundManager::PlayOnceFromDir( CString PlayOnceFromDir )
 	CString *p = new CString( PlayOnceFromDir );
 	if( !g_SoundsToPlayOnceFromDir.write( &p, 1 ) )
 		delete p;
-
-	if( !g_ThreadedMusicStart )
-		StartQueuedSounds();
 }
 
 void GameSoundManager::PlayOnceFromAnnouncer( CString sFolderName )
@@ -600,9 +581,6 @@ void GameSoundManager::PlayOnceFromAnnouncer( CString sFolderName )
 	CString *p = new CString( sFolderName );
 	if( !g_SoundsToPlayOnceFromAnnouncer.write( &p, 1 ) )
 		delete p;
-
-	if( !g_ThreadedMusicStart )
-		StartQueuedSounds();
 }
 
 float GameSoundManager::GetPlayLatency() const
