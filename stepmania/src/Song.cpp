@@ -366,6 +366,20 @@ bool Song::LoadFromSongDir( CString sDir )
 
 void Song::TidyUpData()
 {
+	if( !HasMusic() )
+	{
+		CStringArray arrayPossibleMusic;
+		GetDirListing( m_sSongDir + CString("*.mp3"), arrayPossibleMusic );
+		GetDirListing( m_sSongDir + CString("*.ogg"), arrayPossibleMusic );
+		GetDirListing( m_sSongDir + CString("*.wav"), arrayPossibleMusic );
+
+		if( !arrayPossibleMusic.empty() )		// we found a match
+			m_sMusicFile = arrayPossibleMusic[0];
+//		Don't throw on missing music.  -Chris
+//		else
+//			throw RageException( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir.GetString() );
+	}
+
 	/* This must be done before radar calculation. */
 	if( HasMusic() )
 	{
@@ -378,10 +392,17 @@ void Song::TidyUpData()
 #endif
 		m_fMusicLengthSeconds = sound.GetLengthSeconds();
 		/* XXX: if(m_fMusicLengthSeconds == -1), warn and throw out the song */
+		if(m_fMusicLengthSeconds == 0)
+		{
+			LOG->Warn("File %s is empty?", GetMusicPath().GetString());
+		} else if(m_fMusicLengthSeconds == -1) {
+			LOG->Warn("File %s: error getting length", GetMusicPath().GetString());
+		}
 	}
 	else	// ! HasMusic()
 	{
 		m_fMusicLengthSeconds = 100;		// guess
+		LOG->Warn("File %s has no music; guessing at %i seconds", m_fMusicLengthSeconds);
 	}
 
 	/* Generate these before we autogen notes, so the new notes can inherit
@@ -396,20 +417,6 @@ void Song::TidyUpData()
 	if( m_sArtist == "" )		m_sArtist = "Unknown artist";
 	if( m_BPMSegments.empty() )
 		throw RageException( "No #BPM specified in '%s%s.'", m_sSongDir.GetString(), m_sSongFileName.GetString() );
-
-	if( !HasMusic() )
-	{
-		CStringArray arrayPossibleMusic;
-		GetDirListing( m_sSongDir + CString("*.mp3"), arrayPossibleMusic );
-		GetDirListing( m_sSongDir + CString("*.ogg"), arrayPossibleMusic );
-		GetDirListing( m_sSongDir + CString("*.wav"), arrayPossibleMusic );
-
-		if( !arrayPossibleMusic.empty() )		// we found a match
-			m_sMusicFile = arrayPossibleMusic[0];
-//		Don't throw on missing music.  -Chris
-//		else
-//			throw RageException( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir.GetString() );
-	}
 
 	// We're going to try and do something intelligent here...
 	// The MusicSampleStart always seems to be about 100-120 beats into 
