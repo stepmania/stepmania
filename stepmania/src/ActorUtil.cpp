@@ -48,6 +48,65 @@ Actor* ActorUtil::Create( const CString& sClassName, const CString& sDir, const 
 	return pfn( sDir, pNode );
 }
 
+/* Return false to retry. */
+void ActorUtil::ResolvePath( CString &sPath, const CString &sName )
+{
+	const CString sOriginalPath( sPath );
+
+retry:
+	CollapsePath( sPath );
+
+	// If we know this is an exact match, don't bother with the GetDirListing,
+	// so "foo" doesn't partial match "foobar" if "foo" exists.
+	if( !IsAFile(sPath) && !IsADirectory(sPath) )
+	{
+		CStringArray asPaths;
+		GetDirListing( sPath + "*", asPaths, false, true );	// return path too
+
+		if( asPaths.empty() )
+		{
+			CString sError = ssprintf( "A file in '%s' references a file '%s' which doesn't exist.", sName.c_str(), sPath.c_str() );
+			switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
+			{
+			case Dialog::abort:
+				RageException::Throw( sError ); 
+				break;
+			case Dialog::retry:
+				FlushDirCache();
+				goto retry;
+			case Dialog::ignore:
+				asPaths.push_back( sPath );
+				if( GetExtension(asPaths[0]) == "" )
+					asPaths[0] = SetExtension( asPaths[0], "png" );
+				break;
+			default:
+				ASSERT(0);
+			}
+		}
+		else if( asPaths.size() > 1 )
+		{
+			CString sError = ssprintf( "A file in '%s' references a file '%s' which has multiple matches.", sName.c_str(), sPath.c_str() );
+			switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
+			{
+			case Dialog::abort:
+				RageException::Throw( sError ); 
+				break;
+			case Dialog::retry:
+				FlushDirCache();
+				goto retry;
+			case Dialog::ignore:
+				asPaths.erase( asPaths.begin()+1, asPaths.end() );
+				break;
+			default:
+				ASSERT(0);
+			}
+		}
+
+		sPath = asPaths[0];
+	}
+
+	sPath = DerefRedir( sPath );
+}
 
 
 Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode )
@@ -174,7 +233,6 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 	else // sType is empty or garbage (e.g. "1" // 0==Sprite")
 	{
 		// automatically figure out the type
-retry:
 		/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
 		 * loading the BGAnimationLayer that we're in. */
 		if( sFile == "" )
@@ -184,58 +242,8 @@ retry:
 		/* XXX: We need to do a theme search, since the file we're loading might
 		 * be overridden by the theme. */
 		CString sNewPath = sAniDir+sFile;
-		CollapsePath( sNewPath );
 
-		// If we know this is an exact match, don't bother with the GetDirListing;
-		// it's causing problems with partial matching BGAnimation directory names.
-		if( !IsAFile(sNewPath) && !IsADirectory(sNewPath) )
-		{
-			CStringArray asPaths;
-			GetDirListing( sNewPath + "*", asPaths, false, true );	// return path too
-
-			if( asPaths.empty() )
-			{
-				CString sError = ssprintf( "The actor file in '%s' references a file '%s' which doesn't exist.", sAniDir.c_str(), sFile.c_str() );
-				switch( Dialog::AbortRetryIgnore( sError, "BROKEN_ACTOR_REFERENCE" ) )
-				{
-				case Dialog::abort:
-					RageException::Throw( sError ); 
-					break;
-				case Dialog::retry:
-					FlushDirCache();
-					goto retry;
-				case Dialog::ignore:
-					asPaths.push_back( sNewPath );
-					if( GetExtension(asPaths[0]) == "" )
-						asPaths[0] = SetExtension( asPaths[0], "png" );
-					break;
-				default:
-					ASSERT(0);
-				}
-			}
-			else if( asPaths.size() > 1 )
-			{
-				CString sError = ssprintf( "The actor file in '%s' references a file '%s' which has multiple matches.", sAniDir.c_str(), sFile.c_str() );
-				switch( Dialog::AbortRetryIgnore( sError, "DUPLICATE_ACTOR_REFERENCE" ) )
-				{
-				case Dialog::abort:
-					RageException::Throw( sError ); 
-					break;
-				case Dialog::retry:
-					FlushDirCache();
-					goto retry;
-				case Dialog::ignore:
-					asPaths.erase( asPaths.begin()+1, asPaths.end() );
-					break;
-				default:
-					ASSERT(0);
-				}
-			}
-
-			sNewPath = asPaths[0];
-		}
-
-		sNewPath = DerefRedir( sNewPath );
+		ActorUtil::ResolvePath( sNewPath, sAniDir );
 
 		Actor *pActor = ActorUtil::MakeActor( sNewPath );
 		if( pActor == NULL )

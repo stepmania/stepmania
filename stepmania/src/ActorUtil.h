@@ -53,6 +53,8 @@ namespace ActorUtil
 	// Return a Sprite, BitmapText, or Model depending on the file type
 	Actor* LoadFromActorFile( const CString& sAniDir, const XNode* pNode );
 	Actor* MakeActor( const RageTextureID &ID );
+
+	void ResolvePath( CString &sPath, const CString &sName );
 };
 
 #define SET_XY( actor )			ActorUtil::SetXY( actor, m_sName )
