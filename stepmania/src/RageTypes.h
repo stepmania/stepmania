@@ -208,9 +208,9 @@ public:
                 float v30, float v31, float v32, float v33 )
 	{
 		m00=v00; m01=v01; m02=v02; m03=v03;
-		m10=v00; m11=v01; m12=v02; m13=v03;
-		m20=v00; m21=v01; m22=v02; m23=v03;
-		m30=v00; m31=v01; m32=v02; m33=v03;
+		m10=v10; m11=v11; m12=v12; m13=v13;
+		m20=v20; m21=v21; m22=v22; m23=v23;
+		m30=v30; m31=v31; m32=v32; m33=v33;
 	}
 
     // access grants

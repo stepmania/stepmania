@@ -536,12 +536,12 @@ void RageDisplay::EnterPerspective(float fov, bool preserve_loc)
 
 		/* Pull out the 2d rotations and scales. */
 		{
-			sgMat4 mat;
-			sgMakeIdentMat4(mat);
-			mat[0][0] = matTop.m[0][0];
-			mat[0][1] = matTop.m[0][1];
-			mat[1][0] = matTop.m[1][0];
-			mat[1][1] = matTop.m[1][1];
+			RageMatrix mat;
+			RageMatrixIdentity(&mat);
+			mat.m[0][0] = matTop.m[0][0];
+			mat.m[0][1] = matTop.m[0][1];
+			mat.m[1][0] = matTop.m[1][0];
+			mat.m[1][1] = matTop.m[1][1];
 			glMultMatrixf((float *) mat);
 		}
 
@@ -586,55 +586,62 @@ void RageDisplay::LookAt(const RageVector3 &Eye, const RageVector3 &At, const Ra
 	glGetFloatv( GL_MODELVIEW_MATRIX, (float*)view ); /* cheesy :) */
 	glPopMatrix();
 
-	sgPostMultMat4( GetTopModelMatrix().m, view.m );
+	RageMatrix& matTop = GetTopModelMatrix();
+	RageMatrixMultiply( &matTop, &view, &matTop );
 }
 
 void RageDisplay::Translate( float x, float y, float z )
 {
 	RageMatrix matTemp;
 	RageMatrixTranslation( &matTemp, x, y, z );
+
 	RageMatrix& matTop = GetTopModelMatrix();
-	sgPreMultMat4( matTop.m, matTemp.m );
+	RageMatrixMultiply( &matTop, &matTemp, &matTop );
 }
 
 void RageDisplay::TranslateLocal( float x, float y, float z )
 {
 	RageMatrix matTemp;
 	RageMatrixTranslation( &matTemp, x, y, z );
+
 	RageMatrix& matTop = GetTopModelMatrix();
-	sgPostMultMat4( matTop.m, matTemp.m );
+	RageMatrixMultiply( &matTop, &matTop, &matTemp );
 }
 
 void RageDisplay::Scale( float x, float y, float z )
 {
 	RageMatrix matTemp;
 	RageMatrixScaling( &matTemp, x, y, z );
+
 	RageMatrix& matTop = GetTopModelMatrix();
-	sgPreMultMat4( matTop.m, matTemp.m );
+	RageMatrixMultiply( &matTop, &matTemp, &matTop );
 }
 
 void RageDisplay::RotateX( float r )
 {
 	RageMatrix matTemp;
 	RageMatrixRotationX( &matTemp, r );
+
 	RageMatrix& matTop = GetTopModelMatrix();
-	sgPreMultMat4( matTop.m, matTemp.m );
+	RageMatrixMultiply( &matTop, &matTemp, &matTop );
 }
 
 void RageDisplay::RotateY( float r )
 {
 	RageMatrix matTemp;
 	RageMatrixRotationY( &matTemp, r );
+
 	RageMatrix& matTop = GetTopModelMatrix();
-	sgPreMultMat4( matTop.m, matTemp.m );
+	RageMatrixMultiply( &matTop, &matTemp, &matTop );
 }
 
 void RageDisplay::RotateZ( float r )
 {
 	RageMatrix matTemp;
 	RageMatrixRotationZ( &matTemp, r );
+
 	RageMatrix& matTop = GetTopModelMatrix();
-	sgPreMultMat4( matTop.m, matTemp.m );
+	RageMatrixMultiply( &matTop, &matTemp, &matTop );
 }
 
 void RageDisplay::SetTexture( RageTexture* pTexture )

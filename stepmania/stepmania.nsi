@@ -7,8 +7,8 @@
 ; NOTE: this .NSI script is designed for NSIS v1.8+
 
 Name "StepMania"
-OutFile "stepmania300final.exe"
-!define PRODUCT_NAME "StepMania 3.0 final"
+OutFile "stepmania310.exe"
+!define PRODUCT_NAME "StepMania 3.1"
 
 
 ; Some default compiler settings (uncomment and change at will):
@@ -81,7 +81,7 @@ WriteUninstaller "$INSTDIR\uninst.exe"
 
 ; add registry entries
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\StepMania" "" "$INSTDIR"
-WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\StepMania" "DisplayName" "StepMania (remove only)"
+WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\StepMania" "DisplayName" "${PRODUCT_NAME} (remove only)"
 WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\StepMania" "UninstallString" '"$INSTDIR\uninst.exe"'
 
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command" "" '"$INSTDIR\smpackage.exe" "%1"'
@@ -145,7 +145,7 @@ File "Visualizations\instructions.txt"
 SetOutPath "$INSTDIR"
 ; File "msvcr70.dll"
 ; File "msvcp70.dll"
-File "bass.dll"
+;File "bass.dll"	; Bass is no longer needed
 File "jpeg.dll"
 File "libpng13a.dll"
 File "ogg.dll"
@@ -160,6 +160,9 @@ File "COPYING.txt"
 File "README-FIRST.TXT"
 File "NEWS"
 File "stepmania.exe"
+File "stepmania.vdi"
+File "smpackage.exe"
+
 ; What to do here?  Better to just delete an existing INI than to
 ; drop the local one in ... -glenn
 ; Agreed. - Chris
@@ -168,9 +171,13 @@ File "stepmania.exe"
 ; Maybe we should remove this for snapshot releases; that way we can
 ; track down problems with INI upgrades (and then possibly restore it
 ; for the release if we're not confident we've fixed most problems) -glenn
+; Added message box to ask user. -Chris
+
+IfFileExists "$INSTDIR\stepmania.ini" stepmania_ini_present stepmania_ini_not_present
+stepmania_ini_present:
+MessageBox MB_YESNO|MB_ICONQUESTION "Your settings from the previous installation of StepMania were found.$\nWould you like to keep these settings?" IDNO stepmania_ini_not_present
 Delete "$INSTDIR\stepmania.ini"
-File "stepmania.vdi"
-File "smpackage.exe"
+stepmania_ini_not_present:
 
 ; Create Start Menu icons
 SetShellVarContext all	; install in "All Users" if NT

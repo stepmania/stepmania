@@ -122,7 +122,7 @@ ScreenSelectMode::ScreenSelectMode()
 	this->AddChild( &m_Menu );
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
-	m_soundChange.Load( THEME->GetPathTo("Sounds","select style change"), 10 );
+	m_soundChange.Load( THEME->GetPathTo("Sounds","select style change"), true );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style intro") );
 

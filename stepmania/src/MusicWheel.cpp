@@ -176,7 +176,7 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 		break;
 
 	default:
-		ASSERT( false );	// invalid type
+		ASSERT( 0 );	// invalid type
 	}
 }
 
