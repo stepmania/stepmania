@@ -188,8 +188,6 @@ CString BinaryToHex( const unsigned char *string, int iNumBytes )
 
 CString CryptManager::GetMD5( CString fn )
 {
-	ASSERT( PREFSMAN->m_bSignProfileData );
-
 	struct MD5Context md5c;
 	unsigned char digest[16];
 	int iBytesRead;
