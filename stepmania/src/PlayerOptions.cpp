@@ -20,6 +20,7 @@
 #include "NoteSkinManager.h"
 #include "song.h"
 #include "Course.h"
+#include "Steps.h"
 
 #define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYSIZE(arr); ++Z ) arr[Z]=1.0f; }
 
@@ -540,29 +541,41 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	return true;
 }
 
-bool PlayerOptions::IsHandicapForSong( Song* pSong )
+bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps )
 {
 	if( m_bTimeSpacing && pSong->HasSignificantBpmChangesOrStops() )
 		return true;
+	if( m_bTransforms[TRANSFORM_NOHOLDS] && pSteps->GetRadarValues()[RADAR_NUM_HOLDS]>0 )
+		return true;
+	if( m_bTransforms[TRANSFORM_NOMINES] && pSteps->GetRadarValues()[RADAR_NUM_MINES]>0 )
+		return true;
+	if( m_bTransforms[TRANSFORM_NOHANDS] && pSteps->GetRadarValues()[RADAR_NUM_HANDS]>0 )
+		return true;
+	if( m_bTransforms[TRANSFORM_NOQUADS] && pSteps->GetRadarValues()[RADAR_NUM_HANDS]>0 )
+		return true;
+	if( m_bTransforms[TRANSFORM_NOJUMPS] && pSteps->GetRadarValues()[RADAR_NUM_JUMPS]>0 )
+		return true;
 
-	if( m_bTransforms[TRANSFORM_NOHOLDS] )	return true;
-	if( m_bTransforms[TRANSFORM_NOMINES] )	return true;
-	if( m_bTransforms[TRANSFORM_NOJUMPS] )	return true;
-	if( m_bTransforms[TRANSFORM_NOHANDS] )	return true;
-	if( m_bTransforms[TRANSFORM_NOQUADS] )	return true;
+	// Inserted holds can be really easy on some songs, and scores will be 
+	// highly hold-weighted, and very little tap score weighted.
 	if( m_bTransforms[TRANSFORM_PLANTED] )	return true;
 	if( m_bTransforms[TRANSFORM_TWISTER] )	return true;
+
+	// This makes songs with sparse notes easier.
 	if( m_bTransforms[TRANSFORM_ECHO] )	return true;
 	
 	return false;
 }
 
-bool PlayerOptions::IsHandicapForCourse( Course* pCourse )
+bool PlayerOptions::IsEasierForCourse( Course* pCourse, StepsType st, CourseDifficulty cd )
 {
-	for( unsigned i=0; i<pCourse->m_entries.size(); i++ )
+	vector<Course::Info> ci;
+	pCourse->GetCourseInfo( st, ci, cd );
+
+	for( unsigned i=0; i<ci.size(); i++ )
 	{
-		const CourseEntry& ce = pCourse->m_entries[i];
-		if( ce.pSong && IsHandicapForSong(ce.pSong) )
+		const Course::Info& info = ci[i];
+		if( info.pSong && IsEasierForSongAndSteps(info.pSong, info.pNotes) )
 			return true;
 	}
 	return false;

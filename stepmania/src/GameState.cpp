@@ -897,9 +897,18 @@ void GameState::RestoreSelectedOptions()
 bool GameState::IsDisqualified( PlayerNumber pn )
 {
 	if( GAMESTATE->IsCourseMode() )
-		return GAMESTATE->m_PlayerOptions[pn].IsHandicapForCourse( GAMESTATE->m_pCurCourse );
+	{
+		return GAMESTATE->m_PlayerOptions[pn].IsEasierForCourse( 
+			GAMESTATE->m_pCurCourse, 
+			GAMESTATE->GetCurrentStyleDef()->m_StepsType, 
+			GAMESTATE->m_PreferredCourseDifficulty[pn] );
+	}
 	else
-		return GAMESTATE->m_PlayerOptions[pn].IsHandicapForSong( GAMESTATE->m_pCurSong );
+	{
+		return GAMESTATE->m_PlayerOptions[pn].IsEasierForSongAndSteps( 
+			GAMESTATE->m_pCurSong, 
+			GAMESTATE->m_pCurNotes[pn] );
+	}
 }
 
 void GameState::ResetNoteSkins()

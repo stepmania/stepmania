@@ -12,7 +12,10 @@
 */
 
 class Song;
+class Steps;
 class Course;
+
+#include "GameConstantsAndTypes.h"
 
 struct PlayerOptions
 {
@@ -140,8 +143,8 @@ struct PlayerOptions
 
 
 	// return true if any mods being used will make the song(s) easier
-	bool IsHandicapForSong( Song* pSong );
-	bool IsHandicapForCourse( Course* pCourse );
+	bool IsEasierForSongAndSteps( Song* pSong, Steps* pSteps );
+	bool IsEasierForCourse( Course* pCourse, StepsType st, CourseDifficulty cd );
 };
 
 #endif
