@@ -41,6 +41,9 @@ const CString STYLE_CSS		= "Style.css";
 #define SHOW_STYLE(s)			THEME->GetMetricB("ProfileHtml","ShowStyle"+Capitalize(GAMEMAN->GetStyleDefForStyle(s)->m_szName))
 #define SHOW_DIFFICULTY(dc)		THEME->GetMetricB("ProfileHtml","ShowDifficulty"+DifficultyToString(dc))
 #define SHOW_STEPS_TYPE(st)		THEME->GetMetricB("ProfileHtml","ShowStepsType"+Capitalize(GAMEMAN->NotesTypeToString(st)))
+#define SHOW_HIGH_SCORE_SCORE	THEME->GetMetricB("ProfileHtml","ShowHighScoreScore")
+#define SHOW_HIGH_SCORE_GRADE	THEME->GetMetricB("ProfileHtml","ShowHighScoreGrade")
+#define SHOW_HIGH_SCORE_PERCENT	THEME->GetMetricB("ProfileHtml","ShowHighScorePercent")
 
 #define NEWLINE "\r\n"
 
@@ -642,9 +645,17 @@ void PrintHighScoreListTable( RageFile &f, const HighScoreList& hsl )
 	{
 		const HighScore &hs = hsl.vHighScores[i];
 		CString sName = ssprintf("#%d",i+1);
-		CString sHSName = hs.sName.empty() ? "????" : hs.sName;
-		CString sValue = ssprintf("%s, %s, %i, %.2f%%", sHSName.c_str(), GradeToThemedString(hs.grade).c_str(), hs.iScore, hs.fPercentDP*100);
-		TABLE_LINE2( sName.c_str(), sValue );
+
+		CStringArray asTokens;
+		asTokens.push_back( hs.sName.empty() ? "????" : hs.sName );
+		if( SHOW_HIGH_SCORE_GRADE )
+			asTokens.push_back( GradeToThemedString(hs.grade) );
+		if( SHOW_HIGH_SCORE_SCORE )
+			asTokens.push_back( ssprintf("%i, %.2f%%", hs.iScore) );
+		if( SHOW_HIGH_SCORE_PERCENT )
+			asTokens.push_back( ssprintf("%.2f%%", hs.fPercentDP*100) );
+		
+		TABLE_LINE2( sName, join(", ",asTokens) );
 	}
 	END_TABLE;
 }
