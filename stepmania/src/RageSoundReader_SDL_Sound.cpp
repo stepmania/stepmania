@@ -12,6 +12,10 @@
 #pragma comment(lib, "SDL_sound-1.0.0/lib/sdl_sound_static.lib")
 #endif
 
+#pragma comment(lib, "SDL_sound-1.0.0/lib/ogg_static.lib")
+#pragma comment(lib, "SDL_sound-1.0.0/lib/vorbis_static.lib")
+#pragma comment(lib, "SDL_sound-1.0.0/lib/vorbisfile_static.lib")
+
 #include "RageSoundReader_SDL_Sound.h"
 
 const int channels = 2;
