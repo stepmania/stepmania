@@ -73,8 +73,10 @@ bool DWILoader::LoadFromDWITokens(
 	out.m_NotesType = NOTES_TYPE_INVALID;
 
 	sStepData1.Replace( "\n", "" );
+	sStepData1.Replace( "\r", "" );
 	sStepData1.Replace( " ", "" );
 	sStepData2.Replace( "\n", "" );
+	sStepData2.Replace( "\r", "" );
 	sStepData2.Replace( " ", "" );
 
 	if(		 sMode == "SINGLE" )	out.m_NotesType = NOTES_TYPE_DANCE_SINGLE;

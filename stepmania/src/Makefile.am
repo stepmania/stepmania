@@ -153,6 +153,9 @@ Sound = $(Sound_Null)
 if ALSA
 Sound += $(Sound_ALSA9)
 endif
+if HAVE_OSS
+Sound += $(Sound_OSS)
+endif
 
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
 		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \

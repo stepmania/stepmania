@@ -20,68 +20,6 @@
 # changes.
 
 [Songs]
-
-# ChickenWing XX whatever... is really Chicken Wing
-TitleFrom: Chicken Wing XX
-TitleTo: Chicken Wing
-ArtistTo: Banya
-*
-# SLAM XX is really SLAM... hmmm see a pattern yet?
-TitleFrom: SLAM XX
-TitleTo: SLAM
-ArtistTo: Novasonic
-*
-# Holiday XX is really Holiday
-TitleFrom: Holiday XX
-TitleTo: Holiday
-ArtistTo: F2 Original
-*
-# CanCan XX is really CanCan
-TitleFrom: (CanCan XX)|(Can Can XX)|(Kang Kang XX)|(KangKang XX)|(Kang Kang)|(KangKang)
-TitleTo: Can Can
-ArtistTo: F2 Original
-*
-# Also...
-TitleFrom: cancan
-ArtistFrom: F2 Original
-TitleTo: Can Can
-*
-ArtistFrom: Park Ji Yoon
-ArtistTo: 박지윤
-*
-# Baek Ji Young - Sad Salsa
-ArtistFrom: Baek Ji Young
-#TitleFrom: Sad Salsa
-ArtistTo: 뱩지옝
-*
-# Lee Hyun Do - Pierrot
-#TitleFrom: Pierrot
-#ArtistTo: 이혠도
-*
-# Lee Hyun Do (most probably)
-ArtistFrom: Lee Hyun Do
-ArtistTo: 이혠도
-*
-# Some versions of People Crew - YahWah have the name the wrong way round
-# people aren't sure who the band is or what the song name is.
-# for the record the band is People Crew (http://www.people-crew.co.kr) and
-# the song is Yahwah
-TitleFrom: People Crew
-TitleTo: YahWah
-ArtistTo: People Crew
-*
-TitleFrom: Yah ?Wah
-ArtistTo: People Crew
-*
-TitleFrom: Flower Of Night
-ArtistTo: People Crew
-TitleTo: YahWah
-*
-# Yu Seung Jun - Hope Find You
-TitleFrom: Hope Find You
-ArtistTo: 유승준
-TitleTo: 잦길바래
-*
 # "Candy", "Candy star", or "Candy #".
 TitleFrom: Candy(( star)?|#)
 ArtistFrom: Luv.*
@@ -201,8 +139,10 @@ TitleFrom: (Doors? of Magic)|(Mahou no Tobira)
 TitleTo: 魔法の扉
 SubtitleTo: (スペース&planet;マコのテーマ)
 * 
+# No need to write transliterations for these.
 TitleFrom: Senorita
 TitleTo: SEÑORITA
+DontTransliterate
 * 
 TitleFrom: Senorita\(Speedy Mix\)
 TitleTo: SEÑORITA
@@ -252,7 +192,7 @@ ArtistTo: くにたけみゆき
 ArtistFrom: Kunitake Miyuki
 ArtistTo: くにたけみゆき
 *
-# Dreams Come True:
+# DREAMS COME TRUE:
 TitleFrom: Asa ga Mata Kuru
 TitleTo: 朝がまた来る
 *
@@ -269,26 +209,25 @@ TitleFrom: Ureshii! Tanoshii! Daisuki!
 TitleTo: うれしい! たのしい! 大好き!
 *
 # OHA:
-ArtistFrom: War[ui]jiennu
+ArtistFrom: Warijiennu
 ArtistTo: わるじぇんぬ
 *
-ArtistFrom: Yama-?chan (with|&) Jimusasu ?hikaru
+ArtistFrom: Yamachan with Jimusasuhikaru
 ArtistTo: やまちゃん with ジムナスひかる
 *
 TitleFrom: OHA OHA Sutaataa
 TitleTo: OHA OHA スターター
 *
-ArtistFrom: Yama-?chan (with|&) (Reimondo|Raymond)
+ArtistFrom: Yamachan & Reimondo
 ArtistTo: やまちゃん&レイモンド
 *
-# Optional question mark at the end:
-ArtistFrom: Oha Kids with Imakuni\??
+ArtistFrom: Oha Kids with Imakuni
 ArtistTo: おはおはキッズ with イマクニ
 *
 TitleFrom: Sayonara no Kawari Ni
 TitleTo: サヨナラのかわりに
 *
-ArtistFrom: Oh?ha ?gumi
+ArtistFrom: Ohhagumi
 ArtistTo: おはぐみ
 *
 ArtistFrom: Morikubo Shoutarou
@@ -301,7 +240,7 @@ TitleTo: ゾナパラ
 SubtitleTo: WHY! パラパラ・リミックス
 ArtistTo: ゾベッカ
 *
-# Tokimeki Memorial Dancing Summer Vacation
+#TOKIMEKI MEMORIAL DANCING SUMMER VACATION
 TitleFrom: Anata
 ArtistFrom: Unknown
 TitleTo: あなたに会えて
@@ -333,7 +272,7 @@ SubtitleTo: ~Dancing Summer Mix~
 ArtistTo: 金月 真美
 *
 TitleFrom: Olgore
-ArtistFrom: Unkn?own
+ArtistFrom: Unkown
 TitleTo: ときめきのオルゴーレ
 SubtitleTo: ~Dancing Summer Mix~
 ArtistTo: 金月 真美
@@ -407,35 +346,35 @@ ArtistFrom: (Nobuo Uematsu)|(Uematsu Nobuo)
 ArtistTo: 植松伸夫
 
 [Courses]
-TitleFrom: (.*Kidou)|(Demon Road)|(Road of Oni)|(Oni Michi)|(MAX2 Kidou/Onimichi.*)
+TitleFrom: (Kidou)|(Demon Road)|(Road of Oni)|(Oni Michi)
 TitleTo: 鬼道
 *
-TitleFrom: (.*Kidou 2)|(Demon Road 2)|(Road of Oni 2)|(Oni Michi 2)
+TitleFrom: (Kidou 2)|(Demon Road 2)|(Road of Oni 2)|(Oni Michi 2)
 TitleTo: 鬼道 弐
 *
-TitleFrom: (Love Love)|(Love)|(.*Love Heart)
+TitleFrom: Love
 TitleTo: Love ♡
 *
-TitleFrom: (2 ?MB)|(.*Road of 2 ?MB)
+TitleFrom: Love Love
+TitleTo: Love ♡
+*
+TitleFrom: (2 ?MB)|(Road of 2 ?MB)
 TitleTo: 2MB道
 *
-TitleFrom: .*Dancemania( Oni)?
+TitleFrom: Dancemania( Oni)?
 TitleTo: Dancemania 鬼
 *
-TitleFrom: (TaQ( Oni)?)|(.*Road of TaQ)
+TitleFrom: (TaQ( Oni)?)|(Road of TaQ)
 TitleTo: TaQ 道
 *
-TitleFrom: (Legend Road)|(Road of Legend)|(.*Legendary Road)
+TitleFrom: (Legend Road)|(Road of Legend)
 TitleTo: 伝説道
 *
-TitleFrom: (.*Slow Demon Road)|(Road of Slow)
+TitleFrom: (Slow Demon Road)|(Road of Slow)
 TitleTo: 鬼の遅道
 *
 # "Road of True"?  Maybe "Truth"?
-TitleFrom: (.*True Demon Road)|(Road of Tru.*)
+TitleFrom: (True Demon Road)|(Road of Tru.*)
 TitleTo: 真鬼道
 *
-# DWInsanity's Ayumi Platinum Course
-TitleFrom: Ayumi( Platinum)?
-TitleTo: あゆみ Platinum
-*
+

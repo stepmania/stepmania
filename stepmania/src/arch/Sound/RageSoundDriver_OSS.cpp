@@ -18,11 +18,10 @@
 /* samples */
 const int channels = 2;
 const int samplesize = channels*2;		/* 16-bit */
-const int buffersize_frames = 1024*8;	/* in frames */
-const int buffersize = buffersize_frames * samplesize; /* in bytes */
-
-const int num_chunks = 8;
-
+const int chunk_order = 12;
+const int num_chunks = 4;
+const int buffersize = num_chunks * (1 << (chunk_order-1)); /* in bytes */
+const int buffersize_frames = buffersize/samplesize;	/* in frames */
 
 int RageSound_OSS::MixerThread_start(void *p)
 {
@@ -194,11 +193,14 @@ RageSound_OSS::RageSound_OSS()
 	if(i != channels)
 		RageException::ThrowNonfatal("RageSound_OSS: Wanted %i channels, got %i instead", channels, i);
 		
-	i = 48000;
+	i = 44100;
 	if(ioctl(fd, SOUND_PCM_WRITE_RATE, &i) == -1 )
 		RageException::ThrowNonfatal("RageSound_OSS: ioctl(SOUND_PCM_WRITE_RATE, %i): %s", i, strerror(errno));
 	samplerate = i;
 	LOG->Trace("RageSound_OSS: sample rate %i", samplerate);
+	i = (num_chunks << 16) + chunk_order;
+	if(ioctl(fd, SNDCTL_DSP_SETFRAGMENT, &i) == -1)
+		RageException::ThrowNonfatal("RageSound_OSS: ioctl(SNDCTL_DSP_SETFRAGMENT, %i): %s", i, strerror(errno));
 
 	MixerThreadPtr = SDL_CreateThread(MixerThread_start, this);
 }

@@ -4,6 +4,7 @@
 /* #ifdef HAS_ALSA9 */
 #include "Sound/RageSoundDriver_ALSA9.h"
 /* #endif HAS_ALSA9 */
+#include "Sound/RageSoundDriver_OSS.h"
 
 #endif
 
