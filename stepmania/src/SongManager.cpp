@@ -383,22 +383,22 @@ bool FileRead(RageFile& f, float& fOut)
 
 void FileWrite(RageFile& f, const CString& sWrite)
 {
-	f.PutString(sWrite + "\n");
+	f.PutLine( sWrite );
 }
 
 void FileWrite(RageFile& f, int iWrite)
 {
-	f.PutString(ssprintf("%d\n", iWrite));
+	f.PutLine( ssprintf("%d", iWrite) );
 }
 
 void FileWrite(RageFile& f, size_t uWrite)
 {
-	f.PutString(ssprintf("%lu\n", uWrite));
+	f.PutLine( ssprintf("%lu", uWrite) );
 }
 
 void FileWrite(RageFile& f, float fWrite)
 {
-	f.PutString(ssprintf("%f\n", fWrite));
+	f.PutLine( ssprintf("%f", fWrite) );
 }
 
 #define WARN_AND_RETURN { LOG->Warn("Error parsing file '%s' at %s:%d",fn.c_str(),__FILE__,__LINE__); return; }

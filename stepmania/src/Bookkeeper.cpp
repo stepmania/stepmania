@@ -138,7 +138,7 @@ void Bookkeeper::WriteToDisk()
         for (int i=0; i<DAYS_PER_YEAR; ++i)
             for (int j=0; j<HOURS_PER_DAY; ++j)
                 line += ssprintf( "%d ", m_iCoinsByHourForYear[i][j] );
-		file.PutString( line );
+		file.PutLine( line );
     }
 }
 
