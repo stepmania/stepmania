@@ -125,6 +125,9 @@ public:
 
 	friend RageColor operator * ( float f, const RageColor& other )	{ return other*f; }		// What is this for?  Did I add this?  -Chris
 
+    bool operator == ( const RageColor& other ) const	{ return r==other.r && g==other.g && b==other.b && a==other.a; }
+    bool operator != ( const RageColor& other ) const	{ return !operator==(other); }
+
 	bool FromString( const CString &str )
 	{
 		int result = sscanf( str, "%f,%f,%f,%f", &r, &g, &b, &a );

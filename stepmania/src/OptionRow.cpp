@@ -282,6 +282,11 @@ void OptionRow::LoadExit(
 	bt->SetShadowLength( 0 );
 	bt->SetX( fItemLongRowSharedX );
 	this->AddChild( bt );
+
+	FOREACH_PlayerNumber( p )
+		m_OptionIcons[p].SetHidden( true );
+	m_sprBullet.SetHidden( true );
+	m_textTitle.SetHidden( true );
 }
 
 void OptionRow::PositionUnderlines( bool bShowUnderlines, float fTweenSeconds )
@@ -389,7 +394,7 @@ void OptionRow::UpdateEnabledDisabled(
 	FOREACH_HumanPlayer( p )
 		bThisRowHasFocusByAll &= bThisRowHasFocus[p];
 	
-	const float fDiffuseAlpha = m_bHidden? 0.0f:1.0f;
+	float fDiffuseAlpha = m_bHidden? 0.0f:1.0f;
 
 	/* Don't tween selection colors at all. */
 	RageColor color = bThisRowHasFocusByAny ? colorFocus:colorNoFocus;
@@ -425,7 +430,7 @@ void OptionRow::UpdateEnabledDisabled(
 			else
 				color = colorDisabled;
 
-			float fEnabledDisabledAlpha = bRowEnabled ? 1.0f:0.0f;
+			color.a = (bRowEnabled && !m_bHidden) ? 1.0f:0.0f;
 
 			unsigned item_no = m_RowDef.bOneChoiceForAllPlayers ? 0 : pn;
 
@@ -445,7 +450,7 @@ void OptionRow::UpdateEnabledDisabled(
 					OptionsCursor &ul = *m_Underline[p][item_no];
 					ul.StopTweening();
 					ul.BeginTweening( fTweenSeconds );
-					ul.SetDiffuseAlpha( fEnabledDisabledAlpha );
+					ul.SetDiffuseAlpha( color.a );
 					ul.SetY( m_fY );
 				}
 			}
