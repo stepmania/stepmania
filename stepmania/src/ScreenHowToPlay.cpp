@@ -151,7 +151,7 @@ ScreenHowToPlay::~ScreenHowToPlay()
 	delete m_pPlayer;
 }
 
-void ScreenHowToPlay::Step( float fDelta )
+void ScreenHowToPlay::Step()
 {
 #define ST_LEFT		0x08
 #define ST_DOWN		0x04
@@ -160,13 +160,11 @@ void ScreenHowToPlay::Step( float fDelta )
 #define ST_JUMPLR	(ST_LEFT | ST_RIGHT)
 #define ST_JUMPUD	(ST_UP | ST_DOWN)
 
-	float rate = 1; //GAMESTATE->m_fCurBPS;
-
 	int iStep = 0;
 	int iNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat + 0.6f );
 	int iNumTracks = m_NoteData.GetNumTracks();
 	// if we want to miss from here on out, don't process steps.
-	if((m_iPerfects < m_iNumPerfects) && (m_NoteData.IsThereATapAtRow( iNoteRow )))
+	if( m_iPerfects < m_iNumPerfects && m_NoteData.IsThereATapAtRow( iNoteRow ) )
 	{
 		for( int k=0; k<iNumTracks; k++ )
 			if( m_NoteData.GetTapNote(k, iNoteRow ) == TAP_TAP )
@@ -192,12 +190,6 @@ void ScreenHowToPlay::Step( float fDelta )
 			break;
 		}
 	}
-
-	// if we want to freeze, freeze.
-	if( GAMESTATE->m_bFreeze )
-		rate = 0;
-
-	m_pmCharacter->Update( fDelta * rate );
 }
 
 void ScreenHowToPlay::Update( float fDelta )
@@ -230,7 +222,9 @@ void ScreenHowToPlay::Update( float fDelta )
 
 		if ( m_pmCharacter )
 		{
-			Step( fDelta );
+			Step();
+			if( !GAMESTATE->m_bFreeze )
+				m_pmCharacter->Update( fDelta );
 		}
 	}
 

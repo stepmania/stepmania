@@ -27,7 +27,7 @@ public:
 	virtual void DrawPrimitives();
 
 protected:
-	virtual void Step( float fDelta );
+	virtual void Step();
 	LifeMeterBar*	m_pLifeMeterBar;
 	BGAnimation		m_Overlay;
 	Player*			m_pPlayer;
