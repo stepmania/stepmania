@@ -100,7 +100,7 @@ void RageSoundManager::Update(float delta)
 	 * child sounds first.  Otherwise, another sound might be allocated that has the
 	 * same pointer as an old, deleted parent, and since we use the pointer to the
 	 * parent to determine which sounds share the same parent, it'll confuse GetCopies(). */
-	for( all_sounds_type::iterator iter = all_sounds.begin(); iter != all_sounds.end(); ++iter )
+	for( set<RageSound *>::iterator iter = all_sounds.begin(); iter != all_sounds.end(); ++iter )
 		if( (*iter)->GetOriginal() != (*iter) ) // child
 		{
 			set<RageSound *>::iterator parent = ToDelete.find( (*iter)->GetOriginal() );
@@ -175,7 +175,7 @@ RageSound *RageSoundManager::GetSoundByID( int ID )
 	LockMut( g_SoundManMutex );
 
 	/* Find the sound with p.ID. */
-	all_sounds_type::iterator it;
+	set<RageSound *>::iterator it;
 	for( it = all_sounds.begin(); it != all_sounds.end(); ++it )
 		if( (*it)->GetID() == ID )
 			return *it;
@@ -316,7 +316,7 @@ void RageSoundManager::GetCopies( RageSound &snd, vector<RageSound *> &snds, boo
 
 	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
 	set<RageSound *> sounds;
-	for( all_sounds_type::iterator iter = all_sounds.begin(); iter != all_sounds.end(); ++iter )
+	for( set<RageSound *>::iterator iter = all_sounds.begin(); iter != all_sounds.end(); ++iter )
 		sounds.insert( *iter );
 	g_SoundManMutex.Unlock(); /* finished with all_sounds */
 	

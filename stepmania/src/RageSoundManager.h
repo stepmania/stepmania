@@ -18,8 +18,7 @@ class RageSoundManager
 	set<RageSound *> playing_sounds;
 
 	/* A list of all sounds that currently exist. */
-	typedef set<RageSound *, less<RageSound*> > all_sounds_type;
-	all_sounds_type all_sounds;
+	set<RageSound *> all_sounds;
 	
 	RageSoundDriver *driver;
 
