@@ -25,7 +25,7 @@
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 
-const float DEFAULT_SOUND_VOLUME = 0.50;
+const float DEFAULT_SOUND_VOLUME = 1.00f;
 
 bool g_bAutoRestart = false;
 
