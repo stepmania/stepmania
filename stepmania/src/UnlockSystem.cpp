@@ -77,18 +77,14 @@ bool UnlockSystem::CourseIsLocked( const Course *course )
 bool UnlockSystem::SongIsLocked( const Song *song )
 {
 	SongEntry *p = FindSong( song );
+	if( p == NULL )
+		return false;
 
-	CString tmp;
+	p->updateLocked();
 
-	if (p)
-	{
-		p->updateLocked();
-
-		if (!p->isLocked) tmp = "un";
-		LOG->Trace( "current status: %slocked", tmp.c_str() );
-	}
+	LOG->Trace( "current status: %slocked", p->isLocked? "":"un" );
 	
-	return (p != NULL) && (p->isLocked);
+	return p->isLocked;
 }
 
 bool UnlockSystem::SongIsRoulette( const Song *song )
@@ -107,9 +103,8 @@ bool UnlockSystem::SongIsRoulette( const Song *song )
 
 SongEntry *UnlockSystem::FindSong( CString songname )
 {
-	songname.MakeUpper();
-	for(int i = 0; i < m_SongEntries.size(); i++)
-		if (songname == m_SongEntries[i].m_sSongName)
+	for(unsigned i = 0; i < m_SongEntries.size(); i++)
+		if (!songname.CompareNoCase(m_SongEntries[i].m_sSongName))
 			return &m_SongEntries[i];
 
 	return NULL;
@@ -119,12 +114,9 @@ SongEntry *UnlockSystem::FindCourse( const Course *pCourse )
 {
 	CString CourseName = pCourse->m_sTranslitName;
 
-	CourseName.MakeUpper();
-
 	for(unsigned i = 0; i < m_SongEntries.size(); i++)
 	{
-
-		if( CourseName == m_SongEntries[i].m_sSongName )
+		if( !CourseName.CompareNoCase(m_SongEntries[i].m_sSongName) )
 			return &m_SongEntries[i];
 	}
 
