@@ -71,8 +71,8 @@ ScreenSelectMaxType2::ScreenSelectMaxType2() : ScreenSelect( "ScreenSelectMaxTyp
 
 		for( unsigned choice=0; choice<m_ModeChoices[page].size(); choice++ )
 		{
-			CString sHeaderFile = ssprintf( "select difficulty header %s", m_ModeChoices[page][choice].name );
-			CString sPictureFile = ssprintf( "select difficulty picture %s", m_ModeChoices[page][choice].name );
+			CString sHeaderFile = ssprintf( "ScreenSelectMaxType2 header %s", m_ModeChoices[page][choice].name );
+			CString sPictureFile = ssprintf( "ScreenSelectMaxType2 picture %s", m_ModeChoices[page][choice].name );
 
 			m_sprPicture[page][choice].Load( THEME->GetPathTo("Graphics",sPictureFile) );
 			m_framePages.AddChild( &m_sprPicture[page][choice] );
@@ -82,10 +82,10 @@ ScreenSelectMaxType2::ScreenSelectMaxType2() : ScreenSelect( "ScreenSelectMaxTyp
 		}
 
 		
-		m_sprMore[page].Load( THEME->GetPathTo("Graphics", ssprintf("select difficulty more page%d",page+1) ) );
+		m_sprMore[page].Load( THEME->GetPathTo("Graphics", ssprintf("ScreenSelectMaxType2 more page%d",page+1) ) );
 		m_framePages.AddChild( &m_sprMore[page] );
 
-		m_sprExplanation[page].Load( THEME->GetPathTo("Graphics", "select difficulty explanation") );
+		m_sprExplanation[page].Load( THEME->GetPathTo("Graphics", "ScreenSelectMaxType2 explanation") );
 		m_sprExplanation[page].StopAnimating();
 		m_sprExplanation[page].SetState( page );
 		m_framePages.AddChild( &m_sprExplanation[page] );
@@ -100,18 +100,18 @@ ScreenSelectMaxType2::ScreenSelectMaxType2() : ScreenSelect( "ScreenSelectMaxTyp
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
-		m_sprShadow[p].Load( THEME->GetPathTo("Graphics", "select difficulty shadow 2x1") );
+		m_sprShadow[p].Load( THEME->GetPathTo("Graphics", "ScreenSelectMaxType2 shadow 2x1") );
 		m_sprShadow[p].StopAnimating();
 		m_sprShadow[p].SetState( p );
 		m_sprShadow[p].SetDiffuse( RageColor(0,0,0,0.6f) );
 		m_framePages.AddChild( &m_sprShadow[p] );
 
-		m_sprCursor[p].Load( THEME->GetPathTo("Graphics", "select difficulty cursor 2x1") );
+		m_sprCursor[p].Load( THEME->GetPathTo("Graphics", "ScreenSelectMaxType2 cursor 2x1") );
 		m_sprCursor[p].StopAnimating();
 		m_sprCursor[p].SetState( p );
 		m_framePages.AddChild( &m_sprCursor[p] );
 
-		m_sprOK[p].Load( THEME->GetPathTo("Graphics", "select difficulty ok 2x1") );
+		m_sprOK[p].Load( THEME->GetPathTo("Graphics", "ScreenSelectMaxType2 ok 2x1") );
 		m_sprOK[p].SetState( p );
 		m_sprOK[p].StopAnimating();
 		m_sprOK[p].SetDiffuse( RageColor(1,1,1,0) );
@@ -120,9 +120,9 @@ ScreenSelectMaxType2::ScreenSelectMaxType2() : ScreenSelect( "ScreenSelectMaxTyp
 
 	this->AddChild( &m_framePages );
 	
-	m_soundChange.Load( THEME->GetPathTo("Sounds", "select difficulty change") );
+	m_soundChange.Load( THEME->GetPathTo("Sounds", "ScreenSelectMaxType2 change") );
 	m_soundSelect.Load( THEME->GetPathTo("Sounds", "menu start") );
-	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
+	m_soundDifficult.Load( ANNOUNCER->GetPathTo("ScreenSelectMaxType2 challenge") );
 
 	m_fLockInputTime = LOCK_INPUT_SECONDS;
 
@@ -137,11 +137,13 @@ void ScreenSelectMaxType2::Update( float fDelta )
 
 void ScreenSelectMaxType2::HandleScreenMessage( const ScreenMessage SM )
 {
+	ScreenSelect::HandleScreenMessage( SM );
+
 	switch( SM )
 	{
 	case SM_BeginFadingOut:
 		TweenOffScreen();
-		SCREENMAN->SendMessageToTopScreen( SM_BeginFadingOut, SLEEP_AFTER_CHOICE_SECONDS );	// nofify parent that we're finished
+		SCREENMAN->SendMessageToTopScreen( SM_AllDoneChoosing, SLEEP_AFTER_CHOICE_SECONDS );	// nofify parent that we're finished
 		break;
 	}
 }
@@ -287,7 +289,7 @@ void ScreenSelectMaxType2::MenuStart( PlayerNumber pn )
 		m_sprMore[page].FadeOff( 0, "fade", 0.5f );
 
 	const ModeChoice& mc = m_ModeChoices[m_CurrentPage][m_iChoiceOnPage[pn]];
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("select difficulty comment %s",mc.name)) );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectMaxType2 comment %s",mc.name)) );
 
 	/* XXX: This will play the same announcer twice at the same time; that'll probably
 	 * result in an echo effect. */
@@ -318,7 +320,7 @@ void ScreenSelectMaxType2::MenuStart( PlayerNumber pn )
 		if( GAMESTATE->IsPlayerEnabled((PlayerNumber)p)  &&  m_bChosen[p] == false )
 			return;
 	}
-	this->SendScreenMessage( SM_AllDoneChoosing, SLEEP_AFTER_CHOICE_SECONDS );	// tell our owner it's time to move on
+	this->SendScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_CHOICE_SECONDS );	// tell our owner it's time to move on
 }
 
 
