@@ -41,7 +41,11 @@ private:
 
 	/* The time the movie is actually at: */
 	float m_Rate;
-	bool m_ImageWaiting;
+	enum {
+		FRAME_NONE, /* no frame available; call GetFrame to get one */
+		FRAME_DECODED, /* frame decoded; call ConvertFrame */
+		FRAME_WAITING /* frame converted and waiting to be uploaded */
+	} m_ImageWaiting;
 	bool m_bLoop;
 	bool m_bWantRewind;
 	bool m_bThreaded;
@@ -83,7 +87,11 @@ private:
 	void DestroyTexture();
 	void StartThread();
 	void StopThread();
-	bool RunDecode();
+
+	void UpdateTimer();
+	bool DecodeFrame();
+	float CheckFrameTime();
+	void DiscardFrame();
 };
 
 /*

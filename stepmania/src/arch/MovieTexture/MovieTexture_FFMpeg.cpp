@@ -384,6 +384,8 @@ int FFMpeg_Helper::DecodePacket()
 
 void MovieTexture_FFMpeg::ConvertFrame()
 {
+	RAGE_ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting ) );
+
 	avcodec::AVPicture pict;
 	pict.data[0] = (unsigned char *)m_img->pixels;
 	pict.linesize[0] = m_img->pitch;
@@ -391,6 +393,8 @@ void MovieTexture_FFMpeg::ConvertFrame()
 	avcodec::img_convert(&pict, AVPixelFormats[m_AVTexfmt].pf,
 			(avcodec::AVPicture *) &decoder->frame, decoder->m_stream->codec.pix_fmt, 
 			decoder->m_stream->codec.width, decoder->m_stream->codec.height);
+
+	m_ImageWaiting = FRAME_WAITING;
 }
 
 static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
@@ -418,7 +422,7 @@ try {
 	m_bLoop = true;
     m_State = DECODER_QUIT; /* it's quit until we call StartThread */
 	m_img = NULL;
-	m_ImageWaiting = false;
+	m_ImageWaiting = FRAME_NONE;
 	m_Rate = 1;
 	m_bWantRewind = false;
 	m_Clock = 0;
@@ -440,6 +444,7 @@ try {
 		/* There's nothing there. */
 		RageException::ThrowNonfatal( "%s: EOF getting first frame", GetID().filename.c_str() );
 	}
+	m_ImageWaiting = FRAME_DECODED;
 
 	CreateTexture();
 	LOG->Trace("Resolution: %ix%i (%ix%i, %ix%i)",
@@ -715,24 +720,26 @@ void MovieTexture_FFMpeg::CreateTexture()
     m_uTexHandle = DISPLAY->CreateTexture( pixfmt, m_img, false );
 }
 
-/* Handle decoding for a frame.  Return true if a frame was decoded and is waiting
- * to be handled. */
-bool MovieTexture_FFMpeg::RunDecode()
+void MovieTexture_FFMpeg::UpdateTimer()
 {
-	if( m_State == PAUSE_DECODER )
-	{
-		/* The video isn't running; skip time. */
-		m_Timer.GetDeltaTime();
-		return false;
-	}
+	/* Always update the timer, so we don't skip ahead when coming out of pause. */
+	const float fDeltaTime = m_Timer.GetDeltaTime();
+
+	/* If we're playing, update the clock. */
+	if( m_State == PLAYING )
+		m_Clock += fDeltaTime * m_Rate;
+}
+
+/* Handle decoding for a frame.  Return true if a frame was decoded, false if not
+ * (due to pause, EOF, etc).  If true is returned, we'll be in FRAME_DECODED. */
+bool MovieTexture_FFMpeg::DecodeFrame()
+{
+	RAGE_ASSERT_M( m_ImageWaiting == FRAME_NONE, ssprintf("%i", m_ImageWaiting) );
 
 	if( m_State != PLAYING )
 		return false;
 	CHECKPOINT;
 
-	/* We're playing.  Update the clock. */
-	m_Clock += m_Timer.GetDeltaTime() * m_Rate;
-	
 	/* Read a frame. */
 	int ret = decoder->GetFrame();
 	if( ret == -1 )
@@ -765,64 +772,72 @@ bool MovieTexture_FFMpeg::RunDecode()
 	}
 
 	/* We got a frame. */
+	m_ImageWaiting = FRAME_DECODED;
+
+	return true;
+}
+
+/*
+ * Call when m_ImageWaiting == FRAME_DECODED.
+ * Returns:
+ *  == 0 if the currently decoded frame is ready to be displayed
+ *   > 0 (seconds) if it's not yet time to display;
+ *  == -1 if we're behind and the frame should be skipped
+ */
+float MovieTexture_FFMpeg::CheckFrameTime()
+{
+	RAGE_ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting) );
+
 	const float Offset = decoder->GetTimestamp() - m_Clock;
 
 	/* If we're ahead, we're decoding too fast; delay. */
 	if( Offset > 0 )
 	{
-		SDL_Delay( int(1000*Offset) );
 		if( m_FrameSkipMode )
 		{
 			/* We're caught up; stop skipping frames. */
 			LOG->Trace( "stopped skipping frames" );
 			m_FrameSkipMode = false;
 		}
-	} else {
-		/* We're behind by -Offset seconds.  
-		 *
-		 * If we're just slightly behind, don't worry about it; we'll simply
-		 * not sleep, so we'll move as fast as we can to catch up.
-		 *
-		 * If we're far behind, we're short on CPU and we need to do something
-		 * about it.  We have at least two options:
-		 *
-		 * 1: We can skip texture updates.  This is a big bottleneck on many
-		 * systems.
-		 *
-		 * 2: If that's not enough, we can play with hurry_up.
-		 *
-		 * If we hit a threshold, start skipping frames via #1.  If we do that,
-		 * don't stop once we hit the threshold; keep doing it until we're fully
-		 * caught up.
-		 *
-		 * I'm not sure when we should do #2.  Also, we should try to notice if
-		 * we simply don't have enough CPU for the video; it's better to just
-		 * stay in frame skip mode than to enter and exit it constantly, but we
-		 * don't want to do that due to a single timing glitch.
-		 *
-		 * XXX: is there a setting for hurry_up we can use when we're going to ignore
-		 * a frame to make it take less time?
-		 */
-		const float FrameSkipThreshold = 0.5f;
+		return Offset;
+	}
 
-		if( -Offset >= FrameSkipThreshold && !m_FrameSkipMode )
-		{
-			LOG->Trace( "(%s) Time is %f, and the movie is at %f.  Entering frame skip mode.",
-				GetID().filename.c_str(), m_Clock, decoder->GetTimestamp());
-			m_FrameSkipMode = true;
-		}
+	/*
+	 * We're behind by -Offset seconds.  
+	 *
+	 * If we're just slightly behind, don't worry about it; we'll simply
+	 * not sleep, so we'll move as fast as we can to catch up.
+	 *
+	 * If we're far behind, we're short on CPU.  Skip texture updates; this
+	 * is a big bottleneck on many systems.
+	 *
+	 * If we hit a threshold, start skipping frames via #1.  If we do that,
+	 * don't stop once we hit the threshold; keep doing it until we're fully
+	 * caught up.
+	 *
+	 * We should try to notice if we simply don't have enough CPU for the video;
+	 * it's better to just stay in frame skip mode than to enter and exit it
+	 * constantly, but we don't want to do that due to a single timing glitch.
+	 */
+	const float FrameSkipThreshold = 0.5f;
+
+	if( -Offset >= FrameSkipThreshold && !m_FrameSkipMode )
+	{
+		LOG->Trace( "(%s) Time is %f, and the movie is at %f.  Entering frame skip mode.",
+			GetID().filename.c_str(), m_Clock, decoder->GetTimestamp());
+		m_FrameSkipMode = true;
 	}
 
 	if( m_FrameSkipMode && decoder->m_stream->codec.frame_number % 2 )
-		return false; /* skip */
+		return -1; /* skip */
 	
-	/* Convert it. */
-	ConvertFrame();
+	return 0;
+}
 
-	/* Signal the main thread to update the image on the next Update. */
-	m_ImageWaiting=true;
-
-	return true;
+void MovieTexture_FFMpeg::DiscardFrame()
+{
+	RAGE_ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting) );
+	m_ImageWaiting = FRAME_NONE;
 }
 
 void MovieTexture_FFMpeg::DecoderThread()
@@ -844,7 +859,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 	while( m_State != DECODER_QUIT )
 	{
-		bool bGotFrame = RunDecode();
+		UpdateTimer();
 
 		if( m_State == PAUSE_DECODER )
 		{
@@ -853,8 +868,30 @@ void MovieTexture_FFMpeg::DecoderThread()
 			continue;
 		}
 
-		if( !bGotFrame )
+		if( m_ImageWaiting == FRAME_NONE )
+			DecodeFrame();
+
+		if( m_ImageWaiting != FRAME_DECODED )
 			continue;
+
+		const float fTime = CheckFrameTime();
+		if( fTime == -1 )
+		{
+			DiscardFrame();
+			continue;
+		}
+
+		if( fTime > 0 )
+			SDL_Delay( int(1000*fTime) );
+
+		{
+			int n = SDL_SemValue( m_BufferFinished );
+			ASSERT_M( n == 0, ssprintf("%i", n) );
+		}
+		ConvertFrame();
+
+		/* We just went into FRAME_WAITING.  Don't actually check; the main thread
+		 * will change us back to FRAME_NONE without locking, and poke m_BufferFinished. */
 
 		/* SDL_SemWait does not properly retry sem_wait in Linux on EINTR. */
 		int ret;
@@ -869,7 +906,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 		ASSERT_M( ret != -1, ssprintf("%s, %s", SDL_GetError(), strerror(errno)) );
 
 		/* If the frame wasn't used, then we must be shutting down. */
-		ASSERT_M( !m_ImageWaiting || m_State == DECODER_QUIT, ssprintf("%i", m_State) );
+		ASSERT_M( m_ImageWaiting == FRAME_NONE || m_State == DECODER_QUIT, ssprintf("%i, %i", m_ImageWaiting, m_State) );
 	}
 	CHECKPOINT;
 }
@@ -877,24 +914,45 @@ void MovieTexture_FFMpeg::DecoderThread()
 void MovieTexture_FFMpeg::Update(float fDeltaTime)
 {
 	if( !m_bThreaded )
-		RunDecode();
+	{
+		UpdateTimer();
+
+		/* If we don't have a frame decoded, decode one. */
+		if( m_ImageWaiting == FRAME_NONE )
+			DecodeFrame();
+
+		/* If we have a frame decoded, see if it's time to display it. */
+		if( m_ImageWaiting == FRAME_DECODED )
+		{
+			float fTime = CheckFrameTime();
+			if( fTime > 0 )
+				return;
+			else if( fTime == -1 )
+				DiscardFrame();
+			else
+				ConvertFrame();
+		}
+	}
 
 	/* Note that if there's an image waiting, we *must* signal m_BufferFinished, or
 	 * the decoder thread may sit around waiting for it, even though Pause and Play
 	 * calls, causing the clock to keep running. */
-	if( !m_ImageWaiting )
+	if( m_ImageWaiting != FRAME_WAITING )
 		return;
-
 	CHECKPOINT;
 
 	UpdateFrame();
-	m_ImageWaiting = false;
+	
 	if( m_bThreaded )
 		SDL_SemPost(m_BufferFinished);
 }
 
+/* Call from the main thread when m_ImageWaiting == FRAME_WAITING to update the
+ * texture.  Sets FRAME_NONE.  Does not signal m_BufferFinished. */
 void MovieTexture_FFMpeg::UpdateFrame()
 {
+	ASSERT_M( m_ImageWaiting == FRAME_WAITING, ssprintf("%i", m_ImageWaiting) );
+
     /* Just in case we were invalidated: */
     CreateTexture();
 
@@ -905,6 +963,8 @@ void MovieTexture_FFMpeg::UpdateFrame()
         0, 0,
         m_iImageWidth, m_iImageHeight );
     CHECKPOINT;
+
+	m_ImageWaiting = FRAME_NONE;
 }
 
 void MovieTexture_FFMpeg::Reload()
@@ -936,7 +996,7 @@ void MovieTexture_FFMpeg::StopThread()
 	m_DecoderThread.Wait();
 	CHECKPOINT;
 	
-	m_ImageWaiting = false;
+	m_ImageWaiting = FRAME_NONE;
 
 	/* Clear the above post, if the thread didn't. */
 	SDL_SemTryWait(m_BufferFinished);
