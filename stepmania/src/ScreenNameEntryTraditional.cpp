@@ -324,7 +324,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 			CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[p];
-			Trail* pTrail = pCourse->GetTrail( st, cd );
+			Trail* pTrail = pCourse ? pCourse->GetTrail( st, cd ) : NULL;
 
 			int iHighScoreIndex = -1;	// -1 means "out of ranking"
 			Grade grade = ss.GetGrade( p );
