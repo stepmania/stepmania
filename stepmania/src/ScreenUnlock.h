@@ -25,4 +25,7 @@ public:
 protected:
 	BitmapText PointsUntilNextUnlock;
 	Sprite Unlocks[NUM_UNLOCKS];       // support 30 unlocks right now
+	BitmapText item[NUM_UNLOCKS];      // for scrolling text
+
+	void BreakLine(CString& line);			// used in scrollingtext
 };
