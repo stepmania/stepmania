@@ -3,7 +3,12 @@
 #include "RageUtil.h"
 #include "GameState.h"
 #include "song.h"
+#include "ActorUtil.h"
+#include "XmlFile.h"
+#include "RageLog.h"
 
+REGISTER_ACTOR_CLASS(MeterDisplay)
+REGISTER_ACTOR_CLASS(SongMeterDisplay)
 
 MeterDisplay::MeterDisplay()
 {
@@ -16,12 +21,44 @@ void MeterDisplay::Load( CString sStreamPath, float fStreamWidth, CString sTipPa
 	m_sprStream.Load( sStreamPath );
 	m_sprStream.SetZoomX( fStreamWidth / m_sprStream.GetUnzoomedWidth() );
 
-	m_sprTip.Load( sTipPath );
-
 	this->AddChild( &m_sprStream );
 	this->AddChild( m_sprTip );
 
+	m_sprTip.Load( sTipPath );
+
 	SetPercent( 0.5f );
+}
+
+void MeterDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
+{
+	LOG->Trace( "MeterDisplay::LoadFromNode(%s,node)", sDir.c_str() );
+
+	if( !pNode->GetAttrValue( "StreamWidth", m_fStreamWidth ) )
+		RageException::Throw( "MeterDisplay in " + sDir + " missing StreamWidth attribute" );
+
+	{
+		CString sStreamPath;
+		if( !pNode->GetAttrValue( "StreamPath", sStreamPath ) )
+			RageException::Throw( "MeterDisplay in " + sDir + " missing StreamPath attribute" );
+
+		sStreamPath = sDir + sStreamPath;
+		ActorUtil::ResolvePath( sStreamPath, sDir );
+
+		m_sprStream.Load( sStreamPath );
+		m_sprStream.SetZoomX( m_fStreamWidth / m_sprStream.GetUnzoomedWidth() );
+		this->AddChild( &m_sprStream );
+	}
+
+	const XNode* pChild = pNode->GetChild( "Tip" );
+	if( pChild != NULL )
+	{
+		m_sprTip.LoadFromNode( sDir, pChild );
+		this->AddChild( m_sprTip );
+	}
+
+	SetPercent( 0.5f );
+
+	ActorFrame::LoadFromNode( sDir, pNode );
 }
 
 void MeterDisplay::SetPercent( float fPercent )
