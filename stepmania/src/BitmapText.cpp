@@ -310,6 +310,7 @@ void BitmapText::SetText( CString sText, CString sAlternateText, int iWrapWidthP
 	//
 	m_wTextLines.clear();
 
+	// TODO: Don't handle line breaks differently in wrapping and non-wrapping mode.
 	if( iWrapWidthPixels == -1 )
 	{
 		split( CStringToWstring(sText), L"\n", m_wTextLines, false );
