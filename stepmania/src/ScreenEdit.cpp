@@ -405,8 +405,12 @@ void ScreenEdit::PlayPreviewMusic()
 
 void ScreenEdit::Update( float fDeltaTime )
 {
-	if( m_soundMusic.IsPlaying())
-		GAMESTATE->UpdateSongPosition( m_soundMusic.GetPositionSeconds(), GAMESTATE->m_pCurSong->m_Timing );
+	if( m_soundMusic.IsPlaying() )
+	{
+		RageTimer tm;
+		const float fSeconds = m_soundMusic.GetPositionSeconds( NULL, &tm );
+		GAMESTATE->UpdateSongPosition( fSeconds, GAMESTATE->m_pCurSong->m_Timing, tm );
+	}
 
 	if( m_EditMode == MODE_RECORDING  )	
 	{
