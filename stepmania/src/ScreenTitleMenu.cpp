@@ -114,15 +114,11 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	 * so that the right m_aGameCommands will show */
 	if( ScreenAttract::ChangeCoinModeInput( DeviceI, type, GameI, MenuI, StyleI ) )
 	{
-		SCREENMAN->SetNewScreen( m_sName );
+		SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
 		return;
 	}
 
 	if( m_In.IsTransitioning() || m_Back.IsTransitioning() ) /* not m_Out */
-		return;
-
-
-	if( PREFSMAN->GetCoinMode() != COIN_HOME )
 		return;
 	
 	//

@@ -50,7 +50,7 @@ void ScreenEditCoursesMenu::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_GoToPrevScreen:
 	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+		SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
 		break;
 	}
 }

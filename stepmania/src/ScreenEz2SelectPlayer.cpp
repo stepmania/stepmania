@@ -148,7 +148,7 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToPrevScreen:
 		SOUND->StopMusic();
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+		SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
 		break;
 	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );

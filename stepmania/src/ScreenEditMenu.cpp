@@ -51,7 +51,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		m_Selector.RefreshNotes();
 		break;
 	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+		SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
 		break;
 	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( "ScreenEdit" );

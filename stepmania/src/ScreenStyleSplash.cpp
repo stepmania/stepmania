@@ -64,7 +64,7 @@ void ScreenStyleSplash::HandleScreenMessage( const ScreenMessage SM )
 	
 		break;
 	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+		SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
 		break;
 	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );

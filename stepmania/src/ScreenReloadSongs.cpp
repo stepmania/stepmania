@@ -74,7 +74,7 @@ void ScreenReloadSongs::Update( float fDeltaTime )
 
 	SONGMAN->Reload( m_LoadingWindow );
 	UNLOCKMAN->UpdateSongs();
-	SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+	SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
 }
 
 /*

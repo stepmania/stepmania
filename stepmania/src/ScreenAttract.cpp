@@ -88,8 +88,8 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 					SCREENMAN->PlayCoinSound();
 				SCREENMAN->SendMessageToTopScreen( SM_StopMusic );
 				usleep( (int)(JOIN_PAUSE_SECONDS*1000*1000) );	// do a little pause, like the arcade does
-				LOG->Trace("ScreenAttract::AttractInput: go to ScreenTitleMenu" );
-				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+				LOG->Trace("ScreenAttract::AttractInput: go to ScreenTitleBranch" );
+				SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
 				break;
 			default:
 				ASSERT(0);

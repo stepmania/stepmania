@@ -31,7 +31,7 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 
 
 //
-// Defines specific to GameScreenTitleMenu
+// Defines specific to ScreenEdit
 //
 
 #define DEBUG_X			(SCREEN_LEFT + 10)

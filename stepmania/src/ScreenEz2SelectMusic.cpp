@@ -373,7 +373,7 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+		SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
 		break;
 	case SM_GoToNextScreen:
 		if( m_bGoToOptions )
@@ -387,7 +387,7 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		break;
 	case SM_NoSongs:
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+		SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
 	break;
 	}
 

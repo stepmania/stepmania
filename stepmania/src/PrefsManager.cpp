@@ -849,8 +849,8 @@ Premium	PrefsManager::GetPremium()
 
 
 #include "LuaFunctions.h"
-LuaFunction_NoArgs( CoinMode,	PREFSMAN->m_CoinMode )
-LuaFunction_NoArgs( Premium,	PREFSMAN->m_Premium )
+LuaFunction_NoArgs( CoinMode,	CoinModeToString(PREFSMAN->m_CoinMode) )
+LuaFunction_NoArgs( Premium,	PremiumToString(PREFSMAN->m_Premium) )
 
 
 /*
