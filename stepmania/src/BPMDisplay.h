@@ -9,6 +9,7 @@
 #include "BitmapText.h"
 #include "Quad.h"
 #include "ActorUtil.h"
+#include "ThemeMetric.h"
 class Song;
 class Course;
 
@@ -29,6 +30,13 @@ protected:
 	float GetActiveBPM() const;
 	void SetBPMRange( const DisplayBpms &bpms );
 
+	ThemeMetric<RageColor> NORMAL_COLOR;
+	ThemeMetric<RageColor> CHANGE_COLOR;
+	ThemeMetric<RageColor> EXTRA_COLOR;
+	ThemeMetric<bool> CYCLE;
+	ThemeMetric<CString> SEPARATOR;
+	ThemeMetric<CString> NO_BPM_TEXT;
+	
 	BitmapText m_textBPM;
 	AutoActor m_sprLabel;
 

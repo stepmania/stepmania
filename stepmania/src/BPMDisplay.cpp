@@ -6,16 +6,14 @@
 #include "GameState.h"
 #include "Course.h"
 #include "Style.h"
-#include "ThemeManager.h"
 
-#define NORMAL_COLOR		THEME->GetMetricC(m_sName,"NormalColor")
-#define CHANGE_COLOR		THEME->GetMetricC(m_sName,"ChangeColor")
-#define EXTRA_COLOR			THEME->GetMetricC(m_sName,"ExtraColor")
-#define CYCLE				THEME->GetMetricB(m_sName,"Cycle")
-#define SEPARATOR			THEME->GetMetric (m_sName,"Separator")
-#define NO_BPM_TEXT			THEME->GetMetric (m_sName,"NoBPMText")
-
-BPMDisplay::BPMDisplay()
+BPMDisplay::BPMDisplay():
+	NORMAL_COLOR( m_sName, "NormalColor"),
+	CHANGE_COLOR( m_sName, "ChangeColor" ),
+	EXTRA_COLOR( m_sName, "ExtraColor" ),
+	CYCLE( m_sName, "Cycle" ),
+	SEPARATOR( m_sName, "Separator" ),
+	NO_BPM_TEXT( m_sName, "NoBPMText" )
 {
 	m_fBPMFrom = m_fBPMTo = 0;
 	m_iCurrentBPM = 0;
@@ -110,7 +108,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 				m_textBPM.SetText( ssprintf("%i", MinBPM) );
 		}
 		else
-			m_textBPM.SetText( ssprintf("%i%s%i", MinBPM, SEPARATOR.c_str(), MaxBPM) );
+			m_textBPM.SetText( ssprintf("%i%s%i", MinBPM, SEPARATOR.GetValue().c_str(), MaxBPM) );
 	} else {
 		m_BPMS.clear();
 		for( unsigned i = 0; i < BPMS.size(); ++i )
