@@ -576,11 +576,16 @@ void Player::HandleTapRowScore( unsigned row )
 
 	ASSERT(iNumTapsInRow > 0);
 
-#ifndef DEBUG
-	// don't accumulate points if AutoPlay is on.
-	if( GAMESTATE->m_PlayerController[m_PlayerNumber] == CPU_AUTOPLAY  &&  !GAMESTATE->m_bDemonstrationOrJukebox )
-		return;
+	bool NoCheating = true;
+#ifdef DEBUG
+	bool NoCheating = false;
 #endif //DEBUG
+
+	if(GAMESTATE->m_bDemonstrationOrJukebox)
+		NoCheating = false;
+	// don't accumulate points if AutoPlay is on.
+	if( NoCheating && GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_CPU )
+		return;
 
 	if(m_pScoreKeeper)
 		m_pScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, m_pInventory);
@@ -597,11 +602,16 @@ void Player::HandleTapRowScore( unsigned row )
 
 void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 {
-#ifndef DEBUG
-	// don't accumulate points if AutoPlay is on.
-	if( GAMESTATE->m_PlayerController[m_PlayerNumber] == CPU_AUTOPLAY  &&  !GAMESTATE->m_bDemonstrationOrJukebox )
-		return;
+	bool NoCheating = true;
+#ifdef DEBUG
+	bool NoCheating = false;
 #endif //DEBUG
+
+	if(GAMESTATE->m_bDemonstrationOrJukebox)
+		NoCheating = false;
+	// don't accumulate points if AutoPlay is on.
+	if( NoCheating && GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_CPU )
+		return;
 
 	if(m_pScoreKeeper)
 		m_pScoreKeeper->HandleHoldScore(holdScore, tapScore);
