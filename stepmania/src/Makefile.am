@@ -86,7 +86,8 @@ Sound += arch/Sound/RageSoundDriver_OSS.cpp arch/Sound/RageSoundDriver_OSS.h
 endif
 
 if HAVE_ALSA
-Sound += arch/Sound/RageSoundDriver_ALSA9.cpp arch/Sound/RageSoundDriver_ALSA9.h
+Sound += arch/Sound/RageSoundDriver_ALSA9.cpp arch/Sound/RageSoundDriver_ALSA9.h \
+	 arch/Sound/ALSA9Helpers.cpp arch/Sound/ALSA9Helpers.h
 endif
 
 ArchHooks = arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
