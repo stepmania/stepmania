@@ -261,8 +261,8 @@ void RageBitmapTexture::Create()
 	GetResolutionFromFileName(actualID.filename, m_iSourceWidth, m_iSourceHeight);
 
 
-	CString props = " ";
-	props += PixelFormatToString( pixfmt );
+	CString props;
+	props += PixelFormatToString( pixfmt ) + " ";
 	if(actualID.iAlphaBits == 0) props += "opaque ";
 	if(actualID.iAlphaBits == 1) props += "matte ";
 	if(actualID.iTransparencyOnly) props += "mask ";
