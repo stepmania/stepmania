@@ -120,6 +120,8 @@ try {
 	lua_atpanic( L, LuaPanic );
 	
 	luaopen_base( L );
+	luaopen_math( L );
+	luaopen_string( L );
 	lua_settop(L, 0); // luaopen_* pushes stuff onto the stack that we don't need
 
 	Lua::RegisterFunctions( L );
