@@ -544,6 +544,10 @@ float RageFastSin( float x )
 		}
 	}
 
+	// optimization
+	if( x == 0 )
+		return 0;
+
 	float fIndex = SCALE( x, 0.0f, PI*2, 0, ARRAYSIZE(table)*2 );
 
 	// lerp using samples from the table
@@ -565,8 +569,8 @@ float RageFastSin( float x )
 
 		if( iSample >= int(ARRAYSIZE(table)) )	// PI <= iSample < 2*PI
 		{
-			// sin(x) == -sin(2*PI-x)
-			iSample = ARRAYSIZE(table)*2 - 1 - iSample;	// mirror about ARRAYSIZE(table)
+			// sin(x) == -sin(PI+x)
+			iSample -= ARRAYSIZE(table);
 			DEBUG_ASSERT( iSample>=0 && iSample<ARRAYSIZE(table) );
 			fVal = -table[iSample];
 		}
