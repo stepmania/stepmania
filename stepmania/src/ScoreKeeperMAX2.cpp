@@ -105,9 +105,9 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 		}
 		else
 		{
-			/* When we have lots of songs, the scale above has two problems.  First,
-			 * it biases too much: in a course with 50 songs, the first song is worth
-			 * 80k, the last 4mil, which is too much of a difference.
+			/* When we have lots of songs, the scale above biases too much: in a
+			 * course with 50 songs, the first song is worth 80k, the last 4mil, which
+			 * is too much of a difference.
 			 *
 			 * With this, each song in a 50-song course will be worth 2mil. */
 			m_iMaxPossiblePoints = 100000000 / numSongsInCourse;
