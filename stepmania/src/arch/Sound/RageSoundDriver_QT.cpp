@@ -112,7 +112,6 @@ void RageSound_QT::GetData(SndChannel *chan, SndCommand *cmd_passed) {
   temp |= tr.value.lo;
   double d = static_cast<double>(temp)/tr.scale*freq;
   curr = static_cast<UInt32>(d);
-  LOG->Trace("last/curr/diff = %U/%U/%U", last, curr, curr-last);
   ASSERT(curr > last);
   last = curr;
 
