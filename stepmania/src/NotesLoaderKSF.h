@@ -7,6 +7,7 @@
 
 class KSFLoader: public NotesLoader {
 	bool LoadFromKSFFile( const CString &sPath, Notes &out );
+	bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out );
 
 public:
 	void GetApplicableFiles( CString sPath, CStringArray &out );

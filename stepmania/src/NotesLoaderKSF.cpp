@@ -156,35 +156,8 @@ void KSFLoader::GetApplicableFiles( CString sPath, CStringArray &out )
 	GetDirListing( sPath + CString("*.ksf"), out );
 }
 
-bool KSFLoader::LoadFromDir( CString sDir, Song &out )
+bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 {
-	LOG->Trace( "Song::LoadFromKSFDir(%s)", sDir.c_str() );
-
-	CStringArray arrayKSFFileNames;
-	GetDirListing( sDir + CString("*.ksf"), arrayKSFFileNames );
-
-	/* We shouldn't have been called to begin with if there were no KSFs. */
-	if( arrayKSFFileNames.empty() )
-		RageException::Throw( "Couldn't find any KSF files in '%s'", sDir.c_str() );
-
-	// load the Notes from the rest of the KSF files
-	unsigned i;
-	for( i=0; i<arrayKSFFileNames.size(); i++ ) 
-	{
-		Notes* pNewNotes = new Notes;
-		if(!LoadFromKSFFile( out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes ))
-		{
-			delete pNewNotes;
-			continue;
-		}
-
-		out.m_apNotes.push_back( pNewNotes );
-	}
-
-	CString sPath = out.GetSongDir() + arrayKSFFileNames[0];
-
-	/* XXX: We might have some corrupt KSF's; it'd be better to read global
-	 * stuff from the first successful one above. */
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
@@ -192,7 +165,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 
 	float BPMPos2 = -1, BPM2 = -1;
 
-	for( i=0; i < msd.GetNumValues(); i++ )
+	for( unsigned i=0; i < msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
 		CString sValueName = sParams[0];
@@ -225,32 +198,6 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 			{
 				out.m_sMainTitle = sParams[1];
 			}
-
-			/* XXX: Once we use iconv, this can be more intelligent. */
-			if(!utf8_is_valid(out.m_sMainTitle))
-			{
-				CString SongDir = sDir;
-				SongDir.Replace("\\", "/");
-
-				asBits.clear();
-				split( sDir, "/", asBits, true);
-				ASSERT(asBits.size() > 0);
-
-				CString sSongFolderName = asBits.back();
-
-				asBits.clear();
-				split( sSongFolderName, " - ", asBits, false );
-				if( asBits.size() == 2 )
-				{
-					out.m_sArtist = asBits[0];
-					out.m_sMainTitle = asBits[1];
-				}
-				else
-				{
-					out.m_sMainTitle = asBits[0];
-				}
-				break;
-			}
 		}
 
 		else if( 0==stricmp(sValueName,"BPM") )
@@ -280,6 +227,32 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 		out.AddBPMSegment( BPMSegment(beat, BPM2) );
 	}
 
+
+	/* XXX: Once we use iconv, this can be more intelligent. */
+	if(out.m_sMainTitle == "" || !utf8_is_valid(out.m_sMainTitle))
+	{
+		CString SongDir = sPath;
+		SongDir.Replace("\\", "/");
+
+		CStringArray asBits;
+		split( SongDir, "/", asBits, true);
+		ASSERT(asBits.size() > 1);
+
+		CString sSongFolderName = asBits[asBits.size()-2];
+
+		asBits.clear();
+		split( sSongFolderName, " - ", asBits, false );
+		if( asBits.size() == 2 )
+		{
+			out.m_sArtist = asBits[0];
+			out.m_sMainTitle = asBits[1];
+		}
+		else
+		{
+			out.m_sMainTitle = asBits[0];
+		}
+	}
+
 	// search for music with song in the file name
 	CStringArray arrayPossibleMusic;
 	GetDirListing( out.GetSongDir() + CString("song.mp3"), arrayPossibleMusic );
@@ -288,6 +261,37 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 
 	if( !arrayPossibleMusic.empty() )		// we found a match
 		out.m_sMusicFile = arrayPossibleMusic[0];
+
+	return true;
+}
+
+bool KSFLoader::LoadFromDir( CString sDir, Song &out )
+{
+	LOG->Trace( "Song::LoadFromKSFDir(%s)", sDir.c_str() );
+
+	CStringArray arrayKSFFileNames;
+	GetDirListing( sDir + CString("*.ksf"), arrayKSFFileNames );
+
+	/* We shouldn't have been called to begin with if there were no KSFs. */
+	if( arrayKSFFileNames.empty() )
+		RageException::Throw( "Couldn't find any KSF files in '%s'", sDir.c_str() );
+
+	// load the Notes from the rest of the KSF files
+	unsigned i;
+	for( i=0; i<arrayKSFFileNames.size(); i++ ) 
+	{
+		Notes* pNewNotes = new Notes;
+		if(!LoadFromKSFFile( out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes ))
+		{
+			delete pNewNotes;
+			continue;
+		}
+
+		out.m_apNotes.push_back( pNewNotes );
+	}
+
+	if(!LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[0], out))
+		return false;
 
 	return true;
 }
