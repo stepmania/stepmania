@@ -109,8 +109,8 @@ FileType FilenameDB::GetFileType( const CString &sPath )
 	if( Name == "." )
 		return TTYPE_DIR;
 
-	FileSet &fs = GetFileSet( Dir );
-	return fs.GetFileType( Name );
+	FileSet *fs = GetFileSet( Dir );
+	return fs->GetFileType( Name );
 }
 
 
@@ -118,16 +118,16 @@ int FilenameDB::GetFileSize( const CString &sPath )
 {
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);
-	FileSet &fs = GetFileSet( Dir );
-	return fs.GetFileSize(Name);
+	FileSet *fs = GetFileSet( Dir );
+	return fs->GetFileSize(Name);
 }
 
 int FilenameDB::GetFileHash( const CString &sPath )
 {
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);
-	FileSet &fs = GetFileSet( Dir );
-	return fs.GetFileHash(Name);
+	FileSet *fs = GetFileSet( Dir );
+	return fs->GetFileHash(Name);
 }
 
 bool FilenameDB::ResolvePath(CString &path)
@@ -150,7 +150,7 @@ bool FilenameDB::ResolvePath(CString &path)
 			break;
 
 		if( fs == NULL )
-			fs = &GetFileSet( ret );
+			fs = GetFileSet( ret );
 
 		CString p = path.substr( begin, size );
 		set<File>::iterator it = fs->files.find( File(p) );
@@ -179,14 +179,14 @@ bool FilenameDB::ResolvePath(CString &path)
 
 void FilenameDB::GetFilesMatching(const CString &dir, const CString &beginning, const CString &containing, const CString &ending, vector<CString> &out, bool bOnlyDirs)
 {
-	FileSet &fs = GetFileSet( dir );
-	fs.GetFilesMatching(beginning, containing, ending, out, bOnlyDirs);
+	FileSet *fs = GetFileSet( dir );
+	fs->GetFilesMatching(beginning, containing, ending, out, bOnlyDirs);
 }
 
 void FilenameDB::GetFilesEqualTo(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs)
 {
-	FileSet &fs = GetFileSet( dir );
-	fs.GetFilesEqualTo(fn, out, bOnlyDirs);
+	FileSet *fs = GetFileSet( dir );
+	fs->GetFilesEqualTo(fn, out, bOnlyDirs);
 }
 
 
@@ -215,7 +215,7 @@ void FilenameDB::GetFilesSimpleMatch(const CString &dir, const CString &fn, vect
 	}
 }
 
-FileSet &FilenameDB::GetFileSet( CString dir )
+FileSet *FilenameDB::GetFileSet( CString dir, bool create )
 {
 	/* Normalize the path. */
 	dir.Replace("\\", "/"); /* foo\bar -> foo/bar */
@@ -228,6 +228,13 @@ FileSet &FilenameDB::GetFileSet( CString dir )
 	lower.MakeLower();
 
 	map<CString, FileSet *>::iterator i = dirs.find( lower );
+	if( !create )
+	{
+		if( i == dirs.end() )
+			return NULL;
+		return i->second;
+	}
+
 	FileSet *ret;
 	if( i != dirs.end() )
 	{
@@ -237,7 +244,7 @@ FileSet &FilenameDB::GetFileSet( CString dir )
 			ret->age.Touch();
 			ret->files.clear();
 		} else
-			return *i->second;
+			return i->second;
 	}
 	else
 	{
@@ -246,7 +253,7 @@ FileSet &FilenameDB::GetFileSet( CString dir )
 	}
 
 	PopulateFileSet( *ret, dir );
-	return *ret;
+	return ret;
 }
 
 void FilenameDB::AddFileSet( CString sPath, FileSet *fs )
@@ -280,11 +287,11 @@ void FilenameDB::AddFile( const CString &sPath, int size, int hash, void *priv )
 		/* Combine all but the last part. */
 		CString dir = join( "/", begin, end-1 ) + "/";
 		const CString &fn = *(end-1);
-		FileSet &fs = GetFileSet( dir );
+		FileSet *fs = GetFileSet( dir );
 
 		File f;
 		f.SetName( fn );
-		if( fs.files.find( f ) == fs.files.end() )
+		if( fs->files.find( f ) == fs->files.end() )
 		{
 			f.dir = IsDir;
 			if( !IsDir )
@@ -293,12 +300,49 @@ void FilenameDB::AddFile( const CString &sPath, int size, int hash, void *priv )
 				f.hash = hash;
 				f.priv = priv;
 			}
-			fs.files.insert( f );
+			fs->files.insert( f );
 		}
 		IsDir = true;
 
 		--end;
 	} while( begin != end );
+}
+
+void FilenameDB::DelFile( const CString &sPath )
+{
+	CString lower = sPath;
+	lower.MakeLower();
+
+	map<CString, FileSet *>::iterator fsi = dirs.find( lower );
+	if( fsi != dirs.end() )
+	{
+		FileSet *fs = fsi->second;
+
+		/* Remove any stale dirp pointers. */
+		for( map<CString, FileSet *>::iterator it = dirs.begin(); it != dirs.end(); ++it )
+		{
+			FileSet *Clean = it->second;
+			for( set<File>::iterator f = Clean->files.begin(); f != Clean->files.end(); ++f )
+				if( f->dirp == fs )
+					f->dirp = NULL;
+		}
+
+		delete fs;
+		dirs.erase( fsi );
+	}
+
+	/* Delete sPath from its parent. */
+	CString Dir, Name;
+	SplitPath(sPath, Dir, Name);
+	FileSet *Parent = GetFileSet( Dir, false );
+	if( Parent )
+	{
+		set<File>::iterator i = Parent->files.find( File(Name) );
+		if( i != Parent->files.end() )
+		{
+			Parent->files.erase( i );
+		}
+	}
 }
 
 void FilenameDB::FlushDirCache()
@@ -312,11 +356,11 @@ File *FilenameDB::GetFile( const CString &sPath )
 {
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);
-	FileSet &fs = GetFileSet( Dir );
+	FileSet *fs = GetFileSet( Dir );
 
 	set<File>::iterator it;
-	it = fs.files.find( File(Name) );
-	if( it == fs.files.end() )
+	it = fs->files.find( File(Name) );
+	if( it == fs->files.end() )
 		return NULL;
 
 	/* Oops.  &*it is a const File &, because you can't change the order

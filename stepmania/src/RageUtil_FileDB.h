@@ -70,7 +70,7 @@ struct FileSet
 class FilenameDB
 {
 protected:
-	FileSet &GetFileSet( CString dir );
+	FileSet *GetFileSet( CString dir, bool create=true );
 
 	/* Directories we have cached: */
 	map<CString, FileSet *> dirs;
@@ -92,6 +92,7 @@ public:
 	virtual FilenameDB::~FilenameDB() { FlushDirCache(); }
 
 	void AddFile( const CString &sPath, int size, int hash, void *priv=NULL );
+	void DelFile( const CString &sPath );
 	File *GetFile( const CString &path );
 
 	/* This handles at most two * wildcards.  If we need anything more complicated,
