@@ -66,6 +66,53 @@ inline void wrap( float &x, float n)
 	x = fmodf(x,n);
 }
 
+/*
+ * We only have unsigned swaps; byte swapping a signed value doesn't make sense. 
+ *
+ * Platform-specific, optimized versions are defined in arch_setup, with the names
+ * ArchSwap32, ArchSwap24, and ArchSwap16; we define them to their real names here,
+ * to force inclusion of this file when swaps are in use (to prevent different dependencies
+ * on different systems).
+ */
+#ifdef HAVE_BYTE_SWAPS
+#define Swap32 ArchSwap32
+#define Swap24 ArchSwap24
+#define Swap16 ArchSwap16
+#else
+inline uint32_t Swap32( uint32_t n )
+{
+	return (n >> 24) |
+			((n >>  8) & 0x0000FF00) |
+			((n <<  8) & 0x00FF0000) |
+			(n << 24);
+}
+
+inline uint32_t Swap24( uint32_t n )
+{
+	return Swap32(n) >> 8; // xx223344 -> 443322xx -> 00443322
+}
+
+inline uint16_t Swap16( uint16_t n )
+{
+	return (n >>  8) | (n <<  8);
+}
+#endif
+
+#if defined(ENDIAN_LITTLE)
+inline uint32_t Swap32LE( uint32_t n ) { return n; }
+inline uint32_t Swap24LE( uint32_t n ) { return n; }
+inline uint32_t Swap16LE( uint16_t n ) { return n; }
+inline uint32_t Swap32BE( uint32_t n ) { return Swap32( n ); }
+inline uint32_t Swap24BE( uint32_t n ) { return Swap24( n ); }
+inline uint16_t Swap16BE( uint16_t n ) { return Swap16( n ); }
+#else
+inline uint32_t Swap32BE( uint32_t n ) { return n; }
+inline uint32_t Swap24BE( uint32_t n ) { return n; }
+inline uint32_t Swap16BE( uint16_t n ) { return n; }
+inline uint32_t Swap32LE( uint32_t n ) { return Swap32( n ); }
+inline uint32_t Swap24LE( uint32_t n ) { return Swap24( n ); }
+inline uint16_t Swap16BE( uint16_t n ) { return Swap16( n ); }
+#endif
 
 // Fast random number generators
 // Taken from "Numerical Recipes in C"
