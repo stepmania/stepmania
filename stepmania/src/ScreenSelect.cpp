@@ -44,45 +44,54 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 
 	m_sName = sClassName;
 
-	// Instead of using NUM_CHOICES, use a comma-separated list of choices.  Each
-	// element in the list is a choice name.  This level of indirection 
-	// makes it easier to add or remove items without having to change a bunch
-	// of indices.
-	CStringArray asChoiceNames;
-	split( CHOICE_NAMES, ",", asChoiceNames, true );
-
-	int c;
-	for( c=0; c<asChoiceNames.size(); c++ )
+	//
+	// Load choices
+	//
 	{
-		CString sChoiceName = asChoiceNames[c];
-		CString sChoice = CHOICE(sChoiceName);
+		// Instead of using NUM_CHOICES, use a comma-separated list of choices.  Each
+		// element in the list is a choice name.  This level of indirection 
+		// makes it easier to add or remove items without having to change a bunch
+		// of indices.
+		CStringArray asChoiceNames;
+		split( CHOICE_NAMES, ",", asChoiceNames, true );
 
-		ModeChoice mc;
-		mc.m_sName = sChoiceName;
-		mc.Load( c, sChoice );
-		m_aModeChoices.push_back( mc );
-	
-		CString sBGAnimationDir = THEME->GetPathTo(BGAnimations, m_sName, mc.m_sName, true);	// true="optional"
-		if( sBGAnimationDir == "" )
-			sBGAnimationDir = THEME->GetPathToB(m_sName+" background");
-		BGAnimation *pBGA = new BGAnimation;
-		m_vpBGAnimations.push_back( pBGA );
+		for( unsigned c=0; c<asChoiceNames.size(); c++ )
+		{
+			CString sChoiceName = asChoiceNames[c];
+			CString sChoice = CHOICE(sChoiceName);
+
+			ModeChoice mc;
+			mc.m_sName = sChoiceName;
+			mc.Load( c, sChoice );
+			m_aModeChoices.push_back( mc );
+		
+			CString sBGAnimationDir = THEME->GetPathTo(BGAnimations, m_sName, mc.m_sName, true);	// true="optional"
+			if( sBGAnimationDir == "" )
+				sBGAnimationDir = THEME->GetPathToB(m_sName+" background");
+			BGAnimation *pBGA = new BGAnimation;
+			m_vpBGAnimations.push_back( pBGA );
+		}
 	}
 
 	m_Menu.Load( sClassName );
 	this->AddChild( &m_Menu );
 
-	for( c=0; c<NUM_CODES; c++ )
+	//
+	// Load codes
+	//
 	{
-		CodeItem code;
-		if( !code.Load( CODE(c) ) )
-			continue;
+		for( int c=0; c<NUM_CODES; c++ )
+		{
+			CodeItem code;
+			if( !code.Load( CODE(c) ) )
+				continue;
 
-		m_aCodes.push_back( code );
-		m_aCodeActions.push_back( CODE_ACTION(c) );
-		ModeChoice mc;
-		mc.Load( c, CODE_ACTION(c) );
-		m_aCodeChoices.push_back( mc );
+			m_aCodes.push_back( code );
+			m_aCodeActions.push_back( CODE_ACTION(c) );
+			ModeChoice mc;
+			mc.Load( c, CODE_ACTION(c) );
+			m_aCodeChoices.push_back( mc );
+		}
 	}
 }
 
@@ -90,7 +99,7 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 ScreenSelect::~ScreenSelect()
 {
 	LOG->Trace( "ScreenSelect::~ScreenSelect()" );
-	for( int i=0; i<m_vpBGAnimations.size(); i++ )
+	for( unsigned i=0; i<m_vpBGAnimations.size(); i++ )
 		SAFE_DELETE( m_vpBGAnimations[i] );
 	m_vpBGAnimations.clear();
 }
