@@ -308,12 +308,12 @@ void RageSoundManager::GetCopies( RageSound &snd, vector<RageSound *> &snds, boo
 	g_DeletionMutex.Lock();
 
 	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
-	set<RageSound *> sounds = all_sounds;
+	const set<RageSound *> sounds = all_sounds;
 	g_SoundManMutex.Unlock(); /* finished with all_sounds */
 	
 	RageSound *parent = snd.GetOriginal();
 
-	set<RageSound *>::iterator it;
+	set<RageSound *>::const_iterator it;
 	for( it = sounds.begin(); it != sounds.end(); ++it )
 	{
 		CHECKPOINT_M( ssprintf("%p %p", *it, parent) );
