@@ -884,6 +884,8 @@ void SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses )
 
 void SortCoursePointerArrayByRanking( vector<Course*> &apCourses )
 {
+	for(unsigned i=0; i<apCourses.size(); i++)
+		apCourses[i]->UpdateCourseStats();
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByRanking );
 }
 
@@ -894,6 +896,8 @@ void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses )
 
 void SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses )
 {
+	for(unsigned i=0; i<apCourses.size(); i++)
+		apCourses[i]->UpdateCourseStats();
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTotalDifficulty );
 }
 
