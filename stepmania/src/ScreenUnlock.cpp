@@ -59,6 +59,21 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 	CString IconCommand = ICON_COMMAND;
 	for(i=1; i <= NumUnlocks; i++)
 	{
+		// get pertaining UnlockEntry
+		CString SongTitle = DISPLAYED_SONG(i);
+		if (USE_UNLOCKS_DAT == 1)
+			if ((unsigned)i <= UNLOCKSYS->m_SongEntries.size() )
+				SongTitle = UNLOCKSYS->m_SongEntries[i-1].m_sSongName;
+		LOG->Trace("UnlockScreen: Searching for %s", SongTitle.c_str());
+		
+		const UnlockEntry *pSong = UNLOCKSYS->FindLockEntry( SongTitle );
+
+		if( pSong == NULL)
+		{
+			LOG->Trace("Can't find song %s", SongTitle.c_str());
+			continue;
+		}
+
 		Sprite* entry = new Sprite;
 
 		// new unlock graphic
@@ -67,22 +82,6 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 		// set graphic location
 		entry->SetName( ssprintf("Unlock%d",i) );
 		SET_XY( *entry );
-
-		// get pertaining UnlockEntry
-		CString SongTitle = DISPLAYED_SONG(i);
-		if (USE_UNLOCKS_DAT == 1)
-			if ((unsigned)i <= UNLOCKSYS->m_SongEntries.size() )
-				SongTitle = UNLOCKSYS->m_SongEntries[i-1].m_sSongName;
-		LOG->Trace("UnlockScreen: Searching for %s", SongTitle.c_str());
-		
-		UnlockEntry *pSong = UNLOCKSYS->FindLockEntry( SongTitle );
-
-		if( pSong == NULL)
-		{
-			LOG->Trace("Can't find song %s", SongTitle.c_str());
-			delete entry;   // oops, memory leak
-			continue;
-		}
 
 		entry->Command(IconCommand);
 		Unlocks.push_back(entry);
@@ -114,11 +113,6 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 
 		for(i = 1; i <= NumUnlocks; i++)
 		{
-			BitmapText* text = new BitmapText;
-
-			text->LoadFromFont( THEME->GetPathToF("ScreenUnlock text") );
-			text->SetHorizAlign( Actor::align_left );
-
 			CString DisplayedSong = DISPLAYED_SONG(i);
 			if (USE_UNLOCKS_DAT == 1)
 				if ((unsigned)i <= UNLOCKSYS->m_SongEntries.size() )
@@ -129,6 +123,10 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 			if ( pSong == NULL )  // no such song
 				continue;
 
+			BitmapText* text = new BitmapText;
+
+			text->LoadFromFont( THEME->GetPathToF("ScreenUnlock text") );
+			text->SetHorizAlign( Actor::align_left );
 			text->SetZoom(ScrollingTextZoom);
 
 			if (pSong && pSong->m_pSong != NULL)
@@ -241,12 +239,6 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 
 			unsigned NextIcon = LastUnlocks[LastUnlocks.size() - i];
 
-			Sprite* NewIcon = new Sprite;
-			BitmapText* NewText = new BitmapText;
-
-			NewText->LoadFromFont( THEME->GetPathToF("ScreenUnlock text") );
-			NewText->SetHorizAlign( Actor::align_left );
-
 			CString DisplayedSong = DISPLAYED_SONG(NextIcon);
 			if (USE_UNLOCKS_DAT == 1)
 			{
@@ -257,21 +249,20 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 			DisplayedSong.MakeUpper();
 			UnlockEntry *pSong = UNLOCKSYS->FindLockEntry(DisplayedSong);
 
-			NewText->SetZoom(UNLOCK_TEXT_SCROLL_ZOOM);
-
-			CString title;
-			CString subtitle;
-
 			if (pSong->m_pSong == NULL)
 				continue;
-			else
-			{
-				title = pSong->m_pSong->GetDisplayMainTitle();
-				subtitle = pSong->m_pSong->GetDisplaySubTitle();
-			}
+
+			BitmapText* NewText = new BitmapText;
+
+			NewText->LoadFromFont( THEME->GetPathToF("ScreenUnlock text") );
+			NewText->SetHorizAlign( Actor::align_left );
+
+			CString title = pSong->m_pSong->GetDisplayMainTitle();
+			CString subtitle = pSong->m_pSong->GetDisplaySubTitle();
 
 			if( subtitle != "" )
 				title = title + "\n" + subtitle;
+			NewText->SetZoom(UNLOCK_TEXT_SCROLL_ZOOM);
 			NewText->SetMaxWidth( MaxWidth );
 			NewText->SetText( title );
 
@@ -282,6 +273,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 			NewText->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
 
 			// new unlock graphic
+			Sprite* NewIcon = new Sprite;
 			NewIcon->Load( THEME->GetPathToG(ssprintf("ScreenUnlock %d icon", NextIcon)) );
 
 			// set graphic location

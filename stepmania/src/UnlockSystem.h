@@ -39,10 +39,6 @@ struct UnlockEntry
 	bool	isLocked;    // cached locked tag
 	bool	IsCourse() const { return m_pCourse != NULL; }
 
-	// if song is selectable vai two means
-	bool	SelectableWheel() const;
-	bool	SelectableRoulette() const;
-
 	void	UpdateLocked();  // updates isLocked
 
 	void	UpdateData();
@@ -68,10 +64,10 @@ public:
 	*/
 	UnlockSystem();
 
+	// returns # of points till next unlock - used for ScreenUnlock
 	float DancePointsUntilNextUnlock();
 	float ArcadePointsUntilNextUnlock();
 	float SongPointsUntilNextUnlock();
-	// returns # of points till next unlock - used for ScreenUnlock
 
 	// Used on select screens:
 	bool SongIsLocked( const Song *song );
@@ -95,8 +91,8 @@ public:
 	float UnlockClearStage();
 	float UnlockToasty();
 
-	void RouletteUnlock( const Song *song );
 	// unlocks given song in roulette
+	void RouletteUnlock( const Song *song );
 
 	// read and write unlock in values
 	bool ReadValues( CString filename);
@@ -106,18 +102,15 @@ public:
 
 	UnlockEntry *FindLockEntry( CString lockname );
 
-	// so class can access FindSong
-	friend class ScreenSelectGroup;
+	// All locked songs are stored here
+	vector<UnlockEntry>	m_SongEntries;
+
 private:
 	UnlockEntry *FindSong( const Song *pSong );
 	UnlockEntry *FindCourse( const Course *pCourse );
 
 	void InitRouletteSeeds(int MaxRouletteSlot);  
 	// makes RouletteSeeds more efficient
-
-public: // XXX
-	// All locked songs are stored here
-	vector<UnlockEntry>	m_SongEntries;	
 
 //	float m_fScores[NUM_UNLOCK_TYPES];
 

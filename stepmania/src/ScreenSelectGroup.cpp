@@ -53,13 +53,6 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : Screen( sClassName 
 
 	unsigned i;
 	int j;
-
-	// The new process by which the group and song lists are formed
-	// is bizarre and complex but yields the end result that songs
-	// and groups that do not contain any steps for the current
-	// style (such as solo) are omitted. Bear with me!
-	// -- dro kulix
-
 	
 	vector<Song*> aAllSongs;
 	SONGMAN->GetSongs( aAllSongs );
@@ -69,14 +62,8 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : Screen( sClassName 
 	{
 		bool DisplaySong = aAllSongs[j]->NormallyDisplayed();
 		
-		// check if song is locked
-		if (PREFSMAN->m_bUseUnlockSystem)
-		{
-			UnlockEntry* m_UnlockSong = UNLOCKSYS->FindSong( aAllSongs[j] );
-
-			if (m_UnlockSong)
-				DisplaySong = (m_UnlockSong->SelectableWheel());
-		}
+		if( UNLOCKSYS->SongIsLocked( aAllSongs[j] ) )
+			DisplaySong = false;
 		
 		if( aAllSongs[j]->SongCompleteForStyle(GAMESTATE->GetCurrentStyleDef()) && 
 			DisplaySong )

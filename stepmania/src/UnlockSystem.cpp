@@ -96,6 +96,9 @@ bool UnlockSystem::SongIsLocked( const Song *song )
 
 bool UnlockSystem::SongIsRoulette( const Song *song )
 {
+	if( !PREFSMAN->m_bUseUnlockSystem )
+		return false;
+
 	const UnlockEntry *p = FindSong( song );
 
 	return p && p->m_iRouletteSeed != 0;
@@ -284,21 +287,6 @@ bool UnlockSystem::LoadFromDATFile()
 	}
 	
 	return true;
-}
-
-bool UnlockEntry::SelectableWheel() const
-{
-	return !isLocked;  // cached
-}
-
-bool UnlockEntry::SelectableRoulette() const
-{
-	if( !isLocked )
-		return true;
-
-	if( m_iRouletteSeed != 0 )
-		return true;
-	return false;
 }
 
 float UnlockSystem::DancePointsUntilNextUnlock()
