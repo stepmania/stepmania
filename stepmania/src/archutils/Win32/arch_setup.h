@@ -8,8 +8,14 @@
 #define NEED_MINMAX_TEMPLATES 1
 #endif
 
-/* Don't include windows.h everywhere; when we do eventually include it, use this: */
+// HACK: Fake correct scoping rules in VC6.
+#if _MSC_VER == 1200 
+#define for if(0); else for
+#endif
+
+/* Don't include windows.h everywhere; when we do eventually include it, use these: */
 #define WIN32_LEAN_AND_MEAN
+#define VC_EXTRALEAN
 
 /* If this isn't defined to 0, VC fails to define things like stat and alloca. */
 #define __STDC__ 0

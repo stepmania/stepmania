@@ -1,7 +1,7 @@
 #if !defined(SM_PCH) || SM_PCH == FALSE
 
-#ifndef STDAFX_H
-#define STDAFX_H
+#ifndef GLOBAL_H
+#define GLOBAL_H
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -10,13 +10,6 @@
 #if _MSC_VER >= 1000
 #pragma once
 #endif // _MSC_VER >= 1000
-
-// HACK: Fake correct scoping rules in VC6.
-#if _MSC_VER == 1200 
-#define for if(0); else for
-#endif // _MSC_VER == 1200
-
-#define VC_EXTRALEAN		// Exclude rarely-used stuff
 
 /* Platform-specific fixes. */
 #if defined(WIN32)
