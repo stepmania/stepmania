@@ -519,7 +519,7 @@ struct RageMutexImpl
 RageMutexImpl::RageMutexImpl()
 {
 	mutex = SDL_CreateMutex();
-	LockedBy = NULL;
+	LockedBy = 0;
 	LockCnt = 0;
 }
 
@@ -538,7 +538,7 @@ void RageMutexImpl::Lock()
 	}
 
 	SDL_LockMutex( mutex );
-	LockedBy = GetCurrentThreadId();
+	LockedBy = SDL_ThreadID();
 }
 
 void RageMutexImpl::Unlock()
@@ -549,7 +549,7 @@ void RageMutexImpl::Unlock()
 		return;
 	}
 
-	LockedBy = NULL;
+	LockedBy = 0;
 	SDL_UnlockMutex( mutex );
 }
 #endif
