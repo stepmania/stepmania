@@ -728,18 +728,24 @@ void ScreenEvaluation::Init()
 		{
 			m_sprMachineRecord[p].Load( THEME->GetPathToG("ScreenEvaluation machine record") );
 			m_sprMachineRecord[p].SetName( ssprintf("MachineRecordP%d",p+1) );
-			m_sprMachineRecord[p].SetState( iMachineHighScoreIndex[p] );
 			m_sprMachineRecord[p].StopAnimating();
 			SET_XY_AND_ON_COMMAND( m_sprMachineRecord[p] );
+			if( iMachineHighScoreIndex[p] < m_sprMachineRecord[p].GetNumStates() )
+				m_sprMachineRecord[p].SetState( iMachineHighScoreIndex[p] );
+			else
+				m_sprMachineRecord[p].SetHidden( true );
 			this->AddChild( &m_sprMachineRecord[p] );
 		}
 		if( iPersonalHighScoreIndex[p] != -1 )
 		{
 			m_sprPersonalRecord[p].Load( THEME->GetPathToG("ScreenEvaluation personal record") );
 			m_sprPersonalRecord[p].SetName( ssprintf("PersonalRecordP%d",p+1) );
-			m_sprPersonalRecord[p].SetState( iPersonalHighScoreIndex[p] );
 			m_sprPersonalRecord[p].StopAnimating();
 			SET_XY_AND_ON_COMMAND( m_sprPersonalRecord[p] );
+			if( iPersonalHighScoreIndex[p] < m_sprPersonalRecord[p].GetNumStates() )
+				m_sprPersonalRecord[p].SetState( iPersonalHighScoreIndex[p] );
+			else
+				m_sprPersonalRecord[p].SetHidden( true );
 			this->AddChild( &m_sprPersonalRecord[p] );
 		}
 
