@@ -68,7 +68,7 @@ bool LuaReference::IsSet() const
 
 int LuaReference::GetLuaType() const
 {
-	this->PushSelf();
+	this->PushSelf( LUA->L );
 	int iRet = lua_type( LUA->L, -1 );
 	lua_pop( LUA->L, 1 );
 	return iRet;
