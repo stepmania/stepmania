@@ -189,7 +189,7 @@ void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 				CLAMP( accumError[c], -128, +128 );
 
 				// Keep only a fraction of the error to make the effect more subtle.
-				accumError[c] /= 4;
+				accumError[c] /= (rand()%4)+1;
 			}
 
 			srcp += src->format->BytesPerPixel;
@@ -197,3 +197,4 @@ void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 		}
 	}
 }
+
