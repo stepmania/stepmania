@@ -14,6 +14,7 @@
 
 #include "RageSound.h"
 #include <time.h>
+#include "RageSoundDriver.h"
 
 class RageSound_Null: public RageSoundDriver
 {
