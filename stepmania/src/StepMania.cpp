@@ -1079,7 +1079,12 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		BOOKKEEPER->WriteToDisk();
 		PROFILEMAN->SaveMachineScoresToDisk();
 
-		SCREENMAN->SystemMessage( "Reloaded metrics and textures" );
+		/* If we're in screen test mode, reload the screen. */
+		if( PREFSMAN->m_bScreenTestMode )
+			ResetGame( true );
+		else
+			SCREENMAN->SystemMessage( "Reloaded metrics and textures" );
+
 		return true;
 	}
 #ifndef DARWIN

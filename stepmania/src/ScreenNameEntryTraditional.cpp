@@ -61,44 +61,42 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 	LOG->Trace( "ScreenNameEntryTraditional::ScreenNameEntryTraditional()" );
 
 
-
-		// DEBUGGING STUFF
-	if(0)
+	if( PREFSMAN->m_bScreenTestMode )
 	{
-	GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
-	GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
-	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
-	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
-	StageStats st;
-	for( int z = 0; z < 3; ++z )
-	{
-	st.pSong = SONGMAN->GetRandomSong();
-	ASSERT( st.pSong );
-	ASSERT( st.pSong->m_apNotes.size() );
-	for( int i = 0; i < 2; ++i )
-	{
-		GAMESTATE->m_pCurNotes[i] = st.pSteps[i] = st.pSong->m_apNotes[0];
-		st.iPossibleDancePoints[i] = 1000;
-		st.iActualDancePoints[i] = 985;
-
-		Steps::MemCardData::HighScore hs;
-		hs.grade = GRADE_A;
-		hs.iScore = 42;
-		int a, b;
-		GAMESTATE->m_pCurNotes[i]->AddHighScore( (PlayerNumber)i, hs, a,b );
-
-		if( i == 0 )
+		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
+		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
+		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+		GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
+		GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
+		StageStats st;
+		for( int z = 0; z < 3; ++z )
 		{
-			ProfileManager::CategoryData::HighScore hs;
-			hs.iScore = 1234567;
-			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-			PROFILEMAN->AddHighScore( nt, RANKING_A, (PlayerNumber)i, hs, a );
-		}
-	}
+			st.pSong = SONGMAN->GetRandomSong();
+			ASSERT( st.pSong );
+			ASSERT( st.pSong->m_apNotes.size() );
+			for( int i = 0; i < 2; ++i )
+			{
+				GAMESTATE->m_pCurNotes[i] = st.pSteps[i] = st.pSong->m_apNotes[0];
+				st.iPossibleDancePoints[i] = 1000;
+				st.iActualDancePoints[i] = 985;
 
-	GAMESTATE->m_vPlayedStageStats.push_back( st );
-	}
+				Steps::MemCardData::HighScore hs;
+				hs.grade = GRADE_A;
+				hs.iScore = 42;
+				int a, b;
+				GAMESTATE->m_pCurNotes[i]->AddHighScore( (PlayerNumber)i, hs, a,b );
+
+				if( i == 0 )
+				{
+					ProfileManager::CategoryData::HighScore hs;
+					hs.iScore = 1234567;
+					StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+					PROFILEMAN->AddHighScore( nt, RANKING_A, (PlayerNumber)i, hs, a );
+				}
+			}
+
+			GAMESTATE->m_vPlayedStageStats.push_back( st );
+		}
 
 	}
 

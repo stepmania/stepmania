@@ -162,6 +162,7 @@ public:
 	int				m_iSoundResampleQuality;
 	bool			m_bAllowUnacceleratedRenderer;
 	bool			m_bThreadedInput;
+	bool			m_bScreenTestMode;
 
 	CString			m_sIgnoredMessageWindows;
 

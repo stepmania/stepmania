@@ -194,6 +194,7 @@ PrefsManager::PrefsManager()
 
 	m_bAllowUnacceleratedRenderer = false;
 	m_bThreadedInput = true;
+	m_bScreenTestMode = false;
 	m_sIgnoredMessageWindows = "";
 
 	m_sCoursesToShowRanking = "";
@@ -318,6 +319,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "ShowSongOptions",					(int&)m_ShowSongOptions );
 	ini.GetValue( "Options", "AllowUnacceleratedRenderer",		m_bAllowUnacceleratedRenderer );
 	ini.GetValue( "Options", "ThreadedInput",					m_bThreadedInput );
+	ini.GetValue( "Options", "ScreenTestMode",					m_bScreenTestMode );
 	ini.GetValue( "Options", "IgnoredMessageWindows",			m_sIgnoredMessageWindows );
 	ini.GetValue( "Options", "SoloSingle",						m_bSoloSingle );
 	ini.GetValue( "Options", "DancePointsForOni",				m_bDancePointsForOni );
@@ -478,6 +480,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "ShowSongOptions",					m_ShowSongOptions );
 	ini.SetValue( "Options", "AllowUnacceleratedRenderer",		m_bAllowUnacceleratedRenderer );
 	ini.SetValue( "Options", "ThreadedInput",					m_bThreadedInput );
+	ini.SetValue( "Options", "ScreenTestMode",					m_bScreenTestMode );
 	ini.SetValue( "Options", "IgnoredMessageWindows",			m_sIgnoredMessageWindows );
 	ini.SetValue( "Options", "SoloSingle",						m_bSoloSingle );
 	ini.SetValue( "Options", "DancePointsForOni",				m_bDancePointsForOni );
