@@ -358,7 +358,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	//
 	// First look in the cache for this song (without loading NoteData)
 	//
-	unsigned DirHash = SONGINDEX->GetCacheHash(m_sSongDir);
+	unsigned uDirHash = SONGINDEX->GetCacheHash(m_sSongDir);
 	if( GetHashForDirectory(m_sSongDir) == uDirHash && // this cache is up to date 
 		DoesFileExist(GetCacheFilePath()))	
 	{
