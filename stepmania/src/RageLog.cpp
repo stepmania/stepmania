@@ -72,7 +72,7 @@ map<CString, CString> LogMaps;
 #define LOG_PATH	SYS_BASE_PATH "log.txt"
 #define INFO_PATH	SYS_BASE_PATH "info.txt"
 
-static RageFile g_fileLog, g_fileInfo;
+static RageFile *g_fileLog, *g_fileInfo;
 
 /* Mutex writes to the files.  Writing to files is not thread-aware, and this is the
  * only place we write to the same file from multiple threads. */
@@ -96,6 +96,9 @@ enum {
 
 RageLog::RageLog()
 {
+	g_fileLog = new RageFile;
+	g_fileInfo = new RageFile;
+	
 	g_Mutex = new RageMutex;
 
 	m_bEnabled = true;
@@ -108,11 +111,11 @@ RageLog::RageLog()
 	remove( INFO_PATH );
 
 	// Open log file and leave it open.
-	if( !g_fileLog.Open( LOG_PATH, RageFile::WRITE|RageFile::STREAMED ) )
-		fprintf( stderr, "Couldn't open %s: %s", LOG_PATH, g_fileLog.GetError().c_str() );
+	if( !g_fileLog->Open( LOG_PATH, RageFile::WRITE|RageFile::STREAMED ) )
+		fprintf( stderr, "Couldn't open %s: %s", LOG_PATH, g_fileLog->GetError().c_str() );
 	
-	if( !g_fileInfo.Open( INFO_PATH, RageFile::WRITE|RageFile::STREAMED ) )
-		fprintf( stderr, "Couldn't open %s: %s", INFO_PATH, g_fileInfo.GetError().c_str() );
+	if( !g_fileInfo->Open( INFO_PATH, RageFile::WRITE|RageFile::STREAMED ) )
+		fprintf( stderr, "Couldn't open %s: %s", INFO_PATH, g_fileInfo->GetError().c_str() );
 
 	this->Info( PRODUCT_NAME_VER );
 
@@ -134,6 +137,7 @@ RageLog::RageLog()
 
 RageLog::~RageLog()
 {
+	fprintf(stderr, "XXXXXXXXXXXXXXXXXXXXXXXXXXX shutdown\n");
 	/* Add the mapped log data to info.txt. */
 	const CString AdditionalLog = GetAdditionalLog();
 	vector<CString> AdditionalLogLines;
@@ -147,11 +151,16 @@ RageLog::~RageLog()
 
 	Flush();
 	ShowLogOutput( false );
-	g_fileLog.Close();
-	g_fileInfo.Close();
+	g_fileLog->Close();
+	g_fileInfo->Close();
 
 	delete g_Mutex;
 	g_Mutex = NULL;
+
+	delete g_fileLog;
+	g_fileLog = NULL;
+	delete g_fileInfo;
+	g_fileInfo = NULL;
 }
 
 void RageLog::SetLogging( bool b )
@@ -236,8 +245,8 @@ void RageLog::Write( int where, const CString &line )
 
 	vector<CString> lines;
 	split( line, "\n", lines, false );
-	if( g_fileLog.IsOpen() && (where & WRITE_LOUD) )
-		g_fileLog.PutLine( "/////////////////////////////////////////" );
+	if( g_fileLog->IsOpen() && (where & WRITE_LOUD) )
+		g_fileLog->PutLine( "/////////////////////////////////////////" );
 	if( where & WRITE_LOUD )
 		printf( "/////////////////////////////////////////\n" );
 
@@ -254,22 +263,22 @@ void RageLog::Write( int where, const CString &line )
 		if( LineHeader.size() )
 			str.insert( 0, LineHeader );
 
-		if( where&WRITE_TO_INFO && g_fileInfo.IsOpen() )
-			g_fileInfo.PutLine( str );
+		if( where&WRITE_TO_INFO && g_fileInfo->IsOpen() )
+			g_fileInfo->PutLine( str );
 
 		if( where & WRITE_TO_INFO )
 			AddToInfo( str );
 		AddToRecentLogs( str );
 		
-		if( g_fileLog.IsOpen() )
-			g_fileLog.PutLine( str );
+		if( g_fileLog->IsOpen() )
+			g_fileLog->PutLine( str );
 
 		if( m_bShowLogOutput || where != 0 )
 			printf("%s\n", str.c_str() );
 	}
 
-	if( g_fileLog.IsOpen() && (where & WRITE_LOUD) )
-		g_fileLog.PutLine( "/////////////////////////////////////////" );
+	if( g_fileLog->IsOpen() && (where & WRITE_LOUD) )
+		g_fileLog->PutLine( "/////////////////////////////////////////" );
 	if( where & WRITE_LOUD )
 		printf( "/////////////////////////////////////////\n" );
 
@@ -280,8 +289,8 @@ void RageLog::Write( int where, const CString &line )
 
 void RageLog::Flush()
 {
-	g_fileLog.Flush();
-	g_fileInfo.Flush();
+	g_fileLog->Flush();
+	g_fileInfo->Flush();
 }
 
 
