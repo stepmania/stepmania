@@ -210,7 +210,11 @@ bool MemoryCardDriver_Linux::MountAndTestWrite( UsbStorageDevice* pDevice )
 {
 	if( pDevice->sOsMountDir.empty() )
 		return false;
-	CString sCommand = "mount " + pDevice->sOsMountDir;
+
+	CString sCommand = "umount " + pDevice->sOsMountDir;
+	LOG->Trace( "executing '%s'", sCommand.c_str() );
+	system( sCommand );
+	sCommand = "mount " + pDevice->sOsMountDir;
 	LOG->Trace( "executing '%s'", sCommand.c_str() );
 	system( sCommand );
 
