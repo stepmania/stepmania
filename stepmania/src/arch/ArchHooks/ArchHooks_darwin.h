@@ -20,6 +20,7 @@ public:
     ~ArchHooks_darwin() { }
     void DumpDebugInfo();
     void MessageBoxOK(CString sMessage, CString ID = "");
+    void MessageBoxError(CString sError);
     MessageBoxResult MessageBoxAbortRetryIgnore(CString sMessage, CString ID = "");
 };
 

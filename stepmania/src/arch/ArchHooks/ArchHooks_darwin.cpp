@@ -21,7 +21,21 @@ enum {
     kMacOSX_10_3 = 0x1030
 };
 
-OSStatus HandleException(ExceptionInformation *theException);
+SInt16 ShowAlert(int type, CFStringRef message, CFStringRef OK, CFStringRef cancel = NULL)
+{
+    struct AlertStdCFStringAlertParamRec params = {kStdCFStringAlertVersionOne, true, false, OK, cancel, NULL,
+        kAlertStdAlertOKButton, kAlertStdAlertCancelButton, kWindowAlertPositionParentWindowScreen, NULL};
+    DialogRef dialog;
+    SInt16 result;
+    OSErr err;
+
+    CreateStandardAlert(type, message, NULL, &params, &dialog);
+    err = AutoSizeDialog(dialog);
+    ASSERT(err == noErr);
+    RunStandardAlert(dialog, NULL, &result);
+
+    return result;
+}
 
 ArchHooks_darwin::ArchHooks_darwin()
 {
@@ -232,59 +246,40 @@ void ArchHooks_darwin::MessageBoxOK(CString sMessage, CString ID)
     if (allowHush && MessageIsIgnored(ID))
         return;
 
-    CFStringRef noShow = CFStringCreateWithCString(NULL, "Don't show again", kCFStringEncodingASCII);
-    CFStringRef error = CFStringCreateWithCString(NULL, sMessage.c_str(), kCFStringEncodingASCII);
-    CFStringRef OK = CFStringCreateWithCString(NULL, "OK", kCFStringEncodingASCII);
-    struct AlertStdCFStringAlertParamRec params = {kStdCFStringAlertVersionOne, true, false, OK, NULL,
-        (allowHush ? noShow : NULL),
-        kAlertStdAlertOKButton, NULL, kWindowAlertPositionParentWindowScreen, NULL};
-    DialogRef dialog;
-    CreateStandardAlert(kAlertNoteAlert, error, NULL, &params, &dialog);
-    OSErr err;
-    SInt16 result;
+    CFStringRef message = CFStringCreateWithCString(NULL, sMessage, kCFStringEncodingASCII);
+    SInt16 result = ShowAlert(kAlertNoteAlert, message, CFSTR("OK"), CFSTR("Don't show again"));
 
-    err = AutoSizeDialog(dialog);
-    ASSERT(err == noErr);
-
-    RunStandardAlert(dialog, NULL, &result);
-    if (result != kAlertStdAlertOKButton && allowHush)
+    CFRelease(message);
+    if (result == kAlertStdAlertCancelButton && allowHush)
         IgnoreMessage(ID);
-        
+}
+
+void ArchHooks_darwin::MessageBoxError(CString sError)
+{
+    CFStringRef error = CFStringCreateWithCString(NULL, sError, kCFStringEncodingASCII);
+    ShowAlert(kAlertStopAlert, error, CFSTR("OK"));
+
     CFRelease(error);
-    CFRelease(OK);
-    CFRelease(noShow);
 }
 
 ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString sMessage, CString ID)
 {
-    SInt16 button;
-    /* I see no reason for an abort button */
-    CFStringRef r = CFStringCreateWithCString(NULL, "Retry", kCFStringEncodingASCII);
-    CFStringRef i = CFStringCreateWithCString(NULL, "Ignore", kCFStringEncodingASCII);
-    CFStringRef error = CFStringCreateWithCString(NULL, sMessage.c_str(), kCFStringEncodingASCII);
-    struct AlertStdCFStringAlertParamRec params = {kStdCFStringAlertVersionOne, true, false, r, i, NULL,
-        kAlertStdAlertOKButton, kAlertStdAlertCancelButton, kWindowAlertPositionParentWindowScreen, NULL};
-    DialogRef dialog;
-    MessageBoxResult result;
-    
-    CreateStandardAlert(kAlertNoteAlert, error, NULL, &params, &dialog);
-    OSErr err = AutoSizeDialog(dialog);
-    ASSERT(err == noErr);
-    RunStandardAlert(dialog, NULL, &button);
-    
-    switch (button)
-    {
-    case kAlertStdAlertOKButton:
-        result =  retry;
-        break;
-    case kAlertStdAlertCancelButton:
-        result =  ignore;
-        break;
-    default:
-        ASSERT(0);
-    }
+    CFStringRef error = CFStringCreateWithCString(NULL, sMessage, kCFStringEncodingASCII);
+    SInt16 result = ShowAlert(kAlertNoteAlert, error, CFSTR("Retry"), CFSTR("Ignore"));
+    ArchHooks::MessageBoxResult ret;
+
     CFRelease(error);
-    CFRelease(i);
-    CFRelease(r);
-    return result;
+    switch (result)
+    {
+        case kAlertStdAlertOKButton:
+            ret = retry;
+            break;
+        case kAlertStdAlertCancelButton:
+            ret = ignore;
+            break;
+        default:
+            ASSERT(0);
+    }
+    
+    return ret;
 }
