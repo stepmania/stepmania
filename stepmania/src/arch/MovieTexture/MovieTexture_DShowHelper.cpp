@@ -10,21 +10,19 @@
 struct __declspec(uuid("{71771540-2017-11cf-ae26-0020afd79767}")) CLSID_TextureRenderer;
 
 static HRESULT CBV_ret;
-CTextureRenderer::CTextureRenderer()
-                                   : CBaseVideoRenderer(__uuidof(CLSID_TextureRenderer), 
-                                   NAME("Texture Renderer"), NULL, &CBV_ret)
+CTextureRenderer::CTextureRenderer():
+	CBaseVideoRenderer(__uuidof(CLSID_TextureRenderer), 
+    NAME("Texture Renderer"), NULL, &CBV_ret),
+	m_OneFrameDecoded( "m_OneFrameDecoded", 0 )
 {
     if( FAILED(CBV_ret) )
         RageException::Throw( hr_ssprintf(CBV_ret, "Could not create texture renderer object!") );
 
 	m_pTexture = NULL;
-
-	m_OneFrameDecoded = SDL_CreateSemaphore(0);
 }
 
 CTextureRenderer::~CTextureRenderer()
 {
-	SDL_DestroySemaphore( m_OneFrameDecoded );
 }
 
 
@@ -90,8 +88,8 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 void CTextureRenderer::OnReceiveFirstSample( IMediaSample * pSample )
 {
 	/* If the main thread is in MovieTexture_DShow::Create, kick: */
-	if( SDL_SemValue(m_OneFrameDecoded) == 0 )
-		SDL_SemPost( m_OneFrameDecoded );
+	if( m_OneFrameDecoded.GetValue() == 0 )
+		m_OneFrameDecoded.Post();
 
 	DoRenderSample( pSample );
 }

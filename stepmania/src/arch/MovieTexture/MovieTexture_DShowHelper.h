@@ -35,7 +35,7 @@ public:
 	long GetVidHeight() const { return m_lVidHeight; }
 	void SetRenderTarget( MovieTexture_DShow* pTexture );
 
-	SDL_sem *m_OneFrameDecoded;
+	RageSemaphore m_OneFrameDecoded;
 
 protected:
 	// Video width, height, and pitch.

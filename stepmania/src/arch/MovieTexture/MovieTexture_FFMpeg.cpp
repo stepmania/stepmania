@@ -7,10 +7,13 @@
 #include "RageTimer.h"
 #include "RageFile.h"
 #include "RageSurface.h"
-#include "SDL_utils.h"
 #include "PrefsManager.h"
 
 #include <cerrno>
+
+#if defined(WIN32)
+#include <windows.h>
+#endif
 
 namespace avcodec
 {
@@ -409,7 +412,8 @@ static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
 }
 
 MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
-	RageMovieTexture( ID )
+	RageMovieTexture( ID ),
+	m_BufferFinished( "BufferFinished", 0 )
 {
 try {
 	LOG->Trace( "MovieTexture_FFMpeg::MovieTexture_FFMpeg(%s)", ID.filename.c_str() );
@@ -428,8 +432,6 @@ try {
 	m_Clock = 0;
 	m_FrameSkipMode = false;
 	m_bThreaded = PREFSMAN->m_bThreadedMovieDecode;
-
-	m_BufferFinished = SDL_CreateSemaphore(0);
 
 	CreateDecoder();
 	LOG->Trace("Bitrate: %i", decoder->m_stream->codec.bit_rate );
@@ -470,7 +472,6 @@ catch(...)
 
 	delete decoder;
 
-	SDL_DestroySemaphore( m_BufferFinished );
 	throw;
 };
 }
@@ -482,8 +483,6 @@ MovieTexture_FFMpeg::~MovieTexture_FFMpeg()
 	DestroyTexture();
 
 	delete decoder;
-
-	SDL_DestroySemaphore( m_BufferFinished );
 }
 
 
@@ -882,25 +881,14 @@ void MovieTexture_FFMpeg::DecoderThread()
 		{
 			/* The only reason m_BufferFinished might be non-zero right now (before
 			 * ConvertFrame()) is if we're quitting. */
-			int n = SDL_SemValue( m_BufferFinished );
+			int n = m_BufferFinished.GetValue();
 			ASSERT_M( n == 0 || m_State == DECODER_QUIT, ssprintf("%i, %i", n, m_State) );
 		}
 		ConvertFrame();
 
 		/* We just went into FRAME_WAITING.  Don't actually check; the main thread
 		 * will change us back to FRAME_NONE without locking, and poke m_BufferFinished. */
-
-		/* SDL_SemWait does not properly retry sem_wait in Linux on EINTR. */
-		int ret;
-		do
-		{
-			CHECKPOINT;
-			errno = 0;
-			ret = SDL_SemWait( m_BufferFinished );
-		}
-		while( ret == -1 && errno == EINTR );
-
-		ASSERT_M( ret != -1, ssprintf("%s, %s", SDL_GetError(), strerror(errno)) );
+		m_BufferFinished.Wait();
 
 		/* If the frame wasn't used, then we must be shutting down. */
 		ASSERT_M( m_ImageWaiting == FRAME_NONE || m_State == DECODER_QUIT, ssprintf("%i, %i", m_ImageWaiting, m_State) );
@@ -941,7 +929,7 @@ void MovieTexture_FFMpeg::Update(float fDeltaTime)
 	UpdateFrame();
 	
 	if( m_bThreaded )
-		SDL_SemPost(m_BufferFinished);
+		m_BufferFinished.Post();
 }
 
 /* Call from the main thread when m_ImageWaiting == FRAME_WAITING to update the
@@ -988,7 +976,7 @@ void MovieTexture_FFMpeg::StopThread()
 	m_State = DECODER_QUIT;
 
 	/* Make sure we don't deadlock waiting for m_BufferFinished. */
-	SDL_SemPost(m_BufferFinished);
+	m_BufferFinished.Post();
 	CHECKPOINT;
 	m_DecoderThread.Wait();
 	CHECKPOINT;
@@ -996,7 +984,7 @@ void MovieTexture_FFMpeg::StopThread()
 	m_ImageWaiting = FRAME_NONE;
 
 	/* Clear the above post, if the thread didn't. */
-	SDL_SemTryWait(m_BufferFinished);
+	m_BufferFinished.TryWait();
 
 	LOG->Trace("Decoder thread shut down.");
 }

@@ -27,8 +27,6 @@ typedef char TCHAR, *PTCHAR;
 #include "RageTexture.h"
 #include "RageThreads.h"
 
-#include "SDL_mutex.h"
-
 //-----------------------------------------------------------------------------
 // RageMovieTexture Class Declarations
 //-----------------------------------------------------------------------------
@@ -55,7 +53,7 @@ public:
 
 private:
 	const char *buffer;
-	SDL_sem *buffer_lock, *buffer_finished;
+	RageSemaphore buffer_lock, buffer_finished;
 
 	void Create();
 

@@ -68,7 +68,7 @@ private:
 	RageSurface *m_img;
 	int m_AVTexfmt; /* AVPixelFormat_t of m_img */
 
-	SDL_sem *m_BufferFinished;
+	RageSemaphore m_BufferFinished;
 
 	RageTimer m_Timer;
 	float m_Clock;

@@ -20,7 +20,6 @@
 #include "RageException.h"
 #include "RageSurface.h"
 #include "arch/Dialog/Dialog.h"
-#include "SDL_utils.h"
 
 #include <vfw.h> /* for GetVideoCodecDebugInfo */
 #pragma comment(lib, "vfw32.lib")
@@ -123,7 +122,9 @@ static void GetVideoCodecDebugInfo()
 // MovieTexture_DShow constructor
 //-----------------------------------------------------------------------------
 MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
-	RageMovieTexture( ID )
+	RageMovieTexture( ID ),
+	buffer_lock( "buffer_lock", 1 ),
+	buffer_finished( "buffer_finished", 0 )
 {
 	LOG->Trace( "RageBitmapTexture::RageBitmapTexture()" );
 
@@ -139,8 +140,6 @@ MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
 
 	m_uTexHandle = 0;
 	buffer = NULL;
-	buffer_lock = SDL_CreateSemaphore(1);
-	buffer_finished = SDL_CreateSemaphore(0);
 
 	Create();
 	CreateFrameRects();
@@ -154,13 +153,13 @@ MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
  * for us to process a frame; do so. */
 void MovieTexture_DShow::SkipUpdates()
 {
-	while(SDL_SemTryWait(buffer_lock))
+	while( buffer_lock.TryWait() )
 		CheckFrame();
 }
 
 void MovieTexture_DShow::StopSkippingUpdates()
 {
-	SDL_SemPost(buffer_lock);
+	buffer_lock.Post();
 }
 
 MovieTexture_DShow::~MovieTexture_DShow()
@@ -190,9 +189,6 @@ MovieTexture_DShow::~MovieTexture_DShow()
 	LOG->Flush();
 	if(m_uTexHandle)
 		DISPLAY->DeleteTexture( m_uTexHandle );
-
-	SDL_DestroySemaphore(buffer_lock);
-	SDL_DestroySemaphore(buffer_finished);
 }
 
 void MovieTexture_DShow::Reload()
@@ -247,7 +243,7 @@ void MovieTexture_DShow::CheckFrame()
 	CHECKPOINT;
 
 	/* Start the decoding thread again. */
-	SDL_SemPost(buffer_finished);
+	buffer_finished.Post();
 
 	CHECKPOINT;
 }
@@ -403,7 +399,7 @@ void MovieTexture_DShow::Create()
 	Pause();
 
 	CHECKPOINT;
-	SDL_SemWait( pCTR->m_OneFrameDecoded );
+	pCTR->m_OneFrameDecoded.Wait();
 	CHECKPOINT;
 	CheckFrame();
 	CHECKPOINT;
@@ -418,7 +414,7 @@ void MovieTexture_DShow::NewData(const char *data)
 	ASSERT(data);
 	
 	/* Try to lock. */
-	if(SDL_SemTryWait(buffer_lock))
+	if( buffer_lock.TryWait() )
 	{
 		/* The main thread is doing something uncommon, such as pausing.
 		 * Drop this frame. */
@@ -427,11 +423,11 @@ void MovieTexture_DShow::NewData(const char *data)
 
 	buffer = data;
 
-	SDL_SemWait(buffer_finished);
+	buffer_finished.Wait();
 
 	ASSERT(buffer == NULL);
 
-	SDL_SemPost(buffer_lock);
+	buffer_lock.Post();
 }
 
 
