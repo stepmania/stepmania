@@ -28,6 +28,7 @@
 #include "Course.h"
 #include "RageDisplay.h"
 #include "RageTextureManager.h"
+#include "Banner.h"
 
 
 #define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, THEME->GetMetricI("MusicWheel","NumWheelItems") )
@@ -1047,32 +1048,33 @@ void MusicWheel::SetOpenGroup(CString group, SongSortOrder so)
 		//
 		// cache banners
 		//
+		CString banner;
 		switch( from[i].m_Type )
 		{
 		case TYPE_SONG:
 			{
 				Song* pSong = from[i].m_pSong;
 				if( pSong->HasBanner() )
-					TEXTUREMAN->CacheTexture( pSong->GetBannerPath() );
+					banner = pSong->GetBannerPath();
 			}
 			break;
 		case TYPE_COURSE:
 			{
 				Course* pCourse = from[i].m_pCourse;
 				if( pCourse->HasBanner() )
-					TEXTUREMAN->CacheTexture( pCourse->m_sBannerPath );
+					banner = pCourse->m_sBannerPath;
 			}
 			break;
 		case TYPE_SECTION:
 			{
-				CString sPath = SONGMAN->GetGroupBannerPath( from[i].m_sSectionName );
-				if( !sPath.empty() )
-					TEXTUREMAN->CacheTexture( sPath );
+				banner = SONGMAN->GetGroupBannerPath( from[i].m_sSectionName );
 			}
 			break;
 		default:
 			break;
 		}
+		if(banner != "")
+			TEXTUREMAN->CacheTexture( Banner::BannerTex(banner) );
 	}
 
 	m_iSelection = 0;
