@@ -507,7 +507,6 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 					pNotes = pSong->GetNotes( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
 			}
 			break;
-		case Entry::caprice:
 		case Entry::random:
 		case Entry::random_within_group:
 			{

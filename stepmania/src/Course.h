@@ -22,7 +22,7 @@ class Steps;
 class Course
 {
 	struct Entry {
-		enum Type { fixed, random, random_within_group, best, worst, caprice } type;
+		enum Type { fixed, random, random_within_group, best, worst } type;
 		bool mystery;			// show "??????"
 		Song* pSong;			// used in type=fixed
 		CString group_name;		// used in type=random_within_group
