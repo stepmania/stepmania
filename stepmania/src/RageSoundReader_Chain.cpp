@@ -290,7 +290,10 @@ int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 			iMaxFramesRead = max( iMaxFramesRead, iFramesRead );
 
 			if( m_iChannels == 2 && pSound->GetNumChannels() == 1 )
+			{
 				RageSoundUtil::ConvertMonoToStereoInPlace( Buffer, iSamplesRead );
+				iSamplesRead *= 2;
+			}
 
 			if( fabsf(s.fPan) > 0.0001f )
 				RageSoundUtil::Pan( Buffer, iFramesRead, s.fPan );
