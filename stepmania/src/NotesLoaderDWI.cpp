@@ -152,12 +152,9 @@ bool DWILoader::LoadFromDWITokens(
 	}
 
 	int iNumFeet = atoi(sNumFeet);
-	out.SetDescription(sDescription);
+	// out.SetDescription(sDescription); // Don't put garbage in the description.
 	out.SetMeter(iNumFeet);
-	if( sDescription.CompareNoCase("basic")==0 )		out.SetDifficulty( DIFFICULTY_EASY );
-	else if( sDescription.CompareNoCase("trick")==0 )	out.SetDifficulty( DIFFICULTY_MEDIUM );
-	else if( sDescription.CompareNoCase("maniac")==0 )	out.SetDifficulty( DIFFICULTY_HARD );
-	else if( sDescription.CompareNoCase("smaniac")==0 )	out.SetDifficulty( DIFFICULTY_CHALLENGE );
+	out.SetDifficulty( StringToDifficulty(sDescription) );
 
 	NoteData newNoteData;
 	newNoteData.SetNumTracks( g_mapDanceNoteToNoteDataColumn.size() );
