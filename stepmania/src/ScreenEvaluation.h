@@ -37,8 +37,8 @@ public:
 
 	virtual void TweenOnScreen();
 	virtual void TweenOffScreen();
-	virtual void MenuBack( PlayerNumber p );
-	virtual void MenuStart( PlayerNumber p );
+	virtual void MenuBack( PlayerNumber pn );
+	virtual void MenuStart( PlayerNumber pn );
 
 protected:
 	enum ResultMode	{ RM_ARCADE_STAGE, RM_ARCADE_SUMMARY, RM_ONI };

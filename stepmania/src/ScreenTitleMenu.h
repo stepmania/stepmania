@@ -42,10 +42,10 @@ public:
 private:
 	void GainFocus( int iChoiceIndex );
 	void LoseFocus( int iChoiceIndex );
-	void MenuUp( PlayerNumber p );
-	void MenuDown( PlayerNumber p );
-	void MenuBack( PlayerNumber p );
-	void MenuStart( PlayerNumber p );
+	void MenuUp( PlayerNumber pn );
+	void MenuDown( PlayerNumber pn );
+	void MenuBack( PlayerNumber pn );
+	void MenuStart( PlayerNumber pn );
 
 	TitleMenuChoice m_TitleMenuChoice;
 

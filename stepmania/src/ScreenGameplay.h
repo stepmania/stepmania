@@ -115,7 +115,7 @@ private:
 	DifficultyBanner	m_DifficultyBanner[NUM_PLAYERS];
 
 	Sprite				m_sprOniGameOver[NUM_PLAYERS];
-	void				ShowOniGameOver( PlayerNumber p );
+	void				ShowOniGameOver( PlayerNumber pn );
 
 	Sprite				m_sprToasty;	// easter egg
 

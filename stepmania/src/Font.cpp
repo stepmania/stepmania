@@ -75,8 +75,15 @@ Font::Font( const CString &sASCIITexturePath )
 			m_iFrameNoToWidth[i] += iAddToAllWidths;
 	}
 
+	float fScaleAllWidthsBy = 0;
+	if( ini.GetValueF( "Char Widths", "ScaleAllWidthsBy", fScaleAllWidthsBy ) )
+	{
+		for( int i=0; i<256; i++ )
+			m_iFrameNoToWidth[i] = roundf( m_iFrameNoToWidth[i] * fScaleAllWidthsBy );
+	}
+
 	m_iLineSpacing = m_pTexture->GetSourceFrameHeight();
-	ini.GetValueI( "Char Widths", "LineHeight", m_iLineSpacing );
+	ini.GetValueI( "Char Widths", "LineSpacing", m_iLineSpacing );
 
 	// force widths to even number
 	for( i=0; i<256; i++ )

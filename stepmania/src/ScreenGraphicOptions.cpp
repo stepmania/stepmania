@@ -36,7 +36,7 @@ enum {
 	GO_VSYNC,
 	NUM_GRAPHIC_OPTIONS_LINES
 };
-OptionLineData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
+OptionRowData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
 	{ "Display",		2,  {"FULLSCREEN", "WINDOWED"} },
 	{ "Display Res",	7,  {"320","400","512","640","800","1024","1280"} },
 	{ "Texture Res",	3,  {"256","512","1024"} },

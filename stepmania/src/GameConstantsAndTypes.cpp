@@ -54,9 +54,9 @@ DifficultyClass StringToDifficultyClass( CString sDC )
 	return CLASS_INVALID;
 }
 
-D3DXCOLOR PlayerToColor( PlayerNumber p ) 
+D3DXCOLOR PlayerToColor( PlayerNumber pn ) 
 {
-	switch( p )
+	switch( pn )
 	{
 		case PLAYER_1:	return COLOR_P1;
 		case PLAYER_2:	return COLOR_P2;

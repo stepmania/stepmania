@@ -104,7 +104,7 @@ public:
 											// In Arcade, is the time into the current stage before failing.
 											// In Oni and Endless this is the time into the current course before failing
 
-	float	GetPlayerSurviveTime( PlayerNumber p );	// Returns time player has survived
+	float	GetPlayerSurviveTime( PlayerNumber pn );	// Returns time player has survived
 
 	void AccumulateStageStatistics();		// Call this before clearing values.  Accumulate values above into the Session values below.
 	void ResetStageStatistics();			// Clears the values above

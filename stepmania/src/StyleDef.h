@@ -67,6 +67,6 @@ public:
 
 	PlayerNumber ControllerToPlayerNumber( GameController controller ) const;
 
-	void GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOriginal, NoteData* pNoteDataOut ) const;
+	void GetTransformedNoteDataForStyle( PlayerNumber pn, NoteData* pOriginal, NoteData* pNoteDataOut ) const;
 };
 

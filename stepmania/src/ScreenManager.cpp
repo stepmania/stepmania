@@ -326,7 +326,7 @@ void ScreenManager::SystemMessage( CString sMessage )
 }
 
 /*
-void ScreenManager::OverrideCreditsMessage( PlayerNumber p, CString sNewString )
+void ScreenManager::OverrideCreditsMessage( PlayerNumber pn, CString sNewString )
 {
 	m_textCreditInfo[p].SetText( sNewString );
 }

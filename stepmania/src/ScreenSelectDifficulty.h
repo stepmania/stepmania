@@ -31,10 +31,10 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	void MenuLeft( PlayerNumber p );
-	void MenuRight( PlayerNumber p );
-	void MenuStart( PlayerNumber p );
-	void MenuBack( PlayerNumber p );
+	void MenuLeft( PlayerNumber pn );
+	void MenuRight( PlayerNumber pn );
+	void MenuStart( PlayerNumber pn );
+	void MenuBack( PlayerNumber pn );
 
 	void TweenOffScreen();
 	void TweenOnScreen();

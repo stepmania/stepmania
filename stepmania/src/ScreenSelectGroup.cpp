@@ -238,17 +238,17 @@ void ScreenSelectGroup::AfterChange()
 }
 
 
-void ScreenSelectGroup::MenuLeft( PlayerNumber p )
+void ScreenSelectGroup::MenuLeft( PlayerNumber pn )
 {
-	MenuUp( p );
+	MenuUp( pn );
 }
 
-void ScreenSelectGroup::MenuRight( PlayerNumber p )
+void ScreenSelectGroup::MenuRight( PlayerNumber pn )
 {
-	MenuDown( p );
+	MenuDown( pn );
 }
 
-void ScreenSelectGroup::MenuUp( PlayerNumber p )
+void ScreenSelectGroup::MenuUp( PlayerNumber pn )
 {
 	if( m_bChosen )
 		return;
@@ -261,7 +261,7 @@ void ScreenSelectGroup::MenuUp( PlayerNumber p )
 }
 
 
-void ScreenSelectGroup::MenuDown( PlayerNumber p )
+void ScreenSelectGroup::MenuDown( PlayerNumber pn )
 {
 	if( m_bChosen )
 		return;
@@ -273,7 +273,7 @@ void ScreenSelectGroup::MenuDown( PlayerNumber p )
 	m_soundChange.PlayRandom();
 }
 
-void ScreenSelectGroup::MenuStart( PlayerNumber p )
+void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 {
 	m_soundSelect.PlayRandom();
 	m_bChosen = true;
@@ -293,7 +293,7 @@ void ScreenSelectGroup::MenuStart( PlayerNumber p )
 	this->SendScreenMessage( SM_StartFadingOut, 0.8f );
 }
 
-void ScreenSelectGroup::MenuBack( PlayerNumber p )
+void ScreenSelectGroup::MenuBack( PlayerNumber pn )
 {
 	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }

@@ -40,15 +40,17 @@ OptionIcon::OptionIcon()
 
 void OptionIcon::Load( PlayerNumber pn, CString sText, bool bHeader )
 {
-	static CString sStopWords[] = { "OFF", "VISIBLE", "VIVID", "STANDARD" };
+	static CString sStopWords[] = { "OFF", "VISIBLE", "VIVID", "STANDARD", "X1" };
 	const int iNumStopWords = sizeof(sStopWords)/sizeof(sStopWords[0]);
 	
 	for( int i=0; i<iNumStopWords; i++ )
-		if( sText == sStopWords[i] )
+		if( 0==stricmp(sText,sStopWords[i]) )
 			sText = "";
 
 	if( UPPERCASE )
 		sText.MakeUpper();
+
+	sText.Replace( " ", "\n" );
 
 	bool bVacant = (sText=="");
 	m_spr.SetState( pn*3 + (bHeader?0:(bVacant?1:2)) );

@@ -27,7 +27,7 @@ const int MAX_OPTIONS_PER_LINE = 20;
 
 
 // used to pass menu info into this class
-struct OptionLineData {
+struct OptionRowData {
 	char szTitle[30];
 	int iNumOptions;
 	char szOptionsText[MAX_OPTIONS_PER_LINE][60];
@@ -44,7 +44,7 @@ class ScreenOptions : public Screen
 {
 public:
 	ScreenOptions( CString sBackgroundPath, CString sPagePath, CString sTopEdgePath );
-	void Init( InputMode im, OptionLineData optionLineData[], int iNumOptionLines, bool bUseIcons );
+	void Init( InputMode im, OptionRowData OptionRowData[], int iNumOptionLines, bool bUseIcons );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -55,35 +55,37 @@ protected:
 	virtual void ImportOptions() = 0;
 	virtual void ExportOptions() = 0;
 	void InitOptionsText();
-	void GetWidthXY( PlayerNumber p, int iRow, int &iWidthOut, int &iXOut, int &iYOut );
+	void GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &iXOut, int &iYOut );
 	void PositionUnderlines();
 	void PositionIcons();
 	void RefreshIcons();
-	void PositionHighlights();
-	void TweenHighlight( PlayerNumber player_no );
+	void PositionCursors();
+	void TweenCursor( PlayerNumber player_no );
+	void UpdateEnabledDisabled();
 	virtual void OnChange();
 
-	void MenuBack( PlayerNumber p );
-	void MenuStart( PlayerNumber p );
+	void MenuBack( PlayerNumber pn );
+	void MenuStart( PlayerNumber pn );
 
 	virtual void GoToNextState() = 0;
 	virtual void GoToPrevState() = 0;
 
-	void MenuLeft( PlayerNumber p );
-	void MenuRight( PlayerNumber p );
-	void MenuUp( PlayerNumber p );
-	void MenuDown( PlayerNumber p );
+	void MenuLeft( PlayerNumber pn );
+	void MenuRight( PlayerNumber pn );
+	void MenuUp( PlayerNumber pn );
+	void MenuDown( PlayerNumber pn );
 
 	InputMode		m_InputMode;
 	bool			m_bUseIcons;
 
-	OptionLineData* m_OptionLineData;
-	int				m_iNumOptionLines;
+	OptionRowData*	m_OptionRowData;
+	int				m_iNumOptionRows;
 
 	MenuElements	m_Menu;
 
 	ActorFrame		m_framePage;
 	Sprite			m_sprPage;
+	Sprite			m_sprLineArrows[MAX_OPTION_LINES];
 	BitmapText		m_textOptionLineTitles[MAX_OPTION_LINES];
 	BitmapText		m_textOptions[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];	// this array has to be big enough to hold all of the options
 	bool			m_OptionDim[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];
@@ -100,9 +102,10 @@ protected:
 	OptionIcon		m_OptionIcons[NUM_PLAYERS][MAX_OPTION_LINES];
 	OptionsCursor	m_Highlight[NUM_PLAYERS];
 
-	RandomSample	m_SoundChangeCol;
-	RandomSample	m_SoundChangeRow;
-	RandomSample	m_SoundNext;
+	RageSoundSample	m_SoundChangeCol;
+	RageSoundSample	m_SoundNextRow;
+	RageSoundSample	m_SoundPrevRow;
+	RageSoundSample	m_SoundStart;
 
 	TransitionInvisible		m_Wipe;
 };

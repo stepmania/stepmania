@@ -116,27 +116,27 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 	
-void ScreenEditMenu::MenuUp( PlayerNumber p )
+void ScreenEditMenu::MenuUp( PlayerNumber pn )
 {
 	Selector.Up();
 }
 
-void ScreenEditMenu::MenuDown( PlayerNumber p )
+void ScreenEditMenu::MenuDown( PlayerNumber pn )
 {
 	Selector.Down();
 }
 
-void ScreenEditMenu::MenuLeft( PlayerNumber p, const InputEventType type )
+void ScreenEditMenu::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
 	Selector.Left();
 }
 
-void ScreenEditMenu::MenuRight( PlayerNumber p, const InputEventType type )
+void ScreenEditMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 {
 	Selector.Right();
 }
 
-void ScreenEditMenu::MenuStart( PlayerNumber p )
+void ScreenEditMenu::MenuStart( PlayerNumber pn )
 {
 	MUSIC->Stop();
 
@@ -154,7 +154,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber p )
 	m_Fade.CloseWipingRight( SM_None );
 }
 
-void ScreenEditMenu::MenuBack( PlayerNumber p )
+void ScreenEditMenu::MenuBack( PlayerNumber pn )
 {	
 	m_Menu.TweenOffScreenToBlack( SM_None, true );
 

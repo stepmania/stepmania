@@ -11,6 +11,7 @@
 #define TITLES_START_Y		THEME->GetMetricF("ScreenSelectGroup","TitlesStartY")
 #define TITLES_COLUMNS		THEME->GetMetricI("ScreenSelectGroup","TitlesColumns")
 #define TITLES_ROWS			THEME->GetMetricI("ScreenSelectGroup","TitlesRows")
+#define TITLES_ZOOM			THEME->GetMetricF("ScreenSelectGroup","TitlesZoom")
 
 MusicList::MusicList()
 {
@@ -22,8 +23,8 @@ MusicList::MusicList()
 		m_textTitles[i].SetXY( TITLES_START_X + i*TITLES_SPACING_X, TITLES_START_Y );
 		m_textTitles[i].SetHorizAlign( Actor::align_left );
 		m_textTitles[i].SetVertAlign( Actor::align_top );
-		m_textTitles[i].SetZoom( 0.5f );
 		m_textTitles[i].SetShadowLength( 2 );
+		m_textTitles[i].SetZoom( TITLES_ZOOM );
 		this->AddChild( &m_textTitles[i] );
 	}
 }

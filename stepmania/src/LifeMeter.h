@@ -24,7 +24,7 @@ public:
 	LifeMeter() {};
 	virtual ~LifeMeter() {};
 	
-	virtual void Load( PlayerNumber p ) { m_PlayerNumber = p; }
+	virtual void Load( PlayerNumber pn ) { m_PlayerNumber = pn; }
 	virtual void Update( float fDeltaTime ) { ActorFrame::Update(fDeltaTime); };
 
 	virtual void SongEnded() {};

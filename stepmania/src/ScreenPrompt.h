@@ -29,10 +29,10 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-	void MenuLeft( PlayerNumber p );
-	void MenuRight( PlayerNumber p );
-	void MenuBack( PlayerNumber p );
-	void MenuStart( PlayerNumber p );
+	void MenuLeft( PlayerNumber pn );
+	void MenuRight( PlayerNumber pn );
+	void MenuBack( PlayerNumber pn );
+	void MenuStart( PlayerNumber pn );
 
 
 	TransitionFade	m_Fade;

@@ -107,9 +107,11 @@ ScreenStage::ScreenStage()
 	for( int i=0; i<4; i++ )
 	{
 		m_sprNumbers[i].Load( THEME->GetPathTo("Graphics","stage numbers") );
+		m_sprNumbers[i].SetDiffuse( GAMESTATE->GetStageColor() );
 		m_sprNumbers[i].StopAnimating();
 	}
 	m_sprStage.Load( THEME->GetPathTo("Graphics","stage stage") );	// we may load a different graphic into here later
+	m_sprStage.SetDiffuse( GAMESTATE->GetStageColor() );
 
 
 

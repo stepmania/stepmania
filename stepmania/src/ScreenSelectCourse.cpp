@@ -274,7 +274,7 @@ void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenSelectCourse::MenuLeft( PlayerNumber p, const InputEventType type )
+void ScreenSelectCourse::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
 	m_MusicWheel.PrevMusic();
 	
@@ -282,14 +282,14 @@ void ScreenSelectCourse::MenuLeft( PlayerNumber p, const InputEventType type )
 }
 
 
-void ScreenSelectCourse::MenuRight( PlayerNumber p, const InputEventType type )
+void ScreenSelectCourse::MenuRight( PlayerNumber pn, const InputEventType type )
 {
 	m_MusicWheel.NextMusic();
 
 	AfterCourseChange();
 }
 
-void ScreenSelectCourse::MenuStart( PlayerNumber p )
+void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 {
 	// this needs to check whether valid Notes are selected!
 	m_MusicWheel.Select();
@@ -332,7 +332,7 @@ void ScreenSelectCourse::MenuStart( PlayerNumber p )
 }
 
 
-void ScreenSelectCourse::MenuBack( PlayerNumber p )
+void ScreenSelectCourse::MenuBack( PlayerNumber pn )
 {
 	MUSIC->Stop();
 

@@ -22,7 +22,7 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 
 
 #define STAGE_COLOR_DEMO		THEME->GetMetricC("GameState","StageColorDemo")
-#define STAGE_COLOR_NORMAL		THEME->GetMetricC("GameState","StageColorNormal")
+#define STAGE_COLOR( i )		THEME->GetMetricC("GameState",ssprintf("StageColor%d",i+1))
 #define STAGE_COLOR_FINAL		THEME->GetMetricC("GameState","StageColorFinal")
 #define STAGE_COLOR_EXTRA1		THEME->GetMetricC("GameState","StageColorExtra1")
 #define STAGE_COLOR_EXTRA2		THEME->GetMetricC("GameState","StageColorExtra2")
@@ -256,7 +256,7 @@ D3DXCOLOR GameState::GetStageColor()
 	else if( IsFinalStage() )	return STAGE_COLOR_FINAL;
 	else if( IsExtraStage() )	return STAGE_COLOR_EXTRA1;
 	else if( IsExtraStage2() )	return STAGE_COLOR_EXTRA2;
-	else						return STAGE_COLOR_NORMAL;
+	else						return STAGE_COLOR( min(m_iCurrentStageIndex,4) );
 }
 
 GameDef* GameState::GetCurrentGameDef()
@@ -308,10 +308,10 @@ float GameState::GetElapsedSeconds()
 	}
 }
 
-float GameState::GetPlayerSurviveTime( PlayerNumber p )
+float GameState::GetPlayerSurviveTime( PlayerNumber pn )
 {
-	if( m_fSecondsBeforeFail[p] == -1 )	// haven't failed yet
+	if( m_fSecondsBeforeFail[pn] == -1 )	// haven't failed yet
 		return GetElapsedSeconds();
 	else
-		return m_fSecondsBeforeFail[p];
+		return m_fSecondsBeforeFail[pn];
 }

@@ -123,12 +123,12 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenHowToPlay::MenuBack( PlayerNumber p )
+void ScreenHowToPlay::MenuBack( PlayerNumber pn )
 {
 	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }
 
-void ScreenHowToPlay::MenuStart( PlayerNumber p )
+void ScreenHowToPlay::MenuStart( PlayerNumber pn )
 {
 	m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 

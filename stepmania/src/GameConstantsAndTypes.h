@@ -98,7 +98,7 @@ enum PlayerNumber {
 	PLAYER_INVALID
 };
 
-D3DXCOLOR PlayerToColor( PlayerNumber p );
+D3DXCOLOR PlayerToColor( PlayerNumber pn );
 D3DXCOLOR PlayerToColor( int p );
 
 

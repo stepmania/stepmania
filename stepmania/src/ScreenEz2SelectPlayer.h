@@ -25,9 +25,9 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void MenuDown( PlayerNumber p );
-	virtual void MenuStart( PlayerNumber p );
-	virtual void MenuBack( PlayerNumber p );
+	virtual void MenuDown( PlayerNumber pn );
+	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuBack( PlayerNumber pn );
 private:
 	void TweenOffScreen();
 	void TweenOnScreen();

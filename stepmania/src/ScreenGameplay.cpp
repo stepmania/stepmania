@@ -1364,10 +1364,10 @@ void ScreenGameplay::TweenOffScreen()
 
 }
 
-void ScreenGameplay::ShowOniGameOver( PlayerNumber p )
+void ScreenGameplay::ShowOniGameOver( PlayerNumber pn )
 {
-	m_sprOniGameOver[p].SetDiffuse( D3DXCOLOR(1,1,1,1) );
-	m_sprOniGameOver[p].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
-	m_sprOniGameOver[p].SetTweenY( CENTER_Y );
-	m_sprOniGameOver[p].SetEffectBobbing( D3DXVECTOR3(0,6,0), 4 );
+	m_sprOniGameOver[pn].SetDiffuse( D3DXCOLOR(1,1,1,1) );
+	m_sprOniGameOver[pn].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
+	m_sprOniGameOver[pn].SetTweenY( CENTER_Y );
+	m_sprOniGameOver[pn].SetEffectBobbing( D3DXVECTOR3(0,6,0), 4 );
 }

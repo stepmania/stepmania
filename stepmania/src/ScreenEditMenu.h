@@ -27,12 +27,12 @@ public:
 
 private:
 
-	void MenuUp( PlayerNumber p );
-	void MenuDown( PlayerNumber p );
-	void MenuLeft( PlayerNumber p, const InputEventType type );
-	void MenuRight( PlayerNumber p, const InputEventType type );
-	void MenuBack( PlayerNumber p );
-	void MenuStart( PlayerNumber p );
+	void MenuUp( PlayerNumber pn );
+	void MenuDown( PlayerNumber pn );
+	void MenuLeft( PlayerNumber pn, const InputEventType type );
+	void MenuRight( PlayerNumber pn, const InputEventType type );
+	void MenuBack( PlayerNumber pn );
+	void MenuStart( PlayerNumber pn );
 
 	SongSelector Selector;
 

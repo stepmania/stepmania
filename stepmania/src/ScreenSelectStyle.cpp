@@ -185,7 +185,7 @@ void ScreenSelectStyle::AfterChange()
 	m_sprInfo.SetTweenZoomY( 1 );
 }
 
-void ScreenSelectStyle::MenuLeft( PlayerNumber p )
+void ScreenSelectStyle::MenuLeft( PlayerNumber pn )
 {
 	// search for a style to the left of the current selection that is enabled
 	int iSwitchToStyleIndex = -1;	// -1 means none found
@@ -208,7 +208,7 @@ void ScreenSelectStyle::MenuLeft( PlayerNumber p )
 }
 
 
-void ScreenSelectStyle::MenuRight( PlayerNumber p )
+void ScreenSelectStyle::MenuRight( PlayerNumber pn )
 {
 	// search for a style to the right of the current selection that is enabled
 	int iSwitchToStyleIndex = -1;	// -1 means none found
@@ -230,12 +230,12 @@ void ScreenSelectStyle::MenuRight( PlayerNumber p )
 	AfterChange();
 }
 
-void ScreenSelectStyle::MenuStart( PlayerNumber p )
+void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 {
-	if( p!=PLAYER_INVALID  && !GAMESTATE->m_bSideIsJoined[p] )
+	if( pn!=PLAYER_INVALID  && !GAMESTATE->m_bSideIsJoined[pn] )
 	{
 		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
-		GAMESTATE->m_bSideIsJoined[p] = true;
+		GAMESTATE->m_bSideIsJoined[pn] = true;
 		SCREENMAN->RefreshCreditsMessages();
 		UpdateEnabledDisabled();
 		return;	// don't fall through
@@ -260,7 +260,7 @@ void ScreenSelectStyle::MenuStart( PlayerNumber p )
 	TweenOffScreen();
 }
 
-void ScreenSelectStyle::MenuBack( PlayerNumber p )
+void ScreenSelectStyle::MenuBack( PlayerNumber pn )
 {
 	MUSIC->Stop();
 

@@ -74,7 +74,7 @@ void ScreenGameOver::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenGameOver::MenuStart( PlayerNumber p )
+void ScreenGameOver::MenuStart( PlayerNumber pn )
 {
 	if( m_bClosing )
 		return;

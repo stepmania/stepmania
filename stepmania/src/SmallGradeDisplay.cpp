@@ -40,7 +40,7 @@ void SmallGradeDisplay::DrawPrimitives()
 	Sprite::DrawPrimitives();
 }
 
-void SmallGradeDisplay::SetGrade( PlayerNumber p, Grade g )
+void SmallGradeDisplay::SetGrade( PlayerNumber pn, Grade g )
 {
 	m_Grade = g;
 
@@ -49,14 +49,14 @@ void SmallGradeDisplay::SetGrade( PlayerNumber p, Grade g )
 	int iNumCols = 2;
 	switch( g )
 	{
-	case GRADE_AAA:		SetState( 0*iNumCols+p );	break;
-	case GRADE_AA:		SetState( 1*iNumCols+p );	break;
-	case GRADE_A:		SetState( 2*iNumCols+p );	break;
-	case GRADE_B:		SetState( 3*iNumCols+p );	break;
-	case GRADE_C:		SetState( 4*iNumCols+p );	break;
-	case GRADE_D:		SetState( 5*iNumCols+p );	break;
-	case GRADE_E:		SetState( 6*iNumCols+p );	break;
-	case GRADE_NO_DATA:	SetState( 7*iNumCols+p );	break;
+	case GRADE_AAA:		SetState( 0*iNumCols+pn );	break;
+	case GRADE_AA:		SetState( 1*iNumCols+pn );	break;
+	case GRADE_A:		SetState( 2*iNumCols+pn );	break;
+	case GRADE_B:		SetState( 3*iNumCols+pn );	break;
+	case GRADE_C:		SetState( 4*iNumCols+pn );	break;
+	case GRADE_D:		SetState( 5*iNumCols+pn );	break;
+	case GRADE_E:		SetState( 6*iNumCols+pn );	break;
+	case GRADE_NO_DATA:	SetState( 7*iNumCols+pn );	break;
 	default:			ASSERT(0);
 	}
 }

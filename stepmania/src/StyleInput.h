@@ -17,7 +17,7 @@ struct StyleInput
 	int				col;
 
 	StyleInput() { MakeInvalid(); };
-	StyleInput( PlayerNumber p, int c ) { player = p; col = c; };
+	StyleInput( PlayerNumber pn, int c ) { player = pn; col = c; };
 	bool operator==( const StyleInput &other ) { return player == other.player && col == other.col; };
 
 	inline bool IsValid() const { return player != PLAYER_INVALID; };

@@ -21,10 +21,13 @@
 #include "GameState.h"
 
 
+#define SCROLL_DELAY		THEME->GetMetricF("ScreenMusicScroll","ScrollDelay")
+#define SCROLL_SPEED		THEME->GetMetricF("ScreenMusicScroll","ScrollSpeed")
+#define TEXT_ZOOM			THEME->GetMetricF("ScreenMusicScroll","TextZoom")
+
 const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User + 2);
 
-const int LINE_GAP = 40;
 
 const CString CREDIT_LINES[] = 
 {
@@ -144,28 +147,28 @@ ScreenMusicScroll::ScreenMusicScroll()
 	for( i=0; i<min(arraySongs.GetSize(), MAX_TOTAL_LINES); i++ )
 	{
 		Song* pSong = arraySongs[i];
-		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","music scroll") );
 		m_textLines[m_iNumLines].SetText( pSong->GetFullTitle() );
 		m_textLines[m_iNumLines].SetDiffuse( SONGMAN->GetSongColor(pSong) );
+		m_textLines[m_iNumLines].SetZoom( TEXT_ZOOM );
 
 		m_iNumLines++;
 	}
 
 	for( i=0; i<min(NUM_CREDIT_LINES, MAX_CREDIT_LINES); i++ )
 	{
-		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","music scroll") );
 		m_textLines[m_iNumLines].SetText( CREDIT_LINES[i] );
-//		this->AddChild( &m_textLines[m_iNumLines] );
+		m_textLines[m_iNumLines].SetZoom( TEXT_ZOOM );
 
 		m_iNumLines++;
 	}
 
 	for( i=0; i<m_iNumLines; i++ )
 	{
-		m_textLines[i].SetZoom( 0.7f );
 		m_textLines[i].SetXY( CENTER_X, SCREEN_BOTTOM + 40 );
-		m_textLines[i].BeginTweening( 0.20f * i );
-		m_textLines[i].BeginTweening( 2.0f );
+		m_textLines[i].BeginTweening( SCROLL_DELAY * i );
+		m_textLines[i].BeginTweening( 2.0f*SCROLL_SPEED );
 		m_textLines[i].SetTweenXY( CENTER_X, SCREEN_TOP - 40 );	
 	}
 	
@@ -231,13 +234,13 @@ void ScreenMusicScroll::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenMusicScroll::MenuStart( PlayerNumber p )
+void ScreenMusicScroll::MenuStart( PlayerNumber pn )
 {
 	m_Fade.CloseWipingRight( SM_GoToNextScreen );
 }
 
-void ScreenMusicScroll::MenuBack( PlayerNumber p )
+void ScreenMusicScroll::MenuBack( PlayerNumber pn )
 {
-	MenuStart( p );
+	MenuStart( pn );
 }
 

@@ -34,7 +34,7 @@ enum {
 };
 
 
-OptionLineData g_SelectGameLines[NUM_SELECT_GAME_LINES] = 
+OptionRowData g_SelectGameLines[NUM_SELECT_GAME_LINES] = 
 {
 	"Game",	0, { "" }
 };

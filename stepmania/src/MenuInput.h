@@ -29,7 +29,7 @@ enum MenuButton
 struct MenuInput
 {
 	MenuInput() { MakeInvalid(); };
-	MenuInput( PlayerNumber p, MenuButton b ) { player = p; button = b; };
+	MenuInput( PlayerNumber pn, MenuButton b ) { player = pn; button = b; };
 
 	PlayerNumber	player;
 	MenuButton		button;

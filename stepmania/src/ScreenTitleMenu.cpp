@@ -317,7 +317,7 @@ void ScreenTitleMenu::GainFocus( int iChoiceIndex )
 	m_textChoice[iChoiceIndex].SetEffectCamelion( 2.5f, color1, color2 );
 }
 
-void ScreenTitleMenu::MenuUp( PlayerNumber p )
+void ScreenTitleMenu::MenuUp( PlayerNumber pn )
 {
 	LoseFocus( m_TitleMenuChoice );
 
@@ -332,7 +332,7 @@ void ScreenTitleMenu::MenuUp( PlayerNumber p )
 }
 
 
-void ScreenTitleMenu::MenuDown( PlayerNumber p )
+void ScreenTitleMenu::MenuDown( PlayerNumber pn )
 {
 	LoseFocus( m_TitleMenuChoice );
 
@@ -347,10 +347,10 @@ void ScreenTitleMenu::MenuDown( PlayerNumber p )
 }
 
 
-void ScreenTitleMenu::MenuStart( PlayerNumber p )
+void ScreenTitleMenu::MenuStart( PlayerNumber pn )
 {	
-	GAMESTATE->m_bSideIsJoined[p] = true;
-	GAMESTATE->m_MasterPlayerNumber = p;
+	GAMESTATE->m_bSideIsJoined[pn] = true;
+	GAMESTATE->m_MasterPlayerNumber = pn;
 
 	GAMESTATE->m_bPlayersCanJoin = false;
 
@@ -399,7 +399,7 @@ void ScreenTitleMenu::MenuStart( PlayerNumber p )
 	}
 }
 
-void ScreenTitleMenu::MenuBack( PlayerNumber p )
+void ScreenTitleMenu::MenuBack( PlayerNumber pn )
 {	
 	this->SendScreenMessage( SM_FadeToDemonstration, 0 );
 }

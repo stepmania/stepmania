@@ -56,10 +56,10 @@ void Screen::Update( float fDeltaTime )
 	}
 }
 
-void Screen::MenuBack(	PlayerNumber p, const InputEventType type )
+void Screen::MenuBack(	PlayerNumber pn, const InputEventType type )
 {
 	if(!PREFSMAN->m_bDelayedEscape || type==IET_SLOW_REPEAT || type==IET_FAST_REPEAT)
-		MenuBack(p); 
+		MenuBack(pn); 
 }
 
 void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )

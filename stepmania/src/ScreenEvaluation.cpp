@@ -530,7 +530,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	
 	if( m_bTryExtraStage )
 	{
-		m_sprTryExtraStage.Load( THEME->GetPathTo("Graphics",GAMESTATE->IsExtraStage()?"evaluation try extra stage1":"evaluation try extra stage2") );
+		m_sprTryExtraStage.Load( THEME->GetPathTo("Graphics",GAMESTATE->IsExtraStage()?"evaluation try extra stage2":"evaluation try extra stage1") );
 		m_sprTryExtraStage.SetXY( TRY_EXTRA_STAGE_X, TRY_EXTRA_STAGE_Y );
 		m_sprTryExtraStage.SetEffectGlowing( 1.0f );
 		this->AddChild( &m_sprTryExtraStage );
@@ -807,12 +807,12 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenEvaluation::MenuBack( PlayerNumber p )
+void ScreenEvaluation::MenuBack( PlayerNumber pn )
 {
-	MenuStart( p );
+	MenuStart( pn );
 }
 
-void ScreenEvaluation::MenuStart( PlayerNumber p )
+void ScreenEvaluation::MenuStart( PlayerNumber pn )
 {
 	TweenOffScreen();
 

@@ -98,27 +98,27 @@ GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 	}
 }
 
-void GrooveRadar::GrooveRadarValueMap::SetFromNotes( PlayerNumber p, Notes* pNotes )		// NULL means no song
+void GrooveRadar::GrooveRadarValueMap::SetFromNotes( PlayerNumber pn, Notes* pNotes )		// NULL means no song
 {
 	if( pNotes != NULL )
 	{
 		for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
 		{
-			const float fValueCurrent = m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p];
-			m_fValuesOld[p][c] = fValueCurrent;
-			m_fValuesNew[p][c] = pNotes->m_fRadarValues[c];
+			const float fValueCurrent = m_fValuesOld[pn][c] * (1-m_PercentTowardNew[pn]) + m_fValuesNew[pn][c] * m_PercentTowardNew[pn];
+			m_fValuesOld[pn][c] = fValueCurrent;
+			m_fValuesNew[pn][c] = pNotes->m_fRadarValues[c];
 		}
 
-		if( m_bValuesVisible[p] == false )	// the values WERE invisible
-			m_PercentTowardNew[p] = 1;
+		if( m_bValuesVisible[pn] == false )	// the values WERE invisible
+			m_PercentTowardNew[pn] = 1;
 		else
-			m_PercentTowardNew[p] = 0;
+			m_PercentTowardNew[pn] = 0;
 
-		m_bValuesVisible[p] = true;
+		m_bValuesVisible[pn] = true;
 	}
 	else	// pNotes == NULL
 	{
-		m_bValuesVisible[p] = false;
+		m_bValuesVisible[pn] = false;
 	}
 }
 

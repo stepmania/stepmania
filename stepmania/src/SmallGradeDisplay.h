@@ -25,7 +25,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	void SetGrade( PlayerNumber p, Grade g );
+	void SetGrade( PlayerNumber pn, Grade g );
 
 protected:
 	

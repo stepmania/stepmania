@@ -18,12 +18,12 @@
 #include "GameState.h"
 
 
-void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOriginal, NoteData* pNoteDataOut ) const
+void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber pn, NoteData* pOriginal, NoteData* pNoteDataOut ) const
 {
 	int iNewToOriginalTrack[MAX_COLS_PER_PLAYER];
 	for( int col=0; col<m_iColsPerPlayer; col++ )
 	{
-		ColumnInfo colInfo = m_ColumnInfo[p][col];
+		ColumnInfo colInfo = m_ColumnInfo[pn][col];
 		int originalTrack = colInfo.track;
 		
 		iNewToOriginalTrack[col] = originalTrack;

@@ -36,8 +36,10 @@
 #define BANNER_HEIGHT			THEME->GetMetricF("ScreenSelectMusic","BannerHeight")
 #define BPM_X					THEME->GetMetricF("ScreenSelectMusic","BPMX")
 #define BPM_Y					THEME->GetMetricF("ScreenSelectMusic","BPMY")
+#define BPM_ZOOM				THEME->GetMetricF("ScreenSelectMusic","BPMZoom")
 #define STAGE_X					THEME->GetMetricF("ScreenSelectMusic","StageX")
 #define STAGE_Y					THEME->GetMetricF("ScreenSelectMusic","StageY")
+#define STAGE_ZOOM				THEME->GetMetricF("ScreenSelectMusic","StageZoom")
 #define CD_TITLE_X				THEME->GetMetricF("ScreenSelectMusic","CDTitleX")
 #define CD_TITLE_Y				THEME->GetMetricF("ScreenSelectMusic","CDTitleY")
 #define DIFFICULTY_FRAME_X( p )	THEME->GetMetricF("ScreenSelectMusic",ssprintf("DifficultyFrameP%dX",p+1))
@@ -103,11 +105,12 @@ ScreenSelectMusic::ScreenSelectMusic()
 	this->AddChild( &m_sprBannerFrame );
 
 	m_BPMDisplay.SetXY( BPM_X, BPM_Y );
+	m_BPMDisplay.SetZoom( BPM_ZOOM );
 	this->AddChild( &m_BPMDisplay );
 
 	m_textStage.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
 	m_textStage.TurnShadowOff();
-	m_textStage.SetZoomX( 1.0f );
+	m_textStage.SetZoom( STAGE_ZOOM );
 	m_textStage.SetXY( STAGE_X, STAGE_Y );
 	m_textStage.SetText( GAMESTATE->GetStageText() );
 	m_textStage.SetDiffuse( GAMESTATE->GetStageColor() );
@@ -254,6 +257,7 @@ void ScreenSelectMusic::DrawPrimitives()
 
 void ScreenSelectMusic::TweenOnScreen()
 {
+	int p;
 
 	m_sprBannerFrame.FadeOn( 0, "bounce left", TWEEN_TIME );
 	m_Banner.FadeOn( 0, "bounce left", TWEEN_TIME );
@@ -261,7 +265,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	m_textStage.FadeOn( 0, "bounce left", TWEEN_TIME );
 	m_sprCDTitle.FadeOn( 0, "bounce left", TWEEN_TIME );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_sprDifficultyFrame[p].FadeOn( 0, "fade", TWEEN_TIME );
 		m_sprMeterFrame[p].FadeOn( 0, "fade", TWEEN_TIME );
@@ -448,44 +452,44 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType 
 }
 
 
-void ScreenSelectMusic::EasierDifficulty( PlayerNumber p )
+void ScreenSelectMusic::EasierDifficulty( PlayerNumber pn )
 {
-	LOG->Trace( "ScreenSelectMusic::EasierDifficulty( %d )", p );
+	LOG->Trace( "ScreenSelectMusic::EasierDifficulty( %d )", pn );
 
-	if( !GAMESTATE->IsPlayerEnabled(p) )
+	if( !GAMESTATE->IsPlayerEnabled(pn) )
 		return;
 	if( m_arrayNotes.GetSize() == 0 )
 		return;
-	if( m_iSelection[p] == 0 )
+	if( m_iSelection[pn] == 0 )
 		return;
 
-	m_iSelection[p]--;
+	m_iSelection[pn]--;
 	// the user explicity switched difficulties.  Update the preferred difficulty
-	GAMESTATE->m_PreferredDifficultyClass[p] = m_arrayNotes[ m_iSelection[p] ]->m_DifficultyClass;
+	GAMESTATE->m_PreferredDifficultyClass[pn] = m_arrayNotes[ m_iSelection[pn] ]->m_DifficultyClass;
 
 	m_soundChangeNotes.Play();
 
-	AfterNotesChange( p );
+	AfterNotesChange( pn );
 }
 
-void ScreenSelectMusic::HarderDifficulty( PlayerNumber p )
+void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
 {
-	LOG->Trace( "ScreenSelectMusic::HarderDifficulty( %d )", p );
+	LOG->Trace( "ScreenSelectMusic::HarderDifficulty( %d )", pn );
 
-	if( !GAMESTATE->IsPlayerEnabled(p) )
+	if( !GAMESTATE->IsPlayerEnabled(pn) )
 		return;
 	if( m_arrayNotes.GetSize() == 0 )
 		return;
-	if( m_iSelection[p] == m_arrayNotes.GetSize()-1 )
+	if( m_iSelection[pn] == m_arrayNotes.GetSize()-1 )
 		return;
 
-	m_iSelection[p]++;
+	m_iSelection[pn]++;
 	// the user explicity switched difficulties.  Update the preferred difficulty
-	GAMESTATE->m_PreferredDifficultyClass[p] = m_arrayNotes[ m_iSelection[p] ]->m_DifficultyClass;
+	GAMESTATE->m_PreferredDifficultyClass[pn] = m_arrayNotes[ m_iSelection[pn] ]->m_DifficultyClass;
 
 	m_soundChangeNotes.Play();
 
-	AfterNotesChange( p );
+	AfterNotesChange( pn );
 }
 
 
@@ -537,9 +541,9 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenSelectMusic::MenuLeft( PlayerNumber p, const InputEventType type )
+void ScreenSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
-	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) ) )
+	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_RIGHT) ) )
 			return;		// ignore
 	
 	if( ! m_MusicWheel.WheelIsLocked() )
@@ -549,9 +553,9 @@ void ScreenSelectMusic::MenuLeft( PlayerNumber p, const InputEventType type )
 }
 
 
-void ScreenSelectMusic::MenuRight( PlayerNumber p, const InputEventType type )
+void ScreenSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type )
 {
-	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) ) )
+	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) ) )
 		return;		// ignore
 
 	if( ! m_MusicWheel.WheelIsLocked() )
@@ -560,11 +564,11 @@ void ScreenSelectMusic::MenuRight( PlayerNumber p, const InputEventType type )
 	m_MusicWheel.NextMusic();
 }
 
-void ScreenSelectMusic::MenuStart( PlayerNumber p )
+void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 {
-	if( p != PLAYER_INVALID  &&
-		INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) )  &&
-		INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) ) )
+	if( pn != PLAYER_INVALID  &&
+		INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) )  &&
+		INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_RIGHT) ) )
 	{
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			m_soundLocked.Play();
@@ -590,7 +594,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber p )
 	if( !bResult )
 	{
 	/* why do this? breaks tabs and roulette -glenn */
-//		if( p != PLAYER_INVALID )
+//		if( pn != PLAYER_INVALID )
 //			this->SendScreenMessage( SM_MenuTimer, 1 );	// re-throw a timer message
 	}
 	else	// if !bResult
@@ -665,39 +669,39 @@ void ScreenSelectMusic::MenuStart( PlayerNumber p )
 }
 
 
-void ScreenSelectMusic::MenuBack( PlayerNumber p )
+void ScreenSelectMusic::MenuBack( PlayerNumber pn )
 {
 	MUSIC->Stop();
 
 	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }
 
-void ScreenSelectMusic::AfterNotesChange( PlayerNumber p )
+void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 {
-	if( !GAMESTATE->IsPlayerEnabled(p) )
+	if( !GAMESTATE->IsPlayerEnabled(pn) )
 		return;
 	
-	m_iSelection[p] = clamp( m_iSelection[p], 0, m_arrayNotes.GetSize()-1 );	// bounds clamping
+	m_iSelection[pn] = clamp( m_iSelection[pn], 0, m_arrayNotes.GetSize()-1 );	// bounds clamping
 
-	Notes* pNotes = m_arrayNotes.GetSize()>0 ? m_arrayNotes[m_iSelection[p]] : NULL;
+	Notes* pNotes = m_arrayNotes.GetSize()>0 ? m_arrayNotes[m_iSelection[pn]] : NULL;
 
-	GAMESTATE->m_pCurNotes[p] = pNotes;
+	GAMESTATE->m_pCurNotes[pn] = pNotes;
 
 //	m_BPMDisplay.SetZoomY( 0 );
 //	m_BPMDisplay.BeginTweening( 0.2f );
 //	m_BPMDisplay.SetTweenZoomY( 1.2f );
 
-	DifficultyClass dc = GAMESTATE->m_PreferredDifficultyClass[p];
+	DifficultyClass dc = GAMESTATE->m_PreferredDifficultyClass[pn];
 	Song* pSong = GAMESTATE->m_pCurSong;
-	Notes* m_pNotes = GAMESTATE->m_pCurNotes[p];
+	Notes* m_pNotes = GAMESTATE->m_pCurNotes[pn];
 	
 	if( m_pNotes )
-		m_HighScore[p].SetScore( (float)m_pNotes->m_iTopScore );
+		m_HighScore[pn].SetScore( (float)m_pNotes->m_iTopScore );
 
-	m_DifficultyIcon[p].SetFromNotes( pNotes );
-	m_FootMeter[p].SetFromNotes( pNotes );
-	m_GrooveRadar.SetFromNotes( p, pNotes );
-	m_MusicWheel.NotesChanged( p );
+	m_DifficultyIcon[pn].SetFromNotes( pNotes );
+	m_FootMeter[pn].SetFromNotes( pNotes );
+	m_GrooveRadar.SetFromNotes( pn, pNotes );
+	m_MusicWheel.NotesChanged( pn );
 }
 
 void ScreenSelectMusic::AfterMusicChange()

@@ -242,7 +242,7 @@ void ScreenSelectStyle5th::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenSelectStyle5th::MenuLeft( PlayerNumber p )
+void ScreenSelectStyle5th::MenuLeft( PlayerNumber pn )
 {
 	if( m_iSelection == 0 )		// can't go left any further
 		return;
@@ -255,7 +255,7 @@ void ScreenSelectStyle5th::MenuLeft( PlayerNumber p )
 }
 
 
-void ScreenSelectStyle5th::MenuRight( PlayerNumber p )
+void ScreenSelectStyle5th::MenuRight( PlayerNumber pn )
 {
 	if( m_iSelection == NUM_DANCE_STYLES-1 )		// can't go right any further
 		return;
@@ -267,10 +267,10 @@ void ScreenSelectStyle5th::MenuRight( PlayerNumber p )
 	AfterChange();
 }
 
-void ScreenSelectStyle5th::MenuStart( PlayerNumber p )
+void ScreenSelectStyle5th::MenuStart( PlayerNumber pn )
 {
 	GAMESTATE->m_CurStyle = Style( m_iSelection );
-	GAMESTATE->m_MasterPlayerNumber = p;
+	GAMESTATE->m_MasterPlayerNumber = pn;
 
 	CString sCurStyleName = GAMESTATE->GetCurrentStyleDef()->m_szName;
 	sCurStyleName.MakeLower();
@@ -287,7 +287,7 @@ void ScreenSelectStyle5th::MenuStart( PlayerNumber p )
 	m_soundSelect.PlayRandom();
 }
 
-void ScreenSelectStyle5th::MenuBack( PlayerNumber p )
+void ScreenSelectStyle5th::MenuBack( PlayerNumber pn )
 {
 	MUSIC->Stop();
 

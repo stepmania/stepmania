@@ -224,7 +224,7 @@ MenuBack
 Desc: Actions performed when a player 
 presses the button bound to back
 ************************************/
-void ScreenEz2SelectStyle::MenuBack( PlayerNumber p )
+void ScreenEz2SelectStyle::MenuBack( PlayerNumber pn )
 {
 	MUSIC->Stop();
 
@@ -233,13 +233,13 @@ void ScreenEz2SelectStyle::MenuBack( PlayerNumber p )
 
 
 
-void ScreenEz2SelectStyle::MenuLeft( PlayerNumber p )
+void ScreenEz2SelectStyle::MenuLeft( PlayerNumber pn )
 {
 	m_ScrollingList.Left();
 	m_soundChange.Play();
 }
 
-void ScreenEz2SelectStyle::MenuRight( PlayerNumber p )
+void ScreenEz2SelectStyle::MenuRight( PlayerNumber pn )
 {
 	m_ScrollingList.Right();
 	m_soundChange.Play();
@@ -250,12 +250,12 @@ MenuDown
 Desc: Actions performed when a player 
 presses the button bound to down
 ************************************/
-void ScreenEz2SelectStyle::MenuDown( PlayerNumber p )
+void ScreenEz2SelectStyle::MenuDown( PlayerNumber pn )
 {
-	if( GAMESTATE->m_bSideIsJoined[p] )	// already joined
+	if( GAMESTATE->m_bSideIsJoined[pn] )	// already joined
 		return;	// ignore
 
-	MenuStart( p );
+	MenuStart( pn );
 }
 
 /************************************
@@ -263,18 +263,18 @@ MenuStart
 Desc: Actions performed when a player 
 presses the button bound to start
 ************************************/
-void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
+void ScreenEz2SelectStyle::MenuStart( PlayerNumber pn )
 {
-	if( !GAMESTATE->m_bSideIsJoined[p] )
+	if( !GAMESTATE->m_bSideIsJoined[pn] )
 	{
 		// join them
-		GAMESTATE->m_bSideIsJoined[p] = true;
+		GAMESTATE->m_bSideIsJoined[pn] = true;
 		SCREENMAN->RefreshCreditsMessages();
 		m_soundSelect.Play();
-		m_sprCursors[p].BeginTweening( 0.25f );
-		m_sprCursors[p].SetTweenZoomY( 0 );
-		m_sprControllers[p].BeginTweening( 0.25f );
-		m_sprControllers[p].SetTweenZoomY( 0 );
+		m_sprCursors[pn].BeginTweening( 0.25f );
+		m_sprCursors[pn].SetTweenZoomY( 0 );
+		m_sprControllers[pn].BeginTweening( 0.25f );
+		m_sprControllers[pn].SetTweenZoomY( 0 );
 		
 		RefreshStylesAndList();
 		m_ScrollingList.SetSelection( 0 );

@@ -277,25 +277,25 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenSelectDifficulty::MenuLeft( PlayerNumber p )
+void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
 {
-	if( m_iSelection[p] == 0 )	// can't go left any more
+	if( m_iSelection[pn] == 0 )	// can't go left any more
 		return;
-	if( m_bChosen[p] )
+	if( m_bChosen[pn] )
 		return;
 
-	ChangeTo( p, m_iSelection[p], m_iSelection[p]-1 );
+	ChangeTo( pn, m_iSelection[pn], m_iSelection[pn]-1 );
 }
 
 
-void ScreenSelectDifficulty::MenuRight( PlayerNumber p )
+void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 {
-	if( m_iSelection[p] == NUM_DIFFICULTY_ITEMS-1 )	// can't go right any more
+	if( m_iSelection[pn] == NUM_DIFFICULTY_ITEMS-1 )	// can't go right any more
 		return;
-	if( m_bChosen[p] )
+	if( m_bChosen[pn] )
 		return;
 
-	ChangeTo( p, m_iSelection[p], m_iSelection[p]+1 );
+	ChangeTo( pn, m_iSelection[pn], m_iSelection[pn]+1 );
 }
 
 bool ScreenSelectDifficulty::IsItemOnPage2( int iItemIndex )
@@ -434,7 +434,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	this->SendScreenMessage( SM_StartTweeningOffScreen, 0.7f );
 }
 
-void ScreenSelectDifficulty::MenuBack( PlayerNumber p )
+void ScreenSelectDifficulty::MenuBack( PlayerNumber pn )
 {
 	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }

@@ -33,7 +33,7 @@ enum {
 	NUM_APPEARANCE_OPTIONS_LINES
 };
 
-OptionLineData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
+OptionRowData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 	{ "Announcer",	1, {"OFF"} },	// fill this in on ImportOptions()
 	{ "Theme",		0, {""} },		// fill this in on ImportOptions()
 	{ "Note Skin",	0, {""} },		// fill this in on ImportOptions()
@@ -66,17 +66,17 @@ void ScreenAppearanceOptions::ImportOptions()
 	CStringArray arrayAnnouncerNames;
 	ANNOUNCER->GetAnnouncerNames( arrayAnnouncerNames );
 
-	m_OptionLineData[AO_ANNOUNCER].iNumOptions	=	arrayAnnouncerNames.GetSize() + 1; 
+	m_OptionRowData[AO_ANNOUNCER].iNumOptions	=	arrayAnnouncerNames.GetSize() + 1; 
 	
 	for( int i=0; i<arrayAnnouncerNames.GetSize(); i++ )
-		strcpy( m_OptionLineData[AO_ANNOUNCER].szOptionsText[i+1], arrayAnnouncerNames[i] ); 
+		strcpy( m_OptionRowData[AO_ANNOUNCER].szOptionsText[i+1], arrayAnnouncerNames[i] ); 
 
 
 	// highlight currently selected announcer
 	m_iSelectedOption[0][AO_ANNOUNCER] = -1;
-	for( i=1; i<m_OptionLineData[AO_ANNOUNCER].iNumOptions; i++ )
+	for( i=1; i<m_OptionRowData[AO_ANNOUNCER].iNumOptions; i++ )
 	{
-		if( 0==stricmp(m_OptionLineData[AO_ANNOUNCER].szOptionsText[i], ANNOUNCER->GetCurAnnouncerName()) )
+		if( 0==stricmp(m_OptionRowData[AO_ANNOUNCER].szOptionsText[i], ANNOUNCER->GetCurAnnouncerName()) )
 		{
 			m_iSelectedOption[0][AO_ANNOUNCER] = i;
 			break;
@@ -92,17 +92,17 @@ void ScreenAppearanceOptions::ImportOptions()
 	CStringArray arrayThemeNames;
 	THEME->GetThemeNamesForCurGame( arrayThemeNames );
 
-	m_OptionLineData[AO_THEME].iNumOptions	=	arrayThemeNames.GetSize(); 
+	m_OptionRowData[AO_THEME].iNumOptions	=	arrayThemeNames.GetSize(); 
 	
 	for( i=0; i<arrayThemeNames.GetSize(); i++ )
-		strcpy( m_OptionLineData[AO_THEME].szOptionsText[i], arrayThemeNames[i] ); 
+		strcpy( m_OptionRowData[AO_THEME].szOptionsText[i], arrayThemeNames[i] ); 
 
 
 	// highlight currently selected theme
 	m_iSelectedOption[0][AO_THEME] = -1;
-	for( i=0; i<m_OptionLineData[AO_THEME].iNumOptions; i++ )
+	for( i=0; i<m_OptionRowData[AO_THEME].iNumOptions; i++ )
 	{
-		if( 0==stricmp(m_OptionLineData[AO_THEME].szOptionsText[i], THEME->GetCurThemeName()) )
+		if( 0==stricmp(m_OptionRowData[AO_THEME].szOptionsText[i], THEME->GetCurThemeName()) )
 		{
 			m_iSelectedOption[0][AO_THEME] = i;
 			break;
@@ -118,16 +118,16 @@ void ScreenAppearanceOptions::ImportOptions()
 	CStringArray arraySkinNames;
 	GAMEMAN->GetNoteSkinNames( arraySkinNames );
 
-	m_OptionLineData[AO_SKIN].iNumOptions	=	arraySkinNames.GetSize(); 
+	m_OptionRowData[AO_SKIN].iNumOptions	=	arraySkinNames.GetSize(); 
 	
 	for( i=0; i<arraySkinNames.GetSize(); i++ )
-		strcpy( m_OptionLineData[AO_SKIN].szOptionsText[i], arraySkinNames[i] ); 
+		strcpy( m_OptionRowData[AO_SKIN].szOptionsText[i], arraySkinNames[i] ); 
 
 	// highlight currently selected skin
 	m_iSelectedOption[0][AO_SKIN] = -1;
-	for( i=0; i<m_OptionLineData[AO_SKIN].iNumOptions; i++ )
+	for( i=0; i<m_OptionRowData[AO_SKIN].iNumOptions; i++ )
 	{
-		if( 0==stricmp(m_OptionLineData[AO_SKIN].szOptionsText[i], GAMEMAN->GetCurNoteSkin()) )
+		if( 0==stricmp(m_OptionRowData[AO_SKIN].szOptionsText[i], GAMEMAN->GetCurNoteSkin()) )
 		{
 			m_iSelectedOption[0][AO_SKIN] = i;
 			break;
@@ -140,17 +140,17 @@ void ScreenAppearanceOptions::ImportOptions()
 void ScreenAppearanceOptions::ExportOptions()
 {
 	int iSelectedAnnouncer = m_iSelectedOption[0][AO_ANNOUNCER];
-	CString sNewAnnouncer = m_OptionLineData[AO_ANNOUNCER].szOptionsText[iSelectedAnnouncer];
+	CString sNewAnnouncer = m_OptionRowData[AO_ANNOUNCER].szOptionsText[iSelectedAnnouncer];
 	if( iSelectedAnnouncer == 0 )
 		sNewAnnouncer = "";
 	ANNOUNCER->SwitchAnnouncer( sNewAnnouncer );
 
 	int iSelectedTheme = m_iSelectedOption[0][AO_THEME];
-	CString sNewTheme = m_OptionLineData[AO_THEME].szOptionsText[iSelectedTheme];
+	CString sNewTheme = m_OptionRowData[AO_THEME].szOptionsText[iSelectedTheme];
 	THEME->SwitchTheme( sNewTheme );
 
 	int iSelectedSkin = m_iSelectedOption[0][AO_SKIN];
-	CString sNewSkin = m_OptionLineData[AO_SKIN].szOptionsText[iSelectedSkin];
+	CString sNewSkin = m_OptionRowData[AO_SKIN].szOptionsText[iSelectedSkin];
 	GAMEMAN->SwitchNoteSkin( sNewSkin );
 
 	PREFSMAN->SaveGamePrefsToDisk();

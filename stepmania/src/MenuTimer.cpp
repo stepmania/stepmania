@@ -25,12 +25,12 @@ MenuTimer::MenuTimer()
 	m_fStallSeconds = 0;
 	m_bTimerStopped = false;
 
-	m_textDigit1.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","menu timer numbers 5x2"), "0123456789" );
+	m_textDigit1.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","menu timer numbers 5x2"), "1234567890" );
 	m_textDigit1.TurnShadowOff();
 	m_textDigit1.SetXY( -18, 0 );
 	this->AddChild( &m_textDigit1 );
 
-	m_textDigit2.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","menu timer numbers 5x2"), "0123456789" );
+	m_textDigit2.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","menu timer numbers 5x2"), "1234567890" );
 	m_textDigit2.TurnShadowOff();
 	m_textDigit2.SetXY( +18, 0 );
 	this->AddChild( &m_textDigit2 );

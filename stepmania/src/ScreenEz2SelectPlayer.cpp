@@ -173,7 +173,7 @@ Desc: Actions performed when a player
 presses the button bound to back
 ************************************/
 
-void ScreenEz2SelectPlayer::MenuBack( PlayerNumber p )
+void ScreenEz2SelectPlayer::MenuBack( PlayerNumber pn )
 {
 	MUSIC->Stop();
 
@@ -186,9 +186,9 @@ MenuDown
 Desc: Actions performed when a player 
 presses the button bound to down
 ************************************/
-void ScreenEz2SelectPlayer::MenuDown( PlayerNumber p )
+void ScreenEz2SelectPlayer::MenuDown( PlayerNumber pn )
 {
-	MenuStart( p );
+	MenuStart( pn );
 }
 
 /************************************
@@ -196,18 +196,18 @@ MenuStart
 Desc: Actions performed when a player 
 presses the button bound to start
 ************************************/
-void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
+void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 {
-	if( GAMESTATE->m_bSideIsJoined[p] )	// already joined
+	if( GAMESTATE->m_bSideIsJoined[pn] )	// already joined
 		return;	// ignore
 
-	GAMESTATE->m_bSideIsJoined[p] = true;
+	GAMESTATE->m_bSideIsJoined[pn] = true;
 	SCREENMAN->RefreshCreditsMessages();
 	m_soundSelect.Play();
-	m_sprCursors[p].BeginTweening( 0.25f );
-	m_sprCursors[p].SetTweenZoomY( 0 );
-	m_sprControllers[p].BeginTweening( 0.25f );
-	m_sprControllers[p].SetTweenZoomY( 0 );
+	m_sprCursors[pn].BeginTweening( 0.25f );
+	m_sprCursors[pn].SetTweenZoomY( 0 );
+	m_sprControllers[pn].BeginTweening( 0.25f );
+	m_sprControllers[pn].SetTweenZoomY( 0 );
 
 	bool bBothSidesJoined = true;
 	for( int pn=0; pn<NUM_PLAYERS; pn++ )

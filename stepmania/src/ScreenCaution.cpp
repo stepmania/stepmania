@@ -76,11 +76,11 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenCaution::MenuStart( PlayerNumber p )
+void ScreenCaution::MenuStart( PlayerNumber pn )
 {
-	if( p != PLAYER_INVALID  &&  !GAMESTATE->m_bSideIsJoined[p] )
+	if( pn != PLAYER_INVALID  &&  !GAMESTATE->m_bSideIsJoined[pn] )
 	{
-		GAMESTATE->m_bSideIsJoined[p] = true;
+		GAMESTATE->m_bSideIsJoined[pn] = true;
 		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
 		SCREENMAN->RefreshCreditsMessages();
 		return;	// don't fall though
@@ -90,7 +90,7 @@ void ScreenCaution::MenuStart( PlayerNumber p )
 		m_Wipe.CloseWipingRight( SM_GoToNextScreen );
 }
 
-void ScreenCaution::MenuBack( PlayerNumber p )
+void ScreenCaution::MenuBack( PlayerNumber pn )
 {
 	if(m_FadeWipe.IsClosing())
 		return;
