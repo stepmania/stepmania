@@ -1,7 +1,6 @@
 #ifndef RAGE_THREADS_H
 #define RAGE_THREADS_H
 
-struct SDL_mutex;
 struct SDL_Thread;
 
 class RageThread
@@ -44,11 +43,10 @@ namespace Checkpoints
  * is considered unlocked when the refcount reaches zero.  This is more
  * convenient, though much slower on some archs.  (We don't have any tightly-
  * coupled threads, so that's OK.) */
+struct RageMutexImpl;
 class RageMutex
 {
-	unsigned LockedBy;
-	int Locked;
-	SDL_mutex *mut, *mutwait;
+	RageMutexImpl *mut;
 
 public:
 	void Lock();

@@ -342,7 +342,9 @@ void Checkpoints::LogCheckpoints( bool on )
 void Checkpoints::SetCheckpoint( const char *file, int line, const char *message )
 {
 	int slotno = GetCurThreadSlot();
-	ASSERT( slotno != -1 );
+	/* We can't ASSERT here, since that uses checkpoints. */
+	if( slotno == -1 )
+		*(char*)0=0;
 
 	ThreadSlot &slot = g_ThreadSlots[slotno];
 	
@@ -396,60 +398,182 @@ const char *Checkpoints::GetLogs( const char *delim )
 	return ret;
 }
 
+/*
+ * "Safe" mutexes: locking the same mutex more than once from the same thread
+ * is refcounted and does not deadlock. 
+ *
+ * Only actually lock the mutex once; when we do so, remember which thread locked it.
+ * Then, when we lock in the future, only increment a counter, with no locks.
+ *
+ * We must be holding the real mutex to write to LockedBy and LockCnt.  However,
+ * we can look at LockedBy to see if it's us that owns it (in which case, we already
+ * hold the mutex).
+ *
+ * In Windows, this helps smooth out performance: for some reason, Windows likes
+ * to yank the scheduler away from a thread that locks a mutex that it already owns.
+ */
+#if defined(WIN32)
+struct RageMutexImpl
+{
+	HANDLE mutex;
+	DWORD LockedBy;
+	volatile int LockCnt;
+
+	RageMutexImpl();
+	~RageMutexImpl();
+
+	void Lock();
+	void Unlock();
+};
+
+RageMutexImpl::RageMutexImpl()
+{
+	mutex = CreateMutex( NULL, false, NULL );
+	LockedBy = NULL;
+	LockCnt = 0;
+}
+
+RageMutexImpl::~RageMutexImpl()
+{
+	DeleteObject( mutex );
+}
+
+
+void CrashDeadlocked() { *(char*)0=0; }
+void RageMutexImpl::Lock()
+{
+	if( LockedBy == GetCurrentThreadId() )
+	{
+		++LockCnt;
+		return;
+	}
+
+	int len = 15000;
+	int tries = 2;
+
+	while( tries-- )
+	{
+		/* Wait for fifteen seconds.  If it takes longer than that, we're probably deadlocked. */
+		DWORD ret = WaitForSingleObject( mutex, len );
+
+		switch( ret )
+		{
+		case WAIT_ABANDONED:
+			/* The docs aren't particular about what this does, but it should never happen. */
+			ASSERT( 0 );
+			break;
+
+		case WAIT_OBJECT_0:
+			LockedBy = GetCurrentThreadId();
+			return;
+
+		case WAIT_TIMEOUT:
+			/* Timed out.  Probably deadlocked.  Try again one more time, with a smaller
+			 * timeout, just in case we're debugging and happened to stop while waiting
+			 * on the mutex. */
+			len = 1000;
+			break;
+		}
+	}
+
+	/* XXX: We want a stack trace of *all* threads if this happened, so we can
+	 * tell who we're deadlocked with.  Crash in a thread, so we can see the
+	 * function on the stack (so we know we didn't crash somewhere else above. 
+	 * (We can't use CHECKPOINT, since that uses locks.) */
+	CrashDeadlocked();
+}
+
+void RageMutexImpl::Unlock()
+{
+	if( LockCnt )
+	{
+		--LockCnt;
+		return;
+	}
+
+	LockedBy = NULL;
+	const bool ret = !!ReleaseMutex( mutex );
+
+	/* We can't ASSERT here, since this is called from checkpoints, which is
+	* called from ASSERT. */
+	if( !ret )
+		*(char*)0=0;
+}
+
+#else
+/* SDL implementation. */
+struct RageMutexImpl
+{
+	unsigned LockedBy;
+	volatile int LockCnt;
+
+	SDL_mutex *mutex;
+
+	RageMutexImpl();
+	~RageMutexImpl();
+
+	void Lock();
+	void Unlock();
+};
+
+RageMutexImpl::RageMutexImpl()
+{
+	mutex = SDL_CreateMutex();
+	LockedBy = NULL;
+	LockCnt = 0;
+}
+
+RageMutexImpl::~RageMutexImpl()
+{
+	SDL_DestroyMutex(mutex);
+}
+
+
+void RageMutexImpl::Lock()
+{
+	if( LockedBy == SDL_ThreadID() )
+	{
+		++LockCnt;
+		return;
+	}
+
+	SDL_LockMutex( mutex );
+	LockedBy = GetCurrentThreadId();
+}
+
+void RageMutexImpl::Unlock()
+{
+	if( LockCnt )
+	{
+		--LockCnt;
+		return;
+	}
+
+	LockedBy = NULL;
+	SDL_UnlockMutex( mutex );
+}
+#endif
+
+
 
 RageMutex::RageMutex()
 {
-	Locked = 0;
-	mut = SDL_CreateMutex();
-	mutwait = SDL_CreateMutex();
+	mut = new RageMutexImpl;
 }
 
 RageMutex::~RageMutex()
 {
-	SDL_DestroyMutex(mut);
-	SDL_DestroyMutex(mutwait);
+	delete mut;
 }
 
 void RageMutex::Lock()
 {
-	while(1)
-	{
-		SDL_LockMutex(mut);
-		if(!Locked || LockedBy == SDL_ThreadID())
-		{
-			if(!Locked)
-			{
-				/* This mutex is now locked. */
-				SDL_LockMutex(mutwait);
-				LockedBy = SDL_ThreadID();
-			} /* (else it was already locked and we're just increasing the counter) */
-			Locked++;
-			SDL_UnlockMutex(mut);
-			return;
-		}
-
-		SDL_UnlockMutex(mut);
-
-		/* Someone else is locking it.  Wait until it's available and try again. */
-		SDL_LockMutex(mutwait);
-		SDL_UnlockMutex(mutwait);
-	}
+	mut->Lock();
 }
 
 void RageMutex::Unlock()
 {
-	SDL_LockMutex(mut);
-	ASSERT(Locked);
-	ASSERT(LockedBy == SDL_ThreadID());
-
-	Locked--;
-	if(!Locked)
-	{
-		LockedBy = 0;
-		SDL_UnlockMutex(mutwait);
-	}
-
-	SDL_UnlockMutex(mut);
+	mut->Unlock();
 }
 
 LockMutex::LockMutex(RageMutex &mut, const char *file_, int line_): 
