@@ -93,6 +93,61 @@ void Background::LoadFromAniDir( CString sAniDir )
 	m_BGAnimations.Add( pTempBGA );
 }
 
+BGAnimation *Background::GetBGA(const Song *pSong, const BackgroundChange &aniseg, const CString &bgpath) const
+{
+	BGAnimation *pTempBGA;
+
+	// Using aniseg.m_sBGName, search for the corresponding animation.
+	// Look in this order:  movies in song dir, BGAnims in song dir
+	//  movies in RandomMovies dir, BGAnims in BGAnimsDir.
+	CStringArray asFiles;
+
+	// Look for BG movies in the song dir
+	GetDirListing( pSong->m_sSongDir+aniseg.m_sBGName, asFiles, false, true );
+	if( asFiles.GetSize() > 0 )
+	{
+		pTempBGA = new BGAnimation;
+		pTempBGA->LoadFromMovie( asFiles[0], true, true );
+		return pTempBGA;
+	}
+	// Look for BGAnims in the song dir
+	GetDirListing( pSong->m_sSongDir+aniseg.m_sBGName, asFiles, true, true );
+	if( asFiles.GetSize() > 0 )
+	{
+		pTempBGA = new BGAnimation;
+		pTempBGA->LoadFromAniDir( asFiles[0], bgpath );
+		return pTempBGA;
+	}
+
+	// Look for movies in the RandomMovies dir
+	GetDirListing( RANDOMMOVIES_DIR+aniseg.m_sBGName, asFiles, false, true );
+	if( asFiles.GetSize() > 0 )
+	{
+		pTempBGA = new BGAnimation;
+		pTempBGA->LoadFromMovie( asFiles[0], true, false );
+		return pTempBGA;
+	}
+
+	// Look for BGAnims in the BGAnims dir
+	GetDirListing( BG_ANIMS_DIR+aniseg.m_sBGName, asFiles, true, true );
+	if( asFiles.GetSize() > 0 )
+	{
+		pTempBGA = new BGAnimation;
+		pTempBGA->LoadFromAniDir( asFiles[0], bgpath  );
+		return pTempBGA;
+	}
+
+	// Look for BGAnims in the BGAnims dir
+	GetDirListing( VISUALIZATIONS_DIR+aniseg.m_sBGName, asFiles, false, true );
+	if( asFiles.GetSize() > 0 )
+	{
+		pTempBGA = new BGAnimation;
+		pTempBGA->LoadFromVisualization( asFiles[0], bgpath );
+		return pTempBGA;
+	}
+	return NULL;
+}
+
 void Background::LoadFromSong( Song* pSong )
 {
 	Unload();
@@ -139,51 +194,7 @@ void Background::LoadFromSong( Song* pSong )
 			const BackgroundChange& aniseg = pSong->m_BackgroundChanges[i];
 			bool bFade = i==0;
 
-			BGAnimation *pTempBGA = NULL;
-
-			// Using aniseg.m_sBGName, search for the corresponding animation.
-			// Look in this order:  movies in song dir, BGAnims in song dir
-			//  movies in RandomMovies dir, BGAnims in BGAnimsDir.
-			CStringArray asFiles;
-
-			// Look for BG movies in the song dir
-			GetDirListing( pSong->m_sSongDir+aniseg.m_sBGName, asFiles, false, true );
-			if( asFiles.GetSize() > 0 )
-			{
-				pTempBGA = new BGAnimation;
-				pTempBGA->LoadFromMovie( asFiles[0], true, true );
-			}
-			// Look for BGAnims in the song dir
-			if( asFiles.empty() ) GetDirListing( pSong->m_sSongDir+aniseg.m_sBGName, asFiles, true, true );
-			if( asFiles.GetSize() > 0 )
-			{
-				pTempBGA = new BGAnimation;
-				pTempBGA->LoadFromAniDir( asFiles[0], sSongBackgroundPath );
-			}
-
-			// Look for movies in the RandomMovies dir
-			if( asFiles.empty() ) GetDirListing( RANDOMMOVIES_DIR+aniseg.m_sBGName, asFiles, false, true );
-			if( asFiles.GetSize() > 0 )
-			{
-				pTempBGA = new BGAnimation;
-				pTempBGA->LoadFromMovie( asFiles[0], true, false );
-			}
-
-			// Look for BGAnims in the BGAnims dir
-			if( asFiles.empty() ) GetDirListing( BG_ANIMS_DIR+aniseg.m_sBGName, asFiles, true, true );
-			if( asFiles.GetSize() > 0 )
-			{
-				pTempBGA = new BGAnimation;
-				pTempBGA->LoadFromAniDir( asFiles[0], sSongBackgroundPath  );
-			}
-
-			// Look for BGAnims in the BGAnims dir
-			if( asFiles.empty() ) GetDirListing( VISUALIZATIONS_DIR+aniseg.m_sBGName, asFiles, false, true );
-			if( asFiles.GetSize() > 0 )
-			{
-				pTempBGA = new BGAnimation;
-				pTempBGA->LoadFromVisualization( asFiles[0], sSongBackgroundPath );
-			}
+			BGAnimation *pTempBGA = GetBGA(pSong, aniseg, sSongBackgroundPath);
 
 			if(pTempBGA != NULL)
 			{
