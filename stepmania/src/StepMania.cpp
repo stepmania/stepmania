@@ -303,6 +303,10 @@ int main(int argc, char* argv[])
 		PREFSMAN->m_bVsync );
 	TEXTUREMAN	= new RageTextureManager( PREFSMAN->m_iTextureColorDepth, PREFSMAN->m_iUnloadTextureDelaySeconds, PREFSMAN->m_iMaxTextureResolution );
 
+	/* We might have a new window, so let's make sure window properties are still set. */
+	SDL_WM_SetCaption("StepMania", "StepMania");
+	SetIcon();
+
 	/* Grab the window manager specific information */
 	SDL_SysWMinfo info;
 	SDL_VERSION(&info.version);
