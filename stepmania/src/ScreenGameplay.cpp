@@ -538,6 +538,7 @@ void ScreenGameplay::LoadNextSong()
 				GAMESTATE->m_PlayerOptions[p] = GAMESTATE->m_SelectedOptions[p];
 				// Put courses options into effect.
 				GAMESTATE->m_PlayerOptions[p].FromString( m_asCourseModifiers[iPlaySongIndex] );
+				GAMESTATE->m_SongOptions.Init();
 				GAMESTATE->m_SongOptions.FromString( m_asCourseModifiers[iPlaySongIndex] );
 			}
 		}
@@ -1116,6 +1117,7 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 {
+	int p;
 	switch( SM )
 	{
 		// received while STATE_INTRO
@@ -1229,7 +1231,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 			if( !IsLastSong() )
 			{
-				for( int p=0; p<NUM_PLAYERS; p++ )
+				for( p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsPlayerEnabled(p) && !GAMESTATE->m_CurStageStats.bFailed[p] )
 					m_pLifeMeter[p]->OnSongEnded();	// give a little life back between stages
 				m_OniFade.CloseWipingRight( SM_BeginLoadingNextSong );
@@ -1420,6 +1422,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		break;
 	case SM_GoToScreenAfterBack:
+		/* Reset options.  (Should this be done in ScreenSelect*?) */
+		for( p=0; p<NUM_PLAYERS; p++ )
+			GAMESTATE->m_PlayerOptions[p] = GAMESTATE->m_SelectedOptions[p];
+		GAMESTATE->m_SongOptions.Init();
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:	
@@ -1450,7 +1456,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_soundMusic.StopPlaying();
 		m_StarWipe.SetTransitionTime( 1.5f );
 		m_StarWipe.CloseWipingRight( SM_None );
-		int p;
 		for( p=0; p<NUM_PLAYERS; p++ )
 			if( GAMESTATE->IsPlayerEnabled(p) )
 				m_Player[p].FadeToFail();
