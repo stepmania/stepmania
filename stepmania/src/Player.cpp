@@ -44,6 +44,7 @@ CachedThemeMetricB	HOLD_JUDGMENTS_UNDER_FIELD	("Player","HoldJudgmentsUnderField
 #define START_DRAWING_AT_PIXELS					THEME->GetMetricI("Player","StartDrawingAtPixels")
 #define STOP_DRAWING_AT_PIXELS					THEME->GetMetricI("Player","StopDrawingAtPixels")
 #define MAX_PRO_TIMING_ERROR					THEME->GetMetricI("Player","MaxProTimingError")
+#define RECEPTOR_CUTOFF							THEME->GetMetricI("Player","ReceptorNoSinkScoreCutoff")
 
 /* Distance to search for a note in Step(). */
 /* Units? */
@@ -641,6 +642,12 @@ void PlayerMinus::Step( int col, RageTimer tm )
 	
 	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
+	// calculate TapNoteScore
+	// Declared out here because it will be changed
+	// by code blocks below, and then used to see
+	// if the Receptor arrow should sink or not.
+	TapNoteScore score = TNS_NONE;
+
 	if( iIndexOverlappingNote != -1 )
 	{
 		// compute the score for this hit
@@ -667,9 +674,6 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 
 		TapNote tn = GetTapNote(col,iIndexOverlappingNote);
-
-		// calculate TapNoteScore
-		TapNoteScore score = TNS_NONE;
 
 		switch( GAMESTATE->m_PlayerController[m_PlayerNumber] )
 		{
@@ -883,9 +887,10 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		}
 	}
 
-
-
-	m_pNoteField->Step( col );
+	//Don't blink arrows if the score is higher than what the theme
+	//says should not blink
+	if (RECEPTOR_CUTOFF>=score)
+		m_pNoteField->Step( col );
 }
 
 void PlayerMinus::HandleAutosync(float fNoteOffset)
