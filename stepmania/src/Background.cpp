@@ -286,8 +286,8 @@ void Background::LoadFromSong( Song* pSong )
 		const float fFirstBeat = pSong->m_fFirstBeat;
 		const float fLastBeat = pSong->m_fLastBeat;
 
-		const int iSequenceLength = 8;
-		const int iSequence[iSequenceLength] = {0,1,0,1,2,3,2,3};
+	//	const int iSequenceLength = 8;
+	//	const int iSequence[iSequenceLength] = {0,1,0,1,2,3,2,3};
 		int ctr=0;
 
 		// change BG every 4 bars
