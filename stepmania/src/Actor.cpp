@@ -644,9 +644,9 @@ void Actor::Command( CString sCommandString )
 		else if( sName=="x" )				SetX( fParam(1) );
 		else if( sName=="y" )				SetY( fParam(1) );
 		else if( sName=="z" )				SetZ( fParam(1) );
-		else if( sName=="xoffset" )			SetX( GetX()+fParam(1) );
-		else if( sName=="yoffset" )			SetY( GetY()+fParam(1) );
-		else if( sName=="zoffset" )			SetZ( GetZ()+fParam(1) );
+		else if( sName=="addx" )			SetX( GetX()+fParam(1) );
+		else if( sName=="addy" )			SetY( GetY()+fParam(1) );
+		else if( sName=="addz" )			SetZ( GetZ()+fParam(1) );
 		else if( sName=="zoom" )			SetZoom( fParam(1) );
 		else if( sName=="zoomx" )			SetZoomX( fParam(1) );
 		else if( sName=="zoomy" )			SetZoomY( fParam(1) );
