@@ -43,7 +43,7 @@ void OptionRow::PrepareItemText( CString &s ) const
 	// HACK: Always theme the NEXT_ROW and EXIT items, even if metrics says not to theme.
 	if( s == NEXT_ROW_NAME )							bTheme = true;
 	if( s == EXIT_NAME )								bTheme = true;
-	if( m_RowDef.m_bAllowThemeItems && THEME_ITEMS )	bTheme = true;
+	if( THEME_ITEMS && m_RowDef.m_bAllowThemeItems )	bTheme = true;
 
 	if( bTheme ) 
 		s = THEME_OPTION_ITEM( s, false ); 
