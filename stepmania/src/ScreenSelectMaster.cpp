@@ -189,7 +189,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BeginFadingOut:
 		float fSecs = TweenOffScreen();
 		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, fSecs );	// nofify parent that we're finished
-		m_Menu.m_MenuTimer.Stop();
+		m_Menu.StopTimer();
 		break;
 	}
 }

@@ -379,7 +379,7 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 			GAMESTATE->m_pCurCharacters[p] = pChar;
 		}
 
-		m_Menu.m_MenuTimer.Stop();
+		m_Menu.StopTimer();
 		TweenOffScreen();
 		this->PostScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_TWEEN_OFF_SECONDS );
 	}

@@ -35,6 +35,7 @@
 #include "RageTextureManager.h"
 #include "Course.h"
 #include "ProfileManager.h"
+#include "MenuTimer.h"
 
 
 const int NUM_SCORE_DIGITS	=	9;
@@ -695,12 +696,12 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		if( m_MusicWheel.IsRouletting() )
 		{
 			MenuStart(PLAYER_INVALID);
-			m_Menu.m_MenuTimer.SetSeconds( 15 );
+			m_Menu.m_MenuTimer->SetSeconds( 15 );
 		}
 		else if( m_MusicWheel.GetSelectedType() != TYPE_SONG )
 		{
 			m_MusicWheel.StartRoulette();
-			m_Menu.m_MenuTimer.SetSeconds( 15 );
+			m_Menu.m_MenuTimer->SetSeconds( 15 );
 		}
 		else
 		{
@@ -961,7 +962,7 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 void ScreenSelectMusic::AfterMusicChange()
 {
 	if( !m_MusicWheel.IsRouletting() )
-		m_Menu.m_MenuTimer.Stall();
+		m_Menu.m_MenuTimer->Stall();
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
 	if( pSong )

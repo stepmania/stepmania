@@ -27,6 +27,7 @@
 #include "ActorUtil.h"
 #include "RageTextureManager.h"
 #include "AnnouncerManager.h"
+#include "MenuTimer.h"
 
 #define SCROLLING_LIST_X		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")
 #define SCROLLING_LIST_Y		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListY")
@@ -399,7 +400,7 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenEz2SelectMusic::MenuRight( PlayerNumber pn, const InputEventType type )
 {
-	m_Menu.m_MenuTimer.Stall();
+	m_Menu.m_MenuTimer->Stall();
 	m_MusicBannerWheel.BannersRight();
 	for(int i=i_SkipAheadOffset; i>0; i--)
 		m_MusicBannerWheel.BannersRight();
@@ -437,7 +438,7 @@ void ScreenEz2SelectMusic::TweenOffScreen()
 
 void ScreenEz2SelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
-	m_Menu.m_MenuTimer.Stall();
+	m_Menu.m_MenuTimer->Stall();
 	m_MusicBannerWheel.BannersLeft();
 	for(int i=i_SkipAheadOffset; i>0; i--)
 		m_MusicBannerWheel.BannersLeft();

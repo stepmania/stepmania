@@ -26,6 +26,7 @@
 #include "ActorUtil.h"
 #include "GameState.h"
 #include "UnlockSystem.h"
+#include "MenuTimer.h"
 
 #define BANNER_WIDTH					THEME->GetMetricF("ScreenSelectGroup","BannerWidth")
 #define BANNER_HEIGHT					THEME->GetMetricF("ScreenSelectGroup","BannerHeight")
@@ -263,7 +264,7 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 		return;
 
 	m_soundSelect.PlayRandom();
-	m_Menu.m_MenuTimer.Stop();
+	m_Menu.m_MenuTimer->Stop();
 	m_bChosen = true;
 
 	GAMESTATE->m_pCurSong = NULL;

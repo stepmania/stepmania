@@ -166,7 +166,7 @@ void ScreenSelectDifficultyEX::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BeginFadingOut:
 		TweenOffScreen();
 		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, SLEEP_AFTER_TWEEN_OFF_SECONDS );	// nofify parent that we're finished
-		m_Menu.m_MenuTimer.Stop();
+		m_Menu.StopTimer();
 		break;
 	}
 }

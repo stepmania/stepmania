@@ -21,6 +21,7 @@ Andrew Livy
 #include "RageException.h"
 #include "RageTimer.h"
 #include "ThemeManager.h"
+#include "MenuTimer.h"
 
 /* Constants */
 
@@ -237,9 +238,9 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 	else
 	{
 		// give the other player a little time to join
-		m_Menu.m_MenuTimer.SetSeconds( 1 );
-		m_Menu.m_MenuTimer.Start();
-		m_Menu.m_MenuTimer.EnableStealth( SILENT_WAIT ); // do we wanna make the timer 'quiet' ?
+		m_Menu.m_MenuTimer->SetSeconds( 1 );
+		m_Menu.m_MenuTimer->Start();
+		m_Menu.m_MenuTimer->EnableStealth( SILENT_WAIT ); // do we wanna make the timer 'quiet' ?
 	}
 }
 

@@ -81,7 +81,6 @@ ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions
 		INPUTMODE_TOGETHER, 
 		g_ProfileOptionsLines, 
 		NUM_PROFILE_OPTIONS_LINES );
-	m_Menu.m_MenuTimer.Disable();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenMachineOptions music") );
 }

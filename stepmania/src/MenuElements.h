@@ -14,17 +14,18 @@
 
 #include "Screen.h"
 #include "Sprite.h"
-#include "MenuTimer.h"
 #include "Transition.h"
 #include "HelpDisplay.h"
 #include "BGAnimation.h"
 #include "ActorUtil.h"
+#include "RageSound.h"
 
-
+class MenuTimer;
 class MenuElements : public ActorFrame
 {
 public:
 	MenuElements();
+	virtual ~MenuElements();
 
 	virtual void DrawPrimitives();
 
@@ -39,6 +40,8 @@ public:
 	bool IsTransitioning();
 	bool m_bTimerEnabled;
 
+	void StopTimer();
+
 public:	// let owner tinker with these objects
 
 	CString				m_sName;
@@ -47,7 +50,7 @@ public:	// let owner tinker with these objects
 
 	AutoActor			m_autoHeader;
 	Sprite				m_sprStyleIcon;
-	MenuTimer			m_MenuTimer;
+	MenuTimer			*m_MenuTimer;
 	AutoActor			m_autoFooter;
 	HelpDisplay			m_textHelp;
 

@@ -16,10 +16,10 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
-#include "RageLog.h"
 #include "GameManager.h"
 #include "GameState.h"
 #include "ThemeManager.h"
+#include "MenuTimer.h"
 
 
 #define TIMER_SECONDS			THEME->GetMetricI(m_sName,"TimerSeconds")
@@ -28,6 +28,12 @@
 
 MenuElements::MenuElements()
 {
+	m_MenuTimer = new MenuTimer;
+}
+
+MenuElements::~MenuElements()
+{
+	delete m_MenuTimer;
 }
 
 void MenuElements::Load( CString sClassName )
@@ -59,13 +65,13 @@ void MenuElements::Load( CString sClassName )
 	m_bTimerEnabled = (TIMER_SECONDS != -1);
 	if( m_bTimerEnabled )
 	{
-		m_MenuTimer.SetName( "Timer" );
+		m_MenuTimer->SetName( "Timer" );
 		UtilOnCommand( m_MenuTimer, "MenuElements" );
 		if( TIMER_SECONDS > 0 && PREFSMAN->m_bMenuTimer  &&  !GAMESTATE->m_bEditing )
-			m_MenuTimer.SetSeconds( TIMER_SECONDS );
+			m_MenuTimer->SetSeconds( TIMER_SECONDS );
 		else
-			m_MenuTimer.Disable();
-		this->AddChild( &m_MenuTimer );
+			m_MenuTimer->Disable();
+		this->AddChild( m_MenuTimer );
 	}
 
 	m_autoFooter.Load( THEME->GetPathToG(m_sName+" footer") );
@@ -105,8 +111,8 @@ void MenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 {
 	if( m_bTimerEnabled )
 	{
-		m_MenuTimer.SetSeconds( 0 );
-		m_MenuTimer.Stop();
+		m_MenuTimer->SetSeconds( 0 );
+		m_MenuTimer->Stop();
 		UtilOffCommand( m_MenuTimer, "MenuElements" );
 	}
 
@@ -137,7 +143,7 @@ void MenuElements::Back( ScreenMessage smSendWhenDone )
 	if( m_Back.IsTransitioning() )
 		return;	// ignore
 
-	m_MenuTimer.Stop();
+	m_MenuTimer->Stop();
 	m_Back.StartTransitioning( smSendWhenDone );
 	m_soundBack.Play();
 }
@@ -154,7 +160,7 @@ void MenuElements::DrawTopLayer()
 	m_autoHeader->Draw();
 	m_sprStyleIcon.Draw();
 	if( m_bTimerEnabled )
-		m_MenuTimer.Draw();
+		m_MenuTimer->Draw();
 	m_autoFooter->Draw();
 	m_textHelp.Draw();
 	m_In.Draw();
@@ -177,3 +183,9 @@ bool MenuElements::IsTransitioning()
 {
 	return m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Back.IsTransitioning();
 }
+
+void MenuElements::StopTimer()
+{
+	m_MenuTimer->Stop();
+}
+
