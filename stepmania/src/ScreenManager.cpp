@@ -134,7 +134,12 @@ void ScreenManager::Draw()
 
 	if( PREFSMAN  &&  PREFSMAN->m_bShowStats )
 	{
-		m_textStats.SetText( ssprintf("%i FPS\n%i VPF\n%i DPF", DISPLAY->GetFPS(), DISPLAY->GetVPF(), DISPLAY->GetDPF()) );
+		/* If FPS == 0, we don't have stats yet. */
+		m_textStats.SetText( ssprintf(DISPLAY->GetFPS()?
+			"%i FPS\n%i VPF\n%i DPF":
+			"-- FPS\n-- VPF\n-- DPF",
+			DISPLAY->GetFPS(), DISPLAY->GetVPF(), DISPLAY->GetDPF()) );
+
 		m_textStats.Draw();
 	}
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -191,40 +196,49 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 Screen* ScreenManager::MakeNewScreen( CString sClassName )
 {
 #define RETURN_IF_MATCH(className)	if(0==stricmp(sClassName,"##className##")) return new className
+	Screen *ret = NULL;
 
-	if(		 0==stricmp(sClassName, "ScreenAppearanceOptions") )return new ScreenAppearanceOptions;
-	else if( 0==stricmp(sClassName, "ScreenCaution") )			return new ScreenCaution;
-	else if( 0==stricmp(sClassName, "ScreenEdit") )				return new ScreenEdit;
-	else if( 0==stricmp(sClassName, "ScreenEditMenu") )			return new ScreenEditMenu;
-	else if( 0==stricmp(sClassName, "ScreenEvaluation") )		return new ScreenEvaluation;
-	else if( 0==stricmp(sClassName, "ScreenFinalEvaluation") )	return new ScreenFinalEvaluation;
-	else if( 0==stricmp(sClassName, "ScreenEz2SelectPlayer") )	return new ScreenEz2SelectPlayer;
-	else if( 0==stricmp(sClassName, "ScreenSelectMode") )		return new ScreenSelectMode;
-	else if( 0==stricmp(sClassName, "ScreenGameOver") )			return new ScreenGameOver;
-	else if( 0==stricmp(sClassName, "ScreenGameplay") )			return new ScreenGameplay;
-	else if( 0==stricmp(sClassName, "ScreenGraphicOptions") )	return new ScreenGraphicOptions;
-	else if( 0==stricmp(sClassName, "ScreenHowToPlay") )		return new ScreenHowToPlay;
-	else if( 0==stricmp(sClassName, "ScreenInputOptions") )		return new ScreenInputOptions;
-	else if( 0==stricmp(sClassName, "ScreenMachineOptions") )	return new ScreenMachineOptions;
-	else if( 0==stricmp(sClassName, "ScreenMapControllers") )	return new ScreenMapControllers;
-	else if( 0==stricmp(sClassName, "ScreenInputOptions") )		return new ScreenInputOptions;
-	else if( 0==stricmp(sClassName, "ScreenMusicScroll") )		return new ScreenMusicScroll;
-	else if( 0==stricmp(sClassName, "ScreenNetworkWaiting") )	return new ScreenNetworkWaiting;
-	else if( 0==stricmp(sClassName, "ScreenPlayerOptions") )	return new ScreenPlayerOptions;
-	else if( 0==stricmp(sClassName, "ScreenSandbox") )			return new ScreenSandbox;
-	else if( 0==stricmp(sClassName, "ScreenSelectCourse") )		return new ScreenSelectCourse;
-	else if( 0==stricmp(sClassName, "ScreenSelectDifficulty") )	return new ScreenSelectDifficulty;
-	else if( 0==stricmp(sClassName, "ScreenSelectGame") )		return new ScreenSelectGame;
-	else if( 0==stricmp(sClassName, "ScreenSelectGroup") )		return new ScreenSelectGroup;
-	else if( 0==stricmp(sClassName, "ScreenSelectMusic") )		return new ScreenSelectMusic;
-	else if( 0==stricmp(sClassName, "ScreenSelectStyle5th") )	return new ScreenSelectStyle5th;
-	else if( 0==stricmp(sClassName, "ScreenSelectStyle") )		return new ScreenSelectStyle;
-	else if( 0==stricmp(sClassName, "ScreenSongOptions") )		return new ScreenSongOptions;
-	else if( 0==stricmp(sClassName, "ScreenStage") )			return new ScreenStage;
-	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )		return new ScreenTitleMenu;
-	else if( 0==stricmp(sClassName, "ScreenEz2SelectMusic") )	return new ScreenEz2SelectMusic;
+	if(		 0==stricmp(sClassName, "ScreenAppearanceOptions") )ret = new ScreenAppearanceOptions;
+	else if( 0==stricmp(sClassName, "ScreenCaution") )			ret = new ScreenCaution;
+	else if( 0==stricmp(sClassName, "ScreenEdit") )				ret = new ScreenEdit;
+	else if( 0==stricmp(sClassName, "ScreenEditMenu") )			ret = new ScreenEditMenu;
+	else if( 0==stricmp(sClassName, "ScreenEvaluation") )		ret = new ScreenEvaluation;
+	else if( 0==stricmp(sClassName, "ScreenFinalEvaluation") )	ret = new ScreenFinalEvaluation;
+	else if( 0==stricmp(sClassName, "ScreenEz2SelectPlayer") )	ret = new ScreenEz2SelectPlayer;
+	else if( 0==stricmp(sClassName, "ScreenSelectMode") )		ret = new ScreenSelectMode;
+	else if( 0==stricmp(sClassName, "ScreenGameOver") )			ret = new ScreenGameOver;
+	else if( 0==stricmp(sClassName, "ScreenGameplay") )			ret = new ScreenGameplay;
+	else if( 0==stricmp(sClassName, "ScreenGraphicOptions") )	ret = new ScreenGraphicOptions;
+	else if( 0==stricmp(sClassName, "ScreenHowToPlay") )		ret = new ScreenHowToPlay;
+	else if( 0==stricmp(sClassName, "ScreenInputOptions") )		ret = new ScreenInputOptions;
+	else if( 0==stricmp(sClassName, "ScreenMachineOptions") )	ret = new ScreenMachineOptions;
+	else if( 0==stricmp(sClassName, "ScreenMapControllers") )	ret = new ScreenMapControllers;
+	else if( 0==stricmp(sClassName, "ScreenInputOptions") )		ret = new ScreenInputOptions;
+	else if( 0==stricmp(sClassName, "ScreenMusicScroll") )		ret = new ScreenMusicScroll;
+	else if( 0==stricmp(sClassName, "ScreenNetworkWaiting") )	ret = new ScreenNetworkWaiting;
+	else if( 0==stricmp(sClassName, "ScreenPlayerOptions") )	ret = new ScreenPlayerOptions;
+	else if( 0==stricmp(sClassName, "ScreenSandbox") )			ret = new ScreenSandbox;
+	else if( 0==stricmp(sClassName, "ScreenSelectCourse") )		ret = new ScreenSelectCourse;
+	else if( 0==stricmp(sClassName, "ScreenSelectDifficulty") )	ret = new ScreenSelectDifficulty;
+	else if( 0==stricmp(sClassName, "ScreenSelectGame") )		ret = new ScreenSelectGame;
+	else if( 0==stricmp(sClassName, "ScreenSelectGroup") )		ret = new ScreenSelectGroup;
+	else if( 0==stricmp(sClassName, "ScreenSelectMusic") )		ret = new ScreenSelectMusic;
+	else if( 0==stricmp(sClassName, "ScreenSelectStyle5th") )	ret = new ScreenSelectStyle5th;
+	else if( 0==stricmp(sClassName, "ScreenSelectStyle") )		ret = new ScreenSelectStyle;
+	else if( 0==stricmp(sClassName, "ScreenSongOptions") )		ret = new ScreenSongOptions;
+	else if( 0==stricmp(sClassName, "ScreenStage") )			ret = new ScreenStage;
+	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )		ret = new ScreenTitleMenu;
+	else if( 0==stricmp(sClassName, "ScreenEz2SelectMusic") )	ret = new ScreenEz2SelectMusic;
 	else
 		throw RageException( "Invalid Screen class name '%s'", sClassName.GetString() );
+
+	/* That probably took a little while.  Let's reset stats.  This prevents us
+	 * from displaying an unnaturally low FPS value, and the next FPS value we
+	 * display will be accurate, which makes skips in the initial tween-ins more
+	 * apparent. */
+	DISPLAY->ResetStats();
+
+	return ret;
 }
 
 void ScreenManager::PrepNewScreen( CString sClassName )

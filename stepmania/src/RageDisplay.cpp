@@ -307,14 +307,19 @@ void RageDisplay::Flip()
 	{
 		g_LastCheckTimer.GetDeltaTime();
 		g_iFPS = g_iFramesRenderedSinceLastCheck;
-		g_iFramesRenderedSinceLastCheck = 0;
 		g_iVPF = g_iVertsRenderedSinceLastCheck / g_iFPS;
-		g_iVertsRenderedSinceLastCheck = 0;
 		g_iDPF = g_iDrawsSinceLastCheck / g_iFPS;
-		g_iDrawsSinceLastCheck = 0;
+		g_iFramesRenderedSinceLastCheck = g_iVertsRenderedSinceLastCheck = g_iDrawsSinceLastCheck = 0;
 		LOG->Trace( "FPS: %d, VPF: %d, DPF: %d", g_iFPS, g_iVPF, g_iDPF );
 	}
 
+}
+
+void RageDisplay::ResetStats()
+{
+	g_iFPS = g_iVPF = g_iDPF = 0;
+	g_iFramesRenderedSinceLastCheck = g_iVertsRenderedSinceLastCheck = g_iDrawsSinceLastCheck = 0;
+	g_LastCheckTimer.GetDeltaTime();
 }
 
 bool RageDisplay::IsWindowed() const 

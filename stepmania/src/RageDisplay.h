@@ -79,6 +79,7 @@ public:
 	int GetFPS() const;
 	int GetVPF() const;
 	int GetDPF() const;
+	void ResetStats();
 
 protected:
 	void AddVerts( const RageVertex v[], int iNumVerts );
