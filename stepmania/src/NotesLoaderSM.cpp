@@ -230,10 +230,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		else if( 0==stricmp(sValueName,"MUSICLENGTH") )
 		{
 			if(!FromCache)
-			{
-				LOG->Trace("Ignored #MUSICLENGTH (cache only)");
 				continue;
-			}
 			out.m_fMusicLengthSeconds = (float)atof( sParams[1] );
 		}
 
@@ -245,20 +242,14 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		else if( 0==stricmp(sValueName,"FIRSTBEAT") )
 		{
 			if(!FromCache)
-			{
-				LOG->Trace("Ignored #FIRSTBEAT (cache only)");
 				continue;
-			}
 			out.m_fFirstBeat = (float)atof( sParams[1] );
 		}
 
 		else if( 0==stricmp(sValueName,"LASTBEAT") )
 		{
 			if(!FromCache)
-			{
 				LOG->Trace("Ignored #LASTBEAT (cache only)");
-				continue;
-			}
 			out.m_fLastBeat = (float)atof( sParams[1] );
 		}
 		else if( 0==stricmp(sValueName,"SONGFILENAME") )
