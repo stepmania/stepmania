@@ -31,7 +31,7 @@ ScreenEditMenu.cpp ScreenEditMenu.h ScreenEnding.cpp ScreenEnding.h \
 ScreenEndlessBreak.cpp ScreenEndlessBreak.h ScreenEvaluation.cpp ScreenEvaluation.h ScreenExit.cpp ScreenExit.h ScreenNetEvaluation.cpp ScreenNetEvaluation.h \
 ScreenNetSelectMusic.cpp ScreenNetSelectMusic.h ScreenNetSelectBase.cpp ScreenNetSelectBase.h ScreenNetRoom.cpp ScreenNetRoom.h \
 ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h \
-ScreenGameplay.cpp ScreenGameplay.h ScreenGameplayMultiplayer.cpp ScreenGameplayMultiplayer.h ScreenHowToPlay.cpp ScreenHowToPlay.h \
+ScreenGameplay.cpp ScreenGameplay.h ScreenHowToPlay.cpp ScreenHowToPlay.h \
 ScreenInstructions.cpp ScreenInstructions.h \
 ScreenJukebox.cpp ScreenJukebox.h \
 ScreenJukeboxMenu.cpp ScreenJukeboxMenu.h ScreenLogo.cpp ScreenLogo.h ScreenMapControllers.cpp ScreenMapControllers.h \
@@ -50,6 +50,10 @@ ScreenSongOptions.cpp ScreenSongOptions.h ScreenStage.cpp ScreenStage.h ScreenSt
 ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h ScreenTestInput.cpp ScreenTestInput.h \
 ScreenTestLights.cpp ScreenTestLights.h ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h \
 ScreenTitleMenu.cpp ScreenTitleMenu.h ScreenUnlock.cpp ScreenUnlock.h ScreenWithMenuElements.cpp ScreenWithMenuElements.h
+
+if !WITHOUT_NETWORKING
+Screens += ScreenGameplayMultiplayer.cpp ScreenGameplayMultiplayer.h
+endif
 
 DataStructures = \
 Attack.cpp Attack.h AutoKeysounds.cpp AutoKeysounds.h BannerCache.cpp BannerCache.h CatalogXml.cpp CatalogXml.h \
