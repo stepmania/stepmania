@@ -11,7 +11,7 @@ void NetworkSyncManager::PostStartUp( CString ServerIP ) { }
 bool NetworkSyncManager::Connect(const CString& addy, unsigned short port) { return false; }
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo) { }
 void NetworkSyncManager::ReportSongOver() { }
-void NetworkSyncManager::StartRequest(int position) { }
+void NetworkSyncManager::StartRequest(short position) { }
 void NetworkSyncManager::DisplayStartupStatus() { }
 void NetworkSyncManager::Update( float fDeltaTime ) { }
 
