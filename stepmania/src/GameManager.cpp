@@ -915,7 +915,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		"single",								// m_szName
-		NOTES_TYPE_PARA,						// m_NotesType
+		NOTES_TYPE_PARA_SINGLE,						// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
@@ -1372,6 +1372,10 @@ NotesType GameManager::StringToNotesType( CString sNotesType )
 	// HACK!  We elminitated "ez2-single-hard", but we should still handle it.
 	if( sNotesType == "ez2-single-hard" )
 		sNotesType = "ez2-single";
+
+	// HACK!  "para-single" used to be called just "para"
+	if( sNotesType == "para" )
+		sNotesType = "para-single";
 
 	for( int i=0; i<NUM_NOTES_TYPES; i++ )
 		if( NotesTypes[i].name == sNotesType )

@@ -879,7 +879,6 @@ void Update()
 
 		SCREENMAN->Input( DeviceI, type, GameI, MenuI, StyleI );
 	}
-
 }
 
 

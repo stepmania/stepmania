@@ -75,13 +75,13 @@ CString AnnouncerManager::GetPathTo( CString sFolderName )
 	if( m_sCurAnnouncerName!=""  &&  !DoesFileExist(sPathToFolderCurrent) )
 	{
 		LOG->Trace( "The current announcer is missing the folder '%s'.", sFolderName );
-		MessageBeep( MB_OK );
+//		MessageBeep( MB_OK );
 		CreateDirectories( sPathToFolderCurrent );
 	}
 	if( !DoesFileExist(sPathToFolderEmpty) )
 	{
 		LOG->Trace( "The empty announcer is missing the folder '%s'.", sFolderName );
-		MessageBeep( MB_OK );
+//		MessageBeep( MB_OK );
 		CreateDirectories( sPathToFolderEmpty );
 		CreateDirectories( sPathToFolderEmpty );
 	}
@@ -90,3 +90,9 @@ CString AnnouncerManager::GetPathTo( CString sFolderName )
 	return sPathToFolderCurrent;
 }
 
+bool AnnouncerManager::HasSoundsFor( CString sFolderName )
+{
+	CStringArray asFileNames;
+	GetDirListing( GetPathTo(sFolderName), asFileNames );
+	return asFileNames.GetSize() > 0;
+}

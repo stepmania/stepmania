@@ -42,7 +42,7 @@ char NotesWriterDWI::NotesToDWIChar( bool bCol1, bool bCol2, bool bCol3, bool bC
 		if( l.bCol[0]==bCol1 && l.bCol[1]==bCol2 && l.bCol[2]==bCol3 && l.bCol[3]==bCol4 && l.bCol[4]==bCol5 && l.bCol[5]==bCol6 )
 			return l.c;
 	}
-	ASSERT(0);	// if we assert here, we didn't find the row in the DWI char lookup above.  It must be missing an entry.
+	LOG->Warn( "Failed to find the DWI character for the row %d %d %d %d %d %d", bCol1, bCol2, bCol3, bCol4, bCol5, bCol6 );
 	return '0';
 }
 

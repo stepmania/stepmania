@@ -25,6 +25,7 @@ public:
 	CString GetCurAnnouncerName() { return m_sCurAnnouncerName; };
 
 	CString GetPathTo( CString sFolderName );
+	bool HasSoundsFor( CString sFolderName );
 
 protected:
 	static CString GetAnnouncerDirFromName( CString sAnnouncerName );

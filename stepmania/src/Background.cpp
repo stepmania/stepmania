@@ -151,10 +151,10 @@ void Background::LoadFromSong( Song* pSong )
 			//  movies in RandomMovies dir, BGAnims in BGAnimsDir.
 			CStringArray asFiles;
 
-			// Look for movies in the song dir
-			GetDirListing( pSong->m_sSongDir+aniseg.m_sBGName+".avi", asFiles, false, true );
-			GetDirListing( pSong->m_sSongDir+aniseg.m_sBGName+".mpg", asFiles, false, true );
-			GetDirListing( pSong->m_sSongDir+aniseg.m_sBGName+".mpeg", asFiles, false, true );
+			// Look for BG movies in the song dir
+			GetDirListing( pSong->m_sSongDir+aniseg.m_sBGName, asFiles, false, true );
+			GetDirListing( pSong->m_sSongDir+aniseg.m_sBGName, asFiles, false, true );
+			GetDirListing( pSong->m_sSongDir+aniseg.m_sBGName, asFiles, false, true );
 			if( asFiles.GetSize() > 0 )
 			{
 				pTempBGA = new BGAnimation;
@@ -178,9 +178,9 @@ void Background::LoadFromSong( Song* pSong )
 			}
 
 			// Look for movies in the RandomMovies dir
-			GetDirListing( RANDOMMOVIES_DIR+aniseg.m_sBGName+".avi", asFiles, false, true );
-			GetDirListing( RANDOMMOVIES_DIR+aniseg.m_sBGName+".mpg", asFiles, false, true );
-			GetDirListing( RANDOMMOVIES_DIR+aniseg.m_sBGName+".mpeg", asFiles, false, true );
+			GetDirListing( RANDOMMOVIES_DIR+aniseg.m_sBGName, asFiles, false, true );
+			GetDirListing( RANDOMMOVIES_DIR+aniseg.m_sBGName, asFiles, false, true );
+			GetDirListing( RANDOMMOVIES_DIR+aniseg.m_sBGName, asFiles, false, true );
 			if( asFiles.GetSize() > 0 )
 			{
 				pTempBGA = new BGAnimation;
@@ -197,6 +197,18 @@ void Background::LoadFromSong( Song* pSong )
 			{
 				pTempBGA = new BGAnimation;
 				pTempBGA->LoadFromAniDir( asFiles[0], sSongBackgroundPath  );
+				m_BGAnimations.Add( pTempBGA );
+
+				m_aBGSegments.Add( BGSegment(aniseg.m_fStartBeat, m_BGAnimations.GetSize()-1, bFade) );	// add to the plan
+				continue;	// stop looking for this background
+			}
+
+			// Look for BGAnims in the BGAnims dir
+			GetDirListing( VISUALIZATIONS_DIR+aniseg.m_sBGName, asFiles, false, true );
+			if( asFiles.GetSize() > 0 )
+			{
+				pTempBGA = new BGAnimation;
+				pTempBGA->LoadFromVisualization( asFiles[0], sSongBackgroundPath );
 				m_BGAnimations.Add( pTempBGA );
 
 				m_aBGSegments.Add( BGSegment(aniseg.m_fStartBeat, m_BGAnimations.GetSize()-1, bFade) );	// add to the plan

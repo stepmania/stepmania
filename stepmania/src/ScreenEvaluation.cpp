@@ -565,7 +565,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","evaluation extra stage") );
 	}
-	else if( bOneHasNewRecord )
+	else if( bOneHasNewRecord  &&  ANNOUNCER->HasSoundsFor("evaluation new record") )
 	{
 		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation new record") );
 	}

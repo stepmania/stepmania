@@ -33,7 +33,7 @@
 #include "NotesLoaderKSF.h"
 #include "NotesWriterDWI.h"
 
-const int FILE_CACHE_VERSION = 100;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 102;	// increment this when Song or Notes changes to invalidate cache
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
@@ -777,25 +777,51 @@ void Song::SaveToDWIFile()
 
 void Song::AddAutoGenNotes()
 {
-	// This is way too slow.  Only autogen dance->pump and pump->dance
-	CArray<NotesType,NotesType> aMissingNotesTypes;
-	if( !SongHasNotesType(NOTES_TYPE_DANCE_SINGLE) )	aMissingNotesTypes.Add( NOTES_TYPE_DANCE_SINGLE );
-	if( !SongHasNotesType(NOTES_TYPE_DANCE_DOUBLE) )	aMissingNotesTypes.Add( NOTES_TYPE_DANCE_DOUBLE );
-	if( !SongHasNotesType(NOTES_TYPE_DANCE_SOLO) )		aMissingNotesTypes.Add( NOTES_TYPE_DANCE_SOLO );
-	if( !SongHasNotesType(NOTES_TYPE_PUMP_SINGLE) )		aMissingNotesTypes.Add( NOTES_TYPE_PUMP_SINGLE );
-	if( !SongHasNotesType(NOTES_TYPE_PUMP_DOUBLE) )		aMissingNotesTypes.Add( NOTES_TYPE_PUMP_DOUBLE );
 
-//	for( NotesType ntMissing=(NotesType)0; ntMissing<NUM_NOTES_TYPES; ntMissing=(NotesType)(ntMissing+1) )
+// This hack is no longer needed.  I've sped up autogen.
+
+//	// This is way too slow.  Only autogen dance->pump and pump->dance
+//	CArray<NotesType,NotesType> aMissingNotesTypes;
+//	if( !SongHasNotesType(NOTES_TYPE_DANCE_SINGLE) )	aMissingNotesTypes.Add( NOTES_TYPE_DANCE_SINGLE );
+//	if( !SongHasNotesType(NOTES_TYPE_DANCE_DOUBLE) )	aMissingNotesTypes.Add( NOTES_TYPE_DANCE_DOUBLE );
+//	if( !SongHasNotesType(NOTES_TYPE_DANCE_SOLO) )		aMissingNotesTypes.Add( NOTES_TYPE_DANCE_SOLO );
+//	if( !SongHasNotesType(NOTES_TYPE_PUMP_SINGLE) )		aMissingNotesTypes.Add( NOTES_TYPE_PUMP_SINGLE );
+//	if( !SongHasNotesType(NOTES_TYPE_PUMP_DOUBLE) )		aMissingNotesTypes.Add( NOTES_TYPE_PUMP_DOUBLE );
+//
+//	for( int i=0; i<aMissingNotesTypes.GetSize(); i++ )
 //	{
-//		if( SongHasNotesType(ntMissing) )
-//			continue;
+//		NotesType ntMissing = aMissingNotesTypes[i];
 
-	for( int i=0; i<aMissingNotesTypes.GetSize(); i++ )
+	for( NotesType ntMissing=(NotesType)0; ntMissing<NUM_NOTES_TYPES; ntMissing=(NotesType)(ntMissing+1) )
 	{
-		NotesType ntMissing = aMissingNotesTypes[i];
+next_notes_type:
+
+		if( SongHasNotesType(ntMissing) )
+			continue;
+
 
 		// missing Notes of this type
 		int iNumTracksOfMissing = GAMEMAN->NotesTypeToNumTracks(ntMissing);
+
+		int j;
+
+		// look for an exact match that was created by autogen
+		for( j=0; j<m_apNotes.GetSize(); j++ )
+		{
+			Notes* pOriginalNotes = m_apNotes[j];
+			if( iNumTracksOfMissing != GAMEMAN->NotesTypeToNumTracks(pOriginalNotes->m_NotesType) )
+				continue;	// no match, skip
+
+			Notes* pNewNotes = new Notes;
+			pNewNotes->m_Difficulty		= pOriginalNotes->m_Difficulty;
+			pNewNotes->m_iMeter			= pOriginalNotes->m_iMeter;
+			pNewNotes->m_sDescription	= pOriginalNotes->m_sDescription + " (autogen)";
+			pNewNotes->m_NotesType		= ntMissing;
+			pNewNotes->m_sSMNoteData	= pOriginalNotes->m_sSMNoteData;
+			this->m_apNotes.Add( pNewNotes );
+			goto next_notes_type;
+		}
+
 
 		// look for closest match
 		NotesType	ntBestMatch = (NotesType)-1;
@@ -817,7 +843,7 @@ void Song::AddAutoGenNotes()
 		if( ntBestMatch == -1 )
 			continue;
 
-		for( int j=0; j<m_apNotes.GetSize(); j++ )
+		for( j=0; j<m_apNotes.GetSize(); j++ )
 		{
 			Notes* pOriginalNotes = m_apNotes[j];
 			if( pOriginalNotes->m_NotesType != ntBestMatch )
@@ -835,6 +861,7 @@ void Song::AddAutoGenNotes()
 			newNoteData.LoadTransformedSlidingWindow( &originalNoteData, iNumTracksOfMissing );
 			pNewNotes->SetNoteData( &newNoteData );
 			this->m_apNotes.Add( pNewNotes );
+			goto next_notes_type;
 		}
 	}
 }
