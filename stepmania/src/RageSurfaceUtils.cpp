@@ -553,10 +553,29 @@ static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 			 * lrintf( ((float) i / max_src_val) * max_dst_val )
 			 * { 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3 }
 			 *
-			 * We use the first, since it gives the most even distribution.
+			 * We use the first for increasing resolution, since it gives the most even
+			 * distribution.
+			 *
+			 * 2->4 bit:
+			 * SCALE( i, 0, max_src_val+1, 0, max_dst_val+1 );
+			 * { 0, 4, 8, 12 }
+			 * SCALE( i, 0, max_src_val, 0, max_dst_val );
+			 * { 0, 5, 10, 15 }
+			 * lrintf( ((float) i / max_src_val) * max_dst_val )
+			 * { 0, 5, 10, 15 }
+			 *
+			 * The latter two are equivalent and give an even distribution; we use the
+			 * second, since the first doesn't scale max_src_val to max_dst_val.
+			 *
+			 * Having separate formulas for increasing and decreasing resolution seems
+			 * strange; what's wrong here?
 			 */
-			for( uint32_t i = 0; i <= max_src_val; ++i )
-				lookup[c][i] = (uint8_t) SCALE( i, 0, max_src_val+1, 0, max_dst_val+1 );
+			if( max_src_val > max_dst_val )
+				for( uint32_t i = 0; i <= max_src_val; ++i )
+					lookup[c][i] = (uint8_t) SCALE( i, 0, max_src_val+1, 0, max_dst_val+1 );
+			else
+				for( uint32_t i = 0; i <= max_src_val; ++i )
+					lookup[c][i] = (uint8_t) SCALE( i, 0, max_src_val, 0, max_dst_val );
 		}
 	}
 
