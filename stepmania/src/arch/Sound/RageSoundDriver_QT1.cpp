@@ -8,6 +8,7 @@
  */
 
 #include "global.h"
+#include "RageSoundManager.h"
 #include "RageSoundDriver_QT1.h"
 #include "RageLog.h"
 #include "RageUtil.h"
@@ -54,7 +55,8 @@ RageSound_QT1::RageSound_QT1() {
 	TimeRecord	record;
 	SoundComponentGetInfo(soundOutput, NULL, siOutputLatency, &record);
 	latency = record.value.lo / record.scale;
-	latency += samples / freq; /* double buffer */
+	latency += static_cast<float>(samples) / freq; /* double buffer */
+	LOG->Trace("The output latency is %f", latency);
 
 	OSErr err = SndNewChannel(&channel, sampledSynth, initStereo, callback);
 
@@ -87,6 +89,7 @@ RageSound_QT1::RageSound_QT1() {
 RageSound_QT1::~RageSound_QT1() {
 	if (channel)
 		SndDisposeChannel(channel, true);
+	SAFE_DELETE(channel);
 	SAFE_DELETE_ARRAY(buffer[0]);
 	SAFE_DELETE_ARRAY(buffer[1]);
 	if (soundOutput)
@@ -111,7 +114,8 @@ void RageSound_QT1::GetData(SndChannel *chan, SndCommand *cmd_passed) {
 		temp |= tr.value.lo;
 		double d = static_cast<double>(temp)/tr.scale*freq;
 		temp = static_cast<UInt64>(d);
-		P->last_pos = static_cast<UInt32>(temp % 0x00000000FFFFFFFFLL);
+		P->last_pos = static_cast<UInt32>(temp & 0x00000000FFFFFFFFLL);
+		P->last_pos += samples * 3 / 2;
 	} else
 		P->last_pos += samples;
 
@@ -204,7 +208,7 @@ int RageSound_QT1::GetPosition(const RageSound *snd) const {
 	temp |= tr.value.lo;
 	double d = static_cast<double>(temp)/tr.scale*freq;
 	temp = static_cast<UInt64>(d);
-	return static_cast<UInt32>(temp % 0x00000000FFFFFFFFLL);
+	return static_cast<UInt32>(temp & 0x00000000FFFFFFFFLL);
 }
 
 float RageSound_QT1::GetPlayLatency() const {
