@@ -89,7 +89,10 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		p->LoadFromNode( sAniDir, pNode );
 		pActor = p;
 	}
-	else if( sType == "GenreDisplay" )
+	else if( 
+		sType == "GenreDisplay" ||
+		sType == "RollingNumbers" ||
+		sType == "ScoreDisplayCalories" )
 	{
 		pActor = ActorUtil::Create( sType, sAniDir, pNode );
 	}

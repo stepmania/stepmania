@@ -1,36 +1,34 @@
-/* RollingNumbers - animates from one number to another by scrolling its digits. */
+/* ScoreDisplayCalories - Shows point score during gameplay and some menus. */
 
-#ifndef RollingNumbers_H
-#define RollingNumbers_H
+#ifndef ScoreDisplayCalories_H
+#define ScoreDisplayCalories_H
 
-#include "BitmapText.h"
+#include "RollingNumbers.h"
+#include "PlayerNumber.h"
 
 
 template<class T>
-class LunaRollingNumbers : public LunaBitmapText<T>
+class LunaScoreDisplayCalories : public LunaRollingNumbers<T>
 {
 public:
-	LunaRollingNumbers() { LUA->Register( Register ); }
+	LunaScoreDisplayCalories() { LUA->Register( Register ); }
 
 	static void Register(lua_State *L) 
 	{
-		LunaBitmapText<T>::Register( L );
+		LunaRollingNumbers<T>::Register( L );
 	}
 };
 
 
-class RollingNumbers : public BitmapText
+class ScoreDisplayCalories : public RollingNumbers
 {
 public:
-	RollingNumbers();
+	ScoreDisplayCalories();
+	~ScoreDisplayCalories();
 
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
-	virtual void Update( float fDeltaTime );
-
-	void SetTargetNumber( float fTargetNumber );
-
-	void UpdateText();
+	void PlayCommand( const CString &sCommandName );
 
 	//
 	// Commands
@@ -38,19 +36,8 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 private:
-	// Loaded attributes
-	//
-	// Time between the call to SetTargetNumber and m_fCurrentNumber == 
-	// m_fTargetNumber.  Used to calculate m_fScoreVelocity.
-	float	m_fApproachSeconds;
-	CString m_sFormat;
-
-	//
-	// Calculated
-	//
-	float	m_fCurrentNumber;	// currently showing this
-	float	m_fTargetNumber;	// approach this
-	float	m_fScoreVelocity;	// approach target at this speed
+	PlayerNumber m_PlayerNumber;
+	CString m_sMessageOnStep;
 };
 
 #endif

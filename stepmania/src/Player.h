@@ -58,6 +58,7 @@ public:
 	NoteData m_NoteData;
 
 protected:
+	void HandleStep( int col, const RageTimer &tm );
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 	void OnRowCompletelyJudged( int iStepIndex );
 	void HandleTapRowScore( unsigned row );
@@ -103,6 +104,8 @@ protected:
 	RageSound	m_soundAttackEnding;
 
 	vector<RageSound> m_vKeysounds;
+
+	CString m_sMessageToSendOnStep;
 };
 
 #endif

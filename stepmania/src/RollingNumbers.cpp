@@ -2,6 +2,12 @@
 #include "RollingNumbers.h"
 #include "RageUtil.h"
 #include "XmlFile.h"
+#include "ActorUtil.h"
+
+// lua start
+LUA_REGISTER_CLASS( RollingNumbers )
+// lua end
+REGISTER_ACTOR_CLASS( RollingNumbers );
 
 RollingNumbers::RollingNumbers()
 {
@@ -36,6 +42,8 @@ void RollingNumbers::Update( float fDeltaTime )
 
 void RollingNumbers::SetTargetNumber( float fTargetNumber )
 {
+	if( fTargetNumber == m_fTargetNumber )	// no change
+		return;
 	m_fTargetNumber = fTargetNumber;
 	m_fScoreVelocity = (m_fTargetNumber-m_fCurrentNumber) / m_fApproachSeconds;
 }

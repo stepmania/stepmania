@@ -1,59 +1,49 @@
-/* RollingNumbers - animates from one number to another by scrolling its digits. */
+#include "global.h"
+#include "ScoreDisplayCalories.h"
+#include "MessageManager.h"
+#include "PlayerNumber.h"
+#include "PlayerState.h"
+#include "RageUtil.h"
+#include "StageStats.h"
+#include "XmlFile.h"
+#include "ActorUtil.h"
 
-#ifndef RollingNumbers_H
-#define RollingNumbers_H
+// lua start
+LUA_REGISTER_CLASS( ScoreDisplayCalories )
+// lua end
+REGISTER_ACTOR_CLASS( ScoreDisplayCalories );
 
-#include "BitmapText.h"
-
-
-template<class T>
-class LunaRollingNumbers : public LunaBitmapText<T>
+ScoreDisplayCalories::ScoreDisplayCalories()
 {
-public:
-	LunaRollingNumbers() { LUA->Register( Register ); }
+}
 
-	static void Register(lua_State *L) 
+ScoreDisplayCalories::~ScoreDisplayCalories()
+{
+	MESSAGEMAN->Unsubscribe( this, m_sMessageOnStep );
+}
+
+void ScoreDisplayCalories::LoadFromNode( const CString& sDir, const XNode* pNode )
+{
+	RollingNumbers::LoadFromNode( sDir, pNode );
+
+	bool b = pNode->GetAttrValue( "PlayerNumber", (int&)m_PlayerNumber );
+	ASSERT( b );
+	
+	m_sMessageOnStep = ssprintf("StepP%d",m_PlayerNumber+1);
+	
+	MESSAGEMAN->Subscribe( this, m_sMessageOnStep );
+}
+
+void ScoreDisplayCalories::PlayCommand( const CString &sCommandName )
+{
+	if( sCommandName == m_sMessageOnStep )
 	{
-		LunaBitmapText<T>::Register( L );
+		float fCals = g_CurStageStats.m_player[m_PlayerNumber].fCaloriesBurned;
+		this->SetTargetNumber( fCals );
 	}
-};
-
-
-class RollingNumbers : public BitmapText
-{
-public:
-	RollingNumbers();
-
-	void LoadFromNode( const CString& sDir, const XNode* pNode );
-
-	virtual void Update( float fDeltaTime );
-
-	void SetTargetNumber( float fTargetNumber );
-
-	void UpdateText();
-
-	//
-	// Commands
-	//
-	virtual void PushSelf( lua_State *L );
-
-private:
-	// Loaded attributes
-	//
-	// Time between the call to SetTargetNumber and m_fCurrentNumber == 
-	// m_fTargetNumber.  Used to calculate m_fScoreVelocity.
-	float	m_fApproachSeconds;
-	CString m_sFormat;
-
-	//
-	// Calculated
-	//
-	float	m_fCurrentNumber;	// currently showing this
-	float	m_fTargetNumber;	// approach this
-	float	m_fScoreVelocity;	// approach target at this speed
-};
-
-#endif
+	
+	RollingNumbers::PlayCommand( sCommandName );
+}
 
 /*
  * (c) 2001-2004 Chris Danford

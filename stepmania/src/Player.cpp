@@ -36,6 +36,7 @@
 #include "GameplayMessages.h"
 #include "GameSoundManager.h"
 #include "Style.h"
+#include "MessageManager.h"
 
 CString JUDGMENT_X_NAME( size_t p, size_t both_sides )		{ return "JudgmentXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",p+1) ); }
 CString COMBO_X_NAME( size_t p, size_t both_sides )			{ return "ComboXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",p+1) ); }
@@ -89,7 +90,6 @@ Player::Player()
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
 		this->AddChild( &m_HoldJudgment[c] );
 
-
 	PlayerAI::InitFromDisk();
 
 	m_pNoteField = new NoteField;
@@ -122,6 +122,12 @@ void Player::Init(
 	m_pPrimaryScoreKeeper = pPrimaryScoreKeeper;
 	m_pSecondaryScoreKeeper = pSecondaryScoreKeeper;
 
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+	m_sMessageToSendOnStep = ssprintf("StepP%d",pn+1);
+
+
 	m_soundMine.Load( THEME->GetPathS("Player","mine"), true );
 
 	/* Attacks can be launched in course modes and in battle modes.  They both come
@@ -139,8 +145,6 @@ void Player::Init(
 		break;
 	}
 
-	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 	RageSoundParams p;
 	GameSoundManager::SetPlayerBalance( pn, p );
@@ -674,9 +678,26 @@ void Player::Step( int col, const RageTimer &tm )
 	if( bOniDead )
 		return;	// do nothing
 
+	HandleStep( col, tm );
+
+	MESSAGEMAN->Broadcast( m_sMessageToSendOnStep );	
+}
+
+void Player::HandleStep( int col, const RageTimer &tm )
+{
+
 	//LOG->Trace( "Player::HandlePlayerStep()" );
 
 	ASSERT_M( col >= 0  &&  col <= m_NoteData.GetNumTracks(), ssprintf("%i, %i", col, m_NoteData.GetNumTracks()) );
+
+	//
+	// Count calories for this step.
+	//
+	if( m_pPlayerStageStats )
+	{
+		// FIXME:
+		m_pPlayerStageStats->fCaloriesBurned += randomf( 1.f, 2.f );
+	}
 
 
 	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
