@@ -6,6 +6,7 @@
 #include <d3d8.h>
 #pragma comment(lib, "d3d8.lib")
 
+
 /*
  * The only way I've found to get the display driver version is through
  * D3D.  (There's an interface in DirectDraw, but it always returned 0.)
@@ -60,6 +61,38 @@ static void GetDisplayDriverDebugInfo()
 void SearchForDebugInfo()
 {
 	GetDisplayDriverDebugInfo();
+
+	/* Detect operating system. */
+	OSVERSIONINFO ovi;
+	ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	if (GetVersionEx(&ovi)) {
+		CString Ver = ssprintf("Windows %i.%i (", ovi.dwMajorVersion, ovi.dwMinorVersion);
+		if(ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
+		{
+			if(ovi.dwMinorVersion == 0)
+				Ver += "Win95";
+			else if(ovi.dwMinorVersion == 10)
+				Ver += "Win98";
+			else if(ovi.dwMinorVersion == 90)
+				Ver += "WinME";
+			else 
+				Ver += "unknown 9x-based";
+		}
+		else if(ovi.dwPlatformId == VER_PLATFORM_WIN32_NT)
+		{
+			if(ovi.dwMajorVersion == 4 && ovi.dwMinorVersion == 0)
+				Ver += "WinNT 4.0";
+			else if(ovi.dwMajorVersion == 5 && ovi.dwMinorVersion == 0)
+				Ver += "Win2000";
+			else if(ovi.dwMajorVersion == 5 && ovi.dwMinorVersion == 1)
+				Ver += "WinXP";
+			else
+				Ver += "unknown NT-based";
+		} else Ver += "???";
+
+		Ver += ssprintf(") build %i [%s]", ovi.dwBuildNumber & 0xffff, ovi.szCSDVersion);
+		LOG->Info("%s", Ver.GetString());
+	}
 }
 
 /*
