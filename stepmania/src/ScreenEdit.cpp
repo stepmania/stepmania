@@ -90,35 +90,13 @@ const CString HELP_TEXT =
 	"Black:\n     Show\n     shortcuts\n";
 #endif
 
-/*
- * g_MapEditToDI is a simple mapping: edit functions map to DeviceInputs.
- * If g_MapEditToDIHold for a given edit function is valid, then at least one
- * input in g_MapEditToDIHold must be held when pressing any key in g_MapEditToDI
- * for the input to occur.
- */
-struct MapEditToDI
-{
-	DeviceInput button[NUM_EDIT_BUTTONS][NUM_EDIT_TO_DEVICE_SLOTS];
-	DeviceInput hold[NUM_EDIT_BUTTONS][NUM_EDIT_TO_DEVICE_SLOTS];
-	void Clear()
-	{
-		FOREACH_EditButton(e)
-			for( int slot = 0; slot < NUM_EDIT_TO_DEVICE_SLOTS; ++slot )
-			{
-				button[e][slot].MakeInvalid();
-				hold[e][slot].MakeInvalid();
-			}
-	}
-};
-static MapEditToDI g_EditMappings, g_PlayMappings, g_RecordMappings;
-static MapEditToDI *g_pCurrentMap = &g_EditMappings;
 #if defined(XBOX)
-static void InitEditMappings()
+void ScreenEdit::InitEditMappings()
 {
 	/* XXX: fill this in */
 }
 #else
-static void InitEditMappings()
+void ScreenEdit::InitEditMappings()
 {
 	g_EditMappings.Clear();
 
@@ -226,16 +204,18 @@ static void InitEditMappings()
 #endif
 
 /* Given a DeviceInput that was just depressed, return an active edit function. */
-static bool DeviceToEdit( DeviceInput DeviceI, EditButton &button )
+bool ScreenEdit::DeviceToEdit( DeviceInput DeviceI, EditButton &button )
 {
 	ASSERT( DeviceI.IsValid() );
+
+	const MapEditToDI *pCurrentMap = GetCurrentMap();
 
 	/* First, search to see if a key that requires a modifier is pressed. */
 	FOREACH_EditButton(e)
 	{
 		for( int slot = 0; slot < NUM_EDIT_TO_DEVICE_SLOTS; ++slot )
 		{
-			if( g_pCurrentMap->button[e][slot] == DeviceI && g_pCurrentMap->hold[e][0].IsValid() )
+			if( pCurrentMap->button[e][slot] == DeviceI && pCurrentMap->hold[e][0].IsValid() )
 			{
 				/* The button maps to this function. */
 				button = e;
@@ -243,7 +223,7 @@ static bool DeviceToEdit( DeviceInput DeviceI, EditButton &button )
 				/* This function has one or more shift modifier attached. */
 				for( int holdslot = 0; holdslot < NUM_EDIT_TO_DEVICE_SLOTS; ++holdslot )
 				{
-					DeviceInput hDI = g_pCurrentMap->hold[e][holdslot];
+					DeviceInput hDI = pCurrentMap->hold[e][holdslot];
 					if( INPUTFILTER->IsBeingPressed(hDI) )
 						return true;
 				}
@@ -256,7 +236,7 @@ static bool DeviceToEdit( DeviceInput DeviceI, EditButton &button )
 	{
 		for( int slot = 0; slot < NUM_EDIT_TO_DEVICE_SLOTS; ++slot )
 		{
-			if( g_pCurrentMap->button[e][slot] == DeviceI && !g_pCurrentMap->hold[e][0].IsValid() )
+			if( pCurrentMap->button[e][slot] == DeviceI && !pCurrentMap->hold[e][0].IsValid() )
 			{
 				/* The button maps to this function. */
 				button = e;
@@ -270,14 +250,15 @@ static bool DeviceToEdit( DeviceInput DeviceI, EditButton &button )
 	return false;
 }
 
-static bool EditToDevice( EditButton button, int iSlotNum, DeviceInput &DeviceI )
+bool ScreenEdit::EditToDevice( EditButton button, int iSlotNum, DeviceInput &DeviceI )
 {
 	ASSERT( iSlotNum < NUM_EDIT_TO_DEVICE_SLOTS );
-	DeviceI = g_pCurrentMap->button[button][iSlotNum];
+	const MapEditToDI *pCurrentMap = GetCurrentMap();
+	DeviceI = pCurrentMap->button[button][iSlotNum];
 	return DeviceI.IsValid();
 }
 
-static bool EditIsBeingPressed( EditButton button )
+bool ScreenEdit::EditIsBeingPressed( EditButton button )
 {
 	for( int slot = 0; slot < NUM_EDIT_TO_DEVICE_SLOTS; ++slot )
 	{
@@ -289,6 +270,16 @@ static bool EditIsBeingPressed( EditButton button )
 	return false;
 }
 
+const MapEditToDI *ScreenEdit::GetCurrentMap() const
+{
+	switch( m_EditMode )
+	{
+	case MODE_EDITING: return &g_EditMappings;
+	case MODE_PLAYING: return &g_PlayMappings;
+	case MODE_RECORDING: return &g_RecordMappings;
+	default: FAIL_M( ssprintf("%i",m_EditMode) );
+	}
+}
 
 static const MenuRow g_KeyboardShortcutsItems[] =
 {
@@ -1441,7 +1432,6 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 /* Switch to editing. */
 void ScreenEdit::TransitionToEdit()
 {
-	g_pCurrentMap = &g_EditMappings;
 	m_sprOverlay->PlayCommand( "Edit" );
 
 	/* Important: people will stop playing, change the BG and start again; make sure we reload */
@@ -1481,7 +1471,7 @@ void ScreenEdit::TransitionFromRecordToEdit()
 
 	m_NoteFieldEdit.CopyRange( m_NoteFieldRecord, rowBegin, rowEnd, rowBegin );
 
-	m_NoteFieldEdit.ClearAll();
+	m_NoteFieldRecord.ClearAll();
 }
 
 /* Helper for SM_DoReloadFromDisk */
@@ -2112,7 +2102,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				SOUND->PlayMusic("");
 
 				m_EditMode = MODE_PLAYING;
-				g_pCurrentMap = &g_PlayMappings;
 				m_sprOverlay->PlayCommand( "Play" );
 
 				GAMESTATE->m_bPastHereWeGo = true;
@@ -2168,7 +2157,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				SOUND->PlayMusic("");
 
 				m_EditMode = MODE_RECORDING;
-				g_pCurrentMap = &g_RecordMappings;
 				m_sprOverlay->PlayCommand( "Record" );
 				GAMESTATE->m_bPastHereWeGo = true;
 

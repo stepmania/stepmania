@@ -99,6 +99,26 @@ enum EditButton
 #define FOREACH_EditButton( e ) FOREACH_ENUM( EditButton, NUM_EDIT_BUTTONS, e )
 #define NUM_EDIT_TO_DEVICE_SLOTS 2
 
+/*
+ * g_MapEditToDI is a simple mapping: edit functions map to DeviceInputs.
+ * If g_MapEditToDIHold for a given edit function is valid, then at least one
+ * input in g_MapEditToDIHold must be held when pressing any key in g_MapEditToDI
+ * for the input to occur.
+ */
+struct MapEditToDI
+{
+	DeviceInput button[NUM_EDIT_BUTTONS][NUM_EDIT_TO_DEVICE_SLOTS];
+	DeviceInput hold[NUM_EDIT_BUTTONS][NUM_EDIT_TO_DEVICE_SLOTS];
+	void Clear()
+	{
+		FOREACH_EditButton(e)
+			for( int slot = 0; slot < NUM_EDIT_TO_DEVICE_SLOTS; ++slot )
+			{
+				button[e][slot].MakeInvalid();
+				hold[e][slot].MakeInvalid();
+			}
+	}
+};
 
 class ScreenEdit : public Screen
 {
@@ -270,6 +290,12 @@ public:
 	};
 	void HandleBGChangeChoice( BGChangeChoice c, int* iAnswers );
 
+	void InitEditMappings();
+	bool DeviceToEdit( DeviceInput DeviceI, EditButton &button );
+	bool EditToDevice( EditButton button, int iSlotNum, DeviceInput &DeviceI );
+	bool EditIsBeingPressed( EditButton button );
+	const MapEditToDI *GetCurrentMap() const;
+	MapEditToDI g_EditMappings, g_PlayMappings, g_RecordMappings;
 };
 
 #endif
