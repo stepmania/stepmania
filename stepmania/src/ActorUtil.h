@@ -1,4 +1,4 @@
-/* ActorScroller - ActorFrame that moves its children. */
+/* ActorUtil - Utility functions for creating and manipulating Actors. */
 
 #ifndef ActorUtil_H
 #define ActorUtil_H
@@ -8,9 +8,28 @@
 
 struct XNode;
 
+typedef Actor* (*CreateActorFn)(const CString& sDir, const XNode* pNode);
+
+// Each Actor class should have a REGISTER_ACTOR_CLASS in its CPP file.
+#define REGISTER_ACTOR_CLASS( className ) \
+	Actor* Create##className(const CString& sDir, const XNode* pNode) { \
+		className *pRet = new className; \
+		pRet->LoadFromNode(sDir, pNode); \
+		return pRet; } \
+	class Register##className { \
+	public: \
+		Register##className() { ActorUtil::Register(#className,Create##className); } \
+	}; \
+	static Register##className register##className;
 
 namespace ActorUtil
 {
+	// Every screen should register its class at program initialization.
+	void Register( const CString& sClassName, CreateActorFn pfn );
+	Actor* Create( const CString& sClassName, const CString& sDir, const XNode* pNode );
+
+
+
 	void SetXY( Actor& actor, const CString &sScreenName );
 	inline void SetXY( Actor* pActor, const CString &sScreenName ) { SetXY( *pActor, sScreenName ); }
 

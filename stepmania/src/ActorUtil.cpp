@@ -15,8 +15,34 @@
 #include "XmlFile.h"
 #include "FontCharAliases.h"
 #include "LuaManager.h"
+#include "MessageManager.h"
 
 #include "arch/Dialog/Dialog.h"
+
+
+// Actor registration
+static map<CString,CreateActorFn>	*g_pmapRegistrees = NULL;
+
+void ActorUtil::Register( const CString& sClassName, CreateActorFn pfn )
+{
+	if( g_pmapRegistrees == NULL )
+		g_pmapRegistrees = new map<CString,CreateActorFn>;
+
+	map<CString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClassName );
+	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Actor class '%s' already registered.", sClassName.c_str()) );
+
+	(*g_pmapRegistrees)[sClassName] = pfn;
+}
+
+Actor* ActorUtil::Create( const CString& sClassName, const CString& sDir, const XNode* pNode )
+{
+	map<CString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClassName );
+	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Actor '%s' is not registered.",sClassName.c_str()) )
+
+	CreateActorFn pfn = iter->second;
+	return pfn( sDir, pNode );
+}
+
 
 
 Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode )
@@ -62,6 +88,10 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		BGAnimation *p = new BGAnimation;
 		p->LoadFromNode( sAniDir, pNode );
 		pActor = p;
+	}
+	else if( sType == "GenreDisplay" )
+	{
+		pActor = ActorUtil::Create( sType, sAniDir, pNode );
 	}
 	else if( sType == "ActorFrame" )
 	{

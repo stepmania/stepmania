@@ -1,4 +1,6 @@
-/* ActorScroller - ActorFrame that moves its children. */
+/* AutoActor - An Actor wrapper that creates the appropriate type of Actor. *
+ * from the supplied file name and automatically frees the Actor on 
+ * destruction. */
 
 #ifndef AutoActor_H
 #define AutoActor_H
