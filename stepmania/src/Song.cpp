@@ -520,6 +520,11 @@ void Song::TidyUpData()
 
 		m_Timing.AddBPMSegment( BPMSegment(0, 60) );
 	}
+	
+	/* Make sure the first BPM segment starts at beat 0. */
+	if( m_Timing.m_BPMSegments[0].m_fStartBeat != 0 )
+		m_Timing.m_BPMSegments[0].m_fStartBeat = 0;
+
 
 	/* Only automatically set the sample time if there was no sample length
 	 * (m_fMusicSampleStartSeconds == -1). */
