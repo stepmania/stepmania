@@ -292,36 +292,6 @@ int RageFile::Seek( int offset )
 	return pos;
 }
 
-int RageFile::SeekCur( int offset )
-{
-	ASSERT( offset >= 0 );
-
-	if( !IsOpen() )
-		RageException::Throw("\"%s\" is not open.", GetPath().c_str());
-
-	if( !(m_Mode&READ) )
-		RageException::Throw("\"%s\" is not open for reading; can't seek", GetPath().c_str());
-
-	if( !offset || m_EOF )
-		return m_FilePos;
-
-	int FromBuffer = min( offset, m_BufAvail );
-	m_FilePos += FromBuffer;
-	offset -= FromBuffer;
-	m_BufAvail -= FromBuffer;
-	m_pBuf += FromBuffer;
-	
-	if( offset )
-	{
-		int pos = m_File->SeekCur( offset );
-		if( pos == -1 )
-			return -1;
-
-		m_FilePos = pos;
-	}
-	return m_FilePos;
-}
-
 int RageFile::GetFileSize() const
 {
 	if( !IsOpen() )
@@ -429,7 +399,7 @@ int RageFile::Seek( int offset, int whence )
 	switch( whence )
 	{
 	case SEEK_CUR:
-		return SeekCur( (int) offset );
+		return Seek( Tell() + offset );
 	case SEEK_END:
 		offset += GetFileSize();
 	}

@@ -50,7 +50,6 @@ public:
 
 	int Tell() const { return m_FilePos; }
 	int Seek( int offset );
-	int SeekCur( int offset );
 	int GetFileSize() const;
 	void Rewind();
     
