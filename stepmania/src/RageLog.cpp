@@ -249,6 +249,7 @@ void RageLog::MapLog(const CString &key, const char *fmt, ...)
 void RageLog::UnmapLog(const CString &key)
 {
 	LogMaps.erase(key);
+	UpdateMappedLog();
 }
 
 Checkpoint_::Checkpoint_(CString key_, int n, const char *fmt, ...)
