@@ -53,7 +53,7 @@ void DifficultyIcon::SetFromTrail( PlayerNumber pn, Trail* pTrail )
 	if( pTrail == NULL )
 		m_bBlank = true;
 	else
-		SetFromCourseDifficulty( pn, pTrail->m_CourseDifficulty );
+		SetFromDifficulty( pn, pTrail->m_CourseDifficulty );
 }
 
 void DifficultyIcon::SetFromDifficulty( PlayerNumber pn, Difficulty dc )
@@ -65,12 +65,6 @@ void DifficultyIcon::SetFromDifficulty( PlayerNumber pn, Difficulty dc )
 	case NUM_DIFFICULTIES*2:	SetState( dc*2+pn );	break;
 	default:					m_bBlank = true;		break;
 	}	
-}
-
-void DifficultyIcon::SetFromCourseDifficulty( PlayerNumber pn, CourseDifficulty cd )
-{
-	/* XXX remove */
-	SetFromDifficulty( pn, cd );
 }
 
 /*

@@ -21,7 +21,6 @@ public:
 	void SetFromSteps( PlayerNumber pn, Steps* pSteps );
 	void SetFromTrail( PlayerNumber pn, Trail* pTrail );
 	void SetFromDifficulty( PlayerNumber pn, Difficulty dc );
-	void SetFromCourseDifficulty( PlayerNumber pn, CourseDifficulty cd );
 
 protected:
 	bool m_bBlank;
