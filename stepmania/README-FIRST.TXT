@@ -1121,6 +1121,8 @@ creates your home directory and is required for things to start working.
 ************************************************************
 
 ------------------------CVS after 3.00 beta 6----------------
+BUG FIX:  Fix repeating announcer when you get a 100*n combo and break it
+	at the 100*n+1st step.
 BUG FIX:  When skipping the evaluation screen, stop spinning the grade
 	so it can be seen during fade out.
 NEW FEATURE:  Backspace and delete can be used (in addition to space) to
