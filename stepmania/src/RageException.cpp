@@ -32,7 +32,7 @@ const char* RageException::what() const throw ()
 	return m_sError;
 }
 
-RageException::Throw(const char *fmt, ...)
+void RageException::Throw(const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
@@ -50,10 +50,10 @@ RageException::Throw(const char *fmt, ...)
 	DebugBreak();
 #endif
 
-	throw RageException("%s", error);
+	throw RageException("%s", error.GetString());
 }
 
-RageException::ThrowNonfatal(const char *fmt, ...)
+void RageException::ThrowNonfatal(const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
