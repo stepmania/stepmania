@@ -342,7 +342,7 @@ int MusicThread_start( void *p )
 	while( !g_Shutdown )
 	{
 		g_Mutex->Lock();
-		while( !SoundWaiting() && !g_Shutdown )
+		while( !SoundWaiting() && !g_Shutdown && !g_bFlushing )
 			g_Mutex->Wait();
 		g_Mutex->Unlock();
 
