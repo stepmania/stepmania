@@ -189,7 +189,7 @@ bool RageSound::Load(CString sSoundFilePath, bool cache)
     SoundReader *NewSample = new SoundReader_SDL_Sound;
 	if(!NewSample->Open(sSoundFilePath.GetString()))
 		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound %s: %s",
-			sSoundFilePath.GetString(), NewSample->GetError());
+			sSoundFilePath.GetString(), NewSample->GetError().c_str());
 
 	/* Try to decode into full_buf. */
 	big = false;
