@@ -216,25 +216,25 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 		</Configuration>
 		<Configuration
 			Name="Release|Xbox"
-			OutputDirectory=".\StepMania___Xbox_Release"
-			IntermediateDirectory=".\StepMania___Xbox_Release"
+			OutputDirectory="./../Program"
+			IntermediateDirectory="./../ReleaseXbox"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories=".;.\sdl_xbox_includes;&quot;.\SDL_image-1.2&quot;;&quot;.\plib-1.6.0&quot;;&quot;.\SDL_sound-1.0.0&quot;;vorbis"
+				AdditionalIncludeDirectories=".;sdl_xbox_includes;SDL_image-1.2;vorbis,libjpeg,lua-5.0"
 				PreprocessorDefinitions="WIN32,_XBOX,NDEBUG"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="global.h"
-				PrecompiledHeaderFile=".\StepMania___Xbox_Release/StepMania.pch"
-				AssemblerListingLocation=".\StepMania___Xbox_Release/"
-				ObjectFile=".\StepMania___Xbox_Release/"
-				ProgramDataBaseFileName=".\StepMania___Xbox_Release/"
+				PrecompiledHeaderFile="$(IntDir)/StepMania.pch"
+				AssemblerListingLocation="./../ReleaseXbox/"
+				ObjectFile="./../ReleaseXbox/"
+				ProgramDataBaseFileName="./../ReleaseXbox/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				CompileAs="0"/>
@@ -244,11 +244,11 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 /FIXED:NO"
 				AdditionalDependencies="$(intdir)\verstub.obj xapilib.lib d3d8.lib d3dx8.lib xgraphics.lib dsound.lib dmusic.lib xnet.lib xboxkrnl.lib libcmt.lib"
-				OutputFile="../StepManiaXbox.exe"
+				OutputFile="../Program/StepManiaXbox.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				IgnoreDefaultLibraryNames="libc,libcmtd"
-				ProgramDatabaseFile="../release6xbox/StepMania.pdb"
+				ProgramDatabaseFile="./../ReleaseXbox/StepMania.pdb"
 				OptimizeReferences="2"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
@@ -267,7 +267,10 @@ cl                                                                              
 				StackSize="0x10000"
 				IncludeDebugInfo="TRUE"
 				SuppressStartupBanner="TRUE"
-				TitleID="123456"/>
+				TitleID="123456"
+				TitleInfo="StepMania"
+				TitleName="StepMania"
+				TitleImage="StepMania"/>
 		</Configuration>
 	</Configurations>
 	<Files>
@@ -287,10 +290,22 @@ cl                                                                              
 				RelativePath="ScreenAttract.h">
 			</File>
 			<File
+				RelativePath="ScreenAward.cpp">
+			</File>
+			<File
+				RelativePath="ScreenAward.h">
+			</File>
+			<File
 				RelativePath="ScreenBookkeeping.cpp">
 			</File>
 			<File
 				RelativePath="ScreenBookkeeping.h">
+			</File>
+			<File
+				RelativePath="ScreenBranch.cpp">
+			</File>
+			<File
+				RelativePath="ScreenBranch.h">
 			</File>
 			<File
 				RelativePath="ScreenCaution.cpp">
@@ -303,6 +318,18 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="ScreenCenterImage.h">
+			</File>
+			<File
+				RelativePath="ScreenClearBookkeepingData.cpp">
+			</File>
+			<File
+				RelativePath="ScreenClearBookkeepingData.h">
+			</File>
+			<File
+				RelativePath="ScreenClearMachineStats.cpp">
+			</File>
+			<File
+				RelativePath="ScreenClearMachineStats.h">
 			</File>
 			<File
 				RelativePath="ScreenCredits.cpp">
@@ -318,6 +345,12 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="ScreenDimensions.h">
+			</File>
+			<File
+				RelativePath="ScreenDownloadMachineStats.cpp">
+			</File>
+			<File
+				RelativePath="ScreenDownloadMachineStats.h">
 			</File>
 			<File
 				RelativePath="ScreenEdit.cpp">
@@ -336,6 +369,12 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="ScreenEditMenu.h">
+			</File>
+			<File
+				RelativePath="ScreenEnding.cpp">
+			</File>
+			<File
+				RelativePath="ScreenEnding.h">
 			</File>
 			<File
 				RelativePath="ScreenEvaluation.cpp">
@@ -380,6 +419,12 @@ cl                                                                              
 				RelativePath="ScreenHowToPlay.h">
 			</File>
 			<File
+				RelativePath="ScreenInsertCredit.cpp">
+			</File>
+			<File
+				RelativePath="ScreenInsertCredit.h">
+			</File>
+			<File
 				RelativePath="ScreenInstructions.cpp">
 			</File>
 			<File
@@ -410,9 +455,6 @@ cl                                                                              
 				RelativePath="ScreenMapControllers.h">
 			</File>
 			<File
-				RelativePath="ScreenMemoryCard.h">
-			</File>
-			<File
 				RelativePath="ScreenMessage.h">
 			</File>
 			<File
@@ -438,6 +480,12 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="ScreenNameEntryTraditional.h">
+			</File>
+			<File
+				RelativePath="ScreenNetworkOptions.cpp">
+			</File>
+			<File
+				RelativePath="ScreenNetworkOptions.h">
 			</File>
 			<File
 				RelativePath="ScreenOptions.cpp">
@@ -470,12 +518,6 @@ cl                                                                              
 				RelativePath="ScreenProfileOptions.h">
 			</File>
 			<File
-				RelativePath="ScreenNetworkOptions.cpp">
-			</File>
-			<File
-				RelativePath="ScreenNetworkOptions.h">
-			</File>
-			<File
 				RelativePath="ScreenPrompt.cpp">
 			</File>
 			<File
@@ -488,16 +530,16 @@ cl                                                                              
 				RelativePath="ScreenRanking.h">
 			</File>
 			<File
-				RelativePath="ScreenRaveOptions.cpp">
-			</File>
-			<File
-				RelativePath="ScreenRaveOptions.h">
-			</File>
-			<File
 				RelativePath="ScreenReloadSongs.cpp">
 			</File>
 			<File
 				RelativePath="ScreenReloadSongs.h">
+			</File>
+			<File
+				RelativePath="ScreenResetToDefaults.cpp">
+			</File>
+			<File
+				RelativePath="ScreenResetToDefaults.h">
 			</File>
 			<File
 				RelativePath="ScreenSandbox.cpp">
@@ -516,12 +558,6 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="ScreenSelectCharacter.h">
-			</File>
-			<File
-				RelativePath="ScreenSelectCourse.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectCourse.h">
 			</File>
 			<File
 				RelativePath="ScreenSelectDifficulty.cpp">
@@ -566,6 +602,12 @@ cl                                                                              
 				RelativePath="ScreenSelectStyle.h">
 			</File>
 			<File
+				RelativePath="ScreenSetTime.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSetTime.h">
+			</File>
+			<File
 				RelativePath="ScreenSongOptions.cpp">
 			</File>
 			<File
@@ -602,6 +644,12 @@ cl                                                                              
 				RelativePath="ScreenTestInput.h">
 			</File>
 			<File
+				RelativePath="ScreenTestLights.cpp">
+			</File>
+			<File
+				RelativePath="ScreenTestLights.h">
+			</File>
+			<File
 				RelativePath="ScreenTestSound.cpp">
 			</File>
 			<File
@@ -625,6 +673,12 @@ cl                                                                              
 			<File
 				RelativePath="ScreenUnlock.h">
 			</File>
+			<File
+				RelativePath="ScreenWithMenuElements.cpp">
+			</File>
+			<File
+				RelativePath="ScreenWithMenuElements.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Data Structures"
@@ -640,6 +694,12 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="BannerCache.h">
+			</File>
+			<File
+				RelativePath="CatalogXml.cpp">
+			</File>
+			<File
+				RelativePath="CatalogXml.h">
 			</File>
 			<File
 				RelativePath="Character.cpp">
@@ -658,6 +718,24 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="Course.h">
+			</File>
+			<File
+				RelativePath="CourseUtil.cpp">
+			</File>
+			<File
+				RelativePath="CourseUtil.h">
+			</File>
+			<File
+				RelativePath="Difficulty.cpp">
+			</File>
+			<File
+				RelativePath="Difficulty.h">
+			</File>
+			<File
+				RelativePath="EnumHelper.cpp">
+			</File>
+			<File
+				RelativePath="EnumHelper.h">
 			</File>
 			<File
 				RelativePath=".\Font.cpp">
@@ -699,19 +777,31 @@ cl                                                                              
 				RelativePath="GameInput.h">
 			</File>
 			<File
-				RelativePath=".\GameTypes.h">
-			</File>
-			<File
 				RelativePath=".\Grade.cpp">
 			</File>
 			<File
 				RelativePath=".\Grade.h">
 			</File>
 			<File
+				RelativePath="HighScore.cpp">
+			</File>
+			<File
+				RelativePath="HighScore.h">
+			</File>
+			<File
 				RelativePath="Inventory.cpp">
 			</File>
 			<File
 				RelativePath="Inventory.h">
+			</File>
+			<File
+				RelativePath="LuaFunctions.h">
+			</File>
+			<File
+				RelativePath="LuaHelpers.cpp">
+			</File>
+			<File
+				RelativePath="LuaHelpers.h">
 			</File>
 			<File
 				RelativePath="LyricsLoader.cpp">
@@ -819,6 +909,18 @@ cl                                                                              
 				RelativePath="PlayerOptions.h">
 			</File>
 			<File
+				RelativePath="Profile.cpp">
+			</File>
+			<File
+				RelativePath="Profile.h">
+			</File>
+			<File
+				RelativePath="ProfileHtml.cpp">
+			</File>
+			<File
+				RelativePath="ProfileHtml.h">
+			</File>
+			<File
 				RelativePath=".\RandomSample.cpp">
 			</File>
 			<File
@@ -858,6 +960,12 @@ cl                                                                              
 				RelativePath="SongOptions.h">
 			</File>
 			<File
+				RelativePath="SongUtil.cpp">
+			</File>
+			<File
+				RelativePath="SongUtil.h">
+			</File>
+			<File
 				RelativePath="StageStats.cpp">
 			</File>
 			<File
@@ -868,6 +976,12 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="Steps.h">
+			</File>
+			<File
+				RelativePath="StepsUtil.cpp">
+			</File>
+			<File
+				RelativePath="StepsUtil.h">
 			</File>
 			<File
 				RelativePath="Style.h">
@@ -882,10 +996,34 @@ cl                                                                              
 				RelativePath="StyleInput.h">
 			</File>
 			<File
+				RelativePath="TimeConstants.cpp">
+			</File>
+			<File
+				RelativePath="TimeConstants.h">
+			</File>
+			<File
+				RelativePath="TimingData.cpp">
+			</File>
+			<File
+				RelativePath="TimingData.h">
+			</File>
+			<File
 				RelativePath="TitleSubstitution.cpp">
 			</File>
 			<File
 				RelativePath="TitleSubstitution.h">
+			</File>
+			<File
+				RelativePath="Trail.cpp">
+			</File>
+			<File
+				RelativePath="Trail.h">
+			</File>
+			<File
+				RelativePath="TrailUtil.cpp">
+			</File>
+			<File
+				RelativePath="TrailUtil.h">
 			</File>
 		</Filter>
 		<Filter
@@ -903,6 +1041,12 @@ cl                                                                              
 			<File
 				RelativePath="MsdFile.h">
 			</File>
+			<File
+				RelativePath="XmlFile.cpp">
+			</File>
+			<File
+				RelativePath="XmlFile.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="StepMania"
@@ -918,12 +1062,6 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath=".\StepMania.h">
-			</File>
-			<File
-				RelativePath="custom_launch_params.cpp">
-			</File>
-			<File
-				RelativePath="custom_launch_params.h">
 			</File>
 			<File
 				RelativePath=".\global.cpp">
@@ -947,7 +1085,7 @@ cl                                                                              
 					RelativePath="arch\arch_default.h">
 				</File>
 				<File
-					RelativePath="arch\arch_xbox.h">
+					RelativePath="arch\arch_platform.h">
 				</File>
 				<Filter
 					Name="LoadingWindow"
@@ -963,18 +1101,6 @@ cl                                                                              
 					</File>
 					<File
 						RelativePath="arch\LoadingWindow\LoadingWindow_Win32.cpp">
-						<FileConfiguration
-							Name="Debug|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\LoadingWindow\LoadingWindow_Win32.h">
@@ -994,32 +1120,21 @@ cl                                                                              
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_DSound.cpp">
-						<FileConfiguration
-							Name="Release|Xbox">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_DSound.h">
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_DSound_Software.cpp">
-						<FileConfiguration
-							Name="Debug|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_DSound_Software.h">
+					</File>
+					<File
+						RelativePath="arch\Sound\RageSoundDriver_Generic_Software.cpp">
+					</File>
+					<File
+						RelativePath="arch\Sound\RageSoundDriver_Generic_Software.h">
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_Null.cpp">
@@ -1029,18 +1144,6 @@ cl                                                                              
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_WaveOut.cpp">
-						<FileConfiguration
-							Name="Debug|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_WaveOut.h">
@@ -1050,28 +1153,16 @@ cl                                                                              
 					Name="ArchHooks"
 					Filter="">
 					<File
+						RelativePath="arch\ArchHooks\ArchHooks.cpp">
+					</File>
+					<File
 						RelativePath="arch\ArchHooks\ArchHooks.h">
 					</File>
 					<File
 						RelativePath="arch\ArchHooks\ArchHooks_Win32.cpp">
-						<FileConfiguration
-							Name="Debug|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\ArchHooks\ArchHooks_Win32.h">
-					</File>
-					<File
-						RelativePath="arch\ArchHooks\ArchHooks_none.h">
 					</File>
 				</Filter>
 				<Filter
@@ -1085,72 +1176,24 @@ cl                                                                              
 					</File>
 					<File
 						RelativePath="arch\InputHandler\InputHandler_DirectInput.cpp">
-						<FileConfiguration
-							Name="Debug|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\InputHandler\InputHandler_DirectInput.h">
-						<FileConfiguration
-							Name="Debug|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\InputHandler\InputHandler_DirectInputHelper.cpp">
-						<FileConfiguration
-							Name="Debug|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\InputHandler\InputHandler_DirectInputHelper.h">
-						<FileConfiguration
-							Name="Debug|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="arch\InputHandler\InputHandler_SDL.cpp">
+						RelativePath="arch\InputHandler\InputHandler_Win32_Para.cpp">
 					</File>
 					<File
-						RelativePath="arch\InputHandler\InputHandler_SDL.h">
+						RelativePath="arch\InputHandler\InputHandler_Win32_Para.h">
 					</File>
 					<File
 						RelativePath="arch\InputHandler\InputHandler_Win32_Pump.cpp">
-						<FileConfiguration
-							Name="Debug|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\InputHandler\InputHandler_Win32_Pump.h">
@@ -1167,78 +1210,18 @@ cl                                                                              
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_DShow.cpp">
-						<FileConfiguration
-							Name="Debug|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_DShow.h">
-						<FileConfiguration
-							Name="Debug|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_DShowHelper.cpp">
-						<FileConfiguration
-							Name="Debug|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_DShowHelper.h">
-						<FileConfiguration
-							Name="Debug|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_FFMpeg.cpp">
-						<FileConfiguration
-							Name="Debug|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Xbox"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_FFMpeg.h">
@@ -1263,243 +1246,154 @@ cl                                                                              
 						RelativePath="arch\LowLevelWindow\LowLevelWindow_SDL.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="Lights"
+					Filter="">
+					<File
+						RelativePath="arch\Lights\LightsDriver.h">
+					</File>
+					<File
+						RelativePath="arch\Lights\LightsDriver_Null.h">
+					</File>
+					<File
+						RelativePath="arch\Lights\LightsDriver_SystemMessage.cpp">
+					</File>
+					<File
+						RelativePath="arch\Lights\LightsDriver_SystemMessage.h">
+					</File>
+					<File
+						RelativePath="arch\Lights\LightsDriver_Win32Parallel.cpp">
+					</File>
+					<File
+						RelativePath="arch\Lights\LightsDriver_Win32Parallel.h">
+					</File>
+				</Filter>
+				<Filter
+					Name="MemoryCard"
+					Filter="">
+					<File
+						RelativePath="arch\MemoryCard\MemoryCardDriver.h">
+					</File>
+					<File
+						RelativePath="arch\MemoryCard\MemoryCardDriverThreaded.cpp">
+					</File>
+					<File
+						RelativePath="arch\MemoryCard\MemoryCardDriverThreaded.h">
+					</File>
+					<File
+						RelativePath="arch\MemoryCard\MemoryCardDriverThreaded_Windows.cpp">
+					</File>
+					<File
+						RelativePath="arch\MemoryCard\MemoryCardDriverThreaded_Windows.h">
+					</File>
+					<File
+						RelativePath="arch\MemoryCard\MemoryCardDriver_Null.h">
+					</File>
+				</Filter>
+				<Filter
+					Name="Dialog"
+					Filter="">
+					<File
+						RelativePath="arch\Dialog\Dialog.cpp">
+					</File>
+					<File
+						RelativePath="arch\Dialog\Dialog.h">
+					</File>
+					<File
+						RelativePath="arch\Dialog\DialogDriver.h">
+					</File>
+					<File
+						RelativePath="arch\Dialog\DialogDriver_Win32.cpp">
+					</File>
+					<File
+						RelativePath="arch\Dialog\DialogDriver_Win32.h">
+					</File>
+				</Filter>
+				<Filter
+					Name="Threads"
+					Filter="">
+					<File
+						RelativePath="arch\Threads\Threads.h">
+					</File>
+					<File
+						RelativePath="arch\Threads\Threads_Win32.cpp">
+					</File>
+					<File
+						RelativePath="arch\Threads\Threads_Win32.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="system"
 				Filter="">
 				<File
 					RelativePath="archutils\Win32\AppInstance.cpp">
-					<FileConfiguration
-						Name="Debug|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="archutils\Win32\AppInstance.h">
-					<FileConfiguration
-						Name="Debug|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="archutils\Win32\Crash.cpp">
-					<FileConfiguration
-						Name="Debug|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="archutils\Win32\Crash.h">
-					<FileConfiguration
-						Name="Debug|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="archutils\Win32\DebugInfoHunt.cpp">
-					<FileConfiguration
-						Name="Debug|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="archutils\Win32\DebugInfoHunt.h">
-					<FileConfiguration
-						Name="Debug|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="archutils\Win32\GetFileInformation.cpp">
+				</File>
+				<File
+					RelativePath="archutils\Win32\GetFileInformation.h">
 				</File>
 				<File
 					RelativePath="archutils\Win32\GotoURL.cpp">
-					<FileConfiguration
-						Name="Debug|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="archutils\Win32\GotoURL.h">
-					<FileConfiguration
-						Name="Debug|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="archutils\Win32\RegistryAccess.cpp">
+				</File>
+				<File
+					RelativePath="archutils\Win32\RegistryAccess.h">
 				</File>
 				<File
 					RelativePath="archutils\Win32\RestartProgram.cpp">
-					<FileConfiguration
-						Name="Debug|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="archutils\Win32\RestartProgram.h">
-					<FileConfiguration
-						Name="Debug|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\StepMania.ICO">
-					<FileConfiguration
-						Name="Debug|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\StepMania.RC">
-					<FileConfiguration
-						Name="Debug|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
+					RelativePath="archutils\Win32\StepMania.ico">
 				</File>
 				<File
 					RelativePath="archutils\Win32\USB.cpp">
-					<FileConfiguration
-						Name="Debug|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="archutils\Win32\USB.h">
-					<FileConfiguration
-						Name="Debug|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="archutils\Win32\VideoDriverInfo.cpp">
-					<FileConfiguration
-						Name="Debug|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="archutils\Win32\VideoDriverInfo.h">
 				</File>
 				<File
-					RelativePath="archutils\Win32\arch_setup.h">
+					RelativePath="archutils\Win32\WindowsResources.h">
 				</File>
 				<File
-					RelativePath=".\resource.h">
+					RelativePath="archutils\Win32\WindowsResources.rc">
+				</File>
+				<File
+					RelativePath="archutils\Win32\arch_setup.cpp">
+				</File>
+				<File
+					RelativePath="archutils\Win32\arch_setup.h">
 				</File>
 			</Filter>
 		</Filter>
@@ -1523,6 +1417,12 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath=".\Banner.h">
+			</File>
+			<File
+				RelativePath="ConditionalBGA.cpp">
+			</File>
+			<File
+				RelativePath="ConditionalBGA.h">
 			</File>
 			<File
 				RelativePath="DifficultyIcon.cpp">
@@ -1577,6 +1477,12 @@ cl                                                                              
 				RelativePath="DifficultyDisplay.h">
 			</File>
 			<File
+				RelativePath="DifficultyList.cpp">
+			</File>
+			<File
+				RelativePath="DifficultyList.h">
+			</File>
+			<File
 				RelativePath="DifficultyMeter.cpp">
 			</File>
 			<File
@@ -1589,10 +1495,22 @@ cl                                                                              
 				RelativePath="DifficultyRating.h">
 			</File>
 			<File
+				RelativePath="DualScrollBar.cpp">
+			</File>
+			<File
+				RelativePath="DualScrollBar.h">
+			</File>
+			<File
 				RelativePath="EditCoursesMenu.cpp">
 			</File>
 			<File
 				RelativePath="EditCoursesMenu.h">
+			</File>
+			<File
+				RelativePath="EditCoursesSongMenu.cpp">
+			</File>
+			<File
+				RelativePath="EditCoursesSongMenu.h">
 			</File>
 			<File
 				RelativePath="EditMenu.cpp">
@@ -1649,10 +1567,16 @@ cl                                                                              
 				RelativePath="JukeboxMenu.h">
 			</File>
 			<File
-				RelativePath="MenuElements.cpp">
+				RelativePath="ListDisplay.cpp">
 			</File>
 			<File
-				RelativePath="MenuElements.h">
+				RelativePath="ListDisplay.h">
+			</File>
+			<File
+				RelativePath="MemoryCardDisplay.cpp">
+			</File>
+			<File
+				RelativePath="MemoryCardDisplay.h">
 			</File>
 			<File
 				RelativePath="MenuTimer.cpp">
@@ -1715,6 +1639,12 @@ cl                                                                              
 				RelativePath="OptionsCursor.h">
 			</File>
 			<File
+				RelativePath="PaneDisplay.cpp">
+			</File>
+			<File
+				RelativePath="PaneDisplay.h">
+			</File>
+			<File
 				RelativePath="ScrollBar.cpp">
 			</File>
 			<File
@@ -1733,6 +1663,12 @@ cl                                                                              
 				RelativePath="SnapDisplay.h">
 			</File>
 			<File
+				RelativePath="SongCreditDisplay.cpp">
+			</File>
+			<File
+				RelativePath="SongCreditDisplay.h">
+			</File>
+			<File
 				RelativePath=".\TextBanner.cpp">
 			</File>
 			<File
@@ -1749,6 +1685,12 @@ cl                                                                              
 			Name="Actors used in Gameplay"
 			Filter="">
 			<File
+				RelativePath="ActiveAttackList.cpp">
+			</File>
+			<File
+				RelativePath="ActiveAttackList.h">
+			</File>
+			<File
 				RelativePath="ArrowBackdrop.cpp">
 			</File>
 			<File
@@ -1759,6 +1701,12 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath=".\ArrowEffects.h">
+			</File>
+			<File
+				RelativePath="AttackDisplay.cpp">
+			</File>
+			<File
+				RelativePath="AttackDisplay.h">
 			</File>
 			<File
 				RelativePath=".\Background.cpp">
@@ -1779,6 +1727,9 @@ cl                                                                              
 				RelativePath="CharacterHead.h">
 			</File>
 			<File
+				RelativePath="CombinedLifeMeter.h">
+			</File>
+			<File
 				RelativePath="CombinedLifeMeterTug.cpp">
 			</File>
 			<File
@@ -1797,6 +1748,12 @@ cl                                                                              
 				RelativePath="DancingCharacters.h">
 			</File>
 			<File
+				RelativePath="Foreground.cpp">
+			</File>
+			<File
+				RelativePath="Foreground.h">
+			</File>
+			<File
 				RelativePath=".\GhostArrow.cpp">
 			</File>
 			<File
@@ -1807,18 +1764,6 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="GhostArrowRow.h">
-			</File>
-			<File
-				RelativePath=".\GrayArrow.cpp">
-			</File>
-			<File
-				RelativePath=".\GrayArrow.h">
-			</File>
-			<File
-				RelativePath="GrayArrowRow.cpp">
-			</File>
-			<File
-				RelativePath="GrayArrowRow.h">
 			</File>
 			<File
 				RelativePath=".\HoldGhostArrow.cpp">
@@ -1872,12 +1817,6 @@ cl                                                                              
 				RelativePath="NoteField.h">
 			</File>
 			<File
-				RelativePath="NoteFieldPlus.cpp">
-			</File>
-			<File
-				RelativePath="NoteFieldPlus.h">
-			</File>
-			<File
 				RelativePath="PercentageDisplay.cpp">
 			</File>
 			<File
@@ -1894,6 +1833,18 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="ProTimingDisplay.h">
+			</File>
+			<File
+				RelativePath=".\ReceptorArrow.cpp">
+			</File>
+			<File
+				RelativePath=".\ReceptorArrow.h">
+			</File>
+			<File
+				RelativePath="ReceptorArrowRow.cpp">
+			</File>
+			<File
+				RelativePath="ReceptorArrowRow.h">
 			</File>
 			<File
 				RelativePath="ScoreDisplay.cpp">
@@ -1931,12 +1882,6 @@ cl                                                                              
 			<File
 				RelativePath="ScoreDisplayRave.h">
 			</File>
-			<File
-				RelativePath="TimingAssist.cpp">
-			</File>
-			<File
-				RelativePath="TimingAssist.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Rage"
@@ -1960,19 +1905,13 @@ cl                                                                              
 				RelativePath="RageDisplay_D3D.h">
 			</File>
 			<File
+				RelativePath="RageDisplay_Null.cpp">
+			</File>
+			<File
+				RelativePath="RageDisplay_Null.h">
+			</File>
+			<File
 				RelativePath="RageDisplay_OGL.cpp">
-				<FileConfiguration
-					Name="Debug|Xbox"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="RageDisplay_OGL.h">
@@ -1985,6 +1924,39 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="RageFile.cpp">
+			</File>
+			<File
+				RelativePath="RageFile.h">
+			</File>
+			<File
+				RelativePath="RageFileDriver.cpp">
+			</File>
+			<File
+				RelativePath="RageFileDriver.h">
+			</File>
+			<File
+				RelativePath="RageFileDriverDirect.cpp">
+			</File>
+			<File
+				RelativePath="RageFileDriverDirect.h">
+			</File>
+			<File
+				RelativePath="RageFileDriverDirectHelpers.cpp">
+			</File>
+			<File
+				RelativePath="RageFileDriverDirectHelpers.h">
+			</File>
+			<File
+				RelativePath="RageFileDriverZip.cpp">
+			</File>
+			<File
+				RelativePath="RageFileDriverZip.h">
+			</File>
+			<File
+				RelativePath="RageFileManager.cpp">
+			</File>
+			<File
+				RelativePath="RageFileManager.h">
 			</File>
 			<File
 				RelativePath=".\RageInput.cpp">
@@ -2011,6 +1983,12 @@ cl                                                                              
 				RelativePath="RageMath.h">
 			</File>
 			<File
+				RelativePath="RageModelGeometry.cpp">
+			</File>
+			<File
+				RelativePath="RageModelGeometry.h">
+			</File>
+			<File
 				RelativePath="RageSound.cpp">
 			</File>
 			<File
@@ -2021,6 +1999,12 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="RageSoundManager.h">
+			</File>
+			<File
+				RelativePath="RageSoundPosMap.cpp">
+			</File>
+			<File
+				RelativePath="RageSoundPosMap.h">
 			</File>
 			<File
 				RelativePath="RageSoundReader.h">
@@ -2086,6 +2070,60 @@ cl                                                                              
 				RelativePath="RageSounds.h">
 			</File>
 			<File
+				RelativePath="RageSurface.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface.h">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils.cpp">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Load.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Load.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_BMP.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_BMP.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_GIF.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_GIF.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_JPEG.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_JPEG.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_PNG.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_PNG.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_XPM.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_XPM.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Save_BMP.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Save_BMP.h">
+			</File>
+			<File
 				RelativePath=".\RageTexture.cpp">
 			</File>
 			<File
@@ -2131,6 +2169,9 @@ cl                                                                              
 				RelativePath="RageUtil_CharConversions.h">
 			</File>
 			<File
+				RelativePath="RageUtil_CircularBuffer.h">
+			</File>
+			<File
 				RelativePath="RageUtil_FileDB.cpp">
 			</File>
 			<File
@@ -2139,6 +2180,12 @@ cl                                                                              
 			<Filter
 				Name="Helpers"
 				Filter="">
+				<File
+					RelativePath="SDL_SaveJPEG.cpp">
+				</File>
+				<File
+					RelativePath="SDL_SaveJPEG.h">
+				</File>
 				<File
 					RelativePath="SDL_dither.cpp">
 				</File>
@@ -2158,13 +2205,13 @@ cl                                                                              
 					RelativePath="SDL_utils.h">
 				</File>
 				<File
+					RelativePath="ezsockets.cpp">
+				</File>
+				<File
+					RelativePath="ezsockets.h">
+				</File>
+				<File
 					RelativePath="glext.h">
-				</File>
-				<File
-					RelativePath="regex.c">
-				</File>
-				<File
-					RelativePath="regex.h">
 				</File>
 				<Filter
 					Name="pcre"
@@ -2203,6 +2250,12 @@ cl                                                                              
 				RelativePath="ActorCollision.h">
 			</File>
 			<File
+				RelativePath="ActorCommands.cpp">
+			</File>
+			<File
+				RelativePath="ActorCommands.h">
+			</File>
+			<File
 				RelativePath=".\ActorFrame.cpp">
 			</File>
 			<File
@@ -2227,13 +2280,16 @@ cl                                                                              
 				RelativePath=".\BitmapText.h">
 			</File>
 			<File
-				RelativePath="Milkshape.h">
-			</File>
-			<File
 				RelativePath="Model.cpp">
 			</File>
 			<File
 				RelativePath="Model.h">
+			</File>
+			<File
+				RelativePath="ModelManager.cpp">
+			</File>
+			<File
+				RelativePath="ModelManager.h">
 			</File>
 			<File
 				RelativePath="ModelTypes.cpp">
@@ -2250,12 +2306,6 @@ cl                                                                              
 			<File
 				RelativePath=".\Sprite.h">
 			</File>
-			<File
-				RelativePath="mathlib.c">
-			</File>
-			<File
-				RelativePath="mathlib.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Global Singletons"
@@ -2267,13 +2317,16 @@ cl                                                                              
 				RelativePath="AnnouncerManager.h">
 			</File>
 			<File
-				RelativePath="arch\ArchHooks\ArchHooks.cpp">
-			</File>
-			<File
 				RelativePath="Bookkeeper.cpp">
 			</File>
 			<File
 				RelativePath="Bookkeeper.h">
+			</File>
+			<File
+				RelativePath="CryptManager.cpp">
+			</File>
+			<File
+				RelativePath="CryptManager.h">
 			</File>
 			<File
 				RelativePath=".\FontManager.cpp">
@@ -2310,6 +2363,24 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="InputQueue.h">
+			</File>
+			<File
+				RelativePath="LightsManager.cpp">
+			</File>
+			<File
+				RelativePath="LightsManager.h">
+			</File>
+			<File
+				RelativePath="MemoryCardManager.cpp">
+			</File>
+			<File
+				RelativePath="MemoryCardManager.h">
+			</File>
+			<File
+				RelativePath="NetworkSyncManager.cpp">
+			</File>
+			<File
+				RelativePath="NetworkSyncManager.h">
 			</File>
 			<File
 				RelativePath="NoteSkinManager.cpp">
@@ -2353,21 +2424,245 @@ cl                                                                              
 			<File
 				RelativePath="UnlockSystem.h">
 			</File>
+			<File
+				RelativePath="ezsockets.cpp">
+			</File>
+			<File
+				RelativePath="ezsockets.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Crypto"
+			Filter="">
+			<File
+				RelativePath="crypto\CryptBn.cpp">
+			</File>
+			<File
+				RelativePath="crypto\CryptBn.h">
+			</File>
+			<File
+				RelativePath="CryptHelpers.cpp">
+			</File>
+			<File
+				RelativePath="CryptHelpers.h">
+			</File>
+			<File
+				RelativePath="crypto\CryptMD5.cpp">
+			</File>
+			<File
+				RelativePath="crypto\CryptMD5.h">
+			</File>
+			<File
+				RelativePath="crypto\CryptNoise.cpp">
+			</File>
+			<File
+				RelativePath="crypto\CryptPrime.cpp">
+			</File>
+			<File
+				RelativePath="crypto\CryptPrime.h">
+			</File>
+			<File
+				RelativePath="crypto\CryptRSA.cpp">
+			</File>
+			<File
+				RelativePath="crypto\CryptRSA.h">
+			</File>
+			<File
+				RelativePath="crypto\CryptRand.cpp">
+			</File>
+			<File
+				RelativePath="crypto\CryptRand.h">
+			</File>
+			<File
+				RelativePath="crypto\CryptSH512.cpp">
+			</File>
+			<File
+				RelativePath="crypto\CryptSH512.h">
+			</File>
+			<File
+				RelativePath="crypto\CryptSHA.cpp">
+			</File>
+			<File
+				RelativePath="crypto\CryptSHA.h">
+			</File>
+			<Filter
+				Name="crypto++"
+				Filter="">
+				<File
+					RelativePath="crypto51\algebra.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\algebra.h">
+				</File>
+				<File
+					RelativePath="crypto51\algparam.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\algparam.h">
+				</File>
+				<File
+					RelativePath="crypto51\argnames.h">
+				</File>
+				<File
+					RelativePath="crypto51\asn.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\asn.h">
+				</File>
+				<File
+					RelativePath="crypto51\config.h">
+				</File>
+				<File
+					RelativePath="crypto51\cryptlib.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\cryptlib.h">
+				</File>
+				<File
+					RelativePath="crypto51\files.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\files.h">
+				</File>
+				<File
+					RelativePath="crypto51\filters.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\filters.h">
+				</File>
+				<File
+					RelativePath="crypto51\fltrimpl.h">
+				</File>
+				<File
+					RelativePath="crypto51\integer.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\integer.h">
+				</File>
+				<File
+					RelativePath="crypto51\iterhash.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\iterhash.h">
+				</File>
+				<File
+					RelativePath="crypto51\mdc.h">
+				</File>
+				<File
+					RelativePath="crypto51\misc.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\misc.h">
+				</File>
+				<File
+					RelativePath="crypto51\modarith.h">
+				</File>
+				<File
+					RelativePath="crypto51\modes.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\modes.h">
+				</File>
+				<File
+					RelativePath="crypto51\mqueue.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\mqueue.h">
+				</File>
+				<File
+					RelativePath="crypto51\nbtheory.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\nbtheory.h">
+				</File>
+				<File
+					RelativePath="crypto51\oaep.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\oaep.h">
+				</File>
+				<File
+					RelativePath="crypto51\oids.h">
+				</File>
+				<File
+					RelativePath="crypto51\osrng.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\osrng.h">
+				</File>
+				<File
+					RelativePath="crypto51\pch.h">
+				</File>
+				<File
+					RelativePath="crypto51\pkcspad.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\pkcspad.h">
+				</File>
+				<File
+					RelativePath="crypto51\pubkey.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\pubkey.h">
+				</File>
+				<File
+					RelativePath="crypto51\queue.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\queue.h">
+				</File>
+				<File
+					RelativePath="crypto51\randpool.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\randpool.h">
+				</File>
+				<File
+					RelativePath="crypto51\rng.h">
+				</File>
+				<File
+					RelativePath="crypto51\rsa.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\rsa.h">
+				</File>
+				<File
+					RelativePath="crypto51\secblock.h">
+				</File>
+				<File
+					RelativePath="crypto51\seckey.h">
+				</File>
+				<File
+					RelativePath="crypto51\sha.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\sha.h">
+				</File>
+				<File
+					RelativePath="crypto51\simple.h">
+				</File>
+				<File
+					RelativePath="crypto51\smartptr.h">
+				</File>
+				<File
+					RelativePath="crypto51\strciphr.cpp">
+				</File>
+				<File
+					RelativePath="crypto51\strciphr.h">
+				</File>
+				<File
+					RelativePath="crypto51\words.h">
+				</File>
+			</Filter>
 		</Filter>
 		<File
+			RelativePath="archutils\Win32\DialogCrashHeader.bmp">
+		</File>
+		<File
+			RelativePath="archutils\Win32\DialogErrorHeader.bmp">
+		</File>
+		<File
 			RelativePath="StepMania.xpm">
-		</File>
-		<File
-			RelativePath=".\error.bmp">
-		</File>
-		<File
-			RelativePath="error2.bmp">
-		</File>
-		<File
-			RelativePath="loading.bmp">
-		</File>
-		<File
-			RelativePath=".\splash.bmp">
 		</File>
 	</Files>
 	<Globals>
