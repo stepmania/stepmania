@@ -158,7 +158,7 @@ void RageSound_QT1::StartMixing(RageSound *snd) {
 
     LockMutex L(SOUNDMAN->lock);
     sounds.push_back(s);
-    LOG->Trace("There are %u sounds playing", sounds.size());
+    LOG->Trace("There are %ld sounds playing", sounds.size());
 }
 
 void RageSound_QT1::StopMixing(RageSound *snd) {
@@ -176,7 +176,7 @@ void RageSound_QT1::StopMixing(RageSound *snd) {
 
     delete sounds[i];
     sounds.erase(sounds.begin()+i, sounds.begin()+i+1);
-    LOG->Trace("There are %u sounds playing", sounds.size());
+    LOG->Trace("There are %ld sounds playing", sounds.size());
 }
 
 void RageSound_QT1::Update(float delta) {
