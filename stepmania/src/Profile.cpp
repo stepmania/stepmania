@@ -305,6 +305,9 @@ int Profile::GetPossibleCourseDancePointsForStepsType( StepsType st ) const
 					continue;
 
 				Trail* pTrail = pCourse->GetTrail(st,cd);
+				if( pTrail == NULL )
+					continue;
+
 				const RadarValues& fRadars = pTrail->GetRadarValues();
 				iTotal += ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
 			}
