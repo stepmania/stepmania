@@ -42,6 +42,8 @@ protected:
 	void EasierDifficulty( PlayerNumber pn );
 	void HarderDifficulty( PlayerNumber pn );
 
+	void TweenOffScreen();
+
 	Sprite  m_ChoiceListFrame;
 	Sprite  m_ChoiceListHighlight;
 	Sprite  m_Guide;

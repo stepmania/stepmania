@@ -41,6 +41,8 @@
 #define GUIDE_X					THEME->GetMetricF("ScreenSelectMode","GuideX")
 #define GUIDE_Y					THEME->GetMetricF("ScreenSelectMode","GuideY")
 
+const float TWEEN_TIME		= 0.5f;
+
 const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
 const ScreenMessage SM_NoSongs	= ScreenMessage(SM_User+3);
@@ -181,8 +183,9 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenEz2SelectMusic::MenuRight( PlayerNumber pn, const InputEventType type )
 {
-		m_MusicBannerWheel.BannersRight();
-		MusicChanged();
+	m_Menu.StallTimer();
+	m_MusicBannerWheel.BannersRight();
+	MusicChanged();
 }
 
 void ScreenEz2SelectMusic::MenuBack( PlayerNumber pn )
@@ -193,8 +196,21 @@ void ScreenEz2SelectMusic::MenuBack( PlayerNumber pn )
 }
 
 
+void ScreenEz2SelectMusic::TweenOffScreen()
+{
+	m_MusicBannerWheel.FadeOff( 0, "foldy", TWEEN_TIME );
+	m_PumpDifficultyCircle.FadeOff( 0, "fade", TWEEN_TIME*2 );
+	m_Guide.FadeOff( 0, "fade", TWEEN_TIME*2 );
+	m_PumpDifficultyRating.FadeOff( 0, "fade", TWEEN_TIME*2 );
+	m_Guide.FadeOff( 0, "fade", TWEEN_TIME*2 );
+	m_ChoiceListFrame.FadeOff( 0, "fade", TWEEN_TIME*2 );
+	m_ChoiceListHighlight.FadeOff( 0, "fade", TWEEN_TIME*2 );
+}
+
+
 void ScreenEz2SelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
+	m_Menu.StallTimer();
 	m_MusicBannerWheel.BannersLeft();
 	MusicChanged();
 }
@@ -208,6 +224,8 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 	}
 
 	m_bMadeChoice = true;
+
+	TweenOffScreen();
 
 	// show "hold START for options"
 	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );

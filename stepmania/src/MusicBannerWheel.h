@@ -36,8 +36,11 @@ private:
 	void PlayMusicSample();
 	void LoadSongData();
 	void ChangeNotes();
+	void InsertNewBanner(int direction);
 
-	BitmapText	m_debugtext;
+	#ifdef _DEBUG
+		BitmapText	m_debugtext;
+	#endif
 
 	ScrollingList m_ScrollingList;
 	int currentPos;

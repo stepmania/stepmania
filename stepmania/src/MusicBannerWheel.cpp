@@ -23,6 +23,12 @@
 #define MAXSONGSINBUFFER 5
 #define BANNERTYPE 1
 
+enum
+{
+	GOINGLEFT=0,
+	GOINGRIGHT
+};
+
 #define DEFAULT_SCROLL_DIRECTION		THEME->GetMetricI("Notes","DefaultScrollDirection")
 
 MusicBannerWheel::MusicBannerWheel() 
@@ -96,12 +102,99 @@ MusicBannerWheel::MusicBannerWheel()
 
 	LoadSongData();
 
+	#ifdef _DEBUG
 	m_debugtext.LoadFromFont( THEME->GetPathTo("Fonts","small titles") );
 	m_debugtext.SetXY( 0, -120 );
 	this->AddChild(&m_debugtext);
+	#endif
 }
 
-/************ TODO: OPTIMIZE THIS: MUST!!!! ********************/
+/********************************************
+void MusicBannerWheel::InsertNewBanner(int direction)
+
+Based upon the direction specified it will go off and 
+figure out which banner went out of focus, (which is
+now our NEW! banner) and replace it with something new...
+works only if there are 5 banners in the scrolling list.
+********************************************/
+void MusicBannerWheel::InsertNewBanner(int direction)
+{
+	Song* pSong = NULL;
+	CString sGraphicPath;
+	int elementtoreplace=0;	
+
+	if(	direction == GOINGLEFT)
+	{
+		/* Imagine this:
+			[1][2][3][4][5]
+			then they shift <-
+			[?][1][2][3][4]
+			gotta find out what ? is
+
+		   scrlistpos = 0   0 1 2 [3] [4] [0] [1] [2] 3 4 0 1 2 3 4
+		   scrlistpos = 4   4 0 1 [2] [3] [4] [0] [1] 2 3 4 0 1 2 3 // we lost 2 and got a new one
+		   scrlistpos = 3   3 4 0 [1] [2] [3] [4] [0] 1 2 3 4 0 1 2 // we lost 1 and got a new one
+		 */
+
+		if(currentPos-2 >= 0)
+			pSong = arraySongs[currentPos-2];
+		else
+			pSong = arraySongs[(arraySongs.size()-1) + (currentPos-2)];	// wrap around. (it does honestly!)		
+
+		if( pSong == NULL ) sGraphicPath = (THEME->GetPathTo("Graphics","fallback banner"));
+		else if (pSong->HasBanner()) sGraphicPath = (pSong->GetBannerPath());
+		else if (PREFSMAN->m_bUseBGIfNoBanner && pSong->HasBackground() ) sGraphicPath = (pSong->GetBannerPath());
+		else sGraphicPath = (THEME->GetPathTo("Graphics","fallback banner"));
+
+		elementtoreplace = scrlistPos - 2;
+		if(elementtoreplace < 0) 
+		{
+			elementtoreplace = MAXSONGSINBUFFER + elementtoreplace;
+		}
+		m_ScrollingList.Replace(sGraphicPath, elementtoreplace);
+	}
+	else if( direction == GOINGRIGHT)
+	{
+		/* Imagine this:
+			[1][2][3][4][5]
+			then they shift ->
+			[2][3][4][5][?]
+			gotta find out what ? is
+			scrlistpos = 0 1 2 [3] [4] [0] [1] [2] 3 4
+			scrlistpos = 1 2 3 [4] [0] [1] [2] [3] 4 0 // we lost 3 and got a new one												
+		 */
+		if(currentPos+2 <= arraySongs.size()-1)
+			pSong = arraySongs[currentPos+2];
+		else
+			pSong = arraySongs[0+ (((currentPos+2) - (arraySongs.size()-1)) - 1)]; // wrap around. (it does honestly!)
+
+		if( pSong == NULL ) sGraphicPath = (THEME->GetPathTo("Graphics","fallback banner"));
+		else if (pSong->HasBanner()) sGraphicPath = (pSong->GetBannerPath());
+		else if (PREFSMAN->m_bUseBGIfNoBanner && pSong->HasBackground() ) sGraphicPath = (pSong->GetBannerPath());
+		else sGraphicPath = (THEME->GetPathTo("Graphics","fallback banner"));
+
+		elementtoreplace = scrlistPos + 2;
+		if(elementtoreplace > MAXSONGSINBUFFER-1) 
+		{
+			elementtoreplace = elementtoreplace - MAXSONGSINBUFFER;
+		}
+		m_ScrollingList.Replace(sGraphicPath, elementtoreplace);
+	}
+	else
+	{
+		ASSERT(0); // we should be going in some sort of direction.
+	}
+	PlayMusicSample();
+}
+
+/****************************
+void MusicBannerWheel::LoadSongData()
+
+Loads the Song Data, based upon
+its relative position. It's fairly
+slow, so should only get used once
+and once only.
+*****************************/
 void MusicBannerWheel::LoadSongData()
 {
 	Song* pSong = NULL;
@@ -219,9 +312,12 @@ void MusicBannerWheel::BannersLeft()
 		scrlistPos--;
 
 	if(SingleLoad == 0)
-		m_ScrollingList.Unload();
-	LoadSongData();
-	m_debugtext.SetText(ssprintf("currentPos: %d scrlistPos: %d",currentPos,scrlistPos));
+	//	m_ScrollingList.Unload();
+	// LoadSongData();
+	InsertNewBanner(GOINGLEFT);
+	#ifdef _DEBUG
+		m_debugtext.SetText(ssprintf("currentPos: %d scrlistPos: %d",currentPos,scrlistPos));
+	#endif
 	m_ScrollingList.Left();
 	ChangeNotes();
 }
@@ -239,9 +335,12 @@ void MusicBannerWheel::BannersRight()
 		scrlistPos++;
 
 	if(SingleLoad == 0)
-		m_ScrollingList.Unload();
-	LoadSongData();
-	m_debugtext.SetText(ssprintf("currentPos: %d scrlistPos: %d",currentPos,scrlistPos));
+	//	m_ScrollingList.Unload();
+	//	LoadSongData();
+	InsertNewBanner(GOINGRIGHT);
+	#ifdef _DEBUG
+		m_debugtext.SetText(ssprintf("currentPos: %d scrlistPos: %d",currentPos,scrlistPos));
+	#endif
 	m_ScrollingList.Right();
 	ChangeNotes();
 }
