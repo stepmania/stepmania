@@ -284,6 +284,23 @@ const StyleDef* GameState::GetCurrentStyleDef()
 
 bool GameState::IsPlayable( const ModeChoice& mc )
 {
+	if( mc.pm == PLAY_MODE_RAVE )
+	{
+		// Can't play Rave without characters for attack definitions.
+		if( m_pCharacters.empty() )
+			return false;
+		
+		// Can't play rave unless there is room for two players
+		if( mc.style != STYLE_INVALID &&
+			GAMEMAN->GetStyleDefForStyle(mc.style)->m_StyleType == StyleDef::ONE_PLAYER_TWO_CREDITS )
+			return false;
+	
+		// Can't play rave unless there is room for two players
+		if( m_CurStyle != STYLE_INVALID &&
+			GAMEMAN->GetStyleDefForStyle(m_CurStyle)->m_StyleType == StyleDef::ONE_PLAYER_TWO_CREDITS )
+			return false;
+	}
+
 	return mc.numSidesJoinedToPlay == GAMESTATE->GetNumSidesJoined(); 
 }
 
@@ -499,17 +516,14 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 		}
 }
 
-void GameState::RemoveAllActiveAttacks()
+void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn )
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
 	{
-		for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
-		{
-			m_ActiveAttacks[p][s].fSecsRemaining = 0;
-			m_ActiveAttacks[p][s].sModifier = "";
-		}
-		RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
+		m_ActiveAttacks[pn][s].fSecsRemaining = 0;
+		m_ActiveAttacks[pn][s].sModifier = "";
 	}
+	RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)pn );
 }
 
 void GameState::RemoveAllInventory()

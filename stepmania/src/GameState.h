@@ -175,7 +175,12 @@ public:
 	bool	m_bActiveAttackEndedThisUpdate[NUM_PLAYERS];	// flag for other objects to watch (play sounds)
 	void LaunchAttack( PlayerNumber target, Attack aa );
 	void RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn );
-	void RemoveAllActiveAttacks();	// called on end of song
+	void RemoveAllActiveAttacks()	// called on end of song
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			RemoveActiveAttacksForPlayer( (PlayerNumber)p );
+	}
+	void RemoveActiveAttacksForPlayer( PlayerNumber pn );
 	void RemoveAllInventory();
 	int GetSumOfActiveAttackLevels( PlayerNumber pn );
 	PlayerNumber GetBestPlayer();

@@ -15,6 +15,7 @@
 #include "RageUtil.h"
 #include "GameState.h"
 #include "Character.h"
+#include "ScreenManager.h"
 
 CachedThemeMetricF ATTACK_DURATION_SECONDS	("ScoreKeeperRave","AttackDurationSeconds");
 
@@ -87,7 +88,13 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 	a.fSecsRemaining = ATTACK_DURATION_SECONDS;
 	a.sModifier = sAttackToGive;
 
+	// remove current attack (if any)
+	GAMESTATE->RemoveActiveAttacksForPlayer( pnToAttack );
+
+	// apply new attack
 	GAMESTATE->LaunchAttack( pnToAttack, a );
+
+	SCREENMAN->SystemMessage( ssprintf( "attacking %d with %s", pnToAttack, sAttackToGive.c_str() ) );
 
 	m_soundLaunchAttack.Play();
 }
