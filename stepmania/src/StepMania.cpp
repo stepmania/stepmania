@@ -506,6 +506,14 @@ struct VideoCardDefaults
 		true		// Right now, they've got to have NVidia or ATi Cards anyway..
 	},
 	{
+		"Mobility M3",	// ATI Rage Mobility 128 (AKA "M3")
+		"d3d,opengl",	// movietexture performance is horrid in opengl, but fine in d3d.
+		640,480,
+		16,16,16,
+		1024,
+		false
+	},
+	{
 		// Default graphics settings used for all cards that don't match above.
 		// This must be the very last entry!
 		"",
