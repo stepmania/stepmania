@@ -687,11 +687,6 @@ void NoteData::LoadTransformed( const NoteData& original, int iNewNumTracks, con
 	Convert4sToHoldNotes();
 }
 
-void NoteData::PadTapNotes( int rows )
-{
-	// Nothing to do for a track map.
-}
-
 void NoteData::MoveTapNoteTrack( int dest, int src )
 {
 	if(dest == src) return;
@@ -719,7 +714,6 @@ void NoteData::SetTapNote( int track, int row, const TapNote& t )
 	}
 	else
 	{
-		PadTapNotes(row);
 		m_TapNotes[track][row] = t;
 	}
 }
@@ -732,8 +726,6 @@ void NoteData::ReserveRows( int row )
 void NoteData::EliminateAllButOneTap( int row )
 {
 	if(row < 0) return;
-
-	PadTapNotes(row);
 
 	int track;
 	for(track = 0; track < GetNumTracks(); ++track)
