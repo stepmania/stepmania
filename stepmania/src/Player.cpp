@@ -151,17 +151,20 @@ void PlayerMinus::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, Co
 	{
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
-		for( int al=0; al<NUM_ATTACK_LEVELS; al++ )
+		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			Character *ch = GAMESTATE->m_pCurCharacters[m_PlayerNumber];
-			ASSERT( ch );
-			CString* asAttacks = ch->m_sAttacks[al];
-			for( int att = 0; att < NUM_ATTACKS_PER_LEVEL; ++att )
+			for( int al=0; al<NUM_ATTACK_LEVELS; al++ )
 			{
-				PlayerOptions po;
-				po.FromString( asAttacks[att] );
-				if( po.m_sNoteSkin != "" )
-					m_pNoteField->CacheNoteSkin( po.m_sNoteSkin );
+				Character *ch = GAMESTATE->m_pCurCharacters[p];
+				ASSERT( ch );
+				CString* asAttacks = ch->m_sAttacks[al];
+				for( int att = 0; att < NUM_ATTACKS_PER_LEVEL; ++att )
+				{
+					PlayerOptions po;
+					po.FromString( asAttacks[att] );
+					if( po.m_sNoteSkin != "" )
+						m_pNoteField->CacheNoteSkin( po.m_sNoteSkin );
+				}
 			}
 		}
 	}	
