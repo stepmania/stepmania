@@ -68,6 +68,18 @@ using namespace std;
 #define ASSERT assert
 #endif
 
+/* Define a macro to tell the compiler that a function doesn't return.  This just
+ * improves compiler warnings.  This should be placed near the beginning of the
+ * function prototype (although it looks better near the end, VC only accepts it
+ * at the beginning). */
+#if defined(_MSC_VER)
+#define NORETURN __declspec(noreturn)
+#elif defined(__GNUC__) && defined(__attribute__)
+#define NORETURN __attribute__ ((__noreturn__))
+#else
+#define NORETURN
+#endif
+
 #if 1
 
 #include "StdString.h"
