@@ -8,6 +8,7 @@
 #include "RageSoundReader_Resample.h" /* for ResampleQuality */
 #include "RageFile.h"
 #include "ProductInfo.h"
+#include "GameConstantsAndTypes.h"
 
 #define STEPMANIA_INI_PATH "Data/StepMania.ini"
 #define STATIC_INI_PATH "Data/Static.ini"
@@ -811,6 +812,23 @@ void PrefsManager::ResetToFactoryDefaults()
 	SaveGlobalPrefsToDisk();
 	m_bFirstRun = false;
 }
+
+int PrefsManager::GetCoinMode()
+{
+	if(m_bEventMode) 
+		return COIN_FREE; 
+	else 
+		return m_iCoinMode; 
+}
+
+PrefsManager::Premium	PrefsManager::GetPremium() 
+{ 
+	if(m_bEventMode) 
+		return NO_PREMIUM; 
+	else 
+		return m_Premium; 
+}
+
 
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez

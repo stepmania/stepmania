@@ -49,8 +49,6 @@ public:
 	bool			m_bOnlyDedicatedMenuButtons;
 	bool			m_bMenuTimer;
 	bool			m_bShowDanger;
-	int				m_iNumArcadeStages;
-	bool			m_bEventMode;
 
 	float			m_fJudgeWindowScale;
 	float			m_fJudgeWindowSecondsMarvelous;
@@ -139,10 +137,18 @@ public:
 	int				m_iMusicWheelSwitchSpeed;
 	bool			m_bEasterEggs;
 	int 			m_iMarvelousTiming;
-	int				m_iCoinMode;
+	bool			m_bEventMode;
 	int				m_iCoinsPerCredit;
+	int				m_iNumArcadeStages;
+
+	// These options have weird interactions depending on m_bEventMode, 
+	// so wrap them.
 	enum Premium { NO_PREMIUM, DOUBLES_PREMIUM, JOINT_PREMIUM };
+	int				m_iCoinMode;
 	Premium			m_Premium;
+	int GetCoinMode();
+	Premium	GetPremium();
+
 	bool			m_bDelayedCreditsReconcile;
 	bool			m_bPickExtraStage;
 	bool			m_bComboContinuesBetweenSongs;

@@ -100,7 +100,7 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 
 	m_sprPremium.SetName( "Premium" );
 
-	switch( PREFSMAN->m_Premium )
+	switch( PREFSMAN->GetPremium() )
 	{
 	case PrefsManager::DOUBLES_PREMIUM:
 		m_sprPremium.Load( THEME->GetPathToG(m_sName + " doubles premium") );

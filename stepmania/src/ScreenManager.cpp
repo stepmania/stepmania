@@ -215,7 +215,7 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 		}
 		else 
 		{
-			switch( PREFSMAN->m_iCoinMode )
+			switch( PREFSMAN->GetCoinMode() )
 			{
 			case COIN_HOME:
 				if( GAMESTATE->PlayersCanJoin() )

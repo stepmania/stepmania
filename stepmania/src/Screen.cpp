@@ -160,12 +160,13 @@ bool Screen::ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventTy
 		return false;
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
 	{
-		(int&)PREFSMAN->m_iCoinMode = (PREFSMAN->m_iCoinMode+1) % NUM_COIN_MODES;
+		PREFSMAN->m_iCoinMode++;
+		wrap( PREFSMAN->m_iCoinMode, NUM_COIN_MODES );
 		/* ResetGame();
 				This causes problems on ScreenIntroMovie, which results in the
 				movie being restarted and/or becoming out-of-synch -- Miryokuteki */
 
-		CString sMessage = CoinModeToString( (CoinMode)PREFSMAN->m_iCoinMode );
+		CString sMessage = CoinModeToString( (CoinMode)PREFSMAN->GetCoinMode() );
 		sMessage.MakeUpper();
 		sMessage = "Coin Mode: " + sMessage;
 		SCREENMAN->RefreshCreditsMessages();
@@ -188,11 +189,11 @@ bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, c
 
 		/* subtract coins */
 		int iCoinsToCharge = 0;
-		if( PREFSMAN->m_iCoinMode == COIN_PAY )
+		if( PREFSMAN->GetCoinMode() == COIN_PAY )
 			iCoinsToCharge = PREFSMAN->m_iCoinsPerCredit;
 
 		// If joint premium don't take away a credit for the 2nd join.
-		if( PREFSMAN->m_Premium == PrefsManager::JOINT_PREMIUM  &&  
+		if( PREFSMAN->GetPremium() == PrefsManager::JOINT_PREMIUM  &&  
 			GAMESTATE->GetNumSidesJoined() == 1 )
 			iCoinsToCharge = 0;
 

@@ -55,7 +55,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 
 	// Don't show screen title menu (says "Press Start") 
 	// if there are 0 credits and inserted and CoinMode is pay.
-	if( PREFSMAN->m_iCoinMode == COIN_PAY  &&
+	if( PREFSMAN->GetCoinMode() == COIN_PAY  &&
 		GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
 	{
 		SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
@@ -72,12 +72,12 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 
 
 	m_sprLogo.Load( THEME->GetPathToG(ssprintf("ScreenLogo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
-	m_sprLogo.Command( PREFSMAN->m_iCoinMode==COIN_HOME ? LOGO_HOME_ON_COMMAND : LOGO_ON_COMMAND );
+	m_sprLogo.Command( PREFSMAN->GetCoinMode()==COIN_HOME ? LOGO_HOME_ON_COMMAND : LOGO_ON_COMMAND );
 	this->AddChild( &m_sprLogo );
 
-	if( PREFSMAN->m_iCoinMode != COIN_HOME )
+	if( PREFSMAN->GetCoinMode() != COIN_HOME )
 	{
-		switch( PREFSMAN->m_Premium )
+		switch( PREFSMAN->GetPremium() )
 		{
 		case PrefsManager::DOUBLES_PREMIUM:
 			m_Premium.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu doubles premium") );
@@ -113,19 +113,19 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	m_textMaxStages.SetText( sText );
 	this->AddChild( &m_textMaxStages );
 
-	CString sCoinMode = CoinModeToString((CoinMode)PREFSMAN->m_iCoinMode);
+	CString sCoinMode = CoinModeToString((CoinMode)PREFSMAN->GetCoinMode());
 	m_CoinMode.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu "+sCoinMode) );
 	this->AddChild( &m_CoinMode );
 	
 	m_textHelp.LoadFromFont( THEME->GetPathToF("ScreenTitleMenu help") );
-	m_textHelp.SetText( HELP_TEXT((CoinMode)PREFSMAN->m_iCoinMode) );
+	m_textHelp.SetText( HELP_TEXT((CoinMode)PREFSMAN->GetCoinMode()) );
 	m_textHelp.SetXY( HELP_X, HELP_Y );
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetEffectDiffuseBlink();
 	m_textHelp.SetShadowLength( 2 );
 	this->AddChild( &m_textHelp );
 
-	switch( PREFSMAN->m_iCoinMode )
+	switch( PREFSMAN->GetCoinMode() )
 	{
 	case COIN_HOME:
 		{
@@ -195,7 +195,7 @@ void ScreenTitleMenu::UpdateSelectableChoices()
 
 void ScreenTitleMenu::MoveCursor( bool up )
 {
-	if( PREFSMAN->m_iCoinMode != COIN_HOME )
+	if( PREFSMAN->GetCoinMode() != COIN_HOME )
 		return;
 //	if( m_BeginOut.IsTransitioning() )
 //		return;
@@ -308,7 +308,7 @@ void ScreenTitleMenu::Update( float fDelta )
 	{
 		// don't time out on this screen is coin mode is pay.  
 		// If we're here, then there's a credit in the machine.
-		if( PREFSMAN->m_iCoinMode == COIN_PAY )
+		if( PREFSMAN->GetCoinMode() == COIN_PAY )
 			;	// do nothing
 		else
 		{

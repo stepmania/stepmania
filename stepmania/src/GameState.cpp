@@ -751,7 +751,7 @@ bool GameState::PlayersCanJoin() const
 
 bool GameState::EnoughCreditsToJoin() const
 {
-	switch( PREFSMAN->m_iCoinMode )
+	switch( PREFSMAN->GetCoinMode() )
 	{
 	case COIN_PAY:
 		return GAMESTATE->m_iCoins >= PREFSMAN->m_iCoinsPerCredit;
