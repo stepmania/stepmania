@@ -364,5 +364,5 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenSelectCharacter );
 	IF_RETURN( ScreenRaveOptions );
 
-	RageException::Throw( "Invalid Screen class name '%s'", sClassName.GetString() );
+	RageException::Throw( "Invalid Screen class name '%s'", sClassName.c_str() );
 }

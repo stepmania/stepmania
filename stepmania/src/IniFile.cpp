@@ -102,10 +102,10 @@ void IniFile::WriteFile()
 		if (k->second.empty())
 			continue;
 
-		fprintf( fp, "[%s]\n", k->first.GetString() );
+		fprintf( fp, "[%s]\n", k->first.c_str() );
 
 		for (key::const_iterator i = k->second.begin(); i != k->second.end(); ++i)
-			fprintf( fp, "%s=%s\n", i->first.GetString(), i->second.GetString() );
+			fprintf( fp, "%s=%s\n", i->first.c_str(), i->second.c_str() );
 
 		fprintf( fp, "\n" );
 	}

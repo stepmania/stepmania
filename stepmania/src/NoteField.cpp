@@ -322,7 +322,7 @@ void NoteField::DrawPrimitives()
 			{
 				const BackgroundChange& change = aBackgroundChanges[i];
 				CString sChangeText = ssprintf("%s\n%.0f%%%s%s%s",
-					change.m_sBGName.GetString(),
+					change.m_sBGName.c_str(),
 					change.m_fRate*100,
 					change.m_bFadeLast ? " Fade" : "",
 					change.m_bRewindMovie ? " Rewind" : "",

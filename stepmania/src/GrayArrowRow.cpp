@@ -45,7 +45,7 @@ void GrayArrowRow::Load( PlayerNumber pn )
 		// XXX
 		if( m_GrayArrow[c].GetNumStates() != 2 &&
 			m_GrayArrow[c].GetNumStates() != 3 )
-			RageException::Throw( "'%s' must have 2 or 3 frames", sPath.GetString() );
+			RageException::Throw( "'%s' must have 2 or 3 frames", sPath.c_str() );
 		m_GrayArrow[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
 	}	
 }

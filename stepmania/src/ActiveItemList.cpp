@@ -75,7 +75,7 @@ void ActiveItemList::Update( float fDelta )
 			else
 			{
 				int iDisplaySecondsLeft = (int)(a.fSecsRemaining+1);
-				m_text[s].SetText( ssprintf("%s %02d:%02d", sDisplayText.GetString(), iDisplaySecondsLeft/60, iDisplaySecondsLeft%60) );
+				m_text[s].SetText( ssprintf("%s %02d:%02d", sDisplayText.c_str(), iDisplaySecondsLeft/60, iDisplaySecondsLeft%60) );
 			}
 		}
 	}

@@ -283,7 +283,7 @@ static void InitCharAliases()
 
 	for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
 	{
-		CString from = ssprintf("&%s;", i->first.GetString());
+		CString from = ssprintf("&%s;", i->first.c_str());
 		CString to = WcharToUTF8(i->second);
 		from.MakeUpper();
 		CharAliasRepl[from] = to;

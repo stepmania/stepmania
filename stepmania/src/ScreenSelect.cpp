@@ -97,7 +97,7 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 				continue;
 			}
 
-			LOG->Warn( "The choice token '%s' is not recognized as a Game, Style, PlayMode, or Difficulty.  The choice containing this token will be ignored.", sBit.GetString() );
+			LOG->Warn( "The choice token '%s' is not recognized as a Game, Style, PlayMode, or Difficulty.  The choice containing this token will be ignored.", sBit.c_str() );
 			bChoiceIsInvalid |= true;
 		}
 
@@ -122,7 +122,7 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 			m_aModeChoices.push_back( mc );
 		
 		
-		CString sBGAnimationDir = THEME->GetPathTo(BGAnimations, ssprintf("%s %s",m_sName.GetString(),mc.name), true);	// true="optional"
+		CString sBGAnimationDir = THEME->GetPathTo(BGAnimations, ssprintf("%s %s",m_sName.c_str(),mc.name), true);	// true="optional"
 		if( sBGAnimationDir == "" )
 			sBGAnimationDir = THEME->GetPathToB(m_sName+" background");
 		m_BGAnimations[c].LoadFromAniDir( sBGAnimationDir );

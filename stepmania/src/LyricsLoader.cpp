@@ -19,12 +19,12 @@ static int CompareLyricSegments(const LyricSegment &seg1, const LyricSegment &se
 
 bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 {
-	LOG->Trace( "LyricsLoader::LoadFromLRCFile(%s)", sPath.GetString() );
+	LOG->Trace( "LyricsLoader::LoadFromLRCFile(%s)", sPath.c_str() );
 	
 	ifstream input(sPath);
 	if(input.bad())
 	{
-		LOG->Warn( "Error opening file '%s' for reading.", sPath.GetString() );
+		LOG->Warn( "Error opening file '%s' for reading.", sPath.c_str() );
 		return false;
 	}
 
@@ -55,11 +55,11 @@ bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 		{
 			// set color var here for this segment
 			int r, g, b;
-			int result = sscanf( sValueData.GetString(), "0x%2x%2x%2x", &r, &g, &b );
+			int result = sscanf( sValueData.c_str(), "0x%2x%2x%2x", &r, &g, &b );
 			if(result != 3)
 			{
 				LOG->Trace( "The color value '%s' in '%s' is invalid.",
-					sValueData.GetString(), sPath.GetString() );
+					sValueData.c_str(), sPath.c_str() );
 				continue;
 			}
 

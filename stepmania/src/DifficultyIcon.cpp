@@ -23,7 +23,7 @@ bool DifficultyIcon::Load( CString sPath )
 {
 	Sprite::Load( sPath );
 	if( GetNumStates() != 5  &&  GetNumStates() != 10 )
-		RageException::Throw( "The difficulty icon graphic '%s' must have 5 or 10 frames.", sPath.GetString() );
+		RageException::Throw( "The difficulty icon graphic '%s' must have 5 or 10 frames.", sPath.c_str() );
 	StopAnimating();
 	return true;
 }

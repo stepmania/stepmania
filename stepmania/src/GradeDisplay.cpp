@@ -39,7 +39,7 @@ bool GradeDisplay::Load( RageTextureID ID )
 	Sprite::StopAnimating();
 
 	if( Sprite::GetNumStates() != 8 && Sprite::GetNumStates() != 16 )
-		RageException::Throw( "The grade graphic '%s' must have either 8 or 16 frames.", ID.filename.GetString() );
+		RageException::Throw( "The grade graphic '%s' must have either 8 or 16 frames.", ID.filename.c_str() );
 	return true;
 }
 

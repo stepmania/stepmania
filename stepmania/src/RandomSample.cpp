@@ -78,7 +78,7 @@ bool RandomSample::LoadSoundDir( CString sDir, int iMaxToLoad )
 	
 bool RandomSample::LoadSound( CString sSoundFilePath )
 {
-	LOG->Trace( "RandomSample::LoadSound( %s )", sSoundFilePath.GetString() );
+	LOG->Trace( "RandomSample::LoadSound( %s )", sSoundFilePath.c_str() );
 
 	RageSound *pSS = new RageSound;
 	pSS->Load( sSoundFilePath );

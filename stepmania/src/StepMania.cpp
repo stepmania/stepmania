@@ -80,7 +80,7 @@ static void ChangeToDirOfExecutable(const char *argv0)
 		unsigned n = dir.find_last_of("/\\");
 		if (n != dir.npos) dir.erase(n);
 
-		chdir( dir.GetString() );
+		chdir( dir.c_str() );
 	}
 }
 

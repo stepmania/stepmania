@@ -74,9 +74,9 @@ using namespace std;
 #endif
 
 #ifdef DEBUG
-#define DEBUG_ASSERT	ASSERT
+#define DEBUG_ASSERT(x)	ASSERT(x)
 #else
-#define DEBUG_ASSERT	(void*)(0)
+#define DEBUG_ASSERT(x)
 #endif
 
 

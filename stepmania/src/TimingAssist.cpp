@@ -23,7 +23,7 @@ TimingAssist::TimingAssist()
 			case TNS_GREAT: name = "great"; break;
 			case TNS_PERFECT: name = "perfect"; break;
 			}
-			CString path = ssprintf("gameplay assist %s %s", direction.GetString(), name.GetString());
+			CString path = ssprintf("gameplay assist %s %s", direction.c_str(), name.c_str());
 			Timing[j][i].Load(ANNOUNCER->GetPathTo(path));
 		}
 	}

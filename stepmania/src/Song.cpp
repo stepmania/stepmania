@@ -291,7 +291,7 @@ bool Song::LoadWithoutCache( CString sDir )
 	NotesLoader *ld = MakeLoader( sDir );
 	if(!ld)
 	{
-		LOG->Warn( "Couldn't find any SM, DWI, BMS, or KSF files in '%s'.  This is not a valid song directory.", sDir.GetString() );
+		LOG->Warn( "Couldn't find any SM, DWI, BMS, or KSF files in '%s'.  This is not a valid song directory.", sDir.c_str() );
 		return false;
 	}
 
@@ -310,7 +310,7 @@ bool Song::LoadWithoutCache( CString sDir )
 
 bool Song::LoadFromSongDir( CString sDir )
 {
-//	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.GetString() );
+//	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.c_str() );
 
 	sDir.Replace("\\", "/");
 	// make sure there is a trailing slash at the end of sDir
@@ -332,7 +332,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	if( GetHashForDirectory(m_sSongDir) == uDirHash && // this cache is up to date 
 		DoesFileExist(GetCacheFilePath()))	
 	{
-//		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.GetString(), GetCacheFilePath().GetString() );
+//		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.c_str(), GetCacheFilePath().c_str() );
 		SMLoader ld;
 		ld.LoadFromSMFile( GetCacheFilePath(), *this, true );
 	}
@@ -406,7 +406,7 @@ void Song::TidyUpData()
 			m_sMusicFile = arrayPossibleMusic[0];
 //		Don't throw on missing music.  -Chris
 //		else
-//			RageException::Throw( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir.GetString() );
+//			RageException::Throw( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir.c_str() );
 	}
 
 	/* This must be done before radar calculation. */
@@ -423,9 +423,9 @@ void Song::TidyUpData()
 			 * so just set the file to 0 seconds. */
 			m_fMusicLengthSeconds = 0;
 		} else if(m_fMusicLengthSeconds == 0) {
-			LOG->Warn("File %s is empty?", GetMusicPath().GetString());
+			LOG->Warn("File %s is empty?", GetMusicPath().c_str());
 		} else if(m_fMusicLengthSeconds == -1) {
-			LOG->Warn("File %s: error getting length", GetMusicPath().GetString());
+			LOG->Warn("File %s: error getting length", GetMusicPath().c_str());
 		}
 	}
 	else	// ! HasMusic()
@@ -436,7 +436,7 @@ void Song::TidyUpData()
 
 	if(m_fMusicLengthSeconds < 0)
 	{
-		LOG->Warn("File %i has negative length? (%i)", GetMusicPath().GetString(), m_fMusicLengthSeconds);
+		LOG->Warn("File %i has negative length? (%i)", GetMusicPath().c_str(), m_fMusicLengthSeconds);
 		m_fMusicLengthSeconds = 0;
 	}
 
@@ -465,7 +465,7 @@ void Song::TidyUpData()
 		/* XXX: Once we have a way to display warnings that the user actually
 		 * cares about (unlike most warnings), this should be one of them. */
 		LOG->Warn( "No BPM segments specified in '%s%s', default provided.",
-			m_sSongDir.GetString(), m_sSongFileName.GetString() );
+			m_sSongDir.c_str(), m_sSongFileName.c_str() );
 
 		AddBPMSegment( BPMSegment(0, 60) );
 	}
@@ -617,7 +617,7 @@ void Song::TidyUpData()
 		if( !img )
 		{
 			LOG->Trace("Couldn't load %s%s: %s", 
-				m_sSongDir.GetString(), arrayImages[i].GetString(), SDL_GetError());
+				m_sSongDir.c_str(), arrayImages[i].c_str(), SDL_GetError());
 			continue;
 		}
 
@@ -872,7 +872,7 @@ void Song::Save()
 
 void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 {
-	LOG->Trace( "Song::SaveToSMFile('%s')", sPath.GetString() );
+	LOG->Trace( "Song::SaveToSMFile('%s')", sPath.c_str() );
 
 	NotesWriterSM wr;
 	wr.Write(sPath, *this, bSavingCache);

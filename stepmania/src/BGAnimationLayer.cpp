@@ -480,11 +480,11 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	}
 	else if( sFile == "" )
 	{
-		RageException::Throw( "In the ini file for BGAnimation '%s', '%s' is missing a the line 'File='.", sAniDir.GetString(), sLayer.GetString() );
+		RageException::Throw( "In the ini file for BGAnimation '%s', '%s' is missing a the line 'File='.", sAniDir.c_str(), sLayer.c_str() );
 	}
 
 	if( !DoesFileExist(sPath) )
-		RageException::Throw( "In the ini file for BGAnimation '%s', the specified File '%s' does not exist.", sAniDir.GetString(), sFile.GetString() );
+		RageException::Throw( "In the ini file for BGAnimation '%s', the specified File '%s' does not exist.", sAniDir.c_str(), sFile.c_str() );
 
 	ini.GetValueI( sLayer, "Type", (int&)m_Type );
 	ini.GetValue ( sLayer, "Command", m_sCommand );
