@@ -772,7 +772,7 @@ Model::AdvanceFrame (float dt)
 	{
 		if( (m_bRevertToDefaultAnimation) && (m_sDefaultAnimation != "") )
 		{
-			this->PlayAnimation( m_sDefaultAnimation, m_fDefaultAnimPlayRate );
+			this->PlayAnimation( m_sDefaultAnimation );
 			m_fCurrFrame = 0.0f;
 			return;
 		}
