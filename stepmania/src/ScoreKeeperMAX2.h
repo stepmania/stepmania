@@ -1,10 +1,12 @@
 /* ScoreKeeperMAX2 - MAX2-style scorekeeping. */
 
-#ifndef SCOREKEEPER_MAX2_H
-#define SCOREKEEPER_MAX2_H
+#ifndef SCORE_KEEPER_MAX2_H
+#define SCORE_KEEPER_MAX2_H
 
 #include "ScoreKeeper.h"
-#include "NoteDataWithScoring.h"
+#include "Attack.h"
+#include "song.h"
+#include "Steps.h"
 class Steps;
 
 class ScoreKeeperMAX2: public ScoreKeeper
