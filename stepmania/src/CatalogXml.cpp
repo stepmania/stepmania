@@ -53,22 +53,23 @@ void SaveCatalogXml()
 		pSongNode->AppendChild( "MainTitle", pSong->GetDisplayMainTitle() );
 		pSongNode->AppendChild( "SubTitle", pSong->GetDisplaySubTitle() );
 
-		vector<Steps*> vpSteps = pSong->GetAllSteps();
-		for( unsigned j=0; j<vpSteps.size(); j++ )
+		FOREACH_StepsType( st )
 		{
-			Steps* pSteps = vpSteps[j];
-		
-			if( pSteps->IsAutogen() )
-				continue;
+			FOREACH_Difficulty( dc )
+			{
+				Steps* pSteps = pSong->GetStepsByDifficulty( st, dc, false );	// no autogen
+				if( pSteps == NULL )
+					continue;	// skip
 
-			StepsID stepsID;
-			stepsID.FromSteps( pSteps );
+				StepsID stepsID;
+				stepsID.FromSteps( pSteps );
 
-			XNode* pStepsIDNode = stepsID.CreateNode();
-			pSongNode->AppendChild( pStepsIDNode );
-			
-			pStepsIDNode->AppendChild( "Meter", pSteps->GetMeter() );
-			pStepsIDNode->AppendChild( pSteps->GetRadarValues().CreateNode() );
+				XNode* pStepsIDNode = stepsID.CreateNode();
+				pSongNode->AppendChild( pStepsIDNode );
+				
+				pStepsIDNode->AppendChild( "Meter", pSteps->GetMeter() );
+				pStepsIDNode->AppendChild( pSteps->GetRadarValues().CreateNode() );
+			}
 		}
 	}
 
