@@ -1172,7 +1172,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_User+5:
 		m_Background.FadeIn();
-		GAMESTATE->m_bPastHereWeGo = true;
 		break;
 	case SM_User+6:
 		break;
@@ -1187,6 +1186,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		/* We have 2.5 seconds until the notes start. */
 		m_sprHereWeGo.StartFocusing();
 		m_announcerHereWeGo.PlayRandom();
+		GAMESTATE->m_bPastHereWeGo = true;
 
 		/* This gives the HWG about a second of screen time. */
 		this->SendScreenMessage( SM_StopHereWeGo, 1.5f );
