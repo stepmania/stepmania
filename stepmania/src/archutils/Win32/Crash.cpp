@@ -1052,6 +1052,36 @@ long VDDebugInfoLookupRVA(VDDebugInfoContext *pctx, unsigned rva, char *buf, int
 }
 
 ///////////////////////////////////////////////////////////////////////////
+#include "dbghelp.h"
+#pragma comment(lib, "dbghelp.lib")
+
+static const char *Demangle( const char *buf )
+{
+	static bool initted = false;
+	if( !initted )
+	{
+		SymSetOptions( SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS );
+
+		if (!SymInitialize(GetCurrentProcess(), NULL, TRUE))
+			return buf;
+
+		initted = true;
+	}
+
+	static char obuf[1024];
+
+	if( !UnDecorateSymbolName(buf, obuf, sizeof(obuf),
+		UNDNAME_COMPLETE
+		| UNDNAME_NO_CV_THISTYPE
+		| UNDNAME_NO_ALLOCATION_MODEL
+		| UNDNAME_NO_ACCESS_SPECIFIERS // no public:
+		| UNDNAME_NO_MS_KEYWORDS // no __cdecl 
+		) )
+	{
+		return buf;
+	}
+	return obuf;
+}
 
 static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
 {
@@ -1117,7 +1147,7 @@ static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTE
 		
 		if (fValid) {
 			if (VDDebugInfoLookupRVA(&g_debugInfo, data, buf, sizeof buf) >= 0) {
-				Report(hwnd, hFile, "%08lx: %s()", data, buf);
+				Report(hwnd, hFile, "%08lx: %s", data, Demangle(buf));
 				--limit;
 			} else {
 				ModuleInfo *pMods = pModules;
