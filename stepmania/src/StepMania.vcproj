@@ -190,6 +190,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenAttract.h">
 			</File>
 			<File
+				RelativePath="ScreenAutoGraphicDetail.cpp">
+			</File>
+			<File
+				RelativePath="ScreenAutoGraphicDetail.h">
+			</File>
+			<File
 				RelativePath="ScreenAutogenOptions.cpp">
 			</File>
 			<File
@@ -991,6 +997,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				</File>
 				<File
 					RelativePath="archutils\Win32\USB.h">
+				</File>
+				<File
+					RelativePath="archutils\Win32\VideoDriverInfo.cpp">
+				</File>
+				<File
+					RelativePath="archutils\Win32\VideoDriverInfo.h">
 				</File>
 				<File
 					RelativePath="archutils\Win32\arch_setup.h">
