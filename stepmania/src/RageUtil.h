@@ -112,40 +112,31 @@ inline uint32_t Swap24LE( uint32_t n ) { return Swap24( n ); }
 inline uint16_t Swap16LE( uint16_t n ) { return Swap16( n ); }
 #endif
 
-// Fast random number generators
-// Taken from "Numerical Recipes in C"
+extern int randseed;
 
-extern unsigned long randseed;
-
-inline unsigned long Random()
-{
-	randseed = 1664525L * randseed + 1013904223L;
-	return randseed;
-}
+float RandomFloat( int &seed );
 
 inline float RandomFloat()
 {
-	randseed = 1664525L * randseed + 1013904223L;
-	unsigned long itemp = 0x3f800000 | (0x007fffff & randseed);
-	return (*(float *)&itemp) - 1.0f;
+	return RandomFloat( randseed );
 }
 
 // Returns a float between dLow and dHigh inclusive
 inline float RandomFloat(float fLow, float fHigh)
 {
-	return RandomFloat() * (fHigh - fLow) + fLow;
+	return SCALE( RandomFloat(), 0.0f, 1.0f, fLow, fHigh );
 }
 
 // Returns an integer between nLow and nHigh inclusive
 inline int RandomInt(int nLow, int nHigh)
 {
-	return ((Random() >> 2) % (nHigh - nLow + 1)) + nLow;
+	return int( RandomFloat() * (nHigh - nLow + 1) + nLow );
 }
 
 /* Alternative: */
 class RandomGen
 {
-	unsigned long seed;
+	int seed;
 
 public:
 	RandomGen( unsigned long seed = 0 );
@@ -156,7 +147,7 @@ public:
 // Simple function for generating random numbers
 inline float randomf( const float low=-1.0f, const float high=1.0f )
 {
-    return low + ( high - low ) * ( (float)rand() ) / RAND_MAX;
+    return RandomFloat( low, high );
 }
 
 inline float froundf( const float f, const float fRoundInterval )
