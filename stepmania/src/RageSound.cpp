@@ -71,6 +71,7 @@ RageSound::RageSound()
 	position = 0;
 	stopped_position = 0;
 	playing = false;
+	playing_thread = 0;
 	databuf.reserve(internal_buffer_size);
 
 	/* Register ourself, so we have a unique ID and receive Update()s. */
@@ -103,6 +104,7 @@ RageSound::RageSound(const RageSound &cpy):
 	position = cpy.position;
 	stopped_position = cpy.stopped_position;
 	playing = false;
+	playing_thread = 0;
 
 	databuf.reserve(internal_buffer_size);
 	Sample = cpy.Sample->Copy();
@@ -579,6 +581,8 @@ void RageSound::StartPlaying()
 
 	/* Tell the sound manager to start mixing us. */
 	playing = true;
+	playing_thread = RageThread::GetCurrentThreadID();
+
 	SOUNDMAN->StartMixing(this);
 	SOUNDMAN->playing_sounds.insert( this );
 }
@@ -598,6 +602,7 @@ void RageSound::StopPlaying()
 	SOUNDMAN->lock.Unlock();
 
 	playing = false;
+	playing_thread = 0;
 
 	pos_map.clear();
 }

@@ -195,6 +195,20 @@ void RageSoundManager::StopPlayingAllCopiesOfSound(RageSound &snd)
 	}
 }
 
+void RageSoundManager::StopPlayingSoundsForThisThread()
+{
+	/* Lock to make sure sounds don't become invalidated below before we get to them. */
+	LockMut(lock);
+
+	set<RageSound *> Sounds = GetPlayingSounds();
+	for( set<RageSound *>::iterator it = Sounds.begin(); it != Sounds.end(); ++it )
+	{
+		if( (*it)->GetPlayingThread() != RageThread::GetCurrentThreadID() )
+			continue;
+		(*it)->Stop();
+	}
+}
+
 void RageSoundManager::GetCopies(RageSound &snd, vector<RageSound *> &snds)
 {
 	LockMut(lock);

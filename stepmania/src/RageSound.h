@@ -104,6 +104,7 @@ public:
 	bool SetPositionSeconds( float fSeconds );
 	CString GetLoadedFilePath() const { return m_sFilePath; }
 	bool IsPlaying() const { return playing; }
+	unsigned GetPlayingThread() const { return playing_thread; }
 
 	float GetPlaybackRate() const;
 	RageTimer GetStartTime() const;
@@ -157,6 +158,9 @@ private:
 	 * position when stopped, and when playing but pos_map hasn't yet been filled. */
 	int stopped_position;
 	bool    playing;
+
+	/* If playing, record the thread that called Play(). */
+	unsigned playing_thread;
 
 	/* Unique ID number for this instance of RageSound. */
 	int ID;

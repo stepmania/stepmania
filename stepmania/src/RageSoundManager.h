@@ -56,6 +56,10 @@ public:
 	RageSound *PlaySound( RageSound &snd, const RageSoundParams *params );
 	void StopPlayingAllCopiesOfSound(RageSound &snd);
 
+	/* Stop all sounds that were started by this thread.  This should be called
+	 * before exiting a thread. */
+	void StopPlayingSoundsForThisThread();
+
 	/* A list of all sounds that currently exist.  RageSound adds and removes
 	 * itself to this. */
 	set<RageSound *> all_sounds;
