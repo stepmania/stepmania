@@ -1,8 +1,8 @@
 #include "../../global.h"
 
+#include <SDL.h>
 #include "SDL_image.h"
 #include "LoadingWindow_SDL.h"
-
 #include "loading.xpm"
 
 LoadingWindow_SDL::LoadingWindow_SDL()

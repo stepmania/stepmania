@@ -51,7 +51,7 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 			if(!DriversToTry[i].CompareNoCase("DirectSound-sw")) ret = new RageSound_DSound_Software;
 			if(!DriversToTry[i].CompareNoCase("WaveOut")) ret = new RageSound_WaveOut;
 #endif
-#ifndef WIN32	// FIXME: change to a define for -nix platforms?
+#ifdef LINUX	
 			if(!DriversToTry[i].CompareNoCase("Linux")) ret = new RageSound_Linux;
 #endif		
 			if(!DriversToTry[i].CompareNoCase("Null")) ret = new RageSound_Null;
