@@ -45,6 +45,8 @@ void CourseEntryDisplay::Load()
 
 	m_TextBanner.SetName( TEXT_BANNER_NAME, "TextBanner" );
 	SET_XY_AND_ON_COMMAND( &m_TextBanner );
+	/* Load the m_TextBanner now, so any actor commands sent to us will propagate correctly. */
+	m_TextBanner.LoadFromString( "", "", "", "", "", "" );
 	this->AddChild( &m_TextBanner );
 
 	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
