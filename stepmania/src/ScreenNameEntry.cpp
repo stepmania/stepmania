@@ -416,15 +416,15 @@ void ScreenNameEntry::MenuStart( PlayerNumber pn )
 
 	m_soundStep.Play();
 
-	TrimRight( m_sSelectedName[pn], " " );
-	TrimLeft( m_sSelectedName[pn], " " );
-
-	GAMESTATE->StoreRankingName( pn, m_sSelectedName[pn] );
-
 	// save last used ranking name
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
 	if( pProfile )
 		pProfile->m_sLastUsedHighScoreName = m_sSelectedName[pn];
+
+	TrimRight( m_sSelectedName[pn], " " );
+	TrimLeft( m_sSelectedName[pn], " " );
+
+	GAMESTATE->StoreRankingName( pn, m_sSelectedName[pn] );
 
 	if( !AnyStillEntering() && !m_Out.IsTransitioning() )
 		m_Out.StartTransitioning( SM_GoToNextScreen );
