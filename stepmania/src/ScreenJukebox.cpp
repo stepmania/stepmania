@@ -21,12 +21,15 @@
 #include "RageSounds.h"
 #include "Steps.h"
 #include "ScreenAttract.h"
+#include "RageUtil.h"
 
+// HACK: This belongs in ScreenDemonstration
+#define DIFFICULTIES_TO_SHOW		THEME->GetMetric ("ScreenDemonstration","DifficultiesToShow")
 
 const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+10);	// MUST be same as in ScreenGameplay
 
 
-bool ScreenJukebox::SetSong()
+bool ScreenJukebox::SetSong( bool bDemonstration )
 {
 	vector<Song*> vSongs;
 	if( GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC )
@@ -35,9 +38,37 @@ bool ScreenJukebox::SetSong()
 		SONGMAN->GetSongs( vSongs, GAMESTATE->m_sPreferredGroup );
 
 	//
+	// Calculate what difficulties to show
+	//
+	CStringArray asBits;
+	vector<Difficulty> vDifficultiesToShow;
+	if( bDemonstration )
+	{
+		split( DIFFICULTIES_TO_SHOW, ",", asBits );
+		for( int i=0; i<asBits.size(); i++ )
+		{
+			Difficulty dc = StringToDifficulty( asBits[i] );
+			if( dc != DIFFICULTY_INVALID )
+				vDifficultiesToShow.push_back( dc );
+		}
+	}
+	else
+	{
+		if( GAMESTATE->m_PreferredDifficulty[PLAYER_1] != DIFFICULTY_INVALID )
+		{
+			vDifficultiesToShow.push_back( GAMESTATE->m_PreferredDifficulty[PLAYER_1] );
+		}
+		else
+		{
+			FOREACH_Difficulty( dc )
+				vDifficultiesToShow.push_back( dc );
+		}
+	}
+
+	//
 	// Search for a Song and Steps to play during the demo
 	//
-	for( int i=0; i<600; i++ )
+	for( int i=0; i<1000; i++ )
 	{
 		if( vSongs.size() == 0 )
 			return true;
@@ -50,17 +81,8 @@ bool ScreenJukebox::SetSong()
 		if( pSong->NeverDisplayed() )
 			continue;	// skip
 
-		Difficulty dc = GAMESTATE->m_PreferredDifficulty[PLAYER_1];
-		Steps* pNotes = NULL;
-		if( dc != DIFFICULTY_INVALID )
-			pNotes = pSong->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, GAMESTATE->m_PreferredDifficulty[PLAYER_1] );
-		else	// "all difficulties"
-		{
-			vector<Steps*> vNotes;
-			pSong->GetSteps( vNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
-			if( vNotes.size() > 0 )
-				pNotes = vNotes[rand()%vNotes.size()];
-		}
+		Difficulty dc = vDifficultiesToShow[ rand()%vDifficultiesToShow.size() ];
+		Steps* pNotes = pSong->GetStepsByDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, dc );
 
 		if( pNotes == NULL )
 			continue;	// skip
@@ -79,13 +101,13 @@ bool ScreenJukebox::SetSong()
 	return false;
 }
 
-bool ScreenJukebox::PrepareForJukebox()		// always return true.
+bool ScreenJukebox::PrepareForJukebox( bool bDemonstration )		// always return true.
 {
 	// ScreeJukeboxMenu must set this
 	ASSERT( GAMESTATE->m_CurStyle != STYLE_INVALID );
 	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 
-	SetSong();
+	SetSong( bDemonstration );
 
 //	ASSERT( GAMESTATE->m_pCurSong );
 
@@ -136,7 +158,7 @@ bool ScreenJukebox::PrepareForJukebox()		// always return true.
 	return true;
 }
 
-ScreenJukebox::ScreenJukebox( CString sName, bool bDemonstration ) : ScreenGameplay( "ScreenGameplay", PrepareForJukebox() )	// this is a hack to get some code to execute before the ScreenGameplay constructor
+ScreenJukebox::ScreenJukebox( CString sName, bool bDemonstration ) : ScreenGameplay( "ScreenGameplay", PrepareForJukebox(bDemonstration) )	// this is a hack to get some code to execute before the ScreenGameplay constructor
 {
 	LOG->Trace( "ScreenJukebox::ScreenJukebox()" );
 

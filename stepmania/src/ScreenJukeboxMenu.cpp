@@ -133,7 +133,7 @@ void ScreenJukeboxMenu::MenuStart( PlayerNumber pn )
 		GAMESTATE->m_PreferredDifficulty[p] = dc;
 	GAMESTATE->m_bJukeboxUsesModifiers = bModifiers;
 
-	if(!ScreenJukebox::SetSong())
+	if( !ScreenJukebox::SetSong(false) )
 	{
 		/* No songs are available for the selected style, group, and difficulty. */
 

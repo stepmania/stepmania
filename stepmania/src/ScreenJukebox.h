@@ -18,19 +18,19 @@
 class ScreenJukebox : public ScreenGameplay
 {
 public:
-	ScreenJukebox(  CString sName, bool bDemonstration = false );
+	ScreenJukebox( CString sName, bool bDemonstration = false );
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	/* Hack: public for JukeboxMenu */
-	static bool SetSong();
+	static bool SetSong( bool bDemonstration );
 
 protected:
 	Transition	m_In;
 	Transition	m_Out;
 
-	static bool PrepareForJukebox();
+	static bool PrepareForJukebox( bool bDemonstration );
 };
 
 #endif
