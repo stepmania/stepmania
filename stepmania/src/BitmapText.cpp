@@ -207,13 +207,22 @@ void BitmapText::BuildChars()
 
 void BitmapText::DrawChars()
 {
-	for(unsigned start = 0; start < tex.size(); )
+	unsigned uNumGlyphs = tex.size();
+	unsigned uStartGlyph = SCALE( m_temp.crop.left, 0.f, 1.f, 0, uNumGlyphs );
+	unsigned uEndGlyph = SCALE( m_temp.crop.right, 0.f, 1.f, uNumGlyphs, 0 );
+
+	if( m_temp.crop.right > 0 )
+		int skjdks = 0;
+
+	for(unsigned start = uStartGlyph; start < uEndGlyph; )
 	{
 		unsigned end = start;
-		while(end < tex.size() && tex[end] == tex[start])
+		while(end < uEndGlyph && tex[end] == tex[start])
 			end++;
 		DISPLAY->SetTexture( tex[start] );
-		DISPLAY->DrawQuads( &verts[start*4], (end-start)*4 );
+		RageSpriteVertex &start_vertex = verts[start*4];
+		int iNumVertsToDraw = (end-start)*4;
+		DISPLAY->DrawQuads( &start_vertex, iNumVertsToDraw );
 		
 		start = end;
 	}
