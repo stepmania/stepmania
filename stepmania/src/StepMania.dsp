@@ -1438,6 +1438,14 @@ SOURCE=.\ScoreKeeperMAX2.cpp
 
 SOURCE=.\ScoreKeeperMAX2.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\TimingAssist.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TimingAssist.h
+# End Source File
 # End Group
 # Begin Group "Screens"
 

@@ -1345,6 +1345,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<File
 				RelativePath="ScoreKeeperMAX2.h">
 			</File>
+			<File
+				RelativePath="TimingAssist.cpp">
+			</File>
+			<File
+				RelativePath="TimingAssist.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Rage"
