@@ -81,13 +81,11 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, bool bForceR
 		splitpath( false, sTexturePath, sDrive, sDir, sFName, sExt );
 
 		if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
-			pTexture = (RageTexture*) new RageMovieTexture( m_pScreen, sTexturePath, m_iMaxTextureSize, m_iTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
+			pTexture = new RageMovieTexture( m_pScreen, sTexturePath, m_iMaxTextureSize, m_iTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
 		else
-			pTexture = (RageTexture*) new RageBitmapTexture( m_pScreen, sTexturePath, m_iMaxTextureSize, m_iTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
-
+			pTexture = new RageBitmapTexture( m_pScreen, sTexturePath, m_iMaxTextureSize, m_iTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
 
 		LOG->Trace( "RageTextureManager: Finished loading '%s'.", sTexturePath );
-
 
 		m_mapPathToTexture[sTexturePath] = pTexture;
 	}
