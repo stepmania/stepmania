@@ -13,16 +13,11 @@
 
 
 #include "Sprite.h"
-#include "Font.h"
 
-
-const int MAX_TEXT_LINES	= 40;
-const int MAX_TEXT_CHARS	= 2000;
+class Font;
 
 class BitmapText : public Actor
 {
-protected:
-
 public:
 	BitmapText();
 	virtual ~BitmapText();
@@ -48,12 +43,10 @@ public:
 protected:
 	
 	// recalculate the items below on SetText()
-	char   m_szText[MAX_TEXT_CHARS];
-	char*	m_szTextLines[MAX_TEXT_LINES];	// pointers into m_szText
-	int		m_iLineLengths[MAX_TEXT_LINES];	// in characters
-	int		m_iNumLines;
-	int		m_iLineWidths[MAX_TEXT_LINES];	// in source pixels
-	int		m_iWidestLineWidth;					// in source pixels
+	CString	m_szText;
+	vector<CString> m_szTextLines;
+	vector<int>		m_iLineWidths;			// in source pixels
+	int				m_iWidestLineWidth;		// in source pixels
 
 	bool m_bRainbow;
 };

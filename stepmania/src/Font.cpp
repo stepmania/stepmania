@@ -150,11 +150,11 @@ Font::~Font()
 }
 
 
-int Font::GetLineWidthInSourcePixels( const char *szLine, int iLength )
+int Font::GetLineWidthInSourcePixels( const CString &szLine )
 {
 	int iLineWidth = 0;
 	
-	for( int i=0; i<iLength; i++ )
+	for( unsigned i=0; i<szLine.size(); i++ )
 	{
 		const char c = szLine[i];
 		const int iFrameNo = m_iCharToFrameNo[ (unsigned char)c ];

@@ -20,15 +20,10 @@
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "GameConstantsAndTypes.h"
+#include "Font.h"
 
 
-#define RAINBOW_COLOR_1		THEME->GetMetricC("BitmapText","RainbowColor1")
-#define RAINBOW_COLOR_2		THEME->GetMetricC("BitmapText","RainbowColor2")
-#define RAINBOW_COLOR_3		THEME->GetMetricC("BitmapText","RainbowColor3")
-#define RAINBOW_COLOR_4		THEME->GetMetricC("BitmapText","RainbowColor4")
-#define RAINBOW_COLOR_5		THEME->GetMetricC("BitmapText","RainbowColor5")
-#define RAINBOW_COLOR_6		THEME->GetMetricC("BitmapText","RainbowColor6")
-#define RAINBOW_COLOR_7		THEME->GetMetricC("BitmapText","RainbowColor7")
+#define RAINBOW_COLOR(n)	THEME->GetMetricC("BitmapText",ssprintf("RainbowColor%i", n+1))
 
 const int NUM_RAINBOW_COLORS = 7;
 RageColor RAINBOW_COLORS[NUM_RAINBOW_COLORS];
@@ -40,13 +35,8 @@ BitmapText::BitmapText()
 	static int iReloadCounter = 0;
 	if( iReloadCounter%20==0 )
 	{
-		RAINBOW_COLORS[0] = RAINBOW_COLOR_1;
-		RAINBOW_COLORS[1] = RAINBOW_COLOR_2;
-		RAINBOW_COLORS[2] = RAINBOW_COLOR_3;
-		RAINBOW_COLORS[3] = RAINBOW_COLOR_4;
-		RAINBOW_COLORS[4] = RAINBOW_COLOR_5;
-		RAINBOW_COLORS[5] = RAINBOW_COLOR_6;
-		RAINBOW_COLORS[6] = RAINBOW_COLOR_7;
+		for(int i = 0; i < NUM_RAINBOW_COLORS; ++i)
+			RAINBOW_COLORS[i] = RAINBOW_COLOR(i);
 	}
 	iReloadCounter++;
 
@@ -55,16 +45,8 @@ BitmapText::BitmapText()
 
 	m_pFont = NULL;
 
-	m_iNumLines = 0;
 	m_iWidestLineWidth = 0;
 	
-	for( int i=0; i<MAX_TEXT_LINES; i++ )
-	{
-		m_szTextLines[i] = '\0';
-		m_iLineLengths[i] = -1;
-		m_iLineWidths[i] = 1;
-	}
-
 	m_bShadow = true;
 
 	m_bRainbow = false;
@@ -112,96 +94,70 @@ bool BitmapText::LoadFromTextureAndChars( CString sTexturePath, CString sChars )
 
 void BitmapText::SetText( CString sText )
 {
-	//LOG->Trace( "BitmapText::SetText()" );
-
 	ASSERT( m_pFont );
 
 	if( m_pFont->m_bCapitalsOnly )
 		sText.MakeUpper();
 
-	//
-	// save the string and crop if necessary
-	//
-	ASSERT( sText.GetLength() < MAX_TEXT_CHARS/2 );
+	m_szText = sText;
 
-	strncpy( m_szText, sText, MAX_TEXT_CHARS );
-	m_szText[MAX_TEXT_CHARS-1] = '\0';
+	/* Break the string into lines. */
+	m_szTextLines.clear();
+	m_iLineWidths.clear();
 
-/*
-	Do NOT stop out all extended ASCII chars.  Why was this here?   -Chris
-
-	int iLength = strlen( m_szText );
-
-	//
-	// strip out non-low ASCII chars
-	//
-	for( int i=0; i<iLength; i++ )	// for each character
-	{
-		if( m_szText[i] < 0  || m_szText[i] > MAX_FONT_CHARS-1 )
-			m_szText[i] = ' ';
-	}
-*/
-	//
-	// break the string into lines
-	//
-	m_iNumLines = 0;
-	LPSTR token;
-
-	/* Establish string and get the first token: */
-	token = strtok( m_szText, "\n" );
-	while( token != NULL )
-	{
-		m_szTextLines[m_iNumLines++] = token;
-		token = strtok( NULL, "\n" );
-	}
+	split(m_szText, "\n", m_szTextLines, false);
 	
-	//
-	// calculate line lengths and widths
-	//
+	/* calculate line lengths and widths */
 	m_iWidestLineWidth = 0;
-	
-	for( int l=0; l<m_iNumLines; l++ )	// for each line
+
+	for( unsigned l=0; l<m_szTextLines.size(); l++ )	// for each line
 	{
-		m_iLineLengths[l] = strlen( m_szTextLines[l] );
-		m_iLineWidths[l] = m_pFont->GetLineWidthInSourcePixels( m_szTextLines[l], m_iLineLengths[l] );
-		if( m_iLineWidths[l] > m_iWidestLineWidth )
-			m_iWidestLineWidth = m_iLineWidths[l];
+		m_iLineWidths.push_back(m_pFont->GetLineWidthInSourcePixels( m_szTextLines[l] ));
+		m_iWidestLineWidth = max(m_iWidestLineWidth, m_iLineWidths.back());
 	}
-
-	// fill the RageScreen's vertex buffer with what we're going to draw 
-	//RebuildVertexBuffer();
-
 }
 
 void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )
 {
 	iMaxWidthInSourcePixels = max( 0, iMaxWidthInSourcePixels );
 
-	for( int l=0; l<m_iNumLines; l++ )	// for each line
+	for( unsigned l=0; l<m_szTextLines.size(); l++ )	// for each line
 	{
 		while( m_iLineWidths[l] > iMaxWidthInSourcePixels )
 		{
-			m_iLineLengths[l]--;
-			m_iLineWidths[l] = m_pFont->GetLineWidthInSourcePixels( m_szTextLines[l], m_iLineLengths[l] );
+			m_szTextLines[l].erase(m_szTextLines[l].end()-1, m_szTextLines[l].end());
+			m_iLineWidths[l] = m_pFont->GetLineWidthInSourcePixels( m_szTextLines[l] );
 		}
 	}
-	
 }
 
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
 void BitmapText::DrawPrimitives()
 {
-	if( m_iNumLines == 0 )
+	if( m_szTextLines.empty() )
 		return;
 
 	RageTexture* pTexture = m_pFont->m_pTexture;
 
+	static RageVertex *v = NULL;
+	static int vcnt = 0;
+	{
+		int charcnt = 0;
+		for( unsigned i=0; i<m_szTextLines.size(); i++ )
+			charcnt += m_szTextLines[i].size();
 
-	// make the object in logical units centered at the origin
-	static RageVertex v[4000];
+		charcnt *= 4; /* 4 vertices per char */
+		if(charcnt > vcnt)
+		{
+			vcnt = charcnt;
+			delete [] v;
+			v = new RageVertex[vcnt];
+		}
+	}
+
 	int iNumV = 0;	// the current vertex number
 
-
+	// make the object in logical units centered at the origin
 	const int iHeight = pTexture->GetSourceFrameHeight();	// height of a character
 	const int iLineSpacing = m_pFont->m_iLineSpacing;			// spacing between lines
 	const int iFrameWidth = pTexture->GetSourceFrameWidth();	// width of a character frame in logical units
@@ -209,17 +165,15 @@ void BitmapText::DrawPrimitives()
 	int iY;	//	 the center position of the first row of characters
 	switch( m_VertAlign )
 	{
-	case align_bottom:	iY = -(m_iNumLines)	  * iLineSpacing		+ iLineSpacing/2;	break;
-	case align_middle:	iY = -(m_iNumLines-1) * iLineSpacing/2;					break;
-	case align_top:		iY =								+ iLineSpacing/2;	break;
+	case align_bottom:	iY = -(int(m_szTextLines.size()))	 * iLineSpacing		+ iLineSpacing/2;	break;
+	case align_middle:	iY = -(int(m_szTextLines.size())-1)	 * iLineSpacing/2;					break;
+	case align_top:		iY =						 	     + iLineSpacing/2;	break;
 	default:		ASSERT( false );	return;
 	}
 
-
-	for( int i=0; i<m_iNumLines; i++ )		// foreach line
+	for( unsigned i=0; i<m_szTextLines.size(); i++ )		// foreach line
 	{
-		const char *szLine = m_szTextLines[i];
-		const int iLineLength = m_iLineLengths[i];
+		const CString &szLine = m_szTextLines[i];
 		const int iLineWidth = m_iLineWidths[i];
 		
 		int iX;
@@ -231,7 +185,7 @@ void BitmapText::DrawPrimitives()
 		default:			ASSERT( false );		return;
 		}
 
-		for( int j=0; j<iLineLength; j++ )	// for each character in the line
+		for( unsigned j=0; j<szLine.size(); j++ )	// for each character in the line
 		{
 			const char c = szLine[j];
 			const int iFrameNo = m_pFont->m_iCharToFrameNo[ (unsigned char)c ];
@@ -288,7 +242,6 @@ void BitmapText::DrawPrimitives()
 	else
 		DISPLAY->SetBlendModeNormal();
 
-
 	/* Draw if we're not fully transparent or the zbuffer is enabled (which ignores
 	 * alpha). */
 	if( m_temp.diffuse[0].a != 0 || DISPLAY->ZBufferEnabled())
@@ -339,9 +292,7 @@ void BitmapText::DrawPrimitives()
 		DISPLAY->DrawQuads( v, iNumV );
 	}
 
-	//////////////////////
-	// render the glow pass
-	//////////////////////
+	/* render the glow pass */
 	if( m_temp.glow.a != 0 )
 	{
 		DISPLAY->SetTextureModeGlow();
@@ -351,5 +302,4 @@ void BitmapText::DrawPrimitives()
 			v[i].c = m_temp.glow;
 		DISPLAY->DrawQuads( v, iNumV );
 	}
-
 }

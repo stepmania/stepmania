@@ -18,14 +18,12 @@ const int MAX_FONT_CHARS = 256;		// only low ASCII chars are supported
 
 class Font
 {
-protected:
-
 public:
 	Font( const CString &sASCIITexturePath );
 	Font( const CString &sTexturePath, const CString& sChars );
 	~Font();
 
-	int GetLineWidthInSourcePixels( const char *szLine, int iLength );
+	int GetLineWidthInSourcePixels( const CString &szLine );
 
 	int m_iRefCount;
 
