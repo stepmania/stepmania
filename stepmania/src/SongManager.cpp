@@ -819,16 +819,14 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 	if( course.GetEstimatedNumStages() <= 0 ) return false;
 
 	CString sModifiers;
-	if( course.GetFirstStageInfo( pSongOut, pNotesOut, sModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType ) )
-	{
-		po_out.Init();
-		po_out.FromString( sModifiers );
-		so_out.Init();
-		so_out.FromString( sModifiers );
-		return true;
-	}
-	else
+	if( !course.GetFirstStageInfo( pSongOut, pNotesOut, sModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType ) )
 		return false;
+
+	po_out.Init();
+	po_out.FromString( sModifiers );
+	so_out.Init();
+	so_out.FromString( sModifiers );
+	return true;
 }
 
 /* Return true if n1 < n2. */
