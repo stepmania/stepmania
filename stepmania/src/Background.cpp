@@ -102,14 +102,6 @@ BGAnimation *Background::GetBGA(const Song *pSong, const BackgroundChange &anise
 	//  movies in RandomMovies dir, BGAnims in BGAnimsDir.
 	CStringArray asFiles;
 
-	// Look for BG movies in the song dir
-	GetDirListing( pSong->GetSongDir()+aniseg.m_sBGName, asFiles, false, true );
-	if( !asFiles.empty() )
-	{
-		pTempBGA = new BGAnimation;
-		pTempBGA->LoadFromMovie( asFiles[0], true, true );
-		return pTempBGA;
-	}
 	// Look for BGAnims in the song dir
 	GetDirListing( pSong->GetSongDir()+aniseg.m_sBGName, asFiles, true, true );
 	if( !asFiles.empty() )
@@ -118,7 +110,14 @@ BGAnimation *Background::GetBGA(const Song *pSong, const BackgroundChange &anise
 		pTempBGA->LoadFromAniDir( asFiles[0], bgpath );
 		return pTempBGA;
 	}
-
+	// Look for BG movies in the song dir
+	GetDirListing( pSong->GetSongDir()+aniseg.m_sBGName, asFiles, false, true );
+	if( !asFiles.empty() )
+	{
+		pTempBGA = new BGAnimation;
+		pTempBGA->LoadFromMovie( asFiles[0], true, true );
+		return pTempBGA;
+	}
 	// Look for movies in the RandomMovies dir
 	GetDirListing( RANDOMMOVIES_DIR+aniseg.m_sBGName, asFiles, false, true );
 	if( !asFiles.empty() )

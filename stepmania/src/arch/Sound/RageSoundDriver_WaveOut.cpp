@@ -15,7 +15,7 @@
 const int channels = 2;
 const int samplesize = channels*2;		/* 16-bit */
 const int samplerate = 44100;
-const int buffersize_frames = 1024*4;	/* in frames */
+const int buffersize_frames = 1024*8;	/* in frames */
 const int buffersize = buffersize_frames * samplesize; /* in bytes */
 
 const int num_chunks = 8;
@@ -188,7 +188,7 @@ RageSound_WaveOut::RageSound_WaveOut()
 	fmt.nBlockAlign = fmt.nChannels * fmt.wBitsPerSample / 8;
 	fmt.nAvgBytesPerSec = fmt.nSamplesPerSec * fmt.nBlockAlign;
 
-	MMRESULT ret = waveOutOpen(&wo, WAVE_MAPPER, &fmt, 
+	MMRESULT ret = waveOutOpen(&wo, WAVE_MAPPER, &fmt,
 		(DWORD_PTR) sound_event, NULL, CALLBACK_EVENT);
 
 	if(ret != MMSYSERR_NOERROR)
@@ -204,7 +204,7 @@ RageSound_WaveOut::RageSound_WaveOut()
 			RageException::ThrowNonfatal(wo_ssprintf(ret, "waveOutPrepareHeader failed"));
 		buffers[b].dwFlags |= WHDR_DONE;
 	}
-	
+
 	MixerThreadPtr = SDL_CreateThread(MixerThread_start, this);
 }
 

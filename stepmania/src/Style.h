@@ -30,6 +30,7 @@ enum Style
 	STYLE_EZ2_REAL_VERSUS,
 	STYLE_EZ2_DOUBLE,
 	STYLE_PARA_SINGLE,
+	STYLE_DS3DDX_SINGLE,
 	NUM_STYLES,	// leave this at the end
 	STYLE_NONE,
 };
@@ -38,6 +39,7 @@ const int NUM_DANCE_STYLES = 6;
 const int NUM_PUMP_STYLES = 5;
 const int NUM_EZ2_STYLES = 5;
 const int NUM_PARA_STYLES = 1;
+const int NUM_DS3DDX_STYLES = 1;
 
 // Ugh.  This is needed for the style icon.
 // TODO:  Find a more elegant way to handle this
@@ -50,6 +52,7 @@ inline int GetStyleIndexRelativeToGame( int iGameIndex, Style style )
 	case 1:	iStyleIndex -= NUM_DANCE_STYLES;								break;	// pump
 	case 2:	iStyleIndex -= NUM_DANCE_STYLES+NUM_PUMP_STYLES;				break;	// ez2
 	case 3:	iStyleIndex -= NUM_DANCE_STYLES+NUM_PUMP_STYLES+NUM_EZ2_STYLES;	break;	// para
+	case 4:	iStyleIndex -= NUM_DANCE_STYLES+NUM_PUMP_STYLES+NUM_EZ2_STYLES+NUM_PARA_STYLES;	break;	// ds3ddx
 	default:	ASSERT(0);	// invalid game index
 	}
 	return iStyleIndex;

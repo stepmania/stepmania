@@ -145,6 +145,14 @@ void ScreenEz2SelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 
 void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 {
+	if( !m_MusicBannerWheel.GetSelectedSong()->HasMusic() )
+	{
+		/* TODO: gray these out. 
+			*
+			* XXX: also, make sure they're not selected by roulette */
+		SCREENMAN->Prompt( SM_None, "ERROR:\n \nThis song does not have a music file\n and cannot be played." );
+		return;
+	}
 	MUSIC->Stop();
 	SCREENMAN->SetNewScreen( "ScreenStage" );
 }

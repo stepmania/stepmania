@@ -247,6 +247,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 			case GAME_PUMP:		GAMESTATE->m_CurStyle = STYLE_PUMP_VERSUS;			break; 
 			case GAME_EZ2:		GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	break; 
 			case GAME_PARA:		GAMESTATE->m_CurStyle = STYLE_PARA_SINGLE;			break; 
+			case GAME_DS3DDX:		GAMESTATE->m_CurStyle = STYLE_DS3DDX_SINGLE;			break; 
 			default:	ASSERT(0);
 			}
 

@@ -423,7 +423,13 @@ void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const in
 	for( int t=0; t<m_iNumTracks; t++ )
 	{
 		const int iOriginalTrack = iOriginalTrackToTakeFrom[t];
-		ASSERT( iOriginalTrack < pOriginal->m_iNumTracks );
+
+		// ******************* WHY DO THIS? IT BREAKS SOME AUTOGEN LOADING (NAMELY DDR->DS3DDX) - Andy.
+		
+	//	ASSERT( iOriginalTrack < pOriginal->m_iNumTracks );
+
+
+
 		if( iOriginalTrack == -1 )
 			continue;
 		m_TapNotes[t] = pOriginal->m_TapNotes[iOriginalTrack];

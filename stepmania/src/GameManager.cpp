@@ -33,6 +33,7 @@ const int PUMP_COL_SPACING = 50;
 const int EZ2_COL_SPACING = 46; 
 const int EZ2_REAL_COL_SPACING = 40;
 const int PARA_COL_SPACING = 54;
+const int DS3DDX_COL_SPACING = 54;
 
 struct {
 	char *name;
@@ -48,7 +49,8 @@ struct {
 	{ "ez2-single", 5 },		// Single: TL,LHH,D,RHH,TR
 	{ "ez2-double", 10 },		// Double: Single x2
 	{ "ez2-real", 7 },			// Real: TL,LHH,LHL,D,RHL,RHH,TR
-	{ "para-single", 5 }
+	{ "para-single", 5 },
+	{ "ds3ddx-single", 8 }
 };
 
 //
@@ -369,6 +371,94 @@ GameDef g_GameDefs[NUM_GAMES] =
 				-1, //no default key	// PARA_BUTTON_MENURIGHT
 				-1,					// PARA_BUTTON_MENUUP
 				-1,
+			},
+		}
+	},
+	{	// GAME_DS3DDX
+		"ds3ddx",					// m_szName
+		"Dance Station 3DDX",	// m_szDescription
+		2,							// m_iNumControllers
+		NUM_DS3DDX_BUTTONS,			// m_iButtonsPerController
+		{	// m_szButtonNames
+			"HandLeft",
+			"FootDownLeft",
+			"FootUpLeft",
+			"HandUp",
+			"HandDown",
+			"FootUpRight",
+			"FootDownRight",
+			"HandRight",
+			"Start",
+			"Back",
+			"MenuLeft",
+			"MenuRight",
+			"MenuUp",
+			"MenuDown",
+		},
+		{	// m_szSecondaryFunction
+			"(MenuLeft)",
+			"",
+			"",
+			"(MenuUp)",
+			"(MenuDown)",
+			"",
+			"",
+			"(MenuRight)",
+			"",
+			"",
+			"(dedicated)",
+			"(dedicated)",
+			"(dedicated)",
+			"(dedicated)",
+		},
+		{	// m_DedicatedMenuButton
+			DS3DDX_BUTTON_MENULEFT,	// MENU_BUTTON_LEFT
+			DS3DDX_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
+			DS3DDX_BUTTON_MENUUP,	// MENU_BUTTON_UP
+			DS3DDX_BUTTON_MENUDOWN,	// MENU_BUTTON_DOWN
+			DS3DDX_BUTTON_START,		// MENU_BUTTON_START
+			DS3DDX_BUTTON_BACK,		// MENU_BUTTON_BACK
+		},
+		{	// m_SecondaryMenuButton
+			DS3DDX_BUTTON_HANDLEFT,		// MENU_BUTTON_LEFT
+			DS3DDX_BUTTON_HANDRIGHT,		// MENU_BUTTON_RIGHT
+			DS3DDX_BUTTON_HANDUP,			// MENU_BUTTON_UP
+			DS3DDX_BUTTON_HANDDOWN,		// MENU_BUTTON_DOWN
+			DS3DDX_BUTTON_START,		// MENU_BUTTON_START
+			DS3DDX_BUTTON_BACK,		// MENU_BUTTON_BACK
+		},
+		{	// m_iDefaultKeyboardKey
+			{	// PLAYER_1
+				SDLK_a,					// DS3DDX_BUTTON_HANDLEFT,
+				SDLK_z,					// DS3DDX_BUTTON_FOOTDOWNLEFT,
+				SDLK_q,					// DS3DDX_BUTTON_FOOTUPLEFT,
+				SDLK_w,					// DS3DDX_BUTTON_HANDUP,
+				SDLK_x,					// DS3DDX_BUTTON_HANDDOWN,
+				SDLK_e,					// DS3DDX_BUTTON_FOOTUPRIGHT,
+				SDLK_c,					// DS3DDX_BUTTON_FOOTDOWNRIGHT,
+				SDLK_d,					// DS3DDX_BUTTON_HANDRIGHT,
+				SDLK_RETURN,				// DS3DDX_BUTTON_START,
+				SDLK_ESCAPE,				// DS3DDX_BUTTON_BACK
+				SDLK_LEFT, //no default key	// DS3DDX_BUTTON_MENULEFT
+				SDLK_RIGHT, //no default key	// DS3DDX_BUTTON_MENURIGHT
+				SDLK_UP,					// DS3DDX_BUTTON_MENUUP
+				SDLK_DOWN,				// DS3DDX_BUTTON_MENUDOWN
+			},
+			{	// PLAYER_2
+				-1,					// DS3DDX_BUTTON_HANDLEFT,
+				-1,					// DS3DDX_BUTTON_FOOTDOWNLEFT,
+				-1,					// DS3DDX_BUTTON_FOOTUPLEFT,
+				-1,					// DS3DDX_BUTTON_HANDUP,
+				-1,					// DS3DDX_BUTTON_HANDDOWN,
+				-1,					// DS3DDX_BUTTON_FOOTUPRIGHT,
+				-1,					// DS3DDX_BUTTON_FOOTDOWNRIGHT,
+				-1,					// DS3DDX_BUTTON_HANDRIGHT,
+				-1,				// DS3DDX_BUTTON_START,
+				-1,				// DS3DDX_BUTTON_BACK
+				-1, //no default key	// DS3DDX_BUTTON_MENULEFT
+				-1, //no default key	// DS3DDX_BUTTON_MENURIGHT
+				-1,					// DS3DDX_BUTTON_MENUUP
+				-1,				// DS3DDX_BUTTON_MENUDOWN
 			},
 		}
 	},
@@ -937,6 +1027,41 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			2,0,4,1,3 
 		},
+	},
+	{	// DS3DDX_SINGLE
+		GAME_DS3DDX,								// m_Game
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
+		"single",								// m_szName
+		NOTES_TYPE_PARA_SINGLE,						// m_NotesType
+		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		{ 320, 320 },							// m_iCenterX
+		8,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	GAME_CONTROLLER_1,	DS3DDX_BUTTON_HANDLEFT,	-DS3DDX_COL_SPACING*3 },
+				{ TRACK_2,	GAME_CONTROLLER_1,	DS3DDX_BUTTON_FOOTDOWNLEFT,	-DS3DDX_COL_SPACING*2 },
+				{ TRACK_3,	GAME_CONTROLLER_1,	DS3DDX_BUTTON_FOOTUPLEFT,	-DS3DDX_COL_SPACING*1 },
+				{ TRACK_4,	GAME_CONTROLLER_1,	DS3DDX_BUTTON_HANDUP,	-DS3DDX_COL_SPACING*0 },
+				{ TRACK_5,	GAME_CONTROLLER_1,	DS3DDX_BUTTON_HANDDOWN,	+DS3DDX_COL_SPACING*0 },
+				{ TRACK_6,	GAME_CONTROLLER_1,	DS3DDX_BUTTON_FOOTUPRIGHT,	+DS3DDX_COL_SPACING*1 },
+				{ TRACK_7,	GAME_CONTROLLER_1,	DS3DDX_BUTTON_FOOTDOWNRIGHT,	+DS3DDX_COL_SPACING*2 },
+				{ TRACK_8,	GAME_CONTROLLER_1,	DS3DDX_BUTTON_HANDRIGHT,	+DS3DDX_COL_SPACING*3 },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	GAME_CONTROLLER_2,	DS3DDX_BUTTON_HANDLEFT,	-DS3DDX_COL_SPACING*3 },
+				{ TRACK_2,	GAME_CONTROLLER_2,	DS3DDX_BUTTON_FOOTDOWNLEFT,	-DS3DDX_COL_SPACING*2 },
+				{ TRACK_3,	GAME_CONTROLLER_2,	DS3DDX_BUTTON_FOOTUPLEFT,	-DS3DDX_COL_SPACING*1 },
+				{ TRACK_4,	GAME_CONTROLLER_2,	DS3DDX_BUTTON_HANDUP,	-DS3DDX_COL_SPACING*0 },
+				{ TRACK_5,	GAME_CONTROLLER_2,	DS3DDX_BUTTON_HANDDOWN,	+DS3DDX_COL_SPACING*0 },
+				{ TRACK_6,	GAME_CONTROLLER_2,	DS3DDX_BUTTON_FOOTUPRIGHT,	+DS3DDX_COL_SPACING*1 },
+				{ TRACK_7,	GAME_CONTROLLER_2,	DS3DDX_BUTTON_FOOTDOWNRIGHT,	+DS3DDX_COL_SPACING*2 },
+				{ TRACK_8,	GAME_CONTROLLER_2,	DS3DDX_BUTTON_HANDRIGHT,	+DS3DDX_COL_SPACING*3 },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0,1,2,3,4,5,6,7
+		},
 	}
 };
 
@@ -1149,6 +1274,30 @@ ModeChoice g_ModeChoices[] =
 		STYLE_PARA_SINGLE,
 		DIFFICULTY_HARD,
 		"expert",
+		1
+	},
+	{
+		GAME_DS3DDX,
+		PLAY_MODE_ARCADE,
+		STYLE_DS3DDX_SINGLE,
+		DIFFICULTY_EASY,
+		"pretty",
+		1
+	},
+	{
+		GAME_DS3DDX,
+		PLAY_MODE_ARCADE,
+		STYLE_DS3DDX_SINGLE,
+		DIFFICULTY_MEDIUM,
+		"power",
+		1
+	},
+	{
+		GAME_DS3DDX,
+		PLAY_MODE_ARCADE,
+		STYLE_DS3DDX_SINGLE,
+		DIFFICULTY_HARD,
+		"power2",
 		1
 	},
 };
