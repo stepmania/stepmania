@@ -23,7 +23,7 @@
 #include <set>
 
 /* Not in glext.h: */
-typedef BOOL (APIENTRY * PWSWAPINTERVALEXTPROC) (int interval);
+typedef bool (APIENTRY * PWSWAPINTERVALEXTPROC) (int interval);
 
 struct oglspecs_t {
 	/* OpenGL system information that generally doesn't change at runtime. */
