@@ -279,11 +279,9 @@ void ScreenGameplay::Init()
 		this->AddChild( &m_sprOniGameOver[p] );
 	}
 
-	m_NextSongIn.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
-	this->AddChild( &m_NextSongIn );
-
-	m_NextSongOut.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
-	this->AddChild( &m_NextSongOut );
+	m_NextSong.Load( THEME->GetPathB(m_sName,"next course song") );
+	m_NextSong.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
+	this->AddChild( &m_NextSong );
 
 	m_SongFinished.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
 	this->AddChild( &m_SongFinished );
@@ -993,11 +991,6 @@ void ScreenGameplay::LoadNextSong()
 	m_LyricDisplay.SetName( ssprintf( "Lyrics%s", bBothReverse? "Reverse": bOneReverse? "OneReverse": "") );
 	SET_XY( m_LyricDisplay );
 
-	/* Load the Oni transitions */
-	m_NextSongIn.Load( THEME->GetPathB(m_sName,"next song in") );
-	// Instead, load this right before it's used
-//	m_NextSongOut.Load( THEME->GetPathB(m_sName,"next song out") );
-
 	m_SongFinished.Load( THEME->GetPathB(m_sName,"song finished") );
 
 	// Load lyrics
@@ -1050,7 +1043,7 @@ void ScreenGameplay::LoadNextSong()
 
 
 	/* m_soundMusic and m_SongBackground take a very long time to load,
-	 * so cap fDelta at 0 so m_NextSongIn will show up on screen.
+	 * so cap fDelta at 0 so m_NextSong will show up on screen.
 	 * -Chris */
 	m_bZeroDeltaOnNextUpdate = true;
 
@@ -1438,7 +1431,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		/* Make sure we keep going long enough to register a miss for the last note. */
 		fSecondsToStop += Player::GetMaxStepDistanceSeconds();
 
-		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop && !m_SongFinished.IsTransitioning() && !m_NextSongOut.IsTransitioning() )
+		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop && !m_SongFinished.IsTransitioning() && !m_NextSong.IsTransitioning() )
 			m_SongFinished.StartTransitioning( SM_NotesEnded );
 	
 		//
@@ -2118,7 +2111,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	case SM_NotesEnded:
 		{
 			/* Do this in LoadNextSong, so we don't tween off old attacks until
-			 * m_NextSongOut finishes. */
+			 * m_NextSong finishes. */
 			// GAMESTATE->RemoveAllActiveAttacks();
 
             FOREACH_EnabledPlayer(p)
@@ -2162,18 +2155,16 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
                     }
                 }
 
-				// HACK:  Temporarily set the song pointer to the next song so that 
-				// this m_NextSongOut will show the next song banner
-				Song* pCurSong = GAMESTATE->m_pCurSong;
-
 				int iPlaySongIndex = GAMESTATE->GetCourseSongIndex()+1;
 				iPlaySongIndex %= m_apSongsQueue.size();
-				GAMESTATE->m_pCurSong.Set( m_apSongsQueue[iPlaySongIndex] );
+				m_apSongsQueue[iPlaySongIndex]->PushSelf( LUA->L );
+				GAMESTATE->m_Environment->Set( "NextSong" );
+				MESSAGEMAN->Broadcast( "NextCourseSong" );
+				GAMESTATE->m_Environment->Unset( "NextSong" );
 
-				m_NextSongOut.Load( THEME->GetPathB(m_sName,"next song out") );
-				GAMESTATE->m_pCurSong.Set( pCurSong );
-
-				m_NextSongOut.StartTransitioning( SM_LoadNextSong );
+				m_NextSong.PlayCommand( "Start" );
+				m_NextSong.Reset();
+				m_NextSong.StartTransitioning( SM_LoadNextSong );
 				LoadCourseSongNumber( GAMESTATE->GetCourseSongIndex()+1 );
 				COMMAND( m_sprCourseSongNumber, "ChangeIn" );
 				return;
@@ -2258,10 +2249,14 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		LoadNextSong();
 		GAMESTATE->m_bPastHereWeGo = true;
+
+		m_NextSong.Reset();
+		m_NextSong.PlayCommand( "Finish" );
+		m_NextSong.StartTransitioning( SM_None );
+
 		/* We're fading in, so don't hit any notes for a few seconds; they'll be
 		 * obscured by the fade. */
-		StartPlayingSong( m_NextSongIn.GetLengthSeconds()+2, 0 );
-		m_NextSongIn.StartTransitioning( SM_None );
+		StartPlayingSong( m_NextSong.GetLengthSeconds()+2, 0 );
 		break;
 
 	case SM_PlayToasty:

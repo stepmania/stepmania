@@ -92,8 +92,7 @@ protected:
 	Background			m_SongBackground;
 	Foreground			m_SongForeground;
 
-	Transition	m_NextSongIn;	// shows between songs in a course
-	Transition	m_NextSongOut;	// shows between songs in a course
+	Transition	m_NextSong;	// shows between songs in a course
 	Transition	m_SongFinished;	// shows after each song, course or not
 
 	Sprite				m_sprStaticBackground;
