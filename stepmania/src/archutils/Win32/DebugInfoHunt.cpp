@@ -161,9 +161,10 @@ static void GetVideoCodecDebugInfo()
 			continue;
 		}
 
+		LOG->Trace( "Scanning codec %s", FourCCToString(info.fccHandler).c_str() );
 		VDCHECKPOINT;
 		HIC hic;
-		hic = ICOpen(info.fccType, info.fccHandler, ICMODE_QUERY);
+		hic = ICOpen(info.fccType, info.fccHandler, ICMODE_DECOMPRESS);
 		if(!hic)
 		{
 			LOG->Info("Couldn't open video codec %s",
