@@ -67,6 +67,7 @@ if test "$have_sdl" = "no"; then
   echo "*** make sure that it is installed to continue the build process."
   exit 1
 fi
+AM_CONDITIONAL(HAVE_SDL, true)
 
 # sdl-config puts -L/usr/lib in the library search path, which reorders things
 # in a way that breaks some configurations.
@@ -207,13 +208,17 @@ case $host in
 *-linux-*)
 	AC_DEFINE(LINUX, 1, [Linux])
 	AC_DEFINE(UNIX, 1, [Unix])
+	linux=yes
+	unix=yes
 	;;
 
 *)
 	AC_DEFINE(UNIX, 1, [Unix])
+	unix=yes
 	;;
 esac
-
+AM_CONDITIONAL(UNIX, test "$unix" = "yes" )
+AM_CONDITIONAL(LINUX, test "$linux" = "yes" )
 
 AC_ARG_ENABLE(tests, AC_HELP_STRING([--enable-tests], [Build test programs]), enable_tests=$enableval, enable_tests=no)
 AM_CONDITIONAL(BUILD_TESTS, test "$enable_tests" = "yes" )
