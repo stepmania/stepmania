@@ -72,7 +72,6 @@ public:
 	void RemoveHoldNote( int index );
 	HoldNote &GetHoldNote( int index ) { return m_HoldNotes[index]; }
 	const HoldNote &GetHoldNote( int index ) const { return m_HoldNotes[index]; }
-	const int GetNumHoldNotes() const { return m_iNumHoldNotes; }
 
 	// statistics
 	bool IsThereANoteAtRow( int iRow ) const;
@@ -83,8 +82,10 @@ public:
 	int GetLastRow();
 	int GetNumTapNotes( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
 	int GetNumDoubles( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
-	int GetNumHoldNotes( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
-	
+	/* optimization: for the default of start to end, use the second (faster) */
+	int GetNumHoldNotes( const float fStartBeat, const float fEndBeat = MAX_BEATS );
+	int GetNumHoldNotes() const { return m_iNumHoldNotes; }
+
 	int GetPossibleDancePoints();
 
 	// radar values - return between 0.0 and 1.2
