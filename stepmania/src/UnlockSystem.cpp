@@ -13,6 +13,7 @@
 #include "global.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
+#include "Song.h"
 #include "RageException.h"
 #include "RageUtil.h"
 #include "UnlockSystem.h"
@@ -26,6 +27,16 @@ UnlockSystem::UnlockSystem()
 {
 }
 
+
+bool UnlockSystem::SongIsLocked( const Song *song )
+{
+	return SongIsLocked( song->GetFullTranslitTitle() );
+}
+
+bool UnlockSystem::SongIsRoulette( const Song *song )
+{
+	return SongIsRoulette( song->GetFullTranslitTitle() );
+}
 
 bool UnlockSystem::SongIsLocked( CString sSongName )
 {

@@ -16,6 +16,7 @@
 #include "GameState.h"
 #include "RageLog.h"
 #include "UnlockSystem.h"
+#include "SongManager.h"
 
 ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 {
@@ -33,8 +34,11 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 		Unlocks[i].SetName( ssprintf("Unlock%d",i) );
 		SET_XY( Unlocks[i] );
 
-		const bool SongIsLocked = GAMESTATE->m_pUnlockingSys->SongIsLocked
-			(THEME->GetMetric("ScreenUnlock", ssprintf("Unlock%dSong", i)));
+		Song *pSong = SONGMAN->FindSong("", THEME->GetMetric("ScreenUnlock", ssprintf("Unlock%dSong", i)) );
+		if( pSong == NULL )
+			continue;
+
+		const bool SongIsLocked = GAMESTATE->m_pUnlockingSys->SongIsLocked( pSong );
 		if ( !SongIsLocked )
 			this->AddChild(&Unlocks[i]);
 	}

@@ -17,6 +17,8 @@ enum UnlockTypes { UNLOCK_AP, UNLOCK_DP, UNLOCK_SP,
 				UNLOCK_EC, UNLOCK_EF, UNLOCK_SC,
 				UNLOCK_TT, UNLOCK_RO};
 
+class Song;
+
 struct SongEntry
 {
 	CString m_sSongName;	/* Name of the song in the DWI/SM file itself.. This allows
@@ -50,8 +52,8 @@ class UnlockSystem
 public:
 	UnlockSystem();
 	float NumPointsUntilNextUnlock();
-	bool SongIsLocked( CString sSongName );
-	bool SongIsRoulette( CString sSongName );
+	bool SongIsLocked( const Song *song );
+	bool SongIsRoulette( const Song *song );
 	bool LoadFromDATFile( CString sPath );
 	vector<SongEntry>	m_SongEntries;	// All locked songs are stored here
 
@@ -68,6 +70,8 @@ public:
 private:
 	void SortSongEntriesArray();  // sorts unlocks
 	bool ParseRow(CString text, CString &type, float &qty, CString &songname);
+	bool SongIsLocked( CString sSongName );
+	bool SongIsRoulette( CString sSongName );
 };
 
 

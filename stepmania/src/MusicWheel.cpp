@@ -316,7 +316,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 				continue;
 			if( so==SORT_ROULETTE && !pSong->RouletteDisplayed() )
 				continue;
-			if( so==SORT_ROULETTE && GAMESTATE->m_pUnlockingSys->SongIsRoulette( pSong->GetFullTranslitTitle() ) )
+			if( so==SORT_ROULETTE && GAMESTATE->m_pUnlockingSys->SongIsRoulette( pSong ) )
 				continue;
 		}
 
@@ -328,7 +328,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 			// If we're using unlocks, check it here to prevent from being shown
 			if( PREFSMAN->m_bUseUnlockSystem )
 			{ 
-				pSong->m_bIsLocked = GAMESTATE->m_pUnlockingSys->SongIsLocked( pSong->GetFullTranslitTitle() );
+				pSong->m_bIsLocked = GAMESTATE->m_pUnlockingSys->SongIsLocked( pSong );
 				if( pSong->m_bIsLocked ) { continue; }
 			}
 			arraySongs.push_back( pSong );
