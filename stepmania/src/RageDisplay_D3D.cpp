@@ -734,10 +734,10 @@ RageDisplay::VideoModeParams RageDisplay_D3D::GetVideoModeParams() const { retur
 	g_pd3dDevice->SetTransform( D3DTS_WORLD, (D3DMATRIX*)&m );
 
 
-class RageModelVertexArraySW : public RageModelVertexArray
+class RageModelVertexArraySWD3D : public RageModelVertexArray
 {
 public:
-	RageModelVertexArraySW()
+	RageModelVertexArraySWD3D()
 	{
 		m_sizeVerts = 0;
 		m_sizeTriangles = 0;
@@ -745,7 +745,7 @@ public:
 		m_pTriangles = NULL;
 	}
 
-	~RageModelVertexArraySW()
+	~RageModelVertexArraySWD3D()
 	{
 		m_sizeVerts = 0;
 		m_sizeTriangles = 0;
@@ -814,7 +814,7 @@ protected:
 
 RageModelVertexArray* RageDisplay_D3D::CreateRageModelVertexArray()
 {
-	return new RageModelVertexArraySW;
+	return new RageModelVertexArraySWD3D;
 }
 
 void RageDisplay_D3D::DeleteRageModelVertexArray( RageModelVertexArray* p )

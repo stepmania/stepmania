@@ -894,10 +894,10 @@ void RageDisplay_OGL::SendCurrentMatrices()
 	glLoadMatrixf( (const float*)&modelView );
 }
 
-class RageModelVertexArraySW : public RageModelVertexArray
+class RageModelVertexArraySWOGL : public RageModelVertexArray
 {
 public:
-	RageModelVertexArraySW()
+	RageModelVertexArraySWOGL()
 	{
 		m_sizeVerts = 0;
 		m_sizeTriangles = 0;
@@ -908,7 +908,7 @@ public:
 		m_pTriangles = NULL;
 	}
 
-	~RageModelVertexArraySW()
+	~RageModelVertexArraySWOGL()
 	{
 		m_sizeVerts = 0;
 		m_sizeTriangles = 0;
@@ -982,7 +982,7 @@ protected:
 
 RageModelVertexArray* RageDisplay_OGL::CreateRageModelVertexArray()
 {
-	return new RageModelVertexArraySW;
+	return new RageModelVertexArraySWOGL;
 }
 
 void RageDisplay_OGL::DeleteRageModelVertexArray( RageModelVertexArray* p )
