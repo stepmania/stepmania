@@ -14,12 +14,13 @@ public:
 	bool Load( CString sFilePath, int iMaxToLoad = 1000 /*load all*/ );
 	void UnloadAll();
 	void PlayRandom();
+	void PlayCopyOfRandom();
 	void Stop();
 
 private:
 	bool LoadSoundDir( CString sDir, int iMaxToLoad  );
 	bool LoadSound( CString sSoundFilePath );
-
+	int GetNextToPlay();
 
 	vector<RageSound*> m_pSamples;
 	int m_iIndexLastPlayed;

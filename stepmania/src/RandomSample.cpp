@@ -3,7 +3,7 @@
 #include "RageSound.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-
+#include "RageSoundManager.h"
 
 
 RandomSample::RandomSample()
@@ -78,14 +78,11 @@ bool RandomSample::LoadSound( CString sSoundFilePath )
 	return true;
 }
 
-void RandomSample::PlayRandom()
+int RandomSample::GetNextToPlay()
 {
 	// play one of the samples
 	if( m_pSamples.empty() )
-	{
-//		LOG->Trace( "WARNING:  Tried to play a RandomSample that has 0 sounds loaded." );
-		return;
-	}
+		return -1;
 
 	int iIndexToPlay = 0;
 	for( int i=0; i<5; i++ )
@@ -95,8 +92,24 @@ void RandomSample::PlayRandom()
 			break;
 	}
 
-	m_pSamples[iIndexToPlay]->Play();
 	m_iIndexLastPlayed = iIndexToPlay;
+	return iIndexToPlay;
+}
+
+void RandomSample::PlayRandom()
+{
+	int iIndexToPlay = GetNextToPlay();
+	if( iIndexToPlay == -1 )
+		return;
+	m_pSamples[iIndexToPlay]->Play();
+}
+
+void RandomSample::PlayCopyOfRandom()
+{
+	int iIndexToPlay = GetNextToPlay();
+	if( iIndexToPlay == -1 )
+		return;
+	SOUNDMAN->PlayCopyOfSound( *m_pSamples[iIndexToPlay] );
 }
 
 void RandomSample::Stop()

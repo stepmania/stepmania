@@ -53,7 +53,7 @@ void Transition::Update( float fDeltaTime )
 	/* Start the transition on the first update, not in the ctor, so
 	 * we don't play a sound while our parent is still loading. */
 	if( m_bFirstUpdate )
-		m_sound.PlayRandom();
+		m_sound.PlayCopyOfRandom();
 
 	// Check this before running Update, so we draw the last frame of the finished
 	// transition before sending m_MessageToSendWhenDone.
