@@ -49,7 +49,7 @@ Difficulty StringToDifficulty( const CString& sDC )
 {
 	CString s2 = sDC;
 	s2.MakeLower();
-	if( sDC == "beginner" )		return DIFFICULTY_BEGINNER;
+	if( s2 == "beginner" )		return DIFFICULTY_BEGINNER;
 	else if( s2 == "easy" )		return DIFFICULTY_EASY;
 	else if( s2 == "basic" )	return DIFFICULTY_EASY;
 	else if( s2 == "light" )	return DIFFICULTY_EASY;
