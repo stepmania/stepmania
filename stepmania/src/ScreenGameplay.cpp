@@ -1136,7 +1136,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	// received while STATE_DANCING
 	case SM_NotesEnded:
 		{
-			// save any statistics
+			if( GAMESTATE->m_bDemonstration )		// Don't show "CLEARED" in Demo
+			{
+				this->SendScreenMessage( SM_BeginFadingToTitleMenu, 0 );
+			}
+		// save any statistics
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
 				if( GAMESTATE->IsPlayerEnabled(p) )
