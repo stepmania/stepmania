@@ -157,8 +157,7 @@ void GameState::Reset()
 	ResetStageStatistics();
 
 	FOREACH_PlayerNumber( pn )
-		if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn) )
-			PROFILEMAN->UnloadProfile( pn );
+		PROFILEMAN->UnloadProfile( pn );
 
 	SONGMAN->FreeAllLoadedFromProfiles();
 	SONGMAN->UpdateBest();
