@@ -42,7 +42,10 @@ struct OptionRowDefinition
 	set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
 	bool	m_bExportOnChange;
 
-	bool EnabledForPlayer( PlayerNumber pn ) { return m_vEnabledForPlayers.find(pn) != m_vEnabledForPlayers.end(); }
+	bool IsEnabledForPlayer( PlayerNumber pn ) const 
+	{
+		return m_vEnabledForPlayers.find(pn) != m_vEnabledForPlayers.end(); 
+	}
 
 	OptionRowDefinition() { Init(); }
 	void Init()
@@ -58,9 +61,13 @@ struct OptionRowDefinition
 		m_bExportOnChange = false;
 	}
 
-	OptionRowDefinition( const char *n, bool b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL ) :
-		name(n), bOneChoiceForAllPlayers(b), selectType(SELECT_ONE), layoutType(LAYOUT_SHOW_ALL_IN_ROW)
+	OptionRowDefinition( const char *n, bool b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
 	{
+		Init();
+		name=n;
+		bOneChoiceForAllPlayers=b;
+		selectType=SELECT_ONE;
+		layoutType=LAYOUT_SHOW_ALL_IN_ROW;
 #define PUSH( c )	if(c) choices.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
 #undef PUSH
@@ -95,7 +102,7 @@ public:
 	void UpdateEnabledDisabled();
 
 	int GetOneSelection( PlayerNumber pn, bool bAllowFail=false ) const;
-	int GetOneSharedSelection() const;
+	int GetOneSharedSelection( bool bAllowFail=false ) const;
 	void SetOneSelection( PlayerNumber pn, int iChoice );
 	void SetOneSharedSelection( int iChoice );
 
@@ -104,7 +111,6 @@ public:
 		if( m_RowDef.bOneChoiceForAllPlayers )
 			pn = PLAYER_1;
 		int iChoice = m_iChoiceInRowWithFocus[pn];
-		ASSERT(iChoice >= 0 && iChoice < (int)m_RowDef.choices.size());
 		return iChoice; 
 	}
 	void SetChoiceInRowWithFocus( PlayerNumber pn, int iChoice )

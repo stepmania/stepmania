@@ -8,14 +8,17 @@
 
 OptionsCursor::OptionsCursor()
 {
+}
+
+void OptionsCursor::Load( CString sType, Element elem )
+{
+	ASSERT( m_SubActors.empty() );	// don't load twice
+
 	this->AddChild( &m_sprMiddle );
 	this->AddChild( &m_sprLeft );
 	this->AddChild( &m_sprRight );
-}
 
-void OptionsCursor::Load( PlayerNumber pn, bool bUnderline )
-{
-	CString sPath = THEME->GetPathG("OptionsCursor",bUnderline?"underline":"cursor");
+	CString sPath = THEME->GetPathG(sType,elem==cursor?"cursor":"underline");
 
 	m_sprLeft.Load( sPath );
 	m_sprMiddle.Load( sPath );
@@ -24,6 +27,10 @@ void OptionsCursor::Load( PlayerNumber pn, bool bUnderline )
 	m_sprLeft.StopAnimating();
 	m_sprMiddle.StopAnimating();
 	m_sprRight.StopAnimating();
+}
+
+void OptionsCursor::Set( PlayerNumber pn )
+{
 
 	int iBaseFrameNo;
 	switch( pn )

@@ -13,7 +13,9 @@ class OptionsCursor : public ActorFrame
 public:
 	OptionsCursor();
 
-	void Load( PlayerNumber pn, bool bUnderline );
+	enum Element { cursor, underline };
+	void Load( CString sType, Element elem );
+	void Set( PlayerNumber pn );
 	void SetBarWidth( int iWidth );
 	void TweenBarWidth( int iNewWidth );
 

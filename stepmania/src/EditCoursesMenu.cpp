@@ -43,14 +43,12 @@ enum CourseEntryMenuRow
 	lives,
 };
 
-static const MenuRow g_CourseOptionsMenuItems[] =
-{
-	{ repeat,		"Repeat",		true, true, 0, { "NO","YES" } },
-	{ randomize,	"Randomize",	true, true, 0, { "NO","YES" } },
-	{ lives,		"Lives",		true, true, 4, { "Use Bar Life","1","2","3","4","5","6","7","8","9","10" } },
-	{ -1, NULL, true, true, 0, { NULL } }
-};
-static Menu g_CourseOptionsMenu( "Course Options", g_CourseOptionsMenuItems );
+static Menu g_CourseOptionsMenu(
+	"ScreenMiniMenuCourseOptions",
+	MenuRow( repeat,	"Repeat",		true, true, 0, "NO","YES" ),
+	MenuRow( randomize,	"Randomize",	true, true, 0, "NO","YES" ),
+	MenuRow( lives,		"Lives",		true, true, 4, "Use Bar Life","1","2","3","4","5","6","7","8","9","10" )
+);
 
 enum CourseOptionsMenuRow
 {
@@ -279,11 +277,11 @@ void EditCoursesMenu::Start()
 	switch( m_SelectedRow )
 	{
 	case ROW_COURSE_OPTIONS:
-		g_CourseOptionsMenu.rows[repeat].defaultChoice = pCourse->m_bRepeat ? 1 : 0;
-		g_CourseOptionsMenu.rows[randomize].defaultChoice = pCourse->m_bRandomize ? 1 : 0;
-		g_CourseOptionsMenu.rows[lives].defaultChoice = pCourse->m_iLives;
-		if( g_CourseOptionsMenu.rows[lives].defaultChoice == -1 )
-			g_CourseOptionsMenu.rows[lives].defaultChoice = 0;
+		g_CourseOptionsMenu.rows[repeat].iDefaultChoice = pCourse->m_bRepeat ? 1 : 0;
+		g_CourseOptionsMenu.rows[randomize].iDefaultChoice = pCourse->m_bRandomize ? 1 : 0;
+		g_CourseOptionsMenu.rows[lives].iDefaultChoice = pCourse->m_iLives;
+		if( g_CourseOptionsMenu.rows[lives].iDefaultChoice == -1 )
+			g_CourseOptionsMenu.rows[lives].iDefaultChoice = 0;
 		SCREENMAN->MiniMenu( &g_CourseOptionsMenu, SM_BackFromCourseOptionsMenu );
 		break;
 	case ROW_ACTION:
@@ -353,9 +351,9 @@ void EditCoursesMenu::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_BackFromCourseOptionsMenu:
-		pCourse->m_bRepeat = !!ScreenMiniMenu::s_iLastAnswers[repeat];
-		pCourse->m_bRandomize = !!ScreenMiniMenu::s_iLastAnswers[randomize];
-		pCourse->m_iLives = ScreenMiniMenu::s_iLastAnswers[lives];
+		pCourse->m_bRepeat = !!ScreenMiniMenu::s_viLastAnswers[repeat];
+		pCourse->m_bRandomize = !!ScreenMiniMenu::s_viLastAnswers[randomize];
+		pCourse->m_iLives = ScreenMiniMenu::s_viLastAnswers[lives];
 		if( pCourse->m_iLives == 0 )
 			pCourse->m_iLives = -1;
 		

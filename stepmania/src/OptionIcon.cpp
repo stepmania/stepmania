@@ -15,11 +15,17 @@
 
 OptionIcon::OptionIcon()
 {
-	m_spr.Load( THEME->GetPathG("OptionIcon","frame 3x2") );
+}
+
+void OptionIcon::Load( CString sType )
+{
+	ASSERT( m_SubActors.empty() );	// don't load twice
+
+	m_spr.Load( THEME->GetPathG(sType,"icon 3x2") );
 	m_spr.StopAnimating();
 	this->AddChild( &m_spr );
 
-	m_text.LoadFromFont( THEME->GetPathF("OptionIcon","text") );
+	m_text.LoadFromFont( THEME->GetPathF(sType,"icon") );
 	m_text.SetShadowLength( 0 );
 	m_text.SetZoom( TEXT_ZOOM );
 	m_text.SetXY( TEXT_OFFSET_X, TEXT_OFFSET_Y );
@@ -28,7 +34,7 @@ OptionIcon::OptionIcon()
 	this->AddChild( &m_text );
 }
 
-void OptionIcon::Load( PlayerNumber pn, const CString &_sText, bool bHeader )
+void OptionIcon::Set( PlayerNumber pn, const CString &_sText, bool bHeader )
 {
 	CString sText = _sText;
 

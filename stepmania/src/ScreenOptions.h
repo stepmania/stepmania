@@ -67,6 +67,7 @@ protected:
 	void MenuRight( PlayerNumber pn, const InputEventType type )	{ ChangeValueInRow(pn,+1,type != IET_FIRST_PRESS); }
 	void MenuUp( PlayerNumber pn, const InputEventType type );
 	void MenuDown( PlayerNumber pn, const InputEventType type );
+	void MenuUpDown( PlayerNumber pn, const InputEventType type, int iDir );	// iDir == -1 or iDir == +1
 
 	/* Returns -1 if on a row with no OptionRowDefinition (eg. EXIT). */
 	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const;
@@ -93,7 +94,7 @@ protected:
 	ActorFrame		m_framePage;
 	AutoActor		m_sprPage;
 
-	OptionsCursor	m_Highlight[NUM_PLAYERS];
+	OptionsCursor	m_Cursor[NUM_PLAYERS];
 	Sprite			m_sprLineHighlight[NUM_PLAYERS];
 
 	BitmapText		m_textPlayerName[NUM_PLAYERS];
@@ -140,6 +141,8 @@ protected:
 	ThemeMetric<bool>				SEPARATE_EXIT_ROW;
 	ThemeMetric<float>				SEPARATE_EXIT_ROW_Y;
 	ThemeMetric<CString>			OPTION_ROW_TYPE;
+	ThemeMetric<bool>				THEME_OPTION_TITLES;
+	ThemeMetric<bool>				SHOW_EXPLANATIONS;
 
 	float m_fLockInputSecs;
 };

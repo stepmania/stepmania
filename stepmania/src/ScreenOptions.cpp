@@ -71,6 +71,20 @@ static CString EXPLANATION_X_NAME( size_t p )			{ return ssprintf("ExplanationP%
 static CString EXPLANATION_Y_NAME( size_t p )			{ return ssprintf("ExplanationP%dY",p+1); }
 static CString EXPLANATION_ON_COMMAND_NAME( size_t p )	{ return ssprintf("ExplanationP%dOnCommand",p+1); }
 
+static CString OPTION_TITLE( CString s )
+{
+	s.Replace("\n-","");
+	s.Replace("\n","");
+	s.Replace(" ","");
+	return THEME->GetMetric("OptionTitles",s+"Title");
+}
+static CString OPTION_EXPLANATION( CString s )
+{
+	s.Replace("\n-","");
+	s.Replace("\n","");
+	s.Replace(" ","");
+	return THEME->GetMetric("OptionExplanations",s+"Help");
+}
 
 //REGISTER_SCREEN_CLASS( ScreenOptions );	// can't be instantiated
 ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName),
@@ -95,7 +109,9 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	SHOW_EXIT_ROW					(m_sName,"ShowExitRow"),
 	SEPARATE_EXIT_ROW				(m_sName,"SeparateExitRow"),
 	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY"),
-	OPTION_ROW_TYPE					(m_sName,"OptionRowType")
+	OPTION_ROW_TYPE					(m_sName,"OptionRowType"),
+	SHOW_EXPLANATIONS				(m_sName,"ShowExplanations"),
+	THEME_OPTION_TITLES				(m_sName,"ThemeOptionTitles")
 {
 	m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
 	
@@ -121,8 +137,8 @@ void ScreenOptions::Init()
 	m_bMoreShown = false;
 	FOREACH_PlayerNumber( p )
 	{
-		m_iCurrentRow[p] = 0;
-		m_iFocusX[p] = 0;
+		m_iCurrentRow[p] = -1;
+		m_iFocusX[p] = -1;
 		m_bWasOnExit[p] = false;
 		m_bGotAtLeastOneStartPressed[p] = false;
 	}
@@ -147,11 +163,13 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	{
 		m_Rows.push_back( new OptionRow() );
 		OptionRow &row = *m_Rows.back();
+		const OptionRowDefinition &def = vDefs[r];
+		OptionRowHandler* hand = vHands[r];
 		
 		bool bFirstRowGoesDown = m_OptionsNavigation==NAV_TOGGLE_THREE_KEY;
 
 		row.LoadMetrics( OPTION_ROW_TYPE );
-		row.LoadNormal( vDefs[r], vHands[r], bFirstRowGoesDown );
+		row.LoadNormal( def, hand, bFirstRowGoesDown );
 
 		FOREACH_HumanPlayer( p )
 			this->ImportOptions( r, p );
@@ -186,8 +204,9 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	// init highlights
 	FOREACH_HumanPlayer( p )
 	{
-		m_Highlight[p].Load( p, false );
-		m_framePage.AddChild( &m_Highlight[p] );
+		m_Cursor[p].Load( "ScreenOptions", OptionsCursor::cursor );
+		m_Cursor[p].Set( p );
+		m_framePage.AddChild( &m_Cursor[p] );
 	}
 	
 	for( unsigned r=0; r<m_Rows.size(); r++ )		// foreach row
@@ -264,6 +283,20 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		GetExplanationTitle( r );
 	}
 
+	// put focus on the first enabled row
+	FOREACH_PlayerNumber( p )
+	{
+		for( unsigned r=0; r<m_Rows.size(); r++ )
+		{
+			const OptionRow &row = *m_Rows[r];
+			if( row.GetRowDef().IsEnabledForPlayer(p) )
+			{
+				m_iCurrentRow[p] = r;
+				break;
+			}
+		}
+	}
+
 	CHECKPOINT;
 
 	PositionItems();
@@ -305,10 +338,7 @@ CString ScreenOptions::GetExplanationText( int iRow ) const
 
 	CString sLineName = row.GetRowDef().name;
 	ASSERT( !sLineName.empty() );
-	sLineName.Replace("\n-","");
-	sLineName.Replace("\n","");
-	sLineName.Replace(" ","");
-	return THEME->GetMetric( "OptionExplanations", sLineName+"Help" );
+	return SHOW_EXPLANATIONS ? OPTION_EXPLANATION(sLineName) : "";
 }
 
 CString ScreenOptions::GetExplanationTitle( int iRow ) const
@@ -316,10 +346,7 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 	OptionRow &row = *m_Rows[iRow];
 	
 	CString sLineName = row.GetRowDef().name;
-	sLineName.Replace("\n-","");
-	sLineName.Replace("\n","");
-	sLineName.Replace(" ","");
-	CString sTitle = THEME->GetMetric( "OptionTitles", sLineName+"Title" );
+	CString sTitle = THEME_OPTION_TITLES ? OPTION_TITLE(sLineName) : sLineName;
 
 	// HACK: tack the BPM onto the name of the speed line
 	if( sLineName.CompareNoCase("speed")==0 )
@@ -416,13 +443,13 @@ void ScreenOptions::PositionCursors()
 {
 	// Set the position of the highlight showing the current option the user is changing.
 	// Set the position of the underscores showing the current choice for each option line.
-	FOREACH_HumanPlayer( pn )	// foreach player
+	FOREACH_HumanPlayer( pn )
 	{
 		const int iRow = m_iCurrentRow[pn];
 		ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
 		OptionRow &OptionRow = *m_Rows[iRow];
 
-		OptionsCursor &highlight = m_Highlight[pn];
+		OptionsCursor &highlight = m_Cursor[pn];
 
 		const int iChoiceWithFocus = OptionRow.GetChoiceInRowWithFocus(pn);
 
@@ -445,7 +472,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	int iWidth, iX, iY;
 	GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
 
-	OptionsCursor &highlight = m_Highlight[pn];
+	OptionsCursor &highlight = m_Cursor[pn];
 	highlight.StopTweening();
 	highlight.BeginTweening( TWEEN_SECONDS );
 	highlight.TweenBarWidth( iWidth );
@@ -811,16 +838,30 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 		}
 	}
 
-
-	// If on exit, check it all players are on "Exit"
-	if( IsOnLastRow(pn) )
+	//
+	// Check whether Start ends this screen.
+	//
 	{
-		/* Don't accept START to go to the next screen if we're still transitioning in. */
-		if( AllAreOnLastRow()  &&  selectType == IET_FIRST_PRESS && !IsTransitioning() )
-			this->BeginFadingOut();
-		return;
-	}
+		bool bEndThisScreen = false;
 
+		// If there's no exit row, then pressing Start on any row ends the screen.
+		if( !SHOW_EXIT_ROW )
+			bEndThisScreen = true;
+
+		// If all players are on "Exit"
+		if( AllAreOnLastRow() )
+			bEndThisScreen = true;
+
+		/* Don't accept START to go to the next screen if we're still transitioning in. */
+		if( selectType != IET_FIRST_PRESS || IsTransitioning() )
+			bEndThisScreen = false;
+		
+		if( bEndThisScreen )
+		{
+			this->BeginFadingOut();
+			return;
+		}
+	}
 
 	if( row.GetFirstItemGoesDown() )
 	{
@@ -912,6 +953,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		return;		// don't allow a move
 
 	const int iNumOptions = row.GetRowDef().choices.size();
+
 	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && iNumOptions <= 1 )	// 1 or 0
 	{
 		/* There are no other options on the row; move up or down instead of left and right.
@@ -923,6 +965,9 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		return;
 	}
 
+	if( iNumOptions == 0 )
+		return;
+
 	if( Repeat )
 		return;
 
@@ -931,6 +976,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 
 	int iCurrentChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
 	int iNewChoiceWithFocus = iCurrentChoiceWithFocus + iDelta;
+	ASSERT( iNumOptions > 0 );
 	wrap( iNewChoiceWithFocus, iNumOptions );
 	
 	if( iCurrentChoiceWithFocus != iNewChoiceWithFocus )
@@ -1078,36 +1124,33 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 
 void ScreenOptions::MenuUp( PlayerNumber pn, const InputEventType type )
 {
-	int r;
-	bool bFoundDest = false;
-	for( r=m_iCurrentRow[pn]-1; r>=0; r-- )
-	{
-		OptionRow &row = *m_Rows[r];
-		if( row.GetRowDef().EnabledForPlayer(pn) )
-		{
-			bFoundDest = true;
-			break;
-		}
-	}
-	int iDelta = bFoundDest ? r-m_iCurrentRow[pn] : -1;
-	MoveRow( pn, iDelta, type != IET_FIRST_PRESS );
+	MenuUpDown( pn, type, -1 );
 }
 
 void ScreenOptions::MenuDown( PlayerNumber pn, const InputEventType type )
 {
-	unsigned r;
-	bool bFoundDest = false;
-	for( r=m_iCurrentRow[pn]+1; r<m_Rows.size(); r++ )
+	MenuUpDown( pn, type, +1 );
+}
+
+void ScreenOptions::MenuUpDown( PlayerNumber pn, const InputEventType type, int iDir )
+{
+	ASSERT( iDir == -1 || iDir == +1 );
+
+	int iDest = -1;
+	for( int r=1; r<(int)m_Rows.size(); r++ )
 	{
-		OptionRow &row = *m_Rows[r];
-		if( row.GetRowDef().EnabledForPlayer(pn) )
+		int iDelta = r*iDir;
+		iDest = m_iCurrentRow[pn] + iDelta;
+		ASSERT( m_Rows.size() );
+		wrap( iDest, m_Rows.size() );
+
+		OptionRow &row = *m_Rows[iDest];
+		if( row.GetRowDef().IsEnabledForPlayer(pn) )
 		{
-			bFoundDest = true;
-			break;
+			MoveRow( pn, iDelta, type != IET_FIRST_PRESS );
+			return;
 		}
 	}
-	int iDelta = bFoundDest ? r-m_iCurrentRow[pn] : +1;
-	MoveRow( pn, iDelta, type != IET_FIRST_PRESS );
 }
 
 

@@ -102,6 +102,9 @@ void OptionRow::LoadMetrics( const CString &sType )
 	CAPITALIZE_ALL_OPTION_NAMES		.Load(m_sType,"CapitalizeAllOptionNames");
 	SHOW_UNDERLINES					.Load(m_sType,"ShowUnderlines");
 	TWEEN_SECONDS					.Load(m_sType,"TweenSeconds");
+
+	FOREACH_PlayerNumber( p )
+		m_OptionIcons[p].Load( m_sType );
 }
 
 void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown )
@@ -117,19 +120,14 @@ void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pH
 			MESSAGEMAN->Subscribe( this, *m );
 	}
 
-	if( !def.choices.size() )
-		RageException::Throw( "Screen %s menu entry \"%s\" has no choices",
-		m_sName.c_str(), def.name.c_str() );
-	
 	FOREACH_PlayerNumber( p )
 	{
 		vector<bool> &vbSelected = m_vbSelected[p];
-		vbSelected.resize( m_RowDef.choices.size() );
-		FOREACH( bool, vbSelected, b )
-			*b = false;
+		vbSelected.resize( 0 );
+		vbSelected.resize( m_RowDef.choices.size(), false );
 		
 		// set select the first item if a SELECT_ONE row
-		if( m_RowDef.selectType == SELECT_ONE )
+		if( vbSelected.size() && m_RowDef.selectType == SELECT_ONE )
 			vbSelected[0] = true;
 	}
 
@@ -147,23 +145,6 @@ void OptionRow::AfterImportOptions(
 	float fY
 	)
 {
-	/*
-	ITEMS_START_X, 
-	ITEMS_GAP_X, 
-	ITEMS_END_X, 
-	ITEMS_LONG_ROW_SHARED_X,
-	ITEMS_LONG_ROW_X,
-	ITEMS_ZOOM, 
-	CAPITALIZE_ALL_OPTION_NAMES,
-	THEME->GetPathF(m_sType,"item"),
-	THEME->GetPathF(m_sType,"title"),
-	THEME->GetPathG(m_sType,"bullet"),
-	LABELS_X,
-	ARROWS_X,
-	LABELS_ON_COMMAND
-*/
-
-	
 	// Make all selections the same if bOneChoiceForAllPlayers
 	if( m_RowDef.bOneChoiceForAllPlayers )
 	{
@@ -185,10 +166,10 @@ void OptionRow::AfterImportOptions(
 						bHasASelection = true;
 				}
 
-				if( !bHasASelection )
+				if( !bHasASelection && !m_vbSelected[p].empty() )
 					m_vbSelected[p][0] = true;
 				
-				m_iChoiceInRowWithFocus[p] = GetOneSelection(p);	// focus on the selection we just set
+				m_iChoiceInRowWithFocus[p] = GetOneSelection(p, true);	// focus on the selection we just set
 			}
 			break;
 		case SELECT_MULTIPLE:
@@ -249,7 +230,7 @@ void OptionRow::AfterImportOptions(
 			const int iChoiceInRowWithFocus = m_iChoiceInRowWithFocus[p];
 
 			bt->LoadFromFont( THEME->GetPathF(m_sType,"item") );
-			CString sText = m_RowDef.choices[iChoiceInRowWithFocus];
+			CString sText = (iChoiceInRowWithFocus==-1) ? "" : m_RowDef.choices[iChoiceInRowWithFocus];
 			if( CAPITALIZE_ALL_OPTION_NAMES )
 				sText.MakeUpper();
 			bt->SetText( sText );
@@ -272,7 +253,8 @@ void OptionRow::AfterImportOptions(
 		{
 			OptionsCursor *ul = new OptionsCursor;
 			m_Underline[p].push_back( ul );
-			ul->Load( p, true );
+			ul->Load( m_sType, OptionsCursor::underline );
+			ul->Set( p );
 			int iWidth, iX, iY;
 			GetWidthXY( p, 0, iWidth, iX, iY );
 			ul->SetX( float(iX) );
@@ -306,7 +288,8 @@ void OptionRow::AfterImportOptions(
 				{
 					OptionsCursor *ul = new OptionsCursor;
 					m_Underline[p].push_back( ul );
-					ul->Load( p, true );
+					ul->Load( m_sType, OptionsCursor::cursor );
+					ul->Set( p );
 					ul->SetX( fX );
 					ul->SetWidth( truncf(fItemWidth) );
 				}
@@ -349,12 +332,6 @@ void OptionRow::AfterImportOptions(
 
 void OptionRow::LoadExit()
 {
-	/*
-			THEME->GetPathF(m_sType,"item"),
-		THEME->GetMetric("OptionNames","Exit"),
-		ITEMS_LONG_ROW_SHARED_X,
-		ITEMS_ZOOM
-*/
 	m_RowType = OptionRow::ROW_EXIT;
 	m_RowDef.name = "Exit";
 	m_RowDef.choices.push_back( "" );
@@ -377,10 +354,6 @@ void OptionRow::LoadExit()
 
 void OptionRow::PositionUnderlines( PlayerNumber pn )
 {
-	/*
-	SHOW_UNDERLINES
-	TWEEN_SECONDS
-	*/
 	if( m_RowType == ROW_EXIT )
 		return;
 
@@ -404,7 +377,7 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 
 		ASSERT( m_vbSelected[pnTakeSelectedFrom].size() == m_RowDef.choices.size() );
 
-		bool bSelected = m_vbSelected[pnTakeSelectedFrom][ iChoiceWithFocus ];
+		bool bSelected = (iChoiceWithFocus==-1) ? false : m_vbSelected[pnTakeSelectedFrom][ iChoiceWithFocus ];
 		bool bHidden = !bSelected || m_bHidden;
 		if( !(bool)SHOW_UNDERLINES )
 			bHidden = true;
@@ -504,10 +477,16 @@ void OptionRow::UpdateEnabledDisabled()
 		bThisRowHasFocusByAll &= m_bRowHasFocus[p];
 	
 	bool bRowEnabled = !m_RowDef.m_vEnabledForPlayers.empty();
-	float fDiffuseAlpha = (m_bHidden || !bRowEnabled)? 0.0f:1.0f;
 
 	/* Don't tween selection colors at all. */
-	RageColor color = bThisRowHasFocusByAny ? COLOR_SELECTED:COLOR_NOT_SELECTED;
+	RageColor color;
+	if( bThisRowHasFocusByAny )	color = COLOR_SELECTED;
+	else if( bRowEnabled )		color = COLOR_NOT_SELECTED;
+	else						color = COLOR_DISABLED;
+
+	if( m_bHidden )
+		color.a = 0;
+
 	m_sprBullet.SetGlobalDiffuseColor( color );
 	m_textTitle.SetGlobalDiffuseColor( color );
 
@@ -519,12 +498,12 @@ void OptionRow::UpdateEnabledDisabled()
 		for( unsigned j=0; j<m_textItems.size(); j++ )
 		{
 			if( m_textItems[j]->GetDestY() == m_fY && 	 
-				m_textItems[j]->DestTweenState().diffuse[0][3] == fDiffuseAlpha ) 	 
+				m_textItems[j]->DestTweenState().diffuse[0] == color ) 	 
 				continue;
 
 			m_textItems[j]->StopTweening();
 			m_textItems[j]->BeginTweening( TWEEN_SECONDS );
-			m_textItems[j]->SetDiffuseAlpha( fDiffuseAlpha );
+			m_textItems[j]->SetDiffuseAlpha( color.a );
 			m_textItems[j]->SetY( m_fY );
 		}
 		break;
@@ -533,14 +512,12 @@ void OptionRow::UpdateEnabledDisabled()
 		{
 			bool bRowEnabled = m_RowDef.m_vEnabledForPlayers.find(pn) != m_RowDef.m_vEnabledForPlayers.end();
 			
-			if( m_bRowHasFocus[pn] )
-				color = COLOR_SELECTED;
-			else if( bRowEnabled )
-				color = COLOR_NOT_SELECTED;
-			else
-				color = COLOR_DISABLED;
+			if( m_bRowHasFocus[pn] )	color = COLOR_SELECTED;
+			else if( bRowEnabled )		color = COLOR_NOT_SELECTED;
+			else						color = COLOR_DISABLED;
 
-			color.a = (bRowEnabled && !m_bHidden) ? 1.0f:0.0f;
+			if( m_bHidden )
+				color.a = 0;
 
 			unsigned item_no = m_RowDef.bOneChoiceForAllPlayers ? 0 : pn;
 
@@ -578,14 +555,14 @@ void OptionRow::UpdateEnabledDisabled()
 			m_textItems[0]->SetEffectNone();
 	}
 
-	if( m_sprBullet.GetDestY() != m_fY || m_sprBullet.DestTweenState().diffuse[0][3] != fDiffuseAlpha )
+	if( m_sprBullet.GetDestY() != m_fY || m_sprBullet.DestTweenState().diffuse[0] != color )
 	{
 		m_sprBullet.StopTweening();
 		m_textTitle.StopTweening();
 		m_sprBullet.BeginTweening( TWEEN_SECONDS );
 		m_textTitle.BeginTweening( TWEEN_SECONDS );
-		m_sprBullet.SetDiffuseAlpha( fDiffuseAlpha );
-		m_textTitle.SetDiffuseAlpha( fDiffuseAlpha );
+		m_sprBullet.SetDiffuseAlpha( color.a );
+		m_textTitle.SetDiffuseAlpha( color.a );
 		m_sprBullet.SetY( m_fY );
 		m_textTitle.SetY( m_fY );
 	}
@@ -593,7 +570,7 @@ void OptionRow::UpdateEnabledDisabled()
 
 void OptionRow::LoadOptionIcon( PlayerNumber pn, const CString &sText )
 {
-	m_OptionIcons[pn].Load( pn, sText, false );
+	m_OptionIcons[pn].Set( pn, sText, false );
 }
 
 BitmapText &OptionRow::GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow )
@@ -646,9 +623,9 @@ int OptionRow::GetOneSelection( PlayerNumber pn, bool bAllowFail ) const
 	return -1;
 }
 
-int OptionRow::GetOneSharedSelection() const
+int OptionRow::GetOneSharedSelection( bool bAllowFail ) const
 {
-	return GetOneSelection( (PlayerNumber)0 );
+	return GetOneSelection( (PlayerNumber)0, bAllowFail );
 }
 
 void OptionRow::SetOneSelection( PlayerNumber pn, int iChoice )

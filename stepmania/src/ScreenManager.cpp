@@ -279,6 +279,8 @@ Screen* ScreenManager::MakeNewScreenInternal( const CString &sScreenName )
 
 	LOG->Trace( "Loaded '%s' ('%s') in %f", sScreenName.c_str(), sClassName.c_str(), t.GetDeltaTime());
 
+	this->ZeroNextUpdate();
+
 	return ret;
 }
 
@@ -484,6 +486,7 @@ void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, const CString &sText,
 	// add the new state onto the back of the array
 	Screen *pNewScreen = new ScreenPrompt( sText, type, defaultAnswer, OnYes, OnNo, pCallbackData);
 	pNewScreen->Init();
+	this->ZeroNextUpdate();
 	SetFromNewScreen( pNewScreen, true );
 
 	m_MessageSendOnPop = SM_SendWhenDone;
@@ -497,6 +500,7 @@ void ScreenManager::TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion,
 	// add the new state onto the back of the array
 	Screen *pNewScreen = new ScreenTextEntry( "ScreenTextEntry", sQuestion, sInitialAnswer, OnOK, OnCancel );
 	pNewScreen->Init();
+	this->ZeroNextUpdate();
 	SetFromNewScreen( pNewScreen, true );
 
 	m_MessageSendOnPop = SM_SendWhenDone;
@@ -510,6 +514,7 @@ void ScreenManager::Password( ScreenMessage SM_SendWhenDone, const CString &sTex
 	// add the new state onto the back of the array
 	Screen *pNewScreen = new ScreenTextEntry( "ScreenTextEntry", sText, "", OnOK, OnCancel, true );
 	pNewScreen->Init();
+	this->ZeroNextUpdate();
 	SetFromNewScreen( pNewScreen, true );
 
 	m_MessageSendOnPop = SM_SendWhenDone;
@@ -521,8 +526,9 @@ void ScreenManager::MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessa
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
 	// add the new state onto the back of the array
-	Screen *pNewScreen = new ScreenMiniMenu( pDef, SM_SendOnOK, SM_SendOnCancel );
-	pNewScreen->Init();
+	ScreenMiniMenu *pNewScreen = new ScreenMiniMenu( pDef->sClassName );
+	pNewScreen->Init( pDef, SM_SendOnOK, SM_SendOnCancel );
+	this->ZeroNextUpdate();
 	SetFromNewScreen( pNewScreen, true );
 }
 

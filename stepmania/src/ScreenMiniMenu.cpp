@@ -9,326 +9,103 @@
 #include "Foreach.h"
 #include "ScreenDimensions.h"
 #include "CommonMetrics.h"
-
-
-const float LABEL_X		=	200;
-const float ANSWER_X	=	440;
-const float SPACING_Y	=	26;
-
-const float ZOOM_SELECTED = 0.7f;
-const float ZOOM_NOT_SELECTED = 0.5f;
-
-const RageColor COLOR_ENABLED = RageColor(1,1,1,1);
-const RageColor COLOR_DISABLED = RageColor(0.5f,0.5f,0.5f,1);
+#include "GameState.h"
 
 const ScreenMessage SM_GoToOK		= (ScreenMessage)(SM_User+1);
 const ScreenMessage SM_GoToCancel	= (ScreenMessage)(SM_User+2);
 
-
-int	ScreenMiniMenu::s_iLastRowCode;
-int	ScreenMiniMenu::s_iLastAnswers[MAX_MENU_ROWS];
-
+int	ScreenMiniMenu::s_iLastRowCode = -1;
+vector<int>	ScreenMiniMenu::s_viLastAnswers;
 
 //REGISTER_SCREEN_CLASS( ScreenMiniMenu );
-ScreenMiniMenu::ScreenMiniMenu( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel ) :
-  Screen("ScreenMiniMenu")
+ScreenMiniMenu::ScreenMiniMenu( CString sClassName ) :ScreenOptions( sClassName )
 {
+}
+
+void ScreenMiniMenu::Init( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
+{
+	ScreenOptions::Init();
+
+	m_Background.Load( THEME->GetPathB(m_sName,"background") );
+	m_Background->SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );
+	this->AddChild( m_Background );
+	m_Background->PlayCommand( "On" );
+
+	this->SortByDrawOrder();
+
 	m_bIsTransparent = true;	// draw screens below us
 
 	m_SMSendOnOK = SM_SendOnOK;
 	m_SMSendOnCancel = SM_SendOnCancel;
-	m_Def = *pDef;
-	ASSERT( m_Def.rows.size() <= MAX_MENU_ROWS );
 
-	// Remove rows that aren't applicable to HomeEditMode.
-	if( HOME_EDIT_MODE )
+
+	FOREACH_CONST( MenuRow, pDef->rows, r )
 	{
-		for( int i=((int)m_Def.rows.size())-1; i>=0; i-- )
-		{
-			if( !m_Def.rows[i].bShowInHomeEditMode )
-				m_Def.rows.erase( m_Def.rows.begin()+i );
-		}
+		// Don't add rows that aren't applicable to HomeEditMode.
+		if( !HOME_EDIT_MODE || r->bShowInHomeEditMode )
+			m_vMenuRows.push_back( *r );
 	}
 
-	m_Background.LoadFromAniDir( THEME->GetPathB("ScreenMiniMenu","background") );
-	m_Background.PlayCommand("On");
-	this->AddChild( &m_Background );
-
-	float fHeightOfAll = min( SCREEN_HEIGHT-80, (m_Def.rows.size()-1)*SPACING_Y );
-
-	m_textTitle.LoadFromFont( THEME->GetPathF("Common","normal") );
-	m_textTitle.SetText( m_Def.title );
-	m_textTitle.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y - fHeightOfAll/2 - 30 );
-	m_textTitle.SetZoom( 0.8f );
-	this->AddChild( &m_textTitle );
-
-	m_sndChangeRow.Load( THEME->GetPathS("ScreenMiniMenu","row"), true );
-	m_sndChangeValue.Load( THEME->GetPathS("ScreenMiniMenu","value"), true );
-
-	bool bMarkedFirstEnabledLine = false;
-	m_iCurLine = 0;
-
-	float fLongestLabelPlusAnswer = 0;
-
-	for( unsigned i=0; i<m_Def.rows.size(); i++ )
+	// Convert from m_vMenuRows to vector<OptionRowDefinition>
+	vector<OptionRowDefinition> vDefs;
+	vDefs.resize( m_vMenuRows.size() );
+	for( unsigned r=0; r<m_vMenuRows.size(); r++ )
 	{
-		MenuRowInternal& line = m_Def.rows[i];
-		m_iCurAnswers[i] = 0;
+		const MenuRow &mr = m_vMenuRows[r];
+		OptionRowDefinition &ord = vDefs[r];
 
-		float fY;
-		if( m_Def.rows.size() > 1 )
-			fY = SCALE( i, 0.f, m_Def.rows.size()-1.f, SCREEN_CENTER_Y-fHeightOfAll/2, SCREEN_CENTER_Y+fHeightOfAll/2 );
+		ord.name = mr.sName;
+		if( mr.bEnabled )
+		{
+			ord.m_vEnabledForPlayers.clear();
+			FOREACH_EnabledPlayer( pn )
+				ord.m_vEnabledForPlayers.insert( pn );
+		}
 		else
-			fY = SCREEN_CENTER_Y;
-
-		m_textLabel[i].LoadFromFont( THEME->GetPathF("Common","normal") );
-		m_textLabel[i].SetText( line.name );
-		m_textLabel[i].SetY( fY );
-		m_textLabel[i].SetZoom( ZOOM_NOT_SELECTED );
-		m_textLabel[i].SetHorizAlign( Actor::align_left );
-		m_textLabel[i].SetDiffuse( line.enabled ? COLOR_ENABLED : COLOR_DISABLED );
-		this->AddChild( &m_textLabel[i] );
-
-		m_textAnswer[i].LoadFromFont( THEME->GetPathF("Common","normal") );
-		m_textAnswer[i].SetY( fY );
-		m_textAnswer[i].SetZoom( ZOOM_NOT_SELECTED );
-		m_textAnswer[i].SetHorizAlign( Actor::align_right );
-		m_textAnswer[i].SetDiffuse( line.enabled ? COLOR_ENABLED : COLOR_DISABLED );
-		this->AddChild( &m_textAnswer[i] );
-
-		for( unsigned j = 0; j < line.choices.size(); ++j )
 		{
-	 		m_textAnswer[i].SetText( line.choices[j] );
-			fLongestLabelPlusAnswer = max( 
-				fLongestLabelPlusAnswer, 
-				m_textLabel[i].GetUnzoomedWidth() * ZOOM_SELECTED +
-				m_textAnswer[i].GetUnzoomedWidth() * ZOOM_SELECTED );
+			ord.m_vEnabledForPlayers.clear();
 		}
 
-		ASSERT_M( line.choices.empty() || line.defaultChoice < (int) line.choices.size(),
-			ssprintf("%i, %i", line.defaultChoice, (int) line.choices.size()) );
-		CString sText = line.choices.empty() ? CString("") : line.choices[line.defaultChoice];
- 		m_textAnswer[i].SetText( sText );
-
-		if( !bMarkedFirstEnabledLine && line.enabled )
-		{
-			m_iCurLine = i;
-			AfterLineChanged();
-			bMarkedFirstEnabledLine = true;
-		}
-
-		m_iCurAnswers[i] = line.defaultChoice;
+		ord.bOneChoiceForAllPlayers = true;
+		ord.selectType = SELECT_ONE;
+		ord.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		ord.m_bExportOnChange = false;
+			
+		ord.choices = mr.choices;
 	}
 
-	// adjust text spacing based on widest line
-	float fLabelX = LABEL_X;
-	float fAnswerX = ANSWER_X;
-	float fDefaultWidth = ANSWER_X - LABEL_X;
-	if( fLongestLabelPlusAnswer+20 > fDefaultWidth )
-	{
-		float fIncreaseBy = fLongestLabelPlusAnswer - fDefaultWidth + 20;
-		fLabelX -= fIncreaseBy/2;
-		fAnswerX += fIncreaseBy/2;
-	}
+	vector<OptionRowHandler*> vHands;
+	vHands.resize( vDefs.size(), NULL );
 
-	for( unsigned k=0; k<m_Def.rows.size(); k++ )
-	{
-		m_textLabel[k].SetX( fLabelX );
-		m_textAnswer[k].SetX( fAnswerX );
-	}
-
-	m_In.Load( THEME->GetPathB("ScreenMiniMenu","in") );
-	m_In.StartTransitioning();
-	this->AddChild( &m_In );
-
-	m_Out.Load( THEME->GetPathB("ScreenMiniMenu","out") );
-	this->AddChild( &m_Out );
+	ScreenOptions::InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
 }
 
-void ScreenMiniMenu::Update( float fDeltaTime )
+void ScreenMiniMenu::ImportOptions( int r, PlayerNumber pn )
 {
-	Screen::Update( fDeltaTime );
+	OptionRow &or = *m_Rows[r];
+	MenuRow &mr = m_vMenuRows[r];
+	if( !mr.choices.empty() )
+		or.SetOneSharedSelection( mr.iDefaultChoice );
 }
 
-void ScreenMiniMenu::DrawPrimitives()
+void ScreenMiniMenu::ExportOptions( int r, PlayerNumber pn )
 {
-	Screen::DrawPrimitives();
+	if( r == GetCurrentRow() )
+		s_iLastRowCode = m_vMenuRows[r].iRowCode;
+	s_viLastAnswers.resize( m_vMenuRows.size() );
+	s_viLastAnswers[r] = m_Rows[r]->GetOneSharedSelection( true );
 }
 
-void ScreenMiniMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenMiniMenu::GoToNextScreen()
 {
-	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
-		return;
-
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+	SCREENMAN->PopTopScreen( m_SMSendOnOK );
 }
 
-void ScreenMiniMenu::HandleScreenMessage( const ScreenMessage SM )
+void ScreenMiniMenu::GoToPrevScreen()
 {
-	switch( SM )
-	{
-	case SM_GoToOK:
-		SCREENMAN->PopTopScreen( m_SMSendOnOK );
-		break;
-	case SM_GoToCancel:
-		SCREENMAN->PopTopScreen( m_SMSendOnCancel );
-		break;
-	}
+	SCREENMAN->PopTopScreen( m_SMSendOnCancel );
 }
 
-void ScreenMiniMenu::MenuUp( PlayerNumber pn, const InputEventType type )
-{
-	if( GetGoUpSpot() != -1 )
-	{
-		BeforeLineChanged();
-		m_iCurLine = GetGoUpSpot();
-		AfterLineChanged();
-	}
-}
-
-void ScreenMiniMenu::MenuDown( PlayerNumber pn, const InputEventType type )
-{
-	if( GetGoDownSpot() != -1 )
-	{
-		BeforeLineChanged();
-		m_iCurLine = GetGoDownSpot();
-		AfterLineChanged();
-	}
-}
-
-void ScreenMiniMenu::MenuLeft( PlayerNumber pn, const InputEventType type )
-{
-	if( CanGoLeft() )
-	{
-		m_iCurAnswers[m_iCurLine]--;
-		AfterAnswerChanged();
-	}
-}
-
-void ScreenMiniMenu::MenuRight( PlayerNumber pn, const InputEventType type )
-{
-	if( CanGoRight() )
-	{
-		m_iCurAnswers[m_iCurLine]++;
-		AfterAnswerChanged();
-	}
-}
-
-void ScreenMiniMenu::MenuStart( PlayerNumber pn, const InputEventType type )
-{
-	m_Out.StartTransitioning( SM_GoToOK );
-
-	SCREENMAN->PlayStartSound();
-
-	s_iLastRowCode = m_Def.rows[m_iCurLine].iRowCode;
-	COPY( s_iLastAnswers, m_iCurAnswers );
-}
-
-void ScreenMiniMenu::MenuBack( PlayerNumber pn )
-{
-	m_Out.StartTransitioning( SM_GoToCancel );
-}
-
-void ScreenMiniMenu::BeforeLineChanged()
-{
-	m_textLabel[m_iCurLine].SetEffectNone();
-	m_textAnswer[m_iCurLine].SetEffectNone();
-	m_textLabel[m_iCurLine].SetZoom( ZOOM_NOT_SELECTED );
-	m_textAnswer[m_iCurLine].SetZoom( ZOOM_NOT_SELECTED );
-	m_sndChangeRow.Play();
-}
-
-void ScreenMiniMenu::AfterLineChanged()
-{
-	m_textLabel[m_iCurLine].SetEffectGlowShift( 1.0f, RageColor(0,0.5f,0,1), RageColor(0,1,0,1) );
-	m_textAnswer[m_iCurLine].SetEffectGlowShift( 1.0f, RageColor(0,0.5f,0,1), RageColor(0,1,0,1) );
-	m_textLabel[m_iCurLine].SetZoom( ZOOM_SELECTED );
-	m_textAnswer[m_iCurLine].SetZoom( ZOOM_SELECTED );
-}
-
-void ScreenMiniMenu::AfterAnswerChanged()
-{
-	m_sndChangeValue.Play();
-	int iAnswerInRow = m_iCurAnswers[m_iCurLine];
-	CString sAnswerText = m_Def.rows[m_iCurLine].choices[iAnswerInRow];
-	m_textAnswer[m_iCurLine].SetText( sAnswerText );
-}
-
-int ScreenMiniMenu::GetGoUpSpot()
-{
-	for( int i=m_iCurLine-1; i>=0; i-- )
-		if( m_Def.rows[i].enabled )
-			return i;
-	// wrap
-	for( int i=m_Def.rows.size()-1; i>=0; i-- )
-		if( m_Def.rows[i].enabled )
-			return i;
-	return -1;
-}
-
-int ScreenMiniMenu::GetGoDownSpot()
-{
-	for( unsigned i=m_iCurLine+1; i<m_Def.rows.size(); i++ )
-		if( m_Def.rows[i].enabled )
-			return i;
-	// wrap
-	for( unsigned i=0; i<m_Def.rows.size(); i++ )
-		if( m_Def.rows[i].enabled )
-			return i;
-	return -1;
-}
-
-bool ScreenMiniMenu::CanGoLeft()
-{
-	int iNumInCurRow = m_Def.rows[m_iCurLine].choices.size();
-	if( iNumInCurRow==0 )
-		return false;
-	else
-		return m_iCurAnswers[m_iCurLine] != 0;
-}
-
-bool ScreenMiniMenu::CanGoRight()
-{
-	int iNumInCurRow = m_Def.rows[m_iCurLine].choices.size();
-	if( iNumInCurRow==0 )
-		return false;
-	else
-		return m_iCurAnswers[m_iCurLine] != iNumInCurRow-1;
-}
-
-
-
-Menu::Menu( CString t, const MenuRow *rowp )
-{
-	title = t;
-	for( int i = 0; rowp[i].name; ++i )
-		rows.push_back( rowp[i] );
-}
-
-MenuRowInternal::MenuRowInternal( const MenuRow &r )
-{
-	iRowCode = r.iRowCode;
-	name = r.name;
-	enabled = r.enabled;
-	defaultChoice = r.defaultChoice;
-	bShowInHomeEditMode = r.bShowInHomeEditMode;
-#define PUSH( c )   if(c!=NULL) choices.push_back(c);
-	for( unsigned i = 0; i < ARRAYSIZE(r.choices); ++i )
-		PUSH( r.choices[i] );
-#undef PUSH
-}
-
-void MenuRowInternal::SetDefaultChoiceIfPresent( const CString &s )
-{
-	FOREACH( CString, choices, c )
-	{
-		if( *c == s )
-		{
-			defaultChoice = c - choices.begin();
-			return;
-		}
-	}
-}
 
 /*
  * (c) 2003-2004 Chris Danford

@@ -86,6 +86,8 @@ int OptionToPreferredColumn( CString sOptionText )
 void OptionIconRow::Load( PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
+	for( unsigned i=0; i<NUM_OPTION_COLS; i++ )
+		m_OptionIcon[i].Load( "OptionIconRow" );		
 }
 
 void OptionIconRow::Refresh()
@@ -93,8 +95,6 @@ void OptionIconRow::Refresh()
 	ASSERT( m_PlayerNumber != NUM_PLAYERS );
 	
 	// init
-	for( unsigned i=0; i<NUM_OPTION_COLS; i++ )
-		m_OptionIcon[i].Load( m_PlayerNumber, "", i==0 );		
 
 	CString sOptions = GAMESTATE->m_pPlayerState[m_PlayerNumber]->m_PlayerOptions.GetString();
 	CStringArray asOptions;
@@ -125,8 +125,11 @@ void OptionIconRow::Refresh()
 		}
 	}
 
-	for( unsigned i=0; i<NUM_OPTION_COLS-1; i++ )
-		m_OptionIcon[i+1].Load( m_PlayerNumber, asTabs[i], false );		
+	for( unsigned i=0; i<NUM_OPTION_COLS; i++ )
+		if( i == 0 )
+			m_OptionIcon[i].Set( m_PlayerNumber, "", true );
+		else
+			m_OptionIcon[i].Set( m_PlayerNumber, asTabs[i-1], false );		
 }
 
 void OptionIconRow::DrawPrimitives()

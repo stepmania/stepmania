@@ -221,7 +221,8 @@ public:
 		NUM_MAIN_MENU_CHOICES,
 		MAIN_MENU_CHOICE_INVALID
 	};
-	void HandleMainMenuChoice( MainMenuChoice c, int* iAnswers );
+	void HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers );
+	void HandleMainMenuChoice( MainMenuChoice c ) { const vector<int> v; HandleMainMenuChoice( c, v ); }
 	MainMenuChoice m_CurrentAction;
 
 	enum AreaMenuChoice {
@@ -245,7 +246,8 @@ public:
 		convert_pause_to_beat,
 		NUM_AREA_MENU_CHOICES
 	};
-	void HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers );
+	void HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAnswers );
+	void HandleAreaMenuChoice( AreaMenuChoice c ) { const vector<int> v; HandleAreaMenuChoice( c, v ); }
 	enum TurnType
 	{
 		left,
@@ -315,7 +317,7 @@ public:
 		chaos,
 		NUM_EDIT_NOTES_STATISTICS_CHOICES
 	};
-	void HandleEditNotesStatisticsChoice( EditNotesStatisticsChoice c, int* iAnswers );
+	void HandleEditNotesStatisticsChoice( EditNotesStatisticsChoice c, const vector<int> &iAnswers );
 
 	enum EditSongInfoChoice {
 		main_title,
@@ -327,7 +329,7 @@ public:
 		artist_transliteration,
 		NUM_EDIT_SONG_INFO_CHOICES
 	};
-	void HandleEditSongInfoChoice( EditSongInfoChoice c, int* iAnswers );
+	void HandleEditSongInfoChoice( EditSongInfoChoice c, const vector<int> &iAnswers );
 
 	enum BGChangeChoice {
 		rate,
@@ -349,7 +351,7 @@ public:
 		pref_show_bgs_play,
 		NUM_PREFS_CHOICES
 	};
-	void HandleBGChangeChoice( BGChangeChoice c, int* iAnswers );
+	void HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAnswers );
 
 	void InitEditMappings();
 	bool DeviceToEdit( DeviceInput DeviceI, EditButton &button ) const;
