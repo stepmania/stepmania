@@ -106,6 +106,9 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	if( GAMESTATE->m_pCurSong == NULL && GAMESTATE->m_pCurCourse == NULL )
 		return;	// ScreenDemonstration will move us to the next scren.  We just need to survive for one update without crashing.
 
+	/* Save selected options before we change them. */
+	GAMESTATE->StoreSelectedOptions();
+
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
@@ -512,14 +515,8 @@ void ScreenGameplay::LoadNextSong()
 	GAMESTATE->ResetMusicStatistics();
 	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		// If it's the first song, record the options the player selected for later.
-		if( GAMESTATE->m_CurStageStats.iSongsPlayed[p] == 0 )
-			GAMESTATE->m_SelectedOptions[p] = GAMESTATE->m_PlayerOptions[p];
-
 		if( GAMESTATE->IsPlayerEnabled(p) )
 			GAMESTATE->m_CurStageStats.iSongsPlayed[p]++;
-	}
 
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -536,14 +533,15 @@ void ScreenGameplay::LoadNextSong()
 			iPlaySongIndex %= m_apCourseSongs.size();
 			GAMESTATE->m_pCurSong = m_apCourseSongs[iPlaySongIndex];
 
+			// Restore the player's originally selected options.
+			GAMESTATE->RestoreSelectedOptions();
+
 			for( p=0; p<NUM_PLAYERS; p++ )
 			{
 				GAMESTATE->m_pCurNotes[p] = m_apCourseNotes[iPlaySongIndex];
-				// Restore the player's originally selected options.
-				GAMESTATE->m_PlayerOptions[p] = GAMESTATE->m_SelectedOptions[p];
+
 				// Put courses options into effect.
 				GAMESTATE->m_PlayerOptions[p].FromString( m_asCourseModifiers[iPlaySongIndex] );
-				GAMESTATE->m_SongOptions.Init();
 				GAMESTATE->m_SongOptions.FromString( m_asCourseModifiers[iPlaySongIndex] );
 			}
 		}
@@ -1433,9 +1431,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToScreenAfterBack:
 		/* Reset options.  (Should this be done in ScreenSelect*?) */
-		for( p=0; p<NUM_PLAYERS; p++ )
-			GAMESTATE->m_PlayerOptions[p] = GAMESTATE->m_SelectedOptions[p];
-		GAMESTATE->m_SongOptions.Init();
+		GAMESTATE->RestoreSelectedOptions();
+
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:	
@@ -1451,6 +1448,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		}
 		break;
 	case SM_GoToStateAfterCleared:
+		/* Reset options.  (Should this be done in ScreenSelect*?) */
+		GAMESTATE->RestoreSelectedOptions();
+
 		if( m_bChangedOffsetOrBPM )
 		{
 			m_bChangedOffsetOrBPM = false;
@@ -1518,6 +1518,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 
 	case SM_GoToScreenAfterFail:
+		/* Reset options.  (Should this be done in ScreenSelect*?) */
+		GAMESTATE->RestoreSelectedOptions();
+
 		if( m_bChangedOffsetOrBPM )
 		{
 			m_bChangedOffsetOrBPM = false;
