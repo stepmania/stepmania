@@ -105,17 +105,20 @@ float TimeToSeconds( CString sHMS )
 
 CString SecondsToTime( float fSecs )
 {
-	int iMinsDisplay = (int)fSecs/60;
-	int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
-	float fLeftoverDisplay = (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100;
+	const int iMinsDisplay = (int)fSecs/60;
+	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
+	const float fLeftoverDisplay = (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100;
 	CString sReturn = ssprintf( "%02d:%02d:%02.0f", iMinsDisplay, iSecsDisplay, min(99.0f,fLeftoverDisplay) );
-	if( iMinsDisplay > 99 ) {
+	if( iMinsDisplay >= 60 )
+	{
 		/* Oops.  Probably a really long endless course.  Do "hh:mm.ss"; use a period
 		 * to differentiate between "mm:ss:ms".  I'd much prefer reversing those, since
 		 * it makes much more sense to do "mm:ss.ms", but people would probably complain
-		 * about "arcade accuracy" ... */
-		sReturn = ssprintf( "%02d:%02d.%02.0f", iMinsDisplay/60, iMinsDisplay%60, iSecsDisplay );
+		 * about "arcade accuracy" ... 
+		 */
+		sReturn = ssprintf( "%02d:%02d.%02d", iMinsDisplay/60, iMinsDisplay%60, iSecsDisplay );
 	}
+
 	ASSERT( sReturn.GetLength() <= 8 );
 	return sReturn;
 }
