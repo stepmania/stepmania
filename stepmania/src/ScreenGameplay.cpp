@@ -954,6 +954,10 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 void SaveChanges()
 {
+	/* XXX: Hmm.  Better would be to make sure m_pCurCourse is only set when we're
+	 * playing out of a course, and use that here, so these things wouldn't need to
+	 * special case play modes.  Need to make sure m_pCurCourse gets erased
+	 * correctly, though. -glenn */
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
