@@ -96,7 +96,7 @@ void LightsManager::Update( float fDeltaTime )
 		break;
 	case LIGHTSMODE_ATTRACT:
 		{
-			int iSec = (int)RageTimer::GetTimeSinceStart();
+			int iSec = (int)RageTimer::GetTimeSinceStartFast();
 			int iTopIndex = iSec % 4;
 			switch( iTopIndex )
 			{
@@ -154,7 +154,7 @@ void LightsManager::Update( float fDeltaTime )
 		break;
 	case LIGHTSMODE_TEST:
 		{
-			int iSec = (int)RageTimer::GetTimeSinceStart();
+			int iSec = (int)RageTimer::GetTimeSinceStartFast();
 			FOREACH_CabinetLight( cl )
 			{
 				bool bOn = (iSec%NUM_CABINET_LIGHTS) == cl;
@@ -246,7 +246,7 @@ void LightsManager::Update( float fDeltaTime )
 		break;
 	case LIGHTSMODE_TEST:
 		{
-			int iSec = (int)RageTimer::GetTimeSinceStart();
+			int iSec = (int)RageTimer::GetTimeSinceStartFast();
 
 			int iNumGameButtonsToShow = GAMESTATE->GetCurrentGame()->GetNumGameplayButtons();
 

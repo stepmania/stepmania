@@ -153,7 +153,7 @@ float ArrowEffects::GetYPos( const PlayerState* pPlayerState, int iCol, float fY
 	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_TIPSY] > 0 )
-		f += fEffects[PlayerOptions::EFFECT_TIPSY] * ( cosf( RageTimer::GetTimeSinceStart()*1.2f + iCol*1.8f) * ARROW_SIZE*0.4f );
+		f += fEffects[PlayerOptions::EFFECT_TIPSY] * ( cosf( RageTimer::GetTimeSinceStartFast()*1.2f + iCol*1.8f) * ARROW_SIZE*0.4f );
 	return f;
 }
 
@@ -163,7 +163,7 @@ float ArrowEffects::GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCo
 
 	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
 	if( fEffects[PlayerOptions::EFFECT_TIPSY] > 0 )
-		f -= fEffects[PlayerOptions::EFFECT_TIPSY] * ( cosf( RageTimer::GetTimeSinceStart()*1.2f + iCol*2.f) * ARROW_SIZE*0.4f );
+		f -= fEffects[PlayerOptions::EFFECT_TIPSY] * ( cosf( RageTimer::GetTimeSinceStartFast()*1.2f + iCol*2.f) * ARROW_SIZE*0.4f );
 
 	float fShift, fScale;
 	ArrowGetReverseShiftAndScale( pPlayerState, iCol, fYReverseOffsetPixels, fShift, fScale );
@@ -218,7 +218,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	}
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] > 0 )
-		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * ( cosf( RageTimer::GetTimeSinceStart() + iColNum*0.2f + fYOffset*10/SCREEN_HEIGHT) * ARROW_SIZE*0.5f );
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * ( cosf( RageTimer::GetTimeSinceStartFast() + iColNum*0.2f + fYOffset*10/SCREEN_HEIGHT) * ARROW_SIZE*0.5f );
 	if( fEffects[PlayerOptions::EFFECT_FLIP] > 0 )
 	{
 		// TODO: Don't index by PlayerNumber.
@@ -377,8 +377,8 @@ float ArrowGetPercentVisible( const PlayerState* pPlayerState, int iCol, float f
 		fVisibleAdjust -= fAppearances[PlayerOptions::APPEARANCE_STEALTH];
 	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] > 0 )
 	{
-		float f = sinf(RageTimer::GetTimeSinceStart()*10);
-        f = Quantize( f, 0.3333f );
+		float f = sinf(RageTimer::GetTimeSinceStartFast()*10);
+		f = Quantize( f, 0.3333f );
 		fVisibleAdjust += SCALE( f, 0, 1, -1, 0 );
 	}
 	if( fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] > 0)

@@ -273,7 +273,7 @@ void ScreenSystemLayer::UpdateSkips()
 
 	if( skip )
 	{
-		CString time(SecondsToMMSSMsMs(RageTimer::GetTimeSinceStart()));
+		CString time(SecondsToMMSSMsMs(RageTimer::GetTimeSinceStartFast()));
 
 		static const RageColor colors[] =
 		{
@@ -307,7 +307,7 @@ void ScreenSystemLayer::Update( float fDeltaTime )
 	UpdateSkips();
 
 	if( PREFSMAN->m_bTimestamping )
-		m_textTime.SetText( SecondsToMMSSMsMs(RageTimer::GetTimeSinceStart()) );
+		m_textTime.SetText( SecondsToMMSSMsMs(RageTimer::GetTimeSinceStartFast()) );
 }
 
 /*

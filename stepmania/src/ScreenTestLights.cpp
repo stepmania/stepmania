@@ -45,7 +45,7 @@ void ScreenTestLights::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
 
-	int iSec = (int)RageTimer::GetTimeSinceStart();
+	int iSec = (int)RageTimer::GetTimeSinceStartFast();
 
 	CabinetLight cl = (CabinetLight)(iSec%NUM_CABINET_LIGHTS);
 	int iNumGameButtonsToShow = GAMESTATE->GetCurrentGame()->GetNumGameplayButtons();

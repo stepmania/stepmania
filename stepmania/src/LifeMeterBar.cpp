@@ -514,7 +514,7 @@ void LifeMeterBar::DrawPrimitives()
 	m_pStream->m_fPassingAlpha = m_fPassingAlpha;
 	m_pStream->m_fHotAlpha = m_fHotAlpha;
 
-	float fPercentRed = (m_fTrailingLifePercentage<DANGER_THRESHOLD) ? sinf( RageTimer::GetTimeSinceStart()*PI*4 )/2+0.5f : 0;
+	float fPercentRed = (m_fTrailingLifePercentage<DANGER_THRESHOLD) ? sinf( RageTimer::GetTimeSinceStartFast()*PI*4 )/2+0.5f : 0;
 	m_quadBlackBackground.SetDiffuse( RageColor(fPercentRed*0.8f,0,0,1) );
 
 	ActorFrame::DrawPrimitives();

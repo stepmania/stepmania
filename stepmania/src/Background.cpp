@@ -681,7 +681,7 @@ bool Background::IsDangerAllVisible()
 		return false;
 
 	if( BLINK_DANGER_ALL )
-		return (RageTimer::GetTimeSinceStart() - (int)RageTimer::GetTimeSinceStart()) < 0.5f;
+		return (RageTimer::GetTimeSinceStartFast() - (int)RageTimer::GetTimeSinceStartFast()) < 0.5f;
 	else
 		return true;
 }

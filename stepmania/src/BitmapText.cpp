@@ -517,7 +517,7 @@ void BitmapText::DrawPrimitives()
 		//////////////////////
 		if( m_bRainbow )
 		{
-			int color_index = int(RageTimer::GetTimeSinceStart() / 0.200) % NUM_RAINBOW_COLORS;
+			int color_index = int(RageTimer::GetTimeSinceStartFast() / 0.200) % NUM_RAINBOW_COLORS;
 			for( unsigned i=0; i<verts.size(); i+=4 )
 			{
 				const RageColor color = RAINBOW_COLORS[color_index];

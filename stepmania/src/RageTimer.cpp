@@ -30,24 +30,28 @@
 
 const RageTimer RageZeroTimer(0,0);
 
-static void GetTime( unsigned &secs, unsigned &us )
+static void GetTime( unsigned &secs, unsigned &us, bool bAccurate )
 {
-	uint64_t usecs = ArchHooks::GetMicrosecondsSinceStart( true );
+	// if !bAccurate, then don't call ArchHooks to find the current time.  Just return the 
+	// last calculated time.  GetMicrosecondsSinceStart is slow on some archs.
+	static uint64_t usecs = 0;
+	if( bAccurate )
+		usecs = ArchHooks::GetMicrosecondsSinceStart( true );
 
 	secs = unsigned(usecs / 1000000);
 	us =   unsigned(usecs % 1000000);
 }
 
-float RageTimer::GetTimeSinceStart()
+float RageTimer::GetTimeSinceStart( bool bAccurate )
 {
 	unsigned secs, us;
-	GetTime( secs, us );
-	return secs + us / 1000000.0f;
+	GetTime( secs, us, bAccurate );
+	return secs + (us / 1000000.0f);
 }
 
 void RageTimer::Touch()
 {
-	GetTime( this->m_secs, this->m_us );
+	GetTime( this->m_secs, this->m_us, true );
 }
 
 float RageTimer::Ago() const

@@ -284,7 +284,7 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 
 	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
 	m_textMeasureNumber.SetDiffuse( RageColor(1,0,0,1) );
-	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStart()*2)/2+0.5f) );
+	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.2f", fBPM) );
 	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 60, fYPos );
 	m_textMeasureNumber.Draw();
@@ -297,7 +297,7 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 
 	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
 	m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
-	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStart()*2)/2+0.5f) );
+	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.2f", fSecs) );
 	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 10, fYPos );
 	m_textMeasureNumber.Draw();
@@ -310,7 +310,7 @@ void NoteField::DrawBGChangeText( const float fBeat, const CString sNewBGName )
 
 	m_textMeasureNumber.SetHorizAlign( Actor::align_left );
 	m_textMeasureNumber.SetDiffuse( RageColor(0,1,0,1) );
-	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStart()*2)/2+0.5f) );
+	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( sNewBGName );
 	m_textMeasureNumber.SetXY( +GetWidth()/2.f, fYPos );
 	m_textMeasureNumber.Draw();
@@ -525,7 +525,7 @@ void NoteField::DrawPrimitives()
 	// draw in big batches.
 	//
 
-	float fSelectedRangeGlow = SCALE( cosf(RageTimer::GetTimeSinceStart()*2), -1, 1, 0.1f, 0.3f );
+	float fSelectedRangeGlow = SCALE( cosf(RageTimer::GetTimeSinceStartFast()*2), -1, 1, 0.1f, 0.3f );
 
 	for( int c=0; c<m_pNoteData->GetNumTracks(); c++ )	// for each arrow column
 	{

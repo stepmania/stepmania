@@ -21,7 +21,8 @@ public:
 	float PeekDeltaTime() const { return Ago(); }
 
 	/* deprecated: */
-	static float GetTimeSinceStart();	// seconds since the program was started
+	static float GetTimeSinceStart( bool bAccurate = true );	// seconds since the program was started
+	static float GetTimeSinceStartFast() { return GetTimeSinceStart(false); }
 
 	/* Get a timer representing half of the time ago as this one. */
 	RageTimer Half() const;

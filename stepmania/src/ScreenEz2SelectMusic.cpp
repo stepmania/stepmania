@@ -285,15 +285,15 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 		if(ScrollStartTime == 0)
 		{
 			i_SkipAheadOffset = 0;
-			ScrollStartTime = RageTimer::GetTimeSinceStart();
+			ScrollStartTime = RageTimer::GetTimeSinceStartFast();
 		}
 		else
 		{
-			if(RageTimer::GetTimeSinceStart() - ScrollStartTime > 5) // been cycling for more than 5 seconds
+			if(RageTimer::GetTimeSinceStartFast() - ScrollStartTime > 5) // been cycling for more than 5 seconds
 			{
 				i_SkipAheadOffset = 2; // start skipping ahead in twos
 			}
-			else if (RageTimer::GetTimeSinceStart() - ScrollStartTime > 10) // been cycling for more than 10 seconds
+			else if (RageTimer::GetTimeSinceStartFast() - ScrollStartTime > 10) // been cycling for more than 10 seconds
 			{
 				i_SkipAheadOffset = 3; // start skipping ahead 3 at a time
 			}
@@ -307,7 +307,7 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	//	m_soundMusicChange.Play();
 		m_soundButtonPress.Play();
 	}
-	LastInputTime = RageTimer::GetTimeSinceStart();
+	LastInputTime = RageTimer::GetTimeSinceStartFast();
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
@@ -468,7 +468,7 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 	}
 
 	m_bMadeChoice = true;
-	m_fRemainingWaitTime = RageTimer::GetTimeSinceStart();
+	m_fRemainingWaitTime = RageTimer::GetTimeSinceStartFast();
 
 	TweenOffScreen();
 
@@ -488,7 +488,7 @@ void ScreenEz2SelectMusic::Update( float fDeltaTime )
 {
 	m_DifficultyRating.Update(fDeltaTime);
 
-	if(i_SkipAheadOffset > 0 && RageTimer::GetTimeSinceStart() - LastInputTime < 0.5)
+	if(i_SkipAheadOffset > 0 && RageTimer::GetTimeSinceStartFast() - LastInputTime < 0.5)
 	{
 		m_MusicBannerWheel.SetScanMode(true);
 	}
@@ -504,7 +504,7 @@ void ScreenEz2SelectMusic::Update( float fDeltaTime )
 		this->PostScreenMessage( SM_NoSongs, 5.5f ); // timeout incase the user decides to do nothing :D
 	}
 
-	if(m_bMadeChoice && RageTimer::GetTimeSinceStart() > m_fRemainingWaitTime + 2 && !m_bTransitioning)
+	if(m_bMadeChoice && RageTimer::GetTimeSinceStartFast() > m_fRemainingWaitTime + 2 && !m_bTransitioning)
 	{
 		m_bTransitioning = true;
 		StartTransitioning( SM_GoToNextScreen );
