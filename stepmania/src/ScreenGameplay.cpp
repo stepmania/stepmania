@@ -78,10 +78,8 @@ const ScreenMessage	SM_LoadNextSong			= ScreenMessage(SM_User+11);
 // received while STATE_OUTRO
 const ScreenMessage	SM_SaveChangedBeforeGoingBack	= ScreenMessage(SM_User+20);
 const ScreenMessage	SM_GoToScreenAfterBack	= ScreenMessage(SM_User+21);
-const ScreenMessage	SM_GoToStateAfterCleared= ScreenMessage(SM_User+22);
 
 const ScreenMessage	SM_BeginFailed			= ScreenMessage(SM_User+30);
-const ScreenMessage	SM_GoToScreenAfterFail	= ScreenMessage(SM_User+31);
 
 // received while STATE_INTRO
 const ScreenMessage	SM_StartHereWeGo		= ScreenMessage(SM_User+40);
@@ -2199,7 +2197,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			if( GAMESTATE->HasEarnedExtraStage() )
 			{
 				TweenOffScreen();
-				m_Extra.StartTransitioning( SM_GoToStateAfterCleared );
+				m_Extra.StartTransitioning( SM_GoToNextScreen );
 				SOUND->PlayOnceFromAnnouncer( "gameplay extra" );
 			}
 			else
@@ -2215,16 +2213,16 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 						switch( winner )
 						{
 						case PLAYER_INVALID:
-							m_Draw.StartTransitioning( SM_GoToStateAfterCleared );
+							m_Draw.StartTransitioning( SM_GoToNextScreen );
 							break;
 						default:
-							m_Win[winner].StartTransitioning( SM_GoToStateAfterCleared );
+							m_Win[winner].StartTransitioning( SM_GoToNextScreen );
 							break;
 						}
 					}
 					break;
 				default:
-					m_Cleared.StartTransitioning( SM_GoToStateAfterCleared );
+					m_Cleared.StartTransitioning( SM_GoToNextScreen );
 					break;
 				}
 				
@@ -2334,12 +2332,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		break;
 
-	case SM_GoToStateAfterCleared:
-	case SM_GoToScreenAfterFail:
+	case SM_GoToNextScreen:
 		if( m_bChangedOffsetOrBPM )
 		{
 			m_bChangedOffsetOrBPM = false;
-			ShowSavePrompt( SM );
+			ShowSavePrompt( SM_GoToNextScreen );
 			break;
 		}
 		
@@ -2359,7 +2356,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_pSoundMusic->StopPlaying();
 		m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 		TweenOffScreen();
-		m_Failed.StartTransitioning( SM_GoToScreenAfterFail );
+		m_Failed.StartTransitioning( SM_GoToNextScreen );
 
 		// show the survive time if extra stage
 		if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
