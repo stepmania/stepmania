@@ -215,6 +215,7 @@ void MovieTexture_AVCodec::Create()
 			m_iSourceWidth, m_iSourceHeight,
 			m_iImageWidth, m_iImageHeight, m_iTextureWidth, m_iTextureHeight);
 	LOG->Trace("Bitrate: %i", m_stream->codec.bit_rate );
+	LOG->Trace("Codec pixel format: %i", m_stream->codec.pix_fmt );
 
 	/* We've set up the movie, so we know the dimensions we need.  Set
 	 * up the texture. */
