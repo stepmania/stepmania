@@ -4,6 +4,7 @@
 
 #include "RageUtil.h"
 #include "SDL_utils.h"
+#include "SDL_endian.h"
 #include "RageSoundReader_Vorbisfile.h"
 #include "RageLog.h"
 
@@ -183,6 +184,13 @@ int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
 		bytes_read += size;
 	}
 
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	/* I can't imagine why, but Vorbisfile returns data in little endian, not system-endian. */
+	Sint16 *sbuf = (Sint16 *) buf;
+	for( int i = 0; i < bytes_read/2; ++i )
+		sbuf[i] = SDL_Swap16(sbuf[i]);
+#endif
+	
 	return bytes_read;
 }
 
