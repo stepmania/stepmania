@@ -1,9 +1,11 @@
 #include "global.h"
 #include "RageFileDriverZip.h"
+#include "RageLog.h"
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
 #include <errno.h>
 #include <zzip/zzip.h>
+#include <zzip/plugin.h>
 
 #if defined(_WINDOWS)
 	#ifdef DEBUG
@@ -13,6 +15,54 @@
 	#endif	
 #endif
 #pragma comment(lib, "zzip/zlib.lib")
+
+int OggRageFile_open(zzip_char_t* name, int flags, ...)
+{
+	RageFile *f = new RageFile;
+	if( !f->Open(name) )
+	{
+		LOG->Trace("Opening \"%s\" failed: %s", name, f->GetError().c_str());
+		delete f;
+		errno = ENOENT;
+		return -1;
+	}
+	
+	return (int) f;
+}
+
+int OggRageFile_close(int fd)
+{
+	RageFile *f = (RageFile *) fd;
+	delete f;
+	return 0;
+}
+
+zzip_ssize_t OggRageFile_read(int fd, void* buf, zzip_size_t len)
+{
+	RageFile *f = (RageFile *) fd;
+	return f->Read( buf, len );
+}
+
+zzip_off_t OggRageFile_seeks(int fd, zzip_off_t offset, int whence)
+{
+	RageFile *f = (RageFile *) fd;
+	return f->Seek( offset, whence );
+}
+
+zzip_off_t OggRageFile_filesize(int fd)
+{
+	RageFile *f = (RageFile *) fd;
+	return f->GetFileSize();
+}
+
+zzip_ssize_t OggRageFile_write(int fd, _zzip_const void* buf, zzip_size_t len)
+{
+	errno = EINVAL;
+	return -1;
+}
+
+
+static zzip_plugin_io_handlers ZzipCallbacks;
 
 class RageFileObjZip: public RageFileObj
 {
@@ -43,8 +93,22 @@ public:
 RageFileDriverZip::RageFileDriverZip( CString path ):
 	RageFileDriver( new ZipFilenameDB )
 {
+	static bool initted = false;
+	if( !initted )
+	{
+		initted = true;
+		zzip_init_io( &ZzipCallbacks, 0 );
+
+		ZzipCallbacks.fd.open = OggRageFile_open;
+		ZzipCallbacks.fd.close = OggRageFile_close;
+		ZzipCallbacks.fd.read = OggRageFile_read;
+		ZzipCallbacks.fd.seeks = OggRageFile_seeks;
+		ZzipCallbacks.fd.filesize = OggRageFile_filesize;
+		ZzipCallbacks.fd.write = OggRageFile_write;
+	}
+
 	zzip_error_t err;
-	dir = zzip_dir_open( path, &err );
+	dir = zzip_dir_open_ext_io( path, &err, NULL, NULL ); //&ZzipCallbacks.fd );
 	if( dir == NULL )
 		RageException::Throw( "Couldn't open %s: %s", path.c_str(), zzip_strerror(err) );
 
