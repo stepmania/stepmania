@@ -214,9 +214,6 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 			fprintf( fp, "{" );
 			fCurrentIncrementer = 1.0/64 * BEATS_PER_MEASURE;
 			break;
-		default:
-			ASSERT(0);
-			// fall though
 		case NOTE_TYPE_48TH:
 		case NOTE_TYPE_192ND:
 		case NOTE_TYPE_INVALID:
@@ -224,6 +221,9 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 			// 48ths is through a block of 192nds...
 			fprintf( fp, "`" );
 			fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
+			break;
+		default:
+			RAGE_ASSERT_M(0, ssprintf("nt = %d",nt) );
 			break;
 		}
 
