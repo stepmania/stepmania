@@ -1275,19 +1275,6 @@ cl                                                                              
 						RelativePath="arch\Threads\Threads_Win32.h">
 					</File>
 				</Filter>
-				<Filter
-					Name="Power"
-					Filter="">
-					<File
-						RelativePath=".\powerXBMC\IoSupport.h">
-					</File>
-					<File
-						RelativePath=".\powerXBMC\XKUtils.cpp">
-					</File>
-					<File
-						RelativePath=".\powerXBMC\XKUtils.h">
-					</File>
-				</Filter>
 			</Filter>
 			<Filter
 				Name="system"
