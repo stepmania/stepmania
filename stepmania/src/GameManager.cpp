@@ -55,6 +55,10 @@ struct {
 	{ "para-single",	5 },
 	{ "ds3ddx-single",	8 },
 	{ "bm-single",		6 },
+// MD 10/26/03 - for future support
+//  { "bm-double",      12 },
+//  { "bm-single7",     8 },
+//  { "bm-double7",     16 },
 	{ "maniax-single",	4 },
 	{ "maniax-double",	8 },
 	{ "techno-single8", 8 },

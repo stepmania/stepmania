@@ -8,6 +8,8 @@
 class BMSLoader: public NotesLoader {
 	bool LoadFromBMSFile( const CString &sPath, Steps &out1 );
 	void mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &cNoteCharOut );
+	void PushTrackNumForMagic( int iTrackNum );
+	StepsType CheckTracksMagic( void );
 
 public:
 	void GetApplicableFiles( CString sPath, CStringArray &out );

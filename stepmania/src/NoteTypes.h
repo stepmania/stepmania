@@ -52,6 +52,12 @@ enum
 	TRACK_11,
 	TRACK_12,
 	TRACK_13,	// BMS reader needs 13 tracks
+	// MD 10/26/03 - BMS reader needs a whole lot more than 13 tracks - more like 16
+	//   because we have 11-16, 18, 19, 21-26, 28, 29 for IIDX double (bm-double7)
+	TRACK_14,
+	TRACK_15,
+	TRACK_16,
+	// MD 10/26/03 end
 	MAX_NOTE_TRACKS		// leave this at the end
 };
 
@@ -88,7 +94,7 @@ struct HoldNote
 };
 
 
-inline int   BeatToNoteRow( float fBeatNum )			{ return (int) roundf( fBeatNum * ROWS_PER_BEAT); };
+inline int   BeatToNoteRow( float fBeatNum )			{ return int( fBeatNum * ROWS_PER_BEAT + 0.5f); };	// round
 inline int   BeatToNoteRowNotRounded( float fBeatNum )	{ return (int)( fBeatNum * ROWS_PER_BEAT ); };
 inline float NoteRowToBeat( float fNoteIndex )			{ return fNoteIndex / (float)ROWS_PER_BEAT;	 };
 inline float NoteRowToBeat( int iNoteIndex )			{ return NoteRowToBeat( (float)iNoteIndex );	 };

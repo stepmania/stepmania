@@ -28,6 +28,66 @@
 //	While reading in, use the 6 panel mapping.  After reading in, detect if only 4 notes
 //	are used.  If so, shift the Up+Right column back to the Up column
 //
+
+// MD 10/26/03 - Hey, folks, BMSes are used for things BESIDES DDR steps, 
+//    and so we're borking up BMSes that are for pnm/bm/etc.
+//
+// pnm-nine:   11-15,21-24
+// pnm-five:   13-15,21-22
+// bm-single:  11-16
+// bm-double:  11-16,21-26
+// bm-single7: 11-16,18-19
+// bm-double7: 11-16,18-19,21-26,28-29
+// 
+// So the magics for these are:
+// pnm-nine: nothing >5, with 12, 14, 22 and/or 24
+// pnm-five: nothing >5, with 14 and/or 22
+// bm-*: 18/19 - 7-key modes have 16/17/26/27
+//
+
+int iTracks[MAX_NOTE_TRACKS];
+
+void BMSLoader::PushTrackNumForMagic( int iTrackNum ) {
+	int ix = (iTrackNum < 20) ? (iTrackNum - 11) : (iTrackNum - 12);
+	iTracks[ix]++;
+}
+StepsType BMSLoader::CheckTracksMagic( void ) {
+	int iTrackCount = 0;
+	for (int ix = 0; ix<MAX_NOTE_TRACKS; ix++) {
+		if(iTracks[ix] != 0) iTrackCount++;
+	}
+	// Panel counts:
+	// 4 - DDR
+	// 5 - PNM 5-key
+	// 6 - DDR Solo, BM 5-key
+	// 8 - DDR Double. BM 7-key
+	// 9 - PNM 9-key, BM 7-key
+	// 12 - BM Double 5-key
+	// 16 - BM Double 7-key
+	switch(iTrackCount) {
+	case 4:
+		return STEPS_TYPE_DANCE_SINGLE;
+	case 5:
+		return STEPS_TYPE_PNM_FIVE;
+	case 6:
+		return STEPS_TYPE_DANCE_SOLO;
+	case 8:
+		// Could also be couple or 7-key.
+		// TODO: Insert the magic check between IIDX and DDR Double - 12, 14, 18, or 19.
+		//       Until BM 7-key is supported in stepfiles, we'll assume it's DDR.
+		return STEPS_TYPE_DANCE_DOUBLE;
+	case 9:
+		return STEPS_TYPE_PNM_NINE;
+	case 12:
+		// TODO: Uncomment these once BM Double 5/7-key is supported.
+		// return STEPS_TYPE_BM_DOUBLE;
+	case 16:
+		// return STEPS_TYPE_BM_DOUBLE7;
+	default:
+		return STEPS_TYPE_INVALID;
+	}
+}
+
 void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &cNoteCharOut )
 {
 	if( iBMSTrack > 40 )
@@ -42,6 +102,7 @@ void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &
 
 	switch( iBMSTrack )
 	{
+/* MD 10/26/03 - Let's try this with the new numbers.
 	case 11:	iDanceColOut = DANCE_NOTE_PAD1_LEFT;	break;
 	case 12:	iDanceColOut = DANCE_NOTE_PAD1_UPLEFT;	break;
 	case 13:	iDanceColOut = DANCE_NOTE_PAD1_DOWN;	break;
@@ -54,6 +115,23 @@ void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &
 	case 24:	iDanceColOut = DANCE_NOTE_PAD2_UP;		break;
 	case 25:	iDanceColOut = DANCE_NOTE_PAD2_UPRIGHT;	break;
 	case 26:	iDanceColOut = DANCE_NOTE_PAD2_RIGHT;	break;
+*/
+	case 11:	iDanceColOut = BMS_P1_KEY1;				break;
+	case 12:	iDanceColOut = BMS_P1_KEY2;				break;
+	case 13:	iDanceColOut = BMS_P1_KEY3;				break;
+	case 14:	iDanceColOut = BMS_P1_KEY4;				break;
+	case 15:	iDanceColOut = BMS_P1_KEY5;				break;
+	case 16:	iDanceColOut = BMS_P1_TURN;				break;
+	case 18:	iDanceColOut = BMS_P1_KEY6;				break;
+	case 19:	iDanceColOut = BMS_P1_KEY7;				break;
+	case 21:	iDanceColOut = BMS_P2_KEY1;				break;
+	case 22:	iDanceColOut = BMS_P2_KEY2;				break;
+	case 23:	iDanceColOut = BMS_P2_KEY3;				break;
+	case 24:	iDanceColOut = BMS_P2_KEY4;				break;
+	case 25:	iDanceColOut = BMS_P2_KEY5;				break;
+	case 26:	iDanceColOut = BMS_P2_TURN;				break;
+	case 28:	iDanceColOut = BMS_P2_KEY6;				break;
+	case 29:	iDanceColOut = BMS_P2_KEY7;				break;
 	default:	iDanceColOut = -1;						break;
 	}
 }
@@ -114,6 +192,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 				out.m_StepsType = STEPS_TYPE_DANCE_COUPLE;
 				break;
 			case 3:		// double
+				// Fix it if we find that.
 				out.m_StepsType = STEPS_TYPE_DANCE_DOUBLE;
 				break;
 			default:
@@ -155,6 +234,11 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 			int iMeasureNo	= atoi( value_name.substr(1,3).c_str() );
 			int iTrackNum	= atoi( value_name.substr(4,2).c_str() );
 
+			// MD 10/26/03 - fix for Pop N' and such, including "if there are six panels, then we have Solo" - check here,
+			//    then put the correct step type later
+			BMS_PushTrackNumForMagic(iTrackNum);
+			// end MD 10/26/03
+
 			CString &sNoteData = value_data;
 			vector<bool> arrayNotes;
 
@@ -167,6 +251,8 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 			const unsigned iNumNotesInThisMeasure = arrayNotes.size();
 			//LOG->Trace( "%s:%s: iMeasureNo = %d, iNoteNum = %d, iNumNotesInThisMeasure = %d", 
 			//	valuename.c_str(), sNoteData.c_str(), iMeasureNo, iNoteNum, iNumNotesInThisMeasure );
+
+
 			for( unsigned j=0; j<iNumNotesInThisMeasure; j++ )
 			{
 				if( arrayNotes[j] )
@@ -177,6 +263,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 									 * BEATS_PER_MEASURE * ROWS_PER_BEAT );
 					int iColumnNumber;
 					char cNoteChar;
+					
 					mapBMSTrackToDanceNote( iTrackNum, iColumnNumber, cNoteChar );
 
 					if( iColumnNumber != -1 )
@@ -186,12 +273,20 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		}
 	}
 	
+	// MD 10/26/03 - dance-couple is the only one we should retain unchanged.
+	if( out.m_StepsType != STEPS_TYPE_DANCE_COUPLE)
+	{
+		out.m_StepsType = CheckTracksMagic();
+	}
+
+	/* We fix this later, since we're not moving columns around right now.
 	if( out.m_StepsType == STEPS_TYPE_DANCE_SINGLE  || 
 		out.m_StepsType == STEPS_TYPE_DANCE_DOUBLE  || 
 		out.m_StepsType == STEPS_TYPE_DANCE_COUPLE)	// if there are 4 panels, then the Up+Right track really contains the notes for Up
 	{
 		pNoteData->MoveTapNoteTrack(DANCE_NOTE_PAD1_UP, DANCE_NOTE_PAD1_UPRIGHT);
 	}
+	*/
 
 	// we're done reading in all of the BMS values
 	if( out.m_StepsType == STEPS_TYPE_INVALID )
@@ -210,31 +305,94 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 
 	switch( out.m_StepsType )
 	{
+	// MD 10/26/03 fix PNM &c.
 	case STEPS_TYPE_DANCE_SINGLE:
-		iTransformNewToOld[0] = DANCE_NOTE_PAD1_LEFT;
-		iTransformNewToOld[1] = DANCE_NOTE_PAD1_DOWN;
-		iTransformNewToOld[2] = DANCE_NOTE_PAD1_UP;
-		iTransformNewToOld[3] = DANCE_NOTE_PAD1_RIGHT;
+		iTransformNewToOld[0] = BMS_P1_KEY1;
+		iTransformNewToOld[1] = BMS_P1_KEY3;
+		iTransformNewToOld[2] = BMS_P1_KEY5;
+		iTransformNewToOld[3] = BMS_P1_TURN;
 		break;
 	case STEPS_TYPE_DANCE_DOUBLE:
 	case STEPS_TYPE_DANCE_COUPLE:
-		iTransformNewToOld[0] = DANCE_NOTE_PAD1_LEFT;
-		iTransformNewToOld[1] = DANCE_NOTE_PAD1_DOWN;
-		iTransformNewToOld[2] = DANCE_NOTE_PAD1_UP;
-		iTransformNewToOld[3] = DANCE_NOTE_PAD1_RIGHT;
-		iTransformNewToOld[4] = DANCE_NOTE_PAD2_LEFT;
-		iTransformNewToOld[5] = DANCE_NOTE_PAD2_DOWN;
-		iTransformNewToOld[6] = DANCE_NOTE_PAD2_UP;
-		iTransformNewToOld[7] = DANCE_NOTE_PAD2_RIGHT;
+		iTransformNewToOld[0] = BMS_P1_KEY1;
+		iTransformNewToOld[1] = BMS_P1_KEY3;
+		iTransformNewToOld[2] = BMS_P1_KEY5;
+		iTransformNewToOld[3] = BMS_P1_TURN;
+		iTransformNewToOld[4] = BMS_P2_KEY1;
+		iTransformNewToOld[5] = BMS_P2_KEY3;
+		iTransformNewToOld[6] = BMS_P2_KEY5;
+		iTransformNewToOld[7] = BMS_P2_TURN;
 		break;
 	case STEPS_TYPE_DANCE_SOLO:
-		iTransformNewToOld[0] = DANCE_NOTE_PAD1_LEFT;
-		iTransformNewToOld[1] = DANCE_NOTE_PAD1_UPLEFT;
-		iTransformNewToOld[2] = DANCE_NOTE_PAD1_DOWN;
-		iTransformNewToOld[3] = DANCE_NOTE_PAD1_UP;
-		iTransformNewToOld[4] = DANCE_NOTE_PAD1_UPRIGHT;
-		iTransformNewToOld[5] = DANCE_NOTE_PAD1_RIGHT;
+	case STEPS_TYPE_BM_SINGLE:
+		// Hey! Why the hell are these exactly the same? :-)
+		iTransformNewToOld[0] = BMS_P1_KEY1;
+		iTransformNewToOld[1] = BMS_P1_KEY2;
+		iTransformNewToOld[2] = BMS_P1_KEY3;
+		iTransformNewToOld[3] = BMS_P1_KEY4;
+		iTransformNewToOld[4] = BMS_P1_KEY5;
+		iTransformNewToOld[5] = BMS_P1_TURN;
 		break;
+	case STEPS_TYPE_PNM_FIVE:
+		iTransformNewToOld[0] = BMS_P1_KEY3;
+		iTransformNewToOld[1] = BMS_P1_KEY4;
+		iTransformNewToOld[2] = BMS_P1_KEY5;
+		iTransformNewToOld[3] = BMS_P2_KEY1;
+		iTransformNewToOld[4] = BMS_P2_KEY2;
+		break;		
+	case STEPS_TYPE_PNM_NINE:
+		iTransformNewToOld[0] = BMS_P1_KEY1;
+		iTransformNewToOld[1] = BMS_P1_KEY2;
+		iTransformNewToOld[2] = BMS_P1_KEY3;
+		iTransformNewToOld[3] = BMS_P1_KEY4;
+		iTransformNewToOld[4] = BMS_P1_KEY5;
+		iTransformNewToOld[5] = BMS_P2_KEY1;
+		iTransformNewToOld[6] = BMS_P2_KEY2;
+		iTransformNewToOld[7] = BMS_P2_KEY3;
+		iTransformNewToOld[8] = BMS_P2_KEY4;
+		break;
+	/* MD 10/26/03 - uncomment this section when we get around to BM support outside 5-key
+	case STEPS_TYPE_BM_DOUBLE:
+		iTransformNewToOld[0] = BMS_P1_KEY1;
+		iTransformNewToOld[1] = BMS_P1_KEY2;
+		iTransformNewToOld[2] = BMS_P1_KEY3;
+		iTransformNewToOld[3] = BMS_P1_KEY4;
+		iTransformNewToOld[4] = BMS_P1_KEY5;
+		iTransformNewToOld[5] = BMS_P1_TURN;
+		iTransformNewToOld[6] = BMS_P2_KEY1;
+		iTransformNewToOld[7] = BMS_P2_KEY2;
+		iTransformNewToOld[8] = BMS_P2_KEY3;
+		iTransformNewToOld[9] = BMS_P2_KEY4;
+		iTransformNewToOld[10] = BMS_P2_KEY5;
+		iTransformNewToOld[11] = BMS_P2_TURN;
+		break;
+	case STEPS_TYPE_BM_SINGLE7:
+		iTransformNewToOld[0] = BMS_P1_KEY1;
+		iTransformNewToOld[1] = BMS_P1_KEY2;
+		iTransformNewToOld[2] = BMS_P1_KEY3;
+		iTransformNewToOld[3] = BMS_P1_KEY4;
+		iTransformNewToOld[4] = BMS_P1_KEY5;
+		iTransformNewToOld[5] = BMS_P1_KEY6;
+		iTransformNewToOld[6] = BMS_P1_KEY7;
+		iTransformNewToOld[7] = BMS_P1_TURN;
+	case STEPS_TYPE_BM_DOUBLE7:
+		iTransformNewToOld[0] = BMS_P1_KEY1;
+		iTransformNewToOld[1] = BMS_P1_KEY2;
+		iTransformNewToOld[2] = BMS_P1_KEY3;
+		iTransformNewToOld[3] = BMS_P1_KEY4;
+		iTransformNewToOld[4] = BMS_P1_KEY5;
+		iTransformNewToOld[5] = BMS_P1_KEY6;
+		iTransformNewToOld[6] = BMS_P1_KEY7;
+		iTransformNewToOld[7] = BMS_P1_TURN;
+		iTransformNewToOld[8] = BMS_P2_KEY1;
+		iTransformNewToOld[9] = BMS_P2_KEY2;
+		iTransformNewToOld[10] = BMS_P2_KEY3;
+		iTransformNewToOld[11] = BMS_P2_KEY4;
+		iTransformNewToOld[12] = BMS_P2_KEY5;
+		iTransformNewToOld[13] = BMS_P2_KEY6;
+		iTransformNewToOld[14] = BMS_P2_KEY7;
+		iTransformNewToOld[15] = BMS_P2_TURN;
+	*/
 	default:
 		ASSERT(0);
 	}
@@ -414,6 +572,12 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 				// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahhhhhhhhhhhhhhhhhhhhhhhh!!!!!!!!!!!!!!!
 				//
 				// Thank you.
+
+				// MD 10/26/03 - And allow me to add to that my opinion of the BMS format in general.
+				//
+				// ()*&@^*&^@$(*&^!@(*&^($*&^!#(*&@!&*#*#*@#*@#(*@(%@(*!
+				//
+				// end MD 10/26/03
 
 				case 8:	{ // indirect bpm
 					// This is a very inefficient way to parse, but it doesn't matter much
