@@ -189,10 +189,12 @@ bool GetThreadBacktraceContext( int ThreadID, BacktraceContext *ctx )
 	ctx->eip = (void *) regs.rip;
 	ctx->ebp = (void *) regs.rbp;
 	ctx->esp = (void *) regs.rsp;
-#else
+#elif defined(CPU_X86)
 	ctx->eip = (void *) regs.eip;
 	ctx->ebp = (void *) regs.ebp;
 	ctx->esp = (void *) regs.esp;
+#else
+#error GetThreadBacktraceContext: which arch?
 #endif
 
 	return true;
