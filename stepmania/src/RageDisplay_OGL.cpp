@@ -1236,7 +1236,7 @@ bool RageDisplay_OGL::SupportsSurfaceFormat( PixelFormat pixfmt )
 	switch( GL_PIXFMT_INFO[pixfmt].type )
 	{
 	case GL_UNSIGNED_SHORT_1_5_5_5_REV:
-		return g_bReversePackedPixelsWorks;
+		return g_bGL_EXT_bgra && g_bReversePackedPixelsWorks;
 	default:
 		return true;
 	}
