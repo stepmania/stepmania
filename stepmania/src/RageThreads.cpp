@@ -894,13 +894,15 @@ RageMutex::~RageMutex()
 
 void RageMutex::Lock()
 {
-	const bool bWasLocked = mut->IsLockedByThisThread();
+//	const bool bWasLocked = mut->IsLockedByThisThread();
 
 	mut->Lock();
 
 	/* Only do lock ordering checks on initial locks, to prevent false positives. */
-	if( !bWasLocked )
-		MarkLockedMutex();
+	/* This has internal thread safety issues itself (eg. one thread may delete
+	 * a mutex while another locks one); disable for now. */
+//	if( !bWasLocked )
+//		MarkLockedMutex();
 }
 
 void RageMutex::Unlock()
