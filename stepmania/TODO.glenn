@@ -92,15 +92,11 @@ easier ones with many of those sounds on autoplay; it should sound the
 same.)
 
 Hmm.  So, tentative steps:
-1: Make TapNote a short, and change '0' '1' and '2' to integers, leaving
-the meanings alone.  Change hardcoded '0', '1', '2' to constants
-TAPNOTE_NOTHING, TAPNOTE_TAP, TAPNOTE_HOLD_HEAD, so we can search for
-them more easily.  This step should be straightforward.
-2: Make TapNote a struct, adding 'enum type', with values "TN_NONE",
+1: Make TapNote a struct, adding 'enum type', with values "TN_NONE",
 indicating nothing (the short should always be 0 here), TN_TAP, indicating
 a tap note, TN_HOLD, indicating a hold note head, TN_AUTOPLAY, indicating
 an autoplay note.
-3: Remove TAPNOTE_HOLD_HEAD, using TN_HOLD instead.  At first, only the tap
+2: Remove TAPNOTE_HOLD_HEAD, using TN_HOLD instead.  At first, only the tap
 head of the hold note will have a TapNote entry (like it is now).  
 
 This will make NoteData larger.  It's already too large, so this should
@@ -179,15 +175,6 @@ debugging, and I lose my scores.
 
 ********
 
-Triple-buffering.
-
-Is there an easier way to switch buffers on vsync in parallel with
-rendering without starting another thread?
-
-(Wait for OpenGL.)
-
-********
-
 It'd be nice if we could go straight from one screen to another, tweening
 one off and the other on simultaneously (with a delay so it doesn't
 look like a jumble, but in parallel).
@@ -243,18 +230,8 @@ I'll probably do this once I figure out a good place to display warnings.
 
 *********
 
-We have lots of big things that need to be portable; most of those
-are obvious (renderer, joysticks, keyboard, sound, etc.)  Less
-obvious, minor ones here that nonetheless need to be done: 
  * use / as a filename separator, not \
    Change this in song data at load time, too.
- * no #pragma once
- * MFC->STL is hard, because most STL implementations aren't very STL.
-   g++ 3.1 is much better, but VC6 isn't.  (How is VC7?)
-   Hmm. Things aren't as bad as they seemed a while back; we should be
-   careful, but maybe it's not hopeless.
-
-(This is long-term.)
 
 *********
 
@@ -335,4 +312,40 @@ Option to turn off menu music (except for song previews).
 ********
 
 Don't export *.old in SMZIPs.
+
+********
+
+Don't derive subtitles via GetMainAndSubTitlesFromFullTitle in SMs
+if there's a #SUBTITLE tag at all, even an empty one.  This way, you
+can get full control over what goes in which field, and it's derived
+automatically only if no subtitle is specified at all (or we're importing
+from another format).  Files with subtitles in the #TITLE field should
+be discouraged.
+
+********
+
+Find a replacement for the CRC code.  It doesn't explicitly give
+permission to distribute or modify; only "use", which means we
+really can't even distribute it, much less link it against a GPL
+program.  (No doubt it was probably *intended* to allow modification
+and distribution, of course, but it doesn't say that.)
+
+********
+
+Arrows (all types) should be mipmapped; they look really bad in Space.
+
+********
+
+Make autogen go through combinations of arrows.
+
+
+when converting up (to a dest
+with more tracks), and through source arrows when converting down.
+
+That is, right now we just walk through consecutive arrows.  DDR
+to Pump results in DL, DR, C and UR being used or UL, C, UR, DR.
+Instead, walk through all combinations of 4 (eg. 4C5); 11110, 11101,
+11011, 10111, 01111, so more patterns are possible.
+
+Fix the hold note strangeness first, though.
 
