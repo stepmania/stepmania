@@ -28,12 +28,36 @@ static const CString COINS_DAT = "Data/Coins.dat";
 
 const int COINS_DAT_VERSION = 1;
 
+#if defined(WIN32) // XXX: move to arch_setup.h
+#include "RageThreads.h"
+struct tm *my_localtime_r( const time_t *timep, struct tm *result )
+{
+	static RageMutex mut;
+	LockMut(mut);
+
+	*result = *localtime( timep );
+	return result;
+}
+
+struct tm *my_gmtime_r( const time_t *timep, struct tm *result )
+{
+	static RageMutex mut;
+	LockMut(mut);
+
+	*result = *gmtime( timep );
+	return result;
+}
+#define localtime_r my_localtime_r
+#define gmtime_r my_gmtime_r
+#endif
+
 tm AddDays( tm start, int iDaysToMove )
 {
 	start.tm_mday += iDaysToMove;
 	time_t seconds = mktime( &start );
 	ASSERT( seconds != (time_t)-1 );
-	tm time = *localtime( &seconds );
+	tm time;
+	localtime_r( &seconds, &time );
 	return time;
 }
 
@@ -141,8 +165,9 @@ void Bookkeeper::UpdateLastSeenTime()
 		return;
 	}
 
-    tm tOld = *localtime( &lOldTime );
-    tm tNew = *localtime( &lNewTime );
+    tm tOld, tNew;
+	localtime_r( &lOldTime, &tOld );
+    localtime_r( &lNewTime, &tNew );
 
 	CLAMP( tOld.tm_year, tNew.tm_year-1, tNew.tm_year );
 
@@ -174,9 +199,10 @@ void Bookkeeper::CoinInserted()
 	UpdateLastSeenTime();
 
 	long lTime = m_iLastSeenTime;
-    tm *pTime = localtime( &lTime );
+    tm pTime;
+	localtime_r( &lTime, &pTime );
 
-	m_iCoinsByHourForYear[pTime->tm_yday][pTime->tm_hour]++;
+	m_iCoinsByHourForYear[pTime.tm_yday][pTime.tm_hour]++;
 }
 
 int Bookkeeper::GetCoinsForDay( int iDayOfYear )
@@ -193,7 +219,8 @@ void Bookkeeper::GetCoinsLastDays( int coins[NUM_LAST_DAYS] )
 	UpdateLastSeenTime();
 
 	long lOldTime = m_iLastSeenTime;
-    tm time = *localtime( &lOldTime );
+    tm time;
+	localtime_r( &lOldTime, &time );
 
 	for( int i=0; i<NUM_LAST_DAYS; i++ )
 	{
@@ -208,7 +235,8 @@ void Bookkeeper::GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] )
 	UpdateLastSeenTime();
 
 	long lOldTime = m_iLastSeenTime;
-    tm time = *localtime( &lOldTime );
+    tm time;
+	localtime_r( &lOldTime, &time );
 
 	time = GetNextSunday( time );
 	time = GetYesterday( time );
@@ -233,7 +261,8 @@ void Bookkeeper::GetCoinsByDayOfWeek( int coins[DAYS_IN_WEEK] )
 		coins[i] = 0;
 
 	long lOldTime = m_iLastSeenTime;
-    tm time = *localtime( &lOldTime );
+    tm time;
+	localtime_r( &lOldTime, &time );
 
 	for( int d=0; d<DAYS_PER_YEAR; d++ )
 	{
