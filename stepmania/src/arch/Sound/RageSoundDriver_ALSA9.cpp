@@ -118,7 +118,7 @@ bool RageSound_ALSA9::stream::GetData(bool init)
 		memset( buf, 0, len );
 	}
 
-	RageSoundManager::AttenuateBuf( buf, max_writeahead*samples_per_frame, SOUNDMAN->GetMixVolume() );
+	RageSoundManager::AttenuateBuf( buf, max_writeahead*samples_per_frame, snd->GetVolume() );
 
 	pcm->Write( buf, frames_to_fill );
 

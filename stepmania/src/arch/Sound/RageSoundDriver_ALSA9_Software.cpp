@@ -73,7 +73,6 @@ bool RageSound_ALSA9_Software::GetData()
 		buf = new Sint16[max_writeahead*samples_per_frame];
 
     static SoundMixBuffer mix;
-	mix.SetVolume( SOUNDMAN->GetMixVolume() );
 
 	const int64_t play_pos = pcm->GetPlayPos();
 	const int64_t cur_play_pos = pcm->GetPosition();
@@ -113,7 +112,7 @@ bool RageSound_ALSA9_Software::GetData()
 		bytes_read += got;
 		bytes_left -= got;
 
-		mix.write( (Sint16 *) buf, bytes_read / sizeof(Sint16) );
+		mix.write( (Sint16 *) buf, bytes_read / sizeof(Sint16), sounds[i]->snd->GetVolume() );
 
 		if( bytes_left > 0 )
 		{
