@@ -295,8 +295,6 @@ bool LuaManager::RunScript( const CString &sScript, const CString &sName, CStrin
 			LuaManager::PopStack( sError );
 			return false;
 		}
-
-		ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
 	}
 
 	// evaluate
