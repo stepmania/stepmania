@@ -18,7 +18,7 @@ static RageKeySym XSymToKeySym( int key )
 		KEY_INV       , KEY_INV     , KEY_INV      , KEY_ENTER   , KEY_INV      , /* 10 - 14 */
 		KEY_INV       , KEY_INV     , KEY_INV      , KEY_INV     , KEY_PAUSE    , /* 15 - 19 */
 		KEY_INV       , KEY_INV     , KEY_INV      , KEY_INV     , KEY_INV      , /* 20 - 24 */
-		KEY_INV       , KEY_INV     , KEY_ESC      , KEY_INV     , KEY_INV      , /* 25 - 29 */
+		KEY_INV       , KEY_INV     , KEY_INV      , KEY_ESC     , KEY_INV      , /* 25 - 29 */
 		KEY_INV       , KEY_INV     , KEY_SPACE    , KEY_EXCL    , KEY_QUOTE    , /* 30 - 34 */
 		KEY_HASH      , KEY_DOLLAR  , KEY_PERCENT  , KEY_AMPER   , KEY_SQUOTE   , /* 35 - 39 */
 		KEY_LPAREN    , KEY_RPAREN  , KEY_ASTERISK , KEY_PLUS    , KEY_COMMA    , /* 40 - 44 */
@@ -123,12 +123,12 @@ InputHandler_X11::~InputHandler_X11()
 
 void InputHandler_X11::Update(float fDeltaTime)
 {
+	Display *display = X11Helper::Dpy();
+	Window window = X11Helper::Win();
 	XEvent event;
-	/* XXX: This steals input from other windows, but XCheckMaskEvent won't return anything
-	 * if it isn't called. */
-	if (X11Helper::Win())
-		while(XCheckTypedWindowEvent(X11Helper::Dpy(), X11Helper::Win(), KeyPress, &event)
-			|| XCheckTypedWindowEvent(X11Helper::Dpy(), X11Helper::Win(), KeyRelease, &event) )
+	if (window)
+		while(XCheckTypedWindowEvent(display, window, KeyPress, &event)
+			|| XCheckTypedWindowEvent(display, window, KeyRelease, &event) )
 		{
 			LOG->Trace("key: sym %i, key %i, state %i",
 				XLookupKeysym(&event.xkey,0), XSymToKeySym(XLookupKeysym(&event.xkey,0)),
