@@ -4,7 +4,6 @@
 #include "RageLog.h"
 #include "RageMath.h"
 #include "RageUtil.h"
-#include "GameConstantsAndTypes.h"
 #include "RageFile.h"
 #include "RageSurface_Save_BMP.h"
 #include "RageSurface_Save_JPEG.h"
