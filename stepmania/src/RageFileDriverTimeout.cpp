@@ -83,10 +83,10 @@ public:
 	bool PopulateFileSet( FileSet &fs, const CString &sPath );
 
 protected:
+	void HandleRequest( int iRequest );
 	void RequestTimedOut();
 
 private:
-	void HandleRequest( int iRequest );
 
 	/* All requests: */
 	RageFileDriver *m_pChildDriver;
@@ -297,7 +297,7 @@ void ThreadedFileWorker::Close( RageFileBasic *pFile )
 {
 	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
 
-	if( IsTimedOut() )
+	if( !IsTimedOut() )
 	{
 		/* If we're not in a timed-out state, try to wait for the deletion to complete
 		 * before continuing. */
