@@ -86,6 +86,7 @@ const ScreenMessage	SM_GoToScreenAfterFail	= ScreenMessage(SM_User+31);
 const ScreenMessage	SM_StartHereWeGo		= ScreenMessage(SM_User+40);
 const ScreenMessage	SM_StopHereWeGo			= ScreenMessage(SM_User+41);
 
+static Preference<float> g_fNetStartOffset( Options, "NetworkStartOffset",	-3.0 );
 
 REGISTER_SCREEN_CLASS( ScreenGameplay );
 ScreenGameplay::ScreenGameplay( CString sName ) : Screen(sName)
@@ -1257,13 +1258,15 @@ void ScreenGameplay::Update( float fDeltaTime )
 			StartPlayingSong( 0, 0 );
 			m_pSoundMusic->Stop();
 
+			float startOffset = g_fNetStartOffset;
+
 			NSMAN->StartRequest(1); 
 
 			RageSoundParams p;
 			p.AccurateSync = true;
 			p.SetPlaybackRate( 1.0 );	//Force 1.0 playback speed
 			p.StopMode = RageSoundParams::M_CONTINUE;
-			p.m_StartSecond = 0.0;
+			p.m_StartSecond = startOffset;
 			m_pSoundMusic->Play( &p );
 
 			UpdateSongPosition(0);
