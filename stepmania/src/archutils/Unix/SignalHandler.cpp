@@ -4,6 +4,7 @@
 #include "SignalHandler.h"
 #include "GetSysInfo.h"
 
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/mman.h>
 #include <errno.h>
@@ -52,6 +53,54 @@ static void SigHandler(int sig)
 		handlers[i](sig);
 }
 
+static int find_stack_direction2( char *p )
+{
+	char c;
+	return (&c > p) ? +1:-1;
+}
+
+static int find_stack_direction()
+{
+	char c;
+	return find_stack_direction2( &c );
+}
+
+/* Create a stack with a barrier page at the end to guard against stack overflow. */
+static void *CreateStack( int size )
+{
+	const long PageSize = sysconf(_SC_PAGESIZE);
+
+	/* Round size up to the nearest PageSize. */
+	size += PageSize-1;
+	size -= (size%PageSize);
+
+	/* mmap always returns page-aligned data.
+	 *
+	 * mmap entries always show up individually in /proc/#/maps.  We could use posix_memalign as
+	 * a fallback, but we'd have to put a barrier page on both sides to guarantee that. */
+	char *p = NULL;
+	p = (char *) mmap( NULL, size+PageSize, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
+
+	if( p == (void *) -1 )
+		return NULL;
+	// if( posix_memalign( (void**) &p, PageSize, RealSize ) != 0 )
+	//	return NULL;
+
+	if( find_stack_direction() < 0 )
+	{
+		/* The stack grows towards smaller addresses.  Protect the first page. */
+		mprotect( p, PageSize, PROT_NONE );
+		p += PageSize;
+	}
+	else
+	{
+		/* The stack grows towards larger addresses.  Protect the last page. */
+		mprotect( p+size, PageSize, PROT_NONE );
+	}
+
+	return p;
+}
+
 /* Hook up events to fatal signals, so we can clean up if we're killed. */
 void SignalHandler::OnClose(handler h)
 {
@@ -65,13 +114,11 @@ void SignalHandler::OnClose(handler h)
 		CString system;
 		int version;
 		GetKernel( system, version );
-		void *p = NULL;
-		const int AltStackSize = 1024*64;
-		if( version > 20500 )
-			p = mmap( NULL, AltStackSize, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
 
-		if( p == (void *) -1 )
-			p = malloc( AltStackSize );
+		const int AltStackSize = 1024*64;
+		void *p = NULL;
+		if( version > 20500 )
+			p = CreateStack( AltStackSize );
 
 		if( p != NULL )
 		{
