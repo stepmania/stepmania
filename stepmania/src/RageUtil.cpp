@@ -56,7 +56,7 @@ CString SecondsToTime( float fSecs )
 		 * to differentiate between "mm:ss:ms".  I'd much prefer reversing those, since
 		 * it makes much more sense to do "mm:ss.ms", but people would probably complain
 		 * about "arcade accuracy" ... */
-		sReturn = ssprintf( "%02d:%02d:%02.0f", iMinsDisplay/60, iMinsDisplay%60, iSecsDisplay );
+		sReturn = ssprintf( "%02d:%02d.%02.0f", iMinsDisplay/60, iMinsDisplay%60, iSecsDisplay );
 	}
 	ASSERT( sReturn.GetLength() <= 8 );
 	return sReturn;
