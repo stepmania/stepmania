@@ -42,13 +42,13 @@ namespace NoteDataUtil
 	void RemoveHoldNotes( NoteData &in );
 	enum TurnType { left, right, mirror, shuffle, super_shuffle, NUM_TURN_TYPES };
 	void Turn( NoteData &in, StepsType st, TurnType tt );
-	void Little( NoteData &in );
-	void Wide( NoteData &in );
-	void Big( NoteData &in );
-	void Quick( NoteData &in );
-	void Skippy( NoteData &in );
-	void Mines( NoteData &in );
-	void InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset, bool bNewTapSameAsBeginning );
+	void Little( NoteData &in, float fStartBeat = -1, float fEndBeat = -1 );
+	void Wide( NoteData &in, float fStartBeat = -1, float fEndBeat = -1 );
+	void Big( NoteData &in, float fStartBeat = -1, float fEndBeat = -1 );
+	void Quick( NoteData &in, float fStartBeat = -1, float fEndBeat = -1 );
+	void Skippy( NoteData &in, float fStartBeat = -1, float fEndBeat = -1 );
+	void Mines( NoteData &in, float fStartBeat = -1, float fEndBeat = -1 );
+	void InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset, bool bSkippy, float fStartBeat = -1, float fEndBeat = -1 );
 	void SuperShuffleTaps( NoteData &in );
 
 	// change all TAP_ADDITIONs to TAP_TAPs

@@ -316,6 +316,52 @@ void Player::Update( float fDeltaTime )
 	}
 
 
+	// process transforms that are waiting to be applied
+	for( i=0; i<GAMESTATE->m_TransformsToApply[m_PlayerNumber].size(); i++ )
+	{
+		// Start beat needs to be far enough ahead to be off screen so that
+		// addition arrows don't suddenly pop on.
+		float fStartBeat = GAMESTATE->m_fSongBeat + BEATS_PER_MEASURE*2;
+		fStartBeat = ((int)fStartBeat)+1;
+		float fStartSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( fStartBeat );
+		float fEndSeconds = fStartSeconds+10;
+		float fEndBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fEndSeconds );
+		fEndBeat = ((int)fEndBeat)+1;
+
+		switch( GAMESTATE->m_TransformsToApply[m_PlayerNumber][i] )
+		{
+		case PlayerOptions::TRANSFORM_LITTLE:
+			NoteDataUtil::Little( *this, fStartBeat, fEndBeat );
+			NoteDataUtil::Little( m_NoteField, fStartBeat, fEndBeat );
+			break;
+		case PlayerOptions::TRANSFORM_WIDE:
+			NoteDataUtil::Wide( *this, fStartBeat, fEndBeat );
+			NoteDataUtil::Wide( m_NoteField, fStartBeat, fEndBeat );
+			break;
+		case PlayerOptions::TRANSFORM_BIG:
+			NoteDataUtil::Big( *this, fStartBeat, fEndBeat );
+			NoteDataUtil::Big( m_NoteField, fStartBeat, fEndBeat );
+			break;
+		case PlayerOptions::TRANSFORM_QUICK:
+			NoteDataUtil::Quick( *this, fStartBeat, fEndBeat );
+			NoteDataUtil::Quick( m_NoteField, fStartBeat, fEndBeat );
+			break;
+		case PlayerOptions::TRANSFORM_SKIPPY:
+			NoteDataUtil::Skippy( *this, fStartBeat, fEndBeat );
+			NoteDataUtil::Skippy( m_NoteField, fStartBeat, fEndBeat );
+			break;
+		case PlayerOptions::TRANSFORM_MINES:
+			NoteDataUtil::Mines( *this, fStartBeat, fEndBeat );
+			NoteDataUtil::Mines( m_NoteField, fStartBeat, fEndBeat );
+			break;
+		case PlayerOptions::TRANSFORM_NONE:
+		default:
+			ASSERT(0);
+		}
+	}
+	GAMESTATE->m_TransformsToApply[m_PlayerNumber].clear();
+
+
 	ActorFrame::Update( fDeltaTime );
 }
 

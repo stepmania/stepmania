@@ -482,7 +482,7 @@ void NoteDataUtil::SwapSides( NoteData &in )
 	in.Convert4sToHoldNotes();
 }
 
-void NoteDataUtil::Little(NoteData &in)
+void NoteDataUtil::Little(NoteData &in, float fStartBeat, float fEndBeat)
 {
 	int i;
 
@@ -498,13 +498,21 @@ void NoteDataUtil::Little(NoteData &in)
 			in.RemoveHoldNote( i );
 }
 
-void NoteDataUtil::Wide( NoteData &in )
+void NoteDataUtil::Wide( NoteData &in, float fStartBeat, float fEndBeat )
 {
+	// Make all all quarter notes into jumps.
+
 	in.ConvertHoldNotesTo4s();
 
-	// make all all quarter notes jumps
-	int max_row = in.GetLastRow();
-	for( int i=0; i<=max_row; i+=ROWS_PER_BEAT*2 ) // every even beat
+	int first_row = 0;
+	if( fStartBeat != -1 )
+		first_row = BeatToNoteRow(fStartBeat);
+
+	int last_row = in.GetLastRow();
+	if( fEndBeat != -1 )
+		last_row = BeatToNoteRow(fEndBeat);
+	
+	for( int i=first_row; i<=last_row; i+=ROWS_PER_BEAT*2 ) // every even beat
 	{
 		if( in.GetNumTapNonEmptyTracks(i) != 1 )
 			continue;	// skip.  Don't place during holds
@@ -545,32 +553,40 @@ void NoteDataUtil::Wide( NoteData &in )
 	in.Convert4sToHoldNotes();
 }
 
-void NoteDataUtil::Big( NoteData &in )
+void NoteDataUtil::Big( NoteData &in, float fStartBeat, float fEndBeat )
 {
-	InsertIntelligentTaps(in,1.0f,0.5f,false);	// add 8ths between 4ths
+	InsertIntelligentTaps(in,1.0f,0.5f,false,fStartBeat,fEndBeat);	// add 8ths between 4ths
 }
 
-void NoteDataUtil::Quick( NoteData &in )
+void NoteDataUtil::Quick( NoteData &in, float fStartBeat, float fEndBeat )
 {
-	InsertIntelligentTaps(in,0.5f,0.25f,false);	// add 16ths between 8ths
+	InsertIntelligentTaps(in,0.5f,0.25f,false,fStartBeat,fEndBeat);	// add 16ths between 8ths
 }
 
-void NoteDataUtil::Skippy( NoteData &in )
+void NoteDataUtil::Skippy( NoteData &in, float fStartBeat, float fEndBeat )
 {
-	InsertIntelligentTaps(in,1.0f,0.75f,true);	// add 16ths between 4ths
+	InsertIntelligentTaps(in,1.0f,0.75f,true,fStartBeat,fEndBeat);	// add 16ths between 4ths
 }
 
-void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset, bool bNewTapSameAsBeginning )
+void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset, bool bSkippy, float fStartBeat, float fEndBeat )
 {
 	ASSERT( fInsertBeatOffset <= fBeatInterval );
 
 	in.ConvertHoldNotesTo4s();
 
-	// insert a beat in the middle of every fBeatInterval
-	int max_row = in.GetLastRow();
+	// Insert a beat in the middle of every fBeatInterval.
+
+	int first_row = 0;
+	if( fStartBeat != -1 )
+		first_row = BeatToNoteRow(fStartBeat);
+
+	int last_row = in.GetLastRow();
+	if( fEndBeat != -1 )
+		last_row = BeatToNoteRow(fEndBeat);
+
 	int rows_per_interval = BeatToNoteRow( fBeatInterval );
 	int insert_row_offset = BeatToNoteRow( fInsertBeatOffset );
-	for( int i=0; i<=max_row; i+=rows_per_interval ) 
+	for( int i=first_row; i<=last_row; i+=rows_per_interval ) 
 	{
 		int iRowEarlier = i;
 		int iRowLater = i + rows_per_interval;
@@ -596,12 +612,12 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval, flo
 		int iTrackOfNoteEarlier = in.GetFirstNonEmptyTrack(iRowEarlier);
 		int iTrackOfNoteLater = in.GetFirstNonEmptyTrack(iRowLater);
 		int iTrackOfNoteToAdd = 0;
-		if( bNewTapSameAsBeginning  &&
+		if( bSkippy  &&
 			iTrackOfNoteEarlier != iTrackOfNoteLater )	// Don't make skips on the same note
 		{
 			iTrackOfNoteToAdd = iTrackOfNoteEarlier;
 		}
-		else	// bNewTapSameAsBeginning
+		else
 		{
 			// choose a randomish track
 			if( abs(iTrackOfNoteEarlier-iTrackOfNoteLater) == 2 )
@@ -622,6 +638,28 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval, flo
 	}
 
 	in.Convert4sToHoldNotes();
+}
+
+void NoteDataUtil::Mines( NoteData &in, float fStartBeat, float fEndBeat )
+{
+	int iTapCount = 0;
+
+	int first_row = 0;
+	if( fStartBeat != -1 )
+		first_row = BeatToNoteRow(fStartBeat);
+
+	int last_row = in.GetLastRow();
+	if( fEndBeat != -1 )
+		last_row = BeatToNoteRow(fEndBeat);
+
+	for( int r=first_row; r<=last_row; r++ )
+		for( int t=0; t<in.GetNumTracks(); t++ )
+			if( in.GetTapNote(t,r) == TAP_TAP )
+			{
+				iTapCount++;
+				if( (iTapCount%7) == 6 )
+					in.SetTapNote(t,r,TAP_MINE);
+			}
 }
 
 
@@ -875,20 +913,6 @@ void NoteDataUtil::ConvertAdditionsToRegular( NoteData &in )
 		for( int t=0; t<in.GetNumTracks(); t++ )
 			if( in.GetTapNote(t,r) == TAP_ADDITION )
 				in.SetTapNote(t,r,TAP_TAP);
-}
-
-void NoteDataUtil::Mines( NoteData &in )
-{
-	int iTapCount = 0;
-
-	for( int r=0; r<=in.GetLastRow(); r++ )
-		for( int t=0; t<in.GetNumTracks(); t++ )
-			if( in.GetTapNote(t,r) == TAP_TAP )
-			{
-				iTapCount++;
-				if( (iTapCount%7) == 6 )
-					in.SetTapNote(t,r,TAP_MINE);
-			}
 }
 
 void NoteDataUtil::TransformNoteData( NoteData &nd, PlayerOptions &po, StepsType st )

@@ -167,6 +167,7 @@ public:
 		void MakeBlank() { sModifier=""; }
 	};
 	Attack	m_ActiveAttacks[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
+	vector<PlayerOptions::Transform>	m_TransformsToApply[NUM_PLAYERS];
 
 	// used in PLAY_MODE_BATTLE
 	Attack	m_Inventory[NUM_PLAYERS][NUM_INVENTORY_SLOTS];

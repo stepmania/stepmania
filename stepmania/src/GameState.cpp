@@ -521,6 +521,18 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 {
 	LOG->Trace( "Launch attack '%s' against P%d", a.sModifier.c_str(), target+1 );
 
+	//
+	// Peek at the effect being applied.  If it's a transform, add it to 
+	// a list of transforms that should be applied by the Player on its 
+	// next update.
+	//
+	PlayerOptions po;
+	po.FromString( a.sModifier );
+	if( po.m_Transform != PlayerOptions::TRANSFORM_NONE )
+	{
+		m_TransformsToApply[target].push_back( po.m_Transform );
+	}
+
 	// search for an open slot
 	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 		if( m_ActiveAttacks[target][s].fSecsRemaining <= 0 )
