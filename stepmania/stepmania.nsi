@@ -249,7 +249,7 @@ File "Program\zlib1.dll"
 
 SetOverwrite off
 SetOutPath "$INSTDIR\Data\MachineProfile"
-File "Docs\stats.html"
+File "Docs\Stats.xml"
 SetOverwrite on
 
 SetOutPath "$INSTDIR"
@@ -285,7 +285,7 @@ CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
 CreateShortCut "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\stepmania.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\stepmania.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open StepMania Program Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
-CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Statistics.lnk" "$INSTDIR\Data\MachineProfile\stats.html"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Machine Statistics.lnk" "$INSTDIR\Data\MachineProfile\Stats.xml"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\StepMania Tools and Package Exporter.lnk" "$INSTDIR\Program\smpackage.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\README-FIRST.lnk" "$INSTDIR\README-FIRST.html"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninstall.exe"
