@@ -254,7 +254,13 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 		float fPlayerX = (float) GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p];
 
+		/* Perhaps this should be handled better by defining a new
+		 * StyleType for ONE_PLAYER_ONE_CREDIT_AND_ONE_COMPUTER,
+		 * but for now just ignore SoloSingles when it's Battle or Rave
+		 * Mode.  This doesn't begin to address two-player solo (6 arrows) */
 		if( PREFSMAN->m_bSoloSingle && 
+			GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
+			GAMESTATE->m_PlayMode != PLAY_MODE_RAVE &&
 			GAMESTATE->GetCurrentStyleDef()->m_StyleType == StyleDef::ONE_PLAYER_ONE_CREDIT )
 			fPlayerX = SCREEN_WIDTH/2;
 
