@@ -19,7 +19,7 @@
 !define PRODUCT_NAME_VER "${PRODUCT_NAME} ${VERSION}"
 
 Name "${PRODUCT_NAME}"
-OutFile "StepMania-CVS-20030315.exe"
+OutFile "StepMania-CVS-20030324.exe"
 ;OutFile "StepMania301.exe"
 
 ; Some default compiler settings (uncomment and change at will):
@@ -124,10 +124,6 @@ File "CDTitles\instructions.txt"
 CreateDirectory "$INSTDIR\Courses"
 SetOutPath "$INSTDIR\Courses"
 File "Courses\instructions.txt"
-
-CreateDirectory "$INSTDIR\Music"
-SetOutPath "$INSTDIR\Music"
-File "Music\instructions.txt"
 
 RMDir /r "$INSTDIR\NoteSkins\dance\MAX"
 RMDir /r "$INSTDIR\NoteSkins\dance\default"
@@ -261,9 +257,6 @@ RMDir /r "$INSTDIR\Cache"
 
 Delete "$INSTDIR\Courses\instructions.txt"
 RMDir "$INSTDIR\Courses"
-
-Delete "$INSTDIR\Music\instructions.txt"
-RMDir "$INSTDIR\Music"
 
 Delete "$INSTDIR\NoteSkins\instructions.txt"
 RMDir /r "$INSTDIR\NoteSkins\dance\default"
