@@ -21,7 +21,7 @@
 #include "FontManager.h"
 #include "GameState.h"
 
-const longchar Font::DEFAULT_GLYPH = 0xFFFF;
+const longchar Font::DEFAULT_GLYPH = 0xFFFFFF;
 
 FontPage::FontPage()
 {
@@ -223,6 +223,8 @@ void Font::MergeFont(Font *f)
 
 const glyph &Font::GetGlyph( longchar c ) const
 {
+	ASSERT(c >= 0 && c <= 0xFFFFFF);
+
 	/* See if there's a game-specific version of this character. */
 	int gc = FontManager::MakeGameGlyph(c, GAMESTATE->m_CurGame);
 	map<longchar,glyph*>::const_iterator it = m_iCharToGlyph.find(gc);
