@@ -124,7 +124,7 @@ void GameState::Reset()
 	FOREACH_PlayerNumber( p )
 	{
 		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
-		m_PreferredCourseDifficulty[p] = COURSE_DIFFICULTY_INVALID;
+		m_PreferredCourseDifficulty[p] = COURSE_DIFFICULTY_REGULAR;
 	}
 	m_SortOrder = SORT_INVALID;
 	m_PlayMode = PLAY_MODE_INVALID;
