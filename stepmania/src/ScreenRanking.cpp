@@ -19,6 +19,7 @@
 
 #define CATEGORY_X				THEME->GetMetricF("ScreenRanking","CategoryX")
 #define CATEGORY_Y				THEME->GetMetricF("ScreenRanking","CategoryY")
+#define CATEGORY_WIDTH			THEME->GetMetricF("ScreenRanking","CategoryWidth")
 #define TYPE_X					THEME->GetMetricF("ScreenRanking","TypeX")
 #define TYPE_Y					THEME->GetMetricF("ScreenRanking","TypeY")
 #define LINE_SPACING_X			THEME->GetMetricF("ScreenRanking","LineSpacingX")
@@ -236,7 +237,8 @@ void ScreenRanking::SetPage( PageToShow pts )
 	case PageToShow::TYPE_COURSE:
 		{
 			m_textCategory.SetDiffuse( RageColor(1,1,1,1) );
-			m_textCategory.SetText( pts.pCourse->m_sName );
+			m_textCategory.SetZoom(1);
+			m_textCategory.SetTextMaxWidth( CATEGORY_WIDTH, pts.pCourse->m_sName );
 			m_textType.SetDiffuse( RageColor(1,1,1,1) );
 			m_textType.SetText( GameManager::NotesTypeToString(pts.nt) );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
