@@ -103,7 +103,7 @@ inline float randomf( const float low=-1.0f, const float high=1.0f )
 }
 
 /* XXX: These are C99 functions (except for the roundf(double) overload); what's
- * the C99 define we can test for? */
+ * the C99 define we can test for? XXX autoconf */
 #if defined(WIN32)
 inline double trunc( double f )	{ return float(int(f)); };
 #else
