@@ -360,11 +360,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_textSongsSurvived[p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation stage numbers") );
 				m_textSongsSurvived[p].TurnShadowOff();
 				m_textSongsSurvived[p].SetXY( SONGS_SURVIVED_X(p), SONGS_SURVIVED_Y );
-
-				int StagesPlayed = stageStats.iSongsPassed[p];
-				/* If the last song was failed, count it anyway: */
-				if(stageStats.bFailed[p]) StagesPlayed++;
-				m_textSongsSurvived[p].SetText( ssprintf("%02d", StagesPlayed) );
+				m_textSongsSurvived[p].SetText( ssprintf("%02d", stageStats.iSongsPlayed[p]) );
 				this->AddChild( &m_textSongsSurvived[p] );
 			}
 			break;
