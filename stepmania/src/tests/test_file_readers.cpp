@@ -5,16 +5,14 @@
 #include "RageUtil_FileDB.h"
 #include "test_misc.h"
 
-#include <unistd.h>
-
 bool CreateTestFiles = false;
 
-void CreateBinaryTestFile( FILE *out, int size )
+void CreateBinaryTestFile( RageFile &f, int size )
 {
 	char c = 0;
 	while( size-- )
 	{
-		fprintf( out, "%c", c );
+		f.Write( ssprintf("%c", c) );
 		++c;
 	}
 }
@@ -23,11 +21,11 @@ extern CString g_Root;
 
 void CreateBinaryTestFile( CString fn, int size )
 {
-	FILE *out = fopen( g_Root + "/" + fn, "w+b" );
-	CreateBinaryTestFile( out, size );
-	fclose( out );
+	RageFile f;
+	f.Open( g_Root + "/" + fn, RageFile::WRITE );
+	CreateBinaryTestFile( f, size );
+	f.Close();
 
-	RageFile f(fn);
 	if( !f.Open(fn) )
 	{
 		LOG->Warn("CreateBinaryTestFile: error reopening %s: %s", fn.c_str(), f.GetError().c_str() );
@@ -103,23 +101,25 @@ void TestText( int LineSize, bool DOS )
 	filename += ssprintf( ".%i", LineSize );
 	if( CreateTestFiles )
 	{
-		FILE *out = fopen( g_Root + "/" + filename, "w+b" );
+		RageFile f;
+		f.Open( g_Root + "/" + filename, RageFile::WRITE );
 
 		for( unsigned line = 0; line < NumLines; ++line )
 		{
 			const CString TestLine = MakeTextTestLine( line, LineSize );
-			fprintf( out, "%s", TestLine.c_str() );
+			f.Write( TestLine );
 			if( DOS )
-				fprintf( out, "\r" );
-			fprintf( out, "\n" );
+				f.Write( "\r" );
+			f.Write( "\n" );
 		}
 		
 		/* Write a binary test block at the end. */
-		CreateBinaryTestFile( out, 4096 );
+		CreateBinaryTestFile( f, 4096 );
 
-		fclose( out );
-		out = NULL;
-			return;
+		/* Write a text line, with no NL. */
+		f.Write( "final" );
+
+		return;
 	}
 
 	RageFile test;
@@ -136,6 +136,14 @@ void TestText( int LineSize, bool DOS )
 		if( test.GetLine( buf ) <= 0 )
 		{
 			LOG->Warn("Text read failure, line %i, size %i, DOS %i",
+					line, LineSize, DOS );
+			return;
+		}
+
+		/* If we successfully got data, we should not be at EOF. */
+		if( test.AtEOF() )
+		{
+			LOG->Warn("Unexpected EOF in text read, line %i, size %i, DOS %i",
 					line, LineSize, DOS );
 			return;
 		}
@@ -163,6 +171,42 @@ void TestText( int LineSize, bool DOS )
 	TestBinaryRead( test, 1024, true, test.Tell(), 1024*1 );
 	TestBinaryRead( test, 1024, true, test.Tell(), 1024*2 );
 	TestBinaryRead( test, 1024, true, test.Tell(), 1024*3 );
+
+	{
+		CString buf;
+		if( test.GetLine( buf ) <= 0 )
+		{
+			LOG->Warn( "Unexpected EOF in final line read, DOS %i", DOS );
+			return;
+		}
+
+		if( buf != "final" )
+		{
+			LOG->Warn( "Final text read check failure, DOS %i: '%s'",
+					DOS, buf.c_str() );
+			return;
+		}
+		if( test.AtEOF() )
+		{
+			LOG->Warn( "Unexpected EOF (2) in final text read, DOS %i", DOS );
+			return;
+		}
+	}
+
+	{
+		CString buf;
+		if( test.GetLine( buf ) != 0 )
+		{
+			LOG->Warn( "Expected EOF in final text read, but didn't get it" );
+			return;
+		}
+
+		if( !test.AtEOF() )
+		{
+			LOG->Warn( "Expected EOF (2) in final text read, but didn't get it" );
+			return;
+		}
+	}
 }
 
 void TestText()
@@ -204,11 +248,11 @@ void TestSeek( bool relative )
 	{
 		/* Output a line of text, followed by some junk, followed by binary
 		 * test data. */
-		FILE *out = fopen( g_Root + "/" + "test.seek", "w+b" );
-		fprintf( out, "%s", TestLine.c_str() );
-		fprintf( out, "%s", junk.c_str() );
-		CreateBinaryTestFile( out, 1024 );
-		fclose( out );
+		RageFile f;
+		f.Open( g_Root + "/" + "test.seek", RageFile::WRITE );
+		f.Write( TestLine );
+		f.Write( junk );
+		CreateBinaryTestFile( f, 1024 );
 		return;
 	}
 		
