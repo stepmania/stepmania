@@ -85,7 +85,7 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 	//LOG->Trace( "ScreenDemonstration::Input()" );
 
 
-	if( MenuI.IsValid() )
+	if( MenuI.IsValid() && type == IET_FIRST_PRESS )
 	{
 		switch( MenuI.button )
 		{
