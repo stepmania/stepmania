@@ -158,7 +158,7 @@ public:
 	static const float MUSIC_SECONDS_INVALID;
 
 	void ResetMusicStatistics();	// Call this when it's time to play a new song.  Clears the values above.
-	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing );
+	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer );
 	float GetSongPercent( float beat ) const;
 
 	enum HealthState { HOT, ALIVE, DANGER, DEAD };
