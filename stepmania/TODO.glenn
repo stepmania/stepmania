@@ -7,24 +7,21 @@ low-pri to bother bringing up on the list.
 
 ********
 
-Don't unload textures when they reach 0 refs.  Keep them around for a while.
-They're the place we're spending all of our time loading, and sometimes we
-reload them in odd places; for example, Player reloads arrow graphics
-between songs in courses.  (Don't special case that; it'd just make Player
-ugly.  It's TextureManager's job.)
+All of our graphics are scaled for 640x480.  We should have some way
+to specify the native resolution of graphics, so we can have 1024x768 or
+higher graphics when it's useful.  (For example, the radar kanji could
+look a lot better.)
 
-Ideally, we should only unload a texture when we *need* the memory.  That's
-very tricky to get right, though; we don't really know how much memory
-we can use.  (We have system memory to work with, as textures will get
-swapped out for us, and we don't know how much system memory to use.) We
-could just make it a config parameter, but that sucks.
+Maybe eg "200%" to specify the image is scaled twice as large as other images?
 
-Also, don't use a FIFO.  That tends to make the whole cache die when the
-textures you need are at the beginning of the queue.  (Each load causes you
-to unload a texture that you'll be loading soon, so nothing ever actually
-comes out of the queue.)
+Actually, entire thremes could be high-res, so it might be useful to
+have a more general way to do this (perhaps a way to specify a hint
+for a whole directory?)
 
-(Not sure how to do this.)
+********
+
+Enable antialiasing for the radar lines.  It's extremely cheap for
+simple lines, and the aliasing makes the radar look really ugly.
 
 ********
 
@@ -96,19 +93,9 @@ should always be included in crash dumps.  This includes things like
 video card info and which input devices were found.  All of these
 should go to the debug log.
 
-A place in the loading screen to put warnings, where they can be seen.
 Right now, warnings are easily lost in the debug flood, and aren't seen by
-non-developers running release builds.  Put it somewhere on the loading dialog,
-but try not to change the dialog at all unless there are actually
-warnings to show, so we can keep the nice compact banner dialog
-normally.  (Maybe have a separate dialog resource, and replace the
-regular one with it once there are warnings?)  If (and only if) there
-are warnings, have an OK/CANCEL button pair; make the user click OK
-to continue loading (before changing display mode) if there were warnings.
-(Optional; some people will want to ignore warnings.)  Put warnings
-in a grayed-out edit box, so they can be easily copied.
- - what about warnings during the game? eg. directshow failing should
-   be a warning, not a fatal error
+non-developers running release builds.  Put warnings in a grayed-out edit
+box, so they can be easily copied.
 
 I'll probably do this once I figure out a good place to display warnings.
 
