@@ -61,10 +61,6 @@ RageSounds::~RageSounds()
 
 void StartQueuedMusic( const RageTimer &when )
 {
-	if( g_MusicToPlay.file.size() == 0 )
-		return; /* nothing to do */
-
-	/* Go. */
 	g_HasTiming = g_MusicToPlay.HasTiming;
 	g_TimingDelayed = true;
 
@@ -226,9 +222,6 @@ void RageSounds::PlayMusic( const CString &file, const CString &timing_file, boo
 	 * start now. */
 	if( !g_HasTiming && !g_UpdatingTimer )
 		StartImmediately = true;
-
-	if( g_MusicToPlay.file == "" )
-		return;
 
 	RageTimer when; /* zero */
 	if( !StartImmediately )
