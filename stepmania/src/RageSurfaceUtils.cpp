@@ -250,7 +250,7 @@ static void SetAlphaRGB(const RageSurface *img, uint8_t r, uint8_t g, uint8_t b)
 	img->format->MapRGBA( r, g, b, 0, trans );
 	for( int y = 0; y < img->h; ++y )
 	{
-		uint8_t *row = (uint8_t *)img->pixels + img->pitch*y;
+		uint8_t *row = img->pixels + img->pitch*y;
 
 		for( int x = 0; x < img->w; ++x )
 		{
