@@ -150,6 +150,17 @@ TapNoteScore NoteDataWithScoring::LastTapNoteScore(unsigned row) const
 	return GetTapNoteScore(track, row);
 }
 
+/* From aaroninjapan.com (http://www.aaroninjapan.com/ddr2.html)
+ *
+ * Stream: The ratio of your number of Perfects to getting all Perfects 
+ * Voltage: The ratio of your maximum combo to getting a Full Combo 
+ * Air: The ratio of your number of Perfects on all your jumps (R+L, R+D, etc) to getting all Perfects on all Jumps 
+ * Chaos: The ratio of your dance level compared to that of AAA (all Perfect) level 
+ * Freeze: The ratio of your total number of "OK"s on all the Freeze arrows to getting all "OK" on all the Freeze arrows 
+ *
+ * I don't think chaos is correct, at least relative to DDREX. You can AA songs and get a full Chaos graph.
+ * No idea what it actually could be, though.
+ */
 
 float NoteDataWithScoring::GetActualRadarValue( RadarCategory rv, PlayerNumber pn, float fSongSeconds ) const
 {
@@ -177,21 +188,23 @@ float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds, Player
 	return min( fReturn, 1.0f );
 	*/
 
-	int MaxCombo = GAMESTATE->m_CurStageStats.iMaxCombo[pn];
-	int TotalSteps = GetNumTapNotes();
-
-	return min( (float)MaxCombo/TotalSteps, 1.0f);
-}
-
-float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds, PlayerNumber pn ) const
-{
-	// voltage is essentialy perfects divided by # of steps
 	int totalnotes = GetNumTapNotes();
 	int perfects = GetNumTapNotesWithScore(TNS_PERFECT) + GetNumTapNotesWithScore(TNS_MARVELOUS);
 
 	float result = float(perfects)/totalnotes;
 	return result;
 
+}
+
+float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds, PlayerNumber pn ) const
+{
+	
+	int MaxCombo = GAMESTATE->m_CurStageStats.iMaxCombo[pn];
+	int TotalSteps = GetNumTapNotes();
+
+	return min( (float)MaxCombo/TotalSteps, 1.0f);
+
+	// voltage is essentialy perfects divided by # of steps
 /*	float fAvgBPS = GetLastBeat() / fSongSeconds;
 
 	// peak density of steps
@@ -221,8 +234,8 @@ float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds, PlayerNum
 	// number of doubles
 	int iNumDoubles = 
 		GetNumDoublesWithScore(TNS_MARVELOUS) + 
-		GetNumDoublesWithScore(TNS_PERFECT) + 
-		GetNumDoublesWithScore(TNS_GREAT)/2;
+		GetNumDoublesWithScore(TNS_PERFECT);
+
 //	float fReturn = iNumDoubles / fSongSeconds;
 	int iTotalDoubles = GetNumDoubles();
 
