@@ -32,7 +32,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	
-	void	Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBehind, int iPixelsToDrawAhead );
+	void	Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw );
 	void	RemoveTapNoteRow( int iIndex );
 
 	vector<bool> m_bIsHoldingHoldNote;	// hack:  Need this to know when to "light up" the center of hold notes
@@ -51,8 +51,8 @@ protected:
 	float	m_fPercentFadeToFail;	// -1 of not fading to fail
 
 	PlayerNumber	m_PlayerNumber;
-	int				m_iPixelsToDrawBehind;
-	int				m_iPixelsToDrawAhead;
+	int				m_iFirstPixelToDraw;	// this should be a negative number
+	int				m_iLastPixelToDraw;	// this should be a positive number
 
 	// color arrows
 	NoteDisplay		m_NoteDisplay[MAX_NOTE_TRACKS];

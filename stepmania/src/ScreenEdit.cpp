@@ -222,7 +222,7 @@ ScreenEdit::ScreenEdit()
 
 	GAMESTATE->m_SongOptions.m_fMusicRate = 1;
 	
-	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fArrowScrollSpeed = 1;
+	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 1;
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_ColorType = PlayerOptions::COLOR_NOTE;
 
 	m_BGAnimation.LoadFromAniDir( THEME->GetPathTo("BGAnimations","edit") );
@@ -238,7 +238,7 @@ ScreenEdit::ScreenEdit()
 
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
-	m_NoteFieldEdit.Load( &noteData, PLAYER_1, 200, 800 );
+	m_NoteFieldEdit.Load( &noteData, PLAYER_1, -200, 800 );
 
 	m_rectRecordBack.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );
@@ -249,7 +249,7 @@ ScreenEdit::ScreenEdit()
 
 	m_NoteFieldRecord.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_NoteFieldRecord.SetZoom( 1.0f );
-	m_NoteFieldRecord.Load( &noteData, PLAYER_1, 200, 300 );
+	m_NoteFieldRecord.Load( &noteData, PLAYER_1, -100, 300 );
 
 	m_Clipboard.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
 

@@ -20,7 +20,6 @@
 #include "BitmapText.h"
 #include "Player.h"
 #include "RandomSample.h"
-#include "FocusingSprite.h"
 #include "RageSoundManager.h"
 #include "RageSound.h"
 #include "MotionBlurSprite.h"
@@ -112,8 +111,8 @@ protected:
 	TransitionFadeWipe	m_Fade;
 	TransitionStarWipe	m_StarWipe;
 
-	FocusingSprite		m_sprReady;
-	FocusingSprite		m_sprHereWeGo;
+	Sprite				m_sprReady;
+	Sprite				m_sprHereWeGo;
 	MotionBlurSprite	m_sprCleared;
 	MotionBlurSprite	m_sprFailed;
 	MotionBlurSprite	m_sprTryExtraStage;

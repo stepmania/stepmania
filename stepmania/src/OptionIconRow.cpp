@@ -40,7 +40,10 @@ struct OptionColumnEntry
 const OptionColumnEntry g_OptionColumnEntries[] =
 {
 	{"Boost",	0},
-	{"Wave",	1},
+	{"Land",	0},
+	{"Wave",	0},
+	{"Expand",	0},
+	{"Boomerang",0},
 	{"Drunk",	1},
 	{"Dizzy",	1},
 	{"Space",	1},

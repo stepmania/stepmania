@@ -92,6 +92,7 @@ public:
 	float		m_fSongBeat;
 	float		m_fCurBPS;
 	bool		m_bFreeze;	// in the middle of a freeze
+	bool		m_bPastHereWeGo;
 
 	void ResetMusicStatistics();		// Call this when it's time to play a new song.  Clears the values above.
 	

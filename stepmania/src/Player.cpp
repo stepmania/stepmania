@@ -160,8 +160,8 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	if( GAMESTATE->m_PlayerOptions[pn].m_bLittle )
 		NoteDataUtil::MakeLittle(*this);
 
-	int iPixelsToDrawBefore = 96;
-	int iPixelsToDrawAfter = 384;
+	int iPixelsToDrawBefore = -60;
+	int iPixelsToDrawAfter = 350;
 
 	// If both options are on, we *do* need to multiply it twice.
 	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_MINI] )

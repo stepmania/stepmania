@@ -72,11 +72,8 @@ void GameState::Reset()
 		m_pCurNotes[p] = NULL;
 	m_pCurCourse = NULL;
 
-	m_fMusicSeconds = 0;
-	m_fSongBeat = 0;
-	m_fCurBPS = 0;
-	m_bFreeze = 0;
-	
+	ResetMusicStatistics();
+
 	m_CurStageStats = StageStats();
 	m_vPassedStageStats.clear();
 
@@ -91,6 +88,7 @@ void GameState::ResetMusicStatistics()
 	m_fSongBeat = 0;
 	m_fCurBPS = 10;
 	m_bFreeze = false;
+	m_bPastHereWeGo = false;
 }
 
 int GameState::GetStageIndex()

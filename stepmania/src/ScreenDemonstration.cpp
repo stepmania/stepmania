@@ -96,7 +96,7 @@ bool SetUpSongOptions()		// always return true.
 			/* Lots and lots of arrows.  This might even bias to arrows a little
 			 * too much. */
 			GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
-			GAMESTATE->m_PlayerOptions[p].m_fArrowScrollSpeed = .25f;
+			GAMESTATE->m_PlayerOptions[p].m_fScrollSpeed = .25f;
 			GAMESTATE->m_PlayerOptions[p].m_bEffects[ PlayerOptions::EFFECT_SPACE ] = true;
 			GAMESTATE->m_PlayerOptions[p].m_bEffects[ PlayerOptions::EFFECT_MINI ] = true;
 		}
@@ -112,7 +112,7 @@ bool SetUpSongOptions()		// always return true.
 		GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
 
 		if( RandomFloat(0,1)>0.8f )
-			GAMESTATE->m_PlayerOptions[p].m_fArrowScrollSpeed = 1.5f;
+			GAMESTATE->m_PlayerOptions[p].m_fScrollSpeed = 1.5f;
 		GAMESTATE->m_PlayerOptions[p].m_bEffects[ rand()%PlayerOptions::NUM_EFFECT_TYPES ] = true;
 		if( RandomFloat(0,1)>0.9f )
 			GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_HIDDEN;
@@ -157,6 +157,8 @@ ScreenDemonstration::ScreenDemonstration() : ScreenGameplay(SetUpSongOptions())	
 	m_Fade.OpenWipingRight();
 
 	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that animate "ready", "here we go", etc.
+
+	GAMESTATE->m_bPastHereWeGo = true;
 
 	m_StarWipe.SetOpened();
 	m_DancingState = STATE_DANCING;

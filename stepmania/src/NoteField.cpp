@@ -45,11 +45,11 @@ NoteField::NoteField()
 }
 
 
-void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBehind, int iPixelsToDrawAhead )
+void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw )
 {
 	m_PlayerNumber = pn;
-	m_iPixelsToDrawBehind = iPixelsToDrawBehind;
-	m_iPixelsToDrawAhead = iPixelsToDrawAhead;
+	m_iFirstPixelToDraw = iFirstPixelToDraw;
+	m_iLastPixelToDraw = iLastPixelToDraw;
 
 	m_fPercentFadeToFail = -1;
 
@@ -80,8 +80,8 @@ void NoteField::DrawMeasureBar( int iMeasureIndex )
 	const int iMeasureNoDisplay = iMeasureIndex+1;
 	const float fBeat = float(iMeasureIndex * BEATS_PER_MEASURE);
 
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, fBeat );
-	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
+	const float fYOffset	= ArrowGetYOffset(			m_PlayerNumber, fBeat );
+	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 
 	m_rectMeasureBar.SetXY( 0, fYPos );
 	m_rectMeasureBar.SetZoomX( (float)(m_iNumTracks+1) * ARROW_SIZE );
@@ -98,8 +98,8 @@ void NoteField::DrawMeasureBar( int iMeasureIndex )
 
 void NoteField::DrawMarkerBar( const float fBeat )
 {
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, fBeat );
-	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
+	const float fYOffset	= ArrowGetYOffset(			m_PlayerNumber, fBeat );
+	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 
 	m_rectMarkerBar.SetXY( 0, fYPos );
 	m_rectMarkerBar.SetZoomX( (float)(m_iNumTracks+1) * ARROW_SIZE );
@@ -110,8 +110,8 @@ void NoteField::DrawMarkerBar( const float fBeat )
 
 void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 {
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, fBeat );
-	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
+	const float fYOffset	= ArrowGetYOffset(			m_PlayerNumber, fBeat );
+	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 
 	m_textMeasureNumber.SetDiffuse( RageColor(1,0,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStart()*2)/2+0.5f) );
@@ -122,8 +122,8 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 
 void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 {
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, fBeat );
-	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
+	const float fYOffset	= ArrowGetYOffset(			m_PlayerNumber, fBeat );
+	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 
 	m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStart()*2)/2+0.5f) );
@@ -134,8 +134,8 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 
 void NoteField::DrawBGChangeText( const float fBeat, const CString sNewBGName )
 {
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, fBeat );
-	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
+	const float fYOffset	= ArrowGetYOffset(			m_PlayerNumber, fBeat );
+	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 
 	m_textMeasureNumber.SetDiffuse( RageColor(0,1,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStart()*2)/2+0.5f) );
@@ -149,16 +149,41 @@ void NoteField::DrawPrimitives()
 	//LOG->Trace( "NoteField::DrawPrimitives()" );
 
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
-	
-	const float fBeatsToDrawBehind = m_iPixelsToDrawBehind * (1/(float)ARROW_SIZE) * (1/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed);
-	const float fBeatsToDrawAhead  = m_iPixelsToDrawAhead  * (1/(float)ARROW_SIZE) * (1/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed);
-	const float fFirstBeatToDraw = max( 0, fSongBeat - fBeatsToDrawBehind );
-	/* We actually want to draw up to the last row, which is after MAX_BEATS-1 but
-	 * before MAX_BEATS.  Rely on GetTapNote to cap it for us correctly. */
-	const float fLastBeatToDraw  = min( MAX_BEATS, fSongBeat + fBeatsToDrawAhead );
+
+	// CPU OPTIMIZATION OPPORTUNITY:
+	// change this probing to binary search
+
+	// probe for first note on the screen
+	float fFirstBeatToDraw = fSongBeat-2;	// Adjust to balance of performance and showing enough notes.
+	while( fFirstBeatToDraw<fSongBeat )
+	{
+		float fYOffset = ArrowGetYOffset(m_PlayerNumber, fFirstBeatToDraw);
+		float fYPosWOReverse = ArrowGetYPosWithoutReverse(m_PlayerNumber, fYOffset );
+		if( fYPosWOReverse < m_iFirstPixelToDraw )	// off screen
+			fFirstBeatToDraw += 0.1f;	// move toward fSongBeat
+		else	// on screen
+			break;	// stop probing
+	}
+	fFirstBeatToDraw -= 0.1f;	// rewind if we intentionally overshot
+
+	// probe for last note to draw
+	float fLastBeatToDraw = fSongBeat+20;	// worst case is 0.25x + boost.  Adjust to balance of performance and showing enough notes.
+	while( fLastBeatToDraw>fSongBeat )
+	{
+		float fYOffset = ArrowGetYOffset(m_PlayerNumber, fLastBeatToDraw);
+		float fYPosWOReverse = ArrowGetYPosWithoutReverse(m_PlayerNumber, fYOffset );
+		if( fYPosWOReverse > m_iLastPixelToDraw )	// off screen
+			fLastBeatToDraw -= 0.1f;	// move toward fSongBeat
+		else	// on screen
+			break;	// stop probing
+	}
+	fLastBeatToDraw += 0.1f;	// fast forward since we intentionally overshot
+
+
 	const int iFirstIndexToDraw  = BeatToNoteRow(fFirstBeatToDraw);
 	const int iLastIndexToDraw   = BeatToNoteRow(fLastBeatToDraw);
 
+//	LOG->Trace( "start = %f.1, end = %f.1", fFirstBeatToDraw-fSongBeat, fLastBeatToDraw-fSongBeat );
 //	LOG->Trace( "Drawing elements %d through %d", iFirstIndexToDraw, iLastIndexToDraw );
 
 	if( GAMESTATE->m_bEditing )

@@ -1,5 +1,16 @@
+----------------------- Version 3.02 ---------------------------
+NEW FEATURE:  Added 0.25x scroll speed
+CHANGE:  Reorganized options on Player Options screen
+NEW FEATURE:  New modifier: Acceleration-Land
+NEW FEATURE:  New modifier: Acceleration-Expand
+NEW FEATURE:  New modifier: Acceleration-Boomerang
+CHANGE:  Tweaked Acceleration-Wave for more of a challenge
+CHANGE:  Changed format  NoteSkin tap graphic format.  Existing NoteSkins will 
+	need to update the tap graphic.
+
 ----------------------- Version 3.01 ---------------------------
-CHANGE:  Simplified NoteSkin format.  Old NoteSkins will need to be updated.
+CHANGE:  Simplified NoteSkin tap graphic format.  Old NoteSkins will need to 
+	update the tap graphic.
 NEW FEATURE:  AutoSync status now shown during gameplay with icon
 NEW FEATURE:  added autogen icon to select music
 NEW FEATURE:  toggle for easter eggs in Machine Options

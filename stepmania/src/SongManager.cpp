@@ -581,7 +581,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, cons
 	po_out.Init();
 	so_out.Init();
 	po_out.m_bReverseScroll = true;
-	po_out.m_fArrowScrollSpeed = 1.5f;
+	po_out.m_fScrollSpeed = 1.5f;
 	so_out.m_DrainType = (bExtra2 ? SongOptions::DRAIN_SUDDEN_DEATH : SongOptions::DRAIN_NO_RECOVER);
 
 	// should we do something fancy here, like turn on different effects?
@@ -593,7 +593,6 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, cons
 	case 2:	po_out.m_bEffects[PlayerOptions::EFFECT_DRUNK] = true;	break;
 	case 3:	po_out.m_bEffects[PlayerOptions::EFFECT_MINI] = true;	break;
 	case 4:	po_out.m_bEffects[PlayerOptions::EFFECT_SPACE] = true;	break;
-	case 5:	po_out.m_bEffects[PlayerOptions::EFFECT_WAVE] = true;	break;
 	default:	ASSERT(0);
 	}
 }

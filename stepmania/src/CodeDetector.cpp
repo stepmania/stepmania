@@ -33,7 +33,7 @@ enum Code {
 	CODE_LITTLE,
 	CODE_NEXT_SCROLL_SPEED,
 	CODE_PREVIOUS_SCROLL_SPEED,
-	CODE_BOOST,
+	CODE_NEXT_ACCEL,
 	CODE_NEXT_EFFECT,
 	CODE_NEXT_APPEARANCE,
 	CODE_NEXT_TURN,
@@ -60,7 +60,7 @@ const CString g_sCodeNames[NUM_CODES] = {
 	"Little",
 	"NextScrollSpeed",
 	"PreviousScrollSpeed",
-	"Boost",
+	"NextAccel",
 	"NextEffect",
 	"NextAppearance",
 	"NextTurn",
@@ -174,14 +174,14 @@ bool CodeDetector::DetectAndAdjustOptions( GameController controller )
 			case CODE_SHUFFLE:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_TurnType, PlayerOptions::TURN_SHUFFLE,			PlayerOptions::TURN_NONE );	break;
 			case CODE_SUPER_SHUFFLE:	TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_TurnType, PlayerOptions::TURN_SUPER_SHUFFLE,	PlayerOptions::TURN_NONE );	break;
 			case CODE_LITTLE:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bLittle, true, false );				break;
-			case CODE_NEXT_SCROLL_SPEED:INCREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fArrowScrollSpeed );	break;
-			case CODE_PREVIOUS_SCROLL_SPEED:DECREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fArrowScrollSpeed );	break;
-			case CODE_BOOST:			GAMESTATE->m_PlayerOptions[pn].m_bBoost	^= true;									break;
+			case CODE_NEXT_SCROLL_SPEED:INCREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fScrollSpeed );	break;
+			case CODE_PREVIOUS_SCROLL_SPEED:DECREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fScrollSpeed );	break;
+			case CODE_NEXT_ACCEL:		GAMESTATE->m_PlayerOptions[pn].NextAccel();									break;
 			case CODE_NEXT_EFFECT:		GAMESTATE->m_PlayerOptions[pn].NextEffect();									break;
-			case CODE_NEXT_APPEARANCE:	GAMESTATE->m_PlayerOptions[pn].m_AppearanceType = PlayerOptions::AppearanceType((GAMESTATE->m_PlayerOptions[pn].m_AppearanceType+1)	%PlayerOptions::NUM_APPEARANCE_TYPES );	break;
-			case CODE_NEXT_TURN:		GAMESTATE->m_PlayerOptions[pn].m_TurnType		= PlayerOptions::TurnType(		(GAMESTATE->m_PlayerOptions[pn].m_TurnType+1)		%PlayerOptions::NUM_TURN_TYPES );		break;
+			case CODE_NEXT_APPEARANCE:	GAMESTATE->m_PlayerOptions[pn].NextAppearance();;				break;
+			case CODE_NEXT_TURN:		GAMESTATE->m_PlayerOptions[pn].NextTurn();						break;
 			case CODE_REVERSE:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll, true, false );			break;
-			case CODE_NEXT_COLOR:		GAMESTATE->m_PlayerOptions[pn].m_ColorType		= PlayerOptions::ColorType(		(GAMESTATE->m_PlayerOptions[pn].m_ColorType+1)		%PlayerOptions::NUM_COLOR_TYPES );		break;
+			case CODE_NEXT_COLOR:		GAMESTATE->m_PlayerOptions[pn].NextColor();		break;
 			case CODE_HOLDS:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bHoldNotes, true, false );				break;
 			case CODE_DARK:				TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bDark, true, false );					break;
 			case CODE_CANCEL_ALL:		GAMESTATE->m_PlayerOptions[pn] = PlayerOptions();								break;

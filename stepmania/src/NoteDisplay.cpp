@@ -66,7 +66,6 @@ int NoteDisplay::GetTapFrameNo( const float fNoteBeat )
 	
 	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fPercentIntoMeasure = fmodf( fSongBeat, g_fTapAnimationLengthInBeats ) / g_fTapAnimationLengthInBeats;
-	fPercentIntoMeasure += 1/(iNumFrames*2.f);	// fudge factor so that the "full white" frame shows when the arrow overlaps the receptors
 	int iSongBeatFrameContrib = (int)roundf( fPercentIntoMeasure * iNumFrames );
 
 	float fBeatFraction = fmodf( fNoteBeat, 1.0f );
@@ -92,10 +91,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	const bool bReverse = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bReverseScroll;
 
 	const int	iCol			= hn.m_iTrack;
-	const float fStartYOffset	= ArrowGetYOffset(	m_PlayerNumber, hn.m_fStartBeat );
-	const float fStartYPos		= ArrowGetYPos(		m_PlayerNumber, fStartYOffset );
-	const float fEndYOffset		= ArrowGetYOffset(	m_PlayerNumber, hn.m_fEndBeat );
-	const float fEndYPos		= ArrowGetYPos(		m_PlayerNumber, fEndYOffset );
+	const float fStartYOffset	= ArrowGetYOffset(			m_PlayerNumber, hn.m_fStartBeat );
+	const float fStartYPos		= ArrowGetYPos(	m_PlayerNumber, fStartYOffset );
+	const float fEndYOffset		= ArrowGetYOffset(			m_PlayerNumber, hn.m_fEndBeat );
+	const float fEndYPos		= ArrowGetYPos(	m_PlayerNumber, fEndYOffset );
 
 	// draw from bottom to top
 	const float fFrameWidth = m_sprHoldParts.GetUnzoomedWidth();
@@ -315,12 +314,12 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSameRowAsHoldStart, const float fPercentFadeToFail, const float fLife )
 {
-	const float fYOffset		= ArrowGetYOffset(	m_PlayerNumber, fBeat );
-	const float fYPos			= ArrowGetYPos(		m_PlayerNumber, fYOffset );
-	const float fRotation		= ArrowGetRotation(	m_PlayerNumber, iCol, fYOffset );
-	const float fXPos			= ArrowGetXPos(		m_PlayerNumber, iCol, fYPos );
-	const float fAlpha			= ArrowGetAlpha(	m_PlayerNumber, fYPos, fPercentFadeToFail );
-	const float fGlow			= ArrowGetGlow(		m_PlayerNumber, fYPos, fPercentFadeToFail );
+	const float fYOffset		= ArrowGetYOffset(			m_PlayerNumber, fBeat );
+	const float fYPos			= ArrowGetYPos(	m_PlayerNumber, fYOffset );
+	const float fRotation		= ArrowGetRotation(			m_PlayerNumber, fBeat );
+	const float fXPos			= ArrowGetXPos(				m_PlayerNumber, iCol, fYPos );
+	const float fAlpha			= ArrowGetAlpha(			m_PlayerNumber, fYPos, fPercentFadeToFail );
+	const float fGlow			= ArrowGetGlow(				m_PlayerNumber, fYPos, fPercentFadeToFail );
 	const int iTapFrameNo		= GetTapFrameNo( fBeat );
 	const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
 	RageColor diffuse = RageColor(fColorScale,fColorScale,fColorScale,fAlpha);

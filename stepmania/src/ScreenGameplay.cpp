@@ -1015,9 +1015,11 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	//
 	// handle a step
 	//
-	if( m_DancingState == STATE_DANCING  &&  type == IET_FIRST_PRESS  &&  !PREFSMAN->m_bAutoPlay   &&  StyleI.IsValid() )
-		if( GAMESTATE->IsPlayerEnabled( StyleI.player ) )
-			m_Player[StyleI.player].Step( StyleI.col ); 
+	if( type==IET_FIRST_PRESS && 
+		!PREFSMAN->m_bAutoPlay && 
+		StyleI.IsValid() &&
+		GAMESTATE->IsPlayerEnabled( StyleI.player ) )
+		m_Player[StyleI.player].Step( StyleI.col ); 
 }
 
 void ScreenGameplay::PositionStatusIcons()
@@ -1160,18 +1162,19 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	case SM_User+1:
 		break;
 	case SM_User+2:
-		m_sprReady.StartFocusing();
+		m_sprReady.BeginTweening(0.25f);
+		m_sprReady.SetTweenDiffuse( RageColor(1,1,1,1) );
 		m_announcerReady.PlayRandom();
 		break;
 	case SM_User+3:
 		break;
 	case SM_User+4:
-		m_sprReady.StartBlurring();
 		break;
 	case SM_User+5:
-		{
-			m_Background.FadeIn();
-		}
+		m_sprReady.SetDiffuse( RageColor(1,1,1,0) );
+		m_announcerHereWeGo.PlayRandom();
+		m_Background.FadeIn();
+		GAMESTATE->m_bPastHereWeGo = true;
 		break;
 	case SM_User+6:
 		break;
@@ -1184,7 +1187,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_StartHereWeGo:
 		/* We have 2.5 seconds until the notes start. */
-		m_sprHereWeGo.StartFocusing();
+
+		m_sprHereWeGo.SetDiffuse( RageColor(1,1,1,1) );
+
 		m_announcerHereWeGo.PlayRandom();
 		/* This gives the HWG about a second of screen time. */
 		this->SendScreenMessage( SM_StopHereWeGo, 1.5f );
@@ -1192,7 +1197,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_StopHereWeGo:
 		/* We have one second until the notes start. */
-		m_sprHereWeGo.StartBlurring();
+		m_sprHereWeGo.SetTweenDiffuse( RageColor(1,1,1,0) );
 		m_DancingState = STATE_DANCING;		// STATE CHANGE!  Now the user is allowed to press Back
 		break;
 

@@ -21,6 +21,9 @@
 #include <math.h>
 
 
+RageTimer	g_timerExpand;
+float		g_fExpandSeconds = 0;
+
 float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 {
 	float fSongBeat = GAMESTATE->m_fSongBeat;
@@ -36,10 +39,33 @@ float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 	 *
 	 * I'm not sure which is better. - glenn
 	 */
-	if( GAMESTATE->m_PlayerOptions[pn].m_bBoost )
-		fYOffset *= 1.4f / ((fYOffset+SCREEN_HEIGHT/1.6f)/SCREEN_HEIGHT); 
-	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_WAVE] )
-		fYOffset += 15.0f*sinf( fYOffset/38.0f ); 
+	/* Boost and wave can no longer be used at the same time.  -Chris */
+
+	if( fYOffset < 0 )
+		return fYOffset;	// don't mess with it after crossing the receptors
+
+	switch( GAMESTATE->m_PlayerOptions[pn].m_AccelType )
+	{
+	case PlayerOptions::ACCEL_BOOST:
+		fYOffset *= 1.5f / ((fYOffset+SCREEN_HEIGHT/1.2f)/SCREEN_HEIGHT); 
+		break;
+	case PlayerOptions::ACCEL_LAND:
+		fYOffset *= SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 0.25f, 1.5f ); 
+		break;
+	case PlayerOptions::ACCEL_WAVE:
+		fYOffset += 20.0f*sinf( fYOffset/38.0f ); 
+		break;
+	case PlayerOptions::ACCEL_EXPAND:
+		if( !GAMESTATE->m_bFreeze )
+			g_fExpandSeconds += g_timerExpand.GetDeltaTime();
+		else
+			g_timerExpand.GetDeltaTime();	// throw away
+		fYOffset *= SCALE( cosf(g_fExpandSeconds*3), -1, 1, 0.5f, 1.5f ); 
+		break;
+	case PlayerOptions::ACCEL_BOOMERANG:
+		fYOffset *= SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 1.5f, 0.5f );
+		break;
+	}
 
 	return fYOffset;
 }
@@ -72,19 +98,27 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos )
 	return fPixelOffsetFromCenter;
 }
 
-float ArrowGetRotation( PlayerNumber pn, int iColNum, float fYOffset ) 
+float ArrowGetRotation( PlayerNumber pn, float fNoteBeat ) 
 {
 	float fRotation = 0; //StyleDef.m_ColumnToRotation[iColNum];
 
 	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_DIZZY] )
-		fRotation += fYOffset/SCREEN_HEIGHT*6; 
-	
+	{
+		float fSongBeat = GAMESTATE->m_fSongBeat;
+		float fBeatsUntilStep = fNoteBeat - fSongBeat;
+		fRotation += fBeatsUntilStep; 
+	}
 	return fRotation;
+}
+
+float ArrowGetYPosWithoutReverse( PlayerNumber pn, float fYOffset )
+{
+	return fYOffset * GAMESTATE->m_PlayerOptions[pn].m_fScrollSpeed;
 }
 
 float ArrowGetYPos( PlayerNumber pn, float fYOffset )
 {
-	return fYOffset * GAMESTATE->m_PlayerOptions[pn].m_fArrowScrollSpeed * (GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ? -1 : 1 );
+	return ArrowGetYPosWithoutReverse(pn,fYOffset) * (GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ? -1 : 1 );
 }
 
 
