@@ -781,11 +781,15 @@ int main(int argc, char* argv[])
 
 	GAMEMAN		= new GameManager;
 	THEME		= new ThemeManager;
+	ANNOUNCER	= new AnnouncerManager;
+
+	/* Set up the theme and announcer. */
+	ReadGamePrefsFromDisk();
+
 	NOTESKIN	= new NoteSkinManager;
 	SOUNDMAN	= new RageSoundManager(PREFSMAN->m_sSoundDrivers);
 	SOUNDMAN->SetPrefs(PREFSMAN->m_fSoundVolume);
 	SOUND		= new RageSounds;
-	ANNOUNCER	= new AnnouncerManager;
 	PROFILEMAN	= new ProfileManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
@@ -796,10 +800,6 @@ int main(int argc, char* argv[])
 	/* depends on SONGINDEX: */
 	SONGMAN		= new SongManager( loading_window );		// this takes a long time to load
 	delete loading_window;		// destroy this before init'ing Display
-
-	/* XXX: Why do we reload global prefs?  PREFSMAN loads them in the ctor. -glenn */
-	PREFSMAN->ReadGlobalPrefsFromDisk();
-	ReadGamePrefsFromDisk();
 
 	DISPLAY = CreateDisplay();
 	TEXTUREMAN	= new RageTextureManager();
