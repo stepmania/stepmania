@@ -2,7 +2,7 @@ bin_PROGRAMS = stepmania
 
 AM_LDFLAGS =
 AM_CXXFLAGS = -O2
-AM_CFLAGS = - O2
+AM_CFLAGS = -O2
 
 if NHAVE_SDL
 AM_CXXFLAGS += -ISDL-1.2.6/include
