@@ -342,12 +342,9 @@ void Actor::Update( float fDeltaTime )
 		break;
 	case spin:
 		m_current.rotation += fDeltaTime*m_vEffectMagnitude;
-		while( m_current.rotation.x > 360 )	m_current.rotation.x -= 360;
-		while( m_current.rotation.y > 360 )	m_current.rotation.y -= 360;
-		while( m_current.rotation.z > 360 )	m_current.rotation.z -= 360;
-		while( m_current.rotation.x < -360 )	m_current.rotation.x += 360;
-		while( m_current.rotation.y < -360 )	m_current.rotation.y += 360;
-		while( m_current.rotation.z < -360 )	m_current.rotation.z += 360;
+		wrap( m_current.rotation.x, 360 );
+		wrap( m_current.rotation.y, 360 );
+		wrap( m_current.rotation.z, 360 );
 		break;
 	case vibrate:
 		break;
