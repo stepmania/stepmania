@@ -416,17 +416,15 @@ void Actor::Update( float fDeltaTime )
 	if( m_bFirstUpdate )
 		m_bFirstUpdate = false;
 
+	if( m_fHibernateSecondsLeft > 0 )
 	{
-		float fHibernate = m_fHibernateSecondsLeft;
 		m_fHibernateSecondsLeft -= fDeltaTime;
-		m_fHibernateSecondsLeft = max( 0, m_fHibernateSecondsLeft );
-
-		/* If we're hibernating for 8 seconds, and fDeltaTime is 10 seconds, then
-		 * set fDeltaTime to 2. */
-		fDeltaTime = max( fDeltaTime - fHibernate, 0 );
-		
-		if( fDeltaTime == 0 )
+		if( m_fHibernateSecondsLeft > 0 )
 			return;
+
+		/* Grab the leftover time. */
+		fDeltaTime = -m_fHibernateSecondsLeft;
+		m_fHibernateSecondsLeft = 0;
 	}
 
 	switch( m_EffectClock )
@@ -434,7 +432,11 @@ void Actor::Update( float fDeltaTime )
 	case CLOCK_TIMER:
 		m_fSecsIntoEffect += fDeltaTime;
 		m_fEffectDelta = fDeltaTime;
-		m_fSecsIntoEffect = fmodfp( m_fSecsIntoEffect, m_fEffectPeriodSeconds + m_fEffectDelay );
+
+		/* Wrap the counter, so it doesn't increase indefinitely (causing loss of
+		 * precision if a screen is left to sit for a day). */
+		if( m_fSecsIntoEffect >= m_fEffectPeriodSeconds + m_fEffectDelay )
+			m_fSecsIntoEffect -= m_fEffectPeriodSeconds + m_fEffectDelay;
 		break;
 
 	case CLOCK_BGM_BEAT:
