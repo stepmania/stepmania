@@ -30,6 +30,7 @@
 #include "RageTextureManager.h"
 #include "UnlockSystem.h"
 #include "ProductInfo.h"
+#include "NetworkManager.h"
 
 
 #define LOGO_ON_COMMAND				THEME->GetMetric("ScreenTitleMenu","LogoOnCommand")
@@ -332,6 +333,9 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SetNewScreen( "ScreenJukeboxMenu" );
 			break;
 		#ifdef DEBUG
+		case CHOICE_NETWORKPLAY:
+			NETWORKMAN->Connect();
+			break;
 		case CHOICE_SANDBOX:
 			SCREENMAN->SetNewScreen( "ScreenTest" );
 			break;

@@ -38,6 +38,7 @@ public:
 		CHOICE_EDIT_COURSES,
 		CHOICE_JUKEBOX,
 		#ifdef DEBUG
+		CHOICE_NETWORKPLAY,
 		CHOICE_SANDBOX,
 		#endif
 		CHOICE_EXIT,
@@ -54,6 +55,7 @@ public:
 			"EDIT COURSES",
 			"JUKEBOX",
 			#ifdef DEBUG
+			"NETWORK PLAY",
 			"SANDBOX",
 			#endif
 			"EXIT"
