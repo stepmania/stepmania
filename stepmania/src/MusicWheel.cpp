@@ -56,8 +56,10 @@ CachedThemeMetricF CIRCLE_PERCENT	("MusicWheel","CirclePercent");
 CachedThemeMetricB	USE_3D			("MusicWheel","Use3D");
 CachedThemeMetricI  NUM_WHEEL_ITEMS_METRIC	("MusicWheel","NumWheelItems");
 #define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, (int) NUM_WHEEL_ITEMS_METRIC )
-#define MENU_NAMES					THEME->GetMetric ("MusicWheel","MenuNames")
-#define MENU_ACTIONS				THEME->GetMetric ("MusicWheel","MenuActions")
+#define SORT_MENU_NAMES				THEME->GetMetric ("MusicWheel","SortMenuNames")
+#define SORT_MENU_ACTIONS			THEME->GetMetric ("MusicWheel","SortMenuActions")
+#define MODE_MENU_NAMES				THEME->GetMetric ("MusicWheel","ModeMenuNames")
+#define MODE_MENU_ACTIONS			THEME->GetMetric ("MusicWheel","ModeMenuActions")
 #define WHEEL_ITEM_ON_DELAY_CENTER	THEME->GetMetricF("MusicWheel","WheelItemOnDelayCenter")
 #define WHEEL_ITEM_ON_DELAY_OFFSET	THEME->GetMetricF("MusicWheel","WheelItemOnDelayOffset")
 #define WHEEL_ITEM_OFF_DELAY_CENTER	THEME->GetMetricF("MusicWheel","WheelItemOffDelayCenter")
@@ -76,8 +78,8 @@ static const SongSortOrder SortOrder[] =
 	SORT_BPM, 
 	SORT_MOST_PLAYED, 
 	SORT_ARTIST,
-	SORT_INVALID
 };
+// use ARRAYSIZE(SortOrder)
 
 
 MusicWheel::MusicWheel() 
@@ -377,10 +379,12 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 	switch( so )
 	{
-	case SORT_MENU:
+	case SORT_SORT_MENU:
+	case SORT_MODE_MENU:
 	{
 		arrayWheelItemDatas.clear();	// clear out the previous wheel items 
-		CString sNames = MENU_NAMES, sActions = MENU_ACTIONS;
+		CString sNames = so==SORT_SORT_MENU ? SORT_MENU_NAMES : MODE_MENU_NAMES;
+		CString sActions = so==SORT_SORT_MENU ? SORT_MENU_ACTIONS : MODE_MENU_ACTIONS;
 		vector<CString> Names, Actions;
 		split( sNames, ":", Names );
 		split( sActions, ":", Actions );
@@ -910,7 +914,8 @@ void MusicWheel::Update( float fDeltaTime )
 					if( GAMESTATE->m_pCurSong )
 						SelectSong( GAMESTATE->m_pCurSong );
 					break;
-				case SORT_MENU:
+				case SORT_SORT_MENU:
+				case SORT_MODE_MENU:
 					SelectSort( m_LastSongSortOrder );
 					break;
 				default:
@@ -1139,29 +1144,26 @@ bool MusicWheel::ChangeSort( SongSortOrder new_so )	// return true if change suc
 
 bool MusicWheel::NextSort()		// return true if change successful
 {
-	/* Is the current sort in the default sort order? */
-	int cur = 0;
-	while( SortOrder[cur] != SORT_INVALID && SortOrder[cur] != GAMESTATE->m_SongSortOrder )
-		++cur;
-
-	SongSortOrder so;
-	if( SortOrder[cur] == SORT_INVALID )
+	// don't allow NextSort when on the sort menu or mode menu
+	switch( GAMESTATE->m_SongSortOrder )
 	{
-		/* It isn't, which means we're either in the sort menu or in a sort selected
-		 * from the sort menu.  If we're in the sort menu, return to the first sort. 
-		 * Otherwise, return to the sort menu. */
-		if( GAMESTATE->m_SongSortOrder == SORT_MENU )
-			so = SortOrder[0];
-		else
-			so = SORT_MENU;
-	} else {
-		++cur;
-		if( SortOrder[cur] == SORT_INVALID )
-			cur = 0;
-		so = SortOrder[cur];
+	case SORT_SORT_MENU:
+	case SORT_MODE_MENU:
+		return false;
 	}
 
-	return ChangeSort( so );
+	// find the index of the current sort
+	int cur = 0;
+	while( cur < ARRAYSIZE(SortOrder) && SortOrder[cur] != GAMESTATE->m_SongSortOrder )
+		++cur;
+
+	// move to the next sort with wrapping
+	++cur;
+	wrap( cur, ARRAYSIZE(SortOrder) );
+
+	// apply new sort
+	SongSortOrder soNew = SortOrder[cur];
+	return ChangeSort( soNew );
 }
 
 bool MusicWheel::Select()	// return true if this selection ends the screen
@@ -1283,7 +1285,7 @@ void MusicWheel::SetOpenGroup(CString group, SongSortOrder so)
 
 
 	//
-	// Try to select the item that was selected before chaning groups
+	// Try to select the item that was selected before changing groups
 	//
 	m_iSelection = 0;
 

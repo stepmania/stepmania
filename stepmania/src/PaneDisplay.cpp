@@ -350,7 +350,8 @@ PaneModes PaneDisplay::GetMode() const
 	case SORT_ONI_COURSES:
 	case SORT_ENDLESS_COURSES:
 		return PANEMODE_COURSE;
-	case SORT_MENU:
+	case SORT_SORT_MENU:
+	case SORT_MODE_MENU:
 		return m_CurMode; // leave it
 	default:
 		return PANEMODE_SONG;

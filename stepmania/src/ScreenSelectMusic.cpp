@@ -597,9 +597,12 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 	case SORT_ENDLESS_COURSES:
 		EnterCourseDisplayMode();
 		break;
+	case SORT_SORT_MENU:
+	case SORT_MODE_MENU:
+		// do nothing
+		break;
 	default:
-		if( GAMESTATE->m_SongSortOrder != SORT_MENU )
-			ExitCourseDisplayMode();
+		ExitCourseDisplayMode();
 		break;
 	}
 }
@@ -708,12 +711,20 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 				HarderDifficulty( pn );
 			return;
 		}
-		if( CodeDetector::EnteredMenu(GameI.controller) )
+		if( CodeDetector::EnteredSortMenu(GameI.controller) )
 		{
 			if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
 				m_soundLocked.Play();
 			else
-				m_MusicWheel.ChangeSort( SORT_MENU );
+				m_MusicWheel.ChangeSort( SORT_SORT_MENU );
+			return;
+		}
+		if( CodeDetector::EnteredModeMenu(GameI.controller) )
+		{
+			if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
+				m_soundLocked.Play();
+			else
+				m_MusicWheel.ChangeSort( SORT_MODE_MENU );
 			return;
 		}
 		if( CodeDetector::EnteredNextSort(GameI.controller) )

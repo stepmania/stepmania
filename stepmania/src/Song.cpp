@@ -1463,7 +1463,8 @@ CString GetSectionNameFromSongAndSort( const Song* pSong, SongSortOrder so )
 				return ssprintf("%02d", pNotes->GetMeter() );
 			return "N/A";
 		}
-	case SORT_MENU:
+	case SORT_SORT_MENU:
+	case SORT_MODE_MENU:
 		return "";
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
