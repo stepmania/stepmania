@@ -19,8 +19,6 @@ public:
 
 	MemoryCardState GetCardState( PlayerNumber pn );
 	
-//	CString GetOsMountDir( PlayerNumber pn );	// only valid when state = ready
-
 	void LockCards();	// prevent removing or changing of memory cards
 	void UnlockCards();
 	void TryMountAllCards();
@@ -28,9 +26,6 @@ public:
 	void UnmountAllUsedCards();
 	void MountCard( PlayerNumber pn );
 	void UnmountCard( PlayerNumber pn );
-	
-	void PauseMountingThread();	// call this before mouting, reading, or writing to memory card
-	void UnPauseMountingThread();	// call this when done mouting, reading, or writing to memory card
 	
 	void FlushAndReset();	// force all files to be flushed to mounted memory cards
 
@@ -41,6 +36,8 @@ public:
 
 protected:
 	void UpdateUnassignedCards();	// do our best to assign a Device to each player
+	void PauseMountingThread();	// call this before mouting, reading, or writing to memory card
+	void UnPauseMountingThread();	// call this when done mouting, reading, or writing to memory card
 
 	MemoryCardDriver *m_pDriver;
 
@@ -48,6 +45,7 @@ protected:
 
 	bool	m_bCardsLocked;
 	bool	m_bTooLate[NUM_PLAYERS];	// card was inserted after lock
+	bool	m_bMounted[NUM_PLAYERS];	// card is currently mounted
 	UsbStorageDevice m_Device[NUM_PLAYERS];	// device in the memory card slot, NULL if none
 
 	RageSound m_soundReady;

@@ -35,6 +35,7 @@ MemoryCardManager::MemoryCardManager()
 	FOREACH_PlayerNumber( p )
 	{
 		m_bTooLate[p] = false;
+		m_bMounted[p] = false;
 	}
 	
 	/* These can play at any time.  Preload them, so we don't cause a skip in gameplay. */
@@ -261,6 +262,8 @@ void MemoryCardManager::MountAllUsedCards()
 	}
 }
 
+/* Called in EndGame just after writing the profile.  Called by PlayersFinalized just after
+ * reading the profile.  Should never block; use FlushAndReset to block until writes complete. */
 void MemoryCardManager::UnmountAllUsedCards()
 {
 	FOREACH_EnabledPlayer( p )
@@ -279,8 +282,23 @@ void MemoryCardManager::MountCard( PlayerNumber pn )
 {
 	ASSERT( !m_Device[pn].IsBlank() );
 
+	/* Pause the mounting thread when we mount the first drive. */
+	bool bNeedPause = true;
+	FOREACH_PlayerNumber( p )
+		if( m_bMounted[p] )
+			bNeedPause = false;
+	if( bNeedPause )
+		this->PauseMountingThread();
+
 	if( !m_pDriver->MountAndTestWrite(&m_Device[pn]) )
+	{
+		if( bNeedPause )
+			this->UnPauseMountingThread();
+
 		return;
+	}
+
+	m_bMounted[p] = true;
 
 	/* If this is the first time we're mounting the device, mount the VFS drivers.
 	 * Simply mounting our VFS on a directory doesn't actually touch the directory,
@@ -305,8 +323,21 @@ void MemoryCardManager::UnmountCard( PlayerNumber pn )
 {
 	ASSERT( !m_Device[pn].IsBlank() );
 
+	if( !m_bMounted[pn] )
+		return;
+
 	/* Leave our own filesystem drivers mounted. */
 	m_pDriver->Unmount( &m_Device[pn] );
+
+	m_bMounted[pn] = false;
+
+	/* Unpause the mounting thread when we unmount the last drive. */
+	bool bNeedUnpause = true;
+	FOREACH_PlayerNumber( p )
+		if( m_bMounted[p] )
+			bNeedUnpause = false;
+	if( bNeedUnpause )
+		this->UnPauseMountingThread();
 }
 
 void MemoryCardManager::FlushAndReset()

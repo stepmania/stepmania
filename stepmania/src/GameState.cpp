@@ -230,8 +230,9 @@ void GameState::PlayersFinalized()
 
 	m_bPlayersFinalized = true;
 
-	MEMCARDMAN->PauseMountingThread();
 	MEMCARDMAN->LockCards();
+
+	/* Mount all available cards, for loading the profile and edits. */
 	MEMCARDMAN->TryMountAllCards();
 
 	// apply saved default modifiers if any
@@ -276,7 +277,6 @@ void GameState::PlayersFinalized()
 	}
 
 	MEMCARDMAN->UnmountAllUsedCards();
-	MEMCARDMAN->UnPauseMountingThread();
 }
 
 /* This data is added to each player profile, and to the machine profile per-player. */
@@ -350,7 +350,6 @@ void GameState::EndGame()
 		}
 	}
 
-	MEMCARDMAN->PauseMountingThread();
 	MEMCARDMAN->MountAllUsedCards();
 
 	BOOKKEEPER->WriteToDisk();
@@ -370,8 +369,6 @@ void GameState::EndGame()
 	CHECKPOINT;
 	MEMCARDMAN->FlushAndReset();
 	CHECKPOINT;
-
-	MEMCARDMAN->UnPauseMountingThread();
 
 	SONGMAN->FreeAllLoadedFromProfiles();
 
