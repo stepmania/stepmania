@@ -295,7 +295,8 @@ void Player::Step( int col )
 
 	int iIndexOverlappingNote = -1;		// leave as -1 if we don't find any
 
-	// Start at iIndexStartLookingAt and search outward.  The first one note overlaps the player's hit (this is the closest match).
+	// Start at iIndexStartLookingAt and search outward.  The first one note 
+	// overlaps the player's hit (this is the closest match).
 	for( int delta=0; delta <= iNumElementsToExamine; delta++ )
 	{
 		int iCurrentIndexEarlier = iIndexStartLookingAt - delta;

@@ -3,6 +3,9 @@
 #include "ThemeManager.h"
 #include "SongManager.h"
 
+/* If this actor is used anywhere other than SelectGroup, we
+ * can add a setting that changes which metric group we pull
+ * settings out of, so it can be configured separately. */
 #define BUTTON_X			THEME->GetMetricF("SelectGroup","ButtonX")
 #define BUTTON_START_Y		THEME->GetMetricF("SelectGroup","ButtonStartY")
 #define BUTTON_SPACING_Y	THEME->GetMetricF("SelectGroup","ButtonSpacingY")

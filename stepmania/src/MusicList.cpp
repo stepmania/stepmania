@@ -2,6 +2,9 @@
 #include "MusicList.h"
 #include "ThemeManager.h"
 
+/* If this actor is used anywhere other than SelectGroup, we
+ * can add a setting that changes which metric group we pull
+ * settings out of, so it can be configured separately. */
 #define TITLES_START_X		THEME->GetMetricF("SelectGroup","TitlesStartX")
 #define TITLES_SPACING_X	THEME->GetMetricF("SelectGroup","TitlesSpacingX")
 #define TITLES_START_Y		THEME->GetMetricF("SelectGroup","TitlesStartY")
