@@ -769,6 +769,8 @@ void ScreenEvaluation::TweenOffScreen()
 	*/
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
+		m_Grades[p].SettleImmediately();
+
 		m_BonusInfoFrame[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
 		m_BonusInfoFrame[p].SetTweenZoomY( 0 );
 
