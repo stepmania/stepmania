@@ -75,7 +75,7 @@ static Desc FindClosestFormat(const vector<Desc>& formats)
 }
 
 static void GetIOProcFormats( CAAudioHardwareStream stream,
-			      vector<Desc> &procFormats )
+							  vector<Desc> &procFormats )
 {
 	UInt32 numFormats = stream.GetNumberAvailableIOProcFormats();
 
@@ -89,7 +89,7 @@ static void GetIOProcFormats( CAAudioHardwareStream stream,
 }
 
 static void GetPhysicalFormats( CAAudioHardwareStream stream,
-				vector<Desc> &physicalFormats )
+								vector<Desc> &physicalFormats )
 {
 	UInt32 numFormats = stream.GetNumberAvailablePhysicalFormats();
 	for( UInt32 i=0; i<numFormats; ++i )
@@ -103,184 +103,182 @@ static void GetPhysicalFormats( CAAudioHardwareStream stream,
 
 RageSound_CA::RageSound_CA()
 {
-    try
-    {
-        AudioDeviceID dID;
+	try
+	{
+		AudioDeviceID dID;
 	
-	dID = CAAudioHardwareSystem::GetDefaultDevice(false, false);
-        mOutputDevice = new CAAudioHardwareDevice(dID);
-    }
-    catch (const CAException& e)
-    {
-        RageException::ThrowNonfatal("Couldn't create default output device.");
-    }
+		dID = CAAudioHardwareSystem::GetDefaultDevice(false, false);
+		mOutputDevice = new CAAudioHardwareDevice(dID);
+	}
+	catch (const CAException& e)
+	{
+		RageException::ThrowNonfatal("Couldn't create default output device.");
+	}
     
-    try
-    {
-        mOutputDevice->SetNominalSampleRate(44100.0);
-    }
-    catch (const CAException& e)
-    {
-        RageException::ThrowNonfatal("Couldn't set the nominal sample rate.");
-    }
-    AudioStreamID sID;
+	try
+	{
+		mOutputDevice->SetNominalSampleRate(44100.0);
+	}
+	catch (const CAException& e)
+	{
+		RageException::ThrowNonfatal("Couldn't set the nominal sample rate.");
+	}
+	AudioStreamID sID;
 
-    sID = mOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
-    CAAudioHardwareStream stream( sID );
+	sID = mOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
+	CAAudioHardwareStream stream( sID );
 
-    try
-    {
-        mOutputDevice->AddPropertyListener(kAudioPropertyWildcardChannel,
-                                           kAudioPropertyWildcardSection,
-                                           kAudioDeviceProcessorOverload,
-                                           OverloadListener, this);
+	try
+	{
+		mOutputDevice->AddPropertyListener(kAudioPropertyWildcardChannel,
+										   kAudioPropertyWildcardSection,
+										   kAudioDeviceProcessorOverload,
+										   OverloadListener, this);
     }
-    catch (const CAException& e)
-    {
-        LOG->Warn("Could not install the overload listener.");
-    }
-    
+	catch (const CAException& e)
+	{
+		LOG->Warn("Could not install the overload listener.");
+	}
 
-    vector<Desc> physicalFormats;
-    GetPhysicalFormats( sID, physicalFormats );
-    unsigned i;
-    LOG->Info("Available physical formats:");
-    for (i = 0; i < physicalFormats.size(); ++i)
-    {
-        const Desc& f = physicalFormats[i];
+	vector<Desc> physicalFormats;
+	GetPhysicalFormats( sID, physicalFormats );
+	unsigned i;
+	LOG->Info("Available physical formats:");
+	for (i = 0; i < physicalFormats.size(); ++i)
+	{
+		const Desc& f = physicalFormats[i];
         
-        LOG->Info("Format %u:  Rate: %i  ID: %s  Flags 0x%lx  bpp %lu  fpp %lu"
-		  " bpf %lu  channels %lu  bits %lu", i, int(f.mSampleRate),
-                  FormatToString(f.mFormatID).c_str(), f.mFormatFlags,
-                  f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
-                  f.mChannelsPerFrame, f.mBitsPerChannel);
-    }
-    const Desc& physicalFormat = FindClosestFormat( physicalFormats );
-    stream.SetCurrentPhysicalFormat( physicalFormat );
+		LOG->Info("Format %u:  Rate: %i  ID: %s  Flags 0x%lx  bpp %lu  fpp %lu"
+				  " bpf %lu  channels %lu  bits %lu", i, int(f.mSampleRate),
+				  FormatToString(f.mFormatID).c_str(), f.mFormatFlags,
+				  f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
+				  f.mChannelsPerFrame, f.mBitsPerChannel);
+	}
+	const Desc& physicalFormat = FindClosestFormat( physicalFormats );
+	stream.SetCurrentPhysicalFormat( physicalFormat );
 
-    vector<Desc> procFormats;
-    GetIOProcFormats( sID, procFormats );
-    LOG->Info("Available I/O procedure formats:");
-    for (i = 0; i < procFormats.size(); ++i)
-    {
-        const Desc& f = procFormats[i];
+	vector<Desc> procFormats;
+	GetIOProcFormats( sID, procFormats );
+	LOG->Info("Available I/O procedure formats:");
+	for (i = 0; i < procFormats.size(); ++i)
+	{
+		const Desc& f = procFormats[i];
         
-        LOG->Info("Format %u:  Rate: %i  ID: %s  Flags 0x%lx  bpp %lu  fpp %lu"
-		  " bpf %lu  channels %lu  bits %lu", i, int(f.mSampleRate),
-                  FormatToString(f.mFormatID).c_str(), f.mFormatFlags,
-                  f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
-                  f.mChannelsPerFrame, f.mBitsPerChannel);
-    }
-    const Desc& procFormat = FindClosestFormat( procFormats );
-    stream.SetCurrentIOProcFormat( procFormat );
+		LOG->Info("Format %u:  Rate: %i  ID: %s  Flags 0x%lx  bpp %lu  fpp %lu"
+				  " bpf %lu  channels %lu  bits %lu", i, int(f.mSampleRate),
+				  FormatToString(f.mFormatID).c_str(), f.mFormatFlags,
+				  f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
+				  f.mChannelsPerFrame, f.mBitsPerChannel);
+	}
+	const Desc& procFormat = FindClosestFormat( procFormats );
+	stream.SetCurrentIOProcFormat( procFormat );
     
     
-    try
-    {
-        UInt32 bufferSize = mOutputDevice->GetIOBufferSize();
-        LOG->Info("I/O Buffer size: %lu", bufferSize);
-    }
-    catch (const CAException& e)
-    {
-        LOG->Warn("Could not determine buffer size.");
-    }    
+	try
+	{
+		UInt32 bufferSize = mOutputDevice->GetIOBufferSize();
+		LOG->Info("I/O Buffer size: %lu", bufferSize);
+	}
+	catch (const CAException& e)
+	{
+		LOG->Warn("Could not determine buffer size.");
+	}    
     
-    try
-    {
-        UInt32 frames = mOutputDevice->GetLatency(kAudioDeviceSectionOutput);
-        if (stream.HasProperty(0, kAudioDevicePropertyLatency))
-        {
-            UInt32 t, size = 4;
+	try
+	{
+		UInt32 frames = mOutputDevice->GetLatency(kAudioDeviceSectionOutput);
+		if (stream.HasProperty(0, kAudioDevicePropertyLatency))
+		{
+			UInt32 t, size = 4;
             
-            stream.GetPropertyData(0, kAudioDevicePropertyLatency, size, &t);
-            frames += t;
-            LOG->Info("Frames of stream latency: %lu", t);
-        }
-        else
-            LOG->Warn("Stream reports no latency.");
-        mLatency = frames / 44100.0;
-        LOG->Info("Frames of latency:        %lu\n"
-                  "Seconds of latency:       %f", frames, mLatency);
-    }
-    catch (const CAException& e)
-    {
-        delete mOutputDevice;
-        RageException::ThrowNonfatal("Couldn't get Latency.");
-    }
-    
+			stream.GetPropertyData(0, kAudioDevicePropertyLatency, size, &t);
+			frames += t;
+			LOG->Info("Frames of stream latency: %lu", t);
+		}
+		else
+			LOG->Warn("Stream reports no latency.");
+		mLatency = frames / 44100.0;
+		LOG->Info("Frames of latency:        %lu\n"
+				  "Seconds of latency:       %f", frames, mLatency);
+	}
+	catch (const CAException& e)
+	{
+		delete mOutputDevice;
+		RageException::ThrowNonfatal("Couldn't get Latency.");
+	}
 
 	StartDecodeThread();
 
-    gConverter = new AudioConverter( this, procFormat );
+	gConverter = new AudioConverter( this, procFormat );
     
-    try
-    {
-        mOutputDevice->AddIOProc(GetData, this);
-        mOutputDevice->StartIOProc(GetData);
-    }
-    catch(const CAException& e)
-    {
-        delete gConverter;
-        delete mOutputDevice;
-        RageException::Throw("Couldn't start the IOProc.");
-    }
+	try
+	{
+		mOutputDevice->AddIOProc(GetData, this);
+		mOutputDevice->StartIOProc(GetData);
+	}
+	catch(const CAException& e)
+	{
+		delete gConverter;
+		delete mOutputDevice;
+		RageException::Throw("Couldn't start the IOProc.");
+	}
 }
 
 RageSound_CA::~RageSound_CA()
 {
-    mOutputDevice->StopIOProc(GetData);
-    delete gConverter;
-    delete mOutputDevice;
+	mOutputDevice->StopIOProc(GetData);
+	delete gConverter;
+	delete mOutputDevice;
 }
 
 int64_t RageSound_CA::GetPosition(const RageSoundBase *sound) const
 {
-    AudioTimeStamp time;
+	AudioTimeStamp time;
     
-    mOutputDevice->GetCurrentTime(time);
-    return int64_t(time.mSampleTime);
+	mOutputDevice->GetCurrentTime(time);
+	return int64_t(time.mSampleTime);
 }
 
 void RageSound_CA::FillConverter(void *data, UInt32 dataByteSize)
 {
-    int frames = dataByteSize / gConverter->GetInputFormat().mBytesPerPacket;
-    this->Mix((int16_t *)data, frames, mDecodePos, GetPosition(NULL));
+	int frames = dataByteSize / gConverter->GetInputFormat().mBytesPerPacket;
+	this->Mix((int16_t *)data, frames, mDecodePos, GetPosition(NULL));
 }
 
 OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
-                               const AudioTimeStamp *inNow,
-                               const AudioBufferList *inInputData,
-                               const AudioTimeStamp *inInputTime,
-                               AudioBufferList *outOutputData,
-                               const AudioTimeStamp *inOutputTime,
-                               void *inClientData)
+							   const AudioTimeStamp *inNow,
+							   const AudioBufferList *inInputData,
+							   const AudioTimeStamp *inInputTime,
+							   AudioBufferList *outOutputData,
+							   const AudioTimeStamp *inOutputTime,
+							   void *inClientData)
 {
-    RageTimer tm;
+	RageTimer tm;
 
-    RageSound_CA *This = (RageSound_CA *)inClientData;
-    UInt32 dataPackets = outOutputData->mBuffers[0].mDataByteSize;
+	RageSound_CA *This = (RageSound_CA *)inClientData;
+	UInt32 dataPackets = outOutputData->mBuffers[0].mDataByteSize;
     
-    dataPackets /= gConverter->GetOutputFormat().mBytesPerPacket;
+	dataPackets /= gConverter->GetOutputFormat().mBytesPerPacket;
    
-    This->mDecodePos = int64_t(inOutputTime->mSampleTime);
-    gConverter->FillComplexBuffer(dataPackets, *outOutputData, NULL);
+	This->mDecodePos = int64_t(inOutputTime->mSampleTime);
+	gConverter->FillComplexBuffer(dataPackets, *outOutputData, NULL);
 
-    g_fLastIOProcTime = tm.GetDeltaTime();
-    ++g_iNumIOProcCalls;
+	g_fLastIOProcTime = tm.GetDeltaTime();
+	++g_iNumIOProcCalls;
 
-    return noErr;
+	return noErr;
 }
 
 OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice,
-                                        UInt32 inChannel,
-                                        Boolean isInput,
-                                        AudioDevicePropertyID inPropertyID,
-                                        void *inData)
+										UInt32 inChannel,
+										Boolean isInput,
+										AudioDevicePropertyID inPropertyID,
+										void *inData)
 {
-    LOG->Warn( "Audio overload.  Last IOProc time: %f IOProc calls: %i",
-	       g_fLastIOProcTime, g_iNumIOProcCalls );
-    g_iNumIOProcCalls = 0;
-    return noErr;
+	LOG->Warn( "Audio overload.  Last IOProc time: %f IOProc calls: %i",
+			   g_fLastIOProcTime, g_iNumIOProcCalls );
+	g_iNumIOProcCalls = 0;
+	return noErr;
 }
 
 void RageSound_CA::SetupDecodingThread()
@@ -291,11 +289,11 @@ void RageSound_CA::SetupDecodingThread()
 	kern_return_t ret;
 
 	ret = thread_policy_set( mach_thread_self(),
-				 THREAD_PRECEDENCE_POLICY, (int *)&po,
-				 THREAD_PRECEDENCE_POLICY_COUNT );
+							 THREAD_PRECEDENCE_POLICY, (int *)&po,
+							 THREAD_PRECEDENCE_POLICY_COUNT );
 	if( ret != KERN_SUCCESS )
-	    LOG->Warn("thread_policy_set(THREAD_PRECEDENCE_POLICY) failed: %s",
-		      mach_error_string(ret));
+		LOG->Warn("thread_policy_set(THREAD_PRECEDENCE_POLICY) failed: %s",
+				  mach_error_string(ret));
 }
 
 /*
