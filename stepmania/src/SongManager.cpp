@@ -39,9 +39,9 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 const CString CATEGORY_RANKING_FILE =			BASE_PATH "Data" SLASH "CategoryRanking.dat";
 const CString MACHINE_STEPS_MEM_CARD_DATA =		BASE_PATH "Data" SLASH "MachineStepsMemCardData.dat";
 const CString MACHINE_COURSE_MEM_CARD_DATA =	BASE_PATH "Data" SLASH "MachineCourseMemCardData.dat";
-const int CATEGORY_RANKING_VERSION = 1;
-const int STEPS_MEM_CARD_DATA_VERSION = 3;
-const int COURSE_MEM_CARD_DATA_VERSION = 2;
+const int CATEGORY_RANKING_VERSION = 2;
+const int STEPS_MEM_CARD_DATA_VERSION = 4;
+const int COURSE_MEM_CARD_DATA_VERSION = 3;
 
 
 #define NUM_GROUP_COLORS	THEME->GetMetricI("SongManager","NumGroupColors")
@@ -311,53 +311,103 @@ void SongManager::FreeSongs()
 	m_sGroupBannerPaths.clear();
 }
 
-static CString ReadLine( FILE *fp )
-{
-	char buf[1024];
-	fgets( buf, sizeof(buf), fp );
 
-	CString ret( buf );
-	TrimRight( ret );
-	return ret;
+//
+// Helper function for reading/writing scores
+//
+bool FileRead( ifstream& f, CString& sOut )
+{
+	if( f.eof() )
+		return false;
+	getline(f, sOut);
+	return true;
+}
+bool FileRead( ifstream& f, int& iOut )
+{
+	CString s;
+	if( !FileRead( f, s ) )
+		return false;
+	iOut = atoi( s );
+	return true;
+}
+bool FileRead( ifstream& f, unsigned& uOut )
+{
+	CString s;
+	if( !FileRead( f, s ) )
+		return false;
+	uOut = atoi( s );
+	return true;
+}
+bool FileRead( ifstream& f, float& fOut )
+{
+	CString s;
+	if( !FileRead( f, s ) )
+		return false;
+	fOut = atof( s );
+	return true;
+}
+void FileWrite( ofstream& f, const CString& sWrite )
+{
+	f << sWrite << endl;
+}
+void FileWrite( ofstream& f, int iWrite )
+{
+	f << iWrite << endl;
+}
+void FileWrite( ofstream& f, unsigned uWrite )
+{
+	f << uWrite << endl;
+}
+void FileWrite( ofstream& f, float fWrite )
+{
+	f << fWrite << endl;
 }
 
+#define WARN_AND_RETURN { LOG->Warn("Error parsing file '%s' at %s:%d",fn.c_str(),__FILE__,__LINE__); return; }
 
-void SongManager::ReadStepsMemCardDataFromFile( CString fn, int c )
+void SongManager::ReadStepsMemCardDataFromFile( CString fn, int mc )
 {
 	ifstream f(fn);
 	if( !f.good() )
-		return;
-	CString line;
+		WARN_AND_RETURN;
 
-	getline(f, line);
 	int version;
-	sscanf(line.c_str(), "%i", &version);
-
+	if( !FileRead(f, version) )
+		WARN_AND_RETURN;
 	if( version != STEPS_MEM_CARD_DATA_VERSION )
-		return;
+		WARN_AND_RETURN;
 
-	while( f && !f.eof() )
+	int iNumSongs;
+	if( !FileRead(f, iNumSongs) )
+		WARN_AND_RETURN;
+
+	for( int s=0; s<iNumSongs; s++ )
 	{
 		CString sSongDir;
-		getline(f, sSongDir);
-
-		getline(f, line);
-		unsigned uNumNotes;
-		sscanf(line.c_str(), "%u", &uNumNotes);
+		if( !FileRead(f, sSongDir) )
+			WARN_AND_RETURN;
 
 		Song* pSong = this->GetSongFromDir( sSongDir );
 
-		for( unsigned i=0; i<uNumNotes; i++ )
+		int iNumNotes;
+		if( !FileRead(f, iNumNotes) )
+			WARN_AND_RETURN;
+
+		for( unsigned n=0; n<iNumNotes; n++ )
 		{
 			StepsType nt;
+			if( !FileRead(f, (int&)nt) )
+				WARN_AND_RETURN;
+
 			Difficulty dc;
-
-			getline(f, line);
-			if( sscanf(line.c_str(), "%d %d", (int *)&nt, (int *)&dc) != 2 )
-				break;
-
+			if( !FileRead(f, (int&)dc) )
+				WARN_AND_RETURN;
+		
 			CString sDescription;
-			getline(f, sDescription);
+			if( !FileRead(f, sDescription) )
+				WARN_AND_RETURN;
+
+			// Even if pSong or pNotes is null, we still have to skip over that data.
 
 			Steps* pNotes = NULL;
 			if( pSong )
@@ -368,29 +418,36 @@ void SongManager::ReadStepsMemCardDataFromFile( CString fn, int c )
 					pNotes = pSong->GetStepsByDifficulty( nt, dc );
 			}
 			
-			getline(f, line);
-			
 			int iNumTimesPlayed;
-			if( sscanf(line.c_str(), "%d\n", &iNumTimesPlayed ) != 1 )
-				return;
-			if( pNotes )
-				pNotes->m_MemCardDatas[c].iNumTimesPlayed = iNumTimesPlayed;
+			if( !FileRead(f, iNumTimesPlayed) )
+				WARN_AND_RETURN;
 
 			if( pNotes )
-				pNotes->m_MemCardDatas[c].vHighScores.resize(NUM_RANKING_LINES);
+				pNotes->m_MemCardDatas[mc].iNumTimesPlayed = iNumTimesPlayed;
 
-			for( int k=0; k<NUM_RANKING_LINES; k++ )
+			if( pNotes )
+				pNotes->m_MemCardDatas[mc].vHighScores.resize(NUM_RANKING_LINES);
+
+			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
 				Grade grade;
+				if( !FileRead(f, (int&)grade) )
+					WARN_AND_RETURN;
+				CLAMP( grade, (Grade)0, (Grade)(NUM_GRADES-1) );
+
 				float fScore;
-				char szName[256];	// TODO: not overflow safe
-				if( sscanf(line.c_str(), "%d %f %[^\n]\n", (int *)&grade, &fScore, szName) != 3 )
-					return;
+				if( !FileRead(f, fScore) )
+					WARN_AND_RETURN;
+
+				CString sName;
+				if( !FileRead(f, sName) )
+					WARN_AND_RETURN;
+
 				if( pNotes )
 				{
-					pNotes->m_MemCardDatas[c].vHighScores[k].grade = grade;
-					pNotes->m_MemCardDatas[c].vHighScores[k].fScore = fScore;
-					pNotes->m_MemCardDatas[c].vHighScores[k].sName = szName;
+					pNotes->m_MemCardDatas[mc].vHighScores[l].grade = grade;
+					pNotes->m_MemCardDatas[mc].vHighScores[l].fScore = fScore;
+					pNotes->m_MemCardDatas[mc].vHighScores[l].sName = sName;
 				}
 			}
 		}
@@ -400,80 +457,98 @@ void SongManager::ReadStepsMemCardDataFromFile( CString fn, int c )
 
 void SongManager::ReadCategoryRankingsFromFile( CString fn )
 {
-	FILE* fp = fopen( fn, "r" );
-	if( !fp )
-		return;
+	ifstream f(fn);
+	if( !f.good() )
+		WARN_AND_RETURN;
 
 	int version;
-	fscanf(fp, "%d\n", &version );
-	if( version == CATEGORY_RANKING_VERSION )
-	{			
-		for( int i=0; i<NUM_STEPS_TYPES; i++ )
+	if( !FileRead(f, version) )
+		WARN_AND_RETURN;
+	if( version != CATEGORY_RANKING_VERSION )
+		WARN_AND_RETURN;
+
+	for( int st=0; st<NUM_STEPS_TYPES; st++ )
+	{
+		for( int rc=0; rc<NUM_RANKING_CATEGORIES; rc++ )
 		{
-			for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
+			m_CategoryDatas[st][rc].vHighScores.resize(NUM_RANKING_LINES);
+			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
-				m_CategoryDatas[i][j].vHighScores.resize(NUM_RANKING_LINES);
-				for( int k=0; k<NUM_RANKING_LINES; k++ )
-					if( !feof(fp) )
-					{
-						char szName[256];	// TODO: not overflow safe
-						fscanf(fp, "%i %[^\n]\n", &m_CategoryDatas[i][j].vHighScores[k].iScore, szName);
-						m_CategoryDatas[i][j].vHighScores[k].sName = szName;
-					}
+				int iScore;
+				if( !FileRead(f, iScore) )
+					WARN_AND_RETURN;
+				CString sName;
+				if( !FileRead(f, sName) )
+					WARN_AND_RETURN;
+				m_CategoryDatas[st][rc].vHighScores[l].iScore = iScore;
+				m_CategoryDatas[st][rc].vHighScores[l].sName = sName;
 			}
 		}
 	}
-	fclose(fp);
 }
 
-void SongManager::ReadCourseMemCardDataFromFile( CString fn, int c )
+void SongManager::ReadCourseMemCardDataFromFile( CString fn, int mc )
 {
-	FILE* fp = fopen( fn, "r" );
-	if( !fp )
-		return;
+	ifstream f(fn);
+	if( !f.good() )
+		WARN_AND_RETURN;
 
 	int version;
-	fscanf(fp, "%i\n", &version );
-	if( version == COURSE_MEM_CARD_DATA_VERSION )
-	{			
-		while( fp && !feof(fp) )
-		{
-			CString path=ReadLine( fp );
+	if( !FileRead(f, version) )
+		WARN_AND_RETURN;
+	if( version != COURSE_MEM_CARD_DATA_VERSION )
+		WARN_AND_RETURN;
 
-			Course* pCourse = GetCourseFromPath( path );
-			if( pCourse == NULL )
-				pCourse = GetCourseFromName( path );
-			// even if we don't find the Course*, we still have to read past the input
+	int iNumCourses;
+	if( !FileRead(f, iNumCourses) )
+		WARN_AND_RETURN;
+
+	for( int c=0; c<iNumCourses; c++ )
+	{
+		CString sPath;
+		if( !FileRead(f, sPath) )
+			WARN_AND_RETURN;
+
+		Course* pCourse = GetCourseFromPath( sPath );
+		if( pCourse == NULL )
+			pCourse = GetCourseFromName( sPath );
 		
-			for( int i=0; i<NUM_STEPS_TYPES; i++ )
+		// even if we don't find the Course*, we still have to read past the input
+	
+		for( int st=0; st<NUM_STEPS_TYPES; st++ )
+		{
+			int iNumTimesPlayed;
+			if( !FileRead(f, iNumTimesPlayed) )
+				WARN_AND_RETURN;
+
+			if( pCourse )
+				pCourse->m_MemCardDatas[st][mc].iNumTimesPlayed = iNumTimesPlayed;
+			if( pCourse )
+				pCourse->m_MemCardDatas[st][mc].vHighScores.resize(NUM_RANKING_LINES);
+
+			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
-				int iNumTimesPlayed;
-				fscanf(fp, "%d\n", &iNumTimesPlayed);
+				int iScore;
+				if( !FileRead(f, iScore) )
+					WARN_AND_RETURN;
+
+				float fSurviveTime;
+				if( !FileRead(f, fSurviveTime) )
+					WARN_AND_RETURN;
+
+				CString sName;
+				if( !FileRead(f, sName) )
+					WARN_AND_RETURN;
+
 				if( pCourse )
-					pCourse->m_MemCardDatas[i][c].iNumTimesPlayed = iNumTimesPlayed;
-				if( pCourse )
-					pCourse->m_MemCardDatas[i][c].vHighScores.resize(NUM_RANKING_LINES);
-				for( int j=0; j<NUM_RANKING_LINES; j++ )
 				{
-					if( !feof(fp) )
-					{
-						int iScore;
-						float fSurviveTime;
-						char szName[256];	// TODO: not overflow safe
-						fscanf(fp, "%d %f %[^\n]\n", &iScore, &fSurviveTime, szName);
-						if( pCourse )
-						{
-							pCourse->m_MemCardDatas[i][c].vHighScores[j].iScore = iScore;
-							pCourse->m_MemCardDatas[i][c].vHighScores[j].fSurviveTime = fSurviveTime;
-							pCourse->m_MemCardDatas[i][c].vHighScores[j].sName = szName;
-						}
-					}
+					pCourse->m_MemCardDatas[st][mc].vHighScores[l].iScore = iScore;
+					pCourse->m_MemCardDatas[st][mc].vHighScores[l].fSurviveTime = fSurviveTime;
+					pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName = sName;
 				}
 			}
 		}
 	}
-
-	fclose(fp);
 }
 
 void SongManager::InitMachineScoresFromDisk()
@@ -559,119 +634,105 @@ void SongManager::ReadSM300NoteScores()
 
 void SongManager::SaveCategoryRankingsToFile( CString fn )
 {
-	// category ranking
 	LOG->Trace("SongManager::SaveCategoryRankingsToFile");
 
-	FILE* fp = fopen( fn, "w" );
-	if( fp )
+	ofstream f(fn);
+	if( !f.good() )
+		return;
+
+	FileWrite( f, CATEGORY_RANKING_VERSION );
+
+	for( int st=0; st<NUM_STEPS_TYPES; st++ )
 	{
-		fprintf(fp,"%d\n",CATEGORY_RANKING_VERSION);
-		for( int i=0; i<NUM_STEPS_TYPES; i++ )
+		for( int rc=0; rc<NUM_RANKING_CATEGORIES; rc++ )
 		{
-			for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
+			m_CategoryDatas[st][rc].vHighScores.resize(NUM_RANKING_LINES);
+			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
-				m_CategoryDatas[i][j].vHighScores.resize(NUM_RANKING_LINES);
-				for( int k=0; k<NUM_RANKING_LINES; k++ )
-				{
-					if( fp )
-					{
-						fprintf(fp, "%i %s\n", 
-							m_CategoryDatas[i][j].vHighScores[k].iScore, 
-							m_CategoryDatas[i][j].vHighScores[k].sName.c_str());
-					}
-				}
+				FileWrite( f, m_CategoryDatas[st][rc].vHighScores[l].iScore );
+				FileWrite( f, m_CategoryDatas[st][rc].vHighScores[l].sName );
 			}
 		}
-		fclose(fp);
 	}
 }
 
-void SongManager::SaveCourseMemCardDataToFile( CString fn, int c )
+void SongManager::SaveCourseMemCardDataToFile( CString fn, int mc )
 {
-	// course ranking
 	LOG->Trace("SongManager::SaveCourseMemCardDataToFile");
 
-	FILE* fp = fopen( fn, "w" );
+	ofstream f(fn);
+	if( !f.good() )
+		return;
 
-	if( fp )
+	FileWrite( f, COURSE_MEM_CARD_DATA_VERSION );
+
+	FileWrite( f, m_pCourses.size() );
+
+	for( unsigned c=0; c<m_pCourses.size(); c++ )	// foreach course
 	{
-		fprintf(fp,"%d\n",COURSE_MEM_CARD_DATA_VERSION);
-		for( unsigned i=0; i<m_pCourses.size(); i++ )	// foreach course
-		{
-			Course* pCourse = m_pCourses[i];
-			ASSERT(pCourse);
+		Course* pCourse = m_pCourses[c];
+		ASSERT(pCourse);
 
-			if( pCourse->m_bIsAutogen )
-				fprintf(fp, "%s\n", pCourse->m_sName.c_str());
-			else
-				fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
-			
-			for( int j=0; j<NUM_STEPS_TYPES; j++ )
+		if( pCourse->m_bIsAutogen )
+			FileWrite( f, pCourse->m_sName );
+		else
+			FileWrite( f, pCourse->m_sPath );
+		
+		for( int st=0; st<NUM_STEPS_TYPES; st++ )
+		{
+			FileWrite( f, pCourse->m_MemCardDatas[st][mc].iNumTimesPlayed );
+			pCourse->m_MemCardDatas[st][mc].vHighScores.resize(NUM_RANKING_LINES);
+			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
-				fprintf(fp, "%d\n", pCourse->m_MemCardDatas[j][c].iNumTimesPlayed); 
-				pCourse->m_MemCardDatas[j][c].vHighScores.resize(NUM_RANKING_LINES);
-				for( int k=0; k<NUM_RANKING_LINES; k++ )
-				{
-					fprintf(fp, "%d %f %s\n", 
-						pCourse->m_MemCardDatas[j][c].vHighScores[k].iScore, 
-						pCourse->m_MemCardDatas[j][c].vHighScores[k].fSurviveTime, 
-						pCourse->m_MemCardDatas[j][c].vHighScores[k].sName.c_str());
-				}
+				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].iScore );
+				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].fSurviveTime );
+				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName );
 			}
 		}
-
-		fclose(fp);
 	}
 }
 
-void SongManager::SaveStepsMemCardDataToFile( CString fn, int c )
+void SongManager::SaveStepsMemCardDataToFile( CString fn, int mc )
 {
-	// notes scores
 	LOG->Trace("SongManager::SaveStepsMemCardDataToFile %s", fn.c_str());
+
+	ofstream f(fn);
+	if( !f.good() )
+		return;
+
+	FileWrite( f, STEPS_MEM_CARD_DATA_VERSION );
+
+	FileWrite( f, m_pSongs.size() );
+
+	for( unsigned s=0; s<m_pSongs.size(); s++ )	// foreach song
 	{
-		FILE* fp = fopen( fn, "w" );
-		if( fp )
+		Song* pSong = m_pSongs[s];
+		ASSERT(pSong);
+
+		vector<Steps*> vNotes = pSong->m_apNotes;
+		if( vNotes.size() == 0 )
+			continue;	// skip	
+
+		FileWrite( f, pSong->GetSongDir() );
+		FileWrite( f, vNotes.size() );
+
+		for( unsigned n=0; n<vNotes.size(); n++ )
 		{
-			fprintf(fp,"%d\n",STEPS_MEM_CARD_DATA_VERSION);
+			Steps* pNotes = vNotes[n];
+			ASSERT(pNotes);
 
-			for( unsigned s=0; s<m_pSongs.size(); s++ )	// foreach song
+			FileWrite( f, pNotes->m_StepsType );
+			FileWrite( f, pNotes->GetDifficulty() );
+			FileWrite( f, pNotes->GetDescription() );
+			FileWrite( f, pNotes->m_MemCardDatas[mc].iNumTimesPlayed );
+
+			pNotes->m_MemCardDatas[mc].vHighScores.resize(NUM_RANKING_LINES);
+			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
-				Song* pSong = m_pSongs[s];
-				ASSERT(pSong);
-
-				vector<Steps*> vNotes = pSong->m_apNotes;
-				if( vNotes.size() == 0 )
-					continue;	// skip	
-
-				fprintf(fp, "%s\n%u\n", 
-					pSong->GetSongDir().c_str(),
-					(unsigned)vNotes.size() );
-
-				for( unsigned i=0; i<vNotes.size(); i++ )
-				{
-					Steps* pNotes = vNotes[i];
-					ASSERT(pNotes);
-
-					fprintf(fp, "%d %d\n%s\n", 
-						pNotes->m_StepsType,
-						pNotes->GetDifficulty(),
-						pNotes->GetDescription().c_str() );
-
-
-					fprintf(fp, "%d\n", pNotes->m_MemCardDatas[c].iNumTimesPlayed );
-
-					pNotes->m_MemCardDatas[c].vHighScores.resize(NUM_RANKING_LINES);
-					for( int j=0; j<NUM_RANKING_LINES; j++ )
-					{
-						fprintf(fp, "%d %f %s\n", 
-							pNotes->m_MemCardDatas[c].vHighScores[j].grade,
-							pNotes->m_MemCardDatas[c].vHighScores[j].fScore,
-							pNotes->m_MemCardDatas[c].vHighScores[j].sName.c_str());
-					}
-				}
+				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].grade );
+				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].fScore );
+				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].sName );
 			}
-
-			fclose(fp);
 		}
 	}
 }
