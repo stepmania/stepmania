@@ -327,10 +327,17 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 			// read name
 			this->Mount( &d, TEMP_MOUNT_POINT );
 			FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
+#if 1
 			Profile profile;
 			CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
 			profile.LoadEditableDataFromDir( sProfileDir );
 			d.sName = profile.GetDisplayName();
+#else
+			/* XXX read a file anyway */
+			CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/';
+			
+			d.sName = "foo";
+#endif
 			UnmountMountPoint( TEMP_MOUNT_POINT );
 
 			LOG->Trace( "WriteTest: %s, Name: %s", d.bWriteTestSucceeded ? "succeeded" : "failed", d.sName.c_str() );
@@ -529,7 +536,9 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 	vDevicesOut.clear();
 	
 	{
-		// Bus 002 Device 001: ID 0000:0000
+	        // Discover what storage class devices are connected.  Output looks like:
+
+		// Bus 002 Device 001: ID 0a03:0b05
 		// Port 4
 		//   iSerial                 3 1125198948886
 		//       bInterfaceClass         8 Mass Storage
@@ -611,6 +620,7 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 			}
 		}
 	}
+
 	
 	{
 		// Find the usb-storage device index for all storage class devices.
@@ -635,71 +645,68 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 			}
 			closedir( dirp );
 			dirp = NULL;
-			
-			
-			// Get the mapping from Scsi device number to Scsi file device.  Requires "sg-utils".
-			// sg_scan.  It looks like:
-			
-			// /dev/sg0: scsi47 channel=0 id=0 lun=0 [em]  type=0
-			// /dev/sg1: scsi46 channel=0 id=0 lun=0 [em]  type=0
-			
-			CString sOutput;
-			CString sCommand = "/usr/bin/sg_scan";
-			LOG->Trace( sCommand );
-			RunProgram( sCommand, NULL, sOutput );
-			
-			CStringArray vsLines;
-			split( sOutput, "\n", vsLines );
-			
-			for( unsigned i=0; i<vsLines.size(); i++ )
-			{
-				const CString& sLine = vsLines[i];
-				
-				LOG->Trace( "sLine: %s", sLine.c_str() );
-				
-				int iSg;
-				int iScsiIndex;
-				int iRet = sscanf( sLine.c_str(), "/dev/sg%i: scsi%d", &iSg, &iScsiIndex );
-				if( iRet != 2 )
-					continue;       // don't process this line
-				
-				// search for the usb-storage device corresponding to the SCSI device
-				for( unsigned i=0; i<vDevicesOut.size(); i++ )
-				{
-					UsbStorageDevice& usbd = vDevicesOut[i];
-					if( usbd.iScsiIndex == iScsiIndex ) // found our match
-					{
-						usbd.sScsiDevice = ssprintf("/dev/sd%c",'a'+(char)iSg);
-						
-						LOG->Trace( "iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d, sScsiDevice: %s",
-							usbd.iScsiIndex, usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sScsiDevice.c_str() );
-						break;  // stop looking for a match
-					}
-				}
-			}
 		}
 		else
 		{
-			// 2.4 kernel style
-			
-			// Find the usb-storage device index for all storage class devices.
-			for( unsigned i=0; true; i++ )
-			{
-				CString fn = ssprintf( "/proc/scsi/usb-storage-%d/%d", i, i );
-				if( !ReadUsbStorageDescriptor( fn, i, vDevicesOut ) )
-					break;
-			}
-			
-			for( unsigned i=0; i<vDevicesOut.size(); i++ )
-			{
-				UsbStorageDevice& usbd = vDevicesOut[i];
-				usbd.sScsiDevice = ssprintf("/dev/sd%c",'a'+(char)usbd.iScsiIndex);
-			}
-		}
+		    // 2.4 kernel style
+		    
+		    // Find the usb-storage device index for all storage class devices.
+		    for( unsigned i=0; true; i++ )
+		    {
+			CString fn = ssprintf( "/proc/scsi/usb-storage-%d/%d", i, i );
+			if( !ReadUsbStorageDescriptor( fn, i, vDevicesOut ) )
+			    break;
+		    }
+	        }
+	}
+
+
+	{
+	       	// Get the mapping from Scsi device number to Scsi file device.  Requires sg-utils's
+	       	// sg_scan.  It looks like:
+	       	
+	       	// /dev/sg0: scsi47 channel=0 id=0 lun=0 [em]  type=0
+	       	// /dev/sg1: scsi46 channel=0 id=0 lun=0 [em]  type=0
+	       	
+	       	CString sOutput;
+	       	CString sCommand = "/usr/bin/sg_scan";
+	       	LOG->Trace( sCommand );
+	       	RunProgram( sCommand, NULL, sOutput );
+	       	
+	       	CStringArray vsLines;
+	       	split( sOutput, "\n", vsLines );
+	       	
+	       	for( unsigned i=0; i<vsLines.size(); i++ )
+	       	{
+	       		const CString& sLine = vsLines[i];
+	       		
+	       		LOG->Trace( "sLine: %s", sLine.c_str() );
+	       		
+	       		int iSg;
+	       		int iScsiIndex;
+	       		int iRet = sscanf( sLine.c_str(), "/dev/sg%i: scsi%d", &iSg, &iScsiIndex );
+	       		if( iRet != 2 )
+	       			continue;       // don't process this line
+	       		
+	       		// search for the usb-storage device corresponding to the SCSI device
+	       		for( unsigned i=0; i<vDevicesOut.size(); i++ )
+	       		{
+	       			UsbStorageDevice& usbd = vDevicesOut[i];
+	       			if( usbd.iScsiIndex == iScsiIndex ) // found our match
+	       			{
+	       				usbd.sScsiDevice = ssprintf("/dev/sd%c",'a'+(char)iSg);
+	       				
+	       				LOG->Trace( "iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d, sScsiDevice: %s",
+	       					usbd.iScsiIndex, usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sScsiDevice.c_str() );
+	       				break;  // stop looking for a match
+	       			}
+	       		}
+	       	}
 	}
 	
+
 	{
-		// Find where each device is mounted. Output looks like:
+		// Get the mapping from SCSI device to fs mount point.  Output looks like:
 		
 		// /dev/sda1               /mnt/flash1             auto    noauto,owner 0 0
 		// /dev/sdb1               /mnt/flash2             auto    noauto,owner 0 0
