@@ -71,8 +71,8 @@ void ActorFrame::Update( float fDeltaTime )
 	Actor::Update( fDeltaTime );
 
 	// update all sub-Actors
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->Update(fDeltaTime);
+	for( vector<Actor*>::iterator it=m_SubActors.begin(); it!=m_SubActors.end(); it++ )
+		(*it)->Update(fDeltaTime);
 }
 
 
