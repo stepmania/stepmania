@@ -240,6 +240,31 @@ retry:
 	if( layer.GetValue( "BaseZoomY", f ) )				pActor->SetBaseZoomY( f );
 	if( layer.GetValue( "BaseZoomZ", f ) )				pActor->SetBaseZoomZ( f );
 
+
+	//
+	// Load commands
+	//
+	for( IniKey::const_iterator i = layer.begin();
+		 i != layer.end(); ++i)
+	{
+		CString KeyName = i->first; /* "OnCommand" */
+		KeyName.MakeLower();
+
+		if( KeyName.Right(7) != "command" )
+			continue; /* not a command */
+
+		const CString &sCommands = i->second;
+		Commands cmds = ParseCommands( sCommands );
+		CString sCmdName;
+		/* Special case: "Command=foo" -> "OnCommand=foo" */
+		if( KeyName.size() == 7 )
+			sCmdName="on";
+		else
+			sCmdName = KeyName.Left( KeyName.size()-7 );
+		pActor->AddCommands( sCmdName, cmds );
+	}
+
+
 	ASSERT( pActor );	// we should have filled this in above
 	return pActor;
 }
@@ -287,13 +312,13 @@ Actor* MakeActor( const RageTextureID &ID )
 	}
 }
 
-void UtilSetXY( Actor& actor, const CString &sClassName )
+void UtilSetXY( Actor& actor, const CString &sScreenName )
 {
 	ASSERT( !actor.GetID().empty() );
-	actor.SetXY( THEME->GetMetricF(sClassName,actor.GetID()+"X"), THEME->GetMetricF(sClassName,actor.GetID()+"Y") );
+	actor.SetXY( THEME->GetMetricF(sScreenName,actor.GetID()+"X"), THEME->GetMetricF(sScreenName,actor.GetID()+"Y") );
 }
 
-void UtilCommand( Actor& actor, const CString &sClassName, const CString &sCommandName )
+void UtilCommand( Actor& actor, const CString &sScreenName, const CString &sCommandName )
 {
 	// If Actor is hidden, it won't get updated or drawn, so don't bother tweening.
 	/* ... but we might be unhiding it, or setting state for when we unhide it later */
@@ -316,10 +341,10 @@ void UtilCommand( Actor& actor, const CString &sClassName, const CString &sComma
 	else
 	{
 		ASSERT_M( !actor.GetID().empty(), ssprintf("!actor.GetID().empty() ('%s', '%s')",
-												   sClassName.c_str(), sCommandName.c_str()) );
+												   sScreenName.c_str(), sCommandName.c_str()) );
 	}
 
-	actor.RunCommands( THEME->GetMetricA(sClassName,actor.GetID()+sCommandName+"Command") );
+	actor.RunCommands( THEME->GetMetricA(sScreenName,actor.GetID()+sCommandName+"Command") );
 }
 
 void AutoActor::Load( const CString &sPath )

@@ -12,25 +12,25 @@ class IniKey;
 #define SET_XY_AND_ON_COMMAND( actor )		UtilSetXYAndOnCommand( actor, m_sName )
 #define COMMAND( actor, command_name )		UtilCommand( actor, m_sName, command_name )
 
-void UtilSetXY( Actor& actor, const CString &sClassName );
-inline void UtilSetXY( Actor* pActor, const CString &sClassName ) { UtilSetXY( *pActor, sClassName ); }
+void UtilSetXY( Actor& actor, const CString &sScreenName );
+inline void UtilSetXY( Actor* pActor, const CString &sScreenName ) { UtilSetXY( *pActor, sScreenName ); }
 
 
-void UtilCommand( Actor& actor, const CString &sClassName, const CString &sCommandName );
+void UtilCommand( Actor& actor, const CString &sScreenName, const CString &sCommandName );
 
-inline void UtilOnCommand( Actor& actor, const CString &sClassName ) { UtilCommand( actor, sClassName, "On" ); }
-inline void UtilOffCommand( Actor& actor, const CString &sClassName ) { UtilCommand( actor, sClassName, "Off" ); }
-inline void UtilSetXYAndOnCommand( Actor& actor, const CString &sClassName )
+inline void UtilOnCommand( Actor& actor, const CString &sScreenName ) { UtilCommand( actor, sScreenName, "On" ); }
+inline void UtilOffCommand( Actor& actor, const CString &sScreenName ) { UtilCommand( actor, sScreenName, "Off" ); }
+inline void UtilSetXYAndOnCommand( Actor& actor, const CString &sScreenName )
 {
-	UtilSetXY( actor, sClassName );
-	UtilOnCommand( actor, sClassName );
+	UtilSetXY( actor, sScreenName );
+	UtilOnCommand( actor, sScreenName );
 }
 
 /* convenience */
-inline void UtilCommand( Actor* pActor, const CString &sClassName, const CString &sCommandName ) { if(pActor) UtilCommand( *pActor, sClassName, sCommandName ); }
-inline void UtilOnCommand( Actor* pActor, const CString &sClassName ) { if(pActor) UtilOnCommand( *pActor, sClassName ); }
-inline void UtilOffCommand( Actor* pActor, const CString &sClassName ) { if(pActor) UtilOffCommand( *pActor, sClassName ); }
-inline void UtilSetXYAndOnCommand( Actor* pActor, const CString &sClassName ) { if(pActor) UtilSetXYAndOnCommand( *pActor, sClassName ); }
+inline void UtilCommand( Actor* pActor, const CString &sScreenName, const CString &sCommandName ) { if(pActor) UtilCommand( *pActor, sScreenName, sCommandName ); }
+inline void UtilOnCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) UtilOnCommand( *pActor, sScreenName ); }
+inline void UtilOffCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) UtilOffCommand( *pActor, sScreenName ); }
+inline void UtilSetXYAndOnCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) UtilSetXYAndOnCommand( *pActor, sScreenName ); }
 
 // Return a Sprite, BitmapText, or Model depending on the file type
 Actor* LoadFromActorFile( const CString &sIniPath, const CString &sLayer = "Actor" );
