@@ -412,13 +412,14 @@ static void HandleInputEvents(float fDeltaTime)
 		   or in the step editor. This will save the hassle of an "accidental
 		   keystroke, and your edit is gone".  -- Miryokuteki
 		*/
-		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_LCTRL  && type == IET_FIRST_PRESS )
+		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_SCROLLOCK )
 		{
-			if( !GAMESTATE->m_bIsOnSystemMenu )
-			{
+			if( type != IET_FIRST_PRESS ) continue;
+			if( GAMESTATE->m_bIsOnSystemMenu ) continue;
+
 			SCREENMAN->SystemMessage("OPERATOR");
 			SCREENMAN->SetNewScreen("ScreenOptionsMenu");
-			}
+			continue;
 		}
 		
 		// Global credit key.. accepts a credit anywhere, like the arcade -- Mirykouteki
@@ -436,8 +437,8 @@ static void HandleInputEvents(float fDeltaTime)
 				default:
 					ASSERT(0);
 			}
+			/* Fall through, so screens will receive MenuCoin. */
 		}
-
 
 
 		if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
