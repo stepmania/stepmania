@@ -33,11 +33,17 @@ want to erase songs we didn't load; I frequently move song paths out of
 the search path while debugging (for fast loads) and I don't want that
 to lose cache.  Hmm.  Access time?
 
+Similar problem with high scores; I don't load all of my songs when
+debugging, and I lose my scores.
+
 (Not sure how to do this either.)
 
 ********
 
 Triple-buffering.
+
+Is there an easier way to switch buffers on vsync in parallel with
+rendering without starting another thread?
 
 (Wait for OpenGL.)
 
@@ -56,6 +62,7 @@ in.  (This will need some tuning; they shouldn't both start at once, since
 there'll be too much onscreen and it'll just look like a jumble.)
 
 ********
+
 We have different kinds of things we want to trace, and different
 places to put them.
 

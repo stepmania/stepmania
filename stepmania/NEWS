@@ -1,4 +1,5 @@
 ﻿------------------------CVS after 3.00 beta 6----------------
+NEW FEATURE:  DWI tree loading via "DWIPath".
 NEW FEATURE:  Pump couples support.
 BUG FIX:  Editor no longer crashes if you try to drag a hold note up
 	before beat 0.
