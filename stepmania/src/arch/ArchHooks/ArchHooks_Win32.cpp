@@ -21,6 +21,10 @@ ArchHooks_Win32::ArchHooks_Win32()
 	/* Disable critical errors, and handle them internally.  We never want the
 	 * "drive not ready", etc. dialogs to pop up. */
 	SetErrorMode( SetErrorMode(0) | SEM_FAILCRITICALERRORS );
+
+	/* Windows boost priority on keyboard input, among other things.  Disable that for
+	 * the main thread. */
+	SetThreadPriorityBoost( GetCurrentThread(), TRUE );
 }
 
 ArchHooks_Win32::~ArchHooks_Win32()
