@@ -152,6 +152,8 @@ bool EzSockets::connect( const std::string& host, unsigned short port )
 	addr.sin_addr = *( (LPIN_ADDR)*phe->h_addr_list );
 
 	int desc = ::connect( sock, (struct sockaddr *)&addr, sizeof(addr) );
+	if (desc >=0)
+		state = skCONNECTED;
 	return desc >= 0;
 #else
 	addr.sin_family = AF_INET;
@@ -159,6 +161,8 @@ bool EzSockets::connect( const std::string& host, unsigned short port )
 	inet_pton( AF_INET, host.c_str(), &addr.sin_addr );
 
 	int desc = ::connect( sock, (struct sockaddr *)&addr, sizeof(addr) );
+	if (desc >=0)
+		state = skCONNECTED;
 	return desc >= 0;
 #endif
 }
@@ -260,16 +264,12 @@ int EzSockets::PeekData(char *data, unsigned int bytes)
 			pUpdateRead();
 	}
 
-
-
 	int bytesRead = bytes;
 	if (inBuffer.length()<bytes)
 		bytesRead = inBuffer.length();
-	
 
 	memcpy(data,(inBuffer.substr(0,bytesRead)).c_str(),bytesRead);
 
-	
 	return bytesRead;
 }
 
@@ -323,7 +323,7 @@ int EzSockets::PeekPack(char * data, unsigned int max)
 		if (inBuffer.length()>3)
 		{
 			unsigned int size=0;
-			PeekData((char*)size,4);
+			PeekData((char*)&size,4);
 			size = ntohl(size);
 			if (inBuffer.length()<(size+4))
 				return (-1);
@@ -389,8 +389,9 @@ int EzSockets::pUpdateRead()
 	if (bytes>0)
 		inBuffer.append(tempData,bytes);
 
-	//You cannot read 0 bytes!
-	if (bytes<1) 
+	//You cannot read - bytes!
+	//0 bytes may happen under non-blocking circuimstances
+	if (bytes<0) 
 		state = skERROR;
 
 	return bytes;
