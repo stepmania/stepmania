@@ -509,13 +509,6 @@ correspond the levels of difficulty on the Select Difficulty screen.<br>
 DifficultyMeter: The difficulty of these notes as a bar rating. The value must
 be an integer between 1 and 10.<br>
 <br>
-RadarValues: The values that will be displayed on the Groove Radar as floats
-between 0.00 and 1.00. The 5 values must be separated by commas, and are
-specified in the order: &quot;stream,voltage,air,freeze,chaos&quot;. For MAX300, these
-values are &quot;0.95,0.98,0.22,0.12,0.13&quot;. These values will automatically be
-written when you save the song in the StepMania editor, but you may edit the .SM
-file afterward to tweak them.<br>
-<br>
 NoteData: This value requires a longer explanation.<br>
 <br>
 Each note is represented by a character:<br>
@@ -721,9 +714,9 @@ Endless: Will appear if #REPEAT is ON.<br>
 A fixed song:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #SONG:&lt;group folder&gt;/&lt;song
 folder&gt;:&lt;difficulty&gt;:&lt;modifiers&gt;;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:DDRMAX/MAX300:BASIC;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:Nicolai Rimsky-Korsakov/Flight of the Bumblebee:BASIC;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example:
-#SONG:DDR4th/B4U:MANIAC:sudden,shuffle,reverse;<br>
+#SONG:Oldies/Jump Jive and Wail:MANIAC:sudden,shuffle,reverse;<br>
 A random song:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #SONG:*:(&lt;difficulty&gt;|&lt;meter
 range&gt;):&lt;modifiers&gt;;<br>
@@ -732,47 +725,39 @@ range&gt;):&lt;modifiers&gt;;<br>
 A random song within a group:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #SONG:&lt;group
 folder&gt;/*:(&lt;difficulty&gt;|&lt;meter range&gt;):&lt;modifiers&gt;;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:DDRMAX/*:3..6;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:Classical/*:3..6;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example:
-#SONG:DDR3rd/*:MANIAC:1.5x,reverse;<br>
+#SONG:Techno/*:MANIAC:1.5x,reverse;<br>
 A players best song:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #SONG:PlayersBest:&lt;number&gt;:&lt;modifiers&gt;;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #PlayersBest1:TRICK;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #SONG:BEST&lt;number&gt;:(&lt;difficulty&gt;|&lt;meter range&gt;):&lt;modifiers&gt;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:BEST1:TRICK;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example:
-#PlayersBest4:MANIAC:1.5x,reverse;<br>
+#SONG:BEST4:MANIAC:1.5x,reverse;<br>
 A players worst song:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #SONG:PlayersWorst:&lt;number&gt;:&lt;modifiers&gt;;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #PlayersWorst4:MANIAC;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #SONG:WORST&lt;number&gt;:(&lt;difficulty&gt;|&lt;meter range&gt;):&lt;modifiers&gt;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:WORST4:MANIAC;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example:
-#PlayersWorst1:TRICK:1.5x,reverse,drunk;<br>
+#SONG:WORST1:TRICK:1.5x,reverse,drunk;<br>
 <br>
 Descriptions:<br>
-group folder - The name of the folder that contains the song folder. (e.g.
-&quot;DDR4th&quot;)<br>
-song folder - the name of the folder that contains files for the song. (e.g.
-&quot;B4U&quot;)<br>
-difficulty - Can be one of the following: BEGINNER, BASIC, TRICK, MANIAC,
-CHALLENGE.<br>
+group folder - The name of the folder that contains the song folder. (e.g. &quot;Techno&quot;)<br>
+song folder - the name of the folder that contains files for the song. (e.g. &quot;Flight of the Bumblebee&quot;)<br>
+difficulty - Can be one of the following: BEGINNER, EASY, MEDIUM, HARD, CHALLENGE.<br>
 meter range - A value in the format &quot;x..y&quot; where x is the lowest meter allowed
 and y is the highest meter allowed.&nbsp; For example, the string &quot;7..9&quot; would
-choose only from songs with a foot meter of 7, 8, or 9.<br>
+choose only from songs with a meter of 7, 8, or 9.<br>
 modifiers - A comma separated series of modifier strings.&nbsp; This value may
 be left blank.&nbsp; Any string you see on the Player Options screen is a
 modifier string.&nbsp; Some examples are:<br>
-0.5x, 0.75x, 1.5x, 2.0x, 3.0x, 4.0x, 5.0x, 8.0x<br>
+<ul>0.5x, 0.75x, 1.5x, 2.0x, 3.0x, 4.0x, 5.0x, 8.0x<br>
 boost, wave, drunk, dizzy, space, mini<br>
 hidden, sudden, stealth, blink<br>
 mirror, left, right, shuffle, supershuffle<br>
-little<br>
-reverse<br>
-note, flat, plain<br>
-noholds<br>
-nofreeze<br>
-dark<br>
+little, reverse, note, flat, plain<br>
+noholds, nofreeze, dark<br>
 0.7xmusic, 0.8xmusic, 0.9xmusic, 1.0xmusic, 1.1xmusic, <br>
 1.2xmusic, 1.3xmusic, 1.4xmusic, 1.5xmusic<br>
-<br>
-</font>
+</ul></font>
 <a name="Extra Stages">
 <font face="Courier New" size="2">
 <hr></font>
@@ -782,13 +767,13 @@ Extra Stages</font></a><font size="2"> (<a href="#Table of Contents">top</a>)</f
 <br>
 You can manually specify extra stages for each song group by creating .CRS files
 called &quot;extra1.crs&quot; and &quot;extra2.crs&quot; and placing them in the song group folder
-(e.g. Songs\MAX2\extra1.crs). When it comes time to play an extra stage the
+(e.g. Songs\Vib Ribbon\extra1.crs). When it comes time to play an extra stage the
 first song in the .crs file will be used. Don't forget to specify modifiers -
 see the &quot;CRS File Format&quot; section of this document for more information. If a
 CRS file is not found or is invalid, appropriate song, notes, and modifiers will be chosen.<br>
 <br>
 Don't forget: extra stage CRS files belong in the song group folder (e.g.
-&quot;Songs/DDRMAX/&quot;), not in &quot;Courses&quot;.<br>
+&quot;Songs/Vib Ribbon/&quot;), not in &quot;Courses&quot;.<br>
 <br>
 </font>
 
@@ -801,35 +786,33 @@ Don't forget: extra stage CRS files belong in the song group folder (e.g.
 <a name="Unlock System">Unlock System </a>(<a href="#Table of Contents">top</a>)
 </font>
 
-
-<font face="Courier New" size="2">
 <hr>
 
-
-<font size="2">Stepmania now supports an unlocking system.  This means you can choose to make some songs or courses hidden from the selection interface until a certain condition has been met.  Some of the methods implemented are:<p>
+<font size="2">Unlocks allow songs and courses to be hidden until certain conditions have been met.  Conditions are:<p>
 Dance points (DP)<br>
-Song stays locked until a certain number of dance points are accumulated.  A Perfect is worth 2 points, Great is 1, etc.<p>
+Require a minimum number of dance points.  A Perfect is worth 2 points, a Great is worth 1 point.<p>
 Arcade points (AP)<br>
-Like dance points, except you accumulate 1 point per song cleared.  (Like MAX2 arcade)  However, if you can AAA or AAAA something, you receive 10 points instead.<p>
+Clearing a song is worth 1 point.  An AAA or greater is worth 10 points instead.<p>
 Song points (SP)<br>
-Like Arcade points, except points are accumulated based on dance grade.  D is worth 1 point, C is worth 2, etc.<p>
+A "D" grade is worth 1 point, "C" is worth 2, AA is worth 5, AAAA is worth 20.<p>
 Stages Cleared (SC)<br>
-Songs are unlocked based on how many stages are cleared.<p>
+Require a minimum number of cleared stages.<p>
 Roulette (RO)<br>
-Songs are locked until they are landed on in roulette.<p>
+Locked until landed on (not necessarily passed) in roulette.
+Each entry to be locked via roulette must have its own seed; if multiple songs have the same seed and one of them is landed on, all are unlocked.<p>
 Toasties (!!)<br>
 Songs are locked until a certain number of Toasties appear on screen.<p>
-Unlocks are defined in the file unlocks.dat inside of the Data folder.  The syntax is fairly straightforward, like the course song specification.  You can specify multiple conditions, and the song becomes unlocked once one of those conditions are met.  Songs are specified by their full transliterated title.<p>
+Unlocks are defined in the file unlocks.dat inside of the Data folder.  If multiple conditions are given, the song is unlocked when any one is met.  Songs are specified in the same format as course entries.<p>
 Examples:<p>
-#UNLOCK:xenon:AP=10;<br>
-Song xenon requires 10 arcade points to unlock.<p>
-#UNLOCK:the Legend of MAX:RO=3<br>
-Song "the Legend of Max" is in roulette slot 3.<p>
-#UNLOCK:PARANOIA SURVIVOR MAX:CS=30,RO=3;<br>
-Song "Paranoia Survivor MAX" is locked either by clearing 30 stages, or by landing on it in roulette.<p>
-#UNLOCK:POP 4:CS=50;<p>
-Course Pop 4 is locked until 50 stages are cleared. (Stepmania doesn't distinguish between song and course titles yet.)<p>
-A note about roulette seeds – Each entry to be locked via roulette must have its own seed – if multiple songs have the same seed and one of them is landed on, all of them become unlocked.  A song locked by roulette does NOT need to be cleared in order to become unlocked.</font></font><p>
+#UNLOCK:Duke Of Earl:AP=10;<br>
+The song (or course) "Duke Of Earl" requires 10 arcade points to be played.<p>
+#UNLOCK:Yakety Yak:RO=3;<br>
+"Yakety Yak" is in roulette slot 3.<p>
+#UNLOCK:Banana Boat:CS=30,RO=3;<br>
+"Banana Boat" is locked until either 30 stages are cleared, or until landed on in roulette.<p>
+#UNLOCK:My Course:CS=50;<p>
+Course "My Course" is locked until 50 stages are cleared.<p>
+</font><p>
 <a name="Creating an Announcer">
 
 
@@ -842,7 +825,7 @@ Creating an Announcer</font></a><font size="2"> (<a href="#Table of Contents">to
 <font size="2">
 <br>
 Announcers folders must reside in the &quot;Announcers&quot; folder inside the StepMania
-program directory (e.g. &quot;Announcers\DDRMAX\&quot;). An announcer folder contains
+program directory (e.g. &quot;Announcers\James Earl Jones\&quot;). An announcer folder contains
 several more folders - one for each announcer &quot;trigger&quot;. Add as many .WAV, .MP3,
 or .OGG sounds as you want to the trigger folder. When StepMania wants to play a
 sound for that trigger, it will play a random sound file from your trigger
@@ -1359,12 +1342,14 @@ and put &quot;ssh.bat&quot; into the editbox. <br>
 Thanks</font></a><font size="2"> (<a href="#Table of Contents">top</a>)</font><hr>
 <font size="2">
 <br>
+<!-- I think we should only put credits here that *must* be in the
+     documentation (eg. pcre), and major credits; everyone else can
+     go in the gameplay credits screen ... -glenn -->
 redcrusher (Michael Curry) for help on ez2 graphics<br>
 Dj Slash &amp; Tony Thai for the caution graphic<br>
-Kyle &quot;KeeL&quot; Ward for his awesome menu music (www.ampcast.com/keel)<br>
+<a href="http://www.ampcast.com/music/14706/artist.php">Kyle &quot;KeeL&quot; Ward</a> for his awesome menu music<br>
 Regular expression support provided by the PCRE library package, by
-Philip Hazel, and copyright the University of Cambridge, England.
-
+Philip Hazel, and copyright the University of Cambridge, England.<br>
 <br>
 </font>
 <hr>
