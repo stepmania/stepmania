@@ -489,11 +489,6 @@ void Sprite::StopUsingCustomCoords()
 	m_bUsingCustomTexCoords = false;
 }
 
-void Sprite::SetCroppedSize( float fWidth, float fHeight )
-{
-	m_fRememberedClipWidth = fWidth;
-	m_fRememberedClipHeight = fHeight;
-}
 
 void Sprite::ScaleToClipped( float fWidth, float fHeight )
 {
