@@ -125,11 +125,16 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 		if(!m_Out.IsTransitioning())
 			m_Out.StartTransitioning( SM_GoToNextScreen );
 		return;
+
+	case SM_GainFocus:
+		if( !GAMESTATE->IsTimeToPlayAttractSounds() )
+			SOUNDMAN->SetPrefs( 0 );	// silent
+
+	case SM_LoseFocus:
+		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
+
 	case SM_GoToNextScreen:
 		SOUND->StopMusic();
-		if( !GAMESTATE->IsTimeToPlayAttractSounds() )
-			SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
-
 		GAMESTATE->Reset();
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		return;
