@@ -340,9 +340,10 @@ void PrefsManager::Init()
 	m_sMemoryCardProfileSubdir = PRODUCT_NAME;
 	m_iProductID = 1;
 
-	m_bEnableVirtualKeyboard = true;
+	m_bEnableVirtualKeyboard = false;
 
 #if defined(XBOX)
+	m_bEnableVirtualKeyboard = true;
 	m_bEnableVirtualMemory = true;
 	m_iPageFileSize = 384;
 	m_iPageSize = 16;
