@@ -136,35 +136,41 @@ bool FilenameDB::ResolvePath(CString &path)
 	if(path == "") return true;
 
 	/* Split path into components. */
-	vector<CString> p;
-	split(path, "/", p, true);
-
-	/* If we have "/foo", then add a blank entry to the beginning to line things up. */
-	if( path.Left(1) == "/" )
-		p.insert( p.begin(), "" );
+	int begin = 0, size = -1;
 
 	/* Resolve each component. */
 	CString ret = "";
-	for(unsigned i = 0; i < p.size(); ++i)
+	FileSet *fs = NULL;
+	File *prev_file = NULL;
+	static const CString slash("/");
+	while( 1 )
 	{
-		if( i != 0 )
-			ret += "/";
+		split( path, slash, begin, size, true );
+		if( begin == (int) path.size() )
+			break;
 
-		vector<CString> lst;
-		FileSet &fs = GetFileSet( ret );
-		fs.GetFilesEqualTo(p[i], lst, false);
+		if( fs == NULL )
+			fs = &GetFileSet( ret );
+
+		CString p = path.substr( begin, size );
+		set<File>::iterator it = fs->files.find( File(p) );
 
 		/* If there were no matches, the path isn't found. */
-		if(lst.empty()) return false;
+		if( it == fs->files.end() )
+			return false;
 
-		if( lst.size() > 1 && LOG )
-			LOG->Warn("Ambiguous filenames '%s' and '%s'",
-				lst[0].c_str(), lst[1].c_str());
+		if( prev_file )
+			prev_file->dirp = fs;
+		prev_file = &*it;
 
-		ret += lst[0];
+		if( ret.size() != 0 )
+			ret += "/";
+		ret += it->name;
+
+		fs = it->dirp;
 	}
-
-	if(path.Right(1) == "/")
+	
+	if( path.size() && path[path.size()-1] == '/' )
 		path = ret + "/";
 	else
 		path = ret;

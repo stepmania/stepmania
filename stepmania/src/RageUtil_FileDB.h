@@ -7,6 +7,7 @@
 
 enum FileType { TTYPE_FILE, TTYPE_DIR, TTYPE_NONE };
 
+struct FileSet;
 struct File
 {
 	CString name;
@@ -27,7 +28,12 @@ struct File
 
 	/* Private data, for RageFileDrivers. */
 	void *priv;
-	File() { dir=false; size=-1; hash=-1; priv=NULL;}
+
+	/* If this is non-NULL, and dir is true, this is a pointer to the FileSet containing
+	 * the directory contents.  (This is a cache; it isn't always set.) */
+	FileSet *dirp;
+
+	File() { dir=false; dirp=NULL; size=-1; hash=-1; priv=NULL;}
 	File( const CString &fn )
 	{
 		SetName( fn );
