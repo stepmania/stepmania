@@ -72,6 +72,9 @@ bool UnlockSystem::SongIsRoulette( const Song *song )
 
 SongEntry *UnlockSystem::FindSong( const Song *pSong )
 {
+	/* Manual binary searches are a bad idea; they're insanely easy to get
+	 * wrong.  This breaks the matching, anyway ... */
+	/*
 	int left = 0;
 	int right = m_SongEntries.size() - 1;
 	CString songtitle = pSong->GetFullTranslitTitle();
@@ -94,14 +97,20 @@ SongEntry *UnlockSystem::FindSong( const Song *pSong )
 		LOG->Trace("UnlockSystem: Retrieved: %s", pSong->GetFullTranslitTitle().c_str());
 		return &m_SongEntries[left];
 	}
-
-/*	
-	for(unsigned i = 0; i < m_SongEntries.size(); i++)
-		if (m_SongEntries[i].GetSong() == pSong )
-			return &m_SongEntries[i];
-*/		
+		
 	LOG->Trace("UnlockSystem: Failed to find %s", pSong->GetFullTranslitTitle().c_str());
 	LOG->Trace("            (landed on %s)", m_SongEntries[left].m_sSongName.c_str() );
+*/
+
+	/* This should be good enough; it doesn't iterate over all installed songs.  (This
+	 * is probably called for all songs, so that was probably n^2.) */
+	for(unsigned i = 0; i < m_SongEntries.size(); i++)
+	{
+		if( pSong->Matches("", m_SongEntries[i].m_sSongName) )
+			return &m_SongEntries[i];
+//		if (m_SongEntries[i].GetSong() == pSong )
+//			return &m_SongEntries[i];
+	}
 
 	return NULL;
 }
@@ -146,13 +155,6 @@ bool UnlockSystem::ParseRow(CString text, CString &type, float &qty,
 			text[pos] = ' ';
 		}
 	}
-
-	/* XXX: "local variable 'end' may be used without having been initialized";
-	 * I havn't looked at this code to see if it's a problem, but I don't want
-	 * to simply silence the warning without being sure.  (Can this just be
-	 * a standard INI--does it actually need to be another file format?) -glenn */
-
-	// glenn: ok, i set it at the beginning.
 
 	songname = text.Right(text.GetLength() - 1 - end);
 	
@@ -285,7 +287,7 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 		{
 			current.m_iRouletteSeed = (int)datavalue;
 			if (datavalue > MaxRouletteSlot)
-				MaxRouletteSlot = datavalue;
+				MaxRouletteSlot = (int) datavalue;
 
 			current.isLocked = true;
 			// will read on first update
