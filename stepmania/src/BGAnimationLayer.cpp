@@ -461,9 +461,6 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 
 void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 {
-	Song* pSong = GAMESTATE->m_pCurSong;
-	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","Common fallback background");
-
 	Init();
 	if( sAniDir.Right(1) != "/" )
 		sAniDir += "/";
@@ -475,20 +472,26 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	IniFile ini(sPathToIni);
 	ini.ReadFile();
 
-	CString sFile;
-	ini.GetValue( sLayer, "File", sFile );
+	CString sPath;
+	ini.GetValue( sLayer, "File", sPath );
 
 	bool bUseSongBG = false;
 	ini.GetValueB( sLayer, "UseSongBG", bUseSongBG );
-	if( bUseSongBG )
-		sFile = sSongBGPath;
+	if( bUseSongBG ) {
+		/* Don't throw for missing song backgrounds. */
+		Song *pSong = GAMESTATE->m_pCurSong;
+		if(pSong && pSong->HasBackground())
+			sPath = pSong->GetBackgroundPath();
+		else
+			sPath = THEME->GetPathTo("Graphics","Common fallback background");
+	} else {
+		if( sPath == "" )
+			RageException::Throw( "In the ini file for BGAnimation '%s', '%s' is missing a the line 'File='.", sAniDir.GetString(), sLayer.GetString() );
 
-	if( sFile == "" )
-		RageException::Throw( "In the ini file for BGAnimation '%s', '%s' is missing a the line 'File='.", sAniDir.GetString(), sLayer.GetString() );
-
-	CString sPath = sAniDir+sFile;
-	if( !DoesFileExist(sPath) )
-		RageException::Throw( "In the ini file for BGAnimation '%s', the specified File '%s' does not exist.", sAniDir.GetString(), sFile.GetString() );
+		if( !DoesFileExist(sAniDir+sPath) )
+			RageException::Throw( "In the ini file for BGAnimation '%s', the specified File '%s' does not exist.", sAniDir.GetString(), sPath.GetString() );
+		sPath = sAniDir+sPath;
+	}
 
 	ini.GetValueI( sLayer, "Type", (int&)m_Type );
 	ini.GetValue ( sLayer, "Command", m_sCommand );
