@@ -2,6 +2,7 @@
 
 #include "ScreenTestFonts.h"
 #include "FontManager.h"
+#include "RageTextureManager.h"
 
 static const float LineWidth = 400;
 static const float LineHeight = 50;
@@ -79,7 +80,10 @@ void ScreenTestFonts::Input( const DeviceInput& DeviceI, const InputEventType ty
 	case 'e': SetFont( "Themes/default/Fonts/Normal" ); break;
 	case 'r': SetFont( "Themes/SMMAX2/Fonts/titlemenu" ); break;
 
-	case 'z': FONT->ReloadFonts(); SetText(curtext); break;
+	case 'z': FONT->ReloadFonts();
+			  TEXTUREMAN->ReloadAll();
+			  SetText(curtext);
+			  break;
 	}
 }
 
