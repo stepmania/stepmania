@@ -30,7 +30,7 @@
 #define CHARACTERONCOMMAND					THEME->GetMetric ("ScreenHowToPlay","CharacterOnCommand")
 #define USEPAD								THEME->GetMetricB("ScreenHowToPlay","UsePad")
 #define PADONCOMMAND						THEME->GetMetric ("ScreenHowToPlay","PadOnCommand")
-#define PLAYERX								THEME->GetMetricI("ScreenHowToPlay","PlayerX")
+#define PLAYERX								THEME->GetMetricF("ScreenHowToPlay","PlayerX")
 
 ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 {
