@@ -9,7 +9,6 @@
 #include <math.h>
 
 #pragma comment(lib, "dsound.lib")
-//#pragma comment(lib, "dxguid.lib")
 
 BOOL CALLBACK DSound::EnumCallback(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext)
 {
@@ -20,6 +19,47 @@ BOOL CALLBACK DSound::EnumCallback(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCS
 	return TRUE;
 }
 
+/* The PortAudio directsound code does this.  I'm not sure if it actually matters;
+ * it's an experiment based on some recent reports.  (The default primary buffer
+ * mode is 22050 8-bit.  However, we mix through secondary buffers, and I'm not sure
+ * when the primary buffer mode matters there--I'm certainly not getting 22050 8-bit
+ * sound.) */
+void DSound::SetPrimaryBufferMode()
+{
+#ifndef _XBOX
+	DSBUFFERDESC format;
+	memset(&format, 0, sizeof(format));
+	format.dwSize = sizeof(format);
+	format.dwFlags = DSBCAPS_PRIMARYBUFFER;
+	format.dwBufferBytes = 0;
+	format.lpwfxFormat = NULL;
+
+	IDirectSoundBuffer *buf;
+	HRESULT hr = this->GetDS()->CreateSoundBuffer(&format, &buf, NULL);
+	/* hr */
+	if( FAILED(hr) )
+	{
+		LOG->Warn(hr_ssprintf(hr, "Couldn't create primary buffer"));
+		return;
+	}
+
+    WAVEFORMATEX waveformat;
+    waveformat.cbSize = 0;
+    waveformat.wFormatTag = WAVE_FORMAT_PCM;
+	waveformat.wBitsPerSample = WORD(16);
+	waveformat.nChannels = WORD(2);
+	waveformat.nSamplesPerSec = DWORD(44100);
+	waveformat.nBlockAlign = WORD(4);
+	waveformat.nAvgBytesPerSec = 44100 * waveformat.nBlockAlign;
+
+	// Set the primary buffer's format
+    hr = IDirectSoundBuffer_SetFormat( buf, &waveformat );
+	if( FAILED(hr) )
+		LOG->Warn(hr_ssprintf(hr, "SetFormat on primary buffer"));
+
+	buf->Release();
+#endif
+}
 
 DSound::DSound()
 {
@@ -41,6 +81,8 @@ DSound::DSound()
 	/* Try to set primary mixing privileges */
 	hr = ds->SetCooperativeLevel(GetDesktopWindow(), DSSCL_PRIORITY);
 #endif
+
+	SetPrimaryBufferMode();
 }
 
 DSound::~DSound()

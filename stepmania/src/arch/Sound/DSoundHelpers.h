@@ -11,6 +11,8 @@ class DSound
 	IDirectSound *ds;
 	static BOOL CALLBACK EnumCallback( LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR  lpcstrModule, LPVOID lpContext);
 
+	void SetPrimaryBufferMode();
+    
 public:
 	IDirectSound *GetDS() const { return ds; }
 	bool IsEmulated() const;
