@@ -12,7 +12,7 @@
 
 #include "ScreenOptionsMenu.h"
 #include "RageUtil.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
@@ -68,7 +68,7 @@ ScreenOptionsMenu::ScreenOptionsMenu() :
 		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenOptionsMenu music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenOptionsMenu music") );
 }
 
 /* We depend on the SM options navigation for this screen, not arcade. */

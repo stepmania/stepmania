@@ -16,6 +16,7 @@
 #include "ModeChoice.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
+#include "RageSounds.h"
 #include "ScreenManager.h"
 #include "ScreenSelectDifficultyEX.h"
 #include "ThemeManager.h"
@@ -383,7 +384,7 @@ void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
 				m_sprDifficulty[e].SetDiffuse( RageColor(.5,.5,.5,1) );
 			}
 		}
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectDifficulty comment %s",mc.name)) );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectDifficulty comment %s",mc.name)) );
 		m_soundSelect.Play();
 	}
 

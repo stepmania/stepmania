@@ -18,6 +18,7 @@
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"
 #include "SongManager.h"
+#include "RageSounds.h"
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
@@ -90,9 +91,9 @@ ScreenMusicScroll::ScreenMusicScroll() : Screen("ScreenMusicScroll")
 	m_Out.Load( THEME->GetPathToB("ScreenMusicScroll out") );
 //	this->AddChild( &m_Out );	// draw and update manually
 
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("music scroll") );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("music scroll") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenMusicScroll music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenMusicScroll music") );
 }
 
 

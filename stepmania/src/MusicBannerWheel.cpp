@@ -25,7 +25,7 @@ TODO:
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "ThemeManager.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "StyleDef.h"
 #include "song.h"
 #include "ActorUtil.h"
@@ -301,7 +301,7 @@ void MusicBannerWheel::PlayMusicSample()
 	Song* pSong = GetSelectedSong();
 	if( pSong  &&  pSong->HasMusic() )
 	{
-		SOUNDMAN->PlayMusic(pSong->GetMusicPath(), true,
+		SOUND->PlayMusic(pSong->GetMusicPath(), true,
 			pSong->m_fMusicSampleStartSeconds,
 			pSong->m_fMusicSampleLengthSeconds);
 	}

@@ -10,7 +10,7 @@
 */
 
 #include "ScreenSelectGame.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
@@ -58,7 +58,7 @@ ScreenSelectGame::ScreenSelectGame() :
 		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenSelectGame music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenSelectGame music") );
 }
 
 void ScreenSelectGame::ImportOptions()

@@ -19,7 +19,7 @@
 #include "InputMapper.h"
 #include "GameManager.h"
 #include "GameState.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ThemeManager.h"
 
 
@@ -102,7 +102,7 @@ ScreenMapControllers::ScreenMapControllers() : Screen("ScreenMapControllers")
 	m_Menu.Load( "ScreenMapControllers", false );	// no timer
 	this->AddChild( &m_Menu );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenMapControllers music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenMapControllers music") );
 
 	Refresh();
 }
@@ -150,7 +150,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 		if ( DeviceI.device == DEVICE_KEYBOARD && (DeviceI.button >= SDLK_F1 && DeviceI.button <= SDLK_F12) )
 		{
 			m_textError.SetText( "That key can not be mapped." );
-			SOUNDMAN->PlayOnce( THEME->GetPathToS("Common invalid" ) );
+			SOUND->PlayOnce( THEME->GetPathToS("Common invalid" ) );
 			m_textError.StopTweening();
 			m_textError.SetDiffuse( RageColor(0,1,0,1) );
 			m_textError.BeginTweening( 3 );
@@ -250,7 +250,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 		case SDLK_ESCAPE: /* Quit the screen. */
 			if(!m_Menu.IsTransitioning())
 			{
-				SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
+				SOUND->PlayOnce( THEME->GetPathToS("Common start") );
 				m_Menu.StartTransitioning( SM_GoToNextScreen );		
 				for( int b=0; b<GAMESTATE->GetCurrentGameDef()->m_iButtonsPerController; b++ )
 					m_Line[b].Command( (b%2)? ODD_LINE_OUT:EVEN_LINE_OUT );

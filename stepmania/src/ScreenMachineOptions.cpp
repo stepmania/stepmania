@@ -12,7 +12,7 @@
 
 #include "ScreenMachineOptions.h"
 #include "RageUtil.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
@@ -63,7 +63,7 @@ ScreenMachineOptions::ScreenMachineOptions() :
 		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenMachineOptions music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenMachineOptions music") );
 }
 
 void ScreenMachineOptions::ImportOptions()

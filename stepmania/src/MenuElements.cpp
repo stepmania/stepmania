@@ -12,7 +12,6 @@
 
 #include "MenuElements.h"
 #include "RageUtil.h"
-#include "RageSoundManager.h"
 #include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"

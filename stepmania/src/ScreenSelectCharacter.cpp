@@ -13,6 +13,7 @@
 
 #include "ScreenSelectCharacter.h"
 #include "ScreenManager.h"
+#include "RageSounds.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
@@ -111,9 +112,9 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 	m_soundChange.Load( THEME->GetPathToS("ScreenSelectCharacter change") );
 	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group intro") );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenSelectCharacter music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenSelectCharacter music") );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{

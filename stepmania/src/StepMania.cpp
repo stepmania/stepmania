@@ -620,7 +620,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 			break;
 		GAMESTATE->m_iCoins++;
 		SCREENMAN->RefreshCreditsMessages();
-		SOUNDMAN->PlayOnce( THEME->GetPathToS("Common coin") );
+		SOUND->PlayOnce( THEME->GetPathToS("Common coin") );
 		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
 	}
 

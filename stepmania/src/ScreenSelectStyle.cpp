@@ -12,6 +12,7 @@
 
 #include "ScreenSelectStyle.h"
 #include "GameManager.h"
+#include "RageSounds.h"
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
@@ -181,7 +182,7 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 	SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0 );
 
 	const ModeChoice& mc = m_aModeChoices[GetSelectionIndex(pn)];
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectStyle comment %s",mc.name)) );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectStyle comment %s",mc.name)) );
 
 	//
 	// TweenOffScreen

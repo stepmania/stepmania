@@ -16,7 +16,7 @@
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "GameManager.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
@@ -240,7 +240,7 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	m_soundOptionsChange.Load( THEME->GetPathToS("ScreenSelectMusic options") );
 	m_soundLocked.Load( THEME->GetPathToS("ScreenSelectMusic locked") );
 
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music intro") );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music intro") );
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
@@ -501,7 +501,7 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 		{
 			if( !m_sSampleMusicToPlay.empty() )
 			{
-				SOUNDMAN->PlayMusic(
+				SOUND->PlayMusic(
 					m_sSampleMusicToPlay, 
 					true,
 					m_fSampleStartSeconds,
@@ -561,7 +561,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		
 		m_bGoToOptions = true;
 		m_sprOptionsMessage.SetState( 1 );
-		SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
+		SOUND->PlayOnce( THEME->GetPathToS("Common start") );
 		return;
 	}
 	
@@ -710,7 +710,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		else
 		{
 			GAMESTATE->AdjustFailType();
-			SOUNDMAN->StopMusic();
+			SOUND->StopMusic();
 			SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 		}
 		break;
@@ -765,11 +765,11 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		}
 
 		if( bIsNew )
-			SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment new") );
+			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment new") );
 		else if( bIsHard )
-			SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment hard") );
+			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment hard") );
 		else
-			SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment general") );
+			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment general") );
 
 		m_bMadeChoice = true;
 
@@ -782,7 +782,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	}
 	case TYPE_COURSE:
 	{
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select course comment general") );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select course comment general") );
 
 		Course *pCourse = m_MusicWheel.GetSelectedCourse();
 		ASSERT( pCourse );
@@ -852,7 +852,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 
 void ScreenSelectMusic::MenuBack( PlayerNumber pn )
 {
-	SOUNDMAN->StopMusic();
+	SOUND->StopMusic();
 
 	m_Menu.Back( SM_GoToPrevScreen );
 }
@@ -1079,10 +1079,10 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	// Don't stop music if it's already playing the right file.
 	if( SampleMusicToPlay == "" )
-		SOUNDMAN->StopMusic();
-	else if( SOUNDMAN->GetMusicPath() != SampleMusicToPlay )
+		SOUND->StopMusic();
+	else if( SOUND->GetMusicPath() != SampleMusicToPlay )
 	{
-		SOUNDMAN->StopMusic();
+		SOUND->StopMusic();
 		m_sSampleMusicToPlay = SampleMusicToPlay;
 		m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
 	}

@@ -17,6 +17,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
+#include "RageSounds.h"
 #include "NoteSkinManager.h"
 #include "NoteFieldPositioning.h"
 #include "ScreenSongOptions.h"
@@ -97,7 +98,7 @@ ScreenPlayerOptions::ScreenPlayerOptions() :
 	m_bAcceptedChoices = false;
 	m_bGoToOptions = ( PREFSMAN->m_ShowSongOptions == PrefsManager::YES );
 
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
 }
 
 
@@ -399,7 +400,7 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		{
 			m_bGoToOptions = true;
 			m_sprOptionsMessage.SetState( 1 );
-			SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
+			SOUND->PlayOnce( THEME->GetPathToS("Common start") );
 		}
 	}
 

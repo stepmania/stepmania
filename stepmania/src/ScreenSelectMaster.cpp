@@ -15,6 +15,7 @@
 #include "PrefsManager.h"
 #include "GameManager.h"
 #include "ThemeManager.h"
+#include "RageSounds.h"
 #include "GameState.h"
 #include "AnnouncerManager.h"
 #include "ModeChoice.h"
@@ -410,7 +411,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 
 	if(GetCurrentPage() != PAGE_2 || !AnotherPlayerSelected)
 	{
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectMaster comment %s",mc.name)) );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectMaster comment %s",mc.name)) );
 		m_soundSelect.Play();
 	}
 

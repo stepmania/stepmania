@@ -16,7 +16,6 @@
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "ThemeManager.h"
-#include "RageSoundManager.h"
 #include "StyleDef.h"
 #include "song.h"
 #include "ActorUtil.h"

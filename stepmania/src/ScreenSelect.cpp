@@ -14,7 +14,7 @@
 #include "ScreenSelect.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "GameManager.h"
@@ -83,8 +83,8 @@ void ScreenSelect::Update( float fDelta )
 	if(m_bFirstUpdate)
 	{
 		/* Don't play sounds during the ctor, since derived classes havn't loaded yet. */
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName+" intro") );
-		SOUNDMAN->PlayMusic( THEME->GetPathToS(m_sName+" music") );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName+" intro") );
+		SOUND->PlayMusic( THEME->GetPathToS(m_sName+" music") );
 	}
 
 	Screen::Update( fDelta );
@@ -149,7 +149,7 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 				}
 
 				/* If credits had to be used, it's already taken care of.. add the player */
-				SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
+				SOUND->PlayOnce( THEME->GetPathToS("Common start") );
 				GAMESTATE->m_bSideIsJoined[pn] = true;
 				SCREENMAN->RefreshCreditsMessages();
 				this->UpdateSelectableChoices();
@@ -193,7 +193,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 		}
 		break;
 	case SM_GoToPrevScreen:
-		SOUNDMAN->StopMusic();
+		SOUND->StopMusic();
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextScreen:
@@ -207,7 +207,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenSelect::MenuBack( PlayerNumber pn )
 {
-	SOUNDMAN->StopMusic();
+	SOUND->StopMusic();
 
 	m_Menu.Back( SM_GoToPrevScreen );
 }

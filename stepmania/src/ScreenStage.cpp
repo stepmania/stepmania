@@ -20,7 +20,7 @@
 #include "Sprite.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ThemeManager.h"
 
 
@@ -54,7 +54,7 @@ enum StageMode
 
 ScreenStage::ScreenStage() : Screen("ScreenStage")
 {
-	SOUNDMAN->StopMusic();
+	SOUND->StopMusic();
 
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenStage "+GAMESTATE->GetStageText()) );
 	this->AddChild( &m_Background );
@@ -98,7 +98,7 @@ ScreenStage::ScreenStage() : Screen("ScreenStage")
 	//else													stage_mode = MODE_NORMAL;
 	
 
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage "+GAMESTATE->GetStageText()) );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage "+GAMESTATE->GetStageText()) );
 
 //	switch( stage_mode )
 //	{
@@ -108,21 +108,21 @@ ScreenStage::ScreenStage() : Screen("ScreenStage")
 //			switch( iStageNo )
 //			{
 //			case 1:		break;
-//			case 2:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage 2") );	break;
-//			case 3:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage 3") );	break;
-//			case 4:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage 4") );	break;
-//			case 5:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage 5") );	break;
-//			case 6:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage 6") );	break;
+//			case 2:	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage 2") );	break;
+//			case 3:	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage 3") );	break;
+//			case 4:	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage 4") );	break;
+//			case 5:	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage 5") );	break;
+//			case 6:	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage 6") );	break;
 //			default:	;	break;	// play nothing
 //			}
 //		}
 //		break;
-//	case MODE_FINAL:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage final") );	break;
-//	case MODE_EXTRA1:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage extra1") );	break;
-//	case MODE_EXTRA2:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage extra2") );	break;
-//	case MODE_NONSTOP:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage nonstop") );	break;
-//	case MODE_ONI:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage oni") );		break;
-//	case MODE_ENDLESS:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage endless") );	break;
+//	case MODE_FINAL:	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage final") );	break;
+//	case MODE_EXTRA1:	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage extra1") );	break;
+//	case MODE_EXTRA2:	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage extra2") );	break;
+//	case MODE_NONSTOP:	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage nonstop") );	break;
+//	case MODE_ONI:		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage oni") );		break;
+//	case MODE_ENDLESS:	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage endless") );	break;
 //	default:		ASSERT(0);
 //	}
 //

@@ -13,7 +13,7 @@
 #include "ScreenTextEntry.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ScreenTitleMenu.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
@@ -204,7 +204,7 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 	m_textAnswer.BeginTweening( 0.2f );
 	m_textAnswer.SetDiffuse( RageColor(1,1,1,0) );
 
-	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
+	SOUND->PlayOnce( THEME->GetPathToS("Common start") );
 
 	if( m_bCancelled ) {
 		if( m_pOnCancel ) m_pOnCancel();

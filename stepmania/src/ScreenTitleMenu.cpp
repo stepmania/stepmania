@@ -25,7 +25,7 @@
 #include "InputMapper.h"
 #include "ThemeManager.h"
 #include "SDL_utils.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "CodeDetector.h"
 #include "RageTextureManager.h"
 #include "UnlockSystem.h"
@@ -136,7 +136,7 @@ ScreenTitleMenu::ScreenTitleMenu() : Screen("ScreenTitleMenu")
 	this->AddChild( &m_BeginOut );
 
 
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("title menu game name") );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("title menu game name") );
 
 
 	m_soundAttract.Load( ANNOUNCER->GetPathTo("title menu attract") );
@@ -150,7 +150,7 @@ ScreenTitleMenu::ScreenTitleMenu() : Screen("ScreenTitleMenu")
 		LoseFocus( i );
 	GainFocus( m_Choice );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenTitleMenu music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenTitleMenu music") );
 
 	this->PostScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS);
 

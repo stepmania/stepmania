@@ -14,7 +14,7 @@
 #include "ScreenPrompt.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
@@ -154,7 +154,7 @@ void ScreenPrompt::MenuRight( PlayerNumber pn )
 	m_rectAnswerBox.SetXY( m_textAnswer[m_bAnswer].GetX(), m_textAnswer[m_bAnswer].GetY() );
 	m_rectAnswerBox.SetZoomX( m_textAnswer[m_bAnswer].GetWidestLineWidthInSourcePixels()+10.0f );
 
-	SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenPrompt change") );
+	SOUND->PlayOnce( THEME->GetPathToS("ScreenPrompt change") );
 }
 
 void ScreenPrompt::MenuStart( PlayerNumber pn )
@@ -174,7 +174,7 @@ void ScreenPrompt::MenuStart( PlayerNumber pn )
 	m_textAnswer[1].BeginTweening( 0.2f );
 	m_textAnswer[1].SetDiffuse( RageColor(1,1,1,0) );
 
-	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
+	SOUND->PlayOnce( THEME->GetPathToS("Common start") );
 
 	if( m_bAnswer )
 	{

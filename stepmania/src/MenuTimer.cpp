@@ -18,7 +18,7 @@
 #include "AnnouncerManager.h"
 #include "ThemeManager.h"
 #include "Font.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 
 const float TIMER_SECONDS = 99;
 
@@ -86,7 +86,7 @@ void MenuTimer::Update( float fDeltaTime )
 	int iNewDisplay = (int)(fNewSecondsLeft + 0.99f);
 
 	if( fOldSecondsLeft > 5.5  &&  fNewSecondsLeft < 5.5 )	// transition to below 5.5
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("hurry up") );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("hurry up") );
 
 	if( iOldDisplay != iNewDisplay )
 	{

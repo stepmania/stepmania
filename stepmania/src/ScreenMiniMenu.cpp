@@ -14,7 +14,7 @@
 #include "ScreenMiniMenu.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
@@ -216,7 +216,7 @@ void ScreenMiniMenu::MenuStart( PlayerNumber pn )
 {
 	m_Out.StartTransitioning( SM_GoToOK );
 
-	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
+	SOUND->PlayOnce( THEME->GetPathToS("Common start") );
 
 	s_iLastLine = m_iCurLine;
 	COPY( s_iLastAnswers, m_iCurAnswers );
@@ -233,7 +233,7 @@ void ScreenMiniMenu::BeforeLineChanged()
 	m_textAnswer[m_iCurLine].SetEffectNone();
 	m_textLabel[m_iCurLine].SetZoom( ZOOM_NOT_SELECTED );
 	m_textAnswer[m_iCurLine].SetZoom( ZOOM_NOT_SELECTED );
-	SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenMiniMenu row") );
+	SOUND->PlayOnce( THEME->GetPathToS("ScreenMiniMenu row") );
 }
 
 void ScreenMiniMenu::AfterLineChanged()
@@ -246,7 +246,7 @@ void ScreenMiniMenu::AfterLineChanged()
 
 void ScreenMiniMenu::AfterAnswerChanged()
 {
-	SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenMiniMenu row") );
+	SOUND->PlayOnce( THEME->GetPathToS("ScreenMiniMenu row") );
 	int iAnswerInRow = m_iCurAnswers[m_iCurLine];
 	CString sAnswerText = m_Def.rows[m_iCurLine].choices[iAnswerInRow];
 	m_textAnswer[m_iCurLine].SetText( sAnswerText );

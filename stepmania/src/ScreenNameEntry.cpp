@@ -19,7 +19,7 @@
 #include "GameManager.h"
 #include "RageLog.h"
 #include "GameState.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ThemeManager.h"
 #include "ScreenRanking.h"
 #include "Course.h"
@@ -249,7 +249,7 @@ ScreenNameEntry::ScreenNameEntry() : Screen("ScreenNameEntry")
 
 	m_soundStep.Load( THEME->GetPathToS("ScreenNameEntry step") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenNameEntry music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenNameEntry music") );
 
 	m_fFakeBeat = 0;
 }

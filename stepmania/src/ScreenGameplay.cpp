@@ -38,7 +38,7 @@
 #include "ActorUtil.h"
 #include "NoteSkinManager.h"
 #include "RageTextureManager.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "CombinedLifeMeterEnemy.h"
 #include "CombinedLifeMeterTug.h"
 #include "Inventory.h"
@@ -895,7 +895,7 @@ bool ScreenGameplay::IsTimeToPlayTicks() const
 	// will start coming out the speaker.  Compensate for this by boosting
 	// fPositionSeconds ahead
 	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-	fPositionSeconds += (SOUNDMAN->GetPlayLatency()+(float)G_TICK_EARLY_SECONDS) * m_soundMusic.GetPlaybackRate();
+	fPositionSeconds += (SOUND->GetPlayLatency()+(float)G_TICK_EARLY_SECONDS) * m_soundMusic.GetPlaybackRate();
 	float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
 	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
@@ -935,7 +935,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	if( m_bFirstUpdate )
 	{
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay intro") );	// crowd cheer
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay intro") );	// crowd cheer
 
 		//
 		// Get the transitions rolling
@@ -1217,7 +1217,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT) )
 		{
 			m_DancingState = STATE_OUTRO;
-			SOUNDMAN->PlayOnce( THEME->GetPathToS("Common back") );
+			SOUND->PlayOnce( THEME->GetPathToS("Common back") );
 			/* Hmm.  There are a bunch of subtly different ways we can
 			 * tween out: 
 			 *   1. Keep rendering the song, and keep it moving.  This might
@@ -1575,7 +1575,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					{
 						TweenOffScreen();
 						m_Extra.StartTransitioning( SM_GoToStateAfterCleared );
-						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay extra") );
+						SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay extra") );
 					}
 					else
 					{
@@ -1603,7 +1603,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 							break;
 						}
 						
-						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
+						SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
 					}
 				}
 			}
@@ -1802,7 +1802,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			SET_XY( m_textSurviveTime );
 		}
 
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
 		break;
 
 	case SM_GoToScreenAfterFail:

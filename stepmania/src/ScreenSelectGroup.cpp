@@ -20,7 +20,7 @@
 #include "SongManager.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ThemeManager.h"
 #include <map>
 #include "ActorUtil.h"
@@ -139,9 +139,9 @@ ScreenSelectGroup::ScreenSelectGroup() : Screen("ScreenSelectGroup")
 	m_soundChange.Load( THEME->GetPathToS("ScreenSelectGroup change") );
 	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group intro") );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenSelectGroup music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenSelectGroup music") );
 
 	AfterChange();
 	TweenOnScreen();
@@ -256,9 +256,9 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 	GAMESTATE->m_sPreferredGroup = (m_GroupList.GetSelectionName()=="ALL MUSIC" ? GROUP_ALL_MUSIC : m_GroupList.GetSelectionName() );
 
 	if( GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC )
-        SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group comment all music") );
+        SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group comment all music") );
 	else
-        SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group comment general") );
+        SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group comment general") );
 
 
 	TweenOffScreen();

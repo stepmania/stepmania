@@ -13,7 +13,7 @@
 #include "ScreenStyleSplash.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ScreenManager.h"
 #include "ThemeManager.h"
 #include "GameState.h"
@@ -30,7 +30,7 @@ const ScreenMessage SM_StartClosing		= ScreenMessage(SM_User-8);
 
 ScreenStyleSplash::ScreenStyleSplash() : Screen("ScreenStyleSplash")
 {
-	SOUNDMAN->StopMusic();
+	SOUND->StopMusic();
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;	
 	CString sStyleName = GAMESTATE->GetCurrentStyleDef()->m_szName;
@@ -97,7 +97,7 @@ void ScreenStyleSplash::MenuBack( PlayerNumber pn )
 		return;
 	this->ClearMessageQueue();
 	m_Menu.Back( SM_GoToPrevScreen );
-	SOUNDMAN->PlayOnce( THEME->GetPathToS("menu back") );
+	SOUND->PlayOnce( THEME->GetPathToS("menu back") );
 }
 
 void ScreenStyleSplash::DrawPrimitives()

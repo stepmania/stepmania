@@ -19,7 +19,7 @@
 #include "GameManager.h"
 #include "RageLog.h"
 #include "GameState.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ThemeManager.h"
 #include "ScreenJukebox.h"
 
@@ -55,7 +55,7 @@ ScreenJukeboxMenu::ScreenJukeboxMenu() : Screen("ScreenJukeboxMenu")
 
 	m_soundInvalid.Load( THEME->GetPathToS("Common invalid") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenJukeboxMenu music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenJukeboxMenu music") );
 }
 
 
@@ -140,8 +140,8 @@ void ScreenJukeboxMenu::MenuStart( PlayerNumber pn )
 	}
 
 
-	SOUNDMAN->StopMusic();
-	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
+	SOUND->StopMusic();
+	SOUND->PlayOnce( THEME->GetPathToS("Common start") );
 	m_Menu.StartTransitioning( SM_GoToNextScreen );
 }
 
@@ -149,5 +149,5 @@ void ScreenJukeboxMenu::MenuBack( PlayerNumber pn )
 {	
 	m_Menu.StartTransitioning( SM_GoToPrevScreen );
 
-	SOUNDMAN->StopMusic();
+	SOUND->StopMusic();
 }

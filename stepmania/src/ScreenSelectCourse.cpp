@@ -22,7 +22,7 @@
 #include "InputQueue.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "CodeDetector.h"
 #include "ThemeManager.h"
 #include "Course.h"
@@ -63,7 +63,7 @@ ScreenSelectCourse::ScreenSelectCourse() : Screen("ScreenSelectCourse")
 
 	CodeDetector::RefreshCacheItems();
  
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenSelectCourse music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenSelectCourse music") );
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
@@ -128,9 +128,9 @@ ScreenSelectCourse::ScreenSelectCourse() : Screen("ScreenSelectCourse")
 	m_soundChangeNotes.Load( THEME->GetPathToS("ScreenSelectCourse difficulty") );
 
 
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select course intro") );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select course intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenSelectCourse music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenSelectCourse music") );
 
 	UpdateOptionsDisplays();
 
@@ -332,7 +332,7 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_COURSE:
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select course comment general") );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select course comment general") );
 	
 		TweenOffScreen();
 
@@ -392,7 +392,7 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 
 void ScreenSelectCourse::MenuBack( PlayerNumber pn )
 {
-	SOUNDMAN->StopMusic();
+	SOUND->StopMusic();
 
 	m_Menu.Back( SM_GoToPrevScreen );
 }

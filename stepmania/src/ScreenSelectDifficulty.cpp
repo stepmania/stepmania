@@ -13,6 +13,7 @@
 #include "ScreenSelectDifficulty.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
+#include "RageSounds.h"
 #include "GameManager.h"
 #include "ThemeManager.h"
 #include "GameState.h"
@@ -301,7 +302,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 
 	if(m_CurrentPage != PAGE_2 || !AnotherPlayerSelected)
 	{
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectDifficulty comment %s",mc.name)) );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectDifficulty comment %s",mc.name)) );
 		m_soundSelect.Play();
 	}
 

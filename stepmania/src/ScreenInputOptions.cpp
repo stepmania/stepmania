@@ -12,7 +12,7 @@
 
 #include "ScreenInputOptions.h"
 #include "RageUtil.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
@@ -57,7 +57,7 @@ ScreenInputOptions::ScreenInputOptions() :
 		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenInputOptions music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenInputOptions music") );
 }
 
 void ScreenInputOptions::ImportOptions()

@@ -12,7 +12,7 @@
 
 #include "ScreenInstructions.h"
 #include "RageUtil.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
@@ -72,7 +72,7 @@ ScreenInstructions::ScreenInstructions() : Screen("ScreenInstructions")
 	m_sprHowToPlay.BeginTweening( 0.6f, Actor::TWEEN_DECELERATE );
 	m_sprHowToPlay.SetX( CENTER_X );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenInstructions music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenInstructions music") );
 }
 
 ScreenInstructions::~ScreenInstructions()

@@ -18,6 +18,7 @@
 #include "StepMania.h"
 #include "SDL_utils.h"
 #include "ScreenManager.h"
+#include "RageSounds.h"
 
 
 
@@ -188,10 +189,10 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 				// fall through
 			case COIN_HOME:
 			case COIN_FREE:
-				SOUNDMAN->StopMusic();
+				SOUND->StopMusic();
 				/* We already played the it was a coin was inserted.  Don't play it again. */
 				if( MenuI.button != MENU_BUTTON_COIN )
-					SOUNDMAN->PlayOnce( THEME->GetPathToS("Common coin") );
+					SOUND->PlayOnce( THEME->GetPathToS("Common coin") );
 				SDL_Delay( 800 );	// do a little pause, like the arcade does
 				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 				break;

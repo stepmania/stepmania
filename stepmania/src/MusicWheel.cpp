@@ -17,7 +17,6 @@
 #include "SongManager.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
-#include "RageSoundManager.h"
 #include "ScreenManager.h"	// for sending SM_PlayMusicSample
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"

@@ -13,7 +13,6 @@
 
 #include "ScreenRaveOptions.h"
 #include "RageUtil.h"
-#include "RageSoundManager.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"

@@ -18,6 +18,7 @@
 #include "ScreenTestSound.h"
 #include "ScreenTestFonts.h"
 #include "ScreenManager.h"
+#include "RageSounds.h"
 
 
 ScreenTest::~ScreenTest()
@@ -43,7 +44,7 @@ ScreenTest::ScreenTest() : Screen("ScreenTest")
 	current = NULL;
 	cur_screen = -1;
 
-	SOUNDMAN->StopMusic();
+	SOUND->StopMusic();
 
 	SetScreen(0);
 }
