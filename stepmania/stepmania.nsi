@@ -7,8 +7,10 @@
 ; NOTE: this .NSI script is designed for NSIS v1.8+
 
 Name "StepMania"
-OutFile "stepmania301.exe"
-!define PRODUCT_NAME "StepMania 3.01"
+OutFile "stepmania-CVS-20030119.exe"
+!define PRODUCT_NAME "StepMania CVS"
+;OutFile "stepmania301.exe"
+;!define PRODUCT_NAME "StepMania 3.01"
 
 
 ; Some default compiler settings (uncomment and change at will):
@@ -17,7 +19,7 @@ SetDatablockOptimize on ; (can be off)
 CRCCheck on ; (can be off)
 AutoCloseWindow true ; (can be true for the window go away automatically at end)
 ; ShowInstDetails hide ; (can be show to have them shown, or nevershow to disable)
-; SetDateSave off ; (can be on to have files restored to their orginal date)
+SetDateSave on ; (can be on to have files restored to their orginal date)
 InstallDir "$PROGRAMFILES\StepMania"
 InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\StepMania" ""
 DirShow show ; (make this hide to not let the user change it)
@@ -47,18 +49,23 @@ do_uninstall_nsis:
 Exec "$INSTDIR\uninst.exe"
 old_nsis_not_installed:
 
-; Check for DirextX 8.1 (to be moved to the right section later)
-; XXX: we seem to run fine on 8.0 (4.08.00.0400)
+; Check for DirectX 8.0 (to be moved to the right section later)
+; We only use this for sound.  Actually, I could probably make the sound
+; work with an earlier one; I'm not sure if that's needed or not.  For one
+; thing, forcing people to upgrade drivers is somewhat of a good thing;
+; but upgrading to DX8 if you really don't have to is also somewhat
+; annoying, too ... -g
 ReadRegStr $0 HKEY_LOCAL_MACHINE "Software\Microsoft\DirectX" "Version"
 StrCpy $1 $0 2 2 ;  8.1 is "4.08.01.0810"
 IntCmpU $1 8 check_subversion old_dx ok
 check_subversion:
 StrCpy $1 $0 2 5
-IntCmpU $1 1 ok old_dx ok
+IntCmpU $1 0 ok old_dx ok
 
+; We can function without it (using WaveOut), so don't *require* this.
 old_dx:
-MessageBox MB_YESNO|MB_ICONINFORMATION "You need to upgrade to the latest DirectX to use this software (at least 8.1).$\n Do you wish to visit Microsoft's site now ?" IDYES open_dx_page
-Abort
+MessageBox MB_YESNO|MB_ICONINFORMATION "The latest version of DirectX (8.1 or higher) is strongly recommended.$\n Do you wish to visit Microsoft's site now ?" IDYES open_dx_page
+Goto ok
 
 open_dx_page:
 ExecShell "" "http://www.microsoft.com/directx/"
@@ -101,10 +108,6 @@ CreateDirectory "$INSTDIR\BGAnimations"
 SetOutPath "$INSTDIR\BGAnimations"
 File "BGAnimations\instructions.txt"
 
-CreateDirectory "$INSTDIR\Cache"
-SetOutPath "$INSTDIR\Cache"
-File "Cache\instructions.txt"
-
 CreateDirectory "$INSTDIR\CDTitles"
 SetOutPath "$INSTDIR\CDTitles"
 File "CDTitles\instructions.txt"
@@ -121,8 +124,19 @@ RMDir /r "$INSTDIR\NoteSkins\dance\MAX"
 CreateDirectory "$INSTDIR\NoteSkins\dance\MAX"
 SetOutPath "$INSTDIR\NoteSkins"
 File "NoteSkins\instructions.txt"
+
 SetOutPath "$INSTDIR\NoteSkins\dance"
 File /r "NoteSkins\dance\MAX"
+
+SetOutPath "$INSTDIR\NoteSkins\pump"
+File /r "NoteSkins\pump\classic" ; what the heck, they're tiny
+File /r "NoteSkins\pump\shiny"
+
+SetOutPath "$INSTDIR\NoteSkins\ez2"
+File /r "NoteSkins\ez2\original"
+
+SetOutPath "$INSTDIR\NoteSkins\para"
+File /r "NoteSkins\para\original"
 
 CreateDirectory "$INSTDIR\RandomMovies"
 SetOutPath "$INSTDIR\RandomMovies"
@@ -143,9 +157,8 @@ SetOutPath "$INSTDIR\Visualizations"
 File "Visualizations\instructions.txt"
 
 SetOutPath "$INSTDIR"
-; File "msvcr70.dll"
-; File "msvcp70.dll"
-;File "bass.dll"	; Bass is no longer needed
+File "msvcr70.dll"
+File "msvcp70.dll"
 File "jpeg.dll"
 File "libpng13a.dll"
 File "ogg.dll"
@@ -154,7 +167,7 @@ File "vorbisfile.dll"
 File "zliba.dll"
 File "SDL.dll"
 File "SDL_image.dll"
-File "SDL_net.dll"
+; File "SDL_net.dll"
 
 File "COPYING.txt"
 File "README-FIRST.TXT"
@@ -223,8 +236,7 @@ RMDir "$INSTDIR\Cache"
 Delete "$INSTDIR\CDTitles\instructions.txt"
 RMDir "$INSTDIR\CDTitles"
 
-Delete "$INSTDIR\Cache\instructions.txt"
-RMDir "$INSTDIR\Cache"
+RMDir /r "$INSTDIR\Cache"
 
 Delete "$INSTDIR\Courses\instructions.txt"
 RMDir "$INSTDIR\Courses"
@@ -233,7 +245,15 @@ Delete "$INSTDIR\Music\instructions.txt"
 RMDir "$INSTDIR\Music"
 
 Delete "$INSTDIR\NoteSkins\instructions.txt"
-RMDir /r "$INSTDIR\NoteSkins\dance"
+RMDir /r "$INSTDIR\NoteSkins\dance\MAX"
+RMDir "$INSTDIR\NoteSkins\dance"
+RMDir /r "$INSTDIR\NoteSkins\pump\classic"
+RMDir /r "$INSTDIR\NoteSkins\pump\shiny"
+RMDir "$INSTDIR\NoteSkins\pump"
+RMDir /r "$INSTDIR\NoteSkins\ez2\original"
+RMDir "$INSTDIR\NoteSkins\ez2"
+RMDir /r "$INSTDIR\NoteSkins\para\original"
+RMDir "$INSTDIR\NoteSkins\para"
 RMDir "$INSTDIR\NoteSkins"
 
 Delete "$INSTDIR\RandomMovies\instructions.txt"
@@ -249,13 +269,24 @@ RMDir "$INSTDIR\Themes"
 Delete "$INSTDIR\Visualizations\instructions.txt"
 RMDir "$INSTDIR\Visualizations"
 
-Delete "$INSTDIR\bass.dll"
+Delete "$INSTDIR\msvcr70.dll"
+Delete "$INSTDIR\msvcp70.dll"
+Delete "$INSTDIR\jpeg.dll"
+Delete "$INSTDIR\libpng13a.dll"
+Delete "$INSTDIR\ogg.dll"
+Delete "$INSTDIR\vorbis.dll"
+Delete "$INSTDIR\vorbisfile.dll"
+Delete "$INSTDIR\zliba.dll"
+Delete "$INSTDIR\SDL.dll"
+Delete "$INSTDIR\SDL_image.dll"
 Delete "$INSTDIR\COPYING.txt"
 Delete "$INSTDIR\README-FIRST.TXT"
 Delete "$INSTDIR\NEWS"
 Delete "$INSTDIR\stepmania.exe"
 Delete "$INSTDIR\stepmania.ini"
 Delete "$INSTDIR\smpackage.exe"
+Delete "$INSTDIR\StepMania.vdi"
+Delete "$INSTDIR\log.txt"
 
 RMDir "$INSTDIR"	; will delete only if empty
 
