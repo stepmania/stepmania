@@ -36,6 +36,10 @@ private:
 	vector <BitmapText>	m_textUsers;
 };
 
+//Eventually we won't be using quads in this method.
+#define SET_QUAD_INIT( actor )	UtilSetQuadInit( actor, m_sName );
+void UtilSetQuadInit( Actor& actor, const CString &sClassName );
+
 #endif
 
 /*
