@@ -745,7 +745,7 @@ void NoteData::LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, co
 	for( int t=0; t<m_iNumTracks; t++ )
 	{
 		const int iOriginalTrack = iOriginalTrackToTakeFrom[t];
-		RAGE_ASSERT_M( iOriginalTrack < Original.m_iNumTracks, ssprintf("from %i >= %i (to %i)", 
+		ASSERT_M( iOriginalTrack < Original.m_iNumTracks, ssprintf("from %i >= %i (to %i)", 
 			iOriginalTrack, Original.m_iNumTracks, iOriginalTrackToTakeFrom[t]));
 
 		if( iOriginalTrack == -1 )

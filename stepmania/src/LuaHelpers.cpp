@@ -141,7 +141,7 @@ try {
 	Lua::RegisterFunctions( L );
 
 	LoadFromString( L, "return " + str );
-	RAGE_ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
+	ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
 
 	int ret = lua_pcall(L, 0, 1, 0);
 	if( ret )
@@ -151,7 +151,7 @@ try {
 		RageException::Throw( "Runtime error running \"%s\": %s", str.c_str(), err.c_str() );
 	}
 
-	RAGE_ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
+	ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
 
 	/* Don't accept a function as a return value; if you really want to use a function
 	 * as a boolean, convert it before returning. */

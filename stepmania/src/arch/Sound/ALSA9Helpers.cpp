@@ -39,7 +39,7 @@ bool Alsa9Buf::SetHWParams()
 		err = dsnd_pcm_hw_free( pcm );
 		ALSA_ASSERT("dsnd_pcm_hw_free");
 	}
-//	RAGE_ASSERT_M( dsnd_pcm_state(pcm) == SND_PCM_STATE_OPEN, ssprintf("(%s)", dsnd_pcm_state_name(dsnd_pcm_state(pcm))) );
+//	ASSERT_M( dsnd_pcm_state(pcm) == SND_PCM_STATE_OPEN, ssprintf("(%s)", dsnd_pcm_state_name(dsnd_pcm_state(pcm))) );
 
 	/* allocate the hardware parameters structure */
 	snd_pcm_hw_params_t *hwparams;

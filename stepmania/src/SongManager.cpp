@@ -361,7 +361,7 @@ RageColor SongManager::GetGroupColor( const CString &sGroupName )
 		if( m_sGroupNames[i] == sGroupName )
 			break;
 	}
-	RAGE_ASSERT_M( i != m_sGroupNames.size(), sGroupName );	// this is not a valid group
+	ASSERT_M( i != m_sGroupNames.size(), sGroupName );	// this is not a valid group
 
 	return g_vGroupColors[i%g_vGroupColors.size()];
 }
@@ -778,7 +778,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 		sGroup = GAMESTATE->m_pCurSong->m_sGroupName;
 	}
 
-	RAGE_ASSERT_M( sGroup != "", ssprintf("%p '%s' '%s'",
+	ASSERT_M( sGroup != "", ssprintf("%p '%s' '%s'",
 		GAMESTATE->m_pCurSong,
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->GetSongDir().c_str():"",
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->m_sGroupName.c_str():"") );

@@ -24,7 +24,7 @@ void Attack::GetAttackBeats( const Song *song, PlayerNumber pn, float &fStartBea
 		GAMESTATE->GetUndisplayedBeats( pn, fSecsRemaining, fStartBeat, fEndBeat );
 	}
 
-	RAGE_ASSERT_M( fEndBeat >= fStartBeat, ssprintf("%f >= %f", fEndBeat, fStartBeat) );
+	ASSERT_M( fEndBeat >= fStartBeat, ssprintf("%f >= %f", fEndBeat, fStartBeat) );
 }
 
 bool Attack::operator== ( const Attack &rhs ) const

@@ -154,8 +154,8 @@ bool FilenameDB::ResolvePath(CString &path)
 			fs = GetFileSet( ret );
 
 		CString p = path.substr( begin, size );
-		RAGE_ASSERT_M( p.size() != 1 || p[0] != '.', path ); // no .
-		RAGE_ASSERT_M( p.size() != 2 || p[0] != '.' || p[1] != '.', path ); // no ..
+		ASSERT_M( p.size() != 1 || p[0] != '.', path ); // no .
+		ASSERT_M( p.size() != 2 || p[0] != '.' || p[1] != '.', path ); // no ..
 		set<File>::iterator it = fs->files.find( File(p) );
 
 		/* If there were no matches, the path isn't found. */

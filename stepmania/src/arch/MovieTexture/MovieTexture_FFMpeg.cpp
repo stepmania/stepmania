@@ -387,7 +387,7 @@ int FFMpeg_Helper::DecodePacket()
 
 void MovieTexture_FFMpeg::ConvertFrame()
 {
-	RAGE_ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting ) );
+	ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting ) );
 
 	avcodec::AVPicture pict;
 	pict.data[0] = (unsigned char *)m_img->pixels;
@@ -733,7 +733,7 @@ void MovieTexture_FFMpeg::UpdateTimer()
  * (due to pause, EOF, etc).  If true is returned, we'll be in FRAME_DECODED. */
 bool MovieTexture_FFMpeg::DecodeFrame()
 {
-	RAGE_ASSERT_M( m_ImageWaiting == FRAME_NONE, ssprintf("%i", m_ImageWaiting) );
+	ASSERT_M( m_ImageWaiting == FRAME_NONE, ssprintf("%i", m_ImageWaiting) );
 
 	if( m_State != PLAYING )
 		return false;
@@ -785,7 +785,7 @@ bool MovieTexture_FFMpeg::DecodeFrame()
  */
 float MovieTexture_FFMpeg::CheckFrameTime()
 {
-	RAGE_ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting) );
+	ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting) );
 
 	const float Offset = decoder->GetTimestamp() - m_Clock;
 
@@ -835,7 +835,7 @@ float MovieTexture_FFMpeg::CheckFrameTime()
 
 void MovieTexture_FFMpeg::DiscardFrame()
 {
-	RAGE_ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting) );
+	ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting) );
 	m_ImageWaiting = FRAME_NONE;
 }
 

@@ -48,7 +48,7 @@ void AddLayersFromAniDir( CString sAniDir, vector<Actor*> &layersAddTo, bool Gen
 	if( sAniDir.Right(1) != "/" )
 		sAniDir += "/";
 
-	RAGE_ASSERT_M( IsADirectory(sAniDir), sAniDir + " isn't a directory" );
+	ASSERT_M( IsADirectory(sAniDir), sAniDir + " isn't a directory" );
 
 	CString sPathToIni = sAniDir + "BGAnimation.ini";
 
@@ -108,7 +108,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 	if( sAniDir.Right(1) != "/" )
 		sAniDir += "/";
 
-	RAGE_ASSERT_M( IsADirectory(sAniDir), sAniDir + " isn't a directory" );
+	ASSERT_M( IsADirectory(sAniDir), sAniDir + " isn't a directory" );
 
 	CString sPathToIni = sAniDir + "BGAnimation.ini";
 

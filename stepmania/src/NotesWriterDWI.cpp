@@ -224,7 +224,7 @@ void NotesWriterDWI::WriteDWINotesField( RageFile &f, const Steps &out, int star
 			fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
 			break;
 		default:
-			RAGE_ASSERT_M(0, ssprintf("nt = %d",nt) );
+			ASSERT_M(0, ssprintf("nt = %d",nt) );
 			break;
 		}
 

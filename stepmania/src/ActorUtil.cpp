@@ -237,9 +237,9 @@ void UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
 	{
 		if( actor.GetID().empty() )
 			return;
-	} else {
-		RAGE_ASSERT_M( !actor.GetID().empty(), ssprintf("!actor.GetID().empty() ('%s', '%s')", sClassName.c_str(), sCommandName.c_str()) );
-	}
+	} else
+		ASSERT_M( !actor.GetID().empty(), ssprintf("!actor.GetID().empty() ('%s', '%s')",
+												   sClassName.c_str(), sCommandName.c_str()) );
 
 	actor.Command( THEME->GetMetric(sClassName,actor.GetID()+sCommandName+"Command") );
 }

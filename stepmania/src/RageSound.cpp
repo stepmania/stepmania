@@ -376,7 +376,7 @@ void AdjustBalance( int16_t *buffer, int frames, float fBalance )
 		swap( fLeftFactors[1], fRightFactors[1] );
 	}
 
-	RAGE_ASSERT_M( channels == 2, ssprintf("%i", channels) );
+	ASSERT_M( channels == 2, ssprintf("%i", channels) );
 	for( int samp = 0; samp < frames; ++samp )
 	{
 		int16_t l = int16_t(buffer[0]*fLeftFactors[0] + buffer[1]*fLeftFactors[1]);

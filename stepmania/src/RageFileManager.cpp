@@ -185,7 +185,7 @@ void RageFileManager::MountInitialFilesystems()
 	CStringArray parts;
 	split( DirOfExecutable, "/", parts );
 	CHECKPOINT_M( ssprintf( "... %i parts", parts.size()) );
-	RAGE_ASSERT_M( parts.size() > 1, ssprintf("Strange DirOfExecutable: %s", DirOfExecutable.c_str()) );
+	ASSERT_M( parts.size() > 1, ssprintf("Strange DirOfExecutable: %s", DirOfExecutable.c_str()) );
 	CString Dir = join( "/", parts.begin(), parts.end()-1 );
 	RageFileManager::Mount( "dir", Dir, "" );
 #else
@@ -495,7 +495,7 @@ void AddReference( const RageFileObj *obj, RageFileDriver *driver )
 	/* map::insert returns an iterator (which we discard) and a bool, indicating whether
 	 * this is a new entry.  This should always be new. */
 	const pair< FileReferences::iterator, bool > ret = g_Refs.insert( ref );
-	RAGE_ASSERT_M( ret.second, ssprintf( "RemoveReference: Duplicate reference (%s)", obj->GetDisplayPath().c_str() ) );
+	ASSERT_M( ret.second, ssprintf( "RemoveReference: Duplicate reference (%s)", obj->GetDisplayPath().c_str() ) );
 }
 
 void RemoveReference( const RageFileObj *obj )
@@ -503,7 +503,7 @@ void RemoveReference( const RageFileObj *obj )
 	LockMut( *g_Mutex );
 
 	FileReferences::iterator it = g_Refs.find( obj );
-	RAGE_ASSERT_M( it != g_Refs.end(), ssprintf( "RemoveReference: Missing reference (%s)", obj->GetDisplayPath().c_str() ) );
+	ASSERT_M( it != g_Refs.end(), ssprintf( "RemoveReference: Missing reference (%s)", obj->GetDisplayPath().c_str() ) );
 	g_Refs.erase( it );
 }
 
@@ -574,7 +574,7 @@ RageFileObj *RageFileManager::CopyFileObj( const RageFileObj *cpy, RageFile &p )
 	LockMut( *g_Mutex );
 
 	FileReferences::const_iterator it = g_Refs.find( cpy );
-	RAGE_ASSERT_M( it != g_Refs.end(), ssprintf( "RemoveReference: Missing reference (%s)", cpy->GetDisplayPath().c_str() ) );
+	ASSERT_M( it != g_Refs.end(), ssprintf( "RemoveReference: Missing reference (%s)", cpy->GetDisplayPath().c_str() ) );
 
 	RageFileObj *ret = cpy->Copy( p );
 

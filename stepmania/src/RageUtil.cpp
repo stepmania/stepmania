@@ -29,7 +29,7 @@ int RandomGen::operator() ( int maximum )
 
 void fapproach( float& val, float other_val, float to_move )
 {
-	RAGE_ASSERT_M( to_move >= 0, ssprintf("to_move: %f", to_move) );
+	ASSERT_M( to_move >= 0, ssprintf("to_move: %f", to_move) );
 	if( val == other_val )
 		return;
 	float fDelta = other_val - val;

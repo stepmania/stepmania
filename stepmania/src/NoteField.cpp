@@ -123,7 +123,7 @@ void NoteField::RefreshBeatToNoteSkin()
 			display = m_NoteDisplays.find( Skin );
 		}
 
-		RAGE_ASSERT_M( display != m_NoteDisplays.end(), ssprintf("Couldn't find %s", Skin.c_str()) );
+		ASSERT_M( display != m_NoteDisplays.end(), ssprintf("Couldn't find %s", Skin.c_str()) );
 
 		NoteDisplayCols *cols = display->second;
 		m_BeatToNoteDisplays[Beat] = cols;
@@ -343,9 +343,9 @@ NoteField::NoteDisplayCols *NoteField::SearchForBeat( float Beat )
 	// Again with Beat = -9806 and GAMESTATE->m_fMusicSeconds = -3017.22
 	// Again in the middle of Remember December in Hardcore Galore:
 	//    Beat = -9373.56 and GAMESTATE->m_fMusicSeconds = -2923.48
- 	RAGE_ASSERT_M( it != m_BeatToNoteDisplays.begin(), ssprintf("%f",Beat) );
+ 	ASSERT_M( it != m_BeatToNoteDisplays.begin(), ssprintf("%f",Beat) );
 	--it;
-	RAGE_ASSERT_M( it != m_BeatToNoteDisplays.end(), ssprintf("%f",Beat) );
+	ASSERT_M( it != m_BeatToNoteDisplays.end(), ssprintf("%f",Beat) );
 
 	return it->second;
 }
@@ -557,7 +557,7 @@ void NoteField::DrawPrimitives()
 			if( bIsActive )
 				SearchForSongBeat()->m_GhostArrowRow.SetHoldIsActive( hn.iTrack );
 			
-			RAGE_ASSERT_M( NoteRowToBeat(hn.iStartRow) > -2000, ssprintf("%i %i %i", hn.iStartRow, hn.iEndRow, hn.iTrack) );
+			ASSERT_M( NoteRowToBeat(hn.iStartRow) > -2000, ssprintf("%i %i %i", hn.iStartRow, hn.iEndRow, hn.iTrack) );
 			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(hn.iStartRow) );
 
 			bool bIsInSelectionRange = false;
@@ -616,7 +616,7 @@ void NoteField::DrawPrimitives()
 			bool bIsMine = (tn == TAP_MINE);
 			bool bIsAttack = IsTapAttack(tn);
 
-			RAGE_ASSERT_M( NoteRowToBeat(i) > -2000, ssprintf("%i %i %i, %f %f", i, iLastIndexToDraw, iFirstIndexToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
+			ASSERT_M( NoteRowToBeat(i) > -2000, ssprintf("%i %i %i, %f %f", i, iLastIndexToDraw, iFirstIndexToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
 			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(i) );
 			NoteDisplayCols *nd = CurDisplay->second;
 			if( bIsAttack )
