@@ -31,6 +31,7 @@
 #include "ProfileManager.h"
 #include "arch/arch.h"
 #include "ThemeManager.h"
+#include "fstream"
 #include "Bookkeeper.h"
 
 
@@ -918,13 +919,14 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 	// Filter swear words from name
 	//
 	name.MakeUpper();
-	ifstream f( BLACKLIST_NAMES_FILE );
-	f.open();
+	ifstream f;
+	f.open( NAMES_BLACKLIST_FILE );
 	if( f.good() )
 	{
 		CString sLine;
-		while( getline(sLine) )
+		while( getline(f,sLine) )
 		{
+			sLine.MakeUpper();
 			if( name.Find(sLine) != -1 )
 				name = "";
 		}
