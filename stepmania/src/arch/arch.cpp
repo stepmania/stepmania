@@ -36,7 +36,7 @@ void MakeInputHandlers(vector<InputHandler *> &Add)
 	Add.push_back(new InputHandler_DInput);
 	Add.push_back(new InputHandler_Win32_Pump);
 //	Add.push_back(new InputHandler_Win32_Para);
-#else if defined(_XBOX)
+#elif defined(_XBOX)
 	// Add.push_back(new InputHandler_DInput);
 #endif
 
