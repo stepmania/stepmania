@@ -111,6 +111,10 @@ typedef struct _tagXMLAttr
 {
 	CString name;
 	CString	value;
+	void GetValue(CString &out) const	{ out = value; }
+	void GetValue(int &out) const		{ out = atoi(value); }
+	void GetValue(float &out) const		{ out = (float) atof(value); }
+	void GetValue(bool &out) const		{ out = atoi(value) != 0; }
 	
 	_tagXMLNode*	parent;
 
@@ -142,8 +146,13 @@ typedef struct _tagXMLNode
 	bool SaveToFile( CString sFile, LPDISP_OPT opt = &optDefault );
 
 	// in own attribute list
+	const LPXAttr	GetAttr( LPCTSTR attrname ) const; 
 	LPXAttr	GetAttr( LPCTSTR attrname ); 
 	LPCTSTR	GetAttrValue( LPCTSTR attrname ); 
+	bool GetAttrValue(LPCTSTR name,CString &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue(LPCTSTR name,int &out) const		{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue(LPCTSTR name,float &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue(LPCTSTR name,bool &out) const		{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	XAttrs	GetAttrs( LPCTSTR name ); 
 
 	// in one level child nodes

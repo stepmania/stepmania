@@ -650,6 +650,20 @@ CString _tagXMLNode::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
+const LPXAttr	_tagXMLNode::GetAttr( LPCTSTR attrname ) const
+{
+	for( unsigned i = 0 ; i < attrs.size(); i++ )
+	{
+		LPXAttr attr = attrs[i];
+		if( attr )
+		{
+			if( attr->name == attrname )
+				return attr;
+		}
+	}
+	return NULL;
+}
+
 LPXAttr	_tagXMLNode::GetAttr( LPCTSTR attrname )
 {
 	for( unsigned i = 0 ; i < attrs.size(); i++ )
