@@ -113,10 +113,14 @@ void BPMDisplay::SetBPMRange( const vector<float> &BPMS )
 			MaxBPM = max( MaxBPM, (int) roundf(BPMS[i]) );
 		}
 		if( MinBPM == MaxBPM )
-			m_textBPM.SetText( ssprintf("%i", MinBPM) );
+		{
+			if( MinBPM == -1 )
+				m_textBPM.SetText( "..." ); // random
+			else
+				m_textBPM.SetText( ssprintf("%i", MinBPM) );
+		}
 		else
 			m_textBPM.SetText( ssprintf("%i%s%i", MinBPM, SEPARATOR.c_str(), MaxBPM) );
-		return;
 	} else {
 		m_BPMS.clear();
 		for( i = 0; i < BPMS.size(); ++i )
@@ -151,7 +155,6 @@ void BPMDisplay::SetBPMRange( const vector<float> &BPMS )
 		m_textBPM.SetDiffuse( NORMAL_COLOR );
 		m_sprLabel->SetDiffuse( NORMAL_COLOR );
 	}
-
 }
 
 void BPMDisplay::CycleRandomly()
