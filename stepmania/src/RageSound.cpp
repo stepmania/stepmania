@@ -65,14 +65,6 @@ RageSound::RageSound()
 	ASSERT(SOUNDMAN);
 	LockMut(SOUNDMAN->lock);
 
-	static bool initialized = false;
-	if(!initialized)
-	{
-		if(!Sound_Init())
-			RageException::Throw( "RageSoundManager::RageSoundManager: error initializing sound loader: %s", Sound_GetError());
-		initialized = true;
-	}
-
 	original = this;
 	stream.Sample = NULL;
 	position = 0;
@@ -217,7 +209,7 @@ bool RageSound::Load(CString sSoundFilePath, bool cache)
 
 		if(cnt < 0) {
 			/* XXX untested */
-			Fail(Sound_GetError());
+			Fail(stream.Sample->GetError());
 			delete NewSample;
 			return false;
 		}
@@ -387,7 +379,7 @@ int RageSound::FillBuf(int bytes)
 		if(cnt == -1)
 		{
 			/* XXX untested */
-			Fail(Sound_GetError());
+			Fail(stream.Sample->GetError());
 
 			/* Pretend we got data; we actually just switched to a non-streaming
 			 * buffer. */
@@ -741,7 +733,7 @@ bool RageSound::SetPositionSamples( int samples )
 	if(ret == -1)
 	{
 		/* XXX untested */
-		Fail(Sound_GetError());
+		Fail(stream.Sample->GetError());
 		return false; /* failed */
 	}
 

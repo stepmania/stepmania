@@ -23,6 +23,14 @@ const int read_block_size = 1024;
 
 bool SoundReader_SDL_Sound::Open(CString filename)
 {
+	static bool initialized = false;
+	if(!initialized)
+	{
+		if(!Sound_Init())
+			RageException::Throw( "RageSoundManager::RageSoundManager: error initializing sound loader: %s", Sound_GetError());
+		initialized = true;
+	}
+
 	inbuf = NULL;
 	avail = 0;
 
