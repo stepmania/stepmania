@@ -1399,6 +1399,7 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 	}
 }
 
+#if 0 // undo this if ScaleRegion breaks more things than it fixes
 void NoteDataUtil::Scale( NoteData &nd, float fScale )
 {
 	ASSERT( fScale > 0 );
@@ -1421,6 +1422,42 @@ void NoteDataUtil::Scale( NoteData &nd, float fScale )
 			}
 		}
 	}
+}
+#endif
+
+// added to fix things in the editor
+void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, float fStartBeat, float fEndBeat) {
+	ASSERT( fScale > 0 );
+
+	NoteData temp1, temp2;
+	temp1.Config( nd );
+	temp2.Config( nd );
+
+	int iFirstRowAtEndOfRegion = (nd.GetLastRow() > (fEndBeat * ROWS_PER_BEAT)) ?
+								  nd.GetLastRow() :
+								  fEndBeat * ROWS_PER_BEAT;
+
+	temp1.CopyRange( &nd, 0, fStartBeat * ROWS_PER_BEAT );
+	temp1.CopyRange( &nd, (fEndBeat - fStartBeat) * fScale * ROWS_PER_BEAT, nd.GetLastRow(), iFirstRowAtEndOfRegion);
+	temp2.CopyRange( &nd, fStartBeat * ROWS_PER_BEAT, fEndBeat * ROWS_PER_BEAT );
+	nd.ClearAll();
+
+	for( int r=0; r<=temp2.GetLastRow(); r++ )
+	{
+		for( int t=0; t<temp2.GetNumTracks(); t++ )
+		{
+			TapNote tn = temp2.GetTapNote( t, r );
+			if( tn != TAP_EMPTY )
+			{
+				temp2.SetTapNote( t, r, TAP_EMPTY );
+
+				int new_row = int(r*fScale + fStartBeat*ROWS_PER_BEAT);
+				temp1.SetTapNote( t, new_row, tn );
+			}
+		}
+	}
+
+	nd.CopyAll( &temp1 );
 }
 
 void NoteDataUtil::ShiftRows( NoteData &nd, float fStartBeat, float fBeatsToShift )
