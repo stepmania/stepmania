@@ -231,13 +231,18 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 		m_framePage.AddChild( &m_textExplanation[p] );
 	}
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	/* Hack: if m_CurStyle is set, we're probably in the player or song options menu, so
+	 * the player name is meaningful.  Otherwise, we're probably in the system menu. */
+	if( GAMESTATE->m_CurStyle != STYLE_INVALID )
 	{
-		m_textPlayerName[p].LoadFromFont( THEME->GetPathToF( "ScreenOptions player") );
-		m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
-		m_textPlayerName[p].SetText( PROFILEMAN->GetPlayerName((PlayerNumber)p) );
-		UtilSetXYAndOnCommand( m_textPlayerName[p], "ScreenOptions" );
-		m_framePage.AddChild( &m_textPlayerName[p] );
+		for( p=0; p<NUM_PLAYERS; p++ )
+		{
+			m_textPlayerName[p].LoadFromFont( THEME->GetPathToF( "ScreenOptions player") );
+			m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
+			m_textPlayerName[p].SetText( PROFILEMAN->GetPlayerName((PlayerNumber)p) );
+			UtilSetXYAndOnCommand( m_textPlayerName[p], "ScreenOptions" );
+			m_framePage.AddChild( &m_textPlayerName[p] );
+		}
 	}
 
 	if( SHOW_SCROLL_BAR )
