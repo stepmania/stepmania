@@ -214,6 +214,7 @@ PrefsManager::PrefsManager()
 	m_iAttractSoundFrequency = 1;
 	m_bAllowExtraStage = true;
 	m_bLockWheelAfterRandom = true;
+	m_bHideDefaultNoteSkin = false;
 	m_fPadStickSeconds = 0;
 	g_bAutoRestart = false;
 	m_bSignProfileData = false;
@@ -493,6 +494,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
 	ini.GetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.GetValue( "Options", "LockWheelAfterRandom",			m_bLockWheelAfterRandom );
+	ini.GetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
 	ini.GetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
 	ini.GetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.GetValue( "Options", "SignProfileData",					m_bSignProfileData );
@@ -706,6 +708,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
 	ini.SetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.SetValue( "Options", "LockWheelAfterRandom",			m_bLockWheelAfterRandom );
+	ini.SetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
 	ini.SetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
 	ini.SetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.SetValue( "Options", "SignProfileData",					m_bSignProfileData );

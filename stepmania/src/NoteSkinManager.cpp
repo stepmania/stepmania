@@ -22,6 +22,7 @@
 #include "arch/arch.h"
 #include "RageDisplay.h"
 #include "arch/ArchHooks/ArchHooks.h"
+#include "PrefsManager.h"
 
 
 NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in the program
@@ -110,7 +111,8 @@ void NoteSkinManager::GetNoteSkinNames( CStringArray &AddTo )
 		if( iter != AddTo.end() )
 		{
 			AddTo.erase( iter );
-			AddTo.insert( AddTo.begin(), "default" );
+			if( !PREFSMAN->m_bHideDefaultNoteSkin )
+				AddTo.insert( AddTo.begin(), "default" );
 		}
 	}
 }

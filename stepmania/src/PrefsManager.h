@@ -189,6 +189,7 @@ public:
 	int				m_iAttractSoundFrequency;	// 0 = never, 1 = every time
 	bool			m_bAllowExtraStage;
 	bool			m_bLockWheelAfterRandom;
+	bool			m_bHideDefaultNoteSkin;
 
 	// Number of seconds it takes for a button on the controller to release
 	// after pressed.
