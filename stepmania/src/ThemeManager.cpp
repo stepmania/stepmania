@@ -276,6 +276,8 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName, const CStr
 
 void ThemeManager::UpdateLuaGlobals()
 {
+	LUA->Init();
+
 	/* Important: explicitly refresh cached metrics that we use. */
 	THEME_SCREEN_WIDTH.Read();
 	THEME_SCREEN_HEIGHT.Read();
@@ -288,6 +290,24 @@ void ThemeManager::UpdateLuaGlobals()
 	LUA->SetGlobal( "SCREEN_BOTTOM", (int) SCREEN_BOTTOM );
 	LUA->SetGlobal( "SCREEN_CENTER_X", (int) SCREEN_CENTER_X );
 	LUA->SetGlobal( "SCREEN_CENTER_Y", (int) SCREEN_CENTER_Y );
+
+	/* Run all script files in Lua for all themes.  Start from the deepest fallback
+	 * theme and work outwards. */
+	deque<Theme>::const_iterator iter = g_vThemes.end();
+	--iter;
+	do
+	{
+		const CString &sThemeDir = GetThemeDirFromName( iter->sThemeName );
+		CStringArray asElementPaths;
+		GetDirListing( sThemeDir + "Lua/*.lua", asElementPaths, false, true );
+		for( unsigned i = 0; i < asElementPaths.size(); ++i )
+		{
+			const CString &sPath = asElementPaths[i];
+			LOG->Trace( "Loading \"%s\" ...", sPath.c_str() );
+			LUA->RunScriptFile( sPath );
+		}
+	}
+	while( iter != g_vThemes.begin() );
 }
 
 CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
