@@ -313,11 +313,14 @@ void splitrelpath( const CString &Path, CString& Dir, CString& FName, CString& E
 	}
 }
 
+/* "foo.bar", "baz" -> "foo.baz"
+ * "foo", "baz" -> "foo.baz"
+ * "foo.bar", "" -> "foo" */
 CString SetExtension( const CString &path, const CString &ext )
 {
 	CString Dir, FName, OldExt;
 	splitpath( path, Dir, FName, OldExt );
-	return Dir + FName + "." + ext;
+	return Dir + FName + (ext.size()? ".":"") + ext;
 }
 
 CString GetExtension( CString sPath )
