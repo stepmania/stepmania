@@ -652,14 +652,13 @@ void ThemeManager::GetModifierNames( set<CString>& AddTo )
 	const IniFile::key *cur = m_pIniCurMetrics->GetKey( "OptionNames" );
 	const IniFile::key *base = m_pIniBaseMetrics->GetKey( "OptionNames" );
 
-	for( IniFile::key::const_iterator iter = cur->begin(); iter != cur->end(); iter++ )
-	{
-		AddTo.insert( iter->first );
-	}
-	for( IniFile::key::const_iterator iter = base->begin(); iter != base->end(); iter++ )
-	{
-		AddTo.insert( iter->first );
-	}
+	if( cur )
+		for( IniFile::key::const_iterator iter = cur->begin(); iter != cur->end(); ++iter )
+			AddTo.insert( iter->first );
+
+	if( base )
+		for( IniFile::key::const_iterator iter = base->begin(); iter != base->end(); ++iter )
+			AddTo.insert( iter->first );
 }
 
 /*
