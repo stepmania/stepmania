@@ -1142,6 +1142,16 @@ bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change success
 	if( GAMESTATE->m_SortOrder == new_so )
 		return false;
 
+	/* Don't change to SORT_SORT_MENU or SORT_MODE_MENU if they don't have at least
+	 * two choices. */
+	switch( new_so )
+	{
+	case SORT_SORT_MENU:
+	case SORT_MODE_MENU:
+		if( m_WheelItemDatas[new_so].size() < 2 )
+			return false;
+	}
+
 	switch( m_WheelState )
 	{
 	case STATE_SELECTING_MUSIC:
