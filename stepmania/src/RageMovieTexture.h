@@ -45,6 +45,8 @@ class RageMovieTexture : public RageTexture
 public:
 	RageMovieTexture( RageTextureID ID );
 	virtual ~RageMovieTexture();
+	/* only called by RageTextureManager::InvalidateTextures */
+	void Invalidate() { m_uGLTextureID = 0; }
 	void Update(float fDeltaTime);
 
 	virtual void Reload();
@@ -60,15 +62,13 @@ public:
 	void NewData(char *buffer);
 
 protected:
-	int m_iIndexFrontBuffer;	// index of the buffer that should be rendered from - either 0 or 1
-
 	char *buffer;
 	bool buffer_changed;
 	RageMutex buffer_mutex;
 
 	void Create();
 
-	bool CreateTexture();
+	void CreateTexture();
 	bool PlayMovie();
 	void CheckMovieStatus();
 

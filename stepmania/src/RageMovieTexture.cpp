@@ -100,6 +100,9 @@ void RageMovieTexture::Update(float fDeltaTime)
 
 	buffer_changed = false;
 
+	/* Just in case we were invalidated: */
+	CreateTexture();
+
 	DISPLAY->SetTexture(this);
 	glPixelStorei(GL_UNPACK_SWAP_BYTES, 1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -195,6 +198,17 @@ void RageMovieTexture::Create()
 	m_iSourceWidth  = pCTR->GetVidWidth();
 	m_iSourceHeight = pCTR->GetVidHeight();
 
+	/* image size cannot exceed max size */
+	m_iImageWidth = min( m_iSourceWidth, m_ActualID.iMaxSize );
+	m_iImageHeight = min( m_iSourceHeight, m_ActualID.iMaxSize );
+
+	/* Texture dimensions need to be a power of two; jump to the next. */
+	m_iTextureWidth = power_of_two(m_iImageWidth);
+	m_iTextureHeight = power_of_two(m_iImageHeight);
+
+	if(buffer == NULL)
+		buffer = new char[m_iSourceWidth * m_iSourceHeight * 3];
+
 	/* We've set up the movie, so we know the dimensions we need.  Set
 	 * up the texture. */
 	CreateTexture();
@@ -211,19 +225,12 @@ void RageMovieTexture::NewData(char *data)
 	memcpy(buffer, data, m_iSourceWidth * m_iSourceHeight * 3);
 }
 
-bool RageMovieTexture::CreateTexture()
+void RageMovieTexture::CreateTexture()
 {
-	/* image size cannot exceed max size */
-	m_iImageWidth = min( m_iSourceWidth, m_ActualID.iMaxSize );
-	m_iImageHeight = min( m_iSourceHeight, m_ActualID.iMaxSize );
+	if(m_uGLTextureID)
+		return;
 
-	/* Texture dimensions need to be a power of two; jump to the next. */
-	m_iTextureWidth = power_of_two(m_iImageWidth);
-	m_iTextureHeight = power_of_two(m_iImageHeight);
-
-	buffer = new char[m_iSourceWidth * m_iSourceHeight * 3];
-	if(!m_uGLTextureID)
-		glGenTextures(1, &m_uGLTextureID);
+	glGenTextures(1, &m_uGLTextureID);
 
 	DISPLAY->SetTexture(this);
 
@@ -231,8 +238,6 @@ bool RageMovieTexture::CreateTexture()
 	string buf(m_iTextureWidth*m_iTextureHeight*3, 0);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8,
 		m_iTextureWidth, m_iTextureHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, buf.data());
-
-	return true;
 }
 
 bool RageMovieTexture::PlayMovie()
