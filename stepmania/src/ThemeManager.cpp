@@ -161,10 +161,12 @@ try_element_again:
 			"ThemeManager:  There is more than one theme element element that matches "
 			"'%s/%s/%s'.  Please remove all but one of these matches.",
 			sThemeName.c_str(), sCategory.c_str(), sFileName.c_str() );
-							
+
+#if defined(WIND32)
 		if( DISPLAY->IsWindowed() )
 			if( ArchHooks::retry == HOOKS->MessageBoxAbortRetryIgnore(message) )
 				goto try_element_again;
+#endif
 
 		RageException::Throw( message ); 
 	}
@@ -210,9 +212,11 @@ try_element_again:
 						"Verify that this redirect is correct.",
 						sPath.c_str(), sNewFileName.c_str());
 
+#if defined(WIN32)
 				if( DISPLAY->IsWindowed() )
 					if( ArchHooks::retry == HOOKS->MessageBoxAbortRetryIgnore(message) )
 						goto try_element_again;
+#endif
 
 				RageException::Throw( "%s", message.c_str() ); 
 			}
@@ -232,7 +236,7 @@ try_element_again:
 	ret = GetPathTo( BASE_THEME_NAME, category, sFileName);
 	if( !ret.empty() )	// we found something
 		return ret;
-	else if( bOptional )
+  else if( bOptional )
 		return "";
 
 	CString sCategory = ELEMENT_CATEGORY_STRING[category];
