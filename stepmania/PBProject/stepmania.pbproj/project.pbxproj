@@ -15835,54 +15835,54 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = RageSurface_Save_JPEG.cpp;
-			path = src/RageSurface_Save_JPEG.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/RageSurface_Save_JPEG.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAEBC6C707A20AFE00793F0E = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = RageSurface_Save_JPEG.h;
-			path = src/RageSurface_Save_JPEG.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/RageSurface_Save_JPEG.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAEBC6C807A20AFE00793F0E = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = RageSurfaceUtils_Dither.cpp;
-			path = src/RageSurfaceUtils_Dither.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/RageSurfaceUtils_Dither.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAEBC6C907A20AFE00793F0E = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = RageSurfaceUtils_Dither.h;
-			path = src/RageSurfaceUtils_Dither.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/RageSurfaceUtils_Dither.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAEBC6CA07A20AFE00793F0E = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = RageSurfaceUtils_Zoom.cpp;
-			path = src/RageSurfaceUtils_Zoom.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/RageSurfaceUtils_Zoom.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAEBC6CB07A20AFE00793F0E = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = RageSurfaceUtils_Zoom.h;
-			path = src/RageSurfaceUtils_Zoom.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/RageSurfaceUtils_Zoom.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAEBC6CC07A20AFE00793F0E = {
 			fileRef = AAEBC6C607A20AFE00793F0E;
