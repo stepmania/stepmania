@@ -58,6 +58,7 @@
 #define STOP_DRAWING_HOLD_BODY_OFFSET_FROM_TAIL		NOTESKIN->GetMetricI(skin,name,"StopDrawingHoldBodyOffsetFromTail")
 #define HOLD_NG_GRAY_PERCENT						NOTESKIN->GetMetricF(skin,name,"HoldNGGrayPercent")
 #define USE_LIGHTING								NOTESKIN->GetMetricB(skin,name,"UseLighting")
+#define FLIP_HEAD_AND_TAIL_WHEN_REVERSE				NOTESKIN->GetMetricB(skin,name,"FlipHeadAndTailWhenReverse")
 
 // cache
 struct NoteMetricCache_t {
@@ -90,6 +91,7 @@ struct NoteMetricCache_t {
 	int m_iStopDrawingHoldBodyOffsetFromTail;
 	float m_fHoldNGGrayPercent;
 	bool m_bUseLighting;
+	bool m_bFlipHeadAndTailWhenReverse;
 
 	void Load(CString skin, const CString &name);
 } *NoteMetricCache;
@@ -125,6 +127,7 @@ void NoteMetricCache_t::Load(CString skin, const CString &name)
 	m_iStopDrawingHoldBodyOffsetFromTail = STOP_DRAWING_HOLD_BODY_OFFSET_FROM_TAIL;
 	m_fHoldNGGrayPercent = HOLD_NG_GRAY_PERCENT;
 	m_bUseLighting = USE_LIGHTING;
+	m_bFlipHeadAndTailWhenReverse = FLIP_HEAD_AND_TAIL_WHEN_REVERSE;
 }
 
 NoteDisplay::NoteDisplay()
@@ -782,9 +785,9 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	/* The body and caps should have no overlap, so their order doesn't matter.
 	 * Draw the head last, so it appears on top. */
 	if( !cache->m_bHoldHeadIsAboveWavyParts )
-		DrawHoldHead( hn, bActive, fYHead, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldHead( hn, bActive, cache->m_bFlipHeadAndTailWhenReverse ? fYTail : fYHead, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 	if( !cache->m_bHoldTailIsAboveWavyParts )
-		DrawHoldTail( hn, bActive, fYTail, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldTail( hn, bActive, cache->m_bFlipHeadAndTailWhenReverse ? fYHead : fYTail, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 
 	if( bDrawGlowOnly )
 		DISPLAY->SetTextureModeGlow();
@@ -797,9 +800,9 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 	/* These set the texture mode themselves. */
 	if( cache->m_bHoldTailIsAboveWavyParts )
-		DrawHoldTail( hn, bActive, fYTail, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldTail( hn, bActive, cache->m_bFlipHeadAndTailWhenReverse ? fYHead : fYTail, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 	if( cache->m_bHoldHeadIsAboveWavyParts )
-		DrawHoldHead( hn, bActive, fYHead, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldHead( hn, bActive, cache->m_bFlipHeadAndTailWhenReverse ? fYTail : fYHead, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 
 	// now, draw the glow pass
 	if( !bDrawGlowOnly )
