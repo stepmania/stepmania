@@ -343,14 +343,13 @@ void Player::DrawPrimitives()
 		m_HoldJudgment[c].Draw();
 }
 
-int Player::GetClosestNoteDirectional( int col, float fBeat, float fMaxSecondsDistance, int iDirection  )
+int Player::GetClosestNoteDirectional( int col, float fBeat, float fMaxBeatsDistance, int iDirection  )
 {
 	// look for the closest matching step
 	const int iIndexStartLookingAt = BeatToNoteRow( fBeat );
 
 	// number of elements to examine on either end of iIndexStartLookingAt
-	const int iNumElementsToExamine = BeatToNoteRow( fMaxSecondsDistance );
-
+	const int iNumElementsToExamine = BeatToNoteRow( fMaxBeatsDistance );
 	// Start at iIndexStartLookingAt and search outward.
 	for( int delta=0; delta < iNumElementsToExamine; delta++ )
 	{
@@ -544,9 +543,19 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 {
 	//LOG->Trace( "Notes::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
 	const float fEarliestTime = GAMESTATE->m_fMusicSeconds - fMissIfOlderThanSeconds;
-	const float fMissIfOlderThanThisBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime(fEarliestTime);
+	bool bFreeze;
+	float fMissIfOlderThanThisBeat;
+	float fThrowAway;
+	GAMESTATE->m_pCurSong->GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze );
 
 	int iMissIfOlderThanThisIndex = BeatToNoteRow( fMissIfOlderThanThisBeat );
+	if( bFreeze )
+	{
+		/* iMissIfOlderThanThisIndex is a freeze.  Include the index of the freeze,
+		 * too.  Otherwise we won't show misses for tap notes on freezes until the
+		 * freeze finishes. */
+		iMissIfOlderThanThisIndex++;
+	}
 
 	// Since this is being called every frame, let's not check the whole array every time.
 	// Instead, only check 10 elements back.  Even 10 is overkill.
@@ -554,12 +563,8 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 	//LOG->Trace( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
 
-	/* If we're on a freeze, and the freeze has been running for fMissIfOlderThanSeconds,
-	 * then iMissIfOlderThanThisIndex will be the freeze itself, in which case we do
-	 * want to update the row of the freeze itself; otherwise we won't show misses
-	 * for tap notes on freezes until the freeze finishes. */
 	int iNumMissesFound = 0;
-	for( int r=iStartCheckingAt; r<=iMissIfOlderThanThisIndex; r++ )
+	for( int r=iStartCheckingAt; r<iMissIfOlderThanThisIndex; r++ )
 	{
 		bool MissedNoteOnThisRow = false;
 		for( int t=0; t<GetNumTracks(); t++ )
