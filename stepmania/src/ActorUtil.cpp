@@ -30,22 +30,29 @@ Actor* MakeActor( CString sPath )
 		sExt=="bmp" || 
 		sExt=="avi" || 
 		sExt=="mpeg" || 
-		sExt=="mpg" )
+		sExt=="mpg" ||
+		sExt=="sprite" )
 	{
 		Sprite* pSprite = new Sprite;
 		pSprite->Load( sPath );
 		return pSprite;
 	}
-	if( sExt=="ini" )
+	else if( sExt=="ini" )
 	{
 		BitmapText* pBitmapText = new BitmapText;
 		pBitmapText->LoadFromFont( sPath );
 		return pBitmapText;
 	}
-	if( sExt=="txt" )
+	else if( sExt=="txt" )
 	{
 		Model* pModel = new Model;
 		pModel->LoadMilkshapeAscii( sPath );
+		return pModel;
+	}
+	else if( sExt=="model" )
+	{
+		Model* pModel = new Model;
+		pModel->LoadFromModelFile( sPath );
 		return pModel;
 	}
 
