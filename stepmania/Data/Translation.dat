@@ -63,16 +63,13 @@ ArtistTo: 이혠도
 *
 # Some versions of People Crew - YahWah have the name the wrong way round
 # people aren't sure who the band is or what the song name is.
-# for the record the band is People Crew (http://www.people-crew.co.kr) and the song
-# is Yahwah
+# for the record the band is People Crew (http://www.people-crew.co.kr) and
+# the song is Yahwah
 TitleFrom: People Crew
 TitleTo: YahWah
 ArtistTo: People Crew
 *
-TitleFrom: YahWah
-ArtistTo: People Crew
-*
-TitleFrom: Yah Wah
+TitleFrom: Yah ?Wah
 ArtistTo: People Crew
 *
 TitleFrom: Flower Of Night
