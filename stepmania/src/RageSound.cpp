@@ -575,10 +575,9 @@ void RageSound::SetPlaybackRate( float fScale )
 /* This is used to start music.  It probably belongs in RageSoundManager. */
 void RageSound::LoadAndPlayIfNotAlready( CString sSoundFilePath )
 {
-	SOUNDMAN->lock.Lock();
+	LockMutex L(SOUNDMAN->lock);
 	if( GetLoadedFilePath() == sSoundFilePath && IsPlaying() )
 		return;		// do nothing
-	SOUNDMAN->lock.Unlock();
 
 	Load( sSoundFilePath );
 	SetLooping();
