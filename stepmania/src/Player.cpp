@@ -456,9 +456,9 @@ void Player::Update( float fDeltaTime )
 		{
 			// for each index we crossed since the last update
 			if( GAMESTATE->IsPlayerEnabled(pn) )
-				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iRowLastCrossed+1, iRowNow )
+				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iRowLastCrossed, iRowNow+1 )
 					CrossedRow( r );
-			m_iRowLastCrossed = iRowNow;
+			m_iRowLastCrossed = iRowNow+1;
 		}
 	}
 
@@ -472,9 +472,9 @@ void Player::Update( float fDeltaTime )
 		{
 			// for each index we crossed since the last update
 			if( GAMESTATE->IsPlayerEnabled(pn) )
-				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iMineRowLastCrossed+1, iRowNow )
+				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iMineRowLastCrossed, iRowNow+1 )
 					CrossedMineRow( r );
-			m_iMineRowLastCrossed = iRowNow;
+			m_iMineRowLastCrossed = iRowNow+1;
 		}
 	}
 
