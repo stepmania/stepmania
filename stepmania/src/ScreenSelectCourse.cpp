@@ -14,6 +14,7 @@
 #include "ScreenSelectCourse.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
+#include "ProfileManager.h"
 #include "SongManager.h"
 #include "GameManager.h"
 #include "GameConstantsAndTypes.h"
@@ -52,6 +53,7 @@
 
 
 const float TWEEN_TIME		= 0.5f;
+const int NUM_SCORE_DIGITS  = 9;
 
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 
@@ -391,6 +393,57 @@ void ScreenSelectCourse::AfterCourseChange()
 
 			m_CourseContentsFrame.SetFromCourse( pCourse );
 			m_CourseContentsFrame.TweenInAfterChangedCourse();
+
+			ASSERT(pCourse);
+			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
+				const StepsType &st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+
+				int mc = MEMORY_CARD_MACHINE;
+				if( PROFILEMAN->IsUsingProfile( (PlayerNumber)p ) )
+					mc = p;
+
+				/* Courses are scored by survive time, dance points, 
+				 * percent, and normal score.  Every last mother will
+				 * have an opinion on which should be used here for
+				 * each of oni, endless, nonstop --
+				 * should this choice be an option or a metric? */
+				if ( pCourse->IsOni() || pCourse->IsEndless() )
+				{
+					/* use survive time */
+					float fSurviveTime = 0.0f;
+					if( !pCourse->m_MemCardDatas[st][mc].vHighScores.empty() )
+						fSurviveTime = pCourse->m_MemCardDatas[st][mc].vHighScores[0].fSurviveTime;
+					CString s = SecondsToTime(fSurviveTime);
+
+					/* dim the inital unsignificant digits */
+					/*XXX we'd like to have a dimmed ':' and '.', but 
+					 *    BitmapText only supports dimmed '0' (which
+					 *    is used for the ' ' char) */
+					unsigned i = 0;
+					for ( ; i<s.length(); i++ ) {
+						switch (s[i]) {
+							case ':':
+							case '.':
+							case '0': s[i] = ' '; break;
+							default: i = s.length();
+						}
+					}
+
+					m_HighScore[p].SetText( s );
+				}
+				else /* pCourse->IsNonStop() */
+				{
+					/* use score */
+					int iScore = 0;
+					if( !pCourse->m_MemCardDatas[st][mc].vHighScores.empty() )
+						iScore = pCourse->m_MemCardDatas[st][mc].vHighScores[0].iScore;
+
+					m_HighScore[p].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
+				}
+
+			}
+
 		}
 		break;
 	case TYPE_SECTION:	// if we get here, there are no courses
