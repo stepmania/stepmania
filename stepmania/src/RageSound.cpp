@@ -695,13 +695,11 @@ bool RageSound::SetPositionSamples( int samples )
 	if(ret == 0 && ms != 0)
 	{
 		/* We were told to seek somewhere, and we got 0 instead, which means
-		 * we passed EOF.  This could be a truncated file or invalid data.  Warn
-		 * about it and jump back to the beginning. */
+		 * we passed EOF.  This could be a truncated file or invalid data. */
 		LOG->Warn("SetPositionSamples: %i ms is beyond EOF in %s",
 			ms, GetLoadedFilePath().c_str());
 
-		position = 0;
-		return false; /* failed (but recoverable) */
+		return false; /* failed */
 	}
 
 	return true;
