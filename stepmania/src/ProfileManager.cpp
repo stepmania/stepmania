@@ -284,6 +284,14 @@ bool ProfileManager::DeleteLocalProfile( CString sProfileID )
 	for( unsigned i=0; i<asFilesToDelete.size(); i++ )
 		FILEMAN->Remove( asFilesToDelete[i] );
 
+	// delete edits
+	GetDirListing( sProfileDir + "/" + EDITS_SUBDIR + "*", asFilesToDelete, false, true );
+	for( unsigned i=0; i<asFilesToDelete.size(); i++ )
+		FILEMAN->Remove( asFilesToDelete[i] );
+
+	// remove edits dir
+	FILEMAN->Remove( sProfileDir + "/" + EDITS_SUBDIR );
+
 	// remove profile dir
 	return FILEMAN->Remove( sProfileDir );
 }
