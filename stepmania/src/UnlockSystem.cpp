@@ -22,7 +22,6 @@
 #include "IniFile.h"
 #include "MsdFile.h"
 
-#include <fstream>
 using namespace std;
 
 #include "stdio.h"
