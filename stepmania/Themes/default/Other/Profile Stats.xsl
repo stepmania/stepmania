@@ -672,12 +672,6 @@
 
 
 
-
-
-
-
-
-
 							<table>
 
 								<tr>
@@ -695,14 +689,14 @@
 										<td><xsl:apply-templates select="@Dir | @Path"/></td>
 										<xsl:for-each select="$Catalog/Types/*[name()=$DifficultyName]">
 											<xsl:variable name="Difficulty" select="." />
-											<xsl:variable name="StatsSong" select="$Stats/*/*[@Dir=$Dir or @Path=$Path]/Steps[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]" />
-											<xsl:variable name="CatalogSong" select="$Catalog/*/*[@Dir=$Dir or @Path=$Path]/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]" />
+											<xsl:variable name="StatsSongOrCourse" select="$Stats/*/*[@Dir=$Dir or @Path=$Path]/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]" />
+											<xsl:variable name="CatalogSongOrCourse" select="$Catalog/*/*[@Dir=$Dir or @Path=$Path]/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]" />
 											<td>
-												<xsl:if test="count($CatalogSong) &gt; 0">
-													<xsl:apply-templates select="$CatalogSong/Meter"/>
+												<xsl:if test="count($CatalogSongOrCourse) &gt; 0">
+													<xsl:apply-templates select="$CatalogSongOrCourse/Meter"/>
 													<xsl:text> </xsl:text>
 													<span class="dyndata">
-														<xsl:apply-templates select="$StatsSong/HighScoreList/HighScore[1]/PercentDP" />
+														<xsl:apply-templates select="$StatsSongOrCourse/HighScoreList/HighScore[1]/PercentDP" />
 													</span>
 												</xsl:if>
 											</td>
