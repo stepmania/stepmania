@@ -51,13 +51,6 @@ struct ADPCMCOEFSET
 	Sint16 iCoef1, iCoef2;
 };
 
-struct ADPCMBLOCKHEADER
-{
-	Uint8 bPredictor;
-	Uint16 iDelta;
-	Sint16 iSamp[2];
-};
-
 /* Call this to convert milliseconds to an actual byte position, based on audio data characteristics. */
 Uint32 RageSoundReader_WAV::ConvertMsToBytePos(int BytesPerSample, int channels, Uint32 ms) const
 {
@@ -137,6 +130,39 @@ bool RageSoundReader_WAV::read_uint8(FILE *rw, Uint8 *ui8) const
     return true;
 }
 
+RageSoundReader_WAV::adpcm_t::adpcm_t()
+{
+	memset( this, 0, sizeof(this) );
+}
+
+RageSoundReader_WAV::adpcm_t::adpcm_t( const adpcm_t &cpy )
+{
+	memset( this, 0, sizeof(this) );
+
+	this->cbSize = cpy.cbSize;
+	memcpy( this->blockheaders, cpy.blockheaders, sizeof(this->blockheaders) );
+	this->wSamplesPerBlock = cpy.wSamplesPerBlock;
+	this->wNumCoef = cpy.wNumCoef;
+	this->samples_left_in_block = cpy.samples_left_in_block;
+	this->nibble_state = cpy.nibble_state;
+	this->nibble = cpy.nibble;
+	Alloc();
+}
+
+void RageSoundReader_WAV::adpcm_t::Alloc()
+{
+	Dealloc();
+
+	ASSERT( wNumCoef != 0 );
+
+	aCoef = new ADPCMCOEFSET[wNumCoef];
+}
+
+void RageSoundReader_WAV::adpcm_t::Dealloc()
+{
+	delete [] aCoef;
+	aCoef = NULL;
+}
 
 bool RageSoundReader_WAV::read_fmt_chunk()
 {
@@ -155,15 +181,13 @@ bool RageSoundReader_WAV::read_fmt_chunk()
 		RETURN_IF_MACRO(!read_le16(rw, &adpcm.wSamplesPerBlock), false);
 		RETURN_IF_MACRO(!read_le16(rw, &adpcm.wNumCoef), false);
 
-		adpcm.aCoef = new ADPCMCOEFSET[adpcm.wNumCoef];
+		adpcm.Alloc();
 
 		for (int i = 0; i < adpcm.wNumCoef; i++)
 		{
 			RETURN_IF_MACRO(!read_le16(rw, &adpcm.aCoef[i].iCoef1), false);
 			RETURN_IF_MACRO(!read_le16(rw, &adpcm.aCoef[i].iCoef2), false);
 		}
-
-		adpcm.blockheaders = new ADPCMBLOCKHEADER[fmt.wChannels];
 	}
 
     return true;
@@ -211,7 +235,7 @@ int RageSoundReader_WAV::get_length_fmt_adpcm() const
 	fseek( this->rw, blockno * fmt.wBlockAlign + fmt.data_starting_offset, SEEK_SET );
 
 	/* Don't mess up this->adpcm; we'll put the cursor back as if nothing happened. */
-	struct adpcm_t tmp_adpcm;
+	adpcm_t tmp_adpcm(adpcm);
 	if ( !read_adpcm_block_headers(tmp_adpcm) )
 		return 0;
 
@@ -537,8 +561,6 @@ void RageSoundReader_WAV::Close()
 {
 	delete [] this->adpcm.aCoef;
 	this->adpcm.aCoef = NULL;
-	delete [] this->adpcm.blockheaders;
-	this->adpcm.blockheaders = NULL;
 
 	if( rw )
 		fclose( rw );
@@ -644,8 +666,6 @@ int RageSoundReader_WAV::GetLength() const
 
 RageSoundReader_WAV::RageSoundReader_WAV()
 {
-	this->adpcm.aCoef = NULL;
-	this->adpcm.blockheaders = NULL;
 	rw = NULL;
 }
 

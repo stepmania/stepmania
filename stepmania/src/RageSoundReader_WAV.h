@@ -22,16 +22,28 @@ class RageSoundReader_WAV: public SoundReader_FileReader
 		Uint32 data_starting_offset;
 	} fmt;
 
+	struct ADPCMBLOCKHEADER {
+		Uint8 bPredictor;
+		Uint16 iDelta;
+		Sint16 iSamp[2];
+	};
 	struct adpcm_t
 	{
 		Uint16 cbSize;
 		Uint16 wSamplesPerBlock;
 		Uint16 wNumCoef;
 		ADPCMCOEFSET *aCoef;
-		ADPCMBLOCKHEADER *blockheaders;
+
+		ADPCMBLOCKHEADER blockheaders[2]; /* 2 channels */
 		Uint32 samples_left_in_block;
 		int nibble_state;
 		Sint8 nibble;
+
+		adpcm_t();
+		~adpcm_t() { Dealloc(); }
+		adpcm_t( const adpcm_t &cpy );
+		void Alloc();
+		void Dealloc();
 	};
 	struct adpcm_t adpcm;
 	CString filename;
