@@ -128,7 +128,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRowData[], int iNumO
 
 	// init text
 	int i;
-	for( int i=0; i<m_iNumOptionRows; i++ )		// foreach line
+	for( i=0; i<m_iNumOptionRows; i++ )		// foreach line
 	{
 		m_framePage.AddChild( &m_sprLineArrows[i] );
 
