@@ -113,7 +113,9 @@ stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transi
 		    arch/arch.cpp \
 		    arch/LoadingWindow/LoadingWindow_SDL.cpp \
 		    arch/LoadingWindow/LoadingWindow_SDL.h \
-		    arch/MovieTexture/MovieTexture.cpp
+		    arch/MovieTexture/MovieTexture.cpp \
+		    arch/Sound/RageSoundDriver_Null.cpp
+
 stepmania_LDADD = $(SDL_LIBS) $(GL_LIBS) SDL_sound-1.0.0/.libs/libSDL_sound.a
 INCLUDES = $(SDL_CFLAGS) -O0 -g
 
