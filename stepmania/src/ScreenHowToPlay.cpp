@@ -152,7 +152,7 @@ void ScreenHowToPlay::Update( float fDelta )
 			case 20: m_mCharacter.SetFrame(150); break;
 			case 22: m_mCharacter.SetFrame(270); break;
 			};
-			m_mCharacter.Update(fDelta);
+			m_mCharacter.Update(0);
 		}
 		else
 		{
