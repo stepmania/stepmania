@@ -27,6 +27,7 @@ private:
 	static void ErrorHandler(const char *file, int line, const char *function, int err, const char *fmt, ...);
 		
 public:
+	static void InitializeErrorHandler();
 	static void GetSoundCardDebugInfo();
 	static CString GetHardwareID( CString name="" );
 		

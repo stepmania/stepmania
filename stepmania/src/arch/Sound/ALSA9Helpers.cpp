@@ -118,12 +118,35 @@ bool Alsa9Buf::SetSWParams()
 	return true;
 }
 
+void Alsa9Buf::ErrorHandler(const char *file, int line, const char *function, int err, const char *fmt, ...)
+{
+	va_list va;
+	va_start( va, fmt );
+	CString str = vssprintf(fmt, va);
+	va_end( va );
+
+	if( err )
+		str += ssprintf( " (%s)", dsnd_strerror(err) );
+
+	/* Annoying: these happen both normally (eg. "out of memory" when allocating too many PCM
+	 * slots) and abnormally, and there's no way to tell which is which.  I don't want to
+	 * pollute the warning output. */
+	LOG->Trace( "ALSA error: %s:%i %s: %s", file, line, function, str.c_str() );
+}
+
+void Alsa9Buf::InitializeErrorHandler()
+{
+	dsnd_lib_error_set_handler( ErrorHandler );
+}
+
 void Alsa9Buf::GetSoundCardDebugInfo()
 {
 	static bool done = false;	
 	if( done )
 		return;
 	done = true;
+
+	InitializeErrorHandler();
 
 	if( DoesFileExist("/proc/asound/version") )
 	{
@@ -184,18 +207,13 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 		LOG->Info( "No ALSA sound cards were found.");
 }
 
-void Alsa9Buf::ErrorHandler(const char *file, int line, const char *function, int err, const char *fmt, ...)
-{
-/* NOP */
-}
-
 static CString DeviceName = "hw:0";
 
 Alsa9Buf::Alsa9Buf( hw hardware, int channels_ )
 {
 	GetSoundCardDebugInfo();
 		
-	dsnd_lib_error_set_handler( ErrorHandler );
+	InitializeErrorHandler();
 	
 	channels = channels_;
 	samplerate = 44100;
@@ -390,6 +408,8 @@ void Alsa9Buf::SetSampleRate(int hz)
 
 CString Alsa9Buf::GetHardwareID( CString name )
 {
+	InitializeErrorHandler();
+
 	if( name.empty() )
 		name = DeviceName;
 	
