@@ -122,7 +122,7 @@ void TitleSubst::Load(const CString &filename)
 		if(ArtistFrom.size()) ArtistFrom = "^(" + ArtistFrom + ")$";
 		if(SubtitleFrom.size()) SubtitleFrom = "^(" + SubtitleFrom + ")$";
 
-		AddTrans(TitleFrom, ArtistFrom, SubtitleFrom, TitleTo, ArtistTo, SubtitleTo);
+		AddTrans(TitleFrom, SubtitleFrom, ArtistFrom, TitleTo, SubtitleTo, ArtistTo);
 	}
 }
 
