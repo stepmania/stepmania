@@ -74,8 +74,11 @@ RageSound::RageSound()
 	position = 0;
 	playing = false;
 	Loop = false;
+	AutoStop = true;
 	speed = 1.0f;
 	stream.buf.reserve(internal_buffer_size);
+	m_StartSeconds = 0;
+	m_LengthSeconds = -1;
 
 	/* Register ourselves, so we receive Update()s. */
 	SOUNDMAN->all_sounds.insert(this);
@@ -100,6 +103,7 @@ RageSound::RageSound(const RageSound &cpy)
 	Loop = false;
 	speed = 1.0f;
 	stream.buf.reserve(internal_buffer_size);
+	AutoStop = cpy.AutoStop;
 
 	/* Copy some of it; don't copy the playing state. */
 	big = cpy.big;
@@ -205,22 +209,26 @@ void RageSound::Load(CString sSoundFilePath, bool cache)
 	position = 0;
 }
 
-void RageSound::Play( bool bLoop, float fStartSeconds, float fLengthSeconds )
+void RageSound::SetStartSeconds( float secs )
+{
+	m_StartSeconds = secs;
+}
+
+void RageSound::SetLengthSeconds(float secs)
+{
+	m_LengthSeconds = secs;
+}
+
+/* Start playing from m_StartSeconds. TODO: a way to start playing
+ * from the current pos (unpause) */
+void RageSound::Play()
 {
 	LockMutex L(SOUNDMAN->lock);
 
 	if(playing) Stop();
 	playing = true;
 
-	Loop = bLoop;
-
-	if(fStartSeconds != -1000)
-	{
-		m_StartSeconds = fStartSeconds;
-		SetPositionSeconds(m_StartSeconds);
-	} else m_StartSeconds = 0;
-
-	m_LengthSeconds = fLengthSeconds;
+	SetPositionSeconds(m_StartSeconds);
 
 	// Tell the sound manager to start mixing us
 	SOUNDMAN->StartMixing(this);
@@ -307,7 +315,7 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 		int got;
 		if(position < 0) {
 			/* We havn't *really* started playing yet, so just feed silence.  How
-			 * many more bytes of silence do we need? */
+			* many more bytes of silence do we need? */
 			got = -position * samplesize;
 			got = min(got, size);
 			memset(buffer, 0, got);
@@ -325,78 +333,84 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 				memcpy(buffer, full_buf.data()+byte_pos, got);
 		}
 
-		if(got) {
-			/* Save this sampleno/position map. */
-			pos_map[3].push_back(pos_map_t(sampleno, position, got/samplesize));
-
-			int got_samples = got / samplesize;  /* bytes -> samples */
-
-			/* This block goes from position to position+got_samples. */
-			const float FADE_TIME = 1.5f;
-
-			/* XXX: Loop shouldn't set fading; add a Fade_Time member?
-			 * 
-			 * We want to fade when there's FADE_TIME seconds left, but if
-			 * m_LengthSeconds is -1, we don't know the length we're playing.
-			 * (m_LengthSeconds is the length to play, not the length of the
-			 * source.)  If we don't know the length, don't fade. */
-			if(Loop) {
-				Sint16 *p = (Sint16 *) buffer;
-				int this_position = position;
-
-				for(int samp = 0; samp < got_samples; ++samp)
-				{
-					float fSecsUntilSilent = (m_StartSeconds + m_LengthSeconds) - float(this_position)/samplerate;
-					float fVolPercent = fSecsUntilSilent / FADE_TIME;
-
-					fVolPercent = clamp(fVolPercent, 0.f, 1.f);
-					for(int i = 0; i < channels; ++i) {
-						*p = short(*p * fVolPercent);
-						p++;
-					}
-					this_position++;
-				}
+		if(!got)
+		{
+			/* We need more data.  Find out if we've hit EOF. */
+			bool HitEOF = true;
+			if(big) {
+				/* If we don't have any data left buffered, fill the buffer by up to
+				 * as much as we need. */
+				if(stream.buf.size() || stream.FillBuf(size))
+					HitEOF = false; /* we have more */
+			} else {
+				unsigned byte_pos = position * samplesize; /* samples -> bytes */
+				if(byte_pos < full_buf.size())
+					HitEOF = false; /* we have more */
 			}
 
+			/* If we've passed the stop point (m_StartSeconds+m_LengthSeconds), pretend
+			 * we've hit EOF. */
+			if(m_LengthSeconds != -1 &&
+					float(position)/samplerate > m_StartSeconds+m_LengthSeconds)
+				HitEOF = true;
 
-			bytes_stored += got;
-			position += got_samples;
-			size -= got;
-			buffer += got;
-			sampleno += got_samples;
+			if(!HitEOF)
+				continue;
+
+			/* We're at EOF.  If we're not looping, just stop. */
+			if(Loop)
+			{
+				/* Rewind and start over. */
+				SetPositionSeconds(m_StartSeconds);
+				continue;
+			}
+			if(AutoStop)
+				break;
+
+			/* We're out of data, but we're not going to stop, so fill in the
+			 * rest with silence. */
+			memset(buffer, 0, size);
+			got = size;
 		}
 
-		/* If we've filled the buffer, we're done. */
-		if(!size) break;
+		/* Save this sampleno/position map. */
+		pos_map[3].push_back(pos_map_t(sampleno, position, got/samplesize));
 
-		/* We need more data.  Find out if we've hit EOF. */
-		bool HitEOF = true;
-		if(big) {
-			/* If we don't have any data left buffered, fill the buffer by up to
-			 * as much as we need. */
-			if(stream.buf.size() || stream.FillBuf(size))
-				HitEOF = false; /* we have more */
-		} else {
-			unsigned byte_pos = position * samplesize; /* samples -> bytes */
-			if(byte_pos < full_buf.size())
-				HitEOF = false; /* we have more */
+		int got_samples = got / samplesize;  /* bytes -> samples */
+
+		/* This block goes from position to position+got_samples. */
+		const float FADE_TIME = 1.5f;
+
+		/* XXX: Loop shouldn't set fading; add a Fade_Time member?
+			* 
+			* We want to fade when there's FADE_TIME seconds left, but if
+			* m_LengthSeconds is -1, we don't know the length we're playing.
+			* (m_LengthSeconds is the length to play, not the length of the
+			* source.)  If we don't know the length, don't fade. */
+		if(Loop && m_LengthSeconds != -1) {
+			Sint16 *p = (Sint16 *) buffer;
+			int this_position = position;
+
+			for(int samp = 0; samp < got_samples; ++samp)
+			{
+				float fSecsUntilSilent = (m_StartSeconds + m_LengthSeconds) - float(this_position)/samplerate;
+				float fVolPercent = fSecsUntilSilent / FADE_TIME;
+
+				fVolPercent = clamp(fVolPercent, 0.f, 1.f);
+				for(int i = 0; i < channels; ++i) {
+					*p = short(*p * fVolPercent);
+					p++;
+				}
+				this_position++;
+			}
 		}
 
-		/* If we've passed the stop point (m_StartSeconds+m_LengthSeconds), pretend
-		 * we've hit EOF. */
-		if(m_LengthSeconds != -1 &&
-		   float(position)/samplerate > m_StartSeconds+m_LengthSeconds)
-			HitEOF = true;
 
-		if(!HitEOF)
-			continue;
-
-		/* We're at EOF.  If we're not looping, just stop. */
-		if(!Loop)
-			break;
-
-		/* Rewind and start over. */
-		SetPositionSeconds(m_StartSeconds);
+		bytes_stored += got;
+		position += got_samples;
+		size -= got;
+		buffer += got;
+		sampleno += got_samples;
 	}
 
 	return bytes_stored;
@@ -460,7 +474,7 @@ float RageSound::GetLengthSeconds()
 	}
 }
 
-float RageSound::GetPositionSeconds()
+float RageSound::GetPositionSeconds() const
 {
 	LockMutex L(SOUNDMAN->lock);
 
@@ -556,6 +570,7 @@ void RageSound::SetPlaybackRate( float fScale )
 	speed = fScale;
 }
 
+/* This is used to start music.  It probably belongs in RageSoundManager. */
 void RageSound::LoadAndPlayIfNotAlready( CString sSoundFilePath )
 {
 	SOUNDMAN->lock.Lock();
@@ -564,7 +579,8 @@ void RageSound::LoadAndPlayIfNotAlready( CString sSoundFilePath )
 	SOUNDMAN->lock.Unlock();
 
 	Load( sSoundFilePath );
-	Play( true );
+	SetLooping();
+	Play();
 }
 
 void CircBuf::reserve(unsigned n)

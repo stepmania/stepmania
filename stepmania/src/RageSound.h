@@ -57,7 +57,7 @@ class RageSound
 	CString m_sFilePath;
 //	float m_Rate;
 
-	/* If looping, the range to loop: */
+	/* The amount of data to play (or loop): */
 	float m_StartSeconds, m_LengthSeconds;
 	bool Loop;
 
@@ -67,6 +67,13 @@ class RageSound
 	bool    playing;
 
 	float speed;
+
+	/* If true, the sound will stop when it reaches the end; otherwise it'll
+	 * continue to move forward, feeding silence, which is useful to continue
+	 * timing longer than the actual sound.  (However, if this is false, the
+	 * sound will never stop on its own unless destructed; it must be explitly
+	 * stopped, and PlayCopy can't be used.)  Default is true.  Ignored when looping. */
+	bool AutoStop;
 
 public:
 	RageSound();
@@ -82,17 +89,23 @@ public:
 	void LoadAndPlayIfNotAlready( CString sSoundFilePath );
 	void Unload();
 
-	void Play( bool bLoop = false, float fStartSeconds = -1000, float fLengthSeconds = -1 );
+	void SetAutoStop(bool yes=true) { AutoStop=yes; }
+	bool GetAutoStop() const { return AutoStop; }
+	void SetStartSeconds(float secs = 0); /* default = beginning */
+	void SetLengthSeconds(float secs = -1); /* default = no length limit */
+	void Play();
 	void Pause();
 	void Stop();
 	float GetLengthSeconds();
-	float GetPositionSeconds();
+	float GetPositionSeconds() const;
 	void SetPositionSeconds( float fSeconds );
 	void SetPlaybackRate( float fScale );
 	float GetPlaybackRate() const { return speed; }
 	bool IsPlaying() const { return playing; }
-	CString GetLoadedFilePath() const { return m_sFilePath; };
-
+	CString GetLoadedFilePath() const { return m_sFilePath; }
+	void SetLooping(bool yes=true) { Loop=yes; }
+	bool GetLooping() const { return Loop; }
+	
 	/* Called only by the sound drivers: */
 	/* This function should return the number of bytes actually put into buffer.
 	 * If less than size is returned, it signals the stream to stop; once it's
