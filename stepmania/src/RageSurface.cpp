@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageSurface.h"
+#include "RageUtil.h"
 
 bool RageSurfaceColor::operator== ( const RageSurfaceColor &rhs ) const
 {
@@ -40,16 +41,14 @@ int32_t RageSurfacePalette::FindClosestColor( const RageSurfaceColor &color ) co
 
 RageSurfaceFormat::RageSurfaceFormat():
 	Rmask(Mask[0]), Gmask(Mask[1]), Bmask(Mask[2]), Amask(Mask[3]),
-	Rshift(Shift[0]), Gshift(Shift[1]), Bshift(Shift[2]), Ashift(Shift[3]),
-	Rloss(Loss[0]), Gloss(Loss[1]), Bloss(Loss[2]), Aloss(Loss[3])
+	Rshift(Shift[0]), Gshift(Shift[1]), Bshift(Shift[2]), Ashift(Shift[3])
 {
 	palette = NULL;	
 }
 
 RageSurfaceFormat::RageSurfaceFormat( const RageSurfaceFormat &cpy ):
 	Rmask(Mask[0]), Gmask(Mask[1]), Bmask(Mask[2]), Amask(Mask[3]),
-	Rshift(Shift[0]), Gshift(Shift[1]), Bshift(Shift[2]), Ashift(Shift[3]),
-	Rloss(Loss[0]), Gloss(Loss[1]), Bloss(Loss[2]), Aloss(Loss[3])
+	Rshift(Shift[0]), Gshift(Shift[1]), Bshift(Shift[2]), Ashift(Shift[3])
 {
 	memcpy( this, &cpy, sizeof(RageSurfaceFormat) );
 	if( palette )
@@ -70,10 +69,10 @@ void RageSurfaceFormat::GetRGB( uint32_t val, uint8_t *r, uint8_t *g, uint8_t *b
 		*g = palette->colors[val].g;
 		*b = palette->colors[val].b;
 	} else {
-		*r = int8_t( (val & Rmask) >> Rshift << Rloss );
-		*g = int8_t( (val & Gmask) >> Gshift << Gloss );
-		*b = int8_t( (val & Bmask) >> Bshift << Bloss );
-//		*a = int8_t( (val & Amask) >> Ashift << Aloss );
+		*r = int8_t( (val & Mask[0]) >> Shift[0] << Loss[0] );
+		*g = int8_t( (val & Mask[1]) >> Shift[1] << Loss[1] );
+		*b = int8_t( (val & Mask[2]) >> Shift[2] << Loss[2] );
+//		*a = int8_t( (val & Amask) >> Ashift << Loss[3] );
 	}
 }
 
@@ -87,10 +86,11 @@ bool RageSurfaceFormat::MapRGBA( uint8_t r, uint8_t g, uint8_t b, uint8_t a, uin
 			return false;
 		val = (uint32_t) n;
 	} else {
-		val  = (r >> Rloss << Rshift) |
-			(g >> Gloss << Gshift) |
-			(b >> Bloss << Bshift) |
-			(a >> Aloss << Ashift);
+		val  = 
+			(r >> Loss[0] << Shift[0]) |
+			(g >> Loss[1] << Shift[1]) |
+			(b >> Loss[2] << Shift[2]) |
+			(a >> Loss[3] << Shift[3]);
 	}
 	return true;
 }
@@ -187,31 +187,31 @@ void SetupFormat( RageSurfaceFormat &fmt,
 	fmt.BytesPerPixel = BitsPerPixel/8;
 	if( fmt.BytesPerPixel == 1 )
 	{
-		fmt.Rmask = fmt.Gmask = fmt.Bmask = fmt.Amask = 0;
-		fmt.Rshift = fmt.Gshift = fmt.Bshift = fmt.Ashift = 0;
+		ZERO( fmt.Mask );
+		ZERO( fmt.Shift );
 
 		/* Loss for paletted textures is zero, since the actual palette entries are 8-bit. */
-		fmt.Rloss = fmt.Gloss = fmt.Bloss = fmt.Aloss = 0;
+		ZERO( fmt.Loss );
 
 		fmt.palette = new RageSurfacePalette;
 		fmt.palette->ncolors = 256;
 	}
 	else
 	{
-		fmt.Rmask = Rmask;
-		fmt.Gmask = Gmask;
-		fmt.Bmask = Bmask;
-		fmt.Amask = Amask;
+		fmt.Mask[0] = Rmask;
+		fmt.Mask[1] = Gmask;
+		fmt.Mask[2] = Bmask;
+		fmt.Mask[3] = Amask;
 
-		fmt.Rshift = GetShiftFromMask( Rmask );
-		fmt.Gshift = GetShiftFromMask( Gmask );
-		fmt.Bshift = GetShiftFromMask( Bmask );
-		fmt.Ashift = GetShiftFromMask( Amask );
+		fmt.Shift[0] = GetShiftFromMask( Rmask );
+		fmt.Shift[1] = GetShiftFromMask( Gmask );
+		fmt.Shift[2] = GetShiftFromMask( Bmask );
+		fmt.Shift[3] = GetShiftFromMask( Amask );
 
-		fmt.Rloss = (uint8_t) (8-GetBitsFromMask( Rmask ));
-		fmt.Gloss = (uint8_t) (8-GetBitsFromMask( Gmask ));
-		fmt.Bloss = (uint8_t) (8-GetBitsFromMask( Bmask ));
-		fmt.Aloss = (uint8_t) (8-GetBitsFromMask( Amask ));
+		fmt.Loss[0] = (uint8_t) (8-GetBitsFromMask( Rmask ));
+		fmt.Loss[1] = (uint8_t) (8-GetBitsFromMask( Gmask ));
+		fmt.Loss[2] = (uint8_t) (8-GetBitsFromMask( Bmask ));
+		fmt.Loss[3] = (uint8_t) (8-GetBitsFromMask( Amask ));
 	}
 }
 
