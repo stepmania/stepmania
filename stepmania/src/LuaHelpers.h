@@ -2,9 +2,15 @@
 #define LUA_HELPERS_H
 
 struct lua_State;
-namespace Lua
+class LuaManager
 {
+public:
+	LuaManager();
+	~LuaManager();
+
 	void PrepareExpression( CString &sInOut );	// strip "//" comments and "+"
+
+	/* Run an expression in the global environment, returning the given type. */
 	bool RunExpressionB( const CString &str );
 	float RunExpressionF( const CString &str );
 	bool RunExpressionS( const CString &str, CString &sOut );
@@ -22,8 +28,15 @@ namespace Lua
 	bool GetStack( lua_State *L, int pos, int &out );
 	void SetGlobal( lua_State *L, const CString &sName );
 
-	lua_State *GetGlobalState();
+	lua_State *Get() { return L; }
+
+private:
+	/* Run an expression.  The result is left on the Lua stack. */
+	bool RunExpression( const CString &str );
+	lua_State *L;
 };
+
+extern LuaManager *LUA;
 
 #endif
 

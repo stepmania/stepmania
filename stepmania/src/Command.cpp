@@ -38,20 +38,20 @@ Command::Arg::operator CString ()
 
 Command::Arg::operator float ()
 {
-	Lua::PrepareExpression( s );	// strip invalid chars
-	return Lua::RunExpressionF( s );
+	LUA->PrepareExpression( s );	// strip invalid chars
+	return LUA->RunExpressionF( s );
 }
 
 Command::Arg::operator int ()
 {
-	Lua::PrepareExpression( s );	// strip invalid chars
-	return (int)Lua::RunExpressionF( s );
+	LUA->PrepareExpression( s );	// strip invalid chars
+	return (int)LUA->RunExpressionF( s );
 }
 
 Command::Arg::operator bool ()
 {
-	Lua::PrepareExpression( s );	// strip invalid chars
-	return Lua::RunExpressionF( s ) != 0.0f;
+	LUA->PrepareExpression( s );	// strip invalid chars
+	return LUA->RunExpressionF( s ) != 0.0f;
 }
 
 void Command::Load( const CString &sCommand )

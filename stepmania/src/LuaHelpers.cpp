@@ -8,6 +8,8 @@
 #include <csetjmp>
 #include <cassert>
 
+static LuaManager LUAObj;
+LuaManager *LUA = &LUAObj;
 LuaFunctionList *g_LuaFunctionList = NULL;
 
 #if defined(_WINDOWS)
@@ -50,20 +52,20 @@ const char *ChunkReaderString( lua_State *L, void *ptr, size_t *size )
 	return ret;
 }
 
-void Lua::PushStack( lua_State *L, int out )
+void LuaManager::PushStack( lua_State *L, int out )
 {
 	/* XXX: stack bounds */
 	lua_pushnumber( L, out );
 }
 
-void Lua::PushStack( lua_State *L, bool out )
+void LuaManager::PushStack( lua_State *L, bool out )
 {
 	/* XXX: stack bounds */
 	lua_pushboolean( L, out );
 }
 
 
-void Lua::PushStack( lua_State *L, void *out )
+void LuaManager::PushStack( lua_State *L, void *out )
 {
 	if( out )
 		lua_pushlightuserdata( L, out );
@@ -71,12 +73,12 @@ void Lua::PushStack( lua_State *L, void *out )
 		lua_pushnil( L );
 }
 
-void Lua::PushStack( lua_State *L, const CString &out )
+void LuaManager::PushStack( lua_State *L, const CString &out )
 {
 	lua_pushstring( L, out );
 }
 
-void Lua::PopStack( lua_State *L, CString &out )
+void LuaManager::PopStack( lua_State *L, CString &out )
 {
 	/* There must be at least one entry on the stack. */
 	ASSERT( lua_gettop(L) > 0 );
@@ -86,7 +88,7 @@ void Lua::PopStack( lua_State *L, CString &out )
 	lua_pop( L, -1 );
 }
 
-bool Lua::GetStack( lua_State *L, int pos, int &out )
+bool LuaManager::GetStack( lua_State *L, int pos, int &out )
 {
 	if( pos < 0 )
 		pos = lua_gettop(L) - pos - 1;
@@ -97,7 +99,7 @@ bool Lua::GetStack( lua_State *L, int pos, int &out )
 	return true;
 }
 
-void Lua::SetGlobal( lua_State *L, const CString &sName )
+void LuaManager::SetGlobal( lua_State *L, const CString &sName )
 {
 	lua_setglobal( L, sName );
 }
@@ -110,7 +112,7 @@ static CString jbuf_error;
 static int LuaPanic( lua_State *L )
 {
 	CString err;
-	Lua::PopStack( L, err );
+	LUA->PopStack( L, err );
 
 	/* Grr.  We can't throw an exception from here: it'll explode going through the
 	 * Lua stack for some reason.  Get it off the stack with a longjmp and throw
@@ -119,9 +121,13 @@ static int LuaPanic( lua_State *L )
 	longjmp( jbuf, 1 );
 }
 
-lua_State *L = NULL;
-
 void OpenLua()
+{
+	if( LUA == NULL )
+		LUA = new LuaManager;
+}
+
+LuaManager::LuaManager()
 {
 	ASSERT( L == NULL );
 
@@ -137,25 +143,15 @@ void OpenLua()
 	luaopen_string( L );
 	lua_settop(L, 0); // luaopen_* pushes stuff onto the stack that we don't need
 
-	Lua::RegisterFunctions( L );
+	RegisterFunctions( L );
 }
 
-void CloseLua()
+LuaManager::~LuaManager()
 {
-	ASSERT( L );
-
 	lua_close( L );
-	L = NULL;
 }
 
-lua_State *Lua::GetGlobalState()
-{
-	if( L == NULL )
-		OpenLua();
-	return L;
-}
-
-void Lua::PrepareExpression( CString &sInOut )
+void LuaManager::PrepareExpression( CString &sInOut )
 {
 	// HACK: Many metrics have "//" comments that Lua fails to parse.
 	// Replace them with Lua-style comments.
@@ -169,7 +165,7 @@ void Lua::PrepareExpression( CString &sInOut )
 		sInOut.erase( 0, 1 );
 }
 
-bool RunExpression( const CString &str )
+bool LuaManager::RunExpression( const CString &str )
 {
 	// load string
 	{
@@ -181,7 +177,7 @@ bool RunExpression( const CString &str )
 		if( ret )
 		{
 			CString err;
-			Lua::PopStack( L, err );
+			LuaManager::PopStack( L, err );
 			CString sError = ssprintf( "Lua runtime error parsing \"%s\": %s", str.c_str(), err.c_str() );
 			Dialog::OK( sError, "LUA_ERROR" );
 			return false;
@@ -196,7 +192,7 @@ bool RunExpression( const CString &str )
 		if( ret )
 		{
 			CString err;
-			Lua::PopStack( L, err );
+			LuaManager::PopStack( L, err );
 			CString sError = ssprintf( "Lua runtime error evaluating \"%s\": %s", str.c_str(), err.c_str() );
 			Dialog::OK( sError, "LUA_ERROR" );
 			return false;
@@ -213,7 +209,7 @@ bool RunExpression( const CString &str )
 	return true;
 }
 
-bool Lua::RunExpressionB( const CString &str )
+bool LuaManager::RunExpressionB( const CString &str )
 {
 	if( L == NULL )
 		OpenLua();
@@ -227,7 +223,7 @@ bool Lua::RunExpressionB( const CString &str )
 	return result;
 }
 
-float Lua::RunExpressionF( const CString &str )
+float LuaManager::RunExpressionF( const CString &str )
 {
 	if( L == NULL )
 		OpenLua();
@@ -241,7 +237,7 @@ float Lua::RunExpressionF( const CString &str )
 	return result;
 }
 
-bool Lua::RunExpressionS( const CString &str, CString &sOut )
+bool LuaManager::RunExpressionS( const CString &str, CString &sOut )
 {
 	if( L == NULL )
 		OpenLua();
@@ -257,13 +253,13 @@ bool Lua::RunExpressionS( const CString &str, CString &sOut )
 	return true;
 }
 
-void Lua::Fail( lua_State *L, const CString &err )
+void LuaManager::Fail( lua_State *L, const CString &err )
 {
 	lua_pushstring( L, err );
 	lua_error( L );
 }
 
-void Lua::RegisterFunctions( lua_State *L )
+void LuaManager::RegisterFunctions( lua_State *L )
 {
 	for( const LuaFunctionList *p = g_LuaFunctionList; p; p=p->next )
 		lua_register( L, p->name, p->func );
