@@ -550,7 +550,8 @@ void SetFullscreen( BOOL bFullscreen )
 
 	if( GAMEINFO )
 	{
-		GAMEINFO->m_GameOptions.m_bIsFullscreen = bFullscreen;
+    if (bFullscreen == 1) GAMEINFO->m_GameOptions.m_bIsFullscreen = true;
+    else GAMEINFO->m_GameOptions.m_bIsFullscreen = false;
 		GAMEINFO->SaveConfigToDisk();
 	}
 }

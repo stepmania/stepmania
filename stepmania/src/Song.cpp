@@ -451,7 +451,7 @@ bool Song::LoadSongInfoFromDWIFile( CString sPath )
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
 				int fIndex = atoi( arrayFreezeValues[0] ) * 2;
 				float fFreezeBeat = StepIndexToBeat( fIndex );
-				float fFreezeSeconds = atof( arrayFreezeValues[1] ) / 1000.0f;
+				float fFreezeSeconds = (float)atof( arrayFreezeValues[1] ) / 1000.0f;
 				
 				FreezeSegment new_seg;
 				new_seg.m_fStartBeat = fFreezeBeat;
@@ -476,7 +476,7 @@ bool Song::LoadSongInfoFromDWIFile( CString sPath )
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
 				int fIndex = atoi( arrayBPMChangeValues[0] ) * 2;
 				float fBeat = StepIndexToBeat( fIndex );
-				float fNewBPM = atoi( arrayBPMChangeValues[1] );
+				float fNewBPM = (float)atoi( arrayBPMChangeValues[1] );
 				
 				BPMSegment new_seg;
 				new_seg.m_fStartBeat = fBeat;
