@@ -212,7 +212,6 @@ ScreenSelectMusic::ScreenSelectMusic()
 	}	
 
 	m_MusicSortDisplay.SetXY( SORT_ICON_X, SORT_ICON_Y );
-	//m_MusicSortDisplay.SetEffectGlowing( 1.0f );
 	m_MusicSortDisplay.Set( GAMESTATE->m_SongSortOrder );
 	this->AddChild( &m_MusicSortDisplay );
 
@@ -443,8 +442,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType 
 			{
 				MUSIC->Stop();
 
-				m_MusicSortDisplay.BeginTweening( 0.3f );
-				m_MusicSortDisplay.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+//				m_MusicSortDisplay.FadeOff( 0, "fade", TWEEN_TIME );
 
 				TweenScoreOnAndOffAfterChangeSort();
 			}
@@ -578,8 +576,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			{
 				MUSIC->Stop();
 
-				m_MusicSortDisplay.BeginTweening( 0.3f );
-				m_MusicSortDisplay.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+//				m_MusicSortDisplay.FadeOff( 0, "fade", TWEEN_TIME );
 
 				TweenScoreOnAndOffAfterChangeSort();
 			}
@@ -817,8 +814,6 @@ void ScreenSelectMusic::SortOrderChanged()
 	m_MusicSortDisplay.SetState( GAMESTATE->m_SongSortOrder );
 
 	// tween music sort on screen
-//	m_MusicSortDisplay.SetEffectGlowing();
-	m_MusicSortDisplay.BeginTweening( 0.3f );
-	m_MusicSortDisplay.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );		
+//	m_MusicSortDisplay.FadeOn( 0, "fade", TWEEN_TIME );
 }
 

@@ -188,7 +188,7 @@ void WheelItemDisplay::RefreshGrades()
 			if( m_pSong == GAMESTATE->m_pCurSong )
 			{
 				Notes* pNotes = GAMESTATE->m_pCurNotes[p];
-				m_GradeDisplay[p].SetGrade( (PlayerNumber)p, pNotes->m_TopGrade );
+				m_GradeDisplay[p].SetGrade( (PlayerNumber)p, pNotes ? pNotes->m_TopGrade : GRADE_NO_DATA );
 			}
 			else
 			{
