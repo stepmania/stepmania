@@ -43,7 +43,8 @@ protected:
 	void GetTreeItems( CArray<HTREEITEM,HTREEITEM>& aItemsOut );
 	void GetCheckedTreeItems( CArray<HTREEITEM,HTREEITEM>& aCheckedItemsOut );
 	void GetCheckedPaths( CStringArray& aCheckedItemsOut );
-	
+	bool MakeComment( CString &comment );
+
 	// Generated message map functions
 	//{{AFX_MSG(CSmpackageExportDlg)
 	virtual BOOL OnInitDialog();

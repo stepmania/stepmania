@@ -210,11 +210,29 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 	return true;
 }
 
+bool CSmpackageExportDlg::MakeComment( CString &comment )
+{
+	bool DontAskForComment;
+	if( GetPref("DontAskForComment", DontAskForComment) && DontAskForComment )
+	{
+		comment = "";
+		return true;
+	}
+
+	EnterComment commentDlg;
+	int nResponse = commentDlg.DoModal();
+	if( nResponse != IDOK )
+		return false;	// cancelled
+
+	comment = commentDlg.m_sEnteredComment;
+	if( commentDlg.m_bDontAsk )
+		SetPref( "DontAskForComment", true );
+
+	return true;
+}
 
 void CSmpackageExportDlg::OnButtonExportAsOne() 
 {
-	// TODO: Add your control notification handler code here
-
 	CStringArray asPaths;
 	GetCheckedPaths( asPaths );
 
@@ -240,11 +258,8 @@ void CSmpackageExportDlg::OnButtonExportAsOne()
 
 	// Generate a comment
 	CString sComment;
-	EnterComment commentDlg;
-	nResponse = commentDlg.DoModal();
-	if( nResponse != IDOK )
-		return;	// cancelled
-	sComment = commentDlg.m_sEnteredComment;
+	if( !MakeComment(sComment) )
+		return;		// cancelled
 
 	if( ExportPackage( sPackageName, asPaths, sComment ) )
 		AfxMessageBox( ssprintf("Successfully exported package '%s' to your Desktop.",sPackageName) );
@@ -252,8 +267,6 @@ void CSmpackageExportDlg::OnButtonExportAsOne()
 
 void CSmpackageExportDlg::OnButtonExportAsIndividual() 
 {
-	// TODO: Add your control notification handler code here
-
 	CStringArray asPaths;
 	GetCheckedPaths( asPaths );
 
@@ -265,12 +278,8 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 	
 	// Generate a comment
 	CString sComment;
-	EnterComment commentDlg;
-	int nResponse = commentDlg.DoModal();
-	if( nResponse != IDOK )
-		return;	// cancelled
-	sComment = commentDlg.m_sEnteredComment;
-
+	if( !MakeComment(sComment) )
+		return;		// cancelled
 
 	bool bAllSucceeded = true;
 	CStringArray asExportedPackages;
