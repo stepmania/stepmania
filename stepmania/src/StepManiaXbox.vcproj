@@ -615,6 +615,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenSetTime.h">
 			</File>
 			<File
+				RelativePath="ScreenSMOnlineLogin.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSMOnlineLogin.h">
+			</File>
+			<File
 				RelativePath="ScreenSongOptions.cpp">
 			</File>
 			<File

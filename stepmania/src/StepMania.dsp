@@ -2800,6 +2800,14 @@ SOURCE=.\ScreenSetTime.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenSMOnlineLogin.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSMOnlineLogin.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenSongOptions.cpp
 # End Source File
 # Begin Source File
