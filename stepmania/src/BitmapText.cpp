@@ -29,14 +29,21 @@ BitmapText::BitmapText()
 	m_HorizAlign = align_center;
 	m_VertAlign = align_middle;
 
-	// allocate a vertex buffer
-	HRESULT hr;
-	if( FAILED( hr = SCREEN->GetDevice()->CreateVertexBuffer( 
-									MAX_NUM_VERTICIES * sizeof(CUSTOMVERTEX),
-									D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX,
-									D3DPOOL_MANAGED, &m_pVB ) ) )
-		RageErrorHr( "Vertex Buffer Could Not Be Created", hr );
+//	m_bHasShadow = false;
 
+	// create the vertex buffer
+	HRESULT hr = SCREEN->GetDevice()->CreateVertexBuffer( 
+		MAX_NUM_VERTICIES * sizeof(CUSTOMVERTEX),
+		D3DUSAGE_WRITEONLY, 
+		D3DFVF_CUSTOMVERTEX,
+		D3DPOOL_MANAGED, 
+		&m_pVB );
+
+	if( FAILED( hr ) )
+	{
+		RageErrorHr( "Vertex Buffer Could Not Be Created", hr );
+	}
+	m_iNumV = 0;
 }
 
 BitmapText::~BitmapText()
@@ -190,6 +197,106 @@ float BitmapText::GetLineWidthInSourcePixels( int iLineNo )
 }
 
 
+void BitmapText::RebuildVertexBuffer()
+{
+	// make the object in logical units centered at the origin
+	LPDIRECT3DVERTEXBUFFER8 pVB = m_pVB;
+	CUSTOMVERTEX* v;
+	pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+
+
+
+
+	m_iNumV = 0;	// the current vertex number
+
+	float fHeight = GetUnzoomedHeight();
+	float fY;
+	switch( m_VertAlign )
+	{
+	case align_top:		fY = -(m_sTextLines.GetSize()) * fHeight / 2;	break;
+	case align_middle:	fY = 0;											break;
+	case align_bottom:	fY = (m_sTextLines.GetSize()) * fHeight / 2;	break;
+	default:		ASSERT( true );
+	}
+
+
+	for( int i=0; i<m_sTextLines.GetSize(); i++ )		// foreach line
+	{
+		CString &sLine = m_sTextLines[i];
+
+		float fLineWidth = GetLineWidthInSourcePixels(i);
+		float fX;
+		switch( m_HorizAlign )
+		{
+		case align_left:	fX = 0;					break;
+		case align_center:	fX = -(fLineWidth/2);	break;
+		case align_right:	fX = -fLineWidth;		break;
+		default:		ASSERT( true );
+		}
+
+		for( int j=0; j<sLine.GetLength(); j++ )	// for each character in the line
+		{
+			char c = sLine[j];
+			int iFrameNo = m_iCharToFrameNo[c];
+			ASSERT( iFrameNo != -1 );	// this font doesn't impelemnt this character
+			float fCharWidth = m_fFrameNoToWidth[iFrameNo];
+
+			//if( c == ' ' )
+			//{
+			//	fX += fCharWidth;
+			//	continue;
+			//}
+
+
+			// HACK:
+			// The right side of italic letters is being cropped.  So, we're going to draw a little bit
+			// to the right of the normal character.
+			float fPercentExtra = 0.20f;
+			
+			// don't go over the frame boundary and draw part of the adjacent character
+			float fPercentageOfFrame = fCharWidth / GetUnzoomedWidth();
+			if( fPercentExtra > 1-fPercentageOfFrame )
+				fPercentExtra = 1-fPercentageOfFrame;
+
+
+			// set vertex positions
+
+			v[m_iNumV++].p = D3DXVECTOR3( fX,	fY+fHeight/2,	0 );	// bottom left
+			v[m_iNumV++].p = D3DXVECTOR3( fX,	fY-fHeight/2,	0 );	// top left
+			
+			fX += fCharWidth;
+
+			float fExtraPixels = fPercentExtra * GetUnzoomedWidth();
+
+			v[m_iNumV++].p = D3DXVECTOR3( fX+fExtraPixels,	fY+fHeight/2,	0 );	// bottom right
+			v[m_iNumV++].p = D3DXVECTOR3( fX+fExtraPixels,	fY-fHeight/2,	0 );	// top right
+
+
+			// set texture coordinates
+			m_iNumV -= 4;
+
+			FRECT* pTexCoordRect = m_pTexture->GetTextureCoordRect( iFrameNo );
+
+			float fExtraTexCoords = fPercentExtra * m_pTexture->GetTextureFrameWidth() / m_pTexture->GetTextureWidth();
+
+			v[m_iNumV].tu = pTexCoordRect->left;					v[m_iNumV++].tv = pTexCoordRect->bottom;	// bottom left
+			v[m_iNumV].tu = pTexCoordRect->left;					v[m_iNumV++].tv = pTexCoordRect->top;		// top left
+			v[m_iNumV].tu = pTexCoordRect->right + fExtraTexCoords;	v[m_iNumV++].tv = pTexCoordRect->bottom;	// bottom right
+			v[m_iNumV].tu = pTexCoordRect->right + fExtraTexCoords;	v[m_iNumV++].tv = pTexCoordRect->top;		// top right
+
+
+		}
+
+		fY += fHeight;
+	}
+
+
+
+	pVB->Unlock();
+
+
+}
+
 
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
 void BitmapText::RenderPrimitives()
@@ -242,107 +349,14 @@ void BitmapText::RenderPrimitives()
 		break;
 	}
 
-	pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
-	pd3dDevice->SetRenderState( D3DRS_DESTBLEND, m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
 
 
-	// make the object in logical units centered at the origin
+
+//	RebuildVertexBuffer();
+
+
+	LPDIRECT3DVERTEXBUFFER8 pVB = m_pVB;
 	CUSTOMVERTEX* v;
-	m_pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
-
-
-
-	int &iVNum = m_iNumVerticies;	// the current vertex number
-	iVNum = 0;
-
-
-	float fHeight = GetUnzoomedHeight();
-	float fY;
-	switch( m_VertAlign )
-	{
-	case align_top:		fY = -(m_sTextLines.GetSize()) * fHeight / 2;	break;										break;
-	case align_middle:	fY = 0;											break;
-	case align_bottom:	fY = (m_sTextLines.GetSize()) * fHeight / 2;	break;
-	default:		ASSERT( true );
-	}
-
-
-	for( i=0; i<m_sTextLines.GetSize(); i++ )		// foreach line
-	{
-		CString &sLine = m_sTextLines[i];
-
-		float fLineWidth = GetLineWidthInSourcePixels(i);
-		float fX;
-		switch( m_HorizAlign )
-		{
-		case align_left:	fX = 0;					break;
-		case align_center:	fX = -(fLineWidth/2);	break;
-		case align_right:	fX = -fLineWidth;		break;
-		default:		ASSERT( true );
-		}
-
-		for( int j=0; j<sLine.GetLength(); j++ )	// for each character in the line
-		{
-			char c = sLine[j];
-			int iFrameNo = m_iCharToFrameNo[c];
-			ASSERT( iFrameNo != -1 );	// this font doesn't impelemnt this character
-			float fCharWidth = m_fFrameNoToWidth[iFrameNo];
-
-			//if( c == ' ' )
-			//{
-			//	fX += fCharWidth;
-			//	continue;
-			//}
-
-
-			// HACK:
-			// The right side of italic letters is being cropped.  So, we're going to draw a little bit
-			// to the right of the normal character.
-			float fPercentExtra = 0.20f;
-			
-			// don't go over the frame boundary and draw part of the adjacent character
-			float fPercentageOfFrame = fCharWidth / GetUnzoomedWidth();
-			if( fPercentExtra > 1-fPercentageOfFrame )
-				fPercentExtra = 1-fPercentageOfFrame;
-
-
-			// set vertex positions
-
-			v[iVNum++].p = D3DXVECTOR3( fX,	fY+fHeight/2,	0 );	// bottom left
-			v[iVNum++].p = D3DXVECTOR3( fX,	fY-fHeight/2,	0 );	// top left
-			
-			fX += fCharWidth;
-
-			float fExtraPixels = fPercentExtra * GetUnzoomedWidth();
-
-			v[iVNum++].p = D3DXVECTOR3( fX+fExtraPixels,	fY+fHeight/2,	0 );	// bottom right
-			v[iVNum++].p = D3DXVECTOR3( fX+fExtraPixels,	fY-fHeight/2,	0 );	// top right
-
-
-			// set texture coordinates
-			iVNum -= 4;
-
-			FRECT* pTexCoordRect = m_pTexture->GetTextureCoordRect( iFrameNo );
-
-			float fExtraTexCoords = fPercentExtra * m_pTexture->GetTextureFrameWidth() / m_pTexture->GetTextureWidth();
-
-			v[iVNum].tu = pTexCoordRect->left;						v[iVNum++].tv = pTexCoordRect->bottom;	// bottom left
-			v[iVNum].tu = pTexCoordRect->left;						v[iVNum++].tv = pTexCoordRect->top;		// top left
-			v[iVNum].tu = pTexCoordRect->right + fExtraTexCoords;	v[iVNum++].tv = pTexCoordRect->bottom;	// bottom right
-			v[iVNum].tu = pTexCoordRect->right + fExtraTexCoords;	v[iVNum++].tv = pTexCoordRect->top;		// top right
-
-
-		}
-
-		fY += fHeight;
-	}
-
-
-
-	pVB->Unlock();
-
-
 
 
 	// Set the stage...
@@ -373,7 +387,7 @@ void BitmapText::RenderPrimitives()
 
 			pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
-			for( int i=0; i<iVNum; i++ )
+			for( int i=0; i<m_iNumV; i++ )
 				v[i].color = D3DXCOLOR(0,0,0,0.5f*colorDiffuse[0].a);	// semi-transparent black
 			
 			pVB->Unlock();
@@ -385,7 +399,7 @@ void BitmapText::RenderPrimitives()
 			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
 			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 			
-			for( i=0; i<iVNum; i+=4 )
+			for( i=0; i<m_iNumV; i+=4 )
 				pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, i, 2 );
 
 			SCREEN->PopMatrix();
@@ -397,9 +411,9 @@ void BitmapText::RenderPrimitives()
 		//////////////////////
 		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
-		for( int i=0; i<iVNum; i++ )
+		for( int i=0; i<m_iNumV; i++ )
 		{
-			if( iVNum%2 == 0 )	// this is a bottom vertex
+			if( i%2 == 0 )	// this is a bottom vertex
 				v[i].color = colorDiffuse[0];
 			else				// this is a top vertex
 				v[i].color = colorDiffuse[1];
@@ -417,7 +431,7 @@ void BitmapText::RenderPrimitives()
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );//bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
 
 
-		for( i=0; i<iVNum; i+=4 )
+		for( i=0; i<m_iNumV; i+=4 )
 			pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, i, 2 );
 	}
 
@@ -429,7 +443,7 @@ void BitmapText::RenderPrimitives()
 	{
 		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
-		for( int i=0; i<iVNum; i++ )
+		for( int i=0; i<m_iNumV; i++ )
 			v[i].color = colorAdd;
 		
 		pVB->Unlock();
@@ -441,7 +455,7 @@ void BitmapText::RenderPrimitives()
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 		
-		for( i=0; i<iVNum; i+=4 )
+		for( i=0; i<m_iNumV; i+=4 )
 			pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, i, 2 );
 	}
 
@@ -460,6 +474,9 @@ void BitmapText::SetText( CString sText )
 
 	m_sTextLines.RemoveAll(); 
 	split( sText, "\n", m_sTextLines, false );
+
+
+	RebuildVertexBuffer();
 }
 
 CString BitmapText::GetText() 
@@ -467,95 +484,3 @@ CString BitmapText::GetText()
 	return join( "\n", m_sTextLines ); 
 }
 
-void BitmapText::RebuildVertexBuffer()
-{
-	// make the object in logical units centered at the origin
-	CUSTOMVERTEX* v;
-	m_pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
-
-	int &iVNum = m_iNumVerticies;	// the current vertex number
-	iVNum = 0;
-
-
-	float fHeight = GetUnzoomedHeight();
-	float fY;
-	switch( m_VertAlign )
-	{
-	case align_top:		fY = -(m_sTextLines.GetSize()) * fHeight / 2;	break;										break;
-	case align_middle:	fY = 0;											break;
-	case align_bottom:	fY = (m_sTextLines.GetSize()) * fHeight / 2;	break;
-	default:		ASSERT( true );
-	}
-
-
-	for( i=0; i<m_sTextLines.GetSize(); i++ )		// foreach line
-	{
-		CString &sLine = m_sTextLines[i];
-
-		float fLineWidth = GetLineWidthInSourcePixels(i);
-		float fX;
-		switch( m_HorizAlign )
-		{
-		case align_left:	fX = 0;					break;
-		case align_center:	fX = -(fLineWidth/2);	break;
-		case align_right:	fX = -fLineWidth;		break;
-		default:		ASSERT( true );
-		}
-
-		for( int j=0; j<sLine.GetLength(); j++ )	// for each character in the line
-		{
-			char c = sLine[j];
-			int iFrameNo = m_iCharToFrameNo[c];
-			ASSERT( iFrameNo != -1 );	// this font doesn't implement this character
-			float fCharWidth = m_fFrameNoToWidth[iFrameNo];
-
-
-
-			// HACK:
-			// The right side of italic letters is being cropped.  So, we're going to draw a little bit
-			// to the right of the normal character.
-			float fPercentExtra = 0.20f;
-			
-			// don't go over the frame boundary and draw part of the adjacent character
-			float fPercentageOfFrame = fCharWidth / GetUnzoomedWidth();
-			if( fPercentExtra > 1-fPercentageOfFrame )
-				fPercentExtra = 1-fPercentageOfFrame;
-
-
-			// set vertex positions
-
-			v[iVNum++].p = D3DXVECTOR3( fX,	fY+fHeight/2,	0 );	// bottom left
-			v[iVNum++].p = D3DXVECTOR3( fX,	fY-fHeight/2,	0 );	// top left
-			
-			fX += fCharWidth;
-
-			float fExtraPixels = fPercentExtra * GetUnzoomedWidth();
-
-			v[iVNum++].p = D3DXVECTOR3( fX+fExtraPixels,	fY+fHeight/2,	0 );	// bottom right
-			v[iVNum++].p = D3DXVECTOR3( fX+fExtraPixels,	fY-fHeight/2,	0 );	// top right
-
-
-			// set texture coordinates
-			iVNum -= 4;
-
-			FRECT* pTexCoordRect = m_pTexture->GetTextureCoordRect( iFrameNo );
-
-			float fExtraTexCoords = fPercentExtra * m_pTexture->GetTextureFrameWidth() / m_pTexture->GetTextureWidth();
-
-			v[iVNum].tu = pTexCoordRect->left;						v[iVNum++].tv = pTexCoordRect->bottom;	// bottom left
-			v[iVNum].tu = pTexCoordRect->left;						v[iVNum++].tv = pTexCoordRect->top;		// top left
-			v[iVNum].tu = pTexCoordRect->right + fExtraTexCoords;	v[iVNum++].tv = pTexCoordRect->bottom;	// bottom right
-			v[iVNum].tu = pTexCoordRect->right + fExtraTexCoords;	v[iVNum++].tv = pTexCoordRect->top;		// top right
-
-
-		}
-
-		fY += fHeight;
-	}
-
-
-
-	m_pVB->Unlock();
-
-}

@@ -25,6 +25,7 @@ protected:
 
 public:
 	BitmapText();
+	~BitmapText();
 
 	virtual void RenderPrimitives();
 
@@ -47,8 +48,8 @@ protected:
 	
 	
 	LPDIRECT3DVERTEXBUFFER8 m_pVB;	// our vertex buffer only needs to be rebuilt when the text changes
-	int m_iNumVerticies;
-	RebuildVertexBuffer();	// this should be called when the 
+	int m_iNumV;	// number of verticies used in the vertex buffer
+	void RebuildVertexBuffer();	// this should be called when the text changes
 
 	CStringArray	m_sTextLines;
 };
