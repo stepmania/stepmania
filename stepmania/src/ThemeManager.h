@@ -169,7 +169,6 @@ public:
 	void SwitchTheme( CString sThemeName );		// return false if theme doesn't exist
 	void AssertThemeIsComplete( CString sThemeName );		// return false if theme doesn't exist
 	CString GetPathTo( ThemeElement te );
-	CString GetPathTo( ThemeElement te, CString sThemeName );
 
 protected:
 	CString GetThemeDirFromName( CString sAnnouncerName );

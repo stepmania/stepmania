@@ -96,7 +96,7 @@ CString join(
 	const CStringArray& Source
 );
 
-void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs=false );
+void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
 ULONG GetHashForString( CString s );
 ULONG GetHashForFile( CString sPath );
 ULONG GetHashForDirectory( CString sDir );	// a hash value that remains the same as long as nothing in the directory has changed

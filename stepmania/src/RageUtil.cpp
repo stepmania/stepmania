@@ -251,8 +251,11 @@ void splitrelpath( const CString &Path, CString& Dir, CString& FName, CString& E
 }
 
 
-void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs )
+void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
+	CString sDir, sThrowAway;
+	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
+
 	WIN32_FIND_DATA fd;
 	HANDLE hFind = ::FindFirstFile( sPath, &fd );
 
@@ -268,8 +271,12 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs )
 
 		if( sDirName == "."  ||  sDirName == ".." )
 			continue;
-		
-		AddTo.Add( sDirName );
+
+		if( bReturnPathToo )
+			AddTo.Add( sDir + sDirName );
+		else
+			AddTo.Add( sDirName );
+
 
 	} while( ::FindNextFile( hFind, &fd ) );
 	::FindClose( hFind );
