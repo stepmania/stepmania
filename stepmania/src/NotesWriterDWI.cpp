@@ -307,6 +307,9 @@ void NotesWriterDWI::WriteDWINotesField( RageFile &f, const Steps &out, int star
 
 bool NotesWriterDWI::WriteDWINotesTag( RageFile &f, const Steps &out )
 {
+	if( out.GetDifficulty() == DIFFICULTY_EDIT )
+		return false;	// not supported by DWI
+
 	/* Flush dir cache when writing steps, so the old size isn't cached. */
 	FlushDirCache();
 
@@ -328,7 +331,6 @@ bool NotesWriterDWI::WriteDWINotesTag( RageFile &f, const Steps &out )
 	case DIFFICULTY_MEDIUM:		f.Write( "ANOTHER:" );	break;
 	case DIFFICULTY_HARD:		f.Write( "MANIAC:" );	break;
 	case DIFFICULTY_CHALLENGE:	f.Write( "SMANIAC:" );	break;
-	case DIFFICULTY_EDIT:		return false;
 	default:	ASSERT(0);	return false;
 	}
 
