@@ -751,47 +751,48 @@ void Song::AddAutoGenNotes()
 {
 	for( NotesType ntMissing=(NotesType)0; ntMissing<NUM_NOTES_TYPES; ntMissing=(NotesType)(ntMissing+1) )
 	{
-		if( !SongHasNotesType(ntMissing) )	// missing Notes of this type
+		if( SongHasNotesType(ntMissing) )
+			continue;
+
+		// missing Notes of this type
+		int iNumTracksOfMissing = GAMEMAN->NotesTypeToNumTracks(ntMissing);
+
+		// look for closest match
+		NotesType	ntBestMatch = (NotesType)-1;
+		int			iBestTrackDifference = 10000;	// inf
+
+		for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
 		{
-			int iNumTracksOfMissing = GAMEMAN->NotesTypeToNumTracks(ntMissing);
-
-			// look for closest match
-			NotesType	ntBestMatch = (NotesType)-1;
-			int			iBestTrackDifference = 10000;	// inf
-
-			for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
+			int iNumTracks = GAMEMAN->NotesTypeToNumTracks(nt);
+			int iTrackDifference = abs(iNumTracks-iNumTracksOfMissing);
+			CArray<Notes*,Notes*> apNotes;
+			this->GetNotesThatMatch( nt, apNotes );
+			if( iTrackDifference<iBestTrackDifference  &&  apNotes.GetSize() > 0  &&  apNotes[0]->m_sDescription.Find("autogen")==-1 )
 			{
-				int iNumTracks = GAMEMAN->NotesTypeToNumTracks(nt);
-				int iTrackDifference = abs(iNumTracks-iNumTracksOfMissing);
-				CArray<Notes*,Notes*> apNotes;
-				this->GetNotesThatMatch( nt, apNotes );
-				if( iTrackDifference<iBestTrackDifference  &&  apNotes.GetSize() > 0  &&  apNotes[0]->m_sDescription.Find("autogen")==-1 )
-				{
-					ntBestMatch = nt;
-					iBestTrackDifference = iTrackDifference;
-				}
+				ntBestMatch = nt;
+				iBestTrackDifference = iTrackDifference;
 			}
+		}
 
-			if( ntBestMatch != -1 )
+		if( ntBestMatch != -1 )
+		{
+			for( int j=0; j<m_apNotes.GetSize(); j++ )
 			{
-				for( int j=0; j<m_apNotes.GetSize(); j++ )
-				{
-					Notes* pOriginalNotes = m_apNotes[j];
-					if( pOriginalNotes->m_NotesType != ntBestMatch )
-						continue;	// skip
+				Notes* pOriginalNotes = m_apNotes[j];
+				if( pOriginalNotes->m_NotesType != ntBestMatch )
+					continue;	// skip
 
-					Notes* pNewNotes = new Notes;
-					pNewNotes->m_Difficulty		= pOriginalNotes->m_Difficulty;
-					pNewNotes->m_iMeter			= pOriginalNotes->m_iMeter;
-					pNewNotes->m_sDescription	= pOriginalNotes->m_sDescription + " (autogen)";
-					pNewNotes->m_NotesType		= ntMissing;
+				Notes* pNewNotes = new Notes;
+				pNewNotes->m_Difficulty		= pOriginalNotes->m_Difficulty;
+				pNewNotes->m_iMeter			= pOriginalNotes->m_iMeter;
+				pNewNotes->m_sDescription	= pOriginalNotes->m_sDescription + " (autogen)";
+				pNewNotes->m_NotesType		= ntMissing;
 
-					NoteData originalNoteData, newNoteData;
-					pOriginalNotes->GetNoteData( &originalNoteData );
-					newNoteData.LoadTransformedSlidingWindow( &originalNoteData, iNumTracksOfMissing );
-					pNewNotes->SetNoteData( &newNoteData );
-					this->m_apNotes.Add( pNewNotes );
-				}
+				NoteData originalNoteData, newNoteData;
+				pOriginalNotes->GetNoteData( &originalNoteData );
+				newNoteData.LoadTransformedSlidingWindow( &originalNoteData, iNumTracksOfMissing );
+				pNewNotes->SetNoteData( &newNoteData );
+				this->m_apNotes.Add( pNewNotes );
 			}
 		}
 	}
