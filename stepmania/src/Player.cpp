@@ -155,6 +155,10 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	m_Judgment.SetX( JUDGMENT_X(m_PlayerNumber,bPlayerUsingBothSides) );
 	m_Judgment.SetY( bReverse ? SCREEN_BOTTOM-JUDGMENT_Y : SCREEN_TOP+JUDGMENT_Y );
 
+	/* These commands add to the above positioning, and are usually empty. */
+	m_Judgment.Command( g_NoteFieldMode[pn].m_JudgmentCmd );
+	m_Combo.Command( g_NoteFieldMode[pn].m_ComboCmd );
+
 	int c;
 	for( c=0; c<pStyleDef->m_iColsPerPlayer; c++ )
 	{

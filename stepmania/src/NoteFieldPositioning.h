@@ -15,7 +15,7 @@ struct NoteFieldMode
 {
 	NoteFieldMode();
 	bool MatchesCurrentGame() const;
-	void Load(IniFile &ini, CString id);
+	void Load(IniFile &ini, CString id, int pn = -1);
 
 	void BeginDrawTrack(int tn);
 	void EndDrawTrack(int tn);
@@ -44,6 +44,9 @@ struct NoteFieldMode
 	float m_fFirstPixelToDrawScale, m_fLastPixelToDrawScale;
 	CString m_Backdrop;
 	Actor m_PositionBackdrop;
+
+	CString m_JudgmentCmd, m_ComboCmd;
+	CString m_HoldJudgmentCmd[MAX_NOTE_TRACKS];
 };
 
 class NoteFieldPositioning

@@ -63,50 +63,67 @@ void NoteFieldMode::EndDrawTrack(int tn)
 	DISPLAY->PopMatrix();
 }
 
-static bool GetValueCmd(IniFile &ini,
+template <class T>
+static bool GetValue(IniFile &ini, int pn,
+				   const CString &key, const CString &valuename, T &value )
+{
+	if(pn != -1 && ini.GetValue(key, ssprintf("P%i%s", pn+1, valuename.c_str()), value))
+		return true;
+	return ini.GetValue(key, valuename, value);
+}
+
+static bool GetValue(IniFile &ini, int pn,
 				   const CString &key, const CString &valuename, Actor &value )
 {
 	CString str;
-	if(!ini.GetValue(key, valuename, str))
+	if(!GetValue(ini, pn, key, valuename, str))
 		return false;
 
 	value.Command(str);
 	return true;
 }
 
-void NoteFieldMode::Load(IniFile &ini, CString id)
+void NoteFieldMode::Load(IniFile &ini, CString id, int pn)
 {
 	m_Id = id;
 
 	/* Required: */
 	ASSERT( ini.GetValue ( id, "Name",			m_Name ) );
 
-	ini.GetValue ( id, "Backdrop",				m_Backdrop );
-	ini.GetValueF( id, "FOV",					m_fFov );
-	ini.GetValueF( id, "NearClipDistance",		m_fNear );
-	ini.GetValueF( id, "FarClipDistance",		m_fFar );
-	ini.GetValueF( id, "PixelsDrawAheadScale",	m_fFirstPixelToDrawScale );
-	ini.GetValueF( id, "PixelsDrawBehindScale",	m_fLastPixelToDrawScale );
+	GetValue( ini, pn, id, "Backdrop",				m_Backdrop );
+	GetValue( ini, pn, id, "FOV",					m_fFov );
+	GetValue( ini, pn, id, "NearClipDistance",		m_fNear );
+	GetValue( ini, pn, id, "FarClipDistance",		m_fFar );
+	GetValue( ini, pn, id, "PixelsDrawAheadScale",	m_fFirstPixelToDrawScale );
+	GetValue( ini, pn, id, "PixelsDrawBehindScale",	m_fLastPixelToDrawScale );
 
-	GetValueCmd( ini, id, "Center", m_Center );
-	GetValueCmd( ini, id, "Position", m_Position );
-	GetValueCmd( ini, id, "BackdropPosition", m_PositionBackdrop );
+	GetValue( ini, pn, id, "Center",				m_Center );
+	GetValue( ini, pn, id, "Position",				m_Position );
+	GetValue( ini, pn, id, "BackdropPosition",		m_PositionBackdrop );
+	GetValue( ini, pn, id, "Judgment",				m_JudgmentCmd );
+	GetValue( ini, pn, id, "Combo",					m_ComboCmd );
 
-	for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
+	/* Load per-track data: */
+	int t;
+	for(t = 0; t < MAX_NOTE_TRACKS; ++t)
 	{
-		GetValueCmd( ini, id, ssprintf("Center%i", t+1), m_CenterTrack[t] );
-		GetValueCmd( ini, id, ssprintf("Position%i", t+1), m_PositionTrack[t] );
+		GetValue( ini, pn, id, ssprintf("Center%i", t+1), m_CenterTrack[t] );
+		GetValue( ini, pn, id, ssprintf("Position%i", t+1), m_PositionTrack[t] );
 
-		ini.GetValue( id, ssprintf("GrayButton", t+1), GrayButtonNames[t] );
-		ini.GetValue( id, ssprintf("GrayButton%i", t+1), GrayButtonNames[t] );
+		GetValue( ini, pn, id, ssprintf("GrayButton", t+1), GrayButtonNames[t] );
+		GetValue( ini, pn, id, ssprintf("GrayButton%i", t+1), GrayButtonNames[t] );
 
-		ini.GetValue( id, ssprintf("NoteButton", t+1), NoteButtonNames[t] );
-		ini.GetValue( id, ssprintf("NoteButton%i", t+1), NoteButtonNames[t] );
+		GetValue( ini, pn, id, ssprintf("NoteButton", t+1), NoteButtonNames[t] );
+		GetValue( ini, pn, id, ssprintf("NoteButton%i", t+1), NoteButtonNames[t] );
 
-		ini.GetValue( id, ssprintf("GhostButton", t+1), GhostButtonNames[t] );
-		ini.GetValue( id, ssprintf("GhostButton%i", t+1), GhostButtonNames[t] );
+		GetValue( ini, pn, id, ssprintf("GhostButton", t+1), GhostButtonNames[t] );
+		GetValue( ini, pn, id, ssprintf("GhostButton%i", t+1), GhostButtonNames[t] );
+
+		GetValue( ini, pn, id, ssprintf("HoldJudgment", t+1),	m_HoldJudgmentCmd[t] );
+		GetValue( ini, pn, id, ssprintf("HoldJudgment%i", t+1), m_HoldJudgmentCmd[t] );
 	}
 
+	/* Grab this directly; don't try to set game specs per-player. */
 	CString sGames;
 	if(ini.GetValue( id, "Games", sGames ))
 	{
@@ -181,7 +198,7 @@ void NoteFieldPositioning::Load(PlayerNumber pn)
 	if(!ini.ReadFile())
 		return;
 
-	mode.Load(ini, Modes[ModeNum].m_Id);
+	mode.Load(ini, Modes[ModeNum].m_Id, pn);
 }
 
 

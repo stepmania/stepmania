@@ -118,6 +118,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
+	/* Normally, this is empty and we use the style table entry via ColToButtonName. */
 	CString Button = g_NoteFieldMode[m_PlayerNumber].NoteButtonNames[iColNum];
 	if(Button == "")
 		Button = NoteSkinManager::ColToButtonName(iColNum);
