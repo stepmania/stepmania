@@ -4,11 +4,10 @@
 #include <set>
 #include <map>
 #include "SDL_utils.h"
-#include "arch/Sound/RageSoundDriver.h"
-
 #include "RageThreads.h"
 
 class RageSound;
+class RageSoundDriver;
 
 class RageSoundManager
 {
