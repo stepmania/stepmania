@@ -62,11 +62,10 @@ Player::Player()
 	
 	m_iOffsetSample = 0;
 
-	m_ArrowFrame.AddChild(&m_ArrowBackdrop);
-	m_ArrowFrame.AddChild(&m_NoteField);
-	m_ArrowFrame.AddChild(&m_GrayArrowRow);
-	m_ArrowFrame.AddChild(&m_GhostArrowRow);
-	this->AddChild( &m_ArrowFrame );
+	this->AddChild( &m_ArrowBackdrop );
+	this->AddChild( &m_NoteField );
+	this->AddChild( &m_GrayArrowRow );
+	this->AddChild( &m_GhostArrowRow );
 	this->AddChild( &m_Judgment );
 	this->AddChild( &m_Combo );
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
@@ -159,7 +158,10 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 		m_HoldJudgment[c].SetX( (float)pStyleDef->m_ColumnInfo[pn][c].fXOffset );
 	}
 
-	m_ArrowFrame.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
+	m_ArrowBackdrop.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
+	m_NoteField.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
+	m_GrayArrowRow.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
+	m_GhostArrowRow.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
 
 	if( GAMESTATE->m_PlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI] == 1 )
 	{
@@ -268,7 +270,9 @@ void Player::Update( float fDeltaTime )
 
 void Player::DrawPrimitives()
 {
-	m_Combo.Draw();	// draw this below everything else
+	// Draw these below everything else.
+	m_ArrowBackdrop.Draw();
+	m_Combo.Draw();
 
 	float fTilt = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fPerspectiveTilt;
 	bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fReverseScroll==1;
@@ -288,7 +292,9 @@ void Player::DrawPrimitives()
 		DISPLAY->LookAt(Eye, At, Up);
 	}
 
-	m_ArrowFrame.Draw();
+	m_GrayArrowRow.Draw();
+	m_NoteField.Draw();
+	m_GhostArrowRow.Draw();
 
 	if( fTilt != 0 )
 		DISPLAY->ExitPerspective();

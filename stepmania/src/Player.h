@@ -74,7 +74,6 @@ protected:
 	GrayArrowRow	m_GrayArrowRow;
 	NoteField		m_NoteField;
 	GhostArrowRow	m_GhostArrowRow;
-	ActorFrame		m_ArrowFrame;
 
 	HoldJudgment	m_HoldJudgment[MAX_NOTE_TRACKS];
 
