@@ -49,8 +49,8 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 		CString sChoice = CHOICE(c);
 
 		ModeChoice mc;
-		mc.FromString(sChoice);
-		m_aModeChoices.push_back( mc );
+		if( mc.FromString(sChoice) )
+			m_aModeChoices.push_back( mc );
 		
 		CString sBGAnimationDir = THEME->GetPathTo(BGAnimations, ssprintf("%s %s",m_sName.c_str(),mc.name), true);	// true="optional"
 		if( sBGAnimationDir == "" )
