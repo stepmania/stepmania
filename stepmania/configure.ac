@@ -59,10 +59,11 @@ AM_PATH_SDL(1.2.6,enable_sdl=yes,enable_sdl=no)
 # XXX: 1.2.6 has been out for a while (as well as 1.2.7).  I'm disabling the
 # fallback copy of SDL for now, to see if we can get rid of it.
 if test "$enable_sdl" = "no"; then
-	exit 1
+  echo
+  echo "*** SDL 1.2.6 or greater is required to build StepMania; please"
+  echo "*** make sure that it is installed to continue the build process."
+  exit 1
 fi
-
-AM_CONDITIONAL(NHAVE_SDL, test "$enable_sdl" = "no" )
 
 # sdl-config puts -L/usr/lib in the library search path, which reorders things
 # in a way that breaks some configurations.
@@ -73,10 +74,9 @@ AM_CONDITIONAL(NHAVE_SDL, test "$enable_sdl" = "no" )
 AC_SEARCH_LIBS(IMG_Load, [SDL_image], have_SDL_image=yes,  have_SDL_image=no)
 if test "$have_SDL_image" = "no"; then
   echo
-  echo "*** SDL_image is required to build StepMania; please"
-  echo "*** make sure that SDL_image is installed to continue"
-  echo "*** the installation process."
-  exit 0;
+  echo "*** SDL_image is required to build StepMania; please make sure that"
+  echo "*** it is installed to continue the build process."
+  exit 1
 fi
 
 have_libjpeg=yes
@@ -84,10 +84,9 @@ AC_SEARCH_LIBS(jpeg_read_scanlines, [jpeg], ,  have_libjpeg=no)
 AC_CHECK_HEADER(jpeglib.h, , have_libjpeg=no)
 if test "$have_libjpeg" = "no"; then
   echo
-  echo "*** libjpeg is required to build StepMania; please"
-  echo "*** make sure that libjpeg is installed to continue"
-  echo "*** the installation process."
-  exit 0;
+  echo "*** libjpeg is required to build StepMania; please make sure that"
+  echo "*** it is installed to continue the build process."
+  exit 1
 fi
 
 SM_LUA
