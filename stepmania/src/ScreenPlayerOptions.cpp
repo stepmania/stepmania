@@ -245,6 +245,10 @@ void ScreenPlayerOptions::ImportOptions()
 		}
 		else if( GAMESTATE->m_pCurCourse )   // playing a course
 		{
+			// support for difficult on one side and normal on other is not supported
+			// force same choice on both sides
+			g_PlayerOptionsLines[PO_STEP].bOneChoiceForAllPlayers = true;
+
 			if( GAMESTATE->m_bDifficultCourses &&
 				GAMESTATE->m_pCurCourse->HasDifficult( GAMESTATE->GetCurrentStyleDef()->m_StepsType ) )
 				m_iSelectedOption[p][PO_STEP] = 1;
