@@ -38,6 +38,10 @@ bool ReceptorArrow::Load( CString NoteSkin, PlayerNumber pn, int iColNo )
 
 	m_pPressBlock.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"KeypressBlock") );
 
+	m_pReceptorWaiting->Command( "effectclock,beat" );
+	m_pReceptorGo->Command( "effectclock,beat" );
+	m_pPressBlock->Command( "effectclock,beat" );
+
 	// draw pressblock before receptors
 	this->AddChild( m_pPressBlock );
 	this->AddChild( m_pReceptorWaiting );
@@ -49,14 +53,6 @@ bool ReceptorArrow::Load( CString NoteSkin, PlayerNumber pn, int iColNo )
 void ReceptorArrow::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
-
-	float fPercentIntoBeat = GAMESTATE->m_fSongBeat;
-	wrap(fPercentIntoBeat, 1);	/* Beats can start in very negative territory */
-
-	// TODO: Generalize this to allow any actor to animate based on the beat.
-	m_pReceptorWaiting->SetSecondsIntoAnimation( fPercentIntoBeat );
-	m_pReceptorGo->SetSecondsIntoAnimation( fPercentIntoBeat );
-	m_pPressBlock->SetSecondsIntoAnimation( fPercentIntoBeat );
 
 	// update pressblock alignment based on scroll direction
 	bool bReverse = GAMESTATE->m_PlayerOptions[m_PlayerNumber].GetReversePercentForColumn(m_iColNo) > 0.5;
