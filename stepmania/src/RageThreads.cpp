@@ -318,10 +318,6 @@ static struct SetupUnknownThread
 
 const char *RageThread::GetCurThreadName()
 {
-	int slot = GetCurThreadSlot();
-	if(slot==-1)
-		return "???";
-
 	return GetThreadNameByID( GetCurrentThreadID() );
 }
 

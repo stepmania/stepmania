@@ -117,8 +117,6 @@ RageSound &RageSound::operator=( const RageSound &cpy )
 	delete Sample;
 	Sample = cpy.Sample->Copy();
 
-	/* Load() won't work on a copy if m_sFilePath is already set, so
-	 * copy this down here. */
 	m_sFilePath = cpy.m_sFilePath;
 
 	return *this;
