@@ -232,14 +232,14 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldTailActive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold tail active "+sNoteType[i]) );
-			m_sprHoldTailInactive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold tail inactive "+sNoteType[i]) );
+			m_pHoldTailActive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold tail active "+sNoteType[i]) );
+			m_pHoldTailInactive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold tail inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldTailActive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold tail active") );
-		m_sprHoldTailInactive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold tail inactive") );
+		m_pHoldTailActive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold tail active") );
+		m_pHoldTailInactive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold tail inactive") );
 	}
 }
 
@@ -363,7 +363,7 @@ Sprite *NoteDisplay::GetHoldBodySprite( float fNoteBeat, bool bActive )
 	return pSpriteOut;
 }
 
-Sprite * NoteDisplay::GetHoldTailSprite( float fNoteBeat, bool bActive )
+Actor* NoteDisplay::GetHoldTailActor( float fNoteBeat, bool bActive )
 {
 	NoteType nt = NoteType(0);
 	if( cache->m_bHoldTailAnimationIsNoteColor )
@@ -371,16 +371,16 @@ Sprite * NoteDisplay::GetHoldTailSprite( float fNoteBeat, bool bActive )
 	if( nt == NOTE_TYPE_INVALID )
 		nt = NOTE_TYPE_32ND;
 
-	Sprite *pSpriteOut = bActive ? &m_sprHoldTailActive[nt] : &m_sprHoldTailInactive[nt];
+	Actor *pActorOut = bActive ? m_pHoldTailActive[nt] : m_pHoldTailInactive[nt];
 
 	SetActiveFrame( 
 		fNoteBeat, 
-		*pSpriteOut, 
+		*pActorOut, 
 		cache->m_fHoldTailAnimationLengthInBeats, 
 		cache->m_bHoldTailAnimationIsVivid, 
 		cache->m_bHoldTailAnimationIsNoteColor );
 
-	return pSpriteOut;
+	return pActorOut;
 }
 
 
@@ -645,7 +645,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	// Draw the tail
 	//
 	{
-		Sprite* pSprTail = GetHoldTailSprite( hn.fStartBeat, bActive );
+		Actor* pSprTail = GetHoldTailActor( hn.fStartBeat, bActive );
 
 		const float fY				= fYTail;
 		const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );

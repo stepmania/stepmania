@@ -36,10 +36,10 @@ protected:
 	void SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor );
 	Actor *GetTapNoteActor( float fNoteBeat );
 	Actor *GetHoldHeadActor( float fNoteBeat, bool bActive );
+	Actor* GetHoldTailActor( float fNoteBeat, bool bActive );
 	Sprite *GetHoldTopCapSprite( float fNoteBeat, bool bActive );
 	Sprite *GetHoldBodySprite( float fNoteBeat, bool bActive );
 	Sprite *GetHoldBottomCapSprite( float fNoteBeat, bool bActive );
-	Sprite *GetHoldTailSprite( float fNoteBeat, bool bActive );
 
 	PlayerNumber m_PlayerNumber;	// to look up PlayerOptions
 
@@ -56,8 +56,8 @@ protected:
 	Sprite		m_sprHoldBodyInactive[NOTE_COLOR_IMAGES];
 	Sprite		m_sprHoldBottomCapActive[NOTE_COLOR_IMAGES];
 	Sprite		m_sprHoldBottomCapInactive[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldTailActive[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldTailInactive[NOTE_COLOR_IMAGES];
+	Actor*		m_pHoldTailActive[NOTE_COLOR_IMAGES];
+	Actor*		m_pHoldTailInactive[NOTE_COLOR_IMAGES];
 };
 
 #endif
