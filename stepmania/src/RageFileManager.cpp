@@ -153,7 +153,7 @@ CString LoadedDriver::GetPath( CString path )
 
 bool ilt( const CString &a, const CString &b ) { return a.CompareNoCase(b) < 0; }
 bool ieq( const CString &a, const CString &b ) { return a.CompareNoCase(b) == 0; }
-void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+void RageFileManager::GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
@@ -177,6 +177,24 @@ void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bO
 	sort( AddTo.begin(), AddTo.end(), ilt );
 	CStringArray::iterator it = unique( AddTo.begin(), AddTo.end(), ieq );
 	AddTo.erase(it, AddTo.end());
+}
+
+bool RageFileManager::Remove( const CString &sPath )
+{
+	/* Multiple drivers may have the same file. */
+	bool Deleted = false;
+	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+	{
+		const CString p = g_Drivers[i].GetPath( sPath );
+		if( p.size() == 0 )
+			continue;
+
+		bool ret = g_Drivers[i].driver->Remove( p );
+		if( !ret )
+			Deleted = true;
+	}
+
+	return Deleted;
 }
 
 #include "RageFileDriverDirect.h"

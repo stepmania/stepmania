@@ -9,6 +9,7 @@ public:
 	RageFileDriverDirect( CString root );
 
 	RageFileObj *Open( const CString &path, RageFile::OpenMode mode, RageFile &p, int &err );
+	bool Remove( const CString &sPath );
 	bool Ready();
 
 private:

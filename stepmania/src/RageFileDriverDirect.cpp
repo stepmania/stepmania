@@ -68,6 +68,28 @@ static HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd )
 }
 #endif
 
+static int DoRemove( const CString &sPath )
+{
+#if defined(XBOX)
+	CString TempPath = sPath;
+	TempPath.Replace( "/", "\\" );
+	return remove( sPath );
+#else
+	return remove( sPath );
+#endif
+}
+
+static int DoRmdir( const CString &sPath )
+{
+#if defined(XBOX)
+	CString TempPath = sPath;
+	TempPath.Replace( "/", "\\" );
+	return rmdir( sPath );
+#else
+	return rmdir( sPath );
+#endif
+}
+
 
 /* This driver handles direct file access. */
 class DirectFilenameDB: public FilenameDB
@@ -279,6 +301,7 @@ RageFileObj *RageFileDriverDirect::Open( const CString &path, RageFile::OpenMode
 	/* This partially resolves.  For example, if "abc/def" exists, and we're opening
 	 * "ABC/DEF/GHI/jkl/mno", this will resolve it to "abc/def/GHI/jkl/mno"; we'll
 	 * create the missing parts below. */
+	/* XXX: does it? */
 	FDB->ResolvePath( sPath );
 
 	if( mode == RageFile::WRITE )
@@ -289,6 +312,39 @@ RageFileObj *RageFileDriverDirect::Open( const CString &path, RageFile::OpenMode
 	}
 
 	return MakeFileObjDirect( root + sPath, mode, p, err );
+}
+
+bool RageFileDriverDirect::Remove( const CString &path )
+{
+	CString sPath = path;
+	FDB->ResolvePath( sPath );
+	switch( this->GetFileType(sPath) )
+	{
+	case TTYPE_FILE:
+		LOG->Trace("remove '%s'", (root + sPath).c_str());
+		if( DoRemove( root + sPath ) == -1 )
+		{
+			LOG->Warn("remove(%s) failed: %s",
+				(root + sPath).c_str(), strerror(errno) );
+			return false;
+		}
+		FDB->DelFile( sPath );
+		return true;
+
+	case TTYPE_DIR:
+		LOG->Trace("rmdir '%s'", (root + sPath).c_str());
+		if( DoRmdir( root + sPath ) == -1 )
+		{
+			LOG->Warn("rmdir(%s) failed: %s",
+				(root + sPath).c_str(), strerror(errno) );
+			return false;
+		}
+		FDB->DelFile( sPath );
+		return true;
+
+	case TTYPE_NONE: return false;
+	default: ASSERT(0); return false;
+	}
 }
 
 RageFileObj *RageFileObjDirect::Copy( RageFile &p ) const

@@ -19,6 +19,7 @@ public:
 	virtual int GetPathValue( const CString &path );
 	virtual bool Ready() { return true; } /* see RageFileManager::MountpointIsReady */
 	virtual void FlushDirCache( const CString &sPath );
+	virtual bool Remove( const CString &sPath ) { return false; }
 
 protected:
 	FilenameDB *FDB;

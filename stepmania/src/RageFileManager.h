@@ -10,7 +10,8 @@ public:
 	RageFileManager();
 	~RageFileManager();
 
-	void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+	void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+	bool Remove( const CString &sPath );
 	
 	enum FileType { TYPE_FILE, TYPE_DIR, TYPE_NONE };
 	FileType GetFileType( const CString &sPath );
