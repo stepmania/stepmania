@@ -160,6 +160,7 @@ int ResumeThread( int ThreadID )
  *
  * This call leaves the given thread suspended, so the returned context doesn't become invalid.
  * ResumeThread() can be used to resume a thread after this call. */
+#if defined(CRASH_HANDLER)
 bool GetThreadBacktraceContext( int ThreadID, BacktraceContext *ctx )
 {
 	/* Can't GetThreadBacktraceContext the current thread. */
@@ -199,6 +200,7 @@ bool GetThreadBacktraceContext( int ThreadID, BacktraceContext *ctx )
 
 	return true;
 }
+#endif
 
 /*
  * (c) 2004 Glenn Maynard
