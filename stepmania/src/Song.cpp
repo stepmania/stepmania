@@ -412,12 +412,9 @@ void Song::TidyUpData()
 			throw RageException( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir );
 	}
 
-	if(m_sMusicFile != "") {
-		RageSoundStream sound;
-		sound.Load( GetMusicPath() );
-		m_fMusicLengthSeconds = sound.GetLengthSeconds();
-	}
-
+	RageSoundStream sound;
+	sound.Load( GetMusicPath() );
+	m_fMusicLengthSeconds = sound.GetLengthSeconds();
 
 
 	//
@@ -572,10 +569,6 @@ void Song::GetNotesThatMatch( const StyleDef *s, int p, CArray<Notes*, Notes*>& 
 /* Return whether the song is playable in the given style. */
 bool Song::SongCompleteForStyle( const StyleDef *st ) const
 {
-	/* If we don't have music, we're not complete. */
-	if(m_sMusicFile == "")
-		return false;
-
 	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
 	{
 		if(st->m_NotesTypes[pn] == NOTES_TYPE_INVALID) continue; /* unused */
