@@ -366,7 +366,7 @@ static Menu g_MainMenu(
 	MenuRow( ScreenEdit::save,						"Save",							true, true, 0, NULL ),
 	MenuRow( ScreenEdit::revert_to_last_save,		"Revert to Last Save",			true, true, 0, NULL ),
 	MenuRow( ScreenEdit::player_options,			"Player Options",				true, true, 0, NULL ),
-	MenuRow( ScreenEdit::song_options,				"Song Options",					true, false, 0, NULL ),
+	MenuRow( ScreenEdit::song_options,				"Song Options",					true, true, 0, NULL ),
 	MenuRow( ScreenEdit::edit_song_info,			"Edit Song Info",				true, false, 0, NULL ),
 	MenuRow( ScreenEdit::edit_bpm,					"Edit BPM Change",				true, false, 0, NULL ),
 	MenuRow( ScreenEdit::edit_stop,					"Edit Stop",					true, false, 0, NULL ),
