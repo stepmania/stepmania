@@ -116,7 +116,8 @@ public:
 
 			DrawMask( m_fPercent );
 			
-			const float fPercentBetweenStrips = 1.0f/g_iNumStrips;
+			const float fChamberWidthInPercent = 1.0f/g_iNumChambers;
+			const float fPercentBetweenStrips = froundf( 1.0f/g_iNumStrips, fChamberWidthInPercent );
 
 			const float fPercentOffset = fmodf( GAMESTATE->m_fSongBeat/4+1000, fPercentBetweenStrips );
 			ASSERT( fPercentOffset >= 0  &&  fPercentOffset <= fPercentBetweenStrips );
@@ -206,10 +207,10 @@ public:
 		m_quadMask.Draw();
 
 		// draw mask for horizontal chambers
-		rect.left	= LONG(-g_iMeterWidth/2 + fRightPercent*g_iMeterWidth);
-		rect.top	= LONG(-g_iMeterHeight/2);
-		rect.right	= LONG(+g_iMeterWidth/2);
-		rect.bottom	= LONG(+g_iMeterHeight/2);
+		rect.left	= (LONG)(-g_iMeterWidth/2 + fRightPercent*g_iMeterWidth); 
+		rect.top	= -g_iMeterHeight/2;
+		rect.right	= +g_iMeterWidth/2;
+		rect.bottom	= +g_iMeterHeight/2;
 
 		rect.left  = MIN( rect.left,  + g_iMeterWidth/2 );
 		rect.right = MIN( rect.right, + g_iMeterWidth/2 );
@@ -358,10 +359,6 @@ void LifeMeterBar::Update( float fDeltaTime )
 	{
 
 		const float fDelta = m_fLifePercentage - m_fTrailingLifePercentage;
-//		const float fSign = (fDelta>0) ? 1.0f : -1.0f;
-
-//		const float fLinearForce = fSign * 0.2f;
-//		m_fLifeVelocity += fSpringForce * fDeltaTime;
 
 		const float fSpringForce = fDelta * 2.0f;
 		m_fLifeVelocity += fSpringForce * fDeltaTime;
