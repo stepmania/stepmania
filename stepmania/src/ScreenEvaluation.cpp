@@ -655,7 +655,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 	if( SHOW_TOTAL_SCORE_AREA )
 	{
-		m_sprTotalScoreLabel.Load( THEME->GetPathToG("ScreenEvaluation totalscore labels 1x2") );
+		m_sprTotalScoreLabel.Load( THEME->GetPathToG("ScreenEvaluation totalscore label") );
 		m_sprTotalScoreLabel.SetState( 0 );
 		m_sprTotalScoreLabel.StopAnimating();
 		m_sprTotalScoreLabel.SetName( "TotalScoreLabel" );
@@ -689,7 +689,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	//
 	if( SHOW_TIME_AREA )
 	{
-		m_sprTimeLabel.Load( THEME->GetPathToG("ScreenEvaluation score labels 1x2") );
+		m_sprTimeLabel.Load( THEME->GetPathToG("ScreenEvaluation time label") );
 		m_sprTimeLabel.SetState( 1 );
 		m_sprTimeLabel.StopAnimating();
 		m_sprTimeLabel.SetName( "TimeLabel" );
@@ -701,10 +701,10 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
 
-			m_textTime[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation score") );
+			m_textTime[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation time") );
 			m_textTime[p].EnableShadow( false );
 			m_textTime[p].SetDiffuse( PlayerToColor(p) );
-			m_textTime[p].SetName( ssprintf("ScoreNumberP%d",p+1) );
+			m_textTime[p].SetName( ssprintf("TimeNumberP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_textTime[p] );
 			m_textTime[p].SetText( SecondsToTime(stageStats.fAliveSeconds[p]) );
 			this->AddChild( &m_textTime[p] );
@@ -719,24 +719,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	{
 		if( iMachineHighScoreIndex[p] != -1 )
 		{
-			switch( m_Type )
-			{
-			case stage:
-				m_sprMachineRecord[p].Load( THEME->GetPathToG("ScreenEvaluation machine record") );
-				m_sprMachineRecord[p].SetName( ssprintf("MachineRecordP%d",p+1) );
-				break;
-			case summary:
-				m_sprMachineRecord[p].Load( THEME->GetPathToG("ScreenEvaluation category record") );
-				m_sprMachineRecord[p].SetName( ssprintf("CategoryRecordP%d",p+1) );
-				break;
-			case course:
-				m_sprMachineRecord[p].Load( THEME->GetPathToG("ScreenEvaluation course record") );
-				m_sprMachineRecord[p].SetName( ssprintf("CourseRecordP%d",p+1) );
-				break;
-			default:
-				ASSERT(0);
-			}
-
+			m_sprMachineRecord[p].Load( THEME->GetPathToG("ScreenEvaluation machine record") );
+			m_sprMachineRecord[p].SetName( ssprintf("MachineRecordP%d",p+1) );
 			m_sprMachineRecord[p].SetState( iMachineHighScoreIndex[p] );
 			m_sprMachineRecord[p].StopAnimating();
 			SET_XY_AND_ON_COMMAND( m_sprMachineRecord[p] );
@@ -745,9 +729,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		if( iPersonalHighScoreIndex[p] != -1 )
 		{
 			m_sprPersonalRecord[p].Load( THEME->GetPathToG("ScreenEvaluation personal record") );
+			m_sprPersonalRecord[p].SetName( ssprintf("PersonalRecordP%d",p+1) );
 			m_sprPersonalRecord[p].SetState( iPersonalHighScoreIndex[p] );
 			m_sprPersonalRecord[p].StopAnimating();
-			m_sprPersonalRecord[p].SetName( ssprintf("PersonalRecordP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_sprPersonalRecord[p] );
 			this->AddChild( &m_sprPersonalRecord[p] );
 		}
@@ -888,7 +872,7 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 				hs.iScore = stageStats.iScore[p];
 				hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
 				if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
-					PROFILEMAN->AddHighScore( nt, rc[p], (PlayerNumber)p, hs, iMachineHighScoreIndex[p] );
+					PROFILEMAN->AddHighScore( nt, rc[p], (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
 			}
 			break;
 

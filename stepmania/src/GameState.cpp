@@ -1095,22 +1095,47 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			ASSERT( pCourse );
-			vector<Course::MemCardData::HighScore> &vHighScores = pCourse->m_MemCardDatas[nt][MEMORY_CARD_MACHINE].vHighScores;
-			for( unsigned i=0; i<vHighScores.size(); i++ )
-			{
-				if( vHighScores[i].sName != RANKING_TO_FILL_IN_MARKER[pn] )
-						continue;
 
-				RankingFeats feat;
-				feat.Type = RankingFeats::COURSE;
-				feat.Feat = ssprintf("No. %d in %s", i+1, pCourse->m_sName.c_str() );
-				feat.pStringToFill = &vHighScores[i].sName;
-				feat.grade = GRADE_NO_DATA;
-				feat.iScore = vHighScores[i].iScore;
-				feat.fPercentDP = vHighScores[i].fPercentDP;
-				if( pCourse->HasBanner() )
-					feat.Banner = pCourse->m_sBannerPath;
-				asFeatsOut.push_back( feat );
+			// Find Machine Records
+			{
+				vector<Course::MemCardData::HighScore> &vHighScores = pCourse->m_MemCardDatas[nt][MEMORY_CARD_MACHINE].vHighScores;
+				for( unsigned i=0; i<vHighScores.size(); i++ )
+				{
+					if( vHighScores[i].sName != RANKING_TO_FILL_IN_MARKER[pn] )
+							continue;
+
+					RankingFeats feat;
+					feat.Type = RankingFeats::COURSE;
+					feat.Feat = ssprintf("MR #%d in %s", i+1, pCourse->m_sName.c_str() );
+					feat.pStringToFill = &vHighScores[i].sName;
+					feat.grade = GRADE_NO_DATA;
+					feat.iScore = vHighScores[i].iScore;
+					feat.fPercentDP = vHighScores[i].fPercentDP;
+					if( pCourse->HasBanner() )
+						feat.Banner = pCourse->m_sBannerPath;
+					asFeatsOut.push_back( feat );
+				}
+			}
+
+			// Find Personal Records
+			vector<Course::MemCardData::HighScore> &vHighScores = pCourse->m_MemCardDatas[nt][pn].vHighScores;
+			{
+				for( unsigned i=0; i<vHighScores.size(); i++ )
+				{
+					if( vHighScores[i].sName != RANKING_TO_FILL_IN_MARKER[pn] )
+							continue;
+
+					RankingFeats feat;
+					feat.Type = RankingFeats::COURSE;
+					feat.Feat = ssprintf("PR #%d in %s", i+1, pCourse->m_sName.c_str() );
+					feat.pStringToFill = &vHighScores[i].sName;
+					feat.grade = GRADE_NO_DATA;
+					feat.iScore = vHighScores[i].iScore;
+					feat.fPercentDP = vHighScores[i].fPercentDP;
+					if( pCourse->HasBanner() )
+						feat.Banner = pCourse->m_sBannerPath;
+					asFeatsOut.push_back( feat );
+				}
 			}
 		}
 		break;

@@ -84,14 +84,14 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				hs.grade = GRADE_A;
 				hs.iScore = 42;
 				int a, b;
-				GAMESTATE->m_pCurNotes[i]->AddHighScore( (PlayerNumber)i, hs, a,b );
+				GAMESTATE->m_pCurNotes[i]->AddHighScore( (PlayerNumber)i, hs, a, b );
 
 				if( i == 0 )
 				{
 					ProfileManager::CategoryData::HighScore hs;
 					hs.iScore = 1234567;
 					StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-					PROFILEMAN->AddHighScore( nt, RANKING_A, (PlayerNumber)i, hs, a );
+					PROFILEMAN->AddHighScore( nt, RANKING_A, (PlayerNumber)i, hs, a, b );
 				}
 			}
 

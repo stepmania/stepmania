@@ -114,10 +114,10 @@ public:
 
 	} m_CategoryDatas[NUM_MEMORY_CARDS][NUM_STEPS_TYPES][NUM_RANKING_CATEGORIES];
 
-	void AddHighScore( StepsType nt, RankingCategory rc, PlayerNumber pn, CategoryData::HighScore hs, int &iMachineIndexOut )
+	void AddHighScore( StepsType nt, RankingCategory rc, PlayerNumber pn, CategoryData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 	{
 		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
-		m_CategoryDatas[pn][nt][rc].AddHighScore( hs, iMachineIndexOut );
+		m_CategoryDatas[pn][nt][rc].AddHighScore( hs, iPersonalIndexOut );
 		m_CategoryDatas[MEMORY_CARD_MACHINE][nt][rc].AddHighScore( hs, iMachineIndexOut );
 	}
 
