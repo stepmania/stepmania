@@ -195,16 +195,25 @@ h:a[i]:a[i+1] / m0:m1 */
 
 /*
  * Compute (base ^ exp) % mod.
- * The base MUST be smaller than the modulus.
- * The most significant word of mod MUST be non-zero.
- * We assume that the result array is the same size as the mod array.
  */
-Bignum modpow(Bignum base, Bignum exp, Bignum mod)
+Bignum modpow(Bignum base_in, Bignum exp, Bignum mod)
 {
 	BignumInt *a, *b, *n, *m;
 	int mshift;
 	int i,j,mlen;
-	Bignum result;
+	Bignum base, result;
+
+	/*
+	 * The most significant word of mod needs to be non-zero. It
+	 * should already be, but let's make sure.
+	 */
+	ASSERT(mod[mod[0]] != 0);
+
+	/*
+	 * Make sure the base is smaller than the modulus, by reducing
+	 * it modulo the modulus if not.
+	 */
+	base = bigmod(base_in, mod);
 
 	/* Allocate m of size mlen, copy mod to m */
 	/* We use big endian internally */
@@ -299,6 +308,8 @@ Bignum modpow(Bignum base, Bignum exp, Bignum mod)
 	for (i = 0; i < mlen; i++)
 		n[i] = 0;
 	delete [] n;
+
+	freebn(base);
 
 	return result;
 }
