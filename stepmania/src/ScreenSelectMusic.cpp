@@ -653,6 +653,12 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 
 	if( !GameI.IsValid() )		return;		// don't care
 
+
+	/* XXX: What's the difference between this and StyleI.player? */
+	PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
+	if( !GAMESTATE->IsHumanPlayer(pn) )
+		return;
+
 	if( m_bMadeChoice  &&
 		MenuI.IsValid()  &&
 		MenuI.button == MENU_BUTTON_START  &&
@@ -738,8 +744,6 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		}
 	}
 
-
-	PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
 
 
 	// TRICKY:  Do default processing of MenuLeft and MenuRight before detecting 

@@ -233,6 +233,11 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 
 	if( !GameI.IsValid() )		return;		// don't care
 
+	/* XXX: What's the difference between this and StyleI.player? */
+	PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
+	if( !GAMESTATE->IsHumanPlayer(pn) )
+		return;
+
 	if( m_bMadeChoice  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START  &&  !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
 	{
 		if(m_bGoToOptions) return; /* got it already */
@@ -259,7 +264,6 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 		return;
 	}
 
-	PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
 	if( CodeDetector::EnteredEasierDifficulty(GameI.controller) )
 	{
 		if( GAMESTATE->ChangeCourseDifficulty( pn, +1 ) )
