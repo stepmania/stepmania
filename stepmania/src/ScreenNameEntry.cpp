@@ -131,14 +131,13 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 
 	int p;
 
-	CStringArray asFeats[NUM_PLAYERS];
-	vector<CString*> vpStringsToFill[NUM_PLAYERS];
+	vector<GameState::RankingFeats> aFeats[NUM_PLAYERS];
 
 	// Find out if players deserve to enter their name
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		GAMESTATE->GetRankingFeats( (PlayerNumber)p, asFeats[p], vpStringsToFill[p] );
-		m_bStillEnteringName[p] = asFeats[p].size()>0;
+		GAMESTATE->GetRankingFeats( (PlayerNumber)p, aFeats[p] );
+		m_bStillEnteringName[p] = aFeats[p].size()>0;
 	}
 
 	if( !AnyStillEntering() )
@@ -209,7 +208,15 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 		m_textCategory[p].LoadFromFont( THEME->GetPathToF("ScreenNameEntry category") );
 		m_textCategory[p].SetX( (float)GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
 		m_textCategory[p].SetY( CATEGORY_Y );
-		m_textCategory[p].SetText( join("\n", asFeats[p]) );
+		CString joined;
+		for( unsigned j = 0; j < aFeats[p].size(); ++j )
+		{
+			if( j )
+				joined += "\n";
+			joined += aFeats[p][j].Feat;
+		}
+
+		m_textCategory[p].SetText( joined );
 		this->AddChild( &m_textCategory[p] );
 	}
 

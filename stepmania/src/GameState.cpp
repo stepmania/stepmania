@@ -752,8 +752,11 @@ Character* GameState::GetDefaultCharacter()
 	return NULL;
 }
 
-void GameState::GetRankingFeats( PlayerNumber pn, CStringArray &asFeatsOut, vector<CString*> &vpStringsToFillOut )
+void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsOut )
 {
+	if( !IsHumanPlayer(pn) )
+		return;
+
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
@@ -771,9 +774,15 @@ void GameState::GetRankingFeats( PlayerNumber pn, CStringArray &asFeatsOut, vect
 					if( vHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
 						continue;
 
-					CString s = ssprintf("No. %d in %s", j+1, pSong->GetFullTranslitTitle().c_str() );
-					asFeatsOut.push_back( s );
-					vpStringsToFillOut.push_back( &vHighScores[j].sName );
+					RankingFeats feat;
+					feat.Type = RankingFeats::SONG;
+					feat.Feat = ssprintf("No. %d in %s", j+1, pSong->GetFullTranslitTitle().c_str() );
+					feat.pStringToFill = &vHighScores[j].sName;
+					feat.g = vHighScores[j].grade;
+					feat.Score = vHighScores[j].fScore;
+					feat.Banner = pSong->GetBannerPath();
+
+					asFeatsOut.push_back( feat );
 				}
 			}
 
@@ -790,8 +799,13 @@ void GameState::GetRankingFeats( PlayerNumber pn, CStringArray &asFeatsOut, vect
 					if( vHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
 						continue;
 
-					CString s = ssprintf("No. %d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
-					vpStringsToFillOut.push_back( &vHighScores[j].sName );
+					RankingFeats feat;
+					feat.Type = RankingFeats::RANKING;
+					feat.Feat = ssprintf("No. %d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
+					feat.pStringToFill = &vHighScores[j].sName;
+					feat.g = GRADE_NO_DATA;
+					feat.Score = (float) vHighScores[j].iScore;
+					asFeatsOut.push_back( feat );
 				}
 			}
 		}
@@ -811,9 +825,13 @@ void GameState::GetRankingFeats( PlayerNumber pn, CStringArray &asFeatsOut, vect
 				if( vHighScores[i].sName != RANKING_TO_FILL_IN_MARKER[pn] )
 						continue;
 
-				CString s = ssprintf("No. %d in %s", i+1, pCourse->m_sName.c_str() );
-				asFeatsOut.push_back( s );
-				vpStringsToFillOut.push_back( &vHighScores[i].sName );
+				RankingFeats feat;
+				feat.Type = RankingFeats::COURSE;
+				feat.Feat = ssprintf("No. %d in %s", i+1, pCourse->m_sName.c_str() );
+				feat.pStringToFill = &vHighScores[i].sName;
+				feat.g = GRADE_NO_DATA;
+				feat.Score = (float) vHighScores[i].iScore;
+				asFeatsOut.push_back( feat );
 			}
 		}
 		break;
@@ -824,11 +842,11 @@ void GameState::GetRankingFeats( PlayerNumber pn, CStringArray &asFeatsOut, vect
 
 void GameState::StoreRankingName( PlayerNumber pn, CString name )
 {
-	vector<CString*> vpStringsToFill;
-	CStringArray asFeats;
-	GetRankingFeats( pn, asFeats, vpStringsToFill );
-	for( unsigned i=0; i<vpStringsToFill.size(); i++ )
+	vector<RankingFeats> aFeats;
+	GetRankingFeats( pn, aFeats );
+
+	for( unsigned i=0; i<aFeats.size(); i++ )
 	{
-		(*vpStringsToFill[i]) = name;
+		*aFeats[i].pStringToFill = name;
 	}
 }

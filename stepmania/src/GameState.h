@@ -244,7 +244,18 @@ public:
 	//
 	// Ranking Stuff
 	//
-	void GetRankingFeats( PlayerNumber pn, CStringArray &asFeatsOut, vector<CString*> &vpStringsToFillOut );
+	struct RankingFeats 
+	{
+		enum { SONG, COURSE, RANKING } Type;
+
+		float Score;
+		Grade g;
+		CString Banner;
+		CString Feat;
+		CString *pStringToFill;
+	};
+
+	void GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsOut );
 
 	/* Called by name entry screens: */
 	void StoreRankingName( PlayerNumber pn, CString name );

@@ -31,10 +31,9 @@
 //
 // Defines specific to ScreenNameEntryTraditional
 //
-#define ALPHABET_GAP_X				THEME->GetMetricF("ScreenNameEntryTraditional","AlphabetGapX")
-#define NUM_ALPHABET_DISPLAYED		THEME->GetMetricI("ScreenNameEntryTraditional","NumAlphabetDisplayed")
-
-#define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI("ScreenNameEntryTraditional","MaxRankingNameLength")
+#define ALPHABET_GAP_X				THEME->GetMetricF(m_sName,"AlphabetGapX")
+#define NUM_ALPHABET_DISPLAYED		THEME->GetMetricI(m_sName,"NumAlphabetDisplayed")
+#define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
 
 
 static const wchar_t NAME_CHARS[] =
@@ -54,21 +53,44 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 
 		// DEBUGGING STUFF
+	if(0)
+	{
 	GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 	GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
+	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
+	StageStats st;
+	st.pSong = SONGMAN->GetRandomSong();
+	ASSERT( st.pSong );
+	ASSERT( st.pSong->m_apNotes.size() );
+	for( int i = 0; i < 2; ++i )
+	{
+		GAMESTATE->m_pCurNotes[i] = st.pSteps[i] = st.pSong->m_apNotes[0];
+		st.iPossibleDancePoints[i] = 1000;
+		st.iActualDancePoints[i] = 985;
+
+		Steps::MemCardData::HighScore hs;
+		hs.grade = GRADE_A;
+		hs.fScore = 42;
+		int a, b;
+		GAMESTATE->m_pCurNotes[i]->AddHighScore( (PlayerNumber)i, hs, a,b );
+	}
+
+	GAMESTATE->m_vPlayedStageStats.push_back( st );
+
+
+	}
 
 	int p;
 
-	CStringArray asFeats[NUM_PLAYERS];
-	vector<CString*> vpStringsToFill[NUM_PLAYERS];
+	vector<GameState::RankingFeats> aFeats[NUM_PLAYERS];
 
 	// Find out if players deserve to enter their name
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		GAMESTATE->GetRankingFeats( (PlayerNumber)p, asFeats[p], vpStringsToFill[p] );
-		m_bStillEnteringName[p] = asFeats[p].size()>0;
+		GAMESTATE->GetRankingFeats( (PlayerNumber)p, aFeats[p] );
+		m_bStillEnteringName[p] = aFeats[p].size()>0;
 	}
 
 	if( !AnyStillEntering() )
@@ -145,11 +167,10 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		SET_XY_AND_ON_COMMAND( m_Grade[p] );
 		this->AddChild( &m_Grade[p] );
 
-		/* XXX: merge this with ScreenNameEntry */
 		m_textCategory[p].LoadFromFont( THEME->GetPathToF("ScreenNameEntryTraditional category") );
 		m_textCategory[p].SetName( ssprintf("Category", p+1) );
 		SET_XY_AND_ON_COMMAND( m_textCategory[p] );
-		m_textCategory[p].SetText( join("\n", asFeats[p]) );
+//		m_textCategory[p].SetText( join("\n", asFeats[p]) );
 		this->AddChild( &m_textCategory[p] );
 	}
 
@@ -183,7 +204,7 @@ void ScreenNameEntryTraditional::PositionCharsAndCursor( int pn )
 		const bool hidden = ( Pos < First || Pos > Last );
 		const int ActualPos = clamp( Pos, First-1, Last+1 );
 
-		bt->Command("stoptweening;accelerate,.12");
+		bt->Command("stoptweening;decelerate,.12");
 		bt->SetX( ActualPos * ALPHABET_GAP_X );
 		bt->SetDiffuseAlpha( hidden? 0.0f:1.0f );
 	}
@@ -265,6 +286,8 @@ void ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 		return;
 	m_bStillEnteringName[pn] = false;
 
+	UpdateSelectionText( pn ); /* hide NAME_ cursor */
+
 	CString selection = WStringToCString( m_sSelection[pn] );
 	TrimRight( selection, " " );
 	TrimLeft( selection, " " );
@@ -281,7 +304,7 @@ void ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 void ScreenNameEntryTraditional::UpdateSelectionText( int pn )
 {
 	wstring text = m_sSelection[pn];
-	if( (int) text.size() < MAX_RANKING_NAME_LENGTH )
+	if( m_bStillEnteringName[pn] && (int) text.size() < MAX_RANKING_NAME_LENGTH )
 		text += L"_";
 
 	m_textSelection[pn].SetText( WStringToCString(text) );
@@ -289,8 +312,8 @@ void ScreenNameEntryTraditional::UpdateSelectionText( int pn )
 
 void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventType type )
 {
-	if( m_Menu.IsTransitioning() )
-		return;	
+	if( !m_bStillEnteringName[pn] || m_Menu.IsTransitioning()  )
+		return;
 	if( type == IET_RELEASE )
 		return;		// ignore
 
@@ -328,8 +351,8 @@ void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventTyp
 
 void ScreenNameEntryTraditional::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
-	if( m_Menu.IsTransitioning() )
-		return;	
+	if( !m_bStillEnteringName[pn] || m_Menu.IsTransitioning()  )
+		return;
 	if( type == IET_RELEASE )
 		return;		// ignore
 
@@ -340,8 +363,8 @@ void ScreenNameEntryTraditional::MenuLeft( PlayerNumber pn, const InputEventType
 
 void ScreenNameEntryTraditional::MenuRight( PlayerNumber pn, const InputEventType type )
 {
-	if( m_Menu.IsTransitioning() )
-		return;	
+	if( !m_bStillEnteringName[pn] || m_Menu.IsTransitioning()  )
+		return;
 	if( type == IET_RELEASE )
 		return;		// ignore
 
