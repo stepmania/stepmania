@@ -235,3 +235,8 @@ float ArrowGetBrightness( PlayerNumber pn, float fNoteBeat )
 	return fBrightness;
 }
 
+
+float ArrowGetZPos( PlayerNumber pn, int iCol, float fYPos )
+{
+	return 0;
+}

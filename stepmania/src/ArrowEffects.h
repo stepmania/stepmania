@@ -44,6 +44,8 @@ float ArrowGetYPos(	PlayerNumber pn, float fYOffset );
 //	fYPos (in the case of EFFECT_DRUNK).
 float ArrowGetXPos( PlayerNumber pn, int iCol, float fYPos );
 
+float ArrowGetZPos( PlayerNumber pn, int iCol, float fYPos );
+
 
 //	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 //	AppearanceType.

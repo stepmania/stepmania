@@ -446,6 +446,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			const float fYTop					= fY;
 			const float fStepHeight				= min( fYStep, fFrameHeight );
 			const float fYBottom				= min( fY+fStepHeight, fYCapBottom );
+			const float fZTop					= ArrowGetZPos(	m_PlayerNumber, iCol, fYTop );
+			const float fZBottom				= ArrowGetZPos(	m_PlayerNumber, iCol, fYBottom );
 			const float fXTop					= ArrowGetXPos( m_PlayerNumber, iCol, fYTop );
 			const float fXBottom				= ArrowGetXPos( m_PlayerNumber, iCol, fYBottom );
 			const float fXTopLeft				= fXTop - fFrameWidth/2;
@@ -472,10 +474,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			if( !bDrawGlowOnly && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
 				continue;
 
-			v[0].p = RageVector3(fXTopLeft,    fYTop,   0);	v[0].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
-			v[1].p = RageVector3(fXTopRight,   fYTop,   0);	v[1].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;    	v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
-			v[2].p = RageVector3(fXBottomRight,fYBottom,0);	v[2].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
-			v[3].p = RageVector3(fXBottomLeft, fYBottom,0);	v[3].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
+			v[0].p = RageVector3(fXTopLeft,    fYTop,   fZTop);		v[0].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
+			v[1].p = RageVector3(fXTopRight,   fYTop,   fZTop);		v[1].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;    	v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+			v[2].p = RageVector3(fXBottomRight,fYBottom,fZBottom);	v[2].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
+			v[3].p = RageVector3(fXBottomLeft, fYBottom,fZBottom);	v[3].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
 			v+=4;
 			if( v-queue >= size )
 				break;
@@ -514,6 +516,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		{
 			const float fYTop					= fY;
 			const float fYBottom				= min( fY+fYStep, fYBodyBottom );
+			const float fZTop					= ArrowGetZPos(	m_PlayerNumber, iCol, fYTop );
+			const float fZBottom				= ArrowGetZPos(	m_PlayerNumber, iCol, fYBottom );
 			const float fXTop					= ArrowGetXPos( m_PlayerNumber, iCol, fYTop );
 			const float fXBottom				= ArrowGetXPos( m_PlayerNumber, iCol, fYBottom );
 			const float fXTopLeft				= fXTop - fFrameWidth/2;
@@ -554,10 +558,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			if( !bDrawGlowOnly && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
 				continue;
 
-			v[0].p = RageVector3(fXTopLeft,    fYTop,   0);	v[0].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
-			v[1].p = RageVector3(fXTopRight,   fYTop,   0);	v[1].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
-			v[2].p = RageVector3(fXBottomRight,fYBottom,0);	v[2].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom;	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
-			v[3].p = RageVector3(fXBottomLeft, fYBottom,0);	v[3].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom;	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
+			v[0].p = RageVector3(fXTopLeft,    fYTop,   fZTop);		v[0].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
+			v[1].p = RageVector3(fXTopRight,   fYTop,   fZTop);		v[1].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+			v[2].p = RageVector3(fXBottomRight,fYBottom,fZBottom);	v[2].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom;	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
+			v[3].p = RageVector3(fXBottomLeft, fYBottom,fZBottom);	v[3].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom;	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
 			v+=4;
 			if( v-queue >= size )
 				break;
@@ -595,6 +599,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			const float fYTop					= fY;
 			const float fStepHeight				= min( fYStep, fFrameHeight );
 			const float fYBottom				= min( fY+fStepHeight, fYCapBottom );
+			const float fZTop					= ArrowGetZPos(	m_PlayerNumber, iCol, fYTop );
+			const float fZBottom				= ArrowGetZPos(	m_PlayerNumber, iCol, fYBottom );
 			const float fXTop					= ArrowGetXPos( m_PlayerNumber, iCol, fYTop );
 			const float fXBottom				= ArrowGetXPos( m_PlayerNumber, iCol, fYBottom );
 			const float fXTopLeft				= fXTop - fFrameWidth/2;
@@ -622,10 +628,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			if( !bDrawGlowOnly && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
 				continue;
 
-			v[0].p = RageVector3(fXTopLeft,    fYTop,   0);	v[0].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
-			v[1].p = RageVector3(fXTopRight,   fYTop,   0);	v[1].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;    	v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
-			v[2].p = RageVector3(fXBottomRight,fYBottom,0);	v[2].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
-			v[3].p = RageVector3(fXBottomLeft, fYBottom,0);	v[3].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
+			v[0].p = RageVector3(fXTopLeft,    fYTop,   fZTop);		v[0].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
+			v[1].p = RageVector3(fXTopRight,   fYTop,   fZTop);		v[1].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;    	v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+			v[2].p = RageVector3(fXBottomRight,fYBottom,fZBottom);	v[2].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
+			v[3].p = RageVector3(fXBottomLeft, fYBottom,fZBottom);	v[3].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
 			v+=4;
 			if( v-queue >= size )
 				break;
@@ -641,12 +647,15 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 		const float fY				= fYTail;
 		const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );
+		const float fZ				= ArrowGetZPos(	m_PlayerNumber, iCol, fY );
 		const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, fY, fPercentFadeToFail );
 		const float	fGlow			= ArrowGetGlow( m_PlayerNumber, fY, fPercentFadeToFail );
 		const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 		const RageColor colorGlow	= RageColor(1,1,1,fGlow);
 
 		pSprTail->SetXY( fX, fY );
+		pSprTail->SetZ( fZ );
+		
 		if( bDrawGlowOnly )
 		{
 			pSprTail->SetDiffuse( RageColor(1,1,1,0) );
@@ -669,12 +678,15 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		// draw with normal Sprite
 		const float fY				= fYHead;
 		const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );
+		const float fZ				= ArrowGetZPos(	m_PlayerNumber, iCol, fY );
 		const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, fY, fPercentFadeToFail );
 		const float	fGlow			= ArrowGetGlow( m_PlayerNumber, fY, fPercentFadeToFail );
 		const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 		const RageColor colorGlow	= RageColor(1,1,1,fGlow);
 
 		pActor->SetXY( fX, fY );
+		pActor->SetZ( fZ );
+
 		if( bDrawGlowOnly )
 		{
 			pActor->SetDiffuse( RageColor(1,1,1,0) );
@@ -699,6 +711,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	const float fYPos			= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 	const float fRotation		= ArrowGetRotation(	m_PlayerNumber, fBeat );
 	const float fXPos			= ArrowGetXPos(		m_PlayerNumber, iCol, fYPos );
+	const float fZPos			= ArrowGetZPos(	   m_PlayerNumber, iCol, fYPos );
 	const float fAlpha			= ArrowGetAlpha(	m_PlayerNumber, fYPos, fPercentFadeToFail );
 	const float fGlow			= ArrowGetGlow(		m_PlayerNumber, fYPos, fPercentFadeToFail );
 	const float fColorScale		= ArrowGetBrightness( m_PlayerNumber, fBeat ) * SCALE(fLife,0,1,0.2f,1);
@@ -719,6 +732,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	}
 
 	pActor->SetXY( fXPos, fYPos );
+	pActor->SetZ( fZPos );
 	pActor->SetDiffuse( diffuse );
 	pActor->SetGlow( glow );
 
