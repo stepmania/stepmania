@@ -39,7 +39,7 @@ Actor::Actor()
 	m_fWagTimer =  0.0f;
 	m_vSpinVelocity =  RageVector3(0,0,0);
 	m_fVibrationDistance =  5.0f;
-	m_bVisibleThisFrame =  FALSE;
+	m_bVisibleThisFrame = false;
 
 	m_bShadow = false;
 	m_fShadowLength = 4;
@@ -216,14 +216,14 @@ void Actor::Update( float fDeltaTime )
 			if( m_fPercentBetweenColors > 1.0f ) {
 				m_fPercentBetweenColors = 1.0f;
 
-				m_bTweeningTowardEndColor = FALSE;
+				m_bTweeningTowardEndColor = false;
 			}
 		}
 		else {		// !m_bTweeningTowardEndColor
 			m_fPercentBetweenColors -= m_fDeltaPercentPerSecond * fDeltaTime;
 			if( m_fPercentBetweenColors < 0.0f ) {
 				m_fPercentBetweenColors = 0.0f;
-				m_bTweeningTowardEndColor = TRUE;
+				m_bTweeningTowardEndColor = true;
 			}
 		}
 		//LOG->Trace( "Actor::m_fPercentBetweenColors %f", m_fPercentBetweenColors );
