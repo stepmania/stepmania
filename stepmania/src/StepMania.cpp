@@ -393,7 +393,7 @@ struct VideoCardDefaults
 		640,480,
 		16,16,16,
 		2048,
-		0	// accelerated?
+		1	// accelerated
 	},
 	{
 		"GeForce|Radeon",

@@ -318,20 +318,16 @@ bool CreateDirectories( CString Path )
 		if( mkdir(curpath, 0755) == 0 )
 			continue;
 
-		if(errno != EEXIST)
-		{
-			if( LOG )
-				LOG->Warn("Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
+		if(errno == EEXIST)
+			continue;		// we expect to see this error
 
-			/* When creating a directory that already exists over Samba, Windows is
-			 * returning ENOENT instead of EEXIST.  Continue if we get that error, but
-			 * log it just in case it was a real ENOENT.  (Otherwise, we'll fail to
-			 * create a directory when we could have succeeded.) */
-			if( errno != ENOENT )
-				return false;
-			else
-				continue;
-		}
+		// Log the error, but continue on.
+		/* When creating a directory that already exists over Samba, Windows is
+		 * returning ENOENT instead of EEXIST. */
+		/* On Win32 when Path is only a drive letter (e.g. "i:\"), the result is 
+		 * EINVAL. */
+		if( LOG )
+			LOG->Warn("Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
 
 		/* Make sure it's a directory. */
 		FlushDirCache();
@@ -339,7 +335,12 @@ bool CreateDirectories( CString Path )
 		{
 			if( LOG )
 				LOG->Warn("Couldn't create %s: path exists and is not a directory", curpath.c_str() );
-			return false;
+			
+			// HACK: IsADirectory doesn't work if Path contains a drive letter.
+			// So, ignore IsADirectory's result and continue trying to create
+			// directories anyway.  This shouldn't change behavior, but 
+			// is inefficient because we don't bail early on an error.
+			//return false;
 		}
 	}
 	

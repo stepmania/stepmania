@@ -26,6 +26,7 @@ ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our
 
 #define STEPS_MEM_CARD_DATA_FILE	"StepsMemCardData.dat"
 #define COURSE_MEM_CARD_DATA_FILE	"CourseMemCardData.dat"
+#define NEW_MEM_CARD_NAME			"NewCard"
 #define NEW_PROFILE_NAME			"NewProfile"
 
 ProfileManager::ProfileManager()
@@ -114,13 +115,21 @@ bool ProfileManager::LoadDefaultProfileFromMachine( PlayerNumber pn )
 	return LoadProfile( pn, sDir, false );
 }
 
-bool ProfileManager::IsMemoryCardInserted( PlayerNumber pn )
+CString GetMemCardDir( PlayerNumber pn )
 {
 	CString sDir = PREFSMAN->m_sMemoryCardDir[pn];
 	if( sDir.empty() )
-		return false;
+		return sDir;
 	if( sDir.Right(1) != SLASH )
 		sDir += SLASH;
+	return sDir;
+}
+
+bool ProfileManager::IsMemoryCardInserted( PlayerNumber pn )
+{
+	CString sDir = GetMemCardDir( pn );
+	if( sDir.empty() )
+		return false;
 
 	//
 	// Test whether a memory card is available by trying to write a file.
@@ -141,35 +150,33 @@ bool ProfileManager::IsMemoryCardInserted( PlayerNumber pn )
 
 bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 {
-	CString sDir = PREFSMAN->m_sMemoryCardDir[pn];
+	CString sDir = GetMemCardDir( pn );
 	if( sDir.empty() )
 		return false;
-	if( sDir.Right(1) != SLASH )
-		sDir += SLASH;
 	
 	m_bUsingMemoryCard[pn] = true;
 	bool bResult;
 	bResult = LoadProfile( pn, sDir, false );
-	if( bResult )
-	{
-		return true;
-	}
-	else
-	{
-		// silently create memory card data here
-		bResult = CreateProfile( sDir, NEW_PROFILE_NAME );
-		return bResult;
-	}
+	return bResult;
 }
 
 bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
 {
-	if( IsMemoryCardInserted(pn) && LoadProfileFromMemoryCard(pn) )
+	if( LoadProfileFromMemoryCard(pn) )
 		return true;
-	else if( LoadDefaultProfileFromMachine(pn) )
+	
+	CString sDir = GetMemCardDir( pn );
+	if( !sDir.empty() )
+	{
+		CreateProfile( sDir, NEW_MEM_CARD_NAME );
+		if( LoadProfileFromMemoryCard(pn) )
+			return true;
+	}
+
+	if( LoadDefaultProfileFromMachine(pn) )
 		return true;
-	else
-		return false;
+	
+	return false;
 }
 
 bool ProfileManager::SaveProfile( PlayerNumber pn )
@@ -240,7 +247,7 @@ bool Profile::SaveToIni( CString sIniPath )
 bool ProfileManager::CreateMachineProfile( CString sName )
 {
 	if( sName.empty() )
-		sName = NEW_PROFILE_NAME;
+		sName = "Machine";
 
 	//
 	// Find a free directory name in the profiles directory

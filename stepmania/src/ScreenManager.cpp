@@ -39,12 +39,14 @@ ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our p
 #define CREDITS_COLOR					THEME->GetMetricC("ScreenSystemLayer","CreditsColor")
 #define CREDITS_SHADOW_LENGTH			THEME->GetMetricF("ScreenSystemLayer","CreditsShadowLength")
 #define CREDITS_ZOOM					THEME->GetMetricF("ScreenSystemLayer","CreditsZoom")
-#define CREDITS_TEXT_PRESS_START		THEME->GetMetric ("ScreenSystemLayer","CreditsTextPressStart")
-#define CREDITS_TEXT_JOINED				THEME->GetMetric ("ScreenSystemLayer","CreditsTextJoined")
-#define CREDITS_TEXT_TOO_LATE			THEME->GetMetric ("ScreenSystemLayer","CreditsTextTooLate")
-#define CREDITS_TEXT_INSERT_MORE		THEME->GetMetric ("ScreenSystemLayer","CreditsTextInsertMore")
+#define PLAYER_INFO_PRESS_START			THEME->GetMetric ("ScreenSystemLayer","PlayerInfoPressStart")
+#define PLAYER_INFO_INSERT_CARD			THEME->GetMetric ("ScreenSystemLayer","PlayerInfoInsertCard")
+#define PLAYER_INFO_NO_CARD				THEME->GetMetric ("ScreenSystemLayer","PlayerInfoNoCard")
+#define PLAYER_INFO_NOT_PRESENT			THEME->GetMetric ("ScreenSystemLayer","PlayerInfoNotPresent")
+#define PLAYER_INFO_INSERT_MORE			THEME->GetMetric ("ScreenSystemLayer","PlayerInfoInsertMore")
+#define CREDITS_TEXT_HOME				THEME->GetMetric ("ScreenSystemLayer","CreditsTextHome")
+#define CREDITS_TEXT_FREE_PLAY			THEME->GetMetric ("ScreenSystemLayer","CreditsTextFreePlay")
 #define CREDITS_TEXT_CREDITS			THEME->GetMetric ("ScreenSystemLayer","CreditsTextCredits")
-#define CREDITS_TEXT_FREE				THEME->GetMetric ("ScreenSystemLayer","CreditsTextFree")
 
 const int NUM_SKIPS = 5;
 
@@ -173,7 +175,7 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 		}
 		break;
 	case COIN_FREE:
-		sCredits = CREDITS_TEXT_FREE;
+		sCredits = CREDITS_TEXT_FREE_PLAY;
 		break;
 	default:
 		ASSERT(0);
@@ -194,23 +196,27 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 		CString sPlayerInfo;
 		if( GAMESTATE->m_bSideIsJoined[p] )
 		{
-			sPlayerInfo = CREDITS_TEXT_JOINED;
+			Profile* pProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
+			if( pProfile )
+				sPlayerInfo = pProfile->m_sName;
+			else if( GAMESTATE->m_bPlayersCanJoin )
+				sPlayerInfo = PLAYER_INFO_INSERT_CARD;
+			else if( GAMESTATE->m_bIsOnSystemMenu )
+				sPlayerInfo = "";
+			else
+				sPlayerInfo = PLAYER_INFO_NO_CARD;
 		}
 		else if( GAMESTATE->m_bPlayersCanJoin )
 		{
 			if( PREFSMAN->m_iCoinMode==COIN_PAY && GAMESTATE->m_iCoins<PREFSMAN->m_iCoinsPerCredit )
-				sPlayerInfo = CREDITS_TEXT_INSERT_MORE;
+				sPlayerInfo = PLAYER_INFO_INSERT_MORE;
 			else
-				sPlayerInfo = CREDITS_TEXT_PRESS_START;
+				sPlayerInfo = PLAYER_INFO_PRESS_START;
 		}
 		else
 		{
-			sPlayerInfo = CREDITS_TEXT_TOO_LATE;
+			sPlayerInfo = PLAYER_INFO_NOT_PRESENT;
 		}
-		
-		Profile* pProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
-		if( pProfile )
-			sPlayerInfo += "  " + pProfile->m_sName;
 
 		m_textPlayerInfo[p].SetText( sPlayerInfo );
 	}

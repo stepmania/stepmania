@@ -270,6 +270,9 @@ void ModeChoice::ApplyToAllPlayers() const
 
 void ModeChoice::Apply( PlayerNumber pn ) const
 {
+	if( !GAMESTATE->IsHumanPlayer(pn) )
+		return;
+
 	const PlayMode OldPlayMode = GAMESTATE->m_PlayMode;
 	if( m_game != GAME_INVALID )
 		GAMESTATE->m_CurGame = m_game;
