@@ -22,7 +22,7 @@ void GetKernel( CString &sys, int &vers )
 			int major = atoi(matches[0]);
 			int minor = atoi(matches[1]);
 			int revision = atoi(matches[2]);
-			vers = (major << 16) + (minor << 8) + (revision);
+			vers = (major * 10000) + (minor * 100) + (revision);
 		}
 	}
 }

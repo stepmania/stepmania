@@ -35,7 +35,7 @@ void ArchHooks_Unix::DumpDebugInfo()
 	CString sys;
 	int vers;
 	GetKernel( sys, vers );
-	LOG->Info( "OS: %s ver %06x", sys.c_str(), vers );
+	LOG->Info( "OS: %s ver %06i", sys.c_str(), vers );
 
 #if defined(CRASH_HANDLER)
 	LOG->Info( "Crash backtrace component: %s", BACKTRACE_METHOD_TEXT );

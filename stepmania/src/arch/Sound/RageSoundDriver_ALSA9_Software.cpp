@@ -170,7 +170,7 @@ try {
 	int vers;
 	GetKernel( sys, vers );
 	LOG->Trace( "OS: %s ver %06x", sys.c_str(), vers );
-	if( sys == "Linux" && vers >= 0x020600 )
+	if( sys == "Linux" && vers >= 20600 )
 		max_writeahead = max_writeahead_linux_26;
 
 	if( PREFSMAN->m_iSoundWriteAhead )
