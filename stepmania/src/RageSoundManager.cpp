@@ -97,7 +97,7 @@ void RageSoundManager::PlayCopy( const RageSound &snd )
 	RageSound *newsnd = new RageSound(snd);
 
 	/* PlayCopy's sounds must always stop on their own. */
-	newsnd->SetLooping(true);
+	newsnd->SetLooping(false);
 	newsnd->SetAutoStop(true);
 
 	/* We're responsible for freeing it. */
