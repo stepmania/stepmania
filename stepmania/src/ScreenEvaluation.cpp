@@ -640,42 +640,24 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 
 	// If unlocking is enabled, save the dance points
 	for( p=0; p<NUM_PLAYERS; p++)
-		if( PREFSMAN->m_bUseUnlockSystem )
-			{
-				switch (m_Grades[p].GetGrade())
-				{
-				case GRADE_AAAA:
-					PREFSMAN->m_fArcadePointsAccumulated += 10;
-					PREFSMAN->m_fSongPointsAccumulated += 20;
-					break;
-				case GRADE_AAA:
-					PREFSMAN->m_fArcadePointsAccumulated += 10;
-					PREFSMAN->m_fSongPointsAccumulated += 10;
-					break;
-				case GRADE_AA:
-					PREFSMAN->m_fArcadePointsAccumulated += 1;
-					PREFSMAN->m_fSongPointsAccumulated += 5;
-					break;
-				case GRADE_A:
-					PREFSMAN->m_fArcadePointsAccumulated += 1;
-					PREFSMAN->m_fSongPointsAccumulated += 4;
-					break;
-				case GRADE_B:
-					PREFSMAN->m_fArcadePointsAccumulated += 1;
-					PREFSMAN->m_fSongPointsAccumulated += 3;
-					break;
-				case GRADE_C:
-					PREFSMAN->m_fArcadePointsAccumulated += 1;
-					PREFSMAN->m_fSongPointsAccumulated += 2;
-					break;
-				case GRADE_D:
-					// no points PREFSMAN->m_fArcadePointsAccumulated += 0;
-					PREFSMAN->m_fSongPointsAccumulated += 1;
-					break;
-				}
-				PREFSMAN->SaveGlobalPrefsToDisk();
-			}
+	{
+		/* XXX: This should be encapsulated in UnlockSystem, eg.
+		 * UnlockSystem::AddStats(const StageStats &stats). */
+		if( !PREFSMAN->m_bUseUnlockSystem )
+			continue;
+		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+			continue;	// skip
 
+		const float ArcadePoints[NUM_GRADES] = { -1 /* unused */, 0, 0, 1, 1, 1, 1, 10, 10 };
+		const float SongPoints[NUM_GRADES] = { -1, 0, 1, 2, 3, 4, 5, 10, 20 };
+		/* XXX: This should use stageStats.GetGrade, not m_Grades. */
+		const Grade g = m_Grades[p].GetGrade();
+		
+		PREFSMAN->m_fArcadePointsAccumulated += ArcadePoints[g];
+		PREFSMAN->m_fSongPointsAccumulated += SongPoints[g];
+
+		PREFSMAN->SaveGlobalPrefsToDisk();
+	}
 
 	bool bOneHasNewRecord = false;
 	for( p=0; p<NUM_PLAYERS; p++ )
