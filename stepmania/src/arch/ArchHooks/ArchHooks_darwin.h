@@ -10,14 +10,21 @@
  */
 
 #include "ArchHooks.h"
+class RageMutex;
 
 class ArchHooks_darwin : public ArchHooks
 {
 public:
     ArchHooks_darwin();
-    ~ArchHooks_darwin() { }
+    ~ArchHooks_darwin();
     void DumpDebugInfo();
+
+	void EnterTimeCriticalSection();
+	void ExitTimeCriticalSection();
+
 protected:
+	RageMutex *TimeCritMutex;
+
     void MessageBoxErrorPrivate(CString sError, CString ID);
 	void MessageBoxOKPrivate(CString sMessage, CString ID);
     MessageBoxResult MessageBoxAbortRetryIgnorePrivate(CString sMessage, CString ID);
