@@ -174,6 +174,14 @@ void NoteFieldPositioning::Load(PlayerNumber pn)
 
 	const Style *s = GAMESTATE->GetCurrentStyle();
 
+	// TODO: expand this to include ANY game type where m_bNeedsZoomOutWith2Players == true,
+	// not just "techno".  (eg: solo rave, etc.)
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE || GAMESTATE->m_PlayMode == PLAY_MODE_RAVE )
+	{
+		if( GAMESTATE->GetCurrentGame() == GAMEMAN->StringToGameType( "techno" ) )
+			s = GAMEMAN->GameAndStringToStyle( GAMEMAN->StringToGameType( "techno" ), "versus8" );
+	}
+
 	/* Load the settings in the style table by default. */
 	for(int tn = 0; tn < MAX_NOTE_TRACKS; ++tn)
 	{

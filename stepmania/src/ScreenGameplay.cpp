@@ -302,6 +302,14 @@ void ScreenGameplay::Init()
 	{
 		float fPlayerX = (float) GAMESTATE->GetCurrentStyle()->m_iCenterX[p];
 
+		// TODO: expand this to include ANY game type where m_bNeedsZoomOutWith2Players == true,
+		// not just "techno".  (eg: solo rave, etc.)
+		if( GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE || GAMESTATE->m_PlayMode == PLAY_MODE_RAVE )
+		{
+			if( GAMESTATE->GetCurrentGame() == GAMEMAN->StringToGameType( "techno" ) )
+				fPlayerX = GAMEMAN->GameAndStringToStyle( GAMEMAN->StringToGameType( "techno" ), "versus8" )->m_iCenterX[p];
+		}
+
 		/* Perhaps this should be handled better by defining a new
 		 * StyleType for ONE_PLAYER_ONE_CREDIT_AND_ONE_COMPUTER,
 		 * but for now just ignore SoloSingles when it's Battle or Rave
