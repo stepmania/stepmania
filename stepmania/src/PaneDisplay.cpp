@@ -48,7 +48,12 @@ static const Content_t g_Contents[NUM_PANE_CONTENTS] =
 	{ "CourseMachineHighName",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
 	{ "CourseProfileHighScore",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE|NEED_PROFILE },
 	{ "CourseProfileNumPlays",	NUM_PANES,					NEED_COURSE|NEED_PROFILE },
-	{ "CourseProfileRank",		NUM_PANES,					NEED_COURSE|NEED_PROFILE }
+	{ "CourseProfileRank",		NUM_PANES,					NEED_COURSE|NEED_PROFILE },
+	{ "CourseNumSteps",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
+	{ "CourseJumps",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
+	{ "CourseHolds",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
+	{ "CourseMines",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
+	{ "CourseHands",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE }
 };
 
 static const PaneModes PaneMode[NUM_PANES] =
@@ -146,25 +151,44 @@ void PaneDisplay::SetContent( PaneContents c )
 	if( (g_Contents[c].req&NEED_PROFILE) && !PROFILEMAN->IsUsingProfile( m_PlayerNumber ) )
 		return;
 
-	const float *fRadarValues = NULL;
-	if( GAMESTATE->m_pCurNotes[m_PlayerNumber] )
-		fRadarValues = GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetRadarValues();
+	float fRadarValues[NUM_RADAR_CATEGORIES];
+	memset( fRadarValues, 0, sizeof(fRadarValues) );
+
+	if( g_Contents[c].req&NEED_NOTES )
+		memcpy( fRadarValues, GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetRadarValues(), sizeof(fRadarValues) );
+	else if( g_Contents[c].req&NEED_COURSE )
+	{
+		vector<Course::Info> ci;
+		GAMESTATE->m_pCurCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
+		for( unsigned i = 0; i < ci.size(); ++i )
+		{
+			for( unsigned r = 0; r < NUM_RADAR_CATEGORIES; ++r )
+			{
+				const Steps *pNotes = ci[i].pNotes;
+				fRadarValues[r] += pNotes->GetRadarValues()[r];
+			}
+		}
+	}
 
 	float val = 0;
 	CString str;
 	switch( c )
 	{
+	case COURSE_NUM_STEPS:
 	case SONG_NUM_STEPS:				val = fRadarValues[RADAR_NUM_TAPS_AND_HOLDS]; break;
+	case COURSE_JUMPS:
 	case SONG_JUMPS:					val = fRadarValues[RADAR_NUM_JUMPS]; break;
+	case COURSE_HOLDS:
 	case SONG_HOLDS:					val = fRadarValues[RADAR_NUM_HOLDS]; break;
+	case COURSE_MINES:
 	case SONG_MINES:					val = fRadarValues[RADAR_NUM_MINES]; break;
+	case COURSE_HANDS:
 	case SONG_HANDS:					val = fRadarValues[RADAR_NUM_HANDS]; break;
 	case SONG_DIFFICULTY_RADAR_STREAM:	val = fRadarValues[RADAR_STREAM]; break;
 	case SONG_DIFFICULTY_RADAR_VOLTAGE:	val = fRadarValues[RADAR_VOLTAGE]; break;
 	case SONG_DIFFICULTY_RADAR_AIR:		val = fRadarValues[RADAR_AIR]; break;
 	case SONG_DIFFICULTY_RADAR_FREEZE:	val = fRadarValues[RADAR_FREEZE]; break;
 	case SONG_DIFFICULTY_RADAR_CHAOS:	val = fRadarValues[RADAR_CHAOS]; break;
-
 	case SONG_PROFILE_HIGH_SCORE:
 		val = 100.0f * GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetTopScore( PlayerMemCard(m_PlayerNumber) ).fPercentDP;
 		break;
@@ -258,6 +282,11 @@ void PaneDisplay::SetContent( PaneContents c )
 	case SONG_HOLDS:
 	case SONG_MINES:
 	case SONG_HANDS:
+	case COURSE_NUM_STEPS:
+	case COURSE_JUMPS:
+	case COURSE_HOLDS:
+	case COURSE_MINES:
+	case COURSE_HANDS:
 	case SONG_MACHINE_NUM_PLAYS:
 	case COURSE_MACHINE_NUM_PLAYS:
 	case SONG_PROFILE_NUM_PLAYS:
