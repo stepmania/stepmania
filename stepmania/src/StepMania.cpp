@@ -22,6 +22,7 @@
 #include "RageDisplay.h"
 #include "RageTextureManager.h"
 #include "RageSound.h"
+//#include "RageSoundManager.h"
 #include "RageMusic.h"
 #include "RageInput.h"
 #include "RageTimer.h"
@@ -356,6 +357,7 @@ int main(int argc, char* argv[])
 	HWND hwnd = info.window;
 
 	INPUTMAN	= new RageInput( hwnd );
+//	SOUNDMAN	= new RageSoundManager( hwnd );
 
 	// These things depend on the TextureManager, so do them after!
 	FONT		= new FontManager;
@@ -428,11 +430,14 @@ int main(int argc, char* argv[])
 		// See ScreenManager::Update comments for why we shouldn't do this. -glenn
 		//if( fDeltaTime > 0.050f )	// we dropped a bunch of frames
 		// 	fDeltaTime = 0.050f;
-		if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_TAB) ) )
-			fDeltaTime *= 4;
-		if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_GRAVE) ) )
-			fDeltaTime /= 4;
-
+		if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_TAB) ) ) {
+			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_GRAVE) ) )
+				fDeltaTime = 0; /* both; stop time */
+			else
+				fDeltaTime *= 4;
+		} else
+			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_GRAVE) ) )
+				fDeltaTime /= 4;
 
 		MUSIC->Update( fDeltaTime );
 		SCREENMAN->Update( fDeltaTime );
@@ -520,6 +525,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( INPUTMAN );
 	SAFE_DELETE( MUSIC );
 	SAFE_DELETE( SOUND );
+//	SAFE_DELETE( SOUNDMAN );
 	SAFE_DELETE( TIMER );
 	SAFE_DELETE( FONT );
 	SAFE_DELETE( TEXTUREMAN );
