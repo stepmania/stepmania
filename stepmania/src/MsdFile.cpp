@@ -39,11 +39,14 @@
  */
 #include "MsdFile.h"
 #include "RageLog.h"
+#include "RageUtil.h"
+
 #include <fcntl.h>
 #if defined(WIN32)
 #include <io.h>
 #endif
-#include "RageUtil.h"
+#include <string.h>
+#include <errno.h>
 
 void MsdFile::AddParam( char *buf, int len )
 {
@@ -139,11 +142,15 @@ void MsdFile::ReadBuf( char *buf, int len )
 // returns true if successful, false otherwise
 bool MsdFile::ReadFile( CString sNewPath )
 {
-   int fd;
+	error = "";
+	int fd;
 
-   /* Open a file */
-   if( (fd = open(sNewPath, O_RDONLY, 0)) == -1 )
-	   return false;
+	/* Open a file. */
+	if( (fd = open(sNewPath, O_RDONLY, 0)) == -1 )
+	{
+		error = strerror(errno);
+		return false;
+	}
 
 	int iBufferSize = GetFileSizeInBytes(sNewPath) + 1000; // +1000 because sometimes the bytes read is > filelength.  Why?
 

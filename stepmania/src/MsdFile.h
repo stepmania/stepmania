@@ -26,13 +26,15 @@ public:
 
 	virtual ~MsdFile() { }
 
-	//returns true if successful, false otherwise
+	// Returns true if successful, false otherwise.
 	bool ReadFile( CString sFilePath );
+	CString GetError() const { return error; }
 
 	unsigned GetNumValues() const { return values.size(); }
 	unsigned GetNumParams(unsigned val) const { if(val >= GetNumValues()) return 0; return values[val].params.size(); }
 	const value_t &GetValue(unsigned val) const { ASSERT(val < GetNumValues()); return values[val]; }
 	CString GetParam(unsigned val, unsigned par) const;
+
 
 private:
 	void ReadBuf( char *buf, int len );
@@ -40,6 +42,7 @@ private:
 	void AddValue();
 
 	vector<value_t> values;
+	CString error;
 };
 
 #endif
