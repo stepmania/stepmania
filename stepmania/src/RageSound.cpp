@@ -395,7 +395,7 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 				continue; /* we have more */
 
 			/* We're at the end of the data.  If we're looping, rewind and restart. */
-			if( m_Param.StopMode == RageSoundParams::M_LOOP )
+			if( GetStopMode() == RageSoundParams::M_LOOP )
 			{
 				NumRewindsThisCall++;
 				if(NumRewindsThisCall > 3)
@@ -430,7 +430,7 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 			}
 
 			/* Not looping.  Normally, we'll just stop here. */
-			if( m_Param.StopMode == RageSoundParams::M_STOP )
+			if( GetStopMode() == RageSoundParams::M_STOP )
 				break;
 
 			/* We're out of data, but we're not going to stop, so fill in the
