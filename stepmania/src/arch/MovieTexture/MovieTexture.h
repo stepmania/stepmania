@@ -8,7 +8,7 @@ class RageMovieTexture : public RageTexture
 public:
 	RageMovieTexture( RageTextureID ID ): RageTexture(ID) { }
 	virtual ~RageMovieTexture() { }
-	void Update(float fDeltaTime) { }
+	virtual void Update(float fDeltaTime) { }
 
 	virtual void Reload() = 0;
 
