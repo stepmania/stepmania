@@ -343,12 +343,16 @@ struct WhiteListEntry
 };
 static const WhiteListEntry g_AllowedEntries[] = 
   {
-    { 0x0781, -1, "", "" },   // all SanDisk Cruizer drives
+    { 0x0781, -1, "", "Cruzer" },   // SanDisk Cruzer* drives
     // Disallow the Rio Carbon.  After several mounts, usb-storage gets into a state where mounting will fail.
     // { 0x045a, -1, "", "" },  // Diamond Multimedia Systems (Rio)  
     { 0x04e8, -1, "Kingston|KINGSTON", "" },  // Kingston pen drives manufactured by Samsung
-    { 0x05dc, -1, "", "" },  // All Lexar flash drives
     { 0x041e, -1, "", "^NOMAD MuVo$|^NOMAD MuVo .X" },  // Creative Labs Nomad MuVo flash drives (hard drive players excluded)
+    { 0x08ec, -1, "", "Mini" },  // Iomega Mini drive and Micro Mini drive
+    { 0x05dc, -1, "", "JUMP|Jump" },  // All Lexar Jump*  drives
+    { 0x1915, 0x2220, "", "" },  // Linksys USB 2.0 Disk 128MB
+    { 0x0d7d, -1, "", "USB DISK" },  // PNY Attache pen drives
+    { 0x0ef5, -1, "", "Intelligent|Traveling",  // PQI Intelligent Stick and Traveling Disk 
   };
 bool IsDeviceAllowed( int idVendor, int idProduct, CString sVendor, CString sProduct )
 {
