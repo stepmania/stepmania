@@ -123,7 +123,7 @@ MusicWheel::MusicWheel()
 	m_soundChangeSort.Load(		THEME->GetPathToS("MusicWheel sort") );
 	m_soundExpand.Load(			THEME->GetPathToS("MusicWheel expand") );
 	m_soundStart.Load(			THEME->GetPathToS("Common start") );
-	m_soundLocked.Load(			THEME->GetPathToS("MusicWheel locked") );
+	m_soundLocked.Load(			THEME->GetPathToS("MusicWheel locked"), true );
 
 	
 	m_iSelection = 0;
