@@ -465,6 +465,14 @@ struct VideoCardDefaults
 		0
 	},
 	{
+		"Intel*Extreme Graphics",
+		"d3d",	// OpenGL blue screens w/ XP drivers from 6-21-2002
+		640,480,
+		16,16,16,	// slow at 32bpp
+		1024,
+		0
+	},
+	{
 		// Cards that have problems with OpenGL:
 		// ASSERT fail somewhere in RageDisplay_OpenGL "Trident Video Accelerator CyberBlade"
 		// bug 764499: ASSERT fail after glDeleteTextures for "SiS 650_651_740"
