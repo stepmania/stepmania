@@ -354,7 +354,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F9 )
 	{
 		if( type != IET_FIRST_PRESS ) return;
-		PREFSMAN->m_bShowTranslations ^= 1;
+		PREFSMAN->m_bShowNative ^= 1;
 		m_MusicWheel.RebuildMusicWheelItems();
 		return;
 	}

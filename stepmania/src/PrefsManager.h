@@ -53,7 +53,7 @@ public:
 	bool			m_bAutoPlay;
 	bool			m_bDelayedEscape;
 	bool			m_bInstructions, m_bShowDontDie, m_bShowSelectGroup;
-	bool			m_bShowTranslations;
+	bool			m_bShowNative;
 	bool			m_bArcadeOptionsNavigation;
 	enum			{ NEVER, ALWAYS, ABC_ONLY } m_MusicWheelUsesSections;
 	int				m_iMusicWheelSwitchSpeed;

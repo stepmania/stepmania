@@ -70,7 +70,7 @@ PrefsManager::PrefsManager()
 	m_bInstructions = true;
 	m_bShowDontDie = true;
 	m_bShowSelectGroup = true;
-	m_bShowTranslations = true;
+	m_bShowNative = true;
 	m_bArcadeOptionsNavigation = false;
 	m_bSoloSingle = false;
 	m_bDelayedTextureDelete = true;
@@ -166,7 +166,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "HowToPlay",					m_bInstructions );
 	ini.GetValueB( "Options", "Caution",					m_bShowDontDie );
 	ini.GetValueB( "Options", "SelectGroup",				m_bShowSelectGroup );
-	ini.GetValueB( "Options", "ShowTranslations",			m_bShowTranslations );
+	ini.GetValueB( "Options", "ShowNative",					m_bShowNative );
 	ini.GetValueB( "Options", "ArcadeOptionsNavigation",	m_bArcadeOptionsNavigation );
 	ini.GetValue ( "Options", "DWIPath",					m_DWIPath );
 	ini.GetValueB( "Options", "DelayedTextureDelete",		m_bDelayedTextureDelete );
@@ -254,7 +254,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "HowToPlay",					m_bInstructions );
 	ini.SetValueB( "Options", "Caution",					m_bShowDontDie );
 	ini.SetValueB( "Options", "SelectGroup",				m_bShowSelectGroup );
-	ini.SetValueB( "Options", "ShowTranslations",			m_bShowTranslations );
+	ini.SetValueB( "Options", "ShowNative",					m_bShowNative );
 	ini.SetValueB( "Options", "ArcadeOptionsNavigation",	m_bArcadeOptionsNavigation );
 	ini.SetValue ( "Options", "DWIPath",					m_DWIPath );
 	ini.SetValueB( "Options", "DelayedTextureDelete",		m_bDelayedTextureDelete );

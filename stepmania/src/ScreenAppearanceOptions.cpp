@@ -139,7 +139,7 @@ void ScreenAppearanceOptions::ImportOptions()
 	m_iSelectedOption[0][AO_DANCE_POINTS_FOR_ONI]		= PREFSMAN->m_bDancePointsForOni? 1:0;
 	m_iSelectedOption[0][AO_SELECT_GROUP]				= PREFSMAN->m_bShowSelectGroup? 1:0;
 	m_iSelectedOption[0][AO_WHEEL_SECTIONS]				= (int)PREFSMAN->m_MusicWheelUsesSections;
-	m_iSelectedOption[0][AO_SHOW_TRANSLATIONS]			= PREFSMAN->m_bShowTranslations;
+	m_iSelectedOption[0][AO_SHOW_TRANSLATIONS]			= PREFSMAN->m_bShowNative;
 	m_iSelectedOption[0][AO_SHOW_LYRICS]				= PREFSMAN->m_bShowLyrics;
 }
 
@@ -167,7 +167,7 @@ void ScreenAppearanceOptions::ExportOptions()
 	PREFSMAN->m_bShowDontDie					= !!m_iSelectedOption[0][AO_CAUTION];
 	PREFSMAN->m_bShowSelectGroup				= !!m_iSelectedOption[0][AO_SELECT_GROUP];
 	(int&)PREFSMAN->m_MusicWheelUsesSections	= m_iSelectedOption[0][AO_WHEEL_SECTIONS];
-	PREFSMAN->m_bShowTranslations				= !!m_iSelectedOption[0][AO_SHOW_TRANSLATIONS];
+	PREFSMAN->m_bShowNative				= !!m_iSelectedOption[0][AO_SHOW_TRANSLATIONS];
 	PREFSMAN->m_bShowLyrics						= !!m_iSelectedOption[0][AO_SHOW_LYRICS];
 	PREFSMAN->m_bDancePointsForOni				= !!m_iSelectedOption[0][AO_DANCE_POINTS_FOR_ONI];
 

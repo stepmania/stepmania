@@ -113,7 +113,7 @@ public:
 	CString	m_sMainTitle, m_sSubTitle, m_sArtist;
 	CString m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit;
 
-	/* If PREFSMAN->m_bShowTranslations is off, these are the same as GetTranslit* below.
+	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit* below.
 	 * Otherwise, they return the main titles. */
 	CString GetDisplayMainTitle() const;
 	CString GetDisplaySubTitle() const;
