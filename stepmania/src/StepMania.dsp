@@ -59,10 +59,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\temp\stepmania\Program
+TargetDir=\temp\stepmania\3.9\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                                       	cl                                                                                                                                       /Zl                                                                                                                                       /nologo                                                                                                                                       /c                                                                                                                                       verstub.cpp                                                                                                                                       /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                                        	cl                                                                                                                                        /Zl                                                                                                                                        /nologo                                                                                                                                        /c                                                                                                                                        verstub.cpp                                                                                                                                        /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -96,10 +96,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none /debug
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\temp\stepmania\Program
+TargetDir=\temp\stepmania\3.9\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                                        	cl                                                                                                 /Zl                                                                                                 /nologo                                                                                                 /c                                                                                                 verstub.cpp                                                                                                 /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                                         	cl                                                                                                  /Zl                                                                                                  /nologo                                                                                                  /c                                                                                                  verstub.cpp                                                                                                  /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -1323,14 +1323,6 @@ SOURCE=.\arch\Lights\LightsDriver_SystemMessage.cpp
 # Begin Source File
 
 SOURCE=.\arch\Lights\LightsDriver_SystemMessage.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\arch\Lights\LightsDriver_Win32Parallel.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\arch\Lights\LightsDriver_Win32Parallel.h
 # End Source File
 # End Group
 # Begin Group "MemoryCard"

@@ -11,7 +11,7 @@ LightsDriver *MakeLightsDriver(CString driver)
 	LightsDriver *ret = NULL;
 
 #ifdef _WINDOWS
-	if(!driver.CompareNoCase("Parallel")) ret = new LightsDriver_Win32Parallel;
+//	if(!driver.CompareNoCase("Parallel")) ret = new LightsDriver_Win32Parallel;
 #endif
 	if(!driver.CompareNoCase("SystemMessage")) ret = new LightsDriver_SystemMessage;
 

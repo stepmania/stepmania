@@ -1144,12 +1144,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					<File
 						RelativePath="arch\Lights\LightsDriver_SystemMessage.h">
 					</File>
-					<File
-						RelativePath="arch\Lights\LightsDriver_Win32Parallel.cpp">
-					</File>
-					<File
-						RelativePath="arch\Lights\LightsDriver_Win32Parallel.h">
-					</File>
 				</Filter>
 				<Filter
 					Name="MemoryCard"
