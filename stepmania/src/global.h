@@ -78,7 +78,7 @@ using namespace std;
  * at the beginning). */
 #if defined(_MSC_VER)
 #define NORETURN __declspec(noreturn)
-#elif defined(__GNUC__) && defined(__attribute__)
+#elif defined(__GNUC__) && (__GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 5))
 #define NORETURN __attribute__ ((__noreturn__))
 #else
 #define NORETURN
