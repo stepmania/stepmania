@@ -288,6 +288,8 @@ try_element_again:
 			RageException::Throw( message ); 
 			break;
 		case ArchHooks::retry:
+			FlushDirCache();
+			ReloadMetrics();
 			goto try_element_again;
 		case ArchHooks::ignore:
 			break;
@@ -333,7 +335,11 @@ try_element_again:
 					sPath.c_str(), sNewFileName.c_str());
 
 			if( ArchHooks::retry == HOOKS->MessageBoxAbortRetryIgnore(message) )
+			{
+				FlushDirCache();
+				ReloadMetrics();
 				goto try_element_again;
+			}
 
 			RageException::Throw( "%s", message.c_str() ); 
 		}
@@ -353,12 +359,11 @@ CString ThemeManager::GetPathTo( ElementCategory category, CString sClassName, C
 			return i->second;
 	}
 	
-	// TODO: Use HOOKS->MessageBox()
 try_element_again:
 
-	CString sBaseClass;
-	sBaseClass = "";
-	m_pIniMetrics->GetValue(sClassName,"BaseClass",sBaseClass);
+	CString sFallback;
+	sFallback = "";
+	m_pIniMetrics->GetValue(sClassName,"Fallback",sFallback);
 
 	// search the requested current theme and requested class
 	CString ret = GetPathToRaw( m_sCurThemeName, category, sClassName, sElement);
@@ -368,10 +373,10 @@ try_element_again:
 		return ret;
 	}
 
-	// search the requested current theme and base class
-	if( !sBaseClass.empty() )
+	// search the requested current theme and fallback class
+	if( !sFallback.empty() )
 	{
-		CString ret = GetPathToRaw( m_sCurThemeName, category, sBaseClass, sElement);
+		CString ret = GetPathToRaw( m_sCurThemeName, category, sFallback, sElement);
 		if( !ret.empty() )	// we found something
 		{
 			Cache[sFileName] = ret;
@@ -387,10 +392,10 @@ try_element_again:
 		return ret;
 	}
 	
-	// search the base theme and base class
-	if( !sBaseClass.empty() )
+	// search the base theme and fallback class
+	if( !sFallback.empty() )
 	{
-		ret = GetPathToRaw( BASE_THEME_NAME, category, sBaseClass, sElement);
+		ret = GetPathToRaw( BASE_THEME_NAME, category, sFallback, sElement);
 		if( !ret.empty() )	// we found something
 		{
 			Cache[sFileName] = ret;
@@ -408,6 +413,8 @@ try_element_again:
 
 	/* We can't fall back on _missing in Other: the file types are unknown. */
 	CString sMessage = "The theme element '" + sCategory + "/" + sFileName +"' is missing.";
+	if( !sFallback.empty() )
+		sMessage += "  And it's fallback, '" + ClassAndElementToFileName(sFallback,sElement) + "' isn't present either.";
 	ArchHooks::MessageBoxResult res;
 	if( category != Other )
 		res = HOOKS->MessageBoxAbortRetryIgnore(sMessage, "MissingThemeElement");
@@ -417,7 +424,7 @@ try_element_again:
 	{
 	case ArchHooks::retry:
 		FlushDirCache();
-		g_ThemePathCache[category].clear();
+		ReloadMetrics();
 		goto try_element_again;
 	case ArchHooks::ignore:
 		LOG->Warn( 

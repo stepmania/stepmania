@@ -172,10 +172,12 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 	SONGMAN->GetSongs( arraySongs );
 	SortSongPointerArrayByTitle( arraySongs );
 
-	m_ScrollerBackgrounds.Load( BACKGROUNDS_SCROLL_SECONDS_PER_ITEM, BACKGROUNDS_SPACING_X, BACKGROUNDS_SPACING_Y );
-	this->AddChild( &m_ScrollerBackgrounds );
-	m_ScrollerFrames.Load( BACKGROUNDS_SCROLL_SECONDS_PER_ITEM, BACKGROUNDS_SPACING_X, BACKGROUNDS_SPACING_Y );
-	this->AddChild( &m_ScrollerFrames );
+	// FIXME:  Redo this screen with a BGA
+//	m_ScrollerBackgrounds.Load(
+//		BACKGROUNDS_SCROLL_SECONDS_PER_ITEM, BACKGROUNDS_SPACING_X, BACKGROUNDS_SPACING_Y );
+//	this->AddChild( &m_ScrollerBackgrounds );
+//	m_ScrollerFrames.Load( BACKGROUNDS_SCROLL_SECONDS_PER_ITEM, BACKGROUNDS_SPACING_X, BACKGROUNDS_SPACING_Y );
+//	this->AddChild( &m_ScrollerFrames );
 
 	{
 		for( int i=0; i<NUM_BACKGROUNDS; i++ )
@@ -199,7 +201,7 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 		}
 	}
 	
-	m_ScrollerTexts.Load( TEXTS_SCROLL_SECONDS_PER_ITEM, TEXTS_SPACING_X, TEXTS_SPACING_Y );
+//	m_ScrollerTexts.Load( TEXTS_SCROLL_SECONDS_PER_ITEM, TEXTS_SPACING_X, TEXTS_SPACING_Y );
 	this->AddChild( &m_ScrollerTexts );
 	
 	{

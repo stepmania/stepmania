@@ -4,7 +4,7 @@
 -----------------------------------------------------------------------------
  Class: BGAnimation
 
- Desc: Particles that play in the background of ScreenGameplay
+ Desc: An ActorFrame that loads itself
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Ben Nordstrom
@@ -12,14 +12,9 @@
 -----------------------------------------------------------------------------
 */
 
-#include "ActorFrame.h"
 #include "ActorScroller.h"
 
-
-class BGAnimationLayer;
-
-
-class BGAnimation : public ActorFrame
+class BGAnimation : public ActorScroller
 {
 public:
 	BGAnimation( bool Generic=false );
@@ -32,29 +27,11 @@ public:
 	void LoadFromMovie( CString sMoviePath );
 	void LoadFromVisualization( CString sMoviePath );
 
-	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
-
-	virtual void SetDiffuse( const RageColor &c );
-
-	void GainingFocus( float fRate, bool bRewindMovie, bool bLoop );
-	void LosingFocus();
-
 	float GetLengthSeconds() const { return m_fLengthSeconds; }
 
-	virtual void HandleCommand( const ParsedCommand &command );
-	void PlayOffCommand() { PlayCommand("Off"); }
-	void PlayCommand( const CString &cmd );
-
-	float GetTweenTimeLeft() const;
-	void FinishTweening();
-
 protected:
-	vector<BGAnimationLayer*> m_Layers;
 	float	m_fLengthSeconds;
 	bool	m_bGeneric;
-
-	ActorScroller m_Scroller;
 };
 
 

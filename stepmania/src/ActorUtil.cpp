@@ -26,6 +26,7 @@
 #include "song.h"
 #include "GameState.h"
 #include "RageTextureManager.h"
+#include "SongManager.h"
 
 
 Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
@@ -95,7 +96,10 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 			}
 			else if( sFile.CompareNoCase("songbanner")==0 )
 			{
-				const Song *pSong = GAMESTATE->m_pCurSong;
+				Song *pSong = GAMESTATE->m_pCurSong;
+				if( pSong == NULL )
+					pSong = SONGMAN->GetRandomSong();
+
 				if( pSong && pSong->HasBanner() )
 					sFile = pSong->GetBannerPath();
 				else
@@ -187,14 +191,14 @@ void UtilSetXY( Actor& actor, CString sClassName )
 	actor.SetXY( THEME->GetMetricF(sClassName,actor.GetID()+"X"), THEME->GetMetricF(sClassName,actor.GetID()+"Y") );
 }
 
-float UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
+void UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
 {
 	// If Actor is hidden, it won't get updated or drawn, so don't bother tweening.
 	/* ... but we might be unhiding it, or setting state for when we unhide it later */
 //	if( actor.GetHidden() )
 //		return 0;
 
-	float ret = actor.Command( "playcommand," + sCommandName );
+	actor.Command( "playcommand," + sCommandName );
 
 	// HACK:  It's very often that we command things to TweenOffScreen 
 	// that we aren't drawing.  We know that an Actor is not being
@@ -203,11 +207,11 @@ float UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
 	if( sCommandName=="Off" )
 	{
 		if( actor.GetID().empty() )
-			return ret;
+			return;
 	} else {
 		RAGE_ASSERT_M( !actor.GetID().empty(), ssprintf("!actor.GetID().empty() ('%s', '%s')", sClassName.c_str(), sCommandName.c_str()) );
 	}
 
-	return max( ret, actor.Command( THEME->GetMetric(sClassName,actor.GetID()+sCommandName+"Command") ) );
+	actor.Command( THEME->GetMetric(sClassName,actor.GetID()+sCommandName+"Command") );
 }
 

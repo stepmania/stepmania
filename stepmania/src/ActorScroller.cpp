@@ -14,37 +14,80 @@
 #include "ActorCollision.h"
 #include <math.h>
 #include "RageUtil.h"
+#include "RageDisplay.h"
 
 
 ActorScroller::ActorScroller()
 {
+	m_bLoaded = false;
 	m_fCurrentItem = 0;
 	m_fDestinationItem = 0;
+	m_fSecondsPerItem = 1;
+	m_iNumItemsToDraw = 7;
+
+	m_vRotationDegrees = RageVector3(0,0,0);
+	m_vTranslateTerm0 = RageVector3(0,0,0);
+	m_vTranslateTerm1 = RageVector3(0,0,0);
+	m_vTranslateTerm2 = RageVector3(0,0,0);
 }
 
-void ActorScroller::Load( float fScrollSecondsPerItem, float fSpacingX, float fSpacingY )
+void ActorScroller::Load( 
+	float fSecondsPerItem, 
+	int iNumItemsToDraw, 
+	const RageVector3	&vRotationDegrees,
+	const RageVector3	&vTranslateTerm0,
+	const RageVector3	&vTranslateTerm1,
+	const RageVector3	&vTranslateTerm2
+	)
 {
-	ASSERT( fScrollSecondsPerItem > 0 );
-	m_fScrollSecondsPerItem = fScrollSecondsPerItem;
-	m_vSpacing.x = fSpacingX;
-	m_vSpacing.y = fSpacingY;
+	ASSERT( fSecondsPerItem > 0 );
+	m_fSecondsPerItem = fSecondsPerItem;
+	m_iNumItemsToDraw = iNumItemsToDraw;
+	m_vRotationDegrees = vRotationDegrees;
+	m_vTranslateTerm0 = vTranslateTerm0;
+	m_vTranslateTerm1 = vTranslateTerm1;
+	m_vTranslateTerm2 = vTranslateTerm2;
+
+	m_bLoaded = true;
 }
 
 void ActorScroller::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	fapproach( m_fCurrentItem, m_fDestinationItem, fDeltaTime/m_fScrollSecondsPerItem );
+	fapproach( m_fCurrentItem, m_fDestinationItem, fDeltaTime/m_fSecondsPerItem );
+}
 
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
+void ActorScroller::DrawPrimitives()
+{
+	if( m_bLoaded )
 	{
-		Actor* pActor = m_SubActors[i];
+		for( unsigned i=0; i<m_SubActors.size(); i++ )
+		{
+			float fItemOffset = i - m_fCurrentItem;
 
-		float fItemOffset = i - m_fCurrentItem;
-		float fX = m_vSpacing.x * fItemOffset;
-		float fY = m_vSpacing.y * fItemOffset;
-		fX = roundf( fX );
-		fY = roundf( fY );
-		pActor->SetXY( fX, fY );
+			if( m_vRotationDegrees[0] )
+				DISPLAY->RotateX( m_vRotationDegrees[0]*fItemOffset );
+			if( m_vRotationDegrees[1] )
+				DISPLAY->RotateY( m_vRotationDegrees[1]*fItemOffset );
+			if( m_vRotationDegrees[2] )
+				DISPLAY->RotateZ( m_vRotationDegrees[2]*fItemOffset );
+			
+			RageVector3 vTranslation = 
+				m_vTranslateTerm0 +								// m_vTranslateTerm0*itemOffset^0
+				m_vTranslateTerm1 * fItemOffset +				// m_vTranslateTerm1*itemOffset^1
+				m_vTranslateTerm2 * fItemOffset*fItemOffset;	// m_vTranslateTerm2*itemOffset^2
+			DISPLAY->Translate( 
+				vTranslation[0],
+				vTranslation[1],
+				vTranslation[2]
+				);
+
+			m_SubActors[i]->Draw();
+		}
+	}
+	else
+	{
+		ActorFrame::DrawPrimitives();
 	}
 }

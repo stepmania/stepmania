@@ -651,15 +651,6 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		PlayCommand( "On" );
 }
 
-float BGAnimationLayer::GetMaxTweenTimeLeft() const
-{
-	float ret = 0;
-
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		ret = max(ret, m_SubActors[i]->GetTweenTimeLeft());
-
-	return ret;
-}
 
 void BGAnimationLayer::FinishTweening()
 {

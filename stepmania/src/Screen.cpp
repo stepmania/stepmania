@@ -339,8 +339,15 @@ Screen* Screen::Create( CString sClassName )
 	CString sName = sClassName;
 	if( parts.size() == 2 )
 	{
-		sClassName = parts[1];
 		sName = parts[0];
+		sClassName = parts[1];
+	}
+	// This is the new, preferred method for specifying the screen class.
+	// Look up the class in the metrics group sName
+	else
+	{
+		if( THEME->HasMetric(sClassName,"Class") )
+			sClassName = THEME->GetMetric(sClassName,"Class");
 	}
 
 #define IF_RETURN(X)	if(sClassName.CompareNoCase(#X)==0)	return new X(sName);

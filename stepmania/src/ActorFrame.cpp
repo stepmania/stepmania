@@ -149,3 +149,23 @@ void ActorFrame::HandleCommand( const ParsedCommand &command )
 	// base class handles the rest...
 	Actor::HandleCommand( command );
 }
+
+void ActorFrame::GainingFocus( float fRate, bool bRewindMovie, bool bLoop )
+{
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+		m_SubActors[i]->GainingFocus( fRate, bRewindMovie, bLoop );
+
+	SetDiffuse( RageColor(1,1,1,1) );
+}
+
+void ActorFrame::LosingFocus()
+{
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+		m_SubActors[i]->LosingFocus();
+}
+
+void ActorFrame::PlayCommand( const CString &sCommandName )
+{
+	for( unsigned i=0; i<m_SubActors.size(); i++ ) 
+		m_SubActors[i]->PlayCommand( sCommandName );
+}

@@ -709,7 +709,7 @@ void Actor::AddRotationR( float rot )
 	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromR(rot) );
 }
 
-float Actor::Command( CString sCommands )
+void Actor::Command( CString sCommands )
 {
 	sCommands.MakeLower();
 
@@ -718,8 +718,6 @@ float Actor::Command( CString sCommands )
 
 	for( unsigned i=0; i<vCommands.size(); i++ )
 		this->HandleCommand( vCommands[i] );
-
-	return GetTweenTimeLeft();
 }
 
 void Actor::HandleCommand( const ParsedCommand &command )

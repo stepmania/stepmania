@@ -88,7 +88,13 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	{
 		if( SHARED_PREVIEW_AND_CURSOR )
 		{
-			m_Scroller[0].Load( SCROLLER_SECONDS_PER_ITEM, SCROLLER_SPACING_X, SCROLLER_SPACING_Y );
+			m_Scroller[0].Load( 
+				SCROLLER_SECONDS_PER_ITEM, 
+				7,
+				RageVector3( 0, 0, 0 ),
+				RageVector3( 0, 0, 0 ),
+				RageVector3( SCROLLER_SPACING_X, SCROLLER_SPACING_Y, 0 ),
+				RageVector3( 0, 0, 0 ) );
 			m_Scroller[0].SetName( "Scroller" );
 			this->AddChild( &m_Scroller[0] );
 
@@ -109,7 +115,13 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 				if( !GAMESTATE->IsPlayerEnabled(p) )
 					continue;	// skip
 	
-				m_Scroller[p].Load( SCROLLER_SECONDS_PER_ITEM, SCROLLER_SPACING_X, SCROLLER_SPACING_Y );
+				m_Scroller[p].Load(
+					SCROLLER_SECONDS_PER_ITEM, 
+					7,
+					RageVector3( 0, 0, 0 ),
+					RageVector3( 0, 0, 0 ),
+					RageVector3( SCROLLER_SPACING_X, SCROLLER_SPACING_Y, 0 ),
+					RageVector3( 0, 0, 0 ) );
 				m_Scroller[p].SetName( ssprintf("ScrollerP%d",p+1) );
 				this->AddChild( &m_Scroller[p] );
 				
@@ -228,7 +240,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 
 	this->UpdateSelectableChoices();
 
-	m_fLockInputSecs = TweenOnScreen();
+	m_fLockInputSecs = this->GetTweenTimeLeft();
 }
 
 void ScreenSelectMaster::Update( float fDelta )
@@ -245,14 +257,12 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_PlayPostSwitchPage:
 		{
-			float fSecs = 0;
-
 			if( SHARED_PREVIEW_AND_CURSOR )
 			{
 				for( int i=0; i<NUM_CURSOR_PARTS; i++ )
 				{
 					m_sprCursor[i][0].SetXY( GetCursorX((PlayerNumber)0,i), GetCursorY((PlayerNumber)0,i) );
-					fSecs = max( fSecs, COMMAND( m_sprCursor[i][0], "PostSwitchPage" ) );
+					COMMAND( m_sprCursor[i][0], "PostSwitchPage" );
 				}
 			}
 			else
@@ -262,34 +272,37 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 						if( GAMESTATE->IsPlayerEnabled(p) )
 						{
 							m_sprCursor[i][p].SetXY( GetCursorX((PlayerNumber)p,i), GetCursorY((PlayerNumber)p,i) );
-							fSecs = max( fSecs, COMMAND( m_sprCursor[i][p], "PostSwitchPage" ) );
+							COMMAND( m_sprCursor[i][p], "PostSwitchPage" );
 						}
 			}
 
 			if( SHARED_PREVIEW_AND_CURSOR )
 			{
 				for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
-					fSecs = max( fSecs, COMMAND( m_sprPreview[i][m_iChoice[0]][0], "PostSwitchPage" ) );
+					COMMAND( m_sprPreview[i][m_iChoice[0]][0], "PostSwitchPage" );
 			}
 			else
 			{
 				for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 					for( int p=0; p<NUM_PLAYERS; p++ )
 						if( GAMESTATE->IsPlayerEnabled(p) )
-							fSecs = max( fSecs, COMMAND( m_sprPreview[i][m_iChoice[p]][p], "PostSwitchPage" ) );
+							COMMAND( m_sprPreview[i][m_iChoice[p]][p], "PostSwitchPage" );
 			}
 
 			m_fLockInputSecs = POST_SWITCH_PAGE_SECONDS;
 		}
 		break;
 	case SM_BeginFadingOut:
-		float fSecs = TweenOffScreen();
-		/* This can be used to allow overlap between the main tween-off and the MenuElements
-		 * tweenoff. */
-		fSecs += EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS;
-		fSecs = max( fSecs, 0 );
-		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, fSecs );	// nofify parent that we're finished
-		m_Menu.StopTimer();
+		{
+			TweenOffScreen();
+			float fSecs = GetTweenTimeLeft();
+			/* This can be used to allow overlap between the main tween-off and the MenuElements
+			 * tweenoff. */
+			fSecs += EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS;
+			fSecs = max( fSecs, 0 );
+			SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, fSecs );	// nofify parent that we're finished
+			m_Menu.StopTimer();
+		}
 		break;
 	}
 }
@@ -375,44 +388,42 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 		if( GAMESTATE->IsHumanPlayer(p) && m_bChosen[p] )
 			return false;
 
-	float fSecs = 0;
-
 	if( SHARED_PREVIEW_AND_CURSOR )
 	{
 		for( int i=0; i<NUM_CURSOR_PARTS; i++ )
-			fSecs = max( fSecs, COMMAND( m_sprCursor[i][0], "PreSwitchPage" ) );
+			COMMAND( m_sprCursor[i][0], "PreSwitchPage" );
 	}
 	else
 	{
 		for( int i=0; i<NUM_CURSOR_PARTS; i++ )
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsHumanPlayer(p) )
-					fSecs = max( fSecs, COMMAND( m_sprCursor[i][p], "PreSwitchPage" ) );
+					COMMAND( m_sprCursor[i][p], "PreSwitchPage" );
 	}
 
 	const CString sIconAndExplanationCommand = ssprintf( "SwitchToPage%d", newPage+1 );
 
 	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
-			fSecs = max( fSecs, COMMAND( m_sprIcon[i][c], sIconAndExplanationCommand ) );
+			COMMAND( m_sprIcon[i][c], sIconAndExplanationCommand );
 
 	if( SHARED_PREVIEW_AND_CURSOR )
 	{
 		for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
-			fSecs = max( fSecs, COMMAND( m_sprPreview[i][m_iChoice[p]][0], "PreSwitchPage" ) );
+			COMMAND( m_sprPreview[i][m_iChoice[p]][0], "PreSwitchPage" );
 	}
 	else
 	{
 		for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsPlayerEnabled(p) )
-					fSecs = max( fSecs, COMMAND( m_sprPreview[i][m_iChoice[p]][p], "PreSwitchPage" ) );
+					COMMAND( m_sprPreview[i][m_iChoice[p]][p], "PreSwitchPage" );
 	}
 
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
-		fSecs = max( fSecs, COMMAND( m_sprExplanation[page], sIconAndExplanationCommand ) );
-		fSecs = max( fSecs, COMMAND( m_sprMore[page], sIconAndExplanationCommand ) );
+		COMMAND( m_sprExplanation[page], sIconAndExplanationCommand );
+		COMMAND( m_sprMore[page], sIconAndExplanationCommand );
 	}
 
 
@@ -532,19 +543,17 @@ ScreenSelectMaster::Page ScreenSelectMaster::GetCurrentPage() const
 }
 
 
-float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
+void ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 {
 	if( m_bChosen[pn] == true )
-		return 0;
+		return;
 	m_bChosen[pn] = true;
 
-	float fSecs = 0;
 	for( int page=0; page<NUM_PAGES; page++ )
-		fSecs = max( fSecs, OFF_COMMAND( m_sprMore[page] ) );
+		OFF_COMMAND( m_sprMore[page] );
 
 	for( int i=0; i<NUM_CURSOR_PARTS; i++ )
-		fSecs = max( fSecs, COMMAND( m_sprCursor[i][pn], "Choose") );
-	return fSecs;
+		COMMAND( m_sprCursor[i][pn], "Choose");
 }
 
 void ScreenSelectMaster::MenuStart( PlayerNumber pn )
@@ -558,7 +567,6 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 	m_soundSelect.Play();
 
 	bool bAllDone = true;
-	float fSecs = 0;
 	if( SHARED_PREVIEW_AND_CURSOR || GetCurrentPage() == PAGE_2 )
 	{
 		/* Only one player has to pick.  Choose this for all the other players, too. */
@@ -566,10 +574,12 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 			if( GAMESTATE->IsHumanPlayer(p) )
 			{
 				ASSERT( !m_bChosen[p] );
-				fSecs = max( fSecs, DoMenuStart( (PlayerNumber)p ) );
+				DoMenuStart( (PlayerNumber)p );
 			}
-	} else {
-		fSecs = max( fSecs, DoMenuStart(pn) );
+	}
+	else
+	{
+		DoMenuStart(pn);
 		// check to see if everyone has chosen
 		for( int p=0; p<NUM_PLAYERS; p++ )
 			if( GAMESTATE->IsHumanPlayer((PlayerNumber)p) )
@@ -577,7 +587,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 	}
 
 	if( bAllDone )
-		this->PostScreenMessage( SM_BeginFadingOut, fSecs );// tell our owner it's time to move on
+		this->PostScreenMessage( SM_BeginFadingOut, GetTweenTimeLeft() );// tell our owner it's time to move on
 }
 
 /*
@@ -592,17 +602,15 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
  * This means that the focus command should be position neutral; eg. only use "addx",
  * not "x".
  */
-float ScreenSelectMaster::TweenOnScreen() 
+void ScreenSelectMaster::TweenOnScreen() 
 {
-	float fSecs = 0;
-
 	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
 	{
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
 		{
 			COMMAND( m_sprIcon[i][c], (int(c) == m_iChoice[0])? "GainFocus":"LoseFocus" );
 			m_sprIcon[i][c]->FinishTweening();
-			fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_sprIcon[i][c] ) );
+			SET_XY_AND_ON_COMMAND( m_sprIcon[i][c] );
 		}
 
 		if( SHARED_PREVIEW_AND_CURSOR )
@@ -612,7 +620,7 @@ float ScreenSelectMaster::TweenOnScreen()
 			{
 				COMMAND( m_sprPreview[i][c][p], (int(c) == m_iChoice[p])? "GainFocus":"LoseFocus" );
 				m_sprPreview[i][c][p]->FinishTweening();
-				fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_sprPreview[i][c][p] ) );
+				SET_XY_AND_ON_COMMAND( m_sprPreview[i][c][p] );
 			}
 		}
 		else
@@ -623,7 +631,7 @@ float ScreenSelectMaster::TweenOnScreen()
 					{
 						COMMAND( m_sprPreview[i][c][p], int(c) == m_iChoice[p]? "GainFocus":"LoseFocus" );
 						m_sprPreview[i][c][p]->FinishTweening();
-						fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_sprPreview[i][c][p] ) );
+						SET_XY_AND_ON_COMMAND( m_sprPreview[i][c][p] );
 					}
 		}
 	}
@@ -634,7 +642,7 @@ float ScreenSelectMaster::TweenOnScreen()
 		for( int i=0; i<NUM_CURSOR_PARTS; i++ )
 		{
 			m_sprCursor[i][0].SetXY( GetCursorX((PlayerNumber)0,i), GetCursorY((PlayerNumber)0,i) );
-			fSecs = max( fSecs, ON_COMMAND( m_sprCursor[i][0] ) );
+			ON_COMMAND( m_sprCursor[i][0] );
 		}
 	}
 	else
@@ -644,7 +652,7 @@ float ScreenSelectMaster::TweenOnScreen()
 				if( GAMESTATE->IsPlayerEnabled(p) )
 				{
 					m_sprCursor[i][p].SetXY( GetCursorX((PlayerNumber)p,i), GetCursorY((PlayerNumber)p,i) );
-					fSecs = max( fSecs, ON_COMMAND( m_sprCursor[i][p] ) );
+					ON_COMMAND( m_sprCursor[i][p] );
 				}
 	}
 
@@ -653,44 +661,40 @@ float ScreenSelectMaster::TweenOnScreen()
 		if( SHARED_PREVIEW_AND_CURSOR )
 		{
 			m_Scroller[0].SetCurrentAndDestinationItem( m_iChoice[0] );
-			fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_Scroller[0] ) );
+			SET_XY_AND_ON_COMMAND( m_Scroller[0] );
 			for( unsigned c=0; c<m_aModeChoices.size(); c++ )
-				fSecs = max( fSecs, COMMAND( *m_sprScroll[c][0], int(c) == m_iChoice[0]? "GainFocus":"LoseFocus" ) );
+				COMMAND( *m_sprScroll[c][0], int(c) == m_iChoice[0]? "GainFocus":"LoseFocus" );
 		}
 		else
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsPlayerEnabled(p) )
 				{
 					m_Scroller[p].SetCurrentAndDestinationItem( m_iChoice[p] );
-					fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_Scroller[p] ) );
+					SET_XY_AND_ON_COMMAND( m_Scroller[p] );
 					for( unsigned c=0; c<m_aModeChoices.size(); c++ )
-						fSecs = max( fSecs, COMMAND( *m_sprScroll[c][p], int(c) == m_iChoice[p]? "GainFocus":"LoseFocus" ) );
+						COMMAND( *m_sprScroll[c][p], int(c) == m_iChoice[p]? "GainFocus":"LoseFocus" );
 				}
 	}
 
-	fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_sprExplanation[GetCurrentPage()] ) );
-	fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_sprMore[GetCurrentPage()] ) );
+	SET_XY_AND_ON_COMMAND( m_sprExplanation[GetCurrentPage()] );
+	SET_XY_AND_ON_COMMAND( m_sprMore[GetCurrentPage()] );
 
 	this->SortByZ();
-
-	return fSecs;
 }
 
-float ScreenSelectMaster::TweenOffScreen()
+void ScreenSelectMaster::TweenOffScreen()
 {
-	float fSecs = 0;
-
 	if( SHARED_PREVIEW_AND_CURSOR )
 	{
 		for( int i=0; i<NUM_CURSOR_PARTS; i++ )
-			fSecs = max( fSecs, OFF_COMMAND( m_sprCursor[i][0] ) );
+			OFF_COMMAND( m_sprCursor[i][0] );
 	}
 	else
 	{
 		for( int i=0; i<NUM_CURSOR_PARTS; i++ )
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsPlayerEnabled(p) )
-					fSecs = max( fSecs, OFF_COMMAND( m_sprCursor[i][p] ) );
+					OFF_COMMAND( m_sprCursor[i][p] );
 	}
 
 	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
@@ -711,8 +715,8 @@ float ScreenSelectMaster::TweenOffScreen()
 
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
 		{
-			fSecs = max( fSecs, OFF_COMMAND( m_sprIcon[i][c] ) );
-			fSecs = max( fSecs, COMMAND( m_sprIcon[i][c], SelectedByEitherPlayer? "OffFocused":"OffUnfocused" ) );
+			OFF_COMMAND( m_sprIcon[i][c] );
+			COMMAND( m_sprIcon[i][c], SelectedByEitherPlayer? "OffFocused":"OffUnfocused" );
 		}
 
 
@@ -720,8 +724,8 @@ float ScreenSelectMaster::TweenOffScreen()
 		{
 			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 			{
-				fSecs = max( fSecs, OFF_COMMAND( m_sprPreview[i][c][0] ) );
-				fSecs = max( fSecs, COMMAND( m_sprPreview[i][c][0], SelectedByEitherPlayer? "OffFocused":"OffUnfocused" ) );
+				OFF_COMMAND( m_sprPreview[i][c][0] );
+				COMMAND( m_sprPreview[i][c][0], SelectedByEitherPlayer? "OffFocused":"OffUnfocused" );
 			}
 		}
 		else
@@ -730,8 +734,8 @@ float ScreenSelectMaster::TweenOffScreen()
 				for( int p=0; p<NUM_PLAYERS; p++ )
 					if( GAMESTATE->IsPlayerEnabled(p) )
 					{
-						fSecs = max( fSecs, OFF_COMMAND( m_sprPreview[i][c][p] ) );
-						fSecs = max( fSecs, COMMAND( m_sprPreview[i][c][0], SelectedByEitherPlayer? "OffFocused":"OffUnfocused" ) );
+						OFF_COMMAND( m_sprPreview[i][c][p] );
+						COMMAND( m_sprPreview[i][c][0], SelectedByEitherPlayer? "OffFocused":"OffUnfocused" );
 					}
 		}
 	}
@@ -739,16 +743,14 @@ float ScreenSelectMaster::TweenOffScreen()
 	if( SHOW_SCROLLER )
 	{
 		if( SHARED_PREVIEW_AND_CURSOR )
-			fSecs = max( fSecs, OFF_COMMAND( m_Scroller[0] ) );
+			OFF_COMMAND( m_Scroller[0] );
 		else
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				fSecs = max( fSecs, OFF_COMMAND( m_Scroller[p] ) );
+				OFF_COMMAND( m_Scroller[p] );
 	}
 
-	fSecs = max( fSecs, OFF_COMMAND( m_sprExplanation[GetCurrentPage()] ) );
-	fSecs = max( fSecs, OFF_COMMAND( m_sprMore[GetCurrentPage()] ) );
-
-	return fSecs;
+	OFF_COMMAND( m_sprExplanation[GetCurrentPage()] );
+	OFF_COMMAND( m_sprMore[GetCurrentPage()] );
 }
 
 

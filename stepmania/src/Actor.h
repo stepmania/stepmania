@@ -294,13 +294,21 @@ public:
 	void FadeOn( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,false); };
 	void FadeOff( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,true); };
 
-	float Command( CString sCommands );	// return length in seconds to execute command
+	void Command( CString sCommands );	// return length in seconds to execute command
 	virtual void HandleCommand( const ParsedCommand &command );	// derivable
 	static float GetCommandLength( CString command );
 
 	virtual void SetState( int iNewState ) {};
 	virtual void SetSecondsIntoAnimation( float fSeconds ) {};
 	virtual int GetNumStates() { return 1; };
+
+	//
+	// BGAnimation stuff
+	//
+	virtual void GainingFocus( float fRate, bool bRewindMovie, bool bLoop ) {}
+	virtual void LosingFocus() {}
+	virtual void PlayOffCommand() { this->PlayCommand("Off"); }
+	virtual void PlayCommand( const CString &sCommandName ) {}
 
 protected:
 

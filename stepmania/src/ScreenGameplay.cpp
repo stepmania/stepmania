@@ -1566,9 +1566,23 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			{
 				PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
 				UpdateAutoPlayText();
+				bool bIsHoldingShift = 
+					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT)) ||
+					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT));
 				for( int p=0; p<NUM_PLAYERS; p++ )
+				{
 					if( GAMESTATE->IsHumanPlayer(p) )
-						GAMESTATE->m_PlayerController[p] = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
+					{
+						if( bIsHoldingShift )
+						{
+							GAMESTATE->m_PlayerController[p] = PREFSMAN->m_bAutoPlay ? PC_CPU : PC_HUMAN;
+						}
+						else
+						{
+							GAMESTATE->m_PlayerController[p] = PREFSMAN->m_bAutoPlay ? PC_AUTOPLAY : PC_HUMAN;
+						}
+					}
+				}
 			}
 			break;
 		case SDLK_F9:

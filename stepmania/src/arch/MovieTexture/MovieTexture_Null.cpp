@@ -61,7 +61,9 @@ MovieTexture_Null::MovieTexture_Null(RageTextureID ID) : RageMovieTexture(ID) {
     const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
     SDL_Surface *img = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, size, size, pfd->bpp, pfd->masks[0],
                                                 pfd->masks[1], pfd->masks[2], pfd->masks[3]);
+
     texHandle = DISPLAY->CreateTexture(pixfmt, img, false);
+
     //DISPLAY->UpdateTexture(texHandle, img, 0, 0, size, size);
     SDL_FreeSurface(img);
 }

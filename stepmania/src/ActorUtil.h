@@ -26,21 +26,21 @@ void UtilSetXY( Actor& actor, CString sClassName );
 inline void UtilSetXY( Actor* pActor, CString sClassName ) { UtilSetXY( *pActor, sClassName ); }
 
 
-float UtilCommand( Actor& actor, CString sClassName, CString sCommandName );
+void UtilCommand( Actor& actor, CString sClassName, CString sCommandName );
 
-inline float UtilOnCommand( Actor& actor, CString sClassName ) { return UtilCommand( actor, sClassName, "On" ); }
-inline float UtilOffCommand( Actor& actor, CString sClassName ) { return UtilCommand( actor, sClassName, "Off" ); }
-inline float UtilSetXYAndOnCommand( Actor& actor, CString sClassName )
+inline void UtilOnCommand( Actor& actor, CString sClassName ) { UtilCommand( actor, sClassName, "On" ); }
+inline void UtilOffCommand( Actor& actor, CString sClassName ) { UtilCommand( actor, sClassName, "Off" ); }
+inline void UtilSetXYAndOnCommand( Actor& actor, CString sClassName )
 {
 	UtilSetXY( actor, sClassName );
-	return UtilOnCommand( actor, sClassName );
+	UtilOnCommand( actor, sClassName );
 }
 
 /* convenience */
-inline float UtilCommand( Actor* pActor, CString sClassName, CString sCommandName ) { return UtilCommand( *pActor, sClassName, sCommandName ); }
-inline float UtilOnCommand( Actor* pActor, CString sClassName ) { return UtilOnCommand( *pActor, sClassName ); }
-inline float UtilOffCommand( Actor* pActor, CString sClassName ) { return UtilOffCommand( *pActor, sClassName ); }
-inline float UtilSetXYAndOnCommand( Actor* pActor, CString sClassName ) { return UtilSetXYAndOnCommand( *pActor, sClassName ); }
+inline void UtilCommand( Actor* pActor, CString sClassName, CString sCommandName ) { UtilCommand( *pActor, sClassName, sCommandName ); }
+inline void UtilOnCommand( Actor* pActor, CString sClassName ) { UtilOnCommand( *pActor, sClassName ); }
+inline void UtilOffCommand( Actor* pActor, CString sClassName ) { UtilOffCommand( *pActor, sClassName ); }
+inline void UtilSetXYAndOnCommand( Actor* pActor, CString sClassName ) { UtilSetXYAndOnCommand( *pActor, sClassName ); }
 
 // Return a Sprite, BitmapText, or Model depending on the file type
 Actor* LoadFromActorFile( CString sIniPath, CString sLayer = "Actor" );

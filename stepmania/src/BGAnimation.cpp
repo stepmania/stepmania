@@ -21,6 +21,7 @@
 #include "ThemeManager.h"
 #include "RageFile.h"
 #include "ActorUtil.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 const int MAX_LAYERS = 1000;
 
@@ -38,9 +39,7 @@ BGAnimation::~BGAnimation()
 
 void BGAnimation::Unload()
 {
-    for( unsigned i=0; i<m_Layers.size(); i++ )
-		delete m_Layers[i];
-	m_Layers.clear();
+    DeleteAllChildren();
 }
 
 void BGAnimation::LoadFromStaticGraphic( CString sPath )
@@ -49,10 +48,10 @@ void BGAnimation::LoadFromStaticGraphic( CString sPath )
 
 	BGAnimationLayer* pLayer = new BGAnimationLayer( m_bGeneric );
 	pLayer->LoadFromStaticGraphic( sPath );
-	m_Layers.push_back( pLayer );
+	AddChild( pLayer );
 }
 
-void AddLayersFromAniDir( CString sAniDir, vector<BGAnimationLayer*> &layersAddTo, bool Generic )
+void AddLayersFromAniDir( CString sAniDir, vector<Actor*> &layersAddTo, bool Generic )
 {
 	if( sAniDir.empty() )
 		 return;
@@ -111,40 +110,62 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 	if( DoesFileExist(sPathToIni) )
 	{
 		// This is a new style BGAnimation (using .ini)
-		AddLayersFromAniDir( sAniDir, m_Layers, m_bGeneric );	// TODO: Check for circular load
+		AddLayersFromAniDir( sAniDir, m_SubActors, m_bGeneric );	// TODO: Check for circular load
 
 		IniFile ini(sPathToIni);
 		ini.ReadFile();
 		if( !ini.GetValue( "BGAnimation", "LengthSeconds", m_fLengthSeconds ) )
 		{
-			m_fLengthSeconds = 0;
 			/* XXX: if m_bGeneric, simply constructing the BG layer won't run "On",
 			 * so at this point GetMaxTweenTimeLeft is probably 0 */
-			for( int i=0; (unsigned)i < m_Layers.size(); i++ )
-				m_fLengthSeconds = max(m_fLengthSeconds, m_Layers[i]->GetMaxTweenTimeLeft());
+			m_fLengthSeconds = this->GetTweenTimeLeft();
 		}
 
 		bool bUseScroller;
 		if( ini.GetValue( "BGAnimation", "UseScroller", bUseScroller ) && bUseScroller )
 		{
+			// TODO: Move this into ActorScroller
+			
 #define REQUIRED_GET_VALUE( szName, valueOut ) \
-	if( !ini.GetValue( "BGAnimation", szName, valueOut ) ) \
-		RageException::Throw( "File '%s' is missing the value BGAnimation::%s", sPathToIni.c_str(), szName );
+	if( !ini.GetValue( "Scroller", szName, valueOut ) ) \
+		HOOKS->MessageBoxOK( ssprintf("File '%s' is missing the value Scroller::%s", sPathToIni.c_str(), szName) );
 
-			float fScrollSecondsPerItem, fSpacingX, fSpacingY, fItemPaddingStart, fItemPaddingEnd;
-			REQUIRED_GET_VALUE( "ScrollSecondsPerItem", fScrollSecondsPerItem );
-			REQUIRED_GET_VALUE( "ScrollSpacingX", fSpacingX );
-			REQUIRED_GET_VALUE( "ScrollSpacingY", fSpacingY );
+			float fSecondsPerItem = 1;
+			int iNumItemsToDraw = 7;
+			RageVector3	vRotationDegrees = RageVector3(0,0,0);
+			RageVector3	vTranslateTerm0 = RageVector3(0,0,0);
+			RageVector3	vTranslateTerm1 = RageVector3(0,0,0);
+			RageVector3	vTranslateTerm2 = RageVector3(0,0,0);
+			float fItemPaddingStart = 0;
+			float fItemPaddingEnd = 0;
+
+			REQUIRED_GET_VALUE( "SecondsPerItem", fSecondsPerItem );
+			REQUIRED_GET_VALUE( "NumItemsToDraw", iNumItemsToDraw );
+			REQUIRED_GET_VALUE( "RotationDegreesX", vRotationDegrees[0] );
+			REQUIRED_GET_VALUE( "RotationDegreesY", vRotationDegrees[1] );
+			REQUIRED_GET_VALUE( "RotationDegreesZ", vRotationDegrees[2] );
+			REQUIRED_GET_VALUE( "TranslateTerm0X", vTranslateTerm0[0] );
+			REQUIRED_GET_VALUE( "TranslateTerm0Y", vTranslateTerm0[1] );
+			REQUIRED_GET_VALUE( "TranslateTerm0Z", vTranslateTerm0[2] );
+			REQUIRED_GET_VALUE( "TranslateTerm1X", vTranslateTerm1[0] );
+			REQUIRED_GET_VALUE( "TranslateTerm1Y", vTranslateTerm1[1] );
+			REQUIRED_GET_VALUE( "TranslateTerm1Z", vTranslateTerm1[2] );
+			REQUIRED_GET_VALUE( "TranslateTerm2X", vTranslateTerm2[0] );
+			REQUIRED_GET_VALUE( "TranslateTerm2Y", vTranslateTerm2[1] );
+			REQUIRED_GET_VALUE( "TranslateTerm2Z", vTranslateTerm2[2] );
 			REQUIRED_GET_VALUE( "ItemPaddingStart", fItemPaddingStart );
 			REQUIRED_GET_VALUE( "ItemPaddingEnd", fItemPaddingEnd );
 #undef REQUIRED_GET_VALUE
 
-			m_Scroller.Load( fScrollSecondsPerItem, fSpacingX, fSpacingY );
-			for( unsigned i=0; i<m_Layers.size(); i++ )
-				m_Scroller.AddChild( m_Layers[i] );
-			m_Scroller.SetCurrentAndDestinationItem( int(-fItemPaddingStart) );
-			m_Scroller.SetDestinationItem( int(m_Layers.size()-1+fItemPaddingEnd) );
-			this->AddChild( &m_Scroller );
+			ActorScroller::Load( 
+				fSecondsPerItem,
+				iNumItemsToDraw,
+				vRotationDegrees,
+				vTranslateTerm0,
+				vTranslateTerm1,
+				vTranslateTerm2 );
+			ActorScroller::SetCurrentAndDestinationItem( int(-fItemPaddingStart) );
+			ActorScroller::SetDestinationItem( int(m_SubActors.size()-1+fItemPaddingEnd) );
 		}
 
 		CString InitCommand;
@@ -181,7 +202,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 				continue;	// don't directly load files starting with an underscore
 			BGAnimationLayer* pLayer = new BGAnimationLayer( m_bGeneric );
 			pLayer->LoadFromAniLayerFile( asImagePaths[i] );
-			m_Layers.push_back( pLayer );
+			AddChild( pLayer );
 		}
 	}
 }
@@ -192,7 +213,7 @@ void BGAnimation::LoadFromMovie( CString sMoviePath )
 
 	BGAnimationLayer* pLayer = new BGAnimationLayer( m_bGeneric );
 	pLayer->LoadFromMovie( sMoviePath );
-	m_Layers.push_back( pLayer );
+	AddChild( pLayer );
 }
 
 void BGAnimation::LoadFromVisualization( CString sVisPath )
@@ -205,82 +226,10 @@ void BGAnimation::LoadFromVisualization( CString sVisPath )
 
 	pLayer = new BGAnimationLayer( m_bGeneric );
 	pLayer->LoadFromStaticGraphic( sSongBGPath );
-	m_Layers.push_back( pLayer );
+	AddChild( pLayer );
 
 	pLayer = new BGAnimationLayer( m_bGeneric );
 	pLayer->LoadFromVisualization( sVisPath );
-	m_Layers.push_back( pLayer );	
-}
-
-
-void BGAnimation::Update( float fDeltaTime )
-{
-	for( unsigned i=0; i<m_Layers.size(); i++ )
-		m_Layers[i]->Update( fDeltaTime );
-	ActorFrame::Update( fDeltaTime );
-}
-
-void BGAnimation::DrawPrimitives()
-{
-	for( unsigned i=0; i<m_Layers.size(); i++ )
-		m_Layers[i]->Draw();
-}
-	
-void BGAnimation::GainingFocus( float fRate, bool bRewindMovie, bool bLoop )
-{
-	for( unsigned i=0; i<m_Layers.size(); i++ )
-		m_Layers[i]->GainingFocus( fRate, bRewindMovie, bLoop );
-
-	SetDiffuse( RageColor(1,1,1,1) );
-}
-
-void BGAnimation::LosingFocus()
-{
-	for( unsigned i=0; i<m_Layers.size(); i++ )
-		m_Layers[i]->LosingFocus();
-}
-
-void BGAnimation::SetDiffuse( const RageColor &c )
-{
-	for( unsigned i=0; i<m_Layers.size(); i++ ) 
-		m_Layers[i]->SetDiffuse(c);
-	ActorFrame::SetDiffuse( c );
-}
-
-float BGAnimation::GetTweenTimeLeft() const
-{
-	float ret = 0;
-
-	for( unsigned i=0; i<m_Layers.size(); ++i )
-		ret = max( ret, m_Layers[i]->GetMaxTweenTimeLeft() );
-
-	return max( ret, Actor::GetTweenTimeLeft() );
-}
-
-void BGAnimation::FinishTweening()
-{
-	for( unsigned i=0; i<m_Layers.size(); i++ )
-		m_Layers[i]->FinishTweening();
-	ActorFrame::FinishTweening();
-}
-
-void BGAnimation::PlayCommand( const CString &cmd )
-{
-	for( unsigned i=0; i<m_Layers.size(); i++ ) 
-		m_Layers[i]->PlayCommand( cmd );
-}
-
-void BGAnimation::HandleCommand( const ParsedCommand &command )
-{
-	HandleParams;
-
-	if( sParam(0)=="playcommand" )	PlayCommand( sParam(1) );
-	else
-	{
-		Actor::HandleCommand( command );
-		return;
-	}
-
-	CheckHandledParams;
+	AddChild( pLayer );
 }
 

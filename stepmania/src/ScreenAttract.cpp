@@ -30,12 +30,12 @@
 #define INITIAL_SCREEN			THEME->GetMetric("Common","InitialScreen")
 
 
-ScreenAttract::ScreenAttract( CString sClassName, bool bResetGameState ) : Screen( sClassName )
+ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : Screen( sName )
 {
-	LOG->Trace( "ScreenAttract::ScreenAttract(%s)", sClassName.c_str() );
+	LOG->Trace( "ScreenAttract::ScreenAttract(%s)", m_sName.c_str() );
 
 	// increment times through attract count
-	if( sClassName == INITIAL_SCREEN )
+	if( m_sName == INITIAL_SCREEN )
 		GAMESTATE->m_iNumTimesThroughAttract++;
 
 	if( bResetGameState )
@@ -46,11 +46,11 @@ ScreenAttract::ScreenAttract( CString sClassName, bool bResetGameState ) : Scree
 	m_Background.LoadFromAniDir( THEME->GetPathToB(m_sName+" background") );
 	this->AddChild( &m_Background );
 
-	m_In.Load( THEME->GetPathToB("ScreenAttract in") );
+	m_In.Load( THEME->GetPathToB(m_sName+" in") );
 	m_In.StartTransitioning();
 	this->AddChild( &m_In );
 
-	m_Out.Load( THEME->GetPathToB("ScreenAttract out") );
+	m_Out.Load( THEME->GetPathToB(m_sName+" out") );
 	this->AddChild( &m_Out );
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName) );

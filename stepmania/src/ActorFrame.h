@@ -42,6 +42,10 @@ public:
 	/* Amount of time until all tweens (and all children's tweens) have stopped: */
 	virtual float GetTweenTimeLeft() const;
 
+	virtual void GainingFocus( float fRate, bool bRewindMovie, bool bLoop );
+	virtual void LosingFocus();
+	virtual void PlayCommand( const CString &sCommandName );
+
 protected:
 	vector<Actor*>	m_SubActors;
 };
