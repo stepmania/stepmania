@@ -727,14 +727,15 @@ float NoteDataUtil::GetStreamRadarValue( const NoteData &in, float fSongSeconds 
 
 float NoteDataUtil::GetVoltageRadarValue( const NoteData &in, float fSongSeconds )
 {
-	float fAvgBPS = in.GetLastBeat() / fSongSeconds;
+	const float fLastBeat = in.GetLastBeat();
+	const float fAvgBPS = fLastBeat / fSongSeconds;
 
 	// peak density of steps
 	float fMaxDensitySoFar = 0;
 
 	const int BEAT_WINDOW = 8;
 
-	for( int i=0; i<MAX_BEATS; i+=BEAT_WINDOW )
+	for( int i=0; i<=int(fLastBeat); i+=BEAT_WINDOW )
 	{
 		int iNumNotesThisWindow = in.GetNumTapNotes((float)i,(float)i+BEAT_WINDOW) + in.GetNumHoldNotes((float)i,(float)i+BEAT_WINDOW);
 		float fDensityThisWindow = iNumNotesThisWindow/(float)BEAT_WINDOW;
