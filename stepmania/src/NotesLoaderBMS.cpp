@@ -282,7 +282,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 					if( it != mapWavIdToKeysoundIndex.end() )
 					{
 						tn.bKeysound = true;
-						tn.keysoundIndex = it->second;
+						tn.keysoundIndex = (uint16_t)it->second;
 					}
 					vTapNotes.push_back( tn );
 				}

@@ -141,7 +141,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData,
 						if( 1 == sscanf( p, "%u]", &uKeysoundIndex ) )	// not fatal if this fails due to malformed data
 						{
 							tn.bKeysound = true;
-							tn.keysoundIndex = uKeysoundIndex;
+							tn.keysoundIndex = (uint16_t)uKeysoundIndex;
 						}
 
 						// skip past the ']'

@@ -28,6 +28,7 @@
 #include "NetworkSyncManager.h"	//used for sending timing offset
 #include "DancingCharacters.h"
 #include "ScreenDimensions.h"
+#include "RageSoundManager.h"
 
 CachedThemeMetricF GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
 CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
@@ -216,8 +217,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	m_Combo.Command( g_NoteFieldMode[pn].m_ComboCmd );
 	m_AttackDisplay.Command( g_NoteFieldMode[pn].m_AttackDisplayCmd );
 
-	int c;
-	for( c=0; c<pStyle->m_iColsPerPlayer; c++ )
+	for( int c=0; c<pStyle->m_iColsPerPlayer; c++ )
 	{
 		NoteFieldMode &mode = g_NoteFieldMode[pn];
 		m_HoldJudgment[c].Command( mode.m_HoldJudgmentCmd[c] );

@@ -48,7 +48,7 @@ void NoteData::SetNumTracks( int iNewNumTracks )
 void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 {
 	this->ConvertHoldNotesTo4s();
-	for( unsigned t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, i, iNoteIndexBegin, iNoteIndexEnd )
 			SetTapNote(t, i, TAP_EMPTY);
@@ -58,7 +58,7 @@ void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 
 void NoteData::ClearAll()
 {
-	for( unsigned t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 		m_TapNotes[t].clear();
 	m_HoldNotes.clear();
 }
@@ -334,7 +334,7 @@ int NoteData::GetFirstRow() const
 { 
 	int iEarliestRowFoundSoFar = -1;
 	
-	for( unsigned t=0; t < GetNumTracks(); t++ )
+	for( int t=0; t < GetNumTracks(); t++ )
 	{
 		const TrackMap &trackMap = m_TapNotes[t];
 		TrackMap::const_iterator iter = trackMap.begin();
@@ -363,7 +363,7 @@ int NoteData::GetLastRow() const
 { 
 	int iOldestRowFoundSoFar = 0;
 	
-	for( unsigned t=0; t < GetNumTracks(); t++ )
+	for( int t=0; t < GetNumTracks(); t++ )
 	{
 		const TrackMap &trackMap = m_TapNotes[t];
 		const TrackMap::const_reverse_iterator  iter = trackMap.rbegin();
@@ -581,7 +581,6 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 	// Any note will end a hold (not just a TAP_HOLD_TAIL).  This makes parsing DWIs much easier.
 	// Plus, allowing tap notes in the middle of a hold doesn't make sense!
 
-	int rows = GetLastRow();
 	for( int t=0; t<GetNumTracks(); t++ )	// foreach column
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK( *this, t, i )
@@ -751,7 +750,7 @@ void NoteData::SetTapNote( int track, int row, TapNote t )
 	{
 		TrackMap &trackMap = m_TapNotes[track];
 		// remove the element at this position (if any).  This will return either 0 or 1.
-		unsigned numDeleted = trackMap.erase( row );
+		trackMap.erase( row );
 	}
 	else
 	{
