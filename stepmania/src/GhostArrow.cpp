@@ -63,6 +63,9 @@ void GhostArrow::Step( TapNoteScore score )
 {
 	for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
 	{
+		// HACK: never hide the mine explosion
+		if( i == TNS_HIT_MINE )
+			continue;
 		m_spr[i].StopTweening();
 		m_spr[i].SetHidden( true );
 	}

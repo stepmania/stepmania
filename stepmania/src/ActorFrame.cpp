@@ -11,6 +11,8 @@
 */
 
 #include "ActorFrame.h"
+#include "arch/ArchHooks/ArchHooks.h"
+#include "RageUtil.h"
 
 void ActorFrame::AddChild( Actor* pActor )
 {
@@ -18,8 +20,7 @@ void ActorFrame::AddChild( Actor* pActor )
 	// check that this Actor isn't already added.
 	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
 	if( iter != m_SubActors.end() )
-		RageException::Throw( "Actor \"%s\" adds child \"%s\" more than once",
-			m_sName.c_str(), pActor->m_sName.c_str() );
+		HOOKS->MessageBoxOK( ssprintf("Actor \"%s\" adds child \"%s\" more than once", m_sName.c_str(), pActor->m_sName.c_str()) );
 #endif
 
 	ASSERT( pActor );
