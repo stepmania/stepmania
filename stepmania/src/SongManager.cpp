@@ -608,9 +608,6 @@ void SongManager::InitAutogenCourses()
 		do {
 			CString sArtist = i >= apSongs.size()? "": apSongs[i]->GetDisplayArtist();
 			CString sTranslitArtist = i >= apSongs.size()? "": apSongs[i]->GetTranslitArtist();
-			LOG->Trace("foo '%s' '%s'",
-				sArtist.c_str(),
-				sTranslitArtist.c_str() );
 			if( i < apSongs.size() && !sCurArtist.CompareNoCase(sArtist) )
 			{
 				aSongs.push_back( apSongs[i] );
