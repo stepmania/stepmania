@@ -423,7 +423,7 @@ void NoteField::DrawPrimitives()
 			bool bHoldNoteBeginsOnThisBeat = false;
 			for( int c2=0; c2<GetNumTracks(); c2++ )
 			{
-				if( tn == TAP_HOLD_HEAD )
+				if( GetTapNote(c2, i) == TAP_HOLD_HEAD )
 				{
 					bHoldNoteBeginsOnThisBeat = true;
 					break;
