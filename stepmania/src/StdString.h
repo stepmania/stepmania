@@ -939,24 +939,38 @@ public:
 	void FormatV(const CT* szFormat, va_list argList)
 	{
 	#ifdef SS_ANSI
+		static bool bExactSizeSupported;
+		static bool bInitialized = false;
+		if( !bInitialized )
+		{
+			/* Some systems return the actual size required when snprintf
+			 * doesn't have enough space.  This lets us avoid wasting time
+			 * iterating, and wasting memory. */
+			bInitialized = true;
+			char ignore;
+			bExactSizeSupported = ( snprintf( &ignore, 0, "Hello World" ) == 11 );
+		}
+
+		if( bExactSizeSupported )
+		{
+			char ignore;
+			int iNeeded = ssvsprintf( &ignore, 0, szFormat, argList );
+			char *buf = GetBuffer( iNeeded+1 );
+			ssvsprintf( buf, iNeeded+1, szFormat, argList );
+			ReleaseBuffer( iNeeded );
+			return;
+		}
+
 		int nChars			= FMT_BLOCK_SIZE;
 		int nTry			= 1;
-		
 		do	
 		{
 			// Grow more than linearly (e.g. 512, 1536, 3072, etc)
 			char *buf = GetBuffer(nChars);
 			int nUsed = ssvsprintf(buf, nChars-1, szFormat, argList);
 
-			/* -1 means "not enough, try harder"; > nChars is telling us how
-			 * much. */
-			if(nUsed > nChars) {
-				nChars = nUsed + 1;
-				ReleaseBuffer();
-				continue;
-			}
-
-			if(nUsed == -1) {
+			if(nUsed == -1)
+			{
 				nChars += ((nTry+1) * FMT_BLOCK_SIZE);
 				ReleaseBuffer();
 				continue;
