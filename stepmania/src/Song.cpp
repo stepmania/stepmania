@@ -85,6 +85,13 @@ Song::~Song()
 	// that all pointers to this Song and its Steps are invalidated.
 }
 
+void Song::DetachSteps()
+{
+	m_vpSteps.clear();
+	FOREACH_StepsType( st )
+		m_vpStepsByType[st].clear();
+}
+
 /* Reset to an empty song. */
 void Song::Reset()
 {

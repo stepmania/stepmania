@@ -59,6 +59,7 @@ public:
 	Song();
 	~Song();
 	void Reset();
+	void DetachSteps();
 
 	NotesLoader *MakeLoader( CString sDir ) const;
 

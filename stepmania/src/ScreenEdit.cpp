@@ -613,6 +613,9 @@ void ScreenEdit::Init()
 
 ScreenEdit::~ScreenEdit()
 {
+	// UGLY: Don't delete the Song's steps.
+	m_songLastSave.DetachSteps();
+
 	LOG->Trace( "ScreenEdit::~ScreenEdit()" );
 	m_soundMusic.StopPlaying();
 }
