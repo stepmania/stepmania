@@ -16,6 +16,7 @@
 #include "GameState.h"
 #include "GameManager.h"
 #include "Course.h"
+#include "Song.h"
 #include "PrefsManager.h"
 
 #define CATEGORY_X				THEME->GetMetricF("ScreenRanking","CategoryX")
@@ -37,9 +38,19 @@
 #define POINTS_START_Y			THEME->GetMetricF("ScreenRanking","PointsStartY")
 #define TIME_START_X			THEME->GetMetricF("ScreenRanking","TimeStartX")
 #define TIME_START_Y			THEME->GetMetricF("ScreenRanking","TimeStartY")
+#define PERCENT_START_X			THEME->GetMetricF("ScreenRanking","PercentStartX")
+#define PERCENT_START_Y			THEME->GetMetricF("ScreenRanking","PercentStartY")
+#define PERCENT_COL_SPACING_X	THEME->GetMetricF("ScreenRanking","PercentColSpacingX")
+#define PERCENT_COL_SPACING_Y	THEME->GetMetricF("ScreenRanking","PercentColSpacingY")
 #define SECONDS_PER_PAGE		THEME->GetMetricF("ScreenRanking","SecondsPerPage")
 #define SHOW_CATEGORIES			THEME->GetMetricB("ScreenRanking","ShowCategories")
+#define SHOW_ALL_SONGS			THEME->GetMetricB("ScreenRanking","ShowAllSongs")
 #define NOTES_TYPES_TO_HIDE		THEME->GetMetric ("ScreenRanking","NotesTypesToHide")
+#define EMPTY_SCORE_NAME		THEME->GetMetric ("ScreenRanking","EmptyScoreName")
+#define EMPTY_CATEGORY_SCORE	THEME->GetMetricI("ScreenRanking","EmptyCategoryScore")
+#define EMPTY_COURSE_SCORE		THEME->GetMetricI("ScreenRanking","EmptyCourseScore")
+#define EMPTY_COURSE_TIME		THEME->GetMetricF("ScreenRanking","EmptyCourseTime")
+#define EMPTY_SONG_PERCENT		THEME->GetMetricF("ScreenRanking","EmptySongPercent")
 
 #define COURSES_TO_SHOW			PREFSMAN->m_sCoursesToShowRanking
 
@@ -96,6 +107,17 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		m_textTime[i].SetZoom( TEXT_ZOOM );
 		m_textTime[i].SetHorizAlign( Actor::align_right );
 		this->AddChild( &m_textTime[i] );
+
+		for( int j=0; j<NUM_DIFFICULTIES; j++ )
+		{
+			m_textPercent[i][j].LoadFromFont( THEME->GetPathToF("ScreenRanking letters") );
+			m_textPercent[i][j].EnableShadow( false );
+			m_textPercent[i][j].SetX( PERCENT_START_X+LINE_SPACING_X*i+PERCENT_COL_SPACING_X*j );
+			m_textPercent[i][j].SetY( PERCENT_START_Y+LINE_SPACING_Y*i+PERCENT_COL_SPACING_Y*j );
+			m_textPercent[i][j].SetZoom( TEXT_ZOOM );
+			m_textPercent[i][j].SetHorizAlign( Actor::align_right );
+			this->AddChild( &m_textPercent[i][j] );
+		}
 
 		if( PREFSMAN->m_sCoursesToShowRanking == "" )
 			PREFSMAN->m_sCoursesToShowRanking = THEME->GetMetric("ScreenRanking","CoursesToShow");
@@ -157,6 +179,23 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		}
 	}
 
+	if( SHOW_ALL_SONGS )
+	{
+		vector<Song*> vpSongs = SONGMAN->GetAllSongs();
+		for( unsigned i=0; i<aNotesTypesToShow.size(); i++ )
+		{
+			for( int j=0; j<vpSongs.size(); j++ )
+			{
+				PageToShow pts;
+				pts.type = PageToShow::TYPE_SONG;
+				pts.colorIndex = i;
+				pts.pSong = vpSongs[j];
+				pts.nt = aNotesTypesToShow[i];
+				m_vPagesToShow.push_back( pts );
+			}
+		}
+	}
+
 	this->MoveToTail( &m_In );		// put it in the back so it covers up the stuff we just added
 	this->MoveToTail( &m_Out );		// put it in the back so it covers up the stuff we just added
 
@@ -197,6 +236,16 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenRanking::SetPage( PageToShow pts )
 {
+	// Clear all text
+	for( int l=0; l<NUM_RANKING_LINES; l++ )
+	{
+		m_textScores[l].SetText( "" );
+		m_textPoints[l].SetText( "" );
+		m_textTime[l].SetText( "" );
+		for( int j=0; j<NUM_DIFFICULTIES; j++ )
+			m_textPercent[l][j].SetText( "" );
+	}
+
 	switch( pts.type )
 	{
 	case PageToShow::TYPE_CATEGORY:
@@ -208,24 +257,32 @@ void ScreenRanking::SetPage( PageToShow pts )
 			m_sprType.Load( THEME->GetPathToG("ScreenRanking type "+GameManager::NotesTypeToString(pts.nt)) );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
+				SongManager::CategoryData::HighScore hs;
+				if( l < SONGMAN->m_CategoryDatas[pts.nt][pts.category].vHighScores.size() )
+				{
+					hs = SONGMAN->m_CategoryDatas[pts.nt][pts.category].vHighScores[l];
+				}
+				else
+				{
+					hs.sName = EMPTY_SCORE_NAME;
+					hs.iScore = EMPTY_CATEGORY_SCORE;
+				}
+
 				m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
-				CString sName = SONGMAN->m_MachineScores[pts.nt][pts.category][l].sName;
-				int iScore = SONGMAN->m_MachineScores[pts.nt][pts.category][l].iScore;
-				m_textNames[l].SetText( sName );
-				m_textScores[l].SetText( ssprintf("%09i",iScore) );
-				m_textPoints[l].SetText( "" );
-				m_textTime[l].SetText( "" );
+				m_textNames[l].SetText( hs.sName );
+				m_textScores[l].SetText( ssprintf("%09i",hs.iScore) );
 				m_textNames[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
 				m_textScores[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
 
 				bool bRecentHighScore = false;
-				for( int p=0; p<NUM_PLAYERS; p++ )
-				{
-					bRecentHighScore |=
-						pts.nt == GAMESTATE->m_RankingNotesType  &&
-						GAMESTATE->m_RankingCategory[p] == pts.category  &&
-						GAMESTATE->m_iRankingIndex[p] == l;
-				}
+				// FIXME
+//				for( int p=0; p<NUM_PLAYERS; p++ )
+//				{
+//					bRecentHighScore |=
+//						pts.nt == GAMESTATE->m_RankingNotesType  &&
+//						GAMESTATE->m_RankingCategory[p] == pts.category  &&
+//						GAMESTATE->m_iRankingIndex[p] == l;
+//				}
 
 				if( bRecentHighScore )
 				{
@@ -259,20 +316,29 @@ void ScreenRanking::SetPage( PageToShow pts )
 			m_sprType.Load( THEME->GetPathToG("ScreenRanking type "+GameManager::NotesTypeToString(pts.nt)) );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
+				Course::MemCardData::HighScore hs;
+				if( l < pts.pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores.size() )
+				{
+					hs = pts.pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores[l];
+				}
+				else
+				{
+					hs.sName = EMPTY_SCORE_NAME;
+					hs.iScore = EMPTY_COURSE_SCORE;
+					hs.fSurviveTime = EMPTY_COURSE_TIME;
+				}
+
 				m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
-				CString sName = pts.pCourse->m_RankingScores[pts.nt][l].sName;
-				const int iScore = pts.pCourse->m_RankingScores[pts.nt][l].iScore;
-				const float fSurviveTime = pts.pCourse->m_RankingScores[pts.nt][l].fSurviveTime;
-				m_textNames[l].SetText( sName );
+				m_textNames[l].SetText( hs.sName );
 				if( pts.pCourse->IsOni() )
 				{
-					m_textPoints[l].SetText( ssprintf("%04d",iScore) );
-					m_textTime[l].SetText( SecondsToTime(fSurviveTime) );
+					m_textPoints[l].SetText( ssprintf("%04d",hs.iScore) );
+					m_textTime[l].SetText( SecondsToTime(hs.fSurviveTime) );
 					m_textScores[l].SetText( "" );
 				} else {
 					m_textPoints[l].SetText( "" );
 					m_textTime[l].SetText( "" );
-					m_textScores[l].SetText( ssprintf("%09d",iScore) );
+					m_textScores[l].SetText( ssprintf("%09d",hs.iScore) );
 				}
 				m_textNames[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
 				m_textPoints[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
@@ -280,9 +346,12 @@ void ScreenRanking::SetPage( PageToShow pts )
 				m_textScores[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
 				for( int p=0; p<NUM_PLAYERS; p++ )
 				{
-					if( pts.pCourse == GAMESTATE->m_pRankingCourse  &&
-						pts.nt == GAMESTATE->m_RankingNotesType  &&
-						GAMESTATE->m_iRankingIndex[p] == l )
+					bool bHighlight = false;
+					// FIXME
+//					bHighlight = pts.pCourse == GAMESTATE->m_pRankingCourse  &&
+//						pts.nt == GAMESTATE->m_RankingNotesType  &&
+//						GAMESTATE->m_iRankingIndex[p] == l;
+					if( bHighlight )
 					{
 						m_textNames[l].SetEffectGlowBlink(0.1f);
 						m_textScores[l].SetEffectGlowBlink(0.1f);
@@ -292,6 +361,44 @@ void ScreenRanking::SetPage( PageToShow pts )
 						m_textNames[l].SetEffectNone();
 						m_textScores[l].SetEffectNone();
 					}
+				}
+			}
+		}
+		break;
+	case PageToShow::TYPE_SONG:
+		{
+			m_textCategory.SetDiffuseAlpha(0);
+			m_sprCategory.SetDiffuseAlpha(0);
+
+			m_sprCategory.Load( pts.pSong->GetBannerPath() );
+			m_sprCategory.SetDiffuseAlpha(1);
+			m_textCategory.SetZoom(1);
+			m_textCategory.SetTextMaxWidth( CATEGORY_WIDTH, pts.pSong->GetFullTranslitTitle() );
+			m_textCategory.SetDiffuseAlpha(1);
+		
+			m_sprType.SetDiffuse( RageColor(1,1,1,1) );
+			m_sprType.Load( THEME->GetPathToG("ScreenRanking type "+GameManager::NotesTypeToString(pts.nt)) );
+			for( int l=0; l<NUM_RANKING_LINES; l++ )
+			{
+				m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
+
+				for( int d=0; d<NUM_DIFFICULTIES; d++ )
+				{
+					Difficulty dc = (Difficulty)d;
+					Steps* pSteps = pts.pSong->GetStepsByDifficulty( pts.nt, dc );
+					
+					Steps::MemCardData::HighScore hs;
+					if( l < pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores.size() )
+					{
+						hs = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[l];
+					}
+					else
+					{
+						hs.sName = EMPTY_SCORE_NAME;
+						hs.fScore = EMPTY_SONG_PERCENT;
+					}
+
+					m_textPercent[l][d].SetText( ssprintf("%s %f%", hs.sName.c_str(), hs.fScore) );
 				}
 			}
 		}

@@ -165,119 +165,146 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	//
 	// update persistent statistics
 	//
-	bool bNewRecord[NUM_PLAYERS];
-	ZERO( bNewRecord );
+	int iPersonalHighScoreIndex[NUM_PLAYERS];
+	int iMachineHighScoreIndex[NUM_PLAYERS];
+	RankingCategory rc[NUM_PLAYERS];
+	memset( iPersonalHighScoreIndex, -1, sizeof(iPersonalHighScoreIndex) );
+	memset( iMachineHighScoreIndex, -1, sizeof(iMachineHighScoreIndex) );
+	memset( rc, -1, sizeof(rc) );
 
 
-	switch( m_Type )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-	case stage:
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;	// skip
+		if( !GAMESTATE->m_SongOptions.m_bSaveScore )
+			continue;	// skip
+
+		switch( m_Type )
 		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
+		case stage:
 			{
-				if( GAMESTATE->IsHumanPlayer(p) && GAMESTATE->m_SongOptions.m_bSaveScore )
-				{
-					if( GAMESTATE->m_pCurNotes[p] )
-					{
-						float score;
-						if( PREFSMAN->m_bPercentageScoring )
-							score = stageStats.GetPercentDancePoints( (PlayerNumber)p );
-						else
-							score = float(stageStats.iScore[p] + stageStats.iBonus[p]);
-						GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], score, bNewRecord[p] );
-					}
-					
-					// update unlock data if unlocks are on
-					if ( PREFSMAN->m_bUseUnlockSystem )
-					{
-						UNLOCKSYS->UnlockClearStage();
-						UNLOCKSYS->UnlockAddAP( grade[p] );
-						UNLOCKSYS->UnlockAddSP( grade[p] );
-
-						// we want to save dance points here if we are in event mode.
-						// otherwise, dance points will never get saved except
-						// in nonstop mode.
-						if( PREFSMAN->m_bEventMode )
-							UNLOCKSYS->UnlockAddDP( (float)stageStats.iActualDancePoints[p] );
-
-					}
-				}
-			}
-		}
-		break;
-	case summary:
-		{
-			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-			bool bIsHumanPlayer[NUM_PLAYERS];
-			for( p=0; p<NUM_PLAYERS; p++ )
-				bIsHumanPlayer[p] = GAMESTATE->IsHumanPlayer(p);
-
-			RankingCategory cat[NUM_PLAYERS];
-			int iRankingIndex[NUM_PLAYERS];
-			float	fTotalDP = 0;
-			for( int p=0; p<NUM_PLAYERS; p++ )
-			{
-				float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
-				cat[p] = AverageMeterToRankingCategory( fAverageMeter );
-				fTotalDP += stageStats.iActualDancePoints[p];
-			}
-
-			SONGMAN->AddScores( nt, bIsHumanPlayer, cat, stageStats.iScore, iRankingIndex );
-
-			COPY( GAMESTATE->m_RankingCategory, cat );
-			COPY( GAMESTATE->m_iRankingIndex, iRankingIndex );
-			GAMESTATE->m_RankingNotesType = nt;
-
-			// If unlocking is enabled, save the dance points
-			if( PREFSMAN->m_bUseUnlockSystem )
-				UNLOCKSYS->UnlockAddDP( fTotalDP );
-		}
-		break;
-	case course:
-		{
-			bool bIsHumanPlayer[NUM_PLAYERS];
-			for( p=0; p<NUM_PLAYERS; p++ )
-				bIsHumanPlayer[p] = GAMESTATE->IsHumanPlayer(p);
-
-			int iRankingIndex[NUM_PLAYERS];
-
-			Course* pCourse = GAMESTATE->m_pCurCourse;
-			if( pCourse )
-			{
-				int *score;
-				if( pCourse->IsOni() )
-					score = stageStats.iActualDancePoints;
+				ASSERT( GAMESTATE->m_pCurNotes[p] );
+				float score;
+				if( PREFSMAN->m_bPercentageScoring )
+					score = stageStats.GetPercentDancePoints( (PlayerNumber)p );
 				else
-					score = stageStats.iScore;
-
-				StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-				pCourse->AddScores( nt, bIsHumanPlayer, score, stageStats.fAliveSeconds, iRankingIndex, bNewRecord );
-				COPY( GAMESTATE->m_iRankingIndex, iRankingIndex );
-				GAMESTATE->m_pRankingCourse = pCourse;
-				GAMESTATE->m_RankingNotesType = nt;
-			}
-
-			// If unlocking is enabled, save the dance points
-			// (for courses)
-			if( PREFSMAN->m_bUseUnlockSystem )
-			{
-				for(p=0; p < NUM_PLAYERS; p++)
+					score = float(stageStats.iScore[p] + stageStats.iBonus[p]);
+				Steps::MemCardData::HighScore hs;
+				hs.grade = grade[p];
+				hs.fScore = score;
+				GAMESTATE->m_pCurNotes[p]->AddHighScore( (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
+					
+				// update unlock data if unlocks are on
+				if ( PREFSMAN->m_bUseUnlockSystem )
 				{
-					if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-						continue;	// skip
+					UNLOCKSYS->UnlockClearStage();
+					UNLOCKSYS->UnlockAddAP( grade[p] );
+					UNLOCKSYS->UnlockAddSP( grade[p] );
 
-					UNLOCKSYS->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
-					UNLOCKSYS->UnlockAddAP( (float) stageStats.iSongsPassed[p] );
-					UNLOCKSYS->UnlockAddSP( (float) stageStats.iSongsPassed[p] );
+					// we want to save dance points here if we are in event mode.
+					// otherwise, dance points will never get saved except
+					// in nonstop mode.
+					if( PREFSMAN->m_bEventMode )
+						UNLOCKSYS->UnlockAddDP( (float)stageStats.iActualDancePoints[p] );
+
 				}
 			}
-			// cannot just use score since it may be nonstop mode
+			break;
+		case summary:
+			{
+				StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 
+				float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
+				rc[p] = AverageMeterToRankingCategory( fAverageMeter );
+				float fTotalDP = stageStats.iActualDancePoints[p];
 
+				SongManager::CategoryData::HighScore hs;
+				hs.iScore = stageStats.iScore[p];
+				SONGMAN->AddHighScore( nt, rc[p], (PlayerNumber)p, hs, iMachineHighScoreIndex[p] );
+
+				// If unlocking is enabled, save the dance points
+				if( PREFSMAN->m_bUseUnlockSystem )
+					UNLOCKSYS->UnlockAddDP( fTotalDP );
+			}
+			break;
+		case course:
+			{
+				Course* pCourse = GAMESTATE->m_pCurCourse;
+				if( pCourse )
+				{
+					int score;
+					if( pCourse->IsOni() )
+						score = stageStats.iActualDancePoints[p];
+					else
+						score = stageStats.iScore[p];
+
+					StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+					Course::MemCardData::HighScore hs;
+					hs.iScore = score;
+					hs.fSurviveTime = stageStats.fAliveSeconds[p];
+					pCourse->AddHighScore( nt, (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
+				}
+
+				// If unlocking is enabled, save the dance points
+				// (for courses)
+				if( PREFSMAN->m_bUseUnlockSystem )
+				{
+					for(p=0; p < NUM_PLAYERS; p++)
+					{
+						if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+							continue;	// skip
+
+						UNLOCKSYS->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
+						UNLOCKSYS->UnlockAddAP( (float) stageStats.iSongsPassed[p] );
+						UNLOCKSYS->UnlockAddSP( (float) stageStats.iSongsPassed[p] );
+					}
+				}
+				// cannot just use score since it may be nonstop mode
+
+			}
+			break;
+		default:
+			ASSERT(0);
 		}
-		break;
-	default:
-		ASSERT(0);
+	}
+
+
+	// If both players get a machine high score, a player
+	// whose score is added later may bump the players who were
+	// added earlier.  Adjust for this.
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;	// skip
+		if( iMachineHighScoreIndex[p] == -1 )	// no record
+			continue;	// skip
+		for( int p2=0; p2<p; p2++ )
+		{
+			if( !GAMESTATE->IsHumanPlayer(p2) )
+				continue;	// skip
+			if( iMachineHighScoreIndex[p2] == -1 )	// no record
+				continue;	// skip
+			bool bPlayedSameSteps;
+			switch( m_Type )
+			{
+			case stage:
+				bPlayedSameSteps = GAMESTATE->m_pCurNotes[p]==GAMESTATE->m_pCurNotes[p2];
+				break;
+			case summary:
+				bPlayedSameSteps = rc[p] == rc[p2];
+				break;
+			case course:
+				bPlayedSameSteps = true;
+				break;
+			}
+			if( iMachineHighScoreIndex[p] >= iMachineHighScoreIndex[p2] )
+			{
+				iMachineHighScoreIndex[p2]++;
+				if( iMachineHighScoreIndex[p2] >= NUM_RANKING_LINES )
+					iMachineHighScoreIndex[p2] = -1;
+			}
+		}
 	}
 
 	m_bTryExtraStage = 
@@ -628,7 +655,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	//
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( bNewRecord[p] )
+		if( iPersonalHighScoreIndex[p] == 0 )
 		{
 			m_sprNewRecord[p].Load( THEME->GetPathToG("ScreenEvaluation new record") );
 			m_sprNewRecord[p].SetName( ssprintf("NewRecordP%d",p+1) );
@@ -639,7 +666,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 	bool bOneHasNewRecord = false;
 	for( p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(p) && bNewRecord[p] )
+		if( GAMESTATE->IsPlayerEnabled(p) && iPersonalHighScoreIndex[p] == 0 )
 			bOneHasNewRecord = true;
 	
 	if( m_bTryExtraStage )

@@ -36,7 +36,6 @@ public:
 	GameState();
 	~GameState();
 	void Reset();
-	void ResetLastRanking();
 
 	void Update( float fDelta );
 
@@ -245,12 +244,7 @@ public:
 	//
 	// Ranking Stuff
 	//
-
-	// Filled in by ScreenNameEntry and used by ScreenRanking to flash the recent high scores
-	StepsType			m_RankingNotesType;	// meaningless if a course was played
-	RankingCategory		m_RankingCategory[NUM_PLAYERS];	// meaningless if a course was played
-	Course*				m_pRankingCourse;		// meaningless unless Course was played
-	int					m_iRankingIndex[NUM_PLAYERS];		// -1 if no new high score
+	void GetRankingFeats( PlayerNumber pn, CStringArray &asFeatsOut, vector<CString*> &vpStringsToFillOut );
 
 	/* Called by name entry screens: */
 	void StoreRankingName( PlayerNumber pn, CString name );

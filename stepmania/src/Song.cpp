@@ -1180,22 +1180,19 @@ void Song::RemoveAutoGenNotes()
 }
 
 
-Grade Song::GetGradeForDifficulty( const StyleDef *st, MemoryCard card, Difficulty dc ) const
+Steps::MemCardData::HighScore Song::GetHighScoreForDifficulty( const StyleDef *st, MemoryCard card, Difficulty dc ) const
 {
 	// return max grade of notes in difficulty class
 	vector<Steps*> aNotes;
 	this->GetSteps( aNotes, st->m_StepsType );
 	SortNotesArrayByDifficulty( aNotes );
 
-	Grade grade = GRADE_NO_DATA;
 
-	for( unsigned i=0; i<aNotes.size(); i++ )
-	{
-		const Steps* pNotes = aNotes[i];
-		if( pNotes->GetDifficulty() == dc )
-			grade = max( grade, pNotes->m_MemCardScores[card].grade );
-	}
-	return grade;
+	Steps* pSteps = GetStepsByDifficulty( st->m_StepsType, dc );
+	if( pSteps )
+		return pSteps->GetTopScore(card);
+	else
+		return Steps::MemCardData::HighScore();
 }
 
 
@@ -1549,7 +1546,7 @@ int Song::GetNumTimesPlayed() const
 	int iTotalNumTimesPlayed = 0;
 	for( unsigned i=0; i<m_apNotes.size(); i++ )
 	{
-		iTotalNumTimesPlayed += m_apNotes[i]->m_MemCardScores[MEMORY_CARD_MACHINE].iNumTimesPlayed;
+		iTotalNumTimesPlayed += m_apNotes[i]->GetNumTimesPlayed(MEMORY_CARD_MACHINE);
 	}
 	return iTotalNumTimesPlayed;
 }
@@ -1696,8 +1693,12 @@ int	Song::GetNumNotesWithGrade( Grade g ) const
 	vector<Steps*> vNotes;
 	this->GetSteps( vNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 	for( unsigned j=0; j<vNotes.size(); j++ )
-		if( vNotes[j]->m_MemCardScores[MEMORY_CARD_MACHINE].grade == g )
+	{
+		Steps* pSteps = vNotes[j];
+		
+		if( pSteps->GetTopScore(MEMORY_CARD_MACHINE).grade == g )
 			iCount++;
+	}
 	return iCount;
 }
 

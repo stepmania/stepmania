@@ -129,9 +129,16 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 	}
 
 	int p;
+
+	CStringArray asFeats[NUM_PLAYERS];
+	vector<CString*> vpStringsToFill[NUM_PLAYERS];
+
 	// Find out if players deserve to enter their name
 	for( p=0; p<NUM_PLAYERS; p++ )
-		m_bStillEnteringName[p] = GAMESTATE->m_iRankingIndex[p] != -1;
+	{
+		GAMESTATE->GetRankingFeats( (PlayerNumber)p, asFeats[p], vpStringsToFill[p] );
+		m_bStillEnteringName[p] = asFeats[p].size()>0;
+	}
 
 	if( !AnyStillEntering() )
 	{
@@ -201,28 +208,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 		m_textCategory[p].LoadFromFont( THEME->GetPathToF("ScreenNameEntry category") );
 		m_textCategory[p].SetX( (float)GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
 		m_textCategory[p].SetY( CATEGORY_Y );
-		CString sCategoryText = ssprintf("No. %d in\n", GAMESTATE->m_iRankingIndex[p]+1);
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_ARCADE:
-		case PLAY_MODE_BATTLE:
-		case PLAY_MODE_RAVE:
-			{
-				StageStats SS;
-				vector<Song*> vSongs;
-				GAMESTATE->GetFinalEvalStatsAndSongs( SS, vSongs );
-				sCategoryText += ssprintf("Type %c (%d)", 'A'+GAMESTATE->m_RankingCategory[p], SS.iMeter[p] );
-			}
-			break;
-		case PLAY_MODE_NONSTOP:
-		case PLAY_MODE_ONI:
-		case PLAY_MODE_ENDLESS:
-			sCategoryText += ssprintf("%s", GAMESTATE->m_pCurCourse->m_sName.c_str());
-			break;
-		default:
-			ASSERT(0);
-		}
-		m_textCategory[p].SetText( sCategoryText );
+		m_textCategory[p].SetText( join("\n", asFeats[p]) );
 		this->AddChild( &m_textCategory[p] );
 	}
 

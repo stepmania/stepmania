@@ -47,7 +47,6 @@ GameState::GameState()
 	m_pPosition = NULL;
 
 	m_pUnlockingSys = new UnlockSystem;
-	ResetLastRanking();
 	ReloadCharacters();
 }
 
@@ -158,25 +157,6 @@ void GameState::Update( float fDelta )
 		if( m_bActiveAttackEndedThisUpdate[p] )
 			RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
 	}
-}
-
-void GameState::ResetLastRanking()
-{
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		m_RankingCategory[p] = (RankingCategory)-1;
-		m_iRankingIndex[p] = -1;
-	}
-}
-
-void GameState::StoreRankingName( PlayerNumber pn, CString name )
-{
-	const int index = GAMESTATE->m_iRankingIndex[pn];
-
-	if( GAMESTATE->IsCourseMode() )
-		GAMESTATE->m_pRankingCourse->m_RankingScores[GAMESTATE->m_RankingNotesType][index].sName = name;
-	else
-		SONGMAN->m_MachineScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_RankingCategory[pn]][index].sName = name;
 }
 
 void GameState::ReloadCharacters()
@@ -770,4 +750,82 @@ Character* GameState::GetDefaultCharacter()
 	/* We always have the default character. */
 	ASSERT(0);
 	return NULL;
+}
+
+void GameState::GetRankingFeats( PlayerNumber pn, CStringArray &asFeatsOut, vector<CString*> &vpStringsToFillOut )
+{
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_ARCADE:
+		{
+			int i;
+
+			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			for( i=0; i<m_vPlayedStageStats.size(); i++ )
+			{
+				Song* pSong = m_vPlayedStageStats[i].pSong;
+				Steps* pSteps = m_vPlayedStageStats[i].pSteps[pn];
+				vector<Steps::MemCardData::HighScore> &vHighScores = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores;
+				for( int j=0; j<vHighScores.size(); j++ )
+				{
+					if( vHighScores[j].sName == RANKING_TO_FILL_IN_MARKER[pn] )
+					{
+						CString s = ssprintf("No. %d in %s", j+1, pSong->GetFullTranslitTitle().c_str() );
+						asFeatsOut.push_back( s );
+						vpStringsToFillOut.push_back( &vHighScores[j].sName );
+					}
+				}
+			}
+
+			StageStats stats;
+			vector<Song*> vSongs;
+			GetFinalEvalStatsAndSongs( stats, vSongs );
+
+
+			for( i=0; i<NUM_RANKING_CATEGORIES; i++ )
+			{
+				vector<SongManager::CategoryData::HighScore> &vHighScores = SONGMAN->m_CategoryDatas[nt][i].vHighScores;
+				for( int j=0; j<vHighScores.size(); j++ )
+				{
+					CString s = ssprintf("No. %d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
+					vpStringsToFillOut.push_back( &vHighScores[j].sName );
+				}
+			}
+		}
+		break;
+	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_RAVE:
+		break;
+	case PLAY_MODE_NONSTOP:
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		{
+			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			Course* pCourse = GAMESTATE->m_pCurCourse;
+			vector<Course::MemCardData::HighScore> &vHighScores = pCourse->m_MemCardDatas[nt][MEMORY_CARD_MACHINE].vHighScores;
+			for( int i=0; i<vHighScores.size(); i++ )
+			{
+				if( vHighScores[i].sName == RANKING_TO_FILL_IN_MARKER[pn] )
+				{
+					CString s = ssprintf("No. %d in %s", i+1, pCourse->m_sName.c_str() );
+					asFeatsOut.push_back( s );
+					vpStringsToFillOut.push_back( &vHighScores[i].sName );
+				}
+			}
+		}
+		break;
+	default:
+		ASSERT(0);
+	}
+}
+
+void GameState::StoreRankingName( PlayerNumber pn, CString name )
+{
+	vector<CString*> vpStringsToFill;
+	CStringArray asFeats;
+	GetRankingFeats( pn, asFeats, vpStringsToFill );
+	for( int i=0; i<vpStringsToFill.size(); i++ )
+	{
+		(*vpStringsToFill[i]) = name;
+	}
 }

@@ -34,6 +34,7 @@ void StageStats::AddStats( const StageStats& other )
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
+		pSteps[p] = NULL;
 		iMeter[p] += other.iMeter[p] * iLengthMultiplier;
 		fAliveSeconds[p] += other.fAliveSeconds[p];
 		bFailed[p] |= other.bFailed[p];

@@ -41,13 +41,6 @@ Steps::Steps()
 	notes = NULL;
 	notes_comp = NULL;
 	parent = NULL;
-
-	for( int m=0; m<NUM_MEMORY_CARDS; m++ )
-	{
-		m_MemCardScores[m].iNumTimesPlayed = 0;
-		m_MemCardScores[m].grade = GRADE_NO_DATA;
-		m_MemCardScores[m].fScore = 0;
-	}
 }
 
 Steps::~Steps()
@@ -289,43 +282,6 @@ void Steps::SetRadarValue(int r, float val)
 	DeAutogen();
 	ASSERT(r < NUM_RADAR_CATEGORIES);
 	m_fRadarValues[r] = val;
-}
-
-
-/* Make sure we treat AAAA as higher than AAA, even though the score
- * is the same. 
- *
- * XXX: Isn't it possible to beat the grade but not beat the score, since
- * grading and scores are on completely different systems?  Should we be
- * checking for these completely separately? */
-bool Steps::MemCardScore::HigherScore( float vsScore, Grade vsGrade ) const
-{
-	if( vsScore > this->fScore )
-		return true;
-	if( vsScore < this->fScore )
-		return false;
-	return vsGrade > this->grade;
-}
-
-void Steps::AddScore( PlayerNumber pn, Grade grade, float fScore, bool& bNewRecordOut )
-{
-	bNewRecordOut = false;
-
-	m_MemCardScores[MEMORY_CARD_MACHINE].iNumTimesPlayed++;
-	m_MemCardScores[pn].iNumTimesPlayed++;
-
-	if( m_MemCardScores[pn].HigherScore(fScore, grade) && fScore > 0)
-	{
-		m_MemCardScores[pn].fScore = fScore;
-		m_MemCardScores[pn].grade = grade;
-		bNewRecordOut = true;
-	}
-
-	if( m_MemCardScores[MEMORY_CARD_MACHINE].HigherScore(fScore, grade) )
-	{
-		m_MemCardScores[MEMORY_CARD_MACHINE].fScore = fScore;
-		m_MemCardScores[MEMORY_CARD_MACHINE].grade = grade;
-	}
 }
 
 

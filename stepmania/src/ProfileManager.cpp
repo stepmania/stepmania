@@ -24,8 +24,8 @@ ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our
 
 #define PROFILE_FILE		"Profile.ini"
 
-#define NOTES_SCORES_FILE	"NotesScores.dat"
-#define COURSE_SCORES_FILE	"CourseScores.dat"
+#define STEPS_MEM_CARD_DATA_FILE	"StepsMemCardData.dat"
+#define COURSE_MEM_CARD_DATA_FILE	"CourseMemCardData.dat"
 
 ProfileManager::ProfileManager()
 {
@@ -90,8 +90,8 @@ void ProfileManager::TryLoadProfile( PlayerNumber pn )
 	//
 	// Load scores into SONGMAN
 	//
-	SONGMAN->ReadNoteScoresFromFile( m_sProfileDir[pn]+NOTES_SCORES_FILE, (MemoryCard)pn );
-	SONGMAN->ReadCourseScoresFromFile( m_sProfileDir[pn]+COURSE_SCORES_FILE, (MemoryCard)pn );
+	SONGMAN->ReadStepsMemCardDataFromFile( m_sProfileDir[pn]+STEPS_MEM_CARD_DATA_FILE, (MemoryCard)pn );
+	SONGMAN->ReadCourseMemCardDataFromFile( m_sProfileDir[pn]+COURSE_MEM_CARD_DATA_FILE, (MemoryCard)pn );
 }
 
 void ProfileManager::UnloadProfile( PlayerNumber pn )
@@ -104,8 +104,8 @@ void ProfileManager::UnloadProfile( PlayerNumber pn )
 	//
 	// Save scores into SONGMAN
 	//
-	SONGMAN->SaveNoteScoresToFile( m_sProfileDir[pn]+NOTES_SCORES_FILE, (MemoryCard)pn );
-	SONGMAN->SaveCourseScoresToFile( m_sProfileDir[pn]+COURSE_SCORES_FILE, (MemoryCard)pn );
+	SONGMAN->SaveStepsMemCardDataToFile( m_sProfileDir[pn]+STEPS_MEM_CARD_DATA_FILE, (MemoryCard)pn );
+	SONGMAN->SaveCourseMemCardDataToFile( m_sProfileDir[pn]+COURSE_MEM_CARD_DATA_FILE, (MemoryCard)pn );
 
 	// clear out the displayname and highscore name when we unload the profile.
 	m_Profile[pn].Init();

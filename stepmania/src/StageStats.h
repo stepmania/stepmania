@@ -16,6 +16,7 @@
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"
 class Song;
+class Steps;
 
 
 struct StageStats
@@ -28,6 +29,7 @@ struct StageStats
 
 	Song*	pSong;
 	enum { STAGE_INVALID, STAGE_NORMAL, STAGE_EXTRA, STAGE_EXTRA2 } StageType;
+	Steps*  pSteps[NUM_PLAYERS];
 	int		iMeter[NUM_PLAYERS];
 	float	fAliveSeconds[NUM_PLAYERS];				// how far into the music did they last before failing?  Updated by Gameplay.
 

@@ -131,22 +131,75 @@ public:
 	void AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup );
 
 
-	// Statistics
-	struct RankingScore
+	struct MemCardData
 	{
-		/* Dance points for oni, regular score for nonstop. */
-		int iScore;
-		float fSurviveTime;
-		CString	sName;
-	} m_RankingScores[NUM_STEPS_TYPES][NUM_RANKING_LINES];	// sorted highest to lowest by iDancePoints
-	struct MemCardScore
-	{
+		MemCardData()
+		{
+			iNumTimesPlayed = 0;
+		}
+
 		int iNumTimesPlayed;
-		int iScore;
-		float fSurviveTime;
-	} m_MemCardScores[NUM_MEMORY_CARDS][NUM_STEPS_TYPES];
+
+		struct HighScore
+		{
+			int iScore;
+			float fSurviveTime;
+			CString	sName;
+
+			HighScore()
+			{
+				iScore = 0;
+				fSurviveTime = 0;
+			}
+
+			bool operator>( const HighScore& other )
+			{
+				return iScore > other.iScore;
+			}
+		};
+		vector<HighScore> vHighScores;
+
+		void AddHighScore( HighScore hs, int &iIndexOut )
+		{
+			for( int i=0; i<vHighScores.size() && i<NUM_RANKING_LINES; i++ )
+			{
+				if( hs > vHighScores[i] )
+				{
+					vHighScores.insert( vHighScores.begin()+i, hs );
+					iIndexOut = i;
+					break;
+				}
+			}
+			if( vHighScores.size() > NUM_RANKING_LINES )
+				vHighScores.erase( vHighScores.begin()+NUM_RANKING_LINES, vHighScores.end() );
+		}
+
+		HighScore GetTopScore()
+		{
+			if( vHighScores.empty() )
+				return HighScore();
+			else
+				return vHighScores[0];
+		}
+
+	} m_MemCardDatas[NUM_STEPS_TYPES][NUM_MEMORY_CARDS];
 	
-	void AddScores( StepsType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDancePoints[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iRankingIndexOut[NUM_PLAYERS], bool bNewRecordOut[NUM_PLAYERS] );	// iNewRecordIndexOut[p] = -1 if not a new record
+	void AddHighScore( StepsType st, PlayerNumber pn, MemCardData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
+	{
+		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+		m_MemCardDatas[st][pn].AddHighScore( hs, iPersonalIndexOut );
+		m_MemCardDatas[st][MEMORY_CARD_MACHINE].AddHighScore( hs, iMachineIndexOut );
+	}
+
+	MemCardData::HighScore GetTopScore( StepsType st, MemoryCard card )
+	{
+		return m_MemCardDatas[st][card].GetTopScore();
+	}
+
+	int GetNumTimesPlayed( StepsType st, MemoryCard card )
+	{
+		return m_MemCardDatas[st][card].iNumTimesPlayed;
+	}
 
 	// sorting values
 	int		SortOrder_TotalDifficulty;
@@ -155,7 +208,6 @@ public:
 	void UpdateCourseStats();
 
 private:
-	void SetDefaultScore();
 	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, int Difficult = -1 ) const;
 };
 

@@ -89,26 +89,60 @@ public:
 	void InitMachineScoresFromDisk();
 	void SaveMachineScoresToDisk();
 
-	struct MachineScore
+	struct CategoryData
 	{
-		int iScore;
-		CString	sName;
-	} m_MachineScores[NUM_STEPS_TYPES][NUM_RANKING_CATEGORIES][NUM_RANKING_LINES];
-	void AddScores( StepsType nt, bool bPlayerEnabled[NUM_PLAYERS], RankingCategory hsc[NUM_PLAYERS], int iScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] );	// set iNewRecordIndex = -1 if not a new record
+		struct HighScore
+		{
+			int iScore;
+			CString	sName;
+
+			HighScore()
+			{
+				iScore = 0;
+			}
+
+			bool operator>( const HighScore& other )
+			{
+				return iScore > other.iScore;
+			}
+		};
+		vector<HighScore> vHighScores;
+
+		void AddHighScore( HighScore hs, int &iIndexOut )
+		{
+			for( int i=0; i<vHighScores.size() && i<NUM_RANKING_LINES; i++ )
+			{
+				if( hs > vHighScores[i] )
+				{
+					vHighScores.insert( vHighScores.begin()+i, hs );
+					iIndexOut = i;
+					break;
+				}
+			}
+			if( vHighScores.size() > NUM_RANKING_LINES )
+				vHighScores.erase( vHighScores.begin()+NUM_RANKING_LINES, vHighScores.end() );
+		}
+
+	} m_CategoryDatas[NUM_STEPS_TYPES][NUM_RANKING_CATEGORIES];
+
+	void AddHighScore( StepsType nt, RankingCategory rc, PlayerNumber pn, CategoryData::HighScore hs, int &iMachineIndexOut )
+	{
+		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+		m_CategoryDatas[nt][rc].AddHighScore( hs, iMachineIndexOut );
+	}
+
 	void UpdateBest();
 
 	void UpdateRankingCourses();
 
 	void ReadSM300NoteScores();
-	void ReadNoteScoresFromFile( CString fn, int c );
-	void ReadCourseScoresFromFile( CString fn, int c );
+	void ReadStepsMemCardDataFromFile( CString fn, int c );
+	void ReadCourseMemCardDataFromFile( CString fn, int c );
 	void ReadCategoryRankingsFromFile( CString fn );
-	void ReadCourseRankingsFromFile( CString fn );
 
-	void SaveNoteScoresToFile( CString fn, int c );
-	void SaveCourseScoresToFile( CString fn, int c );
+	void SaveStepsMemCardDataToFile( CString fn, int c );
+	void SaveCourseMemCardDataToFile( CString fn, int c );
 	void SaveCategoryRankingsToFile( CString fn );
-	void SaveCourseRankingsToFile( CString fn );
 
 protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );

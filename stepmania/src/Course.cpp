@@ -53,30 +53,6 @@ Course::Course()
 	m_bDifficult = false;
 	m_iLives = -1;
 	m_iMeter = -1;
-
-	SetDefaultScore();
-}
-
-void Course::SetDefaultScore()
-{
-	//
-	// Init high scores
-	//
-	for( unsigned i=0; i<NUM_STEPS_TYPES; i++ )
-		for( int j=0; j<NUM_RANKING_LINES; j++ )
-		{
-			m_RankingScores[i][j].iScore = IsOni()? 573:573000;
-			m_RankingScores[i][j].fSurviveTime = 57.3f;
-			m_RankingScores[i][j].sName = DEFAULT_RANKING_NAME;
-		}
-
-	for( unsigned m=0; m<NUM_MEMORY_CARDS; m++ )
-		for( unsigned i=0; i<NUM_STEPS_TYPES; i++ )
-		{
-			m_MemCardScores[m][i].iNumTimesPlayed = 0;
-			m_MemCardScores[m][i].iScore = 0;
-			m_MemCardScores[m][i].fSurviveTime = 0;
-		}
 }
 
 PlayMode Course::GetPlayMode() const
@@ -289,8 +265,6 @@ void Course::LoadFromCRSFile( CString sPath )
 	CString ignore;
 	tsub.Subst(m_sName, ignore, ignore,
 				ignore, ignore, ignore);
-
-	SetDefaultScore();
 }
 
 
@@ -392,8 +366,6 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongs
 	SONGMAN->GetSongs( vSongs, e.group_name );
 	for( unsigned i = 0; i < vSongs.size(); ++i)
 		m_entries.push_back( e );
-
-	SetDefaultScore();
 }
 
 void Course::AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup )
@@ -409,8 +381,6 @@ void Course::AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongs
 		m_entries.push_back( m_entries[0] );
 	while( m_entries.size() > 4 )
 		m_entries.pop_back();
-
-	SetDefaultScore();
 }
 
 /*
@@ -739,87 +709,6 @@ bool Course::GetTotalSeconds( float& fSecondsOut ) const
 		fSecondsOut += ci[i].pSong->m_fMusicLengthSeconds;
 	}
 	return true;
-}
-
-
-struct RankingToInsert
-{
-	PlayerNumber pn;
-	int iScore;
-	float fSurviveTime;
-
-	static bool CompareDescending( const RankingToInsert &hs1, const RankingToInsert &hs2 )
-	{
-		return hs1.iScore > hs2.iScore;
-	}
-	static void SortDescending( vector<RankingToInsert>& vHSout )
-	{ 
-		sort( vHSout.begin(), vHSout.end(), CompareDescending ); 
-	}
-};
-
-void Course::AddScores( StepsType nt, bool bPlayerEnabled[NUM_PLAYERS], int iScore[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iRankingIndexOut[NUM_PLAYERS], bool bNewRecordOut[NUM_PLAYERS] )
-{
-	vector<RankingToInsert> vHS;
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		iRankingIndexOut[p] = -1;
-		bNewRecordOut[p] = false;
-
-		if( !bPlayerEnabled[p] )
-			continue;	// skip
-        
-
-		// Update memory card
-		m_MemCardScores[p][nt].iNumTimesPlayed++;
-		m_MemCardScores[MEMORY_CARD_MACHINE][nt].iNumTimesPlayed++;
-
-		if( iScore[p] > m_MemCardScores[p][nt].iScore )
-		{
-			m_MemCardScores[p][nt].iScore = iScore[p];
-			m_MemCardScores[p][nt].fSurviveTime = fSurviveTime[p];
-			bNewRecordOut[p] = true;
-		}
-
-		if( iScore[p] > m_MemCardScores[MEMORY_CARD_MACHINE][nt].iScore )
-		{
-			m_MemCardScores[MEMORY_CARD_MACHINE][nt].iScore = iScore[p];
-			m_MemCardScores[MEMORY_CARD_MACHINE][nt].fSurviveTime = fSurviveTime[p];
-		}
-
-
-		// Update Ranking
-		RankingToInsert hs;
-		hs.iScore = iScore[p];
-		hs.fSurviveTime = fSurviveTime[p];
-		hs.pn = (PlayerNumber)p;
-		vHS.push_back( hs );
-	}
-
-	// Sort descending before inserting.
-	// This guarantees that a high score will not switch poitions on us when we later insert scores for the other player
-	RankingToInsert::SortDescending( vHS );
-
-	for( unsigned i=0; i<vHS.size(); i++ )
-	{
-		RankingToInsert& newHS = vHS[i];
-		RankingScore* rankingScores = m_RankingScores[nt];
-		for( int i=0; i<NUM_RANKING_LINES; i++ )
-		{
-			if( newHS.iScore > rankingScores[i].iScore )
-			{
-				// We found the insert point.  Shift down.
-				for( int j=NUM_RANKING_LINES-1; j>i; j-- )
-					rankingScores[j] = rankingScores[j-1];
-				// insert
-				rankingScores[i].fSurviveTime = newHS.fSurviveTime;
-				rankingScores[i].iScore = newHS.iScore;
-				rankingScores[i].sName = DEFAULT_RANKING_NAME;
-				iRankingIndexOut[newHS.pn] = i;
-				break;
-			}
-		}
-	}
 }
 
 

@@ -187,6 +187,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 			continue;	// skip
 
 		ASSERT( !m_apNotesQueue[p].empty() );
+		GAMESTATE->m_CurStageStats.pSteps[p] = m_apNotesQueue[p][0];
 		GAMESTATE->m_CurStageStats.iMeter[p] = m_apNotesQueue[p][0]->GetMeter();
 	}
 

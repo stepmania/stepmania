@@ -53,17 +53,87 @@ public:
 	CString 		GetSMNoteData() const;
 
 
-	// High scores
-	struct MemCardScore
+	struct MemCardData
 	{
+		MemCardData() 
+		{
+			iNumTimesPlayed = 0;
+		}
+
 		int iNumTimesPlayed;
-		Grade grade;
-		float fScore;
-		bool HigherScore( float fScore, Grade grade ) const;
-	} m_MemCardScores[NUM_MEMORY_CARDS];
 
-	void AddScore( PlayerNumber pn, Grade grade, float fScore, bool& bNewRecordOut );
+		struct HighScore
+		{
+			CString sName;
+			Grade grade;
+			float fScore;
 
+			HighScore()
+			{
+				grade = GRADE_NO_DATA;
+				fScore = 0;
+			}
+
+			bool operator>( const HighScore& other )
+			{
+				return fScore > other.fScore;
+				/* Make sure we treat AAAA as higher than AAA, even though the score
+				 * is the same. 
+				 *
+				 * XXX: Isn't it possible to beat the grade but not beat the score, since
+				 * grading and scores are on completely different systems?  Should we be
+				 * checking for these completely separately? */
+				//	if( vsScore > this->fScore )
+				//		return true;
+				//	if( vsScore < this->fScore )
+				//		return false;
+				//	return vsGrade > this->grade;
+			}
+
+		};
+		vector<HighScore> vHighScores;
+
+		void AddHighScore( MemCardData::HighScore hs, int &iIndexOut )
+		{
+			for( int i=0; i<vHighScores.size() && i<NUM_RANKING_LINES; i++ )
+			{
+				if( hs > vHighScores[i] )
+				{
+					vHighScores.insert( vHighScores.begin()+i, hs );
+					iIndexOut = i;
+					break;
+				}
+			}
+			if( vHighScores.size() > NUM_RANKING_LINES )
+				vHighScores.erase( vHighScores.begin()+NUM_RANKING_LINES, vHighScores.end() );
+		}
+
+		HighScore GetTopScore()
+		{
+			if( vHighScores.empty() )
+				return HighScore();
+			else
+				return vHighScores[0];
+		}
+		
+	} m_MemCardDatas[NUM_MEMORY_CARDS];
+
+	void AddHighScore( PlayerNumber pn, MemCardData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
+	{
+		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+		m_MemCardDatas[pn].AddHighScore( hs, iPersonalIndexOut );
+		m_MemCardDatas[MEMORY_CARD_MACHINE].AddHighScore( hs, iMachineIndexOut );
+	}
+
+	MemCardData::HighScore GetTopScore( MemoryCard card )
+	{
+		return m_MemCardDatas[card].GetTopScore();
+	}
+
+	int GetNumTimesPlayed( MemoryCard card )
+	{
+		return m_MemCardDatas[card].iNumTimesPlayed;
+	}
 
 	void TidyUpData();
 

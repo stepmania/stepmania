@@ -13,6 +13,7 @@
 -----------------------------------------------------------------------------
 */
 
+#include "PlayerNumber.h"	// TODO: Get rid of this dependency.  -Chris
 
 //
 // Screen Dimensions
@@ -194,7 +195,8 @@ enum RankingCategory
 	NUM_RANKING_CATEGORIES
 };
 
-#define DEFAULT_RANKING_NAME CString("STEP")
+const CString DEFAULT_RANKING_NAME = "";
+const CString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS] = {"#P1#","#P2#"};
 
 RankingCategory AverageMeterToRankingCategory( float fAverageMeter );
 
