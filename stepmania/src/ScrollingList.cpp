@@ -70,12 +70,14 @@ ScrollingList::ScrollingList()
 	m_iBounceWait=0;
 	m_sprBannerMask.SetName( "Banner" );	// use the same metrics and animation as Banner
 	m_sprBannerMask.Load( THEME->GetPathToG("ScreenSelectMusic banner mask") );
-	m_RippleCSprite.SetXY(0,0);
-	m_RippleSprite.SetXY(0,0);
+	m_sprBannerMask.SetClearZBuffer( true );
 	m_sprBannerMask.SetBlendMode( BLEND_NO_EFFECT );	// don't draw to color buffer
-	m_sprBannerMask.SetUseZBuffer( true );	// do draw to the zbuffer
+	m_sprBannerMask.SetZWrite( true );	// do draw to the zbuffer
 	m_sprBannerMask.SetWidth(EZ2_BANNER_WIDTH);
 	m_sprBannerMask.SetHeight(EZ2_BANNER_HEIGHT);
+
+	m_RippleCSprite.SetXY(0,0);
+	m_RippleSprite.SetXY(0,0);
 }
 
 void ScrollingList::UseSpriteType(int NewSpriteType)
@@ -515,7 +517,7 @@ void ScrollingList::DrawPrimitives()
 				if(!m_iBouncingState)
 					m_apCSprites[iIndexToDraw1]->SetZoom( 1.0f - (ZOOM_OFFSET * i) );
 				m_apCSprites[iIndexToDraw1]->SetDiffuse( COLOR_SELECTED + RageColor(0,0,0,(1.0f - (FADE_OFFSET * i))) );
-				m_apCSprites[iIndexToDraw1]->SetUseZBuffer( true );	// do have to pass the z test
+				m_apCSprites[iIndexToDraw1]->SetZTest( true );	// do have to pass the z test
 				m_sprBannerMask.SetXY(m_apCSprites[iIndexToDraw1]->GetX(), m_apCSprites[iIndexToDraw1]->GetY());
 				m_sprBannerMask.SetZ( m_apCSprites[iIndexToDraw1]->GetZ()+0.05f );
 				m_sprBannerMask.SetZoom( m_apCSprites[iIndexToDraw1]->GetZoom());
@@ -552,13 +554,13 @@ void ScrollingList::DrawPrimitives()
 				m_apCSprites[iIndexToDraw2]->SetZoom( 1.0f - (ZOOM_OFFSET * i) );
 				m_apCSprites[iIndexToDraw1]->SetDiffuse( COLOR_NOT_SELECTED + RageColor(0,0,0,(- (FADE_OFFSET * i))) );
 				m_apCSprites[iIndexToDraw2]->SetDiffuse( COLOR_NOT_SELECTED + RageColor(0,0,0,(- (FADE_OFFSET * i))) );
-				m_apCSprites[iIndexToDraw1]->SetUseZBuffer( true );	// do have to pass the z test
+				m_apCSprites[iIndexToDraw1]->SetZTest( true );	// do have to pass the z test
 				m_sprBannerMask.SetXY(m_apCSprites[iIndexToDraw1]->GetX(), m_apCSprites[iIndexToDraw1]->GetY());
 				m_sprBannerMask.SetZ( m_apCSprites[iIndexToDraw1]->GetZ()+0.05f );
 				m_sprBannerMask.SetZoom( m_apCSprites[iIndexToDraw1]->GetZoom());
 				m_sprBannerMask.Draw();
 				m_apCSprites[iIndexToDraw1]->Draw();
-				m_apCSprites[iIndexToDraw2]->SetUseZBuffer( true );	// do have to pass the z test
+				m_apCSprites[iIndexToDraw2]->SetZTest( true );	// do have to pass the z test
 				m_sprBannerMask.SetXY(m_apCSprites[iIndexToDraw2]->GetX(), m_apCSprites[iIndexToDraw1]->GetY());
 				m_sprBannerMask.SetZ( m_apCSprites[iIndexToDraw2]->GetZ()+0.05f );
 				m_sprBannerMask.SetZoom( m_apCSprites[iIndexToDraw2]->GetZoom());
