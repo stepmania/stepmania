@@ -403,7 +403,7 @@ void Player::Step( int col )
 		// const float fBeatsUntilStep = fStepBeat - fSongBeat;
 		const float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
 		// The offset from the actual step in seconds:
-		const float fNoteOffset = GAMESTATE->m_fMusicSeconds - fStepSeconds;
+		const float fNoteOffset = fStepSeconds - GAMESTATE->m_fMusicSeconds;
 		// const float fNoteOffset = fBeatsUntilStep / GAMESTATE->m_fCurBPS;
 		const float fSecondsFromPerfect = fabsf( fNoteOffset );
 
