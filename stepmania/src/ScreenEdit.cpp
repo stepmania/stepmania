@@ -549,6 +549,7 @@ void ScreenEdit::Init()
 
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
+	m_bHasUndo = false;
 	m_Undo.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
 
@@ -1054,8 +1055,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			bool bAreaSelected = m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1;
 			g_AreaMenu.rows[cut].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[copy].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[paste_at_current_beat].bEnabled = m_Clipboard.GetLastBeat() != 0;
-			g_AreaMenu.rows[paste_at_begin_marker].bEnabled = m_Clipboard.GetLastBeat() != 0 && m_NoteFieldEdit.m_iBeginMarker!=-1;
+			g_AreaMenu.rows[paste_at_current_beat].bEnabled = !m_Clipboard.IsEmpty();
+			g_AreaMenu.rows[paste_at_begin_marker].bEnabled = !m_Clipboard.IsEmpty() != 0 && m_NoteFieldEdit.m_iBeginMarker!=-1;
 			g_AreaMenu.rows[clear].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[quantize].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[turn].bEnabled = bAreaSelected;
@@ -1065,7 +1066,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			g_AreaMenu.rows[play].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[record].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[convert_beat_to_pause].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[undo].bEnabled = m_Undo.GetLastBeat() != 0;
+			g_AreaMenu.rows[undo].bEnabled = m_bHasUndo;
 			SCREENMAN->MiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
 		}
 		break;
@@ -1082,6 +1083,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case EDIT_BUTTON_OPEN_PREV_STEPS:
 		{
 			// don't keep undo when changing Steps
+			m_bHasUndo = false;
 			m_Undo.ClearAll();
 
 			// save current steps
@@ -1591,6 +1593,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		{
 			CopyFromLastSave();
 			m_pSteps->GetNoteData( m_NoteDataEdit );
+			m_bHasUndo = false;
 			m_Undo.ClearAll();
 		}
 	}
@@ -2051,15 +2054,28 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			}
 			break;
 		case paste_at_current_beat:
-			{
-				int iDestFirstRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-				m_NoteDataEdit.CopyRange( m_Clipboard, 0, m_Clipboard.GetLastRow()+1, iDestFirstRow );
-			}
-			break;
 		case paste_at_begin_marker:
 			{
-				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 );
-				m_NoteDataEdit.CopyRange( m_Clipboard, 0, m_Clipboard.GetLastRow()+1, m_NoteFieldEdit.m_iBeginMarker );
+				int iDestFirstRow = -1;
+				switch( c )
+				{
+					case paste_at_current_beat:
+						iDestFirstRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+						break;
+					case paste_at_begin_marker:
+						ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 );
+						iDestFirstRow = m_NoteFieldEdit.m_iBeginMarker;
+						break;
+					default:
+						ASSERT(0);
+				}
+				
+				int iRowsToCopy = m_Clipboard.GetLastRow()+1;
+				// Don't allow pasting past the maximum row
+				int iMaxRow = (GetMaximumBeat() == FLT_MAX) ? INT_MAX : BeatToNoteRow(GetMaximumBeat());
+				CLAMP( iRowsToCopy, 0, iMaxRow - iDestFirstRow + 1 );
+
+				m_NoteDataEdit.CopyRange( m_Clipboard, 0, iRowsToCopy, iDestFirstRow );
 			}
 			break;
 		case clear:
@@ -2551,12 +2567,14 @@ void ScreenEdit::CopyFromLastSave()
 
 void ScreenEdit::SaveUndo()
 {
+	m_bHasUndo = true;
 	m_Undo.CopyAll( m_NoteDataEdit );
 }
 
 void ScreenEdit::Undo()
 {
 	m_NoteDataEdit.CopyAll( m_Undo );
+	m_bHasUndo = false;
 	m_Undo.ClearAll();
 }
 

@@ -179,6 +179,7 @@ protected:
 	int g_iShiftAnchor;
 
 	NoteData			m_Clipboard;
+	bool				m_bHasUndo;
 	NoteData			m_Undo;
 
 	RageSound			m_soundAddNote;

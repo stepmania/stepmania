@@ -123,6 +123,7 @@ public:
 	//
 	// statistics
 	//
+	bool IsEmpty() const;
 	int GetFirstRow() const;	// return the beat number of the first note
 	float GetFirstBeat() const { return NoteRowToBeat( GetFirstRow() ); }
 	int GetLastRow() const;	// return the beat number of the last note

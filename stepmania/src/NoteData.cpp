@@ -387,6 +387,20 @@ bool NoteData::IsHoldNoteAtBeat( int iTrack, int iRow, int *pHeadRow ) const
 	return bFoundHead;
 }
 
+bool NoteData::IsEmpty() const
+{ 
+	for( int t=0; t < GetNumTracks(); t++ )
+	{
+		int iRow = -1;
+		if( !GetNextTapNoteRowForTrack( t, iRow ) )
+			continue;
+
+		return false;
+	}
+
+	return true;
+}
+
 int NoteData::GetFirstRow() const
 { 
 	int iEarliestRowFoundSoFar = -1;
