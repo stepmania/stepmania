@@ -48,6 +48,8 @@ const CString CREDIT_LINES[] =
 	"DJ McFox (Ryan McKanna)",
 	"Cloud34 (Lamden Travis)",
 	"Redcrusher (Michael Curry)",
+	"Steve 'healing_vision' Klise",
+	"Mauro Panichella",
 	"",
 	"",
 	"",

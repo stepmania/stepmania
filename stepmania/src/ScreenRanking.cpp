@@ -231,7 +231,9 @@ void ScreenRanking::SetPage( PageToShow pts )
 		break;
 	case PageToShow::TYPE_COURSE:
 		{
+			m_textCategory.SetDiffuse( RageColor(1,1,1,1) );
 			m_textCategory.SetText( pts.pCourse->m_sName );
+			m_textType.SetDiffuse( RageColor(1,1,1,1) );
 			m_textType.SetText( GameManager::NotesTypeToString(pts.nt) );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
