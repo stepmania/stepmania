@@ -144,7 +144,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 
 	g_hInstance = hInstance;
 #ifdef _DEBUG
-	_CrtSetDbgFlag(_CRTDBG_CHECK_ALWAYS_DF);
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF|_CRTDBG_LEAK_CHECK_DF);
 #endif
 
 #ifndef _DEBUG
@@ -346,12 +346,6 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 	UnregisterClass( g_sAppClassName, hInstance );
 	CoUninitialize();			// Uninitialize COM
 	CloseHandle( g_hMutex );
-
-#ifdef _DEBUG
-	_CrtCheckMemory();
-
-	_CrtDumpMemoryLeaks();
-#endif
 
 	return 0L;
 }
@@ -860,16 +854,11 @@ void Render()
 			InvalidateObjects();
 
             // Resize the device
-            if( SUCCEEDED( hr = DISPLAY->Reset() ) )
-            {
-                // Initialize the app's device-dependent objects
-                RestoreObjects();
-				return;
-            }
-			else
-			{
+            if( FAILED( hr = DISPLAY->Reset() ) )
 				throw RageException( hr, "Failed to DISPLAY->Reset()" );
-			}
+
+			// Initialize the app's device-dependent objects
+            RestoreObjects();
 
 			break;
 		case S_OK:
@@ -933,6 +922,9 @@ void ApplyGraphicOptions()
 	default:	throw RageException( "Invalid TextureResolution '%d'", iTextureSize );
 	}
 
+	/* XXX: ScreenGraphicOptions assumes this is always 16bpp. If this is
+	 * ever changed, keep track of it, since the available refresh rates
+	 * is dependent on the bit depth. */
 	int iTextureBPP		= 16;
 
 	int &iRefreshRate	= PREFSMAN->m_iRefreshRate;
@@ -953,7 +945,7 @@ void ApplyGraphicOptions()
 		goto success;
 
 	// We failed.  Using default refresh rate.
-	iRefreshRate = 0;
+	iRefreshRate = RageDisplay::REFRESH_DEFAULT;
 	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate) )
 		goto success;
 
