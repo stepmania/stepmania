@@ -1421,23 +1421,25 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			break;
 		case transform:
 			{
-				HandleAreaMenuChoice( cut, NULL );
+//				HandleAreaMenuChoice( cut, NULL );
 				
+				float fBeginBeat = m_NoteFieldEdit.m_fBeginMarker;
+				float fEndBeat = m_NoteFieldEdit.m_fEndMarker;
 				TransformType tt = (TransformType)iAnswers[c];
 				switch( tt )
 				{
-				case little:		NoteDataUtil::Little( m_Clipboard );	break;
-				case wide:			NoteDataUtil::Wide( m_Clipboard );		break;
-				case big:			NoteDataUtil::Big( m_Clipboard );		break;
-				case quick:			NoteDataUtil::Quick( m_Clipboard );		break;
-				case skippy:		NoteDataUtil::Skippy( m_Clipboard );	break;
+				case little:	NoteDataUtil::Little( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
+				case wide:		NoteDataUtil::Wide( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
+				case big:		NoteDataUtil::Big( m_NoteFieldEdit, fBeginBeat, fEndBeat );		break;
+				case quick:		NoteDataUtil::Quick( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
+				case skippy:	NoteDataUtil::Skippy( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
 				default:		ASSERT(0);
 				}
 
 				// bake in the additions
-				NoteDataUtil::ConvertAdditionsToRegular( m_Clipboard );
+				NoteDataUtil::ConvertAdditionsToRegular( m_NoteFieldEdit );
 
-				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
+//				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
 			}
 			break;
 		case alter:

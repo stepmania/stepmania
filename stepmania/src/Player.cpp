@@ -238,7 +238,15 @@ void Player::Update( float fDeltaTime )
 			m_NoteField.m_bIsHoldingHoldNote[i] = bIsHoldingButton && bSteppedOnTapNote;
 
 			if( bSteppedOnTapNote )		// this note is not judged and we stepped on its head
-				m_NoteField.GetHoldNote(i).fStartBeat = fSongBeat;	// move the start of this Hold
+			{
+				// Move the start of this Hold
+				//
+				// IMPORTANT: Every HoldNote::fStartBeat must be at least 1 index less than
+				// its HoldNote::fEndBeat.  Otherwise, when HoldNotes are converted to the 
+				// 4s representation, it disappears, which causes problems for the way we 
+				// store HoldNote life (by index of the hold).
+				m_NoteField.GetHoldNote(i).fStartBeat = min( fSongBeat, m_NoteField.GetHoldNote(i).fEndBeat	-NoteRowToBeat(1) );
+			}
 
 			if( bSteppedOnTapNote && bIsHoldingButton )
 			{
@@ -328,36 +336,34 @@ void Player::Update( float fDeltaTime )
 		float fEndBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fEndSeconds );
 		fEndBeat = ((int)fEndBeat)+1;
 
+		LOG->Trace( "Applying transform from %f to %f", fStartBeat, fEndBeat );
+
 		switch( GAMESTATE->m_TransformsToApply[m_PlayerNumber][i] )
 		{
 		case PlayerOptions::TRANSFORM_LITTLE:
 			NoteDataUtil::Little( *this, fStartBeat, fEndBeat );
-			NoteDataUtil::Little( m_NoteField, fStartBeat, fEndBeat );
 			break;
 		case PlayerOptions::TRANSFORM_WIDE:
 			NoteDataUtil::Wide( *this, fStartBeat, fEndBeat );
-			NoteDataUtil::Wide( m_NoteField, fStartBeat, fEndBeat );
 			break;
 		case PlayerOptions::TRANSFORM_BIG:
 			NoteDataUtil::Big( *this, fStartBeat, fEndBeat );
-			NoteDataUtil::Big( m_NoteField, fStartBeat, fEndBeat );
 			break;
 		case PlayerOptions::TRANSFORM_QUICK:
 			NoteDataUtil::Quick( *this, fStartBeat, fEndBeat );
-			NoteDataUtil::Quick( m_NoteField, fStartBeat, fEndBeat );
 			break;
 		case PlayerOptions::TRANSFORM_SKIPPY:
 			NoteDataUtil::Skippy( *this, fStartBeat, fEndBeat );
-			NoteDataUtil::Skippy( m_NoteField, fStartBeat, fEndBeat );
 			break;
 		case PlayerOptions::TRANSFORM_MINES:
 			NoteDataUtil::Mines( *this, fStartBeat, fEndBeat );
-			NoteDataUtil::Mines( m_NoteField, fStartBeat, fEndBeat );
 			break;
 		case PlayerOptions::TRANSFORM_NONE:
 		default:
 			ASSERT(0);
 		}
+
+		m_NoteField.CopyRange( this, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), BeatToNoteRow(fStartBeat) );
 	}
 	GAMESTATE->m_TransformsToApply[m_PlayerNumber].clear();
 

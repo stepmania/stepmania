@@ -504,6 +504,7 @@ void NoteDataUtil::Wide( NoteData &in, float fStartBeat, float fEndBeat )
 
 	in.ConvertHoldNotesTo4s();
 
+
 	int first_row = 0;
 	if( fStartBeat != -1 )
 		first_row = BeatToNoteRow(fStartBeat);
@@ -512,7 +513,7 @@ void NoteDataUtil::Wide( NoteData &in, float fStartBeat, float fEndBeat )
 	if( fEndBeat != -1 )
 		last_row = BeatToNoteRow(fEndBeat);
 	
-	for( int i=first_row; i<=last_row; i+=ROWS_PER_BEAT*2 ) // every even beat
+	for( int i=first_row; i<last_row; i+=ROWS_PER_BEAT*2 ) // every even beat
 	{
 		if( in.GetNumTapNonEmptyTracks(i) != 1 )
 			continue;	// skip.  Don't place during holds
@@ -586,7 +587,7 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval, flo
 
 	int rows_per_interval = BeatToNoteRow( fBeatInterval );
 	int insert_row_offset = BeatToNoteRow( fInsertBeatOffset );
-	for( int i=first_row; i<=last_row; i+=rows_per_interval ) 
+	for( int i=first_row; i<last_row; i+=rows_per_interval ) 
 	{
 		int iRowEarlier = i;
 		int iRowLater = i + rows_per_interval;
