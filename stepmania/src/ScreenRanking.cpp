@@ -23,11 +23,13 @@
 #include "NoteDataUtil.h"
 #include "ActorUtil.h"
 #include "ProfileManager.h"
+#include "RageLog.h"
 
 
 #define STEPS_TYPES_TO_HIDE			THEME->GetMetric ("ScreenRanking","StepsTypesToHide")
 #define SHOW_CATEGORIES				THEME->GetMetricB("ScreenRanking","ShowCategories")
 #define SHOW_ALL_STEPS_SCORES		THEME->GetMetricB("ScreenRanking","ShowAllStepsScores")
+#define SHOW_ALL_COURSE_SCORES		THEME->GetMetricB("ScreenRanking","ShowAllCourseScores")
 #define DIFFICULTIES_TO_SHOW		THEME->GetMetric ("ScreenRanking","DifficultiesToShow")
 #define COURSES_TO_SHOW				PREFSMAN->m_sCoursesToShowRanking
 #define SECONDS_PER_PAGE			THEME->GetMetricF("ScreenRanking","SecondsPerPage")
@@ -57,12 +59,17 @@
 #define TIME_START_Y				THEME->GetMetricF("ScreenRanking","TimeStartY")
 #define DIFFICULTY_START_X			THEME->GetMetricF("ScreenRanking","DifficultyStartX")
 #define DIFFICULTY_Y				THEME->GetMetricF("ScreenRanking","DifficultyY")
+#define COURSE_DIFFICULTY_START_X	THEME->GetMetricF("ScreenRanking","CourseDifficultyStartX")
+#define COURSE_DIFFICULTY_Y			THEME->GetMetricF("ScreenRanking","CourseDifficultyY")
 #define SONG_TITLE_OFFSET_X			THEME->GetMetricF("ScreenRanking","SongTitleOffsetX")
 #define SONG_TITLE_OFFSET_Y			THEME->GetMetricF("ScreenRanking","SongTitleOffsetY")
 #define SONG_FRAME_OFFSET_X			THEME->GetMetricF("ScreenRanking","SongFrameOffsetX")
 #define SONG_FRAME_OFFSET_Y			THEME->GetMetricF("ScreenRanking","SongFrameOffsetY")
 #define STEPS_SCORE_OFFSET_START_X	THEME->GetMetricF("ScreenRanking","StepsScoreOffsetStartX")
 #define STEPS_SCORE_OFFSET_Y		THEME->GetMetricF("ScreenRanking","StepsScoreOffsetY")
+#define COURSE_SCORE_OFFSET_START_X	THEME->GetMetricF("ScreenRanking","CourseListScoreOffsetStartX")
+#define COURSE_SCORE_OFFSET_Y		THEME->GetMetricF("ScreenRanking","CourseListScoreOffsetY")
+
 
 #define BULLET_X(row)				(BULLET_START_X+ROW_SPACING_X*row)
 #define BULLET_Y(row)				(BULLET_START_Y+ROW_SPACING_Y*row)
@@ -76,6 +83,9 @@
 #define TIME_Y(row)					(TIME_START_Y+ROW_SPACING_Y*row)
 #define DIFFICULTY_X(col)			(DIFFICULTY_START_X+COL_SPACING_X*col)
 #define STEPS_SCORE_OFFSET_X(col)	(STEPS_SCORE_OFFSET_START_X+COL_SPACING_X*col)
+
+#define COURSE_DIFFICULTY_X(col)	(COURSE_DIFFICULTY_START_X+COL_SPACING_X*col)
+#define COURSE_SCORE_OFFSET_X(col)	(COURSE_SCORE_OFFSET_START_X+COL_SPACING_X*col)
 
 const ScreenMessage SM_ShowNextPage		=	(ScreenMessage)(SM_User+67);
 const ScreenMessage SM_HidePage			=	(ScreenMessage)(SM_User+68);
@@ -202,6 +212,49 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		m_ListScoreRowItems.SetXY( CENTER_X, CENTER_Y );
 	}
 
+	{
+		// for all_courses:
+		for( int d=0; d<NUM_COURSE_DIFFICULTIES; d++ )
+		{
+			m_sprCourseDifficulty[d].SetName( ssprintf("CourseDifficulty%d",d) );
+			m_sprCourseDifficulty[d].Load( THEME->GetPathToG(ssprintf("ScreenRanking course difficulty 1x%d",NUM_COURSE_DIFFICULTIES)) );
+			m_sprCourseDifficulty[d].SetHidden( true );
+			this->AddChild( &m_sprCourseDifficulty[d] );
+		}
+
+		vector<Course*> courses;
+		SONGMAN->GetAllCourses( courses, false );
+		LOG->Trace("rankings: adding %i courses", courses.size());
+		for( unsigned s=0; s<courses.size(); s++ )
+		{
+			StepsScoreRowItem* pStepsScoreRowItem = new StepsScoreRowItem;
+
+			pStepsScoreRowItem->m_sprSongFrame.SetName( "CourseListFrame" );
+			pStepsScoreRowItem->m_sprSongFrame.SetHidden( true );
+			pStepsScoreRowItem->m_sprSongFrame.Load( THEME->GetPathToG("ScreenRanking course frame") );
+			pStepsScoreRowItem->AddChild( &pStepsScoreRowItem->m_sprSongFrame );
+
+			pStepsScoreRowItem->m_textSongTitle.SetName( "CourseListTitle" );
+			pStepsScoreRowItem->m_textSongTitle.SetHidden( true );
+			pStepsScoreRowItem->m_textSongTitle.LoadFromFont( THEME->GetPathToF("ScreenRanking course list title") );
+			pStepsScoreRowItem->AddChild( &pStepsScoreRowItem->m_textSongTitle );
+
+			for( int d=0; d<NUM_COURSE_DIFFICULTIES; d++ )
+			{
+				pStepsScoreRowItem->m_textStepsScore[d].SetName( "CourseListScore" );
+				pStepsScoreRowItem->m_textStepsScore[d].LoadFromFont( THEME->GetPathToF("ScreenRanking course list score") );
+				pStepsScoreRowItem->m_textStepsScore[d].SetHidden( true );
+				pStepsScoreRowItem->AddChild( &pStepsScoreRowItem->m_textStepsScore[d] );
+			}
+
+			m_vpCourseScoreRowItem.push_back( pStepsScoreRowItem );
+		}
+
+		m_ListCourseRowItems.SetName( "ListCourseRowItems" );
+		this->AddChild( &m_ListCourseRowItems );
+		m_ListCourseRowItems.SetXY( CENTER_X, CENTER_Y );
+	}
+
 	// calculate which StepsTypes to show
 	vector<StepsType> aStepsTypesToShow;
 	{
@@ -277,6 +330,23 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		}
 	}
 
+	if( SHOW_ALL_COURSE_SCORES )
+	{
+		vector<Course*> courses;
+		SONGMAN->GetAllCourses( courses, false );
+		if( !courses.empty() )
+		{
+			for( unsigned i=0; i<aStepsTypesToShow.size(); i++ )
+			{
+				PageToShow pts;
+				pts.type = PageToShow::TYPE_ALL_COURSES;
+				pts.colorIndex = i;
+				pts.nt = aStepsTypesToShow[i];
+				m_vPagesToShow.push_back( pts );
+			}
+		}
+	}
+
 	this->MoveToTail( &m_In );		// put it in the back so it covers up the stuff we just added
 	this->MoveToTail( &m_Out );		// put it in the back so it covers up the stuff we just added
 
@@ -287,11 +357,11 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 
 ScreenRanking::~ScreenRanking()
 {
-	const unsigned num_songs = SONGMAN->GetAllSongs().size();
-
 	// delete dynamically allocated members
-	for( unsigned s=0; s<num_songs; s++ )
+	for( unsigned s=0; s<m_vpStepsScoreRowItem.size(); s++ )
 		delete m_vpStepsScoreRowItem[s];
+	for( unsigned c=0; c<m_vpCourseScoreRowItem.size(); c++ )
+		delete m_vpCourseScoreRowItem[c];
 }
 
 void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
@@ -333,6 +403,8 @@ float ScreenRanking::SetPage( PageToShow pts )
 	bool bShowTime = false;
 	bool bShowDifficulty = false; 
 	bool bShowStepsScore = false;
+	bool bShowCourseDifficulty = false;
+	bool bShowCourseScore = false;
 	switch( pts.type )
 	{
 	case PageToShow::TYPE_CATEGORY:
@@ -376,6 +448,11 @@ float ScreenRanking::SetPage( PageToShow pts )
 		bShowTime = false;
 		bShowDifficulty = true;
 		bShowStepsScore = true;
+		break;
+	case PageToShow::TYPE_ALL_COURSES:
+		bShowStepsType = true;
+		bShowCourseScore = true;
+		bShowCourseDifficulty = true;
 		break;
 	default:
 		ASSERT(0);
@@ -515,6 +592,58 @@ float ScreenRanking::SetPage( PageToShow pts )
 					pStepsScoreRowItems->m_textStepsScore[*dc_iter].SetUseZBuffer( true );
 					pStepsScoreRowItems->m_textStepsScore[*dc_iter].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
 					ON_COMMAND( pStepsScoreRowItems->m_textStepsScore[*dc_iter] );
+				}
+			}
+		}
+	}
+
+	{
+		for( int d=0; d<NUM_COURSE_DIFFICULTIES; d++ )
+		{
+			m_sprCourseDifficulty[d].SetHidden( !bShowCourseDifficulty );
+			if( bShowCourseDifficulty )
+			{
+				m_sprCourseDifficulty[d].Reset();
+				m_sprCourseDifficulty[d].StopAnimating();
+				m_sprCourseDifficulty[d].SetState( d );
+				m_sprCourseDifficulty[d].SetXY( COURSE_DIFFICULTY_X(d), COURSE_DIFFICULTY_Y );
+				ON_COMMAND( m_sprCourseDifficulty[d] );
+			}
+		}
+
+		m_ListCourseRowItems.SetHidden( !bShowCourseScore );
+		if( bShowCourseScore )
+		{
+			m_ListCourseRowItems.Reset();
+			SET_XY_AND_ON_COMMAND( m_ListCourseRowItems );
+
+			vector<Actor*> vpActors;
+			for( unsigned i=0; i<m_vpCourseScoreRowItem.size(); i++ )
+				vpActors.push_back( m_vpCourseScoreRowItem[i] );
+			m_ListCourseRowItems.Load( vpActors, SONG_SCORE_ROWS_TO_SHOW, SCREEN_WIDTH, ROW_SPACING_Y, false, SONG_SCORE_SECONDS_PER_ROW, 0, false );
+
+			vector<Course*> courses;
+			SONGMAN->GetAllCourses( courses, false );
+			for( unsigned s=0; s<courses.size(); s++ )
+			{
+				StepsScoreRowItem *pStepsCourseRowItems = m_vpCourseScoreRowItem[s];
+				pStepsCourseRowItems->m_sprSongFrame.Reset();
+				pStepsCourseRowItems->m_sprSongFrame.SetXY( SONG_FRAME_OFFSET_X, SONG_FRAME_OFFSET_Y );
+				pStepsCourseRowItems->m_sprSongFrame.SetUseZBuffer( true );
+				ON_COMMAND( pStepsCourseRowItems->m_sprSongFrame );
+
+				pStepsCourseRowItems->m_textSongTitle.Reset();
+				pStepsCourseRowItems->m_textSongTitle.SetXY( SONG_TITLE_OFFSET_X, SONG_TITLE_OFFSET_Y );
+				pStepsCourseRowItems->m_textSongTitle.SetUseZBuffer( true );
+				ON_COMMAND( pStepsCourseRowItems->m_textSongTitle );
+
+				for( int d=0; d<NUM_COURSE_DIFFICULTIES; d++ )
+				{
+					pStepsCourseRowItems->m_textStepsScore[d].Reset();
+					pStepsCourseRowItems->m_textStepsScore[d].SetXY( COURSE_SCORE_OFFSET_X(d), COURSE_SCORE_OFFSET_Y );
+					pStepsCourseRowItems->m_textStepsScore[d].SetUseZBuffer( true );
+					pStepsCourseRowItems->m_textStepsScore[d].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
+					ON_COMMAND( pStepsCourseRowItems->m_textStepsScore[d] );
 				}
 			}
 		}
@@ -667,6 +796,45 @@ float ScreenRanking::SetPage( PageToShow pts )
 			}
 		}
 		return m_ListScoreRowItems.GetSecondsForCompleteScrollThrough();
+	case PageToShow::TYPE_ALL_COURSES:
+		{
+			m_textStepsType.SetText( GameManager::NotesTypeToString(pts.nt) );
+
+			vector<Course*> courses;
+			SONGMAN->GetAllCourses( courses, false );
+			for( unsigned c=0; c<courses.size(); c++ )
+			{
+				const Course* pCourse = courses[c];
+				StepsScoreRowItem *pCourseScoreRowItem = m_vpCourseScoreRowItem[c];
+
+				pCourseScoreRowItem->m_textSongTitle.SetText( pCourse->m_sName );
+				for( int d=0; d<NUM_COURSE_DIFFICULTIES; d++ )
+				{
+					BitmapText* pTextStepsScore = &pCourseScoreRowItem->m_textStepsScore[d];
+
+					Course::MemCardData::HighScore hs;
+					bool bRecentHighScore = false;
+					if( !pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores.empty() )
+					{
+						hs = pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores[0];
+						const CString *psName = &pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores[0].sName;
+						bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
+					}
+					else
+					{
+						hs.sName = NO_SCORE_NAME;				
+					}
+					if( hs.sName.empty() )
+						hs.sName = EMPTY_SCORE_NAME;
+
+					CString s;
+					s = hs.sName + "\n";
+					s += ssprintf( "%0*.*f%%", PERCENT_TOTAL_SIZE, PERCENT_DECIMAL_PLACES, hs.fPercentDP*100 );
+					pTextStepsScore->SetText( s );
+				}
+			}
+		}
+		return m_ListCourseRowItems.GetSecondsForCompleteScrollThrough();
 	default:
 		ASSERT(0);
 		return 0;

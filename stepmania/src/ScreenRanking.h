@@ -32,7 +32,7 @@ public:
 protected:
 	struct PageToShow
 	{
-		enum { TYPE_CATEGORY, TYPE_COURSE, TYPE_ALL_STEPS } type;
+		enum { TYPE_CATEGORY, TYPE_COURSE, TYPE_ALL_STEPS, TYPE_ALL_COURSES } type;
 		int				colorIndex;
 		StepsType		nt;
 		RankingCategory	category;
@@ -65,6 +65,9 @@ protected:
 	};
 	vector<StepsScoreRowItem*> m_vpStepsScoreRowItem;	// for all_steps
 	ListDisplay m_ListScoreRowItems;
+	Sprite m_sprCourseDifficulty[NUM_DIFFICULTIES];	// for all_courses
+	vector<StepsScoreRowItem*> m_vpCourseScoreRowItem;	// for all_courses
+	ListDisplay m_ListCourseRowItems;
 
 	vector<PageToShow>	m_vPagesToShow;
 	vector<Difficulty>  m_vDiffsToShow;
