@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ANNOUNCER_MANAGER_H
+#define ANNOUNCER_MANAGER_H
 /*
 -----------------------------------------------------------------------------
  Class: AnnouncerManager
@@ -37,3 +38,4 @@ protected:
 
 extern AnnouncerManager*	ANNOUNCER;	// global and accessable from anywhere in our program
 	
+#endif

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ARROWEFFECTS_H
+#define ARROWEFFECTS_H
+
 /*
 -----------------------------------------------------------------------------
  File: ArrowEffects.h
@@ -51,3 +53,4 @@ float ArrowGetAlpha( PlayerNumber pn, float fYPos, float fPercentFadeToFail );
 //	ArrowAppearance.
 float ArrowGetGlow( PlayerNumber pn, float fYPos, float fPercentFadeToFail );
 
+#endif

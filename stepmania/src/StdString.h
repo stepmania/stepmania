@@ -244,13 +244,11 @@
 //				http://home.earthlink.net/~jmoleary
 // =============================================================================
 
-// Avoid multiple inclusion the VC++ way,
 // Turn off browser references
 // Turn off unavoidable compiler warnings
 
 
 #if defined(_MSC_VER) && (_MSC_VER > 1100)
-	#pragma once
 	#pragma component(browser, off, references, "CStdString")
 	#pragma warning (push)
 	#pragma warning (disable : 4290) // C++ Exception Specification ignored
