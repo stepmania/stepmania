@@ -11,10 +11,17 @@
 */
 
 #include "GameConstantsAndTypes.h"
+#include "PrefsManager.h"
+#include "GameState.h"
 
-
-int TapNoteScoreToDancePoints( TapNoteScore tns, bool bOni )
+/* XXX: Should this be in GAMESTATE? It's not really a constant anymore. */
+int TapNoteScoreToDancePoints( TapNoteScore tns )
 {
+	const bool bOni = GAMESTATE->IsCourseMode();
+
+	if(!PREFSMAN->m_bMarvelousTiming && tns == TNS_MARVELOUS)
+		tns = TNS_PERFECT;
+
 	switch( tns )
 	{
 	case TNS_MARVELOUS:	return bOni ? +3 : +2;

@@ -124,7 +124,7 @@ enum TapNoteScore {
 	NUM_TAP_NOTE_SCORES
 };
 
-int TapNoteScoreToDancePoints( TapNoteScore tns, bool bOni = false );
+int TapNoteScoreToDancePoints( TapNoteScore tns );
 
 //enum TapNoteTiming { 
 //	TNT_NONE, 

@@ -327,28 +327,12 @@ int NoteData::GetPossibleDancePoints()
 //An "OK" (Successful Freeze step) will add 6 points
 //A "NG" (Unsuccessful Freeze step) is worth 0 points
 
-	if(PREFSMAN->m_bMarvelousTiming && ( GAMESTATE->m_PlayMode == PLAY_MODE_ONI || GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP || GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS ) ) // score out of marvelous for course modes, unless marvelous timing is off
-	{
-		return GetNumTapNotes()*TapNoteScoreToDancePoints(TNS_MARVELOUS) +	// Marvelous for oni
-		   GetNumHoldNotes()*HoldNoteScoreToDancePoints(HNS_OK);
-	}
-
-	return GetNumTapNotes()*TapNoteScoreToDancePoints(TNS_PERFECT) +	// not Marvelous
+	/* Note that, if Marvelous timing is disabled or not active (not course mode),
+	 * PERFECT will be used instead. */
+	return GetNumTapNotes()*TapNoteScoreToDancePoints(TNS_MARVELOUS)+
 	   GetNumHoldNotes()*HoldNoteScoreToDancePoints(HNS_OK);
 }
 
-/* ConvertHoldNotesTo2sAnd3s also clears m_iHoldNotes;
- * shouldn't this do likewise and set all 2/3's to 0? 
- * -glenn
- *
- * Other code assumes != TAP_EMPTY means there's a tap note, so I changed
- * this to do this. -glenn
- *
-
- * This code intentially leaves the TAP_HOLD_HEAD behind because a hold head is 
- * treated exactly like a tap note for scoring purposes.
-
- */
 void NoteData::Convert2sAnd3sToHoldNotes()
 {
 	// Any note will end a hold (not just a TAP_HOLD_TAIL).  This makes parsing DWIs much easier.
