@@ -2,6 +2,7 @@
 #include "Difficulty.h"
 #include "GameState.h"
 #include "ThemeMetric.h"
+#include "LuaManager.h"
 
 
 static const CString DifficultyNames[NUM_DIFFICULTIES] = {
@@ -41,6 +42,19 @@ Difficulty StringToDifficulty( const CString& sDC )
 	else if( s2 == "edit" )		return DIFFICULTY_EDIT;
 	else						return DIFFICULTY_INVALID;
 }
+
+static void LuaDifficulty(lua_State* L)
+{
+	FOREACH_Difficulty( d )
+	{
+		CString s = DifficultyNames[d];
+		s.MakeUpper();
+		LUA->SetGlobal( "DIFFICULTY_"+s, d );
+	}
+	LUA->SetGlobal( "NUM_DIFFICULTIES", NUM_DIFFICULTIES );
+}
+REGISTER_WITH_LUA_FUNCTION( LuaDifficulty );
+
 
 
 static const CString CourseDifficultyNames[NUM_DIFFICULTIES] =
