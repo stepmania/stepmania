@@ -23,6 +23,13 @@ InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our p
 InputFilter::InputFilter()
 {
 	queuemutex = new RageMutex;
+	memset( m_BeingHeld, 0, sizeof(m_BeingHeld) );
+	memset( m_BeingForced, 0, sizeof(m_BeingForced) );
+	memset( m_fSecsHeld, 0, sizeof(m_fSecsHeld) );
+	for( int d=0; d<NUM_INPUT_DEVICES; d++ )	// foreach InputDevice
+		for( int b=0; b < NUM_DEVICE_BUTTONS; b++ )	// foreach button
+			m_fSecsToForce[d][b] = -1;	
+
 	Reset();
 }
 
@@ -39,16 +46,65 @@ void InputFilter::Reset()
 
 void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 {
+	LockMut(*queuemutex);
+
 	if(m_BeingHeld[di.device][di.button] == Down)
 		return;
+
+	const bool WasBeingPressed = IsBeingPressed( di );
 
 	m_BeingHeld[di.device][di.button] = Down;
 	m_fSecsHeld[di.device][di.button] = 0;
 
-	InputEventType iet = Down? IET_FIRST_PRESS:IET_RELEASE;
+	if( WasBeingPressed != IsBeingPressed(di) )
+	{
+		InputEventType iet = IsBeingPressed(di)? IET_FIRST_PRESS:IET_RELEASE;
+		queue.push_back( InputEvent(di,iet) );
+	}
+}
 
+/* Force a key down.  Duration is the amount of time to force the key, or 0 to force
+ * it until we explicitly call StopForcingKey. */
+void InputFilter::ForceKey( DeviceInput di, float duration )
+{
 	LockMut(*queuemutex);
-	queue.push_back( InputEvent(di,iet) );
+
+	if( m_BeingForced[di.device][di.button] )
+		return;
+
+	const bool WasBeingPressed = IsBeingPressed( di );
+
+	m_BeingForced[di.device][di.button] = true;
+	m_fSecsToForce[di.device][di.button] = duration;
+	m_fSecsHeld[di.device][di.button] = 0;
+
+	/* Send an IET_FIRST_PRESS event if the key wasn't already down. */
+	if( WasBeingPressed != IsBeingPressed( di ) )
+	{
+		InputEventType iet = IsBeingPressed(di)? IET_FIRST_PRESS:IET_RELEASE;
+		queue.push_back( InputEvent(di,iet) );
+	}
+}
+
+void InputFilter::StopForcingKey( DeviceInput di )
+{
+	LockMut(*queuemutex);
+
+	if( !m_BeingForced[di.device][di.button] )
+		return;
+
+	const bool WasBeingPressed = IsBeingPressed( di );
+
+	m_BeingForced[di.device][di.button] = false;
+	m_fSecsToForce[di.device][di.button] = 0;
+	m_fSecsHeld[di.device][di.button] = 0;
+	
+	/* Send an IET_RELEASE event if the key is no longer down. */
+	if( WasBeingPressed != IsBeingPressed(di) )
+	{
+		InputEventType iet = IsBeingPressed(di)? IET_FIRST_PRESS:IET_RELEASE;
+		queue.push_back( InputEvent(di,iet) );
+	}
 }
 
 /* Release all buttons on the given device. */
@@ -60,6 +116,8 @@ void InputFilter::ResetDevice( InputDevice dev )
 
 void InputFilter::Update(float fDeltaTime)
 {
+	RageTimer now;
+
 	INPUTMAN->Update( fDeltaTime );
 
 	/* Make sure that nothing gets inserted while we do this, to prevent
@@ -70,7 +128,16 @@ void InputFilter::Update(float fDeltaTime)
 	{
 		for( int b=0; b < NUM_DEVICE_BUTTONS; b++ )	// foreach button
 		{
-			if(!m_BeingHeld[d][b])
+			DeviceInput di( (InputDevice)d,b,now);
+
+			if( m_fSecsToForce[d][b] > 0 )
+			{
+				m_fSecsToForce[d][b] -= fDeltaTime;
+				if( m_fSecsToForce[d][b] <= 0 )
+					StopForcingKey( di );
+			}
+
+			if( !IsBeingPressed(di) )
 				continue;
 
 			const float fOldHoldTime = m_fSecsHeld[d][b];
@@ -93,8 +160,6 @@ void InputFilter::Update(float fDeltaTime)
 				}
 				if( int(fOldHoldTime/fTimeBetweenRepeats) != int(fNewHoldTime/fTimeBetweenRepeats) )
 				{
-					RageTimer now;
-					DeviceInput di( (InputDevice)d,b,now);
 					queue.push_back( InputEvent(di,iet) );
 				}
 			}
@@ -105,7 +170,7 @@ void InputFilter::Update(float fDeltaTime)
 
 bool InputFilter::IsBeingPressed( DeviceInput di )
 {
-	return m_BeingHeld[di.device][di.button];
+	return m_BeingHeld[di.device][di.button] || m_BeingForced[di.device][di.button];
 }
 
 float InputFilter::GetSecsHeld( DeviceInput di )
