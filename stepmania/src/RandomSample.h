@@ -19,7 +19,7 @@ class RandomSample
 {
 public:
 	RandomSample();
-	~RandomSample();
+	virtual ~RandomSample();
 
 	virtual bool Load( CString sFilePath )
 	{

@@ -192,8 +192,10 @@ struct RageVertex
 
 /* nonstandard extension used : nameless struct/union
  * It is, in fact, nonstandard.  G++ 3.x can handle it. 2.95.x can not. XXX */
+#if defined(_MSC_VER)
 #pragma warning (push)
 #pragma warning (disable : 4201)
+#endif
 
 struct RageMatrix
 {
@@ -259,6 +261,8 @@ public:
     };
 };
 
+#if defined(_MSC_VER)
 #pragma warning (pop)
+#endif
 
 #endif

@@ -405,7 +405,8 @@ void NoteData::CropToLeftSide()
 	int iLastRightSideColumn = 7;
 
 	// clear out the right half
-	for( int c=iFirstRightSideColumn; c<=iLastRightSideColumn; c++ )
+	int c;
+	for( c=iFirstRightSideColumn; c<=iLastRightSideColumn; c++ )
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) // foreach TapNote
 			SetTapNote(c, i, TAP_EMPTY);

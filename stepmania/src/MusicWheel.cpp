@@ -686,8 +686,9 @@ void MusicWheel::RebuildWheelItemDisplays()
 	int iIndex = m_iSelection;
 	if( m_iSelection > int(GetCurWheelItemDatas().size()-1) )
 		m_iSelection = 0;
-
-	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW/2; i++ )
+	
+	int i;
+	for( i=0; i<NUM_WHEEL_ITEMS_TO_DRAW/2; i++ )
 	{
 		do
 		{
@@ -774,7 +775,7 @@ void MusicWheel::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 
 	unsigned i;
-	for( i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
+	for( i=0; i<int(NUM_WHEEL_ITEMS_TO_DRAW); i++ )
 	{
 		WheelItemDisplay& display = m_WheelItemDisplays[i];
 

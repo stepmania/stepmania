@@ -90,7 +90,7 @@ void InputMapper::ReadMappingsFromDisk()
 			CStringArray sDeviceInputStrings;
 			split( value, ",", sDeviceInputStrings, false );
 
-			for( unsigned i=0; i<sDeviceInputStrings.size() && i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
+			for( unsigned i=0; i<sDeviceInputStrings.size() && i<unsigned(NUM_GAME_TO_DEVICE_SLOTS); i++ )
 			{
 				DeviceInput DeviceI;
 				DeviceI.fromString( sDeviceInputStrings[i] );
