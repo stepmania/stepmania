@@ -466,7 +466,7 @@ struct VideoCardDefaults
 		640,480,
 		16,16,16,
 		1024,
-		false
+		true
 	},
 	{
 		"Intel.*82810|Intel.*82815",
