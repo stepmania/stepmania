@@ -1229,3 +1229,36 @@ void MusicWheel::TweenOffScreen()
 
 
 }
+
+CString MusicWheel::GetSectionNameFromSongAndSort( Song* pSong, SongSortOrder so )
+{
+	if( pSong == NULL )
+		return "";
+
+	CString sTemp;
+
+	switch( so )
+	{
+	case SORT_GROUP:	
+		sTemp = pSong->m_sGroupName;
+		return sTemp;
+//		case SORT_ARTIST:	
+//			sTemp = pSong->m_sArtist;
+//			sTemp.MakeUpper();
+//			sTemp =  (sTemp.GetLength() > 0) ? sTemp.Left(1) : "";
+//			if( IsAnInt(sTemp) )
+//				sTemp = "NUM";
+//			return sTemp;
+	case SORT_TITLE:
+		sTemp = pSong->GetSortTitle();
+		sTemp.MakeUpper();
+		sTemp = (sTemp.GetLength() > 0) ? sTemp.Left(1) : "";
+		if( IsAnInt(sTemp) )
+			sTemp = "NUM";
+		return sTemp;
+	case SORT_BPM:
+	case SORT_MOST_PLAYED:
+	default:
+		return "";
+	}
+}
