@@ -130,10 +130,12 @@ CString vssprintf( const char *fmt, va_list argList );
 
 // Splits a Path into 4 parts (Directory, Drive, Filename, Extention).  Supports UNC path names.
 // param1: Whether the Supplied Path (PARAM2) contains a directory name only
-//            or a file name (Reason: some directories will end with "xxx.xxx"
+//            or a file name (Reason: some directories will end with "aaa.bbb"
 //            which is like a file name).
+// We should just make sure all pathnames end with a slash, not special case it here.
+// -glenn
 void splitpath( 
-	const bool UsingDirsOnly, 
+	bool UsingDirsOnly, 
 	const CString &Path, 
 	CString &Drive, 
 	CString &Dir, 

@@ -123,16 +123,11 @@ void split( const CString &Source, const CString &Deliminator, CStringArray& Add
 }
 
 
-//-----------------------------------------------------------------------------
-// Name: splitpath()
-// Desc:
-//-----------------------------------------------------------------------------
-void splitpath( const bool UsingDirsOnly, const CString &Path, CString& Drive, CString& Dir, CString& FName, CString& Ext )
+void splitpath( bool UsingDirsOnly, const CString &Path, CString& Drive, CString& Dir, CString& FName, CString& Ext )
 {
-
 	int nSecond;
 
-	// Look for a UNC Name!
+	// Look for a UNC filename.
 	if (Path.Left(2) == "\\\\") 
 	{
 		int nFirst = Path.Find("\\",3);
@@ -146,7 +141,7 @@ void splitpath( const bool UsingDirsOnly, const CString &Path, CString& Drive, C
 		else if (nSecond > nFirst)
 			Drive = Path.Left(nSecond);
 	}
-	else if (Path.Mid(1,1) == ":" )		// normal Drive Structure
+	else if (Path.Mid(1,1) == ":" )		// drive letter
 	{
 		nSecond = 2;
 		Drive = Path.Left(2);
