@@ -653,6 +653,8 @@ void ScreenGameplay::Init()
 			this->AddChild( &m_textSurviveTime );
 		}
 	}
+	
+	m_SongBackground.Init();
 
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're going to use it
 	{
