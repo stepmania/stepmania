@@ -9,7 +9,6 @@
 #include "Quad.h"
 #include "NoteDataWithScoring.h"
 #include "NoteDisplay.h"
-#include "ArrowBackdrop.h"
 #include "ReceptorArrowRow.h"
 #include "GhostArrowRow.h"
 

@@ -4,13 +4,13 @@
 #include "RageLog.h"
 
 #include "GameState.h"
-#include "NoteFieldPositioning.h"
 #include "NoteSkinManager.h"
 #include "song.h"
 #include "Course.h"
 #include "Steps.h"
 #include "ThemeManager.h"
 #include "Foreach.h"
+#include "Style.h"
 
 #define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYSIZE(arr); ++Z ) arr[Z]=1.0f; }
 
