@@ -38,7 +38,6 @@
 #include "NoteSkinManager.h"
 #include "PrefsManager.h"
 #include "SongManager.h"
-#include "PrefsManager.h"
 #include "GameState.h"
 #include "AnnouncerManager.h"
 #include "ScreenManager.h"
@@ -66,7 +65,7 @@ HWND g_hWndMain = NULL;
 #endif
 
 static bool g_bHasFocus = true;
-
+static bool g_bQuitting = false;
 
 static void ChangeToDirOfExecutable(const char *argv0)
 {
@@ -108,10 +107,7 @@ void ApplyGraphicOptions()
 
 void ExitGame()
 {
-	SDL_Event *event;
-	event = (SDL_Event *) malloc(sizeof(SDL_Event));
-	event->type = SDL_QUIT;
-	SDL_PushEvent(event);
+	g_bQuitting = true;
 }
 
 void ResetGame()
@@ -303,6 +299,10 @@ int main(int argc, char* argv[])
 		PREFSMAN->m_bVsync );
 	TEXTUREMAN	= new RageTextureManager( PREFSMAN->m_iTextureColorDepth, PREFSMAN->m_iUnloadTextureDelaySeconds, PREFSMAN->m_iMaxTextureResolution );
 
+	/* Now that we've started DISPLAY, we can set up event masks. */
+	SDL_EventState(SDL_QUIT, SDL_ENABLE);
+	SDL_EventState(SDL_ACTIVEEVENT, SDL_ENABLE);
+
 	/* We might have a new window, so let's make sure window properties are still set. */
 	SDL_WM_SetCaption("StepMania", "StepMania");
 	SetIcon();
@@ -317,6 +317,9 @@ int main(int argc, char* argv[])
 	g_hWndMain = info.window;
 #endif
 
+	/* This initializes objects that change the SDL event mask, and has other
+	 * dependencies on the SDL video subsystem, so it must be initialized after
+	 * DISPLAY and setting the default SDL event mask. */
 	INPUTMAN	= new RageInput();
 
 	// These things depend on the TextureManager, so do them after!
@@ -422,10 +425,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
 		{
 			// pressed Alt+F4
-			SDL_Event *event;
-			event = (SDL_Event *) malloc(sizeof(SDL_Event));
-			event->type = SDL_QUIT;
-			SDL_PushEvent(event);
+			ExitGame();
 			return true;
 		}
 		else
@@ -504,23 +504,19 @@ static void HandleInputEvents(float fDeltaTime)
 	}
 }
 
-static bool HandleSDLEvents()
+static void HandleSDLEvents()
 {
 	// process all queued events
 	SDL_Event event;
-	while(SDL_PollEvent(&event))
+	while(SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_QUITMASK|SDL_ACTIVEEVENTMASK))
 	{
-		if(INPUTMAN->FeedSDLEvent(event))
-			continue; /* it took care of it */
-
 		switch(event.type)
 		{
 		case SDL_QUIT:
 			LOG->Trace("SDL_QUIT: shutting down");
-			return false; /* exit the main loop */
-		case SDL_VIDEORESIZE:
-			DISPLAY->ResolutionChanged(event.resize.w, event.resize.h);
+			ExitGame();
 			break;
+
 		case SDL_ACTIVEEVENT:
 		{
 			/* We don't care about mouse focus. */
@@ -540,17 +536,16 @@ static bool HandleSDLEvents()
 		}
 		}
 	}
-
-	return true;
 }
 
 static void GameLoop()
 {
 	RageTimer timer;
-	while(1)
+	while(!g_bQuitting)
 	{
-		if(!HandleSDLEvents())
-			return; /* exit the main loop (quit) */
+		/* This needs to be called before anything that handles SDL events. */
+		SDL_PumpEvents();
+		HandleSDLEvents();
 
 		/*
 		 * Update
@@ -566,6 +561,7 @@ static void GameLoop()
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_BACKQUOTE) ) )
 				fDeltaTime /= 4;
 
+		DISPLAY->Update( fDeltaTime );
 		TEXTUREMAN->Update( fDeltaTime );
 		GAMESTATE->Update( fDeltaTime );
 		SCREENMAN->Update( fDeltaTime );
