@@ -247,6 +247,7 @@ void PrefsManager::Init()
 	 * specify numbers directly.) This is purely a troubleshooting option
 	 * and is not honored by all sound drivers. */
 	m_iSoundWriteAhead = 0;
+	m_iSoundDevice = "";
 	m_fSoundVolume = DEFAULT_SOUND_VOLUME;
 	m_iSoundResampleQuality = RageSoundReader_Resample::RESAMP_NORMAL;
 
@@ -441,6 +442,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "MusicWheelSwitchSpeed",			m_iMusicWheelSwitchSpeed );
 	ini.GetValue( "Options", "SoundDrivers",					m_sSoundDrivers );
 	ini.GetValue( "Options", "SoundWriteAhead",					m_iSoundWriteAhead );
+	ini.GetValue( "Options", "SoundDevice",						m_iSoundDevice );
 	ini.GetValue( "Options", "MovieDrivers",					m_sMovieDrivers );
 	ini.GetValue( "Options", "EasterEggs",						m_bEasterEggs );
 	ini.GetValue( "Options", "MarvelousTiming",					(int&)m_iMarvelousTiming );
@@ -770,6 +772,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "SignProfileData",					m_bSignProfileData );
 	
 	ini.SetValue( "Options", "SoundWriteAhead",					m_iSoundWriteAhead );
+	ini.SetValue( "Options", "SoundDevice",						m_iSoundDevice );
 
 	ini.SetValue( "Editor", "ShowBGChangesPlay",				m_bEditorShowBGChangesPlay );
 

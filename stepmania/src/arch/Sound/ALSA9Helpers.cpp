@@ -4,6 +4,7 @@
 #include "ALSA9Helpers.h"
 #include "SDL_utils.h"
 #include "ALSA9Dynamic.h"
+#include "PrefsManager.h"
 
 /* int err; must be defined before using this macro */
 #define ALSA_CHECK(x) \
@@ -153,6 +154,13 @@ void Alsa9Buf::InitializeErrorHandler()
 	dsnd_lib_error_set_handler( ErrorHandler );
 }
 
+static CString DeviceName()
+{
+	if( !PREFSMAN->m_iSoundDevice.empty() )
+		return PREFSMAN->m_iSoundDevice;
+	return "hw:0";
+}
+
 void Alsa9Buf::GetSoundCardDebugInfo()
 {
 	static bool done = false;	
@@ -219,9 +227,10 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 
 	if( card == 0 )
 		LOG->Info( "No ALSA sound cards were found.");
+	
+	if( !PREFSMAN->m_iSoundDevice.empty() )
+		LOG->Info( "ALSA device overridden to \"%s\"", PREFSMAN->m_iSoundDevice.c_str() );
 }
-
-static CString DeviceName = "hw:0";
 
 Alsa9Buf::Alsa9Buf( hw hardware, int channels_ )
 {
@@ -240,9 +249,9 @@ Alsa9Buf::Alsa9Buf( hw hardware, int channels_ )
 	/* Open the device. */
 	int err;
 //	err = dsnd_pcm_open( &pcm, "dmix", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
-	err = dsnd_pcm_open( &pcm, DeviceName, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
+	err = dsnd_pcm_open( &pcm, DeviceName(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
 	if (err < 0)
-		RageException::ThrowNonfatal("dsnd_pcm_open: %s", dsnd_strerror(err));
+		RageException::ThrowNonfatal("dsnd_pcm_open(%s): %s", DeviceName().c_str(), dsnd_strerror(err));
 
 	if( !SetHWParams() )
 	{
@@ -433,7 +442,7 @@ CString Alsa9Buf::GetHardwareID( CString name )
 	InitializeErrorHandler();
 
 	if( name.empty() )
-		name = DeviceName;
+		name = DeviceName();
 	
 	snd_ctl_t *handle;
 	int err;
