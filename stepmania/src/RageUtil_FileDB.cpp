@@ -19,6 +19,7 @@
 #include "windows.h"
 #endif
 
+enum FileType { TTYPE_FILE, TTYPE_DIR, TTYPE_NONE };
 
 struct File
 {
@@ -67,9 +68,8 @@ struct FileSet
 		const CString &beginning, const CString &containing, const CString &ending,
 		vector<CString> &out, bool bOnlyDirs) const;
 	void GetFilesEqualTo(const CString &pat, vector<CString> &out, bool bOnlyDirs) const;
-	bool DoesFileExist(const CString &path) const;
-	bool IsADirectory(const CString &path) const;
-	bool IsAFile(const CString &path) const;
+
+	FileType GetFileType( const CString &path ) const;
 	int GetFileSize(const CString &path) const;
 	int GetFileModTime(const CString &path) const;
 };
@@ -204,25 +204,13 @@ void FileSet::GetFilesEqualTo(const CString &str, vector<CString> &out, bool bOn
 	out.push_back( i->name );
 }
 
-bool FileSet::DoesFileExist(const CString &path) const
-{
-	return files.find( File(path) ) != files.end();
-}
-
-bool FileSet::IsADirectory(const CString &path) const
+FileType FileSet::GetFileType(const CString &path ) const
 {
 	set<File>::const_iterator i = files.find( File(path) );
 	if(i == files.end())
-		return false;
-	return i->dir;
-}
+		return TTYPE_NONE;
 
-bool FileSet::IsAFile(const CString &path) const
-{
-	set<File>::const_iterator i = files.find( File(path) );
-	if(i == files.end())
-		return false;
-	return !i->dir;
+	return i->dir? TTYPE_DIR:TTYPE_FILE;
 }
 
 int FileSet::GetFileSize(const CString &path) const
@@ -294,44 +282,22 @@ public:
 	 * case.  If "path" doesn't exist at all, return false and don't change it. */
 	bool ResolvePath(CString &path);
 
-	bool DoesFileExist(const CString &path);
-	bool IsAFile(const CString &path);
-	bool IsADirectory(const CString &path);
+	FileType GetFileType( const CString &path );
 	int GetFileSize(const CString &path);
 	int GetFileModTime( const CString &sFilePath );
 
 	void FlushDirCache();
 };
 
-bool FilenameDB::DoesFileExist( const CString &sPath )
+
+FileType FilenameDB::GetFileType( const CString &sPath )
 {
 	CString Dir, Name;
-	SplitPath(sPath, Dir, Name);
+	SplitPath( sPath, Dir, Name );
 	FileSet &fs = GetFileSet( Dir );
-	return fs.DoesFileExist(Name);
+	return fs.GetFileType( Name );
 }
 
-bool FilenameDB::IsAFile( const CString &sPath )
-{
-	CString Dir, Name;
-	SplitPath(sPath, Dir, Name);
-	FileSet &fs = GetFileSet( Dir );
-	return fs.IsAFile(Name);
-}
-
-bool FilenameDB::IsADirectory( const CString &sPath )
-{
-	CString Dir, Name;
-	SplitPath(sPath, Dir, Name);
-	FileSet &fs = GetFileSet( Dir );
-
-#ifdef _XBOX
-	if ( ( Dir == "D:\\" ) && ( Name == "" ) )
-		return true ;
-#endif
-
-	return fs.IsADirectory(Name);
-}
 
 int FilenameDB::GetFileSize( const CString &sPath )
 {
@@ -531,9 +497,9 @@ void FlushDirCache()
 
 
 #if 0
-bool DoesFileExist( const CString &sPath ) { return FDB.DoesFileExist(sPath); }
-bool IsAFile( const CString &sPath ) { return FDB.IsAFile(sPath); }
-bool IsADirectory( const CString &sPath ) { return FDB.IsADirectory(sPath); }
+bool DoesFileExist( const CString &sPath ) { return FDB.GetFileType( sPath ) != TTYPE_NONE; }
+bool IsAFile( const CString &sPath ) { return FDB.GetFileType( sPath ) == TTYPE_FILE; }
+bool IsADirectory( const CString &sPath ) { return FDB.GetFileType( sPath ) == TTYPE_DIR; }
 int GetFileModTime( const CString &sPath ) { return FDB.GetFileModTime(sPath); }
 unsigned GetFileSizeInBytes( const CString &sPath )
 {
