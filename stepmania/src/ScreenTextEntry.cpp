@@ -10,6 +10,10 @@
 #include "FontCharAliases.h"
 #include "ScreenDimensions.h"
 
+#if defined(XBOX)
+#include "archutils/Xbox/VirtualKeyboard.h"
+#endif
+
 #define QUESTION_X		(CENTER_X)
 #define QUESTION_Y		(CENTER_Y - 60)
 
@@ -93,7 +97,31 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 	if( type != IET_FIRST_PRESS )
 		return;
 
-	switch( DeviceI.button )
+	int button = DeviceI.button;
+
+#if defined(XBOX)
+	bool nextChar = false;
+
+	int toAdd = XBOX_VKB.Translate(button, m_sAnswer, &nextChar);
+
+	if( toAdd != 0 && toAdd != KEY_BACK && toAdd != KEY_ESC && toAdd != KEY_ENTER )
+	{
+		if(!nextChar)
+		{
+			if(!m_sAnswer.empty())
+				m_sAnswer = m_sAnswer.erase( m_sAnswer.size()-1 );
+		}
+
+		m_sAnswer += toAdd;
+
+		UpdateText();
+		return;
+	}
+
+	button = toAdd;
+#endif
+
+	switch( button )
 	{
 	case KEY_ESC:
 		m_bCancelled = true;
@@ -110,6 +138,7 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 		break;
 	default:
 		char c;
+
 		c = DeviceI.ToChar();
 
 		bool bHoldingShift = 

@@ -1315,6 +1315,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				<File
 					RelativePath="archutils\Xbox\GraphicsWindow.h">
 				</File>
+				<File
+					RelativePath=".\archutils\Xbox\VirtualKeyboard.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Xbox\VirtualKeyboard.h">
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

@@ -9,6 +9,10 @@
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
 
+#if defined(XBOX)
+#include "archutils/Xbox/VirtualKeyboard.h"
+#endif
+
 
 enum {
 	PO_PLAYER1,
@@ -173,6 +177,11 @@ void ScreenProfileOptions::MenuStart( PlayerNumber pn, const InputEventType type
 	switch( GetCurrentRow() )
 	{
 	case PO_CREATE_NEW:
+
+#if defined(XBOX)
+		XBOX_VKB.Reset(VKMODE_PROFILE); // set the xbox virtual keyboard to profile mode
+#endif
+
 		SCREENMAN->TextEntry( SM_DoneCreating, "Enter a profile name", "", NULL );
 		break;
 	case PO_DELETE_:
