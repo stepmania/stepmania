@@ -95,10 +95,8 @@ inline int lrintf( float f )
 
 #define HAVE_SDL
 
-#ifdef _XBOX
-#include <xtl.h>
-#include <xgraphics.h>
-#include <stdio.h>
+#if defined(XBOX)
+#include "ArchUtils/Xbox/arch_setup.h"
 #endif
 
 #define HAVE_BYTE_SWAPS
