@@ -1335,7 +1335,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		if( bBeginFailed )
 		{
-			if( PREFSMAN->m_bMinimum1FullSongInCourses && GAMESTATE->GetCourseSongIndex()==0 )
+			if( PREFSMAN->m_bMinimum1FullSongInCourses && GAMESTATE->IsCourseMode() && GAMESTATE->GetCourseSongIndex()==0 )
 				;	// do nothing
 			else
 				SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
