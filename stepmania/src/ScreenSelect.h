@@ -15,6 +15,7 @@
 #include "MenuElements.h"
 #include "BGAnimation.h"
 #include "ModeChoice.h"
+#include "CodeDetector.h"
 
 // Derived classes must send this when done
 const ScreenMessage SM_AllDoneChoosing = (ScreenMessage)(SM_User+123);	// unique
@@ -43,6 +44,9 @@ protected:
 	MenuElements m_Menu;
 	BGAnimation m_BGAnimations[MAX_CHOICES];
 	vector<ModeChoice>	m_aModeChoices;		// derived classes should look here for what choices are available
+
+	vector<CodeItem>	m_aCodes;
+	vector<CString>		m_aCodeActions;
 };
 
 

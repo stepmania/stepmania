@@ -25,11 +25,15 @@
 #include "ThemeManager.h"
 #include "ModeChoice.h"
 #include "RageDisplay.h"
+#include "UnlockSystem.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
 
 #define NUM_CHOICES				THEME->GetMetricI(m_sName,"NumChoices")
 #define CHOICE( choice )		THEME->GetMetric (m_sName,ssprintf("Choice%d",choice+1))
+#define NUM_CODES				THEME->GetMetricI(m_sName,"NumCodes")
+#define CODE( choice )			THEME->GetMetric (m_sName,ssprintf("Code%d",choice+1))
+#define CODE_ACTION( choice )	THEME->GetMetric (m_sName,ssprintf("Code%dAction",choice+1))
 #define HELP_TEXT				THEME->GetMetric (m_sName,"HelpText")
 #define NEXT_SCREEN( choice )	THEME->GetMetric (m_sName,ssprintf("NextScreen%d",choice+1))
 
@@ -39,7 +43,8 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 
 	m_sName = sClassName;
 
-	for( int c=0; c<NUM_CHOICES; c++ )
+	int c;
+	for( c=0; c<NUM_CHOICES; c++ )
 	{
 		CString sChoice = CHOICE(c);
 
@@ -55,6 +60,16 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 
 	m_Menu.Load( sClassName );
 	this->AddChild( &m_Menu );
+
+	for( c=0; c<NUM_CODES; c++ )
+	{
+		CodeItem code;
+		if( !code.Load( CODE(c) ) )
+			continue;
+
+		m_aCodes.push_back( code );
+		m_aCodeActions.push_back( CODE_ACTION(c) );
+	}
 }
 
 
@@ -110,6 +125,26 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 	if( m_Menu.IsTransitioning() )
 		return;
 
+	for( unsigned i = 0; i < m_aCodes.size(); ++i )
+	{
+		if( !m_aCodes[i].EnteredCode( GameI.controller ) )
+			continue;
+
+		const CString &action = m_aCodeActions[i];
+		LOG->Trace("entered code for '%s'", action.c_str());
+		vector<CString> parts;
+		split( action, ";", parts, true );
+		for( unsigned j = 0; j < parts.size(); ++j )
+		{
+			vector<CString> asBits;
+			split( parts[j], ",", asBits, true );
+			if( !asBits[0].CompareNoCase("unlock") )
+				UNLOCKSYS->UnlockCode( atoi(asBits[1]) );
+			if( !asBits[0].CompareNoCase("sound") )
+				SOUND->PlayOnce( THEME->GetPathToS( asBits[1] ) );
+		}
+
+	}
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
 }
 
