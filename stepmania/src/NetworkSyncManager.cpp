@@ -47,7 +47,7 @@ bool NetworkSyncManager::Connect(const CString& addy, unsigned short port)
      * Also, when does it ever connect to localhost?
      * -- Steve
      */
-
+    NetPlayerClient->create(); // Initilize Socket
     useSMserver = NetPlayerClient->connect(addy, port);
     
 	return useSMserver;
