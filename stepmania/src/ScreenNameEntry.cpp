@@ -83,7 +83,7 @@ float GetClosestCharYOffset( float fFakeBeat )
 // return value is relative to gray arrows
 float GetClosestCharYPos( float fFakeBeat )
 {
-	return roundf( GetClosestCharYOffset(fFakeBeat)*g_fCharsSpacingY );
+	return GetClosestCharYOffset(fFakeBeat)*g_fCharsSpacingY;
 }
 
 
