@@ -198,8 +198,15 @@ retry:
 void Sprite::UnloadTexture()
 {
 	if( m_pTexture != NULL )			// If there was a previous bitmap...
+	{
 		TEXTUREMAN->UnloadTexture( m_pTexture );	// Unload it.
-	m_pTexture = NULL;
+		m_pTexture = NULL;
+
+		/* Make sure we're reset to frame 0, so if we're reused, we aren't left on
+		 * a frame number that may be greater than the number of frames in the newly
+		 * loaded image. */
+		SetState( 0 );
+	}
 }
 
 void Sprite::EnableAnimation( bool bEnable )
@@ -686,6 +693,8 @@ void Sprite::SetCustomImageCoords( float fImageCoords[8] )	// order: top left, b
 
 const RectF *Sprite::GetCurrentTextureCoordRect() const
 {
+	ASSERT_M( m_iCurState < (int) m_States.size(), ssprintf("%i, %i", m_iCurState, m_States.size()) );
+
 	unsigned int uFrameNo = m_States[m_iCurState].iFrameIndex;
 	return m_pTexture->GetTextureCoordRect( uFrameNo );
 }
