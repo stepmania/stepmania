@@ -79,12 +79,12 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		return NULL;
 	}
 
-	SDL_Surface *volatile surf = NULL;
+	SDL_Surface *volatile img = NULL;
 	if( setjmp(png_jmpbuf(png)) )
 	{
 		png_destroy_read_struct( &png, &info_ptr, png_infopp_NULL );
-		if( surf )
-			SDL_FreeSurface( surf );
+		if( img )
+			SDL_FreeSurface( img );
 		return NULL;
 	}
 
@@ -187,16 +187,16 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	switch( type )
 	{
 	case PALETTE:
-		surf = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0 );
-		mySDL_SetPalette( surf, colors, 0, 256 );
+		img = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0 );
+		mySDL_SetPalette( img, colors, 0, 256 );
 
 		if( iColorKey != -1 )
-			mySDL_AddColorKey( surf, iColorKey );
+			mySDL_AddColorKey( img, iColorKey );
 
 		break;
 	case RGBX:
 	case RGBA:
-		surf = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, width, height, 32,
+		img = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, width, height, 32,
 				SDL_SwapBE32( 0xFF000000 ),
 				SDL_SwapBE32( 0x00FF0000 ),
 				SDL_SwapBE32( 0x0000FF00 ),
@@ -205,22 +205,22 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	default:
 		FAIL_M(ssprintf( "%i", type) );
 	}
-	ASSERT( surf );
+	ASSERT( img );
 
 	/* alloca to prevent memleaks if libpng longjmps us */
 	png_byte **row_pointers = (png_byte **) alloca( sizeof(png_byte*) * height );
 
 	for( unsigned y = 0; y < height; ++y )
 	{
-		png_byte *p = (png_byte *) surf->pixels;
-		row_pointers[y] = p + surf->pitch*y;
+		png_byte *p = (png_byte *) img->pixels;
+		row_pointers[y] = p + img->pitch*y;
 	}
 
 	png_read_image( png, row_pointers );
 	png_read_end( png, info_ptr );
 	png_destroy_read_struct( &png, &info_ptr, png_infopp_NULL );
 
-	return surf;
+	return img;
 }
 
 
