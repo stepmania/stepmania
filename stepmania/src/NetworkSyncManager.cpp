@@ -4,7 +4,7 @@
 NetworkSyncManager *NSMAN;
 
 #if defined(WITHOUT_NETWORKING)
-NetworkSyncManager::NetworkSyncManager() { }
+NetworkSyncManager::NetworkSyncManager() { useSMServer=false }
 NetworkSyncManager::~NetworkSyncManager () { }
 void NetworkSyncManager::CloseConnection() { }
 void NetworkSyncManager::PostStartUp( CString ServerIP ) { }
@@ -15,7 +15,7 @@ void NetworkSyncManager::ReportSongOver() { }
 void NetworkSyncManager::StartRequest(short position) { }
 void NetworkSyncManager::DisplayStartupStatus() { }
 void NetworkSyncManager::Update( float fDeltaTime ) { }
-
+bool NetworkSyncManager::ChangedScoreboard() {}
 #else
 #include "ezsockets.h"
 #include "ProfileManager.h"
@@ -364,7 +364,12 @@ void NetworkSyncManager::ProcessInput()
 		case 2: //This is already taken care of by the blocking code earlier on
 		case 3: //This is taken care of by the blocking start code
 		case 4: //Undefined
-		case 5: //Undefined
+		case 5: //Scoreboard Update
+			{
+				int ColumnNumber=Read1(m_packet);
+				m_Scoreboard[ColumnNumber] = ReadNT(m_packet);
+				m_scoreboardchange[ColumnNumber]=true;
+			}
 			break;
 		case 6:	//System message from server
 			CString SysMSG = ReadNT(m_packet);
@@ -374,6 +379,13 @@ void NetworkSyncManager::ProcessInput()
 	}
 }
 
+bool NetworkSyncManager::ChangedScoreboard(int Column) 
+{
+	if (!m_scoreboardchange[Column])
+		return false;
+	m_scoreboardchange[Column]=false;
+	return true;
+}
 
 
 uint8_t NetworkSyncManager::Read1(NetPacket &Packet)

@@ -8,6 +8,15 @@
 const int NETPROTOCOLVERSION=1;
 const int NETMAXBUFFERSIZE=1020; //1024 - 4 bytes for EzSockets
 
+enum NSScoreBoardColumn
+{
+	NSSB_NAMES=0,
+	NSSB_COMBO,
+	NSSB_GRADE,
+	NUM_NSSB_CATEGORIES
+};
+#define FOREACH_NSScoreBoardColumn( sc ) FOREACH_ENUM( NSScoreBoardColumn, NUM_NSSB_CATEGORIES, sc )
+
 class EzSockets;
 
 class NetworkSyncManager 
@@ -33,6 +42,12 @@ public:
 
 	void Update(float fDeltaTime);
 
+	bool useSMserver;
+
+
+	//Used togeather for 
+	bool ChangedScoreboard(int Column);	//If scoreboard changed since this function last called, then true.
+	CString m_Scoreboard[NUM_NSSB_CATEGORIES];
 private:
 #if !defined(WITHOUT_NETWORKING)
 
@@ -50,9 +65,9 @@ private:
     
 	int m_startupStatus;	//Used to see if attempt was sucessful or not.
 
-	CString m_ServerName;
+	bool m_scoreboardchange[NUM_NSSB_CATEGORIES];
 
-	bool useSMserver;
+	CString m_ServerName;
  
     EzSockets *NetPlayerClient;
 

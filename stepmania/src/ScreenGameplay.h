@@ -24,6 +24,7 @@ class Inventory;
 #include "Attack.h"
 #include "MeterDisplay.h"
 #include "ActiveAttackList.h"
+#include "NetworkSyncManager.h"
 
 // messages sent by Combo
 const ScreenMessage SM_PlayToasty			= ScreenMessage(SM_User+104);
@@ -124,6 +125,7 @@ protected:
 	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
 	BitmapText			m_textSongOptions;
 	ActiveAttackList	m_ActiveAttackList[NUM_PLAYERS];
+	BitmapText			m_Scoreboard[NUM_NSSB_CATEGORIES];	// for NSMAN, so we can have a scoreboard
 
 	BitmapText			m_textDebug;
 

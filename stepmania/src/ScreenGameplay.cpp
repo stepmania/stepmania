@@ -423,8 +423,28 @@ void ScreenGameplay::Init()
 		break;
 	}
 
+	//the following is only used in SMLAN/SMOnline
+	if (NSMAN->useSMserver) 
+	{
+		int i=-1;
+		FOREACH_PlayerNumber(p)
+			if (!GAMESTATE->IsPlayerEnabled(p))
+				i=p;
 
-
+		if (i!=-1)
+		{
+			FOREACH_NSScoreBoardColumn (i2)
+			{
+				m_Scoreboard[i2].LoadFromFont( THEME->GetPathF(m_sName,"scoreboard") );
+				m_Scoreboard[i2].SetShadowLength( 0 );
+				m_Scoreboard[i2].SetName( ssprintf("ScoreboardC%iP%i",i2+1,i+1) );
+				SET_XY( m_Scoreboard[i2] );
+				this->AddChild( &m_Scoreboard[i2] );
+				m_Scoreboard[i2].SetText(NSMAN->m_Scoreboard[i2]);
+				m_Scoreboard[i2].SetVertAlign(align_top);
+			}
+		}
+	}
 
 	m_textSongTitle.LoadFromFont( THEME->GetPathF(m_sName,"song title") );
 	m_textSongTitle.SetShadowLength( 0 );
@@ -1551,18 +1571,16 @@ void ScreenGameplay::Update( float fDeltaTime )
 	CLAMP( fPercentPositionSong, 0, 1 );
 	m_meterSongPosition.SetPercent( fPercentPositionSong );
 
-
-	//FIXED!!!! 
-	//I figured it out!
-	//The problem was the pn is already taken. 
-	//Sorry, I wasn't too smart about the way I handled it.
-	FOREACH_EnabledPlayer( pn2 )
-	{
-		if( m_pLifeMeter[pn2] )
-			NSMAN->m_playerLife[pn2] = int(m_pLifeMeter[pn2]->GetLife()*10000);
+	if (NSMAN->useSMserver) {
+		FOREACH_EnabledPlayer( pn2 )
+		{
+			if( m_pLifeMeter[pn2] )
+				NSMAN->m_playerLife[pn2] = int(m_pLifeMeter[pn2]->GetLife()*10000);
+		}
+		FOREACH_NSScoreBoardColumn (cn)
+			if (NSMAN->ChangedScoreboard(cn))
+				m_Scoreboard[cn].SetText(NSMAN->m_Scoreboard[cn]);
 	}
-
-
 }
 
 void ScreenGameplay::AbortGiveUp()
@@ -2345,6 +2363,10 @@ void ScreenGameplay::TweenOnScreen()
 		ON_COMMAND( m_DifficultyIcon[p] );
 		ON_COMMAND( m_DifficultyMeter[p] );
 	}
+
+	FOREACH_NSScoreBoardColumn( sc )
+		ON_COMMAND( m_Scoreboard[sc] );
+
 	m_Overlay.PlayCommand("On");
 }
 
@@ -2383,6 +2405,9 @@ void ScreenGameplay::TweenOffScreen()
 		OFF_COMMAND( m_DifficultyMeter[p] );
 	}
 	m_Overlay.PlayCommand("Off");
+
+	FOREACH_NSScoreBoardColumn( sc )
+		OFF_COMMAND( m_Scoreboard[sc] );
 
 	m_textDebug.StopTweening();
 	m_textDebug.BeginTweening( 1/8.f );
