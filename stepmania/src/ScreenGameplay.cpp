@@ -715,47 +715,14 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen(sN
 
 	if( !bDemonstration )	// only load if we're going to use it
 	{
-		m_soundOniDie.Load(				THEME->GetPathToS("ScreenGameplay oni die") );
-		m_announcerReady.Load(			ANNOUNCER->GetPathTo("gameplay ready"), 1 );
-		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go extra"), 1 );
-		else if( GAMESTATE->IsFinalStage() )
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go final"), 1 );
-		else
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go normal"), 1 );
-		m_announcerDanger.Load(			ANNOUNCER->GetPathTo("gameplay comment danger") );
-		m_announcerGood.Load(			ANNOUNCER->GetPathTo("gameplay comment good") );
-		m_announcerHot.Load(			ANNOUNCER->GetPathTo("gameplay comment hot") );
-		m_announcerOni.Load(			ANNOUNCER->GetPathTo("gameplay comment oni") );
-
-		m_announcer100Combo.Load(		ANNOUNCER->GetPathTo("gameplay 100 combo") );
-		m_announcer200Combo.Load(		ANNOUNCER->GetPathTo("gameplay 200 combo") );
-		m_announcer300Combo.Load(		ANNOUNCER->GetPathTo("gameplay 300 combo") );
-		m_announcer400Combo.Load(		ANNOUNCER->GetPathTo("gameplay 400 combo") );
-		m_announcer500Combo.Load(		ANNOUNCER->GetPathTo("gameplay 500 combo") );
-		m_announcer600Combo.Load(		ANNOUNCER->GetPathTo("gameplay 600 combo") );
-		m_announcer700Combo.Load(		ANNOUNCER->GetPathTo("gameplay 700 combo") );
-		m_announcer800Combo.Load(		ANNOUNCER->GetPathTo("gameplay 800 combo") );
-		m_announcer900Combo.Load(		ANNOUNCER->GetPathTo("gameplay 900 combo") );
-		m_announcer1000Combo.Load(		ANNOUNCER->GetPathTo("gameplay 1000 combo") );
-		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("gameplay combo stopped") );
-		m_announcerComboContinuing.Load(ANNOUNCER->GetPathTo("gameplay combo overflow") );
-		m_soundAssistTick.Load(			THEME->GetPathToS("ScreenGameplay assist tick") );
+		m_soundAssistTick.Load(			THEME->GetPathToS("ScreenGameplay assist tick"), true );
 
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_BATTLE:
-			m_announcerBattleTrickLevel1.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level1") );
-			m_announcerBattleTrickLevel2.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level2") );
-			m_announcerBattleTrickLevel3.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level3") );
 			m_soundBattleTrickLevel1.Load(	THEME->GetPathToS("ScreenGameplay battle trick level1"), true );
 			m_soundBattleTrickLevel2.Load(	THEME->GetPathToS("ScreenGameplay battle trick level2"), true );
 			m_soundBattleTrickLevel3.Load(	THEME->GetPathToS("ScreenGameplay battle trick level3"), true );
-			m_announcerBattleDamageLevel1.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level1") );
-			m_announcerBattleDamageLevel2.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level2") );
-			m_announcerBattleDamageLevel3.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level3") );
-			// HACK:  Load incorrect directory on purpose for now.
-			m_announcerBattleDie.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level3") );
 			break;
 		}
 	}
@@ -1026,7 +993,7 @@ void ScreenGameplay::LoadNextSong()
 
 	m_Foreground.LoadFromSong( GAMESTATE->m_pCurSong );
 
-	m_fTimeLeftBeforeDancingComment = GAMESTATE->m_pCurSong->m_fFirstBeat + SECONDS_BETWEEN_COMMENTS;
+	m_fTimeSinceLastDancingComment = 0;
 
 
 	/* m_soundMusic and m_Background take a very long time to load,
@@ -1104,6 +1071,28 @@ void ScreenGameplay::PlayTicks()
 	}
 }
 
+/* Play announcer "type" if it's been at least fSeconds since the last announcer. */
+void ScreenGameplay::PlayAnnouncer( CString type, float fSeconds )
+{
+	if( GAMESTATE->m_fOpponentHealthPercent == 0 )
+		return; // Shut the announcer up
+
+	/* Don't play before the first beat, or after we're finished. */
+	if( m_DancingState != STATE_DANCING )
+		return;
+	if( GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat )
+		return;
+
+
+	if( m_fTimeSinceLastDancingComment < fSeconds )
+		return;
+	m_fTimeSinceLastDancingComment = 0;
+
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(type) );
+
+	if( m_pCombinedLifeMeter )
+		m_pCombinedLifeMeter->OnTaunt();
+}
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
@@ -1251,33 +1240,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 			if( GAMESTATE->m_fOpponentHealthPercent == 0 )
 			{
-
-				// HACK:  Shut the announcer up
-				m_announcerReady.UnloadAll();
-				m_announcerHereWeGo.UnloadAll();
-				m_announcerDanger.UnloadAll();
-				m_announcerGood.UnloadAll();
-				m_announcerHot.UnloadAll();
-				m_announcerOni.UnloadAll();
-				m_announcer100Combo.UnloadAll();
-				m_announcer200Combo.UnloadAll();
-				m_announcer300Combo.UnloadAll();
-				m_announcer400Combo.UnloadAll();
-				m_announcer500Combo.UnloadAll();
-				m_announcer600Combo.UnloadAll();
-				m_announcer700Combo.UnloadAll();
-				m_announcer800Combo.UnloadAll();
-				m_announcer900Combo.UnloadAll();
-				m_announcer1000Combo.UnloadAll();
-				m_announcerComboStopped.UnloadAll();
-				m_announcerBattleTrickLevel1.UnloadAll();
-				m_announcerBattleTrickLevel2.UnloadAll();
-				m_announcerBattleTrickLevel3.UnloadAll();
-				m_announcerBattleDamageLevel1.UnloadAll();
-				m_announcerBattleDamageLevel2.UnloadAll();
-				m_announcerBattleDamageLevel3.UnloadAll();
-
-				m_announcerBattleDie.PlayRandom();
+				// HACK:  Load incorrect directory on purpose for now.
+				PlayAnnouncer( "gameplay battle damage level3", 0 );
 
 				GAMESTATE->RemoveAllActiveAttacks();
 
@@ -1285,7 +1249,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 				{
 					if( GAMESTATE->IsCpuPlayer(p) )
 					{
-						m_soundOniDie.PlayRandom();
+						SOUND->PlayOnceFromDir( THEME->GetPathToS("ScreenGameplay oni die") );
 						ShowOniGameOver((PlayerNumber)p);
 						m_Player[p].Init();		// remove all notes and scoring
 						m_Player[p].FadeToFail();	// tell the NoteField to fade to white
@@ -1297,32 +1261,27 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		// Check to see if it's time to play a ScreenGameplay comment
 		//
-		m_fTimeLeftBeforeDancingComment -= fDeltaTime;
-		if( m_fTimeLeftBeforeDancingComment <= 0 )
+		m_fTimeSinceLastDancingComment += fDeltaTime;
+
+		switch( GAMESTATE->m_PlayMode )
 		{
-			switch( GAMESTATE->m_PlayMode )
-			{
-			case PLAY_MODE_ARCADE:
-			case PLAY_MODE_BATTLE:
-			case PLAY_MODE_RAVE:
-				if( GAMESTATE->OneIsHot() )			
-					m_announcerHot.PlayRandom();
-				else if( GAMESTATE->AllAreInDangerOrWorse() )	
-					m_announcerDanger.PlayRandom();
-				else
-					m_announcerGood.PlayRandom();
-				if( m_pCombinedLifeMeter )
-					m_pCombinedLifeMeter->OnTaunt();
-				break;
-			case PLAY_MODE_NONSTOP:
-			case PLAY_MODE_ONI:
-			case PLAY_MODE_ENDLESS:
-				m_announcerOni.PlayRandom();
-				break;
-			default:
-				ASSERT(0);
-			}
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;	// reset for the next comment
+		case PLAY_MODE_ARCADE:
+		case PLAY_MODE_BATTLE:
+		case PLAY_MODE_RAVE:
+			if( GAMESTATE->OneIsHot() )			
+				PlayAnnouncer( "gameplay comment hot", SECONDS_BETWEEN_COMMENTS );
+			else if( GAMESTATE->AllAreInDangerOrWorse() )	
+				PlayAnnouncer( "gameplay comment danger", SECONDS_BETWEEN_COMMENTS );
+			else
+				PlayAnnouncer( "gameplay comment good", SECONDS_BETWEEN_COMMENTS );
+			break;
+		case PLAY_MODE_NONSTOP:
+		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
+			PlayAnnouncer( "gameplay comment oni", SECONDS_BETWEEN_COMMENTS );
+			break;
+		default:
+			ASSERT(0);
 		}
 	}
 
@@ -1441,7 +1400,7 @@ void ScreenGameplay::UpdateCheckFail()
 			if( !g_CurStageStats.AllFailedEarlier() )	// if not the last one to fail
 			{
 				// kill them!
-				m_soundOniDie.PlayRandom();
+				SOUND->PlayOnceFromDir( THEME->GetPathToS("ScreenGameplay oni die") );
 				ShowOniGameOver((PlayerNumber)pn);
 				m_Player[pn].Init();		// remove all notes and scoring
 				m_Player[pn].FadeToFail();	// tell the NoteField to fade to white
@@ -1865,12 +1824,18 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_PlayReady:
 		m_Background.FadeIn();
-		m_announcerReady.PlayRandom();
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay ready") );
 		m_Ready.StartTransitioning( SM_PlayGo );
 		break;
 
 	case SM_PlayGo:
-		m_announcerHereWeGo.PlayRandom();
+		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+			SOUND->PlayOnceFromDir(	ANNOUNCER->GetPathTo("gameplay here we go extra") );
+		else if( GAMESTATE->IsFinalStage() )
+			SOUND->PlayOnceFromDir(	ANNOUNCER->GetPathTo("gameplay here we go final") );
+		else
+			SOUND->PlayOnceFromDir(	ANNOUNCER->GetPathTo("gameplay here we go normal") );
+
 		m_Go.StartTransitioning( SM_None );
 		GAMESTATE->m_bPastHereWeGo = true;
 		m_DancingState = STATE_DANCING;		// STATE CHANGE!  Now the user is allowed to press Back
@@ -2036,134 +2001,62 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 #define SECS_SINCE_LAST_COMMENT (SECONDS_BETWEEN_COMMENTS-m_fTimeLeftBeforeDancingComment)
 	case SM_100Combo:
-		if( SECS_SINCE_LAST_COMMENT > 2 )
-		{
-			m_announcer100Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay 100 combo", 2 );
 		break;
 	case SM_200Combo:
-		if( SECS_SINCE_LAST_COMMENT > 2 )
-		{
-			m_announcer200Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay 200 combo", 2 );
 		break;
 	case SM_300Combo:
-		if( SECS_SINCE_LAST_COMMENT > 2 )
-		{
-			m_announcer300Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay 300 combo", 2 );
 		break;
 	case SM_400Combo:
-		if( SECS_SINCE_LAST_COMMENT > 2 )
-		{
-			m_announcer400Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay 400 combo", 2 );
 		break;
 	case SM_500Combo:
-		if( SECS_SINCE_LAST_COMMENT > 2 )
-		{
-			m_announcer500Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay 500 combo", 2 );
 		break;
 	case SM_600Combo:
-		if( SECS_SINCE_LAST_COMMENT > 2 )
-		{
-			m_announcer600Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay 600 combo", 2 );
 		break;
 	case SM_700Combo:
-		if( SECS_SINCE_LAST_COMMENT > 2 )
-		{
-			m_announcer700Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay 700 combo", 2 );
 		break;
 	case SM_800Combo:
-		if( SECS_SINCE_LAST_COMMENT > 2 )
-		{
-			m_announcer800Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay 800 combo", 2 );
 		break;
 	case SM_900Combo:
-		if( SECS_SINCE_LAST_COMMENT > 2 )
-		{
-			m_announcer900Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay 900 combo", 2 );
 		break;
 	case SM_1000Combo:
-		if( SECS_SINCE_LAST_COMMENT > 2 )
-		{
-			m_announcer1000Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay 1000 combo", 2 );
 		break;
 	case SM_ComboStopped:
-		if( SECS_SINCE_LAST_COMMENT > 2 )
-		{
-			m_announcerComboStopped.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay combo stopped", 2 );
 		break;
 	case SM_ComboContinuing:
-		if( SECS_SINCE_LAST_COMMENT > 2 )
-		{
-			m_announcerComboContinuing.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay combo overflow", 2 );
 		break;	
 	case SM_BattleTrickLevel1:
-		if( SECS_SINCE_LAST_COMMENT > 3 )
-		{
-			m_announcerBattleTrickLevel1.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay battle trick level1", 3 );
 		m_soundBattleTrickLevel1.Play();
 		break;
 	case SM_BattleTrickLevel2:
-		if( SECS_SINCE_LAST_COMMENT > 3 )
-		{
-			m_announcerBattleTrickLevel2.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay battle trick level2", 3 );
 		m_soundBattleTrickLevel2.Play();
 		break;
 	case SM_BattleTrickLevel3:
-		if( SECS_SINCE_LAST_COMMENT > 3 )
-		{
-			m_announcerBattleTrickLevel3.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay battle trick level3", 3 );
 		m_soundBattleTrickLevel3.Play();
 		break;
 	
 	case SM_BattleDamageLevel1:
-		if( SECS_SINCE_LAST_COMMENT > 3 )
-		{
-			m_announcerBattleDamageLevel1.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay battle damage level1", 3 );
 		break;
 	case SM_BattleDamageLevel2:
-		if( SECS_SINCE_LAST_COMMENT > 3 )
-		{
-			m_announcerBattleDamageLevel2.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay battle damage level2", 3 );
 		break;
 	case SM_BattleDamageLevel3:
-		if( SECS_SINCE_LAST_COMMENT > 3 )
-		{
-			m_announcerBattleDamageLevel3.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-		}
+		PlayAnnouncer( "gameplay battle damage level3", 3 );
 		break;
 	
 	case SM_SaveChangedBeforeGoingBack:

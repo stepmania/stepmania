@@ -79,6 +79,7 @@ protected:
 	void LoadCourseSongNumber( int SongNumber );
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
 	void ShowSavePrompt( ScreenMessage SM_SendWhenDone );
+	void PlayAnnouncer( CString type, float fSeconds );
 
 	void PlayTicks();
 	void UpdateLyrics( float fDeltaTime );
@@ -97,7 +98,7 @@ protected:
 	vector<AttackArray>	m_asModifiersQueue[NUM_PLAYERS];// size may be >1 if playing a course
 
 	bool				m_bChangedOffsetOrBPM;
-	float				m_fTimeLeftBeforeDancingComment;	// this counter is only running while STATE_DANCING
+	float				m_fTimeSinceLastDancingComment;	// this counter is only running while STATE_DANCING
 
 	LyricDisplay		m_LyricDisplay;
 
@@ -163,42 +164,12 @@ protected:
 	
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 
-	// These aren't used.  Are they left-overs from BeginnerHelper work? -Chris
-//	BGAnimation			m_bgaBH;
-//	Sprite				m_sprBH;
-
 	Sprite				m_sprOniGameOver[NUM_PLAYERS];
 	void				ShowOniGameOver( PlayerNumber pn );
 
-	RandomSample	m_soundOniDie;
-	RandomSample	m_announcerReady;
-	RandomSample	m_announcerHereWeGo;
-	RandomSample	m_announcerDanger;
-	RandomSample	m_announcerGood;
-	RandomSample	m_announcerHot;
-	RandomSample	m_announcerOni;
-	RandomSample	m_announcer100Combo;
-	RandomSample	m_announcer200Combo;
-	RandomSample	m_announcer300Combo;
-	RandomSample	m_announcer400Combo;
-	RandomSample	m_announcer500Combo;
-	RandomSample	m_announcer600Combo;
-	RandomSample	m_announcer700Combo;
-	RandomSample	m_announcer800Combo;
-	RandomSample	m_announcer900Combo;
-	RandomSample	m_announcer1000Combo;
-	RandomSample	m_announcerComboStopped;
-	RandomSample	m_announcerComboContinuing;
-	RandomSample	m_announcerBattleTrickLevel1;
-	RandomSample	m_announcerBattleTrickLevel2;
-	RandomSample	m_announcerBattleTrickLevel3;
 	RageSound		m_soundBattleTrickLevel1;
 	RageSound		m_soundBattleTrickLevel2;
 	RageSound		m_soundBattleTrickLevel3;
-	RandomSample	m_announcerBattleDamageLevel1;
-	RandomSample	m_announcerBattleDamageLevel2;
-	RandomSample	m_announcerBattleDamageLevel3;
-	RandomSample	m_announcerBattleDie;
 
 	bool			m_bZeroDeltaOnNextUpdate;
 	bool			m_bDemonstration;
