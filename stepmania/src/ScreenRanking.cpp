@@ -19,8 +19,6 @@
 #include "song.h"
 #include "Steps.h"
 #include "PrefsManager.h"
-#include "NoteData.h"
-#include "NoteDataUtil.h"
 #include "ActorUtil.h"
 #include "ProfileManager.h"
 #include "RageLog.h"
