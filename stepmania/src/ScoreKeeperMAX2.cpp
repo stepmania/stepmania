@@ -427,7 +427,7 @@ int ScoreKeeperMAX2::GetPossibleDancePoints( const NoteData* pNoteData )
 
 int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 {
-	if(GAMESTATE->ShowMarvelous() && tns == TNS_MARVELOUS)
+	if(!GAMESTATE->ShowMarvelous() && tns == TNS_MARVELOUS)
 		tns = TNS_PERFECT;
 
 /*
