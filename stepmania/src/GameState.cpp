@@ -177,9 +177,9 @@ void CheckStageStats( const StageStats &ss, int p )
 {
 	if( ss.pSong )
 		CHECKPOINT_M( ss.pSong->GetFullTranslitTitle() );
-	RAGE_ASSERT_M( ss.playMode < NUM_PLAY_MODES, ssprintf("%i", ss.playMode) );
-	RAGE_ASSERT_M( ss.style < NUM_STYLES, ssprintf("%i", ss.style) );
-	RAGE_ASSERT_M( ss.pSteps[p]->GetDifficulty() < NUM_DIFFICULTIES, ssprintf("%i", ss.pSteps[p]->GetDifficulty()) );
+	RAGE_ASSERT_M( ss.playMode < NUM_PLAY_MODES, ssprintf("playmode %i", ss.playMode) );
+	RAGE_ASSERT_M( ss.style < NUM_STYLES, ssprintf("style %i", ss.style) );
+	RAGE_ASSERT_M( ss.pSteps[p]->GetDifficulty() < NUM_DIFFICULTIES, ssprintf("difficulty %i", ss.pSteps[p]->GetDifficulty()) );
 	/* Meter values can exceed MAX_METER; MAX_METER is just the highest meter value we
 	 * display/track. */
 //	RAGE_ASSERT_M( ss.iMeter[p] < MAX_METER+1, ssprintf("%i", ss.iMeter[p]) );
