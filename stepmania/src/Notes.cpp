@@ -133,12 +133,16 @@ void Notes::TidyUpData()
 	}
 	// Meter is overflowing (invalid), but some files (especially maniac/smaniac steps) are purposefully set higher than 10.
 	// See: BMR's Gravity; we probably should keep those as difficult as we can represent.
-	if( GetMeter() >10 ) {
+	/* Why? If the data file says a meter of 72, we should keep it as 72; if
+	 * individual bits of code (eg. scoring, feet) have maximums, they should
+	 * enforce it internally.  Doing it here will make us lose the difficulty
+	 * completely if the song is edited and written. -glenn */
+/*	if( GetMeter() >10 ) {
 			if( GetDifficulty() == DIFFICULTY_HARD || GetDifficulty() == DIFFICULTY_CHALLENGE)
 				SetMeter(10);
 			else
 				SetMeter(0);
-	}
+	} */
 	if( GetMeter() < 1) // meter is invalid
 	{
 		// guess meter from difficulty class
