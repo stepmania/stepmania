@@ -966,34 +966,34 @@ void ApplyGraphicOptions()
 	//
 	// If the requested resolution doesn't work, keep switching until we find one that does.
 	//
-	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate) )
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
 		goto success;
 
 	// We failed.  Using default refresh rate.
 	iRefreshRate = RageDisplay::REFRESH_DEFAULT;
-	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate) )
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
 		goto success;
 
 	// We failed.  Try full screen with same params.
 	bWindowed = false;
-	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate) )
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
 		goto success;
 
 	// Failed again.  Try 16 BPP
 	iDisplayBPP = 16;
-	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate) )
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
 		goto success;
 
 	// Failed again.  Try 640x480
 	iDisplayWidth = 640;
 	iDisplayHeight = 480;
-	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate) )
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
 		goto success;
 
 	// Failed again.  Try 320x240
 	iDisplayWidth = 320;
 	iDisplayHeight = 240;
-	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate) )
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
 		goto success;
 
 	throw RageException( "Tried every possible display mode, and couldn't find one that works." );

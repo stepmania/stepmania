@@ -244,9 +244,9 @@ D3DFORMAT RageDisplay::FindBackBufferType(bool bWindowed, int iBPP)
 // Desc:
 //-----------------------------------------------------------------------------
 bool RageDisplay::SwitchDisplayMode( 
-	const bool bWindowed, const int iWidth, const int iHeight, const int iBPP, const int iFullScreenHz )
+	bool bWindowed, int iWidth, int iHeight, int iBPP, int iFullScreenHz, bool bVsync )
 {
-	LOG->Trace( "RageDisplay::SwitchDisplayModes( %d, %d, %d, %d, %d )", bWindowed, iWidth, iHeight, iBPP, iFullScreenHz );
+	LOG->Trace( "RageDisplay::SwitchDisplayModes( %d, %d, %d, %d, %d, %d )", bWindowed, iWidth, iHeight, iBPP, iFullScreenHz, bVsync );
 
 	if( !bWindowed )
 		SetCursor( NULL );
@@ -281,7 +281,11 @@ bool RageDisplay::SwitchDisplayMode(
 									iFullScreenHz == REFRESH_MAX? MaxRefresh(iWidth, iHeight, fmtBackBuffer):
 									iFullScreenHz == REFRESH_DEFAULT? D3DPRESENT_RATE_DEFAULT:
 										iFullScreenHz;
-	m_d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+
+	/* Windowed must always use D3DPRESENT_INTERVAL_DEFAULT. */
+	m_d3dpp.FullScreen_PresentationInterval = 
+		bWindowed || bVsync? D3DPRESENT_INTERVAL_DEFAULT:
+		D3DPRESENT_INTERVAL_IMMEDIATE;
 
 	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
 		m_d3dpp.BackBufferWidth, m_d3dpp.BackBufferHeight, m_d3dpp.BackBufferFormat,

@@ -51,7 +51,7 @@ public:
 	~RageDisplay();
 	enum { REFRESH_DEFAULT=0, REFRESH_MAX=1  };
 	bool SwitchDisplayMode( 
-		const bool bWindowed, const int iWidth, const int iHeight, const int iBPP, const int iFullScreenHz );
+		bool bWindowed, int iWidth, int iHeight, int iBPP, int iFullScreenHz, bool bVsync );
 
 //	LPDIRECT3D8 GetD3D()					{ return m_pd3d; };
 //	inline LPDIRECT3DDEVICE8 GetDevice()	{ return m_pd3dDevice; };
