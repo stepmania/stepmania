@@ -80,7 +80,7 @@ public:
 	void GetOniCourses( vector<Course*> &AddTo, bool bIncludeAutogen );		// add to if life meter type is BATTERY.
 	void GetEndlessCourses( vector<Course*> &AddTo, bool bIncludeAutogen );	// add to if set to REPEAT.
 
-	void GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, const StyleDef *s, 
+	void GetExtraStageInfo( bool bExtra2, const StyleDef *s, 
 		Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );
 
 	Song* GetSongFromDir( CString sDir );

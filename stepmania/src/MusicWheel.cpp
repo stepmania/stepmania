@@ -137,7 +137,6 @@ MusicWheel::MusicWheel()
 		SongOptions so;
 		SONGMAN->GetExtraStageInfo(
 			GAMESTATE->IsExtraStage2(),
-			GAMESTATE->m_sPreferredGroup,
 			GAMESTATE->GetCurrentStyleDef(),
 			pSong,
 			pNotes,
@@ -536,7 +535,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			Notes* pNotes;
 			PlayerOptions po;
 			SongOptions so;
-			SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->m_pCurSong->m_sGroupName, GAMESTATE->GetCurrentStyleDef(), pSong, pNotes, po, so );
+			SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyleDef(), pSong, pNotes, po, so );
 			
 			bool bFoundExtraSong = false;
 

@@ -916,7 +916,7 @@ bool CompareNotesPointersForExtra(const Notes *n1, const Notes *n2)
 	return CompareNotesPointersByRadarValues(n1,n2);
 }
 
-void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, const StyleDef *sd, 
+void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd, 
 								   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
 {
 	CString Group = GAMESTATE->m_sPreferredGroup;
