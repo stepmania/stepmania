@@ -174,6 +174,7 @@ void ConvertThemeDlg::OnButtonConvert()
 	RecursiveRename( sThemeDir, "select player", "ScreenSelectPlayer" );
 	RecursiveRename( sThemeDir, "info dance", "info" );
 	RecursiveRename( sThemeDir, "preview dance", "picture" );
+	RecursiveRename( sThemeDir, "preview", "picture" );
 	RecursiveRename( sThemeDir, "select style", "ScreenSelectStyle" );
 	RecursiveRename( sThemeDir, "song options", "ScreenSongOptions" );
 	RecursiveRename( sThemeDir, "menu timer", "MenuTimer" );

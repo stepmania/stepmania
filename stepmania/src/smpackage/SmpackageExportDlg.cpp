@@ -179,7 +179,7 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 
 			try
 			{
-				zip.AddNewFile( sFilePath, Z_BEST_COMPRESSION, true );
+				zip.AddNewFile( sFilePath, Z_NO_COMPRESSION, true );
 			}
 			catch (CException* e)
 			{
