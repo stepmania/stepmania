@@ -140,7 +140,7 @@ int RageFile::GetLine( CString &out )
 			/* Hack: If the last character of the buffer is \r, then it's likely that an
 			 * \r\n has been split across buffers.  Move everything else, then move the
 			 * \r to the beginning of the buffer and handle it the next time around the loop. */
-			if( m_pBuf[m_BufAvail-1] == '\r' )
+			if( m_BufAvail && m_pBuf[m_BufAvail-1] == '\r' )
 			{
 				ReAddCR = true;
 				--m_BufAvail;
