@@ -75,8 +75,6 @@ Player::Player()
 
 	this->AddChild( &m_ArrowBackdrop );
 	this->AddChild( &m_NoteField );
-	this->AddChild( &m_GrayArrowRow );
-	this->AddChild( &m_GhostArrowRow );
 	this->AddChild( &m_Judgment );
 	this->AddChild( &m_ProTimingDisplay );
 	this->AddChild( &m_Combo );
@@ -139,11 +137,9 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, Combine
 	if( !BackdropName.empty() )
 		m_ArrowBackdrop.LoadFromAniDir( THEME->GetPathToB( BackdropName ) );
 
-	m_NoteField.Load( (NoteData*)this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels );
-	
+	m_NoteField.SetY( GRAY_ARROWS_Y_STANDARD );
+	m_NoteField.Load( (NoteData*)this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels, GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD );
 	m_ArrowBackdrop.SetPlayer( pn );
-	m_GrayArrowRow.Load( pn );
-	m_GhostArrowRow.Load( pn );
 
 	const bool bReverse = GAMESTATE->m_PlayerOptions[pn].m_fReverseScroll == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyleDef()->m_StyleType==StyleDef::ONE_PLAYER_TWO_CREDITS;
@@ -188,21 +184,19 @@ void Player::Update( float fDeltaTime )
 	// Update Y positions
 	//
 	float fPercentReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fReverseScroll;
-//	float fHoldJudgeYPos = SCALE( fPercentReverse, 0.f, 1.f, HOLD_JUDGMENT_Y_STANDARD, HOLD_JUDGMENT_Y_REVERSE );
+	float fHoldJudgeYPos = SCALE( fPercentReverse, 0.f, 1.f, HOLD_JUDGMENT_Y_STANDARD, HOLD_JUDGMENT_Y_REVERSE );
 	float fGrayYPos = SCALE( fPercentReverse, 0.f, 1.f, GRAY_ARROWS_Y_STANDARD, GRAY_ARROWS_Y_REVERSE );
 	int c;
 	for( c=0; c<GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer; c++ )
-		m_HoldJudgment[c].SetY( fGrayYPos );
+		m_HoldJudgment[c].SetY( fHoldJudgeYPos );
 	m_ArrowBackdrop.SetY( fGrayYPos );
-	m_NoteField.SetY( fGrayYPos );
-	m_GrayArrowRow.SetY( fGrayYPos );
-	m_GhostArrowRow.SetY( fGrayYPos );
+
+	// NoteField accounts for reverse on its own now.
+//	m_NoteField.SetY( fGrayYPos );
 
 	float fMiniPercent = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_MINI];
 	float fZoom = 1 - fMiniPercent*0.5f;
 	m_NoteField.SetZoom( fZoom );
-	m_GrayArrowRow.SetZoom( fZoom );
-	m_GhostArrowRow.SetZoom( fZoom );
 
 	//
 	// Check for TapNote misses
@@ -251,7 +245,7 @@ void Player::Update( float fDeltaTime )
 				// Increase life
 				fLife = 1;
 
-				m_GhostArrowRow.HoldNote( hn.iTrack );		// update the "electric ghost" effect
+				m_NoteField.HoldNote( hn.iTrack );		// update the "electric ghost" effect
 			}
 			else
 			{
@@ -278,7 +272,7 @@ void Player::Update( float fDeltaTime )
 		{
 			fLife = 1;
 			hns = HNS_OK;
-			m_GhostArrowRow.TapNote( StyleI.col, TNS_PERFECT, true );	// bright ghost flash
+			m_NoteField.TapNote( StyleI.col, TNS_PERFECT, true );	// bright ghost flash
 		}
 
 		if( hns != HNS_NONE )
@@ -355,9 +349,7 @@ void Player::DrawPrimitives()
 		DISPLAY->LookAt(Eye, At, Up);
 	}
 
-	m_GrayArrowRow.Draw();
 	m_NoteField.Draw();
-	m_GhostArrowRow.Draw();
 
 	if( fTilt != 0 )
 		DISPLAY->ExitPerspective();
@@ -475,7 +467,7 @@ void Player::Step( int col, RageTimer tm )
 			{
 				m_soundMineExplosion.Play();
 				score = TNS_MISS;
-				m_GhostArrowRow.TapMine( col, TNS_MISS );
+				m_NoteField.TapMine( col, TNS_MISS );
 			}
 
 			break;
@@ -495,7 +487,7 @@ void Player::Step( int col, RageTimer tm )
 			{
 				m_soundMineExplosion.Play();
 				score = TNS_MISS;
-				m_GhostArrowRow.TapMine( col, TNS_MISS );
+				m_NoteField.TapMine( col, TNS_MISS );
 			}
 			break;
 		case PC_AUTOPLAY:
@@ -542,7 +534,7 @@ void Player::Step( int col, RageTimer tm )
 	}
 
 	if( bGrayArrowStep )
-		m_GrayArrowRow.Step( col );
+		m_NoteField.Step( col );
 }
 
 void Player::HandleAutosync(float fNoteOffset)
@@ -602,7 +594,7 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 		case TNS_MARVELOUS:
 			{
 				bool bBright = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber]>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-				m_GhostArrowRow.TapNote( c, score, bBright );
+				m_NoteField.TapNote( c, score, bBright );
 			}
 			break;
 		}

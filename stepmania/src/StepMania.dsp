@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="StepMania" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 6.00
+# Microsoft Developer Studio Generated Build File, Format Version 60000
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
@@ -98,6 +98,10 @@ XBCP=xbecopy.exe
 # ADD BASE XBCP /NOLOGO
 # ADD XBCP /NOLOGO
 # Begin Special Build Tool
+IntDir=.\Debug
+TargetDir=\stepmania\stepmania
+TargetName=default
+SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                                                                                                             	cl                                                                                                                                                              /Zl                                                                                                                                                              /nologo                                                                                                                                                              /c                                                                                                                                                              verstub.cpp                                                                                                                                                              /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
@@ -3167,6 +3171,25 @@ SOURCE=.\NoteField.cpp
 # Begin Source File
 
 SOURCE=.\NoteField.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteFieldPlus.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteFieldPlus.h
 # End Source File
 # Begin Source File
 

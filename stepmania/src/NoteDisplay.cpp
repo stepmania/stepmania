@@ -756,17 +756,17 @@ void NoteDisplay::DrawHoldHead( const HoldNote& hn, bool bActive, float fYHead, 
 	}
 }
 
-void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float fLife, const float fPercentFadeToFail, bool bDrawGlowOnly )
+void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float fLife, const float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels )
 {
 	// bDrawGlowOnly is a little hacky.  We need to draw the diffuse part and the glow part one pass at a time to minimize state changes
 
 	const bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fReverseScroll > 0.5;
 
 	const int	iCol			= hn.iTrack;
-	const float fStartYOffset	= ArrowGetYOffset( m_PlayerNumber, hn.fStartBeat );
-	const float fStartYPos		= ArrowGetYPos(	   m_PlayerNumber, fStartYOffset );
-	const float fEndYOffset		= ArrowGetYOffset( m_PlayerNumber, hn.fEndBeat );
-	const float fEndYPos		= ArrowGetYPos(	   m_PlayerNumber, fEndYOffset );
+	const float fStartYOffset	= ArrowGetYOffset( m_PlayerNumber, iCol, hn.fStartBeat );
+	const float fStartYPos		= ArrowGetYPos(	   m_PlayerNumber, iCol, fStartYOffset, fReverseOffsetPixels );
+	const float fEndYOffset		= ArrowGetYOffset( m_PlayerNumber, iCol, hn.fEndBeat );
+	const float fEndYPos		= ArrowGetYPos(	   m_PlayerNumber, iCol, fEndYOffset, fReverseOffsetPixels );
 
 	const float fYHead = bReverse ? fEndYPos : fStartYPos;		// the center of the head
 	const float fYTail = bReverse ? fStartYPos : fEndYPos;		// the center the tail
@@ -802,13 +802,13 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 	// now, draw the glow pass
 	if( !bDrawGlowOnly )
-		DrawHold( hn, bActive, fLife, fPercentFadeToFail, true );
+		DrawHold( hn, bActive, fLife, fPercentFadeToFail, true, fReverseOffsetPixels );
 }
 
-void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, float fPercentFadeToFail, float fLife )
+void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels )
 {
-	const float fYOffset		= ArrowGetYOffset(	m_PlayerNumber, fBeat );
-	const float fYPos			= ArrowGetYPos(	m_PlayerNumber, fYOffset );
+	const float fYOffset		= ArrowGetYOffset(	m_PlayerNumber, iCol, fBeat );
+	const float fYPos			= ArrowGetYPos(	m_PlayerNumber, iCol, fYOffset, fReverseOffsetPixels );
 	const float fRotation		= ArrowGetRotation(	m_PlayerNumber, fBeat );
 	const float fXPos			= ArrowGetXPos(		m_PlayerNumber, iCol, fYPos );
 	const float fZPos			= ArrowGetZPos(	   m_PlayerNumber, iCol, fYPos );

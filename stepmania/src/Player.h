@@ -21,9 +21,7 @@
 #include "Judgment.h"
 #include "HoldJudgment.h"
 #include "Combo.h"
-#include "NoteField.h"
-#include "GrayArrowRow.h"
-#include "GhostArrowRow.h"
+#include "NoteFieldPlus.h"
 #include "NoteDataWithScoring.h"
 #include "ArrowBackdrop.h"
 #include "RageTimer.h"
@@ -73,9 +71,7 @@ protected:
 	int				m_iOffsetSample;		//
 
 	ArrowBackdrop	m_ArrowBackdrop;
-	GrayArrowRow	m_GrayArrowRow;
-	NoteField		m_NoteField;
-	GhostArrowRow	m_GhostArrowRow;
+	NoteFieldPlus	m_NoteField;
 
 	HoldJudgment	m_HoldJudgment[MAX_NOTE_TRACKS];
 

@@ -47,7 +47,7 @@ enum {
 OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	OptionRow( "Speed",				"x0.25","x0.5","x0.75","x1","x1.5","x2","x3","x5","x8","C200","C300" ),	
 	OptionRow( "Acceler\n-ation",	"OFF","BOOST","BRAKE","WAVE","EXPAND","BOOMERANG" ),	
-	OptionRow( "Effect",			"OFF","DRUNK","DIZZY","MINI","FLIP","TORNADO" ),	
+	OptionRow( "Effect",			"OFF","DRUNK","DIZZY","MINI","FLIP","TORNADO","TIPSY" ),	
 	OptionRow( "Appear\n-ance",		"VISIBLE","HIDDEN","SUDDEN","STEALTH","BLINK", "R.VANISH" ),	
 	OptionRow( "Turn",				"OFF","MIRROR","LEFT","RIGHT","SHUFFLE","S.SHUFFLE" ),	
 	OptionRow( "Trans\n-form",		"OFF","LITTLE","WIDE","BIG","QUICK","SKIPPY","MINES" ),	
@@ -67,6 +67,7 @@ static const PlayerOptions::Effect ChoosableEffects[] =
 	PlayerOptions::EFFECT_MINI,
 	PlayerOptions::EFFECT_FLIP,
 	PlayerOptions::EFFECT_TORNADO,
+	PlayerOptions::EFFECT_TIPSY,
 	PlayerOptions::NUM_EFFECTS
 };
 

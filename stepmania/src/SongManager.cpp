@@ -755,6 +755,8 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 {
 	unsigned i;
 
+	LOG->Trace( "Loading courses." );
+
 	//
 	// Load courses from in Courses dir
 	//

@@ -29,8 +29,8 @@ public:
 
 	void Load( int iColNum, PlayerNumber pn );
 
-	void DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, float fPercentFadeToFail, float fLife = 1 );
-	void DrawHold( const HoldNote& hn, bool bActive, float fLife, float fPercentFadeToFail, bool bDrawGlowOnly = false );
+	void DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels );
+	void DrawHold( const HoldNote& hn, bool bActive, float fLife, float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels );
 
 protected:
 	void SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor );

@@ -24,7 +24,7 @@
 
 float		g_fExpandSeconds = 0;
 
-float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
+float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 {
 	float fYOffset;
 	if( !GAMESTATE->m_PlayerOptions[pn].m_bTimeSpacing )
@@ -48,6 +48,7 @@ float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 		return fYOffset;
 
 	const float* fAccels = GAMESTATE->m_CurrentPlayerOptions[pn].m_fAccels;
+	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
 
 
 	float fYAdjust = 0;	// fill this in depending on PlayerOptions
@@ -172,15 +173,23 @@ float ArrowGetRotation( PlayerNumber pn, float fNoteBeat )
 		return 0;
 }
 
-float ArrowGetYPosWithoutReverse( PlayerNumber pn, float fYOffset )
+float ArrowGetYPosWithoutReverse( PlayerNumber pn, int iCol, float fYOffset )
 {
 	float fYPos = fYOffset * GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
 	return fYPos;
 }
 
-float ArrowGetYPos( PlayerNumber pn, float fYOffset )
+float ArrowGetYPos( PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels )
 {
-	return ArrowGetYPosWithoutReverse(pn,fYOffset) * SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].m_fReverseScroll, 0.f, 1.f, 1.f, -1.f );
+	float f = ArrowGetYPosWithoutReverse(pn,iCol,fYOffset);
+	f *= SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].m_fReverseScroll, 0.f, 1.f, 1.f, -1.f );
+	f += SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].m_fReverseScroll, 0.f, 1.f, 0.f, fYReverseOffsetPixels );
+
+	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
+
+	if( fEffects[PlayerOptions::EFFECT_TIPSY] > 0 )
+		f += fEffects[PlayerOptions::EFFECT_TIPSY] * ( cosf( RageTimer::GetTimeSinceStart()*1.2f + iCol*2.f) * ARROW_SIZE*0.4f );
+	return f;
 }
 
 

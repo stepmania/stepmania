@@ -23,7 +23,7 @@ const float ARROW_SPACING	= ARROW_SIZE;// + 2;
 //	fYOffset is a vertical position in pixels relative to the center.
 //	(positive if has not yet been stepped on, negative if has already passed).
 //	The ArrowEffect is applied in this stage.
-float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat );
+float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat );
 
 
 //	fRotation is Z rotation of an arrow.  This will depend on the column of 
@@ -35,8 +35,8 @@ float ArrowGetRotation(	PlayerNumber pn, float fNoteBeat );
 //	fYPos is the position of the note in pixels relative to the center.
 //	(positive if has not yet been stepped on, negative if has already passed).
 //	This value is fYOffset with bReverseScroll and fScrollSpeed factored in.
-float ArrowGetYPosWithoutReverse(	PlayerNumber pn, float fYOffset );
-float ArrowGetYPos(	PlayerNumber pn, float fYOffset );
+float ArrowGetYPosWithoutReverse( PlayerNumber pn, int iCol, float fYOffset );
+float ArrowGetYPos(	PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels );
 
 
 //	fXPos is a horizontal position in pixels relative to the center of the field.
