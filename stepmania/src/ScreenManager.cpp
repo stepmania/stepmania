@@ -57,6 +57,14 @@ ScreenManager::ScreenManager()
 	m_textSystemMessage.SetZoom( 0.7f );
 //	m_textSystemMessage.SetShadowLength( 2 );
 	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,0) );
+
+	m_textSysTime.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textSysTime.SetXY( 4.0f, 40.0f );
+	m_textSysTime.SetHorizAlign( Actor::align_left );
+	m_textSysTime.SetVertAlign( Actor::align_top );
+	m_textSysTime.SetZoom( 0.5f );
+	m_textSysTime.SetDiffuse( RageColor(1,0,1,1) );
+	m_textSysTime.EnableShadow(false);
 }
 
 
@@ -87,6 +95,7 @@ void ScreenManager::Update( float fDeltaTime )
 	m_textStats.Update( fDeltaTime );
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		m_textCreditInfo[p].Update( fDeltaTime );
+	m_textSysTime.Update( fDeltaTime );
 
 	EmptyDeleteQueue();
 
@@ -152,6 +161,11 @@ void ScreenManager::Draw()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		m_textCreditInfo[p].Draw();
 
+	if(PREFSMAN->m_bTimestamping)
+	{
+		m_textSysTime.SetText( SecondsToTime(RageTimer::GetTimeSinceStart()) );
+		m_textSysTime.Draw();
+	}
 }
 
 

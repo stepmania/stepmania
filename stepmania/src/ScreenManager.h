@@ -59,7 +59,8 @@ private:
 	BitmapText m_textStats;
 	BitmapText m_textSystemMessage;
 	BitmapText m_textCreditInfo[NUM_PLAYERS];
-
+	BitmapText m_textSysTime;
+	
 	Screen* MakeNewScreen( CString sClassName );
 	void EmptyDeleteQueue();
 	void SetNewScreen( Screen *pNewScreen );

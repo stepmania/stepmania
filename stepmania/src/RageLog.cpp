@@ -14,6 +14,8 @@
 #include "StepMania.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageTimer.h"
+#include "PrefsManager.h"
 #include <fstream>
 #include <time.h>
 
@@ -145,6 +147,9 @@ void RageLog::Warn( const char *fmt, ...)
 /* When */
 void RageLog::Write( int where, CString str)
 {
+	if( PREFSMAN && PREFSMAN->m_bTimestamping )
+		str = SecondsToTime(RageTimer::GetTimeSinceStart()) + ": " + str;
+
 	if( where&WRITE_TO_INFO && m_fileInfo )
 		fprintf(m_fileInfo, "%s\n", str.GetString() );
 
