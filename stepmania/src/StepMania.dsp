@@ -1634,14 +1634,6 @@ SOURCE=.\ActorCollision.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ActorCommands.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ActorCommands.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ActorFrame.cpp
 # End Source File
 # Begin Source File
