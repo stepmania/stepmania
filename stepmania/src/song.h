@@ -47,6 +47,8 @@ class Song
 public:
 	Song();
 	~Song();
+	
+	bool LoadWithoutCache( CString sDir );
 
 	bool LoadFromSongDir( CString sDir );	// calls one of the loads below
 

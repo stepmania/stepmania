@@ -267,53 +267,12 @@ CString Song::GetCacheFilePath() const
  * be a cache file. */
 const CString &Song::GetSongFilePath() const
 {
+	ASSERT ( m_sSongFileName.GetLength() != 0 );
 	return m_sSongFileName;
 }
 
-bool Song::LoadFromSongDir( CString sDir )
+bool Song::LoadWithoutCache( CString sDir )
 {
-	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir );
-
-	// make sure there is a trailing '\\' at the end of sDir
-	if( sDir.Right(1) != "\\" )
-		sDir += "\\";
-
-	// save song dir
-	m_sSongDir = sDir;
-
-	// save group name
-	CStringArray sDirectoryParts;
-	split( m_sSongDir, "\\", sDirectoryParts, false );
-	m_sGroupName = sDirectoryParts[sDirectoryParts.GetSize()-3];	// second from last item
-
-	{
-		/* Generated filename; this doesn't always point to a loadable file,
-		 * but instead points to the place we should write changed files to.
-		 * If we have an SM file in the directory, this should aways point to it. */
-		CStringArray asFileNames;
-		GetDirListing( m_sSongDir+"*.sm", asFileNames );
-		if( asFileNames.GetSize() > 0 )
-			m_sSongFileName = m_sSongDir + asFileNames[0];
-		else
-			m_sSongFileName = m_sSongDir + GetFullTitle() + ".sm";
-	}
-
-	//
-	// First look in the cache for this song (without loading NoteData)
-	//
-	int iDirHash = SONGINDEX->GetCacheHash(m_sSongDir);
-	if( GetHashForDirectory(m_sSongDir) == iDirHash )	// this cache is up to date
-	{
-		if( !DoesFileExist(GetCacheFilePath()) )
-			goto load_without_cache;
-		
-		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir, GetCacheFilePath() );
-		LoadFromSMFile( GetCacheFilePath() );
-
-		return true;
-	}
-
-load_without_cache:
 	//
 	// There was no entry in the cache for this song.
 	// Let's load it from a file, then write a cache entry.
@@ -357,6 +316,52 @@ load_without_cache:
 	
 	// save a cache file so we don't have to parse it all over again next time
 	SaveToCacheFile();
+	return true;
+}
+
+bool Song::LoadFromSongDir( CString sDir )
+{
+	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir );
+
+	// make sure there is a trailing '\\' at the end of sDir
+	if( sDir.Right(1) != "\\" )
+		sDir += "\\";
+
+	// save song dir
+	m_sSongDir = sDir;
+
+	// save group name
+	CStringArray sDirectoryParts;
+	split( m_sSongDir, "\\", sDirectoryParts, false );
+	m_sGroupName = sDirectoryParts[sDirectoryParts.GetSize()-3];	// second from last item
+
+	//
+	// First look in the cache for this song (without loading NoteData)
+	//
+	int iDirHash = SONGINDEX->GetCacheHash(m_sSongDir);
+	if( GetHashForDirectory(m_sSongDir) == iDirHash && // this cache is up to date 
+		DoesFileExist(GetCacheFilePath()))	
+	{
+		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir, GetCacheFilePath() );
+		LoadFromSMFile( GetCacheFilePath() );
+	}
+	else
+	{
+		if(!LoadWithoutCache(sDir))
+			return false;
+	}
+
+	{
+		/* Generated filename; this doesn't always point to a loadable file,
+		 * but instead points to the place we should write changed files to.
+		 * If we have an SM file in the directory, this should aways point to it. */
+		CStringArray asFileNames;
+		GetDirListing( m_sSongDir+"*.sm", asFileNames );
+		if( asFileNames.GetSize() > 0 )
+			m_sSongFileName = m_sSongDir + asFileNames[0];
+		else
+			m_sSongFileName = m_sSongDir + GetFullTitle() + ".sm";
+	}
 
 	return true;
 }
