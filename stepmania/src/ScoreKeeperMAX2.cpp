@@ -24,7 +24,7 @@
 #include "RageLog.h"
 #include "StageStats.h"
 #include "ProfileManager.h"
-
+#include "NetworkSyncManager.h"
 
 ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Steps*>& apNotes_, const vector<AttackArray> &asModifiers, PlayerNumber pn_ ):
 	ScoreKeeper(pn_), apNotes(apNotes_)
@@ -403,6 +403,13 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 		m_iCurToastyCombo = 0;
 		break;
 	}
+
+	
+	currentNetPlayer.ReportScore (
+		m_PlayerNumber, 
+		scoreOfLastTap, 
+		g_CurStageStats.iScore[m_PlayerNumber],
+		g_CurStageStats.iCurCombo[m_PlayerNumber]);
 }
 
 
@@ -415,6 +422,14 @@ void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tap
 
 	if( holdScore == HNS_OK )
 		AddScore( TNS_MARVELOUS );
+
+	currentNetPlayer.ReportScore (
+		m_PlayerNumber, 
+		holdScore+7, 
+		g_CurStageStats.iScore[m_PlayerNumber],
+		g_CurStageStats.iCurCombo[m_PlayerNumber]);
+
+
 }
 
 

@@ -62,7 +62,7 @@
 #include "LightsManager.h"
 #include "ModelManager.h"
 #include "CryptManager.h"
-
+#include "NetworkSyncManager.h"
 
 #if defined(_XBOX)
 	#include "custom_launch_params.h"
@@ -869,6 +869,10 @@ int main(int argc, char* argv[])
 #endif
 
 #endif
+
+	if (argc > 1)
+		currentNetPlayer.Connect (argv[1],8765);
+
 
 	/* Almost everything uses this to read and write files.  Load this early. */
 	FILEMAN = new RageFileManager( argv[0] );

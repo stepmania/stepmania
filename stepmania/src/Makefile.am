@@ -220,10 +220,10 @@ Quad.h Sprite.cpp Sprite.h
 
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h Bookkeeper.h Bookkeeper.cpp CryptManager.cpp CryptManager.h FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
-GameState.cpp GameState.h InputFilter.cpp InputFilter.h InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h \
+GameState.cpp GameState.h InputFilter.cpp InputFilter.h InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h ezsockets.cpp ezsockets.h NetworkSyncManager.cpp NetworkSyncManager.h\
 LightsManager.cpp LightsManager.h MemoryCardManager.cpp MemoryCardManager.h NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h \
 ProfileManager.cpp ProfileManager.h ScreenManager.cpp ScreenManager.h SongManager.cpp SongManager.h ThemeManager.cpp ThemeManager.h \
-UnlockSystem.cpp UnlockSystem.h
+UnlockSystem.cpp UnlockSystem.h 
 
 crypto = \
 crypto/CryptBn.cpp crypto/CryptMD5.cpp crypto/CryptNoise.cpp crypto/CryptPrime.cpp crypto/CryptRand.cpp \

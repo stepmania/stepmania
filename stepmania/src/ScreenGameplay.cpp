@@ -49,6 +49,7 @@
 #include "ProfileManager.h"
 #include "StageStats.h"
 #include "PlayerAI.h"	// for NUM_SKILL_LEVELS
+#include "NetworkSyncManager.h"
 
 //
 // Defines
@@ -754,6 +755,8 @@ ScreenGameplay::~ScreenGameplay()
 	SAFE_DELETE( m_pCombinedLifeMeter );
 
 	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
+
+	currentNetPlayer.ReportSongOver();
 }
 
 bool ScreenGameplay::IsLastSong()
@@ -1025,6 +1028,8 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	p.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 	p.StopMode = RageSoundParams::M_CONTINUE;
 	p.m_StartSecond = fStartSecond;
+
+	currentNetPlayer.StartRequest(); //Network Code.
 
 	m_soundMusic->Play( &p );
 
