@@ -596,7 +596,7 @@ void RageDisplay_OGL::DrawTriangles( const RageVertex v[], int iNumVerts )
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_OGL::DrawIndexedTriangles( const RageVertex v[], const Uint16 pIndices[], int iNumIndices )
+void RageDisplay_OGL::DrawIndexedTriangles( const RageVertex v[], int iNumVerts, const Uint16 pIndices[], int iNumIndices )
 {
 	if( iNumIndices == 0 )
 		return;
@@ -607,10 +607,6 @@ void RageDisplay_OGL::DrawIndexedTriangles( const RageVertex v[], const Uint16 p
 	glMatrixMode( GL_MODELVIEW );
 	glLoadMatrixf( (const float*)GetModelViewTop() );
 
-	/* XXX: This is ugly. */
-	int iNumVerts = 0;
-	for(int i = 0; i < iNumIndices; ++i)
-		iNumVerts = max(iNumVerts, (int) pIndices[i]);
 	SetupVertices( v, iNumVerts );
 //	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
 	glDrawElements( GL_TRIANGLES, iNumIndices, GL_UNSIGNED_SHORT, pIndices );

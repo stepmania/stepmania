@@ -794,7 +794,7 @@ void Model::DrawPrimitives()
 			}
 		}
 
-		DISPLAY->DrawIndexedTriangles( &TempVertices[0], (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
+		DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
 	}
 
 	DISPLAY->SetZBuffer( false );

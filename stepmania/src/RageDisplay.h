@@ -171,7 +171,7 @@ public:
 	virtual void DrawFan( const RageVertex v[], int iNumVerts ) = 0;
 	virtual void DrawStrip( const RageVertex v[], int iNumVerts ) = 0;
 	virtual void DrawTriangles( const RageVertex v[], int iNumVerts ) = 0;
-	virtual void DrawIndexedTriangles( const RageVertex v[], const Uint16* pIndices, int iNumIndices ) = 0;
+	virtual void DrawIndexedTriangles( const RageVertex v[], int iNumVerts, const Uint16* pIndices, int iNumIndices ) = 0;
 	virtual void DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth );
 
 	void DrawCircle( const RageVertex &v, float radius );

@@ -33,13 +33,13 @@ DancingCharacters::DancingCharacters()
 	if( PREFSMAN->m_bShowDancingCharacters )
 	{
 		m_Character[PLAYER_1].SetX( MODEL_X[PLAYER_1] );
-		m_Character[PLAYER_1].LoadMilkshapeAscii( "D:\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\char0000\\model.txt" );
-		m_Character[PLAYER_1].LoadMilkshapeAsciiBones( "D:\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\dance0001.bones.txt" );
+		m_Character[PLAYER_1].LoadMilkshapeAscii( "C:\\My Documents\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\char0000\\model.txt" );
+		m_Character[PLAYER_1].LoadMilkshapeAsciiBones( "C:\\My Documents\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\dance0001.bones.txt" );
 		this->AddChild( &m_Character[PLAYER_1] );
 
 		m_Character[PLAYER_2].SetX( MODEL_X[PLAYER_2] );
-		m_Character[PLAYER_2].LoadMilkshapeAscii( "D:\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\char0011\\model.txt" );
-		m_Character[PLAYER_2].LoadMilkshapeAsciiBones( "D:\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\dance0002.bones.txt" );
+		m_Character[PLAYER_2].LoadMilkshapeAscii( "C:\\My Documents\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\char0011\\model.txt" );
+		m_Character[PLAYER_2].LoadMilkshapeAsciiBones( "C:\\My Documents\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\dance0002.bones.txt" );
 		this->AddChild( &m_Character[PLAYER_2] );
 
 		StartCameraSweep();

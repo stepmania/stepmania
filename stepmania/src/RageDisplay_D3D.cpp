@@ -644,7 +644,7 @@ void RageDisplay_D3D::DrawTriangles( const RageVertex v[], int iNumVerts )
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_D3D::DrawIndexedTriangles( const RageVertex v[], const Uint16 pIndices[], int iNumIndices )
+void RageDisplay_D3D::DrawIndexedTriangles( const RageVertex v[], int iNumVerts, const Uint16 pIndices[], int iNumIndices )
 {
 	if( iNumIndices == 0 )
 		return;
