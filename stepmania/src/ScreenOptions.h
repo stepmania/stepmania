@@ -67,6 +67,7 @@ protected:
 	virtual void ExportOptions() = 0;
 	void InitOptionsText();
 	void GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &iXOut, int &iYOut );
+	CString GetExplanationText( int row ) const;
 	BitmapText &GetTextItemForRow( PlayerNumber pn, int iRow );
 	void PositionUnderlines();
 	void PositionIcons();

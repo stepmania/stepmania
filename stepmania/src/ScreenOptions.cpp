@@ -232,16 +232,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 
 	// poke once at all the explanation metrics so that we catch missing ones early
 	for( r=0; r<m_iNumOptionRows; r++ )		// foreach line
-	{
-		CString sLineName = m_OptionRow[r].name;
-		if( sLineName=="" )
-			sLineName = m_OptionRow[r].choices[0];
-		sLineName.Replace("\n-","");
-		sLineName.Replace("\n","");
-		sLineName.Replace(" ","");
-		CString sExplanation = THEME->GetMetric(m_sName,sLineName);
-	}
-	
+		GetExplanationText( r );
 
 	CHECKPOINT;
 
@@ -287,6 +278,16 @@ ScreenOptions::~ScreenOptions()
 			delete m_textItems[i][j];
 }
 
+CString ScreenOptions::GetExplanationText( int row ) const
+{
+	CString sLineName = m_OptionRow[row].name;
+	if( sLineName=="" )
+		sLineName = m_OptionRow[row].choices[0];
+	sLineName.Replace("\n-","");
+	sLineName.Replace("\n","");
+	sLineName.Replace(" ","");
+	return THEME->GetMetric( m_sName,sLineName );
+}
 
 BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow )
 {
@@ -753,19 +754,9 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 	}
 
 	if( bIsExitRow )
-	{
 		pText->SetText( "" );
-	}
 	else
-	{
-		CString sLineName = m_OptionRow[iCurRow].name;
-		if( sLineName=="" )
-			sLineName = m_OptionRow[iCurRow].choices[0];
-		sLineName.Replace("\n-","");
-		sLineName.Replace("\n","");
-		sLineName.Replace(" ","");
-		pText->SetText( THEME->GetMetric(m_sName,sLineName) );
-	}
+		pText->SetText( GetExplanationText(iCurRow) );
 }
 
 
