@@ -1,6 +1,12 @@
 #include "global.h"
 #include "RageFileDriver.h"
 #include "RageUtil.h"
+#include "RageUtil_FileDB.h"
+
+RageFileDriver::~RageFileDriver()
+{
+	delete FDB;
+}
 
 void RageFileObj::SetError( const CString &err )
 {
@@ -91,6 +97,32 @@ int RageFileDriver::GetPathValue( CString path )
 	}
 
 	return 0;
+}
+
+void RageFileDriver::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+{
+	FDB->GetDirListing( sPath, AddTo, bOnlyDirs, bReturnPathToo );
+}
+
+RageFileManager::FileType RageFileDriver::GetFileType( CString sPath )
+{
+	/* XXX */
+	return (RageFileManager::FileType) FDB->GetFileType( sPath );
+}
+
+int RageFileDriver::GetFileSizeInBytes( CString sPath )
+{
+	return FDB->GetFileSize( sPath );
+}
+
+int RageFileDriver::GetFileModTime( CString sPath )
+{
+	return FDB->GetFileModTime( sPath );
+}
+
+void RageFileDriver::FlushDirCache( const CString &sPath )
+{
+	FDB->FlushDirCache();
 }
 
 /*

@@ -26,8 +26,18 @@ class DirectFilenameDB: public FilenameDB
 {
 protected:
 	virtual void PopulateFileSet( FileSet &fs, const CString &sPath );
+	CString root;
+
 public:
-	DirectFilenameDB() { ExpireSeconds = 30; }
+	DirectFilenameDB( CString root_ )
+	{
+		ExpireSeconds = 30;
+		root = root_;
+		if( root.Right(1) != "/" )
+			root += '/';
+		if( root == "./" )
+			root = "";
+	}
 };
 
 void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
@@ -46,7 +56,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 	if ( sPath.size() > 0  && sPath.Right(1) == SLASH )
 		sPath.erase( sPath.size() - 1 );
 
-	HANDLE hFind = FindFirstFile( sPath+SLASH "*", &fd );
+	HANDLE hFind = FindFirstFile( root+sPath+SLASH "*", &fd );
 
 	if( hFind == INVALID_HANDLE_VALUE )
 		return;
@@ -69,7 +79,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 	if( OldDir == -1 )
 		RageException::Throw( "Couldn't open(.): %s", strerror(errno) );
 
-	if( chdir(sPath) == -1 )
+	if( chdir(root+sPath) == -1 )
 	{
 		/* Only log once per dir. */
 		if( LOG )
@@ -133,30 +143,11 @@ public:
 
 
 RageFileDriverDirect::RageFileDriverDirect( CString root_ ):
+	RageFileDriver( new DirectFilenameDB(root_) ),
 	root(root_)
 {
-	FDB = new DirectFilenameDB;
-
 	if( root.Right(1) != "/" )
 		root += '/';
-}
-
-RageFileDriverDirect::~RageFileDriverDirect()
-{
-	delete FDB;
-}
-
-void RageFileDriverDirect::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
-{
-	const unsigned OldStart = AddTo.size();
-	FDB->GetDirListing( root+sPath, AddTo, bOnlyDirs, bReturnPathToo );
-
-	if( bReturnPathToo )
-	{
-		/* Remove the root path. */
-		for( unsigned j = OldStart; j < AddTo.size(); ++j )
-			AddTo[j].erase( 0, root.size() );
-	}
 }
 
 /* mkdir -p.  Doesn't fail if Path already exists and is a directory. */
@@ -234,22 +225,6 @@ RageFileObj *RageFileDriverDirect::Open( CString sPath, RageFile::OpenMode mode,
 	return new RageFileObjDirect( fd, p );
 }
 
-RageFileManager::FileType RageFileDriverDirect::GetFileType( CString sPath )
-{
-	/* XXX */
-	return (RageFileManager::FileType) FDB->GetFileType( root + sPath );
-}
-
-int RageFileDriverDirect::GetFileSizeInBytes( CString sPath )
-{
-	return FDB->GetFileSize( root + sPath );
-}
-
-int RageFileDriverDirect::GetFileModTime( CString sPath )
-{
-	return FDB->GetFileModTime( root + sPath );
-}
-
 #ifdef _WINDOWS
 #include "windows.h"
 #endif
@@ -289,7 +264,7 @@ bool RageFileDriverDirect::Ready()
 	CreateDirectories( root ); // XXX
 	
 	// Try to write a file.
-	CString sFile = root + "temp";
+	CString sFile = root + "temp"; /* XXX no */
 	RageFile f;
 	if( !f.Open( sFile, RageFile::WRITE ) )
 		return false;
@@ -298,11 +273,6 @@ bool RageFileDriverDirect::Ready()
 	remove( sFile );
 	return true;
 #endif
-}
-
-void RageFileDriverDirect::FlushDirCache( const CString &sPath )
-{
-	FDB->FlushDirCache();
 }
 
 
