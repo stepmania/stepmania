@@ -133,12 +133,15 @@ static void GetSoundDriverDebugInfo()
 
 static CString FourCCToString(int fcc)
 {
-	CString s;
+	char c[4];
+	c[0] = char((fcc >> 0) & 0xFF);
+	c[1] = char((fcc >> 8) & 0xFF);
+	c[2] = char((fcc >> 16) & 0xFF);
+	c[3] = char((fcc >> 24) & 0xFF);
 
-	s += char((fcc >> 0) & 0xFF);
-	s += char((fcc >> 8) & 0xFF);
-	s += char((fcc >> 16) & 0xFF);
-	s += char((fcc >> 24) & 0xFF);
+	CString s;
+	for( int i = 0; i < 4; ++i )
+		s += clamp( c[i], '\x20', '\x7e' );
 
 	return s;
 }
