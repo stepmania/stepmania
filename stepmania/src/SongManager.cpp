@@ -673,6 +673,27 @@ void SongManager::Cleanup()
  * pointers, which are updated explicitly in Song::RevertFromDisk. */
 void SongManager::Invalidate( Song *pStaleSong )
 {
+	//
+	// Save list of all old Course and Trail pointers
+	//
+	map<Course*,CourseID> mapOldCourseToCourseID;
+	typedef pair<TrailID,Course*> TrailIDAndCourse;
+	map<Trail*,TrailIDAndCourse> mapOldTrailToTrailIDAndCourse;
+	FOREACH_CONST( Course*, this->m_pCourses, pCourse )
+	{
+		CourseID id;
+		id.FromCourse( *pCourse );
+		mapOldCourseToCourseID[*pCourse] = id;
+		vector<Trail *> Trails;
+		(*pCourse)->GetAllCachedTrails( Trails );
+		FOREACH_CONST( Trail*, Trails, pTrail )
+		{
+			TrailID id;
+			id.FromTrail( *pTrail );
+			mapOldTrailToTrailIDAndCourse[*pTrail] = TrailIDAndCourse(id, *pCourse);
+		}
+	}
+
 	// It's a real pain to selectively invalidate only those Courses with 
 	// dependencies on the stale Song.  So, instead, just reload all Courses.
 	// It doesn't take very long.
@@ -682,6 +703,42 @@ void SongManager::Invalidate( Song *pStaleSong )
 
 	// invalidate cache
 	StepsID::Invalidate( pStaleSong );
+
+#define CONVERT_COURSE_POINTER( pCourse ) { \
+	CourseID id = mapOldCourseToCourseID[pCourse]; /* this will always succeed */ \
+	pCourse = id.ToCourse(); }
+
+	/* Ugly: We need the course pointer to restore a trail pointer, and both have
+	 * been invalidated.  We need to go through our mapping, and update the course
+	 * pointers, so we can use that to update trail pointers.  */
+	{
+		map<Trail*,TrailIDAndCourse>::iterator it;
+		for( it = mapOldTrailToTrailIDAndCourse.begin(); it != mapOldTrailToTrailIDAndCourse.end(); ++it )
+		{
+			TrailIDAndCourse &tidc = it->second;
+			CONVERT_COURSE_POINTER( tidc.second );
+		}
+	}
+
+	CONVERT_COURSE_POINTER( GAMESTATE->m_pCurCourse );
+	CONVERT_COURSE_POINTER( GAMESTATE->m_pPreferredCourse );
+
+#define CONVERT_TRAIL_POINTER( pTrail ) { \
+	if( pTrail != NULL ) { \
+		map<Trail*,TrailIDAndCourse>::iterator it; \
+		it = mapOldTrailToTrailIDAndCourse.find(pTrail); \
+		ASSERT_M( it != mapOldTrailToTrailIDAndCourse.end(), ssprintf("%p", pTrail) ); \
+		const TrailIDAndCourse &tidc = it->second; \
+		const TrailID &id = tidc.first; \
+		const Course *pCourse = tidc.second; \
+		pTrail = id.ToTrail( pCourse, true ); \
+	} \
+}
+
+	FOREACH_PlayerNumber( pn )
+	{
+		CONVERT_TRAIL_POINTER( GAMESTATE->m_pCurTrail[pn] );
+	}
 }
 
 /* If bAllowNotesLoss is true, any global notes pointers which no longer exist
