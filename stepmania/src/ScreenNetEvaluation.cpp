@@ -11,6 +11,8 @@ const int NUM_SCORE_DIGITS	=	9;
 #define USERDX						THEME->GetMetricF("ScreenNetEvaluation","UserDX")
 #define USERDY						THEME->GetMetricF("ScreenNetEvaluation","UserDY")
 
+#define MAX_COMBO_NUM_DIGITS		THEME->GetMetricI("ScreenEvaluation","MaxComboNumDigits")
+
 ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEvaluation( sClassName )
 {
 	m_pActivePlayer = PLAYER_1;	
@@ -101,5 +103,8 @@ void ScreenNetEvaluation::UpdateStats()
 	m_DifficultyIcon[m_pActivePlayer].SetFromDifficulty( m_pActivePlayer, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty );
 
 	for (int j=0;j<NETNUMTAPSCORES;j++)
-		m_textJudgeNumbers[j][m_pActivePlayer].SetText( ssprintf( "%d", NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j] ) );
+	{
+		int iNumDigits = (j==max_combo) ? MAX_COMBO_NUM_DIGITS : 4;
+		m_textJudgeNumbers[j][m_pActivePlayer].SetText( ssprintf( "%*d", iNumDigits, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j] ) );
+	}
 }
