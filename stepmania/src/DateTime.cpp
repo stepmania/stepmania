@@ -3,6 +3,16 @@
 #include "RageUtil.h"
 
 
+DateTime::DateTime()
+{
+	Init();
+}
+
+void DateTime::Init()
+{
+	ZERO( *this );
+}
+
 DateTime DateTime::GetNowDateTime()
 {
 	time_t now = time(NULL);
@@ -30,28 +40,29 @@ void DateTime::StripTime()
 //
 CString DateTime::GetString() const
 {
-	return ssprintf( "%d-%02d-%02d %02d:%02d:%02d",
-		tm_year+1900,
-		tm_mon+1,
-		tm_mday,
-		tm_hour,
-		tm_min,
-		tm_sec );
-}
-
-CString DateTime::GetDateString() const
-{
-	return ssprintf( "%d-%02d-%02d",
+	CString s = ssprintf( "%d-%02d-%02d",
 		tm_year+1900,
 		tm_mon+1,
 		tm_mday );
+	
+	if( tm_hour != 0 || 
+		tm_min != 0 ||
+		tm_sec != 0 )
+	{
+		s += ssprintf( " %02d:%02d:%02d",
+			tm_hour,
+			tm_min,
+			tm_sec );
+	}
+
+	return s;
 }
 
 bool DateTime::FromString( const CString sDateTime )
 {
-	int ret;
+	Init();
 
-	ZERO( *this );
+	int ret;
 
 	ret = sscanf( sDateTime, "%d-%d-%d %d:%d:%d", 
 		&tm_year,

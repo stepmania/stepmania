@@ -27,6 +27,9 @@ tm GetDayInYearAndYear( int iDayInYearIndex, int iYear );
 
 struct DateTime : public tm
 {
+	DateTime();
+	void Init();
+
 	bool operator<( const DateTime& other ) const
 	{
 	#define COMPARE( v ) if(v!=other.v) return v<other.v;
@@ -46,7 +49,6 @@ struct DateTime : public tm
 	void StripTime();
 
 	CString GetString() const;
-	CString GetDateString() const;
 	bool FromString( const CString sDateTime );
 };
 
