@@ -669,8 +669,6 @@ void Profile::LoadSongScoresFromNode( const XNode* pNode )
 			if( !(*steps)->GetChildValue("Description", sDescription) )
 				WARN_AND_CONTINUE;
 
-			// Even if pSong or pSteps is null, we still have to skip over that data.
-
 			Steps* pSteps = NULL;
 			if( dc == DIFFICULTY_EDIT )
 				pSteps = pSong->GetStepsByDescription( st, sDescription );				
