@@ -69,7 +69,6 @@
 #endif
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.Lib")
-#pragma comment(lib, "d3dx8.lib")
 
 
 
