@@ -70,11 +70,13 @@ bool Alsa9Buf::SetHWParams()
 
 	/* Set the buffersize to the writeahead, and then copy back the actual value
 	 * we got. */
+	writeahead = preferred_writeahead;
 	err = dsnd_pcm_hw_params_set_buffer_size_near( pcm, hwparams, &writeahead );
 	ALSA_CHECK("dsnd_pcm_hw_params_set_buffer_size_near");
 
 	/* The period size is roughly equivalent to what we call the chunksize. */
 	int dir = 0;
+	chunksize = preferred_chunksize;
 	err = dsnd_pcm_hw_params_set_period_size_near( pcm, hwparams, &chunksize, &dir );
 	ALSA_CHECK("dsnd_pcm_hw_params_set_period_size_near");
 
@@ -85,6 +87,14 @@ bool Alsa9Buf::SetHWParams()
 	ALSA_CHECK("dsnd_pcm_hw_params");
 
 	return true;
+}
+
+void Alsa9Buf::LogParams()
+{
+	if( preferred_writeahead != writeahead )
+		LOG->Info("ALSA: writeahead adjusted from %u to %u", preferred_writeahead, writeahead);
+	if( preferred_chunksize != chunksize )
+		LOG->Info("ALSA: chunksize adjusted from %u to %u", preferred_chunksize, chunksize);
 }
 
 bool Alsa9Buf::SetSWParams()
@@ -225,8 +235,8 @@ Alsa9Buf::Alsa9Buf( hw hardware, int channels_ )
 	samplebits = 16;
 	last_cursor_pos = 0;
 	samplerate_set_explicitly = false;
-	writeahead = 8192;
-	chunksize = 1024;
+	preferred_writeahead = 8192;
+	preferred_chunksize = 1024;
 
 	/* Open the device. */
 	int err;
@@ -443,14 +453,14 @@ CString Alsa9Buf::GetHardwareID( CString name )
 
 void Alsa9Buf::SetWriteahead( snd_pcm_sframes_t frames )
 {
-	writeahead = frames;
+	preferred_writeahead = frames;
 	SetHWParams();
 	SetSWParams();
 }
 
 void Alsa9Buf::SetChunksize( snd_pcm_sframes_t frames )
 {
-	chunksize = frames;
+	preferred_chunksize = frames;
 
 	SetHWParams();
 	SetSWParams();

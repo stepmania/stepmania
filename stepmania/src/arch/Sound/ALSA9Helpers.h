@@ -15,6 +15,7 @@ private:
 	int64_t last_cursor_pos;
 	bool samplerate_set_explicitly;
 
+	snd_pcm_uframes_t preferred_writeahead, preferred_chunksize;
 	snd_pcm_uframes_t writeahead, chunksize;
 
 	snd_pcm_t *pcm;
@@ -49,7 +50,8 @@ public:
 
 	void SetWriteahead( snd_pcm_sframes_t frames );
 	void SetChunksize( snd_pcm_sframes_t frames );
-
+	void LogParams();
+	
 	int64_t GetPosition() const;
 	int64_t GetPlayPos() const { return last_cursor_pos; }
 };

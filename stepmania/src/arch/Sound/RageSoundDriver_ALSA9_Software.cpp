@@ -105,6 +105,7 @@ try {
 	
 	pcm->SetWriteahead( max_writeahead );
 	pcm->SetChunksize( max_writeahead / num_chunks );
+	pcm->LogParams();
 	
 	StartDecodeThread();
 	
