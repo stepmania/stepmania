@@ -127,6 +127,7 @@ public:
 	void  SetWidth( float width )	{ m_size.x = width; }
 	void  SetHeight( float height )	{ m_size.y = height; }
 
+	float GetBaseZoomX()				{ return m_baseScale.x;	}
 	void  SetBaseZoomX( float zoom )	{ m_baseScale.x = zoom;	}
 	void  SetBaseZoomY( float zoom )	{ m_baseScale.y = zoom; }
 	void  SetBaseZoomZ( float zoom )	{ m_baseScale.z = zoom; }
@@ -550,6 +551,7 @@ public:
 	static int GetHeight( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetUnzoomedHeight() ); return 1; }
 	static int GetZoom( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoom() ); return 1; }
 	static int GetZoomX( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoomX() ); return 1; }
+	static int GetBaseZoomX( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetBaseZoomX() ); return 1; }
 
 
 	static void Register(lua_State *L) {
@@ -650,6 +652,7 @@ public:
 		ADD_METHOD( GetHeight )
 		ADD_METHOD( GetZoom )
 		ADD_METHOD( GetZoomX )
+		ADD_METHOD( GetBaseZoomX )
 
 		Luna<T>::Register( L );
 	}
