@@ -73,6 +73,7 @@ ScoreKeeper5th::ScoreKeeper5th( const vector<Steps*>& apNotes_, const CStringArr
 
 
 	m_iScore = 0;
+	m_iScoreRemainder = 0;
 	m_iCurToastyCombo = 0; 
 	m_iMaxScoreSoFar = 0;
 	m_iPointBonus = 0;
@@ -261,6 +262,11 @@ void ScoreKeeper5th::AddScore( TapNoteScore score )
 		}
 	}
 
+	// handle round-to-nearest-5 bit
+	m_iScore += m_iScoreRemainder;
+	m_iScoreRemainder = (m_iScore % 5);
+	m_iScore = m_iScore - m_iScoreRemainder;
+	
 	ASSERT(m_iScore >= 0);
 
 	printf( "score: %i\n", m_iScore );
@@ -379,7 +385,8 @@ void ScoreKeeper5th::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTap
 		case TNS_MARVELOUS:
 		case TNS_PERFECT:
 		case TNS_GREAT:
-			iCurCombo += iNumTapsInRow;
+//			iCurCombo += iNumTapsInRow;
+			iCurCombo++;
 			break;
 		}
 		break;

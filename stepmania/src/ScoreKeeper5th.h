@@ -19,6 +19,8 @@ class Steps;
 class ScoreKeeper5th: public ScoreKeeper
 {
 	int				m_iScore;
+	int				m_iScoreRemainder;  // used to round score to nearest 5 points
+
 	int				m_iMaxPossiblePoints;
 	int				m_iTapNotesHit;	// number of notes judged so far, needed by scoring
 
