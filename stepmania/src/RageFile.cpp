@@ -33,7 +33,7 @@ CString FixSlashes( CString sPath )
 void CollapsePath( CString &sPath )
 {
 	CStringArray as;
-	split( sPath, "/", as );
+	split( sPath, "/", as, true );
 
 	for( unsigned i=0; i<as.size(); i++ )
 	{
@@ -42,6 +42,11 @@ void CollapsePath( CString &sPath )
 			as.erase( as.begin()+i-1 );
 			as.erase( as.begin()+i-1 );
 			i -= 2;
+		}
+		else if( as[i] == "." )
+		{
+			as.erase( as.begin()+i );
+			i -= 1;
 		}
 	}
 	sPath = join( "/", as );
