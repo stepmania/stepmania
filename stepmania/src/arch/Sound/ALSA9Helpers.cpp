@@ -218,9 +218,9 @@ int Alsa9Buf::GetNumFramesToFill( int writeahead )
 		return 0;
 	}
 
-	const snd_pcm_sframes_t filled_frames = max( 0, total_frames - avail_frames );
+	const snd_pcm_sframes_t filled_frames = max( 0l, total_frames - avail_frames );
 
-	snd_pcm_sframes_t frames_to_fill = clamp( writeahead - filled_frames, 0, (int)writeahead );
+	snd_pcm_sframes_t frames_to_fill = clamp( writeahead - filled_frames, 0l, (snd_pcm_sframes_t)writeahead );
 	frames_to_fill -= frames_to_fill % xfer_align;
 
 	return frames_to_fill;
