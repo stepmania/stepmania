@@ -417,7 +417,64 @@ static void SetWindowTitlef(HWND hwnd, const char *format, ...) {
 	SetWindowText(hwnd, buf);
 }
 
-static void ReportCrashData(HWND hwnd, HWND hwndReason, HANDLE hFile, const EXCEPTION_POINTERS *const pExc) {
+static void ReportReason(HWND hwnd, HWND hwndReason, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
+{
+	const EXCEPTION_RECORD *const pRecord = (const EXCEPTION_RECORD *)pExc->ExceptionRecord;
+
+	// fill out bomb reason
+	const struct ExceptionLookup *pel = exceptions;
+
+	while(pel->code) {
+		if (pel->code == pRecord->ExceptionCode)
+			break;
+
+		++pel;
+	}
+
+	// Unfortunately, EXCEPTION_ACCESS_VIOLATION doesn't seem to provide
+	// us with the read/write flag and virtual address as the docs say...
+	// *sigh*
+
+	if (!pel->code) {
+		if (hwndReason)
+			SetWindowTitlef(hwndReason, "Crash reason: unknown exception 0x%08lx", pRecord->ExceptionCode);
+
+		if (hFile)
+			Report(hwnd, hFile, "Crash reason: unknown exception 0x%08lx", pRecord->ExceptionCode);
+	} else {
+		if (hwndReason)
+			SetWindowTitlef(hwndReason, "Crash reason: %s", pel->name);
+
+		if (hFile)
+			Report(hwnd, hFile, "Crash reason: %s", pel->name);
+	}
+}
+
+static void ReportThreadStacks(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
+{
+	EnterCriticalSection(&g_csPerThreadState);
+
+	try {
+		for(List2<VirtualDubThreadStateNode>::fwit it = g_listPerThreadState.begin(); it; ++it) {
+			const VirtualDubThreadState *pState = it->pState;
+
+			Report(hwnd, hFile, "Thread %08lx (%s)", pState->dwThreadId, pState->pszThreadName?pState->pszThreadName:"unknown");
+
+			for(int i=0; i<CHECKPOINT_COUNT; ++i) {
+				const VirtualDubCheckpoint& cp = pState->cp[(pState->nNextCP+i) & (CHECKPOINT_COUNT-1)];
+
+				if (cp.file) {
+					Report(hwnd, hFile, "\t%s:%d %s", cp.file, cp.line, cp.message? cp.message:"");
+				}
+			}
+		}
+	} catch(...) {
+	}
+
+	LeaveCriticalSection(&g_csPerThreadState);
+}
+
+static void ReportCrashData(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc) {
 	const EXCEPTION_RECORD *const pRecord = (const EXCEPTION_RECORD *)pExc->ExceptionRecord;
 	const CONTEXT *const pContext = (const CONTEXT *)pExc->ContextRecord;
 	int i, tos;
@@ -445,62 +502,6 @@ static void ReportCrashData(HWND hwnd, HWND hwndReason, HANDLE hFile, const EXCE
 
 		Report(hwnd, hFile, "MM%c = %08lx%08lx", i+'0', pReg[1], pReg[0]);
 	}
-
-	// fill out bomb reason
-
-	const struct ExceptionLookup *pel = exceptions;
-
-	while(pel->code) {
-		if (pel->code == pRecord->ExceptionCode)
-			break;
-
-		++pel;
-	}
-
-	// Unfortunately, EXCEPTION_ACCESS_VIOLATION doesn't seem to provide
-	// us with the read/write flag and virtual address as the docs say...
-	// *sigh*
-
-	if (!pel->code) {
-		if (hwndReason)
-			SetWindowTitlef(hwndReason, "Crash reason: unknown exception 0x%08lx", pRecord->ExceptionCode);
-
-		if (hFile)
-			Report(NULL, hFile, "Crash reason: unknown exception 0x%08lx", pRecord->ExceptionCode);
-	} else {
-		if (hwndReason)
-			SetWindowTitlef(hwndReason, "Crash reason: %s", pel->name);
-
-		if (hFile)
-			Report(NULL, hFile, "Crash reason: %s", pel->name);
-	}
-
-	// Dump thread stacks
-
-	Report(NULL, hFile, "");
-
-	EnterCriticalSection(&g_csPerThreadState);
-
-	try {
-		for(List2<VirtualDubThreadStateNode>::fwit it = g_listPerThreadState.begin(); it; ++it) {
-			const VirtualDubThreadState *pState = it->pState;
-
-			Report(NULL, hFile, "Thread %08lx (%s)", pState->dwThreadId, pState->pszThreadName?pState->pszThreadName:"unknown");
-
-			for(int i=0; i<CHECKPOINT_COUNT; ++i) {
-				const VirtualDubCheckpoint& cp = pState->cp[(pState->nNextCP+i) & (CHECKPOINT_COUNT-1)];
-
-				if (cp.file) {
-					Report(NULL, hFile, "\t%s:%d %s", cp.file, cp.line, cp.message? cp.message:"");
-				}
-			}
-		}
-	} catch(...) {
-	}
-
-	LeaveCriticalSection(&g_csPerThreadState);
-
-	Report(NULL, hFile, "");
 }
 
 static const char *GetNameFromHeap(const char *heap, int idx) {
@@ -1288,11 +1289,22 @@ static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTE
 	return true;
 }
 
+static void ReportDisasm(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
+{
+	char tbuf[2048];
+	long idx = 0;
+
+	Report(hwnd, hFile, "Disassembly:");
+
+	while(idx = g_pcdw->getInstruction(tbuf, idx)) {
+		Report(hwnd, hFile, "%s", tbuf);
+	}
+	FlushFileBuffers(hFile);
+}
+
 static void DoSave(const EXCEPTION_POINTERS *pExc) {
 	HANDLE hFile;
 	char szModName2[MAX_PATH];
-	char tbuf[2048];
-	long idx;
 
 	SpliceProgramPath(szModName2, sizeof szModName2, "crashinfo.txt");
 
@@ -1303,18 +1315,8 @@ static void DoSave(const EXCEPTION_POINTERS *pExc) {
 
 	Report(NULL, hFile,
 			"StepMania crash report -- build %d\r\n"
-			"--------------------------------------\r\n"
-			"\r\n"
-			"Disassembly:", version_num);
-
-	idx = 0;
-
-	while(idx = g_pcdw->getInstruction(tbuf, idx)) {
-		Report(NULL, hFile, "%s", tbuf);
-	}
-	FlushFileBuffers(hFile);
-
-	Report(NULL, hFile, "");
+			"--------------------------------------"
+			"\r\n", version_num);
 
 	// Detect operating system.
 
@@ -1333,21 +1335,33 @@ static void DoSave(const EXCEPTION_POINTERS *pExc) {
 			,ovi.dwBuildNumber & 0xffff
 			,ovi.szCSDVersion);
 	}
-
 	Report(NULL, hFile, "");
 
-	ReportCrashData(NULL, NULL, hFile, pExc);
+	ReportReason(NULL, NULL, hFile, pExc);
+	Report(NULL, hFile, "");
 
+	// Dump thread stacks
+	ReportThreadStacks(NULL, hFile, pExc);
 	Report(NULL, hFile, "");
 
 	ReportCrashCallStack(NULL, hFile, pExc, g_pcdw->vdc.pExtraData);
-	
 	Report(NULL, hFile, "");
 
 	ReportCrashLog(NULL, hFile);
+	Report(NULL, hFile, "");
 
-	Report(NULL, hFile, "\r\n-- End of report");
+	/* We can do without these for now.  People keep saying "here's a bug,
+	 * tell me if you want the crash dump" which wastes time (of course we
+	 * do!).  Let's make the dump smaller to encourage just sending it, which
+	 * is what people should be doing.  (If we can use the SF BTS more
+	 * consistently, instead of forums, this will be less of an issue.) */
+/*	ReportDisasm(NULL, hFile, pExc);
+	Report(NULL, hFile, "");
 
+	ReportCrashData(NULL, hFile, pExc);
+	Report(NULL, hFile, "");
+*/
+	Report(NULL, hFile, "-- End of report");
 	CloseHandle(hFile);
 }
 
@@ -1391,8 +1405,6 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				HWND hwndList3 = GetDlgItem(hDlg, IDC_CALL_STACK);
 				HWND hwndReason = GetDlgItem(hDlg, IDC_STATIC_BOMBREASON);
 				const EXCEPTION_POINTERS *const pExc = (const EXCEPTION_POINTERS *)lParam;
-				const EXCEPTION_RECORD *const pRecord = (const EXCEPTION_RECORD *)pExc->ExceptionRecord;
-				const CONTEXT *const pContext = (const CONTEXT *)pExc->ContextRecord;
 
 				s_pExc = pExc;
 
@@ -1401,9 +1413,9 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				SendMessage(hwndList2, WM_SETFONT, SendMessage(hwndList1, WM_GETFONT, 0, 0), MAKELPARAM(TRUE, 0));
 				SendMessage(hwndList3, WM_SETFONT, SendMessage(hwndList1, WM_GETFONT, 0, 0), MAKELPARAM(TRUE, 0));
 
-				ReportCrashData(hwndList2, hwndReason, NULL, pExc);
+				ReportReason(NULL, hwndReason, NULL, pExc);
+				ReportCrashData(hwndList2, NULL, pExc);
 				s_bHaveCallstack = ReportCrashCallStack(hwndList3, NULL, pExc, g_pcdw->vdc.pExtraData);
-
 			}
 			return TRUE;
 
