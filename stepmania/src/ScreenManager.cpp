@@ -689,6 +689,23 @@ void ScreenManager::SystemMessageNoAnimate( CString sMessage )
 void ScreenManager::RefreshCreditsMessages()
 {
 	m_SystemLayer->RefreshCreditsMessages();
+
+	/* This is called when GAMESTATE->m_bSideIsJoined changes. */
+	CString joined;
+	FOREACH_PlayerNumber( pn )
+	{
+		if( GAMESTATE->m_bSideIsJoined[pn] )
+		{
+			if( joined != "" )
+				joined += ", ";
+			joined += ssprintf( "P%i", pn+1 );
+		}
+	}
+
+	if( joined == "" )
+		joined = "none";
+
+	LOG->MapLog( "JOINED", "Players joined: %s", joined.c_str() );
 }
 
 void ScreenManager::ReloadCreditsText()
