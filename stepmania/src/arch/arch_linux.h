@@ -1,6 +1,8 @@
 #ifndef LINUX_ARCH_H
 #define LINUX_ARCH_H
 
+#include "global.h"
+
 #ifdef HAVE_ALSA
 #  include "Sound/RageSoundDriver_ALSA9.h"
 #endif
@@ -15,6 +17,10 @@
 /* No, it shouldn't.  If they fail to load, we should receive a bug report
  * and fix our code, not have it silently fall back on a broken driver. -glenn */
 // #include "Sound/RageSoundDriver_SDL.h"
+
+#ifdef HAVE_GTK
+#  include "LoadingWindow/LoadingWindow_Gtk.h"
+#endif
 
 #endif
 /*

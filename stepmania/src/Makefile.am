@@ -13,7 +13,6 @@ endif
 AM_CXXFLAGS += -O2 -ISDL-1.2.5/include -ISDL_sound-1.0.0
 AM_CFLAGS   += -O2
 
-
 # This is a little hacky; we use our own version of SDL and SDL_sound, and I don't
 # want to have to integrate their entire build systems.
 # <B.Anderson> Why --disable-alsa --disable-oss? Because SDL and our own
@@ -31,6 +30,7 @@ AM_CFLAGS   += -O2
 #              hanging, because... you get the idea.) Setting these switches
 #              keep SDL from trying to grab the soundcard, so we have it all
 #              to ourselves, thus preventing that nasty hang on boot.
+
 SDL-1.2.5/src/.libs/libSDL.a:
 	cd SDL-1.2.5 && ./configure \
 		--disable-nasm --disable-arts --disable-esd --enable-static --disable-shared --enable-debug --disable-alsa --disable-oss 
@@ -82,9 +82,7 @@ TitleSubstitution.cpp TitleSubstitution.h Inventory.cpp Inventory.h PlayerNumber
 LyricsLoader.cpp LyricsLoader.h NoteFieldPositioning.cpp NoteFieldPositioning.h \
 PlayerAI.cpp PlayerAI.h Character.cpp Character.h ArrowBackdrop.cpp ArrowBackdrop.h
 
-
 FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h
-
 
 StepMania = global.h ScreenDimensions.h StdString.h StepMania.cpp StepMania.h
 
@@ -168,22 +166,32 @@ Sound_Null = \
 	arch/Sound/RageSoundDriver_Null.h
 
 Sound = $(Sound_Null)
+
 if HAVE_ALSA
 Sound += $(Sound_ALSA9)
 endif
+
 if HAVE_OSS
 Sound += $(Sound_OSS)
+endif
+
+Loading = arch/LoadingWindow/LoadingWindow_SDL.cpp \
+	  arch/LoadingWindow/LoadingWindow_SDL.h \
+	  arch/LoadingWindow/LoadingWindow_Null.h
+
+if HAVE_GTK
+  Loading += arch/LoadingWindow/LoadingWindow_Gtk.cpp \
+	     arch/LoadingWindow/LoadingWindow_Gtk.h
 endif
 
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
 		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \
 		    $(PCRE) \
+		    $(Loading) \
 	            arch/arch.cpp \
+		    arch/arch.h \
 		    arch/InputHandler/InputHandler_SDL.cpp \
 		    arch/InputHandler/InputHandler_SDL.h \
-		    arch/LoadingWindow/LoadingWindow_SDL.cpp \
-		    arch/LoadingWindow/LoadingWindow_SDL.h \
-		    arch/LoadingWindow/LoadingWindow_Null.h \
 		    arch/MovieTexture/MovieTexture.cpp \
 		    $(Sound) \
 		    arch/LowLevelWindow/LowLevelWindow.h \
@@ -196,11 +204,13 @@ stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transi
 # for SDL_image.  This is annoying, but it's not a major problem.  The
 # "fix" would be to statically link SDL_image, but that would mean
 # dealing with its build and libjpeg, png, etc--not worth it.
+
 stepmania_LDADD = \
 		  $(GL_LIBS) \
 		  $(srcdir)/SDL-1.2.5/src/.libs/libSDL.a \
 		  $(srcdir)/SDL_sound-1.0.0/.libs/libSDL_sound.a \
-		  $(SDL_LIBS)
+		  $(SDL_LIBS) \
+		  $(GTK_LIBS)
 
 INCLUDES = $(SDL_CFLAGS)
 # -O0 -g

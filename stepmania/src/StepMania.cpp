@@ -52,7 +52,6 @@
 /* This is also a global class; we own it. */
 ArchHooks *HOOKS = NULL;
 
-
 #ifdef WIN32
 
 #ifdef DEBUG
@@ -63,6 +62,10 @@ ArchHooks *HOOKS = NULL;
 
 HWND g_hWndMain = NULL;
 
+#endif
+
+#ifdef HAVE_GTK
+#  include <gtk/gtk.h>
 #endif
 
 static bool g_bHasFocus = true;
@@ -432,6 +435,10 @@ int main(int argc, char* argv[])
 	/* Set this up second.  Do this early, since it's needed for RageException::Throw. 
 	 * Do it after ChangeToDirOfExecutable, so the log ends up in the right place. */
 	LOG			= new RageLog();
+
+#ifdef HAVE_GTK
+	gtk_init(&argc,&argv);
+#endif
 
 #ifdef DEBUG
 	LOG->ShowConsole();

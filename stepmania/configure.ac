@@ -45,9 +45,17 @@ fi
 
 AM_PATH_SDL
 
-AM_PATH_ALSA(0.9.0, alsa=true ,alsa=0 )
+AM_PATH_ALSA(0.9.0,AC_DEFINE([HAVE_ALSA],1,[Define presence of ALSA]),alsa=false)
+
+AC_ARG_ENABLE(gtk2,[  --enable-gtk2             enable debug mode [default=yes]], , enable_gtk2=yes)
+
+if test x$enable_gtk2 = xyes; then
+  AM_PATH_GTK_2_0(2.0.0,AC_DEFINE([HAVE_GTK],1,[Define presence of GTK]),gtk=false)
+fi
+
 AC_CHECK_HEADER(linux/soundcard.h, [AC_DEFINE(HAVE_OSS, 1, [OSS support available])])
-AM_CONDITIONAL(HAVE_ALSA, test x$alsa = xtrue )
+AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
+AM_CONDITIONAL(HAVE_GTK, test x$gtk != xfalse )
 AM_CONDITIONAL(HAVE_OSS, test x$ac_cv_header_linux_soundcard_h = xyes )
 
 # We could do this more cleanly with an AC_CHECK_FUNCS wrapper.
@@ -88,6 +96,8 @@ case $host in
 esac
 AM_CONDITIONAL(DARWIN, test x$darwin = xtrue)
 
+CFLAGS="$CFLAGS $GTK_CFLAGS"
+CPPFLAGS="$CPPFLAGS $GTK_CFLAGS"
 
 # sdl-config puts -L/usr/lib in the library search path, which reorders things
 # in a way that breaks some configurations.
