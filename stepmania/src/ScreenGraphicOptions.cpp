@@ -179,8 +179,9 @@ void ScreenGraphicOptions::ImportOptions()
 	m_iSelectedOption[0][GO_BGBRIGHTNESS]			= (int)( PREFSMAN->m_fBGBrightness*10+0.5f ); 
 	m_iSelectedOption[0][GO_MOVIEDECODEMS]			= PREFSMAN->m_iMovieDecodeMS-1;
 	m_iSelectedOption[0][GO_BGIFNOBANNER]			= PREFSMAN->m_bUseBGIfNoBanner ? 1:0;
-	m_iSelectedOption[0][GO_VSYNC]					= PREFSMAN->m_bVsync ? 1:0;
+	m_iSelectedOption[0][GO_VSYNC]					= PREFSMAN->m_bVsync ? 1:0;	
 }
+
 void ScreenGraphicOptions::ExportOptions()
 {
 	PREFSMAN->m_bWindowed				= m_iSelectedOption[0][GO_WINDOWED] == 1;

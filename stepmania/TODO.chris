@@ -2,11 +2,9 @@
 Fix
 /////////////////////////
 
-Fixed:
-fix "Max Combo" showing on Oni Evauation screen
-NG now causes to lose a battery life
-songs w/o music no longer show up in courses
-changed all "numbers" images to have the same format
+pump life meter
+
+Don't unload textures after loading them once
 
 
 SMANIAC difficulty BLUE DUDE! DO IT!

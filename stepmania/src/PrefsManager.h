@@ -38,6 +38,7 @@ public:
 	bool	m_bUseBGIfNoBanner;
 	bool	m_bHiddenSongs;
 	bool	m_bVsync;
+	bool	m_bUnloadTextures;
 
 	bool	m_bIgnoreJoyAxes;	
 	bool	m_bOnlyDedicatedMenuButtons;

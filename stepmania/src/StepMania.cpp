@@ -940,18 +940,13 @@ void ApplyGraphicOptions()
 	int iDisplayBPP		= 16;
 	
 	int &iTextureSize	= PREFSMAN->m_iTextureResolution;
-	switch( iTextureSize )
-	{
-	case 1024:	break;
-	case 512:	break;
-	case 256:	break;
-	default:	throw RageException( "Invalid TextureResolution '%d'", iTextureSize );
-	}
 
 	/* XXX: ScreenGraphicOptions assumes this is always 16bpp. If this is
 	 * ever changed, keep track of it, since the available refresh rates
 	 * is dependent on the bit depth. */
 	int iTextureBPP		= 16;
+
+	bool bUnloadTextures	= PREFSMAN->m_bUnloadTextures;
 
 	int &iRefreshRate	= PREFSMAN->m_iRefreshRate;
 
@@ -1005,7 +1000,7 @@ success:
 	// Let the texture manager know about our preferences
 	//
 	if( TEXTUREMAN != NULL )
-		TEXTUREMAN->SetPrefs( iTextureSize, iTextureBPP );
+		TEXTUREMAN->SetPrefs( iTextureSize, iTextureBPP, bUnloadTextures );
 
 	RestoreObjects();
 

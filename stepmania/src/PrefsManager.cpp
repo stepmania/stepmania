@@ -52,6 +52,7 @@ PrefsManager::PrefsManager()
 	m_bDelayedEscape = true;
 	m_bHowToPlay = true;
 	m_bArcadeOptionsNavigation = false;
+	m_bUnloadTextures = true;
 
 	/* I'd rather get occasional people asking for support for this even though it's
 	 * already here than lots of people asking why songs aren't being displayed. */
@@ -98,6 +99,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "HowToPlay",				m_bHowToPlay );
 	ini.GetValueB( "Options", "ArcadeOptionsNavigation",m_bArcadeOptionsNavigation );
 	ini.GetValue ( "Options", "DWIPath",				m_DWIPath );
+	ini.GetValueB( "Options", "UnloadTextures",			m_bUnloadTextures );
 
 	m_asAdditionalSongFolders.RemoveAll();
 	CString sAdditionalSongFolders;
@@ -142,6 +144,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "HowToPlay",				m_bHowToPlay );
 	ini.SetValueB( "Options", "ArcadeOptionsNavigation",m_bArcadeOptionsNavigation );
 	ini.SetValue ( "Options", "DWIPath",				m_DWIPath );
+	ini.SetValueB( "Options", "UnloadTextures",			m_bUnloadTextures );
 
 	ini.SetValue( "Options", "AdditionalSongFolders", join(",", m_asAdditionalSongFolders) );
 

@@ -51,26 +51,16 @@ See the file "NEWS" for version history.
 1. About StepMania
 ************************************************************
 
-StepMania game system is capable of playing many game types.  Currently, it 
-supports games similar to Dance Dance Revolution, Pump It Up, and EZ 2 
-Dancer.  In the future, it will support games similar to BeatMania, Guitar 
-Freaks, DrumMania, Para Para Paradise and more.
+StepMania is capable of playing many game types.  Currently, it supports games 
+similar to Dance Dance Revolution, Pump It Up, EZ 2 Dancer, and Para Para 
+Paradise.  In the future, it will support games similar to BeatMania, Guitar 
+Freaks, DrumMania, and more.
 
-StepMania is a rhythm game.  Arrows pointing in different directions scroll 
-up from the bottom of the screen, and the player must hit the corresponding 
-direction in time to the music.  The game can be played with your hands on 
-the keyboard, but the real fun comes when the arrows are registered by dancing 
-on a sensor-laden mat.  The game is very similar to Konami's Dance Dance 
-Revolution and Andamiro's Pump It Up games, but while those play only their 
-own songs, StepMania can play any song that includes a step file.
-
-In Stepmania most popular mode, "dance", the player uses four arrows - up, 
-down, left, and right - , similar to Konami's Dance Dance Revolution series 
-of games.  In "pump" mode, the player must deal with and five direction of 
-steps - ala Andamiro's Pump it Up games.  
-
-Later versions of StepMania will support steps similar to Amuseworld's 
-EZ2Dancer games, as well as any that there is a sizable demand for.
+The games played by StepMania are rhythm games.  Notes scroll up from the 
+bottom of the screen, and the player must hit the corresponding button on the 
+controller in time to the music.  All games can be played using the keyboard, 
+but the real fun comes when using specially designed controllers, like a dance 
+pad or hand sensors.
 
 
 ************************************************************
@@ -84,7 +74,7 @@ EZ2Dancer games, as well as any that there is a sizable demand for.
 * Video card that supports High Color (16-bit color) and has 16MB video RAM
 * DirectX 8.1 compatible video card with drivers
 * DirectX 8.1 compatible sound card with drivers
-* DivX 5 video codec (for movie visualizations)
+* DivX 5 video codec for movie visualizations (www.divx.com)
 
 
 ************************************************************
@@ -100,20 +90,27 @@ and abort the installation.
 4. Installation
 ************************************************************
 
-To install StepMania, download the file stepmania3.exe to a known location 
-on your hard drive, then double-click the file icon to begin the installation.
-The installer automatically remove an older version of the program if one is 
-present. The default installation directory is 'C:\Program Files\StepMania'.
+To install StepMania, download the file stepmania300xxxx.exe to a known 
+location on your hard drive, then double-click the file icon to begin the 
+installation.The installer automatically remove an older version of the 
+program if one is present. The default installation directory is 
+'C:\Program Files\StepMania'.
 
 
 ************************************************************
 5. Controls
 ************************************************************
 
-Use the "Config Key/Joy" option from the Title Menu to configure your 
-keyboad, dance pad, or other game controller.
+Use the "Config Key/Joy" option from the Title Menu to configure your keyboard,
+dance pad, or other game controller.  This menu allows you to map up to 2 
+keyboard/joystick buttons to each function in the game.  The third column is 
+the default key mapping, and cannot be changed.  However, you can override a 
+default keyboard key by simply assigning it to another function.  The mappings 
+for player 1 are on the left half of the screen, and the mapping for player 2 
+are on right half.
 
-The following is a list of special keys.
+
+The following is a list of special keys:
 
 Anywhere:
   * F4 = toggle fullscreen
@@ -135,92 +132,7 @@ In gameplay:
   * Hold Escape = abort playing
 
 
-************************************************************
-6. Playing the Game
-************************************************************
 
-This section primarily covers StepMania's most popular game type, "dance".
-The various games supported by StepMania are similar, and much of this 
-information applies to other games too.
-
-Title Menu screen: At the title screen are a series of options.
-
-  * Game Start:
-		Begin playing the game and go to the Style Select screen.  Make sure 
-		you've configured your keyboard or dance pad before chosing this 
-		option.
-  * Switch Game:  
-		Allows you to chose between the various games supported by StepMania 
-		(dance, pump, ez2, etc).
-  * Config Key/Joy:  
-		This is where you go to assign key presses or pad presses.  You'll 
-		want to use this screen before playing.
-  * Game Options: 
-		This is you can adjust properties of the game, like difficulty
-		and number of stages.
-  * Game Options: 
-		This is you can adjust graphic detail and other settings that 
-		the performance of the game.
-  * Appearance Options: 
-		Here, you can customize the appearance of StepMania by chosing the 
-		announcer, theme, and note skin.
-  * Edit/Record/Synch: 
-		In this mode, you can edit songs and step patterns, or create your
-		own step patterns from scratch.
-  * Exit: 
-		Exits the program.
-  * At the upper-left corner is the total number of songs found when 
-		StepMania perused your songs foler on startup.
-  * At the upper-right is your version of StepMania.
-
-
-Config Key/Joy screen:
-
-	This menu allows you to map up to 2 keyboard/joystick buttons to each 
-	function in the game.  The third column is the default key mapping, and 
-	cannot be changed.  However, you can override a default keyboard key by 
-	simply assigning it to another function.  The mappings for player 1 are 
-	on the left half of the screen, and the mapping for player 2 are on right 
-	half.
-
-
-Appearance Options screen:
-	
-  * Display: 
-		Toggles between Fullscreen mode, in which StepMania is the only 
-		program visible and takes up the entire screen, and Windowed mode, 
-		in which StepMania runs in a window and can be moved about on your 
-		desktop and minimized or maximized, much like any other window.  
-		Many users have found that one mode or the other is more efficient 
-		and produces a smoother game.  This varies depending on memory and 
-		video functionality.
-  * Display Res: 
-		This switches between various standard resolutions of the screen.  
-		A higher number of pixels implies a sharper image, but requires more 
-		computer power.
-  * Texture Res: 
-		Adjusts the resolution (pixel density) of video textures used in the 
-		game.  More detail requires a more powerful computer.
-  * Refresh Rate: 
-		Sets the number of times that the screen will be redrawn in 1 second.
-		Note that this setting will only have an effect in Fullscreen mode.
-		'Default' uses the system default refresh rate (60Hz on most computers).
-  * Ignore JoyAxes: 
-		Many dance mat drivers (if you're using a dance mat) map the arrows 
-		as directions on a joystick axis.  A joystick cannot, logically, be 
-		in more than one place at a time, such as left but also right.  In 
-		the game, it is possible to hit two directions at once (in fact, 
-		required at times) and switching this setting to 'on' will make 
-		StepMania ignore the joystick requirement so that your dance mat 
-		will correctly register two arrows at once.  See section in the README
-		"Connecting Dance Pads" for more information on what adapters to use.
-  * Menu Buttons: 
-		Toggles whether or not the menus will respond to the gameplay buttons.  
-		If not, dedicated buttons for menu navigation will be required.
-  * Show FPS: 
-		Displays the current frames-per-second in the upper right side of the 
-		screen.
-  * BG Mode: 
 		This controls the state of the background behind the arrows.
 		OFF - Only the background graphic of the song is displayed.
 		ANIMATIONS - Along with the background graphic, animated graphics 
@@ -242,145 +154,6 @@ Appearance Options screen:
 			played as the background for the song.
 		Sample animations, visualizations, and random movies can be found at 
 		www.stepmania.com.
-  * BG Brightness:
-		Adjusts the brightness level of the backgrounds.  Since the 
-		backgrounds and the arrows are both brightly colored, darkening the 
-		backgrounds makes the arrows more visible.
-  * Menu Timer: 
-		Toggles whether or not StepMania will place a time limit on using any 
-		given menu.  This limit is usually in the upper-right corner of the 
-		screen.
-  * Event Mode: 
-		If set to ON, there is no limit to the number of songs played.  The 
-		player goes back to the Select Music screen even after failing a song, 
-		and continues to do so until they press Esc to move back a menu.  If 
-		set to OFF, the game will end after a number of songs specified in 
-		'Arcade stages', the next option down.
-  * Arcade Stages: 
-		If Event Mode is OFF, this is the number of songs that can 
-		successfully be cleared before the game over screen is displayed.
-  * Judge Difficulty: 
-		How accurate the player must be in stepping to get a better score for 
-		the step.  A higher number means they must be closer to the actual 
-		timing of the arrow.  Those of you who try to get all 'perfect' steps 
-		will have a monster of a time with this setting all the way up.
-  * Life Difficulty:
-		How difficult it is to keep the life meter at the top of the screen 
-		up.  The higher this number, the less it will increase for precise 
-		steps, and the more it will decrease for poorly timed steps.
-  * Auto Play:
-		The game will play as normal, but will hit all the arrows of its own 
-		accord, without the player's input.  It also will get a perfect on 
-		every step.  This will be saved as a high score for the song.
-
-
-Appearance Options Menu:
-
-  * Announcer: 
-		Select from the installed Announcer packs.  Get more at 
-		www.stepmania.com.
-  * Theme:
-		Select from installed Theme packs.  Themes change the look of Stepmania.
-		Get more at www.stepmania.com.
-  * Note Skin:
-		Change the appearance of the arrows in the game by selecting from the 
-		available packs.  
-	Announcer, theme, and note skin packs can be dowloaded from 
-	www.stepmania.com.
-
-
-Song Options Menu
-
-Upon selecting a song, the words 'Press NEXT for options' will appear on the screen.  If you press the 'next' button (enter by default) you will come to the Song Options menu, which contains a variety of settings for changing the way the song and arrows are played.
-
-Speed: The stream of arrows can be stretched out so that it comes faster, but the arrows are more spaced out.  It can be left at 1x (normal speed) or stretched by multiples of .5, .75, 1.5, 2, 3, 5, or even 8 times the original speed.
-
-Effect: Each of the effects changes the arrows themselves in some way, usually in such a way as to make them more obscure.  Consider these challenege modes.
-
-Off - No effect, normal arrow scrolling.
-Boost - Also known as 'parabolic' in some circles, this makes the arrows start up slowly and accelerate towards the top.
-Wave - Arrows alternately speed up and slow down.
-Drunk - Arrows sway back and forth as they scroll.
-Dizzy - Arrows spin as they scroll.
-Space - Similar to the scrolling effect in the Star Wars intros, arrows scroll away from the player.
-Mini - Arrows are really small.
-
-Appear: These change the visibility of the arrows.
-
-Visible - Normal arrow visibility.
-Hidden - Arrows disappear before they reach the top.
-Sudden - Arrows are invisible until close to the top.
-Stealth - Arrows are completely invisible.  The only way to get them is to either memorize the song, watch another player perform the same song at the same time as you on the same difficulty setting, or be really really lucky.
-
-Turn: These rotate the arrows.  The arrows will show up on screen in their rotated positions.
-
-Off - Normal arrows, unchanged from how they are in the step file
-Mirror - Steps are rotated 180 degrees.  Up becomes a down.
-Left  - Steps are rotated 90 degrees left.  Up becomes a left.
-Right - Steps are rotated 90 degrees right.  Up becomes a right.
-Shuffle - All steps in the step file are randomly shuffled.
-
-Little: Removes any arrows that aren't on the quarter beats.
-
-Scroll: BY reversing the scroll, the arrows will scroll from the top down instead of from the bottom up.
-
-Color: Changes the arrow colors.
-
-Vivid - Arrows cycle colors, and off-beat arrows are at different parts of the cycle so as to be easily identifiable.
-Note - Off-beat arrows are a different color from on-beat arrows, but colors do not cycle.  
-Flat - Off-beat arrows are the same color as on-beat arrows
-Plain - Same as flat, with the addition that notes do not cycle colors.
-
-Holds: If this is set to OFF, there will only be a normal arrow in place of any hold arrows that may appear.  Some players don't like hold arrows.
-
-Dark: This removes the grey arrows from the top of the screen, so that the player can't use them as a reference as to when to hit the proper arrow.
-
-Life Type: Switch between BAR, where there is a meter that can be increased with accurate steps and decreased with poor steps, and BATTERY, where the player gets a set number of batteries, similar to 'lives' in most games, which are removed as they player misses steps.
-
-Bar Drain: Functional only if Life Type is set to BAR.  Switch between three ways the life meter can function.
-
-Normal - Perfect and Great steps increase the bar, any others decrease it.
-No Recover: Same as Normal but it can only go down, not up.  Perfects and Greats leave it in place.
-Sudden Death - Any step score other than Great or Perfect will automatically fail.
-
-Bat. Lives: Functional only when Life Type is set to BATTERY.  This sets the number of batteries the player gets.
-
-Fail: If you fail by missing enough steps, this is when the song ends.
-
-Arcade - Song will end as soon as you fail it.
-End of Song - As the name implies, you will not fail out until the music end.  You miss every step and the song will keep playing until it's finished.
-Off - You cannot fail the song.
-
-Assist: Makes a 'clap' sound every time you are supposed to hit an arrow, to help the player acquaint his or herself with the song's rhythmic structure.
-
-Rate: This is the percent of normal speed that the song plays at.  Any song can be speeded up or slowed down as much as 30%.  This setting is not to correct a song that is misaligned to its steps, as the steps are also sped up or slowed down at the same rate that the song is.
-
-
-
-Select Style screen:  This is the screen where you choose your style of play. 
-
-  * Single:
-		One player, playing on one four-panel pad.  Second player need not apply.
-  * Versus:
-		Two players each with their own respective 4-panel pad and set of arrows.  
-		Each player can choose their own difficulty, and each has their own set 
-		of arrows to follow.  At the end of the song each player will recieve a 
-		separate grade.  There is no interaction between players other than 
-		comparing grades and, if you have dance mats, the possibility of crashing 
-		into each other during play :-)
-  * Double:
-		Same as single, except that one player uses both player's pads, and must 
-		contend with 8 arrows now instead of only four.  The step listings for 
-		doubles mode are separate from single or versus.  Only files containing 
-		such a set of steps will be displayed.
-  * Couple:
-		Very similar to versus, except that each player has a different set of 
-		steps, and each player must choose the same skill level.  Often stepfile 
-		authors use this mode to choreograph a patern between the two players.
-  * Solo:
-		One player plays on six panels.  Like double, this uses a different step 
-		chart than single or versus or double does, and only files containing 
-		that set of steps will be displayed.
 
 
 ************************************************************

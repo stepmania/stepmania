@@ -32,6 +32,7 @@ RageTextureManager::RageTextureManager( RageDisplay* pScreen )
 	m_pScreen = pScreen;
 	m_iMaxTextureSize = 2048;	// infinite size
 	m_iTextureColorDepth = 16;
+	m_bUnloadWhenDone = true;
 }
 
 RageTextureManager::~RageTextureManager()
@@ -123,16 +124,18 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 	
 	pTexture = p->second;
 	pTexture->m_iRefCount--;
-	if( pTexture->m_iRefCount != 0 )
+	ASSERT( pTexture->m_iRefCount >= 0 );
+	if( pTexture->m_iRefCount == 0 )	// There are no more references to this texture.
 	{
-//		LOG->Trace( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath, pTexture->m_iRefCount );
-		return;
+		if( pTexture->IsAMovie()  ||  m_bUnloadWhenDone )	// always unload if a movie so we don't waste time decoding
+		{
+		//	LOG->Trace( "RageTextureManager: '%s' will be deleted.  It has %d references.", sTexturePath, pTexture->m_iRefCount );
+			SAFE_DELETE( pTexture );		// free the texture
+			m_mapPathToTexture.erase(p);	// and remove the key in the map
+		}
 	}
 
-	// There are no more references to this texture.
-//	LOG->Trace( "RageTextureManager: '%s' will be deleted.  It has %d references.", sTexturePath, pTexture->m_iRefCount );
-	SAFE_DELETE( pTexture );		// free the texture
-	m_mapPathToTexture.erase(p);	// and remove the key in the map
+	//LOG->Trace( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath, pTexture->m_iRefCount );
 }
 
 void RageTextureManager::ReloadAll()
@@ -147,12 +150,14 @@ void RageTextureManager::ReloadAll()
 	}
 }
 
-void RageTextureManager::SetPrefs( DWORD dwMaxSize, DWORD dwTextureColorDepth )
+void RageTextureManager::SetPrefs( int iMaxSize, int iTextureColorDepth, bool bUnloadWhenDone )
 {
-	if( dwMaxSize == m_iMaxTextureSize  &&  dwTextureColorDepth == m_iTextureColorDepth )
-		return; 
+	m_bUnloadWhenDone = bUnloadWhenDone;
+	if( iMaxSize == m_iMaxTextureSize  &&  iTextureColorDepth == m_iTextureColorDepth )
+		return;
+	m_iMaxTextureSize = iMaxSize; 
+	m_iTextureColorDepth = iTextureColorDepth;
 	ASSERT( m_iMaxTextureSize >= 64 );
-	m_iMaxTextureSize = dwMaxSize; 
-	m_iTextureColorDepth = dwTextureColorDepth;
+	ASSERT( m_iTextureColorDepth >= 16 );
 	ReloadAll(); 
 }
