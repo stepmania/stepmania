@@ -382,6 +382,7 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 		if( m_vPagesToShow.size() > 0 )
 		{
 			float fSecsToShow = SetPage( m_vPagesToShow[0] );
+			this->SortByZ();
 			m_vPagesToShow.erase( m_vPagesToShow.begin() );
 			this->PostScreenMessage( SM_HidePage, fSecsToShow-PAGE_FADE_SECONDS );
 		}
@@ -851,8 +852,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 		ASSERT(0);
 		return 0;
 	}
-
-	this->SortByZ();
 }
 
 void ScreenRanking::TweenPageOffScreen()
