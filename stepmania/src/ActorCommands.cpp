@@ -8,6 +8,7 @@
 #include "LuaBinding.h"
 
 #include "SubscriptionManager.h"
+template<>
 set<ActorCommands*>* SubscriptionManager<ActorCommands>::s_pSubscribers = NULL;
 
 

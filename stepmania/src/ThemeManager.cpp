@@ -54,6 +54,7 @@ deque<Theme> g_vThemes;
 // For self-registering metrics
 //
 #include "SubscriptionManager.h"
+template<>
 set<IThemeMetric*>* SubscriptionManager<IThemeMetric>::s_pSubscribers = NULL;
 
 void ThemeManager::Subscribe( IThemeMetric *p )

@@ -25,6 +25,7 @@ const CString DEFAULT_LIGHTS_DRIVER = "Null";
 // For self-registering prefs
 //
 #include "SubscriptionManager.h"
+template<>
 set<IPreference*>* SubscriptionManager<IPreference>::s_pSubscribers = NULL;
 
 void PrefsManager::Subscribe( IPreference *p )
