@@ -43,8 +43,33 @@ const float SPIRAL_MIN_ZOOM = 0.3f;
 static const RectI FullScreenRectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM);
 
 
-BGAnimationLayer::BGAnimationLayer()
+BGAnimationLayer::BGAnimationLayer( bool Generic )
 {
+	/* If Generic is false, this is a layer in a real BGA--one that was loaded
+	 * by simply constructing a BGAnimation.  These normally have a position
+	 * of 0,0 (top-left of the screen).  Loaded images are given a default position
+	 * of 320x240, centered in the screen.  Additionally, the "On" command will
+	 * be run automatically.  Example:
+	 *
+	 * BGAnimation bga;
+	 * bga.Load( path );
+	 * this->AddChind( &bga );
+	 *
+	 * If Generic is true, then we act like any other actor.  We assume we don't
+	 * know anything about where we're positioned.  Loaded images are given a
+	 * default position of 0x0.  The "On" command is not run; we'll receive that
+	 * from the owner through COMMAND().  Example:
+	 * 
+	 * AutoActor image;
+	 * image.Load( path );
+	 * ON_COMMAND( image );
+	 * this->AddChind( &image );
+	 *
+	 * TYPE_PARTICLES and TYPE_TILES are currently not supported in this mode.
+	 * 
+	 */
+	m_bGeneric = Generic;
+
 	Init();
 }
 
@@ -151,6 +176,9 @@ void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 
 void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 {
+	/* Generic BGAs are new.  Animation directories with no INI are old and obsolete. 
+	 * Don't combine them. */
+	ASSERT( !m_bGeneric );
 	Init();
 	CString lcPath = sPath;
 	lcPath.MakeLower();
@@ -563,14 +591,19 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 
 			Actor* pActor = MakeActor( ID );
 			m_pActors.push_back( pActor );
-			if( Stretch )
-				pActor->StretchTo( FullScreenRectI );
-			else
-				pActor->SetXY( CENTER_X, CENTER_Y );
+			ASSERT( !(m_bGeneric && Stretch) );
+			if( !m_bGeneric )
+			{
+				if( Stretch )
+					pActor->StretchTo( FullScreenRectI );
+				else
+					pActor->SetXY( CENTER_X, CENTER_Y );
+			}
 		}
 		break;
 	case TYPE_PARTICLES:
 		{
+			ASSERT( !m_bGeneric );
 			for( int i=0; i<m_iNumParticles; i++ )
 			{
 				Actor* pActor = MakeActor( sPath );
@@ -592,6 +625,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		break;
 	case TYPE_TILES:
 		{
+			ASSERT( !m_bGeneric );
 			Sprite s;
 			RageTextureID ID(sPath);
 			ID.bStretch = true;
@@ -627,7 +661,8 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 			m_pActors[i]->SetState( rand()%m_pActors[i]->GetNumStates() );
 	}
 
-	PlayCommand( "On" );
+	if( !m_bGeneric )
+		PlayCommand( "On" );
 }
 
 float BGAnimationLayer::GetMaxTweenTimeLeft() const

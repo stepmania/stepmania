@@ -19,7 +19,7 @@
 class BGAnimationLayer
 {
 public:
-	BGAnimationLayer();
+	BGAnimationLayer( bool Generic );
 	~BGAnimationLayer();
 	void Init();
 	void Unload();
@@ -92,6 +92,7 @@ protected:
 	//
 	
 	// common stuff
+	bool m_bGeneric;
 	map<CString, CString> m_asCommands;
 	float m_fRepeatCommandEverySeconds;	// -1 = no repeat
 	float m_fSecondsUntilNextCommand;

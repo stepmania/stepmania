@@ -21,7 +21,7 @@ class BGAnimationLayer;
 class BGAnimation : public ActorFrame
 {
 public:
-	BGAnimation();
+	BGAnimation( bool Generic=false );
 	virtual ~BGAnimation();
 
 	void Unload();
@@ -51,6 +51,7 @@ public:
 protected:
 	vector<BGAnimationLayer*> m_Layers;
 	float	m_fLengthSeconds;
+	bool	m_bGeneric;
 };
 
 

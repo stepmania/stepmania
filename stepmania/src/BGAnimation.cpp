@@ -24,8 +24,10 @@
 
 const int MAX_LAYERS = 1000;
 
-BGAnimation::BGAnimation()
+BGAnimation::BGAnimation( bool Generic )
 {
+	/* See BGAnimationLayer::BGAnimationLayer for explanation. */
+	m_bGeneric = Generic;
 	m_fLengthSeconds = 10;
 }
 
@@ -45,12 +47,12 @@ void BGAnimation::LoadFromStaticGraphic( CString sPath )
 {
 	Unload();
 
-	BGAnimationLayer* pLayer = new BGAnimationLayer;
+	BGAnimationLayer* pLayer = new BGAnimationLayer( m_bGeneric );
 	pLayer->LoadFromStaticGraphic( sPath );
 	m_Layers.push_back( pLayer );
 }
 
-void AddLayersFromAniDir( CString sAniDir, vector<BGAnimationLayer*> &layersAddTo )
+void AddLayersFromAniDir( CString sAniDir, vector<BGAnimationLayer*> &layersAddTo, bool Generic )
 {
 	if( sAniDir.empty() )
 		 return;
@@ -79,12 +81,12 @@ void AddLayersFromAniDir( CString sAniDir, vector<BGAnimationLayer*> &layersAddT
 			// import a whole BGAnimation
 			sImportDir = sAniDir + sImportDir;
 			CollapsePath( sImportDir );
-			AddLayersFromAniDir( sImportDir, layersAddTo );
+			AddLayersFromAniDir( sImportDir, layersAddTo, Generic );
 		}
 		else
 		{
 			// import a single layer
-			BGAnimationLayer* pLayer = new BGAnimationLayer;
+			BGAnimationLayer* pLayer = new BGAnimationLayer( Generic );
 			pLayer->LoadFromIni( sAniDir, sLayer );
 			layersAddTo.push_back( pLayer );
 		}
@@ -109,7 +111,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 	if( DoesFileExist(sPathToIni) )
 	{
 		// This is a new style BGAnimation (using .ini)
-		AddLayersFromAniDir( sAniDir, m_Layers );	// TODO: Check for circular load
+		AddLayersFromAniDir( sAniDir, m_Layers, m_bGeneric );	// TODO: Check for circular load
 
 		IniFile ini(sPathToIni);
 		ini.ReadFile();
@@ -143,7 +145,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 			const CString sPath = asImagePaths[i];
 			if( Basename(sPath).Left(1) == "_" )
 				continue;	// don't directly load files starting with an underscore
-			BGAnimationLayer* pLayer = new BGAnimationLayer;
+			BGAnimationLayer* pLayer = new BGAnimationLayer( m_bGeneric );
 			pLayer->LoadFromAniLayerFile( asImagePaths[i] );
 			m_Layers.push_back( pLayer );
 		}
@@ -154,7 +156,7 @@ void BGAnimation::LoadFromMovie( CString sMoviePath )
 {
 	Unload();
 
-	BGAnimationLayer* pLayer = new BGAnimationLayer;
+	BGAnimationLayer* pLayer = new BGAnimationLayer( m_bGeneric );
 	pLayer->LoadFromMovie( sMoviePath );
 	m_Layers.push_back( pLayer );
 }
@@ -167,11 +169,11 @@ void BGAnimation::LoadFromVisualization( CString sVisPath )
 	const Song* pSong = GAMESTATE->m_pCurSong;
 	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background");
 
-	pLayer = new BGAnimationLayer;
+	pLayer = new BGAnimationLayer( m_bGeneric );
 	pLayer->LoadFromStaticGraphic( sSongBGPath );
 	m_Layers.push_back( pLayer );
 
-	pLayer = new BGAnimationLayer;
+	pLayer = new BGAnimationLayer( m_bGeneric );
 	pLayer->LoadFromVisualization( sVisPath );
 	m_Layers.push_back( pLayer );	
 }
