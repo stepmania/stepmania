@@ -29,6 +29,8 @@ static void SaveMachineStatsToFirstMemCard()
 		return;
 	}
 
+	MEMCARDMAN->FlushAndReset();
+
 	SCREENMAN->SystemMessage( "Stats not saved - No memory cards ready." );
 }
 
