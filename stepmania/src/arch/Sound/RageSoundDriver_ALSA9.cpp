@@ -41,6 +41,9 @@ void RageSound_ALSA9::MixerThread()
 				stream_pool[i]->state != stream::FLUSHING )
 				continue; /* inactive */
 
+			if( stream_pool[i]->bPaused )
+				continue; /* paused */
+
 			bool bEOF = false;
 			while( !shutdown && stream_pool[i]->GetData(bEOF) && !bEOF )
 				;
@@ -68,6 +71,7 @@ void RageSound_ALSA9::MixerThread()
 				continue; /* stopping but still flushing */
 
 			/* The sound has stopped and flushed all of its buffers. */
+			stream_pool[i]->bPaused = false;
 			stream_pool[i]->pcm->Stop();
 			stream_pool[i]->state = stream::FINISHED;
 		}
@@ -247,6 +251,27 @@ void RageSound_ALSA9::StopMixing(RageSoundBase *snd)
 	stream_pool[i]->snd = NULL;
 }
 
+bool RageSound_ALSA9::PauseMixing( RageSoundBase *snd, bool bStop )
+{
+	unsigned i;
+	for( i = 0; i < stream_pool.size(); ++i )
+		if(stream_pool[i]->snd == snd)
+			break;
+
+	/* A sound can be paused in PLAYING or FLUSHING.  (FLUSHING means the sound
+	 * has been decoded to the end, and we're waiting for that data to finish, so
+	 * externally it looks and acts like PLAYING.) */
+	if( i == stream_pool.size() ||
+			(stream_pool[i]->state != stream::PLAYING && stream_pool[i]->state != stream::FLUSHING) )
+	{
+		LOG->Trace("not stopping a sound because it's not playing");
+		return false;
+	}
+
+	stream_pool[i]->bPaused = bStop;
+
+	return true;
+}
 
 int64_t RageSound_ALSA9::GetPosition(const RageSoundBase *snd) const
 {

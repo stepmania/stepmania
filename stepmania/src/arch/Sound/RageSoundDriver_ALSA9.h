@@ -13,6 +13,7 @@ public:
 	/* virtuals: */
 	void StartMixing(RageSoundBase *snd);
 	void StopMixing(RageSoundBase *snd);
+	bool PauseMixing( RageSoundBase *snd, bool bStop );
 	int64_t GetPosition( const RageSoundBase *snd ) const;
 	int GetSampleRate( int rate ) const;
 
@@ -39,6 +40,7 @@ private:
 		 * channel is available: */
 		RageSoundBase *snd;
 		RageTimer start_time;
+		bool bPaused;
 
 		enum {
 			INACTIVE,
@@ -52,7 +54,7 @@ private:
 
 		bool GetData( bool &bEOF );
 
-		stream() { pcm = NULL; snd = NULL; state=INACTIVE; }
+		stream() { pcm = NULL; snd = NULL; state = INACTIVE; bPaused = false; }
 		~stream();
 	};
 	friend struct stream;
