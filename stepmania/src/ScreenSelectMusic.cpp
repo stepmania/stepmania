@@ -39,6 +39,8 @@ const int NUM_SCORE_DIGITS	=	9;
 #define BANNER_HEIGHT						THEME->GetMetricF("ScreenSelectMusic","BannerHeight")
 #define SONG_OPTIONS_EXTRA_COMMAND			THEME->GetMetric ("ScreenSelectMusic","SongOptionsExtraCommand")
 #define SAMPLE_MUSIC_DELAY					THEME->GetMetricF("ScreenSelectMusic","SampleMusicDelay")
+#define SHOW_RADAR							THEME->GetMetricB("ScreenSelectMusic","ShowRadar")
+#define SHOW_GRAPH							THEME->GetMetricB("ScreenSelectMusic","ShowGraph")
 
 
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
@@ -84,7 +86,12 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	this->AddChild( &m_sprCDTitle );
 
 	m_GrooveRadar.SetName( "Radar" );
-	this->AddChild( &m_GrooveRadar );
+	if( SHOW_RADAR )
+		this->AddChild( &m_GrooveRadar );
+
+	m_GrooveGraph.SetName( "Graph" );
+	if( SHOW_GRAPH )
+		this->AddChild( &m_GrooveGraph );
 
 	m_textSongOptions.SetName( "SongOptions" );
 	m_textSongOptions.LoadFromFont( THEME->GetPathToF("Common normal") );
@@ -197,6 +204,8 @@ void ScreenSelectMusic::TweenOnScreen()
 	SET_XY_AND_ON_COMMAND( m_sprCDTitle );
 	m_GrooveRadar.TweenOnScreen();
 	SET_XY_AND_ON_COMMAND( m_GrooveRadar );
+	m_GrooveGraph.TweenOnScreen();
+	SET_XY_AND_ON_COMMAND( m_GrooveGraph );
 	SET_XY_AND_ON_COMMAND( m_textSongOptions );
 	SET_XY_AND_ON_COMMAND( m_MusicSortDisplay );
 	m_MusicWheel.TweenOnScreen();
@@ -230,6 +239,8 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_sprCDTitle );
 	m_GrooveRadar.TweenOffScreen();
 	OFF_COMMAND( m_GrooveRadar );
+	m_GrooveGraph.TweenOffScreen();
+	OFF_COMMAND( m_GrooveGraph );
 	OFF_COMMAND( m_textSongOptions );
 	OFF_COMMAND( m_MusicSortDisplay );
 	m_MusicWheel.TweenOffScreen();
@@ -723,6 +734,8 @@ void ScreenSelectMusic::AfterMusicChange()
 	GAMESTATE->m_pCurSong = pSong;
 
 	m_sprStage.Load( THEME->GetPathToG("ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
+
+	m_GrooveGraph.SetFromSong( pSong );
 
 	int pn;
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)

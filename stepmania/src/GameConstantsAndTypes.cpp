@@ -13,6 +13,18 @@
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
 
+CString CategoryToString( RadarCategory cat )
+{
+	switch( cat )
+	{
+	case RADAR_STREAM:	return "stream";
+	case RADAR_VOLTAGE:	return "voltage";
+	case RADAR_AIR:		return "air";
+	case RADAR_FREEZE:	return "freeze";
+	case RADAR_CHAOS:	return "chaos";
+	default:	ASSERT(0);		return "";	// invalid
+	}
+}
 
 CString DifficultyToString( Difficulty dc )
 {

@@ -44,6 +44,8 @@ enum RadarCategory	// starting from 12-o'clock rotating clockwise
 	NUM_RADAR_CATEGORIES	// leave this at the end
 };
 
+CString CategoryToString( RadarCategory cat );
+
 enum Difficulty 
 {
 	DIFFICULTY_BEGINNER,	// corresponds to DDREX Beginner
@@ -56,7 +58,6 @@ enum Difficulty
 };
 
 CString DifficultyToString( Difficulty dc );
-
 Difficulty StringToDifficulty( CString sDC );
 
 

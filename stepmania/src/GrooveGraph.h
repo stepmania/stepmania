@@ -29,7 +29,7 @@ public:
 
 protected:
 
-	class Mountain : public ActorFrame
+	class Mountain : public Actor
 	{
 	public:
 		Mountain();
@@ -39,13 +39,13 @@ protected:
 
 		void SetValues( float fNewValues[] );
 
-		float m_PercentTowardNew;
+		float m_fPercentTowardNew;
 		float m_fValuesNew[NUM_DIFFICULTIES];
 		float m_fValuesOld[NUM_DIFFICULTIES];
 	};
 
+	Sprite m_sprBase;
 	Mountain m_Mountains[NUM_RADAR_CATEGORIES];
-	Sprite m_sprLabels[NUM_RADAR_CATEGORIES];
 };
 
 #endif

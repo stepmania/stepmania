@@ -26,33 +26,50 @@
 
 const float GRAPH_EDGE_WIDTH	= 2;
 
+#define EDGE_WIDTH				THEME->GetMetricF("GrooveGraph","EdgeWidth")
+#define DIFFICULTY_COLORS(dc)	THEME->GetMetricC("GrooveGraph",Capitalize(DifficultyToString(dc))+"Color")
+#define SHOW_CATEGORY(cat)		THEME->GetMetricB("GrooveGraph","Show"+Capitalize(CategoryToString(cat)))
+#define CATEGORY_X(cat)			THEME->GetMetricF("GrooveGraph",Capitalize(CategoryToString(cat))+"X")
+#define MOUNTAINS_Y				THEME->GetMetricF("GrooveGraph","MountainsY")
+CachedThemeMetricF MOUNTAIN_WIDTH	("GrooveGraph","MountainWidth");
+CachedThemeMetricF MOUNTAIN_HEIGHT	("GrooveGraph","MountainHeight");
+
+RageColor	g_DifficultyColorsCache[NUM_DIFFICULTIES];
+
 GrooveGraph::GrooveGraph()
 {
+	for( int i=0; i<NUM_DIFFICULTIES; i++ )
+		g_DifficultyColorsCache[i] = DIFFICULTY_COLORS((Difficulty)i);
+	MOUNTAIN_WIDTH.Refresh();
+	MOUNTAIN_HEIGHT.Refresh();
+
+	m_sprBase.Load( THEME->GetPathToG("GrooveGraph base") );
+	this->AddChild( &m_sprBase );
+
 	for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
 	{
-		float fTotalWidth = 60 * NUM_RADAR_CATEGORIES;
-		float fX = SCALE(c,0,NUM_RADAR_CATEGORIES-1, -fTotalWidth, +fTotalWidth );
+		if( !SHOW_CATEGORY((RadarCategory)c) )
+			continue;
 
-		m_Mountains[c].SetXY( fX, -20 );
+		m_Mountains[c].SetXY( CATEGORY_X((RadarCategory)c), MOUNTAINS_Y );
 		this->AddChild( &m_Mountains[c] );
-
-		m_sprLabels[c].Load( THEME->GetPathToG("GrooveGraph labels 1x5") );
-		m_sprLabels[c].StopAnimating();
-		m_sprLabels[c].SetState( c );
-		m_sprLabels[c].SetXY( fX, +10 );
-		this->AddChild( &m_sprLabels[c] );
 	}
 }
 
 void GrooveGraph::SetFromSong( Song* pSong )
 {
 	float fValues[NUM_RADAR_CATEGORIES][NUM_DIFFICULTIES];
-	for( int i=0; i<NUM_DIFFICULTIES; i++ )
+	ZERO( fValues );
+
+	if( pSong )
 	{
-		Notes* pNotes = pSong->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, (Difficulty)i );
-		const float* fRadarValues = pNotes ? pNotes->GetRadarValues() : NULL;
-		for( int j=0; j<NUM_RADAR_CATEGORIES; j++ )
-			fValues[j][i] = fRadarValues ? fRadarValues[j] : 0;
+		for( int i=0; i<NUM_DIFFICULTIES; i++ )
+		{
+			Notes* pNotes = pSong->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, (Difficulty)i );
+			const float* fRadarValues = pNotes ? pNotes->GetRadarValues() : NULL;
+			for( int j=0; j<NUM_RADAR_CATEGORIES; j++ )
+				fValues[j][i] = fRadarValues ? fRadarValues[j] : 0;
+		}
 	}
 
 	for( int j=0; j<NUM_RADAR_CATEGORIES; j++ )
@@ -71,7 +88,7 @@ void GrooveGraph::TweenOffScreen()
 
 GrooveGraph::Mountain::Mountain()
 {
-	m_PercentTowardNew = 0;
+	m_fPercentTowardNew = 0;
 
 	for( int i=0; i<NUM_DIFFICULTIES; i++ )
 	{
@@ -82,51 +99,44 @@ GrooveGraph::Mountain::Mountain()
 
 void GrooveGraph::Mountain::SetValues( float fNewValues[NUM_DIFFICULTIES] )
 {
-	m_PercentTowardNew = 0;
+	m_fPercentTowardNew = 0;
 
-	memcpy( m_fValuesOld, m_fValuesNew, sizeof(m_fValuesNew) );
-	memcpy( m_fValuesNew, fNewValues, sizeof(fNewValues) );
+	for( int i=0; i<NUM_DIFFICULTIES; i++ )
+	{
+		m_fValuesOld[i] = m_fValuesNew[i];
+		m_fValuesNew[i] = fNewValues[i];
+	}
 }
 
 void GrooveGraph::Mountain::Update( float fDeltaTime )
 {
-	ActorFrame::Update( fDeltaTime );
+	Actor::Update( fDeltaTime );
 
-	m_PercentTowardNew = min( m_PercentTowardNew+4.0f*fDeltaTime, 1 );
+	m_fPercentTowardNew += 4.0f*fDeltaTime;
+	CLAMP( m_fPercentTowardNew, 0, 1 );
 }
-
-const RageColor g_DifficultyColors[NUM_DIFFICULTIES] = 
-{
-	RageColor(0.5f,0.5f,1,1),	// light blue
-	RageColor(1,1,0,1),	// yellow
-	RageColor(1,0,0,1),	// red
-	RageColor(0,1,0,1),	// green
-	RageColor(0,0,1,1),	// blue
-};
 
 void GrooveGraph::Mountain::DrawPrimitives()
 {
-	ActorFrame::DrawPrimitives();
-
 	DISPLAY->SetTexture( NULL );
 	DISPLAY->SetTextureModeModulate();
 	RageVertex v[3];
 
 	for( int i=NUM_DIFFICULTIES-1; i>=0; i-- )
 	{
-		float fValue = m_fValuesOld[i] + (m_fValuesNew[i]-m_fValuesOld[i]) * m_PercentTowardNew;
-		v[0].p = RageVector3( -30, -30,	0 );
-		v[1].p = RageVector3( 30, -30,	0 );
-		v[2].p = RageVector3( 0, -30+60*fValue,	0 );
-		v[0].c = v[1].c = v[2].c = g_DifficultyColors[i];
+		float fValue = SCALE(m_fPercentTowardNew, 0.f, 1.f, m_fValuesOld[i], m_fValuesNew[i] );
+		float fHeight = MOUNTAIN_HEIGHT*fValue;
+		v[0].p = RageVector3( -MOUNTAIN_WIDTH/2, MOUNTAIN_HEIGHT/2,	0 );
+		v[1].p = RageVector3( MOUNTAIN_WIDTH/2, MOUNTAIN_HEIGHT/2,	0 );
+		v[2].p = RageVector3( 0, (MOUNTAIN_HEIGHT/2)-fHeight, 0 );
+		v[0].c = v[1].c = v[2].c = g_DifficultyColorsCache[i];
+		DISPLAY->DrawFan( v, 3 );
 	}
-
-	DISPLAY->DrawFan( v, 3 );
 
 	switch( PREFSMAN->m_iPolygonRadar )
 	{
 	case 0:		DISPLAY->DrawLoop_LinesAndPoints( v, 3, 2 );	break;
-	case 1:		DISPLAY->DrawLoop_Polys( v, 3, 2 );			break;
+	case 1:		DISPLAY->DrawLoop_Polys( v, 3, 2 );				break;
 	default:
 	case -1:	DISPLAY->DrawLoop( v, 3, 2 );					break;
 	}
