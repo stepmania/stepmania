@@ -794,10 +794,10 @@ void RageDisplay_D3D::SetMaterial(
 	)
 {
 	D3DMATERIAL8 mat;
-	memcpy( &mat.Diffuse, diffuse, sizeof(diffuse) );
-	memcpy( &mat.Ambient, ambient, sizeof(ambient) );
-	memcpy( &mat.Specular, specular, sizeof(specular) );
-	memcpy( &mat.Emissive, emissive, sizeof(emissive) );
+	memcpy( &mat.Diffuse, diffuse, sizeof(float)*4 );
+	memcpy( &mat.Ambient, ambient, sizeof(float)*4 );
+	memcpy( &mat.Specular, specular, sizeof(float)*4 );
+	memcpy( &mat.Emissive, emissive, sizeof(float)*4 );
 	mat.Power = shininess;
 	g_pd3dDevice->SetMaterial( &mat );
 }
@@ -822,11 +822,16 @@ void RageDisplay_D3D::SetLightDirectional(
 
 	D3DLIGHT8 light;
 	ZERO( light );
-	memcpy( &light.Direction, &dir, sizeof(dir) );
+	light.Type = D3DLIGHT_DIRECTIONAL;
 	memcpy( &light.Direction, &dir, sizeof(dir) );
 	memcpy( &light.Diffuse, diffuse, sizeof(diffuse) );
 	memcpy( &light.Ambient, ambient, sizeof(ambient) );
 	memcpy( &light.Specular, specular, sizeof(specular) );
+	
+	// Same as OpenGL defaults.  Not used in directional lights.
+//	light.Attenuation0 = 1;
+//	light.Attenuation1 = 0;
+//	light.Attenuation2 = 0;
 
 	g_pd3dDevice->SetLight( index, &light );
 }
