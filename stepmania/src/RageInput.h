@@ -117,11 +117,8 @@ class RageInput
 		int GetPadEvent();
 	} *m_Pumps;
 
-	INT m_AbsPosition_x;
-	INT m_AbsPosition_y;
-
-	INT m_RelPosition_x;
-	INT m_RelPosition_y;
+	INT m_AbsPosition_x, m_AbsPosition_y;
+	INT m_RelPosition_x, m_RelPosition_y;
 
 	static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
 										       VOID* pContext );
@@ -140,7 +137,7 @@ public:
 	~RageInput();
 
 	// Initialize DirectInput Resources
-	HRESULT Initialize();
+	void Initialize();
 	// Release all DirectInput Resources
 	void Release();
 	// Get our Devices State
@@ -149,7 +146,7 @@ public:
 	bool WasBeingPressed( DeviceInput di );
 
 //	DIMOUSESTATE2		 GetMouseState() { return dimMouseState; }
-	void GetAbsPosition( DWORD &x, DWORD &y ) const { x = m_AbsPosition_x; y = m_AbsPosition_y; }
+	void GetAbsPosition( int &x, int &y ) const { x = m_AbsPosition_x; y = m_AbsPosition_y; }
 };
 
 namespace USB {

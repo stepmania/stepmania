@@ -394,7 +394,7 @@ RageInput::~RageInput()
 	Release();
 }
 
-HRESULT RageInput::Initialize()
+void RageInput::Initialize()
 {
 	HRESULT hr;
 
@@ -537,8 +537,6 @@ HRESULT RageInput::Initialize()
 		if(m_Pumps[pumpNo].init(pumpNo))
 			LOG->Trace("Found Pump pad %i\n", pumpNo);
 	}
-
-	return S_OK;
 }
 
 void RageInput::Release()
