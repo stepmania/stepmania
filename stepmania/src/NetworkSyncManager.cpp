@@ -32,7 +32,6 @@ void NetworkSyncManager::Update( float fDeltaTime ) { }
 #include "SongManager.h"
 #include "GameState.h"
 #include "StageStats.h"
-#include "String.h"
 #include "Steps.h"
 
 NetworkSyncManager::NetworkSyncManager()
