@@ -51,6 +51,7 @@ namespace GLExt {
 	extern PFNGLBINDBUFFERARBPROC glBindBufferARB;
 	extern PFNGLBUFFERDATAARBPROC glBufferDataARB;
 	extern PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB;
+	extern PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
 };
 
 #if defined(DARWIN)
@@ -92,6 +93,7 @@ PFNGLGENBUFFERSARBPROC GLExt::glGenBuffersARB = NULL;
 PFNGLBINDBUFFERARBPROC GLExt::glBindBufferARB = NULL;
 PFNGLBUFFERDATAARBPROC GLExt::glBufferDataARB = NULL;
 PFNGLDELETEBUFFERSARBPROC GLExt::glDeleteBuffersARB = NULL;
+PFNGLDRAWRANGEELEMENTSPROC GLExt::glDrawRangeElements = NULL;
 static bool g_bEXT_texture_env_combine = true;
 static bool g_bGL_EXT_bgra = true;
 
@@ -659,6 +661,7 @@ void SetupExtensions()
 	GLExt::glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wind->GetProcAddress("glBindBufferARB");
 	GLExt::glBufferDataARB = (PFNGLBUFFERDATAARBPROC) wind->GetProcAddress("glBufferDataARB");
 	GLExt::glDeleteBuffersARB = (PFNGLDELETEBUFFERSARBPROC) wind->GetProcAddress("glDeleteBuffersARB");
+	GLExt::glDrawRangeElements = (PFNGLDRAWRANGEELEMENTSPROC) wind->GetProcAddress("glDrawRangeElements");
 	g_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
 	g_bGL_EXT_bgra = HasExtension("GL_EXT_bgra");
 	CheckPalettedTextures( false );
@@ -1067,19 +1070,19 @@ public:
 
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
 		GLExt::glBufferDataARB( GL_ARRAY_BUFFER_ARB, m_sizeVerts*sizeof(RageVector3), m_pPosition, GL_STATIC_DRAW_ARB );
-		AssertNoGLError();
+//		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
 		GLExt::glBufferDataARB( GL_ARRAY_BUFFER_ARB, m_sizeVerts*sizeof(RageVector2), m_pTexture, GL_STATIC_DRAW_ARB );
-		AssertNoGLError();
+//		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
 		GLExt::glBufferDataARB( GL_ARRAY_BUFFER_ARB, m_sizeVerts*sizeof(RageVector3), m_pNormal, GL_STATIC_DRAW_ARB );
-		AssertNoGLError();
+//		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
 		GLExt::glBufferDataARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_sizeTriangles*sizeof(msTriangle), m_pTriangles, GL_STATIC_DRAW_ARB );
-		AssertNoGLError();
+//		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
 		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
@@ -1093,29 +1096,37 @@ public:
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
-		AssertNoGLError();
+//		AssertNoGLError();
 		glVertexPointer(3, GL_FLOAT, 0, NULL );
-		AssertNoGLError();
+//		AssertNoGLError();
 
 		glDisableClientState(GL_COLOR_ARRAY);
 
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
-		AssertNoGLError();
+//		AssertNoGLError();
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
-		AssertNoGLError();
+//		AssertNoGLError();
 
 		glEnableClientState(GL_NORMAL_ARRAY);
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
-		AssertNoGLError();
+//		AssertNoGLError();
 		glNormalPointer(GL_FLOAT, 0, NULL);
-		AssertNoGLError();
+//		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
-		AssertNoGLError();
+//		AssertNoGLError();
 
-		glDrawElements( GL_TRIANGLES, m_sizeTriangles*3, GL_UNSIGNED_SHORT, 0 );  //last 0 is offset in element-array
-		AssertNoGLError();
+#define BUFFER_OFFSET(o) o
+
+		GLExt::glDrawRangeElements( 
+			GL_TRIANGLES, 
+			0,					// minimum array index contained in indices
+			m_sizeVerts-1,		// maximum array index contained in indices
+			m_sizeTriangles*3,	// number of elements to be rendered
+			GL_UNSIGNED_SHORT,	//
+			0 );
+//		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
 		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
