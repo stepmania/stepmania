@@ -109,12 +109,12 @@ void NetworkSyncManager::CloseConnection()
 void NetworkSyncManager::PostStartUp(const CString& ServerIP)
 {
 	CString sAddress;
-	int iPort;
+	short iPort;
 	
 	int cLoc = ServerIP.Find( ":" );
 	if ( ServerIP.Find( ":" ) > 0 )
 	{
-		iPort = atoi( ServerIP.substr( cLoc + 1 ).c_str() );
+		iPort = (short) atoi( ServerIP.substr( cLoc + 1 ).c_str() );
 		sAddress = ServerIP.substr( 0, cLoc );
 	}
 	else
