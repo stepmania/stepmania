@@ -4,16 +4,17 @@
 
   LGPL (c) A. Schiffler
 
+  This file is indented with a tab size of 8, unlike the rest of the SM
+  source which has a tab size of 4.  I'm leaving it that way so I can
+  send patches upstream.  (Since 8 is the de-facto standard tab size,
+  it'd be nice to fix the rest of the source to use it, but I don't want
+  to do a full-source commit ...) -glenn
 */
 
-#ifdef WIN32
-#include <windows.h>
-#endif
+#include "SDL_rotozoom.h"
 
 #include <stdlib.h>
-#include <string.h>
-
-#include "SDL_rotozoom.h"
+#include <math.h>
 
 typedef struct tColorRGBA {
     Uint8 r;
@@ -39,7 +40,6 @@ typedef struct tColorY {
 int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int smooth)
 {
     int x, y, sx, sy, *sax, *say;
-    tColorRGBA *c00, *c01, *c10, *c11;
 
     /* Variable setup */
     // if (smooth) {
@@ -53,9 +53,7 @@ int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int smooth)
 	sy = (int) (65536.0 * (float) src->h / (float) dst->h);
     //}
 
-    /*
-     * Allocate memory for row increments 
-     */
+    /* Allocate memory for row increments */
     if ((sax = (int *) malloc((dst->w + 1) * sizeof(Uint32))) == NULL)
 	return (-1);
 
@@ -64,32 +62,29 @@ int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int smooth)
 	return (-1);
     }
 
-    /*
-     * Precalculate row increments 
-     */
+    /* Precalculate row increments */
     int csx = 0;
     int *csax = sax;
     for (x = 0; x <= dst->w; x++) {
+	csx &= 0xffff;
 	*csax = csx;
 	csax++;
-	csx &= 0xffff;
 	csx += sx;
     }
     int csy = 0;
     int *csay = say;
     for (y = 0; y <= dst->h; y++) {
+	csy &= 0xffff;
 	*csay = csy;
 	csay++;
-	csy &= 0xffff;
 	csy += sy;
     }
 
     /*
      * Pointer setup 
      */
-    tColorRGBA *sp, *csp, *dp;
+    tColorRGBA *sp, *csp;
     sp = csp = (tColorRGBA *) src->pixels;
-    dp = (tColorRGBA *) dst->pixels;
     int sgap = src->pitch - src->w * 4;
     int dgap = dst->pitch - dst->w * 4;
 
@@ -100,23 +95,22 @@ int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int smooth)
 
 	/* Scan destination */
 	for (y = 0; y < dst->h; y++) {
-	    /*
-	     * Setup color source pointers 
-	     */
-	    c00 = csp;
-	    c01 = csp;
-	    c01++;
-	    c10 = (tColorRGBA *) ((Uint8 *) csp + src->pitch);
-	    c11 = c10;
-	    c11++;
+	    /* Set up color source pointers */
+	    tColorRGBA *c00 = csp;
+	    tColorRGBA *c01 = csp+1;
+	    tColorRGBA *c10 = (tColorRGBA *) ((Uint8 *) csp + src->pitch);
+	    tColorRGBA *c11 = c10+1;
 	    csax = sax;
+	    /* Set destination pointer. */
+	    tColorRGBA *dp = (tColorRGBA *) ((Uint8 *) dst->pixels + dgap*y);
+
 	    for (x = 0; x < dst->w; x++) {
 
 		/*
 		 * Interpolate colors 
 		 */
-		int ex = (*csax & 0xffff);
-		int ey = (*csay & 0xffff);
+		int ex = *csax;
+		int ey = *csay;
 		int t1, t2;
 		t1 = ((((c01->r - c00->r) * ex) >> 16) + c00->r) & 0xff;
 		t2 = ((((c11->r - c10->r) * ex) >> 16) + c10->r) & 0xff;
@@ -131,37 +125,27 @@ int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int smooth)
 		t2 = ((((c11->a - c10->a) * ex) >> 16) + c10->a) & 0xff;
 		dp->a = (Uint8)((((t2 - t1) * ey) >> 16) + t1);
 
-		/*
-		 * Advance source pointers 
-		 */
+		/* Advance source pointers. */
 		csax++;
 		int sstep = (*csax >> 16);
 		c00 += sstep;
 		c01 += sstep;
 		c10 += sstep;
 		c11 += sstep;
-		/*
-		 * Advance destination pointer 
-		 */
+		/* Advance destination pointer. */
 		dp++;
 	    }
-	    /*
-	     * Advance source pointer 
-	     */
+	    /* Advance source pointer. */
 	    csay++;
 	    csp = (tColorRGBA *) ((Uint8 *) csp + (*csay >> 16) * src->pitch);
-	    /*
-	     * Advance destination pointers 
-	     */
-	    dp = (tColorRGBA *) ((Uint8 *) dp + dgap);
 	}
 
     } else {
 	/* Non-Interpolating Zoom */
-
 	for (y = 0; y < dst->h; y++) {
 	    sp = csp;
 	    csax = sax;
+	    tColorRGBA *dp = (tColorRGBA *) ((Uint8 *) dst->pixels + dgap*y);
 	    for (x = 0; x < dst->w; x++) {
 		/* Draw */
 		*dp = *sp;
@@ -174,8 +158,6 @@ int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int smooth)
 	    /* Advance source pointer */
 	    csay++;
 	    csp = (tColorRGBA *) ((Uint8 *) csp + (*csay >> 16) * src->pitch);
-	    /* Advance destination pointers */
-	    dp = (tColorRGBA *) ((Uint8 *) dp + dgap);
 	}
 
     }
