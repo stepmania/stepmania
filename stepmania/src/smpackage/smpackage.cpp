@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "smpackage.h"
-#include "smpackageDlg.h"
+#include "smpackageExportDlg.h"
 #include "smpackageInstallDlg.h"
 #include "RageUtil.h"
 
@@ -111,7 +111,7 @@ BOOL CSmpackageApp::InitInstance()
 
 
 	// Show the Manager Dialog
-	CSmpackageDlg dlg;
+	CSmpackageExportDlg dlg;
 	int nResponse = dlg.DoModal();
 //	if (nResponse == IDOK)
 

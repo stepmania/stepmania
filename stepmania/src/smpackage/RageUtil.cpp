@@ -500,7 +500,10 @@ bool IsAFile( const CString &sPath )
 bool IsADirectory( const CString &sPath )
 {
     DWORD dwAttr = GetFileAttributes( sPath );
-    return (dwAttr & FILE_ATTRIBUTE_DIRECTORY) != 0;
+	if( dwAttr == 0xFFFFFFFF )	// failed
+		return false;
+	else
+		return (dwAttr & FILE_ATTRIBUTE_DIRECTORY) != 0;
 }
 
 

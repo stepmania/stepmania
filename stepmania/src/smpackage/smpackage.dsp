@@ -88,6 +88,14 @@ LINK32=link.exe
 # Name "smpackage - Win32 Debug"
 # Begin Source File
 
+SOURCE=.\EnterName.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\EnterName.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\install.bmp
 # End Source File
 # Begin Source File
@@ -136,11 +144,11 @@ SOURCE=.\res\smpackage.rc2
 # End Source File
 # Begin Source File
 
-SOURCE=.\smpackageDlg.cpp
+SOURCE=.\SmpackageExportDlg.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\smpackageDlg.h
+SOURCE=.\SmpackageExportDlg.h
 # End Source File
 # Begin Source File
 
