@@ -405,7 +405,7 @@ FileSet &FilenameDB::GetFileSet( CString dir )
 	lower.MakeLower();
 
 	FileSet *ret;
-	map<CString, FileSet *>::iterator i = dirs.find( dir );
+	map<CString, FileSet *>::iterator i = dirs.find( lower );
 	bool reload = false;
 	if(i == dirs.end())
 	{
