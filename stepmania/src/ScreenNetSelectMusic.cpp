@@ -138,8 +138,8 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 			so = SORT_TITLE;
 
 		GAMESTATE->m_PreferredSortOrder = so;
-		m_MusicWheel.SetOpenGroup( ssprintf("%c", c ), so );
 		m_MusicWheel.SelectSection( ssprintf("%c", c ) );
+		m_MusicWheel.SetOpenGroup( ssprintf("%c", c ), so );
 		m_MusicWheel.Move( +1 );
 		//m_MusicWheel.Move( -1 );
 	}
