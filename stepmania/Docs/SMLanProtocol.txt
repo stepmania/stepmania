@@ -28,8 +28,8 @@ Payload - variable size based on command
 The payload may contain more data than expected, i.e. new protocol version.
 
 If the size is 	"NT" then that means it's a null-terminating string.
-		"MSN" most significant 4 bits
-		"LSN" least significant 4 bits
+		"MSN" most significant 4 bits (byte/16)
+		"LSN" least significant 4 bits (byte%16)
 
 
 Note: Primary player is 0x0, secondary player is 0x1
@@ -344,6 +344,14 @@ Client SMOnline packets:
 		1: User wishes to enter room 
     NT		Room Name (Used when entering rooms)
 
+002: Create a new Room
+ Size:
+    1		Room Type
+		0: Normal room (has sub rooms)
+		1: Game room (no sub rooms)
+    NT		Room Title
+    NT		Room Description
+
 
 Server SMOnline packets:
 000:  Login Responce
@@ -371,4 +379,4 @@ Server SMOnline packets:
     NT		Room2 Description		
 	...
     NT		RoomN Title
-    NT		RoomN Description		
+    NT		RoomN Description
