@@ -42,8 +42,9 @@ struct ConfOption
 		m_iEffects = 0;
 #define PUSH( c )	if(c) names.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
-#undef PUSH
 	}
+	void AddOption( const CString &sName ) { PUSH(sName); }
+#undef PUSH
 
 	ConfOption( const char *n, MoveData_t m,
 			void (*lst)( CStringArray &out ) )
