@@ -6,13 +6,10 @@
 class Sample3dObject: public ActorFrame
 {
 	float rot;
-	float fDeltaTime;
-	float tX;
-	float tY;
-	float tZ;
+
 public:
 	Sample3dObject();
-	void Update();
+	void Update( float fDeltaTime );
 	void DrawPrimitives();
 	
 };

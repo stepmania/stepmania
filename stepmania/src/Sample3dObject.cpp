@@ -18,12 +18,10 @@
 Sample3dObject::Sample3dObject()
 {
 	rot = 0;
-	Sample3dObject::Update();
-	DrawPrimitives();
 
 }
 
-void Sample3dObject::Update()
+void Sample3dObject::Update( float fDeltaTime )
 {
 	rot += fDeltaTime * 360.f;
 	rot = float(fmod(rot, 360.f));
