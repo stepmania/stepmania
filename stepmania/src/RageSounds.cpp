@@ -176,6 +176,9 @@ void StartMusic( MusicToPlay &ToPlay )
 
 	if( ToPlay.HasTiming && ToPlay.force_loop && ToPlay.length_sec != -1 )
 	{
+		/* Extend the loop period so it always starts and ends on the same fractional
+		 * beat.  That is, if it starts on beat 1.5, and ends on beat 10.2, extend it
+		 * to end on beat 10.5.  This way, effects always loop cleanly. */
 		float fStartBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTime( ToPlay.start_sec );
 		float fEndSec = ToPlay.start_sec + ToPlay.length_sec;
 		float fEndBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTime( fEndSec );
@@ -189,8 +192,12 @@ void StartMusic( MusicToPlay &ToPlay )
 
 		fEndBeat += fBeatDifference;
 
-		float fRealEndSec = NewMusic->m_NewTiming.GetElapsedTimeFromBeat( fEndBeat );
-		ToPlay.length_sec = fRealEndSec - ToPlay.start_sec;
+		const float fRealEndSec = NewMusic->m_NewTiming.GetElapsedTimeFromBeat( fEndBeat );
+		const float fNewLengthSec = fRealEndSec - ToPlay.start_sec;
+
+		/* Extend the fade_len, so the added time is faded out. */
+		ToPlay.fade_len += fNewLengthSec - ToPlay.length_sec;
+		ToPlay.length_sec = fNewLengthSec;
 	}
 
 	bool StartImmediately = false;
