@@ -258,6 +258,19 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn )
 	}
 }
 
+bool GameState::IsCourseMode() const
+{
+	switch(m_PlayMode)
+	{
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_NONSTOP:
+	case PLAY_MODE_ENDLESS:
+		return true;
+	default:
+		return false;
+	}
+}
+
 bool GameState::HasEarnedExtraStage()
 {
 	if( PREFSMAN->m_bEventMode )

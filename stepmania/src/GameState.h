@@ -62,6 +62,7 @@ public:
 
 	bool IsPlayerEnabled( PlayerNumber pn );
 	bool IsPlayerEnabled( int p ) { return IsPlayerEnabled( (PlayerNumber)p ); };	// for those too lasy to cast all those p's to a PlayerNumber
+	bool IsCourseMode() const;
 
 	CString			m_sLoadingMessage;	// used in loading screen
 	CString			m_sPreferredGroup;	// GROUP_ALL_MUSIC denotes no preferred group
