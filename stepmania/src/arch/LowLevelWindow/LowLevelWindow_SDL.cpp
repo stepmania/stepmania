@@ -102,6 +102,16 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 
 #if defined(_WINDOWS)
 	SDL_SetRefreshRate( (p.rate == REFRESH_DEFAULT)? SDL_REFRESH_DEFAULT:p.rate );
+#elif defined(LINUX)
+	/* nVidia cards:
+	 *
+	 * This only works the first time we set up a window; after that, the
+	 * drivers appear to cache the value, so you have to actually restart
+	 * the program to change it again. */
+	static char buf[128];
+	strcpy( buf, "__GL_SYNC_TO_VBLANK=" );
+	strcat( buf, p.vsync?"1":"0" );
+	putenv( buf );
 #endif
 
 #if defined(WIN32)
