@@ -40,6 +40,8 @@ public:
 	DancingCharacters* GetDancingCharacters() { return m_pDancingCharacters; };
 
 protected:
+	void LoadFromRandom( float fFirstBeat, float fLastBeat, const TimingData &timing );
+
 	bool IsDangerPlayerVisible( PlayerNumber pn );
 	bool IsDangerAllVisible();
 	bool IsDeadPlayerVisible( PlayerNumber pn );

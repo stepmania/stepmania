@@ -272,6 +272,39 @@ CString Background::CreateRandomBGA()
 	return file;
 }
 
+void Background::LoadFromRandom( float fFirstBeat, float fLastBeat, const TimingData &timing )
+{
+	// change BG every 4 bars
+	for( float f=fFirstBeat; f<fLastBeat; f+=BEATS_PER_MEASURE*4 )
+	{
+		// Don't fade.  It causes frame rate dip, especially on 
+		// slower machines.
+		bool bFade = false;
+		//bool bFade = PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_RANDOMMOVIES || 
+		//	PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_MOVIEVIS;
+		
+		CString sBGName = CreateRandomBGA();
+		if( sBGName != "" )
+			m_aBGChanges.push_back( BackgroundChange(f,sBGName,1.f,bFade) );
+	}
+
+	// change BG every BPM change that is at the beginning of a measure
+	for( unsigned i=0; i<timing.m_BPMSegments.size(); i++ )
+	{
+		const BPMSegment& bpmseg = timing.m_BPMSegments[i];
+
+		if( fmodf(bpmseg.m_fStartBeat, (float)BEATS_PER_MEASURE) != 0 )
+			continue;	// skip
+
+		if( bpmseg.m_fStartBeat < fFirstBeat  || bpmseg.m_fStartBeat > fLastBeat )
+			continue;	// skip
+
+		CString sBGName = CreateRandomBGA();
+		if( sBGName != "" )
+			m_aBGChanges.push_back( BackgroundChange(bpmseg.m_fStartBeat,sBGName) );
+	}
+}
+
 void Background::LoadFromSong( Song* pSong )
 {
 	Unload();
@@ -326,38 +359,7 @@ void Background::LoadFromSong( Song* pSong )
 	}
 	else	// pSong doesn't have an animation plan
 	{
-		const float fFirstBeat = pSong->m_fFirstBeat;
-		const float fLastBeat = pSong->m_fLastBeat;
-
-		// change BG every 4 bars
-		for( float f=fFirstBeat; f<fLastBeat; f+=BEATS_PER_MEASURE*4 )
-		{
-			// Don't fade.  It causes frame rate dip, especially on 
-			// slower machines.
-			bool bFade = false;
-			//bool bFade = PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_RANDOMMOVIES || 
-			//	PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_MOVIEVIS;
-			
-			CString sBGName = CreateRandomBGA();
-			if( sBGName != "" )
-				m_aBGChanges.push_back( BackgroundChange(f,sBGName,1.f,bFade) );
-		}
-
-		// change BG every BPM change that is at the beginning of a measure
-		for( unsigned i=0; i<pSong->m_Timing.m_BPMSegments.size(); i++ )
-		{
-			const BPMSegment& bpmseg = pSong->m_Timing.m_BPMSegments[i];
-
-			if( fmodf(bpmseg.m_fStartBeat, (float)BEATS_PER_MEASURE) != 0 )
-				continue;	// skip
-
-			if( bpmseg.m_fStartBeat < fFirstBeat  || bpmseg.m_fStartBeat > fLastBeat )
-				continue;	// skip
-
-			CString sBGName = CreateRandomBGA();
-			if( sBGName != "" )
-				m_aBGChanges.push_back( BackgroundChange(bpmseg.m_fStartBeat,sBGName) );
-		}
+		LoadFromRandom( pSong->m_fFirstBeat, pSong->m_fLastBeat, pSong->m_Timing );
 	}
 
 
