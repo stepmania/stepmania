@@ -138,7 +138,7 @@ if test x$enable_gtk2 = xyes; then
   AM_PATH_GTK_2_0(2.0.0,AC_DEFINE([HAVE_GTK],1,[Define presence of GTK]),enable_gtk2=no)
 fi
 
-AC_CHECK_HEADER(linux/soundcard.h, [AC_DEFINE(HAVE_OSS, 1, [OSS support available])])
+AC_CHECK_HEADER(sys/soundcard.h, [AC_DEFINE(HAVE_OSS, 1, [OSS support available])])
 AC_ARG_ENABLE(force-oss, AC_HELP_STRING([--enable-force-oss], [Force OSS]), force_oss=$enableval, force_oss=yes)
 AC_CHECK_HEADER(stdint.h, , [AC_DEFINE(MISSING_STDINT_H, 1, [stdint.h is missing])])
 AC_CHECK_HEADERS([inttypes.h])
@@ -160,10 +160,10 @@ AC_DEFINE(_GNU_SOURCE, 1, [Use GNU extensions])
 
 AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
 AM_CONDITIONAL(HAVE_GTK, test "$enable_gtk2" != "no" )
-AM_CONDITIONAL(HAVE_OSS, test x$ac_cv_header_linux_soundcard_h = xyes )
+AM_CONDITIONAL(HAVE_OSS, test x$ac_cv_header_sys_soundcard_h = xyes )
 AM_CONDITIONAL(USE_CRASH_HANDLER, test "$use_crash_handler" = "yes" )
 
-if test x$force_oss = xyes && test x$ac_cv_header_linux_soundcard_h = xyes; then
+if test x$force_oss = xyes && test x$ac_cv_header_sys_soundcard_h = xyes; then
 	AC_DEFINE([FORCE_OSS], 1, [Force OSS Usage])
 fi
 
