@@ -1,0 +1,198 @@
+Index: configure
+===================================================================
+RCS file: /cvsroot/ffmpeg/ffmpeg/configure,v
+retrieving revision 1.101
+diff -u -r1.101 configure
+--- configure	24 Aug 2003 16:02:39 -0000	1.101
++++ configure	2 Sep 2003 03:51:33 -0000
+@@ -191,6 +191,10 @@
+ ffserver="no"
+ network="no"
+ mingw32="yes"
++LIBPREF=""
++LIBSUF=".lib"
++SLIBPREF=""
++SLIBSUF=".dll"
+ ;;
+ CYGWIN*)
+ v4l="no"
+@@ -884,6 +888,9 @@
+   echo "TARGET_MMX=yes" >> config.mak
+   echo "#define HAVE_MMX 1" >> $TMPH
+   echo "#define __CPU__ 586" >> $TMPH
++fi
++if test "$mingw32" = "yes" ; then
++  echo "TARGET_MINGW32=yes" >> config.mak
+ fi
+ if test "$builtin_vector" = "yes" ; then
+   echo "TARGET_BUILTIN_VECTOR=yes" >> config.mak
+Index: output_example.c
+===================================================================
+RCS file: /cvsroot/ffmpeg/ffmpeg/output_example.c,v
+retrieving revision 1.5
+diff -u -r1.5 output_example.c
+--- output_example.c	28 Aug 2003 23:05:25 -0000	1.5
++++ output_example.c	2 Sep 2003 03:51:33 -0000
+@@ -30,7 +30,7 @@
+ #define M_PI 3.1415926535897931
+ #endif
+ 
+-#include "avformat.h"
++#include "libavformat/avformat.h"
+ 
+ /* 5 seconds stream duration */
+ #define STREAM_DURATION 5.0
+Index: libavcodec/Makefile
+===================================================================
+RCS file: /cvsroot/ffmpeg/ffmpeg/libavcodec/Makefile,v
+retrieving revision 1.104
+diff -u -r1.104 Makefile
+--- libavcodec/Makefile	11 Aug 2003 20:27:17 -0000	1.104
++++ libavcodec/Makefile	2 Sep 2003 03:51:39 -0000
+@@ -7,8 +7,8 @@
+ VPATH=$(SRC_PATH)/libavcodec
+ 
+ # NOTE: -I.. is needed to include config.h
+-CFLAGS= $(OPTFLAGS) -Wall -g -DHAVE_AV_CONFIG_H -I.. -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_GNU_SOURCE
+-LDFLAGS= -g
++CFLAGS= $(OPTFLAGS) -Wall -g1 -DHAVE_AV_CONFIG_H -I.. -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_GNU_SOURCE
++LDFLAGS= -g1
+ 
+ OBJS= common.o utils.o mem.o allcodecs.o \
+       mpegvideo.o jrevdct.o jfdctfst.o jfdctint.o\
+@@ -158,7 +158,12 @@
+ 	$(RANLIB) $@
+ 
+ $(SLIB): $(OBJS)
++ifeq ($(TARGET_MINGW32),yes)
++	$(CC) $(SHFLAGS) -Wl,--output-def,$(@:.dll=.def) -o $@ $(OBJS) $(EXTRALIBS) $(AMREXTRALIBS)
++	-lib /machine:i386 /def:$(@:.dll=.def)
++else
+ 	$(CC) $(SHFLAGS) -o $@ $(OBJS) $(EXTRALIBS) $(AMREXTRALIBS)
++endif
+ 
+ dsputil.o: dsputil.c dsputil.h
+ 
+Index: libavcodec/os_support.h
+===================================================================
+RCS file: /cvsroot/ffmpeg/ffmpeg/libavcodec/os_support.h,v
+retrieving revision 1.6
+diff -u -r1.6 os_support.h
+--- libavcodec/os_support.h	15 Apr 2003 22:29:37 -0000	1.6
++++ libavcodec/os_support.h	2 Sep 2003 03:51:39 -0000
+@@ -12,7 +12,8 @@
+ 
+ #ifdef __MINGW32__
+ #  undef DATADIR /* clashes with /usr/include/w32api/objidl.h */
+-#  include <windows.h>
++__declspec(dllimport) void __stdcall Sleep(unsigned long dwMilliseconds);
++// #  include <windows.h>
+ #  define usleep(t)    Sleep((t) / 1000)
+ #endif
+ 
+Index: libavformat/Makefile
+===================================================================
+RCS file: /cvsroot/ffmpeg/ffmpeg/libavformat/Makefile,v
+retrieving revision 1.46
+diff -u -r1.46 Makefile
+--- libavformat/Makefile	28 Aug 2003 19:53:47 -0000	1.46
++++ libavformat/Makefile	2 Sep 2003 03:51:39 -0000
+@@ -6,7 +6,7 @@
+ 
+ VPATH=$(SRC_PATH)/libavformat
+ 
+-CFLAGS= $(OPTFLAGS) -Wall -g -I.. -I$(SRC_PATH) -I$(SRC_PATH)/libavcodec -DHAVE_AV_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_GNU_SOURCE
++CFLAGS= $(OPTFLAGS) -Wall -g1 -I.. -I$(SRC_PATH) -I$(SRC_PATH)/libavcodec -DHAVE_AV_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_GNU_SOURCE
+ 
+ OBJS= utils.o cutils.o allformats.o
+ PPOBJS=
+@@ -80,7 +80,12 @@
+ 	$(RANLIB) $@
+ 
+ $(SLIB): $(OBJS)
+-	$(CC) $(SHFLAGS) -o $@ $(OBJS) $(PPOBJS) $(EXTRALIBS) $(AMREXTRALIBS)
++ifeq ($(TARGET_MINGW32),yes)
++	$(CC) $(SHFLAGS) -Wl,--output-def,$(@:.dll=.def) -o $@ $(OBJS) $(PPOBJS) $(EXTRALIBS) $(AMREXTRALIBS) $(VPATH)/../libavcodec/avcodec.dll
++	-lib /machine:i386 /def:$(@:.dll=.def)
++else
++	$(CC) $(SHFLAGS) -o $@ $(OBJS) $(PPOBJS) $(EXTRALIBS) $(AMREXTRALIBS) 
++endif
+ 
+ depend: $(SRCS)
+ 	$(CC) -MM $(CFLAGS) $^ 1>.depend
+Index: libavformat/dvcore.c
+===================================================================
+RCS file: /cvsroot/ffmpeg/ffmpeg/libavformat/dvcore.c,v
+retrieving revision 1.1
+diff -u -r1.1 dvcore.c
+--- libavformat/dvcore.c	28 Aug 2003 19:53:47 -0000	1.1
++++ libavformat/dvcore.c	2 Sep 2003 03:51:39 -0000
+@@ -21,6 +21,7 @@
+  */
+ #include "avformat.h"
+ #include "dvcore.h"
++#include "strptime.h"
+ 
+ /*
+  * The reason why the following three big ugly looking tables are
+Index: libavformat/strptime.c
+===================================================================
+RCS file: /cvsroot/ffmpeg/ffmpeg/libavformat/strptime.c,v
+retrieving revision 1.1
+diff -u -r1.1 strptime.c
+--- libavformat/strptime.c	27 Jul 2002 02:56:22 -0000	1.1
++++ libavformat/strptime.c	2 Sep 2003 03:51:41 -0000
+@@ -46,14 +46,8 @@
+ # endif  /* GCC.  */
+ #endif  /* Not __P.  */
+ 
+-#if ! HAVE_LOCALTIME_R && ! defined localtime_r
+-# ifdef _LIBC
+-#  define localtime_r __localtime_r
+-# else
+-/* Approximate localtime_r as best we can in its absence.  */
+-#  define localtime_r my_localtime_r
+-static struct tm *localtime_r __P ((const time_t *, struct tm *));
+-static struct tm *
++#if defined (NEED_LOCALTIME_R)
++struct tm *
+ localtime_r (t, tp)
+      const time_t *t;
+      struct tm *tp;
+@@ -64,8 +58,7 @@
+   *tp = *l;
+   return tp;
+ }
+-# endif /* ! _LIBC */
+-#endif /* ! HAVE_LOCALTIME_R && ! defined (localtime_r) */
++#endif
+ 
+ 
+ #define match_char(ch1, ch2) if (ch1 != ch2) return NULL
+Index: libavformat/strptime.h
+===================================================================
+RCS file: /cvsroot/ffmpeg/ffmpeg/libavformat/strptime.h,v
+retrieving revision 1.1
+diff -u -r1.1 strptime.h
+--- libavformat/strptime.h	27 Jul 2002 02:56:22 -0000	1.1
++++ libavformat/strptime.h	2 Sep 2003 03:51:41 -0000
+@@ -29,4 +29,19 @@
+  */
+ extern char *strptime(const char *, const char *, struct tm *);
+ 
++#ifdef HAVE_CONFIG_H
++# include "config.h"
++#endif
++
++#if ! HAVE_LOCALTIME_R && ! defined localtime_r
++# ifdef _LIBC
++#  define localtime_r __localtime_r
++# else
++/* Approximate localtime_r as best we can in its absence.  */
++#  define localtime_r my_localtime_r
++extern struct tm *localtime_r(const time_t *, struct tm *);
++#  define NEED_LOCALTIME_R 1
++# endif
++#endif
++
+ #endif
