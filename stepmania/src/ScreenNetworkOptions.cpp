@@ -134,11 +134,13 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		{
 		case NO_START_SERVER:
 			if (!NSMAN->isLanServer)
+			{
 #if defined(XBOX)
 				XBOX_VKB.Reset(VKMODE_PROFILE);
 #endif
 
 				SCREENMAN->TextEntry( SM_ServerNameEnter, "Enter a server name...", "", NULL );
+			}
 			break;
 		case NO_STOP_SERVER:
 			if ( NSMAN->LANserver != NULL )
