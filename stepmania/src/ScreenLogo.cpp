@@ -39,7 +39,7 @@ ScreenLogo::ScreenLogo() : ScreenAttract("ScreenLogo","logo")
 	this->AddChild( &m_sprLogo );
 
 	m_textVersion.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textVersion.SetText( "v3.0 final" );
+	m_textVersion.SetText( "CVS" );
 	m_textVersion.SetDiffuse( RageColor(0.6f,0.6f,0.6f,1) );	// light gray
 	m_textVersion.SetXY( VERSION_X, VERSION_Y );
 	m_textVersion.SetZoom( 0.5f );
