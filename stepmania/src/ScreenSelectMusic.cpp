@@ -357,11 +357,12 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 	}
 	for( int i=0; i<apActorsInScore.GetSize(); i++ )
 	{
+		apActorsInScore[i]->StopTweening();
+
 		float fOriginalX = apActorsInScore[i]->GetX();
 		apActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_END );		// tween off screen
 		apActorsInScore[i]->SetTweenX( fOriginalX+400 );
 		
-		apActorsInScore[i]->StopTweening();
 		apActorsInScore[i]->BeginTweening( 0.5f );		// sleep
 
 		apActorsInScore[i]->BeginTweening( 1, TWEEN_BIAS_BEGIN );		// tween back on screen
