@@ -87,7 +87,7 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 	if( fAccels[PlayerOptions::ACCEL_BOOMERANG] > 0 )
 		fYOffset +=	fAccels[PlayerOptions::ACCEL_BOOMERANG] * (fYOffset * SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 1.5f, 0.5f )- fYOffset);
 
-	fYOffset *= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
+	float fScrollSpeed = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
 
 	if( fAccels[PlayerOptions::ACCEL_EXPAND] > 0 )
 	{
@@ -97,9 +97,11 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 			g_fExpandSeconds += timerExpand.GetDeltaTime();
 		else
 			timerExpand.GetDeltaTime();	// throw away
-		float fExpandScrollMultiplier = fAccels[PlayerOptions::ACCEL_EXPAND] * SCALE( cosf(g_fExpandSeconds*3), -1, 1, 0.5f, 1.5f );
-		fYOffset *=	fExpandScrollMultiplier; 
+		float fExpandMultiplier = SCALE( cosf(g_fExpandSeconds*3), -1, 1, 0.5f, 1.5f );
+		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 0.f, 1.f, 1.f, fExpandMultiplier );
 	}
+
+	fYOffset *= fScrollSpeed;
 
 	return fYOffset;
 }
