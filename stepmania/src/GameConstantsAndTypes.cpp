@@ -13,6 +13,20 @@
 #include "GameConstantsAndTypes.h"
 
 
+int TapNoteScoreToDancePoints( TapNoteScore tns, bool bOni )
+{
+	switch( tns )
+	{
+	case TNS_MARVELOUS:	return bOni ? +3 : +2;
+	case TNS_PERFECT:	return +2;
+	case TNS_GREAT:		return +1;
+	case TNS_GOOD:		return +0;
+	case TNS_BOO:		return bOni ? 0 : -4;
+	case TNS_MISS:		return bOni ? 0 : -8;
+	case TNS_NONE:		return 0;
+	default:	ASSERT(0);	return 0;
+	}
+}
 
 CString DifficultyToString( Difficulty dc )
 {
