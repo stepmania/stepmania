@@ -36,6 +36,8 @@ void NORETURN sm_crash( const char *reason )
 	/* Do something after the above, so the call/return isn't optimized to a jmp; that
 	 * way, this function will appear in backtrace stack traces. */
 	_asm nop;
+#else
+	_exit( 1 );
 #endif
 }
 
