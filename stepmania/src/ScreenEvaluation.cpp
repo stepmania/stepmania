@@ -1118,11 +1118,14 @@ void ScreenEvaluation::CommitScores(
 
 			// erase awards from the Last list that have been received so that we 
 			// won't show them again.
+			switch( m_Type )
 			{
+			case stage:
 				for( int i=GAMESTATE->m_vLastPerDifficultyAwards[p].size()-1; i>=0; i-- )
 				{
 					PerDifficultyAward pda = GAMESTATE->m_vLastPerDifficultyAwards[p][i];
 					Steps* pSteps = stageStats.pSteps[p];
+					ASSERT( pSteps != NULL );
 					bool bAlreadyHad = pProfile->HasPerDifficultyAward( pSteps->m_StepsType, pSteps->GetDifficulty(), pda );
 					pProfile->AddPerDifficultyAward( pSteps->m_StepsType, pSteps->GetDifficulty(), pda );
 					if( bAlreadyHad )
