@@ -36,6 +36,9 @@ void SaveCatalogXml( CString sDir )
 
 		xml.AppendChild( pSongNode );
 
+		pSongNode->AppendChild( "MainTitle", pSong->GetDisplayMainTitle() );
+		pSongNode->AppendChild( "SubTitle", pSong->GetDisplaySubTitle() );
+
 		vector<Steps*> vpSteps = pSong->GetAllSteps();
 		for( unsigned j=0; j<vpSteps.size(); j++ )
 		{
