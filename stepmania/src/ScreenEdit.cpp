@@ -990,9 +990,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				iPasteAtRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 				break;
 			}
-			temp.CopyRange( &m_NoteFieldEdit, iTakeFromRow, MAX_TAP_NOTE_ROWS );
-			m_NoteFieldEdit.ClearRange( min(iTakeFromRow,iPasteAtRow), MAX_TAP_NOTE_ROWS  );
-			m_NoteFieldEdit.CopyRange( &temp, 0, MAX_TAP_NOTE_ROWS-iTakeFromRow, iPasteAtRow );
+			temp.CopyRange( &m_NoteFieldEdit, iTakeFromRow, m_NoteFieldEdit.GetLastRow() );
+			m_NoteFieldEdit.ClearRange( min(iTakeFromRow,iPasteAtRow), m_NoteFieldEdit.GetLastRow()  );
+			m_NoteFieldEdit.CopyRange( &temp, 0, temp.GetLastRow(), iPasteAtRow );
 		}
 		break;
 	case SDLK_x:
