@@ -692,7 +692,7 @@ retry:
 	const CString sReason = ssprintf( "Semaphore timeout on mutex %s on thread %s",
 		GetName().c_str(), ThisSlot? ThisSlot->GetThreadName(): "(???" ")" ); // stupid trigraph warnings
 #if defined(CRASH_HANDLER)
-	ForceCrashHandler( sReason );
+	ForceCrashHandlerDeadlock( sReason, GetInvalidThreadId() );
 #else
 	RageException::Throw( "%s", sReason.c_str() );
 #endif
