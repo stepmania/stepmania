@@ -575,12 +575,31 @@ void Song::TidyUpData()
 		m_apNotes[i]->Compress();
 }
 
+struct TitleTrans
+{
+	CString TitleFrom, SubFrom, ArtistFrom,	/* regex */
+			    TitleTo, SubTo, ArtistTo;			/* plain text */
+	TitleTrans(CString tf, CString sf, CString af, CString tt, CString st, CString at):
+		TitleFrom(tf), SubFrom(sf), ArtistFrom(af),
+			TitleTo(tt), SubTo(st), ArtistTo(at) { }
+
+	bool Matches(CString title, CString sub, CString artist)
+	{
+		if(!TitleFrom.empty() && !regex(TitleFrom, title)) return false; /* no match */
+		if(!SubFrom.empty() && !regex(SubFrom, sub)) return false; /* no match */
+		if(!ArtistFrom.empty() && !regex(ArtistFrom, artist)) return false; /* no match */
+
+		return true;
+	}
+};
+
 void Song::ReCalulateRadarValuesAndLastBeat()
 {
 	//
 	// calculate radar values and first/last beat
 	//
-	for( unsigned int i=0; i<m_apNotes.size(); i++ )
+	unsigned int i;
+	for( i=0; i<m_apNotes.size(); i++ )
 	{
 		Notes* pNotes = m_apNotes[i];
 		NoteData tempNoteData;
@@ -609,40 +628,63 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 
 	/* XXX make theme metrics for these or something.  Candy makes it
 	 * a little annoying ...*/
-	if(m_sMainTitle == "Kakumei") {
-		m_sMainTitleTranslit = m_sMainTitle;
-		m_sMainTitle = "&kakumei1;&kakumei2;";
+
+	static vector<TitleTrans> ttab;
+	/* These REs aren't completely tested. XXX */
+	if(ttab.empty())
+	{
+		/* "+{" is the ugly hack for Kakumei: */
+		ttab.push_back(TitleTrans("^\\+\\{$", "", "", "&kakumei1;&kakumei2;", "", "") );
+		ttab.push_back(TitleTrans("^Kakumei$", "", "", "&kakumei1;&kakumei2;", "", "") );
+
+		/* Ambiguous, so check artist: */
+		ttab.push_back(TitleTrans("^Candy$", "", "^Luv.*", "Candy &whitestar;", "", "") );
+		ttab.push_back(TitleTrans("^Candy$", "", "^Riyu.*", "Candy &whiteheart;", "", "") );
+
+		ttab.push_back(TitleTrans("^Matsuri Japan$", "", "", "&matsuri; Japan", "", "") );
+		ttab.push_back(TitleTrans("^} JAPAN$", "", "", "&matsuri; Japan", "", "") );
+		/* This is a little fuzzy, so check the artist, too. */
+		ttab.push_back(TitleTrans(".*Japan.*", "", "(Re-Venge)|(RevenG)", "&matsuri; Japan", "", "") );
+
+		ttab.push_back(TitleTrans("^Sweet Sweet (Love|\\$) Magic$", "", "", "Sweet Sweet &whiteheart; Magic", "", "") );
+
+		/* These ones are pretty distinct, so don't check artists: */
+		ttab.push_back(TitleTrans("^Candy #$", "", "", "Candy &whitestar;", "", "") );
+		ttab.push_back(TitleTrans("^Candy \\$$", "", "", "Candy &whiteheart;", "", "") );
+
+		ttab.push_back(TitleTrans("^Max 300$", "", "(Omega)|(%)", "", "", "&omega;") );
+
+		/* Uncomment this once we have this glyph: */
+//		ttab.push_back(TitleTrans("^Bre[a=]kdown$", "", "", "Bre&flipped-a;kdown", "", "") );
 	}
-	if(m_sMainTitle == "Candy") {
-		/* very funny ... */
-		if(m_sArtist.substr(0, 3) == "Luv")
+
+	/* XXX: sana molette */
+
+	for(i = 0; i < ttab.size(); ++i)
+	{
+		if(!ttab[i].Matches(m_sMainTitle, m_sSubTitle, m_sArtist))
+			continue;
+
+		/* The song matches.  Replace whichever strings aren't empty: */
+		if(!ttab[i].TitleTo.empty())
 		{
 			m_sMainTitleTranslit = m_sMainTitle;
-			m_sMainTitle = "Candy &whitestar;";
-		} else if(m_sArtist.substr(0, 4) == "Riyu") {
-			m_sMainTitleTranslit = m_sMainTitle;
-			m_sMainTitle = "Candy &whiteheart;";
+			m_sMainTitle = ttab[i].TitleTo;
+			FontManager::ReplaceMarkers( m_sMainTitle );
 		}
-
+		if(!ttab[i].SubTo.empty())
+		{
+			m_sSubTitleTranslit = m_sSubTitle;
+			m_sSubTitle = ttab[i].SubTo;
+			FontManager::ReplaceMarkers( m_sSubTitle );
+		}
+		if(!ttab[i].ArtistTo.empty())
+		{
+			m_sArtistTranslit = m_sArtist;
+			m_sArtist = ttab[i].ArtistTo;
+			FontManager::ReplaceMarkers( m_sArtist );
+		}
 	}
-	if(m_sMainTitle == "Sweet Sweet Love Magic") {
-		m_sMainTitleTranslit = m_sMainTitle;
-		m_sMainTitle = "Sweet Sweet &whiteheart; Magic";
-	}
-	if(m_sMainTitle == "Matsuri Japan") {
-		m_sMainTitleTranslit = m_sMainTitle;
-		m_sMainTitle = "&matsuri; Japan";
-	}
-	if(m_sArtist == "Omega") {
-		m_sArtistTranslit = m_sArtist;
-		m_sArtist = "&omega;";
-	}
-	/* XXX: breakdown, sana molette */
-
-	/* We can't leave placeholders in the actual text, because it'll get
-	 * written to cache, and cache entries can't contain semicolons. */
-	FontManager::ReplaceMarkers( m_sMainTitle );
-	FontManager::ReplaceMarkers( m_sArtist );
 }
 
 void Song::GetNotesThatMatch( NotesType nt, vector<Notes*>& arrayAddTo ) const
