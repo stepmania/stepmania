@@ -39,25 +39,8 @@ hints.  Probably never an issue.
 
 ********
 
-Abstract NoteData completely, and then make the arrays vectors, so they
-don't have arbitrary limits and don't take lots of extra memory.
- 
-1: add real accessors: GetTapNote(row, track), SetTapNote(row, track, char),
-        GetHoldNote(num), SetHoldNote(num, Hold), etc.  Inline them.
-2: Make everything use them.  (Including derived classes.)
-3: Make m_TapNotes and m_HoldNotes private.  (Not protected!  A base
-   class implementation should almost always be hidden even from its
-   derived classes; they can use the same above accessors as everyone
-   else.)
-4: Change them to vector<>s. Make sure GetTapNote returns a '0' when
-   the parameters are out of range (since we generally assume we can
-   do that).
-Step 2 is straightforward but will take time and a lot of changes, so
-I don't want to do that before the release. 
-
-Then, make class Notes store a NoteData instead of SMNoteData, so we'd
+Make class Notes store a NoteData instead of SMNoteData, so we'd
 only have to convert on initial load and when saving; faster and simpler.
-
  
 Even better: do away with m_HoldNotes completely, and change the default
 storage scheme to 4s.  Make every place that accesses holds either use
@@ -342,3 +325,11 @@ special-cased.
 
 Option to skip the music select screen and always pick all music.
 
+********
+
+BPM sync for menus; this would allow full BGAs, synced menu effects,
+and so on.  Novelty; low-pri.
+
+********
+
+Option to turn off menu music (except for song previews).
