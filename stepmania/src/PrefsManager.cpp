@@ -42,6 +42,7 @@ void PrefsManager::Init()
 	m_iRefreshRate = REFRESH_DEFAULT;
 	m_bOnlyDedicatedMenuButtons = false;
 	m_bCelShadeModels = false;		// Work-In-Progress.. disable by default.
+	m_fConstantUpdateDeltaSeconds = 0;
 #ifdef DEBUG
 	m_bShowStats = true;
 #else
@@ -330,6 +331,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "ScreenHeight",					m_fScreenHeight );
 #endif
 	ini.GetValue( "Options", "CelShadeModels",					m_bCelShadeModels );
+	ini.GetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
 	ini.GetValue( "Options", "DisplayWidth",					m_iDisplayWidth );
 	ini.GetValue( "Options", "DisplayHeight",					m_iDisplayHeight );
 	ini.GetValue( "Options", "DisplayColorDepth",				m_iDisplayColorDepth );
@@ -563,6 +565,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 
 	ini.SetValue( "Options", "Windowed",						m_bWindowed );
 	ini.SetValue( "Options", "CelShadeModels",					m_bCelShadeModels );
+	ini.SetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
 	ini.SetValue( "Options", "DisplayWidth",					m_iDisplayWidth );
 	ini.SetValue( "Options", "DisplayHeight",					m_iDisplayHeight );
 	ini.SetValue( "Options", "DisplayColorDepth",				m_iDisplayColorDepth );

@@ -202,6 +202,10 @@ public:
 	int				m_iMaxHighScoresPerListForPlayer;
 	bool			m_bCelShadeModels;
 
+	/* experimental: force a specific update rate.  This prevents big 
+	 * animation jumps on frame skips. */
+	float			m_fConstantUpdateDeltaSeconds;	// 0 to disable
+
 	// Number of seconds it takes for a button on the controller to release
 	// after pressed.
 	float			m_fPadStickSeconds;

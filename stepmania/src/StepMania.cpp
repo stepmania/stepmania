@@ -1496,6 +1496,9 @@ static void GameLoop()
 		 * Update
 		 */
 		float fDeltaTime = timer.GetDeltaTime();
+
+		if( PREFSMAN->m_fConstantUpdateDeltaSeconds > 0 )
+			fDeltaTime = PREFSMAN->m_fConstantUpdateDeltaSeconds;
 		
 		CheckSkips( fDeltaTime );
 
