@@ -55,6 +55,7 @@ bool MsdFile::ReadFile( CString sNewPath )
 
 	m_iNumValues = 0;
 
+	bool ReadingValue=false;
 	int i;
 	for( i=0; i<iBytesRead; i++ )
 	{
@@ -62,6 +63,32 @@ bool MsdFile::ReadFile( CString sNewPath )
 		{
 		case '#':	// begins a new value
 			{
+				/* Unfortunately, many of these files are missing ;'s.
+				 * For now, if we get a # when we thought we were inside
+				 * a value/parameter, assume we missed the ;.  Back up,
+				 * delete whitespace and end the value. */
+				if(ReadingValue) {
+					/* Make sure this # is the first non-whitespace character on the line. */
+					bool FirstChar = true;
+					int j;
+					for(j = i-1; j >= 0 && !strchr("\r\n", m_szFileString[j]); --j)
+					{
+						if(m_szFileString[j] == ' ' || m_szFileString[j] == '\t')
+							continue;
+
+						FirstChar = false;
+						break;
+					}
+					if(!FirstChar) {
+						/* Oops, we're not; handle this like a regular character. */
+						break;
+					}
+
+					for(j = i-1; j >= 0 && isspace(m_szFileString[j]); --j)
+					m_szFileString[j] = 0;
+				}
+
+				ReadingValue=true;
 				m_iNumValues++;
 				int iCurValueIndex = m_iNumValues-1;
 				m_iNumParams[iCurValueIndex] = 1;
@@ -83,6 +110,7 @@ bool MsdFile::ReadFile( CString sNewPath )
 				// fast forward until just before the next '#'
 				while( m_szFileString[i+1] != '#'  &&  i<iBytesRead )
 					i++;
+				ReadingValue=false;
 			}
 			break;
 		case '/':
