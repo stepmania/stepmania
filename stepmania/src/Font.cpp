@@ -39,7 +39,7 @@ void FontPage::Load( const FontPageSettings &cfg )
 	RageTextureID ID(m_sTexturePath);
 	ID.bStretch = true;
 
-	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath );
+	m_pTexture = TEXTUREMAN->LoadTexture( ID );
 	ASSERT( m_pTexture != NULL );
 
 	// load character widths
