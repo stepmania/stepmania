@@ -347,10 +347,16 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		m_iMissCombo++;
 	}
 
-	if( fDeltaLife > 0 )
-		fDeltaLife *= m_fLifeDifficulty;
-	else
-		fDeltaLife /= m_fLifeDifficulty;
+	switch( GAMESTATE->m_SongOptions.m_DrainType )
+	{
+	case SongOptions::DRAIN_NORMAL:
+	case SongOptions::DRAIN_NO_RECOVER:
+		if( fDeltaLife > 0 )
+			fDeltaLife *= m_fLifeDifficulty;
+		else
+			fDeltaLife /= m_fLifeDifficulty;
+		break;
+	}
 
 	m_fLifePercentage += fDeltaLife;
 	CLAMP( m_fLifePercentage, 0, 1 );
