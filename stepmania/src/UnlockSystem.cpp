@@ -14,13 +14,13 @@
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "song.h"
-#include "course.h"
+#include "Course.h"
 #include "RageException.h"
 #include "RageUtil.h"
 #include "UnlockSystem.h"
 #include "SongManager.h"
-#include "gamestate.h"
-#include "inifile.h"
+#include "GameState.h"
+#include "IniFile.h"
 
 #include <fstream>
 using namespace std;
