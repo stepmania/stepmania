@@ -46,9 +46,18 @@ bool IniFile::ReadFile()
 	}
 
 	CString keyname;
-	CString line;
-	while( f.GetLine(line) )
+	while( 1 )
 	{
+		CString line;
+		switch( f.GetLine(line) )
+		{
+		case -1:
+			error = f.GetError();
+			return false;
+		case 0:
+			return true; /* eof */
+		}
+
 		if(line.size() >= 3 &&
 			line[0] == '\xef' &&
 			line[1] == '\xbb' &&
@@ -80,8 +89,6 @@ bool IniFile::ReadFile()
 			}
 		}
 	}
-
-	return true;
 }
 
 // writes data stored in class to ini file
