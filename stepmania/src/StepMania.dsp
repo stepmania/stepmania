@@ -338,14 +338,6 @@ SOURCE=.\IniFile.cpp
 
 SOURCE=.\IniFile.h
 # End Source File
-# Begin Source File
-
-SOURCE=.\MSDScanner.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\MSDScanner.h
-# End Source File
 # End Group
 # Begin Group "System"
 
@@ -525,6 +517,14 @@ SOURCE=.\BPMDisplay.cpp
 # Begin Source File
 
 SOURCE=.\BPMDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Course.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Course.h
 # End Source File
 # Begin Source File
 
@@ -1041,18 +1041,6 @@ SOURCE=.\ScreenStage.cpp
 # Begin Source File
 
 SOURCE=.\ScreenStage.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSynchronize.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSynchronize.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSynchronizeMenu.cpp
 # End Source File
 # Begin Source File
 

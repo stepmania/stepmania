@@ -259,7 +259,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 						GS[p].fRadarActual[i] += GSstage.fRadarActual[i];
 					}
 				}
-				for( int i=0; i<NUM_RADAR_VALUES; i++ )
+				for( i=0; i<NUM_RADAR_VALUES; i++ )
 				{
 					GS[p].fRadarPossible[i] /= iSongsToShow;
 					GS[p].fRadarActual[i] /= iSongsToShow;

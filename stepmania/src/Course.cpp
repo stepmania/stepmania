@@ -88,7 +88,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 				continue;	// skip this song
 
 			Notes* pNotes = NULL;
-			for( int i=0; i<pSong->m_arrayNotes.GetSize(); i++ )
+			for( i=0; i<pSong->m_arrayNotes.GetSize(); i++ )
 				if( 0 == stricmp(pSong->m_arrayNotes[i]->m_sDescription, sNotesDescription) )
 					pNotes = pSong->m_arrayNotes[i];
 			
