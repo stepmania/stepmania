@@ -358,16 +358,10 @@ bool ProfileManager::DeleteLocalProfile( CString sProfileID )
 	CStringArray asFilesToDelete;
 	GetDirListing( sProfileDir + "/*", asFilesToDelete, false, true );
 	for( unsigned i=0; i<asFilesToDelete.size(); i++ )
-		remove( asFilesToDelete[i] );
+		FILEMAN->Remove( asFilesToDelete[i] );
 
 	// remove profile dir
-	// FIXME for non Win32 platforms
-	int ret = rmdir( sProfileDir );
-	FlushDirCache();
-	if( ret != 0 )
-		return false;
-	else
-		return true;
+	return FILEMAN->Remove( sProfileDir );
 }
 
 void ProfileManager::SaveMachineScoresToDisk()
