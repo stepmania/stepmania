@@ -43,15 +43,14 @@ CString LoadALSA()
 	return "";
 error:
 	UnloadALSA();
-	if( Handle )
-		dlclose( Handle );
-	Handle = NULL;
 	return error;
 }
 
 void UnloadALSA()
 {
-	dlclose( Handle );
+	if( Handle )
+		dlclose( Handle );
+	Handle = NULL;
 #define FUNC(ret, name, proto) d##name = NULL;
 #include "ALSA9Functions.h"
 #undef FUNC

@@ -183,7 +183,7 @@ RageSound_ALSA9_Software::RageSound_ALSA9_Software()
 	CString err = LoadALSA();
 	if( err != "" )
 		RageException::ThrowNonfatal("Driver unusable: %s", err.c_str());
-
+try {
 	shutdown = false;
 
 	max_writeahead = safe_writeahead;
@@ -198,6 +198,11 @@ RageSound_ALSA9_Software::RageSound_ALSA9_Software()
 	
 	MixingThread.SetName( "RageSound_ALSA9_Software" );
 	MixingThread.Create( MixerThread_start, this );
+} catch(...) {
+	UnloadALSA();
+	throw;
+}
+
 }
 
 RageSound_ALSA9_Software::~RageSound_ALSA9_Software()
