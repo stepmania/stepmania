@@ -36,8 +36,8 @@ const int NUM_SCORE_DIGITS	=	9;
 
 
 // metrics that are common to all ScreenEvaluation classes
-#define BANNER_WIDTH						THEME->GetMetricF("ScreenEvaluation","BannerWidth")
-#define BANNER_HEIGHT						THEME->GetMetricF("ScreenEvaluation","BannerHeight")
+#define BANNER_WIDTH						THEME->GetMetricF(m_sName,"BannerWidth")
+#define BANNER_HEIGHT						THEME->GetMetricF(m_sName,"BannerHeight")
 const char* JUDGE_STRING[NUM_JUDGE_LINES] =
 {
 	"Marvelous", "Perfect", "Great", "Good", "Boo", "Miss", "OK", "MaxCombo", "TotalError"
@@ -47,9 +47,9 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 	"Jumps", "Holds", "Mines", "Hands"
 };
 
-#define SPIN_GRADES							THEME->GetMetricB("ScreenEvaluation","SpinGrades")
-#define CHEER_DELAY_SECONDS					THEME->GetMetricF("ScreenEvaluation","CheerDelaySeconds")
-#define BAR_ACTUAL_MAX_COMMAND				THEME->GetMetric ("ScreenEvaluation","BarActualMaxCommand")
+#define SPIN_GRADES							THEME->GetMetricB(m_sName,"SpinGrades")
+#define CHEER_DELAY_SECONDS					THEME->GetMetricF(m_sName,"CheerDelaySeconds")
+#define BAR_ACTUAL_MAX_COMMAND				THEME->GetMetric (m_sName,"BarActualMaxCommand")
 
 // metrics that are specific to classes derived from ScreenEvaluation
 #define FAILED_SCREEN						THEME->GetMetric (m_sName, "FailedScreen")
@@ -289,17 +289,17 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				m_LargeBanner.LoadFromSong( GAMESTATE->m_pCurSong );
 				m_LargeBanner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 				m_LargeBanner.SetName( "LargeBanner" );
-				UtilSetXYAndOnCommand( m_LargeBanner, "ScreenEvaluation" );
+				SET_XY_AND_ON_COMMAND( m_LargeBanner );
 				this->AddChild( &m_LargeBanner );
 
 				m_sprLargeBannerFrame.Load( THEME->GetPathToG("ScreenEvaluation banner frame") );
 				m_sprLargeBannerFrame.SetName( "LargeBannerFrame" );
-				UtilSetXYAndOnCommand( m_sprLargeBannerFrame, "ScreenEvaluation" );
+				SET_XY_AND_ON_COMMAND( m_sprLargeBannerFrame );
 				this->AddChild( &m_sprLargeBannerFrame );
 
 				m_sprStage.Load( THEME->GetPathToG("ScreenEvaluation stage "+GAMESTATE->GetStageText()) );
 				m_sprStage.SetName( "Stage" );
-				UtilSetXYAndOnCommand( m_sprStage, "ScreenEvaluation" );
+				SET_XY_AND_ON_COMMAND( m_sprStage );
 				this->AddChild( &m_sprStage );
 
 				for( int p=0; p<NUM_PLAYERS; p++ )
@@ -316,14 +316,14 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 					m_DifficultyIcon[p].SetFromNotes( (PlayerNumber)p, GAMESTATE->m_pCurNotes[p] );
 					m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
-					UtilSetXYAndOnCommand( m_DifficultyIcon[p], "ScreenEvaluation" );
+					SET_XY_AND_ON_COMMAND( m_DifficultyIcon[p] );
 					this->AddChild( &m_DifficultyIcon[p] );
 					
 					m_textPlayerOptions[p].LoadFromFont( THEME->GetPathToF("Common normal") );
 					CString sPO = GAMESTATE->m_PlayerOptions[p].GetString();
 					sPO.Replace( ", ", "\n" );
 					m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d",p+1) );
-					UtilSetXYAndOnCommand( m_textPlayerOptions[p], "ScreenEvaluation" );
+					SET_XY_AND_ON_COMMAND( m_textPlayerOptions[p] );
 					m_textPlayerOptions[p].SetText( sPO );
 					this->AddChild( &m_textPlayerOptions[p] );
 				}
@@ -336,12 +336,12 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 					m_SmallBanner[i].LoadFromSong( vSongsToShow[i] );
 					m_SmallBanner[i].ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 					m_SmallBanner[i].SetName( ssprintf("SmallBanner%d",i+1) );
-					UtilSetXYAndOnCommand( m_SmallBanner[i], "ScreenEvaluation" );
+					SET_XY_AND_ON_COMMAND( m_SmallBanner[i] );
 					this->AddChild( &m_SmallBanner[i] );
 
 					m_sprSmallBannerFrame[i].Load( THEME->GetPathToG("ScreenEvaluation banner frame") );
 					m_sprSmallBannerFrame[i].SetName( ssprintf("SmallBanner%d",i+1) );
-					UtilSetXYAndOnCommand( m_sprSmallBannerFrame[i], "ScreenEvaluation" );
+					SET_XY_AND_ON_COMMAND( m_sprSmallBannerFrame[i] );
 					this->AddChild( &m_sprSmallBannerFrame[i] );
 				}
 			}
@@ -351,12 +351,12 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				m_LargeBanner.LoadFromCourse( GAMESTATE->m_pCurCourse );
 				m_LargeBanner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 				m_LargeBanner.SetName( "LargeBanner" );
-				UtilSetXYAndOnCommand( m_LargeBanner, "ScreenEvaluation" );
+				SET_XY_AND_ON_COMMAND( m_LargeBanner );
 				this->AddChild( &m_LargeBanner );
 
 				m_sprLargeBannerFrame.Load( THEME->GetPathToG("ScreenEvaluation banner frame") );
 				m_sprLargeBannerFrame.SetName( "LargeBannerFrame" );
-				UtilSetXYAndOnCommand( m_sprLargeBannerFrame, "ScreenEvaluation" );
+				SET_XY_AND_ON_COMMAND( m_sprLargeBannerFrame );
 				this->AddChild( &m_sprLargeBannerFrame );
 			}
 			break;
@@ -411,13 +411,13 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 			m_sprGradeFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation grade frame p%d",p+1)) );
 			m_sprGradeFrame[p].SetName( ssprintf("GradeFrameP%d",p+1) );
-			UtilSetXYAndOnCommand( m_sprGradeFrame[p], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_sprGradeFrame[p] );
 			this->AddChild( &m_sprGradeFrame[p] );
 
 			m_Grades[p].Load( THEME->GetPathToG("ScreenEvaluation grades") );
 			m_Grades[p].SetGrade( (PlayerNumber)p, grade[p] );
 			m_Grades[p].SetName( ssprintf("GradeP%d",p+1) );
-			UtilSetXYAndOnCommand( m_Grades[p], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_Grades[p] );
 			if( SPIN_GRADES )
 				m_Grades[p].Spin();
 			this->AddChild( &m_Grades[p] );
@@ -436,16 +436,16 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 			m_sprPercentFrame[p].SetName( ssprintf("PercentFrameP%d",p+1) );
 			m_sprPercentFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation percent frame p%d",p+1)) );
-			UtilSetXYAndOnCommand( m_sprPercentFrame[p], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_sprPercentFrame[p] );
 			this->AddChild( &m_sprPercentFrame[p] );
 
 			/* Use "ScreenEvaluation Percent" for the [metric set], but position and
 			 * tween it with "PercentP1X", etc. */
 			m_Percent[p].SetName( "ScreenEvaluation Percent" );
 			m_Percent[p].Load( (PlayerNumber) p );
-			m_Percent[p].SetXY( THEME->GetMetricF("ScreenEvaluation", ssprintf("PercentP%dX",p+1)),
-				THEME->GetMetricF("ScreenEvaluation",ssprintf("PercentP%dY",p+1)) );
-			m_Percent[p].Command( THEME->GetMetric("ScreenEvaluation",ssprintf("PercentP%dOnCommand",p+1)) );
+			m_Percent[p].SetXY( THEME->GetMetricF(m_sName, ssprintf("PercentP%dX",p+1)),
+				THEME->GetMetricF(m_sName,ssprintf("PercentP%dY",p+1)) );
+			m_Percent[p].Command( THEME->GetMetric(m_sName,ssprintf("PercentP%dOnCommand",p+1)) );
 			this->AddChild( &m_Percent[p] );
 		}
 	}
@@ -462,7 +462,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 			m_sprBonusFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation bonus frame p%d",p+1)) );
 			m_sprBonusFrame[p].SetName( ssprintf("BonusFrameP%d",p+1) );
-			UtilSetXYAndOnCommand( m_sprBonusFrame[p], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_sprBonusFrame[p] );
 			this->AddChild( &m_sprBonusFrame[p] );
 
 			for( int r=0; r<NUM_SHOWN_RADAR_CATEGORIES; r++ )	// foreach line
@@ -470,7 +470,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				m_sprPossibleBar[p][r].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation bar possible p%d",p+1)) );
 				m_sprPossibleBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * stageStats.fRadarPossible[p][r] );
 				m_sprPossibleBar[p][r].SetName( ssprintf("BarPossible%dP%d",r+1,p+1) );
-				UtilSetXYAndOnCommand( m_sprPossibleBar[p][r], "ScreenEvaluation" );
+				SET_XY_AND_ON_COMMAND( m_sprPossibleBar[p][r] );
 				this->AddChild( &m_sprPossibleBar[p][r] );
 
 				m_sprActualBar[p][r].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation bar actual p%d",p+1)) );
@@ -481,7 +481,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				LOG->Trace("Radar bar %d of 5 - %f percent", r,  value);
 				
 				m_sprActualBar[p][r].SetName( ssprintf("BarActual%dP%d",r+1,p+1) );
-				UtilSetXYAndOnCommand( m_sprActualBar[p][r], "ScreenEvaluation" );
+				SET_XY_AND_ON_COMMAND( m_sprActualBar[p][r] );
 				
 				// .99999 is fairly close to 1.00, so we use that 
 				if( stageStats.fRadarActual[p][r] > 0.99999f )
@@ -503,7 +503,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 			m_sprSurvivedFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation survived frame p%d",p+1)) );
 			m_sprSurvivedFrame[p].SetName( ssprintf("SurvivedFrameP%d",p+1) );
-			UtilSetXYAndOnCommand( m_sprSurvivedFrame[p], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_sprSurvivedFrame[p] );
 			this->AddChild( &m_sprSurvivedFrame[p] );
 
 			m_textSurvivedNumber[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation stage") );
@@ -512,7 +512,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			// Should be accurate, but I'm not sure if its "standard" that (bool)true = 1.  (assumption)
 			m_textSurvivedNumber[p].SetText( ssprintf("%02d", stageStats.iSongsPlayed[p] - (int)stageStats.bFailed[p]) );
 			m_textSurvivedNumber[p].SetName( ssprintf("SurvivedNumberP%d",p+1) );
-			UtilSetXYAndOnCommand( m_textSurvivedNumber[p], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_textSurvivedNumber[p] );
 			this->AddChild( &m_textSurvivedNumber[p] );
 		}
 	}
@@ -529,7 +529,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 			m_sprWinFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation win frame p%d",p+1)) );
 			m_sprWinFrame[p].SetName( ssprintf("WinFrameP%d",p+1) );
-			UtilSetXYAndOnCommand( m_sprWinFrame[p], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_sprWinFrame[p] );
 			this->AddChild( &m_sprWinFrame[p] );
 
 			m_sprWin[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation win p%d 1x3",p+1)) );
@@ -537,7 +537,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			int iFrame = GAMESTATE->GetStageResult( (PlayerNumber)p );
 			m_sprWin[p].SetState( iFrame );
 			m_sprWin[p].SetName( ssprintf("WinP%d",p+1) );
-			UtilSetXYAndOnCommand( m_sprWin[p], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_sprWin[p] );
 			this->AddChild( &m_sprWin[p] );
 		}
 	}
@@ -557,7 +557,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			m_sprJudgeLabels[l].StopAnimating();
 			m_sprJudgeLabels[l].SetState( l );
 			m_sprJudgeLabels[l].SetName( ssprintf("%sLabel",JUDGE_STRING[l]) );
-			UtilSetXYAndOnCommand( m_sprJudgeLabels[l], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_sprJudgeLabels[l] );
 			this->AddChild( &m_sprJudgeLabels[l] );
 
 			for( p=0; p<NUM_PLAYERS; p++ )
@@ -569,7 +569,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				m_textJudgeNumbers[l][p].EnableShadow( false );
 				m_textJudgeNumbers[l][p].SetDiffuse( PlayerToColor(p) );
 				m_textJudgeNumbers[l][p].SetName( ssprintf("%sNumberP%d",JUDGE_STRING[l],p+1) );
-				UtilSetXYAndOnCommand( m_textJudgeNumbers[l][p], "ScreenEvaluation" );
+				SET_XY_AND_ON_COMMAND( m_textJudgeNumbers[l][p] );
 				this->AddChild( &m_textJudgeNumbers[l][p] );
 
 				int iValue;
@@ -600,7 +600,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		m_sprStatsLabel[l]->StopAnimating();
 		m_sprStatsLabel[l]->SetState( l );
 		m_sprStatsLabel[l]->SetName( ssprintf("%sLabel",STATS_STRING[l]) );
-		UtilSetXYAndOnCommand( m_sprStatsLabel[l], "ScreenEvaluation" );
+		SET_XY_AND_ON_COMMAND( m_sprStatsLabel[l] );
 		this->AddChild( m_sprStatsLabel[l] );
 
 		for( p=0; p<NUM_PLAYERS; p++ )
@@ -611,7 +611,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			m_textStatsText[l][p].LoadFromFont( THEME->GetPathToF("ScreenEvaluation stats") );
 			m_textStatsText[l][p].SetDiffuse( PlayerToColor(p) );
 			m_textStatsText[l][p].SetName( ssprintf("%sTextP%d",STATS_STRING[l],p+1) );
-			UtilSetXYAndOnCommand( m_textStatsText[l][p], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_textStatsText[l][p] );
 			this->AddChild( &m_textStatsText[l][p] );
 
 			const int indeces[NUM_STATS_LINES] =
@@ -635,7 +635,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		m_sprScoreLabel.SetState( 0 );
 		m_sprScoreLabel.StopAnimating();
 		m_sprScoreLabel.SetName( "ScoreLabel" );
-		UtilSetXYAndOnCommand( m_sprScoreLabel, "ScreenEvaluation" );
+		SET_XY_AND_ON_COMMAND( m_sprScoreLabel );
 		this->AddChild( &m_sprScoreLabel );
 
 		for( p=0; p<NUM_PLAYERS; p++ )
@@ -647,7 +647,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			m_textScore[p].EnableShadow( false );
 			m_textScore[p].SetDiffuse( PlayerToColor(p) );
 			m_textScore[p].SetName( ssprintf("ScoreNumberP%d",p+1) );
-			UtilSetXYAndOnCommand( m_textScore[p], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_textScore[p] );
 			m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, stageStats.iScore[p]) );
 			this->AddChild( &m_textScore[p] );
 		}
@@ -659,7 +659,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		m_sprTotalScoreLabel.SetState( 0 );
 		m_sprTotalScoreLabel.StopAnimating();
 		m_sprTotalScoreLabel.SetName( "TotalScoreLabel" );
-		UtilSetXYAndOnCommand( m_sprTotalScoreLabel, "ScreenEvaluation" );
+		SET_XY_AND_ON_COMMAND( m_sprTotalScoreLabel );
 		this->AddChild( &m_sprTotalScoreLabel );
 
 		for( p=0; p<NUM_PLAYERS; p++ )
@@ -678,7 +678,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			m_textTotalScore[p].SetDiffuse( PlayerToColor(p) );
 			m_textTotalScore[p].SetName( ssprintf("TotalScoreNumberP%d",p+1) );
 			m_textTotalScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS+2, iTotalScore) );
-			UtilSetXYAndOnCommand( m_textTotalScore[p], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_textTotalScore[p] );
 
 			this->AddChild( &m_textTotalScore[p] );
 		}
@@ -693,7 +693,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		m_sprTimeLabel.SetState( 1 );
 		m_sprTimeLabel.StopAnimating();
 		m_sprTimeLabel.SetName( "TimeLabel" );
-		UtilSetXYAndOnCommand( m_sprTimeLabel, "ScreenEvaluation" );
+		SET_XY_AND_ON_COMMAND( m_sprTimeLabel );
 		this->AddChild( &m_sprTimeLabel );
 
 		for( p=0; p<NUM_PLAYERS; p++ )
@@ -705,7 +705,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			m_textTime[p].EnableShadow( false );
 			m_textTime[p].SetDiffuse( PlayerToColor(p) );
 			m_textTime[p].SetName( ssprintf("ScoreNumberP%d",p+1) );
-			UtilSetXYAndOnCommand( m_textTime[p], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_textTime[p] );
 			m_textTime[p].SetText( SecondsToTime(stageStats.fAliveSeconds[p]) );
 			this->AddChild( &m_textTime[p] );
 		}
@@ -739,7 +739,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 			m_sprMachineRecord[p].SetState( iMachineHighScoreIndex[p] );
 			m_sprMachineRecord[p].StopAnimating();
-			UtilSetXYAndOnCommand( m_sprMachineRecord[p], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_sprMachineRecord[p] );
 			this->AddChild( &m_sprMachineRecord[p] );
 		}
 		if( iPersonalHighScoreIndex[p] != -1 )
@@ -748,7 +748,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			m_sprPersonalRecord[p].SetState( iPersonalHighScoreIndex[p] );
 			m_sprPersonalRecord[p].StopAnimating();
 			m_sprPersonalRecord[p].SetName( ssprintf("PersonalRecordP%d",p+1) );
-			UtilSetXYAndOnCommand( m_sprPersonalRecord[p], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_sprPersonalRecord[p] );
 			this->AddChild( &m_sprPersonalRecord[p] );
 		}
 
@@ -756,7 +756,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		{
 			m_FullCombo[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation full combo P%i",p+1)) );
 			m_FullCombo[p]->SetName( ssprintf("FullComboP%d",p+1) );
-			UtilSetXYAndOnCommand( m_FullCombo[p], "ScreenEvaluation" );
+			SET_XY_AND_ON_COMMAND( m_FullCombo[p] );
 			this->AddChild( m_FullCombo[p] );
 		}
 	}
@@ -770,7 +770,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	{
 		m_sprTryExtraStage.Load( THEME->GetPathToG(GAMESTATE->IsExtraStage()?"ScreenEvaluation try extra2":"ScreenEvaluation try extra1") );
 		m_sprTryExtraStage.SetName( "TryExtraStage" );
-		UtilSetXYAndOnCommand( m_sprTryExtraStage, "ScreenEvaluation" );
+		SET_XY_AND_ON_COMMAND( m_sprTryExtraStage );
 		this->AddChild( &m_sprTryExtraStage );
 
 		if( GAMESTATE->IsExtraStage() )
@@ -963,22 +963,22 @@ void ScreenEvaluation::TweenOffScreen()
 	int p;
 
 	// large banner area
-	UtilOffCommand( m_LargeBanner, "ScreenEvaluation" );
-	UtilOffCommand( m_sprLargeBannerFrame, "ScreenEvaluation" );
-	UtilOffCommand( m_sprStage, "ScreenEvaluation" );
+	OFF_COMMAND( m_LargeBanner );
+	OFF_COMMAND( m_sprLargeBannerFrame );
+	OFF_COMMAND( m_sprStage );
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
-		UtilOffCommand( m_DifficultyIcon[p], "ScreenEvaluation" );
-		UtilOffCommand( m_textPlayerOptions[p], "ScreenEvaluation" );
+		OFF_COMMAND( m_DifficultyIcon[p] );
+		OFF_COMMAND( m_textPlayerOptions[p] );
 	}
 
 	// small banner area
 	for( int i=0; i<MAX_SONGS_TO_SHOW; i++ )
 	{
-		UtilOffCommand( m_SmallBanner[i], "ScreenEvaluation" );
-		UtilOffCommand( m_sprSmallBannerFrame[i], "ScreenEvaluation" );
+		OFF_COMMAND( m_SmallBanner[i] );
+		OFF_COMMAND( m_sprSmallBannerFrame[i] );
 	}
 
 	// grade area
@@ -986,8 +986,8 @@ void ScreenEvaluation::TweenOffScreen()
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
-		UtilOffCommand( m_sprGradeFrame[p], "ScreenEvaluation" );
-		UtilOffCommand( m_Grades[p], "ScreenEvaluation" );
+		OFF_COMMAND( m_sprGradeFrame[p] );
+		OFF_COMMAND( m_Grades[p] );
 	}
 
 	if( SHOW_GRAPH_AREA )
@@ -1020,8 +1020,8 @@ void ScreenEvaluation::TweenOffScreen()
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
 
-			UtilOffCommand( m_sprPercentFrame[p], "ScreenEvaluation" );
-			m_Percent[p].Command( THEME->GetMetric("ScreenEvaluation",ssprintf("PercentP%dOffCommand",p+1)) );
+			OFF_COMMAND( m_sprPercentFrame[p] );
+			m_Percent[p].Command( THEME->GetMetric(m_sName,ssprintf("PercentP%dOffCommand",p+1)) );
 			m_Percent[p].TweenOffScreen();
 		}
 	}
@@ -1033,11 +1033,11 @@ void ScreenEvaluation::TweenOffScreen()
 		{
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;
-			UtilOffCommand( m_sprBonusFrame[p], "ScreenEvaluation" );
+			OFF_COMMAND( m_sprBonusFrame[p] );
 			for( int r=0; r<NUM_SHOWN_RADAR_CATEGORIES; r++ )	// foreach line
 			{
-				UtilOffCommand( m_sprPossibleBar[p][r], "ScreenEvaluation" );
-				UtilOffCommand( m_sprActualBar[p][r], "ScreenEvaluation" );
+				OFF_COMMAND( m_sprPossibleBar[p][r] );
+				OFF_COMMAND( m_sprActualBar[p][r] );
 			}
 		}
 	}
@@ -1049,8 +1049,8 @@ void ScreenEvaluation::TweenOffScreen()
 		{
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;
-			UtilOffCommand( m_sprSurvivedFrame[p], "ScreenEvaluation" );
-			UtilOffCommand( m_textSurvivedNumber[p], "ScreenEvaluation" );
+			OFF_COMMAND( m_sprSurvivedFrame[p] );
+			OFF_COMMAND( m_textSurvivedNumber[p] );
 		}
 	}
 
@@ -1061,8 +1061,8 @@ void ScreenEvaluation::TweenOffScreen()
 		{
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;
-			UtilOffCommand( m_sprWinFrame[p], "ScreenEvaluation" );
-			UtilOffCommand( m_sprWin[p], "ScreenEvaluation" );
+			OFF_COMMAND( m_sprWinFrame[p] );
+			OFF_COMMAND( m_sprWin[p] );
 		}
 	}
 
@@ -1073,13 +1073,13 @@ void ScreenEvaluation::TweenOffScreen()
 		if( !SHOW_JUDGMENT(l) )
 			continue;
 
-		UtilOffCommand( m_sprJudgeLabels[l], "ScreenEvaluation" );
+		OFF_COMMAND( m_sprJudgeLabels[l] );
 
 		for( p=0; p<NUM_PLAYERS; p++ )
 		{
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;
-			UtilOffCommand( m_textJudgeNumbers[l][p], "ScreenEvaluation" );
+			OFF_COMMAND( m_textJudgeNumbers[l][p] );
 		}
 	}
 
@@ -1089,49 +1089,49 @@ void ScreenEvaluation::TweenOffScreen()
 		if( !SHOW_STAT(l) )
 			continue;
 
-		UtilOffCommand( m_sprStatsLabel[l], "ScreenEvaluation" );
+		OFF_COMMAND( m_sprStatsLabel[l] );
 
 		for( p=0; p<NUM_PLAYERS; p++ )
 		{
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;
-			UtilOffCommand( m_textStatsText[l][p], "ScreenEvaluation" );
+			OFF_COMMAND( m_textStatsText[l][p] );
 		}
 	}
 
 	// score area
 	if( SHOW_SCORE_AREA )
 	{
-		UtilOffCommand( m_sprScoreLabel, "ScreenEvaluation" );
+		OFF_COMMAND( m_sprScoreLabel );
 		for( p=0; p<NUM_PLAYERS; p++ )
 		{
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;
-			UtilOffCommand( m_textScore[p], "ScreenEvaluation" );
+			OFF_COMMAND( m_textScore[p] );
 		}
 	}
 
 	// total score area
 	if( SHOW_TOTAL_SCORE_AREA )
 	{
-		UtilOffCommand( m_sprTotalScoreLabel, "ScreenEvaluation" );
+		OFF_COMMAND( m_sprTotalScoreLabel );
 		for( p=0; p<NUM_PLAYERS; p++ )
 		{
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;
-			UtilOffCommand( m_textTotalScore[p], "ScreenEvaluation" );
+			OFF_COMMAND( m_textTotalScore[p] );
 		}
 	}
 
 	// time area
 	if( SHOW_TIME_AREA )
 	{
-		UtilOffCommand( m_sprTimeLabel, "ScreenEvaluation" );
+		OFF_COMMAND( m_sprTimeLabel );
 		for( p=0; p<NUM_PLAYERS; p++ )
 		{
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;
-			UtilOffCommand( m_textTime[p], "ScreenEvaluation" );
+			OFF_COMMAND( m_textTime[p] );
 		}
 	}
 
@@ -1140,12 +1140,12 @@ void ScreenEvaluation::TweenOffScreen()
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
-		UtilOffCommand( m_sprMachineRecord[p], "ScreenEvaluation" );
-		UtilOffCommand( m_sprPersonalRecord[p], "ScreenEvaluation" );
+		OFF_COMMAND( m_sprMachineRecord[p] );
+		OFF_COMMAND( m_sprPersonalRecord[p] );
 		if( m_FullCombo[p].IsLoaded() )
-			UtilOffCommand( m_FullCombo[p], "ScreenEvaluation" );
+			OFF_COMMAND( m_FullCombo[p] );
 	}
-	UtilOffCommand( m_sprTryExtraStage, "ScreenEvaluation" );
+	OFF_COMMAND( m_sprTryExtraStage );
 }
 
 void ScreenEvaluation::Update( float fDeltaTime )
