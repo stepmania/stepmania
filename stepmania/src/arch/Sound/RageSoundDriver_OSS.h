@@ -17,7 +17,7 @@ class RageSound_OSS: public RageSound_Generic_Software
 	void MixerThread();
 	RageThread MixingThread;
 
-	static void CheckOSSVersion( int fd );
+	static CString CheckOSSVersion( int fd );
 	
 public:
 	bool GetData();
@@ -29,6 +29,7 @@ public:
 	void SetupDecodingThread();
 
 	RageSound_OSS();
+	CString Init();
 	~RageSound_OSS();
 };
 

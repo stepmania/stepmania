@@ -91,12 +91,12 @@ int64_t RageSound_OSS::GetPosition(const RageSoundBase *snd) const
 	
 	int delay;
 	if(ioctl(fd, SNDCTL_DSP_GETODELAY, &delay) == -1)
-		RageException::ThrowNonfatal("RageSound_OSS: ioctl(SNDCTL_DSP_GETODELAY): %s", strerror(errno));
+		RageException::Throw("RageSound_OSS: ioctl(SNDCTL_DSP_GETODELAY): %s", strerror(errno));
 
 	return last_cursor_pos - (delay / bytes_per_frame);
 }
 
-void RageSound_OSS::CheckOSSVersion( int fd )
+CString RageSound_OSS::CheckOSSVersion( int fd )
 {
 	int version = 0;
 
@@ -125,10 +125,7 @@ void RageSound_OSS::CheckOSSVersion( int fd )
 #ifndef FORCE_OSS
 #define ALSA_SNDRV_OSS_VERSION         ((3<<16)|(8<<8)|(1<<4)|(0))
 	if( version == ALSA_SNDRV_OSS_VERSION && IsADirectory("/proc/asound") )
-	{
-		close( fd );
-		RageException::ThrowNonfatal( "RageSound_OSS: ALSA detected.  ALSA OSS emulation is buggy; use ALSA natively.");
-	}
+		return "RageSound_OSS: ALSA detected.  ALSA OSS emulation is buggy; use ALSA natively.";
 #endif
 	if( version )
 	{
@@ -146,56 +143,68 @@ void RageSound_OSS::CheckOSSVersion( int fd )
 
 		LOG->Info("OSS: %i.%i.%i", major, minor, rev );
 	}
+
+	return "";
 }
 
 RageSound_OSS::RageSound_OSS()
 {
-	fd = open("/dev/dsp", O_WRONLY|O_NONBLOCK);
-	if(fd == -1)
-		RageException::ThrowNonfatal("RageSound_OSS: Couldn't open /dev/dsp: %s", strerror(errno));
-
-	CheckOSSVersion( fd );
-
+	fd = -1;
 	shutdown = false;
 	last_cursor_pos = 0;
+}
+
+CString RageSound_OSS::Init()
+{
+	fd = open("/dev/dsp", O_WRONLY|O_NONBLOCK);
+	if( fd == -1 )
+		return ssprintf( "RageSound_OSS: Couldn't open /dev/dsp: %s", strerror(errno) );
+
+	CString sError = CheckOSSVersion( fd );
+	if( sError != "" )
+		return sError;
 
 	int i = AFMT_S16_LE;
 	if(ioctl(fd, SNDCTL_DSP_SETFMT, &i) == -1)
-		RageException::ThrowNonfatal("RageSound_OSS: ioctl(SNDCTL_DSP_SETFMT, %i): %s", i, strerror(errno));
+		return ssprintf( "RageSound_OSS: ioctl(SNDCTL_DSP_SETFMT, %i): %s", i, strerror(errno) );
 	if(i != AFMT_S16_LE)
-		RageException::ThrowNonfatal("RageSound_OSS: Wanted format %i, got %i instead", AFMT_S16_LE, i);
+		return ssprintf( "RageSound_OSS: Wanted format %i, got %i instead", AFMT_S16_LE, i );
 
 	i = channels;
 	if(ioctl(fd, SNDCTL_DSP_CHANNELS, &i) == -1)
-		RageException::ThrowNonfatal("RageSound_OSS: ioctl(SNDCTL_DSP_CHANNELS, %i): %s", i, strerror(errno));
+		return ssprintf( "RageSound_OSS: ioctl(SNDCTL_DSP_CHANNELS, %i): %s", i, strerror(errno) );
 	if(i != channels)
-		RageException::ThrowNonfatal("RageSound_OSS: Wanted %i channels, got %i instead", channels, i);
+		return ssprintf( "RageSound_OSS: Wanted %i channels, got %i instead", channels, i );
 		
 	i = 44100;
 	if(ioctl(fd, SOUND_PCM_WRITE_RATE, &i) == -1 )
-		RageException::ThrowNonfatal("RageSound_OSS: ioctl(SOUND_PCM_WRITE_RATE, %i): %s", i, strerror(errno));
+		return ssprintf( "RageSound_OSS: ioctl(SOUND_PCM_WRITE_RATE, %i): %s", i, strerror(errno) );
 	samplerate = i;
 	LOG->Trace("RageSound_OSS: sample rate %i", samplerate);
 	i = (num_chunks << 16) + chunk_order;
 	if(ioctl(fd, SNDCTL_DSP_SETFRAGMENT, &i) == -1)
-		RageException::ThrowNonfatal("RageSound_OSS: ioctl(SNDCTL_DSP_SETFRAGMENT, %i): %s", i, strerror(errno));
-
+		return ssprintf( "RageSound_OSS: ioctl(SNDCTL_DSP_SETFRAGMENT, %i): %s", i, strerror(errno) );
 	StartDecodeThread();
 	
 	MixingThread.SetName( "RageSound_OSS" );
 	MixingThread.Create( MixerThread_start, this );
-}
 
+	return "";
+}
 
 RageSound_OSS::~RageSound_OSS()
 {
-	/* Signal the mixing thread to quit. */
-	shutdown = true;
-	LOG->Trace("Shutting down mixer thread ...");
-	MixingThread.Wait();
-	LOG->Trace("Mixer thread shut down.");
+	if( MixingThread.IsCreated() )
+	{
+		/* Signal the mixing thread to quit. */
+		shutdown = true;
+		LOG->Trace("Shutting down mixer thread ...");
+		MixingThread.Wait();
+		LOG->Trace("Mixer thread shut down.");
+	}
 
-	close(fd);
+	if( fd != -1 )
+		close( fd );
 }
 
 float RageSound_OSS::GetPlayLatency() const
