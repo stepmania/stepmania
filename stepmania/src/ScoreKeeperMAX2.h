@@ -9,15 +9,15 @@ class Steps;
 
 class ScoreKeeperMAX2: public ScoreKeeper
 {
-	int				m_iScoreRemainder;
-	int				m_iMaxPossiblePoints;
-	int				m_iTapNotesHit;	// number of notes judged so far, needed by scoring
+	int		m_iScoreRemainder;
+	int		m_iMaxPossiblePoints;
+	int		m_iTapNotesHit;	// number of notes judged so far, needed by scoring
 
-	int				m_iNumTapsAndHolds;
-	int			    m_iMaxScoreSoFar; // for nonstop scoring
-	int				m_iPointBonus; // the difference to award at the end
- 	int				m_iCurToastyCombo;
-	bool			m_bIsLastSongInCourse;
+	int		m_iNumTapsAndHolds;
+	int		m_iMaxScoreSoFar; // for nonstop scoring
+	int		m_iPointBonus; // the difference to award at the end
+ 	int		m_iCurToastyCombo;
+	bool	m_bIsLastSongInCourse;
 
 	const vector<Steps*>& apSteps;
 
@@ -25,11 +25,16 @@ class ScoreKeeperMAX2: public ScoreKeeper
 
 	/* Configuration: */
 	/* Score after each tap will be rounded to the nearest m_iRoundTo; 1 to do nothing. */
-	int				m_iRoundTo;
-	int				m_ComboBonusFactor[NUM_TAP_NOTE_SCORES];
+	int		m_iRoundTo;
+	int		m_ComboBonusFactor[NUM_TAP_NOTE_SCORES];
 
 public:
-	ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Steps*>& apSteps, const vector<AttackArray> &asModifiers, PlayerState* pPlayerState);
+	ScoreKeeperMAX2( 
+		const vector<Song*>& apSongs, 
+		const vector<Steps*>& apSteps, 
+		const vector<AttackArray> &asModifiers, 
+		PlayerState* pPlayerState,
+		PlayerStageStats* pPlayerStageStats );
 
 	// before a song plays (called multiple times if course)
 	void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData );

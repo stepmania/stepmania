@@ -17,8 +17,13 @@
 #include "PlayerState.h"
 #include "Style.h"
 
-ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Steps*>& apSteps_, const vector<AttackArray> &asModifiers, PlayerState* pPlayerState ):
-	ScoreKeeper(pPlayerState), apSteps(apSteps_)
+ScoreKeeperMAX2::ScoreKeeperMAX2( 
+		const vector<Song*>& apSongs, 
+		const vector<Steps*>& apSteps_, 
+		const vector<AttackArray> &asModifiers, 
+		PlayerState* pPlayerState,
+		PlayerStageStats* pPlayerStageStats ):
+	ScoreKeeper(pPlayerState,pPlayerStageStats), apSteps(apSteps_)
 {
 	ASSERT( apSongs.size() == apSteps_.size() );
 	ASSERT( apSongs.size() == asModifiers.size() );
@@ -63,12 +68,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Ste
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( rvPre, rvPost );
 	}
 
-	// TODO: Move StageStats numbers into PlayerState.
-	{
-		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-		g_CurStageStats.m_player[pn].iPossibleDancePoints = iTotalPossibleDancePoints;
-	}
-
+	m_pPlayerStageStats->iPossibleDancePoints = iTotalPossibleDancePoints;
 
 	m_iScoreRemainder = 0;
 	m_iCurToastyCombo = 0; 
@@ -204,9 +204,7 @@ static int GetScore(int p, int B, int S, int n)
 
 void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 {
-	// TODO: Move StageStats numbers into PlayerState.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	int &iScore = g_CurStageStats.m_player[pn].iScore;
+	int &iScore = m_pPlayerStageStats->iScore;
 /*
   http://www.aaroninjapan.com/ddr2.html
 
@@ -266,7 +264,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	const int B = m_iMaxPossiblePoints/10;
 
 	// Don't use a multiplier if the player has failed
-	if( g_CurStageStats.m_player[pn].bFailedEarlier )
+	if( m_pPlayerStageStats->bFailedEarlier )
 	{
 		iScore += p;
 		// make score evenly divisible by 5
@@ -279,8 +277,8 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	else
 	{
 		iScore += GetScore(p, B, sum, m_iTapNotesHit);
-		const int &iCurrentCombo = g_CurStageStats.m_player[pn].iCurCombo;
-		g_CurStageStats.m_player[pn].iBonus += m_ComboBonusFactor[score] * iCurrentCombo;
+		const int &iCurrentCombo = m_pPlayerStageStats->iCurCombo;
+		m_pPlayerStageStats->iBonus += m_ComboBonusFactor[score] * iCurrentCombo;
 	}
 
 	/* Subtract the maximum this step could have been worth from the bonus. */
@@ -288,7 +286,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_PERFECT )
 	{
-		if (!g_CurStageStats.m_player[pn].bFailedEarlier)
+		if (!m_pPlayerStageStats->bFailedEarlier)
 			iScore += m_iPointBonus;
 		if ( m_bIsLastSongInCourse )
 		{
@@ -314,14 +312,11 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 void ScoreKeeperMAX2::HandleTapScore( TapNoteScore score )
 {
-	// TODO: Move StageStats numbers into PlayerState.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
 	if( score == TNS_HIT_MINE )
 	{
 		if( m_pPlayerState->m_HealthState != PlayerState::DEAD )
-			g_CurStageStats.m_player[pn].iActualDancePoints += TapNoteScoreToDancePoints( TNS_HIT_MINE );
-		g_CurStageStats.m_player[pn].iTapNoteScores[TNS_HIT_MINE] += 1;
+			m_pPlayerStageStats->iActualDancePoints += TapNoteScoreToDancePoints( TNS_HIT_MINE );
+		m_pPlayerStageStats->iTapNoteScores[TNS_HIT_MINE] += 1;
 	}
 }
 
@@ -329,14 +324,11 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 {
 	ASSERT( iNumTapsInRow >= 1 );
 
-	// TODO: Move StageStats numbers into PlayerState.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
 	// Update dance points.
 	if( m_pPlayerState->m_HealthState != PlayerState::DEAD )
-		g_CurStageStats.m_player[pn].iActualDancePoints += TapNoteScoreToDancePoints( scoreOfLastTap );
+		m_pPlayerStageStats->iActualDancePoints += TapNoteScoreToDancePoints( scoreOfLastTap );
 	// update judged row totals
-	g_CurStageStats.m_player[pn].iTapNoteScores[scoreOfLastTap] += 1;
+	m_pPlayerStageStats->iTapNoteScores[scoreOfLastTap] += 1;
 
 	//
 	// Regular combo
@@ -367,7 +359,7 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	TapNoteScore MinScoreToContinueCombo = GAMESTATE->m_PlayMode == PLAY_MODE_ONI? TNS_PERFECT:TNS_GREAT;
 
 	if( scoreOfLastTap >= MinScoreToContinueCombo )
-		g_CurStageStats.m_player[pn].iCurCombo += ComboCountIfHit;
+		m_pPlayerStageStats->iCurCombo += ComboCountIfHit;
 
 	AddScore( scoreOfLastTap );		// only score once per row
 
@@ -408,32 +400,30 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 
 	
 	// TODO: Remove indexing with PlayerNumber
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	NSMAN->ReportScore(pn, scoreOfLastTap,
-                       g_CurStageStats.m_player[pn].iScore,
-                       g_CurStageStats.m_player[pn].iCurCombo);
+                       m_pPlayerStageStats->iScore,
+                       m_pPlayerStageStats->iCurCombo);
 }
 
 
 void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 {
-	// TODO: Move StageStats numbers into PlayerState.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
 	// update dance points totals
 	if( m_pPlayerState->m_HealthState != PlayerState::DEAD )
-		g_CurStageStats.m_player[pn].iActualDancePoints += HoldNoteScoreToDancePoints( holdScore );
-	g_CurStageStats.m_player[pn].iHoldNoteScores[holdScore] ++;
+		m_pPlayerStageStats->iActualDancePoints += HoldNoteScoreToDancePoints( holdScore );
+	m_pPlayerStageStats->iHoldNoteScores[holdScore] ++;
 
 	if( holdScore == HNS_OK )
 		AddScore( TNS_MARVELOUS );
 
+	// TODO: Remove indexing with PlayerNumber
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	NSMAN->ReportScore(
 		pn, 
 		holdScore+7, 
-        g_CurStageStats.m_player[pn].iScore,
-        g_CurStageStats.m_player[pn].iCurCombo );
-
-
+        m_pPlayerStageStats->iScore,
+        m_pPlayerStageStats->iCurCombo );
 }
 
 

@@ -17,12 +17,14 @@ class NoteData;
 class Inventory;
 class Steps;
 struct PlayerState;
+struct PlayerStageStats;
 
 
 class ScoreKeeper: public Actor 
 {
 protected:
 	PlayerState* m_pPlayerState;
+	PlayerStageStats* m_pPlayerStageStats;
 
 	/* Common toggles that this class handles directly: */
 
@@ -31,7 +33,7 @@ protected:
 //	bool Stats_DoublesCount;
 
 public:
-	ScoreKeeper(PlayerState* pPlayerState) { m_pPlayerState=pPlayerState; }
+	ScoreKeeper(PlayerState* pPlayerState,PlayerStageStats* pPlayerStageStats) { m_pPlayerState=pPlayerState; m_pPlayerStageStats=pPlayerStageStats; }
 	virtual void DrawPrimitives() { }
 	virtual void Update( float fDelta ) { }
 

@@ -13,7 +13,8 @@
 ThemeMetric<float> ATTACK_DURATION_SECONDS	("ScoreKeeperRave","AttackDurationSeconds");
 
 
-ScoreKeeperRave::ScoreKeeperRave( PlayerState* pPlayerState ) : ScoreKeeper(pPlayerState)
+ScoreKeeperRave::ScoreKeeperRave( PlayerState* pPlayerState, PlayerStageStats* pPlayerStageStats ) : 
+	ScoreKeeper(pPlayerState,pPlayerStageStats)
 {
 }
 

@@ -3,12 +3,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "PrefsManager.h"	// for GameplayStatistics
-#include "Sprite.h"
-#include "BitmapText.h"
-
 #include "ActorFrame.h"
-#include "RandomSample.h"
 #include "Judgment.h"
 #include "HoldJudgment.h"
 #include "Combo.h"
@@ -25,9 +20,9 @@ class LifeMeter;
 class CombinedLifeMeter;
 class ScoreKeeper;
 class Inventory;
+struct PlayerStageStats;
 
 #define	SAMPLE_COUNT	16
-
 
 class PlayerMinus : public ActorFrame
 {
@@ -41,6 +36,7 @@ public:
 	void Load( 
 		PlayerState* pPlayerState, 
 		const NoteData& noteData, 
+		PlayerStageStats* pPlayerStageStats,
 		LifeMeter* pLM, 
 		CombinedLifeMeter* pCombinedLM, 
 		ScoreDisplay* pScoreDisplay, 
@@ -75,6 +71,7 @@ protected:
 	int GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind, bool bAllowGraded ) const;
 
 	PlayerState*	m_pPlayerState;
+	PlayerStageStats*	m_pPlayerStageStats;
 	float			m_fNoteFieldHeight;
 
 	float			m_fOffset[SAMPLE_COUNT]; // for AutoSync
@@ -117,6 +114,7 @@ public:
 	void Load( 
 		PlayerState* pPlayerState, 
 		const NoteData& noteData, 
+		PlayerStageStats* pPlayerStageStats,
 		LifeMeter* pLM, 
 		CombinedLifeMeter* pCombinedLM, 
 		ScoreDisplay* pScoreDisplay, 

@@ -253,7 +253,12 @@ void ScreenGameplay::Init()
 		{
 		case PrefsManager::SCORING_MAX2:
 		case PrefsManager::SCORING_5TH:
-			m_pPrimaryScoreKeeper[p] = new ScoreKeeperMAX2( m_apSongsQueue, m_vpStepsQueue[p], m_asModifiersQueue[p], GAMESTATE->m_pPlayerState[p] );
+			m_pPrimaryScoreKeeper[p] = new ScoreKeeperMAX2( 
+				m_apSongsQueue, 
+				m_vpStepsQueue[p], 
+				m_asModifiersQueue[p], 
+				GAMESTATE->m_pPlayerState[p], 
+				&g_CurStageStats.m_player[p] );
 			break;
 		default: ASSERT(0);
 		}
@@ -261,7 +266,9 @@ void ScreenGameplay::Init()
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_RAVE:
-			m_pSecondaryScoreKeeper[p] = new ScoreKeeperRave( GAMESTATE->m_pPlayerState[p] );
+			m_pSecondaryScoreKeeper[p] = new ScoreKeeperRave( 
+				GAMESTATE->m_pPlayerState[p],
+				&g_CurStageStats.m_player[p] );
 			break;
 		}
 	}
@@ -820,6 +827,7 @@ void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 		m_Player[p].Load( 
 			GAMESTATE->m_pPlayerState[p], 
 			nd, 
+			&g_CurStageStats.m_player[p],
 			m_pLifeMeter[p], 
 			m_pCombinedLifeMeter, 
 			m_pPrimaryScoreDisplay[p], 
@@ -1755,7 +1763,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		}
 	}
 
-	/* Nothing else cares about releases. */
+	/* Nothing below cares about releases. */
 	if(type == IET_RELEASE) return;
 
 	// Handle special keys to adjust the offset
