@@ -369,14 +369,14 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "PrevScreen") );
 		break;
 	case SM_GoToNextScreen:
 		SOUND->StopMusic();
-		SCREENMAN->SetNewScreen( "ScreenStage" );
+		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NextScreen") );
 		break;
 	case SM_NoSongs:
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NoSongsScreen") );
 		break;
 	case SM_AddToChat:
 		{
