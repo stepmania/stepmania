@@ -73,5 +73,8 @@ SDL_Surface *mySDL_Palettize( SDL_Surface *src_surf, int GrayBits, int AlphaBits
 
 SDL_Surface *SDL_LoadImage( const CString &sPath );
 
+SDL_RWops *OpenRWops( const CString &sPath, bool Write=false );
+SDL_RWops *OpenRWops( CString &sBuf );
+
 #endif
 

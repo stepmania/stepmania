@@ -1126,12 +1126,12 @@ int RWRageFile_Close(struct SDL_RWops *context)
 	return 0;
 }
 
-SDL_Surface *SDL_LoadImage( const CString &sPath )
+SDL_RWops *OpenRWops( const CString &sPath, bool Write )
 {
 	SDL_RWops *rw = SDL_AllocRW();
 
 	RageFile *f = new RageFile;
-	if( !f->Open(sPath) )
+	if( !f->Open(sPath, Write? RageFile::WRITE:RageFile::READ) )
 	{
 		LOG->Trace("Couldn't open %s: %s", sPath.c_str(), f->GetError().c_str() );
 		delete f;
@@ -1144,5 +1144,81 @@ SDL_Surface *SDL_LoadImage( const CString &sPath )
 	rw->write = RWRageFile_Write;
 	rw->close = RWRageFile_Close;
 
+	return rw;
+}
+
+SDL_Surface *SDL_LoadImage( const CString &sPath )
+{
+	SDL_RWops *rw = OpenRWops( sPath );
+	if( rw == NULL )
+		return NULL;
+
 	return IMG_LoadTyped_RW( rw, true, (char *) GetExtension(sPath).c_str() );
+}
+
+struct RWString
+{
+	CString *buf;
+	int fp;
+	RWString( CString *b ): buf(b), fp(0) { }
+};
+
+int RWString_Seek( struct SDL_RWops *context, int offset, int whence )
+{
+	RWString *f = (RWString *) context->hidden.unknown.data1;
+
+	switch(whence)
+	{
+	case SEEK_CUR: offset += f->fp; break;
+	case SEEK_END: offset += f->buf->size(); break;
+	}
+	f->fp = min( offset, (int) f->buf->size() );
+	return f->fp;
+}
+
+int RWString_Read( struct SDL_RWops *context, void *ptr, int size, int nmemb )
+{
+	RWString *f = (RWString *) context->hidden.unknown.data1;
+	CString &buf = *f->buf;
+
+	size *= nmemb;
+	size = min( size, (int) buf.size() - f->fp );
+	memcpy( ptr, buf.data()+f->fp, size );
+
+	f->fp += size;
+	return size;
+}
+
+int RWString_Write( struct SDL_RWops *context, const void *ptr, int size, int nmemb )
+{
+	RWString *f = (RWString *) context->hidden.unknown.data1;
+	CString &buf = *f->buf;
+
+	size *= nmemb;
+	const int ahead = buf.size() - f->fp;
+	const int overwrite = min( size, ahead );
+	buf.replace( buf.begin() + f->fp, buf.begin() + f->fp + overwrite,
+		(const char*)ptr, size );
+
+	f->fp += size;
+	return size;
+}
+
+/* Close and free an allocated SDL_FSops structure */
+int RWString_Close(struct SDL_RWops *context)
+{
+	RWString *f = (RWString *) context->hidden.unknown.data1;
+	delete f;
+	return 0;
+}
+
+SDL_RWops *OpenRWops( CString &sBuf )
+{
+	SDL_RWops *rw = SDL_AllocRW();
+	rw->hidden.unknown.data1 = new RWString( &sBuf );
+	rw->seek = RWString_Seek;
+	rw->read = RWString_Read;
+	rw->write = RWString_Write;
+	rw->close = RWString_Close;
+	return rw;
 }
