@@ -1,5 +1,5 @@
-#ifndef RAGE_SOUND_ALSA9_H
-#define RAGE_SOUND_ALSA9_H
+#ifndef RAGE_SOUND_ALSA9_SOFTWARE_H
+#define RAGE_SOUND_ALSA9_SOFTWARE_H
 
 #include "RageSound.h"
 #include "RageThreads.h"
@@ -7,38 +7,23 @@
 
 #include "ALSA9Helpers.h"
 
-class RageSound_ALSA9: public RageSoundDriver
+class RageSound_ALSA9_Software: public RageSoundDriver
 {
 private:
-	struct stream
+	struct sound
 	{
-		/* Actual audio stream: */
-		Alsa9Buf *pcm;
-
-		/* Sound object that's playing on this stream, or NULL if this
-		 * channel is available: */
 		RageSound *snd;
-
-		enum {
-			INACTIVE,
-			PLAYING,
-			STOPPING
-		} state;
-
+		bool stopping;
 		int flush_pos; /* state == STOPPING only */
-
-		bool GetData( bool init );
-
-		stream() { pcm = NULL; snd = NULL; state=INACTIVE; }
-		~stream();
+		sound() { snd = NULL; stopping=false; }
 	};
-	friend struct stream;
 
-	/* Pool of available streams. */
-	vector<stream *> stream_pool;
+	/* List of currently playing sounds: */
+	vector<sound *> sounds;
 
 	bool shutdown;
 
+	Alsa9Buf *pcm;
 
 	static int MixerThread_start(void *p);
 	void MixerThread();
@@ -51,12 +36,12 @@ public:
 	void StartMixing(RageSound *snd);
 	void StopMixing(RageSound *snd);
 	int GetPosition(const RageSound *snd) const;
-	int GetSampleRate() const { return -1; }
+	float GetPlayLatency() const;
 
 	void Update(float delta);
 
-	RageSound_ALSA9();
-	~RageSound_ALSA9();
+	RageSound_ALSA9_Software();
+	~RageSound_ALSA9_Software();
 };
 
 #endif

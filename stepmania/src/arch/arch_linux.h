@@ -3,6 +3,7 @@
 
 #ifdef HAVE_ALSA
 #include "Sound/RageSoundDriver_ALSA9.h"
+#include "Sound/RageSoundDriver_ALSA9_Software.h"
 #endif
 
 #ifdef HAVE_OSS

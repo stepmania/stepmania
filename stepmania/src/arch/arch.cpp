@@ -114,6 +114,7 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 #endif
 #ifdef HAVE_ALSA
 			if(!DriversToTry[i].CompareNoCase("ALSA9")) ret = new RageSound_ALSA9;
+			if(!DriversToTry[i].CompareNoCase("ALSA9-sw")) ret = new RageSound_ALSA9_Software;
 #endif		
 #ifdef HAVE_OSS
 			if(!DriversToTry[i].CompareNoCase("OSS")) ret = new RageSound_OSS;

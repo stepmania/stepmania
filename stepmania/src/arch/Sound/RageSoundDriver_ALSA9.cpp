@@ -1,7 +1,6 @@
 #include "global.h"
 #include "RageSoundDriver_ALSA9.h"
 
-#include "RageTimer.h"
 #include "RageLog.h"
 #include "RageSound.h"
 #include "RageSoundManager.h"
@@ -14,6 +13,8 @@ const int samples_per_frame = channels;
 const int bytes_per_frame = sizeof(Sint16) * samples_per_frame;
 
 const unsigned max_writeahead = 1024*8;
+const int num_chunks = 8;
+const int chunksize = max_writeahead / num_chunks;
 
 int RageSound_ALSA9::MixerThread_start(void *p)
 {
@@ -29,107 +30,180 @@ void RageSound_ALSA9::MixerThread()
 
 	while(!shutdown)
 	{
-		GetData();
-		const float delay_ms = 1000 * float(max_writeahead) / samplerate;
-		SDL_Delay( int(delay_ms) / 2);
+		/* Sleep for the size of one chunk. */
+		const int chunksize_frames = max_writeahead / num_chunks;
+		float sleep_secs = (float(chunksize_frames) / samplerate);
+		SDL_Delay( 20 ); // int(1000 * sleep_secs));
+
+		LockMutex L(SOUNDMAN->lock);
+		for( unsigned i = 0; i < stream_pool.size(); ++i )
+		{
+			if( stream_pool[i]->state == stream_pool[i]->INACTIVE )
+				continue; /* inactive */
+
+			while( stream_pool[i]->GetData(false) )
+				;
+		}
 	}
 }
 
-/* Returns the number of frames processed */
-void RageSound_ALSA9::GetData()
+RageSound_ALSA9::stream::~stream()
 {
-	const int frames_to_fill = pcm->GetNumFramesToFill();
-	if( frames_to_fill <= 0 )
-		return;
+	delete pcm;
+}
 
-	/* Sint16 represents a single sample
-	 * each frame contains one sample per channel
-	 */
+/* Returns the number of frames processed */
+bool RageSound_ALSA9::stream::GetData(bool init)
+{
+	int frames_to_fill = pcm->GetNumFramesToFill( max_writeahead );
+	if( !init )
+		frames_to_fill = min( frames_to_fill, chunksize );
+				
+	if( frames_to_fill < chunksize )
+		return false;
+
     static Sint16 *buf = NULL;
-	if (!buf)
-		buf = new Sint16[max_writeahead*samples_per_frame*4];
+	if ( !buf )
+		buf = new Sint16[max_writeahead*samples_per_frame];
 
-    static SoundMixBuffer mix;
-	mix.SetVolume( SOUNDMAN->GetMixVolume() );
-
-	LockMutex L(SOUNDMAN->lock);
-	for(unsigned i = 0; i < sounds.size(); ++i)
+	unsigned len = frames_to_fill*bytes_per_frame;
+	/* It might be INACTIVE, when we're prebuffering. We just don't want to
+	 * fill anything in STOPPING; in that case, we just clear the audio buffer. */
+	if( state != STOPPING )
 	{
-		if(sounds[i]->stopping)
-			continue;
+		LOG->Trace("%p pp %i", this, pcm->GetPlayPos() );
+		const unsigned got = snd->GetPCM( (char *) buf, len, pcm->GetPlayPos() );
 
-		/* Call the callback.
-		 * Get the units straight,
-		 * <bytes> = GetPCM(<bytes*>, <bytes>, <frames>)
-		 */
-		unsigned got = sounds[i]->snd->GetPCM( (char *) buf, frames_to_fill*bytes_per_frame, pcm->GetPlayPos() ) / sizeof(Sint16);
-		mix.write((Sint16 *) buf, got);
-
-		if( int(got) < frames_to_fill )
+		if( got < len )
 		{
-			/* This sound is finishing. */
-			sounds[i]->stopping = true;
-		}
-    }
-	L.Unlock();
+			/* Fill the remainder of the buffer with silence. */
+			memset( buf+got, 0, len-got );
 
-    memset( buf, 0, sizeof(Sint16) * frames_to_fill * samples_per_frame );
-	mix.read( buf );
+			/* STOPPING tells the mixer thread to release the stream once str->flush_bufs
+			 * buffers have been flushed. */
+			state = STOPPING;
+
+			/* Flush two buffers worth of data. */
+			flush_pos = pcm->GetPlayPos();
+		}
+	} else {
+		/* Silence the buffer. */
+		memset( buf, 0, len );
+	}
 
 	pcm->Write( buf, frames_to_fill );
+
+	return true;
 }
 
 
 void RageSound_ALSA9::StartMixing(RageSound *snd)
 {
-	sound *s = new sound;
-	s->snd = snd;
-
 	LockMutex L(SOUNDMAN->lock);
-	sounds.push_back(s);
+
+	/* Find an unused buffer. */
+	unsigned i;
+	for( i = 0; i < stream_pool.size(); ++i )
+	{
+		if( stream_pool[i]->state == stream_pool[i]->INACTIVE )
+			break;
+	}
+
+	if( i == stream_pool.size() )
+	{
+		/* We don't have a free sound buffer. Fake it. */
+		SOUNDMAN->AddFakeSound(snd);
+		return;
+	}
+
+	/* Give the stream to the playing sound and remove it from the pool. */
+	stream_pool[i]->snd = snd;
+	stream_pool[i]->pcm->SetSampleRate( snd->GetSampleRate() );
+
+	/* Pre-buffer the stream. */
+	stream_pool[i]->GetData(true);
+	stream_pool[i]->pcm->Play();
+
+	/* Normally, at this point we should still be INACTIVE, in which case,
+	 * tell the mixer thread to start mixing this channel.  However, if it's
+	 * been changed to STOPPING, then we actually finished the whole file
+	 * in the prebuffering GetData calls above, so leave it alone and let it
+	 * finish on its own. */
+	if( stream_pool[i]->state == stream_pool[i]->INACTIVE )
+		stream_pool[i]->state = stream_pool[i]->PLAYING;
 }
 
 void RageSound_ALSA9::Update(float delta)
 {
-	LockMutex L(SOUNDMAN->lock);
-
 	/* SoundStopped might erase sounds out from under us, so make a copy
 	 * of the sound list. */
-	vector<sound *> snds = sounds;
-	for(unsigned i = 0; i < snds.size(); ++i)
-	{
-		if(!sounds[i]->stopping) continue;
+	vector<stream *> str = stream_pool;
+	ASSERT( SOUNDMAN );
+	LockMutex L( SOUNDMAN->lock );
 
-		if(GetPosition(snds[i]->snd) < sounds[i]->flush_pos)
+	for(unsigned i = 0; i < str.size(); ++i)
+	{
+		if( str[i]->state != str[i]->STOPPING )
+			continue;
+
+		int ps = str[i]->pcm->GetPosition();
+		if( ps < str[i]->flush_pos )
 			continue; /* stopping but still flushing */
 
-		/* This sound is done. */
-		snds[i]->snd->StopPlaying();
+		/* The sound has stopped and flushed all of its buffers. */
+		if( str[i]->snd != NULL )
+			str[i]->snd->StopPlaying();
+		str[i]->snd = NULL;
+
+		str[i]->pcm->Stop();
+		str[i]->state = str[i]->INACTIVE;
 	}
+
 }
 
 void RageSound_ALSA9::StopMixing(RageSound *snd)
 {
+	ASSERT(snd != NULL);
 	LockMutex L(SOUNDMAN->lock);
 
-	/* Find the sound. */
 	unsigned i;
-	for(i = 0; i < sounds.size(); ++i)
-		if(sounds[i]->snd == snd) break;
-	if(i == sounds.size())
+	for( i = 0; i < stream_pool.size(); ++i )
+		if(stream_pool[i]->snd == snd)
+			break;
+
+	if( i == stream_pool.size() )
 	{
 		LOG->Trace("not stopping a sound because it's not playing");
 		return;
 	}
 
-	delete sounds[i];
-	sounds.erase(sounds.begin()+i, sounds.begin()+i+1);
+	/* STOPPING tells the mixer thread to release the stream once str->flush_bufs
+	 * buffers have been flushed. */
+	stream_pool[i]->state = stream_pool[i]->STOPPING;
+
+	/* Flush two buffers worth of data. */
+	stream_pool[i]->flush_pos = stream_pool[i]->pcm->GetPlayPos();
+
+	/* This function is called externally (by RageSound) to stop immediately.
+	 * We need to prevent SoundStopped from being called; it should only be
+	 * called when we stop implicitely at the end of a sound.  Set snd to NULL. */
+	stream_pool[i]->snd = NULL;
 }
 
 
 int RageSound_ALSA9::GetPosition(const RageSound *snd) const
 {
-	return pcm->GetPosition();
+	LockMutex L(SOUNDMAN->lock);
+
+	unsigned i;
+	for( i = 0; i < stream_pool.size(); ++i )
+		if( stream_pool[i]->snd == snd )
+			break;
+
+	if( i == stream_pool.size() )
+		RageException::Throw("GetPosition: Sound %s is not being played", snd->GetLoadedFilePath().c_str());
+
+	return stream_pool[i]->pcm->GetPosition();
 }       
 
 
@@ -137,8 +211,37 @@ RageSound_ALSA9::RageSound_ALSA9()
 {
 	shutdown = false;
 
-	pcm = new Alsa9Buf( Alsa9Buf::HW_DONT_CARE, channels, samplerate, max_writeahead );
-	
+	/* Create a bunch of streams and put them into the stream pool. */
+	for(int i = 0; i < 8; ++i)
+	{
+//		LOG->Trace("%i\n", i);
+		Alsa9Buf *newbuf;
+		try {
+			newbuf = new Alsa9Buf( Alsa9Buf::HW_HARDWARE, channels, Alsa9Buf::DYNAMIC_SAMPLERATE );
+		} catch(const RageException &e) {
+			/* If we didn't get at least 8, fail. */
+			if(i >= 8) break; /* OK */
+
+			/* Clean up; the dtor won't be called. */
+			for(int n = 0; n < i; ++n)
+				delete stream_pool[n];
+
+			if(i)
+			{
+				/* We created at least one hardware buffer. */
+				LOG->Trace("Could only create %i buffers; need at least 8 (failed with %s).  Hardware ALSA driver can't be used.", i, e.what());
+				RageException::ThrowNonfatal("Driver unusable (not enough hardware buffers)");
+			}
+			RageException::ThrowNonfatal("Driver unusable (no hardware buffers)");
+		}
+
+		stream *s = new stream;
+		s->pcm = newbuf;
+		stream_pool.push_back(s);
+	}
+
+	LOG->Trace("Got %i hardware buffers", stream_pool.size());
+
 	MixingThread.SetName( "RageSound_ALSA9" );
 	MixingThread.Create( MixerThread_start, this );
 }
@@ -151,12 +254,8 @@ RageSound_ALSA9::~RageSound_ALSA9()
 	MixingThread.Wait();
 	LOG->Trace("Mixer thread shut down.");
  
-	delete pcm;
-}
-
-float RageSound_ALSA9::GetPlayLatency() const
-{
-	return float(max_writeahead)/samplerate;
+	for(unsigned i = 0; i < stream_pool.size(); ++i)
+		delete stream_pool[i];
 }
 
 /*
