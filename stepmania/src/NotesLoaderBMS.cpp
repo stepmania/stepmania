@@ -580,19 +580,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 {
 	CString sData;
 	if( GetTagFromMap( mapNameToData, "#title", sData ) )
-	{
-		// strip Steps type out of description leaving only song title - looks like 'B4U <BASIC>'
-		size_t iIndex = sData.find_last_of('<');
-		if( iIndex == sData.npos )
-			iIndex = sData.find_last_of('(');
-		if( iIndex != sData.npos )
-		{
-			sData = sData.Left( iIndex );
-			GetMainAndSubTitlesFromFullTitle( sData, out.m_sMainTitle, out.m_sSubTitle );
-		}
-		else
-			out.m_sMainTitle = sData;
-	}
+		GetMainAndSubTitlesFromFullTitle( sData, out.m_sMainTitle, out.m_sSubTitle );
 
 	GetTagFromMap( mapNameToData, "#artist", out.m_sArtist );
 	GetTagFromMap( mapNameToData, "#backbmp", out.m_sBackgroundFile );
