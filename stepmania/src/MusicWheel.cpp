@@ -1385,9 +1385,13 @@ CString MusicWheel::GetSectionNameFromSongAndSort( Song* pSong, SongSortOrder so
 	case SORT_TITLE:
 		sTemp = pSong->GetSortTitle();
 		sTemp.MakeUpper();
-		sTemp = (sTemp.GetLength() > 0) ? sTemp.Left(1) : "";
+		if(sTemp.empty()) return "";
+
+		sTemp = sTemp[0];
 		if( IsAnInt(sTemp) )
 			sTemp = "NUM";
+		else if(toupper(sTemp[0]) < 'A' || toupper(sTemp[0]) > 'Z')
+			sTemp = "OTHER";
 		return sTemp;
 	case SORT_BPM:
 	case SORT_MOST_PLAYED:
