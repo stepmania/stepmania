@@ -401,7 +401,7 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 	{
 	case ROW_COURSE:
 		CHECKPOINT;
-		m_textValue[ROW_COURSE].SetText( pCourse->m_sName );
+		m_textValue[ROW_COURSE].SetText( pCourse->GetFullDisplayTitle() );
 		m_CourseBanner.LoadFromCourse( pCourse );
 		m_CourseBanner.ScaleToClipped( COURSE_BANNER_WIDTH, COURSE_BANNER_HEIGHT );
 		m_iSelection[ROW_ENTRY] = 0;

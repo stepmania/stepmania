@@ -25,7 +25,7 @@ namespace CourseUtil
 class CourseID
 {
 	CString sPath;
-	CString sName;
+	CString sFullTitle;
 
 public:
 	CourseID() { Unset(); }
@@ -34,7 +34,7 @@ public:
 	Course *ToCourse() const;
 	bool operator<( const CourseID &other ) const
 	{
-		return sPath < other.sPath || sName < other.sName;
+		return sPath < other.sPath || sFullTitle < other.sFullTitle;
 	}
 
 	XNode* CreateNode() const;

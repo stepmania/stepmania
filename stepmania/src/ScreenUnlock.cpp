@@ -133,7 +133,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 				if (crs != NULL)
 				{
 					text->SetMaxWidth( MaxWidth );
-					text->SetText( crs->m_sName );
+					text->SetText( crs->GetFullDisplayTitle() );
 					text->Command("Diffuse,0,1,0,1");
 				}
 				else   // entry isn't a song or course

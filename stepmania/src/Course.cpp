@@ -74,9 +74,9 @@ void Course::LoadFromCRSFile( CString sPath )
 
 		// handle the data
 		if( 0 == stricmp(sValueName, "COURSE") )
-			m_sName = sParams[1];
+			m_sMainTitle = sParams[1];
 		else if( 0 == stricmp(sValueName, "COURSETRANSLIT") )
-			m_sNameTranslit = sParams[1];
+			m_sMainTitleTranslit = sParams[1];
 		else if( 0 == stricmp(sValueName, "REPEAT") )
 		{
 			CString str = sParams[1];
@@ -249,11 +249,11 @@ void Course::LoadFromCRSFile( CString sPath )
 	static TitleSubst tsub("courses");
 
 	TitleFields title;
-	title.Title = m_sName;
-	title.TitleTranslit = m_sNameTranslit;
+	title.Title = m_sMainTitle;
+	title.TitleTranslit = m_sMainTitleTranslit;
 	tsub.Subst( title );
-	m_sName = title.Title;
-	m_sNameTranslit = title.TitleTranslit;
+	m_sMainTitle = title.Title;
+	m_sMainTitleTranslit = title.TitleTranslit;
 }
 
 void Course::Init()
@@ -266,7 +266,13 @@ void Course::Init()
 	FOREACH_Difficulty(dc)
 		m_iCustomMeter[dc] = -1;
 	m_entries.clear();
-	m_sPath = m_sName = m_sNameTranslit = m_sBannerPath = m_sCDTitlePath = "";
+	m_sPath = "";
+	m_sMainTitle = "";
+	m_sMainTitleTranslit = "";
+	m_sSubTitle = "";
+	m_sSubTitleTranslit = "";
+	m_sBannerPath = "";
+	m_sCDTitlePath = "";
 	ZERO( m_TrailCacheValid );
 	m_iTrailCacheSeed = 0;
 }
@@ -282,9 +288,9 @@ void Course::Save()
 		return;
 	}
 
-	f.PutLine( ssprintf("#COURSE:%s;", m_sName.c_str()) );
-	if( m_sNameTranslit != "" )
-		f.PutLine( ssprintf("#COURSETRANSLIT:%s;", m_sNameTranslit.c_str()) );
+	f.PutLine( ssprintf("#COURSE:%s;", m_sMainTitle.c_str()) );
+	if( m_sMainTitleTranslit != "" )
+		f.PutLine( ssprintf("#COURSETRANSLIT:%s;", m_sMainTitleTranslit.c_str()) );
 	if( m_bRepeat )
 		f.PutLine( "#REPEAT:YES;" );
 	if( m_iLives != -1 )
@@ -388,10 +394,10 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, Difficulty diff )
 
 	if( sGroupName == "" )
 	{
-		m_sName = "All Songs";
+		m_sMainTitle = "All Songs";
 		// m_sBannerPath = ""; // XXX
 	} else {
-		m_sName = SONGMAN->ShortenGroupName( sGroupName );
+		m_sMainTitle = SONGMAN->ShortenGroupName( sGroupName );
 		m_sBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
 	}
 
@@ -420,7 +426,7 @@ void Course::AutogenNonstopFromGroup( CString sGroupName, Difficulty diff )
 
 	m_bRepeat = false;
 
-	m_sName += " Random";	
+	m_sMainTitle += " Random";	
 
 	// resize to 4
 	while( m_entries.size() < 4 )
@@ -445,9 +451,9 @@ void Course::AutogenOniFromArtist( CString sArtistName, CString sArtistNameTrans
 
 	/* "Artist Oni" is a little repetitive; "by Artist" stands out less, and lowercasing
 	 * "by" puts more emphasis on the artist's name.  It also sorts them together. */
-	m_sName = "by " + sArtistName;
+	m_sMainTitle = "by " + sArtistName;
 	if( sArtistNameTranslit != sArtistName )
-		m_sNameTranslit = "by " + sArtistNameTranslit;
+		m_sMainTitleTranslit = "by " + sArtistNameTranslit;
 
 
 	// m_sBannerPath = ""; // XXX
@@ -526,11 +532,36 @@ struct SortTrailEntry
 	bool operator< ( const SortTrailEntry &rhs ) const { return SortMeter < rhs.SortMeter; }
 };
 
-CString Course::GetDisplayName() const
+CString Course::GetDisplayMainTitle() const
 {
 	if( !PREFSMAN->m_bShowNative )
-		return GetTranslitName();
-	return m_sName;
+		return GetTranslitMainTitle();
+	return m_sMainTitle;
+}
+
+CString Course::GetDisplaySubTitle() const
+{
+	if( !PREFSMAN->m_bShowNative )
+		return GetTranslitSubTitle();
+	return m_sSubTitle;
+}
+
+CString Course::GetFullDisplayTitle() const
+{
+	CString Title = GetDisplayMainTitle();
+	CString SubTitle = GetDisplaySubTitle();
+
+	if(!SubTitle.empty()) Title += " " + SubTitle;
+	return Title;
+}
+
+CString Course::GetFullTranslitTitle() const
+{
+	CString Title = GetTranslitMainTitle();
+	CString SubTitle = GetTranslitSubTitle();
+
+	if(!SubTitle.empty()) Title += " " + SubTitle;
+	return Title;
 }
 
 /* This is called by many simple functions, like Course::GetTotalSeconds, and may
@@ -642,7 +673,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	// Construct a new Trail, add it to the cache, then return it.
 	//
 	/* Different seed for each course, but the same for the whole round: */
-	RandomGen rnd( GAMESTATE->m_iRoundSeed + GetHashForString(m_sName) );
+	RandomGen rnd( GAMESTATE->m_iRoundSeed + GetHashForString(m_sMainTitle) );
 
 	vector<CourseEntry> tmp_entries;
 	if( m_bRandomize )
@@ -1017,7 +1048,7 @@ void Course::UpdateCourseStats( StepsType st )
 	// themes change..
 	
 	LOG->Trace("%s: Total feet: %d",
-		this->m_sName.c_str(),
+		this->m_sMainTitle.c_str(),
 		m_SortOrder_TotalDifficulty );
 }
 

@@ -75,8 +75,11 @@ public:
 
 	bool		m_bIsAutogen;		// was this created by AutoGen?
 	CString		m_sPath;
-	CString		m_sName, m_sNameTranslit;
+private:
+	CString		m_sMainTitle, m_sMainTitleTranslit;
+	CString		m_sSubTitle, m_sSubTitleTranslit;
 
+public:
 	bool HasBanner() const;
 
 	CString		m_sBannerPath;
@@ -90,9 +93,18 @@ public:
 
 	vector<CourseEntry> m_entries;
 
-	/* If PREFSMAN->m_bShowNative is off, this are the same as GetTranslit* below. */
-	CString GetDisplayName() const;
-	CString GetTranslitName() const { return m_sNameTranslit.size()? m_sNameTranslit: m_sName; }
+	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit* below.
+	 * Otherwise, they return the main titles. */
+	CString GetDisplayMainTitle() const;
+	CString GetDisplaySubTitle() const;
+
+	/* Returns the transliterated titles, if any; otherwise returns the main titles. */
+	CString GetTranslitMainTitle() const { return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; }
+	CString GetTranslitSubTitle() const { return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle; }
+
+	/* "title subtitle" */
+	CString GetFullDisplayTitle() const;
+	CString GetFullTranslitTitle() const;
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
 	Trail* GetTrail( StepsType st, CourseDifficulty cd=DIFFICULTY_MEDIUM ) const;

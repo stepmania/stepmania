@@ -22,8 +22,8 @@ static bool CompareCoursePointersByName(const Course* pCourse1, const Course* pC
 	// XXX: That doesn't happen to me, and it shouldn't (strcmp is strictly
 	// a byte sort, though CompareNoCase doesn't use strcmp).  Are you sure
 	// you didn't have only one space before? -glenn
-	CString sName1 = pCourse1->m_sName;
-	CString sName2 = pCourse2->m_sName;
+	CString sName1 = pCourse1->GetFullDisplayTitle();
+	CString sName2 = pCourse2->GetFullDisplayTitle();
 	sName1.Replace( "  " , " 0" );
 	sName2.Replace( "  " , " 0" );
 	return sName1.CompareNoCase( sName2 ) == -1;
@@ -74,7 +74,7 @@ static bool MovePlayersBestToEnd( const Course* pCourse1, const Course* pCourse2
 	if( !C1HasBest && C2HasBest )
 		return true;
 
-	return pCourse1->m_sName < pCourse2->m_sName;
+	return CompareCoursePointersByName( pCourse1, pCourse2 );
 }
 
 static bool CompareRandom( const Course* pCourse1, const Course* pCourse2 )
@@ -140,7 +140,7 @@ bool CompareCoursePointersBySortValueDescending(const Course *pSong1, const Cour
 
 bool CompareCoursePointersByTitle( const Course *pCourse1, const Course *pCourse2 )
 {
-	return pCourse1->m_sName < pCourse2->m_sName;
+	return CompareCoursePointersByName( pCourse1, pCourse2 );
 }
 
 void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses )
@@ -183,18 +183,18 @@ void CourseID::FromCourse( const Course *p )
 		if( p->m_bIsAutogen )
 		{
 			sPath = "";
-			sName = p->m_sName;
+			sFullTitle = p->GetFullDisplayTitle();
 		}
 		else
 		{
 			sPath = p->m_sPath;
-			sName = "";
+			sFullTitle = "";
 		}
 	}
 	else
 	{
 		sPath = "";
-		sName = "";
+		sFullTitle = "";
 	}
 }
 
@@ -204,7 +204,7 @@ Course *CourseID::ToCourse() const
 	pCourse = SONGMAN->GetCourseFromPath( sPath );
 	if( pCourse ) 
 		return pCourse;
-	pCourse = SONGMAN->GetCourseFromName( sName );
+	pCourse = SONGMAN->GetCourseFromName( sFullTitle );
 		return pCourse;
 }
 
@@ -215,8 +215,8 @@ XNode* CourseID::CreateNode() const
 
 	if( !sPath.empty() )
 		pNode->AppendAttr( "Path", sPath );
-	if( !sName.empty() )
-		pNode->AppendAttr( "Name", sName );
+	if( !sFullTitle.empty() )
+		pNode->AppendAttr( "FullTitle", sFullTitle );
 
 	return pNode;
 }
@@ -225,21 +225,21 @@ void CourseID::LoadFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->name == "Course" );
 	pNode->GetAttrValue("Path", sPath);
-	pNode->GetAttrValue("Name", sName);
+	pNode->GetAttrValue("FullTitle", sFullTitle);
 }
 
 CString CourseID::ToString() const
 {
 	if( !sPath.empty() )
 		return sPath;
-	if( !sName.empty() )
-		return sName;
+	if( !sFullTitle.empty() )
+		return sFullTitle;
 	return "";
 }
 
 bool CourseID::IsValid() const
 {
-	return !sPath.empty() || !sName.empty();
+	return !sPath.empty() || !sFullTitle.empty();
 }
 
 /*

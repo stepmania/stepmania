@@ -29,7 +29,7 @@ Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
 
 	Trail *ret = p->GetTrail( st, cd );
 	if( !bAllowNull && ret == NULL )
-		RageException::Throw( "%i, %i, \"%s\"", st, cd, p->m_sName.c_str() );	
+		RageException::Throw( "%i, %i, \"%s\"", st, cd, p->GetFullDisplayTitle().c_str() );	
 
 	return ret;
 }

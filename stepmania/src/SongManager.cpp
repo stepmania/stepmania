@@ -893,7 +893,7 @@ Course* SongManager::GetCourseFromPath( CString sPath )
 Course* SongManager::GetCourseFromName( CString sName )
 {
 	for( unsigned int i=0; i<m_pCourses.size(); i++ )
-		if( sName.CompareNoCase(m_pCourses[i]->m_sName) == 0 )
+		if( sName.CompareNoCase(m_pCourses[i]->GetFullDisplayTitle()) == 0 )
 			return m_pCourses[i];
 
 	return NULL;
@@ -947,7 +947,7 @@ Course *SongManager::FindCourse( CString sName )
 {
 	for( unsigned i = 0; i < m_pCourses.size(); i++ )
 	{
-		if( !sName.CompareNoCase(m_pCourses[i]->m_sName) )
+		if( !sName.CompareNoCase(m_pCourses[i]->GetFullDisplayTitle()) )
 			return m_pCourses[i];
 	}
 

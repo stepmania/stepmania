@@ -711,7 +711,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		return SECONDS_PER_PAGE;
 	case PAGE_TYPE_TRAIL:
 		{
-			m_textCourseTitle.SetText( pts.pCourse->m_sName );
+			m_textCourseTitle.SetText( pts.pCourse->GetFullDisplayTitle() );
 			m_Banner.LoadFromCourse( pts.pCourse );
 			m_textStepsType.SetText( GameManager::NotesTypeToThemedString(pts.nt) );
 
@@ -814,7 +814,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 				CourseScoreRowItem *pCourseScoreRowItem = m_vpCourseScoreRowItem[c];
 				const Course* pCourse = pCourseScoreRowItem->m_pCourse;
 
-				pCourseScoreRowItem->m_textSongTitle.SetText( pCourse->m_sName );
+				pCourseScoreRowItem->m_textSongTitle.SetText( pCourse->GetFullDisplayTitle() );
 				FOREACH_ShownCourseDifficulty( cd )
 				{
 					BitmapText* pTextStepsScore = &pCourseScoreRowItem->m_textStepsScore[cd];

@@ -130,8 +130,8 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 					bt = &m_textSectionName;
 					break;
 				case TYPE_COURSE:
-					sDisplayName = data->m_pCourse->GetDisplayName();
-					sTranslitName = data->m_pCourse->GetTranslitName();
+					sDisplayName = data->m_pCourse->GetFullDisplayTitle();
+					sTranslitName = data->m_pCourse->GetFullTranslitTitle();
 					bt = &m_textCourse;
 					break;
 				case TYPE_SORT:

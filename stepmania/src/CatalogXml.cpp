@@ -50,7 +50,10 @@ void SaveCatalogXml()
 			StepsID stepsID;
 			stepsID.FromSteps( pSteps );
 
-			pSongNode->AppendChild( stepsID.CreateNode() );
+			XNode* pStepsIDNode = stepsID.CreateNode();
+			pSongNode->AppendChild( pStepsIDNode );
+			
+			pStepsIDNode->AppendChild( pSteps->GetRadarValues().CreateNode() );
 		}
 	}
 
@@ -68,7 +71,8 @@ void SaveCatalogXml()
 
 		xml.AppendChild( pCourseNode );
 
-		pCourseNode->AppendChild( "Title", pCourse->m_sName );
+		pCourseNode->AppendChild( "MainTitle", pCourse->GetDisplayMainTitle() );
+		pCourseNode->AppendChild( "SubTitle", pCourse->GetDisplaySubTitle() );
 		pCourseNode->AppendChild( "HasMods", pCourse->HasMods() );
 
 		FOREACH_StepsType( st )
@@ -84,7 +88,10 @@ void SaveCatalogXml()
 				TrailID trailID;
 				trailID.FromTrail( pTrail );
 
-				pCourseNode->AppendChild( trailID.CreateNode() );
+				XNode* pTrailIDNode = trailID.CreateNode();
+				pCourseNode->AppendChild( pTrailIDNode );
+				
+				pTrailIDNode->AppendChild( pTrail->GetRadarValues().CreateNode() );
 			}
 		}
 	}
