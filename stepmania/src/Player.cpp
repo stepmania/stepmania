@@ -294,20 +294,15 @@ void Player::DrawPrimitives()
 
 		// construct view and project matrix
 		RageMatrix matNewView;
-		if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bReverseScroll )
-			RageMatrixLookAtLH( 
-				&matNewView, 
-				&RageVector3( CENTER_X, GetY()-300.0f, 400.0f ),
-				&RageVector3( CENTER_X, GetY()+100.0f, 0.0f ), 
-				&RageVector3( 0.0f,     -1.0f,           0.0f ) 
-				);
-		else
-			RageMatrixLookAtLH( 
-				&matNewView, 
-				&RageVector3( CENTER_X, GetY()+800.0f, 400.0f ),
-				&RageVector3( CENTER_X, GetY()+400.0f, 0.0f ), 
-				&RageVector3( 0.0f,     -1.0f,           0.0f ) 
-				);
+		RageVector3 Eye, At, Up( 0.0f, -1.0f, 0.0f );
+		if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bReverseScroll ) {
+			Eye = RageVector3( CENTER_X, GetY()-300.0f, 400.0f );
+			At = RageVector3( CENTER_X, GetY()+100.0f, 0.0f );
+		} else {
+			Eye = RageVector3( CENTER_X, GetY()+800.0f, 400.0f );
+			At = RageVector3( CENTER_X, GetY()+400.0f, 0.0f );
+		}
+		RageMatrixLookAtLH( &matNewView, &Eye, &At, &Up );
 
 		DISPLAY->SetViewTransform( &matNewView );
 
