@@ -14,7 +14,7 @@ extern "C"
 #define SArg(n) (luaL_checkstring(L,n))
 #define IArg(n) (luaL_checkint(L,n))
 #define BArg(n) (!!IArg(n))
-#define FArg(n) (luaL_checknumber(L,n))
+#define FArg(n) ((float) luaL_checknumber(L,n))
 
 
 #define LUA_REGISTER_CLASS( T ) \
