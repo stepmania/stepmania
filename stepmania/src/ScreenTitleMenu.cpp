@@ -116,7 +116,6 @@ ScreenTitleMenu::ScreenTitleMenu() : Screen("ScreenTitleMenu")
 		break;
 	case COIN_PAY:
 	case COIN_FREE:
-	case COIN_EVENT:
 		break;
 	default:
 		ASSERT(0);

@@ -181,14 +181,14 @@ int GameState::GetNumStagesLeft()
 {
 	if(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
 		return 1;
-	if(PREFSMAN->m_iCoinMode==COIN_EVENT)
+	if( PREFSMAN->m_bEventMode )
 		return 999;
 	return PREFSMAN->m_iNumArcadeStages - m_iCurrentStageIndex;
 }
 
 bool GameState::IsFinalStage()
 {
-	if( PREFSMAN->m_iCoinMode==COIN_EVENT )
+	if( PREFSMAN->m_bEventMode )
 		return false;
 	int iPredictedStageForCurSong = 1;
 	if( m_pCurSong != NULL )
@@ -199,14 +199,14 @@ bool GameState::IsFinalStage()
 
 bool GameState::IsExtraStage()
 {
-	if( PREFSMAN->m_iCoinMode==COIN_EVENT )
+	if( PREFSMAN->m_bEventMode )
 		return false;
 	return m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages;
 }
 
 bool GameState::IsExtraStage2()
 {
-	if( PREFSMAN->m_iCoinMode==COIN_EVENT )
+	if( PREFSMAN->m_bEventMode )
 		return false;
 	return m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages+1;
 }
@@ -217,7 +217,7 @@ CString GameState::GetStageText()
 	else if( m_PlayMode == PLAY_MODE_ONI )		return "oni";
 	else if( m_PlayMode == PLAY_MODE_NONSTOP )	return "nonstop";
 	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return "endless";
-	else if( PREFSMAN->m_iCoinMode==COIN_EVENT )			return "event";
+	else if( PREFSMAN->m_bEventMode )			return "event";
 	else if( IsFinalStage() )					return "final";
 	else if( IsExtraStage() )					return "extra1";
 	else if( IsExtraStage2() )					return "extra2";
@@ -326,7 +326,7 @@ bool GameState::IsCourseMode() const
 
 bool GameState::HasEarnedExtraStage()
 {
-	if( PREFSMAN->m_iCoinMode==COIN_EVENT )
+	if( PREFSMAN->m_bEventMode )
 		return false;
 
 	if( GAMESTATE->m_PlayMode != PLAY_MODE_ARCADE )

@@ -40,6 +40,7 @@ public:
 	bool			m_bMenuTimer;
 	bool			m_bShowDanger;
 	int				m_iNumArcadeStages;
+	bool			m_bEventMode;
 	float			m_fJudgeWindowScale;
 	float			m_fLifeDifficultyScale;
 	float			m_fJudgeWindowMarvelousSeconds;

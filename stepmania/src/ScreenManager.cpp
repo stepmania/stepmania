@@ -149,15 +149,16 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 	// update joined
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
+		CString sText;
 		switch( PREFSMAN->m_iCoinMode )
 		{
 		case COIN_HOME:
 			if( GAMESTATE->m_bSideIsJoined[p] )
-				m_textCreditInfo[p].SetText( "" );
+				sText = "";
 			else if( GAMESTATE->m_bPlayersCanJoin )		// would  (GAMESTATE->m_CurStyle!=STYLE_INVALID) do the same thing?
-				m_textCreditInfo[p].SetText( "PRESS START" );
+				sText = "PRESS START";
 			else
-				m_textCreditInfo[p].SetText( "NOT PRESENT" );
+				sText = "NOT PRESENT";
 			break;
 		case COIN_PAY:
 			{
@@ -165,18 +166,17 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 				CString txt = ssprintf("CREDIT(S) %d", GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit);
 				if (Coins)
 					txt += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit );
-				m_textCreditInfo[p].SetText(txt);
+				sText = txt;
 			}
 			break;
 		case COIN_FREE:
-			m_textCreditInfo[p].SetText( "FREE PLAY" );
-			break;
-		case COIN_EVENT:
-			m_textCreditInfo[p].SetText( "EVENT MODE" );
+			sText = "FREE PLAY";
 			break;
 		default:
 			ASSERT(0);
 		}
+		
+		m_textCreditInfo[p].SetText( sText );
 	}
 }
 

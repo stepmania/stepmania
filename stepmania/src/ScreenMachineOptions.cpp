@@ -41,8 +41,8 @@ enum {
 
 OptionRow g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	OptionRow( "Menu\nTimer",			"OFF","ON" ),
-	OptionRow( "Coin\nMode",			"HOME","PAY","FREE PLAY","EVENT MODE" ),
-	OptionRow( "Songs Per\nPlay",		"1","2","3","4","5","6","7" ),
+	OptionRow( "Coin\nMode",			"HOME","PAY","FREE PLAY" ),
+	OptionRow( "Songs Per\nPlay",		"1","2","3","4","5","6","7","UNLIMITED" ),
 	OptionRow( "Judge\nDifficulty",		"1","2","3","4","5","6","7","8" ),
 	OptionRow( "Life\nDifficulty",		"1","2","3","4","5","6","7" ),
 	OptionRow( "Default\nFail Type",	"ARCADE","END OF SONG","OFF" ),	
@@ -71,7 +71,7 @@ void ScreenMachineOptions::ImportOptions()
 {
 	m_iSelectedOption[0][MO_COIN_MODE]				= PREFSMAN->m_iCoinMode;
 	m_iSelectedOption[0][MO_MENU_TIMER]				= PREFSMAN->m_bMenuTimer ? 1:0;
-	m_iSelectedOption[0][MO_NUM_ARCADE_STAGES]		= PREFSMAN->m_iNumArcadeStages - 1;
+	m_iSelectedOption[0][MO_NUM_ARCADE_STAGES]		= PREFSMAN->m_bEventMode ? 7 : PREFSMAN->m_iNumArcadeStages - 1;
 
 	/* .02 difficulty is beyond our timing right now; even autoplay
 	 * misses!  At least fix autoplay before enabling this, or we'll
@@ -114,6 +114,7 @@ void ScreenMachineOptions::ExportOptions()
 	PREFSMAN->m_iCoinMode				= m_iSelectedOption[0][MO_COIN_MODE];
 	PREFSMAN->m_bMenuTimer				= m_iSelectedOption[0][MO_MENU_TIMER] == 1;
 	PREFSMAN->m_iNumArcadeStages		= m_iSelectedOption[0][MO_NUM_ARCADE_STAGES] + 1;
+	PREFSMAN->m_bEventMode				= m_iSelectedOption[0][MO_NUM_ARCADE_STAGES] == 7;
 
 	switch( m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] )
 	{

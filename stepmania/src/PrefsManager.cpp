@@ -54,6 +54,7 @@ PrefsManager::PrefsManager()
 	m_fBGBrightness = 0.8f;
 	m_bMenuTimer = true;
 	m_iNumArcadeStages = 3;
+	m_bEventMode = false;
 	m_bAutoPlay = false;
 	m_fJudgeWindowScale = 1.0f;
 	m_fJudgeWindowMarvelousSeconds = 0.0225f;
@@ -143,6 +144,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueF( "Options", "BGBrightness",				m_fBGBrightness );
 	ini.GetValueB( "Options", "MenuTimer",					m_bMenuTimer );
 	ini.GetValueI( "Options", "NumArcadeStages",			m_iNumArcadeStages );
+	ini.GetValueB( "Options", "EventMode",					m_bEventMode );
 	ini.GetValueB( "Options", "AutoPlay",					m_bAutoPlay );
 	ini.GetValueF( "Options", "JudgeWindowScale",			m_fJudgeWindowScale );
 	ini.GetValueF( "Options", "JudgeWindowMarvelousSeconds",m_fJudgeWindowMarvelousSeconds );
@@ -225,6 +227,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueF( "Options", "BGBrightness",				m_fBGBrightness );
 	ini.SetValueB( "Options", "MenuTimer",					m_bMenuTimer );
 	ini.SetValueI( "Options", "NumArcadeStages",			m_iNumArcadeStages );
+	ini.SetValueB( "Options", "EventMode",					m_bEventMode );
 	ini.SetValueB( "Options", "AutoPlay",					m_bAutoPlay );
 	ini.SetValueF( "Options", "JudgeWindowScale",			m_fJudgeWindowScale );
 	ini.SetValueF( "Options", "JudgeWindowMarvelousSeconds",m_fJudgeWindowMarvelousSeconds );

@@ -186,7 +186,6 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 				// fall through
 			case COIN_HOME:
 			case COIN_FREE:
-			case COIN_EVENT:
 				SOUNDMAN->StopMusic();
 				/* We already played the it was a coin was inserted.  Don't play it again. */
 				if( MenuI.button != MENU_BUTTON_COIN )

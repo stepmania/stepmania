@@ -863,7 +863,7 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 		m_Grades[p].SettleImmediately();
 
 
-	if( PREFSMAN->m_iCoinMode==COIN_EVENT )
+	if( PREFSMAN->m_bEventMode )
 	{
 		switch( GAMESTATE->m_PlayMode )
 		{
