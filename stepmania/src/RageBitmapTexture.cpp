@@ -24,7 +24,7 @@ static void GetResolutionFromFileName( CString sPath, int &Width, int &Height )
 	 *  Foo (dither, res 512x128).png
 	 *
 	 * Be careful that this doesn't get mixed up with frame dimensions. */
-	Regex re("\\([^\\)]*res ([0-9]+)x([0-9]+).*\\)");
+	static Regex re("\\([^\\)]*res ([0-9]+)x([0-9]+).*\\)");
 
 	vector<CString> matches;
 	if(!re.Compare(sPath, matches))
