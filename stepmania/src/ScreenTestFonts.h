@@ -11,8 +11,13 @@ public:
 	ScreenTestFonts();
 
 	BitmapText txt;
+	BitmapText curfont;
 	Quad Vline, Hline;
 	void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	void Draw();
+	CString			curtext;
+	void SetText(CString txt);
+	void SetFont(CString font);
 };
 
 #endif
