@@ -62,23 +62,21 @@ public:
 
 	void NewData(const char *buffer);
 
-protected:
-	char *buffer;
-	bool buffer_changed;
-	RageMutex buffer_mutex;
+private:
+	const char *buffer;
+	SDL_sem *buffer_lock, *buffer_finished;
 
 	void Create();
 
-	void CreateTexture();
+	unsigned CreateTexture();
+	void CreateTextures();
 	bool PlayMovie();
-	void CheckMovieStatus();
+	void SkipUpdates();
+	void StopSkippingUpdates();
 
-	virtual unsigned int GetGLTextureID();
+	unsigned int GetGLTextureID() { return m_uGLTextureID; }
 	unsigned int m_uGLTextureID;
 
-	//-----------------------------------------------------------------------------
-	// DirectShow pointers
-	//-----------------------------------------------------------------------------
 	CComPtr<IGraphBuilder>  m_pGB;          // GraphBuilder
 	bool					m_bLoop;
 	bool					m_bPlaying;

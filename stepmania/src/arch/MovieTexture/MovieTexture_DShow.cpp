@@ -43,40 +43,65 @@ MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
 {
 	LOG->Trace( "RageBitmapTexture::RageBitmapTexture()" );
 
-	buffer_changed = false;
-
 	m_uGLTextureID = 0;
 	buffer = NULL;
- 
-	Create();
+	buffer_lock = SDL_CreateSemaphore(1);
+	buffer_finished = SDL_CreateSemaphore(0);
 
+	Create();
 	CreateFrameRects();
+
 	// flip all frame rects because movies are upside down
 	for( unsigned i=0; i<m_TextureCoordRects.size(); i++ )
-	{
-		float fTemp = m_TextureCoordRects[i].top;
-		m_TextureCoordRects[i].top = m_TextureCoordRects[i].bottom;
-		m_TextureCoordRects[i].bottom = fTemp;
-	}
+		swap(m_TextureCoordRects[i].top, m_TextureCoordRects[i].bottom);
 
 	m_bLoop = true;
 	m_bPlaying = false;
 }
 
+/* Hold buffer_lock.  If it's held, then the decoding thread is waiting
+ * for us to process a frame; do so. */
+void MovieTexture_DShow::SkipUpdates()
+{
+	while(SDL_SemTryWait(buffer_lock))
+		Update(0);
+}
+
+void MovieTexture_DShow::StopSkippingUpdates()
+{
+	SDL_SemPost(buffer_lock);
+}
+
 MovieTexture_DShow::~MovieTexture_DShow()
 {
 	LOG->Trace("MovieTexture_DShow::~MovieTexture_DShow");
+	LOG->Flush();
 
-	// Shut down the graph
+	SkipUpdates();
+
+	/* Shut down the graph.  We can't call Stop() here, since that will
+	 * call SkipUpdates again, which will deadlock if we call it twice
+	 * in a row. */
     if (m_pGB) {
-		Stop();
-		m_pGB.Release ();
+		LOG->Trace("MovieTexture_DShow: shutdown");
+	LOG->Flush();
+		CComPtr<IMediaControl> pMC;
+		m_pGB.QueryInterface(&pMC);
+
+		HRESULT hr;
+		if( FAILED( hr = pMC->Stop() ) )
+			RageException::Throw( hr_ssprintf(hr, "Could not stop the DirectShow graph.") );
+
+//		Stop();
+		m_pGB.Release();
 	}
-
-	delete [] buffer;
-
+	LOG->Trace("MovieTexture_DShow: shutdown ok");
+	LOG->Flush();
 	if(m_uGLTextureID)
 		glDeleteTextures(1, &m_uGLTextureID);
+
+	SDL_DestroySemaphore(buffer_lock);
+	SDL_DestroySemaphore(buffer_finished);
 }
 
 void MovieTexture_DShow::Reload()
@@ -85,25 +110,29 @@ void MovieTexture_DShow::Reload()
 }
 
 
-unsigned int MovieTexture_DShow::GetGLTextureID()
-{
-	CheckMovieStatus();		// restart the movie if we reach the end
-	return m_uGLTextureID;
-}
-
 void MovieTexture_DShow::Update(float fDeltaTime)
 {
-	LockMutex L(buffer_mutex);
+	// restart the movie if we reach the end
+	if(m_bLoop)
+	{
+		// Check for completion events
+		CComPtr<IMediaEvent>    pME;
+		m_pGB.QueryInterface(&pME);
 
-	if(!buffer_changed)
+		long lEventCode, lParam1, lParam2;
+		pME->GetEvent( &lEventCode, &lParam1, &lParam2, 0 );
+		if( lEventCode == EC_COMPLETE )
+			SetPosition(0);
+	}
+
+	if(buffer == NULL)
 		return;
 
-	buffer_changed = false;
-
 	/* Just in case we were invalidated: */
-	CreateTexture();
+	CreateTextures();
 
-	DISPLAY->SetTexture(this);
+	glBindTexture( GL_TEXTURE_2D, m_uGLTextureID );
+
 	glPixelStorei(GL_UNPACK_SWAP_BYTES, 1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -123,6 +152,13 @@ void MovieTexture_DShow::Update(float fDeltaTime)
 	glPixelStorei(GL_UNPACK_SWAP_BYTES, 0);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glFlush();
+
+	buffer = NULL;
+
+	LOG->Trace("processed, signalling");
+
+	/* Start the decoding thread again. */
+	SDL_SemPost(buffer_finished);
 }
 
 void PrintCodecError(HRESULT hr, CString s)
@@ -208,33 +244,51 @@ void MovieTexture_DShow::Create()
 	m_iTextureWidth = power_of_two(m_iImageWidth);
 	m_iTextureHeight = power_of_two(m_iImageHeight);
 
-	if(buffer == NULL)
-		buffer = new char[m_iSourceWidth * m_iSourceHeight * 3];
-
 	/* We've set up the movie, so we know the dimensions we need.  Set
 	 * up the texture. */
-	CreateTexture();
+	CreateTextures();
 
 	// Start the graph running
     if( !PlayMovie() )
         RageException::Throw( "Could not run the DirectShow graph." );
 }
 
+
 void MovieTexture_DShow::NewData(const char *data)
 {
-	LockMutex L(buffer_mutex);
-	buffer_changed = true;
-	memcpy(buffer, data, m_iSourceWidth * m_iSourceHeight * 3);
+	ASSERT(data);
+	
+	/* Try to lock. */
+	if(SDL_SemTryWait(buffer_lock))
+	{
+		/* The main thread is doing something uncommon, such as pausing.
+		 * Drop this frame. */
+		return;
+	}
+
+	buffer = data;
+
+	SDL_SemWait(buffer_finished);
+
+	ASSERT(buffer == NULL);
+
+	SDL_SemPost(buffer_lock);
 }
 
-void MovieTexture_DShow::CreateTexture()
+
+
+void MovieTexture_DShow::CreateTextures()
 {
-	if(m_uGLTextureID)
-		return;
+	if(!m_uGLTextureID)
+		m_uGLTextureID = CreateTexture();
+}
 
-	glGenTextures(1, &m_uGLTextureID);
+unsigned MovieTexture_DShow::CreateTexture()
+{
+	unsigned TextureID;
 
-	DISPLAY->SetTexture(this);
+	glGenTextures(1, &TextureID);
+	glBindTexture( GL_TEXTURE_2D, TextureID );
 
 	/* Initialize the texture and set it to black. */
 	string buf(m_iTextureWidth*m_iTextureHeight*3, 0);
@@ -256,10 +310,14 @@ void MovieTexture_DShow::CreateTexture()
 
 	glTexImage2D(GL_TEXTURE_2D, 0, internalformat,
 		m_iTextureWidth, m_iTextureHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, buf.data());
+
+	return TextureID;
 }
 
 bool MovieTexture_DShow::PlayMovie()
 {
+	SkipUpdates();
+
 	LOG->Trace("MovieTexture_DShow::PlayMovie()");
 	CComPtr<IMediaControl> pMC;
     m_pGB.QueryInterface(&pMC);
@@ -271,26 +329,11 @@ bool MovieTexture_DShow::PlayMovie()
 
 	m_bPlaying = true;
 
-    return true;
+	StopSkippingUpdates();
+
+	return true;
 }
 
-
-//-----------------------------------------------------------------------------
-// CheckMovieStatus: If the movie has ended, rewind to beginning
-//-----------------------------------------------------------------------------
-void MovieTexture_DShow::CheckMovieStatus()
-{
-	if(!m_bLoop) return;
-
-    // Check for completion events
-	CComPtr<IMediaEvent>    pME;
-    m_pGB.QueryInterface(&pME);
-
-	long lEventCode, lParam1, lParam2;
-    pME->GetEvent( &lEventCode, &lParam1, &lParam2, 0 );
-    if( EC_COMPLETE == lEventCode )
-		SetPosition(0);
-}
 
 void MovieTexture_DShow::Play()
 {
@@ -299,16 +342,22 @@ void MovieTexture_DShow::Play()
 
 void MovieTexture_DShow::Pause()
 {
+	SkipUpdates();
+
 	CComPtr<IMediaControl> pMC;
     m_pGB.QueryInterface(&pMC);
 
 	HRESULT hr;
 	if( FAILED( hr = pMC->Pause() ) )
         RageException::Throw( hr_ssprintf(hr, "Could not pause the DirectShow graph.") );
+
+	StopSkippingUpdates();
 }
 
 void MovieTexture_DShow::Stop()
 {
+	SkipUpdates();
+
 	CComPtr<IMediaControl> pMC;
     m_pGB.QueryInterface(&pMC);
 
@@ -317,13 +366,19 @@ void MovieTexture_DShow::Stop()
         RageException::Throw( hr_ssprintf(hr, "Could not stop the DirectShow graph.") );
 
 	m_bPlaying = false;
+
+	StopSkippingUpdates();
 }
 
 void MovieTexture_DShow::SetPosition( float fSeconds )
 {
+	SkipUpdates();
+
 	CComPtr<IMediaPosition> pMP;
     m_pGB.QueryInterface(&pMP);
     pMP->put_CurrentPosition(0);
+
+	StopSkippingUpdates();
 }
 
 bool MovieTexture_DShow::IsPlaying() const
