@@ -184,7 +184,7 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	sound_desired.format = AUDIO_S16SYS;
 	sound_desired.rate = samplerate;
 
-    SoundReader *NewSample = new SoundReader_SDL_Sound;
+    SoundReader_SDL_Sound *NewSample = new SoundReader_SDL_Sound;
 	if(!NewSample->Open(sSoundFilePath.GetString()))
 		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound %s: %s",
 			sSoundFilePath.GetString(), NewSample->GetError().c_str());
