@@ -383,7 +383,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	static bool bPlaySelect = true;
 	if( bPlaySelect )
 	{
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectDifficulty comment %s",mc.m_sName.c_str())) );
+		SOUND->PlayOnceFromAnnouncer( ssprintf("ScreenSelectDifficulty comment %s",mc.m_sName.c_str()) );
 		m_soundSelect.Play();
 	}
 

@@ -18,7 +18,6 @@
 #include "GameManager.h"
 #include "SongManager.h"
 #include "RageLog.h"
-#include "AnnouncerManager.h"
 #include "LifeMeterBar.h"
 #include "LifeMeterBattery.h"
 #include "GameState.h"
@@ -1152,7 +1151,7 @@ void ScreenGameplay::PlayAnnouncer( CString type, float fSeconds )
 		return;
 	m_fTimeSinceLastDancingComment = 0;
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(type) );
+	SOUND->PlayOnceFromAnnouncer( type );
 
 	if( m_pCombinedLifeMeter )
 		m_pCombinedLifeMeter->OnTaunt();
@@ -1171,7 +1170,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	if( m_bFirstUpdate )
 	{
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay intro") );	// crowd cheer
+		SOUND->PlayOnceFromAnnouncer( "gameplay intro" );	// crowd cheer
 
 		//
 		// Get the transitions rolling
@@ -1909,17 +1908,17 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_PlayReady:
 		m_Background.FadeToActualBrightness();
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay ready") );
+		SOUND->PlayOnceFromAnnouncer( "gameplay ready" );
 		m_Ready.StartTransitioning( SM_PlayGo );
 		break;
 
 	case SM_PlayGo:
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-			SOUND->PlayOnceFromDir(	ANNOUNCER->GetPathTo("gameplay here we go extra") );
+			SOUND->PlayOnceFromAnnouncer( "gameplay here we go extra" );
 		else if( GAMESTATE->IsFinalStage() )
-			SOUND->PlayOnceFromDir(	ANNOUNCER->GetPathTo("gameplay here we go final") );
+			SOUND->PlayOnceFromAnnouncer( "gameplay here we go final" );
 		else
-			SOUND->PlayOnceFromDir(	ANNOUNCER->GetPathTo("gameplay here we go normal") );
+			SOUND->PlayOnceFromAnnouncer( "gameplay here we go normal" );
 
 		m_Go.StartTransitioning( SM_None );
 		GAMESTATE->m_bPastHereWeGo = true;
@@ -2031,7 +2030,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			{
 				TweenOffScreen();
 				m_Extra.StartTransitioning( SM_GoToStateAfterCleared );
-				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay extra") );
+				SOUND->PlayOnceFromAnnouncer( "gameplay extra" );
 			}
 			else
 			{
@@ -2059,7 +2058,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					break;
 				}
 				
-				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
+				SOUND->PlayOnceFromAnnouncer( "gameplay cleared" );
 			}
 		}
 
@@ -2206,11 +2205,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		// Feels hackish. Feel free to make cleaner.
 		if( GAMESTATE->IsCourseMode() )
 			if( GAMESTATE->GetCourseSongIndex() > (int(m_apSongsQueue.size() / 2) - 1 ) )
-				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo( "gameplay oni failed halfway" ) );
+				SOUND->PlayOnceFromAnnouncer( "gameplay oni failed halfway" );
 			else
-				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo( "gameplay oni failed" ) );
+				SOUND->PlayOnceFromAnnouncer( "gameplay oni failed" );
 		else
-			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
+			SOUND->PlayOnceFromAnnouncer( "gameplay failed" );
 		break;
 
 	case SM_GoToScreenAfterFail:

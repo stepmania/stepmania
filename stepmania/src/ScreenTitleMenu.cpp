@@ -169,7 +169,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 //	this->AddChild( &m_BeginOut );
 
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("title menu game name") );
+	SOUND->PlayOnceFromAnnouncer( "title menu game name" );
 
 
 	m_soundChange.Load( THEME->GetPathToS("ScreenTitleMenu change"),true );	
@@ -337,7 +337,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_PlayComment:
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("title menu attract") );
+		SOUND->PlayOnceFromAnnouncer( "title menu attract" );
 		this->PostScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS );
 		break;
 	case SM_GoToNextScreen:
