@@ -74,6 +74,7 @@ const float SECONDS_BEFORE_DEMONSTRATION = 30;
 
 ScreenTitleMenu::ScreenTitleMenu()
 {
+	MUSIC->Stop();
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
 
 

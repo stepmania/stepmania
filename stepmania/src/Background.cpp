@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: Background.cpp
+ Class: Background
 
  Desc: Background behind arrows while dancing
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -273,6 +274,11 @@ void Background::Update( float fDeltaTime )
 				for( int i=0; i<m_aAnimSegs.GetSize()-1; i++ )
 					if( m_aAnimSegs[i+1].m_fStartBeat > m_fSongBeat )
 						break;
+				if( i == m_aAnimSegs.GetSize() )
+				{
+					m_pCurBGA = NULL;
+					break;	// no animations
+				}
 				int iNewAnimationSegment = i;
 				if( iNewAnimationSegment > m_iCurAnimSegment )
 				{
