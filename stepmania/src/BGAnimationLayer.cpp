@@ -439,6 +439,9 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 
 	ASSERT( IsADirectory(sAniDir) );
 
+	CHECKPOINT_M( ssprintf( "BGAnimationLayer::LoadFromIni \"%s\"::%s %s",
+		sAniDir.c_str(), sLayer.c_str(), m_bGeneric? "(generic) ":"" ) );
+
 	CString sPathToIni = sAniDir + "BGAnimation.ini";
 
 	IniFile ini(sPathToIni);
@@ -474,6 +477,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	{
 		HOOKS->MessageBoxOK( ssprintf( 
 			"In the ini file for BGAnimation '%s', '%s' is missing a the line 'File='.", sAniDir.c_str(), sLayer.c_str() ) );
+		sPath = THEME->GetPathToG("_missing");
 	}
 
 
@@ -588,7 +592,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 
 			Actor* pActor = MakeActor( ID );
 			m_pActors.push_back( pActor );
-			ASSERT( !(m_bGeneric && Stretch) );
+			RAGE_ASSERT_M( !(m_bGeneric && Stretch), ssprintf("BGA \"%s\"::%s can't stretch",sAniDir.c_str(),sLayer.c_str())  );
 			if( !m_bGeneric )
 			{
 				if( Stretch )
