@@ -176,7 +176,7 @@ void ScreenSelect::FinalizeChoices()
 	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->IsHumanPlayer(p) )
 		{
-			const int sel = GetSelectionIndex( (PlayerNumber)p );
+			const int sel = GetSelectionIndex( p );
 			
 			if( m_aModeChoices[sel].m_pStyle )
 				GAMESTATE->m_pCurStyle = m_aModeChoices[sel].m_pStyle;

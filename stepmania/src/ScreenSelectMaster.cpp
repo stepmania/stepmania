@@ -602,20 +602,18 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 	if( SHARED_PREVIEW_AND_CURSOR || GetCurrentPage() == PAGE_2 )
 	{
 		/* Only one player has to pick.  Choose this for all the other players, too. */
-		FOREACH_PlayerNumber( p )
-			if( GAMESTATE->IsHumanPlayer(p) )
-			{
-				ASSERT( !m_bChosen[p] );
-				fSecs = max( fSecs, DoMenuStart( (PlayerNumber)p ) );
-			}
+		FOREACH_HumanPlayer( p )
+		{
+			ASSERT( !m_bChosen[p] );
+			fSecs = max( fSecs, DoMenuStart(p) );
+		}
 	}
 	else
 	{
 		fSecs = max( fSecs, DoMenuStart(pn) );
 		// check to see if everyone has chosen
-		FOREACH_PlayerNumber( p )
-			if( GAMESTATE->IsHumanPlayer((PlayerNumber)p) )
-				bAllDone &= m_bChosen[p];
+		FOREACH_HumanPlayer( p )
+			bAllDone &= m_bChosen[p];
 	}
 
 	if( bAllDone )
