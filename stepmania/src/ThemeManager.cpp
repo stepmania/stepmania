@@ -94,8 +94,8 @@ void ThemeManager::SwitchTheme( CString sThemeName )
 		m_sCurThemeName = sThemeName;
 
 	// update hashes for metrics files
-	m_iHashForCurThemeMetrics = GetHashForFile( GetMetricsPathFromName(m_sCurThemeName) );
-	m_iHashForBaseThemeMetrics = GetHashForFile( GetMetricsPathFromName(BASE_THEME_NAME) );
+	m_uHashForCurThemeMetrics = GetHashForFile( GetMetricsPathFromName(m_sCurThemeName) );
+	m_uHashForBaseThemeMetrics = GetHashForFile( GetMetricsPathFromName(BASE_THEME_NAME) );
 
 	// read new metrics.  First read base metrics, then read cur theme's metrics, overriding base theme
 	m_pIniMetrics->Reset();
@@ -169,37 +169,27 @@ try_element_again:
 			GetThemeDirFromName(m_sCurThemeName), 
 			GetThemeDirFromName(BASE_THEME_NAME) );
 	}
-	else
+	asPossibleElementFilePaths[0].MakeLower();
+	if( asPossibleElementFilePaths[0].GetLength() > 5  &&  asPossibleElementFilePaths[0].Right(5) == "redir" )	// this is a redirect file
 	{
-		asPossibleElementFilePaths[0].MakeLower();
-		if( asPossibleElementFilePaths[0].GetLength() > 5  &&  asPossibleElementFilePaths[0].Right(5) == "redir" )	// this is a redirect file
-		{
-			CString sRedirFilePath = asPossibleElementFilePaths[0];
-			
-			CString sDir, sFName, sExt;
-			splitrelpath( sRedirFilePath, sDir, sFName, sExt );
+		CString sRedirFilePath = asPossibleElementFilePaths[0];
+		
+		CString sDir, sFName, sExt;
+		splitrelpath( sRedirFilePath, sDir, sFName, sExt );
 
-			CStdioFile file;
-			file.Open( sRedirFilePath, CFile::modeRead );
-			CString sNewFileName;
-			file.ReadString( sNewFileName );
+		CStdioFile file;
+		file.Open( sRedirFilePath, CFile::modeRead );
+		CString sNewFileName;
+		file.ReadString( sNewFileName );
 //			CString sNewFilePath = sDir+"\\"+sNewFileName; // This is what it used to be, FONT redirs were getting extra slashes
-			// at the start of their file names, so I took out this extra slash - Andy.
-			CString sNewFilePath = sDir+sNewFileName;
-			if( sNewFileName == ""  ||  !DoesFileExist(sNewFilePath) )
-			{
-				throw RageException( "The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath, sNewFilePath ); 
-			}
-			else
-				return sNewFilePath;
-		}
-		else
-		{
-			return asPossibleElementFilePaths[0];
-		}
+		// at the start of their file names, so I took out this extra slash - Andy.
+		CString sNewFilePath = sDir+sNewFileName;
+		if( sNewFileName == ""  ||  !DoesFileExist(sNewFilePath) )
+			throw RageException( "The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath, sNewFilePath ); 
+		return sNewFilePath;
 	}
 
-	return "";
+	return asPossibleElementFilePaths[0];
 }
 
 
@@ -220,8 +210,8 @@ try_metric_again:
 	if (m_uNextReloadTicks == 0 || ::GetTickCount() > m_uNextReloadTicks)
 	{
 		m_uNextReloadTicks = GetTickCount()+1000;
-		if( m_iHashForCurThemeMetrics != GetHashForFile(sCurMetricPath)  ||
-			m_iHashForBaseThemeMetrics != GetHashForFile(sDefaultMetricPath) )
+		if( m_uHashForCurThemeMetrics != GetHashForFile(sCurMetricPath)  ||
+			m_uHashForBaseThemeMetrics != GetHashForFile(sDefaultMetricPath) )
 		{
 			SwitchTheme(m_sCurThemeName);	// force a reload of the metrics cache
 		}
