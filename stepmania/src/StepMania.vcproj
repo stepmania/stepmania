@@ -741,6 +741,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Profile.h">
 			</File>
 			<File
+				RelativePath="ProfileHtml.cpp">
+			</File>
+			<File
+				RelativePath="ProfileHtml.h">
+			</File>
+			<File
 				RelativePath=".\RandomSample.cpp">
 			</File>
 			<File
@@ -1988,10 +1994,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="CombinedLifeMeter.h">
 			</File>
 			<File
-				RelativePath="CryptManager.h">
+				RelativePath="CryptManager.cpp">
 			</File>
 			<File
-				RelativePath="CryptManager.cpp">
+				RelativePath="CryptManager.h">
 			</File>
 			<File
 				RelativePath=".\FontManager.cpp">

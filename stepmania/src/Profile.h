@@ -43,6 +43,7 @@ public:
 	//
 	// General data
 	//
+	bool m_bIsMachineProfile;
 	CString m_sName;
 	CString m_sLastUsedHighScoreName;
 	bool m_bUsingProfileDefaultModifiers;
