@@ -28,20 +28,18 @@ bool DIDevice::Open()
 	buffered = true;
 	
 	LPDIRECTINPUTDEVICE tmpdevice;
-	HRESULT hr = IDirectInput_CreateDevice(dinput, JoystickInst.guidInstance,
-			    &tmpdevice, NULL);
+	HRESULT hr = dinput->CreateDevice( JoystickInst.guidInstance, &tmpdevice, NULL );
 	if ( hr != DI_OK )
 	{
 		LOG->Info( hr_ssprintf(hr, "OpenDevice: IDirectInput_CreateDevice") );
 		return false;
 	}
 
-	hr = IDirectInputDevice_QueryInterface(tmpdevice,
-		   	    IID_IDirectInputDevice2, (LPVOID *) &Device);
-	IDirectInputDevice_Release(tmpdevice);
+	hr = tmpdevice->QueryInterface( IID_IDirectInputDevice2, (LPVOID *) &Device );
+	tmpdevice->Release();
 	if ( hr != DI_OK )
 	{
-		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice_QueryInterface", JoystickInst.tszProductName) );
+		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice::QueryInterface", JoystickInst.tszProductName) );
 		return false;
 	}
 
@@ -49,26 +47,24 @@ bool DIDevice::Open()
 	if( type == KEYBOARD )
 		coop = DISCL_FOREGROUND|DISCL_NONEXCLUSIVE;
 
-	hr = IDirectInputDevice2_SetCooperativeLevel( Device, g_hWndMain, coop );
+	hr = Device->SetCooperativeLevel( g_hWndMain, coop );
 	if ( hr != DI_OK )
 	{
-		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2_SetCooperativeLevel", JoystickInst.tszProductName) );
+		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2::SetCooperativeLevel", JoystickInst.tszProductName) );
 		return false;
 	}
 
-	hr = IDirectInputDevice2_SetDataFormat(Device, 
-		type == JOYSTICK? &c_dfDIJoystick: &c_dfDIKeyboard);
+	hr = Device->SetDataFormat( type == JOYSTICK? &c_dfDIJoystick: &c_dfDIKeyboard );
 	if ( hr != DI_OK )
 	{
-		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2_SetDataFormat", JoystickInst.tszProductName) );
+		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2::SetDataFormat", JoystickInst.tszProductName) );
 		return false;
 	}
 
 	switch( type )
 	{
 	case JOYSTICK:
-		IDirectInputDevice2_EnumObjects(Device, DIJoystick_EnumDevObjectsProc,
-					this, DIDFT_BUTTON | DIDFT_AXIS | DIDFT_POV);
+		Device->EnumObjects( DIJoystick_EnumDevObjectsProc, this, DIDFT_BUTTON | DIDFT_AXIS | DIDFT_POV);
 		break;
 	case KEYBOARD:
 		/* Always 256-button. */
@@ -93,15 +89,14 @@ bool DIDevice::Open()
 		dipdw.diph.dwObj = 0;
 		dipdw.diph.dwHow = DIPH_DEVICE;
 		dipdw.dwData = INPUT_QSIZE;
-		hr = IDirectInputDevice2_SetProperty(Device,
-						DIPROP_BUFFERSIZE, &dipdw.diph);
+		hr = Device->SetProperty( DIPROP_BUFFERSIZE, &dipdw.diph );
 		if ( hr == DI_POLLEDDEVICE )
 		{
 			/* This device doesn't support buffering, so we're forced
 			 * to use less reliable polling. */
 			buffered = false;
 		} else if ( hr != DI_OK ) {
-			LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2_SetProperty", JoystickInst.tszProductName) );
+			LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2::SetProperty", JoystickInst.tszProductName) );
 			return false;
 		}
 	}
@@ -114,8 +109,8 @@ void DIDevice::Close()
 	/* Don't try to close a device that isn't open. */
 	ASSERT( Device != NULL );
 
-	IDirectInputDevice2_Unacquire(Device);
-	IDirectInputDevice2_Release(Device);
+	Device->Unacquire();
+	Device->Release();
 
 	Device = NULL;
 	buttons = axes = hats = NULL;
@@ -159,7 +154,7 @@ static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev
 		diprg.lMin				= -100;
 		diprg.lMax				= 100;
 
-		hr = IDirectInputDevice2_SetProperty(device->Device, DIPROP_RANGE, &diprg.diph);
+		hr = device->Device->SetProperty( DIPROP_RANGE, &diprg.diph );
 		if ( hr != DI_OK )
 			return DIENUM_CONTINUE; /* don't use this axis */
 	
@@ -169,7 +164,7 @@ static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev
 		dilong.diph.dwObj		= dev->dwOfs;
 		dilong.diph.dwHow		= DIPH_BYOFFSET;
 		dilong.dwData = 0;
-		hr = IDirectInputDevice2_SetProperty(device->Device, DIPROP_DEADZONE, &dilong.diph);
+		hr = device->Device->SetProperty( DIPROP_DEADZONE, &dilong.diph );
 		if ( hr != DI_OK )
 			return DIENUM_CONTINUE; /* don't use this axis */
 
