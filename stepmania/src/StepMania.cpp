@@ -51,7 +51,7 @@
 #include "BannerCache.h"
 #include "UnlockSystem.h"
 #include "arch/ArchHooks/ArchHooks.h"
-#include "RageFile.h"
+#include "RageFileManager.h"
 #include "Bookkeeper.h"
 #include "LightsManager.h"
 
@@ -785,6 +785,9 @@ int main(int argc, char* argv[])
 
 	/* Whew--we should be able to crash safely now! */
 
+	/* Everything except LOG uses this to read and write files.  Load this early. */
+	FILEMAN = new RageFileManager;
+
 	atexit(SDL_Quit);   /* Clean up on exit */
 
 	/* Fire up the SDL, but don't actually start any subsystems.
@@ -957,6 +960,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( FONT );
 	SAFE_DELETE( TEXTUREMAN );
 	SAFE_DELETE( DISPLAY );
+	SAFE_DELETE( FILEMAN );
 	SAFE_DELETE( LOG );
 	
 	if( g_sErrorString != "" )
