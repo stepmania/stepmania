@@ -11,6 +11,19 @@
 
 #include "Banner.h"
 
+/* Call CacheSongBanner to cache a song banner by path.  (Actually, this could be
+ * a course banner, too.)  Currently, this will waste time if the banner is already
+ * cached, but since we only do this during the initial cache phase of song loads
+ * this is OK for now.
+ *
+ * Call LoadAllBanners to load all precached song banners.
+ *
+ * Call LoadCachedSongBanner to load a banner into a texture and retrieve an ID
+ * for it.  You can check if the banner was actually preloaded by calling
+ * TEXTUREMAN->IsTextureRegistered() on the ID; it might not be if the banner cache
+ * is missing or disabled.
+ */
+ 
 BannerCache *BANNERCACHE;
 
 
