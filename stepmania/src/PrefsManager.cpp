@@ -99,17 +99,6 @@ PrefsManager::PrefsManager()
 	m_bAutoMapJoysticks = true;
 	m_fGlobalOffsetSeconds = 0;
 
-	// unlock system initializations
-	m_fDancePointsAccumulated = 0;
-	m_fArcadePointsAccumulated = 0;
-	m_fSongPointsAccumulated = 0;
-	m_fExtraStagesCleared = 0;
-	m_fExtraStagesFailed = 0;
-	m_fTotalStagesCleared = 0;
-	m_fTotalToastysSeen = 0;
-	m_RouletteSeeds = "10000000000000000";
-
-
 	/* DDR Extreme-style extra stage support.
 	 * Default off so people used to the current behavior (or those with extra
 	 * stage CRS files) don't get it changed around on them. */
@@ -217,16 +206,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "Timestamping",				m_bTimestamping );
 	ini.GetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
 	ini.GetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
-	/* XXX: This belongs in the memcard code, not prefs. */
-	ini.GetValueF( "Options", "DancePointsAccumulated",		m_fDancePointsAccumulated );
 	ini.GetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
-	ini.GetValueF( "Options", "ArcadePointsAccumulated",	m_fArcadePointsAccumulated );
-	ini.GetValueF( "Options", "SongPointsAccumulated",		m_fSongPointsAccumulated );
-	ini.GetValueF( "Options", "ExtraStagesCleared",			m_fExtraStagesCleared );
-	ini.GetValueF( "Options", "ExtraStagesFailed",			m_fExtraStagesFailed );
-	ini.GetValueF( "Options", "TotalStagesCleared",			m_fTotalStagesCleared );
-	ini.GetValueF( "Options", "TotalToastysSeen",			m_fTotalToastysSeen );
-	ini.GetValue ( "Options", "RouletteSeeds",				m_RouletteSeeds );
 
 	ini.GetValueB( "Options", "FirstRun",					m_bFirstRun );
 	ini.GetValueB( "Options", "AutoMapJoysticks",			m_bAutoMapJoysticks );
@@ -320,7 +300,6 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "Timestamping",				m_bTimestamping );
 	ini.SetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
 	ini.SetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
-	ini.SetValueF( "Options", "DancePointsAccumulated",		m_fDancePointsAccumulated );
 	ini.SetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
 	ini.SetValueB( "Options", "FirstRun",					m_bFirstRun );
 	ini.SetValueB( "Options", "AutoMapJoysticks",			m_bAutoMapJoysticks );
@@ -331,16 +310,6 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 #endif
 	ini.SetValueB( "Options", "AntiAliasing",				m_bAntiAliasing );
 	ini.SetValueF( "Options", "GlobalOffsetSeconds",		m_fGlobalOffsetSeconds );
-
-	// unlock system values
-	ini.SetValueF( "Options", "ArcadePointsAccumulated",	m_fArcadePointsAccumulated );
-	ini.SetValueF( "Options", "SongPointsAccumulated",		m_fSongPointsAccumulated );
-	ini.SetValueF( "Options", "ExtraStagesCleared",			m_fExtraStagesCleared );
-	ini.SetValueF( "Options", "ExtraStagesFailed",			m_fExtraStagesFailed );
-	ini.SetValueF( "Options", "TotalStagesCleared",			m_fTotalStagesCleared );
-	ini.SetValueF( "Options", "TotalToastysSeen",			m_fTotalToastysSeen );
-	ini.SetValue ( "Options", "RouletteSeeds",				m_RouletteSeeds );
-
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who

@@ -77,18 +77,10 @@ public:
 	bool			m_bAutogenGroupCourses;
 	bool			m_bBreakComboToGetItem;
 	bool			m_bShowDancingCharacters;
-	float			m_fDancePointsAccumulated;
 	bool			m_bUseUnlockSystem;
 	bool			m_bFirstRun;
 	bool			m_bAutoMapJoysticks;
 	float			m_fGlobalOffsetSeconds;
-	float			m_fArcadePointsAccumulated;
-	float			m_fSongPointsAccumulated;
-	float			m_fExtraStagesCleared;
-	float			m_fExtraStagesFailed;
-	float			m_fTotalStagesCleared;
-	float			m_fTotalToastysSeen;
-	CString			m_RouletteSeeds;
 
 	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */
 	int				m_iBoostAppPriority;

@@ -669,13 +669,17 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 
 		const float ArcadePoints[NUM_GRADES] = { -1 /* unused */, 0, 0, 1, 1, 1, 1, 10, 10 };
 		const float SongPoints[NUM_GRADES] = { -1, 0, 1, 2, 3, 4, 5, 10, 20 };
-		/* XXX: This should use stageStats.GetGrade, not m_Grades. */
+
+		
+		// this is already done on lines 272-274
+
+		/* XXX: This should use stageStats.GetGrade, not m_Grades. 
 		const Grade g = m_Grades[p].GetGrade();
 		
 		PREFSMAN->m_fArcadePointsAccumulated += ArcadePoints[g];
 		PREFSMAN->m_fSongPointsAccumulated += SongPoints[g];
 
-		PREFSMAN->SaveGlobalPrefsToDisk();
+		PREFSMAN->SaveGlobalPrefsToDisk(); */
 	}
 
 	bool bOneHasNewRecord = false;

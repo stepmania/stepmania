@@ -18,6 +18,7 @@
 #include "ScreenGameplay.h"
 #include "GameState.h"
 #include "Course.h"
+#include "unlocksystem.h"
 
 
 ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Notes*>& apNotes_, PlayerNumber pn_ ):
@@ -305,8 +306,10 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 		m_iCurToastyCombo += iNumTapsInRow;
 
 		if( m_iCurToastyCombo==250 && !GAMESTATE->m_bDemonstrationOrJukebox )
+		{
 			SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
-			PREFSMAN->m_fTotalToastysSeen += 1;
+			GAMESTATE->m_pUnlockingSys->UnlockToasty();
+		}
 		break;
 	default:
 		m_iCurToastyCombo = 0;
