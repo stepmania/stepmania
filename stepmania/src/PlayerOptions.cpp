@@ -26,6 +26,7 @@ void PlayerOptions::Init()
 	m_Turn = TURN_NONE;
 	m_Transform = TRANSFORM_NONE;
 	m_bHoldNotes = true;
+	m_bTimingAssist = false;
 }
 
 void FLOAT_APPROACH( float& val, float other_val, float deltaPercent )
@@ -120,7 +121,7 @@ CString PlayerOptions::GetString()
 	}
 
 	if( !m_bHoldNotes )		sReturn += "NoHolds, ";
-
+	if( m_bTimingAssist )	sReturn += "TimingAssist, ";
 
 	if( sReturn.GetLength() > 2 )
 		sReturn.erase( sReturn.GetLength()-2 );	// delete the trailing ", "
@@ -180,6 +181,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "noholds" )	m_bHoldNotes = false;
 		else if( sBit == "nofreeze" )	m_bHoldNotes = false;
 		else if( sBit == "dark" )		m_fDark = 1;
+		else if( sBit == "timingassist")m_bTimingAssist = true;
 	}
 }
 

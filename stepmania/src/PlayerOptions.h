@@ -81,7 +81,7 @@ struct PlayerOptions
 	Turn		m_Turn;
 	Transform	m_Transform;
 	bool		m_bHoldNotes;
-
+	bool		m_bTimingAssist;
 
 	void NextAccel();
 	void NextEffect();
