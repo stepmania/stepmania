@@ -502,22 +502,23 @@
 					</xsl:with-param>
 					<xsl:with-param name="text">
 
-						<xsl:for-each select="./*[count(*) &gt; 0]">
-							<h2>
-								<xsl:if test="name()='TapNoteScores'">Tap Scores</xsl:if>
-								<xsl:if test="name()='HoldNoteScores'">Hold Scores</xsl:if>
-								<xsl:if test="name()='RadarValues'">Stats</xsl:if>
-							</h2>
-							<xsl:element name="table" use-attribute-sets="EntityTableAttr">
-								<xsl:call-template name="DataTableGenerator">
-									<xsl:with-param name="cols" select="2" />
-									<xsl:with-param name="nodeset" select="*[text()]" />
-								</xsl:call-template>
-							</xsl:element>
-							<xsl:if test="position()!=last()">
-								<hr />
-							</xsl:if>
-						</xsl:for-each>
+						<h2>Judgments</h2>
+						<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+							<xsl:call-template name="DataTableGenerator">
+								<xsl:with-param name="cols" select="2" />
+								<xsl:with-param name="nodeset" select="TapNoteScores/* | HoldNoteScores/*" />
+							</xsl:call-template>
+						</xsl:element>
+
+						<hr />
+
+						<h2>Stats</h2>
+						<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+							<xsl:call-template name="DataTableGenerator">
+								<xsl:with-param name="cols" select="2" />
+								<xsl:with-param name="nodeset" select="RadarValues/*" />
+							</xsl:call-template>
+						</xsl:element>
 
 					</xsl:with-param>
 				</xsl:call-template>		
