@@ -57,24 +57,20 @@ void ScoreDisplayNormal::SetScore( int iNewScore )
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 
-	if ( m_pPlayerState->m_CurrentPlayerOptions.m_fScoreDisplay == PlayerOptions::SCORING_SUBTRACT )
+	if( m_pPlayerState->m_CurrentPlayerOptions.m_ScoreDisplay == PlayerOptions::SCORING_SUBTRACT )
 	{
-		if ( iNewScore == 0 && g_CurStageStats.m_player[pn].iMaxScoreToNow == 0 )
-		{
+		if( iNewScore == 0 && g_CurStageStats.m_player[pn].iMaxScoreToNow == 0 )
 			m_iScore = g_CurStageStats.m_player[pn].iMaxScore;
-		}
 		else 
-		{
 			m_iScore = g_CurStageStats.m_player[pn].iMaxScore - ( g_CurStageStats.m_player[pn].iMaxScoreToNow - iNewScore );
-		}
 	}
-	else if ( m_pPlayerState->m_CurrentPlayerOptions.m_fScoreDisplay == PlayerOptions::SCORING_AVERAGE )
+	else if( m_pPlayerState->m_CurrentPlayerOptions.m_ScoreDisplay == PlayerOptions::SCORING_AVERAGE )
 	{
-		if ( g_CurStageStats.m_player[pn].iMaxScoreToNow == 0 ) // don't divide by zero fats
+		if( g_CurStageStats.m_player[pn].iMaxScoreToNow == 0 ) // don't divide by zero fats
 			m_iScore = 0;
 		else
 		{
-			float scoreRatio = ( (float) iNewScore / (float) g_CurStageStats.m_player[pn].iMaxScoreToNow );
+			float scoreRatio = (float) iNewScore / (float) g_CurStageStats.m_player[pn].iMaxScoreToNow;
 			m_iScore = (int) ( scoreRatio * g_CurStageStats.m_player[pn].iMaxScore );
 		}
 	}
