@@ -348,18 +348,6 @@ float Profile::GetSongsPercentComplete( StepsType st, Difficulty dc ) const
 	return GetSongsActual(st,dc) / GetSongsPossible(st,dc);
 }
 
-float Profile::GetSongsPercentCompleteAllDifficulties( StepsType st ) const
-{
-	float fActual = 0;
-	float fPossible = 0;
-	FOREACH_Difficulty( d )
-	{
-		fActual += GetSongsActual(st,d);
-		fPossible += GetSongsPossible(st,d);
-	}
-	return fActual / fPossible;
-}
-
 
 float Profile::GetCoursesPossible( StepsType st, CourseDifficulty cd ) const
 {
@@ -442,10 +430,15 @@ float Profile::GetCoursesPercentComplete( StepsType st, CourseDifficulty cd ) co
 	return GetCoursesActual(st,cd) / GetCoursesPossible(st,cd);
 }
 
-float Profile::GetCoursesPercentCompleteAllDifficulties( StepsType st ) const
+float Profile::GetSongsAndCoursesPercentCompleteAllDifficulties( StepsType st ) const
 {
 	float fActual = 0;
 	float fPossible = 0;
+	FOREACH_Difficulty( d )
+	{
+		fActual += GetSongsActual(st,d);
+		fPossible += GetSongsPossible(st,d);
+	}
 	FOREACH_CourseDifficulty( d )
 	{
 		fActual += GetCoursesActual(st,d);
@@ -1784,8 +1777,7 @@ public:
 	static int IsCodeUnlocked( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCodeUnlocked(IArg(1)) ); return 1; }
 	static int GetTotalStepsWithTopGrade( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalStepsWithTopGrade((StepsType)IArg(1),(Difficulty)IArg(2),(Grade)IArg(3)) ); return 1; }
 	static int GetTotalTrailsWithTopGrade( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalTrailsWithTopGrade((StepsType)IArg(1),(CourseDifficulty)IArg(2),(Grade)IArg(3)) ); return 1; }
-	static int GetSongsPercentCompleteAllDifficulties( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetSongsPercentCompleteAllDifficulties((StepsType)IArg(1)) ); return 1; }
-	static int GetCoursesPercentCompleteAllDifficulties( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCoursesPercentCompleteAllDifficulties((StepsType)IArg(1)) ); return 1; }
+	static int GetSongsAndCoursesPercentCompleteAllDifficulties( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetSongsAndCoursesPercentCompleteAllDifficulties((StepsType)IArg(1)) ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1803,8 +1795,7 @@ public:
 		ADD_METHOD( IsCodeUnlocked )
 		ADD_METHOD( GetTotalStepsWithTopGrade )
 		ADD_METHOD( GetTotalTrailsWithTopGrade )
-		ADD_METHOD( GetSongsPercentCompleteAllDifficulties )
-		ADD_METHOD( GetCoursesPercentCompleteAllDifficulties )
+		ADD_METHOD( GetSongsAndCoursesPercentCompleteAllDifficulties )
 		Luna<T>::Register( L );
 	}
 };

@@ -75,8 +75,7 @@ public:
 	float GetCoursesActual( StepsType st, CourseDifficulty cd ) const;
 	float GetSongsPercentComplete( StepsType st, Difficulty dc ) const;
 	float GetCoursesPercentComplete( StepsType st, CourseDifficulty cd ) const;
-	float GetSongsPercentCompleteAllDifficulties( StepsType st ) const;
-	float GetCoursesPercentCompleteAllDifficulties( StepsType st ) const;
+	float GetSongsAndCoursesPercentCompleteAllDifficulties( StepsType st ) const;
 	static CString GetProfileDisplayNameFromDir( CString sDir );
 	int GetSongNumTimesPlayed( const Song* pSong ) const;
 	int GetSongNumTimesPlayed( const SongID& songID ) const;
