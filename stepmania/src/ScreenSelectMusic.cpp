@@ -451,11 +451,8 @@ void ScreenSelectMusic::SkipSongPartTweens()
 	if( SHOW_DIFFICULTY_LIST )
 		m_DifficultyList.FinishTweening();
 
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{		
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
-
 		m_sprDifficultyFrame[p].FinishTweening();
 		m_sprMeterFrame[p].FinishTweening();
 		m_DifficultyIcon[p].FinishTweening();
@@ -616,10 +613,8 @@ void ScreenSelectMusic::SwitchDisplayMode( DisplayMode dm )
 
 void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 {
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
 		m_textHighScore[p].RunCommands( SCORE_SORT_CHANGE_COMMAND(p) );
 		m_sprHighScoreFrame[p].RunCommands( SCORE_FRAME_SORT_CHANGE_COMMAND(p) );
 	}
@@ -1718,16 +1713,13 @@ void ScreenSelectMusic::UpdateOptionsDisplays()
 
 //	m_PlayerOptionIcons.Refresh();
 
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{
-		if( GAMESTATE->IsHumanPlayer(p) )
-		{
-			m_OptionIconRow[p].Refresh();
+		m_OptionIconRow[p].Refresh();
 
-			CString s = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString();
+		CString s = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString();
 			s.Replace( ", ", "\n" );
-//			m_textPlayerOptions[p].SetText( s );
-		}
+//		m_textPlayerOptions[p].SetText( s );
 	}
 
 	CString s = GAMESTATE->m_SongOptions.GetString();
