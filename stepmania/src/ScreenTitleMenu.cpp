@@ -27,7 +27,8 @@ const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"GAME START",
 	"SWITCH GAME",
 	"CONFIG KEY/JOY",
-	"GAME OPTIONS",
+	"INPUT OPTIONS",
+	"MACHINE OPTIONS",
 	"GRAPHIC OPTIONS",
 	"APPEARANCE OPTIONS",
 	"EDIT/RECORD/SYNCH",
@@ -211,8 +212,11 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		case CHOICE_MAP_INSTRUMENTS:
 			SCREENMAN->SetNewScreen( "ScreenMapInstruments" );
 			break;
-		case CHOICE_GAME_OPTIONS:
-			SCREENMAN->SetNewScreen( "ScreenGameOptions" );
+		case CHOICE_INPUT_OPTIONS:
+			SCREENMAN->SetNewScreen( "ScreenInputOptions" );
+			break;
+		case CHOICE_MACHINE_OPTIONS:
+			SCREENMAN->SetNewScreen( "ScreenMachineOptions" );
 			break;
 		case CHOICE_GRAPHIC_OPTIONS:
 			SCREENMAN->SetNewScreen( "ScreenGraphicOptions" );
@@ -360,7 +364,8 @@ void ScreenTitleMenu::MenuStart( PlayerNumber pn )
 	case CHOICE_GAME_START:
 	case CHOICE_SELECT_GAME:
 	case CHOICE_MAP_INSTRUMENTS:
-	case CHOICE_GAME_OPTIONS:
+	case CHOICE_INPUT_OPTIONS:
+	case CHOICE_MACHINE_OPTIONS:
 	case CHOICE_GRAPHIC_OPTIONS:
 	case CHOICE_APPEARANCE_OPTIONS:
 		m_soundSelect.PlayRandom();

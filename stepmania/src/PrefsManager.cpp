@@ -51,6 +51,7 @@ PrefsManager::PrefsManager()
 	m_bUseBGIfNoBanner = false;
 	m_bDelayedEscape = true;
 	m_bHowToPlay = true;
+	m_bArcadeOptionsNavigation = false;
 
 	/* I'd rather get occasional people asking for support for this even though it's
 	 * already here than lots of people asking why songs aren't being displayed. */
@@ -95,6 +96,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "HiddenSongs",			m_bHiddenSongs );
 	ini.GetValueB( "Options", "Vsync",					m_bVsync );
 	ini.GetValueB( "Options", "HowToPlay",				m_bHowToPlay );
+	ini.GetValueB( "Options", "ArcadeOptionsNavigation",m_bArcadeOptionsNavigation );
 	ini.GetValue ( "Options", "DWIPath",				m_DWIPath );
 
 	m_asAdditionalSongFolders.RemoveAll();
@@ -138,6 +140,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "HiddenSongs",			m_bHiddenSongs );
 	ini.SetValueB( "Options", "Vsync",					m_bVsync );
 	ini.SetValueB( "Options", "HowToPlay",				m_bHowToPlay );
+	ini.SetValueB( "Options", "ArcadeOptionsNavigation",m_bArcadeOptionsNavigation );
 	ini.SetValue ( "Options", "DWIPath",				m_DWIPath );
 
 	ini.SetValue( "Options", "AdditionalSongFolders", join(",", m_asAdditionalSongFolders) );

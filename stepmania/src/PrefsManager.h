@@ -50,6 +50,7 @@ public:
 	bool	m_bAutoPlay;
 	bool	m_bDelayedEscape;
 	bool	m_bHowToPlay;
+	bool	m_bArcadeOptionsNavigation;
 	
 	CStringArray m_asAdditionalSongFolders;
 	CString m_DWIPath;

@@ -183,11 +183,12 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenEvaluation.h"
 #include "ScreenEz2SelectPlayer.h"
 #include "ScreenEz2SelectStyle.h"
-#include "ScreenGameOptions.h"
 #include "ScreenGameOver.h"
 #include "ScreenGameplay.h"
 #include "ScreenGraphicOptions.h"
 #include "ScreenHowToPlay.h"
+#include "ScreenInputOptions.h"
+#include "ScreenMachineOptions.h"
 #include "ScreenMapInstruments.h"
 #include "ScreenMusicScroll.h"
 #include "ScreenPlayerOptions.h"
@@ -209,6 +210,8 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 
 Screen* ScreenManager::MakeNewScreen( CString sClassName )
 {
+#define RETURN_IF_MATCH(className)	if(0==stricmp(sClassName,"##className##")) return new className
+
 	if(		 0==stricmp(sClassName, "ScreenAppearanceOptions") )return new ScreenAppearanceOptions;
 	else if( 0==stricmp(sClassName, "ScreenCaution") )			return new ScreenCaution;
 	else if( 0==stricmp(sClassName, "ScreenEdit") )				return new ScreenEdit;
@@ -217,12 +220,14 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenFinalEvaluation") )	return new ScreenFinalEvaluation;
 	else if( 0==stricmp(sClassName, "ScreenEz2SelectPlayer") )	return new ScreenEz2SelectPlayer;
 	else if( 0==stricmp(sClassName, "ScreenEz2SelectStyle") )	return new ScreenEz2SelectStyle;
-	else if( 0==stricmp(sClassName, "ScreenGameOptions") )		return new ScreenGameOptions;
 	else if( 0==stricmp(sClassName, "ScreenGameOver") )			return new ScreenGameOver;
 	else if( 0==stricmp(sClassName, "ScreenGameplay") )			return new ScreenGameplay;
 	else if( 0==stricmp(sClassName, "ScreenGraphicOptions") )	return new ScreenGraphicOptions;
 	else if( 0==stricmp(sClassName, "ScreenHowToPlay") )		return new ScreenHowToPlay;
+	else if( 0==stricmp(sClassName, "ScreenInputOptions") )		return new ScreenInputOptions;
+	else if( 0==stricmp(sClassName, "ScreenMachineOptions") )	return new ScreenMachineOptions;
 	else if( 0==stricmp(sClassName, "ScreenMapInstruments") )	return new ScreenMapInstruments;
+	else if( 0==stricmp(sClassName, "ScreenInputOptions") )		return new ScreenInputOptions;
 	else if( 0==stricmp(sClassName, "ScreenMusicScroll") )		return new ScreenMusicScroll;
 	else if( 0==stricmp(sClassName, "ScreenPlayerOptions") )	return new ScreenPlayerOptions;
 	else if( 0==stricmp(sClassName, "ScreenSandbox") )			return new ScreenSandbox;
