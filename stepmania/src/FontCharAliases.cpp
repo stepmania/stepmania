@@ -307,6 +307,27 @@ static void InitCharAliases()
 	}
 }
 
+void ReplaceText( CString &Text, const map<CString,CString> &m )
+{
+	basic_string<char,char_traits_char_nocase> txt(Text);
+	
+	for(map<CString,CString>::const_iterator it = m.begin(); it != m.end(); ++it)
+	{
+		unsigned start = 0;
+		while(1)
+		{
+			unsigned pos = txt.find(it->first, start);
+			if(pos == txt.npos)
+				break;
+
+			txt.replace(pos, it->first.size(), it->second);
+			start = pos+it->second.size();
+		}
+	}
+
+	Text = txt.c_str();
+}
+
 /* Replace all &markers; and &#NNNN;s with UTF-8. */
 void FontCharAliases::ReplaceMarkers( CString &sText )
 {
