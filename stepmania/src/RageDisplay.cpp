@@ -628,7 +628,7 @@ RageMatrix RageDisplay::GetOrthoMatrix( float l, float r, float b, float t, floa
 
 RageMatrix RageDisplay::GetFrustumMatrix( float l, float r, float b, float t, float zn, float zf )
 {
-	// glFrustrum
+	// glFrustum
 	float A = (r+l) / (r-l);
 	float B = (t+b) / (t-b);
 	float C = -1 * (zf+zn) / (zf-zn);
