@@ -91,6 +91,8 @@ void Song::Reset()
 	for( unsigned i=0; i<m_vpSteps.size(); i++ )
 		SAFE_DELETE( m_vpSteps[i] );
 	m_vpSteps.clear();
+	FOREACH_StepsType( st )
+		m_vpStepsByType[st].clear();
 
 	Song empty;
 	*this = empty;
@@ -382,6 +384,19 @@ void Song::DeleteDuplicateSteps( vector<Steps*> &vSteps )
 				
 			/* Don't use RemoveSteps; autogen notes havn't yet been created and it'll
 			 * create them. */
+			FOREACH_StepsType( st )
+			{
+				for( int k=this->m_vpStepsByType[st].size()-1; k>=0; k-- )
+				{
+					if( this->m_vpStepsByType[st][k] == s2 )
+					{
+						// delete this->m_vpStepsByType[k]; // delete below
+						this->m_vpStepsByType[st].erase( this->m_vpStepsByType[st].begin()+k );
+						break;
+					}
+				}
+			}
+
 			for( int k=this->m_vpSteps.size()-1; k>=0; k-- )
 			{
 				if( this->m_vpSteps[k] == s2 )
@@ -866,19 +881,14 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 
 void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType st, Difficulty dc, int iMeterLow, int iMeterHigh, const CString &sDescription, bool bIncludeAutoGen, int Max ) const
 {
-	/* Ignore m_bAutogenSteps for STEPS_TYPE_LIGHTS_CABINET. */
-	if( st != STEPS_TYPE_LIGHTS_CABINET && !PREFSMAN->m_bAutogenSteps )
-		bIncludeAutoGen = false;
-
 	if( !Max )
 		return;
 
-	for( unsigned i=0; i<m_vpSteps.size(); i++ )	// for each of the Song's Steps
+	const vector<Steps*>& vpSteps = GetAllSteps(st);
+	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
-		Steps* pSteps = m_vpSteps[i];
+		Steps* pSteps = vpSteps[i];
 
-		if( st != STEPS_TYPE_INVALID && pSteps->m_StepsType != st ) 
-			continue;
 		if( dc != DIFFICULTY_INVALID && dc != pSteps->GetDifficulty() )
 			continue;
 		if( iMeterLow != -1 && iMeterLow > pSteps->GetMeter() )
@@ -903,16 +913,11 @@ void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType st, Difficulty dc, in
 
 Steps* Song::GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen ) const
 {
-	/* Ignore m_bAutogenSteps for STEPS_TYPE_LIGHTS_CABINET. */
-	if( st != STEPS_TYPE_LIGHTS_CABINET && !PREFSMAN->m_bAutogenSteps )
-		bIncludeAutoGen = false;
-	const vector<Steps*>& vpSteps = m_vpSteps;
+	const vector<Steps*>& vpSteps = GetAllSteps(st);
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
 		Steps* pSteps = vpSteps[i];
 
-		if( st != STEPS_TYPE_INVALID && pSteps->m_StepsType != st )
-			continue;
 		if( dc != DIFFICULTY_INVALID && dc != pSteps->GetDifficulty() )
 			continue;
 		if( !bIncludeAutoGen && pSteps->IsAutogen() )
@@ -926,21 +931,14 @@ Steps* Song::GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAut
 
 Steps* Song::GetStepsByMeter( StepsType st, int iMeterLow, int iMeterHigh ) const
 {
-	/* Ignore m_bAutogenSteps for STEPS_TYPE_LIGHTS_CABINET. */
-	bool bIncludeAutoGen = (st == STEPS_TYPE_LIGHTS_CABINET || PREFSMAN->m_bAutogenSteps);
-
-	const vector<Steps*>& vpSteps = m_vpSteps;
+	const vector<Steps*>& vpSteps = GetAllSteps(st);
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
 		Steps* pSteps = vpSteps[i];
 
-		if( st != STEPS_TYPE_INVALID && pSteps->m_StepsType != st )
-			continue;
 		if( iMeterLow > pSteps->GetMeter() )
 			continue;
 		if( iMeterHigh < pSteps->GetMeter() )
-			continue;
-		if( !bIncludeAutoGen && pSteps->IsAutogen() )
 			continue;
 
 		return pSteps;
@@ -1133,13 +1131,25 @@ void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 		{
 			Steps* pNewNotes = new Steps;
 			pNewNotes->AutogenFrom(pOriginalNotes, ntTo);
-			this->m_vpSteps.push_back( pNewNotes );
+			this->AddSteps( pNewNotes );
 		}
 	}
 }
 
 void Song::RemoveAutoGenNotes()
 {
+	FOREACH_StepsType(st)
+	{
+		for( int j=m_vpStepsByType[st].size()-1; j>=0; j-- )
+		{
+			if( m_vpStepsByType[st][j]->IsAutogen() )
+			{
+//				delete m_vpSteps[j]; // delete below
+				m_vpStepsByType[st].erase( m_vpStepsByType[st].begin()+j );
+			}
+		}
+	}
+
 	for( int j=m_vpSteps.size()-1; j>=0; j-- )
 	{
 		if( m_vpSteps[j]->IsAutogen() )
@@ -1296,6 +1306,8 @@ CString Song::GetFullTranslitTitle() const
 void Song::AddSteps( Steps* pSteps )
 {
 	m_vpSteps.push_back( pSteps );
+	ASSERT_M( pSteps->m_StepsType < NUM_STEPS_TYPES, ssprintf("%i", pSteps->m_StepsType) );
+	m_vpStepsByType[pSteps->m_StepsType].push_back( pSteps );
 }
 
 void Song::RemoveSteps( const Steps* pSteps )
@@ -1304,6 +1316,18 @@ void Song::RemoveSteps( const Steps* pSteps )
 	// then adding them again.
 
 	RemoveAutoGenNotes();
+
+
+	vector<Steps*> &vpSteps = m_vpStepsByType[pSteps->m_StepsType];
+	for( int j=vpSteps.size()-1; j>=0; j-- )
+	{
+		if( vpSteps[j] == pSteps )
+		{
+//			delete vpSteps[j]; // delete below
+			vpSteps.erase( vpSteps.begin()+j );
+			break;
+		}
+	}
 
 	for( int j=m_vpSteps.size()-1; j>=0; j-- )
 	{

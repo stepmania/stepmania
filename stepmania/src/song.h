@@ -173,7 +173,7 @@ public:
 	bool SongCompleteForStyle( const StyleDef *st ) const;
 	bool HasStepsType( StepsType st ) const;
 	bool HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const;
-	const vector<Steps*>& GetAllSteps() const { return m_vpSteps; }
+	const vector<Steps*>& GetAllSteps( StepsType st=STEPS_TYPE_INVALID ) const { return st==STEPS_TYPE_INVALID? m_vpSteps:m_vpStepsByType[st]; }
 	void GetSteps( vector<Steps*>& arrayAddTo, StepsType st = STEPS_TYPE_INVALID, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, const CString &sDescription = "", bool bIncludeAutoGen = true, int Max = -1 ) const;
 	Steps* GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen = true ) const;
 	Steps* GetStepsByMeter( StepsType st, int iMeterLow, int iMeterHigh ) const;
@@ -199,6 +199,7 @@ private:
 	void DeleteDuplicateSteps( vector<Steps*> &vSteps );
 
 	vector<Steps*> m_vpSteps;
+	vector<Steps*> m_vpStepsByType[NUM_STEPS_TYPES];
 };
 
 #endif
