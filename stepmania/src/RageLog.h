@@ -28,8 +28,9 @@ public:
 	void ShowConsole();
 	void HideConsole();
 
-protected:
-	FILE* m_fileLog;
+private:
+	FILE *m_fileLog, *m_fileInfo;
+	void Write( int, CString );
 };
 
 extern RageLog*	LOG;	// global and accessable from anywhere in our program
