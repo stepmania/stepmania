@@ -13,7 +13,7 @@
 #include "Trail.h"
 #include "Foreach.h"
 #include "Steps.h"
-#include "Song.h"
+#include "song.h"
 
 void TrailEntry::GetAttackArray( AttackArray &out ) const
 {
