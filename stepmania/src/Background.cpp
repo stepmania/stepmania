@@ -314,12 +314,12 @@ void Background::LoadFromSong( Song* pSong )
 			m_aBGSegments.Add( BGSegment(-10000,0,false) );
 		}
 
-		/* If we have only 2, only generate a single animation segment for for the
-		 * whole song.  Otherwise, if it's a movie., it'll loop every four bars; we
-		 * want it to play continuously. */
 		const float fFirstBeat = pSong->m_fFirstBeat;
 		const float fLastBeat = pSong->m_fLastBeat;
 
+		/* If we have only 2, only generate a single animation segment for for the
+		 * whole song.  Otherwise, if it's a movie, it'll loop every four measures; we
+		 * want it to play continuously. */
 		if( m_BGAnimations.GetSize() == 2) {
 			m_aBGSegments.Add( BGSegment(fFirstBeat,1,bFade) );
 		} else {
