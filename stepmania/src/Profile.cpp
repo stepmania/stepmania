@@ -1553,8 +1553,8 @@ XNode* Profile::AwardRecord::CreateNode() const
 	XNode* pNode = new XNode;
 	pNode->name = "AwardRecord";
 
-	pNode->AppendChild( "FirstTime", first );
-	pNode->AppendChild( "LastTime",	last );
+	pNode->AppendChild( "FirstTime", int(first) );
+	pNode->AppendChild( "LastTime",	int(last) );
 	pNode->AppendChild( "Count",	iCount );
 
 	return pNode;
