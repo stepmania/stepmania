@@ -642,10 +642,10 @@ void Song::GetNotes( vector<Notes*>& arrayAddTo, NotesType nt, Difficulty dc, in
 								arrayAddTo.push_back( m_apNotes[i] );
 }
 
-Notes* Song::GetNotes( NotesType nt, Difficulty dc ) const
+Notes* Song::GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen ) const
 {
 	vector<Notes*> vNotes;
-	GetNotes( vNotes, nt, dc );
+	GetNotes( vNotes, nt, dc, -1, -1, "", bIncludeAutoGen );
 	if( vNotes.size() == 0 )
 		return NULL;
 	else 
