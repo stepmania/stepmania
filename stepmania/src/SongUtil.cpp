@@ -74,29 +74,6 @@ void SongUtil::SortSongPointerArrayByTitle( vector<Song*> &arraySongPointers )
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByTitle );
 }
 
-static int GetSongSortDifficulty(const Song *pSong)
-{
-	vector<Steps*> aNotes;
-	pSong->GetSteps( aNotes, GAMESTATE->GetCurrentStyle()->m_StepsType );
-
-	/* Sort by the first difficulty found in the following order: */
-	const Difficulty d[] = { DIFFICULTY_EASY, DIFFICULTY_MEDIUM, DIFFICULTY_HARD,
-		DIFFICULTY_CHALLENGE, DIFFICULTY_INVALID };
-
-	for(int i = 0; d[i] != DIFFICULTY_INVALID; ++i)
-	{
-		for( unsigned j = 0; j < aNotes.size(); ++j)
-		{
-			if(aNotes[j]->GetDifficulty() != d[i])
-				continue;
-
-			return aNotes[j]->GetMeter();
-		}
-	}
-
-	return 1;
-}
-
 bool CompareSongPointersByBPM(const Song *pSong1, const Song *pSong2)
 {
 	DisplayBpms bpms1, bpms2;
