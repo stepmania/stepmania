@@ -103,6 +103,7 @@ void ScreenOptionsMaster::SetList( OptionRowDefinition &row, OptionRowHandler &h
 			}
 		}
 		else if( sName == "exportonchange" )	hand.m_bExportOnChange = true;
+		else		RageException::Throw( "Unkown row flag \"%s\"", sName.c_str() );
 	}
 
 	for( int col = 0; col < NumCols; ++col )
@@ -472,24 +473,27 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	
 	for( unsigned i = 0; i < Flags.size(); ++i )
 	{
-		Flags[i].MakeLower();
+		CString sFlag = Flags[i];
+		sFlag.MakeLower();
 
-		if( Flags[i] == "together" )
+		if( sFlag == "together" )
 			im = INPUTMODE_SHARE_CURSOR;
-		if( Flags[i] == "explanations" )
+		else if( sFlag == "explanations" )
 			Explanations = true;
-		if( Flags[i] == "forceallplayers" )
+		else if( sFlag == "forceallplayers" )
 		{
 			FOREACH_PlayerNumber( pn )
 				GAMESTATE->m_bSideIsJoined[pn] = true;
 			GAMESTATE->m_MasterPlayerNumber = PlayerNumber(0);
 		}
-		if( Flags[i] == "smnavigation" )
+		else if( sFlag == "smnavigation" )
 			SetNavigation( NAV_THREE_KEY_MENU );
-		if( Flags[i] == "toggle" || Flags[i] == "firstchoicegoesdown" )
+		else if( sFlag == "toggle" || sFlag == "firstchoicegoesdown" )
 			SetNavigation( PREFSMAN->m_bArcadeOptionsNavigation? NAV_TOGGLE_THREE_KEY:NAV_TOGGLE_FIVE_KEY );
-		if( Flags[i] == "hideunderlines" )
+		else if( sFlag == "hideunderlines" )
 			bShowUnderlines = false;
+		else
+			RageException::Throw( "Unknown flag \"%s\"", sFlag.c_str() );
 	}
 
 	m_OptionRowAlloc = new OptionRowDefinition[asLineNames.size()];

@@ -981,7 +981,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 			FOREACH_HumanPlayer( p )
 			{
 				row.m_iChoiceInRowWithFocus[p] = iNewChoiceWithFocus;
-				StoreFocus( pn );
+				StoreFocus( p );
 			}
 		}
 
