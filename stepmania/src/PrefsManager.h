@@ -43,7 +43,6 @@ public:
 	bool			m_bDelayedScreenLoad;
 	bool			m_bBannerCache;
 
-	bool			m_bIgnoreJoyAxes;	
 	bool			m_bOnlyDedicatedMenuButtons;
 	bool			m_bMenuTimer;
 	bool			m_bShowDanger;

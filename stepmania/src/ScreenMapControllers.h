@@ -16,6 +16,7 @@
 #include "GrayArrow.h"
 #include "InputMapper.h"
 #include "MenuElements.h"
+#include "RageInputDevice.h"
 
 
 class ScreenMapControllers : public Screen
@@ -43,7 +44,9 @@ private:
 	int m_iCurController;
 	int m_iCurButton;
 	int m_iCurSlot;
+
 	bool m_bWaitingForPress;
+	DeviceInput m_DeviceIToMap;
 
 	BitmapText	m_textError;
 	BitmapText	m_textName[MAX_GAME_BUTTONS];

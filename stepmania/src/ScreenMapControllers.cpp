@@ -119,12 +119,18 @@ void ScreenMapControllers::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
 
-	for( int b=0; b<GAMESTATE->GetCurrentGameDef()->m_iButtonsPerController; b++ )
-	{
-		CString sButtonName = GAMESTATE->GetCurrentGameDef()->m_szButtonNames[b];
+	
+	if( m_bWaitingForPress  &&  m_DeviceIToMap.IsValid() )	// we're going to map an input
+	{	
+		GameInput curGameI( (GameController)m_iCurController,
+							(GameButton)m_iCurButton );
 
-		if( sButtonName == "Start"  ||  sButtonName == "Back" )
-			continue;
+		INPUTMAPPER->SetInputMap( m_DeviceIToMap, curGameI, m_iCurSlot );
+		INPUTMAPPER->AddDefaultMappingsForCurrentGameIfUnmapped();
+		// commit to disk so we don't lose the changes!
+		INPUTMAPPER->SaveMappingsToDisk();
+
+		m_bWaitingForPress = false;
 	}
 }
 
@@ -144,8 +150,22 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 	LOG->Trace( "ScreenMapControllers::Input():  device: %d, button: %d", 
 		DeviceI.device, DeviceI.button );
 
-	if( m_bWaitingForPress )	// we're going to map an input
-	{	
+	//
+	// TRICKY:  This eliminates the need for a separate "ignore joy axes"
+	// preference.  Some adapters map the PlayStation digital d-pad to
+	// both axes and buttons.  We want buttons to be used for 
+	// any mappings where possible because presses of buttons aren't mutually 
+	// exclusive and presses of axes are (e.g. can't read presses of both Left and 
+	// Right simultaneously).  So, when the user presses a button, we'll wait
+	// until the next Update before adding a mapping so that we get a chance 
+	// to see all input events the user's press of a panel.  This screen will be
+	// receive input events for joystick axes presses first, then the input events 
+	// for button presses.  We'll use the last input event received in the same 
+	// Update so that a button presses are favored for mapping over axis presses.
+	//
+
+	if( m_bWaitingForPress )
+	{
 		/* Don't allow function keys to be mapped. */
 		if ( DeviceI.device == DEVICE_KEYBOARD && (DeviceI.button >= SDLK_F1 && DeviceI.button <= SDLK_F12) )
 		{
@@ -156,47 +176,11 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			m_textError.BeginTweening( 3 );
 			m_textError.BeginTweening( 1 );
 			m_textError.SetDiffuse( RageColor(0,1,0,0) );
-			return;
 		}
-
-		static int axes[] = 
+		else
 		{
-			JOY_LEFT, JOY_RIGHT, JOY_UP, JOY_DOWN,
-			JOY_Z_UP, JOY_Z_DOWN,
-			JOY_ROT_UP, JOY_ROT_DOWN, JOY_ROT_LEFT, JOY_ROT_RIGHT, JOY_ROT_Z_UP, JOY_ROT_Z_DOWN,
-			JOY_HAT_LEFT, JOY_HAT_RIGHT, JOY_HAT_UP, JOY_HAT_DOWN, 
-			JOY_AUX_1, JOY_AUX_2, JOY_AUX_3, JOY_AUX_4,
-			-1
-		};
-
-		bool IsAxis = false;
-		for( int ax = 0; axes[ax] != -1; ++ax )
-			if( DeviceI.button == axes[ax] )
-				IsAxis = true;
-
-		// ignore joystick D-Pad presses if the user has set their pref.
-		if( PREFSMAN->m_bIgnoreJoyAxes && IsAxis && DeviceI.IsJoystick() )
-		{
-			//m_textError.SetText( "Game option is set to ignore the Joystick D-Pad." );
-			//m_fErrorDisplayCountdown = 5;	// show the error message
-			m_textError.StopTweening();
-			m_textError.SetDiffuse( RageColor(0,1,0,1) );
-			m_textError.BeginTweening( 3 );
-			m_textError.BeginTweening( 1 );
-			m_textError.SetDiffuse( RageColor(0,1,0,0) );
-
-			return;	// ignore this press
+			m_DeviceIToMap = DeviceI;
 		}
-
-		GameInput curGameI( (GameController)m_iCurController,
-							(GameButton)m_iCurButton );
-
-		INPUTMAPPER->SetInputMap( DeviceI, curGameI, m_iCurSlot );
-		INPUTMAPPER->AddDefaultMappingsForCurrentGameIfUnmapped();
-		// commit to disk so we don't lose the changes!
-		INPUTMAPPER->SaveMappingsToDisk();
-
-		m_bWaitingForPress = false;
 	}
 	else if( DeviceI.device == DEVICE_KEYBOARD )
 	{
@@ -257,7 +241,8 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			break;
 		case SDLK_RETURN: /* Change the selection. */
 		case SDLK_KP_ENTER:
-			m_bWaitingForPress = true;	
+			m_bWaitingForPress = true;
+			m_DeviceIToMap.MakeInvalid();
 			break;
 		}
 	}

@@ -45,7 +45,6 @@ PrefsManager::PrefsManager()
 	m_iMovieColorDepth = 16;
 	m_iMaxTextureResolution = 2048;
 	m_iRefreshRate = REFRESH_DEFAULT;
-	m_bIgnoreJoyAxes = true;		// ON by default because all USB convertors that are compatible with pads map to buttons
 	m_bOnlyDedicatedMenuButtons = false;
 #ifdef DEBUG
 	m_bShowStats = true;

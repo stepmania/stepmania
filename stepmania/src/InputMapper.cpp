@@ -73,7 +73,6 @@ struct AutoJoyMapping
 	Game game;
 	const char *szDeviceDescription;	// reported by InputHandler
 	const char *szControllerName;	// the product name of the controller
-	bool bIgnoreAxes;
 	struct {
 		int iSlotIndex;	// -1 == end marker
 		int deviceButton;
@@ -95,7 +94,6 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		GAME_DANCE,
 		"GIC USB Joystick",
 		"Boom USB convertor (black/gray)",
-		false,
 		{
 			{ 0, JOY_16, DANCE_BUTTON_LEFT },
 			{ 0, JOY_14, DANCE_BUTTON_RIGHT },
@@ -108,7 +106,6 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		GAME_DANCE,
 		"4 axis 16 button joystick",
 		"PC Magic Box",
-		false,
 		{
 			{ 0, JOY_16, DANCE_BUTTON_LEFT },
 			{ 0, JOY_14, DANCE_BUTTON_RIGHT },
@@ -121,7 +118,6 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		GAME_DANCE,
 		"GamePad Pro USB ",	// yes, there is a space at the end
 		"GamePad Pro USB",
-		false,
 		{
 			{ 0, JOY_LEFT,	DANCE_BUTTON_LEFT },
 			{ 0, JOY_RIGHT,	DANCE_BUTTON_RIGHT },
@@ -142,7 +138,6 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		GAME_DANCE,
 		"4 axis 12 button joystick with hat switch",
 		"Super Joy Box 5",
-		false,
 		{
 			{ 0, JOY_HAT_LEFT,	DANCE_BUTTON_LEFT },
 			{ 0, JOY_HAT_RIGHT,	DANCE_BUTTON_RIGHT },
@@ -165,7 +160,6 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		GAME_DANCE,
 		"MP-8866 Dual USB Joypad",
 		"Super Dual Box",
-		false,
 		{
 			{ 0, JOY_HAT_LEFT,	DANCE_BUTTON_LEFT },
 			{ 0, JOY_HAT_RIGHT,	DANCE_BUTTON_RIGHT },
@@ -188,7 +182,6 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		GAME_DANCE,
 		"XBOX Gamepad Plugin V0.01",
 		"X-Box gamepad",
-		false,
 		{
 			{ 0, JOY_HAT_LEFT,	DANCE_BUTTON_LEFT },
 			{ 0, JOY_HAT_RIGHT,	DANCE_BUTTON_RIGHT },
@@ -209,7 +202,6 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		GAME_PUMP,
 		"Pump USB",
 		"Pump USB pad",
-		false,
 		{
 			{ 0, PUMP_UL,		PUMP_BUTTON_UPLEFT },
 			{ 0, PUMP_UR,		PUMP_BUTTON_UPRIGHT },
@@ -231,7 +223,6 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 {
 	vector<InputDevice> vDevices;
 	vector<CString> vDescriptions;
-	PREFSMAN->m_bIgnoreJoyAxes = false;
 	INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
 
 	int iNumJoysticksMapped = 0;
@@ -255,8 +246,6 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 
 				LOG->Info( "Applying default joystick mapping #%d for device '%s' (%s)",
 					iNumJoysticksMapped+1, mapping.szDeviceDescription, mapping.szControllerName );
-
-				PREFSMAN->m_bIgnoreJoyAxes |= mapping.bIgnoreAxes;
 
 				for( int k=0; mapping.maps[k].iSlotIndex != -1; k++ )
 				{
