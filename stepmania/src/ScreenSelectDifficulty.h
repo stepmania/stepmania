@@ -16,26 +16,15 @@
 #include "Quad.h"
 #include "MenuElements.h"
 #include "RandomSample.h"
+#include "ModeChoice.h"
 
 
 class ScreenSelectDifficulty : public Screen
 {
 public:
-	enum Choice
-	{
-		CHOICE_BEGINNER = 0,	// page 1
-		CHOICE_EASY,
-		CHOICE_MEDIUM,
-		CHOICE_HARD,
-		CHOICE_NONSTOP,	// page 2
-		CHOICE_ONI,	
-		CHOICE_ENDLESS,
-		NUM_CHOICES
-	};
 
-#define NUM_CHOICES_ON_PAGE_1	4	// beginner, easy, medium, hard, 
-#define NUM_CHOICES_ON_PAGE_2	3	// Nonstop, Oni, Endless
-#define NUM_PAGES	2
+	enum Page { PAGE_1, PAGE_2, NUM_PAGES };
+#define MAX_CHOICES_PER_PAGE	6
 
 	ScreenSelectDifficulty();
 	virtual ~ScreenSelectDifficulty();
@@ -54,17 +43,15 @@ public:
 	void TweenOnScreen();
 
 private:
-	void ChangeTo( PlayerNumber pn, int iOldChoice, int iNewChoice );
-
-	bool IsOnPage2( int iChoice );
-	bool SelectedSomethingOnPage2();	// checks selection of players
+	void ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages );
+	void ChangePage( int iNewPage );
 
 	MenuElements m_Menu;
 
-	ActorFrame	m_framePages;	// 2 pages
+	ActorFrame	m_framePages;	// to hold the 2 pages
 
-	Sprite	m_sprHeader[NUM_CHOICES];
-	Sprite	m_sprPicture[NUM_CHOICES];
+	Sprite	m_sprHeader[NUM_PAGES][MAX_CHOICES_PER_PAGE];
+	Sprite	m_sprPicture[NUM_PAGES][MAX_CHOICES_PER_PAGE];
 	Sprite	m_sprExplanation[NUM_PAGES];
 	Sprite	m_sprMoreArrows[NUM_PAGES];
 
@@ -76,7 +63,10 @@ private:
 	RageSound	m_soundSelect;
 	RandomSample m_soundDifficult;
 
-	Choice m_Choice[NUM_PLAYERS];
+	vector<ModeChoice> m_ModeChoices[NUM_PAGES];
+
+	int m_iCurrentPage;
+	int m_iChoiceOnPage[NUM_PLAYERS];
 	bool m_bChosen[NUM_PLAYERS];
 
 	float m_fLockInputTime;

@@ -118,14 +118,20 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 			float fPercentThroughBounce = m_fSecsIntoEffect / m_fEffectPeriodSeconds;
 			float fPercentOffset = sinf( fPercentThroughBounce*PI ); 
 			m_temp.pos += m_vectBounce * fPercentOffset;
+			m_temp.pos.x = roundf( m_temp.pos.x );
+			m_temp.pos.y = roundf( m_temp.pos.y );
+			m_temp.pos.z = roundf( m_temp.pos.z );
 		}
 		break;
 	case bobbing:
 		{
-		float fPercentThroughBounce = m_fSecsIntoEffect / m_fEffectPeriodSeconds;
-		float fPercentOffset = sinf( fPercentThroughBounce*PI*2 ); 
-		m_temp.pos += m_vectBounce * fPercentOffset;
-		}
+			float fPercentThroughBounce = m_fSecsIntoEffect / m_fEffectPeriodSeconds;
+			float fPercentOffset = sinf( fPercentThroughBounce*PI*2 ); 
+			m_temp.pos += m_vectBounce * fPercentOffset;
+			m_temp.pos.x = roundf( m_temp.pos.x );
+			m_temp.pos.y = roundf( m_temp.pos.y );
+			m_temp.pos.z = roundf( m_temp.pos.z );
+	}
 		break;
 	default:
 		ASSERT(0);	// invalid Effect
@@ -515,12 +521,15 @@ void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, 
 	TweenState original = m_current;
 	TweenState mod = m_current;
 
-#define CONTAINS(needle)	(-1!=sFadeString.Find(needle))
+	CStringArray asBits;
+	split( sFadeString, " ", asBits );
+	
+#define CONTAINS(needle)	(find( asBits.begin(), asBits.end(), needle ) != asBits.end())
 
 	TweenType tt;
 	if( CONTAINS("linear") )			tt = TWEEN_LINEAR;
-	else if( CONTAINS("accelerate") )	tt = TWEEN_BIAS_BEGIN;
-	else if( CONTAINS("bounce") )		tt = TWEEN_BOUNCE_END;
+	else if( CONTAINS("accelerate") )	tt = bOnToScreenOrOffOfScreen ? TWEEN_BIAS_END : TWEEN_BIAS_BEGIN;
+	else if( CONTAINS("bounce") )		tt = bOnToScreenOrOffOfScreen ? TWEEN_BOUNCE_END : TWEEN_BOUNCE_BEGIN;
 	else if( CONTAINS("spring") )		tt = TWEEN_SPRING;
 	else								tt = TWEEN_LINEAR;
 
@@ -540,8 +549,8 @@ void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, 
 	mod.rotation.x	+= (CONTAINS("spinx")?-PI*2:0);
 	mod.rotation.y	+= (CONTAINS("spiny")?-PI*2:0);
 	mod.rotation.z	+= (CONTAINS("spinz")?-PI*2:0);
-	mod.scale.x		*= (CONTAINS("foldx")?0:1) * (CONTAINS("zoomx")?3:1);
-	mod.scale.y		*= (CONTAINS("foldy")?0:1) * (CONTAINS("zoomy")?3:1);
+	mod.scale.x		*= (CONTAINS("foldx")?0:1) * (CONTAINS("zoomx")||CONTAINS("zoom")?3:1);
+	mod.scale.y		*= (CONTAINS("foldy")?0:1) * (CONTAINS("zoomy")||CONTAINS("zoom")?3:1);
 	for( int i=0; i<4; i++ )
 	{
 		mod.diffuse[i] = GetDiffuse();

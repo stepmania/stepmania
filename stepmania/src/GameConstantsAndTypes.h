@@ -16,9 +16,9 @@
 #include "RageTypes.h"	// for RageColor
 
 
-/////////////////////////////
+//
 // Screen Dimensions
-/////////////////////////////
+//
 #define	SCREEN_WIDTH	(640)
 #define	SCREEN_HEIGHT	(480)
 
@@ -33,12 +33,9 @@
 #define	SCREEN_NEAR		(-1000)
 #define	SCREEN_FAR		(1000)
 
-/////////////////////////
+//
 // Note definitions
-/////////////////////////
-
-
-
+//
 enum RadarCategory	// starting from 12-o'clock rotating clockwise
 {
 	RADAR_STREAM = 0,
@@ -84,19 +81,27 @@ enum NotesType
 	NOTES_TYPE_INVALID,
 };
 
-//////////////////////////
+//
 // Play mode stuff
-//////////////////////////
+//
 enum PlayMode
 {
 	PLAY_MODE_ARCADE,
 	PLAY_MODE_NONSTOP,	// DDR EX Nonstop
 	PLAY_MODE_ONI,		// DDR EX Challenge
 	PLAY_MODE_ENDLESS,	// DDR PlayStation Endless
+	PLAY_MODE_BATTLE,
 	NUM_PLAY_MODES,
 	PLAY_MODE_INVALID
 };
 
+CString PlayModeToString( PlayMode pm );
+PlayMode StringToPlayMode( CString s );
+
+
+//
+// Player number stuff
+//
 enum PlayerNumber {
 	PLAYER_1 = 0,
 	PLAYER_2,

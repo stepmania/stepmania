@@ -49,9 +49,31 @@ Difficulty StringToDifficulty( CString sDC )
 	else if( sDC == "heavy" )		return DIFFICULTY_HARD;
 	else if( sDC == "smaniac" )		return DIFFICULTY_CHALLENGE;
 	else if( sDC == "challenge" )	return DIFFICULTY_CHALLENGE;
-
-	return DIFFICULTY_INVALID;
+	else							return DIFFICULTY_INVALID;
 }
+
+
+CString PlayModeToString( PlayMode pm )
+{
+	switch( pm )
+	{
+	case PLAY_MODE_ARCADE:		return "arcade";
+	case PLAY_MODE_ONI:			return "oni";
+	case PLAY_MODE_NONSTOP:		return "nonstop";
+	case PLAY_MODE_ENDLESS:		return "endless";
+	case PLAY_MODE_BATTLE:		return "battle";
+	default:	ASSERT(0);		return "";
+	}
+}
+
+PlayMode StringToPlayMode( CString s )
+{
+	for( int i=0; i<NUM_PLAY_MODES; i++ )
+		if( PlayModeToString((PlayMode)i).CompareNoCase(s) == 0 )
+			return (PlayMode)i;
+	return PLAY_MODE_INVALID;
+}
+
 
 RageColor PlayerToColor( PlayerNumber pn ) 
 {

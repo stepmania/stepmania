@@ -41,7 +41,7 @@ PrefsManager::PrefsManager()
 	m_iTextureColorDepth = 16;		// default to 16 for better preformance on slower cards
 	m_iMaxTextureResolution = 2048;
 	m_iRefreshRate = REFRESH_DEFAULT;
-	m_bIgnoreJoyAxes = false;		// when did this get changed to ON by default?
+	m_bIgnoreJoyAxes = true;		// ON by default because all USB convertors that are compatible with pads map to buttons
 	m_bOnlyDedicatedMenuButtons = false;
 #ifdef DEBUG
 	m_bShowStats = true;
