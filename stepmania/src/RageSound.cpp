@@ -608,7 +608,9 @@ void RageSound::StopPlaying()
 	/* We may still have positions queued up in RageSoundManager.  We need to make sure
 	 * that we don't accept those; otherwise, if we start playing again quickly, they'll
 	 * confuse GetPositionSeconds().  Do this by changing our ID. */
+	SOUNDMAN->UnregisterSound( this );
 	ID = SOUNDMAN->GetUniqueID();
+	SOUNDMAN->RegisterSound( this );
 
 //	LOG->Trace("StopPlaying %p finished (%s)", this, this->GetLoadedFilePath().c_str());
 

@@ -97,7 +97,7 @@ void RageSoundManager::Update(float delta)
 	FlushPosMapQueue();
 
 	/* Scan the owned_sounds list for sounds that are no longer playing, and delete them. */
-	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
+	g_SoundManMutex.Lock(); /* lock for access to owned_sounds */
 	set<RageSound *> ToDelete;
 	for( set<RageSound *>::iterator it = owned_sounds.begin(); it != owned_sounds.end(); ++it )
 	{
@@ -110,7 +110,7 @@ void RageSoundManager::Update(float delta)
 
 	for( set<RageSound *>::iterator it = ToDelete.begin(); it != ToDelete.end(); ++it )
 		owned_sounds.erase( *it );
-	g_SoundManMutex.Unlock(); /* finished with owned_sounds and all_sounds */
+	g_SoundManMutex.Unlock(); /* finished with owned_sounds */
 
 	/* Be sure to release g_SoundManMutex before deleting sounds. */
 	for( set<RageSound *>::iterator it = ToDelete.begin(); it != ToDelete.end(); ++it )
@@ -124,14 +124,14 @@ void RageSoundManager::Update(float delta)
 void RageSoundManager::RegisterSound( RageSound *p )
 {
 	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
-	all_sounds.insert( p );
+	all_sounds[p->GetID()] = p;
 	g_SoundManMutex.Unlock(); /* finished with all_sounds */
 }
 
 void RageSoundManager::UnregisterSound( RageSound *p )
 {
 	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
-	all_sounds.erase( p );
+	all_sounds.erase( p->GetID() );
 	g_SoundManMutex.Unlock(); /* finished with all_sounds */
 }
 
@@ -160,11 +160,11 @@ RageSound *RageSoundManager::GetSoundByID( int ID )
 	LockMut( g_SoundManMutex );
 
 	/* Find the sound with p.ID. */
-	set<RageSound *>::iterator it;
-	for( it = all_sounds.begin(); it != all_sounds.end(); ++it )
-		if( (*it)->GetID() == ID )
-			return *it;
-	return NULL;
+	map<int,RageSound *>::iterator it;
+	it = all_sounds.find( ID );
+	if( it == all_sounds.end() )
+		return NULL;
+	return it->second;
 }
 
 /* This is only called by RageSoundManager::Update. */

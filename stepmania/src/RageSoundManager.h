@@ -16,8 +16,8 @@ class RageSoundManager
 	 * when they're finished playing): */
 	set<RageSound *> owned_sounds;
 
-	/* A list of all sounds that currently exist. */
-	set<RageSound *> all_sounds;
+	/* A list of all sounds that currently exist, by ID. */
+	map<int,RageSound *> all_sounds;
 	
 	RageSoundDriver *driver;
 
