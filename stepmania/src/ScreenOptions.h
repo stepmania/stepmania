@@ -94,7 +94,8 @@ protected:
 	void MenuDown( PlayerNumber pn, const InputEventType type ) { Move( pn, +1, type != IET_FIRST_PRESS ); }
 	void Move( PlayerNumber pn, int dir, bool Repeat );
 
-	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const { return m_iCurrentRow[pn]; }
+	/* Returns -1 if on a row with no OptionRow (eg. EXIT). */
+	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const;
 
 	MenuElements	m_Menu;
 	OptionRow*		m_OptionRow;
@@ -102,33 +103,36 @@ protected:
 protected:	// derived classes need access to these
 	int				m_iSelectedOption[NUM_PLAYERS][MAX_OPTION_LINES];
 	int				m_iNumOptionRows;
-	int				m_iCurrentRow[NUM_PLAYERS];
 
-	OptionIcon		m_OptionIcons[NUM_PLAYERS][MAX_OPTION_LINES];
+	void LoadOptionIcon( PlayerNumber pn, int iRow, CString sText );
 
 private:
-
 	/* Map menu lines to m_OptionRow entries. */
-	const enum { ROW_EXIT = -1 };
-	vector<int>		m_Rows;
+	struct Row
+	{
+		Row();
+		~Row();
+		const enum { ROW_NORMAL, ROW_EXIT } Type;
+		vector<BitmapText *>	m_textItems;
+		Sprite					m_sprBullet;
+		BitmapText				m_textTitle;
+		OptionsCursor			m_Underline[NUM_PLAYERS];
+		OptionIcon				m_OptionIcons[NUM_PLAYERS];
+
+		float m_fY;
+		bool m_bRowIsLong;	// goes off edge of screen
+		bool m_bHidden; // currently off screen
+	};
+	vector<Row*>		m_Rows;
+
+	int				m_iCurrentRow[NUM_PLAYERS];
 
 	InputMode		m_InputMode;
 
 	ActorFrame		m_framePage;
 	AutoActor		m_sprPage;
 	AutoActor		m_sprFrame;
-	Sprite			m_sprBullets[MAX_OPTION_LINES];
-	BitmapText		m_textTitles[MAX_OPTION_LINES];
-	vector<BitmapText *>	m_textItems[MAX_OPTION_LINES];
 
-	bool m_bRowIsLong[MAX_OPTION_LINES];	// goes off edge of screen
-
-	/* True if the item is off of the screen. */
-	bool m_bRowIsHidden[MAX_OPTION_LINES];
-	float m_fRowY[MAX_OPTION_LINES];
-
-
-	OptionsCursor	m_Underline[NUM_PLAYERS][MAX_OPTION_LINES];
 	OptionsCursor	m_Highlight[NUM_PLAYERS];
 	Sprite			m_sprLineHighlight[NUM_PLAYERS];
 

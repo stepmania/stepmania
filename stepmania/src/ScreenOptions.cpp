@@ -79,8 +79,11 @@ ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 	}
 
 	m_framePage.Command( FRAME_ON_COMMAND );
+}
 
-	memset(&m_bRowIsLong, 0, sizeof(m_bRowIsLong));
+void ScreenOptions::LoadOptionIcon( PlayerNumber pn, int iRow, CString sText )
+{
+	m_Rows[iRow]->m_OptionIcons[pn].Load( pn, sText, false );
 }
 
 void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLines )
@@ -122,6 +125,12 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 		m_framePage.AddChild( &m_Highlight[p] );
 	}
 
+	int r;
+	for( r=0; r<m_iNumOptionRows; r++ )		// foreach row
+	{
+		m_Rows.push_back( new Row() );
+	}
+	
 	// init underlines
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -130,26 +139,29 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 
 		for( int l=0; l<m_iNumOptionRows; l++ )
 		{	
-			m_OptionIcons[p][l].Load( (PlayerNumber)p, "", false );
-			m_framePage.AddChild( &m_OptionIcons[p][l] );
+			Row &row = *m_Rows[l];
 
-			m_Underline[p][l].Load( (PlayerNumber)p, true );
-			m_framePage.AddChild( &m_Underline[p][l] );
+			LoadOptionIcon( (PlayerNumber)p, l, "" );
+			m_framePage.AddChild( &row.m_OptionIcons[p] );
+
+			row.m_Underline[p].Load( (PlayerNumber)p, true );
+			m_framePage.AddChild( &row.m_Underline[p] );
 		}
 	}
 
 	// init m_textItems from optionLines
-	int r;
-	for( r=0; r<m_iNumOptionRows; r++ )		// foreach line
+	for( r=0; r<m_iNumOptionRows; r++ )		// foreach row
 	{
-		vector<BitmapText *> & textItems = m_textItems[r];
+		Row &row = *m_Rows[r];
+		row.Type = Row::ROW_NORMAL;
+
+		vector<BitmapText *> & textItems = row.m_textItems;
 		const OptionRow &optline = m_OptionRow[r];
 
 		unsigned c;
 
-		m_framePage.AddChild( &m_sprBullets[r] );
-
-		m_framePage.AddChild( &m_textTitles[r] );		
+		m_framePage.AddChild( &row.m_sprBullet );
+		m_framePage.AddChild( &row.m_textTitle );		
 
 		float fX = ITEMS_START_X;	// indent 70 pixels
 		for( c=0; c<optline.choices.size(); c++ )
@@ -172,8 +184,8 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 		if( fX > SCREEN_RIGHT-40 )
 		{
 			// It goes off the edge of the screen.  Re-init with the "long row" style.
-			m_bRowIsLong[r] = true;
-			for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this line
+			row.m_bRowIsLong = true;
+			for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this row
 				delete textItems[j];
 			textItems.clear();
 
@@ -206,25 +218,24 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 
 		for( c=0; c<textItems.size(); c++ )
 			m_framePage.AddChild( textItems[c] );
-
-		m_Rows.push_back( r );
 	}
 
 	// TRICKY:  Add one more item.  This will be "EXIT"
 	{
+		m_Rows.push_back( new Row() );
+		Row &row = *m_Rows.back();
+		row.Type = Row::ROW_EXIT;
+
 		BitmapText *bt = new BitmapText;
-		m_textItems[r].push_back( bt );
+		row.m_textItems.push_back( bt );
 
 		bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
 		bt->SetText( "EXIT" );
 		bt->SetZoom( ITEMS_ZOOM );
-		bt->SetShadowLength( 0 );
-		float fY = ITEMS_START_Y + ITEMS_SPACING_Y*m_iNumOptionRows;
-		bt->SetXY( CENTER_X, fY );
+		bt->EnableShadow( false );
+		bt->SetX( CENTER_X );
 
 		m_framePage.AddChild( bt );
-
-		m_Rows.push_back( ROW_EXIT );
 	}
 
 	InitOptionsText();
@@ -282,7 +293,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	m_framePage.AddChild( m_sprFrame );
 
 	// poke once at all the explanation metrics so that we catch missing ones early
-	for( r=0; r<m_iNumOptionRows; r++ )		// foreach line
+	for( r=0; r<(int)m_Rows.size(); r++ )		// foreach row
 	{
 		GetExplanationText( r );
 		GetExplanationTitle( r );
@@ -304,19 +315,19 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	/* It's tweening into position, but on the initial tween-in we only want to
 	 * tween in the whole page at once.  Since the tweens are nontrivial, it's
 	 * easiest to queue the tweens and then force them to finish. */
-	for( r=0; r<m_iNumOptionRows; r++ )	// foreach options row
+	for( r=0; r<(int) m_Rows.size(); r++ )	// foreach options line
 	{
-		m_textTitles[r].FinishTweening();
-		m_sprBullets[r].FinishTweening();
-		for( unsigned c=0; c<m_textItems[r].size(); c++ )
-		{
-			m_textItems[r][c]->FinishTweening();
-		}
+		Row &row = *m_Rows[r];
+		row.m_sprBullet.FinishTweening();
+		row.m_textTitle.FinishTweening();
+
+		for( unsigned c=0; c<row.m_textItems.size(); c++ )
+			row.m_textItems[c]->FinishTweening();
 
 		for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
 		{
-			m_Underline[p][r].FinishTweening();
-			m_OptionIcons[p][r].FinishTweening();
+			row.m_Underline[p].FinishTweening();
+			row.m_OptionIcons[p].FinishTweening();
 		}
 	}
 }
@@ -325,22 +336,27 @@ ScreenOptions::~ScreenOptions()
 {
 	LOG->Trace( "ScreenOptions::~ScreenOptions()" );
 	for( unsigned i=0; i<m_Rows.size(); i++ )
-		for( unsigned j = 0; j < m_textItems[i].size(); ++j)
-			delete m_textItems[i][j];
+		delete m_Rows[i];
 }
 
-CString ScreenOptions::GetExplanationText( int row ) const
+CString ScreenOptions::GetExplanationText( int iRow ) const
 {
-	CString sLineName = m_OptionRow[row].name;
+	if( m_Rows[iRow]->Type == Row::ROW_EXIT )
+		return "";
+
+	CString sLineName = m_OptionRow[iRow].name;
 	sLineName.Replace("\n-","");
 	sLineName.Replace("\n","");
 	sLineName.Replace(" ","");
 	return THEME->GetMetric( "OptionExplanations", sLineName+"Help" );
 }
 
-CString ScreenOptions::GetExplanationTitle( int row ) const
+CString ScreenOptions::GetExplanationTitle( int iRow ) const
 {
-	CString sLineName = m_OptionRow[row].name;
+	if( m_Rows[iRow]->Type == Row::ROW_EXIT )
+		return "";
+	
+	CString sLineName = m_OptionRow[iRow].name;
 	sLineName.Replace("\n-","");
 	sLineName.Replace("\n","");
 	sLineName.Replace(" ","");
@@ -365,26 +381,26 @@ CString ScreenOptions::GetExplanationTitle( int row ) const
 
 BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow )
 {
-	const bool bExitRow = (m_Rows[iRow] == ROW_EXIT);
-	if( bExitRow )
-		return *m_textItems[iRow][0];
+	Row &row = *m_Rows[iRow];
+	if( row.Type == Row::ROW_EXIT )
+		return *row.m_textItems[0];
 
-	const bool bLotsOfOptions = m_bRowIsLong[iRow];
-	if( !bLotsOfOptions )
+	if( !row.m_bRowIsLong )
 	{
 		unsigned iOptionInRow = m_iSelectedOption[pn][iRow];
-		return *m_textItems[iRow][iOptionInRow];
+		return *row.m_textItems[iOptionInRow];
 	}
 
 	const bool bOneChoice = m_OptionRow[iRow].bOneChoiceForAllPlayers;
 
 	if( bOneChoice )
-		return *m_textItems[iRow][0];
+		return *row.m_textItems[0];
 
 	/* We have lots of options and this isn't a OneChoice row, which means
 	 * each player has a separate item displayed.  */
-	int iOptionInRow = min( (unsigned)pn, m_textItems[iRow].size()-1 );
-	return *m_textItems[iRow][iOptionInRow];
+	int iOptionInRow = min( (unsigned)pn, row.m_textItems.size()-1 );
+	CHECKPOINT;
+	return *row.m_textItems[iOptionInRow];
 }
 
 void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &iXOut, int &iYOut )
@@ -393,23 +409,24 @@ void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &
 
 	iWidthOut = int(roundf( text.GetZoomedWidth() ));
 	iXOut = int(roundf( text.GetDestX() ));
-	/* We update m_fRowY, change colors and tween items, and then tween rows to
-	 * their final positions.  (This is so we don't tween colors, too.)  m_fRowY
+	/* We update m_fY, change colors and tween items, and then tween rows to
+	 * their final positions.  (This is so we don't tween colors, too.)  m_fY
 	 * is the actual destination position, even though we may not have set up the
 	 * tween yet. */
-	iYOut = int(roundf( m_fRowY[iRow] ));
+	iYOut = int(roundf( m_Rows[iRow]->m_fY ));
 }
 
 void ScreenOptions::InitOptionsText()
 {
 	for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
 	{
-		if( m_Rows[i] == ROW_EXIT )
+		Row &row = *m_Rows[i];
+		if( row.Type == Row::ROW_EXIT )
 			continue;
 
 		const float fY = ITEMS_START_Y + ITEMS_SPACING_Y*i;
 
-		BitmapText &title = m_textTitles[i];
+		BitmapText &title = row.m_textTitle;
 
 		title.LoadFromFont( THEME->GetPathToF("ScreenOptions title") );
 		CString sText = GetExplanationTitle( i );
@@ -421,13 +438,13 @@ void ScreenOptions::InitOptionsText()
 		title.SetVertAlign( Actor::align_middle );		
 		title.EnableShadow( false );		
 
-		Sprite &bullet = m_sprBullets[i];
+		Sprite &bullet = row.m_sprBullet;
 		bullet.Load( THEME->GetPathToG("ScreenOptions bullet") );
 		bullet.SetXY( ARROWS_X, fY );
 		
 		// set the Y position of each item in the line
-		for( unsigned c=0; c<m_textItems[i].size(); c++ )
-			m_textItems[i][c]->SetY( fY );
+		for( unsigned c=0; c<row.m_textItems.size(); c++ )
+			row.m_textItems[c]->SetY( fY );
 	}
 }
 
@@ -441,10 +458,11 @@ void ScreenOptions::PositionUnderlines()
 
 		for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
 		{
-			if( m_Rows[i] == ROW_EXIT )
+			Row &row = *m_Rows[i];
+			if( row.Type == Row::ROW_EXIT )
 				continue;
 
-			OptionsCursor &underline = m_Underline[p][i];
+			OptionsCursor &underline = row.m_Underline[p];
 
 			/* Don't tween X movement and color changes. */
 			int iWidth, iX, iY;
@@ -455,9 +473,9 @@ void ScreenOptions::PositionUnderlines()
 			// If there's only one choice (ScreenOptionsMenu), don't show underlines.  
 			// It looks silly.
 			bool bOnlyOneChoice = m_OptionRow[i].choices.size() == 1;
-			bool hidden = bOnlyOneChoice || m_bRowIsHidden[i];
+			bool hidden = bOnlyOneChoice || row.m_bHidden;
 
-			if( underline.GetDestY() != m_fRowY[i] )
+			if( underline.GetDestY() != row.m_fY )
 			{
 				underline.StopTweening();
 				underline.BeginTweening( 0.3f );
@@ -480,16 +498,17 @@ void ScreenOptions::PositionIcons()
 
 		for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
 		{
-			if( m_Rows[i] == ROW_EXIT )
+			Row &row = *m_Rows[i];
+			if( row.Type == Row::ROW_EXIT )
 				continue;
 
-			OptionIcon &icon = m_OptionIcons[p][i];
+			OptionIcon &icon = row.m_OptionIcons[p];
 
 			int iWidth, iX, iY;			// We only use iY
 			GetWidthXY( (PlayerNumber)p, i, iWidth, iX, iY );
 			icon.SetX( ICONS_X(p) );
 
-			if( icon.GetDestY() != m_fRowY[i] )
+			if( icon.GetDestY() != row.m_fY )
 			{
 				icon.StopTweening();
 				icon.BeginTweening( 0.3f );
@@ -497,7 +516,7 @@ void ScreenOptions::PositionIcons()
 
 			icon.SetY( (float)iY );
 			/* XXX: this doesn't work since icon is an ActorFrame */
-			icon.SetDiffuse( RageColor(1,1,1, m_bRowIsHidden[i]? 0.0f:1.0f) );
+			icon.SetDiffuse( RageColor(1,1,1, row.m_bHidden? 0.0f:1.0f) );
 		}
 	}
 }
@@ -517,12 +536,12 @@ void ScreenOptions::PositionCursors()
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
 
-		int i=m_iCurrentRow[p];
+		const int row = m_iCurrentRow[p];
 
 		OptionsCursor &highlight = m_Highlight[p];
 
 		int iWidth, iX, iY;
-		GetWidthXY( (PlayerNumber)p, i, iWidth, iX, iY );
+		GetWidthXY( (PlayerNumber)p, row, iWidth, iX, iY );
 		highlight.SetBarWidth( iWidth );
 		highlight.SetXY( (float)iX, (float)iY );
 	}
@@ -531,7 +550,7 @@ void ScreenOptions::PositionCursors()
 void ScreenOptions::TweenCursor( PlayerNumber player_no )
 {
 	// Set the position of the highlight showing the current option the user is changing.
-	int iCurRow = m_iCurrentRow[player_no];
+	const int iCurRow = m_iCurrentRow[player_no];
 
 	OptionsCursor &highlight = m_Highlight[player_no];
 
@@ -548,19 +567,21 @@ void ScreenOptions::TweenCursor( PlayerNumber player_no )
 
 void ScreenOptions::UpdateText( PlayerNumber player_no, int iRow )
 {
-	int iChoiceInRow = m_iSelectedOption[player_no][iRow];
+	Row &row = *m_Rows[iRow];
 
-	if( !m_bRowIsLong[iRow] )
+	if( !row.m_bRowIsLong )
 		return;
 
-	const OptionRow &row = m_OptionRow[iRow];
+	int iChoiceInRow = m_iSelectedOption[player_no][iRow];
 
-	unsigned item_no = row.bOneChoiceForAllPlayers?0:player_no;
+	const OptionRow &optrow = m_OptionRow[iRow];
+
+	unsigned item_no = optrow.bOneChoiceForAllPlayers?0:player_no;
 
 	/* If player_no is 2 and there is no player 1: */
-	item_no = min( item_no, m_textItems[iRow].size()-1 );
+	item_no = min( item_no, m_Rows[iRow]->m_textItems.size()-1 );
 
-	m_textItems[iRow][item_no]->SetText( m_OptionRow[iRow].choices[iChoiceInRow] );
+	m_Rows[iRow]->m_textItems[item_no]->SetText( m_OptionRow[iRow].choices[iChoiceInRow] );
 }
 
 void ScreenOptions::UpdateEnabledDisabled()
@@ -571,7 +592,9 @@ void ScreenOptions::UpdateEnabledDisabled()
 	// init text
 	for( unsigned i=0; i<m_Rows.size(); i++ )		// foreach line
 	{
-		if( m_Rows[i] == ROW_EXIT )
+		Row &row = *m_Rows[i];
+
+		if( row.Type == Row::ROW_EXIT )
 		{
 			bool bExitRowIsSelectedByBoth = true;
 			for( int p=0; p<NUM_PLAYERS; p++ )
@@ -579,20 +602,20 @@ void ScreenOptions::UpdateEnabledDisabled()
 					bExitRowIsSelectedByBoth = false;
 
 			RageColor color = bExitRowIsSelectedByBoth ? colorSelected : colorNotSelected;
-			m_textItems[i][0]->SetGlobalDiffuseColor( color );
+			row.m_textItems[0]->SetGlobalDiffuseColor( color );
 
-			if( m_textItems[i][0]->GetDestY() != m_fRowY[i] )
+			if( row.m_textItems[0]->GetDestY() != row.m_fY )
 			{
-				m_textItems[i][0]->StopTweening();
-				m_textItems[i][0]->BeginTweening( 0.3f );
-				m_textItems[i][0]->SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
-				m_textItems[i][0]->SetY( m_fRowY[i] );
+				row.m_textItems[0]->StopTweening();
+				row.m_textItems[0]->BeginTweening( 0.3f );
+				row.m_textItems[0]->SetDiffuseAlpha( row.m_bHidden? 0.0f:1.0f );
+				row.m_textItems[0]->SetY( row.m_fY );
 			}
 
 			if( bExitRowIsSelectedByBoth )
-				m_textItems[i][0]->SetEffectDiffuseShift( 1.0f, colorSelected, colorNotSelected );
+				row.m_textItems[0]->SetEffectDiffuseShift( 1.0f, colorSelected, colorNotSelected );
 			else
-				m_textItems[i][0]->SetEffectNone();
+				row.m_textItems[0]->SetEffectNone();
 
 			continue;
 		}
@@ -604,31 +627,31 @@ void ScreenOptions::UpdateEnabledDisabled()
 
 		/* Don't tween selection colors at all. */
 		RageColor color = bThisRowIsSelected ? colorSelected : colorNotSelected;
-		m_sprBullets[i].SetGlobalDiffuseColor( color );
-		m_textTitles[i].SetGlobalDiffuseColor( color );
+		row.m_sprBullet.SetGlobalDiffuseColor( color );
+		row.m_textTitle.SetGlobalDiffuseColor( color );
 
-		for( unsigned j=0; j<m_textItems[i].size(); j++ )
-			m_textItems[i][j]->SetGlobalDiffuseColor( color );
+		for( unsigned j=0; j<row.m_textItems.size(); j++ )
+			row.m_textItems[j]->SetGlobalDiffuseColor( color );
 
-		if( m_sprBullets[i].GetDestY() != m_fRowY[i] )
+		if( row.m_sprBullet.GetDestY() != row.m_fY )
 		{
-			m_sprBullets[i].StopTweening();
-			m_textTitles[i].StopTweening();
-			m_sprBullets[i].BeginTweening( 0.3f );
-			m_textTitles[i].BeginTweening( 0.3f );
+			row.m_sprBullet.StopTweening();
+			row.m_textTitle.StopTweening();
+			row.m_sprBullet.BeginTweening( 0.3f );
+			row.m_textTitle.BeginTweening( 0.3f );
 
-			m_sprBullets[i].SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
-			m_textTitles[i].SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
+			row.m_sprBullet.SetDiffuseAlpha( row.m_bHidden? 0.0f:1.0f );
+			row.m_textTitle.SetDiffuseAlpha( row.m_bHidden? 0.0f:1.0f );
 
-			m_sprBullets[i].SetY( m_fRowY[i] );
-			m_textTitles[i].SetY( m_fRowY[i] );
+			row.m_sprBullet.SetY( row.m_fY );
+			row.m_textTitle.SetY( row.m_fY );
 
-			for( unsigned j=0; j<m_textItems[i].size(); j++ )
+			for( unsigned j=0; j<row.m_textItems.size(); j++ )
 			{
-				m_textItems[i][j]->StopTweening();
-				m_textItems[i][j]->BeginTweening( 0.3f );
-				m_textItems[i][j]->SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
-				m_textItems[i][j]->SetY( m_fRowY[i] );
+				row.m_textItems[j]->StopTweening();
+				row.m_textItems[j]->BeginTweening( 0.3f );
+				row.m_textItems[j]->SetDiffuseAlpha( row.m_bHidden? 0.0f:1.0f );
+				row.m_textItems[j]->SetY( row.m_fY );
 			}
 		}
 	}
@@ -690,7 +713,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		this->PostScreenMessage( SM_BeginFadingOut, 0 );
+		StartGoToNextState();
 		break;
 	case SM_GoToPrevScreen:
 //		this->ExportOptions();	// Don't save options if we're going back!
@@ -779,7 +802,7 @@ void ScreenOptions::PositionItems()
 	}
 
 	int pos = 0;
-	for( int i=0; i<(int) m_Rows.size(); i++ )		// foreach line
+	for( int i=0; i<(int) m_Rows.size(); i++ )		// foreach row
 	{
 		float ItemPosition;
 		if( i < first_start )
@@ -793,9 +816,11 @@ void ScreenOptions::PositionItems()
 		else
 			ItemPosition = (float) total - 0.5f;
 			
+		Row &row = *m_Rows[i];
+
 		float fY = ITEMS_START_Y + ITEMS_SPACING_Y*ItemPosition;
-		m_fRowY[i] = fY;
-		m_bRowIsHidden[i] = i < first_start ||
+		row.m_fY = fY;
+		row.m_bHidden = i < first_start ||
 							(i >= first_end && i < second_start) ||
 							i >= second_end;
 	}
@@ -807,7 +832,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 
-	/* Update m_fRowY[] and m_bRowIsHidden[]. */
+	/* Update m_fY and m_bHidden[]. */
 	PositionItems();
 
 	/* Do positioning. */
@@ -828,13 +853,8 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		TweenCursor( (PlayerNumber) p );
 
-	int iCurRow = m_iCurrentRow[pn];
-
-	bool bIsExitRow = iCurRow == m_iNumOptionRows;
-
-	CString text = "";
-	if( !bIsExitRow )
-		text = GetExplanationText( iCurRow );
+	const int iCurRow = m_iCurrentRow[pn];
+	const CString text = GetExplanationText( iCurRow );
 
 	BitmapText *pText = NULL;
 	switch( m_InputMode )
@@ -884,27 +904,28 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	{
 		bool bAllOnExit = true;
 		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] != m_iNumOptionRows )
+			if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->Type != Row::ROW_EXIT )
 				bAllOnExit = false;
 
-		if( m_iCurrentRow[pn] != m_iNumOptionRows )	// not on exit
+		if( m_Rows[m_iCurrentRow[pn]]->Type != Row::ROW_EXIT )	// not on exit
 			MenuDown( pn, type );	// can't go down any more
 		else if( bAllOnExit && type == IET_FIRST_PRESS )
-			this->PostScreenMessage( SM_BeginFadingOut, 0 );
+			StartGoToNextState();
 	}
 	else if( type == IET_FIRST_PRESS )	// !m_bArcadeOptionsNavigation
 	{
-		this->PostScreenMessage( SM_BeginFadingOut, 0 );
+		StartGoToNextState();
 	}
 }
 
 
 void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 {
-	int iCurRow = m_iCurrentRow[pn];
-	OptionRow &row = m_OptionRow[iCurRow];
+	const int iCurRow = m_iCurrentRow[pn];
+	Row &row = *m_Rows[iCurRow];
+	OptionRow &optrow = m_OptionRow[iCurRow];
 
-	const int iNumOptions = (iCurRow == m_iNumOptionRows)? 1: row.choices.size();
+	const int iNumOptions = (row.Type == Row::ROW_EXIT)? 1: optrow.choices.size();
 	if( PREFSMAN->m_bArcadeOptionsNavigation )
 	{
 		/* If START is being pressed, and arcade nav is on, then we're holding left/right
@@ -922,7 +943,7 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 	if( Repeat )
 		return;
 
-	if( iCurRow == m_iNumOptionRows	)	// EXIT is selected
+	if( row.Type == Row::ROW_EXIT	)	// EXIT is selected
 		return;		// don't allow a move
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -935,7 +956,7 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 		int iNewSel = m_iSelectedOption[p][iCurRow] + iDelta;
 		wrap( iNewSel, iNumOptions );
 		
-		if( row.bOneChoiceForAllPlayers )
+		if( optrow.bOneChoiceForAllPlayers )
 		{
 			for( int p2=0; p2<NUM_PLAYERS; p2++ )
 			{
@@ -975,4 +996,23 @@ void ScreenOptions::Move( PlayerNumber pn, int dir, bool Repeat )
 	}
 	if( changed )
 		m_SoundNextRow.Play();
+}
+
+int ScreenOptions::GetCurrentRow( PlayerNumber pn ) const
+{
+	const int l = m_iCurrentRow[pn];
+	if( m_Rows[l]->Type != Row::ROW_NORMAL )
+		return -1;
+	return l;
+}
+
+ScreenOptions::Row::Row()
+{
+	m_bRowIsLong = false;
+}
+
+ScreenOptions::Row::~Row()
+{
+	for( unsigned i = 0; i < m_textItems.size(); ++i )
+		delete m_textItems[i];
 }

@@ -479,6 +479,7 @@ void ScreenOptionsMaster::ExportOptions()
 {
 	int ChangeMask = 0;
 
+	CHECKPOINT;
 	unsigned i;
 	for( i = 0; i < OptionRowHandlers.size(); ++i )
 	{
@@ -494,12 +495,13 @@ void ScreenOptionsMaster::ExportOptions()
 		}
 	}
 
+	CHECKPOINT;
 	/* If the selection is on a LIST, and the selected LIST option sets the screen,
 	 * honor it. */
 	m_NextScreen = "";
 
 	const int row = this->GetCurrentRow();
-	if( row < (int) OptionRowHandlers.size() ) /* might be on "exit" */
+	if( row != -1 )
 	{
 		const OptionRowHandler &hand = OptionRowHandlers[row];
 		if( hand.type == ROW_LIST )
@@ -510,6 +512,7 @@ void ScreenOptionsMaster::ExportOptions()
 				m_NextScreen = mc.m_sScreen;
 		}
 	}
+	CHECKPOINT;
 
 	// NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 	// XXX: handle different destinations based on play mode?
@@ -544,6 +547,7 @@ void ScreenOptionsMaster::ExportOptions()
 	{
 		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );
 	}
+	CHECKPOINT;
 }
 
 void ScreenOptionsMaster::MenuStart( PlayerNumber pn, const InputEventType type )
@@ -586,9 +590,7 @@ void ScreenOptionsMaster::RefreshIcons()
 
 		for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
 		{
-			OptionRow &row = m_OptionRow[i];
-			OptionIcon &icon = m_OptionIcons[p][i];
-			OptionRowHandler &handler = OptionRowHandlers[i];
+			const OptionRow &row = m_OptionRow[i];
 
 			int iSelection = m_iSelectedOption[p][i];
 			if( iSelection >= (int)m_OptionRow[i].choices.size() )
@@ -606,6 +608,7 @@ void ScreenOptionsMaster::RefreshIcons()
 
 			// set icon name
 			CString sIcon;
+			const OptionRowHandler &handler = OptionRowHandlers[i];
 			switch( handler.type )
 			{
 			case ROW_LIST:
@@ -623,7 +626,7 @@ void ScreenOptionsMaster::RefreshIcons()
 			if( row.bOneChoiceForAllPlayers )
 				sIcon = "";
 
-			icon.Load( (PlayerNumber)p, sIcon, false );
+			LoadOptionIcon( (PlayerNumber)p, i, sIcon );
 		}
 	}
 }
