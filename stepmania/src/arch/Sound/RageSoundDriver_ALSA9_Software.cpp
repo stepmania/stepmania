@@ -7,6 +7,7 @@
 #include "RageUtil.h"
 #include "RageTimer.h"
 #include "ALSA9Dynamic.h"
+#include "PrefsManager.h"
 
 #include "archutils/Unix/GetSysInfo.h"
 
@@ -171,6 +172,9 @@ try {
 	LOG->Trace( "OS: %s ver %06x", sys.c_str(), vers );
 	if( sys == "Linux" && vers >= 0x020600 )
 		max_writeahead = max_writeahead_linux_26;
+
+	if( PREFSMAN->m_iSoundWriteAhead )
+		max_writeahead = PREFSMAN->m_iSoundWriteAhead;
 
 	pcm = new Alsa9Buf( Alsa9Buf::HW_DONT_CARE, channels, samplerate );
 	
