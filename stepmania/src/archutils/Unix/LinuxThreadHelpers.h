@@ -6,6 +6,9 @@ CString ThreadsVersion();
 /* Get the current thread's ThreadID. */
 int GetCurrentThreadId();
 
+/* Return true if NPTL libraries are in use, false if linuxthreads. */
+bool UsingNPTL();
+
 int SuspendThread( int ThreadID );
 int ResumeThread( int ThreadID );
 

@@ -46,7 +46,7 @@ CString ThreadsVersion()
 }
 
 /* Crash-conditions-safe: */
-static bool UsingNPTL()
+bool UsingNPTL()
 {
 	char buf[1024] = "";
 	int ret = confstr( _CS_GNU_LIBPTHREAD_VERSION, buf, sizeof(buf) );
