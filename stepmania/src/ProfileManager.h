@@ -85,6 +85,7 @@ public:
 
 	Profile* GetMachineProfile() { return &m_MachineProfile; }
 
+	CString GetPlayerName( PlayerNumber pn );
 	bool IsUsingMemoryCard( PlayerNumber pn ) { return m_bUsingMemoryCard[pn]; }
 
 

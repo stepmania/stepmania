@@ -232,6 +232,16 @@ Profile* ProfileManager::GetProfile( PlayerNumber pn )
 		return &m_Profile[pn];
 }
 
+CString ProfileManager::GetPlayerName( PlayerNumber pn )
+{
+	Profile *prof = ProfileManager::GetProfile( pn );
+	if( prof )
+		return prof->m_sLastUsedHighScoreName;
+
+	const char *names[NUM_PLAYERS] = { "PLAYER 1", "PLAYER 2" };
+	return names[pn];
+}
+
 bool Profile::LoadFromIni( CString sIniPath )
 {
 	Init();
