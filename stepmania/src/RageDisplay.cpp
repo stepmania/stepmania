@@ -78,10 +78,9 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 	SetupOpenGL();
 
 	// Log driver details
-	LOG->Trace("OpenGL driver:");
-	LOG->Trace("  Vendor: %s", glGetString(GL_VENDOR));
-	LOG->Trace("  Renderer: %s", glGetString(GL_RENDERER));
-	LOG->Trace("  Version: %s", glGetString(GL_VERSION));
+	LOG->Info("OGL Vendor: %s", glGetString(GL_VENDOR));
+	LOG->Info("OGL Renderer: %s", glGetString(GL_RENDERER));
+	LOG->Info("OGL Version: %s", glGetString(GL_VERSION));
 
 
 	/* Log this, so if people complain that the radar looks bad on their
