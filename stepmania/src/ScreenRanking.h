@@ -39,8 +39,8 @@ protected:
 	void TweenPageOffScreen();
 
 
-	BitmapText m_textCategory;
-	BitmapText m_textType;
+	Sprite m_sprCategory;
+	Sprite m_sprType;
 	Sprite m_sprBullets[NUM_RANKING_LINES];
 	BitmapText m_textNames[NUM_RANKING_LINES];
 	BitmapText m_textScores[NUM_RANKING_LINES];	// for category

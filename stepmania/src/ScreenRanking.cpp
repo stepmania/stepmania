@@ -48,15 +48,11 @@ const ScreenMessage SM_HidePage			=	(ScreenMessage)(SM_User+68);
 
 ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking")
 {
-	m_textCategory.LoadFromFont( THEME->GetPathToF("ScreenRanking title") );
-	m_textCategory.EnableShadow( false );
-	m_textCategory.SetXY( CATEGORY_X, CATEGORY_Y );
-	this->AddChild( &m_textCategory );
+	m_sprCategory.SetXY( CATEGORY_X, CATEGORY_Y );
+	this->AddChild( &m_sprCategory );
 
-	m_textType.LoadFromFont( THEME->GetPathToF("ScreenRanking title") );
-	m_textType.EnableShadow( false );
-	m_textType.SetXY( TYPE_X, TYPE_Y );
-	this->AddChild( &m_textType );
+	m_sprType.SetXY( TYPE_X, TYPE_Y );
+	this->AddChild( &m_sprType );
 
 	for( int i=0; i<NUM_RANKING_LINES; i++ )
 	{
@@ -196,10 +192,10 @@ void ScreenRanking::SetPage( PageToShow pts )
 	{
 	case PageToShow::TYPE_CATEGORY:
 		{
-			m_textCategory.SetDiffuse( RageColor(1,1,1,1) );
-			m_textCategory.SetText( ssprintf("Type %c", 'A'+pts.category) );
-			m_textType.SetDiffuse( RageColor(1,1,1,1) );
-			m_textType.SetText( GameManager::NotesTypeToString(pts.nt) );
+			m_sprCategory.SetDiffuse( RageColor(1,1,1,1) );
+			m_sprCategory.Load( THEME->GetPathToG(ssprintf("ScreenRanking category %c", 'A'+pts.category)) );
+			m_sprType.SetDiffuse( RageColor(1,1,1,1) );
+			m_sprType.Load( THEME->GetPathToG("ScreenRanking type "+GameManager::NotesTypeToString(pts.nt)) );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
 				m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
@@ -236,11 +232,11 @@ void ScreenRanking::SetPage( PageToShow pts )
 		break;
 	case PageToShow::TYPE_COURSE:
 		{
-			m_textCategory.SetDiffuse( RageColor(1,1,1,1) );
-			m_textCategory.SetZoom(1);
-			m_textCategory.SetTextMaxWidth( CATEGORY_WIDTH, pts.pCourse->m_sName );
-			m_textType.SetDiffuse( RageColor(1,1,1,1) );
-			m_textType.SetText( GameManager::NotesTypeToString(pts.nt) );
+			m_sprCategory.SetDiffuse( RageColor(1,1,1,1) );
+			m_sprCategory.SetZoom(1);
+			m_sprCategory.Load( THEME->GetPathToG("ScreenRanking category "+pts.pCourse->m_sName) );
+			m_sprType.SetDiffuse( RageColor(1,1,1,1) );
+			m_sprType.Load( THEME->GetPathToG("ScreenRanking type "+GameManager::NotesTypeToString(pts.nt)) );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
 				m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
@@ -287,8 +283,8 @@ void ScreenRanking::SetPage( PageToShow pts )
 
 void ScreenRanking::TweenPageOnScreen()
 {
-	m_textCategory.FadeOn(0,"bounce right",0.5f);
-	m_textType.FadeOn(0.1f,"bounce right",0.5f);
+	m_sprCategory.FadeOn(0,"bounce right",0.5f);
+	m_sprType.FadeOn(0.1f,"bounce right",0.5f);
 
 	for( int l=0; l<NUM_RANKING_LINES; l++ )
 	{
@@ -302,8 +298,8 @@ void ScreenRanking::TweenPageOnScreen()
 
 void ScreenRanking::TweenPageOffScreen()
 {
-	m_textCategory.FadeOff(0,"fade",0.25f);
-	m_textType.FadeOff(0.1f,"fade",0.25f);
+	m_sprCategory.FadeOff(0,"fade",0.25f);
+	m_sprType.FadeOff(0.1f,"fade",0.25f);
 
 	for( int l=0; l<NUM_RANKING_LINES; l++ )
 	{
