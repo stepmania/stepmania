@@ -242,7 +242,6 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 
 
 // Screen classes
-#include "ScreenAppearanceOptions.h"
 #include "ScreenCaution.h"
 #include "ScreenEdit.h"
 #include "ScreenEditMenu.h"
@@ -348,7 +347,6 @@ Screen* Screen::Create( CString sClassName )
 #define IF_RETURN(X)	if(sClassName.CompareNoCase(#X)==0)	return new X(sName);
 
 	IF_RETURN( ScreenAttract );
-	IF_RETURN( ScreenAppearanceOptions );
 	IF_RETURN( ScreenCaution );
 	IF_RETURN( ScreenEdit );
 	IF_RETURN( ScreenEditMenu );
