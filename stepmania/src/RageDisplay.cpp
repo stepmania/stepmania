@@ -97,8 +97,8 @@ void RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, R
 //	LOG->Trace( "RageDisplay::SetVideoMode( %d, %d, %d, %d, %d, %d )", windowed, width, height, bpp, rate, vsync );
 
 
-//	if( windowed )
-//		flags |= SDL_FULLSCREEN;
+	if( !windowed )
+		g_flags |= SDL_FULLSCREEN;
 	g_flags |= SDL_DOUBLEBUF;
 	g_flags |= SDL_RESIZABLE;
 	g_flags |= SDL_OPENGL;
@@ -127,6 +127,7 @@ void RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, R
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 	}
 
+	/* XXX: bpp? shouldn't this be 4 or 8? */
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, bpp);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, TRUE);
 
