@@ -1,4 +1,4 @@
-﻿# This file is UTF-8; to be readable, edit it in an editor capable
+﻿﻿# This file is UTF-8; to be readable, edit it in an editor capable
 # of UTF-8, such as Notepad in Windows 2000 and later.
 #
 # Six keywords: TitleFrom, ArtistFrom, SubtitleFrom, TitleTo,
@@ -19,16 +19,70 @@
 # first loaded.  Delete the files in the "Cache" directory after making
 # changes.
 
+# characters needed to add for full effectiveness:
+# ／ (fullwidth slash, the thing that separates each of 3 or more articles) (U+FF0F)
+# 陽 (U+967D) (part of 'Taiyo no Rakuen')
+# ♮ (U+266E) (the music natural sign--for the lightning bolt of FLASH IN THE NIGHT.  Inspired by the DWI character support PNG made by Sonny B)
+# Greek alphabet (U+370 - U+3CE) (here, for Yoma Komatsu...also good for Greek DWI'ers like Synthesis2k2 and Nighthawk)
+# Also suggested:
+# Cyrillic alphabet (automap U+400 - U44F, and import any oddballs that get used.  Idea put forth by parasyte)
+
+# Todo: group songs bet
+
 [Songs]
+TitleFrom: 17 ?(Sai|Ages)?
+TitleTo: 17才
+*
+TitleFrom: Hypnotic Crisis
+TitleTo: HYPNØTIC CRISIS
+*
+TitleFrom: ((Matsuri )|(\{ ))Japan
+TitleTo: 祭 JAPAN
+*
+# Matsuri Japan is often just "Japan".  There may be other songs by
+# that name, too, so match the artist, too.
+TitleFrom: Japan
+ArtistFrom: .*(Re-Venge)|(RevenG).*
+TitleTo: 祭 JAPAN
+*
+TitleFrom: (Dancing|Odoru) Po[mn]pokolin
+TitleTo: おどるポンポコリン
+*
+TitleFrom: (God of Romance)|(Roman(su|ce) no Kamisama)
+TitleTo: ロマンスの神様
+*
+# People can't decide how they want to spell this, so cope with
+# both l or r, and one or two l/r and t.
+TitleFrom: Sana Mo((ll?)|(rr?))et(t?)e Ne Ente
+TitleTo: サナ・モレッテ・ネ・エンテ
+*
 # "Candy", "Candy star", or "Candy #".
 TitleFrom: Candy(( star)?|#)
 ArtistFrom: Luv.*
 TitleTo: CANDY☆
 *
+TitleFrom: Flash in the Night
+TitleTo: FLA♮H IN THE NIGHT
+*
+TitleFrom: Freckles([ -]Sobakasu)?
+TitleTo: そばかす
+*
+TitleFrom: Sobakasu([ -]Freckles)?
+TitleTo: そばかす
+*
+TitleFrom: Yozora no Muko
+TitleTo: 夜空ノムコウ
+*
+TitleFrom: Bre[a=]k ?Down!?
+TitleTo: BRE∀K DOWN!
+*
 # "Candy", "Candy heart", or "Candy $".
 TitleFrom: Candy(( heart)?|\$)
 ArtistFrom: .*Riyu.*
 TitleTo: CANDY♡
+*
+TitleFrom: (Kakumei)|(\+\{)
+TitleTo: 革命
 *
 # Make sure this appears after the above "Riyu" match, so it doesn't
 # break it.  I've seen both "Kosaku" and "Kosaka"; I think Kosaka is
@@ -56,10 +110,9 @@ TitleTo: 祭 JAPAN
 TitleFrom: \+\{
 TitleTo: 革命
 *
-TitleFrom: Sweet Sweet \$ Magic
+TitleFrom: Sweet Sweet (Love |\$ )?Magic
 TitleTo: Sweet Sweet ♡ Magic
 *
-
 # Special stuff is done.  Titles:
 TitleFrom: Matsuri Japan
 TitleTo: 祭 JAPAN
@@ -100,6 +153,13 @@ TitleTo: 17才
 TitleFrom: Mobo ?\*? ?Moga
 TitleTo: MOBO★MOGA
 *
+# Handle a typo:
+TitleFrom: (A(oi|io) Shoudou|Blue Impulse)
+TitleTo: 蒼い衝動
+*
+TitleFrom: Daikenkai
+TitleTo: 大見解
+*
 TitleFrom: Love (Love )?Shine
 TitleTo: LOVE ♡ SHINE
 *
@@ -125,8 +185,17 @@ TitleTo: 大見解
 TitleFrom: Love Love Sugar
 TitleTo: ♡LOVE²シュガ→♡
 *
+# Handle Door and Doors
+TitleFrom: (Doors? of Magic)|(Mahou no Tobira)
+TitleTo: 魔法の扉
+SubtitleTo: (スペース&planet;マコのテーマ)
+* 
 TitleFrom: Mikeneko Rock
 TitleTo: 三毛猫ロック
+*
+# Handle "Mobo Moga:Mobo * Moga"; spaces optional.
+TitleFrom: Mobo ?\*? ?Moga
+TitleTo: MOBO★MOGA
 *
 TitleFrom: Sakura
 TitleTo: 桜
@@ -139,7 +208,22 @@ TitleFrom: (Doors? of Magic)|(Mahou no Tobira)
 TitleTo: 魔法の扉
 SubtitleTo: (スペース&planet;マコのテーマ)
 * 
+TitleFrom: Chotto Kiitena
+TitleTo: ちょっときいてな
+*
 # No need to write transliterations for these.
+TitleFrom: L'amour et la liberte
+TitleTo: L'amour et la liberté
+DontTransliterate
+*
+TitleFrom: La Senorita
+TitleTo: La Señorita
+DontTransliterate
+*
+TitleFrom: La Senorita Virtual
+TitleTo: La Señorita Virtual
+DontTransliterate
+*
 TitleFrom: Senorita
 TitleTo: SEÑORITA
 DontTransliterate
@@ -147,15 +231,7 @@ DontTransliterate
 TitleFrom: Senorita\(Speedy Mix\)
 TitleTo: SEÑORITA
 SubtitleTo: Speedy Mix
-*
-TitleFrom: La Senorita
-TitleTo: La Señorita
-*
-TitleFrom: La Senorita Virtual
-TitleTo: La Señorita Virtual
-*
-TitleFrom: L'amour et la liberte
-TitleTo: L'amour et la liberté
+DontTransliterate
 *
 TitleFrom: Chotto Kiitena
 TitleTo: ちょっときいてな
@@ -219,12 +295,10 @@ SubtitleTransTo: (Hajime no Ippo Opening 2)
 *
 # This song had the game title in the artist field, instead of the
 # actual artist.
-TitleTo: Meridian Dance
 ArtistFrom: Seiken Densetsu 2 OST
-
+TitleTo: Meridian Dance
 SubtitleTo: 聖剣伝説2OST
 SubtitleTransTo: Seiken Densetsu 2 OST
-
 ArtistTo: 菊田裕樹
 ArtistTransTo: Hiroki Kikuta
 *
@@ -257,8 +331,21 @@ SubtitleTo: ~それぞれの明日~
 *
 
 # Artists:
+TitleFrom: Max 300
+ArtistFrom: %
+ArtistTo: Ω
+*
 ArtistFrom: Omega
 ArtistTo: Ω
+*
+# Make sure this appears after the above "Riyu" match, so it doesn't
+# break it.  I've seen both "Kosaku" and "Kosaka"; I think Kosaka is
+# correct, but handle both. */
+ArtistFrom: Riyu Kosak[au]
+ArtistTo: 小坂りゆ
+*
+ArtistFrom: Kosak[au] Riyu
+ArtistTo: 小坂りゆ
 *
 ArtistFrom: ZZ
 ArtistTo: &doublezeta;
@@ -267,6 +354,7 @@ ArtistTo: &doublezeta;
 ArtistFrom: Anettai Maji.*Ska (Bakudan|Bukuden)
 ArtistTo: 亜熱帯マジ-SKA爆弾
 *
+ArtistFrom: (Spanish Folk Music|Mexican Folk Song)
 ArtistFrom: Spanish Folk Music
 ArtistTo: メキシコ民謡
 *
@@ -276,6 +364,16 @@ ArtistTo: 新谷さなえ
 TitleFrom: White Lovers
 ArtistFrom: Sana
 ArtistTo: 新谷さなえ
+*
+ArtistFrom: YOMA KOMATSU
+ArtistTo: ΨΦMA KΦMATSU
+*
+ArtistFrom: Bus Stop featuring Carl Douglas
+ArtistTo: BUS★STOP featuring CARL DOUGLAS
+*
+TitleFrom: (Kick the Can|One Two|Na-Na|Swing It)
+ArtistFrom: BUS STOP
+ArtistTo: BUS★STOP
 *
 ArtistFrom: dj TAKA feat. ?Noria
 ArtistTo: dj TAKA feat. のりあ
@@ -300,7 +398,7 @@ TitleFrom: Nante Koi Shitandaro
 TitleTo: なんて恋したんだろ
 *
 TitleFrom: Ureshii! Tanoshii! Daisuki!
-TitleTo: うれしい! たのしい! 大好き!
+TitleTo: うれしい！ たのしい！ 大好き！
 *
 # OHA:
 ArtistFrom: War[ui]jiennu
@@ -313,10 +411,10 @@ TitleFrom: OHA OHA Sutaataa
 TitleTo: OHA OHA スターター
 *
 ArtistFrom: Yama-?chan (&|with) (Reimondo|Raymond)
-ArtistTo: やまちゃん&レイモンド
+ArtistTo: やまちゃん＆レイモンド
 *
 ArtistFrom: Oha Kids with Imakuni(\??)
-ArtistTo: おはおはキッズ with イマクニ
+ArtistTo: おはおはキッズ with イマクニ？
 *
 TitleFrom: Sayonara no Kawari Ni
 TitleTo: サヨナラのかわりに
@@ -362,10 +460,11 @@ ArtistFrom: Mami Kingetsu
 ArtistTo: 金月 真美
 *
 TitleFrom: Motto! Motto! Tokimeki
+TitleTo: もっと！ モット！ TOKIMEKI
 TitleTo: もっと ! モット ! TOKIMEKI
 *
 TitleFrom: Tokimeki no Organ
-TitleTo: ときめきのオルゴーレ
+TitleTo: ときめきのオルゴール
 *
 TitleFrom: Yuuki no Kamisama
 TitleTo: 勇気の神様
@@ -390,7 +489,7 @@ ArtistTo: 朝比奈 夕子
 *
 TitleFrom: Olgore
 ArtistFrom: Unkown
-TitleTo: ときめきのオルゴーレ
+TitleTo: ときめきのオルゴール
 ArtistTo: 金月 真美
 *
 TitleFrom: Anata
@@ -405,8 +504,115 @@ ArtistTo: 金月 真美
 *
 TitleFrom: Mot! Mot! Tokimeki
 ArtistFrom: Unknown
+TitleTo: もっと！ モット！ TOKIMEKI
 TitleTo: もっと ! モット ! TOKIMEKI
 ArtistTo: 金月 真美
+*
+#
+# Disney Dancing Museum:
+#
+TitleFrom: Chip 'N' Dale's Vacation
+TitleTo: チップとデールのバケーション
+ArtistTo: チップ＆デール
+*
+TitleFrom: Disco Magic
+ArtistFrom: Minnie
+TitleTo: ディスコマジック
+ArtistTo: ミニー
+*
+TitleFrom: Electrical Parade
+ArtistFrom: Minnie
+TitleTo: エレクトリカル・パレード
+ArtistTo: ミニー
+*
+TitleFrom: Go Go Go
+ArtistFrom: Donald
+TitleTo: ゴー・ゴー・ゴー
+ArtistTo: ドナルド
+*
+TitleFrom: Goofy's Rock 'N' Roll Show
+TitleTo: グーフィーのロックンロールショー
+ArtistTo: グーフィー
+*
+TitleFrom: Irish River
+ArtistFrom: Goofy
+TitleTo: アイリッシュリバー
+ArtistTo: グーフィー
+*
+TitleFrom: It's A Small World
+ArtistFrom: Huey, Dewey & Louie
+TitleTo: イッツ・ア・スモール・ワールド
+ArtistTo: ヒューイ／デューイ／ルーイ
+*
+TitleFrom: Mickey Fever
+TitleTo: ミッキー・フィーバー
+ArtistTo: ミッキー
+*
+TitleFrom: Mickey Motion
+TitleTo: ミッキー・モーション
+ArtistTo: ミニー
+*
+TitleFrom: Mickey Mouse March
+ArtistFrom: Mickey
+TitleTo: ミッキーマウス・マーチ
+ArtistTo: ミッキー
+*
+TitleFrom: Mickey Mouse Ondo
+TitleTo: ミッキーマウス音頭
+ArtistTo: ミッキー
+*
+TitleFrom: Minnie's Yoo Hoo!
+TitleTo: ミニーのユーフー！
+ArtistTo: ミニー
+*
+TitleFrom: Miwaku no Tango
+ArtistFrom: Clarabell
+TitleTo: 魅惑のタンゴ
+ArtistTo: クララベル
+*
+TitleFrom: Morty and Ferdy's Carnival
+TitleTo: モーティとフェルディのカーニバル
+ArtistTo: モーティ＆フェルディ
+*
+TitleFrom: Para-Para Venus
+ArtistFrom: Daisy
+TitleTo: パラパラヴィーナス
+ArtistTo: デイジー
+*
+TitleFrom: Russian Dance
+ArtistFrom: Scrooge
+TitleTo: ロシアの踊り
+ArtistTo: スクルーヅ
+*
+TitleFrom: Savanna No Mukou
+ArtistFrom: Donald
+TitleTo: サバンナのむこう
+ArtistTo: ドナルド
+*
+TitleFrom: Taiyo No Rakuen
+ArtistFrom: Horace
+TitleTo: 太陽の楽園
+ArtistTo: ホーレス
+*
+TitleFrom: Tap! Tap! Tap!
+ArtistFrom: Grandma Duck
+TitleTo: タップ！タップ！タップ！
+ArtistTo: グランアダックタ
+*
+TitleFrom: The Tiki Tiki Tiki Room
+ArtistFrom: Goofy
+TitleTo: 魅惑のチキルーム
+ArtistTo: グーフィー
+*
+TitleFrom: Turkey In The Straw
+ArtistFrom: Pluto
+TitleTo: 藁の中の七面鳥
+ArtistTo: プルート
+*
+TitleFrom: Waltz of the Flowers
+ArtistFrom: Daisy
+TitleTo: 花のワルツ
+ArtistTo: デイジー
 *
 TitleFrom: Pokemon
 TitleTo: Pokémon
@@ -424,11 +630,14 @@ TitleTo: 부담
 TitleFrom: Byul
 TitleTo: 별
 *
-ArtistFrom: Gunchuri Kko Kko
+ArtistFrom: (Gunchuri Kko Kko)|(Country Kko Kko)
 ArtistTo: 컨츄리꼬꼬
 *
 ArtistFrom: Back Ji Young
 ArtistTo: 벡지영
+*
+ArtistFrom: Lee Jung Hyun
+ArtistTo: 이정현
 *
 TitleFrom: Hogisim
 TitleTo: 호기심
@@ -443,6 +652,122 @@ TitleTo: 경고
 TitleFrom: Sung Suk
 TitleTo: 성숙
 *
+TitleFrom: Gamyunwi Shigan
+TitleTo: 가면의 시간
+*
+TitleFrom: Gaggai
+TitleTo: 가까이
+*
+ArtistFrom: Tashannie
+ArtistTo: 타샤니
+*
+ArtistFrom: Hans Band
+ArtistTo: 한스밴드
+*
+# TM4:
+TitleFrom: Akumajo Dracula MEDLEY
+TitleTo: 悪魔城ドラキュラMEDLEY
+*
+ArtistFrom: Kukeihakurabu
+ArtistTo: 矩形波倶楽部
+*
+ArtistFrom: Yuji Ueda & Yui Horie
+ArtistTo: 上田祐司＆堀江由衣
+*
+ArtistFrom: Atsuko Enomoto
+ArtistTo: 榎本温子
+*
+TitleFrom: Hareta Hi no Marine
+TitleTo: 晴れた日のマリーン
+*
+ArtistFrom: Gotou? Maki
+ArtistTo: 後藤真希
+*
+TitleFrom: La Duena del Swing
+TitleTo: La Dueña del Swing
+*
+TitleFrom: Pokemon Trainer Theme
+TitleTo: Pokémon Trainer Theme
+*
+ArtistFrom: Pokemon Jhoto
+ArtistTo: Pokémon Jhoto
+DontTransliterate
+*
+TitleFrom: Watashi No Tamagoyaki
+TitleTo: 私の卵焼き
+*
+TitleFrom: soramimi keeki
+TitleTo: そらみみけーき
+*
+TitleFrom: The Peace!
+TitleTo: THE☆PEACE!
+*
+TitleFrom: tentaikansoku
+TitleTo: 天体観測
+ArtistTo: 入尾信充
+*
+SubtitleFrom: \(e=mc2 mix\)
+SubtitleTo: (e=mc² mix)
+*
+ArtistFrom: Taku Iwa[sz]aki
+ArtistTransTo: Taku Iwasaki
+ArtistTo: 岩崎琢
+*
+ArtistFrom: Hideki Naganuma
+ArtistTo: 長沼英樹
+*
+TitleFrom: Under Star\(Hajime no Ippo Opening 2\)
+TitleTo: Under Star
+# Note that these are double-width parentheses.
+SubtitleTo: （はじめの一歩 Opening 2）
+SubtitleTransTo: (Hajime no Ippo Opening 2)
+*
+# This song had the game title in the artist field, instead of the
+# actual artist.
+TitleTo: Meridian Dance
+ArtistFrom: Seiken Densetsu 2 OST
+
+SubtitleTo: 聖剣伝説2OST
+SubtitleTransTo: Seiken Densetsu 2 OST
+
+ArtistTo: 菊田裕樹
+ArtistTransTo: Hiroki Kikuta
+*
+ArtistFrom: Ayumi and Vincent de Moor
+ArtistTo: あゆみ and Vincent de Moor
+*
+ArtistFrom: Toshio Sakurai
+ArtistTo: 桜井敏郎
+*
+ArtistFrom: Yasunori Mitsuda
+ArtistTo: 光田康典
+*
+ArtistFrom: Tamaki Nami
+ArtistTo: 玉置成実
+*
+ArtistFrom: Tomoe Shinohara
+ArtistTo: 篠原ともえ
+*
+ArtistFrom: Maaya Sakamoto
+ArtistTo: 坂本真綾
+*
+
+# Miscellaneous Unofficial
+
+TitleFrom: Pokemon
+TitleTo: Pokémon
+DontTransliterate
+*
+ArtistFrom: Omega Versus KTz
+ArtistTo: Ω Versus KTz
+*
+ArtistFrom: DJ Demon Versus Omega
+ArtistTo: DJ 鬼 Versus Ω
+*
+ArtistFrom: NW 260, ZZ, and 290
+ArtistTo: NW 260, &doublezeta;, and 290
+*
+
 # Fanboy bonus:
 
 ArtistFrom: (Megumi Hayashibara)|(Hayashibara Megumi)
@@ -513,12 +838,13 @@ ArtistTo: 近藤浩治
 *
 ArtistFrom: Blue?mchen
 ArtistTo: Blümchen
+DontTransliterate
 *
 [Courses]
-TitleFrom: (Kidou)|(Demon Road)|(Road of Oni)|(Oni Michi)
+TitleFrom: (Kidou)|(Demon Road)|(Road of Oni)|(Oni Michi)|(Kidou/Onimichi \(Demon Road\))
 TitleTo: 鬼道
 *
-TitleFrom: (Kidou 2)|(Demon Road 2)|(Road of Oni 2)|(Oni Michi 2)
+TitleFrom: (Kidou 2)|(Demon Road 2)|(Road of Oni 2)|(Oni Michi 2)|(Kidou 2/Onimichi 2 \(Demon Road 2\))
 TitleTo: 鬼道 弐
 *
 TitleFrom: Love
@@ -535,8 +861,7 @@ TitleTo: Dancemania 鬼
 *
 TitleFrom: (TaQ( Oni)?)|(Road of TaQ)
 TitleTo: TaQ道
-*
-TitleFrom: (Legend Road)|(Road of Legend)
+TitleFrom: (Legend(ary)? Road)|(Road of Legend)
 TitleTo: 伝説道
 *
 TitleFrom: (Slow Demon Road)|(Road of Slow)|(Demon's Slow Road)
@@ -552,7 +877,9 @@ TitleTo: 家庭用DDRコース
 TitleFrom: Four Seasons
 TitleTo: 春夏秋冬
 *
+TitleFrom: Dancemania Nonstop
 TitleFrom: DanceMania Nonstop
+TitleTo: Dancemania 連
 TitleTo: DanceMania 連
 *
 TitleFrom: (Otome no Michi|Maiden Star Road)
