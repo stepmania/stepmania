@@ -576,6 +576,12 @@ void GameCommand::Apply( PlayerNumber pn ) const
 		UNLOCKMAN->UnlockCode( m_iUnlockIndex );
 	if( m_sSoundPath != "" )
 		SOUND->PlayOnce( THEME->GetPathToS( m_sSoundPath ) );
+
+	/* If we're going to stop music, do so before preparing new screens, so we don't
+	 * stop music between preparing screens and loading screens. */
+	if( m_bStopMusic )
+		SOUND->StopMusic();
+
 	FOREACH_CONST( CString, m_vsScreensToPrepare, s )
 		SCREENMAN->PrepareScreen( *s );
 	if( m_bDeletePreparedScreens )
@@ -675,10 +681,6 @@ void GameCommand::Apply( PlayerNumber pn ) const
 	{
 		PREFSMAN->ResetToFactoryDefaults();
 		SCREENMAN->SystemMessage( "All options reset to factory defaults." );
-	}
-	if( m_bStopMusic )
-	{
-		SOUND->StopMusic();
 	}
 	if( m_bApplyDefaultOptions )
 	{
