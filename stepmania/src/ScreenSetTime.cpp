@@ -146,6 +146,9 @@ void ScreenSetTime::ChangeValue( int iDirection )
 
 void ScreenSetTime::ChangeSelection( int iDirection )
 {
+	if( iDirection == -1 && m_Selection == 0 )	// top row
+		return;	// can't go up any more
+
 	// turn off old effect
 	m_textValue[m_Selection].SetEffectNone();
 
