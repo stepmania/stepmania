@@ -257,7 +257,11 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 			return;
 	}
 
-	// pass input to topmost state
+	// Pass input to the topmost screen.  If we have a new top screen pending, don't
+	// send to the old screen, but do send to overlay screens.
+	if( m_sDelayedScreen != "" )
+		return;
+
 	if( !m_ScreenStack.empty() )
 		m_ScreenStack.back()->Input( DeviceI, type, GameI, MenuI, StyleI );
 }
