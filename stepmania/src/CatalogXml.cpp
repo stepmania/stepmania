@@ -75,6 +75,21 @@ void SaveCatalogXml( CString sDir )
 
 		pCourseNode->AppendChild( "Title", pCourse->m_sName );
 		pCourseNode->AppendChild( "HasMods", pCourse->HasMods() );
+
+		FOREACH_StepsType( st )
+		{
+			FOREACH_CourseDifficulty( cd )
+			{
+				Trail *pTrail = pCourse->GetTrail( st, cd );
+				if( pTrail == NULL )
+					continue;
+				
+				TrailID trailID;
+				trailID.FromTrail( pTrail );
+
+				pCourseNode->AppendChild( trailID.CreateNode() );
+			}
+		}
 	}
 
 	xml.SaveToFile(fn);
