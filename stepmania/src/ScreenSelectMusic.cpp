@@ -341,7 +341,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
 
 	CArray<Actor*,Actor*> apActorsInScore;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		apActorsInScore.Add( &m_sprHighScoreFrame[p] );
 		apActorsInScore.Add( &m_HighScore[p] );
@@ -401,7 +401,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 
 	CArray<Actor*,Actor*> apActorsInScore;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		apActorsInScore.Add( &m_sprHighScoreFrame[p] );
 		apActorsInScore.Add( &m_HighScore[p] );

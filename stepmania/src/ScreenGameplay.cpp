@@ -214,7 +214,7 @@ ScreenGameplay::ScreenGameplay()
 	};
 
 	// Update possible dance points
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;	// skip
