@@ -88,6 +88,23 @@ void RageSoundManager::Update(float delta)
 	driver->Update(delta);
 }
 
+/* Register the given sound, and return a unique ID. */
+int RageSoundManager::RegisterSound( RageSound *p )
+{
+	LockMut(lock);
+
+	all_sounds.insert( p );
+
+	static int iID = 0;
+	return ++iID;
+}
+
+void RageSoundManager::UnregisterSound( RageSound *p )
+{
+	LockMut(lock);
+	all_sounds.erase( p );
+}
+
 float RageSoundManager::GetPlayLatency() const
 {
 	return driver->GetPlayLatency();

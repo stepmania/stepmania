@@ -17,6 +17,7 @@ public:
 	virtual int GetSampleRate() const = 0;
 	virtual RageTimer GetStartTime() const { return RageZeroTimer; }
 	virtual float GetVolume() const = 0;
+	virtual int GetID() const = 0;
 	virtual CString GetLoadedFilePath() const = 0;
 };
 
@@ -106,6 +107,7 @@ public:
 	float GetPlaybackRate() const;
 	RageTimer GetStartTime() const;
 	float GetVolume() const;
+	int GetID() const { return ID; }
 	void SetParams( const RageSoundParams &p );
 	const RageSoundParams &GetParams() const { return m_Param; }
 
@@ -151,6 +153,9 @@ private:
 	 * were at when we stopped without jumping to the last position we buffered. */
 	int64_t stopped_position;
 	bool    playing;
+
+	/* Unique ID number for this instance of RageSound. */
+	int ID;
 
 	CString error;
 

@@ -38,6 +38,8 @@ public:
 	void StartMixing( RageSoundBase *snd );	/* used by RageSound */
 	void StopMixing( RageSoundBase *snd );	/* used by RageSound */
 	int64_t GetPosition( const RageSoundBase *snd ) const;	/* used by RageSound */
+	int RegisterSound( RageSound *p );		/* used by RageSound */
+	void UnregisterSound( RageSound *p );	/* used by RageSound */
 	float GetPlayLatency() const;
 	int GetDriverSampleRate( int rate ) const;
 	const set<RageSound *> &GetPlayingSounds() const { return playing_sounds; }

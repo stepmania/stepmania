@@ -75,8 +75,8 @@ RageSound::RageSound()
 	playing = false;
 	databuf.reserve(internal_buffer_size);
 
-	/* Register ourselves, so we receive Update()s. */
-	SOUNDMAN->all_sounds.insert(this);
+	/* Register ourself, so we have a unique ID and receive Update()s. */
+	ID = SOUNDMAN->RegisterSound( this );
 }
 
 RageSound::~RageSound()
@@ -88,10 +88,8 @@ RageSound::~RageSound()
 
 	Unload();
 
-	/* Unregister ourselves. */
-	SOUNDMAN->lock.Lock();
-	SOUNDMAN->all_sounds.erase(this);
-	SOUNDMAN->lock.Unlock();
+	/* Unregister ourself. */
+	SOUNDMAN->UnregisterSound( this );
 }
 
 RageSound::RageSound(const RageSound &cpy):
@@ -114,8 +112,9 @@ RageSound::RageSound(const RageSound &cpy):
 	 * copy this down here. */
 	m_sFilePath = cpy.m_sFilePath;
 
-	/* Register ourselves, so we receive Update()s. */
-	SOUNDMAN->all_sounds.insert(this);
+	/* Register ourselves, so we receive Update()s.  We have a different ID than
+	 * our parent. */
+	ID = SOUNDMAN->RegisterSound( this );
 }
 
 void RageSound::Unload()
