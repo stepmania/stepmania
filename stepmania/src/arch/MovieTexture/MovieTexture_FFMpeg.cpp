@@ -864,7 +864,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 		if( m_State == PAUSE_DECODER )
 		{
 			/* We aren't feeding frames, so we aren't waiting; don't chew CPU. */
-			SDL_Delay( 10 );
+			usleep( 10000 );
 			continue;
 		}
 
@@ -882,7 +882,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 		}
 
 		if( fTime > 0 )
-			SDL_Delay( int(1000*fTime) );
+			usleep( int(1000000*fTime) );
 
 		{
 			/* The only reason m_BufferFinished might be non-zero right now (before

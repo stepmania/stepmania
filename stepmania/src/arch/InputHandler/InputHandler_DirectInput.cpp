@@ -76,7 +76,7 @@ InputHandler_DInput::InputHandler_DInput()
 	g_NumJoysticks = 0;
 
 	AppInstance inst;	
-	HRESULT hr = DirectInputCreate(/* SDL_Instance */inst.Get(), DIRECTINPUT_VERSION, &dinput, NULL);
+	HRESULT hr = DirectInputCreate(inst.Get(), DIRECTINPUT_VERSION, &dinput, NULL);
 	if ( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: DirectInputCreate") );
 
@@ -489,7 +489,7 @@ void InputHandler_DInput::InputThreadMain()
 
 		/* If we have no buffered devices, we didn't delay at WaitForMultipleObjectsEx. */
 		if( BufferedDevices.size() == 0 )
-			SDL_Delay( 50 );
+			usleep( 50000 );
 		CHECKPOINT;
 	}
 	CHECKPOINT;
