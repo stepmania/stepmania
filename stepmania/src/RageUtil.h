@@ -43,6 +43,12 @@ inline bool CLAMP(int &x, int l, int h)
 	else if (x < l) { x = l; return true; }
 	return false;
 }
+inline bool CLAMP(unsigned &x, unsigned l, unsigned h)
+{
+	if (x > h)		{ x = h; return true; }
+	else if (x < l) { x = l; return true; }
+	return false;
+}
 inline bool CLAMP(float &x, float l, float h)
 {
 	if (x > h)		{ x = h; return true; }
@@ -50,13 +56,19 @@ inline bool CLAMP(float &x, float l, float h)
 	return false;
 }
 
-inline void wrap( int &x, int n)
+inline void wrap(int &x, int n)
 {
 	if (x<0)
 		x += ((-x/n)+1)*n;
 	x %= n;
 }
-inline void wrap( float &x, float n)
+inline void wrap(unsigned &x, unsigned n)
+{
+	if (x<0)
+		x += ((-x/n)+1)*n;
+	x %= n;
+}
+inline void wrap(float &x, float n)
 {
 	if (x<0)
 		x += truncf(((-x/n)+1))*n;
