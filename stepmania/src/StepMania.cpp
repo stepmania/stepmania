@@ -60,7 +60,6 @@
 #include "NetworkSyncManager.h"
 
 #if defined(_XBOX)
-	#include "archutils/Xbox/custom_launch_params.h"
 	#ifdef _DEBUG
 		#pragma comment(lib, "SDL-1.2.6/lib/xboxSDLmaind.lib")
 	#else
@@ -922,7 +921,6 @@ int main(int argc, char* argv[])
 #ifdef _XBOX
 	int argc = 1;
 	char *argv[] = {"default.xbe"};
-	XGetCustomLaunchData();
 #endif
 
 	g_argc = argc;
@@ -1177,9 +1175,7 @@ int main(int argc, char* argv[])
 
 	SAFE_DELETE( HOOKS );
 
-#ifdef _XBOX
-	XReturnToLaunchingXBE();
-#else
+#ifndef _XBOX
 	return 0;
 #endif
 }
