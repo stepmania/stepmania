@@ -140,8 +140,8 @@ void CourseContentsList::TweenInAfterChangedCourse()
 	{
 		CourseEntryDisplay& display = m_CourseContentDisplays[i];
 
-		display.SetXY( 0, -((MAX_VISIBLE_CONTENTS-1)/2) * float(ContentsBarHeight) );
 		display.StopTweening();
+		display.SetXY( 0, -((MAX_VISIBLE_CONTENTS-1)/2) * float(ContentsBarHeight) );
 		display.BeginTweening( i*0.1f );
 		display.SetTweenY( (-(MAX_VISIBLE_CONTENTS-1)/2 + i) * float(ContentsBarHeight) );
 	}
