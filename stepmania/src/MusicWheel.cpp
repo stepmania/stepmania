@@ -45,11 +45,12 @@
 #define LOCKED_INITIAL_VELOCITY		THEME->GetMetricF("MusicWheel","LockedInitialVelocity")
 #define SCROLL_BAR_X				THEME->GetMetricF("MusicWheel","ScrollBarX")
 #define SCROLL_BAR_HEIGHT			THEME->GetMetricI("MusicWheel","ScrollBarHeight")
+#define ITEM_CURVE_X				THEME->GetMetricF("MusicWheel","ItemCurveX")
 #define ITEM_SPACING_Y				THEME->GetMetricF("MusicWheel","ItemSpacingY")
 #define NUM_SECTION_COLORS			THEME->GetMetricI("MusicWheel","NumSectionColors")
 #define SECTION_COLORS( i )			THEME->GetMetricC("MusicWheel",ssprintf("SectionColor%d",i+1))
 
-float g_fItemSpacingY;	// cache
+float g_fItemSpacingY, g_fItemCurveX;	// cache
 
 inline RageColor GetNextSectionColor() {
 	static int i=0;
@@ -308,7 +309,7 @@ MusicWheel::MusicWheel()
 
 	// update theme metric cache
 	g_fItemSpacingY = ITEM_SPACING_Y;
-
+	g_fItemCurveX = ITEM_CURVE_X;
 
 	// for debugging
 	if( GAMESTATE->m_CurStyle == STYLE_NONE )
@@ -701,7 +702,7 @@ float MusicWheel::GetBannerY( float fPosOffsetsFromMiddle )
 
 float MusicWheel::GetBannerX( float fPosOffsetsFromMiddle )
 {	
-	float fX = (1-cosf((fPosOffsetsFromMiddle)/3))*95.0f;
+	float fX = (1-cosf(fPosOffsetsFromMiddle/PI))*g_fItemCurveX;
 	
 	return roundf( fX );
 }
