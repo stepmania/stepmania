@@ -166,6 +166,12 @@ inline float ftruncf( const float f, const float fTruncInterval )
 	return int( (f)/fTruncInterval ) * fTruncInterval;
 }
 
+/* Return i rounded up to the nearest multiple of iInterval. */
+inline int QuantizeUp( int i, int iInterval )
+{
+	return int( (i+iInterval-1)/iInterval ) * iInterval;
+}
+
 // Move val toward other_val by to_move.
 void fapproach( float& val, float other_val, float to_move );
 
