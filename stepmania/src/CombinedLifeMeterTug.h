@@ -32,6 +32,7 @@ public:
 	virtual bool IsFailing( PlayerNumber pn ) { return false; };
 
 protected:
+	void ChangeLife( PlayerNumber pn, float fPercentToMove );
 
 	MeterDisplay	m_Stream[NUM_PLAYERS];
 	Sprite	m_sprSeparator;

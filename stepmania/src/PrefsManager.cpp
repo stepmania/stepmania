@@ -70,21 +70,32 @@ PrefsManager::PrefsManager()
 	m_fJudgeWindowOKSeconds = 0.250f;	// allow enough time to take foot off and put back on
 	m_fJudgeWindowMineSeconds = 0.090f;	// same as great
 	m_fJudgeWindowAttackSeconds = 0.135f;
-	m_fLifeDeltaMarvelousPercentChange = +0.008f;
-	m_fLifeDeltaPerfectPercentChange = +0.008f;
-	m_fLifeDeltaGreatPercentChange = +0.004f;
-	m_fLifeDeltaGoodPercentChange = +0.000f;
-	m_fLifeDeltaBooPercentChange = -0.040f;
-	m_fLifeDeltaMissPercentChange = -0.080f;
-	m_fLifeDeltaOKPercentChange = +0.008f;
-	m_fLifeDeltaNGPercentChange = -0.080f;
-	m_fLifeDeltaHitMinePercentChange = -0.160f;
+	m_fLifeDeltaMarvelousPercentChange =	+0.008f;
+	m_fLifeDeltaPerfectPercentChange =		+0.008f;
+	m_fLifeDeltaGreatPercentChange =		+0.004f;
+	m_fLifeDeltaGoodPercentChange =			+0.000f;
+	m_fLifeDeltaBooPercentChange =			-0.040f;
+	m_fLifeDeltaMissPercentChange =			-0.080f;
+	m_fLifeDeltaHitMinePercentChange =		-0.160f;
+	m_fLifeDeltaOKPercentChange =			+0.008f;
+	m_fLifeDeltaNGPercentChange =			-0.080f;
+
+	m_fTugMeterMarvelousPercentChange =		+0.008f;
+	m_fTugMeterPerfectPercentChange =		+0.008f;
+	m_fTugMeterGreatPercentChange =			+0.004f;
+	m_fTugMeterGoodPercentChange =			+0.000f;
+	m_fTugMeterBooPercentChange =			-0.010f;
+	m_fTugMeterMissPercentChange =			-0.020f;
+	m_fTugMeterHitMinePercentChange =		-0.040f;
+	m_fTugMeterOKPercentChange =			+0.008f;
+	m_fTugMeterNGPercentChange =			-0.020f;
+
 	m_iRegenComboAfterFail = 10; // cumulative
 	m_iRegenComboAfterMiss = 5; // cumulative
 	m_iMaxRegenComboAfterFail = 10;
 	m_iMaxRegenComboAfterMiss = 10;
 	m_bTwoPlayerRecovery = true;
-	m_bMercifulMines = true;
+	m_bMercifulDrain = true;
 	
 	m_iPercentScoreMarvelousWeight = 3;
 	m_iPercentScorePerfectWeight = 2;
@@ -109,6 +120,17 @@ PrefsManager::PrefsManager()
 	m_fGradePercentB = 0.65f;
 	m_fGradePercentC = 0.45f;
 	m_fGradePercentD = 0;
+	
+	m_fSuperMeterMarvelousPercentChange =	+0.08f;
+	m_fSuperMeterPerfectPercentChange =		+0.08f;
+	m_fSuperMeterGreatPercentChange =		+0.04f;
+	m_fSuperMeterGoodPercentChange =		+0.00f;
+	m_fSuperMeterBooPercentChange =			-0.00f;
+	m_fSuperMeterMissPercentChange =		-0.20f;
+	m_fSuperMeterHitMinePercentChange =		-0.40f;
+	m_fSuperMeterOKPercentChange =			+0.08f;
+	m_fSuperMeterNGPercentChange =			-0.20f;
+	m_bMercifulSuperMeter = true;
 
 	m_bDelayedEscape = true;
 	m_bInstructions = true;
@@ -304,15 +326,24 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "LifeDeltaGoodPercentChange",		m_fLifeDeltaGoodPercentChange );
 	ini.GetValue( "Options", "LifeDeltaBooPercentChange",		m_fLifeDeltaBooPercentChange );
 	ini.GetValue( "Options", "LifeDeltaMissPercentChange",		m_fLifeDeltaMissPercentChange );
+	ini.GetValue( "Options", "LifeDeltaHitMinePercentChange",	m_fLifeDeltaHitMinePercentChange );
 	ini.GetValue( "Options", "LifeDeltaOKPercentChange",		m_fLifeDeltaOKPercentChange );
 	ini.GetValue( "Options", "LifeDeltaNGPercentChange",		m_fLifeDeltaNGPercentChange );
-	ini.GetValue( "Options", "LifeDeltaHitMinePercentChange",	m_fLifeDeltaHitMinePercentChange );
+	ini.GetValue( "Options", "TugMeterMarvelousPercentChange",	m_fTugMeterMarvelousPercentChange );
+	ini.GetValue( "Options", "TugMeterPerfectPercentChange",	m_fTugMeterPerfectPercentChange );
+	ini.GetValue( "Options", "TugMeterGreatPercentChange",		m_fTugMeterGreatPercentChange );
+	ini.GetValue( "Options", "TugMeterGoodPercentChange",		m_fTugMeterGoodPercentChange );
+	ini.GetValue( "Options", "TugMeterBooPercentChange",		m_fTugMeterBooPercentChange );
+	ini.GetValue( "Options", "TugMeterMissPercentChange",		m_fTugMeterMissPercentChange );
+	ini.GetValue( "Options", "TugMeterHitMinePercentChange",	m_fTugMeterHitMinePercentChange );
+	ini.GetValue( "Options", "TugMeterOKPercentChange",			m_fTugMeterOKPercentChange );
+	ini.GetValue( "Options", "TugMeterNGPercentChange",			m_fTugMeterNGPercentChange );
 	ini.GetValue( "Options", "RegenComboAfterFail",				m_iRegenComboAfterFail );
 	ini.GetValue( "Options", "RegenComboAfterMiss",				m_iRegenComboAfterMiss );
 	ini.GetValue( "Options", "MaxRegenComboAfterFail",			m_iMaxRegenComboAfterFail );
 	ini.GetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
 	ini.GetValue( "Options", "TwoPlayerRecovery",				m_bTwoPlayerRecovery );
-	ini.GetValue( "Options", "MercifulMines",					m_bMercifulMines );
+	ini.GetValue( "Options", "MercifulDrain",					m_bMercifulDrain );
 
 	ini.GetValue( "Options", "PercentScoreMarvelousWeight",		m_iPercentScoreMarvelousWeight );
 	ini.GetValue( "Options", "PercentScorePerfectWeight",		m_iPercentScorePerfectWeight );
@@ -337,6 +368,17 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "GradePercentB",					m_fGradePercentB );
 	ini.GetValue( "Options", "GradePercentC",					m_fGradePercentC );
 	ini.GetValue( "Options", "GradePercentD",					m_fGradePercentD );
+
+	ini.GetValue( "Options", "SuperMeterMarvelousPercentChange",m_fSuperMeterMarvelousPercentChange );
+	ini.GetValue( "Options", "SuperMeterPerfectPercentChange",	m_fSuperMeterPerfectPercentChange );
+	ini.GetValue( "Options", "SuperMeterGreatPercentChange",	m_fSuperMeterGreatPercentChange );
+	ini.GetValue( "Options", "SuperMeterGoodPercentChange",		m_fSuperMeterGoodPercentChange );
+	ini.GetValue( "Options", "SuperMeterBooPercentChange",		m_fSuperMeterBooPercentChange );
+	ini.GetValue( "Options", "SuperMeterMissPercentChange",		m_fSuperMeterMissPercentChange );
+	ini.GetValue( "Options", "SuperMeterHitMinePercentChange",	m_fSuperMeterHitMinePercentChange );
+	ini.GetValue( "Options", "SuperMeterOKPercentChange",		m_fSuperMeterOKPercentChange );
+	ini.GetValue( "Options", "SuperMeterNGPercentChange",		m_fSuperMeterNGPercentChange );
+	ini.GetValue( "Options", "MercifulSuperMeter",				m_bMercifulSuperMeter );
 
 	ini.GetValue( "Options", "DelayedEscape",					m_bDelayedEscape );
 	ini.GetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
@@ -488,15 +530,24 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "LifeDeltaGoodPercentChange",		m_fLifeDeltaGoodPercentChange );
 	ini.SetValue( "Options", "LifeDeltaBooPercentChange",		m_fLifeDeltaBooPercentChange );
 	ini.SetValue( "Options", "LifeDeltaMissPercentChange",		m_fLifeDeltaMissPercentChange );
+	ini.SetValue( "Options", "LifeDeltaHitMinePercentChange",	m_fLifeDeltaHitMinePercentChange );
 	ini.SetValue( "Options", "LifeDeltaOKPercentChange",		m_fLifeDeltaOKPercentChange );
 	ini.SetValue( "Options", "LifeDeltaNGPercentChange",		m_fLifeDeltaNGPercentChange );
-	ini.SetValue( "Options", "LifeDeltaHitMinePercentChange",	m_fLifeDeltaHitMinePercentChange );
+	ini.SetValue( "Options", "TugMeterMarvelousPercentChange",	m_fTugMeterMarvelousPercentChange );
+	ini.SetValue( "Options", "TugMeterPerfectPercentChange",	m_fTugMeterPerfectPercentChange );
+	ini.SetValue( "Options", "TugMeterGreatPercentChange",		m_fTugMeterGreatPercentChange );
+	ini.SetValue( "Options", "TugMeterGoodPercentChange",		m_fTugMeterGoodPercentChange );
+	ini.SetValue( "Options", "TugMeterBooPercentChange",		m_fTugMeterBooPercentChange );
+	ini.SetValue( "Options", "TugMeterMissPercentChange",		m_fTugMeterMissPercentChange );
+	ini.SetValue( "Options", "TugMeterHitMinePercentChange",	m_fTugMeterHitMinePercentChange );
+	ini.SetValue( "Options", "TugMeterOKPercentChange",			m_fTugMeterOKPercentChange );
+	ini.SetValue( "Options", "TugMeterNGPercentChange",			m_fTugMeterNGPercentChange );
 	ini.SetValue( "Options", "RegenComboAfterFail",				m_iRegenComboAfterFail );
 	ini.SetValue( "Options", "RegenComboAfterMiss",				m_iRegenComboAfterMiss );
 	ini.SetValue( "Options", "MaxRegenComboAfterFail",			m_iMaxRegenComboAfterFail );
 	ini.SetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
 	ini.SetValue( "Options", "TwoPlayerRecovery",				m_bTwoPlayerRecovery );
-	ini.SetValue( "Options", "MercifulMines",					m_bMercifulMines );
+	ini.SetValue( "Options", "MercifulDrain",					m_bMercifulDrain );
 
 	ini.SetValue( "Options", "PercentScoreMarvelousWeight",		m_iPercentScoreMarvelousWeight );
 	ini.SetValue( "Options", "PercentScorePerfectWeight",		m_iPercentScorePerfectWeight );
@@ -521,6 +572,17 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "GradePercentB",					m_fGradePercentB );
 	ini.SetValue( "Options", "GradePercentC",					m_fGradePercentC );
 	ini.SetValue( "Options", "GradePercentD",					m_fGradePercentD );
+
+	ini.SetValue( "Options", "SuperMeterMarvelousPercentChange",m_fSuperMeterMarvelousPercentChange );
+	ini.SetValue( "Options", "SuperMeterPerfectPercentChange",	m_fSuperMeterPerfectPercentChange );
+	ini.SetValue( "Options", "SuperMeterGreatPercentChange",	m_fSuperMeterGreatPercentChange );
+	ini.SetValue( "Options", "SuperMeterGoodPercentChange",		m_fSuperMeterGoodPercentChange );
+	ini.SetValue( "Options", "SuperMeterBooPercentChange",		m_fSuperMeterBooPercentChange );
+	ini.SetValue( "Options", "SuperMeterMissPercentChange",		m_fSuperMeterMissPercentChange );
+	ini.SetValue( "Options", "SuperMeterHitMinePercentChange",	m_fSuperMeterHitMinePercentChange );
+	ini.SetValue( "Options", "SuperMeterOKPercentChange",		m_fSuperMeterOKPercentChange );
+	ini.SetValue( "Options", "SuperMeterNGPercentChange",		m_fSuperMeterNGPercentChange );
+	ini.SetValue( "Options", "MercifulSuperMeter",				m_bMercifulSuperMeter );
 
 	ini.SetValue( "Options", "DelayedEscape",					m_bDelayedEscape );
 	ini.SetValue( "Options", "HiddenSongs",						m_bHiddenSongs );

@@ -29,6 +29,7 @@ public:
 
 protected:
 	void LaunchAttack( AttackLevel al );
+	void AddSuperMeterDelta( float fUnscaledPercentChange );
 
 	RageSound m_soundLaunchAttack;
 	RageSound m_soundAttackEnding;

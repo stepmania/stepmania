@@ -380,6 +380,9 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 
 void LifeMeterBar::ChangeLife( float fDeltaLife )
 {
+	if( PREFSMAN->m_bMercifulDrain  &&  fDeltaLife < 0 )
+		fDeltaLife *= SCALE( m_fLifePercentage, 0.f, 1.f, 0.5f, 1.f);
+
 	// handle progressiveness and ComboToRegainLife here
 	if( fDeltaLife >= 0 )
 	{
@@ -455,9 +458,6 @@ void LifeMeterBar::ChangeLifeMine()
 	default:
 		ASSERT(0);
 	}
-
-	if( PREFSMAN->m_bMercifulMines )
-		fDeltaLife *= SCALE( m_fLifePercentage, 0.f, 1.f, 0.5f, 1.f);
 
 	ChangeLife( fDeltaLife );
 }

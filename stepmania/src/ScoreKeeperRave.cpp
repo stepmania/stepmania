@@ -16,6 +16,7 @@
 #include "GameState.h"
 #include "Character.h"
 #include "ScreenManager.h"
+#include "PrefsManager.h"
 
 CachedThemeMetricF ATTACK_DURATION_SECONDS	("ScoreKeeperRave","AttackDurationSeconds");
 
@@ -35,28 +36,71 @@ void ScoreKeeperRave::OnNextSong( int iSongInCourseIndex, const Steps* pNotes, c
 
 void ScoreKeeperRave::HandleTapScore( TapNoteScore score )
 {
-	// FIXME
+	float fPercentToMove;
+	switch( score )
+	{
+	case TNS_HIT_MINE:		fPercentToMove = PREFSMAN->m_fSuperMeterHitMinePercentChange;	break;
+	}
+
+	AddSuperMeterDelta( fPercentToMove );
 }
 
 #define CROSSED( val ) (fOld < val && fNew >= val)
 #define CROSSED_ATTACK_LEVEL( level ) CROSSED(1.f/NUM_ATTACK_LEVELS*(level+1))
 void ScoreKeeperRave::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
 {
-	AttackLevel oldAL = (AttackLevel)(int)GAMESTATE->m_fSuperMeter[m_PlayerNumber];
-
-	// TODO: Move these to prefs
 	float fPercentToMove;
 	switch( scoreOfLastTap )
 	{
-	case TNS_MARVELOUS:		fPercentToMove = +0.04f;	break;
-	case TNS_PERFECT:		fPercentToMove = +0.04f;	break;
-	case TNS_GREAT:			fPercentToMove = +0.02f;	break;
-	case TNS_GOOD:			fPercentToMove = +0.00f;	break;
-	case TNS_BOO:			fPercentToMove = -0.08f;	break;
-	case TNS_MISS:			fPercentToMove = -0.16f;	break;
+	case TNS_MARVELOUS:		fPercentToMove = PREFSMAN->m_fSuperMeterMarvelousPercentChange;	break;
+	case TNS_PERFECT:		fPercentToMove = PREFSMAN->m_fSuperMeterPerfectPercentChange;	break;
+	case TNS_GREAT:			fPercentToMove = PREFSMAN->m_fSuperMeterGreatPercentChange;		break;
+	case TNS_GOOD:			fPercentToMove = PREFSMAN->m_fSuperMeterGoodPercentChange;		break;
+	case TNS_BOO:			fPercentToMove = PREFSMAN->m_fSuperMeterBooPercentChange;		break;
+	case TNS_MISS:			fPercentToMove = PREFSMAN->m_fSuperMeterMissPercentChange;		break;
 	default:	ASSERT(0);	fPercentToMove = +0.00f;	break;
 	}
+	AddSuperMeterDelta( fPercentToMove );
+}
 
+void ScoreKeeperRave::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
+{
+	float fPercentToMove;
+	switch( tapScore )
+	{
+	case TNS_HIT_MINE:		fPercentToMove = PREFSMAN->m_fSuperMeterHitMinePercentChange;	break;
+	}
+	AddSuperMeterDelta( fPercentToMove );
+}
+
+void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
+{
+	if( PREFSMAN->m_bMercifulDrain  &&  fUnscaledPercentChange<0 )
+	{
+		float fSuperPercentage = GAMESTATE->m_fSuperMeter[m_PlayerNumber] / NUM_ATTACK_LEVELS;
+		fUnscaledPercentChange *= SCALE( fSuperPercentage, 0.f, 1.f, 0.5f, 1.f);
+	}
+
+	// more mercy: Grow super meter slower or faster depending on life.
+	if( PREFSMAN->m_bMercifulSuperMeter )
+	{
+		float fLifePercentage;
+		switch( m_PlayerNumber )
+		{
+		case PLAYER_1:	fLifePercentage = GAMESTATE->m_fTugLifePercentP1;		break;
+		case PLAYER_2:	fLifePercentage = 1 - GAMESTATE->m_fTugLifePercentP1;	break;
+		default:	ASSERT(0);
+		}
+		if( fUnscaledPercentChange > 0 )
+			fUnscaledPercentChange *= SCALE( fLifePercentage, 0.f, 1.f, 1.8f, 0.2f);
+		else	// fUnscaledPercentChange <= 0
+			fUnscaledPercentChange *= SCALE( fLifePercentage, 0.f, 1.f, 1.8f, 0.2f);
+	}
+
+
+	AttackLevel oldAL = (AttackLevel)(int)GAMESTATE->m_fSuperMeter[m_PlayerNumber];
+
+	float fPercentToMove = fUnscaledPercentChange;
 	GAMESTATE->m_fSuperMeter[m_PlayerNumber] += fPercentToMove * GAMESTATE->m_fSuperMeterGrowthScale[m_PlayerNumber];
 	CLAMP( GAMESTATE->m_fSuperMeter[m_PlayerNumber], 0.f, NUM_ATTACK_LEVELS );
 
@@ -64,16 +108,16 @@ void ScoreKeeperRave::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 
 	if( newAL > oldAL )
 	{
+		LaunchAttack( oldAL );
 		if( newAL == NUM_ATTACK_LEVELS )	// hit upper bounds of meter
 			GAMESTATE->m_fSuperMeter[m_PlayerNumber] -= 1.f;
-		LaunchAttack( oldAL );
 	}
+
+	// mercy
+	if( fUnscaledPercentChange < 0 )
+		GAMESTATE->RemoveActiveAttacksForPlayer( m_PlayerNumber );
 }
 
-void ScoreKeeperRave::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
-{
-	// FIXME
-}
 
 void ScoreKeeperRave::Update( float fDelta )
 {

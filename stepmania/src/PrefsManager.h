@@ -55,6 +55,7 @@ public:
 	bool			m_bShowDanger;
 	int				m_iNumArcadeStages;
 	bool			m_bEventMode;
+
 	float			m_fJudgeWindowScale;
 	float			m_fLifeDifficultyScale;
 	float			m_fJudgeWindowMarvelousSeconds;
@@ -65,6 +66,7 @@ public:
 	float			m_fJudgeWindowOKSeconds;
 	float			m_fJudgeWindowMineSeconds;
 	float			m_fJudgeWindowAttackSeconds;
+
 	float			m_fLifeDeltaMarvelousPercentChange;
 	float			m_fLifeDeltaPerfectPercentChange;
 	float			m_fLifeDeltaGreatPercentChange;
@@ -74,12 +76,23 @@ public:
 	float			m_fLifeDeltaHitMinePercentChange;
 	float			m_fLifeDeltaOKPercentChange;
 	float			m_fLifeDeltaNGPercentChange;
+	// tug meter used in rave
+	float			m_fTugMeterMarvelousPercentChange;
+	float			m_fTugMeterPerfectPercentChange;
+	float			m_fTugMeterGreatPercentChange;
+	float			m_fTugMeterGoodPercentChange;
+	float			m_fTugMeterBooPercentChange;
+	float			m_fTugMeterMissPercentChange;
+	float			m_fTugMeterHitMinePercentChange;
+	float			m_fTugMeterOKPercentChange;
+	float			m_fTugMeterNGPercentChange;
 	int				m_iRegenComboAfterFail;
 	int				m_iRegenComboAfterMiss;
 	int				m_iMaxRegenComboAfterFail;
 	int				m_iMaxRegenComboAfterMiss;
 	bool			m_bTwoPlayerRecovery;
-	bool			m_bMercifulMines;
+	bool			m_bMercifulDrain;
+
 	int				m_iPercentScoreMarvelousWeight;
 	int				m_iPercentScorePerfectWeight;
 	int				m_iPercentScoreGreatWeight;
@@ -103,6 +116,18 @@ public:
 	float			m_fGradePercentB;
 	float			m_fGradePercentC;
 	float			m_fGradePercentD;
+
+	float			m_fSuperMeterMarvelousPercentChange;
+	float			m_fSuperMeterPerfectPercentChange;
+	float			m_fSuperMeterGreatPercentChange;
+	float			m_fSuperMeterGoodPercentChange;
+	float			m_fSuperMeterBooPercentChange;
+	float			m_fSuperMeterMissPercentChange;
+	float			m_fSuperMeterHitMinePercentChange;
+	float			m_fSuperMeterOKPercentChange;
+	float			m_fSuperMeterNGPercentChange;
+	bool			m_bMercifulSuperMeter;
+
 	bool			m_bAutoPlay;
 	bool			m_bDelayedEscape;
 	bool			m_bInstructions, m_bShowDontDie, m_bShowSelectGroup;

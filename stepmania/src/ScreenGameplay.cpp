@@ -48,6 +48,7 @@
 #include "LightsManager.h"
 #include "ProfileManager.h"
 #include "StageStats.h"
+#include "PlayerAI.h"	// for NUM_SKILL_LEVELS
 
 //
 // Defines
@@ -887,18 +888,7 @@ void ScreenGameplay::LoadNextSong()
 		else if( GAMESTATE->IsCpuPlayer(p) )
 		{
 			GAMESTATE->m_PlayerController[p] = PC_CPU;
-			if( GAMESTATE->m_iCpuSkill[p] == -1 )
-			{
-				switch( GAMESTATE->m_pCurNotes[p]->GetDifficulty() )
-				{
-				case DIFFICULTY_BEGINNER:	GAMESTATE->m_iCpuSkill[p] = 1;	break;
-				case DIFFICULTY_EASY:		GAMESTATE->m_iCpuSkill[p] = 3;	break;
-				case DIFFICULTY_MEDIUM:		GAMESTATE->m_iCpuSkill[p] = 5;	break;
-				case DIFFICULTY_HARD:		GAMESTATE->m_iCpuSkill[p] = 7;	break;
-				case DIFFICULTY_CHALLENGE:	GAMESTATE->m_iCpuSkill[p] = 9;	break;
-				default:	ASSERT(0);
-				}
-			}
+			GAMESTATE->m_iCpuSkill[p] = SCALE( GAMESTATE->m_pCurNotes[p]->GetMeter(), MIN_METER, MAX_METER, 0, NUM_SKILL_LEVELS-1 );
 		}
 		else if( PREFSMAN->m_bAutoPlay )
 			GAMESTATE->m_PlayerController[p] = PC_AUTOPLAY;
