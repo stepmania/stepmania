@@ -196,8 +196,13 @@ MusicWheel::MusicWheel()
 	m_fPositionOffsetFromSelection = 0;
 
 
-	RageLog( "end of MusicWheel::MusicWheel()" );
-
+	// find the previously selected song (if any), and select it
+	for( i=0; i<m_WheelItems.GetSize(); i++ )
+	{
+		if( m_WheelItems[i].m_pSong != NULL
+		 && m_WheelItems[i].m_pSong == GAMEINFO->m_pCurSong )
+			m_iSelection = i;
+	}
 }
 
 void MusicWheel::RebuildWheelItems()
@@ -489,8 +494,7 @@ void MusicWheel::Update( float fDeltaTime )
 		m_fPositionOffsetFromSelection = 0;
 	else
 	{
-		m_fPositionOffsetFromSelection -= fDeltaTime * m_fPositionOffsetFromSelection*4;	// linear
-		//m_fPositionOffsetFromSelection += fDeltaTime * m_fPositionOffsetFromSelection/fabs(m_fPositionOffsetFromSelection);	// constant
+		m_fPositionOffsetFromSelection -= fDeltaTime * m_fPositionOffsetFromSelection*4;
 	}
 }
 
