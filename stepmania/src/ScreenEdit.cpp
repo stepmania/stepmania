@@ -217,7 +217,7 @@ ScreenEdit::ScreenEdit()
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fArrowScrollSpeed = 1;
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_ColorType = PlayerOptions::COLOR_NOTE;
 
-	m_Background.LoadFromSong( m_pSong );
+	m_BGAnimation.LoadFromAniDir( THEME->GetPathTo("BGAnimations","edit") );
 
 	shiftAnchor = -1;
 	m_SnapDisplay.SetXY( EDIT_X, EDIT_GRAY_Y );
@@ -359,7 +359,7 @@ void ScreenEdit::Update( float fDeltaTime )
 		}
 	}
 
-	m_Background.Update( fDeltaTime );
+	m_BGAnimation.Update( fDeltaTime );
 	m_SnapDisplay.Update( fDeltaTime );
 	m_GrayArrowRowEdit.Update( fDeltaTime );
 	m_NoteFieldEdit.Update( fDeltaTime );
@@ -501,7 +501,7 @@ void ScreenEdit::Update( float fDeltaTime )
 
 void ScreenEdit::DrawPrimitives()
 {
-	m_Background.Draw();
+	m_BGAnimation.Draw();
 	m_SnapDisplay.Draw();
 	m_GrayArrowRowEdit.Draw();
 

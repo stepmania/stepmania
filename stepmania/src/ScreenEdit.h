@@ -18,7 +18,7 @@
 #include "FocusingSprite.h"
 #include "RageMusic.h"
 #include "MotionBlurSprite.h"
-#include "Background.h"
+#include "BGAnimation.h"
 #include "SnapDisplay.h"
 
 
@@ -55,16 +55,16 @@ protected:
 	Song*			m_pSong;
 	Notes*			m_pNotes;
 
-	Background				m_Background;
+	BGAnimation		m_BGAnimation;
 
-	NoteField				m_NoteFieldEdit;
-	SnapDisplay				m_SnapDisplay;
-	GrayArrowRow			m_GrayArrowRowEdit;
+	NoteField		m_NoteFieldEdit;
+	SnapDisplay		m_SnapDisplay;
+	GrayArrowRow	m_GrayArrowRowEdit;
 
-	BitmapText				m_textInfo;		// status information that changes
-	BitmapText				m_textHelp;
-	Quad					m_rectShortcutsBack;
-	BitmapText				m_textShortcuts;
+	BitmapText		m_textInfo;		// status information that changes
+	BitmapText		m_textHelp;
+	Quad			m_rectShortcutsBack;
+	BitmapText		m_textShortcuts;
 
 	// keep track of where we are and what we're doing
 	float				m_fTrailingBeat;	// this approaches GAMESTATE->m_fSongBeat, which is the actual beat
