@@ -32,7 +32,7 @@ NetworkSyncManager::~NetworkSyncManager ()
 	delete NetPlayerClient;
 }
 
-int NetworkSyncManager::Connect(char * addy, int port)
+int NetworkSyncManager::Connect(char * addy, unsigned short port)
 {
 	if (port!=8765) 
 		return -1;
@@ -48,7 +48,7 @@ int NetworkSyncManager::Connect(char * addy, int port)
 	NetPlayerClient->create();	//Initilize Socket
 
 	if(!NetPlayerClient->connect(addy,port)) {
-		useSMserver = -1;	//If connection to socket fails, tell
+		useSMserver = false;	//If connection to socket fails, tell
 							//other network functions to not do anything
 	} else {
 		useSMserver = 1;	//Utilize other network funtions

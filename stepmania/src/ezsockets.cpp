@@ -1,3 +1,4 @@
+#include "global.h"
 /*******************************************
   ezsockets.cpp -- Header for sockets.cpp
    Designed by Josh Allen and Charles
@@ -49,7 +50,7 @@ int EzSockets::create() {
   return (true);
 }
 
-bool EzSockets::bind(int port) {
+bool EzSockets::bind(unsigned short port) {
 
   if (!check()) {
     return false;
@@ -73,6 +74,7 @@ bool EzSockets::listen() {
   }
   return true;
 }
+typedef int socklen_t;
 
 bool EzSockets::accept(EzSockets &socket) {
 
@@ -255,7 +257,7 @@ bool EzSockets::sendData(char data[1024], int size) {
   return true;
 }
 
-bool EzSockets::connect(std::string host, int port) {
+bool EzSockets::connect(std::string host, unsigned short port) {
   if (!check()) {
     return false;
   }

@@ -28,7 +28,7 @@ public:
 
 	void StartRequest();	//Request a start.  Block until granted.
 
-	int Connect(char * addy, int port);
+	int Connect(char * addy, unsigned short port);
 							//Connect to SM Server
 
 	int m_playerID;  //these are currently unused, but need to stay

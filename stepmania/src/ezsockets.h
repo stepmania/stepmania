@@ -55,7 +55,7 @@ class EzSockets {
   //Crate the socket
   int create();
   //Bind Socket to local port
-  bool bind(int port);
+  bool bind(unsigned short port);
   //Listen with socket
   bool listen();
   //Accept incomming socket
@@ -72,7 +72,7 @@ class EzSockets {
   bool send(int x);
   //Connect to remote host
   //NOTE: YOU MUST PUT IN IP, NOT NAME
-  bool connect(std::string host, int port);
+  bool connect(std::string host, unsigned short port);
   
   long uAddr(); 
   //Kill socket
