@@ -25,6 +25,7 @@
 #include "Course.h"
 #include "GameManager.h"
 #include "ProductInfo.h"
+#include "RageUtil.h"
 
 
 ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our program
@@ -41,7 +42,7 @@ ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our
 
 #define SM_300_STATISTICS_FILE	BASE_PATH "statistics.ini"
 
-#define USER_PROFILES_DIR		BASE_PATH "Data" SLASH "UserProfiles" SLASH
+#define USER_PROFILES_DIR		BASE_PATH "Data" SLASH "LocalProfiles" SLASH
 #define MACHINE_PROFILE_DIR		BASE_PATH "Data" SLASH "MachineProfile" SLASH
 
 const int CATEGORY_RANKING_VERSION = 4;
@@ -74,15 +75,15 @@ ProfileManager::~ProfileManager()
 	SaveMachineScoresToDisk();
 }
 
-void ProfileManager::GetMachineProfileIDs( vector<CString> &asProfileIDsOut )
+void ProfileManager::GetLocalProfileIDs( vector<CString> &asProfileIDsOut )
 {
 	GetDirListing( USER_PROFILES_DIR "*", asProfileIDsOut, true, false );
 }
 
-void ProfileManager::GetMachineProfileNames( vector<CString> &asNamesOut )
+void ProfileManager::GetLocalProfileNames( vector<CString> &asNamesOut )
 {
 	CStringArray vsProfileIDs;
-	GetMachineProfileIDs( vsProfileIDs );
+	GetLocalProfileIDs( vsProfileIDs );
 	for( unsigned i=0; i<vsProfileIDs.size(); i++ )
 	{
 		CString sProfileID = vsProfileIDs[i];
@@ -141,7 +142,7 @@ bool ProfileManager::CreateProfile( CString sProfileDir, CString sName )
 
 bool ProfileManager::LoadDefaultProfileFromMachine( PlayerNumber pn )
 {
-	CString sProfileID = PREFSMAN->m_sDefaultMachineProfileID[pn];
+	CString sProfileID = PREFSMAN->m_sDefaultLocalProfileID[pn];
 	if( sProfileID.empty() )
 	{
 		m_sProfileDir[pn] = "";
@@ -262,17 +263,16 @@ bool Profile::SaveToIni( CString sIniPath )
 	return true;
 }
 
-bool ProfileManager::CreateMachineProfile( CString sName )
+bool ProfileManager::CreateLocalProfile( CString sName )
 {
-	if( sName.empty() )
-		sName = "Machine";
+	ASSERT( !sName.empty() );
 
 	//
 	// Find a free directory name in the profiles directory
 	//
 	CString sProfileID, sProfileDir;
 	const int MAX_TRIES = 1000;
-        int i;
+    int i;
 	for( i=0; i<MAX_TRIES; i++ )
 	{
 		sProfileID = ssprintf("%08d",i);
@@ -296,7 +296,7 @@ bool ProfileManager::CreateMachineProfile( CString sName )
 	return true;
 }
 
-bool ProfileManager::RenameMachineProfile( CString sProfileID, CString sNewName )
+bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )
 {
 	ASSERT( !sProfileID.empty() );
 
@@ -316,7 +316,7 @@ bool ProfileManager::RenameMachineProfile( CString sProfileID, CString sNewName 
 	return true;
 }
 
-bool ProfileManager::DeleteMachineProfile( CString sProfileID )
+bool ProfileManager::DeleteLocalProfile( CString sProfileID )
 {
 	// delete all files in profile dir
 	CString sProfileDir = USER_PROFILES_DIR + sProfileID;
@@ -423,9 +423,9 @@ void FileWrite(RageFile& f, float fWrite)
 
 void ProfileManager::ReadSongScoresFromFile( CString fn, MemoryCard mc )
 {
-	RageFile f(fn);
-	if (!f.IsOpen() || f.GetError() != 0)
-		return; /* don't warn if it just doesn't exist */
+	RageFile f;
+	if( !f.Open(fn, RageFile::READ) )
+		return;
 
 	int version;
 	if( !FileRead(f, version) )
@@ -518,9 +518,9 @@ void ProfileManager::ReadSongScoresFromFile( CString fn, MemoryCard mc )
 
 void ProfileManager::ReadCategoryScoresFromFile( CString fn, MemoryCard mc )
 {
-	RageFile f(fn);
-	if (!f.IsOpen() || f.GetError() != 0)
-		return; /* don't warn if it just doesn't exist */
+	RageFile f;
+	if( !f.Open(fn, RageFile::READ) )
+		return;
 	
 	int version;
 	if( !FileRead(f, version) )
@@ -550,9 +550,9 @@ void ProfileManager::ReadCategoryScoresFromFile( CString fn, MemoryCard mc )
 
 void ProfileManager::ReadCourseScoresFromFile( CString fn, MemoryCard mc )
 {
-	RageFile f(fn);
-	if (!f.IsOpen() || f.GetError() != 0)
-		return; /* don't warn if it just doesn't exist */
+	RageFile f;
+	if( !f.Open(fn, RageFile::READ) )
+		return;
 	
 	int version;
 	if( !FileRead(f, version) )
@@ -705,8 +705,8 @@ void ProfileManager::SaveCategoryScoresToFile( CString fn, MemoryCard mc )
 {
 	LOG->Trace("SongManager::SaveCategoryRankingsToFile");
 
-	RageFile f(fn);
-	if (!f.IsOpen() || f.GetError() != 0)
+	RageFile f;
+	if( !f.Open(fn, RageFile::WRITE) )
 		return;
 
 	FileWrite( f, CATEGORY_RANKING_VERSION );
@@ -733,8 +733,8 @@ void ProfileManager::SaveCourseScoresToFile( CString fn, MemoryCard mc )
 {
 	LOG->Trace("SongManager::SaveCourseScoresToFile");
 
-	RageFile f(fn);
-	if (!f.IsOpen() || f.GetError() != 0)
+	RageFile f;
+	if( !f.Open(fn, RageFile::WRITE) )
 		return;
 	
 	FileWrite( f, COURSE_SCORES_VERSION );
@@ -789,8 +789,8 @@ void ProfileManager::SaveSongScoresToFile( CString fn, MemoryCard mc )
 {
 	LOG->Trace("SongManager::SaveSongScoresToFile %s", fn.c_str());
 
-	RageFile f(fn);
-	if (!f.IsOpen() || f.GetError() != 0)
+	RageFile f;
+	if( !f.Open(fn, RageFile::WRITE) )
 		return;
 	
 	FileWrite( f, STEPS_SCORES_VERSION );
@@ -918,12 +918,7 @@ void ProfileManager::SaveStatsWebPageToFile( CString fn, MemoryCard mc )
 		 * (Note for testing this: remember that we'll cache directories for a time; this is only slow if
 		 * the directory cache expires before we get here.) */
 		//CString sImagePath = pSong->HasBanner() ? pSong->GetBannerPath() : (pSong->HasBackground() ? pSong->GetBackgroundPath() : "" );
-		CString sImagePath = pSong->GetBannerPath();
-		if( sImagePath.empty() )
-			f.Write( "<td> </td>" );
-		else
-			f.Write( ssprintf("<td><img src=\"%s\" width='120'></td>", HTMLQuoteDoubleQuotes(sImagePath).c_str()) );
-		
+		f.Write( "<td> </td>" );
 		f.Write( ssprintf("<td>%s<br>", pSong->GetTranslitMainTitle().c_str()) );
 		f.Write( ssprintf("<font size='-1'>%s</font><br>", pSong->GetTranslitSubTitle().c_str()) );
 		f.Write( ssprintf("<font size='-1'><i>%s</i></font></td>", pSong->GetTranslitArtist().c_str()) );

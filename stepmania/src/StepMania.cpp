@@ -837,7 +837,6 @@ int main(int argc, char* argv[])
 	SOUNDMAN	= new RageSoundManager(PREFSMAN->m_sSoundDrivers);
 	SOUNDMAN->SetPrefs(PREFSMAN->m_fSoundVolume);
 	SOUND		= new RageSounds;
-	PROFILEMAN	= new ProfileManager;
 	BOOKKEEPER	= new Bookkeeper;
 	LIGHTSMAN	= new LightsManager(PREFSMAN->m_sLightsDriver);
 	INPUTFILTER	= new InputFilter;
@@ -848,6 +847,7 @@ int main(int argc, char* argv[])
 	
 	/* depends on SONGINDEX: */
 	SONGMAN		= new SongManager( loading_window );		// this takes a long time to load
+	PROFILEMAN	= new ProfileManager;	// must load after SONGMAN
 	delete loading_window;		// destroy this before init'ing Display
 
 	DISPLAY = CreateDisplay();

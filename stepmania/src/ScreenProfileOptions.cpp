@@ -53,19 +53,19 @@ ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions
 
 	g_ProfileOptionsLines[PO_PLAYER1].choices.clear();
 	g_ProfileOptionsLines[PO_PLAYER1].choices.push_back( "-NONE-" );
-	PROFILEMAN->GetMachineProfileNames( g_ProfileOptionsLines[PO_PLAYER1].choices );
+	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_PLAYER1].choices );
 
 	g_ProfileOptionsLines[PO_PLAYER2].choices.clear();
 	g_ProfileOptionsLines[PO_PLAYER2].choices.push_back( "-NONE-" );
-	PROFILEMAN->GetMachineProfileNames( g_ProfileOptionsLines[PO_PLAYER2].choices );
+	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_PLAYER2].choices );
 
 	g_ProfileOptionsLines[PO_DELETE_].choices.clear();
 	g_ProfileOptionsLines[PO_DELETE_].choices.push_back( "-NONE-" );
-	PROFILEMAN->GetMachineProfileNames( g_ProfileOptionsLines[PO_DELETE_].choices );
+	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_DELETE_].choices );
 
 	g_ProfileOptionsLines[PO_RENAME_].choices.clear();
 	g_ProfileOptionsLines[PO_RENAME_].choices.push_back( "-NONE-" );
-	PROFILEMAN->GetMachineProfileNames( g_ProfileOptionsLines[PO_RENAME_].choices );
+	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_RENAME_].choices );
 
 	if( PREFSMAN->m_sMemoryCardDir[PLAYER_1].empty() )
 		g_ProfileOptionsLines[PO_CARD_DIR_1].choices[0] = "-NOT SET IN INI-";
@@ -88,21 +88,21 @@ ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions
 void ScreenProfileOptions::ImportOptions()
 {
 	vector<CString> vsProfiles;
-	PROFILEMAN->GetMachineProfileIDs( vsProfiles );
+	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
 	CStringArray::iterator iter;
 
 	iter = find( 
 		vsProfiles.begin(),
 		vsProfiles.end(),
-		PREFSMAN->m_sDefaultMachineProfileID[PLAYER_1] );
+		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_1] );
 	if( iter != vsProfiles.end() )
 		m_iSelectedOption[0][PO_PLAYER1] = iter - vsProfiles.begin() + 1;
 
 	iter = find( 
 		vsProfiles.begin(),
 		vsProfiles.end(),
-		PREFSMAN->m_sDefaultMachineProfileID[PLAYER_2] );
+		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_2] );
 	if( iter != vsProfiles.end() )
 		m_iSelectedOption[0][PO_PLAYER2] = iter - vsProfiles.begin() + 1;
 }
@@ -110,17 +110,17 @@ void ScreenProfileOptions::ImportOptions()
 void ScreenProfileOptions::ExportOptions()
 {
 	vector<CString> vsProfiles;
-	PROFILEMAN->GetMachineProfileIDs( vsProfiles );
+	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
 	if( m_iSelectedOption[0][PO_PLAYER1] > 0 )
-		PREFSMAN->m_sDefaultMachineProfileID[PLAYER_1] = vsProfiles[m_iSelectedOption[0][PO_PLAYER1]-1];
+		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_1] = vsProfiles[m_iSelectedOption[0][PO_PLAYER1]-1];
 	else
-		PREFSMAN->m_sDefaultMachineProfileID[PLAYER_1] = "";
+		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_1] = "";
 
 	if( m_iSelectedOption[0][PO_PLAYER2] > 0 )
-		PREFSMAN->m_sDefaultMachineProfileID[PLAYER_2] = vsProfiles[m_iSelectedOption[0][PO_PLAYER2]-1];
+		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_2] = vsProfiles[m_iSelectedOption[0][PO_PLAYER2]-1];
 	else
-		PREFSMAN->m_sDefaultMachineProfileID[PLAYER_2] = "";
+		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_2] = "";
 }
 
 void ScreenProfileOptions::GoToPrevState()
@@ -145,7 +145,7 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
 			CString sNewName = ScreenTextEntry::s_sLastAnswer;
-			bool bResult = PROFILEMAN->CreateMachineProfile( sNewName );
+			bool bResult = PROFILEMAN->CreateLocalProfile( sNewName );
 			if( bResult )
 				SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	// reload
 			else
@@ -156,7 +156,7 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
 			CString sNewName = ScreenTextEntry::s_sLastAnswer;
-			bool bResult = PROFILEMAN->RenameMachineProfile( sProfileID, sNewName );
+			bool bResult = PROFILEMAN->RenameLocalProfile( sProfileID, sNewName );
 			if( bResult )
 				SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	// reload
 			else
@@ -166,7 +166,7 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 	case SM_DoneDeleting:
 		if( ScreenPrompt::s_bLastAnswer )
 		{
-			bool bResult = PROFILEMAN->DeleteMachineProfile( sProfileID );
+			bool bResult = PROFILEMAN->DeleteLocalProfile( sProfileID );
 			if( bResult )
 				SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	// reload
 			else
@@ -209,7 +209,7 @@ void ScreenProfileOptions::MenuStart( PlayerNumber pn, const InputEventType type
 CString ScreenProfileOptions::GetSelectedProfileID()
 {
 	vector<CString> vsProfiles;
-	PROFILEMAN->GetMachineProfileIDs( vsProfiles );
+	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
 	if( m_iSelectedOption[0][m_iCurrentRow[0]]==0 )
 		return "";

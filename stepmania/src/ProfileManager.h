@@ -41,14 +41,14 @@ public:
 	ProfileManager();
 	~ProfileManager();
 
-	bool CreateMachineProfile( CString sName );
-	bool RenameMachineProfile( CString sProfileID, CString sNewName );
-	bool DeleteMachineProfile( CString sProfileID );
+	bool CreateLocalProfile( CString sName );
+	bool RenameLocalProfile( CString sProfileID, CString sNewName );
+	bool DeleteLocalProfile( CString sProfileID );
 
 	bool CreateMemoryCardProfile( CString sName );
 
-	void GetMachineProfileIDs( vector<CString> &asProfileIDsOut );
-	void GetMachineProfileNames( vector<CString> &asNamesOut );
+	void GetLocalProfileIDs( vector<CString> &asProfileIDsOut );
+	void GetLocalProfileNames( vector<CString> &asNamesOut );
 
 	bool LoadFirstAvailableProfile( PlayerNumber pn );
 	bool IsMemoryCardInserted( PlayerNumber pn );

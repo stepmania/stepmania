@@ -353,7 +353,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		ini.GetValue( "Options", ssprintf("DefaultMachineProfileIDP%d",p+1),	m_sDefaultMachineProfileID[p] );
+		ini.GetValue( "Options", ssprintf("DefaultLocalProfileIDP%d",p+1),	m_sDefaultLocalProfileID[p] );
 		ini.GetValue( "Options", ssprintf("MemoryCardDirP%d",p+1),				m_sMemoryCardDir[p] );
 		FixSlashesInPlace( m_sMemoryCardDir[p] );
 		ini.GetValue( "Options", ssprintf("MemoryCardMountCommandP%d",p+1),		m_sMemoryCardMountCommand[p] );
@@ -509,7 +509,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		ini.SetValue( "Options", ssprintf("DefaultMachineProfileIDP%d",p+1),	m_sDefaultMachineProfileID[p] );
+		ini.SetValue( "Options", ssprintf("DefaultLocalProfileIDP%d",p+1),	m_sDefaultLocalProfileID[p] );
 		ini.SetValue( "Options", ssprintf("MemoryCardDirP%d",p+1),				m_sMemoryCardDir[p] );
 		ini.SetValue( "Options", ssprintf("MemoryCardMountCommandP%d",p+1),		m_sMemoryCardMountCommand[p] );
 	}
