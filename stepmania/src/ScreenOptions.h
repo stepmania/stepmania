@@ -30,6 +30,8 @@ struct OptionRow
 	bool bOneChoiceForAllPlayers;
 	vector<CString> choices;
 
+	OptionRow(): name(""), bOneChoiceForAllPlayers(false) { }
+
 	OptionRow( const char *n, int b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
 	{
 		name = n;
@@ -96,7 +98,6 @@ protected:
 	int m_iSelectedOption[NUM_PLAYERS][MAX_OPTION_LINES];
 
 private:
-	CString			m_sName;
 	InputMode		m_InputMode;
 	bool			m_bLoadExplanations;
 

@@ -40,11 +40,9 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 #define COLOR_NOT_SELECTED	THEME->GetMetricC("ScreenOptions","ColorNotSelected")
 #define NUM_SHOWN_ITEMS		THEME->GetMetricI("ScreenOptions","NumShownItems")
 
-ScreenOptions::ScreenOptions( CString sClassName ) : Screen("ScreenOptions")
+ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
-
-	m_sName = sClassName;
 
 	m_SoundChangeCol.Load( THEME->GetPathToS("ScreenOptions change") );
 	m_SoundNextRow.Load( THEME->GetPathToS("ScreenOptions next") );
