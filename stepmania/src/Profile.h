@@ -59,13 +59,15 @@ public:
 	//
 	CString GetDisplayName() const;
 	CString GetDisplayTotalCaloriesBurned() const;
+	CString GetDisplayTotalCaloriesBurnedToday() const;
 	int GetTotalNumSongsPlayed() const;
 	int GetTotalNumSongsPassed() const;
-	int GetActualSongDancePointsForStepsType( StepsType st ) const;
-	int GetActualCourseDancePointsForStepsType( StepsType st ) const;
-	int GetPossibleSongDancePointsForStepsType( StepsType st ) const;
-	int GetPossibleCourseDancePointsForStepsType( StepsType st ) const;
-	float GetPercentCompleteForStepsType( StepsType st ) const;
+	int GetActualSongDancePoints( StepsType st, Difficulty dc ) const;
+	int GetActualCourseDancePoints( StepsType st, CourseDifficulty cd ) const;
+	int GetPossibleSongDancePoints( StepsType st, Difficulty dc ) const;
+	int GetPossibleCourseDancePoints( StepsType st, CourseDifficulty cd ) const;
+	float GetSongsPercentComplete( StepsType st, Difficulty dc ) const { return (float)(GetActualSongDancePoints(st,dc))/GetPossibleSongDancePoints(st,dc); }
+	float GetCoursesPercentComplete( StepsType st, CourseDifficulty cd ) const { return (float)(GetActualCourseDancePoints(st,cd))/GetPossibleCourseDancePoints(st,cd); }
 	static CString GetProfileDisplayNameFromDir( CString sDir );
 	int GetSongNumTimesPlayed( const Song* pSong ) const;
 	int GetSongNumTimesPlayed( const SongID& songID ) const;

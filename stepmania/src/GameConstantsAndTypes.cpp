@@ -121,12 +121,12 @@ XToString( MemoryCardState );
 
 static const CString PerDifficultyAwardNames[NUM_PER_DIFFICULTY_AWARDS] = {
 	"FullComboGreats",
-	"FullComboPerfects",
-	"FullComboMarvelouses",
 	"SingleDigitGreats",
-	"SingleDigitPerfects",
 	"OneGreat",
+	"FullComboPerfects",
+	"SingleDigitPerfects",
 	"OnePerfect",
+	"FullComboMarvelouses",
 	"Greats80Percent",
 	"Greats90Percent",
 	"Greats100Percent",

@@ -8,12 +8,15 @@
 
 enum EndingStatsLine
 {
-	PERCENT_COMPLETE,
-	TOTAL_CALORIES,
-	TOTAL_SONGS_PLAYED,
+	CALORIES_TODAY,
 	CURRENT_COMBO,
+	PERCENT_COMPLETE_EASY,
+	PERCENT_COMPLETE_MEDIUM,
+	PERCENT_COMPLETE_HARD,
+	PERCENT_COMPLETE_CHALLENGE,
 	NUM_ENDING_STATS_LINES
 };
+#define FOREACH_EndingStatsLine( l ) FOREACH_ENUM( EndingStatsLine, NUM_ENDING_STATS_LINES, l )
 
 class ScreenEnding : public ScreenAttract
 {
@@ -27,8 +30,11 @@ public:
 
 private:
 	BitmapText m_textPlayerName[NUM_PLAYERS];
-	BitmapText m_textStatsTitle[NUM_PLAYERS][NUM_ENDING_STATS_LINES];
-	BitmapText m_textStatsValue[NUM_PLAYERS][NUM_ENDING_STATS_LINES];
+	struct Line
+	{
+		BitmapText title;
+		BitmapText value;
+	} m_Lines[NUM_ENDING_STATS_LINES][NUM_PLAYERS];
 
 	Sprite	m_sprRemoveMemoryCard[NUM_PLAYERS];
 	bool m_bWaitingForRemoveCard[NUM_PLAYERS];

@@ -771,20 +771,24 @@ bool PrintPercentCompleteForStepsType( RageFile &f, const Profile *pProfile, Ste
 
  	PRINT_OPEN(f, GAMEMAN->NotesTypeToThemedString(st) );
 	{
-		BEGIN_TABLE(1);
+		FOREACH_Difficulty( dc )
 		{
-			const int iActualSong = pProfile->GetActualSongDancePointsForStepsType(st);
-			const int iActualCourse = pProfile->GetActualCourseDancePointsForStepsType(st);
-			const int iPossibleSong = pProfile->GetPossibleSongDancePointsForStepsType(st);
-			const int iPossibleCourse = pProfile->GetPossibleCourseDancePointsForStepsType(st);
-			const float fPercent = float(iActualSong+iActualCourse) / (iPossibleSong+iPossibleCourse);
-			TABLE_LINE2( "Percent Complete", ssprintf("%06.3f%%", fPercent*100) );
-			TABLE_LINE2( "Actual Song Points", iActualSong );
-			TABLE_LINE2( "Actual Course Points", iActualCourse );
-			TABLE_LINE2( "Possible Song Points", iPossibleSong );
-			TABLE_LINE2( "Possible Course Points", iPossibleCourse );
+			if( dc == DIFFICULTY_EDIT )
+				continue;	// skip
+			if( !SHOW_DIFFICULTY(dc) )
+				continue;
+			BEGIN_TABLE(1);
+			{
+				const int iActualSong = pProfile->GetActualSongDancePoints(st,dc);
+				const int iPossibleSong = pProfile->GetPossibleSongDancePoints(st,dc);
+				const float fPercent = float(iActualSong) / (iPossibleSong);
+				CString sDifficulty = DifficultyToThemedString(dc);
+				TABLE_LINE2( sDifficulty+" Percent Complete", ssprintf("%06.3f%%", fPercent*100) );
+				TABLE_LINE2( sDifficulty+" Actual Song Points", iActualSong );
+				TABLE_LINE2( sDifficulty+" Possible Song Points", iPossibleSong );
+			}
+			END_TABLE;
 		}
-		END_TABLE;
 	
 		PRINT_OPEN(f, "Songs" );
 		{
@@ -851,6 +855,20 @@ bool PrintPercentCompleteForStepsType( RageFile &f, const Profile *pProfile, Ste
 		}
 		PRINT_CLOSE(f);
 	
+		FOREACH_ShownCourseDifficulty( cd )
+		{
+			BEGIN_TABLE(1);
+			{
+				const int iActualCourse = pProfile->GetActualCourseDancePoints(st,cd);
+				const int iPossibleCourse = pProfile->GetPossibleCourseDancePoints(st,cd);
+				const float fPercent = float(iActualCourse) / (iPossibleCourse);
+				TABLE_LINE2( CourseDifficultyToThemedString(cd)+" Percent Complete", ssprintf("%06.3f%%", fPercent*100) );
+				TABLE_LINE2( CourseDifficultyToThemedString(cd)+" Actual Course Points", iActualCourse );
+				TABLE_LINE2( CourseDifficultyToThemedString(cd)+" Possible Course Points", iPossibleCourse );
+			}
+			END_TABLE;
+		}
+
 		PRINT_OPEN(f, "Courses" );
 		{
 			TranslatedWrite(f, "<table class='difficulty'>\n" );

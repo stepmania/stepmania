@@ -14,6 +14,8 @@
 #include "GameManager.h"
 #include "SongUtil.h"
 #include "ScreenManager.h"
+#include "PrefsManager.h"
+#include "StageStats.h"
 
 
 #define SCROLL_DELAY		THEME->GetMetricF("ScreenEnding","ScrollDelay")
@@ -22,30 +24,75 @@
 
 
 
-CString GetStatsLineTitle( PlayerNumber pn, int iLine )
+CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 {
-	static const CString s[NUM_ENDING_STATS_LINES] = {
-		"%s %% Complete",
-		"Total Calories",
-		"Total Played",
-		"Current Combo",
-	};
-	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-	return ssprintf( s[iLine], GAMEMAN->NotesTypeToThemedString(st).c_str() );
+	switch( line )
+	{
+	case CALORIES_TODAY:	return "Calories Today";
+	case CURRENT_COMBO:		return "Current Combo";
+	case PERCENT_COMPLETE_EASY:
+	case PERCENT_COMPLETE_MEDIUM:
+	case PERCENT_COMPLETE_HARD:
+	case PERCENT_COMPLETE_CHALLENGE:
+		// Ugly...
+		{
+			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			CString sStepsType = GAMEMAN->NotesTypeToThemedString(st);
+			if( GAMESTATE->IsCourseMode() )
+			{
+				CourseDifficulty cd = (CourseDifficulty)line;
+				if( !GAMESTATE->IsCourseDifficultyShown(cd) )
+					return "";
+				CString sDifficulty = CourseDifficultyToThemedString(cd);
+				return ssprintf( "%s %% Complete", sStepsType.c_str() );
+			}
+			else
+			{
+				Difficulty dc = (Difficulty)line;
+				CString sDifficulty = DifficultyToThemedString(dc);
+				return ssprintf( "%s %% Complete", sStepsType.c_str() );
+			}
+		}
+	default:	ASSERT(0);	return "";
+	}
 }
 
-CString GetStatsLineValue( PlayerNumber pn, int iLine )
+CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 {
 	Profile* pProfile = PROFILEMAN->GetProfile( pn );
 	ASSERT( pProfile );
 
-	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-	switch( iLine )
+	switch( line )
 	{
-	case PERCENT_COMPLETE:		return ssprintf( "%06.3f%%", pProfile->GetPercentCompleteForStepsType(st)*100 );	
-	case TOTAL_CALORIES:		return pProfile->GetDisplayTotalCaloriesBurned();
-	case TOTAL_SONGS_PLAYED:	return Commify( pProfile->GetTotalNumSongsPlayed() );
+	case CALORIES_TODAY:		return pProfile->GetDisplayTotalCaloriesBurned();
 	case CURRENT_COMBO:			return Commify( pProfile->m_iCurrentCombo );
+	case PERCENT_COMPLETE_EASY:
+	case PERCENT_COMPLETE_MEDIUM:
+	case PERCENT_COMPLETE_HARD:
+	case PERCENT_COMPLETE_CHALLENGE:
+		{
+			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			Difficulty dc = (Difficulty)(line-1);
+		}
+		// Ugly...
+		{
+			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			CString sStepsType = GAMEMAN->NotesTypeToThemedString(st);
+			if( GAMESTATE->IsCourseMode() )
+			{
+				CourseDifficulty cd = (CourseDifficulty)line;
+				if( !GAMESTATE->IsCourseDifficultyShown(cd) )
+					return "";
+				CString sDifficulty = CourseDifficultyToThemedString(cd);
+				return ssprintf( "%06.3f%%", pProfile->GetCoursesPercentComplete(st,cd)*100 );
+			}
+			else
+			{
+				Difficulty dc = (Difficulty)line;
+				CString sDifficulty = DifficultyToThemedString(dc);
+				return ssprintf( "%06.3f%%", pProfile->GetSongsPercentComplete(st,dc)*100 );
+			}
+		}
 	default:	ASSERT(0);	return "";
 	}
 }
@@ -53,6 +100,59 @@ CString GetStatsLineValue( PlayerNumber pn, int iLine )
 
 ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, false/*dont reset GAMESTATE*/ )
 {
+	if( PREFSMAN->m_bScreenTestMode )
+	{
+		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_1, false);
+		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2, false);
+
+		GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
+		GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
+		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
+		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
+		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+		GAMESTATE->m_pCurSong = SONGMAN->GetRandomSong();
+		GAMESTATE->m_pCurCourse = SONGMAN->GetRandomCourse();
+		GAMESTATE->m_pCurSteps[PLAYER_1] = GAMESTATE->m_pCurSong->GetAllSteps()[0];
+		GAMESTATE->m_pCurSteps[PLAYER_2] = GAMESTATE->m_pCurSong->GetAllSteps()[0];
+		g_CurStageStats.pSteps[PLAYER_1] = GAMESTATE->m_pCurSteps[PLAYER_1];
+		g_CurStageStats.pSteps[PLAYER_2] = GAMESTATE->m_pCurSteps[PLAYER_2];
+		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 2;
+		GAMESTATE->m_PlayerOptions[PLAYER_2].m_fScrollSpeed = 2;
+		GAMESTATE->m_iCurrentStageIndex = 0;
+		GAMESTATE->m_PlayerOptions[PLAYER_1].ChooseRandomMofifiers();
+		GAMESTATE->m_PlayerOptions[PLAYER_2].ChooseRandomMofifiers();
+
+		for( float f = 0; f < 100.0f; f += 1.0f )
+		{
+			float fP1 = fmodf(f/100*4+.3f,1);
+			g_CurStageStats.SetLifeRecord( PLAYER_1, fP1, f );
+			g_CurStageStats.SetLifeRecord( PLAYER_2, 1-fP1, f );
+		}
+	
+		g_CurStageStats.iActualDancePoints[PLAYER_1] = rand()%3;
+		g_CurStageStats.iPossibleDancePoints[PLAYER_1] = 2;
+		g_CurStageStats.iActualDancePoints[PLAYER_2] = rand()%2;
+		g_CurStageStats.iPossibleDancePoints[PLAYER_2] = 1;
+		g_CurStageStats.iCurCombo[PLAYER_1] = 0;
+		g_CurStageStats.UpdateComboList( PLAYER_1, 0, false );
+		g_CurStageStats.iCurCombo[PLAYER_1] = 1;
+		g_CurStageStats.UpdateComboList( PLAYER_1, 1, false );
+		g_CurStageStats.iCurCombo[PLAYER_1] = 50;
+		g_CurStageStats.UpdateComboList( PLAYER_1, 25, false );
+		g_CurStageStats.iCurCombo[PLAYER_1] = 250;
+		g_CurStageStats.UpdateComboList( PLAYER_1, 100, false );
+
+		g_CurStageStats.iTapNoteScores[PLAYER_1][TNS_MARVELOUS] = rand()%2;
+		g_CurStageStats.iTapNoteScores[PLAYER_1][TNS_PERFECT] = rand()%2;
+		g_CurStageStats.iTapNoteScores[PLAYER_1][TNS_GREAT] = rand()%2;
+		g_CurStageStats.iTapNoteScores[PLAYER_2][TNS_MARVELOUS] = rand()%2;
+		g_CurStageStats.iTapNoteScores[PLAYER_2][TNS_PERFECT] = rand()%2;
+		g_CurStageStats.iTapNoteScores[PLAYER_2][TNS_GREAT] = rand()%2;
+
+		g_vPlayedStageStats.clear();
+	}
+
+
 	vector<Song*> arraySongs;
 	SONGMAN->GetSongs( arraySongs );
 	SongUtil::SortSongPointerArrayByTitle( arraySongs );
@@ -72,24 +172,24 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 		SET_XY_AND_ON_COMMAND( m_textPlayerName[p] );
 		this->AddChild( &m_textPlayerName[p] );
 
-		m_bWaitingForRemoveCard[p] = MEMCARDMAN->GetCardState((PlayerNumber)p)!=MEMORY_CARD_STATE_NO_CARD;
+		m_bWaitingForRemoveCard[p] = MEMCARDMAN->GetCardState(p)!=MEMORY_CARD_STATE_NO_CARD;
 
 		if( pProfile == NULL )
 			continue;	// don't show the stats lines
 	
-		for( int i=0; i<NUM_ENDING_STATS_LINES; i++ )
+		FOREACH_EndingStatsLine( i )
 		{
-			m_textStatsTitle[p][i].LoadFromFont( THEME->GetPathToF("ScreenEnding stats title") );
-			m_textStatsTitle[p][i].SetText( GetStatsLineTitle((PlayerNumber)p, i) );
-			m_textStatsTitle[p][i].SetName( ssprintf("StatsTitleP%dLine%d",p+1,i+1) );
-			SET_XY_AND_ON_COMMAND( m_textStatsTitle[p][i] );
-			this->AddChild( &m_textStatsTitle[p][i] );
+			m_Lines[i][p].title.LoadFromFont( THEME->GetPathToF("ScreenEnding stats title") );
+			m_Lines[i][p].title.SetText( GetStatsLineTitle(p, i) );
+			m_Lines[i][p].title.SetName( ssprintf("StatsTitleP%dLine%d",p+1,i+1) );
+			SET_XY_AND_ON_COMMAND( m_Lines[i][p].title );
+			this->AddChild( &m_Lines[i][p].title );
 		
-			m_textStatsValue[p][i].LoadFromFont( THEME->GetPathToF("ScreenEnding stats value") );
-			m_textStatsValue[p][i].SetText( GetStatsLineValue((PlayerNumber)p, i) );
-			m_textStatsValue[p][i].SetName( ssprintf("StatsValueP%dLine%d",p+1,i+1) );
-			SET_XY_AND_ON_COMMAND( m_textStatsValue[p][i] );
-			this->AddChild( &m_textStatsValue[p][i] );
+			m_Lines[i][p].value.LoadFromFont( THEME->GetPathToF("ScreenEnding stats value") );
+			m_Lines[i][p].value.SetText( GetStatsLineValue(p, i) );
+			m_Lines[i][p].value.SetName( ssprintf("StatsValueP%dLine%d",p+1,i+1) );
+			SET_XY_AND_ON_COMMAND( m_Lines[i][p].value );
+			this->AddChild( &m_Lines[i][p].value );
 		}
 
 		m_sprRemoveMemoryCard[p].SetName( ssprintf("RemoveCardP%d",p+1) );
@@ -132,7 +232,7 @@ void ScreenEnding::Update( float fDeltaTime )
 	{
 		if( m_bWaitingForRemoveCard[p] )
 		{
-			m_bWaitingForRemoveCard[p] = MEMCARDMAN->GetCardState((PlayerNumber)p)!=MEMORY_CARD_STATE_NO_CARD;
+			m_bWaitingForRemoveCard[p] = MEMCARDMAN->GetCardState(p)!=MEMORY_CARD_STATE_NO_CARD;
 			if( !m_bWaitingForRemoveCard[p] )
 				m_sprRemoveMemoryCard[p].SetHidden( true );
 		}

@@ -1783,6 +1783,7 @@ bool PlayerIsUsingModifier( PlayerNumber pn, const CString sModifier )
 #include "LuaFunctions.h"
 LuaFunction_PlayerNumber( IsPlayerEnabled,	GAMESTATE->IsPlayerEnabled(pn) )
 LuaFunction_PlayerNumber( IsHumanPlayer,	GAMESTATE->IsHumanPlayer(pn) )
+LuaFunction_PlayerNumber( IsPlayerUsingProfile,	PROFILEMAN->IsUsingProfile(pn) )
 LuaFunction_PlayerNumber( IsWinner,			GAMESTATE->GetStageResult(pn)==RESULT_WIN )
 LuaFunction_NoArgs( IsCourseMode,			GAMESTATE->IsCourseMode() )
 LuaFunction_NoArgs( IsDemonstration,		GAMESTATE->m_bDemonstrationOrJukebox )

@@ -65,6 +65,7 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define SHOW_GRAPH_AREA						THEME->GetMetricB(m_sName,"ShowGraphArea")
 #define SHOW_COMBO_AREA						THEME->GetMetricB(m_sName,"ShowComboArea")
 #define SHOW_PER_DIFFICULTY_AWARD			THEME->GetMetricB(m_sName,"ShowPerDifficultyAward")
+#define SHOW_PEAK_COMBO_AWARD				THEME->GetMetricB(m_sName,"ShowPeakComboAward")
 #define GRAPH_START_HEIGHT					THEME->GetMetricF(m_sName,"GraphStartHeight")
 #define TYPE								THEME->GetMetric (m_sName,"Type")
 #define PASSED_SOUND_TIME					THEME->GetMetricF(m_sName,"PassedSoundTime")
@@ -72,7 +73,6 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define NUM_SEQUENCE_SOUNDS					THEME->GetMetricI(m_sName,"NumSequenceSounds")
 #define SOUNDSEQ_TIME( i )					THEME->GetMetricF(m_sName,ssprintf("SoundSeqTime%d", i+1))
 #define SOUNDSEQ_NAME( i )					THEME->GetMetric (m_sName,ssprintf("SoundSeqName%d", i+1))
-#define PEAK_COMBO_AWARD_COMMAND			THEME->GetMetric (m_sName,"PeakComboAwardCommand")
 #define MAX_COMBO_NUM_DIGITS				THEME->GetMetricI(m_sName,"MaxComboNumDigits")
 #define PLAYER_OPTIONS_SEPARATOR			THEME->GetMetric (m_sName,"PlayerOptionsSeparator")
 
@@ -136,13 +136,31 @@ void ScreenEvaluation::Init()
 		g_CurStageStats.UpdateComboList( PLAYER_1, 25, false );
 		g_CurStageStats.iCurCombo[PLAYER_1] = 250;
 		g_CurStageStats.UpdateComboList( PLAYER_1, 100, false );
+		if( rand()%2 )
+		{
+			g_CurStageStats.iCurCombo[PLAYER_1] = rand()%11000;
+			g_CurStageStats.UpdateComboList( PLAYER_1, 110, false );
+		}
+		g_CurStageStats.iCurCombo[PLAYER_2] = 0;
+		g_CurStageStats.UpdateComboList( PLAYER_2, 0, false );
+		g_CurStageStats.iCurCombo[PLAYER_2] = 1;
+		g_CurStageStats.UpdateComboList( PLAYER_2, 1, false );
+		g_CurStageStats.iCurCombo[PLAYER_2] = 50;
+		g_CurStageStats.UpdateComboList( PLAYER_2, 25, false );
+		g_CurStageStats.iCurCombo[PLAYER_2] = 250;
+		g_CurStageStats.UpdateComboList( PLAYER_2, 100, false );
+		if( rand()%2 )
+		{
+			g_CurStageStats.iCurCombo[PLAYER_2] = rand()%11000;
+			g_CurStageStats.UpdateComboList( PLAYER_2, 110, false );
+		}
 
-		g_CurStageStats.iTapNoteScores[PLAYER_1][TNS_MARVELOUS] = rand()%2;
-		g_CurStageStats.iTapNoteScores[PLAYER_1][TNS_PERFECT] = rand()%2;
-		g_CurStageStats.iTapNoteScores[PLAYER_1][TNS_GREAT] = rand()%2;
-		g_CurStageStats.iTapNoteScores[PLAYER_2][TNS_MARVELOUS] = rand()%2;
-		g_CurStageStats.iTapNoteScores[PLAYER_2][TNS_PERFECT] = rand()%2;
-		g_CurStageStats.iTapNoteScores[PLAYER_2][TNS_GREAT] = rand()%2;
+		g_CurStageStats.iTapNoteScores[PLAYER_1][TNS_MARVELOUS] = rand()%3;
+		g_CurStageStats.iTapNoteScores[PLAYER_1][TNS_PERFECT] = rand()%3;
+		g_CurStageStats.iTapNoteScores[PLAYER_1][TNS_GREAT] = rand()%3;
+		g_CurStageStats.iTapNoteScores[PLAYER_2][TNS_MARVELOUS] = rand()%3;
+		g_CurStageStats.iTapNoteScores[PLAYER_2][TNS_PERFECT] = rand()%3;
+		g_CurStageStats.iTapNoteScores[PLAYER_2][TNS_GREAT] = rand()%3;
 
 		g_vPlayedStageStats.clear();
 	}
@@ -625,7 +643,7 @@ void ScreenEvaluation::Init()
 				case boo:		iValue = stageStats.iTapNoteScores[p][TNS_BOO];			break;
 				case miss:		iValue = stageStats.iTapNoteScores[p][TNS_MISS];		break;
 				case ok:		iValue = stageStats.iHoldNoteScores[p][HNS_OK];			break;
-				case max_combo:	iValue = stageStats.iMaxCombo[p];						break;
+				case max_combo:	iValue = stageStats.GetMaxCombo(p).cnt;					break;
 				case error:		iValue = stageStats.iTotalError[p];						break;
 				default:	iValue = 0;	ASSERT(0);
 				}
@@ -635,12 +653,6 @@ void ScreenEvaluation::Init()
 				m_textJudgeNumbers[l][p].SetText( ssprintf("%*d",iNumDigits,iValue) );
 			}
 		}
-	}
-
-	FOREACH_EnabledPlayer( pn )
-	{
-		if( pcaToShow[pn] != PEAK_COMBO_AWARD_INVALID )
-			m_textJudgeNumbers[max_combo][pn].Command( PEAK_COMBO_AWARD_COMMAND );
 	}
 
 	for( l=0; l<NUM_STATS_LINES; l++ ) 
@@ -766,15 +778,23 @@ void ScreenEvaluation::Init()
 			SET_XY_AND_ON_COMMAND( m_sprPersonalRecord[p] );
 			this->AddChild( m_sprPersonalRecord[p] );
 		}
-
 		if( SHOW_PER_DIFFICULTY_AWARD && pdaToShow[p]!=PER_DIFFICULTY_AWARD_INVALID )
 		{
 			CString sAward = PerDifficultyAwardToString( pdaToShow[p] );
 
-			m_PerDifficultyAward[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation award %s",sAward.c_str())) );
+			m_PerDifficultyAward[p].Load( THEME->GetPathG(m_sName,"PerDifficultyAward "+sAward) );
 			m_PerDifficultyAward[p]->SetName( ssprintf("PerDifficultyAwardP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_PerDifficultyAward[p] );
 			this->AddChild( m_PerDifficultyAward[p] );
+		}
+		if( SHOW_PEAK_COMBO_AWARD && pcaToShow[p]!=PEAK_COMBO_AWARD_INVALID )
+		{
+			CString sAward = PeakComboAwardToString( pcaToShow[p] );
+
+			m_PeakComboAward[p].Load( THEME->GetPathG(m_sName,"PeakComboAward "+sAward) );
+			m_PeakComboAward[p]->SetName( ssprintf("PeakComboAwardP%d",p+1) );
+			SET_XY_AND_ON_COMMAND( m_PeakComboAward[p] );
+			this->AddChild( m_PeakComboAward[p] );
 		}
 	}
 
@@ -1306,6 +1326,8 @@ void ScreenEvaluation::TweenOffScreen()
 			OFF_COMMAND( m_sprPersonalRecord[p] );
 			if( m_PerDifficultyAward[p].IsLoaded() )
 				OFF_COMMAND( m_PerDifficultyAward[p] );
+			if( m_PeakComboAward[p].IsLoaded() )
+				OFF_COMMAND( m_PeakComboAward[p] );
 		}
 	}
 	OFF_COMMAND( m_sprTryExtraStage );

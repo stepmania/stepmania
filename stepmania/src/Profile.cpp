@@ -169,12 +169,30 @@ CString Profile::GetDisplayName() const
 		return "NoName";
 }
 
+static CString FormatCalories( float fCals )
+{
+	return Commify((int)fCals) + " Cal";
+}
+
 CString Profile::GetDisplayTotalCaloriesBurned() const
 {
 	if( m_iWeightPounds == 0 )	// weight not entered
 		return "N/A";
 	else 
-		return Commify((int)m_fTotalCaloriesBurned) + " Cal";
+		return FormatCalories( m_fTotalCaloriesBurned );
+}
+
+CString Profile::GetDisplayTotalCaloriesBurnedToday() const
+{
+	time_t now = time(NULL);
+    tm tNow;
+	localtime_r( &now, &tNow );
+	Day today = { tNow.tm_yday, tNow.tm_year+1900 };
+	float fCals = GetCaloriesBurnedForDay(today);
+	if( m_iWeightPounds == 0 )	// weight not entered
+		return "N/A";
+	else 
+		return FormatCalories( m_fTotalCaloriesBurned );
 }
 
 int Profile::GetTotalNumSongsPlayed() const
@@ -193,89 +211,91 @@ int Profile::GetTotalNumSongsPassed() const
 	return iTotal;
 }
 
-int Profile::GetPossibleSongDancePointsForStepsType( StepsType st ) const
+int Profile::GetPossibleSongDancePoints( StepsType st, Difficulty dc ) const
 {
 	int iTotal = 0;
 
 	// add steps high scores
+	const vector<Song*> vSongs = SONGMAN->GetAllSongs();
+	for( unsigned i=0; i<vSongs.size(); i++ )
 	{
-		const vector<Song*> vSongs = SONGMAN->GetAllSongs();
-		for( unsigned i=0; i<vSongs.size(); i++ )
+		Song* pSong = vSongs[i];
+		
+		if( pSong->m_SelectionDisplay == Song::SHOW_NEVER )
+			continue;	// skip
+
+		vector<Steps*> vSteps = pSong->GetAllSteps();
+		for( unsigned j=0; j<vSteps.size(); j++ )
 		{
-			Song* pSong = vSongs[i];
+			Steps* pSteps = vSteps[j];
 			
-			if( pSong->m_SelectionDisplay == Song::SHOW_NEVER )
+			if( pSteps->m_StepsType != st )
 				continue;	// skip
 
-			vector<Steps*> vSteps = pSong->GetAllSteps();
-			for( unsigned j=0; j<vSteps.size(); j++ )
-			{
-				Steps* pSteps = vSteps[j];
-				
-				if( pSteps->m_StepsType != st )
-					continue;	// skip
+			if( pSteps->GetDifficulty() != dc )
+				continue;	// skip
 
-				const RadarValues& fRadars = pSteps->GetRadarValues();
-				iTotal += ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
-			}
+			const RadarValues& fRadars = pSteps->GetRadarValues();
+			iTotal += ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
 		}
 	}
 
 	return iTotal;
 }
 
-int Profile::GetActualSongDancePointsForStepsType( StepsType st ) const
+int Profile::GetActualSongDancePoints( StepsType st, Difficulty dc ) const
 {
 	int iTotal = 0;
 	
 	// add steps high scores
+	for( std::map<SongID,HighScoresForASong>::const_iterator i = m_SongHighScores.begin();
+		i != m_SongHighScores.end();
+		++i )
 	{
-		for( std::map<SongID,HighScoresForASong>::const_iterator i = m_SongHighScores.begin();
-			i != m_SongHighScores.end();
-			++i )
+		const SongID &id = i->first;
+		Song* pSong = id.ToSong();
+		
+		// If the Song isn't loaded on the current machine, then we can't 
+		// get radar values to compute dance points.
+		if( pSong == NULL )
+			continue;
+
+		if( pSong->m_SelectionDisplay == Song::SHOW_NEVER )
+			continue;	// skip
+
+		const HighScoresForASong &hsfas = i->second;
+
+		for( std::map<StepsID,HighScoresForASteps>::const_iterator j = hsfas.m_StepsHighScores.begin();
+			j != hsfas.m_StepsHighScores.end();
+			++j )
 		{
-			const SongID &id = i->first;
-			Song* pSong = id.ToSong();
+			const StepsID &id = j->first;
+			Steps* pSteps = id.ToSteps( pSong, true );
 			
-			// If the Song isn't loaded on the current machine, then we can't 
+			// If the Steps isn't loaded on the current machine, then we can't 
 			// get radar values to compute dance points.
-			if( pSong == NULL )
+			if( pSteps == NULL )
 				continue;
 
-			if( pSong->m_SelectionDisplay == Song::SHOW_NEVER )
+			if( pSteps->m_StepsType != st )
+				continue;
+
+			if( pSteps->GetDifficulty() != dc )
 				continue;	// skip
 
-			const HighScoresForASong &hsfas = i->second;
+			const HighScoresForASteps& h = j->second;
+			const HighScoreList& hs = h.hs;
 
-			for( std::map<StepsID,HighScoresForASteps>::const_iterator j = hsfas.m_StepsHighScores.begin();
-				j != hsfas.m_StepsHighScores.end();
-				++j )
-			{
-				const StepsID &id = j->first;
-				Steps* pSteps = id.ToSteps( pSong, true );
-				
-				// If the Steps isn't loaded on the current machine, then we can't 
-				// get radar values to compute dance points.
-				if( pSteps == NULL )
-					continue;
-
-				if( pSteps->m_StepsType != st )
-					continue;
-
-				const HighScoresForASteps& h = j->second;
-				const HighScoreList& hs = h.hs;
-
-				const RadarValues& fRadars = pSteps->GetRadarValues();
-				int iPossibleDP = ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
-				iTotal += (int)truncf( hs.GetTopScore().fPercentDP * iPossibleDP );
-			}
+			const RadarValues& fRadars = pSteps->GetRadarValues();
+			int iPossibleDP = ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
+			iTotal += (int)truncf( hs.GetTopScore().fPercentDP * iPossibleDP );
 		}
 	}
 
 	return iTotal;
 }
 
-int Profile::GetPossibleCourseDancePointsForStepsType( StepsType st ) const
+int Profile::GetPossibleCourseDancePoints( StepsType st, CourseDifficulty cd ) const
 {
 	int iTotal = 0;
 
@@ -290,82 +310,68 @@ int Profile::GetPossibleCourseDancePointsForStepsType( StepsType st ) const
 		if( !pCourse->AllSongsAreFixed() )
 			continue;
 
-		FOREACH_ShownCourseDifficulty( cd )
-		{
-			Trail* pTrail = pCourse->GetTrail(st,cd);
-			if( pTrail == NULL )
-				continue;
+		Trail* pTrail = pCourse->GetTrail(st,cd);
+		if( pTrail == NULL )
+			continue;
 
-			const RadarValues& fRadars = pTrail->GetRadarValues();
-			iTotal += ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
-		}
+		const RadarValues& fRadars = pTrail->GetRadarValues();
+		iTotal += ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
 	}
 
 	return iTotal;
 }
 
-int Profile::GetActualCourseDancePointsForStepsType( StepsType st ) const
+int Profile::GetActualCourseDancePoints( StepsType st, CourseDifficulty cd ) const
 {
 	int iTotal = 0;
 	
 	// add course high scores
+	for( std::map<CourseID,HighScoresForACourse>::const_iterator i = m_CourseHighScores.begin();
+		i != m_CourseHighScores.end();
+		i++ )
 	{
-		for( std::map<CourseID,HighScoresForACourse>::const_iterator i = m_CourseHighScores.begin();
-			i != m_CourseHighScores.end();
-			i++ )
+		CourseID id = i->first;
+		const Course* pCourse = id.ToCourse();
+		
+		// If the Course isn't loaded on the current machine, then we can't 
+		// get radar values to compute dance points.
+		if( pCourse == NULL )
+			continue;
+		
+		// Don't count any course that has any entries that change over time.
+		if( !pCourse->AllSongsAreFixed() )
+			continue;
+
+		const HighScoresForACourse &hsfac = i->second;
+
+		for( std::map<TrailID,HighScoresForATrail>::const_iterator j = hsfac.m_TrailHighScores.begin();
+			j != hsfac.m_TrailHighScores.end();
+			++j )
 		{
-			CourseID id = i->first;
-			const Course* pCourse = id.ToCourse();
+			const TrailID &id = j->first;
+			Trail* pTrail = id.ToTrail( pCourse, true );
 			
-			// If the Course isn't loaded on the current machine, then we can't 
+			// If the Steps isn't loaded on the current machine, then we can't 
 			// get radar values to compute dance points.
-			if( pCourse == NULL )
-				continue;
-			
-			// Don't count any course that has any entries that change over time.
-			if( !pCourse->AllSongsAreFixed() )
+			if( pTrail == NULL )
 				continue;
 
-			const HighScoresForACourse &hsfac = i->second;
+			if( pTrail->m_StepsType != st )
+				continue;
 
-			for( std::map<TrailID,HighScoresForATrail>::const_iterator j = hsfac.m_TrailHighScores.begin();
-				j != hsfac.m_TrailHighScores.end();
-				++j )
-			{
-				const TrailID &id = j->first;
-				Trail* pTrail = id.ToTrail( pCourse, true );
-				
-				// If the Steps isn't loaded on the current machine, then we can't 
-				// get radar values to compute dance points.
-				if( pTrail == NULL )
-					continue;
+			if( pTrail->m_CourseDifficulty != cd )
+				continue;
 
-				if( pTrail->m_StepsType != st )
-					continue;
+			const HighScoresForATrail& h = j->second;
+			const HighScoreList& hs = h.hs;
 
-				const HighScoresForATrail& h = j->second;
-				const HighScoreList& hs = h.hs;
-
-				const RadarValues& fRadars = pTrail->GetRadarValues();
-				int iPossibleDP = ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
-				iTotal += (int)truncf( hs.GetTopScore().fPercentDP * iPossibleDP );
-			}
+			const RadarValues& fRadars = pTrail->GetRadarValues();
+			int iPossibleDP = ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
+			iTotal += (int)truncf( hs.GetTopScore().fPercentDP * iPossibleDP );
 		}
 	}
 
 	return iTotal;
-}
-
-float Profile::GetPercentCompleteForStepsType( StepsType st ) const
-{
-	int iPossible = 
-		GetPossibleSongDancePointsForStepsType( st ) +
-		GetPossibleCourseDancePointsForStepsType( st );
-	int iActual = 
-		GetActualSongDancePointsForStepsType( st ) +
-		GetActualCourseDancePointsForStepsType( st );
-
-	return float(iActual) / iPossible;
 }
 
 CString Profile::GetProfileDisplayNameFromDir( CString sDir )
