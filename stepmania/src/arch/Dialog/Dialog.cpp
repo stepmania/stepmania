@@ -19,6 +19,7 @@
 static DialogDriver *g_pImpl = NULL;
 static DialogDriverNull g_pNullDriver;
 static bool g_bWindowed = false;
+static bool g_bIsShowingDialog = false;
 
 void Dialog::Init()
 {
@@ -57,6 +58,11 @@ void Dialog::Shutdown()
 {
 	delete g_pImpl;
 	g_pImpl = NULL;
+}
+
+bool Dialog::IsShowingDialog()
+{
+	return g_bIsShowingDialog;
 }
 
 static bool MessageIsIgnored( CString ID )
@@ -100,7 +106,11 @@ void Dialog::Error( CString sMessage, CString ID )
 	if( ID != "" && MessageIsIgnored( ID ) )
 		return;
 
+	g_bIsShowingDialog = true;
+	
 	g_pImpl->Error( sMessage, ID );
+	
+	g_bIsShowingDialog = false;
 }
 
 void Dialog::SetWindowed( bool bWindowed )
@@ -115,11 +125,15 @@ void Dialog::OK( CString sMessage, CString ID )
 	if( ID != "" && MessageIsIgnored( ID ) )
 		return;
 
+	g_bIsShowingDialog = true;
+	
 	// only show Dialog if windowed
 	if( !g_bWindowed )
 		g_pNullDriver.OK( sMessage, ID );
 	else
 		g_pImpl->OK( sMessage, ID );	// call derived version
+	
+	g_bIsShowingDialog = false;
 }
 
 Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString ID )
@@ -129,11 +143,15 @@ Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString ID )
 	if( ID != "" && MessageIsIgnored( ID ) )
 		return g_pNullDriver.AbortRetryIgnore( sMessage, ID );
 
+	g_bIsShowingDialog = true;
+	
 	// only show Dialog if windowed
 	if( !g_bWindowed )
 		return g_pNullDriver.AbortRetryIgnore( sMessage, ID );
 	else
 		return g_pImpl->AbortRetryIgnore( sMessage, ID );	// call derived version
+	
+	g_bIsShowingDialog = false;
 }
 
 Dialog::Result Dialog::RetryCancel( CString sMessage, CString ID )
@@ -143,11 +161,15 @@ Dialog::Result Dialog::RetryCancel( CString sMessage, CString ID )
 	if( ID != "" && MessageIsIgnored( ID ) )
 		return g_pNullDriver.RetryCancel( sMessage, ID );
 
+	g_bIsShowingDialog = true;
+
 	// only show Dialog if windowed
 	if( !g_bWindowed )
 		return g_pNullDriver.RetryCancel( sMessage, ID );
 	else
 		return g_pImpl->RetryCancel( sMessage, ID );	// call derived version
+	
+	g_bIsShowingDialog = false;
 }
 
 /*

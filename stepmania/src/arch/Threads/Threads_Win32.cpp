@@ -188,12 +188,14 @@ void SemaImpl_Win32::Post()
 
 bool SemaImpl_Win32::Wait()
 {
-	int len = 15000;
+	int len = 60000;
 	int tries = 2;
 
 	while( tries-- )
 	{
-		/* Wait for fifteen seconds.  If it takes longer than that, we're probably deadlocked. */
+		/* Wait for 60 seconds.  In debug builds, some screens may take longer 
+		 * than 15 seconds to load.  If it takes longer than that, we're 
+		 * probably deadlocked. */
 		if( SimpleWaitForSingleObject( sem, len ) )
 		{
 			--m_iCounter;
