@@ -609,8 +609,10 @@ void RageDisplay::GetProjectionTransform( D3DXMATRIX* pMatrixOut )
 
 void RageDisplay::ResetMatrixStack() 
 { 
-	m_MatrixStack.SetSize( 1, 20 );
-	D3DXMatrixIdentity( &GetTopMatrix() );
+	D3DXMATRIX ident;
+	D3DXMatrixIdentity( &ident );
+	m_MatrixStack.clear();
+	m_MatrixStack.push_back(ident);
 }
 
 void RageDisplay::PushMatrix() 

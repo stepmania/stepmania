@@ -471,7 +471,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			case SORT_MOST_PLAYED:
 				SortSongPointerArrayByMostPlayed( arraySongs );
 				if( arraySongs.GetSize() > 30 )
-					arraySongs.SetSize( 30 );
+					arraySongs.erase(arraySongs.begin()+30, arraySongs.end());
 				break;
 			default:
 				ASSERT(0);	// unhandled SortOrder
@@ -480,9 +480,9 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 
 
 			///////////////////////////////////
-			// Build an array of WheelItemDatas from the sorted list of Song*s
+			// Build an array of WheelItemDatas from the sorted list of Song*'s
 			///////////////////////////////////
-			arrayWheelItemDatas.SetSize( 0, 300 );	// clear out the previous wheel items and set large capacity jumps
+			arrayWheelItemDatas.clear();	// clear out the previous wheel items 
 
 			bool bUseSections = false;
 			switch( so )
