@@ -5,6 +5,9 @@
 #include "RageException.h"
 #include "MsdFile.h"
 #include "RageLog.h"
+#include "RageUtil.h"
+#include "NoteData.h"
+#include "NoteTypes.h"
 
 bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 {

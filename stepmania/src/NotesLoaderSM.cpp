@@ -5,6 +5,7 @@
 #include "RageException.h"
 #include "MsdFile.h"
 #include "RageLog.h"
+#include "RageUtil.h"
 
 void SMLoader::LoadFromSMTokens( 
 	CString sNotesType, 

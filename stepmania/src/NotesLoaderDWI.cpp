@@ -5,6 +5,8 @@
 #include "RageLog.h"
 #include "RageException.h"
 #include "MsdFile.h"
+#include "RageUtil.h"
+#include "NoteData.h"
 
 #include <map>
 using namespace std;
