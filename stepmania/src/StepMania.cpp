@@ -803,10 +803,6 @@ static void MountTreeOfZips( const CString &dir )
 	}
 }
 
-#ifdef _XBOX
-char *xboxargv[] = { "d:\\default.xbe" };
-#endif
-
 #if defined(HAVE_VERSION_INFO)
 extern unsigned long version_num;
 extern const char *version_time;
