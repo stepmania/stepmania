@@ -568,20 +568,32 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 {
 	if( m_bChosen[pn] )
 		return 0;
+
+	bool bAnyChosen = false;
+	FOREACH_PlayerNumber( p )
+		bAnyChosen |= m_bChosen[p];
+
 	m_bChosen[pn] = true;
+
+	bool bIsFirstToChoose = bAnyChosen;
 
 	float fSecs = 0;
 
-	for( int page=0; page<NUM_PAGES; page++ )
+	if( bIsFirstToChoose )
 	{
-		OFF_COMMAND( m_sprMore[page] );
-		fSecs = max( fSecs, m_sprMore[page]->GetTweenTimeLeft() );
-	}
+		for( int page=0; page<NUM_PAGES; page++ )
+		{
+			OFF_COMMAND( m_sprMore[page] );
+			fSecs = max( fSecs, m_sprMore[page]->GetTweenTimeLeft() );
+		}
 
-	for( int i=0; i<NUM_CURSOR_PARTS; i++ )
-	{
-		COMMAND( m_sprCursor[i][pn], "Choose");
-		fSecs = max( fSecs, m_sprCursor[i][pn]->GetTweenTimeLeft() );
+		int iIndex = SHARED_PREVIEW_AND_CURSOR ? 0 : pn;
+
+		for( int i=0; i<NUM_CURSOR_PARTS; i++ )
+		{
+			COMMAND( m_sprCursor[i][pn], "Choose");
+			fSecs = max( fSecs, m_sprCursor[i][iIndex]->GetTweenTimeLeft() );
+		}
 	}
 
 	return fSecs;
@@ -589,6 +601,13 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 
 void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 {
+	// If the player isn't already joined, try to join them.
+	// Allow a player to join even if input is locked or someone has already already chosen.
+	MenuInput MenuI;
+	MenuI.player = pn;
+	MenuI.button = MENU_BUTTON_START;
+	Screen::JoinInput( MenuI );
+
 	if( m_fLockInputSecs > 0 )
 		return;
 	if( m_bChosen[pn] )
@@ -607,21 +626,15 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 		return;
 	}
 
-	// If the player isn't already joined, join them.
-	MenuInput MenuI;
-	MenuI.player = pn;
-	MenuI.button = MENU_BUTTON_START;
-	Screen::JoinInput( MenuI );
-
-
 	float fSecs = 0;
 	bool bAllDone = true;
 	if( (bool)SHARED_PREVIEW_AND_CURSOR || GetCurrentPage() == PAGE_2 )
 	{
 		/* Only one player has to pick.  Choose this for all the other players, too. */
-		FOREACH_HumanPlayer( p )
+		FOREACH_PlayerNumber( p )
 		{
-			fSecs = max( fSecs, DoMenuStart(p) );
+			ASSERT( !m_bChosen[p] );
+			fSecs = max( fSecs, DoMenuStart(p) );	// no harm in calling this for an unjoined player
 		}
 	}
 	else
