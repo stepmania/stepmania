@@ -70,6 +70,7 @@ protected:
 	unsigned m_uHashForCurThemeBaseLanguage;
 	unsigned m_uHashForBaseThemeBaseLanguage;
 	RageTimer m_ReloadTimer;
+	RageTimer m_ThemePathCacheTimer;
 };
 
 extern ThemeManager*	THEME;	// global and accessable from anywhere in our program

@@ -45,6 +45,9 @@ const CString ELEMENT_CATEGORY_STRING[NUM_ELEMENT_CATEGORIES] =
 	"Other"
 };
 
+/* We spend a lot of time doing redundant theme path lookups.  Cache results. */
+static map<CString, CString> g_ThemePathCache[NUM_ELEMENT_CATEGORIES];
+
 ThemeManager::ThemeManager()
 {
 	m_pIniMetrics = new IniFile;
@@ -228,6 +231,7 @@ try_element_again:
 	if( asElementPaths.size() > 1 )
 	{
 		FlushDirCache();
+		g_ThemePathCache[category].clear();
 
 		CString message = ssprintf( 
 			"ThemeManager:  There is more than one theme element element that matches "
@@ -298,6 +302,22 @@ try_element_again:
 
 CString ThemeManager::GetPathTo( ElementCategory category, CString sFileName, bool bOptional ) 
 {
+	if ( m_ThemePathCacheTimer.PeekDeltaTime() >= 5 )
+	{
+		m_ThemePathCacheTimer.GetDeltaTime();
+		for( int i = 0; i < NUM_ELEMENT_CATEGORIES; ++i )
+			g_ThemePathCache[i].clear();
+	}
+
+	map<CString, CString> &Cache = g_ThemePathCache[category];
+	{
+		map<CString, CString>::const_iterator i;
+		
+		i = Cache.find( sFileName );
+		if( i != Cache.end() )
+			return i->second;
+	}
+	
 	// TODO: Use HOOKS->MessageBox()
 #if defined(DEBUG) && defined(WIN32)
 try_element_again:
@@ -305,13 +325,22 @@ try_element_again:
 
 	CString ret = GetPathTo( m_sCurThemeName, category, sFileName);
 	if( !ret.empty() )	// we found something
+	{
+		Cache[sFileName] = ret;
 		return ret;
+	}
 
 	ret = GetPathTo( BASE_THEME_NAME, category, sFileName);
 	if( !ret.empty() )	// we found something
+	{
+		Cache[sFileName] = ret;
 		return ret;
+	}
 	else if( bOptional )
+	{
+		Cache[sFileName] = "";
 		return "";
+	}
 
 	CString sCategory = ELEMENT_CATEGORY_STRING[category];
 
@@ -321,6 +350,8 @@ try_element_again:
 	{
 	case IDRETRY:
 		FlushDirCache();
+		g_ThemePathCache[category].clear();
+
 		goto try_element_again;
 	case IDCANCEL:
 		RageException::Throw( "Theme element '%s" SLASH "%s' could not be found in '%s' or '%s'.", 
@@ -342,7 +373,9 @@ try_element_again:
 	/* Err? */
 	if(sFileName == "_missing")
 		RageException::Throw("'_missing' isn't present in '%s%s'", GetThemeDirFromName(BASE_THEME_NAME).c_str(), sCategory.c_str() );
-	return GetPathTo( category, "_missing" );
+
+	Cache[sFileName] = GetPathTo( category, "_missing" );
+	return Cache[sFileName];
 }
 
 
