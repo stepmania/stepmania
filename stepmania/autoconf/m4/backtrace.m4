@@ -75,6 +75,7 @@ AC_DEFUN(SM_CHECK_CRASH_HANDLER,
     AC_MSG_CHECKING(for crash handler components)
     if test "$have_backtrace" = "yes" -a "$have_symbol_lookup" = "yes"; then
 	    use_crash_handler=yes
+	    AC_DEFINE([CRASH_HANDLER],1,[Define if using crash handler])
 	    AC_MSG_RESULT(ok)
     else
 	    AC_MSG_RESULT(incomplete; crash handler will not be used)
