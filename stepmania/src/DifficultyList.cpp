@@ -285,8 +285,6 @@ void DifficultyList::SetFromGameState()
 			// DIFFICULTIES_TO_SHOW.
 			CStringArray asDiff;
 			split( DIFFICULTIES_TO_SHOW, ",", asDiff );
-			//Difficulty mind = (Difficulty)(NUM_DIFFICULTIES-1);
-			//Difficulty maxd = (Difficulty)0;
 			for( unsigned i=0; i<asDiff.size(); i++ )
 			{
 				Difficulty d = StringToDifficulty( asDiff[i] );
