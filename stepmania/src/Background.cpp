@@ -36,14 +36,8 @@ const float FADE_SECONDS = 1.0f;
 
 const CString STATIC_BACKGROUND = "static background";
 const int MAX_RANDOM_BACKGROUNDS = 4;
-const CString RANDOM_BACKGROUND[MAX_RANDOM_BACKGROUNDS] = 
-{
-	"__random1",
-	"__random2",
-	"__random3",
-	"__random4",
-};
 
+CString RandomBackground(int num) { return ssprintf("__random%i", num); }
 
 Background::Background()
 {
@@ -242,7 +236,7 @@ void Background::LoadFromSong( Song* pSong )
 	{
 		for( int i=0; i<MAX_RANDOM_BACKGROUNDS; i++ )
 		{
-			CString sBGName = RANDOM_BACKGROUND[ i ];
+			CString sBGName = RandomBackground(i);
 			BGAnimation *pTempBGA = CreateRandomBGA();
 			if( pTempBGA )
 			{
@@ -273,7 +267,7 @@ void Background::LoadFromSong( Song* pSong )
 					m_BGAnimations[sBGName] = pTempBGA;
 				else // the background was not found.  Use a random one instead
 					if( bLoadedAnyRandomBackgrounds )
-						sBGName = RANDOM_BACKGROUND[ rand()%MAX_RANDOM_BACKGROUNDS ];
+						sBGName = RandomBackground( rand()%MAX_RANDOM_BACKGROUNDS );
 					else
 						sBGName = STATIC_BACKGROUND;
 			}
@@ -295,7 +289,7 @@ void Background::LoadFromSong( Song* pSong )
 		{
 			if( bLoadedAnyRandomBackgrounds )
 			{
-				CString sBGName = RANDOM_BACKGROUND[ ctr ];
+				CString sBGName = RandomBackground( ctr );
 				bool bFade = PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_RANDOMMOVIES || 
 					PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_MOVIEVIS;
 				m_aBGChanges.push_back( BackgroundChange(f,sBGName,1.f,bFade) );
@@ -316,7 +310,7 @@ void Background::LoadFromSong( Song* pSong )
 
 			if( bLoadedAnyRandomBackgrounds )
 			{
-				CString sBGName = RANDOM_BACKGROUND[ rand()%MAX_RANDOM_BACKGROUNDS ];
+				CString sBGName = RandomBackground( rand()%MAX_RANDOM_BACKGROUNDS );
 				m_aBGChanges.push_back( BackgroundChange(bpmseg.m_fStartBeat,sBGName) );
 			}
 		}
