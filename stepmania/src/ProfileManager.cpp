@@ -65,33 +65,6 @@ static const char *MEM_CARD_DIR[NUM_PLAYERS] =
 };
 
 
-CString Profile::GetDisplayName()
-{
-	if( !m_sName.empty() )
-		return m_sName;
-	else if( !m_sLastUsedHighScoreName.empty() )
-		return m_sLastUsedHighScoreName;
-	else
-		return "NO NAME";
-}
-
-CString Profile::GetDisplayCaloriesBurned()
-{
-	if( m_fWeightPounds == 0 )	// weight not entered
-		return "N/A";
-	else 
-		return ssprintf("%iCal",m_fCaloriesBurned);
-}
-
-int Profile::GetTotalNumSongsPlayed()
-{
-	int iTotal = 0;
-	for( int i=0; i<NUM_PLAY_MODES; i++ )
-		iTotal += m_iNumSongsPlayedByPlayMode[i];
-	return iTotal;
-}
-
-
 ProfileManager::ProfileManager()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
