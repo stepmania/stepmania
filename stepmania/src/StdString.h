@@ -1063,9 +1063,9 @@ inline void	ssadd(std::wstring& sDst, PCWSTR pW)
 //  builds we can't use _vsnprintf/_vsnwsprintf because they're MS extensions.
 // -----------------------------------------------------------------------------
 #ifdef SS_ANSI
-	inline int ssvsprintf(PSTR pA, size_t /*nCount*/, PCSTR pFmtA, va_list vl)
+	inline int ssvsprintf(PSTR pA, size_t nCount, PCSTR pFmtA, va_list vl)
 	{
-		return vsprintf(pA, pFmtA, vl);
+		return vsnprintf(pA, nCount, pFmtA, vl);
 	}
 	inline int ssvsprintf(PWSTR pW, size_t nCount, PCWSTR pFmtW, va_list vl)
 	{
@@ -1670,10 +1670,33 @@ public:
 	void FormatV(const CT* szFormat, va_list argList)
 	{
 	#ifdef SS_ANSI
+		int nChars			= FMT_BLOCK_SIZE;
+		int nTry			= 1;
+		
+		do	
+		{
+			// Grow more than linearly (e.g. 512, 1536, 3072, etc)
+			char *buf = GetBuffer(nChars);
+			int nUsed = ssvsprintf(buf, nChars-1, szFormat, argList);
 
-		int nLen	= sslen(szFormat) + STD_BUF_SIZE;
-		ssvsprintf(GetBuffer(nLen), nLen-1, szFormat, argList);
-		ReleaseBuffer();
+			/* -1 means "not enough, try harder"; > nChars is telling us how
+			 * much. */
+			if(nUsed > nChars) {
+				nChars = nUsed + 1;
+				ReleaseBuffer();
+				continue;
+			}
+
+			if(nUsed == -1) {
+				nChars += ((nTry+1) * FMT_BLOCK_SIZE);
+				ReleaseBuffer();
+				continue;
+			}
+
+			/* OK */
+			ReleaseBuffer(nUsed);
+			break;
+		} while ( nTry++ < MAX_FMT_TRIES );
 
 	#else
 
