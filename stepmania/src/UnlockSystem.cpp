@@ -15,7 +15,6 @@
 #include "RageLog.h"
 #include "song.h"
 #include "Course.h"
-#include "RageException.h"
 #include "RageUtil.h"
 #include "UnlockSystem.h"
 #include "SongManager.h"
