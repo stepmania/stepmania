@@ -46,10 +46,22 @@ enum PixelFormat {
 	FMT_PAL,
 	NUM_PIX_FORMATS
 };
+inline CString PixelFormatToString( PixelFormat pixfmt )
+{
+	const CString s[NUM_PIX_FORMATS] = {
+		"FMT_RGBA8",
+		"FMT_RGBA4",
+		"FMT_RGB5A1",
+		"FMT_RGB5",
+		"FMT_RGB8",
+		"FMT_PAL" };
+	return s[pixfmt];
+};
 struct PixelFormatDesc {
 	int bpp;
 	unsigned int masks[4];
 };
+/* This is info is different for OGL and D3D. */
 extern const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS];
 
 class RageDisplay

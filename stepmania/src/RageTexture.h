@@ -93,10 +93,14 @@ public:
 	static void GetFrameDimensionsFromFileName( CString sPath, int* puFramesWide, int* puFramesHigh );
 	static int GetFrameCountFromFileName( CString sPath );
 
-protected:
+	const RageTextureID& GetID() { return m_ID; }
+
+private:
 	/* We might change settings when loading (due to hints, hardware
 	 * limitations, etc).  The data actually loaded is here: */
 	RageTextureID m_ID;
+
+protected:
 
 	int		m_iSourceWidth,		m_iSourceHeight;	// dimensions of the original image loaded from disk
 	int		m_iTextureWidth,	m_iTextureHeight;	// dimensions of the texture in memory

@@ -78,6 +78,8 @@ void RageBitmapTexture::Reload()
  */
 void RageBitmapTexture::Create()
 {
+	RageTextureID actualID = GetID();
+
 	/* Create (and return) a surface ready to be loaded to OpenGL */
 	/* Load the image into an SDL surface. */
 	SDL_Surface *img = IMG_Load(GetFilePath());
@@ -87,7 +89,7 @@ void RageBitmapTexture::Create()
 	if(img == NULL)
 		RageException::Throw( "RageBitmapTexture: Couldn't load %s: %s", GetFilePath().c_str(), SDL_GetError() );
 
-	if(m_ID.bHotPinkColorKey)
+	if(actualID.bHotPinkColorKey)
 	{
 		/* Annoying: SDL will do a nearest-match on paletted images if
 		 * they don't have the color we ask for, so images without HOT PINK
@@ -112,46 +114,43 @@ void RageBitmapTexture::Create()
 		 * TRAIT_NO_TRANSPARENCY if the color key is never used. */
 		int traits = FindSurfaceTraits(img);
 		if(traits & TRAIT_NO_TRANSPARENCY) 
-			m_ID.iAlphaBits = 0;
+			actualID.iAlphaBits = 0;
 		else if(traits & TRAIT_BOOL_TRANSPARENCY) 
-			m_ID.iAlphaBits = 1;
+			actualID.iAlphaBits = 1;
 		if(traits & TRAIT_WHITE_ONLY) 
-			m_ID.iTransparencyOnly = 8;
+			actualID.iTransparencyOnly = 8;
 	}
 
 	// look in the file name for a format hints
 	CString HintString = GetFilePath();
 	HintString.MakeLower();
 
-	if( HintString.Find("4alphaonly") != -1 )		m_ID.iTransparencyOnly = 4;
-	else if( HintString.Find("8alphaonly") != -1 )	m_ID.iTransparencyOnly = 8;
-	if( HintString.Find("dither") != -1 )			m_ID.bDither = true;
+	if( HintString.Find("4alphaonly") != -1 )		actualID.iTransparencyOnly = 4;
+	else if( HintString.Find("8alphaonly") != -1 )	actualID.iTransparencyOnly = 8;
+	if( HintString.Find("dither") != -1 )			actualID.bDither = true;
 
-	if( m_ID.iTransparencyOnly )
-		m_ID.iColorDepth = 32;	/* Treat the image as 32-bit, so we don't lose any alpha precision. */
+	if( actualID.iTransparencyOnly )
+		actualID.iColorDepth = 32;	/* Treat the image as 32-bit, so we don't lose any alpha precision. */
 
 	/* Cap the max texture size to the hardware max. */
-	m_ID.iMaxSize = min( m_ID.iMaxSize, DISPLAY->GetMaxTextureSize() );
+	actualID.iMaxSize = min( actualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
 
 	/* Save information about the source. */
 	m_iSourceWidth = img->w;
 	m_iSourceHeight = img->h;
 
-	/* See if the apparent "size" is being overridden. */
-	GetResolutionFromFileName(m_ID.filename, m_iSourceWidth, m_iSourceHeight);
-
 	/* image size cannot exceed max size */
-	m_iImageWidth = min( m_iSourceWidth, m_ID.iMaxSize );
-	m_iImageHeight = min( m_iSourceHeight, m_ID.iMaxSize );
+	m_iImageWidth = min( m_iSourceWidth, actualID.iMaxSize );
+	m_iImageHeight = min( m_iSourceHeight, actualID.iMaxSize );
 
 	/* Texture dimensions need to be a power of two; jump to the next. */
 	m_iTextureWidth = power_of_two(m_iImageWidth);
 	m_iTextureHeight = power_of_two(m_iImageHeight);
 
-	ASSERT( m_iTextureWidth <= m_ID.iMaxSize );
-	ASSERT( m_iTextureHeight <= m_ID.iMaxSize );
+	ASSERT( m_iTextureWidth <= actualID.iMaxSize );
+	ASSERT( m_iTextureHeight <= actualID.iMaxSize );
 
-	if(m_ID.bStretch)
+	if(actualID.bStretch)
 	{
 		/* The hints asked for the image to be stretched to the texture size,
 		 * probably for tiling. */
@@ -169,8 +168,6 @@ void RageBitmapTexture::Create()
 	// Format of the image that we will pass to OpenGL and that we want OpenGL to use
 	PixelFormat pixfmt;
 
-	SDL_SaveBMP( img, "testing.bmp" );
-
 	/* Figure out which texture format to use. */
 	// if the source is palleted, load palleted no matter what the prefs
 	if(img->format->BitsPerPixel == 8 && DISPLAY->SupportsTextureFormat(FMT_PAL))
@@ -180,7 +177,7 @@ void RageBitmapTexture::Create()
 	else
 	{
 		// not paletted
-		switch( m_ID.iColorDepth )
+		switch( actualID.iColorDepth )
 		{
 		case 16:
 			{
@@ -196,7 +193,7 @@ void RageBitmapTexture::Create()
 					src_alpha_bits = max( 1, src_alpha_bits );
 
 				/* Don't use more than we were hinted to. */
-				src_alpha_bits = min( m_ID.iAlphaBits, src_alpha_bits );
+				src_alpha_bits = min( actualID.iAlphaBits, src_alpha_bits );
 
 				switch( src_alpha_bits ) {
 				case 0:
@@ -213,7 +210,7 @@ void RageBitmapTexture::Create()
 			pixfmt = FMT_RGBA8;
 			break;
 		default:
-			RageException::Throw( "Invalid color depth: %d bits", m_ID.iColorDepth );
+			RageException::Throw( "Invalid color depth: %d bits", actualID.iColorDepth );
 		}
 
 		/* Override the internalformat with an alpha format if it was requested. 
@@ -221,7 +218,7 @@ void RageBitmapTexture::Create()
 		 * images are as small or smaller (and the load will fail). */
 		/* SDL surfaces don't allow for 8 bpp surfaces that aren't paletted.  Arg! 
 		 * fix this later. -Chris */
-//		if(m_ID.iTransparencyOnly > 0)
+//		if(actualID.iTransparencyOnly > 0)
 //		{
 //			imagePixfmt = FMT_ALPHA8;
 //			texturePixfmt = FMT_ALPHA8;
@@ -229,7 +226,7 @@ void RageBitmapTexture::Create()
 
 		/* It's either not a paletted image, or we can't handle paletted textures.
 		 * Convert to the desired RGBA format, dithering if appropriate. */
-		if( m_ID.bDither && 
+		if( actualID.bDither && 
 			(pixfmt==FMT_RGBA4 || pixfmt==FMT_RGB5A1) )	/* Don't dither if format is 32bpp; there's no point. */
 		{
 			/* Dither down to the destination format. */
@@ -243,14 +240,10 @@ void RageBitmapTexture::Create()
 		}
 	}
 
-	SDL_SaveBMP( img, "testing.bmp" );
-
 	/* This needs to be done *after* the final resize, since that resize
 	 * may introduce new alpha bits that need to be set.  It needs to be
 	 * done *before* we set up the palette, since it might change it. */
 	FixHiddenAlpha(img);
-
-	SDL_SaveBMP( img, "testing.bmp" );
 
 	/* Convert the data to the destination format and dimensions 
 	 * required by OpenGL if it's not in it already.  */
@@ -258,37 +251,28 @@ void RageBitmapTexture::Create()
 		PIXEL_FORMAT_DESC[pixfmt].masks[0], PIXEL_FORMAT_DESC[pixfmt].masks[1],
 		PIXEL_FORMAT_DESC[pixfmt].masks[2], PIXEL_FORMAT_DESC[pixfmt].masks[3]);
 	
-	SDL_SaveBMP( img, "testing.bmp" );
-
 	m_uTexHandle = DISPLAY->CreateTexture( pixfmt, img );
 
 	SDL_FreeSurface( img );
 
 	CreateFrameRects();
 
-/*
+	/* See if the apparent "size" is being overridden. */
+	GetResolutionFromFileName(actualID.filename, m_iSourceWidth, m_iSourceHeight);
+
+
 	CString props = " ";
-	switch( pixfmt )
-	{
-	case FMT_RGBA4:		props += "FMT_RGBA4 ";	break;
-	case FMT_RGBA8:		props += "FMT_RGBA8 ";	break;
-	case FMT_RGB5A1:	props += "FMT_RGB5A1 ";	break;
-	case FMT_ALPHA8:	props += "FMT_ALPHA8 ";	break;
-	case FMT_PAL:		props += "FMT_PAL ";	break;
-	default:	ASSERT(0);	break;
-	}
-	if(m_ID.iAlphaBits == 0) props += "opaque ";
-	if(m_ID.iAlphaBits == 1) props += "matte ";
-	if(m_ID.iTransparencyOnly) props += "mask ";
-	if(m_ID.bStretch) props += "stretch ";
-	if(m_ID.bDither) props += "dither ";
-	if(IsPackedPixelFormat(pixfmt)) props += "paletted ";
+	props += PixelFormatToString( pixfmt );
+	if(actualID.iAlphaBits == 0) props += "opaque ";
+	if(actualID.iAlphaBits == 1) props += "matte ";
+	if(actualID.iTransparencyOnly) props += "mask ";
+	if(actualID.bStretch) props += "stretch ";
+	if(actualID.bDither) props += "dither ";
 	props.erase(props.size()-1);
 	LOG->Trace( "RageBitmapTexture: Loaded '%s' (%ux%u); %s, source %d,%d;  image %d,%d.", 
-		m_ID.filename.c_str(), GetTextureWidth(), GetTextureHeight(),
+		actualID.filename.c_str(), GetTextureWidth(), GetTextureHeight(),
 		props.c_str(), m_iSourceWidth, m_iSourceHeight,
 		m_iImageWidth,	m_iImageHeight);
-*/
 }
 
 void RageBitmapTexture::Destroy()

@@ -194,9 +194,11 @@ void PrintCodecError(HRESULT hr, CString s)
 
 void MovieTexture_DShow::Create()
 {
+	RageTextureID actualID = GetID();
+
     HRESULT hr;
     
-	m_ID.iAlphaBits = 0;
+	actualID.iAlphaBits = 0;
 
     if( FAILED( hr=CoInitialize(NULL) ) )
         RageException::Throw( hr_ssprintf(hr, "Could not CoInitialize") );
@@ -217,7 +219,7 @@ void MovieTexture_DShow::Create()
     // Add the source filter
     CComPtr<IBaseFilter>    pFSrc;          // Source Filter
     WCHAR wFileName[MAX_PATH];
-	MultiByteToWideChar(CP_ACP, 0, m_ID.filename.c_str(), -1, wFileName, MAX_PATH);
+	MultiByteToWideChar(CP_ACP, 0, actualID.filename.c_str(), -1, wFileName, MAX_PATH);
 
 	// if this fails, it's probably because the user doesn't have DivX installed
     if( FAILED( hr = m_pGB->AddSourceFilter( wFileName, L"SOURCE", &pFSrc ) ) )
@@ -246,7 +248,7 @@ void MovieTexture_DShow::Create()
 	pCTR->SetRenderTarget(this);
 
 	/* Cap the max texture size to the hardware max. */
-	m_ID.iMaxSize = min( m_ID.iMaxSize, DISPLAY->GetMaxTextureSize() );
+	actualID.iMaxSize = min( actualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
 
     // The graph is built, now get the set the output video width and height.
 	// The source and image width will always be the same since we can't scale the video
@@ -254,8 +256,8 @@ void MovieTexture_DShow::Create()
 	m_iSourceHeight = pCTR->GetVidHeight();
 
 	/* image size cannot exceed max size */
-	m_iImageWidth = min( m_iSourceWidth, m_ID.iMaxSize );
-	m_iImageHeight = min( m_iSourceHeight, m_ID.iMaxSize );
+	m_iImageWidth = min( m_iSourceWidth, actualID.iMaxSize );
+	m_iImageHeight = min( m_iSourceHeight, actualID.iMaxSize );
 
 	/* Texture dimensions need to be a power of two; jump to the next. */
 	m_iTextureWidth = power_of_two(m_iImageWidth);
