@@ -638,11 +638,14 @@ void ScreenManager::PopTopScreen( ScreenMessage SM )
 
 	/* Post to the new top.  This must be done now; otherwise, we'll have a single
 	 * frame between popping and these messages, which can result in a frame where eg.
-	 * input is accepted where it shouldn't be. */
+	 * input is accepted where it shouldn't be.  Watch out; sending m_MessageSendOnPop
+	 * might push another screen (eg. editor menu -> PlayerOptions), which will set
+	 * a new m_MessageSendOnPop. */
+	ScreenMessage MessageToSend = m_MessageSendOnPop;
+	m_MessageSendOnPop = SM_None;
 	SendMessageToTopScreen( SM );
 	SendMessageToTopScreen( SM_GainFocus );
-	SendMessageToTopScreen( m_MessageSendOnPop );
-	m_MessageSendOnPop = SM_None;
+	SendMessageToTopScreen( MessageToSend );
 }
 
 void ScreenManager::PostMessageToTopScreen( ScreenMessage SM, float fDelay )
