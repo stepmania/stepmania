@@ -303,13 +303,16 @@ RageSound_Generic_Software::RageSound_Generic_Software()
 
 RageSound_Generic_Software::~RageSound_Generic_Software()
 {
-	/* Signal the mixing thread to quit. */
-	shutdown_decode_thread = true;
-	LOG->Trace("Shutting down decode thread ...");
-	LOG->Flush();
-	m_DecodeThread.Wait();
-	LOG->Trace("Decode thread shut down.");
-	LOG->Flush();
+	/* Signal the decoding thread to quit. */
+	if( m_DecodeThread.IsCreated() )
+	{
+		shutdown_decode_thread = true;
+		LOG->Trace("Shutting down decode thread ...");
+		LOG->Flush();
+		m_DecodeThread.Wait();
+		LOG->Trace("Decode thread shut down.");
+		LOG->Flush();
+	}
 }
 
 /*
