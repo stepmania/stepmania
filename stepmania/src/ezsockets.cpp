@@ -389,6 +389,33 @@ ostream& operator<<(ostream &os, EzSockets &obj)
 	return os;
 }
 
+EzSockets& EzSockets::operator=(const EzSockets &socket)
+{
+	if (this == &socket) {
+		return *this;
+	}
+	else
+	{
+		blocking = socket.blocking;
+		fromAddr = socket.fromAddr;
+		fromAddr_len = socket.fromAddr_len;
+		string inBuffer = socket.inBuffer;
+		outBuffer = socket.outBuffer;
+		state = socket.state;
+		lastCode = socket.lastCode;	//Used for debugging purposes
+		MAXCON = socket.MAXCON;
+		sock = socket.sock;
+		addr = socket.addr;
+		if (scks == NULL)
+			scks = new fd_set;
+		*scks = *socket.scks;
+		if (scks == NULL)
+			times = new timeval;
+		*times = *socket.times;
+		return *this;
+	}
+}
+
 
 /**************************\
 |   Internal Data System   |

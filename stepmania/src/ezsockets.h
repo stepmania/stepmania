@@ -93,6 +93,7 @@ public:
 	char operator[] (int i); //Access buffer
 	friend istream& operator>>(istream& is, EzSockets& obj);
 	friend ostream& operator<<(ostream& os, const EzSockets& obj);
+	EzSockets& operator=(const EzSockets &socket);
 
 
 	bool blocking;
