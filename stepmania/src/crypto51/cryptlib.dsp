@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="cryptlib" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 60000
+# Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Static Library" 0x0104
@@ -139,143 +139,11 @@ SOURCE=.\algebra.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\algparam.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\asn.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\basecode.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\channels.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\cryptlib.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\des.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\dessp.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\eprecomp.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\files.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\filters.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\fips140.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\hex.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\integer.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\iterhash.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\md5.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\misc.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\modes.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\mqueue.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\nbtheory.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\oaep.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\osrng.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\pkcspad.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\polynomi.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\pssr.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\pubkey.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\queue.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\randpool.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\rsa.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\sha.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\strciphr.cpp
-# End Source File
-# End Group
-# Begin Group "Header Files"
-
-# PROP Default_Filter ".;.h"
-# Begin Source File
-
-SOURCE=.\3way.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\adler32.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\aes.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\algebra.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\algparam.cpp
 # End Source File
 # Begin Source File
 
@@ -283,11 +151,11 @@ SOURCE=.\algparam.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\arc4.h
+SOURCE=.\argnames.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\argnames.h
+SOURCE=.\asn.cpp
 # End Source File
 # Begin Source File
 
@@ -295,39 +163,7 @@ SOURCE=.\asn.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\base64.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\basecode.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\blowfish.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\blumshub.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\cast.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\cbcmac.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\channels.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\config.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\crc.h
+SOURCE=.\cryptlib.cpp
 # End Source File
 # Begin Source File
 
@@ -335,55 +171,7 @@ SOURCE=.\cryptlib.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\default.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\des.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\dh.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\dh2.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\diamond.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\dmac.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\dsa.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ec2n.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\eccrypto.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ecp.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\elgamal.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\eprecomp.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\esign.h
+SOURCE=.\files.cpp
 # End Source File
 # Begin Source File
 
@@ -391,11 +179,11 @@ SOURCE=.\files.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\filters.h
+SOURCE=.\filters.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\fips140.h
+SOURCE=.\filters.h
 # End Source File
 # Begin Source File
 
@@ -403,51 +191,7 @@ SOURCE=.\fltrimpl.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\gf256.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\gf2_32.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\gf2n.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\gfpcrypt.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\gost.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\gzip.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\haval.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\hex.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\hmac.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\hrtimer.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ida.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\idea.h
+SOURCE=.\integer.cpp
 # End Source File
 # Begin Source File
 
@@ -455,39 +199,19 @@ SOURCE=.\integer.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\iterhash.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\iterhash.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\lubyrack.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\luc.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\mars.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\md2.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\md4.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\md5.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\md5mac.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\mdc.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc.cpp
 # End Source File
 # Begin Source File
 
@@ -499,11 +223,15 @@ SOURCE=.\modarith.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\modes.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\modes.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\modexppc.h
+SOURCE=.\mqueue.cpp
 # End Source File
 # Begin Source File
 
@@ -511,7 +239,7 @@ SOURCE=.\mqueue.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\mqv.h
+SOURCE=.\nbtheory.cpp
 # End Source File
 # Begin Source File
 
@@ -519,11 +247,7 @@ SOURCE=.\nbtheory.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\network.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\nr.h
+SOURCE=.\oaep.cpp
 # End Source File
 # Begin Source File
 
@@ -535,11 +259,11 @@ SOURCE=.\oids.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\osrng.h
+SOURCE=.\osrng.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\panama.h
+SOURCE=.\osrng.h
 # End Source File
 # Begin Source File
 
@@ -547,15 +271,15 @@ SOURCE=.\pch.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\pkcspad.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\pkcspad.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\polynomi.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\pssr.h
+SOURCE=.\pubkey.cpp
 # End Source File
 # Begin Source File
 
@@ -563,7 +287,7 @@ SOURCE=.\pubkey.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\pwdbased.h
+SOURCE=.\queue.cpp
 # End Source File
 # Begin Source File
 
@@ -571,7 +295,7 @@ SOURCE=.\queue.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\rabin.h
+SOURCE=.\randpool.cpp
 # End Source File
 # Begin Source File
 
@@ -579,43 +303,15 @@ SOURCE=.\randpool.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\rc2.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\rc5.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\rc6.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\rijndael.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ripemd.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\rng.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\rsa.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\rsa.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\rw.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\safer.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\seal.h
 # End Source File
 # Begin Source File
 
@@ -627,7 +323,7 @@ SOURCE=.\seckey.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\serpent.h
+SOURCE=.\sha.cpp
 # End Source File
 # Begin Source File
 
@@ -635,15 +331,7 @@ SOURCE=.\sha.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\shark.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\simple.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\skipjack.h
 # End Source File
 # Begin Source File
 
@@ -651,11 +339,7 @@ SOURCE=.\smartptr.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\socketft.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\square.h
+SOURCE=.\strciphr.cpp
 # End Source File
 # Begin Source File
 
@@ -663,63 +347,7 @@ SOURCE=.\strciphr.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\tea.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\tiger.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\trdlocal.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\trunhash.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\twofish.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\wait.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\wake.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\winpipes.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\words.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\xormac.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\xtr.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\xtrcrypt.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zdeflate.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zinflate.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib.h
 # End Source File
 # End Group
 # Begin Group "Miscellaneous"
