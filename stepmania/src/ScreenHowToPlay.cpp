@@ -35,9 +35,19 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	pND->SetTapNote( 0, ROWS_PER_BEAT*24, TAP_TAP );
 	pND->SetTapNote( 3, ROWS_PER_BEAT*24, TAP_TAP );
 	pND->SetTapNote( 0, ROWS_PER_BEAT*28, TAP_TAP );
+	pND->AddHoldNote( HoldNote(2, 32, 35) );
+	pND->AddHoldNote( HoldNote(0, 36, 39) );
+	pND->AddHoldNote( HoldNote(3, 36, 39) );
+	pND->AddHoldNote( HoldNote(2, 40, 43) );
+	pND->SetTapNote( 0, ROWS_PER_BEAT*44,    TAP_TAP );
+	pND->SetTapNote( 1, (int)(ROWS_PER_BEAT*44.5f), TAP_TAP );
+	pND->SetTapNote( 2, ROWS_PER_BEAT*45,    TAP_TAP );
+	pND->SetTapNote( 3, (int)(ROWS_PER_BEAT*45.5f), TAP_TAP );
+	pND->SetTapNote( 0, ROWS_PER_BEAT*46,    TAP_TAP );
+	pND->SetTapNote( 2, ROWS_PER_BEAT*46,    TAP_TAP );
 
 	m_pSong = new Song;
-	m_pSong->AddBPMSegment( BPMSegment(0,120) );
+	m_pSong->AddBPMSegment( BPMSegment(0,60) );
 	m_pSong->AddStopSegment( StopSegment(12,2) );
 	m_pSong->AddStopSegment( StopSegment(16,2) );
 	m_pSong->AddStopSegment( StopSegment(20,2) );
