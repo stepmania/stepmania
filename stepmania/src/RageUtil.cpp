@@ -102,6 +102,21 @@ CString hr_ssprintf( int hr, const char *fmt, ...)
 
 	return s += ssprintf( "(%s)", DXGetErrorString8(hr) );
 }
+
+CString werr_ssprintf( int err, const char *fmt, ...)
+{
+	char buf[1024];
+	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
+		0, err, 0, buf, sizeof(buf), NULL);
+
+    va_list	va;
+    va_start(va, fmt);
+    CString s = vssprintf( fmt, va );
+    va_end(va);
+
+	return s += ssprintf( "(%s)", buf );
+}
+
 #endif
 
 CString join( const CString &Deliminator, const CStringArray& Source)
