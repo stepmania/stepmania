@@ -134,16 +134,16 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 			//cause these things not to work right
 			//and will sometimes cause a crash.
 			//We should make SURE we won't crash!
-			if ( i >= NSMAN->m_EvalPlayerData.size() )
+			if ( size_t(i) >= NSMAN->m_EvalPlayerData.size() )
 				break;
 
-			if ( NSMAN->m_EvalPlayerData[i].name >= NSMAN->m_PlayerNames.size() )
+			if ( size_t(NSMAN->m_EvalPlayerData[i].name) >= NSMAN->m_PlayerNames.size() )
 				break;
 
 			if ( NSMAN->m_EvalPlayerData[i].name < 0 )
 				break;
 
-			if ( i >= m_textUsers.size() )
+			if ( size_t(i) >= m_textUsers.size() )
 				break;
 
 			m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_EvalPlayerData[i].name] );
