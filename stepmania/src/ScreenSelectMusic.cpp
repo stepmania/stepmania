@@ -528,6 +528,8 @@ void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
 	AfterNotesChange( pn );
 }
 
+/* Adjust game options.  These settings may be overridden again later by the
+ * SongOptions menu. */
 void ScreenSelectMusic::AdjustOptions()
 {
 	/* Find the easiest difficulty notes selected by either player. */

@@ -250,6 +250,17 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
 }
 
+/* Adjust game options.  These settings may be overridden again later by the
+ * SongOptions menu. */
+void ScreenSelectCourse::AdjustOptions()
+{
+	if(GAMESTATE->m_pCurCourse->m_iLives != -1)
+	{
+		/* oni */
+		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LifeType::LIFE_BATTERY;
+		GAMESTATE->m_SongOptions.m_iBatteryLives = GAMESTATE->m_pCurCourse->m_iLives;
+	}
+}
 
 void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 {
@@ -331,6 +342,7 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 		GAMESTATE->m_SongOptions.FromString( sModifiers );
 
 		m_Menu.StopTimer();
+		AdjustOptions();
 
 		this->SendScreenMessage( SM_GoToNextScreen, 2.5f );
 		

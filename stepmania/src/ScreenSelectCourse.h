@@ -38,8 +38,8 @@ public:
 	void MenuBack( PlayerNumber pn );
 
 protected:
+	void AdjustOptions();
 	void AfterCourseChange();
-
 	void UpdateOptionsDisplays();
 
 	MenuElements		m_Menu;
