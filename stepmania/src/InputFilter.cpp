@@ -22,8 +22,8 @@ InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our p
 
 InputFilter::InputFilter()
 {
-	Reset();
 	queuemutex = new RageMutex;
+	Reset();
 }
 
 InputFilter::~InputFilter()
