@@ -465,9 +465,9 @@ float PlayerOptions::GetReversePercentForColumn( int iCol )
 	return f;
 }
 
-bool ComparePlayerOptions( const PlayerOptions &po1, const PlayerOptions &po2 )
+bool PlayerOptions::operator==( const PlayerOptions &other )
 {
-#define COMPARE(x) { if( po1.x != po2.x ) return false; }
+#define COMPARE(x) { if( x != other.x ) return false; }
 	COMPARE(m_bTimeSpacing);
 	COMPARE(m_fScrollSpeed);
 	COMPARE(m_fScrollBPM);
@@ -492,6 +492,5 @@ bool ComparePlayerOptions( const PlayerOptions &po1, const PlayerOptions &po2 )
 	for( i = 0; i < PlayerOptions::NUM_TRANSFORMS; ++i )
 		COMPARE(m_bTransforms[i]);
 #undef COMPARE
-
 	return true;
 }

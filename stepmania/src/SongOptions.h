@@ -29,6 +29,9 @@ struct SongOptions
 	void Init();
 	CString GetString() const;
 	void FromString( CString sOptions );
+
+	bool operator==( const SongOptions &other );
+	bool operator!=( const SongOptions &other ) { return !operator==(other); }
 };
 
 #endif

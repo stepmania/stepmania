@@ -20,6 +20,9 @@ struct PlayerOptions
 	void FromString( CString sOptions );
 	void ChooseRandomMofifiers();
 
+	bool operator==( const PlayerOptions &other );
+	bool operator!=( const PlayerOptions &other ) { return !operator==(other); }
+
 
 	enum Accel {
 		ACCEL_BOOST,

@@ -28,7 +28,6 @@ void ModeChoice::Init()
 	m_bInvalid = true;
 }
 
-bool ComparePlayerOptions( const PlayerOptions &po1, const PlayerOptions &po2 );
 bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
 
 bool ModeChoice::DescribesCurrentModeForAllPlayers() const
@@ -66,14 +65,9 @@ bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 		po.FromString( m_sModifiers );
 		so.FromString( m_sModifiers );
 
-		/* Did anything change? */
-		bool Changed = false;
-		if( !ComparePlayerOptions(po, GAMESTATE->m_PlayerOptions[pn]) )
-			Changed = true;
-		if( !CompareSongOptions(so, GAMESTATE->m_SongOptions) )
-			Changed = true;
-
-		if( Changed )
+		if( po != GAMESTATE->m_PlayerOptions[pn] )
+			return false;
+		if( so != GAMESTATE->m_SongOptions )
 			return false;
 	}
 
