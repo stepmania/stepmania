@@ -295,33 +295,24 @@ void Player::DrawPrimitives()
 {
 	m_frameCombo.Draw();	// draw this below everything else
 
-	RageMatrix matOldView, matOldProj;
+	RageMatrix matOldProj;
 
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bEffects[PlayerOptions::EFFECT_SPACE] )
 	{
-		// save old view and projection
+		DISPLAY->PushMatrix();
+		DISPLAY->EnterPerspective(45, false);
 
-// TODO:  Re-add this code		
-//		DISPLAY->GetViewTransform( &matOldView );
-//		DISPLAY->GetProjectionTransform( &matOldProj );
-//
-//		// construct view and project matrix
-//		RageMatrix matNewView;
-//		RageVector3 Eye, At, Up( 0.0f, -1.0f, 0.0f );
-//		if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bReverseScroll ) {
-//			Eye = RageVector3( CENTER_X, GetY()-300.0f, 400.0f );
-//			At = RageVector3( CENTER_X, GetY()+100.0f, 0.0f );
-//		} else {
-//			Eye = RageVector3( CENTER_X, GetY()+800.0f, 400.0f );
-//			At = RageVector3( CENTER_X, GetY()+400.0f, 0.0f );
-//		}
-//		RageMatrixLookAtLH( &matNewView, &Eye, &At, &Up );
-//
-//		DISPLAY->SetViewTransform( &matNewView );
-//
-//		RageMatrix matNewProj;
-//		RageMatrixPerspectiveFovLH( &matNewProj, PI/4.0f, SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.0f, 1000.0f );
-//		DISPLAY->SetProjectionTransform( &matNewProj );
+		// construct view and project matrix
+		RageVector3 Eye, At, Up( 0.0f, 1.0f, 0.0f );
+		if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bReverseScroll ) {
+			Eye = RageVector3( CENTER_X, -300.0f, 400.0f );
+			At = RageVector3( CENTER_X, 100.0f, 0.0f );
+		} else {
+			Eye = RageVector3( CENTER_X, 800, 400 );
+			At = RageVector3( CENTER_X, 400, 0.0f );
+		}
+
+		DISPLAY->LookAt(Eye, At, Up);
 	}
 
 	m_GrayArrowRow.Draw();
@@ -330,10 +321,8 @@ void Player::DrawPrimitives()
 
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bEffects[PlayerOptions::EFFECT_SPACE] )
 	{
-// TODO:  Re-add this code		
-//		// restire old view and projection
-//		DISPLAY->SetViewTransform( &matOldView );
-//		DISPLAY->SetProjectionTransform( &matOldProj );
+		DISPLAY->ExitPerspective();
+		DISPLAY->PopMatrix();
 	}
 
 	m_frameJudgement.Draw();
