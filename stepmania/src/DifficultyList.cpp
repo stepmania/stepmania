@@ -11,10 +11,11 @@
 #include "ThemeManager.h"
 #include "StepsUtil.h"
 
-#define ITEMS_SPACING_Y							THEME->GetMetricF(m_sName,"ItemsSpacingY")
-#define DESCRIPTION_MAX_WIDTH					THEME->GetMetricF(m_sName,"DescriptionMaxWidth")
-#define NUM_SHOWN_ITEMS							THEME->GetMetricI(m_sName,"NumShownItems")
-#define MOVE_COMMAND							THEME->GetMetric (m_sName,"MoveCommand")
+#define ITEMS_SPACING_Y				THEME->GetMetricF(m_sName,"ItemsSpacingY")
+#define DESCRIPTION_MAX_WIDTH		THEME->GetMetricF(m_sName,"DescriptionMaxWidth")
+#define NUM_SHOWN_ITEMS				THEME->GetMetricI(m_sName,"NumShownItems")
+#define MOVE_COMMAND				THEME->GetMetric (m_sName,"MoveCommand")
+#define DIFFICULTIES_TO_SHOW		THEME->GetMetric( "Common","DifficultiesToShow" )
 
 #define MAX_METERS NUM_DIFFICULTIES + MAX_EDITS_PER_SONG
 
@@ -269,51 +270,72 @@ void DifficultyList::SetFromGameState()
 	if( bSongChanged )
 	{
 		m_CurSong = song;
-		if( !song )
-			return;
 
 		for( int m = 0; m < MAX_METERS; ++m )
 		{
 			m_Lines[m].m_Meter.Unset();
-			m_Lines[m].m_Description.SetText( "" );
 			m_Lines[m].m_Number.SetText( "" );
+			m_Lines[m].m_Description.SetText( "" );
 		}
 
-		vector<Steps*>	CurSteps;
-		song->GetSteps( CurSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
-
-		/* Should match the sort in ScreenSelectMusic::AfterMusicChange. */
-		StepsUtil::SortNotesArrayByDifficulty( CurSteps );
-
-		unsigned i;
-		for( i = 0; i < m_Rows.size(); ++i )
-			delete m_Rows[i];
-		m_Rows.clear();
-
-		for( i = 0; i < CurSteps.size(); ++i )
+		if( song == NULL )
 		{
-			m_Rows.push_back( new Row() );
-			Row &row = *m_Rows[i];
+			// FIXME: This clamps to between the min and the max difficulty, but
+			// it really should round to the nearest difficulty that's in 
+			// DIFFICULTIES_TO_SHOW.
+			CStringArray asDiff;
+			split( DIFFICULTIES_TO_SHOW, ",", asDiff );
+			Difficulty mind = (Difficulty)(NUM_DIFFICULTIES-1);
+			Difficulty maxd = (Difficulty)0;
+			for( unsigned i=0; i<asDiff.size(); i++ )
+			{
+				Difficulty d = StringToDifficulty( asDiff[i] );
+				if( d == DIFFICULTY_INVALID )
+					continue;
 
-			row.m_Steps = CurSteps[i];
+				m_Lines[i].m_Meter.SetMeter( 3*(d), d );
+				m_Lines[i].m_Number.SetText( "?" );
+				m_Lines[i].m_Description.SetText( DifficultyToThemedString(d) );
+			}
+		}
+		else
+		{
+			vector<Steps*>	CurSteps;
+			song->GetSteps( CurSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 
-			m_Lines[i].m_Meter.SetFromNotes( m_Rows[i]->m_Steps );
+			/* Should match the sort in ScreenSelectMusic::AfterMusicChange. */
+			StepsUtil::SortNotesArrayByDifficulty( CurSteps );
 
-			Difficulty dc = row.m_Steps->GetDifficulty();
-			
-			CString s;
-			if( row.m_Steps->GetDifficulty() == DIFFICULTY_EDIT )
-				s = row.m_Steps->GetDescription();
-			else
-				s = DifficultyToThemedString(dc);
-			m_Lines[i].m_Description.SetMaxWidth( DESCRIPTION_MAX_WIDTH );
-			m_Lines[i].m_Description.SetText( s );
-			/* Don't mess with alpha; it might be fading on. */
-			m_Lines[i].m_Description.SetDiffuseColor( SONGMAN->GetDifficultyColor(dc) );
-			
-			m_Lines[i].m_Number.SetZoomX(1);
-			m_Lines[i].m_Number.SetDiffuseColor( SONGMAN->GetDifficultyColor(dc) );
-			m_Lines[i].m_Number.SetText( ssprintf("%d",row.m_Steps->GetMeter()) );
+			unsigned i;
+			for( i = 0; i < m_Rows.size(); ++i )
+				delete m_Rows[i];
+			m_Rows.clear();
+
+			for( i = 0; i < CurSteps.size(); ++i )
+			{
+				m_Rows.push_back( new Row() );
+				Row &row = *m_Rows[i];
+
+				row.m_Steps = CurSteps[i];
+
+				m_Lines[i].m_Meter.SetFromNotes( m_Rows[i]->m_Steps );
+
+				Difficulty dc = row.m_Steps->GetDifficulty();
+				
+				CString s;
+				if( row.m_Steps->GetDifficulty() == DIFFICULTY_EDIT )
+					s = row.m_Steps->GetDescription();
+				else
+					s = DifficultyToThemedString(dc);
+				m_Lines[i].m_Description.SetMaxWidth( DESCRIPTION_MAX_WIDTH );
+				m_Lines[i].m_Description.SetText( s );
+				/* Don't mess with alpha; it might be fading on. */
+				m_Lines[i].m_Description.SetDiffuseColor( SONGMAN->GetDifficultyColor(dc) );
+				
+				m_Lines[i].m_Number.SetZoomX(1);
+				m_Lines[i].m_Number.SetDiffuseColor( SONGMAN->GetDifficultyColor(dc) );
+				m_Lines[i].m_Number.SetText( ssprintf("%d",row.m_Steps->GetMeter()) );
+			}
 		}
 	}
 

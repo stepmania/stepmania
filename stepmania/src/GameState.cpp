@@ -41,7 +41,8 @@
 
 #include <ctime>
 
-#define DEFAULT_MODIFIERS THEME->GetMetric( "Common","DefaultModifiers" )
+#define DEFAULT_MODIFIERS		THEME->GetMetric( "Common","DefaultModifiers" )
+#define DIFFICULTIES_TO_SHOW	THEME->GetMetric( "Common","DifficultiesToShow" )
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
 
@@ -1575,6 +1576,38 @@ bool GameState::IsTimeToPlayAttractSounds()
 		return true;
 
 	return false;
+}
+
+bool GameState::ChangeDifficulty( PlayerNumber pn, int dir )
+{
+	// FIXME: This clamps to between the min and the max difficulty, but
+	// it really should round to the nearest difficulty that's in 
+	// DIFFICULTIES_TO_SHOW.
+	CStringArray asDiff;
+	split( DIFFICULTIES_TO_SHOW, ",", asDiff );
+	Difficulty mind = (Difficulty)(NUM_DIFFICULTIES-1);
+	Difficulty maxd = (Difficulty)0;
+	for( unsigned i=0; i<asDiff.size(); i++ )
+	{
+		Difficulty d = StringToDifficulty( asDiff[i] );
+		if( d == DIFFICULTY_INVALID )
+			continue;
+
+		mind = min( mind, d );
+		maxd = max( maxd, d );
+	}
+
+	Difficulty diff = (Difficulty)(m_PreferredDifficulty[pn]+dir);
+	if( diff < mind || diff > maxd )
+		return false;
+
+	this->m_PreferredDifficulty[pn] = diff;
+	bool bLockDifficulties = m_PlayMode == PLAY_MODE_RAVE;
+	if( bLockDifficulties )
+		for( int p = 0; p < NUM_PLAYERS; ++p )
+			m_PreferredDifficulty[p] = m_PreferredDifficulty[pn];
+
+	return true;
 }
 
 bool GameState::ChangeCourseDifficulty( PlayerNumber pn, int dir )

@@ -82,7 +82,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
-	m_bInCourseDisplayMode = GAMESTATE->IsCourseMode();
+	m_DisplayMode = GAMESTATE->IsCourseMode() ? DISPLAY_COURSES : DISPLAY_SONGS;
 
 	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. 
 	 * Do this before anything that might look at GAMESTATE->m_iCurrentStageIndex. */
@@ -593,24 +593,37 @@ void ScreenSelectMusic::TweenOffScreen()
 
 /* This hides elements that are only relevant when displaying a single song,
  * and shows elements for course display.  XXX: Allow different tween commands. */
-void ScreenSelectMusic::EnterCourseDisplayMode()
+void ScreenSelectMusic::SwitchDisplayMode( DisplayMode dm )
 {
-	if( m_bInCourseDisplayMode )
+	if( m_DisplayMode == dm )
 		return;
-	m_bInCourseDisplayMode = true;
 
-	TweenSongPartsOffScreen( false );
-	TweenCoursePartsOnScreen( false );
-}
+	// tween off
+	switch( m_DisplayMode )
+	{
+	case DISPLAY_SONGS:
+		TweenSongPartsOffScreen( false );
+		break;
+	case DISPLAY_COURSES:
+		TweenCoursePartsOffScreen( false );
+		break;
+	case DISPLAY_MODES:
+		break;
+	}
 
-void ScreenSelectMusic::ExitCourseDisplayMode()
-{
-	if( !m_bInCourseDisplayMode )
-		return;
-	m_bInCourseDisplayMode = false;
-
-	TweenSongPartsOnScreen( false );
-	TweenCoursePartsOffScreen( false );
+	// tween on
+	m_DisplayMode = dm;
+	switch( m_DisplayMode )
+	{
+	case DISPLAY_SONGS:
+		TweenSongPartsOnScreen( false );
+		break;
+	case DISPLAY_COURSES:
+		TweenCoursePartsOnScreen( false );
+		break;
+	case DISPLAY_MODES:
+		break;
+	}
 }
 
 void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
@@ -629,14 +642,14 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 	case SORT_NONSTOP_COURSES:
 	case SORT_ONI_COURSES:
 	case SORT_ENDLESS_COURSES:
-		EnterCourseDisplayMode();
+		SwitchDisplayMode( DISPLAY_COURSES );
 		break;
 	case SORT_SORT_MENU:
 	case SORT_MODE_MENU:
-		// do nothing
+		SwitchDisplayMode( DISPLAY_MODES );
 		break;
 	default:
-		ExitCourseDisplayMode();
+		SwitchDisplayMode( DISPLAY_SONGS );
 		break;
 	}
 }
@@ -877,31 +890,39 @@ void ScreenSelectMusic::EasierDifficulty( PlayerNumber pn )
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 
-	if( m_MusicWheel.GetSelectedType() == TYPE_COURSE )
+	switch( m_MusicWheel.GetSelectedType() )
 	{
+	case TYPE_SONG:
+		if( m_iSelection[pn] == 0 )
+			return;
+
+		m_iSelection[pn]--;
+		// the user explicity switched difficulties.  Update the preferred difficulty
+		GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[ m_iSelection[pn] ]->GetDifficulty();
+
+		m_soundDifficultyEasier.Play();
+
+		AfterNotesChange( pn );
+		break;
+
+	case TYPE_COURSE:
 		if( GAMESTATE->ChangeCourseDifficulty( pn, -1 ) )
 		{
 			m_soundDifficultyEasier.Play();
 			AfterMusicChange();
 		}
-		return;
+		break;
+
+	case TYPE_RANDOM:
+	case TYPE_ROULETTE:
+	case TYPE_LEAP:
+		if( GAMESTATE->ChangeDifficulty( pn, -1 ) )
+		{
+			m_soundDifficultyEasier.Play();
+			AfterMusicChange();
+		}
+		break;
 	}
-
-	if( m_MusicWheel.GetSelectedType() != TYPE_SONG )
-		return;
-
-	if( m_MusicWheel.GetSelectedType() != TYPE_SONG )
-		return;
-	if( m_iSelection[pn] == 0 )
-		return;
-
-	m_iSelection[pn]--;
-	// the user explicity switched difficulties.  Update the preferred difficulty
-	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[ m_iSelection[pn] ]->GetDifficulty();
-
-	m_soundDifficultyEasier.Play();
-
-	AfterNotesChange( pn );
 }
 
 void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
@@ -911,29 +932,39 @@ void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 
-	if( m_MusicWheel.GetSelectedType() == TYPE_COURSE )
+	switch( m_MusicWheel.GetSelectedType() )
 	{
+	case TYPE_SONG:
+		if( m_iSelection[pn] == int(m_arrayNotes.size()-1) )
+			return;
+
+		m_iSelection[pn]++;
+		// the user explicity switched difficulties.  Update the preferred difficulty
+		GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[ m_iSelection[pn] ]->GetDifficulty();
+
+		m_soundDifficultyHarder.Play();
+
+		AfterNotesChange( pn );
+		break;
+
+	case TYPE_COURSE:
 		if( GAMESTATE->ChangeCourseDifficulty( pn, +1 ) )
 		{
 			m_soundDifficultyHarder.Play();
 			AfterMusicChange();
 		}
-		return;
+		break;
+
+	case TYPE_RANDOM:
+	case TYPE_ROULETTE:
+	case TYPE_LEAP:
+		if( GAMESTATE->ChangeDifficulty( pn, +1 ) )
+		{
+			m_soundDifficultyHarder.Play();
+			AfterMusicChange();
+		}
+		break;
 	}
-
-	if( m_MusicWheel.GetSelectedType() != TYPE_SONG )
-		return;
-
-	if( m_iSelection[pn] == int(m_arrayNotes.size()-1) )
-		return;
-
-	m_iSelection[pn]++;
-	// the user explicity switched difficulties.  Update the preferred difficulty
-	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[ m_iSelection[pn] ]->GetDifficulty();
-
-	m_soundDifficultyHarder.Play();
-
-	AfterNotesChange( pn );
 }
 
 
@@ -1241,8 +1272,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_MenuTimer->Stall();
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
-	if( pSong )
-		GAMESTATE->m_pCurSong = pSong;
+	GAMESTATE->m_pCurSong = pSong;
 
 	m_GrooveGraph.SetFromSong( pSong );
 

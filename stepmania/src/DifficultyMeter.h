@@ -31,9 +31,9 @@ public:
 	void SetFromNotes( const Steps* pNotes );
 	void SetFromCourse( const Course* pCourse, PlayerNumber pn );
 	void Unset();
+	void SetMeter( int iMeter, Difficulty dc );
 
 private:
-	void SetMeter( int iMeter, Difficulty dc );
 	void SetDifficulty( CString diff );
 	BitmapText		m_textFeet;
 
