@@ -72,7 +72,7 @@ PrefsManager::PrefsManager()
 	m_bShowTranslations = true;
 	m_bArcadeOptionsNavigation = false;
 	m_bDDRExtremeDifficultySelect = false;
-	m_bSoloSingle = true;
+	m_bSoloSingle = false;	// OFF!!!!
 	m_iUnloadTextureDelaySeconds = 0; // disabled 60*30;	// 30 mins
 	m_bCoinOpMode = false;
 	m_MusicWheelUsesSections = ALWAYS;
