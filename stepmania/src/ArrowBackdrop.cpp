@@ -6,11 +6,11 @@
 void ArrowBackdrop::BeginDraw()
 {
 	BGAnimation::BeginDraw();
-	GAMESTATE->m_Position->BeginDrawBackdrop(m_PlayerNumber);
+	g_NoteFieldMode[m_PlayerNumber].BeginDrawTrack(-1);
 }
 
 void ArrowBackdrop::EndDraw()
 {
-	GAMESTATE->m_Position->EndDrawBackdrop(m_PlayerNumber);
+	g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(-1);
 	BGAnimation::EndDraw();
 }

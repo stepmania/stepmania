@@ -346,7 +346,7 @@ void NoteField::DrawPrimitives()
 
 	for( int c=0; c<GetNumTracks(); c++ )	// for each arrow column
 	{
-		GAMESTATE->m_Position->BeginDrawTrack(m_PlayerNumber, c);
+		g_NoteFieldMode[m_PlayerNumber].BeginDrawTrack(c);
 
 		/////////////////////////////////
 		// Draw all HoldNotes in this column (so that they appear under the tap notes)
@@ -414,7 +414,7 @@ void NoteField::DrawPrimitives()
 			m_NoteDisplay[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail );
 		}
 
-		GAMESTATE->m_Position->EndDrawTrack(m_PlayerNumber, c);
+		g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(c);
 	}
 
 }

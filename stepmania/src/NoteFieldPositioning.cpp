@@ -13,14 +13,19 @@
 #include "Style.h"
 #include "GameDef.h"
 
+/* Copies of the current mode.  Update this by calling Load. */
+NoteFieldMode g_NoteFieldMode[NUM_PLAYERS];
 
-NoteFieldPositioning::Mode::Mode()
+NoteFieldMode::NoteFieldMode()
 {
 	m_fFov = 0;
+	m_fFirstPixelToDrawScale = m_fLastPixelToDrawScale = 1.0f;
 }
 
-void NoteFieldPositioning::Mode::BeginDrawTrack(int tn)
+void NoteFieldMode::BeginDrawTrack(int tn)
 {
+	DISPLAY->PushMatrix();
+
 	/* It's useful to be able to use Actors like this, functioning only
 	 * for a transformation.  However, this is a big waste of matrix
 	 * stack space, as each of these will push.  Profile this. XXX */
@@ -38,7 +43,7 @@ void NoteFieldPositioning::Mode::BeginDrawTrack(int tn)
 		m_PositionTrack[tn].BeginDraw();
 }
 
-void NoteFieldPositioning::Mode::EndDrawTrack(int tn)
+void NoteFieldMode::EndDrawTrack(int tn)
 {
 	if(tn == -1)
 		m_PositionBackdrop.EndDraw();
@@ -52,6 +57,8 @@ void NoteFieldPositioning::Mode::EndDrawTrack(int tn)
 	if(tn != -1)
 		m_CenterTrack[tn].EndDraw();
 	m_Center.EndDraw();
+
+	DISPLAY->PopMatrix();
 }
 
 NoteFieldPositioning::NoteFieldPositioning(CString fn)
@@ -62,7 +69,7 @@ NoteFieldPositioning::NoteFieldPositioning(CString fn)
 
 	for(IniFile::const_iterator i = ini.begin(); i != ini.end(); ++i)
 	{
-		Mode m;
+		NoteFieldMode m;
 
 		const IniFile::key &k = i->second;
 		IniFile::key::const_iterator val;
@@ -126,7 +133,7 @@ NoteFieldPositioning::NoteFieldPositioning(CString fn)
 	}
 }
 
-bool NoteFieldPositioning::Mode::MatchesCurrentGame() const
+bool NoteFieldMode::MatchesCurrentGame() const
 {
 	if(Styles.empty())
 		return true;
@@ -135,6 +142,31 @@ bool NoteFieldPositioning::Mode::MatchesCurrentGame() const
 		return false;
 
 	return true;
+}
+
+void NoteFieldPositioning::Load(PlayerNumber pn)
+{
+	NoteFieldMode &mode = g_NoteFieldMode[pn];
+	const int ModeNum = GetID(GAMESTATE->m_PlayerOptions[pn].m_sPositioning);
+	if(ModeNum != -1)
+	{
+		/* We have a custom mode; copy it. */
+		mode = Modes[ModeNum];
+		return;
+	}
+
+	/* No transformation is enabled, so use the one defined in the style
+		* table. */
+	mode = NoteFieldMode(); /* reset */
+
+	const StyleDef *s = GAMESTATE->GetCurrentStyleDef();
+
+	/* Set the m_PositionTrack[] value for each track. */
+	for(int tn = 0; tn < MAX_NOTE_TRACKS; ++tn)
+	{
+		const float fPixelXOffsetFromCenter = s->m_ColumnInfo[pn][tn].fXOffset;
+		mode.m_PositionTrack[tn].SetX(fPixelXOffsetFromCenter);
+	}
 }
 
 
@@ -156,11 +188,6 @@ int NoteFieldPositioning::GetID(const CString &name) const
 	return -1;
 }
 
-int NoteFieldPositioning::GetID(PlayerNumber pn) const
-{
-	return GetID(GAMESTATE->m_PlayerOptions[pn].m_sPositioning);
-}
-
 
 /* Get all arrow modifier names for the current game. */
 void NoteFieldPositioning::GetNamesForCurrentGame(vector<CString> &IDs)
@@ -173,62 +200,4 @@ void NoteFieldPositioning::GetNamesForCurrentGame(vector<CString> &IDs)
 		
 		IDs.push_back(Modes[i].name);
 	}
-}
-
-/* XXX: Lots of GetID calls, which do a bunch of string compares; profile this. */
-CString NoteFieldPositioning::GetBackdropBGA(PlayerNumber pn) const
-{
-	const int mode = GetID(pn);
-	if(mode == -1)
-		return ""; /* none */
-	LOG->Trace("bd %s", Modes[mode].Backdrop.c_str() );
-	return Modes[mode].Backdrop;
-}
-
-void NoteFieldPositioning::BeginDrawBackdrop(PlayerNumber pn)
-{
-	const int mode = GetID(pn);
-	if(mode == -1)
-		return;
-
-	DISPLAY->PushMatrix();
-	Modes[mode].BeginDrawTrack(-1);
-}
-
-void NoteFieldPositioning::EndDrawBackdrop(PlayerNumber pn)
-{
-	const int mode = GetID(pn);
-	if(mode == -1)
-		return;
-
-	Modes[mode].EndDrawTrack(-1);
-	DISPLAY->PopMatrix();
-}
-
-void NoteFieldPositioning::BeginDrawTrack(PlayerNumber pn, int tn)
-{
-	const int mode = GetID(pn);
-
-	DISPLAY->PushMatrix();
-
-	if(mode == -1)
-	{
-		/* No transformation is enabled, so use the one defined in the style
-		 * table. */
-		const StyleDef *s = GAMESTATE->GetCurrentStyleDef();
-		const float fPixelXOffsetFromCenter = s->m_ColumnInfo[pn][tn].fXOffset;
-		DISPLAY->Translate(fPixelXOffsetFromCenter, 0, 0);
-	} else {
-		Modes[mode].BeginDrawTrack(tn);
-	}
-}
-
-void NoteFieldPositioning::EndDrawTrack(PlayerNumber pn, int tn)
-{
-	const int mode = GetID(pn);
-
-	if(mode != -1)
-		Modes[mode].EndDrawTrack(tn);
-
-	DISPLAY->PopMatrix();
 }

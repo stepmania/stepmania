@@ -86,6 +86,9 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	m_pInventory = pInventory;
 	m_pScoreKeeper = pScoreKeeper;
 
+	/* Ensure that this is up-to-date. */
+	GAMESTATE->m_Position->Load(pn);
+
 	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
 	// init scoring
@@ -136,7 +139,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	int iStopDrawingAtPixels = GAMESTATE->m_bEditing ? 400 : STOP_DRAWING_AT_PIXELS;
 
 	m_ArrowBackdrop.Unload();
-	CString BackdropName = GAMESTATE->m_Position->GetBackdropBGA(pn);
+	CString BackdropName = g_NoteFieldMode[pn].Backdrop;
 	if( !BackdropName.empty() )
 		m_ArrowBackdrop.LoadFromAniDir( THEME->GetPathToB( BackdropName ) );
 	m_NoteField.Load( (NoteData*)this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels );
