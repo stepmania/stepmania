@@ -404,7 +404,7 @@ static void child_process()
     FILE *CrashDump = fopen("/tmp/crashinfo.txt", "w+");
     if(CrashDump == NULL)
     {
-        fprintf(stderr, "Couldn't open crashinfo.txt: %s", strerror(errno));
+        fprintf(stderr, "Couldn't open /tmp/crashinfo.txt: %s\n", strerror(errno));
         exit(1);
     }
 
