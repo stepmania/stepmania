@@ -574,6 +574,10 @@ void setmax( T &a, const T &b )
  * in ScreenSongOptions). */
 void GameState::AdjustFailType()
 {
+	/* Single song mode only. */
+	if( this->IsCourseMode() )
+		return;
+
 	/* If the player changed the fail mode explicitly, leave it alone. */
 	if( GAMESTATE->m_bChangedFailType )
 		return;
