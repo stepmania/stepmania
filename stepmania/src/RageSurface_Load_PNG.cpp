@@ -9,6 +9,8 @@
 #  include "libpng/include/png.h"
 #  if defined(_WINDOWS)
 #    pragma comment(lib, "libpng/lib/libpng.lib")
+#  elif defined(XBOX)
+#	 pragma comment(lib, "libpng/lib/xboxlibpng.lib")
 #  endif
 #  pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #else
@@ -18,7 +20,6 @@
 #if defined(_XBOX)
 #  include <malloc.h>	// for alloca
 #  include "archutils/Xbox/VirtualMemory.h"
-#  define PNG_USER_MEM_SUPPORTED
 #elif !defined(WIN32)
 #  include <alloca.h>
 #endif
@@ -175,14 +176,10 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		type = PALETTE;
 		break;
 
-	// TODO: Recompile libpng for Xbox and make sure that this is compiled into 
-	// the library.
-#ifndef _XBOX
 	case PNG_COLOR_TYPE_GRAY_ALPHA: 
 		type = RGBA;
 		png_set_gray_to_rgb( png );
 		break;
-#endif
 	case PNG_COLOR_TYPE_PALETTE:
 		type = PALETTE;
 		break;
