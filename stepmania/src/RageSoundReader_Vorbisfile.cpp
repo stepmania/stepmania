@@ -36,22 +36,13 @@
 static size_t OggRageFile_read_func( void *ptr, size_t size, size_t nmemb, void *datasource )
 {
 	RageFile *f = (RageFile *) datasource;
-	ASSERT( size == 1 );
-	return f->Read( ptr, nmemb );
-/* XXX */
+	return f->Read( ptr, size, nmemb );
 }
 
 static int OggRageFile_seek_func( void *datasource, ogg_int64_t offset, int whence )
 {
 	RageFile *f = (RageFile *) datasource;
-	switch( whence )
-	{
-	case SEEK_CUR:
-		return f->SeekCur( (int) offset );
-	case SEEK_END:
-		offset += f->GetFileSize();
-	}
-	return f->Seek( (int) offset );
+	return f->Seek( (int) offset, whence );
 }
 
 static int OggRageFile_close_func( void *datasource )
