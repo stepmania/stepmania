@@ -28,6 +28,7 @@
 #include "Notes.h"
 #include "GameState.h"
 #include "FontCharAliases.h"
+#include "TitleSubstitution.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -577,156 +578,12 @@ void Song::TidyUpData()
 		m_apNotes[i]->Compress();
 }
 
-struct TitleTrans
-{
-	Regex TitleFrom, SubFrom, ArtistFrom;
-	CString TitleTo, SubTo, ArtistTo;			/* plain text */
-
-	TitleTrans(CString tf, CString sf, CString af, CString tt, CString st, CString at):
-		TitleFrom(tf), SubFrom(sf), ArtistFrom(af),
-			TitleTo(tt), SubTo(st), ArtistTo(at) { }
-
-	bool Matches(CString title, CString sub, CString artist)
-	{
-		if(!TitleFrom.Compare(title)) return false; /* no match */
-		if(!SubFrom.Compare(sub)) return false; /* no match */
-		if(!ArtistFrom.Compare(artist)) return false; /* no match */
-
-		return true;
-	}
-};
-
 void Song::TranslateTitles()
 {
-	/* XXX make theme metrics for these or something. */
+	static TitleSubst tsub;
 
-	static vector<TitleTrans> ttab;
-	/* These REs aren't completely tested. XXX */
-	if(ttab.empty())
-	{
-		/* Ambiguous, so check artist.  Do this early; Riyu will be replaced later: */
-		ttab.push_back(TitleTrans("^Candy$", "", "^Luv.*", "CANDY &whitestar;", "", "") );
-		ttab.push_back(TitleTrans("^Candy$", "", ".*Riyu.*", "CANDY &whiteheart;", "", "") );
-
-		/* Make sure this appears after the above "Riyu" match, so it doesn't
-		 * break it.  I've seen both "Kosaku" and "Kosaka"; I think Kosaka is
-		 * correct, but handle both. */
-		ttab.push_back(TitleTrans("", "", "Riyu Kosak[au]", "", "", "&kosaka1;&kosaka2;&hri;&hyu;") );
-		ttab.push_back(TitleTrans("", "", "Kosak[au] Riyu", "", "", "&kosaka1;&kosaka2;&hri;&hyu;") );
-
-		/* Matsuri Japan is often just "Japan".  There may be other songs by
-		 * this name, too, so match the artist, too. */
-		ttab.push_back(TitleTrans("^Japan$", "", "(Re-Venge)|(RevenG)", "&matsuri; JAPAN", "", "") );
-
-		/* Fix up hacked titles: */
-		ttab.push_back(TitleTrans("^Max 300$", "", "%", "", "", "&omega;") );
-		ttab.push_back(TitleTrans("^Bre=kdown$", "", "", "Bre&flipped-a;kdown", "", "") );
-		ttab.push_back(TitleTrans("^Candy #$", "", "", "Candy &whitestar;", "", "") );
-		ttab.push_back(TitleTrans("^Candy \\$$", "", "", "Candy &whiteheart;", "", "") );
-		ttab.push_back(TitleTrans("^} JAPAN$", "", "", "&matsuri; JAPAN", "", "") );
-		ttab.push_back(TitleTrans("^\\+\\{$", "", "", "&kakumei1;&kakumei2;", "", "") );
-		ttab.push_back(TitleTrans("^Sweet Sweet \\$ Magic$", "", "", "Sweet Sweet &whiteheart; Magic", "", "") );
-
-		/* Special stuff is done.  Titles: */
-		ttab.push_back(TitleTrans("^Matsuri Japan$", "", "", "&matsuri; JAPAN", "", "") );
-		ttab.push_back(TitleTrans("^Kakumei$", "", "", "&kakumei1;&kakumei2;", "", "") );
-		ttab.push_back(TitleTrans("^Sweet Sweet (Love )?Magic$", "", "", "Sweet Sweet &whiteheart; Magic", "", "") );
-		ttab.push_back(TitleTrans("^Break ?Down!?$", "", "", "BRE&flipped-a;K DOWN!", "", "") );
-		/* サナ・モレッテ・ネ・エンテ 
-		 * People can't decide how they want to spell this, so cope with
-		 * both l or r, and one or two l/r and t. */
-		ttab.push_back(TitleTrans("^Sana Mo((ll?)|(rr?))et(t?)e Ne Ente", "", "", 
-			"&ksa;&kna;&kdot;&kmo;&kre;&kq;&kte;&kdot;&kne;&kdot;&ke;&kn;&kte;", "", ""));
-		ttab.push_back(TitleTrans("^Freckles$", "", "", "&hso;&hba;&hka;&hsu;", "", "") );
-		ttab.push_back(TitleTrans("^Sobakasu$", "", "", "&hso;&hba;&hka;&hsu;", "", "") );
-
-		/* 夜空のムコウ */
-		ttab.push_back(TitleTrans("^Yozora no Muko$", "", "", "&yozora1;&yozora2;&hno;&kmu;&kko;&ku;", "", "") );
-
-		/* 17才 */
-		ttab.push_back(TitleTrans("^17 ?(Sai)?$", "", "", "17&sai;", "", "") );
-
-		/* Handle "Mobo Moga", "Mobo * Moga"; spaces optional. */
-		ttab.push_back(TitleTrans("^Mobo ?\\*? ?Moga$", "", "", "MOBO&whitestar;MOGA", "", "") );
-
-		ttab.push_back(TitleTrans("^Love (Love )?Shine$", "", "", "LOVE &whiteheart; SHINE", "", "") );
-
-		/* ロマンスの神様 */
-		ttab.push_back(TitleTrans("^God of Romance$", "", "", "&kro;&kma;&kn;&ksu;&hno;&kami;&sama;", "", "") );
-
-		/* おどるポンポコリン */
-		ttab.push_back(TitleTrans("^Dancing Pompokolin$", "", "", "&ho;&hdo;&hru;&kpo;&kn;&kpo;&kko;&kri;&kn;", "", "") );
-
-		/* 青い振動 */
-		ttab.push_back(TitleTrans("^Aoi Shoudou$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "") );
-		ttab.push_back(TitleTrans("^Blue Impulse$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "") );
-		/* Handle a typo: */
-		ttab.push_back(TitleTrans("^Aio Shoudou$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "") );
-
-		/* 大見解 */
-		ttab.push_back(TitleTrans("^Daikenkai$", "", "", "&ookii;&kenkai1;&kenkai2;", "", "") );
-
-		/* ♡LOVE²シュガ→♡ */
-		ttab.push_back(TitleTrans("^Love Love Sugar$", "", "", "&whiteheart;LOVE&squared; &ksi;&kyus;&kga;&rightarrow;&whiteheart;", "", "") );
-
-		/* 三毛猫ロック */
-		ttab.push_back(TitleTrans("^Mikeneko Rock$", "", "", "&num-san;&hair;&neko;&kro;&kq;&kku;", "", "") );
-		
-		/* 桜 */
-		ttab.push_back(TitleTrans("^Sakura$", "", "", "&sakura;", "", "") );
-
-		/* 魔法の扉, スペース☆マコのテーマ  (handle Door and Doors) */
-        ttab.push_back(TitleTrans("^(Doors? of Magic)|(Mahou no Tobira)$", "", "", "&mahou1;&mahou2;&hno;&tobira;", "&ksu;&kpe;&kdash;&ksu;&whitestar;&kma;&kko;&hno;&kti;&kdash;&kmu;", "") ); 
-
-		/* Subtitles: */
-		/* それぞれの明日 (title is Graduation) */
-		ttab.push_back(TitleTrans("", "^Each Tomorrow$", "", "", "&hso;&hre;&hzo;&hre;&hno;&aka;&nichi;", "") );
-
-		/* Artists: */
-		ttab.push_back(TitleTrans("", "", "^Omega$", "", "", "&omega;") );
-		ttab.push_back(TitleTrans("", "", "^ZZ$", "", "", "&doublezeta;") );
-
-		/* 亜熱帯マジ-SKA爆弾 (serious tropical ska bomb? ruh roh) */
-		ttab.push_back(TitleTrans("", "", "^Anettai Maji.*Ska (Bakudan|Bukuden)", "", "", "&anettai1;&anettai2;&anettai3;&kma;&kji;-SKA&bakudan1;&bakudan2;") );
-
-		/* メキシコ民謡 */
-		ttab.push_back(TitleTrans("", "", "^Spanish Folk Music$", "", "", "&kme;&kki;&ksi;&kko;&minyou1;&minyou2;") );
-
-		/* 新谷さなえ (Sanae or incorrect Sana) */
-		ttab.push_back(TitleTrans("", "", "Sanae? Shintani", "", "", "&shintani1;&shintani2;&hsa;&hna;&he;") );
-
-		ttab.push_back(TitleTrans("", "", "dj TAKA feat. ?Noria", "", "", "dj TAKA feat. &hno;&hri;&ha;") );
-
-		/* くにたけみゆき */
-		ttab.push_back(TitleTrans("", "", "Miyuki Kunitake", "", "", "&hku;&hni;&hta;&hke;&hmi;&hyu;&hki;") );
-		ttab.push_back(TitleTrans("", "", "Kunitake Miyuki", "", "", "&hku;&hni;&hta;&hke;&hmi;&hyu;&hki;") );
-	}
-
-	for(unsigned i = 0; i < ttab.size(); ++i)
-	{
-		if(!ttab[i].Matches(m_sMainTitle, m_sSubTitle, m_sArtist))
-			continue;
-
-		/* The song matches.  Replace whichever strings aren't empty: */
-		if(!ttab[i].TitleTo.empty())
-		{
-			m_sMainTitleTranslit = m_sMainTitle;
-			m_sMainTitle = ttab[i].TitleTo;
-			FontCharAliases::ReplaceMarkers( m_sMainTitle );
-		}
-		if(!ttab[i].SubTo.empty())
-		{
-			m_sSubTitleTranslit = m_sSubTitle;
-			m_sSubTitle = ttab[i].SubTo;
-			FontCharAliases::ReplaceMarkers( m_sSubTitle );
-		}
-		if(!ttab[i].ArtistTo.empty())
-		{
-			m_sArtistTranslit = m_sArtist;
-			m_sArtist = ttab[i].ArtistTo;
-			FontCharAliases::ReplaceMarkers( m_sArtist );
-		}
-	}
+	tsub.Subst(m_sMainTitle, m_sSubTitle, m_sArtist,
+				m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit);
 }
 
 void Song::ReCalculateRadarValuesAndLastBeat()

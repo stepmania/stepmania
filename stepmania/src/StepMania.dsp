@@ -529,6 +529,14 @@ SOURCE=.\StyleDef.h
 
 SOURCE=.\StyleInput.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\TitleSubstitution.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TitleSubstitution.h
+# End Source File
 # End Group
 # Begin Group "File Types"
 
