@@ -237,12 +237,14 @@ struct RageModelVertex	// doesn't have color.  Relies on material color
 	RageModelVertex():
 		p(0,0,0),
 		n(0,0,0),
-		t(0,0)
+		t(0,0),
+		TextureMatrixScale(1,1)
 		{ }
     RageVector3		p;	// position
     RageVector3		n;	// normal
 	RageVector2		t;	// texture coordinates
 	int8_t			bone;
+	RageVector2		TextureMatrixScale; // usually 1,1
 };
 
 
