@@ -469,13 +469,21 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	{
 		XNode* pNumSongsPlayedByPlayMode = pGeneralDataNode->AppendChild("NumSongsPlayedByPlayMode");
 		FOREACH_PlayMode( pm )
+		{
+			/* Don't save unplayed PlayModes. */
+			if( !m_iNumSongsPlayedByPlayMode[pm] )
+				continue;
 			pNumSongsPlayedByPlayMode->AppendChild( PlayModeToString(pm), m_iNumSongsPlayedByPlayMode[pm] );
+		}
 	}
 
 	{
 		XNode* pNumSongsPlayedByStyle = pGeneralDataNode->AppendChild("NumSongsPlayedByStyle");
 		for( int i=0; i<NUM_STYLES; i++ )
 		{
+			/* Don't save unplayed styles. */
+			if( !m_iNumSongsPlayedByStyle[i] )
+				continue;
 			CString sStyle = GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName;
 			pNumSongsPlayedByStyle->AppendChild( sStyle, m_iNumSongsPlayedByStyle[i] );
 		}
