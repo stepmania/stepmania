@@ -576,7 +576,7 @@ static void GameLoop()
 		DISPLAY->Flip();
 
 		if(g_bHasFocus)
-			SDL_Delay( 0 );	// give some time to other processes and threads
+			SDL_Delay( 1 );	// give some time to other processes and threads
 		else
 			SDL_Delay( 10 );// give some time to other processes and threads
 	}
