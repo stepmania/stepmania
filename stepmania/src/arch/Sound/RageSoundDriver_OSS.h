@@ -3,6 +3,7 @@
 
 #include "RageSoundDriver.h"
 #include "RageThreads.h"
+#include "RageTimer.h"
 
 class RageSound_OSS: public RageSoundDriver
 {
@@ -10,6 +11,7 @@ class RageSound_OSS: public RageSoundDriver
 
 	struct sound {
 	    RageSound *snd;
+		RageTimer start_time;
 
 		bool stopping;
 

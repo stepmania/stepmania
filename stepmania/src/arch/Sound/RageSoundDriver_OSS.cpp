@@ -18,11 +18,11 @@
 
 /* samples */
 const int channels = 2;
-const int samplesize = channels*2;		/* 16-bit */
+const int bytes_per_frame = channels*2;		/* 16-bit */
 const int chunk_order = 12;
 const int num_chunks = 4;
 const int buffersize = num_chunks * (1 << (chunk_order-1)); /* in bytes */
-const int buffersize_frames = buffersize/samplesize;	/* in frames */
+const int buffersize_frames = buffersize/bytes_per_frame;	/* in frames */
 
 int RageSound_OSS::MixerThread_start(void *p)
 {
@@ -78,21 +78,47 @@ bool RageSound_OSS::GetData()
 	static SoundMixBuffer mix;
 	mix.SetVolume( SOUNDMAN->GetMixVolume() );
 
+	const int play_pos = last_cursor_pos;
+	const int cur_play_pos = GetPosition( NULL /* doesn't care */);
+
 	for(unsigned i = 0; i < sounds.size(); ++i)
 	{
 		if(sounds[i]->stopping)
 			continue;
 
+		int bytes_read = 0;
+		int bytes_left = chunksize;
+
+		if( !sounds[i]->start_time.IsZero() )
+		{
+			/* If the sound is supposed to start at a time past this buffer, insert silence. */
+			const int iFramesUntilThisBuffer = play_pos - cur_play_pos;
+			const float fSecondsBeforeStart = -sounds[i]->start_time.Ago();
+			const int iFramesBeforeStart = int(fSecondsBeforeStart * samplerate);
+			const int iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
+			const int iSilentBytesInThisBuffer = clamp( iSilentFramesInThisBuffer * bytes_per_frame, 0, bytes_left );
+
+			memset( buf+bytes_read, 0, iSilentBytesInThisBuffer );
+			bytes_read += iSilentBytesInThisBuffer;
+			bytes_left -= iSilentBytesInThisBuffer;
+
+			if( !iSilentBytesInThisBuffer )
+				sounds[i]->start_time.SetZero();
+		}
+
+
 		/* Call the callback. */
-		unsigned got = sounds[i]->snd->GetPCM((char *) buf, chunksize, last_cursor_pos);
+		int got = sounds[i]->snd->GetPCM( (char *) buf+bytes_read, bytes_left, last_cursor_pos+bytes_read/bytes_per_frame );
+		bytes_read += got;
+		bytes_left -= got;
 
-		mix.write((Sint16 *) buf, got/2);
+		mix.write( (Sint16 *) buf, bytes_read / sizeof(Sint16) );
 
-		if((int) got < chunksize)
+		if( bytes_left > 0 )
 		{
 			/* This sound is finishing. */
 			sounds[i]->stopping = true;
-			sounds[i]->flush_pos = last_cursor_pos + (got / samplesize);
+			sounds[i]->flush_pos = last_cursor_pos + (got / bytes_per_frame);
 		}
 	}
 
@@ -102,7 +128,7 @@ bool RageSound_OSS::GetData()
 		RageException::Throw("write didn't: %i (%s)", wrote, wrote == -1? strerror(errno): "" );
 
 	/* Increment last_cursor_pos. */
-	last_cursor_pos += chunksize / samplesize;
+	last_cursor_pos += chunksize / bytes_per_frame;
 
 	return true;
 }
@@ -111,6 +137,7 @@ void RageSound_OSS::StartMixing(RageSound *snd)
 {
 	sound *s = new sound;
 	s->snd = snd;
+	s->start_time = snd->GetStartTime();
 
 	LockMutex L(SOUNDMAN->lock);
 	sounds.push_back(s);
@@ -163,7 +190,7 @@ int RageSound_OSS::GetPosition(const RageSound *snd) const
 	if(ioctl(fd, SNDCTL_DSP_GETODELAY, &delay) == -1)
 		RageException::ThrowNonfatal("RageSound_OSS: ioctl(SNDCTL_DSP_GETODELAY): %s", strerror(errno));
 
-	return last_cursor_pos - (delay / samplesize);
+	return last_cursor_pos - (delay / bytes_per_frame);
 }
 
 void CheckOSSVersion( int fd )
