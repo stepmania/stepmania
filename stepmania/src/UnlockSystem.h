@@ -27,7 +27,8 @@ enum UnlockType
 	UNLOCK_EXTRA_FAILED,
 	UNLOCK_TOASTY,
 	UNLOCK_CLEARED,
-	NUM_UNLOCK_TYPES
+	NUM_UNLOCK_TYPES,
+	UNLOCK_INVALID,
 };
 
 struct UnlockEntry
@@ -67,9 +68,6 @@ public:
 	bool SongIsRoulette( const Song *song );
 	bool CourseIsLocked( const Course *course );
 
-	// executed when program is first executed
-	bool LoadFromDATFile();
-
 	// Gets number of unlocks for title screen
 	int GetNumUnlocks() const;
 
@@ -97,7 +95,8 @@ public:
 	vector<UnlockEntry>	m_SongEntries;
 
 private:
-	// read and write unlock in values
+	// read and write unlocks
+	bool Load();
 	bool ReadValues();
 	bool WriteValues() const;
 	

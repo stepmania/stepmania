@@ -42,7 +42,7 @@ UnlockSystem::UnlockSystem()
 {
 	UNLOCKMAN = this;
 
-	LoadFromDATFile();
+	Load();
 
 	memset( m_fScores, 0, sizeof(m_fScores) );
 
@@ -153,10 +153,32 @@ bool UnlockEntry::IsLocked() const
 	return true;
 }
 
-bool UnlockSystem::LoadFromDATFile()
+static const char *g_ShortUnlockNames[NUM_UNLOCK_TYPES] =
 {
-	LOG->Trace( "UnlockSystem::LoadFromDATFile()" );
+	"AP",
+	"DP",
+	"SP",
+	"EC",
+	"EF",
+	"!!",
+	"CS"
+};
+
+static UnlockType StringToUnlockType( const CString &s )
+{
+	for( int i = 0; i < NUM_UNLOCK_TYPES; ++i )
+		if( g_ShortUnlockNames[i] == s )
+			return (UnlockType) i;
+	return UNLOCK_INVALID;
+}
+
+bool UnlockSystem::Load()
+{
+	LOG->Trace( "UnlockSystem::Load()" );
 	
+	if( !IsAFile(UNLOCKS_PATH) )
+		return false;
+
 	MsdFile msd;
 	if( !msd.ReadFile( UNLOCKS_PATH ) )
 	{
@@ -164,7 +186,7 @@ bool UnlockSystem::LoadFromDATFile()
 		return false;
 	}
 
-	unsigned i, j;
+	unsigned i;
 
 	for( i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -198,37 +220,27 @@ bool UnlockSystem::LoadFromDATFile()
 		CStringArray UnlockTypes;
 		split( sParams[2], ",", UnlockTypes );
 
-		for( j=0; j<UnlockTypes.size(); ++j )
+		for( unsigned j=0; j<UnlockTypes.size(); ++j )
 		{
 			CStringArray readparam;
 
-			split(UnlockTypes[j], "=", readparam);
-			CString unlock_type = readparam[0];
-			float datavalue = (float) atof(readparam[1]);
+			split( UnlockTypes[j], "=", readparam );
+			const CString &unlock_type = readparam[0];
 
 			LOG->Trace("UnlockTypes line: %s", UnlockTypes[j].c_str() );
-			LOG->Trace("Unlock info: %s %f", unlock_type.c_str(), datavalue);
 
-			if( unlock_type == "AP" )
-				current.m_fRequired[UNLOCK_ARCADE_POINTS] = datavalue;
-			if( unlock_type == "DP" )
-				current.m_fRequired[UNLOCK_DANCE_POINTS] = datavalue;
-			if( unlock_type == "SP" )
-				current.m_fRequired[UNLOCK_SONG_POINTS] = datavalue;
-			if( unlock_type == "EC" )
-				current.m_fRequired[UNLOCK_EXTRA_CLEARED] = datavalue;
-			if( unlock_type == "EF" )
-				current.m_fRequired[UNLOCK_EXTRA_CLEARED] = datavalue;
-			if( unlock_type == "!!" )
-				current.m_fRequired[UNLOCK_TOASTY] = datavalue;
-			if( unlock_type == "CS" )
-				current.m_fRequired[UNLOCK_CLEARED] = datavalue;
+			const float val = (float) atof( readparam[1] );
+			LOG->Trace("Unlock info: %s %f", unlock_type.c_str(), val);
+
+			const UnlockType ut = StringToUnlockType( unlock_type );
+			if( ut != UNLOCK_INVALID )
+				current.m_fRequired[ut] = val;
 			if( unlock_type == "CODE" )
-				current.m_iCode = (int) datavalue;
+				current.m_iCode = (int) val;
 			if( unlock_type == "RO" )
 			{
-				m_UnlockedCodes.insert( (int)datavalue );
-				m_RouletteCodes.insert( (int)datavalue );
+				m_UnlockedCodes.insert( (int)val );
+				m_RouletteCodes.insert( (int)val );
 			}
 		}
 
@@ -236,24 +248,21 @@ bool UnlockSystem::LoadFromDATFile()
 	}
 
 	UpdateSongs();
-	
+
 	for(i=0; i < m_SongEntries.size(); i++)
 	{
-		CString tmp = "  ";
-		if (!m_SongEntries[i].IsLocked()) tmp = "un";
-
 		LOG->Trace( "UnlockSystem Entry %s", m_SongEntries[i].m_sSongName.c_str() );
 		if (m_SongEntries[i].m_pSong != NULL)
 			LOG->Trace( "          Translit %s", m_SongEntries[i].m_pSong->GetTranslitMainTitle().c_str() );
-		LOG->Trace( "                AP %f", m_SongEntries[i].m_fRequired[UNLOCK_ARCADE_POINTS] );
-		LOG->Trace( "                DP %f", m_SongEntries[i].m_fRequired[UNLOCK_DANCE_POINTS] );
-		LOG->Trace( "                SP %f", m_SongEntries[i].m_fRequired[UNLOCK_SONG_POINTS] );
-		LOG->Trace( "                CS %f", m_SongEntries[i].m_fRequired[UNLOCK_CLEARED] );
+		for( int j = 0; j < NUM_UNLOCK_TYPES; ++j )
+			if( m_SongEntries[i].m_fRequired[j] )
+				LOG->Trace( "                %s %f", g_UnlockNames[j], m_SongEntries[i].m_fRequired[j] );
+
 		LOG->Trace( "              CODE %i", m_SongEntries[i].m_iCode );
-		LOG->Trace( "            Status %slocked", tmp.c_str() );
-		if (m_SongEntries[i].m_pSong)
+		LOG->Trace( "            Status %s", m_SongEntries[i].IsLocked()? "locked":"unlocked" );
+		if( m_SongEntries[i].m_pSong )
 			LOG->Trace( "                   Found matching song entry" );
-		if (m_SongEntries[i].m_pCourse)
+		if( m_SongEntries[i].m_pCourse )
 			LOG->Trace( "                   Found matching course entry" );
 	}
 	
