@@ -12,7 +12,7 @@ WorkerThread::WorkerThread( const CString &sName ):
 	m_fHeartbeat = -1;
 	m_bRequestFinished = false;
 
-	m_WorkerThread.SetName( "ThreadedFileWorker " + sName + " worker" );
+	m_WorkerThread.SetName( "WorkerThread (" + sName + ")" );
 }
 
 WorkerThread::~WorkerThread()
@@ -48,7 +48,7 @@ void WorkerThread::StopThread()
 	m_WorkerEvent.Lock();
 	if( m_bTimedOut )
 	{
-		LOG->Trace( "Waiting for timed-out fs \"%s\" to complete ..." );
+		LOG->Trace( "Waiting for timed-out fs \"%s\" to complete ...", m_WorkerThread.GetName().c_str() );
 		while( m_bTimedOut )
 			m_WorkerEvent.Wait();
 	}
