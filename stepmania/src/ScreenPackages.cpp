@@ -569,6 +569,20 @@ void ScreenPackages::EnterURL( const CString & sURL )
 	UpdateProgress();
 	return;
 }
+
+static size_t FindEndOfHeaders( const CString &buf )
+{
+	size_t iPos1 = buf.find( "\n\n" );
+	size_t iPos2 = buf.find( "\r\n\r\n" );
+	LOG->Trace("end: %i, %i", iPos1, iPos2);
+	if( iPos1 != string::npos && (iPos2 == string::npos || iPos2 > iPos1) )
+		return iPos1 + 2;
+	else if( iPos2 != string::npos && (iPos1 == string::npos || iPos1 > iPos2) )
+		return iPos2 + 4;
+	else
+		return string::npos;
+}
+
 void ScreenPackages::HTTPUpdate()
 {
 	if( !m_bIsDownloading )
@@ -594,15 +608,7 @@ void ScreenPackages::HTTPUpdate()
 	{
 		m_sStatus = "Waiting for header.";
 		//We don't know if we are using unix-style or dos-style
-		size_t iHeaderEnd = m_sBUFFER.find("\n\n");
-		if( iHeaderEnd != m_sBUFFER.npos )
-			iHeaderEnd += 2;
-		else
-		{
-			iHeaderEnd = m_sBUFFER.find("\r\n\r\n");
-			if( iHeaderEnd != m_sBUFFER.npos )
-				iHeaderEnd += 4;
-		}
+		size_t iHeaderEnd = FindEndOfHeaders( m_sBUFFER );
 		if( iHeaderEnd == m_sBUFFER.npos )
 			return;
 
@@ -628,7 +634,7 @@ void ScreenPackages::HTTPUpdate()
 			m_iTotalBytes = -1;	//We don't know, so go until disconnect
 
 		m_bGotHeader = true;
-		m_sBUFFER = m_sBUFFER.erase( 0, iHeaderEnd );
+		m_sBUFFER.erase( 0, iHeaderEnd );
 	}
 
 	if( m_bIsPackage )
