@@ -412,6 +412,8 @@ void Song::TidyUpData()
 	if( m_sMainTitle == "" )	m_sMainTitle = "Untitled song";
 	TrimRight(m_sSubTitle);
 	if( m_sArtist == "" )		m_sArtist = "Unknown artist";
+
+	/* XXX don't throw due to broken songs */
 	if( m_BPMSegments.empty() )
 		RageException::Throw( "No #BPM specified in '%s%s.'", m_sSongDir.GetString(), m_sSongFileName.GetString() );
 
