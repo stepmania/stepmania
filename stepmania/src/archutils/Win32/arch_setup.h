@@ -8,6 +8,11 @@
 #define NEED_MINMAX_TEMPLATES 1
 #endif
 
+/* Don't include windows.h everywhere; when we do eventually include it, use this: */
+#ifdef _WINDOWS
+#define WIN32_LEAN_AND_MEAN
+#endif
+
 #include <direct.h> /* has stuff that should be in unistd.h */
 #include <wchar.h> /* needs to be included before our fixes below */
 
@@ -21,6 +26,8 @@
 /* mkdir is missing the mode arg */
 #define mkdir(p,m) mkdir(p)
 
+
+#pragma warning (disable : 4201) // nonstandard extension used : nameless struct/union (Windows headers do this)
 #pragma warning (disable : 4786) // turn off broken debugger warning
 #pragma warning (disable : 4512) // assignment operator could not be generated (so?)
 /* "unreferenced formal parameter"; we *want* that in many cases */
