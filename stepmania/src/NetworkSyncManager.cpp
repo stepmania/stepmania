@@ -12,7 +12,6 @@
 */
 
 #include "global.h"
-#include <cstring>
 #include "NetworkSyncManager.h"
 #include "ProfileManager.h"
 #include "ezsockets.h"
@@ -68,7 +67,7 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 	CloseConnection();
 	if( ServerIP!="LISTEN" )
 	{
-		if( !Connect(ServerIP.c_str(),8765) )
+		if( !Connect(ServerIP.c_str(), 8765) )
 		{
 			m_startupStatus = 2;
 			LOG->Warn( "Network Sync Manager failed to connect" );
@@ -79,7 +78,7 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 		if( !Listen(8765) )
 		{
 			m_startupStatus = 2;
-			LOG->Warn( "Listen() failed");
+			LOG->Warn( "Listen() failed" );
 			return;
 		}
 
@@ -93,8 +92,8 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 	NetPlayerClient->SendPack((char*) &ClientCommand, 4);
 	LOG->Info("CNCHECKPOINT");
 
-	NetPlayerClient->ReadData((char*)&m_ServerVersion,4);
-	LOG->Info("CNCHECKPOINT:%d",NetPlayerClient->inBuffer.length());
+	NetPlayerClient->ReadData((char*)&m_ServerVersion, 4);
+	LOG->Info("CNCHECKPOINT:%d", int(NetPlayerClient->inBuffer.length()));
 
 	// If network play is desired and the connection works,
 	// halt until we know what server version we're dealing with
@@ -109,7 +108,7 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 		for( i=0; i < strlen(ProfileNames[0]); i++ )
 			PlayerName.m_data[i] = ProfileNames[0][i];
 		PlayerName.m_data[i] = 0;
-		NetPlayerClient->SendPack((char*) &PlayerName,20);
+		NetPlayerClient->SendPack((char*)&PlayerName, 20);
 	}
 	if( ProfileNames.size() > 1 )
 	{
@@ -118,10 +117,10 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 		for( i=0; i < strlen(ProfileNames[1]); i++ )
 			PlayerName.m_data[i] = ProfileNames[1][i];
 		PlayerName.m_data[i] = 0;
-		NetPlayerClient->SendPack( (char*) &PlayerName,20 );
+		NetPlayerClient->SendPack( (char*)&PlayerName, 20 );
 	}
 
-	LOG->Info("Server Version: %d",m_ServerVersion);
+	LOG->Info("Server Version: %d", m_ServerVersion);
 }
 
 
@@ -130,20 +129,16 @@ void NetworkSyncManager::StartUp()
 	CString ServerIP;
 
 	if( GetCommandlineArgument( "netip", &ServerIP ) )
-	{
 		PostStartUp(ServerIP);
-	}
 	else if( GetCommandlineArgument( "listen" ) )
-	{
 		PostStartUp("LISTEN");
-	}
 }
 
 
 bool NetworkSyncManager::Connect(const CString& addy, unsigned short port)
 {
 	LOG->Info("Beginning to connect");
-	if (port!=8765) 
+	if (port != 8765) 
 		return false;
 	//Make sure using port 8765
 	//This may change in future versions
@@ -163,7 +158,7 @@ bool NetworkSyncManager::Connect(const CString& addy, unsigned short port)
 bool NetworkSyncManager::Listen(unsigned short port)
 {
 	LOG->Info("Beginning to Listen");
-	if (port!=8765) 
+	if (port != 8765) 
 		return false;
 	//Make sure using port 8765
 	//This may change in future versions
@@ -179,7 +174,7 @@ bool NetworkSyncManager::Listen(unsigned short port)
 	EZListener->bind(8765);
     
 	useSMserver = EZListener->listen();
-	useSMserver = EZListener->accept( *NetPlayerClient);  //Wait for someone to connect
+	useSMserver = EZListener->accept( *NetPlayerClient );  //Wait for someone to connect
 
 	EZListener->close();	//Kill Listener
 	delete EZListener;
@@ -260,17 +255,17 @@ void NetworkSyncManager::StartRequest()
 	tSteps = g_CurStageStats.pSteps[PLAYER_1];
 	if (tSteps!=NULL)
 	{
-		SendNetPack.m_step=tSteps->GetMeter();
+		SendNetPack.m_step = tSteps->GetMeter();
 	}
 
 	tSteps = g_CurStageStats.pSteps[PLAYER_2];
 	if (tSteps!=NULL)
 	{
-		SendNetPack.m_step+=tSteps->GetMeter()*256;
+		SendNetPack.m_step += tSteps->GetMeter()*256;
 	}
 	SendNetPack.m_score = 0;
-	SendNetPack.m_life=0;
-	SendNetPack.m_combo=0;
+	SendNetPack.m_life = 0;
+	SendNetPack.m_combo = 0;
 
 	NetPlayerClient->SendPack((char*)&SendNetPack, sizeof(netHolder)); 
 	
@@ -301,30 +296,30 @@ void NetworkSyncManager::SendSongs()
 	CString SongInfo;
 	char toSend[1020];	//Standard buffer is 1024 and 
 						//we have to include 4 size bytes
-	for (i=0;i<LogSongs.size();i++)
+	for (i=0; i<LogSongs.size(); i++)
 	{
 		Song * CSong = LogSongs[i];
-		SongInfo=char(1) + CSong->m_sGroupName;
-		SongInfo+=char(2) + CSong->GetTranslitMainTitle();
-		SongInfo+=char(3) + CSong->GetTranslitSubTitle();
-		SongInfo+=char(4) + CSong->GetTranslitArtist(); 
+		SongInfo = char(1) + CSong->m_sGroupName;
+		SongInfo += char(2) + CSong->GetTranslitMainTitle();
+		SongInfo += char(3) + CSong->GetTranslitSubTitle();
+		SongInfo += char(4) + CSong->GetTranslitArtist(); 
 		
 		for (j=4;j<SongInfo.length()+4;j++)
 			toSend[j] = SongInfo.c_str()[j-4];
-		toSend[0]=char(35);
-		toSend[1]=char(0);
-		toSend[2]=char(0);
-		toSend[3]=char(0);
+		toSend[0] = char(35);
+		toSend[1] = char(0);
+		toSend[2] = char(0);
+		toSend[3] = char(0);
 
-		NetPlayerClient->SendPack (toSend,SongInfo.length()+4);
+		NetPlayerClient->SendPack(toSend, SongInfo.length() + 4);
 	}
-	toSend[0]=char(36);
-	NetPlayerClient->SendPack (toSend,4);
+	toSend[0] = char(36);
+	NetPlayerClient->SendPack(toSend, 4);
 
 	//Exit because this is ONLY for use with SMOnline
 	//If admins feel strongly, this can be exported
 	//to another command line, like "--exitfirst"
-	exit (0);
+	exit(0);
 
 	//NOTE TO ADMINS: I do not actually know the 
 	//safe way to exit stepmania, if you can, either tell me
@@ -341,7 +336,6 @@ void NetworkSyncManager::DisplayStartupStatus()
 	case 0:
 		//Networking wasn't attepmpted
 		return;
-		break;
 	case 1:
 		sMessage = "Connect to server successful.";
 		break;
@@ -354,9 +348,7 @@ void NetworkSyncManager::DisplayStartupStatus()
 
 void NetworkSyncManager::Update(float fDeltaTime)
 {
-	
 }
 
 //Global and accessable from anywhere
 NetworkSyncManager *NSMAN;
-
