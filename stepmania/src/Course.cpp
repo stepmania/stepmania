@@ -656,8 +656,8 @@ void Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 		/* This applies difficult mode for meter ranges.  (If it's a difficulty
 		 * class, we'll do it below.) */
-		int low_meter, high_meter;
-		GetMeterRange( i, low_meter, high_meter, entry_difficulty );
+		int low_meter = m_entries[i].low_meter;
+		int high_meter = m_entries[i].high_meter;
 
 		switch( e.type )
 		{
@@ -899,12 +899,6 @@ bool Course::IsFixed() const
 	}
 
 	return true;
-}
-
-void Course::GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, CourseDifficulty cd ) const
-{
-	iMeterLowOut = m_entries[stage].low_meter;
-	iMeterHighOut = m_entries[stage].high_meter;
 }
 
 

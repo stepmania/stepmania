@@ -141,7 +141,6 @@ public:
 
 private:
 	void GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
-	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, CourseDifficulty cd ) const;
 
 	typedef pair<StepsType,CourseDifficulty> TrailParams;
 	typedef map<TrailParams, Trail> TrailCache;
