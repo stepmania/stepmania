@@ -8,6 +8,7 @@
 #include "RageUtil.h"
 
 #include "SDL.h"
+#include "config.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -214,14 +215,14 @@ void CheckOSSVersion( int fd )
 	 * too.  It looks like that version is potentially a valid OSS version, so
 	 * check both.
 	 */
-
+#ifndef FORCE_OSS
 #define ALSA_SNDRV_OSS_VERSION         ((3<<16)|(8<<8)|(1<<4)|(0))
-	if( version == ALSA_SNDRV_OSS_VERSION && IsADirectory("/proc/asound") )
+	if( version == ALSA_SNDRV_OSS_VERSION && IsADirectory("/proc/asound"))
 	{
 		close( fd );
 		RageException::ThrowNonfatal( "RageSound_OSS: ALSA detected.  ALSA OSS emulation is buggy; use ALSA natively.");
 	}
-
+#endif
 	int major, minor, rev;
 	if( version < 361 )
 	{
