@@ -125,6 +125,7 @@ void GameState::Reset()
 		else
 			m_pCurCharacters[p] = GetDefaultCharacter();
 	}
+	ASSERT( m_pCurCharacters[p] );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
