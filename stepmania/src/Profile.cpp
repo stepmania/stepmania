@@ -139,7 +139,7 @@ CString Profile::GetDisplayTotalCaloriesBurned() const
 	if( m_fWeightPounds == 0 )	// weight not entered
 		return "N/A";
 	else 
-		return Commify(m_fTotalCaloriesBurned) + " Cal";
+		return Commify((int)m_fTotalCaloriesBurned) + " Cal";
 }
 
 int Profile::GetTotalNumSongsPlayed() const
