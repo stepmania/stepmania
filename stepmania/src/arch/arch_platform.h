@@ -3,7 +3,7 @@
 
 // In here, you define which APIs are guaranteed to be available on which OSes.
 // Don't ever actually #include anything here -- that's for */Selector_*.h.
-#if defined(UNIX) || !defined(DARWIN) // Darwin isn't POSIX enough for us.
+#if defined(UNIX) && !defined(DARWIN) // Darwin isn't POSIX enough for us.
 #define HAVE_POSIX				// (is Darwin POSIX at all?)
 #endif
 #if defined(DARWIN)
