@@ -842,7 +842,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
 	int iRowNow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-	if( iRowNow >= 0  &&  iRowNow < MAX_TAP_NOTE_ROWS )
+	if( iRowNow >= 0 )
 	{
 		for( int r=m_iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
 		{
