@@ -993,7 +993,10 @@ void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop 
 	m_SubActors[0]->Command( ssprintf("rate,%f",fRate) );
 
 	if( m_fRepeatCommandEverySeconds == -1 )	// if not repeating
+	{
+		StopTweening();
 		PlayCommand( "On" );
+	}
 }
 
 void BGAnimationLayer::LosingFocus()
