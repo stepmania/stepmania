@@ -1,6 +1,6 @@
 -- Sample options menu item.  
 function OptionsRowTest()
-	local function Set(list,pn)
+	local function Set(self,list,pn)
 		if list[1] then
 			Trace("FOO: 1")
 		end
@@ -30,7 +30,7 @@ function OptionsRowTest()
 		-- Set list[1] to true if Option1 should be selected, and
 		-- list[2] if Option2 should be selected.  This will be
 		-- called once per enabled player.
-		LoadSelections = (function(list, pn) list[1] = true; end),
+		LoadSelections = (function(self,list,pn) list[1] = true; end),
 		SaveSelections = Set,
 	}
 end
