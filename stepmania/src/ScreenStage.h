@@ -21,8 +21,6 @@ class ScreenStage : public Screen
 public:
 	ScreenStage( CString sName );
 
-	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	
 	virtual void MenuBack( PlayerNumber pn );
