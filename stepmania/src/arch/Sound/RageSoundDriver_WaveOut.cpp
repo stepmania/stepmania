@@ -9,8 +9,6 @@
 #include "RageUtil.h"
 #include "RageSoundManager.h"
 
-#include "SDL.h"
-
 const int channels = 2;
 const int bytes_per_frame = channels*2;		/* 16-bit */
 const int samplerate = 44100;
@@ -19,7 +17,7 @@ const int buffersize = buffersize_frames * bytes_per_frame; /* in bytes */
 
 const int num_chunks = 8;
 const int chunksize_frames = buffersize_frames / num_chunks;
-const int chunksize = buffersize / num_chunks;
+const int chunksize = buffersize / num_chunks; /* in bytes */
 
 static CString wo_ssprintf( MMRESULT err, const char *fmt, ...)
 {
@@ -46,11 +44,12 @@ void RageSound_WaveOut::MixerThread()
 	 * assigns it; we might get here before that happens, though. */
 	while(!SOUNDMAN && !shutdown) Sleep(10);
 
-	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL))
-		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set sound thread priority"));
+	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
+		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority") );
 
-	while(!shutdown) {
-		while(GetData())
+	while( !shutdown )
+	{
+		while( GetData() )
 			;
 
 		WaitForSingleObject(sound_event, 10);
@@ -65,64 +64,14 @@ bool RageSound_WaveOut::GetData()
 
 	/* Look for a free buffer. */
 	int b;
-	for(b = 0; b < num_chunks; ++b)
+	for( b = 0; b < num_chunks; ++b )
 		if(buffers[b].dwFlags & WHDR_DONE) break;
+	if( b == num_chunks )
+		return false;
 
-	if(b == num_chunks) return false;
+	/* Call the callback. */
+	this->Mix( (int16_t *) buffers[b].lpData, chunksize_frames, last_cursor_pos, GetPosition( NULL ) );
 
-	/* Create a 32-bit buffer to mix sounds. */
-	static Sint16 *buf = NULL;
-	int bufsize = chunksize_frames * channels;
-	if(!buf)
-		buf = new Sint16[bufsize];
-	memset(buf, 0, bufsize*sizeof(Uint16));
-	memset(buffers[b].lpData, 0, bufsize*sizeof(Uint16));
-	static SoundMixBuffer mix;
-
-	const int64_t play_pos = last_cursor_pos;
-    const int64_t cur_play_pos = GetPosition( NULL );
-
-	for(unsigned i = 0; i < sounds.size(); ++i)
-	{
-		if(sounds[i]->stopping)
-			continue;
-
-        int bytes_read = 0;
-        int bytes_left = chunksize;
-
-		if( !sounds[i]->start_time.IsZero() )
-		{
-			/* If the sound is supposed to start at a time past this buffer, insert silence. */
-			const int64_t iFramesUntilThisBuffer = play_pos - cur_play_pos;
-			const float fSecondsBeforeStart = -sounds[i]->start_time.Ago();
-			const int64_t iFramesBeforeStart = int64_t(fSecondsBeforeStart * samplerate);
-			const int64_t iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
-			const int iSilentBytesInThisBuffer = clamp( int(iSilentFramesInThisBuffer * bytes_per_frame), 0, bytes_left );
-
-			memset( buf+bytes_read, 0, iSilentBytesInThisBuffer );
-			bytes_read += iSilentBytesInThisBuffer;
-			bytes_left -= iSilentBytesInThisBuffer;
-
-			if( !iSilentBytesInThisBuffer )
-				sounds[i]->start_time.SetZero();
-		}
-
-		/* Call the callback. */
-		int got = sounds[i]->snd->GetPCM( (char *) buf+bytes_read, bytes_left, play_pos+bytes_read/bytes_per_frame );
-        bytes_read += got;
-        bytes_left -= got;
-
-		mix.write( (Sint16 *) buf, bytes_read / sizeof(Sint16), sounds[i]->snd->GetVolume() );
-
-		if( bytes_left > 0 )
-		{
-			/* This sound is finishing. */
-			sounds[i]->stopping = true;
-			sounds[i]->flush_pos = play_pos + (bytes_read / bytes_per_frame);
-		}
-	}
-
-	mix.read((Sint16 *) buffers[b].lpData);
 	MMRESULT ret = waveOutWrite(wo, &buffers[b], sizeof(buffers[b]));
   	if(ret != MMSYSERR_NOERROR)
 		RageException::Throw(wo_ssprintf(ret, "waveOutWrite failed"));
@@ -133,51 +82,10 @@ bool RageSound_WaveOut::GetData()
 	return true;
 }
 
-void RageSound_WaveOut::StartMixing( RageSoundBase *snd )
+void RageSound_WaveOut::SetupDecodingThread()
 {
-	sound *s = new sound;
-	s->snd = snd;
-	s->start_time = snd->GetStartTime();
-
-	LockMutex L(SOUNDMAN->lock);
-	sounds.push_back(s);
-}
-
-void RageSound_WaveOut::Update(float delta)
-{
-	LockMutex L(SOUNDMAN->lock);
-
-	/* SoundStopped might erase sounds out from under us, so make a copy
-	 * of the sound list. */
-	vector<sound *> snds = sounds;
-	for(unsigned i = 0; i < snds.size(); ++i)
-	{
-		if(!snds[i]->stopping) continue;
-
-		if(GetPosition(snds[i]->snd) < snds[i]->flush_pos)
-			continue; /* stopping but still flushing */
-
-		/* This sound is done. */
-		snds[i]->snd->StopPlaying();
-	}
-}
-
-void RageSound_WaveOut::StopMixing( RageSoundBase *snd )
-{
-	LockMutex L(SOUNDMAN->lock);
-
-	/* Find the sound. */
-	unsigned i;
-	for(i = 0; i < sounds.size(); ++i)
-		if(sounds[i]->snd == snd) break;
-	if(i == sounds.size())
-	{
-		LOG->Trace("not stopping a sound because it's not playing");
-		return;
-	}
-
-	delete sounds[i];
-	sounds.erase(sounds.begin()+i, sounds.begin()+i+1);
+	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
+		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority") );
 }
 
 int64_t RageSound_WaveOut::GetPosition( const RageSoundBase *snd ) const
