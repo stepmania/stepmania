@@ -265,9 +265,7 @@ void SongSelector::OnNotesTypeChange()
 	m_textStyle.SetText( GAMEMAN->GetStyleDefForStyle(GetSelectedStyle())->m_szName );
 
 	m_pNotess.RemoveAll();
-	/* XXX. We should display couples if either side exists ... 
-	 * 
-	 * This will also list fallback notes, which we don't want to do. */
+	/* XXX. This will list fallback notes, which we don't want. */
 	GetSelectedSong()->GetNotesThatMatch( GAMEMAN->GetStyleDefForStyle(GetSelectedStyle()), 0, m_pNotess );
 	SortNotesArrayByDifficulty( m_pNotess );
 	m_pNotess.Add( NULL );		// marker for "(NEW)"
