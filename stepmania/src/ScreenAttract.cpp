@@ -46,11 +46,6 @@ ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : Screen( sN
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName) );
 
-	if( GAMESTATE->IsTimeToPlayAttractSounds() )
-		SOUND->PlayMusic( THEME->GetPathToS(m_sName + " music") );
-	else
-		SOUND->PlayMusic( "" );	// stop music
-
 	float fTimeUntilBeginFadingOut = m_Background.GetLengthSeconds() - m_Out.GetLengthSeconds();
 	if( fTimeUntilBeginFadingOut < 0 )
 	{
@@ -134,6 +129,13 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 
 void ScreenAttract::Update( float fDelta )
 {
+	if( IsFirstUpdate() )
+	{
+		if( GAMESTATE->IsTimeToPlayAttractSounds() )
+			SOUND->PlayMusic( THEME->GetPathToS(m_sName + " music") );
+		else
+			SOUND->PlayMusic( "" );	// stop music
+	}
 	Screen::Update(fDelta);
 }
 
