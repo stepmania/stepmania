@@ -115,6 +115,8 @@ enum // 3DDX Buttons
 	NUM_DS3DDX_BUTTONS, // leave this at the end.
 };
 
+/* TODO: Having two game types where the only difference is two keys is a waste.
+ * Delete BM and make the BM styles use only a subset of the IIDX keys. */
 enum // BM Buttons
 {
 	BM_BUTTON_KEY1,
@@ -127,7 +129,7 @@ enum // BM Buttons
 	 * matching. */
 	BM_BUTTON_SCRATCHDOWN,
 	BM_BUTTON_START,
-	BM_BUTTON_SELECT,
+	BM_BUTTON_BACK,
 	BM_BUTTON_MENULEFT,
 	BM_BUTTON_MENURIGHT,
 	BM_BUTTON_MENUUP,
@@ -151,7 +153,7 @@ enum // IIDX Buttons
 	 * matching. */
 	IIDX_BUTTON_SCRATCHDOWN,
 	IIDX_BUTTON_START,
-	IIDX_BUTTON_SELECT,
+	IIDX_BUTTON_BACK,
 	IIDX_BUTTON_MENULEFT,
 	IIDX_BUTTON_MENURIGHT,
 	IIDX_BUTTON_MENUUP,

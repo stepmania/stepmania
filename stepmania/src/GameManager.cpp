@@ -567,13 +567,13 @@ Game g_Games[NUM_GAMES] =
 				KEY_Ce,							// DS3DDX_BUTTON_FOOTUPRIGHT,
 				KEY_Cc,							// DS3DDX_BUTTON_FOOTDOWNRIGHT,
 				KEY_Cd,							// DS3DDX_BUTTON_HANDRIGHT,
-				KEY_ENTER,					// DS3DDX_BUTTON_START,
-				KEY_ESC,					// DS3DDX_BUTTON_BACK
+				KEY_ENTER,						// DS3DDX_BUTTON_START,
+				KEY_ESC,						// DS3DDX_BUTTON_BACK
 				KEY_LEFT, //no default key		// DS3DDX_BUTTON_MENULEFT
-				KEY_RIGHT, //no default key	// DS3DDX_BUTTON_MENURIGHT
-				KEY_UP,						// DS3DDX_BUTTON_MENUUP
+				KEY_RIGHT, //no default key		// DS3DDX_BUTTON_MENURIGHT
+				KEY_UP,							// DS3DDX_BUTTON_MENUUP
 				KEY_DOWN,						// DS3DDX_BUTTON_MENUDOWN
-				KEY_F1,						// DS3DDX_BUTTON_COIN
+				KEY_F1,							// DS3DDX_BUTTON_COIN
 				KEY_SCRLLOCK					// DS3DDX_BUTTON_OPERATOR
 			},
 			{	// PLAYER_2
@@ -612,10 +612,10 @@ Game g_Games[NUM_GAMES] =
 			"Key3",
 			"Key4",
 			"Key5",
-			"Scratch",
-			"Scratch (down)",
+			"Scratch up",
+			"Scratch down",
 			"Start",
-			"Select",
+			"Back",
 			"MenuLeft",
 			"MenuRight",
 			"MenuUp",
@@ -631,8 +631,8 @@ Game g_Games[NUM_GAMES] =
 			"",
 			"(MenuUp)",
 			"(MenuDown)",
-			"(Start)",
-			"(Back)",
+			"",
+			"",
 			"(dedicated)",
 			"(dedicated)",
 			"(dedicated)",
@@ -647,7 +647,7 @@ Game g_Games[NUM_GAMES] =
 			BM_BUTTON_MENUUP,		// MENU_BUTTON_UP
 			BM_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
 			BM_BUTTON_START,		// MENU_BUTTON_START
-			BM_BUTTON_SELECT,		// MENU_BUTTON_BACK
+			BM_BUTTON_BACK,			// MENU_BUTTON_BACK
 			BM_BUTTON_COIN,			// MENU_BUTTON_COIN
 			BM_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
 		},
@@ -657,7 +657,7 @@ Game g_Games[NUM_GAMES] =
 			BM_BUTTON_SCRATCHUP,	// MENU_BUTTON_UP
 			BM_BUTTON_SCRATCHDOWN,	// MENU_BUTTON_DOWN
 			BM_BUTTON_START,		// MENU_BUTTON_START
-			BM_BUTTON_SELECT,		// MENU_BUTTON_BACK
+			BM_BUTTON_BACK,			// MENU_BUTTON_BACK
 			BM_BUTTON_COIN,			// MENU_BUTTON_COIN
 			BM_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
 		},
@@ -667,16 +667,16 @@ Game g_Games[NUM_GAMES] =
 				KEY_Ck,					// BM_BUTTON_KEY2,
 				KEY_COMMA,				// BM_BUTTON_KEY3,
 				KEY_Cl,					// BM_BUTTON_KEY4,
-				KEY_PERIOD,			// BM_BUTTON_KEY5,
-				KEY_LSHIFT,			// BM_BUTTON_SCRATCHUP,
-				NO_DEFAULT_KEY,						// BM_BUTTON_SCRATCHDOWN,
-				KEY_ENTER,			// BM_BUTTON_START,
-				NO_DEFAULT_KEY,						// BM_BUTTON_SELECT,
+				KEY_PERIOD,				// BM_BUTTON_KEY5,
+				KEY_LSHIFT,				// BM_BUTTON_SCRATCHUP,
+				NO_DEFAULT_KEY,			// BM_BUTTON_SCRATCHDOWN,
+				KEY_ENTER,				// BM_BUTTON_START,
+				KEY_ESC,				// BM_BUTTON_BACK,
 				KEY_LEFT,				// BM_BUTTON_MENULEFT
 				KEY_RIGHT,				// BM_BUTTON_MENURIGHT
-				KEY_UP,				// BM_BUTTON_MENUUP
+				KEY_UP,					// BM_BUTTON_MENUUP
 				KEY_DOWN,				// BM_BUTTON_MENUDOWN
-				KEY_F1,				// BM_BUTTON_COIN
+				KEY_F1,					// BM_BUTTON_COIN
 				KEY_SCRLLOCK			// BM_BUTTON_OPERATOR
 			},
 			{	// PLAYER_2
@@ -688,7 +688,7 @@ Game g_Games[NUM_GAMES] =
 				NO_DEFAULT_KEY,					// BM_BUTTON_SCRATCHUP,
 				NO_DEFAULT_KEY,					// BM_BUTTON_SCRATCHDOWN,
 				NO_DEFAULT_KEY,					// BM_BUTTON_START,
-				NO_DEFAULT_KEY,					// BM_BUTTON_SELECT,
+				NO_DEFAULT_KEY,					// BM_BUTTON_BACK,
 				NO_DEFAULT_KEY,					// BM_BUTTON_MENULEFT
 				NO_DEFAULT_KEY,					// BM_BUTTON_MENURIGHT
 				NO_DEFAULT_KEY,					// BM_BUTTON_MENUUP
@@ -716,10 +716,10 @@ Game g_Games[NUM_GAMES] =
 			"Key5",
 			"Key6",
 			"Key7",
-			"Scratch",
-			"Scratch (down)",
+			"Scratch up",
+			"Scratch down",
 			"Start",
-			"Select",
+			"Back",
 			"MenuLeft",
 			"MenuRight",
 			"MenuUp",
@@ -737,9 +737,8 @@ Game g_Games[NUM_GAMES] =
 			"",
 			"(MenuUp)",
 			"(MenuDown)",
-			"(Start)",
-			"(Back)",
-			"(dedicated)",
+			"",
+			"",
 			"(dedicated)",
 			"(dedicated)",
 			"(dedicated)",
@@ -753,7 +752,7 @@ Game g_Games[NUM_GAMES] =
 			IIDX_BUTTON_MENUUP,		// MENU_BUTTON_UP
 			IIDX_BUTTON_MENUDOWN,	// MENU_BUTTON_DOWN
 			IIDX_BUTTON_START,		// MENU_BUTTON_START
-			IIDX_BUTTON_SELECT,		// MENU_BUTTON_BACK
+			IIDX_BUTTON_BACK,		// MENU_BUTTON_BACK
 			IIDX_BUTTON_COIN,		// MENU_BUTTON_COIN
 			IIDX_BUTTON_OPERATOR,	// MENU_BUTTON_OPERATOR
 		},
@@ -763,7 +762,7 @@ Game g_Games[NUM_GAMES] =
 			IIDX_BUTTON_SCRATCHUP,	// MENU_BUTTON_UP
 			IIDX_BUTTON_SCRATCHDOWN,// MENU_BUTTON_DOWN
 			IIDX_BUTTON_START,		// MENU_BUTTON_START
-			IIDX_BUTTON_SELECT,		// MENU_BUTTON_BACK
+			IIDX_BUTTON_BACK,		// MENU_BUTTON_BACK
 			IIDX_BUTTON_COIN,		// MENU_BUTTON_COIN
 			IIDX_BUTTON_OPERATOR,	// MENU_BUTTON_OPERATOR
 		},
@@ -773,18 +772,18 @@ Game g_Games[NUM_GAMES] =
 				KEY_Ck,				// IIDX_BUTTON_KEY2,
 				KEY_COMMA,			// IIDX_BUTTON_KEY3,
 				KEY_Cl,				// IIDX_BUTTON_KEY4,
-				KEY_PERIOD,		// IIDX_BUTTON_KEY5,
+				KEY_PERIOD,			// IIDX_BUTTON_KEY5,
 				KEY_SEMICOLON,		// IIDX_BUTTON_KEY6,
 				KEY_SLASH,			// IIDX_BUTTON_KEY7,
-				KEY_LSHIFT,		// IIDX_BUTTON_SCRATCHUP,
-				NO_DEFAULT_KEY,					// IIDX_BUTTON_SCRATCHDOWN,
-				KEY_ENTER,		// IIDX_BUTTON_START,
-				NO_DEFAULT_KEY,					// IIDX_BUTTON_SELECT,
+				KEY_LSHIFT,			// IIDX_BUTTON_SCRATCHUP,
+				NO_DEFAULT_KEY,		// IIDX_BUTTON_SCRATCHDOWN,
+				KEY_ENTER,			// IIDX_BUTTON_START,
+				KEY_ESC,			// IIDX_BUTTON_BACK,
 				KEY_LEFT,			// IIDX_BUTTON_MENULEFT
 				KEY_RIGHT,			// IIDX_BUTTON_MENURIGHT
-				KEY_UP,			// IIDX_BUTTON_MENUUP
+				KEY_UP,				// IIDX_BUTTON_MENUUP
 				KEY_DOWN,			// IIDX_BUTTON_MENUDOWN
-				KEY_F1,			// IIDX_BUTTON_COIN
+				KEY_F1,				// IIDX_BUTTON_COIN
 				KEY_SCRLLOCK		// IIDX_BUTTON_OPERATOR
 			},
 			{	// PLAYER_2
@@ -798,7 +797,7 @@ Game g_Games[NUM_GAMES] =
 				NO_DEFAULT_KEY,					// IIDX_BUTTON_SCRATCHUP,
 				NO_DEFAULT_KEY,					// IIDX_BUTTON_SCRATCHDOWN,
 				NO_DEFAULT_KEY,					// IIDX_BUTTON_START,
-				NO_DEFAULT_KEY,					// IIDX_BUTTON_SELECT,
+				NO_DEFAULT_KEY,					// IIDX_BUTTON_BACK,
 				NO_DEFAULT_KEY,					// IIDX_BUTTON_MENULEFT
 				NO_DEFAULT_KEY,					// IIDX_BUTTON_MENURIGHT
 				NO_DEFAULT_KEY,					// IIDX_BUTTON_MENUUP
@@ -1104,7 +1103,7 @@ Game g_Games[NUM_GAMES] =
 				NO_DEFAULT_KEY,					// BM_BUTTON_SCRATCHUP,
 				NO_DEFAULT_KEY,					// BM_BUTTON_SCRATCHDOWN,
 				NO_DEFAULT_KEY,					// BM_BUTTON_START,
-				NO_DEFAULT_KEY,					// BM_BUTTON_SELECT,
+				NO_DEFAULT_KEY,					// BM_BUTTON_BACK,
 				NO_DEFAULT_KEY,					// BM_BUTTON_MENULEFT
 				NO_DEFAULT_KEY,					// BM_BUTTON_MENURIGHT
 				NO_DEFAULT_KEY,					// BM_BUTTON_MENUUP
@@ -2957,11 +2956,7 @@ bool GameManager::IsGameEnabled( const Game *pGame )
 {
 	CStringArray asNoteSkins;
 	NOTESKIN->GetNoteSkinNames( pGame, asNoteSkins, false ); /* don't omit default */
-	for( unsigned i = 0; i < asNoteSkins.size(); ++i )
-		if( !asNoteSkins[i].CompareNoCase("default") )
-			return true;
-
-	return false;
+	return asNoteSkins.size() > 0;
 }
 
 int GameManager::StepsTypeToNumTracks( StepsType st )
