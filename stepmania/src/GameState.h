@@ -205,6 +205,7 @@ public:
 	void ApplyModifiers( PlayerNumber pn, CString sModifiers );
 	void StoreSelectedOptions();
 	void RestoreSelectedOptions();
+	void ResetCurrentOptions();
 
 	bool IsDisqualified( PlayerNumber pn );
 

@@ -1032,6 +1032,17 @@ void GameState::RestoreSelectedOptions()
 	m_SongOptions = m_StoredSongOptions;
 }
 
+void GameState::ResetCurrentOptions()
+{
+	FOREACH_PlayerNumber( p )
+	{
+		m_pPlayerState[p]->m_PlayerOptions.Init();
+		m_pPlayerState[p]->m_PlayerOptions.FromString( PREFSMAN->m_sDefaultModifiers );
+	}
+	m_SongOptions.Init();
+	m_SongOptions.FromString( PREFSMAN->m_sDefaultModifiers );
+}
+
 bool GameState::IsDisqualified( PlayerNumber pn )
 {
 	if( !PREFSMAN->m_bDisqualification )

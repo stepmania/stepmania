@@ -55,7 +55,7 @@ AutoScreenMessage( SM_BackFromEditOptions )
 AutoScreenMessage( SM_BackFromSongInformation )
 AutoScreenMessage( SM_BackFromBGChange )
 AutoScreenMessage( SM_BackFromInsertAttack )
-AutoScreenMessage( SM_BackFromInsertAttackModifiers )
+AutoScreenMessage( SM_BackFromInsertAttackPlayerOptions )
 AutoScreenMessage( SM_BackFromPrefs ) 
 AutoScreenMessage( SM_BackFromCourseModeMenu )
 AutoScreenMessage( SM_DoRevertToLastSave )
@@ -920,7 +920,6 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 				fScrollSpeed = fNewScrollSpeed;
 				m_soundMarker.Play();
-				GAMESTATE->StoreSelectedOptions();
 			}
 			break;
 		}
@@ -1462,10 +1461,14 @@ void ScreenEdit::TransitionEditMode( EditMode em )
 
 			CheckNumberOfNotesAndUndo();
 		}
+
+		GAMESTATE->ResetCurrentOptions();
 		break;
 	case MODE_RECORDING:
+		GAMESTATE->RestoreSelectedOptions();
 		break;
 	case MODE_PLAYING:
+		GAMESTATE->RestoreSelectedOptions();
 		break;
 	default:
 		ASSERT(0);
@@ -1561,8 +1564,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		SM == SM_BackFromPlayerOptions ||
 		SM == SM_BackFromSongOptions )
 	{
-		// coming back from PlayerOptions or SongOptions
 		GAMESTATE->StoreSelectedOptions();
+		GAMESTATE->ResetCurrentOptions();
 
 		// stop any music that screen may have been playing
 		SOUND->StopMusic();
@@ -1572,11 +1575,12 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iDurationChoice = ScreenMiniMenu::s_viLastAnswers[0];
 		g_fLastInsertAttackDurationSeconds = strtof( g_InsertAttack.rows[0].choices[iDurationChoice], NULL );
 		GAMESTATE->StoreSelectedOptions();	// save so that we don't lose the options chosen for edit and playback
+		GAMESTATE->ResetCurrentOptions();
 
 		// XXX: Fix me
-		//SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertAttackModifiers );
+		//SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertAttackPlayerOptions );
 	}
-	else if( SM == SM_BackFromInsertAttackModifiers )
+	else if( SM == SM_BackFromInsertAttackPlayerOptions )
 	{
 		PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
 		CString sMods = poChosen.GetString();
