@@ -685,7 +685,7 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 {
 #if defined(_XBOX)
 	return NULL;
-#elif
+#else if
 	/* Get the back buffer. */
 	IDirect3DSurface8* pSurface;
 	g_pd3dDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pSurface );
