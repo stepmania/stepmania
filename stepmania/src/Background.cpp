@@ -286,15 +286,20 @@ void Background::LoadFromSong( Song* pSong )
 		const float fFirstBeat = pSong->m_fFirstBeat;
 		const float fLastBeat = pSong->m_fLastBeat;
 
+		const int iSequenceLength = 8;
+		const int iSequence[iSequenceLength] = {0,1,0,1,2,3,2,3};
+		int ctr=0;
+
 		// change BG every 4 bars
 		for( float f=fFirstBeat; f<fLastBeat; f+=BEATS_PER_MEASURE*4 )
 		{
 			if( bLoadedAnyRandomBackgrounds )
 			{
-				CString sBGName = RANDOM_BACKGROUND[ rand()%MAX_RANDOM_BACKGROUNDS ];
+				CString sBGName = RANDOM_BACKGROUND[ ctr ];
 				bool bFade = PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_RANDOMMOVIES || 
 					PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_MOVIEVIS;
 				m_aBGChanges.push_back( BackgroundChange(f,sBGName,1.f,bFade) );
+				ctr = (ctr+1)%MAX_RANDOM_BACKGROUNDS;
 			}
 		}
 

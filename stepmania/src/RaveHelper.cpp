@@ -80,12 +80,12 @@ void RaveHelper::LaunchAttack( AttackLevel al )
 	CString sAttackToGive = asAttacks[ rand()%NUM_ATTACKS_PER_LEVEL ];
   	PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
 
-	GameState::ActiveAttack aa;
-	aa.level = al;
-	aa.fSecsRemaining = ATTACK_DURATION_SECONDS;
-	aa.sModifier = sAttackToGive;
+	GameState::Attack a;
+	a.level = al;
+	a.fSecsRemaining = ATTACK_DURATION_SECONDS;
+	a.sModifier = sAttackToGive;
 
-	GAMESTATE->LaunchAttack( pnToAttack, aa );
+	GAMESTATE->LaunchAttack( pnToAttack, a );
 	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( pnToAttack );
 
 	m_soundLaunchAttack.Play();

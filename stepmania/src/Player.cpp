@@ -32,7 +32,9 @@
 #include "PlayerAI.h"
 
 #define GRAY_ARROWS_Y				THEME->GetMetricF("Player","GrayArrowsY")
+#define JUDGMENT_X( p, both_sides )	THEME->GetMetricF("Player",both_sides ? "JudgmentXOffsetBothSides" : ssprintf("JudgmentXOffsetOneSideP%d",p+1))
 #define JUDGMENT_Y					THEME->GetMetricF("Player","JudgmentY")
+#define COMBO_X( p, both_sides )	THEME->GetMetricF("Player",both_sides ? "ComboXOffsetBothSides" : ssprintf("ComboXOffsetOneSideP%d",p+1))
 #define COMBO_Y						THEME->GetMetricF("Player","ComboY")
 #define HOLD_JUDGMENT_Y				THEME->GetMetricF("Player","HoldJudgmentY")
 CachedThemeMetricI					BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
@@ -137,7 +139,10 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	m_GhostArrowRow.Load( pn );
 
 	bool bReverse = GAMESTATE->m_PlayerOptions[pn].m_fReverseScroll == 1;
+	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyleDef()->m_StyleType==StyleDef::ONE_PLAYER_TWO_CREDITS;
+	m_Combo.SetX( COMBO_X(m_PlayerNumber,bPlayerUsingBothSides) );
 	m_Combo.SetY( bReverse ? SCREEN_BOTTOM-COMBO_Y : SCREEN_TOP+COMBO_Y );
+	m_Judgment.SetX( JUDGMENT_X(m_PlayerNumber,bPlayerUsingBothSides) );
 	m_Judgment.SetY( bReverse ? SCREEN_BOTTOM-JUDGMENT_Y : SCREEN_TOP+JUDGMENT_Y );
 
 	int c;

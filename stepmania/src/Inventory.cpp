@@ -16,6 +16,7 @@
 #include "GameState.h"
 #include "RageTimer.h"
 #include "PrefsManager.h"
+#include "Song.h"
 
 
 #define NUM_ITEM_TYPES			THEME->GetMetricF("Inventory","NumItemTypes")
@@ -110,7 +111,8 @@ void Inventory::Update( float fDelta )
 
 
 	// use items if this player is CPU-controlled
-	if( GAMESTATE->m_PlayerController[m_PlayerNumber] != HUMAN )
+	if( GAMESTATE->m_PlayerController[m_PlayerNumber] != HUMAN &&
+		GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
 	{
 		// every one second, consider using an item
 		int iLastSecond = (int)(RageTimer::GetTimeSinceStart() - fDelta);
@@ -118,8 +120,8 @@ void Inventory::Update( float fDelta )
 		if( iLastSecond != iThisSecond )
 		{
 			int iSlotToConsider = rand()%NUM_INVENTORY_SLOTS;
-			bool bTimeToUse = (rand()%10)==0;
-			if( GAMESTATE->m_sInventory[m_PlayerNumber][iSlotToConsider] != ""  &&
+			bool bTimeToUse = (rand()%6)==0;
+			if( !GAMESTATE->m_Inventory[m_PlayerNumber][iSlotToConsider].IsBlank()  &&
 				bTimeToUse )
 			{
 				UseItem( iSlotToConsider );
@@ -133,14 +135,14 @@ void Inventory::AwardItem( int iItemIndex )
 	// search for the first open slot
 	int iOpenSlot = -1;
 
-	CString* asInventory = GAMESTATE->m_sInventory[m_PlayerNumber]; //[NUM_INVENTORY_SLOTS]
+	GameState::Attack* asInventory = GAMESTATE->m_Inventory[m_PlayerNumber]; //[NUM_INVENTORY_SLOTS]
 
-	if( asInventory[NUM_INVENTORY_SLOTS/2] == "" )
+	if( asInventory[NUM_INVENTORY_SLOTS/2].IsBlank() )
 		iOpenSlot = NUM_INVENTORY_SLOTS/2;
 	else
 	{
 		for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
-			if( asInventory[s] == "" )
+			if( asInventory[s].IsBlank() )
 			{
 				iOpenSlot = s;
 				break;
@@ -149,8 +151,11 @@ void Inventory::AwardItem( int iItemIndex )
 
 	if( iOpenSlot != -1 )
 	{
-		CString sAttackToGive = g_Items[iItemIndex].sModifier;
-		asInventory[iOpenSlot] = sAttackToGive;
+		GameState::Attack a;
+		a.sModifier = g_Items[iItemIndex].sModifier;
+		a.fSecsRemaining = ITEM_DURATION_SECONDS;
+		a.level = g_Items[iItemIndex].level;
+		asInventory[iOpenSlot] = a;
 		m_soundAcquireItem.Play();
 	}
 	// else not enough room to insert item
@@ -158,31 +163,18 @@ void Inventory::AwardItem( int iItemIndex )
 
 void Inventory::UseItem( int iSlot )
 {
-	CString* asInventory = GAMESTATE->m_sInventory[m_PlayerNumber]; //[NUM_INVENTORY_SLOTS]
+	GameState::Attack* asInventory = GAMESTATE->m_Inventory[m_PlayerNumber]; //[NUM_INVENTORY_SLOTS]
 
-	if( asInventory[iSlot] == "" )
+	if( asInventory[iSlot].IsBlank() )
 		return;
 
     PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
-	GameState::ActiveAttack aa;
-	aa.sModifier = asInventory[iSlot];
-	aa.fSecsRemaining = ITEM_DURATION_SECONDS;
-	aa.level = ATTACK_LEVEL_1;
+	GameState::Attack a = asInventory[iSlot];
 
-	// UGLY:  Search through g_Items and find out what the attack level for this item is.
-	for( unsigned i=0; i<g_Items.size(); i++ )
-	{
-		if( aa.sModifier == g_Items[i].sModifier )
-		{
-			aa.level = g_Items[i].level;
-			break;
-		}
-	}
-
-	GAMESTATE->LaunchAttack( pnToAttack, aa );
+	GAMESTATE->LaunchAttack( pnToAttack, a );
 	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( pnToAttack );
 
 	// remove the item
-	asInventory[iSlot] = "";
+	asInventory[iSlot].MakeBlank();
 	m_soundUseItem.Play();
 }

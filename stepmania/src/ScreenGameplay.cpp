@@ -46,50 +46,6 @@ CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenCom
 CachedThemeMetricF G_TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
 
 
-/*
-#define MAXCOMBO_X						THEME->GetMetricF("ScreenGameplay","MaxComboX")
-#define MAXCOMBO_Y						THEME->GetMetricF("ScreenGameplay","MaxComboY")
-#define MAXCOMBO_ZOOM					THEME->GetMetricF("ScreenGameplay","MaxComboZoom")
-#define BPM_X							THEME->GetMetricF("ScreenGameplay","BPMX")
-#define BPM_Y							THEME->GetMetricF("ScreenGameplay","BPMY")
-#define BPM_ZOOM						THEME->GetMetricF("ScreenGameplay","BPMZoom")
-#define STAGENAME_X						THEME->GetMetricF("ScreenGameplay","StagenameX")
-#define STAGENAME_Y						THEME->GetMetricF("ScreenGameplay","StagenameY")
-#define STAGENAME_ZOOM					THEME->GetMetricF("ScreenGameplay","StagenameZoom")
-#define LIFE_FRAME_X					THEME->GetMetricF("ScreenGameplay","LifeFrameX")
-#define LIFE_FRAME_Y( e )				THEME->GetMetricF("ScreenGameplay",ssprintf("LifeFrame%sY",e?"Extra":""))
-#define SCORE_FRAME_X					THEME->GetMetricF("ScreenGameplay","ScoreFrameX")
-#define SCORE_FRAME_Y( e )				THEME->GetMetricF("ScreenGameplay",ssprintf("ScoreFrame%sY",e?"Extra":""))
-#define MIDDLE_FRAME_X					THEME->GetMetricF("ScreenGameplay","MiddleFrameX")
-#define MIDDLE_FRAME_Y					THEME->GetMetricF("ScreenGameplay","MiddleFrameY")
-#define LIFE_X( p )						THEME->GetMetricF("ScreenGameplay",ssprintf("LifeP%dX",p+1))
-#define LIFE_Y( p, e )					THEME->GetMetricF("ScreenGameplay",ssprintf("LifeP%d%sY",p+1,e?"Extra":""))
-#define STAGE_X							THEME->GetMetricF("ScreenGameplay","StageX")
-#define STAGE_Y( e )					THEME->GetMetricF("ScreenGameplay",ssprintf("Stage%sY",e?"Extra":""))
-#define SONG_NUMBER_X( p )				THEME->GetMetricF("ScreenGameplay",ssprintf("SongNumberP%dX",p+1))
-#define SONG_NUMBER_Y( p, e )			THEME->GetMetricF("ScreenGameplay",ssprintf("SongNumberP%d%sY",p+1,e?"Extra":""))
-#define SCORE_X( p )					THEME->GetMetricF("ScreenGameplay",ssprintf("ScoreP%dX",p+1))
-#define SCORE_Y( p, e )					THEME->GetMetricF("ScreenGameplay",ssprintf("ScoreP%d%sY",p+1,e?"Extra":""))
-#define SCORE_ZOOM						THEME->GetMetricF("ScreenGameplay","ScoreZoom")
-#define PLAYER_OPTIONS_X( p )			THEME->GetMetricF("ScreenGameplay",ssprintf("PlayerOptionsP%dX",p+1))
-#define PLAYER_OPTIONS_Y( p, e )		THEME->GetMetricF("ScreenGameplay",ssprintf("PlayerOptionsP%d%sY",p+1,e?"Extra":""))
-#define SONG_OPTIONS_X					THEME->GetMetricF("ScreenGameplay","SongOptionsX")
-#define SONG_OPTIONS_Y( e )				THEME->GetMetricF("ScreenGameplay",ssprintf("SongOptions%sY",e?"Extra":""))
-#define DIFFICULTY_X( p )				THEME->GetMetricF("ScreenGameplay",ssprintf("DifficultyP%dX",p+1))
-#define DIFFICULTY_Y( p, e, r )			THEME->GetMetricF("ScreenGameplay",ssprintf("DifficultyP%d%s%sY",p+1,e?"Extra":"",r?"Reverse":""))
-#define LYRICS_X						THEME->GetMetricF("ScreenGameplay",ssprintf("LyricsX"))
-#define LYRICS_Y( e, r )				THEME->GetMetricF("ScreenGameplay",ssprintf("Lyrics%s%sY",e?"Extra":"",r?"Reverse":""))
-#define ACTIVE_ITEMS_X( p )				THEME->GetMetricF("ScreenGameplay",ssprintf("ActiveItemsP%dX",p+1))
-#define ACTIVE_ITEMS_Y( p, e, r )		THEME->GetMetricF("ScreenGameplay",ssprintf("ActiveItemsP%d%s%sY",p+1,e?"Extra":"",r?"Reverse":""))
-#define DEBUG_X							THEME->GetMetricF("ScreenGameplay","DebugX")
-#define DEBUG_Y							THEME->GetMetricF("ScreenGameplay","DebugY")
-#define AUTOPLAY_X						THEME->GetMetricF("ScreenGameplay","AutoPlayX")
-#define AUTOPLAY_Y						THEME->GetMetricF("ScreenGameplay","AutoPlayY")
-#define SURVIVE_TIME_X					THEME->GetMetricF("ScreenGameplay","SurviveTimeX")
-#define SURVIVE_TIME_Y					THEME->GetMetricF("ScreenGameplay","SurviveTimeY")
-*/
-
-
 const ScreenMessage	SM_PlayReady			= ScreenMessage(SM_User+0);
 const ScreenMessage	SM_PlayGo				= ScreenMessage(SM_User+1);
 
@@ -128,6 +84,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 	/* Save selected options before we change them. */
 	GAMESTATE->StoreSelectedOptions();
+
+	GAMESTATE->RemoveAllInventory();
 
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -469,6 +427,18 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		if( GAMESTATE->IsExtraStage() )	// only load if we're going to use it
 			m_Extra.Load( THEME->GetPathToB("ScreenGameplay extra2") );
 		this->AddChild( &m_Extra );
+
+		// only load if we're going to use it
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_BATTLE:
+			for( p=0; p<NUM_PLAYERS; p++ )
+			{
+				m_Win[p].Load( THEME->GetPathToB(ssprintf("ScreenGameplay win p%d",p+1)) );
+				this->AddChild( &m_Win[p] );
+			}
+			break;
+		}
 
 		m_In.Load( THEME->GetPathToB("ScreenGameplay in") );
 		this->AddChild( &m_In );
@@ -1338,6 +1308,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					return;		// ignore
 				m_DancingState = STATE_OUTRO;
 
+				GAMESTATE->RemoveAllActiveAttacks();
+
 				if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG  &&  AllFailedEarlier() )
 				{
 					this->PostScreenMessage( SM_BeginFailed, 0 );
@@ -1354,7 +1326,23 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					else
 					{
 						TweenOffScreen();
-						m_Cleared.StartTransitioning( SM_GoToStateAfterCleared );
+						
+						switch( GAMESTATE->m_PlayMode )
+						{
+						case PLAY_MODE_BATTLE:
+							{
+								PlayerNumber winner = PLAYER_1;
+								for( int p=0; p<NUM_PLAYERS; p++ )
+									if( GAMESTATE->m_CurStageStats.iActualDancePoints[p] > GAMESTATE->m_CurStageStats.iActualDancePoints[winner] )
+										winner = (PlayerNumber)p;
+								m_Win[winner].StartTransitioning( SM_GoToStateAfterCleared );
+							}
+							break;
+						default:
+							m_Cleared.StartTransitioning( SM_GoToStateAfterCleared );
+							break;
+						}
+						
 						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
 					}
 				}

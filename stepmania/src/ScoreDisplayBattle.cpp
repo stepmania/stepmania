@@ -49,18 +49,19 @@ void ScoreDisplayBattle::Update( float fDelta )
 
 	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 	{
-		CString sNewItem = GAMESTATE->m_sInventory[m_PlayerNumber][s];
+		GameState::Attack attack = GAMESTATE->m_Inventory[m_PlayerNumber][s];
+		CString sNewModifier = attack.sModifier;
 
-		if( sNewItem != m_iLastSeenInventory[s] )
+		if( sNewModifier != m_iLastSeenInventory[s] )
 		{
-			m_iLastSeenInventory[s] = sNewItem;
+			m_iLastSeenInventory[s] = sNewModifier;
 
-			if( sNewItem == "" )
+			if( sNewModifier == "" )
 				m_ItemIcon[s].Command( "linear,0.25;zoom,0" );
 			else
 			{
 				// TODO:  Cache all of the icon graphics so we don't load them dynamically from disk.
-				m_ItemIcon[s].Load( THEME->GetPathToG("ScoreDisplayBattle icon "+sNewItem) );
+				m_ItemIcon[s].Load( THEME->GetPathToG("ScoreDisplayBattle icon "+sNewModifier) );
 				m_ItemIcon[s].StopTweening();
 				m_ItemIcon[s].Command( "diffuse,1,1,1,1;zoom,1;"
 					"sleep,0.1;linear,0;diffusealpha,0;"

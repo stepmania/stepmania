@@ -158,21 +158,26 @@ public:
 	AttackLevel	m_MaxAttackLevel[NUM_PLAYERS];
 	CString	m_sAttacks[NUM_PLAYERS][NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
 
-	// used in PLAY_MODE_BATTLE
-	CString	m_sInventory[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
 	
 	// used in PLAY_MODE_RAVE and PLAY_MODE_BATTLE
-	struct ActiveAttack
+	struct Attack
 	{
 		AttackLevel	level;
 		float fSecsRemaining;
 		CString sModifier;
+		bool IsBlank() { return sModifier.empty(); }
+		void MakeBlank() { sModifier=""; }
 	};
-	ActiveAttack	m_ActiveAttacks[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
+	Attack	m_ActiveAttacks[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
+
+	// used in PLAY_MODE_BATTLE
+	Attack	m_Inventory[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
+	
 	bool	m_bActiveAttackEndedThisUpdate[NUM_PLAYERS];	// flag so we can play sounds
-	void LaunchAttack( PlayerNumber target, ActiveAttack aa );
+	void LaunchAttack( PlayerNumber target, Attack aa );
 	void RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn );
 	void RemoveAllActiveAttacks();	// called on end of song
+	void RemoveAllInventory();
 	int GetSumOfActiveAttackLevels( PlayerNumber pn );
 
 

@@ -64,17 +64,17 @@ void ActiveItemList::Update( float fDelta )
 
 	if( (int)fNowSeconds != (int)fLastSeconds )
 	{
-		GameState::ActiveAttack* sActiveAttacks = GAMESTATE->m_ActiveAttacks[m_PlayerNumber];	// NUM_INVENTORY_SLOTS
+		GameState::Attack* sActiveAttacks = GAMESTATE->m_ActiveAttacks[m_PlayerNumber];	// NUM_INVENTORY_SLOTS
 		for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 		{
-			GameState::ActiveAttack& aa = sActiveAttacks[s];
+			GameState::Attack& a = sActiveAttacks[s];
 
-			CString sDisplayText = aa.sModifier;
+			CString sDisplayText = a.sModifier;
 			if( sDisplayText == "" )
 				m_text[s].SetText( "" );
 			else
 			{
-				int iDisplaySecondsLeft = (int)(aa.fSecsRemaining+1);
+				int iDisplaySecondsLeft = (int)(a.fSecsRemaining+1);
 				m_text[s].SetText( ssprintf("%s %02d:%02d", sDisplayText.GetString(), iDisplaySecondsLeft/60, iDisplaySecondsLeft%60) );
 			}
 		}
