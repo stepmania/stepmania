@@ -54,10 +54,24 @@ public:
 	 * itself to this. */
 	set<RageSound *> all_sounds;
 
-	static void MixAudio(Uint8 *dst, const Uint8 *src, Uint32 len, int volume);
+	static void MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, float volume);
+};
+
+/* This inputs and outputs 16-bit 44khz stereo input. */
+class SoundMixBuffer
+{
+	basic_string<Sint32> mixbuf;
+	float vol;
+
+public:
+	void write(const Sint16 *buf, unsigned size);
+	void read(Sint16 *buf);
+	unsigned size() const { return mixbuf.size(); }
+	void SetVolume(float f);
+
+	SoundMixBuffer();
 };
 
 extern RageSoundManager *SOUNDMAN;
 
 #endif
-

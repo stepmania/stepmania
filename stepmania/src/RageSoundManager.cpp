@@ -209,75 +209,67 @@ void RageSoundManager::PlayOnceFromDir( CString sDir )
 }
 
 /* Standalone helpers: */
-/* The volume ranges from 0 - 128 */
-#define ADJUST_VOLUME(s, v)	(s = Sint16((s*v)/SDL_MIX_MAXVOLUME))
 
 /* Mix audio.  This is from SDL, but doesn't depend on the sound being
- * initialized.  We need higher-quality mixing; that'll probably require
- * having a 32-bit output buffer and another function to scale down to
- * 16-bit.  I don't know how to do that, though, and I can't find any
- * code; I don't even know how this is supposed to work (what should volume
- * be to mix an arbitrary number of sounds with *equal* volume?), so XXX. */
-void RageSoundManager::MixAudio(Uint8 *dst, const Uint8 *src, Uint32 len, int volume)
+ * initialized. */
+void RageSoundManager::MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, float volume)
 {
-	Uint16 format = AUDIO_S16SYS;
-
 	if ( volume == 0 )
 		return;
 
-	switch (format) {
-		case AUDIO_S16LSB: {
-			Sint16 src1, src2;
-			int dst_sample;
-			const int max_audioval = ((1<<(16-1))-1);
-			const int min_audioval = -(1<<(16-1));
+	int factor = int(volume * 256);
+	len /= 2;
+	while ( len-- ) {
+		Sint16 src1 = *src;
+		src1 = Sint16((src1*factor)/256);
+		Sint16 src2 = *dst;
 
-			len /= 2;
-			while ( len-- ) {
-				src1 = ((src[1])<<8|src[0]);
-				ADJUST_VOLUME(src1, volume);
-				src2 = ((dst[1])<<8|dst[0]);
-				src += 2;
-				dst_sample = src1+src2;
-				if ( dst_sample > max_audioval ) {
-					dst_sample = max_audioval;
-				} else
-				if ( dst_sample < min_audioval ) {
-					dst_sample = min_audioval;
-				}
-				dst[0] = Uint8(dst_sample&0xFF);
-				dst_sample >>= 8;
-				dst[1] = Uint8(dst_sample&0xFF);
-				dst += 2;
-			}
-		}
-		break;
+		int dst_sample = src1+src2;
+		dst_sample = clamp(dst_sample, -32768, 32767);
+		*dst = Sint16(dst_sample);
 
-		case AUDIO_S16MSB: {
-			Sint16 src1, src2;
-			int dst_sample;
-			const int max_audioval = ((1<<(16-1))-1);
-			const int min_audioval = -(1<<(16-1));
-
-			len /= 2;
-			while ( len-- ) {
-				src1 = ((src[0])<<8|src[1]);
-				ADJUST_VOLUME(src1, volume);
-				src2 = ((dst[0])<<8|dst[1]);
-				src += 2;
-				dst_sample = src1+src2;
-				if ( dst_sample > max_audioval ) {
-					dst_sample = max_audioval;
-				} else
-				if ( dst_sample < min_audioval ) {
-					dst_sample = min_audioval;
-				}
-				dst[1] = Uint8(dst_sample&0xFF);
-				dst_sample >>= 8;
-				dst[0] = Uint8(dst_sample&0xFF);
-				dst += 2;
-			}
-		}
-		break;
+		src++;
+		dst++;
 	}
+}
+
+SoundMixBuffer::SoundMixBuffer()
+{
+	vol = .5;
+}
+
+void SoundMixBuffer::write(const Sint16 *buf, unsigned size)
+{
+	size /= 2;
+
+	if(mixbuf.size() < size)
+	{
+		basic_string<Sint32> empty(size-mixbuf.size(), 0);
+
+		mixbuf.insert(mixbuf.end(), empty.begin(), empty.end());
+	}
+
+	for(unsigned pos = 0; pos < size; ++pos)
+	{
+		Sint32 samp = buf[pos] * 32768;
+
+		/* Scale volume: */
+		samp = Sint32(samp * vol);
+
+		/* Add and clip: */
+		mixbuf[pos] = clamp(mixbuf[pos] + samp, INT_MIN, INT_MAX);
+	}
+}
+
+void SoundMixBuffer::read(Sint16 *buf)
+{
+	for(unsigned pos = 0; pos < mixbuf.size(); ++pos)
+	{
+		/* XXX: dither */
+		Sint32 out = (mixbuf[pos] + 0) / 32768;
+		out = clamp(out, -32768, 32767);
+		buf[pos] = Sint16(out);
+	}
+
+	mixbuf.erase();
 }
