@@ -53,14 +53,14 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo /o"../StepMania-StackTrace.bsc"
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 $(intdir)\verstub.obj kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /pdb:"../release6/StepMania.pdb" /map /debug /machine:I386
-# SUBTRACT LINK32 /pdb:none
+# ADD LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib /nologo /subsystem:windows /pdb:"../release6/StepMania.pdb" /map /debug /machine:I386
+# SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\stepmania\stepmania
+TargetDir=\temp\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                         	cl                          /Zl                          /nologo                          /c                          verstub.cpp                          /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                              	cl                               /Zl                               /nologo                               /c                               verstub.cpp                               /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -88,14 +88,14 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 $(intdir)\verstub.obj kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /pdb:"../debug6/StepMania-debug.pdb" /map /debug /machine:I386 /out:"../StepMania-debug.exe"
+# ADD LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib /nologo /subsystem:windows /pdb:"../debug6/StepMania-debug.pdb" /map /debug /machine:I386 /out:"../StepMania-debug.exe"
 # SUBTRACT LINK32 /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\stepmania\stepmania
+TargetDir=\temp\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                         	cl                          /Zl                          /nologo                          /c                          verstub.cpp                          /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                              	cl                               /Zl                               /nologo                               /c                               verstub.cpp                               /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -509,6 +509,54 @@ SOURCE=.\MsdFile.h
 # Begin Group "System"
 
 # PROP Default_Filter ""
+# Begin Group "default"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\arch\default\arch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\default\LoadingWindow_SDL.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\default\LoadingWindow_SDL.h
+# End Source File
+# End Group
+# Begin Group "Win32"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\arch\Win32\arch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\Win32\LoadingWindow_Win32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\Win32\LoadingWindow_Win32.h
+# End Source File
+# End Group
+# Begin Group "arch"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\arch\arch.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\arch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\LoadingWindow.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\resource.h
@@ -553,6 +601,10 @@ SOURCE=.\StepMania.ICO
 # Begin Source File
 
 SOURCE=.\StepMania.RC
+# End Source File
+# Begin Source File
+
+SOURCE=.\StepMania.xpm
 # End Source File
 # End Group
 # Begin Group "Transitions"
@@ -653,6 +705,14 @@ SOURCE=.\BitmapText.h
 # Begin Source File
 
 SOURCE=.\Quad.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Sample3dObject.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Sample3dObject.h
 # End Source File
 # Begin Source File
 
