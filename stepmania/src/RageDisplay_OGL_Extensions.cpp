@@ -1,5 +1,7 @@
 #include "global.h"
 
+#define __glext_h_
+
 #if defined(WIN32)
 #include <windows.h>
 #endif
