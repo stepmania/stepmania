@@ -473,6 +473,16 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 //	if (cleared > total) cleared = total; // clear/total <= 1
 //	if (total == 0) total = 1;  // no division by 0
 
+	if (GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
+	{   // extra stage is its own thing, should not be progressive
+	    // and it should be as difficult as life 4
+		// (e.g. it should not depend on life settings)
+
+		m_iProgressiveLifebar = 0;
+		m_fLifeDifficulty = 1.0f;
+		return;
+	}
+
 	if (total > 1)
 		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * (int)(ProgressiveLifebarDifficulty * cleared / (total - 1));
 	else
