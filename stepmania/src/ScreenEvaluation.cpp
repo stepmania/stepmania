@@ -1279,9 +1279,6 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 			iNumStagesOfLastSong = 1;
 		}
 		GAMESTATE->m_iCurrentStageIndex += iNumStagesOfLastSong;
-
-		// save current stage stats
-		GAMESTATE->m_vPlayedStageStats.push_back( GAMESTATE->m_CurStageStats );	// Save this stage's stats
 		break;
 	}
 }

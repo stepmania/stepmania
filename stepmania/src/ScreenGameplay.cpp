@@ -196,10 +196,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	}
 
 
-	if( !GAMESTATE->IsCourseMode() )
-		GAMESTATE->m_CurStageStats.pSong = GAMESTATE->m_pCurSong;
-	else
-		GAMESTATE->m_CurStageStats.pSong = NULL;
+	GAMESTATE->m_CurStageStats.pSong = NULL; // set in LoadNextSong
 	GAMESTATE->m_CurStageStats.playMode = GAMESTATE->m_PlayMode;
 	GAMESTATE->m_CurStageStats.style = GAMESTATE->m_CurStyle;
 
@@ -734,6 +731,8 @@ void ScreenGameplay::LoadNextSong()
 	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
 	iPlaySongIndex %= m_apSongsQueue.size();
 	GAMESTATE->m_pCurSong = m_apSongsQueue[iPlaySongIndex];
+
+	GAMESTATE->m_CurStageStats.pSong = GAMESTATE->m_pCurSong;
 
 	// Restore the player's originally selected options.
 	GAMESTATE->RemoveAllActiveAttacks();
@@ -1639,6 +1638,30 @@ void ScreenGameplay::ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 	SCREENMAN->Prompt( SM_SendWhenDone, sMessage, true, false, SaveChanges, RevertChanges, &m_apSongsQueue );
 }
 
+void ScreenGameplay::SongFinished()
+{
+	/* Need to Finish before calling GetActualRadarValue, for GetMaxCombo. */
+	GAMESTATE->m_CurStageStats.Finish();
+
+	// save any statistics
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;
+		for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
+		{
+			RadarCategory rc = (RadarCategory)r;
+			GAMESTATE->m_CurStageStats.fRadarPossible[p][r] = NoteDataUtil::GetRadarValue( m_Player[p], rc, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
+			GAMESTATE->m_CurStageStats.fRadarActual[p][r] = m_Player[p].GetActualRadarValue( rc, (PlayerNumber)p, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
+		}
+	}
+
+
+	// save current stage stats
+	GAMESTATE->m_vPlayedStageStats.push_back( GAMESTATE->m_CurStageStats );
+}
+
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 {
 	CHECKPOINT_M( ssprintf("HandleScreenMessage(%i)", SM) );
@@ -1660,28 +1683,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	// received while STATE_DANCING
 	case SM_NotesEnded:
 		{
-			/* Need to Finish before calling GetActualRadarValue, for GetMaxCombo. */
-			GAMESTATE->m_CurStageStats.Finish();
-
-			// save any statistics
-			int p;
-			for( p=0; p<NUM_PLAYERS; p++ )
-			{
-				if( GAMESTATE->IsPlayerEnabled(p) )
-				{
-					for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
-					{
-						RadarCategory rc = (RadarCategory)r;
-						GAMESTATE->m_CurStageStats.fRadarPossible[p][r] = NoteDataUtil::GetRadarValue( m_Player[p], rc, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
-						GAMESTATE->m_CurStageStats.fRadarActual[p][r] = m_Player[p].GetActualRadarValue( rc, (PlayerNumber)p, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
-					}
-				}
-			}
-
 			/* Do this in LoadNextSong, so we don't tween off old attacks until
 			 * m_NextSongOut finishes. */
 			// GAMESTATE->RemoveAllActiveAttacks();
 
+			int p;
 			for( p=0; p<NUM_PLAYERS; p++ )
 			{
 				if( !GAMESTATE->IsPlayerEnabled(p) )
@@ -1697,18 +1703,14 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					GAMESTATE->m_CurStageStats.bFailed[p] = true;
 				}
 
+				/* Mark failure.  This hasn't been done yet if m_bTwoPlayerRecovery is set. */
+				if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_OFF &&
+					(m_pLifeMeter[p] && m_pLifeMeter[p]->IsFailing()) || 
+					(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing((PlayerNumber)p)) )
+					GAMESTATE->m_CurStageStats.bFailed[p] = true;
+
 				if( !GAMESTATE->m_CurStageStats.bFailed[p] )
 					GAMESTATE->m_CurStageStats.iSongsPassed[p]++;
-			}
-
-			/* Mark failure.  This was possibly already done by UpdateCheckFail, but
-			 * not always, if m_bTwoPlayerRecovery is set. */
-			if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_OFF )
-			{
-				for( p=0; p<NUM_PLAYERS; p++ )
-					if( (m_pLifeMeter[p] && m_pLifeMeter[p]->IsFailing()) || 
-						(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing((PlayerNumber)p)) )
-						GAMESTATE->m_CurStageStats.bFailed[p] = true;
 			}
 
 			/* If all players have *really* failed (bFailed, not the life meter or
@@ -1816,6 +1818,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 
 	case SM_LoadNextSong:
+		SongFinished();
+
 		LoadNextSong();
 		GAMESTATE->m_bPastHereWeGo = true;
 		/* We're fading in, so don't hit any notes for a few seconds; they'll be
@@ -1973,12 +1977,16 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 
 	case SM_GoToScreenAfterBack:
+		SongFinished();
+
 		/* Reset options.  (Should this be done in ScreenSelect*?) */
 		GAMESTATE->RestoreSelectedOptions();
 		SCREENMAN->SetNewScreen( PREV_SCREEN(GAMESTATE->m_PlayMode) );
 		break;
 
 	case SM_GoToStateAfterCleared:
+		SongFinished();
+
 		/* Reset options.  (Should this be done in ScreenSelect*?) */
 		GAMESTATE->RestoreSelectedOptions();
 
@@ -2030,6 +2038,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 
 	case SM_GoToScreenAfterFail:
+		SongFinished();
+
 		/* Reset options.  (Should this be done in ScreenSelect*?) */
 		GAMESTATE->RestoreSelectedOptions();
 
