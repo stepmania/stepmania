@@ -46,7 +46,7 @@ void Course::SetDefaultScore()
 	for( unsigned i=0; i<NUM_NOTES_TYPES; i++ )
 		for( int j=0; j<NUM_RANKING_LINES; j++ )
 		{
-			m_RankingScores[i][j].iScore = IsOni()? 573: 0;
+			m_RankingScores[i][j].iScore = IsOni()? 573:573000;
 			m_RankingScores[i][j].fSurviveTime = 57.3f;
 			m_RankingScores[i][j].sName = DEFAULT_RANKING_NAME;
 		}
