@@ -26,7 +26,7 @@ InputHandler_Win32_Pump::~InputHandler_Win32_Pump()
 
 void InputHandler_Win32_Pump::Update(float fDeltaTime)
 {
-	static const int bits[] = {
+	static const int bits[NUM_PUMP_PAD_BUTTONS] = {
 	/* P1 */	(1<<9), (1<<12), (1<<13), (1<<11), (1<<10),
 	/* ESC */	(1<<16),
 	/* P1 */	(1<<17), (1<<20), (1<<21), (1<<19), (1<<18),
