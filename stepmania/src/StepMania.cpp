@@ -254,7 +254,12 @@ RageDisplay *CreateDisplay()
 	 */
 
 	// Video card changed since last run
+#if defined(WIN32)
 	CString sVideoDriver = GetPrimaryVideoDriverName();
+#endif
+#if !defined(WIN32)
+    CString sVideoDriver = "OpenGL";
+#endif
 	if( PREFSMAN->m_sVideoRenderers == "" || 
 		PREFSMAN->m_sLastSeenVideoDriver != sVideoDriver )
 	{
@@ -285,7 +290,12 @@ RageDisplay *CreateDisplay()
 			ini.GetValueB( sKey, "AntiAliasing", PREFSMAN->m_bAntiAliasing );
 
 			// Update last seen video card
+#if defined(WIN32)
 			PREFSMAN->m_sLastSeenVideoDriver = GetPrimaryVideoDriverName();
+#endif
+#if !defined(WIN32)
+            PREFSMAN->m_sLastSeenVideoDriver = "OpenGL";
+#endif
 
 			break; // stop looking
 		}
