@@ -77,8 +77,8 @@ RageSound::RageSound()
 	AutoStop = true;
 	speed = 1.0f;
 	stream.buf.reserve(internal_buffer_size);
-	m_StartSeconds = 0;
-	m_LengthSeconds = -1;
+	m_StartSample = 0;
+	m_LengthSamples = -1;
 	AccurateSync = false;
 	/* Register ourselves, so we receive Update()s. */
 	SOUNDMAN->all_sounds.insert(this);
@@ -102,8 +102,8 @@ RageSound::RageSound(const RageSound &cpy)
 	full_buf = cpy.full_buf;
 	big = cpy.big;
 	m_sFilePath = cpy.m_sFilePath;
-	m_StartSeconds = cpy.m_StartSeconds;
-	m_LengthSeconds = cpy.m_LengthSeconds;
+	m_StartSample = cpy.m_StartSample;
+	m_LengthSamples = cpy.m_LengthSamples;
 	Loop = cpy.Loop;
 	position = cpy.position;
 	playing = false;
@@ -214,12 +214,12 @@ void RageSound::Load(CString sSoundFilePath, bool cache)
 
 void RageSound::SetStartSeconds( float secs )
 {
-	m_StartSeconds = secs;
+	m_StartSample = int(secs*samplerate);
 }
 
 void RageSound::SetLengthSeconds(float secs)
 {
-	m_LengthSeconds = secs;
+	m_LengthSamples = int(secs*samplerate);
 }
 
 /* Start playing from the current position.  If the sound is already
@@ -315,11 +315,11 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 	{
 		int got;
 		int MaxBytes;
-		if(m_LengthSeconds != -1)
+		if(m_LengthSamples != -1)
 		{
 			/* We have a length; only read up to the end.  MaxPosition is the
 			 * sample position of the end. */
-			int MaxPosition = int((m_StartSeconds + m_LengthSeconds) * samplerate);
+			int MaxPosition = m_StartSample + m_LengthSamples;
 
 			/* Number of bytes until MaxPosition. */
 			MaxBytes = (MaxPosition - position) * samplesize;
@@ -368,16 +368,16 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 					HitEOF = false; /* we have more */
 			}
 
-			/* If we've passed the stop point (m_StartSeconds+m_LengthSeconds), pretend
+			/* If we've passed the stop point (m_StartSample+m_LengthSamples), pretend
 			 * we've hit EOF. */
-			if(m_LengthSeconds != -1 &&
-					float(position)/samplerate >= m_StartSeconds+m_LengthSeconds)
+			if(m_LengthSamples != -1 &&
+					position >= m_StartSample+m_LengthSamples)
 				HitEOF = true;
 
 			if(!HitEOF)
 				continue;
 
-			if(Loop && m_LengthSeconds == 0)
+			if(Loop && m_LengthSamples == 0)
 			{
 				/* Oops.  Looping with seconds == 0 doesn't make much sense.
 				 * It might happen if we're given an empty sound file as input,
@@ -386,10 +386,10 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 			}
 
 			/* We're at EOF.  If we're not looping, just stop. */
-			if(Loop && m_LengthSeconds != 0)
+			if(Loop && m_LengthSamples != 0)
 			{
 				/* Rewind and start over. */
-				SetPositionSeconds(m_StartSeconds);
+				SetPositionSeconds(float(m_StartSample) / samplerate);
 				continue;
 			}
 			if(AutoStop)
@@ -410,18 +410,18 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 		const float FADE_TIME = 1.5f;
 
 		/* XXX: Loop shouldn't set fading; add a Fade_Time member?
-			* 
-			* We want to fade when there's FADE_TIME seconds left, but if
-			* m_LengthSeconds is -1, we don't know the length we're playing.
-			* (m_LengthSeconds is the length to play, not the length of the
-			* source.)  If we don't know the length, don't fade. */
-		if(Loop && m_LengthSeconds != -1) {
+		 * 
+		 * We want to fade when there's FADE_TIME seconds left, but if
+		 * m_LengthSamples is -1, we don't know the length we're playing.
+		 * (m_LengthSamples is the length to play, not the length of the
+		 * source.)  If we don't know the length, don't fade. */
+		if(Loop && m_LengthSamples != -1) {
 			Sint16 *p = (Sint16 *) buffer;
 			int this_position = position;
 
 			for(int samp = 0; samp < got_samples; ++samp)
 			{
-				float fSecsUntilSilent = (m_StartSeconds + m_LengthSeconds) - float(this_position)/samplerate;
+				float fSecsUntilSilent = float(m_StartSample + m_LengthSamples - this_position) / samplerate;
 				float fVolPercent = fSecsUntilSilent / FADE_TIME;
 
 				fVolPercent = clamp(fVolPercent, 0.f, 1.f);
@@ -468,7 +468,7 @@ void RageSound::Stop()
 	/* Tell the sound manager to stop mixing this sound. */
 	SOUNDMAN->StopMixing(this);
 
-	SetPositionSeconds(m_StartSeconds);
+	SetPositionSeconds(float(m_StartSample)/samplerate);
 
 	playing = false;
 	for(int i = 0; i < 4; ++i)

@@ -58,7 +58,7 @@ class RageSound
 //	float m_Rate;
 
 	/* The amount of data to play (or loop): */
-	float m_StartSeconds, m_LengthSeconds;
+	int m_StartSample, m_LengthSamples;
 	bool Loop;
 
 	/* Current position of the output sound; if < 0, nothing will play until it
