@@ -11,6 +11,7 @@
 -----------------------------------------------------------------------------
 */
 #include "PlayerNumber.h"
+#include "RageSound.h"
 
 struct UsbStorageDevice;
 class MemoryCardDriver;
@@ -38,6 +39,9 @@ protected:
 	bool	m_bTooLate[NUM_PLAYERS];	// card was inserted after lock
 	bool	m_bWriteError[NUM_PLAYERS];	// couldn't write to the card
 	UsbStorageDevice* m_pDevice[NUM_PLAYERS];	// device in the memory card slot, NULL if none
+
+	RageSound m_soundConnect;
+	RageSound m_soundDisconnect;
 };
 
 extern MemoryCardManager*	MEMCARDMAN;	// global and accessable from anywhere in our program

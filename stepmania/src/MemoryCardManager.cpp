@@ -15,6 +15,7 @@
 #include "arch/MemoryCard/MemoryCardDriver.h"	// for UsbStorageDevice
 #include "arch/arch.h"
 #include "ScreenManager.h"
+#include "ThemeManager.h"
 
 MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -29,6 +30,10 @@ MemoryCardManager::MemoryCardManager()
 		m_bTooLate[NUM_PLAYERS] = false;
 		m_bWriteError[NUM_PLAYERS] = false;
 	}
+	m_pDriver->GetStorageDevices( g_StorageDevices );
+
+	m_soundConnect.Load( THEME->GetPathToS("MemoryCardManager connect") );
+	m_soundDisconnect.Load( THEME->GetPathToS("MemoryCardManager disconnect") );
 }
 
 MemoryCardManager::~MemoryCardManager()
@@ -51,7 +56,10 @@ void MemoryCardManager::Update( float fDelta )
 		{
 			const UsbStorageDevice old = vOld[i];
 			if( find(vNew.begin(),vNew.end(),old) == vNew.end() )
+			{
 				SCREENMAN->SystemMessage( ssprintf("Disconnected bus %d port %d device %d path %s", old.iBus, old.iPortOnHub, old.iDeviceOnBus, old.sOsMountDir.c_str()) );
+				m_soundDisconnect.Play();
+			}
 		}
 
 		// check for connects
@@ -59,7 +67,10 @@ void MemoryCardManager::Update( float fDelta )
 		{
 			const UsbStorageDevice newd = vNew[i];
 			if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )
+			{
 				SCREENMAN->SystemMessage( ssprintf("Connected bus %d port %d device %d path %s", newd.iBus, newd.iPortOnHub, newd.iDeviceOnBus, newd.sOsMountDir.c_str()) );
+				m_soundConnect.Play();
+			}
 		}
 	}
 }
