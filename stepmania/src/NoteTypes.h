@@ -40,7 +40,8 @@ static const TapNote TAP_MINE		= '6';
 // MD 11/12/03 - for future modifiers
 // TAP_ADD_HOLD is to TAP_HOLD what TAP_ADDITION is to TAP_TAP.
 // There is no equivalent for TAP_MINE.
-static const TapNote TAP_ADD_HOLD	= '7';
+static const TapNote TAP_ADD_HOLD	= '7';	// is this supposed to be TAP_ADD_HOLD_HEAD? -Chris
+
 
 // BM-specific
 // Removed taps, e.g. in Little - play keysounds here as if
@@ -69,10 +70,6 @@ static const TapNote TAP_REMOVED_HOLD_TAIL	= '\'';
 
 // MD 11/12/03 end
 
-// attack note start.  Use lowercase letters a-z.
-// Don't use uppercase letters - 'M' it taken for mine.
-static const TapNote TAP_ATTACK_BEGIN	= 'a';
-static const TapNote TAP_ATTACK_END		= 'z';
 
 enum 
 {
@@ -133,6 +130,15 @@ struct HoldNote
 	int		iTrack;	
 	float	fStartBeat;
 	float	fEndBeat;
+};
+
+struct AttackNote
+{
+	AttackNote( int t, float b, CString m, float d ) { iTrack=t; fBeat=b; sModifiers=m; fDurationSeconds=d; }
+	int		iTrack;	
+	float	fBeat;
+	CString sModifiers;
+	float	fDurationSeconds;
 };
 
 

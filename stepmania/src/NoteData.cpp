@@ -174,6 +174,40 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 	m_HoldNotes.erase(m_HoldNotes.begin()+iHoldIndex, m_HoldNotes.begin()+iHoldIndex+1);
 }
 
+void NoteData::AddAttackNote( AttackNote an )
+{
+	m_AttackNotes.push_back(an);	
+}
+
+void NoteData::RemoveAttackNote( int index )
+{
+	m_AttackNotes.erase( m_AttackNotes.begin()+index );
+}
+
+bool CompareAttackNotes( const AttackNote& an1, const AttackNote& an2 )
+{
+	return an1.fBeat < an2.fBeat;
+}
+
+void NoteData::ShuffleAttackNotesOnSameRow()
+{
+	// sort, then shuffle
+	sort( m_AttackNotes.begin(), m_AttackNotes.end(), CompareAttackNotes );
+
+	for( int i=0; i<m_AttackNotes.size();  ) 
+	{
+		// Shuffle with other AttackNotes that are on the same row.
+		// Lame shuffle...
+		for( int j=i+1; j<m_AttackNotes.size(); j++ )
+		{
+			if( m_AttackNotes[i].fBeat != m_AttackNotes[j].fBeat )
+				break;	// stop searching
+			if( rand()%2 )
+				swap( m_AttackNotes[i].fBeat, m_AttackNotes[j].fBeat );
+		}
+	}
+}
+
 int NoteData::GetFirstRow() const
 { 
 	return BeatToNoteRow( GetFirstBeat() );
@@ -602,15 +636,6 @@ void NoteData::SetTapNote(int track, int row, TapNote t)
 	m_TapNotes[track][row]=t;
 }
 
-void NoteData::SetTapNoteAttack( int track, int row, CString sMods, float fDurationSeconds )
-{
-	if(row < 0) return;
-
-	PadTapNotes(row);
-	// TODO: mark as TAP_ATTACK and save attack params to array
-	m_TapNotes[track][row]=TAP_TAP;
-}
-
 void NoteData::EliminateAllButOneTap(int row)
 {
 	if(row < 0) return;
@@ -652,3 +677,5 @@ int NoteData::GetNumTracksHeldAtRow( int row )
 	GetTracksHeldAtRow( row, viTracks );
 	return viTracks.size();
 }
+
+

@@ -663,40 +663,50 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			if( iCol >= m_NoteFieldEdit.GetNumTracks() )	// this button is not in the range of columns for this StyleDef
 				break;
 
+			int i;
+
 			// check for to see if the user intended to remove a HoldNote
-			bool bRemovedAHoldNote = false;
-			for( int i=0; i<m_NoteFieldEdit.GetNumHoldNotes(); i++ )	// for each HoldNote
+			for( i=0; i<m_NoteFieldEdit.GetNumHoldNotes(); i++ )	// for each HoldNote
 			{
 				const HoldNote &hn = m_NoteFieldEdit.GetHoldNote(i);
 				if( iCol == hn.iTrack  &&		// the notes correspond
 					fSongBeat >= hn.fStartBeat  &&  fSongBeat <= hn.fEndBeat )	// the cursor lies within this HoldNote
 				{
 					m_NoteFieldEdit.RemoveHoldNote( i );
-					bRemovedAHoldNote = true;
-					break;	// stop iterating over all HoldNotes
+					return;
 				}
 			}
 
-			if( !bRemovedAHoldNote )
+			// check for to see if the user intended to remove an AttackNote
+			for( i=0; i<m_NoteFieldEdit.GetNumAttackNotes(); i++ )
 			{
-				// Delete the tap note here if one already exists
-				if( m_NoteFieldEdit.GetTapNote(iCol, iSongIndex) != TAP_EMPTY )
+				const AttackNote& an = m_NoteFieldEdit.GetAttackNote(i);
+				if( an.fBeat == fSongBeat && an.iTrack == iCol )
 				{
-					m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_EMPTY );
+					m_NoteFieldEdit.RemoveAttackNote( i );
+					return;
 				}
-				else
-				{
-					// Hold LShift to lay mine, hold RShift to lay an attack
-					if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT)) )
-						m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_MINE );
-					else if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT)) )
-					{
-						g_iLastInsertAttackTrack = iCol;
-						SCREENMAN->MiniMenu( &g_InsertAttack, SM_BackFromInsertAttack );
-					}
-					else
-						m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_TAP );
-				}
+			}
+
+			if( m_NoteFieldEdit.GetTapNote(iCol, iSongIndex) != TAP_EMPTY )
+			{
+				m_NoteFieldEdit.SetTapNote( iCol, iSongIndex, TAP_EMPTY );
+				return;
+			}
+
+			// Hold LShift to lay mine, hold RShift to lay an attack
+			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT)) )
+			{
+				m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_MINE );
+			}
+			else if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT)) )
+			{
+				g_iLastInsertAttackTrack = iCol;
+				SCREENMAN->MiniMenu( &g_InsertAttack, SM_BackFromInsertAttack );
+			}
+			else
+			{
+				m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_TAP );
 			}
 		}
 		break;
@@ -1276,9 +1286,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		{
 			PlayerOptions poChosen = GAMESTATE->m_PlayerOptions[PLAYER_1];
 			CString sMods = poChosen.GetString();
-			int row = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-			m_NoteFieldEdit.SetTapNote( g_iLastInsertAttackTrack, row, TAP_TAP );
-			m_NoteFieldEdit.SetTapNoteAttack( g_iLastInsertAttackTrack, row, sMods, g_fLastInsertAttackDurationSeconds );
+			m_NoteFieldEdit.AddAttackNote( AttackNote(g_iLastInsertAttackTrack,GAMESTATE->m_fSongBeat,sMods,g_fLastInsertAttackDurationSeconds) );
 			GAMESTATE->RestoreSelectedOptions();	// restore the edit and playback options
 		}
 		break;

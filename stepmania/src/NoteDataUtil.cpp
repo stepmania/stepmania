@@ -169,17 +169,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &out )
 				case TAP_HOLD_HEAD: c = '2'; break;
 				case TAP_HOLD_TAIL: c = '3'; break;
 				case TAP_MINE:		c = 'M'; break;
-				default: 
-					if( tn >= TAP_ATTACK_BEGIN && tn <= TAP_ATTACK_END )
-					{
-						c = tn - TAP_ATTACK_BEGIN + 'a';	// TODO: overflow check?
-					}
-					else
-					{
-						ASSERT(0); 
-						c = '0'; 
-					}
-					break;
+				default: ASSERT(0);	c = '0'; break;
 				}
 				sRet.append(1, c);
 			}

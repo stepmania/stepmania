@@ -25,6 +25,8 @@ class NoteData
 
 	vector<HoldNote>	m_HoldNotes;
 
+	vector<AttackNote>	m_AttackNotes;
+
 	/* Pad m_TapNotes so it includes the row "rows". */
 	void PadTapNotes(int rows);
 
@@ -51,8 +53,7 @@ public:
 	}
 	void MoveTapNoteTrack(int dest, int src);
 	void SetTapNote(int track, int row, TapNote t);
-	void SetTapNoteAttack( int track, int row, CString sMods, float fDurationSeconds );
-
+	
 	void ClearRange( int iNoteIndexBegin, int iNoteIndexEnd );
 	void ClearAll();
 	void CopyRange( const NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin = -1 );
@@ -139,6 +140,12 @@ public:
 	HoldNote &GetHoldNote( int index ) { return m_HoldNotes[index]; }
 	const HoldNote &GetHoldNote( int index ) const { return m_HoldNotes[index]; }
 
+	// used in edit/record
+	void AddAttackNote( AttackNote an );	// add note hold note merging overlapping HoldNotes and destroying TapNotes underneath
+	void RemoveAttackNote( int index );
+	const AttackNote& GetAttackNote( int index ) { return m_AttackNotes[index]; }
+	void ShuffleAttackNotesOnSameRow();
+
 	// statistics
 
 	/* Return the highest beat/row that might contain notes.  (Use GetLastBeat if you need
@@ -157,6 +164,7 @@ public:
 	/* optimization: for the default of start to end, use the second (faster) */
 	int GetNumHoldNotes( const float fStartBeat, const float fEndBeat = -1 ) const;
 	int GetNumHoldNotes() const { return m_HoldNotes.size(); }
+	int GetNumAttackNotes() const { return m_AttackNotes.size(); }
 
 	// Transformations
 	void LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track

@@ -824,7 +824,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		DrawHold( hn, bActive, fLife, fPercentFadeToFail, true, fReverseOffsetPixels );
 }
 
-void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels )
+void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels )
 {
 	const float fYOffset		= ArrowGetYOffset(	m_PlayerNumber, iCol, fBeat );
 	const float fYPos			= ArrowGetYPos(	m_PlayerNumber, iCol, fYOffset, fReverseOffsetPixels );
@@ -836,16 +836,6 @@ void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bo
 	const float fColorScale		= ArrowGetBrightness( m_PlayerNumber, fBeat ) * SCALE(fLife,0,1,0.2f,1);
 	RageColor diffuse = RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	RageColor glow = RageColor(1,1,1,fGlow);
-
-	Actor* pActor = NULL;
-	if( bIsMine )
-		pActor = GetTapMineActor( fBeat );
-	else if( bIsAddition )
-		pActor = GetTapAdditionActor( fBeat );
-	else if( bOnSameRowAsHoldStart  &&  cache->m_bDrawHoldHeadForTapsOnSameRow )
-		pActor = GetHoldHeadActor( fBeat, false );
-	else	
-		pActor = GetTapNoteActor( fBeat );
 
 	pActor->SetRotationZ( fRotation );
 	pActor->SetXY( fXPos, fYPos );
@@ -871,6 +861,21 @@ void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bo
 		DISPLAY->SetLightOff( 0 );
 		DISPLAY->SetLighting( false );
 	}
+}
+
+void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels )
+{
+	Actor* pActor = NULL;
+	if( bIsMine )
+		pActor = GetTapMineActor( fBeat );
+	else if( bIsAddition )
+		pActor = GetTapAdditionActor( fBeat );
+	else if( bOnSameRowAsHoldStart  &&  cache->m_bDrawHoldHeadForTapsOnSameRow )
+		pActor = GetHoldHeadActor( fBeat, false );
+	else	
+		pActor = GetTapNoteActor( fBeat );
+
+	DrawActor( pActor, iCol, fBeat, fPercentFadeToFail, fLife, fReverseOffsetPixels );
 }
 
 

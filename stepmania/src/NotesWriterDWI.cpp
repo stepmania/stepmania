@@ -19,11 +19,6 @@ CString NotesWriterDWI::NotesToDWIString( const TapNote cNoteCols[6] )
 		case TAP_EMPTY:
 		case TAP_MINE:
 			continue;
-		default:
-			if( cNoteCols[col] >= TAP_ATTACK_BEGIN && cNoteCols[col] <= TAP_ATTACK_END )
-				continue;
-			else
-				ASSERT(0); 
 		}
 
 		if( cNoteCols[col] == TAP_HOLD_HEAD )
