@@ -47,6 +47,9 @@
 
 enum ThreadRequest
 {
+	REQ_OPEN,
+	REQ_CLOSE,
+	REQ_GET_FILE_SIZE,
 	REQ_POPULATE_FILE_SET,
 	REQ_FLUSH_DIR_CACHE,
 
@@ -63,6 +66,14 @@ public:
 	~ThreadedFileWorker();
 
 	void SetTimeout( float fSeconds );
+
+	/* Threaded operations.  If a file operation times out, the caller loses all access
+	 * to the file and should fail all future operations; this is because the thread
+	 * is still trying to finish the operation.  The thread will clean up afterwards. */
+	RageFileBasic *Open( const CString &sPath, int iMode, int &iErr );
+	void Close( RageFileBasic *pFile );
+	int GetFileSize( RageFileBasic *&pFile );
+
 	bool FlushDirCache( const CString &sPath );
 	bool PopulateFileSet( FileSet &fs, const CString &sPath );
 
@@ -87,11 +98,28 @@ private:
 	bool m_bRequestFinished;
 	bool m_bTimedOut;
 
-	/* REQ_POPULATE_FILE_SET, REQ_FLUSH_DIR_CACHE: */
+	/* List of files to delete: */
+	vector<RageFileBasic *> m_apDeletedFiles;
+
+	/* REQ_OPEN, REQ_POPULATE_FILE_SET, REQ_FLUSH_DIR_CACHE: */
 	CString m_sRequestPath; /* in */
 
 	/* REQ_POPULATE_FILE_SET: */
-	FileSet m_RequestOutput; /* out */
+	RageFileBasic *m_pResultFile; /* out */
+
+	/* REQ_POPULATE_FILE_SET: */
+	FileSet m_ResultFileSet; /* out */
+
+	/* REQ_OPEN: */
+	int m_iResultErr; /* out */
+	int m_iRequestMode; /* in */
+
+	/* REQ_GET_FILE_SIZE: */
+	RageFileBasic *m_pRequestFile; /* in */
+
+//	CString m_sResultError; /* out */
+	/* REQ_GET_FILE_SIZE */
+	int m_iResultReturn; /* out */
 };
 
 static vector<ThreadedFileWorker *> g_apWorkers;
@@ -113,7 +141,9 @@ ThreadedFileWorker::ThreadedFileWorker( CString sDriverName, RageFileDriver *pCh
 	m_Request = REQ_INVALID;
 	m_bTimedOut = false;
 	m_pChildDriver = pChildDriver;
-
+	m_pResultFile = NULL;
+	m_pRequestFile = NULL;
+	
 	m_WorkerThread.SetName( "ThreadedFileWorker fileset worker \"" + sDriverName + "\"" );
 	m_WorkerThread.Create( StartWorkerMain, this );
 
@@ -183,13 +213,19 @@ bool ThreadedFileWorker::DoRequest( ThreadRequest r )
 	while( !m_bRequestFinished && !m_bTimedOut )
 		bTimedOut = !m_WorkerEvent.Wait( &m_Timeout );
 
-	/* Set m_bTimedOut true.  It'll be set to false when the operation actually
-	 * completes. */
-	if( bTimedOut )
+	/* Don't depend on bTimedOut to tell if we timed out; only look at m_bRequestFinished,
+	 * to avoid a race condition where the event times out and the operation completes
+	 * simultaneously. */
+	bool bRequestFinished = m_bRequestFinished;
+	if( !m_bRequestFinished )
+	{
+		/* Set m_bTimedOut true.  It'll be set to false when the operation actually
+		 * completes. */
 		m_bTimedOut = true;
+	}
 	m_WorkerEvent.Unlock();
 
-	return !bTimedOut;
+	return bRequestFinished;
 }
 
 void ThreadedFileWorker::WorkerMain()
@@ -201,17 +237,44 @@ void ThreadedFileWorker::WorkerMain()
 			m_WorkerEvent.Wait();
 		const ThreadRequest r = m_Request;
 		m_Request = REQ_INVALID;
+
+		/* We're going to clean up any deleted files.  Make a copy of the list; don't
+		 * hold the lock while we delete. */
+
+		vector<RageFileBasic *> apDeletedFiles = m_apDeletedFiles;
+		m_apDeletedFiles.clear();
+
 		m_WorkerEvent.Unlock();
 
+		for( unsigned i = 0; i < apDeletedFiles.size(); ++i )
+			delete apDeletedFiles[i];
+		apDeletedFiles.clear();
+		
 		/* We have a request. */
 		switch( r )
 		{
+		case REQ_OPEN:
+			ASSERT( m_pResultFile == NULL );
+			ASSERT( !m_sRequestPath.empty() );
+			m_pResultFile = m_pChildDriver->Open( m_sRequestPath, m_iRequestMode, m_iResultErr );
+			break;
+
+		case REQ_CLOSE:
+			ASSERT( m_pRequestFile != NULL );
+			delete m_pRequestFile;
+			break;
+
+		case REQ_GET_FILE_SIZE:
+			ASSERT( m_pRequestFile != NULL );
+			m_iResultReturn = m_pRequestFile->GetFileSize();
+			break;
+
 		case REQ_POPULATE_FILE_SET:
 			ASSERT( !m_bRequestFinished );
 			ASSERT( !m_sRequestPath.empty() );
 
-			m_RequestOutput = FileSet();
-			m_pChildDriver->FDB->GetFileSetCopy( m_sRequestPath, m_RequestOutput );
+			m_ResultFileSet = FileSet();
+			m_pChildDriver->FDB->GetFileSetCopy( m_sRequestPath, m_ResultFileSet );
 			break;
 
 		case REQ_FLUSH_DIR_CACHE:
@@ -224,9 +287,20 @@ void ThreadedFileWorker::WorkerMain()
 
 		m_WorkerEvent.Lock();
 
-		/* If we timed out, clear the time-out flag, indicating that we can work
-		 * once again. */
-		if( !m_bTimedOut )
+		if( m_bTimedOut )
+		{
+			/* The event timed out.  Clean up any residue from the last action. */
+			if( m_pResultFile != NULL )
+			{
+				m_apDeletedFiles.push_back( m_pResultFile );
+				m_pResultFile = NULL;
+				break;
+			}
+
+			/* Clear the time-out flag, indicating that we can work again. */
+			m_bTimedOut = false;
+		}
+		else
 			m_bRequestFinished = true;
 
 		/* We're finished.  Wake up the requester. */
@@ -236,6 +310,62 @@ void ThreadedFileWorker::WorkerMain()
 		if( r == REQ_SHUTDOWN )
 			break;
 	}
+}
+
+RageFileBasic *ThreadedFileWorker::Open( const CString &sPath, int iMode, int &iErr )
+{
+	/* If we're currently in a timed-out state, fail. */
+	if( m_bTimedOut )
+	{
+		iErr = EFAULT; /* Win32 has no ETIMEDOUT */
+		return NULL;
+	}
+
+	m_sRequestPath = sPath;
+	m_iRequestMode = iMode;
+
+	if( !DoRequest(REQ_OPEN) )
+	{
+		LOG->Trace( "Open(%s) timed out", sPath.c_str() );
+		return false;
+	}
+
+	iErr = m_iResultErr;
+	RageFileBasic *pRet = m_pResultFile;
+	m_pResultFile = NULL;
+
+	return pRet;
+}
+
+void ThreadedFileWorker::Close( RageFileBasic *pFile )
+{
+	/* We need to delete files passed to us by Close, even if we're in a timed-out state. */
+	m_WorkerEvent.Lock();
+	m_apDeletedFiles.push_back( pFile );
+	m_WorkerEvent.Broadcast();
+	m_WorkerEvent.Unlock();
+}
+
+int ThreadedFileWorker::GetFileSize( RageFileBasic *&pFile )
+{
+	/* If we're currently in a timed-out state, fail. */
+	if( m_bTimedOut )
+	{
+		this->Close( pFile );
+		pFile = NULL;
+		return -1;
+	}
+
+	m_pRequestFile = pFile;
+
+	if( !DoRequest(REQ_GET_FILE_SIZE) )
+	{
+		/* If we time out, we can no longer access pFile. */
+		pFile = NULL;
+		return -1;
+	}
+
+	return m_iResultReturn;
 }
 
 bool ThreadedFileWorker::PopulateFileSet( FileSet &fs, const CString &sPath )
@@ -249,13 +379,13 @@ bool ThreadedFileWorker::PopulateFileSet( FileSet &fs, const CString &sPath )
 	m_bRequestFinished = false;
 
 	/* Kick off the worker thread, and wait for it to finish. */
-	if( !DoRequest( REQ_POPULATE_FILE_SET ) )
+	if( !DoRequest(REQ_POPULATE_FILE_SET) )
 	{
 		LOG->Trace( "PopulateFileSet(%s) timed out", sPath.c_str() );
 		return false;
 	}
 
-	fs = m_RequestOutput;
+	fs = m_ResultFileSet;
 	return true;
 }
 
@@ -268,7 +398,7 @@ bool ThreadedFileWorker::FlushDirCache( const CString &sPath )
 	m_sRequestPath = sPath;
 
 	/* Kick off the worker thread, and wait for it to finish. */
-	if( !DoRequest( REQ_FLUSH_DIR_CACHE ) )
+	if( !DoRequest(REQ_FLUSH_DIR_CACHE) )
 	{
 		LOG->Trace( "FlushDirCache(%s) timed out", sPath.c_str() );
 		return false;
@@ -276,6 +406,88 @@ bool ThreadedFileWorker::FlushDirCache( const CString &sPath )
 
 	return true;
 }
+
+
+class RageFileObjTimeout: public RageFileObj
+{
+public:
+	/* pFile will be freed by passing it to pWorker. */
+	RageFileObjTimeout( ThreadedFileWorker *pWorker, RageFileBasic *pFile, int iSize )
+	{
+		m_pWorker = pWorker;
+		m_pFile = pFile;
+		m_iFileSize = iSize;
+	}
+
+	~RageFileObjTimeout()
+	{
+		if( m_pFile != NULL )
+			m_pWorker->Close( m_pFile );
+	}
+
+	int GetFileSize() const
+	{
+		return m_iFileSize;
+	}
+
+	RageFileBasic *Copy() const
+	{
+		// XXX
+		return NULL;
+	}
+
+protected:
+	int ReadInternal( void *pBuffer, size_t iBytes )
+	{
+		// XXX
+		if( m_pFile == NULL )
+		{
+			SetError( "Operation timed out" );
+			return -1;
+		}
+
+		int iRet = m_pFile->Read( pBuffer, iBytes );
+		if( iRet == -1 )
+            m_pFile->GetError();
+		return iRet;
+	}
+
+	int WriteInternal( const void *pBuffer, size_t iBytes )
+	{
+		// XXX
+		if( m_pFile == NULL )
+		{
+			SetError( "Operation timed out" );
+			return -1;
+		}
+
+		int iRet = m_pFile->Write( pBuffer, iBytes );
+		if( iRet == -1 )
+            m_pFile->GetError();
+		return iRet;
+	}
+
+	int FlushInternal()
+	{
+		// XXX
+		if( m_pFile == NULL )
+		{
+			SetError( "Operation timed out" );
+			return -1;
+		}
+
+		int iRet = m_pFile->Flush();
+		if( iRet == -1 )
+            m_pFile->GetError();
+		return iRet;
+	}
+
+	RageFileBasic *m_pFile;
+	ThreadedFileWorker *m_pWorker;
+
+	/* GetFileSize isn't allowed to fail, so cache the file size on load. */
+	int m_iFileSize;
+};
 
 /* This FilenameDB runs PopulateFileSet in the worker thread. */
 class TimedFilenameDB: public FilenameDB
@@ -314,10 +526,28 @@ RageFileDriverTimeout::RageFileDriverTimeout( CString sPath ):
 	((TimedFilenameDB *) FDB)->SetWorker( m_pWorker );
 }
 
-RageFileBasic *RageFileDriverTimeout::Open( const CString &path, int mode, int &err )
+RageFileBasic *RageFileDriverTimeout::Open( const CString &sPath, int iMode, int &iErr )
 {
-	// XXX
-	return m_pChild->Open( path, mode, err );
+	RageFileBasic *pChildFile = m_pWorker->Open( sPath, iMode, iErr );
+	if( pChildFile == NULL )
+		return NULL;
+
+	/* RageBasicFile::GetFileSize isn't allowed to fail, but we are; grab the file
+	 * size now and store it. */
+	int iSize = 0;
+	if( iMode & RageFile::READ )
+	{
+		iSize = m_pWorker->GetFileSize( pChildFile );
+		if( iSize == -1 )
+		{
+			/* When m_pWorker->GetFileSize fails, it takes ownership of pChildFile. */
+			ASSERT( pChildFile == NULL );
+			iErr = EFAULT;
+			return NULL;
+		}
+	}
+
+	return new RageFileObjTimeout( m_pWorker, pChildFile, iSize );
 }
 
 void RageFileDriverTimeout::FlushDirCache( const CString &sPath )
@@ -341,25 +571,6 @@ static struct FileDriverEntry_Timeout: public FileDriverEntry
         FileDriverEntry_Timeout(): FileDriverEntry( "TIMEOUT" ) { }
         RageFileDriver *Create( CString Root ) const { return new RageFileDriverTimeout( Root ); }
 } const g_RegisterDriver;
-
-class RageFileObjTimed: public RageFileObj
-{
-public:
-	/* By default, pFile will not be freed. */
-	RageFileObjTimed( RageFileBasic *pOutput );
-	~RageFileObjTimed();
-
-	int GetFileSize() const { return m_pFile->GetFileSize(); }
-	void DeleteFileWhenFinished() { m_bFileOwned = true; }
-
-protected:
-	int ReadInternal( void *pBuffer, size_t iBytes ) { SetError( "Not implemented" ); return -1; }
-	int WriteInternal( const void *pBuffer, size_t iBytes );
-	int FlushInternal();
-	
-	RageFileBasic *m_pFile;
-	bool m_bFileOwned;
-};
 
 /*
  * Copyright (c) 2005 Glenn Maynard
