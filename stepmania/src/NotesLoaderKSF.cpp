@@ -128,7 +128,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 		out.m_StepsType = STEPS_TYPE_PUMP_SINGLE;
 		
 		/* Check for "halfdouble" before "double". */
-		if( sFName.Find("halfdouble") != -1 )
+		if( sFName.Find("halfdouble") != -1 || sFName.Find("h_double") != -1 )
 		{
 			notedata.SetNumTracks( 6 );
 			out.m_StepsType = STEPS_TYPE_PUMP_HALFDOUBLE;
@@ -168,6 +168,10 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 				sPath.c_str(), sRowString.c_str());
 			return false;
 		}
+
+		/* Half-doubles is offset; "0011111100000". */
+		if( STEPS_TYPE_PUMP_HALFDOUBLE )
+			sRowString.erase( 0, 2 );
 
 		// the length of a note in a row depends on TICKCOUNT
 		float fBeatThisRow = r/(float)iTickCount;
