@@ -341,6 +341,7 @@ public:
 		m_sName = sParam;
 
 		defOut.bOneChoiceForAllPlayers = false;
+		defOut.m_bAllowThemeItems = false;
 		defOut.name = "Characters";
 		Default.m_pCharacter = GAMESTATE->GetDefaultCharacter();
 
@@ -360,7 +361,6 @@ public:
 			s.MakeUpper();
 
 			defOut.choices.push_back( s ); 
-			defOut.m_bAllowThemeItems = false;
 			GameCommand mc;
 			mc.m_pCharacter = pCharacter;
 			ListEntries.push_back( mc );
