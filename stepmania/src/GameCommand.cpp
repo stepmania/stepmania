@@ -18,6 +18,7 @@
 #include "Style.h"
 #include "Foreach.h"
 #include "Command.h"
+#include "arch/Dialog/Dialog.h"
 
 void GameCommand::Init()
 {
@@ -208,6 +209,13 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 		else if( sName == "songgroup" )
 		{
 			m_sSongGroup = sValue;
+		}
+
+		else
+		{
+			CString sWarning = ssprintf( "Command '%s' is not valid.", command->GetOriginalCommandString().c_str() );
+			LOG->Warn( sWarning );
+			Dialog::OK( sWarning, "FRAME_DIMENSIONS_WARNING" );
 		}
 	}
 
