@@ -45,9 +45,9 @@ public:
 	void FlushDirCache( CString sPath );
 
 	/* Used only by RageFile: */
-	RageFileObj *Open( CString sPath, int mode, RageFile &p, int &err );
+	RageFileObj *Open( CString sPath, int mode, int &err );
 	void Close( RageFileObj *obj );
-	RageFileObj *CopyFileObj( const RageFileObj *cpy, RageFile &p );
+	RageFileObj *CopyFileObj( const RageFileObj *cpy );
 
 private:
 	RageFileObj *OpenForWriting( CString sPath, int mode, int &err );

@@ -638,7 +638,7 @@ static bool PathUsesSlowFlush( const CString &sPath )
 }
 
 /* Used only by RageFile: */
-RageFileObj *RageFileManager::Open( CString sPath, int mode, RageFile &p, int &err )
+RageFileObj *RageFileManager::Open( CString sPath, int mode, int &err )
 {
 	err = ENOENT;
 
@@ -681,7 +681,7 @@ RageFileObj *RageFileManager::Open( CString sPath, int mode, RageFile &p, int &e
 }
 
 /* Copy a RageFileObj for a new RageFile. */
-RageFileObj *RageFileManager::CopyFileObj( const RageFileObj *cpy, RageFile &p )
+RageFileObj *RageFileManager::CopyFileObj( const RageFileObj *cpy )
 {
 	LockMut( *g_Mutex );
 

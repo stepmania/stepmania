@@ -15,7 +15,7 @@ class RageFileDriver
 public:
 	RageFileDriver( FilenameDB *db ) { FDB = db; }
 	virtual ~RageFileDriver();
-	virtual RageFileObj *Open( const CString &path, int mode, RageFile &p, int &err ) = 0;
+	virtual RageFileObj *Open( const CString &path, int mode, int &err ) = 0;
 	virtual void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
 	virtual RageFileManager::FileType GetFileType( const CString &sPath );
 	virtual int GetFileSizeInBytes( const CString &sFilePath );
@@ -38,11 +38,9 @@ protected:
 	CString m_sError;
 
 public:
-	RageFileObj( RageFile &p ) { }
 	virtual ~RageFileObj() { }
 
 	CString GetError() const { return m_sError; }
-//	virtual CString RealPath() const { return parent->GetPath(); }
 	
 	virtual int Seek( int offset ) = 0;
 	virtual int GetFileSize() = 0;
@@ -52,7 +50,7 @@ public:
 	virtual int Read(void *buffer, size_t bytes) = 0;
 	virtual int Write(const void *buffer, size_t bytes) = 0;
 	virtual int Flush() { return 0; }
-	virtual RageFileObj *Copy( RageFile &p ) const = 0;
+	virtual RageFileObj *Copy() const = 0;
 };
 
 /* This is used to register the driver, so RageFileManager can see it. */
