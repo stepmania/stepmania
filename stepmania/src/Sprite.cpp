@@ -18,6 +18,7 @@
 
 // lua start
 LUA_REGISTER_CLASS( Sprite )
+REGISTER_ACTOR_CLASS( Sprite )
 // lua end
 
 
