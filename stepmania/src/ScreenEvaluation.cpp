@@ -201,18 +201,6 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		}
 	}
 
-	Grade best_grade = GRADE_NO_DATA;
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		best_grade = min( best_grade, grade[p] ); 
-
-		// if its extra stage, update # passed stages
-		if ( (GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() ) &&
-			grade[p] > GRADE_FAILED &&
-			m_Type != summary)
-			UNLOCKSYS->UnlockClearExtraStage();
-	}
-
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -227,6 +215,11 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			UNLOCKSYS->UnlockAddAP( grade[p] );
 			UNLOCKSYS->UnlockAddSP( grade[p] );
 			UNLOCKSYS->UnlockAddDP( (float)stageStats.iActualDancePoints[p] );
+
+			// if it's extra stage, update # passed stages
+			if ( (GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() ) &&
+				grade[p] > GRADE_FAILED )
+				UNLOCKSYS->UnlockClearExtraStage();
 			break;
 
 		case course:
@@ -775,6 +768,10 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	for( p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(p) && (iMachineHighScoreIndex[p] != -1 || iPersonalHighScoreIndex[p] != -1) )
 			bOneHasNewTopRecord = true;
+
+	Grade best_grade = GRADE_NO_DATA;
+	for( p=0; p<NUM_PLAYERS; p++ )
+		best_grade = min( best_grade, grade[p] ); 
 	
 	if( PREFSMAN->m_bAllowExtraStage && m_bTryExtraStage )
 	{
