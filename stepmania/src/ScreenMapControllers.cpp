@@ -24,12 +24,12 @@ static const ThemeMetric<apActorCommands> ODD_LINE_OUT	("ScreenMapControllers","
 const int FramesToWaitForInput = 2;
 
 // reserve the 3rd slot for hard-coded keys
-const int NUM_CHANGABLE_SLOTS = NUM_GAME_TO_DEVICE_SLOTS-1;
+const int NUM_CHANGABLE_SLOTS = NUM_SHOWN_GAME_TO_DEVICE_SLOTS-1;
 
 
 const float LINE_START_Y	=	64;
 const float LINE_GAP_Y		=	28;
-const float BUTTON_COLUMN_X[NUM_GAME_TO_DEVICE_SLOTS*MAX_GAME_CONTROLLERS] =
+const float BUTTON_COLUMN_X[NUM_SHOWN_GAME_TO_DEVICE_SLOTS*MAX_GAME_CONTROLLERS] =
 {
 	50, 125, 200, 440, 515, 590 
 };
@@ -68,10 +68,10 @@ ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMen
 
 		for( int p=0; p<MAX_GAME_CONTROLLERS; p++ ) 
 		{			
-			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ ) 
+			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
 				m_textMappedTo[p][b][s].LoadFromFont( THEME->GetPathF("ScreenMapControllers","entry") );
-				m_textMappedTo[p][b][s].SetXY( BUTTON_COLUMN_X[p*NUM_GAME_TO_DEVICE_SLOTS+s], 0 );
+				m_textMappedTo[p][b][s].SetXY( BUTTON_COLUMN_X[p*NUM_SHOWN_GAME_TO_DEVICE_SLOTS+s], 0 );
 				m_textMappedTo[p][b][s].SetZoom( 0.5f );
 				m_textMappedTo[p][b][s].SetShadowLength( 0 );
 				m_Line[b].AddChild( &m_textMappedTo[p][b][s] );
@@ -333,7 +333,7 @@ void ScreenMapControllers::Refresh()
 	{			
 		for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ ) 
 		{
-			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ ) 
+			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
 				bool bSelected = p == m_iCurController  &&  b == m_iCurButton  &&  s == m_iCurSlot; 
 

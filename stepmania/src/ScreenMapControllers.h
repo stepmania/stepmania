@@ -8,6 +8,7 @@
 #include "BitmapText.h"
 #include "InputMapper.h"
 
+enum { NUM_SHOWN_GAME_TO_DEVICE_SLOTS = 3 };
 
 class ScreenMapControllers : public ScreenWithMenuElements
 {
@@ -41,7 +42,7 @@ private:
 	BitmapText	m_textError;
 	BitmapText	m_textName[MAX_GAME_BUTTONS];
 	BitmapText	m_textName2[MAX_GAME_BUTTONS];
-	BitmapText	m_textMappedTo[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS][NUM_GAME_TO_DEVICE_SLOTS];
+	BitmapText	m_textMappedTo[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS][NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
 
 	ActorFrame	m_Line[MAX_GAME_BUTTONS];
 };
