@@ -64,22 +64,7 @@ struct AutoJoyMapping
 	const char *szGame;
 	const char *szDriverRegex;	// reported by InputHandler
 	const char *szControllerName;	// the product name of the controller
-	struct Mapping {
-		bool IsEndMarker() const { return iSlotIndex==-1; }
-
-		int iSlotIndex;	// -1 == end marker
-		int deviceButton;
-		GameButton gb;
-		/* If this is true, this is an auxilliary mapping assigned to the second
-		 * player.  If two of the same device are found, and the device has secondary
-		 * entries, the later entries take precedence.  This way, if a Pump pad is
-		 * found, it'll map P1 to the primary pad and P2 to the secondary pad.
-		 * (We can't tell if a slave pad is actually there.)  Then, if a second primary
-		 * is found (DEVICE_PUMP2), 2P will be mapped to it. 
-		 *
-		 * This isn't well-tested; I only have one Pump pad. */
-		bool SecondController;
-	} maps[32];
+	struct InputMapper::Mapping maps[32];
 };
 #define END_MARKER	{-1, -1, -1, false },	// end marker
 const AutoJoyMapping g_AutoJoyMappings[] = 
@@ -302,6 +287,28 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 	},
 };
 
+void InputMapper::ApplyMapping( const Mapping *maps, GameController gc, InputDevice device )
+{
+	for( int k=0; !maps[k].IsEndMarker(); k++ )
+	{
+		GameController map_gc = gc;
+		if( maps[k].SecondController )
+		{
+			map_gc = (GameController)(map_gc+1);
+
+			/* If that pushed it over, then it's a second controller for a joystick
+			 * that's already a second controller, so we'll just ignore it.  (This
+			 * can happen if eg. two primary Pump pads are connected.) */
+			if( map_gc >= GAME_CONTROLLER_INVALID )
+				continue;
+		}
+
+		DeviceInput di( device, maps[k].deviceButton );
+		GameInput gi( map_gc, maps[k].gb );
+		SetInputMap( di, gi, maps[k].iSlotIndex );
+	}
+}
+
 void InputMapper::AutoMapJoysticksForCurrentGame()
 {
 	vector<InputDevice> vDevices;
@@ -338,25 +345,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 			LOG->Info( "Applying default joystick mapping #%d for device '%s' (%s)",
 				iNumJoysticksMapped+1, mapping.szDriverRegex, mapping.szControllerName );
 
-			for( int k=0; !mapping.maps[k].IsEndMarker(); k++ )
-			{
-				GameController map_gc = gc;
-				if( mapping.maps[k].SecondController )
-				{
-					map_gc = (GameController)(map_gc+1);
-
-					/* If that pushed it over, then it's a second controller for
-					 * a joystick that's already a second controller, so we'll
-					 * just ignore it.  (This can happen if eg. two primary
-					 * Pump pads are connected.) */
-					if( map_gc >= GAME_CONTROLLER_INVALID )
-						continue;
-				}
-
-				DeviceInput di( device, mapping.maps[k].deviceButton );
-				GameInput gi( map_gc, mapping.maps[k].gb );
-				SetInputMap( di, gi, mapping.maps[k].iSlotIndex );
-			}
+			ApplyMapping( mapping.maps, gc, device );
 
 			iNumJoysticksMapped++;
 		}
