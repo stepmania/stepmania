@@ -169,6 +169,11 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 		ON_COMMAND( m_DifficultyIcon[p] );
 		m_DC[p] = GAMESTATE->m_PreferredDifficulty[p];
 		m_DifficultyIcon[p].SetFromDifficulty( p, m_DC[p] );
+
+		m_DifficultyMeters[p].SetName( "DifficultyMeter", ssprintf("MeterP%d",p+1) );
+		m_DifficultyMeters[p].Load();
+		SET_XY_AND_ON_COMMAND( m_DifficultyMeters[p] );
+		this->AddChild( &m_DifficultyMeters[p] );
 	}
 
 	m_SelectMode = SelectGroup;
@@ -404,7 +409,7 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 	case SelectDifficulty:
 		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 		vector <Steps *> MultiSteps;
-		MultiSteps = m_vSongs[m_iSongNum % m_vSongs.size()]->GetAllSteps( st );
+		MultiSteps = GAMESTATE->m_pCurSong->GetAllSteps( st );
 		if (MultiSteps.size() == 0)
 			m_DC[pn] = NUM_DIFFICULTIES;
 		else
@@ -419,7 +424,8 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 				if (i > 0)	//If we are at the easiest difficulty, do nothign
 					m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
 		}
-		m_DifficultyIcon[pn].SetFromDifficulty( pn, m_DC[pn] );
+		UpdateDifficulties( pn );
+		GAMESTATE->m_PreferredDifficulty[pn] = m_DC[pn];
 	}
 }
 
@@ -442,7 +448,7 @@ void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 	case SelectDifficulty:
 		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 		vector <Steps *> MultiSteps;
-		MultiSteps = m_vSongs[m_iSongNum % m_vSongs.size()]->GetAllSteps( st );
+		MultiSteps = GAMESTATE->m_pCurSong->GetAllSteps( st );
 		if (MultiSteps.size() == 0)
 			m_DC[pn] = NUM_DIFFICULTIES;
 		else
@@ -457,7 +463,8 @@ void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 				if (i < (int)MultiSteps.size() - 1 )	//If we are at the hardest difficulty, do nothign
 					m_DC[pn] = MultiSteps[i+1]->GetDifficulty();
 		}
-		m_DifficultyIcon[pn].SetFromDifficulty( pn, m_DC[pn] );
+		UpdateDifficulties( pn );
+		GAMESTATE->m_PreferredDifficulty[pn] = m_DC[pn];
 	}
 }
 
@@ -521,7 +528,10 @@ void ScreenNetSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_rectDiff );
 
 	FOREACH_EnabledPlayer (pn)
+	{
+		OFF_COMMAND( m_DifficultyMeters[pn] );
 		OFF_COMMAND( m_DifficultyIcon[pn] );
+	}
 }
 
 
@@ -550,10 +560,19 @@ void ScreenNetSelectMusic::StartSelectedSong()
 		Steps * pSteps = pSong->GetStepsByDifficulty(st,m_DC[pn]);
 		GAMESTATE->m_pCurSteps[pn] = pSteps;
 	}
-	GAMESTATE->m_pCurSong = pSong;
 	
 	TweenOffScreen();
 	StartTransitioning( SM_GoToNextScreen );
+}
+
+void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
+{
+	m_DifficultyIcon[pn].SetFromDifficulty( pn, m_DC[pn] );
+	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+	if ( m_DC[pn] != NUM_DIFFICULTIES )
+		m_DifficultyMeters[pn].SetFromSteps( GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, m_DC[pn] ) );
+	else
+		m_DifficultyMeters[pn].SetFromMeterAndDifficulty( 0, m_DC[pn] ); 
 }
 
 void ScreenNetSelectMusic::UpdateSongsListPos()
@@ -575,11 +594,13 @@ void ScreenNetSelectMusic::UpdateSongsListPos()
 
 	m_textArtist.SetText( m_vSongs[j]->GetTranslitArtist() );
 	m_textSubtitle.SetText( m_vSongs[j]->GetTranslitSubTitle() );
+	GAMESTATE->m_pCurSong = m_vSongs[j];
 
 	//Update the difficulty Icons
 	//Handle difficulty
 	FOREACH_EnabledPlayer (pn)
 	{
+		m_DC[pn] = GAMESTATE->m_PreferredDifficulty[pn];
 		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 		vector <Steps *> MultiSteps;
 		MultiSteps = m_vSongs[j]->GetAllSteps( st );
@@ -596,9 +617,8 @@ void ScreenNetSelectMusic::UpdateSongsListPos()
 			else
 				m_DC[pn] = MultiSteps[i]->GetDifficulty();
 		}
-		m_DifficultyIcon[pn].SetFromDifficulty( pn, m_DC[pn] );
+		UpdateDifficulties( pn );
 	}
-
 
 	//Then handle sound (Copied from MusicBannerWheel)
 	SOUND->StopMusic();

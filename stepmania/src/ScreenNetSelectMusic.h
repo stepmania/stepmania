@@ -12,6 +12,7 @@
 #include "ModeSwitcher.h"
 #include "DifficultyIcon.h"
 #include "Difficulty.h"
+#include "DifficultyMeter.h"
 
 class ScreenNetSelectMusic : public ScreenWithMenuElements
 {
@@ -91,8 +92,12 @@ private:
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 	Difficulty			m_DC[NUM_PLAYERS];
 
+	void UpdateDifficulties( PlayerNumber pn );
+	DifficultyMeter		m_DifficultyMeters[NUM_PLAYERS];
+
 	RageSound m_soundChangeOpt;
 	RageSound m_soundChangeSel;
+
 };
 
 #endif
