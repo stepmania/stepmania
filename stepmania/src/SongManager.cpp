@@ -115,9 +115,6 @@ void SongManager::Reload( LoadingWindow *ld )
 	FreeSongs();
 	FreeCourses();
 
-	m_sGroupNames.clear();
-	m_sGroupBannerPaths.clear();
-
 	/* Always check songs for changes. */
 	const bool OldVal = PREFSMAN->m_bFastLoad;
 	PREFSMAN->m_bFastLoad = false;
@@ -316,11 +313,18 @@ void SongManager::PreloadSongImages()
 
 void SongManager::FreeSongs()
 {
+	m_sGroupNames.clear();
+	m_sGroupBannerPaths.clear();
+
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
 		SAFE_DELETE( m_pSongs[i] );
 	m_pSongs.clear();
 
 	m_sGroupBannerPaths.clear();
+
+	for( int i = 0; i < NUM_PROFILE_SLOTS; ++i )
+		m_pBestSongs[i].clear();
+	m_pShuffledSongs.clear();
 }
 
 CString SongManager::GetGroupBannerPath( CString sGroupName )
@@ -638,6 +642,10 @@ void SongManager::FreeCourses()
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
 		delete m_pCourses[i];
 	m_pCourses.clear();
+
+	for( int i = 0; i < NUM_PROFILE_SLOTS; ++i )
+		m_pBestCourses[i].clear();
+	m_pShuffledCourses.clear();
 }
 
 /* Called periodically to wipe out cached NoteData.  This is called when we change
