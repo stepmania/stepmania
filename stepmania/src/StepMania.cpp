@@ -921,6 +921,9 @@ static void ProcessArgsSecond()
 		//use it a lot.
 	if( GetCommandlineArgument( "course", & Argument ) )
 		ArgStartCourse(Argument);
+
+	if( GetCommandlineArgument( "netip" ) )
+		NSMAN->DisplayStartupStatus();	//If we're using networking show what happend
 }
 
 int main(int argc, char* argv[])

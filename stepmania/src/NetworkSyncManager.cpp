@@ -21,6 +21,7 @@
 #include "RageUtil.h"
 #include "ThemeManager.h"
 #include "ScreenSelectMusic.h"
+#include "Screen.h"
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 #include "SongOptions.h"
@@ -40,6 +41,7 @@ NetworkSyncManager::NetworkSyncManager()
 	m_ServerVersion = 0;
     
 	useSMserver = false;
+	m_startupStatus = 0;	//By default, connection not tried.
 
 	StartUp();
 }
@@ -55,10 +57,12 @@ NetworkSyncManager::~NetworkSyncManager ()
 void NetworkSyncManager::StartUp()
 {
 	CString ServerIP;
+
 	if( GetCommandlineArgument( "netip", &ServerIP ) )
 	{
 		if( !Connect(ServerIP.c_str(),8765) )
 		{
+			m_startupStatus = 2;
 			LOG->Warn( "Network Sync Manager failed to connect" );
 			return;
 		}
@@ -68,6 +72,7 @@ void NetworkSyncManager::StartUp()
 	{
 		if( !Listen(8765) )
 		{
+			m_startupStatus = 2;
 			LOG->Warn( "Listen() failed");
 			return;
 		}
@@ -77,6 +82,8 @@ void NetworkSyncManager::StartUp()
         return;
 
 	useSMserver = true;
+
+	m_startupStatus = 1;	//Connection attepmpt sucessful
 
 	int ClientCommand=3;
 	NetPlayerClient->send((char*) &ClientCommand, 4);
@@ -248,6 +255,9 @@ void NetworkSyncManager::StartRequest()
 //SMOnline server.
 void NetworkSyncManager::SendSongs()
 {	
+	if (!useSMserver)
+		return ;
+
 	vector <Song *> LogSongs;
 	LogSongs = SONGMAN->GetAllSongs();
 	unsigned i,j;
@@ -324,7 +334,27 @@ void ArgStartCourse(CString CourseName)
 	GAMESTATE->BeginStage();
 }
 
+	
+void NetworkSyncManager::DisplayStartupStatus()
+{
+	CString sMessage("");
 
+	switch (m_startupStatus)
+	{
+	case 0:
+		//Networking wasn't attepmpted
+		return;
+		break;
+	case 1:
+		sMessage = "Connect to server successful.";
+		break;
+	case 2:
+		sMessage = "Connection failed.";
+		break;
+	}
+//	SCREENMAN->RefreshCreditsMessages();
+	SCREENMAN->SystemMessage(sMessage);
+}
 
 
 //Global and accessable from anywhere

@@ -33,6 +33,8 @@ public:
 	bool Connect(const CString& addy, unsigned short port); // Connect to SM Server
 	void SendSongs();  //Send song list to server (And exit) 
 
+	void DisplayStartupStatus();	//Used to note user if connect attempt was sucessful or not.
+
 	int m_playerLife[NUM_PLAYERS];	//Life
 
 private:
@@ -42,7 +44,9 @@ private:
 	int m_step;
 	int m_score;
 	int m_combo;
-     
+    
+	int m_startupStatus;	//Used to see if attempt was sucessful or not.
+
 	bool useSMserver;
  
     EzSockets *NetPlayerClient;
