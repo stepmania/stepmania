@@ -32,6 +32,8 @@ private:
 	void GoToNextState();
 	void GoToPrevState();
 
+	CString ConvertParamToThemeDifficulty( const CString &in ) const;
+
 	bool            m_bAcceptedChoices;
 	bool            m_bGoToOptions;
 	Sprite          m_sprOptionsMessage;

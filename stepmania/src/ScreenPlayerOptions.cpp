@@ -121,6 +121,10 @@ void ScreenPlayerOptions::ImportOptions()
 		{
 			CString s = vNotes[i]->GetDescription();
 			s.MakeUpper();
+
+			// convert to theme-defined values
+			s = ConvertParamToThemeDifficulty(s);
+
 			m_OptionRow[PO_STEP].choices.push_back( s );
 		}
 	}
@@ -431,4 +435,36 @@ void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	}
 	ScreenOptions::HandleScreenMessage( SM );
+}
+
+CString ScreenPlayerOptions::ConvertParamToThemeDifficulty(
+	const CString &in ) const
+{
+	// inefficient, could optimize
+#define BEGINNER_DESCRIPTION	THEME->GetMetric("ScreenPlayerOptions","Beginner")
+#define EASY_DESCRIPTION		THEME->GetMetric("ScreenPlayerOptions","Easy")
+#define MEDIUM_DESCRIPTION		THEME->GetMetric("ScreenPlayerOptions","Medium")
+#define HARD_DESCRIPTION		THEME->GetMetric("ScreenPlayerOptions","Hard")
+#define CHALLENGE_DESCRIPTION	THEME->GetMetric("ScreenPlayerOptions","Challenge")
+
+	if (in == "BEGINNER") return BEGINNER_DESCRIPTION;  // Extreme
+
+	if (in == "BASIC") return EASY_DESCRIPTION;  // 3rd
+	if (in == "LIGHT") return EASY_DESCRIPTION;  // MAX
+
+	if (in == "ANOTHER")   return MEDIUM_DESCRIPTION;  // 3rd
+	if (in == "STANDARD")  return MEDIUM_DESCRIPTION;  // MAX.  Note DDRUSA uses this for standard, but its unlikely
+	if (in == "TRICK")     return MEDIUM_DESCRIPTION;  // 4th/5th
+	if (in == "DIFFICULT") return MEDIUM_DESCRIPTION;  // DDRUSA, unlikely
+
+	if (in == "SSR")    return HARD_DESCRIPTION; // 3rd
+	if (in == "MANIAC")	return HARD_DESCRIPTION; // pre-MAX
+	if (in == "HEAVY")	return HARD_DESCRIPTION; // MAX
+	if (in == "EXPERT") return HARD_DESCRIPTION; // Euromix
+	
+	if (in == "SMANIAC")   return CHALLENGE_DESCRIPTION; // 4th
+	if (in == "CHALLENGE") return CHALLENGE_DESCRIPTION; // MAX
+	if (in == "ONI")	   return CHALLENGE_DESCRIPTION; // Extreme
+
+	return in;  // something else
 }
