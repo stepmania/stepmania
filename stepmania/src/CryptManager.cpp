@@ -10,8 +10,8 @@
 #include "crypto51/channels.h"
 #include "crypto51/hex.h"
 #include "crypto51/rsa.h"
-#include "crypto51/md5.h"
 #include "crypto51/osrng.h"
+#include "crypto/CryptMD5.h"
 #include <memory>
 
 using namespace CryptoPP;
@@ -162,24 +162,40 @@ bool CryptManager::Verify( CString sPath, CString sSignature )
 	}
 }
 
+static CString BinaryToHex( const unsigned char *string, int iNumBytes )
+{
+	CString s;
+	for( int i=0; i<iNumBytes; i++ )
+	{
+		unsigned val = string[i];
+		s += ssprintf( "%x", val );
+	}
+	return s;
+}
 
 CString CryptManager::GetMD5( CString fn )
 {
-	ASSERT( PREFSMAN->m_bSignProfileData );
+       struct MD5Context md5c;
+       unsigned char digest[16];
+       int iBytesRead;
+       unsigned char buffer[1024];
 
-	MD5 md5;
-	HashFilter md5Filter(md5);
+       RageFile file;
+       if( !file.Open( fn, RageFile::READ ) )
+       {
+               LOG->Warn( "GetMD5: Failed to open file '%s'", fn.c_str() );
+               return "";
+       }
 
-	auto_ptr<ChannelSwitch> channelSwitch(new ChannelSwitch);
-	channelSwitch->AddDefaultRoute(md5Filter);
-	RageFileSource(fn, true, channelSwitch.release());
+       MD5Init(&md5c);
+       while( !file.AtEOF() && file.GetError().empty() )
+       {
+               iBytesRead = file.Read( buffer, sizeof(buffer) );
+               MD5Update(&md5c, buffer, iBytesRead);
+       }
+       MD5Final(digest, &md5c);
 
-	HexEncoder encoder(new RageFileSink("temp.txt"), false);
-	cout << "\nMD5: ";
-	md5Filter.TransferTo(encoder);
-
-	ASSERT(0);
-	return "";
+       return BinaryToHex( digest, sizeof(digest) );
 }
 
 CString CryptManager::GetPublicKeyFileName()
