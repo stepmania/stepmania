@@ -48,7 +48,7 @@ void LightsManager::Update( float fDeltaTime )
 			case 0:
 				{
 					int iSec = (int)(RageTimer::GetTimeSinceStart()*2);
-					float fBeatPercentage = GAMESTATE->m_fSongBeat - (int)GAMESTATE->m_fSongBeat;
+//					float fBeatPercentage = GAMESTATE->m_fSongBeat - (int)GAMESTATE->m_fSongBeat;
 					bool bOn = (iSec%2)==0; 
 					for( int i=0; i<8; i++ )
 						m_pDriver->SetLight( (Light)i, bOn );
@@ -167,12 +167,12 @@ void LightsManager::Update( float fDeltaTime )
 		{
 			for( int c=0; c<2; c++ )
 			{
-				GameController gc = (GameController)c;
+//				GameController gc = (GameController)c;
 				bool bOn = GAMESTATE->m_bSideIsJoined[c];
 
 				for( int i=0; i<4; i++ )
 				{
-					GameButton gb = (GameButton)i;
+//					GameButton gb = (GameButton)i;
 					Light light = (Light)(LIGHT_GAME_BUTTON1 + c*4+i);
 					m_pDriver->SetLight( light, bOn );
 				}
