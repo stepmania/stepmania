@@ -146,25 +146,29 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 				pActor = pSprite;
 				TEXTUREMAN->EnableOddDimensionWarning();
 			}
-			else if( IsAFile(sDir+sFile) || IsADirectory(sDir+sFile) )
+			else 
 			{
-				// If we know this is an exact match, don't bother with the
-				// GetDirListing below.  The GetDirListing is causing problems with 
-				// partial matching BGAnimation directory names.
-				CString sNewPath = DerefRedir( sDir+sFile );
-				pActor = MakeActor( sNewPath );
-			}
-			else
-			{
-				CStringArray asPaths;
-				GetDirListing( sDir + sFile + "*", asPaths, false, true );	// return path too
+				/* XXX: We need to do a theme search, since the file we're loading might
+				 * be overridden by the theme. */
+				CString sNewPath = sDir+sFile;
 
-				if( asPaths.empty() )
-					RageException::Throw( "The actor file '%s' references a file '%s' which doesn't exist.", sIniPath.c_str(), sFile.c_str() );
-				else if( asPaths.size() > 1 )
-					RageException::Throw( "The actor file '%s' references a file '%s' which has multiple matches.", sIniPath.c_str(), sFile.c_str() );
+				// If we know this is an exact match, don't bother with the GetDirListing;
+				// it's causing problems with partial matching BGAnimation directory names.
+				if( !IsAFile(sNewPath) && !IsADirectory(sNewPath) )
+				{
+					CStringArray asPaths;
+					GetDirListing( sNewPath + "*", asPaths, false, true );	// return path too
 
-				CString sNewPath = DerefRedir( asPaths[0] );
+					if( asPaths.empty() )
+						RageException::Throw( "The actor file '%s' references a file '%s' which doesn't exist.", sIniPath.c_str(), sFile.c_str() );
+					else if( asPaths.size() > 1 )
+						RageException::Throw( "The actor file '%s' references a file '%s' which has multiple matches.", sIniPath.c_str(), sFile.c_str() );
+
+					sNewPath = asPaths[0];
+				}
+
+				sNewPath = DerefRedir( sNewPath );
+
 				pActor = MakeActor( sNewPath );
 			}
 		}
