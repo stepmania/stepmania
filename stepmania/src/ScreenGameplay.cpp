@@ -1802,7 +1802,7 @@ void ScreenGameplay::SongFinished()
 	GAMESTATE->RemoveAllActiveAttacks();
 }
 
-void ScreenGameplay::StageFinished()
+void ScreenGameplay::StageFinished( bool bBackedOut )
 {
 	if( GAMESTATE->IsCourseMode() && GAMESTATE->m_PlayMode != PLAY_MODE_ENDLESS )
 	{
@@ -1825,7 +1825,8 @@ void ScreenGameplay::StageFinished()
 	}
 
 	// save current stage stats
-	g_vPlayedStageStats.push_back( g_CurStageStats );
+	if( !bBackedOut )
+		g_vPlayedStageStats.push_back( g_CurStageStats );
 
 	/* Reset options. */
 	GAMESTATE->RestoreSelectedOptions();
@@ -2086,7 +2087,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_GoToScreenAfterBack:
 		SongFinished();
-		StageFinished();
+		StageFinished( true );
 
 		GAMESTATE->CancelStage();
 
@@ -2102,7 +2103,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		}
 		
 		SongFinished();
-		StageFinished();
+		StageFinished( false );
 
 		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 		break;
@@ -2159,7 +2160,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		}
 
 		SongFinished();
-		StageFinished();
+		StageFinished( false );
 		
 		switch( GAMESTATE->m_PlayMode )
 		{

@@ -86,7 +86,7 @@ protected:
 	void UpdateLyrics( float fDeltaTime );
 	void UpdateCheckFail();
 	void SongFinished();
-	void StageFinished();
+	void StageFinished( bool bBackedOut );
 
 	enum DancingState { 
 		STATE_INTRO = 0, // not allowed to press Back
