@@ -151,16 +151,22 @@ RageFileManager::~RageFileManager()
 
 CString LoadedDriver::GetPath( CString path )
 {
-	path.Replace( "\\", "/" );
-
-	/* If the path begins with @, default mount points don't count. */
-	const bool Dedicated = ( path.size() && path[0] == '@' );
-	if( MountPoint.size() == 0 )
-		return Dedicated? "":path;
-	
 	/* Map all slashes to forward slash. */
-	path.Replace( "\\", "/" );
+	FixSlashesInPlace( path );
 
+	/* Collapse the path, removing any leading dots.  (FilenameDB::ResolvePath requires
+	 * this.) */
+	CollapsePath( path, true );
+
+	/* Default mountpoints: */
+	if( MountPoint.size() == 0 )
+	{
+		/* If the path begins with @, default mount points don't count. */
+		if( path.size() && path[0] == '@' )
+			return "";
+		return path;
+	}
+	
 	if( path.Left( MountPoint.size() ).CompareNoCase( MountPoint ) )
 		return ""; /* no match */
 
