@@ -40,12 +40,29 @@ void NoteData::SetNumTracks( int iNewNumTracks )
 
 
 /* Clear [rowBegin,rowEnd]; that is, including rowEnd. */
-void NoteData::ClearRange( int rowBegin, int rowEnd )
+void NoteData::ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack )
 {
+	/* Optimization: if the range encloses everything, just clear the whole maps. */
+	if( rowBegin == 0 && rowEnd == MAX_NOTE_ROW )
+	{
+		m_TapNotes[iTrack].clear();
+
+		for( int i = GetNumHoldNotes()-1; i >= 0; --i )
+		{
+			HoldNote hn = GetHoldNote(i);
+			if( hn.iTrack != iTrack )
+				continue;
+			this->RemoveHoldNote( i );
+		}
+	}
+
 	/* Crop or split hold notes overlapping the range. */
 	for( int i = GetNumHoldNotes()-1; i >= 0; --i )	// for each HoldNote
 	{
 		HoldNote hn = GetHoldNote(i);
+		if( hn.iTrack != iTrack )
+			continue;
+
 		if( !hn.RangeOverlaps(rowBegin, rowEnd) )
 			continue;
 
@@ -74,11 +91,14 @@ void NoteData::ClearRange( int rowBegin, int rowEnd )
 	}
 
 	/* Clear other notes in the region. */
-	for( int t=0; t<GetNumTracks(); t++ )
-	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, rowBegin, rowEnd )
-			SetTapNote( t, r, TAP_EMPTY );
-	}
+	FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, iTrack, r, rowBegin, rowEnd )
+		SetTapNote( iTrack, r, TAP_EMPTY );
+}
+
+void NoteData::ClearRange( int rowBegin, int rowEnd )
+{
+	for( int t=0; t < GetNumTracks(); ++t )
+		ClearRangeForTrack( rowBegin, rowEnd, t );
 }
 
 void NoteData::ClearAll()

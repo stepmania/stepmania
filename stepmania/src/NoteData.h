@@ -68,6 +68,7 @@ public:
 	void MoveTapNoteTrack( int dest, int src );
 	void SetTapNote( int track, int row, const TapNote& tn );
 	
+	void ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack );
 	void ClearRange( int rowBegin, int rowEnd );
 	void ClearAll();
 	void CopyRange( const NoteData& from, int rowFromBegin, int rowFromEnd, int rowToBegin = 0 );

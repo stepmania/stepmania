@@ -1323,20 +1323,14 @@ void NoteDataUtil::CopyRightToLeft( NoteData &inout )
 
 void NoteDataUtil::ClearLeft( NoteData &inout )
 {
-	inout.ConvertHoldNotesTo4s();
 	for( int t=0; t<inout.GetNumTracks()/2; t++ )
-		FOREACH_NONEMPTY_ROW_IN_TRACK( inout, t, r )
-			inout.SetTapNote(t, r, TAP_EMPTY);
-	inout.Convert4sToHoldNotes();
+		inout.ClearRangeForTrack( 0, MAX_NOTE_ROW, t );
 }
 
 void NoteDataUtil::ClearRight( NoteData &inout )
 {
-	inout.ConvertHoldNotesTo4s();
 	for( int t=(inout.GetNumTracks()+1)/2; t<inout.GetNumTracks(); t++ )
-		FOREACH_NONEMPTY_ROW_IN_TRACK( inout, t, r )
-			inout.SetTapNote(t, r, TAP_EMPTY);
-	inout.Convert4sToHoldNotes();
+		inout.ClearRangeForTrack( 0, MAX_NOTE_ROW, t );
 }
 
 void NoteDataUtil::CollapseToOne( NoteData &inout )
@@ -1586,10 +1580,11 @@ void NoteDataUtil::Scale( NoteData &nd, float fScale )
 }
 #endif
 
-// added to fix things in the editor - make sure that you're working off data that is 
-// either in 4s or in 2s and 3s.
 void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, int iStartIndex, int iEndIndex )
 {
+	// convert to 2sAnd3s before calling this
+	ASSERT( nd.GetNumHoldNotes() == 0 );
+
 	ASSERT( fScale > 0 );
 	ASSERT( iStartIndex < iEndIndex );
 	ASSERT( iStartIndex >= 0 );
