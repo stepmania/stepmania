@@ -79,9 +79,16 @@ void BeginnerHelper::AddPlayer( int pn, NoteData *pNotes )
 
 bool BeginnerHelper::CanUse()
 {
-	return ((GAMESTATE->m_CurGame == GAME_DANCE) &&
-			(DoesFileExist("Characters" SLASH "DancePad-DDR.txt")) &&
-			(DoesFileExist("Characters" SLASH "DancePads-DDR.txt")) );
+	if( !DoesFileExist("Characters" SLASH "DancePad-DDR.txt") )
+		return false;
+	if( !DoesFileExist("Characters" SLASH "DancePads-DDR.txt") )
+		return false;
+	if( GAMESTATE->m_CurGame != GAME_DANCE )
+		return false;
+	if( GAMESTATE->m_pCharacters.size() == 0 )
+		return false;
+
+	return true;
 }
 
 bool BeginnerHelper::Initialize( int iDancePadType )
@@ -132,34 +139,37 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 		if( !GAMESTATE->IsHumanPlayer(pl))
 			continue;
 
+		if( GAMESTATE->m_pCurNotes[pl]->GetDifficulty() != DIFFICULTY_BEGINNER )
+			continue;
+
 		// if there is no character set, try loading a random one.
-		if( GAMESTATE->m_pCurCharacters[pl] == NULL )
-		{
-			GAMESTATE->m_pCurCharacters[pl] = GAMESTATE->GetRandomCharacter();
-		}
+		// XXX: If the character is turned on by us, it should be reverted 
+		Character *Character = GAMESTATE->m_pCurCharacters[pl];
+		if( Character == NULL )
+			Character = GAMESTATE->GetRandomCharacter();
 
-		if( GAMESTATE->m_pCurNotes[pl]->GetDifficulty() == DIFFICULTY_BEGINNER && GAMESTATE->m_pCurCharacters[pl] != NULL )
-		{
-			// Load textures
-			m_mDancer[pl].SetHorizAlign( align_left );
-			m_mDancer[pl].LoadMilkshapeAscii( GAMESTATE->m_pCurCharacters[pl]->GetModelPath() );
+		/* If there aren't any characters, CanUse() should have returned false. */
+		ASSERT( Character != NULL );
 
-			// Load needed animations
-			m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-LEFT","Characters" SLASH "BeginnerHelper_step-left.bones.txt" );
-			m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-DOWN","Characters" SLASH "BeginnerHelper_step-down.bones.txt" );
-			m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-UP","Characters" SLASH "BeginnerHelper_step-up.bones.txt" );
-			m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-RIGHT","Characters" SLASH "BeginnerHelper_step-right.bones.txt" );
-			m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-JUMPLR","Characters" SLASH "BeginnerHelper_step-jumplr.bones.txt" );
-			/*m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-JUMPUD","Characters\\BeginnerHelper_step-jumpud.bones.txt" );*/
-			m_mDancer[pl].LoadMilkshapeAsciiBones( "rest",GAMESTATE->m_pCurCharacters[0]->GetRestAnimationPath() );
-			m_mDancer[pl].SetDefaultAnimation( "rest" );
-			m_mDancer[pl].PlayAnimation( "rest" );
-			m_mDancer[pl].SetRotationX( PLAYER_ANGLE );
-			m_mDancer[pl].SetX( HELPER_X + PLAYER_X(pl) );
-			m_mDancer[pl].SetY( HELPER_Y + 10 );
-			m_mDancer[pl].SetZoom( 20 );
-			m_mDancer[pl].m_bRevertToDefaultAnimation = true;		// Stay bouncing after a step has finished animating.
-		}
+		// Load textures
+		m_mDancer[pl].SetHorizAlign( align_left );
+		m_mDancer[pl].LoadMilkshapeAscii( Character->GetModelPath() );
+
+		// Load needed animations
+		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-LEFT","Characters" SLASH "BeginnerHelper_step-left.bones.txt" );
+		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-DOWN","Characters" SLASH "BeginnerHelper_step-down.bones.txt" );
+		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-UP","Characters" SLASH "BeginnerHelper_step-up.bones.txt" );
+		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-RIGHT","Characters" SLASH "BeginnerHelper_step-right.bones.txt" );
+		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-JUMPLR","Characters" SLASH "BeginnerHelper_step-jumplr.bones.txt" );
+		/*m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-JUMPUD","Characters\\BeginnerHelper_step-jumpud.bones.txt" );*/
+		m_mDancer[pl].LoadMilkshapeAsciiBones( "rest",Character->GetRestAnimationPath() );
+		m_mDancer[pl].SetDefaultAnimation( "rest" );
+		m_mDancer[pl].PlayAnimation( "rest" );
+		m_mDancer[pl].SetRotationX( PLAYER_ANGLE );
+		m_mDancer[pl].SetX( HELPER_X + PLAYER_X(pl) );
+		m_mDancer[pl].SetY( HELPER_Y + 10 );
+		m_mDancer[pl].SetZoom( 20 );
+		m_mDancer[pl].m_bRevertToDefaultAnimation = true;		// Stay bouncing after a step has finished animating.
 	}
 
 	return (m_bInitialized = true);
