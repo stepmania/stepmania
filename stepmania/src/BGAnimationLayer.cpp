@@ -653,6 +653,9 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 
 void BGAnimationLayer::Update( float fDeltaTime )
 {
+	if( m_fHibernateSecondsLeft > 0 )
+		return;
+
 	fDeltaTime *= m_fUpdateRate;
 
 	const float fSongBeat = GAMESTATE->m_fSongBeat;

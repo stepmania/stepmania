@@ -77,6 +77,9 @@ void ActorFrame::Update( float fDeltaTime )
 //	LOG->Trace( "ActorFrame::Update( %f )", fDeltaTime );
 	Actor::Update( fDeltaTime );
 
+	if( m_fHibernateSecondsLeft > 0 )
+		return;
+
 	// update all sub-Actors
 	for( vector<Actor*>::iterator it=m_SubActors.begin(); it!=m_SubActors.end(); it++ )
 		(*it)->Update(fDeltaTime);
@@ -121,7 +124,7 @@ float ActorFrame::GetTweenTimeLeft() const
 	float m = Actor::GetTweenTimeLeft();
 
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m = max(m, m_SubActors[i]->GetTweenTimeLeft());
+		m = max(m, m_fHibernateSecondsLeft + m_SubActors[i]->GetTweenTimeLeft());
 
 	return m;
 

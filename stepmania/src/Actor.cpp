@@ -55,6 +55,7 @@ void Actor::Reset()
 	m_bShadow = false;
 	m_fShadowLength = 4;
 	m_bIsAnimating = true;
+	m_fHibernateSecondsLeft = 0;
 
 	m_bTextureWrapping = false;
 	m_BlendMode = BLEND_NORMAL;
@@ -74,6 +75,8 @@ Actor::Actor()
 void Actor::Draw()
 {
 	if( m_bHidden )
+		return;	// early abort
+	if( m_fHibernateSecondsLeft > 0 )
 		return;	// early abort
 
 	// call the most-derived versions
@@ -294,6 +297,12 @@ bool Actor::IsFirstUpdate()
 void Actor::Update( float fDeltaTime )
 {
 //	LOG->Trace( "Actor::Update( %f )", fDeltaTime );
+
+	m_fHibernateSecondsLeft -= fDeltaTime;
+	m_fHibernateSecondsLeft = max( 0, m_fHibernateSecondsLeft );
+
+	if( m_fHibernateSecondsLeft > 0 )
+		return;
 
 	// update effect
 	switch( m_Effect )
@@ -816,6 +825,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	else if( sName=="clearzbuffer" )	SetClearZBuffer( bParam(1) );
 	else if( sName=="backfacecull" )	SetUseBackfaceCull( bParam(1) );
 	else if( sName=="hidden" )			SetHidden( bParam(1) );
+	else if( sName=="hibernate" )		SetHibernate( fParam(1) );
 	else if( sName=="playcommand" )		PlayCommand( sParam(1) );
 
 	/* These are commands intended for a Sprite commands, but they will get 
@@ -847,6 +857,8 @@ float Actor::GetCommandLength( CString command )
 float Actor::GetTweenTimeLeft() const
 {
 	float tot = 0;
+
+	tot += m_fHibernateSecondsLeft;
 
 	for( unsigned i=0; i<m_TweenInfo.size(); ++i )
 		tot += m_TweenInfo[i].m_fTimeLeftInTween;

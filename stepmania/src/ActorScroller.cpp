@@ -55,6 +55,9 @@ void ActorScroller::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
+	if( m_fHibernateSecondsLeft > 0 )
+		return;	// early abort
+
 	fapproach( m_fCurrentItem, m_fDestinationItem, fDeltaTime/m_fSecondsPerItem );
 }
 

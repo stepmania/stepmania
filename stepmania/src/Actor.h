@@ -265,14 +265,16 @@ public:
 	//
 	// other properties
 	//
-	bool GetHidden() const		{ return m_bHidden; }
-	void SetHidden( bool b )	{ m_bHidden = b; }
+	bool GetHidden() const				{ return m_bHidden; }
+	void SetHidden( bool b )			{ m_bHidden = b; }
 	void SetShadowLength( float fLength );
-	void EnableShadow( bool b )	{ m_bShadow = b; }
+	void EnableShadow( bool b )			{ m_bShadow = b; }
+	// TODO: Implement hibernate as a tween type?
+	void SetHibernate( float fSecs )	{ m_fHibernateSecondsLeft = fSecs; }
 
 	virtual void EnableAnimation( bool b ) 		{ m_bIsAnimating = b; }
-	virtual void StartAnimating()	{ this->EnableAnimation(true); };
-	virtual void StopAnimating()	{ this->EnableAnimation(false); };
+	virtual void StartAnimating()		{ this->EnableAnimation(true); };
+	virtual void StopAnimating()		{ this->EnableAnimation(false); };
 
 
 	//
@@ -367,6 +369,7 @@ protected:
 	// other properties
 	//
 	bool	m_bHidden;
+	float	m_fHibernateSecondsLeft;
 	bool	m_bShadow;
 	float	m_fShadowLength;
 	bool	m_bIsAnimating;
