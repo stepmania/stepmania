@@ -980,6 +980,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 						RelativePath="arch\Lights\LightsDriver_Null.h">
 					</File>
 					<File
+						RelativePath="arch\Lights\LightsDriver_SystemMessage.cpp">
+					</File>
+					<File
+						RelativePath="arch\Lights\LightsDriver_SystemMessage.h">
+					</File>
+					<File
 						RelativePath="arch\Lights\LightsDriver_Win32Parallel.cpp">
 					</File>
 					<File
