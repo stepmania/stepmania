@@ -16,16 +16,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-typedef struct tColorRGBA {
-    Uint8 r;
-    Uint8 g;
-    Uint8 b;
-    Uint8 a;
-} tColorRGBA;
-
-typedef struct tColorY {
-    Uint8 y;
-} tColorY;
+struct tColorRGBA {
+    Uint8 r,g,b,a;
+};
 
 #define MAX(a,b)    (((a) > (b)) ? (a) : (b))
 
@@ -49,8 +42,8 @@ int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int smooth)
 	// sx = (int) (65536.0 * (float) (src->w - 1) / (float) dst->w);
 	// sy = (int) (65536.0 * (float) (src->h - 1) / (float) dst->h);
     // } else {
-	sx = (int) (65536.0 * (float) src->w / (float) dst->w);
-	sy = (int) (65536.0 * (float) src->h / (float) dst->h);
+	sx = 65536 * src->w / dst->w;
+	sy = 65536 * src->h / dst->h;
     //}
 
     /* Allocate memory for row increments */
@@ -66,27 +59,23 @@ int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int smooth)
     int csx = 0;
     int *csax = sax;
     for (x = 0; x <= dst->w; x++) {
-	csx &= 0xffff;
 	*csax = csx;
+	csx &= 0xffff;
 	csax++;
 	csx += sx;
     }
     int csy = 0;
     int *csay = say;
     for (y = 0; y <= dst->h; y++) {
-	csy &= 0xffff;
 	*csay = csy;
+	csy &= 0xffff;
 	csay++;
 	csy += sy;
     }
 
-    /*
-     * Pointer setup 
-     */
+    /* Pointer setup */
     tColorRGBA *sp, *csp;
     sp = csp = (tColorRGBA *) src->pixels;
-    int sgap = src->pitch - src->w * 4;
-    int dgap = dst->pitch - dst->w * 4;
 
     /* Switch between interpolating and non-interpolating code */
     csay = say;
@@ -102,15 +91,15 @@ int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int smooth)
 	    tColorRGBA *c11 = c10+1;
 	    csax = sax;
 	    /* Set destination pointer. */
-	    tColorRGBA *dp = (tColorRGBA *) ((Uint8 *) dst->pixels + dgap*y);
+	    tColorRGBA *dp = (tColorRGBA *) ((Uint8 *) dst->pixels + dst->pitch*y);
 
 	    for (x = 0; x < dst->w; x++) {
 
 		/*
 		 * Interpolate colors 
 		 */
-		int ex = *csax;
-		int ey = *csay;
+		int ex = *csax & 0xffff;
+		int ey = *csay & 0xffff;
 		int t1, t2;
 		t1 = ((((c01->r - c00->r) * ex) >> 16) + c00->r) & 0xff;
 		t2 = ((((c11->r - c10->r) * ex) >> 16) + c10->r) & 0xff;
@@ -145,7 +134,7 @@ int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int smooth)
 	for (y = 0; y < dst->h; y++) {
 	    sp = csp;
 	    csax = sax;
-	    tColorRGBA *dp = (tColorRGBA *) ((Uint8 *) dst->pixels + dgap*y);
+	    tColorRGBA *dp = (tColorRGBA *) ((Uint8 *) dst->pixels + dst->pitch*y);
 	    for (x = 0; x < dst->w; x++) {
 		/* Draw */
 		*dp = *sp;
