@@ -80,6 +80,9 @@ void LyricDisplay::Update( float fDeltaTime )
 	 * skip it. */
 	fShowLength = max(fShowLength, 0);
 
+	// make lyrics show faster a larger song rates.
+	fShowLength /= GAMESTATE->m_SongOptions.m_fMusicRate;
+
 	for( int i=0; i<2; i++ )
 	{
 		m_textLyrics[i].SetText( GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric );
