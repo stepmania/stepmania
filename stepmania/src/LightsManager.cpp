@@ -186,7 +186,6 @@ void LightsManager::Update( float fDeltaTime )
 	switch( m_LightsMode )
 	{
 	case LIGHTSMODE_ATTRACT:
-	case LIGHTSMODE_MENU:
 	case LIGHTSMODE_DEMONSTRATION:
 		{
 			ZERO( m_LightsState.m_bGameButtonLights );
@@ -205,10 +204,14 @@ void LightsManager::Update( float fDeltaTime )
 			}
 		}
 		break;
+	case LIGHTSMODE_MENU:
 	case LIGHTSMODE_GAMEPLAY:
 		{
-			if( PREFSMAN->m_bBlinkGameplayButtonLightsOnNote )
+			if( m_LightsMode == LIGHTSMODE_GAMEPLAY  &&  PREFSMAN->m_bBlinkGameplayButtonLightsOnNote )
 			{
+				//
+				// Blink on notes.
+				//
 				FOREACH_GameController( gc )
 				{
 					FOREACH_GameButton( gb )
@@ -219,6 +222,9 @@ void LightsManager::Update( float fDeltaTime )
 			}
 			else
 			{
+				//
+				// Blink on button pressess.
+				//
 				FOREACH_GameController( gc )
 				{
 					// don't blink unjoined sides
