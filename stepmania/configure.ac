@@ -42,7 +42,6 @@ AC_ARG_WITH(vorbis, AC_HELP_STRING([--without-vorbis], [Disable Vorbis support])
 # This is used to force the integer decoder, on systems that prefer it.
 AC_ARG_WITH(integer-vorbis, AC_HELP_STRING([--with-integer-vorbis], [Integer vorbis decoding only]), with_int_vorbis=$withval, with_int_vorbis=no)
 
-echo $with_int_vorbis
 have_vorbis=no
 if test "$with_vorbis" = "yes" -a "$with_int_vorbis" = "no"; then
 	oldlibs="$LIBS"
