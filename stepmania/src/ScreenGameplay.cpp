@@ -246,8 +246,9 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	m_Background.SetDiffuse( RageColor(0.4f,0.4f,0.4f,1) );
 	this->AddChild( &m_Background );
 	
+	m_sprStaticBackground.SetName( "StaticBG" );
 	m_sprStaticBackground.Load( THEME->GetPathToG("ScreenGameplay Static Background"));
-	m_sprStaticBackground.SetXY( STATICBG_X, STATICBG_Y );
+	SET_XY( m_sprStaticBackground );
 	this->AddChild(&m_sprStaticBackground);
 
 	if( !bDemonstration )	// only load if we're going to use it
