@@ -106,8 +106,7 @@ void RageFileDriver::GetDirListing( const CString &sPath, CStringArray &AddTo, b
 
 RageFileManager::FileType RageFileDriver::GetFileType( const CString &sPath )
 {
-	/* XXX */
-	return (RageFileManager::FileType) FDB->GetFileType( sPath );
+	return FDB->GetFileType( sPath );
 }
 
 int RageFileDriver::GetFileSizeInBytes( const CString &sPath )
