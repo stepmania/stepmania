@@ -131,7 +131,7 @@ public:
 
 	static const longchar DEFAULT_GLYPH;
 
-	static bool MatchesFont(CString FontName, CString FileName);
+	static CString GetFontName(CString FileName);
 
 private:
 	/* List of pages and fonts that we use (and are responsible for freeing). */

@@ -345,29 +345,13 @@ void Font::SetDefaultGlyph(FontPage *fp)
 }
 
 
-/* "Normal.png", "Normal [foo].png", "Normal 16x16.png", and "Normal [foo] 16x16.png"
- * are all part of the FontName "Normal".  "Normal2 16x16.png" is not.
- *
- * So, FileName must start with FontName, followed by either " [", " DIGIT" or
- * a period.
- *
- * This is to make sure we don't pull in textures from similarly-named fonts.
- */ 
-bool Font::MatchesFont(CString FontName, CString FileName)
-{
-	FontName.MakeLower();
-	FileName.MakeLower();
-
-	if(FileName.substr(0, FontName.size()) != FontName)
-		return false;
-	FileName = FileName.substr(FontName.size());
-
-	return regex("^( \\[|\\.| [0-9]+x[0-9]+)", FileName);
-}
-
-CString GetFontName(CString FileName)
+CString Font::GetFontName(CString FileName)
 {
 	CString orig = FileName;
+
+	CString sDir, sFName, sExt;
+	splitpath( FileName, sDir, sFName, sExt );
+	FileName = sFName;
 
 	/* If it ends in an extension, remove it. */
 	if(regex("\\....", FileName))
@@ -387,8 +371,10 @@ CString GetFontName(CString FileName)
 	if(FileName.empty())
 		RageException::Throw("Can't parse font filename \"%s\"", orig.GetString());
 
+	FileName.MakeLower();
 	return FileName;
 }
+
 
 /* Given a file in a font, find all of the files for the font.
  * 

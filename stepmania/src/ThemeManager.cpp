@@ -129,44 +129,30 @@ try_element_again:
 	///////////////////////////////////////
 	// Search both the current theme and the default theme dirs for this element
 	///////////////////////////////////////
-	static const char *font_masks[] = { "*.png", ".redir", NULL };
-	static const char *blank_mask[] = { "", NULL };
-	const char **asset_masks = font_masks;
 
-	/* If the theme asset name has an extension, don't add
-	 * a mask.  This should only happen with redirs. */
-	if(sFileName.find_last_of('.') != sFileName.npos)
-		asset_masks = blank_mask;
-
-	int i;
-	CString path;
-
-	for(i = 0; asset_masks[i]; ++i)
-	{
-		path = sCurrentThemeDir;
-		GetDirListing( path + "Fonts\\"+sFileName + asset_masks[i],
-						asPossibleElementFilePaths, false, true );
-	}
+	CString path = sCurrentThemeDir;
+	GetDirListing( sCurrentThemeDir + "Fonts\\"+sFileName + "*",
+					asPossibleElementFilePaths, false, true );
 
 	/* Weed out false matches.  (For example, this gets rid of "normal2" when
 	 * we're really looking for "normal".) */
+	int i;
 	for(i = 0; i < int(asPossibleElementFilePaths.size()); ) {
-		if(!Font::MatchesFont(path + "Fonts\\"+ sFileName, asPossibleElementFilePaths[i]))
+		if(Font::GetFontName(sFileName) != Font::GetFontName(asPossibleElementFilePaths[i]))
 			asPossibleElementFilePaths.erase(asPossibleElementFilePaths.begin()+i);
 		else i++;
 	}
 
 	if(asPossibleElementFilePaths.empty())
-	for(i = 0; asset_masks[i]; ++i)
 	{
 		path = sDefaultThemeDir;
 
-		GetDirListing( path + "Fonts\\"+ sFileName + asset_masks[i],
+		GetDirListing( sDefaultThemeDir + "Fonts\\"+ sFileName + "*",
 						asPossibleElementFilePaths, false, true );
 	}
 
 	for(i = 0; i < int(asPossibleElementFilePaths.size()); ) {
-		if(!Font::MatchesFont(path + "Fonts\\"+ sFileName, asPossibleElementFilePaths[i]))
+		if(Font::GetFontName(sFileName) != Font::GetFontName(asPossibleElementFilePaths[i]))
 			asPossibleElementFilePaths.erase(asPossibleElementFilePaths.begin()+i);
 		else i++;
 	}

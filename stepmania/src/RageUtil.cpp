@@ -201,7 +201,7 @@ void splitpath( CString Path, CString& Dir, CString& Filename, CString& Ext )
 	Dir = mat[0];
 	Path = mat[1];
 
-	if(regex("^(.*)(\\....)$", Path, mat))
+	if(regex("^(.*)(\\.[^\\.]+)$", Path, mat))
 	{
 		Filename = mat[0];
 		Ext = mat[1];

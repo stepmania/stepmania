@@ -36,9 +36,6 @@ public:
 	 * adjustment of fonts in ScreenTestFonts at the moment. */
 	void ReloadFonts();
 
-	/* Return true if FileName is a part of the font "FontName". */
-	static bool MatchesFont(CString FontName, CString FileName);
-
 	static longchar MakeGameGlyph(longchar c, Game g);
 	static bool ExtractGameGlyph(longchar ch, int &c, Game &g);
 
