@@ -64,6 +64,9 @@ bool StepManiaLanServer::ServerStart()
 
 void StepManiaLanServer::ServerStop()
 {
+	for (unsigned int x = 0; x < Client.size(); ++x)
+		delete Client[x];
+
 	Client.clear();
 	server.close();
 	stop = true;
@@ -113,12 +116,18 @@ void StepManiaLanServer::Disconnect(const unsigned int clientNum)
 	vector<GameClient*>::iterator Iterator;
 	Iterator = Client.begin();
 	if (clientNum == (Client.size()-1))
+	{
+		delete Client[clientNum];
 		Client.pop_back();
+	}
 	else
 		for (unsigned int x = 0; x < Client.size(); ++x)
 		{
 			if (x == clientNum)
+			{
+				delete Client[x];
 				Client.erase(Iterator);
+			}
 			Iterator++;
 		}
 }
@@ -532,7 +541,7 @@ void StepManiaLanServer::NewClientCheck()
 	}
 	else
 	{
-		Client.pop_back();
+		Disconnect(Client.size()-1);
 	}
 }
 
