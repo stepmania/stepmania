@@ -11,6 +11,10 @@
 #include "smpackageUtil.h"	
 #include "EditInsallations.h"	
 
+#include <vector>
+#include <algorithm>
+using namespace std;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -83,9 +87,9 @@ CString ReplaceInvalidFileNameChars( CString sOldFileName )
 	return sNewFileName;
 }
 
-void GetFilePaths( CString sDirOrFile, CStringArray& asPathToFilesOut )
+void GetFilePaths( CString sDirOrFile, 	vector<CString> &asPathToFilesOut )
 {
-	CStringArray asDirectoriesToExplore;
+	vector<CString> asDirectoriesToExplore;
 
 	// HACK:
 	// Must use backslashes in the path, or else WinZip and WinRAR don't see the files.
@@ -99,18 +103,18 @@ void GetFilePaths( CString sDirOrFile, CStringArray& asPathToFilesOut )
 	
 	if( IsAFile(sDirOrFile) )
 	{
-		asPathToFilesOut.Add( sDirOrFile );
+		asPathToFilesOut.push_back( sDirOrFile );
 		return;
 	}
 
 
 	GetDirListing( sDirOrFile, asPathToFilesOut, false, true );
 	GetDirListing( sDirOrFile, asDirectoriesToExplore, true, true );
-	while( asDirectoriesToExplore.GetSize() > 0 )
+	while( asDirectoriesToExplore.size() > 0 )
 	{
 		GetDirListing( asDirectoriesToExplore[0] + "\\*.*", asPathToFilesOut, false, true );
 		GetDirListing( asDirectoriesToExplore[0] + "\\*.*", asDirectoriesToExplore, true, true );
-		asDirectoriesToExplore.RemoveAt( 0 );
+		asDirectoriesToExplore.erase( 0 );
 	}
 }
 
@@ -163,15 +167,15 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 	zip.SetGlobalComment( sComment );
 
 	/* Find files to add to zip. */
-	int i;
-	CStringArray asFilePaths;
-	for( i=0; i<asDirectoriesToExport.GetSize(); i++ )
+	unsigned i;
+	vector<CString> asFilePaths;
+	for( i=0; i<asDirectoriesToExport.size(); i++ )
 		GetFilePaths( asDirectoriesToExport[i], asFilePaths );
 
 	//
 	// Add files to zip
 	//
-	for( int j=0; j<asFilePaths.GetSize(); j++ )
+	for( unsigned j=0; j<asFilePaths.size(); j++ )
 	{
 		CString sFilePath = asFilePaths[j];
 		
@@ -236,12 +240,12 @@ void CSmpackageExportDlg::OnButtonExportAsOne()
 	CStringArray asPaths;
 	GetCheckedPaths( asPaths );
 
-	if( asPaths.GetSize() == 0 )
+	if( asPaths.size() == 0 )
 	{
 		AfxMessageBox( "No items are checked" );
 		return;
 	}
-	else if( asPaths.GetSize() == 1 )
+	else if( asPaths.size() == 1 )
 	{
 		OnButtonExportAsIndividual();
 		return;
@@ -270,7 +274,7 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 	CStringArray asPaths;
 	GetCheckedPaths( asPaths );
 
-	if( asPaths.GetSize() == 0 )
+	if( asPaths.size() == 0 )
 	{
 		AfxMessageBox( "No items are checked" );
 		return;
@@ -284,7 +288,7 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 	bool bAllSucceeded = true;
 	CStringArray asExportedPackages;
 	CStringArray asFailedPackages;
-	for( int i=0; i<asPaths.GetSize(); i++ )
+	for( unsigned i=0; i<asPaths.size(); i++ )
 	{		
 		// Generate a package name for every path
 		CString sPath = asPaths[i];
@@ -292,21 +296,21 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 		CString sPackageName;
 		CStringArray asPathBits;
 		split( sPath, "\\", asPathBits, true );
-		sPackageName = asPathBits[ asPathBits.GetSize()-1 ] + ".smzip";
+		sPackageName = asPathBits[ asPathBits.size()-1 ] + ".smzip";
 		sPackageName = ReplaceInvalidFileNameChars( sPackageName );
 
 		CStringArray asPathsToExport;
-		asPathsToExport.Add( sPath );
+		asPathsToExport.push_back( sPath );
 		
 		if( ExportPackage( sPackageName, asPathsToExport, sComment ) )
-			asExportedPackages.Add( sPackageName );
+			asExportedPackages.push_back( sPackageName );
 		else
-			asFailedPackages.Add( sPackageName );
+			asFailedPackages.push_back( sPackageName );
 	}
 
 	CString sMessage;
-	if( asFailedPackages.GetSize() == 0 )
-		sMessage = ssprintf("Successfully exported the package%s '%s' to your Desktop.", asFailedPackages.GetSize()>1?"s":"", join("', '",asExportedPackages) );
+	if( asFailedPackages.size() == 0 )
+		sMessage = ssprintf("Successfully exported the package%s '%s' to your Desktop.", asFailedPackages.size()>1?"s":"", join("', '",asExportedPackages) );
 	else
 		sMessage = ssprintf("  The packages %s failed to export.", join(", ",asFailedPackages) );
 	AfxMessageBox( sMessage );
@@ -392,7 +396,7 @@ void CSmpackageExportDlg::GetCheckedPaths( CStringArray& aPathsOut )
 
 		sPath.TrimRight('\\');	// strip off last slash
 
-		aPathsOut.Add( sPath );
+		aPathsOut.push_back( sPath );
 	}
 }
 
@@ -416,7 +420,7 @@ void CSmpackageExportDlg::RefreshInstallationList()
 
 	CStringArray asInstallDirs;
 	GetStepManiaInstallDirs( asInstallDirs );
-	for( int i=0; i<asInstallDirs.GetSize(); i++ )
+	for( unsigned i=0; i<asInstallDirs.size(); i++ )
 	{
 		m_comboDir.AddString( asInstallDirs[i] );
 	}
@@ -443,7 +447,7 @@ void CSmpackageExportDlg::RefreshTree()
 		CStringArray as1;
 		HTREEITEM item1 = m_tree.InsertItem( "Announcers" );
 		GetDirListing( "Announcers\\*.*", as1, true, false );
-		for( int i=0; i<as1.GetSize(); i++ )
+		for( unsigned i=0; i<as1.size(); i++ )
 			m_tree.InsertItem( as1[i], item1 );
 	}
 
@@ -452,7 +456,7 @@ void CSmpackageExportDlg::RefreshTree()
 		CStringArray as1;
 		HTREEITEM item1 = m_tree.InsertItem( "Characters" );
 		GetDirListing( "Characters\\*.*", as1, true, false );
-		for( int i=0; i<as1.GetSize(); i++ )
+		for( unsigned i=0; i<as1.size(); i++ )
 			m_tree.InsertItem( as1[i], item1 );
 	}
 
@@ -461,7 +465,7 @@ void CSmpackageExportDlg::RefreshTree()
 		CStringArray as1;
 		HTREEITEM item1 = m_tree.InsertItem( "Themes" );
 		GetDirListing( "Themes\\*.*", as1, true, false );
-		for( int i=0; i<as1.GetSize(); i++ )
+		for( unsigned i=0; i<as1.size(); i++ )
 			m_tree.InsertItem( as1[i], item1 );
 	}
 
@@ -470,7 +474,7 @@ void CSmpackageExportDlg::RefreshTree()
 		CStringArray as1;
 		HTREEITEM item1 = m_tree.InsertItem( "BGAnimations" );
 		GetDirListing( "BGAnimations\\*.*", as1, true, false );
-		for( int i=0; i<as1.GetSize(); i++ )
+		for( unsigned i=0; i<as1.size(); i++ )
 			m_tree.InsertItem( as1[i], item1 );
 	}
 
@@ -481,7 +485,7 @@ void CSmpackageExportDlg::RefreshTree()
 		GetDirListing( "RandomMovies\\*.avi", as1, false, false );
 		GetDirListing( "RandomMovies\\*.mpg", as1, false, false );
 		GetDirListing( "RandomMovies\\*.mpeg", as1, false, false );
-		for( int i=0; i<as1.GetSize(); i++ )
+		for( unsigned i=0; i<as1.size(); i++ )
 			m_tree.InsertItem( as1[i], item1 );
 	}
 
@@ -492,7 +496,7 @@ void CSmpackageExportDlg::RefreshTree()
 		GetDirListing( "Visualizations\\*.avi", as1, false, false );
 		GetDirListing( "Visualizations\\*.mpg", as1, false, false );
 		GetDirListing( "Visualizations\\*.mpeg", as1, false, false );
-		for( int i=0; i<as1.GetSize(); i++ )
+		for( unsigned i=0; i<as1.size(); i++ )
 			m_tree.InsertItem( as1[i], item1 );
 	}
 
@@ -501,7 +505,7 @@ void CSmpackageExportDlg::RefreshTree()
 		CStringArray as1;
 		HTREEITEM item1 = m_tree.InsertItem( "Courses" );
 		GetDirListing( "Courses\\*.crs", as1, false, false );
-		for( int i=0; i<as1.GetSize(); i++ )
+		for( unsigned i=0; i<as1.size(); i++ )
 		{
 			as1[i] = as1[i].Left(as1[i].GetLength()-4);	// strip off ".crs"
 			m_tree.InsertItem( as1[i], item1 );
@@ -516,12 +520,12 @@ void CSmpackageExportDlg::RefreshTree()
 		CStringArray as1;
 		HTREEITEM item1 = m_tree.InsertItem( "NoteSkins" );
 		GetDirListing( "NoteSkins\\*.*", as1, true, false );
-		for( int i=0; i<as1.GetSize(); i++ )
+		for( unsigned i=0; i<as1.size(); i++ )
 		{
 			CStringArray as2;
 			HTREEITEM item2 = m_tree.InsertItem( as1[i], item1 );
 			GetDirListing( "NoteSkins\\" + as1[i] + "\\*.*", as2, true, false );
-			for( int j=0; j<as2.GetSize(); j++ )
+			for( unsigned j=0; j<as2.size(); j++ )
 				m_tree.InsertItem( as2[j], item2 );
 		}
 	}
@@ -533,12 +537,12 @@ void CSmpackageExportDlg::RefreshTree()
 		CStringArray as1;
 		HTREEITEM item1 = m_tree.InsertItem( "Songs" );
 		GetDirListing( "Songs\\*.*", as1, true, false );
-		for( int i=0; i<as1.GetSize(); i++ )
+		for( unsigned i=0; i<as1.size(); i++ )
 		{
 			CStringArray as2;
 			HTREEITEM item2 = m_tree.InsertItem( as1[i], item1 );
 			GetDirListing( "Songs\\" + as1[i] + "\\*.*", as2, true, false );
-			for( int j=0; j<as2.GetSize(); j++ )
+			for( unsigned j=0; j<as2.size(); j++ )
 				m_tree.InsertItem( as2[j], item2 );
 		}
 	}

@@ -157,9 +157,8 @@ bool IsAFile( const CString &sPath );
 bool IsADirectory( const CString &sPath );
 DWORD GetFileSizeInBytes( const CString &sFilePath );
 
-int CompareCStringsAsc(const void *arg1, const void *arg2);
-int CompareCStringsDesc(const void *arg1, const void *arg2);
 void SortCStringArray( CStringArray &AddTo, const bool bSortAcsending = true );
+void StripCrnl(CString &s);
 
 
 LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata);

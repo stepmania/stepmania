@@ -68,7 +68,7 @@ BOOL CSmpackageApp::InitInstance()
 	// check if there's a .smzip command line argument
 	CStringArray arrayCommandLineBits;
 	split( ::GetCommandLine(), "\"", arrayCommandLineBits );
-	for( int i=0; i<arrayCommandLineBits.GetSize(); i++ )
+	for( unsigned i=0; i<arrayCommandLineBits.size(); i++ )
 	{
 		CString sPath = arrayCommandLineBits[i];
 		sPath.TrimLeft();

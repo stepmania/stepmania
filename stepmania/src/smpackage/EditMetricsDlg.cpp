@@ -93,33 +93,35 @@ void EditMetricsDlg::RefreshTree()
 	iniCombined.ReadFile();
 
 	CStringArray asKeys;
-	asKeys.Copy( iniCombined.names );
+	IniFile::const_iterator it;
+	for( it = iniCombined.begin(); it != iniCombined.end(); ++it )
+		asKeys.push_back( it->first );
 	SortCStringArray( asKeys );
 
-	for( int i=0; i<asKeys.GetSize(); i++ )
+	for( unsigned i=0; i<asKeys.size(); i++ )
 	{
 		CString sKey = asKeys[i];
-		bool bInBase = iniBase.FindKey(sKey) != -1;
-		bool bInTheme = iniTheme.FindKey(sKey) != -1;
+		bool bInBase = iniBase.GetKey(sKey) != NULL;
+		bool bInTheme = iniTheme.GetKey(sKey) != NULL;
 
 		HTREEITEM item1 = m_tree.InsertItem( sKey );
 		SET_ITEM_STYLE( item1, bInBase, bInTheme );
 
-		IniFile::key* pKey = iniCombined.GetKeyPointer( sKey );
+		const IniFile::key* pKey = iniCombined.GetKey( sKey );
 		CStringArray asNames;
-		for( POSITION pos=pKey->GetStartPosition(); pos != NULL; )
+		for( IniFile::key::const_iterator val = pKey->begin(); val != pKey->end(); ++val )
 		{
-			CString sName, sValue;
-			pKey->GetNextAssoc( pos, sName, sValue );
-			asNames.Add( sName );
+			CString sName = val->first, sValue = val->second;
+			asNames.push_back( sName );
 		}
 	
 		SortCStringArray( asNames );
 
-		for( int j=0; j<asNames.GetSize(); j++ )
+		for( unsigned j=0; j<asNames.size(); j++ )
 		{
 			CString sName = asNames[j];
-			CString sValue = iniCombined.GetValue( sKey, sName );
+			CString sValue;
+			iniCombined.GetValue( sKey, sName, sValue );
 
 			CString sThrowAway;
 			bool bInBase = !!iniBase.GetValue( sKey, sName, sThrowAway );
@@ -176,8 +178,16 @@ void EditMetricsDlg::OnSelchangedTree(NMHDR* pNMHDR, LRESULT* pResult)
 	m_buttonOverride.EnableWindow( bInBase && !bInTheme );
 	m_buttonRemove.EnableWindow( bInTheme );
 	m_editValue.EnableWindow( bInTheme );
-	m_editValue.SetWindowText( bInTheme ? iniTheme.GetValue(sKey,sName) : "" );
-	m_editDefault.SetWindowText( bInBase ? iniBase.GetValue(sKey,sName) : "" );
+	if( bInTheme )
+	{
+		CString n;
+		iniTheme.GetValue(sKey,sName, n);
+		m_editValue.SetWindowText( n );
+		m_editDefault.SetWindowText( n );
+	} else {
+		m_editValue.SetWindowText( "" );
+		m_editDefault.SetWindowText( "" );
+	}
 
 	*pResult = 0;
 }

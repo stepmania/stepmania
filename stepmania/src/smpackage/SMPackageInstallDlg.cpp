@@ -260,10 +260,8 @@ void CSMPackageInstallDlg::RefreshInstallationList()
 
 	CStringArray asInstallDirs;
 	GetStepManiaInstallDirs( asInstallDirs );
-	for( int i=0; i<asInstallDirs.GetSize(); i++ )
-	{
+	for( unsigned i=0; i<asInstallDirs.size(); i++ )
 		m_comboDir.AddString( asInstallDirs[i] );
-	}
 	m_comboDir.SetCurSel( 0 );	// guaranteed to be at least one item
 }
 

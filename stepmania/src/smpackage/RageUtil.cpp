@@ -12,6 +12,7 @@
 */
 
 #include "RageUtil.h"
+#include <algorithm>
 
 ULONG		randseed = time(NULL);
 
@@ -34,8 +35,8 @@ float TimeToSeconds( CString sHMS )
 	CStringArray arrayBits;
 	split( sHMS, ":", arrayBits, false );
 
-	while( arrayBits.GetSize() < 3 )
-		arrayBits.InsertAt( 0, "0" );	// pad missing bits
+	while( arrayBits.size() < 3 )
+		arrayBits.insert(arrayBits.begin(), "0" );	// pad missing bits
 
 	float fSeconds = 0;
 	fSeconds += atoi( arrayBits[0] ) * 60 * 60;
@@ -84,21 +85,19 @@ CString vssprintf( LPCTSTR fmt, va_list argList)
 //-----------------------------------------------------------------------------
 CString join( const CString &Deliminator, const CStringArray& Source)
 {
-	if( Source.GetSize() == 0 )
+	if( Source.empty() )
 		return "";
 
-	CString csReturn;
 	CString csTmp;
 
 	// Loop through the Array and Append the Deliminator
-	for( int iNum = 0; iNum < Source.GetSize()-1; iNum++ ) {
-		csTmp += Source.GetAt(iNum);
+	for( unsigned iNum = 0; iNum < Source.size()-1; iNum++ ) {
+		csTmp += Source[iNum];
 		csTmp += Deliminator;
 	}
-	csTmp += Source.GetAt( Source.GetSize()-1 );
+	csTmp += Source.back();
 	return csTmp;
 }
-
 
 //-----------------------------------------------------------------------------
 // Name: split()
@@ -122,7 +121,7 @@ void split( const CString &Source, const CString &Deliminator, CStringArray& Add
 				if( newCString.IsEmpty() && bIgnoreEmpty )
 					; // do nothing
 				else
-					AddIt.Add(AddCString);
+					AddIt.push_back(AddCString);
 
 			tmpCString = newCString.Mid(pos + Deliminator.GetLength());
 			newCString = tmpCString;
@@ -132,8 +131,10 @@ void split( const CString &Source, const CString &Deliminator, CStringArray& Add
 	if( newCString.IsEmpty() && bIgnoreEmpty )
 		; // do nothing
 	else
-		AddIt.Add(newCString);
+		AddIt.push_back(newCString);
 }
+
+
 
 
 //-----------------------------------------------------------------------------
@@ -212,49 +213,36 @@ void splitpath( const bool UsingDirsOnly, const CString &Path, CString& Drive, C
 //-----------------------------------------------------------------------------
 void splitrelpath( const CString &Path, CString& Dir, CString& FName, CString& Ext )
 {
-	// need to split on both forward slashes and back slashes
-	CStringArray sPathBits;
+	/* Find the last slash or backslash. */
+	int Last = max(Path.ReverseFind('/'), Path.ReverseFind('\\')); 
 
-	CStringArray sBackShashPathBits;
-	split( Path, "\\", sBackShashPathBits, true );
+	/* Set 'Last' to the first character of the filename.  If we have
+	 * no directory separators, this is the entire string, so set it
+	 * to 0. */
+	if(Last == -1) Last = 0;
+	else Last++;
 
-	for( int i=0; i<sBackShashPathBits.GetSize(); i++ )	// foreach backslash bit
-	{
-		CStringArray sForwardShashPathBits;
-		split( sBackShashPathBits[i], "/", sForwardShashPathBits, true );
-
-		sPathBits.Append( sForwardShashPathBits );
-	}
-
-
-	if( sPathBits.GetSize() == 0 )
-	{
-		Dir = FName = Ext = "";
-		return;
-	}
-
-	CString sFNameAndExt = sPathBits[ sPathBits.GetSize()-1 ];
-
+	CString sFNameAndExt = Path.Right(Path.GetLength()-Last);
+	
 	// subtract the FNameAndExt from Path
 	Dir = Path.Left( Path.GetLength()-sFNameAndExt.GetLength() );	// don't subtract out the trailing slash
-
 
 	CStringArray sFNameAndExtBits;
 	split( sFNameAndExt, ".", sFNameAndExtBits, false );
 
-	if( sFNameAndExtBits.GetSize() == 0 )	// no file at the end of this path
+	if( sFNameAndExt.GetLength() == 0 )	// no file at the end of this path
 	{
 		FName = "";
 		Ext = "";
 	}
-	else if( sFNameAndExtBits.GetSize() == 1 )	// file doesn't have extension
+	else if( sFNameAndExtBits.size() == 1 )	// file doesn't have extension
 	{
 		FName = sFNameAndExtBits[0];
 		Ext = "";
 	}
-	else if( sFNameAndExtBits.GetSize() > 1 )	// file has extension and possibly multiple periods
+	else if( sFNameAndExtBits.size() > 1 )	// file has extension and possibly multiple periods
 	{
-		Ext = sFNameAndExtBits[ sFNameAndExtBits.GetSize()-1 ];
+		Ext = sFNameAndExtBits[ sFNameAndExtBits.size()-1 ];
 
 		// subtract the Ext and last period from FNameAndExt
 		FName = sFNameAndExt.Left( sFNameAndExt.GetLength()-Ext.GetLength()-1 );
@@ -284,9 +272,9 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 			continue;
 
 		if( bReturnPathToo )
-			AddTo.Add( sDir + sDirName );
+			AddTo.push_back( sDir + sDirName );
 		else
-			AddTo.Add( sDirName );
+			AddTo.push_back( sDirName );
 
 
 	} while( ::FindNextFile( hFind, &fd ) );
@@ -460,7 +448,7 @@ int GetHashForDirectory( CString sDir )
 
 	CStringArray arrayFiles;
 	GetDirListing( sDir+"\\*.*", arrayFiles, false );
-	for( int i=0; i<arrayFiles.GetSize(); i++ )
+	for( unsigned i=0; i<arrayFiles.size(); i++ )
 	{
 		const CString sFilePath = sDir + arrayFiles[i];
 		hash += GetHashForFile( sFilePath );
@@ -507,27 +495,27 @@ bool IsADirectory( const CString &sPath )
 }
 
 
-
-int CompareCStringsAsc(const void *arg1, const void *arg2)
+bool CompareCStringsAsc(const CString &str1, const CString &str2)
 {
-	CString str1 = *(CString *)arg1;
-	CString str2 = *(CString *)arg2;
-	return str1.CompareNoCase( str2 );
+	return str1.CompareNoCase( str2 ) < 0;
 }
 
-int CompareCStringsDesc(const void *arg1, const void *arg2)
+bool CompareCStringsDesc(const CString &str1, const CString &str2)
 {
-	CString str1 = *(CString *)arg1;
-	CString str2 = *(CString *)arg2;
-	return str2.CompareNoCase( str1 );
+	return str1.CompareNoCase( str2 ) > 0;
 }
 
-void SortCStringArray( CStringArray &arrayCStrings, const bool bSortAcsending )
+void SortCStringArray( CStringArray &arrayCStrings, const bool bSortAscending )
 {
-	qsort( arrayCStrings.GetData(), arrayCStrings.GetSize(), sizeof(CString), bSortAcsending ? CompareCStringsAsc : CompareCStringsDesc );
+	sort( arrayCStrings.begin(), arrayCStrings.end(),
+			CompareCStringsDesc);
 }
 
-
+void StripCrnl(CString &s)
+{
+	while( s.GetLength() && (s[s.GetLength()-1] == '\r' || s[s.GetLength()-1] == '\n') )
+		s.Delete(s.GetLength()-1);
+}
 
 LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata)
 {

@@ -8,7 +8,7 @@ void WriteStepManiaInstallDirs( const CStringArray& asInstallDirsToWrite )
 	Reg.SetRootKey(HKEY_LOCAL_MACHINE);
 	Reg.SetKey("Software\\StepMania\\smpackage\\Installations", TRUE);	// create if not already present
 
-	int i;
+	unsigned i;
 
 	for( i=0; i<100; i++ )
 	{
@@ -17,7 +17,7 @@ void WriteStepManiaInstallDirs( const CStringArray& asInstallDirsToWrite )
 		Reg.WriteString( sName, "" );
 	}
 
-	for( i=0; i<asInstallDirsToWrite.GetSize(); i++ )
+	for( i=0; i<asInstallDirsToWrite.size(); i++ )
 	{
 		CString sName = ssprintf("%d",i);
 		Reg.WriteString( sName, asInstallDirsToWrite[i] );
@@ -27,7 +27,7 @@ void WriteStepManiaInstallDirs( const CStringArray& asInstallDirsToWrite )
 
 void GetStepManiaInstallDirs( CStringArray& asInstallDirsOut )
 {
-	asInstallDirsOut.RemoveAll();
+	asInstallDirsOut.clear();
 
 	CRegistry Reg;
 	Reg.SetRootKey(HKEY_LOCAL_MACHINE);
@@ -42,7 +42,7 @@ void GetStepManiaInstallDirs( CStringArray& asInstallDirsOut )
 		if( sPath == "" )	// read failed
 			continue;	// skip
 
-		asInstallDirsOut.Add( sPath );
+		asInstallDirsOut.push_back( sPath );
 	} 
 
 	// while we're at it, write to clean up stale entries
@@ -55,7 +55,7 @@ void AddStepManiaInstallDir( CString sNewInstallDir )
 	GetStepManiaInstallDirs( asInstallDirs );
 
 	bool bAlreadyInList = false;
-	for( int i=0; i<asInstallDirs.GetSize(); i++ )
+	for( unsigned i=0; i<asInstallDirs.size(); i++ )
 	{
 		if( asInstallDirs[i].CompareNoCase(sNewInstallDir) == 0 )
 		{
@@ -65,7 +65,7 @@ void AddStepManiaInstallDir( CString sNewInstallDir )
 	}
 
 	if( !bAlreadyInList )
-		asInstallDirs.Add( sNewInstallDir );
+		asInstallDirs.push_back( sNewInstallDir );
 
 	WriteStepManiaInstallDirs( asInstallDirs );
 }

@@ -62,7 +62,7 @@ BOOL ConvertThemeDlg::OnInitDialog()
 	
 	CStringArray asThemes;
 	GetDirListing( "Themes\\*.*", asThemes, true, false );
-	for( int i=0; i<asThemes.GetSize(); i++ )
+	for( unsigned i=0; i<asThemes.size(); i++ )
 //		if( asThemes[i] != "default" )	// allow editing of default
 			m_listThemes.AddString( asThemes[i] );
 
@@ -78,7 +78,7 @@ void RecursiveRename( CString sDirStart, CString sOld, CString sNew )
 
 	CStringArray asFilesAndDirs;
 	GetDirListing( sDirStart+"*.*", asFilesAndDirs, false, false );
-	for( int i=0; i<asFilesAndDirs.GetSize(); i++ )
+	for( unsigned i=0; i<asFilesAndDirs.size(); i++ )
 	{
 		CString sOldFilePath = sDirStart+asFilesAndDirs[i];
 		CString sNewFilePath = sOldFilePath;
@@ -91,7 +91,7 @@ void RecursiveRename( CString sDirStart, CString sOld, CString sNew )
 
 	CStringArray asDirs;
 	GetDirListing( sDirStart+"*.*", asDirs, true, false );
-	for( i=0; i<asDirs.GetSize(); i++ )
+	for( i=0; i<asDirs.size(); i++ )
 		RecursiveRename( sDirStart+asDirs[i], sOld, sNew );
 }
 
@@ -331,9 +331,6 @@ void LaunchNotepad( CString sPathToOpen )
 
 void ConvertThemeDlg::OnButtonAnalyze() 
 {
-	// TODO: Add your control notification handler code here
-	int i;
-
 	CString sBaseDir = "Themes\\default\\";
 	int iSel = m_listThemes.GetCurSel();
 	CString sThemeName;
@@ -356,14 +353,15 @@ void ConvertThemeDlg::OnButtonAnalyze()
 
 	CStringArray asRedundant;
 	CStringArray asWarning;
-	for( i=0; i<asThemeFilePaths.GetSize(); i++ )
+	unsigned i;
+	for( i=0; i<asThemeFilePaths.size(); i++ )
 	{
 		CString sThemeElement = asThemeFilePaths[i];
 		sThemeElement.Replace( sThemeDir, "" );
 		sThemeElement = StripExtension( sThemeElement );
 		bool bFoundMatch = false;
 
-		for( int j=0; j<asBaseFilePaths.GetSize(); j++ )
+		for( unsigned j=0; j<asBaseFilePaths.size(); j++ )
 		{
 			CString sBaseElement = asBaseFilePaths[j];
 			sBaseElement.Replace( sBaseDir, "" );
@@ -373,12 +371,12 @@ void ConvertThemeDlg::OnButtonAnalyze()
 			{
 				bFoundMatch = true;
  				if( FilesAreIdentical( asThemeFilePaths[i], asBaseFilePaths[j] ) )
-					asRedundant.Add( asThemeFilePaths[i] );
+					asRedundant.push_back( asThemeFilePaths[i] );
 				break;	// skip to next file in asThemeFilePaths
 			}
 		}
 		if( !bFoundMatch )
-			asWarning.Add( asThemeFilePaths[i] );
+			asWarning.push_back( asThemeFilePaths[i] );
 	}
 
 	SortCStringArray( asRedundant );
@@ -390,13 +388,13 @@ void ConvertThemeDlg::OnButtonAnalyze()
 	fprintf( fp, "The following elements are REDUNDANT.\n"
 		"    (These elements are identical to the elements in the base theme.\n"
 		"    They are unnecessary and should be deleted.)\n" );
-	for( i=0; i<asRedundant.GetSize(); i++ )
+	for( i=0; i<asRedundant.size(); i++ )
 		fprintf( fp, asRedundant[i] + "\n" );
 	fprintf( fp, "\n" );
 	fprintf( fp, "The following elements are possibly MISNAMED.\n"
 		"    (These files do not have a corresponding element in the base theme.\n"
 		"    This likely means that there is an error in the file name.)\n" );
-	for( i=0; i<asWarning.GetSize(); i++ )
+	for( i=0; i<asWarning.size(); i++ )
 		fprintf( fp, asWarning[i] + "\n" );
 	fclose( fp );
 
@@ -417,9 +415,6 @@ void ConvertThemeDlg::OnButtonEditMetrics()
 
 void ConvertThemeDlg::OnButtonAnalyzeMetrics() 
 {
-	// TODO: Add your control notification handler code here
-	int i;
-
 	int iSel = m_listThemes.GetCurSel();
 	CString sThemeName;
 	m_listThemes.GetText( iSel, sThemeName );
@@ -433,27 +428,27 @@ void ConvertThemeDlg::OnButtonAnalyzeMetrics()
 	iniTheme.ReadFile();
 
 	CMapStringToString mapBaseClassPlusNameToValue;
-	for( i=0; i<iniBase.names.GetSize(); i++ )
+	unsigned i;
+	IniFile::const_iterator it;
+	for( it = iniBase.begin(); it != iniBase.end(); ++it )
 	{
-		CString sKey = iniBase.names[i];
-		IniFile::key& Key = iniBase.keys[i];
-		for( POSITION pos=Key.GetStartPosition(); pos!=NULL; )
+		CString sKey = it->first;
+		const IniFile::key &Key = it->second;
+		for( IniFile::key::const_iterator val = Key.begin(); val != Key.end(); ++val )
 		{
-			CString sName, sValue;
-			Key.GetNextAssoc( pos, sName, sValue );
+			CString sName = val->first, sValue = val->second;
 			mapBaseClassPlusNameToValue[sKey+"-"+sName] = sValue;
 		}
 	}
 
 	CMapStringToString mapThemeClassPlusNameToValue;
-	for( i=0; i<iniTheme.names.GetSize(); i++ )
+	for( it = iniTheme.begin(); it != iniTheme.end(); ++it )
 	{
-		CString sKey = iniTheme.names[i];
-		IniFile::key& Key = iniTheme.keys[i];
-		for( POSITION pos=Key.GetStartPosition(); pos!=NULL; )
+		CString sKey = it->first;
+		const IniFile::key &Key = it->second;
+		for( IniFile::key::const_iterator val = Key.begin(); val != Key.end(); ++val )
 		{
-			CString sName, sValue;
-			Key.GetNextAssoc( pos, sName, sValue );
+			CString sName = val->first, sValue = val->second;
 			mapThemeClassPlusNameToValue[sKey+"-"+sName] = sValue;
 		}
 	}
@@ -476,12 +471,12 @@ void ConvertThemeDlg::OnButtonAnalyzeMetrics()
 			{
 				bFoundMatch = true;
 				if( sThemeValue == sBaseValue )
-					asRedundant.Add( sThemeKey );
+					asRedundant.push_back( sThemeKey );
 				break;	// skip to next file in asThemeFilePaths
 			}
 		}
 		if( !bFoundMatch )
-			asWarning.Add( sThemeKey );
+			asWarning.push_back( sThemeKey );
 	}
 
 	SortCStringArray( asRedundant );
@@ -493,13 +488,13 @@ void ConvertThemeDlg::OnButtonAnalyzeMetrics()
 	fprintf( fp, "The following metrics are REDUNDANT.\n"
 		"    (These metrics are identical to the metrics in the base theme.\n"
 		"    They are unnecessary and should be deleted.)\n" );
-	for( i=0; i<asRedundant.GetSize(); i++ )
+	for( i=0; i<asRedundant.size(); i++ )
 		fprintf( fp, asRedundant[i] + "\n" );
 	fprintf( fp, "\n" );
 	fprintf( fp, "The following elements are possibly MISNAMED.\n"
 		"    (These metrics do not have a corresponding metric in\n"
 		"    the base theme.  This likely means that there is an error in the metric name.)\n" );
-	for( i=0; i<asWarning.GetSize(); i++ )
+	for( i=0; i<asWarning.size(); i++ )
 		fprintf( fp, asWarning[i] + "\n" );
 	fclose( fp );
 

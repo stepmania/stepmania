@@ -55,7 +55,7 @@ BOOL EditInsallations::OnInitDialog()
 
 	CStringArray asInstallDirs;
 	GetStepManiaInstallDirs( asInstallDirs );
-	for( int i=0; i<asInstallDirs.GetSize(); i++ )
+	for( unsigned i=0; i<asInstallDirs.size(); i++ )
 		m_list.AddString( asInstallDirs[i] );
 
 
@@ -114,15 +114,13 @@ void EditInsallations::OnButtonAdd()
 
 void EditInsallations::OnOK() 
 {
-	// TODO: Add extra validation here
-	
-	m_asReturnedInstallDirs.RemoveAll();
+	m_asReturnedInstallDirs.clear();
 
 	for( int i=0; i<m_list.GetCount(); i++ )
 	{
 		CString sDir;
 		m_list.GetText( i, sDir );
-		m_asReturnedInstallDirs.Add( sDir );
+		m_asReturnedInstallDirs.push_back( sDir );
 	}
 
 	CDialog::OnOK();
