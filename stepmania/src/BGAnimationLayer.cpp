@@ -819,6 +819,7 @@ void BGAnimationLayer::PlayCommand( const CString &sCommandName )
 	ActorFrame::PlayCommand( sCommandName );
 }
 
+
 /*
  * (c) 2001-2004 Ben Nordstrom, Chris Danford, Glenn Maynard
  * All rights reserved.

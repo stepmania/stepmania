@@ -290,6 +290,7 @@ CString NoteSkinManager::GetPathToFromDir( const CString &sDir, const CString &s
 	CStringArray matches;		// fill this with the possible files
 
 	GetDirListing( sDir+sFileName+"*.redir",	matches, false, true );
+	GetDirListing( sDir+sFileName+"*.xml",		matches, false, true );
 	GetDirListing( sDir+sFileName+"*.actor",	matches, false, true );
 	GetDirListing( sDir+sFileName+"*.model",	matches, false, true );
 	GetDirListing( sDir+sFileName+"*.txt",		matches, false, true );

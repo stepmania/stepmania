@@ -30,7 +30,7 @@ void BGAnimation::Unload()
     DeleteAllChildren();
 }
 
-void BGAnimation::LoadFromStaticGraphic( CString sPath )
+void BGAnimation::LoadFromStaticGraphic( const CString &sPath )
 {
 	Unload();
 
@@ -51,11 +51,12 @@ static bool CompareLayerNames( const CString& s1, const CString& s2 )
 	return i1 < i2;
 }
 
-void AddLayersFromAniDir( CString sAniDir, vector<Actor*> &layersAddTo, bool Generic )
+void AddLayersFromAniDir( const CString &_sAniDir, vector<Actor*> &layersAddTo, bool Generic )
 {
-	if( sAniDir.empty() )
+	if( _sAniDir.empty() )
 		 return;
 
+	CString sAniDir = _sAniDir;
 	if( sAniDir.Right(1) != "/" )
 		sAniDir += "/";
 
@@ -118,13 +119,14 @@ void AddLayersFromAniDir( CString sAniDir, vector<Actor*> &layersAddTo, bool Gen
 	}
 }
 
-void BGAnimation::LoadFromAniDir( CString sAniDir )
+void BGAnimation::LoadFromAniDir( const CString &_sAniDir )
 {
 	Unload();
 
-	if( sAniDir.empty() )
+	if( _sAniDir.empty() )
 		 return;
 
+	CString sAniDir = _sAniDir;
 	if( sAniDir.Right(1) != "/" )
 		sAniDir += "/";
 
@@ -139,34 +141,19 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 
 		IniFile ini;
 		ini.ReadFile( sPathToIni );
-		if( !ini.GetValue( "BGAnimation", "LengthSeconds", m_fLengthSeconds ) )
-		{
-			/* XXX: if m_bGeneric, simply constructing the BG layer won't run "On",
-			 * so at this point GetMaxTweenTimeLeft is probably 0 */
-			m_fLengthSeconds = this->GetTweenTimeLeft();
-		}
+
+		const XNode* pBGAnimation = ini.GetChild( "BGAnimation" );
+		XNode dummy;
+		dummy.m_sName = "BGAnimation";
+		if( pBGAnimation == NULL )
+			pBGAnimation = &dummy;
+		LoadFromNode( sAniDir, *pBGAnimation );
 
 		bool bUseScroller;
 		if( ini.GetValue( "BGAnimation", "UseScroller", bUseScroller ) && bUseScroller )
 		{
 			ActorScroller::LoadFromIni( ini, "Scroller" );
 		}
-
-		CString sInitCommand;
-		if( ini.GetValue( "BGAnimation", "InitCommand", sInitCommand ) )
-		{
-			/* There's an InitCommand.  Run it now.  This can be used to eg. change Z to
-			 * modify draw order between BGAs in a Foreground.  Most things should be done
-			 * in metrics.ini commands, not here. */
-			this->RunCommands( ParseCommands(sInitCommand) );
-		}
-	
-		Command cmd;
-		cmd.Load( "PlayCommand,Init" );
-		this->RunCommandOnChildren( cmd );
-
-		if( !m_bGeneric )
-			PlayCommand( "On" );
 	}
 	else
 	{
@@ -198,7 +185,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 	}
 }
 
-void BGAnimation::LoadFromMovie( CString sMoviePath )
+void BGAnimation::LoadFromMovie( const CString &sMoviePath )
 {
 	Unload();
 
@@ -207,7 +194,7 @@ void BGAnimation::LoadFromMovie( CString sMoviePath )
 	AddChild( pLayer );
 }
 
-void BGAnimation::LoadFromVisualization( CString sVisPath )
+void BGAnimation::LoadFromVisualization( const CString &sVisPath )
 {
 	Unload();
 	BGAnimationLayer* pLayer;
@@ -222,6 +209,46 @@ void BGAnimation::LoadFromVisualization( CString sVisPath )
 	pLayer = new BGAnimationLayer( m_bGeneric );
 	pLayer->LoadFromVisualization( sVisPath );
 	AddChild( pLayer );
+}
+
+void BGAnimation::LoadFromNode( const CString &sDir, const XNode& node )
+{
+	DEBUG_ASSERT( node.m_sName == "BGAnimation" );
+
+
+	if( !node.GetAttrValue( "LengthSeconds", m_fLengthSeconds ) )
+	{
+		/* XXX: if m_bGeneric, simply constructing the BG layer won't run "On",
+		 * so at this point GetMaxTweenTimeLeft is probably 0 */
+		m_fLengthSeconds = this->GetTweenTimeLeft();
+	}
+
+	CString sInitCommand;
+	if( node.GetAttrValue( "InitCommand", sInitCommand ) )
+	{
+		/* There's an InitCommand.  Run it now.  This can be used to eg. change Z to
+		 * modify draw order between BGAs in a Foreground.  Most things should be done
+		 * in metrics.ini commands, not here. */
+		this->RunCommands( ParseCommands(sInitCommand) );
+	}
+
+	const XNode* pChildren = node.GetChild("children");
+	if( pChildren )
+	{
+		FOREACH_CONST_Child( pChildren, pChild )
+		{
+			Actor* pChildActor = LoadFromActorFile( sDir, *pChild );
+			AddChild( pChildActor );
+		}
+	}
+
+	
+	Command cmd;
+	cmd.Load( "PlayCommand,Init" );
+	this->RunCommandOnChildren( cmd );
+
+	if( !m_bGeneric )
+		PlayCommand( "On" );
 }
 
 /*

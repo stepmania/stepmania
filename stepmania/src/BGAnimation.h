@@ -7,6 +7,8 @@
  * is used for many things other than backgrounds. */
 #include "ActorScroller.h"
 
+struct XNode;
+
 class BGAnimation : public ActorScroller
 {
 public:
@@ -15,10 +17,11 @@ public:
 
 	void Unload();
 
-	void LoadFromStaticGraphic( CString sPath );
-	void LoadFromAniDir( CString sAniDir );
-	void LoadFromMovie( CString sMoviePath );
-	void LoadFromVisualization( CString sMoviePath );
+	void LoadFromStaticGraphic( const CString &sPath );
+	void LoadFromAniDir( const CString &sAniDir );
+	void LoadFromMovie( const CString &sMoviePath );
+	void LoadFromVisualization( const CString &sMoviePath );
+	void LoadFromNode( const CString &sDir, const XNode& node );
 
 	float GetLengthSeconds() const { return m_fLengthSeconds; }
 

@@ -16,6 +16,7 @@
 #include "RageTextureManager.h"
 #include "SongManager.h"
 #include "Course.h"
+#include "XmlFile.h"
 #include "FontCharAliases.h"
 
 #include "arch/Dialog/Dialog.h"
@@ -39,10 +40,12 @@ Actor* LoadFromActorFile( const CString &sIniPath, const CString &sLayer )
 
 Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 {
-	Actor* pActor = NULL;	// fill this in before we return;
+	Actor* pActor = NULL;	// fill this in before we return
 
-	CString sType;
-	layer.GetAttrValue( "Type", sType );
+	CString sType = layer.m_sName;
+	if( sType.empty() )
+		layer.GetAttrValue( "Type", sType );
+
 	CString sFile;
 	layer.GetAttrValue( "File", sFile );
 	FixSlashesInPlace( sFile );
@@ -50,6 +53,12 @@ Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 	if( sType == "SongCreditDisplay" )
 	{
 		pActor = new SongCreditDisplay;
+	}
+	else if( sType == "BGAnimation" )
+	{
+		BGAnimation *pBGA = new BGAnimation;
+		pBGA->LoadFromNode( sAniDir, layer );
+		pActor = pBGA;
 	}
 	else
 	{
@@ -274,7 +283,14 @@ Actor* MakeActor( const RageTextureID &ID )
 	CString sExt = GetExtension( ID.filename );
 	sExt.MakeLower();
 	
-	if( sExt=="actor" )
+	if( sExt=="xml" )
+	{
+		XNode xml;
+		xml.LoadFromFile( ID.filename );
+		CString sDir = Dirname( ID.filename );
+		return LoadFromActorFile( sDir, xml );
+	}
+	else if( sExt=="actor" )
 	{
 		return LoadFromActorFile( ID.filename );
 	}

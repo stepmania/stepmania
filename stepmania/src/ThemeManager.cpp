@@ -333,10 +333,10 @@ try_element_again:
 
 		for( unsigned p = 0; p < asPaths.size(); ++p )
 		{
-			static const char *masks[NUM_ELEMENT_CATEGORIES][12] = {
+			static const char *masks[NUM_ELEMENT_CATEGORIES][13] = {
 				{ "", NULL },
 				{ "ini", NULL },
-				{ "actor", "sprite", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
+				{ "xml", "actor", "sprite", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
 				{ "png", NULL },
 				{ "mp3", "ogg", "wav", NULL },
 				{ "sm", NULL },
