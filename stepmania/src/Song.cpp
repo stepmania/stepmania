@@ -1235,7 +1235,7 @@ Steps::MemCardData::HighScore Song::GetHighScoreForDifficulty( const StyleDef *s
 
 bool Song::IsNew() const
 {
-	return GetNumTimesPlayed()==0;
+	return GetNumTimesPlayed(MEMORY_CARD_MACHINE) == 0;
 }
 
 bool Song::IsEasy( StepsType nt ) const
@@ -1456,9 +1456,9 @@ void SortSongPointerArrayByGroupAndTitle( vector<Song*> &arraySongPointers )
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGroupAndTitle );
 }
 
-bool CompareSongPointersByMostPlayed(const Song *pSong1, const Song *pSong2)
-{
-	return pSong1->GetNumTimesPlayed() < pSong2->GetNumTimesPlayed();
+//bool CompareSongPointersByMostPlayed(const Song *pSong1, const Song *pSong2)
+//{
+//	return pSong1->GetNumTimesPlayed() < pSong2->GetNumTimesPlayed();
 /*
 Comparing titles is slow, and this makes course selection choppy.  Turning this
 off means we don't get consistent orderings of songs that have been played
@@ -1479,7 +1479,7 @@ that have all been played 0 times.
 		return false;
 	return CompareSongPointersByTitle( pSong1, pSong2 );
 */
-}
+//}
 /* Actually, just calculating GetNumTimesPlayed within the sort is pretty
  * slow, so let's precompute it.  (This could be generalized with a template.) */
 map<const Song*, CString> song_sort_val;
@@ -1489,10 +1489,10 @@ bool CompareSongPointersBySortVal(const Song *pSong1, const Song *pSong2)
 	return song_sort_val[pSong1] < song_sort_val[pSong2];
 }
 
-void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers )
+void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, MemoryCard card )
 {
 	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
-		song_sort_val[arraySongPointers[i]] = ssprintf("%9i", arraySongPointers[i]->GetNumTimesPlayed());
+		song_sort_val[arraySongPointers[i]] = ssprintf("%9i", arraySongPointers[i]->GetNumTimesPlayed(card));
 	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortVal );
 	reverse( arraySongPointers.begin(), arraySongPointers.end() );
 	song_sort_val.clear();
@@ -1543,13 +1543,12 @@ bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(G
 bool Song::HasCDTitle() const 		{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); }
 bool Song::HasBGChanges() const 	{return !m_BackgroundChanges.empty(); }
 
-int Song::GetNumTimesPlayed() const
+int Song::GetNumTimesPlayed( MemoryCard card ) const
 {
 	int iTotalNumTimesPlayed = 0;
 	for( unsigned i=0; i<m_apNotes.size(); i++ )
-	{
-		iTotalNumTimesPlayed += m_apNotes[i]->GetNumTimesPlayed(MEMORY_CARD_MACHINE);
-	}
+		iTotalNumTimesPlayed += m_apNotes[i]->GetNumTimesPlayed( card );
+
 	return iTotalNumTimesPlayed;
 }
 

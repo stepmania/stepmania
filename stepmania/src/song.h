@@ -249,7 +249,7 @@ public:
 	Steps* GetStepsByDescription( StepsType nt, CString sDescription, bool bIncludeAutoGen = true ) const;
 	Steps* GetClosestNotes( StepsType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
 	void GetEdits( vector<Steps*>& arrayAddTo, StepsType nt, bool bIncludeAutoGen = true ) const;
-	int GetNumTimesPlayed() const;
+	int GetNumTimesPlayed( MemoryCard card ) const;
 	bool IsNew() const;
 	bool IsEasy( StepsType nt ) const;
 	bool HasEdits( StepsType nt ) const;
@@ -270,7 +270,7 @@ void SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByArtist( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByGroupAndTitle( vector<Song*> &arraySongPointers );
-void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers );
+void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, MemoryCard card );
 void SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Difficulty dc );
 
 

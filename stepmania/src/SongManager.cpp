@@ -1321,8 +1321,11 @@ Course *SongManager::FindCourse( CString sName )
 
 void SongManager::UpdateBest()
 {
-	m_pBestSongs = m_pSongs;
-	SortSongPointerArrayByMostPlayed( m_pBestSongs );
+	for( int i = 0; i < NUM_MEMORY_CARDS; ++i )
+	{
+		m_pBestSongs[i] = m_pSongs;
+		SortSongPointerArrayByMostPlayed( m_pBestSongs[i], (MemoryCard) i );
+	}
 }
 
 void SongManager::UpdateRankingCourses()
