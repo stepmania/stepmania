@@ -18,7 +18,13 @@
 #undef FAR
 #include "libjpeg/jpeglib.h"
 #include "libjpeg/jerror.h"
+
+#if !defined(XBOX)
 #pragma comment(lib, "libjpeg/jpeg.lib")
+#else
+#pragma comment(lib, "libjpeg/xboxjpeg.lib")
+#endif
+
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #else
 extern "C" {

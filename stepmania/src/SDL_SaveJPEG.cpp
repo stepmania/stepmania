@@ -17,7 +17,7 @@ namespace jpeg
 
 /* Pull in JPEG library here. */
 #ifdef _XBOX
-	// FIXME
+#pragma comment(lib, "libjpeg/xboxjpeg.lib")
 #elif defined _WINDOWS
 #pragma comment(lib, "libjpeg/jpeg.lib")
 #endif
