@@ -55,6 +55,19 @@ protected:
 	bool m_bFileOwned;
 };
 
+class RageFileObjGzip: public RageFileObjDeflate
+{
+public:
+	RageFileObjGzip( RageFileBasic *pFile );
+	int Start();
+	int Finish();
+
+private:
+	int m_iDataStartOffset;
+};
+
+RageFileBasic *GunzipFile( RageFileBasic &file, CString &sError, uint32_t *iCRC32 );
+
 #endif
 
 /*

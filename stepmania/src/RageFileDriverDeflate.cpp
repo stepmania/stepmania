@@ -1,5 +1,7 @@
 #include "global.h"
 #include "RageFileDriverDeflate.h"
+#include "RageFileDriverSlice.h"
+#include "RageFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 
@@ -277,6 +279,206 @@ int RageFileObjDeflate::FlushInternal()
 		if( err == Z_STREAM_END )
 			return m_pFile->Flush();
 	}
+}
+
+/*
+ * Parse a .gz file, check the header CRC16 if present, and return the data
+ * CRC32 and a decompressor.
+ */
+RageFileBasic *GunzipFile( RageFileBasic &file, CString &sError, uint32_t *iCRC32 )
+{
+	sError = "";
+
+	file.Seek(0);
+	file.EnableCRC32( true );
+
+	{
+		char magic[2];
+		FileReading::ReadBytes( file, magic, 2, sError );
+		if( sError != "" )
+			return NULL;
+
+		if( magic[0] != '\x1f' || magic[1] != '\x8b' )
+		{
+			sError = "Not a gzip file";
+			return NULL;
+		}
+	}
+
+	uint8_t iCompressionMethod = FileReading::read_8( file, sError );
+	uint8_t iFlags = FileReading::read_8( file, sError );
+	FileReading::read_32_le( file, sError ); /* time */
+	FileReading::read_8( file, sError ); /* xfl */
+	FileReading::read_8( file, sError ); /* os */
+	if( sError != "" )
+		return NULL;
+
+#define FTEXT    1<<0
+#define FHCRC    1<<1
+#define FEXTRA   1<<2
+#define FNAME    1<<3
+#define FCOMMENT 1<<4
+#define UNSUPPORTED_MASK ~((1<<5)-1)
+	if( iCompressionMethod != 8 )
+	{
+		sError = ssprintf( "Unsupported compression: %i", iCompressionMethod );
+		return NULL;
+	}
+
+	/* Warning: flags other than FNAME are untested, since gzip doesn't
+	 * actually output them. */
+	if( iFlags & UNSUPPORTED_MASK )
+	{
+		sError = ssprintf( "Unsupported flags: %x", iFlags );
+		return NULL;
+	}
+
+	if( iFlags & FEXTRA )
+	{
+		int16_t iSize = FileReading::read_16_le( file, sError );
+		FileReading::SkipBytes( file, iSize, sError );
+	}
+
+	if( iFlags & FNAME )
+		while( sError == "" && FileReading::read_8( file, sError ) != 0 )
+			;
+	if( iFlags & FCOMMENT )
+		while( sError == "" && FileReading::read_8( file, sError ) != 0 )
+			;
+	
+	if( iFlags & FHCRC )
+	{
+		/* Get the CRC of the data read so far.  Be sure to do this before
+		 * reading iExpectedCRC16. */
+		uint32_t iActualCRC32;
+		bool bOK = file.GetCRC32( &iActualCRC32 );
+		ASSERT( bOK );
+	
+		uint16_t iExpectedCRC16 = FileReading::read_u16_le( file, sError );
+		uint16_t iActualCRC16 = int16_t( iActualCRC32 & 0xFFFF );
+		if( sError != "" )
+			return NULL;
+
+		if( iActualCRC16 != iExpectedCRC16 )
+		{
+			sError = "Header CRC error";
+			return NULL;
+		}
+	}
+
+	/* We only need CRC checking on the raw data for the header, so disable
+	 * it. */
+	file.EnableCRC32( false );
+
+	if( sError != "" )
+		return NULL;
+
+	int iDataPos = file.Tell();
+
+	/* Seek to the end, and grab the uncompressed flie size and CRC. */
+	int iFooterPos = file.GetFileSize() - 8;
+
+	FileReading::Seek( file, iFooterPos, sError );
+	
+	uint32_t iExpectedCRC32 = FileReading::read_u32_le( file, sError );
+	uint32_t iUncompressedSize = FileReading::read_u32_le( file, sError );
+	if( iCRC32 != NULL )
+		*iCRC32 = iExpectedCRC32;
+	
+	FileReading::Seek( file, iDataPos, sError );
+	
+	if( sError != "" )
+		return NULL;
+	
+	RageFileDriverSlice *pSliceFile = new RageFileDriverSlice( &file, iDataPos, iFooterPos-iDataPos );
+	RageFileObjInflate *pInflateFile = new RageFileObjInflate( pSliceFile, iUncompressedSize );
+	pInflateFile->DeleteFileWhenFinished();
+
+	/* Enable CRC calculation only if the caller is interested. */
+	if( iCRC32 != NULL )
+		pInflateFile->EnableCRC32();
+
+	return pInflateFile;
+}
+
+/*
+ * Usage:
+ *
+ * RageFile output;
+ * output.Open( "hello.gz", RageFile::WRITE );
+ *
+ * RageFileObjGzip gzip( &output );
+ * gzip.Start();
+ * gzip.Write( "data" );
+ * gzip.Finish();
+ */ 
+RageFileObjGzip::RageFileObjGzip( RageFileBasic *pFile ):
+	RageFileObjDeflate( pFile )
+{
+	m_iDataStartOffset = -1;
+}
+
+/* Write the gzip header. */
+int RageFileObjGzip::Start()
+{
+	/* We should be at the start of the file. */
+	ASSERT( this->Tell() == 0 );
+
+	static const char header[] =
+	{
+		'\x1f', '\x8b', // magic
+		8,              // method: deflate
+		0,              // no flags
+		0, 0, 0, 0,     // no time
+		0,              // no extra flags
+		255             // unknown os
+	};
+
+	if( m_pFile->Write( header, sizeof(header) ) == -1 )
+		return -1;
+	
+	m_iDataStartOffset = Tell();
+
+	/* Enable and reset the CRC32 for the uncompressed data about to be
+	 * written to this file. */
+	this->EnableCRC32( true );
+
+	return 0;
+}
+
+/* Write the gzip footer. */
+int RageFileObjGzip::Finish()
+{
+	/* We're about to write to the underlying file (so the footer isn't
+	 * compressed).  Flush the compressed data first. */
+	if( this->Flush() == -1 )
+		return -1;
+
+	/* Read the CRC of the data that's been written. */
+	uint32_t iCRC;
+	bool bOK = this->GetCRC32( &iCRC );
+	ASSERT( bOK );
+
+	/* Figure out the size of the data. */
+	uint32_t iSize = Tell() - m_iDataStartOffset;
+
+	/* Write the CRC and size directly to the file, so they don't get compressed. */
+	iCRC = Swap32LE( iCRC );
+	if( m_pFile->Write( &iCRC, sizeof(iCRC) ) == -1 )
+	{
+		SetError( m_pFile->GetError() );
+		return -1;
+	}
+
+	/* Write the size. */
+	iSize = Swap32LE( iSize );
+	if( m_pFile->Write( &iSize, sizeof(iSize) ) == -1 )
+	{
+		SetError( m_pFile->GetError() );
+		return -1;
+	}
+	
+	return this->Flush();
 }
 
 /*
