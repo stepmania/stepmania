@@ -5,25 +5,52 @@
 #include "RageFileManager.h"
 #include "resource.h"
 #include <windows.h>
+#include "SDL_utils.h"
 
-HBITMAP g_hBitmap = NULL;
+static HBITMAP g_hBitmap = NULL;
 
+/* Load a file into a GDI surface. */
+HBITMAP LoadWin32Surface( CString fn )
+{
+	SDL_Surface *s = SDL_LoadImage( fn );
+	if( s == NULL )
+		return NULL;
+
+	ConvertSDLSurface( s, s->w, s->h, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0 );
+
+	HBITMAP bitmap = CreateCompatibleBitmap( GetDC(NULL), s->w, s->h );
+	ASSERT( bitmap );
+
+	HDC BitmapDC = CreateCompatibleDC( GetDC(NULL) );
+	SelectObject( BitmapDC, bitmap );
+
+	/* This is silly, but simple.  We only do this once, on a small image. */
+	for( int y = 0; y < s->h; ++y )
+	{
+		unsigned const char *line = ((unsigned char *) s->pixels) + (y * s->pitch);
+		for( int x = 0; x < s->w; ++x )
+		{
+			unsigned const char *data = line + (x*s->format->BytesPerPixel);
+			
+			SetPixelV( BitmapDC, x, y, RGB( data[3], data[2], data[1] ) );
+		}
+	}
+
+	SelectObject( BitmapDC, NULL );
+	DeleteObject( BitmapDC );
+
+	SDL_FreeSurface( s );
+	return bitmap;
+}
 
 BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
-	AppInstance handle;
-
 	switch( msg )
 	{
 	case WM_INITDIALOG:
-	    /* XXX: Figure out how to use SDL_LoadImage here. */
-		g_hBitmap = 
-			(HBITMAP)LoadImage( 
-				handle.Get(), 
-				DirOfExecutable + "\\..\\Data\\splash.bmp",
-				IMAGE_BITMAP,
-				0, 0,
-				LR_LOADFROMFILE );
+		g_hBitmap = LoadWin32Surface( "Data/splash.png" );
+		if( g_hBitmap == NULL )
+			g_hBitmap = LoadWin32Surface( "Data/splash.bmp" );
 		SendMessage( 
 			GetDlgItem(hWnd,IDC_SPLASH), 
 			STM_SETIMAGE, 
