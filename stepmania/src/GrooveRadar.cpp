@@ -71,6 +71,10 @@ void GrooveRadar::TweenOffScreen()
 	{
 		m_sprRadarLabels[c].StopTweening();
 		m_sprRadarLabels[c].BeginTweening( 0.2f );
+		/* Make sure we undo glow.  We do this at the end of TweenIn,
+		 * but we might tween off before we complete tweening in, and
+		 * the glow can remain. */
+		m_sprRadarLabels[c].SetTweenGlow( D3DXCOLOR(1,1,1,0) );
 		m_sprRadarLabels[c].SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 	}
 	m_GrooveRadarValueMap.TweenOffScreen();
