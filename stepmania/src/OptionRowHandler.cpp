@@ -727,7 +727,7 @@ public:
 		lua_pushvalue( LUA->L, 1 );
 
 		/* Argument 3 (pn): */
-		LUA->PushStack( (int) pn );
+		LuaHelpers::PushStack( (int) pn );
 
 		ASSERT( lua_gettop(LUA->L) == 6 ); /* vbSelectedOut, m_iLuaTable, function, self, arg, arg */
 
@@ -771,7 +771,7 @@ public:
 		lua_pushvalue( LUA->L, 1 );
 
 		/* Argument 3 (pn): */
-		LUA->PushStack( (int) pn );
+		LuaHelpers::PushStack( (int) pn );
 
 		ASSERT( lua_gettop(LUA->L) == 6 ); /* vbSelectedOut, m_iLuaTable, function, self, arg, arg */
 

@@ -1471,14 +1471,14 @@ public:
 	static int GetAllSteps( T* p, lua_State *L )
 	{
 		const vector<Steps*> &v = p->GetAllSteps();
-		CreateTableFromArray<Steps*>( v, L );
+		LuaHelpers::CreateTableFromArray<Steps*>( v, L );
 		return 1;
 	}
 	static int GetStepsByStepsType( T* p, lua_State *L )
 	{
 		StepsType st = (StepsType)IArg(1);
 		const vector<Steps*> &v = p->GetStepsByStepsType( st );
-		CreateTableFromArray<Steps*>( v, L );
+		LuaHelpers::CreateTableFromArray<Steps*>( v, L );
 		return 1;
 	}
 	static int GetSongDir( T* p, lua_State *L )	{ lua_pushstring(L, p->GetSongDir() ); return 1; }

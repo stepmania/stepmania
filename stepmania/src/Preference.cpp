@@ -52,11 +52,11 @@ void IPreference::SetFromStack( lua_State *L )
 	} \
 	void Preference<type>::PushValue( lua_State *L ) const \
 	{ \
-		LuaManager::PushStack( m_currentValue, L ); \
+		LuaHelpers::PushStack( m_currentValue, L ); \
 	} \
 	void Preference<type>::SetFromStack( lua_State *L ) \
 	{ \
-		LuaManager::PopStack( m_currentValue, L ); \
+		LuaHelpers::PopStack( m_currentValue, L ); \
 	}
 
 READFROM_AND_WRITETO( int )

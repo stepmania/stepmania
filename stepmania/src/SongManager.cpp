@@ -1270,14 +1270,14 @@ public:
 	static int GetAllSongs( T* p, lua_State *L )
 	{
 		const vector<Song*> &v = p->GetAllSongs();
-		CreateTableFromArray<Song*>( v, L );
+		LuaHelpers::CreateTableFromArray<Song*>( v, L );
 		return 1;
 	}
 	static int GetAllCourses( T* p, lua_State *L )
 	{
 		vector<Course*> v;
 		p->GetAllCourses( v, BArg(1) );
-		CreateTableFromArray<Course*>( v, L );
+		LuaHelpers::CreateTableFromArray<Course*>( v, L );
 		return 1;
 	}
 	static int FindSong( T* p, lua_State *L )	{ Song *pS = p->FindSong(SArg(1)); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }

@@ -71,7 +71,7 @@ int LuaFunc_##func( lua_State *L ) { \
 	REQ_ARGS( #func, 1 ); \
 	REQ_ARG( #func, 1, string ); \
 	CString str; \
-	LUA->PopStack( str ); \
+	LuaHelpers::PopStack( str ); \
 	LUA_RETURN( call, L ); \
 } \
 LuaFunction( func ); /* register it */
@@ -83,8 +83,8 @@ int LuaFunc_##func( lua_State *L ) { \
 	REQ_ARG( #func, 2, string ); \
 	CString str1; \
 	CString str2; \
-	LUA->PopStack( str2 ); \
-	LUA->PopStack( str1 ); \
+	LuaHelpers::PopStack( str2 ); \
+	LuaHelpers::PopStack( str1 ); \
 	LUA_RETURN( call, L ); \
 } \
 LuaFunction( func ); /* register it */
