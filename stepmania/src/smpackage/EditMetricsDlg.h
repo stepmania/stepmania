@@ -7,7 +7,7 @@
 // EditMetricsDlg.h : header file
 //
 
-#include "ColorListBox.h"
+#include "TreeCtrlEx.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // EditMetricsDlg dialog
@@ -21,10 +21,10 @@ public:
 // Dialog Data
 	//{{AFX_DATA(EditMetricsDlg)
 	enum { IDD = IDD_EDIT_METRICS };
-	CColorListBox	m_listName;
-	CColorListBox	m_listClass;
-	CEdit	m_editValue;
-	CEdit	m_editDefault;
+	CButton	m_buttonRemove;
+	CButton	m_buttonOverride;
+	CButton	m_buttonNew;
+	CTreeCtrlEx	m_tree;
 	//}}AFX_DATA
 
 	CString m_sTheme;
@@ -41,9 +41,11 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(EditMetricsDlg)
-		// NOTE: the ClassWizard will add member functions here
+	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+
+	void RefreshTree();
 };
 
 //{{AFX_INSERT_LOCATION}}

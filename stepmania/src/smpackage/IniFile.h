@@ -36,7 +36,7 @@ public:
 
 	
 	//all private functions
-private:
+//private:
 
 	//returns index of specified key, or -1 if not found
 	int FindKey(CString keyname);
@@ -86,6 +86,7 @@ public:
 	//gets value of [keyname] valuename = 
 	//overloaded to return CString, int, and double,
 	//returns "", or 0 if key/value not found.  Sets error member to show problem
+	BOOL GetValue(CString keyname, CString valuename, CString value_out); 
 	CString GetValue(CString keyname, CString valuename); 
 	int GetValueI(CString keyname, CString valuename); 
 	double GetValueF(CString keyname, CString valuename);

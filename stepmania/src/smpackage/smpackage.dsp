@@ -88,14 +88,6 @@ LINK32=link.exe
 # Name "smpackage - Win32 Debug"
 # Begin Source File
 
-SOURCE=.\ColorListBox.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ColorListBox.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\converttheme.bmp
 # End Source File
 # Begin Source File
@@ -242,6 +234,14 @@ SOURCE=.\StdAfx.h
 # Begin Source File
 
 SOURCE=.\res\StepMania.ICO
+# End Source File
+# Begin Source File
+
+SOURCE=.\TreeCtrlEx.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TreeCtrlEx.h
 # End Source File
 # End Target
 # End Project

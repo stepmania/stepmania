@@ -152,6 +152,26 @@ int IniFile::GetNumValues(CString keyname)
 
 //gets value of [keyname] valuename = 
 //overloaded to return CString, int, and double
+BOOL IniFile::GetValue(CString keyname, CString valuename, CString value_out)
+{
+	int keynum = FindKey(keyname);//, valuenum = FindValue(keynum,valuename);
+	if( keynum == -1 )
+	{
+		error = "Unable to locate specified key.";
+		return FALSE;
+	}
+
+	CMapStringToString &map = keys[keynum];
+	if( !map.Lookup(valuename, value_out) )
+	{
+		error = "Unable to locate specified value.";
+		return FALSE;
+	}
+	return TRUE;
+}
+
+//gets value of [keyname] valuename = 
+//overloaded to return CString, int, and double
 CString IniFile::GetValue(CString keyname, CString valuename)
 {
 	int keynum = FindKey(keyname);//, valuenum = FindValue(keynum,valuename);

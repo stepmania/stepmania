@@ -2,7 +2,7 @@
 
 [General Info]
 Version=1
-LastClass=ConvertThemeDlg
+LastClass=EditMetricsDlg
 LastTemplate=CDialog
 NewFileInclude1=#include "stdafx.h"
 NewFileInclude2=#include "smpackage.h"
@@ -13,16 +13,16 @@ Class2=CSmpackageDlg
 
 ResourceCount=8
 Resource1=IDR_MAINFRAME
-Resource2=IDD_EDIT_INSTALLATIONS
+Resource2=IDD_INSTALL
 Class3=CSMPackageInstallDlg
 Class4=CSmpackageExportDlg
-Resource3=IDD_INSTALL
+Resource3=IDD_EDIT_INSTALLATIONS
 Class5=EnterName
-Resource4=IDD_CONVERT_THEME
+Resource4=IDD_MENU
 Class6=EditInsallations
-Resource5=IDD_DIALOG_NAME
+Resource5=IDD_CONVERT_THEME
 Class7=MainMenuDlg
-Resource6=IDD_MENU
+Resource6=IDD_DIALOG_NAME
 Class8=ConvertThemeDlg
 Resource7=IDD_EXPORTER
 Class9=EditMetricsDlg
@@ -166,21 +166,20 @@ LastObject=IDC_CONVERT_THEME
 [DLG:IDD_CONVERT_THEME]
 Type=1
 Class=ConvertThemeDlg
-ControlCount=14
+ControlCount=13
 Control1=IDOK,button,1342242817
 Control2=IDC_STATIC,static,1342177294
 Control3=IDC_LIST_THEMES,listbox,1352728835
 Control4=IDC_BUTTON_CONVERT,button,1476460544
 Control5=IDC_STATIC,static,1342308352
-Control6=IDC_STATIC,static,1342308352
-Control7=IDC_STATIC,button,1342177287
-Control8=IDC_STATIC,static,1342308352
-Control9=IDC_BUTTON_ANALYZE,button,1476460544
-Control10=IDC_STATIC,button,1342177287
-Control11=IDC_STATIC,static,1342308352
-Control12=IDC_BUTTON_EDIT_METRICS,button,1476460544
-Control13=IDC_STATIC,static,1342308352
-Control14=IDC_BUTTON_ANALYZE_METRICS,button,1476460544
+Control6=IDC_STATIC,button,1342177287
+Control7=IDC_STATIC,static,1342308352
+Control8=IDC_BUTTON_ANALYZE,button,1476460544
+Control9=IDC_STATIC,button,1342177287
+Control10=IDC_STATIC,static,1342308352
+Control11=IDC_BUTTON_EDIT_METRICS,button,1476460544
+Control12=IDC_STATIC,static,1342308352
+Control13=IDC_BUTTON_ANALYZE_METRICS,button,1476460544
 
 [CLS:ConvertThemeDlg]
 Type=0
@@ -194,17 +193,19 @@ VirtualFilter=dWC
 [DLG:IDD_EDIT_METRICS]
 Type=1
 Class=EditMetricsDlg
-ControlCount=10
+ControlCount=12
 Control1=IDOK,button,1342242817
 Control2=IDC_STATIC,static,1342177294
-Control3=IDC_LIST_CLASS,listbox,1352728835
+Control3=IDC_EDIT_VALUE,edit,1350631552
 Control4=IDC_STATIC,static,1342308352
-Control5=IDC_LIST_NAME,listbox,1352728835
+Control5=IDC_EDIT_DEFAULT,edit,1350633600
 Control6=IDC_STATIC,static,1342308352
-Control7=IDC_EDIT_VALUE,edit,1350631552
-Control8=IDC_STATIC,static,1342308352
-Control9=IDC_EDIT_DEFAULT,edit,1350633600
-Control10=IDC_STATIC,static,1342308352
+Control7=IDC_BUTTON_OVERRIDE,button,1342242816
+Control8=IDC_BUTTON_REMOVE,button,1342242816
+Control9=IDC_BUTTON_NEW,button,1342242816
+Control10=IDC_TREE,SysTreeView32,1350631461
+Control11=IDC_STATIC,static,1342308352
+Control12=IDC_STATIC,static,1342308352
 
 [CLS:EditMetricsDlg]
 Type=0
@@ -213,4 +214,5 @@ ImplementationFile=EditMetricsDlg.cpp
 BaseClass=CDialog
 Filter=D
 VirtualFilter=dWC
+LastObject=EditMetricsDlg
 

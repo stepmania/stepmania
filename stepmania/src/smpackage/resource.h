@@ -42,11 +42,11 @@
 #define IDC_BUTTON_CONVERT              1024
 #define IDC_BUTTON_ANALYZE              1025
 #define IDC_BUTTON_EDIT_METRICS         1026
-#define IDC_LIST_CLASS                  1026
-#define IDC_LIST_NAME                   1027
 #define IDC_BUTTON_ANALYZE_METRICS      1027
 #define IDC_EDIT_VALUE                  1028
 #define IDC_EDIT_DEFAULT                1029
+#define IDC_BUTTON_OVERRIDE             1037
+#define IDC_BUTTON_NEW                  1039
 
 // Next default values for new objects
 // 
@@ -54,7 +54,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        147
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1029
+#define _APS_NEXT_CONTROL_VALUE         1035
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

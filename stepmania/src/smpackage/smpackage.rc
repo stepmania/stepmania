@@ -174,34 +174,32 @@ BEGIN
                     IDC_STATIC,103,168,215,35
 END
 
-IDD_CONVERT_THEME DIALOG DISCARDABLE  0, 0, 332, 282
+IDD_CONVERT_THEME DIALOG DISCARDABLE  0, 0, 332, 262
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Theme Elements"
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "Close",IDOK,275,261,50,14
+    DEFPUSHBUTTON   "Close",IDOK,275,241,50,14
     CONTROL         144,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
-    LISTBOX         IDC_LIST_THEMES,7,48,88,207,LBS_SORT | 
+    LISTBOX         IDC_LIST_THEMES,7,44,88,192,LBS_SORT | 
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Convert from 3.0 to 4.0",IDC_BUTTON_CONVERT,170,55,95,
+    PUSHBUTTON      "Convert from 3.0 to 4.0",IDC_BUTTON_CONVERT,170,51,95,
                     15,WS_DISABLED
-    LTEXT           "This will convert the element names in a SM 3.0 theme to the SM 4.0 theme naming scheme.  After converting a theme, it will no longer be compatible with StepMania 3.0.  Be sure to make a backup if this is important to you.",
-                    IDC_STATIC,110,75,210,33
-    LTEXT           "This tool will not convert any theme metrics.  You'll need to convert these by hand.",
-                    IDC_STATIC,110,113,210,18
-    GROUPBOX        "Elements",IDC_STATIC,105,45,220,122
+    LTEXT           "This will convert the element names in a SM 3.0 theme to the SM 4.0 theme naming scheme.  After converting a theme, it will no longer be compatible with StepMania 3.0.  Be sure to make a backup if this is important to you.  (This tool will not convert theme metrics)",
+                    IDC_STATIC,110,71,210,40
+    GROUPBOX        "Elements",IDC_STATIC,105,41,220,106
     LTEXT           "Check for redundant or possibly midnamed theme elements.",
-                    IDC_STATIC,110,155,210,10
-    PUSHBUTTON      "Analyze Elements",IDC_BUTTON_ANALYZE,165,135,95,15,
+                    IDC_STATIC,110,135,210,10
+    PUSHBUTTON      "Analyze Elements",IDC_BUTTON_ANALYZE,165,115,95,15,
                     WS_DISABLED
-    GROUPBOX        "Metrics",IDC_STATIC,105,172,220,83
+    GROUPBOX        "Metrics",IDC_STATIC,105,153,220,83
     LTEXT           "Edit theme metrics with a user-friendly interface.",
-                    IDC_STATIC,110,202,210,10
-    PUSHBUTTON      "Edit Metrics",IDC_BUTTON_EDIT_METRICS,165,182,95,15,
+                    IDC_STATIC,110,183,210,10
+    PUSHBUTTON      "Edit Metrics",IDC_BUTTON_EDIT_METRICS,165,163,95,15,
                     WS_DISABLED
     LTEXT           "Check for redundant or possibly midnamed theme metrics.",
-                    IDC_STATIC,109,242,210,10
-    PUSHBUTTON      "Analyze Metrics",IDC_BUTTON_ANALYZE_METRICS,165,222,95,
+                    IDC_STATIC,109,223,210,10
+    PUSHBUTTON      "Analyze Metrics",IDC_BUTTON_ANALYZE_METRICS,165,203,95,
                     15,WS_DISABLED
 END
 
@@ -212,17 +210,21 @@ FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,275,213,50,14
     CONTROL         146,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
-    LISTBOX         IDC_LIST_CLASS,7,57,94,170,LBS_SORT | 
-                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Class",IDC_STATIC,7,47,88,9
-    LISTBOX         IDC_LIST_NAME,106,57,107,170,LBS_SORT | 
-                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Name",IDC_STATIC,106,47,88,9
-    EDITTEXT        IDC_EDIT_VALUE,217,58,108,46,ES_AUTOHSCROLL
-    LTEXT           "Value",IDC_STATIC,218,47,88,9
-    EDITTEXT        IDC_EDIT_DEFAULT,217,119,108,48,ES_AUTOHSCROLL | 
+    EDITTEXT        IDC_EDIT_VALUE,217,116,108,38,ES_AUTOHSCROLL
+    LTEXT           "Value",IDC_STATIC,218,105,88,9
+    EDITTEXT        IDC_EDIT_DEFAULT,217,170,108,40,ES_AUTOHSCROLL | 
                     ES_READONLY
-    LTEXT           "Default Value",IDC_STATIC,218,108,88,9
+    LTEXT           "Default Value",IDC_STATIC,218,159,88,9
+    PUSHBUTTON      "Override",IDC_BUTTON_OVERRIDE,217,45,60,14
+    PUSHBUTTON      "Remove Override",IDC_BUTTON_REMOVE,217,63,60,14
+    PUSHBUTTON      "New Metric",IDC_BUTTON_NEW,217,81,60,14
+    CONTROL         "Tree1",IDC_TREE,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_LINESATROOT | TVS_SHOWSELALWAYS | WS_BORDER | 
+                    WS_TABSTOP,91,44,119,165
+    LTEXT           "Help:\n\nGray = A metric that is not overridden by the current theme (exists in the base theme but not in the current theme)",
+                    IDC_STATIC,7,43,79,62
+    LTEXT           "Black = A metric that is overridden by the current theme (exists in both the base theme, and the current theme)\n\nRed = A metric that exists in the current theme but not in the base theme (check to see if the metric name is misspelled)",
+                    IDC_STATIC,7,106,78,103
 END
 
 
@@ -322,7 +324,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 325
         TOPMARGIN, 7
-        BOTTOMMARGIN, 275
+        BOTTOMMARGIN, 255
     END
 
     IDD_EDIT_METRICS, DIALOG
