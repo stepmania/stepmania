@@ -173,13 +173,14 @@ void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevic
 					}
 					else if( strcmp(szTemp,"No")==0 )
 					{
-						break;	// this device isn't attached.  Ignore it.
+						LOG->Trace( "iUsbStorageIndex: %d is not attached", iUsbStorageIndex );
 					}
 					else
 					{
 						LOG->Warn( "Invalid value for Attached: '%s'", szTemp );
-						break;
 					}
+
+					break;	// we're done handling this device
 				}
 			}
 		}
