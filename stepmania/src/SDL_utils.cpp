@@ -184,6 +184,16 @@ void mySDL_GetBitsPerChannel(const SDL_PixelFormat *fmt, Uint32 bits[4])
 	bits[3] = 8 - fmt->Aloss;
 }
 
+/* SDL_SetPalette only works when SDL video has been initialized, even on software
+ * surfaces. */
+void mySDL_SetPalette(SDL_Surface *dst, SDL_Color *colors, int start, int cnt)
+{
+	ASSERT( dst->format->palette );
+	ASSERT( start+cnt >= dst->format->palette->ncolors );
+	memcpy( dst->format->palette->colors + start, colors,
+				cnt * sizeof(SDL_Color) );
+}
+
 void ConvertSDLSurface(SDL_Surface *&image,
 		int width, int height, int bpp,
 		Uint32 R, Uint32 G, Uint32 B, Uint32 A)
@@ -213,9 +223,12 @@ void ConvertSDLSurface(SDL_Surface *&image,
 	SDL_SetAlpha( image, 0, SDL_ALPHA_OPAQUE );
 
 	/* Copy the palette, if we have one. */
-	if(image->format->palette)
-		SDL_SetPalette(ret_image, SDL_LOGPAL, image->format->palette->colors,
+	if( image->format->BitsPerPixel == 8 && ret_image->format->BitsPerPixel == 8 )
+	{
+		ASSERT( ret_image->format->palette );
+		mySDL_SetPalette(ret_image, image->format->palette->colors,
 			0, image->format->palette->ncolors);
+	}
 
 	if(image->format->BitsPerPixel == 8 && ret_image->format->BitsPerPixel == 8 &&
 	   image->flags & SDL_SRCCOLORKEY)
@@ -588,3 +601,199 @@ void mySDL_WM_SetIcon( CString sIconFile )
 	SDL_WM_SetIcon(srf, NULL /* derive from alpha */);
 	SDL_FreeSurface(srf);
 }
+
+struct SurfaceHeader
+{
+	int width, height, pitch;
+	int Rmask, Gmask, Bmask, Amask;
+	int bpp;
+
+	/* Relevant only if bpp = 8: */
+	Uint8 colorkey; 
+	bool colorkeyed;
+};
+
+/* Save and load SDL_Surfaces to disk.  This avoids problems with bitmaps. */
+bool mySDL_SaveSurface( SDL_Surface *img, CString file )
+{
+	FILE *f = fopen(file.c_str(), "wb+");
+	if(f == NULL)
+		return false;
+
+	SurfaceHeader h;
+	h.height = img->h;
+	h.width = img->w;
+	h.pitch = img->pitch;
+	h.Rmask = img->format->Rmask;
+	h.Gmask = img->format->Gmask;
+	h.Bmask = img->format->Bmask;
+	h.Amask = img->format->Amask;
+	h.bpp = img->format->BitsPerPixel;
+	/* We lose data in the conversion, which makes matching the color key after loading
+	 * tricky.  Just store it. */
+	if( img->flags & SDL_SRCCOLORKEY )
+	{
+		h.colorkeyed = true;
+		ASSERT( img->format->colorkey < 256 );
+		h.colorkey = (Uint8) img->format->colorkey;
+	} else {
+		h.colorkeyed = false;
+		h.colorkey = 0;
+	}
+
+	fwrite(&h, sizeof(h), 1, f);
+
+	if(h.bpp == 8)
+		fwrite(img->format->palette->colors, 256 * sizeof(SDL_Color), 1, f);
+
+	fwrite(img->pixels, img->h * img->pitch, 1, f);
+	
+	fclose(f);
+	return true;
+}
+
+SDL_Surface *mySDL_LoadSurface( CString file )
+{
+	FILE *f = fopen(file.c_str(), "rb");
+	if(f == NULL)
+		return NULL;
+
+	SurfaceHeader h;
+	if(fread(&h, sizeof(h), 1, f) != 1) return NULL;
+
+	SDL_Color palette[256];
+	if(h.bpp == 8)
+		if(fread(palette, 256 * sizeof(SDL_Color), 1, f) != 1) return NULL;
+
+	int size = h.height * h.pitch;
+	char *pixels = (char *) malloc(size);
+	if(fread(pixels, size, 1, f) != 1) return NULL;
+
+	/* Create the surface. */
+	SDL_Surface *img = SDL_CreateRGBSurfaceFrom(pixels,
+			h.width, h.height, h.bpp, h.pitch,
+			h.Rmask, h.Gmask, h.Bmask, h.Amask);
+
+	/* Set the palette. */
+	if( h.bpp == 8 )
+	{
+		SDL_SetColors( img, palette, 0, 256 );
+		if( h.colorkeyed )
+			SDL_SetColorKey( img, SDL_SRCCOLORKEY, h.colorkey );
+	}
+
+	fclose(f);
+	return img;
+}
+
+
+/* Annoying: SDL_MapRGB will do a nearest-match if the specified color isn't found.
+ * This breaks color keyed images that don't actually use the color key. */
+int mySDL_MapRGBExact(SDL_PixelFormat *fmt, Uint8 R, Uint8 G, Uint8 B)
+{
+	Uint32 color = SDL_MapRGB(fmt, R, G, B);
+
+	if( fmt->BitsPerPixel == 8 ) {
+		if(fmt->palette->colors[color].r != R ||
+		   fmt->palette->colors[color].g != G ||
+		   fmt->palette->colors[color].b != B )
+			return -1;
+	}
+
+	return color;
+}
+
+inline static float scale(float x, float l1, float h1, float l2, float h2)
+{
+	return ((x - l1) / (h1 - l1) * (h2 - l2) + l2);
+}
+
+inline void mySDL_GetRawRGBAV_XY(const SDL_Surface *src, Uint8 *v, int x, int y)
+{
+	const Uint8 *srcp = (const Uint8 *) src->pixels + (y * src->pitch);
+	const Uint8 *srcpx = srcp + (x * src->format->BytesPerPixel);
+
+	mySDL_GetRawRGBAV(srcpx, src, v);
+}
+
+#include "RageUtil.h"
+
+/* Completely unoptimized. */
+void mySDL_BlitTransform( const SDL_Surface *src, SDL_Surface *dst, 
+					const float fCoords[8] /* TL, BR, BL, TR */ )
+{
+	ASSERT( src->format->BytesPerPixel == dst->format->BytesPerPixel );
+
+	const float Coords[8] = {
+		(fCoords[0] * (src->w)), (fCoords[1] * (src->h)),
+		(fCoords[2] * (src->w)), (fCoords[3] * (src->h)),
+		(fCoords[4] * (src->w)), (fCoords[5] * (src->h)),
+		(fCoords[6] * (src->w)), (fCoords[7] * (src->h))
+	};
+
+	const int TL_X = 0, TL_Y = 1, BL_X = 2, BL_Y = 3,
+			  BR_X = 4, BR_Y = 5, TR_X = 6, TR_Y = 7;
+
+	for( int y = 0; y < dst->h; ++y )
+	{
+		Uint8 *dstp = (Uint8 *) dst->pixels + (y * dst->pitch); /* line */
+		Uint8 *dstpx = dstp; /* pixel */
+
+		const float start_y = scale(float(y), 0, float(dst->h), Coords[TL_Y], Coords[BL_Y]);
+		const float end_y = scale(float(y), 0, float(dst->h), Coords[TR_Y], Coords[BR_Y]);
+
+		const float start_x = scale(float(y), 0, float(dst->h), Coords[TL_X], Coords[BL_X]);
+		const float end_x = scale(float(y), 0, float(dst->h), Coords[TR_X], Coords[BR_X]);
+
+		for( int x = 0; x < dst->w; ++x )
+		{
+			const float src_xp = scale(float(x), 0, float(dst->w), start_x, end_x);
+			const float src_yp = scale(float(x), 0, float(dst->w), start_y, end_y);
+
+			/* If the surface is two pixels wide, src_xp is 0..2.  .5 indicates
+			 * pixel[0]; 1 indicates 50% pixel[0], 50% pixel[1]; 1.5 indicates
+			 * pixel[1]; 2 indicates 50% pixel[1], 50% pixel[2] (which is clamped
+			 * to pixel[1]). */
+			int src_x[2], src_y[2];
+			src_x[0] = (int) truncf(src_xp - 0.5f);
+			src_x[1] = src_x[0] + 1;
+
+			src_y[0] = (int) truncf(src_yp - 0.5f);
+			src_y[1] = src_y[0] + 1;
+
+			/* Emulate GL_REPEAT. */
+			src_x[0] = clamp(src_x[0], 0, src->w);
+			src_x[1] = clamp(src_x[1], 0, src->w);
+			src_y[0] = clamp(src_y[0], 0, src->h);
+			src_y[1] = clamp(src_y[1], 0, src->h);
+
+			/* Decode our four pixels. */
+			Uint8 v[4][4];
+			mySDL_GetRawRGBAV_XY(src, v[0], src_x[0], src_y[0]);
+			mySDL_GetRawRGBAV_XY(src, v[1], src_x[0], src_y[1]);
+			mySDL_GetRawRGBAV_XY(src, v[2], src_x[1], src_y[0]);
+			mySDL_GetRawRGBAV_XY(src, v[3], src_x[1], src_y[1]);
+
+			/* Distance from the pixel chosen: */
+			float weight_x = src_xp - (src_x[0] + 0.5f);
+			float weight_y = src_yp - (src_y[0] + 0.5f);
+
+			/* Filter: */
+			Uint8 out[4] = { 0,0,0,0 };
+			for(int i = 0; i < 4; ++i)
+			{
+				Uint32 sum = 0;
+				sum += Uint8(v[0][i] * (1-weight_x) * (1-weight_y));
+				sum += Uint8(v[1][i] * (1-weight_x) * (weight_y));
+				sum += Uint8(v[2][i] * (weight_x)   * (1-weight_y));
+				sum += Uint8(v[3][i] * (weight_x)   * (weight_y));
+				out[i] = (Uint8) clamp(sum, 0u, 255u);
+			}
+
+			mySDL_SetRawRGBAV(dstpx, dst, out);
+
+			dstpx += dst->format->BytesPerPixel;
+		}
+	}
+}
+

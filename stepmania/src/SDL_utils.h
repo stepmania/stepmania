@@ -23,6 +23,7 @@ Uint32 mySDL_SetRGBAV(const SDL_PixelFormat *fmt, const Uint8 *v);
 void mySDL_SetRGBAV(Uint8 *p, const SDL_Surface *src, const Uint8 *v);
 
 void mySDL_GetBitsPerChannel(const SDL_PixelFormat *fmt, Uint32 bits[4]);
+void mySDL_SetPalette(SDL_Surface *dst, SDL_Color *colors, int start, int cnt);
 void ConvertSDLSurface(SDL_Surface *&image,
 		int width, int height, int bpp,
 		Uint32 R, Uint32 G, Uint32 B, Uint32 A);
@@ -55,6 +56,13 @@ int FindSurfaceTraits(const SDL_Surface *img);
 
 void mySDL_WM_SetIcon( CString sIconFile );
 
+bool mySDL_SaveSurface( SDL_Surface *img, CString file );
+SDL_Surface *mySDL_LoadSurface( CString file );
+
+int mySDL_MapRGBExact(SDL_PixelFormat *fmt, Uint8 R, Uint8 G, Uint8 B);
+
+void mySDL_BlitTransform( const SDL_Surface *src, SDL_Surface *dst, 
+					const float fCoords[8] /* TL, BR, BL, TR */ );
 
 #endif
 
