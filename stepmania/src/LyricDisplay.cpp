@@ -11,16 +11,20 @@ float g_TweenInTime, g_TweenOutTime;
 
 LyricDisplay::LyricDisplay()
 {
-	m_textLyrics.LoadFromFont( THEME->GetPathToF("Common normal") );
-	m_textLyrics.SetDiffuse( RageColor(1,1,1,1) );
-	this->AddChild(&m_textLyrics);
+	for( int i=0; i<2; i++ )
+	{
+		m_textLyrics[i].LoadFromFont( THEME->GetPathToF("LyricDisplay text") );
+		m_textLyrics[i].SetDiffuse( RageColor(1,1,1,1) );
+		this->AddChild(&m_textLyrics[i]);
+	}
 
 	Init();
 }
 
 void LyricDisplay::Init()
 {
-	m_textLyrics.SetText("");
+	for( int i=0; i<2; i++ )
+		m_textLyrics[i].SetText("");
 	m_iCurLyricNumber = 0;
 
 	/* Update global cache: */
@@ -67,32 +71,43 @@ void LyricDisplay::Update( float fDeltaTime )
 	const float TweenBufferTime = g_TweenInTime + g_TweenOutTime;
 
 	fShowLength = min(fShowLength, Distance - TweenBufferTime);
-	fShowLength = min(fShowLength, 5);
+	fShowLength = min(fShowLength, 3);
 
 	/* If it's negative, two lyrics are so close together that there's no time
 	 * to tween properly.  Lyrics should never be this brief, anyway, so just
 	 * skip it. */
 	fShowLength = max(fShowLength, 0);
 
-	m_textLyrics.SetText( GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric );
+	for( int i=0; i<2; i++ )
+	{
+		m_textLyrics[i].SetText( GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric );
 
-	/*
-	 * This really needs a way to define a custom theme command here, so themes
-	 * can do things like:
-	 * 
-	 * "Diffuse=1,1,1,0;linear,.2;Diffuse=1,1,1,1;linear,.2;LyricDiffuse"
-	 */
+		/*
+		 * This really needs a way to define a custom theme command here, so themes
+		 * can do things like:
+		 * 
+		 * "Diffuse=1,1,1,0;linear,.2;Diffuse=1,1,1,1;linear,.2;LyricDiffuse"
+		 */
 
-	float fZoom = 1.0f;
-	fZoom = min(fZoom, float(SCREEN_WIDTH)/(m_textLyrics.GetWidestLineWidthInSourcePixels()+1) );
+		float fZoom = 1.0f;
+		fZoom = min(fZoom, float(SCREEN_WIDTH)/(m_textLyrics[i].GetWidestLineWidthInSourcePixels()+1) );
 
-	m_textLyrics.StopTweening();
-	m_textLyrics.SetZoomX(fZoom);
+		m_textLyrics[i].StopTweening();
+		m_textLyrics[i].SetZoomX(fZoom);
 
-	m_textLyrics.SetDiffuse(GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_Color);
-	m_textLyrics.Command(IN_COMMAND);
-	m_textLyrics.BeginTweening( fShowLength ); /* sleep */
-	m_textLyrics.Command(OUT_COMMAND);
+		RageColor color = GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_Color;
+		if( i==0 )
+			color /= 2;
+		m_textLyrics[i].SetDiffuse(color);
+
+		if( i==1 )
+			m_textLyrics[i].SetCropRight(1);
+		m_textLyrics[i].Command(IN_COMMAND);
+		m_textLyrics[i].BeginTweening( fShowLength ); /* sleep */
+		if( i==1 )
+			m_textLyrics[i].SetCropRight(0);
+		m_textLyrics[i].Command(OUT_COMMAND);
+	}
 
 	m_iCurLyricNumber++;
 }

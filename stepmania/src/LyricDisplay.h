@@ -14,7 +14,7 @@ public:
 	void Init();
 
 private:
-	BitmapText m_textLyrics;
+	BitmapText m_textLyrics[2];
 	unsigned m_iCurLyricNumber;
 	float m_fLastSecond;
 };
