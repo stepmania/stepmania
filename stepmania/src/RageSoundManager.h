@@ -54,7 +54,6 @@ public:
 	set<RageSound *> playing_sounds;
 	void GetCopies(RageSound &snd, vector<RageSound *> &snds);
 
-	static void MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, float volume);
 	static void AttenuateBuf( Sint16 *buf, int samples, float vol );
 };
 

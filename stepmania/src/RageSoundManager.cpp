@@ -172,30 +172,6 @@ void RageSoundManager::PlayOnceFromDir( CString sDir )
 
 /* Standalone helpers: */
 
-/* Mix audio.  This is from SDL, but doesn't depend on the sound being
- * initialized. */
-void RageSoundManager::MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, float volume)
-{
-	if ( volume == 0 )
-		return;
-
-	int factor = int(volume * 256);
-	len /= 2;
-	while ( len-- ) {
-		Sint16 src1 = *src;
-		src1 = Sint16((src1*factor)/256);
-		Sint16 src2 = *dst;
-
-		int dst_sample = src1+src2;
-		dst_sample = clamp(dst_sample, -32768, 32767);
-		*dst = Sint16(dst_sample);
-
-		src++;
-		dst++;
-	}
-}
-
-
 void RageSoundManager::SetPrefs(float MixVol)
 {
 	MixVolume = MixVol;
