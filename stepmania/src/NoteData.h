@@ -134,8 +134,6 @@ public:
 	void ConvertHoldNotesTo4s();
 	void To4s( const NoteData& from );
 	void From4s( const NoteData& from );
-
-	void EliminateAllButOneTap( int row ); 
 };
 
 

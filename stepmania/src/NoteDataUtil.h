@@ -38,6 +38,7 @@ namespace NoteDataUtil
 	void RemoveHands( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
 	void RemoveQuads( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
 	void RemoveMines( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
+	void RemoveAllButOneTap( NoteData &inout, int row );
 	enum TrackMapping { left, right, mirror, shuffle, super_shuffle, stomp, NUM_TRACK_MAPPINGS };
 	void Turn( NoteData &inout, StepsType st, TrackMapping tt, float fStartBeat = 0, float fEndBeat = -1 );
 	void Little( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );

@@ -585,6 +585,25 @@ void NoteDataUtil::RemoveMines(NoteData &inout, float fStartBeat, float fEndBeat
 				inout.SetTapNote( t, r, TAP_EMPTY );
 }
 
+void NoteDataUtil::RemoveAllButOneTap( NoteData &inout, int row )
+{
+	if(row < 0) return;
+
+	int track;
+	for( track = 0; track < inout.GetNumTracks(); ++track )
+	{
+		if( inout.GetTapNote(track, row).type == TapNote::tap )
+			break;
+	}
+
+	track++;
+
+	for( ; track < inout.GetNumTracks(); ++track )
+	{
+		if( inout.GetTapNote(track, row).type == TapNote::tap )
+			inout.SetTapNote(track, row, TAP_EMPTY );
+	}
+}
 
 static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int NumTracks, int *iTakeFromTrack )
 {
@@ -1526,7 +1545,7 @@ void NoteDataUtil::FixImpossibleRows( NoteData &inout, StepsType st )
 		}
 
 		if( !bPassedOneMask )
-			inout.EliminateAllButOneTap(r);
+			RemoveAllButOneTap( inout, r );
 	}
 }
 

@@ -303,14 +303,14 @@ int NoteData::GetFirstRow() const
 	
 	for( int t=0; t < GetNumTracks(); t++ )
 	{
-		const TrackMap &trackMap = m_TapNotes[t];
-		TrackMap::const_iterator iter = trackMap.begin();
-		if( iter == trackMap.end() )	// trackMap is empty
+		int iRow = -1;
+		if( !GetNextTapNoteRowForTrack( t, iRow ) )
 			continue;
+
 		if( iEarliestRowFoundSoFar == -1 )
-			iEarliestRowFoundSoFar = iter->first;
+			iEarliestRowFoundSoFar = iRow;
 		else
-			iEarliestRowFoundSoFar = min( iEarliestRowFoundSoFar, iter->first );
+			iEarliestRowFoundSoFar = min( iEarliestRowFoundSoFar, iRow );
 	}
 
 	for( int i=0; i<GetNumHoldNotes(); i++ )
@@ -332,11 +332,10 @@ int NoteData::GetLastRow() const
 	
 	for( int t=0; t < GetNumTracks(); t++ )
 	{
-		const TrackMap &trackMap = m_TapNotes[t];
-		const TrackMap::const_reverse_iterator  iter = trackMap.rbegin();
-		if( iter == trackMap.rend() )	// trackMap is empty
+		int iRow = 999999999;
+		if( !GetPrevTapNoteRowForTrack( t, iRow ) )
 			continue;
-		iOldestRowFoundSoFar = max( iOldestRowFoundSoFar, iter->first );
+		iOldestRowFoundSoFar = max( iOldestRowFoundSoFar, iRow );
 	}
 
 	for( int i=0; i<GetNumHoldNotes(); i++ )
@@ -715,26 +714,6 @@ void NoteData::SetTapNote( int track, int row, const TapNote& t )
 	else
 	{
 		m_TapNotes[track][row] = t;
-	}
-}
-
-void NoteData::EliminateAllButOneTap( int row )
-{
-	if(row < 0) return;
-
-	int track;
-	for(track = 0; track < GetNumTracks(); ++track)
-	{
-		if( m_TapNotes[track][row].type == TapNote::tap )
-			break;
-	}
-
-	track++;
-
-	for( ; track < GetNumTracks(); ++track)
-	{
-		if( m_TapNotes[track][row].type == TapNote::tap )
-			m_TapNotes[track][row] = TAP_EMPTY;
 	}
 }
 
