@@ -32,6 +32,13 @@ public:
 	bool			m_bVsync;
 	bool			m_bInterlaced;
 	bool			m_bPAL;
+#ifdef _XBOX
+	float			m_fScreenPosX;
+	float			m_fScreenPosY;
+	float			m_fScreenWidth;
+	float			m_fScreenHeight;
+	bool			resizing; // true when in the screen center screen
+#endif
 	bool			m_bDelayedTextureDelete;
 	bool			m_bTexturePreload;
 	bool			m_bDelayedScreenLoad;
