@@ -209,6 +209,9 @@ static int GetScore(int p, int B, int S, int n)
 
 void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 {
+	if( g_CurStageStats.bFailed[m_PlayerNumber] )
+		return;	// don't add
+
 	int &iScore = g_CurStageStats.iScore[m_PlayerNumber];
 /*
   http://www.aaroninjapan.com/ddr2.html
@@ -318,6 +321,9 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 void ScoreKeeperMAX2::HandleTapScore( TapNoteScore score )
 {
+	if( g_CurStageStats.bFailed[m_PlayerNumber] )
+		return;	// don't add
+
 	if( score == TNS_HIT_MINE )
 	{
 		g_CurStageStats.iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( TNS_HIT_MINE );
@@ -327,6 +333,9 @@ void ScoreKeeperMAX2::HandleTapScore( TapNoteScore score )
 
 void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
 {
+	if( g_CurStageStats.bFailed[m_PlayerNumber] )
+		return;	// don't add
+
 	ASSERT( iNumTapsInRow >= 1 );
 
 	// Update dance points.
@@ -402,6 +411,9 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 
 void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 {
+	if( g_CurStageStats.bFailed[m_PlayerNumber] )
+		return;	// don't add
+
 	// update dance points totals
 	g_CurStageStats.iHoldNoteScores[m_PlayerNumber][holdScore] ++;
 	g_CurStageStats.iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( holdScore );

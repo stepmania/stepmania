@@ -256,8 +256,11 @@ float StageStats::GetPercentDancePoints( PlayerNumber pn ) const
 	if( iActualDancePoints[pn] == iPossibleDancePoints[pn] )
 		return 1;	// correct for rounding error
 
+	ASSERT( iActualDancePoints[pn] <= iPossibleDancePoints[pn] );
+
 	float fPercentDancePoints =  iActualDancePoints[pn] / (float)iPossibleDancePoints[pn];
-	return clamp( fPercentDancePoints, 0, 1 );
+	
+	return fPercentDancePoints;
 }
 
 void StageStats::SetLifeRecord( PlayerNumber pn, float life, float pos )
