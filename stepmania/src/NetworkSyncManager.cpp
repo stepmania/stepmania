@@ -3,8 +3,7 @@
 
 NetworkSyncManager *NSMAN;
 
-#if !defined(WITH_NETWORKING)
-
+#if defined(WITHOUT_NETWORKING)
 NetworkSyncManager::NetworkSyncManager() { }
 NetworkSyncManager::~NetworkSyncManager () { }
 void NetworkSyncManager::CloseConnection() { }
