@@ -65,8 +65,7 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 	/* Prep the new screen once m_In is complete. */
 	this->PostScreenMessage( SM_PrepScreen, m_Background.GetLengthSeconds() );
 
-	int p;
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber(p)
 	{
 		Character* pChar = GAMESTATE->m_pCurCharacters[p];
 		m_sprCharacterIcon[p].SetName( ssprintf("CharacterIconP%d",p+1) );
