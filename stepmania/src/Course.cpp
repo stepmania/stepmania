@@ -510,21 +510,42 @@ bool Course::IsPlayableIn( StepsType nt ) const
 	return ci.size() > 0;
 }
 
-
 static vector<Song*> GetFilteredBestSongs( StepsType nt )
 {
-	vector<Song*> vSongsByMostPlayed = SONGMAN->GetBestSongs();
-	// filter out songs that don't have both medium and hard steps and long ver sons
-	for( int j=vSongsByMostPlayed.size()-1; j>=0; j-- )
+	const vector<Song*> &vSongsByMostPlayed = SONGMAN->GetBestSongs();
+	vector<Song*> ret;
+	ret.reserve( vSongsByMostPlayed.size() );
+
+	for( unsigned i=0; i < vSongsByMostPlayed.size(); ++i )
 	{
-		Song* pSong = vSongsByMostPlayed[j];
-		if( SONGMAN->GetNumStagesForSong(pSong) > 1 ||
-			!pSong->GetStepsByDifficulty(nt, DIFFICULTY_MEDIUM, PREFSMAN->m_bAutogenMissingTypes)  ||
-			!pSong->GetStepsByDifficulty(nt, DIFFICULTY_HARD, PREFSMAN->m_bAutogenMissingTypes) )
-			vSongsByMostPlayed.erase( vSongsByMostPlayed.begin()+j );
+		// filter out long songs and songs that don't have both medium and hard steps
+		Song* pSong = vSongsByMostPlayed[i];
+		if( SONGMAN->GetNumStagesForSong(pSong) > 1 )
+			continue;
+
+		bool FoundMedium = false, FoundHard = false;
+		for( unsigned j=0; j < pSong->m_apNotes.size(); j++ )	// for each of the Song's Steps
+		{
+			if( pSong->m_apNotes[j]->m_StepsType != nt )
+				continue;
+			if( !PREFSMAN->m_bAutogenMissingTypes && pSong->m_apNotes[j]->IsAutogen() )
+				continue;
+
+			if( pSong->m_apNotes[j]->GetDifficulty() == DIFFICULTY_MEDIUM )
+				FoundMedium = true;
+			else if( pSong->m_apNotes[j]->GetDifficulty() == DIFFICULTY_HARD )
+				FoundHard = true;
+
+			if( FoundMedium && FoundHard )
+				break;
+		}
+		if( !FoundMedium || !FoundHard )
+			continue;
+
+		ret.push_back( pSong );
 	}
 
-	return vSongsByMostPlayed;
+	return ret;
 }
 
 void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficult ) const
