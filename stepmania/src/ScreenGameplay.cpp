@@ -255,7 +255,7 @@ void ScreenGameplay::Init()
 	// Init ScoreKeepers
 	//
 
-    FOREACH_PlayerNumber(p)
+    FOREACH_EnabledPlayer(p)
 	{
         switch( PREFSMAN->m_iScoringType )
 		{
@@ -408,9 +408,9 @@ void ScreenGameplay::Init()
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ENDLESS:
-        FOREACH_PlayerNumber(p)
+        FOREACH_EnabledPlayer(p)
 		{
-			if( !GAMESTATE->IsPlayerEnabled(p) && !SHOW_LIFE_METER_FOR_DISABLED_PLAYERS )
+			if( !SHOW_LIFE_METER_FOR_DISABLED_PLAYERS )
 				continue;	// skip
 
 			switch( GAMESTATE->m_SongOptions.m_LifeType )
@@ -1265,8 +1265,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		// Update living players' alive time
 		//
-		FOREACH_PlayerNumber(pn)
-			if( GAMESTATE->IsPlayerEnabled(pn) && !g_CurStageStats.bFailed[pn])
+		FOREACH_EnabledPlayer(pn)
+			if(!g_CurStageStats.bFailed[pn])
 				g_CurStageStats.fAliveSeconds [pn] += fDeltaTime * GAMESTATE->m_SongOptions.m_fMusicRate;
 
 		// update fGameplaySeconds
