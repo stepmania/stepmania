@@ -234,40 +234,30 @@ bool RunExpression( const CString &str )
 
 bool Lua::RunExpressionB( const CString &str )
 {
-	try {
-		if( L == NULL )
-			OpenLua();
+	if( L == NULL )
+		OpenLua();
 
-		if( !RunExpression( str ) )
-			return false;
+	if( !RunExpression( str ) )
+		return false;
 
-		bool result = !!lua_toboolean( L, -1 );
-		lua_pop( L, -1 );
+	bool result = !!lua_toboolean( L, -1 );
+	lua_pop( L, -1 );
 
-		return result;
-	} catch( const CString &err ) {
-		RageException::Throw( "Error running \"%s\": %s", str.c_str(), err.c_str() );
-	}
+	return result;
 }
 
 float Lua::RunExpressionF( const CString &str )
 {
-	try {
-		if( L == NULL )
-			OpenLua();
+	if( L == NULL )
+		OpenLua();
 
-		if( !RunExpression( str ) )
-			return 0;
+	if( !RunExpression( str ) )
+		return 0;
 
-		float result = (float) lua_tonumber( L, -1 );
-		lua_pop( L, -1 );
+	float result = (float) lua_tonumber( L, -1 );
+	lua_pop( L, -1 );
 
-		return result;
-	} catch( const CString &err ) {
-		/* Why does VC7 say "unreachable code" here?  This isn't unreachable, and
-		 * it doesn't warn in RunExpressionB ... */
-		RageException::Throw( "Error running \"%s\": %s", str.c_str(), err.c_str() );
-	}
+	return result;
 }
 
 void Lua::Fail( lua_State *L, const CString &err )
