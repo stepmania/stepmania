@@ -285,7 +285,7 @@ void RageFileDriverZip::ParseZipfile()
 		if( got == 0 ) /* skip */
 			continue;
 
-		zip.SeekCur( info.extra_field_length );
+		zip.Seek( zip.Tell() + info.extra_field_length );
 
 		FileInfo *pInfo = new FileInfo(info);
 		Files.push_back( pInfo );

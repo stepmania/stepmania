@@ -109,7 +109,7 @@ void RageFile_JPEG_skip_input_data( j_decompress_ptr cinfo, long num_bytes )
 	num_bytes -= in_buffer;
 
 	if( num_bytes )
-		src->file->SeekCur( num_bytes );
+		src->file->Seek( src->file->Tell() + num_bytes );
 }
 
 void RageFile_JPEG_term_source( j_decompress_ptr cinfo )
