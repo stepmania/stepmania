@@ -324,6 +324,8 @@ void InputHandler_DInput::UpdateBuffered(DIDevice &device, const RageTimer &tm)
 
 	numevents = INPUT_QSIZE;
 	HRESULT hr = IDirectInputDevice2_GetDeviceData( device.Device, sizeof(DIDEVICEOBJECTDATA), evtbuf, &numevents, 0);
+	if ( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
+		return;
 
 	/* Handle the events */
 	if ( hr != DI_OK )
