@@ -664,6 +664,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 //	LOG->Trace( "ScreenSelectMusic::Input()" );
 
 	// debugging?
+	// I just like being able to see untransliterated titles occasionally.
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F9 )
 	{
 		if( type != IET_FIRST_PRESS ) return;
