@@ -490,6 +490,7 @@ static void GetImageDirListing( CString sPath, CStringArray &AddTo, bool bReturn
 	GetDirListing( sPath + ".gif", AddTo, false, bReturnPathToo ); 
 }
 
+/* This is called within TidyUpData, before autogen notes are added. */
 static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 {
 	CHECKPOINT;
@@ -514,7 +515,19 @@ static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 				song->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetMeter() );
 				
 			CHECKPOINT;
-			song->RemoveNotes(s2);
+
+			/* Don't use RemoveNotes; autogen notes havn't yet been created and it'll
+			 * create them. */
+			for( int k=song->m_apNotes.size()-1; k>=0; k-- )
+			{
+				if( song->m_apNotes[k] == s2 )
+				{
+					delete song->m_apNotes[k];
+					song->m_apNotes.erase( song->m_apNotes.begin()+k );
+					break;
+				}
+			}
+
 			CHECKPOINT;
 			vSteps.erase(vSteps.begin()+j);
 			CHECKPOINT;
