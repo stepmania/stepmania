@@ -18,7 +18,7 @@ class Course;
 class Song;
 
 
-const int MAX_WHEEL_ITEMS	=	25;
+const int MAX_VISIBLE_WHEEL_ITEMS	=	25;
 
 const ScreenMessage	SM_SongChanged		=	ScreenMessage(SM_User+47);	// this should be unique!
 const ScreenMessage SM_SortOrderChanging=	ScreenMessage(SM_User+48);	
@@ -89,7 +89,7 @@ protected:
 	vector<WheelItemData> m_WheelItemDatas[NUM_SORT_ORDERS];
 	vector<WheelItemData *> m_CurWheelItemData;
 	
-	MusicWheelItem	m_MusicWheelItems[MAX_WHEEL_ITEMS];
+	MusicWheelItem	m_MusicWheelItems[MAX_VISIBLE_WHEEL_ITEMS];
 	
 	int					m_iSelection;		// index into m_CurWheelItemData
 	CString				m_sExpandedSectionName;
