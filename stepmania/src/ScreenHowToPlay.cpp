@@ -236,9 +236,6 @@ void ScreenHowToPlay::DrawPrimitives()
 		RageColor(0,0,0,1),
 		RageVector3(0, 0, 1) );
 
-//	m_mDancePad.Draw();
-//	m_mCharacter.Draw();
-
 	DISPLAY->SetLightOff( 0 );
 	DISPLAY->SetLighting( false );
 }
