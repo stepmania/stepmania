@@ -328,22 +328,30 @@ void DancingCharacters::DrawPrimitives()
 
 	FOREACH_EnabledPlayer( p )
 	{
-		if(!PREFSMAN->m_bCelShadeModels) {
-			bool bFailed = g_CurStageStats.bFailed[p];
-			bool bDanger = m_bDrawDangerLight;
-			DISPLAY->SetLighting( true );
-			RageColor ambient  = bFailed ? RageColor(0.2f,0.1f,0.1f,1) : (bDanger ? RageColor(0.4f,0.1f,0.1f,1) : RageColor(0.4f,0.4f,0.4f,1));
-			RageColor diffuse  = bFailed ? RageColor(0.4f,0.1f,0.1f,1) : (bDanger ? RageColor(0.8f,0.1f,0.1f,1) : RageColor(0.8f,0.8f,0.8f,1));
-			RageColor specular = RageColor(0.8f,0.8f,0.8f,1);
-			DISPLAY->SetLightDirectional( 
-				0,
-				ambient, 
-				diffuse,
-				specular,
-				RageVector3(+1, 0, +1) );
-			m_Character[p].Draw();
+		if( PREFSMAN->m_bCelShadeModels )
+		{
+			m_Character[p].DrawCelShaded();
+			continue;
 		}
-		else {m_Character[p].DrawCelShaded();}
+
+		bool bFailed = g_CurStageStats.bFailed[p];
+		bool bDanger = m_bDrawDangerLight;
+
+		DISPLAY->SetLighting( true );
+		RageColor ambient  = bFailed ? RageColor(0.2f,0.1f,0.1f,1) : (bDanger ? RageColor(0.4f,0.1f,0.1f,1) : RageColor(0.4f,0.4f,0.4f,1));
+		RageColor diffuse  = bFailed ? RageColor(0.4f,0.1f,0.1f,1) : (bDanger ? RageColor(0.8f,0.1f,0.1f,1) : RageColor(0.8f,0.8f,0.8f,1));
+		RageColor specular = RageColor(0.8f,0.8f,0.8f,1);
+		DISPLAY->SetLightDirectional( 
+			0,
+			ambient, 
+			diffuse,
+			specular,
+			RageVector3(+1, 0, +1) );
+
+		m_Character[p].Draw();
+
+		DISPLAY->SetLightOff( 0 );
+		DISPLAY->SetLighting( false );
 	}
 
 
