@@ -92,7 +92,11 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
+<<<<<<< StepMania.dsp
+TargetDir=\Stepmania\stepmania
+=======
 TargetDir=\stepmania
+>>>>>>> 1.222
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                                                                     	cl                                                                                                                      /Zl                                                                                                                      /nologo                                                                                                                      /c                                                                                                                      verstub.cpp                                                                                                                      /Fo$(IntDir)\ 
@@ -2172,10 +2176,6 @@ SOURCE=.\UnlockSystem.cpp
 SOURCE=.\UnlockSystem.h
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=.\cursor1.cur
-# End Source File
 # Begin Source File
 
 SOURCE=.\error.bmp

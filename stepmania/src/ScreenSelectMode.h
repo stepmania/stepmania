@@ -17,6 +17,7 @@ Andrew Livy
 #include "ModeChoice.h"
 #include "BitmapText.h"
 #include "RandomSample.h"
+#include "BGAnimationLayer.h"
 
 /* Class Definition */
 
@@ -35,8 +36,10 @@ public:
 protected:
 	virtual int GetSelectionIndex( PlayerNumber pn );
 	virtual void UpdateSelectableChoices();
+	void ChangeBGA();
 	int m_iNumChoices;
 	int m_iSelectableChoices[MAX_ELEMS];
+
 	RageSound			m_soundModeChange;
 	RageSound			m_soundConfirm;
 	RageSound			m_soundStart;
@@ -47,5 +50,6 @@ protected:
 	Sprite m_sprJoinMessage[NUM_PLAYERS];
 	Sprite m_sprJoinFrame[NUM_PLAYERS];
 	Sprite m_Guide;
+	vector<BGAnimation*>	m_Backgrounds;
 	bool m_bSelected;
 };

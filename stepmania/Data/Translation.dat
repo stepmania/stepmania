@@ -20,6 +20,48 @@
 # changes.
 
 [Songs]
+
+# ChickenWing XX whatever... is really Chicken Wing
+TitleFrom: Chicken Wing XX
+TitleTo: Chicken Wing
+ArtistTo: Banya
+*
+# SLAM XX is really SLAM... hmmm see a pattern yet?
+TitleFrom: SLAM XX
+TitleTo: SLAM
+ArtistTo: Novasonic
+*
+# Holiday XX is really Holiday
+TitleFrom: Holiday XX
+TitleTo: Holiday
+ArtistTo: F2 Original
+*
+# CanCan XX is really CanCan
+TitleFrom: (CanCan XX)|(Can Can XX)|(Kang Kang XX)|(KangKang XX)|(Kang Kang)|(KangKang)
+TitleTo: Can Can
+ArtistTo: F2 Original
+*
+# So many people like to rape this name...
+ArtistFrom: (.*Banya.*)
+ArtistTo: Banya
+*
+ArtistFrom: (¹ÚÁöÀ±)|(Park Ji Yoon)
+ArtistTo: 박지윤
+*
+# Baek Ji Young - Sad Salsa
+TitleFrom: Sad Salsa
+ArtistTo: 뱩지옝
+*
+# Lee Hyun Do - Pierrot
+TitleFrom: Pierrot
+ArtistFrom: (Lee Hyun Do)|(Li Hyun Do)
+ArtistTo: 이혠도
+*
+# Yu Seung Jun - Hope Find You
+TitleFrom: Hope Find You
+ArtistTo: 유승준
+TitleTo: 잦길바래
+*
 # "Candy", "Candy star", or "Candy #".
 TitleFrom: Candy(( star)?|#)
 ArtistFrom: Luv.*
@@ -344,7 +386,7 @@ ArtistFrom: (Nobuo Uematsu)|(Uematsu Nobuo)
 ArtistTo: 植松伸夫
 
 [Courses]
-TitleFrom: (.*Kidou)|(Demon Road)|(Road of Oni)|(Oni Michi)
+TitleFrom: (.*Kidou)|(Demon Road)|(Road of Oni)|(Oni Michi)|(MAX2 Kidou/Onimichi.*)
 TitleTo: 鬼道
 *
 TitleFrom: (.*Kidou 2)|(Demon Road 2)|(Road of Oni 2)|(Oni Michi 2)

@@ -34,6 +34,7 @@ Chris Danford
 #define GUIDE_X		THEME->GetMetricF("ScreenSelectMode", "GuideX")
 #define GUIDE_Y		THEME->GetMetricF("ScreenSelectMode", "GuideY")
 #define USECONFIRM THEME->GetMetricI("ScreenSelectMode","UseConfirm")
+#define USE_MODE_SPECIFIC_BGS THEME->GetMetricI("ScreenSelectMode", "UseModeSpecificBGAnims")
 
 /************************************
 ScreenSelectMode (Constructor)
@@ -63,6 +64,13 @@ ScreenSelectMode::ScreenSelectMode() : ScreenSelect( "ScreenSelectMode" )
 		CString sElementPath = THEME->GetPathToG(sElementName);
 
 		arrayLocations.push_back( sElementPath );
+		
+		if(USE_MODE_SPECIFIC_BGS == 1)
+		{	
+			BGAnimation templayer;
+			templayer.LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenSelectMode background %s", mc.name )) );
+			templayer.SetDiffuse(RageColor(0,0,0,0));
+		}
 	}
 	
 	// m_ScrollingList.UseSpriteType(BANNERTYPE);
@@ -103,6 +111,15 @@ void ScreenSelectMode::MenuLeft( PlayerNumber pn )
 	}
 	m_ScrollingList.Left();
 	m_soundModeChange.Play();
+	if(USE_MODE_SPECIFIC_BGS == 1)
+	{
+		ChangeBGA();
+	}
+}
+
+void ScreenSelectMode::ChangeBGA()
+{
+
 }
 
 void ScreenSelectMode::MenuRight( PlayerNumber pn )
@@ -114,6 +131,10 @@ void ScreenSelectMode::MenuRight( PlayerNumber pn )
 	}
 	m_ScrollingList.Right();
 	m_soundModeChange.Play();
+	if(USE_MODE_SPECIFIC_BGS == 1)
+	{
+		ChangeBGA();
+	}
 }
 
 void ScreenSelectMode::UpdateSelectableChoices()
@@ -156,6 +177,10 @@ void ScreenSelectMode::UpdateSelectableChoices()
 	m_ScrollingList.SetSelection(0);
 	m_ScrollingList.Unload();
 	m_ScrollingList.Load(GraphicPaths);
+	if(USE_MODE_SPECIFIC_BGS == 1)
+	{
+		// TODO: Finish implementing this! (Got exams no time to finish...)
+	}
 }
 
 void ScreenSelectMode::HandleScreenMessage( const ScreenMessage SM )

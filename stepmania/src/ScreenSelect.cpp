@@ -218,6 +218,10 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 		}
 	}
 
+// For some reason the menu likes to take 10 seconds to transition O_o
+// quite noticeable pause... and in the meantime the player is sitting there
+// wondering why their keys aren't working... even ESC... @_@
+
 	if( m_Menu.IsTransitioning() )
 		return;
 

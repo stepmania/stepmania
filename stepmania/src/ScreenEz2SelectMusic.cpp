@@ -29,6 +29,7 @@
 #include "RageTimer.h"
 #include "ActorUtil.h"
 #include "RageTextureManager.h"
+#include "AnnouncerManager.h"
 
 #define SCROLLING_LIST_X		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")
 #define SCROLLING_LIST_Y		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListY")
@@ -189,6 +190,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 
 		MusicChanged();
 	}
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music intro") );
 }
 
 void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
