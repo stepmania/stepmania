@@ -1019,7 +1019,24 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		{
 			m_DancingState = STATE_OUTRO;
 			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu back") );
-			m_soundMusic.Stop();
+			/* Hmm.  There are a bunch of subtly different ways we can
+			 * tween out: 
+			 *   1. Keep rendering the song, and keep it moving.  This might
+			 *      cause problems if the cancel and the end of the song overlap.
+			 *   2. Stop the song completely, so all song motion under the tween
+			 *      ceases.
+			 *   3. Stop the song, but keep effects (eg. Drunk) running.
+			 *   4. Don't display the song at all.
+			 *
+			 * We're doing #3.  I'm not sure which is best.
+			 *
+			 * We have to pause the music, not stop it.  If we stop it,
+			 * its position will be 0, and we'll render the *start*
+			 * of the song while we tween out, which looks really strange.
+			 * -glenn
+			 */
+			m_soundMusic.Pause();
+
 			this->ClearMessageQueue();
 			m_Fade.CloseWipingLeft( SM_SaveChangedBeforeGoingBack );
 		}
