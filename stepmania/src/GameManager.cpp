@@ -554,7 +554,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		"pump-double",							// m_szName
 		NOTES_TYPE_PUMP_DOUBLE,					// m_NotesType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,	// m_StyleType
-		{ 160, 480 },							// m_iCenterX
+		{ 320, 480 },							// m_iCenterX
 		10,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
