@@ -301,46 +301,17 @@ bool LuaManager::RunScript( const CString &sScript, int iReturnValues )
 }
 
 
-bool LuaManager::RunExpression( const CString &str, int iReturnValues )
+bool LuaManager::RunExpression( const CString &sExpression )
 {
-	// load string
-	{
-		ChunkReaderData data;
-		CString sStatement = "return " + str;
-		data.buf = &sStatement;
-		int ret = lua_load( L, ChunkReaderString, &data, "in" );
+	if( !RunScript( "return " + sExpression, 1 ) )
+		return false;
 
-		if( ret )
-		{
-			CString err;
-			LuaManager::PopStack( err );
-			CString sError = ssprintf( "Lua runtime error parsing \"%s\": %s", str.c_str(), err.c_str() );
-			Dialog::OK( sError, "LUA_ERROR" );
-			return false;
-		}
+	ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
 
-		ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
-	}
-
-	// evaluate
-	{
-		int ret = lua_pcall( L, 0, iReturnValues, 0 );
-		if( ret )
-		{
-			CString err;
-			LuaManager::PopStack( err );
-			CString sError = ssprintf( "Lua runtime error evaluating \"%s\": %s", str.c_str(), err.c_str() );
-			Dialog::OK( sError, "LUA_ERROR" );
-			return false;
-		}
-
-		ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
-
-		/* Don't accept a function as a return value; if you really want to use a function
-		 * as a boolean, convert it before returning. */
-		if( lua_isfunction( L, -1 ) )
-			RageException::Throw( "result is a function; did you forget \"()\"?" );
-	}
+	/* Don't accept a function as a return value; if you really want to use a function
+	 * as a boolean, convert it before returning. */
+	if( lua_isfunction( L, -1 ) )
+		RageException::Throw( "result is a function; did you forget \"()\"?" );
 
 	return true;
 }
