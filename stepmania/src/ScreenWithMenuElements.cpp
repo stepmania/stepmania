@@ -80,6 +80,12 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 	m_textHelp->SetTips( asHelpTips );
 	this->AddChild( m_textHelp );
 
+	m_sprUnderlay.Load( THEME->GetPathB(m_sName,"underlay") );
+	m_sprUnderlay->SetName("Underlay");
+	m_sprUnderlay->SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );
+	SET_XY_AND_ON_COMMAND( m_sprUnderlay );
+	this->AddChild( m_sprUnderlay );
+	
 	m_sprOverlay.Load( THEME->GetPathB(m_sName,"overlay") );
 	m_sprOverlay->SetName("Overlay");
 	SET_XY_AND_ON_COMMAND( m_sprOverlay );

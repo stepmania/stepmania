@@ -26,6 +26,7 @@ public:
 	void ResetTimer();
 
 protected:
+	AutoActor			m_sprUnderlay;
 	AutoActor			m_autoHeader;
 	Sprite				m_sprStyleIcon;
 	MemoryCardDisplay	m_MemoryCardDisplay[NUM_PLAYERS];
