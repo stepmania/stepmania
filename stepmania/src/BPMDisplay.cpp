@@ -46,7 +46,7 @@ void BPMDisplay::Update( float fDeltaTime )
 { 
 	ActorFrame::Update( fDeltaTime ); 
 
-	if( !CYCLE )
+	if( !(bool)CYCLE )
 		return;
 	if( m_BPMS.size() == 0 )
 		return; /* no bpm */
@@ -91,7 +91,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 			AllIdentical = false;
 	}
 
-	if( !CYCLE )
+	if( !(bool)CYCLE )
 	{
 		int MinBPM=99999999;
 		int MaxBPM=-99999999;
