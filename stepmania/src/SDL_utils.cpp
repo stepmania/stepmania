@@ -9,6 +9,7 @@
 #include "RageUtil.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
+#include <errno.h>
 
 /* Pull in all of our SDL libraries here. */
 #ifdef _XBOX
