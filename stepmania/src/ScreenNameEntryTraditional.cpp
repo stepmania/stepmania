@@ -542,6 +542,7 @@ void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage SM )
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				Finish( (PlayerNumber)p );
+			MenuStart( PLAYER_INVALID, IET_FIRST_PRESS );
 		}
 		break;
 	case SM_ChangeDisplayedFeat:
@@ -613,7 +614,10 @@ void ScreenNameEntryTraditional::UpdateSelectionText( int pn )
 void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventType type )
 {
 	if( !AnyStillEntering() )
+	{
 		m_Menu.StartTransitioning( SM_GoToNextScreen );
+		return;
+	}
 
 	if( !m_bStillEnteringName[pn] )
 		return;	// ignore
