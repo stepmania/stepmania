@@ -39,7 +39,7 @@ static void init_destination (j_compress_ptr cinfo)
 /*
  * Empty the output buffer --- called whenever buffer is full.
  */
-static unsigned char empty_output_buffer (j_compress_ptr cinfo)
+static boolean empty_output_buffer (j_compress_ptr cinfo)
 {
 	my_destination_mgr * dest = (my_destination_mgr *) cinfo->dest;
 	int nbytes;
