@@ -83,7 +83,7 @@ void NoteFieldPlus::Update( float fDelta )
 	for( int c=0; c<m_iNumCols; c++ )
 	{
 		float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
-		float fY = ArrowGetYPos( m_PlayerNumber, c, 0, m_iYReverseOffsetPixels );
+		float fY = ArrowGetYPos( m_PlayerNumber, c, 0, (float) m_iYReverseOffsetPixels );
 		float fZ = ArrowGetZPos( m_PlayerNumber, c, 0 );
 
 		m_GrayArrow[c].Update( fDelta );
