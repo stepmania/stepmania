@@ -24,6 +24,10 @@
 
 
 #define HELP_TEXT			THEME->GetMetric("ScreenMapControllers","HelpText")
+#define EVEN_LINE_IN		THEME->GetMetric("ScreenMapControllers","EvenLineIn")
+#define EVEN_LINE_OUT		THEME->GetMetric("ScreenMapControllers","EvenLineOut")
+#define ODD_LINE_IN			THEME->GetMetric("ScreenMapControllers","OddLineIn")
+#define ODD_LINE_OUT		THEME->GetMetric("ScreenMapControllers","OddLineOut")
 
 
 // reserve the 3rd slot for hard-coded keys
@@ -51,31 +55,34 @@ ScreenMapControllers::ScreenMapControllers() : Screen("ScreenMapControllers")
 		CString sSecondary = GAMESTATE->GetCurrentGameDef()->m_szSecondaryFunction[b];
 
 		m_textName[b].LoadFromFont( THEME->GetPathToF("Common title") );
-		m_textName[b].SetXY( CENTER_X, LINE_START_Y + b*LINE_GAP_Y-6 );
-
+		m_textName[b].SetXY( CENTER_X, -6 );
 		m_textName[b].SetText( sName );
 		m_textName[b].SetZoom( 0.7f );
 		m_textName[b].SetShadowLength( 2 );
-		this->AddChild( &m_textName[b] );
+		m_Line[b].AddChild( &m_textName[b] );
 
 		m_textName2[b].LoadFromFont( THEME->GetPathToF("Common title") );
-		m_textName2[b].SetXY( CENTER_X, LINE_START_Y + b*LINE_GAP_Y+6 );
+		m_textName2[b].SetXY( CENTER_X, +6 );
 		m_textName2[b].SetText( sSecondary );
 		m_textName2[b].SetZoom( 0.5f );
 		m_textName2[b].SetShadowLength( 2 );
-		this->AddChild( &m_textName2[b] );
+		m_Line[b].AddChild( &m_textName2[b] );
 
 		for( int p=0; p<MAX_GAME_CONTROLLERS; p++ ) 
 		{			
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
 				m_textMappedTo[p][b][s].LoadFromFont( THEME->GetPathToF("ScreenMapControllers entry") );
-				m_textMappedTo[p][b][s].SetXY( BUTTON_COLUMN_X[p*NUM_GAME_TO_DEVICE_SLOTS+s], LINE_START_Y + b*LINE_GAP_Y );
+				m_textMappedTo[p][b][s].SetXY( BUTTON_COLUMN_X[p*NUM_GAME_TO_DEVICE_SLOTS+s], 0 );
 				m_textMappedTo[p][b][s].SetZoom( 0.5f );
 				m_textMappedTo[p][b][s].SetShadowLength( 0 );
-				this->AddChild( &m_textMappedTo[p][b][s] );
+				m_Line[b].AddChild( &m_textMappedTo[p][b][s] );
 			}
 		}
+		m_Line[b].SetY( LINE_START_Y + b*LINE_GAP_Y );
+		this->AddChild( &m_Line[b] );
+
+		m_Line[b].Command( (b%2)? ODD_LINE_IN:EVEN_LINE_IN );
 	}	
 
 	m_textError.LoadFromFont( THEME->GetPathToF("Common normal") );
@@ -245,6 +252,8 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			{
 				SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
 				m_Menu.StartTransitioning( SM_GoToNextScreen );		
+				for( int b=0; b<GAMESTATE->GetCurrentGameDef()->m_iButtonsPerController; b++ )
+					m_Line[b].Command( (b%2)? ODD_LINE_OUT:EVEN_LINE_OUT );
 			}
 			break;
 		case SDLK_RETURN: /* Change the selection. */

@@ -50,6 +50,8 @@ private:
 	BitmapText	m_textName2[MAX_GAME_BUTTONS];
 	BitmapText	m_textMappedTo[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS][NUM_GAME_TO_DEVICE_SLOTS];
 
+	ActorFrame	m_Line[MAX_GAME_BUTTONS];
+
 	MenuElements m_Menu;
 
 };
