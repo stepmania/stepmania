@@ -581,8 +581,8 @@ void NoteField::DrawPrimitives()
 				continue;	// skip
 			}
 
-			const bool bIsActive = hn.bActive;
-			const bool bIsHoldingNote = hn.bHeld;
+			const bool bIsActive = hn.result.bActive;
+			const bool bIsHoldingNote = hn.result.bHeld;
 			if( bIsActive )
 				SearchForSongBeat()->m_GhostArrowRow.SetHoldIsActive( hn.iTrack );
 			

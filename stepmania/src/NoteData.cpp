@@ -601,7 +601,8 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK( *this, t, r )
 		{
-			if( GetTapNote(t,r).type != TapNote::hold_head )
+			TapNote head = GetTapNote(t,r);
+			if( head.type != TapNote::hold_head )
 				continue;	// skip
 
 			SetTapNote(t, r, TAP_EMPTY);	// clear the hold head marker
@@ -616,7 +617,9 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 
 				SetTapNote(t, j, TAP_EMPTY);
 
-				AddHoldNote( HoldNote(t, r, j) );
+				HoldNote hold(t, r, j);
+				hold.result = head.HoldResult;
+				AddHoldNote( hold );
 				break;	// done searching for the end of this hold
 			}
 		}
@@ -634,11 +637,13 @@ void NoteData::ConvertHoldNotesTo2sAnd3s()
 		const HoldNote &hn = GetHoldNote(i);
 		
 		/* If they're the same, then they got clamped together, so just ignore it. */
-		if( hn.iStartRow != hn.iEndRow )
-		{
-			SetTapNote( hn.iTrack, hn.iStartRow, TAP_ORIGINAL_HOLD_HEAD );
-			SetTapNote( hn.iTrack, hn.iEndRow, TAP_ORIGINAL_HOLD_TAIL );
-		}
+		if( hn.iStartRow == hn.iEndRow )
+			continue;
+
+		TapNote head = TAP_ORIGINAL_HOLD_HEAD;
+		head.HoldResult = hn.result;
+		SetTapNote( hn.iTrack, hn.iStartRow, head );
+		SetTapNote( hn.iTrack, hn.iEndRow, TAP_ORIGINAL_HOLD_TAIL );
 	}
 	m_HoldNotes.clear();
 }

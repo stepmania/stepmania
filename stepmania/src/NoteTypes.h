@@ -21,6 +21,7 @@ struct TapNoteResult
 	bool bHidden;
 };
 
+/* This HoldNote data is persisted when converted to 2sAnd3s. */
 struct HoldNoteResult
 {
 	HoldNoteScore hns;
@@ -40,9 +41,13 @@ struct HoldNoteResult
 		hns = HNS_NONE;
 		fLife = 1.0f;
 		iLastHeldRow = 0;
+		bHeld = bActive = false;
 	}
 
 	float GetLastHeldBeat() const;
+
+	bool bHeld;
+	bool bActive;
 };
 
 
@@ -112,9 +117,10 @@ struct TapNote
 		return true;
 	}
 
-	/* This data is only used and manipulated by NoteDataWithScoring.  It's only in
-	 * here for the sake of efficiency. */
 	TapNoteResult result;
+
+	/* This is valid for hold_head when in 2sAnd3s. */
+	HoldNoteResult HoldResult;
 };
 
 extern TapNote TAP_EMPTY;					// '0'
@@ -173,7 +179,7 @@ inline float NoteRowToBeat( int row )			{ return NoteRowToBeat( (float)row );	 }
 
 struct HoldNote
 {
-	HoldNote( int t, int s, int e ) { iTrack=t; iStartRow=s; iEndRow=e; bHeld = bActive = false; }
+	HoldNote( int t, int s, int e ) { iTrack=t; iStartRow=s; iEndRow=e; }
 	bool RowIsInRange( int row ) const { return iStartRow <= row && row <= iEndRow; }
 	bool RangeOverlaps( int start, int end ) const
 	{
@@ -189,16 +195,12 @@ struct HoldNote
 	float GetStartBeat() const { return NoteRowToBeat( iStartRow ); }
 	float GetEndBeat() const { return NoteRowToBeat( iEndRow ); }
 
-	/* Invariant: iStartRow <= iEndRow */
+	/* Invariant: iStartRow <= iEndRow.  If equal, the hold note is empty. */
 	int		iStartRow;
 	int		iEndRow;
 	int		iTrack;	
 
-	/* This data is only used and manipulated by NoteDataWithScoring.  It's only in
-	 * here for the sake of efficiency. */
 	HoldNoteResult result;
-	bool bHeld;
-	bool bActive;
 };
 
 #endif
