@@ -175,7 +175,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 			{
 				iTotalMeter += m_apCourseNotes[i]->GetMeter();
 				m_apCourseNotes[i]->GetNoteData( &notedata );
-				iTotalPossibleDancePoints += m_pScoreKeeper[p]->GetPossibleDancePoints( &notedata );
+				iTotalPossibleDancePoints += m_pScoreKeeper[GAMESTATE->m_MasterPlayerNumber]->GetPossibleDancePoints( &notedata );
 			}
 
 			GAMESTATE->m_CurStageStats.pSong = NULL;
@@ -346,7 +346,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	m_MaxCombo.LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenGameplay max combo numbers") );
 	m_MaxCombo.SetXY( MAXCOMBO_X, MAXCOMBO_Y );
 	m_MaxCombo.SetZoom( MAXCOMBO_ZOOM );
-	m_MaxCombo.SetText( ssprintf("%d", m_Player[GAMESTATE->m_MasterPlayerNumber].GetPlayersMaxCombo()) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
+	m_MaxCombo.SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iCurCombo[GAMESTATE->m_MasterPlayerNumber]) ); /* TODO: Make this work for both players */
 	this->AddChild( &m_MaxCombo );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -798,7 +798,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 
 	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )
-		m_MaxCombo.SetText( ssprintf("%d", m_Player[GAMESTATE->m_MasterPlayerNumber].GetPlayersMaxCombo()) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
+		m_MaxCombo.SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iCurCombo[GAMESTATE->m_MasterPlayerNumber]) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
 	
 	
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );

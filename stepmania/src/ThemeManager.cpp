@@ -215,10 +215,10 @@ try_element_again:
 			* up resolving to the overridden background. */
 			/* Use GetPathToOptional because we don't want report that there's an element
 			 * missing.  Instead we want to report that the redirect is invalid. */
-			CString sPath = GetPathToOptional(sAssetCategory, sNewFileName);
+			CString sNewPath = GetPathToOptional(sAssetCategory, sNewFileName);
 
-			if( !sPath.empty() )
-				return sPath;
+			if( !sNewPath.empty() )
+				return sNewPath;
 			else
 			{
 				CString message = ssprintf(

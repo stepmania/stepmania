@@ -219,7 +219,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_sprLongBalloon.SetEffectBob( 2, RageVector3(0,10,0) );
 	this->AddChild( &m_sprLongBalloon );
 
-	m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","ScreenSelectMusic options") );
+	m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","ScreenSelectMusic options message 1x2") );
 	m_sprOptionsMessage.StopAnimating();
 	m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
 	m_sprOptionsMessage.SetZoom( 1 );
@@ -228,7 +228,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
-	m_soundChangeNotes.Load( THEME->GetPathTo("Sounds","ScreenSelectMusic notes") );
+	m_soundChangeNotes.Load( THEME->GetPathTo("Sounds","ScreenSelectMusic difficulty") );
 	m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","ScreenSelectMusic options") );
 	m_soundLocked.Load( THEME->GetPathTo("Sounds","ScreenSelectMusic locked") );
 

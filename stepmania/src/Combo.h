@@ -26,18 +26,10 @@ public:
 
 	void Init( PlayerNumber pn ) { m_PlayerNumber = pn; }
 
-	void SetScore( TapNoteScore score, int iNumNotesInThisRow, Inventory* pInventory );
-
-	int GetCurrentCombo() const { return m_iCurCombo; }
-	int GetMaxCombo() const { return m_iMaxCombo; }
-	void Reset();
+	void SetCombo( int iCombo );
 
 protected:
 	PlayerNumber m_PlayerNumber;
-
-	int			m_iCurCombo;
-	int			m_iMaxCombo;
-	int			m_iCurComboOfPerfects;
 
 	Sprite		m_sprCombo;
 	BitmapText	m_textComboNumber;

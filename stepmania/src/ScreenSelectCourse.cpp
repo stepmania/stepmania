@@ -121,7 +121,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 	m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
 	m_sprOptionsMessage.SetZoomY( 0 );
 	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
-	this->AddChild( &m_sprOptionsMessage );
+//	this->AddChild( &m_sprOptionsMessage );	// draw and update manually
 
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
@@ -151,6 +151,13 @@ void ScreenSelectCourse::DrawPrimitives()
 	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
+	m_sprOptionsMessage.Draw();
+}
+
+void ScreenSelectCourse::Update( float fDelta )
+{
+	Screen::Update( fDelta );
+	m_sprOptionsMessage.Update( fDelta );	
 }
 
 void ScreenSelectCourse::TweenOnScreen()
@@ -338,16 +345,24 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 
 		m_bMadeChoice = true;
 
+		float fShowSeconds = m_Menu.m_Out.GetLengthSeconds();
+
 		// show "hold START for options"
 		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
-		m_sprOptionsMessage.BeginTweening( 0.25f );	// fade in
+		m_sprOptionsMessage.BeginTweening( 0.15f );	// fade in
 		m_sprOptionsMessage.SetTweenZoomY( 1 );
 		m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,1) );
-		m_sprOptionsMessage.BeginTweening( 2.0f );	// sleep
-		m_sprOptionsMessage.BeginTweening( 0.25f );	// fade out
+		m_sprOptionsMessage.BeginTweening( fShowSeconds-0.35f );	// sleep
+		m_sprOptionsMessage.BeginTweening( 0.15f );	// fade out
 		m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
 		m_sprOptionsMessage.SetTweenZoomY( 0 );
-		this->SendScreenMessage( SM_AllowOptionsMenuRepeat, 0.75f );
+
+		/* Don't accept a held START for a little while, so it's not
+		 * hit accidentally.  Accept an initial START right away, though,
+		 * so we don't ignore deliberate fast presses (which would be
+		 * annoying). */
+		this->SendScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
+
 
 		m_Menu.StartTransitioning( SM_GoToNextScreen );
 

@@ -22,6 +22,8 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"	// for TapNoteScore and HoldNoteScore
 class NoteData;
+class Inventory;
+
 
 class ScoreKeeper: public Actor 
 {
@@ -38,7 +40,7 @@ public:
 	ScoreKeeper(PlayerNumber pn) { m_PlayerNumber=pn; }
 	virtual void DrawPrimitives() { }
 
-	virtual void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow ) = 0;
+	virtual void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, Inventory* pInventory ) = 0;
 	virtual void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore ) = 0;
 
 	virtual int TapNoteScoreToDancePoints( TapNoteScore tns ) = 0;

@@ -22,12 +22,14 @@ class ScoreKeeperMAX2: public ScoreKeeper
 	float			m_fScoreMultiplier;
 	int				m_iTapNotesHit;	// number of notes judged so far, needed by scoring
 
+	int				m_iCurToastyCombo;
+
 	void AddScore( TapNoteScore score );
 
 public:
 	ScoreKeeperMAX2(Notes *notes, PlayerNumber pn);
 
-	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
+	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, Inventory* pInventory );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
 
 	int TapNoteScoreToDancePoints( TapNoteScore tns );

@@ -61,11 +61,6 @@ Player::Player()
 		this->AddChild( &m_HoldJudgment[c] );
 }
 
-int Player::GetPlayersMaxCombo()
-{
-	return(	m_Combo.GetMaxCombo() );
-}
-
 Player::~Player()
 {
 }
@@ -490,7 +485,10 @@ void Player::OnRowDestroyed( TapNoteScore lastScore, int iIndexThatWasSteppedOn 
 			case TNS_GREAT:
 			case TNS_PERFECT:
 			case TNS_MARVELOUS:
-				m_GhostArrowRow.TapNote( c, score, m_Combo.GetCurrentCombo()>(int)BRIGHT_GHOST_COMBO_THRESHOLD);
+				{
+					bool bBright = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber]>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+					m_GhostArrowRow.TapNote( c, score, bBright );
+				}
 				break;
 			}
 		}
@@ -499,8 +497,7 @@ void Player::OnRowDestroyed( TapNoteScore lastScore, int iIndexThatWasSteppedOn 
 	if( iNumNotesInThisRow > 0 )
 	{
 		HandleTapRowScore( score, iNumNotesInThisRow );	// update score
-		m_Combo.SetScore( score, iNumNotesInThisRow, m_pInventory );
-		GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber] = max( GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber], m_Combo.GetCurrentCombo() );
+		m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
 	}
 
 	m_Judgment.SetJudgment( score );
@@ -541,7 +538,7 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		if( iNumMissesThisRow > 0 )
 		{
 			HandleTapRowScore( TNS_MISS, iNumMissesThisRow );
-			m_Combo.SetScore( TNS_MISS, iNumMissesThisRow, m_pInventory );
+			m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
 		}
 	}
 
@@ -580,7 +577,7 @@ void Player::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
 #endif //DEBUG
 
 	if(m_pScoreKeeper)
-		m_pScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow);
+		m_pScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, m_pInventory);
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber]);

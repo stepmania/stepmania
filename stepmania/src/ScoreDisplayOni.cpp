@@ -24,7 +24,7 @@ ScoreDisplayOni::ScoreDisplayOni()
 	LOG->Trace( "ScoreDisplayOni::ScoreDisplayOni()" );
 
 	// init the text
-	m_text.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay score numbers") );
+	m_text.LoadFromNumbers( THEME->GetPathTo("Numbers","ScoreDisplayOni numbers") );
 	m_text.EnableShadow( false );
 	this->AddChild( &m_text );
 }

@@ -37,6 +37,7 @@ void StageStats::operator+=( const StageStats& other )
 			iTapNoteScores[p][t] += other.iTapNoteScores[p][t];
 		for( int h=0; h<NUM_HOLD_NOTE_SCORES; h++ )
 			iHoldNoteScores[p][h] += other.iHoldNoteScores[p][h];
+		iCurCombo[p] += other.iCurCombo[p];
 		iMaxCombo[p] += other.iMaxCombo[p];
 		fScore[p] += other.fScore[p];
 		for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )

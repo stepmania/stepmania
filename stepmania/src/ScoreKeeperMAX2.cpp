@@ -13,31 +13,43 @@
 #include "GameState.h"
 #include "PrefsManager.h"
 #include "Notes.h"
+#include "PrefsManager.h"
+#include "ScreenManager.h"
+#include "ScreenGameplay.h"
+#include "GameState.h"
+
 
 ScoreKeeperMAX2::ScoreKeeperMAX2(Notes *notes, PlayerNumber pn_):
 	ScoreKeeper(pn_)
 {
-//	Stats_DoublesCount = true;
+	if( notes )
+	{
+		NoteData noteData;
+		notes->GetNoteData( &noteData );
 
-	NoteData noteData;
-	notes->GetNoteData( &noteData );
+		int Meter = notes->GetMeter();
+		Meter = min(Meter, 10);
 
-	int Meter = notes? notes->GetMeter() : 5;
-	Meter = min(Meter, 10);
+		int N = noteData.GetNumRowsWithTaps() + noteData.GetNumHoldNotes();
+		
+		int sum = (N * (N + 1)) / 2;
 
-	int N = noteData.GetNumRowsWithTaps() + noteData.GetNumHoldNotes();
-	
-	int sum = (N * (N + 1)) / 2;
+		if(sum)
+			m_fScoreMultiplier = float(Meter * 1000000) / sum;
+		else /* avoid div/0 on empty songs */
+			m_fScoreMultiplier = 0.f;
 
-	if(sum)
-		m_fScoreMultiplier = float(Meter * 1000000) / sum;
-	else /* avoid div/0 on empty songs */
+		ASSERT(m_fScoreMultiplier >= 0.0);
+	}
+	else
+	{
+		ASSERT( GAMESTATE->IsCourseMode() );
 		m_fScoreMultiplier = 0.f;
-
-	ASSERT(m_fScoreMultiplier >= 0.0);
+	}
 
 	m_iTapNotesHit = 0;
 	m_lScore = 0;
+	m_iCurToastyCombo = 0; 
 }
 
 void ScoreKeeperMAX2::AddScore( TapNoteScore score )
@@ -59,7 +71,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber] = m_lScore * m_fScoreMultiplier;
 }
 
-void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
+void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, Inventory* pInventory )
 {
 	ASSERT( iNumTapsInRow >= 1 );
 
@@ -106,6 +118,99 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 */
 //	for( int i=0; i<iNumTapsInRow; i++ )
 	AddScore( scoreOfLastTap );		// only score once per row
+
+
+	//
+	// handle combo logic
+	//
+#ifndef DEBUG
+	if( PREFSMAN->m_bAutoPlay && !GAMESTATE->m_bDemonstrationOrJukebox )	// cheaters never prosper
+	{
+		m_iCurComboOfPerfects = 0;
+		return;
+	}
+#endif //DEBUG
+
+	// combo of marvelous/perfect
+	switch( scoreOfLastTap )
+	{
+	case TNS_MARVELOUS:
+	case TNS_PERFECT:
+		m_iCurToastyCombo += iNumTapsInRow;
+
+		if( m_iCurToastyCombo==250 && !GAMESTATE->m_bDemonstrationOrJukebox )
+			SCREENMAN->SendMessageToTopScreen( SM_PlayToasty, 0 );
+		break;
+	default:
+		m_iCurToastyCombo = 0;
+		break;
+	}
+
+	
+	int &iCurCombo = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber];
+	
+	switch( scoreOfLastTap )
+	{
+	case TNS_MARVELOUS:
+	case TNS_PERFECT:
+	case TNS_GREAT:
+		{
+			int iOldCombo = iCurCombo;
+
+			if( GAMESTATE->IsCourseMode() )
+			{
+				switch( scoreOfLastTap )
+				{
+				case TNS_MARVELOUS:
+				case TNS_PERFECT:
+					iCurCombo += iNumTapsInRow;
+					break;
+				case TNS_GREAT:
+					int aosid = 4;
+					break;
+				}
+			}
+			else
+				iCurCombo += iNumTapsInRow;
+
+	#define CROSSED( i ) (iOldCombo<i && i<=iCurCombo)
+
+			if     ( CROSSED(100) )	SCREENMAN->SendMessageToTopScreen( SM_100Combo, 0 );
+			else if( CROSSED(200) )	SCREENMAN->SendMessageToTopScreen( SM_200Combo, 0 );
+			else if( CROSSED(300) )	SCREENMAN->SendMessageToTopScreen( SM_300Combo, 0 );
+			else if( CROSSED(400) )	SCREENMAN->SendMessageToTopScreen( SM_400Combo, 0 );
+			else if( CROSSED(500) )	SCREENMAN->SendMessageToTopScreen( SM_500Combo, 0 );
+			else if( CROSSED(600) )	SCREENMAN->SendMessageToTopScreen( SM_600Combo, 0 );
+			else if( CROSSED(700) )	SCREENMAN->SendMessageToTopScreen( SM_700Combo, 0 );
+			else if( CROSSED(800) )	SCREENMAN->SendMessageToTopScreen( SM_800Combo, 0 );
+			else if( CROSSED(900) )	SCREENMAN->SendMessageToTopScreen( SM_900Combo, 0 );
+			else if( CROSSED(1000))	SCREENMAN->SendMessageToTopScreen( SM_1000Combo, 0 );
+
+			// new max combo
+			GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber] = max(GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber], iCurCombo);
+		}
+		break;
+	case TNS_GOOD:
+	case TNS_BOO:
+	case TNS_MISS:
+		{
+			// don't play "combo stopped" in battle
+			switch( GAMESTATE->m_PlayMode )
+			{
+			case PLAY_MODE_BATTLE:
+				if( pInventory )
+					pInventory->OnComboBroken( m_PlayerNumber, iCurCombo );
+			default:
+				if( iCurCombo>50 )
+					SCREENMAN->SendMessageToTopScreen( SM_ComboStopped, 0 );
+			}
+
+			iCurCombo = 0;
+		}
+		break;
+	default:
+		ASSERT(0);
+	}
 }
 
 
