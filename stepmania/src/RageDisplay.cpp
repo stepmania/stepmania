@@ -156,8 +156,6 @@ bool RageDisplay::HasExtension(CString ext) const
 	return m_oglspecs->glExts.find(ext) != m_oglspecs->glExts.end();
 }
 
-extern HWND g_hWndMain;
-
 void RageDisplay::SetupExtensions()
 {
 	double fGLVersion = atof( (const char *) glGetString(GL_VERSION) );
