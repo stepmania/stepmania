@@ -696,7 +696,7 @@ void StepManiaLanServer::SelectSong(PacketFunctions& Packet, unsigned int client
 			//The following code forces the host to select the same song twice in order to play it.
 			if ((strcmp(CurrentSongInfo.title, LastSongInfo.title) == 0) &&
 				(strcmp(CurrentSongInfo.artist, LastSongInfo.artist) == 0) &&
-				(strcmp(CurrentSongInfo.artist, LastSongInfo.subtitle) == 0))
+				(strcmp(CurrentSongInfo.subtitle, LastSongInfo.subtitle) == 0))
 					SecondSameSelect = true;
 
 			if (!SecondSameSelect)
