@@ -1519,7 +1519,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	if( SM == SM_UpdateTextInfo )
 	{
 		UpdateTextInfo();
-		this->PostScreenMessage( SM_UpdateTextInfo, 0.5f );
+		this->PostScreenMessage( SM_UpdateTextInfo, 0.1f );
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
