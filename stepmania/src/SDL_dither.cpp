@@ -74,7 +74,11 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 	{
 		int MaxInputIntensity = (1 << src_cbits[i])-1;
 		int MaxOutputIntensity = (1 << dst_cbits[i])-1;
-		conv[i] = MaxOutputIntensity * 65536 / MaxInputIntensity;
+		/* If the source is missing the channel, avoid div/0. */
+		if(MaxInputIntensity == 0)
+			conv[i] = 0;
+		else
+			conv[i] = MaxOutputIntensity * 65536 / MaxInputIntensity;
 	}
 
 	/* For each row: */
