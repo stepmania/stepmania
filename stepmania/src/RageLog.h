@@ -1,4 +1,6 @@
-#pragma once
+#ifndef RAGELOG_H
+#define RAGELOG_H
+
 /*
 -----------------------------------------------------------------------------
  Class: RageLog
@@ -10,6 +12,7 @@
 -----------------------------------------------------------------------------
 */
 
+#include <stdio.h>
 
 class RageLog
 {
@@ -17,9 +20,9 @@ public:
 	RageLog();
 	~RageLog();
 
-	void Trace( LPCTSTR fmt, ...);
-	void Trace( HRESULT hr, LPCTSTR fmt, ...);
-	void Warn( LPCTSTR fmt, ...);
+	void Trace( const char *fmt, ...);
+	void Trace( HRESULT hr, const char *fmt, ...);
+	void Warn( const char *fmt, ...);
 	void Flush();
 
 	void ShowConsole();
@@ -30,3 +33,5 @@ protected:
 };
 
 extern RageLog*	LOG;	// global and accessable from anywhere in our program
+
+#endif

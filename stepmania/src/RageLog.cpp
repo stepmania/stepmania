@@ -34,7 +34,6 @@ RageLog::RageLog()
 	// Open log file and leave it open.  Let the OS close it when the app exits
 	m_fileLog = fopen( LOG_FILE_NAME, "w" );
 
-
 	SYSTEMTIME st;
     GetLocalTime( &st );
 
@@ -64,37 +63,38 @@ void RageLog::HideConsole()
 	FreeConsole();
 }
 
-void RageLog::Trace( LPCTSTR fmt, ...)
+void RageLog::Trace( const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
-
     CString sBuff = vssprintf( fmt, va );
-	sBuff += "\n";
+    va_end(va);
 
-	fprintf( m_fileLog, sBuff ); 
-	printf( sBuff ); 
+	fprintf( m_fileLog, "%s\n", sBuff ); 
+	printf( "%s\n", sBuff ); 
 
 #ifdef DEBUG
 	this->Flush();	// implicit flush
 #endif
 }
 
-void RageLog::Trace( HRESULT hr, LPCTSTR fmt, ...)
+void RageLog::Trace( HRESULT hr, const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
     CString s = vssprintf( fmt, va );
+    va_end(va);
+
 	s += ssprintf( "(%s)", DXGetErrorString8(hr) );
-	this->Trace( s );
+	this->Trace( "%s", s );
 }
 
-void RageLog::Warn( LPCTSTR fmt, ...)
+void RageLog::Warn( const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
-
     CString sBuff = vssprintf( fmt, va );
+    va_end(va);
 
 	Trace(  "/////////////////////////////////////////\n"
 			"WARNING:  %s\n"
