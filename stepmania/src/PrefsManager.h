@@ -6,6 +6,9 @@
 #include "PlayerNumber.h"
 #include "Grade.h"	// for NUM_GRADE_TIERS
 
+class IPreference;
+class IniFile;
+
 class PrefsManager
 {
 public:
@@ -268,7 +271,6 @@ public:
 	bool			m_bTimestamping;
 	bool			m_bLogSkips;
 	bool			m_bLogCheckpoints;
-	bool			m_bLogFPS;
 	bool			m_bShowLoadingWindow;
 
 	/* Game-specific prefs: */
@@ -281,7 +283,15 @@ public:
 
 protected:
 	void ReadPrefsFromFile( CString sIni );
+
 };
+
+
+//
+// For self-registering prefs
+//
+void Subscribe( IPreference *p );
+
 
 /* This is global, because it can be accessed by crash handlers and error handlers
  * that are run after PREFSMAN shuts down (and probably don't want to deref tht

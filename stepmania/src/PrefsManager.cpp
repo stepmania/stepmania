@@ -9,6 +9,8 @@
 #include "RageFile.h"
 #include "ProductInfo.h"
 #include "GameConstantsAndTypes.h"
+#include "Foreach.h"
+#include "Preference.h"
 
 #define DEFAULTS_INI_PATH	"Data/Defaults.ini"		// these can be overridden
 #define STEPMANIA_INI_PATH	"Data/StepMania.ini"	// overlay on Defaults.ini, contains the user's choices
@@ -18,6 +20,27 @@ PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our pro
 
 const float DEFAULT_SOUND_VOLUME = 1.00f;
 const CString DEFAULT_LIGHTS_DRIVER = "Null";
+
+
+//
+// For self-registering prefs
+//
+vector<IPreference*> *g_pvpSubscribers = NULL;
+
+void Subscribe( IPreference *p )
+{
+	// TRICKY: If we make this a global vector instead of a global pointer,
+	// then we'd have to be careful that the static constructors of all
+	// Preferences are called before the vector constructor.  It's
+	// too tricky to enfore that, so we'll allocate the vector ourself
+	// so that the compiler can't possibly call the vector constructor
+	// after we've already added to the vector.
+	if( g_pvpSubscribers == NULL )
+		g_pvpSubscribers = new vector<IPreference*>;
+	g_pvpSubscribers->push_back( p );
+}
+
+
 
 bool g_bAutoRestart = false;
 
@@ -278,7 +301,6 @@ void PrefsManager::Init()
 	m_bTimestamping = false;
 	m_bLogSkips = false;
 	m_bLogCheckpoints = false;
-	m_bLogFPS = true;
 	m_bShowLoadingWindow = true;
 
 	m_bMemoryCards = false;
@@ -292,6 +314,9 @@ void PrefsManager::Init()
 
 	m_sMemoryCardProfileSubdir = PRODUCT_NAME;
 	m_iProductID = 1;
+
+
+	FOREACH_CONST( IPreference*, *g_pvpSubscribers, p ) (*p)->LoadDefault();
 }
 
 PrefsManager::~PrefsManager()
@@ -552,8 +577,10 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Debug", "Timestamping",						m_bTimestamping );
 	ini.GetValue( "Debug", "LogSkips",							m_bLogSkips );
 	ini.GetValue( "Debug", "LogCheckpoints",					m_bLogCheckpoints );
-	ini.GetValue( "Debug", "LogFPS",							m_bLogFPS );
 	ini.GetValue( "Debug", "ShowLoadingWindow",					m_bShowLoadingWindow );
+
+
+	FOREACH( IPreference*, *g_pvpSubscribers, p ) (*p)->ReadFrom( ini );
 }
 
 void PrefsManager::SaveGlobalPrefsToDisk() const
@@ -793,8 +820,9 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Debug", "Timestamping",						m_bTimestamping );
 	ini.SetValue( "Debug", "LogSkips",							m_bLogSkips );
 	ini.SetValue( "Debug", "LogCheckpoints",					m_bLogCheckpoints );
-	ini.SetValue( "Debug", "LogFPS",							m_bLogFPS );
 	ini.SetValue( "Debug", "ShowLoadingWindow",					m_bShowLoadingWindow );
+
+	FOREACH_CONST( IPreference*, *g_pvpSubscribers, p ) (*p)->WriteTo( ini );
 
 	ini.WriteFile( STEPMANIA_INI_PATH );
 }

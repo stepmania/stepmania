@@ -10,7 +10,7 @@
 #include "RageSurface_Save_BMP.h"
 #include "SDL_rotozoom.h"
 #include "RageSurface.h"
-#include "PrefsManager.h"
+#include "Preference.h"
 
 //
 // Statistics stuff
@@ -29,6 +29,8 @@ static int			g_iFramesRenderedSinceLastCheck,
 					g_iNumChecksSinceLastReset;
 
 RageDisplay*		DISPLAY	= NULL;
+
+Preference<bool>  LOG_FPS( Debug, "LogFPS", true );
 
 CString RageDisplay::PixelFormatToString( PixelFormat pixfmt )
 {
@@ -109,7 +111,7 @@ void RageDisplay::ProcessStatsOnFlip()
 		g_iCFPS = g_iFramesRenderedSinceLastReset / g_iNumChecksSinceLastReset;
 		g_iVPF = g_iVertsRenderedSinceLastCheck / g_iFPS;
 		g_iFramesRenderedSinceLastCheck = g_iVertsRenderedSinceLastCheck = 0;
-		if( PREFSMAN->m_bLogFPS )
+		if( LOG_FPS.GetValue() )
 			LOG->Trace( "FPS: %d, CFPS %d, VPF: %d", g_iFPS, g_iCFPS, g_iVPF );
 	}
 }
