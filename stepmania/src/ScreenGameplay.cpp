@@ -2356,9 +2356,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			SET_XY_AND_ON_COMMAND( m_textSurviveTime );
 		}
 		
-		// Feels hackish. Feel free to make cleaner.
 		if( GAMESTATE->IsCourseMode() )
-			if( GAMESTATE->GetCourseSongIndex() > (int(m_apSongsQueue.size() / 2) - 1 ) )
+			if( GAMESTATE->GetCourseSongIndex() >= int(m_apSongsQueue.size() / 2) )
 				SOUND->PlayOnceFromAnnouncer( "gameplay oni failed halfway" );
 			else
 				SOUND->PlayOnceFromAnnouncer( "gameplay oni failed" );
