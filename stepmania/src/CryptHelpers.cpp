@@ -96,10 +96,8 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 	int newPosition = current + (streamoff)begin;
 	
 	if( newPosition >= m_file.GetFileSize() )
-	{
-		m_file.Seek(current);
 		return 0;	// don't try to seek beyond the end of file
-	}
+
 	m_file.Seek(newPosition);
 	try
 	{
