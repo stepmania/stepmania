@@ -502,6 +502,7 @@ void MemoryCardManager::LockCards()
 
 	/* If either player's card is in STATE_CHECKING, we need to give it a chance
 	 * to finish up before returning. */
+	bool bLogged = false;
 	while( !g_pWorker->IsTimedOut() )
 	{
 		/* Check for changes. */
@@ -515,9 +516,18 @@ void MemoryCardManager::LockCards()
 			break;
 
 		/* Only if we need to, wait for something to happen.  If we time out waiting for
-		 *a heartbeat, give up. */
+		 * a heartbeat, give up. */
+		if( !bLogged )
+		{
+			bLogged = true;
+			LOG->Trace( "One or more cards are in STATE_CHECKING; waiting for them ..." );
+		}
+
 		if( !g_pWorker->WaitForOneHeartbeat() )
+		{
+			LOG->Trace( "STATE_CHECKING wait timed out" );
 			break;
+		}
 	}
 
 	g_pWorker->SetTimeout( -1 );
