@@ -37,6 +37,9 @@ enum InputDevice {
 // button byte codes for directional pad
 enum JoystickButton {
 	JOY_LEFT = 0, JOY_RIGHT, JOY_UP, JOY_DOWN,
+	JOY_Z_UP, JOY_Z_DOWN,
+	JOY_ROT_UP, JOY_ROT_DOWN,
+	JOY_HAT_LEFT, JOY_HAT_RIGHT, JOY_HAT_UP, JOY_HAT_DOWN, 
 	JOY_1,	JOY_2,	JOY_3,	JOY_4,	JOY_5,	JOY_6,	JOY_7,	JOY_8,	JOY_9,	JOY_10,
 	JOY_11,	JOY_12,	JOY_13,	JOY_14,	JOY_15,	JOY_16,	JOY_17,	JOY_18,	JOY_19,	JOY_20,
 	JOY_21,	JOY_22,	JOY_23,	JOY_24,
@@ -97,8 +100,8 @@ class RageInput
 	DIMOUSESTATE2 m_mouseState;
 
 	// Joystick data for NUM_JOYSTICKS controllers
-    DIJOYSTATE2 m_joyState[NUM_JOYSTICKS];
-    DIJOYSTATE2 m_oldJoyState[NUM_JOYSTICKS];
+	bool	m_joyState[NUM_JOYSTICKS][NUM_JOYSTICK_BUTTONS];
+	bool	m_oldJoyState[NUM_JOYSTICKS][NUM_JOYSTICK_BUTTONS];
 
 	struct {
 		bool button[NUM_PUMP_PAD_BUTTONS];

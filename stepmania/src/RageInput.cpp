@@ -83,6 +83,14 @@ CString DeviceInput::GetDescription()
 		case JOY_RIGHT:		sReturn += "Right";		break;
 		case JOY_UP:		sReturn += "Up";		break;
 		case JOY_DOWN:		sReturn += "Down";		break;
+		case JOY_Z_UP:		sReturn += "Z-Up";		break;
+		case JOY_Z_DOWN:	sReturn += "Z-Down";	break;
+		case JOY_ROT_UP:	sReturn += "Z-Down";	break;
+		case JOY_ROT_DOWN:	sReturn += "Z-Down";	break;
+		case JOY_HAT_LEFT:	sReturn += "H-Left";	break;
+		case JOY_HAT_RIGHT:	sReturn += "H-Right";	break;
+		case JOY_HAT_UP:	sReturn += "H-Up";		break;
+		case JOY_HAT_DOWN:	sReturn += "H-Down";	break;
 		case JOY_1:		sReturn += "1";		break;
 		case JOY_2:		sReturn += "2";		break;
 		case JOY_3:		sReturn += "3";		break;
@@ -376,12 +384,8 @@ RageInput::RageInput( HWND hWnd )
 
 	ZeroMemory( &m_keys, sizeof(m_keys) );
 	ZeroMemory( &m_oldKeys, sizeof(m_oldKeys) );
-	for( i=0; i<NUM_JOYSTICKS; i++ )
-	{
-		ZeroMemory( &m_joyState[i], sizeof(m_joyState[i]) );
-		ZeroMemory( &m_oldKeys[i], sizeof(m_joyState[i]) );
-	}
 
+	ZeroMemory( &m_oldJoyState, sizeof(m_oldJoyState) );
 	ZeroMemory( &m_pumpState, sizeof(m_pumpState) );
 	ZeroMemory( &m_oldPumpState, sizeof(m_oldPumpState) );
 	m_Pumps = new pump_t[NUM_PUMPS];
@@ -672,8 +676,8 @@ void RageInput::Update()
 	//////////////////////////////////////////////////////////////////
 
 	CopyMemory( &m_oldKeys, &m_keys, sizeof(m_keys) );
-	CopyMemory( &m_oldJoyState, &m_joyState, sizeof(m_joyState) );
 	CopyMemory( &m_oldPumpState, &m_pumpState, sizeof(m_pumpState) );
+	CopyMemory( &m_oldJoyState, &m_joyState, sizeof(m_joyState) );
 
 	ZeroMemory( &m_joyState, sizeof(m_joyState) );
 
@@ -717,9 +721,25 @@ void RageInput::Update()
 			break;
 		}
 
+		DIJOYSTATE2 joyState;
+		ZeroMemory( &joyState, sizeof(joyState) );
 		// Get the input's device state
-		if( FAILED( hr = m_pJoystick[i]->GetDeviceState( sizeof(DIJOYSTATE2), &m_joyState[i] ) ) )
+		if( FAILED( hr = m_pJoystick[i]->GetDeviceState( sizeof(DIJOYSTATE2), &joyState ) ) )
+		{
 			LOG->Trace(hr, "Failed to read joystick %i\n", i);
+			continue;
+		}
+
+		if ( IS_LEFT(joyState.lX) )  m_joyState[i][JOY_LEFT] = true;
+		if ( IS_RIGHT(joyState.lX) ) m_joyState[i][JOY_RIGHT] = true;
+		if ( IS_UP(joyState.lY) )    m_joyState[i][JOY_UP] = true;
+		if ( IS_DOWN(joyState.lY) )  m_joyState[i][JOY_DOWN] = true;
+
+		for (int button_index = JOY_1; button_index < NUM_JOYSTICK_BUTTONS; ++button_index)
+		{
+			if ( IS_PRESSED( joyState.rgbButtons[button_index - JOY_1] ) )
+			m_joyState[i][button_index] = true;
+		}
 	}
 
 	UpdatePump();
@@ -736,33 +756,13 @@ bool RageInput::IsBeingPressed( DeviceInput di )
 	case DEVICE_JOY2:
 	case DEVICE_JOY3:
 	case DEVICE_JOY4: {
-		int joy_index;
-		joy_index = di.device - DEVICE_JOY1;
-
-		switch( di.button )
-		{
-		case JOY_LEFT:
-			return IS_LEFT( m_joyState[joy_index].lX );
-		case JOY_RIGHT:
-			return IS_RIGHT( m_joyState[joy_index].lX );
-		case JOY_UP:
-			return IS_UP( m_joyState[joy_index].lY );
-		case JOY_DOWN:
-			return IS_DOWN( m_joyState[joy_index].lY );
-		default:	// a joystick button
-			int button_index = di.button - JOY_1;
-			return 0 != IS_PRESSED( m_joyState[joy_index].rgbButtons[button_index] );
-		}
+		return m_joyState[di.device - DEVICE_JOY1][ di.button ];
 	}
 	case DEVICE_PUMP1:
 	case DEVICE_PUMP2:
 	{
-		int pump_index;
-		pump_index = di.device - DEVICE_PUMP1;
-		if(m_pumpState[pump_index].button[di.button])
-			return 1;
 		ASSERT(di.button < NUM_PUMP_PAD_BUTTONS);
-		return m_pumpState[pump_index].button[di.button];
+		return m_pumpState[pump_index - DEVICE_PUMP1].button[di.button];
 	}
 	default:
 		ASSERT( false ); // bad device
@@ -781,30 +781,12 @@ bool RageInput::WasBeingPressed( DeviceInput di )
 	case DEVICE_JOY2:
 	case DEVICE_JOY3:
 	case DEVICE_JOY4:
-		int joy_index;
-		joy_index = di.device - DEVICE_JOY1;
-
-		switch( di.button )
-		{
-		case JOY_LEFT:
-			return IS_LEFT( m_oldJoyState[joy_index].lX );
-		case JOY_RIGHT:
-			return IS_RIGHT( m_oldJoyState[joy_index].lX );
-		case JOY_UP:
-			return IS_UP( m_oldJoyState[joy_index].lY );
-		case JOY_DOWN:
-			return IS_DOWN( m_oldJoyState[joy_index].lY );
-		default:	// a joystick button
-			int button_index = di.button - JOY_1;
-			return 0 != IS_PRESSED( m_oldJoyState[joy_index].rgbButtons[button_index] );
-		}
+		return m_oldJoyState[di.device - DEVICE_JOY1][ di.button ];
 
 	case DEVICE_PUMP1:
 	case DEVICE_PUMP2: {
-		int pump_index;
-		pump_index = di.device - DEVICE_PUMP1;
 		ASSERT(di.button < NUM_PUMP_PAD_BUTTONS);
-		return m_oldPumpState[pump_index].button[di.button];
+		return m_oldPumpState[pump_index - DEVICE_PUMP1].button[di.button];
 	}
 
 	default:
