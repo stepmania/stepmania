@@ -13,7 +13,7 @@
 
 #include "ScoreDisplay.h"
 #include "GameConstantsAndTypes.h"
-#include "OptionIcon.h"
+#include "Sprite.h"
 
 
 class ScoreDisplayBattle : public ScoreDisplay

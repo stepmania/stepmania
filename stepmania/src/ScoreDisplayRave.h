@@ -13,9 +13,9 @@
 
 #include "ScoreDisplay.h"
 #include "GameConstantsAndTypes.h"
-#include "OptionIcon.h"
 #include "MeterDisplay.h"
 #include "Sprite.h"
+#include "BitmapText.h"
 
 
 class ScoreDisplayRave : public ScoreDisplay
