@@ -134,7 +134,7 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 	case TYPE_COURSE:
 	case TYPE_SORT:
 		{
-			CString sDisplayName;
+			CString sDisplayName, sTranslitName;
 			BitmapText *bt = NULL;
 			switch( pWID->m_Type )
 			{
@@ -143,7 +143,8 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 					bt = &m_textSectionName;
 					break;
 				case TYPE_COURSE:
-					sDisplayName = data->m_pCourse->m_sName;
+					sDisplayName = data->m_pCourse->GetDisplayName();
+					sTranslitName = data->m_pCourse->GetTranslitName();
 					bt = &m_textCourse;
 					break;
 				case TYPE_SORT:
@@ -155,7 +156,7 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 			}
 
 			bt->SetZoom( 1 );
-			bt->SetText( sDisplayName );
+			bt->SetText( sDisplayName, sTranslitName );
 			bt->SetDiffuse( data->m_color );
 			bt->TurnRainbowOff();
 
