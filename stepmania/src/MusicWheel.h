@@ -13,6 +13,7 @@
 
 #include "Sprite.h"
 #include "ActorFrame.h"
+#include "RageSound.h"
 #include "RandomSample.h"
 #include "GameConstantsAndTypes.h"
 #include "MusicSortDisplay.h"

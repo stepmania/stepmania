@@ -13,6 +13,7 @@
 
 #include "ScreenCredits.h"
 #include "ScreenManager.h"
+#include "RageSoundManager.h"
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"
 #include "SongManager.h"
