@@ -69,7 +69,7 @@ void BannerCache::LoadAllBanners()
 	int total_size = 0;
 	for( ban = m_BannerPathToImage.begin(); ban != m_BannerPathToImage.end(); ++ban )
 	{
-		const SDL_Surface *&img = ban->second;
+		SDL_Surface *&img = ban->second;
 		const int size = img->pitch * img->h;
 		total_size += size;
 	}
