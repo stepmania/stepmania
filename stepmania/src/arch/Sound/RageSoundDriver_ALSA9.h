@@ -47,7 +47,7 @@ public:
 	RageThread MixingThread;
 
 	int GetData();
-	void Recover(int r);
+	bool Recover( int r );
 
 	/* virtuals: */
 	void StartMixing(RageSound *snd);

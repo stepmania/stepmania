@@ -54,13 +54,9 @@ int RageSound_ALSA9::GetData()
 	LockMutex L(SOUNDMAN->lock);
 
 	snd_pcm_sframes_t avail_frames = snd_pcm_avail_update(pcm);
-	if( avail_frames == -EPIPE )
-	{
-		LOG->Trace("underrun");
-		int err = snd_pcm_prepare(pcm);
-		ALSA_ASSERT("snd_pcm_prepare (Recover)");
+	if( avail_frames < 0 && Recover(avail_frames) )
 		avail_frames = snd_pcm_avail_update(pcm);
-	}
+
 	if( avail_frames < 0 )
 	{
 		LOG->Trace( "RageSoundDriver_ALSA9::GetData: snd_pcm_avail_update: %s", snd_strerror(avail_frames) );
@@ -72,12 +68,9 @@ int RageSound_ALSA9::GetData()
 	ASSERT( frames_to_fill >= 0 );
 	ASSERT( frames_to_fill <= (int)max_writeahead );
 
-	LOG->Trace("%li avail, %li filled, %li to", avail_frames, filled_frames, frames_to_fill);
+//	LOG->Trace("%li avail, %li filled, %li to", avail_frames, filled_frames, frames_to_fill);
 	if( frames_to_fill <= 0 )
-	{
-		LOG->Trace("skip");
 		return 0;
-	}
 
 	/* Sint16 represents a single sample
 	 * each frame contains one sample per channel
@@ -86,7 +79,7 @@ int RageSound_ALSA9::GetData()
 	if (!buf)
 		buf = new Sint16[max_writeahead*samples_per_frame*4];
 
-    SoundMixBuffer mix;
+    static SoundMixBuffer mix;
 	mix.SetVolume( SOUNDMAN->GetMixVolume() );
 
 	for(unsigned i = 0; i < sounds.size(); ++i)
@@ -113,14 +106,10 @@ int RageSound_ALSA9::GetData()
 
 	/* We should be able to write it all.  If we don't, treat it as an error. */
 	int wrote = snd_pcm_mmap_writei( pcm, buf, frames_to_fill );
-	if( wrote == -EPIPE )
-	{
-		int err = snd_pcm_prepare(pcm);
-		ALSA_ASSERT("snd_pcm_prepare (Recover)");
+	if( wrote < 0 && Recover(wrote) )
 		wrote = snd_pcm_mmap_writei( pcm, buf, frames_to_fill );
-	}
 
-	if( wrote <= 0 )
+	if( wrote < 0 )
 	{
 		LOG->Trace( "RageSoundDriver_ALSA9::GetData: snd_pcm_mmap_writei: %s", snd_strerror(wrote) );
 		return -1;
@@ -138,25 +127,28 @@ int RageSound_ALSA9::GetData()
  * return -EPIPE.  When this happens, call Recover() to restart
  * playback.
  */
-void RageSound_ALSA9::Recover(int r)
+bool RageSound_ALSA9::Recover(int r)
 {
-	int err;
-
-	if (r == -EPIPE)
+	if( r == -EPIPE )
 	{
 		LOG->Trace("RageSound_ALSA9::Recover (prepare)");
-		err = snd_pcm_prepare(pcm);
+		int err = snd_pcm_prepare(pcm);
 		ALSA_ASSERT("snd_pcm_prepare (Recover)");
+		return true;
 	}
-	else /* r == -ESTRPIPE */
+
+	if( r == -ESTRPIPE )
 	{
 		LOG->Trace("RageSound_ALSA9::Recover (resume)");
+		int err;
 		while ((err = snd_pcm_resume(pcm)) == -EAGAIN)
 			SDL_Delay(10);
 
 		ALSA_ASSERT("snd_pcm_resume (Recover)");
+		return true;
 	}
 
+	return false;
 }
 
 
@@ -222,7 +214,7 @@ int RageSound_ALSA9::GetPosition(const RageSound *snd) const
 	if ( state == SND_PCM_STATE_PREPARED )
 		return 0;
 
-	/* XXX snd_pcm_hwsync */
+	snd_pcm_hwsync( pcm );
 	/* delay is returned in frames */
 	snd_pcm_sframes_t delay = snd_pcm_status_get_delay(status);
 
