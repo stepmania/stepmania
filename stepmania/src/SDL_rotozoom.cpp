@@ -20,7 +20,6 @@ static void InitVectors( vector<int> &s0, vector<int> &s1, vector<float> &percen
 	if( src >= dst )
 	{
 		float sx = float(src) / dst;
-		printf("sx %f\n", sx);
 		for( int x = 0; x < dst; x++ )
 		{
 			/* sax is the exact (floating-point) x coordinate in the source
@@ -54,7 +53,6 @@ static void InitVectors( vector<int> &s0, vector<int> &s1, vector<float> &percen
 				 * pixels; find the percentage: */
 				const float p = (sax - fleft) / xdist;
 				percent.push_back(1-p);
-				printf("p %.3f\n", p);
 			}
 		}
 	}
@@ -70,7 +68,6 @@ static void InitVectors( vector<int> &s0, vector<int> &s1, vector<float> &percen
 		 * resize.)
 		 */
 		float sx = float(src-1) / (dst-1);
-		printf("sx %f\n", sx);
 		for( int x = 0; x < dst; x++ )
 		{
 			const float sax = sx*x;
@@ -78,11 +75,9 @@ static void InitVectors( vector<int> &s0, vector<int> &s1, vector<float> &percen
 			/* source x coordinates of left and right pixels to sample */
 			s0.push_back( clamp(int(sax), 0, src-1));
 			s1.push_back( clamp(int(sax+1), 0, src-1) );
-			printf("sax: %.3f, esx0 %i, esx1 %i\n", sax, s0.back(), s1.back());
 
 			const float p = 1 - (sax - floorf(sax));
 			percent.push_back( p );
-			printf("p %.3f\n", p);
 		}
 	}
 }
