@@ -58,29 +58,33 @@ void ScrollBar::SetBarHeight( int iHeight )
 void ScrollBar::SetPercentage( float fStartPercent, float fEndPercent )
 {
 	CHECKPOINT;
-	const int k_iBarContentHeight = m_iBarHeight - int( m_sprTopButton.GetUnzoomedHeight()/2 + m_sprBottomButton.GetUnzoomedHeight()/2 );
+	const int iBarContentHeight = m_iBarHeight - int( m_sprTopButton.GetUnzoomedHeight()/2 + m_sprBottomButton.GetUnzoomedHeight()/2 );
+	ASSERT( iBarContentHeight != 0 );
+	CHECKPOINT;
 
 	// make sure the percent numbers are between 0 and 1
 	fStartPercent	= fmodf( fStartPercent+1, 1 );
 	fEndPercent		= fmodf( fEndPercent+1, 1 );
 
+	CHECKPOINT;
 	int iPart1TopY, iPart1BottomY, iPart2TopY, iPart2BottomY;
 
 	if( fStartPercent < fEndPercent )	// we only need to one 1 thumb part
 	{
-		iPart1TopY		= (int)SCALE( fStartPercent,0.0f, 1.0f, -k_iBarContentHeight/2.0f, +k_iBarContentHeight/2.0f ); 
-		iPart1BottomY	= (int)SCALE( fEndPercent,  0.0f, 1.0f, -k_iBarContentHeight/2.0f, +k_iBarContentHeight/2.0f ); 
+		iPart1TopY		= (int)SCALE( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		iPart1BottomY	= (int)SCALE( fEndPercent,  0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
 		iPart2TopY		= -1; 
 		iPart2BottomY	= -1; 
 	}
 	else	// we need two thumb parts
 	{
-		iPart1TopY		= (int)SCALE( 0.0f,			0.0f, 1.0f, -k_iBarContentHeight/2.0f, +k_iBarContentHeight/2.0f ); 
-		iPart1BottomY	= (int)SCALE( fEndPercent,	0.0f, 1.0f, -k_iBarContentHeight/2.0f, +k_iBarContentHeight/2.0f ); 
-		iPart2TopY		= (int)SCALE( fStartPercent,0.0f, 1.0f, -k_iBarContentHeight/2.0f, +k_iBarContentHeight/2.0f ); 
-		iPart2BottomY	= (int)SCALE( 1.0f,			0.0f, 1.0f, -k_iBarContentHeight/2.0f, +k_iBarContentHeight/2.0f ); 
+		iPart1TopY		= (int)SCALE( 0.0f,			0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		iPart1BottomY	= (int)SCALE( fEndPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		iPart2TopY		= (int)SCALE( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		iPart2BottomY	= (int)SCALE( 1.0f,			0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
 	}
 
+	CHECKPOINT;
 		
 	m_sprScrollThumbPart1.StretchTo( RectI(
 		(int)-m_sprScrollThumbPart1.GetUnzoomedWidth()/2,
@@ -89,6 +93,7 @@ void ScrollBar::SetPercentage( float fStartPercent, float fEndPercent )
 		iPart1BottomY
 		) );
 
+	CHECKPOINT;
 	if( iPart2TopY != -1 )
 	{
 		m_sprScrollThumbPart2.StretchTo( RectI(
