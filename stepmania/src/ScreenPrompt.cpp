@@ -94,7 +94,11 @@ void ScreenPrompt::Input( const DeviceInput& DeviceI, const InputEventType type,
 
 	if( DeviceI.device==DEVICE_KEYBOARD && type==IET_FIRST_PRESS )
 	{
-		PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( GameI.controller );
+		PlayerNumber pn;
+		if ( GAMESTATE->GetCurrentStyle() == NULL )
+			pn = (PlayerNumber)GameI.controller;
+		else
+			pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( GameI.controller );
 		switch( DeviceI.button )
 		{
 		case KEY_LEFT:
