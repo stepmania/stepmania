@@ -448,8 +448,9 @@ void CrashSignalHandler( int signal )
 		close(fds[0]);
 		parent_process( fds[1], BacktracePointers, signal );
 		waitpid(pid, NULL, 0);
-		/* Now that we're done, actually kill all threads. */
-		RageThread::HaltAllThreads( true );
+		/* Now that we're done, actually kill all threads.  kill(0) should kill ourself
+		 * and all other threads. */
+		kill( 0, SIGKILL );
 	}
 }
 
