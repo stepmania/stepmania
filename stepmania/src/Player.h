@@ -56,6 +56,7 @@ protected:
 	void OnRowDestroyed( TapNoteScore lastScore, int iStepIndex );
 	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
+	void HandleAutosync(float fNoteOffset);
 
 	int GetClosestNoteDirectional( int col, float fBeat, float fMaxBeatsAhead, int iDirection );
 	int GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind );

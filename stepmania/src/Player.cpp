@@ -394,23 +394,8 @@ void Player::Step( int col )
 		LOG->Trace("(%2d/%2d)Note offset: %f, Score: %i", m_iOffsetSample, SAMPLE_COUNT, fNoteOffset, score);
 		SetTapNoteScore(col, iIndexOverlappingNote, score);
 
-
-		if( GAMESTATE->m_SongOptions.m_bAutoSync  &&  score>=TNS_GREAT ) 
-		{
-			m_fOffset[m_iOffsetSample++] = fNoteOffset;
-			if (m_iOffsetSample >= SAMPLE_COUNT) 
-			{
-				float mean = calc_mean(m_fOffset, m_fOffset+SAMPLE_COUNT);
-				float stddev = calc_stddev(m_fOffset, m_fOffset+SAMPLE_COUNT);
-
-				if (stddev < .03 && stddev < fabsf(mean)) { //If they stepped with less than .03 error
-					GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds += mean;
-					LOG->Trace("Offset corrected by %f. Error in steps: %f seconds.", mean, stddev);
-				} else
-					LOG->Trace("Offset NOT corrected. Average offset: %f seconds. Error: %f seconds.", mean, stddev);
-				m_iOffsetSample = 0;
-			}
-		}
+		if (score>=TNS_GREAT ) 
+			HandleAutosync(fNoteOffset);
 
 		if (score > TNS_NONE && IsRowComplete(iIndexOverlappingNote, TNS_BOO) )
 			OnRowDestroyed( score, iIndexOverlappingNote );
@@ -418,6 +403,27 @@ void Player::Step( int col )
 
 	if( !bDestroyedNote )
 		m_GrayArrowRow.Step( col );
+}
+
+void Player::HandleAutosync(float fNoteOffset)
+{
+	if( !GAMESTATE->m_SongOptions.m_bAutoSync )
+		return;
+
+	m_fOffset[m_iOffsetSample++] = fNoteOffset;
+	if (m_iOffsetSample < SAMPLE_COUNT) 
+		return; /* need more */
+
+	const float mean = calc_mean(m_fOffset, m_fOffset+SAMPLE_COUNT);
+	const float stddev = calc_stddev(m_fOffset, m_fOffset+SAMPLE_COUNT);
+
+	if (stddev < .03 && stddev < fabsf(mean)) { //If they stepped with less than .03 error
+		GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds += mean;
+		LOG->Trace("Offset corrected by %f. Error in steps: %f seconds.", mean, stddev);
+	} else
+		LOG->Trace("Offset NOT corrected. Average offset: %f seconds. Error: %f seconds.", mean, stddev);
+
+	m_iOffsetSample = 0;
 }
 
 void Player::OnRowDestroyed( TapNoteScore lastScore, int iIndexThatWasSteppedOn )
