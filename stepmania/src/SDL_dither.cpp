@@ -125,7 +125,13 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 				int out_intensity = colors[3] * conv[3];
 	
 				/* Truncate, and add e to make sure a value of 14.999998 -> 15. */
-				colors[3] = Uint8((out_intensity + 1) >> 16);
+//				colors[3] = Uint8((out_intensity + 1) >> 16);
+
+				/* I don't remember why this used to truncate.  Doing that causes
+				 * dithering to an image with 1-bit alpha to be transparent on all
+				 * source alpha values except for full-opaque, which is wrong. 
+				 * Add .5, so we round. */
+				colors[3] = Uint8((out_intensity + 32767) >> 16);
 			}
 
 			/* Raw value -> int -> pixel */
@@ -249,7 +255,13 @@ void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 				int out_intensity = colors[3] * conv[3];
 	
 				/* Truncate, and add e to make sure a value of 14.999998 -> 15. */
-				colors[3] = Uint8((out_intensity + 1) >> 16);
+//				colors[3] = Uint8((out_intensity + 1) >> 16);
+
+				/* I don't remember why this used to truncate.  Doing that causes
+				 * dithering to an image with 1-bit alpha to be transparent on all
+				 * source alpha values except for full-opaque, which is wrong. 
+				 * Add .5, so we round. */
+				colors[3] = Uint8((out_intensity + 32767) >> 16);
 			}
 
 			mySDL_SetRawRGBAV( dstp, dst, colors );
