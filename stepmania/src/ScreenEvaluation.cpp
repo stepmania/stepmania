@@ -717,6 +717,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		if( SHOW_FULL_COMBO && stageStats.FullCombo( (PlayerNumber) p ) )
 		{
 			m_FullCombo[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation full combo P%i",p+1)) );
+			m_FullCombo[p]->SetName( ssprintf("FullComboP%d",p+1) );
+			UtilSetXYAndOnCommand( m_FullCombo[p], "ScreenEvaluation" );
 			this->AddChild( m_FullCombo[p] );
 		}
 	}
@@ -943,7 +945,8 @@ void ScreenEvaluation::TweenOffScreen()
 			continue;
 		UtilOffCommand( m_sprMachineRecord[p], "ScreenEvaluation" );
 		UtilOffCommand( m_sprPersonalRecord[p], "ScreenEvaluation" );
-		UtilOffCommand( m_FullCombo[p], "ScreenEvaluation" );
+		if( m_FullCombo[p].IsLoaded() )
+			UtilOffCommand( m_FullCombo[p], "ScreenEvaluation" );
 	}
 	UtilOffCommand( m_sprTryExtraStage, "ScreenEvaluation" );
 }
