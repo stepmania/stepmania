@@ -42,7 +42,6 @@ struct CrashData
 #define CHILD_MAGIC_PARAMETER "--private-do-crash-handler"
 
 const char *SignalName( int signo );
-const char *SignalCodeName( int signo, int code );
 
 #if defined(DARWIN)
 const char *ExceptionName( int signo );
