@@ -250,7 +250,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 ScreenOptions::~ScreenOptions()
 {
 	LOG->Trace( "ScreenOptions::~ScreenOptions()" );
-	for( int i=0; i<m_iNumOptionRows; i++ )
+	for( int i=0; i<m_iNumOptionRows+1; i++ ) /* +1 = "exit" */
 		for( unsigned j = 0; j < m_textItems[i].size(); ++j)
 			delete m_textItems[i][j];
 }
