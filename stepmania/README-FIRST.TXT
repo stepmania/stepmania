@@ -827,11 +827,13 @@ Header section...
 16. Extra Stages
 ************************************************************
 
-You can manually specify extra stage 1 and 2 by creating a .CRS files in the 
-group folder called extra1.crs and extra2.crs.  These courses must contain 
-exactly one valid song.  Don't forget to specify modifiers - see the CRS File 
-Format section in the readme for more information.  If a CRS file is not found
-or is invalid, the program will choose approprite Song/Notes/Options.
+You can manually specify extra stages for each song group by creating .CRS
+files called "extra1.crs" and "extra2.crs".  These courses must contain
+exactly one valid song.  Don't forget to specify modifiers - see the CRS
+File Format section for more information.  If a CRS file is not found or
+is invalid, the program will choose appropriate songs, notes and options.
+
+Place these course files in the song group folder, not in "Courses".
 
 ************************************************************
 17. Creating an Announcer
