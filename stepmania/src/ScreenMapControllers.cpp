@@ -264,8 +264,6 @@ void ScreenMapControllers::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_GoToNextScreen:
-		//SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-		/* At request, moved this into the options/operator menu -- Miryokuteki */
 		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 		break;
 	}
