@@ -63,16 +63,7 @@ AH_VERBATIM([VA_ZZZ_NEEDED_FUNCS],
 #endif
 ])
 
-AC_CHECK_DECLS([SIGPWR, SIGUSR1],,,[#include <signal.h>])
-AH_VERBATIM([SIGNALS],
-[#if !HAVE_DECL_SIGPWR
-#if HAVE_DECL_SIGUSR1
-#define SIGPWR SIGUSR1
-#else  //!HAVE_DECL_SIGUSR1
-#define SIGPWR 30
-#endif //HAVE_DECL_SIGUSR1
-#endif //!HAVE_DECL_SIGPWR
-])
+AC_CHECK_DECLS([SIGPWR],,,[#include <signal.h>])
 
 case $host in
 	*-*-darwin*)
