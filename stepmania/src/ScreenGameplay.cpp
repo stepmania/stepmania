@@ -31,6 +31,7 @@
 #include "ThemeManager.h"
 #include "RageTimer.h"
 #include "ScoreKeeperMAX2.h"
+#include "NoteFieldPositioning.h"
 
 #include "LyricsLoader.h"
 
@@ -449,6 +450,11 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		}
 	}
 
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		GAMESTATE->m_Position[p]->LoadFromStyleDef(GAMESTATE->GetCurrentStyleDef(), (PlayerNumber)p);
+	}
 
 	/* LoadNextSong first, since that positions some elements which need to be
 	 * positioned before we TweenOnScreen. */
