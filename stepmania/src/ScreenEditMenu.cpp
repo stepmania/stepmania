@@ -1,15 +1,4 @@
 #include "global.h"
-/*
------------------------------------------------------------------------------
- Class: ScreenEditMenu
-
- Desc: The main title screen and menu.
-
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
-	Chris Danford
------------------------------------------------------------------------------
-*/
-
 #include "ScreenEditMenu.h"
 #include "SongManager.h"
 #include "ScreenManager.h"
@@ -25,13 +14,8 @@
 #include "song.h"
 
 
-//
-// Defines specific to ScreenEditMenu
-//
-#define EXPLANATION_X				THEME->GetMetricF("ScreenEditMenu","ExplanationX")
-#define EXPLANATION_Y				THEME->GetMetricF("ScreenEditMenu","ExplanationY")
-#define EXPLANATION_TEXT			THEME->GetMetric("ScreenEditMenu","ExplanationText")
-#define HELP_TEXT					THEME->GetMetric("ScreenEditMenu","HelpText")
+#define EXPLANATION_TEXT			THEME->GetMetric(m_sName,"ExplanationText")
+#define HELP_TEXT					THEME->GetMetric(m_sName,"HelpText")
 
 const ScreenMessage SM_RefreshSelector	=	(ScreenMessage)(SM_User+1);
 
@@ -39,40 +23,24 @@ ScreenEditMenu::ScreenEditMenu( CString sName ) : ScreenWithMenuElements( sName 
 {
 	LOG->Trace( "ScreenEditMenu::ScreenEditMenu()" );
 
-//	GAMESTATE->m_CurStyle = STYLE_INVALID;
+	/* Enable all players. */
+	FOREACH_PlayerNumber( pn )
+		GAMESTATE->m_bSideIsJoined[pn] = true;
 
 	m_Selector.SetXY( 0, 0 );
 //	m_Selector.AllowNewNotes();
 	this->AddChild( &m_Selector );
 
 
+	m_textExplanation.SetName( "Explanation" );
 	m_textExplanation.LoadFromFont( THEME->GetPathToF("Common normal") );
-	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
+	SET_XY_AND_ON_COMMAND( m_textExplanation );
 	m_textExplanation.SetText( EXPLANATION_TEXT );
-	m_textExplanation.SetZoom( 0.7f );
 	this->AddChild( &m_textExplanation );
 
 	this->SortByDrawOrder();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenEditMenu music") );
-}
-
-
-ScreenEditMenu::~ScreenEditMenu()
-{
-	LOG->Trace( "ScreenEditMenu::~ScreenEditMenu()" );
-}
-
-void ScreenEditMenu::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}
-
-void ScreenEditMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
-{
-	LOG->Trace( "ScreenEditMenu::Input()" );
-
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
@@ -228,3 +196,27 @@ void ScreenEditMenu::MenuBack( PlayerNumber pn )
 	SOUND->StopMusic();
 }
 
+/*
+ * (c) 2002-2004 Chris Danford
+ * All rights reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
