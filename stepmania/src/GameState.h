@@ -94,6 +94,7 @@ public:
 	float		m_fCurBPS;
 	bool		m_bFreeze;	// in the middle of a freeze
 	bool		m_bPastHereWeGo;
+	static const float MUSIC_SECONDS_INVALID;
 
 	void ResetMusicStatistics();		// Call this when it's time to play a new song.  Clears the values above.
 	void UpdateSongPosition(float fPositionSeconds);
