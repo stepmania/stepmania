@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\stepmania\itg\itg\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                            	cl                    /Zl                    /nologo                    /c                    verstub.cpp                    /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                             	cl                     /Zl                     /nologo                     /c                     verstub.cpp                     /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\stepmania\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                             	cl                                                                                                                      /Zl                                                                                                                      /nologo                                                                                                                      /c                                                                                                                      verstub.cpp                                                                                                                      /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                              	cl                                                                                                                       /Zl                                                                                                                       /nologo                                                                                                                       /c                                                                                                                       verstub.cpp                                                                                                                       /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -630,14 +630,6 @@ SOURCE=.\RageUtil_FileDB.h
 # Begin Group "Data Structures"
 
 # PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\ArrowBackdrop.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ArrowBackdrop.h
-# End Source File
 # Begin Source File
 
 SOURCE=.\Attack.cpp
@@ -3199,14 +3191,6 @@ SOURCE=.\crypto51\modarith.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\crypto51\modes.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\crypto51\modes.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\crypto51\mqueue.cpp
 # End Source File
 # Begin Source File
@@ -3220,14 +3204,6 @@ SOURCE=.\crypto51\nbtheory.cpp
 # Begin Source File
 
 SOURCE=.\crypto51\nbtheory.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\crypto51\oaep.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\crypto51\oaep.h
 # End Source File
 # Begin Source File
 
@@ -3271,14 +3247,6 @@ SOURCE=.\crypto51\queue.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\crypto51\randpool.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\crypto51\randpool.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\crypto51\rng.h
 # End Source File
 # Begin Source File
@@ -3312,14 +3280,6 @@ SOURCE=.\crypto51\simple.h
 # Begin Source File
 
 SOURCE=.\crypto51\smartptr.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\crypto51\strciphr.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\crypto51\strciphr.h
 # End Source File
 # Begin Source File
 

@@ -5,7 +5,7 @@
 
 #ifdef OS_RNG_AVAILABLE
 
-#include "randpool.h"
+#include "filters.h"
 
 //added
 #include "cryptlib.h"
