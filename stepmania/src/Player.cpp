@@ -917,8 +917,8 @@ void Player::Step( int col, RageTimer tm )
 		if( score==TNS_MARVELOUS  &&  !GAMESTATE->ShowMarvelous())
 			score = TNS_PERFECT;
 
-		LOG->Trace("XXX: %i col %i, at %f, music at %f, step was at %f, off by %f",
-			score, col, fStepSeconds, fCurrentMusicSeconds, fMusicSeconds, fNoteOffset );
+		//LOG->Trace("XXX: %i col %i, at %f, music at %f, step was at %f, off by %f",
+		//	score, col, fStepSeconds, fCurrentMusicSeconds, fMusicSeconds, fNoteOffset );
 //		LOG->Trace("Note offset: %f (fSecondsFromPerfect = %f), Score: %i", fNoteOffset, fSecondsFromPerfect, score);
 		
 		tn.result.tns = score;
