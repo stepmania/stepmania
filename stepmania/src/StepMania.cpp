@@ -506,7 +506,7 @@ static void CheckVideoDefaultSettings()
 
 	const VideoCardDefaults* pDefaults = NULL;
 	
-	for( int i=0; i<ARRAYSIZE(g_VideoCardDefaults); i++ )
+	for( unsigned i=0; i<ARRAYSIZE(g_VideoCardDefaults); i++ )
 	{
 		pDefaults = &g_VideoCardDefaults[i];
 
