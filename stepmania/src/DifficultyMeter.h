@@ -33,7 +33,7 @@ public:
 	void Unset();
 
 private:
-	void SetMeter( int iMeter );
+	void SetMeter( int iMeter, Difficulty dc );
 	void SetDifficulty( CString diff );
 	BitmapText		m_textFeet;
 
