@@ -169,6 +169,8 @@ private:
 	int fd;
 	CString path; /* for Copy */
 
+	CString write_buf;
+
 public:
 	RageFileObjDirect( const CString &path, int fd_, RageFile &p );
 	virtual ~RageFileObjDirect();
@@ -341,10 +343,23 @@ RageFileObjDirect::RageFileObjDirect( const CString &path_, int fd_, RageFile &p
 	path = path_;
 	fd = fd_;
 	ASSERT( fd != -1 );
+
+	if( parent.GetOpenMode() == RageFile::WRITE )
+		write_buf.reserve( 1024*64 );
 }
 
 RageFileObjDirect::~RageFileObjDirect()
 {
+	if( write_buf.size() )
+	{
+		int ret = write( fd, write_buf.data(), write_buf.size() );
+		if( ret == -1 )
+		{
+			LOG->Warn("Error writing %s: %s", this->path.c_str(), strerror(errno) );
+			SetError( strerror(errno) );
+		}
+	}
+
 	if( fd != -1 )
 		close( fd );
 }
@@ -363,14 +378,8 @@ int RageFileObjDirect::Read( void *buf, size_t bytes )
 
 int RageFileObjDirect::Write( const void *buf, size_t bytes )
 {
-	int ret = write( fd, buf, bytes );
-	if( ret == -1 )
-	{
-		SetError( strerror(errno) );
-		return -1;
-	}
-
-	return ret;
+	write_buf.append( (const char *)buf, (const char *)buf+bytes );
+	return bytes;
 }
 
 void RageFileObjDirect::Rewind()
