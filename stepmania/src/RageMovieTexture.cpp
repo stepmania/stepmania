@@ -379,7 +379,6 @@ void HandleDivXError()
 		"be installed before running the application.\n\n"
 		"Please visit http://www.divx.com to download the latest version."
 		);
-	exit(1);
 }
 
 //-----------------------------------------------------------------------------
