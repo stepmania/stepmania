@@ -1708,9 +1708,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			 * not always, if m_bTwoPlayerRecovery is set. */
 			if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_OFF )
 			{
-				if( (m_pLifeMeter[p] && !m_pLifeMeter[p]->IsFailing()) || 
-					(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)p)) )
-					GAMESTATE->m_CurStageStats.bFailed[p] = true;
+				for( p=0; p<NUM_PLAYERS; p++ )
+					if( (m_pLifeMeter[p] && m_pLifeMeter[p]->IsFailing()) || 
+						(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing((PlayerNumber)p)) )
+						GAMESTATE->m_CurStageStats.bFailed[p] = true;
 			}
 
 			/* If all players have *really* failed (bFailed, not the life meter or
