@@ -9,7 +9,7 @@
  *
  */
 
-#include "LoadingWindow_Null.h"
+#include "LoadingWindow.h"
 
 extern void MakeNewCocoaWindow();
 extern void DisposeOfCocoaWindow();
@@ -25,7 +25,6 @@ public:
 	void SetText(CString str) { SetCocoaWindowText(str.c_str()); }
 };
 
-#undef ARCH_LOADING_WINDOW
-#define ARCH_LOADING_WINDOW LoadingWindow_Cocoa
+#define HAVE_LOADING_WINDOW_COCOA
 
 #endif /* LOADING_WINDOW_COCOA */
