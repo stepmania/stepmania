@@ -124,6 +124,7 @@ protected:	// derived classes need access to these
 	OptionIcon		m_OptionIcons[NUM_PLAYERS][MAX_OPTION_LINES];
 	OptionsCursor	m_Highlight[NUM_PLAYERS];
 
+	BitmapText		m_textPlayerName[NUM_PLAYERS];
 	BitmapText		m_textExplanation[NUM_PLAYERS];
 	DualScrollBar	m_ScrollBar;
 

@@ -21,6 +21,7 @@
 #include "ThemeManager.h"
 #include "InputMapper.h"
 #include "ActorUtil.h"
+#include "ProfileManager.h"
 
 const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 
@@ -221,6 +222,15 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 		m_textExplanation[p].SetZoom( EXPLANATION_ZOOM );
 		m_textExplanation[p].SetShadowLength( 0 );
 		m_framePage.AddChild( &m_textExplanation[p] );
+	}
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_textPlayerName[p].LoadFromFont( THEME->GetPathToF( "ScreenOptions player") );
+		m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
+		m_textPlayerName[p].SetText( PROFILEMAN->GetPlayerName((PlayerNumber)p) );
+		UtilSetXYAndOnCommand( m_textPlayerName[p], "ScreenOptions" );
+		m_framePage.AddChild( &m_textPlayerName[p] );
 	}
 
 	if( SHOW_SCROLL_BAR )
