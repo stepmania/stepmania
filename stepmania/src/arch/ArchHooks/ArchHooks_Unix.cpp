@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageLog.h"
+#include "RageThreads.h"
 #include "ArchHooks_Unix.h"
 #include "archutils/Unix/SignalHandler.h"
 #include "archutils/Unix/GetSysInfo.h"
@@ -12,8 +13,10 @@
 
 static void EmergencyShutdown( int signal )
 {
-	/* If we don't actually use SDL for video, this should be a no-op. */
-	if( SDL_WasInit(SDL_INIT_VIDEO) )
+	/* If we don't actually use SDL for video, this should be a no-op.  Only
+	 * do this if the main thread crashes; trying to shut down from
+	 * another thread causes crashes (eg. GL may be using TLS). */
+	if( !strcmp(RageThread::GetCurThreadName(), "Main thread") && SDL_WasInit(SDL_INIT_VIDEO) )
 		SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 	
