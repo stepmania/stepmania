@@ -150,6 +150,7 @@ void PrefsManager::Init()
 	m_bDelayedScreenLoad = false;
 	m_bDelayedModelDelete = false;
 	m_BannerCache = BNCACHE_LOW_RES;
+	m_bPalettedBannerCache = false;
 	m_bFastLoad = true;
 	m_MusicWheelUsesSections = ALWAYS;
 	m_iMusicWheelSwitchSpeed = 10;
@@ -444,6 +445,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
 	ini.GetValue( "Options", "DelayedModelDelete",				m_bDelayedModelDelete );
 	ini.GetValue( "Options", "BannerCache",						(int&)m_BannerCache );
+	ini.GetValue( "Options", "PalettedBannerCache",				m_bPalettedBannerCache );
 	ini.GetValue( "Options", "FastLoad",						m_bFastLoad );
 	ini.GetValue( "Options", "MusicWheelUsesSections",			(int&)m_MusicWheelUsesSections );
 	ini.GetValue( "Options", "MusicWheelSwitchSpeed",			m_iMusicWheelSwitchSpeed );
@@ -686,6 +688,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
 	ini.SetValue( "Options", "DelayedModelDelete",				m_bDelayedModelDelete );
 	ini.SetValue( "Options", "BannerCache",						m_BannerCache );
+	ini.SetValue( "Options", "PalettedBannerCache",				m_bPalettedBannerCache );
 	ini.SetValue( "Options", "FastLoad",						m_bFastLoad );
 	ini.SetValue( "Options", "MusicWheelUsesSections",			m_MusicWheelUsesSections );
 	ini.SetValue( "Options", "MusicWheelSwitchSpeed",			m_iMusicWheelSwitchSpeed );

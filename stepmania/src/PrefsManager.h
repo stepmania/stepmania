@@ -44,6 +44,7 @@ public:
 	bool			m_bDelayedModelDelete;
 	enum BannerCacheMode { BNCACHE_OFF, BNCACHE_LOW_RES, BNCACHE_FULL };
 	BannerCacheMode	m_BannerCache;
+	bool			m_bPalettedBannerCache;
 	bool			m_bFastLoad;
 
 	bool			m_bOnlyDedicatedMenuButtons;
