@@ -12,8 +12,8 @@ InputQueue*	INPUTQUEUE = NULL;	// global and accessable from anywhere in our pro
 
 InputQueue::InputQueue()
 {
-	FOREACH_PlayerNumber( p )
-		m_aQueue[p].insert(m_aQueue[p].begin(), MAX_INPUT_QUEUE_LENGTH, GameButtonAndTime() );
+	FOREACH_GameController ( gc )
+		m_aQueue[gc].insert(m_aQueue[gc].begin(), MAX_INPUT_QUEUE_LENGTH, GameButtonAndTime() );
 }
 
 void InputQueue::RememberInput( const GameInput GameI )
