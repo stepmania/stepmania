@@ -694,7 +694,8 @@ void NoteDataUtil::Mines( NoteData &in, float fStartBeat, float fEndBeat )
 		for( int t=0; t<in.GetNumTracks(); t++ )
 			if( in.GetTapNote(t,iMineRow) == TAP_TAP )
 				in.SetTapNote(t,iMineRow,TAP_MINE);
-		
+
+		iRowCount = 0;
 	}
 }
 
