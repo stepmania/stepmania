@@ -58,8 +58,6 @@ public:
 	/* Run an expression.  The result is left on the Lua stack. */
 	bool RunExpression( const CString &str );
 	lua_State *L;
-private:
-	int m_iNopFunction;
 };
 
 extern LuaManager *LUA;

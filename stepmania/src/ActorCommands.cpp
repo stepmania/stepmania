@@ -14,13 +14,6 @@ ActorCommands::ActorCommands( const Commands& cmds )
 
 void ActorCommands::Register()
 {
-	if( m_cmds.v.size() == 0 )
-	{
-		LUA->PushNopFunction();
-		this->SetFromStack();
-		return;
-	}
-
 	//
 	// Convert cmds to a Lua function
 	//
