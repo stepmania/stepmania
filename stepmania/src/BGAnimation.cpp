@@ -60,6 +60,9 @@ void BGAnimation::LoadFromAniDir( CString sAniDir, CString sSongBGPath )
 	GetDirListing( sAniDir+"*.png", asImagePaths, false, true );
 	GetDirListing( sAniDir+"*.jpg", asImagePaths, false, true );
 	GetDirListing( sAniDir+"*.gif", asImagePaths, false, true );
+	GetDirListing( sAniDir+"*.avi", asImagePaths, false, true );
+	GetDirListing( sAniDir+"*.mpg", asImagePaths, false, true );
+	GetDirListing( sAniDir+"*.mpeg", asImagePaths, false, true );
 	GetDirListing( sAniDir+"*.sprite", asImagePaths, false, true );
 
 	SortCStringArray( asImagePaths );
