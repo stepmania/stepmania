@@ -648,7 +648,15 @@ void Song::TidyUpData()
 
 	/* For any images we have now, make sure they're loadable, so we don't throw with
 	 * "can't load image" later.  Do this before the image search below, to avoid redundant
-	 * image decodes.  XXX: Images in BGA scripts? */
+	 * image decodes.
+	 * XXX: Images in BGA scripts? 
+	 * Should we do this?  It's not very good to wipe out metadata like this if files don't
+	 * exist; for example, the file might be in a different directory that may not be available
+	 * (eg. a CDTitle in the global directory that doesn't exist yet); if we do this and the file
+	 * is saved to disk in the editor, we'll wipe out the data when it was legitimate.  However,
+	 * it's possible that there might be a valid banner, etc. and the metadata is simply meaningless,
+	 * in which case it's often better (for the average user) to wipe it out and use the file.
+	 */
 	if( HasBanner() && !ImageIsLoadable( GetBannerPath() ) )
 		m_sBannerFile = "";
 	if( HasBackground() && !ImageIsLoadable( GetBackgroundPath() ) )
