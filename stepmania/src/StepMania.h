@@ -15,6 +15,8 @@ int SMmain(int argc, char* argv[]);
 void ApplyGraphicOptions();
 void ExitGame();
 void ResetGame( bool ReturnToFirstScreen=true );
+void ReadGamePrefsFromDisk();
+void SaveGamePrefsToDisk();
 
 #if defined(WIN32)
 extern HWND g_hWndMain;

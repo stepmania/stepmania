@@ -188,7 +188,7 @@ void ExitGame()
 void ResetGame( bool ReturnToFirstScreen )
 {
 	GAMESTATE->Reset();
-	PREFSMAN->ReadGamePrefsFromDisk();
+	ReadGamePrefsFromDisk();
 	INPUTMAPPER->ReadMappingsFromDisk();
 
 	NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_CurGame );
@@ -215,7 +215,7 @@ void ResetGame( bool ReturnToFirstScreen )
 			THEME->SwitchThemeAndLanguage( "default", THEME->GetCurLanguage() );
 		TEXTUREMAN->DoDelayedDelete();
 	}
-	PREFSMAN->SaveGamePrefsToDisk();
+	SaveGamePrefsToDisk();
 
 	PREFSMAN->m_bFirstRun = false;
 
@@ -509,6 +509,53 @@ static void RestoreAppPri()
 #endif
 }
 
+
+#define GAMEPREFS_INI_PATH BASE_PATH "Data" SLASH "GamePrefs.ini"
+
+
+void ReadGamePrefsFromDisk()
+{
+	if( !GAMESTATE )
+		return;
+
+	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
+	IniFile ini;
+	ini.SetPath( GAMEPREFS_INI_PATH );
+	ini.ReadFile();	// it's OK if this fails
+
+	CString sAnnouncer = sGameName, sTheme = sGameName, sNoteSkin = sGameName;
+
+	// if these calls fail, the three strings will keep the initial values set above.
+	ini.GetValue( sGameName, "Announcer",			sAnnouncer );
+	ini.GetValue( sGameName, "Theme",				sTheme );
+	ini.GetValue( sGameName, "DefaultModifiers",	PREFSMAN->m_sDefaultModifiers );
+
+	// it's OK to call these functions with names that don't exist.
+	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
+	THEME->SwitchThemeAndLanguage( sTheme, PREFSMAN->m_sLanguage );
+
+//	NOTESKIN->SwitchNoteSkin( sNoteSkin );
+}
+
+void SaveGamePrefsToDisk()
+{
+	if( !GAMESTATE )
+		return;
+
+	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
+	IniFile ini;
+	ini.SetPath( GAMEPREFS_INI_PATH );
+	ini.ReadFile();	// it's OK if this fails
+
+	ini.SetValue( sGameName, "Announcer",			ANNOUNCER->GetCurAnnouncerName() );
+	ini.SetValue( sGameName, "Theme",				THEME->GetCurThemeName() );
+	ini.SetValue( sGameName, "DefaultModifiers",	PREFSMAN->m_sDefaultModifiers );
+
+	ini.WriteFile();
+}
+
+
+
 #define UNLOCKS_PATH BASE_PATH "Data" SLASH "Unlocks.dat"
 
 
@@ -590,7 +637,7 @@ int main(int argc, char* argv[])
 
 	/* XXX: Why do we reload global prefs?  PREFSMAN loads them in the ctor. -glenn */
 	PREFSMAN->ReadGlobalPrefsFromDisk( true );
-	PREFSMAN->ReadGamePrefsFromDisk();
+	ReadGamePrefsFromDisk();
 
 	DISPLAY = CreateDisplay();
 	TEXTUREMAN	= new RageTextureManager();
@@ -641,7 +688,7 @@ int main(int argc, char* argv[])
 	GameLoop();
 
 	PREFSMAN->SaveGlobalPrefsToDisk();
-	PREFSMAN->SaveGamePrefsToDisk();
+	SaveGamePrefsToDisk();
 
 #ifndef DEBUG
 	}
