@@ -8,8 +8,6 @@
 #include "RageThreads.h"
 #include "RageTimer.h"
 
-#include "SDL_mutex.h"
-
 /* Fix a compile problem in gcc 3.2: */
 #if defined(HAVE_INTTYPES_H)
 #include <inttypes.h>
