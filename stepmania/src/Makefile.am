@@ -5,13 +5,12 @@ AM_CXXFLAGS =
 AM_CFLAGS =
 
 if DARWIN
-AM_LDFLAGS = -framework Cocoa -framework Quicktime -framework Carbon -framework OpenGL -framework IOKit
-CXXFLAGS_EXTRA =
+AM_LDFLAGS += -framework Cocoa -framework Quicktime -framework Carbon -framework OpenGL -framework IOKit
 else
-CXXFLAGS_EXTRA = -DLINUX
+AM_CXXFLAGS += -DLINUX
 endif
 
-AM_CXXFLAGS = -ISDL-1.2.5/include -ISDL_sound-1.0.0 $(CXXFLAGS_EXTRA)
+AM_CXXFLAGS = -ISDL-1.2.5/include -ISDL_sound-1.0.0
 
 # This is a little hacky; we use our own version of SDL and SDL_sound, and I don't
 # want to have to integrate their entire build systems.
