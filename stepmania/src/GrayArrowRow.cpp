@@ -37,8 +37,10 @@ void GrayArrowRow::Load( PlayerNumber pn )
 	{
 		CString sPath = GAMEMAN->GetPathTo(c, "receptor");
 		m_GrayArrow[c].Load( sPath );
-		if( m_GrayArrow[c].GetNumStates() != 3 )
-			RageException::Throw( "'%s' must have 3 frames", sPath.GetString() );
+		// XXX
+		if( m_GrayArrow[c].GetNumStates() != 2 &&
+			m_GrayArrow[c].GetNumStates() != 3 )
+			RageException::Throw( "'%s' must have 2 or 3 frames", sPath.GetString() );
 		m_GrayArrow[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
 	}	
 }

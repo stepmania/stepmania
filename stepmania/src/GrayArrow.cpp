@@ -39,14 +39,20 @@ void GrayArrow::Update( float fDeltaTime )
 
 	Sprite::Update( fDeltaTime );
 
+	/* XXX: get rid of this once we update the note skins */
+	int IdleState = (GetNumStates() == 3)? 0: 1;
+	int OffState = (GetNumStates() == 3)? 1: 0;
+	int OnState = (GetNumStates() == 3)? 2: 1;
+	
 	if( !GAMESTATE->m_bPastHereWeGo )
 	{
+		SetState( IdleState );
 		SetState( 0 );
 		return;
 	}
 
 	/* These could be metrics or configurable.  I'd prefer the flash to
-	* start on the beat, I think ... -glenn */
+	 * start on the beat, I think ... -glenn */
 
 	/* Start flashing 10% of a beat before the beat starts. */
 	const float flash_offset = -0.1f;
@@ -57,12 +63,12 @@ void GrayArrow::Update( float fDeltaTime )
 	float cur_beat = GAMESTATE->m_fSongBeat;
 
 	/* Beats can start in very negative territory (many BMR songs, Drop Out 
-		* -Remix-). */
+	 * -Remix-). */
 	cur_beat += 100.0f;
 
 	cur_beat -= flash_offset;
 	float fPercentIntoBeat = fmodf(cur_beat, 1);
-	SetState( (fPercentIntoBeat<flash_length)? 1 : 2 );
+	SetState( (fPercentIntoBeat<flash_length)? OffState : OnState );
 }
 
 void GrayArrow::Step()
