@@ -141,19 +141,6 @@ having them inline with the rest of the notes would be nice.  Hmm ...
 
 ********
 
-All of our graphics are scaled for 640x480.  We should have some way
-to specify the native resolution of graphics, so we can have 1024x768 or
-higher graphics when it's useful.  (For example, the radar kanji could
-look a lot better.)
-
-Maybe eg "200%" to specify the image is scaled twice as large as other images?
-
-Actually, entire thremes could be high-res, so it might be useful to
-have a more general way to do this (perhaps a way to specify a hint
-for a whole directory?)
-
-********
-
 Stuff in the song cache never dies unless the version changes.  We don't
 want to erase songs we didn't load; I frequently move song paths out of
 the search path while debugging (for fast loads) and I don't want that
@@ -281,15 +268,6 @@ Option to turn off menu music (except for song previews).
 ********
 
 Don't export *.old in SMZIPs.
-
-********
-
-Don't derive subtitles via GetMainAndSubTitlesFromFullTitle in SMs
-if there's a #SUBTITLE tag at all, even an empty one.  This way, you
-can get full control over what goes in which field, and it's derived
-automatically only if no subtitle is specified at all (or we're importing
-from another format).  Files with subtitles in the #TITLE field should
-be discouraged.
 
 ********
 

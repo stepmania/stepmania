@@ -19,7 +19,7 @@
 !define PRODUCT_NAME_VER "${PRODUCT_NAME} ${VERSION}"
 
 Name "${PRODUCT_NAME}"
-OutFile "StepMania-CVS-20030419.exe"
+OutFile "StepMania-CVS-20030422.exe"
 ;OutFile "StepMania301.exe"
 
 ; Some default compiler settings (uncomment and change at will):
@@ -183,6 +183,7 @@ File "Visualizations\instructions.txt"
 CreateDirectory "$INSTDIR\Data"
 SetOutPath "$INSTDIR\Data"
 File "Data\Translation.dat"
+File "Data\AI.ini"
 
 SetOutPath "$INSTDIR"
 File "msvcr70.dll"
@@ -298,6 +299,7 @@ RMDir "$INSTDIR\Visualizations"
 
 ; Don't delete high scores.
 Delete "$INSTDIR\Data\Translation.dat"
+Delete "$INSTDIR\Data\AI.ini"
 Delete "$INSTDIR\Data\stepmania.ini"
 Delete "$INSTDIR\Data\Keymaps.ini"
 Delete "$INSTDIR\Data\GamePrefs.ini"
