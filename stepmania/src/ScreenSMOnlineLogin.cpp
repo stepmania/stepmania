@@ -22,7 +22,10 @@ ScreenSMOnlineLogin::ScreenSMOnlineLogin( const CString& sName ) : ScreenWithMen
 {
 	m_iPlayer = THEME->GetMetricI( sName, "PlayerNumber" ) - 1;
 
-	m_sUserName = GAMESTATE->GetPlayerDisplayName((PlayerNumber)m_iPlayer);
+	if ( GAMESTATE->IsPlayerEnabled( (PlayerNumber)m_iPlayer ) )
+		m_sUserName = GAMESTATE->GetPlayerDisplayName((PlayerNumber)m_iPlayer);
+	else
+		m_sUserName = "INVALID";
 
 	m_sprPassword.SetName( "PasswordBG" );
 	m_sprPassword.Load( THEME->GetPathG( m_sName, "PasswordBG" ) );
