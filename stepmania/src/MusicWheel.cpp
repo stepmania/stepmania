@@ -39,6 +39,7 @@
 #define NUM_SECTION_COLORS			THEME->GetMetricI("MusicWheel","NumSectionColors")
 #define SECTION_COLORS( i )			THEME->GetMetricC("MusicWheel",ssprintf("SectionColor%d",i+1))
 #define DEFAULT_SCROLL_DIRECTION	THEME->GetMetricI("Notes","DefaultScrollDirection")
+#define SONG_REAL_EXTRA_COLOR		THEME->GetMetricC("MusicWheel","SongRealExtraColor")
 
 
 const int MAX_WHEEL_SOUND_SPEED = 15;
@@ -408,15 +409,15 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			{
 				if( arrayWheelItemDatas[i].m_pSong == pSong )
 				{
+					/* Change the song color. */
+					arrayWheelItemDatas[i].m_color = SONG_REAL_EXTRA_COLOR;
 					bFoundExtraSong = true;
 					break;
 				}
 			}
 
-			// XXX this is where we can make the EX1 stage that will lead to
-			// EX2 a different color
 			if( !bFoundExtraSong )
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, GAMESTATE->GetStageColor()) );
+				arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONG_REAL_EXTRA_COLOR) );
 		}
 
 		break;
