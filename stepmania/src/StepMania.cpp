@@ -563,6 +563,20 @@ int main(int argc, char* argv[])
 	catch( RageException e )
 	{
 		g_sErrorString = e.what();
+		if (!PREFSMAN->m_bWindowed)
+		{
+			try
+			{
+				/* Goto windowed if possible */
+				PREFSMAN->m_bWindowed = 1;
+				ApplyGraphicOptions();
+			}
+			catch (...)
+		    {
+				/* Couldn't goto windowed so don't display an error message */
+				g_sErrorString = "";
+			}
+		}
 	}
 #endif
 
