@@ -26,10 +26,11 @@ GameSoundManager *SOUND = NULL;
  * That would cause the extra pad time to be silence.)
  */
 /* Lock this before touching g_UpdatingTimer or g_Playing. */
-static RageMutex *g_Mutex;
+static RageEvent *g_Mutex;
 static bool g_UpdatingTimer;
 static bool g_ThreadedMusicStart = true;
 static bool g_Shutdown;
+static bool g_bFlushing = false;
 
 struct MusicPlaying
 {
@@ -311,13 +312,42 @@ static void StartQueuedSounds()
 	}
 }
 
+void GameSoundManager::Flush()
+{
+	g_Mutex->Lock();
+	g_bFlushing = true;
+	while( g_bFlushing )
+		g_Mutex->Wait();
+	g_Mutex->Unlock();
+
+	/* The thread won't actually delete the sound, waiting for SOUNDMAN to do it in
+	 * the main thread.  Update it now, to make sure that the sound is actually deleted
+	 * before returning. */
+	SOUNDMAN->Update(0);
+}
+
 int MusicThread_start( void *p )
 {
 	while( !g_Shutdown )
 	{
 		usleep( 10000 );
 
+		/* This is a little hack: we want to make sure that we go through
+		 * StartQueuedSounds after Flush() is called, to be sure we're flushed,
+		 * so check g_bFlushing before calling.  This won't work if more than
+		 * one thread might call Flush(), but only the main thread is allowed
+		 * to make SOUND calls. */
+		bool bFlushing = g_bFlushing;
+
 		StartQueuedSounds();
+
+		if( bFlushing )
+		{
+			g_Mutex->Lock();
+			g_Mutex->Signal();
+			g_bFlushing = false;
+			g_Mutex->Unlock();
+		}
 	}
 
 	return 0;
@@ -333,7 +363,7 @@ GameSoundManager::GameSoundManager()
 	g_SoundsToPlayOnceFromAnnouncer.reserve( 16 );
 	g_MusicsToPlay.reserve( 16 );
 
-	g_Mutex = new RageMutex("GameSoundManager");
+	g_Mutex = new RageEvent("GameSoundManager");
 	g_Playing = new MusicPlaying( new RageSound );
 
 	g_UpdatingTimer = false;

@@ -17,6 +17,7 @@ public:
 	void PlayMusic( const CString &file, TimingData *pTiming, bool force_loop = false, float start_sec = 0, float length_sec = -1, float fade_len = 0, bool align_beat = true );
 	void StopMusic() { PlayMusic(""); }
 	CString GetMusicPath() const;
+	void Flush();
 
 	void PlayOnce( CString sPath );
 	void PlayOnceFromDir( CString sDir );
