@@ -19,6 +19,10 @@
 
 AttackDisplay::AttackDisplay()
 {
+	if( GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
+		GAMESTATE->m_PlayMode != PLAY_MODE_RAVE )
+		return;
+
 	m_textAttack.LoadFromFont( THEME->GetPathToF("AttackDisplay") );
 	m_textAttack.SetDiffuseAlpha( 0 );	// invisible
 	this->AddChild( &m_textAttack );
@@ -28,29 +32,32 @@ void AttackDisplay::Update( float fDelta )
 {
 	ActorFrame::Update( fDelta );
 
-	if( GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] )
+	if( GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
+		GAMESTATE->m_PlayMode != PLAY_MODE_RAVE )
+		return;
+
+	if( !GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] )
+		return;
+	// don't handle this again
+	GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] = false;
+
+	for( unsigned s=0; s<GAMESTATE->m_ActiveAttacks[m_PlayerNumber].size(); s++ )
 	{
-		// don't handle this again
-		GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] = false;
+		if( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].fStartSecond >= 0 )
+			continue; /* hasn't started yet */
 
-		for( unsigned s=0; s<GAMESTATE->m_ActiveAttacks[m_PlayerNumber].size(); s++ )
-		{
-			if( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].fStartSecond >= 0 )
-				continue; /* hasn't started yet */
+		if( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].fSecsRemaining <= 0 )
+			continue; /* ended already */
 
-			if( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].fSecsRemaining <= 0 )
-				continue; /* ended already */
+		if( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].IsBlank() )
+			continue;
 
-			if( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].IsBlank() )
-				continue;
+		CString sText = GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].sModifier;
 
-			CString sText = GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].sModifier;
+		m_textAttack.SetDiffuseAlpha( 1 );
+		m_textAttack.SetText( sText );
+		m_textAttack.Command( TEXT_ON_COMMAND(m_PlayerNumber) );
 
-			m_textAttack.SetDiffuseAlpha( 1 );
-			m_textAttack.SetText( sText );
-			m_textAttack.Command( TEXT_ON_COMMAND(m_PlayerNumber) );
-
-			break;
-		}
+		break;
 	}
 }
