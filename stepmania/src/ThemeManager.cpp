@@ -169,6 +169,8 @@ try_element_again:
 
 	if( asElementPaths.size() > 1 )
 	{
+		FDB.FlushDirCache();
+
 		CString message = ssprintf( 
 			"There is more than one theme element element that matches "
 			"'%s/%s/%s'.  Please remove all but one of these matches.",
