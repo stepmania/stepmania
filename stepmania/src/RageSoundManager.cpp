@@ -12,10 +12,6 @@
 #include "arch/arch.h"
 #include "arch/Sound/RageSoundDriver.h"
 
-#if defined(XBOX)
-#include "archutils/Xbox/VirtualMemory.h"
-#endif
-
 /*
  * The lock ordering requirements are:
  * RageSound::Lock before g_SoundManMutex
@@ -212,10 +208,6 @@ RageSound *RageSoundManager::PlaySound( RageSound &snd, const RageSoundParams *p
 	else
 	{
 		sound_to_play = new RageSound(snd);
-#if defined(XBOX)
-		// keep the sound data committed to memory
-		vmem_Manager.Lock(sound_to_play);
-#endif
 
 		/* We're responsible for freeing it. */
 		g_SoundManMutex.Lock(); /* lock for access to owned_sounds */
