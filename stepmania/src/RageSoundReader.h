@@ -22,6 +22,7 @@ public:
 	virtual SoundReader *Copy() const = 0;
 	virtual int GetSampleRate() const = 0;
 	virtual unsigned GetNumChannels() const { return 2; } /* 1 or 2 */
+	virtual bool IsStreamingFromDisk() const = 0;
 
 	bool Error() const { return !error.empty(); }
 	string GetError() const { return error; }

@@ -156,8 +156,9 @@ public:
 	int SetPosition_Accurate(int ms)  { return 0; }
 	int SetPosition_Fast(int ms) { return 0; }
 	int Read(char *buf, unsigned len) { return 0; }
-	int GetSampleRate() const { return 44100; }
 	SoundReader *Copy() const { return new RageSoundReader_Silence; }
+	int GetSampleRate() const { return 44100; }
+	bool IsStreamingFromDisk() const { return false; }
 };
 
 
@@ -790,6 +791,11 @@ int RageSound::GetSampleRate() const
 	return Sample->GetSampleRate();
 }
 
+bool RageSound::IsStreamingFromDisk() const
+{
+	ASSERT( Sample );
+	return Sample->IsStreamingFromDisk();
+}
 
 bool RageSound::SetPositionFrames( int frames )
 {

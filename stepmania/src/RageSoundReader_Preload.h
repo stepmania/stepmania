@@ -46,6 +46,7 @@ public:
 	int Read(char *buf, unsigned len);
 	int GetSampleRate() const { return samplerate; }
 	unsigned GetNumChannels() const { return channels; }
+	bool IsStreamingFromDisk() const { return false; }
 
 	SoundReader *Copy() const;
 	~SoundReader_Preload() { }

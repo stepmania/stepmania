@@ -23,6 +23,7 @@ public:
 		OPEN_FATAL_ERROR=2,
 	};
 	virtual OpenResult Open(CString filename) = 0;
+	virtual bool IsStreamingFromDisk() const { return true; }
 
 	static SoundReader *OpenFile( CString filename, CString &error );
 private:

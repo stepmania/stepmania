@@ -33,6 +33,7 @@ public:
 
 	int GetSampleRate() const { return samplerate; }
 	unsigned GetNumChannels() const { return source->GetNumChannels(); }
+	bool IsStreamingFromDisk() const { return source->IsStreamingFromDisk(); }
 };
 
 #endif
