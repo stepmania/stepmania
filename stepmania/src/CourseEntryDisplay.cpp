@@ -26,6 +26,7 @@
 #include <math.h>
 
 #define SEPARATE_COURSE_METERS		THEME->GetMetricB(m_sName,"SeparateCourseMeters")
+#define TEXT_BANNER_NAME			THEME->GetMetric (m_sName,"TextBannerName")
 
 void CourseEntryDisplay::Load()
 {
@@ -42,7 +43,7 @@ void CourseEntryDisplay::Load()
 	SET_XY_AND_ON_COMMAND( &m_textNumber );
 	this->AddChild( &m_textNumber );
 
-	m_TextBanner.SetName( "TextBanner" );
+	m_TextBanner.SetName( TEXT_BANNER_NAME, "TextBanner" );
 	SET_XY_AND_ON_COMMAND( &m_TextBanner );
 	this->AddChild( &m_TextBanner );
 
