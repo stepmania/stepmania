@@ -711,36 +711,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			0,2,4,1,3,5,7,9,6,8
 		},
 	},
-/*	{	// PUMP_STYLE_COUPLE
-		GAME_PUMP,								// m_Game
-		true,									// m_bUsedForGameplay
-		false,									// m_bUsedForEdit
-		"pump-couple",							// m_szName
-		NOTES_TYPE_PUMP_COUPLE,					// m_NotesTypes
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
-		{ 160, 480 },							// m_iCenterX
-		5,										// m_iColsPerPlayer
-		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
-			{	// PLAYER_1
-				{ TRACK_1,	GAME_CONTROLLER_1,	PUMP_BUTTON_DOWNLEFT,	-PUMP_COL_SPACING*2 },
-				{ TRACK_2,	GAME_CONTROLLER_1,	PUMP_BUTTON_UPLEFT,		-PUMP_COL_SPACING*1 },
-				{ TRACK_3,	GAME_CONTROLLER_1,	PUMP_BUTTON_CENTER,		+PUMP_COL_SPACING*0 },
-				{ TRACK_4,	GAME_CONTROLLER_1,	PUMP_BUTTON_UPRIGHT,	+PUMP_COL_SPACING*1 },
-				{ TRACK_5,	GAME_CONTROLLER_1,	PUMP_BUTTON_DOWNRIGHT,	+PUMP_COL_SPACING*2 },
-			},
-			{	// PLAYER_2
-				{ TRACK_1,	GAME_CONTROLLER_2,	PUMP_BUTTON_DOWNLEFT,	-PUMP_COL_SPACING*2 },
-				{ TRACK_2,	GAME_CONTROLLER_2,	PUMP_BUTTON_UPLEFT,		-PUMP_COL_SPACING*1 },
-				{ TRACK_3,	GAME_CONTROLLER_2,	PUMP_BUTTON_CENTER,		+PUMP_COL_SPACING*0 },
-				{ TRACK_4,	GAME_CONTROLLER_2,	PUMP_BUTTON_UPRIGHT,	+PUMP_COL_SPACING*1 },
-				{ TRACK_5,	GAME_CONTROLLER_2,	PUMP_BUTTON_DOWNRIGHT,	+PUMP_COL_SPACING*2 },
-			},
-		},
-		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-			0,2,4,1,3
-		},
-	},
-*/
 	{	// STYLE_PUMP_COUPLE
 		GAME_PUMP,								// m_Game
 		true,									// m_bUsedForGameplay
