@@ -68,6 +68,20 @@ sub ReadCommand
 	return 0;
 }
 
+sub CreateDirectories
+{
+	my @dirs = split /\//, $_[0];
+	my $dir = "";
+	for( my $i = 0; $i <= $#dirs; ++$i )
+	{
+		$dir .= $dirs[$i] . "/";
+		if( ! -d $dir )
+		{
+			mkdir($dir) || die "mkdir($dir): $!";
+		}
+	}
+}
+
 
 if ($#ARGV == -1)
 {
@@ -168,18 +182,6 @@ while(!eof(F))
 	if ( $line[0] eq "SetOutPath" )
 	{
 		$OutPath = $line[1];
-
-		my @dirs = split /\//, $OutPath;
-		my $dir = "";
-		for( my $i = 0; $i <= $#dirs; ++$i )
-		{
-			$dir .= $dirs[$i] . "/";
-			if( ! -d $dir )
-			{
-				mkdir($dir) || die "mkdir($dir): $!";
-			}
-		}
-
 		next;
 	}
 	
@@ -200,6 +202,9 @@ while(!eof(F))
 			next;
 		}
 		
+		# Only create directories if we're actually installing something to them.
+		CreateDirectories( $OutPath );
+
 		my $args="-p";
 		if( $recurse )
 		{
