@@ -38,6 +38,7 @@
 #pragma comment(lib, "D3dx8.lib")
 
 #include <math.h>
+#include <list>
 
 RageDisplay*		DISPLAY	= NULL;
 
@@ -60,29 +61,60 @@ int g_CurrentHeight, g_CurrentWidth, g_CurrentBPP;
  * Instead, we load a palette into a slot.  We need to keep track
  * of which texture's palette is stored in what slot. */
 map<unsigned,int>	g_TexResourceToPaletteIndex;
+list<int>			g_PaletteIndex;
 struct TexturePalette { PALETTEENTRY p[256]; };
 map<unsigned,TexturePalette>	g_TexResourceToTexturePalette;
 
-int GetUnusedPaletteIndex()
+/* Load the palette, if any, for the given texture into a palette slot, and make
+ * it current. */
+static void SetPalette( unsigned TexResource )
 {
-	for( int i=0; i<256; i++ )
+	/* If the texture isn't paletted, we have nothing to do. */
+	if( g_TexResourceToTexturePalette.find(TexResource) == g_TexResourceToTexturePalette.end() )
+		return;
+
+	/* Is the palette already loaded? */
+	if( g_TexResourceToPaletteIndex.find(TexResource) == g_TexResourceToPaletteIndex.end() )
 	{
-		bool bFreeToUse = true;
-		for( map<unsigned,int>::const_iterator iter=g_TexResourceToPaletteIndex.begin();
-			iter!=g_TexResourceToPaletteIndex.end();
-			++iter )
+		/* It's not.  Grab the least recently used slot. */
+		int iPalIndex = g_PaletteIndex.front();
+
+		/* If any other texture is currently using this slot, mark that palette unloaded. */
+		for( map<unsigned,int>::iterator i = g_TexResourceToPaletteIndex.begin(); i != g_TexResourceToPaletteIndex.end(); ++i )
 		{
-			if( iter->second == i )
-			{
-				bFreeToUse = false;
-				break;
-			}
+			if( i->second != iPalIndex )
+				continue;
+			g_TexResourceToPaletteIndex.erase(i);
+			break;
 		}
-		if( bFreeToUse )
-			return i;
+
+		/* Load it. */
+#ifndef _XBOX
+		g_pd3dDevice->SetPaletteEntries( iPalIndex, g_TexResourceToTexturePalette[TexResource].p );
+#else
+		ASSERT(0);
+#endif
+
+		g_TexResourceToPaletteIndex[TexResource] = iPalIndex;
 	}
-	ASSERT( 0 );	// couldn't find a free palette index.  Resource leak?
-	return 0;
+	
+	const int iPalIndex = g_TexResourceToPaletteIndex[TexResource];
+
+	/* Find this palette index in the least-recently-used queue and move it to the end. */
+	for(list<int>::iterator i = g_PaletteIndex.begin(); i != g_PaletteIndex.end(); ++i)
+	{
+		if( *i != iPalIndex )
+			continue;
+		g_PaletteIndex.erase(i);
+		g_PaletteIndex.push_back(iPalIndex);
+		break;
+	}
+
+#ifndef _XBOX
+	g_pd3dDevice->SetCurrentTexturePalette( iPalIndex );
+#else
+	ASSERT(0);
+#endif
 }
 
 #define D3DFVF_RAGEVERTEX (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX1)	// D3D FVF flags which describe our vertex structure
@@ -151,6 +183,8 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 
 	g_Windowed = false;
 
+	for( int i = 0; i < 256; ++i )
+		g_PaletteIndex.push_back(i);
 
 	typedef IDirect3D8 * (WINAPI * Direct3DCreate8_t) (UINT SDKVersion);
 	Direct3DCreate8_t pDirect3DCreate8;
@@ -590,15 +624,7 @@ void RageDisplay::SetTexture( RageTexture* pTexture )
 	g_pd3dDevice->SetTexture( 0, pTex );
 	
 	// Set palette (if any)
-	if( g_TexResourceToPaletteIndex.find(uTexHandle) != g_TexResourceToPaletteIndex.end() )
-	{
-		int iPaletteIndex = g_TexResourceToPaletteIndex.find(uTexHandle)->second;
-#ifndef _XBOX
-		g_pd3dDevice->SetCurrentTexturePalette( iPaletteIndex );
-#else
-		ASSERT(0);
-#endif
-	}
+	SetPalette(uTexHandle);
 }
 void RageDisplay::SetTextureModeModulate()
 {
@@ -754,8 +780,6 @@ unsigned RageDisplay::CreateTexture(
 
 	if( pixfmt == FMT_PAL )
 	{
-		int iPalIndex = GetUnusedPaletteIndex();
-
 		// Save palette
 		TexturePalette pal;
 		memset( pal.p, 0, sizeof(pal.p) );
@@ -768,17 +792,9 @@ unsigned RageDisplay::CreateTexture(
 			bool bIsColorKey = img->flags & SDL_SRCCOLORKEY && (unsigned)i == img->format->colorkey;
 			pal.p[i].peFlags = bIsColorKey ? 0x00 : 0xFF;
 		}
-#ifndef _XBOX
-		g_pd3dDevice->SetPaletteEntries( iPalIndex, pal.p );
-#else
-		ASSERT(0);
-#endif
 
 		ASSERT( g_TexResourceToTexturePalette.find(uTexHandle) == g_TexResourceToTexturePalette.end() );
 		g_TexResourceToTexturePalette[uTexHandle] = pal;
-
-		ASSERT( g_TexResourceToPaletteIndex.find(uTexHandle) == g_TexResourceToPaletteIndex.end() );
-		g_TexResourceToPaletteIndex[uTexHandle] = iPalIndex;
 	}
 
 	UpdateTexture( uTexHandle, pixfmt, img, 0, 0, img->w, img->h );
