@@ -95,7 +95,7 @@ PrefsManager::PrefsManager()
 	m_bAutogenMissingTypes = true;
 	m_bAutogenGroupCourses = true;
 	m_bBreakComboToGetItem = false;
-	m_bShowDancingCharacters = false;
+	m_ShowDancingCharacters = CO_OFF;
 	m_bUseUnlockSystem = false;
 	m_bFirstRun = true;
 	m_bAutoMapJoysticks = true;
@@ -241,7 +241,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "AutogenGroupCourses",		m_bAutogenGroupCourses );
 	ini.GetValueB( "Options", "Timestamping",			m_bTimestamping );
 	ini.GetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
-	ini.GetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
+	ini.GetValueI( "Options", "ShowDancingCharacters",		(int&)m_ShowDancingCharacters );
 	ini.GetValueB( "Options", "TenFooterInRed",			m_bTenFooterInRed );
 
 	ini.GetValueI( "Options", "CourseSortOrder",			(int&)m_iCourseSortOrder );
@@ -357,7 +357,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "AutogenGroupCourses",		m_bAutogenGroupCourses );
 	ini.SetValueB( "Options", "Timestamping",			m_bTimestamping );
 	ini.SetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
-	ini.SetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
+	ini.SetValueI( "Options", "ShowDancingCharacters",		m_ShowDancingCharacters );
 	ini.SetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
 	ini.SetValueB( "Options", "FirstRun",				m_bFirstRun );
 	ini.SetValueB( "Options", "AutoMapJoysticks",			m_bAutoMapJoysticks );

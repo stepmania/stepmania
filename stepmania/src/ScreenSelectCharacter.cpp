@@ -20,6 +20,7 @@
 #include "AnnouncerManager.h"
 #include "GameState.h"
 #include "Character.h"
+#include "PrefsManager.h"
 
 
 #define TITLE_ON_COMMAND( p )				THEME->GetMetric ("ScreenSelectCharacter",ssprintf("TitleP%dOnCommand",p+1))
@@ -53,7 +54,8 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 {	
 	LOG->Trace( "ScreenSelectCharacter::ScreenSelectCharacter()" );	
 
-	if( GAMESTATE->m_pCharacters.empty() )
+	if(	GAMESTATE->m_pCharacters.empty() ||
+		(GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE && GAMESTATE->m_PlayMode != PLAY_MODE_RAVE && PREFSMAN->m_ShowDancingCharacters != PrefsManager::CO_SELECT ))
 	{
 		HandleScreenMessage( SM_GoToNextScreen );
 		return;
