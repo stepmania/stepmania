@@ -180,7 +180,7 @@ Loading = arch/LoadingWindow/LoadingWindow_SDL.cpp \
 	  arch/LoadingWindow/LoadingWindow_Null.h
 
 if HAVE_GTK
-  Loading += arch/LoadingWindow/LoadingWindow_Gtk.cpp \
+  Loading += arch/LoadingWindow/LoadingWindow_Gtk.c \
 	     arch/LoadingWindow/LoadingWindow_Gtk.h
 endif
 
