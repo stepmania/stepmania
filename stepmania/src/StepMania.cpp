@@ -560,7 +560,7 @@ int main(int argc, char* argv[])
 
 #ifndef DEBUG
 	}
-	catch( RageException e )
+	catch( const RageException &e )
 	{
 		g_sErrorString = e.what();
 
@@ -588,6 +588,13 @@ int main(int argc, char* argv[])
 			}
 		}
 #endif
+	} catch( const exception &e ) {
+		if( LOG )
+			LOG->Warn("Unhandled exception: \"%s\"", e.what() );
+
+		/* Re-throw, so we get an unhandled exception crash and get a backtrace (at least
+		 * in Windows). */
+		throw;
 	}
 #endif
 
