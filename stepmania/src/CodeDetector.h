@@ -75,6 +75,7 @@ public:
 		CODE_BW_NEXT_GROUP,
 		CODE_BW_NEXT_GROUP2,
 		CODE_SAVE_SCREENSHOT,
+		CODE_CANCEL_ALL_PLAYER_OPTIONS,
 		NUM_CODES	// leave this at the end
 	};
 

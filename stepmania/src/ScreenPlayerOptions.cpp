@@ -17,6 +17,7 @@
 #include "RageSounds.h"
 #include "ScreenSongOptions.h"
 #include "PrefsManager.h"
+#include "CodeDetector.h"
 
 
 #define PREV_SCREEN( play_mode )	THEME->GetMetric ("ScreenPlayerOptions","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
@@ -106,6 +107,15 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 			m_sprOptionsMessage.SetState( 1 );
 			SOUND->PlayOnce( THEME->GetPathToS("Common start") );
 		}
+	}
+
+	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_CANCEL_ALL) )
+	{
+		SOUND->PlayOnce( THEME->GetPathToS("ScreenPlayerOptions cancel all") );
+		GAMESTATE->m_PlayerOptions[MenuI.player].Init();
+		GAMESTATE->m_PlayerOptions[MenuI.player].FromString( PREFSMAN->m_sDefaultModifiers );
+		this->ImportOptions();
+		this->PositionUnderlines();
 	}
 
 	ScreenOptionsMaster::Input( DeviceI, type, GameI, MenuI, StyleI );
