@@ -180,7 +180,7 @@ void RageSound_ALSA9::Update(float delta)
 
 		/* The sound has stopped and flushed all of its buffers. */
 		if( str[i]->snd != NULL )
-			str[i]->snd->StopPlaying();
+			str[i]->snd->SoundIsFinishedPlaying();
 		str[i]->snd = NULL;
 
 		str[i]->pcm->Stop();
