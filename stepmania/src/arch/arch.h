@@ -1,8 +1,17 @@
 #ifndef ARCH_H
 #define ARCH_H
 
-#include "global.h"
 #include "RageTextureID.h"
+
+// Put renderers switch here, makes things cleaner
+#if defined(_WINDOWS)
+#define SUPPORT_OPENGL
+#define SUPPORT_D3D
+#elif defined(_XBOX)
+#define SUPPORT_D3D
+#else
+#define SUPPORT_OPENGL
+#endif
 
 /* Include this file if you need to create an instance of a driver object.  */
 class ArchHooks;
@@ -20,8 +29,10 @@ LightsDriver *MakeLightsDriver(CString driver);
 class LoadingWindow;
 LoadingWindow *MakeLoadingWindow();
 
+#if defined(SUPPORT_OPENGL)
 class LowLevelWindow;
 LowLevelWindow *MakeLowLevelWindow();
+#endif
 
 class MemoryCardDriver;
 MemoryCardDriver *MakeMemoryCardDriver();
@@ -31,16 +42,6 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID);
 
 class RageSoundDriver;
 RageSoundDriver *MakeRageSoundDriver(CString drivers);
-
-// Put renderers switch here, makes things cleaner
-#if defined(_WINDOWS)
-#define SUPPORT_OPENGL
-#define SUPPORT_D3D
-#elif defined(_XBOX)
-#define SUPPORT_D3D
-#else
-#define SUPPORT_OPENGL
-#endif
 
 #endif
 
