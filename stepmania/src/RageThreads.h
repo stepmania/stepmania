@@ -3,6 +3,29 @@
 
 #include "SDL_thread.h"
 
+class RageThread
+{
+	SDL_Thread *thr;
+	CString name;
+
+public:
+	RageThread();
+	~RageThread();
+
+	static void RegisterMainThread();
+
+	void SetName( const CString &n ) { name = n; }
+	void Create( int (*fn)(void *), void *data );
+
+	/* For crash handlers: kill or suspend all threads (except for
+	 * the running one) immediately. */ 
+	static void HaltAllThreads();
+	static const char *GetCurThreadName();
+
+	int Wait();
+};
+
+
 /* Mutex class that follows the behavior of Windows mutexes: if the same
  * thread locks the same mutex twice, we just increase a refcount; a mutex
  * is considered unlocked when the refcount reaches zero.  This is more

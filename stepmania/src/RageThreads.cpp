@@ -17,6 +17,196 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 
+#include "SDL_utils.h"
+
+#include <signal.h>
+
+/* SDL threads aren't quite enough.  We need to be able to suspend or
+ * kill all threads, including the main one.  SDL doesn't count the
+ * main thread as a thread.  So, we'll have to do this nonportably. */
+#if defined(LINUX)
+#define PID_BASED_THREADS
+#endif
+
+#define MAX_THREADS 128
+
+struct ThreadSlot
+{
+	char name[1024];
+	Uint32 threadid;
+
+	bool used;
+
+#if defined(PID_BASED_THREADS)
+	/* Keep a list of child PIDs, so we can send them SIGKILL.  This has an
+	 * added bonus: if this is corrupted, we'll just send signals and they'll
+	 * fail; we won't blow up (unless we're root). */
+	int pid;
+#endif
+
+	/* Used to bootstrap the thread: */
+	int (*fn)(void *);
+	void *data;
+
+	ThreadSlot()
+	{
+		used = false;
+#if defined(PID_BASED_THREADS)
+		pid = -1;
+#endif
+	}
+
+	void SetupThisThread();
+	void ShutdownThisThread();
+};
+
+
+static ThreadSlot g_ThreadSlots[MAX_THREADS];
+static RageMutex g_ThreadSlotsLock;
+
+static int FindEmptyThreadSlot()
+{
+	LockMut(g_ThreadSlotsLock);
+	for( int entry = 0; entry < MAX_THREADS; ++entry )
+	{
+		if( g_ThreadSlots[entry].used )
+			continue;
+
+		g_ThreadSlots[entry].used = true;
+		return entry;
+	}
+			
+	RageException::Throw("Out of thread slots!");
+}
+
+static int GetCurThreadSlot()
+{
+	Uint32 ThisThread = SDL_ThreadID();
+
+	for( int entry = 0; entry < MAX_THREADS; ++entry )
+	{
+		if( !g_ThreadSlots[entry].used )
+			continue;
+		if( g_ThreadSlots[entry].threadid == ThisThread )
+			return entry;
+	}
+	return -1;
+}
+
+
+RageThread::RageThread()
+{
+	thr = NULL;
+}
+
+RageThread::~RageThread()
+{
+
+}
+
+
+void ThreadSlot::SetupThisThread()
+{
+#if defined(PID_BASED_THREADS)
+	pid = getpid();
+#endif
+	threadid = SDL_ThreadID();
+}
+
+void ThreadSlot::ShutdownThisThread()
+{
+#if defined(PID_BASED_THREADS)
+	pid = -1;
+#endif
+	used = false;
+}
+
+static int StartThread( void *p )
+{
+	ThreadSlot *thr = (ThreadSlot *) p;
+
+	thr->SetupThisThread();
+
+	int ret = thr->fn(thr->data);
+
+	thr->ShutdownThisThread();
+
+	return ret;
+}
+
+void RageThread::Create( int (*fn)(void *), void *data )
+{
+	/* Don't create a thread that's already running: */
+	ASSERT( thr == NULL );
+
+	int slotno = FindEmptyThreadSlot();
+	ThreadSlot &slot = g_ThreadSlots[slotno];
+	slot.fn = fn;
+	slot.data = data;
+	
+	if( name == "" )
+	{
+		LOG->Warn("Created a thread without naming it first.");
+
+		/* If you don't name it, I will: */
+		strcpy(slot.name, "Joe");
+	} else {
+		strcpy(slot.name, name.c_str());
+	}
+
+	/* Start a thread using our own startup function. */
+	thr = SDL_CreateThread( StartThread, &slot );
+	if( thr == NULL )
+		RageException::Throw( "Thread creation failed: %s", SDL_GetError() );
+}
+
+struct SetupMainThread
+{
+	SetupMainThread()
+	{
+		int slot = FindEmptyThreadSlot();
+		g_ThreadSlots[slot].SetupThisThread();
+	}
+} SetupMainThreadObj;
+
+const char *RageThread::GetCurThreadName()
+{
+	int slot = GetCurThreadSlot();
+	if(slot==-1)
+		return "???";
+
+	/* This function may be called in crash conditions, so guarantee the string
+	 * is null-terminated. */
+	g_ThreadSlots[slot].name[ sizeof(g_ThreadSlots[slot].name)-1] = 0;
+
+	return g_ThreadSlots[slot].name;
+}
+
+int RageThread::Wait()
+{
+	ASSERT( thr != NULL );
+
+	int ret;
+	SDL_WaitThread(thr, &ret);
+	return ret;
+}
+
+void RageThread::HaltAllThreads()
+{
+#if defined(PID_BASED_THREADS)
+	int ThisThread = getpid();
+	for( int entry = 0; entry < MAX_THREADS; ++entry )
+	{
+		if( !g_ThreadSlots[entry].used )
+			continue;
+		const int pid = g_ThreadSlots[entry].pid;
+		if( pid <= 0 || pid == ThisThread )
+			continue;
+		kill( pid, SIGKILL );
+	}
+#endif
+}
+
 RageMutex::RageMutex()
 {
 	Locked = 0;
