@@ -107,8 +107,9 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 			ON_COMMAND( m_textUsers[i] );
 		}
 		COMMAND( m_textUsers[m_iCurrentPlayer], "Sel" );
-		break;
+		return;	//no need to let ScreenEvaluation get ahold of this.
 	}
+	ScreenEvaluation::HandleScreenMessage( SM );
 }
 
 void ScreenNetEvaluation::UpdateStats()
