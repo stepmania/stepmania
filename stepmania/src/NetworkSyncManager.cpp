@@ -300,8 +300,19 @@ void NetworkSyncManager::StartRequest(short position)
 	//Block until go is recieved.
 	//Switch to blocking mode (this is the only
 	//way I know how to get precievably instantanious results
+
+	bool dontExit=true;
 	NetPlayerClient->blocking=true;
-	NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE);
+	while (dontExit)
+	{
+		ClearPacket(m_packet);
+		if (NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)<1)
+			dontExit=false; // Also allow exit if there is a problem on the socket
+		if (Read1(m_packet) == (128+3))
+			dontExit=false;
+		//Only allow passing on Start request. 
+		//Otherwise scoreboard updates and such will confuse us.
+	}
 	NetPlayerClient->blocking=false;
 
 }
