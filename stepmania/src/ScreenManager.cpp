@@ -344,7 +344,7 @@ void ScreenManager::Update( float fDeltaTime )
 	 * So, let's just zero the first update for every screen.
 	 *
 	 * XXX:  If a new Screen is set during this Update, that new screen is Drawn
-	 * before it's first Update.
+	 * before its first Update.
 	 */
 	ASSERT( !m_ScreenStack.empty() || m_DelayedScreen != "" );	// Why play the game if there is nothing showing?
 
