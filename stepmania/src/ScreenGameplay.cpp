@@ -693,7 +693,6 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 	}
 
 	m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
-//	m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
 	m_Background.SetDiffuseColor( D3DXCOLOR(0.5f,0.5f,0.5f,1) );
 	m_Background.BeginTweeningQueued( 2 );
 	m_Background.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
