@@ -435,7 +435,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		GAMESTATE->m_pPreferredCourse = m_pCourse;
 	}
 	if( m_pTrail )
-		GAMESTATE->m_pCurSteps[pn] = m_pSteps;
+		GAMESTATE->m_pCurTrail[pn] = m_pTrail;
 	if( m_CourseDifficulty != COURSE_DIFFICULTY_INVALID )
 		GAMESTATE->ChangePreferredCourseDifficulty( pn, m_CourseDifficulty );
 	if( m_pCharacter )
@@ -467,6 +467,8 @@ bool ModeChoice::IsZero() const
 		m_sModifiers != "" ||
 		m_pSong != NULL || 
 		m_pSteps != NULL || 
+		m_pCourse != NULL || 
+		m_pTrail != NULL || 
 		m_pCharacter != NULL || 
 		m_CourseDifficulty != COURSE_DIFFICULTY_INVALID )
 		return false;
