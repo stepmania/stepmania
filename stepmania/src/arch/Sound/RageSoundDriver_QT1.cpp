@@ -26,7 +26,7 @@ const unsigned buffersize = samples*samplesize/8;
 
 namespace
 {
-    volatile Uint32 fill_me = 0;
+    volatile UInt32 fill_me = 0;
     UInt8  *buffer[2];
     CmpSoundHeader header;
 }
@@ -42,8 +42,8 @@ RageSound_QT1::RageSound_QT1()
     header.numFrames = samples;
     header.encode = cmpSH;
 
-    buffer[0] = new Uint8[buffersize];
-    buffer[1] = new Uint8[buffersize];
+    buffer[0] = new UInt8[buffersize];
+    buffer[1] = new UInt8[buffersize];
     memset(buffer[0], 0, buffersize);
     memset(buffer[1], 0, buffersize);
 
