@@ -85,9 +85,9 @@ bool RageSound_ALSA9_Software::GetData()
 		 * Get the units straight,
 		 * <bytes> = GetPCM(<bytes*>, <bytes>, <frames>)
 		 */
-		unsigned got_bytes = sounds[i]->snd->GetPCM( (char *) buf, frames_to_fill*bytes_per_frame, pcm->GetPlayPos() );
-		unsigned got_samples = got_bytes / sizeof(Sint16);
-		unsigned got_frames = got_bytes / bytes_per_frame;
+		const int got_bytes = sounds[i]->snd->GetPCM( (char *) buf, frames_to_fill*bytes_per_frame, pcm->GetPlayPos() );
+		const int got_samples = got_bytes / sizeof(Sint16);
+		const int got_frames = got_bytes / bytes_per_frame;
 		mix.write((Sint16 *) buf, got_samples );
 
 		if( got_frames < frames_to_fill )
@@ -151,6 +151,11 @@ void RageSound_ALSA9_Software::StopMixing(RageSound *snd)
 
 	delete sounds[i];
 	sounds.erase(sounds.begin()+i, sounds.begin()+i+1);
+
+	/* If nothing is playing, reset the sample count; this is just to
+	 * prevent eventual overflow. */
+	if( sounds.empty() )
+		pcm->Reset();
 }
 
 
