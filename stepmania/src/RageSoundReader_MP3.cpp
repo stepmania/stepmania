@@ -439,8 +439,6 @@ int RageSoundReader_MP3::do_mad_frame_decode()
  * so we can emulate that sync offset. */
 int RageSoundReader_MP3::FindOffsetFix()
 {
-	int i;
-
 	/* Do a fake rewind. */
 	if( fseek(this->rw, 0, SEEK_SET) == -1 )
 	{
@@ -461,8 +459,8 @@ int RageSoundReader_MP3::FindOffsetFix()
 	mad->first_frame = true;
 
 	/* Read a couple frames, to make sure we're synced. */
-	bool Silent = true;
-	for( i = 0; Silent || i < 5; ++i )
+	int FramesToRead = 5;
+	while( FramesToRead-- )
 	{
 		int ret = do_mad_frame_decode();
 		if( ret == 0 )
@@ -473,24 +471,28 @@ int RageSoundReader_MP3::FindOffsetFix()
 		if( ret == -1 )
 			return false; /* it set the error */
 
-		synth_output();
-
 		/* If this frame is silent, it's not an appropriate sample.  Find
 		 * a frame with actual sound in it. */
-		Silent = true;
-		for( unsigned j = 0; Silent && j < mad->outleft; ++j )
-			if( mad->outbuf[j] )
-				Silent=false;
-	}
+		if( !FramesToRead )
+		{
+			/* We've read enough frames.  Now, make sure this frame isn't silent. */
+			bool Silent = true;
+			for( int j = 0; j < 2; ++j )
+			for( int k = 0; k < 36; ++k )
+			for( int l = 0; l < 32; ++l )
+				if( mad->Frame.sbsample[j][k][l] )
+					Silent=false;
+			/* If it's silent, it's not an appropriate sample.  Find a frame
+			 * with actual sound in it. */
 
-	if( Silent )
-	{
-		/* The sound didn't have any non-silent frames. */
-		MADLIB_rewind();
-		return true;
+			if( Silent )
+				++FramesToRead;
+		}
+
 	}
 
 	/* Clear the TOC cache.  We might have cached bogus values. */
+	int i;
 	for( i = 0; i < 200; ++i)
 		mad->toc[i] = -1;
 
@@ -498,10 +500,9 @@ int RageSoundReader_MP3::FindOffsetFix()
 	 * we decoded the last frame. */
 	mad_timer_t Apparent = mad->Timer;
 
-	/* Save the last frame's PCM data. */
-	unsigned size = mad->outleft;
-	char *cpy = new char[size];
-	memcpy( cpy, mad->outbuf, size );
+	/* Save the last frame's subband samples. */
+	mad_fixed_t cpy[2][36][32];
+	memcpy( cpy, mad->Frame.sbsample, sizeof(mad->Frame.sbsample) );
 
 	/* Do a real rewind. */
 	MADLIB_rewind();
@@ -520,8 +521,7 @@ int RageSoundReader_MP3::FindOffsetFix()
 		if( ret == -1 )
 			return false; /* it set the error */
 
-		synth_output();
-		if( mad->outleft == size && !memcmp( cpy, mad->outbuf, mad->outleft ) )
+		if( !memcmp( cpy, mad->Frame.sbsample, sizeof(mad->Frame.sbsample) ) )
 		{
 			/* Found it.  Record that frame's real timestamp. */
 			Actual = mad->Timer;
@@ -540,7 +540,6 @@ int RageSoundReader_MP3::FindOffsetFix()
 	else
 		this->OffsetFix = 0;
 
-	delete [] cpy;
 	MADLIB_rewind();
 	return true;
 }
