@@ -484,6 +484,10 @@ void ScreenNameEntryTraditional::DrawPrimitives()
 
 void ScreenNameEntryTraditional::ChangeDisplayedFeat()
 {
+	CHECKPOINT;
+	
+	LOG->Trace( "ScreenNameEntryTraditional::ChangeDisplayedFeat" );
+
 	for( int pn=0; pn<NUM_PLAYERS; ++pn )
 	{
 		if( !GAMESTATE->IsHumanPlayer(pn) )
@@ -515,6 +519,8 @@ void ScreenNameEntryTraditional::ChangeDisplayedFeat()
 
 void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage SM )
 {
+	LOG->Trace( "ScreenNameEntryTraditional::HandleScreenMessage( %d )", SM );
+
 	switch( SM )
 	{
 	case SM_MenuTimer:
