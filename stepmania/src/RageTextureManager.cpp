@@ -58,7 +58,7 @@ void RageTextureManager::Update( float fDeltaTime )
 //-----------------------------------------------------------------------------
 RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 {
-	LOG->Trace( "RageTextureManager::LoadTexture(%s).", ID.filename.GetString() );
+	Checkpoint( ssprintf( "RageTextureManager::LoadTexture(%s).", ID.filename.GetString() ) );
 
 	/* We could have two copies of the same bitmap if there are equivalent but
 	 * different paths, e.g. "Bitmaps\me.bmp" and "..\Rage PC Edition\Bitmaps\me.bmp". */
@@ -67,6 +67,7 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 	{
 		/* Found the texture.  Just increase the refcount and return it. */
 		p->second->m_iRefCount++;
+		LOG->UnmapLog( "LoadTexture" );
 		return p->second;
 	}
 
@@ -81,10 +82,9 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 	else
 		pTexture = new RageBitmapTexture( ID );
 
-	LOG->Trace( "RageTextureManager: Loaded '%s'.", ID.filename.GetString() );
-
 	m_mapPathToTexture[ID] = pTexture;
 
+	LOG->UnmapLog( "LoadTexture" );
 	return pTexture;
 }
 
