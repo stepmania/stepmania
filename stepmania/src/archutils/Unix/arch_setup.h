@@ -7,6 +7,11 @@
 
 #if defined(LINUX)
 
+/* __KERNEL__ needs to be defined on PPC for asm/byteorder.h to work. */
+#if defined(CPU_PPC) && !defined(__KERNEL__)
+#define __KERNEL__
+#endif
+
 extern "C"
 {
 #include <asm/byteorder.h>
