@@ -1151,8 +1151,8 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType n
 		case NOTE_TYPE_8TH:		fSnapInterval2 = 1/2.0f;	break;
 		case NOTE_TYPE_12TH:	fSnapInterval2 = 1/3.0f;	break;
 		case NOTE_TYPE_16TH:	fSnapInterval2 = 1/4.0f;	break;
-		case NOTE_TYPE_24TH:	fSnapInterval1 = 1/6.0f;	break;
-		case NOTE_TYPE_32ND:	fSnapInterval1 = 1/8.0f;	break;
+		case NOTE_TYPE_24TH:	fSnapInterval2 = 1/6.0f;	break;
+		case NOTE_TYPE_32ND:	fSnapInterval2 = 1/8.0f;	break;
 		case -1:				fSnapInterval2 = 10000;		break;	// nothing will ever snap to this.  That's what we want!
 		default:	ASSERT( false );						return;
 	}
