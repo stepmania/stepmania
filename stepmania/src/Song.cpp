@@ -23,7 +23,6 @@
 #include "RageFileManager.h"
 #include "RageSurface.h"
 #include "NoteDataUtil.h"
-#include "SDL_utils.h"
 #include "ProfileManager.h"
 #include "StageStats.h"
 #include "StepsUtil.h"

@@ -8,7 +8,6 @@
 #include "BitmapText.h"
 #include "PrefsManager.h"
 #include "InputMapper.h"
-#include "RageInputDevice.h"
 
 const int NUM_BOOKKEEPING_COLS = 4;
 

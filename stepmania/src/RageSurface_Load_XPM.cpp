@@ -5,7 +5,6 @@
 #include "RageFile.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "SDL_utils.h"
 #include "RageSurface.h"
 
 #define CheckLine() \

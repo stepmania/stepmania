@@ -2,7 +2,6 @@
 #include "RageSurface_Load_JPEG.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "SDL_utils.h"
 #include "RageFile.h"
 #include "RageSurface.h"
 

@@ -1,5 +1,4 @@
 #include "global.h"
-#include "SDL_utils.h"
 #include "RageFile.h"
 
 #include "RageDisplay.h"
