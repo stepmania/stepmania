@@ -160,6 +160,12 @@ TitleTo: L'amour et la liberté
 TitleFrom: Chotto Kiitena
 TitleTo: ちょっときいてな
 *
+TitleFrom: Akumajo Dracula MEDLEY
+TitleTo: 悪魔城ドラキュラMEDLEY
+*
+ArtistFrom: Kukeihakurabu
+ArtistTo: 矩形波倶楽部
+*
 # Subtitles:
 # (Title is Graduation.)
 SubtitleFrom: .*Each Tomorrow.*
@@ -346,19 +352,19 @@ ArtistTo: 奥井雅美
 ArtistFrom: Morning Musume
 ArtistTo: Morning娘
 *
-ArtistFrom: (Youko Ishida)|(Ishida Youko)
+ArtistFrom: (You?ko Ishida)|(Ishida You?ko)
 ArtistTo: 石田燿子
 *
-ArtistFrom: (Youko Kanno)|(Kanno Youko)
+ArtistFrom: (You?ko Kanno)|(Kanno You?ko)
 ArtistTo: 菅野よう子
 *
-ArtistFrom: Yoko Kanno and the Seatbelts
+ArtistFrom: You?ko Kanno and the Seatbelts
 ArtistTo: 菅野よう子 and the Seatbelts
 *
 ArtistFrom: (Megumi Ogata)|(Ogata Megumi)
 ArtistTo: 緒方恵美
 *
-ArtistFrom: (Yoko Takahashi)|(Takahashi Yoko)
+ArtistFrom: (You?ko Takahashi)|(Takahashi You?ko)
 ArtistTo: 高橋洋子
 *
 ArtistFrom: (Daichi Akitaroh)|(Akitaroh Daichi)
