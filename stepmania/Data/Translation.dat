@@ -68,20 +68,11 @@ TitleTo: BRE∀K DOWN!
 *
 # "Candy", "Candy heart", or "Candy $".
 TitleFrom: Candy(( heart)?|\$)
-ArtistFrom: .*Riyu.*
+ArtistFrom: .*(Riyu|りゆ).*
 TitleTo: CANDY♡
 *
 TitleFrom: (Kakumei)|(\+\{)
 TitleTo: 革命
-*
-# Make sure this appears after the above "Riyu" match, so it doesn't
-# break it.  I've seen both "Kosaku" and "Kosaka"; I think Kosaka is
-# correct, but handle both. */
-ArtistFrom: Riyu Kosak[au]
-ArtistTo: 小坂りゆ
-*
-ArtistFrom: Kosak[au] Riyu
-ArtistTo: 小坂りゆ
 *
 # Matsuri Japan is often just "Japan".  There may be other songs by
 # that name, too, so match the artist, too.
@@ -238,13 +229,8 @@ ArtistTo: Ω
 ArtistFrom: Omega
 ArtistTo: Ω
 *
-# Make sure this appears after the above "Riyu" match, so it doesn't
-# break it.  I've seen both "Kosaku" and "Kosaka"; I think Kosaka is
-# correct, but handle both. */
-ArtistFrom: Riyu Kosak[au]
-ArtistTo: 小坂りゆ
-*
-ArtistFrom: Kosak[au] Riyu
+# I've seen both "Kosaku" and "Kosaka"; Kosaka is correct, but handle both. */
+ArtistFrom: (Riyu Kosak[au])|(Kosak[au] Riyu)
 ArtistTo: 小坂りゆ
 *
 ArtistFrom: ZZ
@@ -277,10 +263,7 @@ ArtistTo: BUS★STOP
 ArtistFrom: dj TAKA feat. ?Noria
 ArtistTo: dj TAKA feat. のりあ
 *
-ArtistFrom: Miyuki Kunitake
-ArtistTo: くにたけみゆき
-*
-ArtistFrom: Kunitake Miyuki
+ArtistFrom: (Miyuki Kunitake)|(Kunitake Miyuki)
 ArtistTo: くにたけみゆき
 *
 
