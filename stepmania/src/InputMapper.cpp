@@ -267,6 +267,22 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
+		"dance",
+		"Dance ", //Notice extra space at end
+		"LevelSix USB Pad (DDR638)",
+		{
+			{ 0, JOY_1,			DANCE_BUTTON_UP,		false },
+			{ 0, JOY_2,			DANCE_BUTTON_DOWN,		false },
+			{ 0, JOY_3,			DANCE_BUTTON_LEFT,		false },
+			{ 0, JOY_4,			DANCE_BUTTON_RIGHT,		false },
+			{ 0, JOY_7,			DANCE_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_8,			DANCE_BUTTON_UPLEFT,	false },
+			{ 0, JOY_9,			DANCE_BUTTON_BACK,		false },
+			{ 0, JOY_10,		DANCE_BUTTON_START,		false },
+			END_MARKER
+		}
+	},
+	{
 		"pump",
 		"Pump USB",
 		"Pump USB pad",
@@ -282,6 +298,24 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, PUMP_2P_MID,	PUMP_BUTTON_CENTER,		true },
 			{ 0, PUMP_2P_DL,	PUMP_BUTTON_DOWNLEFT,	true },
 			{ 0, PUMP_2P_DR,	PUMP_BUTTON_DOWNRIGHT,	true },
+			END_MARKER
+		}
+	},
+	{
+		"techno",
+		"Dance ", //Notice the extra space at end
+		"LevelSix USB Pad (DDR638)",
+		{
+			{ 0, JOY_1,			TECHNO_BUTTON_UP,		false },
+			{ 0, JOY_2,			TECHNO_BUTTON_DOWN,		false },
+			{ 0, JOY_3,			TECHNO_BUTTON_LEFT,		false },
+			{ 0, JOY_4,			TECHNO_BUTTON_RIGHT,	false },
+			{ 0, JOY_5,			TECHNO_BUTTON_DOWNRIGHT,false },
+			{ 0, JOY_6,			TECHNO_BUTTON_DOWNLEFT,	false },
+			{ 0, JOY_7,			TECHNO_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_8,			TECHNO_BUTTON_UPLEFT,	false },
+			{ 0, JOY_9,			TECHNO_BUTTON_BACK,		false },
+			{ 0, JOY_10,		TECHNO_BUTTON_START,	false },
 			END_MARKER
 		}
 	},
