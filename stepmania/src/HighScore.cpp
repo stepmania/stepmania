@@ -45,7 +45,6 @@ XNode* HighScore::CreateNode() const
 
 	// TRICKY:  Don't write "name to fill in" markers.
 	pNode->AppendChild( "Name", IsRankingToFillIn(sName) ? "" : sName );
-	pNode->AppendChild( "sName",			sName );
 	pNode->AppendChild( "Grade",			grade );
 	pNode->AppendChild( "Score",			iScore );
 	pNode->AppendChild( "PercentDP",		fPercentDP );
