@@ -2,6 +2,7 @@
 #define RAGE_SOUND_OBJ_H
 
 #include <deque>
+#include "RageTimer.h"
 
 class CircBuf
 {
@@ -70,7 +71,7 @@ public:
 	void Stop();
 
 	float GetLengthSeconds();
-	float GetPositionSeconds() const;
+	float GetPositionSeconds( bool *approximate=NULL ) const;
 	int GetSampleRate() const;
 	bool SetPositionSeconds( float fSeconds = -1);
 	void SetAccurateSync(bool yes=true) { AccurateSync = yes; }
@@ -80,6 +81,8 @@ public:
 	float GetPlaybackRate() const { return float(speed_input_samples) / speed_output_samples; }
 	bool IsPlaying() const { return playing; }
 	CString GetLoadedFilePath() const { return m_sFilePath; }
+	void SetStartTime( const RageTimer &tm ) { StartTime = tm; }
+	RageTimer GetStartTime() const { return StartTime; }
 
 private:
 	/* If we were copied from another RageSound, this will point to it; otherwise
@@ -130,9 +133,13 @@ private:
 	int speed_input_samples, speed_output_samples;
 	bool AccurateSync;
 
+	/* Optional driver feature: time to actually start playing sounds.  If zero, or if not
+	 * supported, it'll start immediately. */
+	RageTimer StartTime;
+
 	CString error;
 
-	int GetPositionSecondsInternal() const;
+	int GetPositionSecondsInternal( bool *approximate=NULL ) const;
 	bool SetPositionSamples( int samples = -1 );
 	int GetData(char *buffer, int size);
 	void Fail(CString reason);

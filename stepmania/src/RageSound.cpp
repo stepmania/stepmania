@@ -108,6 +108,7 @@ RageSound::RageSound(const RageSound &cpy)
 	position = cpy.position;
 	playing = false;
 	AccurateSync = cpy.AccurateSync;
+	StartTime = cpy.StartTime;
 	fade_length = cpy.fade_length;
 	speed_input_samples = cpy.speed_input_samples;
 	speed_output_samples = cpy.speed_output_samples;
@@ -554,10 +555,15 @@ float RageSound::GetLengthSeconds()
 	return len / 1000.f; /* ms -> secs */
 }
 
-/* Get the position in samples, not counting GetOffsetFix, playback rate. */
-int RageSound::GetPositionSecondsInternal() const
+/* Get the position in frames (ignoring GetOffsetFix).  approximate is set to true
+ * if the returned time is approximated because of underrun, the sound not having started
+ * (after Play()) or finished (after EOF) yet. */
+int RageSound::GetPositionSecondsInternal( bool *approximate ) const
 {
 	LockMut(SOUNDMAN->lock);
+
+	if( approximate )
+		*approximate = false;
 
 	/* If we're not playing, just report the static position. */
 	if( !IsPlaying() )
@@ -572,6 +578,8 @@ int RageSound::GetPositionSecondsInternal() const
 	if(pos_map.empty())
 	{
 		LOG->Trace("no data yet; %i", position);
+		if( approximate )
+			*approximate = true;
 		return position - int(samplerate()*SOUNDMAN->GetPlayLatency());
 	}
 
@@ -620,12 +628,14 @@ int RageSound::GetPositionSecondsInternal() const
 	 */
 	LOG->Trace("Approximate sound time: sample %i, dist %i, closest %i", cur_sample, closest_position_dist, closest_position);
 
+	if( approximate )
+		*approximate = true;
 	return closest_position;
 }
 
-float RageSound::GetPositionSeconds() const
+float RageSound::GetPositionSeconds( bool *approximate ) const
 {
-	const float pos = GetPositionSecondsInternal() / float(samplerate());
+	const float pos = GetPositionSecondsInternal( approximate ) / float(samplerate());
 	const float fixed_pos = pos + Sample->GetOffsetFix();
 	return GetPlaybackRate() * fixed_pos;
 }
