@@ -550,54 +550,80 @@ void ScreenOptions::PositionItems()
 	/* Total number of rows, including "EXIT". */
 	const int NumRows = m_iNumOptionRows + 1;
 
+	int first_start, first_end, second_start, second_end;
+
 	/* Choices for each player.  If only one player is active, it's the same for both. */
 	const int P1Choice = GAMESTATE->IsHumanPlayer(PLAYER_1)? m_iCurrentRow[PLAYER_1]: m_iCurrentRow[PLAYER_2];
 	const int P2Choice = GAMESTATE->IsHumanPlayer(PLAYER_2)? m_iCurrentRow[PLAYER_2]: m_iCurrentRow[PLAYER_1];
 
-	/* First half: */
-	const int earliest = min( P1Choice, P2Choice );
-	int first_start = max( earliest - halfsize+1, 0 );
-	int first_end = first_start + halfsize - 1;
-
-	/* Second half: */
-	int latest = max( P1Choice, P2Choice );
-
-	int second_start = max( latest - halfsize + 1, 0 );
-	/* Never overlap: */
-	second_start = max( second_start, first_end + 1 );
-	int second_end = second_start + halfsize - 1;
-
-	if( second_end >= NumRows )
+	const bool BothPlayersActivated = GAMESTATE->IsHumanPlayer(PLAYER_1) && GAMESTATE->IsHumanPlayer(PLAYER_2);
+	if( m_InputMode == INPUTMODE_BOTH || !BothPlayersActivated )
 	{
-		first_start = max(0, NumRows - total);
-		first_end = NumRows;
-		second_start = 9999;
-		second_end = 9999;
+		/* Simply center the cursor. */
+		first_start = max( P1Choice - halfsize, 0 );
+		first_end = first_start + total;
+		second_start = second_end = first_end;
+	} else {
+		/* First half: */
+		const int earliest = min( P1Choice, P2Choice );
+		first_start = max( earliest - halfsize/2, 0 );
+		first_end = first_start + halfsize;
+
+		/* Second half: */
+		const int latest = max( P1Choice, P2Choice );
+
+		second_start = max( latest - halfsize/2, 0 );
+
+		/* Don't overlap. */
+		second_start = max( second_start, first_end );
+
+		second_end = second_start + halfsize;
 	}
 
-	bool is_split = false;
-	if(first_end+1 < second_start)
-		is_split = true;
+	first_end = min( first_end, NumRows );
+	second_end = min( second_end, NumRows );
 
+	/* If less than total (and NumRows) are displayed, fill in the empty
+	 * space intelligently. */
+	while(1)
+	{
+		const int sum = (first_end - first_start) + (second_end - second_start);
+		if( sum >= NumRows || sum >= total)
+			break; /* nothing more to display, or no room */
+
+		/* First priority: expand the top of the second half until it meets
+		 * the first half. */
+		if( second_start > first_end )
+			second_start--;
+		/* Otherwise, expand either end. */
+		else if( first_start > 0 )
+			first_start--;
+		else if( second_end < NumRows )
+			second_end++;
+		else
+			ASSERT(0); /* do we have room to grow or don't we? */
+	}
+
+	int pos = 0;
 	for( int i=0; i<NumRows; i++ )		// foreach line
 	{
 		float ItemPosition;
 		if( i < first_start )
 			ItemPosition = -0.5f;
-		else if( i <= first_end )
-			ItemPosition = float(i - first_start);
+		else if( i < first_end )
+			ItemPosition = (float) pos++;
 		else if( i < second_start )
 			ItemPosition = halfsize - 0.5f;
-		else if( i <= second_end )
-			ItemPosition = float(halfsize + i - second_start);
+		else if( i < second_end )
+			ItemPosition = (float) pos++;
 		else
 			ItemPosition = (float) total - 0.5f;
 			
 		float fY = ITEMS_START_Y + ITEMS_SPACING_Y*ItemPosition;
 		m_fRowY[i] = fY;
 		m_bRowIsHidden[i] = i < first_start ||
-							(i > first_end && i < second_start) ||
-							i > second_end;
+							(i >= first_end && i < second_start) ||
+							i >= second_end;
 	}
 }
 
