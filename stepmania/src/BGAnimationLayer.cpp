@@ -56,10 +56,15 @@ BGAnimationLayer::BGAnimationLayer()
 	m_Effect = EFFECT_STRETCH_STILL;	
 }
 
+/* Static background layers are simple, uncomposited background images with nothing
+ * behind them.  Since they have nothing behind them, they have no need for alpha,
+ * so turn that off. */
 void BGAnimationLayer::LoadFromStaticGraphic( CString sPath )
 {
+	RageTextureID ID(sPath);
+	ID.iAlphaBits = 0;
 	m_iNumSprites = 1;
-	m_Sprites[0].LoadBG( sPath );
+	m_Sprites[0].LoadBG( ID );
 	m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 }
 
