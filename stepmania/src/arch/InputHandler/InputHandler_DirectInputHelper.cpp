@@ -219,7 +219,7 @@ static int ConvertScancodeToKey( int scancode )
 	case DIK_K: return KEY_Ck;
 	case DIK_L: return KEY_Cl;
 	case DIK_SEMICOLON: return KEY_SEMICOLON;
-	case DIK_APOSTROPHE: return KEY_QUOTE;
+	case DIK_APOSTROPHE: return KEY_SQUOTE;
 	case DIK_GRAVE: return KEY_ACCENT;
 	case DIK_LSHIFT: return KEY_LSHIFT;
 	case DIK_BACKSLASH: return KEY_BACKSLASH;
