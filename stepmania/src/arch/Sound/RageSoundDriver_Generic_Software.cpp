@@ -57,7 +57,7 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 			continue;
 		}
 
-		if( s.state == sound::STOPPED )
+		if( s.state != sound::STOPPING && s.state != sound::PLAYING )
 			continue;
 
 		/* STOPPING or PLAYING.  Read sound data. */
