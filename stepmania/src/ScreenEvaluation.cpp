@@ -1111,52 +1111,6 @@ void ScreenEvaluation::CommitScores(
 				pcaToShowOut[p] = GAMESTATE->m_vLastPeakComboAwards[p].back();
 
 			LOG->Trace( "done with per combo awards" );
-
-
-			//
-			// erase awards from the Last list that have been received so that we 
-			// won't show them again.
-			//
-			if( !PROFILEMAN->IsUsingProfile(p) )
-			{
-				// don't show any awards on ScreenAward unless using a profile
-				GAMESTATE->m_vLastPerDifficultyAwards[p].clear();
-				GAMESTATE->m_vLastPeakComboAwards[p].clear();
-			}
-			else
-			{
-				Profile* pProfile = PROFILEMAN->GetProfile(p);
-
-				switch( m_Type )
-				{
-				case stage:
-					for( int i=GAMESTATE->m_vLastPerDifficultyAwards[p].size()-1; i>=0; i-- )
-					{
-						PerDifficultyAward pda = GAMESTATE->m_vLastPerDifficultyAwards[p][i];
-						Steps* pSteps = stageStats.pSteps[p];
-						ASSERT( pSteps != NULL );
-						bool bAlreadyHad = pProfile->HasPerDifficultyAward( pSteps->m_StepsType, pSteps->GetDifficulty(), pda );
-						pProfile->AddPerDifficultyAward( pSteps->m_StepsType, pSteps->GetDifficulty(), pda );
-						if( bAlreadyHad )
-							GAMESTATE->m_vLastPerDifficultyAwards[p].erase( GAMESTATE->m_vLastPerDifficultyAwards[p].begin()+i );
-					}
-				}
-
-				LOG->Trace( "done erasing dupe pdas" );
-
-				{
-					for( int i=GAMESTATE->m_vLastPeakComboAwards[p].size()-1; i>=0; i-- )
-					{
-						PeakComboAward pca = GAMESTATE->m_vLastPeakComboAwards[p][i];
-						bool bAlreadyHad = pProfile->HasPeakComboAward( pca );
-						pProfile->AddPeakComboAward( pca );
-						if( bAlreadyHad )
-							GAMESTATE->m_vLastPeakComboAwards[p].erase( GAMESTATE->m_vLastPeakComboAwards[p].begin()+i );
-					}
-				}
-
-				LOG->Trace( "done erasing pcas" );
-			}
 		}
 	}
 

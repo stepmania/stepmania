@@ -191,30 +191,6 @@ public:
 	map<DateTime,float> m_mapDayToCaloriesBurned;
 	float GetCaloriesBurnedForDay( DateTime day ) const;
 	
-	//
-	// Awards
-	//
-	struct AwardRecord
-	{
-		time_t first;
-		time_t last;
-		int iCount;	// num times achieved
-
-		AwardRecord() { Unset(); }
-
-		bool IsSet() const	{ return iCount>0; }
-		void Set(time_t t)	{ if (iCount==0) first = t; last = t; iCount++; }
-		void Unset()		{ iCount = 0; first = -1; last = -1; }
-		
-		XNode* CreateNode() const;
-		void LoadFromNode( const XNode* pNode );
-	};
-	AwardRecord m_PerDifficultyAwards[NUM_STEPS_TYPES][NUM_DIFFICULTIES][NUM_PER_DIFFICULTY_AWARDS];
-	AwardRecord m_PeakComboAwards[NUM_PEAK_COMBO_AWARDS];
-	void AddPerDifficultyAward( StepsType st, Difficulty dc, PerDifficultyAward pda );
-	void AddPeakComboAward( PeakComboAward pca );
-	bool HasPerDifficultyAward( StepsType st, Difficulty dc, PerDifficultyAward pda );
-	bool HasPeakComboAward( PeakComboAward pca );
 
 	//
 	// RecentSongScores
@@ -264,7 +240,6 @@ public:
 		InitCategoryScores(); 
 		InitScreenshotData(); 
 		InitCalorieData(); 
-		InitAwards(); 
 		InitRecentSongScores(); 
 		InitRecentCourseScores(); 
 	}
@@ -275,7 +250,6 @@ public:
 	void InitCategoryScores(); 
 	void InitScreenshotData(); 
 	void InitCalorieData(); 
-	void InitAwards(); 
 	void InitRecentSongScores(); 
 	void InitRecentCourseScores(); 
 
@@ -292,7 +266,6 @@ public:
 	void LoadCategoryScoresFromNode( const XNode* pNode );
 	void LoadScreenshotDataFromNode( const XNode* pNode );
 	void LoadCalorieDataFromNode( const XNode* pNode );
-	void LoadAwardsFromNode( const XNode* pNode );
 	void LoadRecentSongScoresFromNode( const XNode* pNode );
 	void LoadRecentCourseScoresFromNode( const XNode* pNode );
 
@@ -303,7 +276,6 @@ public:
 	XNode* SaveCategoryScoresCreateNode() const;
 	XNode* SaveScreenshotDataCreateNode() const;
 	XNode* SaveCalorieDataCreateNode() const;
-	XNode* SaveAwardsCreateNode() const;
 	XNode* SaveRecentSongScoresCreateNode() const;
 	XNode* SaveRecentCourseScoresCreateNode() const;
 
