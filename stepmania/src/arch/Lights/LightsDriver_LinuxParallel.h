@@ -1,9 +1,4 @@
-//
-//    LightsDriver_LinuxParallel - Parallel Port Based Lights Driver for Linux
-//
-//    This requires root permissions to work! (run as root or suid)
-//    This code was written using SystemMessage Driver as template.
-//
+/* LightsDriver_LinuxParallel - Parallel port-based lights for Linux */
 
 #ifndef LightsDriver_LinuxParallel_H
 #define LightsDriver_LinuxParallel_H
