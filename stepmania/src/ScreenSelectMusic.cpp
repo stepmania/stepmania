@@ -507,6 +507,18 @@ void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
 	AfterNotesChange( pn );
 }
 
+template<class T>
+void setmin( T &a, const T &b )
+{
+	a = min(a, b);
+}
+
+template<class T>
+void setmax( T &a, const T &b )
+{
+	a = max(a, b);
+}
+
 /* Adjust game options.  These settings may be overridden again later by the
  * SongOptions menu. */
 void ScreenSelectMusic::AdjustOptions()
@@ -521,24 +533,23 @@ void ScreenSelectMusic::AdjustOptions()
 		dc = min(dc, GAMESTATE->m_pCurNotes[p]->GetDifficulty());
 	}
 
-	LOG->Trace( "AdjustOptions: difficulty %i", dc );
 	if( !GAMESTATE->m_bChangedFailMode )
 	{
-		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_ARCADE;
+		/* Reset the fail type to the default. */
+		SongOptions so;
+		so.FromString( PREFSMAN->m_sDefaultModifiers );
+		GAMESTATE->m_SongOptions.m_FailType = so.m_FailType;
 
         /* Easy and beginner are never harder than FAIL_END_OF_SONG. */
 		if(dc <= DIFFICULTY_EASY)
-		{
-			LOG->Trace( "AdjustOptions: EOS" );
-			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_END_OF_SONG;
-		}
+			setmax(GAMESTATE->m_SongOptions.m_FailType, SongOptions::FAIL_END_OF_SONG);
 
 		/* If beginner's steps were chosen, and this is the first stage,
 		 * turn off failure completely--always give a second try. */
 		if(dc == DIFFICULTY_BEGINNER &&
 			!PREFSMAN->m_bEventMode && /* stage index is meaningless in event mode */
 			GAMESTATE->m_iCurrentStageIndex == 0)
-			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
+			setmax(GAMESTATE->m_SongOptions.m_FailType, SongOptions::FAIL_OFF);
 	}
 }
 
