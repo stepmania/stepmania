@@ -14,6 +14,7 @@
 #include "ThemeManager.h"
 #include "PlayerOptions.h"
 #include "GameState.h"
+#include "RageLog.h"
 
 
 #define SPACING_X	THEME->GetMetricF("OptionIconRow","SpacingX")
@@ -38,15 +39,6 @@ struct OptionColumnEntry
 
 const OptionColumnEntry g_OptionColumnEntries[] =
 {
-	{"0.5X",	0},
-	{"0.75X",	0},
-	{"1X",		0},
-	{"1.5X",	0},
-	{"2X",		0},
-	{"3X",		0},
-	{"4X",		0},
-	{"5X",		0},
-	{"8X",		0},
 	{"Boost",	0},
 	{"Wave",	1},
 	{"Drunk",	1},
@@ -76,10 +68,18 @@ const int NUM_OPTION_COL_ENTRIES = sizeof(g_OptionColumnEntries)/sizeof(OptionCo
 
 int OptionToPreferredColumn( CString sOptionText )
 {
+	/* Speedups always go in column 0. digit ... x */
+	if(sOptionText.GetLength() > 1 &&
+		isdigit(sOptionText[0])    &&
+		tolower(sOptionText[sOptionText.GetLength()-1]) == 'x') {
+			return 0;
+	}
+
 	for( int i=0; i<NUM_OPTION_COL_ENTRIES; i++ )
 		if( g_OptionColumnEntries[i].szString == sOptionText )
 			return g_OptionColumnEntries[i].iSlotIndex;
 
+	LOG->Trace("Unknown option: \"%s\"", sOptionText );
 	ASSERT(0);	// we encountered an option that isn't in our lookup table.  You should add it above.
 	return -1;
 }
