@@ -118,6 +118,14 @@ void InputFilter::Update(float fDeltaTime)
 {
 	RageTimer now;
 
+	// Constructing the DeviceInput inside the nested loops caues terrible 
+	// performance.  So, construct it once outside the loop, then change 
+	// .device and .button inside the loop.  I have no idea what is causing 
+	// the slowness.  DeviceInput is a very small and simple structure, but
+	// it's constructor was being called NUM_INPUT_DEVICES*NUM_DEVICE_BUTTONS
+	// (>2000) times per Update().
+	DeviceInput di( (InputDevice)0,0,now);
+
 	INPUTMAN->Update( fDeltaTime );
 
 	/* Make sure that nothing gets inserted while we do this, to prevent
@@ -128,7 +136,8 @@ void InputFilter::Update(float fDeltaTime)
 	{
 		for( int b=0; b < NUM_DEVICE_BUTTONS; b++ )	// foreach button
 		{
-			DeviceInput di( (InputDevice)d,b,now);
+			di.device = (InputDevice)d;
+			di.button = b;
 
 			if( m_fSecsToForce[d][b] > 0 )
 			{
