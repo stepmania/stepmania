@@ -40,6 +40,7 @@ protected:
 
 
 	Sprite m_sprCategory;
+	BitmapText m_textCategory;
 	Sprite m_sprType;
 	Sprite m_sprBullets[NUM_RANKING_LINES];
 	BitmapText m_textNames[NUM_RANKING_LINES];

@@ -51,6 +51,11 @@ ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking")
 	m_sprCategory.SetXY( CATEGORY_X, CATEGORY_Y );
 	this->AddChild( &m_sprCategory );
 
+	m_textCategory.LoadFromFont( THEME->GetPathToF("ScreenRanking title") );
+	m_textCategory.EnableShadow( false );
+	m_textCategory.SetXY( CATEGORY_X, CATEGORY_Y );
+	this->AddChild( &m_textCategory );
+
 	m_sprType.SetXY( TYPE_X, TYPE_Y );
 	this->AddChild( &m_sprType );
 
@@ -192,6 +197,7 @@ void ScreenRanking::SetPage( PageToShow pts )
 	{
 	case PageToShow::TYPE_CATEGORY:
 		{
+			m_textCategory.SetDiffuseAlpha(0);
 			m_sprCategory.SetDiffuse( RageColor(1,1,1,1) );
 			m_sprCategory.Load( THEME->GetPathToG(ssprintf("ScreenRanking category %c", 'A'+pts.category)) );
 			m_sprType.SetDiffuse( RageColor(1,1,1,1) );
@@ -232,9 +238,19 @@ void ScreenRanking::SetPage( PageToShow pts )
 		break;
 	case PageToShow::TYPE_COURSE:
 		{
-			m_sprCategory.SetDiffuse( RageColor(1,1,1,1) );
-			m_sprCategory.SetZoom(1);
-			m_sprCategory.Load( THEME->GetPathToG("ScreenRanking category "+pts.pCourse->m_sName) );
+			m_textCategory.SetDiffuseAlpha(0);
+			m_sprCategory.SetDiffuseAlpha(0);
+			CString path = THEME->GetPathToG("ScreenRanking category "+pts.pCourse->m_sName, true);
+			if( IsAFile(path) )
+			{
+				m_sprCategory.Load( path );
+				m_sprCategory.SetDiffuseAlpha(1);
+			} else {
+				m_textCategory.SetZoom(1);
+				m_textCategory.SetTextMaxWidth( CATEGORY_WIDTH, pts.pCourse->m_sName );
+				m_textCategory.SetDiffuseAlpha(1);
+			}
+
 			m_sprType.SetDiffuse( RageColor(1,1,1,1) );
 			m_sprType.Load( THEME->GetPathToG("ScreenRanking type "+GameManager::NotesTypeToString(pts.nt)) );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
@@ -285,6 +301,7 @@ void ScreenRanking::TweenPageOnScreen()
 {
 	m_sprCategory.FadeOn(0,"bounce right",0.5f);
 	m_sprType.FadeOn(0.1f,"bounce right",0.5f);
+	m_textCategory.FadeOn(0,"bounce right",0.5f);
 
 	for( int l=0; l<NUM_RANKING_LINES; l++ )
 	{
@@ -300,6 +317,7 @@ void ScreenRanking::TweenPageOffScreen()
 {
 	m_sprCategory.FadeOff(0,"fade",0.25f);
 	m_sprType.FadeOff(0.1f,"fade",0.25f);
+	m_textCategory.FadeOff(0.1f,"fade",0.25f);
 
 	for( int l=0; l<NUM_RANKING_LINES; l++ )
 	{
