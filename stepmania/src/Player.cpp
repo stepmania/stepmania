@@ -228,7 +228,7 @@ void Player::Update( float fDeltaTime )
 		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 
 		// if they got a bad score or haven't stepped on the corresponding tap yet
-		const TapNoteScore tns = m_TapNoteScores[hn.m_iTrack][iHoldStartIndex];
+		const TapNoteScore tns = GetTapNoteScore(hn.m_iTrack, iHoldStartIndex);
 		const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this hold?
 
 		if( hn.m_fStartBeat < fSongBeat && fSongBeat < hn.m_fEndBeat )	// if the song beat is in the range of this hold
@@ -364,7 +364,7 @@ void Player::Step( int col )
 		//LOG->Trace( "Checking Notes[%d]", iCurrentIndexEarlier );
 		if( iCurrentIndexEarlier >= 0  &&
 			GetTapNote(col, iCurrentIndexEarlier) != TAP_EMPTY  &&	// there is a note here
-			m_TapNoteScores[col][iCurrentIndexEarlier] == TNS_NONE )	// this note doesn't have a score
+			GetTapNoteScore(col, iCurrentIndexEarlier) == TNS_NONE )	// this note doesn't have a score
 		{
 			iIndexOverlappingNote = iCurrentIndexEarlier;
 			break;
@@ -377,7 +377,7 @@ void Player::Step( int col )
 		//LOG->Trace( "Checking Notes[%d]", iCurrentIndexLater );
 		if( iCurrentIndexLater >= 0  &&
 			GetTapNote(col, iCurrentIndexLater) != TAP_EMPTY  &&	// there is a note here
-			m_TapNoteScores[col][iCurrentIndexLater] == TNS_NONE )	// this note doesn't have a score
+			GetTapNoteScore(col, iCurrentIndexLater) == TNS_NONE )	// this note doesn't have a score
 		{
 			iIndexOverlappingNote = iCurrentIndexLater;
 			break;
@@ -395,7 +395,7 @@ void Player::Step( int col )
 		const float fNoteOffset = fBeatsUntilStep / GAMESTATE->m_fCurBPS; //the offset from the actual step in seconds
 
 
-		TapNoteScore &score = m_TapNoteScores[col][iIndexOverlappingNote];
+		TapNoteScore score;
 
 		if(		 fPercentFromPerfect < PREFSMAN->m_fJudgeWindowPerfectPercent )	score = TNS_PERFECT;
 		else if( fPercentFromPerfect < PREFSMAN->m_fJudgeWindowGreatPercent )	score = TNS_GREAT;
@@ -410,6 +410,8 @@ void Player::Step( int col )
 		bDestroyedNote = (score >= TNS_GOOD);
 
 		LOG->Trace("(%2d/%2d)Note offset: %f, Score: %i", m_iOffsetSample, SAMPLE_COUNT, fNoteOffset, score);
+		SetTapNoteScore(col, iIndexOverlappingNote, score);
+
 		if (GAMESTATE->m_SongOptions.m_AutoAdjust == SongOptions::ADJUST_ON) 
 		{
 			m_fOffset[m_iOffsetSample++] = fNoteOffset;
@@ -432,10 +434,10 @@ void Player::Step( int col )
 
 		if (score > TNS_NONE) {
 			bool bRowDestroyed = true;
-			for( int t=0; t<m_iNumTracks; t++ )			// did this complete the elminiation of the row?
+			for( int t=0; t<m_iNumTracks; t++ )			// did this complete the elimination of the row?
 			{
 				if( GetTapNote(t, iIndexOverlappingNote) != TAP_EMPTY  &&			// there is a note here
-					m_TapNoteScores[t][iIndexOverlappingNote] == TNS_NONE )	// and it doesn't have a score
+					GetTapNoteScore(t, iIndexOverlappingNote) == TNS_NONE )			// and it doesn't have a score
 				{
 					bRowDestroyed = false;
 					break;	// stop searching
@@ -457,8 +459,11 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 	// find the minimum score of the row
 	TapNoteScore score = TNS_PERFECT;
 	for( int t=0; t<m_iNumTracks; t++ )
-		if( m_TapNoteScores[t][iIndexThatWasSteppedOn] >= TNS_BOO )
-			score = min( score, m_TapNoteScores[t][iIndexThatWasSteppedOn] );
+	{
+		TapNoteScore tns = GetTapNoteScore(t, iIndexThatWasSteppedOn);
+		if( tns >= TNS_BOO )
+			score = min( score, tns );
+	}
 
 	// remove this row from the NoteField
 //	bool bHoldNoteOnThisBeat = false;
@@ -539,9 +544,9 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 		int iNumMissesThisRow = 0;
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
-			if( GetTapNote(t, r) != TAP_EMPTY  &&  m_TapNoteScores[t][r] == TNS_NONE )
+			if( GetTapNote(t, r) != TAP_EMPTY  &&  GetTapNoteScore(t, r) == TNS_NONE )
 			{
-				m_TapNoteScores[t][r] = TNS_MISS;
+				SetTapNoteScore(t, r, TNS_MISS);
 				iNumMissesFound++;
 				iNumMissesThisRow++;
 			}
