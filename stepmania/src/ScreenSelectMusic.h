@@ -23,6 +23,7 @@
 #include "PaneDisplay.h"
 #include "Character.h"
 #include "BGAnimation.h"
+#include "RageUtil_BackgroundLoader.h"
 
 class ScreenSelectMusic : public ScreenWithMenuElements
 {
@@ -61,6 +62,7 @@ protected:
 	void SortOrderChanged();
 
 	void UpdateOptionsDisplays();
+	void CheckBackgroundRequests();
 
 	vector<Steps*>		m_vpSteps;
 	vector<Trail*>		m_vpTrails;
@@ -103,7 +105,6 @@ protected:
 	bool				m_bMadeChoice;
 	bool				m_bGoToOptions;
 	Sprite				m_sprOptionsMessage;
-	float				m_fPlaySampleCountdown;
 	CString				m_sSampleMusicToPlay;
 	TimingData			*m_pSampleMusicTimingData;
 	float				m_fSampleStartSeconds, m_fSampleLengthSeconds;
@@ -117,6 +118,8 @@ protected:
 	RageSound			m_soundDifficultyHarder;
 	RageSound			m_soundOptionsChange;
 	RageSound			m_soundLocked;
+
+	BackgroundLoader	m_BackgroundLoader;
 };
 
 #endif

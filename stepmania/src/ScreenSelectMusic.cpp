@@ -50,6 +50,14 @@ const int NUM_SCORE_DIGITS	=	9;
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 CString g_sFallbackCDTitlePath;
 
+static CString g_sCDTitlePath;
+static bool g_bWantFallbackCdTitle;
+static bool g_bCDTitleWaiting = false;
+static CString g_sBannerPath;
+static bool g_bBannerWaiting = false;
+static bool g_bSampleMusicWaiting = false;
+static RageTimer g_StartedLoadingAt(RageZeroTimer);
+
 ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
@@ -312,7 +320,6 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
-	m_fPlaySampleCountdown = 0;
 	m_bAllowOptionsMenu = m_bAllowOptionsMenuRepeat = false;
 
 	UpdateOptionsDisplays();
@@ -635,6 +642,75 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 	}
 }
 
+void ScreenSelectMusic::CheckBackgroundRequests()
+{
+	if( g_bCDTitleWaiting )
+	{
+		/* The CDTitle is normally very small, so we don't bother waiting to display it. */
+		CString sPath;
+		if( m_BackgroundLoader.IsCacheFileFinished(g_sCDTitlePath, sPath) )
+		{
+			g_bCDTitleWaiting = false;
+
+			CString sCDTitlePath = sPath;
+
+			if( sCDTitlePath.empty() || !IsAFile(sCDTitlePath) )
+				sCDTitlePath = g_bWantFallbackCdTitle? g_sFallbackCDTitlePath:"";
+
+			if( !sCDTitlePath.empty() )
+			{
+				TEXTUREMAN->DisableOddDimensionWarning();
+				m_sprCDTitleFront.Load( sCDTitlePath );
+				m_sprCDTitleBack.Load( sCDTitlePath );
+				TEXTUREMAN->EnableOddDimensionWarning();
+			}
+
+			m_BackgroundLoader.FinishedWithCachedFile( g_sCDTitlePath );
+		}
+		else
+			return;
+	}
+
+	/* Loading the rest can cause small skips, so don't do it until the wheel settles. */
+	if( !m_MusicWheel.IsSettled() )
+		return;
+
+	if( g_bBannerWaiting )
+	{
+		float HighQualTime = THEME->GetMetricF("FadingBanner","FadeSeconds");
+
+		CString sPath;
+		if( g_StartedLoadingAt.Ago() >= HighQualTime && m_BackgroundLoader.IsCacheFileFinished(g_sBannerPath, sPath) )
+		{
+			g_bBannerWaiting = false;
+			RageTimer foo;
+			m_Banner.Load( sPath );
+
+			m_BackgroundLoader.FinishedWithCachedFile( g_sBannerPath );
+		}
+		else
+			return;
+	}
+
+	/* Nothing else is going.  Start the music, if we havn't yet. */
+	if( g_bSampleMusicWaiting )
+	{
+		/* Don't start the music sample when moving fast. */
+		if( g_StartedLoadingAt.Ago() >= SAMPLE_MUSIC_DELAY )
+		{
+			g_bSampleMusicWaiting = false;
+
+			SOUND->PlayMusic(
+				m_sSampleMusicToPlay, m_pSampleMusicTimingData,
+				true, m_fSampleStartSeconds, m_fSampleLengthSeconds,
+				1.5f, /* fade out for 1.5 seconds */
+				ALIGN_MUSIC_BEATS );
+		}
+		else
+			return;
+	}
+}
+
 void ScreenSelectMusic::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
@@ -642,24 +718,7 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 	m_bgNoOptionsOut.Update( fDeltaTime );
 	m_sprOptionsMessage.Update( fDeltaTime );
 
-
-	if( m_fPlaySampleCountdown > 0 )
-	{
-		m_fPlaySampleCountdown -= fDeltaTime;
-		/* Make sure we don't start the sample when rouletting is
-		 * spinning down. */
-		if( m_fPlaySampleCountdown <= 0 && !m_MusicWheel.IsRouletting() )
-		{
-			if( !m_sSampleMusicToPlay.empty() )
-			{
-				SOUND->PlayMusic(
-					m_sSampleMusicToPlay, m_pSampleMusicTimingData,
-					true, m_fSampleStartSeconds, m_fSampleLengthSeconds,
-					1.5f, /* fade out for 1.5 seconds */
-					ALIGN_MUSIC_BEATS );
-			}
-		}
-	}
+	CheckBackgroundRequests();
 }
 
 void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -1353,6 +1412,11 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	m_sSampleMusicToPlay = "";
 	m_pSampleMusicTimingData = NULL;
+	g_sCDTitlePath = "";
+	g_sBannerPath = "";
+	g_bWantFallbackCdTitle = false;
+	bool bWantBanner = true;
+
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_SECTION:
@@ -1363,8 +1427,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_iSelection[p] = -1;
 
 			m_BPMDisplay.NoBPM();
-			m_sprCDTitleFront.UnloadTexture();
-			m_sprCDTitleBack.UnloadTexture();
+			g_sCDTitlePath = ""; // none
 			m_DifficultyDisplay.UnsetDifficulties();
 
 			m_fSampleStartSeconds = 0;
@@ -1376,10 +1439,11 @@ void ScreenSelectMusic::AfterMusicChange()
 			switch( m_MusicWheel.GetSelectedType() )
 			{
 			case TYPE_SECTION:
-				m_Banner.LoadFromGroup( sGroup );	// if this isn't a group, it'll default to the fallback banner
+				g_sBannerPath = SONGMAN->GetGroupBannerPath( sGroup );
 				m_sSampleMusicToPlay = THEME->GetPathS(m_sName,"section music");
 				break;
 			case TYPE_SORT:
+				bWantBanner = false; /* we load it ourself */
 				switch( GAMESTATE->m_SortOrder )
 				{
 				case SORT_SORT_MENU:
@@ -1417,9 +1481,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			StepsUtil::SortNotesArrayByDifficulty( m_vpSteps );
 
 			if ( PREFSMAN->m_bShowBanners )
-				m_Banner.LoadFromSong( pSong );
-			else
-				m_Banner.LoadFallback() ;
+				g_sBannerPath = pSong->GetBannerPath();
 
 			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			{
@@ -1430,11 +1492,8 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_BPMDisplay.SetBPM( pSong );
 			}
 
-			const CString CDTitlePath = pSong->HasCDTitle()? pSong->GetCDTitlePath():g_sFallbackCDTitlePath;
-			TEXTUREMAN->DisableOddDimensionWarning();
-			m_sprCDTitleFront.Load( CDTitlePath );
-			m_sprCDTitleBack.Load( CDTitlePath );
-			TEXTUREMAN->EnableOddDimensionWarning();
+			g_sCDTitlePath = pSong->GetCDTitlePath();
+			g_bWantFallbackCdTitle = true;
 
 			const vector<Song*> best = SONGMAN->GetBestSongs( PROFILE_SLOT_MACHINE );
 			const int index = FindIndex( best.begin(), best.end(), pSong );
@@ -1478,16 +1537,15 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
+		bWantBanner = false; /* we load it ourself */
 		switch(m_MusicWheel.GetSelectedType())
 		{
 		case TYPE_ROULETTE:	m_Banner.LoadRoulette();	break;
 		case TYPE_RANDOM: 	m_Banner.LoadRandom();		break;
 		default: ASSERT(0);
 		}
-
 		m_BPMDisplay.NoBPM();
-		m_sprCDTitleFront.UnloadTexture();
-		m_sprCDTitleBack.UnloadTexture();
+		g_sCDTitlePath = ""; // none
 		m_DifficultyDisplay.UnsetDifficulties();
 
 		m_fSampleStartSeconds = 0;
@@ -1535,7 +1593,10 @@ void ScreenSelectMusic::AfterMusicChange()
 		else
 			m_textTotalTime.SetText( "xx:xx.xx" );	// The numbers format doesn't have a '?'.  Is there a better solution?
 
-		m_Banner.LoadFromCourse( pCourse );
+		g_sBannerPath = pCourse->m_sBannerPath;
+		if( g_sBannerPath.empty() )
+			m_Banner.LoadFallback();
+
 		m_BPMDisplay.SetBPM( pCourse );
 
 		m_DifficultyDisplay.UnsetDifficulties();
@@ -1581,15 +1642,44 @@ void ScreenSelectMusic::AfterMusicChange()
 		ASSERT(0);
 	}
 
-	// update stage counter display (long versions/marathons)
-	m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+GAMESTATE->GetStageText()) );
+	m_sprCDTitleFront.UnloadTexture();
+	m_sprCDTitleBack.UnloadTexture();
+
+	if( m_MusicWheel.GetSelectedType() == TYPE_ROULETTE || m_MusicWheel.GetSelectedType() == TYPE_RANDOM )
+	m_BackgroundLoader.Abort();
+
+	g_bCDTitleWaiting = false;
+	if( !g_sCDTitlePath.empty() || g_bWantFallbackCdTitle )
+	{
+		LOG->Trace( "cache \"%s\"", g_sCDTitlePath.c_str());
+		m_BackgroundLoader.CacheFile( g_sCDTitlePath ); // empty OK
+		g_bCDTitleWaiting = true;
+	}
+
+	g_bBannerWaiting = false;
+	if( bWantBanner )
+	{
+		LOG->Trace("LoadFromCachedBanner(%s)",g_sBannerPath .c_str());
+		if( m_Banner.LoadFromCachedBanner( g_sBannerPath ) )
+		{
+			m_BackgroundLoader.CacheFile( g_sBannerPath );
+			g_bBannerWaiting = true;
+		}
+	}
 
 	// Don't stop music if it's already playing the right file.
-	if( SOUND->GetMusicPath() != m_sSampleMusicToPlay )
+	g_bSampleMusicWaiting = false;
+	if( !m_MusicWheel.IsRouletting() && SOUND->GetMusicPath() != m_sSampleMusicToPlay )
 	{
 		SOUND->StopMusic();
-		m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
+		if( !m_sSampleMusicToPlay.empty() )
+			g_bSampleMusicWaiting = true;
 	}
+
+	g_StartedLoadingAt.Touch();
+
+	// update stage counter display (long versions/marathons)
+	m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+GAMESTATE->GetStageText()) );
 
 	m_Artist.SetTips( m_Artists, m_AltArtists );
 
@@ -1607,10 +1697,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_CourseContentsFrame.TweenInAfterChangedCourse();
 		break;
 	}
-
-	/* Make sure we never start the sample when moving fast. */
-	if(m_MusicWheel.IsMoving())
-		m_fPlaySampleCountdown = 0;
 }
 
 
