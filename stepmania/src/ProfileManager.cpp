@@ -43,8 +43,8 @@ ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our
 #define COURSE_SCORES_FILE		"CourseScores.dat"
 #define STATS_HTML_FILE			"stats.html"
 #define STYLE_CSS_FILE			"style.css"
-#define NEW_MEM_CARD_NAME		"NewCard"
-#define NEW_PROFILE_NAME		"NewProfile"
+#define NEW_MEM_CARD_NAME		""
+#define NEW_PROFILE_NAME		""
 
 #define SM_300_STATISTICS_FILE	"statistics.ini"
 
@@ -63,6 +63,34 @@ static const char *MEM_CARD_DIR[NUM_PLAYERS] =
 	"@mc1/",
 	"@mc2/",
 };
+
+
+CString Profile::GetDisplayName()
+{
+	if( !m_sName.empty() )
+		return m_sName;
+	else if( !m_sLastUsedHighScoreName.empty() )
+		return m_sLastUsedHighScoreName;
+	else
+		return "NO NAME";
+}
+
+CString Profile::GetDisplayCaloriesBurned()
+{
+	if( m_fWeightPounds == 0 )	// weight not entered
+		return "N/A";
+	else 
+		return ssprintf("%f.3Cal",m_fCaloriesBurned);
+}
+
+int Profile::GetTotalNumSongsPlayed()
+{
+	int iTotal = 0;
+	for( int i=0; i<NUM_PLAY_MODES; i++ )
+		iTotal += m_iNumSongsPlayedByPlayMode[i];
+	return iTotal;
+}
+
 
 ProfileManager::ProfileManager()
 {
@@ -129,8 +157,6 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 
 bool ProfileManager::CreateProfile( CString sProfileDir, CString sName )
 {
-	ASSERT( !sName.empty() );
-
 	bool bResult;
 
 	Profile pro;

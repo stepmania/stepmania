@@ -176,10 +176,7 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 			Profile* pProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
 			if( pProfile )
 			{
-				if( !pProfile->m_sLastUsedHighScoreName.empty() )
-					sCredits = pProfile->m_sLastUsedHighScoreName;
-				else
-					sCredits = pProfile->m_sName;
+				sCredits = pProfile->GetDisplayName();
 			}
 			else 
 			{

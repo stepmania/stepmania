@@ -30,7 +30,7 @@
 #define INITIAL_SCREEN			THEME->GetMetric("Common","InitialScreen")
 
 
-ScreenAttract::ScreenAttract( CString sClassName ) : Screen( sClassName )
+ScreenAttract::ScreenAttract( CString sClassName, bool bResetGameState ) : Screen( sClassName )
 {
 	LOG->Trace( "ScreenAttract::ScreenAttract(%s)", sClassName.c_str() );
 
@@ -38,7 +38,8 @@ ScreenAttract::ScreenAttract( CString sClassName ) : Screen( sClassName )
 	if( sClassName == INITIAL_SCREEN )
 		GAMESTATE->m_iNumTimesThroughAttract++;
 
-	GAMESTATE->Reset();
+	if( bResetGameState )
+		GAMESTATE->Reset();
 
 	// We have to do initialization in the first update because this->GetElementName() won't
 	// work until the object has been fully constructed.

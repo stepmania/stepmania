@@ -30,6 +30,8 @@ struct Profile
 		m_iTotalPlaySeconds = 0;
 		m_iTotalGameplaySeconds = 0;
 		m_iCurrentCombo = 0;
+		m_fWeightPounds = 0;
+		m_fCaloriesBurned = 0;
 
 		int i;
 		for( i=0; i<NUM_PLAY_MODES; i++ )
@@ -42,6 +44,10 @@ struct Profile
 			m_iNumSongsPlayedByMeter[i] = 0;
 	}
 
+	CString GetDisplayName();
+	CString GetDisplayCaloriesBurned();
+	int GetTotalNumSongsPlayed();
+
 	bool LoadFromIni( CString sIniPath );
 	bool SaveToIni( CString sIniPath );
 	CString m_sName;
@@ -52,6 +58,8 @@ struct Profile
 	int m_iTotalPlaySeconds;
 	int m_iTotalGameplaySeconds;
 	int m_iCurrentCombo;
+	float m_fWeightPounds;
+	int m_fCaloriesBurned;
 	int m_iNumSongsPlayedByPlayMode[NUM_PLAY_MODES];
 	int m_iNumSongsPlayedByStyle[NUM_STYLES];
 	int m_iNumSongsPlayedByDifficulty[NUM_DIFFICULTIES];
