@@ -25,11 +25,14 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-protected:
+	/* Hack: public for JukeboxMenu */
+	static bool SetSong();
 
+protected:
 	TransitionBGAnimation	m_In;
 	TransitionBGAnimation	m_Out;
 
+	static bool PrepareForJukebox();
 };
 
 #endif

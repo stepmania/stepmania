@@ -23,12 +23,8 @@
 const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+10);	// MUST be same as in ScreenGameplay
 
 
-bool PrepareForJukebox()		// always return true.
+bool ScreenJukebox::SetSong()
 {
-	// ScreeJukeboxMenu must set this
-	ASSERT( GAMESTATE->m_CurStyle != STYLE_INVALID );
-	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
-
 	vector<Song*> vSongs;
 	if( GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC )
 		SONGMAN->GetSongs( vSongs );
@@ -68,8 +64,19 @@ bool PrepareForJukebox()		// always return true.
 		for( int p=0; p<NUM_PLAYERS; p++ )
 			GAMESTATE->m_pCurNotes[p] = pNotes;
 		
-		break;	// done looking
+		return true;	// done looking
 	}
+
+	return false;
+}
+
+bool ScreenJukebox::PrepareForJukebox()		// always return true.
+{
+	// ScreeJukeboxMenu must set this
+	ASSERT( GAMESTATE->m_CurStyle != STYLE_INVALID );
+	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
+
+	SetSong();
 
 	ASSERT( GAMESTATE->m_pCurSong );
 
