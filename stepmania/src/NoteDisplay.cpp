@@ -391,7 +391,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			DISPLAY->SetTextureModeGlow();
 		else
 			DISPLAY->SetTextureModeModulate();
-		DISPLAY->DisableTextureWrapping();
+		DISPLAY->EnableTextureWrapping(false);
 
 		const float fFrameWidth		= pBottomCap->GetUnzoomedWidth();
 		const float fFrameHeight	= pBottomCap->GetUnzoomedHeight();
@@ -534,7 +534,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			DISPLAY->SetTextureModeGlow();
 		else
 			DISPLAY->SetTextureModeModulate();
-		DISPLAY->DisableTextureWrapping();
+		DISPLAY->EnableTextureWrapping(false);
 
 		const float fFrameWidth  = pSprTopCap->GetUnzoomedWidth();
 		const float fFrameHeight = pSprTopCap->GetUnzoomedHeight();

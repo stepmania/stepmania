@@ -65,8 +65,7 @@ public:
 	bool ZBufferEnabled() const;
 	void EnableZBuffer();
 	void DisableZBuffer();
-	void EnableTextureWrapping();
-	void DisableTextureWrapping();
+	void EnableTextureWrapping(bool yes=true);
 
 	void DrawQuad( const RageVertex v[4] );	// upper-left, upper-right, lower-left, lower-right
 	void DrawQuads( const RageVertex v[], int iNumVerts );

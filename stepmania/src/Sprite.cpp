@@ -257,6 +257,7 @@ void Sprite::DrawPrimitives()
 			v[2].t = RageVector2( m_CustomTexCoords[4],	m_CustomTexCoords[5] );	// bottom right
 			v[3].t = RageVector2( m_CustomTexCoords[6],	m_CustomTexCoords[7] );	// top right
 
+			/* XXX: Why don't we honor m_bTextureWrapping when using custom coords? */
 			DISPLAY->EnableTextureWrapping();
 		} 
 		else 
@@ -268,10 +269,7 @@ void Sprite::DrawPrimitives()
 			v[2].t = RageVector2( pTexCoordRect->right,	pTexCoordRect->bottom );	// bottom right
 			v[3].t = RageVector2( pTexCoordRect->right,	pTexCoordRect->top );		// top right
 
-			if( m_bTextureWrapping )	
-				DISPLAY->EnableTextureWrapping();
-			else
-				DISPLAY->DisableTextureWrapping();
+			DISPLAY->EnableTextureWrapping(m_bTextureWrapping);
 		}
 	}
 
