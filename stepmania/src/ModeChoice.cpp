@@ -211,6 +211,30 @@ int GetSidesRequiredToPlayStyle( Style style )
 	}
 }
 
+static bool AreStyleAndPlayModeCompatible( Style style, PlayMode pm )
+{
+	if( style == STYLE_INVALID || pm == PLAY_MODE_INVALID )
+		return true;
+
+	switch( pm )
+	{
+	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_RAVE:
+		// Can't play rave if there isn't enough room for two players.
+		// This is correct for dance (ie, no rave for solo and doubles),
+		// and should be okay for pump .. not sure about other game types.
+		if( GAMEMAN->GetStyleDefForStyle(style)->m_iColsPerPlayer >= 6 )
+			return false;
+		
+		/* Don't allow battle modes if the style takes both sides. */
+		const StyleDef *sd = GAMEMAN->GetStyleDefForStyle( style );
+		if( sd->m_StyleType==StyleDef::ONE_PLAYER_TWO_CREDITS )
+			return false;
+	}
+
+	return true;
+}
+
 bool ModeChoice::IsPlayable( CString *why ) const
 {
 	if( m_bInvalid )
@@ -230,16 +254,9 @@ bool ModeChoice::IsPlayable( CString *why ) const
 	if( m_pm != PLAY_MODE_INVALID || m_style != STYLE_INVALID )
 	{
 		const PlayMode pm = (m_pm != PLAY_MODE_INVALID) ? m_pm : GAMESTATE->m_PlayMode;
-		if( pm == PLAY_MODE_RAVE || pm == PLAY_MODE_BATTLE )
-		{
-			// Can't play rave if there isn't enough room for two players.
-			// This is correct for dance (ie, no rave for solo and doubles),
-			// and should be okay for pump .. not sure about other game types.
-			const Style &style = m_style != STYLE_INVALID? m_style: GAMESTATE->m_CurStyle;
-			if( style != STYLE_INVALID &&
-				GAMEMAN->GetStyleDefForStyle(style)->m_iColsPerPlayer >= 6 )
-				return false;
-		}
+		const Style style = (m_style != STYLE_INVALID)? m_style: GAMESTATE->m_CurStyle;
+		if( !AreStyleAndPlayModeCompatible( style, pm ) )
+			return false;
 	}
 
 	if( !m_sScreen.CompareNoCase("ScreenEditCoursesMenu") )
