@@ -25,6 +25,15 @@ static const CString EditMenuRowNames[NUM_EDIT_MENU_ROWS] = {
 XToString( EditMenuRow, NUM_EDIT_MENU_ROWS );
 XToThemedString( EditMenuRow, NUM_EDIT_MENU_ROWS );
 
+static const CString EditMenuActionNames[NUM_EDIT_MENU_ACTIONS] = {
+	"Edit",
+	"Delete",
+	"Create",
+};
+XToString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
+XToThemedString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
+StringToX( EditMenuAction );
+
 
 #define ARROWS_X( i )			THEME->GetMetricF("EditMenu",ssprintf("Arrows%dX",i+1))
 #define SONG_BANNER_WIDTH		THEME->GetMetricF("EditMenu","SongBannerWidth")

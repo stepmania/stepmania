@@ -369,19 +369,6 @@ const CString& GoalTypeToString( GoalType gt );
 GoalType StringToGoalType( const CString& s );
 
 
-enum EditMenuAction
-{
-	EDIT_MENU_ACTION_EDIT,
-	EDIT_MENU_ACTION_DELETE,
-	EDIT_MENU_ACTION_CREATE,
-	NUM_EDIT_MENU_ACTIONS
-};
-#define FOREACH_EditMenuAction( ema ) FOREACH_ENUM( EditMenuAction, NUM_EDIT_MENU_ACTIONS, ema )
-const CString& EditMenuActionToString( EditMenuAction ema );
-EditMenuAction StringToEditMenuAction( const CString& s );
-const CString& EditMenuActionToThemedString( EditMenuAction ema );
-
-
 #endif
 
 /*

@@ -27,6 +27,17 @@ enum EditMenuRow
 const CString& EditMenuRowToString( EditMenuRow r );
 const CString& EditMenuRowToThemedString( EditMenuRow r );
 
+enum EditMenuAction
+{
+	EDIT_MENU_ACTION_EDIT,
+	EDIT_MENU_ACTION_DELETE,
+	EDIT_MENU_ACTION_CREATE,
+	NUM_EDIT_MENU_ACTIONS
+};
+#define FOREACH_EditMenuAction( ema ) FOREACH_ENUM( EditMenuAction, NUM_EDIT_MENU_ACTIONS, ema )
+const CString& EditMenuActionToString( EditMenuAction ema );
+const CString& EditMenuActionToThemedString( EditMenuAction ema );
+
 
 class EditMenu: public ActorFrame 
 {

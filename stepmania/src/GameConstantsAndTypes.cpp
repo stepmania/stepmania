@@ -294,27 +294,6 @@ static void LuaGoalType(lua_State* L)
 REGISTER_WITH_LUA_FUNCTION( LuaGoalType );
 
 
-static const CString EditMenuActionNames[NUM_EDIT_MENU_ACTIONS] = {
-	"Edit",
-	"Delete",
-	"Create",
-};
-XToString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
-XToThemedString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
-StringToX( EditMenuAction );
-static void LuaEditMenuAction(lua_State* L)
-{
-	FOREACH_EditMenuAction( ema )
-	{
-		CString s = EditMenuActionNames[ema];
-		s.MakeUpper();
-		LUA->SetGlobal( "EDIT_MENU_ACTION_"+s, ema );
-	}
-}
-REGISTER_WITH_LUA_FUNCTION( LuaEditMenuAction );
-
-
-
 #include "LuaFunctions.h"
 LuaFunction_NoArgs( CoinMode,   CoinModeToString(PREFSMAN->m_CoinMode) )
 LuaFunction_NoArgs( Premium,    PremiumToString(PREFSMAN->m_Premium) )
