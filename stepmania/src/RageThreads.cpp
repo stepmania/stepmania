@@ -20,6 +20,7 @@
 #include "SDL_utils.h"
 
 #include <signal.h>
+#include <errno.h>
 
 /* SDL threads aren't quite enough.  We need to be able to suspend or
  * kill all threads, including the main one.  SDL doesn't count the
@@ -27,6 +28,11 @@
 #if defined(LINUX)
 #define PID_BASED_THREADS
 #include "archutils/Unix/LinuxThreadHelpers.h"
+#endif
+
+#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) && defined(CRASH_HANDLER)
+#include "archutils/Unix/Backtrace.h"
+#include "archutils/Unix/CrashHandler.h"
 #endif
 
 #if defined(WIN32)
@@ -38,7 +44,7 @@
 static const unsigned int UnknownThreadID = 0xFFFFFFFF;
 struct ThreadSlot
 {
-	char name[1024];
+	mutable char name[1024]; /* mutable so we can force nul-termination */
 	Uint32 threadid;
 
 	/* Format this beforehand, since it's easier to do that than to do it under crash conditions. */
@@ -87,6 +93,7 @@ struct ThreadSlot
 #endif
 	}
 
+	const char *GetThreadName() const;
 	void SetupThisThread();
 	void ShutdownThisThread();
 	void SetupUnknownThread();
@@ -181,6 +188,14 @@ RageThread::~RageThread()
 
 }
 
+const char *ThreadSlot::GetThreadName() const
+{
+	/* This function may be called in crash conditions, so guarantee the string
+	 * is null-terminated. */
+	name[ sizeof(name)-1] = 0;
+
+	return name;
+}
 
 void ThreadSlot::SetupThisThread()
 {
@@ -288,11 +303,7 @@ const char *RageThread::GetCurThreadName()
 	if(slot==-1)
 		return "???";
 
-	/* This function may be called in crash conditions, so guarantee the string
-	 * is null-terminated. */
-	g_ThreadSlots[slot].name[ sizeof(g_ThreadSlots[slot].name)-1] = 0;
-
-	return g_ThreadSlots[slot].name;
+	return g_ThreadSlots[slot].GetThreadName();
 }
 
 int RageThread::Wait()
@@ -548,6 +559,126 @@ void RageMutexImpl::Unlock()
 	 * called from ASSERT. */
 	if( !ret )
 		sm_crash();
+}
+
+#elif defined(HAVE_LIBPTHREAD)
+#include <sys/time.h>
+struct RageMutexImpl
+{
+	unsigned LockedBy;
+	volatile int LockCnt;
+
+	pthread_mutex_t mutex;
+
+	RageMutexImpl();
+	~RageMutexImpl();
+
+	void Lock();
+	void Unlock();
+};
+
+RageMutexImpl::RageMutexImpl()
+{
+	pthread_mutex_init( &mutex, NULL );
+	LockedBy = 0;
+	LockCnt = 0;
+}
+
+RageMutexImpl::~RageMutexImpl()
+{
+	int ret = pthread_mutex_destroy( &mutex ) == -1;
+	if( ret )
+		RageException::Throw( "Error deleting mutex: %s", strerror(ret) );
+}
+
+static ThreadSlot *FindThread( unsigned id )
+{
+	for( int i = 0; i < MAX_THREADS; ++i )
+		if( g_ThreadSlots[i].threadid == id )
+			return &g_ThreadSlots[i];
+	return NULL;
+}
+
+void RageMutexImpl::Lock()
+{
+	if( LockedBy == SDL_ThreadID() )
+	{
+		++LockCnt;
+		return;
+	}
+
+#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) && defined(CRASH_HANDLER)
+	int len = 10; /* seconds */
+	int tries = 2;
+
+	while( tries-- )
+	{
+		/* Wait for ten seconds.  If it takes longer than that, we're probably deadlocked. */
+		timeval tv;
+		gettimeofday( &tv, NULL );
+
+		timespec ts;
+		ts.tv_sec = tv.tv_sec + len;
+		ts.tv_nsec = tv.tv_usec * 1000;
+		int ret = pthread_mutex_timedlock( &mutex, &ts );
+		switch( ret )
+		{
+		case 0:
+			LockedBy = SDL_ThreadID();
+			return;
+
+		case ETIMEDOUT:
+			/* Timed out.  Probably deadlocked.  Try again one more time, with a smaller
+			 * timeout, just in case we're debugging and happened to stop while waiting
+			 * on the mutex. */
+			len = 1;
+			break;
+
+		default:
+			RageException::Throw( "pthread_mutex_timedlock: %s", strerror(ret) );
+		}
+	}
+
+	ThreadSlot *slot = FindThread( LockedBy );
+	if( slot == NULL )
+	{
+		CString reason = ssprintf( "Thread deadlock between \"%s\" and an unknown thread",
+			RageThread::GetCurThreadName() );
+		ForceCrashHandler( reason );
+		_exit(1);
+	}
+
+	CString reason = ssprintf( "Thread deadlock between \"%s\" and \"%s\"",
+		RageThread::GetCurThreadName(), slot->GetThreadName() );
+
+	BacktraceContext ctx;
+	if( !GetThreadBacktraceContext( slot->pid, &ctx ) )
+	{
+		reason += "; GetThreadBacktraceContext failed";
+		ForceCrashHandler( reason );
+	} else {
+		ForceCrashHandlerDeadlock( reason, &ctx );
+	}
+
+	_exit(1);
+#else
+	int ret = pthread_mutex_lock( &mutex );
+	if( ret )
+		RageException::Throw( "pthread_mutex_lock failed: %s", strerror(ret) );
+	LockedBy = SDL_ThreadID();
+#endif
+}
+
+void RageMutexImpl::Unlock()
+{
+	if( LockCnt )
+	{
+		--LockCnt;
+		return;
+	}
+
+	LockedBy = 0;
+	pthread_mutex_unlock( &mutex );
 }
 
 #else
