@@ -940,7 +940,7 @@ void NoteDataUtil::InsertIntelligentTaps(
 	ASSERT( iInsertOffsetRows <= iWindowSizeRows );
 	ASSERT( iWindowSizeRows <= iWindowStrideRows );
 
-	inout.ConvertHoldNotesTo4s();
+	inout.ConvertHoldNotesTo2sAnd3s();
 
 	bool bRequireNoteAtBeginningOfWindow = !bSkippy;
 	bool bRequireNoteAtEndOfWindow = true;
@@ -967,6 +967,9 @@ void NoteDataUtil::InsertIntelligentTaps(
 		
 		// don't insert a new note if there's already one within this interval
 		bool bNoteInMiddle = false;
+		for( int t = 0; t < inout.GetNumTracks(); ++t )
+			if( inout.IsHoldNoteAtBeat(t, iRowEarlier+1) )
+				bNoteInMiddle = true;
 		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, j, iRowEarlier+1, iRowLater-1 )
 			bNoteInMiddle = true;
 		if( bNoteInMiddle )
@@ -1013,7 +1016,7 @@ done_looking_for_track_to_add:
 		inout.SetTapNote(iTrackOfNoteToAdd, iRowToAdd, TAP_ADDITION_TAP);
 	}
 
-	inout.Convert4sToHoldNotes();
+	inout.Convert2sAnd3sToHoldNotes();
 }
 
 void NoteDataUtil::AddMines( NoteData &inout, int iStartIndex, int iEndIndex )
