@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="StepMania" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 60000
+# Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
@@ -59,10 +59,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\stepmania\stepmania\Program
+TargetDir=\temp\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                        	cl                                                                                                                        /Zl                                                                                                                        /nologo                                                                                                                        /c                                                                                                                        verstub.cpp                                                                                                                        /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                         	cl                                                                                                                         /Zl                                                                                                                         /nologo                                                                                                                         /c                                                                                                                         verstub.cpp                                                                                                                         /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -96,10 +96,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none /debug
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\stepmania\stepmania\Program
+TargetDir=\temp\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                         	cl                                                                                  /Zl                                                                                  /nologo                                                                                  /c                                                                                  verstub.cpp                                                                                  /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                          	cl                                                                                   /Zl                                                                                   /nologo                                                                                   /c                                                                                   verstub.cpp                                                                                   /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -1307,6 +1307,10 @@ SOURCE=.\arch\LowLevelWindow\LowLevelWindow_SDL.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\arch\Lights\LightsDriver.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\arch\Lights\LightsDriver.h
 # End Source File
 # Begin Source File
@@ -1333,6 +1337,10 @@ SOURCE=.\arch\Lights\LightsDriver_Win32Parallel.h
 # Begin Group "MemoryCard"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\arch\MemoryCard\MemoryCardDriver.cpp
+# End Source File
 # Begin Source File
 
 SOURCE=.\arch\MemoryCard\MemoryCardDriver.h
