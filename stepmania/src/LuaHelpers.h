@@ -16,6 +16,7 @@ namespace Lua
 	void PushStack( lua_State *L, void *out );
 	void PushStack( lua_State *L, const CString &out );
 	void PopStack( lua_State *L, CString &out );
+	bool GetStack( lua_State *L, int pos, int &out );
 };
 
 #endif

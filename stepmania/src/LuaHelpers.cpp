@@ -76,6 +76,17 @@ void Lua::PopStack( lua_State *L, CString &out )
 	lua_pop( L, -1 );
 }
 
+bool Lua::GetStack( lua_State *L, int pos, int &out )
+{
+	if( pos < 0 )
+		pos = lua_gettop(L) - pos - 1;
+	if( pos < 1 )
+		return false;
+	
+	out = (int) lua_tonumber( L, pos );
+	return true;
+}
+
 void LoadFromString( lua_State *L, const CString &str )
 {
 	ChunkReaderData data;
@@ -171,7 +182,7 @@ LuaFunctionList::LuaFunctionList( CString name_, lua_CFunction func_ )
 }
 
 
-LuaFunction_NoArgs( MonthOfYear, GetLocalTime().tm_mon );
+LuaFunction_NoArgs( MonthOfYear, GetLocalTime().tm_mon+1 );
 LuaFunction_NoArgs( DayOfMonth, GetLocalTime().tm_mday );
 LuaFunction_NoArgs( Hour, GetLocalTime().tm_hour );
 LuaFunction_NoArgs( Minute, GetLocalTime().tm_min );
