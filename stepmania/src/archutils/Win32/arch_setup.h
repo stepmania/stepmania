@@ -22,6 +22,10 @@
 /* mkdir is missing the mode arg */
 #define mkdir(p,m) mkdir(p)
 
+/* Missing stdint types: */
+typedef __int64 int64_t;
+typedef unsigned __int64 uint64_t;
+static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
 
 #pragma warning (disable : 4201) // nonstandard extension used : nameless struct/union (Windows headers do this)
 #pragma warning (disable : 4786) // turn off broken debugger warning
@@ -42,6 +46,7 @@
 /* Windows is missing some basic math functions: */
 #define NEED_TRUNCF
 #define NEED_ROUNDF
+#define MISSING_STDINT_H
 
 /* For RageLog */
 #define HAVE_VERSION_INFO
