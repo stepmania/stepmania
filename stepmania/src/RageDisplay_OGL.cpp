@@ -827,6 +827,7 @@ RageSurface* RageDisplay_OGL::CreateScreenshot()
 
 	glReadPixels(0, 0, wind->GetVideoModeParams().width, wind->GetVideoModeParams().height, GL_RGBA,
 	             GL_UNSIGNED_BYTE, image->pixels);
+	AssertNoGLError();
 
 	// flip vertically
 	int pitch = image->pitch;

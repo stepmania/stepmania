@@ -1,6 +1,7 @@
 #include "global.h"
 #include "SDL_rotozoom.h"
 #include "RageSurface.h"
+#include "RageUtil.h"
 
 #include <vector>
 using namespace std;
@@ -15,6 +16,11 @@ using namespace std;
 
 static void ZoomSurface( RageSurface * src, RageSurface * dst )
 {
+	// The original code here didn't handle the magnification case correctly.
+	// the sample centers sax and say aren't being calculated correctly.
+	// The coordinate system here is a bit confusing.  This might be 
+	// easier to follow if the 
+
     /* Ratio from source to dest. */
     const float sx = float(src->w) / dst->w;
     const float sy = float(src->h) / dst->h;
@@ -33,7 +39,12 @@ static void ZoomSurface( RageSurface * src, RageSurface * dst )
      * distance from the start of the sample to its center. */
     for( x = 0; x < dst->w; x++ )
 	{
-		const float sax = sx*x + sx/2;
+		float sax = sx*x + sx/2;//SCALE(sx,2.f,0.5f,2.f,1.f);
+
+		// Pixel alignment is off in the magnify case.
+		// This is an ugly hack to correct for it.
+		if( sx < 1 ) // magnifying
+			sax += SCALE(sx,0.5f,1.f,sx/2.f,0.f);
 
 		/* sx/2 is the distance from the start of the sample to the center;
 		 * sx/4 is the distance from the center of the sample to the center of
@@ -65,6 +76,11 @@ static void ZoomSurface( RageSurface * src, RageSurface * dst )
     for( y = 0; y < dst->h; y++ )
 	{
 		float say = sy*y + sy/2;
+
+		// Pixel alignment is off in the magnify case.
+		// This is an ugly hack to correct for it.
+		if( sy < 1 ) // magnifying
+			say += SCALE(sy,0.5f,1.f,sy/2.f,0.f);
 
 		float ystep = sy/4;
 
