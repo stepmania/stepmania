@@ -63,6 +63,6 @@ public:
 	GameInput StyleInputToGameInput( const StyleInput StyleI ) const;
 	StyleInput GameInputToStyleInput( const GameInput &GameI ) const;
 
-	void GetTransformedNoteDataForStyle( PlayerNumber p, const NoteData* pOriginal, NoteData* pNoteDataOut );
+	void GetTransformedNoteDataForStyle( PlayerNumber p, const NoteData* pOriginal, NoteData* pNoteDataOut ) const;
 };
 
