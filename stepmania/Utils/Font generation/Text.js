@@ -31,14 +31,14 @@ var OutputDir = "c:/temp/stepmania/utils/Font generation/Output/";
  * a single text layer with the characters we want.  The orientation, font, etc.
  * don't matter; they'll be overridden. */
 var JAFontPages = Array("main", "kanji 1", "kanji 2","kanji 3");
-var KRFontPages = Array("jamo 1");
+var KRFontPages = Array("jamo 1", "jamo 2");
 
 var Fonts = new Array(
 	/* name                       font         pages        frame sz  font sz  AA                border   bold */
-	//new FontDef("_japanese 16px", "MS-Gothic", JAFontPages, 32,       20,      AntiAlias.STRONG, 2,       true),
-	//new FontDef("_japanese 24px", "MS-Gothic", JAFontPages, 32,       28,      AntiAlias.SMOOTH, 2,       true)
-	new FontDef("_korean 16px",     "ArialUnicodeMS",     KRFontPages, 32,       20,      AntiAlias.SMOOTH, 2,       true),
-	new FontDef("_korean 24px",     "ArialUnicodeMS",     KRFontPages, 32,       28,      AntiAlias.SMOOTH, 2,       true)
+	new FontDef("_japanese 16px", "MS-Gothic", JAFontPages, 32,       20,      AntiAlias.STRONG, 2,       true),
+	new FontDef("_japanese 24px", "MS-Gothic", JAFontPages, 32,       28,      AntiAlias.SMOOTH, 2,       true)
+	//new FontDef("_korean 16px",   "ArialUnicodeMS", KRFontPages, 32,       20,      AntiAlias.SMOOTH, 2,       true),
+	//new FontDef("_korean 24px",   "ArialUnicodeMS", KRFontPages, 32,       28,      AntiAlias.SMOOTH, 2,       true)
 		);
 	
 
