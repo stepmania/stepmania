@@ -399,7 +399,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	const float fYHead = bReverse ? fEndYPos : fStartYPos;		// the center of the head
 	const float fYTail = bReverse ? fStartYPos : fEndYPos;		// the center the tail
 
-	const int	fYStep = 16;	// 16 logical pixels per segment
+	const bool  bWavy = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_DRUNK] > 0;
+	const int	fYStep = bWavy ? 16 : 128;	// use small steps only if wavy
 
 	const float fColorScale		= 1*fLife + (1-fLife)*cache->m_fHoldNGGrayPercent;
 
