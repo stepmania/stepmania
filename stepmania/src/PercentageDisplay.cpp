@@ -70,6 +70,10 @@ void PercentageDisplay::Refresh()
 	if( !PREFSMAN->m_bDancePointsForOni )
 	{
 		float fPercentDancePoints = g_CurStageStats.GetPercentDancePoints( m_PlayerNumber );
+
+		// clamp percentage - feedback is that negative numbers look weird here.
+		CLAMP( fPercentDancePoints, 0.f, 1.f );
+
 		if( PERCENT_USE_REMAINDER )
 		{
 			int iPercentWhole = int(fPercentDancePoints*100);
