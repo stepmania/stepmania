@@ -358,12 +358,26 @@ int RageFileObjDirect::Read( void *buf, size_t bytes )
 	return ret;
 }
 
+/* write(), but retry a couple times on EINTR. */
+static int retried_write( int fd, const void *buf, size_t count )
+{
+        int tries = 3, ret;
+        do
+        {
+                ret = write( fd, buf, count );
+        }
+        while( ret == -1 && errno == EINTR && tries-- );
+
+        return ret;
+}
+
+
 int RageFileObjDirect::Flush()
 {
 	if( !write_buf.size() )
 		return 0;
 
-	int ret = write( fd, write_buf.data(), write_buf.size() );
+	int ret = retried_write( fd, write_buf.data(), write_buf.size() );
 	if( ret == -1 )
 	{
 		LOG->Warn("Error writing %s: %s", this->path.c_str(), strerror(errno) );
@@ -387,7 +401,7 @@ int RageFileObjDirect::Write( const void *buf, size_t bytes )
 		 * the buffer size, so just write it directly. */
 		if( bytes >= BUFSIZE )
 		{
-			int ret = write( fd, buf, bytes );
+			int ret = retried_write( fd, buf, bytes );
 			if( ret == -1 )
 			{
 				LOG->Warn("Error writing %s: %s", this->path.c_str(), strerror(errno) );
