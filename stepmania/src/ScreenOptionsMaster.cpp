@@ -69,7 +69,7 @@ void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, C
 
 	row.bOneChoiceForAllPlayers = false;
 	const int NumCols = atoi( asParts[0] );
-	for( int i=0; i<asParts.size(); i++ )
+	for( unsigned i=0; i<asParts.size(); i++ )
 	{
 		if( asParts[i].CompareNoCase("together") == 0 )
 			row.bOneChoiceForAllPlayers = true;
@@ -283,7 +283,7 @@ ScreenOptionsMaster::~ScreenOptionsMaster()
 
 void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
 {
-	for( int i=0; i<vbSelectedOut.size(); i++ )
+	for( int i=0; i<(int)vbSelectedOut.size(); i++ )
 		vbSelectedOut[i] = i==iSelection;
 }
 
@@ -435,7 +435,7 @@ void ScreenOptionsMaster::ImportOptions()
 
 int GetOneSelection( const vector<bool> &vbSelected )
 {
-	for( int i=0; i<vbSelected.size(); i++ )
+	for( unsigned i=0; i<vbSelected.size(); i++ )
 		if( vbSelected[i] )
 			return i;
 	ASSERT(0);	// shouldn't call this if not expecting one to be selected
@@ -451,7 +451,7 @@ int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRow
 	case ROW_LIST:
 		{
 			hand.Default.Apply( (PlayerNumber)pn );
-			for( int i=0; i<vbSelected.size(); i++ )
+			for( unsigned i=0; i<vbSelected.size(); i++ )
 				if( vbSelected[i] )
 					hand.ListEntries[i].Apply( (PlayerNumber)pn );
 		}
@@ -666,7 +666,7 @@ void ScreenOptionsMaster::RefreshIcons()
 			// find first selection and whether multiple are selected
 			int iFirstSelection = -1;
 			bool bMultipleSelected = false;
-			for( int j=0; j<row.m_vbSelected[p].size(); j++ )
+			for( unsigned j=0; j<row.m_vbSelected[p].size(); j++ )
 			{
 				if( row.m_vbSelected[p][j] )
 				{

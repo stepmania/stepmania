@@ -134,7 +134,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 			{
 				vector<bool> &vbSelected = Row.m_vbSelected[p];
 				vbSelected.resize( Row.m_RowDef.choices.size() );
-				for( int j=0; j<vbSelected.size(); j++ )
+				for( unsigned j=0; j<vbSelected.size(); j++ )
 					vbSelected[j] = false;
 
 				// set select the first item if not a multiselect row

@@ -128,7 +128,7 @@ protected:
 		vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size().
 		int GetOneSelection( PlayerNumber pn )
 		{
-			for( int i=0; i<m_vbSelected[pn].size(); i++ )
+			for( unsigned i=0; i<(unsigned)m_vbSelected[pn].size(); i++ )
 				if( m_vbSelected[pn][i] )
 					return i;
 			ASSERT(0);	// shouldn't call this if not expecting one to be selected
@@ -140,7 +140,7 @@ protected:
 		}
 		void SetOneSelection( PlayerNumber pn, int iChoice )
 		{
-			for( int i=0; i<m_vbSelected[pn].size(); i++ )
+			for( unsigned i=0; i<(unsigned)m_vbSelected[pn].size(); i++ )
 				m_vbSelected[pn][i] = false;
 			m_vbSelected[pn][iChoice] = true;
 		}
