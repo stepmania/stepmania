@@ -182,26 +182,33 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenProfileOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 {
-	CString sProfileID = GetSelectedProfileID();
-	CString sName = GetSelectedProfileName();
-
 	switch( GetCurrentRow() )
 	{
 	case PO_CREATE_NEW:
 		SCREENMAN->TextEntry( SM_DoneCreating, "Enter a profile name", "", NULL );
 		break;
 	case PO_DELETE_:
+	{
+		const CString sProfileID = GetSelectedProfileID();
+		const CString sName = GetSelectedProfileName();
+
 		if( sProfileID=="" )
 			SOUND->PlayOnce( THEME->GetPathToS("common invalid") );
 		else
 			SCREENMAN->Prompt( SM_DoneDeleting, ssprintf("Delete profile %s '%s'?",sProfileID.c_str(),sName.c_str()), true );
 		break;
+	}
 	case PO_RENAME_:
+	{
+		const CString sProfileID = GetSelectedProfileID();
+		const CString sName = GetSelectedProfileName();
+
 		if( sProfileID=="" )
 			SOUND->PlayOnce( THEME->GetPathToS("common invalid") );
 		else
 			SCREENMAN->TextEntry( SM_DoneRenaming, ssprintf("Rename profile %s '%s'",sProfileID.c_str(),sName.c_str()), sName, NULL );
 		break;
+	}
 	default:
 		ScreenOptions::MenuStart( pn, type );
 	}
@@ -212,17 +219,19 @@ CString ScreenProfileOptions::GetSelectedProfileID()
 	vector<CString> vsProfiles;
 	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-	if( m_Rows[GetCurrentRow()]->GetOneSharedSelection() )
+	const Row &row = *m_Rows[GetCurrentRow()];
+	const int Selection = row.GetOneSharedSelection();
+	if( !Selection )
 		return "";
-	else
-		return vsProfiles[ m_Rows[GetCurrentRow()]->GetOneSharedSelection()-1];
+	return vsProfiles[ Selection-1 ];
 }
 
 CString ScreenProfileOptions::GetSelectedProfileName()
 {
-	if( m_Rows[GetCurrentRow()]->GetOneSharedSelection() )
+	const Row &row = *m_Rows[GetCurrentRow()];
+	const int Selection = row.GetOneSharedSelection();
+	if( !Selection )
 		return "";
-	else
-		return g_ProfileOptionsLines[PO_PLAYER1].choices[ m_Rows[GetCurrentRow()]->GetOneSharedSelection() ];
+	return g_ProfileOptionsLines[PO_PLAYER1].choices[ Selection ];
 }
 
