@@ -826,23 +826,17 @@ void NoteDataUtil::Backwards( NoteData &inout )
 
 void NoteDataUtil::SwapSides( NoteData &inout )
 {
-	inout.ConvertHoldNotesTo4s();
-	/* XXX: This is broken. */
-	for( int t=0; t<inout.GetNumTracks()/2; t++ )
+	int iOriginalTrackToTakeFrom[MAX_NOTE_TRACKS];
+	for( int t = 0; t < inout.GetNumTracks()/2; ++t )
 	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK( inout, t, r )
-		{
-			int iTrackEarlier = t;
-			int iTrackLater = t + inout.GetNumTracks()/2 + inout.GetNumTracks()%2;
-
-			// swap
-			const TapNote &tnEarlier = inout.GetTapNote(iTrackEarlier, r);
-			const TapNote &tnLater = inout.GetTapNote(iTrackLater, r);
-			inout.SetTapNote(iTrackEarlier, r, tnLater);
-			inout.SetTapNote(iTrackLater, r, tnEarlier);
-		}
+		int iTrackEarlier = t;
+		int iTrackLater = t + inout.GetNumTracks()/2 + inout.GetNumTracks()%2;
+		iOriginalTrackToTakeFrom[iTrackEarlier] = iTrackLater;
+		iOriginalTrackToTakeFrom[iTrackLater] = iTrackEarlier;
 	}
-	inout.Convert4sToHoldNotes();
+
+	NoteData orig( inout );
+	inout.LoadTransformed( orig, orig.GetNumTracks(), iOriginalTrackToTakeFrom );
 }
 
 void NoteDataUtil::Little( NoteData &inout, int iStartIndex, int iEndIndex )
