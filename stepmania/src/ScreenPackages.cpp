@@ -11,6 +11,7 @@
 #include "ScreenTextEntry.h"
 #include "ScreenNetSelectBase.h"	//Used for Quad Utility
 #include "ScreenManager.h"
+#include <cstdlib>
 
 #if defined(XBOX)
 #include "archutils/Xbox/VirtualKeyboard.h"
@@ -96,6 +97,11 @@ ScreenPackages::ScreenPackages( CString sClassName ) : ScreenWithMenuElements( s
 	this->AddChild( &m_textStatus );
 
 	UpdateProgress();
+
+	//Workaround:  For some reason, the first download always
+	//corrupts; by opening and closing the rage file, this 
+	//problem does not occour.  Go figure?
+	m_fOutputFile.Close();
 }
 
 void ScreenPackages::HandleScreenMessage( const ScreenMessage SM )
@@ -472,6 +478,12 @@ void ScreenPackages::EnterURL( const CString & sURL )
 		j = k+1;
 		k = Addy.Find( '/', j );
 	}
+
+	//If there is no '/' in the addy, ignore it all
+	//for base address.
+	if ( Addy.Find( '/', 0 ) < 0 )
+		j = 0;
+
 	m_sEndName = Addy.Right( Addy.length() - j + 1 );
 
 	if ( Port == 80 )
@@ -603,10 +615,11 @@ void ScreenPackages::HTTPUpdate()
 				if ( ( ( m_iTotalBytes <= m_iDownloaded ) && ( m_iTotalBytes != -1 ) ) ||
 								//We have the full doc. (And we knew how big it was)
 				   ( ( m_iTotalBytes == -1 ) && 
-						( ( m_wSocket.state == EzSockets::SockState::skERROR ) || 
-						  ( m_wSocket.state == EzSockets::SockState::skDISCONNECTED ) ) ) )
-								//We didn't know how big it was, and were disconnected
-								//So that means we have it all.
+						( ( m_wSocket.state == 8 ) || 
+						  ( m_wSocket.state == 0 ) ) ) )
+							//XXX: Work around;  these should use enumerated types.
+							//We didn't know how big it was, and were disconnected
+							//So that means we have it all.
 				{
 					m_wSocket.close();
 					m_bIsDownloading = false;
