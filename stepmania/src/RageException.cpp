@@ -15,7 +15,7 @@
 #include "RageLog.h"
 #include "RageLog.h"
 
-#if defined(WIN32) && defined(DEBUG)
+#if defined(_WINDOWS) && defined(DEBUG)
 #include "windows.h"
 #endif
 
@@ -54,7 +54,7 @@ void RageException::Throw(const char *fmt, ...)
 		fflush(stdout);
 	}
 
-#if defined(WIN32) && defined(DEBUG)
+#if defined(_WINDOWS) && defined(DEBUG)
 	MessageBox( NULL, error, "Fatal Error", MB_OK );
 	DebugBreak();
 #endif
