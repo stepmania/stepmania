@@ -25,7 +25,6 @@
 #include "ThemeManager.h"
 #include "SDL_Utils.h"
 #include "RageSoundManager.h"
-#include "RageMovieTexture.h"
 
 #define SECONDS_TO_SHOW					THEME->GetMetricF(m_sMetricName,"SecondsToShow")
 #define NEXT_SCREEN						THEME->GetMetric(m_sMetricName,"NextScreen")
