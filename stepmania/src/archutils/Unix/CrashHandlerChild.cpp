@@ -349,7 +349,13 @@ static void child_process()
     /* Forcibly kill our parent. */
     kill( getppid(), SIGKILL );
 #else
-    fprintf(stderr,
+    /* stdout may have been inadvertently closed by the crash in the parent;
+     * write to /dev/tty instead. */
+    FILE *tty = fopen( "/dev/tty", "w" );
+    if( tty == NULL )
+        tty = stdin;
+
+    fprintf(tty,
             "\n"
             PRODUCT_NAME " has crashed.  Debug information has been output to\n"
             "\n"
