@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="StepMania" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 60000
+# Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
@@ -62,10 +62,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\stepmania\stepmania\Program
+TargetDir=\temp\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                            	cl                                                                                            /Zl                                                                                            /nologo                                                                                            /c                                                                                            verstub.cpp                                                                                            /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                             	cl                                                                                             /Zl                                                                                             /nologo                                                                                             /c                                                                                             verstub.cpp                                                                                             /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,10 +99,6 @@ XBCP=xbecopy.exe
 # ADD BASE XBCP /NOLOGO
 # ADD XBCP /NOLOGO
 # Begin Special Build Tool
-IntDir=.\../Debug_Xbox
-TargetDir=\stepmania\stepmania
-TargetName=default
-SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                                                                                                                                                                                                                    	cl                                                                                                                                                                                                                                                                     /Zl                                                                                                                                                                                                                                                                     /nologo                                                                                                                                                                                                                                                                     /c  PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -139,10 +135,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none /debug
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\stepmania\stepmania\Program
+TargetDir=\temp\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                             	cl                                                      /Zl                                                      /nologo                                                      /c                                                      verstub.cpp                                                      /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                              	cl                                                       /Zl                                                       /nologo                                                       /c                                                       verstub.cpp                                                       /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -178,10 +174,6 @@ XBCP=xbecopy.exe
 # ADD BASE XBCP /NOLOGO
 # ADD XBCP /NOLOGO
 # Begin Special Build Tool
-IntDir=.\../Release_Xbox
-TargetDir=\stepmania\stepmania
-TargetName=default
-SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                                                                                                                                                                                                                     	cl                                                                                                                                                                                                                                                                      /Zl                                                                                                                                                                                                                                                                      /nologo                                                                                                                                                                                                                                                                      /c  PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -6085,25 +6077,6 @@ SOURCE=.\Bookkeeper.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\CryptHelpers.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\CryptHelpers.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\CryptManager.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Debug"
@@ -6448,6 +6421,461 @@ SOURCE=.\UnlockSystem.h
 # Begin Group "Crypto"
 
 # PROP Default_Filter ""
+# Begin Group "crypto++"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\crypto51\algebra.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\algebra.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\algparam.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\algparam.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\argnames.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\asn.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\asn.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\config.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\cryptlib.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\cryptlib.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\files.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\files.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\filters.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\filters.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\fltrimpl.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\integer.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\integer.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\iterhash.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\iterhash.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\mdc.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\misc.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\misc.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\modarith.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\modes.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\modes.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\mqueue.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\mqueue.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\nbtheory.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\nbtheory.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\oaep.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\oaep.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\oids.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\osrng.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\osrng.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\pch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\pkcspad.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\pkcspad.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\pubkey.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\pubkey.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\queue.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\queue.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\randpool.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\randpool.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\rng.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\rsa.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\rsa.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\secblock.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\seckey.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\sha.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\sha.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\simple.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\smartptr.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\strciphr.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\strciphr.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crypto51\words.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\crypto\CryptBn.cpp
@@ -6466,6 +6894,25 @@ SOURCE=.\crypto\CryptBn.cpp
 # Begin Source File
 
 SOURCE=.\crypto\CryptBn.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CryptHelpers.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\CryptHelpers.h
 # End Source File
 # Begin Source File
 
