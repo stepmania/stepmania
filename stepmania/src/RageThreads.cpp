@@ -163,18 +163,21 @@ static int FindEmptyThreadSlot()
 	RageException::Throw("Out of thread slots!");
 }
 
-static int GetCurThreadSlot()
+static int GetThreadSlotFromID( unsigned int iID )
 {
-	Uint32 ThisThread = SDL_ThreadID();
-
 	for( int entry = 0; entry < MAX_THREADS; ++entry )
 	{
 		if( !g_ThreadSlots[entry].used )
 			continue;
-		if( g_ThreadSlots[entry].threadid == ThisThread )
+		if( g_ThreadSlots[entry].threadid == iID )
 			return entry;
 	}
 	return -1;
+}
+
+static int GetCurThreadSlot()
+{
+	return GetThreadSlotFromID( RageThread::GetCurrentThreadID() );
 }
 
 static int GetUnknownThreadSlot()
@@ -317,6 +320,15 @@ const char *RageThread::GetCurThreadName()
 {
 	int slot = GetCurThreadSlot();
 	if(slot==-1)
+		return "???";
+
+	return GetThreadNameByID( GetCurrentThreadID() );
+}
+
+const char *RageThread::GetThreadNameByID( unsigned int iID )
+{
+	int slot = GetThreadSlotFromID( iID );
+	if( slot == -1 )
 		return "???";
 
 	return g_ThreadSlots[slot].GetThreadName();

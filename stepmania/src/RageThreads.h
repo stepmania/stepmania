@@ -25,7 +25,7 @@ public:
 	static unsigned int GetCurrentThreadID();
 
 	static const char *GetCurThreadName();
-
+	static const char *GetThreadNameByID( unsigned int iID );
 	int Wait();
 	bool IsCreated() const { return thr != NULL; }
 };
