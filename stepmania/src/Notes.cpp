@@ -86,6 +86,16 @@ void Notes::GetNoteData( NoteData* pNoteDataOut ) const
 	NoteDataUtil::LoadFromSMNoteDataString( *pNoteDataOut, m_sSMNoteData );
 }
 
+void Notes::SetSMNoteData( const CString &out )
+{
+	m_sSMNoteData = out;
+}
+
+CString Notes::GetSMNoteData() const
+{
+	return m_sSMNoteData;
+}
+
 // Color is a function of Difficulty and Intended Style
 NotesDisplayType Notes::GetNotesDisplayType() const
 {

@@ -48,6 +48,9 @@ public:
 	CString			m_sSMNoteData;
 	void			GetNoteData( NoteData* pNoteDataOut ) const;
 	void			SetNoteData( NoteData* pNewNoteData );
+	void			SetSMNoteData( const CString &out );
+	CString 		GetSMNoteData() const;
+
 	NotesDisplayType GetNotesDisplayType() const;
 	RageColor		GetColor() const;
 	
