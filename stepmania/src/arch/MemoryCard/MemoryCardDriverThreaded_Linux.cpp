@@ -156,7 +156,8 @@ void MemoryCardDriverThreaded_Linux::MountThreadMain()
 	    case 0: // no change.  Poll again.
 	      continue;
 	    case -1:
-	      LOG->Warn( "Error polling" );
+	      if( errno != EINTR )
+	        LOG->Warn( "Error polling: %s", strerror(errno) );
 	      continue;
 	    }
 	}
