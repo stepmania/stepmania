@@ -281,22 +281,6 @@ void RageSoundManager::DeleteSound( RageSound *p )
 	g_SoundManMutex.Unlock(); /* finished with owned_sounds */
 }
 
-void RageSoundManager::StopPlayingSoundsForThisThread()
-{
-	/* Lock to make sure sounds don't become invalidated below before we get to them. */
-	g_DeletionMutex.Lock();
-
-	set<RageSound *> Sounds = GetPlayingSounds();
-	set<RageSound *>::iterator it;
-	for( it = Sounds.begin(); it != Sounds.end(); ++it )
-	{
-		if( (*it)->GetPlayingThread() != RageThread::GetCurrentThreadID() )
-			continue;
-		(*it)->Stop();
-	}
-	g_DeletionMutex.Unlock();
-}
-
 /*
  * If bLockSounds is true, all returned sounds will be locked; you must call Unlock()
  * on all returned sounds when you're done.  This is used for thread safety: without

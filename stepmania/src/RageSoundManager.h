@@ -63,10 +63,6 @@ public:
 	RageSound *PlaySound( RageSound &snd, const RageSoundParams *params );
 	void StopPlayingAllCopiesOfSound(RageSound &snd);
 
-	/* Stop all sounds that were started by this thread.  This should be called
-	 * before exiting a thread. */
-	void StopPlayingSoundsForThisThread();
-
 	void GetCopies( RageSound &snd, vector<RageSound *> &snds, bool bLockSounds=false );
 
 	static void AttenuateBuf( int16_t *buf, int samples, float vol );
