@@ -148,7 +148,7 @@ PrefsManager::PrefsManager()
 	m_bTexturePreload = false;
 	m_bDelayedScreenLoad = false;
 	m_BannerCache = BNCACHE_LOW_RES;
-	m_bFastLoad = false;
+	m_bFastLoad = true;
 	m_MusicWheelUsesSections = ALWAYS;
 	m_iMusicWheelSwitchSpeed = 10;
 	m_bEasterEggs = true;
