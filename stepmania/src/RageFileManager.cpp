@@ -69,7 +69,17 @@ static CString GetDirOfExecutable( CString argv0 )
 #ifdef _XBOX
 	return "D:\\";
 #else
-	CString sPath = argv0;
+	/* argv[0] can be wrong in most OS's; try to avoid using it. */
+
+	CString sPath;
+#if defined(_WIN32)
+	char buf[MAX_PATH];
+	GetModuleFileName( NULL, buf, sizeof(buf) );
+	sPath = buf;
+#else
+	sPath = argv0;
+#endif
+
 	sPath.Replace( "\\", "/" );
 
 	bool IsAbsolutePath = false;
