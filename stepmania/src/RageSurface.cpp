@@ -146,7 +146,8 @@ RageSurface::RageSurface( const RageSurface &cpy )
 
 RageSurface::~RageSurface()
 {
-	delete [] pixels;
+	if( pixels_owned )
+		delete [] pixels;
 }
 
 static int GetShiftFromMask( uint32_t mask )
