@@ -49,7 +49,7 @@ XNode* HighScore::CreateNode() const
 
 	// TRICKY:  Don't write "name to fill in" markers.
 	pNode->AppendChild( "Name", IsRankingToFillIn(sName) ? "" : sName );
-	pNode->AppendChild( "Grade",			grade );
+	pNode->AppendChild( "Grade",			GradeToString(grade) );
 	pNode->AppendChild( "Score",			iScore );
 	pNode->AppendChild( "PercentDP",		fPercentDP );
 	pNode->AppendChild( "SurviveSeconds",	fSurviveSeconds );
@@ -69,7 +69,12 @@ void HighScore::LoadFromNode( const XNode* pNode )
 		child++ )
 	{
 		if( (*child)->name == "Name" )					(*child)->GetValue( sName );
-		else if( (*child)->name == "Grade" )			(*child)->GetValue( (int&)grade );
+		else if( (*child)->name == "Grade" )
+		{
+			CString sGrade;
+			(*child)->GetValue( sGrade );
+			grade = StringToGrade( sGrade );
+		}
 		else if( (*child)->name == "Score" )			(*child)->GetValue( iScore );
 		else if( (*child)->name == "PercentDP" )		(*child)->GetValue( fPercentDP );
 		else if( (*child)->name == "SurviveSeconds" )	(*child)->GetValue( fSurviveSeconds );

@@ -13,6 +13,7 @@
 #include "Grade.h"
 #include "RageUtil.h"
 #include "ThemeManager.h"
+#include "RageLog.h"
 
 CString GradeToThemedString( Grade g )
 {
@@ -65,7 +66,7 @@ Grade StringToGrade( const CString &sGrade )
 	if( sscanf(sGrade.c_str(),"TIER%02d",&iTier) == 1 )
 		return (Grade)(iTier-1);
 
-	ASSERT(0);
+	LOG->Warn( "Invalid grade: %s", sGrade.c_str() );
 	return GRADE_NO_DATA;
 };
 
