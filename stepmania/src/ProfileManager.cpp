@@ -195,7 +195,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 	bResult = LoadProfile( pn, sDir, false );
 	return bResult;
 }
-
+			
 bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
 {
 	// mount card
