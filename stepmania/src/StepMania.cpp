@@ -816,6 +816,7 @@ int main(int argc, char* argv[])
 	LOG->SetLogging( PREFSMAN->m_bLogging );
 	LOG->SetFlushing( PREFSMAN->m_bForceLogFlush );
 	LOG->SetTimestamping( PREFSMAN->m_bTimestamping );
+	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
 
 	CheckSDLVersion( 1,2,6 );
 	
