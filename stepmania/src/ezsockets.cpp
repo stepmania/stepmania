@@ -23,6 +23,11 @@
 #define SOCKET_ERROR -1
 #endif
 
+//There are cases where 0 isn't a proper socket
+#if !defined(SOCKET_NONE)
+#define SOCKET_NONE 0
+#endif
+
 #if !defined(INVALID_SOCKET)
 #define INVALID_SOCKET -1
 #endif
@@ -55,7 +60,7 @@ EzSockets::~EzSockets()
 //Check to see if the socket has been created
 bool EzSockets::check()
 {
-	return sock != INVALID_SOCKET;
+	return sock > SOCKET_NONE;
 }
 
 bool EzSockets::create()
@@ -89,7 +94,7 @@ bool EzSockets::create(int Protocol, int Type)
 	state = skDISCONNECTED;
 	sock = socket(AF_INET, Type, Protocol);
 	lastCode = sock;
-	return sock != INVALID_SOCKET;
+	return sock > SOCKET_NONE;	//Socket must be Greater than 0
 }
 
 
@@ -142,7 +147,7 @@ bool EzSockets::accept(EzSockets& socket)
 	
 	lastCode = socket.sock;
 
-	if (socket.sock == INVALID_SOCKET)
+	if ( socket.sock == SOCKET_ERROR )
 		return false;
 	
 	socket.state = skCONNECTED;
