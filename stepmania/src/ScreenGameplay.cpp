@@ -1341,7 +1341,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
 	// update song position meter
 	//
-	float fPercentPositionSong = GAMESTATE->m_fMusicSeconds / GAMESTATE->m_pCurSong->m_fMusicLengthSeconds;
+	float fMusicLengthSeconds = GAMESTATE->m_pCurSong->m_fMusicLengthSeconds;
+	// HACK: most songs have a lead out, so the meter never makes 
+	// it all the way to the right.  Fudge by guessing that there's 5 seconds of lead out
+	fMusicLengthSeconds -= 5;
+	float fPercentPositionSong = GAMESTATE->m_fMusicSeconds / fMusicLengthSeconds;
 	CLAMP( fPercentPositionSong, 0, 1 );
 	m_meterSongPosition.SetPercent( fPercentPositionSong );
 }
