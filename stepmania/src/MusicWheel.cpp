@@ -47,6 +47,7 @@ CachedThemeMetricF ITEM_SPACING_Y	("MusicWheel","ItemSpacingY");
 #define NUM_SECTION_COLORS			THEME->GetMetricI("MusicWheel","NumSectionColors")
 #define SECTION_COLORS( i )			THEME->GetMetricC("MusicWheel",ssprintf("SectionColor%d",i+1))
 #define SONG_REAL_EXTRA_COLOR		THEME->GetMetricC("MusicWheel","SongRealExtraColor")
+#define SORT_MENU_COLOR				THEME->GetMetricC("MusicWheel","SortMenuColor")
 #define SHOW_ROULETTE				THEME->GetMetricB("MusicWheel","ShowRoulette")
 #define SHOW_RANDOM					THEME->GetMetricB("MusicWheel","ShowRandom")
 CachedThemeMetricB	USE_3D			("MusicWheel","Use3D");
@@ -162,13 +163,8 @@ MusicWheel::MusicWheel()
 		case PLAY_MODE_NONSTOP:	GAMESTATE->m_SongSortOrder = SORT_NONSTOP_COURSES; break;
 		case PLAY_MODE_ENDLESS:	GAMESTATE->m_SongSortOrder = SORT_ENDLESS_COURSES; break;
 		default:
-			// If there is a default sort requested..use it.
-			SongSortOrder	so;
-			so = StringToSongSortOrder(DEFAULT_SORT);
-			if( so != SORT_INVALID )
-				GAMESTATE->m_SongSortOrder = so;
-			else
-				GAMESTATE->m_SongSortOrder = SortOrder[0];
+			GAMESTATE->m_SongSortOrder = StringToSongSortOrder( DEFAULT_SORT );
+			ASSERT( GAMESTATE->m_SongSortOrder != SORT_INVALID );
 			break;
 		}
 	}
@@ -405,8 +401,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			if( so == SORT_INVALID )
 				so = SORT_GROUP;
 
-			RageColor c = RageColor(1,1,0,1);
-			WheelItemData wid( TYPE_SORT, NULL, "", NULL, c, so );
+			WheelItemData wid( TYPE_SORT, NULL, "", NULL, SORT_MENU_COLOR, so );
 			wid.m_sLabel = Names[i];
 			wid.m_Action.Load( i, Actions[i] );
 
