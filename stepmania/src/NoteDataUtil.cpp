@@ -1245,6 +1245,10 @@ void NoteDataUtil::Echo( NoteData &inout, int iStartIndex, int iEndIndex )
 	const int rows_per_interval = BeatToNoteRow( 0.5f );
 	iStartIndex = Quantize( iStartIndex, rows_per_interval );
 
+	/* Clamp iEndIndex to the last real tap note.  Otherwise, we'll keep adding
+	 * echos of our echos all the way up to MAX_TAP_ROW. */
+	iEndIndex = min( iEndIndex, inout.GetLastRow() )+1;
+
 	// window is one beat wide and slides 1/2 a beat at a time
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r, iStartIndex, iEndIndex )
 	{
