@@ -506,6 +506,7 @@ CString DerefRedir(const CString &path)
 	return path2;
 }
 
+/* XXX: This can be used to read one line from any file; rename it. */
 CString GetRedirContents(const CString &path)
 {
 	RageFile file(path);
