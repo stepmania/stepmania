@@ -14,13 +14,12 @@
 const int channels = 2;
 const int bytes_per_frame = channels*2; /* 16-bit */
 const int samplerate = 44100;
-const int buffersize_frames = 1024*16;	/* in frames */
+const int buffersize_frames = 1024*4;	/* in frames */
 const int buffersize = buffersize_frames * bytes_per_frame; /* in bytes */
 
 /* We'll fill the buffer in chunks this big.  This should evenly divide the
  * buffer size. */
 const int num_chunks = 8;
-const int chunksize_frames = buffersize_frames / num_chunks;
 const int chunksize = buffersize / num_chunks;
 
 int RageSound_DSound_Software::MixerThread_start(void *p)
