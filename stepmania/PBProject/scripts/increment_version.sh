@@ -2,7 +2,7 @@
 
 #Stupid ProjectBuild wouldn't allow perl
 
-exec perl -w -e '
+perl -w -e '
 open F, "<version.tst"||die;
 $ver = <F>;
 close F;
