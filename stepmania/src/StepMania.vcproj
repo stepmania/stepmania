@@ -392,6 +392,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenSelect.h">
 			</File>
 			<File
+				RelativePath="ScreenSelectCharacter.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSelectCharacter.h">
+			</File>
+			<File
 				RelativePath="ScreenSelectCourse.cpp">
 			</File>
 			<File
@@ -509,6 +515,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 		<Filter
 			Name="Data Structures"
 			Filter="">
+			<File
+				RelativePath="Character.cpp">
+			</File>
+			<File
+				RelativePath="Character.h">
+			</File>
 			<File
 				RelativePath="CodeDetector.cpp">
 			</File>

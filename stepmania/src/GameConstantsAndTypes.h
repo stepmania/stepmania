@@ -182,10 +182,16 @@ const CString GROUP_ALL_MUSIC = "";
 //
 // Battle stuff
 //
-const int ITEM_NONE			= -1;
-const int NUM_ITEM_SLOTS	= 3;
-
-
+const int NUM_INVENTORY_SLOTS	= 3;
+enum AttackLevel
+{
+	ATTACK_LEVEL_1,
+	ATTACK_LEVEL_2,
+	ATTACK_LEVEL_3,
+	NUM_ATTACK_LEVELS
+};
+const int NUM_ATTACKS_PER_LEVEL	= 3;
+const int ITEM_NONE = -1;
 
 
 const CString BG_ANIMS_DIR = "BGAnimations/";

@@ -134,7 +134,7 @@ protected:
 
 	Player				m_Player[NUM_PLAYERS];
 
-	Inventory			m_Inventory;
+	Inventory			m_Inventory[NUM_PLAYERS];
 	ActiveItemList		m_ActiveItemList[NUM_PLAYERS];
 
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];

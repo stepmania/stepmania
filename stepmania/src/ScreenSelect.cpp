@@ -219,7 +219,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 	case SM_AllDoneChoosing:		
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
+				if( GAMESTATE->IsHumanPlayer(p) )
 					GAMESTATE->ApplyModeChoice( m_aModeChoices[this->GetSelectionIndex((PlayerNumber)p)], (PlayerNumber)p );
 
 			GAMESTATE->m_bPlayersCanJoin = false;

@@ -308,16 +308,8 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	case TNS_GOOD:
 	case TNS_BOO:
 	case TNS_MISS:
-		// don't play "combo stopped" in battle
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_BATTLE:
-			if( pInventory )
-				pInventory->OnComboBroken( m_PlayerNumber, iCurCombo );
-		default:
-			if( iCurCombo>50 )
-				SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
-		}
+		if( iCurCombo>50 )
+			SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
 
 		iCurCombo = 0;
 		break;

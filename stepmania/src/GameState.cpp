@@ -94,14 +94,32 @@ void GameState::Reset()
 
 void GameState::Update( float fDelta )
 {
-	int p;
-	for( p=0; p<NUM_PLAYERS; p++ )
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
 		m_CurrentPlayerOptions[p].Approach( m_PlayerOptions[p], fDelta );
 
-	for( p=0; p<NUM_PLAYERS; p++ )
 		if(m_Position[p]) m_Position[p]->Update(fDelta);
-}
 
+		m_bActiveAttackEndedThisUpdate[p] = false;
+
+		for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
+		{
+			if( m_sActiveAttacks[p][s].fSecsRemaining > 0 )
+			{
+				m_sActiveAttacks[p][s].fSecsRemaining -= fDelta;
+				if( m_sActiveAttacks[p][s].fSecsRemaining <= 0 )
+				{
+					m_sActiveAttacks[p][s].fSecsRemaining = 0;
+					m_sActiveAttacks[p][s].sModifier = "";
+					m_bActiveAttackEndedThisUpdate[p] = true;
+				}
+			}
+		}
+
+		if( m_bActiveAttackEndedThisUpdate[p] )
+			RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
+	}
+}
 
 void GameState::ResetLastRanking()
 {
@@ -121,10 +139,6 @@ void GameState::ResetMusicStatistics()
 	m_fCurBPS = 10;
 	m_bFreeze = false;
 	m_bPastHereWeGo = false;
-
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		for( int s=0; s<NUM_ITEM_SLOTS; s++ )
-			m_iItems[p][s] = ITEM_NONE;
 }
 
 void GameState::UpdateSongPosition(float fPositionSeconds)
@@ -229,10 +243,15 @@ bool GameState::IsPlayable( const ModeChoice& mc )
 
 bool GameState::IsPlayerEnabled( PlayerNumber pn )
 {
-	// no longer necessary
-//	if( GAMESTATE->m_bIsOnSystemMenu )	// if no style set (we're in TitleMenu, ConfigInstruments or something)
-//		return true;				// allow input from both sides
+	// In battle, all players are present.  Non-human players are CPU controlled.
+	if( m_PlayMode == PLAY_MODE_BATTLE )
+		return true;
+	
+	return IsHumanPlayer( pn );
+}
 
+bool GameState::IsHumanPlayer( PlayerNumber pn )
+{
 	if( m_CurStyle == STYLE_INVALID )	// no style chosen
 		if( this->m_bPlayersCanJoin )	
 			return m_bSideIsJoined[pn];	// only allow input from sides that have already joined
@@ -251,6 +270,12 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn )
 		return false;
 	}
 }
+
+bool GameState::IsCpuPlayer( PlayerNumber pn )
+{
+	return IsPlayerEnabled(pn) && !IsHumanPlayer(pn);
+}
+
 
 bool GameState::IsCourseMode() const
 {
@@ -344,4 +369,37 @@ void GameState::RestoreSelectedOptions()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		GAMESTATE->m_PlayerOptions[p] = GAMESTATE->m_StoredPlayerOptions[p];
 	m_SongOptions = m_StoredSongOptions;
+}
+
+
+void GameState::ActivateAttack( PlayerNumber target, ActiveAttack aa )
+{
+	// search for an open slot
+	for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
+		if( m_sActiveAttacks[target][s].fSecsRemaining <= 0 )
+		{
+			m_sActiveAttacks[target][s] = aa;
+			return;
+		}
+}
+
+void GameState::RemoveAllActiveAttacks()
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
+		{
+			m_sActiveAttacks[p][s].fSecsRemaining = 0;
+			m_sActiveAttacks[p][s].sModifier = "";
+		}
+}
+
+void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
+{
+	// rebuild player options
+	PlayerOptions po = GAMESTATE->m_StoredPlayerOptions[pn];
+	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
+	{
+		po.FromString( m_sActiveAttacks[pn][s].sModifier );
+	}
+	GAMESTATE->m_PlayerOptions[pn] = po;
 }

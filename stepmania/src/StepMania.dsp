@@ -295,6 +295,14 @@ SOURCE=.\RageUtil.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\Character.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Character.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\CodeDetector.cpp
 # End Source File
 # Begin Source File
@@ -1794,6 +1802,14 @@ SOURCE=.\ScreenSelect.cpp
 # Begin Source File
 
 SOURCE=.\ScreenSelect.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectCharacter.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectCharacter.h
 # End Source File
 # Begin Source File
 

@@ -65,8 +65,20 @@ public:
 	void ApplyModeChoice( const ModeChoice& mc, PlayerNumber pn );
 	bool IsPlayable( const ModeChoice& mc );
 
+	void GetPlayerInfo( PlayerNumber pn, bool& bIsEnabledOut, bool& bIsHumanOut );
 	bool IsPlayerEnabled( PlayerNumber pn );
-	bool IsPlayerEnabled( int p ) { return IsPlayerEnabled( (PlayerNumber)p ); };	// for those too lasy to cast all those p's to a PlayerNumber
+	bool IsPlayerEnabled( int p ) { return IsPlayerEnabled( (PlayerNumber)p ); };
+	bool IsHumanPlayer( PlayerNumber pn );
+	bool IsHumanPlayer( int p ) { return IsHumanPlayer( (PlayerNumber)p ); };
+	bool IsCpuPlayer( PlayerNumber pn );
+	bool IsCpuPlayer( int p ) { return IsCpuPlayer( (PlayerNumber)p ); };
+	bool AnyPlayersAreCpu()
+	{ 
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			if( IsCpuPlayer(p) )
+				return true;
+		return false;
+	}
 	bool IsCourseMode() const;
 
 	CString			m_sLoadingMessage;	// used in loading screen
@@ -136,7 +148,20 @@ public:
 	void RestoreSelectedOptions();
 
 
-	int				m_iItems[NUM_PLAYERS][NUM_ITEM_SLOTS];
+	CString m_sCharacterName[NUM_PLAYERS];
+	AttackLevel	m_MaxAttackLevel[NUM_PLAYERS];
+	CString	m_sAttacks[NUM_PLAYERS][NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
+	CString	m_sInventory[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
+	struct ActiveAttack
+	{
+		float fSecsRemaining;
+		CString sModifier;
+	};
+	ActiveAttack	m_sActiveAttacks[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
+	bool	m_bActiveAttackEndedThisUpdate[NUM_PLAYERS];	// flag so we can play sounds
+	void ActivateAttack( PlayerNumber target, ActiveAttack aa );
+	void RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn );
+	void RemoveAllActiveAttacks();	// called on end of song
 
 	bool HasEarnedExtraStage();
 	bool m_bAllow2ndExtraStage; //only used when "Allow Selection of Extra Stage is on"

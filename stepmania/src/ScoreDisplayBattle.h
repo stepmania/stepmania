@@ -12,23 +12,22 @@
 */
 
 #include "ScoreDisplay.h"
-#include "Sprite.h"
 #include "GameConstantsAndTypes.h"
-
+#include "OptionIcon.h"
 
 
 class ScoreDisplayBattle : public ScoreDisplay
 {
 public:
 	ScoreDisplayBattle();
+	virtual void Init( PlayerNumber pn );
 
 	virtual void Update( float fDelta );
 
 protected:
-	Sprite m_sprFrames[NUM_ITEM_SLOTS];
-	Sprite m_sprItems[NUM_ITEM_SLOTS];
+	OptionIcon m_Inventory[NUM_INVENTORY_SLOTS];
 
-	int m_iLastSeenItems[NUM_ITEM_SLOTS];
+	CString m_iLastSeenInventory[NUM_INVENTORY_SLOTS];
 };
 
 #endif

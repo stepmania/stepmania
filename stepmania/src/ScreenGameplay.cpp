@@ -222,7 +222,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	
 		m_TimingAssist.Load((PlayerNumber)p, &m_Player[p]);
 
-		m_ActiveItemList[p].Init( (PlayerNumber)p, &m_Inventory );
+		m_ActiveItemList[p].Init( (PlayerNumber)p );
 		/* Position it in LoadNextSong. */
 		this->AddChild( &m_ActiveItemList[p] );
 
@@ -398,8 +398,11 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	m_BPMDisplay.SetZoom( BPM_ZOOM );
 	this->AddChild( &m_BPMDisplay );
 
-	m_Inventory.RefreshPossibleItems();
-	this->AddChild( &m_Inventory );
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_Inventory[p].Load( (PlayerNumber)p );
+		this->AddChild( &m_Inventory[p] );
+	}
 
 	
 	if( !bDemonstration )	// only load if we're going to use it
@@ -573,7 +576,7 @@ void ScreenGameplay::LoadNextSong()
 		NoteData pNewNoteData;
 		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &pOriginalNoteData, &pNewNoteData );
 
-		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pScoreDisplay[p], &m_Inventory, m_pScoreKeeper[p] );
+		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pScoreDisplay[p], &m_Inventory[p], m_pScoreKeeper[p] );
 
 		m_TimingAssist.Reset();
 	}
@@ -1074,7 +1077,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		}
 		
 		if( iItemSlot != -1 )
-			m_Inventory.UseItem( MenuI.player, iItemSlot );
+			m_Inventory[MenuI.player].UseAttack( iItemSlot );
 	}
 }
 
@@ -1110,7 +1113,7 @@ void SaveChanges()
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
-			// FIXME
+			// FIXME!!!
 			//for( int i=0; i<m_apSongsQueue.size(); i++ )
 			//	m_apSongsQueue[i]->Save();
 		}
@@ -1214,7 +1217,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				}
 			}
 
-			m_Inventory.RemoveAllActiveItems();
+			GAMESTATE->RemoveAllActiveAttacks();
 
 			for( p=0; p<NUM_PLAYERS; p++ )
 			{

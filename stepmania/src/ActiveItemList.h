@@ -26,7 +26,7 @@ class ActiveItemList : public ActorFrame
 public:
 	ActiveItemList();
 
-	void Init( PlayerNumber pn, Inventory* pInventory );
+	void Init( PlayerNumber pn );
 
 	virtual void Update( float fDelta );
 
@@ -34,7 +34,6 @@ protected:
 	BitmapText m_text[MAX_ACTIVE_ITEMS_LINES];
 
 	PlayerNumber m_PlayerNumber;
-	Inventory* m_pInventory;
 };
 
 #endif

@@ -25,8 +25,6 @@
 
 ActiveItemList::ActiveItemList()
 {
-	m_pInventory = NULL;
-
 	for( int i=0; i<MAX_ACTIVE_ITEMS_LINES; i++ )
 	{
 		m_text[i].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
@@ -36,10 +34,9 @@ ActiveItemList::ActiveItemList()
 	}
 }
 
-void ActiveItemList::Init( PlayerNumber pn, Inventory* pInventory )
+void ActiveItemList::Init( PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
-	m_pInventory = pInventory;
 
 	for( int i=0; i<MAX_ACTIVE_ITEMS_LINES; i++ )
 	{
@@ -58,29 +55,24 @@ void ActiveItemList::Update( float fDelta )
 	ActorFrame::Update( fDelta ); 
 
 
-	if( m_pInventory )
+	// refresh text only once every second
+	float fNowSeconds = RageTimer::GetTimeSinceStart();
+	float fLastSeconds = RageTimer::GetTimeSinceStart() - fDelta;
+
+	if( (int)fNowSeconds != (int)fLastSeconds )
 	{
-		// refresh text only once every second
-		float fNowSeconds = RageTimer::GetTimeSinceStart();
-		float fLastSeconds = RageTimer::GetTimeSinceStart() - fDelta;
-
-		if( (int)fNowSeconds != (int)fLastSeconds )
+		GameState::ActiveAttack* sActiveAttacks = GAMESTATE->m_sActiveAttacks[m_PlayerNumber];	// NUM_INVENTORY_SLOTS
+		for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 		{
-			int iNumActiveItems = m_pInventory->m_ActiveItems[m_PlayerNumber].size();
-			for( int i=0; i<MAX_ACTIVE_ITEMS_LINES; i++ )
-			{
-				if( i<iNumActiveItems )
-				{
-					const Inventory::ActiveItem& active_item = m_pInventory->m_ActiveItems[m_PlayerNumber][i];
-					const Inventory::ItemDef& item_def = m_pInventory->m_ItemDefs[ active_item.iItemDefIndex ];
+			GameState::ActiveAttack& aa = sActiveAttacks[s];
 
-					int iDisplaySecondsLeft = (int)(active_item.fSecondsLeft+1);
-					m_text[i].SetText( ssprintf("%s %02d:%02d", item_def.effect.GetString(), iDisplaySecondsLeft/60, iDisplaySecondsLeft%60) );
-				}
-				else
-				{
-					m_text[i].SetText( "" );
-				}
+			CString sDisplayText = aa.sModifier;
+			if( sDisplayText == "" )
+				m_text[s].SetText( "" );
+			else
+			{
+				int iDisplaySecondsLeft = (int)(aa.fSecsRemaining+1);
+				m_text[s].SetText( ssprintf("%s %02d:%02d", sDisplayText.GetString(), iDisplaySecondsLeft/60, iDisplaySecondsLeft%60) );
 			}
 		}
 	}
