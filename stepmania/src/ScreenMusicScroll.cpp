@@ -19,7 +19,6 @@
 #include "AnnouncerManager.h"
 #include "song.h"
 #include "SongUtil.h"
-#include "GameState.h"
 
 
 #define SCROLL_DELAY		THEME->GetMetricF("ScreenMusicScroll","ScrollDelay")
@@ -36,9 +35,6 @@ const unsigned NUM_CREDIT_LINES = sizeof(CREDIT_LINES) / sizeof(CString);
 
 ScreenMusicScroll::ScreenMusicScroll( CString sClassName ) : ScreenAttract( sClassName )
 {
-	/* Make sure the last stage was finished. */
-	GAMESTATE->FinishStage();
-
 	vector<Song*> arraySongs;
 	SONGMAN->GetSongs( arraySongs );
 	SongUtil::SortSongPointerArrayByTitle( arraySongs );

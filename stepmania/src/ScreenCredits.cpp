@@ -23,7 +23,6 @@
 #include "BitmapText.h"
 #include "ActorUtil.h"
 #include "SongUtil.h"
-#include "GameState.h"
 
 
 #define BACKGROUNDS_SPACING_X				THEME->GetMetricF("ScreenCredits","BackgroundsSpacingX")
@@ -170,9 +169,6 @@ static const CreditLine CREDIT_LINES[] =
 
 ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 {
-	/* Make sure the last stage was finished. */
-	GAMESTATE->FinishStage();
-
 	vector<Song*> arraySongs;
 	SONGMAN->GetSongs( arraySongs );
 	SongUtil::SortSongPointerArrayByTitle( arraySongs );

@@ -317,6 +317,9 @@ void GameState::EndGame()
 {
 	LOG->Trace( "GameState::EndGame" );
 
+	/* Finish the final stage. */
+	FinishStage();
+
 	// Update profile stats
 	int iPlaySeconds = max( 0, (int) m_timeGameStarted.PeekDeltaTime() );
 
