@@ -705,7 +705,7 @@ void Player::HandleStep( int col, const RageTimer &tm )
 			if( iLbs != 0 )
 			{
 				int iNumTracksHeld = 0;
-				for( unsigned t=0; t<m_NoteData.GetNumTracks(); t++ )
+				for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 				{
 					const StyleInput StyleI( pn, t );
 					const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );

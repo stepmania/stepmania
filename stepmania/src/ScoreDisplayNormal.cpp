@@ -36,6 +36,8 @@ void ScoreDisplayNormal::Init( const PlayerState* pPlayerState )
 
 void ScoreDisplayNormal::SetScore( int iNewScore ) 
 {
+	float fScore = (float)iNewScore;
+
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
@@ -53,21 +55,21 @@ void ScoreDisplayNormal::SetScore( int iNewScore )
 		// nothing to do
 		break;
 	case PlayerOptions::SCORING_SUBTRACT:
-		iNewScore = iMaxScore - ( iCurMaxScore - iNewScore );
+		fScore = iMaxScore - ( iCurMaxScore - fScore );
 		break;
 	case PlayerOptions::SCORING_AVERAGE:
 		if( iCurMaxScore == 0 ) // don't divide by zero fats
 		{
-			iNewScore = 0;
+			fScore = 0;
 		}
 		else
 		{
-			float fScoreRatio = iNewScore / (float)iCurMaxScore;
-			iNewScore = fScoreRatio * iMaxScore;
+			float fScoreRatio = fScore / (float)iCurMaxScore;
+			fScore = fScoreRatio * iMaxScore;
 		}
 	}
 
-	m_text.SetTargetNumber( iNewScore );
+	m_text.SetTargetNumber( fScore );
 }
 
 /*
