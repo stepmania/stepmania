@@ -197,9 +197,7 @@ bool IniFile::SetValue(const CString &keyname, const CString &valuename, const C
 // overloaded to accept CString, int, and double
 bool IniFile::SetValueI(const CString &keyname, const CString &valuename, int value, bool create)
 {
-	CString temp;
-	temp.Format("%d",value);
-	return SetValue(keyname, valuename, temp, create);
+	return SetValue(keyname, valuename, ssprintf("%d",value), create);
 }
 
 // sets value of [keyname] valuename =.
@@ -208,9 +206,7 @@ bool IniFile::SetValueI(const CString &keyname, const CString &valuename, int va
 // overloaded to accept CString, int, and double
 bool IniFile::SetValueF(const CString &keyname, const CString &valuename, float value, bool create)
 {
-	CString temp;
-	temp.Format("%f",value);
-	return SetValue(keyname, valuename, temp, create);
+	return SetValue(keyname, valuename, ssprintf("%f",value), create);
 }
 
 // sets value of [keyname] valuename =.
@@ -219,9 +215,7 @@ bool IniFile::SetValueF(const CString &keyname, const CString &valuename, float 
 // overloaded to accept CString, int, and double
 bool IniFile::SetValueB(const CString &keyname, const CString &valuename, bool value, bool create)
 {
-	CString temp;
-	temp.Format("%d",value);
-	return SetValue(keyname, valuename, temp, create);
+	return SetValue(keyname, valuename, ssprintf("%d",value), create);
 }
 
 // deletes specified value
