@@ -1020,7 +1020,9 @@ void BGAnimationLayer::LosingFocus()
 
 void BGAnimationLayer::PlayCommand( CString cmd )
 {
-	for( unsigned i=0; i<m_pActors.size(); i++ )
+	unsigned i;
+
+	for( i=0; i<m_pActors.size(); i++ )
 		m_pActors[i]->Command( ssprintf("playcommand,%s", cmd.c_str()) );
 
 	cmd.MakeLower();
@@ -1029,6 +1031,6 @@ void BGAnimationLayer::PlayCommand( CString cmd )
 	if( it == m_asCommands.end() )
 		return;
 
-	for( unsigned i=0; i<m_pActors.size(); i++ )
+	for( i=0; i<m_pActors.size(); i++ )
 		m_pActors[i]->Command( it->second );
 }
