@@ -1233,8 +1233,8 @@ void SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers )
 
 int CompareSongPointersByArtist(const Song *pSong1, const Song *pSong2)
 {
-	CString s1 = pSong1->m_sArtist;
-	CString s2 = pSong2->m_sArtist;
+	CString s1 = pSong1->GetTranslitArtist();
+	CString s2 = pSong2->GetTranslitArtist();
 
 	s1 = MakeSortString(s1);
 	s2 = MakeSortString(s2);

@@ -1255,7 +1255,7 @@ CString MusicWheel::GetSectionNameFromSongAndSort( const Song* pSong, SongSortOr
 			switch( so )
 			{
 			case SORT_TITLE:	s = pSong->GetTranslitMainTitle();	break;
-			case SORT_ARTIST:	s = pSong->m_sArtist;				break;
+			case SORT_ARTIST:	s = pSong->GetTranslitArtist();		break;
 			default:	ASSERT(0);
 			}
 			s = MakeSortString(s);	// resulting string will be uppercase
@@ -1275,7 +1275,7 @@ CString MusicWheel::GetSectionNameFromSongAndSort( const Song* pSong, SongSortOr
 			float fMinBPM, fMaxBPM;
 			pSong->GetDisplayBPM( fMinBPM, fMaxBPM );
 			int iMaxBPM = (int)fMaxBPM;
-			iMaxBPM += iBPMGroupSize - (iMaxBPM%iBPMGroupSize);
+			iMaxBPM += iBPMGroupSize - (iMaxBPM%iBPMGroupSize) - 1;
 			return ssprintf("%03d-%03d",iMaxBPM-(iBPMGroupSize-1), iMaxBPM);
 		}
 	case SORT_MOST_PLAYED:
