@@ -11,7 +11,7 @@ texture to 256x256, then we need *four pixels* of buffer between each
 tile to ensure they don't bleed into each other.  Splitting all tiled
 bitmaps into lots of smaller textures sounds good (for other reasons,
 too).  But for fonts, this would create hundreds of tiny textures; that
-would be a performance hit (four fonts could mean over 1000 textures,
+would be a big performance hit (four fonts could mean over 1000 textures,
 and we'd have to flush the render queue *every character*--ack.)  Maybe
 BitmapTexts could pre-render their text; then they'd be nearly free,
 but changing text would be more expensive.  Maybe too expensive; eg.
@@ -19,17 +19,23 @@ the Oni timer changes every frame.  But we might have to do that anyway
 with fallback fonts; how is Jared implementing that?
 
 If we split tiled sprites apart, we can also tile BGAs with only one
-render, by using the texture matrix (I think--maybe we'd just have to
-stretch.)  Then we might be able to use multitexturing (if available)
+render.  Then we might be able to use multitexturing (if available)
 for BGAs, to render multiple BGALayers in one pass; they get slow.  Tricky
 to interface, though.
 
-Even with texture wrapping off, I'm still seeing borders.  With my new
-texture loader, the bottom gameplay frame has a black border instead of
-a gray one.  Is that the border color or is it still wrapping?  Either
-is a problem; even if it *is* the border color, it shouldn't render anything
-there.  (Can the border be set transparent?  But that would cause transparent
-borders, which might cause seaming ...)
+Hmm.  The two times we want to scale textures (to fill the texture)
+are 1: when we're going to wrap the texture and 2: when the image is
+larger than our maximum texture (eg. due to the max texture size option).
+In case #1, we want the resize filter to wrap.  In case #2, we don't.
+We should only wrap filtering if the texture is going to be wrapped.
+Is it actually noticable?  Might reduce seams in tiled BGAs.
+
+********
+
+Make RageTextureManager handle refcounting, not RageTexture.
+
+We'll use a pre-loaded texture even if we're loading it with different
+hints.  Probably never an issue.
 
 ********
 
