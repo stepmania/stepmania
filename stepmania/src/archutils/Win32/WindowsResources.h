@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by StepMania.RC
+// Used by WindowsResources.rc
 //
 #define IDC_CRASH_SAVE                  16
 #define IDD_ERROR_DIALOG                111

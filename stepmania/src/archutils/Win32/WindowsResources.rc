@@ -26,10 +26,10 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_ERROR_DIALOG DIALOG  0, 0, 332, 234
+IDD_ERROR_DIALOG DIALOGEX 0, 0, 332, 234
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
 CAPTION "StepMania Error"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,265,215,60,15
     EDITTEXT        IDC_EDIT_ERROR,5,80,320,130,ES_MULTILINE | ES_READONLY | 
@@ -38,7 +38,7 @@ BEGIN
     PUSHBUTTON      "Report the Error",IDC_BUTTON_REPORT,90,215,76,15
     PUSHBUTTON      "Restart StepMania",IDC_BUTTON_RESTART,175,215,80,15
     CONTROL         129,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
-    LTEXT           "Sorry!  An error has occurred while running StepMania.\r\n\r\nSpecific details about the error may be listeted in the box below:",
+    LTEXT           "Sorry!  An error has occurred while running StepMania.\r\n\r\nSpecific details about the error may be shown in the box below:",
                     IDC_STATIC,7,46,298,28
 END
 
