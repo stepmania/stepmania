@@ -68,6 +68,7 @@ CourseUtil.cpp CourseUtil.h DateTime.cpp DateTime.h Font.cpp Font.h FontCharAlia
 FontCharmaps.cpp FontCharmaps.h Game.cpp Game.h GameCommand.cpp GameCommand.h \
 GameConstantsAndTypes.cpp GameConstantsAndTypes.h \
 GameInput.cpp GameInput.h Grade.cpp Grade.h HighScore.cpp HighScore.h Inventory.cpp Inventory.h LuaFunctions.h \
+LuaReference.cpp LuaReference.h \
 LyricsLoader.cpp LyricsLoader.h MenuInput.h \
 NoteData.cpp NoteData.h NoteDataUtil.cpp NoteDataUtil.h NoteDataWithScoring.cpp NoteDataWithScoring.h \
 NoteFieldPositioning.cpp NoteFieldPositioning.h NoteTypes.cpp NoteTypes.h NotesLoader.cpp NotesLoader.h \

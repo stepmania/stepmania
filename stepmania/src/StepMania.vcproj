@@ -720,6 +720,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="LuaFunctions.h">
 			</File>
 			<File
+				RelativePath="LuaReference.cpp">
+			</File>
+			<File
+				RelativePath="LuaReference.h">
+			</File>
+			<File
 				RelativePath="LyricsLoader.cpp">
 			</File>
 			<File
