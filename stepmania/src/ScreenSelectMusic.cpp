@@ -901,7 +901,13 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
-		m_Banner.LoadRoulette();
+		switch(m_MusicWheel.GetSelectedType())
+		{
+		case TYPE_ROULETTE: m_Banner.LoadRoulette(); break;
+		case TYPE_RANDOM: m_Banner.LoadRandom(); break;
+		default: ASSERT(0);
+		}
+
 		m_BPMDisplay.NoBPM();
 		m_sprCDTitleFront.UnloadTexture();
 		m_sprCDTitleBack.UnloadTexture();
