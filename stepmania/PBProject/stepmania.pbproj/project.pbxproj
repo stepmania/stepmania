@@ -2390,6 +2390,8 @@
 				AA54709206F559DF008EB9B2,
 				AA21D5A20712AE16008B825F,
 				AAFC6CF2072A30440053AAD3,
+				AAAB2CE0072BD2EC00CD9FC9,
+				AAAB2CE4072BD2FA00CD9FC9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4302,6 +4304,8 @@
 				AA8A405106EEFF72002F25AB,
 				AA21D59D0712ADE4008B825F,
 				AAFC6CF1072A30440053AAD3,
+				AAAB2CDF072BD2EC00CD9FC9,
+				AAAB2CE3072BD2FA00CD9FC9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9554,6 +9558,8 @@
 				AAF4206A05D6400800056441,
 				AA6EFD7C04770A7C005F316C,
 				AA6EFD7D04770A7C005F316C,
+				AAAB2CE1072BD2FA00CD9FC9,
+				AAAB2CE2072BD2FA00CD9FC9,
 				AAD36082062BB8AE00D0CED8,
 				AAD36083062BB8AE00D0CED8,
 				AA6EFD8604770A7C005F316C,
@@ -9708,6 +9714,8 @@
 				AA6EFDCA04770C79005F316C,
 				AAFF5541054E736D00D02EE9,
 				AAFF5542054E736D00D02EE9,
+				AAAB2CDD072BD2EC00CD9FC9,
+				AAAB2CDE072BD2EC00CD9FC9,
 				AABE35EB04967E25005F316C,
 				AABE35EC04967E26005F316C,
 				AAD6A6DE065E0A8D0042165A,
@@ -13366,6 +13374,66 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
+		};
+		AAAB2CDD072BD2EC00CD9FC9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = AutoKeysounds.cpp;
+			path = ../src/AutoKeysounds.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAAB2CDE072BD2EC00CD9FC9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = AutoKeysounds.h;
+			path = ../src/AutoKeysounds.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAAB2CDF072BD2EC00CD9FC9 = {
+			fileRef = AAAB2CDD072BD2EC00CD9FC9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAAB2CE0072BD2EC00CD9FC9 = {
+			fileRef = AAAB2CDE072BD2EC00CD9FC9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAAB2CE1072BD2FA00CD9FC9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = RageSoundMixBuffer.cpp;
+			path = ../src/RageSoundMixBuffer.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAAB2CE2072BD2FA00CD9FC9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = RageSoundMixBuffer.h;
+			path = ../src/RageSoundMixBuffer.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAAB2CE3072BD2FA00CD9FC9 = {
+			fileRef = AAAB2CE1072BD2FA00CD9FC9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAAB2CE4072BD2FA00CD9FC9 = {
+			fileRef = AAAB2CE2072BD2FA00CD9FC9;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AAADA4AE04E5F3DE00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
