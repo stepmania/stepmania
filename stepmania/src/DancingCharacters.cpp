@@ -59,6 +59,7 @@ DancingCharacters::DancingCharacters()
 		m_Character[p].LoadMilkshapeAsciiBones( "rest", pChar->GetRestAnimationPath() );
 		m_Character[p].LoadMilkshapeAsciiBones( "warmup", pChar->GetWarmUpAnimationPath() );
 		m_Character[p].LoadMilkshapeAsciiBones( "dance", pChar->GetDanceAnimationPath() );
+		m_Character[p].LoadMilkshapeAsciiBones( "howtoplay", pChar->GetHowToPlayAnimationPath() );
 		m_Character[p].PlayAnimation( "rest" );
 		this->AddChild( &m_Character[p] );
 	}

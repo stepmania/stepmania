@@ -738,6 +738,13 @@ void Model::PlayAnimation( CString sAniName )
 	m_fCurrFrame = 0;
 }
 
+float Model::GetCurFrame() { return m_fCurrFrame; };
+
+void Model::SetFrame( float fNewFrame )
+{
+	m_fCurrFrame = fNewFrame;
+}
+
 void
 Model::AdvanceFrame (float dt)
 {

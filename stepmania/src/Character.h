@@ -29,6 +29,7 @@ public:
 	CString GetRestAnimationPath();
 	CString GetWarmUpAnimationPath();
 	CString GetDanceAnimationPath();
+	CString GetHowToPlayAnimationPath();
 
 	CString m_sCharDir;
 	CString m_sName;

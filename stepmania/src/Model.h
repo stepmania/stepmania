@@ -57,6 +57,8 @@ public:
 	void	AdvanceFrame (float dt);
 
 	virtual void SetState( int iNewState );
+	float GetCurFrame();
+	void SetFrame( float fNewFrame );
 	virtual int GetNumStates();
 
 

@@ -52,10 +52,11 @@ CString GetRandomFileInDir( CString sDir )
 }
 
 
-CString Character::GetModelPath()			{ return m_sCharDir + "model.txt"; }
-CString Character::GetRestAnimationPath()	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest" SLASH)); }
-CString Character::GetWarmUpAnimationPath() { return DerefRedir(GetRandomFileInDir(m_sCharDir + "WarmUp" SLASH)); }
-CString Character::GetDanceAnimationPath()	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance" SLASH)); }
+CString Character::GetModelPath()				{ return m_sCharDir + "model.txt"; }
+CString Character::GetRestAnimationPath()		{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest" SLASH)); }
+CString Character::GetWarmUpAnimationPath()		{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "WarmUp" SLASH)); }
+CString Character::GetDanceAnimationPath()		{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance" SLASH)); }
+CString Character::GetHowToPlayAnimationPath()	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "HowToPlay" SLASH)); }
 CString Character::GetTakingABreakPath()
 {
 	CStringArray as;

@@ -1,4 +1,5 @@
 #include "global.h"
+#include "stdlib.h"
 /*
 -----------------------------------------------------------------------------
  Class: ScreenHowToPlay
@@ -43,9 +44,35 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	m_LifeMeter.Load( PLAYER_1 );
 	m_LifeMeter.SetXY( 480, 40 );
 	this->AddChild( &m_LifeMeter );
+	
+
+
+
+
+
+
+	// Display character
+	int iRnd;
+	iRnd = rand() % (GAMESTATE->m_pCharacters.size()-1);
+	if( iRnd != 0 )
+	{
+		m_mCharacter.LoadMilkshapeAscii( GAMESTATE->m_pCharacters[iRnd]->GetModelPath() );
+		m_mCharacter.LoadMilkshapeAsciiBones("howtoplay", GAMESTATE->m_pCharacters[iRnd]->GetHowToPlayAnimationPath() );
+		m_mCharacter.SetZoom(20);
+		m_mCharacter.Command("X,150;Y,300;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,100;Y,425");
+		this->AddChild(&m_mCharacter);
+	}
+	//
+
+
+
+
+
+
 
 	NoteData* pND = new NoteData;
 	pND->SetNumTracks( iNumOfTracks );
+	/* Old notes.. Until our HowToPlay animation changes, Steps changed.
 	pND->SetTapNote( 0, ROWS_PER_BEAT*12, TAP_TAP );
 	pND->SetTapNote( 1, ROWS_PER_BEAT*16, TAP_TAP );
 	pND->SetTapNote( 2, ROWS_PER_BEAT*20, TAP_TAP );
@@ -62,25 +89,39 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	pND->SetTapNote( 3, (int)(ROWS_PER_BEAT*45.5f), TAP_TAP );
 	pND->SetTapNote( 0, ROWS_PER_BEAT*46,    TAP_TAP );
 	pND->SetTapNote( 2, ROWS_PER_BEAT*46,    TAP_TAP );
+	*/
+
+	pND->SetTapNote( 1, ROWS_PER_BEAT*16, TAP_TAP );
+	pND->SetTapNote( 2, ROWS_PER_BEAT*18, TAP_TAP );
+	pND->SetTapNote( 0, ROWS_PER_BEAT*20, TAP_TAP );
+	pND->SetTapNote( 0, ROWS_PER_BEAT*22, TAP_TAP );
+	pND->SetTapNote( 3, ROWS_PER_BEAT*22, TAP_TAP );
 
 	m_pSong = new Song;
 	float fSongBPM = SONG_BPM;	// need this on a separate line, otherwise VC6 release build screws up and returns 0
 	m_pSong->AddBPMSegment( BPMSegment(0.0,fSongBPM) );
-	m_pSong->AddStopSegment( StopSegment(15,2) );
+	/* Same as above
+	m_pSong->AddStopSegment( StopSegment(12,2) );
 	m_pSong->AddStopSegment( StopSegment(16,2) );
 	m_pSong->AddStopSegment( StopSegment(20,2) );
 	m_pSong->AddStopSegment( StopSegment(24,2) );
 	m_pSong->AddStopSegment( StopSegment(28,2) );
+	*/
+	m_pSong->AddStopSegment( StopSegment(16,2) );
+	m_pSong->AddStopSegment( StopSegment(18,2) );
+	m_pSong->AddStopSegment( StopSegment(20,2) );
+	m_pSong->AddStopSegment( StopSegment(22,2) );
 
 	GAMESTATE->m_pCurSong = m_pSong;
 	GAMESTATE->m_bPastHereWeGo = true;
 	GAMESTATE->m_PlayerController[PLAYER_1] = PC_AUTOPLAY;
 	m_Player.Load( PLAYER_1, pND, &m_LifeMeter, NULL, NULL, NULL, NULL, NULL );
+	
+	/* We need a nice way to fill up the LifeMeter half-way. -- Miryo */
 
 	m_Player.SetX( 480 );
 	m_Player.DontShowJudgement();
 	this->AddChild( &m_Player );
-
 	delete pND;
 
 	m_fFakeSecondsIntoSong = 0;
@@ -99,6 +140,56 @@ void ScreenHowToPlay::Update( float fDelta )
 	{
 		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong );
 		m_fFakeSecondsIntoSong += fDelta;
+		LOG->ShowConsole();
+
+		if( GAMESTATE->m_bFreeze )
+		{
+			switch(int(GAMESTATE->m_fSongBeat))
+			{
+			case 16: m_mCharacter.SetFrame(30); break;
+			case 18: m_mCharacter.SetFrame(85); break;
+			case 20: m_mCharacter.SetFrame(150); break;
+			case 22: m_mCharacter.SetFrame(270); break;
+			};
+		}
+		else
+		{
+			// HowToPlay animations.. This will be retimed soon to be a reasonable speed. This was just a quick'n'dirty way of showing this screen correctly.
+			// Until we get a better HowToPlay animation done, it has to be this way..
+			if( (GAMESTATE->m_fSongBeat >= 15.0f && GAMESTATE->m_fSongBeat <= 15.2f) )
+			{
+				m_mCharacter.SetFrame(1);
+			};
+			if( (GAMESTATE->m_fSongBeat >= 17.0f && GAMESTATE->m_fSongBeat <= 17.2f) )
+			{ 
+				m_mCharacter.SetFrame(55);
+			};
+			if( (GAMESTATE->m_fSongBeat >= 19.0f && GAMESTATE->m_fSongBeat <= 19.2f) )
+			{ 
+				m_mCharacter.SetFrame(120);
+			};
+			if( (GAMESTATE->m_fSongBeat >= 21.0f && GAMESTATE->m_fSongBeat <= 21.2f) )
+			{ 
+				m_mCharacter.SetFrame(240);
+			};
+			// ----------------------------------------------------------------------- */
+
+
+			if( (GAMESTATE->m_fSongBeat >= 0.0f && GAMESTATE->m_fSongBeat <= 15.0f) ||
+				(GAMESTATE->m_fSongBeat >= 16.8f && GAMESTATE->m_fSongBeat <= 17.0f) ||
+				(GAMESTATE->m_fSongBeat >= 18.8f && GAMESTATE->m_fSongBeat <= 19.0f) ||
+				(GAMESTATE->m_fSongBeat >= 20.8f && GAMESTATE->m_fSongBeat <= 21.0f) ||
+				(GAMESTATE->m_fSongBeat >= 22.8f) )
+			{
+				if( (m_mCharacter.GetCurFrame() >=243) || (m_mCharacter.GetCurFrame() <=184) )
+					m_mCharacter.SetFrame(184);
+				//Loop for HowToPlay static movement is 184~243
+			};
+
+			m_mCharacter.Update( (0+(fDelta*1.08)) );
+			//m_mCharacter.Draw();
+		};	
+
 	}
 
 	ScreenAttract::Update( fDelta );
@@ -110,7 +201,7 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_BeginFadingOut:
 		/* We can't do this in ScreenHowToPlay::~ScreenHowToPlay, since that happens
-		 * after the ctor of the next screen; we don't want to mess with its state. */
+		 * after the actor of the next screen; we don't want to mess with its state. */
 		GAMESTATE->m_pCurSong = NULL;
 		break;
 	}
