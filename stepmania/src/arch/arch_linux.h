@@ -1,9 +1,10 @@
 #ifndef LINUX_ARCH_H
 #define LINUX_ARCH_H
 
-/* #ifdef HAS_ALSA9 */
-#include "Sound/RageSoundDriver_ALSA9.h"
-/* #endif HAS_ALSA9 */
+#ifdef HAVE_ALSA
+#  include "Sound/RageSoundDriver_ALSA9.h"
+#endif
+
 #include "Sound/RageSoundDriver_OSS.h"
 
 /* 
