@@ -52,9 +52,9 @@ const int NUM_SCORE_DIGITS	=	9;
 #define SHOW_PANES							THEME->GetMetricB("ScreenSelectMusic","ShowPanes")
 #define SHOW_DIFFICULTY_LIST				THEME->GetMetricB("ScreenSelectMusic","ShowDifficultyList")
 #define CDTITLE_SPIN_SECONDS				THEME->GetMetricF("ScreenSelectMusic","CDTitleSpinSeconds")
-#define PREV_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectMusic","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
-#define NEXT_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectMusic","NextScreen"+Capitalize(PlayModeToString(play_mode)))
-#define NEXT_OPTIONS_SCREEN( play_mode )	THEME->GetMetric ("ScreenSelectMusic","NextOptionsScreen"+Capitalize(PlayModeToString(play_mode)))
+#define PREV_SCREEN							THEME->GetMetric ("ScreenSelectMusic","PrevScreen")
+#define NEXT_SCREEN							THEME->GetMetric ("ScreenSelectMusic","NextScreen")
+#define NEXT_OPTIONS_SCREEN					THEME->GetMetric ("ScreenSelectMusic","NextOptionsScreen")
 #define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreP%iSortChangeCommand", i+1))
 #define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
 #define DO_ROULETTE_ON_MENU_TIMER			THEME->GetMetricB("ScreenSelectMusic","DoRouletteOnMenuTimer")
@@ -987,7 +987,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		break;
 	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( PREV_SCREEN(GAMESTATE->m_PlayMode) );
+		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		/* We may have stray SM_SongChanged messages from the music wheel.  We can't
 		 * handle them anymore, since the title menu (and attract screens) reset
 		 * the game state, so just discard them. */
@@ -1003,13 +1003,13 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToNextScreen:
 		if( m_bGoToOptions )
 		{
-			SCREENMAN->SetNewScreen( NEXT_OPTIONS_SCREEN(GAMESTATE->m_PlayMode) );
+			SCREENMAN->SetNewScreen( NEXT_OPTIONS_SCREEN );
 		}
 		else
 		{
 			GAMESTATE->AdjustFailType();
 			SOUND->StopMusic();
-			SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
+			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		}
 		break;
 	case SM_SongChanged:
