@@ -6,6 +6,7 @@
 #include "EnumHelper.h"
 #include "Foreach.h"
 #include "PrefsManager.h"
+#include "LuaManager.h"
 
 
 static const CString RadarCategoryNames[NUM_RADAR_CATEGORIES] = {
@@ -255,11 +256,22 @@ static const CString GoalTypeNames[NUM_GOAL_TYPES] = {
 };
 XToString( GoalType );
 StringToX( GoalType );
+void LuaGoalType(lua_State* L)
+{
+	FOREACH_GoalType( gt )
+	{
+		CString s = GoalTypeNames[gt];
+		s.MakeUpper();
+		LUA->SetGlobal( "GOAL_TYPE_"+s, gt );
+	}
+}
+REGISTER_WITH_LUA_FUNCTION( LuaGoalType );
 
 
 #include "LuaFunctions.h"
 LuaFunction_NoArgs( CoinMode,   CoinModeToString(PREFSMAN->m_CoinMode) )
 LuaFunction_NoArgs( Premium,    PremiumToString(PREFSMAN->m_Premium) )
+
 
 /*
  * (c) 2001-2004 Chris Danford
