@@ -136,13 +136,13 @@ void Song::AddAnimationSegment( AnimationSegment seg )
 	SortAnimationSegmentsArray( m_AnimationSegments );
 }
 
-float Song::GetMusicStartBeat()
+float Song::GetMusicStartBeat() const
 {
 	float fBPS = m_BPMSegments[0].m_fBPM / 60.0f; 
 	return -m_fBeat0OffsetInSeconds*fBPS; 
 };
 
-void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut )
+void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const
 {
 //	LOG->Trace( "GetBeatAndBPSFromElapsedTime( fElapsedTime = %f )", fElapsedTime );
 	// This function is a nightmare.  Don't even try to understand it. :-)
@@ -219,7 +219,7 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 // This is a super hack, but it's only called from ScreenEdit, so it's OK :-)
 // Writing an inverse function of GetBeatAndBPSFromElapsedTime() is impossible,
 // so do a binary search to get close to the correct elapsed time.
-float Song::GetElapsedTimeFromBeat( float fBeat )
+float Song::GetElapsedTimeFromBeat( float fBeat ) const
 {
 	float fElapsedTimeBestGuess = 100;	//  seconds
 	float fSecondsToMove = fElapsedTimeBestGuess;	//  seconds
@@ -257,12 +257,12 @@ void Song::GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &
 	sSubTitleOut = ""; 
 };	
 
-CString Song::GetCacheFilePath()
+CString Song::GetCacheFilePath() const
 {
 	return ssprintf( "Cache\\%u", (UINT)GetHashForString(m_sSongDir) );
 }
 
-CString Song::GetSongFilePath()
+CString Song::GetSongFilePath() const
 {
 	CStringArray asFileNames;
 	GetDirListing( m_sSongDir+"*.sm", asFileNames );
@@ -1215,7 +1215,7 @@ void Song::TidyUpData()
 }
 
 
-void Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo )
+void Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo ) const
 {
 	for( int i=0; i<m_apNotes.GetSize(); i++ )	// for each of the Song's Notes
 		if( m_apNotes[i]->m_NotesType == nt )
@@ -1390,7 +1390,7 @@ void Song::SaveToSMAndDWIFile()
 	fclose( fp );
 }
 
-Grade Song::GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc )
+Grade Song::GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc ) const
 {
 	CArray<Notes*, Notes*> aNotes;
 	this->GetNotesThatMatch( nt, aNotes );
@@ -1406,12 +1406,12 @@ Grade Song::GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc )
 }
 
 
-bool Song::IsNew()
+bool Song::IsNew() const
 {
 	return GetNumTimesPlayed()==0;
 }
 
-bool Song::IsEasy( NotesType nt )
+bool Song::IsEasy( NotesType nt ) const
 {
 	for( int i=0; i<m_apNotes.GetSize(); i++ )
 	{
@@ -1430,8 +1430,8 @@ bool Song::IsEasy( NotesType nt )
 
 int CompareSongPointersByTitle(const void *arg1, const void *arg2)
 {
-	Song* pSong1 = *(Song**)arg1;
-	Song* pSong2 = *(Song**)arg2;
+	const Song* pSong1 = *(const Song**)arg1;
+	const Song* pSong2 = *(const Song**)arg2;
 	
 	CString sTitle1 = pSong1->GetFullTitle();
 	CString sTitle2 = pSong2->GetFullTitle();
@@ -1478,8 +1478,8 @@ void SortSongPointerArrayByBPM( CArray<Song*, Song*> &arraySongPointers )
 
 int CompareSongPointersByArtist(const void *arg1, const void *arg2)
 {
-	Song* pSong1 = *(Song**)arg1;
-	Song* pSong2 = *(Song**)arg2;
+	const Song* pSong1 = *(const Song**)arg1;
+	const Song* pSong2 = *(const Song**)arg2;
 		
 	CString sArtist1 = pSong1->m_sArtist;
 	CString sArtist2 = pSong2->m_sArtist;
@@ -1499,8 +1499,8 @@ void SortSongPointerArrayByArtist( CArray<Song*, Song*> &arraySongPointers )
 
 int CompareSongPointersByGroup(const void *arg1, const void *arg2)
 {
-	Song* pSong1 = *(Song**)arg1;
-	Song* pSong2 = *(Song**)arg2;
+	const Song* pSong1 = *(const Song**)arg1;
+	const Song* pSong2 = *(const Song**)arg2;
 		
 	CString sGroup1 = pSong1->m_sGroupName;
 	CString sGroup2 = pSong2->m_sGroupName;
@@ -1520,8 +1520,8 @@ void SortSongPointerArrayByGroup( CArray<Song*, Song*> &arraySongPointers )
 
 int CompareSongPointersByMostPlayed(const void *arg1, const void *arg2)
 {
-	Song* pSong1 = *(Song**)arg1;
-	Song* pSong2 = *(Song**)arg2;
+	const Song* pSong1 = *(const Song**)arg1;
+	const Song* pSong2 = *(const Song**)arg2;
 		
 	int iNumTimesPlayed1 = pSong1->GetNumTimesPlayed();
 	int iNumTimesPlayed2 = pSong2->GetNumTimesPlayed();

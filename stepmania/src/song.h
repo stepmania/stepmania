@@ -60,8 +60,8 @@ public:
 	void SaveToSMAndDWIFile();	// saves SM, then saves DWI so that the SM is the master copy and NoteTypes not supported by DWI are not lost
 	void SaveToCacheFile();
 
-	CString GetSongFilePath();
-	CString GetCacheFilePath();
+	CString GetSongFilePath() const;
+	CString GetCacheFilePath() const;
 
 public:
 	CString m_sSongDir;
@@ -75,7 +75,7 @@ public:
 	CString	m_sArtist;
 	CString	m_sCredit;
 
-	CString GetFullTitle()		{return m_sMainTitle + " " + m_sSubTitle; };
+	CString GetFullTitle() const { return m_sMainTitle + " " + m_sSubTitle; }
 	static void GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut );
 
 
@@ -88,7 +88,7 @@ public:
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
 
-	float GetMusicStartBeat();
+	float GetMusicStartBeat() const;
 
 	CString	m_sBannerFile;
 	CString	m_sBackgroundFile;
@@ -149,16 +149,16 @@ public:
 				break;
 		return m_AnimationSegments[i].m_sAnimationName;
 	};
-	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut );
-	float GetElapsedTimeFromBeat( float fBeat );
+	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const;
+	float GetElapsedTimeFromBeat( float fBeat ) const;
 	
 	
 	
 	CArray<Notes*, Notes*> m_apNotes;
 
 	bool SongHasNoteType( NotesType nt ) const;
-	void GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo );
-	int GetNumTimesPlayed()
+	void GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo ) const;
+	int GetNumTimesPlayed() const
 	{
 		int iTotalNumTimesPlayed = 0;
 		for( int i=0; i<m_apNotes.GetSize(); i++ )
@@ -167,9 +167,9 @@ public:
 		}
 		return iTotalNumTimesPlayed;
 	}
-	bool IsNew();
-	bool IsEasy( NotesType nt );
-	Grade GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc );
+	bool IsNew() const;
+	bool IsEasy( NotesType nt ) const;
+	Grade GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc ) const;
 };
 
 
