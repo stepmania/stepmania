@@ -17,6 +17,7 @@ static char THIS_FILE[] = __FILE__;
 
 EnterComment::EnterComment(CWnd* pParent /*=NULL*/)
 	: CDialog(EnterComment::IDD, pParent)
+	, m_bDontAsk(FALSE)
 {
 	//{{AFX_DATA_INIT(EnterComment)
 		// NOTE: the ClassWizard will add member initialization here
@@ -30,6 +31,7 @@ void EnterComment::DoDataExchange(CDataExchange* pDX)
 	//{{AFX_DATA_MAP(EnterComment)
 	DDX_Control(pDX, IDC_EDIT, m_edit);
 	//}}AFX_DATA_MAP
+	DDX_Check(pDX, IDC_DONTASK, m_bDontAsk);
 }
 
 

@@ -1,4 +1,4 @@
-//Microsoft Developer Studio generated resource script.
+// Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
 
@@ -27,18 +27,18 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE 
+1 TEXTINCLUDE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE 
+2 TEXTINCLUDE 
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE DISCARDABLE 
+3 TEXTINCLUDE 
 BEGIN
     "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
     "#define _AFX_NO_OLE_RESOURCES\r\n"
@@ -66,15 +66,15 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON    DISCARDABLE     "smpackage.ICO"
+IDR_MAINFRAME           ICON                    "smpackage.ICO"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
 //
 
-IDD_INSTALL DIALOG DISCARDABLE  0, 0, 332, 234
-STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
+IDD_INSTALL DIALOG  0, 0, 332, 234
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
 CAPTION "Stepmania Package Manager"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -97,8 +97,8 @@ BEGIN
 END
 
 IDD_EXPORTER DIALOGEX 0, 0, 332, 234
-STYLE DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | 
-    WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
+    WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Stepmania Package Manager"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -119,8 +119,8 @@ BEGIN
     PUSHBUTTON      "Open Program Folder",IDC_BUTTON_OPEN,83,215,79,15
 END
 
-IDD_DIALOG_NAME DIALOG DISCARDABLE  0, 0, 261, 58
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_DIALOG_NAME DIALOG  0, 0, 261, 58
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Name Your Package"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -133,8 +133,8 @@ BEGIN
                     18,38,179,12
 END
 
-IDD_EDIT_INSTALLATIONS DIALOG DISCARDABLE  0, 0, 233, 220
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_EDIT_INSTALLATIONS DIALOG  0, 0, 233, 220
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Edit Installations"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -153,8 +153,8 @@ BEGIN
                     IDC_STATIC,18,144,196,17
 END
 
-IDD_MENU DIALOG DISCARDABLE  0, 0, 332, 234
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_MENU DIALOG  0, 0, 332, 234
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "StepMania Tools Main Menu"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -174,8 +174,8 @@ BEGIN
                     IDC_STATIC,103,168,215,35
 END
 
-IDD_CONVERT_THEME DIALOG DISCARDABLE  0, 0, 332, 258
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_CONVERT_THEME DIALOG  0, 0, 332, 258
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Theme Elements"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -203,8 +203,8 @@ BEGIN
                     15,WS_DISABLED
 END
 
-IDD_EDIT_METRICS DIALOG DISCARDABLE  0, 0, 332, 234
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_EDIT_METRICS DIALOG  0, 0, 332, 234
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Edit Theme Metrics"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -226,20 +226,22 @@ BEGIN
     PUSHBUTTON      "Explanation",IDC_BUTTON_HELP,65,214,71,13
 END
 
-IDD_ENTER_COMMENT DIALOG DISCARDABLE  0, 0, 312, 202
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_ENTER_COMMENT DIALOGEX 0, 0, 312, 202
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Add A Comment"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     LTEXT           "This message will be displayed before a user installs your package.",
                     -1,7,7,219,12
-    EDITTEXT        IDC_EDIT,17,24,232,171,ES_MULTILINE | ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT,17,24,232,155,ES_MULTILINE | ES_AUTOHSCROLL
     DEFPUSHBUTTON   "OK",IDOK,255,7,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,255,24,50,14
+    CONTROL         "Don't display this dialog in the future",IDC_DONTASK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,181,145,11
 END
 
-IDD_SHOW_COMMENT DIALOG DISCARDABLE  0, 0, 246, 186
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_SHOW_COMMENT DIALOG  0, 0, 246, 186
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Package Comment"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -250,7 +252,6 @@ BEGIN
 END
 
 
-#ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////
 //
 // Version
@@ -273,15 +274,13 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "CompanyName", "\0"
-            VALUE "FileDescription", "smpackage MFC Application\0"
-            VALUE "FileVersion", "1, 0, 0, 1\0"
-            VALUE "InternalName", "smpackage\0"
-            VALUE "LegalCopyright", "Copyright (C) 2002\0"
-            VALUE "LegalTrademarks", "\0"
-            VALUE "OriginalFilename", "smpackage.EXE\0"
-            VALUE "ProductName", "smpackage Application\0"
-            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "FileDescription", "smpackage MFC Application"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "smpackage"
+            VALUE "LegalCopyright", "Copyright (C) 2002"
+            VALUE "OriginalFilename", "smpackage.EXE"
+            VALUE "ProductName", "smpackage Application"
+            VALUE "ProductVersion", "1, 0, 0, 1"
         END
     END
     BLOCK "VarFileInfo"
@@ -290,8 +289,6 @@ BEGIN
     END
 END
 
-#endif    // !_MAC
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -299,7 +296,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
+GUIDELINES DESIGNINFO 
 BEGIN
     IDD_INSTALL, DIALOG
     BEGIN
@@ -381,11 +378,11 @@ END
 // Bitmap
 //
 
-INSTALL                 BITMAP  DISCARDABLE     "install.bmp"
-MANAGE                  BITMAP  DISCARDABLE     "manage.bmp"
-MENU                    BITMAP  DISCARDABLE     "menu.bmp"
-CONVERTTHEME            BITMAP  DISCARDABLE     "converttheme.bmp"
-EDIT_METRICS            BITMAP  DISCARDABLE     "editmetrics.bmp"
+INSTALL                 BITMAP                  "install.bmp"
+MANAGE                  BITMAP                  "manage.bmp"
+MENU                    BITMAP                  "menu.bmp"
+CONVERTTHEME            BITMAP                  "converttheme.bmp"
+EDIT_METRICS            BITMAP                  "editmetrics.bmp"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 

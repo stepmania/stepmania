@@ -1,3 +1,4 @@
+#include "afxwin.h"
 #if !defined(AFX_ENTERCOMMENT_H__DE628EA8_0FE7_4594_B2A2_47BDB283FA1E__INCLUDED_)
 #define AFX_ENTERCOMMENT_H__DE628EA8_0FE7_4594_B2A2_47BDB283FA1E__INCLUDED_
 
@@ -40,6 +41,8 @@ protected:
 	virtual void OnOK();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
+	BOOL m_bDontAsk;
 };
 
 //{{AFX_INSERT_LOCATION}}
