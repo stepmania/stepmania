@@ -173,21 +173,24 @@ NOTE: Server responces always add 128, thus a server responce for no operation
 	The way this works is to send every player's info for a given
 	 field.  Like every player's score will be sent first, then every
 	 player's grade.
-    4		Score				//m_textScore[p]
+    1		First player's player ID
+	<Other player's IDs>
+    4		Score
 	<Other player's scores>
-    1		Grade				//m_Grades[p]
+    1		Grade
 	<Other player's Grades>
     1		Difficulty (0=beginner, 1=light, etc.)
 	<Other player's difficulties>
     2           miss
-	(ETC)
-    2		boo				//m_textJudgeNumbers[l][p]  (in inverse)
-    2		good
-    2		great
-    2		perfect
-    2		marvelous       (REFER TO LINE 640 of ScreenEvaluation)
-    2		ok
-    2		max_combo
+	<Other player's misses>
+    2		boo		
+	<Other player's boos>
+    2		good (All players)
+    2		great (All players)
+    2		perfect (All players)
+    2		marvelous (All players)
+    2		ok (All players)
+    2		max_combo (All players)
 
 
 005: 	Scoreboard update
