@@ -1,10 +1,12 @@
 /*
 -----------------------------------------------------------------------------
- File: ThemeManager.h
+ Class: ThemeManager
 
- Desc: .
+ Desc: Manages which graphics and sounds are chosed to load.  Every time 
+	a sound or graphic is loaded, it gets the path from the ThemeManager.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -67,6 +69,7 @@ enum ThemeElement {
 	GRAPHIC_ARROWS_LEFT,
 	GRAPHIC_ARROWS_RIGHT,
 	GRAPHIC_EDIT_BACKGROUND,
+	GRAPHIC_EDIT_SNAP_INDICATOR,
 	
 	SOUND_FAILED,	
 	SOUND_ASSIST,	
@@ -81,6 +84,8 @@ enum ThemeElement {
 	SOUND_MENU_BACK,	
 	SOUND_TRAINING_MUSIC,	
 	SOUND_INVALID,	
+	SOUND_EDIT_CHANGE_LINE,	
+	SOUND_EDIT_CHANGE_SNAP,	
 
 	FONT_OUTLINE,	
 	FONT_NORMAL,

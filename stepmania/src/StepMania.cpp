@@ -20,7 +20,8 @@
 #include "RageMusic.h"
 #include "RageInput.h"
 
-#include "GameInfo.h"
+#include "PrefsManager.h"
+#include "SongManager.h"
 #include "ThemeManager.h"
 #include "WindowManager.h"
 
@@ -377,7 +378,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 
 		case WM_COMMAND:
 		{
-			GameOptions &go = GAMEINFO->m_GameOptions;
+			GameOptions &go = PREFS->m_GameOptions;
             switch( LOWORD(wParam) )
             {
 
@@ -472,7 +473,8 @@ HRESULT CreateObjects( HWND hWnd )
 	SOUND	= new RageSound( hWnd );
 	MUSIC	= new RageSoundStream;
 	INPUT	= new RageInput( hWnd );
-	GAMEINFO= new GameInfo;
+	PREFS	= new PrefsManager;
+	SONGS	= new SongManager;
 	SCREEN	= new RageScreen( hWnd );
 
 	BringWindowToTop( hWnd );
@@ -499,7 +501,7 @@ HRESULT CreateObjects( HWND hWnd )
 //		go.m_iDisplayColor
 //	);
 
-	WM->SystemMessage( ssprintf("Found %d songs.", GAMEINFO->m_pSongs.GetSize()) );
+	WM->SystemMessage( ssprintf("Found %d songs.", SONGS->m_pSongs.GetSize()) );
 
 
 	//WM->SetNewWindow( new WindowLoading );
@@ -524,7 +526,8 @@ void DestroyObjects()
     DXUtil_Timer( TIMER_STOP );
 
 	SAFE_DELETE( WM );
-	SAFE_DELETE( GAMEINFO );
+	SAFE_DELETE( PREFS );
+	SAFE_DELETE( SONGS );
 
 	SAFE_DELETE( INPUT );
 	SAFE_DELETE( MUSIC );
@@ -619,8 +622,8 @@ void Update()
 	{
 		DeviceI = diArray[i];
 
-		GAMEINFO->DeviceToPad( DeviceI, PadI );
-		GAMEINFO->PadToPlayer( PadI, PlayerI );
+		PREFS->DeviceToPad( DeviceI, PadI );
+		PREFS->PadToPlayer( PadI, PlayerI );
 
 		WM->Input( DeviceI, PadI, PlayerI );
 	}
@@ -708,7 +711,7 @@ BOOL SwitchDisplayMode()//( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD
 
 
 	// use GameOptions to get the display settings
-	GameOptions &go = GAMEINFO->m_GameOptions;
+	GameOptions &go = PREFS->m_GameOptions;
 	bool bWindowed	=	go.m_bWindowed;
 	DWORD dwWidth	=	go.m_iResolution;
 	DWORD dwHeight	=	go.m_iResolution==640 ? 480 : 240;
@@ -748,12 +751,12 @@ BOOL SwitchDisplayMode()//( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD
 
 	RestoreObjects();
 
-	if( GAMEINFO )
+	if( PREFS )
 	{
-	    GAMEINFO->m_GameOptions.m_bWindowed = bWindowed;
-	    GAMEINFO->m_GameOptions.m_iDisplayColor = dwBPP;
-	    GAMEINFO->m_GameOptions.m_iResolution = dwWidth;
-		GAMEINFO->SaveConfigToDisk();
+	    PREFS->m_GameOptions.m_bWindowed = bWindowed;
+	    PREFS->m_GameOptions.m_iDisplayColor = dwBPP;
+	    PREFS->m_GameOptions.m_iResolution = dwWidth;
+		PREFS->SavePrefsToDisk();
 	}
 
 	if( WM )

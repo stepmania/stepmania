@@ -16,6 +16,7 @@
 
 #include "Song.h"
 #include <assert.h>
+#include <math.h>	// for fmod
 
 
 
@@ -77,6 +78,9 @@ Song::Song()
 
 void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut )
 {
+	RageLog( "GetBeatAndBPSFromElapsedTime( fElapsedTime = %f )", fElapsedTime );
+	// This function is a nightmare.  Don't even try to understand it. :-)
+
 	fElapsedTime += m_fOffsetInSeconds;
 
 
@@ -185,6 +189,8 @@ bool Song::LoadFromSongDir( CString sDir )
 	{
 		RageError( ssprintf("Couldn't find any BMS or MSD files in '%s'", sDir) );
 	}
+
+	RageLog( "m_fOffsetInSeconds is %f", m_fOffsetInSeconds );
 
 
 	return TRUE;
@@ -485,7 +491,7 @@ bool Song::LoadSongInfoFromDWIFile( CString sPath )
 			{
 				CStringArray arrayFreezeValues;
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
-				int fIndex = atoi( arrayFreezeValues[0] ) * 2;
+				float fIndex = atoi( arrayFreezeValues[0] ) * ELEMENTS_PER_BEAT / 4.0f;
 				float fFreezeBeat = StepIndexToBeat( fIndex );
 				float fFreezeSeconds = (float)atof( arrayFreezeValues[1] ) / 1000.0f;
 				
@@ -510,7 +516,7 @@ bool Song::LoadSongInfoFromDWIFile( CString sPath )
 			{
 				CStringArray arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
-				int fIndex = atoi( arrayBPMChangeValues[0] ) * 2;
+				float fIndex = atoi( arrayBPMChangeValues[0] ) * ELEMENTS_PER_BEAT / 4.0f;
 				float fBeat = StepIndexToBeat( fIndex );
 				float fNewBPM = (float)atoi( arrayBPMChangeValues[1] );
 				

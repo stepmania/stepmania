@@ -1,10 +1,12 @@
 /*
 -----------------------------------------------------------------------------
- File: GrayArrow.h
+ Class: GrayArrow
 
- Desc: Class used to represent a color arrow on the screen.
+ Desc: A gray arrow that "receives" ColorArrows.
 
- Copyright (c) 2001 Ben Norstrom.  All rights reserved.
+ Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+	Ben Nordstrom
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 

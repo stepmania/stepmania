@@ -23,7 +23,7 @@
 #include "dxerr8.h"
 #include "DXUtil.h"
 #include "RageUtil.h"
-#include "GameInfo.h"
+#include "PrefsManager.h"
 
 //#include <stdio.h>
 #include <assert.h>
@@ -92,9 +92,9 @@ void RageBitmapTexture::Create( DWORD dwHints )
 
 	
 	// if the user has requested high color textures, use the higher color
-	if( GAMEINFO != NULL
-	 && GAMEINFO->m_GameOptions.m_iDisplayColor == 32 
-	 && GAMEINFO->m_GameOptions.m_iTextureColor == 32 )
+	if( PREFS != NULL
+	 && PREFS->m_GameOptions.m_iDisplayColor == 32 
+	 && PREFS->m_GameOptions.m_iTextureColor == 32 )
 	{
 		fmtTexture = D3DFMT_A8R8G8B8;
 	}

@@ -11,6 +11,7 @@
 
 #include "MusicWheel.h"
 #include "RageUtil.h"
+#include "SongManager.h"
 #include "ScreenDimensions.h"
 #include "ThemeManager.h"
 #include "RageMusic.h"
@@ -216,7 +217,7 @@ MusicWheel::MusicWheel()
 	// init m_mapGroupNameToBannerColor
 
 	CArray<Song*, Song*> arraySongs;
-	arraySongs.Copy( GAMEINFO->m_pSongs );
+	arraySongs.Copy( SONGS->m_pSongs );
 	SortSongPointerArrayByGroup( arraySongs );
 	
 	int iNextGroupBannerColor = 0;
@@ -236,7 +237,7 @@ MusicWheel::MusicWheel()
 	}
 
 
-	m_SortOrder = GAMEINFO->m_SongSortOrder;
+	m_SortOrder = PREFS->m_SongSortOrder;
 	m_MusicSortDisplay.Set( m_SortOrder );
 	m_MusicSortDisplay.SetXY( SORT_ICON_ON_SCREEN_X, SORT_ICON_ON_SCREEN_Y );
 
@@ -256,10 +257,10 @@ MusicWheel::MusicWheel()
 		BuildWheelItemDatas( m_WheelItemDatas[so], SongSortOrder(so) );
 
 
-	if( GAMEINFO->m_pCurSong == NULL	// if there is no currently selected song
-		&&  GAMEINFO->m_pSongs.GetSize() > 0 )		// and there is at least one song
+	if( SONGS->m_pCurSong == NULL && 	// if there is no currently selected song
+		SONGS->m_pSongs.GetSize() > 0 )		// and there is at least one song
 	{
-		GAMEINFO->m_pCurSong = GAMEINFO->m_pSongs[0];	// select the first song
+		SONGS->m_pCurSong = SONGS->m_pSongs[0];	// select the first song
 	}
 
 
@@ -268,7 +269,7 @@ MusicWheel::MusicWheel()
 	for( i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
 	{
 		if( GetCurWheelItemDatas()[i].m_pSong != NULL
-		 && GetCurWheelItemDatas()[i].m_pSong == GAMEINFO->m_pCurSong )
+		 && GetCurWheelItemDatas()[i].m_pSong == SONGS->m_pCurSong )
 		{
 			m_iSelection = i;		// select it
 			m_sExpandedSectionName = GetCurWheelItemDatas()[m_iSelection].m_sSectionName;	// make its group the currently expanded group
@@ -283,7 +284,7 @@ MusicWheel::MusicWheel()
 
 MusicWheel::~MusicWheel()
 {
-	GAMEINFO->m_SongSortOrder = m_SortOrder;
+	PREFS->m_SongSortOrder = m_SortOrder;
 }
 
 void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arrayWheelItemDatas, SongSortOrder so )
@@ -295,12 +296,12 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 	CArray<Song*, Song*> arraySongs;
 	
 	// copy only song that have at least one Steps for the current GameMode
-	for( int i=0; i<GAMEINFO->m_pSongs.GetSize(); i++ )
+	for( int i=0; i<SONGS->m_pSongs.GetSize(); i++ )
 	{
-		Song* pSong = GAMEINFO->m_pSongs[i];
+		Song* pSong = SONGS->m_pSongs[i];
 
 		CArray<Steps*, Steps*> arraySteps;
-		pSong->GetStepsThatMatchGameMode( GAMEINFO->m_GameMode, arraySteps );
+		pSong->GetStepsThatMatchGameMode( PREFS->m_GameMode, arraySteps );
 
 		if( arraySteps.GetSize() > 0 )
 			arraySongs.Add( pSong );

@@ -86,14 +86,14 @@ void Player::Load( const Style& style, PlayerNumber player_no, const Steps& step
 	// load step elements
 	for( int i=0; i<MAX_TAP_STEP_ELEMENTS; i++ )
 	{
-		m_TapStepsOriginal[i] = steps.m_TapSteps[i];
-		m_TapStepsRemaining[i] = steps.m_TapSteps[i];
+		m_TapStepsOriginal[i] = steps2.m_TapSteps[i];
+		m_TapStepsRemaining[i] = steps2.m_TapSteps[i];
 	}
-	for( i=0; i<steps.m_iNumHoldSteps; i++ )
+	for( i=0; i<steps2.m_iNumHoldSteps; i++ )
 	{
-		m_HoldSteps[i] = steps.m_HoldSteps[i];
+		m_HoldSteps[i] = steps2.m_HoldSteps[i];
 	}
-	m_iNumHoldSteps = steps.m_iNumHoldSteps;
+	m_iNumHoldSteps = steps2.m_iNumHoldSteps;
 
 
 	m_Combo.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - COMBO_Y : COMBO_Y );
@@ -146,8 +146,8 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		// update the life
 		if( fStartBeat < m_fSongBeat && m_fSongBeat < fEndBeat )	// if the song beat is in the range of this hold
 		{
-			PlayerInput PlayerI = { m_PlayerNumber, hs.m_TapStep };
-			bool bIsHoldingButton = GAMEINFO->IsButtonDown( PlayerI );
+			PlayerInput PlayerI( m_PlayerNumber, hs.m_TapStep );
+			bool bIsHoldingButton = PREFS->IsButtonDown( PlayerI );
 			if( bIsHoldingButton )
 			{
 				hss.m_fLife += fDeltaTime/HOLD_ARROW_NG_TIME;
@@ -201,7 +201,7 @@ void Player::RenderPrimitives()
 {
 	D3DXMATRIX matOldView, matOldProj;
 
-	if( m_PlayerOptions.m_EffectType == PlayerOptions::EFFECT_STARS )
+	if( m_PlayerOptions.m_EffectType == PlayerOptions::EFFECT_SPACE )
 	{
 		// turn off Z Buffering
 		SCREEN->GetDevice()->SetRenderState( D3DRS_ZENABLE,      FALSE );
@@ -229,7 +229,7 @@ void Player::RenderPrimitives()
 	m_ColorArrowField.Draw();
 	m_GhostArrows.Draw();
 
-	if( m_PlayerOptions.m_EffectType == PlayerOptions::EFFECT_STARS )
+	if( m_PlayerOptions.m_EffectType == PlayerOptions::EFFECT_SPACE )
 	{
 		// restire old view and projection
 		SCREEN->GetDevice()->SetTransform( D3DTS_VIEW, &matOldView );

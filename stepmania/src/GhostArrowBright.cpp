@@ -24,7 +24,7 @@ GhostArrowBright::GhostArrowBright()
 
 void GhostArrowBright::SetBeat( const float fSongBeat )
 {
-	//SetState( fmod(fSongBeat,1)<0.25 ? 1 : 0 );
+	//SetState( fmodf(fSongBeat,1)<0.25 ? 1 : 0 );
 }
 
 void GhostArrowBright::Step( TapStepScore score )

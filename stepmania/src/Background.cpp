@@ -54,7 +54,7 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 		this->AddActor( &m_sprSongBackground );
 
 
-		if( GAMEINFO->m_GameOptions.m_bRandomVis && !bDisableVisualizations )
+		if( PREFS->m_GameOptions.m_bUseRandomVis && !bDisableVisualizations )
 		{
 			// load a random visualization
 			CStringArray sVisualizationPaths;

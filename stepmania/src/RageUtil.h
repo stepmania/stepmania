@@ -46,11 +46,16 @@
 //-----------------------------------------------------------------------------
 
 // Simple function for generating random numbers
-float randomf( float low=-1.0f, float high=1.0f );
-int roundf( FLOAT f );
-int roundf( double f );
+inline float randomf( float low=-1.0f, float high=1.0f )
+{
+    return low + ( high - low ) * ( (FLOAT)rand() ) / RAND_MAX;
+}
+inline int roundf( float f )	{ return (int)((f)+0.5f); };
+inline int roundf( double f )	{ return (int)((f)+0.5);  };
+
 
 bool IsAnInt( CString s );
+
 
 CString ssprintf( LPCTSTR fmt, ...);
 CString vssprintf( LPCTSTR fmt, va_list argList );

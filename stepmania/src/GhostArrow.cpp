@@ -28,7 +28,7 @@ void GhostArrow::Update( float fDeltaTime )
 
 void GhostArrow::SetBeat( const float fSongBeat )
 {
-	//SetState( fmod(fSongBeat,1)<0.25 ? 1 : 0 );
+	//SetState( fmodf(fSongBeat,1)<0.25 ? 1 : 0 );
 }
 
 void GhostArrow::Step( TapStepScore score )

@@ -384,11 +384,7 @@ SOURCE=.\WindowTitleMenu.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\GameInfo.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GameInfo.h
+SOURCE=.\GameConstants.h
 # End Source File
 # Begin Source File
 
@@ -420,11 +416,27 @@ SOURCE=.\PlayerInput.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\PrefsManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\PrefsManager.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Song.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\song.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SongManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SongManager.h
 # End Source File
 # Begin Source File
 
@@ -469,6 +481,14 @@ SOURCE=.\IniFile.cpp
 # Begin Source File
 
 SOURCE=.\IniFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\XMLMarkup.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\XMLMarkup.h
 # End Source File
 # End Group
 # Begin Group "System"
@@ -668,6 +688,14 @@ SOURCE=.\GradeDisplay.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\GranularityIndicator.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GranularityIndicator.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\MusicSortDisplay.cpp
 # End Source File
 # Begin Source File
@@ -789,14 +817,6 @@ SOURCE=.\GhostArrows.cpp
 # Begin Source File
 
 SOURCE=.\GhostArrows.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GranularityIndicator.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GranularityIndicator.h
 # End Source File
 # Begin Source File
 

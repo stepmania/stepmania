@@ -13,9 +13,9 @@ Class2=CSmpackageDlg
 
 ResourceCount=3
 Resource1=IDR_MAINFRAME
-Resource2=IDD_MANAGER
+Resource2=IDD_INSTALL
 Class3=CSMPackageInstallDlg
-Resource3=IDD_INSTALL
+Resource3=IDD_MANAGER
 
 [CLS:CSmpackageApp]
 Type=0

@@ -12,7 +12,7 @@
 
 #include "Sprite.h"
 #include "RageTextureManager.h"
-#include "GameInfo.h"
+#include "PrefsManager.h"
 #include "IniFile.h"
 #include <assert.h>
 #include <math.h>
@@ -40,8 +40,8 @@ Sprite::Sprite()
 	m_VertAlign = align_middle;
 
 
-	if( GAMEINFO )
-		m_bHasShadow = GAMEINFO->m_GameOptions.m_bShadows;
+	if( PREFS )
+		m_bHasShadow = PREFS->m_GameOptions.m_bShadows;
 	else
 		m_bHasShadow = true;
 

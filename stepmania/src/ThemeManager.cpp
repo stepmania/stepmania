@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: ThemeManager.h
+ Class: ThemeManager
 
- Desc: .
+ Desc: See header.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -73,6 +74,7 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_ARROWS_LEFT:			sAssetPath = "Graphics\\arrows left 1x4";				break;
 		case GRAPHIC_ARROWS_RIGHT:			sAssetPath = "Graphics\\arrows right 1x4";				break;
 		case GRAPHIC_EDIT_BACKGROUND:		sAssetPath = "Graphics\\edit background";				break;
+		case GRAPHIC_EDIT_SNAP_INDICATOR:	sAssetPath = "Graphics\\edit snap indicator";			break;
 
 		case SOUND_FAILED:					sAssetPath = "Sounds\\failed";							break;
 		case SOUND_ASSIST:					sAssetPath = "Sounds\\Assist";							break;
@@ -87,6 +89,8 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case SOUND_MENU_BACK:				sAssetPath = "Sounds\\menu back";						break;
 		case SOUND_TRAINING_MUSIC:			sAssetPath = "Sounds\\training music";					break;
 		case SOUND_INVALID:					sAssetPath = "Sounds\\invalid";							break;
+		case SOUND_EDIT_CHANGE_LINE:		sAssetPath = "Sounds\\edit change line";				break;
+		case SOUND_EDIT_CHANGE_SNAP:		sAssetPath = "Sounds\\edit change snap";				break;
 
 		case FONT_OUTLINE:					sAssetPath = "Fonts\\Outline";							break;
 		case FONT_NORMAL:					sAssetPath = "Fonts\\Normal";							break;

@@ -12,7 +12,7 @@
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 
-#include "GameInfo.h"	// for ScoreSummary
+#include "PrefsManager.h"	// for ScoreSummary
 #include "Steps.h"
 #include "Sprite.h"
 #include "BitmapText.h"

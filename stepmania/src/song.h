@@ -14,7 +14,7 @@
 
 #include "Steps.h"
 
-#include "GameInfo.h"	// for definition of GameMode
+#include "PrefsManager.h"	// for definition of GameMode
 enum GameMode;	// why is this needed?
 
 
