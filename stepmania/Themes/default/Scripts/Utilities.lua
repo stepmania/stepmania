@@ -20,6 +20,15 @@ function FindSelection( list )
 	return nil
 end
 
+-- Look up each value in a table, returning a table with the resulting strings.
+function TableMetricLookup( t, group )
+	local ret = { }
+	for key, val in t do
+		Trace(val)
+		ret[key] = THEME:GetMetric(group,val)
+	end
+	return ret
+end
 
 -- (c) 2005 Glenn Maynard
 -- All rights reserved.
