@@ -52,6 +52,8 @@ void Actor::Reset()
 	m_ZTestMode = ZTEST_OFF;
 	m_bZWrite = false;
 	m_CullMode = CULL_NONE;
+
+	m_mapNameToCommands.clear();
 }
 
 Actor::Actor()
@@ -623,9 +625,16 @@ void Actor::AddRotationR( float rot )
 	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromR(rot) );
 }
 
-void Actor::RunCommands( const Commands &vCommands )
+void Actor::AddCommands( const CString sName, const Commands &cmds )
 {
-	FOREACH_CONST( Command, vCommands.v, c )
+	CString sKey = sName;
+	sKey.MakeLower();
+	m_mapNameToCommands[sKey] = cmds;
+}
+
+void Actor::RunCommands( const Commands &cmds )
+{
+	FOREACH_CONST( Command, cmds.v, c )
 		this->HandleCommand( *c );
 }
 
@@ -768,10 +777,10 @@ void Actor::HandleCommand( const Command &command )
 	EndHandleArgs;
 }
 
-float Actor::GetCommandsLengthSeconds( const Commands &vCommands )
+float Actor::GetCommandsLengthSeconds( const Commands &cmds )
 {
 	Actor temp;
-	temp.RunCommands(vCommands);
+	temp.RunCommands(cmds);
 
 	return temp.GetTweenTimeLeft();
 }
@@ -911,6 +920,18 @@ void Actor::QueueCommand( Command command )
 {
 	BeginTweening( 0, TWEEN_LINEAR ); 
 	DestTweenState().command = command; 
+}
+
+void Actor::PlayCommand( const CString &sCommandName )
+{
+	CString sKey = sCommandName;
+	sKey.MakeLower();
+	map<CString, Commands>::const_iterator it = m_mapNameToCommands.find( sKey );
+
+	if( it == m_mapNameToCommands.end() )
+		return;
+
+	RunCommands( it->second );
 }
 
 /*

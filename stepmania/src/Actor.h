@@ -6,6 +6,7 @@
 #include "RageTypes.h"
 #include "Command.h"
 #include <deque>
+#include <map>
 
 #define DRAW_ORDER_BEFORE_EVERYTHING	-100
 #define DRAW_ORDER_TRANSITIONS			100
@@ -303,9 +304,10 @@ public:
 	//
 	// Commands
 	//
-	void RunCommands( const Commands &vCommands );
+	void AddCommands( const CString sName, const Commands &cmds );
+	void RunCommands( const Commands &cmds );
 	virtual void HandleCommand( const Command &command );	// derivable
-	static float GetCommandsLengthSeconds( const Commands &vCommands );
+	static float GetCommandsLengthSeconds( const Commands &cmds );
 
 	//
 	// Animation
@@ -320,8 +322,7 @@ public:
 	//
 	virtual void GainFocus( float fRate, bool bRewindMovie, bool bLoop ) {}
 	virtual void LoseFocus() {}
-	virtual void PlayCommand( const CString &sCommandName ) {}
-	virtual void PlayOffCommand( const CString &sCommandName ) {}
+	virtual void PlayCommand( const CString &sCommandName );
 
 protected:
 
@@ -403,6 +404,11 @@ protected:
 	// global state
 	//
 	static float g_fCurrentBGMTime, g_fCurrentBGMBeat;
+
+	//
+	// commands
+	//
+	map<CString, Commands> m_mapNameToCommands;
 };
 
 #endif
