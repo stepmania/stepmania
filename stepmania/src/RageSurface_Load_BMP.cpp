@@ -177,7 +177,7 @@ try { /* file reading may throw */
 		/* Expand 1- and 4-bits to 8-bits. */
 		if( iFileBPP == 1 )
 		{
-			for( unsigned x = 0; x < (int) iWidth; ++x )
+			for( unsigned x = 0; x < iWidth; ++x )
 			{
 				int iByteNo = x >> 3;
 				int iBitNo = 7-(x&7);
@@ -187,7 +187,7 @@ try { /* file reading may throw */
 		}
 		else if( iFileBPP == 4 )
 		{
-			for( unsigned x = 0; x < (int) iWidth; ++x )
+			for( unsigned x = 0; x < iWidth; ++x )
 			{
 				if( (x & 1) == 0 )
 					pRow[x] = buf[x/2] & 0x0F;
