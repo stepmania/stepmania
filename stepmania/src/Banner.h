@@ -20,19 +20,21 @@ class Banner : public CroppedSprite
 {
 public:
 	Banner();
+	virtual ~Banner() { }
 
 	virtual bool Load( RageTextureID ID );
 
 	virtual void Update( float fDeltaTime );
 
-	bool LoadFromSong( Song* pSong );		// NULL means no song
-	bool LoadFromGroup( CString sGroupName );
-	bool LoadFromCourse( Course* pCourse );
-	bool LoadRoulette();
+	void LoadFromSong( Song* pSong );		// NULL means no song
+	void LoadFromGroup( CString sGroupName );
+	void LoadFromCourse( Course* pCourse );
+	void LoadRoulette();
+	void LoadFallback();
 
 	void SetScrolling( bool bScroll, float Percent = 0);
-	bool IsScrolling() { return m_bScrolling; }
-	float ScrollingPercent() { return m_fPercentScrolling; }
+	bool IsScrolling() const { return m_bScrolling; }
+	float ScrollingPercent() const { return m_fPercentScrolling; }
 
 protected:
 	bool m_bScrolling;
