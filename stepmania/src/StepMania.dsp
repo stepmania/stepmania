@@ -1128,6 +1128,14 @@ SOURCE=.\ScreenSelectStyle.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenSelectStyle5th.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectStyle5th.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenSongOptions.cpp
 # End Source File
 # Begin Source File
