@@ -33,7 +33,6 @@ inline void UtilOffCommand( Actor* pActor, const CString &sScreenName ) { if(pAc
 inline void UtilSetXYAndOnCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) UtilSetXYAndOnCommand( *pActor, sScreenName ); }
 
 // Return a Sprite, BitmapText, or Model depending on the file type
-Actor* LoadFromActorFile( const CString &sIniPath, const CString &sLayer = "Actor" );
 Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer );
 Actor* MakeActor( const RageTextureID &ID );
 

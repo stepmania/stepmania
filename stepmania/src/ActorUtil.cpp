@@ -22,22 +22,6 @@
 #include "arch/Dialog/Dialog.h"
 
 
-Actor* LoadFromActorFile( const CString &sIniPath, const CString &sLayer )
-{
-	// TODO: Check for recursive loading
-	IniFile ini;
-	if( !ini.ReadFile( sIniPath ) )
-		RageException::Throw( "%s", ini.GetError().c_str() );
-	
-	CString sDir = Dirname( sIniPath );
-
-	const XNode* pLayer = ini.GetChild(sLayer);
-	if( pLayer == NULL )
-		RageException::Throw( "The file '%s' doesn't have layer '%s'.", sIniPath.c_str(), sLayer.c_str() );
-
-	return LoadFromActorFile( sDir, *pLayer );
-}
-
 Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 {
 	Actor* pActor = NULL;	// fill this in before we return
@@ -309,7 +293,18 @@ Actor* MakeActor( const RageTextureID &ID )
 	}
 	else if( sExt=="actor" )
 	{
-		return LoadFromActorFile( ID.filename );
+		// TODO: Check for recursive loading
+		IniFile ini;
+		if( !ini.ReadFile( ID.filename ) )
+			RageException::Throw( "%s", ini.GetError().c_str() );
+	
+		CString sDir = Dirname( ID.filename );
+
+		const XNode* pLayer = ini.GetChild( "Actor" );
+		if( pLayer == NULL )
+			RageException::Throw( "The file '%s' doesn't have layer 'Actor'.", ID.filename.c_str() );
+
+		return LoadFromActorFile( sDir, *pLayer );
 	}
 	else if( sExt=="png" ||
 		sExt=="jpg" || 
