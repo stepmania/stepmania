@@ -19,7 +19,7 @@
 !define PRODUCT_NAME_VER "${PRODUCT_NAME} ${VERSION}"
 
 Name "${PRODUCT_NAME}"
-OutFile "StepMania-CVS-20030209.exe"
+OutFile "StepMania-CVS-20030211.exe"
 ;OutFile "StepMania301.exe"
 
 ; Some default compiler settings (uncomment and change at will):
@@ -32,7 +32,7 @@ SetDateSave on ; (can be on to have files restored to their orginal date)
 InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
 InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}" ""
 DirShow show ; (make this hide to not let the user change it)
-DirText "Select the directory to install StepMania in:"
+DirText "${PRODUCT_NAME_VER}"
 
 
 ;
@@ -101,7 +101,7 @@ WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninst
 WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninst.exe"'
 
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command" "" '"$INSTDIR\smpackage.exe" "%1"'
-WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile" "" "StepMania package"
+WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile" "" "SMZIP package"
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\DefaultIcon" "" "$INSTDIR\smpackage.exe,0"
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "" '"$INSTDIR\smpackage.exe" "%1"'
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip" "" "smzipfile"
@@ -214,7 +214,7 @@ CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
 CreateShortCut "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\stepmania.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\stepmania.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open Songs Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\Songs\"
-CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Package Exporter.lnk" "$INSTDIR\smpackage.exe"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\SMZIP Package Exporter.lnk" "$INSTDIR\smpackage.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\README-FIRST.lnk" "$INSTDIR\README-FIRST.htm"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninst.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go To StepMania web site.lnk" "http://www.stepmania.com"
