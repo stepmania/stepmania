@@ -424,7 +424,7 @@ int ScreenOptionsMaster::ExportOption( const OptionRow &row, const OptionRowHand
 
 	case ROW_CHARACTER:
 		if( sel == 0 )
-			GAMESTATE->m_pCurCharacters[pn] = NULL;
+			GAMESTATE->m_pCurCharacters[pn] = GAMESTATE->GetDefaultCharacter();
 		else
 		{
 			vector<Character*> apCharacters;
