@@ -662,8 +662,9 @@ void ChangeCurrentGame( Game g )
 
 void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 {
-	if( !GAMESTATE )
-		return;
+	ASSERT( GAMESTATE );
+	ASSERT( ANNOUNCER );
+	ASSERT( THEME );
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	IniFile ini;
