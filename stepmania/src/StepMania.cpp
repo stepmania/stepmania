@@ -72,6 +72,8 @@
 HWND g_hWndMain = NULL;
 #endif
 
+#include <time.h>
+
 // command line arguments
 CString		g_sSongPath = "";
 CString		g_sServerIP = "";

@@ -13,13 +13,14 @@
 
 #include "RageUtil.h"
 
-unsigned long randseed = time(NULL);
-
 #include <numeric>
+#include <time.h>
 #include <math.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fstream>
+
+unsigned long randseed = time(NULL);
 
 int power_of_two(int input)
 {
@@ -30,7 +31,7 @@ int power_of_two(int input)
 	return value;
 }
 
-bool IsAnInt( const char *s )
+bool IsAnInt( const CString &s )
 {
 	if( s[0] == '\0' )
 		return false;
@@ -145,8 +146,8 @@ void split( const CString &Source, const CString &Deliminator, CStringArray& Add
 		int pos = Source.Find(Deliminator, startpos);
 		if ( pos == -1 ) pos=Source.GetLength();
 
-		CString AddCString = Source.Mid(startpos, pos-startpos);
-		if( AddCString.IsEmpty() && bIgnoreEmpty )
+		CString AddCString = Source.substr(startpos, pos-startpos);
+		if( AddCString.empty() && bIgnoreEmpty )
 			; // do nothing
 		else
 			AddIt.push_back(AddCString);
@@ -174,7 +175,7 @@ void splitpath( bool UsingDirsOnly, const CString &Path, CString& Drive, CString
 		else if (nSecond > nFirst)
 			Drive = Path.Left(nSecond);
 	}
-	else if (Path.Mid(1,1) == ":" )		// drive letter
+	else if (Path[1] == ':' )		// drive letter
 	{
 		nSecond = 2;
 		Drive = Path.Left(2);
@@ -199,7 +200,7 @@ void splitpath( bool UsingDirsOnly, const CString &Path, CString& Drive, CString
 		}
 		else {
 
-			Dir = Path.Mid(nSecond + 1, (nDirEnd - nSecond) - 1);
+			Dir = Path.substr(nSecond + 1, (nDirEnd - nSecond) - 1);
 
 			int nFileEnd = Path.ReverseFind('.');
 			if (nFileEnd != -1) {
@@ -209,7 +210,7 @@ void splitpath( bool UsingDirsOnly, const CString &Path, CString& Drive, CString
 					Ext = "";
 				}
 				else {
-					FName = Path.Mid(nDirEnd + 1, (nFileEnd - nDirEnd) - 1);
+					FName = Path.substr(nDirEnd + 1, (nFileEnd - nDirEnd) - 1);
 					Ext = Path.Right((Path.GetLength() - nFileEnd) - 1);
 				}
 			}
