@@ -9,15 +9,12 @@
 #include "ThemeManager.h"
 #include "SongManager.h"
 
-/* XXX: metric */
 CachedThemeMetricF FADE_SECONDS			("FadingBanner","FadeSeconds");
-CachedThemeMetricF MW_SWITCH_SECONDS	("MusicWheel","SwitchSeconds");
 
 
 FadingBanner::FadingBanner()
 {
 	FADE_SECONDS.Refresh();
-	MW_SWITCH_SECONDS.Refresh();
 
 	m_bMovingFast = false;
 	m_bSkipNextBannerUpdate = false;
@@ -45,21 +42,6 @@ void FadingBanner::Update( float fDeltaTime )
 	}
 
 	m_bSkipNextBannerUpdate = false;
-
-	/* Don't fade to the full banner until we finish fading. */
-	float HighQualTime = FADE_SECONDS;
-
-	/* Hacky: also don't fade until the music wheel has a chance to settle down. */
-	HighQualTime = max( HighQualTime, 1.0f / PREFSMAN->m_iMusicWheelSwitchSpeed );
-	HighQualTime = max( HighQualTime, (float)MW_SWITCH_SECONDS );
-	
-	if( m_sPendingBanner == "" || m_PendingTimer.PeekDeltaTime() < HighQualTime )
-		return;
-
-	/* Load the high quality banner. */
-	CString banner = m_sPendingBanner;
-	BeforeChange();
-	m_Banner[GetBackIndex()].Load( banner );
 }
 
 void FadingBanner::DrawPrimitives()
@@ -73,7 +55,7 @@ void FadingBanner::DrawPrimitives()
 bool FadingBanner::Load( RageTextureID ID )
 {
 	BeforeChange();
-	bool bRet = m_Banner[m_iIndexFront].Load(ID);
+	bool bRet = m_Banner[GetBackIndex()].Load(ID);
 	return bRet;
 }
 
@@ -88,35 +70,31 @@ void FadingBanner::BeforeChange()
 	m_Banner[m_iIndexFront].BeginTweening( FADE_SECONDS );		// fade out
 	m_Banner[m_iIndexFront].SetDiffuse( RageColor(1,1,1,0) );
 
-	m_sPendingBanner = "";
-
 	/* We're about to load a banner.  It'll probably cause a frame skip or
 	 * two.  Skip an update, so the fade-in doesn't skip. */
 	m_bSkipNextBannerUpdate = true;
 }
 
-/* If this returns false, the banner couldn't be loaded. */
-void FadingBanner::LoadFromCachedBanner( const CString &path )
+/* If this returns true, a low-resolution banner was loaded, and the full-res
+ * banner should be loaded later. */
+bool FadingBanner::LoadFromCachedBanner( const CString &path )
 {
 	/* If we're already on the given banner, don't fade again. */
 	if( path != "" && m_Banner[GetBackIndex()].GetTexturePath() == path )
-		return;
+		return false;
 
 	if( path == "" )
 	{
-		BeforeChange();
-		m_Banner[GetBackIndex()].LoadFallback();
-		return;
+		LoadFallback();
+		return false;
 	}
 
 	/* If we're currently fading to the given banner, go through this again,
 	 * which will cause the fade-in to be further delayed. */
 
-	/* No matter what we load, ensure we don't fade to a stale path. */
-	m_sPendingBanner = "";
-
 	RageTextureID ID;
-	if( PREFSMAN->m_BannerCache == PrefsManager::BNCACHE_FULL )
+	bool bLowRes = (PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_FULL);
+	if( !bLowRes )
 		ID = Sprite::SongBannerTexture( path );
 	else
 		/* Try to load the low quality version. */
@@ -131,28 +109,20 @@ void FadingBanner::LoadFromCachedBanner( const CString &path )
 		 * we'll get called again and load the real banner. */
 
 		if( m_bMovingFast )
-			return;
+			return false;
 
-		BeforeChange();
-// FIXME 			m_Banner[GetBackIndex()].LoadFromSong( pSong );
 		if( IsAFile(path) )
-			m_Banner[GetBackIndex()].Load( path );
+			Load( path );
 		else
-			m_Banner[GetBackIndex()].LoadFallback();
+			LoadFallback();
 
-		return;
+		return false;
 	}
 
 	BeforeChange();
 	m_Banner[GetBackIndex()].Load( ID );
 
-	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_FULL )
-	{
-		m_sPendingBanner = path;
-		m_PendingTimer.GetDeltaTime(); /* reset */
-	}
-
-	return;
+	return bLowRes;
 }
 
 void FadingBanner::LoadFromSong( const Song* pSong )
@@ -184,15 +154,11 @@ void FadingBanner::LoadFromGroup( CString sGroupName )
 {
 	const CString sGroupBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
 	LoadFromCachedBanner( sGroupBannerPath );
-//	BeforeChange();
-//	m_Banner[GetBackIndex()].LoadFromGroup( sGroupName );
 }
 
 void FadingBanner::LoadFromCourse( const Course* pCourse )
 {
 	LoadFromCachedBanner( pCourse->m_sBannerPath );
-//	BeforeChange();
-//	m_Banner[GetBackIndex()].LoadFromCourse( pCourse );
 }
 
 void FadingBanner::LoadRoulette()

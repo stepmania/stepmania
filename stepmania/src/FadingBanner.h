@@ -25,6 +25,8 @@ public:
 	void LoadRandom();
 	void LoadFallback();
 
+	bool LoadFromCachedBanner( const CString &path );
+
 	void SetMovingFast( bool fast ) { m_bMovingFast=fast; }
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -37,10 +39,6 @@ protected:
 	int			m_iIndexFront;
 	int			GetBackIndex() { return m_iIndexFront==0 ? 1 : 0; }
 
-	void LoadFromCachedBanner( const CString &path );
-
-	CString		m_sPendingBanner;
-	RageTimer	m_PendingTimer;
 	bool		m_bMovingFast;
 	bool		m_bSkipNextBannerUpdate;
 };
