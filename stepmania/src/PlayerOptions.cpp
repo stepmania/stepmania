@@ -28,6 +28,7 @@ void PlayerOptions::Init()
 	m_bHoldNotes = true;
 	m_bTimingAssist = false;
 	m_fPerspectiveTilt = 0;
+	m_sPositioning = "";
 }
 
 void FLOAT_APPROACH( float& val, float other_val, float deltaPercent )

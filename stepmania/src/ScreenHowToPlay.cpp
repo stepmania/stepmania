@@ -64,8 +64,6 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	delete pND;
 
 	m_fFakeSecondsIntoSong = 0;
-
-	GAMESTATE->m_Position[PLAYER_1]->LoadFromStyleDef(GAMESTATE->GetCurrentStyleDef(), PLAYER_1);
 }
 
 ScreenHowToPlay::~ScreenHowToPlay()

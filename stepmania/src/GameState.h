@@ -193,7 +193,7 @@ public:
 	//
 	// Arrow positioning
 	//
-	NoteFieldPositioning *m_Position[NUM_PLAYERS];
+	NoteFieldPositioning *m_Position;
 };
 
 

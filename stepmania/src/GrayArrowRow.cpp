@@ -59,14 +59,14 @@ void GrayArrowRow::DrawPrimitives()
 {
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		GAMESTATE->m_Position[m_PlayerNumber]->BeginDrawTrack(c);
+		GAMESTATE->m_Position->BeginDrawTrack(m_PlayerNumber, c);
 
 		// set arrow X
 		float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
 		m_GrayArrow[c].SetX( fX );
 		m_GrayArrow[c].Draw();
 
-		GAMESTATE->m_Position[m_PlayerNumber]->EndDrawTrack(c);
+		GAMESTATE->m_Position->EndDrawTrack(m_PlayerNumber, c);
 	}
 
 }

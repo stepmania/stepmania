@@ -1,11 +1,19 @@
 #include "global.h"
 #include "NoteFieldPositioning.h"
+
 #include "RageDisplay.h"
 #include "RageDisplayInternal.h"
-
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageMath.h"
+
+#include "GameState.h"
+#include "GameManager.h"
+#include "IniFile.h"
+#include "Game.h"
+#include "Style.h"
+#include "GameDef.h"
+
 
 /* This is similar in style to Actor::Command.  However, Actors don't store
  * matrix stacks; they only store offsets and scales, and compound them into
@@ -83,16 +91,7 @@ void MatrixCommand(CString sCommandString, RageMatrix &mat)
 	
 }
 
-NoteFieldPositioning::NoteFieldPositioning()
-{
-	Init();
-}
-
-NoteFieldPositioning::~NoteFieldPositioning()
-{
-}
-
-void NoteFieldPositioning::Init()
+NoteFieldPositioning::Mode::Mode()
 {
 	for( int tn=0; tn<MAX_NOTE_TRACKS; tn++ )
 	{
@@ -101,76 +100,156 @@ void NoteFieldPositioning::Init()
 		m_fFov[tn] = 0;
 	}
 }
-/*
-void NoteFieldPositioning::LoadFromFile(CString fn)
+
+void NoteFieldPositioning::Mode::BeginDrawTrack(int tn) const
 {
-	Init();
-
-}
-*/
-void NoteFieldPositioning::LoadFromStyleDef(const StyleDef *s, PlayerNumber pn)
-{
-	Init();
-
-	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
-	{
-		/* Set up the normal position of each track. */
-		const float fPixelXOffsetFromCenter = s->m_ColumnInfo[pn][t].fXOffset;
-		RageMatrixTranslation(&m_Position[t], fPixelXOffsetFromCenter, 0, 0);
-	}
-
-	// XXX
-
-	FILE *f = fopen("test.dat", "r");
-	if(f) for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
-	{
-		char buf[1000];
-		if(!fgets(buf, 1000, f)) break;
-
-		CString b(buf);
-		TrimRight(b);
-		
-		RageMatrixIdentity(&m_Position[t]);
-		MatrixCommand(b, m_Position[t]);
-
-		if(!fgets(buf, 1000, f)) break;
-		b=buf;
-		TrimRight(b);
-
-		RageMatrixIdentity(&m_PerspPosition[t]);
-		MatrixCommand(b, m_PerspPosition[t]);
-
-		if(!fgets(buf, 1000, f)) break;
-		sscanf(buf, "%f", &m_fFov[t]);
-	}
-	if( f )
-		fclose(f);
-// XXX
-
-}
-
-void NoteFieldPositioning::Update(float fDeltaTime)
-{
-}
-
-
-void NoteFieldPositioning::BeginDrawTrack(int tn)
-{
-	DISPLAY->PushMatrix();
-
-	glMultMatrixf((float *) m_Position[tn]);
+	glMultMatrixf((const float *) m_Position[tn]);
 
 	if(m_fFov[tn])
 		DISPLAY->EnterPerspective(m_fFov[tn]);
 	
-	glMultMatrixf((float *) m_PerspPosition[tn]);
+	glMultMatrixf((const float *) m_PerspPosition[tn]);
 }
 
-void NoteFieldPositioning::EndDrawTrack(int tn)
+void NoteFieldPositioning::Mode::EndDrawTrack(int tn) const
 {
 	if(m_fFov[tn])
 		DISPLAY->ExitPerspective();
+}
+
+
+NoteFieldPositioning::NoteFieldPositioning(CString fn)
+{
+	IniFile ini(fn);
+	if(!ini.ReadFile())
+		return;
+
+	for(IniFile::const_iterator i = ini.begin(); i != ini.end(); ++i)
+	{
+		Mode m;
+
+		const IniFile::key &k = i->second;
+		for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
+		{
+			IniFile::key::const_iterator val;
+
+			val = k.find("Name");
+			ASSERT(val != k.end()); /* required */
+			m.name = val->second;
+
+			val = k.find(ssprintf("Track%i", t+1));
+			if(val != k.end())
+				MatrixCommand(val->second, m.m_Position[t]);
+			val = k.find(ssprintf("PTrack%i", t+1));
+			if(val != k.end())
+				MatrixCommand(val->second, m.m_PerspPosition[t]);
+
+			val = k.find(ssprintf("FOV%i", t+1));
+			if(val != k.end())
+				m.m_fFov[t] = float(atof(val->second.c_str()));
+
+			CString sGames;
+			val = k.find("Games");
+			if(val != k.end())
+			{
+				vector<CString> games;
+				split(val->second, ",", games);
+				for(unsigned n = 0; n < games.size(); ++n)
+				{
+					vector<CString> bits;
+					split(games[n], "-", bits);
+					ASSERT(bits.size() == 2);
+
+					const Game game = GAMEMAN->StringToGameType( bits[0] );
+					ASSERT(game != GAME_INVALID);
+
+					const Style style = GAMEMAN->GameAndStringToStyle( game, bits[1] );
+					ASSERT(style != STYLE_INVALID);
+					m.Styles.insert(style );
+				}
+			}
+		}
+
+		Modes.push_back(m);
+	}
+}
+
+bool NoteFieldPositioning::Mode::MatchesCurrentGame() const
+{
+	if(Styles.empty())
+		return true;
+
+	if(Styles.find(GAMESTATE->m_CurStyle) == Styles.end())
+		return false;
+
+	return true;
+}
+
+
+/* Get the unique ID of the given name, for the current game/style.  If it
+ * doesn't exist, return "". */
+int NoteFieldPositioning::GetID(const CString &name) const
+{
+		LOG->Trace("look for %s", name.c_str());
+	for(unsigned i = 0; i < Modes.size(); ++i)
+	{
+		if(Modes[i].name.CompareNoCase(name))
+			continue;
+
+		if(!Modes[i].MatchesCurrentGame())
+			continue;
+
+		LOG->Trace("found it");
+		return i;
+	}
+
+	return -1;
+}
+
+int NoteFieldPositioning::GetID(PlayerNumber pn) const
+{
+	return GetID(GAMESTATE->m_PlayerOptions[pn].m_sPositioning);
+}
+
+
+/* Get all arrow modifier names for the current game. */
+void NoteFieldPositioning::GetNamesForCurrentGame(vector<CString> &IDs)
+{ // XXX dupes
+	/* Iterate over all keys. */
+	for(unsigned i = 0; i < Modes.size(); ++i)
+	{
+		if(!Modes[i].MatchesCurrentGame())
+			continue;
+		
+		IDs.push_back(Modes[i].name);
+	}
+}
+
+
+void NoteFieldPositioning::BeginDrawTrack(PlayerNumber pn, int tn) const
+{
+	const int mode = GetID(pn);
+
+	DISPLAY->PushMatrix();
+
+	if(mode == -1)
+	{
+		/* No transformation is enabled, so use the one defined in the style
+		 * table. */
+		const StyleDef *s = GAMESTATE->GetCurrentStyleDef();
+		const float fPixelXOffsetFromCenter = s->m_ColumnInfo[pn][tn].fXOffset;
+		DISPLAY->Translate(fPixelXOffsetFromCenter, 0, 0);
+	} else {
+		Modes[mode].BeginDrawTrack(tn);
+	}
+}
+
+void NoteFieldPositioning::EndDrawTrack(PlayerNumber pn, int tn) const
+{
+	const int mode = GetID(pn);
+
+	if(mode != -1)
+		Modes[mode].EndDrawTrack(tn);
 
 	DISPLAY->PopMatrix();
 }
-

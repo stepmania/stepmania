@@ -42,8 +42,7 @@ GameState::GameState()
 
 GameState::~GameState()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		delete m_Position[p];
+	delete m_Position;
 }
 
 void GameState::Reset()
@@ -88,8 +87,7 @@ void GameState::Reset()
 	for( p=0; p<NUM_PLAYERS; p++ )
 		NOTESKIN->SwitchNoteSkin( PlayerNumber(p), PREFSMAN->m_sDefaultNoteSkin );
 
-	for( p=0; p<NUM_PLAYERS; p++ )
-		m_Position[p] = new NoteFieldPositioning;
+	m_Position = new NoteFieldPositioning("test.ini");
 }
 
 void GameState::Update( float fDelta )
@@ -97,8 +95,6 @@ void GameState::Update( float fDelta )
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_CurrentPlayerOptions[p].Approach( m_PlayerOptions[p], fDelta );
-
-		if(m_Position[p]) m_Position[p]->Update(fDelta);
 
 		m_bActiveAttackEndedThisUpdate[p] = false;
 

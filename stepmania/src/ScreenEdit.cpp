@@ -272,8 +272,6 @@ ScreenEdit::ScreenEdit()
 	GAMESTATE->m_PlayerController[PLAYER_1] = HUMAN;
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
 
-	GAMESTATE->m_Position[PLAYER_1]->LoadFromStyleDef(GAMESTATE->GetCurrentStyleDef(), PLAYER_1);
-
 	m_Fade.SetClosed();
 
 	m_sprHelp.Load( THEME->GetPathTo("Graphics","ScreenEdit help") );

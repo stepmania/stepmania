@@ -1,31 +1,47 @@
 #ifndef NOTEFIELD_POSITIONING_H
 #define NOTEFIELD_POSITIONING_H
 
-#include "NoteTypes.h"
+#include "RageMath.h"
 #include "PlayerNumber.h"
 #include "StyleDef.h"
 #include "PlayerNumber.h"
+#include "Style.h"
 
-#include "RageMath.h"
+#include <set>
 
 class NoteFieldPositioning
 {
-	RageMatrix m_Position[MAX_NOTE_TRACKS];
-	/* 0 = no perspective */
-	float m_fFov[MAX_NOTE_TRACKS];
-	RageMatrix m_PerspPosition[MAX_NOTE_TRACKS];
+	struct Mode
+	{
+		Mode();
+		bool MatchesCurrentGame() const;
+
+		void BeginDrawTrack(int tn) const;
+		void EndDrawTrack(int tn) const;
+
+		CString name;
+		set<Style> Styles;
+
+		RageMatrix m_Position[MAX_NOTE_TRACKS];
+		/* 0 = no perspective */
+		float m_fFov[MAX_NOTE_TRACKS];
+		RageMatrix m_PerspPosition[MAX_NOTE_TRACKS];
+	};
+
+	vector<Mode> Modes;
 
 public:
-	NoteFieldPositioning();
-	~NoteFieldPositioning();
-	void Init();
-	void Update(float fDeltaTime);
+	NoteFieldPositioning(CString fn);
 
-	void LoadFromFile(CString fn);
-	void LoadFromStyleDef(const StyleDef *s, PlayerNumber pn);
+	/* Get the mode number for the given positioning type (for the current
+	 * game and style). */
+	int GetID(const CString &name) const;
+	int GetID(PlayerNumber pn) const;
 
-	void BeginDrawTrack(int tn);
-	void EndDrawTrack(int tn);
+	void BeginDrawTrack(PlayerNumber pn, int tn) const;
+	void EndDrawTrack(PlayerNumber pn, int tn) const;
+
+	void GetNamesForCurrentGame(vector<CString> &IDs);
 };
 
 #endif
