@@ -1026,7 +1026,6 @@ void ScreenGameplay::LoadNextSong()
 	// Load cabinet lights data
 	//
 	{
-		int	i;
 		vector<Steps*> vSteps;
 		m_CabinetLightsNoteData.Init();
 		ASSERT( GAMESTATE->m_pCurSong );
@@ -1039,11 +1038,14 @@ void ScreenGameplay::LoadNextSong()
 		StepsType lightsSteps = GAMESTATE->GetCurrentStyle()->m_StepsType; //STEPS_TYPE_DANCE_SINGLE;
 		GAMESTATE->m_pCurSong->GetSteps(vSteps,lightsSteps);
 		
-		if(!vSteps.empty()) {vSteps[0]->GetNoteData(&m_CabinetLightsNoteData);}
-		for (i=0;i<vSteps.size();i++) { 	 
+		if(!vSteps.empty())
+			vSteps[0]->GetNoteData(&m_CabinetLightsNoteData);
+		for (unsigned i = 0; i < vSteps.size(); ++i)
+		{ 	 
 			Difficulty DC = StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty);
 			Difficulty DC2 = vSteps[i]->GetDifficulty();
-			if(DC == DC2) {vSteps[i]->GetNoteData( &m_CabinetLightsNoteData );}
+			if(DC == DC2)
+				vSteps[i]->GetNoteData( &m_CabinetLightsNoteData );
 		}
 
 
