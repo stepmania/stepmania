@@ -143,7 +143,6 @@ void ConvertThemeDlg::OnButtonConvert()
 	RecursiveRename( sThemeDir, "player options", "ScreenPlayerOptions" );
 	RecursiveRename( sThemeDir, "select course content bar", "CourseEntryDisplay bar" );
 	RecursiveRename( sThemeDir, "select course", "ScreenSelectCourse" );
-	RecursiveRename( sThemeDir, "select difficulty", "ScreenSelectDifficulty" );
 	RecursiveRename( sThemeDir, "select difficulty easy header", "ScreenSelectDifficulty info arcade-easy" );
 	RecursiveRename( sThemeDir, "select difficulty easy picture", "ScreenSelectDifficulty picture arcade-easy" );
 	RecursiveRename( sThemeDir, "select difficulty medium header", "ScreenSelectDifficulty info arcade-medium" );
@@ -174,7 +173,7 @@ void ConvertThemeDlg::OnButtonConvert()
 	RecursiveRename( sThemeDir, "select music", "ScreenSelectMusic" );
 	RecursiveRename( sThemeDir, "select player", "ScreenSelectPlayer" );
 	RecursiveRename( sThemeDir, "info dance", "info" );
-	RecursiveRename( sThemeDir, "preview dance", "preview" );
+	RecursiveRename( sThemeDir, "preview dance", "picture" );
 	RecursiveRename( sThemeDir, "select style", "ScreenSelectStyle" );
 	RecursiveRename( sThemeDir, "song options", "ScreenSongOptions" );
 	RecursiveRename( sThemeDir, "menu timer", "MenuTimer" );
