@@ -198,6 +198,11 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
     // Get the video bitmap buffer
     pSample->GetPointer( &pBmpBuffer );
 
+	/* m_pTexture is getting NULLed out somewhere.  I'd like to put a bunch
+	 * of traces in here, but this is called 20 times per frame and I don't
+	 * want to send some 200 traces/sec during gameplay, so let's just try
+	 * to narrow it down.  */
+	 
 	// Find which texture we should render to.  We want to copy to the "back buffer"
 	LPDIRECT3DTEXTURE8 pD3DTextureCopyTo = m_pTexture->GetBackBuffer();
 
@@ -215,6 +220,12 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 	BYTE  *pTxtBuffer = static_cast<byte *>(d3dlr.pBits);
     LONG  lTxtPitch = d3dlr.Pitch;
    
+	ASSERT( pTxtBuffer != NULL );
+
+	/* I had the crash occur down at the flip, meaning m_pTexture is valid when
+	 * we got the backbuffer.  Let's get some data here, in the middle. */
+	LOG->Trace("movie: %p, %p, pit %i, %ix%i, %i, %i", m_pTexture, pTxtBuffer, lTxtPitch,
+		m_lVidHeight, m_lVidWidth, m_TextureFormat, m_lVidPitch);
     // Copy the bits    
     // OPTIMIZATION OPPORTUNITY: Use a video and texture
     // format that allows a simpler copy than this one.
@@ -222,10 +233,10 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 	{
 	case D3DFMT_A8R8G8B8:
 		{
-			for(int y = 0; y < m_lVidHeight; y++ ) {
+			for(int y = 0; y < m_pTexture->GetImageHeight(); y++ ) {
 				BYTE *pBmpBufferOld = pBmpBuffer;
 				BYTE *pTxtBufferOld = pTxtBuffer;   
-				for (int x = 0; x < m_lVidWidth; x++) {
+				for (int x = 0; x < m_pTexture->GetImageWidth(); x++) {
 					pTxtBuffer[0] = pBmpBuffer[0];
 					pTxtBuffer[1] = pBmpBuffer[1];
 					pTxtBuffer[2] = pBmpBuffer[2];
@@ -240,10 +251,10 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 		break;
 	case D3DFMT_A1R5G5B5:
 		{
-			for(int y = 0; y < m_lVidHeight; y++ ) {
+			for(int y = 0; y < m_pTexture->GetImageHeight(); y++ ) {
 				BYTE *pBmpBufferOld = pBmpBuffer;
 				BYTE *pTxtBufferOld = pTxtBuffer;   
-				for (int x = 0; x < m_lVidWidth; x++) {
+				for (int x = 0; x < m_pTexture->GetImageWidth(); x++) {
 					*(WORD *)pTxtBuffer =
 						0x8000 +
 						((pBmpBuffer[2] & 0xF8) << 7) +
@@ -315,6 +326,7 @@ RageMovieTexture::RageMovieTexture(
 
 RageMovieTexture::~RageMovieTexture()
 {
+	LOG->Trace("RageMovieTexture::~RageMovieTexture");
 	CleanupDShow();
 
 	SAFE_RELEASE(m_pd3dTexture[0]);
@@ -476,6 +488,17 @@ HRESULT RageMovieTexture::CreateD3DTexture()
 	m_iTextureWidth = ddsd.Width;
 	m_iTextureHeight = ddsd.Height;
 	m_TextureFormat = ddsd.Format;
+
+	if( m_iTextureWidth < m_iImageWidth || m_iTextureHeight < m_iImageHeight )
+	{
+		/* Gack.  We got less than we asked for; probably on a Voodoo.
+		 * We really need to scale the image down; hopefully DShow has some
+		 * way to do that efficiently.  For now, we'll just have to
+		 * chop it off. */
+		m_iImageWidth = min(m_iImageWidth, m_iTextureWidth);
+		m_iImageHeight = min(m_iImageHeight, m_iTextureHeight);
+	}
+
     if( m_TextureFormat != D3DFMT_A8R8G8B8 &&
 		m_TextureFormat != D3DFMT_A1R5G5B5 )
         throw RageException( "Texture is format we can't handle! Format = 0x%x!", m_TextureFormat );
@@ -486,6 +509,7 @@ HRESULT RageMovieTexture::CreateD3DTexture()
 
 HRESULT RageMovieTexture::PlayMovie()
 {
+	LOG->Trace("RageMovieTexture::PlayMovie()");
 	CComPtr<IMediaControl> pMC;
     m_pGB.QueryInterface(&pMC);
 
@@ -523,6 +547,7 @@ void RageMovieTexture::CheckMovieStatus()
 //-----------------------------------------------------------------------------
 void RageMovieTexture::CleanupDShow()
 {
+	LOG->Trace("RageMovieTexture::CleanupDShow()");
 	m_pCTR->SetRenderTarget( NULL );
     // Shut down the graph
     if (m_pGB) {
@@ -541,6 +566,7 @@ void RageMovieTexture::Play()
 
 void RageMovieTexture::Pause()
 {
+	LOG->Trace("RageMovieTexture::Pause()");
 	CComPtr<IMediaControl> pMC;
     m_pGB.QueryInterface(&pMC);
 
@@ -552,6 +578,7 @@ void RageMovieTexture::Pause()
 
 void RageMovieTexture::Stop()
 {
+	LOG->Trace("RageMovieTexture::Stop()");
 	CComPtr<IMediaControl> pMC;
     m_pGB.QueryInterface(&pMC);
 
@@ -564,6 +591,7 @@ void RageMovieTexture::Stop()
 
 void RageMovieTexture::SetPosition( float fSeconds )
 {
+	LOG->Trace("RageMovieTexture::Stop()");
 	CComPtr<IMediaPosition> pMP;
     m_pGB.QueryInterface(&pMP);
     pMP->put_CurrentPosition(0);
