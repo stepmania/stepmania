@@ -12,7 +12,6 @@
  * cause framerate problems.
  *
  * TODO:
- * Rate (speed)
  * Configurable buffer sizes (stored in SoundManager) and so on
  *
  * Error handling:
@@ -61,154 +60,6 @@ const int read_block_size = 1024;
  * driver will have that much latency. */
 const int pos_map_backlog_samples = samplerate;
 
-class SpeedChanger
-{
-	/* Number of samples for each input value: */
-	int compress;
-
-	/* Amount to compress the sample: */
-	float rate;
-
-	/* Current sample: */
-	Uint32 cur_sample;
-
-	/* Number of inputs for this sample (once it reaches compress, it's complete). */
-	int sample_inputs;
-
-	float frac;
-
-	basic_string<Sint16> samples;
-
-	basic_string<Sint16> output;
-
-	static float cub(float fm1, float f0, float f1, float f2, float x);
-	void move_data();
-
-public:
-	SpeedChanger();
-	~SpeedChanger();
-	void Set(float speed);
-	void write(const Sint16 *buf, int size);
-	void flush();
-	unsigned read(Sint16 *buf, unsigned size);
-};
-
-SpeedChanger::SpeedChanger()
-{
-	compress = 1;
-	rate = 1;
-	cur_sample = sample_inputs = 0;
-	frac = 0;
-}
-
-SpeedChanger::~SpeedChanger()
-{
-}
-
-/* compute f(x) with a cubic interpolation */
-float SpeedChanger::cub(
-  float fm1, /* f(-1) */
-  float f0,  /* f(0)  */
-  float f1,  /* f(1)  */
-  float f2,  /* f(2)  */
-  float x)   /* 0.0 <= x < 1.0 */
-{
-    /* a x^3 + b x^2 + c x + d */
-    float a, b, c, d;
-
-    d = f0;
-    b = .5f * (f1+fm1) - f0;
-    a = 1/6.f * (f2-f1+fm1-f0-4.0f*b);
-    c = f1 - a - b - d;
-
-    return ((a * x + b) * x + c) * x + d;
-};
-
-#include <math.h>
-
-void SpeedChanger::Set(float speed)
-{
-	if(speed >= 1.0f)
-		compress = int(speed);
-	else
-		compress = 1;
-	
-	rate = speed / compress;
-
-	cur_sample = sample_inputs = 0;
-
-	/* previous value for interp: */
-	samples.insert(samples.end(), 0);
-}
-
-void SpeedChanger::write(const Sint16 *buf, int size)
-{
-	while(size > 1)
-	{
-		cur_sample += buf[0];
-		buf++;
-		size--;
-		sample_inputs++;
-
-		if(sample_inputs == compress)
-			move_data();
-	}
-}
-
-void SpeedChanger::move_data()
-{
-	/* We have a complete sample.  Reduce it to the average: */
-	cur_sample /= compress;
-
-	/* Add it to the sample buffer: */
-	samples.insert(samples.end(), Sint16(cur_sample));
-	sample_inputs = cur_sample = 0;
-
-	if(samples.size() != 4)
-		return;
-
-	/* We have enough samples to interpolate. */
-	while(frac < 1)
-	{
-		float interp = cub(samples[0], samples[1],
-                samples[2], samples[3], frac);
-
-		Sint16 clipped;
-		if(interp > 32767) clipped = 32767u;
-		else if(interp < -32768) clipped = -32768;
-		else clipped = Sint16(interp);
-		output.insert(output.end(), clipped);
-		frac += rate;
-	}
-
-	frac -= 1;
-	samples.erase(samples.begin(), samples.begin()+1);
-}
-
-void SpeedChanger::flush()
-{
-	/* Feed null until all samples are empty. */
-	while(1)
-	{
-		Sint16 nothing = 0;
-		write(&nothing, 0);
-
-		int empty = true;
-		for(unsigned i = 0; empty && i < samples.size(); ++i)
-			if(samples[i]) empty = false;
-		if(empty) return;
-		move_data();
-	}
-}
-
-unsigned SpeedChanger::read(Sint16 *buf, unsigned size)
-{
-	size = min(size, output.size());
-	memcpy(buf, output.data(), size*sizeof(Sint16));
-	output.erase(output.begin(), output.begin() + size);
-	return size;
-}
-
 RageSound::RageSound()
 {
 	ASSERT(SOUNDMAN);
@@ -227,8 +78,7 @@ RageSound::RageSound()
 	position = 0;
 	playing = false;
 	StopMode = M_STOP;
-	speed = 1.0f;
-	speedchanger = NULL;
+	speed_input_samples = speed_output_samples = 1;
 	stream.buf.reserve(internal_buffer_size);
 	m_StartSample = 0;
 	m_LengthSamples = -1;
@@ -265,9 +115,9 @@ RageSound::RageSound(const RageSound &cpy)
 	StopMode = cpy.StopMode;
 	position = cpy.position;
 	playing = false;
-	speed = 1;
-	speedchanger = NULL;
 	AccurateSync = cpy.AccurateSync;
+	speed_input_samples = cpy.speed_input_samples;
+	speed_output_samples = cpy.speed_output_samples;
 
 	if(big)
 	{
@@ -276,9 +126,6 @@ RageSound::RageSound(const RageSound &cpy)
 		stream.buf.reserve(internal_buffer_size);
 		Load(cpy.GetLoadedFilePath(), false);
 	}
-
-	if(cpy.speed != 1)
-		SetPlaybackRate(cpy.speed);
 
 	/* Load() won't work on a copy if m_sFilePath is already set, so
 	 * copy this down here. */
@@ -295,9 +142,6 @@ void RageSound::Unload()
 
 	delete stream.Sample;
 	stream.Sample = NULL;
-	
-	delete speedchanger;
-	speedchanger = NULL;
 	
 	m_sFilePath = "";
 	stream.buf.clear();
@@ -433,6 +277,65 @@ int RageSound::Bytes_Available() const
 	return full_buf.size() - byte_pos;
 }
 
+#include <math.h>
+
+void RageSound::RateChange(char *buf, int &cnt,
+				int speed_input_samples, int speed_output_samples, int channels)
+{
+	if(speed_input_samples == speed_output_samples)
+		return;
+
+	/* Rate change.  Change speed_input_samples into speed_output_samples.
+		* Do this per-channel. */
+	static char *inbuf_tmp = NULL;
+	static int maxcnt = 0;
+	if(cnt > maxcnt)
+	{
+		maxcnt = cnt;
+		delete [] inbuf_tmp;
+		inbuf_tmp = new char[cnt];
+	}
+
+	memcpy(inbuf_tmp, buf, cnt);
+
+	for(int c = 0; c < channels; ++c)
+	{
+		const Sint16 *in = (const Sint16 *) inbuf_tmp;
+		Sint16 *out = (Sint16 *) buf;
+		in += c;
+		out += c;
+		for(unsigned n = 0; n < cnt/(channels * sizeof(Sint16)); n += speed_input_samples)
+		{
+
+			/* Input 4 samples, output 5; 25% slowdown with no
+				* rounding error. */
+
+			Sint16 samps[16];
+			ASSERT(speed_input_samples <= sizeof(samps)/sizeof(*samps));
+			int s;
+			for(s = 0; s < speed_input_samples; ++s) {
+				samps[s] = *in; in += channels;
+			}
+
+			float pos = 0;
+			float incr = float(speed_input_samples) / speed_output_samples;
+
+			for(s = 0; s < speed_output_samples; ++s) {
+				float frac = pos - floorf(pos);
+				int p = int(pos);
+				int val = int(samps[p] * (1-frac));
+				if(s+1 < speed_output_samples)
+					val += int(samps[p+1] * frac);
+
+				*out = Sint16(val);
+				pos += incr;
+				out += channels;
+			}
+		}
+	}
+	cnt = (cnt * speed_output_samples) / speed_input_samples;
+}
+
 /* Fill the buffer by about "bytes" worth of data.  (We might go a little
  * over, and we won't overflow our buffer.)  Return the number of bytes
  * actually read; 0 = EOF. */
@@ -447,67 +350,34 @@ int RageSound::FillBuf(int bytes)
 
 	bool got_something = false;
 
-	bool at_eof = false;
-
 	while(bytes > 0)
 	{
 		if(read_block_size > stream.buf.capacity() - stream.buf.size())
 			break; /* full */
 
-		char inbuf[1024];
+		char inbuf[10240];
+		int read_size = read_block_size;
 		int cnt = 0;
-		if(speedchanger)
+
+		if(speed_input_samples != speed_output_samples)
 		{
-			unsigned input_size = stream.buf.capacity() - stream.buf.size();
-			input_size = min(input_size, sizeof(inbuf));
-			input_size /= sizeof(Sint16);
+			/* Read enough data to produce read_block_size. */
+			read_size = read_size * speed_input_samples / speed_output_samples;
 
-			cnt = speedchanger->read((Sint16 *) inbuf, input_size);
-			cnt *= sizeof(Sint16);
-
-			stream.buf.write((const char *) inbuf, cnt);
-			speedchanger->flush();
-			bytes -= cnt;
-
-			if(cnt)
-				got_something = true;
-
-			if(!cnt)
-			{
-				/* Read input data. */
-				cnt = stream.Sample->Read(inbuf, sizeof(inbuf));
-				if(cnt == -1)
-				{
-					/* XXX untested */
-					Fail(Sound_GetError());
-
-					/* Pretend we got data; we actually just switched to a non-streaming
-					 * buffer. */
-					return true;
-				}
-				
-				if(cnt == 0)
-				{
-					if(!at_eof)
-					{
-						at_eof = true;
-						speedchanger->flush();
-						continue;
-					}
-
-					/* Really EOF. */
-					speedchanger->flush();
-					return got_something; /* EOF */
-				}
-
-				speedchanger->write((const Sint16 *) inbuf, cnt/2);
-			}
-			continue;
+			/* Read in blocks that are a multiple of a sample, the number of
+			 * channels and the number of input samples. */
+			int block_size = sizeof(Sint16) * channels * speed_input_samples;
+			read_size = (read_size / block_size) * block_size;
+			ASSERT(read_size < sizeof(inbuf));
 		}
 
-		cnt = stream.Sample->Read(inbuf, sizeof(inbuf));
+		ASSERT(read_size < sizeof(inbuf));
+
+		cnt = stream.Sample->Read(inbuf, read_size);
 		if(cnt == 0)
 			return got_something; /* EOF */
+
+		RateChange(inbuf, cnt, speed_input_samples, speed_output_samples, channels);
 
 		if(cnt == -1)
 		{
@@ -739,14 +609,14 @@ float RageSound::GetPositionSeconds() const
 
 	/* If we're not playing, just report the static position. */
 	if( !IsPlaying() )
-		return speed * position / float(samplerate);
+		return GetPlaybackRate() * position / float(samplerate);
 
 	/* If we don't yet have any position data, GetPCM hasn't yet been called at all,
 	 * so report the static position. */
 	{
 		if(pos_map.empty()) {
 			LOG->Trace("no data yet; %i", position);
-			return speed * position / float(samplerate);
+			return GetPlaybackRate() * position / float(samplerate);
 		}
 	}
 
@@ -764,8 +634,7 @@ float RageSound::GetPositionSeconds() const
 			/* cur_sample lies in this block; it's an exact match.  Figure
 			 * out the exact position. */
 			int diff = pos_map[i].position - pos_map[i].sampleno;
-			diff = int(diff * speed);
-			return float(cur_sample + diff) / samplerate;
+			return GetPlaybackRate() * float(cur_sample + diff) / samplerate;
 		}
 
 		/* See if the current position is close to the beginning of this block. */
@@ -795,7 +664,7 @@ float RageSound::GetPositionSeconds() const
 	 * 3. Underflow; we'll be given a larger sample number than we know about.
 	 */
 
-	return speed * closest_position / float(samplerate);
+	return GetPlaybackRate() * closest_position / float(samplerate);
 }
 
 bool RageSound::SetPositionSeconds( float fSeconds )
@@ -874,18 +743,16 @@ void RageSound::SetPlaybackRate( float NewSpeed )
 {
 	LockMut(SOUNDMAN->lock);
 
-	if(speed == NewSpeed)
+	if(GetPlaybackRate() == NewSpeed)
 		return;
 
-	/* Scale the position to the new scale. XXX untested */
-	position *= int(speed / NewSpeed);
-
-	speed = NewSpeed;
-
-	if(!speedchanger)
-		speedchanger = new SpeedChanger;
-	
-	speedchanger->Set(speed);
+	if(NewSpeed == 1.00f) {
+		speed_input_samples = 1; speed_output_samples = 1;
+	} else {
+		/* Approximate it to the nearest tenth. */
+		speed_input_samples = int(NewSpeed * 10);
+		speed_output_samples = 10;
+	}
 }
 
 /* This is used to start music.  It probably belongs in RageSoundManager. */

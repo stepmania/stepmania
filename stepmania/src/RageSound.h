@@ -23,7 +23,6 @@ public:
 };
 
 class SoundReader;
-class SpeedChanger;
 
 class RageSound
 {
@@ -73,7 +72,7 @@ public:
 	bool SetPositionSeconds( float fSeconds = -1);
 	void SetAccurateSync(bool yes=true) { AccurateSync = yes; }
 	void SetPlaybackRate( float fScale );
-	float GetPlaybackRate() const { return speed; }
+	float GetPlaybackRate() const { return float(speed_input_samples) / speed_output_samples; }
 	bool IsPlaying() const { return playing; }
 	CString GetLoadedFilePath() const { return m_sFilePath; }
 	
@@ -125,9 +124,9 @@ private:
 	int		position;
 	bool    playing;
 
-	float speed;
-	SpeedChanger *speedchanger; /* only if speed != 1 */
-
+	/* Number of samples input and output when changing speed.  Currently,
+	 * this is either 1/1, 5/4 or 4/5. */
+	int speed_input_samples, speed_output_samples;
 	bool AccurateSync;
 
 	CString error;
@@ -136,6 +135,9 @@ private:
 	int GetData(char *buffer, int size);
 	void Fail(CString reason);
 	int Bytes_Available() const;
+
+	static void RateChange(char *buf, int &cnt,
+				int speed_input_samples, int speed_output_samples, int channels);
 
 public:
 	/* Used by RageSoundManager: */
