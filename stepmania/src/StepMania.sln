@@ -1,8 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 7.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StepMania", "StepMania.vcproj", "{670745A6-106B-420D-A2A9-D4F89A23986E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cryptlib", "crypto51\cryptlib.vcproj", "{E34673D6-55FA-45C9-933A-FDD68CCD785F}"
-EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		ConfigName.0 = Debug
@@ -11,7 +9,6 @@ Global
 		ConfigName.3 = Release
 	EndGlobalSection
 	GlobalSection(ProjectDependencies) = postSolution
-		{670745A6-106B-420D-A2A9-D4F89A23986E}.0 = {E34673D6-55FA-45C9-933A-FDD68CCD785F}
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.Debug.ActiveCfg = Debug|Win32
@@ -22,14 +19,6 @@ Global
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.FIPS 140 Release.Build.0 = Release|Win32
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.Release.ActiveCfg = Release|Win32
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.Release.Build.0 = Release|Win32
-		{E34673D6-55FA-45C9-933A-FDD68CCD785F}.Debug.ActiveCfg = Debug|Win32
-		{E34673D6-55FA-45C9-933A-FDD68CCD785F}.Debug.Build.0 = Debug|Win32
-		{E34673D6-55FA-45C9-933A-FDD68CCD785F}.FIPS 140 Debug.ActiveCfg = FIPS 140 Debug|Win32
-		{E34673D6-55FA-45C9-933A-FDD68CCD785F}.FIPS 140 Debug.Build.0 = FIPS 140 Debug|Win32
-		{E34673D6-55FA-45C9-933A-FDD68CCD785F}.FIPS 140 Release.ActiveCfg = FIPS 140 Release|Win32
-		{E34673D6-55FA-45C9-933A-FDD68CCD785F}.FIPS 140 Release.Build.0 = FIPS 140 Release|Win32
-		{E34673D6-55FA-45C9-933A-FDD68CCD785F}.Release.ActiveCfg = Release|Win32
-		{E34673D6-55FA-45C9-933A-FDD68CCD785F}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		DPBuild = 5

@@ -209,9 +209,12 @@ LightsManager.cpp LightsManager.h MemoryCardManager.cpp MemoryCardManager.h Note
 ProfileManager.cpp ProfileManager.h ScreenManager.cpp ScreenManager.h SongManager.cpp SongManager.h ThemeManager.cpp ThemeManager.h \
 UnlockSystem.cpp UnlockSystem.h
 
+cryptlib = \
+crypto51\algparam.cpp crypto51\asn.cpp crypto51\basecode.cpp crypto51\channels.cpp crypto51\cryptlib.cpp crypto51\des.cpp crypto51\dessp.cpp crypto51\files.cpp crypto51\filters.cpp crypto51\fips140.cpp crypto51\hex.cpp crypto51\integer.cpp crypto51\iterhash.cpp crypto51\md5.cpp crypto51\misc.cpp crypto51\modes.cpp crypto51\mqueue.cpp crypto51\nbtheory.cpp crypto51\pkcspad.cpp crypto51\pssr.cpp crypto51\pubkey.cpp crypto51\queue.cpp crypto51\randpool.cpp crypto51\rsa.cpp crypto51\sha.cpp crypto51\strciphr.cpp 
+
 stepmania_SOURCES = $(Screens) $(DataStructures) $(FileTypes) $(StepMania) $(Arch) \
 					$(ActorsInGameplayAndMenus) $(ActorsInMenus) $(ActorsInGameplay) \
-					$(Rage) $(Actors) $(GlobalSingletons)
+					$(Rage) $(Actors) $(GlobalSingletons) $(cryptlib)
 
 stepmania_LDADD = \
 		  $(GL_LIBS) \

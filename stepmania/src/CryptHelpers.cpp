@@ -4,22 +4,27 @@
 #include "channels.h"
 #include "rsa.h"
 #include "md5.h"
+#include "randpool.h"
 #include <memory>
-
-/* Pull in crypt library here. */
-#ifdef _XBOX
-	// FIXME
-#elif defined _WINDOWS
-	#ifdef DEBUG
-		#pragma comment(lib, "crypto51/cryptlibd.lib")
-	#else
-		#pragma comment(lib, "crypto51/cryptlib.lib")
-	#endif
-#endif
-
 
 using namespace CryptoPP;
 using namespace std;
+
+void GenerateRSAKey(unsigned int keyLength, const char *privFilename, const char *pubFilename, const char *seed)
+{
+	RandomPool randPool;
+	randPool.Put((byte *)seed, strlen(seed));
+
+	RSAES_OAEP_SHA_Decryptor priv(randPool, keyLength);
+	HexEncoder privFile(new FileSink(privFilename));
+	priv.DEREncode(privFile);
+	privFile.MessageEnd();
+
+	RSAES_OAEP_SHA_Encryptor pub(priv);
+	HexEncoder pubFile(new FileSink(pubFilename));
+	pub.DEREncode(pubFile);
+	pubFile.MessageEnd();
+}
 
 void RSASignFile(const char *privFilename, const char *messageFilename, const char *signatureFilename)
 {
