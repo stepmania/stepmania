@@ -218,8 +218,6 @@ CString NoteSkinManager::GetPathTo( PlayerNumber pn, CString sButtonName, CStrin
 		GetNoteSkinDir(sNoteSkinName).c_str(),
 		GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME).c_str(),
 		GAME_BASE_NOTESKIN_NAME.c_str() );
-
-	return ret;
 }
 
 CString NoteSkinManager::GetPathTo( CString sSkinName, CString sButtonName, CString sElementName, bool bGlobalDefault )	// looks in GAMESTATE for the current Style
