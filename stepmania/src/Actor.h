@@ -38,6 +38,9 @@ public:
 
 
 	// let subclasses override
+
+	/* Do subclasses really need to override tweening?  Tween data should
+	 * probably be private ... - glenn */
 	virtual void Restore() {};
 	virtual void Invalidate() {};
 
@@ -46,6 +49,7 @@ public:
 	virtual void DrawPrimitives() = 0;	// override with Actor specific action
 	virtual void EndDraw();		// pops transform from world matrix stack
 	virtual void Update( float fDeltaTime );
+	virtual void UpdateTweening( float fDeltaTime );
 
 	virtual float GetX()					{ return m_current.pos.x; };
 	virtual float GetY()					{ return m_current.pos.y; };

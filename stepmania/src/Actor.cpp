@@ -141,6 +141,61 @@ void Actor::EndDraw()
 	DISPLAY->PopMatrix();
 }
 
+void Actor::UpdateTweening( float fDeltaTime )
+{
+	// update tweening
+	if( m_iNumTweenStates == 0 )
+		return;
+
+	// we are performing a tween
+	TweenState &TS = m_TweenStates[0];		// earliest tween
+	TweenInfo  &TI = m_TweenInfo[0];		// earliest tween
+
+	if( TI.m_fTimeLeftInTween == TI.m_fTweenTime )	// we are just beginning this tween
+	{
+		// set the start position
+		m_start = m_current;
+	}
+	
+	TI.m_fTimeLeftInTween -= fDeltaTime;
+
+	if( TI.m_fTimeLeftInTween <= 0 )	// The tweening is over.  Stop the tweening
+	{
+		m_current = TS;
+		
+		// delete the head tween
+		for( int i=0; i<m_iNumTweenStates-1; i++ )
+		{
+			m_TweenStates[i] = m_TweenStates[i+1];
+            m_TweenInfo[i] = m_TweenInfo[i+1];
+		}
+		m_iNumTweenStates--;
+	}
+	else		// in the middle of tweening.  Recalcute the current position.
+	{
+		const float fPercentThroughTween = 1-(TI.m_fTimeLeftInTween / TI.m_fTweenTime);
+
+		// distort the percentage if appropriate
+		float fPercentAlongPath;
+		switch( TI.m_TweenType )
+		{
+		case TWEEN_LINEAR:		fPercentAlongPath = fPercentThroughTween;														break;
+		case TWEEN_BIAS_BEGIN:	fPercentAlongPath = 1 - (1-fPercentThroughTween) * (1-fPercentThroughTween);					break;
+		case TWEEN_BIAS_END:	fPercentAlongPath = fPercentThroughTween * fPercentThroughTween;								break;
+		case TWEEN_BOUNCE_BEGIN:fPercentAlongPath = 1 - sinf( 1.1f + fPercentThroughTween*(D3DX_PI-1.1f) ) / 0.89f;				break;
+		case TWEEN_BOUNCE_END:	fPercentAlongPath = sinf( 1.1f + (1-fPercentThroughTween)*(D3DX_PI-1.1f) ) / 0.89f;				break;
+		case TWEEN_SPRING:		fPercentAlongPath = 1 - cosf( fPercentThroughTween*D3DX_PI*2.5f )/(1+fPercentThroughTween*3);	break;
+		default:	ASSERT(0);
+		}
+
+		m_current.pos			= m_start.pos	  + (TS.pos		 - m_start.pos	   )*fPercentAlongPath;
+		m_current.scale			= m_start.scale	  + (TS.scale	 - m_start.scale   )*fPercentAlongPath;
+		m_current.rotation		= m_start.rotation+ (TS.rotation - m_start.rotation)*fPercentAlongPath;
+		for(int i=0; i<4; i++) 
+			m_current.diffuse[i]= m_start.diffuse[i]*(1.0f-fPercentAlongPath) + TS.diffuse[i]*(fPercentAlongPath);
+		m_current.glow			= m_start.glow      *(1.0f-fPercentAlongPath) + TS.glow      *(fPercentAlongPath);
+	}
+}
 
 void Actor::Update( float fDeltaTime )
 {
@@ -194,59 +249,7 @@ void Actor::Update( float fDeltaTime )
 		break;
 	}
 
-
-	// update tweening
-	if( m_iNumTweenStates > 0 )		// we are performing a tween
-	{
-		TweenState &TS = m_TweenStates[0];		// earliest tween
-		TweenInfo  &TI = m_TweenInfo[0];		// earliest tween
-
-		if( TI.m_fTimeLeftInTween == TI.m_fTweenTime )	// we are just beginning this tween
-		{
-			// set the start position
-			m_start = m_current;
-		}
-		
-		TI.m_fTimeLeftInTween -= fDeltaTime;
-
-		if( TI.m_fTimeLeftInTween <= 0 )	// The tweening is over.  Stop the tweening
-		{
-			m_current = TS;
-			
-			// delete the head tween
-			for( int i=0; i<m_iNumTweenStates-1; i++ )
-			{
-				m_TweenStates[i] = m_TweenStates[i+1];
-                m_TweenInfo[i] = m_TweenInfo[i+1];
-			}
-			m_iNumTweenStates--;
-		}
-		else		// in the middle of tweening.  Recalcute the curent position.
-		{
-			const float fPercentThroughTween = 1-(TI.m_fTimeLeftInTween / TI.m_fTweenTime);
-
-			// distort the percentage if appropriate
-			float fPercentAlongPath;
-			switch( TI.m_TweenType )
-			{
-			case TWEEN_LINEAR:		fPercentAlongPath = fPercentThroughTween;														break;
-			case TWEEN_BIAS_BEGIN:	fPercentAlongPath = 1 - (1-fPercentThroughTween) * (1-fPercentThroughTween);					break;
-			case TWEEN_BIAS_END:	fPercentAlongPath = fPercentThroughTween * fPercentThroughTween;								break;
-			case TWEEN_BOUNCE_BEGIN:fPercentAlongPath = 1 - sinf( 1.1f + fPercentThroughTween*(D3DX_PI-1.1f) ) / 0.89f;				break;
-			case TWEEN_BOUNCE_END:	fPercentAlongPath = sinf( 1.1f + (1-fPercentThroughTween)*(D3DX_PI-1.1f) ) / 0.89f;				break;
-			case TWEEN_SPRING:		fPercentAlongPath = 1 - cosf( fPercentThroughTween*D3DX_PI*2.5f )/(1+fPercentThroughTween*3);	break;
-			default:	ASSERT(0);
-			}
-
-			m_current.pos			= m_start.pos	  + (TS.pos		 - m_start.pos	   )*fPercentAlongPath;
-			m_current.scale			= m_start.scale	  + (TS.scale	 - m_start.scale   )*fPercentAlongPath;
-			m_current.rotation		= m_start.rotation+ (TS.rotation - m_start.rotation)*fPercentAlongPath;
-			for(int i=0; i<4; i++) 
-				m_current.diffuse[i]= m_start.diffuse[i]*(1.0f-fPercentAlongPath) + TS.diffuse[i]*(fPercentAlongPath);
-			m_current.glow			= m_start.glow      *(1.0f-fPercentAlongPath) + TS.glow      *(fPercentAlongPath);
-		}
-	}	// end if m_TweenType != no_tween
-
+	UpdateTweening( fDeltaTime );
 }
 
 void Actor::BeginTweening( float time, TweenType tt )
