@@ -16,6 +16,13 @@ void AutoActor::Load( const CString &sPath )
 	m_pActor = ActorUtil::MakeActor( sPath );
 }
 
+void AutoActor::LoadFromNode( const CString &sDir, const XNode* pNode )
+{
+	Unload();
+
+	m_pActor = ActorUtil::LoadFromActorFile( sDir, pNode );
+}
+
 void AutoActor::LoadAndSetName( const CString &sScreenName, const CString &sActorName )
 {
 	Load( THEME->GetPathG(sScreenName,sActorName) );

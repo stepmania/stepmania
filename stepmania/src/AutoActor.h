@@ -4,6 +4,7 @@
 #define AutoActor_H
 
 class Actor;
+struct XNode;
 
 // creates the appropriate Actor derivitive on load and
 // automatically deletes Actor on deconstruction.
@@ -19,6 +20,7 @@ public:
 	void Unload();
 	bool IsLoaded() const			{ return m_pActor != NULL; }
 	void Load( const CString &sPath );
+	void LoadFromNode( const CString &sDir, const XNode* pNode );
 	void LoadAndSetName( const CString &sScreenName, const CString &sActorName );
 
 protected:
