@@ -109,19 +109,14 @@ void GameState::Reset()
 {
 	EndGame();
 	
-	/* Don't do the OS mount for cards during the attract screens.  Only do OS mounts in
-	 * the time between BeginGame and PlayersFinalized.  I think we do that anyway (except
-	 * for background write tests, which happen anyway unless the memory card thread is
-	 * paused).  Can we remove this? */
-	MEMCARDMAN->LockCards();
-	
 	ASSERT( THEME );
 
 	m_timeGameStarted.SetZero();
 	m_pCurStyle = NULL;
 	FOREACH_PlayerNumber( p )
 		m_bSideIsJoined[p] = false;
-	m_bPlayersFinalized = false;
+	MEMCARDMAN->SetPlayersFinalized( false );
+	MEMCARDMAN->UnlockCards();
 //	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_mapEnv.clear();
@@ -161,6 +156,11 @@ void GameState::Reset()
 
 	ResetMusicStatistics();
 	ResetStageStatistics();
+
+	FOREACH_PlayerNumber( pn )
+		if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn) )
+			PROFILEMAN->UnloadProfile( pn );
+
 	SONGMAN->FreeAllLoadedFromProfiles();
 	SONGMAN->UpdateBest();
 	SONGMAN->UpdateShuffled();
@@ -230,10 +230,10 @@ void GameState::BeginGame()
 
 void GameState::PlayersFinalized()
 {
-	if( m_bPlayersFinalized )
+	if( MEMCARDMAN->GetPlayersFinalized() )
 		return;
 
-	m_bPlayersFinalized = true;
+	MEMCARDMAN->SetPlayersFinalized( true );
 
 	MEMCARDMAN->LockCards();
 

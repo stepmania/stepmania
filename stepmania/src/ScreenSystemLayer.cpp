@@ -18,6 +18,8 @@
 #define CREDITS_CARD_TOO_LATE					THEME->GetMetric ("ScreenSystemLayer","CreditsCardTooLate")
 #define CREDITS_CARD_NO_NAME					THEME->GetMetric ("ScreenSystemLayer","CreditsCardNoName")
 #define CREDITS_CARD_READY						THEME->GetMetric ("ScreenSystemLayer","CreditsCardReady")
+#define CREDITS_CARD_CHECKING					THEME->GetMetric ("ScreenSystemLayer","CreditsCardChecking")
+#define CREDITS_CARD_REMOVED					THEME->GetMetric ("ScreenSystemLayer","CreditsCardRemoved")
 #define CREDITS_FREE_PLAY						THEME->GetMetric ("ScreenSystemLayer","CreditsFreePlay")
 #define CREDITS_CREDITS							THEME->GetMetric ("ScreenSystemLayer","CreditsCredits")
 #define CREDITS_NOT_PRESENT						THEME->GetMetric ("ScreenSystemLayer","CreditsNotPresent")
@@ -123,7 +125,7 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 		bool bShowCreditsMessage;
 		if( GAMESTATE->m_bIsOnSystemMenu )
 			bShowCreditsMessage = true;
-		else if( GAMESTATE->m_bPlayersFinalized )
+		else if( MEMCARDMAN->GetPlayersFinalized() )
 			bShowCreditsMessage = !GAMESTATE->IsPlayerEnabled( p );	
 		else 
 			bShowCreditsMessage = !GAMESTATE->m_bSideIsJoined[p];
@@ -154,6 +156,12 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 			case MEMORY_CARD_STATE_TOO_LATE:
 				sCredits = CREDITS_CARD_TOO_LATE;
 				break;
+			case MEMORY_CARD_STATE_CHECKING:
+				sCredits = CREDITS_CARD_CHECKING;
+				break;
+			case MEMORY_CARD_STATE_REMOVED:
+				sCredits = CREDITS_CARD_REMOVED;
+				break;
 			case MEMORY_CARD_STATE_READY:
 				if( PROFILEMAN->LastLoadWasFromLastGood(p) && pProfile )
 					sCredits = pProfile->GetDisplayName() + CREDITS_LOADED_FROM_LAST_GOOD_APPEND;
@@ -170,7 +178,7 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 					sCredits = CREDITS_CARD_NO_NAME;
 				break;
 			default:
-				ASSERT(0);
+				FAIL_M( ssprintf("%i",mcs) );
 			}
 		}
 		else // bShowCreditsMessage

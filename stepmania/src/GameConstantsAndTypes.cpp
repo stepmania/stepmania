@@ -122,8 +122,10 @@ XToThemedString( HoldNoteScore, NUM_HOLD_NOTE_SCORES );
 
 static const CString MemoryCardStateNames[NUM_MEMORY_CARD_STATES] = {
 	"ready",
+	"checking",
 	"late",
 	"error",
+	"removed",
 	"none",
 };
 XToString( MemoryCardState );

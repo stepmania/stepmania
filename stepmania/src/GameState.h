@@ -47,7 +47,6 @@ public:
 	const Game*		m_pCurGame;
 	const Style*		m_pCurStyle;
 	bool				m_bSideIsJoined[NUM_PLAYERS];	// left side, right side
-	bool				m_bPlayersFinalized;
 	PlayMode			m_PlayMode;			// many screens display different info depending on this value
 	int					m_iCoins;			// not "credits"
 	PlayerNumber		m_MasterPlayerNumber;	// used in Styles where one player controls both sides

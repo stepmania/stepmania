@@ -17,7 +17,7 @@ public:
 
 	void Update( float fDelta );
 
-	MemoryCardState GetCardState( PlayerNumber pn );
+	MemoryCardState GetCardState( PlayerNumber pn ) const { return m_State[pn]; }
 	
 	void LockCards();	// prevent removing or changing of memory cards
 	void UnlockCards();
@@ -25,6 +25,10 @@ public:
 	void UnmountCard( PlayerNumber pn );
 	
 	void FlushAndReset();	// force all files to be flushed to mounted memory cards
+
+	/* If bOn is true, and a card is still initializing, block until it's ready. */
+	void SetPlayersFinalized( bool bOn );
+	bool GetPlayersFinalized() const { return m_bPlayersFinalized; }
 
 	bool PathIsMemCard( CString sDir ) const;
 
@@ -34,13 +38,20 @@ public:
 protected:
 	void PauseMountingThread();	// call this before mouting, reading, or writing to memory card
 	void UnPauseMountingThread();	// call this when done mouting, reading, or writing to memory card
+	void CheckStateChanges();
 
 	vector<UsbStorageDevice> m_vStorageDevices;	// all currently connected
 
+
 	bool	m_bCardsLocked;
-	bool	m_bTooLate[NUM_PLAYERS];	// card was inserted after lock
 	bool	m_bMounted[NUM_PLAYERS];	// card is currently mounted
-	UsbStorageDevice m_Device[NUM_PLAYERS];	// device in the memory card slot, NULL if none
+
+	UsbStorageDevice m_Device[NUM_PLAYERS];	// device in the memory card slot, blank if none
+	UsbStorageDevice m_FinalDevice[NUM_PLAYERS];	// device in the memory card slot when we finalized, blank if none
+
+	MemoryCardState m_State[NUM_PLAYERS];
+
+	bool	m_bPlayersFinalized;
 
 	RageSound m_soundReady;
 	RageSound m_soundError;

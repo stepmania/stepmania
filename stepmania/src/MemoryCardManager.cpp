@@ -11,7 +11,6 @@
 #include "ScreenManager.h"
 #include "ProfileManager.h"
 #include "Foreach.h"
-#include "GameState.h"
 #include "RageUtil_WorkerThread.h"
 
 MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in our program
@@ -241,10 +240,12 @@ MemoryCardManager::MemoryCardManager()
 	m_bCardsLocked = false;
 	FOREACH_PlayerNumber( p )
 	{
-		m_bTooLate[p] = false;
 		m_bMounted[p] = false;
+		m_State[p] = MEMORY_CARD_STATE_NO_CARD;
 	}
 	
+	m_bPlayersFinalized = false;
+
 	/* These can play at any time.  Preload them, so we don't cause a skip in gameplay. */
 	m_soundReady.Load( THEME->GetPathS("MemoryCardManager","ready"), true );
 	m_soundError.Load( THEME->GetPathS("MemoryCardManager","error"), true );
@@ -269,7 +270,7 @@ void MemoryCardManager::Update( float fDelta )
 	const vector<UsbStorageDevice> vOld = m_vStorageDevices;	// copy
 	if( !g_pWorker->StorageDevicesChanged( m_vStorageDevices ) )
 		return;
-	const vector<UsbStorageDevice> &vNew = m_vStorageDevices;
+/*	const vector<UsbStorageDevice> &vNew = m_vStorageDevices;
 
 	vector<UsbStorageDevice> vConnects;	// fill these in below
 	vector<UsbStorageDevice> vDisconnects;	// fill these in below
@@ -305,35 +306,9 @@ void MemoryCardManager::Update( float fDelta )
 		
 		vector<UsbStorageDevice>::iterator iter = find( vDisconnects.begin(), vDisconnects.end(), assigned_device );
 		if( iter != vDisconnects.end() )
-		{
-			UnmountCard( p );
-			
 			assigned_device.MakeBlank();
-			m_soundDisconnect.Play();
-			
-			if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(p) )
-				PROFILEMAN->UnloadProfile( p );
-		}
 	}
-	
-	// Update the status of already-assigned cards.  It may contain updated info 
-	// like WriteTest results and a new sName.
-	FOREACH_PlayerNumber( p )
-	{
-		UsbStorageDevice &assigned_device = m_Device[p];
-		if( assigned_device.IsBlank() )     // no card assigned to this player
-			continue;
-		
-		vector<UsbStorageDevice>::iterator iter = find( m_vStorageDevices.begin(), m_vStorageDevices.end(), assigned_device );
-		if( iter != m_vStorageDevices.end() )
-		{
-			// play write test error sound if write test failed since we last checked
-			if( assigned_device.bNeedsWriteTest && !iter->bNeedsWriteTest && !iter->bWriteTestSucceeded )
-				m_soundError.Play();
-			assigned_device = *iter;
-		}
-	}
-	
+*/
 	// make a list of unassigned
 	vector<UsbStorageDevice> vUnassignedDevices = m_vStorageDevices;        // copy
 	
@@ -354,18 +329,32 @@ void MemoryCardManager::Update( float fDelta )
 		}
 	}
 	
-	// try to assign each device to a player
+	// Try to assign each device to a player.  If a player already has a device
+	// assigned, and the device still exists, keep him on the same card.
 	FOREACH_PlayerNumber( p )
 	{
-		LOG->Trace( "Looking for a card for Player %d", p+1 );
-		
-		UsbStorageDevice &assigned_device = m_Device[p];		    
-		if( !assigned_device.IsBlank() )    // they already have an assigned card
+		UsbStorageDevice &assigned_device = m_Device[p];
+		if( !assigned_device.IsBlank() )
 		{
-			LOG->Trace( "Player %d already has a card: '%s'", p+1, assigned_device.sOsMountDir.c_str() );
-			continue;       // skip
+			/* The player has a card assigned.  If it's been removed, clear it. */
+			vector<UsbStorageDevice>::iterator it = find( m_vStorageDevices.begin(), m_vStorageDevices.end(), assigned_device );
+			if( it != m_vStorageDevices.end() )
+			{
+				/* The player has a card, and it's still plugged in.  Update any changed
+				 * state, such as m_State. */
+				LOG->Trace( "Player %d already has a card: '%s'", p+1, assigned_device.sOsMountDir.c_str() );
+				assigned_device = *it;
+				continue;
+			}
+
+			/* The assigned card has been removed; clear it and re-search. */
+			LOG->Trace( "Player %i: disconnected bus %d port %d device %d path %s",
+				p+1, assigned_device.iBus, assigned_device.iPort, assigned_device.iLevel, assigned_device.sOsMountDir.c_str() );
+			assigned_device.MakeBlank();
 		}
-		
+
+		LOG->Trace( "Looking for a card for Player %d", p+1 );
+				
 		FOREACH( UsbStorageDevice, vUnassignedDevices, d )
 		{
 			// search for card dir match
@@ -386,39 +375,106 @@ void MemoryCardManager::Update( float fDelta )
 				PREFSMAN->m_iMemoryCardUsbLevel[p] != d->iLevel )
 				continue;       // not a match
 			
-			LOG->Trace( "device match:  iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d, sOsMountDir: %s",
-				d->iScsiIndex, d->iBus, d->iLevel, d->iPort, d->sOsMountDir.c_str() );
-			
+			LOG->Trace( "Player %i: device match:  iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d, sOsMountDir: %s",
+				p+1, d->iScsiIndex, d->iBus, d->iLevel, d->iPort, d->sOsMountDir.c_str() );
+
 			assigned_device = *d;    // save a copy
 			vUnassignedDevices.erase( d );       // remove the device so we don't match it for another player
-			m_bTooLate[p] = GAMESTATE->m_bPlayersFinalized;    // the device is too late if inserted when cards were locked
-			
-			// play sound
-			if( m_bTooLate[p] )
-				m_soundTooLate.Play();
-			else if( !d->bNeedsWriteTest && !d->bWriteTestSucceeded )
-				m_soundError.Play();
-			else
-				m_soundReady.Play();
-			
 			break;
 		}
 	}
-	
-	SCREENMAN->RefreshCreditsMessages();
+
+	CheckStateChanges();
 }
 
-MemoryCardState MemoryCardManager::GetCardState( PlayerNumber pn )
+void MemoryCardManager::CheckStateChanges()
 {
-	UsbStorageDevice &d = m_Device[pn];
-	if( d.IsBlank() )
-		return MEMORY_CARD_STATE_NO_CARD;
-	else if( m_bTooLate[pn] )
-		return MEMORY_CARD_STATE_TOO_LATE;
-	else if( !d.bNeedsWriteTest && !d.bWriteTestSucceeded )
-		return MEMORY_CARD_STATE_WRITE_ERROR;
-	else
-		return MEMORY_CARD_STATE_READY;
+	/* Deal with assignment changes. */
+	FOREACH_PlayerNumber( p )
+	{
+		UsbStorageDevice &new_device = m_Device[p];		    
+
+		MemoryCardState state = MEMORY_CARD_STATE_INVALID;
+
+		if( m_bPlayersFinalized )
+		{
+			if( m_FinalDevice[p].m_State == UsbStorageDevice::STATE_NONE )
+			{
+				/* We didn't have a card when we finalized, so we won't accept anything.
+				 * If anything is inserted (even if it's still checking), say TOO LATE. */
+				if( new_device.m_State == UsbStorageDevice::STATE_NONE )
+					state = MEMORY_CARD_STATE_NO_CARD;
+				else
+					state = MEMORY_CARD_STATE_TOO_LATE;
+			}
+			else
+			{
+				/* We had a card inserted when we finalized. */
+				if( new_device.m_State == UsbStorageDevice::STATE_NONE )
+					state = MEMORY_CARD_STATE_REMOVED;
+				if( new_device.m_State == UsbStorageDevice::STATE_READY )
+				{
+					if( m_FinalDevice[p].sSerial != new_device.sSerial )
+					{
+						/* A different card is inserted than we had when we finalized;
+						 * ignore it. */
+						state = MEMORY_CARD_STATE_REMOVED;
+					}
+				}
+
+				/* Otherwise, the card is checking or has an error.  Use the regular logic. */
+			}
+		}
+
+		if( state == MEMORY_CARD_STATE_INVALID )
+		{
+			switch( new_device.m_State )
+			{
+			case UsbStorageDevice::STATE_NONE:
+				state = MEMORY_CARD_STATE_NO_CARD;
+				break;
+
+			case UsbStorageDevice::STATE_CHECKING:
+				state = MEMORY_CARD_STATE_CHECKING;
+				break;
+
+			case UsbStorageDevice::STATE_WRITE_ERROR:
+				state = MEMORY_CARD_STATE_WRITE_ERROR;
+				break;
+
+			case UsbStorageDevice::STATE_READY:
+				state = MEMORY_CARD_STATE_READY;
+				break;
+			}
+		}
+
+		MemoryCardState LastState = m_State[p];
+		if( m_State[p] != state )
+		{
+			// play sound
+			switch( state )
+			{
+			case MEMORY_CARD_STATE_NO_CARD:
+			case MEMORY_CARD_STATE_REMOVED:
+				if( LastState == MEMORY_CARD_STATE_READY )
+					m_soundDisconnect.Play();
+				break;
+			case MEMORY_CARD_STATE_READY:
+				m_soundReady.Play();
+				break;
+			case MEMORY_CARD_STATE_TOO_LATE:
+				m_soundTooLate.Play();
+				break;
+			case MEMORY_CARD_STATE_WRITE_ERROR:
+				m_soundError.Play();
+				break;
+			}
+
+			m_State[p] = state;
+		}
+	}
+
+	SCREENMAN->RefreshCreditsMessages();
 }
 
 void MemoryCardManager::LockCards()
@@ -434,8 +490,8 @@ void MemoryCardManager::UnlockCards()
 	m_bCardsLocked = false;
 	
 	// clear too late flag
-	FOREACH_PlayerNumber( p )
-		m_bTooLate[p] = false;
+//	FOREACH_PlayerNumber( p )
+//		m_State[p] = MEMORY_CARD_STATE_NO_CARD;
 
 	g_pWorker->SetMountThreadState( ThreadedMemoryCardWorker::detect_and_mount );
 }
@@ -518,12 +574,64 @@ void MemoryCardManager::FlushAndReset()
 		UsbStorageDevice &d = m_Device[p];
 		if( d.IsBlank() )	// no card assigned
 			continue;	// skip
-		if( (!d.bNeedsWriteTest && !d.bWriteTestSucceeded) || m_bTooLate[p] )
+		if( d.m_State == UsbStorageDevice::STATE_WRITE_ERROR )
 			continue;	// skip
 		g_pWorker->Flush( &m_Device[p] );
 	}
 	
 	g_pWorker->Reset();	// forces cards to be re-detected
+}
+
+void MemoryCardManager::SetPlayersFinalized( bool bOn )
+{
+	m_bPlayersFinalized = bOn;
+
+	if( !bOn )
+	{
+		m_bPlayersFinalized = false;
+
+		/* If a memory card was inserted too late last game, allow it now. */
+		CheckStateChanges();
+		return;
+	}
+
+//	g_pWorker->SetTimeout( 10 );
+//	ASSERT( g_pWorker->TimeoutEnabled() );
+
+	/* XXX: wait */
+
+	FOREACH_PlayerNumber( p )
+	{
+		/* If the card in this player's slot is ready, then use it. */
+		// XXX: share code with Update(): keep updating until timed out or
+		// STATE_READY or STATE_NONE
+		UsbStorageDevice &d = m_Device[p];
+
+		/* Set the final state. */
+		switch( d.m_State )
+		{
+		case UsbStorageDevice::STATE_READY:
+			m_State[p] = MEMORY_CARD_STATE_READY;
+			m_FinalDevice[p] = d;
+			break;
+
+		case UsbStorageDevice::STATE_NONE:
+			m_State[p] = MEMORY_CARD_STATE_NO_CARD;
+			break;
+
+		case UsbStorageDevice::STATE_CHECKING:
+		case UsbStorageDevice::STATE_WRITE_ERROR:
+			m_State[p] = MEMORY_CARD_STATE_WRITE_ERROR;
+			break;
+
+		default:
+			FAIL_M( ssprintf("%i", d.m_State) );
+		}
+
+		/* If there is no card ready when we finalize, the final device must be blank. */
+		if( m_State[p] != MEMORY_CARD_STATE_READY )
+			m_FinalDevice[p] = UsbStorageDevice();
+	}
 }
 
 bool MemoryCardManager::PathIsMemCard( CString sDir ) const
