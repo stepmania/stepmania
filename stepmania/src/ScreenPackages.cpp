@@ -580,14 +580,17 @@ void ScreenPackages::HTTPUpdate()
 	//as there may be need to "if" it out some time.
 	/* If you need a conditional for a large block of code, stick it in
 	 * a function and return. */
-	int Size = 1; 
-	while( Size > 0 )
+	while(1)
 	{
 		char Buffer[1024];
-		Size = m_wSocket.ReadData( Buffer, 1024 );
-		m_sBUFFER.append( Buffer, Size );
-		BytesGot += Size;
+		int iSize = m_wSocket.ReadData( Buffer, 1024 );
+		if( iSize <= 0 )
+			break;
+
+		m_sBUFFER.append( Buffer, iSize );
+		BytesGot += iSize;
 	}
+
 	if( !m_bGotHeader )
 	{
 		m_sStatus = "Waiting for header.";
