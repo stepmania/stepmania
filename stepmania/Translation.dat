@@ -15,9 +15,6 @@
 #
 # Courses are matched by title only.
 #
-# Changed titles are placed in TRANSLIT fields by default.  Specify
-# "DontTransliterate" to disable this.
-#
 # Note that changes to this file are only applied to songs when they are
 # first loaded.  Delete the files in the "Cache" directory after making
 # changes.
@@ -150,19 +147,15 @@ DontTransliterate
 TitleFrom: Senorita\(Speedy Mix\)
 TitleTo: SEÑORITA
 SubtitleTo: Speedy Mix
-DontTransliterate
 *
 TitleFrom: La Senorita
 TitleTo: La Señorita
-DontTransliterate
 *
 TitleFrom: La Senorita Virtual
 TitleTo: La Señorita Virtual
-DontTransliterate
 *
 TitleFrom: L'amour et la liberte
 TitleTo: L'amour et la liberté
-DontTransliterate
 *
 TitleFrom: Chotto Kiitena
 TitleTo: ちょっときいてな
