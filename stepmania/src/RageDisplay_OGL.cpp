@@ -1184,10 +1184,10 @@ void RageDisplay_OGL::UpdateTexture(
 {
 	glBindTexture( GL_TEXTURE_2D, uTexHandle );
 
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
-
 	bool FreeImg;
 	PixelFormat pixfmt = GetImgPixelFormat( img, FreeImg, width, height );
+
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 
 //	GLenum glTexFormat = GL_PIXFMT_INFO[pixfmt].internalfmt;
 	GLenum glImageFormat = GL_PIXFMT_INFO[pixfmt].format;
