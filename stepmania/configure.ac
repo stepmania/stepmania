@@ -133,6 +133,7 @@ AC_TRY_COMPILE(	[#include <stdlib.h>
 		 AC_DEFINE([NEED_CSTDLIB_WORKAROUND], 1, [cstdlib breaks llabs])]
 	      )
 
+AC_CHECK_LIB( pthread, pthread_create, AC_DEFINE([HAVE_LIBPTHREAD],1,[libpthread is available]) )
 AC_CHECK_LIB( pthread, pthread_mutex_timedlock, AC_DEFINE([HAVE_PTHREAD_MUTEX_TIMEDLOCK],1,[pthreads has pthread_mutex_timedlock()]) )
 
 AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
