@@ -36,8 +36,8 @@ public:
 	 * adjustment of fonts in ScreenTestFonts at the moment. */
 	void ReloadFonts();
 
-	static longchar MakeGameGlyph(longchar c, Game g);
-	static bool ExtractGameGlyph(longchar ch, int &c, Game &g);
+	static longchar MakeGameGlyph(wchar_t c, Game g);
+	static bool ExtractGameGlyph(longchar ch, wchar_t &c, Game &g);
 
 protected:
 	// map from file name to a texture holder

@@ -25,7 +25,8 @@
 #include "FontCharmaps.h"
 #include "FontCharAliases.h"
 
-const longchar Font::DEFAULT_GLYPH = 0xFFFFFF;
+/* Last private-use Unicode character: */
+const wchar_t Font::DEFAULT_GLYPH = 0xF8FF;
 
 FontPage::FontPage()
 {
@@ -192,7 +193,7 @@ FontPage::~FontPage()
 		TEXTUREMAN->UnloadTexture( m_pTexture );
 }
 
-int Font::GetLineWidthInSourcePixels( const lstring &szLine ) const
+int Font::GetLineWidthInSourcePixels( const wstring &szLine ) const
 {
 	int LineWidth = 0;
 	
@@ -202,7 +203,7 @@ int Font::GetLineWidthInSourcePixels( const lstring &szLine ) const
 	return LineWidth;
 }
 
-int Font::GetLineHeightInSourcePixels( const lstring &szLine ) const
+int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
 {
 	int iLineHeight = 0;
 
@@ -213,7 +214,7 @@ int Font::GetLineHeightInSourcePixels( const lstring &szLine ) const
 	return iLineHeight;
 }
 
-int Font::GetLineSpacingInSourcePixels( const lstring &szLine ) const
+int Font::GetLineSpacingInSourcePixels( const wstring &szLine ) const
 {
 	int iLineSpacing = 0;
 
@@ -292,7 +293,7 @@ void Font::MergeFont(Font &f)
 	f.pages.clear();
 }
 
-const glyph &Font::GetGlyph( longchar c ) const
+const glyph &Font::GetGlyph( wchar_t c ) const
 {
 	ASSERT(c >= 0 && c <= 0xFFFFFF);
 
@@ -523,16 +524,18 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 			if(codepoint.substr(0, 2) == "U+" && IsHexVal(codepoint.substr(2)))
 				sscanf(codepoint.substr(2).c_str(), "%x", &c);
 			else
+			{
 				c = FontCharAliases::GetChar(codepoint);
 
-			if(c == -1)
-			{
-				LOG->Warn("Font definition '%s' has an invalid value '%s'.",
-					ini.GetPath().GetString(), val.GetString() );
-				continue;
+				if(c == INVALID_CHAR)
+				{
+					LOG->Warn("Font definition '%s' has an invalid value '%s'.",
+						ini.GetPath().GetString(), val.GetString() );
+					continue;
+				}
 			}
 
-			if(game != GAME_INVALID) c = FontManager::MakeGameGlyph(c, game);
+			if(game != GAME_INVALID) c = FontManager::MakeGameGlyph(wchar_t(c), game);
 
 			cfg.CharToGlyphNo[c] = atoi(data);
 			continue;

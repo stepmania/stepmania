@@ -41,7 +41,7 @@ ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuesti
 	m_pOnOK = OnOK;
 	m_pOnCancel = OnCancel;
 
-	m_sAnswer = CStringToLstring(sInitialAnswer);
+	m_sAnswer = CStringToWstring(sInitialAnswer);
 	m_bCancelled = false;
 
 	m_Fade.SetTransitionTime( 0.5f );
@@ -73,7 +73,7 @@ ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuesti
 
 void ScreenTextEntry::UpdateText()
 {
-	CString txt = LStringToCString(m_sAnswer);
+	CString txt = WStringToCString(m_sAnswer);
 	FontCharAliases::ReplaceMarkers(txt);
 	m_textAnswer.SetText( txt );
 }
@@ -205,7 +205,7 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 	} else {
 		if( m_pOnOK )
 		{
-			CString ret = LStringToCString(m_sAnswer);
+			CString ret = WStringToCString(m_sAnswer);
 			FontCharAliases::ReplaceMarkers(ret);
 			m_pOnOK( ret );
 		}

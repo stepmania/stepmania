@@ -47,7 +47,7 @@ protected:
 	
 	// recalculate the items below on SetText()
 	CString			m_szText;
-	vector<lstring>	m_szTextLines;
+	vector<wstring>	m_szTextLines;
 	vector<int>		m_iLineWidths;			// in source pixels
 	int				m_iWidestLineWidth;		// in source pixels
 

@@ -37,19 +37,20 @@ FontManager::~FontManager()
 }
 
 /* A longchar is at least 32 bits.  If c & 0xFF000000, it's a game-custom
- * character; game 0 is 0x01nnnnnn, game 1 is 0x02nnnnnn, and so on. */
-longchar FontManager::MakeGameGlyph(longchar c, Game g)
+ * character; game 0 is 0x0100nnnn, game 1 is 0x0200nnnn, and so on. */
+longchar FontManager::MakeGameGlyph(wchar_t c, Game g)
 {
-	ASSERT(g >= 0 && g <= 0xFF && c >= 0 && c <= 0xFFFF);
+	ASSERT(c >= 0 && c <= 0xFFFF);
+	ASSERT(g >= 0 && g <= 0xFF);
 	return longchar (((g+1) << 24) + c);
 }
 
-bool FontManager::ExtractGameGlyph(longchar ch, int &c, Game &g)
+bool FontManager::ExtractGameGlyph(longchar ch, wchar_t &c, Game &g)
 {
 	if((ch & 0xFF000000) == 0) return false; /* not a game glyph */
 	
 	g = Game((ch >> 24) - 1);
-	c = ch & 0xFFFFFF;
+	c = wchar_t(ch & 0xFFFF);
 
 	return true;
 }

@@ -163,7 +163,7 @@ void BitmapText::BuildChars()
 	for( i=0; i<m_szTextLines.size(); i++ )		// foreach line
 	{
 		iY += m_pFont->GetHeight();
-		const lstring &szLine = m_szTextLines[i];
+		const wstring &szLine = m_szTextLines[i];
 		const int iLineWidth = m_iLineWidths[i];
 		
 		int iX;
@@ -232,8 +232,8 @@ void BitmapText::SetText( CString sText )
 	m_szTextLines.clear();
 	m_iLineWidths.clear();
 
-	lstring s; s+='\n';
-	split(CStringToLstring(sText), s, m_szTextLines, false);
+	wstring s; s+=L'\n';
+	split(CStringToWstring(sText), s, m_szTextLines, false);
 	
 	BuildChars();
 }

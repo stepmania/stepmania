@@ -7,7 +7,7 @@
 #include <map>
 
 /* Map from "&foo;" to a UTF-8 string. */
-typedef map<CString, longchar, StdStringLessNoCase> aliasmap;
+typedef map<CString, wchar_t, StdStringLessNoCase> aliasmap;
 static aliasmap CharAliases;
 static map<CString,CString> CharAliasRepl;
 
@@ -335,7 +335,7 @@ static void InitCharAliases()
 	for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
 	{
 		CString from = ssprintf("&%s;", i->first.GetString());
-		CString to = LcharToUTF8(i->second);
+		CString to = WcharToUTF8(i->second);
 		from.MakeUpper();
 		CharAliasRepl[from] = to;
 	}
@@ -350,12 +350,12 @@ void FontCharAliases::ReplaceMarkers( CString &sText )
 }
 
 /* Replace all &markers; and &#NNNN;s with UTF-8. */
-longchar FontCharAliases::GetChar( CString &codepoint )
+wchar_t FontCharAliases::GetChar( CString &codepoint )
 {
 	InitCharAliases();
 	aliasmap::const_iterator i = CharAliases.find(codepoint);
 	if(i == CharAliases.end())
-		return longchar(-1);
+		return INVALID_CHAR;
 	
 	return i->second;
 }

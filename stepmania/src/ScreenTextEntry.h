@@ -40,7 +40,7 @@ protected:
 	TransitionFade	m_Fade;
 	BitmapText		m_textQuestion;
 	Quad			m_rectAnswerBox;
-	lstring			m_sAnswer;
+	wstring			m_sAnswer;
 	BitmapText		m_textAnswer;
 	ScreenMessage	m_SMSendWhenDone;
 	void(*m_pOnOK)( CString sAnswer );

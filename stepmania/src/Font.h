@@ -104,11 +104,11 @@ public:
 	Font();
 	~Font();
 
-	const glyph &GetGlyph( longchar c ) const;
+	const glyph &GetGlyph( wchar_t c ) const;
 
-	int GetLineWidthInSourcePixels( const lstring &szLine ) const;
-	int GetLineHeightInSourcePixels( const lstring &szLine ) const;
-	int GetLineSpacingInSourcePixels( const lstring &szLine ) const;
+	int GetLineWidthInSourcePixels( const wstring &szLine ) const;
+	int GetLineHeightInSourcePixels( const wstring &szLine ) const;
+	int GetLineSpacingInSourcePixels( const wstring &szLine ) const;
 
 	/* Add a FontPage to this font. */
 	void AddPage(FontPage *fp);
@@ -129,7 +129,7 @@ public:
 
 	void SetDefaultGlyph(FontPage *fp);
 
-	static const longchar DEFAULT_GLYPH;
+	static const wchar_t DEFAULT_GLYPH;
 
 	static CString GetFontName(CString FileName);
 	/* Remove filenames in 'v' that aren't in the same font as "FileName". */

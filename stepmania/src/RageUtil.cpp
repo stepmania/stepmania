@@ -179,7 +179,7 @@ void split( const CString &Source, const CString &Deliminator, CStringArray &Add
 	do_split(Source, Deliminator, AddIt, bIgnoreEmpty );
 }
 
-void split( const lstring &Source, const lstring &Deliminator, vector<lstring> &AddIt, const bool bIgnoreEmpty )
+void split( const wstring &Source, const wstring &Deliminator, vector<wstring> &AddIt, const bool bIgnoreEmpty )
 {
 	do_split(Source, Deliminator, AddIt, bIgnoreEmpty );
 }
@@ -706,18 +706,17 @@ int utf8_get_char_len (const char *pp)
   return -1;
 }
 
-longchar utf8_get_char (const char *p)
+wchar_t utf8_get_char (const char *p)
 {
   int len = utf8_get_char_len(p);
   if(len == -1)
-	  return 0xFFFF;
+	  return INVALID_CHAR;
 
   int mask = masks[len];
-
-  longchar result = longchar(p[0] & mask);
+  wchar_t result = wchar_t(p[0] & mask);
   for (int i = 1; i < len; ++i) {
       if ((p[i] & 0xc0) != 0x80)
-          return (longchar) -1;
+          return INVALID_CHAR;
 
 	  result <<= 6;
       result |= p[i] & 0x3f;
@@ -726,17 +725,17 @@ longchar utf8_get_char (const char *p)
   return result;
 }
 
-const longchar INVALID_CHAR = 0xFFFF;
+const wchar_t INVALID_CHAR = 0xFFFF;
 
-lstring CStringToLstring(const CString &str)
+wstring CStringToWstring(const CString &str)
 {
 	const char *ptr = str.c_str(), *end = str.c_str()+str.size();
 
-	lstring ret;
+	wstring ret;
 
 	while(ptr && ptr != end)
 	{
-		longchar c = utf8_get_char (ptr);
+		wchar_t c = utf8_get_char (ptr);
 		if(c == -1)
 			ret += INVALID_CHAR;
 		else
@@ -747,17 +746,17 @@ lstring CStringToLstring(const CString &str)
 	return ret;
 }
 
-CString LStringToCString(const lstring &str)
+CString WStringToCString(const wstring &str)
 {
 	CString ret;
 
 	for(unsigned i = 0; i < str.size(); ++i)
-		ret.append(LcharToUTF8(str[i]));
+		ret.append(WcharToUTF8(str[i]));
 
 	return ret;
 }
 
-int unichar_to_utf8 (longchar c, char *outbuf)
+static int unichar_to_utf8 (wchar_t c, char *outbuf)
 {
 	unsigned int len = 0;
 	int first;
@@ -795,7 +794,7 @@ int unichar_to_utf8 (longchar c, char *outbuf)
 	return len;
 }
 
-CString LcharToUTF8( longchar c )
+CString WcharToUTF8( wchar_t c )
 {
 	char buf[6];
 	int cnt = unichar_to_utf8(c, buf);
@@ -874,8 +873,10 @@ void Replace_Unicode_Markers( CString &Text )
 		int num;
 		if(hex) sscanf(Text.c_str()+pos, "&x%x;", &num);
 		else sscanf(Text.c_str()+pos, "&#%i;", &num);
-		
-		Text.replace(pos, p-pos, LcharToUTF8(num));
+		if(num > 0xFFFF)
+			num = INVALID_CHAR;
+
+		Text.replace(pos, p-pos, WcharToUTF8(wchar_t(num)));
 	}
 }
 
