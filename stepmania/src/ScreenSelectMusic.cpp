@@ -383,7 +383,7 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 	if( m_fPlaySampleCountdown > 0 )
 	{
 		m_fPlaySampleCountdown -= fDeltaTime;
-		if( m_fPlaySampleCountdown < 0 )
+		if( m_fPlaySampleCountdown <= 0 )
 			this->PlayMusicSample();
 	}
 
