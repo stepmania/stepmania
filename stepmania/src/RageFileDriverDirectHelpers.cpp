@@ -277,26 +277,17 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 	} while( FindNextFile( hFind, &fd ) );
 	FindClose(hFind);
 #else
-	int OldDir = DoOpen(".", O_RDONLY);
-	if( OldDir == -1 )
-		RageException::Throw( "Couldn't open(.): %s", strerror(errno) );
-
-	if( chdir(root+sPath) == -1 )
-	{
-		/* Only log once per dir. */
-		if( LOG && errno != ENOENT )
-			LOG->MapLog("chdir " + root+"/"+sPath, "Couldn't chdir(%s%s): %s", root.c_str(), sPath.c_str(), strerror(errno) );
-		close( OldDir );
-		return;
-	}
-
-	DIR *d = opendir(".");
+	/* Ugly: POSIX threads are not guaranteed to have per-thread cwds, and only
+	 * a few systems have openat() or equivalent; one or the other is needed
+	 * to do efficient, thread-safe directory traversal.  Instead, we have to
+	 * use absolute paths, which forces the system to re-parse the directory
+	 * for each file.  This isn't a major issue, since most large directory
+	 * scans are be I/O (disk-seek)-bound. */
+	 
+	DIR *d = opendir(root+sPath);
 	if( d == NULL )
 	{
-		LOG->MapLog("opendir " + root+"/"+sPath, "Couldn't opendir(%s%s): %s", root.c_str(), sPath.c_str(), strerror(errno) );
-		if( fchdir( OldDir ) == -1 )
-			RageException::Throw( "Couldn't fchdir(): %s", strerror(errno) );
-		close( OldDir );
+		LOG->MapLog("opendir " + root+sPath, "Couldn't opendir(%s%s): %s", root.c_str(), sPath.c_str(), strerror(errno) );
 		return;
 	}
 
@@ -309,7 +300,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 		f.SetName( ent->d_name );
 		
 		struct stat st;
-		if( DoStat(ent->d_name, &st) == -1 )
+		if( DoStat(root+sPath + "/" + ent->d_name, &st) == -1 )
 		{
 			/* If it's a broken symlink, ignore it.  Otherwise, warn. */
 			if( lstat(ent->d_name, &st) == 0 )
@@ -330,9 +321,6 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 	}
 	       
 	closedir(d);
-	if( fchdir( OldDir ) == -1 )
-		RageException::Throw( "Couldn't fchdir(): %s", strerror(errno) );
-	close( OldDir );
 #endif
 }
 
