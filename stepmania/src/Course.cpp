@@ -79,29 +79,9 @@ void Course::SetDefaultScore()
 
 Song *Course::FindSong(CString sGroup, CString sSong) const
 {
-	const vector<Song*> &apSongs = SONGMAN->GetAllSongs();
-
-	// foreach song
-	for( unsigned i = 0; i < apSongs.size(); i++ )
-	{
-		Song* pSong = apSongs[i];
-
-		if( sGroup.size() && sGroup.CompareNoCase(pSong->m_sGroupName) != 0)
-			continue; /* wrong group */
-
-		CString sDir = pSong->GetSongDir();
-		sDir.Replace("\\","/");
-		CStringArray bits;
-		split( sDir, "/", bits );
-		ASSERT(bits.size() >= 2); /* should always have at least two parts */
-		CString sLastBit = bits[bits.size()-1];
-
-		// match on song dir or title (ala DWI)
-		if( sSong.CompareNoCase(sLastBit)==0 )
-			return pSong;
-		if( sSong.CompareNoCase(pSong->GetFullTranslitTitle())==0 )
-			return pSong;
-	}
+	Song *pSong = SONGMAN->FindSong( sGroup, sSong );
+	if( pSong )
+		return pSong;
 
 	LOG->Trace( "Course file '%s' contains a song '%s%s%s' that is not present",
 			m_sPath.c_str(), sGroup.c_str(), sGroup.size()? "/":"", sSong.c_str());

@@ -1067,4 +1067,15 @@ void SongManager::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS],
 	}
 }
 
+Song *SongManager::FindSong( CString sGroup, CString sSong )
+{
+	// foreach song
+	for( unsigned i = 0; i < m_pSongs.size(); i++ )
+	{
+		if( m_pSongs[i]->Matches(sGroup, sSong) )
+			return m_pSongs[i];
+	}
+
+	return NULL;	
+}
 

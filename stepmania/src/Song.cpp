@@ -1570,3 +1570,25 @@ int	Song::GetNumNotesWithGrade( Grade g ) const
 			iCount++;
 	return iCount;
 }
+
+bool Song::Matches(CString sGroup, CString sSong) const
+{
+	if( sGroup.size() && sGroup.CompareNoCase(this->m_sGroupName) != 0)
+		return false;
+
+	CString sDir = this->GetSongDir();
+	sDir.Replace("\\","/");
+	CStringArray bits;
+	split( sDir, "/", bits );
+	ASSERT(bits.size() >= 2); /* should always have at least two parts */
+	CString sLastBit = bits[bits.size()-1];
+
+	// match on song dir or title (ala DWI)
+	if( !sSong.CompareNoCase(sLastBit) )
+		return true;
+	if( !sSong.CompareNoCase(this->GetFullTranslitTitle()) )
+		return true;
+
+	return false;
+}
+

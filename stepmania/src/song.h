@@ -170,6 +170,8 @@ public:
 	bool HasLyrics() const;
 	bool m_bIsLocked;
 
+	bool Matches(CString sGroup, CString sSong) const;
+
 	vector<BPMSegment>			m_BPMSegments;	// this must be sorted before gameplay
 	vector<StopSegment>			m_StopSegments;	// this must be sorted before gameplay
 	vector<BackgroundChange>	m_BackgroundChanges;	// this must be sorted before gameplay
