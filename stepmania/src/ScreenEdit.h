@@ -17,6 +17,7 @@
 #include "RandomSample.h"
 #include "FocusingSprite.h"
 #include "RageMusic.h"
+#include "RageSound.h"
 #include "MotionBlurSprite.h"
 #include "BGAnimation.h"
 #include "SnapDisplay.h"
@@ -96,7 +97,7 @@ protected:
 // for MODE_RECORD and MODE_PLAY
 
 	Quad			m_rectRecordBack;
-	RageSoundStream	m_soundMusic;
+	RageSound		m_soundMusic;
 
 	int				m_iMenuSelection;
 	BitmapText		m_textActionMenu[NUM_ACTION_MENU_ITEMS];

@@ -291,7 +291,8 @@ ScreenEdit::ScreenEdit()
 	m_soundInvalid.Load(	THEME->GetPathTo("Sounds","menu invalid") );
 
 
-	m_soundMusic.Load( m_pSong->GetMusicPath(), true );	// enable accurate sync
+	m_soundMusic.Load(m_pSong->GetMusicPath());
+	m_soundMusic.SetAccurateSync(true);
 
 	m_soundAssistTick.Load(		THEME->GetPathTo("Sounds","gameplay assist tick") );
 
@@ -321,7 +322,7 @@ ScreenEdit::ScreenEdit()
 ScreenEdit::~ScreenEdit()
 {
 	LOG->Trace( "ScreenEdit::~ScreenEdit()" );
-	m_soundMusic.Stop();
+	m_soundMusic.StopPlaying();
 }
 
 // play assist ticks
@@ -358,8 +359,6 @@ bool ScreenEdit::PlayTicks() const
 
 void ScreenEdit::Update( float fDeltaTime )
 {
-	m_soundMusic.Update( fDeltaTime );
-
 	float fPositionSeconds = m_soundMusic.GetPositionSeconds();
 	float fSongBeat, fBPS;
 	bool bFreeze;
@@ -957,8 +956,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
 			float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
 			m_soundMusic.SetPositionSeconds( fStartSeconds );
-			m_soundMusic.Play();
 			m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
+			m_soundMusic.StartPlaying();
 		}
 		break;
 	case SDLK_t:
@@ -1394,7 +1393,7 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 void ScreenEdit::TransitionToEdit()
 {
 	m_EditMode = MODE_EDITING;
-	m_soundMusic.Stop();
+	m_soundMusic.StopPlaying();
 	m_rectRecordBack.StopTweening();
 	m_rectRecordBack.BeginTweening( 0.5f );
 	m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0) );
