@@ -3,15 +3,19 @@
 
 #include "RageFileManager.h"
 #include "RageLog.h"
-#include "archutils/Unix/CrashHandler.h"
+#include "arch/ArchHooks/ArchHooks.h"
+void ExitGame() { }
 
 CString g_Driver = "dir", g_Root = ".";
+
 CString argv0;
+int g_argc = 0;
+char **g_argv = NULL;
 
 void test_handle_args( int argc, char *argv[] )
 {
-        CrashHandlerHandleArgs( argc, argv );
-
+	g_argc = argc;
+	g_argv = argv;
 	argv0 = argv[0];
 
 	while( 1 )
@@ -42,7 +46,7 @@ void test_handle_args( int argc, char *argv[] )
 
 void test_init()
 {
-	InitializeCrashHandler();
+	HOOKS = MakeArchHooks();
 
 	FILEMAN = new RageFileManager( argv0 );
 	FILEMAN->Mount( g_Driver, g_Root, "" );
@@ -57,6 +61,7 @@ void test_deinit()
 {
 	delete LOG;
 	delete FILEMAN;
+	delete HOOKS;
 }
 
 
