@@ -154,6 +154,7 @@ typedef int longchar;
 typedef basic_string<longchar> lstring;
 
 lstring CStringToLstring(const CString &str);
+CString LcharToUTF8( longchar c );
 
 // Splits a CString into an CStringArray according the Deliminator.
 void split(
