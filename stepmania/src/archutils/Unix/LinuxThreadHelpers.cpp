@@ -99,7 +99,7 @@ CString ThreadsVersion()
 {
 // Not all systems have a header that declares _CS_GNU_LIBPTHREAD_VERSION.
 // Deal with it.
-#if defined(LINUX) and defined(_CS_GNU_LIBPTHREAD_VERSION)
+#if defined(_CS_GNU_LIBPTHREAD_VERSION)
 	char buf[1024];
 	int ret = confstr( _CS_GNU_LIBPTHREAD_VERSION, buf, sizeof(buf) );
 	RAGE_ASSERT_M( ret != -1, ssprintf( "%i", ret) );
@@ -112,7 +112,6 @@ CString ThreadsVersion()
 /* Get this thread's ID (this may be a TID or a PID). */
 int GetCurrentThreadId()
 {
-#if defined(LINUX)
 	InitializePidThreadHelpers(); // for g_bUsingNPTL
 
 	pid_t ret = gettid();
@@ -124,7 +123,6 @@ int GetCurrentThreadId()
 		return ret;
 
 	ASSERT( !g_bUsingNPTL );
-#endif
 
 	return getpid();
 }
