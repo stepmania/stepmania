@@ -8,6 +8,7 @@
 #include "ActorScroller.h"
 
 struct XNode;
+class IniFile;
 
 class BGAnimation : public ActorScroller
 {
@@ -21,7 +22,7 @@ public:
 	void LoadFromNode( const CString &sDir, const XNode& node );
 
 protected:
-	static void AddLayersFromAniDir( const CString &_sAniDir, vector<Actor*> &layersAddTo, bool bGeneric );
+	void AddLayersFromAniDir( const CString &_sAniDir, const IniFile& ini, bool bGeneric );
 };
 
 #endif

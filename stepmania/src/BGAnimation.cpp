@@ -34,21 +34,9 @@ static bool CompareLayerNames( const CString& s1, const CString& s2 )
 	return i1 < i2;
 }
 
-void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, vector<Actor*> &layersAddTo, bool bGeneric )
+void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, const IniFile& ini, bool bGeneric )
 {
-	if( _sAniDir.empty() )
-		 return;
-
-	CString sAniDir = _sAniDir;
-	if( sAniDir.Right(1) != "/" )
-		sAniDir += "/";
-
-	ASSERT_M( IsADirectory(sAniDir), sAniDir + " isn't a directory" );
-
-	CString sPathToIni = sAniDir + "BGAnimation.ini";
-
-	IniFile ini;
-	ini.ReadFile( sPathToIni );
+	const CString& sAniDir = _sAniDir;
 
 	{
 		CString expr;
@@ -90,14 +78,24 @@ void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, vector<Actor*> &
 				sImportDir = sAniDir + sImportDir;
 				CollapsePath( sImportDir );
 
-				AddLayersFromAniDir( sImportDir, layersAddTo, bGeneric );
+				if( sImportDir.Right(1) != "/" )
+					sImportDir += "/";
+
+				ASSERT_M( IsADirectory(sImportDir), sImportDir + " isn't a directory" );
+
+				CString sPathToIni = sImportDir + "BGAnimation.ini";
+
+				IniFile ini2;
+				ini2.ReadFile( sPathToIni );
+
+				AddLayersFromAniDir( sImportDir, ini2, bGeneric );
 			}
 			else
 			{
 				// import as a single layer
 				BGAnimationLayer* pLayer = new BGAnimationLayer( bGeneric );
 				pLayer->LoadFromNode( sAniDir, *pKey );
-				layersAddTo.push_back( pLayer );
+				this->AddChild( pLayer );
 			}
 		}
 	}
@@ -121,11 +119,10 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir, bool bGeneric )
 	if( DoesFileExist(sPathToIni) )
 	{
 		// This is a new style BGAnimation (using .ini)
-
 		IniFile ini;
 		ini.ReadFile( sPathToIni );
 
-		AddLayersFromAniDir( sAniDir, m_SubActors, bGeneric );	// TODO: Check for circular load
+		AddLayersFromAniDir( sAniDir, ini, bGeneric );	// TODO: Check for circular load
 
 		XNode* pBGAnimation = ini.GetChild( "BGAnimation" );
 		XNode dummy;
@@ -146,7 +143,6 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir, bool bGeneric )
 		}
 
 		LoadFromNode( sAniDir, *pBGAnimation );
-
 	}
 	else
 	{
@@ -196,6 +192,7 @@ void BGAnimation::LoadFromNode( const CString &sDir, const XNode& node )
 	Command cmd;
 	cmd.Load( "PlayCommand,Init" );
 	this->RunCommandOnChildren( cmd );
+
 
 	/* Backwards-compatibility: if a "LengthSeconds" value is present, create a dummy
 	 * actor that sleeps for the given length of time.  This will extend GetTweenTimeLeft. */
