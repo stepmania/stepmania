@@ -522,18 +522,29 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 			iTakeFromTrack[5] = 2;
 			break;
 		case NOTES_TYPE_PUMP_SINGLE:
-		case NOTES_TYPE_PUMP_DOUBLE:
 		case NOTES_TYPE_PUMP_COUPLE:
-			iTakeFromTrack[0] = 1;
-			iTakeFromTrack[1] = 3;
+			iTakeFromTrack[0] = 3;
+			iTakeFromTrack[1] = 4;
 			iTakeFromTrack[2] = 2;
-			iTakeFromTrack[3] = 4;
-			iTakeFromTrack[4] = 0;
-			iTakeFromTrack[5] = 6;
-			iTakeFromTrack[6] = 8;
+			iTakeFromTrack[3] = 0;
+			iTakeFromTrack[4] = 1;
+			iTakeFromTrack[5] = 8;
+			iTakeFromTrack[6] = 9;
 			iTakeFromTrack[7] = 7;
-			iTakeFromTrack[8] = 9;
-			iTakeFromTrack[9] = 5;
+			iTakeFromTrack[8] = 5;
+			iTakeFromTrack[9] = 6;
+			break;
+		case NOTES_TYPE_PUMP_DOUBLE:
+			iTakeFromTrack[0] = 8;
+			iTakeFromTrack[1] = 9;
+			iTakeFromTrack[2] = 7;
+			iTakeFromTrack[3] = 5;
+			iTakeFromTrack[4] = 6;
+			iTakeFromTrack[5] = 3;
+			iTakeFromTrack[6] = 4;
+			iTakeFromTrack[7] = 2;
+			iTakeFromTrack[8] = 0;
+			iTakeFromTrack[9] = 1;
 			break;
 		case NOTES_TYPE_EZ2_SINGLE:
 		case NOTES_TYPE_EZ2_DOUBLE:
