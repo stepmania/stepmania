@@ -61,7 +61,7 @@ DataStructures = \
 CodeDetector.cpp CodeDetector.h Course.cpp Course.h Font.cpp Font.h FontCharAliases.cpp FontCharAliases.h \
 FontCharmaps.cpp FontCharmaps.h GameConstantsAndTypes.cpp GameConstantsAndTypes.h GameDef.cpp GameDef.h \
 GameInput.cpp GameInput.h GameTypes.h Grade.cpp Grade.h NoteData.cpp NoteData.h NoteDataWithScoring.cpp \
-NoteDataWithScoring.h Steps.cpp Steps.h NotesLoader.cpp NotesLoader.h NotesLoaderBMS.cpp NotesLoaderBMS.h \
+NoteDataWithScoring.h NoteDataUtil.cpp NoteDataUtil.h Steps.cpp Steps.h NotesLoader.cpp NotesLoader.h NotesLoaderBMS.cpp NotesLoaderBMS.h \
 NotesLoaderDWI.cpp NotesLoaderDWI.h NotesLoaderKSF.cpp NotesLoaderKSF.h NotesLoaderSM.cpp NotesLoaderSM.h \
 NotesWriterDWI.cpp NotesWriterDWI.h NotesWriterSM.cpp NotesWriterSM.h NoteTypes.cpp NoteTypes.h Player.cpp Player.h \
 PlayerOptions.cpp PlayerOptions.h RandomSample.cpp RandomSample.h Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h \
