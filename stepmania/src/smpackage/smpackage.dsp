@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="smpackage" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 60000
+# Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
@@ -40,6 +40,7 @@ RSC=rc.exe
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "../../"
 # PROP Intermediate_Dir "Release"
+# PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /Yu"stdafx.h" /FD /c
 # ADD CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_AFXDLL" /FR /Yu"stdafx.h" /FD /c
@@ -52,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /machine:I386
-# ADD LINK32 /nologo /subsystem:windows /machine:I386
+# ADD LINK32 ZipArchive\Release\ZipArchive.lib /nologo /subsystem:windows /machine:I386
 
 !ELSEIF  "$(CFG)" == "smpackage - Win32 Debug"
 
@@ -86,10 +87,9 @@ LINK32=link.exe
 
 # Name "smpackage - Win32 Release"
 # Name "smpackage - Win32 Debug"
-# Begin Source File
+# Begin Group "Source"
 
-SOURCE=.\converttheme.bmp
-# End Source File
+# PROP Default_Filter ""
 # Begin Source File
 
 SOURCE=.\EditInsallations.cpp
@@ -97,10 +97,6 @@ SOURCE=.\EditInsallations.cpp
 # Begin Source File
 
 SOURCE=.\EditInsallations.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\editmetrics.bmp
 # End Source File
 # Begin Source File
 
@@ -136,23 +132,11 @@ SOURCE=.\IniFile.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\install.bmp
-# End Source File
-# Begin Source File
-
 SOURCE=.\MainMenuDlg.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\MainMenuDlg.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\manage.bmp
-# End Source File
-# Begin Source File
-
-SOURCE=.\menu.bmp
 # End Source File
 # Begin Source File
 
@@ -169,10 +153,6 @@ SOURCE=.\RageUtil.cpp
 # Begin Source File
 
 SOURCE=.\RageUtil.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ReadMe.txt
 # End Source File
 # Begin Source File
 
@@ -201,22 +181,6 @@ SOURCE=.\smpackage.cpp
 # Begin Source File
 
 SOURCE=.\smpackage.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\res\smpackage.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\smpackage.ICO
-# End Source File
-# Begin Source File
-
-SOURCE=.\smpackage.rc
-# End Source File
-# Begin Source File
-
-SOURCE=.\res\smpackage.rc2
 # End Source File
 # Begin Source File
 
@@ -249,15 +213,56 @@ SOURCE=.\StdAfx.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\res\StepMania.ICO
-# End Source File
-# Begin Source File
-
 SOURCE=.\TreeCtrlEx.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\TreeCtrlEx.h
 # End Source File
+# End Group
+# Begin Group "Resources"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\converttheme.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\editmetrics.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\install.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\manage.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\menu.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\smpackage.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\smpackage.ICO
+# End Source File
+# Begin Source File
+
+SOURCE=.\smpackage.rc
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\smpackage.rc2
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\StepMania.ICO
+# End Source File
+# End Group
 # End Target
 # End Project
