@@ -1,3 +1,6 @@
+/* Handle and provide an interface to the sound driver.  Delete sounds that
+ * have been detached from their owner when they're finished playing.  Distribute Update
+ * calls to all sounds. */
 #include "stdafx.h"
 
 #include "RageSoundManager.h"
@@ -10,9 +13,9 @@
 #include "arch/arch.h"
 #include "arch/Sound/RageSoundDriver.h"
 
-RageSoundManager::RageSoundManager()
+RageSoundManager::RageSoundManager(CString drivers)
 {
-	driver = MakeRageSoundDriver();
+	driver = MakeRageSoundDriver(drivers);
 	if(!driver)
 		throw RageException("Couldn't find a sound driver that works");
 }
@@ -129,4 +132,78 @@ void RageSoundManager::PlayOnceFromDir( CString sDir )
 
 	int index = rand() % arraySoundFiles.size();
 	PlayOnce( sDir + arraySoundFiles[index] );
+}
+
+/* Standalone helpers: */
+/* The volume ranges from 0 - 128 */
+#define ADJUST_VOLUME(s, v)	(s = Sint16((s*v)/SDL_MIX_MAXVOLUME))
+
+/* Mix audio.  This is from SDL, but doesn't depend on the sound being
+ * initialized.  We need higher-quality mixing; that'll probably require
+ * having a 32-bit output buffer and another function to scale down to
+ * 16-bit.  I don't know how to do that, though, and I can't find any
+ * code; I don't even know how this is supposed to work (what should volume
+ * be to mix an arbitrary number of sounds with *equal* volume?), so XXX. */
+void RageSoundManager::MixAudio(Uint8 *dst, const Uint8 *src, Uint32 len, int volume)
+{
+	Uint16 format = AUDIO_S16SYS;
+
+	if ( volume == 0 )
+		return;
+
+	switch (format) {
+		case AUDIO_S16LSB: {
+			Sint16 src1, src2;
+			int dst_sample;
+			const int max_audioval = ((1<<(16-1))-1);
+			const int min_audioval = -(1<<(16-1));
+
+			len /= 2;
+			while ( len-- ) {
+				src1 = ((src[1])<<8|src[0]);
+				ADJUST_VOLUME(src1, volume);
+				src2 = ((dst[1])<<8|dst[0]);
+				src += 2;
+				dst_sample = src1+src2;
+				if ( dst_sample > max_audioval ) {
+					dst_sample = max_audioval;
+				} else
+				if ( dst_sample < min_audioval ) {
+					dst_sample = min_audioval;
+				}
+				dst[0] = Uint8(dst_sample&0xFF);
+				dst_sample >>= 8;
+				dst[1] = Uint8(dst_sample&0xFF);
+				dst += 2;
+			}
+		}
+		break;
+
+		case AUDIO_S16MSB: {
+			Sint16 src1, src2;
+			int dst_sample;
+			const int max_audioval = ((1<<(16-1))-1);
+			const int min_audioval = -(1<<(16-1));
+
+			len /= 2;
+			while ( len-- ) {
+				src1 = ((src[0])<<8|src[1]);
+				ADJUST_VOLUME(src1, volume);
+				src2 = ((dst[0])<<8|dst[1]);
+				src += 2;
+				dst_sample = src1+src2;
+				if ( dst_sample > max_audioval ) {
+					dst_sample = max_audioval;
+				} else
+				if ( dst_sample < min_audioval ) {
+					dst_sample = min_audioval;
+				}
+				dst[1] = Uint8(dst_sample&0xFF);
+				dst_sample >>= 8;
+				dst[0] = Uint8(dst_sample&0xFF);
+				dst += 2;
+			}
+		}
+		break;
+	}
 }

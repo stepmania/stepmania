@@ -25,7 +25,7 @@ class RageSoundManager
 public:
 	RageMutex lock;
 
-	RageSoundManager();
+	RageSoundManager(CString drivers);
 	~RageSoundManager();
 
 	void Update(float delta);
@@ -43,6 +43,8 @@ public:
 	/* A list of all sounds that currently exist.  RageSound adds and removes
 	 * itself to this. */
 	set<RageSound *> all_sounds;
+
+	static void MixAudio(Uint8 *dst, const Uint8 *src, Uint32 len, int volume);
 };
 
 extern RageSoundManager *SOUNDMAN;
