@@ -21,7 +21,11 @@ private:
 	T			m_currentValue;
 
 public:
-	ThemeMetric( const CString& sGroup, const CString& sName ):
+	/* Initializing with no group and name is allowed; if you do this, you must
+	 * call Load() to set them.  This is done to allow initializing cached metrics
+	 * in one place for classes that don't receive their m_sName in the constructor
+	 * (everything except screens). */
+	ThemeMetric( const CString& sGroup = "", const CString& sName = "" ):
 		m_sGroup( sGroup ),
 		m_sName( sName )
 	{
@@ -34,6 +38,13 @@ public:
 		ThemeManager::Unsubscribe( this );
 	}
 
+	void Load( const CString &sGroup, const CString& sName )
+	{
+		m_sGroup = sGroup;
+		m_sName = sName;
+		Read();
+	}
+
 	void ChangeGroup( const CString &sGroup )
 	{
 		m_sGroup = sGroup;
@@ -42,11 +53,14 @@ public:
 
 	void Read()
 	{
-		THEME->GetMetric( m_sGroup, m_sName, m_currentValue );
+		if( m_sName != "" )
+			THEME->GetMetric( m_sGroup, m_sName, m_currentValue );
 	}
 
 	const T& GetValue() const
 	{
+		ASSERT( m_sName != "" );
+
 		return m_currentValue;
 	}
 	
