@@ -27,7 +27,7 @@ void HandleFile(const CString& file, const CString& dir, const CString& archiveP
 {
     static bool archiveMade = false;
     char path[] = "/usr/bin/tar";
-    char arg1[] = "-rf";
+    char arg1[] = "-rvf";
     char arg2[archivePath.length() + 1];
     char arg3[] = "-C";
     char arg4[dir.length() + 1];
@@ -43,8 +43,16 @@ void HandleFile(const CString& file, const CString& dir, const CString& archiveP
     strcpy(arg4, dir);
     strcpy(arg5, file);
 
-    if (CallTool(path, arg1, arg2, arg3, arg4, arg5, NULL))
+    /*if (CallTool(path, arg1, arg2, arg3, arg4, arg5, NULL))
+        exit(-10);*/
+    int r;
+    if ((r = CallTool2(true, -1, -1, -1, path, arg1, arg2, arg3, arg4,
+                       arg5, NULL)) != 0)
+    {
+        fprintf(stderr, "%s %s %s %s %s %s returned %d\n",
+                path, arg1, arg2, arg3, arg4, arg5, r);
         exit(-10);
+    }
 }
 
 const CString GetPath(const CString& ID)

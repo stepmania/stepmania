@@ -82,6 +82,9 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
 
     split(line, ":", parts);
     nextLine++;
+	
+	if (parts.size() == 0)
+		return;
 
 #pragma mark LABEL
     if (parts[0] == "LABEL")

@@ -36,7 +36,7 @@ bool IsADirectory(const CString& path)
     struct stat s;
     if (stat(path, &s))
         return false;
-    return s.st_mode & S_IFDIR;
+    return (s.st_mode & S_IFDIR) && !(s.st_mode & S_IFLNK);
 }
 
 bool DoesFileExist(const CString& path)
@@ -128,22 +128,24 @@ int CallTool3(bool blocking, int fd_in, int fd_out, int fd_err, const char *path
         case -1: /* error */
             _exit(-1);
         case 0: /* child */
-            if (fd_in > -1)
+            if (fd_in > -1 && fd_in != 0)
+			{
                 dup2(fd_in, 0);
+				close(fd_in);
+			}
             
-            if (fd_out > -1)
+            if (fd_out > -1 && fd_in != 1)
+			{
                 dup2(fd_out, 1);
+				close(fd_out);
+			}
                 
-            if (fd_err > -1)
+            if (fd_err > -1 && fd_in != 2)
+			{
                 dup2(fd_err, 2);
+				close(fd_err);
+			}
                 
-            if (fd_err != fd_in && fd_err != fd_out)
-                close(fd_err);
-                
-            if (fd_out != fd_in)
-                close(fd_out);
-                
-            close(fd_in);
             execv(path, arguments);
             _exit(-1);
     }
@@ -151,8 +153,9 @@ int CallTool3(bool blocking, int fd_in, int fd_out, int fd_err, const char *path
     if (!blocking)
         return 0;
 
-    int status;
+    int status, returnStatus;
 
     waitpid(pid, &status, 0);
-    return WEXITSTATUS(status);
+	returnStatus = WEXITSTATUS(status);
+    return returnStatus;
 }
