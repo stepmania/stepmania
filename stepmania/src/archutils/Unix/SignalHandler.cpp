@@ -3,6 +3,7 @@
 #include "RageLog.h"
 #include "SignalHandler.h"
 #include "GetSysInfo.h"
+#include "StepMania.h"
 
 #include <unistd.h>
 #include <sys/mman.h>
@@ -35,7 +36,7 @@ SaveSignals::SaveSignals()
 	{
 		struct sigaction sa;
 		sigaction(signals[i], NULL, &sa);
-        old_handlers.push_back(sa);
+		old_handlers.push_back(sa);
 	}
 }
 
@@ -48,6 +49,13 @@ SaveSignals::~SaveSignals()
 
 static void SigHandler(int sig)
 {
+	if( sig == SIGINT || sig == SIGQUIT )
+	{
+		/* ^C. */
+		ExitGame();
+		return;
+	}
+	
 	for(unsigned i = 0; i < handlers.size(); ++i)
 		handlers[i](sig);
 
