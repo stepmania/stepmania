@@ -81,6 +81,8 @@ RageSound_QT1::RageSound_QT1()
 
     if (err != noErr)
         RageException::ThrowNonfatal("Unable to create audio channel");
+
+    StartDecodeThread();
 }
 
 RageSound_QT1::~RageSound_QT1()
