@@ -1226,6 +1226,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	switch( GAMESTATE->m_SongOptions.m_FailType )
 	{
 	case SongOptions::FAIL_OFF:
+		// don't allow fail
 		break;
 	default:
 		// check for individual fail
