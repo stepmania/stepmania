@@ -102,10 +102,10 @@ void ScreenManager::Update( float fDeltaTime )
 		 *
 		 * So, let's just drop the first update for every screen.
 		 */
-		if(m_ScreenStack[i]->FirstUpdate())
-			continue;
-
-		m_ScreenStack[i]->Update( fDeltaTime );
+		if( m_ScreenStack[i]->IsFirstUpdate() )
+			m_ScreenStack[i]->Update( 0 );
+		else
+			m_ScreenStack[i]->Update( fDeltaTime );
 	}
 
 }
@@ -197,6 +197,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenLogo.h"
 #include "ScreenUnlock.h"
 #include "ScreenDemonstration.h"
+#include "ScreenInstructions.h"
 #include "ScreenPrompt.h"
 #include "ScreenTextEntry.h"
 
@@ -243,6 +244,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenLogo") )				ret = new ScreenLogo;
 	else if( 0==stricmp(sClassName, "ScreenUnlock") )			ret = new ScreenUnlock;
 	else if( 0==stricmp(sClassName, "ScreenDemonstration") )	ret = new ScreenDemonstration;
+	else if( 0==stricmp(sClassName, "ScreenInstructions") )		ret = new ScreenInstructions;
 	else
 		RageException::Throw( "Invalid Screen class name '%s'", sClassName.GetString() );
 

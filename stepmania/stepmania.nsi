@@ -7,8 +7,8 @@
 ; NOTE: this .NSI script is designed for NSIS v1.8+
 
 Name "StepMania"
-OutFile "stepmania310.exe"
-!define PRODUCT_NAME "StepMania 3.1"
+OutFile "stepmania301.exe"
+!define PRODUCT_NAME "StepMania 3.01"
 
 
 ; Some default compiler settings (uncomment and change at will):

@@ -623,38 +623,12 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, cons
 	}
 }
 
-/* Pick a random song (for the demonstration). */
-bool SongManager::ChooseRandomSong()
+Song* SongManager::GetRandomSong()
 {
-	if( SONGMAN->m_pSongs.empty() )
-		return false;
+	if( m_pSongs.empty() )
+		return NULL;
 
-	int i;
-	for( i=0; i<600; i++ )	// try 600 times
-	{
-		Song* pSong = m_pSongs[ rand()%m_pSongs.size() ];
-
-		if( pSong->m_apNotes.empty() )
-			continue;	// skip
-		
-		if( !pSong->HasMusic() )
-			continue;	// skip
-
-		for( int j=0; j<3; j++ )	// try 3 times
-		{
-			Notes* pNotes = pSong->m_apNotes[ rand()%pSong->m_apNotes.size() ];
-			if( pNotes->m_NotesType != GAMESTATE->GetCurrentStyleDef()->m_NotesType )
-				continue;
-
-			// found something we can use!
-			GAMESTATE->m_pCurSong = pSong;
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				GAMESTATE->m_pCurNotes[p] = pNotes;
-			return true;
-		}
-	}
-
-	return false;
+	return SONGMAN->m_pSongs[ rand()%m_pSongs.size() ];
 }
 
 Song* SongManager::GetSongFromDir( CString sDir )

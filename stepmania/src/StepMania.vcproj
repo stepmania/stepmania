@@ -193,6 +193,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenCaution.h">
 			</File>
 			<File
+				RelativePath="ScreenDemonstration.cpp">
+			</File>
+			<File
+				RelativePath="ScreenDemonstration.h">
+			</File>
+			<File
 				RelativePath="ScreenDimensions.h">
 			</File>
 			<File

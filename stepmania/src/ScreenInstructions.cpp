@@ -37,8 +37,8 @@ ScreenInstructions::ScreenInstructions()
 	LOG->Trace( "ScreenInstructions::ScreenInstructions()" );
 
 	m_Menu.Load(
-		THEME->GetPathTo("BGAnimations","How To Play"), 
-		THEME->GetPathTo("Graphics","How To Play Top Edge"), 
+		THEME->GetPathTo("BGAnimations","Instructions"), 
+		THEME->GetPathTo("Graphics","Instructions Top Edge"), 
 		HELP_TEXT, false, true, TIMER_SECONDS
 		);
 	this->AddChild( &m_Menu );
@@ -56,13 +56,13 @@ ScreenInstructions::ScreenInstructions()
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-		sHowToPlayPath = THEME->GetPathTo("Graphics","how to play arcade");
+		sHowToPlayPath = THEME->GetPathTo("Graphics","instructions arcade");
 		break;
 	case PLAY_MODE_ENDLESS:
-		sHowToPlayPath = THEME->GetPathTo("Graphics","how to play endless");
+		sHowToPlayPath = THEME->GetPathTo("Graphics","instructions endless");
 		break;
 	case PLAY_MODE_ONI:
-		sHowToPlayPath = THEME->GetPathTo("Graphics","how to play oni");
+		sHowToPlayPath = THEME->GetPathTo("Graphics","instructions oni");
 		break;
 	default:
 		ASSERT(0);
@@ -77,7 +77,7 @@ ScreenInstructions::ScreenInstructions()
 	m_sprHowToPlay.BeginTweening( 0.6f, Actor::TWEEN_BIAS_BEGIN );
 	m_sprHowToPlay.SetTweenX( CENTER_X );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","how to play music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","instructions music") );
 }
 
 ScreenInstructions::~ScreenInstructions()
@@ -96,7 +96,7 @@ void ScreenInstructions::DrawPrimitives()
 {
 	m_Menu.DrawBottomLayer();
 	m_Menu.DrawTopLayer();
-	Screen::DrawPrimitives();	// draw How To Play graphic on top of all the others!
+	Screen::DrawPrimitives();	// draw instructions graphic on top of all the others!
 }
 
 void ScreenInstructions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )

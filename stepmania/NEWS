@@ -1,4 +1,6 @@
 ----------------------- Version 3.01 ---------------------------
+NEW FEATURE: New High Score screen
+NEW FEATURE: Full "attract" sequence
 NEW FEATURE: .SM files can now contain UTF-8 text.
 NEW FEATURE: New alignment tags for bitmap fonts.
 NEW FEATURE: Bitmap fonts now support full Unicode mapping.

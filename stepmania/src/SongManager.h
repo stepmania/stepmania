@@ -62,9 +62,7 @@ public:
 	void GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, const StyleDef *s, 
 		Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );
 
-	/* Choose a random song from the current style.  Return true
-	 * if successful, false if no song could be found. */
-	bool ChooseRandomSong();
+	Song* GetRandomSong();
 
 	Song* GetSongFromDir( CString sDir );
 

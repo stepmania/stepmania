@@ -37,33 +37,6 @@ const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User+3);
 ScreenAttract::ScreenAttract()
 {
 	LOG->Trace( "ScreenAttract::ScreenAttract()" );
-
-	m_bFirstUpdate = true;
-
-	//
-	// I think it's better to do all the initialization here rather than have it scattered
-	// about in all the global singleton classes
-	//
-	GAMESTATE->Reset();
-	PREFSMAN->ReadGamePrefsFromDisk();
-	INPUTMAPPER->ReadMappingsFromDisk();
-	GAMESTATE->m_bPlayersCanJoin = true;
-
-	if( !GAMEMAN->DoesNoteSkinExist( GAMEMAN->GetCurNoteSkin() ) )
-	{
-		CStringArray asNoteSkinNames;
-		GAMEMAN->GetNoteSkinNames( asNoteSkinNames );
-		GAMEMAN->SwitchNoteSkin( asNoteSkinNames[0] );
-	}
-	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
-	{
-		CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
-		if( THEME->DoesThemeExist( sGameName ) )
-			THEME->SwitchTheme( sGameName );
-		else
-			THEME->SwitchTheme( "default" );
-	}
-	PREFSMAN->SaveGamePrefsToDisk();
 }
 
 
@@ -77,36 +50,59 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 {
 //	LOG->Trace( "ScreenAttract::Input()" );
 
+	if(type != IET_FIRST_PRESS) return; // don't care
+
 	if( m_Fade.IsClosing() )
 		return;
 
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+	if( MenuI.IsValid() )
+	{
+		switch( MenuI.button )
+		{
+		case MENU_BUTTON_LEFT:
+		case MENU_BUTTON_RIGHT:
+			m_Fade.CloseWipingRight( SM_GoToNextScreen );
+			break;
+		case MENU_BUTTON_START:
+			GAMESTATE->m_bSideIsJoined[MenuI.player] = true;
+			GAMESTATE->m_MasterPlayerNumber = MenuI.player;
+			GAMESTATE->m_bPlayersCanJoin = false;
+
+			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
+			::Sleep( 1000 );	// do a little pause, like the arcade does
+			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+			break;
+		case MENU_BUTTON_BACK:
+			Exit();
+			break;
+		}
+	}
+
+//	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+}
+
+void ScreenAttract::FirstUpdate()
+{
+	// We have to do initialization in the first update because this->GetElementName() won't
+	// work until the object has been fully constructed.
+	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",this->GetElementName()) );
+	this->AddChild( &m_Background );
+
+	m_Fade.SetClosed();
+	m_Fade.OpenWipingRight( SM_None );
+	this->AddChild( &m_Fade );
+
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(this->GetElementName()) );
+
+	m_soundStart.Load( THEME->GetPathTo("Sounds","menu start") );
+
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds",this->GetElementName() + " music") );
+
+	this->SendScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );
 }
 
 void ScreenAttract::Update( float fDelta )
 {
-	// We have to do initialization in the first update because this->GetElementName() won't
-	// work until the object has been fully constructed.
-	if( m_bFirstUpdate )
-	{
-		m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",this->GetElementName()) );
-		this->AddChild( &m_Background );
-
-		m_Fade.SetClosed();
-		m_Fade.OpenWipingRight( SM_None );
-		this->AddChild( &m_Fade );
-
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(this->GetElementName()) );
-
-		m_soundStart.Load( THEME->GetPathTo("Sounds","menu start") );
-
-		SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds",this->GetElementName() + " music") );
-
-		this->SendScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );
-
-		m_bFirstUpdate = false;
-	}
-
 	Screen::Update(fDelta);
 }
 
@@ -115,21 +111,11 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_BeginFadingOut:
-		m_Fade.CloseWipingRight( SM_GoToNextScreen );
+		if( !m_Fade.IsClosing() )
+			m_Fade.CloseWipingRight( SM_GoToNextScreen );
 		break;
 	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
-}
-
-void ScreenAttract::MenuStart( PlayerNumber pn )
-{	
-	GAMESTATE->m_bSideIsJoined[pn] = true;
-	GAMESTATE->m_MasterPlayerNumber = pn;
-	GAMESTATE->m_bPlayersCanJoin = false;
-
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
-	::Sleep( 1000 );	// do a little pause, like the arcade does
-	SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 }

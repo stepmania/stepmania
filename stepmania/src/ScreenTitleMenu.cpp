@@ -58,46 +58,18 @@ const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 #define COLOR_SELECTED					THEME->GetMetricC("ScreenTitleMenu","ColorSelected")
 #define ZOOM_NOT_SELECTED				THEME->GetMetricF("ScreenTitleMenu","ZoomNotSelected")
 #define ZOOM_SELECTED					THEME->GetMetricF("ScreenTitleMenu","ZoomSelected")
-#define SECONDS_BEFORE_DEMONSTRATION	THEME->GetMetricF("ScreenTitleMenu","SecondsBeforeDemonstration")
 #define SECONDS_BETWEEN_ATTRACT			THEME->GetMetricF("ScreenTitleMenu","SecondsBetweenAttract")
 #define HELP_TEXT						THEME->GetMetric("ScreenTitleMenu","HelpText")
 #define NEXT_SCREEN						THEME->GetMetric("ScreenTitleMenu","NextScreen")
 
 const ScreenMessage SM_PlayAttract			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+12);
-const ScreenMessage SM_GoToDemonstration	=	ScreenMessage(SM_User+13);
+const ScreenMessage SM_GoToAttractLoop		=	ScreenMessage(SM_User+13);
 
 
 ScreenTitleMenu::ScreenTitleMenu()
 {
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
-
-	//
-	// I think it's better to do all the initialization here rather than have it scattered
-	// about in all the global singleton classes
-	//
-	GAMESTATE->Reset();
-	PREFSMAN->ReadGamePrefsFromDisk();
-	INPUTMAPPER->ReadMappingsFromDisk();
-	GAMESTATE->m_bPlayersCanJoin = true;
-
-	if( !GAMEMAN->DoesNoteSkinExist( GAMEMAN->GetCurNoteSkin() ) )
-	{
-		CStringArray asNoteSkinNames;
-		GAMEMAN->GetNoteSkinNames( asNoteSkinNames );
-		GAMEMAN->SwitchNoteSkin( asNoteSkinNames[0] );
-	}
-	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
-	{
-		CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
-		if( THEME->DoesThemeExist( sGameName ) )
-			THEME->SwitchTheme( sGameName );
-		else
-			THEME->SwitchTheme( "default" );
-	}
-	PREFSMAN->SaveGamePrefsToDisk();
-
-
 
 	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","title menu") );
 	this->AddChild( &m_Background );
@@ -190,79 +162,14 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	if( m_Fade.IsClosing() )
 		return;
 
-	/* Reset the demonstration timer when a key is pressed. */
-	TimeToDemonstration.GetDeltaTime();
-
-	if(DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F1 && type == IET_FIRST_PRESS)
-	{
-		FadeToDemonstration();
-		return;
-	}
-
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 void ScreenTitleMenu::Update( float fDelta )
 {
-	if(TimeToDemonstration.PeekDeltaTime() >= SECONDS_BEFORE_DEMONSTRATION)
-	{
-		FadeToDemonstration();
-		TimeToDemonstration.GetDeltaTime();
-	}
 	Screen::Update(fDelta);
 }
 
-void ScreenTitleMenu::FadeToDemonstration()
-{
-	// Set up the game state for a demonstration
-	switch( GAMESTATE->m_CurGame )
-	{
-	case GAME_DANCE:	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;			break; 
-	case GAME_PUMP:		GAMESTATE->m_CurStyle = STYLE_PUMP_VERSUS;			break; 
-	case GAME_EZ2:		GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	break; 
-	case GAME_PARA:		GAMESTATE->m_CurStyle = STYLE_PARA_SINGLE;			break; 
-	case GAME_DS3DDX:	GAMESTATE->m_CurStyle = STYLE_DS3DDX_SINGLE;		break;
-	case GAME_BM:	GAMESTATE->m_CurStyle = STYLE_BM_SINGLE;				break;
-	default:	ASSERT(0);
-	}
-
-	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
-
-	if(!SONGMAN->ChooseRandomSong())
-	{
-		// Couldn't find Song/Notes to play.  Abort demonstration!
-		GAMESTATE->Reset();
-		return;
-	}
-
-	ASSERT( GAMESTATE->m_pCurSong );
-
-	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-
-	// choose some cool options
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-
-		if( RandomFloat(0,1)>0.8f )
-			GAMESTATE->m_PlayerOptions[p].m_fArrowScrollSpeed = 1.5f;
-		GAMESTATE->m_PlayerOptions[p].m_bEffects[ rand()%PlayerOptions::NUM_EFFECT_TYPES ] = true;
-		if( RandomFloat(0,1)>0.9f )
-			GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_HIDDEN;
-		if( RandomFloat(0,1)>0.9f )
-			GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_SUDDEN;
-		if( RandomFloat(0,1)>0.7f )
-			GAMESTATE->m_PlayerOptions[p].m_bReverseScroll = true;
-		if( RandomFloat(0,1)>0.8f )
-			GAMESTATE->m_PlayerOptions[p].m_bDark = true;
-	}
-	GAMESTATE->m_SongOptions.m_LifeType = (randomf(0,1)>0.8f) ? SongOptions::LIFE_BATTERY : SongOptions::LIFE_BAR;
-	GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
-
-	GAMESTATE->m_bDemonstration = true;
-	m_Fade.CloseWipingRight( SM_GoToDemonstration );
-}
 
 void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 {
@@ -310,11 +217,8 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 			break;
 		}
 		break;
-	case SM_GoToDemonstration:
-		{
-			ASSERT( GAMESTATE->m_pCurSong );
-			SCREENMAN->SetNewScreen( "ScreenGameplay" );
-		}
+	case SM_GoToAttractLoop:
+		SCREENMAN->SetNewScreen( "ScreenCompany" );
 		break;
 	}
 }
@@ -406,11 +310,7 @@ void ScreenTitleMenu::MenuStart( PlayerNumber pn )
 		break;
 	case CHOICE_EXIT: {
 		m_soundSelect.PlayRandom();
-
-		SDL_Event *event;
-		event = (SDL_Event *) malloc(sizeof(event));
-		event->type = SDL_QUIT;
-		SDL_PushEvent(event);
+		Exit();
 		LOG->Trace("CHOICE_EXIT: shutting down");
 		}
 		return;
@@ -420,13 +320,7 @@ void ScreenTitleMenu::MenuStart( PlayerNumber pn )
 }
 
 void ScreenTitleMenu::MenuBack( PlayerNumber pn )
-{	
-	if(m_TitleMenuChoice == CHOICE_EXIT)
-		return;
-
-	LoseFocus( m_TitleMenuChoice );
-	m_TitleMenuChoice = CHOICE_EXIT;
-	m_soundChange.PlayRandom();
-	GainFocus( m_TitleMenuChoice );
+{
+	this->m_Fade.CloseWipingRight( SM_GoToAttractLoop );
 }
 

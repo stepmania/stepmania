@@ -18,6 +18,7 @@
 #include "GameState.h"
 #include "InputMapper.h"
 #include "ThemeManager.h"
+#include "StepMania.h"
 
 
 enum {
@@ -100,12 +101,12 @@ void ScreenSelectGame::ExportOptions()
 
 void ScreenSelectGame::GoToPrevState()
 {
-	SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+	Reset();
 }
 
 void ScreenSelectGame::GoToNextState()
 {
-	SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+	Reset();
 }
 
 

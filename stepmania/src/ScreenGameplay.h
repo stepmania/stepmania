@@ -1,3 +1,5 @@
+#ifndef SCREENGAMEPLAY_H
+#define SCREENGAMEPLAY_H
 /*
 -----------------------------------------------------------------------------
  Class: ScreenGameplay
@@ -47,15 +49,16 @@ const ScreenMessage	SM_ComboStopped				= ScreenMessage(SM_User+210);
 class ScreenGameplay : public Screen
 {
 public:
-	ScreenGameplay();
+	ScreenGameplay( bool bLoadSounds = true );
 	virtual ~ScreenGameplay();
+	virtual void FirstUpdate();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 
-private:
+protected:
 	void TweenOnScreen();
 	void TweenOffScreen();
 
@@ -66,7 +69,7 @@ private:
 	bool AllAreInDanger();
 	bool AllAreFailing();
 	bool AllFailedEarlier();
-	bool PlayTicks() const;
+	bool IsTimeToPlayTicks() const;
 
 	enum DancingState { 
 		STATE_INTRO = 0, // not allowed to press Back
@@ -123,9 +126,6 @@ private:
 
 	Sprite				m_sprToasty;	// easter egg
 
-	Sprite				m_sprDemonstrationOverlay;
-	Sprite				m_sprDemonstrationBlink;
-
 	RandomSample	m_soundFail;
 	RandomSample	m_soundOniDie;
 	RandomSample	m_soundTryExtraStage;
@@ -156,4 +156,4 @@ private:
 };
 
 
-
+#endif

@@ -20,6 +20,8 @@
 
 Actor::Actor()
 {
+	m_bFirstUpdate = true;
+
 	m_iNumTweenStates = 0;
 
 	m_size = RageVector2( 1, 1 );
@@ -198,9 +200,25 @@ void Actor::UpdateTweening( float fDeltaTime )
 	}
 }
 
+bool Actor::IsFirstUpdate()
+{
+	return m_bFirstUpdate;
+}
+
+void Actor::FirstUpdate()
+{
+	
+}
+
 void Actor::Update( float fDeltaTime )
 {
 //	LOG->Trace( "Actor::Update( %f )", fDeltaTime );
+
+	if( m_bFirstUpdate )
+	{
+		this->FirstUpdate();
+		m_bFirstUpdate = false;
+	}
 
 	// update effect
 	switch( m_Effect )

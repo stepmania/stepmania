@@ -78,6 +78,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"MenuRight",
 			"MenuUp",
 			"MenuDown",
+			"Insert Coin",
 		},
 		{	// m_szSecondaryFunction
 			"(MenuLeft)",
@@ -92,6 +93,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"(dedicated)",
 			"(dedicated)",
 			"(dedicated)",
+			"",
 		},
 		{	// m_DedicatedMenuButton
 			DANCE_BUTTON_MENULEFT,	// MENU_BUTTON_LEFT
@@ -100,6 +102,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			DANCE_BUTTON_MENUDOWN,	// MENU_BUTTON_DOWN
 			DANCE_BUTTON_START,		// MENU_BUTTON_START
 			DANCE_BUTTON_BACK,		// MENU_BUTTON_BACK
+			DANCE_BUTTON_INSERTCOIN,// MENU_BUTTON_INSERTCOIN
 		},
 		{	// m_SecondaryMenuButton
 			DANCE_BUTTON_LEFT,		// MENU_BUTTON_LEFT
@@ -108,6 +111,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			DANCE_BUTTON_DOWN,		// MENU_BUTTON_DOWN
 			DANCE_BUTTON_START,		// MENU_BUTTON_START
 			DANCE_BUTTON_BACK,		// MENU_BUTTON_BACK
+			DANCE_BUTTON_INSERTCOIN,// MENU_BUTTON_INSERTCOIN
 		},
 		{	// m_iDefaultKeyboardKey
 			{	// PLAYER_1
@@ -123,6 +127,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				-1, //no default key	// DANCE_BUTTON_MENURIGHT
 				SDLK_UP,					// DANCE_BUTTON_MENUUP
 				SDLK_DOWN,				// DANCE_BUTTON_MENUDOWN
+				SDLK_F1,				// DANCE_BUTTON_INSERTCOIN
 			},
 			{	// PLAYER_2
 				SDLK_KP4,			// DANCE_BUTTON_LEFT,
@@ -137,6 +142,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				-1, //no default key	// DANCE_BUTTON_MENURIGHT
 				-1, //no default key	// DANCE_BUTTON_MENUUP
 				-1, //no default key	// DANCE_BUTTON_MENUDOWN
+				SDLK_F2,				// DANCE_BUTTON_INSERTCOIN
 			},
 		}
 	},
@@ -157,6 +163,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"MenuRight",
 			"MenuUp",
 			"MenuDown",
+			"Insert Coin",
 		},
 		{	// m_szSecondaryFunction
 			"(MenuUp)",
@@ -170,6 +177,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"(dedicated)",
 			"(dedicated)",
 			"(dedicated)",
+			"",
 		},
 		{	// m_DedicatedMenuButton
 			PUMP_BUTTON_MENULEFT,	// MENU_BUTTON_LEFT
@@ -178,6 +186,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			PUMP_BUTTON_MENUDOWN,	// MENU_BUTTON_DOWN
 			PUMP_BUTTON_START,		// MENU_BUTTON_START
 			PUMP_BUTTON_BACK,		// MENU_BUTTON_BACK
+			PUMP_BUTTON_INSERTCOIN,// MENU_BUTTON_INSERTCOIN
 		},
 		{	// m_SecondaryMenuButton
 			PUMP_BUTTON_DOWNLEFT,		// MENU_BUTTON_LEFT
@@ -186,6 +195,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			PUMP_BUTTON_UPRIGHT,	// MENU_BUTTON_DOWN
 			PUMP_BUTTON_CENTER,		// MENU_BUTTON_START
 			PUMP_BUTTON_BACK,		// MENU_BUTTON_BACK
+			PUMP_BUTTON_INSERTCOIN,// MENU_BUTTON_INSERTCOIN
 		},
 		{	// m_iDefaultKeyboardKey
 			{	// PLAYER_1
@@ -200,6 +210,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				SDLK_RIGHT,				// PUMP_BUTTON_MENURIGHT
 				SDLK_UP,					// PUMP_BUTTON_MENUUP
 				SDLK_DOWN,				// PUMP_BUTTON_MENUDOWN
+				SDLK_F1,				// PUMP_BUTTON_INSERTCOIN
 			},
 			{	// PLAYER_2
 				SDLK_KP7,			// PUMP_BUTTON_UPLEFT,
@@ -213,6 +224,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				-1, //no default key	// PUMP_BUTTON_MENURIGHT
 				-1, //no default key	// PUMP_BUTTON_MENUUP
 				-1, //no default key	// PUMP_BUTTON_MENUDOWN
+				SDLK_F2,				// PUMP_BUTTON_INSERTCOIN
 			},
 		}
 	},
@@ -235,6 +247,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"MenuRight",
 			"MenuUp",
 			"MenuDown",
+			"Insert Coin",
 		},
 		{	// m_szSecondaryFunction
 			"(MenuUp)",
@@ -250,6 +263,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"(dedicated)",
 			"(dedicated)",
 			"(dedicated)",
+			"",
 		},
 		{	// m_DedicatedMenuButton
 			EZ2_BUTTON_MENULEFT,	// MENU_BUTTON_LEFT
@@ -258,6 +272,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			EZ2_BUTTON_MENUDOWN,	// MENU_BUTTON_DOWN
 			EZ2_BUTTON_START,		// MENU_BUTTON_START
 			EZ2_BUTTON_BACK,		// MENU_BUTTON_BACK
+			EZ2_BUTTON_INSERTCOIN,	// MENU_BUTTON_INSERTCOIN
 		},
 		{	// m_SecondaryMenuButton
 			EZ2_BUTTON_HANDUPLEFT,	// MENU_BUTTON_LEFT
@@ -266,6 +281,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			EZ2_BUTTON_FOOTUPRIGHT,	// MENU_BUTTON_DOWN
 			EZ2_BUTTON_FOOTDOWN,	// MENU_BUTTON_START
 			EZ2_BUTTON_BACK,		// MENU_BUTTON_BACK
+			EZ2_BUTTON_INSERTCOIN,	// MENU_BUTTON_INSERTCOIN
 		},
 		{	// m_iDefaultKeyboardKey
 			{	// PLAYER_1
@@ -282,6 +298,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				SDLK_RIGHT,				// EZ2_BUTTON_MENURIGHT
 				SDLK_UP,					// EZ2_BUTTON_MENUUP
 				SDLK_DOWN,				// EZ2_BUTTON_MENUDOWN
+				SDLK_F1,				// EZ2_BUTTON_INSERTCOIN
 			},
 			{	// PLAYER_2
 				-1,						// EZ2_BUTTON_FOOTUPLEFT,
@@ -297,6 +314,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				-1, //no default key	// EZ2_BUTTON_MENURIGHT
 				-1, //no default key	// EZ2_BUTTON_MENUUP
 				-1, //no default key	// EZ2_BUTTON_MENUDOWN
+				SDLK_F2,				// EZ2_BUTTON_INSERTCOIN
 			},
 		},
 	},
@@ -317,6 +335,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"MenuRight",
 			"MenuUp",
 			"MenuDown",
+			"Insert Coin",
 		},
 		{	// m_szSecondaryFunction
 			"(MenuLeft)",
@@ -330,6 +349,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"(dedicated)",
 			"(dedicated)",
 			"(dedicated)",
+			"",
 		},
 		{	// m_DedicatedMenuButton
 			PARA_BUTTON_MENULEFT,	// MENU_BUTTON_LEFT
@@ -338,6 +358,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			PARA_BUTTON_MENUDOWN,	// MENU_BUTTON_DOWN
 			PARA_BUTTON_START,		// MENU_BUTTON_START
 			PARA_BUTTON_BACK,		// MENU_BUTTON_BACK
+			PARA_BUTTON_INSERTCOIN,// MENU_BUTTON_INSERTCOIN
 		},
 		{	// m_SecondaryMenuButton
 			PARA_BUTTON_LEFT,		// MENU_BUTTON_LEFT
@@ -346,6 +367,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			PARA_BUTTON_UPLEFT,		// MENU_BUTTON_DOWN
 			PARA_BUTTON_START,		// MENU_BUTTON_START
 			PARA_BUTTON_BACK,		// MENU_BUTTON_BACK
+			PARA_BUTTON_INSERTCOIN,// MENU_BUTTON_INSERTCOIN
 		},
 		{	// m_iDefaultKeyboardKey
 			{	// PLAYER_1
@@ -360,6 +382,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				SDLK_RIGHT, //no default key	// PARA_BUTTON_MENURIGHT
 				SDLK_UP,					// PARA_BUTTON_MENUUP
 				SDLK_DOWN,				// PARA_BUTTON_MENUDOWN
+				SDLK_F1,				// PARA_BUTTON_INSERTCOIN
 			},
 			{	// PLAYER_2
 				-1,					// PARA_BUTTON_LEFT,
@@ -373,6 +396,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				-1, //no default key	// PARA_BUTTON_MENURIGHT
 				-1,					// PARA_BUTTON_MENUUP
 				-1,
+				-1,					// PARA_BUTTON_INSERTCOIN
 			},
 		}
 	},
@@ -396,6 +420,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"MenuRight",
 			"MenuUp",
 			"MenuDown",
+			"Insert Coin",
 		},
 		{	// m_szSecondaryFunction
 			"(MenuLeft)",
@@ -412,6 +437,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"(dedicated)",
 			"(dedicated)",
 			"(dedicated)",
+			"",
 		},
 		{	// m_DedicatedMenuButton
 			DS3DDX_BUTTON_MENULEFT,	// MENU_BUTTON_LEFT
@@ -420,6 +446,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			DS3DDX_BUTTON_MENUDOWN,	// MENU_BUTTON_DOWN
 			DS3DDX_BUTTON_START,		// MENU_BUTTON_START
 			DS3DDX_BUTTON_BACK,		// MENU_BUTTON_BACK
+			DS3DDX_BUTTON_INSERTCOIN,// MENU_BUTTON_INSERTCOIN
 		},
 		{	// m_SecondaryMenuButton
 			DS3DDX_BUTTON_HANDLEFT,		// MENU_BUTTON_LEFT
@@ -428,6 +455,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			DS3DDX_BUTTON_HANDDOWN,		// MENU_BUTTON_DOWN
 			DS3DDX_BUTTON_START,		// MENU_BUTTON_START
 			DS3DDX_BUTTON_BACK,		// MENU_BUTTON_BACK
+			DS3DDX_BUTTON_INSERTCOIN,// MENU_BUTTON_INSERTCOIN
 		},
 		{	// m_iDefaultKeyboardKey
 			{	// PLAYER_1
@@ -445,6 +473,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				SDLK_RIGHT, //no default key	// DS3DDX_BUTTON_MENURIGHT
 				SDLK_UP,					// DS3DDX_BUTTON_MENUUP
 				SDLK_DOWN,				// DS3DDX_BUTTON_MENUDOWN
+				SDLK_F1,				// DS3DDX_BUTTON_INSERTCOIN
 			},
 			{	// PLAYER_2
 				-1,					// DS3DDX_BUTTON_HANDLEFT,
@@ -461,6 +490,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				-1, //no default key	// DS3DDX_BUTTON_MENURIGHT
 				-1,					// DS3DDX_BUTTON_MENUUP
 				-1,				// DS3DDX_BUTTON_MENUDOWN
+				-1,				// DS3DDX_BUTTON_INSERTCOIN
 			},
 		}
 	},
@@ -485,6 +515,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"MenuRight",
 			"MenuUp",
 			"MenuDown",
+			"Insert Coin",
 		},
 		{	// m_szSecondaryFunction
 			"(MenuLeft)",
@@ -503,6 +534,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"(dedicated)",
 			"(dedicated)",
 			"(dedicated)",
+			"",
 		},
 		{	// m_DedicatedMenuButton
 			BM_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
@@ -511,6 +543,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			BM_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
 			BM_BUTTON_START,		// MENU_BUTTON_START
 			BM_BUTTON_SELECT,		// MENU_BUTTON_BACK
+			BM_BUTTON_INSERTCOIN,// MENU_BUTTON_INSERTCOIN
 		},
 		{	// m_SecondaryMenuButton
 			BM_BUTTON_KEY1,			// MENU_BUTTON_LEFT
@@ -519,6 +552,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			BM_BUTTON_SCRATCHDOWN,	// MENU_BUTTON_DOWN
 			BM_BUTTON_START,		// MENU_BUTTON_START
 			BM_BUTTON_SELECT,		// MENU_BUTTON_BACK
+			BM_BUTTON_INSERTCOIN,// MENU_BUTTON_INSERTCOIN
 		},
 		{	// m_iDefaultKeyboardKey
 			{	// PLAYER_1
@@ -537,6 +571,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				SDLK_RIGHT,				// BM_BUTTON_MENURIGHT
 				SDLK_UP,				// BM_BUTTON_MENUUP
 				SDLK_DOWN,				// BM_BUTTON_MENUDOWN
+				SDLK_F1,				// BM_BUTTON_INSERTCOIN
 			},
 			{	// PLAYER_2
 				-1,					// BM_BUTTON_KEY1,
@@ -554,6 +589,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				-1,					// BM_BUTTON_MENURIGHT
 				-1,					// BM_BUTTON_MENUUP
 				-1,					// BM_BUTTON_MENUDOWN
+				-1,					// BM_BUTTON_INSERTCOIN
 			},
 		}
 	},

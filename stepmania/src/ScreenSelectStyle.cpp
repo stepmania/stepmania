@@ -333,7 +333,7 @@ void ScreenSelectStyle::UpdateEnabledDisabled()
 		if( IsEnabled(i) )
 			m_sprIcon[i].SetDiffuse( RageColor(1,1,1,1) );
 		else
-			m_sprIcon[i].SetDiffuse( RageColor(0.5f,0.5f,0.5f,1) );
+			m_sprIcon[i].SetDiffuse( RageColor(0.25f,0.25f,0.25f,1) );
 	}
 
 	// Select first enabled style

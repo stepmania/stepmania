@@ -46,7 +46,7 @@ public:
 	void RefreshCreditsMessages();
 
 private:
-	vector<Screen*> m_ScreenStack;
+	vector<Screen*> m_ScreenStack;	// bottommost to topmost
 	vector<Screen*> m_ScreensToDelete;
 	Screen *m_ScreenBuffered;
 

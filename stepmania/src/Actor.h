@@ -49,6 +49,8 @@ public:
 	virtual void BeginDraw();	// pushes transform onto world matrix stack
 	virtual void DrawPrimitives() = 0;	// override with Actor specific action
 	virtual void EndDraw();		// pops transform from world matrix stack
+	bool IsFirstUpdate();
+	virtual void FirstUpdate();	// called after object is constructed, but before the first call to Update()
 	virtual void Update( float fDeltaTime );
 	virtual void UpdateTweening( float fDeltaTime );
 
@@ -188,19 +190,11 @@ public:
 
 protected:
 
-/*
-	RageVector2 m_size;		// width, height
-	RageVector3 m_pos;		// X-Y coordinate of where the center point will appear on screen
-	RageVector3 m_rotation;	// X, Y, and Z m_rotation
-	RageVector2 m_scale;	// X and Y zooming
-	RageColor   m_colorDiffuse[4];	// 4 corner colors - left to right, top to bottom
-	RageColor   m_colorGlow;
-*/
+	bool	m_bFirstUpdate;
+
 	//
 	// Stuff for tweening
 	//
-
-
 	struct TweenState
 	{
 		// start and end position for tweening

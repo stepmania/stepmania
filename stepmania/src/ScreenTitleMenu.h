@@ -51,7 +51,6 @@ private:
 	void MenuDown( PlayerNumber pn );
 	void MenuBack( PlayerNumber pn );
 	void MenuStart( PlayerNumber pn );
-	void FadeToDemonstration();
 
 	TitleMenuChoice m_TitleMenuChoice;
 

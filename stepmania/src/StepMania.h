@@ -14,7 +14,9 @@
 
 void ApplyGraphicOptions();
 
+void Exit();
 
+void Reset();
 
 
 #endif

@@ -17,7 +17,6 @@
 
 Screen::Screen()
 {
-	m_FirstUpdate = true;
 }
 
 Screen::~Screen()
@@ -105,11 +104,4 @@ void Screen::SendScreenMessage( ScreenMessage SM, float fDelay )
 	QSM.SM = SM;
 	QSM.fDelayRemaining = fDelay;
 	m_QueuedMessages.push_back( QSM );
-}
-
-bool Screen::FirstUpdate()
-{ 
-	bool ret = m_FirstUpdate;
-	m_FirstUpdate = false;
-	return ret;
 }

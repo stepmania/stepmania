@@ -95,6 +95,19 @@ void ScreenPrompt::Input( const DeviceInput& DeviceI, const InputEventType type,
 	if( m_Fade.IsOpening() )
 		return;
 
+	if( DeviceI.device == DEVICE_KEYBOARD )
+	{
+		switch( DeviceI.button )
+		{
+		case SDLK_LEFT:
+			this->MenuLeft( StyleI.player );
+			return;
+		case SDLK_RIGHT:
+			this->MenuLeft( StyleI.player );
+			return;
+		}
+	}
+
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 

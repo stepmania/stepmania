@@ -39,9 +39,6 @@ public:
 	void SendScreenMessage( const ScreenMessage SM, const float fDelay );
 	void ClearMessageQueue() { m_QueuedMessages.clear(); }
 
-	/* Used only by ScreenManager::Update. */
-	bool FirstUpdate();
-
 protected:
 
 	// structure for holding messages sent to a Screen

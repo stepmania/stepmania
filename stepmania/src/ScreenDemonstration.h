@@ -9,16 +9,25 @@
 -----------------------------------------------------------------------------
 */
 
-#include "ScreenAttract.h"
+#include "ScreenGameplay.h"
+#include "Sprite.h"
 
 
-class ScreenDemonstration : public ScreenAttract
+class ScreenDemonstration : public ScreenGameplay
 {
 public:
+	ScreenDemonstration();
+	~ScreenDemonstration();
 
-private:
-	virtual CString	GetMetricName() { return "Demonstration"; };	// used to look up theme metrics
-	virtual CString	GetElementName() { return "demonstration"; };	// used to look up theme elements
+	virtual void FirstUpdate();
+	virtual void Update( float fDeltaTime );
+	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	virtual void HandleScreenMessage( const ScreenMessage SM );
+
+protected:
+	Sprite		m_sprDemonstrationOverlay;
+	Sprite		m_sprDemonstrationBlink;
+
 
 };
 

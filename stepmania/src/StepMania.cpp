@@ -108,6 +108,39 @@ void ApplyGraphicOptions()
 		TEXTUREMAN->ReloadAll(); 
 }
 
+void Exit()
+{
+	SDL_Event *event;
+	event = (SDL_Event *) malloc(sizeof(event));
+	event->type = SDL_QUIT;
+	SDL_PushEvent(event);
+}
+
+void Reset()
+{
+	GAMESTATE->Reset();
+	PREFSMAN->ReadGamePrefsFromDisk();
+	INPUTMAPPER->ReadMappingsFromDisk();
+	GAMESTATE->m_bPlayersCanJoin = true;
+
+	if( !GAMEMAN->DoesNoteSkinExist( GAMEMAN->GetCurNoteSkin() ) )
+	{
+		CStringArray asNoteSkinNames;
+		GAMEMAN->GetNoteSkinNames( asNoteSkinNames );
+		GAMEMAN->SwitchNoteSkin( asNoteSkinNames[0] );
+	}
+	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
+	{
+		CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
+		if( THEME->DoesThemeExist( sGameName ) )
+			THEME->SwitchTheme( sGameName );
+		else
+			THEME->SwitchTheme( "default" );
+	}
+	PREFSMAN->SaveGamePrefsToDisk();
+
+	SCREENMAN->SetNewScreen( "ScreenCompany" );	// Change this to set a different initial screen
+}
 
 static void GameLoop();
 #include "SDL_utils.h"
@@ -220,9 +253,7 @@ int main(int argc, char* argv[])
 	FONT		= new FontManager;
 	SCREENMAN	= new ScreenManager;
 
-
-	// normal game
-	SCREENMAN->SetNewScreen( "ScreenWarning" );
+	Reset();
 
 	/* Run the main loop. */
 	GameLoop();
@@ -307,9 +338,10 @@ static void HandleInputEvents(float fDeltaTime)
 				// pressed just F4
 				PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
 				ApplyGraphicOptions();
-				// fall through
+				continue;
 				/* why fall through? other code shouldn't be using 
 				 * globally-bound keys -glenn */
+				/* you're right.  -Chris */
 			}
 		}
 		else if( type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))

@@ -334,7 +334,7 @@ try_element_again:
 						asPossibleElementFilePaths[0].GetString(), sNewFilePath.GetString());
 
 #ifdef _DEBUG
-			if( MessageBox(NULL, "ThemeManager", message.GetString(), MB_RETRYCANCEL ) == IDRETRY)
+			if( MessageBox(NULL, message.GetString(), "ThemeManager", MB_RETRYCANCEL ) == IDRETRY)
 				goto try_element_again;
 #endif
 			RageException::Throw( "%s", message.GetString() ); 
