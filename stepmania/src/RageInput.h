@@ -105,7 +105,7 @@ class RageInput
 
 		pump_t();
 		~pump_t();
-		bool init(int devno, bool share=true);
+		bool init(int devno);
 		int GetPadEvent();
 	} *m_Pumps;
 
@@ -121,7 +121,7 @@ public:
 
 namespace USB {
 	char *GetUSBDevicePath (int num);
-	HANDLE OpenUSB (int VID, int PID, int num, bool share=true);
+	HANDLE OpenUSB (int VID, int PID, int num);
 };
 
 extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program

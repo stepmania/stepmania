@@ -544,7 +544,7 @@ err:
     return ret;
 }
 
-HANDLE USB::OpenUSB (int VID, int PID, int num, bool share)
+HANDLE USB::OpenUSB (int VID, int PID, int num)
 {
     DWORD index = 0;
 
@@ -556,10 +556,8 @@ HANDLE USB::OpenUSB (int VID, int PID, int num, bool share)
 		if(h != INVALID_HANDLE_VALUE)
 			CloseHandle (h);
 
-		int ShareMode = 0;
-		if(share) ShareMode |= FILE_SHARE_READ | FILE_SHARE_WRITE;
 		h = CreateFile (path, GENERIC_READ,
-			   ShareMode, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+			   FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
 
 		free(path);
 
@@ -597,10 +595,10 @@ RageInput::pump_t::~pump_t()
 		CloseHandle(h);
 }
 
-bool RageInput::pump_t::init(int devno, bool share)
+bool RageInput::pump_t::init(int devno)
 {
 	const int pump_usb_vid = 0x0d2f, pump_usb_pid = 0x0001;
-	h = USB::OpenUSB (pump_usb_vid, pump_usb_pid, devno, share);
+	h = USB::OpenUSB (pump_usb_vid, pump_usb_pid, devno);
 	return h != INVALID_HANDLE_VALUE;
 }
 
