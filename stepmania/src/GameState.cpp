@@ -309,11 +309,8 @@ void GameState::GetAllStageTexts( CStringArray &out )
 	out.push_back( "final" );
 	out.push_back( "extra1" );
 	out.push_back( "extra2" );
-	if (!(PREFSMAN->m_bEventMode))
-	{
-		for( int stage = 0; stage < (PREFSMAN->m_iNumArcadeStages)-1; ++stage )
-			out.push_back( ssprintf("%d",stage+1) );
-	}
+	for( int stage = 0; stage < PREFSMAN->m_iNumArcadeStages; ++stage )
+		out.push_back( ssprintf("%d",stage+1) );
 }
 
 int GameState::GetCourseSongIndex()

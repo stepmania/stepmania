@@ -133,8 +133,9 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 		GAMESTATE->GetAllStageTexts( StageTexts );
 		for( unsigned i = 0; i < StageTexts.size(); ++i )
 		{
-			CString path = THEME->GetPathToG( "ScreenSelectMusic stage "+StageTexts[i] );
-			TEXTUREMAN->CacheTexture( path );
+			CString path = THEME->GetPathToG( "ScreenSelectMusic stage "+StageTexts[i], true );
+			if( path != "" )
+				TEXTUREMAN->CacheTexture( path );
 		}
 	}
 
