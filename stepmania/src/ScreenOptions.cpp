@@ -178,7 +178,9 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 				else
 					bt->SetX( ITEM_X[p] );
 
-				UpdateText( (PlayerNumber)p, j );
+				/* If bOneChoiceForAllPlayers, then only initialize one text item. */
+				if( optline.bOneChoiceForAllPlayers )
+					break;
 			}
 		}
 
@@ -257,7 +259,11 @@ void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &
 {
 	bool bExitRow = iRow == m_iNumOptionRows;
 	bool bLotsOfOptions = m_bRowIsLong[iRow];
-	unsigned iOptionInRow = bExitRow ? 0 : bLotsOfOptions ? pn : m_iSelectedOption[pn][iRow];
+	bool bOneChoice = m_OptionRow[iRow].bOneChoiceForAllPlayers;
+	
+	unsigned iOptionInRow = bExitRow? 0: 
+							bLotsOfOptions? (bOneChoice? 0:pn):
+							m_iSelectedOption[pn][iRow];
 
 	ASSERT( iOptionInRow < m_textItems[iRow].size() );
 	BitmapText &text = *m_textItems[iRow][iOptionInRow];
@@ -486,25 +492,6 @@ void ScreenOptions::UpdateEnabledDisabled()
 				m_textItems[i][j]->BeginTweening( 0.3f );
 				m_textItems[i][j]->SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
 				m_textItems[i][j]->SetY( m_fRowY[i] );
-			}
-		}
-
-		/* Hide the text of all but the first active player, so we don't overdraw. */
-		if( m_InputMode == INPUTMODE_TOGETHER && m_bRowIsLong[i] )
-		{
-			bool one = false;
-			for( unsigned j=0; j<NUM_PLAYERS; j++ )
-			{
-				if( GAMESTATE->IsHumanPlayer(j) )
-				{
-					if(!one)
-					{
-						one=true;
-						continue;
-					}
-				}
-				m_textItems[i][j]->StopTweening();
-				m_textItems[i][j]->SetDiffuse( RageColor(1,1,1,0) );
 			}
 		}
 	}
