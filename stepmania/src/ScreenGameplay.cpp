@@ -58,8 +58,8 @@
 #define SHOW_SCORE_IN_RAVE						THEME->GetMetricB(m_sName,"ShowScoreInRave")
 #define SONG_POSITION_METER_WIDTH				THEME->GetMetricF(m_sName,"SongPositionMeterWidth")
 #define PLAYER_X( p, styleType )				THEME->GetMetricF(m_sName,ssprintf("PlayerP%d%sX",p+1,StyleTypeToString(styleType).c_str()))
-static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","InitialBackgroundBrightness");
 
+static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","InitialBackgroundBrightness");
 static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 static ThemeMetric<float> TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
 
@@ -89,6 +89,7 @@ static Preference<float> g_fNetStartOffset( Options, "NetworkStartOffset",	-3.0 
 REGISTER_SCREEN_CLASS( ScreenGameplay );
 ScreenGameplay::ScreenGameplay( CString sName ) : Screen(sName)
 {
+	PLAYER_TYPE.Load( sName, "PlayerType" );
 }
 
 void ScreenGameplay::Init()
@@ -823,7 +824,7 @@ void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 		NoteData nd = ndTransformed;
 		NoteDataUtil::RemoveAllTapsOfType( nd, TapNote::autoKeysound );
 		m_Player[p].Init( 
-			"Player",
+			PLAYER_TYPE,
 			GAMESTATE->m_pPlayerState[p], 
 			&STATSMAN->m_CurStageStats.m_player[p],
 			m_pLifeMeter[p], 

@@ -161,6 +161,8 @@ protected:
 	BeginnerHelper	m_BeginnerHelper;
 
 	NoteData		m_CabinetLightsNoteData;
+
+	ThemeMetric<CString> PLAYER_TYPE;
 };
 
 
