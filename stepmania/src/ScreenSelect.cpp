@@ -176,10 +176,6 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_AllDoneChoosing:		
 		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsHumanPlayer(p) )
-					m_aModeChoices[this->GetSelectionIndex((PlayerNumber)p)].Apply( (PlayerNumber)p );
-
 			GAMESTATE->m_bPlayersCanJoin = false;
 			SCREENMAN->RefreshCreditsMessages();
 
@@ -200,6 +196,13 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToNextScreen:
 		{
+			/* Apply here, not in SM_AllDoneChoosing, because applying can take a very
+			 * long time (200+ms), and at SM_AllDoneChoosing, we're still tweening stuff
+			 * off-screen. */
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsHumanPlayer(p) )
+					m_aModeChoices[this->GetSelectionIndex((PlayerNumber)p)].Apply( (PlayerNumber)p );
+
 			int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
 			SCREENMAN->SetNewScreen( NEXT_SCREEN(iSelectionIndex) );
 		}
