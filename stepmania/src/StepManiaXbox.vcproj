@@ -271,12 +271,11 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="archutils\win32\verinc 
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\"/>
 			<Tool
-				Name="VCPreLinkEventTool"
-				CommandLine="disasm\verinc
-cl                                                                                                                                                                                     /Zl                                                                                                                                                                                     /nologo                                                                                                                                                                                     /c                                                                                                                                                                                     verstub.cpp                                                                                                                                                                                     /Fo$(IntDir)\
-"/>
+				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="XboxDeploymentTool"
 				Progress="TRUE"
@@ -1125,10 +1124,7 @@ cl                                                                              
 						RelativePath="arch\LoadingWindow\LoadingWindow.h">
 					</File>
 					<File
-						RelativePath="arch\LoadingWindow\LoadingWindow_SDL.cpp">
-					</File>
-					<File
-						RelativePath="arch\LoadingWindow\LoadingWindow_SDL.h">
+						RelativePath="arch\LoadingWindow\LoadingWindow_Null.h">
 					</File>
 				</Filter>
 				<Filter
@@ -1186,12 +1182,6 @@ cl                                                                              
 					</File>
 					<File
 						RelativePath="arch\InputHandler\InputHandler.h">
-					</File>
-					<File
-						RelativePath="arch\InputHandler\InputHandler_SDL.cpp">
-					</File>
-					<File
-						RelativePath="arch\InputHandler\InputHandler_SDL.h">
 					</File>
 					<File
 						RelativePath="arch\InputHandler\InputHandler_Xbox.cpp">
