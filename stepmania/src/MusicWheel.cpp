@@ -108,7 +108,8 @@ MusicWheel::MusicWheel()
 	m_fPositionOffsetFromSelection = 0;
 
 	m_iSwitchesLeftInSpinDown = 0;
-	
+	m_Moving = 0;
+
 	if( GAMESTATE->IsExtraStage() ||  GAMESTATE->IsExtraStage2() )
 	{
 		// make the preferred group the group of the last song played.
