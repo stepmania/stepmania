@@ -355,7 +355,8 @@ void PlayerMinus::Update( float fDeltaTime )
 		float fStartBeat, fEndBeat;
 		mod.GetAttackBeats( GAMESTATE->m_pCurSong, m_PlayerNumber, fStartBeat, fEndBeat );
 
-		LOG->Trace( "Applying transform from %f to %f", fStartBeat, fEndBeat );
+		LOG->Trace( "Applying transform '%s' from %f to %f to '%s'", mod.sModifier.c_str(), fStartBeat, fEndBeat,
+			GAMESTATE->m_pCurSong->GetTranslitMainTitle().c_str() );
 		if( po.m_sNoteSkin != "" )
 			GAMESTATE->SetNoteSkinForBeatRange( m_PlayerNumber, po.m_sNoteSkin, fStartBeat, fEndBeat );
 
