@@ -894,6 +894,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 						RelativePath="arch\InputHandler\InputHandler.h">
 					</File>
 					<File
+						RelativePath="arch\InputHandler\InputHandler_SDL.cpp">
+					</File>
+					<File
+						RelativePath="arch\InputHandler\InputHandler_SDL.h">
+					</File>
+					<File
 						RelativePath="arch\InputHandler\InputHandler_Win32_Pump.cpp">
 					</File>
 					<File

@@ -11,6 +11,7 @@
 #include "ArchHooks/ArchHooks_none.h"
 #include "Sound/RageSoundDriver_Null.h"
 #include "LowLevelWindow/LowLevelWindow_SDL.h"
+#include "InputHandler/InputHandler_SDL.h"
 
 #endif
 

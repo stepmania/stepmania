@@ -125,6 +125,8 @@ ThemeManager.cpp ThemeManager.h
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
 		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \
 		    arch/arch.cpp \
+		    arch/InputHandler/InputHandler_SDL.cpp \
+		    arch/InputHandler/InputHandler_SDL.h \
 		    arch/LoadingWindow/LoadingWindow_SDL.cpp \
 		    arch/LoadingWindow/LoadingWindow_SDL.h \
 		    arch/LoadingWindow/LoadingWindow_Null.h \
