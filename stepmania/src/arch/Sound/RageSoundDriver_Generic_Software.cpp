@@ -19,11 +19,12 @@ RageSound_Generic_Software::sound::sound()
 	snd = NULL;
 	state = STOPPED;
 
-	/* Reserve enough blocks in the buffer to hold the buffer, plus some extra, since blocks
-	 * are partially read by Mix(). */
+	/* Reserve enough blocks in the buffer to hold the buffer; plus some extra, since blocks
+	 * are partially read by Mix(); plus some more extra, since we can buffer one block
+	 * over frames_to_buffer (we buffer until filled >= frames_to_buffer). */
 	const int frames_per_block = samples_per_block / channels;
 	const int blocks_to_prebuffer = frames_to_buffer / frames_per_block;
-	buffer.reserve( blocks_to_prebuffer + 2 );
+	buffer.reserve( blocks_to_prebuffer + 4 );
 }
 
 int RageSound_Generic_Software::DecodeThread_start( void *p )
