@@ -987,25 +987,17 @@ void Song::Save()
 	ReCalculateRadarValuesAndLastBeat();
 	TranslateTitles();
 
+	/* Save the new files.  These calls make backups on their own. */
 	SaveToSMFile( GetSongFilePath(), false );
 	SaveToDWIFile();
 	SaveToCacheFile();
 
 	/* We've safely written our files and created backups.  Rename non-SM and non-DWI
-	 * files to avoid confusion. 
-	 *
-	 * Don't rename anything before writing.  If we do, and we crash before we actually get
-	 * the file written, we'll be in a state where we can't automatically find the
-	 * data in the future and the user will have to correct it himself.  Also, don't
-	 * rename SM or DWI: we just wrote those. */
+	 * files to avoid confusion. */
 	CStringArray arrayOldFileNames;
 	GetDirListing( m_sSongDir + "*.bms", arrayOldFileNames );
 	GetDirListing( m_sSongDir + "*.ksf", arrayOldFileNames );
-//	GetDirListing( m_sSongDir + "*.dwi", arrayOldFileNames );
-//	GetDirListing( m_sSongDir + "*.sm", arrayOldFileNames );
 	
-	/* We copy files instead of renaming them, since it's more reliable: if we crash
-	 * before the data below is written, we'll be left */
 	for( unsigned i=0; i<arrayOldFileNames.size(); i++ )
 	{
 		const CString sOldPath = m_sSongDir + arrayOldFileNames[i];
@@ -1018,7 +1010,6 @@ void Song::Save()
 		} else
 			FILEMAN->Remove( sOldPath );
 	}
-
 }
 
 
