@@ -27,7 +27,9 @@ LoadingWindow_SDL::LoadingWindow_SDL()
 	SDL_WM_SetCaption("Loading StepMania", "");
 
 	SDL_Surface *srf = IMG_ReadXPMFromArray(icon);
-	SDL_SetColorKey( srf, SDL_SRCCOLORKEY, SDL_MapRGB(srf->format, 0xFF, 0, 0xFF));
+	Uint32 color;
+	if( mySDL_MapRGBExact( srf->format, 0xFF, 0, 0xFF, color ) )
+		mySDL_AddColorKey( srf, color );
 
 #if !defined(DARWIN) || !DARWIN
   /* Windows icons are 32x32 and SDL can't resize them for us, which
