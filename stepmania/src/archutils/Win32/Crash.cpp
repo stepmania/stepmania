@@ -795,7 +795,9 @@ static void DoSave()
 	Report(NULL, hFile, "");
 
 	// Dump thread stacks
-	WriteBuf( hFile, Checkpoints::GetLogs("\r\n") );
+	static char buf[1024*32];
+	Checkpoints::GetLogs( buf, sizeof(buf), "\r\n" );
+	WriteBuf( hFile, buf );
 	Report(NULL, hFile, "");
 
 	ReportCallStack( NULL, hFile, g_CrashInfo.m_BacktracePointers );

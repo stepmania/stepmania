@@ -182,12 +182,12 @@ static void parent_process( int to_child, const CrashData *crash )
 	}
 
     /* 5. Write CHECKPOINTs. */
-    p = Checkpoints::GetLogs("\n");
-    size = strlen(p)+1;
+    static char buf[1024*32];
+    Checkpoints::GetLogs( buf, sizeof(buf), "\n" );
+    size = strlen(buf)+1;
     if( !parent_write(to_child, &size, sizeof(size)) )
 	return;
-
-    if( !parent_write(to_child, p, size) )
+    if( !parent_write(to_child, buf, size) )
 	return;
 	
     /* 6. Write the crashed thread's name. */
