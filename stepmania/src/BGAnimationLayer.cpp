@@ -233,6 +233,14 @@ found_effect:
 			m_Sprites[0].Load( sPath );
 			int iNumTilesWide = int(ceil(SCREEN_WIDTH /m_Sprites[0].GetUnzoomedWidth()));
 			int iNumTilesHigh = int(ceil(SCREEN_HEIGHT/m_Sprites[0].GetUnzoomedHeight()));
+			if( m_Effect == EFFECT_TILE_SCROLL_LEFT ||
+				m_Effect == EFFECT_TILE_SCROLL_RIGHT ) {
+				iNumTilesWide++;
+			}
+			if( m_Effect == EFFECT_TILE_SCROLL_UP ||
+				m_Effect == EFFECT_TILE_SCROLL_DOWN ) {
+				iNumTilesHigh++;
+			}
 
 			iNumTilesWide = min( iNumTilesWide, MAX_TILES_WIDE );
 			iNumTilesHigh = min( iNumTilesHigh, MAX_TILES_HIGH );
