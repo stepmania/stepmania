@@ -563,19 +563,36 @@ static float ArrowGetAlphaOrGlow( bool bGlow, PlayerNumber pn, int iCol, float f
 		return ArrowGetAlpha( pn, iCol, fYOffset, fPercentFadeToFail, fYReverseOffsetPixels );
 }
 
+struct StripBuffer
+{
+	enum { size = 512 };
+	RageSpriteVertex buf[size];
+	RageSpriteVertex *v;
+	StripBuffer() { Init(); }
+	void Init()
+	{
+		v = buf;
+	}
+	void Draw()
+	{
+		DISPLAY->DrawQuadStrip( buf, v-buf );
+	}
+	int Used() const { return v - buf; }
+	int Free() const { return size - Used(); }
+};
+
 void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
 {
 	//
 	// Draw the top cap (always wavy)
 	//
-	const int size = 4096;
-	static RageSpriteVertex queue[size];
+	StripBuffer queue;
+
 	Sprite* pSprTopCap = GetHoldTopCapSprite( hn.GetStartBeat(), bIsBeingHeld );
 
 	pSprTopCap->SetZoom( ArrowGetZoom( m_PlayerNumber ) );
 
 	// draw manually in small segments
-	RageSpriteVertex *v = &queue[0];
 	RageTexture* pTexture = pSprTopCap->GetTexture();
 	const RectF *pRect = pSprTopCap->GetCurrentTextureCoordRect();
 	DISPLAY->ClearAllTextures();
@@ -620,30 +637,37 @@ void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, f
 		if( fAlpha > 0 )
 			bAllAreTransparent = false;
 
-		v[0].p = RageVector3(fXLeft,  fY, fZ); v[0].c = color; v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
-		v[1].p = RageVector3(fXRight, fY, fZ); v[1].c = color; v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
-		v+=2;
-		if( v-queue >= size )
-			break;
+		queue.v[0].p = RageVector3(fXLeft,  fY, fZ);	queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
+		queue.v[1].p = RageVector3(fXRight, fY, fZ);	queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		queue.v+=2;
+		if( queue.Free() < 2 )
+		{
+			/* The queue is full.  Render it, clear the buffer, and move back a step to
+			 * start off the quad strip again. */
+			if( !bAllAreTransparent )
+				queue.Draw();
+			queue.Init();
+			bAllAreTransparent = true;
+			fY -= fYStep;
+		}
 	}
 	if( !bAllAreTransparent )
-		DISPLAY->DrawQuadStrip( queue, v-queue );
+		queue.Draw();
 }
+
 
 void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
 {
 	//
 	// Draw the body (always wavy)
 	//
-	const int size = 4096;
-	static RageSpriteVertex queue[size];
+	StripBuffer queue;
 
 	Sprite* pSprBody = GetHoldBodySprite( hn.GetStartBeat(), bIsBeingHeld );
 
 	pSprBody->SetZoom( ArrowGetZoom( m_PlayerNumber ) );
 
 	// draw manually in small segments
-	RageSpriteVertex *v = &queue[0];
 	RageTexture* pTexture = pSprBody->GetTexture();
 	const RectF *pRect = pSprBody->GetCurrentTextureCoordRect();
 	DISPLAY->ClearAllTextures();
@@ -691,15 +715,23 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, flo
 		if( fAlpha > 0 )
 			bAllAreTransparent = false;
 
-		v[0].p = RageVector3(fXLeft,  fY, fZ);	v[0].c = color; v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
-		v[1].p = RageVector3(fXRight, fY, fZ);	v[1].c = color; v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
-		v+=2;
-		if( v-queue >= size )
-			break;
+		queue.v[0].p = RageVector3(fXLeft,  fY, fZ);	queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
+		queue.v[1].p = RageVector3(fXRight, fY, fZ);	queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		queue.v+=2;
+		if( queue.Free() < 2 )
+		{
+			/* The queue is full.  Render it, clear the buffer, and move back a step to
+			 * start off the quad strip again. */
+			if( !bAllAreTransparent )
+				queue.Draw();
+			queue.Init();
+			bAllAreTransparent = true;
+			fY -= fYStep;
+		}
 	}
 
 	if( !bAllAreTransparent )
-		DISPLAY->DrawQuadStrip( queue, v-queue );
+		queue.Draw();
 }
 
 void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
@@ -707,15 +739,13 @@ void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld
 	//
 	// Draw the bottom cap (always wavy)
 	//
-	const int size = 4096;
-	static RageSpriteVertex queue[size];
+	StripBuffer queue;
 
 	Sprite* pBottomCap = GetHoldBottomCapSprite( hn.GetStartBeat(), bIsBeingHeld );
 
 	pBottomCap->SetZoom( ArrowGetZoom( m_PlayerNumber ) );
 
 	// draw manually in small segments
-	RageSpriteVertex *v = &queue[0];
 	RageTexture* pTexture = pBottomCap->GetTexture();
 	const RectF *pRect = pBottomCap->GetCurrentTextureCoordRect();
 	DISPLAY->ClearAllTextures();
@@ -759,14 +789,22 @@ void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld
 		if( fAlpha > 0 )
 			bAllAreTransparent = false;
 
-		v[0].p = RageVector3(fXLeft,  fY, fZ);	v[0].c = color; v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
-		v[1].p = RageVector3(fXRight, fY, fZ);	v[1].c = color; v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
-		v+=2;
-		if( v-queue >= size )
-			break;
+		queue.v[0].p = RageVector3(fXLeft,  fY, fZ);	queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
+		queue.v[1].p = RageVector3(fXRight, fY, fZ);	queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		queue.v+=2;
+		if( queue.Free() < 2 )
+		{
+			/* The queue is full.  Render it, clear the buffer, and move back a step to
+			 * start off the quad strip again. */
+			if( !bAllAreTransparent )
+				queue.Draw();
+			queue.Init();
+			bAllAreTransparent = true;
+			fY -= fYStep;
+		}
 	}
 	if( !bAllAreTransparent )
-		DISPLAY->DrawQuadStrip( queue, v-queue );
+		queue.Draw();
 }
 
 void NoteDisplay::DrawHoldTail( const HoldNote& hn, bool bIsBeingHeld, float fYTail, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
