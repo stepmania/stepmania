@@ -383,6 +383,9 @@ mp3, or wav format.
 #TITLE:...;    - The "main title" of the song.
 #SUBTITLE:...; - This text will appear underneath the main title of the song 
     on the Select Music screen.  e.g. "~Dirty Mix~" or "(remix)".
+#TRANSLITERATION:...; - An English transliteration of the song and subtitle.  This
+    is used when sorting songs alphabetically when their proper title does not use latin
+    alphanumerics.
 #ARTIST:...;   - The artist of the song.
 #CREDIT:...;   - Give yourself some credit here for creating a wonderful song.
 #BPM:...;      - BPM of the music
