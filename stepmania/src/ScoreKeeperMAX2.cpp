@@ -462,11 +462,11 @@ int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 
 int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns )
 {
-	int HoldScoreValues[NUM_TAP_NOTE_SCORES] =
+	int HoldScoreValues[NUM_HOLD_NOTE_SCORES] =
 	{
 		0,
-		PREFSMAN->m_iPercentScoreWeightNG,
 		PREFSMAN->m_iPercentScoreWeightOK,
+		PREFSMAN->m_iPercentScoreWeightNG,
 	};
 	return HoldScoreValues[hns];
 }
