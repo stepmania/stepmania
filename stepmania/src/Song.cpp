@@ -403,7 +403,7 @@ void Song::TidyUpData()
 	else	// ! HasMusic()
 	{
 		m_fMusicLengthSeconds = 100;		// guess
-		LOG->Warn("File %s has no music; guessing at %i seconds", m_fMusicLengthSeconds);
+		LOG->Warn("File %s has no music; guessing at %f seconds", m_fMusicLengthSeconds);
 	}
 
 	/* Generate these before we autogen notes, so the new notes can inherit
