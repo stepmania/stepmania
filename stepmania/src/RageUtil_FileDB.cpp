@@ -183,6 +183,10 @@ bool FileSet::IsAFile(const CString &path) const
 /* Given "foo/bar/baz/" or "foo/bar/baz", return "foo/bar/" and "baz". */
 static void SplitPath( CString Path, CString &Dir, CString &Name )
 {
+	/* Strip off any trailing slashes. */
+	if( Path.size() > 0 && Path.Right(1) == SLASH )
+		Path.erase( Path.size()-1 );
+
 	static Regex split("(.*/)([^/]+)");
 	CStringArray match;
 	if(split.Compare(Path, match)) {
