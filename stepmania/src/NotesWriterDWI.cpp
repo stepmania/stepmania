@@ -331,6 +331,7 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 	fprintf( fp, "#TITLE:%s;\n", out.GetFullTranslitTitle().c_str() );
 	fprintf( fp, "#ARTIST:%s;\n", out.GetTranslitArtist().c_str() );
 	ASSERT( out.m_BPMSegments[0].m_fStartBeat == 0 );
+	fprintf( fp, "#FILE:%s;\n", out.m_sMusicFile.c_str() );
 	fprintf( fp, "#BPM:%.3f;\n", out.m_BPMSegments[0].m_fBPM );
 	fprintf( fp, "#GAP:%d;\n", int(-roundf( out.m_fBeat0OffsetInSeconds*1000 )) );
 	fprintf( fp, "#SAMPLESTART:%.3f;\n", out.m_fMusicSampleStartSeconds );
