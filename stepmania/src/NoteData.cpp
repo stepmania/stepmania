@@ -718,11 +718,6 @@ void NoteData::SetTapNote( int track, int row, const TapNote& t )
 	}
 }
 
-void NoteData::ReserveRows( int row )
-{
-	// Nothing to do for a track map.
-}
-
 void NoteData::EliminateAllButOneTap( int row )
 {
 	if(row < 0) return;

@@ -41,8 +41,6 @@ public:
 
 	/* Return the note at the given track and row.  Row may be out of
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
-	void ReserveRows( int row );
-
 	inline const TapNote &GetTapNote(unsigned track, int row) const
 	{
 		const TrackMap &mapTrack = m_TapNotes[track];
