@@ -151,6 +151,9 @@ static void GameLoop();
 
 static void SetIcon()
 {
+	if(!SDL_WasInit(SDL_INIT_VIDEO))
+		return;
+
 	SDL_Surface *srf = IMG_ReadXPMFromArray(icon);
 	SDL_SetColorKey( srf, SDL_SRCCOLORKEY, SDL_MapRGB(srf->format, 0xFF, 0, 0xFF));
 
@@ -162,8 +165,7 @@ static void SetIcon()
 	zoomSurface(srf, 32, 32);
 
 	SDL_SetAlpha( srf, SDL_SRCALPHA, SDL_ALPHA_OPAQUE );
-	if(SDL_WasInit(SDL_INIT_VIDEO))
-		SDL_WM_SetIcon(srf, NULL /* derive from alpha */);
+	SDL_WM_SetIcon(srf, NULL /* derive from alpha */);
 	SDL_FreeSurface(srf);
 }
 
