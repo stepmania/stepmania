@@ -51,6 +51,13 @@ void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 	this->Convert4sToHoldNotes();
 }
 
+void NoteData::ClearAll()
+{
+	for( int t=0; t<m_iNumTracks; t++ )
+		m_TapNotes[t].clear();
+	m_HoldNotes.clear();
+}
+
 /* Copy a range from pFrom to this.  (Note that this does *not* overlay;
  * all data in the range is overwritten.) */
 void NoteData::CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin )
