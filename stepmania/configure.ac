@@ -20,6 +20,8 @@ AC_SEARCH_LIBS(mad_synth_init, [mad], have_mad=yes,  have_mad=no)
 AC_PROG_CC
 AC_PROG_CXX
 
+AC_CHECK_FUNCS(powf sqrtf sinf cosf acosf)
+
 AM_PATH_SDL
 
 # sdl-config puts -L/usr/lib in the library search path, which reorders things
