@@ -193,7 +193,11 @@ void ScreenOptions::InitOptionsText()
 
 void ScreenOptions::DimOption(int line, int option, bool dim)
 {
+	if(m_OptionDim[line][option] == dim)
+		return;
+
 	m_OptionDim[line][option] = dim;
+	m_textOptions[line][option].StopTweening();
 	m_textOptions[line][option].BeginTweening(.250);
 	if(m_OptionDim[line][option])
 		m_textOptions[line][option].SetTweenDiffuse( D3DXCOLOR(.5,.5,.5,1) );
