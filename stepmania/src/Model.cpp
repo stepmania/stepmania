@@ -785,11 +785,6 @@ bool Model::MaterialsNeedNormals() const
 	return false;
 }
 
-void Model::PushSelf( lua_State *L )
-{
-	Luna<Model,LuaModel>::Push( L, this );
-}
-
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.

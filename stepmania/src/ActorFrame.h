@@ -5,13 +5,20 @@
 
 #include "Actor.h"
 
-#define LUA_ActorFrame_METHODS( T ) \
-	LUA_Actor_METHODS( T ) \
+template<class T>
+class LunaActorFrame : public LunaActor<T>
+{
+public:
+	LunaActorFrame() { LUA->Register( Register ); }
+
 	static int propagate( T* p, lua_State *L )	{ p->SetPropagateCommands( BArg(1) ); return 0; } \
 
-#define LUA_ActorFrame_METHODS_MAP( T ) \
-	LUA_Actor_METHODS_MAP( T ) \
-	LUA_METHOD_MAP( T, propagate ) \
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( propagate ) \
+		LunaActor<T>::Register( L );
+	}
+};
 
 class ActorFrame : public Actor
 {

@@ -976,12 +976,6 @@ void Sprite::LoseFocus()
 	Actor::LoseFocus();
 }
 
-void Sprite::PushSelf( lua_State *L )
-{
-	Luna<Sprite,LuaSprite>::Push( L, this );
-}
-
-
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

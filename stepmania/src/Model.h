@@ -10,13 +10,20 @@
 #include <map>
 #include "RageModelGeometry.h"
 
-#define LUA_Model_METHODS( T ) \
-	LUA_Actor_METHODS( T ) \
+template<class T>
+class LunaModel : public LunaActor<T>
+{
+public:
+	LunaModel() { LUA->Register( Register ); }
+
 	static int playanimation( T* p, lua_State *L )	{ p->PlayAnimation(SArg(1),FArg(2)); return 0; } \
 
-#define LUA_Model_METHODS_MAP( T ) \
-	LUA_Actor_METHODS_MAP( T ) \
-	LUA_METHOD_MAP( T, playanimation ) \
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( playanimation ) \
+		LunaActor<T>::Register( L );
+	}
+};
 
 class Model : public Actor
 {

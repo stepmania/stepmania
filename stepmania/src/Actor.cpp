@@ -979,10 +979,6 @@ void Actor::PlayCommand( const CString &sCommandName )
 	RunCommands( *it->second );
 }
 
-void Actor::PushSelf( lua_State *L )
-{
-	Luna<Actor,LuaActor>::Push( L, this );
-}
 
 /*
  * (c) 2001-2004 Chris Danford

@@ -9,13 +9,19 @@
 #include <map>
 struct XNode;
 struct lua_State;
+#include "LuaBinding.h"
+
 
 #define DRAW_ORDER_BEFORE_EVERYTHING	-100
 #define DRAW_ORDER_TRANSITIONS			100
 #define DRAW_ORDER_AFTER_EVERYTHING		200
 
+template<class T>
+class LunaActor : public Luna<T>
+{
+public:
+	LunaActor() { LUA->Register( Register ); }
 
-#define LUA_Actor_METHODS( T ) \
 	static int sleep( T* p, lua_State *L )			{ p->Sleep(FArg(1)); return 0; } \
 	static int linear( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),Actor::TWEEN_LINEAR); return 0; } \
 	static int accelerate( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),Actor::TWEEN_ACCELERATE); return 0; } \
@@ -105,96 +111,98 @@ struct lua_State;
 	static int playcommand( T* p, lua_State *L )		{ p->PlayCommand(SArg(1)); return 0; } \
 	static int queuecommand( T* p, lua_State *L )		{ p->QueueCommand(SArg(1)); return 0; } \
 
-#define LUA_Actor_METHODS_MAP( T ) \
-	LUA_METHOD_MAP( T, sleep ) \
-	LUA_METHOD_MAP( T, linear ) \
-	LUA_METHOD_MAP( T, accelerate ) \
-	LUA_METHOD_MAP( T, decelerate ) \
-	LUA_METHOD_MAP( T, bouncebegin ) \
-	LUA_METHOD_MAP( T, bounceend ) \
-	LUA_METHOD_MAP( T, spring ) \
-	LUA_METHOD_MAP( T, stoptweening ) \
-	LUA_METHOD_MAP( T, finishtweening ) \
-	LUA_METHOD_MAP( T, hurrytweening ) \
-	LUA_METHOD_MAP( T, x ) \
-	LUA_METHOD_MAP( T, y ) \
-	LUA_METHOD_MAP( T, z ) \
-	LUA_METHOD_MAP( T, addx ) \
-	LUA_METHOD_MAP( T, addy ) \
-	LUA_METHOD_MAP( T, addz ) \
-	LUA_METHOD_MAP( T, zoom ) \
-	LUA_METHOD_MAP( T, zoomx ) \
-	LUA_METHOD_MAP( T, zoomy ) \
-	LUA_METHOD_MAP( T, zoomz ) \
-	LUA_METHOD_MAP( T, zoomtowidth ) \
-	LUA_METHOD_MAP( T, zoomtoheight ) \
-	LUA_METHOD_MAP( T, stretchto ) \
-	LUA_METHOD_MAP( T, cropleft ) \
-	LUA_METHOD_MAP( T, croptop ) \
-	LUA_METHOD_MAP( T, cropright ) \
-	LUA_METHOD_MAP( T, cropbottom ) \
-	LUA_METHOD_MAP( T, fadeleft ) \
-	LUA_METHOD_MAP( T, fadetop ) \
-	LUA_METHOD_MAP( T, faderight ) \
-	LUA_METHOD_MAP( T, fadebottom ) \
-	LUA_METHOD_MAP( T, diffuse ) \
-	LUA_METHOD_MAP( T, diffuseleftedge ) \
-	LUA_METHOD_MAP( T, diffuserightedge ) \
-	LUA_METHOD_MAP( T, diffusetopedge ) \
-	LUA_METHOD_MAP( T, diffusebottomedge ) \
-	LUA_METHOD_MAP( T, diffusealpha ) \
-	LUA_METHOD_MAP( T, diffusecolor ) \
-	LUA_METHOD_MAP( T, glow ) \
-	LUA_METHOD_MAP( T, rotationx ) \
-	LUA_METHOD_MAP( T, rotationy ) \
-	LUA_METHOD_MAP( T, rotationz ) \
-	LUA_METHOD_MAP( T, heading ) \
-	LUA_METHOD_MAP( T, pitch ) \
-	LUA_METHOD_MAP( T, roll ) \
-	LUA_METHOD_MAP( T, shadowlength ) \
-	LUA_METHOD_MAP( T, horizalign ) \
-	LUA_METHOD_MAP( T, vertalign ) \
-	LUA_METHOD_MAP( T, diffuseblink ) \
-	LUA_METHOD_MAP( T, diffuseshift ) \
-	LUA_METHOD_MAP( T, glowblink ) \
-	LUA_METHOD_MAP( T, glowshift ) \
-	LUA_METHOD_MAP( T, rainbow ) \
-	LUA_METHOD_MAP( T, wag ) \
-	LUA_METHOD_MAP( T, bounce ) \
-	LUA_METHOD_MAP( T, bob ) \
-	LUA_METHOD_MAP( T, pulse ) \
-	LUA_METHOD_MAP( T, spin ) \
-	LUA_METHOD_MAP( T, vibrate ) \
-	LUA_METHOD_MAP( T, stopeffect ) \
-	LUA_METHOD_MAP( T, effectcolor1 ) \
-	LUA_METHOD_MAP( T, effectcolor2 ) \
-	LUA_METHOD_MAP( T, effectperiod ) \
-	LUA_METHOD_MAP( T, effectoffset ) \
-	LUA_METHOD_MAP( T, effectdelay ) \
-	LUA_METHOD_MAP( T, effectclock ) \
-	LUA_METHOD_MAP( T, effectmagnitude ) \
-	LUA_METHOD_MAP( T, scaletocover ) \
-	LUA_METHOD_MAP( T, scaletofit ) \
-	LUA_METHOD_MAP( T, animate ) \
-	LUA_METHOD_MAP( T, play ) \
-	LUA_METHOD_MAP( T, pause ) \
-	LUA_METHOD_MAP( T, setstate ) \
-	LUA_METHOD_MAP( T, texturewrapping ) \
-	LUA_METHOD_MAP( T, additiveblend ) \
-	LUA_METHOD_MAP( T, blend ) \
-	LUA_METHOD_MAP( T, zbuffer ) \
-	LUA_METHOD_MAP( T, ztest ) \
-	LUA_METHOD_MAP( T, ztestmode ) \
-	LUA_METHOD_MAP( T, zwrite ) \
-	LUA_METHOD_MAP( T, clearzbuffer ) \
-	LUA_METHOD_MAP( T, backfacecull ) \
-	LUA_METHOD_MAP( T, cullmode ) \
-	LUA_METHOD_MAP( T, hidden ) \
-	LUA_METHOD_MAP( T, hibernate ) \
-	LUA_METHOD_MAP( T, draworder ) \
-	LUA_METHOD_MAP( T, playcommand ) \
-	LUA_METHOD_MAP( T, queuecommand ) \
-
+	static void Register(lua_State *L) {
+  		ADD_METHOD( sleep ) \
+		ADD_METHOD( linear ) \
+		ADD_METHOD( accelerate ) \
+		ADD_METHOD( decelerate ) \
+		ADD_METHOD( bouncebegin ) \
+		ADD_METHOD( bounceend ) \
+		ADD_METHOD( spring ) \
+		ADD_METHOD( stoptweening ) \
+		ADD_METHOD( finishtweening ) \
+		ADD_METHOD( hurrytweening ) \
+		ADD_METHOD( x ) \
+		ADD_METHOD( y ) \
+		ADD_METHOD( z ) \
+		ADD_METHOD( addx ) \
+		ADD_METHOD( addy ) \
+		ADD_METHOD( addz ) \
+		ADD_METHOD( zoom ) \
+		ADD_METHOD( zoomx ) \
+		ADD_METHOD( zoomy ) \
+		ADD_METHOD( zoomz ) \
+		ADD_METHOD( zoomtowidth ) \
+		ADD_METHOD( zoomtoheight ) \
+		ADD_METHOD( stretchto ) \
+		ADD_METHOD( cropleft ) \
+		ADD_METHOD( croptop ) \
+		ADD_METHOD( cropright ) \
+		ADD_METHOD( cropbottom ) \
+		ADD_METHOD( fadeleft ) \
+		ADD_METHOD( fadetop ) \
+		ADD_METHOD( faderight ) \
+		ADD_METHOD( fadebottom ) \
+		ADD_METHOD( diffuse ) \
+		ADD_METHOD( diffuseleftedge ) \
+		ADD_METHOD( diffuserightedge ) \
+		ADD_METHOD( diffusetopedge ) \
+		ADD_METHOD( diffusebottomedge ) \
+		ADD_METHOD( diffusealpha ) \
+		ADD_METHOD( diffusecolor ) \
+		ADD_METHOD( glow ) \
+		ADD_METHOD( rotationx ) \
+		ADD_METHOD( rotationy ) \
+		ADD_METHOD( rotationz ) \
+		ADD_METHOD( heading ) \
+		ADD_METHOD( pitch ) \
+		ADD_METHOD( roll ) \
+		ADD_METHOD( shadowlength ) \
+		ADD_METHOD( horizalign ) \
+		ADD_METHOD( vertalign ) \
+		ADD_METHOD( diffuseblink ) \
+		ADD_METHOD( diffuseshift ) \
+		ADD_METHOD( glowblink ) \
+		ADD_METHOD( glowshift ) \
+		ADD_METHOD( rainbow ) \
+		ADD_METHOD( wag ) \
+		ADD_METHOD( bounce ) \
+		ADD_METHOD( bob ) \
+		ADD_METHOD( pulse ) \
+		ADD_METHOD( spin ) \
+		ADD_METHOD( vibrate ) \
+		ADD_METHOD( stopeffect ) \
+		ADD_METHOD( effectcolor1 ) \
+		ADD_METHOD( effectcolor2 ) \
+		ADD_METHOD( effectperiod ) \
+		ADD_METHOD( effectoffset ) \
+		ADD_METHOD( effectdelay ) \
+		ADD_METHOD( effectclock ) \
+		ADD_METHOD( effectmagnitude ) \
+		ADD_METHOD( scaletocover ) \
+		ADD_METHOD( scaletofit ) \
+		ADD_METHOD( animate ) \
+		ADD_METHOD( play ) \
+		ADD_METHOD( pause ) \
+		ADD_METHOD( setstate ) \
+		ADD_METHOD( texturewrapping ) \
+		ADD_METHOD( additiveblend ) \
+		ADD_METHOD( blend ) \
+		ADD_METHOD( zbuffer ) \
+		ADD_METHOD( ztest ) \
+		ADD_METHOD( ztestmode ) \
+		ADD_METHOD( zwrite ) \
+		ADD_METHOD( clearzbuffer ) \
+		ADD_METHOD( backfacecull ) \
+		ADD_METHOD( cullmode ) \
+		ADD_METHOD( hidden ) \
+		ADD_METHOD( hibernate ) \
+		ADD_METHOD( draworder ) \
+		ADD_METHOD( playcommand ) \
+		ADD_METHOD( queuecommand ) \
+		Luna<T>::Register( L );
+	}
+};
 
 class Actor
 {

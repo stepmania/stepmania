@@ -551,11 +551,6 @@ void BitmapText::SetWrapWidthPixels( int iWrapWidthPixels )
 	SetText( m_sText, "", iWrapWidthPixels );
 }
 
-void BitmapText::PushSelf( lua_State *L )
-{
-	Luna<BitmapText,LuaBitmapText>::Push( L, this );
-}
-
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.

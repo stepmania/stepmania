@@ -6,15 +6,22 @@
 #include "Actor.h"
 class RageTexture;
 
-#define LUA_BitmapText_METHODS( T ) \
-	LUA_Actor_METHODS( T ) \
+template<class T>
+class LunaBitmapText : public LunaActor<T>
+{
+public:
+	LunaBitmapText() { LUA->Register( Register ); }
+
 	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); return 0; } \
 	static int maxwidth( T* p, lua_State *L )			{ p->SetMaxWidth( FArg(1) ); return 0; } \
 
-#define LUA_BitmapText_METHODS_MAP( T ) \
-	LUA_Actor_METHODS_MAP( T ) \
-	LUA_METHOD_MAP( T, wrapwidthpixels ) \
-	LUA_METHOD_MAP( T, maxwidth ) \
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( wrapwidthpixels ) \
+		ADD_METHOD( maxwidth ) \
+		LunaActor<T>::Register( L );
+	}
+};
 
 
 class Font;

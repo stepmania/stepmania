@@ -2,6 +2,9 @@
  * Modified by Chris.
  */
 
+#ifndef LuaBinding_H
+#define LuaBinding_H
+
 extern "C"
 {
 #include <lua.h>
@@ -9,6 +12,7 @@ extern "C"
 }
 
 #include "LuaManager.h"
+#include <vector>
 
 
 #define SArg(n) (luaL_checkstring(L,n))
@@ -17,27 +21,10 @@ extern "C"
 #define FArg(n) ((float) luaL_checknumber(L,n))
 
 
-#define LUA_REGISTER_CLASS( T ) \
-class Lua##T { \
-public: \
-	Lua##T() { LUA->Register( Register ); } \
-	static const char className[]; \
-	static Luna<T,Lua##T>::RegType methods[]; \
-	static void Register( lua_State* L ) { \
-		Luna<T,Lua##T>::Register(L); \
-	} \
-	LUA_##T##_METHODS( T ) \
-}; \
-static Lua##T registera; \
-const char Lua##T::className[] = #T; \
-Luna<T,Lua##T>::RegType Lua##T::methods[] = { \
-	LUA_##T##_METHODS_MAP( T ) \
-	{0,0} \
-};
-#define LUA_METHOD_MAP( T, Method ) 	{ #Method, Lua##T::Method },
 
-
-template <typename T, typename TInfo> class Luna {
+template <typename T>
+class Luna 
+{
   typedef struct { T *pT; } userdataType;
 public:
   typedef int (*mfp)(T *p, lua_State *L);
@@ -47,12 +34,12 @@ public:
     lua_newtable(L);
     int methods = lua_gettop(L);
 
-    luaL_newmetatable(L, TInfo::className);
+    luaL_newmetatable(L, s_className);
     int metatable = lua_gettop(L);
 
     // store method table in globals so that
     // scripts can add functions written in Lua.
-    lua_pushstring(L, TInfo::className);
+    lua_pushstring(L, s_className);
     lua_pushvalue(L, methods);
     lua_settable(L, LUA_GLOBALSINDEX);
 
@@ -69,7 +56,8 @@ public:
     lua_settable(L, metatable);
 
     // fill method table with methods from class T
-    for (RegType *l = TInfo::methods; l->name; l++) {
+    for (vector<RegType>::const_iterator i = s_pvMethods->begin(); i != s_pvMethods->end(); i++) {
+		const RegType *l = &(*i);
       lua_pushstring(L, l->name);
       lua_pushlightuserdata(L, (void*)l);
       lua_pushcclosure(L, thunk, 1);
@@ -82,13 +70,12 @@ public:
   // get userdata from Lua stack and return pointer to T object
   static T *check(lua_State *L, int narg) {
     userdataType *ud =
-      static_cast<userdataType*>(luaL_checkudata(L, narg, TInfo::className));
-    if(!ud) luaL_typerror(L, narg, TInfo::className);
+      static_cast<userdataType*>(luaL_checkudata(L, narg, s_className));
+    if(!ud) luaL_typerror(L, narg, s_className);
     return ud->pT;  // pointer to T object
   }
 
 private:
-  Luna();  // hide default constructor
 
   // member function dispatcher
   static int thunk(lua_State *L) {
@@ -106,22 +93,38 @@ public:
   static int Push(lua_State *L, T* p ) {
     userdataType *ud = static_cast<userdataType*>(lua_newuserdata(L, sizeof(userdataType)));
     ud->pT = p;  // store pointer to object in userdata
-    luaL_getmetatable(L, TInfo::className);  // lookup metatable in Lua registry
+    luaL_getmetatable(L, s_className);  // lookup metatable in Lua registry
     lua_setmetatable(L, -2);
     return 1;  // userdata containing pointer to T object
   }
 
+	typedef vector<RegType> RegTypeVector;
+	static RegTypeVector *s_pvMethods;
 private:
+	static const char s_className[];
 
   static int tostring_T (lua_State *L) {
     char buff[32];
     userdataType *ud = static_cast<userdataType*>(lua_touserdata(L, 1));
     T *obj = ud->pT;
     sprintf(buff, "%p", obj);
-    lua_pushfstring(L, "%s (%s)", TInfo::className, buff);
+    lua_pushfstring(L, "%s (%s)", s_className, buff);
     return 1;
   }
 };
+
+
+#define LUA_REGISTER_CLASS( T ) \
+const char Luna##T<T>::s_className[] = #T; \
+Luna##T<T>::RegTypeVector* Luna##T<T>::s_pvMethods = NULL; \
+static Luna##T<T> registera; \
+void T::PushSelf( lua_State *L ) { Luna##T<T>::Push( L, this ); }
+
+#define ADD_METHOD( method_name ) \
+	{ if(s_pvMethods==NULL) s_pvMethods = new RegTypeVector; RegType r = {#method_name,method_name}; s_pvMethods->push_back(r); }
+
+
+#endif
 
 /*
  * (c) 2001-2005 lua-users.org, Chris Danford

@@ -254,11 +254,6 @@ void ActorFrame::PlayCommand( const CString &sCommandName )
 	}
 }
 
-void ActorFrame::PushSelf( lua_State *L )
-{
-	Luna<ActorFrame,LuaActorFrame>::Push( L, this );
-}
-
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

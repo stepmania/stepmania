@@ -8,9 +8,12 @@
 
 class RageTexture;
 
+template<class T>
+class LunaSprite : public LunaActor<T>
+{
+public:
+	LunaSprite() { LUA->Register( Register ); }
 
-#define LUA_Sprite_METHODS( T ) \
-	LUA_Actor_METHODS( T ) \
 	/* Commands that go in the tweening queue: 
 	 * Commands that take effect immediately (ignoring the tweening queue): */ \
 	static int customtexturerect( T* p, lua_State *L )	{ p->SetCustomTextureRect( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; } \
@@ -25,15 +28,17 @@ class RageTexture;
 	static int loop( T* p, lua_State *L )				{ p->SetLooping(BArg(1)); return 0; } \
 	static int rate( T* p, lua_State *L )				{ p->SetPlaybackRate(FArg(1)); return 0; } \
 
-#define LUA_Sprite_METHODS_MAP( T ) \
-	LUA_Actor_METHODS_MAP( T ) \
-	LUA_METHOD_MAP( T, customtexturerect ) \
-	LUA_METHOD_MAP( T, texcoordvelocity ) \
-	LUA_METHOD_MAP( T, scaletoclipped ) \
-	LUA_METHOD_MAP( T, stretchtexcoords ) \
-	LUA_METHOD_MAP( T, position ) \
-	LUA_METHOD_MAP( T, loop ) \
-	LUA_METHOD_MAP( T, rate ) \
+	static void Register(lua_State *L) {
+		ADD_METHOD( customtexturerect ) \
+		ADD_METHOD( texcoordvelocity ) \
+		ADD_METHOD( scaletoclipped ) \
+		ADD_METHOD( stretchtexcoords ) \
+		ADD_METHOD( position ) \
+		ADD_METHOD( loop ) \
+		ADD_METHOD( rate ) \
+		LunaActor<T>::Register( L );
+	}
+};
 
 
 class Sprite: public Actor
