@@ -437,14 +437,14 @@ HWND GetHwnd()
 
 
 /* Set the video mode. */
-bool RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
+CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 {
 	g_CurrentParams = p;
 
 	HRESULT hr;
 
 	if( FindBackBufferType( p.windowed, p.bpp ) == -1 )	// no possible back buffer formats
-		return false;	// failed to set mode
+		return ssprintf( "FindBackBufferType(%i,%i) failed", p.windowed, p.bpp );	// failed to set mode
 
 #if defined _WINDOWS
 	/* Set SDL window title and icon -before- creating the window */
@@ -563,7 +563,7 @@ bool RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	/* Palettes were lost by Reset(), so mark them unloaded. */
 	g_TexResourceToPaletteIndex.clear();
 
-	return true;	// mode change successful
+	return "";	// mode change successful
 }
 
 void RageDisplay_D3D::ResolutionChanged()

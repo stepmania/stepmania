@@ -75,7 +75,7 @@ public:
 
 	void SaveScreenshot( CString sPath );
 protected:
-	bool TryVideoMode( VideoModeParams params, bool &bNewDeviceOut );
+	CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut );
 	void SetViewport(int shift_left, int shift_down);
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
 

@@ -198,10 +198,10 @@ public:
 	virtual CString GetTextureDiagnostics( unsigned id ) const { return ""; }
 
 protected:
-	// Return true if mode change was successful.
+	// Return "" if mode change was successful, an error message otherwise.
 	// bNewDeviceOut is set true if a new device was created and textures
 	// need to be reloaded.
-	virtual bool TryVideoMode( VideoModeParams params, bool &bNewDeviceOut ) = 0;
+	virtual CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut ) = 0;
 
 	virtual void SetViewport(int shift_left, int shift_down) = 0;
 

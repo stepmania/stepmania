@@ -78,22 +78,25 @@ bool RageDisplay::SetVideoMode( VideoModeParams p )
 
 	bool bNeedReloadTextures;
 	
-	if( this->TryVideoMode(p,bNeedReloadTextures) )
+	CString err;
+	err = this->TryVideoMode(p,bNeedReloadTextures);
+	if( err == "" )
 		return bNeedReloadTextures;
 	
 	// fall back
 	p.windowed = false;
-	if( this->TryVideoMode(p,bNeedReloadTextures) )
+	if( this->TryVideoMode(p,bNeedReloadTextures) == "" )
 		return bNeedReloadTextures;
 	p.bpp = 16;
-	if( this->TryVideoMode(p,bNeedReloadTextures) )
+	if( this->TryVideoMode(p,bNeedReloadTextures) == "" )
 		return bNeedReloadTextures;
 	p.width = 640;
 	p.height = 480;
-	if( this->TryVideoMode(p,bNeedReloadTextures) )
+	if( this->TryVideoMode(p,bNeedReloadTextures) == "" )
 		return bNeedReloadTextures;
 
-	RageException::ThrowNonfatal( "SetVideoMode failed.  Tried to fall back to other modes, but nothing worked." );
+	RageException::ThrowNonfatal( "SetVideoMode failed: %s.  Tried to fall back to other modes, but nothing worked.",
+			err.c_str() );
 }
 
 void RageDisplay::ProcessStatsOnFlip()
