@@ -974,8 +974,10 @@ int RageSoundReader_MP3::SetPosition_hard( int ms )
 			synthed = true;
 		}
 
-		if( do_mad_frame_decode() == -1 )
-			return -1; /* it set the error */
+		int ret = do_mad_frame_decode();
+		if( ret <= 0 )
+			return ret; /* it set the error */
+
 		synthed = false;
 	}
 }
