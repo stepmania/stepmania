@@ -259,5 +259,3 @@ float UnlockSystem::NumPointsUntilNextUnlock()
 	if (fSmallestPoints == 400000000) return 0;  // no match found
 	return fSmallestPoints - PREFSMAN->m_fDancePointsAccumulated;
 }
-
-
