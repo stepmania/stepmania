@@ -10,6 +10,7 @@
 #include "ThemeMetric.h"
 #include "OptionRow.h"
 
+class OptionRowHandler;
 
 enum InputMode 
 { 
@@ -23,7 +24,7 @@ class ScreenOptions : public ScreenWithMenuElements
 public:
 	ScreenOptions( CString sClassName );
 	virtual void Init();
-	void InitMenu( InputMode im, OptionRowDefinition defs[], int iNumOptionLines, bool bShowUnderlines = true );
+	void InitMenu( InputMode im, const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands, bool bShowUnderlines = true );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

@@ -26,6 +26,8 @@ OptionRow::OptionRow()
 		this->AddChild( &m_OptionIcons[p] );
 	this->AddChild( &m_sprBullet );
 	this->AddChild( &m_textTitle );
+
+	m_pHand = NULL;
 }
 
 OptionRow::~OptionRow()
@@ -49,13 +51,16 @@ void OptionRow::Clear()
 			SAFE_DELETE( m_Underline[p][i] );
 		m_Underline[p].clear();
 	}
+
+	m_pHand = NULL;
 }
 
-void OptionRow::LoadNormal( const OptionRowDefinition &def )
+void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand )
 {
 	m_RowDef = def;
 	m_RowType = OptionRow::ROW_NORMAL;
-	
+	m_pHand = pHand;
+
 	if( !def.choices.size() )
 		RageException::Throw( "Screen %s menu entry \"%s\" has no choices",
 		m_sName.c_str(), def.name.c_str() );

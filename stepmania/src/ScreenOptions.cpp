@@ -150,9 +150,11 @@ void ScreenOptions::LoadOptionIcon( PlayerNumber pn, int iRow, CString sText )
 	m_Rows[iRow]->LoadOptionIcon( pn, sText );
 }
 
-void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNumOptionLines, bool bShowUnderlines )
+void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands, bool bShowUnderlines )
 {
 	LOG->Trace( "ScreenOptions::Set()" );
+
+	ASSERT( vDefs.size() == vHands.size() );
 
 	m_InputMode = im;
 
@@ -160,12 +162,12 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 
 	Font* pFont = FONT->LoadFont( THEME->GetPathF(m_sName,"item") );
 
-	for( int r=0; r<iNumOptionLines; r++ )		// foreach row
+	for( unsigned r=0; r<vDefs.size(); r++ )		// foreach row
 	{
 		m_Rows.push_back( new OptionRow() );
 		OptionRow &row = *m_Rows.back();
 		
-		row.LoadNormal( defs[r] );
+		row.LoadNormal( vDefs[r], vHands[r] );
 
 		this->ImportOptions( r );
 	
@@ -1150,7 +1152,7 @@ void ScreenOptions::RefreshRowChoices( int r, const OptionRowDefinition &newdef 
 		{
 			Font* pFont = FONT->LoadFont( THEME->GetPathF(m_sName,"item") );
 			row.Clear();
-			row.LoadNormal( newdef );
+			row.LoadNormal( newdef, row.GetHandler() );
 			row.AfterImportOptions( 
 				pFont, 
 				ITEMS_START_X, 

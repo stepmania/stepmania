@@ -10,6 +10,7 @@
 #include "ThemeMetric.h"
 
 class Font;
+class OptionRowHandler;
 
 enum SelectType
 {
@@ -83,7 +84,7 @@ public:
 	~OptionRow();
 
 	void Clear();
-	void LoadNormal( const OptionRowDefinition &def );
+	void LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand );
 	void LoadExit(
 		const CString &sFontPath,
 		const CString &sExitText,
@@ -136,9 +137,10 @@ public:
 		ROW_NORMAL,
 		ROW_EXIT
 	};
-	RowType GetRowType() const { return m_RowType; }
 	const OptionRowDefinition &GetRowDef() const { return m_RowDef; }
 	OptionRowDefinition &GetRowDef() { return m_RowDef; }
+	RowType GetRowType() const { return m_RowType; }
+	OptionRowHandler *GetHandler() { return m_pHand; }
 
 	BitmapText &GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow );
 	void GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut );
@@ -154,6 +156,7 @@ public:
 protected:
 	OptionRowDefinition		m_RowDef;
 	RowType					m_RowType;
+	OptionRowHandler*		m_pHand;
 	vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
 	vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
 	Sprite					m_sprBullet;

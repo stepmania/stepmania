@@ -72,10 +72,9 @@ void ScreenProfileOptions::Init()
 	else
 		g_ProfileOptionsLines[PO_OS_MOUNT_2].choices[0] = PREFSMAN->m_sMemoryCardOsMountPoint[PLAYER_2];
 
-	InitMenu( 
-		INPUTMODE_SHARE_CURSOR, 
-		g_ProfileOptionsLines, 
-		NUM_PROFILE_OPTIONS_LINES );
+	vector<OptionRowDefinition> vDefs( &g_ProfileOptionsLines[0], &g_ProfileOptionsLines[ARRAYSIZE(g_ProfileOptionsLines)] );
+	vector<OptionRowHandler*> vHands( vDefs.size(), NULL );
+	InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
 
 	SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions","music") );
 }

@@ -56,10 +56,10 @@ void ScreenNetworkOptions::Init()
 	g_NetworkOptionsLines[PO_SERVER].choices.push_back("Stop");
 	g_NetworkOptionsLines[PO_SERVER].choices.push_back("Start...");
 	
-	InitMenu( 
-		INPUTMODE_SHARE_CURSOR, 
-		g_NetworkOptionsLines, 
-		NUM_NETWORK_OPTIONS_LINES );
+	vector<OptionRowDefinition> vDefs( &g_NetworkOptionsLines[0], &g_NetworkOptionsLines[ARRAYSIZE(g_NetworkOptionsLines)] );
+	vector<OptionRowHandler*> vHands( vDefs.size(), NULL );
+
+	InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
 
 	SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions","music") );
 }

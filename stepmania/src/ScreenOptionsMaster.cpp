@@ -105,7 +105,9 @@ void ScreenOptionsMaster::Init()
 
 	ASSERT( OptionRowHandlers.size() == asLineNames.size() );
 
-	InitMenu( im, &m_OptionRowAlloc[0], asLineNames.size(), bShowUnderlines );
+	vector<OptionRowHandler*> vHands( m_OptionRowAlloc.size(), NULL );
+
+	InitMenu( im, m_OptionRowAlloc, vHands, bShowUnderlines );
 }
 
 ScreenOptionsMaster::~ScreenOptionsMaster()
