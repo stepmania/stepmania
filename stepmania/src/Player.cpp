@@ -38,6 +38,9 @@ CachedThemeMetricI					BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboTh
 #define START_DRAWING_AT_PIXELS		THEME->GetMetricI("Player","StartDrawingAtPixels")
 #define STOP_DRAWING_AT_PIXELS		THEME->GetMetricI("Player","StopDrawingAtPixels")
 
+/* Distance to search for a note in Step(). */
+static const float StepSearchDistanceBackwards = 1.0f;
+static const float StepSearchDistanceForwards = 1.0f;
 
 Player::Player()
 {
@@ -353,8 +356,8 @@ void Player::Step( int col )
 	ASSERT( col >= 0  &&  col <= GetNumTracks() );
 
 	int iIndexOverlappingNote = GetClosestNote( col, GAMESTATE->m_fSongBeat, 
-						   GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
-						   GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate );
+						   StepSearchDistanceForwards * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
+						   StepSearchDistanceBackwards * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate );
 	
 	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
@@ -375,7 +378,6 @@ void Player::Step( int col )
 
 		TapNoteScore score;
 
-		LOG->Trace("fSecondsFromPerfect = %f", fSecondsFromPerfect);
 		if(		 fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_MARVELOUS;
 		else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
 		else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
@@ -391,9 +393,9 @@ void Player::Step( int col )
 
 		bDestroyedNote = (score >= TNS_GOOD);
 
-		LOG->Trace("(%2d/%2d)Note offset: %f, Score: %i", m_iOffsetSample, SAMPLE_COUNT, fNoteOffset, score);
+		LOG->Trace("Note offset: %f (fSecondsFromPerfect = %f), Score: %i", fNoteOffset, fSecondsFromPerfect, score);
 		SetTapNoteScore(col, iIndexOverlappingNote, score);
-		SetTapNoteOffset(col, iIndexOverlappingNote, fNoteOffset);
+		SetTapNoteOffset(col, iIndexOverlappingNote, -fNoteOffset);
 
 		if ( score >= TNS_GREAT ) 
 			HandleAutosync(fNoteOffset);
@@ -436,6 +438,7 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 	 * function is only called when a row is completed. */
 //	TapNoteScore score = MinTapNoteScore(iIndexThatWasSteppedOn);
 	TapNoteScore score = LastTapNoteScore(iIndexThatWasSteppedOn);
+	ASSERT(score != TNS_NONE);
 
 	/* If the whole row was hit with perfects or greats, remove the row
 	 * from the NoteField, so it disappears. */
