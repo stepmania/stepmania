@@ -170,9 +170,15 @@ void NetworkSyncManager::StartUp()
 {
 	CString ServerIP;
 
-	if( isLanServer ) {
-		LANserver->ServerStart();
-	}
+	if( isLanServer )
+		if (LANserver->ServerStart() == false) {
+			//If the server happens to not start when told,
+			//Print to log and release the memory where the
+			//server was held.
+			isLanServer = false;
+			LOG->Warn("Server failed to start.");
+			delete LANserver;
+		}
 
 	if( GetCommandlineArgument( "netip", &ServerIP ) )
 		PostStartUp(ServerIP);

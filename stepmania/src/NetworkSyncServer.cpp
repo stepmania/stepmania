@@ -23,15 +23,18 @@ StepManiaLanServer::~StepManiaLanServer() {
 	ServerStop();
 }
 
-void StepManiaLanServer::ServerStart() {
+bool StepManiaLanServer::ServerStart() {
 	server.blocking = 0; /* Turn off blocking */
 	if (server.create())
 		if (server.bind(8765))
 			if (server.listen()) {
 				stop = false;
 				statsTime = time(NULL);
+				return true;
 			}
 
+	//Hopefully we will not get here. If we did, something went wrong above.
+	return false;
 }
 
 void StepManiaLanServer::ServerStop() {
@@ -174,11 +177,6 @@ void GameClient::StartRequest(PacketFunctions &Packet) {
 	gameInfo.subtitle = Packet.ReadNT();
 	gameInfo.artist = Packet.ReadNT();
 	gameInfo.course = Packet.ReadNT();
-
-	cout << gameInfo.title << endl;
-	cout << gameInfo.subtitle << endl;
-	cout << gameInfo.artist << endl;
-	cout << gameInfo.course << endl;
 
 	Player[0].score = 0;
 	Player[0].combo = 0;
@@ -371,10 +369,8 @@ void StepManiaLanServer::NewClientCheck() {
 		 in that client socket.*/
 	int CurrentEmptyClient = FindEmptyClient();
 	if (CurrentEmptyClient > -1)
-		if (server.accept(Client[CurrentEmptyClient].clientSocket) == 1) {
+		if (server.accept(Client[CurrentEmptyClient].clientSocket) == 1)
 			Client[CurrentEmptyClient].Used = 1;
-			cout << "Added client to " << CurrentEmptyClient << endl;
-		}
 
 }
 

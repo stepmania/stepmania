@@ -5,12 +5,7 @@
 #include "ezsockets.h"
 #include "NetworkSyncManager.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-
 #include <time.h>
-
-#include <iostream>
 
 #include "StdString.h"
 
@@ -73,7 +68,7 @@ class GameClient {
 
 class StepManiaLanServer {
 	public:
-		void ServerStart();
+		bool ServerStart();
 		void ServerStop();
 		void ServerUpdate();
 		StepManiaLanServer();
