@@ -272,22 +272,34 @@ FileSet *FilenameDB::GetFileSet( CString dir, bool create )
 
 	m_Mutex.Lock();
 
-	map<CString, FileSet *>::iterator i = dirs.find( lower );
-	if( !create )
+	while(1)
 	{
-		if( i == dirs.end() )
-			return NULL;
-		return i->second;
-	}
+		/* Look for the directory. */
+		map<CString, FileSet *>::iterator i = dirs.find( lower );
+		if( !create )
+		{
+			if( i == dirs.end() )
+				return NULL;
+			return i->second;
+		}
 
-	FileSet *ret;
-	if( i != dirs.end() )
-	{
+		/* We're allowed to create.  If the directory wasn't found, break out and
+		 * create it. */
+		if( i == dirs.end() )
+			break;
+
 		/* This directory already exists.  If it's still being filled in by another
 		 * thread, wait for it. */
 		FileSet *pFileSet = i->second;
-		while( !pFileSet->m_bFilled )
+		if( !pFileSet->m_bFilled )
+		{
 			m_Mutex.Wait();
+
+			/* Beware: when we unlock m_Mutex to wait for it to finish filling,
+			 * we give up our claim to dirs, so i may be invalid.  Start over
+			 * and re-search. */
+			continue;
+		}
 
 		if( ExpireSeconds == -1 || pFileSet->age.PeekDeltaTime() < ExpireSeconds )
 		{
@@ -297,11 +309,12 @@ FileSet *FilenameDB::GetFileSet( CString dir, bool create )
 
 		/* It's expired.  Delete the old entry. */
 		this->DelFileSet( i );
+		break;
 	}
 
 	/* Create the FileSet and insert it.  Set it to !m_bFilled, so if other threads
 	 * happen to try to use this directory before we finish filling it, they'll wait. */
-	ret = new FileSet;
+	FileSet *ret = new FileSet;
 	ret->m_bFilled = false;
 	dirs[lower] = ret;
 
@@ -452,10 +465,30 @@ void FilenameDB::DelFile( const CString &sPath )
 
 void FilenameDB::FlushDirCache()
 {
-	LockMut(m_Mutex);
-	for( map<CString, FileSet *>::iterator i = dirs.begin(); i != dirs.end(); ++i )
-		delete i->second;
-	dirs.clear();
+	while(1)
+	{
+		m_Mutex.Lock();
+		if( dirs.empty() )
+		{
+			m_Mutex.Unlock();
+			break;
+		}
+
+		/* Grab the first entry.  Take it out of the list while we hold the
+		 * lock, to guarantee that we own it. */
+		FileSet *pFileSet = dirs.begin()->second;
+
+		dirs.erase( dirs.begin() );
+
+		/* If it's being filled, we don't really own it until it's finished being
+		 * filled, so wait. */
+		while( !pFileSet->m_bFilled )
+			m_Mutex.Wait();
+
+		m_Mutex.Unlock();
+
+		delete pFileSet;
+	}
 }
 
 const File *FilenameDB::GetFile( const CString &sPath )
