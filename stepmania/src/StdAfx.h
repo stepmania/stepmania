@@ -68,7 +68,6 @@ public:
 	const char *GetString() const { return (const char *) *this; }
 };
 #define CString CStringTemp
-#define CStringArray CArray<CStringTemp,CStringTemp>
 
 /* VC6's <algorithm> is doesn't actually define min and max. */
 template<class T>
