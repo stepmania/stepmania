@@ -47,7 +47,11 @@ const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"RandomVanish",
 	"CancelAll",
 	"NextTheme",
+	"NextTheme2",
 	"NextAnnouncer",
+	"NextAnnouncer2",
+	"NextGame",
+	"NextGame2",
 	"NextBannerGroup",
 	"NextBannerGroup2"
 };

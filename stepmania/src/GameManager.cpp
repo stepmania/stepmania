@@ -1688,6 +1688,13 @@ void GameManager::GetEnabledGames( vector<Game>& aGamesOut )
 	}
 }
 
+bool GameManager::IsGameEnabled( Game game )
+{
+	vector<Game> aGames;
+	GetEnabledGames( aGames );
+	return find( aGames.begin(), aGames.end(), game ) != aGames.end();
+}
+
 int GameManager::NotesTypeToNumTracks( StepsType nt )
 {
 	if(nt >= NUM_STEPS_TYPES)

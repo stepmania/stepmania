@@ -272,7 +272,8 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	}
 
 	// detect codes
-	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_THEME) )
+	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_THEME) ||
+		CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_THEME2) )
 	{
 		THEME->NextTheme();
 		ApplyGraphicOptions();	// update window title and icon
@@ -280,12 +281,27 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		TEXTUREMAN->DoDelayedDelete();
 	}
-	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_ANNOUNCER) )
+	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_ANNOUNCER) ||
+		CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_ANNOUNCER2) )
 	{
 		ANNOUNCER->NextAnnouncer();
 		CString sName = ANNOUNCER->GetCurAnnouncerName();
 		if( sName=="" ) sName = "(none)";
 		SCREENMAN->SystemMessage( "Announcer: "+sName );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+	}
+	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_GAME) ||
+		CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_GAME2) )
+	{
+		for( int i=0; i<NUM_GAMES; i++ )
+		{
+			GAMESTATE->m_CurGame = (Game)(GAMESTATE->m_CurGame+1);
+			wrap( (int&)GAMESTATE->m_CurGame, NUM_GAMES );
+			
+			if( GAMEMAN->IsGameEnabled(GAMESTATE->m_CurGame) )
+				break;	// found the first enabled game.  Stop searching.
+		}
+		SCREENMAN->SystemMessage( ssprintf("Game: %s",GAMESTATE->GetCurrentGameDef()->m_szName) );
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 	}
 //	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );

@@ -32,6 +32,7 @@ public:
 	Style	GetEditorStyleForNotesType( StepsType nt );
 
 	void GetEnabledGames( vector<Game>& aGamesOut );
+	bool IsGameEnabled( Game game );
 
 	static int NotesTypeToNumTracks( StepsType nt );
 	static StepsType StringToNotesType( CString sNotesType );
