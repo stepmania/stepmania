@@ -20,6 +20,7 @@ public:
 
 	void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
 	bool Remove( CString sPath );
+	void CreateDir( CString sDir );
 	
 	enum FileType { TYPE_FILE, TYPE_DIR, TYPE_NONE };
 	FileType GetFileType( CString sPath );

@@ -288,6 +288,16 @@ bool RageFileManager::Remove( CString sPath )
 	return Deleted;
 }
 
+void RageFileManager::CreateDir( CString sDir )
+{
+	CString sTempFile = sDir + "temp";
+	RageFile f;
+	f.Open( sTempFile, RageFile::WRITE );
+	f.Close();
+
+	FILEMAN->Remove( sTempFile );
+
+}
 void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 {
 	LockMut( *g_Mutex );

@@ -687,17 +687,9 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 
 	SaveStatsWebPageToDir( sDir );
 
-	//
-	// create edits dir
-	//
-	CString sEditsTempFile = sDir + EDITS_SUBDIR + "temp";
-	RageFile f;
-	f.Open( sDir + EDITS_SUBDIR + "temp", RageFile::WRITE );
-	f.Close();
-
-	FILEMAN->FlushDirCache( sDir + EDITS_SUBDIR );
-
-	FILEMAN->Remove( sEditsTempFile );
+	// Empty directories if none exist.
+	FILEMAN->CreateDir( sDir + EDITS_SUBDIR );
+	FILEMAN->CreateDir( sDir + SCREENSHOTS_SUBDIR );
 
 	return true;
 }
