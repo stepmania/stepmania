@@ -162,8 +162,8 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			--from;
 			--to;
 
-			if( from < 0 || from >= m_aModeChoices.size() ||
-				to < 0 || to >= m_aModeChoices.size() )
+			if( from >= m_aModeChoices.size() ||
+				to >= m_aModeChoices.size() )
 			{
 				LOG->Warn( "%s::OptionOrder%s out of range", m_sName.c_str(), dirname.c_str() );
 				continue;
