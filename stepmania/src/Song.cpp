@@ -785,7 +785,7 @@ void Song::TidyUpData()
 	{
 		StepsType st = (StepsType)i;
 
-		for( unsigned j=0; j<DIFFICULTY_INVALID-1; j++ )
+		for( unsigned j=0; j<NUM_DIFFICULTIES; j++ )
 		{
 			Difficulty dc = (Difficulty)j;
 
