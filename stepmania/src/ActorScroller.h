@@ -54,6 +54,9 @@ public:
 	{
 		ActorScroller::LoadFromNode( sDir, pNode );
 
+		// FIXME!  We need to load children before ActorScroller::LoadFromNode or
+		// else it won't SetDestinationItem correctly.
+
 		LoadChildrenFromNode( sDir, pNode );
 	}
 };
