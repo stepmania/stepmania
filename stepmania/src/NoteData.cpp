@@ -127,6 +127,101 @@ void NoteData::CopyAll( const NoteData* pFrom )
 	m_AttackMap = pFrom->m_AttackMap;
 }
 
+bool NoteData::IsRowEmpty( int index ) const
+{
+	/* If this is out of range, we don't have any notes there, so all tracks are empty. */
+	if( index < 0 || index >= GetMaxRow() )
+		return true;
+
+	for( int t=0; t<m_iNumTracks; t++ )
+		if( GetTapNoteX(t, index) != TAP_EMPTY )
+			return false;
+	return true;
+}
+
+int NoteData::GetNumTapNonEmptyTracks( int index ) const
+{
+	int iNum = 0;
+	for( int t=0; t<m_iNumTracks; t++ )
+		if( GetTapNote(t, index) != TAP_EMPTY )
+			iNum++;
+	return iNum;
+}
+
+int NoteData::GetFirstNonEmptyTrack( int index ) const
+{
+	/* If this is out of range, we don't have any notes there, so all tracks are empty. */
+	if( index < 0 || index >= GetMaxRow() )
+		return 0;
+
+	for( int t=0; t<m_iNumTracks; t++ )
+		if( GetTapNoteX( t, index ) != TAP_EMPTY )
+			return t;
+	return -1;
+}
+
+int NoteData::GetNumTracksWithTap( int index ) const
+{
+	/* If this is out of range, we don't have any notes there, so all tracks are empty. */
+	if( index < 0 || index >= GetMaxRow() )
+		return 0;
+
+	int iNum = 0;
+	for( int t=0; t<m_iNumTracks; t++ )
+	{
+		TapNote tn = GetTapNoteX( t, index );
+		if( tn == TAP_TAP )
+			iNum++;
+	}
+	return iNum;
+}
+
+int NoteData::GetNumTracksWithTapOrHoldHead( int index ) const
+{
+	/* If this is out of range, we don't have any notes there, so all tracks are empty. */
+	if( index < 0 || index >= GetMaxRow() )
+		return 0;
+
+	int iNum = 0;
+	for( int t=0; t<m_iNumTracks; t++ )
+	{
+		TapNote tn = GetTapNoteX( t, index );
+		if( tn == TAP_TAP || tn == TAP_ADDITION || tn == TAP_HOLD_HEAD )
+			iNum++;
+	}
+	return iNum;
+}
+
+int NoteData::GetFirstTrackWithTap( int index ) const
+{
+	/* If this is out of range, we don't have any notes there, so all tracks are empty. */
+	if( index < 0 || index >= GetMaxRow() )
+		return -1;
+
+	for( int t=0; t<m_iNumTracks; t++ )
+	{
+		TapNote tn = GetTapNoteX( t, index );
+		if( tn == TAP_TAP || tn == TAP_ADDITION )
+			return t;
+	}
+	return -1;
+}
+
+int NoteData::GetFirstTrackWithTapOrHoldHead( int index ) const
+{
+	/* If this is out of range, we don't have any notes there, so all tracks are empty. */
+	if( index < 0 || index >= GetMaxRow() )
+		return -1;
+
+	for( int t=0; t<m_iNumTracks; t++ )
+	{
+		TapNote tn = GetTapNoteX( t, index );
+		if( tn == TAP_TAP || tn == TAP_ADDITION || tn == TAP_HOLD_HEAD )
+			return t;
+	}
+	return -1;
+}
+
 void NoteData::AddHoldNote( HoldNote add )
 {
 	ASSERT( add.fStartBeat>=0 && add.fEndBeat>=0 );
@@ -313,15 +408,22 @@ int NoteData::GetNumTapNotes( float fStartBeat, float fEndBeat ) const
 {
 	int iNumNotes = 0;
 
-	if(fEndBeat == -1) fEndBeat = GetMaxBeat();
+	if( fEndBeat == -1 )
+		fEndBeat = GetMaxBeat();
+
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
+
+	/* Clamp to known-good ranges. */
+	iStartIndex = clamp( iStartIndex, 0, GetMaxRow()-1 );
+	iEndIndex = clamp( iEndIndex, 0, GetMaxRow()-1 );
 	
 	for( int t=0; t<m_iNumTracks; t++ )
 	{
 		for( int i=iStartIndex; i<=iEndIndex; i++ )
 		{
-			if( GetTapNote(t, i) != TAP_EMPTY && GetTapNote(t, i) != TAP_MINE )
+			TapNote tn = GetTapNoteX(t, i);
+			if( tn != TAP_EMPTY && tn != TAP_MINE )
 				iNumNotes++;
 		}
 	}
@@ -348,14 +450,20 @@ int NoteData::GetNumMines( float fStartBeat, float fEndBeat ) const
 {
 	int iNumMines = 0;
 
-	if(fEndBeat == -1) fEndBeat = GetMaxBeat();
+	if( fEndBeat == -1 )
+		fEndBeat = GetMaxBeat();
+
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
+
+	/* Clamp to known-good ranges. */
+	iStartIndex = clamp( iStartIndex, 0, GetMaxRow()-1 );
+	iEndIndex = clamp( iEndIndex, 0, GetMaxRow()-1 );
 	
 	for( int t=0; t<m_iNumTracks; t++ )
 	{
 		for( int i=iStartIndex; i<=iEndIndex; i++ )
-			if( GetTapNote(t, i) == TAP_MINE )
+			if( GetTapNoteX(t, i) == TAP_MINE )
 				iNumMines++;
 	}
 	
@@ -387,8 +495,12 @@ int NoteData::GetNumHands( float fStartBeat, float fEndBeat ) const
 	if( fEndBeat == -1 )
 		fEndBeat = temp.GetMaxBeat();
 
-	const int iStartIndex = BeatToNoteRow( fStartBeat );
-	const int iEndIndex = BeatToNoteRow( fEndBeat );
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+
+	/* Clamp to known-good ranges. */
+	iStartIndex = clamp( iStartIndex, 0, temp.GetMaxRow()-1 );
+	iEndIndex = clamp( iEndIndex, 0, temp.GetMaxRow()-1 );
 
 	int iNum = 0;
 	for( int i=iStartIndex; i<=iEndIndex; i++ )
@@ -396,9 +508,8 @@ int NoteData::GetNumHands( float fStartBeat, float fEndBeat ) const
 		int iNumNotesThisIndex = 0;
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
-			if( temp.GetTapNote(t, i) == TAP_MINE )
-				continue; // mines don't count
-			if( temp.GetTapNote(t, i) != TAP_EMPTY )
+			TapNote tn = temp.GetTapNoteX(t, i);
+			if( tn != TAP_MINE && tn != TAP_EMPTY ) // mines don't count
 				iNumNotesThisIndex++;
 		}
 		if( iNumNotesThisIndex >= 3 )
@@ -413,8 +524,12 @@ int NoteData::GetNumN( int MinTaps, float fStartBeat, float fEndBeat ) const
 	if( fEndBeat == -1 )
 		fEndBeat = GetMaxBeat();
 
-	const int iStartIndex = BeatToNoteRow( fStartBeat );
-	const int iEndIndex = BeatToNoteRow( fEndBeat );
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+
+	/* Clamp to known-good ranges. */
+	iStartIndex = clamp( iStartIndex, 0, GetMaxRow()-1 );
+	iEndIndex = clamp( iEndIndex, 0, GetMaxRow()-1 );
 
 	int iNum = 0;
 	for( int i=iStartIndex; i<=iEndIndex; i++ )
@@ -422,9 +537,8 @@ int NoteData::GetNumN( int MinTaps, float fStartBeat, float fEndBeat ) const
 		int iNumNotesThisIndex = 0;
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
-			if( GetTapNote(t, i) == TAP_MINE )
-				continue; // mines don't count
-			if( GetTapNote(t, i) != TAP_EMPTY )
+			TapNote tn = GetTapNoteX(t, i);
+			if( tn != TAP_MINE && tn != TAP_EMPTY ) // mines don't count
 				iNumNotesThisIndex++;
 		}
 		if( iNumNotesThisIndex >= MinTaps )
@@ -750,6 +864,12 @@ void NoteData::SetTapNote(int track, int row, TapNote t)
 
 	PadTapNotes(row);
 	m_TapNotes[track][row]=t;
+}
+
+void NoteData::ReserveRows( int row )
+{
+	for(int track = 0; track < m_iNumTracks; ++track)
+		m_TapNotes[track].reserve( row );
 }
 
 void NoteData::EliminateAllButOneTap(int row)

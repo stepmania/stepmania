@@ -58,6 +58,14 @@ public:
 		if(row < 0 || row >= (int) m_TapNotes[track].size()) return TapNote(TAP_EMPTY);
 		return m_TapNotes[track][row];
 	}
+	void ReserveRows( int row );
+
+	/* GetTapNote is called a lot.  This one doesn't do any bounds checking,
+	 * which is much faster.  Be sure that 0 <= row < GetMaxRow(). */
+	inline TapNote GetTapNoteX(unsigned track, int row) const
+	{
+		return m_TapNotes[track][row];
+	}
 	void MoveTapNoteTrack(int dest, int src);
 	void SetTapNote(int track, int row, TapNote t);
 	
@@ -65,71 +73,15 @@ public:
 	void ClearAll();
 	void CopyRange( const NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin = -1 );
 	void CopyAll( const NoteData* pFrom );
-	
-	inline bool IsRowEmpty( int index ) const
-	{
-		for( int t=0; t<m_iNumTracks; t++ )
-			if( GetTapNote(t, index) != TAP_EMPTY )
-				return false;
-		return true;
-	}
-	inline int GetNumTapNonEmptyTracks( int index ) const
-	{
-		int iNum = 0;
-		for( int t=0; t<m_iNumTracks; t++ )
-			if( GetTapNote(t, index) != TAP_EMPTY )
-				iNum++;
-		return iNum;
-	}
-	inline int GetFirstNonEmptyTrack( int index ) const
-	{
-		for( int t=0; t<m_iNumTracks; t++ )
-			if( GetTapNote(t, index) != TAP_EMPTY )
-				return t;
-		return -1;
-	}
-	inline int GetNumTracksWithTap( int index ) const
-	{
-		int iNum = 0;
-		for( int t=0; t<m_iNumTracks; t++ )
-		{
-			TapNote tn = GetTapNote(t, index);
-			if( tn == TAP_TAP )
-				iNum++;
-		}
-		return iNum;
-	}
-	inline int GetNumTracksWithTapOrHoldHead( int index ) const
-	{
-		int iNum = 0;
-		for( int t=0; t<m_iNumTracks; t++ )
-		{
-			TapNote tn = GetTapNote(t, index);
-			if( tn == TAP_TAP || tn == TAP_ADDITION || tn == TAP_HOLD_HEAD )
-				iNum++;
-		}
-		return iNum;
-	}
-	inline int GetFirstTrackWithTap( int index ) const
-	{
-		for( int t=0; t<m_iNumTracks; t++ )
-		{
-			TapNote tn = GetTapNote(t, index);
-			if( tn == TAP_TAP || tn == TAP_ADDITION )
-				return t;
-		}
-		return -1;
-	}
-	inline int GetFirstTrackWithTapOrHoldHead( int index ) const
-	{
-		for( int t=0; t<m_iNumTracks; t++ )
-		{
-			TapNote tn = GetTapNote(t, index);
-			if( tn == TAP_TAP || tn == TAP_ADDITION || tn == TAP_HOLD_HEAD )
-				return t;
-		}
-		return -1;
-	}
+
+	bool IsRowEmpty( int index ) const;
+	int GetNumTapNonEmptyTracks( int index ) const;
+	int GetFirstNonEmptyTrack( int index ) const;
+	int GetNumTracksWithTap( int index ) const;
+	int GetNumTracksWithTapOrHoldHead( int index ) const;
+	int GetFirstTrackWithTap( int index ) const;
+	int GetFirstTrackWithTapOrHoldHead( int index ) const;
+
 	inline bool IsThereATapAtRow( int index ) const
 	{
 		return GetFirstTrackWithTap( index ) != -1;
