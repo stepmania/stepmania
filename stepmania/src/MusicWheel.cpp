@@ -169,8 +169,10 @@ MusicWheel::MusicWheel()
 
 	// HACK: invalidate currently selected song in the case that it
 	// cannot be played due to lack of stages remaining
-	if( GAMESTATE->m_pCurSong != NULL && SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong ) + GAMESTATE->m_iCurrentStageIndex > PREFSMAN->m_iNumArcadeStages)
-		GAMESTATE->m_pCurSong = NULL;
+	if( GAMESTATE->m_pCurSong != NULL && 
+		SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong ) + GAMESTATE->m_iCurrentStageIndex > PREFSMAN->m_iNumArcadeStages
+		&& !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
+			GAMESTATE->m_pCurSong = NULL;
 
 	// If there is no currently selected song, select one.
 	if( GAMESTATE->m_pCurSong == NULL )
