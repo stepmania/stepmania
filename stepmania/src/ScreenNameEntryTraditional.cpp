@@ -376,12 +376,9 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			SET_ON( m_FeatDisplay[p][i].m_Difficulty );
 			this->AddChild( &m_FeatDisplay[p][i].m_Difficulty );
 
+			m_FeatDisplay[p][i].m_textScore.SetName( "ScreenNameEntryTraditional Percent" );
+			m_FeatDisplay[p][i].m_textScore.Load( (PlayerNumber)p, &ss );
 			m_FeatDisplay[p][i].m_textScore.SetName( ssprintf("ScoreP%i",p+1) );
-			m_FeatDisplay[p][i].m_textScore.LoadFromNumbers( THEME->GetPathToN("ScreenNameEntryTraditional score") );
-			if( PREFSMAN->m_bPercentageScoring )
-				m_FeatDisplay[p][i].m_textScore.SetText( ssprintf("%.2f%%", fPercentDP*100) );
-			else
-				m_FeatDisplay[p][i].m_textScore.SetText( ssprintf("%i", iScore) );
 			SET_ON( m_FeatDisplay[p][i].m_textScore );
 			this->AddChild( &m_FeatDisplay[p][i].m_textScore );
 

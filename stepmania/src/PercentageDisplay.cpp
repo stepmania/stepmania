@@ -15,12 +15,14 @@
 
 PercentageDisplay::PercentageDisplay()
 {
+	m_pSource = NULL;
 }
 
-void PercentageDisplay::Load( PlayerNumber pn )
+void PercentageDisplay::Load( PlayerNumber pn, StageStats* pSource )
 {
 	ASSERT( m_sName != "" ); // set this!
 	m_PlayerNumber = pn;
+	m_pSource = pSource;
 	m_Last = -1;
 
 	if( PREFSMAN->m_bDancePointsForOni )
@@ -28,7 +30,7 @@ void PercentageDisplay::Load( PlayerNumber pn )
 	else
 		m_textPercent.SetName( ssprintf("PercentP%i", pn+1) );
 
-	m_textPercent.LoadFromNumbers( THEME->GetPathToN(m_sName + " text") );
+	m_textPercent.LoadFromNumbers( THEME->GetPathN(m_sName,"text") );
 	SET_XY_AND_ON_COMMAND( m_textPercent );
 	this->AddChild( &m_textPercent );
 
@@ -60,7 +62,7 @@ void PercentageDisplay::Update( float fDeltaTime )
 
 void PercentageDisplay::Refresh()
 {
-	const int iActualDancePoints = g_CurStageStats.iActualDancePoints[m_PlayerNumber];
+	const int iActualDancePoints = m_pSource->iActualDancePoints[m_PlayerNumber];
 	if( iActualDancePoints == m_Last )
 		return;
 
@@ -69,7 +71,7 @@ void PercentageDisplay::Refresh()
 	CString sNumToDisplay;
 	if( !PREFSMAN->m_bDancePointsForOni )
 	{
-		float fPercentDancePoints = g_CurStageStats.GetPercentDancePoints( m_PlayerNumber );
+		float fPercentDancePoints = m_pSource->GetPercentDancePoints( m_PlayerNumber );
 
 		// clamp percentage - feedback is that negative numbers look weird here.
 		CLAMP( fPercentDancePoints, 0.f, 1.f );

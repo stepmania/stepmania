@@ -496,7 +496,7 @@ void ScreenEvaluation::Init()
 			/* Use "ScreenEvaluation Percent" for the [metric set], but position and
 			 * tween it with "PercentP1X", etc. */
 			m_Percent[p].SetName( "ScreenEvaluation Percent" );
-			m_Percent[p].Load( (PlayerNumber) p );
+			m_Percent[p].Load( (PlayerNumber) p, &g_CurStageStats );
 			m_Percent[p].SetXY( THEME->GetMetricF(m_sName, ssprintf("PercentP%dX",p+1)),
 				THEME->GetMetricF(m_sName,ssprintf("PercentP%dY",p+1)) );
 			m_Percent[p].Command( THEME->GetMetric(m_sName,ssprintf("PercentP%dOnCommand",p+1)) );

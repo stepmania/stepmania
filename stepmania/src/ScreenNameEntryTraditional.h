@@ -18,6 +18,7 @@
 #include "Banner.h"
 #include "HighScore.h"
 #include "DifficultyIcon.h"
+#include "PercentageDisplay.h"
 
 
 class HighScoreWheelItem : public ActorFrame
@@ -78,13 +79,13 @@ private:
 	/* Feat display: */
 	struct FeatDisplay
 	{
-		HighScoreWheel	m_Wheel;
-		GradeDisplay	m_Grade;
-		DifficultyIcon	m_Difficulty;
-		BitmapText		m_textCategory;
-		BitmapText		m_textScore;
-		Banner			m_sprBanner;
-		Sprite			m_sprBannerFrame;
+		HighScoreWheel		m_Wheel;
+		GradeDisplay		m_Grade;
+		DifficultyIcon		m_Difficulty;
+		BitmapText			m_textCategory;
+		PercentageDisplay	m_textScore;
+		Banner				m_sprBanner;
+		Sprite				m_sprBannerFrame;
 	};
 
 	vector<FeatDisplay>		m_FeatDisplay[NUM_PLAYERS];
