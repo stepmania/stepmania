@@ -32,10 +32,6 @@ public:
 	 * hearing it.  (This isn't necessarily the same as the buffer latency.) */
 	virtual float GetPlayLatency() const { return 0.0f; }
 
-	/* This is called if the volume changed; call SOUNDMAN->GetMixVolume() to
-	 * get it. */
-	virtual void VolumeChanged() { }
-
 	virtual int GetSampleRate( int rate ) const { return 44100; }
 
 	virtual ~RageSoundDriver() { }

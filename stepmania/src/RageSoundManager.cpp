@@ -379,8 +379,6 @@ void RageSoundManager::SetPrefs(float MixVol)
 	g_SoundManMutex.Lock(); /* lock for access to MixVolume */
 	MixVolume = MixVol;
 	g_SoundManMutex.Unlock(); /* finished with MixVolume */
-
-	driver->VolumeChanged();
 }
 
 /* Standalone helpers: */
