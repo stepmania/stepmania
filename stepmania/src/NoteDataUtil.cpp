@@ -1258,7 +1258,7 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 		attack.fSecsRemaining = 15;
 		attack.sModifier = szAttacks[rand()%ARRAYSIZE(szAttacks)];
 		attack.level = ATTACK_LEVEL_1;
-		nd.SetTapAttackNote( iTrack, BeatToNoteRow(iBeat), attack );
+		nd.SetTapAttackNote( iTrack, BeatToNoteRow(fBeat), attack );
 	}
 }
 

@@ -1239,7 +1239,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	if( bPlayTicks )
 	{
 		float fSecsPerBeat = 1.f/GAMESTATE->m_fCurBPS;
-		float fSecsToLight = fSecsPerBeat*.2;
+		float fSecsToLight = fSecsPerBeat*.2f;
 		s_fSecsLeftOnUpperLights = fSecsToLight;
 	}
 	else
