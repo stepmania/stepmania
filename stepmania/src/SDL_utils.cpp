@@ -341,6 +341,20 @@ void HandleSDLEvents()
 	}
 }
 
+void SDL_UpdateHWnd()
+{
+#ifdef _WINDOWS
+	/* Grab the window manager specific information */
+	SDL_SysWMinfo info;
+	SDL_VERSION(&info.version);
+	if ( SDL_GetWMInfo(&info) < 0 ) 
+		RageException::Throw( "SDL_GetWMInfo failed" );
+
+	g_hWndMain = info.window;
+#endif
+}
+
+
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.

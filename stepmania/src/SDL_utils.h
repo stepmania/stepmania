@@ -33,6 +33,8 @@ RageSurface *RageSurfaceFromSDLSurface( SDL_Surface *surf );
 
 void HandleSDLEvents();
 
+void SDL_UpdateHWnd();
+
 #endif
 
 /*
