@@ -241,9 +241,15 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 
 	bool UsbChanged()
 	{
+	  LOG->Trace( "USBChanged" );
+
+
 		// check PROC_KMSG for any "usb" messages
 		if( fds_kmsg == -1 )
+		  {
+		    printf("closed\n");
 			return false;
+		  }
 
 		fd_set fdset;
 		FD_ZERO( &fdset );
@@ -254,15 +260,20 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 		if ( select(max_fd+1, &fdset, NULL, NULL, &zero) <= 0 )
 			return false;
 
+		LOG->Trace( "kmsg: fd isset" );
+
 		if( !FD_ISSET(fds_kmsg, &fdset) )
 			return false;
 
-		static char buffer[1024];	// large enough to read all messages in one call
-		int ret = read(fds_kmsg, &buffer, sizeof(buffer));
+		printf( "kmsg: reading...\n" );
 
+		static char buffer[1024];	// large enough to read all messages in one call
+		int ret = read(fds_kmsg, buffer, sizeof(buffer));
+
+		printf("kmsg: read %d bytes\n", ret );
 		if( ret == 0 )
 		{
-			LOG->Warn("Read only %d bytes from '%s'", ret, PROC_KMSG);
+		  printf( "closing kmsg" );
 			close(fds_kmsg);
 			fds_kmsg = -1;
 			return false;
@@ -276,10 +287,16 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 		  {
 		    buffer[ret] = '\0';
 		  }
-		LOG->Trace( "read '%s' from kmsg", buffer );
+		char* temp = buffer;
+		while( *temp )
+		  {
+		    if( *temp<32  )
+		      *temp = '\n';
+		    temp++;
+		  }
+		printf( "kmsg: '%s'", buffer );
 	       
-		bool bLogAboutUsb = strstr(buffer,"usb") || strstr(buffer,"USB");
-		return bLogAboutUsb;
+		return true;
 	}
 
 	void MemoryCardManager::Update( float fDelta )
