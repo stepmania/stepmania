@@ -1150,6 +1150,7 @@ void mySDL_FixupPalettedAlpha( SDL_Surface *img )
 	if( img->flags & SDL_SRCCOLORKEY )
 	{
 		img->flags &= ~SDL_SRCCOLORKEY;
+		ASSERT_M( (int)img->format->colorkey < img->format->palette->ncolors, ssprintf("%i",img->format->colorkey) );
 		img->format->palette->colors[ img->format->colorkey ].unused = 0;
 	}
 }
