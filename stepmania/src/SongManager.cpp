@@ -588,14 +588,17 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	 * That's not too bad, I think.  This will also change it in the song scroll,
 	 * which is a little odd but harmless. 
 	 *
+	 * XXX: Ack.  This means this function can only be called when we have a style
+	 * set up, which is too restrictive.  How to handle this?
+	 *
 	 * XXX: Once we support edits, ignore them, too. */
-	const NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+//	const NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
 	for( unsigned i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		const Notes* pNotes = pSong->m_apNotes[i];
 
-		if(pNotes->m_NotesType != nt)
-			continue;
+//		if(pNotes->m_NotesType != nt)
+//			continue;
 
 		if( pNotes->GetMeter() >= 10 )
 			return EXTRA_COLOR;
