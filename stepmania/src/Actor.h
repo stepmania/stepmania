@@ -45,7 +45,6 @@ public:
 		RageVector3 scale;
 		RectF		crop;	// 0 = no cropping, 1 = fully cropped
 		RectF		fade;	// 0 = no fade
-		RageColor	fadecolor;
 		RageColor   diffuse[4];
 		RageColor   glow;
 		GlowMode	glowmode;
@@ -158,7 +157,6 @@ public:
 	void  SetFadeTop( float percent )	{ DestTweenState().fade.top = percent;	}
 	void  SetFadeRight( float percent )	{ DestTweenState().fade.right = percent;}
 	void  SetFadeBottom( float percent ){ DestTweenState().fade.bottom = percent;}
-	void  SetFadeDiffuseColor( const RageColor &c ) { DestTweenState().fadecolor = c; }
 
 	void SetGlobalDiffuseColor( RageColor c );
 	void SetGlobalX( float x );

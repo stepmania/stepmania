@@ -677,7 +677,6 @@ void Actor::HandleCommand( const Command &command )
 	else if( sName=="fadetop" )			SetFadeTop( fArg(1) );
 	else if( sName=="faderight" )		SetFadeRight( fArg(1) );
 	else if( sName=="fadebottom" )		SetFadeBottom( fArg(1) );
-	else if( sName=="fadecolor" )		SetFadeDiffuseColor( cArg(1) );
 	else if( sName=="diffuse" )			SetDiffuse( cArg(1) );
 	else if( sName=="diffuseleftedge" )		SetDiffuseLeftEdge( cArg(1) );
 	else if( sName=="diffuserightedge" )	SetDiffuseRightEdge( cArg(1) );
@@ -841,7 +840,6 @@ void Actor::TweenState::Init()
 	scale = RageVector3( 1, 1, 1 );
 	crop = RectF( 0,0,0,0 );
 	fade = RectF( 0,0,0,0 );
-	fadecolor = RageColor( 1, 1, 1, 0 );
 	for(int i=0; i<4; i++) 
 		diffuse[i] = RageColor( 1, 1, 1, 1 );
 	glow = RageColor( 1, 1, 1, 0 );
@@ -864,7 +862,6 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 	average_out.fade.top	= ts1.fade.top   + (ts2.fade.top	- ts1.fade.top   )*fPercentBetween;
 	average_out.fade.right	= ts1.fade.right + (ts2.fade.right	- ts1.fade.right )*fPercentBetween;
 	average_out.fade.bottom	= ts1.fade.bottom+ (ts2.fade.bottom	- ts1.fade.bottom)*fPercentBetween;
-	average_out.fadecolor	= ts1.fadecolor  + (ts2.fadecolor	- ts1.fadecolor  )*fPercentBetween;
 
 	for(int i=0; i<4; i++) 
 		average_out.diffuse[i]	= ts1.diffuse[i]+ (ts2.diffuse[i]	- ts1.diffuse[i])*fPercentBetween;
