@@ -696,21 +696,21 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 								   Song*& pSongOut, Steps*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
 {
 	CString sGroup = GAMESTATE->m_sPreferredGroup;
-	if(sGroup == GROUP_ALL_MUSIC)
+	if( sGroup == GROUP_ALL_MUSIC )
 	{
-		ASSERT(GAMESTATE->m_pCurSong);
+		if( GAMESTATE->m_pCurSong == NULL )
+		{
+			/* This normally shouldn't happen, but it's helpful to permit it for testing. */
+			LOG->Warn( "GetExtraStageInfo() called in GROUP_ALL_MUSIC, but GAMESTATE->m_pCurSong == NULL" );
+			GAMESTATE->m_pCurSong = SONGMAN->GetRandomSong();
+		}
 		sGroup = GAMESTATE->m_pCurSong->m_sGroupName;
 	}
-	/* XXX: Temporary extra info: someone reported an odd assertion failure here. */
-//	ASSERT(sGroup != "");
-	if( sGroup == "" )
-	{
-		LOG->Warn("GetExtraStageInfo error: sGroup == \"\", m_pCurSong %p '%s' '%s'",
+
+	RAGE_ASSERT_M( sGroup != "", ssprintf("%p '%s' '%s'",
 		GAMESTATE->m_pCurSong,
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->GetSongDir().c_str():"",
-		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->m_sGroupName.c_str():"");
-		ASSERT(0); /* get a backtrace */
-	}
+		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->m_sGroupName.c_str():"") );
 
 	if(GetExtraStageInfoFromCourse(bExtra2, sGroup, pSongOut, pNotesOut, po_out, so_out))
 		return;
