@@ -164,7 +164,7 @@ static const CreditLine CREDIT_LINES[] =
 	{1,"Join the StepMania team"},
 	{1,"and help us out!"},
 };
-
+#include "ActorUtil.h"
 
 ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 {
@@ -173,12 +173,29 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 	SortSongPointerArrayByTitle( arraySongs );
 
 	// FIXME:  Redo this screen with a BGA
-//	m_ScrollerBackgrounds.Load(
-//		BACKGROUNDS_SCROLL_SECONDS_PER_ITEM, BACKGROUNDS_SPACING_X, BACKGROUNDS_SPACING_Y );
-//	this->AddChild( &m_ScrollerBackgrounds );
-//	m_ScrollerFrames.Load( BACKGROUNDS_SCROLL_SECONDS_PER_ITEM, BACKGROUNDS_SPACING_X, BACKGROUNDS_SPACING_Y );
-//	this->AddChild( &m_ScrollerFrames );
+	m_ScrollerBackgrounds.SetName( "Backgrounds" );
+	m_ScrollerBackgrounds.Load(
+		BACKGROUNDS_SCROLL_SECONDS_PER_ITEM,
+		4,
+		RageVector3(0, 0, 0),
+		RageVector3(0, 0, 0),
+		RageVector3(BACKGROUNDS_SPACING_X, BACKGROUNDS_SPACING_Y, 0),
+		RageVector3(0, 0, 0) );
+	SET_XY( m_ScrollerBackgrounds );
+	this->AddChild( &m_ScrollerBackgrounds );
 
+	m_ScrollerFrames.SetName( "Backgrounds" );
+	m_ScrollerFrames.Load(
+		BACKGROUNDS_SCROLL_SECONDS_PER_ITEM,
+		4,
+		RageVector3(0, 0, 0),
+		RageVector3(0, 0, 0),
+		RageVector3(BACKGROUNDS_SPACING_X, BACKGROUNDS_SPACING_Y, 0),
+		RageVector3(0, 0, 0) );
+	SET_XY( m_ScrollerFrames );
+	this->AddChild( &m_ScrollerFrames );
+
+	float fTime = 0;
 	{
 		for( int i=0; i<NUM_BACKGROUNDS; i++ )
 		{
@@ -199,9 +216,25 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 			pFrame->Load( THEME->GetPathToG("ScreenCredits background frame") );
 			m_ScrollerFrames.AddChild( pFrame );
 		}
+		const int iFirst = -2, iLast = NUM_BACKGROUNDS+2;
+		m_ScrollerBackgrounds.SetCurrentAndDestinationItem( iFirst );
+		m_ScrollerBackgrounds.SetDestinationItem( iLast );
+
+		m_ScrollerFrames.SetCurrentAndDestinationItem( iFirst );
+		m_ScrollerFrames.SetDestinationItem( iLast );
+
+		fTime = max( fTime, BACKGROUNDS_SCROLL_SECONDS_PER_ITEM*(iLast-iFirst) );
 	}
 	
-//	m_ScrollerTexts.Load( TEXTS_SCROLL_SECONDS_PER_ITEM, TEXTS_SPACING_X, TEXTS_SPACING_Y );
+	m_ScrollerTexts.SetName( "Texts" );
+	m_ScrollerTexts.Load(
+		TEXTS_SCROLL_SECONDS_PER_ITEM,
+		40,
+		RageVector3(0, 0, 0),
+		RageVector3(0, 0, 0),
+		RageVector3(TEXTS_SPACING_X, TEXTS_SPACING_Y, 0),
+		RageVector3(0, 0, 0) );
+	SET_XY( m_ScrollerTexts );
 	this->AddChild( &m_ScrollerTexts );
 	
 	{
@@ -220,6 +253,11 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 			pText->SetZoom( TEXTS_ZOOM );
 			m_ScrollerTexts.AddChild( pText );
 		}
+
+		const int iFirst = -10, iLast = ARRAYSIZE(CREDIT_LINES)+10;
+		m_ScrollerTexts.SetCurrentAndDestinationItem( iFirst );
+		m_ScrollerTexts.SetDestinationItem( iLast );
+		fTime = max( fTime, TEXTS_SCROLL_SECONDS_PER_ITEM*(iLast-iFirst) );
 	}
 
 	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenCredits overlay") );
@@ -229,8 +267,9 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 	this->MoveToTail( &m_Out );		// put it in the back so it covers up the stuff we just added
 
 	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
-	this->PostScreenMessage( SM_BeginFadingOut, m_Background.GetLengthSeconds() );
-
+	LOG->Trace("XXXXXXXXX %f", fTime);
+	this->PostScreenMessage( SM_BeginFadingOut, fTime );
+//	this->PostScreenMessage( SM_BeginFadingOut, m_Background.GetLengthSeconds() );
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("credits") );
 }
 
