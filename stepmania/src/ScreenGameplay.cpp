@@ -1556,12 +1556,27 @@ void ScreenGameplay::Update( float fDeltaTime )
 	}
 
 
-	// send blink data
+	// Before the first beat of the song, blink all cabinet lights (except for 
+	// menu buttons) on the beat.
 	bool bOverrideCabinetBlink = (GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat) && bCrossedABeat;
-
 	FOREACH_CabinetLight( cl )
 	{
-		if( bOverrideCabinetBlink || bBlinkCabinetLight[cl] )
+		switch( cl )
+		{
+		case LIGHT_BUTTONS_LEFT:
+		case LIGHT_BUTTONS_RIGHT:
+			// don't blink
+			break;
+		default:
+			bBlinkCabinetLight[cl] |= bOverrideCabinetBlink;
+			break;
+		}
+	}
+
+	// Send blink data.
+	FOREACH_CabinetLight( cl )
+	{
+		if( bBlinkCabinetLight[cl] )
 			LIGHTSMAN->BlinkCabinetLight( cl );
 	}
 
