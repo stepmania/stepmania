@@ -154,7 +154,7 @@ private:
 	RageSoundSample	m_soundToasty;
 
 
-	RageSoundStream	m_soundMusic;
+	RageSound		m_soundMusic;
 };
 
 

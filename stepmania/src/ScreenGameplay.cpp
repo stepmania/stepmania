@@ -463,9 +463,8 @@ ScreenGameplay::ScreenGameplay()
 	 * include options set by the course.  Should it? -glenn */
 	LoadNextSong( true );
 
-
 	/* Keep the music playing after it's finished; we'll stop it. */
-	// XXX m_soundMusic.SetAutoStop(false);
+	m_soundMusic.SetStopMode(RageSound::M_CONTINUE);
 
 	if( GAMESTATE->m_bDemonstration )
 	{
@@ -604,7 +603,7 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 	m_Background.BeginTweening( 2 );
 	m_Background.SetTweenDiffuse( RageColor(1,1,1,1) );
 
-	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath(), true );	// enable accurate sync
+	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath() );
 	const float fFirstBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
 	const float fFirstSecond = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( fFirstBeat );
 	const float fStartSecond = min( 0, fFirstSecond-4 );
@@ -701,13 +700,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 {
 	int pn;
 		
-	//LOG->Trace( "ScreenGameplay::Update(%f)", fDeltaTime );
-
-	m_soundMusic.Update( fDeltaTime );
-
 	if( GAMESTATE->m_pCurSong == NULL )
 		return;
-
 
 	// update the global music statistics for other classes to access
 	float fPositionSeconds = m_soundMusic.GetPositionSeconds();
