@@ -319,19 +319,15 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 				continue;
 		}
 
+		// If we're using unlocks, check it here to prevent from being shown
+		if( so!=SORT_ROULETTE && GAMESTATE->m_pUnlockingSys->SongIsLocked(pSong) )
+			continue;
+
 		vector<Notes*> arraySteps;
 		pSong->GetNotes( arraySteps, GAMESTATE->GetCurrentStyleDef()->m_NotesType, DIFFICULTY_INVALID, -1, -1, "", PREFSMAN->m_bAutogenMissingTypes );
 
 		if( !arraySteps.empty() )
-		{
-			// If we're using unlocks, check it here to prevent from being shown
-			if( PREFSMAN->m_bUseUnlockSystem && so!=SORT_ROULETTE )
-			{ 
-				if( GAMESTATE->m_pUnlockingSys->SongIsLocked(pSong) )
-					continue;
-			}
 			arraySongs.push_back( pSong );
-		}
 	}
 }
 
@@ -553,9 +549,8 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				Course* pCourse = apCourses[c];
 
 				// if unlocks are on, make sure it is unlocked
-				if ( PREFSMAN->m_bUseUnlockSystem)
-					if ( GAMESTATE->m_pUnlockingSys->CourseIsLocked( pCourse) )
-						continue;
+				if ( GAMESTATE->m_pUnlockingSys->CourseIsLocked(pCourse) )
+					continue;
 
 				// check that this course has at least one song playable in the current style
 				if( pCourse->IsPlayableIn(GAMESTATE->GetCurrentStyleDef()->m_NotesType) )
@@ -1120,8 +1115,7 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 		StartRandom();
 		return false;
 	case TYPE_SONG:
-		if (PREFSMAN->m_bUseUnlockSystem)
-			GAMESTATE->m_pUnlockingSys->RouletteUnlock( m_CurWheelItemData[m_iSelection]->m_pSong );
+		GAMESTATE->m_pUnlockingSys->RouletteUnlock( m_CurWheelItemData[m_iSelection]->m_pSong );
 		// fall-through - we want to check for unlocking only if its a song
 	case TYPE_COURSE:
 		return true;

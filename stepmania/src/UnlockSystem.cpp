@@ -44,19 +44,23 @@ UnlockSystem::UnlockSystem()
 	WriteValues("Data/MemCard.ini");  // create if it does not exist
 }
 
-bool UnlockSystem::RouletteUnlock( const Song *song )
+void UnlockSystem::RouletteUnlock( const Song *song )
 {
 	SongEntry *p = FindSong( song );
-	if (!p) return false;                       // does not exist
-	if (p->m_iRouletteSeed == 0) return false;  // already unlocked
+	if (!p)
+		return;  // does not exist
+	if (p->m_iRouletteSeed == 0)
+		return;  // already unlocked
 
 	RouletteSeeds[p->m_iRouletteSeed] = '1';
 	WriteValues("Data/MemCard.ini");
-	return true;
 }
 
 bool UnlockSystem::CourseIsLocked( const Course *course )
 {
+	if( !PREFSMAN->m_bUseUnlockSystem )
+		return false;
+
 	// I know, its not a song, but for purposes of title
 	// comparison, its the same thing.
 	SongEntry *p = FindCourse( course );
@@ -69,6 +73,9 @@ bool UnlockSystem::CourseIsLocked( const Course *course )
 
 bool UnlockSystem::SongIsLocked( const Song *song )
 {
+	if( !PREFSMAN->m_bUseUnlockSystem )
+		return false;
+
 	SongEntry *p = FindSong( song );
 	if( p == NULL )
 		return false;

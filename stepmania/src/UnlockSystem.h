@@ -83,7 +83,7 @@ public:
 	float UnlockClearStage();
 	float UnlockToasty();
 
-	bool RouletteUnlock( const Song *song );
+	void RouletteUnlock( const Song *song );
 	// unlocks given song in roulette
 
 	// read and write unlock in values
