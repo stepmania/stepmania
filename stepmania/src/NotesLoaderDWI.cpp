@@ -375,7 +375,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 			out.m_sCDTitleFile = sParams[1];
 
 		else if( 0==stricmp(sValueName,"BPM") )
-			out.AddBPMSegment( BPMSegment(0, BeatToNoteRow(strtof(sParams[1], NULL))) );
+			out.AddBPMSegment( BPMSegment(0, strtof(sParams[1], NULL)) );
 
 		else if( 0==stricmp(sValueName,"DISPLAYBPM") )
 		{

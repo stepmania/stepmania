@@ -603,7 +603,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 
 	if( GetTagFromMap( mapNameToData, "#bpm", sData ) )
 	{
-		BPMSegment newSeg( 0, BeatToNoteRow(strtof(sData, NULL)) );
+		BPMSegment newSeg( 0, strtof(sData, NULL) );
 		out.AddBPMSegment( newSeg );
 
 		LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartIndex), newSeg.GetBPM() );

@@ -30,7 +30,7 @@ public:
 		float fYReverseOffsetPixels );
 	virtual void Unload();
 
-	float	m_fBeginMarker, m_fEndMarker;	// only used with MODE_EDIT
+	int	m_iBeginMarker, m_iEndMarker;	// only used with MODE_EDIT
 
 	void FadeToFail();
 	void CacheAllUsedNoteSkins( bool bDeleteUnused );
@@ -44,8 +44,8 @@ public:
 
 protected:
 	void DrawBeatBar( const float fBeat );
-	void DrawMarkerBar( const float fBeat );
-	void DrawAreaHighlight( const float fStartBeat, const float fEndBeat );
+	void DrawMarkerBar( int fBeat );
+	void DrawAreaHighlight( int iStartBeat, int iEndBeat );
 	void DrawBPMText( const float fBeat, const float fBPM );
 	void DrawFreezeText( const float fBeat, const float fBPM );
 	void DrawBGChangeText( const float fBeat, const CString sNewBGName );

@@ -31,7 +31,7 @@ NoteField::NoteField()
 	m_sprBars.Load( THEME->GetPathToG("NoteField bars") );
 	m_sprBars.StopAnimating();
 
-	m_fBeginMarker = m_fEndMarker = -1;
+	m_iBeginMarker = m_iEndMarker = -1;
 
 	m_fPercentFadeToFail = -1;
 	LastDisplay = NULL;
@@ -267,8 +267,9 @@ void NoteField::DrawBeatBar( const float fBeat )
 	}
 }
 
-void NoteField::DrawMarkerBar( const float fBeat )
+void NoteField::DrawMarkerBar( int iBeat )
 {
+	float fBeat = NoteRowToBeat( iBeat );
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
 	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 
@@ -277,8 +278,10 @@ void NoteField::DrawMarkerBar( const float fBeat )
 	m_rectMarkerBar.Draw();
 }
 
-void NoteField::DrawAreaHighlight( const float fStartBeat, const float fEndBeat )
+void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 {
+	float fStartBeat = NoteRowToBeat( iStartBeat );
+	float fEndBeat = NoteRowToBeat( iEndBeat );
 	float fYStartOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fStartBeat );
 	float fYStartPos	= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYStartOffset, m_fYReverseOffsetPixels );
 	float fYEndOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fEndBeat );
@@ -524,12 +527,12 @@ void NoteField::DrawPrimitives()
 		//
 		// Draw marker bars
 		//
-		if( m_fBeginMarker != -1  &&  m_fEndMarker != -1 )
-			DrawAreaHighlight( m_fBeginMarker, m_fEndMarker );
-		else if( m_fBeginMarker != -1 )
-			DrawMarkerBar( m_fBeginMarker );
-		else if( m_fEndMarker != -1 )
-			DrawMarkerBar( m_fEndMarker );
+		if( m_iBeginMarker != -1  &&  m_iEndMarker != -1 )
+			DrawAreaHighlight( m_iBeginMarker, m_iEndMarker );
+		else if( m_iBeginMarker != -1 )
+			DrawMarkerBar( m_iBeginMarker );
+		else if( m_iEndMarker != -1 )
+			DrawMarkerBar( m_iEndMarker );
 
 	}
 
@@ -590,8 +593,8 @@ void NoteField::DrawPrimitives()
 			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(hn.iStartRow) );
 
 			bool bIsInSelectionRange = false;
-			if( m_fBeginMarker!=-1 && m_fEndMarker!=-1 )
-				bIsInSelectionRange = hn.ContainedByRange( BeatToNoteRow( m_fBeginMarker ), BeatToNoteRow( m_fEndMarker ) );
+			if( m_iBeginMarker!=-1 && m_iEndMarker!=-1 )
+				bIsInSelectionRange = hn.ContainedByRange( m_iBeginMarker, m_iEndMarker );
 
 			NoteDisplayCols *nd = CurDisplay->second;
 			nd->display[c].DrawHold( hn, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels );
@@ -652,10 +655,10 @@ void NoteField::DrawPrimitives()
 			}
 
 			bool bIsInSelectionRange = false;
-			if( m_fBeginMarker!=-1 && m_fEndMarker!=-1 )
+			if( m_iBeginMarker!=-1 && m_iEndMarker!=-1 )
 			{
-				float fBeat = NoteRowToBeat(i);
-				bIsInSelectionRange = m_fBeginMarker<=fBeat && fBeat<=m_fEndMarker;
+				int iBeat = i;
+				bIsInSelectionRange = m_iBeginMarker<=iBeat && iBeat<=m_iEndMarker;
 			}
 
 			bool bIsAddition = (tn.source == TapNote::addition);

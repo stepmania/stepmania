@@ -1829,7 +1829,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 					fOffsetDelta *= 10;
 				BPMSegment& seg = GAMESTATE->m_pCurSong->GetBPMSegmentAtBeat( GAMESTATE->m_fSongBeat );
 
-				seg.m_iBPS += BeatToNoteRow(fOffsetDelta);
+				seg.m_fBPS += fOffsetDelta;
 
 				m_textDebug.SetText( ssprintf("Cur BPM = %.2f", seg.GetBPM()) );
 				m_textDebug.StopTweening();

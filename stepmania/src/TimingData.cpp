@@ -7,12 +7,12 @@
 
 void BPMSegment::SetBPM( float f )
 {
-	m_iBPS = BeatToNoteRow( f / 60.0f );
+	m_fBPS = f / 60.0f;
 }
 
 float BPMSegment::GetBPM() const
 {
-	return NoteRowToBeat(m_iBPS * 60);
+	return m_fBPS * 60.0f;
 }
 
 TimingData::TimingData()
@@ -42,16 +42,14 @@ void SortStopSegmentsArray( vector<StopSegment> &arrayStopSegments )
 
 void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut ) const
 {
-	int iMinBPS = MAX_NOTE_ROW;
-	int iMaxBPS = 0;
+	fMinBPMOut = 99999;
+	fMaxBPMOut = 0;
 	for( unsigned i=0; i<m_BPMSegments.size(); i++ ) 
 	{
 		const BPMSegment &seg = m_BPMSegments[i];
-		iMaxBPS = max( seg.m_iBPS, iMaxBPS );
-		iMinBPS = min( seg.m_iBPS, iMinBPS );
+		fMaxBPMOut = max( seg.m_fBPS * 60.0f, fMaxBPMOut );
+		fMinBPMOut = min( seg.m_fBPS * 60.0f, fMinBPMOut );
 	}
-	fMinBPMOut = NoteRowToBeat( iMinBPS );
-	fMaxBPMOut = NoteRowToBeat( iMaxBPS );
 }
 
 
@@ -71,7 +69,7 @@ void TimingData::AddStopSegment( const StopSegment &seg )
 void TimingData::SetBPMAtBeat( float fBeat, float fBPM )
 {
 	int iNoteRow = BeatToNoteRow( fBeat );
-	int iBPS = BeatToNoteRow( fBPM ) / 60;
+	float fBPS = fBPM / 60.0f;
 	unsigned i;
 	for( i=0; i<m_BPMSegments.size(); i++ )
 		if( m_BPMSegments[i].m_iStartIndex >= iNoteRow )
@@ -81,16 +79,16 @@ void TimingData::SetBPMAtBeat( float fBeat, float fBPM )
 	{
 		// There is no BPMSegment at the specified beat.  If the BPM being set differs
 		// from the last BPMSegment's BPM, create a new BPMSegment.
-		if( i == 0 || m_BPMSegments[i-1].m_iBPS != iBPS )
-			AddBPMSegment( BPMSegment(iNoteRow, iBPS) );
+		if( i == 0 || fabsf(m_BPMSegments[i-1].m_fBPS - fBPS) > 0.003f )
+			AddBPMSegment( BPMSegment(iNoteRow, fBPS) );
 	}
 	else	// BPMSegment being modified is m_BPMSegments[i]
 	{
-		if( i > 0  &&  m_BPMSegments[i-1].m_iBPS == iBPS )
+		if( i > 0  &&  fabsf(m_BPMSegments[i-1].m_fBPS - fBPS) < 0.003f )
 			m_BPMSegments.erase( m_BPMSegments.begin()+i,
 										  m_BPMSegments.begin()+i+1);
 		else
-			m_BPMSegments[i].m_iBPS = iBPS;
+			m_BPMSegments[i].m_fBPS = fBPS;
 	}
 }
 
@@ -152,7 +150,7 @@ void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float f
 		else if( iStartIndexNextSegment > iEndIndex )
 			continue;
 
-		m_BPMSegments[i].m_iBPS = lrintf( m_BPMSegments[i].m_iBPS * fFactor );
+		m_BPMSegments[i].m_fBPS = m_BPMSegments[i].m_fBPS * fFactor;
 	}
 }
 
@@ -194,8 +192,7 @@ void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatO
 		const bool bIsLastBPMSegment = i==m_BPMSegments.size()-1;
 		const int iStartRowNextSegment = bIsLastBPMSegment ? MAX_NOTE_ROW : m_BPMSegments[i+1].m_iStartIndex; 
 		const float fStartBeatNextSegment = NoteRowToBeat( iStartRowNextSegment );
-		const int iBPS = m_BPMSegments[i].m_iBPS;
-		const float fBPS = NoteRowToBeat( iBPS );
+		const float fBPS = m_BPMSegments[i].m_fBPS;
 
 		for( unsigned j=0; j<m_StopSegments.size(); j++ )	// foreach freeze
 		{
@@ -204,7 +201,7 @@ void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatO
 			if( !bIsLastBPMSegment && m_StopSegments[j].m_iStartRow > iStartRowNextSegment )
 				continue;
 
-			// this freeze lies within this BPMSegment
+				// this freeze lies within this BPMSegment
 			const int iRowsBeatsSinceStartOfSegment = m_StopSegments[j].m_iStartRow - iStartRowThisSegment;
 			const float fBeatsSinceStartOfSegment = NoteRowToBeat(iRowsBeatsSinceStartOfSegment);
 			const float fFreezeStartSecond = fBeatsSinceStartOfSegment / fBPS;
@@ -260,24 +257,22 @@ float TimingData::GetElapsedTimeFromBeat( float fBeat ) const
 	for( unsigned i=0; i<m_BPMSegments.size(); i++ ) // foreach BPMSegment
 	{
 		const bool bIsLastBPMSegment = i==m_BPMSegments.size()-1;
-		const float fBPS = NoteRowToBeat( m_BPMSegments[i].m_iBPS );
+		const float fBPS = m_BPMSegments[i].m_fBPS;
 
 		if( bIsLastBPMSegment )
 		{
-			fElapsedTime += fBeat / fBPS;
+			fElapsedTime += NoteRowToBeat( iRow ) / fBPS;
 		}
 		else
 		{
 			const int iStartIndexThisSegment = m_BPMSegments[i].m_iStartIndex;
-			const float fStartBeatThisSegment = NoteRowToBeat( iStartIndexThisSegment );
 			const int iStartIndexNextSegment = m_BPMSegments[i+1].m_iStartIndex; 
-			const float fStartBeatNextSegment = NoteRowToBeat( iStartIndexNextSegment );
-			const float fBeatsInThisSegment = fStartBeatNextSegment - fStartBeatThisSegment;
-			fElapsedTime += min(fBeat, fBeatsInThisSegment) / fBPS;
-			fBeat -= fBeatsInThisSegment;
+			const int iRowsInThisSegment = min( iStartIndexNextSegment - iStartIndexThisSegment, iRow );
+			fElapsedTime += NoteRowToBeat( iRowsInThisSegment ) / fBPS;
+			iRow -= iRowsInThisSegment;
 		}
 		
-		if( fBeat <= 0 )
+		if( iRow <= 0 )
 			return fElapsedTime;
 	}
 

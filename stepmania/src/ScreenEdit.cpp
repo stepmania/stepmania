@@ -489,7 +489,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	GAMESTATE->ResetNoteSkins();
 	GAMESTATE->StoreSelectedOptions();
 
-	g_fShiftAnchor = -1;
+	g_iShiftAnchor = -1;
 
 
 	m_SnapDisplay.SetXY( EDIT_X, PLAYER_Y_STANDARD );
@@ -664,7 +664,7 @@ void ScreenEdit::Update( float fDeltaTime )
 
 		// check for end of playback/record
 
-		if( GAMESTATE->m_fSongBeat > m_NoteFieldEdit.m_fEndMarker + 4 )		// give a one measure lead out
+		if( GAMESTATE->m_fSongBeat > NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) + 4 )		// give a one measure lead out
 		{
 			if( m_EditMode == MODE_RECORDING )
 			{
@@ -674,7 +674,7 @@ void ScreenEdit::Update( float fDeltaTime )
 			{
 				TransitionToEdit();
 			}
-			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fEndMarker;
+			GAMESTATE->m_fSongBeat = NoteRowToBeat( m_NoteFieldEdit.m_iEndMarker );
 		}
 	}
 
@@ -742,8 +742,8 @@ void ScreenEdit::UpdateTextInfo()
 	sText += ssprintf( "Current Beat:\n     %.2f\n",		GAMESTATE->m_fSongBeat );
 	sText += ssprintf( "Current Second:\n     %.2f\n",		m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
 	sText += ssprintf( "Snap to:\n     %s\n",				sNoteType.c_str() );
-	sText += ssprintf( "Selection begin:\n     %s\n",		m_NoteFieldEdit.m_fBeginMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fBeginMarker).c_str() );
-	sText += ssprintf( "Selection end:\n     %s\n",			m_NoteFieldEdit.m_fEndMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fEndMarker).c_str() );
+	sText += ssprintf( "Selection begin:\n     %s\n",		m_NoteFieldEdit.m_iBeginMarker==-1 ? "not set" : ssprintf("%.2f",NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker)).c_str() );
+	sText += ssprintf( "Selection end:\n     %s\n",			m_NoteFieldEdit.m_iEndMarker==-1 ? "not set" : ssprintf("%.2f",NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker)).c_str() );
 	sText += ssprintf( "Difficulty:\n     %s\n",			DifficultyToString( m_pSteps->GetDifficulty() ).c_str() );
 	sText += ssprintf( "Description:\n     %s\n",			GAMESTATE->m_pCurSteps[PLAYER_1] ? GAMESTATE->m_pCurSteps[PLAYER_1]->GetDescription().c_str() : "no description" );
 	sText += ssprintf( "Main title:\n     %s\n",			m_pSong->m_sMainTitle.c_str() );
@@ -834,9 +834,6 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 
 void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB )
 {
-	if( DeviceI.device != DEVICE_KEYBOARD )
-		return;
-
 	if( type == IET_LEVEL_CHANGED )
 		return;		// don't care
 
@@ -845,12 +842,13 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		switch( EditB )
 		{
 		case EDIT_BUTTON_SCROLL_SELECT:
-			g_fShiftAnchor = -1;
+			g_iShiftAnchor = -1;
 			break;
 		}
 		return;
 	}
 
+	const int iSongBeat = BeatToNoteRow(GAMESTATE->m_fSongBeat);
 	switch( EditB )
 	{
 	case EDIT_BUTTON_COLUMN_0:
@@ -1008,21 +1006,21 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				 *
 				 * If this is the first time we've moved since shift was depressed,
 				 * the old position (before this move) becomes the start pos: */
-
-				if( g_fShiftAnchor == -1 )
-					g_fShiftAnchor = fStartBeat;
+				int iEndBeat = BeatToNoteRow( fEndBeat );
+				if( g_iShiftAnchor == -1 )
+					g_iShiftAnchor = BeatToNoteRow(fStartBeat);
 				
-				if(fEndBeat == g_fShiftAnchor)
+				if( iEndBeat == g_iShiftAnchor )
 				{
 					/* We're back at the anchor, so we have nothing selected. */
-					m_NoteFieldEdit.m_fBeginMarker = m_NoteFieldEdit.m_fEndMarker = -1;
+					m_NoteFieldEdit.m_iBeginMarker = m_NoteFieldEdit.m_iEndMarker = -1;
 				}
 				else
 				{
-					m_NoteFieldEdit.m_fBeginMarker = g_fShiftAnchor;
-					m_NoteFieldEdit.m_fEndMarker = fEndBeat;
-					if(m_NoteFieldEdit.m_fBeginMarker > m_NoteFieldEdit.m_fEndMarker)
-						swap(m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker);
+					m_NoteFieldEdit.m_iBeginMarker = g_iShiftAnchor;
+					m_NoteFieldEdit.m_iEndMarker = iEndBeat;
+					if( m_NoteFieldEdit.m_iBeginMarker > m_NoteFieldEdit.m_iEndMarker )
+						swap( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 				}
 			}
 
@@ -1041,38 +1039,38 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			OnSnapModeChange();
 		break;
 	case EDIT_BUTTON_LAY_SELECT:
-		if( m_NoteFieldEdit.m_fBeginMarker==-1 && m_NoteFieldEdit.m_fEndMarker==-1 )
+		if( m_NoteFieldEdit.m_iBeginMarker==-1 && m_NoteFieldEdit.m_iEndMarker==-1 )
 		{
 			// lay begin marker
-			m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
+			m_NoteFieldEdit.m_iBeginMarker = BeatToNoteRow(GAMESTATE->m_fSongBeat);
 		}
-		else if( m_NoteFieldEdit.m_fEndMarker==-1 )	// only begin marker is laid
+		else if( m_NoteFieldEdit.m_iEndMarker==-1 )	// only begin marker is laid
 		{
-			if( GAMESTATE->m_fSongBeat == m_NoteFieldEdit.m_fBeginMarker )
+			if( iSongBeat == m_NoteFieldEdit.m_iBeginMarker )
 			{
-				m_NoteFieldEdit.m_fBeginMarker = -1;
+				m_NoteFieldEdit.m_iBeginMarker = -1;
 			}
 			else
 			{
-				m_NoteFieldEdit.m_fEndMarker = max( m_NoteFieldEdit.m_fBeginMarker, GAMESTATE->m_fSongBeat );
-				m_NoteFieldEdit.m_fBeginMarker = min( m_NoteFieldEdit.m_fBeginMarker, GAMESTATE->m_fSongBeat );
+				m_NoteFieldEdit.m_iEndMarker = max( m_NoteFieldEdit.m_iBeginMarker, iSongBeat );
+				m_NoteFieldEdit.m_iBeginMarker = min( m_NoteFieldEdit.m_iBeginMarker, iSongBeat );
 			}
 		}
 		else	// both markers are laid
 		{
-			m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
-			m_NoteFieldEdit.m_fEndMarker = -1;
+			m_NoteFieldEdit.m_iBeginMarker = iSongBeat;
+			m_NoteFieldEdit.m_iEndMarker = -1;
 		}
 		m_soundMarker.Play();
 		break;
 	case EDIT_BUTTON_OPEN_AREA_MENU:
 		{
 			// update enabled/disabled in g_AreaMenu
-			bool bAreaSelected = m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1;
+			bool bAreaSelected = m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1;
 			g_AreaMenu.rows[cut].enabled = bAreaSelected;
 			g_AreaMenu.rows[copy].enabled = bAreaSelected;
 			g_AreaMenu.rows[paste_at_current_beat].enabled = this->m_Clipboard.GetLastBeat() != 0;
-			g_AreaMenu.rows[paste_at_begin_marker].enabled = this->m_Clipboard.GetLastBeat() != 0 && m_NoteFieldEdit.m_fBeginMarker!=-1;
+			g_AreaMenu.rows[paste_at_begin_marker].enabled = this->m_Clipboard.GetLastBeat() != 0 && m_NoteFieldEdit.m_iBeginMarker!=-1;
 			g_AreaMenu.rows[clear].enabled = bAreaSelected;
 			g_AreaMenu.rows[quantize].enabled = bAreaSelected;
 			g_AreaMenu.rows[turn].enabled = bAreaSelected;
@@ -1306,13 +1304,13 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		break;
 
 	case EDIT_BUTTON_PLAY_SELECTION:
-		if( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 )
+		if( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 )
 			HandleAreaMenuChoice( play, NULL );
 		else
 			HandleMainMenuChoice( play_current_beat_to_end, NULL );
 		break;
 	case EDIT_BUTTON_RECORD:
-		if( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 )
+		if( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 )
 			HandleAreaMenuChoice( record, NULL );
 		break;
 	case EDIT_BUTTON_INSERT:
@@ -1464,13 +1462,10 @@ void ScreenEdit::TransitionFromRecordToEdit()
 {
 	TransitionToEdit();
 
-	int rowBegin = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
-	int rowEnd = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
-
 	// delete old TapNotes in the range
-	m_NoteDataEdit.ClearRange( rowBegin, rowEnd );
+	m_NoteDataEdit.ClearRange( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 
-	m_NoteDataEdit.CopyRange( m_NoteDataRecord, rowBegin, rowEnd, rowBegin );
+	m_NoteDataEdit.CopyRange( m_NoteDataRecord, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker, m_NoteFieldEdit.m_iBeginMarker );
 
 	m_NoteDataRecord.ClearAll();
 }
@@ -1736,15 +1731,15 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			break;
 		case play_whole_song:
 			{
-				m_NoteFieldEdit.m_fBeginMarker = 0;
-				m_NoteFieldEdit.m_fEndMarker = m_NoteDataEdit.GetLastBeat();
+				m_NoteFieldEdit.m_iBeginMarker = 0;
+				m_NoteFieldEdit.m_iEndMarker = m_NoteDataEdit.GetLastRow();
 				HandleAreaMenuChoice( play, NULL );
 			}
 			break;
 		case play_current_beat_to_end:
 			{
-				m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
-				m_NoteFieldEdit.m_fEndMarker = m_NoteDataEdit.GetLastBeat();
+				m_NoteFieldEdit.m_iBeginMarker = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+				m_NoteFieldEdit.m_iEndMarker = m_NoteDataEdit.GetLastRow();
 				HandleAreaMenuChoice( play, NULL );
 			}
 			break;
@@ -1915,11 +1910,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			break;
 		case copy:
 			{
-				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 );
-				int iFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
-				int iLastRow  = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
+				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
 				m_Clipboard.ClearAll();
-				m_Clipboard.CopyRange( m_NoteDataEdit, iFirstRow, iLastRow );
+				m_Clipboard.CopyRange( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 			}
 			break;
 		case paste_at_current_beat:
@@ -1932,25 +1925,20 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			break;
 		case paste_at_begin_marker:
 			{
-				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 );
-				int iSrcFirstRow = 0;
-				int iSrcLastRow  = BeatToNoteRow( m_Clipboard.GetLastBeat() );
-				int iDestFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
-				m_NoteDataEdit.CopyRange( m_Clipboard, iSrcFirstRow, iSrcLastRow, iDestFirstRow );
+				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 );
+				m_NoteDataEdit.CopyRange( m_Clipboard, 0, m_Clipboard.GetLastRow(), m_NoteFieldEdit.m_iBeginMarker );
 			}
 			break;
 		case clear:
 			{
-				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 );
-				int iFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
-				int iLastRow  = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
-				m_NoteDataEdit.ClearRange( iFirstRow, iLastRow );
+				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
+				m_NoteDataEdit.ClearRange( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 			}
 			break;
 		case quantize:
 			{
 				NoteType nt = (NoteType)iAnswers[c];
-				NoteDataUtil::SnapToNearestNoteType( m_NoteDataEdit, nt, nt, BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker), BeatToNoteRow(m_NoteFieldEdit.m_fEndMarker) );
+				NoteDataUtil::SnapToNearestNoteType( m_NoteDataEdit, nt, nt, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 			}
 			break;
 		case turn:
@@ -1976,8 +1964,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			break;
 		case transform:
 			{
-				int iBeginRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
-				int iEndRow = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
+				int iBeginRow = m_NoteFieldEdit.m_iBeginMarker;
+				int iEndRow = m_NoteFieldEdit.m_iEndMarker;
 				TransformType tt = (TransformType)iAnswers[c];
 				StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 
@@ -2066,13 +2054,12 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				m_Clipboard.Convert2sAnd3sToHoldNotes();
 
-//				float fOldClipboardEndBeat = m_NoteFieldEdit.m_fEndMarker;
-				float fOldClipboardBeats = m_NoteFieldEdit.m_fEndMarker - m_NoteFieldEdit.m_fBeginMarker;
-				float fNewClipboardBeats = fOldClipboardBeats * fScale;
-				float fDeltaBeats = fNewClipboardBeats - fOldClipboardBeats;
-				float fNewClipboardEndBeat = m_NoteFieldEdit.m_fBeginMarker + fNewClipboardBeats;
-				NoteDataUtil::ShiftRows( m_NoteDataEdit, BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker), BeatToNoteRow(fDeltaBeats) );
-				m_pSong->m_Timing.ScaleRegion( fScale, BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker), BeatToNoteRow(m_NoteFieldEdit.m_fEndMarker) );
+				int iOldClipboardBeats = m_NoteFieldEdit.m_iEndMarker - m_NoteFieldEdit.m_iBeginMarker;
+				int iNewClipboardBeats = lrintf( iOldClipboardBeats * fScale );
+				int iDeltaBeats = iNewClipboardBeats - iOldClipboardBeats;
+				int iNewClipboardEndBeat = m_NoteFieldEdit.m_iBeginMarker + iNewClipboardBeats;
+				NoteDataUtil::ShiftRows( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, iDeltaBeats );
+				m_pSong->m_Timing.ScaleRegion( fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 
 				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
 
@@ -2091,22 +2078,22 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 					sIter[i]->GetNoteData( ndTemp );
 					ndTemp.ConvertHoldNotesTo2sAnd3s();
-					NoteDataUtil::ScaleRegion( ndTemp, fScale, BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker), BeatToNoteRow(m_NoteFieldEdit.m_fEndMarker) );
+					NoteDataUtil::ScaleRegion( ndTemp, fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 					ndTemp.Convert2sAnd3sToHoldNotes();
 					sIter[i]->SetNoteData( ndTemp );
 				}
 
-				m_NoteFieldEdit.m_fEndMarker = fNewClipboardEndBeat;
+				m_NoteFieldEdit.m_iEndMarker = iNewClipboardEndBeat;
 
-				float fOldBPM = m_pSong->GetBPMAtBeat( m_NoteFieldEdit.m_fBeginMarker );
+				float fOldBPM = m_pSong->GetBPMAtBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
 				float fNewBPM = fOldBPM * fScale;
-				m_pSong->SetBPMAtBeat( m_NoteFieldEdit.m_fBeginMarker, fNewBPM );
-				m_pSong->SetBPMAtBeat( fNewClipboardEndBeat, fOldBPM );
+				m_pSong->SetBPMAtBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker), fNewBPM );
+				m_pSong->SetBPMAtBeat( NoteRowToBeat(iNewClipboardEndBeat), fOldBPM );
 			}
 			break;
 		case play:
 			{
-				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 );
+				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
 
 				SOUND->PlayMusic("");
 
@@ -2120,7 +2107,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				/* Give a 1 measure lead-in.  Set this before loading Player, so it knows
 				 * where we're starting. */
-				float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( m_NoteFieldEdit.m_fBeginMarker - 4 );
+				float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) - 4 );
 				GAMESTATE->UpdateSongPosition( fSeconds, m_pSong->m_Timing );
 
 				/* If we're in course display mode, set that up. */
@@ -2161,7 +2148,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			break;
 		case record:
 			{
-				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 );
+				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
 
 				SOUND->PlayMusic("");
 
@@ -2181,7 +2168,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				m_rectRecordBack.BeginTweening( 0.5f );
 				m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0.8f) );
 
-				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
+				GAMESTATE->m_fSongBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker - ROWS_PER_MEASURE );	// give a 1 measure lead-in
 				float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat);
 				LOG->Trace( "Starting playback at %f", fStartSeconds );
 
@@ -2208,19 +2195,18 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 		// MD 11/02/03 - Converting selected region to a pause of the same length.
 		case convert_beat_to_pause:
 			{
-				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 );
-				// This was written horribly, using beats and not converting to time at all.
-				float fMarkerStart = m_pSong->m_Timing.GetElapsedTimeFromBeat(m_NoteFieldEdit.m_fBeginMarker);
-				float fMarkerEnd = m_pSong->m_Timing.GetElapsedTimeFromBeat(m_NoteFieldEdit.m_fEndMarker);
+				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
+				float fMarkerStart = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
+				float fMarkerEnd = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
 				float fStopLength = fMarkerEnd - fMarkerStart;
 				// be sure not to clobber the row at the start - a row at the end
 				// can be dropped safely, though
 				NoteDataUtil::ShiftRows( m_NoteDataEdit, 
-										 BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker) + 1,
-										 BeatToNoteRow(-m_NoteFieldEdit.m_fEndMarker+m_NoteFieldEdit.m_fBeginMarker)
+										 m_NoteFieldEdit.m_iBeginMarker + 1,
+										 -m_NoteFieldEdit.m_iEndMarker+m_NoteFieldEdit.m_iBeginMarker
 									   );
-				m_pSong->m_Timing.ShiftRows( BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker) + 1,
-										     BeatToNoteRow(-m_NoteFieldEdit.m_fEndMarker+m_NoteFieldEdit.m_fBeginMarker)
+				m_pSong->m_Timing.ShiftRows( m_NoteFieldEdit.m_iBeginMarker + 1,
+										     -m_NoteFieldEdit.m_iEndMarker+m_NoteFieldEdit.m_iBeginMarker
 										   );
 				unsigned i;
 				for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
@@ -2231,15 +2217,15 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 						continue;
 					else {
 						if( fStart > fMarkerStart )
-							m_pSong->m_Timing.m_StopSegments[i].m_iStartRow = BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker);
+							m_pSong->m_Timing.m_StopSegments[i].m_iStartRow = m_NoteFieldEdit.m_iBeginMarker;
 						m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds = fStopLength;
 						break;
 					}
 				}
 
 				if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no BPMSegment at the current beat
-					m_pSong->AddStopSegment( StopSegment(BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker), fStopLength) );
-				m_NoteFieldEdit.m_fEndMarker = -1;
+					m_pSong->AddStopSegment( StopSegment(m_NoteFieldEdit.m_iBeginMarker, fStopLength) );
+				m_NoteFieldEdit.m_iEndMarker = -1;
 				break;
 			}
 		// MD 11/02/03 - Converting a pause at the current beat into beats.

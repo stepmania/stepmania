@@ -7,10 +7,10 @@
 
 struct BPMSegment 
 {
-	BPMSegment() { m_iStartIndex = -1; m_iBPS = -1; }
-	BPMSegment( int s, int b ) { m_iStartIndex = s; m_iBPS = b; }
+	BPMSegment() { m_iStartIndex = -1; m_fBPS = -1; }
+	BPMSegment( int s, float b ) { m_iStartIndex = s; m_fBPS = b/60.0f; }
 	int m_iStartIndex;
-	int m_iBPS; /* rows per second */
+	float m_fBPS;
 
 	void SetBPM( float f );
 	float GetBPM() const;

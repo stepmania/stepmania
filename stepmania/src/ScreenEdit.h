@@ -162,7 +162,7 @@ protected:
 	float				m_fTrailingBeat;	// this approaches GAMESTATE->m_fSongBeat, which is the actual beat
 	/* The location we were at when shift was pressed, or
 	 * -1 when shift isn't pressed: */
-	float g_fShiftAnchor;
+	int g_iShiftAnchor;
 
 	NoteData			m_Clipboard;
 
