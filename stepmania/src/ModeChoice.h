@@ -27,6 +27,7 @@ struct ModeChoice		// used in SelectMode
 	bool DescribesCurrentMode( PlayerNumber pn ) const;
 	bool DescribesCurrentModeForAllPlayers() const;
 	bool IsPlayable( CString *why = NULL ) const;
+	bool IsZero() const;
 
 	bool		m_bInvalid;
 	int			m_iIndex;

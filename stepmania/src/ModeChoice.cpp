@@ -253,3 +253,17 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		PROFILEMAN->TryLoadProfile( pn );
 	}
 }
+
+bool ModeChoice::IsZero() const
+{
+	if( m_game != GAME_INVALID ||
+		m_pm != PLAY_MODE_INVALID ||
+		m_style != STYLE_INVALID ||
+		m_dc != DIFFICULTY_INVALID ||
+		m_sAnnouncer != "" ||
+		m_sModifiers != "" )
+		return false;
+
+	return true;
+}
+
