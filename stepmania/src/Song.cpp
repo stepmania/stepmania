@@ -1577,7 +1577,7 @@ CString Song::GetMusicPath() const
 {
 	/* If there's no path in the music file, the file is in the same directory
 	 * as the song.  (This is the preferred configuration.) */
-	if( m_sMusicFile.Find('/') == -1)
+	if( m_sMusicFile.Find(SLASH[0]) == -1)
 		return m_sSongDir+m_sMusicFile;
 
 	/* The file has a path.  If it was loaded from the m_DWIPath, it's relative
