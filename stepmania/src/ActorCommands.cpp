@@ -40,7 +40,8 @@ ActorCommands::ActorCommands( const CString &sCommands )
 				sName == "ztestmode" ||
 				sName == "cullmode" ||
 				sName == "playcommand" ||
-				sName == "queuecommand";
+				sName == "queuecommand" ||
+				sName == "settext";
 
 			for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
 			{
