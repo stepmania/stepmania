@@ -18,6 +18,9 @@ AM_CXXFLAGS += $(X_CFLAGS)
 $(srcdir)/libresample/libresample.a:
 	cd $(srcdir)/libresample && autoconf && sh ./configure && make
 
+$(srcdir)/crypto51/libcryptopp.a:
+	cd $(srcdir)/crypto51 && make
+
 Screens = \
 Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h ScreenAward.cpp ScreenAward.h \
 ScreenBookkeeping.cpp ScreenBookkeeping.h ScreenBranch.cpp ScreenBranch.h ScreenCaution.cpp ScreenCaution.h \
@@ -246,7 +249,8 @@ main_LDADD = \
 		  $(SDL_LIBS) \
 		  $(XLIBS) \
 		  -lSDL_image \
-		  $(srcdir)/libresample/libresample.a
+		  $(srcdir)/libresample/libresample.a \
+		  $(srcdir)/crypto51/libcryptopp.a
 
 stepmania_SOURCES = $(main_SOURCES)
 stepmania_LDADD = $(main_LDADD)
