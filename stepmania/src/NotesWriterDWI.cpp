@@ -6,6 +6,7 @@
 #include "RageLog.h"
 #include "RageFile.h"
 #include "NoteDataUtil.h"
+#include "RageFile.h"
 
 /* Output is an angle bracket expression without angle brackets, eg. "468". */
 CString NotesWriterDWI::NotesToDWIString( const TapNote cNoteCols[6] )
@@ -182,7 +183,7 @@ CString NotesWriterDWI::OptimizeDWIString( CString holds, CString taps )
 		return ssprintf( "<%s>", ret.c_str() );
 }
 
-void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
+void NotesWriterDWI::WriteDWINotesField( RageFile &f, const Steps &out, int start )
 {
 	NoteData notedata;
 	out.GetNoteData( &notedata );
@@ -202,16 +203,16 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 			break;
 		case NOTE_TYPE_12TH:
 		case NOTE_TYPE_24TH:
-			fprintf( fp, "[" );
+			f.Write( "[" );
 			fCurrentIncrementer = 1.0/24 * BEATS_PER_MEASURE;
 			break;
 		case NOTE_TYPE_16TH:
-			fprintf( fp, "(" );
+			f.Write( "(" );
 			fCurrentIncrementer = 1.0/16 * BEATS_PER_MEASURE;
 			break;
 		case NOTE_TYPE_32ND:
 		case NOTE_TYPE_64TH:
-			fprintf( fp, "{" );
+			f.Write( "{" );
 			fCurrentIncrementer = 1.0/64 * BEATS_PER_MEASURE;
 			break;
 		case NOTE_TYPE_48TH:
@@ -219,7 +220,7 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 		case NOTE_TYPE_INVALID:
 			// since, for whatever reason, the only way to do
 			// 48ths is through a block of 192nds...
-			fprintf( fp, "`" );
+			f.Write(  "`" );
 			fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
 			break;
 		default:
@@ -272,7 +273,7 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 			default:
 				ASSERT(0);	// not a type supported by DWI.  We shouldn't have called in here if that's the case
 			}
-			fprintf( fp, "%s", str.c_str() );
+			f.Write( str );
 		}
 
 		switch( nt )
@@ -282,29 +283,29 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 			break;
 		case NOTE_TYPE_12TH:
 		case NOTE_TYPE_24TH:
-			fprintf( fp, "]" );
+			f.Write( "]" );
 			break;
 		case NOTE_TYPE_16TH:
-			fprintf( fp, ")" );
+			f.Write( ")" );
 			break;
 		case NOTE_TYPE_32ND:
 		case NOTE_TYPE_64TH:
-			fprintf( fp, "}" );
+			f.Write( "}" );
 			break;
 		case NOTE_TYPE_48TH:
 		case NOTE_TYPE_192ND:
 		case NOTE_TYPE_INVALID:
-			fprintf( fp, "'" );
+			f.Write( "'" );
 			break;
 		default:
 			ASSERT(0);
 			// fall though
 		}
-		fprintf( fp, "\n" );
+		f.PutLine( "" );
 	}
 }
 
-bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Steps &out )
+bool NotesWriterDWI::WriteDWINotesTag( RageFile &f, const Steps &out )
 {
 	/* Flush dir cache when writing steps, so the old size isn't cached. */
 	FlushDirCache();
@@ -313,44 +314,44 @@ bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Steps &out )
 
 	switch( out.m_StepsType )
 	{
-	case STEPS_TYPE_DANCE_SINGLE:	fprintf( fp, "#SINGLE:" );	break;
-	case STEPS_TYPE_DANCE_COUPLE:	fprintf( fp, "#COUPLE:" );	break;
-	case STEPS_TYPE_DANCE_DOUBLE:	fprintf( fp, "#DOUBLE:" );	break;
-	case STEPS_TYPE_DANCE_SOLO:		fprintf( fp, "#SOLO:" );	break;
+	case STEPS_TYPE_DANCE_SINGLE:	f.Write( "#SINGLE:" );	break;
+	case STEPS_TYPE_DANCE_COUPLE:	f.Write( "#COUPLE:" );	break;
+	case STEPS_TYPE_DANCE_DOUBLE:	f.Write( "#DOUBLE:" );	break;
+	case STEPS_TYPE_DANCE_SOLO:		f.Write( "#SOLO:" );	break;
 	default:	return false;	// not a type supported by DWI
 	}
 
 	switch( out.GetDifficulty() )
 	{
-	case DIFFICULTY_BEGINNER:	fprintf( fp, "BEGINNER:" ); break;
-	case DIFFICULTY_EASY:		fprintf( fp, "BASIC:" );	break;
-	case DIFFICULTY_MEDIUM:		fprintf( fp, "ANOTHER:" );	break;
-	case DIFFICULTY_HARD:		fprintf( fp, "MANIAC:" );	break;
-	case DIFFICULTY_CHALLENGE:	fprintf( fp, "SMANIAC:" );	break;
+	case DIFFICULTY_BEGINNER:	f.Write( "BEGINNER:" ); break;
+	case DIFFICULTY_EASY:		f.Write( "BASIC:" );	break;
+	case DIFFICULTY_MEDIUM:		f.Write( "ANOTHER:" );	break;
+	case DIFFICULTY_HARD:		f.Write( "MANIAC:" );	break;
+	case DIFFICULTY_CHALLENGE:	f.Write( "SMANIAC:" );	break;
 	default:	ASSERT(0);	return false;
 	}
 
-	fprintf( fp, "%d:\n", out.GetMeter() );
+	f.PutLine( ssprintf("%d:", out.GetMeter()) );
 	return true;
 }
 
 bool NotesWriterDWI::Write( CString sPath, const Song &out )
 {
-	FILE* fp = fopen( sPath, "w" );	
-	if( fp == NULL )
-		RageException::Throw( "Error opening song file '%s' for writing.", sPath.c_str() );
+	RageFile f;
+	if( !f.Open( sPath, RageFile::WRITE ) )
+		RageException::Throw( "Error opening song file '%s' for writing.", f.GetError().c_str() );
 
 	/* Write transliterations, if we have them, since DWI doesn't support UTF-8. */
-	fprintf( fp, "#TITLE:%s;\n", out.GetFullTranslitTitle().c_str() );
-	fprintf( fp, "#ARTIST:%s;\n", out.GetTranslitArtist().c_str() );
+	f.PutLine( ssprintf("#TITLE:%s;", out.GetFullTranslitTitle().c_str()) );
+	f.PutLine( ssprintf("#ARTIST:%s;", out.GetTranslitArtist().c_str()) );
 	ASSERT( out.m_BPMSegments[0].m_fStartBeat == 0 );
-	fprintf( fp, "#FILE:%s;\n", out.m_sMusicFile.c_str() );
-	fprintf( fp, "#BPM:%.3f;\n", out.m_BPMSegments[0].m_fBPM );
-	fprintf( fp, "#GAP:%d;\n", int(-roundf( out.m_fBeat0OffsetInSeconds*1000 )) );
-	fprintf( fp, "#SAMPLESTART:%.3f;\n", out.m_fMusicSampleStartSeconds );
-	fprintf( fp, "#SAMPLELENGTH:%.3f;\n", out.m_fMusicSampleLengthSeconds );
+	f.PutLine( ssprintf("#FILE:%s;", out.m_sMusicFile.c_str()) );
+	f.PutLine( ssprintf("#BPM:%.3f;", out.m_BPMSegments[0].m_fBPM) );
+	f.PutLine( ssprintf("#GAP:%d;", int(-roundf( out.m_fBeat0OffsetInSeconds*1000 ))) );
+	f.PutLine( ssprintf("#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds) );
+	f.PutLine( ssprintf("#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds) );
 	if( out.m_sCDTitleFile.size() )
-		fprintf( fp, "#CDTITLE:%s;\n", out.m_sCDTitleFile.c_str() );
+		f.PutLine( ssprintf("#CDTITLE:%s;", out.m_sCDTitleFile.c_str()) );
 	switch( out.m_DisplayBPMType )
 	{
 	case Song::DISPLAY_ACTUAL:
@@ -358,41 +359,41 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 		break;
 	case Song::DISPLAY_SPECIFIED:
 		if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
-			fprintf( fp, "#DISPLAYBPM:%i;\n", (int) out.m_fSpecifiedBPMMin );
+			f.PutLine( ssprintf("#DISPLAYBPM:%i;\n", (int) out.m_fSpecifiedBPMMin) );
 		else
-			fprintf( fp, "#DISPLAYBPM:%i..%i;\n", (int) out.m_fSpecifiedBPMMin, (int) out.m_fSpecifiedBPMMax );
+			f.PutLine( ssprintf("#DISPLAYBPM:%i..%i;\n", (int) out.m_fSpecifiedBPMMin, (int) out.m_fSpecifiedBPMMax) );
 		break;
 	case Song::DISPLAY_RANDOM:
-		fprintf( fp, "#DISPLAYBPM:*" );
+		f.PutLine( "#DISPLAYBPM:*" );
 		break;
 	}
 
 	if( !out.m_StopSegments.empty() )
 	{
-		fprintf( fp, "#FREEZE:" );
+		f.Write( "#FREEZE:" );
 
 		for( unsigned i=0; i<out.m_StopSegments.size(); i++ )
 		{
 			const StopSegment &fs = out.m_StopSegments[i];
-			fprintf( fp, "%.3f=%.3f", BeatToNoteRow( fs.m_fStartBeat ) * 4.0f / ROWS_PER_BEAT,
-				roundf(fs.m_fStopSeconds*1000) );
+			f.Write( ssprintf("%.3f=%.3f", BeatToNoteRow( fs.m_fStartBeat ) * 4.0f / ROWS_PER_BEAT,
+				roundf(fs.m_fStopSeconds*1000)) );
 			if( i != out.m_StopSegments.size()-1 )
-				fprintf( fp, "," );
+				f.Write( "," );
 		}
-		fprintf( fp, ";\n" );
+		f.PutLine( ";" );
 	}
 
 	if( out.m_BPMSegments.size() > 1)
 	{
-		fprintf( fp, "#CHANGEBPM:" );
+		f.Write( "#CHANGEBPM:" );
 		for( unsigned i=1; i<out.m_BPMSegments.size(); i++ )
 		{
 			const BPMSegment &bs = out.m_BPMSegments[i];
-			fprintf( fp, "%.3f=%.3f", BeatToNoteRow( bs.m_fStartBeat ) * 4.0f / ROWS_PER_BEAT, bs.m_fBPM );
+			f.Write( ssprintf("%.3f=%.3f", BeatToNoteRow( bs.m_fStartBeat ) * 4.0f / ROWS_PER_BEAT, bs.m_fBPM ) );
 			if( i != out.m_BPMSegments.size()-1 )
-				fprintf( fp, "," );
+				f.Write( "," );
 		}
-		fprintf( fp, ";\n" );
+		f.PutLine( ";" );
 	}
 
 	for( unsigned i=0; i<out.m_apNotes.size(); i++ ) 
@@ -400,22 +401,20 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 		if( out.m_apNotes[i]->IsAutogen() )
 			continue;	// don't save autogen notes
 
-		if(!WriteDWINotesTag( fp, *out.m_apNotes[i] ))
+		if(!WriteDWINotesTag( f, *out.m_apNotes[i] ))
 			continue;
 
-		WriteDWINotesField( fp, *out.m_apNotes[i], 0 );
+		WriteDWINotesField( f, *out.m_apNotes[i], 0 );
 		if(out.m_apNotes[i]->m_StepsType==STEPS_TYPE_DANCE_DOUBLE ||
 		   out.m_apNotes[i]->m_StepsType==STEPS_TYPE_DANCE_COUPLE)
 		{
-			fprintf( fp, ":\n" );
-			WriteDWINotesField( fp, *out.m_apNotes[i], 4 );
+			f.PutLine( ":" );
+			WriteDWINotesField( f, *out.m_apNotes[i], 4 );
 		}
 
-		fprintf( fp, ";\n" );
+		f.PutLine( ";" );
 	}
 	
-	fclose( fp );
-
 	return true;
 }
 /*
