@@ -13,7 +13,7 @@ SongCacheIndex *SONGINDEX;
 SongCacheIndex::SongCacheIndex()
 {
 	mkdir("Cache", 0755);
-	CacheIndex.SetPath( "Cache\\index.cache" );
+	CacheIndex.SetPath( "Cache/index.cache" );
 	ReadCacheIndex();
 }
 
