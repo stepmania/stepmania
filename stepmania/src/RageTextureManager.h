@@ -47,6 +47,10 @@ public:
 	void AdjustTextureID(RageTextureID &ID) const;
 	void DiagnosticOutput() const;
 
+	void DisableOddDimensionWarning() { m_iNoWarnAboutOddDimensions++; }
+	void EnableOddDimensionWarning() { m_iNoWarnAboutOddDimensions--; }
+	bool GetOddDimensionWarning() const { return m_iNoWarnAboutOddDimensions == 0; }
+
 protected:
 	void DeleteTexture( RageTexture *t );
 	enum GCType { screen_changed, delayed_delete };
@@ -60,6 +64,7 @@ protected:
 	RageTexture* LoadTextureInternal( RageTextureID ID );
 
 	std::map<RageTextureID, RageTexture*> m_mapPathToTexture;
+	int m_iNoWarnAboutOddDimensions;
 };
 
 extern RageTextureManager*	TEXTUREMAN;	// global and accessable from anywhere in our program

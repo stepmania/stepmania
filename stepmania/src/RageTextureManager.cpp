@@ -61,6 +61,7 @@ static CString GetExtension(const CString &fn)
 
 RageTextureManager::RageTextureManager()
 {
+	m_iNoWarnAboutOddDimensions = 0;
 }
 
 RageTextureManager::~RageTextureManager()
