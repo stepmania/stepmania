@@ -10,7 +10,6 @@ protected:
 	void SetError(string e) const { error = e; }
 
 public:
-	virtual bool Open(CString filename) = 0;
 	virtual int GetLength() const = 0; /* ms */
 	virtual int GetLength_Fast() const { return GetLength(); } /* ms */
 	virtual int SetPosition_Accurate(int ms) = 0;
