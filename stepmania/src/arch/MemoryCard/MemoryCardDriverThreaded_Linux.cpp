@@ -352,7 +352,9 @@ static const WhiteListEntry g_AllowedEntries[] =
     { 0x05dc, -1, "", "JUMP|Jump" },  // All Lexar Jump*  drives
     { 0x1915, 0x2220, "", "" },  // Linksys USB 2.0 Disk 128MB
     { 0x0d7d, -1, "", "USB DISK" },  // PNY Attache pen drives
+    { 0x0ea0, -1, "", "Flash Disk" },   // other PNY Attache pen drives
     { 0x0ef5, -1, "", "Intelligent|Traveling" },  // PQI Intelligent Stick and Traveling Disk 
+    { 0x08ec, -1, "", "M-Disk" },  // M-Systems flash drive
   };
 bool IsDeviceAllowed( int idVendor, int idProduct, CString sVendor, CString sProduct )
 {
