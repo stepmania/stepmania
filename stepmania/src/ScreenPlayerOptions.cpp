@@ -10,6 +10,7 @@
 #include "PrefsManager.h"
 #include "CodeDetector.h"
 #include "ScreenDimensions.h"
+#include "Style.h"
 
 
 #define PREV_SCREEN		THEME->GetMetric ("ScreenPlayerOptions","PrevScreen")
@@ -111,9 +112,8 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		}
 	}
 
-	PlayerNumber pn = StyleI.player;
-
-	if( GAMESTATE->IsHumanPlayer(StyleI.player) && CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_CANCEL_ALL_PLAYER_OPTIONS) )
+	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( GameI.controller );
+	if( GAMESTATE->IsHumanPlayer(pn) && CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_CANCEL_ALL_PLAYER_OPTIONS) )
 	{
 		SOUND->PlayOnce( THEME->GetPathToS("ScreenPlayerOptions cancel all") );
 		
