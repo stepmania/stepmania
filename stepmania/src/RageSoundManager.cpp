@@ -10,6 +10,8 @@
 #include "RageLog.h"
 #include "RageTimer.h"
 
+#include "RageMusic.h"
+
 #include "arch/arch.h"
 #include "arch/Sound/RageSoundDriver.h"
 #include "SDL_audio.h"
@@ -255,46 +257,19 @@ void RageSoundManager::MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, floa
 	}
 }
 
-CString RageSoundManager::GetMusicPath() const
-{
-	return music->GetLoadedFilePath();
-}
 
 void RageSoundManager::PlayMusic(CString file, bool force_loop, float start_sec, float length_sec, float fade_len)
 {
-//	LOG->Trace("play '%s' (current '%s')", file.c_str(), music->GetLoadedFilePath().c_str());
-	if(music->IsPlaying())
-	{
-		if( music->GetLoadedFilePath() == file )
-			return;		// do nothing
+	MUSIC->Play(file, force_loop, start_sec, length_sec, fade_len);
+}
+void RageSoundManager::StopMusic()
+{
+	MUSIC->Stop();
+}
 
-		music->StopPlaying();
-	}
-
-	/* If file is blank, just stop. */
-	if(file.empty())
-	{
-		music->Unload();
-		return;
-	}
-
-	music->Load( file, false );
-	if( force_loop )
-		music->SetStopMode( RageSound::M_LOOP );
-
-	if(start_sec == -1)
-		music->SetStartSeconds();
-	else
-		music->SetStartSeconds(start_sec);
-
-	if(length_sec == -1)
-		music->SetLengthSeconds();
-	else
-		music->SetLengthSeconds(length_sec);
-
-	music->SetFadeLength(fade_len);
-	music->SetPositionSeconds();
-	music->StartPlaying();
+CString RageSoundManager::GetMusicPath() const
+{
+	return MUSIC->GetPath();
 }
 
 void RageSoundManager::SetPrefs(float MixVol)
