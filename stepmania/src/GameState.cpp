@@ -68,6 +68,8 @@ GameState::~GameState()
 {
 	delete m_pUnlockingSys;
 	delete m_pPosition;
+	for( unsigned i=0; i<m_pCharacters.size(); i++ )
+		delete m_pCharacters[i];
 }
 
 void GameState::Reset()
