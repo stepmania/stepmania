@@ -150,6 +150,8 @@ void MemoryCardManager::LockCards( bool bLock )
 
 void MemoryCardManager::AssignUnassignedCards()
 {
+	LOG->Trace( "AssignUnassignedCards" );
+
 	// make a list of unassigned
 	vector<UsbStorageDevice> vUnassignedDevices = m_vStorageDevices;	// copy
 
@@ -170,8 +172,13 @@ void MemoryCardManager::AssignUnassignedCards()
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
+			LOG->Trace( "Looking for a card for Player %d", p+1 );
+
 			if( !m_Device[p].IsBlank() )	// they already have an assigned card
+			{
+				LOG->Trace( "Already has a card", p+1 );
 				continue;	// skip
+			}
 
 			unsigned i;
 
