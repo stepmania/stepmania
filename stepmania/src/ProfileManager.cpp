@@ -472,7 +472,8 @@ void ProfileManager::ReadSongScoresFromDir( CString sDir, MemoryCard mc )
 			if( pNotes )
 				pNotes->m_MemCardDatas[mc].vHighScores.resize( iNumHighScores );
 
-			for( unsigned l=0; l<iNumHighScores; l++ )
+			unsigned l;
+			for( l=0; l<iNumHighScores; l++ )
 			{
 				CString sName;
 				if( !FileRead(f, sName) )
@@ -498,6 +499,16 @@ void ProfileManager::ReadSongScoresFromDir( CString sDir, MemoryCard mc )
 				pNotes->m_MemCardDatas[mc].vHighScores[l].grade = grade;
 				pNotes->m_MemCardDatas[mc].vHighScores[l].iScore = iScore;
 				pNotes->m_MemCardDatas[mc].vHighScores[l].fPercentDP = fPercentDP;
+			}
+
+			// ignore all high scores that are 0
+			for( l=0; l<iNumHighScores; l++ )
+			{
+				if( pNotes->m_MemCardDatas[mc].vHighScores[l].iScore <= 0 )
+				{
+					pNotes->m_MemCardDatas[mc].vHighScores.resize(l);
+					break;
+				}
 			}
 		}
 	}
@@ -1236,7 +1247,8 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 				{
 					Steps::MemCardData::HighScore &hs = vHighScores[i];
 					CString sName = ssprintf("#%d",i+1);
-					CString sValue = ssprintf("%s, %s, %i, %.2f%%", hs.sName.c_str(), GradeToString(hs.grade).c_str(), hs.iScore, hs.fPercentDP*100);
+					CString sHSName = hs.sName.empty() ? "????" : hs.sName;
+					CString sValue = ssprintf("%s, %s, %i, %.2f%%", sHSName.c_str(), GradeToString(hs.grade).c_str(), hs.iScore, hs.fPercentDP*100);
 					PRINT_LINE_S( sName.c_str(), sValue );
 				}
 				f.PutLine( "</div>\n" );
