@@ -154,7 +154,7 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYOffset )
 		
 		const float fAdjustedPixelOffset = SCALE( cosf(fRads), -1, 1, fMinX, fMaxX );
 
-		fPixelOffsetFromCenter = fAdjustedPixelOffset - fRealPixelOffset;
+		fPixelOffsetFromCenter += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO];
 	}
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] > 0 )
