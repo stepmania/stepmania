@@ -25,6 +25,7 @@
 !system "utils\upx avformat.dll" ignore
 !system "utils\upx resample.dll" ignore
 !system "utils\upx dbghelp.dll" ignore
+!system "utils\upx zlib1.dll" ignore
 
 Name "${PRODUCT_NAME_VER}"
 OutFile "${PRODUCT_NAME_VER}.exe"
@@ -208,7 +209,7 @@ File "avcodec.dll"
 File "avformat.dll"
 File "resample.dll"
 File "dbghelp.dll"
-; File "SDL_net.dll"
+File "zlib1.dll"
 
 File "COPYING.txt"
 File "README-FIRST.html"
@@ -352,6 +353,7 @@ Delete "$INSTDIR\avcodec.dll"
 Delete "$INSTDIR\avformat.dll"
 Delete "$INSTDIR\resample.dll"
 Delete "$INSTDIR\dbghelp.dll"
+Delete "$INSTDIR\zlib1.dll"
 Delete "$INSTDIR\COPYING.txt"
 Delete "$INSTDIR\README-FIRST.html"
 Delete "$INSTDIR\NEWS"
