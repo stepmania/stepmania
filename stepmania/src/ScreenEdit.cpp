@@ -455,7 +455,19 @@ void ScreenEdit::Update( float fDeltaTime )
 	if(m_EditMode == MODE_PLAYING && PlayTicks())
 		m_soundAssistTick.Play();
 
+	static float fUpdateCounter = 0;
+	fUpdateCounter -= fDeltaTime;
+	if( fUpdateCounter < 0 )
+	{
+		fUpdateCounter = 0.5;
+		UpdateTextInfo();
+	}
+}
 
+void ScreenEdit::UpdateTextInfo()
+{
+	int iNumTapNotes = m_NoteFieldEdit.GetNumTapNotes();
+	int iNumHoldNotes = m_NoteFieldEdit.GetNumHoldNotes();
 
 	CString sNoteType;
 	switch( m_SnapDisplay.GetNoteType() )
@@ -469,34 +481,22 @@ void ScreenEdit::Update( float fDeltaTime )
 	default:  ASSERT(0);
 	}
 
+	CString sText;
+	sText += ssprintf( "Current Beat:\n     %.2f\n",		GAMESTATE->m_fSongBeat );
+	sText += ssprintf( "Snap to:\n     %s\n",				sNoteType.GetString() );
+	sText += ssprintf( "Selection begin:\n     %s\n",		m_NoteFieldEdit.m_fBeginMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fBeginMarker).GetString() );
+	sText += ssprintf( "Selection end:\n     %s\n",			m_NoteFieldEdit.m_fEndMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fEndMarker).GetString() );
+	sText += ssprintf( "Difficulty:\n     %s\n",			DifficultyToString( m_pNotes->GetDifficulty() ).GetString() );
+	sText += ssprintf( "Description:\n     %s\n",			GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->GetDescription().GetString() : "no description" );
+	sText += ssprintf( "Main title:\n     %s\n",			m_pSong->m_sMainTitle.GetString() );
+	sText += ssprintf( "Tap Notes:\n     %d\n",				iNumTapNotes );
+	sText += ssprintf( "Hold Notes:\n     %d\n",			iNumHoldNotes );
+	sText += ssprintf( "Beat 0 Offset:\n     %.2f secs\n",	m_pSong->m_fBeat0OffsetInSeconds );
+	sText += ssprintf( "Preview Start:\n     %.2f secs\n",	m_pSong->m_fMusicSampleStartSeconds );
+	sText += ssprintf( "Preview Length:\n     %.2f secs\n",m_pSong->m_fMusicSampleLengthSeconds );
 
-	static float fUpdateCounter = 0.5;
-	fUpdateCounter -= fDeltaTime;
-	if( fUpdateCounter < 0 )
-	{
-		fUpdateCounter = 0.5;
-
-		int iNumTapNotes = m_NoteFieldEdit.GetNumTapNotes();
-		int iNumHoldNotes = m_NoteFieldEdit.GetNumHoldNotes();
-
-		CString sText;
-		sText += ssprintf( "Current Beat:\n     %.2f\n",		GAMESTATE->m_fSongBeat );
-		sText += ssprintf( "Snap to:\n     %s\n",				sNoteType.GetString() );
-		sText += ssprintf( "Selection begin:\n     %s\n",		m_NoteFieldEdit.m_fBeginMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fBeginMarker).GetString() );
-		sText += ssprintf( "Selection end:\n     %s\n",			m_NoteFieldEdit.m_fEndMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fEndMarker).GetString() );
-		sText += ssprintf( "Difficulty:\n     %s\n",			DifficultyToString( m_pNotes->GetDifficulty() ).GetString() );
-		sText += ssprintf( "Description:\n     %s\n",			GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->GetDescription().GetString() : "no description" );
-		sText += ssprintf( "Main title:\n     %s\n",			m_pSong->m_sMainTitle.GetString() );
-		sText += ssprintf( "Tap Notes:\n     %d\n",				iNumTapNotes );
-		sText += ssprintf( "Hold Notes:\n     %d\n",			iNumHoldNotes );
-		sText += ssprintf( "Beat 0 Offset:\n     %.2f secs\n",	m_pSong->m_fBeat0OffsetInSeconds );
-		sText += ssprintf( "Preview Start:\n     %.2f secs\n",	m_pSong->m_fMusicSampleStartSeconds );
-		sText += ssprintf( "Preview Length:\n     %.2f secs\n",m_pSong->m_fMusicSampleLengthSeconds );
-
-		m_textInfo.SetText( sText );
-	}
+	m_textInfo.SetText( sText );
 }
-
 
 void ScreenEdit::DrawPrimitives()
 {
@@ -942,6 +942,10 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		HandleAreaMenuChoice( delete_and_shift, NULL );
 		break;
 	}
+
+	/* Make sure the displayed time is up-to-date after possibly changing something,
+	 * so it doesn't feel lagged. */
+	UpdateTextInfo();
 }
 
 void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )

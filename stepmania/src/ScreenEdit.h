@@ -44,6 +44,7 @@ protected:
 	void TransitionToEdit();
 	bool PlayTicks() const;
 	void PlayPreviewMusic();
+	void UpdateTextInfo();
 
 	void OnSnapModeChange();
 	void MenuItemGainFocus( BitmapText* menuitem );
