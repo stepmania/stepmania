@@ -40,7 +40,6 @@ void IniFile::SetPath(CString newpath)
 // returns true if successful, false otherwise
 bool IniFile::ReadFile()
 {
-LOG->Trace("INI: Reading '%s'",path.c_str() );
 	FILE *f = fopen(path, "r");
 
 	if (f == NULL)
@@ -56,7 +55,7 @@ LOG->Trace("INI: Reading '%s'",path.c_str() );
 	{
 		buf[sizeof(buf)-1]=0;
 		CString line(buf);
-LOG->Trace("Read line '%s'", line.c_str());
+
 		if(line.size() >= 3 &&
 			line[0] == '\xef' &&
 			line[1] == '\xbb' &&
@@ -71,7 +70,6 @@ LOG->Trace("Read line '%s'", line.c_str());
 			continue;
 
 		StripCrnl(line);
-LOG->Trace("Stripped: '%s'", line.c_str());
 
 		if (line.substr(0, 2) == "//" || line.substr(0) == "#")
 			continue; /* comment */
@@ -91,7 +89,7 @@ LOG->Trace("Stripped: '%s'", line.c_str());
 			}
 		}
 	}
-	LOG->Trace("INI: done");
+
 	fclose(f);	
 	return 1;
 }
