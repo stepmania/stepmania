@@ -695,6 +695,8 @@ void Actor::AddRotationR( float rot )
 void Actor::RunCommands( const ActorCommands& cmds )
 {
 	cmds.PushSelf( LUA->L );
+	ASSERT( !lua_isnil(LUA->L, -1) );
+
 	this->PushSelf( LUA->L ); // 1st parameter
 	lua_call(LUA->L, 1, 0); // call function with 1 argument and 0 results
 }
