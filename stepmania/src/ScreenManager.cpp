@@ -355,21 +355,25 @@ retry:
 	}
 	
 	// Load shared BGAnimation
+	CString sNewBGA;
 	if( pNewScreen->UsesBackground() )
+		sNewBGA = THEME->GetPathToB(sScreenName+" background");
+	if( sNewBGA.empty() )
 	{
-		CString sNewBGA = THEME->GetPathToB(sScreenName+" background");
-		if( m_sLastLoadedBackground != sNewBGA )
-		{
-			// Create the new background before deleting the previous so that we keep
-			// any common textures loaded.
-			BGAnimation *pNewBGA = new BGAnimation;
-			pNewBGA->LoadFromAniDir( sNewBGA );
-			SAFE_DELETE( m_pSharedBGA );
-			m_pSharedBGA = pNewBGA;
+		m_pSharedBGA->Unload();
+		m_sLastLoadedBackground = "";
+	}
+	else if( m_sLastLoadedBackground != sNewBGA )
+	{
+		// Create the new background before deleting the previous so that we keep
+		// any common textures loaded.
+		BGAnimation *pNewBGA = new BGAnimation;
+		pNewBGA->LoadFromAniDir( sNewBGA );
+		SAFE_DELETE( m_pSharedBGA );
+		m_pSharedBGA = pNewBGA;
 
-			m_sLastLoadedBackground = sNewBGA;
-		}
-	}	
+		m_sLastLoadedBackground = sNewBGA;
+	}
 
 	bool bWasOnSystemMenu = GAMESTATE->m_bIsOnSystemMenu;
 
