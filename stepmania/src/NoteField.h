@@ -12,8 +12,6 @@
 #include "ReceptorArrowRow.h"
 #include "GhostArrowRow.h"
 
-class Song;
-
 class NoteField : public NoteDataWithScoring, public ActorFrame
 {
 public:
@@ -29,7 +27,6 @@ public:
 		int iEndDrawingPixel, 
 		float fYReverseOffsetPixels );
 	virtual void Unload();
-	void RemoveTapNoteRow( int iIndex );
 
 	map<RowTrack,bool> m_HeldHoldNotes;	// true if button is being held down
 	map<RowTrack,bool> m_ActiveHoldNotes;	// true if hold has life > 0

@@ -168,11 +168,6 @@ void NoteField::Update( float fDeltaTime )
 
 	RefreshBeatToNoteSkin();
 
-
-	//
-	// update all NoteDisplays
-	//
-
 	/*
 	 * Update all NoteDisplays.  Hack: We need to call this once per frame, not
 	 * once per player.
@@ -647,12 +642,6 @@ void NoteField::DrawPrimitives()
 	}
 
 	cur->m_GhostArrowRow.Draw();
-}
-
-void NoteField::RemoveTapNoteRow( int iIndex )
-{
-	for( int c=0; c<GetNumTracks(); c++ )
-		SetTapNote(c, iIndex, TAP_EMPTY);
 }
 
 void NoteField::FadeToFail()
