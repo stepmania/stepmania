@@ -106,7 +106,7 @@ void ScreenSystemLayer::ReloadCreditsText()
 void ScreenSystemLayer::SystemMessage( const CString &sMessage )
 {
 	m_textMessage.SetText( sMessage );
-	ActorCommands c = ActorCommands( ParseCommands("finishtweening;diffusealpha,1;addx,-640;linear,0.5;addx,+640;sleep,5;linear,0.5;diffusealpha,0") );
+	ActorCommands c = ActorCommands( "finishtweening;diffusealpha,1;addx,-640;linear,0.5;addx,+640;sleep,5;linear,0.5;diffusealpha,0" );
 	m_textMessage.RunCommands( c );
 }
 

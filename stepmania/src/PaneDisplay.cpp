@@ -11,6 +11,7 @@
 #include "Style.h"
 #include "Command.h"
 #include "ActorUtil.h"
+#include "Foreach.h"
 
 #define SHIFT_X(p)			THEME->GetMetricF(m_sName, ssprintf("ShiftP%iX", p+1))
 #define SHIFT_Y(p)			THEME->GetMetricF(m_sName, ssprintf("ShiftP%iY", p+1))
@@ -105,7 +106,13 @@ void PaneDisplay::Load( PlayerNumber pn )
 
 			level.m_fIfLessThan = cmds.v[0].GetArg(0);
 			cmds.v.erase( cmds.v.begin(), cmds.v.begin()+1 );
-			level.m_Command = apActorCommands(new ActorCommands( cmds ));
+
+			// TODO: clean this up
+			vector<CString> vs;
+			FOREACH_CONST( Command, cmds.v, cmd )
+				vs.push_back( cmd->GetOriginalCommandString() );
+
+			level.m_Command = apActorCommands( new ActorCommands(join(";",vs)) );
 		}
 	}
 

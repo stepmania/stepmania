@@ -171,12 +171,12 @@ void ScreenUnlock::Init()
 				LOG->Trace("Target Row: %f", TargetRow);
 				LOG->Trace("command for icon %d: %s", i, ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime * 2, ScrollingTextEndY).c_str() );
 				CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime, ScrollingTextEndY);
-				text->RunCommands( ActorCommands(ParseCommands(sCommand)) );
+				text->RunCommands( ActorCommands(sCommand) );
 			}
 			else
 			{
 				CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY);
-				text->RunCommands( ActorCommands(ParseCommands(sCommand)) );
+				text->RunCommands( ActorCommands(sCommand) );
 			}
 
 			item.push_back(text);
@@ -203,12 +203,12 @@ void ScreenUnlock::Init()
 					LOG->Trace("Target Row: %f", TargetRow);
 					LOG->Trace("command for icon %d: %s", i, ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime * 2, ScrollingTextEndY).c_str() );
 					CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime, ScrollingTextEndY);
-					IconCount->RunCommands( ActorCommands(ParseCommands(sCommand)) );
+					IconCount->RunCommands( ActorCommands(sCommand) );
 				}
 				else
 				{
 					CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY);
-					IconCount->RunCommands( ActorCommands(ParseCommands(sCommand)) );
+					IconCount->RunCommands( ActorCommands(sCommand) );
 				}
 
 				ItemIcons.push_back(IconCount);
@@ -274,7 +274,7 @@ void ScreenUnlock::Init()
 			NewText->SetXY(ScrollingTextX, ScrollingTextStartY);
 			{
 				CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows ));
-				NewText->RunCommands( ActorCommands(ParseCommands(sCommand)) );
+				NewText->RunCommands( ActorCommands(sCommand) );
 			}
 
 			// new unlock graphic
@@ -285,7 +285,7 @@ void ScreenUnlock::Init()
 			NewIcon->SetWidth(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 			{
 				CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows ));
-				NewIcon->RunCommands( ActorCommands(ParseCommands(sCommand)) );
+				NewIcon->RunCommands( ActorCommands(sCommand) );
 			}
 
 			ItemIcons.push_back(NewIcon);

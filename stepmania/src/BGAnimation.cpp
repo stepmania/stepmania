@@ -183,7 +183,7 @@ void BGAnimation::LoadFromNode( const CString& sDir, const XNode* pNode )
 
 	ActorScroller::LoadFromNode( sDir, pNode );
 
-	this->RunCommandsOnChildren( ActorCommands(ParseCommands("PlayCommand,Init")) );
+	this->RunCommandsOnChildren( ActorCommands("PlayCommand,Init") );
 
 
 	/* Backwards-compatibility: if a "LengthSeconds" value is present, create a dummy

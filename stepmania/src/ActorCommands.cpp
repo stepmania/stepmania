@@ -6,78 +6,87 @@
 #include <sstream>
 #include "LuaBinding.h"
 
-ActorCommands::ActorCommands( const Commands& cmds )
+ActorCommands::ActorCommands( const CString &sCommands )
 {
-	m_cmds = cmds;
+	if( sCommands.Left(1) == "%" )
+	{
+		m_sLuaFunction = sCommands;
+		m_sLuaFunction.erase( m_sLuaFunction.begin() );
+		m_sLuaFunction = "return " + m_sLuaFunction;
+	}
+	else
+	{
+		Commands cmds;
+		ParseCommands( sCommands, cmds );
+		
+		//
+		// Convert cmds to a Lua function
+		//
+		ostringstream s;
+		
+		s << "return function(self)\n";
+
+		FOREACH_CONST( Command, cmds.v, c )
+		{
+			const Command& cmd = (*c);
+			CString sName = cmd.GetName();
+			s << "\tself:" << sName << "(";
+
+			bool bFirstParamIsString =
+				sName == "horizalign" ||
+				sName == "vertalign" ||
+				sName == "effectclock" ||
+				sName == "blend" ||
+				sName == "ztestmode" ||
+				sName == "cullmode" ||
+				sName == "playcommand" ||
+				sName == "queuecommand";
+
+			for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
+			{
+				CString sArg = cmd.m_vsArgs[i];
+
+				// "+200" -> "200"
+				if( sArg[0] == '+' )
+					sArg.erase( sArg.begin() );
+
+				if( i==1 && bFirstParamIsString ) // string literal
+				{
+					s << "'" << sArg << "'";
+				}
+				else if( sArg[0] == '#' )	// HTML color
+				{
+					RageColor c;	// in case FromString fails
+					c.FromString( sArg );
+					// c is still valid if FromString fails
+					s << c.r << "," << c.g << "," << c.b << "," << c.a;
+				}
+				else
+				{
+					s << sArg;
+				}
+
+				if( i != cmd.m_vsArgs.size()-1 )
+					s << ",";
+			}
+			s << ")\n";
+		}
+
+		s << "end\n";
+
+		m_sLuaFunction = s.str();
+	}
+
 	Register();
 }
 
 void ActorCommands::Register()
 {
-	//
-	// Convert cmds to a Lua function
-	//
-	ostringstream s;
-	
-	s << "return function(self)\n";
-
-	FOREACH_CONST( Command, m_cmds.v, c )
-	{
-		const Command& cmd = (*c);
-		CString sName = cmd.GetName();
-		s << "\tself:" << sName << "(";
-
-		bool bFirstParamIsString =
-			sName == "horizalign" ||
-			sName == "vertalign" ||
-			sName == "effectclock" ||
-			sName == "blend" ||
-			sName == "ztestmode" ||
-			sName == "cullmode" ||
-			sName == "playcommand" ||
-			sName == "queuecommand";
-
-		for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
-		{
-			CString sArg = cmd.m_vsArgs[i];
-
-			// "+200" -> "200"
-			if( sArg[0] == '+' )
-				sArg.erase( sArg.begin() );
-
-			if( i==1 && bFirstParamIsString ) // string literal
-			{
-				s << "'" << sArg << "'";
-			}
-			else if( sArg[0] == '#' )	// HTML color
-			{
-				RageColor c;	// in case FromString fails
-				c.FromString( sArg );
-				// c is still valid if FromString fails
-				s << c.r << "," << c.g << "," << c.b << "," << c.a;
-			}
-			else
-			{
-				s << sArg;
-			}
-
-			if( i != cmd.m_vsArgs.size()-1 )
-				s << ",";
-		}
-		s << ")\n";
-	}
-
-	s << "end\n";
-
-
-	CString s2 = s.str();
 	CString sError;
-	if( !LUA->RunScript( s2, "in", sError, 1 ) )
+	if( !LUA->RunScript( m_sLuaFunction, "in", sError, 1 ) )
 	{
-		/* We're compiling a generated script, so it should never fail. */
-		FAIL_M( ssprintf("Compiling \"%s\": %s", s2.c_str(), sError.c_str()) );
+		FAIL_M( ssprintf("Compiling \"%s\": %s", m_sLuaFunction.c_str(), sError.c_str()) );
 	}
-
 
 	/* The function is now on the stack. */
 	this->SetFromStack();

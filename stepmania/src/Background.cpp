@@ -473,7 +473,7 @@ void Background::LoadFromSong( const Song* pSong )
 		 * may look something like "BGAnimation, BGAnimationLayer, Sprite" or it
 		 * may be deeper, like "BGAnimation, BGAnimationLayer, BGAnimation,
 		 * BGAnimationLayer, Sprite". */
-		ActorCommands acmds( ParseCommands("effectclock,music") );
+		ActorCommands acmds( "effectclock,music" );
 		pBGA->RunCommands( acmds );
 	}
 }

@@ -31,7 +31,7 @@ bool ReceptorArrow::Load( CString NoteSkin, const PlayerState* pPlayerState, int
 	{
 		CString sJudge = TapNoteScoreToString( i );
 		CString sCommand = Capitalize(sJudge)+"Command";
-		m_sScoreCommand[i] = apActorCommands( new ActorCommands(NOTESKIN->GetMetricA(NoteSkin,m_sName,sCommand)) );
+		m_sScoreCommand[i] = apActorCommands( new ActorCommands(NOTESKIN->GetMetric(NoteSkin,m_sName,sCommand)) );
 	}
 
 	m_pPressBlock.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"KeypressBlock") );

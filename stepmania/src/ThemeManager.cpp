@@ -750,7 +750,7 @@ Commands ThemeManager::GetMetricM( const CString &sClassName, const CString &sVa
 apActorCommands ThemeManager::GetMetricA( const CString &sClassName, const CString &sValueName )
 {
 	CString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
-	return apActorCommands( new ActorCommands( ParseCommands( sValue ) ) );
+	return apActorCommands( new ActorCommands( sValue ) );
 }
 
 void ThemeManager::NextTheme()

@@ -238,7 +238,7 @@ void DifficultyList::PositionItems()
 		if( m_bShown && m < (int)m_Rows.size() )
 			bHidden = m_Rows[m].m_bHidden;
 
-		ActorCommands c = ActorCommands( ParseCommands( ssprintf("diffusealpha,%f",bHidden?0.0f:1.0f) ) );
+		ActorCommands c = ActorCommands( ssprintf("diffusealpha,%f",bHidden?0.0f:1.0f) );
 		m_Lines[m].m_Description.RunCommands( c );
 		m_Lines[m].m_Meter.RunCommandsOnChildren( c );
 		m_Lines[m].m_Number.RunCommands( c );
@@ -359,7 +359,7 @@ void DifficultyList::HideRows()
 {
 	for( unsigned m = 0; m < m_Rows.size(); ++m )
 	{
-		ActorCommands c = ActorCommands( ParseCommands( "finishtweening;diffusealpha,0" ) );
+		ActorCommands c = ActorCommands( "finishtweening;diffusealpha,0" );
 		m_Lines[m].m_Description.RunCommands( c );
 		m_Lines[m].m_Meter.RunCommandsOnChildren( c );
 		m_Lines[m].m_Number.RunCommands( c );
@@ -372,7 +372,7 @@ void DifficultyList::TweenOnScreen()
 	m_bShown = true;
 	for( unsigned m = 0; m < m_Rows.size(); ++m )
 	{
-		ActorCommands c = ActorCommands( ParseCommands( "finishtweening" ) );
+		ActorCommands c = ActorCommands( "finishtweening" );
 		m_Lines[m].m_Description.RunCommands( c );
 		m_Lines[m].m_Meter.RunCommandsOnChildren( c );
 		m_Lines[m].m_Number.RunCommands( c );
