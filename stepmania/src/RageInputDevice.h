@@ -63,9 +63,10 @@ public:
 	int button;
 	RageTimer ts;
 
-	DeviceInput() { device=DEVICE_NONE; button=-1; ts.SetZero(); }
-	DeviceInput( InputDevice d, int b ) { device=d; button=b; ts.SetZero(); }
-	DeviceInput( InputDevice d, int b, const RageTimer &t ) { device=d; button=b; ts = t; }
+	DeviceInput(): device(DEVICE_NONE), button(-1), ts(RageZeroTimer) { }
+	DeviceInput( InputDevice d, int b ): device(d), button(b), ts(RageZeroTimer) { }
+	DeviceInput( InputDevice d, int b, const RageTimer &t ):
+		device(d), button(b), ts(t) { }
 
 	bool operator==( const DeviceInput &other ) 
 	{ 
