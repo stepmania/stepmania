@@ -1321,7 +1321,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		/* If FAIL_IMMEDIATE and everyone is failing, start SM_BeginFailed. */
 		bool bBeginFailed = false;
-		switch( GAMESTATE->m_SongOptions.m_FailType )
+		SongOptions::FailType ft = GAMESTATE->m_SongOptions.m_FailType;
+		if( PREFSMAN->m_bMinimum1FullSongInCourses && GAMESTATE->IsCourseMode() && GAMESTATE->GetCourseSongIndex()==0 )
+			ft = SongOptions::FAIL_COMBO_OF_30_MISSES;
+		switch( ft )
 		{
 		case SongOptions::FAIL_IMMEDIATE:
 			if( GAMESTATE->AllAreDead() )
@@ -1334,12 +1337,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		}
 
 		if( bBeginFailed )
-		{
-			if( PREFSMAN->m_bMinimum1FullSongInCourses && GAMESTATE->IsCourseMode() && GAMESTATE->GetCourseSongIndex()==0 )
-				;	// do nothing
-			else
-				SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
-		}
+			SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
 
 		//
 		// Update living players' alive time
