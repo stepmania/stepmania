@@ -77,7 +77,8 @@ void ScreenPlayerOptions::ImportOptions()
 
 	m_OptionRow[PO_NOTE_SKIN].choices.clear();
 
-	for( unsigned i=0; i<arraySkinNames.size(); i++ )
+	unsigned i;
+	for( i=0; i<arraySkinNames.size(); i++ )
 	{
 		arraySkinNames[i].MakeUpper();
 		m_OptionRow[PO_NOTE_SKIN].choices.push_back( arraySkinNames[i] ); 
@@ -90,7 +91,7 @@ void ScreenPlayerOptions::ImportOptions()
 
 	CStringArray arrayPosNames;
 	GAMESTATE->m_Position->GetNamesForCurrentGame(arrayPosNames);
-	for( unsigned i=0; i<arrayPosNames.size(); i++ )
+	for( i=0; i<arrayPosNames.size(); i++ )
 	{
 		arrayPosNames[i].MakeUpper();
 		m_OptionRow[PO_PERSPECTIVE].choices.push_back( arrayPosNames[i] ); 
