@@ -229,12 +229,17 @@ bool MemoryCardDriver_Linux::MountAndTestWrite( UsbStorageDevice* pDevice )
 	return true;
 }
 
-void MemoryCardDriver_Linux::Unmount( UsbStorageDevice* pDevice )
+void MemoryCardDriver_Linux::Flush( UsbStorageDevice* pDevice )
 {
 	if( !pDevice->sOsMountDir.empty() )
 		return;
+
+	// unmount and mount again.  Is there a better way to flush?
+	// "sync" will only flush all file systems at the same time.  -Chris
 	CString sCommand = "umount " + pDevice->sOsMountDir;
 	LOG->Trace( "executing '%s'", sCommand.c_str() );
+	system( sCommand );
+	sCommand = "mount " + pDevice->sOsMountDir;
 	system( sCommand );
 }
 
