@@ -10,6 +10,11 @@ MessageManager*	MESSAGEMAN = NULL;	// global and accessable from anywhere in our
 
 static const CString MessageNames[NUM_MESSAGES] = {
 	"CurrentSongChanged",
+	"CurrentStepsP1Changed",
+	"CurrentStepsP2Changed",
+	"EditStepsTypeChanged",
+	"EditSourceStepsChanged",
+	"EditSourceStepsTypeChanged",
 };
 XToString( Message );
 
@@ -50,12 +55,16 @@ void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, Message m )
 	Unsubscribe( pSubscriber, MessageToString(m) );
 }
 
-void MessageManager::Broadcast( const CString& sMessage )
+void MessageManager::Broadcast( const CString& sMessage ) const
 {
-	SubscribersSet& subs = m_MessageToSubscribers[sMessage];
-	FOREACHS_CONST( IMessageSubscriber*, subs, p )
+	map<CString,SubscribersSet>::const_iterator iter = m_MessageToSubscribers.find( sMessage );
+	if( iter == m_MessageToSubscribers.end() )
+		return;
+
+	FOREACHS_CONST( IMessageSubscriber*, iter->second, p )
 	{
-		(*p)->HandleMessage( sMessage );
+		IMessageSubscriber *pSub = *p;
+		pSub->HandleMessage( sMessage );
 	}
 }
 

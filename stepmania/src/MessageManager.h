@@ -17,20 +17,53 @@ struct lua_State;
 enum Message
 {
 	MESSAGE_CURRENT_SONG_CHANGED,
+	MESSAGE_CURRENT_STEPS_P1_CHANGED,
+	MESSAGE_CURRENT_STEPS_P2_CHANGED,
+	MESSAGE_EDIT_STEPS_TYPE_CHANGED,
+	MESSAGE_EDIT_SOURCE_STEPS_CHANGED,
+	MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED,
 	NUM_MESSAGES
 };
 const CString& MessageToString( Message m );
 
-template<class T, Message M>
+template<class T>
+class BroadcastOnChange
+{
+private:
+	Message mSendWhenChanged;
+	T val;
+public:
+	BroadcastOnChange( Message m ) { mSendWhenChanged = m; }
+	const T Get() const { return val; }
+	void Set( T t ) { val = t; MESSAGEMAN->Broadcast( MessageToString(mSendWhenChanged) ); }
+	operator T () const { return val; }
+};
+
+template<class T>
 class BroadcastOnChangePtr
 {
 private:
+	Message mSendWhenChanged;
 	T *val;
 public:
-	const T* Get() { return val; }
-	void Set( T* t ) { val = t; MESSAGEMAN->Broadcast( MessageToString(M) ); }
+	BroadcastOnChangePtr( Message m ) { mSendWhenChanged = m; }
+	const T* Get() const { return val; }
+	void Set( T* t ) { val = t; MESSAGEMAN->Broadcast( MessageToString(mSendWhenChanged) ); }
 	operator T* () const { return val; }
 	T* operator->() const { return val; }
+};
+
+template<class T, int N>
+class BroadcastOnChangePtr1D
+{
+private:
+	Message mSendWhenChanged;
+	T *val[N];
+public:
+	BroadcastOnChangePtr1D( Message m ) { mSendWhenChanged = m; }
+	const T* Get( unsigned i ) const { return val[i]; }
+	void Set( unsigned i, T* t ) { val[i] = t; MESSAGEMAN->Broadcast( MessageToString((Message)(mSendWhenChanged+i)) ); }
+	T* operator[]( unsigned i ) const { return val[i]; }
 };
 
 class MessageManager
@@ -43,7 +76,7 @@ public:
 	void Subscribe( IMessageSubscriber* pSubscriber, Message m );
 	void Unsubscribe( IMessageSubscriber* pSubscriber, const CString& sMessage );
 	void Unsubscribe( IMessageSubscriber* pSubscriber, Message m );
-	void Broadcast( const CString& sMessage );
+	void Broadcast( const CString& sMessage ) const;
 
 	// Lua
 	void PushSelf( lua_State *L );
