@@ -69,6 +69,7 @@ void ScreenNetRoom::Input( const DeviceInput& DeviceI, const InputEventType type
 
 void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 {
+	CString titleSub;
 	switch( SM )
 	{
 	case SM_GoToPrevScreen:
@@ -82,7 +83,9 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 			switch ( NSMAN->m_SMOnlinePacket.Read1() )
 			{
 			case 0: //Room title Change
-				m_textTitle.SetText( NSMAN->m_SMOnlinePacket.ReadNT() + '\n' + NSMAN->m_SMOnlinePacket.ReadNT() );
+				titleSub = NSMAN->m_SMOnlinePacket.ReadNT() + "\n";
+				titleSub += NSMAN->m_SMOnlinePacket.ReadNT();
+				m_textTitle.SetText( titleSub );
 				if ( NSMAN->m_SMOnlinePacket.Read1() != 0 )
 				{
 					CString SMOnlineSelectScreen;
