@@ -10,7 +10,7 @@
 class BeginnerHelper : public ActorFrame
 {
 public:
-	static enum STEPTYPE
+	enum STEPTYPE
 	{
 		ST_LEFT=6,
 		ST_DOWN=3,
