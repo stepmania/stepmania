@@ -144,6 +144,7 @@ private:
 
 	/* Map from characters to glyphs.  (Each glyph* is part of one of pages[].) */
 	map<longchar,glyph*> m_iCharToGlyph;
+	glyph *m_iCharToGlyphCache[128];
 
 	/* We keep this around only for reloading. */
 	CString Chars;

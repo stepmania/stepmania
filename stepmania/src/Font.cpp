@@ -270,6 +270,12 @@ void Font::MergeFont(Font &f)
 
 const glyph &Font::GetGlyph( wchar_t c ) const
 {
+	ASSERT(c >= 0 && c <= 0xFFFFFF);
+
+	/* Fast path: */
+	if( c < (int) ARRAYSIZE(m_iCharToGlyphCache) && m_iCharToGlyphCache[c] )
+		return *m_iCharToGlyphCache[c];
+
 	/* Try the regular character. */
 	map<longchar,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
 
@@ -842,6 +848,16 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 		LOG->Warn("Font %s has no characters", sFontOrTextureFilePath.c_str());
 
 	LoadStack.pop_back();
+
+	if( LoadStack.empty() )
+	{
+		/* Cache ASCII glyphs. */
+		ZERO( m_iCharToGlyphCache );
+		map<longchar,glyph*>::iterator it;
+		for( it = m_iCharToGlyph.begin(); it != m_iCharToGlyph.end(); ++it )
+			if( it->first < (int) ARRAYSIZE(m_iCharToGlyphCache) )
+				m_iCharToGlyphCache[it->first] = it->second;
+	}
 }
 
 /*
