@@ -214,10 +214,12 @@ void GameState::PlayersFinalized()
 		// Only set the sort order if it wasn't already set by a ModeChoice
 		if( m_SortOrder == SORT_INVALID && pProfile->m_SortOrder != SORT_INVALID )
 			m_SortOrder = pProfile->m_SortOrder;
-		if( pProfile->m_PreferredDifficulty != DIFFICULTY_INVALID )
-			GAMESTATE->m_PreferredDifficulty[pn] = pProfile->m_PreferredDifficulty;
-		if( pProfile->m_PreferredCourseDifficulty != COURSE_DIFFICULTY_INVALID )
-			GAMESTATE->m_PreferredCourseDifficulty[pn] = pProfile->m_PreferredCourseDifficulty;
+		if( pProfile->m_LastDifficulty != DIFFICULTY_INVALID )
+			GAMESTATE->m_PreferredDifficulty[pn] = pProfile->m_LastDifficulty;
+		if( pProfile->m_LastCourseDifficulty != COURSE_DIFFICULTY_INVALID )
+			GAMESTATE->m_PreferredCourseDifficulty[pn] = pProfile->m_LastCourseDifficulty;
+		if( m_pCurSong == NULL && pProfile->m_pLastSong )
+			m_pCurSong = pProfile->m_pLastSong;
 	}
 
 
@@ -311,9 +313,11 @@ void GameState::EndGame()
 		if( IsSongSort(m_SortOrder) )
 			pProfile->m_SortOrder = m_SortOrder;
 		if( m_PreferredDifficulty[pn] != DIFFICULTY_INVALID )
-			pProfile->m_PreferredDifficulty = m_PreferredDifficulty[pn];
+			pProfile->m_LastDifficulty = m_PreferredDifficulty[pn];
 		if( m_PreferredCourseDifficulty[pn] != COURSE_DIFFICULTY_INVALID )
-			pProfile->m_PreferredCourseDifficulty = m_PreferredCourseDifficulty[pn];
+			pProfile->m_LastCourseDifficulty = m_PreferredCourseDifficulty[pn];
+		if( !g_vPlayedStageStats.empty() )
+			pProfile->m_pLastSong = g_vPlayedStageStats.back().pSong;
 
 		PROFILEMAN->SaveProfile( pn );
 		PROFILEMAN->UnloadProfile( pn );

@@ -280,6 +280,7 @@ bool Song::LoadFromSongDir( CString sDir )
 		return true;	// do load this song
 }
 
+// Should this be called StepsID? -Chris
 struct SongID
 {
 	StepsType st;

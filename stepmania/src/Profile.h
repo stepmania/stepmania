@@ -92,8 +92,9 @@ public:
 	bool m_bUsingProfileDefaultModifiers;
 	CString m_sDefaultModifiers;
 	SortOrder m_SortOrder;
-	Difficulty m_PreferredDifficulty;
-	CourseDifficulty m_PreferredCourseDifficulty;
+	Difficulty m_LastDifficulty;
+	CourseDifficulty m_LastCourseDifficulty;
+	Song* m_pLastSong;
 	int m_iTotalPlays;
 	int m_iTotalPlaySeconds;
 	int m_iTotalGameplaySeconds;
