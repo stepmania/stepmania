@@ -565,7 +565,6 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		{
 			Actor* pActor = LoadFromActorFile( sPathToIni, sLayer );
 			m_SubActors.push_back( pActor );
-			RAGE_ASSERT_M( !(m_bGeneric && Stretch), ssprintf("BGA \"%s\"::%s can't stretch",sAniDir.c_str(),sLayer.c_str())  );
 			if( !m_bGeneric )
 			{
 				if( Stretch )
