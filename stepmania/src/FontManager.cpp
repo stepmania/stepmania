@@ -18,6 +18,7 @@
 #include "RageLog.h"
 #include "RageException.h"
 #include "RageTimer.h"
+#include "ThemeManager.h"
 
 static map <CString, wchar_t, StdStringLessNoCase> CharAliases;
 
@@ -206,9 +207,24 @@ void FontManager::GetFontPaths(const CString &sFontOrTextureFilePath,
 	ASSERT(!TexturePaths.empty()); /* ThemeManager should have checked this */
 }
 
+static CStringArray LoadStack;
+
 /* Load the named font and return it. */
 Font *FontManager::LoadFontInt(const CString &sFontOrTextureFilePath, CString sChars)
 {
+	/* Check for recursion (recursive imports). */
+	{
+		for(unsigned i = 0; i < LoadStack.size(); ++i)
+		{
+			if(LoadStack[i] == sFontOrTextureFilePath)
+			{
+				CString str = join("\n", LoadStack);
+				str += "\n" + sFontOrTextureFilePath;
+				RageException::Throw("Font import recursion detected\n%s", str.GetString());
+			}
+		}
+		LoadStack.push_back(sFontOrTextureFilePath);
+	}
 	/* The font is not already loaded.  Figure out what we have. */
 //	LOG->Trace( "FontManager::LoadFont(%s).", sFontFilePath.GetString() );
 
@@ -226,7 +242,34 @@ Font *FontManager::LoadFontInt(const CString &sFontOrTextureFilePath, CString sC
 	{
 		ini.SetPath( IniPath );
 		ini.ReadFile();
+		ini.RenameKey("Char Widths", "main");
 		ini.GetValueB( "main", "CapitalsOnly", CapitalsOnly );
+	}
+
+	{
+		/* Check to see if we need to import any other fonts.  Do this
+		 * before loading this font, so any characters in this font
+		 * override those imported. */
+		CString imports;
+		ini.GetValue( "main", "import", imports );
+		CStringArray ImportList;
+		split(imports, ",", ImportList, true);
+
+		/* Load the default font first, unless we're currently loading it. */
+		static bool LoadingDefaultFont = false;
+		if(!LoadingDefaultFont)
+		{
+			LoadingDefaultFont = true;
+			CString path = THEME->GetPathTo("Fonts", "default font");
+			pFont->MergeFont(FONT->LoadFont(path));
+			LoadingDefaultFont = false;
+		}
+
+		for(unsigned i = 0; i < ImportList.size(); ++i)
+		{
+			CString path = THEME->GetPathTo("Fonts", ImportList[i]);
+			pFont->MergeFont(FONT->LoadFont(path));
+		}
 	}
 
 	/* Load each font page. */
@@ -274,6 +317,8 @@ Font *FontManager::LoadFontInt(const CString &sFontOrTextureFilePath, CString sC
 	if(pFont->m_iCharToGlyph.empty())
 		LOG->Warn("Font %s has no characters", sFontOrTextureFilePath.GetString());
 
+	LoadStack.pop_back();
+
 	return pFont;
 }
 
@@ -310,6 +355,7 @@ Font* FontManager::LoadFont( const CString &sFontOrTextureFilePath, CString sCha
 	{
 		/* XXX; these should be in a data file somewhere (theme metrics?) 
 		 * (The comments here are UTF-8; they won't show up in VC6.) */
+		CharAliases["default"]		= Font::DEFAULT_GLYPH; /* ? */
 		CharAliases["kakumei1"]		= 0x547D; /* 革 */
 		CharAliases["kakumei2"]		= 0x9769; /* 命 */
 		CharAliases["matsuri"]		= 0x796D; /* 祭 */

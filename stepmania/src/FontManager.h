@@ -27,11 +27,12 @@ public:
 	Font* LoadFont( const CString &sFontOrTextureFilePath, CString sChars = "" );
 	void UnloadFont( Font *fp );
 
+	static bool MatchesFont(CString FontName, CString FileName);
+
 protected:
 	// map from file name to a texture holder
 	map<CString, Font*> m_mapPathToFont;
 	static Font *LoadFontInt(const CString &sFontOrTextureFilePath, CString sChars);
-	static bool MatchesFont(CString FontName, CString FileName);
 	static CString GetPageNameFromFileName(const CString &fn);
 	static void LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CString &PageName, int NumFrames);
 	static void GetFontPaths(const CString &sFontOrTextureFilePath, 

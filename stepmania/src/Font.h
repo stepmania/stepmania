@@ -92,11 +92,18 @@ public:
 	/* Add a FontPage to this font. */
 	void AddPage(FontPage *fp);
 
+	/* Steal all of a font's pages. */
+	void MergeFont(Font *f);
+
 	/* Load font-wide settings. */
 	void CapsOnly();
 
+	static const wchar_t DEFAULT_GLYPH;
+
 private:
+	/* List of pages and fonts that we're responsible for freeing. */
 	vector<FontPage *> pages;
+	vector<Font *> merged_fonts;
 };
 
 #endif

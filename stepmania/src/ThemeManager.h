@@ -42,6 +42,7 @@ protected:
 	static CString GetThemeDirFromName( CString sThemeName );
 	CString GetElementDir( CString sThemeName );
 	static CString GetMetricsPathFromName( CString sThemeName );
+	CString GetPathToFont( CString sAssetCategory, CString sFileName );
 
 	CString m_sCurThemeName;
 

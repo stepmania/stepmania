@@ -18,6 +18,9 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
+#include "FontManager.h"
+
+const wchar_t Font::DEFAULT_GLYPH = 0xFFFF;
 
 FontPage::FontPage()
 {
@@ -188,6 +191,10 @@ Font::~Font()
 {
 	for(unsigned i = 0; i < pages.size(); ++i)
 		delete pages[i];
+
+	/* Free any fonts that we merged into us. */
+	for(unsigned i = 0; i < merged_fonts.size(); ++i)
+		FONT->UnloadFont(merged_fonts[i]);
 }
 
 void Font::AddPage(FontPage *fp)
@@ -201,12 +208,28 @@ void Font::AddPage(FontPage *fp)
 	}
 }
 
+void Font::MergeFont(Font *f)
+{
+	for(map<wchar_t,glyph*>::iterator it = f->m_iCharToGlyph.begin();
+		it != f->m_iCharToGlyph.end(); ++it)
+	{
+		m_iCharToGlyph[it->first] = it->second;
+	}
+
+	/* We now have ownership of f.  Mark it to be freed. */
+	merged_fonts.push_back(f);
+}
+
 const glyph &Font::GetGlyph( wchar_t c ) const
 {
 	map<wchar_t,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
 
 	if(it == m_iCharToGlyph.end())
-		RageException::Throw( "The font '%s' does not implement the character '%c'", path.GetString(), c );
+	{
+		if(c == Font::DEFAULT_GLYPH)
+			RageException::Throw( "The default glyph is missing from the font '%s'", path.GetString() );
+		return GetGlyph(DEFAULT_GLYPH);
+	}
 
 	return *it->second;
 }
@@ -216,7 +239,11 @@ RageTexture *Font::GetGlyphTexture( wchar_t c )
 	map<wchar_t,glyph*>::iterator it = m_iCharToGlyph.find(c);
 
 	if(it == m_iCharToGlyph.end())
-		RageException::Throw( "The font '%s' does not implement the character '%c'", path.GetString(), c );
+	{
+		if(c == Font::DEFAULT_GLYPH)
+			RageException::Throw( "The default glyph is missing from the font '%s'", path.GetString() );
+		return GetGlyphTexture(DEFAULT_GLYPH);
+	}
 
 	return it->second->Texture;
 }
