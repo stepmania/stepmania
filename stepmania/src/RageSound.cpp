@@ -322,7 +322,7 @@ int RageSound::FillBuf( int frames )
 
 /* Get a block of data from the input.  If buffer is NULL, just return the amount
  * that would be read. */
-int RageSound::GetData(char *buffer, int size)
+int RageSound::GetData( char *buffer, int frames )
 {
 	if( m_Param.m_LengthSeconds != -1 )
 	{
@@ -332,23 +332,24 @@ int RageSound::GetData(char *buffer, int size)
 
 		/* If it's negative, we're past the end, so cap it at 0. Don't read
 		 * more than size. */
-		size = clamp( FramesToRead * framesize, 0, size );
+		frames = clamp( FramesToRead, 0, frames );
 	}
 
 	int got;
-	if(position < 0) {
+	if( position < 0 )
+	{
 		/* We havn't *really* started playing yet, so just feed silence.  How
 		 * many more bytes of silence do we need? */
-		got = -position * framesize;
-		got = min(got, size);
-		if(buffer)
-			memset(buffer, 0, got);
+		got = -position;
+		got = min( got, frames );
+		if( buffer )
+			memset( buffer, 0, got*framesize );
 	} else {
 		/* Feed data out of our streaming buffer. */
 		ASSERT(Sample);
-		got = min(int(databuf.num_readable()), size);
-		if(buffer)
-			databuf.read(buffer, got);
+		got = min( int(databuf.num_readable()/framesize), frames );
+		if( buffer )
+			databuf.read( buffer, got*framesize );
 	}
 
 	return got;
@@ -382,7 +383,7 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 			FillBuf( size );
 
 		/* Get a block of data. */
-		int got = GetData( (char *) buffer, size*framesize );
+		int got = GetData( (char *) buffer, size ) * framesize;
 		if( !got )
 		{
 			/* We're at the end of the data.  If we're looping, rewind and restart. */
@@ -409,7 +410,7 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 				 * nothing to send and we'll just end up coming back here. */
 				if( !Bytes_Available() )
 					FillBuf( size );
-				if( GetData(NULL, size*framesize) == 0 )
+				if( GetData(NULL, size) == 0 )
 				{
 					LOG->Warn( "Can't loop data in %s; no data available at start point %f",
 						GetLoadedFilePath().c_str(), m_Param.m_StartSecond );
