@@ -595,13 +595,13 @@ void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 
 //A single step's points are calculated as follows: 
 //
-//Let p = score multiplier (Perfect = 10, Great = 5, other = 0)
+//p = score multiplier (Perfect = 10, Great = 5, other = 0)
 //N = total number of steps and freeze steps
+//S = The sum of all integers from 1 to N (the total number of steps/freeze steps) 
 //n = number of the current step or freeze step (varies from 1 to N)
 //B = Base value of the song (1,000,000 X the number of feet difficulty) - All edit data is rated as 5 feet
 //So, the score for one step is: 
 //one_step_score = p * (B/S) * n 
-//Where S = The sum of all integers from 1 to N (the total number of steps/freeze steps) 
 //
 //*IMPORTANT* : Double steps (U+L, D+R, etc.) count as two steps instead of one, so if you get a double L+R on the 112th step of a song, you score is calculated with a Perfect/Great/whatever for both the 112th and 113th steps. Got it? Now, through simple algebraic manipulation 
 //S = 1+...+N = (1+N)*N/2 (1 through N added together) 
@@ -637,6 +637,7 @@ void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 	for( int i=0; i<iNumTapsInRow; i++ )
 		lScore += p * ++m_iTapNotesHit;
 	ASSERT(lScore > 0);
+	GAMESTATE->m_fScoreMultiplier = 0; // XXX this isn't being set anywhere
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_fScore[m_PlayerNumber] = lScore * GAMESTATE->m_fScoreMultiplier);
 }
