@@ -66,6 +66,15 @@ int LuaFunc_##func( lua_State *L ) { \
 } \
 LuaFunction( func ); /* register it */
 
+#define LuaFunction_Float( func, call ) \
+int LuaFunc_##func( lua_State *L ) { \
+	REQ_ARGS( #func, 1 ); \
+	REQ_ARG( #func, 1, number ); \
+	const float a1 = float(lua_tonumber( L, 1 )); \
+	LUA_RETURN( call, L ); \
+} \
+LuaFunction( func ); /* register it */
+
 #define LuaFunction_Str( func, call ) \
 int LuaFunc_##func( lua_State *L ) { \
 	REQ_ARGS( #func, 1 ); \
