@@ -1536,6 +1536,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageFile.cpp">
 			</File>
 			<File
+				RelativePath="RageFile.h">
+			</File>
+			<File
 				RelativePath="RageFileDriver.cpp">
 			</File>
 			<File
@@ -1546,6 +1549,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="RageFileDriverDirect.h">
+			</File>
+			<File
+				RelativePath="RageFileDriverZip.cpp">
+			</File>
+			<File
+				RelativePath="RageFileDriverZip.h">
 			</File>
 			<File
 				RelativePath="RageFileManager.cpp">
@@ -1901,9 +1910,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ProfileManager.h">
-			</File>
-			<File
-				RelativePath="RageFile.h">
 			</File>
 			<File
 				RelativePath="ScreenManager.cpp">
