@@ -271,6 +271,7 @@ CString NoteSkinManager::GetPathToFromDir( CString sDir, CString sFileName, bool
 
 	GetDirListing( sDir+sFileName+"*.redir",	matches, false, true );
 	GetDirListing( sDir+sFileName+"*.actor",	matches, false, true );
+	GetDirListing( sDir+sFileName+"*.model",	matches, false, true );
 	GetDirListing( sDir+sFileName+"*.txt",		matches, false, true );
 	GetDirListing( sDir+sFileName+"*.sprite",	matches, false, true );
 	GetDirListing( sDir+sFileName+"*.png",		matches, false, true );

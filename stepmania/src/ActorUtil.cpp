@@ -183,10 +183,11 @@ Actor* MakeActor( RageTextureID ID )
 		pSprite->Load( ID );
 		return pSprite;
 	}
-	else if( sExt=="txt" )
+	else if( sExt=="txt" ||
+		sExt=="model" )
 	{
 		Model* pModel = new Model;
-		pModel->LoadMilkshapeAscii( ID.filename );
+		pModel->Load( ID.filename );
 		return pModel;
 	}
 	/* Do this last, to avoid the IsADirectory in most cases. */

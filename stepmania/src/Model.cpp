@@ -55,9 +55,73 @@ void Model::Clear ()
 	m_pCurAnimation = NULL;
 }
 
+void Model::Load( CString sFile )
+{
+	if( sFile == "" ) return;
+
+	CString sExt = GetExtension(sFile);
+	sExt.MakeLower();
+	if( sExt=="txt" )
+		LoadMilkshapeAscii( sFile );
+	else if( sExt=="model" )
+		LoadFromModelFile( sFile );
+}
+
 #define THROW RageException::Throw( "Parse at line %d: '%s'", sLine.c_str() );
 
-bool Model::LoadMilkshapeAscii( CString sPath )
+void Model::LoadFromModelFile( CString sPath )
+{
+	Clear();
+
+	IniFile ini;
+	ini.SetPath( sPath );
+	ini.ReadFile();
+
+	CString sDir = Dirname( sPath );
+
+	CString sMeshes, sMaterials, sBones;
+	if( !ini.GetValue( "Model", "Meshes", sMeshes ) )
+		RageException::Throw( "The model file '%s' is missing the value [Model] Meshes.", sPath.c_str() );
+	if( !ini.GetValue( "Model", "Materials", sMaterials ) )
+		RageException::Throw( "The model file '%s' is missing the value [Model] Materials.", sPath.c_str() );
+	if( !ini.GetValue( "Model", "Bones", sBones ) )
+		RageException::Throw( "The model file '%s' is missing the value [Model] Bones.", sPath.c_str() );
+
+	LoadPieces( sDir+sMeshes, sDir+sMaterials, sDir+sBones );
+}
+
+void Model::LoadMilkshapeAscii( CString sPath )
+{
+	LoadPieces( sPath, sPath, sPath );
+}
+
+void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBomesPath )
+{
+	Clear();
+
+	ASSERT( m_pGeometry == NULL );
+	m_pGeometry = MODELMAN->LoadMilkshapeAscii( sMeshesPath );
+
+	LoadMaterialsFromMilkshapeAscii( sMaterialsPath );
+
+	LoadMilkshapeAsciiBones( DEFAULT_ANIMATION_NAME, sBomesPath );
+
+	//
+    // Setup temp vertices (if necessary)
+	//
+	bUseTempVertices = m_mapNameToAnimation[DEFAULT_ANIMATION_NAME].Bones.size() > 0;	// if there are no bones, then there's no reason to use temp vertices
+	if( bUseTempVertices )
+	{
+		m_vTempVerticesByMesh.resize( m_pGeometry->m_Meshes.size() );
+		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
+		{
+			msMesh& Mesh = m_pGeometry->m_Meshes[i];
+			m_vTempVerticesByMesh[i].resize( Mesh.Vertices.size() );
+		}
+	}
+}
+
+void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 {
 	FixSlashesInPlace(sPath);
 	const CString sDir = Dirname( sPath );
@@ -66,14 +130,8 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 	if( !f.Open( sPath ) )
 		RageException::Throw( "Model::LoadMilkshapeAscii Could not open \"%s\": %s", sPath.c_str(), f.GetError().c_str() );
 
-	Clear ();
-
 	CString sLine;
 	int iLineNum = 0;
-    int i;
-
-	ASSERT( m_pGeometry == NULL );
-	m_pGeometry = MODELMAN->LoadMilkshapeAscii( sPath );
 
     while( f.GetLine( sLine ) > 0 )
     {
@@ -211,27 +269,9 @@ bool Model::LoadMilkshapeAscii( CString sPath )
     }
 
 	f.Close();
-
-	LoadMilkshapeAsciiBones( DEFAULT_ANIMATION_NAME, sPath );
-
-	//
-    // Setup temp vertices (if necessary)
-	//
-	bUseTempVertices = m_mapNameToAnimation[DEFAULT_ANIMATION_NAME].Bones.size() > 0;	// if there are no bones, then there's no reason to use temp vertices
-	if( bUseTempVertices )
-	{
-		m_vTempVerticesByMesh.resize( m_pGeometry->m_Meshes.size() );
-		for (i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
-		{
-			msMesh& Mesh = m_pGeometry->m_Meshes[i];
-			m_vTempVerticesByMesh[i].resize( Mesh.Vertices.size() );
-		}
-	}
-
-	return true;
 }
 
-bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
+void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 {
 	FixSlashesInPlace(sPath);
 	const CString sDir = Dirname( sPath );
@@ -367,8 +407,6 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 			PlayAnimation( sAniName );
 		}
 	}
-
-	return true;
 }
 
 void Model::DrawPrimitives()

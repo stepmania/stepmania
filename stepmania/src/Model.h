@@ -29,14 +29,13 @@ public:
 
 public:
 	void	Clear ();
-	void	Load( CString sFile )
-	{
-		if( sFile == "" ) return;
-		LoadMilkshapeAscii( sFile );
-	};
+	void	Load( CString sFile );
 
-	bool	LoadMilkshapeAscii( CString sFile );
-	bool	LoadMilkshapeAsciiBones( CString sAniName, CString sFile );
+	void	LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBomesPath );
+	void	LoadFromModelFile( CString sFile );
+	void	LoadMilkshapeAscii( CString sFile );
+	void 	LoadMaterialsFromMilkshapeAscii( CString sPath );
+	void 	LoadMilkshapeAsciiBones( CString sAniName, CString sPath );
 	void	PlayAnimation( CString sAniName, float fPlayRate = 1 );
 
 	virtual void	Update( float fDelta );
