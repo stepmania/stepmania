@@ -421,7 +421,9 @@ float ArrowGetZoom( PlayerNumber pn )
 {
 	/* Hack: make STYLE_TECHNO_VERSUS8 fit. */
 	if( GAMESTATE->m_CurGame == GAME_TECHNO &&
-		GAMESTATE->m_CurStyle == STYLE_TECHNO_VERSUS8 )
+		( GAMESTATE->m_CurStyle == STYLE_TECHNO_VERSUS8 
+		|| GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE 
+		|| GAMESTATE->m_PlayMode == PLAY_MODE_RAVE ) )
 		return 0.6f;
 	return 1.0f;
 }

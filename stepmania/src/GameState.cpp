@@ -780,6 +780,13 @@ GameDef* GameState::GetCurrentGameDef()
 const StyleDef* GameState::GetCurrentStyleDef() const
 {
 	ASSERT( m_CurStyle != STYLE_INVALID );	// the style must be set before calling this
+
+	// HACK: if we're in TM doing PLAY_MODE_BATTLE or PLAY_MODE_RAVE,
+	// pretend that we're doing STYLE_TECHNO_VERSUS8 instead.
+	if( m_CurGame == GAME_TECHNO &&
+		( m_PlayMode == PLAY_MODE_BATTLE || m_PlayMode == PLAY_MODE_RAVE ) )
+		return GAMEMAN->GetStyleDefForStyle( STYLE_TECHNO_VERSUS8 );
+
 	return GAMEMAN->GetStyleDefForStyle( m_CurStyle );
 }
 

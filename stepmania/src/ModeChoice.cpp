@@ -268,7 +268,8 @@ static bool AreStyleAndPlayModeCompatible( Style style, PlayMode pm )
 		// Can't play rave if there isn't enough room for two players.
 		// This is correct for dance (ie, no rave for solo and doubles),
 		// and should be okay for pump .. not sure about other game types.
-		if( GAMEMAN->GetStyleDefForStyle(style)->m_iColsPerPlayer >= 6 )
+		// Techno Motion scales down versus arrows, though, so allow this.
+		if( GAMEMAN->GetStyleDefForStyle(style)->m_iColsPerPlayer >= 6 && GAMESTATE->m_CurGame != GAME_TECHNO )
 			return false;
 		
 		/* Don't allow battle modes if the style takes both sides. */
@@ -407,6 +408,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		GAMESTATE->m_CurGame = m_game;
 	if( m_pm != PLAY_MODE_INVALID )
 		GAMESTATE->m_PlayMode = m_pm;
+
 	if( m_style != STYLE_INVALID )
 	{
 		GAMESTATE->m_CurStyle = m_style;
@@ -479,7 +481,6 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 	{
 		GAMESTATE->PlayersFinalized();
 	}
-	
 }
 
 bool ModeChoice::IsZero() const
