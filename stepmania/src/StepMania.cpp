@@ -957,8 +957,13 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	case MENU_BUTTON_COIN:
 		/* Handle a coin insertion. */
 		if( GAMESTATE->m_bEditing )	// no coins while editing
+		{
+			LOG->Trace( "Ignored coin insertion (editing)" );
 			break;
+		}
+
 		GAMESTATE->m_iCoins++;
+		LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit);
 		BOOKKEEPER->CoinInserted();
 		SCREENMAN->RefreshCreditsMessages();
 		SOUND->PlayOnce( THEME->GetPathToS("Common coin") );

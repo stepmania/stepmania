@@ -99,6 +99,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 			switch( PREFSMAN->m_iCoinMode )
 			{
 			case COIN_PAY:
+				LOG->Trace("ScreenAttract::AttractInput: COIN_PAY (%i/%i)", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit );
 				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
 					break;	// don't fall through
 				// fall through
@@ -109,6 +110,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 				if( MenuI.button != MENU_BUTTON_COIN )
 					SOUND->PlayOnce( THEME->GetPathToS("Common coin") );
 				SDL_Delay( 800 );	// do a little pause, like the arcade does
+				LOG->Trace("ScreenAttract::AttractInput: go to ScreenTitleMenu" );
 				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 				break;
 			default:
