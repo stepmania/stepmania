@@ -483,6 +483,14 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 		return;
 	}
 
+	// should be checked before calling function, but in case
+	// it isn't, do so here
+	if (PREFSMAN->m_bEventMode)
+	{
+		m_fLifeDifficulty = m_fBaseLifeDifficulty;
+		return;
+	}
+
 	if (total > 1)
 		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * (int)(ProgressiveLifebarDifficulty * cleared / (total - 1));
 	else
@@ -491,22 +499,22 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 	if (m_fLifeDifficulty >= 0.4) return;
 
     /* Approximate deductions for a miss
-	 * Life 1: 5%
-	 * Life 2: 5.7%
-	 * Life 3: 6.6%
-	 * Life 4: 8%
-	 * Life 5: 10%
-	 * Life 6: 13.3%
-	 * Life 7: 20%
-	 * Life 8: 26.6%
-	 * Life 9: 32%
-	 * Life 10: 40%
-	 * Life 11: 50%
-	 * Life 12: 57.1%
-	 * Life 13: 66.6%
-	 * Life 14: 80%
-	 * Life 15: 100%
-	 * Life 16+: 200%
+	 * Life 1 :    5   %
+	 * Life 2 :    5.7 %
+	 * Life 3 :    6.6 %
+	 * Life 4 :    8   %
+	 * Life 5 :   10   %
+	 * Life 6 :   13.3 %
+	 * Life 7 :   20   %
+	 * Life 8 :   26.6 %
+	 * Life 9 :   32   %
+	 * Life 10:   40   %
+	 * Life 11:   50   %
+	 * Life 12:   57.1 %
+	 * Life 13:   66.6 %
+	 * Life 14:   80   %
+	 * Life 15:  100   %
+	 * Life 16+: 200   %
 	 *
 	 * Note there is 200%, because boos take off 1/2 as much as
 	 * a miss, and a boo would suck up half of your lifebar.
