@@ -1,6 +1,7 @@
 #include "global.h"
 #include "RageTextureID.h"
 #include "RageTextureManager.h"
+#include "RageUtil.h"
 
 void RageTextureID::Init()
 {
@@ -51,3 +52,8 @@ bool RageTextureID::operator==(const RageTextureID &rhs) const
 		// EQUAL(Policy); // don't do this
 }
 
+void RageTextureID::SetFilename( const CString &fn )
+{
+	filename = fn;
+	CollapsePath( filename );
+}

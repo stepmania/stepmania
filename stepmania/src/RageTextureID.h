@@ -58,7 +58,8 @@ struct RageTextureID
 	void Init();
 
 	RageTextureID() { Init(); }
-	RageTextureID(const CString &fn) { Init(); filename=fn; }
+	RageTextureID( const CString &fn ) { Init(); SetFilename(fn); }
+	void SetFilename( const CString &fn );
 };
 
 #endif
