@@ -100,7 +100,7 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 
 	Write1(m_packet,NETPROTOCOLVERSION);
 	int ctr = 2 * 16 + 0;
-	Write1(m_packet,ctr);
+	Write1(m_packet, (uint8_t) ctr);
 
 	vector <CString> ProfileNames;
 	PROFILEMAN->GetLocalProfileNames(ProfileNames);
@@ -201,18 +201,18 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	ClearPacket(m_packet);
 
 	Write1(m_packet,5);
-	unsigned char ctr = playerID * 16 + step - 1;
+	uint8_t ctr = (uint8_t) (playerID * 16 + step - 1);
 	Write1(m_packet,ctr);
 
-	ctr = g_CurStageStats.GetGrade((PlayerNumber)playerID)*16;
+	ctr = uint8_t( g_CurStageStats.GetGrade((PlayerNumber)playerID)*16 );
 
 	Write1(m_packet,ctr);
 
 	Write4(m_packet,score);
 
-	Write2(m_packet,combo);
+	Write2(m_packet, (uint16_t) combo);
 
-	Write2(m_packet,m_playerLife[playerID]);
+	Write2(m_packet, (uint16_t) m_playerLife[playerID]);
 
 	NetPlayerClient->SendPack((char*)m_packet.Data, m_packet.Position); 
 
@@ -251,11 +251,11 @@ void NetworkSyncManager::StartRequest()
 	Steps * tSteps;
 	tSteps = g_CurStageStats.pSteps[PLAYER_1];
 	if (tSteps!=NULL)
-		ctr = ctr+tSteps->GetMeter()*16;
+		ctr = uint8_t(ctr+tSteps->GetMeter()*16);
 
 	tSteps = g_CurStageStats.pSteps[PLAYER_2];
 	if (tSteps!=NULL)
-		ctr = ctr+tSteps->GetMeter();
+		ctr = uint8_t(ctr+tSteps->GetMeter());
 
 	Write1(m_packet,ctr);
 
