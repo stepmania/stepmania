@@ -614,12 +614,14 @@ void RageDisplay_OGL::SaveScreenshot( CString sPath )
 	int width = wind->GetVideoModeParams().width;
 	int height = wind->GetVideoModeParams().height;
 
+	const PixelFormatDesc &desc = PIXEL_FORMAT_DESC[FMT_RGB8];
 	SDL_Surface *image = SDL_CreateRGBSurfaceSane(
 		SDL_SWSURFACE, width, height,
-        24, 0x0000FF, 0x00FF00, 0xFF0000, 0x000000);
+        desc.bpp, desc.masks[0], desc.masks[1], desc.masks[2], desc.masks[3] );
+
 	SDL_Surface *temp = SDL_CreateRGBSurfaceSane(
 		SDL_SWSURFACE, width, height,
-		24, 0x0000FF, 0x00FF00, 0xFF0000, 0x000000);
+        desc.bpp, desc.masks[0], desc.masks[1], desc.masks[2], desc.masks[3] );
 
 	glReadPixels(0, 0, wind->GetVideoModeParams().width, wind->GetVideoModeParams().height, GL_RGB,
 	             GL_UNSIGNED_BYTE, image->pixels);
