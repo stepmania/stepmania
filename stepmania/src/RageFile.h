@@ -68,6 +68,9 @@ public:
 	int GetLine( CString &out );
 	int PutLine( const CString &str );
 
+	void EnableCRC32( bool on=true );
+	bool GetCRC32( unsigned *iRet );
+
 protected:
 	void SetError( const CString &err );
 	
@@ -84,6 +87,8 @@ namespace FileReading
 	/* On error, these set sError to the error message.  If sError is already
 	 * non-empty, nothing happens. */
 	void ReadBytes( RageFileBasic &f, void *buf, int size, CString &sError );
+	void SkipBytes( RageFileBasic &f, int size, CString &sError );
+	void Seek( RageFileBasic &f, int iOffset, CString &sError );
 	uint8_t read_8( RageFileBasic &f, CString &sError );
 	int16_t read_16_le( RageFileBasic &f, CString &sError );
 	uint16_t read_u16_le( RageFileBasic &f, CString &sError );

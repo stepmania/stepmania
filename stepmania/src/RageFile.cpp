@@ -97,6 +97,19 @@ int RageFile::PutLine( const CString &str )
 	return m_File->PutLine( str );
 }
 
+void RageFile::EnableCRC32( bool on )
+{
+	ASSERT_OPEN;
+	m_File->EnableCRC32( on );
+}
+
+bool RageFile::GetCRC32( unsigned *iRet )
+{
+	ASSERT_OPEN;
+	return m_File->GetCRC32( iRet );
+}
+
+
 bool RageFile::AtEOF() const
 {
 	ASSERT_READ;
@@ -200,6 +213,29 @@ void FileReading::ReadBytes( RageFileBasic &f, void *buf, int size, CString &sEr
 	if( ret == -1 )
 		sError = f.GetError();
 	else if( ret < size )
+		sError = "Unexpected end of file";
+}
+
+void FileReading::SkipBytes( RageFileBasic &f, int iBytes, CString &sError )
+{
+	if( sError.size() != 0 )
+		return;
+
+	iBytes += f.Tell();
+	FileReading::Seek( f, iBytes, sError );
+}
+
+void FileReading::Seek( RageFileBasic &f, int iOffset, CString &sError )
+{
+	if( sError.size() != 0 )
+		return;
+
+	int iGot = f.Seek( iOffset );
+	if( iGot == iOffset )
+		return;
+	if( iGot == -1 )
+		sError = f.GetError();
+	else if( iGot < iOffset )
 		sError = "Unexpected end of file";
 }
 

@@ -11,6 +11,8 @@ RageFileObj::RageFileObj()
 	m_iBufAvail = 0;
 	m_bEOF = false;
 	m_iFilePos = 0;
+	m_bCRC32Enabled = false;
+	m_iCRC32 = 0;
 }
 
 RageFileObj::~RageFileObj()
@@ -26,6 +28,9 @@ int RageFileObj::Seek( int iOffset )
 		return m_iFilePos;
 
 	m_bEOF = false;
+
+	/* If we're calculating a CRC32, disable it. */
+	m_bCRC32Enabled = false;
 
 	ResetBuf();
 
@@ -58,6 +63,8 @@ int RageFileObj::Read( void *pBuffer, size_t iBytes )
 			/* Copy data out of the buffer first. */
 			int iFromBuffer = min( (int) iBytes, m_iBufAvail );
 			memcpy( pBuffer, m_pBuf, iFromBuffer );
+			if( m_bCRC32Enabled )
+				CRC32( m_iCRC32, pBuffer, iFromBuffer );
 
 			ret += iFromBuffer;
 			m_iFilePos += iFromBuffer;
@@ -85,6 +92,9 @@ int RageFileObj::Read( void *pBuffer, size_t iBytes )
 
 			if( iFromFile == 0 )
 				m_bEOF = true;
+
+			if( m_bCRC32Enabled )
+				CRC32( m_iCRC32, pBuffer, iFromFile );
 			ret += iFromFile;
 			m_iFilePos += iFromFile;
 			return ret;
@@ -147,7 +157,11 @@ int RageFileObj::Write( const void *pBuffer, size_t iBytes )
 {
 	int iRet = WriteInternal( pBuffer, iBytes );
 	if( iRet != -1 )
+	{
 		m_iFilePos += iRet;
+		if( m_bCRC32Enabled )
+			CRC32( m_iCRC32, pBuffer, iBytes );
+	}
 	return iRet;
 }
 
@@ -170,6 +184,32 @@ void RageFileObj::EnableBuffering()
 {
 	if( m_pBuffer == NULL )
 		m_pBuffer = new char[BSIZE];
+}
+
+void RageFileObj::EnableCRC32( bool on )
+{
+	if( !on )
+	{
+		m_bCRC32Enabled = false;
+		return;
+	}
+
+	/* If we're not at the beginning of the file, it's meaningless to start
+	 * calculating a CRC32 now. */
+	if( m_iFilePos != 0 )
+		return;
+
+	m_bCRC32Enabled = true;
+	m_iCRC32 = 0;
+}
+
+bool RageFileObj::GetCRC32( unsigned *iRet )
+{
+	if( !m_bCRC32Enabled )
+		return false;
+
+	*iRet = m_iCRC32;
+	return true;
 }
 
 /* Read up to the next \n, and return it in out.  Strip the \n.  If the \n is

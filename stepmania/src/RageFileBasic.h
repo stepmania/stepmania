@@ -49,6 +49,9 @@ public:
 	virtual int GetLine( CString &out ) = 0;
 	virtual int PutLine( const CString &str ) = 0;
 
+	virtual void EnableCRC32( bool on=true ) = 0;
+	virtual bool GetCRC32( unsigned *iRet ) = 0;
+	
 	virtual int GetFileSize() const = 0;
 };
 
@@ -79,6 +82,9 @@ public:
 
 	int GetLine( CString &out );
 	int PutLine( const CString &str );
+
+	void EnableCRC32( bool on=true );
+	bool GetCRC32( unsigned *iRet );
 
 	virtual int GetFileSize() const = 0;
 	virtual CString GetDisplayPath() const { return ""; }
@@ -123,6 +129,12 @@ private:
 	char *m_pBuffer;
 	char *m_pBuf;
 	int  m_iBufAvail;
+
+	/* If EnableCRC32() is called, a CRC32 will be calculated as the file is read.
+	 * This is only meaningful if EnableCRC32() is called at the very start of the
+	 * file, and no seeking is performed. */
+	bool m_bCRC32Enabled;
+	unsigned m_iCRC32;
 };
 
 #endif
