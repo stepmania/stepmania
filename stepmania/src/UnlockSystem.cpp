@@ -233,27 +233,30 @@ bool SongEntry::updateLocked()
 	if (!(isLocked)) return true;  // if its already true
 	
 	UnlockSystem *UNLOCKS = GAMESTATE->m_pUnlockingSys;
+	bool locked[8];
+	for(int i=0; i < 8; i++)
+		locked[i] = true;
 
 	if (m_fArcadePointsRequired != 0)
-		isLocked = ( UNLOCKS->ArcadePoints < m_fArcadePointsRequired);
+		locked[0] = ( UNLOCKS->ArcadePoints < m_fArcadePointsRequired);
 
 	if (m_fDancePointsRequired != 0)
-		isLocked = ( UNLOCKS->DancePoints < m_fDancePointsRequired);
+		locked[1] = ( UNLOCKS->DancePoints < m_fDancePointsRequired);
 
 	if (m_fSongPointsRequired != 0)
-		isLocked = ( UNLOCKS->SongPoints < m_fSongPointsRequired);
+		locked[2] = ( UNLOCKS->SongPoints < m_fSongPointsRequired);
 
 	if (m_fExtraStagesCleared != 0)
-		isLocked = ( UNLOCKS->ExtraClearPoints < m_fExtraStagesCleared);
+		locked[3] = ( UNLOCKS->ExtraClearPoints < m_fExtraStagesCleared);
 
 	if (m_fExtraStagesFailed != 0)
-		isLocked = ( UNLOCKS->ExtraFailPoints < m_fExtraStagesFailed);
+		locked[4] = ( UNLOCKS->ExtraFailPoints < m_fExtraStagesFailed);
 
 	if (m_fStagesCleared != 0)
-		isLocked = ( UNLOCKS->StagesCleared < m_fStagesCleared);
+		locked[5] = ( UNLOCKS->StagesCleared < m_fStagesCleared);
 
 	if (m_fToastysSeen != 0)
-		isLocked = ( UNLOCKS->ToastyPoints < m_fToastysSeen);
+		locked[6] = ( UNLOCKS->ToastyPoints < m_fToastysSeen);
 
 	if (m_iRouletteSeed != 0)
 	{
@@ -261,13 +264,12 @@ bool SongEntry::updateLocked()
 
 		LOG->Trace("Seed in question: %d Roulette seeds: %s", 
 			m_iRouletteSeed, tmp.c_str() );
-		isLocked = (tmp[m_iRouletteSeed] != '1');
-
-		if (isLocked)
-			LOG->Trace("Song is currently LOCKED");
-		else
-			LOG->Trace("Song is currently UNLOCKED");
+		locked[7] = (tmp[m_iRouletteSeed] != '1');
 	}
+
+	isLocked = true;
+	for(int j=0; j < 8; j++)
+		isLocked = isLocked && locked[j];
 
 	return !isLocked;
 }
@@ -288,41 +290,59 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 	CString unlock_type, song_title;
 	float datavalue;
 	int MaxRouletteSlot = 0;
+	int i;
 
 	CString line;
 	while( getline(input, line) )
 	{
-		if(line.substr(0, 2) == "//")	// Check for comments
-			continue;
+		CStringArray parameters;
+		CStringArray UnlockTypes;
 
-		/* "[data1] data2".  Ignore whitespace at the beginning of the line. */
-		if (!ParseRow(line, unlock_type, datavalue, song_title))
+		split(line, ":", parameters);
+
+		if (parameters[0] != "#UNLOCK")
 			continue;
+		
+		split(parameters[2], ",", UnlockTypes);
 
 		SongEntry current;
 
-		song_title.MakeUpper();	//Avoid case-sensitive problems
-		current.m_sSongName = song_title;
+		parameters[1].MakeUpper();	//Avoid case-sensitive problems
+		current.m_sSongName = parameters[1];
 		
-		if (unlock_type == "AP")
-			current.m_fArcadePointsRequired = datavalue;
-		if (unlock_type == "DP")
-			current.m_fDancePointsRequired = datavalue;
-		if (unlock_type == "SP")
-			current.m_fSongPointsRequired = datavalue;
-		if (unlock_type == "EC")
-			current.m_fExtraStagesCleared = datavalue;
-		if (unlock_type == "EF")
-			current.m_fExtraStagesFailed = datavalue;
-		if (unlock_type == "CS")
-			current.m_fStagesCleared = datavalue;
-		if (unlock_type == "!!")
-			current.m_fToastysSeen = datavalue;
-		if (unlock_type == "RO")
+		LOG->Trace("Song entry: %s", parameters[1].c_str() );
+
+		for(i=0; i<UnlockTypes.size(); i++)
 		{
-			current.m_iRouletteSeed = (int)datavalue;
-			if (datavalue > MaxRouletteSlot)
-				MaxRouletteSlot = (int)datavalue;
+			CStringArray readparam;
+
+			split(UnlockTypes[i], "=", readparam);
+			unlock_type = readparam[0];
+			datavalue = atof(readparam[1]);
+
+			LOG->Trace("UnlockTypes line: %s", UnlockTypes[i].c_str() );
+			LOG->Trace("Unlock info: %s %f", unlock_type.c_str(), datavalue);
+
+			if (unlock_type == "AP")
+				current.m_fArcadePointsRequired = datavalue;
+			if (unlock_type == "DP")
+				current.m_fDancePointsRequired = datavalue;
+			if (unlock_type == "SP")
+				current.m_fSongPointsRequired = datavalue;
+			if (unlock_type == "EC")
+				current.m_fExtraStagesCleared = datavalue;
+			if (unlock_type == "EF")
+				current.m_fExtraStagesFailed = datavalue;
+			if (unlock_type == "CS")
+				current.m_fStagesCleared = datavalue;
+			if (unlock_type == "!!")
+				current.m_fToastysSeen = datavalue;
+			if (unlock_type == "RO")
+			{
+				current.m_iRouletteSeed = (int)datavalue;
+				if (datavalue > MaxRouletteSlot)
+					MaxRouletteSlot = (int)datavalue;
+			}
 		}
 		current.updateLocked();
 		m_SongEntries.push_back(current);
@@ -333,12 +353,19 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 	// sort list so we can make use of binary searching
 	sort( m_SongEntries.begin(), m_SongEntries.end(), CompareSongEntries );
 
-	for(unsigned i=0; i < m_SongEntries.size(); i++)
+	for(i=0; i < m_SongEntries.size(); i++)
 	{
 		CString tmp = "  ";
 		if (!m_SongEntries[i].isLocked) tmp = "un";
-		LOG->Trace( "UnlockSystem entry: %s", m_SongEntries[i].m_sSongName.c_str() );
-		LOG->Trace( "Initial status:%slocked", tmp.c_str() );
+
+		LOG->Trace( "UnlockSystem Entry %s", m_SongEntries[i].m_sSongName.c_str() );
+		LOG->Trace( "                AP %f", m_SongEntries[i].m_fArcadePointsRequired );
+		LOG->Trace( "                DP %f", m_SongEntries[i].m_fDancePointsRequired );
+		LOG->Trace( "                SP %f", m_SongEntries[i].m_fSongPointsRequired );
+		LOG->Trace( "                CS %f", m_SongEntries[i].m_fStagesCleared );
+		LOG->Trace( "                RO %i", m_SongEntries[i].m_iRouletteSeed );
+		LOG->Trace( "            Status %slocked", tmp.c_str() );
+		
 	}
 	
 	return true;
