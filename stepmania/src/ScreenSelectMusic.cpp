@@ -186,6 +186,16 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	SET_XY( m_CourseContentsFrame );
 	this->AddChild( &m_CourseContentsFrame );
 
+	m_Artist.SetName( "ArtistDisplay" );
+	m_Artist.Load();
+	SET_XY( m_Artist );
+	this->AddChild( &m_Artist );
+		
+	m_MachineRank.SetName( "MachineRank" );
+	m_MachineRank.LoadFromFont( THEME->GetPathToF("ScreenSelectMusic rank") );
+	SET_XY( m_MachineRank );
+	this->AddChild( &m_MachineRank );
+
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
@@ -222,11 +232,6 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 		SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
 		this->AddChild( &m_DifficultyMeter[p] );
 
-		m_Artist.SetName( "ArtistDisplay" );
-		m_Artist.Load();
-		SET_XY( m_Artist );
-		this->AddChild( &m_Artist );
-		
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
 		m_sprHighScoreFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic score frame p%d",p+1)) );
 		SET_XY( m_sprHighScoreFrame[p] );
@@ -406,7 +411,8 @@ void ScreenSelectMusic::TweenOnScreen()
 	m_MusicWheel.TweenOnScreen();
 	ON_COMMAND( m_MusicWheel );
 	ON_COMMAND( m_Artist );
-	
+	ON_COMMAND( m_MachineRank );
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{		
 		if( !GAMESTATE->IsHumanPlayer(p) )
@@ -452,7 +458,8 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_MusicWheel );
 	OFF_COMMAND( m_sprBalloon );
 	OFF_COMMAND( m_Artist );
-	
+	OFF_COMMAND( m_MachineRank );
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{		
 		if( !GAMESTATE->IsHumanPlayer(p) )
@@ -996,6 +1003,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	CString SampleMusicToPlay; 
 	vector<CString> m_Artists, m_AltArtists;
 
+	m_MachineRank.SetText( "" );
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_SECTION:
@@ -1057,6 +1065,11 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_sprCDTitleBack.Load( CDTitlePath );
 			TEXTUREMAN->EnableOddDimensionWarning();
 			FlipSpriteHorizontally(m_sprCDTitleBack);
+
+			const vector<Song*> best = SONGMAN->GetBestSongs( MEMORY_CARD_MACHINE );
+			const int index = FindIndex( best.begin(), best.end(), pSong );
+			if( index != -1 )
+				m_MachineRank.SetText( ssprintf("%i", index+1) );
 
 			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 
@@ -1154,6 +1167,11 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_AltArtists.push_back( ci[i].pSong->GetTranslitArtist() );
 			}
 		}
+
+		const vector<Course*> best = SONGMAN->GetBestCourses( MEMORY_CARD_MACHINE );
+		const int index = FindIndex( best.begin(), best.end(), pCourse );
+		if( index != -1 )
+			m_MachineRank.SetText( ssprintf("%i", index+1) );
 
 		break;
 	}
