@@ -450,19 +450,6 @@ void FixupPath( CString &path, const CString &sSongPath )
 	/* Replace backslashes with slashes in all paths. */	
 	FixSlashesInPlace( path );
 
-	if( path.Left(3) == "../" )
-	{
-		/* The path begins with "../".  Resolve it wrt. the song directory. */
-		path = sSongPath + "/" + path;
-	}
-
-	CollapsePath( path );
-
-	/* If the path still begins with "../", then there were an unreasonable number
-	 * of them at the beginning of the path.  Clear the path entirely. */
-	if( path.Left(3) == "../" )
-		path = "";
-		
 	/* Many imported files contain erroneous whitespace before or after
 	 * filenames.  Paths usually don't actually start or end with spaces,
 	 * so let's just remove it. */
@@ -1546,45 +1533,59 @@ bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(G
 bool Song::HasCDTitle() const 		{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); }
 bool Song::HasBGChanges() const 	{return !m_BackgroundChanges.empty(); }
 
+CString GetSongAssetPath( CString sPath, const CString &sSongPath )
+{
+	if( sPath == "" )
+		return "";
+
+	/* If there's no path in the file, the file is in the same directory
+	 * as the song.  (This is the preferred configuration.) */
+	if( sPath.Find('/') == -1 )
+		return sSongPath+sPath;
+
+	/* The song contains a path; treat it as relative to the top SM directory. */
+	if( sPath.Left(3) == "../" )
+	{
+		/* The path begins with "../".  Resolve it wrt. the song directory. */
+		sPath = sSongPath + sPath;
+	}
+
+	CollapsePath( sPath );
+
+	/* If the path still begins with "../", then there were an unreasonable number
+	 * of them at the beginning of the path.  Ignore the path entirely. */
+	if( sPath.Left(3) == "../" )
+		return "";
+
+	return sPath;
+}
+
 
 /* Note that supplying a path relative to the top-level directory is only for compatibility
  * with DWI.  We prefer paths relative to the song directory. */
 CString Song::GetMusicPath() const
 {
-	/* If there's no path in the music file, the file is in the same directory
-	 * as the song.  (This is the preferred configuration.) */
-	if( m_sMusicFile.Find('/') == -1)
-		return m_sSongDir+m_sMusicFile;
-
-	/* Otherwise, it's relative to the top of the SM directory (the CWD), so
-	 * return it directly. */
-	return m_sMusicFile;
+	return GetSongAssetPath( m_sMusicFile, m_sSongDir );
 }
 
 CString Song::GetBannerPath() const
 {
-	if( m_sBannerFile == "" )
-		return "";
-	return m_sSongDir+m_sBannerFile;
+	return GetSongAssetPath( m_sBannerFile, m_sSongDir );
 }
 
 CString Song::GetLyricsPath() const
 {
-	if( m_sLyricsFile == "" )
-		return "";
-	return m_sSongDir+m_sLyricsFile;
+	return GetSongAssetPath( m_sLyricsFile, m_sSongDir );
 }
 
 CString Song::GetCDTitlePath() const
 {
-	if( m_sCDTitleFile.Find('/') == -1 )
-		return m_sSongDir+m_sCDTitleFile;
-	return m_sCDTitleFile;
+	return GetSongAssetPath( m_sCDTitleFile, m_sSongDir );
 }
 
 CString Song::GetBackgroundPath() const
 {
-	return m_sSongDir+m_sBackgroundFile;
+	return GetSongAssetPath( m_sBackgroundFile, m_sSongDir );
 }
 
 CString Song::GetDisplayMainTitle() const
