@@ -93,7 +93,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 
 			const char *p = sMeasureLine;
 			int iTrack = 0;
-			while( *p )
+			while( iTrack < iNumTracks && *p )
 			{
 				TapNote tn;
 				char ch = *p;
