@@ -298,6 +298,88 @@ static const CString D3DURL = "http://search.microsoft.com/gomsuri.asp?n=1&c=rp_
 
 #define VIDEOCARDS_INI_PATH BASE_PATH "Data" SLASH "VideoCardDefaults.ini"
 
+static CString GetMatchingVideocardDefaults( IniFile &ini, const CString &sVideoDriver )
+{
+	IniFile::const_iterator i;
+	for( i = ini.begin(); i != ini.end(); ++i )
+	{
+		const CString &sKey = i->first;
+
+		CString sDriverRegex;
+		if( !ini.GetValue( sKey, "DriverRegex", sDriverRegex ) )
+		{
+			LOG->Warn("%s entry %s is missing DriverRegex; ignored.", VIDEOCARDS_INI_PATH, sKey.c_str());
+			continue;
+		}
+
+		TrimLeft( sDriverRegex );
+		TrimRight( sDriverRegex );
+
+		Regex regex( sDriverRegex );
+		if( regex.Compare(sVideoDriver) )
+		{
+			LOG->Trace( "Card matches '%s'.", sDriverRegex.size()? sDriverRegex.c_str():"(unknown card)" );
+			return sKey;
+		}
+	}
+
+	ASSERT(0);
+}
+
+static CString GetVideoDriverName()
+{
+#if defined(_WINDOWS)
+	return GetPrimaryVideoDriverName();
+#else
+    return "OpenGL";
+#endif
+}
+
+static void CheckVideoDefaultSettings()
+{
+	// Video card changed since last run
+	CString sVideoDriver = GetVideoDriverName();
+	
+	LOG->Trace( "Last seen video driver: " + PREFSMAN->m_sLastSeenVideoDriver );
+
+	IniFile ini;
+	ini.SetPath( VIDEOCARDS_INI_PATH );
+	if(!ini.ReadFile())
+		RageException::Throw( "Couldn't read \"%s\": %s.", VIDEOCARDS_INI_PATH, ini.error.c_str() );
+
+	const CString sKey = GetMatchingVideocardDefaults( ini, sVideoDriver );
+
+	CString sVideoRenderers;
+	ini.GetValue( sKey, "Renderers", sVideoRenderers );
+
+	bool SetDefaultVideoParams=false;
+	if( PREFSMAN->m_sVideoRenderers == "" )
+	{
+		SetDefaultVideoParams=true;
+		LOG->Trace( "Applying defaults for %s.", PREFSMAN->m_sLastSeenVideoDriver.c_str() );
+	} else if( PREFSMAN->m_sLastSeenVideoDriver != sVideoDriver ) {
+		SetDefaultVideoParams=true;
+		LOG->Trace( "Video card has changed from %s to %s.  Applying new defaults.", PREFSMAN->m_sLastSeenVideoDriver.c_str(), sVideoDriver.c_str() );
+	}
+		
+	if( SetDefaultVideoParams )
+	{
+		ini.GetValue( sKey, "Renderers", PREFSMAN->m_sVideoRenderers );
+		ini.GetValueI( sKey, "Width", PREFSMAN->m_iDisplayWidth );
+		ini.GetValueI( sKey, "Height", PREFSMAN->m_iDisplayHeight );
+		ini.GetValueI( sKey, "DisplayColor", PREFSMAN->m_iDisplayColorDepth );
+		ini.GetValueI( sKey, "TextureColor", PREFSMAN->m_iTextureColorDepth );
+		ini.GetValueI( sKey, "MovieColor", PREFSMAN->m_iMovieColorDepth );
+		ini.GetValueB( sKey, "AntiAliasing", PREFSMAN->m_bAntiAliasing );
+
+		// Update last seen video card
+		PREFSMAN->m_sLastSeenVideoDriver = GetVideoDriverName();
+	} else if( PREFSMAN->m_sVideoRenderers.CompareNoCase(sVideoRenderers) ) {
+		LOG->Warn("Video renderer list has been changed from \"%s\" to \"%s\"",
+				sVideoRenderers.c_str(), PREFSMAN->m_sVideoRenderers.c_str() );
+	}
+}
+
 RageDisplay *CreateDisplay()
 {
 	/* We never want to bother users with having to decide which API to use.
@@ -323,65 +405,15 @@ RageDisplay *CreateDisplay()
 	 * Actually, right now we're falling back.  I'm not sure which behavior is better.
 	 */
 
-	// Video card changed since last run
-#if defined(_WINDOWS)
-	CString sVideoDriver = GetPrimaryVideoDriverName();
-#else
-    CString sVideoDriver = "OpenGL";
-#endif
-	
-	LOG->Trace( "Last seen video driver: " + PREFSMAN->m_sLastSeenVideoDriver );
-
-	if( PREFSMAN->m_sVideoRenderers == "" || 
-		PREFSMAN->m_sLastSeenVideoDriver != sVideoDriver )
-	{
-		LOG->Trace( "Video card has changed.  Applying new defaults." );
-
-		IniFile ini;
-		ini.SetPath( VIDEOCARDS_INI_PATH );
-		if(!ini.ReadFile())
-			RageException::Throw( "Couldn't read \"%s\": %s.", VIDEOCARDS_INI_PATH, ini.error.c_str() );
-
-		IniFile::const_iterator i;
-		for( i = ini.begin(); i != ini.end(); ++i )
-		{
-			const CString &sKey = i->first;
-
-			CString sDriverRegex;
-			if( !ini.GetValue( sKey, "DriverRegex", sDriverRegex ) )
-				break;
-			Regex regex( sDriverRegex );
-			if( !regex.Compare(sVideoDriver) )
-				continue;	// skip
-
-			LOG->Trace( "Using default graphics settings for '%s'.", sDriverRegex.size()? sDriverRegex.c_str():"(unknown card)" );
-
-			ini.GetValue( sKey, "Renderers", PREFSMAN->m_sVideoRenderers );
-			ini.GetValueI( sKey, "Width", PREFSMAN->m_iDisplayWidth );
-			ini.GetValueI( sKey, "Height", PREFSMAN->m_iDisplayHeight );
-			ini.GetValueI( sKey, "DisplayColor", PREFSMAN->m_iDisplayColorDepth );
-			ini.GetValueI( sKey, "TextureColor", PREFSMAN->m_iTextureColorDepth );
-			ini.GetValueI( sKey, "MovieColor", PREFSMAN->m_iMovieColorDepth );
-			ini.GetValueB( sKey, "AntiAliasing", PREFSMAN->m_bAntiAliasing );
-
-			// Update last seen video card
-#if defined(_WINDOWS)
-			PREFSMAN->m_sLastSeenVideoDriver = GetPrimaryVideoDriverName();
-#else
-            PREFSMAN->m_sLastSeenVideoDriver = "OpenGL";
-#endif
-
-			break; // stop looking
-		}
-	}
+	CheckVideoDefaultSettings();
 
 	RageDisplay::VideoModeParams params(GetCurVideoModeParams());
 
 	CString error = "There was an error while initializing your video card.\n\n"
 		"   PLEASE DO NOT FILE THIS ERROR AS A BUG!\n\n"
-		"Video Driver: "+sVideoDriver+"\n\n";
+		"Video Driver: "+GetVideoDriverName()+"\n\n";
 
-	LOG->Info( "Trying video renderers: '%s'", PREFSMAN->m_sVideoRenderers.c_str() );
+	LOG->Info( "Video renderers: '%s'", PREFSMAN->m_sVideoRenderers.c_str() );
 
 	CStringArray asRenderers;
 	split( PREFSMAN->m_sVideoRenderers, ",", asRenderers, true );
