@@ -180,34 +180,6 @@ inline int   BeatToNoteRow( float fBeatNum )			{ return lrintf( fBeatNum * ROWS_
 inline int   BeatToNoteRowNotRounded( float fBeatNum )	{ return (int)( fBeatNum * ROWS_PER_BEAT ); }
 inline float NoteRowToBeat( int iRow )					{ return iRow / (float)ROWS_PER_BEAT; }
 
-
-
-struct HoldNote
-{
-	HoldNote( int t, int s, int e ) { iTrack=t; iStartRow=s; iEndRow=e; }
-	bool RowIsInRange( int row ) const { return iStartRow <= row && row <= iEndRow; }
-	bool RangeOverlaps( int start, int end ) const
-	{
-		/* If the range doesn't overlap us, then start and end are either both before
-		 * us or both after us. */
-		return !( (start < iStartRow && end < iStartRow) ||
-				  (start > iEndRow && end > iEndRow) );
-	}
-	bool RangeOverlaps( const HoldNote &hn ) const { return RangeOverlaps(hn.iStartRow, hn.iEndRow); }
-	bool RangeInside( int start, int end ) const { return iStartRow <= start && end <= iEndRow; }
-	bool ContainedByRange( int start, int end ) const { return start <= iStartRow && iEndRow <= end; }
-
-	float GetStartBeat() const { return NoteRowToBeat( iStartRow ); }
-	float GetEndBeat() const { return NoteRowToBeat( iEndRow ); }
-
-	/* Invariant: iStartRow <= iEndRow.  If equal, the hold note is empty. */
-	int		iStartRow;
-	int		iEndRow;
-	int		iTrack;	
-
-	HoldNoteResult result;
-};
-
 #endif
 
 /*
