@@ -43,6 +43,7 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 #define PLAYER_HEIGHT		(360)
 #define PLAYER_Y_STANDARD	(PLAYER_Y-PLAYER_HEIGHT/2)
 
+#define PLAY_RECORD_HELP_TEXT	THEME->GetMetric(m_sName,"PlayRecordHelpText")
 
 const ScreenMessage SM_BackFromMainMenu				= (ScreenMessage)(SM_User+1);
 const ScreenMessage SM_BackFromAreaMenu				= (ScreenMessage)(SM_User+2);
@@ -568,6 +569,11 @@ void ScreenEdit::Init()
 	SET_XY_AND_ON_COMMAND( m_textInfo );
 	this->AddChild( &m_textInfo );
 
+	m_textPlayRecordHelp.SetName( "PlayRecordHelp" );
+	m_textPlayRecordHelp.LoadFromFont( THEME->GetPathF("ScreenEdit","PlayRecordHelp") );
+	m_textPlayRecordHelp.SetText( PLAY_RECORD_HELP_TEXT );
+	SET_XY_AND_ON_COMMAND( m_textPlayRecordHelp );
+	this->AddChild( &m_textPlayRecordHelp );
 
 	this->SortByDrawOrder();
 
@@ -1425,6 +1431,8 @@ void ScreenEdit::TransitionEditMode( EditMode em )
 	// Show/hide depending on em
 	//
 	m_Background.SetHidden( !PREFSMAN->m_bEditorShowBGChangesPlay || em == MODE_EDITING );
+	m_sprUnderlay->SetHidden( em != MODE_EDITING );
+	m_sprOverlay->SetHidden( em != MODE_EDITING );
 	m_textInputTips.SetHidden( em != MODE_EDITING );
 	m_textInfo.SetHidden( em != MODE_EDITING );
 	// Play the OnCommands again so that these will be re-hidden if the OnCommand hides them.
@@ -1433,6 +1441,7 @@ void ScreenEdit::TransitionEditMode( EditMode em )
 		m_textInputTips.PlayCommand( "On" );
 		m_textInfo.PlayCommand( "On" );
 	}
+	m_textPlayRecordHelp.SetHidden( em != MODE_PLAYING );
 	m_SnapDisplay.SetHidden( em != MODE_EDITING );
 	m_NoteFieldEdit.SetHidden( em != MODE_EDITING );
 	m_NoteFieldRecord.SetHidden( em != MODE_RECORDING );

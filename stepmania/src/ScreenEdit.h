@@ -161,6 +161,7 @@ protected:
 
 	BitmapText		m_textInputTips;
 	BitmapText		m_textInfo;		// status information that changes
+	BitmapText		m_textPlayRecordHelp;
 
 	// keep track of where we are and what we're doing
 	float				m_fTrailingBeat;	// this approaches GAMESTATE->m_fSongBeat, which is the actual beat
