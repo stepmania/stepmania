@@ -500,6 +500,7 @@ retry:
 	// It makes sense that ScreenManager should allocate memory for a new screen since it 
 	// deletes it later on.  This also convention will reduce includes because screens won't 
 	// have to include each other's headers of other screens.
+	LOG->Trace( "Loading screen %s", sClassName.c_str() );
 	Screen* pNewScreen = MakeNewScreen(sClassName);
 	LOG->Trace( "Loaded %s in %f", sClassName.c_str(), t.GetDeltaTime());
 
