@@ -60,15 +60,10 @@ void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 	if( bs.m_BeingHeld == Down )
 		return;
 
-	const bool WasBeingPressed = IsBeingPressed( di );
-
 	bs.m_BeingHeld = Down;
 	bs.m_fSecsHeld = 0;
-	if( WasBeingPressed != IsBeingPressed(di) )
-	{
-		InputEventType iet = IsBeingPressed(di)? IET_FIRST_PRESS:IET_RELEASE;
-		queue.push_back( InputEvent(di,iet) );
-	}
+
+	queue.push_back( InputEvent(di,Down? IET_FIRST_PRESS:IET_RELEASE) );
 }
 
 /* Release all buttons on the given device. */
