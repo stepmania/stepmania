@@ -472,15 +472,33 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 		if( m_Param.m_Balance != 0 )
 		{
 			Sint16 *p = (Sint16 *) buffer;
-			const float fLeft = SCALE( m_Param.m_Balance, -1, 1, 1, 0 );
-			const float fRight = SCALE( m_Param.m_Balance, -1, 1, 0, 1 );
-			const int iLeft = int(fLeft*256);
-			const int iRight = int(fRight*256);
+
+			float fBalance = m_Param.m_Balance;
+			bool bSwap = fBalance < 0;
+			if( bSwap )
+				fBalance = -fBalance;
+
+			float fLeftFactors[2] ={ 1-fBalance, 0 };
+			float fRightFactors[2] =
+			{
+				SCALE( fBalance, 0, 1, 0.5f, 0 ),
+				SCALE( fBalance, 0, 1, 0.5f, 1 )
+			};
+
+			if( bSwap )
+			{
+				swap( fLeftFactors[0], fRightFactors[0] );
+				swap( fLeftFactors[1], fRightFactors[1] );
+			}
+
 			RAGE_ASSERT_M( channels == 2, ssprintf("%i", channels) );
 			for( int samp = 0; samp < got_frames; ++samp )
 			{
-				*(p++) = short( (*p * iLeft) >> 8 );
-				*(p++) = short( (*p * iRight) >> 8 );
+				Sint16 l = Sint16(p[0]*fLeftFactors[0] + p[1]*fLeftFactors[1]);
+				Sint16 r = Sint16(p[0]*fRightFactors[0] + p[1]*fRightFactors[1]);
+				p[0] = l;
+				p[1] = r;
+				p+=2;
 			}
 		}
 
