@@ -217,6 +217,73 @@ TitleTo: ちょっときいてな
 TitleFrom: The Strong Jaeger
 TitleTo: 合体せよ！ストロングイェーガー！！
 *
+# Subtitles:
+# (Title is Graduation.)
+SubtitleFrom: .*(Each Tomorrow|sorezore no ashita).*
+SubtitleTo: ~それぞれの明日~
+*
+# Some files are missing the space, so the subtitle isn't parsed.
+TitleFrom: GRADUATION~(Each Tomorrow|sorezore no ashita)~
+TitleTo: GRADUATION
+SubtitleTo: ~それぞれの明日~
+SubtitleTransTo: sorezore no ashita
+DontTransliterate
+*
+
+# Artists:
+TitleFrom: Max 300
+ArtistFrom: %
+ArtistTo: Ω
+*
+ArtistFrom: Omega
+ArtistTo: Ω
+*
+# Make sure this appears after the above "Riyu" match, so it doesn't
+# break it.  I've seen both "Kosaku" and "Kosaka"; I think Kosaka is
+# correct, but handle both. */
+ArtistFrom: Riyu Kosak[au]
+ArtistTo: 小坂りゆ
+*
+ArtistFrom: Kosak[au] Riyu
+ArtistTo: 小坂りゆ
+*
+ArtistFrom: ZZ
+ArtistTo: &doublezeta;
+*
+# Serious tropical ska bomb? ruh roh
+ArtistFrom: Anettai Maji.*Ska (Bakudan|Bukuden)
+ArtistTo: 亜熱帯マジ-SKA爆弾
+*
+ArtistFrom: (Spanish Folk Music|Mexican Folk Song)
+ArtistTo: メキシコ民謡
+*
+ArtistFrom: Sanae? Shintani
+ArtistTo: 新谷さなえ
+*
+TitleFrom: White Lovers
+ArtistFrom: Sana
+ArtistTo: 新谷さなえ
+*
+ArtistFrom: YOMA KOMATSU
+ArtistTo: ΨΦMA KΦMATSU
+*
+ArtistFrom: Bus Stop featuring Carl Douglas
+ArtistTo: BUS★STOP featuring CARL DOUGLAS
+*
+TitleFrom: (Kick the Can|One Two|Na-Na|Swing It)
+ArtistFrom: BUS STOP
+ArtistTo: BUS★STOP
+*
+ArtistFrom: dj TAKA feat. ?Noria
+ArtistTo: dj TAKA feat. のりあ
+*
+ArtistFrom: Miyuki Kunitake
+ArtistTo: くにたけみゆき
+*
+ArtistFrom: Kunitake Miyuki
+ArtistTo: くにたけみゆき
+*
+
 # TM:
 ArtistFrom: (Masahiro Andoh)|(Andoh Masahiro)
 ArtistTo: 安藤まさひろ
@@ -480,72 +547,7 @@ ArtistFrom: sakura
 TitleTo: この思いを伝えたい
 ArtistTo: さくら
 *
-# Subtitles:
-# (Title is Graduation.)
-SubtitleFrom: .*(Each Tomorrow|sorezore no ashita).*
-SubtitleTo: ~それぞれの明日~
-*
-# Some files are missing the space, so the subtitle isn't parsed.
-TitleFrom: GRADUATION~(Each Tomorrow|sorezore no ashita)~
-TitleTo: GRADUATION
-SubtitleTo: ~それぞれの明日~
-SubtitleTransTo: sorezore no ashita
-DontTransliterate
-*
 
-# Artists:
-TitleFrom: Max 300
-ArtistFrom: %
-ArtistTo: Ω
-*
-ArtistFrom: Omega
-ArtistTo: Ω
-*
-# Make sure this appears after the above "Riyu" match, so it doesn't
-# break it.  I've seen both "Kosaku" and "Kosaka"; I think Kosaka is
-# correct, but handle both. */
-ArtistFrom: Riyu Kosak[au]
-ArtistTo: 小坂りゆ
-*
-ArtistFrom: Kosak[au] Riyu
-ArtistTo: 小坂りゆ
-*
-ArtistFrom: ZZ
-ArtistTo: &doublezeta;
-*
-# Serious tropical ska bomb? ruh roh
-ArtistFrom: Anettai Maji.*Ska (Bakudan|Bukuden)
-ArtistTo: 亜熱帯マジ-SKA爆弾
-*
-ArtistFrom: (Spanish Folk Music|Mexican Folk Song)
-ArtistTo: メキシコ民謡
-*
-ArtistFrom: Sanae? Shintani
-ArtistTo: 新谷さなえ
-*
-TitleFrom: White Lovers
-ArtistFrom: Sana
-ArtistTo: 新谷さなえ
-*
-ArtistFrom: YOMA KOMATSU
-ArtistTo: ΨΦMA KΦMATSU
-*
-ArtistFrom: Bus Stop featuring Carl Douglas
-ArtistTo: BUS★STOP featuring CARL DOUGLAS
-*
-TitleFrom: (Kick the Can|One Two|Na-Na|Swing It)
-ArtistFrom: BUS STOP
-ArtistTo: BUS★STOP
-*
-ArtistFrom: dj TAKA feat. ?Noria
-ArtistTo: dj TAKA feat. のりあ
-*
-ArtistFrom: Miyuki Kunitake
-ArtistTo: くにたけみゆき
-*
-ArtistFrom: Kunitake Miyuki
-ArtistTo: くにたけみゆき
-*
 # DREAMS COME TRUE:
 TitleFrom: Asa ga Mata Kuru
 TitleTo: 朝がまた来る
