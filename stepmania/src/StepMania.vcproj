@@ -576,6 +576,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Attack.h">
 			</File>
 			<File
+				RelativePath="AutoKeysounds.cpp">
+			</File>
+			<File
+				RelativePath="AutoKeysounds.h">
+			</File>
+			<File
 				RelativePath="BannerCache.cpp">
 			</File>
 			<File

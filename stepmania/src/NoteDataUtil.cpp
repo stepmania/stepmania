@@ -108,6 +108,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 				// that's what we've been writing to disk.  -Chris
 				case 'M': tn = TAP_ORIGINAL_MINE;			break;
 				case 'A': tn = TAP_ORIGINAL_ATTACK;			break;
+				case 'K': tn = TAP_ORIGINAL_AUTO_KEYSOUND;	break;
 				default: 
 					/* Invalid data.  We don't want to assert, since there might
 					 * simply be invalid data in an .SM, and we don't want to die
@@ -225,6 +226,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out 
 				case TapNote::hold_tail:	c = '3'; break;
 				case TapNote::mine:			c = 'M'; break;
 				case TapNote::attack:		c = 'A'; break;
+				case TapNote::autoKeysound:	c = 'K'; break;
 				default: 
 					ASSERT(0);	// invalid enum value
 					c = '0'; 
@@ -1716,6 +1718,30 @@ void NoteDataUtil::ShiftRows( NoteData &nd, float fStartBeat, float fBeatsToShif
 	temp.CopyRange( nd, iTakeFromRow, nd.GetLastRow() );
 	nd.ClearRange( min(iTakeFromRow,iPasteAtRow), nd.GetLastRow()  );
 	nd.CopyRange( temp, 0, temp.GetLastRow(), iPasteAtRow );		
+}
+
+void NoteDataUtil::RemoveAllTapsOfType( NoteData& ndInOut, TapNote::Type typeToRemove )
+{
+	for( int t=0; t<ndInOut.GetNumTracks(); t++ )
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK( ndInOut, t, row )
+		{
+			if( ndInOut.GetTapNote(t, row).type == typeToRemove )
+				ndInOut.SetTapNote( t, row, TAP_EMPTY );
+		}
+	}
+}
+
+void NoteDataUtil::RemoveAllTapsExceptForType( NoteData& ndInOut, TapNote::Type typeToKeep )
+{
+	for( int t=0; t<ndInOut.GetNumTracks(); t++ )
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK( ndInOut, t, row )
+		{
+			if( ndInOut.GetTapNote(t, row).type != typeToKeep )
+				ndInOut.SetTapNote( t, row, TAP_EMPTY );
+		}
+	}
 }
 
 

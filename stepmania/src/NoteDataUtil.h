@@ -95,6 +95,9 @@ namespace NoteDataUtil
 
 	// If fBeatsToShift>0, add blank rows.  If fBeatsToShift<0, delete rows
 	void ShiftRows( NoteData &nd, float fStartBeat, float fBeatsToShift );
+
+	void RemoveAllTapsOfType( NoteData& ndInOut, TapNote::Type typeToRemove );
+	void RemoveAllTapsExceptForType( NoteData& ndInOut, TapNote::Type typeToKeep );
 };
 
 #endif

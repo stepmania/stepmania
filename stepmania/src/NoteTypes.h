@@ -11,6 +11,7 @@ struct TapNote
 		hold,		/* In 4s mode, holds and TAP_HOLD_HEAD are deleted and TAP_HOLD is added: */
 		mine,		// don't step!
 		attack,
+		autoKeysound,
  	} type;
 	enum Source {
 		original,	// part of the original NoteData
@@ -76,6 +77,7 @@ extern TapNote TAP_ORIGINAL_HOLD_TAIL;		// '3'
 extern TapNote TAP_ORIGINAL_HOLD;			// '4'
 extern TapNote TAP_ORIGINAL_MINE;			// 'M'
 extern TapNote TAP_ORIGINAL_ATTACK;			// 'A'
+extern TapNote TAP_ORIGINAL_AUTO_KEYSOUND;	// 'K'
 extern TapNote TAP_ADDITION_TAP;
 extern TapNote TAP_ADDITION_MINE;
 

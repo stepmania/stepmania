@@ -814,18 +814,32 @@ void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 	GAMESTATE->m_pCurSteps[p]->GetNoteData( originalNoteData );
 	
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
-	NoteData newNoteData;
-	pStyle->GetTransformedNoteDataForStyle( p, originalNoteData, newNoteData );
-	m_Player[p].Load( 
-		p, 
-		newNoteData, 
-		m_pLifeMeter[p], 
-		m_pCombinedLifeMeter, 
-		m_pPrimaryScoreDisplay[p], 
-		m_pSecondaryScoreDisplay[p], 
-		m_pInventory[p], 
-		m_pPrimaryScoreKeeper[p], 
-		m_pSecondaryScoreKeeper[p] );
+	NoteData ndTransformed;
+	pStyle->GetTransformedNoteDataForStyle( p, originalNoteData, ndTransformed );
+
+	// load player
+	{
+		NoteData nd = ndTransformed;
+		NoteDataUtil::RemoveAllTapsOfType( nd, TapNote::autoKeysound );
+		m_Player[p].Load( 
+			p, 
+			nd, 
+			m_pLifeMeter[p], 
+			m_pCombinedLifeMeter, 
+			m_pPrimaryScoreDisplay[p], 
+			m_pSecondaryScoreDisplay[p], 
+			m_pInventory[p], 
+			m_pPrimaryScoreKeeper[p], 
+			m_pSecondaryScoreKeeper[p] );
+	}
+
+	// load auto keysounds
+	{
+		NoteData nd = ndTransformed;
+		NoteDataUtil::RemoveAllTapsExceptForType( nd, TapNote::autoKeysound );
+		m_AutoKeysounds.Load( p, nd );
+	}
+
 
 	// Put course options into effect.  Do this after Player::Load so
 	// that mods aren't double-applied.
@@ -1291,6 +1305,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
 	m_BeginnerHelper.Update(fDeltaTime);
+	
+	m_AutoKeysounds.Update(fDeltaTime);
 
 	//
 	// update GameState HealthState

@@ -25,6 +25,7 @@ class Inventory;
 #include "MeterDisplay.h"
 #include "ActiveAttackList.h"
 #include "NetworkSyncManager.h"
+#include "AutoKeysounds.h"
 
 // messages sent by Combo
 const ScreenMessage SM_PlayToasty			= ScreenMessage(SM_User+104);
@@ -156,6 +157,8 @@ protected:
 	MeterDisplay		m_meterSongPosition;
 
 	Player				m_Player[NUM_PLAYERS];
+
+	AutoKeysounds	m_AutoKeysounds;
 
 	// used in PLAY_MODE_BATTLE
 	Inventory*			m_pInventory[NUM_PLAYERS];

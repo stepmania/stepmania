@@ -46,7 +46,7 @@
 	bm-*: can't tell difference between bm-single and dance-solo
 		18/19 marks bm-single7, 28/29 marks bm-double7
 		bm-double uses 21-26. */
-	
+
 enum BmsTrack
 {
 	BMS_P1_KEY1 = 0,
@@ -65,10 +65,20 @@ enum BmsTrack
 	BMS_P2_TURN,
 	BMS_P2_KEY6,
 	BMS_P2_KEY7,
-	BMS_AUTO_KEYSOUND,
+	// max 4 simultaneous auto keysounds
+	BMS_AUTO_KEYSOUND_1,
+	BMS_AUTO_KEYSOUND_2,
+	BMS_AUTO_KEYSOUND_3,
+	BMS_AUTO_KEYSOUND_4,
+	BMS_AUTO_KEYSOUND_5,
+	BMS_AUTO_KEYSOUND_6,
+	BMS_AUTO_KEYSOUND_7,
+	BMS_AUTO_KEYSOUND_LAST,
 	NUM_BMS_TRACKS,
-	BMS_TRACK_INVALID,
 };
+
+const int NUM_NON_AUTO_KEYSOUND_TRACKS = BMS_AUTO_KEYSOUND_1;	
+const int NUM_AUTO_KEYSOUND_TRACKS = NUM_BMS_TRACKS - NUM_NON_AUTO_KEYSOUND_TRACKS;	
 
 static bool ConvertRawTrackToTapNote( int iRawTrack, BmsTrack &bmsTrackOut, bool &bIsHoldOut )
 {
@@ -84,7 +94,7 @@ static bool ConvertRawTrackToTapNote( int iRawTrack, BmsTrack &bmsTrackOut, bool
 
 	switch( iRawTrack )
 	{
-	case 1:  bmsTrackOut = BMS_AUTO_KEYSOUND;	break;
+	case 1:  bmsTrackOut = BMS_AUTO_KEYSOUND_1;	break;
 	case 11:	bmsTrackOut = BMS_P1_KEY1;		break;
 	case 12:	bmsTrackOut = BMS_P1_KEY2;		break;
 	case 13:	bmsTrackOut = BMS_P1_KEY3;		break;
@@ -112,11 +122,11 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd )
 {
 	ASSERT( NUM_BMS_TRACKS == nd.GetNumTracks() );
 
-	bool bTrackHasNote[NUM_BMS_TRACKS];
+	bool bTrackHasNote[NUM_NON_AUTO_KEYSOUND_TRACKS];
 	ZERO( bTrackHasNote );
 
 	int iLastRow = nd.GetLastRow();
-	for( int t=0; t<nd.GetNumTracks(); t++ )
+	for( int t=0; t<NUM_NON_AUTO_KEYSOUND_TRACKS; t++ )
 	{
 		for( int r=0; r<=iLastRow; r++ )
 		{
@@ -129,7 +139,7 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd )
 	}
 
 	int iNumNonEmptyTracks = 0;
-	for( int t=0; t<nd.GetNumTracks(); t++ )
+	for( int t=0; t<NUM_NON_AUTO_KEYSOUND_TRACKS; t++ )
 		if( bTrackHasNote[t] )
 			iNumNonEmptyTracks++;
 
@@ -306,35 +316,75 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 					bool bIsHold;
 					if( ConvertRawTrackToTapNote(iRawTrackNum, bmsTrack, bIsHold) )
 					{
-						if( bmsTrack == BMS_AUTO_KEYSOUND )
+						TapNote tn = vTapNotes[j];
+
+						if( bmsTrack == BMS_AUTO_KEYSOUND_1 )
 						{
+							tn.type = TapNote::autoKeysound;
+
+							// shift the auto keysound as far right as possible
+							int iLastEmptyTrack = -1;
+							if( ndNotes.GetTapLastEmptyTrack(row,iLastEmptyTrack)  &&
+								iLastEmptyTrack >= BMS_AUTO_KEYSOUND_1 )
+							{
+								bmsTrack = (BmsTrack)iLastEmptyTrack;
+							}
+							else
+							{
+								// no room for this note.  Drop it.
+								continue;
+							}
+						}
+						else if( bIsHold )
+						{
+							tn.type = TapNote::hold_head;
 						}
 						else
 						{
-							TapNote tn = vTapNotes[j];
-							tn.type = bIsHold ? TapNote::hold_head : TapNote::tap;
-							ndNotes.SetTapNote( bmsTrack, row, tn );
+							tn.type = TapNote::tap;
 						}
+
+						ndNotes.SetTapNote( bmsTrack, row, tn );
 					}
 				}
 			}
 		}
 	}
 
+	// we're done reading in all of the BMS values
+
 	out.m_StepsType = DetermineStepsType( iPlayer, ndNotes );
 
-	// we're done reading in all of the BMS values
 	if( out.m_StepsType == STEPS_TYPE_INVALID )
 	{
 		LOG->Warn( "Couldn't determine note type of file '%s'", sPath.c_str() );
 		return false;
 	}
 
-	int iNumNewTracks = GameManager::StepsTypeToNumTracks( out.m_StepsType );
-	int iTransformNewToOld[NUM_BMS_TRACKS];
 
-	for( int i = 0; i < NUM_BMS_TRACKS; ++i)
-		iTransformNewToOld[i] = -1;
+	// shift all of the autokeysound tracks onto the main tracks
+	for( int t=BMS_AUTO_KEYSOUND_1; t<BMS_AUTO_KEYSOUND_1+NUM_AUTO_KEYSOUND_TRACKS; t++ )
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK( ndNotes, t, row )
+		{
+			TapNote tn = ndNotes.GetTapNote( t, row );
+			int iEmptyTrack;
+			if( ndNotes.GetTapFirstEmptyTrack(row, iEmptyTrack) )
+			{
+				ndNotes.SetTapNote( iEmptyTrack, row, tn );
+				ndNotes.SetTapNote( t, row, TAP_EMPTY );
+			}
+			else
+			{
+				LOG->Warn( "No room to shift." );
+			}
+		}
+	}
+
+
+	int iNumNewTracks = GameManager::StepsTypeToNumTracks( out.m_StepsType );
+	vector<int> iTransformNewToOld;
+	iTransformNewToOld.resize( iNumNewTracks, -1 );
 
 	switch( out.m_StepsType )
 	{
@@ -434,7 +484,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 
 	NoteData noteData2;
 	noteData2.SetNumTracks( iNumNewTracks );
-	noteData2.LoadTransformed( ndNotes, iNumNewTracks, iTransformNewToOld );
+	noteData2.LoadTransformed( ndNotes, iNumNewTracks, iTransformNewToOld.begin() );
 
 	out.SetNoteData( noteData2 );
 
