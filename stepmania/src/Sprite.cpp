@@ -135,9 +135,7 @@ void Sprite::UnloadTexture()
 
 bool Sprite::LoadTexture( CString sTexturePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
 {
-	if( m_pTexture != NULL )			// If there was a previous bitmap...
-		UnloadTexture();
-
+	UnloadTexture();
 
 	m_sTexturePath = sTexturePath;
 
@@ -156,7 +154,7 @@ bool Sprite::LoadTexture( CString sTexturePath, bool bForceReload, int iMipMaps,
 		m_iNumStates = i+1;
 	}
 		
-	return TRUE;
+	return true;
 }
 
 
