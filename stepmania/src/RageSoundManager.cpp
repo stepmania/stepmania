@@ -264,14 +264,19 @@ void RageSoundManager::SetPrefs(float MixVol)
 
 SoundMixBuffer::SoundMixBuffer()
 {
-	vol = SOUNDMAN->GetMixVolume();
 	bufsize = used = 0;
 	mixbuf = NULL;
+	SetVolume( SOUNDMAN->GetMixVolume() );
 }
 
 SoundMixBuffer::~SoundMixBuffer()
 {
 	free(mixbuf);
+}
+
+void SoundMixBuffer::SetVolume( float f )
+{
+	vol = f;
 }
 
 void SoundMixBuffer::write(const Sint16 *buf, unsigned size)
