@@ -89,15 +89,16 @@ CString DirOfExecutable;
 
 static void ChangeToDirOfExecutable(const char *argv0)
 {
+#ifdef _XBOX
+	DirOfExecutable = "D:\\";
+	InitialWorkingDirectory = "D:\\";
+	return;
+#else
+
 	char tmp[1024];
 	getcwd( tmp, 1024 );
 	tmp[1023] = 0;
 	InitialWorkingDirectory = tmp;
-
-#ifdef _XBOX
-	DirOfExecutable = "D:/";
-	return;
-#else
 
 	DirOfExecutable = argv0;
 	DirOfExecutable.Replace( "\\", "/" );
