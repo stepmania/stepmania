@@ -42,7 +42,6 @@ public:
 	const set<RageSound *> &GetPlayingSounds() const { return playing_sounds; }
 
 	void PlayOnce( CString sPath );
-	static void PlayOnceFromDir( CString sDir );
 
 	RageSound *PlaySound(RageSound &snd);
 	void StopPlayingSound(RageSound &snd);

@@ -149,27 +149,6 @@ void RageSoundManager::PlayOnce( CString sPath )
 	snd->Play();
 }
 
-void RageSoundManager::PlayOnceFromDir( CString sDir )
-{
-	if( sDir == "" )
-		return;
-
-	// make sure there's a slash at the end of this path
-	if( sDir.Right(1) != "/" )
-		sDir += "/";
-
-	CStringArray arraySoundFiles;
-	GetDirListing( sDir + "*.mp3", arraySoundFiles );
-	GetDirListing( sDir + "*.wav", arraySoundFiles );
-	GetDirListing( sDir + "*.ogg", arraySoundFiles );
-
-	if( arraySoundFiles.empty() )
-		return;
-
-	int index = rand() % arraySoundFiles.size();
-	SOUNDMAN->PlayOnce( sDir + arraySoundFiles[index] );
-}
-
 /* Standalone helpers: */
 
 void RageSoundManager::SetPrefs(float MixVol)
