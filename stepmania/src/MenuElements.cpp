@@ -33,6 +33,7 @@
 #define HELP_ON_COMMAND			THEME->GetMetric("MenuElements","HelpOnCommand")
 #define HELP_OFF_COMMAND		THEME->GetMetric("MenuElements","HelpOffCommand")
 #define TIMER_SECONDS			THEME->GetMetricI(m_sName,"TimerSeconds")
+#define STYLE_ICON				THEME->GetMetricB(m_sName,"StyleIcon")
 
 
 MenuElements::MenuElements()
@@ -54,7 +55,7 @@ void MenuElements::Load( CString sClassName, bool bEnableTimer, bool bLoadStyleI
 	m_sprHeader.Command( HEADER_ON_COMMAND );
 	this->AddChild( &m_sprHeader );
 
-	if( bLoadStyleIcon  &&  GAMESTATE->m_CurStyle != STYLE_INVALID )
+	if( STYLE_ICON && GAMESTATE->m_CurStyle != STYLE_INVALID )
 	{
 		CString sIconFileName = ssprintf("MenuElements icon %s", GAMESTATE->GetCurrentStyleDef()->m_szName );
 		m_sprStyleIcon.Load( THEME->GetPathToG(sIconFileName) );
