@@ -89,37 +89,6 @@ void ScreenDemonstration::Update( float fDeltaTime )
 	ScreenGameplay::Update( fDeltaTime );
 }
 
-void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
-{
-	//LOG->Trace( "ScreenDemonstration::Input()" );
-
-	// note: this code really is only needed because when one of these happens
-	// AttractInput calls SCREENMAN->SetNewScreen(), and we never get another chance
-	// to reset the volume in that case, and sounds then "vanish" everywhere.
-	// (should SetNewScreen() cause a SM_LoseFocus message to be sent to the top screen
-	//  before it gets deleted?)
-	if( MenuI.IsValid() && type == IET_FIRST_PRESS )
-	{
-		switch( MenuI.button )
-		{
-		case MENU_BUTTON_COIN:
-		case MENU_BUTTON_START:
-		case MENU_BUTTON_BACK:
-			if( PREFSMAN->m_iCoinMode == COIN_PAY )
-				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
-					break;	// don't fall through
-
-			SOUND->StopMusic();
-			if( !GAMESTATE->IsTimeToPlayAttractSounds() )
-				SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
-
-			break;
-		}
-	}
-
-	ScreenAttract::AttractInput( DeviceI, type, GameI, MenuI, StyleI, m_In.IsTransitioning() || m_Out.IsTransitioning() );
-}
-
 void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
@@ -136,6 +105,7 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 		break;
 
 	case SM_LoseFocus:
+		LOG->Trace("XXX: lose foc");
 		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
 		break;
 
