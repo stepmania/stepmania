@@ -38,6 +38,10 @@ public:
 	{
 		FDB->AddFile( MountPoint, 0, 0 );
 	}
+	void Delete( const CString &MountPoint )
+	{
+		FDB->DelFile( MountPoint );
+	}
 };
 static RageFileDriverMountpoints *g_Mountpoints = NULL;
 
@@ -277,6 +281,9 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 {
 	LockMut( *g_Mutex );
 
+	// unmount anything that was previously mounted here.
+	Unmount(MountPoint);
+
 	if( MountPoint.size() && MountPoint.Right(1) != "/" )
 		MountPoint += '/';
 	ASSERT( Root != "" );
@@ -295,6 +302,17 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 	g_Drivers.push_back( ld );
 
 	g_Mountpoints->Add( MountPoint );
+}
+
+void RageFileManager::Unmount( CString MountPoint )
+{
+	LockMut( *g_Mutex );
+
+	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+		if( !g_Drivers[i].MountPoint.CompareNoCase( MountPoint ) )
+			g_Drivers.erase( g_Drivers.begin()+i );
+
+	g_Mountpoints->Delete( MountPoint );
 }
 
 bool RageFileManager::IsMounted( CString MountPoint )
