@@ -32,6 +32,5 @@ extern int g_launchReturnXBE  ;
 
 int XGetCustomLaunchData() ;
 void XReturnToLaunchingXBE( );
-void XLaunchNewImageWithParams( char *szXBEName, char *szMap_D_As, PCUSTOM_LAUNCH_DATA pLaunchData );
 
 #endif
