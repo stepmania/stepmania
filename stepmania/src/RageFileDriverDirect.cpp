@@ -451,7 +451,7 @@ bool RageFileDriverDirect::Ready()
 #endif
 }
 
-static const int BUFSIZE = 1024*64;
+static const unsigned int BUFSIZE = 1024*64;
 RageFileObjDirect::RageFileObjDirect( const CString &path_, int fd_, RageFile &p ):
 	RageFileObj( p )
 {
