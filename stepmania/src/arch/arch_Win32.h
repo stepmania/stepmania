@@ -6,6 +6,7 @@
 #include "ErrorDialog/ErrorDialog_Win32.h"
 #include "ArchHooks/ArchHooks_Win32.h"
 
+#include "InputHandler/InputHandler_DirectInput.h"
 #include "InputHandler/InputHandler_Win32_Pump.h"
 // #include "InputHandler/InputHandler_Win32_Para.h"
 

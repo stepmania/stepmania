@@ -28,7 +28,11 @@ LowLevelWindow *MakeLowLevelWindow() { return new ARCH_LOW_LEVEL_WINDOW; }
 
 void MakeInputHandlers(vector<InputHandler *> &Add)
 {
+#if defined(WIN32) && !defined(_XBOX)
+	Add.push_back(new InputHandler_DInput);
+#else
 	Add.push_back(new InputHandler_SDL);
+#endif
 
 #if defined(WIN32)
 	Add.push_back(new InputHandler_Win32_Pump);
