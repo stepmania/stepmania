@@ -11,12 +11,24 @@
 #include "PrefsManager.h"
 #include "ArchHooks_darwin.h"
 #include "RageLog.h"
+#include "archutils/Unix/SignalHandler.h"
 #include <Carbon/Carbon.h>
+
+void HandleSignal(int sig);
+OSStatus HandleException(ExceptionInformation *theException);
+void PrintSystemInformation(FILE *fp);
 
 const unsigned maxLogMessages = 10; /* Follow the windows example */
 
+static queue<CString> crashLog;
+static vector<CString> staticLog;
+static CString additionalLog;
+static volatile unsigned handlingException;
+
+
 ArchHooks_darwin::ArchHooks_darwin() {
-    /* Nothing for now. */
+    SignalHandler::OnClose(HandleSignal);
+    InstallExceptionHandler(HandleException);
 }
 
 void ArchHooks_darwin::Log(CString str, bool important) {
@@ -27,6 +39,10 @@ void ArchHooks_darwin::Log(CString str, bool important) {
     if (crashLog.size() == maxLogMessages)
         crashLog.pop();
     crashLog.push(str);
+}
+
+void ArchHooks_darwin::AdditionalLog(CString str) {
+    additionalLog = str;
 }
 
 void ArchHooks_darwin::MessageBoxOK(CString sMessage, CString ID) {
@@ -96,5 +112,81 @@ ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString
     CFRelease(i);
     CFRelease(r);
     return result;
-}    
+}
+
+void HandleSignal(int sig) {
+    FILE *fp = fopen("crashinfo.txt", "w");
+
+    /* ***FIXME*** we need to track build number somehow */
+    fprintf(fp,
+            "StepMania crash report -- build unknown\n"
+            "---------------------------------------\n\n"
+            "Crash reason: Signal %d\n\n"
+            "All stack trace information in ~/Library/Logs/CrashReporter/\n\n"
+            "Static log:\n", sig);
+    PrintSystemInformation(fp); //not written yet
+    unsigned size = staticLog.size();
+    for (unsigned i=0; i<size; ++i)
+        fprintf(fp, "%s\n", staticLog[i].c_str());
+    fprintf(fp, "\nPartial log:\n");
+    while (!crashLog.empty()) {
+        CString s = crashLog.front();
+        fprintf(fp, "%s\n", s.c_str());
+        crashLog.pop();
+    }
+    fprintf(fp, "\nAdditionalLog:\n%s\n\n-- End of report\n", additionalLog.c_str());
+    fclose(fp);
+}
+
+#define CASE_CODE(code,addr) case k##code: strcpy((addr),#code); break
+
+OSStatus HandleException(ExceptionInformation *theException) {
+    if (handlingException)
+        return noErr; /* Ignore it. */
+    handlingException = true;
+    
+    FILE *fp = fopen("crashinfo.txt", "w");
+    char code[31];
+
+    switch (theException->theKind) {
+        CASE_CODE(UnknownException, code);
+        CASE_CODE(IllegalInstructionException, code);
+        CASE_CODE(TrapException, code);
+        CASE_CODE(AccessException, code);
+        CASE_CODE(UnmappedMemoryException, code);
+        CASE_CODE(ExcludedMemoryException, code);
+        CASE_CODE(ReadOnlyMemoryException, code);
+        CASE_CODE(UnresolvablePageFaultException, code);
+        CASE_CODE(PrivilegeViolationException, code);
+        CASE_CODE(TraceException, code);
+        CASE_CODE(InstructionBreakpointException, code);
+        CASE_CODE(DataBreakpointException, code);
+        CASE_CODE(FloatingPointException, code);
+        CASE_CODE(StackOverflowException, code);
+    }
+ /* ***FIXME*** we need to track build number somehow */
+    fprintf(fp,
+            "StepMania crash report -- build unknown\n"
+            "---------------------------------------\n\n"
+            "Crash reason: %s\n\n"
+            "All stack trace information in ~/Library/Logs/CrashReporter/\n\n"
+            "Static log:\n", code);
+    PrintSystemInformation(fp); //not written yet
+    unsigned size = staticLog.size();
+    for (unsigned i=0; i<size; ++i)
+        fprintf(fp, "%s\n", staticLog[i].c_str());
+    fprintf(fp, "\nPartial log:\n");
+    while (!crashLog.empty()) {
+        CString s = crashLog.front();
+        fprintf(fp, "%s\n", s.c_str());
+        crashLog.pop();
+    }
+    fprintf(fp, "\nAdditionalLog:\n%s\n\n-- End of report\n", additionalLog.c_str());
+    fclose(fp);
+    _exit(-1);
+    return -1;
+}
+
+void PrintSystemInformation(FILE *fp) {
+}
     

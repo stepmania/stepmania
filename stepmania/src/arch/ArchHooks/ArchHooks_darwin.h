@@ -13,15 +13,10 @@
 #include <queue>
 
 class ArchHooks_darwin : public ArchHooks {
-private:
-    queue<CString> crashLog;
-    vector<CString> staticLog;
-    CString additionalLog;
-
 public:
     ArchHooks_darwin();
     void Log(CString str, bool important);
-    void AdditionalLog(CString str) { additionalLog = str; }
+    void AdditionalLog(CString str);
     void MessageBoxOK(CString sMessage, CString ID = "");
     MessageBoxResult MessageBoxAbortRetryIgnore(CString sMessage, CString ID = "");
 };
