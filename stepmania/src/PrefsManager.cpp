@@ -431,7 +431,7 @@ void PrefsManager::ReadGamePrefsFromDisk()
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	IniFile ini;
 	ini.SetPath( GAMEPREFS_INI_PATH );
-	ini.ReadFile();	// it's OK if this fails
+//	ini.ReadFile();	// it's OK if this fails
 
 	CString sAnnouncer = sGameName, sTheme = sGameName, sNoteSkin = sGameName;
 
@@ -443,12 +443,6 @@ void PrefsManager::ReadGamePrefsFromDisk()
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
 	THEME->SwitchThemeAndLanguage( sTheme, m_sLanguage );
-
-	// XXX: ?
-//	if(NOTESKIN->DoesNoteSkinExist(sNoteSkin))
-//		m_sDefaultNoteSkin = sNoteSkin;
-//	else
-//		m_sDefaultNoteSkin = "default";
 
 //	NOTESKIN->SwitchNoteSkin( sNoteSkin );
 }
