@@ -9,7 +9,7 @@ const int samplerate = 44100;
 void RageSound_Null::Update( float fDeltaTime )
 {
 	/* "Play" frames. */
-	while( last_cursor_pos < GetPosition(NULL)+1024 )
+	while( last_cursor_pos < GetPosition(NULL)+1024*4 )
 	{
 		int16_t buf[256*channels];
 		this->Mix( buf, 256, last_cursor_pos, GetPosition(NULL) );
