@@ -322,7 +322,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 			const HighScoreList& hsl = 
 				GAMESTATE->IsCourseMode() ?
-				PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse, GAMESTATE->GetCurrentStyleDef()->m_StepsType, GAMESTATE->m_CourseDifficulty[p]) :
+				PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse, GAMESTATE->GetCurrentStyleDef()->m_StepsType, GAMESTATE->m_PreferredCourseDifficulty[p]) :
 				PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSteps);
 
 			for( unsigned h=0; h<hsl.vHighScores.size(); h++ )
@@ -367,7 +367,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			m_FeatDisplay[p][i].m_Difficulty.SetName( ssprintf("DifficultyP%i",p+1) );
 			m_FeatDisplay[p][i].m_Difficulty.Load( THEME->GetPathToG(ssprintf("ScreenNameEntryTraditional difficulty icons 1x%d",NUM_DIFFICULTIES)) );
 			if( GAMESTATE->IsCourseMode() )
-				m_FeatDisplay[p][i].m_Difficulty.SetFromCourseDifficulty( (PlayerNumber)p, GAMESTATE->m_CourseDifficulty[p] );
+				m_FeatDisplay[p][i].m_Difficulty.SetFromCourseDifficulty( (PlayerNumber)p, GAMESTATE->m_PreferredCourseDifficulty[p] );
 			else
 				m_FeatDisplay[p][i].m_Difficulty.SetFromNotes( (PlayerNumber)p, pSteps );
 			SET_ON( m_FeatDisplay[p][i].m_Difficulty );

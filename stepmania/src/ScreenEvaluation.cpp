@@ -912,7 +912,7 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 		case course:
 			{
 				Course* pCourse = GAMESTATE->m_pCurCourse;
-				CourseDifficulty cd = GAMESTATE->m_CourseDifficulty[p];
+				CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[p];
 				ASSERT( pCourse );
 
 				// don't save scores for a failed Nonstop

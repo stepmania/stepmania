@@ -70,6 +70,7 @@ void Profile::InitGeneralData()
 	m_sDefaultModifiers = "";
 	m_SortOrder = SORT_INVALID;
 	m_PreferredDifficulty = DIFFICULTY_INVALID;
+	m_PreferredCourseDifficulty = COURSE_DIFFICULTY_INVALID;
 	m_iTotalPlays = 0;
 	m_iTotalPlaySeconds = 0;
 	m_iTotalGameplaySeconds = 0;
@@ -570,6 +571,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "DefaultModifiers",				m_sDefaultModifiers );
 	pGeneralDataNode->AppendChild( "SortOrder",						SortOrderToString(m_SortOrder) );
 	pGeneralDataNode->AppendChild( "PreferredDifficulty",			DifficultyToString(m_PreferredDifficulty) );
+	pGeneralDataNode->AppendChild( "PreferredCourseDifficulty",		CourseDifficultyToString(m_PreferredCourseDifficulty) );
 	pGeneralDataNode->AppendChild( "TotalPlays",					m_iTotalPlays );
 	pGeneralDataNode->AppendChild( "TotalPlaySeconds",				m_iTotalPlaySeconds );
 	pGeneralDataNode->AppendChild( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
@@ -702,13 +704,13 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->name == "GeneralData" );
 
+	CString s;
+
 	pNode->GetChildValue( "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
 	pNode->GetChildValue( "DefaultModifiers",				m_sDefaultModifiers );
-	CString s;
-	pNode->GetChildValue( "SortOrder",						s );
-	m_SortOrder = StringToSortOrder( s );
-	pNode->GetChildValue( "PreferredDifficulty",			s );
-	m_PreferredDifficulty = StringToDifficulty( s );
+	pNode->GetChildValue( "SortOrder",						s );	m_SortOrder = StringToSortOrder( s );
+	pNode->GetChildValue( "PreferredDifficulty",			s );	m_PreferredDifficulty = StringToDifficulty( s );
+	pNode->GetChildValue( "PreferredCourseDifficulty",		s );	m_PreferredCourseDifficulty = StringToCourseDifficulty( s );
 	pNode->GetChildValue( "TotalPlays",						m_iTotalPlays );
 	pNode->GetChildValue( "TotalPlaySeconds",				m_iTotalPlaySeconds );
 	pNode->GetChildValue( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );

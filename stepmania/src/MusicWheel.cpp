@@ -33,7 +33,6 @@
 #include "UnlockSystem.h"
 #include "ModeChoice.h"
 #include "ActorUtil.h"
-#include "ProfileManager.h"
 
 
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
@@ -173,34 +172,21 @@ void MusicWheel::Load()
 		GAMESTATE->m_SongOptions = so;
 	}
 
-	if( GAMESTATE->m_SortOrder == SORT_INVALID )
+	switch( GAMESTATE->m_PlayMode )
 	{
-		switch( GAMESTATE->m_PlayMode )
+	// in course modes, force a particular sort
+	case PLAY_MODE_ONI:		GAMESTATE->m_SortOrder = SORT_ONI_COURSES; break;
+	case PLAY_MODE_NONSTOP:	GAMESTATE->m_SortOrder = SORT_NONSTOP_COURSES; break;
+	case PLAY_MODE_ENDLESS:	GAMESTATE->m_SortOrder = SORT_ENDLESS_COURSES; break;
+	default:
+		// if no player preferred sort, fall back to theme default
+		if( GAMESTATE->m_SortOrder == SORT_INVALID )
 		{
-		case PLAY_MODE_ONI:		GAMESTATE->m_SortOrder = SORT_ONI_COURSES; break;
-		case PLAY_MODE_NONSTOP:	GAMESTATE->m_SortOrder = SORT_NONSTOP_COURSES; break;
-		case PLAY_MODE_ENDLESS:	GAMESTATE->m_SortOrder = SORT_ENDLESS_COURSES; break;
-		default:
-			// look for a player's saved sort
-			FOREACH_HumanPlayer( pn )
-			{
-				if( PROFILEMAN->IsUsingProfile(pn) )
-				{
-					GAMESTATE->m_SortOrder = PROFILEMAN->GetProfile(pn)->m_SortOrder;
-					if( GAMESTATE->m_SortOrder != SORT_INVALID )	// we found one
-						break;	// stop searching
-				}
-			}
-			
-			// if no player preferred sort, fall back to theme default
-			if( GAMESTATE->m_SortOrder == SORT_INVALID )
-			{
-				GAMESTATE->m_SortOrder = StringToSortOrder( DEFAULT_SORT );
-				ASSERT( GAMESTATE->m_SortOrder != SORT_INVALID );
-			}
-
-			break;
+			GAMESTATE->m_SortOrder = StringToSortOrder( DEFAULT_SORT );
+			ASSERT( GAMESTATE->m_SortOrder != SORT_INVALID );
 		}
+
+		break;
 	}
 
 	/* Update for SORT_MOST_PLAYED. */
@@ -1171,17 +1157,6 @@ bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change success
 	m_LastSortOrder = GAMESTATE->m_SortOrder;
 	GAMESTATE->m_SortOrder = new_so;
 	
-	// Save the new sort to all profiles
-	// HACK: Don't save course sorts
-	if( IsSongSort(new_so) )
-	{
-		FOREACH_HumanPlayer( pn )
-		{
-			if( PROFILEMAN->IsUsingProfile(pn) )
-				PROFILEMAN->GetProfile(pn)->m_SortOrder = new_so;
-		}
-	}
-
 	m_WheelState = STATE_FLYING_OFF_BEFORE_NEXT_SORT;
 	return true;
 }

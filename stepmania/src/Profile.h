@@ -90,6 +90,7 @@ public:
 	CString m_sDefaultModifiers;
 	SortOrder m_SortOrder;
 	Difficulty m_PreferredDifficulty;
+	CourseDifficulty m_PreferredCourseDifficulty;
 	int m_iTotalPlays;
 	int m_iTotalPlaySeconds;
 	int m_iTotalGameplaySeconds;

@@ -415,7 +415,7 @@ void ScreenSelectCourse::AfterCourseChange()
 			ASSERT(pCourse);
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				CourseDifficulty cd = GAMESTATE->m_CourseDifficulty[p];
+				CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[p];
 
 				Profile* pProfile;
 				if( PROFILEMAN->IsUsingProfile( (PlayerNumber)p ) )

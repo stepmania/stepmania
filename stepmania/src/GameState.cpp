@@ -37,6 +37,7 @@
 #include <time.h>
 #include "MemoryCardManager.h"
 #include "StageStats.h"
+#include "GameConstantsAndTypes.h"
 
 #define DEFAULT_MODIFIERS THEME->GetMetric( "Common","DefaultModifiers" )
 
@@ -91,7 +92,7 @@ void GameState::Reset()
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
-		m_CourseDifficulty[p] = COURSE_DIFFICULTY_REGULAR;
+		m_PreferredCourseDifficulty[p] = COURSE_DIFFICULTY_REGULAR;
 	}
 	m_SortOrder = SORT_INVALID;
 	m_PlayMode = PLAY_MODE_INVALID;
@@ -208,8 +209,13 @@ void GameState::PlayersFinalized()
 			GAMESTATE->m_PlayerOptions[pn].Init();
 			GAMESTATE->ApplyModifiers( pn, pProfile->m_sDefaultModifiers );
 		}
+		// Only set the sort order if it wasn't already set by a ModeChoice
+		if( m_SortOrder == SORT_INVALID )
+			m_SortOrder = pProfile->m_SortOrder;
 		if( pProfile->m_PreferredDifficulty != DIFFICULTY_INVALID )
 			GAMESTATE->m_PreferredDifficulty[pn] = pProfile->m_PreferredDifficulty;
+		if( pProfile->m_PreferredCourseDifficulty != COURSE_DIFFICULTY_INVALID )
+			GAMESTATE->m_PreferredCourseDifficulty[pn] = pProfile->m_PreferredCourseDifficulty;
 	}
 
 
@@ -301,8 +307,15 @@ void GameState::EndGame()
 
 		Profile* pProfile = PROFILEMAN->GetProfile(pn);
 
-		// persist current settings
-		pProfile->m_PreferredDifficulty = m_PreferredDifficulty[pn];
+		// persist settings
+		pProfile->m_bUsingProfileDefaultModifiers = true;
+		pProfile->m_sDefaultModifiers = m_PlayerOptions[pn].GetString();
+		if( IsSongSort(m_SortOrder) )
+			pProfile->m_SortOrder = m_SortOrder;
+		if( m_PreferredDifficulty[pn] != DIFFICULTY_INVALID )
+			pProfile->m_PreferredDifficulty = m_PreferredDifficulty[pn];
+		if( m_PreferredCourseDifficulty[pn] != COURSE_DIFFICULTY_INVALID )
+			pProfile->m_PreferredCourseDifficulty = m_PreferredCourseDifficulty[pn];
 
 		PROFILEMAN->SaveProfile( pn );
 		PROFILEMAN->UnloadProfile( pn );
@@ -1305,7 +1318,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			StepsType nt = this->GetCurrentStyleDef()->m_StepsType;
 			Course* pCourse = this->m_pCurCourse;
 			ASSERT( pCourse );
-			CourseDifficulty cd = this->m_CourseDifficulty[pn];
+			CourseDifficulty cd = this->m_PreferredCourseDifficulty[pn];
 
 			// Find Machine Records
 			{
@@ -1445,14 +1458,14 @@ bool GameState::IsTimeToPlayAttractSounds()
 
 bool GameState::ChangeCourseDifficulty( PlayerNumber pn, int dir )
 {
-	CourseDifficulty diff = (CourseDifficulty)(m_CourseDifficulty[pn]+dir);
+	CourseDifficulty diff = (CourseDifficulty)(m_PreferredCourseDifficulty[pn]+dir);
 	if( diff < 0 || diff >= NUM_COURSE_DIFFICULTIES )
 		return false;
 
-	this->m_CourseDifficulty[pn] = diff;
+	this->m_PreferredCourseDifficulty[pn] = diff;
 	if( PREFSMAN->m_bLockCourseDifficulties )
 		for( int p = 0; p < NUM_PLAYERS; ++p )
-			m_CourseDifficulty[p] = m_CourseDifficulty[pn];
+			m_PreferredCourseDifficulty[p] = m_PreferredCourseDifficulty[pn];
 
 	return true;
 }

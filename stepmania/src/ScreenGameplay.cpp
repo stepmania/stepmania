@@ -176,12 +176,12 @@ void ScreenGameplay::Init()
 		if( !m_bDemonstration )
 			for( p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsPlayerEnabled(p) )
-					PROFILEMAN->IncrementCoursePlayCount( GAMESTATE->m_pCurCourse, st, GAMESTATE->m_CourseDifficulty[p], (PlayerNumber)p );
+					PROFILEMAN->IncrementCoursePlayCount( GAMESTATE->m_pCurCourse, st, GAMESTATE->m_PreferredCourseDifficulty[p], (PlayerNumber)p );
 
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
 			vector<Course::Info> ci;
-			GAMESTATE->m_pCurCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci, GAMESTATE->m_CourseDifficulty[p] );
+			GAMESTATE->m_pCurCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci, GAMESTATE->m_PreferredCourseDifficulty[p] );
 
 			m_apNotesQueue[p].clear();
 			m_asModifiersQueue[p].clear();

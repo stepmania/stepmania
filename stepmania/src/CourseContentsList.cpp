@@ -59,7 +59,7 @@ void CourseContentsList::SetFromCourse( const Course* pCourse )
 
 	vector<Course::Info> ci[NUM_PLAYERS];
 	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
-		pCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci[pn], GAMESTATE->m_CourseDifficulty[pn] );
+		pCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci[pn], GAMESTATE->m_PreferredCourseDifficulty[pn] );
 
 	m_iNumContents = 0; 
 	for( int i=0; i<min((int)ci[0].size(), MAX_TOTAL_CONTENTS); i++ )

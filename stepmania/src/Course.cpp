@@ -51,7 +51,7 @@ PlayMode Course::GetPlayMode() const
 
 float Course::GetMeterForPlayer( PlayerNumber pn ) const
 {
-	return GetMeter( GAMESTATE->m_CourseDifficulty[pn] );
+	return GetMeter( GAMESTATE->m_PreferredCourseDifficulty[pn] );
 }
 
 float Course::GetMeter( CourseDifficulty cd ) const

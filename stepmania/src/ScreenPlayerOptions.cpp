@@ -18,7 +18,6 @@
 #include "ScreenSongOptions.h"
 #include "PrefsManager.h"
 #include "CodeDetector.h"
-#include "ProfileManager.h"
 
 
 #define PREV_SCREEN( play_mode )	THEME->GetMetric ("ScreenPlayerOptions","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
@@ -169,22 +168,6 @@ void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 	}
 
 	ScreenOptionsMaster::HandleScreenMessage( SM );
-}
-
-void ScreenPlayerOptions::ExportOptions()
-{
-	ScreenOptionsMaster::ExportOptions();
-
-	// automatically save all options to profile
-	FOREACH_HumanPlayer( pn )
-	{
-		if( PROFILEMAN->IsUsingProfile(pn) )
-		{
-			Profile* pProfile = PROFILEMAN->GetProfile(pn);
-			pProfile->m_bUsingProfileDefaultModifiers = true;
-			pProfile->m_sDefaultModifiers = GAMESTATE->m_PlayerOptions[pn].GetString();
-		}
-	}
 }
 
 void ScreenPlayerOptions::UpdateDisqualified()

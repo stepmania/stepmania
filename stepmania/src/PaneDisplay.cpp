@@ -158,7 +158,7 @@ void PaneDisplay::SetContent( PaneContents c )
 	else if( g_Contents[c].req&NEED_COURSE )
 	{
 		vector<Course::Info> ci;
-		CourseDifficulty cd = GAMESTATE->m_CourseDifficulty[m_PlayerNumber];
+		CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[m_PlayerNumber];
 		StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 		rv = GAMESTATE->m_pCurCourse->GetRadarValues( st, cd );
 	}
@@ -167,7 +167,7 @@ void PaneDisplay::SetContent( PaneContents c )
 	const Steps *pSteps = GAMESTATE->m_pCurNotes[m_PlayerNumber];
 	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
-	const CourseDifficulty cd = GAMESTATE->m_CourseDifficulty[m_PlayerNumber];
+	const CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[m_PlayerNumber];
 
 	float val = 0;
 	CString str;
