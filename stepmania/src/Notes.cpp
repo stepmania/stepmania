@@ -73,9 +73,16 @@ void Notes::GetNoteData( NoteData* pNoteDataOut ) const
 {
 	ASSERT(this);
 	ASSERT(pNoteDataOut);
+
 	Decompress();
-	pNoteDataOut->SetNumTracks( notes->GetNumTracks() );
-	*pNoteDataOut = *notes;
+
+	if( notes != NULL )
+		*pNoteDataOut = *notes;
+	else
+	{
+		pNoteDataOut->ClearAll();
+		pNoteDataOut->SetNumTracks( GameManager::NotesTypeToNumTracks(m_NotesType) );
+	}
 }
 
 void Notes::SetSMNoteData( const CString &out )
