@@ -160,10 +160,32 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 	{
 		switch( MenuI.button )
 		{
-		case MENU_BUTTON_START:
 		case MENU_BUTTON_LEFT:
 		case MENU_BUTTON_RIGHT:
 			SCREENMAN->SendMessageToTopScreen( SM_NotesEnded, 0 );
+			break;
+		/* XXX: this is a copy-and-paste from ScreenAttract */
+		case MENU_BUTTON_START:
+		case MENU_BUTTON_BACK:
+		case MENU_BUTTON_COIN:
+			switch( PREFSMAN->m_CoinMode )
+			{
+			case PrefsManager::COIN_PAY:
+				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
+					break;	// don't fall through
+				// fall through
+			case PrefsManager::COIN_FREE:
+			case PrefsManager::COIN_HOME:
+				SOUNDMAN->StopMusic();
+				/* We already played the it was a coin was inserted.  Don't play it again. */
+				if( MenuI.button != MENU_BUTTON_COIN )
+					SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common coin") );
+				SDL_Delay( 800 );	// do a little pause, like the arcade does
+				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+				break;
+			default:
+				ASSERT(0);
+			}
 			break;
 		}
 	}
