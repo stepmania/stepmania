@@ -18,7 +18,7 @@
 #include "ScreenGameplay.h"
 #include "GameState.h"
 #include "Course.h"
-#include "unlocksystem.h"
+#include "UnlockSystem.h"
 
 
 ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Notes*>& apNotes_, PlayerNumber pn_ ):
