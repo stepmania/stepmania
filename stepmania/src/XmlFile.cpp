@@ -281,13 +281,40 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 
 	char* xml = (char*)pszXml;
 
+	// <
 	xml = strchr( xml, chXMLTagOpen );
 	if( xml == NULL )
 		return NULL;
 
-	// Close Tag
-	if( *(xml+1) == chXMLTagPre ) // </Close
+	// </
+	if( xml[1] == chXMLTagPre )
 		return xml;
+
+	/* <!-- */
+	if( !strncmp(xml+1, "!--", 3) )
+	{
+		xml += 4;
+
+		/* Find the close tag. */
+		char *pEnd = strstr( xml, "-->" );
+		if( pEnd == NULL )
+		{
+			if( !pi->error_occur ) 
+			{
+				pi->error_occur = true;
+				pi->error_pointer = xml;
+				pi->error_code = PIE_ALONE_NOT_CLOSED;
+				pi->error_string = "Unterminated comment";
+			}
+
+			return NULL;
+		}
+
+		// Skip -->.
+		xml = pEnd + 3;
+
+		return Load( xml, pi );
+	}
 
 	// XML Node Tag Name Open
 	xml++;
