@@ -66,20 +66,18 @@ void Banner::SetScrolling( bool bScroll, float Percent)
 
 void Banner::LoadFromSong( Song* pSong )		// NULL means no song
 {
-	m_bScrolling = false;
-
 	Sprite::TurnShadowOff();
 
 	if( pSong == NULL )					LoadFallback();
 	else if( pSong->HasBanner() )		Load( pSong->GetBannerPath() );
 	else if( PREFSMAN->m_bUseBGIfNoBanner  &&  pSong->HasBackground() )	Load( pSong->GetBackgroundPath() );
 	else								LoadFallback();
+
+	m_bScrolling = false;
 }
 
 void Banner::LoadFromGroup( CString sGroupName )
 {
-	m_bScrolling = false;
-
 	CString sGroupBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
 
 	if( sGroupName == "ALL MUSIC" )
@@ -88,17 +86,19 @@ void Banner::LoadFromGroup( CString sGroupName )
 		Load( sGroupBannerPath );
 	else
 		LoadFallback();
+
+	m_bScrolling = false;
 }
 
 void Banner::LoadFromCourse( Course* pCourse )		// NULL means no course
 {
-	m_bScrolling = false;
-
 	Sprite::TurnShadowOff();
 
 	if( pCourse == NULL )						LoadFallback();
 	else if( pCourse->m_sBannerPath != "" )		Load( pCourse->m_sBannerPath );
 	else										LoadFallback();
+
+	m_bScrolling = false;
 }
 
 void Banner::LoadFallback()
