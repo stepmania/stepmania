@@ -20,6 +20,7 @@
 #include <set>
 
 #include "arch/Threads/Threads.h"
+#include "arch/Dialog/Dialog.h"
 
 #if defined(CRASH_HANDLER)
 #if defined(_WINDOWS)
@@ -654,8 +655,12 @@ void RageSemaphore::Post()
 
 void RageSemaphore::Wait()
 {
+retry:
 	if( m_pSema->Wait() )
 		return;
+
+	if( Dialog::IsShowingDialog() )
+		goto retry;
 
 	/* We waited too long.  We're probably deadlocked, though unlike mutexes, we can't
 	 * tell which thread we're stuck on. */
