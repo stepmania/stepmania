@@ -756,7 +756,7 @@ float calc_stddev(const float *start, const float *end)
 	return dev;
 }
 
-void TrimLeft(string &str, const char *s)
+void TrimLeft(CString &str, const char *s)
 {
 	int n = 0;
 	while(n < int(str.size()) && strchr(s, str[n]))
@@ -765,7 +765,7 @@ void TrimLeft(string &str, const char *s)
 	str.erase(str.begin(), str.begin()+n);
 }
 
-void TrimRight(string &str, const char *s)
+void TrimRight(CString &str, const char *s)
 {
 	int n = str.size();
 	while(n > 0 && strchr(s, str[n-1]))

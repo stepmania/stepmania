@@ -2,6 +2,34 @@
 Fix
 /////////////////////////
 
+note coloring in graphic, NoteColor with add?
+
+remove shadow from everywhere
+
+separate credits screen
+
+handle demonstration in a more graceful way
+
+reset titlemenu timeout if button pressed
+
+new Message/Object system
+
+replace Mini -> Zoom
+
+sort ini before writing
+
+autoplay and tick icons
+
+autogen and edit icon
+
+dynamically sized NoteData
+
+replace judge window prefs with window* and WindowScale
+
+email about voodoo3 card at home
+
+BGAnimation speed with different song rates
+
 remove 4x diffuse colors
 
 change noteskin format (get rid of .colors)
@@ -53,10 +81,15 @@ I'll abbreviate a course file I did:
 
 The problem is on song 2, it still gets the 0.5x and dizzy modifiers. Shouldn't they be reset for the 2nd song? 
 
+better documentation
 
 performane issues
 
-ready, here we go closer to start (dive into the night)
+cheer on gameplay start
+
+break cheer into separate trigger
+
+ready, here we go closer to start (ButterFly)
 
 long ver balloon
 

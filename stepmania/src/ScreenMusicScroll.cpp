@@ -66,6 +66,7 @@ const CString CREDIT_LINES[] =
 	"",
 	"TESTING:",
 	"Gotetsu",
+	"spds (James Sanders)",
 	"",
 	"",
 	"",

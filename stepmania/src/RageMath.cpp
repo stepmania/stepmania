@@ -14,8 +14,13 @@
 #include "RageMath.h"
 #include "RageTypes.h"
 
+#ifdef _DEBUG
+#pragma comment(lib, "plib-1.6.0/sg_d.lib")
+#pragma comment(lib, "plib-1.6.0/ul_d.lib")
+#else
 #pragma comment(lib, "plib-1.6.0/sg.lib")
 #pragma comment(lib, "plib-1.6.0/ul.lib")
+#endif
 
 void RageVec2Normalize( RageVector2* pOut, const RageVector2* pV )
 {

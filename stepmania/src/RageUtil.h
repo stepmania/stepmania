@@ -29,10 +29,15 @@ inline int RECTCENTERX(RECT rect) { return rect.left + (rect.right-rect.left)/2;
 inline int RECTCENTERY(RECT rect) { return rect.top + (rect.bottom-rect.top)/2; }
 
 /* Common harmless mismatches. */
+#ifndef min
 inline float min(float a, int b) { return a < b? a:b; }
-inline float max(float a, int b) { return a > b? a:b; }
 inline float min(int a, float b) { return a < b? a:b; }
+#endif
+
+#ifndef max
+inline float max(float a, int b) { return a > b? a:b; }
 inline float max(int a, float b) { return a > b? a:b; }
+#endif
 
 /* Traditional defines.  Only use this if you absolutely need
  * a constant value. */
@@ -187,8 +192,8 @@ HINSTANCE GotoURL(const char *url);
 float calc_mean(const float *start, const float *end);
 float calc_stddev(const float *start, const float *end);
 
-void TrimLeft(string &str, const char *s = "\r\n\t ");
-void TrimRight(string &str, const char *s = "\r\n\t ");
+void TrimLeft(CString &str, const char *s = "\r\n\t ");
+void TrimRight(CString &str, const char *s = "\r\n\t ");
 
 /* Fix Windows breakage ... */
 #ifdef WIN32
