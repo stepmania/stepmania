@@ -18,29 +18,23 @@
 const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+10);	// MUST be same as in ScreenGameplay
 
 
-bool PrepareForDemonstration()		// always return true.
+REGISTER_SCREEN_CLASS( ScreenDemonstration );
+ScreenDemonstration::ScreenDemonstration( CString sName ) : ScreenJukebox( sName )
+{
+	LOG->Trace( "ScreenDemonstration::ScreenDemonstration()" );
+	m_bDemonstration = true;
+}
+
+void ScreenDemonstration::Init()
 {
 	GAMESTATE->m_pCurStyle = GAMEMAN->GetDemonstrationStyleForGame(GAMESTATE->m_pCurGame);
 
 	GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 
-	/* If needed, turn sound off.  We need to do this before the ScreenGameplay ctor,
-	 * since changes to sound volume aren't guaranteed to take effect if done *after*
-	 * the sound starts playing. */
+	/* If needed, turn sound off. */
 	if( !GAMESTATE->IsTimeToPlayAttractSounds() )
 		SOUNDMAN->SetPrefs( 0 );	// silent
 
-	return true;
-}
-
-REGISTER_SCREEN_CLASS( ScreenDemonstration );
-ScreenDemonstration::ScreenDemonstration( CString sName ) : ScreenJukebox( sName, PrepareForDemonstration() )	// this is a hack to get some code to execute before the ScreenGameplay constructor
-{
-	LOG->Trace( "ScreenDemonstration::ScreenDemonstration()" );
-}
-
-void ScreenDemonstration::Init()
-{
 	ScreenJukebox::Init();
 
 	if( GAMESTATE->m_pCurSong == NULL )	// we didn't find a song.
