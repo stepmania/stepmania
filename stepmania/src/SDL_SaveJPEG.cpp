@@ -111,27 +111,7 @@ static void jpeg_SDL_RW_dest(jpeg::j_compress_ptr cinfo, SDL_RWops *ctx)
 /* Save a JPEG to a file.  cjpeg.c and example.c from jpeglib were helpful in writing this. */
 void IMG_SaveJPG_RW( const SDL_Surface *surface, SDL_RWops *dest )
 {
-#define filename		file
-
-
-  /* This struct contains the JPEG compression parameters and pointers to
-   * working space (which is allocated as needed by the JPEG library).
-   * It is possible to have several such structures, representing multiple
-   * compression/decompression processes, in existence at once.  We refer
-   * to any one struct (and its associated working data) as a "JPEG object".
-   */
   struct jpeg::jpeg_compress_struct cinfo;
-  /* This struct represents a JPEG error handler.  It is declared separately
-   * because applications often want to supply a specialized error handler
-   * (see the second half of this file for an example).  But here we just
-   * take the easy way out and use the standard error handler, which will
-   * print a message on stderr and call exit() if compression fails.
-   * Note that this struct must live as long as the main JPEG parameter
-   * struct, to avoid dangling-pointer problems.
-   */
-  struct jpeg::jpeg_error_mgr jerr;
-  /* More stuff */
-  jpeg::JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */
 
   /* Step 1: allocate and initialize JPEG compression object */
 
@@ -140,7 +120,9 @@ void IMG_SaveJPG_RW( const SDL_Surface *surface, SDL_RWops *dest )
    * This routine fills in the contents of struct jerr, and returns jerr's
    * address which we place into the link field in cinfo.
    */
+  struct jpeg::jpeg_error_mgr jerr;
   cinfo.err = jpeg::jpeg_std_error(&jerr);
+
   /* Now we can initialize the JPEG compression object. */
   jpeg::jpeg_CreateCompress(&cinfo, JPEG_LIB_VERSION, \
                         (size_t) sizeof(struct jpeg::jpeg_compress_struct));
@@ -185,7 +167,7 @@ void IMG_SaveJPG_RW( const SDL_Surface *surface, SDL_RWops *dest )
    * To keep things simple, we pass one scanline per call; you can pass
    * more if you wish, though.
    */
-  int row_stride = surface->pitch;	/* JSAMPLEs per row in image_buffer */
+  const int row_stride = surface->pitch;	/* JSAMPLEs per row in image_buffer */
 
   while( cinfo.next_scanline < cinfo.image_height )
   {
@@ -193,8 +175,8 @@ void IMG_SaveJPG_RW( const SDL_Surface *surface, SDL_RWops *dest )
      * Here the array is only one element long, but you could pass
      * more than one scanline at a time if that's more convenient.
      */
-    row_pointer[0] = & ((jpeg::JSAMPLE*)surface->pixels)[cinfo.next_scanline * row_stride];
-    (void) jpeg::jpeg_write_scanlines(&cinfo, row_pointer, 1);
+    jpeg::JSAMPROW row_pointer = & ((jpeg::JSAMPLE*)surface->pixels)[cinfo.next_scanline * row_stride];
+    jpeg::jpeg_write_scanlines(&cinfo, &row_pointer, 1);
   }
 
   /* Step 6: Finish compression */
