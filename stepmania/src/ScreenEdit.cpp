@@ -82,6 +82,7 @@ const ScreenMessage SM_BackFromAreaMenu				= (ScreenMessage)(SM_User+2);
 const ScreenMessage SM_BackFromEditNotesStatistics	= (ScreenMessage)(SM_User+3);
 const ScreenMessage SM_BackFromEditOptions			= (ScreenMessage)(SM_User+4);
 const ScreenMessage SM_BackFromEditSongInfo			= (ScreenMessage)(SM_User+5);
+const ScreenMessage SM_BackFromBGChange				= (ScreenMessage)(SM_User+6);
 
 
 const CString HELP_TEXT = 
@@ -95,102 +96,106 @@ const CString HELP_TEXT =
 	"F1:\n     Show\n     keyboard\n     shortcuts\n";
 
 
-MiniMenuDefinition g_KeyboardShortcuts =
-{
+
+#define E	"                                "	// CHAR[32]
+#define OPTION_NAME_SIZE  sizeof(E)
+#define THIRTY_ES	E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E		// MAX_OPTIONS_PER_LINE == 30
+
+
+Menu g_KeyboardShortcuts
+(
 	"Keyboard Shortcuts",
-	9,
-	{
-		{ "PgUp/PgDn: jump measure",						false, 1, 0, {""} },
-		{ "Home/End: jump to first/last beat",				false, 1, 0, {""} },
-		{ "Ctrl + Up/Down: Change zoom",					false, 1, 0, {""} },
-		{ "Shift + Up/Down: Drag area marker",				false, 1, 0, {""} },
-		{ "P: Play selection",								false, 1, 0, {""} },
-		{ "Ctrl + P: Play whole song",						false, 1, 0, {""} },
-		{ "F7/F8: Decrease/increase BPM at cur beat",		false, 1, 0, {""} },
-		{ "F9/F10: Decrease/increase stop at cur beat",		false, 1, 0, {""} },
-		{ "F11/F12: Decrease/increase music offset",		false, 1, 0, {""} },
+	MenuRow( "PgUp/PgDn: jump measure",							false ),
+	MenuRow( "Home/End: jump to first/last beat",				false ),
+	MenuRow( "Ctrl + Up/Down: Change zoom",						false ),
+	MenuRow( "Shift + Up/Down: Drag area marker",				false ),
+	MenuRow( "P: Play selection",								false ),
+	MenuRow( "Ctrl + P: Play whole song",						false ),
+	MenuRow( "F7/F8: Decrease/increase BPM at cur beat",		false ),
+	MenuRow( "F9/F10: Decrease/increase stop at cur beat",		false ),
+	MenuRow( "F11/F12: Decrease/increase music offset",			false ),
 		/* XXX: This would be better as a single submenu, to let people tweak
 		 * and play the sample several times (without having to re-enter the
 		 * menu each time), so it doesn't use a whole bunch of hotkeys. */
-		{ "[ and ]: Decrease/increase sample music start",	false, 1, 0, {""} },
-		{ "{ and }: Decrease/increase sample music length",	false, 1, 0, {""} },
-		{ "M: Play sample music",							false, 1, 0, {""} },
-	}
-};
+	MenuRow( "[ and ]: Decrease/increase sample music start",	false ),
+	MenuRow( "{ and }: Decrease/increase sample music length",	false ),
+	MenuRow( "M: Play sample music",							false )
+);
 
-MiniMenuDefinition g_MainMenu =
-{
+Menu g_MainMenu
+(
 	"Main Menu",
-	ScreenEdit::NUM_MAIN_MENU_CHOICES,
-	{
-		{ "Edit Notes Statistics",	true, 1, 0, {""} },
-		{ "Play Whole Song",		true, 1, 0, {""} },
-		{ "Save",					true, 1, 0, {""} },
-		{ "Player Options",			true, 1, 0, {""} },
-		{ "Song Options",			true, 1, 0, {""} },
-		{ "Edit Song Info",			true, 1, 0, {""} },
-		{ "Add/Edit BPM Change",	true, 1, 0, {""} },
-		{ "Add/Edit Stop",			true, 1, 0, {""} },
-		{ "Add/Edit BG Change",		true, 1, 0, {""} },
-		{ "Play preview music",		true, 1, 0, {""} },
-		{ "Exit",					true, 1, 0, {""} },
-	}
-};
+	MenuRow( "Edit Notes Statistics",	true ),
+	MenuRow( "Play Whole Song",			true ),
+	MenuRow( "Save",					true ),
+	MenuRow( "Player Options",			true ),
+	MenuRow( "Song Options",			true ),
+	MenuRow( "Edit Song Info",			true ),
+	MenuRow( "Add/Edit BPM Change",		true ),
+	MenuRow( "Add/Edit Stop",			true ),
+	MenuRow( "Add/Edit BG Change",		true ),
+	MenuRow( "Play preview music",		true ),
+	MenuRow( "Exit",					true )
+);
 
-MiniMenuDefinition g_AreaMenu =
-{
+Menu g_AreaMenu
+(
 	"Area Menu",
-	ScreenEdit::NUM_AREA_MENU_CHOICES,
-	{
-		{ "Cut",					true, 1, 0, {""} },
-		{ "Copy",					true, 1, 0, {""} },
-		{ "Paste at current beat",	true, 1, 0, {""} },
-		{ "Paste at begin marker",	true, 1, 0, {""} },
-		{ "Clear",					true, 1, 0, {""} },
-		{ "Quantize",				true, NUM_NOTE_TYPES, 0, {"4TH","8TH","12TH","16TH","24TH","32ND"} },
-		{ "Turn",					true, ScreenEdit::NUM_TURN_TYPES, 0, {"Left","Right","Mirror","Shuffle","Super Shuffle"} },
-		{ "Transform",				true, ScreenEdit::NUM_TRANSFORM_TYPES, 0, {"Little","Wide","Big","Quick","Skippy"} },
-		{ "Alter",					true, ScreenEdit::NUM_ALTER_TYPES, 0, {"Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Shift Left","Shift Right"} },
-		{ "Play selection",			true, 1, 0, {""} },
-		{ "Record in selection",	true, 1, 0, {""} },
-		{ "Insert blank beat and shift down", true, 1, 0, {""} },
-		{ "Delete blank beat and shift up", true, 1, 0, {""} },
-	}
-};
+	MenuRow( "Cut",							true ),
+	MenuRow( "Copy",						true ),
+	MenuRow( "Paste at current beat",		true ),
+	MenuRow( "Paste at begin marker",		true ),
+	MenuRow( "Clear",						true ),
+	MenuRow( "Quantize",					true, 0, "4TH","8TH","12TH","16TH","24TH","32ND" ),
+	MenuRow( "Turn",						true, 0, "Left","Right","Mirror","Shuffle","Super Shuffle" ),
+	MenuRow( "Transform",					true, 0, "Little","Wide","Big","Quick","Skippy" ),
+	MenuRow( "Alter",						true, 0, "Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Shift Left","Shift Right" ),
+	MenuRow( "Play selection",				true ),
+	MenuRow( "Record in selection",			true ),
+	MenuRow( "Insert beat and shift down",	true ),
+	MenuRow( "Delete beat and shift up",	true )
+);
 
 
-MiniMenuDefinition g_EditNotesStatistics =
-{
+Menu g_EditNotesStatistics
+(
 	"Statistics",
-	ScreenEdit::NUM_EDIT_NOTES_STATISTICS_CHOICES,
-	{
-		{ "Difficulty",	true, 5, 0, {"BEGINNER","EASY","MEDIUM","HARD","CHALLENGE"} },
-		{ "Meter",		true, 11, 0, {"1","2","3","4","5","6","7","8","9","10","11"} },
-		{ "Description",true, 1, 0, {""} },
-		{ "Tap Notes",	false, 1, 0, {""} },
-		{ "Hold Notes",	false, 1, 0, {""} },
-		{ "Stream",		false, 1, 0, {""} },
-		{ "Voltage",	false, 1, 0, {""} },
-		{ "Air",		false, 1, 0, {""} },
-		{ "Freeze",		false, 1, 0, {""} },
-		{ "Chaos",		false, 1, 0, {""} },
-	}
-};
+	MenuRow( "Difficulty",	true, 0, "BEGINNER","EASY","MEDIUM","HARD","CHALLENGE" ),
+	MenuRow( "Meter",		true, 0, "1","2","3","4","5","6","7","8","9","10","11" ),
+	MenuRow( "Description",	true ),
+	MenuRow( "Tap Notes",	false ),
+	MenuRow( "Hold Notes",	false ),
+	MenuRow( "Stream",		false ),
+	MenuRow( "Voltage",		false ),
+	MenuRow( "Air",			false ),
+	MenuRow( "Freeze",		false ),
+	MenuRow( "Chaos",		false )
+);
 
 
-MiniMenuDefinition g_EditSongInfo =
-{
+Menu g_EditSongInfo
+(
 	"Edit Song Info",
-	ScreenEdit::NUM_EDIT_SONG_INFO_CHOICES,
-	{
-		{ "Main title",					true, 1, 0, {""} },
-		{ "Sub title",					true, 1, 0, {""} },
-		{ "Artist",						true, 1, 0, {""} },
-		{ "Main title transliteration",	true, 1, 0, {""} },
-		{ "Sub title transliteration",	true, 1, 0, {""} },
-		{ "Artist transliteration",		true, 1, 0, {""} },
-	}
-};
+	MenuRow( "Main title",					true ),
+	MenuRow( "Sub title",					true ),
+	MenuRow( "Artist",						true ),
+	MenuRow( "Main title transliteration",	true ),
+	MenuRow( "Sub title transliteration",	true ),
+	MenuRow( "Artist transliteration",		true )
+);
+
+
+Menu g_BGChange
+(
+	"Background Change",
+	MenuRow( "Add Change to random",				true ),
+	MenuRow( "Add Change to song BGAnimation",		true ),
+	MenuRow( "Add Change to song Movie",			true ),
+	MenuRow( "Add Change to global Random Movie",	true ),
+	MenuRow( "Add Change to global BGAnimation",	true ),
+	MenuRow( "Add Change to global Visualization",	true ),
+	MenuRow( "Remove Change",						true )
+);
 
 
 ScreenEdit::ScreenEdit()
@@ -761,17 +766,17 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		{
 			// update enabled/disabled in g_AreaMenu
 			bool bAreaSelected = m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1;
-			g_AreaMenu.lines[cut].bEnabled = bAreaSelected;
-			g_AreaMenu.lines[copy].bEnabled = bAreaSelected;
-			g_AreaMenu.lines[paste_at_current_beat].bEnabled = this->m_Clipboard.GetLastBeat() != 0;
-			g_AreaMenu.lines[paste_at_begin_marker].bEnabled = this->m_Clipboard.GetLastBeat() != 0 && m_NoteFieldEdit.m_fBeginMarker!=-1;
-			g_AreaMenu.lines[clear].bEnabled = bAreaSelected;
-			g_AreaMenu.lines[quantize].bEnabled = bAreaSelected;
-			g_AreaMenu.lines[turn].bEnabled = bAreaSelected;
-			g_AreaMenu.lines[transform].bEnabled = bAreaSelected;
-			g_AreaMenu.lines[alter].bEnabled = bAreaSelected;
-			g_AreaMenu.lines[play].bEnabled = bAreaSelected;
-			g_AreaMenu.lines[record].bEnabled = bAreaSelected;
+			g_AreaMenu.rows[cut].enabled = bAreaSelected;
+			g_AreaMenu.rows[copy].enabled = bAreaSelected;
+			g_AreaMenu.rows[paste_at_current_beat].enabled = this->m_Clipboard.GetLastBeat() != 0;
+			g_AreaMenu.rows[paste_at_begin_marker].enabled = this->m_Clipboard.GetLastBeat() != 0 && m_NoteFieldEdit.m_fBeginMarker!=-1;
+			g_AreaMenu.rows[clear].enabled = bAreaSelected;
+			g_AreaMenu.rows[quantize].enabled = bAreaSelected;
+			g_AreaMenu.rows[turn].enabled = bAreaSelected;
+			g_AreaMenu.rows[transform].enabled = bAreaSelected;
+			g_AreaMenu.rows[alter].enabled = bAreaSelected;
+			g_AreaMenu.rows[play].enabled = bAreaSelected;
+			g_AreaMenu.rows[record].enabled = bAreaSelected;
 			SCREENMAN->MiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
 		}
 		break;
@@ -1056,6 +1061,9 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BackFromEditSongInfo:
 		HandleEditSongInfoChoice( (EditSongInfoChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
 		break;
+	case SM_BackFromBGChange:
+		HandleBGChangeChoice( (BGChangeChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
+		break;
 	case SM_RegainingFocus:
 		// coming back from PlayerOptions or SongOptions
 		m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
@@ -1155,16 +1163,16 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
 				float fMusicSeconds = m_soundMusic.GetLengthSeconds();
 
-				g_EditNotesStatistics.lines[difficulty].iDefaultOption = pNotes->GetDifficulty();
-				g_EditNotesStatistics.lines[meter].iDefaultOption = pNotes->GetMeter()-1;
-				strcpy( g_EditNotesStatistics.lines[description].szOptionsText[0], pNotes->GetDescription() );
-				strcpy( g_EditNotesStatistics.lines[tap_notes].szOptionsText[0], ssprintf("%d", m_NoteFieldEdit.GetNumTapNotes()) );
-				strcpy( g_EditNotesStatistics.lines[hold_notes].szOptionsText[0], ssprintf("%d", m_NoteFieldEdit.GetNumHoldNotes()) );
-				strcpy( g_EditNotesStatistics.lines[stream].szOptionsText[0], ssprintf("%f", NoteDataUtil::GetStreamRadarValue(m_NoteFieldEdit,fMusicSeconds)) );
-				strcpy( g_EditNotesStatistics.lines[voltage].szOptionsText[0], ssprintf("%f", NoteDataUtil::GetVoltageRadarValue(m_NoteFieldEdit,fMusicSeconds)) );
-				strcpy( g_EditNotesStatistics.lines[air].szOptionsText[0], ssprintf("%f", NoteDataUtil::GetAirRadarValue(m_NoteFieldEdit,fMusicSeconds)) );
-				strcpy( g_EditNotesStatistics.lines[freeze].szOptionsText[0], ssprintf("%f", NoteDataUtil::GetFreezeRadarValue(m_NoteFieldEdit,fMusicSeconds)) );
-				strcpy( g_EditNotesStatistics.lines[chaos].szOptionsText[0], ssprintf("%f", NoteDataUtil::GetChaosRadarValue(m_NoteFieldEdit,fMusicSeconds)) );
+				g_EditNotesStatistics.rows[difficulty].defaultChoice = pNotes->GetDifficulty();
+				g_EditNotesStatistics.rows[meter].defaultChoice = pNotes->GetMeter()-1;
+				g_EditNotesStatistics.rows[description].choices.resize(1);	g_EditNotesStatistics.rows[description].choices[0] = pNotes->GetDescription();
+				g_EditNotesStatistics.rows[tap_notes].choices.resize(1);	g_EditNotesStatistics.rows[tap_notes].choices[0] = ssprintf("%d", m_NoteFieldEdit.GetNumTapNotes());
+				g_EditNotesStatistics.rows[hold_notes].choices.resize(1);	g_EditNotesStatistics.rows[hold_notes].choices[0] = ssprintf("%d", m_NoteFieldEdit.GetNumHoldNotes());
+				g_EditNotesStatistics.rows[stream].choices.resize(1);		g_EditNotesStatistics.rows[stream].choices[0] = ssprintf("%f", NoteDataUtil::GetStreamRadarValue(m_NoteFieldEdit,fMusicSeconds));
+				g_EditNotesStatistics.rows[voltage].choices.resize(1);		g_EditNotesStatistics.rows[voltage].choices[0] = ssprintf("%f", NoteDataUtil::GetVoltageRadarValue(m_NoteFieldEdit,fMusicSeconds));
+				g_EditNotesStatistics.rows[air].choices.resize(1);			g_EditNotesStatistics.rows[air].choices[0] = ssprintf("%f", NoteDataUtil::GetAirRadarValue(m_NoteFieldEdit,fMusicSeconds));
+				g_EditNotesStatistics.rows[freeze].choices.resize(1);		g_EditNotesStatistics.rows[freeze].choices[0] = ssprintf("%f", NoteDataUtil::GetFreezeRadarValue(m_NoteFieldEdit,fMusicSeconds));
+				g_EditNotesStatistics.rows[chaos].choices.resize(1);		g_EditNotesStatistics.rows[chaos].choices[0] = ssprintf("%f", NoteDataUtil::GetChaosRadarValue(m_NoteFieldEdit,fMusicSeconds));
 				SCREENMAN->MiniMenu( &g_EditNotesStatistics, SM_BackFromEditNotesStatistics );
 			}
 			break;
@@ -1197,12 +1205,12 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 		case edit_song_info:
 			{
 				Song* pSong = GAMESTATE->m_pCurSong;
-				strcpy( g_EditSongInfo.lines[main_title].szOptionsText[0], pSong->m_sMainTitle );
-				strcpy( g_EditSongInfo.lines[sub_title].szOptionsText[0], pSong->m_sSubTitle );
-				strcpy( g_EditSongInfo.lines[artist].szOptionsText[0], pSong->m_sArtist );
-				strcpy( g_EditSongInfo.lines[main_title_transliteration].szOptionsText[0], pSong->m_sMainTitleTranslit );
-				strcpy( g_EditSongInfo.lines[sub_title_transliteration].szOptionsText[0], pSong->m_sSubTitleTranslit );
-				strcpy( g_EditSongInfo.lines[artist_transliteration].szOptionsText[0], pSong->m_sArtistTranslit );
+				g_EditSongInfo.rows[main_title].choices.resize(1);					g_EditSongInfo.rows[main_title].choices[0] = pSong->m_sMainTitle;
+				g_EditSongInfo.rows[sub_title].choices.resize(1);					g_EditSongInfo.rows[sub_title].choices[0] = pSong->m_sSubTitle;
+				g_EditSongInfo.rows[artist].choices.resize(1);						g_EditSongInfo.rows[artist].choices[0] = pSong->m_sArtist;
+				g_EditSongInfo.rows[main_title_transliteration].choices.resize(1);	g_EditSongInfo.rows[main_title_transliteration].choices[0] = pSong->m_sMainTitleTranslit;
+				g_EditSongInfo.rows[sub_title_transliteration].choices.resize(1);	g_EditSongInfo.rows[sub_title_transliteration].choices[0] = pSong->m_sSubTitleTranslit;
+				g_EditSongInfo.rows[artist_transliteration].choices.resize(1);		g_EditSongInfo.rows[artist_transliteration].choices[0] = pSong->m_sArtistTranslit;
 
 				SCREENMAN->MiniMenu( &g_EditSongInfo, SM_BackFromEditSongInfo );
 			}
@@ -1213,17 +1221,50 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			break;
 		case edit_bg_change:
 			{
-				CString sOldBackground;
-				unsigned i;
-				for( i=0; i<m_pSong->m_BackgroundChanges.size(); i++ )
-				{
-					if( m_pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
-						break;
-				}
-				if( i != m_pSong->m_BackgroundChanges.size() )	// there is already a BGChange here
-					sOldBackground = m_pSong->m_BackgroundChanges[i].m_sBGName;
+				//
+				// Fill in option names
+				//
+				g_BGChange.rows[add_song_bganimation].choices.clear();
+				GetDirListing( m_pSong->GetSongDir()+"/*.*", g_BGChange.rows[add_song_bganimation].choices, true );
 
-				SCREENMAN->TextEntry( SM_None, "Type a background name.\nPress Enter to keep,\nEscape to cancel.\nEnter an empty string to remove\nthe Background Change.", sOldBackground, AddBGChange, NULL );
+				g_BGChange.rows[add_song_movie].choices.clear();
+				GetDirListing( m_pSong->GetSongDir()+"/*.avi", g_BGChange.rows[add_song_movie].choices, false );
+				GetDirListing( m_pSong->GetSongDir()+"/*.mpg", g_BGChange.rows[add_song_movie].choices, false );
+				GetDirListing( m_pSong->GetSongDir()+"/*.mpeg", g_BGChange.rows[add_song_movie].choices, false );
+
+				g_BGChange.rows[add_global_random_movie].choices.clear();
+				GetDirListing( m_pSong->GetSongDir()+"/*.avi", g_BGChange.rows[add_global_random_movie].choices, false );
+				GetDirListing( m_pSong->GetSongDir()+"/*.mpg", g_BGChange.rows[add_global_random_movie].choices, false );
+				GetDirListing( m_pSong->GetSongDir()+"/*.mpeg", g_BGChange.rows[add_global_random_movie].choices, false );
+
+				g_BGChange.rows[add_global_bganimation].choices.clear();
+				GetDirListing( m_pSong->GetSongDir()+"/*.*", g_BGChange.rows[add_global_bganimation].choices, true );
+
+				g_BGChange.rows[add_global_visualization].choices.clear();
+				GetDirListing( m_pSong->GetSongDir()+"/*.avi", g_BGChange.rows[add_global_visualization].choices, false );
+				GetDirListing( m_pSong->GetSongDir()+"/*.mpg", g_BGChange.rows[add_global_visualization].choices, false );
+				GetDirListing( m_pSong->GetSongDir()+"/*.mpeg", g_BGChange.rows[add_global_visualization].choices, false );
+
+
+				//
+				// Fill in line enabled/disabled
+				//
+				bool bAlreadyBGChangeHere = false;
+				for( unsigned i=0; i<m_pSong->m_BackgroundChanges.size(); i++ )
+					if( m_pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+						bAlreadyBGChangeHere = true;
+
+				g_BGChange.rows[add_random].enabled = true;
+				g_BGChange.rows[add_song_bganimation].enabled = g_BGChange.rows[add_song_bganimation].choices.size() > 0;
+				g_BGChange.rows[add_song_movie].enabled = g_BGChange.rows[add_global_random_movie].choices.size() > 0;
+				g_BGChange.rows[add_global_random_movie].enabled = g_BGChange.rows[add_global_random_movie].choices.size() > 0;
+				g_BGChange.rows[add_global_bganimation].enabled = g_BGChange.rows[add_global_bganimation].choices.size() > 0;
+				g_BGChange.rows[add_global_visualization].enabled = g_BGChange.rows[add_global_visualization].choices.size() > 0;
+				g_BGChange.rows[delete_change].enabled = bAlreadyBGChangeHere;
+					
+
+
+				SCREENMAN->MiniMenu( &g_BGChange, SM_BackFromBGChange );
 			}
 			break;
 		case play_preview_music:
@@ -1463,6 +1504,38 @@ void ScreenEdit::HandleEditSongInfoChoice( EditSongInfoChoice c, int* iAnswers )
 		SCREENMAN->TextEntry( SM_None, "Edit sub title transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sSubTitleTranslit, ChangeSubTitleTranslit, NULL );
 		break;
 	case artist_transliteration:
+		SCREENMAN->TextEntry( SM_None, "Edit artist transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtistTranslit, ChangeArtistTranslit, NULL );
+		break;
+	default:
+		ASSERT(0);
+	};
+}
+
+void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, int* iAnswers )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+
+	switch( c )
+	{
+	case add_random:
+		SCREENMAN->TextEntry( SM_None, "Edit main title.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sMainTitle, ChangeMainTitle, NULL );
+		break;
+	case add_song_bganimation:
+		SCREENMAN->TextEntry( SM_None, "Edit sub title.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sSubTitle, ChangeSubTitle, NULL );
+		break;
+	case add_song_movie:
+		SCREENMAN->TextEntry( SM_None, "Edit artist.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtist, ChangeArtist, NULL );
+		break;
+	case add_global_random_movie:
+		SCREENMAN->TextEntry( SM_None, "Edit main title transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sMainTitleTranslit, ChangeMainTitleTranslit, NULL );
+		break;
+	case add_global_bganimation:
+		SCREENMAN->TextEntry( SM_None, "Edit sub title transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sSubTitleTranslit, ChangeSubTitleTranslit, NULL );
+		break;
+	case add_global_visualization:
+		SCREENMAN->TextEntry( SM_None, "Edit artist transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtistTranslit, ChangeArtistTranslit, NULL );
+		break;
+	case delete_change:
 		SCREENMAN->TextEntry( SM_None, "Edit artist transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtistTranslit, ChangeArtistTranslit, NULL );
 		break;
 	default:

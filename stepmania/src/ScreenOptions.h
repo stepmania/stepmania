@@ -26,13 +26,17 @@
 const unsigned MAX_OPTION_LINES = 20;
 const unsigned MAX_OPTIONS_PER_LINE = 20;
 
+struct OptionRow
+{
+	CString name;
+	vector<CString> choices;
 
-// used to pass menu info into this class
-struct OptionRowData {
-	char szTitle[40];
-	unsigned iNumOptions;
-	char szOptionsText[MAX_OPTIONS_PER_LINE][80];
-	char szExplanation[2048];
+	OptionRow( CString n, CString c0="", CString c1="", CString c2="", CString c3="", CString c4="", CString c5="", CString c6="", CString c7="", CString c8="", CString c9="", CString c10="", CString c11="", CString c12="", CString c13="", CString c14="" )
+	{
+		name = n;
+#define PUSH( c )	if(c!="") choices.push_back(c);
+		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);
+	}
 };
 
 enum InputMode 
@@ -46,7 +50,7 @@ class ScreenOptions : public Screen
 {
 public:
 	ScreenOptions( CString sClassName, bool bEnableTimer );
-	void Init( InputMode im, OptionRowData OptionRowData[], int iNumOptionLines, bool bUseIcons );
+	void Init( InputMode im, OptionRow OptionRow[], int iNumOptionLines, bool bUseIcons, bool bLoadExplanations );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -79,10 +83,12 @@ protected:
 	void MenuUp( PlayerNumber pn );
 	void MenuDown( PlayerNumber pn );
 
+	CString			m_sClassName;
 	InputMode		m_InputMode;
 	bool			m_bUseIcons;
+	bool			m_bLoadExplanations;
 
-	OptionRowData*	m_OptionRowData;
+	OptionRow*	m_OptionRow;
 	int				m_iNumOptionRows;
 
 	MenuElements	m_Menu;

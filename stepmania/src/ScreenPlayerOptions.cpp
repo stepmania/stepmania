@@ -34,17 +34,17 @@ enum {
 	PO_DARK,
 	NUM_PLAYER_OPTIONS_LINES
 };
-OptionRowData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
-	{ "Speed",			11, {"x0.25","x0.5","x0.75","x1","x1.5","x2","x3","x4","x5","x8", "x12"} },	
-	{ "Acceler\n-ation",6, {"OFF","BOOST","LAND","WAVE","EXPAND","BOOMERANG"} },	
-	{ "Effect",			7, {"OFF","DRUNK","DIZZY","SPACE","MINI","FLIP","TORNADO"} },	
-	{ "Appear\n-ance",	5, {"VISIBLE","HIDDEN","SUDDEN","STEALTH","BLINK"} },	
-	{ "Turn",			6, {"OFF","MIRROR","LEFT","RIGHT","SHUFFLE","SUPER SHUFFLE"} },	
-	{ "Trans\n-form",	6, {"OFF","LITTLE","WIDE","BIG","QUICK","SKIPPY"} },	
-	{ "Scroll",			2, {"STANDARD","REVERSE"} },	
-	{ "Note\nSkin",		0, {""} },	
-	{ "Holds",			2, {"OFF","ON"} },	
-	{ "Dark",			2, {"OFF","ON"} },	
+OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
+	OptionRow( "Speed",				"x0.25","x0.5","x0.75","x1","x1.5","x2","x3","x4","x5","x8", "x12" ),	
+	OptionRow( "Acceler\n-ation",	"OFF","BOOST","LAND","WAVE","EXPAND","BOOMERANG" ),	
+	OptionRow( "Effect",			"OFF","DRUNK","DIZZY","SPACE","MINI","FLIP","TORNADO" ),	
+	OptionRow( "Appear\n-ance",		"VISIBLE","HIDDEN","SUDDEN","STEALTH","BLINK" ),	
+	OptionRow( "Turn",				"OFF","MIRROR","LEFT","RIGHT","SHUFFLE","SUPER SHUFFLE" ),	
+	OptionRow( "Trans\n-form",		"OFF","LITTLE","WIDE","BIG","QUICK","SKIPPY" ),	
+	OptionRow( "Scroll",			"STANDARD","REVERSE" ),	
+	OptionRow( "Note\nSkin",		"" ),	
+	OptionRow( "Holds",				"OFF","ON" ),	
+	OptionRow( "Dark",				"OFF","ON" ),	
 };
 
 
@@ -57,7 +57,7 @@ ScreenPlayerOptions::ScreenPlayerOptions() :
 		INPUTMODE_PLAYERS, 
 		g_PlayerOptionsLines, 
 		NUM_PLAYER_OPTIONS_LINES,
-		true );
+		true, false );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
 
@@ -81,12 +81,12 @@ void ScreenPlayerOptions::ImportOptions()
 	CStringArray arraySkinNames;
 	NOTESKIN->GetNoteSkinNames( arraySkinNames );
 
-	m_OptionRowData[PO_NOTE_SKIN].iNumOptions	=	arraySkinNames.size(); 
+	m_OptionRow[PO_NOTE_SKIN].choices.clear();
 
 	for( unsigned i=0; i<arraySkinNames.size(); i++ )
 	{
 		arraySkinNames[i].MakeUpper();
-		strcpy( m_OptionRowData[PO_NOTE_SKIN].szOptionsText[i], arraySkinNames[i] ); 
+		m_OptionRow[PO_NOTE_SKIN].choices.push_back( arraySkinNames[i] ); 
 	}
 
 
@@ -117,9 +117,9 @@ void ScreenPlayerOptions::ImportOptions()
 
 		// highlight currently selected skin
 		m_iSelectedOption[p][PO_NOTE_SKIN] = -1;
-		for( unsigned j=0; j<m_OptionRowData[PO_NOTE_SKIN].iNumOptions; j++ )
+		for( unsigned j=0; j<m_OptionRow[PO_NOTE_SKIN].choices.size(); j++ )
 		{
-			if( 0==stricmp(m_OptionRowData[PO_NOTE_SKIN].szOptionsText[j], NOTESKIN->GetCurNoteSkinName((PlayerNumber)p)) )
+			if( 0==stricmp(m_OptionRow[PO_NOTE_SKIN].choices[j], NOTESKIN->GetCurNoteSkinName((PlayerNumber)p)) )
 			{
 				m_iSelectedOption[p][PO_NOTE_SKIN] = j;
 				break;
@@ -172,7 +172,7 @@ void ScreenPlayerOptions::ExportOptions()
 
 
 		int iSelectedSkin = m_iSelectedOption[p][PO_NOTE_SKIN];
-		CString sNewSkin = m_OptionRowData[PO_NOTE_SKIN].szOptionsText[iSelectedSkin];
+		CString sNewSkin = m_OptionRow[PO_NOTE_SKIN].choices[iSelectedSkin];
 		NOTESKIN->SwitchNoteSkin( (PlayerNumber)p, sNewSkin );
 
 

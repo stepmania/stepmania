@@ -22,7 +22,7 @@
 #include "MenuInput.h"
 #include "StyleInput.h"
 class Screen;
-struct MiniMenuDefinition;
+struct Menu;
 class ScreenSystemLayer;
 
 
@@ -46,7 +46,7 @@ public:
 	void AddNewScreenToTop( CString sClassName );
 	void Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo = false, bool bDefaultAnswer = false, void(*OnYes)() = NULL, void(*OnNo)() = NULL );
 	void TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL );
-	void MiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel = SM_None );
+	void MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel = SM_None );
 	void PopTopScreen( ScreenMessage SM = SM_RegainingFocus );
 	void SystemMessage( CString sMessage );
 

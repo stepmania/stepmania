@@ -35,13 +35,13 @@ enum {
 
 /* Hmm.  Ignore JoyAxes and Back Delayed probably belong in "key/joy config",
  * preferably alongside button configuration. */
-OptionRowData g_InputOptionsLines[NUM_INPUT_OPTIONS_LINES] = {
-	{ "Ignore\nJoy Axes",	2, {"OFF","ON (for NTPad or DirectPad)"} },
-	{ "Menu\nButtons",		2, {"USE GAMEPLAY BUTTONS","ONLY DEDICATED BUTTONS"} },
-	{ "AutoPlay",			2, {"OFF","ON"} },
-	{ "Back\nDelayed",		2, {"INSTANT","HOLD"} },
-	{ "Options\nNavigation",2, {"SM STYLE","ARCADE STYLE"} },
-	{ "Wheel\nSpeed",		4, {"SLOW","NORMAL","FAST","REALLY FAST"} },
+OptionRow g_InputOptionsLines[NUM_INPUT_OPTIONS_LINES] = {
+	OptionRow( "Ignore\nJoy Axes",		"OFF","ON (for NTPad or DirectPad)" ),
+	OptionRow( "Menu\nButtons",			"USE GAMEPLAY BUTTONS","ONLY DEDICATED BUTTONS" ),
+	OptionRow( "AutoPlay",				"OFF","ON" ),
+	OptionRow( "Back\nDelayed",			"INSTANT","HOLD" ),
+	OptionRow( "Options\nNavigation",	"SM STYLE","ARCADE STYLE" ),
+	OptionRow( "Wheel\nSpeed",			"SLOW","NORMAL","FAST","REALLY FAST" ),
 };
 
 ScreenInputOptions::ScreenInputOptions() :
@@ -49,20 +49,11 @@ ScreenInputOptions::ScreenInputOptions() :
 {
 	LOG->Trace( "ScreenInputOptions::ScreenInputOptions()" );
 
-	// fill g_InputOptionsLines with explanation text
-	for( int i=0; i<NUM_INPUT_OPTIONS_LINES; i++ )
-	{
-		CString sLineName = g_InputOptionsLines[i].szTitle;
-		sLineName.Replace("\n","");
-		sLineName.Replace(" ","");
-		strcpy( g_InputOptionsLines[i].szExplanation, THEME->GetMetric("ScreenInputOptions",sLineName) );
-	}
-
 	Init( 
 		INPUTMODE_BOTH, 
 		g_InputOptionsLines, 
 		NUM_INPUT_OPTIONS_LINES,
-		false );
+		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenInputOptions music") );

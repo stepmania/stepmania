@@ -38,14 +38,14 @@ enum {
 	NUM_OPTIONS_MENU_LINES
 };
 
-OptionRowData g_OptionsMenuLines[NUM_OPTIONS_MENU_LINES] = {
-	{ "",	1, {"Appearance Options"} },
-	{ "",	1, {"Config Key/Joy Mappings"} },
-	{ "",	1, {"Input Options"} },
-	{ "",	1, {"Gameplay Options"} },
-	{ "",	1, {"Graphic Options"} },
-	{ "",	1, {"Machine Options"} },
-	{ "",	1, {"Sound Options"} },
+OptionRow g_OptionsMenuLines[NUM_OPTIONS_MENU_LINES] = {
+	OptionRow( "",	"Appearance Options" ),
+	OptionRow( "",	"Config Key/Joy Mappings" ),
+	OptionRow( "",	"Input Options" ),
+	OptionRow( "",	"Gameplay Options" ),
+	OptionRow( "",	"Graphic Options" ),
+	OptionRow( "",	"Machine Options" ),
+	OptionRow( "",	"Sound Options" ),
 };
 
 ScreenOptionsMenu::ScreenOptionsMenu() :
@@ -53,20 +53,11 @@ ScreenOptionsMenu::ScreenOptionsMenu() :
 {
 	LOG->Trace( "ScreenOptionsMenu::ScreenOptionsMenu()" );
 
-	// fill g_InputOptionsLines with explanation text
-	for( int i=0; i<NUM_OPTIONS_MENU_LINES; i++ )
-	{
-		CString sLineName = g_OptionsMenuLines[i].szOptionsText[0];
-		sLineName.Replace("\n","");
-		sLineName.Replace(" ","");
-		strcpy( g_OptionsMenuLines[i].szExplanation, THEME->GetMetric("ScreenOptionsMenu",sLineName) );
-	}
-
 	Init( 
 		INPUTMODE_BOTH, 
 		g_OptionsMenuLines, 
 		NUM_OPTIONS_MENU_LINES,
-		false );
+		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenOptionsMenu music") );

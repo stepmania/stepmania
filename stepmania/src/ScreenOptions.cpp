@@ -45,6 +45,8 @@ ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer )
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
 
+	m_sClassName = sClassName;
+
 	m_SoundChangeCol.Load( THEME->GetPathTo("Sounds","ScreenOptions change") );
 	m_SoundNextRow.Load( THEME->GetPathTo("Sounds","ScreenOptions next") );
 	m_SoundPrevRow.Load( THEME->GetPathTo("Sounds","ScreenOptions prev") );
@@ -74,15 +76,16 @@ ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer )
 	memset(&m_OptionDim, 0, sizeof(m_OptionDim));
 }
 
-void ScreenOptions::Init( InputMode im, OptionRowData OptionRowData[], int iNumOptionLines, bool bUseIcons )
+void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLines, bool bUseIcons, bool bLoadExplanations )
 {
 	LOG->Trace( "ScreenOptions::Set()" );
 
 
 	m_InputMode = im;
-	m_OptionRowData = OptionRowData;
+	m_OptionRow = OptionRow;
 	m_iNumOptionRows = iNumOptionLines;
 	m_bUseIcons = bUseIcons;
+	m_bLoadExplanations = bLoadExplanations;
 
 
 	this->ImportOptions();
@@ -120,7 +123,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRowData[], int iNumO
 
 		m_framePage.AddChild( &m_textOptionLineTitles[i] );		
 
-		for( unsigned j=0; j<m_OptionRowData[i].iNumOptions; j++ )
+		for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
 			m_framePage.AddChild( &m_textOptions[i][j] );	// this array has to be big enough to hold all of the options
 	}
 
@@ -168,14 +171,14 @@ void ScreenOptions::InitOptionsText()
 	int i;
 	for( i=0; i<m_iNumOptionRows; i++ )	// foreach options line
 	{
-		OptionRowData &optline = m_OptionRowData[i];
+		OptionRow &optline = m_OptionRow[i];
 
 		float fY = ITEMS_START_Y + fLineGap*i;
 
 		BitmapText &title = m_textOptionLineTitles[i];
 
 		title.LoadFromFont( THEME->GetPathTo("Fonts","option title") );
-		CString sText = optline.szTitle;
+		CString sText = optline.name;
 
 		title.SetText( sText );
 		title.SetXY( LABELS_X, fY );
@@ -192,12 +195,12 @@ void ScreenOptions::InitOptionsText()
 
 		// init all text in this line and count the width of the line
 		float fX = ITEMS_START_X;	// indent 70 pixels
-		for( unsigned j=0; j<optline.iNumOptions; j++ )	// for each option on this line
+		for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this line
 		{
 			BitmapText &option = m_textOptions[i][j];
 
 			option.LoadFromFont( THEME->GetPathTo("Fonts","option item") );
-			option.SetText( optline.szOptionsText[j] );
+			option.SetText( optline.choices[j] );
 			option.SetZoom( ITEMS_ZOOM );
 			option.EnableShadow( false );
 
@@ -243,7 +246,7 @@ void ScreenOptions::DimOption(int line, int option, bool dim)
 
 bool ScreenOptions::RowCompletelyDimmed(int line) const
 {
-	for(unsigned i = 0; i < m_OptionRowData[line].iNumOptions; ++i)
+	for(unsigned i = 0; i < m_OptionRow[line].choices.size(); ++i)
 		if(!m_OptionDim[line][i]) return false;
 	return true;
 }
@@ -260,7 +263,7 @@ void ScreenOptions::PositionUnderlines()
 
 			// If there's only one choice (ScreenOptionsMenu), don't show underlines.  
 			// It looks silly.
-			bool bOnlyOneChoice = m_OptionRowData[i].iNumOptions == 1;
+			bool bOnlyOneChoice = m_OptionRow[i].choices.size() == 1;
 			underline.SetDiffuse( bOnlyOneChoice ? RageColor(1,1,1,0) : RageColor(1,1,1,1) );
 
 			int iWidth, iX, iY;
@@ -298,9 +301,9 @@ void ScreenOptions::RefreshIcons()
 			OptionIcon &icon = m_OptionIcons[p][i];
 
 			int iSelection = m_iSelectedOption[p][i];
-			CString sSelection = m_OptionRowData[i].szOptionsText[iSelection];
+			CString sSelection = m_OptionRow[i].choices[iSelection];
 			if( sSelection == "ON" )
-				sSelection = m_OptionRowData[i].szTitle;
+				sSelection = m_OptionRow[i].name;
 			icon.Load( (PlayerNumber)p, m_bUseIcons ? sSelection : "", false );
 		}
 	}
@@ -357,7 +360,7 @@ void ScreenOptions::UpdateEnabledDisabled()
 
 		m_textOptionLineTitles[i].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
 
-		for( unsigned j=0; j<m_OptionRowData[i].iNumOptions; j++ )
+		for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
 			m_textOptions[i][j].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
 	}
 
@@ -430,8 +433,18 @@ void ScreenOptions::OnChange()
 	UpdateEnabledDisabled();
 
 	int iCurRow = m_iCurrentRow[PLAYER_1];
-	if( iCurRow < m_iNumOptionRows )
-		m_textExplanation.SetText( m_OptionRowData[iCurRow].szExplanation );
+
+	bool bIsExitRow = iCurRow == m_iNumOptionRows;
+
+	if( !bIsExitRow  &&  m_bLoadExplanations )
+	{
+		CString sLineName = m_OptionRow[iCurRow].name;
+		if( sLineName=="" )
+			sLineName = m_OptionRow[iCurRow].choices[0];
+		sLineName.Replace("\n","");
+		sLineName.Replace(" ","");
+		m_textExplanation.SetText( THEME->GetMetric(m_sClassName,sLineName) );	
+	}
 	else
 		m_textExplanation.SetText( "" );
 }
@@ -484,7 +497,7 @@ void ScreenOptions::MenuLeft( PlayerNumber pn )
 		if( iCurRow == m_iNumOptionRows	)	// EXIT is selected
 			return;		// don't allow a move
 
-		const int iNumOptions = m_OptionRowData[iCurRow].iNumOptions;
+		const int iNumOptions = m_OptionRow[iCurRow].choices.size();
 		if( iNumOptions == 1 )
 			continue;
 
@@ -508,7 +521,7 @@ void ScreenOptions::MenuRight( PlayerNumber pn )
 		if( iCurRow == m_iNumOptionRows	)	// EXIT is selected
 			return;		// don't allow a move
 
-		const int iNumOptions = m_OptionRowData[iCurRow].iNumOptions;
+		const int iNumOptions = m_OptionRow[iCurRow].choices.size();
 		if( iNumOptions == 1 )
 			continue;
 

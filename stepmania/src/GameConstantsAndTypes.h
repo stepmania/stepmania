@@ -198,4 +198,12 @@ const int ITEM_NONE			= -1;
 const int NUM_ITEM_SLOTS	= 3;
 
 
+
+
+const CString BG_ANIMS_DIR = "BGAnimations/";
+const CString VISUALIZATIONS_DIR = "Visualizations/";
+const CString RANDOMMOVIES_DIR = "RandomMovies/";
+
+
+
 #endif

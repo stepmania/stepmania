@@ -732,7 +732,7 @@ bool RageSound::SetPositionSamples( int samples )
 	 * To do this, we'll undo the muliply by the playback rate above.
 	 * Glenn:  Feel free to change this to whatever method is more elegant.
 	 * -Chris */
-	int ms = int(float(samples) * 1000.f / samplerate) * GetPlaybackRate();
+	int ms = int( float(samples) * 1000.f / samplerate * GetPlaybackRate() );
 
 	if(!big) {
 		/* Just make sure the position is in range. */

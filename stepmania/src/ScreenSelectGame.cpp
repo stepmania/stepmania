@@ -27,9 +27,9 @@ enum {
 };
 
 
-OptionRowData g_SelectGameLines[NUM_SELECT_GAME_LINES] = 
+OptionRow g_SelectGameLines[NUM_SELECT_GAME_LINES] = 
 {
-	{	"Game",	0, { "" } }
+	OptionRow(	"Game"	),	
 };
 
 
@@ -41,23 +41,14 @@ ScreenSelectGame::ScreenSelectGame() :
 	/* populate g_SelectGameLines */
 	vector<Game> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
-	unsigned i;
-	for( i=0; i<aGames.size(); i++ )
+	
+	m_OptionRow[SG_GAME].choices.clear();
+	for( unsigned i=0; i<aGames.size(); i++ )
 	{
 		Game game = aGames[i];
 		CString sGameName = GAMEMAN->GetGameDefForGame(game)->m_szName;
-		strcpy( g_SelectGameLines[0].szOptionsText[i], sGameName );
-	}
-	g_SelectGameLines[0].iNumOptions = i;
-
-
-	// fill g_InputOptionsLines with explanation text
-	for( i=0; i<NUM_SELECT_GAME_LINES; i++ )
-	{
-		CString sLineName = g_SelectGameLines[i].szTitle;
-		sLineName.Replace("\n","");
-		sLineName.Replace(" ","");
-		strcpy( g_SelectGameLines[i].szExplanation, THEME->GetMetric("ScreenSelectGame",sLineName) );
+		sGameName.MakeUpper();
+		m_OptionRow[SG_GAME].choices.push_back( sGameName );
 	}
 
 
@@ -65,7 +56,7 @@ ScreenSelectGame::ScreenSelectGame() :
 		INPUTMODE_BOTH, 
 		g_SelectGameLines, 
 		NUM_SELECT_GAME_LINES,
-		false );
+		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectGame music") );

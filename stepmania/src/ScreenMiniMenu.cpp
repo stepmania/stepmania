@@ -35,17 +35,17 @@ const ScreenMessage SM_GoToCancel	= (ScreenMessage)(SM_User+2);
 
 
 int	ScreenMiniMenu::s_iLastLine;
-int	ScreenMiniMenu::s_iLastAnswers[MAX_MINI_MENU_LINES];
+int	ScreenMiniMenu::s_iLastAnswers[MAX_MENU_ROWS];
 
 
-ScreenMiniMenu::ScreenMiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
+ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
 {
 	m_bIsTransparent = true;	// draw screens below us
 
 	m_SMSendOnOK = SM_SendOnOK;
 	m_SMSendOnCancel = SM_SendOnCancel;
 	m_Def = *pDef;
-	ASSERT( m_Def.iNumLines <= MAX_MINI_MENU_LINES );
+	ASSERT( m_Def.rows.size() <= MAX_MENU_ROWS );
 
 
 	m_Fade.SetTransitionTime( 0.5f );
@@ -55,10 +55,10 @@ ScreenMiniMenu::ScreenMiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendO
 	this->AddChild( &m_Fade );
 
 	
-	float fHeightOfAll = (m_Def.iNumLines-1)*SPACING_Y;
+	float fHeightOfAll = (m_Def.rows.size()-1)*SPACING_Y;
 
 	m_textTitle.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textTitle.SetText( m_Def.szTitle );
+	m_textTitle.SetText( m_Def.title );
 	m_textTitle.SetXY( CENTER_X, CENTER_Y - fHeightOfAll/2 - 30 );
 	m_textTitle.SetZoom( 0.8f );
 	this->AddChild( &m_textTitle );
@@ -68,27 +68,28 @@ ScreenMiniMenu::ScreenMiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendO
 
 	float fLongestLabelPlusAnswer = 0;
 
-	for( int i=0; i<m_Def.iNumLines; i++ )
+	for( int i=0; i<m_Def.rows.size(); i++ )
 	{
-		MiniMenuDefinition::MiniMenuLine& line = m_Def.lines[i];
+		MenuRow& line = m_Def.rows[i];
 		m_iCurAnswers[i] = 0;
 
-		float fY = SCALE( i, 0.f, m_Def.iNumLines-1.f, CENTER_Y-fHeightOfAll/2, CENTER_Y+fHeightOfAll/2 );
+		float fY = SCALE( i, 0.f, m_Def.rows.size()-1.f, CENTER_Y-fHeightOfAll/2, CENTER_Y+fHeightOfAll/2 );
 
 		m_textLabel[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-		m_textLabel[i].SetText( line.szLabel );
+		m_textLabel[i].SetText( line.name );
 		m_textLabel[i].SetY( fY );
 		m_textLabel[i].SetZoom( ZOOM_NOT_SELECTED );
 		m_textLabel[i].SetHorizAlign( Actor::align_left );
-		m_textLabel[i].SetDiffuse( line.bEnabled ? COLOR_ENABLED : COLOR_DISABLED );
+		m_textLabel[i].SetDiffuse( line.enabled ? COLOR_ENABLED : COLOR_DISABLED );
 		this->AddChild( &m_textLabel[i] );
 
+		CString sText = line.choices.empty() ? "" : line.choices[line.defaultChoice];
 		m_textAnswer[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
- 		m_textAnswer[i].SetText( line.szOptionsText[line.iDefaultOption] );
+ 		m_textAnswer[i].SetText( sText );
 		m_textAnswer[i].SetY( fY );
 		m_textAnswer[i].SetZoom( ZOOM_NOT_SELECTED );
 		m_textAnswer[i].SetHorizAlign( Actor::align_right );
-		m_textAnswer[i].SetDiffuse( line.bEnabled ? COLOR_ENABLED : COLOR_DISABLED );
+		m_textAnswer[i].SetDiffuse( line.enabled ? COLOR_ENABLED : COLOR_DISABLED );
 		this->AddChild( &m_textAnswer[i] );
 
 		fLongestLabelPlusAnswer = max( 
@@ -96,14 +97,14 @@ ScreenMiniMenu::ScreenMiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendO
 			m_textLabel[i].GetWidestLineWidthInSourcePixels() * ZOOM_SELECTED +
 			m_textAnswer[i].GetWidestLineWidthInSourcePixels() * ZOOM_SELECTED );
 
-		if( !bMarkedFirstEnabledLine && line.bEnabled )
+		if( !bMarkedFirstEnabledLine && line.enabled )
 		{
 			m_iCurLine = i;
 			AfterLineChanged();
 			bMarkedFirstEnabledLine = true;
 		}
 
-		m_iCurAnswers[i] = line.iDefaultOption;
+		m_iCurAnswers[i] = line.defaultChoice;
 	}
 
 	// adjust text spacing based on widest line
@@ -117,7 +118,7 @@ ScreenMiniMenu::ScreenMiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendO
 		fAnswerX += fIncreaseBy/2;
 	}
 
-	for( int k=0; k<m_Def.iNumLines; k++ )
+	for( int k=0; k<m_Def.rows.size(); k++ )
 	{
 		m_textLabel[k].SetX( fLabelX );
 		m_textAnswer[k].SetX( fAnswerX );
@@ -244,7 +245,7 @@ void ScreenMiniMenu::AfterAnswerChanged()
 {
 	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenMiniMenu row") );
 	int iAnswerInRow = m_iCurAnswers[m_iCurLine];
-	CString sAnswerText = m_Def.lines[m_iCurLine].szOptionsText[iAnswerInRow];
+	CString sAnswerText = m_Def.rows[m_iCurLine].choices[iAnswerInRow];
 	m_textAnswer[m_iCurLine].SetText( sAnswerText );
 }
 
@@ -252,11 +253,11 @@ int ScreenMiniMenu::GetGoUpSpot()
 {
 	int i;
 	for( i=m_iCurLine-1; i>=0; i-- )
-		if( m_Def.lines[i].bEnabled )
+		if( m_Def.rows[i].enabled )
 			return i;
 	// wrap
-	for( i=m_Def.iNumLines-1; i>=0; i-- )
-		if( m_Def.lines[i].bEnabled )
+	for( i=m_Def.rows.size()-1; i>=0; i-- )
+		if( m_Def.rows[i].enabled )
 			return i;
 	return -1;
 }
@@ -264,12 +265,12 @@ int ScreenMiniMenu::GetGoUpSpot()
 int ScreenMiniMenu::GetGoDownSpot()
 {
 	int i;
-	for( i=m_iCurLine+1; i<m_Def.iNumLines; i++ )
-		if( m_Def.lines[i].bEnabled )
+	for( i=m_iCurLine+1; i<m_Def.rows.size(); i++ )
+		if( m_Def.rows[i].enabled )
 			return i;
 	// wrap
-	for( i=0; i<m_Def.iNumLines; i++ )
-		if( m_Def.lines[i].bEnabled )
+	for( i=0; i<m_Def.rows.size(); i++ )
+		if( m_Def.rows[i].enabled )
 			return i;
 	return -1;
 }
@@ -281,6 +282,6 @@ bool ScreenMiniMenu::CanGoLeft()
 
 bool ScreenMiniMenu::CanGoRight()
 {
-	int iNumInCurRow = m_Def.lines[m_iCurLine].iNumOptions;
+	int iNumInCurRow = m_Def.rows[m_iCurLine].choices.size();
 	return m_iCurAnswers[m_iCurLine] != iNumInCurRow-1;
 }

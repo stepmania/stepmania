@@ -35,16 +35,16 @@ enum {
 	GO_VSYNC,
 	NUM_GRAPHIC_OPTIONS_LINES
 };
-OptionRowData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
-	{ "Display\nMode",			2,  {"FULLSCREEN", "WINDOWED"} },
-	{ "Display\nResolution",	7,  {"320","400","512","640","800","1024","1280"} },
-	{ "Display\nColor",			2,  {"16BIT","32BIT"} },
-	{ "Max Texture\nResolution",4,  {"256","512","1024","2048"} },
-	{ "Texture\nColor",			2,  {"16BIT","32BIT"} },
-	{ "Keep Textures\nIn Memory",2,  {"NO","YES"} },
-	{ "Refresh\nRate",			11, {"DEFAULT","60","70","72","75","80","85","90","100","120","150"} },
-	{ "Movie\nDecode",			4,  {"1ms","2ms","3ms","4ms"} },
-	{ "Wait For\nVsync",		2,  {"NO", "YES"} },
+OptionRow g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
+	OptionRow( "Display\nMode",				"FULLSCREEN", "WINDOWED" ),
+	OptionRow( "Display\nResolution",		"320","400","512","640","800","1024","1280" ),
+	OptionRow( "Display\nColor",			"16BIT","32BIT" ),
+	OptionRow( "Max Texture\nResolution",	"256","512","1024","2048" ),
+	OptionRow( "Texture\nColor",			"16BIT","32BIT" ),
+	OptionRow( "Keep Textures\nIn Memory",	"NO","YES" ),
+	OptionRow( "Refresh\nRate",				"DEFAULT","60","70","72","75","80","85","90","100","120","150" ),
+	OptionRow( "Movie\nDecode",				"1ms","2ms","3ms","4ms" ),
+	OptionRow( "Wait For\nVsync",			"NO", "YES" ),
 };
 
 static const int HorizRes[] = {
@@ -62,20 +62,11 @@ ScreenGraphicOptions::ScreenGraphicOptions() :
 {
 	LOG->Trace( "ScreenGraphicOptions::ScreenGraphicOptions()" );
 
-	// fill g_InputOptionsLines with explanation text
-	for( int i=0; i<NUM_GRAPHIC_OPTIONS_LINES; i++ )
-	{
-		CString sLineName = g_GraphicOptionsLines[i].szTitle;
-		sLineName.Replace("\n","");
-		sLineName.Replace(" ","");
-		strcpy( g_GraphicOptionsLines[i].szExplanation, THEME->GetMetric("ScreenGraphicOptions",sLineName) );
-	}
-
 	Init(
 		INPUTMODE_BOTH, 
 		g_GraphicOptionsLines, 
 		NUM_GRAPHIC_OPTIONS_LINES,
-		false );
+		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenGraphicOptions music") );
@@ -124,8 +115,8 @@ void ScreenGraphicOptions::ImportOptions()
 	{
 	case REFRESH_DEFAULT:	m_iSelectedOption[0][GO_REFRESH_RATE]		= 0; break;
 	default:
-		for(unsigned i = 2; i < g_GraphicOptionsLines[GO_REFRESH_RATE].iNumOptions; ++i) {
-			if(atoi(g_GraphicOptionsLines[GO_REFRESH_RATE].szOptionsText[i]) <= PREFSMAN->m_iRefreshRate) 
+		for(unsigned i = 2; i < g_GraphicOptionsLines[GO_REFRESH_RATE].choices.size(); ++i) {
+			if(atoi(g_GraphicOptionsLines[GO_REFRESH_RATE].choices[i]) <= PREFSMAN->m_iRefreshRate) 
 				m_iSelectedOption[0][GO_REFRESH_RATE] = i;
 		}
 	}
@@ -169,7 +160,7 @@ void ScreenGraphicOptions::ExportOptions()
 	else 
 	{
 		int n = m_iSelectedOption[0][GO_REFRESH_RATE];
-		PREFSMAN->m_iRefreshRate = atoi(g_GraphicOptionsLines[GO_REFRESH_RATE].szOptionsText[n]);
+		PREFSMAN->m_iRefreshRate = atoi(g_GraphicOptionsLines[GO_REFRESH_RATE].choices[n]);
 	}
 
 	PREFSMAN->m_iMovieDecodeMS			= m_iSelectedOption[0][GO_MOVIEDECODEMS]+1;

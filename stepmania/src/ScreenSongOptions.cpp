@@ -31,14 +31,14 @@ enum {
 	NUM_SONG_OPTIONS_LINES
 };
 
-OptionRowData g_SongOptionsLines[NUM_SONG_OPTIONS_LINES] = {
-	{ "Life\nType",		2, {"BAR","BATTERY"} },	
-	{ "Bar\nDrain",		3, {"NORMAL","NO RECOVER","SUDDEN DEATH"} },	
-	{ "Bat\nLives",		10, {"1","2","3","4","5","6","7","8","9","10"} },	
-	{ "Fail",			3, {"ARCADE","END OF SONG","OFF"} },	
-	{ "Assist",			2, {"OFF","TICK"} },	
-	{ "Rate",			9, {"x0.7","x0.8","x0.9","x1.0","x1.1","x1.2","x1.3","x1.4","x1.5"} },	
-	{ "Auto\nAdjust",	2, {"OFF", "ON"} },	
+OptionRow g_SongOptionsLines[NUM_SONG_OPTIONS_LINES] = {
+	OptionRow( "Life\nType",	"BAR","BATTERY" ),	
+	OptionRow( "Bar\nDrain",	"NORMAL","NO RECOVER","SUDDEN DEATH" ),	
+	OptionRow( "Bat\nLives",	"1","2","3","4","5","6","7","8","9","10" ),	
+	OptionRow( "Fail",			"ARCADE","END OF SONG","OFF" ),	
+	OptionRow( "Assist",		"OFF","TICK" ),	
+	OptionRow( "Rate",			"x0.7","x0.8","x0.9","x1.0","x1.1","x1.2","x1.3","x1.4","x1.5" ),	
+	OptionRow( "Auto\nAdjust",	"OFF", "ON" ),	
 };
 
 
@@ -50,7 +50,7 @@ ScreenSongOptions::ScreenSongOptions() :
 	Init( INPUTMODE_BOTH, 
 		g_SongOptionsLines, 
 		NUM_SONG_OPTIONS_LINES,
-		false );
+		false, false );
 }
 
 void ScreenSongOptions::ImportOptions()

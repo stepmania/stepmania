@@ -29,7 +29,6 @@
 enum {
 	AO_ANNOUNCER = 0,
 	AO_THEME,
-//	AO_DIFF_SELECT,
 	AO_SKIN,
 	AO_INSTRUCTIONS,
 	AO_CAUTION,
@@ -40,17 +39,17 @@ enum {
 	NUM_APPEARANCE_OPTIONS_LINES
 };
 
-OptionRowData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
-	{ "Announcer",		    1, {"OFF"} },	// fill this in on ImportOptions()
-	{ "Theme",			    0, {""} },		// fill this in on ImportOptions()
-//	{ "Difficulty\nSelect", 2, {"DDR Extreme", "Normal"} },
-	{ "Note\nSkin",		    0, {""} },		// fill this in on ImportOptions()
-	{ "How To\nPlay",	    2, {"SKIP","SHOW"} },
-	{ "Caution",		    2, {"SKIP","SHOW"} },
-	{ "Oni Score\nDisplay",	2, {"PERCENT","DANCE POINTS"} },
-	{ "Song\nGroup",	    2, {"ALL MUSIC","CHOOSE"} },
-	{ "Wheel\nSections",    3, {"NEVER","ALWAYS", "ABC ONLY"} },
-	{ "Translations",	    2, {"NATIVE","TRANSLITERATE"} },
+
+OptionRow g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
+	OptionRow( "Announcer"			 ),
+	OptionRow( "Theme"				 ),
+	OptionRow( "Default\nNoteSkin"	 ),
+	OptionRow( "How To\nPlay",		"SKIP","SHOW"),
+	OptionRow( "Caution",			"SKIP","SHOW"),
+	OptionRow( "Oni Score\nDisplay","PERCENT","DANCE POINTS"),
+	OptionRow( "Song\nGroup",		"ALL MUSIC","CHOOSE"),
+	OptionRow( "Wheel\nSections",	"NEVER","ALWAYS", "ABC ONLY"),
+	OptionRow( "Translations",		"NATIVE","TRANSLITERATE"),
 };
 
 ScreenAppearanceOptions::ScreenAppearanceOptions() :
@@ -58,20 +57,11 @@ ScreenAppearanceOptions::ScreenAppearanceOptions() :
 {
 	LOG->Trace( "ScreenAppearanceOptions::ScreenAppearanceOptions()" );
 
-	// fill g_InputOptionsLines with explanation text
-	for( int i=0; i<NUM_APPEARANCE_OPTIONS_LINES; i++ )
-	{
-		CString sLineName = g_AppearanceOptionsLines[i].szTitle;
-		sLineName.Replace("\n","");
-		sLineName.Replace(" ","");
-		strcpy( g_AppearanceOptionsLines[i].szExplanation, THEME->GetMetric("ScreenAppearanceOptions",sLineName) );
-	}
-
 	Init( 
 		INPUTMODE_BOTH, 
 		g_AppearanceOptionsLines, 
 		NUM_APPEARANCE_OPTIONS_LINES,
-		false );
+		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenAppearanceOptions music") );
@@ -79,30 +69,26 @@ ScreenAppearanceOptions::ScreenAppearanceOptions() :
 
 void ScreenAppearanceOptions::ImportOptions()
 {
+	unsigned i;
+
 	//
 	// fill in announcer names
 	//
 	CStringArray arrayAnnouncerNames;
 	ANNOUNCER->GetAnnouncerNames( arrayAnnouncerNames );
 
-	m_OptionRowData[AO_ANNOUNCER].iNumOptions	=	arrayAnnouncerNames.size() + 1; 
-	unsigned i;
-	for( i=0; i<arrayAnnouncerNames.size(); i++ )
-		strcpy( m_OptionRowData[AO_ANNOUNCER].szOptionsText[i+1], arrayAnnouncerNames[i] ); 
-
+	m_OptionRow[AO_ANNOUNCER].choices.clear();
+	m_OptionRow[AO_ANNOUNCER].choices.push_back( "OFF" );
+	for( i=0; i<arrayAnnouncerNames.size() && i<MAX_OPTIONS_PER_LINE; i++ )
+	{
+		m_OptionRow[AO_ANNOUNCER].choices.push_back( arrayAnnouncerNames[i] ); 
+	}
 
 	// highlight currently selected announcer
-	m_iSelectedOption[0][AO_ANNOUNCER] = -1;
-	for( i=1; i<m_OptionRowData[AO_ANNOUNCER].iNumOptions; i++ )
-	{
-		if( 0==stricmp(m_OptionRowData[AO_ANNOUNCER].szOptionsText[i], ANNOUNCER->GetCurAnnouncerName()) )
-		{
+	m_iSelectedOption[0][AO_ANNOUNCER] = 0;
+	for( i=1; i<m_OptionRow[AO_ANNOUNCER].choices.size(); i++ )
+		if( 0==stricmp(m_OptionRow[AO_ANNOUNCER].choices[i], ANNOUNCER->GetCurAnnouncerName()) )
 			m_iSelectedOption[0][AO_ANNOUNCER] = i;
-			break;
-		}
-	}
-	if( m_iSelectedOption[0][AO_ANNOUNCER] == -1 )
-		m_iSelectedOption[0][AO_ANNOUNCER] = 0;
 
 
 	//
@@ -111,24 +97,19 @@ void ScreenAppearanceOptions::ImportOptions()
 	CStringArray arrayThemeNames;
 	THEME->GetThemeNamesForCurGame( arrayThemeNames );
 
-	m_OptionRowData[AO_THEME].iNumOptions	=	arrayThemeNames.size(); 
+	m_OptionRow[AO_THEME].choices.clear();
 	
-	for( i=0; i<arrayThemeNames.size(); i++ )
-		strcpy( m_OptionRowData[AO_THEME].szOptionsText[i], arrayThemeNames[i] ); 
-
+	for( i=0; i<arrayThemeNames.size() && i<MAX_OPTIONS_PER_LINE; i++ )
+	{
+		m_OptionRow[AO_THEME].choices.push_back( arrayThemeNames[i] ); 
+	}
 
 	// highlight currently selected theme
-	m_iSelectedOption[0][AO_THEME] = -1;
-	for( i=0; i<m_OptionRowData[AO_THEME].iNumOptions; i++ )
-	{
-		if( 0==stricmp(m_OptionRowData[AO_THEME].szOptionsText[i], THEME->GetCurThemeName()) )
-		{
+	m_iSelectedOption[0][AO_THEME] = 0;
+	for( i=0; i<m_OptionRow[AO_THEME].choices.size(); i++ )
+		if( 0==stricmp(m_OptionRow[AO_THEME].choices[i], THEME->GetCurThemeName()) )
 			m_iSelectedOption[0][AO_THEME] = i;
-			break;
-		}
-	}
-	if( m_iSelectedOption[0][AO_THEME] == -1 )
-		m_iSelectedOption[0][AO_THEME] = 0;
+
 
 	//
 	// fill in skin names
@@ -136,27 +117,23 @@ void ScreenAppearanceOptions::ImportOptions()
 	CStringArray arraySkinNames;
 	NOTESKIN->GetNoteSkinNames( arraySkinNames );
 
-	m_OptionRowData[AO_SKIN].iNumOptions    =       arraySkinNames.size();
+	m_OptionRow[AO_SKIN].choices.clear();
 
-	for( i=0; i<arraySkinNames.size(); i++ )
-	strcpy( m_OptionRowData[AO_SKIN].szOptionsText[i], arraySkinNames[i] );
+	for( i=0; i<arraySkinNames.size() && i<MAX_OPTIONS_PER_LINE; i++ )
+	{
+		arraySkinNames[i].MakeUpper();
+		m_OptionRow[AO_SKIN].choices.push_back( arraySkinNames[i] ); 
+	}
 
 	// highlight currently selected skin
-	m_iSelectedOption[0][AO_SKIN] = -1;
-	for( i=0; i<m_OptionRowData[AO_SKIN].iNumOptions; i++ )
-	{
-		if( 0==stricmp(m_OptionRowData[AO_SKIN].szOptionsText[i], PREFSMAN->m_sDefaultNoteSkin) )
-		{
+	m_iSelectedOption[0][AO_SKIN] = 0;
+	for( i=0; i<m_OptionRow[AO_SKIN].choices.size(); i++ )
+		if( 0==stricmp(m_OptionRow[AO_SKIN].choices[i], PREFSMAN->m_sDefaultNoteSkin) )
 			m_iSelectedOption[0][AO_SKIN] = i;
-			break;
-		}
-	}
-	if( m_iSelectedOption[0][AO_SKIN] == -1 )
-		m_iSelectedOption[0][AO_SKIN] = 0;
+
 
 	m_iSelectedOption[0][AO_INSTRUCTIONS]				= PREFSMAN->m_bInstructions? 1:0;
 	m_iSelectedOption[0][AO_CAUTION]					= PREFSMAN->m_bShowDontDie? 1:0;
-//	m_iSelectedOption[0][AO_DIFF_SELECT]				= PREFSMAN->m_bDDRExtremeDifficultySelect? 1:0;
 	m_iSelectedOption[0][AO_DANCE_POINTS_FOR_ONI]		= PREFSMAN->m_bDancePointsForOni? 1:0;
 	m_iSelectedOption[0][AO_SELECT_GROUP]				= PREFSMAN->m_bShowSelectGroup? 1:0;
 	m_iSelectedOption[0][AO_WHEEL_SECTIONS]				= (int)PREFSMAN->m_MusicWheelUsesSections;
@@ -169,20 +146,19 @@ void ScreenAppearanceOptions::ExportOptions()
 	PREFSMAN->SaveGlobalPrefsToDisk();
 
 	int iSelectedAnnouncer = m_iSelectedOption[0][AO_ANNOUNCER];
-	CString sNewAnnouncer = m_OptionRowData[AO_ANNOUNCER].szOptionsText[iSelectedAnnouncer];
+	CString sNewAnnouncer = m_OptionRow[AO_ANNOUNCER].choices[iSelectedAnnouncer];
 	if( iSelectedAnnouncer == 0 )
 		sNewAnnouncer = "";
 	ANNOUNCER->SwitchAnnouncer( sNewAnnouncer );
 
 	int iSelectedTheme = m_iSelectedOption[0][AO_THEME];
-	CString sNewTheme = m_OptionRowData[AO_THEME].szOptionsText[iSelectedTheme];
+	CString sNewTheme = m_OptionRow[AO_THEME].choices[iSelectedTheme];
 	THEME->SwitchTheme( sNewTheme );
 
     int iSelectedSkin = m_iSelectedOption[0][AO_SKIN];
-    CString sNewSkin = m_OptionRowData[AO_SKIN].szOptionsText[iSelectedSkin];
+    CString sNewSkin = m_OptionRow[AO_SKIN].choices[iSelectedSkin];
 
 	PREFSMAN->m_sDefaultNoteSkin				= sNewSkin;
-//	PREFSMAN->m_bDDRExtremeDifficultySelect		= !!m_iSelectedOption[0][AO_DIFF_SELECT];
 	PREFSMAN->m_bInstructions					= !!m_iSelectedOption[0][AO_INSTRUCTIONS];
 	PREFSMAN->m_bShowDontDie					= !!m_iSelectedOption[0][AO_CAUTION];
 	PREFSMAN->m_bShowSelectGroup				= !!m_iSelectedOption[0][AO_SELECT_GROUP];

@@ -38,17 +38,17 @@ enum {
 };
 /* Hmm.  Ignore JoyAxes and Back Delayed probably belong in "input options",
  * preferably alongside button configuration. */
-OptionRowData g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
-	{ "Menu\nTimer",		2, {"OFF","ON"} },
-	{ "Arcade\nStages",		8, {"1","2","3","4","5","6","7","UNLIMITED"} },
-	{ "Judge\nDifficulty",	8, {"1","2","3","4","5","6","7","8"} },
-	{ "Life\nDifficulty",	7, {"1","2","3","4","5","6","7"} },
-	{ "Default\nFail Type",	3, {"ARCADE","END OF SONG","OFF"} },	
-	{ "Show\nStats",		2, {"OFF","ON"} },
-	{ "Coin\nMode",			3, {"HOME","PAY","FREE PLAY"} },
-	{ "Coins Per\nCredit",	8, {"1","2","3","4","5","6","7","8"} },
-	{ "Joint\nPremium",		2, {"OFF","ON"} },
-	{ "Song\nOptions",		2, {"HIDE","ALLOW"} },
+OptionRow g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
+	OptionRow( "Menu\nTimer",			"OFF","ON" ),
+	OptionRow( "Arcade\nStages",		"1","2","3","4","5","6","7","UNLIMITED" ),
+	OptionRow( "Judge\nDifficulty",		"1","2","3","4","5","6","7","8" ),
+	OptionRow( "Life\nDifficulty",		"1","2","3","4","5","6","7" ),
+	OptionRow( "Default\nFail Type",	"ARCADE","END OF SONG","OFF" ),	
+	OptionRow( "Show\nStats",			"OFF","ON" ),
+	OptionRow( "Coin\nMode",			"HOME","PAY","FREE PLAY" ),
+	OptionRow( "Coins Per\nCredit",		"1","2","3","4","5","6","7","8" ),
+	OptionRow( "Joint\nPremium",		"OFF","ON" ),
+	OptionRow( "Song\nOptions",			"HIDE","ALLOW" ),
 };
 
 ScreenMachineOptions::ScreenMachineOptions() :
@@ -56,20 +56,11 @@ ScreenMachineOptions::ScreenMachineOptions() :
 {
 	LOG->Trace( "ScreenMachineOptions::ScreenMachineOptions()" );
 
-	// fill g_InputOptionsLines with explanation text
-	for( int i=0; i<NUM_MACHINE_OPTIONS_LINES; i++ )
-	{
-		CString sLineName = g_MachineOptionsLines[i].szTitle;
-		sLineName.Replace("\n","");
-		sLineName.Replace(" ","");
-		strcpy( g_MachineOptionsLines[i].szExplanation, THEME->GetMetric("ScreenMachineOptions",sLineName) );
-	}
-
 	Init( 
 		INPUTMODE_BOTH, 
 		g_MachineOptionsLines, 
 		NUM_MACHINE_OPTIONS_LINES,
-		false );
+		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenMachineOptions music") );

@@ -28,8 +28,8 @@ enum {
 	SO_MASTER_VOLUME,
 	NUM_SOUND_OPTIONS_LINES
 };
-OptionRowData g_SoundOptionsLines[NUM_SOUND_OPTIONS_LINES] = {
-	{ "Master\nVolume",		6, {"MUTE","20%","40%","60%","80%","100%"} },
+OptionRow g_SoundOptionsLines[NUM_SOUND_OPTIONS_LINES] = {
+	OptionRow( "Master\nVolume",		"MUTE","20%","40%","60%","80%","100%" ),
 };
 
 ScreenSoundOptions::ScreenSoundOptions() :
@@ -37,16 +37,7 @@ ScreenSoundOptions::ScreenSoundOptions() :
 {
 	LOG->Trace( "ScreenSoundOptions::ScreenSoundOptions()" );
 
-	// fill g_InputOptionsLines with explanation text
-	for( int i=0; i<NUM_SOUND_OPTIONS_LINES; i++ )
-	{
-		CString sLineName = g_SoundOptionsLines[i].szTitle;
-		sLineName.Replace("\n","");
-		sLineName.Replace(" ","");
-		strcpy( g_SoundOptionsLines[i].szExplanation, THEME->GetMetric("ScreenSoundOptions",sLineName) );
-	}
-
-	Init( INPUTMODE_BOTH, g_SoundOptionsLines, NUM_SOUND_OPTIONS_LINES, false );
+	Init( INPUTMODE_BOTH, g_SoundOptionsLines, NUM_SOUND_OPTIONS_LINES, false, true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSoundOptions music") );

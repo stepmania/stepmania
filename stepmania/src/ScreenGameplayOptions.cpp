@@ -37,16 +37,16 @@ enum {
 	NUM_GAMEPLAY_OPTIONS_LINES
 };
 
-OptionRowData g_GameplayOptionsLines[NUM_GAMEPLAY_OPTIONS_LINES] = {
-	{ "Background\nMode",		4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
-	{ "Background\nBrightness",	11, {"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"} },
-	{ "BG For\nBanner",			2,  {"NO", "YES (slow)"} },
-	{ "Show\nDanger",			2, {"OFF","ON"} },
-	{ "Solo\nSingles",			2, {"OFF","ON"} },
-	{ "Hidden\nSongs",			2, {"OFF","ON"} },
-	{ "Easter\nEggs",			2, {"OFF","ON"} },
-	{ "Marvelous\nTiming",		2, {"OFF","ON"} },
-	{ "Pick Extra\nStage",		2, {"OFF","ON"} }
+OptionRow g_GameplayOptionsLines[NUM_GAMEPLAY_OPTIONS_LINES] = {
+	OptionRow( "Background\nMode",		"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ),
+	OptionRow( "Background\nBrightness","0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ),
+	OptionRow( "BG For\nBanner",		"NO", "YES (slow)" ),
+	OptionRow( "Show\nDanger",			"OFF","ON" ),
+	OptionRow( "Solo\nSingles",			"OFF","ON" ),
+	OptionRow( "Hidden\nSongs",			"OFF","ON" ),
+	OptionRow( "Easter\nEggs",			"OFF","ON" ),
+	OptionRow( "Marvelous\nTiming",		"OFF","ON" ),
+	OptionRow( "Pick Extra\nStage",		"OFF","ON" )
 };
 
 ScreenGameplayOptions::ScreenGameplayOptions() :
@@ -54,20 +54,11 @@ ScreenGameplayOptions::ScreenGameplayOptions() :
 {
 	LOG->Trace( "ScreenGameplayOptions::ScreenGameplayOptions()" );
 
-	// fill g_InputOptionsLines with explanation text
-	for( int i=0; i<NUM_GAMEPLAY_OPTIONS_LINES; i++ )
-	{
-		CString sLineName = g_GameplayOptionsLines[i].szTitle;
-		sLineName.Replace("\n","");
-		sLineName.Replace(" ","");
-		strcpy( g_GameplayOptionsLines[i].szExplanation, THEME->GetMetric("ScreenGameplayOptions",sLineName) );
-	}
-
 	Init( 
 		INPUTMODE_BOTH, 
 		g_GameplayOptionsLines, 
 		NUM_GAMEPLAY_OPTIONS_LINES,
-		false );
+		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenMachineOptions music") );
