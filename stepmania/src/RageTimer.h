@@ -47,10 +47,11 @@ public:
 	RageTimer Half() const;
 
 	/* Add (or subtract) a duration from a timestamp.  The result is another timestamp. */
-	RageTimer operator+(float tm) const;
+	RageTimer operator+( float tm ) const;
+	void operator+=( float tm ) { *this = *this + tm; }
 
 	/* Find the amount of time between two timestamps.  The result is a duration. */
-	float operator-(const RageTimer &rhs) const;
+	float operator-( const RageTimer &rhs ) const;
 
 	/* "float" is bad for a "time since start" RageTimer.  If the game is running for
 	 * several days, we'll lose a lot of resolution.  I don't want to use double
@@ -59,8 +60,8 @@ public:
 	unsigned m_secs, m_us;
 
 private:
-	static RageTimer Sum(const RageTimer &lhs, float tm);
-	static float Difference(const RageTimer &lhs, const RageTimer &rhs);
+	static RageTimer Sum( const RageTimer &lhs, float tm );
+	static float Difference( const RageTimer &lhs, const RageTimer &rhs );
 };
 
 extern const RageTimer RageZeroTimer;
