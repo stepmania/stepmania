@@ -57,7 +57,7 @@ if test "$have_mad" = "no"; then
 	AC_DEFINE(NO_MP3_SUPPORT, 1, [MP3 support not available])
 fi
 
-AM_CONDITIONAL(HAVE_MP3, test "$have_mad" != "yes" )
+AM_CONDITIONAL(HAVE_MP3, test "$have_mad" = "yes" )
 
 AC_SEARCH_LIBS(avcodec_init, [avcodec], have_libavcodec=yes,  have_libavcodec=no)
 AC_SEARCH_LIBS(guess_format, [avformat], have_libavformat=yes,  have_libavformat=no)
