@@ -54,6 +54,8 @@ RageSound_QT1::RageSound_QT1()
     latency = static_cast<float>(samples) / freq; /* double buffer */
     LOG->Trace("The output latency is %f", latency);
 
+    StartDecodeThread();
+
     OSErr err = SndNewChannel(&channel, sampledSynth, initStereo, callback);
 
     if (err != noErr)
@@ -81,8 +83,6 @@ RageSound_QT1::RageSound_QT1()
 
     if (err != noErr)
         RageException::ThrowNonfatal("Unable to create audio channel");
-
-    StartDecodeThread();
 }
 
 RageSound_QT1::~RageSound_QT1()
