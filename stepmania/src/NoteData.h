@@ -85,42 +85,20 @@ public:
 
 	float GetFirstBeat();	// return the beat number of the first note
 	int GetFirstRow();
-	float GetLastBeat();	// return the beat number of the last note
-	int GetLastRow();
-	int GetNumTapNotes( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
-	int GetNumDoubles( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
+	float GetLastBeat() const;	// return the beat number of the last note
+	int GetLastRow() const;
+	int GetNumTapNotes( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS ) const;
+	int GetNumDoubles( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS ) const;
 	/* optimization: for the default of start to end, use the second (faster) */
-	int GetNumHoldNotes( const float fStartBeat, const float fEndBeat = MAX_BEATS );
+	int GetNumHoldNotes( const float fStartBeat, const float fEndBeat = MAX_BEATS ) const;
 	int GetNumHoldNotes() const { return m_HoldNotes.size(); }
 
 	int GetPossibleDancePoints();
-
-	// radar values - return between 0.0 and 1.2
-	float GetRadarValue( RadarCategory rv, float fSongSeconds )
-	{
-		switch( rv )
-		{
-		case RADAR_STREAM:	return GetStreamRadarValue( fSongSeconds );		break;
-		case RADAR_VOLTAGE:	return GetVoltageRadarValue( fSongSeconds );	break;
-		case RADAR_AIR:		return GetAirRadarValue( fSongSeconds );		break;
-		case RADAR_FREEZE:	return GetFreezeRadarValue( fSongSeconds );		break;
-		case RADAR_CHAOS:	return GetChaosRadarValue( fSongSeconds );		break;
-		default:	ASSERT(0);  return 0;
-		}
-	};
-	float GetStreamRadarValue( float fSongSeconds );
-	float GetVoltageRadarValue( float fSongSeconds );
-	float GetAirRadarValue( float fSongSeconds );
-	float GetFreezeRadarValue( float fSongSeconds );
-	float GetChaosRadarValue( float fSongSeconds );
 
 	// Transformations
 	void LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track
 	void LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTracks );	// used by autogen
 
-
-	void CropToLeftSide();
-	void CropToRightSide();
 	void RemoveHoldNotes();
 	void Turn( PlayerOptions::TurnType tt );
 	void MakeLittle();
@@ -145,6 +123,15 @@ namespace NoteDataUtil
 	NoteType GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex );
 	void LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData );
 	CString GetSMNoteDataString(NoteData &in);
+
+	float GetStreamRadarValue( const NoteData &in, float fSongSeconds );
+	float GetVoltageRadarValue( const NoteData &in, float fSongSeconds );
+	float GetAirRadarValue( const NoteData &in, float fSongSeconds );
+	float GetFreezeRadarValue( const NoteData &in, float fSongSeconds );
+	float GetChaosRadarValue( const NoteData &in, float fSongSeconds );
+
+	// radar values - return between 0.0 and 1.2
+	float GetRadarValue( const NoteData &in, RadarCategory rv, float fSongSeconds );
 };
 
 #endif

@@ -197,12 +197,12 @@ float NoteData::GetFirstBeat()
 		return fEarliestBeatFoundSoFar;
 }
 
-int NoteData::GetLastRow()
+int NoteData::GetLastRow() const
 { 
 	return BeatToNoteRow( GetLastBeat() );
 }
 
-float NoteData::GetLastBeat()			
+float NoteData::GetLastBeat() const
 { 
 	float fOldestBeatFoundSoFar = 0;
 	
@@ -226,7 +226,7 @@ float NoteData::GetLastBeat()
 	return fOldestBeatFoundSoFar;
 }
 
-int NoteData::GetNumTapNotes( const float fStartBeat, const float fEndBeat )			
+int NoteData::GetNumTapNotes( const float fStartBeat, const float fEndBeat ) const
 { 
 	int iNumNotes = 0;
 
@@ -243,7 +243,7 @@ int NoteData::GetNumTapNotes( const float fStartBeat, const float fEndBeat )
 	return iNumNotes;
 }
 
-int NoteData::GetNumDoubles( const float fStartBeat, const float fEndBeat )			
+int NoteData::GetNumDoubles( const float fStartBeat, const float fEndBeat ) const
 {
 	int iNumDoubles = 0;
 
@@ -265,7 +265,7 @@ int NoteData::GetNumDoubles( const float fStartBeat, const float fEndBeat )
 	return iNumDoubles;
 }
 
-int NoteData::GetNumHoldNotes( const float fStartBeat, const float fEndBeat )			
+int NoteData::GetNumHoldNotes( const float fStartBeat, const float fEndBeat ) const
 {
 	int iNumHolds = 0;
 
@@ -294,70 +294,6 @@ int NoteData::GetPossibleDancePoints()
 
 	return GetNumTapNotes()*TapNoteScoreToDancePoints(TNS_PERFECT) +
 		   GetNumHoldNotes()*HoldNoteScoreToDancePoints(HNS_OK);
-}
-
-void NoteData::CropToLeftSide()
-{
-	int iFirstRightSideColumn = 4;
-	int iLastRightSideColumn = 7;
-
-	// clear out the right half
-	int c;
-	for( c=iFirstRightSideColumn; c<=iLastRightSideColumn; c++ )
-	{
-		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) // foreach TapNote
-			SetTapNote(c, i, TAP_EMPTY);
-	}
-
-	for( int i=GetNumHoldNotes()-1; i>=0; i-- ) // foreach HoldNote
-	{
-		if( c >= iFirstRightSideColumn )
-		{
-			// delete this HoldNote
-			m_HoldNotes.erase(m_HoldNotes.begin()+i, m_HoldNotes.begin()+i+1);
-		}
-	}
-}
-
-
-void NoteData::CropToRightSide()
-{
-	int iFirstRightSideColumn = 4;
-	int iLastRightSideColumn = 7;
-
-	int c;
-
-	// clear out the left half
-	for( c=0; c<iFirstRightSideColumn; c++ )
-	{
-		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) // foreach TapNote
-			SetTapNote(c, i, TAP_EMPTY);
-	}
-
-	// copy the right side into the left
-	for( c=iFirstRightSideColumn; c<=iLastRightSideColumn; c++ )
-	{
-		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) // foreach TapNote
-		{
-			SetTapNote(c-4, i, GetTapNote(c, i));
-			SetTapNote(c, i, TAP_EMPTY);
-		}
-	}
-
-	for( int i=GetNumHoldNotes()-1; i>=0; i-- ) // foreach HoldNote
-	{
-		HoldNote &hn = GetHoldNote(i);
-
-		if( hn.m_iTrack < iFirstRightSideColumn )
-		{
-			// delete this HoldNote by shifting everything down
-			RemoveHoldNote( i );
-		}
-		else
-		{
-			hn.m_iTrack -= 4;
-		}
-	}
 }
 
 void NoteData::RemoveHoldNotes()
@@ -727,66 +663,6 @@ void NoteData::SnapToNearestNoteType( NoteType nt1, NoteType nt2, float fBeginBe
 }
 
 
-float NoteData::GetStreamRadarValue( float fSongSeconds )
-{
-	// density of steps
-	int iNumNotes = GetNumTapNotes() + GetNumHoldNotes();
-	float fNotesPerSecond = iNumNotes/fSongSeconds;
-	float fReturn = fNotesPerSecond / 7;
-	return min( fReturn, 1.0f );
-}
-
-float NoteData::GetVoltageRadarValue( float fSongSeconds )
-{
-	float fAvgBPS = GetLastBeat() / fSongSeconds;
-
-	// peak density of steps
-	float fMaxDensitySoFar = 0;
-
-	const int BEAT_WINDOW = 8;
-
-	for( int i=0; i<MAX_BEATS; i+=BEAT_WINDOW )
-	{
-		int iNumNotesThisWindow = GetNumTapNotes((float)i,(float)i+BEAT_WINDOW) + GetNumHoldNotes((float)i,(float)i+BEAT_WINDOW);
-		float fDensityThisWindow = iNumNotesThisWindow/(float)BEAT_WINDOW;
-		fMaxDensitySoFar = max( fMaxDensitySoFar, fDensityThisWindow );
-	}
-
-	float fReturn = fMaxDensitySoFar*fAvgBPS/10;
-	return min( fReturn, 1.0f );
-}
-
-float NoteData::GetAirRadarValue( float fSongSeconds )
-{
-	// number of doubles
-	int iNumDoubles = GetNumDoubles();
-	float fReturn = iNumDoubles / fSongSeconds;
-	return min( fReturn, 1.0f );
-}
-
-float NoteData::GetChaosRadarValue( float fSongSeconds )
-{
-	// count number of triplets or 16ths
-	int iNumChaosNotes = 0;
-	int rows = GetLastRow();
-	for( int r=0; r<=rows; r++ )
-	{
-		if( !IsRowEmpty(r)  &&  GetNoteType(r) >= NOTE_TYPE_12TH )
-			iNumChaosNotes++;
-	}
-
-	float fReturn = iNumChaosNotes / fSongSeconds * 0.5f;
-	return min( fReturn, 1.0f );
-}
-
-float NoteData::GetFreezeRadarValue( float fSongSeconds )
-{
-	// number of hold steps
-	float fReturn = GetNumHoldNotes() / fSongSeconds;
-	return min( fReturn, 1.0f );
-}
-
-
 // -1 for iOriginalTracksToTakeFrom means no track
 void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] )
 {
@@ -1143,4 +1019,76 @@ CString NoteDataUtil::GetSMNoteDataString(NoteData &in)
 	in.Convert2sAnd3sToHoldNotes();
 
 	return join( "\n,", asMeasureStrings );
+}
+
+float NoteDataUtil::GetRadarValue( const NoteData &in, RadarCategory rv, float fSongSeconds )
+{
+	switch( rv )
+	{
+	case RADAR_STREAM:	return GetStreamRadarValue( in, fSongSeconds );
+	case RADAR_VOLTAGE:	return GetVoltageRadarValue( in, fSongSeconds );
+	case RADAR_AIR:		return GetAirRadarValue( in, fSongSeconds );
+	case RADAR_FREEZE:	return GetFreezeRadarValue( in, fSongSeconds );
+	case RADAR_CHAOS:	return GetChaosRadarValue( in, fSongSeconds );
+	default:	ASSERT(0);  return 0;
+	}
+}
+
+float NoteDataUtil::GetStreamRadarValue( const NoteData &in, float fSongSeconds )
+{
+	// density of steps
+	int iNumNotes = in.GetNumTapNotes() + in.GetNumHoldNotes();
+	float fNotesPerSecond = iNumNotes/fSongSeconds;
+	float fReturn = fNotesPerSecond / 7;
+	return min( fReturn, 1.0f );
+}
+
+float NoteDataUtil::GetVoltageRadarValue( const NoteData &in, float fSongSeconds )
+{
+	float fAvgBPS = in.GetLastBeat() / fSongSeconds;
+
+	// peak density of steps
+	float fMaxDensitySoFar = 0;
+
+	const int BEAT_WINDOW = 8;
+
+	for( int i=0; i<MAX_BEATS; i+=BEAT_WINDOW )
+	{
+		int iNumNotesThisWindow = in.GetNumTapNotes((float)i,(float)i+BEAT_WINDOW) + in.GetNumHoldNotes((float)i,(float)i+BEAT_WINDOW);
+		float fDensityThisWindow = iNumNotesThisWindow/(float)BEAT_WINDOW;
+		fMaxDensitySoFar = max( fMaxDensitySoFar, fDensityThisWindow );
+	}
+
+	float fReturn = fMaxDensitySoFar*fAvgBPS/10;
+	return min( fReturn, 1.0f );
+}
+
+float NoteDataUtil::GetAirRadarValue( const NoteData &in, float fSongSeconds )
+{
+	// number of doubles
+	int iNumDoubles = in.GetNumDoubles();
+	float fReturn = iNumDoubles / fSongSeconds;
+	return min( fReturn, 1.0f );
+}
+
+float NoteDataUtil::GetFreezeRadarValue( const NoteData &in, float fSongSeconds )
+{
+	// number of hold steps
+	float fReturn = in.GetNumHoldNotes() / fSongSeconds;
+	return min( fReturn, 1.0f );
+}
+
+float NoteDataUtil::GetChaosRadarValue( const NoteData &in, float fSongSeconds )
+{
+	// count number of triplets or 16ths
+	int iNumChaosNotes = 0;
+	int rows = in.GetLastRow();
+	for( int r=0; r<=rows; r++ )
+	{
+		if( !in.IsRowEmpty(r)  &&  GetNoteType(r) >= NOTE_TYPE_12TH )
+			iNumChaosNotes++;
+	}
+
+	float fReturn = iNumChaosNotes / fSongSeconds * 0.5f;
+	return min( fReturn, 1.0f );
 }

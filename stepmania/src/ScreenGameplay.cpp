@@ -1153,7 +1153,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
 					{
 						RadarCategory rc = (RadarCategory)r;
-						GAMESTATE->m_fRadarPossible[p][r] = m_Player[p].GetRadarValue( rc, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
+						GAMESTATE->m_fRadarPossible[p][r] = NoteDataUtil::GetRadarValue( m_Player[p], rc, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
 						GAMESTATE->m_fRadarActual[p][r] = m_Player[p].GetActualRadarValue( rc, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
 					}
 				}

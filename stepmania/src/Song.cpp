@@ -563,7 +563,7 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		pNotes->GetNoteData( &tempNoteData );
 
 		for( int r=0; r<NUM_RADAR_VALUES; r++ )
-			pNotes->m_fRadarValues[r] = tempNoteData.GetRadarValue( (RadarCategory)r, m_fMusicLengthSeconds );
+			pNotes->m_fRadarValues[r] = NoteDataUtil::GetRadarValue( tempNoteData, (RadarCategory)r, m_fMusicLengthSeconds );
 
 		float fFirstBeat = tempNoteData.GetFirstBeat();
 		float fLastBeat = tempNoteData.GetLastBeat();
