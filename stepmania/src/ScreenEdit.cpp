@@ -1796,8 +1796,6 @@ void ScreenEdit::HandleEditNotesStatisticsChoice( EditNotesStatisticsChoice c, i
 	
 	switch( c )
 	{
-	case predict_meter:	
-		break;
 	case description:
 		SCREENMAN->TextEntry( SM_None, "Edit notes description.\nPress Enter to confirm,\nEscape to cancel.", m_pNotes->GetDescription(), ChangeDescription, NULL );
 		break;
