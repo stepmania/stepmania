@@ -341,7 +341,7 @@ void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Di
 	song_sort_val.clear();
 	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
 	{
-		Steps* pSteps = arraySongPointers[i]->GetStepsByDifficulty( GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
+		const Steps* pSteps = arraySongPointers[i]->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
 		CString &s = song_sort_val[arraySongPointers[i]];
 		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
 		if( PREFSMAN->m_bSubSortByNumSteps )
